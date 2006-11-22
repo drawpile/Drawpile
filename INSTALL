@@ -1,0 +1,8 @@
+DrawPile is still in a very early stage of development, so automatic
+installation is not yet supported.
+To compile DrawPile, Qt 4.2 is required. Go to src/ subdirectory
+and run "qmake && make".
+The client should be built in the client/ subdirectory and the server in server/
+
+A better build system is hopefully on its way...
+
