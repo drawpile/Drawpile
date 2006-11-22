@@ -1,0 +1,13 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+	<file>icons/document-save.png</file>
+	<file>icons/document-save-as.png</file>
+	<file>icons/draw-brush.png</file>
+	<file>icons/draw-eraser.png</file>
+	<file>icons/zoom-in.png</file>
+	<file>icons/zoom-out.png</file>
+	<file>icons/system-log-out.png</file>
+	<file>icons/network-error.png</file>
+	<file>icons/network-transmit-receive.png</file>
+</qresource>
+</RCC>
