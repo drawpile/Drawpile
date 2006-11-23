@@ -1,3 +1,23 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2006 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
 #include <QContextMenuEvent>
 #include <QApplication>
 #include <QClipboard>
@@ -6,21 +26,21 @@
 #include "hostlabel.h"
 
 HostLabel::HostLabel(QWidget *parent)
-	:QLabel(tr("not connected"), parent)
+	:QLabel(QString(), parent)
 {
-	setTextInteractionFlags(Qt::TextSelectableByMouse);
+	setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard);
 	setCursor(Qt::IBeamCursor);
 	menu_ = new QMenu(this);
 	QAction *copy = menu_->addAction(tr("Copy address to clipboard"));
 	connect(copy,SIGNAL(triggered()),this,SLOT(copyAddress()));
-	copy->setEnabled(false);
 	menu_->setDefaultAction(copy);
+	disconnect();
 }
 
 void HostLabel::setAddress(QString address)
 {
 	address_ = address;
-	setText("Host: " + address_);
+	setText(tr("Host: %1").arg(address_));
 	menu_->defaultAction()->setEnabled(true);
 }
 
@@ -35,6 +55,9 @@ void HostLabel::disconnect()
 void HostLabel::copyAddress()
 {
 	QApplication::clipboard()->setText(address_);
+	// Put address also in selection buffer so it can be pasted with
+	// a middle mouse click where supported.
+	QApplication::clipboard()->setText(address_, QClipboard::Selection);
 }
 
 void HostLabel::contextMenuEvent(QContextMenuEvent *event)
