@@ -1,12 +1,29 @@
 /*******************************************************************************
 
-Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
-For more info, see: http://drawpile.sourceforge.net/
+   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   For more info, see: http://drawpile.sourceforge.net/
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 *******************************************************************************/
 
 #ifndef PROTOCOL_H_INCLUDED
 #define PROTOCOL_H_INCLUDED
+
+#include <stddef.h> // size_t
+#include <stdint.h> // [u]int#_t
 
 //! DrawPile network protocol.
 namespace protocol
@@ -34,7 +51,7 @@ namespace type
 	//! Drawing data: Tool Info message.
 	const uint8_t ToolInfo = 3;
 	
-	/** Acknowledgement message. */
+	//! Acknowledgement message.
 	const uint8_t Acknowledgement = 255;
 } // namespace type
 
@@ -80,41 +97,72 @@ struct Message
 		//! Previous message (of same type) in queue.
 		*prev;
 	
+	//! Turn message (list) to char* buffer and set 'len' to the length of the buffer.
 	/**
-	 * Turn message (list) to char* buffer and set 'len' to the length of the buffer.
-	 *
 	 * @param len refers to size_t to which the length of returned buffer is stored.
 	 *
-	 * @return NULL if out of memory.
 	 * @return Buffer ready to be sent to network.
+	 *
+	 * @throw std::bad_alloc
 	 */
 	char* serialize(size_t &len) const;
 
+	//! Get the number of bytes required to serialize the message payload.
 	/**
-	 * Get the number of bytes required to serialize the message payload.
 	 * @return payload length in bytes
 	 */
-	virtual size_t payloadLength() const = 0;
+	virtual
+	size_t payloadLength() const = 0;
 
+	//! Serialize the message payload.
 	/**
-	 * Serialize the message payload. The buffer must have room
-	 * for at least payloadLength() bytes.
-	 * @param buffer serialized bytes will be stored here.
+	 * The buffer must have room for at least payloadLength() bytes.
+	 *
+	 * @param buf serialized bytes will be stored here.
+	 *
 	 * @return number of bytes stored.
 	 */
-	virtual size_t serializePayload(char *buffer) const = 0;
+	virtual
+	size_t serializePayload(char *buf) const = 0;
+	
+	//! Check if buf contains enough data to unserialize
+	/**
+	 * The value is not guaranteed to be constant for all message types, at all times.
+	 *
+	 * Meaning: the length returned may grow when the function is able to scan
+	 * the full extent of the message.
+	 *
+	 * @param buf points to data buffer waiting for serialization.
+	 * @param len declares the length of the data buffer.
+	 *
+	 * @return length of data needed to unserialize or completely scan the length.
+	 * Only unserialize() if you have at least this much data in the buffer at the
+	 * time of calling this function.
+	 */
+	virtual
+	size_t reqDataLen(const char *buf, size_t len) const = 0;
+	
+	//! Unserializes char* buffer to associated message struct.
+	/**
+	 * Before calling unserialize(), you MUST ensure the buffer has enough data
+	 * by calling reqDataLen()
+	 *
+	 *
+	 * @param buf points to data buffer waiting for serialization.
+	 * @param len declares the length of the data buffer.
+	 */
+	virtual
+	void unserialize(char* buf, size_t len) = 0;
 };
 
 //! Protocol identifier
 /**
  * The first message sent to the server.
  *
- * Has constant size of 14 bytes.
- *
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Protocol_identifier
  */
 struct Identifier
-	: Message /* Serializing<struct Identifier>*/
+	: Message
 {
 	Identifier()
 		: Message(type::Identifier)
@@ -138,21 +186,16 @@ struct Identifier
 	
 	/* functions */
 	
-	//! Unserializes char* buffer to Identifier.
-	static Identifier* unserialize(Identifier& in, const char* buf, size_t len);
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
 
-	//! Check if buf contains enough data to unserialize
-	static bool isEnoughData(const char *buf, size_t len);
-
-	size_t serializePayload(char *buffer) const;
+	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
 };
 
 //! Stroke info
 /**
  * Minimal data required for drawing with the tool provided by ToolInfo.
- *
- * Has the constant size of 8 bytes.
  *
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Stroke_info
  */
@@ -180,13 +223,10 @@ struct StrokeInfo
 	
 	/* functions */
 	
-	//! Turns char* buffer to StrokeInfo structure list.
-	static StrokeInfo* unserialize(StrokeInfo& in, const char* buf, size_t len);
-
-	//! Check if buf contains enough data to unserialize
-	static bool isEnoughData(const char *buf, size_t len);
-
-	size_t serializePayload(char *buffer) const;
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	
+	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
 };
 
