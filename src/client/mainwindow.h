@@ -23,8 +23,10 @@
 #include <QMainWindow>
 
 class QActionGroup;
-class NetStatus;
-class HostLabel;
+namespace widgets {
+	class NetStatus;
+	class HostLabel;
+}
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -42,8 +44,8 @@ class MainWindow : public QMainWindow {
 		void createMenus();
 		void createToolbars();
 
-		NetStatus *netstatus_;
-		HostLabel *hostaddress_;
+		widgets::NetStatus *netstatus_;
+		widgets::HostLabel *hostaddress_;
 
 		QAction *save_;
 		QAction *saveas_;

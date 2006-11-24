@@ -23,6 +23,8 @@
 
 #include "netstatus.h"
 
+namespace widgets {
+
 NetStatus::NetStatus(QWidget *parent)
 	: QWidget(parent), icon_(":/icons/network-error.png")
 {
@@ -33,5 +35,7 @@ void NetStatus::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
 	painter.drawPixmap(event->rect(), icon_, event->rect());
+}
+
 }
 

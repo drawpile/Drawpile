@@ -37,10 +37,10 @@ MainWindow::MainWindow()
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
-	hostaddress_ = new HostLabel();
+	hostaddress_ = new widgets::HostLabel();
 	statusbar->addPermanentWidget(hostaddress_);
 
-	netstatus_ = new NetStatus(this);
+	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
 
 	readSettings();

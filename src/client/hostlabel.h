@@ -24,6 +24,12 @@
 
 class QMenu;
 
+namespace widgets {
+//! Host address label
+/**
+ * This widget displayes the IP address of the host. It allows the user
+ * to select the address with the mouse and copy it to the clipboard.
+ */
 class HostLabel : public QLabel
 {
 	Q_OBJECT
@@ -31,8 +37,11 @@ class HostLabel : public QLabel
 		HostLabel(QWidget *parent=0);
 
 	public slots:
-		void setAddress(QString address);
+		//! Set the address
+		void setAddress(const QString& address);
+		//! Set message to indicate lack of connection with host
 		void disconnect();
+		//! Copy the address to clipboard
 		void copyAddress();
 
 	protected:
@@ -42,6 +51,8 @@ class HostLabel : public QLabel
 		QString address_;
 		QMenu *menu_;
 };
+
+}
 
 #endif
 

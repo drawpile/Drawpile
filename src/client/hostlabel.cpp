@@ -25,6 +25,8 @@
 
 #include "hostlabel.h"
 
+namespace widgets {
+
 HostLabel::HostLabel(QWidget *parent)
 	:QLabel(QString(), parent)
 {
@@ -37,13 +39,22 @@ HostLabel::HostLabel(QWidget *parent)
 	disconnect();
 }
 
-void HostLabel::setAddress(QString address)
+/**
+ * Set the label to display the address.
+ * A context menu to copy the address to clipboard will be enabled.
+ * @param address the address to display
+ */
+void HostLabel::setAddress(const QString& address)
 {
 	address_ = address;
 	setText(tr("Host: %1").arg(address_));
 	menu_->defaultAction()->setEnabled(true);
 }
 
+/**
+ * Set the label to indicate a lack of connection.
+ * Context menu will be disabled.
+ */
 void HostLabel::disconnect()
 {
 	address_ = QString();
@@ -52,6 +63,10 @@ void HostLabel::disconnect()
 
 }
 
+/**
+ * Copy the current address to clipboard.
+ * Should not be called if disconnected.
+ */
 void HostLabel::copyAddress()
 {
 	QApplication::clipboard()->setText(address_);
@@ -63,5 +78,7 @@ void HostLabel::copyAddress()
 void HostLabel::contextMenuEvent(QContextMenuEvent *event)
 {
 	menu_->popup(event->globalPos());
+}
+
 }
 

@@ -23,6 +23,11 @@
 #include <QWidget>
 #include <QPixmap>
 
+namespace widgets {
+//! Network connection status widget
+/**
+ * This widget displays the current status of the connection with the server.
+ */
 class NetStatus : public QWidget
 {
 	Q_OBJECT
@@ -33,6 +38,8 @@ class NetStatus : public QWidget
 	private:
 		QPixmap icon_;
 };
+
+}
 
 #endif
 
