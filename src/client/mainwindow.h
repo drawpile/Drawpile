@@ -26,7 +26,12 @@ class QActionGroup;
 namespace widgets {
 	class NetStatus;
 	class HostLabel;
+	class EditorView;
 }
+namespace drawingboard {
+	class Board;
+}
+class Controller;
 
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -46,6 +51,9 @@ class MainWindow : public QMainWindow {
 
 		widgets::NetStatus *netstatus_;
 		widgets::HostLabel *hostaddress_;
+		widgets::EditorView *view_;
+		drawingboard::Board *board_;
+		Controller *controller_;
 
 		QAction *save_;
 		QAction *saveas_;

@@ -26,10 +26,15 @@
 #include "mainwindow.h"
 #include "netstatus.h"
 #include "hostlabel.h"
+#include "editorview.h"
+#include "board.h"
+#include "controller.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
 {
+	setWindowTitle(tr("DrawPile"));
+
 	initActions();
 	createMenus();
 	createToolbars();
@@ -43,6 +48,18 @@ MainWindow::MainWindow()
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
 
+	view_ = new widgets::EditorView(this);
+	setCentralWidget(view_);
+
+	board_ = new drawingboard::Board(this);
+	board_->initBoard(QSize(800,600),Qt::red);
+	view_->setScene(board_);
+
+	controller_ = new Controller(this);
+	controller_->setBoard(board_);
+	connect(view_,SIGNAL(penDown(int,int,qreal)),controller_,SLOT(penDown(int,int,qreal)));
+	connect(view_,SIGNAL(penMove(int,int,qreal)),controller_,SLOT(penMove(int,int,qreal)));
+	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 	readSettings();
 }
 
