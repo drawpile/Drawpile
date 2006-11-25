@@ -132,6 +132,21 @@ void MainWindow::saveas()
 	}
 }
 
+void MainWindow::zoomin()
+{
+	view_->scale(2.0,2.0);
+}
+
+void MainWindow::zoomout()
+{
+	view_->scale(0.5,0.5);
+}
+
+void MainWindow::zoomone()
+{
+	view_->resetMatrix();
+}
+
 void MainWindow::initActions()
 {
 	// File actions
@@ -168,6 +183,12 @@ void MainWindow::initActions()
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
 	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom out"), this);
 	zoomout_->setShortcut(QKeySequence::ZoomOut);
+	zoomorig_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Actual size"), this);
+	//zoomorig_->setShortcut(QKeySequence::ZoomOut);
+
+	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
+	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
+	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
 
 	drawingTools_ = new QActionGroup(this);
 	drawingTools_->setExclusive(true);
@@ -215,6 +236,7 @@ void MainWindow::createMenus()
 	windowmenu->addSeparator();
 	windowmenu->addAction(zoomin_);
 	windowmenu->addAction(zoomout_);
+	windowmenu->addAction(zoomorig_);
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(help_);
@@ -240,6 +262,7 @@ void MainWindow::createToolbars()
 	drawtools->addSeparator();
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);
+	drawtools->addAction(zoomorig_);
 	addToolBar(Qt::LeftToolBarArea, drawtools);
 
 }

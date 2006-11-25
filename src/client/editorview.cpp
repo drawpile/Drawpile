@@ -18,34 +18,75 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <iostream>
 #include <QMouseEvent>
+#include <QScrollBar>
 
 #include "editorview.h"
 
 namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(false)
+	: QGraphicsView(parent), pendown_(false), isdragging_(false)
 {
 	viewport()->setMouseTracking(false);
 }
 
 void EditorView::mousePressEvent(QMouseEvent *event)
 {
-	QPointF point = mapToScene(event->pos());
-	emit penDown(qRound(point.x()), qRound(point.y()), 1.0, false);
+	if(event->button() == Qt::MidButton) {
+		startDrag(event->x(), event->y());
+	} else {
+		QPointF point = mapToScene(event->pos());
+		emit penDown(qRound(point.x()), qRound(point.y()), 1.0, false);
+	}
 }
 
 void EditorView::mouseMoveEvent(QMouseEvent *event)
 {
-	QPointF point = mapToScene(event->pos());
-	emit penMove(qRound(point.x()), qRound(point.y()), 1.0);
+	if(isdragging_) {
+		moveDrag(event->x(), event->y());
+	} else {
+		QPointF point = mapToScene(event->pos());
+		emit penMove(qRound(point.x()), qRound(point.y()), 1.0);
+	}
 }
 
 void EditorView::mouseReleaseEvent(QMouseEvent *event)
 {
-	emit penUp();
+	if(isdragging_) {
+		stopDrag();
+	} else {
+		emit penUp();
+	}
+}
+
+void EditorView::startDrag(int x,int y)
+{
+	oldcursor_ = cursor();
+	setCursor(Qt::ClosedHandCursor);
+	dragx_ = x;
+	dragy_ = y;
+	isdragging_ = true;
+}
+
+void EditorView::moveDrag(int x, int y)
+{
+	int dx = dragx_ - x;
+	int dy = dragy_ - y;
+
+	dragx_ = x;
+	dragy_ = y;
+
+	QScrollBar *ver = verticalScrollBar();
+	ver->setSliderPosition(ver->sliderPosition()+dy);
+	QScrollBar *hor = horizontalScrollBar();
+	hor->setSliderPosition(hor->sliderPosition()+dx);
+}
+
+void EditorView::stopDrag()
+{
+	setCursor(oldcursor_);
+	isdragging_ = false;
 }
 
 }

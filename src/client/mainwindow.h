@@ -41,6 +41,9 @@ class MainWindow : public QMainWindow {
 	public slots:
 		void save();
 		void saveas();
+		void zoomin();
+		void zoomout();
+		void zoomone();
 
 	protected:
 		void closeEvent(QCloseEvent *event);
@@ -80,6 +83,7 @@ class MainWindow : public QMainWindow {
 		QAction *eraserTool_;
 		QAction *zoomin_;
 		QAction *zoomout_;
+		QAction *zoomorig_;
 
 		QAction *toggleFileBar;
 		QAction *toggleDrawBar;

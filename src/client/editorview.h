@@ -54,7 +54,15 @@ class EditorView : public QGraphicsView
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 	private:
+		void startDrag(int x, int y);
+		void moveDrag(int x, int y);
+		void stopDrag();
+
 		bool pendown_;
+
+		bool isdragging_;
+		QCursor oldcursor_;
+		int dragx_,dragy_;
 };
 
 }
