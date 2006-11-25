@@ -28,6 +28,14 @@ namespace drawingboard {
 
 //! Controller for drawing and network operations
 /**
+ * The controller handles all drawing commands coming in from the
+ * network or the user. Drawing commands received from the network
+ * are committed to the board and user commands are sent to the server.
+ *
+ * Before finishing their roundtrip from the server, user commands
+ * are displayed on a special preview layer. This provides immediate
+ * feedback even when the network is congested. Preview strokes are
+ * removed as the real ones are received from the server.
  */
 class Controller : public QObject
 {
@@ -38,7 +46,7 @@ class Controller : public QObject
 		void setBoard(drawingboard::Board *board);
 
 	public slots:
-		void penDown(int x,int y, qreal pressure);
+		void penDown(int x,int y, qreal pressure, bool isEraser);
 		void penMove(int x,int y, qreal pressure);
 		void penUp();
 

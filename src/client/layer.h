@@ -17,36 +17,41 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#ifndef LAYER_H
+#define LAYER_H
 
-#include <iostream>
-#include <QMouseEvent>
+#include <QGraphicsItem>
 
-#include "editorview.h"
+namespace drawingboard {
 
-namespace widgets {
+class Brush;
 
-EditorView::EditorView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(false)
+//! A modifiable pixmap item for QGraphicsScene
+/**
+ */
+class Layer : public QGraphicsItem
 {
-	viewport()->setMouseTracking(false);
+	public:
+		Layer(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+		Layer(const QPixmap& pixmap, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+
+		void setPixmap(const QPixmap& pixmap);
+		QPixmap pixmap() const;
+
+		void drawLine(const QLine& line, const Brush& brush);
+
+		QRectF boundingRect() const;
+		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+			 QWidget *widget);
+
+	private:
+		QPixmap pixmap_;
+
+		int plastx_, plasty_;
+};
+
 }
 
-void EditorView::mousePressEvent(QMouseEvent *event)
-{
-	QPointF point = mapToScene(event->pos());
-	emit penDown(qRound(point.x()), qRound(point.y()), 1.0, false);
-}
+#endif
 
-void EditorView::mouseMoveEvent(QMouseEvent *event)
-{
-	QPointF point = mapToScene(event->pos());
-	emit penMove(qRound(point.x()), qRound(point.y()), 1.0);
-}
-
-void EditorView::mouseReleaseEvent(QMouseEvent *event)
-{
-	emit penUp();
-}
-
-}
 

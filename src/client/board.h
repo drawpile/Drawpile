@@ -22,8 +22,12 @@
 
 #include <QGraphicsScene>
 
+#include "brush.h" // for testing
+
 //! Drawing board related classes
 namespace drawingboard {
+
+class Layer;
 
 //! The drawing board
 /**
@@ -40,13 +44,17 @@ class Board : public QGraphicsScene
 		//! Initialize the board using an existing pixmap as base
 		void initBoard(QPixmap pixmap);
 
+		//! Begin a new preview stroke
 		void beginPreview(int x,int y, qreal pressure);
+		//! Pen motion info for preview stroke
 		void strokePreview(int x,int y, qreal pressure);
+		//! End a preview stroke
 		void endPreview();
 
 	private:
-		QPixmap pixmap_;
+		Layer *image_;
 
+		Brush brush_;
 		int plastx_, plasty_;
 };
 

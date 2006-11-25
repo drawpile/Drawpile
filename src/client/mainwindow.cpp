@@ -52,12 +52,14 @@ MainWindow::MainWindow()
 	setCentralWidget(view_);
 
 	board_ = new drawingboard::Board(this);
-	board_->initBoard(QSize(800,600),Qt::red);
+	board_->setBackgroundBrush(
+			palette().brush(QPalette::Active,QPalette::Window));
+	board_->initBoard(QSize(800,600),Qt::white);
 	view_->setScene(board_);
 
 	controller_ = new Controller(this);
 	controller_->setBoard(board_);
-	connect(view_,SIGNAL(penDown(int,int,qreal)),controller_,SLOT(penDown(int,int,qreal)));
+	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
 	connect(view_,SIGNAL(penMove(int,int,qreal)),controller_,SLOT(penMove(int,int,qreal)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 	readSettings();

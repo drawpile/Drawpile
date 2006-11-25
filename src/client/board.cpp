@@ -19,42 +19,71 @@
 */
 
 #include <QGraphicsPixmapItem>
+#include <QPainter>
 
 #include "board.h"
+#include "layer.h"
+#include "brush.h"
 
 namespace drawingboard {
 
 Board::Board(QObject *parent)
 	: QGraphicsScene(parent)
 {
+	//setItemIndexMethod(NoIndex);
 }
 
+/**
+ * A new pixmap is created with the given size and initialized to a solid color
+ * @param size size of the drawing board
+ * @param background background color
+ */
 void Board::initBoard(const QSize& size, const QColor& background)
 {
-	pixmap_ = QPixmap(size);
-	pixmap_.fill(background);
+
+	QPixmap pixmap(size);
+	pixmap.fill(background);
 
 	setSceneRect(0,0,size.width(), size.height());
-	new QGraphicsPixmapItem(pixmap_,0,this);
+	image_ = new Layer(pixmap,0,this);
 }
 
+/**
+ * An existing pixmap is used as a base.
+ * @param pixmap pixmap to use
+ */
 void Board::initBoard(QPixmap pixmap)
 {
-	pixmap_ = pixmap;
-
-	setSceneRect(0,0,pixmap_.width(), pixmap_.height());
-	new QGraphicsPixmapItem(pixmap_,0,this);
+	setSceneRect(0,0,pixmap.width(), pixmap.height());
+	image_ = new Layer(pixmap, 0, this);
 }
 
+/**
+ * Preview strokes are used to give immediate feedback to the user,
+ * before the stroke info messages have completed their roundtrip
+ * through the server.
+ * @param x initial stroke coordinate
+ * @param y initial stroke coordinate
+ * @param pressure stroke pressure
+ */
 void Board::beginPreview(int x,int y, qreal pressure)
 {
 	plastx_ = x;
 	plasty_ = y;
 }
 
+/**
+ * @param x initial stroke coordinate
+ * @param y initial stroke coordinate
+ * @param pressure stroke pressure
+ */
 void Board::strokePreview(int x,int y, qreal pressure)
 {
+#if 0
 	new QGraphicsLineItem(plastx_,plasty_,x,y,0,this);
+#else
+	image_->drawLine(QLine(plastx_,plasty_,x,y),brush_);
+#endif
 	plastx_ = x;
 	plasty_ = y;
 }

@@ -25,6 +25,8 @@
 namespace widgets {
 //! Editor view
 /**
+ * The editor view is a customized QGraphicsView that translates
+ * user input to drawing commands.
  */
 class EditorView : public QGraphicsView
 {
@@ -33,8 +35,18 @@ class EditorView : public QGraphicsView
 		EditorView(QWidget *parent=0);
 
 	signals:
-		void penDown(int x,int y, qreal pressure);
+		//! This signal is emitted when a mouse button is pressed or the pen touches the tablet
+		/**
+		 * @param x initial x coordinate
+		 * @param y initial y coordinate
+		 * @param pressure initial pressure (always 1.0 if not supported)
+		 * @param isEraser is the input device the wide end of a tablet stylus?
+		 */
+		void penDown(int x,int y, qreal pressure, bool isEraser);
+		//! This signal is emitted when the pen or mouse pointer is moved while drawing
 		void penMove(int x,int y, qreal pressure);
+
+		//! This signal is emitted when the pen is lifted or the mouse button released.
 		void penUp();
 
 	protected:
