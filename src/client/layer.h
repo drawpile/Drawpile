@@ -38,13 +38,20 @@ class Layer : public QGraphicsItem
 		void setPixmap(const QPixmap& pixmap);
 		QPixmap pixmap() const;
 
-		void drawLine(const QLine& line, const Brush& brush);
+		//! Draw a line between two points with interpolated pressure values
+		void drawLine(const QPoint& point1, qreal pressure1,
+				const QPoint& point2, qreal pressure2, const Brush& brush);
+
+		void drawPoint(const QPoint& point, qreal pressure, const Brush& brush);
 
 		QRectF boundingRect() const;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 			 QWidget *widget);
 
 	private:
+		void drawPoint(QPainter &painter, int x, int y, qreal pressure,
+				const Brush &brush);
+
 		QPixmap pixmap_;
 
 		int plastx_, plasty_;

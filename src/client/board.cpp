@@ -59,6 +59,16 @@ void Board::initBoard(QPixmap pixmap)
 }
 
 /**
+ * File format is deduced from the filename.
+ * @param filename filename
+ * @return false on failure.
+ */
+bool Board::save(QString filename)
+{
+	return image_->pixmap().save(filename);
+}
+
+/**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
  * through the server.
@@ -82,7 +92,7 @@ void Board::strokePreview(int x,int y, qreal pressure)
 #if 0
 	new QGraphicsLineItem(plastx_,plasty_,x,y,0,this);
 #else
-	image_->drawLine(QLine(plastx_,plasty_,x,y),brush_);
+	image_->drawLine(QPoint(plastx_,plasty_),1.0,QPoint(x,y),1.0,brush_);
 #endif
 	plastx_ = x;
 	plasty_ = y;

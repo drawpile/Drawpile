@@ -31,7 +31,7 @@ void Controller::setBoard(drawingboard::Board *board)
 	board_ = board;
 }
 
-void Controller::penDown(int x,int y, qreal pressure)
+void Controller::penDown(int x,int y, qreal pressure, bool isEraser)
 {
 	if(board_) {
 		board_->beginPreview(x,y,pressure);

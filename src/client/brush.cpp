@@ -18,12 +18,13 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <cmath>
 #include "brush.h"
 
 namespace drawingboard {
 
-Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
-	: radius1_(radius), radius2_(1),
+Brush::Brush(int diameter, qreal hardness, qreal opacity, const QColor& color)
+	: diameter1_(diameter), diameter2_(1),
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color),
@@ -32,12 +33,12 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
 }
 
 /**
- * Set the radius for pressure=1.0
- * @param radius brush radius. Must be greater than 1
+ * Set the diameter for pressure=1.0
+ * @param diameter brush diameter. Must be greater than 0
  */
-void Brush::setRadius(int radius)
+void Brush::setDiameter(int diameter)
 {
-	radius1_ = radius;
+	diameter1_ = diameter;
 	cachepressure_ = -1;
 }
 
@@ -72,9 +73,9 @@ void Brush::setColor(const QColor& color)
 }
 
 
-void Brush::setRadius2(int radius)
+void Brush::setDiameter2(int diameter)
 {
-	radius2_ = radius;
+	diameter2_ = diameter;
 	cachepressure_ = -1;
 }
 
@@ -96,13 +97,25 @@ void Brush::setColor2(const QColor& color)
 }
 
 /**
+ * Get the brush diameter for certain pressure.
+ * @param pressure pen pressure. Range is [0..1]
+ * @return diameter
+ */
+int Brush::diameter(qreal pressure) const
+{
+	return int(ceil(diameter2_ + (diameter1_ - diameter2_) * pressure));
+}
+
+/**
  * Get the brush radius for certain pressure.
  * @param pressure pen pressure. Range is [0..1]
  * @return radius
  */
-int Brush::radius(qreal pressure) const
+qreal Brush::radius(qreal pressure) const
 {
-	return qRound(radius2_ + (radius1_ - radius2_) * pressure);
+	qreal rad1 = diameter1_ / 2.0;
+	qreal rad2 = diameter2_ / 2.0;
+	return qRound(rad2 + (rad1 - rad2) * pressure);
 }
 
 /**
@@ -148,24 +161,24 @@ QColor Brush::color(qreal pressure) const
  */
 QPixmap Brush::getBrush(qreal pressure) const
 {
-	if(qAbs(pressure - cachepressure_) > 1.0/256.0) {
+	if(fabs(pressure - cachepressure_) > 1.0/256.0) {
 		// Regenerate brush (we currently support 256 levels of pressure)
 
-		int rad = radius(pressure);
+		int dia = diameter(pressure);
+		qreal rad = radius(pressure);
 		qreal hard = hardness(pressure);
 
-		int diameter = rad*2;
-		QImage brush(diameter,diameter,QImage::Format_ARGB32);
+		QImage brush(dia,dia,QImage::Format_ARGB32);
 
 		// Fill the brush with color
 		brush.fill(color(pressure).rgb());
 
 		// Set brush alpha
 		qreal rr = 1.0/(rad*rad);
-		for(int y=0;y<diameter;++y) {
+		for(int y=0;y<dia;++y) {
 			uchar *data = brush.scanLine(y)+3;
 			qreal yy = (y-rad) * (y-rad);
-			for(int x=0;x<diameter;++x,data+=4) {
+			for(int x=0;x<dia;++x,data+=4) {
 				qreal xx = (x-rad) * (x-rad);
 				qreal intensity = (1-(xx + yy)*rr) + hard;
 

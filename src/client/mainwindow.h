@@ -38,6 +38,10 @@ class MainWindow : public QMainWindow {
 	public:
 		MainWindow();
 
+	public slots:
+		void save();
+		void saveas();
+
 	protected:
 		void closeEvent(QCloseEvent *event);
 
@@ -54,6 +58,9 @@ class MainWindow : public QMainWindow {
 		widgets::EditorView *view_;
 		drawingboard::Board *board_;
 		Controller *controller_;
+
+		QString filename_;
+		QString lastpath_;
 
 		QAction *save_;
 		QAction *saveas_;

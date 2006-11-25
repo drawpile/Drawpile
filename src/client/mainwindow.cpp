@@ -22,6 +22,7 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QSettings>
+#include <QFileDialog>
 
 #include "mainwindow.h"
 #include "netstatus.h"
@@ -86,6 +87,8 @@ void MainWindow::readSettings()
 				toggleDrawBar->setChecked(false);
 		}
 	}
+
+	lastpath_ = cfg.value("lastpath").toString();
 }
 
 void MainWindow::writeSettings()
@@ -96,12 +99,37 @@ void MainWindow::writeSettings()
 	cfg.setValue("pos", pos());
 	cfg.setValue("size", size());
 	cfg.setValue("state", saveState());
+	cfg.setValue("lastpath", lastpath_);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	(void)event;
 	writeSettings();
+}
+
+void MainWindow::save()
+{
+	if(filename_.isEmpty()) {
+		saveas();
+	} else {
+		board_->save(filename_);
+	}
+}
+
+void MainWindow::saveas()
+{
+	QString file = QFileDialog::getSaveFileName(this,
+			tr("Save image"), lastpath_,
+			tr("Images (*.png *.jpg *.bmp)"));
+	if(file.isEmpty()==false) {
+		QFileInfo info(file);
+		lastpath_ = info.absolutePath();
+		filename_ = info.absoluteFilePath();
+		if(info.suffix().isEmpty())
+			filename_ += ".png";
+		board_->save(filename_);
+	}
 }
 
 void MainWindow::initActions()
@@ -114,6 +142,8 @@ void MainWindow::initActions()
 	quit_->setShortcut(QKeySequence("Ctrl+Q"));
 	quit_->setMenuRole(QAction::QuitRole);
 
+	connect(save_,SIGNAL(triggered()), this, SLOT(save()));
+	connect(saveas_,SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(quit_,SIGNAL(triggered()), this, SLOT(close()));
 
 	// Session actions

@@ -33,13 +33,13 @@ namespace drawingboard {
 class Brush
 {
 	public:
-		Brush(int radius=16, qreal hardness=0, qreal opacity=1.0,
+		Brush(int diameter=16, qreal hardness=0, qreal opacity=1.0,
 				const QColor& color=Qt::black);
 
-		//! Set radius for heavy brush
-		void setRadius(int radius);
-		//! Set radius for light brush
-		void setRadius2(int radius);
+		//! Set diameter for heavy brush
+		void setDiameter(int diameter);
+		//! Set diameter for light brush
+		void setDiameter2(int diameter);
 
 		//! Set hardness for heavy brush
 		void setHardness(qreal hardness);
@@ -56,8 +56,10 @@ class Brush
 		//! Set color for light brush
 		void setColor2(const QColor& color);
 
+		//! Get interpolated diameter
+		int diameter(qreal pressure) const;
 		//! Get interpolated radius
-		int radius(qreal pressure) const;
+		qreal radius(qreal pressure) const;
 		//! Get interpolated hardness
 		qreal hardness(qreal pressure) const;
 		//! Get interpolated opacity
@@ -68,7 +70,7 @@ class Brush
 		//! Get a brush pixmap to paint with
 		QPixmap getBrush(qreal pressure) const;
 	private:
-		int radius1_, radius2_;
+		int diameter1_, diameter2_;
 		qreal hardness1_, hardness2_;
 		qreal opacity1_, opacity2_;
 		QColor color1_, color2_;

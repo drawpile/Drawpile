@@ -44,6 +44,9 @@ class Board : public QGraphicsScene
 		//! Initialize the board using an existing pixmap as base
 		void initBoard(QPixmap pixmap);
 
+		//! Save board contents to file.
+		bool save(QString filename);
+
 		//! Begin a new preview stroke
 		void beginPreview(int x,int y, qreal pressure);
 		//! Pen motion info for preview stroke
