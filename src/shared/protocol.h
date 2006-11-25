@@ -35,6 +35,9 @@ const uint8_t NoUser = 255;
 /* only used by Identifier message */
 const uint8_t identifier_size = 8;
 
+//! Protocol identifier string.
+const char identifierString[8] = {'D','r','a','w','P','i','l','e'};
+
 //! Message type identifiers.
 namespace type
 {
@@ -175,8 +178,11 @@ struct Identifier
 	//! Protocol identifier.
 	char identifier[identifier_size];
 	
-	//! Protocol version.
-	uint32_t version;
+	uint16_t
+		//! Protocol version.
+		version,
+		//! Client implementation level
+		level;
 	
 	uint8_t
 		//! Operation flags.
