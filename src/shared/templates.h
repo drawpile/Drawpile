@@ -26,18 +26,40 @@
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
 
+/* Swapping endianess.. wrapper for ntohl(), ntohs(), etc. */
+
+//! Swaps endianess (default template).
+/**
+ * Should only be used with 8 bit types, if others use this, it's an error.
+ *
+ * @param x scalar to be byte swapped.
+ *
+ * @return x in its original form. 8 bit types can't be swapped.
+ */
 template <class T>
 T& bswap(T& x)
 {
 	return x;
 }
 
+//! Swaps endianess (16bit specialization)
+/**
+ * @param x scalar to be byte swapped.
+ *
+ * @return x with its byte order swapped.
+ */
 template <uint16_t>
 uint16_t bswap(uint16_t& x)
 {
 	return ntohs(x);
 }
 
+//! Swaps endianess (32bit specialization)
+/**
+ * @param x scalar to be byte swapped.
+ *
+ * @return x with its byte order swapped.
+ */
 template <uint32_t>
 uint32_t bswap(uint32_t& x)
 {
@@ -54,6 +76,14 @@ char* bswap_mem(char* buf, T& x)
 }
 */
 
+//! Wrapper for memcpy() and bswap().
+/**
+ * @param x target variable.
+ * @param buf source char* buffer.
+ *
+ * @return reference to x after writing sizeof(x) bytes from buffer to it, and swapping
+ * the endianess.
+ */
 template <class T>
 T& bswap_mem(T& x, const char* buf)
 {
@@ -61,7 +91,6 @@ T& bswap_mem(T& x, const char* buf)
 	memcpy(&x, buf, sizeof(T));
 	return bswap(x);
 }
-
 
 /* doesn't work, whines about const'ness */
 /*
@@ -73,5 +102,47 @@ T& bswap_mem_t(const char* buf, T& u)
 	return x;
 }
 */
+
+/* Bit operations */
+
+//! Set bit flag
+/**
+ * @param u flag container.
+ * @param x flag to be set.
+ *
+ * @return modified flag container.
+ */
+template <class T>
+T& bSetFlag(T& u, T& x)
+{
+	return u |= x;
+}
+
+//! Clear bit flag
+/**
+ * @param u flag container.
+ * @param x flag to be cleared.
+ *
+ * @return modified flag container.
+ */
+template <class T>
+T& bClrFlag(T& u, T& x)
+{
+	return u ^= x;
+}
+
+//! Test bit flag
+/**
+ * @param u flag container.
+ * @param x flag to be tested.
+ *
+ * @return test result
+ */
+template <class T>
+bool bIsFlag(T& u, T& x)
+{
+	return (u & x) == x;
+}
+
 
 #endif
