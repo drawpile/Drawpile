@@ -19,6 +19,7 @@
 */
 
 #include <QMouseEvent>
+#include <QTabletEvent>
 #include <QScrollBar>
 
 #include "editorview.h"
@@ -57,6 +58,29 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 		stopDrag();
 	} else {
 		emit penUp();
+	}
+}
+
+void EditorView::tabletEvent(QTabletEvent *event)
+{
+	event->accept();
+	if(event->pressure()==0) {
+		if(pendown_) {
+			pendown_ = false;
+			emit penUp();
+		}
+	} else {
+		if(pendown_) {
+			QPointF point = mapToScene(event->pos());
+			emit penMove(qRound(point.x()), qRound(point.y()),
+					event->pressure());
+		} else {
+			QPointF point = mapToScene(event->pos());
+			emit penDown(qRound(point.x()), qRound(point.y()),
+					event->pressure(),
+					event->pointerType()==QTabletEvent::Eraser);
+			pendown_ = true;
+		}
 	}
 }
 
