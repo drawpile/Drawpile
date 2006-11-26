@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>Form</class>
- <widget class="QWidget" name="Form" >
+ <class>BrushSettings</class>
+ <widget class="QWidget" name="BrushSettings" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -47,7 +47,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QSlider" name="horizontalSlider" >
+         <widget class="QSlider" name="brushsize" >
           <property name="minimum" >
            <number>1</number>
           </property>
@@ -81,7 +81,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QSlider" name="horizontalSlider_2" >
+         <widget class="QSlider" name="brushopacity" >
           <property name="minimum" >
            <number>0</number>
           </property>
@@ -121,7 +121,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QSlider" name="horizontalSlider_3" >
+         <widget class="QSlider" name="brushhardness" >
           <property name="minimum" >
            <number>0</number>
           </property>
@@ -161,28 +161,28 @@
        <number>0</number>
       </property>
       <item row="1" column="1" >
-       <widget class="QCheckBox" name="checkBox_4" >
+       <widget class="QCheckBox" name="pressurecolor" >
         <property name="text" >
          <string>Color</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0" >
-       <widget class="QCheckBox" name="checkBox_3" >
+       <widget class="QCheckBox" name="pressurehardness" >
         <property name="text" >
          <string>Hardness</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="QCheckBox" name="checkBox_2" >
+       <widget class="QCheckBox" name="pressureopacity" >
         <property name="text" >
          <string>Opacity</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0" >
-       <widget class="QCheckBox" name="checkBox" >
+       <widget class="QCheckBox" name="pressuresize" >
         <property name="text" >
          <string>Size</string>
         </property>
@@ -194,21 +194,21 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>horizontalSlider</tabstop>
+  <tabstop>brushsize</tabstop>
   <tabstop>spinBox</tabstop>
-  <tabstop>horizontalSlider_2</tabstop>
+  <tabstop>brushopacity</tabstop>
   <tabstop>spinBox_2</tabstop>
-  <tabstop>horizontalSlider_3</tabstop>
+  <tabstop>brushhardness</tabstop>
   <tabstop>spinBox_3</tabstop>
-  <tabstop>checkBox</tabstop>
-  <tabstop>checkBox_2</tabstop>
-  <tabstop>checkBox_3</tabstop>
-  <tabstop>checkBox_4</tabstop>
+  <tabstop>pressuresize</tabstop>
+  <tabstop>pressureopacity</tabstop>
+  <tabstop>pressurehardness</tabstop>
+  <tabstop>pressurecolor</tabstop>
  </tabstops>
  <resources/>
  <connections>
   <connection>
-   <sender>horizontalSlider</sender>
+   <sender>brushsize</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>spinBox</receiver>
    <slot>setValue(int)</slot>
@@ -224,7 +224,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_2</sender>
+   <sender>brushopacity</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>spinBox_2</receiver>
    <slot>setValue(int)</slot>
@@ -240,7 +240,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>horizontalSlider_3</sender>
+   <sender>brushhardness</sender>
    <signal>sliderMoved(int)</signal>
    <receiver>spinBox_3</receiver>
    <slot>setValue(int)</slot>
@@ -258,7 +258,7 @@
   <connection>
    <sender>spinBox</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider</receiver>
+   <receiver>brushsize</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -274,7 +274,7 @@
   <connection>
    <sender>spinBox_2</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_2</receiver>
+   <receiver>brushopacity</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -290,7 +290,7 @@
   <connection>
    <sender>spinBox_3</sender>
    <signal>valueChanged(int)</signal>
-   <receiver>horizontalSlider_3</receiver>
+   <receiver>brushhardness</receiver>
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
