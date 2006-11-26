@@ -25,6 +25,22 @@
 namespace protocol
 {
 
+//! Message modifiers
+/**
+ * http://drawpile.sourceforge.net/wiki/index.php/Protocol#Message_modifiers
+ */
+namespace message
+{
+
+const uint8_t
+	//! No message modifiers.
+	None = 0x00,
+	//! Has user modifier.
+	isUser = 0x01,
+	//! Has bundling modifier.
+	isBundling = 0x02;
+}
+
 //! Protocol extension flags.
 /**
  * @see protocol::Identifier message

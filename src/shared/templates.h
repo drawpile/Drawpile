@@ -92,16 +92,20 @@ T& bswap_mem(T& x, const char* buf)
 	return bswap(x);
 }
 
-/* doesn't work, whines about const'ness */
-/*
-template <const char*, class T>
-T& bswap_mem_t(const char* buf, T& u)
+//! Wrapper for memcpy() and bswap()
+/**
+ * @param buf target char* buffer.
+ * @param u source integer.
+ *
+ * @return modified buf with u written in it, in swapped byte order.
+ */
+template <class T>
+char* bswap_mem(char* buf, T& u)
 {
-	T x;
-	memcpy(&x, &bswap<T>(&const_cast<char*>(*buf)), sizeof(T));
-	return x;
+	assert(buf != 0);
+	memcpy(buf, &bswap(u), sizeof(T));
+	return buf;
 }
-*/
 
 /* Bit operations */
 

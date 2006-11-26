@@ -22,6 +22,7 @@
 #ifndef Protocol_INCLUDED
 #define Protocol_INCLUDED
 
+#include <cassert> // assert()
 #include <stddef.h> // size_t
 #include <stdint.h> // [u]int#_t
 
@@ -98,10 +99,13 @@ struct Message
 	
 	//! Get the number of bytes required to serialize the message payload.
 	/**
-	 * @return payload length in bytes
+	 * @return payload length in bytes. Defaults to zero payload.
 	 */
 	virtual
-	size_t payloadLength() const = 0;
+	size_t payloadLength() const
+	{
+		return 0;
+	}
 	
 	//! Serialize the message payload.
 	/**
@@ -109,10 +113,15 @@ struct Message
 	 *
 	 * @param buf serialized bytes will be stored here.
 	 *
-	 * @return number of bytes stored.
+	 * @return number of bytes stored. Defaults to zero payload.
 	 */
 	virtual
-	size_t serializePayload(char *buf) const = 0;
+	size_t serializePayload(char *buf) const
+	{
+		assert(buf != 0);
+		
+		return 0;
+	}
 	
 	//! Check if buf contains enough data to unserialize
 	/**
@@ -127,10 +136,16 @@ struct Message
 	 * @return length of data needed to unserialize or completely scan the length.
 	 * Only unserialize() if you have at least this much data in the buffer at the
 	 * time of calling this function. Length includes message type and other
-	 * header data.
+	 * header data. Defaults to zero payload message with no modifiers.
 	 */
 	virtual
-	size_t reqDataLen(const char *buf, size_t len) const = 0;
+	size_t reqDataLen(const char *buf, size_t len) const
+	{
+		assert(buf != 0 && len != 0);
+		assert(buf[0] == type);
+		
+		return sizeof(type);
+	}
 	
 	//! Unserializes char* buffer to associated message struct.
 	/**
@@ -143,10 +158,17 @@ struct Message
 	 * @param len declares the length of the data buffer.
 	 *
 	 * @return Used buffer length. Should be the same as the value previously returned
-	 * by reqDataLen() call.
+	 * by reqDataLen() call. Defaults to zero payload with no modifiers.
 	 */
 	virtual
-	size_t unserialize(const char* buf, size_t len) = 0;
+	size_t unserialize(const char* buf, size_t len)
+	{
+		assert(buf != 0 && len != 0);
+		assert(buf[0] == type);
+		assert(reqDataLen(buf, len) <= len);
+		
+		return sizeof(type);
+	}
 };
 
 //! Protocol identifier.
@@ -248,8 +270,8 @@ struct StrokeEnd
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	//size_t serializePayload(char *buf) const;
+	//size_t payloadLength() const;
 };
 
 //! Tool Info message.
@@ -323,10 +345,13 @@ struct Synchronize
 	// does not have any.
 	
 	/* functions */
+	
+	/*
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
+	*/
 };
 
 //! Raster data message.
@@ -390,10 +415,12 @@ struct SyncWait
 	
 	/* functions */
 	
+	/*
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
+	*/
 };
 
 //! Authentication request message.
@@ -569,10 +596,12 @@ struct ListBoards
 	
 	/* functions */
 	
+	/*
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
+	*/
 };
 
 //! Cancel instruction.
@@ -594,10 +623,12 @@ struct Cancel
 	
 	/* functions */
 	
+	/*
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
+	*/
 };
 
 //! User Info message.
