@@ -26,6 +26,8 @@
 #include <stddef.h> // size_t
 #include <stdint.h> // [u]int#_t
 
+#include "templates.h"
+
 #include "protocol.errors.h"
 #include "protocol.defaults.h"
 #include "protocol.tools.h"
@@ -51,18 +53,14 @@ const uint16_t revision = 6;
  * @see protocol::type for full list of message types.
  *
  * @param _type message type.
- * @param _bundled does the message have the bundling modifier?
- *	Defaults to false.
- * @param _user does the message include user identifier?
- *	Defaults to false.
+ * @param _flags indicates message modifiers (see protocol::message namespace)
  */
 struct Message
 {
-	Message(uint8_t _type, bool _bundled=false, bool _user=false)
+	Message(uint8_t _type, uint8_t _flags=protocol::message::None)
 		: type(_type),
 		user_id(protocol::null_user),
-		isBundled(_bundled),
-		isUser(_user),
+		modifiers(_flags),
 		next(0),
 		prev(0)
 	{ }
@@ -75,11 +73,9 @@ struct Message
 	//! Originating user for the message, as assigned by the server.
 	uint8_t user_id;
 	
-	const bool
-		//! Message can bundle.
-		isBundled,
-		//! Message contains user ID.
-		isUser;
+	const uint8_t
+		//! Message modifiers
+		modifiers;
 	
 	Message
 		//! Next message (of same type) in queue.
@@ -136,7 +132,7 @@ struct Message
 	 * @return length of data needed to unserialize or completely scan the length.
 	 * Only unserialize() if you have at least this much data in the buffer at the
 	 * time of calling this function. Length includes message type and other
-	 * header data. Defaults to zero payload message with no modifiers.
+	 * header data. Defaults to zero payload message with possible user modifier.
 	 */
 	virtual
 	size_t reqDataLen(const char *buf, size_t len) const
@@ -144,7 +140,7 @@ struct Message
 		assert(buf != 0 && len != 0);
 		assert(buf[0] == type);
 		
-		return sizeof(type);
+		return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
 	}
 	
 	//! Unserializes char* buffer to associated message struct.
@@ -158,7 +154,7 @@ struct Message
 	 * @param len declares the length of the data buffer.
 	 *
 	 * @return Used buffer length. Should be the same as the value previously returned
-	 * by reqDataLen() call. Defaults to zero payload with no modifiers.
+	 * by reqDataLen() call. Defaults to zero payload with possible user modifiers.
 	 */
 	virtual
 	size_t unserialize(const char* buf, size_t len)
@@ -167,7 +163,10 @@ struct Message
 		assert(buf[0] == type);
 		assert(reqDataLen(buf, len) <= len);
 		
-		return sizeof(type);
+		if (bIsFlag(modifiers, message::isUser))
+			bswap_mem(user_id, buf+sizeof(type));
+		
+		return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
 	}
 };
 
@@ -204,7 +203,7 @@ struct Identifier
 	uint8_t extensions;
 	
 	/* functions */
-
+	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
@@ -221,7 +220,7 @@ struct StrokeInfo
 	: Message
 {
 	StrokeInfo()
-		: Message(protocol::type::StrokeInfo, true, true),
+		: Message(protocol::type::StrokeInfo, message::isUser|message::isBundling),
 		x(0),
 		y(0)
 	{ }
@@ -257,7 +256,7 @@ struct StrokeEnd
 	: Message
 {
 	StrokeEnd()
-		: Message(protocol::type::StrokeEnd, false, true)
+		: Message(protocol::type::StrokeEnd, message::isUser)
 	{ }
 	
 	~StrokeEnd() { }
@@ -268,10 +267,7 @@ struct StrokeEnd
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len);
-	size_t reqDataLen(const char *buf, size_t len) const;
-	//size_t serializePayload(char *buf) const;
-	//size_t payloadLength() const;
+	// none needed
 };
 
 //! Tool Info message.
@@ -284,7 +280,7 @@ struct ToolInfo
 	: Message
 {
 	ToolInfo()
-		: Message(protocol::type::ToolInfo, false, true),
+		: Message(protocol::type::ToolInfo, message::isUser),
 		tool_id(protocol::tool::None),
 		lo_color(0),
 		hi_color(0),
@@ -346,12 +342,7 @@ struct Synchronize
 	
 	/* functions */
 	
-	/*
-	size_t unserialize(const char* buf, size_t len);
-	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
-	*/
+	// needs none
 };
 
 //! Raster data message.
@@ -415,12 +406,7 @@ struct SyncWait
 	
 	/* functions */
 	
-	/*
-	size_t unserialize(const char* buf, size_t len);
-	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
-	*/
+	// needs none
 };
 
 //! Authentication request message.
@@ -596,12 +582,7 @@ struct ListBoards
 	
 	/* functions */
 	
-	/*
-	size_t unserialize(const char* buf, size_t len);
-	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
-	*/
+	// needs none
 };
 
 //! Cancel instruction.
@@ -623,12 +604,7 @@ struct Cancel
 	
 	/* functions */
 	
-	/*
-	size_t unserialize(const char* buf, size_t len);
-	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
-	*/
+	// needs none
 };
 
 //! User Info message.
@@ -639,7 +615,7 @@ struct UserInfo
 	: Message
 {
 	UserInfo()
-		: Message(protocol::type::UserInfo, false, true),
+		: Message(protocol::type::UserInfo, message::isUser),
 		mode(protocol::user::None),
 		event(protocol::user_event::None),
 		length(0),
@@ -856,7 +832,7 @@ struct Chat
 	: Message
 {
 	Chat()
-		: Message(protocol::type::Chat),
+		: Message(protocol::type::Chat, message::isUser),
 		board_id(protocol::Global),
 		length(0),
 		data(0)

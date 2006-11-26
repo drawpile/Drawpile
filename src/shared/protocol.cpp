@@ -40,16 +40,18 @@ char *Message::serialize(size_t &len) const
 	
 	size_t headerlen, length;
 	
-	if (isBundled)
+	if (bIsFlag(modifiers, message::isBundling))
 	{
 		// If we are bundling packets, there will be no extra headers
 		headerlen = 0;
-		length = sizeof(type) + sizeof(null_count) + isUser?sizeof(user_id):0;
+		length = sizeof(type) + sizeof(null_count)
+			+ bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
 	}
 	else
 	{
 		// If messages are not bundled, simply concatenate whole messages
-		headerlen = sizeof(type) + isUser?sizeof(user_id):0;
+		headerlen = sizeof(type)
+			+ bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
 		length = headerlen;
 	}
 	
@@ -79,10 +81,10 @@ char *Message::serialize(size_t &len) const
 	char *data = new char[length];
 	char *dataptr = data;
 
-	if(isBundled) {
+	if(bIsFlag(modifiers, message::isBundling)) {
 		// Write bundled packets
 		*(dataptr++) = type;
-		if(isUser)
+		if(bIsFlag(modifiers, message::isUser))
 			*(dataptr++) = user_id;
 		*(dataptr++) = count;
 		
@@ -96,7 +98,7 @@ char *Message::serialize(size_t &len) const
 		while (ptr)
 		{
 			*(dataptr++) = ptr->type;
-			if(isUser)
+			if(bIsFlag(modifiers, message::isUser))
 				*(dataptr++) = ptr->user_id;
 			dataptr += ptr->serializePayload(dataptr);
 			ptr=ptr->next;
@@ -225,41 +227,7 @@ size_t StrokeInfo::reqDataLen(const char *buf, size_t len) const
  * struct StrokeEnd
  */
 
-size_t StrokeEnd::unserialize(const char* buf, size_t len)
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	assert(reqDataLen(buf, len) <= len);
-	
-	bswap_mem(user_id, buf+sizeof(type));
-	
-	return sizeof(type) + sizeof(user_id);
-}
-
-size_t StrokeEnd::reqDataLen(const char *buf, size_t len) const
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	
-	return sizeof(type) + sizeof(user_id);
-}
-
-/*
-size_t StrokeEnd::serializePayload(char *buf) const
-{
-	assert(buf != 0);
-	//assert(1);
-	
-	return 0;
-}
-*/
-
-/*
-size_t StrokeEnd::payloadLength() const
-{
-	return 0;
-}
-*/
+// nothing special needed
 
 /*
  * struct ToolInfo
@@ -323,42 +291,7 @@ size_t ToolInfo::payloadLength() const
  * struct Synchronize
  */
 
-/*
-size_t Synchronize::unserialize(const char* buf, size_t len)
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	assert(reqDataLen(buf, len) <= len);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t Synchronize::reqDataLen(const char *buf, size_t len) const
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t Synchronize::serializePayload(char *buf) const
-{
-	assert(buf != 0);
-	
-	return 0;
-}
-*/
-
-/*
-size_t Synchronize::payloadLength() const
-{
-	return 0;
-}
-*/
+// no special implementation required
 
 /*
  * struct Raster
@@ -402,9 +335,9 @@ size_t Raster::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
-	bswap(buf, offset); size_t i = sizeof(offset);
-	bswap(buf+i, length); i += sizeof(length);
-	bswap(buf+i, size); i += sizeof(size);
+	bswap_mem(buf, offset); size_t i = sizeof(offset);
+	bswap_mem(buf+i, length); i += sizeof(length);
+	bswap_mem(buf+i, size); i += sizeof(size);
 	
 	memcpy(buf+i, data, length); i += length;
 	
@@ -420,83 +353,13 @@ size_t Raster::payloadLength() const
  * struct SyncWait
  */
 
-/*
-size_t SyncWait::unserialize(const char* buf, size_t len)
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	assert(reqDataLen(buf, len) <= len);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t SyncWait::reqDataLen(const char *buf, size_t len) const
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t SyncWait::serializePayload(char *buf) const
-{
-	assert(buf != 0);
-	
-	return 0;
-}
-*/
-
-/*
-size_t SyncWait::payloadLength() const
-{
-	return 0;
-}
-*/
+// no special implementation required
 
 /*
  * struct Authentication
  */
 
-/*
-size_t Authentication::unserialize(const char* buf, size_t len)
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	assert(reqDataLen(buf, len) <= len);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t Authentication::reqDataLen(const char *buf, size_t len) const
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t Authentication::serializePayload(char *buf) const
-{
-	assert(buf != 0);
-	
-	return 0;
-}
-*/
-
-/*
-size_t Authentication::payloadLength() const
-{
-	return 0;
-}
-*/
+// no special implementation required
 
 /*
  * struct Password
@@ -539,8 +402,8 @@ size_t Password::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
-	bswap(buf, board_id); size_t i = sizeof(board_id);
-	bswap(buf+i, length); i += sizeof(length);
+	bswap_mem(buf, board_id); size_t i = sizeof(board_id);
+	bswap_mem(buf+i, length); i += sizeof(length);
 	
 	memcpy(buf+i, data, length);
 	
@@ -681,80 +544,13 @@ size_t Instruction::payloadLength() const
  * struct ListBoards
  */
 
-/*
-size_t ListBoards::unserialize(const char* buf, size_t len)
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	assert(reqDataLen(buf, len) <= len);
-	
-	return sizeof(type);
-}
-*/
-/*
-size_t ListBoards::reqDataLen(const char *buf, size_t len) const
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	
-	return sizeof(type);
-}
-*/
-/*
-size_t ListBoards::serializePayload(char *buf) const
-{
-	assert(buf != 0);
-	
-	return 0;
-}
-*/
-/*
-size_t ListBoards::payloadLength() const
-{
-	return 0;
-}
-*/
+// no special implementation required
 
 /*
  * struct Cancel
  */
 
-/*
-size_t Cancel::unserialize(const char* buf, size_t len)
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	assert(reqDataLen(buf, len) <= len);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t Cancel::reqDataLen(const char *buf, size_t len) const
-{
-	assert(buf != 0 && len != 0);
-	assert(buf[0] == type);
-	
-	return sizeof(type);
-}
-*/
-
-/*
-size_t Cancel::serializePayload(char *buf) const
-{
-	assert(buf != 0);
-	
-	return 0;
-}
-*/
-
-/*
-size_t Cancel::payloadLength() const
-{
-	return 0;
-}
-*/
+// no special implementation required
 
 /*
  * struct UserInfo
@@ -1165,7 +961,7 @@ size_t Palette::serializePayload(char *buf) const
 	assert(buf != 0);
 	
 	bswap_mem(buf, offset); size_t i = sizeof(offset);
-	bswa_mem(buf+i, count); i += sizeof(count);
+	bswap_mem(buf+i, count); i += sizeof(count);
 	
 	memcpy(buf+i, data, count*RGB_size); i += count*RGB_size;
 	
