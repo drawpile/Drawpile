@@ -112,12 +112,14 @@ const uint8_t
 	//! Left session.
 	Leave = 6,
 	
-	//! Lost connection/disconnected.
+	//! User disconnected.
 	Disconnect = 10,
+	//! Broken pipe / lost connection.
+	BrokenPipe = 11,
 	//! Dropped by server.
-	Drop = 11,
+	Drop = 12,
 	//! Kicked by admin.
-	Kick = 12,
+	Kick = 13,
 	
 	//! Muted by admin.
 	Mute = 20,
@@ -127,6 +129,7 @@ const uint8_t
 	Deaf = 22,
 	//! Undeafened by admin.
 	UnDeaf = 23,
+	
 	//! Forced to observer mode by admin.
 	Observer = 25,
 	//! Observer mode lifted by admin.
