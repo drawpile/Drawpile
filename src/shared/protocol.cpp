@@ -129,13 +129,13 @@ size_t Identifier::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy(&identifier, buf+i, identifier_size); i += identifier_size;
-	memcpy(&revision, buf+i, sizeof(revision)); i += sizeof(revision);
-	memcpy(&level, buf+i, sizeof(level)); i += sizeof(level);
-	memcpy(&extensions, buf+i, sizeof(extensions)); i += sizeof(extensions);
 	
-	revision = bswap(revision);
-	level = bswap(level);
+	memcpy(&identifier, buf+i, identifier_size); i += identifier_size;
+	
+	bswap_mem(revision, buf+i); i += sizeof(revision);
+	bswap_mem(level, buf+i); i += sizeof(level);
+	
+	memcpy(&extensions, buf+i, sizeof(extensions)); i += sizeof(extensions);
 	
 	return i;
 }
@@ -189,13 +189,10 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len)
 	do
 	{
 		ptr->user_id = uid;
-		memcpy(&ptr->x, buf+i, sizeof(x)); i += sizeof(x);
-		memcpy(&ptr->y, buf+i, sizeof(y)); i += sizeof(y);
+		bswap_mem(ptr->x, buf+i); i += sizeof(x);
+		bswap_mem(ptr->y, buf+i); i += sizeof(y);
 		memcpy(&ptr->pressure, buf+i, sizeof(pressure)); i += sizeof(pressure);
 		
-		ptr->x = bswap(ptr->x);
-		ptr->y = bswap(ptr->y);
-
 		ptr = static_cast<StrokeInfo*>(next);
 	}
 	while (ptr);
@@ -352,17 +349,12 @@ size_t Raster::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy(&offset, buf+i, sizeof(offset)); i += sizeof(offset);
-	memcpy(&length, buf+i, sizeof(length)); i += sizeof(length);
-	memcpy(&size, buf+i, sizeof(size)); i += sizeof(size);
-	
-	length = bswap(length);
+	bswap_mem(offset, buf+i); i += sizeof(offset);
+	bswap_mem(length, buf+i); i += sizeof(length);
+	bswap_mem(size, buf+i); i += sizeof(size);
 	
 	data = new char[length];
 	memcpy(data, buf+i, length); i += length;
-	
-	offset = bswap(offset);
-	size = bswap(size);
 	
 	return i;
 }
@@ -376,10 +368,11 @@ size_t Raster::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size);
 	else
 	{
-		uint32_t tmp;
-		memcpy(&tmp, buf+sizeof(type)+sizeof(offset), sizeof(length));
+		uint32_t rlen; // temporary
 		
-		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size) + bswap(tmp);
+		bswap_mem(rlen, buf+sizeof(type)+sizeof(offset));
+		
+		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size) + rlen;
 	}
 }
 
@@ -813,23 +806,17 @@ size_t BoardInfo::unserialize(const char* buf, size_t len)
 	
 	memcpy(&identifier, buf+i, sizeof(identifier)); i += sizeof(identifier);
 	
-	//bswap_mem(width, buf+i); i += sizeof(width);
-	memcpy(&width, buf+i, sizeof(width)); i += sizeof(width);
-	//bswap_mem(height, buf+i); i += sizeof(width);
-	memcpy(&height, buf+i, sizeof(height)); i += sizeof(height);
+	bswap_mem(width, buf+i); i += sizeof(width);
+	bswap_mem(height, buf+i); i += sizeof(width);
 	
 	memcpy(&owner, buf+i, sizeof(owner)); i += sizeof(owner);
 	memcpy(&users, buf+i, sizeof(users)); i += sizeof(users);
 	memcpy(&limit, buf+i, sizeof(limit)); i += sizeof(limit);
 	
-	//bswap_mem(length, buf+i); i += sizeof(width);
-	memcpy(&length, buf+i, sizeof(length)); i += sizeof(length);
+	bswap_mem(length, buf+i); i += sizeof(width);
 	
 	name = new char[length];
 	memcpy(name, buf+i, length); i += length;
-	
-	width = bswap(width);
-	height = bswap(height);
 	
 	return i;
 }
@@ -919,12 +906,9 @@ size_t Error::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	size_t i = sizeof(type);
-	memcpy(&code, buf+i, sizeof(code)); i += sizeof(code);
+	bswap_mem(code, buf+sizeof(type));
 	
-	code = bswap(code);
-	
-	return i;
+	return sizeof(type) + sizeof(code);
 }
 
 size_t Error::reqDataLen(const char *buf, size_t len) const
@@ -958,13 +942,10 @@ size_t Deflate::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy(&uncompressed, buf+i, sizeof(uncompressed)); i += sizeof(uncompressed);
-	memcpy(&length, buf+i, sizeof(length)); i += sizeof(length);
+	bswap_mem(uncompressed, buf+i); i += sizeof(uncompressed);
+	bswap_mem(length, buf+i); i += sizeof(length);
 	
-	uncompressed = bswap(uncompressed);
-	length = bswap(length);
 	data = new char[length];
-	
 	memcpy(data, buf+i, length);  i += length;
 	
 	return i;
@@ -981,8 +962,7 @@ size_t Deflate::reqDataLen(const char *buf, size_t len) const
 	{
 		uint16_t rlen;
 		
-		memcpy(&rlen, buf+sizeof(type)+sizeof(uncompressed), sizeof(length));
-		rlen = bswap(rlen);
+		bswap_mem(rlen, buf+sizeof(type)+sizeof(uncompressed));
 		
 		return sizeof(type) + sizeof(uncompressed) + sizeof(length) + rlen;
 	}

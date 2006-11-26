@@ -26,7 +26,8 @@
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
 
-template <class T> T& bswap(T& x)
+template <class T>
+T& bswap(T& x)
 {
 	return x;
 }
@@ -53,24 +54,24 @@ char* bswap_mem(char* buf, T& x)
 }
 */
 
-/* // unused
 template <class T>
-T& bswap_mem(T& x, char* buf)
+T& bswap_mem(T& x, const char* buf)
 {
 	assert(buf != 0);
-	memcpy(&x, bswap<T>(*buf), sizeof(T));
-	return x;
+	memcpy(&x, buf, sizeof(T));
+	return bswap(x);
 }
-*/
+
 
 /* doesn't work, whines about const'ness */
+/*
 template <const char*, class T>
 T& bswap_mem_t(const char* buf, T& u)
 {
 	T x;
-	memcpy(&x, bswap<T>(const_cast<char*>(buf)), sizeof(T));
+	memcpy(&x, &bswap<T>(&const_cast<char*>(*buf)), sizeof(T));
 	return x;
 }
-
+*/
 
 #endif
