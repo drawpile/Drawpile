@@ -98,7 +98,7 @@ struct Message
 	 * @return payload length in bytes. Defaults to zero payload.
 	 */
 	virtual
-	size_t payloadLength() const
+	size_t payloadLength() const throw()
 	{
 		return 0;
 	}
@@ -112,7 +112,7 @@ struct Message
 	 * @return number of bytes stored. Defaults to zero payload.
 	 */
 	virtual
-	size_t serializePayload(char *buf) const
+	size_t serializePayload(char *buf) const throw()
 	{
 		assert(buf != 0);
 		
@@ -206,8 +206,8 @@ struct Identifier
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Stroke info message.
@@ -240,10 +240,13 @@ struct StrokeInfo
 	
 	/* functions */
 	
+	/**
+	 * @throw protocol::scrambled_buffer
+	 */
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Stroke End message
@@ -317,8 +320,8 @@ struct ToolInfo
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Synchronization request message.
@@ -381,8 +384,8 @@ struct Raster
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! SyncWait message.
@@ -434,8 +437,8 @@ struct Authentication
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Password message.
@@ -470,8 +473,8 @@ struct Password
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Subscribe message.
@@ -497,8 +500,8 @@ struct Subscribe
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Unsubscribe message.
@@ -524,8 +527,8 @@ struct Unsubscribe
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Admin Instruction message.
@@ -555,8 +558,8 @@ struct Instruction
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! List Boards request.
@@ -641,8 +644,8 @@ struct UserInfo
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Host info message
@@ -687,8 +690,8 @@ struct HostInfo
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Board Info message.
@@ -740,8 +743,8 @@ struct BoardInfo
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Acknowledgement message.
@@ -764,8 +767,8 @@ struct Acknowledgement
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Error message.
@@ -788,8 +791,8 @@ struct Error
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Deflate Extension message.
@@ -820,8 +823,8 @@ struct Deflate
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Chat Extension message.
@@ -855,8 +858,8 @@ struct Chat
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Shared Palette message (proposed).
@@ -890,8 +893,8 @@ struct Palette
 	
 	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
-	size_t serializePayload(char *buf) const;
-	size_t payloadLength() const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 } // namespace protocol

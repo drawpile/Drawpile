@@ -22,8 +22,19 @@
 #ifndef Protocol_Errors_INCLUDED
 #define Protocol_Errors_INCLUDED
 
+// #include <exception>
+
 namespace protocol
 {
+
+//! Scrambled input buffer.
+class scrambled_buffer
+	: public std::exception
+{
+public:
+	scrambled_buffer() { }
+	~scrambled_buffer() throw() { }
+};
 
 //! Errors
 /**

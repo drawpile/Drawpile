@@ -113,7 +113,7 @@ char *Message::serialize(size_t &len) const
  * struct Identifier
  */
 
-size_t Identifier::serializePayload(char *buf) const
+size_t Identifier::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -126,7 +126,7 @@ size_t Identifier::serializePayload(char *buf) const
 	return i;
 }
 
-size_t Identifier::payloadLength() const
+size_t Identifier::payloadLength() const throw()
 {
 	return identifier_size + sizeof(revision) + sizeof(level) + sizeof(extensions);
 }
@@ -160,7 +160,7 @@ size_t Identifier::reqDataLen(const char *buf, size_t len) const
  * struct StrokeInfo
  */
 
-size_t StrokeInfo::serializePayload(char *buf) const
+size_t StrokeInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -171,7 +171,7 @@ size_t StrokeInfo::serializePayload(char *buf) const
 	return i;
 }
 
-size_t StrokeInfo::payloadLength() const
+size_t StrokeInfo::payloadLength() const throw()
 {
 	return sizeof(x) + sizeof(y) + sizeof(pressure);
 }
@@ -190,10 +190,7 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len)
 	bswap_mem(count, buf+i); i += sizeof(count);
 	
 	if (count == 0)
-	{
-		// TODO
-		// throw new scrambled_buffer();
-	}
+		throw new scrambled_buffer();
 	
 	StrokeInfo *ptr = this;
 	do
@@ -262,7 +259,7 @@ size_t ToolInfo::reqDataLen(const char *buf, size_t len) const
 	return sizeof(type) + sizeof(user_id) + payloadLength();
 }
 
-size_t ToolInfo::serializePayload(char *buf) const
+size_t ToolInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	assert(tool_id != protocol::tool::None);
@@ -280,7 +277,7 @@ size_t ToolInfo::serializePayload(char *buf) const
 	return i;
 }
 
-size_t ToolInfo::payloadLength() const
+size_t ToolInfo::payloadLength() const throw()
 {
 	return sizeof(tool_id) + sizeof(lo_color)
 		+ sizeof(hi_color) + sizeof(lo_size) + sizeof(hi_size)
@@ -331,7 +328,7 @@ size_t Raster::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t Raster::serializePayload(char *buf) const
+size_t Raster::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -344,7 +341,7 @@ size_t Raster::serializePayload(char *buf) const
 	return i;
 }
 
-size_t Raster::payloadLength() const
+size_t Raster::payloadLength() const throw()
 {
 	return sizeof(offset) + sizeof(length) + sizeof(size) + length;
 }
@@ -398,7 +395,7 @@ size_t Password::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t Password::serializePayload(char *buf) const
+size_t Password::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -410,7 +407,7 @@ size_t Password::serializePayload(char *buf) const
 	return i;
 }
 
-size_t Password::payloadLength() const
+size_t Password::payloadLength() const throw()
 {
 	return sizeof(board_id) + sizeof(length) + length;
 }
@@ -438,7 +435,7 @@ size_t Subscribe::reqDataLen(const char *buf, size_t len) const
 	return sizeof(type) + sizeof(board_id);
 }
 
-size_t Subscribe::serializePayload(char *buf) const
+size_t Subscribe::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -447,7 +444,7 @@ size_t Subscribe::serializePayload(char *buf) const
 	return sizeof(board_id);
 }
 
-size_t Subscribe::payloadLength() const
+size_t Subscribe::payloadLength() const throw()
 {
 	return sizeof(board_id);
 }
@@ -475,7 +472,7 @@ size_t Unsubscribe::reqDataLen(const char *buf, size_t len) const
 	return sizeof(type) + sizeof(board_id);
 }
 
-size_t Unsubscribe::serializePayload(char *buf) const
+size_t Unsubscribe::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -484,7 +481,7 @@ size_t Unsubscribe::serializePayload(char *buf) const
 	return sizeof(board_id);
 }
 
-size_t Unsubscribe::payloadLength() const
+size_t Unsubscribe::payloadLength() const throw()
 {
 	return sizeof(board_id);
 }
@@ -525,7 +522,7 @@ size_t Instruction::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t Instruction::serializePayload(char *buf) const
+size_t Instruction::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -535,7 +532,7 @@ size_t Instruction::serializePayload(char *buf) const
 	return sizeof(length) + length;
 }
 
-size_t Instruction::payloadLength() const
+size_t Instruction::payloadLength() const throw()
 {
 	return sizeof(length) + length;
 }
@@ -593,7 +590,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t UserInfo::serializePayload(char *buf) const
+size_t UserInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -606,7 +603,7 @@ size_t UserInfo::serializePayload(char *buf) const
 	return i;
 }
 
-size_t UserInfo::payloadLength() const
+size_t UserInfo::payloadLength() const throw()
 {
 	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
 }
@@ -642,7 +639,7 @@ size_t HostInfo::reqDataLen(const char *buf, size_t len) const
 	return sizeof(type) + payloadLength();
 }
 
-size_t HostInfo::serializePayload(char *buf) const
+size_t HostInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 
@@ -658,7 +655,7 @@ size_t HostInfo::serializePayload(char *buf) const
 	return i;
 }
 
-size_t HostInfo::payloadLength() const
+size_t HostInfo::payloadLength() const throw()
 {
 	return sizeof(boards) + sizeof(boardLimit) + sizeof(users)
 		+ sizeof(userLimit) + sizeof(nameLenLimit) + sizeof(maxSubscriptions)
@@ -712,7 +709,7 @@ size_t BoardInfo::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t BoardInfo::serializePayload(char *buf) const
+size_t BoardInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -730,7 +727,7 @@ size_t BoardInfo::serializePayload(char *buf) const
 	return i;
 }
 
-size_t BoardInfo::payloadLength() const
+size_t BoardInfo::payloadLength() const throw()
 {
 	return sizeof(identifier) + sizeof(width) + sizeof(height) + sizeof(owner)
 		+ sizeof(users) + sizeof(limit) + sizeof(limit) + length;
@@ -759,7 +756,7 @@ size_t Acknowledgement::reqDataLen(const char *buf, size_t len) const
 	return sizeof(type) + sizeof(event);
 }
 
-size_t Acknowledgement::serializePayload(char *buf) const
+size_t Acknowledgement::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -768,7 +765,7 @@ size_t Acknowledgement::serializePayload(char *buf) const
 	return sizeof(event);
 }
 
-size_t Acknowledgement::payloadLength() const
+size_t Acknowledgement::payloadLength() const throw()
 {
 	return sizeof(event);
 }
@@ -796,7 +793,7 @@ size_t Error::reqDataLen(const char *buf, size_t len) const
 	return sizeof(type) + sizeof(code);
 }
 
-size_t Error::serializePayload(char *buf) const
+size_t Error::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -805,7 +802,7 @@ size_t Error::serializePayload(char *buf) const
 	return sizeof(code);
 }
 
-size_t Error::payloadLength() const
+size_t Error::payloadLength() const throw()
 {
 	return sizeof(code);
 }
@@ -847,7 +844,7 @@ size_t Deflate::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t Deflate::serializePayload(char *buf) const
+size_t Deflate::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -859,7 +856,7 @@ size_t Deflate::serializePayload(char *buf) const
 	return i;
 }
 
-size_t Deflate::payloadLength() const
+size_t Deflate::payloadLength() const throw()
 {
 	return sizeof(uncompressed) + sizeof(length) + length;
 }
@@ -901,7 +898,7 @@ size_t Chat::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t Chat::serializePayload(char *buf) const
+size_t Chat::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -913,7 +910,7 @@ size_t Chat::serializePayload(char *buf) const
 	return i;
 }
 
-size_t Chat::payloadLength() const
+size_t Chat::payloadLength() const throw()
 {
 	return sizeof(board_id) + sizeof(length) + length;
 }
@@ -956,7 +953,7 @@ size_t Palette::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t Palette::serializePayload(char *buf) const
+size_t Palette::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -968,7 +965,7 @@ size_t Palette::serializePayload(char *buf) const
 	return i;
 }
 
-size_t Palette::payloadLength() const
+size_t Palette::payloadLength() const throw()
 {
 	return sizeof(offset) + sizeof(count) + count * RGB_size;
 }
