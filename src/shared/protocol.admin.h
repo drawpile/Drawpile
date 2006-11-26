@@ -49,103 +49,130 @@ namespace admin
 {
 
 //! Target/Command separator
-const wchar_t separator = ":";
+const char separator = ":";
 
 //! Arg separator
-const wchar_t argsep = ",";
+const char argsep = ",";
 
 //! Set board as instruction target.
-const wchar_t board[] = "board";
+const char board[] = "board";
 
 //! Set user as instruction target.
-const wchar_t user[] = "user";
+const char user[] = "user";
 
 //! Set server as instruction target.
-const wchar_t server[] = "server";
+const char server[] = "server";
+
+//! Set session user as instruction target.
+const char session[] = "session";
 
 //! Bool.true
-const wchar_t bool_true[] = "true";
+const char bool_true[] = "true";
 
 //! Bool.false
-const wchar_t bool_false[] = "false";
+const char bool_false[] = "false";
 
 //! Board/Create
 /**
  * \code
- * board:create [width],[height],[user_limit],[name]
+ * board:create width,height,user_limit,name
  * \endcode
  *
  * Response: BoardInfo
  */
-const wchar_t create[] = "create";
+const char create[] = "create";
 
 //! Board/Alter
 /**
  * \code
- * board:alter [board_id] [width],[height],[user_limit],[name]
+ * board:alter board_id width,height,user_limit,name
  * \endcode
  *
  * Board size can only be increased!
  */
-const wchar_t alter[] = "alter";
+const char alter[] = "alter";
 
 //! Board/Destroy
 /**
  * \code
- * board:destroy [board_id]
+ * board:destroy board_id
  * \endcode
  */
-const wchar_t destroy[] = "destroy";
+const char destroy[] = "destroy";
 
 //! Board/Persist
 /**
  * \code
- * board:persist [board_id]
+ * board:persist board_id
  * \endcode
  *
  * Response: BoardInfo
  */
-const wchar_t persist[] = "persist";
+const char persist[] = "persist";
 
-//! User/Kick
+//! User/Kick or Session/Kick
 /**
  * \code
- * user:kick [user_id]
+ * user:kick user_id
  * \endcode
  *
  * Response: UserInfo with updated status
+ *
+ * \code
+ * session:kick user_id board_id
+ * \endcode
+ *
+ * Response: Session user info with updated satus.
  */
-const wchar_t kick[] = "kick";
+const char kick[] = "kick";
 
-//! User/Observe
+//! User/Observe or Session/Observe
 /**
  * \code
- * user:observe [user_id] [bool]
+ * user:observe user_id bool
  * \endcode
  *
  * Response: UserInfo with updated status
+ *
+ * \code
+ * session:observe user_id bool board_id
+ * \endcode
+ *
+ * Response: Session user info with updated satus.
  */
-const wchar_t observe[] = "observe";
+const char observe[] = "observe";
 
 //! User/Mute
 /**
  * \code
- * user:mute [user_id] [bool]
+ * user:mute user_id bool
  * \endcode
  *
  * Response: UserInfo with updated status
+ *
+ * \code
+ * session:mute user_id bool board_id
+ * \endcode
+ *
+ * Response: Session user info with updated satus.
  */
-const wchar_t mute[] = "mute";
+const char mute[] = "mute";
 
 //! User/Deafen
 /**
  * \code
- * user:deaf [user_id] [bool]
+ * user:deaf user_id bool
  * \endcode
  *
  * Response: UserInfo with updated status
+ *
+ * \code
+ * session:deaf user_id bool board_id
+ * \endcode
+ *
+ * Response: Session user info with updated satus.
  */
-const wchar_t deaf[] = "deaf";
+const char deaf[] = "deaf";
 
 } // namespace admin
 

@@ -41,12 +41,6 @@ namespace protocol
 //! Implemented protocol revision number.
 const uint16_t revision = 6;
 
-/*
- * only for getting the size of message count part of bundled messages.
- * Makes it easier to conform to same size :)
- */
-const uint8_t message_count = 0;
-
 //! Base for all message types.
 /**
  * Minimum requirements for derived structs is the definitions of _type.
@@ -122,7 +116,7 @@ struct Message
 	
 	//! Check if buf contains enough data to unserialize
 	/**
-	 * The value is not guaranteed to be constant for all message types, at all times.
+	 * The value is not guaranteed to be constant.
 	 *
 	 * Meaning: the length returned may grow when the function is able to scan
 	 * the full extent of the message.
@@ -132,7 +126,8 @@ struct Message
 	 *
 	 * @return length of data needed to unserialize or completely scan the length.
 	 * Only unserialize() if you have at least this much data in the buffer at the
-	 * time of calling this function.
+	 * time of calling this function. Length includes message type and other
+	 * header data.
 	 */
 	virtual
 	size_t reqDataLen(const char *buf, size_t len) const = 0;
@@ -146,9 +141,12 @@ struct Message
 	 *
 	 * @param buf points to data buffer waiting for serialization.
 	 * @param len declares the length of the data buffer.
+	 *
+	 * @return Used buffer length. Should be the same as the value previously returned
+	 * by reqDataLen() call.
 	 */
 	virtual
-	void unserialize(const char* buf, size_t len) = 0;
+	size_t unserialize(const char* buf, size_t len) = 0;
 };
 
 //! Protocol identifier.
@@ -185,7 +183,7 @@ struct Identifier
 	
 	/* functions */
 
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -221,7 +219,7 @@ struct StrokeInfo
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -248,7 +246,7 @@ struct StrokeEnd
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -299,7 +297,7 @@ struct ToolInfo
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -325,7 +323,7 @@ struct Synchronize
 	// does not have any.
 	
 	/* functions */
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -348,7 +346,7 @@ struct Raster
 		data(0)
 	{ }
 	
-	~Raster() { }
+	~Raster() { delete [] data; }
 	
 	/* unique data */
 	
@@ -365,7 +363,7 @@ struct Raster
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -392,7 +390,7 @@ struct SyncWait
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -421,7 +419,7 @@ struct Authentication
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -442,7 +440,7 @@ struct Password
 		data(0)
 	{ }
 	
-	~Password() { }
+	~Password() { delete [] data; }
 	
 	/* unique data */
 	
@@ -457,7 +455,7 @@ struct Password
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -484,7 +482,7 @@ struct Subscribe
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -511,7 +509,7 @@ struct Unsubscribe
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -530,7 +528,7 @@ struct Instruction
 		data(0)
 	{ }
 	
-	~Instruction() { }
+	~Instruction() { delete [] data; }
 	
 	/* unique data */
 	
@@ -542,7 +540,7 @@ struct Instruction
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -551,6 +549,10 @@ struct Instruction
 //! List Boards request.
 /**
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#List_boards
+ *
+ * Client requests info for all boards on server. Server should response with
+ * sequential BoardInfo messages for all boards, and append ACK after all boards
+ * have been described to mark the end of list.
  */
 struct ListBoards
 	: Message
@@ -567,7 +569,7 @@ struct ListBoards
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -592,7 +594,7 @@ struct Cancel
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -613,7 +615,7 @@ struct UserInfo
 		name(0)
 	{ }
 	
-	~UserInfo() { }
+	~UserInfo() { delete [] name; }
 	
 	/* unique data */
 	
@@ -630,7 +632,7 @@ struct UserInfo
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -676,7 +678,7 @@ struct HostInfo
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -687,18 +689,19 @@ struct BoardInfo
 	: Message
 {
 	BoardInfo()
-		: Message(protocol::type::BoardInfo, true),
+		: Message(protocol::type::BoardInfo),
 		identifier(protocol::Global),
 		width(0),
 		height(0),
 		owner(protocol::null_user),
 		users(0),
-		userLimit(0),
-		nameLength(0),
+		limit(0),
+		flags(protocol::session::None),
+		length(0),
 		name(0)
 	{ }
 	
-	~BoardInfo() { }
+	~BoardInfo() { delete [] name; }
 	
 	/* unique data */
 	
@@ -717,16 +720,18 @@ struct BoardInfo
 		//! Board users.
 		users,
 		//! Board user limit.
-		userLimit,
+		limit,
+		//! Session flags.
+		flags,
 		//! Board name length.
-		nameLength;
+		length;
 	
 	//! Board name.
 	char* name;
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -750,7 +755,7 @@ struct Acknowledgement
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -762,23 +767,19 @@ struct Error
 {
 	Error()
 		: Message(protocol::type::Error),
-		category(protocol::error::category::None),
-		code(protocol::error::code::None)
+		code(protocol::error::None)
 	{ }
 	
 	~Error() { }
 	
 	/* unique data */
 	
-	uint16_t
-		//! Error category.
-		category,
-		//! Error code.
-		code;
+	//! Error code.
+	uint16_t code;
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -795,7 +796,7 @@ struct Deflate
 		data(0)
 	{ }
 	
-	~Deflate() { }
+	~Deflate() { delete [] data; }
 	
 	/* unique data */
 	
@@ -810,7 +811,7 @@ struct Deflate
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -830,7 +831,7 @@ struct Chat
 		data(0)
 	{ }
 	
-	~Chat() { }
+	~Chat() { delete [] data; }
 	
 	/* unique data */
 	
@@ -845,7 +846,7 @@ struct Chat
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
@@ -865,7 +866,7 @@ struct Palette
 		data(0)
 	{ }
 	
-	~Palette() { }
+	~Palette() { delete [] data; }
 	
 	/* unique data */
 	
@@ -880,7 +881,7 @@ struct Palette
 	
 	/* functions */
 	
-	void unserialize(const char* buf, size_t len);
+	size_t unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len) const;
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;

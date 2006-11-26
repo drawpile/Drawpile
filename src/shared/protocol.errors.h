@@ -33,29 +33,64 @@ namespace protocol
 namespace error
 {
 
-//! Error categories
-/**
- * @see protocol::error namespace
- * @see protocol::Error message
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Error
- */
-namespace category
-{
-	//! No category defined.
-	const uint8_t None = 0;
-} // namespace category
-
-//! Error codes
-/**
- * @see protocol::error namespace
- * @see protocol::Error message
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Error
- */
-namespace code
-{
+const uint16_t
 	//! No error code defined.
-	const uint8_t None = 0;
-} // namespace code
+	None = 0,
+	
+	/* Server status things that can be considered errors. */
+	
+	//! Server full.
+	Overloaded = 7,
+	
+	/* Session errors. */
+	
+	//! No sessions (likely a response to ListBoards).
+	NoSessions = 10,
+	//! Does not exist.
+	UnknownSession = 12,
+	//! Subscribe failed, board full.
+	SessionFull = 15,
+	//! Not subscribed (likely a response to invalid Unsubscribe)
+	NotSubscribed = 16,
+	//! Session lost (possibly because of protocol::admin::destroy)
+	SessionLost = 19,
+	
+	/* Admin errors. */
+	
+	//! Unrecognized instruction target.
+	UnrecognizedTarget = 50,
+	//! Unrecognized instruction command.
+	UnrecognizedCommand = 52,
+	//! Garbage in instruction, couldn't parse.
+	ParseFailure = 55,
+	
+	/* Auth errors. */ 
+	
+	//! Wrong password
+	PasswordFailure = 45,
+	
+	/* Name policy errors. */
+	
+	//! Name is too long.
+	TooLong = 72,
+	//! Name not unique, go frell it up some more.
+	NotUnique = 74,
+	
+	/* Bad behaving clients */
+	//! What? Who?
+	UnrecognizedMessage = 80,
+	
+	/* Completely unexpected error messages */
+	
+	//! Something bad happened to server, yet it managed to throw this up.
+	ServerFarked = 98,
+	
+	//! Something worse happened, yet the server managed to barf this up.
+	/**
+	 * Server is unlikely to recover automatically.
+	 * Check free memory and some such.
+	 */
+	ServerFrelled = 99;
 
 } // namespace error
 

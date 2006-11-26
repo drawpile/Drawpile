@@ -28,17 +28,26 @@ namespace protocol
 //! Board identifier for no particular board (global) things. Mostly for Chat messages.
 const uint8_t Global = 0;
 
-/* only used by Identifier message */
-const uint8_t identifier_size = 8;
+/* RGB color size */
+const size_t RGB_size = sizeof(uint32_t) - sizeof(uint8_t);
 
-//! No user identifier defined.
+/* RGBA color size */
+const size_t RGBA_size = sizeof(uint32_t);
+
+//! The only invalid message count value.
+const uint8_t null_count = 0;
+
+//! No user identifier defined (not really null, as you can see).
 const uint8_t null_user = 255;
 
 //! No protocol revision defined.
-const uint16_t null_revision = 0x0000;
+const uint16_t null_revision = 0;
 
 //! No feature implementation level defined.
-const uint16_t null_implementation = 0x0000;
+const uint16_t null_implementation = 0;
+
+/* only used by Identifier message */
+const uint8_t identifier_size = 8;
 
 //! Protocol identifier string.
 const char identifierString[identifier_size] = {'D','r','a','w','P','i','l','e'};
