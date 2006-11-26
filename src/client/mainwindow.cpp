@@ -27,9 +27,11 @@
 #include "mainwindow.h"
 #include "netstatus.h"
 #include "hostlabel.h"
+#include "dualcolorbutton.h"
 #include "editorview.h"
 #include "board.h"
 #include "controller.h"
+#include "toolsettingswidget.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
@@ -39,6 +41,7 @@ MainWindow::MainWindow()
 	initActions();
 	createMenus();
 	createToolbars();
+	createToolSettings();
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
@@ -147,6 +150,19 @@ void MainWindow::zoomone()
 	view_->resetMatrix();
 }
 
+void MainWindow::selectTool(QAction *tool)
+{
+	tools::Type type;
+	if(tool == brushTool_) {
+		type = tools::BRUSH;
+	} else if(tool == eraserTool_) {
+		type = tools::ERASER;
+	} else {
+		return;
+	}
+	emit toolChanged(type);
+}
+
 void MainWindow::initActions()
 {
 	// File actions
@@ -194,6 +210,7 @@ void MainWindow::initActions()
 	drawingTools_->setExclusive(true);
 	drawingTools_->addAction(brushTool_);
 	drawingTools_->addAction(eraserTool_);
+	connect(drawingTools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Toolbar toggling actions
 	toggleFileBar = new QAction(tr("File"), this);
@@ -263,7 +280,20 @@ void MainWindow::createToolbars()
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);
 	drawtools->addAction(zoomorig_);
+	drawtools->addSeparator();
+
+	widgets::DualColorButton *dcbtn = new widgets::DualColorButton(drawtools);
+	drawtools->addWidget(dcbtn);
+
 	addToolBar(Qt::LeftToolBarArea, drawtools);
 
+}
+
+void MainWindow::createToolSettings()
+{
+	toolsettings_ = new widgets::ToolSettings(this);
+	toolsettings_->setObjectName("toolsettings");
+	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
+	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
 }
 

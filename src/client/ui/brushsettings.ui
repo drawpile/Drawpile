@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>222</width>
-    <height>266</height>
+    <height>272</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -88,6 +88,9 @@
           <property name="maximum" >
            <number>100</number>
           </property>
+          <property name="value" >
+           <number>100</number>
+          </property>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
@@ -100,6 +103,9 @@
           </property>
           <property name="minimum" >
            <number>0</number>
+          </property>
+          <property name="value" >
+           <number>100</number>
           </property>
          </widget>
         </item>
@@ -128,6 +134,9 @@
           <property name="maximum" >
            <number>100</number>
           </property>
+          <property name="value" >
+           <number>50</number>
+          </property>
           <property name="orientation" >
            <enum>Qt::Horizontal</enum>
           </property>
@@ -140,6 +149,9 @@
           </property>
           <property name="minimum" >
            <number>0</number>
+          </property>
+          <property name="value" >
+           <number>50</number>
           </property>
          </widget>
         </item>
@@ -190,6 +202,19 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

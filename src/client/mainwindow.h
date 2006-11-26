@@ -22,11 +22,15 @@
 
 #include <QMainWindow>
 
+#include "tools.h"
+
 class QActionGroup;
 namespace widgets {
 	class NetStatus;
 	class HostLabel;
 	class EditorView;
+	class DualColorButton;
+	class ToolSettings;
 }
 namespace drawingboard {
 	class Board;
@@ -44,6 +48,10 @@ class MainWindow : public QMainWindow {
 		void zoomin();
 		void zoomout();
 		void zoomone();
+		void selectTool(QAction *tool);
+
+	signals:
+		void toolChanged(tools::Type);
 
 	protected:
 		void closeEvent(QCloseEvent *event);
@@ -55,7 +63,10 @@ class MainWindow : public QMainWindow {
 		void initActions();
 		void createMenus();
 		void createToolbars();
+		void createToolSettings();
 
+		widgets::ToolSettings *toolsettings_;
+		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
 		widgets::HostLabel *hostaddress_;
 		widgets::EditorView *view_;
