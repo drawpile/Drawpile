@@ -22,59 +22,28 @@
 #ifndef Shared_Templates_INCLUDED
 #define Shared_Templates_INCLUDED
 
-#include "sockets.h" // ntohl(), etc.
+#include "sockets.h"
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
 
 /* Swapping endianess.. wrapper for ntohl(), ntohs(), etc. */
 
-//! Swaps endianess (default template).
-/**
- * Should only be used with 8 bit types, if others use this, it's an error.
- *
- * @param x scalar to be byte swapped.
- *
- * @return x in its original form. 8 bit types can't be swapped.
- */
 template <class T>
-T& bswap(T& x)
+T bswap(T& x)
 {
-	return x;
+	switch (sizeof(T))
+	{
+		case sizeof(uint32_t):
+			return ntohl(x);
+			break;
+		case sizeof(uint16_t):
+			return ntohs(x);
+			break;
+		default:
+			return x;
+			break;
+	}
 }
-
-//! Swaps endianess (16bit specialization)
-/**
- * @param x scalar to be byte swapped.
- *
- * @return x with its byte order swapped.
- */
-template <uint16_t>
-uint16_t bswap(uint16_t& x)
-{
-	return ntohs(x);
-}
-
-//! Swaps endianess (32bit specialization)
-/**
- * @param x scalar to be byte swapped.
- *
- * @return x with its byte order swapped.
- */
-template <uint32_t>
-uint32_t bswap(uint32_t& x)
-{
-	return ntohl(x);
-}
-
-/* // unused
-template <class T>
-char* bswap_mem(char* buf, T& x)
-{
-	assert(buf != 0);
-	memcpy(buf, bswap(x), sizeof(T));
-	return buf;
-}
-*/
 
 //! Wrapper for memcpy() and bswap().
 /**
@@ -85,11 +54,11 @@ char* bswap_mem(char* buf, T& x)
  * the endianess.
  */
 template <class T>
-T& bswap_mem(T& x, const char* buf)
+T bswap_mem(T& x, const char* buf)
 {
 	assert(buf != 0);
 	memcpy(&x, buf, sizeof(T));
-	return bswap(x);
+	return x = bswap(x);
 }
 
 //! Wrapper for memcpy() and bswap()
@@ -103,8 +72,19 @@ template <class T>
 char* bswap_mem(char* buf, T& u)
 {
 	assert(buf != 0);
-	memcpy(buf, &bswap(u), sizeof(T));
+	T x = bswap(u);
+	memcpy(buf, &x, sizeof(T));
 	return buf;
+}
+
+
+template <class T>
+T bswap_mem(const char* buf)
+{
+	assert(buf != 0);
+	T x;
+	memcpy(&x, buf, sizeof(T));
+	return x;
 }
 
 /* Bit operations */
@@ -147,6 +127,5 @@ bool bIsFlag(T& u, T& x)
 {
 	return (u & x) == x;
 }
-
 
 #endif

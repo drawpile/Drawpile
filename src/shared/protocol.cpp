@@ -217,7 +217,7 @@ size_t StrokeInfo::reqDataLen(const char *buf, size_t len) const
 	if (len < h + payloadLength())
 		return h + payloadLength();
 	else
-		return h + bswap(buf[2]) * payloadLength();
+		return h + buf[2] * payloadLength();
 }
 
 /*
@@ -320,11 +320,8 @@ size_t Raster::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size);
 	else
 	{
-		uint32_t rlen; // temporary
-		
-		bswap_mem(rlen, buf+sizeof(type)+sizeof(offset));
-		
-		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size) + rlen;
+		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size)
+			+ bswap_mem<uint32_t>(buf+sizeof(type)+sizeof(offset));
 	}
 }
 
@@ -387,11 +384,8 @@ size_t Password::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type)+sizeof(board_id)+sizeof(length);
 	else
 	{
-		uint8_t rlen;
-		
-		bswap_mem(rlen, buf+sizeof(type)+sizeof(board_id));
-		
-		return sizeof(type) + sizeof(board_id) + sizeof(length) + rlen;
+		return sizeof(type) + sizeof(board_id) + sizeof(length)
+			+ bswap_mem<uint8_t>(buf+sizeof(type)+sizeof(board_id));
 	}
 }
 
@@ -945,11 +939,8 @@ size_t Palette::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type) + sizeof(offset) + sizeof(count);
 	else
 	{
-		uint8_t rcount;
-		
-		bswap_mem(rcount, buf+sizeof(type)+sizeof(offset));
-		
-		return sizeof(type) + sizeof(offset) + sizeof(count) + rcount*RGB_size;
+		return sizeof(type) + sizeof(offset) + sizeof(count)
+			+ bswap_mem<uint8_t>(buf+sizeof(type)+sizeof(offset)) * RGB_size;
 	}
 }
 
