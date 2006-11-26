@@ -6,6 +6,7 @@
 	<file>icons/draw-eraser.png</file>
 	<file>icons/zoom-in.png</file>
 	<file>icons/zoom-out.png</file>
+	<file>icons/zoom-original.png</file>
 	<file>icons/system-log-out.png</file>
 	<file>icons/network-error.png</file>
 	<file>icons/network-transmit-receive.png</file>

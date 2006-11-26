@@ -17,43 +17,52 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#ifndef USER_H
+#define USER_H
 
-#include "controller.h"
-#include "board.h"
 #include "brush.h"
 
-Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0)
+namespace drawingboard {
+
+class Layer;
+
+//! A drawingboard user
+/**
+ */
+class User
 {
+	public:
+		User(int id);
+
+		//! Get the user's ID number
+		int id() const { return id_; }
+
+		//! Get a reference to the user's brush
+		Brush& brush() {return brush_;}
+
+		//! Get the user's brush
+		const Brush& brush() const {return brush_;}
+
+		//! Begin a new stroke
+		void strokeBegin(Layer *layer, int x, int y, qreal pressure);
+
+		//! Continue stroke
+		void strokeMotion(int x,int y, qreal pressure);
+
+		//! End stroke
+		void strokeEnd();
+	private:
+		int id_;
+		Brush brush_;
+
+		Layer *layer_;
+		int lastx_,lasty_;
+		qreal lastpressure_;
+		bool penmoved_;
+};
+
 }
 
-void Controller::setBoard(drawingboard::Board *board)
-{
-	board_ = board;
-	board_->addUser(0);
-}
+#endif
 
-void Controller::penDown(int x,int y, qreal pressure, bool isEraser)
-{
-	if(board_) {
-		//board_->beginPreview(x,y,pressure);
-		board_->strokeBegin(0,x,y,pressure,drawingboard::Brush());
-	}
-}
-
-void Controller::penMove(int x,int y, qreal pressure)
-{
-	if(board_) {
-		//board_->strokePreview(x,y,pressure);
-		board_->strokeMotion(0,x,y,pressure);
-	}
-}
-
-void Controller::penUp()
-{
-	if(board_) {
-		//board_->endPreview();
-		board_->strokeEnd(0);
-	}
-}
 

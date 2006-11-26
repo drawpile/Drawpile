@@ -183,7 +183,7 @@ void MainWindow::initActions()
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
 	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom out"), this);
 	zoomout_->setShortcut(QKeySequence::ZoomOut);
-	zoomorig_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Actual size"), this);
+	zoomorig_ = new QAction(QIcon(":icons/zoom-original.png"),tr("Actual size"), this);
 	//zoomorig_->setShortcut(QKeySequence::ZoomOut);
 
 	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));

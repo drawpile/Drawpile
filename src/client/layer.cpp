@@ -151,8 +151,8 @@ QRectF Layer::boundingRect() const
 void Layer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *widget)
 {
-	QRect rect = option->exposedRect.toRect();
-	painter->drawPixmap(rect, pixmap_, rect);
+	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
+    painter->drawPixmap(exposed, pixmap_, exposed);
 }
 
 }

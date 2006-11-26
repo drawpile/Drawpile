@@ -69,6 +69,9 @@ class Brush
 
 		//! Get a brush pixmap to paint with
 		QPixmap getBrush(qreal pressure) const;
+
+		//! Copy operator
+		Brush& operator=(const Brush& brush);
 	private:
 		int diameter1_, diameter2_;
 		qreal hardness1_, hardness2_;

@@ -23,7 +23,7 @@
 
 #include "board.h"
 #include "layer.h"
-#include "brush.h"
+#include "user.h"
 
 namespace drawingboard {
 
@@ -59,6 +59,22 @@ void Board::initBoard(QPixmap pixmap)
 }
 
 /**
+ * @param id user id
+ */
+void Board::addUser(int id)
+{
+	users_[id] = new User(id);
+}
+
+/**
+ * @param id user id
+ */
+void Board::removeUser(int id)
+{
+	users_.remove(id);
+}
+
+/**
  * File format is deduced from the filename.
  * @param filename filename
  * @return false on failure.
@@ -69,6 +85,17 @@ bool Board::save(QString filename)
 }
 
 /**
+ * @param device QIODevice to which the image is saved
+ * @param format image format. Eg. "PNG"
+ * @param quality image quality. Range is [0..100]
+ * @return false on failure.
+ */
+bool Board::save(QIODevice *device, const char *format, int quality)
+{
+	return image_->pixmap().save(device, format, quality);
+}
+
+/**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
  * through the server.
@@ -76,30 +103,65 @@ bool Board::save(QString filename)
  * @param y initial stroke coordinate
  * @param pressure stroke pressure
  */
-void Board::beginPreview(int x,int y, qreal pressure)
+void Board::previewBegin(int x,int y, qreal pressure)
 {
-	plastx_ = x;
-	plasty_ = y;
 }
 
 /**
- * @param x initial stroke coordinate
- * @param y initial stroke coordinate
+ * @param x stroke x coordinate
+ * @param y stroke y coordinate
  * @param pressure stroke pressure
  */
-void Board::strokePreview(int x,int y, qreal pressure)
+void Board::previewMotion(int x,int y, qreal pressure)
 {
-#if 0
-	new QGraphicsLineItem(plastx_,plasty_,x,y,0,this);
-#else
-	image_->drawLine(QPoint(plastx_,plasty_),1.0,QPoint(x,y),1.0,brush_);
-#endif
-	plastx_ = x;
-	plasty_ = y;
 }
 
-void Board::endPreview()
+/**
+ */
+void Board::previewEnd()
 {
+}
+
+/**
+ * The new stroke is assigned to the indicated user.
+ * @param user user id
+ * @param x x coordinate
+ * @param y y coordinate
+ * @param pressure pen pressure
+ * @param brush brush to use
+ */
+void Board::strokeBegin(int user, int x, int y, qreal pressure, const Brush& brush)
+{
+	if(users_.contains(user)) {
+		User *u = users_.value(user);
+		u->brush() = brush;
+		u->strokeBegin(image_, x, y, pressure);
+	}
+}
+
+/*
+ * @param user user id
+ * @param x x coordinate
+ * @param y y coordinate
+ * @param pressure pen pressure
+ */
+void Board::strokeMotion(int user, int x, int y, qreal pressure)
+{
+	if(users_.contains(user)) {
+		User *u = users_.value(user);
+		u->strokeMotion(x,y,pressure);
+	}
+}
+
+/*
+ * @param user user id
+ */
+void Board::strokeEnd(int user)
+{
+	if(users_.contains(user)) {
+		User *u = users_.value(user);
+		u->strokeEnd();
+	}
 }
 
 }

@@ -21,13 +21,14 @@
 #define BOARD_H
 
 #include <QGraphicsScene>
-
-#include "brush.h" // for testing
+#include <QHash>
 
 //! Drawing board related classes
 namespace drawingboard {
 
 class Layer;
+class User;
+class Brush;
 
 //! The drawing board
 /**
@@ -47,18 +48,35 @@ class Board : public QGraphicsScene
 		//! Save board contents to file.
 		bool save(QString filename);
 
+		//! Save board contents to a QIODevice
+		bool save(QIODevice *device, const char *format, int quality);
+
+		//! Add a new user to the board
+		void addUser(int id);
+
+		//! Remove a user from the board
+		void removeUser(int id);
+
 		//! Begin a new preview stroke
-		void beginPreview(int x,int y, qreal pressure);
+		void previewBegin(int x,int y, qreal pressure);
+
 		//! Pen motion info for preview stroke
-		void strokePreview(int x,int y, qreal pressure);
+		void previewMotion(int x,int y, qreal pressure);
+
 		//! End a preview stroke
-		void endPreview();
+		void previewEnd();
+
+		//! User begins a stroke
+		void strokeBegin(int user, int x, int y, qreal pressure, const Brush& brush);
+		//! User continues a stroke
+		void strokeMotion(int user, int x, int y, qreal pressure);
+
+		//! User ends a stroke
+		void strokeEnd(int user);
 
 	private:
 		Layer *image_;
-
-		Brush brush_;
-		int plastx_, plasty_;
+		QHash<int,User*> users_;
 };
 
 }

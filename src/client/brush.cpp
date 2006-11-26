@@ -44,7 +44,7 @@ void Brush::setDiameter(int diameter)
 
 /**
  * Set the hardness for pressure=1.0
- * @param radius brush hardness. Range is [-1..1]
+ * @param hardness brush hardness. Range is [-1..1]
  */
 void Brush::setHardness(qreal hardness)
 {
@@ -192,6 +192,38 @@ QPixmap Brush::getBrush(qreal pressure) const
 		cachepressure_ = pressure;
 	}
 	return cache_;
+}
+
+/**
+ * This copy operator tries to preserve the brush cache.
+ * If both brushes contain equal parameters (opacity excluded)
+ * and the brush that is being overwritten (but not the other one)
+ * has a cached brush pixmap, then the old cache is preserved.
+ * @param brush brush to replace this with
+ */
+Brush& Brush::operator=(const Brush& brush)
+{
+	bool isEqual = true;
+	if(diameter1_ != brush.diameter1_ || diameter2_ != brush.diameter2_ ||
+			(hardness1_ - brush.hardness1_) > 1.0/255.0 ||
+			(hardness2_ - brush.hardness2_) > 1.0/255.0 ||
+			color1_ != brush.color1_ ||
+			color2_ != brush.color2_)
+		isEqual = false;
+	diameter1_ = brush.diameter1_;
+	diameter2_ = brush.diameter2_;
+	hardness1_ = brush.hardness1_;
+	hardness2_ = brush.hardness2_;
+	opacity1_ = brush.opacity1_;
+	opacity2_ = brush.opacity2_;
+	color1_ = brush.color1_;
+	color2_ = brush.color2_;
+
+	if(isEqual==false || cachepressure_<0 || brush.cachepressure_>=0) {
+		cachepressure_ = brush.cachepressure_;
+		cache_ = brush.cache_;
+	}
+	return *this;
 }
 
 }
