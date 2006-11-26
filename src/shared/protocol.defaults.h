@@ -19,15 +19,30 @@
 
 *******************************************************************************/
 
-#ifndef Sockets_INCLUDED
-#define Sockets_INCLUDED
+#ifndef Protocol_Defaults_INCLUDED
+#define Protocol_Defaults_INCLUDED
 
-#ifdef WIN32
-	#include <winsock2.h>
-#else
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	// TODO
-#endif
+namespace protocol
+{
 
-#endif // SOCKETS_H_INCLUDED
+//! Board identifier for no particular board (global) things. Mostly for Chat messages.
+const uint8_t Global = 0;
+
+/* only used by Identifier message */
+const uint8_t identifier_size = 8;
+
+//! No user identifier defined.
+const uint8_t null_user = 255;
+
+//! No protocol revision defined.
+const uint16_t null_revision = 0x0000;
+
+//! No feature implementation level defined.
+const uint16_t null_implementation = 0x0000;
+
+//! Protocol identifier string.
+const char identifierString[identifier_size] = {'D','r','a','w','P','i','l','e'};
+
+} // namespace protocol
+
+#endif // Protocol_Defaults_INCLUDED

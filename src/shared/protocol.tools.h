@@ -19,15 +19,24 @@
 
 *******************************************************************************/
 
-#ifndef Sockets_INCLUDED
-#define Sockets_INCLUDED
+#ifndef Protocol_Tools_INCLUDED
+#define Protocol_Tools_INCLUDED
 
-#ifdef WIN32
-	#include <winsock2.h>
-#else
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	// TODO
-#endif
+namespace protocol
+{
 
-#endif // SOCKETS_H_INCLUDED
+//! Tool identifier codes for ToolInfo message.
+namespace tool
+{
+
+const uint8_t
+	//! No tool defined.
+	None = 0,
+	//! Default brush tool type.
+	Brush = 1;
+
+} // namespace tool
+
+} // namespace protocol
+
+#endif // Protocol_Tools_INCLUDED

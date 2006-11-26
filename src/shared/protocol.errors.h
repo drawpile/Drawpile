@@ -19,15 +19,46 @@
 
 *******************************************************************************/
 
-#ifndef Sockets_INCLUDED
-#define Sockets_INCLUDED
+#ifndef Protocol_Errors_INCLUDED
+#define Protocol_Errors_INCLUDED
 
-#ifdef WIN32
-	#include <winsock2.h>
-#else
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	// TODO
-#endif
+namespace protocol
+{
 
-#endif // SOCKETS_H_INCLUDED
+//! Errors
+/**
+ * @see protocol::Error message
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Error
+ */
+namespace error
+{
+
+//! Error categories
+/**
+ * @see protocol::error namespace
+ * @see protocol::Error message
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Error
+ */
+namespace category
+{
+	//! No category defined.
+	const uint8_t None = 0;
+} // namespace category
+
+//! Error codes
+/**
+ * @see protocol::error namespace
+ * @see protocol::Error message
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Error
+ */
+namespace code
+{
+	//! No error code defined.
+	const uint8_t None = 0;
+} // namespace code
+
+} // namespace error
+
+} // namespace protocol
+
+#endif // Protocol_Errors_INCLUDED

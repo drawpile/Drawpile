@@ -19,49 +19,35 @@
 
 *******************************************************************************/
 
-#ifndef PROTOCOL_H_INCLUDED
-#define PROTOCOL_H_INCLUDED
+#ifndef Protocol_INCLUDED
+#define Protocol_INCLUDED
 
 #include <stddef.h> // size_t
 #include <stdint.h> // [u]int#_t
 
+#include "protocol.errors.h"
+#include "protocol.defaults.h"
+#include "protocol.tools.h"
+#include "protocol.types.h"
+#include "protocol.flags.h"
+
 //! DrawPile network protocol.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol
+ */
 namespace protocol
 {
 
-//! User ID for arbitrary user.
-const uint8_t NoUser = 255;
-
-/* only used by Identifier message */
-const uint8_t identifier_size = 8;
-
-//! Protocol identifier string.
-const char identifierString[8] = {'D','r','a','w','P','i','l','e'};
-
-//! Message type identifiers.
-namespace type
-{
-	//! No message type specified, should assume error.
-	const uint8_t None = 0;
-	
-	//! Protocol identifier message.
-	const uint8_t Identifier = 7;
-	
-	//! Drawing data: Stroke Info message.
-	const uint8_t StrokeInfo = 1;
-	//! Drawing data: Stroke End message.
-	const uint8_t StrokeEnd = 2;
-	//! Drawing data: Tool Info message.
-	const uint8_t ToolInfo = 3;
-	
-	//! Acknowledgement message.
-	const uint8_t Acknowledgement = 255;
-} // namespace type
-
+//! Implemented protocol revision number.
+const uint16_t revision = 6;
 
 //! Base for all message types.
 /**
  * Minimum requirements for derived structs is the definitions of _type.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Message_structure
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Message_modifiers
+ * @see protocol::type for full list of message types.
  *
  * @param _type message type.
  * @param _bundled does the message have the bundling modifier?
@@ -73,7 +59,7 @@ struct Message
 {
 	Message(uint8_t _type, bool _bundled=false, bool _user=false)
 		: type(_type),
-		user_id(NoUser),
+		user_id(protocol::null_user),
 		isBundled(_bundled),
 		isUser(_user),
 		next(0),
@@ -82,7 +68,7 @@ struct Message
 	
 	virtual ~Message() { }
 	
-	//! Message type/identifier.
+	//! Message type identifier (full list in protocol::type namespace).
 	const uint8_t type;
 	
 	//! Originating user for the message, as assigned by the server.
@@ -158,7 +144,7 @@ struct Message
 	void unserialize(char* buf, size_t len) = 0;
 };
 
-//! Protocol identifier
+//! Protocol identifier.
 /**
  * The first message sent to the server.
  *
@@ -168,38 +154,37 @@ struct Identifier
 	: Message
 {
 	Identifier()
-		: Message(type::Identifier)
+		: Message(protocol::type::Identifier),
+		revision(protocol::null_revision),
+		level(protocol::null_implementation),
+		extensions(protocol::extensions::None)
 	{ }
 	
 	~Identifier() { }
 	
 	/* unique data */
 	
-	//! Protocol identifier.
+	//! Protocol identifier (see protocol::identifierString).
 	char identifier[identifier_size];
 	
 	uint16_t
-		//! Protocol version.
-		version,
-		//! Client implementation level
+		//! Used protocol revision.
+		revision,
+		//! Client feature implementation level.
 		level;
 	
-	uint8_t
-		//! Operation flags.
-		flags,
-		//! Extension flags.
-		extensions;
+	//! Extension flags (see protocol::extensions for full list).
+	uint8_t extensions;
 	
 	/* functions */
 	
 	void unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len);
-
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
 };
 
-//! Stroke info
+//! Stroke info message.
 /**
  * Minimal data required for drawing with the tool provided by ToolInfo.
  *
@@ -209,7 +194,7 @@ struct StrokeInfo
 	: Message
 {
 	StrokeInfo()
-		: Message(type::StrokeInfo, true, true),
+		: Message(protocol::type::StrokeInfo, true, true),
 		x(0),
 		y(0)
 	{ }
@@ -223,7 +208,7 @@ struct StrokeInfo
 		x,
 		//! Vertical coordinate.
 		y;
-		
+	
 	//! Should default to 255 for devices that do not support it.
 	uint8_t pressure;
 	
@@ -231,11 +216,669 @@ struct StrokeInfo
 	
 	void unserialize(const char* buf, size_t len);
 	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Stroke End message
+/**
+ * Marks the end of a line defined by StrokeInfo messages.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Stroke_end
+ */
+struct StrokeEnd
+	: Message
+{
+	StrokeEnd()
+		: Message(protocol::type::StrokeEnd, false, true)
+	{ }
 	
+	~StrokeEnd() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Tool Info message.
+/**
+ * Describes interpolating brush or some other tool.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Tool_info
+ */
+struct ToolInfo
+	: Message
+{
+	ToolInfo()
+		: Message(protocol::type::ToolInfo, false, true),
+		tool_id(protocol::tool::None),
+		lo_color(0),
+		hi_color(0),
+		lo_size(0),
+		hi_size(0),
+		lo_softness(0),
+		hi_softness(0)
+	{ }
+	
+	~ToolInfo() { }
+	
+	/* unique data */
+	
+	//! Tool identifier (for full list, see protocol::tool).
+	uint8_t tool_id;
+	
+	uint32_t
+		//! Lo pressure color (RGBA)
+		lo_color,
+		//! Hi pressure color (RGBA)
+		hi_color;
+	
+	uint8_t
+		//! Lo pressure size.
+		lo_size,
+		//! Hi pressure size.
+		hi_size,
+		//! Lo pressure softness.
+		lo_softness,
+		//! Hi pressure softness.
+		hi_softness;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Synchronization request message.
+/**
+ * Requests raster data.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Synchronize
+ */
+struct Synchronize
+	: Message
+{
+	Synchronize()
+		: Message(protocol::type::Synchronize)
+	{ }
+	
+	~Synchronize() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Raster data message.
+/**
+ * Serves raster data request delivered by Synchronize message.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Raster
+ */
+struct Raster
+	: Message
+{
+	Raster()
+		: Message(protocol::type::Raster),
+		offset(0),
+		length(0),
+		size(0),
+		data(0)
+	{ }
+	
+	~Raster() { }
+	
+	/* unique data */
+	
+	uint32_t
+		//! Offset of raster data.
+		offset,
+		//! Length of raster data.
+		length,
+		//! Size of the whole raster.
+		size;
+	
+	//! Raster data.
+	char* data;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! SyncWait message.
+/**
+ * Instructs client to enter SyncWait state.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#SyncWait
+ */
+struct SyncWait
+	: Message
+{
+	SyncWait()
+		: Message(protocol::type::SyncWait)
+	{ }
+	
+	~SyncWait() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Authentication request message.
+/**
+ * Request for password to login or join session.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Authentication
+ */
+struct Authentication
+	: Message
+{
+	Authentication()
+		: Message(protocol::type::Authentication),
+		board_id(protocol::Global)
+	{ }
+	
+	~Authentication() { }
+	
+	/* unique data */
+	
+	//! Board identifier for which the auth request is aimed at (protocol::Global for server).
+	uint8_t board_id;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Password message.
+/**
+ * Response to Authentication request.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Password
+ */
+struct Password
+	: Message
+{
+	Password()
+		: Message(protocol::type::Password),
+		length(0),
+		data(0)
+	{ }
+	
+	~Password() { }
+	
+	/* unique data */
+	
+	//! Board identifier, must be the same as in the auth request this is response to.
+	uint8_t board_id;
+	
+	//! Password length.
+	uint8_t length;
+	
+	//! Password data.
+	char* data;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Subscribe message.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Subscribe
+ */
+struct Subscribe
+	: Message
+{
+	Subscribe()
+		: Message(protocol::type::Subscribe),
+		board_id(protocol::Global)
+	{ }
+	
+	~Subscribe() { }
+	
+	/* unique data */
+	
+	//! Board identifier.
+	uint8_t board_id;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Unsubscribe message.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Unsubscribe
+ */
+struct Unsubscribe
+	: Message
+{
+	Unsubscribe()
+		: Message(protocol::type::Unsubscribe),
+		board_id(protocol::Global)
+	{ }
+	
+	~Unsubscribe() { }
+	
+	/* unique data */
+	
+	//! Board identifier;
+	uint8_t board_id;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Admin Instruction message.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Instruction
+ */
+struct Instruction
+	: Message
+{
+	Instruction()
+		: Message(protocol::type::Instruction),
+		length(0),
+		data(0)
+	{ }
+	
+	~Instruction() { }
+	
+	/* unique data */
+	
+	//! Instruction string length.
+	uint8_t length;
+	
+	//! Instruction string data.
+	char* data;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! List Boards request.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#List_boards
+ */
+struct ListBoards
+	: Message
+{
+	ListBoards()
+		: Message(protocol::type::ListBoards)
+	{ }
+	
+	~ListBoards() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Cancel instruction.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Cancel
+ */
+struct Cancel
+	: Message
+{
+	Cancel()
+		: Message(protocol::type::Cancel)
+	{ }
+	
+	~Cancel() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! User Info message.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#User_info
+ */
+struct UserInfo
+	: Message
+{
+	UserInfo()
+		: Message(protocol::type::UserInfo, false, true),
+		mode(protocol::user::None),
+		event(protocol::user_event::None),
+		length(0),
+		name(0)
+	{ }
+	
+	~UserInfo() { }
+	
+	/* unique data */
+	
+	uint8_t
+		//! User mode flags (see protocol::user for full list)
+		mode,
+		//! User event (see protocol::user_event for full list)
+		event,
+		//! Name length in bytes.
+		length;
+	
+	//! User name.
+	char* name;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Host info message
+struct HostInfo
+	: Message
+{
+	HostInfo()
+		: Message(protocol::type::HostInfo),
+		boards(0),
+		boardLimit(0),
+		users(0),
+		userLimit(0),
+		nameLenLimit(0),
+		maxSubscriptions(0),
+		requirements(protocol::requirements::None),
+		extensions(protocol::extensions::None)
+	{ }
+	
+	~HostInfo() { }
+	
+	/* unique data */
+	
+	uint8_t
+		//! Number of boards on server.
+		boards,
+		//! Max number of boards on server.
+		boardLimit,
+		//! Connected users.
+		users,
+		//! Max connected users (1 always reserved for admin over this).
+		userLimit,
+		//! User/board name length limit.
+		nameLenLimit,
+		//! Max board/session subscriptions per user.
+		maxSubscriptions,
+		//! Server operation flags (see protocol::requirements).
+		requirements,
+		//! Extension support (see protocol::extensions).
+		extensions;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Board Info message.
+struct BoardInfo
+	: Message
+{
+	BoardInfo()
+		: Message(protocol::type::BoardInfo, true),
+		identifier(protocol::Global),
+		width(0),
+		height(0),
+		owner(protocol::null_user),
+		users(0),
+		userLimit(0),
+		nameLength(0),
+		name(0)
+	{ }
+	
+	~BoardInfo() { }
+	
+	/* unique data */
+	
+	//! Board identifier.
+	uint8_t identifier;
+	
+	uint16_t
+		//! Board width.
+		width,
+		//! Board height.
+		height;
+	
+	uint8_t
+		//! Board owner user identifier.
+		owner,
+		//! Board users.
+		users,
+		//! Board user limit.
+		userLimit,
+		//! Board name length.
+		nameLength;
+	
+	//! Board name.
+	char* name;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Acknowledgement message.
+struct Acknowledgement
+	: Message
+{
+	Acknowledgement()
+		: Message(protocol::type::Acknowledgement),
+		event(protocol::type::None)
+	{ }
+	
+	~Acknowledgement() { }
+	
+	/* unique data */
+	
+	//! Event identifier.
+	uint8_t event;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Error message.
+struct Error
+	: Message
+{
+	Error()
+		: Message(protocol::type::Error),
+		category(protocol::error::category::None),
+		code(protocol::error::code::None)
+	{ }
+	
+	~Error() { }
+	
+	/* unique data */
+	
+	uint16_t
+		//! Error category.
+		category,
+		//! Error code.
+		code;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Deflate Extension message.
+struct Deflate
+	: Message
+{
+	Deflate()
+		: Message(protocol::type::Deflate),
+		uncompressed(0),
+		length(0),
+		data(0)
+	{ }
+	
+	~Deflate() { }
+	
+	/* unique data */
+	
+	uint16_t
+		//! Size of the data when uncompressed.
+		uncompressed,
+		//! Data length.
+		length;
+	
+	//! Compressed data.
+	char* data;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Chat Extension message.
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Chat
+ */
+struct Chat
+	: Message
+{
+	Chat()
+		: Message(protocol::type::Chat),
+		board_id(protocol::Global),
+		length(0),
+		data(0)
+	{ }
+	
+	~Chat() { }
+	
+	/* unique data */
+	
+	uint8_t
+		//! Target board identifier (use protocol::Global for global messages).
+		board_id,
+		//! Message string length.
+		length;
+	
+	//! Message string data.
+	char* data;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
+	size_t serializePayload(char *buf) const;
+	size_t payloadLength() const;
+};
+
+//! Shared Palette message (proposed).
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Palette
+ */
+struct Palette
+	: Message
+{
+	Palette()
+		: Message(protocol::type::Palette),
+		offset(0),
+		count(0),
+		data(0)
+	{ }
+	
+	~Palette() { }
+	
+	/* unique data */
+	
+	uint8_t
+		//! Color offset in shared palette.
+		offset,
+		//! Number of colors in data. Length of palette data is 3*color_count bytes.
+		count;
+	
+	//! Palette data.
+	char* data;
+	
+	/* functions */
+	
+	void unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len);
 	size_t serializePayload(char *buf) const;
 	size_t payloadLength() const;
 };
 
 } // namespace protocol
 
-#endif // PROTOCOL_H_INCLUDED
+#endif // Protocol_INCLUDED
