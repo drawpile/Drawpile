@@ -22,27 +22,25 @@
 #ifndef Shared_Templates_INCLUDED
 #define Shared_Templates_INCLUDED
 
-#include "sockets.h"
+//#include "sockets.h"
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
 
-/* Swapping endianess.. wrapper for ntohl(), ntohs(), etc. */
+/* swapping endianess */
 
 template <class T>
-T bswap(T& x)
+struct bswap_t
 {
-	switch (sizeof(T))
-	{
-		case sizeof(uint32_t):
-			return ntohl(x);
-			break;
-		case sizeof(uint16_t):
-			return ntohs(x);
-			break;
-		default:
-			return x;
-			break;
-	}
+	static
+	T& swap(T&);
+};
+
+/* wrapper for bswap_t */
+
+template <class T>
+T& bswap(T& x)
+{
+	return bswap_t<T>::swap(x);
 }
 
 //! Wrapper for memcpy() and bswap().
@@ -54,11 +52,11 @@ T bswap(T& x)
  * the endianess.
  */
 template <class T>
-T bswap_mem(T& x, const char* buf)
+T& bswap_mem(T& x, const char* buf)
 {
 	assert(buf != 0);
 	memcpy(&x, buf, sizeof(T));
-	return x = bswap(x);
+	return bswap(x);
 }
 
 //! Wrapper for memcpy() and bswap()
@@ -72,8 +70,7 @@ template <class T>
 char* bswap_mem(char* buf, T& u)
 {
 	assert(buf != 0);
-	T x = bswap(u);
-	memcpy(buf, &x, sizeof(T));
+	memcpy(buf, &bswap(u), sizeof(T));
 	return buf;
 }
 
@@ -84,7 +81,7 @@ T bswap_mem(const char* buf)
 	assert(buf != 0);
 	T x;
 	memcpy(&x, buf, sizeof(T));
-	return x;
+	return bswap(x);
 }
 
 /* Bit operations */
