@@ -17,10 +17,12 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-
+#include <iostream>
 #include "controller.h"
 #include "board.h"
 #include "brush.h"
+#include "dualcolorbutton.h"
+#include "toolsettingswidget.h"
 
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0)
@@ -35,25 +37,21 @@ void Controller::setBoard(drawingboard::Board *board)
 
 void Controller::penDown(int x,int y, qreal pressure, bool isEraser)
 {
-	if(board_) {
-		//board_->beginPreview(x,y,pressure);
-		board_->strokeBegin(0,x,y,pressure,drawingboard::Brush());
-	}
+	//board_->beginPreview(x,y,pressure);
+	drawingboard::Brush brush = settings_->getBrush(colors_->foreground(),
+			colors_->background());
+	board_->strokeBegin(0,x,y,pressure,brush);
 }
 
 void Controller::penMove(int x,int y, qreal pressure)
 {
-	if(board_) {
-		//board_->strokePreview(x,y,pressure);
-		board_->strokeMotion(0,x,y,pressure);
-	}
+	//board_->strokePreview(x,y,pressure);
+	board_->strokeMotion(0,x,y,pressure);
 }
 
 void Controller::penUp()
 {
-	if(board_) {
-		//board_->endPreview();
-		board_->strokeEnd(0);
-	}
+	//board_->endPreview();
+	board_->strokeEnd(0);
 }
 

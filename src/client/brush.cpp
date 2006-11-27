@@ -115,7 +115,7 @@ qreal Brush::radius(qreal pressure) const
 {
 	qreal rad1 = diameter1_ / 2.0;
 	qreal rad2 = diameter2_ / 2.0;
-	return qRound(rad2 + (rad1 - rad2) * pressure);
+	return rad2 + (rad1 - rad2) * pressure;
 }
 
 /**
@@ -154,7 +154,7 @@ QColor Brush::color(qreal pressure) const
 /**
  * A brush is basically a pixmap filled with a single color and an alpha
  * channel that defines its shape.
- * The alpha channel is produced with the formula \f$a(x,y) = 1-\frac{x^2+y^2}{r^2}+h\f$.
+ * The alpha channel is produced with the formula \f$a(x,y) = 1-\frac{x^2+y^2}{r^2}^{2h^r}\f$.
  * getBrush will cache the previously used brush.
  * @param pressure pen pressure. Range is [0..1]
  * @return brush pixmap
@@ -166,7 +166,8 @@ QPixmap Brush::getBrush(qreal pressure) const
 
 		int dia = diameter(pressure);
 		qreal rad = radius(pressure);
-		qreal hard = hardness(pressure);
+		qreal hard = pow(hardness(pressure)*2,rad);
+		if(hard<0.01) hard=0.01;
 
 		QImage brush(dia,dia,QImage::Format_ARGB32);
 
@@ -180,7 +181,7 @@ QPixmap Brush::getBrush(qreal pressure) const
 			qreal yy = (y-rad) * (y-rad);
 			for(int x=0;x<dia;++x,data+=4) {
 				qreal xx = (x-rad) * (x-rad);
-				qreal intensity = (1-(xx + yy)*rr) + hard;
+				qreal intensity = 1-pow( (xx+yy)*(rr) ,hard);
 
 				if(intensity<0) intensity=0;
 				else if(intensity>1) intensity=1;
@@ -205,8 +206,8 @@ Brush& Brush::operator=(const Brush& brush)
 {
 	bool isEqual = true;
 	if(diameter1_ != brush.diameter1_ || diameter2_ != brush.diameter2_ ||
-			(hardness1_ - brush.hardness1_) > 1.0/255.0 ||
-			(hardness2_ - brush.hardness2_) > 1.0/255.0 ||
+			fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
+			fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
 			color1_ != brush.color1_ ||
 			color2_ != brush.color2_)
 		isEqual = false;

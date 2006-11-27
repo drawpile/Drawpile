@@ -63,6 +63,9 @@ MainWindow::MainWindow()
 
 	controller_ = new Controller(this);
 	controller_->setBoard(board_);
+	controller_->setColors(fgbgcolor_);
+	controller_->setSettings(toolsettings_);
+
 	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
 	connect(view_,SIGNAL(penMove(int,int,qreal)),controller_,SLOT(penMove(int,int,qreal)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
@@ -282,8 +285,8 @@ void MainWindow::createToolbars()
 	drawtools->addAction(zoomorig_);
 	drawtools->addSeparator();
 
-	widgets::DualColorButton *dcbtn = new widgets::DualColorButton(drawtools);
-	drawtools->addWidget(dcbtn);
+	fgbgcolor_ = new widgets::DualColorButton(drawtools);
+	drawtools->addWidget(fgbgcolor_);
 
 	addToolBar(Qt::LeftToolBarArea, drawtools);
 

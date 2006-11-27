@@ -29,6 +29,10 @@ namespace tools {
 	class BrushSettings;
 }
 
+namespace drawingboard {
+	class Brush;
+}
+
 namespace widgets {
 
 //! Tool settings window
@@ -44,6 +48,9 @@ class ToolSettings: public QDockWidget
 
 		~ToolSettings();
 
+		//! Get a brush with the current settings
+		drawingboard::Brush getBrush(const QColor& foreground,
+				const QColor& background) const;
 	public slots:
 		void setTool(tools::Type tool);
 
@@ -52,11 +59,8 @@ class ToolSettings: public QDockWidget
 		ToolSettings& operator=(const ToolSettings& ts);
 
 		tools::BrushSettings *brushsettings_;
-		QWidget *brush_;
 		tools::BrushSettings *erasersettings_;
-		QWidget *eraser_;
 
-		QWidget *currentwidget_;
 		tools::ToolSettings *currenttool_;
 };
 

@@ -29,26 +29,58 @@ namespace tools {
 //! Base class for tool settings
 class ToolSettings {
 	public:
+		ToolSettings(QString name,QString title, bool swapcolors)
+			: name_(name), title_(title), swapcolors_(swapcolors) {}
 		virtual ~ToolSettings() { }
 
 		//! Create an UI widget
-		virtual QWidget *createUi(QWidget *parent) = 0;
+		virtual void createUi(QWidget *parent) = 0;
+
+		//! Get the UI widget
+		QWidget *getUi() { return widget_; }
 
 		//! Get a brush based on the settings in the UI
 		/**
 		 * An UI widget must have been created before this can be called.
+		 * @param foreground foreground color
+		 * @param background background color
 		 * @return brush with values from the UI widget
 		 */
-		virtual drawingboard::Brush getBrush() const = 0;
+		virtual drawingboard::Brush getBrush(const QColor& foreground,
+				const QColor& background) const = 0;
+
+		//! Check if foreground and background colors should be swapped
+		/**
+		 * Eraser brush uses the background color as its foreground.
+		 * @return true if colors should be swapped
+		 */
+		bool isColorsSwapped() const { return swapcolors_; }
+
+		//! Get the name (internal) of this tool
+		const QString& getName() const { return name_; }
+		//
+		//! Get the title of this tool
+		const QString& getTitle() const { return title_; }
+
+	protected:
+		void setUiWidget(QWidget *widget) { widget_ = widget; }
+
+	private:
+		QString name_;
+		QString title_;
+		bool swapcolors_;
+		QWidget *widget_;
 };
 
 class BrushSettings : public ToolSettings {
 	public:
-		BrushSettings();
+		BrushSettings(QString name, QString title, bool swapcolors=false);
 		~BrushSettings();
 
-		QWidget *createUi(QWidget *parent);
-		drawingboard::Brush getBrush() const;
+		void createUi(QWidget *parent);
+
+		drawingboard::Brush getBrush(const QColor& foreground,
+				const QColor& background) const;
 	private:
 		Ui_BrushSettings *ui_;
 };

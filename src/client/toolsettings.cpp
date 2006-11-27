@@ -22,8 +22,8 @@
 
 namespace tools {
 
-
-BrushSettings::BrushSettings()
+BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
+	: ToolSettings(name,title,swapcolors)
 {
 	ui_ = new Ui_BrushSettings();
 }
@@ -33,14 +33,16 @@ BrushSettings::~BrushSettings()
 	delete ui_;
 }
 
-QWidget *BrushSettings::createUi(QWidget *parent)
+void BrushSettings::createUi(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
 	ui_->setupUi(widget);
-	return widget;
+	widget->hide();
+	setUiWidget(widget);
 }
 
-drawingboard::Brush BrushSettings::getBrush() const
+drawingboard::Brush BrushSettings::getBrush(const QColor& foreground,
+		const QColor& background) const
 {
 	int diameter = ui_->brushsize->value();
 	qreal hardness = ui_->brushhardness->value()/qreal(ui_->brushhardness->maximum());
@@ -53,10 +55,13 @@ drawingboard::Brush BrushSettings::getBrush() const
 		hardness2 = 0;
 	if(ui_->pressureopacity->isChecked())
 		opacity2 = 0;
-	drawingboard::Brush brush(diameter,hardness,opacity);
+
+	drawingboard::Brush brush(diameter,hardness,opacity,
+			isColorsSwapped()?background:foreground);
 	brush.setDiameter2(diameter2);
 	brush.setHardness2(hardness2);
 	brush.setOpacity2(opacity2);
+	brush.setColor2(isColorsSwapped()?foreground:background);
 	return brush;
 }
 
