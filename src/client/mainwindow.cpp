@@ -95,6 +95,7 @@ void MainWindow::readSettings()
 	QList<QAction*> actions = drawingTools_->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
+	toolsettings_->setTool(tools::Type(tool));
 }
 
 void MainWindow::writeSettings()
@@ -176,8 +177,11 @@ void MainWindow::initActions()
 	// File actions
 	save_ = new QAction(QIcon(":icons/document-save.png"),tr("&Save"), this);
 	save_->setShortcut(QKeySequence::Save);
+	save_->setStatusTip(tr("Save picture to file"));
 	saveas_ = new QAction(QIcon(":icons/document-save-as.png"),tr("Save &As..."), this);
+	saveas_->setStatusTip(tr("Save picture to file with a new name"));
 	quit_ = new QAction(QIcon(":icons/system-log-out.png"),tr("&Quit"), this);
+	quit_->setStatusTip(tr("Quit the program"));
 	quit_->setShortcut(QKeySequence("Ctrl+Q"));
 	quit_->setMenuRole(QAction::QuitRole);
 
@@ -187,9 +191,13 @@ void MainWindow::initActions()
 
 	// Session actions
 	host_ = new QAction("Host...", this);
+	host_->setStatusTip(tr("Host a new drawing session"));
 	join_ = new QAction("Join...", this);
+	join_->setStatusTip(tr("Join an existing drawing session"));
 	logout_ = new QAction("Leave", this);
+	logout_->setStatusTip(tr("Leave this drawing session"));
 	lockboard_ = new QAction("Lock the board", this);
+	lockboard_->setStatusTip(tr("Prevent others from making changes"));
 	kickuser_ = new QAction("Kick", this);
 	lockuser_ = new QAction("Lock", this);
 
@@ -269,7 +277,7 @@ void MainWindow::createToolbars()
 	QMenu *togglemenu = new QMenu(this);
 	// File toolbar
 	QToolBar *filetools = new QToolBar(tr("File tools"));
-	filetools->setObjectName("filetools");
+	filetools->setObjectName("filetoolsbar");
 	togglemenu->addAction(filetools->toggleViewAction());
 	filetools->addAction(save_);
 	filetools->addAction(saveas_);
@@ -277,7 +285,7 @@ void MainWindow::createToolbars()
 
 	// Drawing toolbar
 	QToolBar *drawtools = new QToolBar("Drawing tools");
-	drawtools->setObjectName("drawtools");
+	drawtools->setObjectName("drawtoolsbar");
 	togglemenu->addAction(drawtools->toggleViewAction());
 
 	drawtools->addAction(brushTool_);
@@ -306,7 +314,7 @@ void MainWindow::createDocks()
 void MainWindow::createToolSettings(QMenu *toggles)
 {
 	toolsettings_ = new widgets::ToolSettings(this);
-	toolsettings_->setObjectName("toolsettings");
+	toolsettings_->setObjectName("toolsettingsdock");
 	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
 	toggles->addAction(toolsettings_->toggleViewAction());

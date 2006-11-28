@@ -1,22 +1,23 @@
 /*
-   DrawPile - a collaborative drawing program.
+	DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+	Copyright (C) 2006 Calle Laakkonen
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2, or (at your option)
+	any later version.
 
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software Foundation,
+	Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QSettings>
 #include "toolsettings.h"
 #include "ui_brushsettings.h"
 
@@ -30,7 +31,20 @@ BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
 
 BrushSettings::~BrushSettings()
 {
-	delete ui_;
+	if(ui_) {
+		// Remember settings
+		QSettings cfg;
+		cfg.beginGroup("tools");
+		cfg.beginGroup(getName());
+		cfg.setValue("size", ui_->brushsize->value());
+		cfg.setValue("opacity", ui_->brushopacity->value());
+		cfg.setValue("hardness", ui_->brushhardness->value());
+		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
+		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
+		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
+		cfg.setValue("pressurecolor", ui_->pressurecolor->isChecked());
+		delete ui_;
+	}
 }
 
 QWidget *BrushSettings::createUi(QWidget *parent)
@@ -39,6 +53,22 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	ui_->setupUi(widget);
 	widget->hide();
 	setUiWidget(widget);
+
+	// Load previous settings
+	QSettings cfg;
+	cfg.beginGroup("tools");
+	cfg.beginGroup(getName());
+	ui_->brushsize->setValue(cfg.value("size", 1).toInt());
+	ui_->brushsizebox->setValue(ui_->brushsize->value());
+	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
+	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
+	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+
 	return widget;
 }
 
