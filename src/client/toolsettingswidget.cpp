@@ -18,6 +18,8 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QStackedWidget>
+
 #include "toolsettingswidget.h"
 #include "toolsettings.h"
 
@@ -26,16 +28,19 @@ namespace widgets {
 ToolSettings::ToolSettings(QWidget *parent)
 	: QDockWidget(parent)
 {
+	// Create a widget stack
+	widgets_ = new QStackedWidget(this);
+	setWidget(widgets_);
+
 	// Create settings widget for brush
-	brushsettings_ = new tools::BrushSettings("brush", tr("Brush"));
-	brushsettings_->createUi(this);
+	brushsettings_ = new tools::BrushSettings("brush", tr("Brush settings"));
+	widgets_->addWidget(brushsettings_->createUi(this));
 	currenttool_ = brushsettings_;
 
 	// Create settings widget for eraser
-	erasersettings_ = new tools::BrushSettings("brush", tr("Eraser"),true);
-	erasersettings_->createUi(this);
+	erasersettings_ = new tools::BrushSettings("brush", tr("Eraser settings"),true);
+	widgets_->addWidget(erasersettings_->createUi(this));
 
-	setTool(tools::BRUSH);
 }
 
 ToolSettings::~ToolSettings()
@@ -49,14 +54,12 @@ ToolSettings::~ToolSettings()
  * @param tool tool identifier
  */
 void ToolSettings::setTool(tools::Type tool) {
-	currenttool_->getUi()->hide();
 	switch(tool) {
 		case tools::BRUSH: currenttool_ = brushsettings_; break;
 		case tools::ERASER: currenttool_ = erasersettings_; break;
 	}
 	setWindowTitle(currenttool_->getTitle());
-	currenttool_->getUi()->show();
-	setWidget(currenttool_->getUi());
+	widgets_->setCurrentWidget(currenttool_->getUi());
 }
 
 /**

@@ -63,7 +63,8 @@ class MainWindow : public QMainWindow {
 		void initActions();
 		void createMenus();
 		void createToolbars();
-		void createToolSettings();
+		void createDocks();
+		void createToolSettings(QMenu *menu);
 
 		widgets::ToolSettings *toolsettings_;
 		widgets::DualColorButton *fgbgcolor_;
@@ -96,8 +97,8 @@ class MainWindow : public QMainWindow {
 		QAction *zoomout_;
 		QAction *zoomorig_;
 
-		QAction *toggleFileBar;
-		QAction *toggleDrawBar;
+		QAction *toolbartoggles_;
+		QAction *docktoggles_;
 
 		QAction *help_;
 		QAction *about_;

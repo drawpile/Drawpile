@@ -41,7 +41,7 @@ MainWindow::MainWindow()
 	initActions();
 	createMenus();
 	createToolbars();
-	createToolSettings();
+	createDocks();
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
@@ -69,6 +69,7 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
 	connect(view_,SIGNAL(penMove(int,int,qreal)),controller_,SLOT(penMove(int,int,qreal)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
+
 	readSettings();
 }
 
@@ -83,18 +84,17 @@ void MainWindow::readSettings()
 		move(cfg.value("pos").toPoint());
 
 	if(cfg.contains("state")) {
-		if(restoreState(cfg.value("state").toByteArray())) {
-			// Correct action tickmarks
-			QToolBar *filebar = findChild<QToolBar*>("filetools");
-			if(filebar && filebar->isHidden())
-				toggleFileBar->setChecked(false);
-			QToolBar *drawbar = findChild<QToolBar*>("drawtools");
-			if(drawbar && drawbar->isHidden())
-				toggleDrawBar->setChecked(false);
-		}
+		restoreState(cfg.value("state").toByteArray());
 	}
 
 	lastpath_ = cfg.value("lastpath").toString();
+
+	cfg.endGroup();
+	cfg.beginGroup("tools");
+	int tool = cfg.value("tool", 0).toInt();
+	QList<QAction*> actions = drawingTools_->actions();
+	if(tool<0 || tool>=actions.count()) tool=0;
+	actions[tool]->trigger();
 }
 
 void MainWindow::writeSettings()
@@ -106,6 +106,11 @@ void MainWindow::writeSettings()
 	cfg.setValue("size", size());
 	cfg.setValue("state", saveState());
 	cfg.setValue("lastpath", lastpath_);
+
+	cfg.endGroup();
+	cfg.beginGroup("tools");
+	int tool = drawingTools_->actions().indexOf(drawingTools_->checkedAction());
+	cfg.setValue("tool", tool);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -216,12 +221,8 @@ void MainWindow::initActions()
 	connect(drawingTools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Toolbar toggling actions
-	toggleFileBar = new QAction(tr("File"), this);
-	toggleFileBar->setCheckable(true);
-	toggleFileBar->setChecked(true);
-	toggleDrawBar = new QAction(tr("Drawing tools"), this);
-	toggleDrawBar->setCheckable(true);
-	toggleDrawBar->setChecked(true);
+	toolbartoggles_ = new QAction(tr("Toolbars"), this);
+	docktoggles_ = new QAction(tr("Docks"), this);
 
 	// Help actions
 	help_ = new QAction(tr("DrawPile Help"), this);
@@ -250,9 +251,8 @@ void MainWindow::createMenus()
 	QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
 
 	QMenu *windowmenu = menuBar()->addMenu(tr("&Window"));
-	QMenu *toolbarmenu = windowmenu->addMenu(tr("Toolbars"));
-	toolbarmenu->addAction(toggleFileBar);
-	toolbarmenu->addAction(toggleDrawBar);
+	windowmenu->addAction(toolbartoggles_);
+	windowmenu->addAction(docktoggles_);
 	windowmenu->addSeparator();
 	windowmenu->addAction(zoomin_);
 	windowmenu->addAction(zoomout_);
@@ -266,16 +266,19 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolbars()
 {
-	QToolBar *filetools = new QToolBar(toggleFileBar->text());
+	QMenu *togglemenu = new QMenu(this);
+	// File toolbar
+	QToolBar *filetools = new QToolBar(tr("File tools"));
 	filetools->setObjectName("filetools");
-	connect(toggleFileBar,SIGNAL(triggered(bool)),filetools,SLOT(setVisible(bool)));
+	togglemenu->addAction(filetools->toggleViewAction());
 	filetools->addAction(save_);
 	filetools->addAction(saveas_);
 	addToolBar(Qt::TopToolBarArea, filetools);
 
-	QToolBar *drawtools = new QToolBar(toggleDrawBar->text());
+	// Drawing toolbar
+	QToolBar *drawtools = new QToolBar("Drawing tools");
 	drawtools->setObjectName("drawtools");
-	connect(toggleDrawBar,SIGNAL(triggered(bool)),drawtools,SLOT(setVisible(bool)));
+	togglemenu->addAction(drawtools->toggleViewAction());
 
 	drawtools->addAction(brushTool_);
 	drawtools->addAction(eraserTool_);
@@ -290,13 +293,23 @@ void MainWindow::createToolbars()
 
 	addToolBar(Qt::LeftToolBarArea, drawtools);
 
+	toolbartoggles_->setMenu(togglemenu);
 }
 
-void MainWindow::createToolSettings()
+void MainWindow::createDocks()
+{
+	QMenu *toggles = new QMenu(this);
+	createToolSettings(toggles);
+	docktoggles_->setMenu(toggles);
+}
+
+void MainWindow::createToolSettings(QMenu *toggles)
 {
 	toolsettings_ = new widgets::ToolSettings(this);
 	toolsettings_->setObjectName("toolsettings");
+	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
+	toggles->addAction(toolsettings_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
 }
 

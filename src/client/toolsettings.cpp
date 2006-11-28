@@ -23,7 +23,7 @@
 namespace tools {
 
 BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
-	: ToolSettings(name,title,swapcolors)
+	: ToolSettings(name,title), swapcolors_(swapcolors)
 {
 	ui_ = new Ui_BrushSettings();
 }
@@ -33,12 +33,13 @@ BrushSettings::~BrushSettings()
 	delete ui_;
 }
 
-void BrushSettings::createUi(QWidget *parent)
+QWidget *BrushSettings::createUi(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
 	ui_->setupUi(widget);
 	widget->hide();
 	setUiWidget(widget);
+	return widget;
 }
 
 drawingboard::Brush BrushSettings::getBrush(const QColor& foreground,
@@ -57,11 +58,11 @@ drawingboard::Brush BrushSettings::getBrush(const QColor& foreground,
 		opacity2 = 0;
 
 	drawingboard::Brush brush(diameter,hardness,opacity,
-			isColorsSwapped()?background:foreground);
+			swapcolors_?background:foreground);
 	brush.setDiameter2(diameter2);
 	brush.setHardness2(hardness2);
 	brush.setOpacity2(opacity2);
-	brush.setColor2(isColorsSwapped()?foreground:background);
+	brush.setColor2(swapcolors_?foreground:background);
 	return brush;
 }
 

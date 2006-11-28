@@ -24,6 +24,8 @@
 
 #include "tools.h"
 
+class QStackedWidget;
+
 namespace tools {
 	class ToolSettings;
 	class BrushSettings;
@@ -62,6 +64,7 @@ class ToolSettings: public QDockWidget
 		tools::BrushSettings *erasersettings_;
 
 		tools::ToolSettings *currenttool_;
+		QStackedWidget *widgets_;
 };
 
 }

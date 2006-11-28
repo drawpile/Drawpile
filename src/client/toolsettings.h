@@ -29,12 +29,12 @@ namespace tools {
 //! Base class for tool settings
 class ToolSettings {
 	public:
-		ToolSettings(QString name,QString title, bool swapcolors)
-			: name_(name), title_(title), swapcolors_(swapcolors) {}
+		ToolSettings(QString name,QString title)
+			: name_(name), title_(title), widget_(0) {}
 		virtual ~ToolSettings() { }
 
 		//! Create an UI widget
-		virtual void createUi(QWidget *parent) = 0;
+		virtual QWidget *createUi(QWidget *parent) = 0;
 
 		//! Get the UI widget
 		QWidget *getUi() { return widget_; }
@@ -49,13 +49,6 @@ class ToolSettings {
 		virtual drawingboard::Brush getBrush(const QColor& foreground,
 				const QColor& background) const = 0;
 
-		//! Check if foreground and background colors should be swapped
-		/**
-		 * Eraser brush uses the background color as its foreground.
-		 * @return true if colors should be swapped
-		 */
-		bool isColorsSwapped() const { return swapcolors_; }
-
 		//! Get the name (internal) of this tool
 		const QString& getName() const { return name_; }
 		//
@@ -68,7 +61,6 @@ class ToolSettings {
 	private:
 		QString name_;
 		QString title_;
-		bool swapcolors_;
 		QWidget *widget_;
 };
 
@@ -77,12 +69,13 @@ class BrushSettings : public ToolSettings {
 		BrushSettings(QString name, QString title, bool swapcolors=false);
 		~BrushSettings();
 
-		void createUi(QWidget *parent);
+		QWidget *createUi(QWidget *parent);
 
 		drawingboard::Brush getBrush(const QColor& foreground,
 				const QColor& background) const;
 	private:
 		Ui_BrushSettings *ui_;
+		bool swapcolors_;
 };
 
 }
