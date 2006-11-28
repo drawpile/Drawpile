@@ -178,9 +178,9 @@ QPixmap Brush::getBrush(qreal pressure) const
 		qreal rr = 1.0/(rad*rad);
 		for(int y=0;y<dia;++y) {
 			uchar *data = brush.scanLine(y)+3;
-			qreal yy = (y-rad) * (y-rad);
+			qreal yy = (y-rad+0.5) * (y-rad+0.5);
 			for(int x=0;x<dia;++x,data+=4) {
-				qreal xx = (x-rad) * (x-rad);
+				qreal xx = (x-rad+0.5) * (x-rad+0.5);
 				qreal intensity = 1-pow( (xx+yy)*(rr) ,hard);
 
 				if(intensity<0) intensity=0;
