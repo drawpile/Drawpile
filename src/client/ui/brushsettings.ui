@@ -71,7 +71,7 @@
      <item>
       <widget class="QSlider" name="brushopacity" >
        <property name="minimum" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="maximum" >
         <number>100</number>
@@ -90,7 +90,7 @@
         <number>100</number>
        </property>
        <property name="minimum" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="value" >
         <number>100</number>

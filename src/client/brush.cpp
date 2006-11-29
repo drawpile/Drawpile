@@ -24,7 +24,7 @@
 namespace drawingboard {
 
 Brush::Brush(int diameter, qreal hardness, qreal opacity, const QColor& color)
-	: diameter1_(diameter), diameter2_(1),
+	: diameter1_(diameter), diameter2_(diameter),
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color),
@@ -54,7 +54,6 @@ void Brush::setHardness(qreal hardness)
 
 /**
  * Set the opacity for pressure=1.0
- * Opacity is not used internally by this class, but is provided as a service.
  * @param opacity brush opacity. Range is [0..1]
  */
 void Brush::setOpacity(qreal opacity)
@@ -154,7 +153,7 @@ QColor Brush::color(qreal pressure) const
 /**
  * A brush is basically a pixmap filled with a single color and an alpha
  * channel that defines its shape.
- * The alpha channel is produced with the formula \f$a(x,y) = 1-\frac{x^2+y^2}{r^2}^{2r^h}\f$.
+ * The alpha channel is produced with the formula \f$a(x,y) = (1-\frac{x^2+y^2}{r^2}^{2r^{2h-1}})*o\f$.
  * getBrush will cache the previously used brush.
  * @param pressure pen pressure. Range is [0..1]
  * @return brush pixmap
@@ -166,8 +165,9 @@ QPixmap Brush::getBrush(qreal pressure) const
 
 		int dia = diameter(pressure);
 		qreal rad = radius(pressure);
-		qreal hard = pow(2*rad,hardness(pressure));
+		qreal hard = pow(2*rad,2*hardness(pressure)-1);
 		if(hard<0.01) hard=0.01;
+		qreal alpha = opacity(pressure);
 
 		QImage brush(dia,dia,QImage::Format_ARGB32);
 
@@ -183,7 +183,7 @@ QPixmap Brush::getBrush(qreal pressure) const
 			qreal yy = (y-rad) * (y-rad);
 			for(int x=0;x<dia;++x,data+=4) {
 				qreal xx = (x-rad) * (x-rad);
-				qreal intensity = 1-pow( (xx+yy)*(rr) ,hard);
+				qreal intensity = (1-pow( (xx+yy)*(rr) ,hard)) * alpha;
 
 				if(intensity<0) intensity=0;
 				else if(intensity>1) intensity=1;
@@ -210,6 +210,8 @@ Brush& Brush::operator=(const Brush& brush)
 	if(diameter1_ != brush.diameter1_ || diameter2_ != brush.diameter2_ ||
 			fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
 			fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
+			fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
+			fabs(opacity2_ - brush.opacity2_) >= 0.01 ||
 			color1_ != brush.color1_ ||
 			color2_ != brush.color2_)
 		isEqual = false;

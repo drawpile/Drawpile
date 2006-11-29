@@ -56,6 +56,7 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 		const QPoint& point2, qreal pressure2, const Brush& brush)
 {
 	QPainter painter(&pixmap_);
+	painter.setOpacity(1.0);
 	qreal pressure = pressure1;
 	qreal deltapressure;
 	if(pressure2-pressure1 < 1.0/255.0)
@@ -133,8 +134,8 @@ void Layer::drawPoint(QPainter &painter, int x,int y, qreal pressure, const Brus
 {
 	int r = brush.diameter(pressure)/2;
 	QPoint p(x-r,y-r);
-	painter.setOpacity(brush.opacity(pressure));
 	if(r==0) {
+		painter.setOpacity(brush.opacity(pressure));
 		painter.setPen(brush.color(pressure));
 		painter.drawPoint(QPoint(x,y));
 	} else {
