@@ -1,0 +1,200 @@
+<ui version="4.0" >
+ <class>ColorDialog</class>
+ <widget class="QDialog" name="ColorDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>280</width>
+    <height>97</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="margin" >
+    <number>4</number>
+   </property>
+   <property name="spacing" >
+    <number>1</number>
+   </property>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>Blue</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Green</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QSlider" name="green" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QSlider" name="blue" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3" >
+    <widget class="QSpinBox" name="redbox" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3" >
+    <widget class="QSpinBox" name="greenbox" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3" >
+    <widget class="QSpinBox" name="bluebox" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2" >
+    <widget class="QSlider" name="red" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>Red</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>redbox</tabstop>
+  <tabstop>greenbox</tabstop>
+  <tabstop>bluebox</tabstop>
+  <tabstop>red</tabstop>
+  <tabstop>green</tabstop>
+  <tabstop>blue</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>red</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>redbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>142</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>255</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>green</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>greenbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>165</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>261</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>bluebox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>156</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>261</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bluebox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>blue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>265</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>54</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>greenbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>green</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>288</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>98</x>
+     <y>56</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>redbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>red</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>257</x>
+     <y>13</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>82</x>
+     <y>21</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

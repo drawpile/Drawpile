@@ -24,7 +24,7 @@ DualColorButton::DualColorButton(const QColor& fgColor, const QColor& bgColor, Q
 void DualColorButton::setForeground(const QColor &c)
 {
 	foreground_ = c;
-	emit foregroundChanged(c);
+	update();
 }
 
 /**
@@ -34,7 +34,7 @@ void DualColorButton::setForeground(const QColor &c)
 void DualColorButton::setBackground(const QColor &c)
 {
 	background_ = c;
-	emit backgroundChanged(c);
+	update();
 }
 
 QRect DualColorButton::foregroundRect() const

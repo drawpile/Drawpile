@@ -31,6 +31,7 @@ namespace widgets {
 	class EditorView;
 	class DualColorButton;
 	class ToolSettings;
+	class ColorDialog;
 }
 namespace drawingboard {
 	class Board;
@@ -71,6 +72,7 @@ class MainWindow : public QMainWindow {
 		widgets::NetStatus *netstatus_;
 		widgets::HostLabel *hostaddress_;
 		widgets::EditorView *view_;
+		widgets::ColorDialog *fgdialog_,*bgdialog_;
 		drawingboard::Board *board_;
 		Controller *controller_;
 

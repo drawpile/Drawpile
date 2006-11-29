@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QApplication>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QStatusBar>
@@ -32,6 +33,7 @@
 #include "board.h"
 #include "controller.h"
 #include "toolsettingswidget.h"
+#include "colordialog.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
@@ -96,6 +98,13 @@ void MainWindow::readSettings()
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
 	toolsettings_->setTool(tools::Type(tool));
+
+	QColor fg = cfg.value("foreground", Qt::black).value<QColor>();
+	QColor bg = cfg.value("background", Qt::white).value<QColor>();
+	fgbgcolor_->setForeground(fg);
+	fgbgcolor_->setBackground(bg);
+	fgdialog_->setColor(fg);
+	bgdialog_->setColor(bg);
 }
 
 void MainWindow::writeSettings()
@@ -112,12 +121,15 @@ void MainWindow::writeSettings()
 	cfg.beginGroup("tools");
 	int tool = drawingTools_->actions().indexOf(drawingTools_->checkedAction());
 	cfg.setValue("tool", tool);
+	cfg.setValue("foreground",fgbgcolor_->foreground());
+	cfg.setValue("background",fgbgcolor_->background());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	(void)event;
 	writeSettings();
+	QApplication::quit();
 }
 
 void MainWindow::save()
@@ -296,7 +308,21 @@ void MainWindow::createToolbars()
 	drawtools->addAction(zoomorig_);
 	drawtools->addSeparator();
 
+	// Create color button
 	fgbgcolor_ = new widgets::DualColorButton(drawtools);
+
+	// Create color changer dialog for foreground
+	fgdialog_ = new widgets::ColorDialog(tr("Foreground color"), this);
+	connect(fgbgcolor_,SIGNAL(foregroundClicked()), fgdialog_, SLOT(show()));
+	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)), fgdialog_, SLOT(setColor(QColor)));
+	connect(fgdialog_,SIGNAL(colorChanged(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+
+	// Create color changer dialog for background
+	bgdialog_ = new widgets::ColorDialog(tr("Background color"), this);
+	connect(fgbgcolor_,SIGNAL(backgroundClicked()), bgdialog_, SLOT(show()));
+	connect(fgbgcolor_,SIGNAL(backgroundChanged(QColor)), bgdialog_, SLOT(setColor(QColor)));
+	connect(bgdialog_,SIGNAL(colorChanged(QColor)), fgbgcolor_, SLOT(setBackground(QColor)));
+
 	drawtools->addWidget(fgbgcolor_);
 
 	addToolBar(Qt::LeftToolBarArea, drawtools);
