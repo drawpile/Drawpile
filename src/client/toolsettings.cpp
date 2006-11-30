@@ -96,5 +96,25 @@ drawingboard::Brush BrushSettings::getBrush(const QColor& foreground,
 	return brush;
 }
 
+NoSettings::NoSettings(const QString& name, const QString& title)
+	: ToolSettings(name, title)
+{
+}
+
+QWidget *NoSettings::createUi(QWidget *parent)
+{
+	QLabel *ui = new QLabel(QApplication::tr("This tool has no settings"),
+			parent);
+	setUiWidget(ui);
+	return ui;
+}
+
+drawingboard::Brush NoSettings::getBrush(const QColor& foreground,
+		const QColor& background) const
+{
+	// return a default brush
+	return drawingboard::Brush(1,1,1,foreground);
+}
+
 }
 

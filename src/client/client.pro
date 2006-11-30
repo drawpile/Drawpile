@@ -13,5 +13,5 @@ HEADERS = mainwindow.h \
 SOURCES = main.cpp mainwindow.cpp \
 	netstatus.cpp hostlabel.cpp dualcolorbutton.cpp editorview.cpp \
 	toolsettingswidget.cpp colordialog.cpp \
-	board.cpp controller.cpp layer.cpp brush.cpp user.cpp toolsettings.cpp
+	board.cpp controller.cpp layer.cpp brush.cpp user.cpp tools.cpp toolsettings.cpp
 

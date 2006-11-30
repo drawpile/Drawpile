@@ -57,6 +57,9 @@ class Board : public QGraphicsScene
 		//! Remove a user from the board
 		void removeUser(int id);
 
+		//! Get the color at position
+		QColor colorAt(int x,int y);
+
 		//! Begin a new preview stroke
 		void previewBegin(int x,int y, qreal pressure);
 

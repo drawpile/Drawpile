@@ -92,9 +92,10 @@ class MainWindow : public QMainWindow {
 		QAction *lockuser_;
 		QAction *kickuser_;
 
-		QActionGroup *drawingTools_;
-		QAction *brushTool_;
-		QAction *eraserTool_;
+		QActionGroup *drawingtools_;
+		QAction *brushtool_;
+		QAction *erasertool_;
+		QAction *pickertool_;
 		QAction *zoomin_;
 		QAction *zoomout_;
 		QAction *zoomorig_;

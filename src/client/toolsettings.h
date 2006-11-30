@@ -64,6 +64,11 @@ class ToolSettings {
 		QWidget *widget_;
 };
 
+//! Basic brush settings
+/**
+ * This is a settings class for brush based drawing tools, like the
+ * regular brush and eraser.
+ */
 class BrushSettings : public ToolSettings {
 	public:
 		BrushSettings(QString name, QString title, bool swapcolors=false);
@@ -76,6 +81,20 @@ class BrushSettings : public ToolSettings {
 	private:
 		Ui_BrushSettings *ui_;
 		bool swapcolors_;
+};
+
+//! No settings
+/**
+ * This is a dummy settings class for settingless tools, like the color picker
+ */
+class NoSettings : public ToolSettings {
+	public:
+		NoSettings(const QString& name, const QString& title);
+
+		QWidget *createUi(QWidget *parent);
+
+		drawingboard::Brush getBrush(const QColor& foreground,
+				const QColor& background) const;
 };
 
 }

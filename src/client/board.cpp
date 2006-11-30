@@ -96,6 +96,18 @@ bool Board::save(QIODevice *device, const char *format, int quality)
 }
 
 /**
+ * @param x x coordinate
+ * @param y y coordinate
+ * @return color at coordinates
+ */
+QColor Board::colorAt(int x,int y)
+{
+	// There is no direct nice way of getting pixel values from QPixmaps
+	QImage pixel = image_->pixmap().copy(x,y,1,1).toImage();
+	return QColor(pixel.pixel(0,0));
+}
+
+/**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
  * through the server.

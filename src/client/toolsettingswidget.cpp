@@ -41,6 +41,10 @@ ToolSettings::ToolSettings(QWidget *parent)
 	erasersettings_ = new tools::BrushSettings("eraser", tr("Eraser settings"),true);
 	widgets_->addWidget(erasersettings_->createUi(this));
 
+	// Create a settings widget for color picker
+	pickersettings_ = new tools::NoSettings("picker", tr("Color picker"));
+	widgets_->addWidget(pickersettings_->createUi(this));
+
 }
 
 ToolSettings::~ToolSettings()
@@ -57,6 +61,7 @@ void ToolSettings::setTool(tools::Type tool) {
 	switch(tool) {
 		case tools::BRUSH: currenttool_ = brushsettings_; break;
 		case tools::ERASER: currenttool_ = erasersettings_; break;
+		case tools::PICKER: currenttool_ = pickersettings_; break;
 	}
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());

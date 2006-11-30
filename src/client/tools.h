@@ -20,9 +20,80 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+class Controller;
+
 namespace tools {
 
-enum Type {BRUSH, ERASER};
+enum Type {BRUSH, ERASER, PICKER};
+
+//! Base class for all tools
+class Tool
+{
+	public:
+		Tool(Type type)
+			: type_(type) {}
+		virtual ~Tool() {};
+
+		//! Get an instance of a specific tool
+		static Tool *get(Controller *controller, int user, Type type);
+
+		//! Get the type of this tool
+		Type type() const { return type_; }
+
+		//! Begin drawing
+		virtual void begin(int x,int y, qreal pressure) = 0;
+
+		//! Draw stroke
+		virtual void motion(int x,int y, qreal pressure) = 0;
+
+		//! End drawing
+		virtual void end() = 0;
+
+	protected:
+		static Controller *controller() { return controller_; }
+		static int user() { return user_; }
+
+	private:
+		static Controller *controller_;
+		static int user_;
+		Type type_;
+
+};
+
+//! Base class for brush type tools
+class BrushBase : public Tool
+{
+	public:
+		BrushBase(Type type) : Tool(type) {}
+
+		void begin(int x,int y, qreal perssure);
+		void motion(int x,int y, qreal pressure);
+		void end();
+};
+
+//! Regular brush
+class Brush : public BrushBase {
+	public:
+		Brush() : BrushBase(BRUSH) {}
+};
+
+//! Eraser
+class Eraser : public BrushBase {
+	public:
+		Eraser() : BrushBase(ERASER) {}
+};
+
+//! Color picker
+class ColorPicker : public Tool {
+	public:
+		ColorPicker() : Tool(PICKER) {}
+
+		void begin(int x,int y, qreal perssure);
+		void motion(int x,int y, qreal pressure);
+		void end();
+	private:
+		void pickColor(int x,int y);
+};
 
 }
 

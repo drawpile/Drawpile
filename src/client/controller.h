@@ -22,6 +22,8 @@
 
 #include <QObject>
 
+#include "tools.h"
+
 namespace drawingboard {
 	class Board;
 }
@@ -45,6 +47,8 @@ namespace widgets {
 class Controller : public QObject
 {
 	Q_OBJECT
+	friend class tools::BrushBase;
+	friend class tools::ColorPicker;
 	public:
 		Controller(QObject *parent=0);
 
@@ -56,11 +60,13 @@ class Controller : public QObject
 		void penDown(int x,int y, qreal pressure, bool isEraser);
 		void penMove(int x,int y, qreal pressure);
 		void penUp();
+		void setTool(tools::Type tool);
 
 	private:
 		drawingboard::Board *board_;
 		widgets::DualColorButton *colors_;
 		widgets::ToolSettings *settings_;
+		tools::Tool *tool_;
 };
 
 #endif

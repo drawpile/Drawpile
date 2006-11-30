@@ -28,7 +28,6 @@ class QStackedWidget;
 
 namespace tools {
 	class ToolSettings;
-	class BrushSettings;
 }
 
 namespace drawingboard {
@@ -60,8 +59,9 @@ class ToolSettings: public QDockWidget
 		ToolSettings(const ToolSettings& ts);
 		ToolSettings& operator=(const ToolSettings& ts);
 
-		tools::BrushSettings *brushsettings_;
-		tools::BrushSettings *erasersettings_;
+		tools::ToolSettings *brushsettings_;
+		tools::ToolSettings *erasersettings_;
+		tools::ToolSettings *pickersettings_;
 
 		tools::ToolSettings *currenttool_;
 		QStackedWidget *widgets_;

@@ -67,6 +67,7 @@ MainWindow::MainWindow()
 	controller_->setBoard(board_);
 	controller_->setColors(fgbgcolor_);
 	controller_->setSettings(toolsettings_);
+	connect(this, SIGNAL(toolChanged(tools::Type)), controller_, SLOT(setTool(tools::Type)));
 
 	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
 	connect(view_,SIGNAL(penMove(int,int,qreal)),controller_,SLOT(penMove(int,int,qreal)));
@@ -94,10 +95,11 @@ void MainWindow::readSettings()
 	cfg.endGroup();
 	cfg.beginGroup("tools");
 	int tool = cfg.value("tool", 0).toInt();
-	QList<QAction*> actions = drawingTools_->actions();
+	QList<QAction*> actions = drawingtools_->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
 	toolsettings_->setTool(tools::Type(tool));
+	controller_->setTool(tools::Type(tool));
 
 	QColor fg = cfg.value("foreground", Qt::black).value<QColor>();
 	QColor bg = cfg.value("background", Qt::white).value<QColor>();
@@ -119,7 +121,7 @@ void MainWindow::writeSettings()
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
-	int tool = drawingTools_->actions().indexOf(drawingTools_->checkedAction());
+	int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
 	cfg.setValue("tool", tool);
 	cfg.setValue("foreground",fgbgcolor_->foreground());
 	cfg.setValue("background",fgbgcolor_->background());
@@ -174,10 +176,12 @@ void MainWindow::zoomone()
 void MainWindow::selectTool(QAction *tool)
 {
 	tools::Type type;
-	if(tool == brushTool_) {
+	if(tool == brushtool_) {
 		type = tools::BRUSH;
-	} else if(tool == eraserTool_) {
+	} else if(tool == erasertool_) {
 		type = tools::ERASER;
+	} else if(tool == pickertool_) {
+		type = tools::PICKER;
 	} else {
 		return;
 	}
@@ -219,10 +223,12 @@ void MainWindow::initActions()
 	adminTools_->addAction(lockuser_);
 
 	// Drawing tool actions
-	brushTool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("Brush"), this);
-	brushTool_->setCheckable(true); brushTool_->setChecked(true);
-	eraserTool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("Eraser"), this);
-	eraserTool_->setCheckable(true);
+	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("Brush"), this);
+	brushtool_->setCheckable(true); brushtool_->setChecked(true);
+	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("Eraser"), this);
+	erasertool_->setCheckable(true);
+	pickertool_ = new QAction(/*QIcon(":icons/draw-picker.png"),*/tr("Color picker"), this);
+	pickertool_->setCheckable(true);
 	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom in"), this);
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
 	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom out"), this);
@@ -234,11 +240,12 @@ void MainWindow::initActions()
 	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
 	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
 
-	drawingTools_ = new QActionGroup(this);
-	drawingTools_->setExclusive(true);
-	drawingTools_->addAction(brushTool_);
-	drawingTools_->addAction(eraserTool_);
-	connect(drawingTools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+	drawingtools_ = new QActionGroup(this);
+	drawingtools_->setExclusive(true);
+	drawingtools_->addAction(brushtool_);
+	drawingtools_->addAction(erasertool_);
+	drawingtools_->addAction(pickertool_);
+	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Toolbar toggling actions
 	toolbartoggles_ = new QAction(tr("Toolbars"), this);
@@ -300,8 +307,9 @@ void MainWindow::createToolbars()
 	drawtools->setObjectName("drawtoolsbar");
 	togglemenu->addAction(drawtools->toggleViewAction());
 
-	drawtools->addAction(brushTool_);
-	drawtools->addAction(eraserTool_);
+	drawtools->addAction(brushtool_);
+	drawtools->addAction(erasertool_);
+	drawtools->addAction(pickertool_);
 	drawtools->addSeparator();
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);

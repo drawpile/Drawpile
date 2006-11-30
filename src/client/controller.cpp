@@ -21,6 +21,7 @@
 #include "controller.h"
 #include "board.h"
 #include "brush.h"
+#include "tools.h"
 #include "dualcolorbutton.h"
 #include "toolsettingswidget.h"
 
@@ -35,23 +36,23 @@ void Controller::setBoard(drawingboard::Board *board)
 	board_->addUser(0);
 }
 
+void Controller::setTool(tools::Type tool)
+{
+	tool_ = tools::Tool::get(this, 0, tool);
+}
+
 void Controller::penDown(int x,int y, qreal pressure, bool isEraser)
 {
-	//board_->beginPreview(x,y,pressure);
-	drawingboard::Brush brush = settings_->getBrush(colors_->foreground(),
-			colors_->background());
-	board_->strokeBegin(0,x,y,pressure,brush);
+	tool_->begin(x,y,pressure);
 }
 
 void Controller::penMove(int x,int y, qreal pressure)
 {
-	//board_->strokePreview(x,y,pressure);
-	board_->strokeMotion(0,x,y,pressure);
+	tool_->motion(x,y,pressure);
 }
 
 void Controller::penUp()
 {
-	//board_->endPreview();
-	board_->strokeEnd(0);
+	tool_->end();
 }
 
