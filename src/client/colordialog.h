@@ -27,21 +27,32 @@ class Ui_ColorDialog;
 namespace widgets {
 //! Color selection dialog
 /**
+ * The color selection dialog provides sliders for chaning a color's
+ * RGB and HSV values.
  */
 class ColorDialog : public QDialog
 {
 	Q_OBJECT
 	public:
 		ColorDialog(QString title,QWidget *parent=0);
+		//! Get the current color
 		QColor color() const;
 	signals:
+		//! This signal is emitted when the color is changed
+		/**
+		 * The signal is only emitted when the color is changed
+		 * from within the dialog.
+		 * @param color new color
+		 */
 		void colorChanged(const QColor& color);
 
 	public slots:
+		//! Set the color
 		void setColor(const QColor& color);
 	
 	private slots:
-		void updateColor();
+		void updateRgb();
+		void updateHsv();
 
 	private:
 		Ui_ColorDialog *ui_;

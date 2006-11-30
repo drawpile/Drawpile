@@ -27,30 +27,80 @@ ColorDialog::ColorDialog(QString title, QWidget *parent)
 {
 	ui_ = new Ui_ColorDialog;
 	ui_->setupUi(this);
-	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
-	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
-	connect(ui_->blue, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
+	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
+	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
+	connect(ui_->blue, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
+
+	connect(ui_->hue, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
+	connect(ui_->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
+	connect(ui_->value, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
 	setWindowTitle(title);
 }
 
+/**
+ * The contents of the widget is updated to reflect the new color.
+ * No signal is emitted.
+ * @param color new color
+ */
 void ColorDialog::setColor(const QColor& color)
 {
+	int h,s,v;
+	color.getHsv(&h,&s,&v);
+
 	updating_ = true;
 	ui_->red->setValue(color.red());
 	ui_->green->setValue(color.green());
 	ui_->blue->setValue(color.blue());
+	ui_->hue->setValue(h);
+	ui_->saturation->setValue(s);
+	ui_->value->setValue(v);
 	updating_ = false;
 }
 
+/*
+ * @return current color
+ */
 QColor ColorDialog::color() const
 {
 	return QColor(ui_->red->value(), ui_->green->value(), ui_->blue->value());
 }
 
-void ColorDialog::updateColor()
+/**
+ * RGB sliders have been used, update HSV to match
+ */
+void ColorDialog::updateRgb()
 {
-	if(!updating_)
-		emit colorChanged(color());
+	if(!updating_) {
+		QColor col = color();
+		int h,s,v;
+		col.getHsv(&h,&s,&v);
+		updating_ = true;
+		ui_->hue->setValue(h);
+		ui_->saturation->setValue(s);
+		ui_->value->setValue(v);
+		emit colorChanged(col);
+		updating_ = false;
+	}
+}
+
+/**
+ * HSV sliders have been used, update RGB to match
+ */
+void ColorDialog::updateHsv()
+{
+	if(!updating_) {
+		QColor col = QColor::fromHsv(
+				ui_->hue->value(),
+				ui_->saturation->value(),
+				ui_->value->value()
+				);
+		updating_ = true;
+		ui_->red->setValue(col.red());
+		ui_->green->setValue(col.green());
+		ui_->blue->setValue(col.blue());
+		emit colorChanged(col);
+		updating_ = false;
+	}
 }
 
 }
