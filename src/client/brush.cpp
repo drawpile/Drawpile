@@ -169,26 +169,31 @@ QPixmap Brush::getBrush(qreal pressure) const
 		if(hard<0.01) hard=0.01;
 		qreal alpha = opacity(pressure);
 
-		QImage brush(dia,dia,QImage::Format_ARGB32);
+		QImage brush(dia,dia,QImage::Format_ARGB32_Premultiplied);
 
-		// Fill the brush with color
-		brush.fill(color(pressure).rgb());
+		QColor brushcolor = color(pressure);
+		qreal red = brushcolor.red();
+		qreal green = brushcolor.green();
+		qreal blue = brushcolor.blue();
 
 		// Set brush alpha
 		qreal rr = 1.0/(rad*rad);
 		if(dia%2==0) // Sample from middle of pixel if diameter is even
 			rad -= 0.5;
-		uchar *data = brush.bits()+3;
+		uchar *data = brush.bits();
 		for(int y=0;y<dia;++y) {
 			qreal yy = (y-rad) * (y-rad);
-			for(int x=0;x<dia;++x,data+=4) {
+			for(int x=0;x<dia;++x) {
 				qreal xx = (x-rad) * (x-rad);
 				qreal intensity = (1-pow( (xx+yy)*(rr) ,hard)) * alpha;
 
 				if(intensity<0) intensity=0;
 				else if(intensity>1) intensity=1;
 
-				*data = qRound(intensity*255);
+				*(data++) = qRound(blue * intensity);
+				*(data++) = qRound(green * intensity);
+				*(data++) = qRound(red * intensity);
+				*(data++) = qRound(intensity*255);
 			}
 		}
 		cache_ = QPixmap::fromImage(brush);
