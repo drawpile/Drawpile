@@ -100,6 +100,9 @@ class MainWindow : public QMainWindow {
 		QAction *zoomout_;
 		QAction *zoomorig_;
 
+		QAction *toggleoutline_;
+		QAction *togglecrosshair_;
+
 		QAction *toolbartoggles_;
 		QAction *docktoggles_;
 

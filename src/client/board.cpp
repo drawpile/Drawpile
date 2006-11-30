@@ -18,7 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QGraphicsPixmapItem>
+#include <QGraphicsEllipseItem>
 #include <QPainter>
 
 #include "board.h"
@@ -30,7 +30,11 @@ namespace drawingboard {
 Board::Board(QObject *parent)
 	: QGraphicsScene(parent)
 {
-	//setItemIndexMethod(NoIndex);
+	setItemIndexMethod(NoIndex);
+	outline_ = new QGraphicsEllipseItem(0,this);
+	outline_->hide();
+	outline_->setZValue(9999);
+	outline_->setPen(Qt::DotLine);
 }
 
 /**
@@ -105,6 +109,38 @@ QColor Board::colorAt(int x,int y)
 	// There is no direct nice way of getting pixel values from QPixmaps
 	QImage pixel = image_->pixmap().copy(x,y,1,1).toImage();
 	return QColor(pixel.pixel(0,0));
+}
+
+/**
+ * Move cursor outline to the specified location, set its size and show it.
+ * The outline will not be shown if its width is smaller than 2.
+ * @param x x coordinate
+ * @param y y coordinate
+ * @param size brush diameter
+ */
+void Board::showCursorOutline(const QPoint& pos, int size)
+{
+	if(size>1) {
+		outline_->setPos(pos);
+		outline_->setRect(-size*0.5,-size*0.5,size,size);
+		outline_->show();
+	}
+}
+
+/**
+ * @param x x coordinate
+ * @param y y coordinate
+ */
+void Board::moveCursorOutline(const QPoint& pos)
+{
+	outline_->setPos(pos);
+}
+
+/**
+ */
+void Board::hideCursorOutline()
+{
+	outline_->hide();
 }
 
 /**

@@ -52,6 +52,11 @@ class ToolSettings: public QDockWidget
 		//! Get a brush with the current settings
 		drawingboard::Brush getBrush(const QColor& foreground,
 				const QColor& background) const;
+
+	signals:
+		//! This signal is emitted when the current tool changes its size
+		void sizeChanged(int size);
+
 	public slots:
 		void setTool(tools::Type tool);
 

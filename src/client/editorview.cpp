@@ -1,3 +1,4 @@
+#include <iostream>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -23,13 +24,56 @@
 #include <QScrollBar>
 
 #include "editorview.h"
+#include "board.h"
 
 namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(false), isdragging_(false)
+	: QGraphicsView(parent), pendown_(false), isdragging_(false),
+	prevpoint_(0,0),outlinesize_(10), showoutline_(true), crosshair_(false)
 {
-	viewport()->setMouseTracking(false);
+}
+
+void EditorView::setBoard(drawingboard::Board *board)
+{
+	board_ = board;
+	setScene(board);
+}
+
+void EditorView::setOutline(bool enable)
+{
+	showoutline_ = enable;
+	if(enable)
+		viewport()->setMouseTracking(true);
+	else
+		viewport()->setMouseTracking(false);
+}
+
+void EditorView::setOutlineSize(int size)
+{
+	outlinesize_ = size;
+}
+
+void EditorView::setCrosshair(bool enable)
+{
+	crosshair_ = enable;
+	if(enable)
+		viewport()->setCursor(Qt::CrossCursor);
+	else
+		viewport()->setCursor(Qt::ArrowCursor);
+}
+
+void EditorView::enterEvent(QEvent *event)
+{
+	QGraphicsView::enterEvent(event);
+	if(showoutline_)
+		board_->showCursorOutline(prevpoint_,outlinesize_);
+}
+
+void EditorView::leaveEvent(QEvent *event)
+{
+	QGraphicsView::leaveEvent(event);
+	board_->hideCursorOutline();
 }
 
 void EditorView::mousePressEvent(QMouseEvent *event)
@@ -37,18 +81,27 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	if(event->button() == Qt::MidButton) {
 		startDrag(event->x(), event->y());
 	} else {
-		QPointF point = mapToScene(event->pos());
-		emit penDown(qRound(point.x()), qRound(point.y()), 1.0, false);
+		pendown_ = true;
+		QPoint point = mapToScene(event->pos()).toPoint();
+		emit penDown(point.x(), point.y(), 1.0, false);
 	}
+	board_->hideCursorOutline();
+
 }
 
 void EditorView::mouseMoveEvent(QMouseEvent *event)
 {
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
+	} else if(pendown_) {
+		QPoint point = mapToScene(event->pos()).toPoint();
+		emit penMove(point.x(), point.y(), 1.0);
 	} else {
-		QPointF point = mapToScene(event->pos());
-		emit penMove(qRound(point.x()), qRound(point.y()), 1.0);
+		QPoint point = mapToScene(event->pos()).toPoint();
+		if(point != prevpoint_) {
+			board_->moveCursorOutline(point);
+			prevpoint_ = point;
+		}
 	}
 }
 
@@ -57,29 +110,39 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 	if(isdragging_) {
 		stopDrag();
 	} else {
+		pendown_ = false;
 		emit penUp();
+	}
+	if(showoutline_) {
+		prevpoint_ = mapToScene(event->pos()).toPoint();
+		board_->showCursorOutline(prevpoint_, outlinesize_);
 	}
 }
 
 void EditorView::tabletEvent(QTabletEvent *event)
 {
 	event->accept();
+	QPoint point = mapToScene(event->pos()).toPoint();
 	if(event->pressure()==0) {
 		if(pendown_) {
 			pendown_ = false;
+			if(showoutline_)
+				board_->showCursorOutline(point,outlinesize_);
 			emit penUp();
+		} else {
+			if(prevpoint_ != point) {
+				board_->moveCursorOutline(point);
+				prevpoint_ = point;
+			}
 		}
 	} else {
 		if(pendown_) {
-			QPointF point = mapToScene(event->pos());
-			emit penMove(qRound(point.x()), qRound(point.y()),
-					event->pressure());
+			emit penMove(point.x(), point.y(), event->pressure());
 		} else {
-			QPointF point = mapToScene(event->pos());
-			emit penDown(qRound(point.x()), qRound(point.y()),
-					event->pressure(),
+			emit penDown(point.x(), point.y(), event->pressure(),
 					event->pointerType()==QTabletEvent::Eraser);
 			pendown_ = true;
+			board_->hideCursorOutline();
 		}
 	}
 }

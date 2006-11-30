@@ -69,6 +69,8 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
 	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
 
+	// Connect size change signal
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
 }
 
@@ -94,6 +96,11 @@ drawingboard::Brush BrushSettings::getBrush(const QColor& foreground,
 	brush.setOpacity2(opacity2);
 	brush.setColor2(swapcolors_?foreground:background);
 	return brush;
+}
+
+int BrushSettings::getSize() const
+{
+	return ui_->brushsize->value();
 }
 
 NoSettings::NoSettings(const QString& name, const QString& title)

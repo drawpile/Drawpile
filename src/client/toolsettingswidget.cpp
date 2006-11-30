@@ -65,6 +65,7 @@ void ToolSettings::setTool(tools::Type tool) {
 	}
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());
+	emit sizeChanged(currenttool_->getSize());
 }
 
 /**

@@ -34,6 +34,12 @@ class ToolSettings {
 		virtual ~ToolSettings() { }
 
 		//! Create an UI widget
+		/**
+		 * If the tool has a size changing signal, it will be connected to the
+		 * parent's sizeChanged(int) signal.
+		 * @param parent parent widget
+		 * @return UI widget
+		 */
 		virtual QWidget *createUi(QWidget *parent) = 0;
 
 		//! Get the UI widget
@@ -48,6 +54,12 @@ class ToolSettings {
 		 */
 		virtual drawingboard::Brush getBrush(const QColor& foreground,
 				const QColor& background) const = 0;
+
+		//! Get the brush size
+		/**
+		 * @return size of the current brush
+		 */
+		virtual int getSize() const = 0;
 
 		//! Get the name (internal) of this tool
 		const QString& getName() const { return name_; }
@@ -78,6 +90,9 @@ class BrushSettings : public ToolSettings {
 
 		drawingboard::Brush getBrush(const QColor& foreground,
 				const QColor& background) const;
+
+		int getSize() const;
+
 	private:
 		Ui_BrushSettings *ui_;
 		bool swapcolors_;
@@ -95,6 +110,8 @@ class NoSettings : public ToolSettings {
 
 		drawingboard::Brush getBrush(const QColor& foreground,
 				const QColor& background) const;
+
+		int getSize() const { return 0; }
 };
 
 }

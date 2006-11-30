@@ -55,13 +55,16 @@ MainWindow::MainWindow()
 	statusbar->addPermanentWidget(netstatus_);
 
 	view_ = new widgets::EditorView(this);
+	connect(toolsettings_, SIGNAL(sizeChanged(int)), view_, SLOT(setOutlineSize(int)));
+	connect(toggleoutline_, SIGNAL(triggered(bool)), view_, SLOT(setOutline(bool)));
+	connect(togglecrosshair_, SIGNAL(triggered(bool)), view_, SLOT(setCrosshair(bool)));
 	setCentralWidget(view_);
 
 	board_ = new drawingboard::Board(this);
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	board_->initBoard(QSize(800,600),Qt::white);
-	view_->setScene(board_);
+	view_->setBoard(board_);
 
 	controller_ = new Controller(this);
 	controller_->setBoard(board_);
@@ -94,6 +97,7 @@ void MainWindow::readSettings()
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
+	// Remember last used tool
 	int tool = cfg.value("tool", 0).toInt();
 	QList<QAction*> actions = drawingtools_->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
@@ -101,6 +105,13 @@ void MainWindow::readSettings()
 	toolsettings_->setTool(tools::Type(tool));
 	controller_->setTool(tools::Type(tool));
 
+	// Remember cursor settings
+	toggleoutline_->setChecked(cfg.value("outline",true).toBool());
+	view_->setOutline(toggleoutline_->isChecked());
+	togglecrosshair_->setChecked(cfg.value("crosshair",true).toBool());
+	view_->setCrosshair(togglecrosshair_->isChecked());
+
+	// Remember foreground and background colors
 	QColor fg = cfg.value("foreground", Qt::black).value<QColor>();
 	QColor bg = cfg.value("background", Qt::white).value<QColor>();
 	fgbgcolor_->setForeground(fg);
@@ -123,6 +134,8 @@ void MainWindow::writeSettings()
 	cfg.beginGroup("tools");
 	int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
 	cfg.setValue("tool", tool);
+	cfg.setValue("outline", toggleoutline_->isChecked());
+	cfg.setValue("crosshair", togglecrosshair_->isChecked());
 	cfg.setValue("foreground",fgbgcolor_->foreground());
 	cfg.setValue("background",fgbgcolor_->background());
 }
@@ -247,6 +260,13 @@ void MainWindow::initActions()
 	drawingtools_->addAction(pickertool_);
 	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
+	// Tool cursor settings
+	toggleoutline_ = new QAction(tr("Show brush outline"), this);
+	toggleoutline_->setCheckable(true);
+
+	togglecrosshair_ = new QAction(tr("Crosshair cursor"), this);
+	togglecrosshair_->setCheckable(true);
+
 	// Toolbar toggling actions
 	toolbartoggles_ = new QAction(tr("Toolbars"), this);
 	docktoggles_ = new QAction(tr("Docks"), this);
@@ -275,7 +295,15 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(lockuser_);
 	sessionmenu->addAction(kickuser_);
 
-	QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
+	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
+	toolsmenu->addAction(brushtool_);
+	toolsmenu->addAction(erasertool_);
+	toolsmenu->addAction(pickertool_);
+	toolsmenu->addSeparator();
+	toolsmenu->addAction(toggleoutline_);
+	toolsmenu->addAction(togglecrosshair_);
+
+	//QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
 
 	QMenu *windowmenu = menuBar()->addMenu(tr("&Window"));
 	windowmenu->addAction(toolbartoggles_);

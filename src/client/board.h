@@ -60,6 +60,15 @@ class Board : public QGraphicsScene
 		//! Get the color at position
 		QColor colorAt(int x,int y);
 
+		//! Display the cursor outline
+		void showCursorOutline(const QPoint& pos, int size);
+
+		//! Move the cursor outline
+		void moveCursorOutline(const QPoint& pos);
+
+		//! Hide the cursor outline
+		void hideCursorOutline();
+
 		//! Begin a new preview stroke
 		void previewBegin(int x,int y, qreal pressure);
 
@@ -79,6 +88,7 @@ class Board : public QGraphicsScene
 
 	private:
 		Layer *image_;
+		QGraphicsEllipseItem *outline_;
 		QHash<int,User*> users_;
 };
 
