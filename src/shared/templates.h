@@ -32,7 +32,7 @@ template <class T>
 struct bswap_t
 {
 	static
-	T& swap(T&);
+	T& swap(T& x) { return x; }
 };
 
 /* wrapper for bswap_t */

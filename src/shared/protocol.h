@@ -65,7 +65,7 @@ struct Message
 		prev(0)
 	{ }
 	
-	virtual ~Message() { }
+	virtual ~Message() throw() { }
 	
 	//! Message type identifier (full list in protocol::type namespace).
 	const uint8_t type;
@@ -98,10 +98,7 @@ struct Message
 	 * @return payload length in bytes. Defaults to zero payload.
 	 */
 	virtual
-	size_t payloadLength() const throw()
-	{
-		return 0;
-	}
+	size_t payloadLength() const throw();
 	
 	//! Serialize the message payload.
 	/**
@@ -112,12 +109,7 @@ struct Message
 	 * @return number of bytes stored. Defaults to zero payload.
 	 */
 	virtual
-	size_t serializePayload(char *buf) const throw()
-	{
-		assert(buf != 0);
-		
-		return 0;
-	}
+	size_t serializePayload(char *buf) const throw();
 	
 	//! Check if buf contains enough data to unserialize
 	/**
@@ -135,13 +127,7 @@ struct Message
 	 * header data. Defaults to zero payload message with possible user modifier.
 	 */
 	virtual
-	size_t reqDataLen(const char *buf, size_t len) const
-	{
-		assert(buf != 0 && len != 0);
-		assert(buf[0] == type);
-		
-		return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
-	}
+	size_t reqDataLen(const char*, size_t) const;
 	
 	//! Unserializes char* buffer to associated message struct.
 	/**
@@ -157,17 +143,7 @@ struct Message
 	 * by reqDataLen() call. Defaults to zero payload with possible user modifiers.
 	 */
 	virtual
-	size_t unserialize(const char* buf, size_t len)
-	{
-		assert(buf != 0 && len != 0);
-		assert(buf[0] == type);
-		assert(reqDataLen(buf, len) <= len);
-		
-		if (bIsFlag(modifiers, message::isUser))
-			bswap_mem(user_id, buf+sizeof(type));
-		
-		return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
-	}
+	size_t unserialize(const char*, size_t);
 };
 
 //! Protocol identifier.
@@ -186,7 +162,7 @@ struct Identifier
 		extensions(protocol::extensions::None)
 	{ }
 	
-	~Identifier() { }
+	~Identifier() throw() { }
 	
 	/* unique data */
 	
@@ -225,7 +201,7 @@ struct StrokeInfo
 		y(0)
 	{ }
 	
-	~StrokeInfo() { }
+	~StrokeInfo() throw() { }
 	
 	/* unique data */
 	
@@ -262,7 +238,7 @@ struct StrokeEnd
 		: Message(protocol::type::StrokeEnd, message::isUser)
 	{ }
 	
-	~StrokeEnd() { }
+	~StrokeEnd() throw() { }
 	
 	/* unique data */
 	
@@ -293,7 +269,7 @@ struct ToolInfo
 		hi_softness(0)
 	{ }
 	
-	~ToolInfo() { }
+	~ToolInfo() throw() { }
 	
 	/* unique data */
 	
@@ -337,7 +313,7 @@ struct Synchronize
 		: Message(protocol::type::Synchronize)
 	{ }
 	
-	~Synchronize() { }
+	~Synchronize() throw() { }
 	
 	/* unique data */
 	
@@ -365,7 +341,7 @@ struct Raster
 		data(0)
 	{ }
 	
-	~Raster() { delete [] data; }
+	~Raster() throw() { delete [] data; }
 	
 	/* unique data */
 	
@@ -401,7 +377,7 @@ struct SyncWait
 		: Message(protocol::type::SyncWait)
 	{ }
 	
-	~SyncWait() { }
+	~SyncWait() throw() { }
 	
 	/* unique data */
 	
@@ -426,7 +402,7 @@ struct Authentication
 		board_id(protocol::Global)
 	{ }
 	
-	~Authentication() { }
+	~Authentication() throw() { }
 	
 	/* unique data */
 	
@@ -456,7 +432,7 @@ struct Password
 		data(0)
 	{ }
 	
-	~Password() { delete [] data; }
+	~Password() throw() { delete [] data; }
 	
 	/* unique data */
 	
@@ -489,7 +465,7 @@ struct Subscribe
 		board_id(protocol::Global)
 	{ }
 	
-	~Subscribe() { }
+	~Subscribe() throw() { }
 	
 	/* unique data */
 	
@@ -516,7 +492,7 @@ struct Unsubscribe
 		board_id(protocol::Global)
 	{ }
 	
-	~Unsubscribe() { }
+	~Unsubscribe() throw() { }
 	
 	/* unique data */
 	
@@ -544,7 +520,7 @@ struct Instruction
 		data(0)
 	{ }
 	
-	~Instruction() { delete [] data; }
+	~Instruction() throw() { delete [] data; }
 	
 	/* unique data */
 	
@@ -577,7 +553,7 @@ struct ListBoards
 		: Message(protocol::type::ListBoards)
 	{ }
 	
-	~ListBoards() { }
+	~ListBoards() throw() { }
 	
 	/* unique data */
 	
@@ -599,7 +575,7 @@ struct Cancel
 		: Message(protocol::type::Cancel)
 	{ }
 	
-	~Cancel() { }
+	~Cancel() throw() { }
 	
 	/* unique data */
 	
@@ -625,11 +601,13 @@ struct UserInfo
 		name(0)
 	{ }
 	
-	~UserInfo() { delete [] name; }
+	~UserInfo() throw() { delete [] name; }
 	
 	/* unique data */
 	
 	uint8_t
+		//! Session ID
+		board_id,
 		//! User mode flags (see protocol::user for full list)
 		mode,
 		//! User event (see protocol::user_event for full list)
@@ -664,7 +642,7 @@ struct HostInfo
 		extensions(protocol::extensions::None)
 	{ }
 	
-	~HostInfo() { }
+	~HostInfo() throw() { }
 	
 	/* unique data */
 	
@@ -706,12 +684,13 @@ struct BoardInfo
 		owner(protocol::null_user),
 		users(0),
 		limit(0),
+		uflags(protocol::user::None),
 		flags(protocol::session::None),
 		length(0),
 		name(0)
 	{ }
 	
-	~BoardInfo() { delete [] name; }
+	~BoardInfo() throw() { delete [] name; }
 	
 	/* unique data */
 	
@@ -731,6 +710,8 @@ struct BoardInfo
 		users,
 		//! Board user limit.
 		limit,
+		//! Default user flags.
+		uflags,
 		//! Session flags.
 		flags,
 		//! Board name length.
@@ -756,7 +737,7 @@ struct Acknowledgement
 		event(protocol::type::None)
 	{ }
 	
-	~Acknowledgement() { }
+	~Acknowledgement() throw() { }
 	
 	/* unique data */
 	
@@ -780,7 +761,7 @@ struct Error
 		code(protocol::error::None)
 	{ }
 	
-	~Error() { }
+	~Error() throw() { }
 	
 	/* unique data */
 	
@@ -806,7 +787,7 @@ struct Deflate
 		data(0)
 	{ }
 	
-	~Deflate() { delete [] data; }
+	~Deflate() throw() { delete [] data; }
 	
 	/* unique data */
 	
@@ -841,7 +822,7 @@ struct Chat
 		data(0)
 	{ }
 	
-	~Chat() { delete [] data; }
+	~Chat() throw() { delete [] data; }
 	
 	/* unique data */
 	
@@ -876,7 +857,7 @@ struct Palette
 		data(0)
 	{ }
 	
-	~Palette() { delete [] data; }
+	~Palette() throw() { delete [] data; }
 	
 	/* unique data */
 	

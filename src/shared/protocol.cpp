@@ -61,7 +61,7 @@ char *Message::serialize(size_t &len) const
 	size_t count = 1;
 	
 	// first message in bundle
-	const Message *ptr;
+	const Message *ptr = 0;
 	// Count number of messages to serialize and required size
 	if (prev)
 	{
@@ -76,6 +76,8 @@ char *Message::serialize(size_t &len) const
 	else
 		ptr = this;
 	// ptr now points to the first message in list (0 if no list).
+	
+	assert(ptr != 0); // some problems with the constness?
 	
 	// Allocate memory and serialize.
 	char *data = new char[length];
@@ -107,6 +109,38 @@ char *Message::serialize(size_t &len) const
 
 	len = length;
 	return data;
+}
+
+size_t Message::payloadLength() const throw()
+{
+	return 0;
+}
+
+size_t Message::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	return 0;
+}
+
+size_t Message::reqDataLen(const char *buf, size_t len) const
+{
+	assert(buf != 0 && len != 0);
+	assert(buf[0] == type);
+	
+	return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
+}
+
+size_t Message::unserialize(const char* buf, size_t len)
+{
+	assert(buf != 0 && len != 0);
+	assert(buf[0] == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	if (bIsFlag(modifiers, message::isUser))
+		bswap_mem(user_id, buf+sizeof(type));
+	
+	return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
 }
 
 /*
@@ -556,6 +590,8 @@ size_t UserInfo::unserialize(const char* buf, size_t len)
 	size_t i = sizeof(type);
 	
 	bswap_mem(user_id, buf+i); i += sizeof(user_id);
+	
+	bswap_mem(board_id, buf+i); i += sizeof(board_id);
 	bswap_mem(mode, buf+i); i += sizeof(mode);
 	bswap_mem(event, buf+i); i += sizeof(event);
 	bswap_mem(length, buf+i); i += sizeof(length);
@@ -571,7 +607,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	size_t off = sizeof(type) + sizeof(mode) + sizeof(event);
+	size_t off = sizeof(type) + sizeof(board_id) + sizeof(mode) + sizeof(event);
 	if (len < off + sizeof(length))
 		return off + sizeof(length);
 	else
@@ -588,7 +624,8 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, mode); size_t i = sizeof(mode);
+	bswap_mem(buf, board_id); size_t i = sizeof(board_id);
+	bswap_mem(buf+i, mode); i += sizeof(mode);
 	bswap_mem(buf+i, event); i += sizeof(event);
 	bswap_mem(buf+i, length); i+= sizeof(length);
 	
@@ -675,6 +712,8 @@ size_t BoardInfo::unserialize(const char* buf, size_t len)
 	bswap_mem(owner, buf+i); i += sizeof(owner);
 	bswap_mem(users, buf+i); i += sizeof(users);
 	bswap_mem(limit, buf+i); i += sizeof(limit);
+	bswap_mem(uflags, buf+i); i += sizeof(uflags);
+	bswap_mem(flags, buf+i); i += sizeof(uflags);
 	bswap_mem(length, buf+i); i += sizeof(width);
 	
 	name = new char[length];

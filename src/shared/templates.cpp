@@ -14,11 +14,13 @@ Authors:
 #ifndef BSWAP_T_INCLUDED
 #define BSWAP_T_INCLUDED
 
+/*
 template <class T>
 T& bswap_t::swap(T& x)
 {
 	return x;
 }
+*/
 
 template <>
 uint32_t& bswap_t<uint32_t>::swap(uint32_t& x)
