@@ -61,7 +61,7 @@ class Board : public QGraphicsScene
 		QColor colorAt(int x,int y);
 
 		//! Display the cursor outline
-		void showCursorOutline(const QPoint& pos, int size);
+		void showCursorOutline(const QPoint& pos, int radius);
 
 		//! Move the cursor outline
 		void moveCursorOutline(const QPoint& pos);

@@ -192,7 +192,7 @@ QPixmap Brush::getBrush(qreal pressure) const
 		qreal blue = brushcolor.blue();
 
 		// 1/radius^2
-		qreal rr = 1.0/(rad*rad);
+		qreal rr = 1.0/double(rad*rad);
 
 		// Only one quarter of the pixels are unique.
 		// Quarter 1 is top left, quarter 2 is top right,

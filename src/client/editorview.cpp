@@ -49,9 +49,9 @@ void EditorView::setOutline(bool enable)
 		viewport()->setMouseTracking(false);
 }
 
-void EditorView::setOutlineSize(int size)
+void EditorView::setOutlineRadius(int radius)
 {
-	outlinesize_ = size;
+	outlinesize_ = radius;
 }
 
 void EditorView::setCrosshair(bool enable)

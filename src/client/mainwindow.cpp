@@ -55,7 +55,7 @@ MainWindow::MainWindow()
 	statusbar->addPermanentWidget(netstatus_);
 
 	view_ = new widgets::EditorView(this);
-	connect(toolsettings_, SIGNAL(sizeChanged(int)), view_, SLOT(setOutlineSize(int)));
+	connect(toolsettings_, SIGNAL(sizeChanged(int)), view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)), view_, SLOT(setOutline(bool)));
 	connect(togglecrosshair_, SIGNAL(triggered(bool)), view_, SLOT(setCrosshair(bool)));
 	setCentralWidget(view_);

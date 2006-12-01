@@ -56,8 +56,8 @@ class EditorView : public QGraphicsView
 		void penUp();
 
 	public slots:
-		//! Set the size of the brush preview outline
-		void setOutlineSize(int size);
+		//! Set the radius of the brush preview outline
+		void setOutlineRadius(int radius);
 
 		//! Enable or disable cursor outline
 		void setOutline(bool enable);

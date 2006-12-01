@@ -116,13 +116,13 @@ QColor Board::colorAt(int x,int y)
  * The outline will not be shown if its width is smaller than 2.
  * @param x x coordinate
  * @param y y coordinate
- * @param size brush diameter
+ * @param radius brush radius
  */
-void Board::showCursorOutline(const QPoint& pos, int size)
+void Board::showCursorOutline(const QPoint& pos, int radius)
 {
-	if(size>1) {
+	if(radius>0) {
 		outline_->setPos(pos);
-		outline_->setRect(-size*0.5,-size*0.5,size,size);
+		outline_->setRect(-radius,-radius,radius*2,radius*2);
 		outline_->show();
 	}
 }
