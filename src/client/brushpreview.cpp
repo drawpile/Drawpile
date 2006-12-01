@@ -1,4 +1,5 @@
 #include <QPainter>
+#include <QEvent>
 #include <cmath>
 
 #include "brushpreview.h"
@@ -13,6 +14,18 @@ BrushPreview::BrushPreview(QWidget *parent)
 	setMinimumSize(32,32);
 	brush_.setColor(palette().color(QPalette::WindowText));
 	brush_.setColor2(palette().color(QPalette::WindowText));
+}
+
+void BrushPreview::changeEvent(QEvent *event)
+{
+	QWidget::changeEvent(event);
+	if(event->type() == QEvent::PaletteChange) {
+		brush_.setColor(palette().color(QPalette::WindowText));
+		if(colorpressure_)
+			brush_.setColor2(palette().color(QPalette::Window));
+		else
+			brush_.setColor2(palette().color(QPalette::WindowText));
+	}
 }
 
 void BrushPreview::paintEvent(QPaintEvent *event)
@@ -116,10 +129,11 @@ void BrushPreview::setHardnessPressure(bool enable)
 
 void BrushPreview::setColorPressure(bool enable)
 {
+	colorpressure_ = enable;
 	if(enable)
 		brush_.setColor2(palette().color(QPalette::Window));
 	else
-		brush_.setColor2(brush_.color(1.0));
+		brush_.setColor2(palette().color(QPalette::WindowText));
 	update();
 }
 

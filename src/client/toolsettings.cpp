@@ -56,6 +56,14 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	widget->hide();
 	setUiWidget(widget);
 
+	if(swapcolors_) {
+		QPalette palette = ui_->preview->palette();
+		QColor tmp = palette.color(QPalette::Window);
+		palette.setColor(QPalette::Window, palette.color(QPalette::WindowText));
+		palette.setColor(QPalette::WindowText,tmp);
+		ui_->preview->setPalette(palette);
+	}
+
 	// Load previous settings
 	QSettings cfg;
 	cfg.beginGroup("tools");
@@ -73,9 +81,16 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	ui_->preview->setHardness(ui_->brushhardness->value());
 
 	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
+
 	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	ui_->preview->setOpacityPressure(ui_->pressureopacity->isChecked());
+
 	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	ui_->preview->setHardnessPressure(ui_->pressurehardness->isChecked());
+
 	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
 
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -127,6 +142,7 @@ QWidget *NoSettings::createUi(QWidget *parent)
 drawingboard::Brush NoSettings::getBrush(const QColor& foreground,
 		const QColor& background) const
 {
+	(void)background;
 	// return a default brush
 	return drawingboard::Brush(1,1,1,foreground);
 }

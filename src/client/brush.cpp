@@ -113,7 +113,7 @@ void Brush::checkSensitivity()
 	sensitive_ = diameter1_ != diameter2_ ||
 			fabs(hardness1_ - hardness2_) >= 0.01 ||
 			fabs(opacity1_ - opacity2_) >= 0.01 ||
-			color1_ != color1_;
+			color1_ != color2_;
 }
 
 /**

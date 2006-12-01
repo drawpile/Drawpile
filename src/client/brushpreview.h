@@ -67,12 +67,14 @@ class QDESIGNER_WIDGET_EXPORT BrushPreview : public QWidget {
 
 	protected:
 		void paintEvent(QPaintEvent *event);
+		void changeEvent(QEvent *event);
 
 	private:
 		drawingboard::Brush brush_;
 		bool sizepressure_;
 		bool opacitypressure_;
 		bool hardnesspressure_;
+		bool colorpressure_;
 };
 
 #ifndef NO_WIDGETS_NAMESPACE
