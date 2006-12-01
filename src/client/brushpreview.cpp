@@ -30,6 +30,7 @@ void BrushPreview::changeEvent(QEvent *event)
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
+	(void)event;
 	QPainter painter(this);
 
 	painter.fillRect(contentsRect(), palette().window());
@@ -67,9 +68,9 @@ void BrushPreview::setBrush(const drawingboard::Brush& brush)
  */
 void BrushPreview::setSize(int size)
 {
-	brush_.setDiameter(size);
+	brush_.setRadius(size);
 	if(sizepressure_==false)
-		brush_.setDiameter2(size);
+		brush_.setRadius2(size);
 	update();
 }
 
@@ -101,9 +102,9 @@ void BrushPreview::setSizePressure(bool enable)
 {
 	sizepressure_ = enable;
 	if(enable)
-		brush_.setDiameter2(1);
+		brush_.setRadius2(0);
 	else
-		brush_.setDiameter2(brush_.diameter(1.0));
+		brush_.setRadius2(brush_.radius(1.0));
 	update();
 }
 

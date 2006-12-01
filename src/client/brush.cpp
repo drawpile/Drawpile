@@ -23,8 +23,8 @@
 
 namespace drawingboard {
 
-Brush::Brush(int diameter, qreal hardness, qreal opacity, const QColor& color)
-	: diameter1_(diameter), diameter2_(diameter),
+Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
+	: radius1_(radius), radius2_(radius),
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color),
@@ -33,12 +33,12 @@ Brush::Brush(int diameter, qreal hardness, qreal opacity, const QColor& color)
 }
 
 /**
- * Set the diameter for pressure=1.0
- * @param diameter brush diameter. Must be greater than 0
+ * Set the radius for pressure=1.0
+ * @param radius brush radius. 0 means single pixel brush
  */
-void Brush::setDiameter(int diameter)
+void Brush::setRadius(int radius)
 {
-	diameter1_ = diameter;
+	radius1_ = radius;
 	checkSensitivity();
 	cachepressure_ = -1;
 }
@@ -77,9 +77,9 @@ void Brush::setColor(const QColor& color)
 }
 
 
-void Brush::setDiameter2(int diameter)
+void Brush::setRadius2(int radius)
 {
-	diameter2_ = diameter;
+	radius2_  = radius;
 	checkSensitivity();
 	cachepressure_ = -1;
 }
@@ -110,20 +110,10 @@ void Brush::setColor2(const QColor& color)
  */
 void Brush::checkSensitivity()
 {
-	sensitive_ = diameter1_ != diameter2_ ||
+	sensitive_ = radius1_ != radius2_ ||
 			fabs(hardness1_ - hardness2_) >= 0.01 ||
 			fabs(opacity1_ - opacity2_) >= 0.01 ||
 			color1_ != color2_;
-}
-
-/**
- * Get the brush diameter for certain pressure.
- * @param pressure pen pressure. Range is [0..1]
- * @return diameter
- */
-int Brush::diameter(qreal pressure) const
-{
-	return int(ceil(diameter2_ + (diameter1_ - diameter2_) * pressure));
 }
 
 /**
@@ -131,11 +121,9 @@ int Brush::diameter(qreal pressure) const
  * @param pressure pen pressure. Range is [0..1]
  * @return radius
  */
-qreal Brush::radius(qreal pressure) const
+int Brush::radius(qreal pressure) const
 {
-	qreal rad1 = diameter1_ / 2.0;
-	qreal rad2 = diameter2_ / 2.0;
-	return rad2 + (rad1 - rad2) * pressure;
+	return int(ceil(radius2_ + (radius1_ - radius2_) * pressure));
 }
 
 /**
@@ -185,38 +173,59 @@ QPixmap Brush::getBrush(qreal pressure) const
 			(sensitive_ && fabs(pressure - cachepressure_) > 1.0/256.0)) {
 		// Regenerate brush (we currently support 256 levels of pressure)
 
-		int dia = diameter(pressure);
-		qreal rad = radius(pressure);
+		int rad = radius(pressure);
+		if(rad==0) {
+			// Special case zero radius (usually not used)
+			QPixmap pix(1,1);
+			pix.fill(color(pressure));
+			return pix;
+		}
 		qreal hard = pow(2*rad,2*hardness(pressure)-1);
 		if(hard<0.01) hard=0.01;
 		qreal alpha = opacity(pressure);
 
-		QImage brush(dia,dia,QImage::Format_ARGB32_Premultiplied);
+		QImage brush(rad*2,rad*2,QImage::Format_ARGB32_Premultiplied);
 
 		QColor brushcolor = color(pressure);
 		qreal red = brushcolor.red();
 		qreal green = brushcolor.green();
 		qreal blue = brushcolor.blue();
 
-		// Set brush alpha
+		// 1/radius^2
 		qreal rr = 1.0/(rad*rad);
-		if(dia%2==0) // Sample from middle of pixel if diameter is even
-			rad -= 0.5;
-		uchar *data = brush.bits();
-		for(int y=0;y<dia;++y) {
-			qreal yy = (y-rad) * (y-rad);
-			for(int x=0;x<dia;++x) {
-				qreal xx = (x-rad) * (x-rad);
+
+		// Only one quarter of the pixels are unique.
+		// Quarter 1 is top left, quarter 2 is top right,
+		// quarter 3 is bottom left and quarter 4 is bottom right.
+		unsigned int scanline = brush.width()*4 - 1;
+		unsigned int scanline15= brush.width()*4 + brush.width()*2 + 2*(brush.width()%2);
+		unsigned int scanline2 = brush.width()/2*4;
+		uchar *q1 = brush.bits();
+		uchar *q2 = q1 + scanline;
+		uchar *q3 = q1 + brush.width()*(brush.height()-1)*4;
+		uchar *q4 = q3 + scanline;
+		for(int y=0;y<rad;++y) {
+			qreal yy = (y-rad+0.5) * (y-rad+0.5);
+			for(int x=0;x<rad;++x) {
+				qreal xx = (x-rad+0.5) * (x-rad+0.5);
 				qreal intensity = (1-pow( (xx+yy)*(rr) ,hard)) * alpha;
 
 				if(intensity<0) intensity=0;
 				else if(intensity>1) intensity=1;
 
-				*(data++) = qRound(blue * intensity);
-				*(data++) = qRound(green * intensity);
-				*(data++) = qRound(red * intensity);
-				*(data++) = qRound(intensity*255);
+				uchar r = qRound(red * intensity);
+				uchar g = qRound(green * intensity);
+				uchar b = qRound(blue * intensity);
+				uchar a = qRound(intensity*255);
+				*(q1++) = b; *(q1++) = g; *(q1++) = r; *(q1++) = a;
+				*(q2--) = a; *(q2--) = r; *(q2--) = g; *(q2--) = b;
+				*(q3++) = b; *(q3++) = g; *(q3++) = r; *(q3++) = a;
+				*(q4--) = a; *(q4--) = r; *(q4--) = g; *(q4--) = b;
 			}
+			q1 += scanline2;
+			q2 += scanline15;
+			q3 -= scanline15;
+			q4 -= scanline2;
 		}
 		cache_ = QPixmap::fromImage(brush);
 		cachepressure_ = pressure;
@@ -234,7 +243,7 @@ QPixmap Brush::getBrush(qreal pressure) const
 Brush& Brush::operator=(const Brush& brush)
 {
 	bool isEqual = true;
-	if(diameter1_ != brush.diameter1_ || diameter2_ != brush.diameter2_ ||
+	if(radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
 			fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
 			fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
 			fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
@@ -242,8 +251,8 @@ Brush& Brush::operator=(const Brush& brush)
 			color1_ != brush.color1_ ||
 			color2_ != brush.color2_)
 		isEqual = false;
-	diameter1_ = brush.diameter1_;
-	diameter2_ = brush.diameter2_;
+	radius1_ = brush.radius1_ ;
+	radius2_ = brush.radius2_ ;
 	hardness1_ = brush.hardness1_;
 	hardness2_ = brush.hardness2_;
 	opacity1_ = brush.opacity1_;

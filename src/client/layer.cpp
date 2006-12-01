@@ -102,8 +102,8 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 	x2 = qMax(point1.x(), point2.x());
 	y1 = qMin(point1.y(), point2.y());
 	y2 = qMax(point1.y(), point2.y());
-	int dia = qMax(brush.diameter(pressure1),brush.diameter(pressure2));
-	update(x1-dia/2,y1-dia/2,x2-x1+dia,y2-y1+dia);
+	int rad = qMax(brush.radius(pressure1),brush.radius(pressure2));
+	update(x1-rad,y1-rad,x2-x1+rad*2,y2-y1+rad*2);
 }
 
 /**
@@ -114,7 +114,7 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
  */
 void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
 {
-	int r = brush.diameter(pressure)/2;
+	int r = brush.radius(pressure);
 	QPainter painter(&pixmap_);
 	drawPoint(painter,point.x(),point.y(), pressure, brush);
 	update(point.x()-r,point.y()-r,point.x()+r,point.y()+r);
@@ -132,12 +132,12 @@ void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
  */
 void Layer::drawPoint(QPainter &painter, int x,int y, qreal pressure, const Brush& brush)
 {
-	int r = brush.diameter(pressure)/2;
+	int r = brush.radius(pressure);
 	QPoint p(x-r,y-r);
 	if(r==0) {
 		painter.setOpacity(brush.opacity(pressure));
 		painter.setPen(brush.color(pressure));
-		painter.drawPoint(QPoint(x,y));
+		painter.drawPoint(p);
 	} else {
 		painter.drawPixmap(p, brush.getBrush(pressure));
 	}

@@ -125,7 +125,10 @@
      <item>
       <widget class="QSlider" name="brushsize" >
        <property name="minimum" >
-        <number>1</number>
+        <number>0</number>
+       </property>
+       <property name="maximum" >
+        <number>64</number>
        </property>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
@@ -134,8 +137,11 @@
      </item>
      <item>
       <widget class="QSpinBox" name="brushsizebox" >
+       <property name="maximum" >
+        <number>64</number>
+       </property>
        <property name="minimum" >
-        <number>1</number>
+        <number>0</number>
        </property>
       </widget>
      </item>
