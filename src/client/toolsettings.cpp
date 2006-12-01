@@ -19,6 +19,8 @@
 */
 #include <QSettings>
 #include "toolsettings.h"
+#include "brushpreview.h"
+using widgets::BrushPreview; // qt designer doesn't know about namespaces
 #include "ui_brushsettings.h"
 
 namespace tools {
@@ -60,10 +62,16 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	cfg.beginGroup(getName());
 	ui_->brushsize->setValue(cfg.value("size", 1).toInt());
 	ui_->brushsizebox->setValue(ui_->brushsize->value());
+	ui_->preview->setSize(ui_->brushsize->value());
+
 	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
 	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
+	ui_->preview->setOpacity(ui_->brushopacity->value());
+
 	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
 	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
+	ui_->preview->setHardness(ui_->brushhardness->value());
+
 	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
 	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
 	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());

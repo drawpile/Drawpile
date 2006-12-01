@@ -25,7 +25,9 @@
 
 #include "brush.h"
 
+#ifndef NO_WIDGETS_NAMESPACE
 namespace widgets {
+#endif
 
 //! Brush previewing widget
 /**
@@ -36,15 +38,46 @@ class QDESIGNER_WIDGET_EXPORT BrushPreview : public QWidget {
 		BrushPreview(QWidget *parent=0);
 
 	public slots:
+		//! Set the brush to preview
+		/**
+		 * @param brush brush to set
+		 */
+		void setBrush(const drawingboard::Brush& brush);
+
+		//! Set preview brush size
+		void setSize(int size);
+
+		//! Set preview brush opacity
+		void setOpacity(int opacity);
+
+		//! Set preview brush hardness
+		void setHardness(int hardness);
+
+		//! Enable/disable default size pressure sensitivity
+		void setSizePressure(bool enable);
+
+		//! Enable/disable default opacity pressure sensitivity
+		void setOpacityPressure(bool enable);
+
+		//! Enable/disable default hardness pressure sensitivity
+		void setHardnessPressure(bool enable);
+
+		//! Enable/disable color pressure sensitivity
+		void setColorPressure(bool enable);
 
 	protected:
 		void paintEvent(QPaintEvent *event);
 
 	private:
 		drawingboard::Brush brush_;
+		bool sizepressure_;
+		bool opacitypressure_;
+		bool hardnesspressure_;
 };
 
+#ifndef NO_WIDGETS_NAMESPACE
 }
+#endif
 
 #endif
 

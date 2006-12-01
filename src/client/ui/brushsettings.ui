@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>222</width>
-    <height>216</height>
+    <width>257</width>
+    <height>302</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,11 +14,99 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>2</number>
+    <number>3</number>
    </property>
    <property name="spacing" >
-    <number>0</number>
+    <number>2</number>
    </property>
+   <item>
+    <widget class="BrushPreview" name="preview" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>7</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="maximumSize" >
+      <size>
+       <width>16777215</width>
+       <height>128</height>
+      </size>
+     </property>
+     <property name="palette" >
+      <palette>
+       <active>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window" >
+         <brush brushstyle="SolidPattern" >
+          <color alpha="255" >
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
@@ -196,13 +284,20 @@
      <property name="sizeHint" >
       <size>
        <width>20</width>
-       <height>16</height>
+       <height>40</height>
       </size>
      </property>
     </spacer>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>BrushPreview</class>
+   <extends>QWidget</extends>
+   <header>brushpreview.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>brushsizebox</tabstop>
   <tabstop>brushopacitybox</tabstop>
@@ -224,12 +319,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>142</x>
-     <y>27</y>
+     <x>146</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>177</x>
-     <y>33</y>
+     <x>252</x>
+     <y>115</y>
     </hint>
    </hints>
   </connection>
@@ -240,12 +335,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>184</x>
-     <y>22</y>
+     <x>252</x>
+     <y>112</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>23</x>
-     <y>33</y>
+     <x>27</x>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -256,12 +351,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>103</x>
-     <y>77</y>
+     <x>107</x>
+     <y>162</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>198</x>
-     <y>80</y>
+     <x>252</x>
+     <y>167</y>
     </hint>
    </hints>
   </connection>
@@ -272,12 +367,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>170</x>
-     <y>69</y>
+     <x>252</x>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>36</x>
-     <y>76</y>
+     <x>40</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>
@@ -288,12 +383,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>143</x>
-     <y>128</y>
+     <x>147</x>
+     <y>214</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>173</x>
-     <y>128</y>
+     <x>252</x>
+     <y>219</y>
     </hint>
    </hints>
   </connection>
@@ -304,12 +399,124 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>183</x>
-     <y>116</y>
+     <x>252</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>12</x>
-     <y>126</y>
+     <x>16</x>
+     <y>214</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushsize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setSize(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>70</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>80</x>
+     <y>40</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushhardness</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setHardness(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>175</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>220</x>
+     <y>35</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushopacity</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setOpacity(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>167</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>192</x>
+     <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressuresize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setSizePressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>36</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>60</x>
+     <y>27</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressureopacity</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setOpacityPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>157</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>167</x>
+     <y>27</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressurehardness</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setHardnessPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>31</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>43</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pressurecolor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setColorPressure(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>181</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>235</x>
+     <y>19</y>
     </hint>
    </hints>
   </connection>

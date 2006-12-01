@@ -28,7 +28,7 @@ Brush::Brush(int diameter, qreal hardness, qreal opacity, const QColor& color)
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color),
-	cachepressure_(-1)
+	sensitive_(false), cachepressure_(-1)
 {
 }
 
@@ -39,6 +39,7 @@ Brush::Brush(int diameter, qreal hardness, qreal opacity, const QColor& color)
 void Brush::setDiameter(int diameter)
 {
 	diameter1_ = diameter;
+	checkSensitivity();
 	cachepressure_ = -1;
 }
 
@@ -49,6 +50,7 @@ void Brush::setDiameter(int diameter)
 void Brush::setHardness(qreal hardness)
 {
 	hardness1_ = hardness;
+	checkSensitivity();
 	cachepressure_ = -1;
 }
 
@@ -59,6 +61,8 @@ void Brush::setHardness(qreal hardness)
 void Brush::setOpacity(qreal opacity)
 {
 	opacity1_ = opacity;
+	checkSensitivity();
+	cachepressure_ = -1;
 }
 
 /**
@@ -68,6 +72,7 @@ void Brush::setOpacity(qreal opacity)
 void Brush::setColor(const QColor& color)
 {
 	color1_ = color;
+	checkSensitivity();
 	cachepressure_ = -1;
 }
 
@@ -75,24 +80,40 @@ void Brush::setColor(const QColor& color)
 void Brush::setDiameter2(int diameter)
 {
 	diameter2_ = diameter;
+	checkSensitivity();
 	cachepressure_ = -1;
 }
 
 void Brush::setHardness2(qreal hardness)
 {
 	hardness2_ = hardness;
+	checkSensitivity();
 	cachepressure_ = -1;
 }
 
 void Brush::setOpacity2(qreal opacity)
 {
 	opacity2_ = opacity;
+	checkSensitivity();
+	cachepressure_ = -1;
 }
 
 void Brush::setColor2(const QColor& color)
 {
 	color2_ = color;
+	checkSensitivity();
 	cachepressure_ = -1;
+}
+
+/**
+ * Check if brush is sensitive to pressure.
+ */
+void Brush::checkSensitivity()
+{
+	sensitive_ = diameter1_ != diameter2_ ||
+			fabs(hardness1_ - hardness2_) >= 0.01 ||
+			fabs(opacity1_ - opacity2_) >= 0.01 ||
+			color1_ != color1_;
 }
 
 /**
@@ -160,7 +181,8 @@ QColor Brush::color(qreal pressure) const
  */
 QPixmap Brush::getBrush(qreal pressure) const
 {
-	if(fabs(pressure - cachepressure_) > 1.0/256.0) {
+	if(cachepressure_<0 ||
+			(sensitive_ && fabs(pressure - cachepressure_) > 1.0/256.0)) {
 		// Regenerate brush (we currently support 256 levels of pressure)
 
 		int dia = diameter(pressure);
@@ -228,6 +250,7 @@ Brush& Brush::operator=(const Brush& brush)
 	opacity2_ = brush.opacity2_;
 	color1_ = brush.color1_;
 	color2_ = brush.color2_;
+	sensitive_ = brush.sensitive_;
 
 	if(isEqual==false || cachepressure_<0 || brush.cachepressure_>=0) {
 		cachepressure_ = brush.cachepressure_;

@@ -1,7 +1,7 @@
+#include <QtPlugin>
+
 #include "../../brushpreview.h"
 #include "plugin.h"
-
-#include <QtPlugin>
 
 BrushPreviewPlugin::BrushPreviewPlugin(QObject *parent)
 	: QObject(parent)
@@ -24,7 +24,7 @@ bool BrushPreviewPlugin::isInitialized() const
 
 QWidget *BrushPreviewPlugin::createWidget(QWidget *parent)
 {
-    return new widgets::BrushPreview(parent);
+    return new BrushPreview(parent);
 }
 
 QString BrushPreviewPlugin::name() const
@@ -77,3 +77,4 @@ QString BrushPreviewPlugin::includeFile() const
 }
 
 Q_EXPORT_PLUGIN2(brushpreviewlugin, BrushPreviewPlugin)
+

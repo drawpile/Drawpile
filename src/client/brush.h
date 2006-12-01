@@ -73,10 +73,13 @@ class Brush
 		//! Copy operator
 		Brush& operator=(const Brush& brush);
 	private:
+		void checkSensitivity();
+
 		int diameter1_, diameter2_;
 		qreal hardness1_, hardness2_;
 		qreal opacity1_, opacity2_;
 		QColor color1_, color2_;
+		bool sensitive_;
 
 		mutable QPixmap cache_;
 		mutable qreal cachepressure_;
