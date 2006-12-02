@@ -138,7 +138,9 @@ size_t Message::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	if (bIsFlag(modifiers, message::isUser))
-		bswap_mem(user_id, buf+sizeof(type));
+	{
+		memcpy_t(user_id, buf+sizeof(type));
+	}
 	
 	return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
 }
@@ -153,9 +155,9 @@ size_t Identifier::serializePayload(char *buf) const throw()
 	
 	memcpy(buf, &identifier, identifier_size); size_t i = identifier_size;
 	
-	bswap_mem(buf+i, revision); i += sizeof(revision);
-	bswap_mem(buf+i, level); i += sizeof(level);
-	bswap_mem(buf+i, extensions); i += sizeof(extensions);
+	memcpy_t(buf+i, bswap(copy(revision))); i += sizeof(revision);
+	memcpy_t(buf+i, bswap(copy(level))); i += sizeof(level);
+	memcpy_t(buf+i, extensions); i += sizeof(extensions);
 	
 	return i;
 }
@@ -174,9 +176,12 @@ size_t Identifier::unserialize(const char* buf, size_t len)
 	
 	memcpy(&identifier, buf+i, identifier_size); i += identifier_size;
 	
-	bswap_mem(revision, buf+i); i += sizeof(revision);
-	bswap_mem(level, buf+i); i += sizeof(level);
-	bswap_mem(extensions, buf+i); i += sizeof(extensions);
+	memcpy_t(revision, buf+i); i += sizeof(revision);
+	memcpy_t(level, buf+i); i += sizeof(level);
+	memcpy_t(extensions, buf+i); i += sizeof(extensions);
+	
+	bswap(revision);
+	bswap(level);
 	
 	return i;
 }
@@ -198,9 +203,9 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, x); size_t i = sizeof(x);
-	bswap_mem(buf+i, y); i += sizeof(y);
-	bswap_mem(buf+i, pressure); i += sizeof(pressure);
+	memcpy_t(buf, bswap(copy(x))); size_t i = sizeof(x);
+	memcpy_t(buf+i, bswap(copy(y))); i += sizeof(y);
+	memcpy_t(buf+i, pressure); i += sizeof(pressure);
 	
 	return i;
 }
@@ -216,12 +221,13 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	uint8_t count, uid; // temporary
-	
 	size_t i = sizeof(type);
 	
-	bswap_mem(uid, buf+i); i += sizeof(user_id);
-	bswap_mem(count, buf+i); i += sizeof(count);
+	uint8_t uid;
+	memcpy_t(uid, buf+i); i += sizeof(user_id);
+	
+	uint8_t count;
+	memcpy_t(count, buf+i); i += sizeof(count);
 	
 	if (count == 0)
 		throw new scrambled_buffer();
@@ -230,9 +236,12 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len)
 	do
 	{
 		ptr->user_id = uid;
-		bswap_mem(ptr->x, buf+i); i += sizeof(x);
-		bswap_mem(ptr->y, buf+i); i += sizeof(y);
-		bswap_mem(ptr->pressure, buf+i); i += sizeof(pressure);
+		memcpy_t(ptr->x, buf+i); i += sizeof(x);
+		memcpy_t(ptr->y, buf+i); i += sizeof(y);
+		memcpy_t(ptr->pressure, buf+i); i += sizeof(pressure);
+		
+		bswap(ptr->x);
+		bswap(ptr->y);
 		
 		ptr = static_cast<StrokeInfo*>(next);
 	}
@@ -271,16 +280,16 @@ size_t ToolInfo::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(user_id, buf+i); i += sizeof(user_id);
-	bswap_mem(tool_id, buf+i); i += sizeof(tool_id);
+	memcpy_t(user_id, buf+i); i += sizeof(user_id);
+	memcpy_t(tool_id, buf+i); i += sizeof(tool_id);
 	
-	memcpy(&lo_color, buf+i, sizeof(lo_color)); i += sizeof(lo_color);
-	memcpy(&hi_color, buf+i, sizeof(hi_color)); i += sizeof(hi_color);
+	memcpy_t(lo_color, buf+i); i += sizeof(lo_color);
+	memcpy_t(hi_color, buf+i); i += sizeof(hi_color);
 	
-	bswap_mem(lo_size, buf+i); i += sizeof(lo_size);
-	bswap_mem(hi_size, buf+i); i += sizeof(hi_size);
-	bswap_mem(lo_softness, buf+i); i += sizeof(lo_softness);
-	bswap_mem(hi_softness, buf+i); i += sizeof(hi_softness);
+	memcpy_t(lo_size, buf+i); i += sizeof(lo_size);
+	memcpy_t(hi_size, buf+i); i += sizeof(hi_size);
+	memcpy_t(lo_softness, buf+i); i += sizeof(lo_softness);
+	memcpy_t(hi_softness, buf+i); i += sizeof(hi_softness);
 	
 	return i;
 }
@@ -298,15 +307,15 @@ size_t ToolInfo::serializePayload(char *buf) const throw()
 	assert(buf != 0);
 	assert(tool_id != protocol::tool::None);
 	
-	bswap_mem(buf, tool_id); size_t i = sizeof(tool_id);
+	memcpy_t(buf, tool_id); size_t i = sizeof(tool_id);
 	
 	memcpy(buf+i, &lo_color, sizeof(lo_color)); i += sizeof(lo_color);
 	memcpy(buf+i, &hi_color, sizeof(hi_color)); i += sizeof(hi_color);
 	
-	bswap_mem(buf+i, lo_size); i += sizeof(lo_size);
-	bswap_mem(buf+i, hi_size); i += sizeof(hi_size);
-	bswap_mem(buf+i, lo_softness); i += sizeof(lo_softness);
-	bswap_mem(buf+i, hi_softness); i += sizeof(hi_softness);
+	memcpy_t(buf+i, lo_size); i += sizeof(lo_size);
+	memcpy_t(buf+i, hi_size); i += sizeof(hi_size);
+	memcpy_t(buf+i, lo_softness); i += sizeof(lo_softness);
+	memcpy_t(buf+i, hi_softness); i += sizeof(hi_softness);
 	
 	return i;
 }
@@ -335,9 +344,13 @@ size_t Raster::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(offset, buf+i); i += sizeof(offset);
-	bswap_mem(length, buf+i); i += sizeof(length);
-	bswap_mem(size, buf+i); i += sizeof(size);
+	memcpy_t(offset, buf+i); i += sizeof(offset);
+	memcpy_t(length, buf+i); i += sizeof(length);
+	memcpy_t(size, buf+i); i += sizeof(size);
+	
+	bswap(offset);
+	bswap(length);
+	bswap(size);
 	
 	data = new char[length];
 	memcpy(data, buf+i, length); i += length;
@@ -354,8 +367,9 @@ size_t Raster::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size);
 	else
 	{
+		uint32_t tmp = *(buf+sizeof(type)+sizeof(offset));
 		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size)
-			+ bswap_mem<uint32_t>(buf+sizeof(type)+sizeof(offset));
+			+ tmp;
 	}
 }
 
@@ -363,9 +377,9 @@ size_t Raster::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, offset); size_t i = sizeof(offset);
-	bswap_mem(buf+i, length); i += sizeof(length);
-	bswap_mem(buf+i, size); i += sizeof(size);
+	memcpy_t(buf, bswap(copy(offset))); size_t i = sizeof(offset);
+	memcpy_t(buf+i, bswap(copy(length))); i += sizeof(length);
+	memcpy_t(buf+i, bswap(copy(size))); i += sizeof(size);
 	
 	memcpy(buf+i, data, length); i += length;
 	
@@ -400,8 +414,8 @@ size_t Password::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(board_id, buf+i); i += sizeof(board_id);
-	bswap_mem(length, buf+i); i += sizeof(length);
+	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	data = new char[length];
 	memcpy(data, buf+i, length); i += length;
@@ -418,8 +432,9 @@ size_t Password::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type)+sizeof(board_id)+sizeof(length);
 	else
 	{
+		uint8_t tmp = *(buf+sizeof(type));
 		return sizeof(type) + sizeof(board_id) + sizeof(length)
-			+ bswap_mem<uint8_t>(buf+sizeof(type)+sizeof(board_id));
+			+ tmp+sizeof(board_id);
 	}
 }
 
@@ -427,8 +442,8 @@ size_t Password::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, board_id); size_t i = sizeof(board_id);
-	bswap_mem(buf+i, length); i += sizeof(length);
+	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf+i, length); i += sizeof(length);
 	
 	memcpy(buf+i, data, length);
 	
@@ -450,7 +465,7 @@ size_t Subscribe::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	bswap_mem(board_id, buf+sizeof(type));
+	memcpy_t(board_id, buf+sizeof(type));
 	
 	return sizeof(type)+sizeof(board_id);
 }
@@ -467,7 +482,7 @@ size_t Subscribe::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, board_id);
+	memcpy_t(buf, board_id);
 	
 	return sizeof(board_id);
 }
@@ -487,7 +502,7 @@ size_t Unsubscribe::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	bswap_mem(board_id, buf+sizeof(type));
+	memcpy_t(board_id, buf+sizeof(type));
 	
 	return sizeof(type) + sizeof(board_id);
 }
@@ -504,7 +519,7 @@ size_t Unsubscribe::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, board_id);
+	memcpy_t(buf, board_id);
 	
 	return sizeof(board_id);
 }
@@ -525,7 +540,7 @@ size_t Instruction::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(length, buf+i); i += sizeof(length);
+	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	data = new char[length];
 	memcpy(data, buf+i, length); i += length;
@@ -544,7 +559,7 @@ size_t Instruction::reqDataLen(const char *buf, size_t len) const
 	{
 		uint8_t rlen;
 		
-		bswap_mem(rlen, buf+sizeof(type));
+		memcpy_t(rlen, buf+sizeof(type));
 		
 		return sizeof(type) + sizeof(length) + rlen;
 	}
@@ -554,7 +569,7 @@ size_t Instruction::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, length);
+	memcpy_t(buf, length);
 	memcpy(buf+sizeof(length), data, length);
 	
 	return sizeof(length) + length;
@@ -589,12 +604,12 @@ size_t UserInfo::unserialize(const char* buf, size_t len)
 	
 	size_t i = sizeof(type);
 	
-	bswap_mem(user_id, buf+i); i += sizeof(user_id);
+	memcpy_t(user_id, buf+i); i += sizeof(user_id);
 	
-	bswap_mem(board_id, buf+i); i += sizeof(board_id);
-	bswap_mem(mode, buf+i); i += sizeof(mode);
-	bswap_mem(event, buf+i); i += sizeof(event);
-	bswap_mem(length, buf+i); i += sizeof(length);
+	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(mode, buf+i); i += sizeof(mode);
+	memcpy_t(event, buf+i); i += sizeof(event);
+	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	name = new char[length];
 	memcpy(name, buf+i, length); i += length;
@@ -614,7 +629,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const
 	{
 		uint8_t rlen;
 	
-		bswap_mem(rlen, buf+off);
+		memcpy_t(rlen, buf+off);
 		
 		return off + sizeof(length) + rlen;
 	}
@@ -624,10 +639,10 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, board_id); size_t i = sizeof(board_id);
-	bswap_mem(buf+i, mode); i += sizeof(mode);
-	bswap_mem(buf+i, event); i += sizeof(event);
-	bswap_mem(buf+i, length); i+= sizeof(length);
+	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf+i, mode); i += sizeof(mode);
+	memcpy_t(buf+i, event); i += sizeof(event);
+	memcpy_t(buf+i, length); i+= sizeof(length);
 	
 	memcpy(buf+i, name, length); i += length;
 	
@@ -650,14 +665,14 @@ size_t HostInfo::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(boards, buf+i); i += sizeof(boards);
-	bswap_mem(boardLimit, buf+i); i += sizeof(boardLimit);
-	bswap_mem(users, buf+i); i += sizeof(users);
-	bswap_mem(userLimit, buf+i); i += sizeof(userLimit);
-	bswap_mem(nameLenLimit, buf+i); i += sizeof(nameLenLimit);
-	bswap_mem(maxSubscriptions, buf+i); i += sizeof(maxSubscriptions);
-	bswap_mem(requirements, buf+i); i += sizeof(requirements);
-	bswap_mem(extensions, buf+i); i += sizeof(extensions);
+	memcpy_t(boards, buf+i); i += sizeof(boards);
+	memcpy_t(boardLimit, buf+i); i += sizeof(boardLimit);
+	memcpy_t(users, buf+i); i += sizeof(users);
+	memcpy_t(userLimit, buf+i); i += sizeof(userLimit);
+	memcpy_t(nameLenLimit, buf+i); i += sizeof(nameLenLimit);
+	memcpy_t(maxSubscriptions, buf+i); i += sizeof(maxSubscriptions);
+	memcpy_t(requirements, buf+i); i += sizeof(requirements);
+	memcpy_t(extensions, buf+i); i += sizeof(extensions);
 	
 	return i;
 }
@@ -674,14 +689,14 @@ size_t HostInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 
-	bswap_mem(buf, boards); size_t i = sizeof(boards);
-	bswap_mem(buf+i, boardLimit); i += sizeof(boardLimit);
-	bswap_mem(buf+i, users); i += sizeof(users);
-	bswap_mem(buf+i, userLimit); i += sizeof(userLimit);
-	bswap_mem(buf+i, nameLenLimit); i += sizeof(nameLenLimit);
-	bswap_mem(buf+i, maxSubscriptions); i += sizeof(maxSubscriptions);
-	bswap_mem(buf+i, requirements); i += sizeof(requirements);
-	bswap_mem(buf+i, extensions); i += sizeof(extensions);
+	memcpy_t(buf, boards); size_t i = sizeof(boards);
+	memcpy_t(buf+i, boardLimit); i += sizeof(boardLimit);
+	memcpy_t(buf+i, users); i += sizeof(users);
+	memcpy_t(buf+i, userLimit); i += sizeof(userLimit);
+	memcpy_t(buf+i, nameLenLimit); i += sizeof(nameLenLimit);
+	memcpy_t(buf+i, maxSubscriptions); i += sizeof(maxSubscriptions);
+	memcpy_t(buf+i, requirements); i += sizeof(requirements);
+	memcpy_t(buf+i, extensions); i += sizeof(extensions);
 	
 	return i;
 }
@@ -707,14 +722,14 @@ size_t BoardInfo::unserialize(const char* buf, size_t len)
 	
 	memcpy(&identifier, buf+i, sizeof(identifier)); i += sizeof(identifier);
 	
-	bswap_mem(width, buf+i); i += sizeof(width);
-	bswap_mem(height, buf+i); i += sizeof(width);
-	bswap_mem(owner, buf+i); i += sizeof(owner);
-	bswap_mem(users, buf+i); i += sizeof(users);
-	bswap_mem(limit, buf+i); i += sizeof(limit);
-	bswap_mem(uflags, buf+i); i += sizeof(uflags);
-	bswap_mem(flags, buf+i); i += sizeof(uflags);
-	bswap_mem(length, buf+i); i += sizeof(width);
+	memcpy_t(width, buf+i); i += sizeof(width);
+	memcpy_t(height, buf+i); i += sizeof(width);
+	memcpy_t(owner, buf+i); i += sizeof(owner);
+	memcpy_t(users, buf+i); i += sizeof(users);
+	memcpy_t(limit, buf+i); i += sizeof(limit);
+	memcpy_t(uflags, buf+i); i += sizeof(uflags);
+	memcpy_t(flags, buf+i); i += sizeof(uflags);
+	memcpy_t(length, buf+i); i += sizeof(width);
 	
 	name = new char[length];
 	memcpy(name, buf+i, length); i += length;
@@ -735,10 +750,10 @@ size_t BoardInfo::reqDataLen(const char *buf, size_t len) const
 	{
 		uint8_t rlen;
 		
-		bswap_mem(rlen, buf+p);
+		memcpy_t(rlen, buf+p);
 		
 		return p + sizeof(length) + rlen;
-		// return p + sizeof(length) + bswap_mem_t(buf+p, length));
+		// return p + sizeof(length) + memcpy_t_t(buf+p, length));
 	}
 }
 
@@ -748,12 +763,12 @@ size_t BoardInfo::serializePayload(char *buf) const throw()
 	
 	memcpy(buf, &identifier, sizeof(identifier)); size_t i = sizeof(identifier);
 	
-	bswap_mem(buf+i, width); i += sizeof(width);
-	bswap_mem(buf+i, height); i += sizeof(height);
-	bswap_mem(buf+i, owner); i += sizeof(owner);
-	bswap_mem(buf+i, users); i += sizeof(users);
-	bswap_mem(buf+i, limit); i += sizeof(limit);
-	bswap_mem(buf+i, length); i += sizeof(length);
+	memcpy_t(buf+i, width); i += sizeof(width);
+	memcpy_t(buf+i, height); i += sizeof(height);
+	memcpy_t(buf+i, owner); i += sizeof(owner);
+	memcpy_t(buf+i, users); i += sizeof(users);
+	memcpy_t(buf+i, limit); i += sizeof(limit);
+	memcpy_t(buf+i, length); i += sizeof(length);
 	
 	memcpy(buf+i, name, length); i += length;
 
@@ -776,7 +791,7 @@ size_t Acknowledgement::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	bswap_mem(event, buf+sizeof(type));
+	memcpy_t(event, buf+sizeof(type));
 	
 	return sizeof(type) + sizeof(event);
 }
@@ -793,7 +808,7 @@ size_t Acknowledgement::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, event);
+	memcpy_t(buf, event);
 	
 	return sizeof(event);
 }
@@ -813,7 +828,7 @@ size_t Error::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	bswap_mem(code, buf+sizeof(type));
+	memcpy_t(code, buf+sizeof(type));
 	
 	return sizeof(type) + sizeof(code);
 }
@@ -830,7 +845,7 @@ size_t Error::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, code);
+	memcpy_t(buf, code);
 	
 	return sizeof(code);
 }
@@ -851,8 +866,11 @@ size_t Deflate::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(uncompressed, buf+i); i += sizeof(uncompressed);
-	bswap_mem(length, buf+i); i += sizeof(length);
+	memcpy_t(uncompressed, buf+i); i += sizeof(uncompressed);
+	memcpy_t(length, buf+i); i += sizeof(length);
+	
+	bswap(uncompressed);
+	bswap(length);
 	
 	data = new char[length];
 	memcpy(data, buf+i, length);  i += length;
@@ -871,7 +889,8 @@ size_t Deflate::reqDataLen(const char *buf, size_t len) const
 	{
 		uint16_t rlen;
 		
-		bswap_mem(rlen, buf+sizeof(type)+sizeof(uncompressed));
+		memcpy_t(rlen, buf+sizeof(type)+sizeof(uncompressed));
+		bswap(rlen);
 		
 		return sizeof(type) + sizeof(uncompressed) + sizeof(length) + rlen;
 	}
@@ -881,8 +900,8 @@ size_t Deflate::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, uncompressed); size_t i = sizeof(uncompressed);
-	bswap_mem(buf+i, length); i += sizeof(length);
+	memcpy_t(buf, bswap(copy(uncompressed))); size_t i = sizeof(uncompressed);
+	memcpy_t(buf+i, bswap(copy(length))); i += sizeof(length);
 	
 	memcpy(buf+i, data, length); i += length;
 	
@@ -905,8 +924,8 @@ size_t Chat::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	bswap_mem(board_id, buf+i); i += sizeof(board_id);
-	bswap_mem(length, buf+i); i += sizeof(length);
+	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	data = new char[length];
 	memcpy(data, buf+i, length); i += length;
@@ -925,7 +944,7 @@ size_t Chat::reqDataLen(const char *buf, size_t len) const
 	{
 		uint8_t rlen;
 		
-		bswap_mem(rlen, buf+sizeof(type)+sizeof(board_id));
+		memcpy_t(rlen, buf+sizeof(type)+sizeof(board_id));
 		
 		return sizeof(type) + sizeof(board_id) + sizeof(length) + rlen;
 	}
@@ -935,8 +954,8 @@ size_t Chat::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, board_id); size_t i = sizeof(board_id);
-	bswap_mem(buf+i, length); i += sizeof(length);
+	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf+i, length); i += sizeof(length);
 	
 	memcpy(buf+i, data, length); i += length;
 	
@@ -960,8 +979,8 @@ size_t Palette::unserialize(const char* buf, size_t len)
 	
 	size_t i = sizeof(type);
 	
-	bswap_mem(offset, buf+i); i += sizeof(offset);
-	bswap_mem(count, buf+i); i += sizeof(count);
+	memcpy_t(offset, buf+i); i += sizeof(offset);
+	memcpy_t(count, buf+i); i += sizeof(count);
 	
 	data = new char[count*RGB_size];
 	memcpy(data, buf+i, count*RGB_size); i += count*RGB_size;
@@ -978,8 +997,9 @@ size_t Palette::reqDataLen(const char *buf, size_t len) const
 		return sizeof(type) + sizeof(offset) + sizeof(count);
 	else
 	{
+		uint8_t tmp = *(buf+sizeof(type)+sizeof(offset));
 		return sizeof(type) + sizeof(offset) + sizeof(count)
-			+ bswap_mem<uint8_t>(buf+sizeof(type)+sizeof(offset)) * RGB_size;
+			+ tmp * RGB_size;
 	}
 }
 
@@ -987,8 +1007,8 @@ size_t Palette::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	bswap_mem(buf, offset); size_t i = sizeof(offset);
-	bswap_mem(buf+i, count); i += sizeof(count);
+	memcpy_t(buf, offset); size_t i = sizeof(offset);
+	memcpy_t(buf+i, count); i += sizeof(count);
 	
 	memcpy(buf+i, data, count*RGB_size); i += count*RGB_size;
 	

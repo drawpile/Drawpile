@@ -127,7 +127,7 @@ struct Message
 	 * header data. Defaults to zero payload message with possible user modifier.
 	 */
 	virtual
-	size_t reqDataLen(const char*, size_t) const;
+	size_t reqDataLen(const char* buf, size_t len) const;
 	
 	//! Unserializes char* buffer to associated message struct.
 	/**
@@ -143,7 +143,7 @@ struct Message
 	 * by reqDataLen() call. Defaults to zero payload with possible user modifiers.
 	 */
 	virtual
-	size_t unserialize(const char*, size_t);
+	size_t unserialize(const char* buf, size_t len);
 };
 
 //! Protocol identifier.

@@ -5,5 +5,5 @@ TARGET = drawpileserver
 LIBS += -L../shared
 
 HEADERS =
-SOURCES = main.cpp
+SOURCES = dpsrv.cpp
 

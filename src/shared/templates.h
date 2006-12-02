@@ -26,63 +26,85 @@
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
 
-/* swapping endianess */
 
+/* simple template to return copy of the parameter */
 template <class T>
-struct bswap_t
-{
-	static
-	T& swap(T& x) { return x; }
-};
+T copy(T& x) { return x; }
 
-/* wrapper for bswap_t */
+/* swapping endianess */
 
 template <class T>
 T& bswap(T& x)
 {
-	return bswap_t<T>::swap(x);
+	assert("Default template should never be used!");
+	return x;
 }
 
-//! Wrapper for memcpy() and bswap().
-/**
- * @param x target variable.
- * @param buf source char* buffer.
- *
- * @return reference to x after writing sizeof(x) bytes from buffer to it, and swapping
- * the endianess.
- */
-template <class T>
-T& bswap_mem(T& x, const char* buf)
+// unsigned
+
+template <> inline
+uint32_t& bswap<uint32_t>(uint32_t& x)
 {
-	assert(buf != 0);
-	memcpy(&x, buf, sizeof(T));
-	return bswap(x);
+	// (c) 2003 Juan Carlos Cobas
+	return x = (((x&0x000000FF)<<24) + ((x&0x0000FF00)<<8) +
+		((x&0x00FF0000)>>8) + ((x&0xFF000000)>>24));
 }
 
-//! Wrapper for memcpy() and bswap()
-/**
- * @param buf target char* buffer.
- * @param u source integer.
- *
- * @return modified buf with u written in it, in swapped byte order.
- */
-template <class T>
-char* bswap_mem(char* buf, T& u)
+template <> inline
+uint16_t& bswap<uint16_t>(uint16_t& x)
 {
-	assert(buf != 0);
-	memcpy(buf, &bswap(u), sizeof(T));
-	return buf;
+	// (c) 2003 Juan Carlos Cobas
+	return x = (((x >> 8)) | (x << 8));
 }
 
+template <> inline
+uint8_t& bswap<uint8_t>(uint8_t& x)
+{
+	// (c) 2003 Juan Carlos Cobas
+	return x;
+}
+
+// signed (should not be used)
+/*
+template <> inline
+int32_t& bswap<int32_t>(int32_t& x)
+{
+	// (c) 2003 Juan Carlos Cobas
+	return x = (((x&0x000000FF)<<24) + ((x&0x0000FF00)<<8) +
+		((x&0x00FF0000)>>8) + ((x&0xFF000000)>>24));
+}
+
+template <> inline
+int16_t& bswap<int16_t>(int16_t& x)
+{
+	// (c) 2003 Juan Carlos Cobas
+	return x = (((x >> 8)) | (x << 8));
+}
+
+template <> inline
+int8_t& bswap<int8_t>(int8_t& x)
+{
+	// (c) 2003 Juan Carlos Cobas
+	return x;
+}
+*/
+
+/* memmory */
+
+template <class X>
+char* memcpy_t(char* dst, const X& src)
+{
+	memcpy(dst, &src, sizeof(X));
+	return dst;
+}
 
 template <class T>
-T bswap_mem(const char* buf)
+T& memcpy_t(T& dst, const char* src)
 {
-	assert(buf != 0);
-	T x;
-	memcpy(&x, buf, sizeof(T));
-	return bswap(x);
+	memcpy(&dst, src, sizeof(T));
+	return dst;
 }
+
 
 /* Bit operations */
 
