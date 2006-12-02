@@ -63,7 +63,11 @@ class DualColorButton : public QWidget {
 
 	protected:
 		void mousePressEvent(QMouseEvent *event);
+		void mouseMoveEvent(QMouseEvent *event);
+		void mouseReleaseEvent(QMouseEvent *event);
 		void paintEvent(QPaintEvent *event);
+		void dragEnterEvent(QDragEnterEvent *event);
+		void dropEvent(QDropEvent *event);
 
 	private:
 		QColor foreground_;
@@ -73,6 +77,9 @@ class DualColorButton : public QWidget {
 		QRect backgroundRect() const;
 		QRect resetBlackRect() const;
 		QRect resetWhiteRect() const;
+
+		QPoint dragStart_;
+		enum {NODRAG,FOREGROUND,BACKGROUND} dragSource_;
 };
 
 }

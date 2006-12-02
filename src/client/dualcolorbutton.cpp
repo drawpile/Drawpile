@@ -1,5 +1,7 @@
+#include <QApplication>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QDrag>
 
 #include "dualcolorbutton.h"
 
@@ -9,12 +11,14 @@ DualColorButton::DualColorButton(QWidget *parent)
 	: QWidget(parent), foreground_(Qt::black), background_(Qt::white)
 {
 	setMinimumSize(32,32);
+	setAcceptDrops(true);
 }
 
 DualColorButton::DualColorButton(const QColor& fgColor, const QColor& bgColor, QWidget *parent)
 	: QWidget(parent), foreground_(fgColor), background_(bgColor)
 {
 	setMinimumSize(32,32);
+	setAcceptDrops(true);
 }
 
 /**
@@ -115,6 +119,36 @@ void DualColorButton::paintEvent(QPaintEvent *event)
 
 void DualColorButton::mousePressEvent(QMouseEvent *event)
 {
+	if(event->button() != Qt::LeftButton)
+		return;
+	dragSource_ = NODRAG;
+	if(backgroundRect().contains(event->pos()))
+			dragSource_ = BACKGROUND;
+	if(foregroundRect().contains(event->pos()))
+			dragSource_ = FOREGROUND;
+
+	dragStart_ = event->pos();
+}
+
+void DualColorButton::mouseMoveEvent(QMouseEvent *event)
+{
+	if(dragSource_ != NODRAG && (event->buttons() & Qt::LeftButton) &&
+			(event->pos() - dragStart_).manhattanLength()
+		< QApplication::startDragDistance())
+	{
+		QDrag *drag = new QDrag(this);
+
+		QMimeData *mimedata = new QMimeData;
+		QColor color = (dragSource_ == FOREGROUND)?foreground_:background_;
+		mimedata->setColorData(color);
+
+		drag->setMimeData(mimedata);
+		drag->start(Qt::CopyAction);
+	}
+}
+
+void DualColorButton::mouseReleaseEvent(QMouseEvent *event)
+{
 	QRect swaprect(qRound(width()*2.0/3.0),0,width()/3,height()/3);
 	if(resetBlackRect().contains(event->pos()) || resetWhiteRect().contains(event->pos())) {
 		foreground_ = Qt::black;
@@ -134,6 +168,25 @@ void DualColorButton::mousePressEvent(QMouseEvent *event)
 		emit backgroundChanged(background_);
 		update();
 	}
+}
+
+void DualColorButton::dragEnterEvent(QDragEnterEvent *event)
+{
+	if(event->mimeData()->hasFormat("application/x-color"))
+		event->acceptProposedAction();
+}
+
+void DualColorButton::dropEvent(QDropEvent *event)
+{
+	QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
+	if(foregroundRect().contains(event->pos())) {
+		foreground_ = color;
+		emit foregroundChanged(color);
+	} else if(backgroundRect().contains(event->pos())) {
+		background_ = color;
+		emit backgroundChanged(color);
+	}
+	update();
 }
 
 }
