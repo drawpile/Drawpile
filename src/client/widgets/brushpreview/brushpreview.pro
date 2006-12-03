@@ -1,7 +1,7 @@
 TEMPLATE = lib
 CONFIG += designer plugin debug_and_release
 target.path = $$[QT_INSTALL_PLUGINS]/designer
-DEFINES += NO_WIDGETS_NAMESPACE
+DEFINES += DESIGNER_PLUGIN
 INSTALLS += target
 
 # Input

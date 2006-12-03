@@ -4,7 +4,7 @@
 
 #include "brushpreview.h"
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 namespace widgets {
 #endif
 
@@ -138,7 +138,7 @@ void BrushPreview::setColorPressure(bool enable)
 	update();
 }
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 }
 #endif
 

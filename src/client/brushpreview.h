@@ -21,18 +21,21 @@
 #define BRUSHPREVIEW_H
 
 #include <QWidget>
-#include <QtDesigner/QDesignerExportWidget>
 
 #include "brush.h"
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 namespace widgets {
+#define PLUGIN_EXPORT
+#else
+#include <QtDesigner/QDesignerExportWidget>
+#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
 //! Brush previewing widget
 /**
  */
-class QDESIGNER_WIDGET_EXPORT BrushPreview : public QWidget {
+class PLUGIN_EXPORT BrushPreview : public QWidget {
 	Q_OBJECT
 	public:
 		BrushPreview(QWidget *parent=0);
@@ -77,7 +80,7 @@ class QDESIGNER_WIDGET_EXPORT BrushPreview : public QWidget {
 		bool colorpressure_;
 };
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 }
 #endif
 

@@ -24,7 +24,7 @@
 
 #include "colortriangle.h"
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 namespace widgets {
 #endif
 
@@ -526,7 +526,7 @@ void ColorTriangle::makeTriangle()
 	triangle_ = QPixmap::fromImage(triangle);
 }
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 }
 #endif
 

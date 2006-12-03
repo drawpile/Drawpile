@@ -25,14 +25,17 @@
 #include <QPixmap>
 #include <QtDesigner/QDesignerExportWidget>
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 namespace widgets {
+#define PLUGIN_EXPORT
+#else
+#include <QtDesigner/QDesignerExportWidget>
+#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
-
 //! HSV color triangle widget
 /**
  */
-class QDESIGNER_WIDGET_EXPORT ColorTriangle : public QWidget {
+class PLUGIN_EXPORT ColorTriangle : public QWidget {
 	Q_OBJECT
 	public:
 		ColorTriangle(QWidget *parent=0,const QColor& color = Qt::white);
@@ -111,7 +114,7 @@ class QDESIGNER_WIDGET_EXPORT ColorTriangle : public QWidget {
 		QPixmap triangle_;
 };
 
-#ifndef NO_WIDGETS_NAMESPACE
+#ifndef DESIGNER_PLUGIN
 }
 #endif
 

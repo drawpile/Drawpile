@@ -24,7 +24,7 @@ bool ColorTrianglePlugin::isInitialized() const
 
 QWidget *ColorTrianglePlugin::createWidget(QWidget *parent)
 {
-    return new ColorTriangle(Qt::red, parent);
+    return new ColorTriangle(parent);
 }
 
 QString ColorTrianglePlugin::name() const
