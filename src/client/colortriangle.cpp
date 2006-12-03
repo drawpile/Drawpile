@@ -185,7 +185,7 @@ void ColorTriangle::mousePressEvent(QMouseEvent *event)
 		emit greenChanged(col.green());
 		emit blueChanged(col.blue());
 		emit colorChanged(col);
-	} else if(isInTriangle(event->x(), event->y())) {
+	} else if(isInTriangle(pos.x(), pos.y())) {
 		setSv(pos.x(), pos.y());
 		update();
 		mode_ = DRAGSV;
@@ -212,7 +212,7 @@ void ColorTriangle::mouseMoveEvent(QMouseEvent *event)
 		update();
 		emit hueChanged(qRound(hue_ * 359));
 		emit colorChanged(color());
-	} else {
+	} else if(mode_==DRAGSV) {
 		if(isInTriangle(pos.x(), pos.y())) {
 			setSv(pos.x(), pos.y());
 			update();
