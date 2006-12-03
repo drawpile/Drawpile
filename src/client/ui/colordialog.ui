@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>273</width>
-    <height>188</height>
+    <height>318</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
@@ -16,7 +16,14 @@
    <property name="spacing" >
     <number>2</number>
    </property>
-   <item row="1" column="1" >
+   <item row="1" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="text" >
+      <string>R</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
     <widget class="QSlider" name="green" >
      <property name="maximum" >
       <number>255</number>
@@ -26,100 +33,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="QSlider" name="blue" >
-     <property name="maximum" >
-      <number>255</number>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2" >
-    <widget class="QSpinBox" name="redbox" >
-     <property name="maximum" >
-      <number>255</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2" >
-    <widget class="QSpinBox" name="greenbox" >
-     <property name="maximum" >
-      <number>255</number>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="2" >
-    <widget class="QSpinBox" name="bluebox" >
-     <property name="maximum" >
-      <number>255</number>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" >
-    <widget class="QSlider" name="red" >
-     <property name="maximum" >
-      <number>255</number>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" >
-    <widget class="QLabel" name="label_3" >
-     <property name="text" >
-      <string>B</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
-      <string>G</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="label" >
-     <property name="text" >
-      <string>R</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" >
-    <widget class="QLabel" name="label_4" >
-     <property name="text" >
-      <string>H</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" >
-    <widget class="QLabel" name="label_6" >
-     <property name="text" >
-      <string>S</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" >
-    <widget class="QLabel" name="label_5" >
-     <property name="text" >
-      <string>V</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
-    <widget class="QSlider" name="hue" >
-     <property name="maximum" >
-      <number>359</number>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" >
+   <item row="5" column="1" >
     <widget class="QSlider" name="saturation" >
      <property name="maximum" >
       <number>255</number>
@@ -129,7 +43,28 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1" >
+   <item row="3" column="2" >
+    <widget class="QSpinBox" name="bluebox" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2" >
+    <widget class="QSpinBox" name="saturationbox" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <widget class="QSpinBox" name="redbox" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" >
     <widget class="QSlider" name="value" >
      <property name="maximum" >
       <number>255</number>
@@ -139,7 +74,17 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2" >
+   <item row="4" column="1" >
+    <widget class="QSlider" name="hue" >
+     <property name="maximum" >
+      <number>359</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
     <widget class="QSpinBox" name="huebox" >
      <property name="wrapping" >
       <bool>true</bool>
@@ -149,22 +94,94 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2" >
-    <widget class="QSpinBox" name="saturationbox" >
+   <item row="6" column="0" >
+    <widget class="QLabel" name="label_5" >
+     <property name="text" >
+      <string>V</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="label_6" >
+     <property name="text" >
+      <string>S</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
+      <string>H</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QSlider" name="blue" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>G</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="label_3" >
+     <property name="text" >
+      <string>B</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="QSpinBox" name="greenbox" >
      <property name="maximum" >
       <number>255</number>
      </property>
     </widget>
    </item>
-   <item row="5" column="2" >
+   <item row="1" column="1" >
+    <widget class="QSlider" name="red" >
+     <property name="maximum" >
+      <number>255</number>
+     </property>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" >
     <widget class="QSpinBox" name="valuebox" >
      <property name="maximum" >
       <number>255</number>
      </property>
     </widget>
    </item>
+   <item row="0" column="1" >
+    <widget class="ColorTriangle" name="colorTriangle" >
+     <property name="minimumSize" >
+      <size>
+       <width>128</width>
+       <height>128</height>
+      </size>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorTriangle</class>
+   <extends>QWidget</extends>
+   <header>colortriangle.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>redbox</tabstop>
   <tabstop>greenbox</tabstop>
@@ -182,12 +199,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>142</x>
-     <y>19</y>
+     <x>166</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>255</x>
-     <y>25</y>
+     <x>270</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -198,12 +215,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>178</x>
-     <y>54</y>
+     <x>202</x>
+     <y>184</y>
     </hint>
     <hint type="destinationlabel" >
      <x>270</x>
-     <y>59</y>
+     <y>189</y>
     </hint>
    </hints>
   </connection>
@@ -214,12 +231,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>169</x>
-     <y>85</y>
+     <x>193</x>
+     <y>215</y>
     </hint>
     <hint type="destinationlabel" >
      <x>270</x>
-     <y>90</y>
+     <y>220</y>
     </hint>
    </hints>
   </connection>
@@ -230,12 +247,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>265</x>
-     <y>81</y>
+     <x>270</x>
+     <y>220</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>67</x>
-     <y>85</y>
+     <x>91</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>
@@ -247,11 +264,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>270</x>
-     <y>59</y>
+     <y>189</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>111</x>
-     <y>54</y>
+     <x>135</x>
+     <y>184</y>
     </hint>
    </hints>
   </connection>
@@ -262,12 +279,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>257</x>
-     <y>13</y>
+     <x>270</x>
+     <y>146</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>82</x>
-     <y>21</y>
+     <x>106</x>
+     <y>153</y>
     </hint>
    </hints>
   </connection>
@@ -278,12 +295,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>203</x>
-     <y>108</y>
+     <x>213</x>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>232</x>
-     <y>108</y>
+     <x>270</x>
+     <y>251</y>
     </hint>
    </hints>
   </connection>
@@ -294,12 +311,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>191</x>
-     <y>136</y>
+     <x>213</x>
+     <y>277</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>231</x>
-     <y>136</y>
+     <x>270</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>
@@ -310,12 +327,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>197</x>
-     <y>167</y>
+     <x>213</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>228</x>
-     <y>166</y>
+     <x>270</x>
+     <y>313</y>
     </hint>
    </hints>
   </connection>
@@ -326,12 +343,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>216</x>
-     <y>118</y>
+     <x>270</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>70</x>
-     <y>106</y>
+     <x>94</x>
+     <y>246</y>
     </hint>
    </hints>
   </connection>
@@ -342,12 +359,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>217</x>
-     <y>148</y>
+     <x>270</x>
+     <y>282</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>68</x>
-     <y>141</y>
+     <x>92</x>
+     <y>277</y>
     </hint>
    </hints>
   </connection>
@@ -358,12 +375,204 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>228</x>
-     <y>177</y>
+     <x>270</x>
+     <y>313</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>58</x>
-     <y>174</y>
+     <x>82</x>
+     <y>308</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>red</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorTriangle</receiver>
+   <slot>setRed(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>60</x>
+     <y>146</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>70</x>
+     <y>71</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>green</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorTriangle</receiver>
+   <slot>setGreen(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>41</x>
+     <y>170</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>47</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorTriangle</receiver>
+   <slot>setBlue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>30</x>
+     <y>203</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>104</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorTriangle</receiver>
+   <slot>setHue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>27</x>
+     <y>233</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>65</x>
+     <y>28</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saturation</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorTriangle</receiver>
+   <slot>setSaturation(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>30</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>191</x>
+     <y>34</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>value</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>colorTriangle</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>35</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>161</x>
+     <y>18</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorTriangle</sender>
+   <signal>redChanged(int)</signal>
+   <receiver>red</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>44</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>34</x>
+     <y>141</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorTriangle</sender>
+   <signal>greenChanged(int)</signal>
+   <receiver>green</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>61</x>
+     <y>12</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>115</x>
+     <y>176</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorTriangle</sender>
+   <signal>blueChanged(int)</signal>
+   <receiver>blue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>146</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>152</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorTriangle</sender>
+   <signal>hueChanged(int)</signal>
+   <receiver>hue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>132</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>134</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorTriangle</sender>
+   <signal>saturationChanged(int)</signal>
+   <receiver>saturation</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>167</x>
+     <y>11</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>168</x>
+     <y>271</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>colorTriangle</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>value</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>204</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>36</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>

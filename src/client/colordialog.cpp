@@ -18,6 +18,9 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include "colordialog.h"
+#include "colortriangle.h"
+using widgets::ColorTriangle;
+
 #include "ui_colordialog.h"
 
 namespace widgets {

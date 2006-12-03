@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = brushpreview/
+SUBDIRS = brushpreview/ colortriangle/
