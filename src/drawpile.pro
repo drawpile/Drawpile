@@ -1,3 +1,5 @@
 TEMPLATE = subdirs
 CONFIG += ordered
-SUBDIRS = shared/ server/ client/
+SUBDIRS += shared/
+SUBDIRS += server/
+SUBDIRS += client/
