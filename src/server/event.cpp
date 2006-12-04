@@ -19,6 +19,7 @@
 
 *******************************************************************************/
 
+#include "../shared/sockets.h"
 #include "event.h"
 
 #include <memory> // memcpy()
