@@ -49,6 +49,11 @@ const uint16_t null_implementation = 0;
 /* only used by Identifier message */
 const uint8_t identifier_size = 8;
 
+//! Seed size for passwords (bytes).
+const uint8_t password_seed_size = 4;
+//! Size of the password hash (bytes).
+const uint8_t password_hash_size = 20;
+
 //! Protocol identifier string.
 const char identifierString[identifier_size] = {'D','r','a','w','P','i','l','e'};
 

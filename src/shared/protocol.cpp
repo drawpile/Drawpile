@@ -401,6 +401,42 @@ size_t Raster::payloadLength() const throw()
  * struct Authentication
  */
 
+size_t Authentication::unserialize(const char* buf, size_t len)
+{
+	assert(buf != 0 && len != 0);
+	assert(buf[0] == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	size_t i = sizeof(type);
+	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy(seed, buf+i, password_seed_size); i += password_seed_size;
+	
+	return i;
+}
+
+size_t Authentication::reqDataLen(const char *buf, size_t len) const
+{
+	assert(buf != 0 && len != 0);
+	assert(buf[0] == type);
+	
+	return sizeof(type) + sizeof(board_id) + password_seed_size;
+}
+
+size_t Authentication::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy(buf+i, seed, password_seed_size); i += sizeof(password_seed_size);
+	
+	return i;
+}
+
+size_t Authentication::payloadLength() const throw()
+{
+	return sizeof(board_id) + password_seed_size;
+}
+
 // no special implementation required
 
 /*
@@ -415,10 +451,7 @@ size_t Password::unserialize(const char* buf, size_t len)
 	
 	size_t i = sizeof(type);
 	memcpy_t(board_id, buf+i); i += sizeof(board_id);
-	memcpy_t(length, buf+i); i += sizeof(length);
-	
-	data = new char[length];
-	memcpy(data, buf+i, length); i += length;
+	memcpy(&data, buf+i, password_hash_size); i += password_hash_size;
 	
 	return i;
 }
@@ -428,14 +461,7 @@ size_t Password::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	if (len < sizeof(type)+sizeof(board_id)+sizeof(length))
-		return sizeof(type)+sizeof(board_id)+sizeof(length);
-	else
-	{
-		uint8_t tmp = *(buf+sizeof(type));
-		return sizeof(type) + sizeof(board_id) + sizeof(length)
-			+ tmp+sizeof(board_id);
-	}
+	return sizeof(type) + sizeof(board_id) + password_hash_size;
 }
 
 size_t Password::serializePayload(char *buf) const throw()
@@ -443,16 +469,14 @@ size_t Password::serializePayload(char *buf) const throw()
 	assert(buf != 0);
 	
 	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
-	memcpy_t(buf+i, length); i += sizeof(length);
-	
-	memcpy(buf+i, data, length);
+	memcpy(buf+i, &data, password_hash_size); i += password_hash_size;
 	
 	return i;
 }
 
 size_t Password::payloadLength() const throw()
 {
-	return sizeof(board_id) + sizeof(length) + length;
+	return sizeof(board_id) + password_hash_size;
 }
 
 /*

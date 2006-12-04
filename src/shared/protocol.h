@@ -409,6 +409,8 @@ struct Authentication
 	//! Board identifier for which the auth request is aimed at (protocol::Global for server).
 	uint8_t board_id;
 	
+	char seed[password_seed_size]; // n bytes of gibberish
+	
 	/* functions */
 	
 	size_t unserialize(const char* buf, size_t len);
@@ -427,9 +429,7 @@ struct Password
 	: Message
 {
 	Password()
-		: Message(protocol::type::Password),
-		length(0),
-		data(0)
+		: Message(protocol::type::Password)
 	{ }
 	
 	~Password() throw() { delete [] data; }
@@ -439,11 +439,8 @@ struct Password
 	//! Board identifier, must be the same as in the auth request this is response to.
 	uint8_t board_id;
 	
-	//! Password length.
-	uint8_t length;
-	
 	//! Password data.
-	char* data;
+	char data[password_hash_size];
 	
 	/* functions */
 	
