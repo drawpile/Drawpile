@@ -33,6 +33,8 @@
 	#include <unistd.h> // close()
 	#include <errno.h> // errno
 	// TODO
+	#define INVALID_SOCKET 0
+	#define SOCKET_ERROR -1
 #endif
 
 /** */
