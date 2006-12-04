@@ -21,6 +21,7 @@
 
 #include "sockets.h"
 
+#include <fcntl.h>
 #include <cassert>
 
 void Socket::close() throw()
@@ -32,7 +33,7 @@ void Socket::close() throw()
 	#endif
 }
 
-Socket* Socket::accept() throw()
+Socket* Socket::accept()
 {
 	Socket* s = new Socket();
 	sockaddr_in* a = s->getAddr();
@@ -48,6 +49,17 @@ Socket* Socket::accept() throw()
 		delete s;
 		return 0;
 	}
+}
+
+void Socket::block(bool x) throw()
+{
+	#ifdef WIN32
+	unsigned long arg = !x;
+	ioctlsocket(sock, FIONBIO, &arg);
+	#else
+	assert(x == false);
+	fcntl(sock, F_SETFL, O_NONBLOCK);
+	#endif
 }
 
 int Socket::bindTo(uint32_t address, uint16_t port) throw()
@@ -74,7 +86,8 @@ int Socket::send(char* buffer, size_t buflen) throw()
 	assert(buffer != 0);
 	assert(buflen != 0);
 	
-	int r = ::send(sock, buffer, buflen, 0);
+	int r = ::send(sock, buffer, buflen, MSG_NOSIGNAL);
+	
 	error = errno;
 	return r;
 }

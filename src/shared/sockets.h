@@ -26,45 +26,67 @@
 
 #ifdef WIN32
 	#include <winsock2.h>
+	#define MSG_NOSIGNAL 0 // used by send(), the flag isn't used in win32
 #else
 	#include <sys/socket.h>
 	#include <netinet/in.h>
-	#include <unistd.h>
-	#include <errno.h>
+	#include <unistd.h> // close()
+	#include <errno.h> // errno
 	// TODO
 #endif
 
+/** */
 class Socket
 {
 protected:
+	/** */
 	uint32_t sock;
 	
+	/** */
 	sockaddr_in addr;
 	
+	/** */
 	int error;
 public:
+	/** */
 	Socket() throw() { }
 
+	/** */
 	virtual ~Socket() throw() { close(); };
 	
+	/** */
 	void close() throw();
 	
+	/** */
 	uint32_t fd(uint32_t nsock) throw() { return sock = nsock; }
+	/** */
 	uint32_t fd() throw() { return sock; }
 	
-	Socket* accept() throw();
+	/** */
+	Socket* accept();
 	
+	/** */
+	void block(bool x) throw();
+	
+	/** */
 	int bindTo(uint32_t address, uint16_t port) throw();
+	/** */
 	int listen() throw();
 	
+	/** */
 	int send(char* buffer, size_t buflen) throw();
+	/** */
 	int recv(char* buffer, size_t buflen) throw();
 	
+	/** */
 	int getError() throw() { return error; }
 	
+	/** */
 	sockaddr_in* getAddr() { return &addr; }
 	
+	/** */
 	int address() const throw() { return ntohl(addr.sin_addr.s_addr); }
+	/** */
 	int port() const throw() { return ntohs(addr.sin_port); }
 };
 
