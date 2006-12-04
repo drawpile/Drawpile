@@ -44,15 +44,6 @@ protected:
 	fd_set fds[3];
 	fd_set t_fds[3];
 	
-	/**
-	 * Initialize event system.
-	 */
-	void init();
-	
-	/**
-	 * Finish.
-	 */
-	void finish() throw();
 public:
 	
 	static const int
@@ -64,14 +55,24 @@ public:
 		except;
 	
 	/**
-	 * ctor (calls init())
+	 * ctor
 	 */
 	Event();
 	
 	/**
-	 * dtor (calls finish())
+	 * dtor
 	 */
 	~Event() throw();
+	
+	/**
+	 * Initialize event system.
+	 */
+	void init();
+	
+	/**
+	 * Finish.
+	 */
+	void finish() throw();
 	
 	/**
 	 * Wait for events.

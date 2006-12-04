@@ -22,24 +22,87 @@
 #include "../shared/protocol.h"
 #include "../shared/sockets.h"
 
+#include "user.h"
 #include "event.h"
 
 //#include <sys/time.h>
-#include <getopt.h>
+#include <getopt.h> // for command-line opts
 
+#include <bitset>
+#include <map>
+#include <list>
 #include <vector>
 #include <cstdlib>
 #include <iostream>
 
-std::vector<Socket*> sockets;
+Event ev;
 
+const int hard_limit = 255;
+
+std::bitset<hard_limit> user_ids;
+std::bitset<hard_limit> session_ids;
+
+std::vector<uint32_t> sockets;
+std::map<uint32_t, User*> users;
+std::map<uint8_t, uint32_t> user_id_map;
+
+// listening socket
+Socket lsock;
+
+/** */
+uint8_t getUserID()
+{
+	for (int i=1; i != 256; i++)
+	{
+		if (!user_ids.test(i))
+		{
+			user_ids.set(i, true);
+			return i;
+		}
+	}
+	
+	return 0;
+}
+
+/** */
+uint8_t getSessionID()
+{
+	for (int i=1; i != 256; i++)
+	{
+		if (!session_ids.test(i))
+		{
+			session_ids.set(i, true);
+			return i;
+		}
+	}
+	
+	return 0;
+}
+
+/** */
+void restoreUserID(uint8_t id)
+{
+	user_ids.set(id, false);
+}
+
+/** */
+void restoreSessionID(uint8_t id)
+{
+	session_ids.set(id, false);
+}
+
+/** */
 int cleanexit(int rc)
 {
+	lsock.close();
+	
+	/*
 	std::vector<Socket*>::iterator s(sockets.begin());
 	for (; s != sockets.end(); s++)
 	{
 		(*s)->close();
 	}
+	*/
 	
 	#ifdef WIN32
 	WSACleanup();
@@ -48,6 +111,59 @@ int cleanexit(int rc)
 	exit(rc);
 }
 
+char* password = 0;
+size_t pw_len = 0,
+	user_limit = 0,
+	cur_users = 0;
+
+/** */
+void uWrite(uint32_t fd)
+{
+	//users[fd]
+	User* u = users[fd];
+	
+	Buffer buf = u->buffers.front();
+	
+	int rb = u->s->send(
+		buf.rpos,
+		buf.canRead()
+	);
+	
+	if (rb > 0)
+	{
+		buf.read(rb);
+		
+		// just to ensure we don't need to do anything for it.
+		assert(buf.rpos == u->buffers.front().rpos);
+		
+		if (buf.left == 0)
+		{
+			delete [] buf.data;
+			u->buffers.pop();
+			if (u->buffers.empty())
+				ev.remove(fd, ev.write);
+		}
+	}
+}
+
+/** */
+void uRead(uint32_t fd)
+{
+	//users[fd]
+	// TODO
+	
+	
+}
+
+/** */
+void uExcept(uint32_t fd)
+{
+	//users[fd]
+	// TODO: SigPipe is the only thing that goes here, right?
+	// So, this isn't really needed.
+}
+
+/** */
 int main(int argc, char** argv)
 {
 	
@@ -60,10 +176,6 @@ int main(int argc, char** argv)
 	uint16_t
 		hi_port = 0,
 		lo_port = 0;
-	
-	char* password = 0;
-	size_t pw_len = 0,
-		user_limit = 0;
 	
 	//bool localhost_admin = true;
 	
@@ -119,35 +231,33 @@ int main(int argc, char** argv)
 	
 	} // end limited scope
 	
-	sockets.reserve(10);
-	
 	#ifdef WIN32
 	std::cout << "initializing WSA" << std::endl;
 	WSADATA info;
     if (WSAStartup(MAKEWORD(2,0), &info)) { exit(1); }
     #endif
 	
-	Socket s;
-	sockets.push_back(&s);
 	std::cout << "creating socket" << std::endl;
-	s.fd(socket(AF_INET, SOCK_STREAM, 0));
+	lsock.fd(socket(AF_INET, SOCK_STREAM, 0));
 	
-	if (s.fd() == INVALID_SOCKET)
+	if (lsock.fd() == INVALID_SOCKET)
 	{
 		std::cout << "failed to create a socket." << std::endl;
 		cleanexit(1);
 	}
+	
+	lsock.block(0); // nonblocking
 	
 	std::cout << "binding socket address" << std::endl;
 	{ // limited scope
 		bool bound = false;
 		for (int bport=lo_port; bport < hi_port+1; bport++)
 		{
-			if (s.bindTo(INADDR_ANY, bport) == SOCKET_ERROR)
+			if (lsock.bindTo(INADDR_ANY, bport) == SOCKET_ERROR)
 			{
-				if (s.getError() == EBADF)
+				if (lsock.getError() == EBADF)
 					cleanexit(1);
-				else if (s.getError() == EINVAL)
+				else if (lsock.getError() == EINVAL)
 					cleanexit(1);
 			}
 			else
@@ -160,7 +270,7 @@ int main(int argc, char** argv)
 		if (!bound)
 		{
 			std::cout << "Failed to bind to any port." << std::endl;
-			int e = s.getError();
+			int e = lsock.getError();
 			switch (e)
 			{
 				#ifndef WIN32
@@ -197,21 +307,27 @@ int main(int argc, char** argv)
 		}
 	}
 	
-	if (s.listen() == SOCKET_ERROR)
+	if (lsock.listen() == SOCKET_ERROR)
 	{
 		std::cout << "Failed to open listening port." << std::endl;
 		cleanexit(0);
 	}
 	
-	std::cout << "listening on: " << s.address() << ":" << s.port() << std::endl;
+	std::cout << "listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
 	
-	{ // limited scope for ev.
-	Event ev;
 	
-	ev.add(s.fd(), ev.read);
+	sockets.reserve(10);
+	
+	ev.init();
+	
+	ev.add(lsock.fd(), ev.read);
+	
+	Socket *nu;
+	
+	std::vector<uint32_t>::iterator siter;
 	
 	int ec;
-	while (1)
+	while (1) // yay for infinite loops
 	{
 		ec = ev.wait(0, 500000);
 		
@@ -225,15 +341,69 @@ int main(int argc, char** argv)
 		}
 		else
 		{
+			if (ev.isset(lsock.fd(), ev.read))
+			{
+				ec--;
+				
+				nu = lsock.accept();
+				
+				if (nu != 0)
+				{
+					uint8_t id = getUserID();
+					if (id == 0)
+					{
+						delete nu;
+					}
+					else
+					{
+						User *ud = new User;
+						ud->s = nu;
+						ud->id = id;
+						
+						sockets.push_back(nu->fd());
+						
+						ev.add(nu->fd(), ev.read);
+						ev.add(nu->fd(), ev.except);
+						
+						users[nu->fd()] = ud;
+						user_id_map[id] = nu->fd();
+					}
+				}
+				// new connection?
+			}
+			
+			if (ec != 0)
+			{
+				for (siter = sockets.begin(); siter != sockets.end(); siter++)
+				{
+					if (ev.isset(*siter, ev.read))
+					{
+						ec--;
+						uRead(*siter);
+					}
+					else if (ev.isset(*siter, ev.write))
+					{
+						ec--;
+						uWrite(*siter);
+					}
+					else if (ev.isset(*siter, ev.except))
+					{
+						ec--;
+						uExcept(*siter);
+					}
+					
+					if (ec == 0) break;
+				}
+			}
+			
 			// do something
 		}
+		
+		// do something generic?
 	}
 	
-	} // limited scope for ev.
+	ev.finish();
 	
-	#ifdef WIN32
-	WSACleanup();
-	#endif
-	
-	return 0;
+	cleanexit(0);
+	return 0; // never reached
 }

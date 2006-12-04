@@ -30,12 +30,10 @@ const int
 
 Event::Event()
 {
-	init();
 }
 
 Event::~Event() throw()
 {
-	finish();
 }
 
 void Event::init()
