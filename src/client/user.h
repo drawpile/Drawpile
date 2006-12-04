@@ -28,6 +28,8 @@ class Layer;
 
 //! A drawingboard user
 /**
+ * The user class holds user state information. It provides an interface
+ * for committing drawing commands received from the network.
  */
 class User
 {

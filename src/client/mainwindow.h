@@ -38,6 +38,7 @@ namespace drawingboard {
 }
 class Controller;
 
+//! The application main window
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 	public:

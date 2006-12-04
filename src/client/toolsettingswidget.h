@@ -38,8 +38,7 @@ namespace widgets {
 
 //! Tool settings window
 /**
- * This widget displayes the IP address of the host. It allows the user
- * to select the address with the mouse and copy it to the clipboard.
+ * A dock widget that displays settings for the currently selected tool.
  */
 class ToolSettings: public QDockWidget
 {
@@ -58,6 +57,7 @@ class ToolSettings: public QDockWidget
 		void sizeChanged(int size);
 
 	public slots:
+		//! Set the tool for which settings are shown
 		void setTool(tools::Type tool);
 
 	private:

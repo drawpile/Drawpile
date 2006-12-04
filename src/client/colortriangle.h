@@ -23,7 +23,6 @@
 
 #include <QWidget>
 #include <QPixmap>
-#include <QtDesigner/QDesignerExportWidget>
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets {

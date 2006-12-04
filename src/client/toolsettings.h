@@ -27,6 +27,11 @@ class Ui_BrushSettings;
 namespace tools {
 
 //! Base class for tool settings
+/**
+ * The tool settings class provides a user interface widget that is
+ * displayed in a dock window and a uniform way of getting a brush
+ * configured by the user.
+ */
 class ToolSettings {
 	public:
 		ToolSettings(QString name,QString title)
@@ -62,9 +67,16 @@ class ToolSettings {
 		virtual int getSize() const = 0;
 
 		//! Get the name (internal) of this tool
+		/**
+		 * The internal name is used when settings are stored to a
+		 * configuration file
+		 */
 		const QString& getName() const { return name_; }
-		//
+
 		//! Get the title of this tool
+		/**
+		 * The title is what is shown to the user
+		 */
 		const QString& getTitle() const { return title_; }
 
 	protected:

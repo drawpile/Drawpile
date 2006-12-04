@@ -32,6 +32,9 @@ class Brush;
 
 //! The drawing board
 /**
+ * The drawing board contains the picture and provides methods
+ * to modify it. The board has a list of users and remembers each of their
+ * states, so drawing commands can be interleaved.
  */
 class Board : public QGraphicsScene
 {

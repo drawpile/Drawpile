@@ -27,6 +27,12 @@ namespace tools {
 enum Type {BRUSH, ERASER, PICKER};
 
 //! Base class for all tools
+/**
+ * Tool classes interpret mouse/pen commands into editing actions.
+ * Normally, network packets are generated, but in case of offline mode
+ * or local tools (such as color picker) the actions are carried out
+ * immediately.
+ */
 class Tool
 {
 	public:
@@ -61,6 +67,10 @@ class Tool
 };
 
 //! Base class for brush type tools
+/**
+ * Brush type tools change to drawing board. They use the basic
+ * stroke commands provided by the board.
+ */
 class BrushBase : public Tool
 {
 	public:
@@ -84,6 +94,9 @@ class Eraser : public BrushBase {
 };
 
 //! Color picker
+/**
+ * Color picker is a local tool, it does not affect the drawing board.
+ */
 class ColorPicker : public Tool {
 	public:
 		ColorPicker() : Tool(PICKER) {}

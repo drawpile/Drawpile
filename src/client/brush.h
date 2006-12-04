@@ -20,8 +20,6 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
-#include <QPixmap>
-
 namespace drawingboard {
 
 //! A brush for drawing onto a layer

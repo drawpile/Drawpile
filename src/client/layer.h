@@ -28,6 +28,7 @@ class Brush;
 
 //! A drawing layer item item for QGraphicsScene
 /**
+ * The actual drawing code is implemented here.
  */
 class Layer : public QGraphicsItem
 {
@@ -35,13 +36,17 @@ class Layer : public QGraphicsItem
 		Layer(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 		Layer(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 
+		//! Set layer contents
 		void setImage(const QImage& image);
+
+		//! Get layer contents
 		QImage image() const;
 
 		//! Draw a line between two points with interpolated pressure values
 		void drawLine(const QPoint& point1, qreal pressure1,
 				const QPoint& point2, qreal pressure2, const Brush& brush);
 
+		//! Draw a single point
 		void drawPoint(const QPoint& point, qreal pressure, const Brush& brush);
 
 		QRectF boundingRect() const;
