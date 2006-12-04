@@ -44,12 +44,12 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 	for(int x=0;x<strokew;x++) {
 		qreal fx = x/double(strokew);
 		qreal pressure = ((fx*fx) - (fx*fx*fx))*6.756;
-		QPixmap brush = brush_.getBrush(pressure);
+		QImage brush = brush_.getBrush(pressure);
 		int r = qRound(brush.width()/2.0);
 
 		int y = qRound(sin(phase) * strokeh);
 		phase += dphase;
-		painter.drawPixmap(offx+x-r,offy+y-r,brush);
+		painter.drawImage(offx+x-r,offy+y-r,brush);
 	}
 
 }

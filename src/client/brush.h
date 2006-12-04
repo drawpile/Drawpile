@@ -26,8 +26,8 @@ namespace drawingboard {
 
 //! A brush for drawing onto a layer
 /**
- * This class produces a pixmap that can be used as a brush.
- * Two sets of parameters are set and the pixmap is created by
+ * This class produces an image that can be used as a brush.
+ * Two sets of parameters are set and the image is created by
  * interpolating between them.
  */
 class Brush
@@ -46,9 +46,9 @@ class Brush
 		//! Set hardness for light brush
 		void setHardness2(qreal hardness);
 
-		//! Set opacity for heavy brush (doesn't affect the brush pixmap)
+		//! Set opacity for heavy brush
 		void setOpacity(qreal opacity);
-		//! Set opacity for light brush (doesn't affect the brush pixmap)
+		//! Set opacity for light brush
 		void setOpacity2(qreal opacity);
 
 		//! Set color for heavy brush
@@ -65,8 +65,8 @@ class Brush
 		//! Get interpolated color
 		QColor color(qreal pressure) const;
 
-		//! Get a brush pixmap to paint with
-		QPixmap getBrush(qreal pressure) const;
+		//! Get a brush image to paint with
+		QImage getBrush(qreal pressure) const;
 
 		//! Copy operator
 		Brush& operator=(const Brush& brush);
@@ -79,7 +79,7 @@ class Brush
 		QColor color1_, color2_;
 		bool sensitive_;
 
-		mutable QPixmap cache_;
+		mutable QImage cache_;
 		mutable qreal cachepressure_;
 };
 

@@ -42,8 +42,8 @@ class Board : public QGraphicsScene
 		//! Initialize to a solid color
 		void initBoard(const QSize& size, const QColor& background);
 
-		//! Initialize the board using an existing pixmap as base
-		void initBoard(QPixmap pixmap);
+		//! Initialize the board using an existing image as base
+		void initBoard(QImage image);
 
 		//! Save board contents to file.
 		bool save(QString filename);

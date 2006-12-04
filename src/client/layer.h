@@ -26,17 +26,17 @@ namespace drawingboard {
 
 class Brush;
 
-//! A modifiable pixmap item for QGraphicsScene
+//! A drawing layer item item for QGraphicsScene
 /**
  */
 class Layer : public QGraphicsItem
 {
 	public:
 		Layer(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
-		Layer(const QPixmap& pixmap, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+		Layer(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 
-		void setPixmap(const QPixmap& pixmap);
-		QPixmap pixmap() const;
+		void setImage(const QImage& image);
+		QImage image() const;
 
 		//! Draw a line between two points with interpolated pressure values
 		void drawLine(const QPoint& point1, qreal pressure1,
@@ -52,7 +52,7 @@ class Layer : public QGraphicsItem
 		void drawPoint(QPainter &painter, int x, int y, qreal pressure,
 				const Brush &brush);
 
-		QPixmap pixmap_;
+		QImage image_;
 
 		int plastx_, plasty_;
 };

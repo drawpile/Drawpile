@@ -160,33 +160,37 @@ QColor Brush::color(qreal pressure) const
 }
 
 /**
- * A brush is basically a pixmap filled with a single color and an alpha
+ * A brush is basically an image filled with a single color and an alpha
  * channel that defines its shape.
  * The alpha channel is produced with the formula \f$a(x,y) = (1-\frac{x^2+y^2}{r^2}^{2r^{2h-1}})*o\f$.
  * getBrush will cache the previously used brush.
  * @param pressure pen pressure. Range is [0..1]
- * @return brush pixmap
+ * @return brush image
  */
-QPixmap Brush::getBrush(qreal pressure) const
+QImage Brush::getBrush(qreal pressure) const
 {
 	if(cachepressure_<0 ||
 			(sensitive_ && fabs(pressure - cachepressure_) > 1.0/256.0)) {
 		// Regenerate brush (we currently support 256 levels of pressure)
 
+		QColor brushcolor = color(pressure);
+		qreal alpha = opacity(pressure);
 		int rad = radius(pressure);
 		if(rad==0) {
 			// Special case zero radius (usually not used)
-			QPixmap pix(1,1);
-			pix.fill(color(pressure));
+			QImage pix(1,1,QImage::Format_ARGB32_Premultiplied);
+			uchar *bits = pix.bits();
+			*(bits++) = qRound(brushcolor.blue() * alpha);
+			*(bits++) = qRound(brushcolor.green() * alpha);
+			*(bits++) = qRound(brushcolor.red() * alpha);
+			*bits = qRound(alpha*255);
 			return pix;
 		}
 		qreal hard = pow(2*rad,2*hardness(pressure)-1);
 		if(hard<0.01) hard=0.01;
-		qreal alpha = opacity(pressure);
 
 		QImage brush(rad*2,rad*2,QImage::Format_ARGB32_Premultiplied);
 
-		QColor brushcolor = color(pressure);
 		qreal red = brushcolor.red();
 		qreal green = brushcolor.green();
 		qreal blue = brushcolor.blue();
@@ -227,7 +231,7 @@ QPixmap Brush::getBrush(qreal pressure) const
 			q3 -= scanline15;
 			q4 -= scanline2;
 		}
-		cache_ = QPixmap::fromImage(brush);
+		cache_ = brush;
 		cachepressure_ = pressure;
 	}
 	return cache_;
@@ -237,7 +241,7 @@ QPixmap Brush::getBrush(qreal pressure) const
  * This copy operator tries to preserve the brush cache.
  * If both brushes contain equal parameters (opacity excluded)
  * and the brush that is being overwritten (but not the other one)
- * has a cached brush pixmap, then the old cache is preserved.
+ * has a cached brush image, then the old cache is preserved.
  * @param brush brush to replace this with
  */
 Brush& Brush::operator=(const Brush& brush)

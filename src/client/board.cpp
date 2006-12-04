@@ -38,28 +38,28 @@ Board::Board(QObject *parent)
 }
 
 /**
- * A new pixmap is created with the given size and initialized to a solid color
+ * A new image is created with the given size and initialized to a solid color
  * @param size size of the drawing board
  * @param background background color
  */
 void Board::initBoard(const QSize& size, const QColor& background)
 {
 
-	QPixmap pixmap(size);
-	pixmap.fill(background);
+	QImage image(size, QImage::Format_RGB32);
+	image.fill(background.rgb());
 
 	setSceneRect(0,0,size.width(), size.height());
-	image_ = new Layer(pixmap,0,this);
+	image_ = new Layer(image,0,this);
 }
 
 /**
- * An existing pixmap is used as a base.
- * @param pixmap pixmap to use
+ * An existing image is used as a base.
+ * @param image image to use
  */
-void Board::initBoard(QPixmap pixmap)
+void Board::initBoard(QImage image)
 {
-	setSceneRect(0,0,pixmap.width(), pixmap.height());
-	image_ = new Layer(pixmap, 0, this);
+	setSceneRect(0,0,image.width(), image.height());
+	image_ = new Layer(image, 0, this);
 }
 
 /**
@@ -85,7 +85,7 @@ void Board::removeUser(int id)
  */
 bool Board::save(QString filename)
 {
-	return image_->pixmap().save(filename);
+	return image_->image().save(filename);
 }
 
 /**
@@ -96,7 +96,7 @@ bool Board::save(QString filename)
  */
 bool Board::save(QIODevice *device, const char *format, int quality)
 {
-	return image_->pixmap().save(device, format, quality);
+	return image_->image().save(device, format, quality);
 }
 
 /**
@@ -106,9 +106,7 @@ bool Board::save(QIODevice *device, const char *format, int quality)
  */
 QColor Board::colorAt(int x,int y)
 {
-	// There is no direct nice way of getting pixel values from QPixmaps
-	QImage pixel = image_->pixmap().copy(x,y,1,1).toImage();
-	return QColor(pixel.pixel(0,0));
+	return QColor(image_->image().pixel(0,0));
 }
 
 /**

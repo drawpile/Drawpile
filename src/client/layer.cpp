@@ -33,19 +33,19 @@ Layer::Layer(QGraphicsItem *parent, QGraphicsScene *scene)
 {
 }
 
-Layer::Layer(const QPixmap& pixmap, QGraphicsItem *parent, QGraphicsScene *scene)
-	: QGraphicsItem(parent,scene), pixmap_(pixmap)
+Layer::Layer(const QImage& image, QGraphicsItem *parent, QGraphicsScene *scene)
+	: QGraphicsItem(parent,scene), image_(image)
 {
 }
 
-void Layer::setPixmap(const QPixmap& pixmap)
+void Layer::setImage(const QImage& image)
 {
-	pixmap_ = pixmap;
+	image_ = image;
 }
 
-QPixmap Layer::pixmap() const
+QImage Layer::image() const
 {
-	return pixmap_;
+	return image_;
 }
 
 /**
@@ -55,7 +55,7 @@ QPixmap Layer::pixmap() const
 void Layer::drawLine(const QPoint& point1, qreal pressure1,
 		const QPoint& point2, qreal pressure2, const Brush& brush)
 {
-	QPainter painter(&pixmap_);
+	QPainter painter(&image_);
 	painter.setOpacity(1.0);
 	qreal pressure = pressure1;
 	qreal deltapressure;
@@ -115,7 +115,7 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
 {
 	int r = brush.radius(pressure);
-	QPainter painter(&pixmap_);
+	QPainter painter(&image_);
 	drawPoint(painter,point.x(),point.y(), pressure, brush);
 	update(point.x()-r,point.y()-r,point.x()+r,point.y()+r);
 }
@@ -139,21 +139,21 @@ void Layer::drawPoint(QPainter &painter, int x,int y, qreal pressure, const Brus
 		painter.setPen(brush.color(pressure));
 		painter.drawPoint(p);
 	} else {
-		painter.drawPixmap(p, brush.getBrush(pressure));
+		painter.drawImage(p, brush.getBrush(pressure));
 	}
 
 }
 
 QRectF Layer::boundingRect() const
 {
-	return QRectF(0,0, pixmap_.width(), pixmap_.height());
+	return QRectF(0,0, image_.width(), image_.height());
 }
 
 void Layer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *widget)
 {
 	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
-    painter->drawPixmap(exposed, pixmap_, exposed);
+    painter->drawImage(exposed, image_, exposed);
 }
 
 }
