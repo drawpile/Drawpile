@@ -85,7 +85,7 @@ struct Buffer
 		
 		left -= len;
 		
-		assert(left >= 0);
+		assert(left >= 0UL);
 	}
 	
 	//! How many bytes can be read.

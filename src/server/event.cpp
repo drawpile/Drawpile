@@ -21,7 +21,8 @@
 
 #include "event.h"
 
-#include <cassert>
+#include <memory> // memcpy()
+#include <cassert> // assert()
 
 const int
 	Event::read = 0,
