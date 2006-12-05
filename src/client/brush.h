@@ -20,6 +20,9 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
+#include <QImage>
+#include <QColor>
+
 namespace drawingboard {
 
 //! A brush for drawing onto a layer
