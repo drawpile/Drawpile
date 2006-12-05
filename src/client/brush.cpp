@@ -246,15 +246,7 @@ QImage Brush::getBrush(qreal pressure) const
  */
 Brush& Brush::operator=(const Brush& brush)
 {
-	bool isEqual = true;
-	if(radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
-			fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
-			fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
-			fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
-			fabs(opacity2_ - brush.opacity2_) >= 0.01 ||
-			color1_ != brush.color1_ ||
-			color2_ != brush.color2_)
-		isEqual = false;
+	bool isEqual = (*this == brush);
 	radius1_ = brush.radius1_ ;
 	radius2_ = brush.radius2_ ;
 	hardness1_ = brush.hardness1_;
@@ -272,5 +264,27 @@ Brush& Brush::operator=(const Brush& brush)
 	return *this;
 }
 
+
+bool Brush::operator==(const Brush& brush) const
+{
+	return radius1_ == brush.radius1_ && radius2_ == brush.radius2_ &&
+			fabs(hardness1_ - brush.hardness1_) <= 0.01 &&
+			fabs(hardness2_ - brush.hardness2_) <= 0.01 &&
+			fabs(opacity1_ - brush.opacity1_) <= 0.01 &&
+			fabs(opacity2_ - brush.opacity2_) <= 0.01 &&
+			color1_ == brush.color1_ &&
+			color2_ == brush.color2_;
 }
 
+bool Brush::operator!=(const Brush& brush) const
+{
+	return radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
+			fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
+			fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
+			fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
+			fabs(opacity2_ - brush.opacity2_) >= 0.01 ||
+			color1_ != brush.color1_ ||
+			color2_ != brush.color2_;
+}
+
+}

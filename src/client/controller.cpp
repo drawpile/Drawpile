@@ -26,7 +26,7 @@
 #include "toolsettingswidget.h"
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0)
+	: QObject(parent), board_(0), editor_(0)
 {
 }
 
@@ -34,11 +34,13 @@ void Controller::setBoard(drawingboard::Board *board)
 {
 	board_ = board;
 	board_->addUser(0);
+	editor_ = board->getEditor(true);
+
 }
 
 void Controller::setTool(tools::Type tool)
 {
-	tool_ = tools::Tool::get(this, 0, tool);
+	tool_ = tools::Tool::get(editor_,tool);
 }
 
 void Controller::penDown(int x,int y, qreal pressure, bool isEraser)

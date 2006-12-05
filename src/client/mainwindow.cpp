@@ -34,6 +34,7 @@
 #include "controller.h"
 #include "toolsettingswidget.h"
 #include "colordialog.h"
+#include "interfaces.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
@@ -68,8 +69,6 @@ MainWindow::MainWindow()
 
 	controller_ = new Controller(this);
 	controller_->setBoard(board_);
-	controller_->setColors(fgbgcolor_);
-	controller_->setSettings(toolsettings_);
 	connect(this, SIGNAL(toolChanged(tools::Type)), controller_, SLOT(setTool(tools::Type)));
 
 	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
@@ -346,6 +345,7 @@ void MainWindow::createToolbars()
 
 	// Create color button
 	fgbgcolor_ = new widgets::DualColorButton(drawtools);
+	interface::Global::setColorSource(fgbgcolor_);
 
 	// Create color changer dialog for foreground
 	fgdialog_ = new widgets::ColorDialog(tr("Foreground color"), this);
@@ -376,6 +376,7 @@ void MainWindow::createDocks()
 void MainWindow::createToolSettings(QMenu *toggles)
 {
 	toolsettings_ = new widgets::ToolSettings(this);
+	interface::Global::setBrushSource(toolsettings_);
 	toolsettings_->setObjectName("toolsettingsdock");
 	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));

@@ -26,11 +26,7 @@
 
 namespace drawingboard {
 	class Board;
-}
-
-namespace widgets {
-	class DualColorButton;
-	class ToolSettings;
+	class BoardEditor;
 }
 
 //! Controller for drawing and network operations
@@ -53,8 +49,6 @@ class Controller : public QObject
 		Controller(QObject *parent=0);
 
 		void setBoard(drawingboard::Board *board);
-		void setColors(widgets::DualColorButton *colors) { colors_ = colors; } // TODO ugly
-		void setSettings(widgets::ToolSettings *settings) { settings_ = settings; } // TODO replace with something nicer
 
 	public slots:
 		void penDown(int x,int y, qreal pressure, bool isEraser);
@@ -64,9 +58,8 @@ class Controller : public QObject
 
 	private:
 		drawingboard::Board *board_;
-		widgets::DualColorButton *colors_;
-		widgets::ToolSettings *settings_;
 		tools::Tool *tool_;
+		drawingboard::BoardEditor *editor_;
 };
 
 #endif

@@ -24,6 +24,7 @@
 #include "board.h"
 #include "layer.h"
 #include "user.h"
+#include "boardeditor.h"
 
 namespace drawingboard {
 
@@ -35,6 +36,13 @@ Board::Board(QObject *parent)
 	outline_->hide();
 	outline_->setZValue(9999);
 	outline_->setPen(Qt::DotLine);
+}
+
+Board::~Board()
+{
+	foreach(User *u, users_) {
+		delete u;
+	}
 }
 
 /**
@@ -67,7 +75,9 @@ void Board::initBoard(QImage image)
  */
 void Board::addUser(int id)
 {
-	users_[id] = new User(id);
+	User *user = new User(id);
+	user->setLayer(image_);
+	users_[id] = user;
 }
 
 /**
@@ -75,7 +85,7 @@ void Board::addUser(int id)
  */
 void Board::removeUser(int id)
 {
-	users_.remove(id);
+	delete users_.take(id);
 }
 
 /**
@@ -99,14 +109,11 @@ bool Board::save(QIODevice *device, const char *format, int quality)
 	return image_->image().save(device, format, quality);
 }
 
-/**
- * @param x x coordinate
- * @param y y coordinate
- * @return color at coordinates
- */
-QColor Board::colorAt(int x,int y)
+BoardEditor *Board::getEditor(bool local)
 {
-	return QColor(image_->image().pixel(0,0));
+	BoardEditor *editor;
+	editor = new LocalBoardEditor(this, users_.value(0)); // TODO local user
+	return editor;
 }
 
 /**
@@ -141,6 +148,7 @@ void Board::hideCursorOutline()
 	outline_->hide();
 }
 
+#if 0
 /**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
@@ -167,46 +175,40 @@ void Board::previewMotion(int x,int y, qreal pressure)
 void Board::previewEnd()
 {
 }
+#endif
 
 /**
- * The new stroke is assigned to the indicated user.
  * @param user user id
- * @param x x coordinate
- * @param y y coordinate
- * @param pressure pen pressure
  * @param brush brush to use
  */
-void Board::strokeBegin(int user, int x, int y, qreal pressure, const Brush& brush)
+void Board::userSetTool(int user, const Brush& brush)
 {
-	if(users_.contains(user)) {
-		User *u = users_.value(user);
-		u->brush() = brush;
-		u->strokeBegin(image_, x, y, pressure);
-	}
+	if(users_.contains(user))
+		users_.value(user)->setBrush(brush);
 }
 
-/*
+/**
  * @param user user id
  * @param x x coordinate
  * @param y y coordinate
  * @param pressure pen pressure
  */
-void Board::strokeMotion(int user, int x, int y, qreal pressure)
+void Board::userStroke(int user, int x, int y, qreal pressure)
 {
 	if(users_.contains(user)) {
 		User *u = users_.value(user);
-		u->strokeMotion(x,y,pressure);
+		u->addStroke(x,y,pressure);
 	}
 }
 
-/*
+/**
  * @param user user id
  */
-void Board::strokeEnd(int user)
+void Board::userEndStroke(int user)
 {
 	if(users_.contains(user)) {
 		User *u = users_.value(user);
-		u->strokeEnd();
+		u->endStroke();
 	}
 }
 

@@ -93,13 +93,13 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 {
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
-	} else if(pendown_) {
-		QPoint point = mapToScene(event->pos()).toPoint();
-		emit penMove(point.x(), point.y(), 1.0);
 	} else {
 		QPoint point = mapToScene(event->pos()).toPoint();
 		if(point != prevpoint_) {
-			board_->moveCursorOutline(point);
+			if(pendown_)
+				emit penMove(point.x(), point.y(), 1.0);
+			else
+				board_->moveCursorOutline(point);
 			prevpoint_ = point;
 		}
 	}
@@ -137,11 +137,15 @@ void EditorView::tabletEvent(QTabletEvent *event)
 		}
 	} else {
 		if(pendown_) {
-			emit penMove(point.x(), point.y(), event->pressure());
+			if(prevpoint_ != point) {
+				emit penMove(point.x(), point.y(), event->pressure());
+			}
+			prevpoint_ = point;
 		} else {
 			emit penDown(point.x(), point.y(), event->pressure(),
 					event->pointerType()==QTabletEvent::Eraser);
 			pendown_ = true;
+			prevpoint_ = point;
 			board_->hideCursorOutline();
 		}
 	}

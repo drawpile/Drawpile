@@ -20,7 +20,9 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
-class Controller;
+namespace drawingboard {
+	class BoardEditor;
+}
 
 namespace tools {
 
@@ -29,9 +31,7 @@ enum Type {BRUSH, ERASER, PICKER};
 //! Base class for all tools
 /**
  * Tool classes interpret mouse/pen commands into editing actions.
- * Normally, network packets are generated, but in case of offline mode
- * or local tools (such as color picker) the actions are carried out
- * immediately.
+ * The BoardEditor is used to actually commit those actions.
  */
 class Tool
 {
@@ -41,7 +41,7 @@ class Tool
 		virtual ~Tool() {};
 
 		//! Get an instance of a specific tool
-		static Tool *get(Controller *controller, int user, Type type);
+		static Tool *get(drawingboard::BoardEditor *editor, Type type);
 
 		//! Get the type of this tool
 		Type type() const { return type_; }
@@ -56,20 +56,16 @@ class Tool
 		virtual void end() = 0;
 
 	protected:
-		static Controller *controller() { return controller_; }
-		static int user() { return user_; }
+		static drawingboard::BoardEditor *editor_;
 
 	private:
-		static Controller *controller_;
-		static int user_;
 		Type type_;
 
 };
 
 //! Base class for brush type tools
 /**
- * Brush type tools change to drawing board. They use the basic
- * stroke commands provided by the board.
+ * Brush type tools change to drawing board.
  */
 class BrushBase : public Tool
 {
@@ -104,8 +100,6 @@ class ColorPicker : public Tool {
 		void begin(int x,int y, qreal perssure);
 		void motion(int x,int y, qreal pressure);
 		void end();
-	private:
-		void pickColor(int x,int y);
 };
 
 }

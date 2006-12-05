@@ -29,6 +29,7 @@ namespace drawingboard {
 class Layer;
 class User;
 class Brush;
+class BoardEditor;
 
 //! The drawing board
 /**
@@ -39,8 +40,11 @@ class Brush;
 class Board : public QGraphicsScene
 {
 	Q_OBJECT
+	friend class BoardEditor;
+
 	public:
 		Board(QObject *parent=0);
+		~Board();
 
 		//! Initialize to a solid color
 		void initBoard(const QSize& size, const QColor& background);
@@ -60,8 +64,8 @@ class Board : public QGraphicsScene
 		//! Remove a user from the board
 		void removeUser(int id);
 
-		//! Get the color at position
-		QColor colorAt(int x,int y);
+		//! Get a board editor
+		BoardEditor *getEditor(bool local);
 
 		//! Display the cursor outline
 		void showCursorOutline(const QPoint& pos, int radius);
@@ -72,6 +76,7 @@ class Board : public QGraphicsScene
 		//! Hide the cursor outline
 		void hideCursorOutline();
 
+#if 0 // move these to BoardEditor?
 		//! Begin a new preview stroke
 		void previewBegin(int x,int y, qreal pressure);
 
@@ -80,14 +85,16 @@ class Board : public QGraphicsScene
 
 		//! End a preview stroke
 		void previewEnd();
+#endif
 
-		//! User begins a stroke
-		void strokeBegin(int user, int x, int y, qreal pressure, const Brush& brush);
-		//! User continues a stroke
-		void strokeMotion(int user, int x, int y, qreal pressure);
+		//! User switches tools
+		void userSetTool(int user, const Brush& brush);
+
+		//! User stroke information
+		void userStroke(int user, int x, int y, qreal pressure);
 
 		//! User ends a stroke
-		void strokeEnd(int user);
+		void userEndStroke(int user);
 
 	private:
 		Layer *image_;

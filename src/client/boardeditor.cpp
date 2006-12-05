@@ -17,56 +17,38 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef USER_H
-#define USER_H
 
-#include "brush.h"
+#include "boardeditor.h"
+#include "layer.h"
+#include "board.h"
+#include "user.h"
 
 namespace drawingboard {
 
-class Layer;
-
-//! A drawingboard user
-/**
- * The user class holds user state information. It provides an interface
- * for committing drawing commands received from the network.
- */
-class User
+const Brush& BoardEditor::currentBrush()
 {
-	public:
-		User(int id);
-
-		//! Get the user's ID number
-		int id() const { return id_; }
-
-		//! Set the layer on which to draw
-		void setLayer(Layer *layer);
-
-		//! Set brush to use
-		void setBrush(const Brush& brush);
-
-		//! Get the brush
-		const Brush& brush() const { return brush_; }
-
-		//! Stroke info
-		void addStroke(int x,int y, qreal pressure);
-
-		//! End stroke
-		void endStroke();
-
-	private:
-		int id_;
-		Brush brush_;
-
-		Layer *layer_;
-		QPoint lastpoint_;
-		qreal lastpressure_;
-		bool penmoved_;
-		bool strokestarted_;
-};
-
+	return user_->brush();
 }
 
-#endif
+QColor BoardEditor::colorAt(int x,int y)
+{
+	return board_->image_->image().pixel(x,y);
+}
 
+void LocalBoardEditor::setTool(const Brush& brush)
+{
+	user_->setBrush(brush);
+}
+
+void LocalBoardEditor::addStroke(int x, int y, qreal pressure)
+{
+	user_->addStroke(x,y,pressure);
+}
+
+void LocalBoardEditor::endStroke()
+{
+	user_->endStroke();
+}
+
+}
 

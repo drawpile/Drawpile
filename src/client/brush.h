@@ -71,6 +71,12 @@ class Brush
 
 		//! Copy operator
 		Brush& operator=(const Brush& brush);
+
+		//! Equality test
+		bool operator==(const Brush& brush) const;
+
+		//! Inequality test
+		bool operator!=(const Brush& brush) const;
 	private:
 		void checkSensitivity();
 

@@ -24,44 +24,56 @@
 namespace drawingboard {
 
 User::User(int id)
-	: id_(id)
+	: id_(id),penmoved_(false), strokestarted_(false)
 {
+}
+
+void User::setLayer(Layer *layer)
+{
+	layer_ = layer;
+}
+
+void User::setBrush(const Brush& brush)
+{
+	brush_ = brush;
 }
 
 /**
- * This function must be called before strokeMotion or strokeEnd.
- * @param layer the layer on which the stroke is drawn.
- * @param x initial x coordinate
- * @param y initial y coordinate
- * @param pressure initial pressure
+  @param x x coordinate
+  @param y y coordinate
+  @param pressure pressure [0..1]
  */
-void User::strokeBegin(Layer *layer, int x, int y, qreal pressure)
+void User::addStroke(int x,int y, qreal pressure)
 {
-	layer_ = layer;
-	lastx_ = x;
-	lasty_ = y;
-	lastpressure_ = pressure;
-	penmoved_ = false;
-}
-
-void User::strokeMotion(int x,int y, qreal pressure)
-{
-	layer_->drawLine(
-			QPoint(lastx_,lasty_), lastpressure_,
-			QPoint(x,y), pressure,
-			brush_
-			);
-	lastx_ = x;
-	lasty_ = y;
-	lastpressure_ = pressure;
-	penmoved_ = true;
-}
-
-void User::strokeEnd()
-{
-	if(penmoved_ == false) {
-		layer_->drawPoint(QPoint(lastx_,lasty_), lastpressure_, brush_);
+	QPoint point(x,y);
+	if(strokestarted_) {
+		// Continuing stroke
+		layer_->drawLine(
+				lastpoint_, lastpressure_,
+				point, pressure,
+				brush_
+				);
+		penmoved_ = true;
+	} else {
+		strokestarted_ = true;
 	}
+	lastpoint_ = point;
+	lastpressure_ = pressure;
+}
+
+/**
+ * endStroke resets the pen so the next addStroke will begin a new stroke.
+ * If the pen did not move during between the first addStroke() and endStroke()
+ * a single dot will be drawn.
+ */
+void User::endStroke()
+{
+	// Draw the single dot if pen was not moved
+	if(penmoved_ == false) {
+		layer_->drawPoint(lastpoint_, lastpressure_, brush_);
+	}
+	strokestarted_ = false;
+	penmoved_ = false;
 }
 
 }

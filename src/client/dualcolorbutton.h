@@ -21,6 +21,7 @@
 #define DUALCOLORBUTTON_H
 
 #include <QWidget>
+#include "interfaces.h"
 
 namespace widgets {
 
@@ -29,7 +30,7 @@ namespace widgets {
  * The DualColorButton provides two colors and signals to notify when they
  * have changed.
  */
-class DualColorButton : public QWidget {
+class DualColorButton : public QWidget, public interface::ColorSource {
 	Q_OBJECT
 	public:
 		DualColorButton(QWidget *parent=0);

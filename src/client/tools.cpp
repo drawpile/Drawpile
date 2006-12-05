@@ -21,14 +21,13 @@
 #include "controller.h"
 #include "tools.h"
 #include "brush.h"
-#include "toolsettingswidget.h"
-#include "dualcolorbutton.h"
 #include "board.h"
+#include "boardeditor.h"
+#include "interfaces.h"
 
 namespace tools {
 
-Controller *Tool::controller_;
-int Tool::user_;
+drawingboard::BoardEditor *Tool::editor_;
 
 /**
  * The returned tool can be used to perform actions on the board
@@ -36,20 +35,18 @@ int Tool::user_;
  * 
  * This is not multiboard safe! This class needs to be reworked
  * if the support for joining multiple boards simultaneously is needed.
- * @param controller board controller
- * @param user user id of the local user
+ * @param editor board editor delegate
  * @param type type of tool wanted
  * @return the requested tool
  */
-Tool *Tool::get(Controller *controller, int user, Type type)
+Tool *Tool::get(drawingboard::BoardEditor *editor, Type type)
 {
 	// When and if we support joining to multiple boards,
 	// tools can no longer be shared.
 	static Tool *brush = new Brush();
 	static Tool *eraser = new Eraser();
 	static Tool *picker = new ColorPicker();
-	controller_ = controller;
-	user_ = user;
+	editor_ = editor;
 	switch(type) {
 		case BRUSH: return brush;
 		case ERASER: return eraser;
@@ -60,43 +57,43 @@ Tool *Tool::get(Controller *controller, int user, Type type)
 
 void BrushBase::begin(int x,int y, qreal pressure)
 {
-	drawingboard::Brush brush = controller()->settings_->getBrush(
-			controller()->colors_->foreground(),
-			controller()->colors_->background()
+	drawingboard::Brush brush = interface::Global::brushSource()->getBrush(
+			interface::Global::colorSource()->foreground(),
+			interface::Global::colorSource()->background()
 			);
-	controller()->board_->strokeBegin(user(),x,y,pressure,brush);
+
+	if(editor_->currentBrush() != brush)
+		editor_->setTool(brush);
+
+	editor_->addStroke(x,y,pressure);
 }
 
 void BrushBase::motion(int x,int y, qreal pressure)
 {
-	controller()->board_->strokeMotion(user(),x,y,pressure);
+	editor_->addStroke(x,y,pressure);
 }
 
 void BrushBase::end()
 {
-	controller()->board_->strokeEnd(user());
+	editor_->endStroke();
 }
 
 void ColorPicker::begin(int x, int y, qreal pressure)
 {
 	(void)pressure;
-	pickColor(x,y);
+	interface::Global::colorSource()->setForeground(
+			editor_->colorAt(x,y));
 }
 
 void ColorPicker::motion(int x,int y, qreal pressure)
 {
 	(void)pressure;
-	pickColor(x,y);
+	interface::Global::colorSource()->setForeground(
+			editor_->colorAt(x,y));
 }
 
 void ColorPicker::end()
 {
-}
-
-void ColorPicker::pickColor(int x,int y)
-{
-	QColor color = controller()->board_->colorAt(x,y);
-	controller()->colors_->setForeground(color);
 }
 
 }

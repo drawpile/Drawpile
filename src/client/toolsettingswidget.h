@@ -23,15 +23,12 @@
 #include <QDockWidget>
 
 #include "tools.h"
+#include "interfaces.h"
 
 class QStackedWidget;
 
 namespace tools {
 	class ToolSettings;
-}
-
-namespace drawingboard {
-	class Brush;
 }
 
 namespace widgets {
@@ -40,7 +37,7 @@ namespace widgets {
 /**
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettings: public QDockWidget
+class ToolSettings: public QDockWidget, public interface::BrushSource
 {
 	Q_OBJECT
 	public:
