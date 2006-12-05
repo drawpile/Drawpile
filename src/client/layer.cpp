@@ -51,6 +51,8 @@ QImage Layer::image() const
 /**
  * The brush pixmap is drawn at each point between point1 and point2.
  * Pressure values are interpolated between the points.
+ * First pixel is not drawn. This is done on purpose, as drawLine is usually
+ * used to draw multiple joined lines.
  */
 void Layer::drawLine(const QPoint& point1, qreal pressure1,
 		const QPoint& point2, qreal pressure2, const Brush& brush)
@@ -58,52 +60,76 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 	QPainter painter(&image_);
 	painter.setOpacity(1.0);
 	qreal pressure = pressure1;
+#if 0 // TODO
 	qreal deltapressure;
-	if(pressure2-pressure1 < 1.0/255.0)
+	if(qAbs(pressure2-pressure1) < 1.0/255.0)
 		deltapressure = 0;
 	else
 		deltapressure = (pressure2-pressure1) / hypot(point1.x()-point2.x(), point1.y()-point2.y());
+#endif
 
-	// Bresenham's line drawing algorithm
-	bool steep = abs(point2.y() - point1.y()) > abs(point2.x() - point1.x());
-	int x1,x2,y1,y2;
-	if(steep) {
-		x1 = point1.y(); y1 = point1.x();
-		x2 = point2.y(); y2 = point2.x();
-	} else {
-		x1 = point1.x(); y1 = point1.y();
-		x2 = point2.x(); y2 = point2.y();
-	}
-	if(x1 > x2) {
-		int tmp;
-		tmp = x1; x1 = x2; x2 = tmp;
-		tmp = y1; y1 = y2; y2 = tmp;
-	}
-	int deltax = x2-x1;
-	int deltay = abs(y2-y1);
-	int error = 0;
-	int ystep = y1<y2?1:-1;
-	int y = y1;
-	for(int x=x1;x<x2;++x) {
-		if(steep)
-			drawPoint(painter,y,x,pressure1,brush);
-		else
-			drawPoint(painter,x,y,pressure1,brush);
-		pressure += deltapressure;
-		error += deltay;
-		if(2*error >= deltax) {
-			y += ystep;
-			error -= deltax;
+	// Based on interpolatePoints() in kolourpaint
+	const int x1 = point1.x (),
+		y1 = point1.y (),
+		x2 = point2.x (),
+		y2 = point2.y ();
+
+	// Difference of x and y values
+	const int dx = x2 - x1;
+	const int dy = y2 - y1;
+
+	// Absolute values of differences
+	const int ix = qAbs (dx);
+	const int iy = qAbs (dy);
+
+	// Larger of the x and y differences
+	const int inc = ix > iy ? ix : iy;
+
+	// Plot location
+	int plotx = x1;
+	int ploty = y1;
+
+	int x = 0;
+	int y = 0;
+
+	for (int i = 0; i <= inc; i++) {
+		int plot = 0;
+
+		x += ix;
+		y += iy;
+
+		if (x > inc) {
+			plot++;
+			x -= inc;
+
+			if (dx < 0)
+				plotx--;
+			else
+				plotx++;
 		}
+
+		if (y > inc) {
+			plot++;
+			y -= inc;
+
+			if (dy < 0)
+				ploty--;
+			else
+				ploty++;
+		}
+
+		if (plot)
+			drawPoint(painter, plotx, ploty, pressure, brush);
 	}
 
 	// Update screen
-	x1 = qMin(point1.x(), point2.x());
-	x2 = qMax(point1.x(), point2.x());
-	y1 = qMin(point1.y(), point2.y());
-	y2 = qMax(point1.y(), point2.y());
+	const int left = qMin(point1.x(), point2.x());
+	const int right = qMax(point1.x(), point2.x());
+	const int top = qMin(point1.y(), point2.y());
+	const int bottom = qMax(point1.y(), point2.y());
 	int rad = qMax(brush.radius(pressure1),brush.radius(pressure2));
-	update(x1-rad,y1-rad,x2-x1+rad*2,y2-y1+rad*2);
+	if(rad==0) rad=1;
+	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
 }
 
 /**
@@ -132,7 +158,7 @@ void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
  */
 void Layer::drawPoint(QPainter &painter, int x,int y, qreal pressure, const Brush& brush)
 {
-	int r = brush.radius(pressure);
+	const int r = brush.radius(pressure);
 	QPoint p(x-r,y-r);
 	if(r==0) {
 		painter.setOpacity(brush.opacity(pressure));
@@ -150,7 +176,7 @@ QRectF Layer::boundingRect() const
 }
 
 void Layer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-	 QWidget *widget)
+	 QWidget *)
 {
 	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
     painter->drawImage(exposed, image_, exposed);

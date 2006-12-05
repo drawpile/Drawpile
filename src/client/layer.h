@@ -51,7 +51,7 @@ class Layer : public QGraphicsItem
 
 		QRectF boundingRect() const;
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-			 QWidget *widget);
+			 QWidget *);
 
 	private:
 		void drawPoint(QPainter &painter, int x, int y, qreal pressure,

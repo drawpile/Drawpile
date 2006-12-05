@@ -61,7 +61,6 @@ class User
 		Layer *layer_;
 		QPoint lastpoint_;
 		qreal lastpressure_;
-		bool penmoved_;
 		bool strokestarted_;
 };
 

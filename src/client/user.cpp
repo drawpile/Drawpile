@@ -24,7 +24,7 @@
 namespace drawingboard {
 
 User::User(int id)
-	: id_(id),penmoved_(false), strokestarted_(false)
+	: id_(id), strokestarted_(false)
 {
 }
 
@@ -53,8 +53,9 @@ void User::addStroke(int x,int y, qreal pressure)
 				point, pressure,
 				brush_
 				);
-		penmoved_ = true;
 	} else {
+		// First point
+		layer_->drawPoint(point, pressure, brush_);
 		strokestarted_ = true;
 	}
 	lastpoint_ = point;
@@ -68,12 +69,7 @@ void User::addStroke(int x,int y, qreal pressure)
  */
 void User::endStroke()
 {
-	// Draw the single dot if pen was not moved
-	if(penmoved_ == false) {
-		layer_->drawPoint(lastpoint_, lastpressure_, brush_);
-	}
 	strokestarted_ = false;
-	penmoved_ = false;
 }
 
 }
