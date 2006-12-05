@@ -63,11 +63,13 @@ const uint8_t
 	Subscribe = 30,
 	//! for Unsubscribe.
 	Unsubscribe = 31,
+	//! for Session select.
+	SessionSelect = 37,
 
 	//! for Instruction.
 	Instruction = 77,
-	//! for ListBoards.
-	ListBoards = 72,
+	//! for ListSessions.
+	ListSessions = 72,
 	//! for Cancel.
 	Cancel = 73,
 
@@ -75,8 +77,8 @@ const uint8_t
 	UserInfo = 80,
 	//! for HostInfo.
 	HostInfo = 81,
-	//! for BoardInfo.
-	BoardInfo = 82,
+	//! for SessionInfo.
+	SessionInfo = 82,
 
 	//! for Acknowledgement.
 	Acknowledgement = 20,

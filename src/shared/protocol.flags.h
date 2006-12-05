@@ -38,7 +38,9 @@ const uint8_t
 	//! Has user modifier.
 	isUser = 0x01,
 	//! Has bundling modifier.
-	isBundling = 0x02;
+	isBundling = 0x02,
+	//! Is directed by SessionSelect message.
+	isSession = 0x04;
 }
 
 //! Protocol extension flags.
@@ -73,7 +75,7 @@ const uint8_t
 	//! No special requirements.
 	None = 0x00,
 	
-	//! Enforces unique user and board names.
+	//! Enforces unique user and session names.
 	EnforceUnique = 0x01,
 	
 	//! Server does not allow global Chat messages.
@@ -107,23 +109,22 @@ const uint8_t
 
 //! Session specific flags
 /**
- * @see protocol::BoardInfo message
+ * @see protocol::SessionInfo message
  */
 namespace session
 {
 
 const uint8_t
 	//! No session flags
-	None = 0x00,
+	None = user::None,
 	
 	//! Users join the session in observer mode.
-	Observer = 0x08,
+	Observer = user::Observer,
 	
 	//! Users join the session muted.
-	Mute = 0x10,
-	
+	Mute = user::Mute,
 	//! Users join the session deafened.
-	Deaf = 0x20;
+	Deaf = user::Deaf;
 
 } // namespace session
 

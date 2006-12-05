@@ -399,15 +399,15 @@ struct Authentication
 {
 	Authentication()
 		: Message(protocol::type::Authentication),
-		board_id(protocol::Global)
+		session_id(protocol::Global)
 	{ }
 	
 	~Authentication() throw() { }
 	
 	/* unique data */
 	
-	//! Board identifier for which the auth request is aimed at (protocol::Global for server).
-	uint8_t board_id;
+	//! Session identifier for which the auth request is aimed at (protocol::Global for server).
+	uint8_t session_id;
 	
 	char seed[password_seed_size]; // n bytes of gibberish
 	
@@ -436,8 +436,8 @@ struct Password
 	
 	/* unique data */
 	
-	//! Board identifier, must be the same as in the auth request this is response to.
-	uint8_t board_id;
+	//! Session identifier, must be the same as in the auth request this is response to.
+	uint8_t session_id;
 	
 	//! Password data.
 	char data[password_hash_size];
@@ -459,15 +459,15 @@ struct Subscribe
 {
 	Subscribe()
 		: Message(protocol::type::Subscribe),
-		board_id(protocol::Global)
+		session_id(protocol::Global)
 	{ }
 	
 	~Subscribe() throw() { }
 	
 	/* unique data */
 	
-	//! Board identifier.
-	uint8_t board_id;
+	//! Session identifier.
+	uint8_t session_id;
 	
 	/* functions */
 	
@@ -486,15 +486,15 @@ struct Unsubscribe
 {
 	Unsubscribe()
 		: Message(protocol::type::Unsubscribe),
-		board_id(protocol::Global)
+		session_id(protocol::Global)
 	{ }
 	
 	~Unsubscribe() throw() { }
 	
 	/* unique data */
 	
-	//! Board identifier;
-	uint8_t board_id;
+	//! Session identifier;
+	uint8_t session_id;
 	
 	/* functions */
 	
@@ -535,22 +535,22 @@ struct Instruction
 	size_t payloadLength() const throw();
 };
 
-//! List Boards request.
+//! List sessions request.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#List_boards
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#List_sessions
  *
- * Client requests info for all boards on server. Server should response with
- * sequential BoardInfo messages for all boards, and append ACK after all boards
+ * Client requests info for all sessions on server. Server should response with
+ * sequential SessionInfo messages for all sessions, and append ACK after all sessions
  * have been described to mark the end of list.
  */
-struct ListBoards
+struct ListSessions
 	: Message
 {
-	ListBoards()
-		: Message(protocol::type::ListBoards)
+	ListSessions()
+		: Message(protocol::type::ListSessions)
 	{ }
 	
-	~ListBoards() throw() { }
+	~ListSessions() throw() { }
 	
 	/* unique data */
 	
@@ -604,7 +604,7 @@ struct UserInfo
 	
 	uint8_t
 		//! Session ID
-		board_id,
+		session_id,
 		//! User mode flags (see protocol::user for full list)
 		mode,
 		//! User event (see protocol::user_event for full list)
@@ -629,8 +629,8 @@ struct HostInfo
 {
 	HostInfo()
 		: Message(protocol::type::HostInfo),
-		boards(0),
-		boardLimit(0),
+		sessions(0),
+		sessionLimit(0),
 		users(0),
 		userLimit(0),
 		nameLenLimit(0),
@@ -644,17 +644,17 @@ struct HostInfo
 	/* unique data */
 	
 	uint8_t
-		//! Number of boards on server.
-		boards,
-		//! Max number of boards on server.
-		boardLimit,
+		//! Number of sessions on server.
+		sessions,
+		//! Max number of sessions on server.
+		sessionLimit,
 		//! Connected users.
 		users,
 		//! Max connected users (1 always reserved for admin over this).
 		userLimit,
-		//! User/board name length limit.
+		//! User/session name length limit.
 		nameLenLimit,
-		//! Max board/session subscriptions per user.
+		//! Max session subscriptions per user.
 		maxSubscriptions,
 		//! Server operation flags (see protocol::requirements).
 		requirements,
@@ -669,12 +669,12 @@ struct HostInfo
 	size_t payloadLength() const throw();
 };
 
-//! Board Info message.
-struct BoardInfo
+//! Session Info message.
+struct SessionInfo
 	: Message
 {
-	BoardInfo()
-		: Message(protocol::type::BoardInfo),
+	SessionInfo()
+		: Message(protocol::type::SessionInfo),
 		identifier(protocol::Global),
 		width(0),
 		height(0),
@@ -687,11 +687,11 @@ struct BoardInfo
 		name(0)
 	{ }
 	
-	~BoardInfo() throw() { delete [] name; }
+	~SessionInfo() throw() { delete [] name; }
 	
 	/* unique data */
 	
-	//! Board identifier.
+	//! Session identifier.
 	uint8_t identifier;
 	
 	uint16_t
@@ -701,20 +701,20 @@ struct BoardInfo
 		height;
 	
 	uint8_t
-		//! Board owner user identifier.
+		//! Session owner user identifier.
 		owner,
-		//! Board users.
+		//! Session users.
 		users,
-		//! Board user limit.
+		//! Session user limit.
 		limit,
 		//! Default user flags.
 		uflags,
 		//! Session flags.
 		flags,
-		//! Board name length.
+		//! Session name length.
 		length;
 	
-	//! Board name.
+	//! Session name.
 	char* name;
 	
 	/* functions */
@@ -814,7 +814,7 @@ struct Chat
 {
 	Chat()
 		: Message(protocol::type::Chat, message::isUser),
-		board_id(protocol::Global),
+		session_id(protocol::Global),
 		length(0),
 		data(0)
 	{ }
@@ -824,8 +824,8 @@ struct Chat
 	/* unique data */
 	
 	uint8_t
-		//! Target board identifier (use protocol::Global for global messages).
-		board_id,
+		//! Target session identifier (use protocol::Global for global messages).
+		session_id,
 		//! Message string length.
 		length;
 	
@@ -866,6 +866,34 @@ struct Palette
 	
 	//! Palette data.
 	char* data;
+	
+	/* functions */
+	
+	size_t unserialize(const char* buf, size_t len);
+	size_t reqDataLen(const char *buf, size_t len) const;
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
+};
+
+//! Session selector
+/**
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Palette
+ */
+struct SessionSelect
+	: Message
+{
+	SessionSelect()
+		: Message(protocol::type::SessionSelect,
+		protocol::message::isUser),
+		session_id(protocol::Global)
+	{ }
+	
+	~SessionSelect() throw() { }
+	
+	/* unique data */
+	
+	//! Session identifier
+	uint8_t session_id;
 	
 	/* functions */
 	

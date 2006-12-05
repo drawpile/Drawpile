@@ -25,7 +25,7 @@
 namespace protocol
 {
 
-//! Board identifier for no particular board (global) things. Mostly for Chat messages.
+//! Session identifier for no particular session (global).
 const uint8_t Global = 0;
 
 /* RGB color size */

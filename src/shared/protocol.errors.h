@@ -55,11 +55,11 @@ const uint16_t
 	
 	/* Session errors. */
 	
-	//! No sessions (likely a response to ListBoards).
+	//! No sessions (likely a response to ListSessions).
 	NoSessions = 10,
 	//! Does not exist.
 	UnknownSession = 12,
-	//! Subscribe failed, board full.
+	//! Subscribe failed, session full.
 	SessionFull = 15,
 	//! Not subscribed (likely a response to invalid Unsubscribe)
 	NotSubscribed = 16,

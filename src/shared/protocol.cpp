@@ -408,7 +408,7 @@ size_t Authentication::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(session_id, buf+i); i += sizeof(session_id);
 	memcpy(seed, buf+i, password_seed_size); i += password_seed_size;
 	
 	return i;
@@ -419,14 +419,14 @@ size_t Authentication::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	return sizeof(type) + sizeof(board_id) + password_seed_size;
+	return sizeof(type) + sizeof(session_id) + password_seed_size;
 }
 
 size_t Authentication::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf, session_id); size_t i = sizeof(session_id);
 	memcpy(buf+i, seed, password_seed_size); i += sizeof(password_seed_size);
 	
 	return i;
@@ -434,7 +434,7 @@ size_t Authentication::serializePayload(char *buf) const throw()
 
 size_t Authentication::payloadLength() const throw()
 {
-	return sizeof(board_id) + password_seed_size;
+	return sizeof(session_id) + password_seed_size;
 }
 
 // no special implementation required
@@ -450,7 +450,7 @@ size_t Password::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(session_id, buf+i); i += sizeof(session_id);
 	memcpy(&data, buf+i, password_hash_size); i += password_hash_size;
 	
 	return i;
@@ -461,14 +461,14 @@ size_t Password::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	return sizeof(type) + sizeof(board_id) + password_hash_size;
+	return sizeof(type) + sizeof(session_id) + password_hash_size;
 }
 
 size_t Password::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf, session_id); size_t i = sizeof(session_id);
 	memcpy(buf+i, &data, password_hash_size); i += password_hash_size;
 	
 	return i;
@@ -476,7 +476,7 @@ size_t Password::serializePayload(char *buf) const throw()
 
 size_t Password::payloadLength() const throw()
 {
-	return sizeof(board_id) + password_hash_size;
+	return sizeof(session_id) + password_hash_size;
 }
 
 /*
@@ -489,9 +489,9 @@ size_t Subscribe::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	memcpy_t(board_id, buf+sizeof(type));
+	memcpy_t(session_id, buf+sizeof(type));
 	
-	return sizeof(type)+sizeof(board_id);
+	return sizeof(type)+sizeof(session_id);
 }
 
 size_t Subscribe::reqDataLen(const char *buf, size_t len) const
@@ -499,21 +499,21 @@ size_t Subscribe::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	return sizeof(type) + sizeof(board_id);
+	return sizeof(type) + sizeof(session_id);
 }
 
 size_t Subscribe::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, board_id);
+	memcpy_t(buf, session_id);
 	
-	return sizeof(board_id);
+	return sizeof(session_id);
 }
 
 size_t Subscribe::payloadLength() const throw()
 {
-	return sizeof(board_id);
+	return sizeof(session_id);
 }
 
 /*
@@ -526,9 +526,9 @@ size_t Unsubscribe::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	memcpy_t(board_id, buf+sizeof(type));
+	memcpy_t(session_id, buf+sizeof(type));
 	
-	return sizeof(type) + sizeof(board_id);
+	return sizeof(type) + sizeof(session_id);
 }
 
 size_t Unsubscribe::reqDataLen(const char *buf, size_t len) const
@@ -536,21 +536,21 @@ size_t Unsubscribe::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	return sizeof(type) + sizeof(board_id);
+	return sizeof(type) + sizeof(session_id);
 }
 
 size_t Unsubscribe::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, board_id);
+	memcpy_t(buf, session_id);
 	
-	return sizeof(board_id);
+	return sizeof(session_id);
 }
 
 size_t Unsubscribe::payloadLength() const throw()
 {
-	return sizeof(board_id);
+	return sizeof(session_id);
 }
 
 /*
@@ -605,7 +605,7 @@ size_t Instruction::payloadLength() const throw()
 }
 
 /*
- * struct ListBoards
+ * struct ListSessions
  */
 
 // no special implementation required
@@ -630,7 +630,7 @@ size_t UserInfo::unserialize(const char* buf, size_t len)
 	
 	memcpy_t(user_id, buf+i); i += sizeof(user_id);
 	
-	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(session_id, buf+i); i += sizeof(session_id);
 	memcpy_t(mode, buf+i); i += sizeof(mode);
 	memcpy_t(event, buf+i); i += sizeof(event);
 	memcpy_t(length, buf+i); i += sizeof(length);
@@ -646,7 +646,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	size_t off = sizeof(type) + sizeof(board_id) + sizeof(mode) + sizeof(event);
+	size_t off = sizeof(type) + sizeof(session_id) + sizeof(mode) + sizeof(event);
 	if (len < off + sizeof(length))
 		return off + sizeof(length);
 	else
@@ -663,7 +663,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf, session_id); size_t i = sizeof(session_id);
 	memcpy_t(buf+i, mode); i += sizeof(mode);
 	memcpy_t(buf+i, event); i += sizeof(event);
 	memcpy_t(buf+i, length); i+= sizeof(length);
@@ -689,8 +689,8 @@ size_t HostInfo::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy_t(boards, buf+i); i += sizeof(boards);
-	memcpy_t(boardLimit, buf+i); i += sizeof(boardLimit);
+	memcpy_t(sessions, buf+i); i += sizeof(sessions);
+	memcpy_t(sessionLimit, buf+i); i += sizeof(sessionLimit);
 	memcpy_t(users, buf+i); i += sizeof(users);
 	memcpy_t(userLimit, buf+i); i += sizeof(userLimit);
 	memcpy_t(nameLenLimit, buf+i); i += sizeof(nameLenLimit);
@@ -713,8 +713,8 @@ size_t HostInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 
-	memcpy_t(buf, boards); size_t i = sizeof(boards);
-	memcpy_t(buf+i, boardLimit); i += sizeof(boardLimit);
+	memcpy_t(buf, sessions); size_t i = sizeof(sessions);
+	memcpy_t(buf+i, sessionLimit); i += sizeof(sessionLimit);
 	memcpy_t(buf+i, users); i += sizeof(users);
 	memcpy_t(buf+i, userLimit); i += sizeof(userLimit);
 	memcpy_t(buf+i, nameLenLimit); i += sizeof(nameLenLimit);
@@ -727,16 +727,16 @@ size_t HostInfo::serializePayload(char *buf) const throw()
 
 size_t HostInfo::payloadLength() const throw()
 {
-	return sizeof(boards) + sizeof(boardLimit) + sizeof(users)
+	return sizeof(sessions) + sizeof(sessionLimit) + sizeof(users)
 		+ sizeof(userLimit) + sizeof(nameLenLimit) + sizeof(maxSubscriptions)
 		+ sizeof(requirements) + sizeof(extensions);
 }
 
 /*
- * struct BoardInfo
+ * struct SessionInfo
  */
 
-size_t BoardInfo::unserialize(const char* buf, size_t len)
+size_t SessionInfo::unserialize(const char* buf, size_t len)
 {
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
@@ -761,7 +761,7 @@ size_t BoardInfo::unserialize(const char* buf, size_t len)
 	return i;
 }
 
-size_t BoardInfo::reqDataLen(const char *buf, size_t len) const
+size_t SessionInfo::reqDataLen(const char *buf, size_t len) const
 {
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
@@ -781,7 +781,7 @@ size_t BoardInfo::reqDataLen(const char *buf, size_t len) const
 	}
 }
 
-size_t BoardInfo::serializePayload(char *buf) const throw()
+size_t SessionInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -799,7 +799,7 @@ size_t BoardInfo::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t BoardInfo::payloadLength() const throw()
+size_t SessionInfo::payloadLength() const throw()
 {
 	return sizeof(identifier) + sizeof(width) + sizeof(height) + sizeof(owner)
 		+ sizeof(users) + sizeof(limit) + sizeof(limit) + length;
@@ -948,7 +948,7 @@ size_t Chat::unserialize(const char* buf, size_t len)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
-	memcpy_t(board_id, buf+i); i += sizeof(board_id);
+	memcpy_t(session_id, buf+i); i += sizeof(session_id);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	data = new char[length];
@@ -962,15 +962,15 @@ size_t Chat::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 && len != 0);
 	assert(buf[0] == type);
 	
-	if (len < sizeof(type) + sizeof(board_id) + sizeof(length))
-		return sizeof(type) + sizeof(board_id) + sizeof(length);
+	if (len < sizeof(type) + sizeof(session_id) + sizeof(length))
+		return sizeof(type) + sizeof(session_id) + sizeof(length) + 1;
 	else
 	{
 		uint8_t rlen;
 		
-		memcpy_t(rlen, buf+sizeof(type)+sizeof(board_id));
+		memcpy_t(rlen, buf+sizeof(type)+sizeof(session_id));
 		
-		return sizeof(type) + sizeof(board_id) + sizeof(length) + rlen;
+		return sizeof(type) + sizeof(session_id) + sizeof(length) + rlen;
 	}
 }
 
@@ -978,7 +978,7 @@ size_t Chat::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, board_id); size_t i = sizeof(board_id);
+	memcpy_t(buf, session_id); size_t i = sizeof(session_id);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
 	memcpy(buf+i, data, length); i += length;
@@ -988,7 +988,7 @@ size_t Chat::serializePayload(char *buf) const throw()
 
 size_t Chat::payloadLength() const throw()
 {
-	return sizeof(board_id) + sizeof(length) + length;
+	return sizeof(session_id) + sizeof(length) + length;
 }
 
 /*
