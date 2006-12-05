@@ -80,13 +80,12 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 {
 	if(event->button() == Qt::MidButton) {
 		startDrag(event->x(), event->y());
+		board_->hideCursorOutline();
 	} else {
 		pendown_ = true;
 		QPoint point = mapToScene(event->pos()).toPoint();
 		emit penDown(point.x(), point.y(), 1.0, false);
 	}
-	board_->hideCursorOutline();
-
 }
 
 void EditorView::mouseMoveEvent(QMouseEvent *event)
@@ -98,8 +97,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		if(point != prevpoint_) {
 			if(pendown_)
 				emit penMove(point.x(), point.y(), 1.0);
-			else
-				board_->moveCursorOutline(point);
+			board_->moveCursorOutline(point);
 			prevpoint_ = point;
 		}
 	}
@@ -109,13 +107,13 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(isdragging_) {
 		stopDrag();
+		if(showoutline_) {
+			prevpoint_ = mapToScene(event->pos()).toPoint();
+			board_->showCursorOutline(prevpoint_, outlinesize_);
+		}
 	} else {
 		pendown_ = false;
 		emit penUp();
-	}
-	if(showoutline_) {
-		prevpoint_ = mapToScene(event->pos()).toPoint();
-		board_->showCursorOutline(prevpoint_, outlinesize_);
 	}
 }
 
@@ -123,32 +121,29 @@ void EditorView::tabletEvent(QTabletEvent *event)
 {
 	event->accept();
 	QPoint point = mapToScene(event->pos()).toPoint();
+
+	if(prevpoint_ != point)
+		board_->moveCursorOutline(point);
+
 	if(event->pressure()==0) {
+		// Pressure 0, pen is not touching the tablet
 		if(pendown_) {
 			pendown_ = false;
-			if(showoutline_)
-				board_->showCursorOutline(point,outlinesize_);
 			emit penUp();
-		} else {
-			if(prevpoint_ != point) {
-				board_->moveCursorOutline(point);
-				prevpoint_ = point;
-			}
 		}
 	} else {
+		// Pressure>0, pen is touching the tablet
 		if(pendown_) {
-			if(prevpoint_ != point) {
+			if(prevpoint_ != point)
 				emit penMove(point.x(), point.y(), event->pressure());
-			}
-			prevpoint_ = point;
 		} else {
 			emit penDown(point.x(), point.y(), event->pressure(),
 					event->pointerType()==QTabletEvent::Eraser);
 			pendown_ = true;
 			prevpoint_ = point;
-			board_->hideCursorOutline();
 		}
 	}
+	prevpoint_ = point;
 }
 
 void EditorView::startDrag(int x,int y)
