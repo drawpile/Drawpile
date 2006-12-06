@@ -225,10 +225,8 @@ void CSHA1::HexDigest(char *szReport)
 	assert(finalized);
 	assert(szReport != 0);
 	
-	unsigned char i;
 	char szTemp[3];
-	
-	for(i = 0; i < 20; i++)
+	for(int i=0; i != 20; i++)
 	{
 		snprintf(szTemp, 2, "%02X", m_digest[i]);
 		memcpy(szReport+(i*2), &szTemp, 2);
