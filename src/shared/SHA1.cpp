@@ -217,6 +217,8 @@ void CSHA1::Final()
 	#endif
 }
 
+#include "templates.h"
+
 // Get the final hash as a pre-formatted string
 void CSHA1::HexDigest(char *szReport)
 {
@@ -224,12 +226,13 @@ void CSHA1::HexDigest(char *szReport)
 	assert(szReport != 0);
 	
 	// Hex magic by George Anescu.
-	static unsigned char saucHex[] = "0123456789ABCDEF";
+	static unsigned char saucHex[16] =
+		{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
 	for(int i=0; i != 20; i++)
 	{
-		szReport+(i*2) = saucHex[x >> 4];
-		szReport+(i*2)+1 = saucHex[x & 0xF];
+		*(szReport+(i*2)) = saucHex[m_digest[i] >> 4];
+		*(szReport+(i*2)+1) = saucHex[m_digest[i] & 0xF];
 	}
 }
 
