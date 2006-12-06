@@ -125,7 +125,7 @@ size_t Message::serializePayload(char *buf) const throw()
 
 size_t Message::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
@@ -133,7 +133,7 @@ size_t Message::reqDataLen(const char *buf, size_t len) const
 
 size_t Message::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -188,7 +188,7 @@ size_t Identifier::unserialize(const char* buf, size_t len)
 
 size_t Identifier::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == protocol::type::Identifier);
 	
 	return sizeof(type) + identifier_size + sizeof(revision)
@@ -217,7 +217,7 @@ size_t StrokeInfo::payloadLength() const throw()
 
 size_t StrokeInfo::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -252,7 +252,7 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len)
 
 size_t StrokeInfo::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	size_t h = sizeof(type) + sizeof(user_id) + sizeof(null_count);
@@ -275,11 +275,12 @@ size_t StrokeInfo::reqDataLen(const char *buf, size_t len) const
 
 size_t ToolInfo::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
+	
 	memcpy_t(user_id, buf+i); i += sizeof(user_id);
 	memcpy_t(tool_id, buf+i); i += sizeof(tool_id);
 	
@@ -296,7 +297,7 @@ size_t ToolInfo::unserialize(const char* buf, size_t len)
 
 size_t ToolInfo::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(user_id) + payloadLength();
@@ -339,7 +340,7 @@ size_t ToolInfo::payloadLength() const throw()
 
 size_t Raster::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -360,7 +361,7 @@ size_t Raster::unserialize(const char* buf, size_t len)
 
 size_t Raster::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	if (len < sizeof(type) + sizeof(offset) + sizeof(length))
@@ -403,7 +404,7 @@ size_t Raster::payloadLength() const throw()
 
 size_t Authentication::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -416,7 +417,7 @@ size_t Authentication::unserialize(const char* buf, size_t len)
 
 size_t Authentication::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(session_id) + password_seed_size;
@@ -445,7 +446,7 @@ size_t Authentication::payloadLength() const throw()
 
 size_t Password::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -458,7 +459,7 @@ size_t Password::unserialize(const char* buf, size_t len)
 
 size_t Password::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(session_id) + password_hash_size;
@@ -485,7 +486,7 @@ size_t Password::payloadLength() const throw()
 
 size_t Subscribe::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -496,7 +497,7 @@ size_t Subscribe::unserialize(const char* buf, size_t len)
 
 size_t Subscribe::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(session_id);
@@ -522,7 +523,7 @@ size_t Subscribe::payloadLength() const throw()
 
 size_t Unsubscribe::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -533,7 +534,7 @@ size_t Unsubscribe::unserialize(const char* buf, size_t len)
 
 size_t Unsubscribe::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(session_id);
@@ -559,7 +560,7 @@ size_t Unsubscribe::payloadLength() const throw()
 
 size_t Instruction::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -574,7 +575,7 @@ size_t Instruction::unserialize(const char* buf, size_t len)
 
 size_t Instruction::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	if (len < sizeof(type) + sizeof(length))
@@ -622,7 +623,7 @@ size_t Instruction::payloadLength() const throw()
 
 size_t UserInfo::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -643,7 +644,7 @@ size_t UserInfo::unserialize(const char* buf, size_t len)
 
 size_t UserInfo::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	size_t off = sizeof(type) + sizeof(session_id) + sizeof(mode) + sizeof(event);
@@ -684,7 +685,7 @@ size_t UserInfo::payloadLength() const throw()
 
 size_t HostInfo::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -703,7 +704,7 @@ size_t HostInfo::unserialize(const char* buf, size_t len)
 
 size_t HostInfo::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + payloadLength();
@@ -738,7 +739,7 @@ size_t HostInfo::payloadLength() const throw()
 
 size_t SessionInfo::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -763,7 +764,7 @@ size_t SessionInfo::unserialize(const char* buf, size_t len)
 
 size_t SessionInfo::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	size_t p = sizeof(type) + sizeof(identifier) + sizeof(width) + sizeof(height)
@@ -811,7 +812,7 @@ size_t SessionInfo::payloadLength() const throw()
 
 size_t Acknowledgement::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -822,7 +823,7 @@ size_t Acknowledgement::unserialize(const char* buf, size_t len)
 
 size_t Acknowledgement::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(event);
@@ -848,7 +849,7 @@ size_t Acknowledgement::payloadLength() const throw()
 
 size_t Error::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -859,7 +860,7 @@ size_t Error::unserialize(const char* buf, size_t len)
 
 size_t Error::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	return sizeof(type) + sizeof(code);
@@ -885,7 +886,7 @@ size_t Error::payloadLength() const throw()
 
 size_t Deflate::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -904,7 +905,7 @@ size_t Deflate::unserialize(const char* buf, size_t len)
 
 size_t Deflate::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	if (len < sizeof(type) + sizeof(uncompressed) + sizeof(length))
@@ -943,7 +944,7 @@ size_t Deflate::payloadLength() const throw()
 
 size_t Chat::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -959,7 +960,7 @@ size_t Chat::unserialize(const char* buf, size_t len)
 
 size_t Chat::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	if (len < sizeof(type) + sizeof(session_id) + sizeof(length))
@@ -997,7 +998,7 @@ size_t Chat::payloadLength() const throw()
 
 size_t Palette::unserialize(const char* buf, size_t len)
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
@@ -1014,7 +1015,7 @@ size_t Palette::unserialize(const char* buf, size_t len)
 
 size_t Palette::reqDataLen(const char *buf, size_t len) const
 {
-	assert(buf != 0 && len != 0);
+	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
 	if (len < sizeof(type) + sizeof(offset) + sizeof(count))

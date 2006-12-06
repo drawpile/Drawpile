@@ -34,16 +34,16 @@ namespace protocol
  *
  * For example:
  * \code
- * board:create 200,200,8,Faust's session
+ * session:create 200,200,8,Faust's session
  * \endcode
  *
  * All of the admin instructions emit ACK/Instruction response, but some will
  * give some additional response. Error will be returned in case there was a
  * problem interpreting the instruction or you had insufficient rights for it.
  *
- * Session owner may alter the board she is the owner of.
+ * Session owner may alter the session she is the owner of.
  * Since observer, mute, deaf and such statuses are hostwide, they can't be
- * enforced on per board basis.
+ * enforced on per-session basis.
  */
 namespace admin
 {
@@ -53,9 +53,6 @@ const char separator = ":";
 
 //! Arg separator
 const char argsep = ",";
-
-//! Set board as instruction target.
-const char board[] = "board";
 
 //! Set user as instruction target.
 const char user[] = "user";
@@ -72,105 +69,84 @@ const char bool_true[] = "true";
 //! Bool.false
 const char bool_false[] = "false";
 
-//! Board/Create
+//! Create session
 /**
  * \code
- * board:create width,height,user_limit,name
+ * session:create width,height,user_limit,name
  * \endcode
  *
- * Response: BoardInfo
+ * Response: SessionInfo
  */
 const char create[] = "create";
 
-//! Board/Alter
+//! Alter session
 /**
  * \code
- * board:alter board_id width,height,user_limit,name
+ * session:alter session_id width,height,user_limit,name
  * \endcode
  *
- * Board size can only be increased!
+ * Session's board size can only be increased!
  */
 const char alter[] = "alter";
 
-//! Board/Destroy
+//! Destroy session
 /**
  * \code
- * board:destroy board_id
+ * session:destroy session_id
  * \endcode
  */
 const char destroy[] = "destroy";
 
-//! Board/Persist
+//! Make session persistent
 /**
  * \code
- * board:persist board_id
+ * session:persist session_id
  * \endcode
  *
- * Response: BoardInfo
+ * Response: SessionInfo
  */
 const char persist[] = "persist";
 
-//! User/Kick or Session/Kick
+
+
+
+//! Kick user
 /**
  * \code
- * user:kick user_id
+ * user:kick session_id user_id
  * \endcode
  *
  * Response: UserInfo with updated status
- *
- * \code
- * session:kick user_id board_id
- * \endcode
- *
- * Response: Session user info with updated satus.
  */
 const char kick[] = "kick";
 
-//! User/Observe or Session/Observe
+//! User/Observe
 /**
  * \code
- * user:observe user_id bool
+ * user:observe session_id user_id bool
  * \endcode
  *
  * Response: UserInfo with updated status
- *
- * \code
- * session:observe user_id bool board_id
- * \endcode
- *
- * Response: Session user info with updated satus.
  */
 const char observe[] = "observe";
 
-//! User/Mute
+//! Mute user
 /**
  * \code
- * user:mute user_id bool
+ * user:mute session_id user_id bool
  * \endcode
  *
  * Response: UserInfo with updated status
- *
- * \code
- * session:mute user_id bool board_id
- * \endcode
- *
- * Response: Session user info with updated satus.
  */
 const char mute[] = "mute";
 
 //! User/Deafen
 /**
  * \code
- * user:deaf user_id bool
+ * user:deaf session_id user_id bool
  * \endcode
  *
  * Response: UserInfo with updated status
- *
- * \code
- * session:deaf user_id bool board_id
- * \endcode
- *
- * Response: Session user info with updated satus.
  */
 const char deaf[] = "deaf";
 
