@@ -20,9 +20,16 @@ Modified by M.K.A. 06-12-2006.
 		34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
 */
 
-#include <cassert>
-
 #include "SHA1.h"
+
+#include <cassert>
+#include <memory.h> // Needed for memset and memcpy
+#include <stdio.h>  // Needed for file access and sprintf
+#include <string.h> // Needed for strcat and strcpy
+
+#ifdef _MSC_VER
+#include <stdlib.h>
+#endif
 
 // Rotate x bits to the left
 #ifndef ROL32

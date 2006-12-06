@@ -26,15 +26,6 @@ Modified by M.K.A. 06-12-2006.
 
 #include <stdint.h>
 
-#include <memory.h> // Needed for memset and memcpy
-
-#include <stdio.h>  // Needed for file access and sprintf
-#include <string.h> // Needed for strcat and strcpy
-
-#ifdef _MSC_VER
-#include <stdlib.h>
-#endif
-
 /////////////////////////////////////////////////////////////////////////////
 // Declare SHA1 workspace
 
@@ -71,6 +62,7 @@ public:
 	void GetHash(uint8_t *puDest);
 
 private:
+	inline
 	int SHABLK0(int i);
 	
 	// Private SHA-1 transformation

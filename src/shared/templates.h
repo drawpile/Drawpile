@@ -25,7 +25,7 @@
 //#include "sockets.h"
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
-
+#include <cassert>
 
 /* simple template to return copy of the parameter */
 template <class T>
