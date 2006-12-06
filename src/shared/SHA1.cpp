@@ -22,10 +22,10 @@ Modified by M.K.A. 06-12-2006.
 
 #include "SHA1.h"
 
+#include "templates.h" // toHex()
+
 #include <cassert>
-#include <memory.h> // Needed for memset and memcpy
-#include <stdio.h>  // Needed for file access and sprintf
-#include <string.h> // Needed for strcat and strcpy
+#include <memory.h> // memset(), memcpy()
 
 #ifdef _MSC_VER
 #include <stdlib.h>
@@ -226,7 +226,8 @@ void CSHA1::HexDigest(char *szReport)
 	assert(szReport != 0);
 	
 	for(int i=0; i != 20; i++)
-		snprintf(szReport+(i*2), 3, "%02X", m_digest[i]);
+		toHex(szReport+(i*2), m_digest[i]);
+		//snprintf(szReport+(i*2), 3, "%02X", m_digest[i]);
 }
 
 // Get the raw message digest

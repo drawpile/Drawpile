@@ -64,36 +64,12 @@ uint8_t& bswap<uint8_t>(uint8_t& x)
 	return x;
 }
 
-// signed (should not be used)
-/*
-template <> inline
-int32_t& bswap<int32_t>(int32_t& x)
-{
-	// (c) 2003 Juan Carlos Cobas
-	return x = (((x&0x000000FF)<<24) + ((x&0x0000FF00)<<8) +
-		((x&0x00FF0000)>>8) + ((x&0xFF000000)>>24));
-}
-
-template <> inline
-int16_t& bswap<int16_t>(int16_t& x)
-{
-	// (c) 2003 Juan Carlos Cobas
-	return x = (((x >> 8)) | (x << 8));
-}
-
-template <> inline
-int8_t& bswap<int8_t>(int8_t& x)
-{
-	// (c) 2003 Juan Carlos Cobas
-	return x;
-}
-*/
-
 /* memmory */
 
 template <class X>
 char* memcpy_t(char* dst, const X& src)
 {
+	assert(dst != 0);
 	memcpy(dst, &src, sizeof(X));
 	return dst;
 }
@@ -105,6 +81,18 @@ T& memcpy_t(T& dst, const char* src)
 	return dst;
 }
 
+/* String operations */
+
+inline
+char* toHex(char* buffer, const uint8_t& x)
+{
+	// by George Anescu.
+	static unsigned char saucHex[] = "0123456789ABCDEF";
+	buffer[0] = saucHex[x >> 4];
+	buffer[1] = saucHex[x & 0xF];
+	
+	return buffer;
+}
 
 /* Bit operations */
 
