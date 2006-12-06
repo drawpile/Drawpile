@@ -1,2 +1,3 @@
 #cmakedefine HAVE_INVALID_SOCKET
 #cmakedefine HAVE_SOCKET_ERROR
+#cmakedefine HAVE_STDINT_H
