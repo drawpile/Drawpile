@@ -225,12 +225,8 @@ void CSHA1::HexDigest(char *szReport)
 	assert(finalized);
 	assert(szReport != 0);
 	
-	char szTemp[3];
 	for(int i=0; i != 20; i++)
-	{
-		snprintf(szTemp, 2, "%02X", m_digest[i]);
-		memcpy(szReport+(i*2), &szTemp, 2);
-	}
+		snprintf(szReport+(i*2), 2, "%02X", m_digest[i]);
 }
 
 // Get the raw message digest
