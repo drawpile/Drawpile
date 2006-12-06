@@ -1,0 +1,2 @@
+#cmakedefine HAVE_INVALID_SOCKET
+#cmakedefine HAVE_SOCKET_ERROR
