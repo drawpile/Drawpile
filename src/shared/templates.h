@@ -81,19 +81,6 @@ T& memcpy_t(T& dst, const char* src)
 	return dst;
 }
 
-/* String operations */
-
-inline
-char* toHex(char* buffer, const uint8_t& x)
-{
-	// by George Anescu.
-	static unsigned char saucHex[] = "0123456789ABCDEF";
-	buffer[0] = saucHex[x >> 4];
-	buffer[1] = saucHex[x & 0xF];
-	
-	return buffer;
-}
-
 /* Bit operations */
 
 //! Set bit flag

@@ -22,8 +22,6 @@ Modified by M.K.A. 06-12-2006.
 
 #include "SHA1.h"
 
-#include "templates.h" // toHex()
-
 #include <cassert>
 #include <memory.h> // memset(), memcpy()
 
@@ -225,9 +223,14 @@ void CSHA1::HexDigest(char *szReport)
 	assert(finalized);
 	assert(szReport != 0);
 	
+	// Hex magic by George Anescu.
+	static unsigned char saucHex[] = "0123456789ABCDEF";
+	
 	for(int i=0; i != 20; i++)
-		toHex(szReport+(i*2), m_digest[i]);
-		//snprintf(szReport+(i*2), 3, "%02X", m_digest[i]);
+	{
+		szReport+(i*2) = saucHex[x >> 4];
+		szReport+(i*2)+1 = saucHex[x & 0xF];
+	}
 }
 
 // Get the raw message digest
