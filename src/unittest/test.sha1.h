@@ -16,9 +16,9 @@ void hashing()
 	
 	CSHA1 h;
 	
-	char* digest = new char[20*2];
-	
 	uint32_t res_len = 40;
+
+	char* digest = new char[reslen+1];
 	
 	testing("SHA-1 #1");
 	
