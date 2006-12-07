@@ -227,10 +227,13 @@ void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 
 	// Special case, single pixel brush
 	if(dia==0) {
-		const qreal a = opacity(pressure);
-		*dest = int(*dest * (1-a) + blue * a + 0.5);  ++dest;
-		*dest = int(*dest * (1-a) + green * a + 0.5); ++dest;
-		*dest = int(*dest * (1-a) + red * a + 0.5);
+		if(offx==0 && offy==0 &&
+				pos.x() < image.width() && pos.y() < image.height()) {
+			const qreal a = opacity(pressure);
+			*dest = int(*dest * (1-a) + blue * a + 0.5);  ++dest;
+			*dest = int(*dest * (1-a) + green * a + 0.5); ++dest;
+			*dest = int(*dest * (1-a) + red * a + 0.5);
+		}
 		return;
 	}
 
