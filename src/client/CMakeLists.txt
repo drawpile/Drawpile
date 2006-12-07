@@ -3,9 +3,23 @@ set ( EXECNAME drawpile )
 # Qt stuff
 
 find_package ( Qt4 REQUIRED )
-include_directories ( ${QT_INCLUDE_DIR} )
-include_directories ( ${QT_INCLUDE_DIR}/QtGui )
-include_directories ( ${QT_INCLUDE_DIR}/QtCore )
+
+# Qt_definitions ( foo )
+
+include_directories (
+	${QT_INCLUDE_DIR}
+	${QT_QTGUI_INCLUDE_DIR}
+	${QT_QTCORE_INCLUDE_DIR}
+)
+
+include ( ${QT_USE_FILE} )
+
+#set ( QT_USE_QTASSISTANT TRUE )
+#set ( QT_USE_QTDESIGNER TRUE )
+#set ( QT_USE_QTMAIN TREU )
+#set ( QT_USE_QTNETWORK TRUE )
+#set ( QT_USE_QTOPENGL TRUE )
+#set ( QT_USE_QTXML TRUE )
 
 #message ( "DEVNOTE | Qt found at: " ${QT_INCLUDE_DIR} )
 
@@ -62,7 +76,4 @@ add_executable (
 target_link_libraries(
 	${EXECNAME}
 	${QT_LIBRARIES}
-	${QT_QTCORE_LIBRARIES}
-	#${QT_QTNETWORK_LIBRARIES}
-	${QT_QTGUI_LIBRARIES}
 )
