@@ -75,6 +75,7 @@ void ColorTriangle::setHue(int hue)
 	hue_ = hue/359.0;
 	if(hue_>1.0) hue_ = 1.0;
 	else if(hue_<0.0) hue_ = 0;
+	updateVertices();
 	makeTriangle();
 	update();
 }
@@ -94,6 +95,7 @@ void ColorTriangle::setValue(int value)
 void ColorTriangle::setColor(const QColor& color)
 {
 	color.getHsvF(&hue_,&saturation_,&value_);
+	updateVertices();
 	makeTriangle();
 	update();
 }
