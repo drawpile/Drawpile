@@ -26,13 +26,13 @@
 
 #ifdef WIN32
 	#include <winsock2.h>
-	#define MSG_NOSIGNAL 0 // used by send(), the flag isn't used in win32
+	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
 #else
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <unistd.h> // close()
 	#include <errno.h> // errno
-	// TODO
+	
 	#define INVALID_SOCKET 0
 	#define SOCKET_ERROR -1
 #endif
@@ -61,6 +61,7 @@ public:
 	
 	/** */
 	uint32_t fd(uint32_t nsock) throw() { return sock = nsock; }
+	
 	/** */
 	uint32_t fd() throw() { return sock; }
 	
@@ -72,6 +73,7 @@ public:
 	
 	/** */
 	int bindTo(uint32_t address, uint16_t port) throw();
+	
 	/** */
 	int listen() throw();
 	
@@ -88,6 +90,7 @@ public:
 	
 	/** */
 	int address() const throw() { return ntohl(addr.sin_addr.s_addr); }
+	
 	/** */
 	int port() const throw() { return ntohs(addr.sin_port); }
 };

@@ -1,3 +1,5 @@
+# src/client/widgets/colortriangle
+
 set ( Triangle_Headers
 	plugin.h
 )

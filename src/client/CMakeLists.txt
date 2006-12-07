@@ -25,52 +25,68 @@ include ( ${QT_USE_FILE} )
 
 # subdirs
 
-# add_subdirectory ( widgets/ )
+if ( PROCESS_WIDGETS )
+	add_subdirectory ( widgets/ )
+endif ( PROCESS_WIDGETS )
 
 # files
 
-set ( C_HDRS
+set (
+	Client_Headers
 	mainwindow.h netstatus.h hostlabel.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h
 )
 
-set ( C_SRCS
+set (
+	Client_Sources
 	main.cpp mainwindow.cpp netstatus.cpp hostlabel.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp interfaces.cpp boardeditor.cpp
 )
 
-set ( C_RES ui/resources.qrc )
-set ( C_UIS ui/brushsettings.ui ui/colordialog.ui )
+include (AddFileDependencies)
+add_file_dependencies ( ${EXECNAME} shared )
+
+set ( Client_Resources ui/resources.qrc )
+set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui )
 
 if ( WIN32 )
-	# link_libraries ( ws2_32 )
+	link_libraries ( ws2_32 )
 endif ( WIN32 )
 
-# link_libraries( dpshared )
+link_libraries( dpshared )
 
 # .MOC
 
-Qt4_automoc ( ${C_SRCS} )
+Qt4_automoc ( ${Client_Sources} )
 
 # .UI
 
-Qt4_wrap_UI ( UI_HDRS ${C_UIS} )
+Qt4_wrap_UI ( Client_UI_Headers ${Client_UIs} )
 
-Qt4_add_resources ( C_RES_SRCS ${C_RES} )
+Qt4_add_resources ( Client_Resource_Sources ${Client_Resources} )
 
-Qt4_wrap_CPP ( MOC_SRCS ${C_HDRS} )
+Qt4_wrap_CPP ( MOC_Sources ${Client_Headers} )
+
+if (WIN32)
+	set ( EXEFORMAT WIN32 )
+endif (WIN32)
+
+if (MACOSX)
+	set ( EXEFORMAT MACOSX_BUNDLE )
+endif (MACOSX)
 
 add_executable (
 	${EXECNAME}
-	${C_SRCS}
-	${C_HDRS}
-	${UI_HDRS}
-	${C_RES_SRCS}
-	${MOC_SRCS}
+	${EXEFORMAT}
+	${Client_Sources}
+	${Client_Headers}
+	${Client_UI_Headers}
+	${Client_Resource_Sources}
+	${MOC_Sources}
 )
 
 target_link_libraries(

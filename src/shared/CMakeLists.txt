@@ -1,8 +1,10 @@
+# src/shared/
+
 set (
 	Shared_Headers
-	protocol.h
 	sockets.h
 	SHA1.h
+	protocol.h
 	protocol.admin.h
 	protocol.defaults.h
 	protocol.errors.h
@@ -19,7 +21,7 @@ set (
 )
 
 if (WIN32)
-	link_libraries (ws2_32)
+	link_libraries (ws2_32) # winsock2
 endif (WIN32)
 
 add_library (

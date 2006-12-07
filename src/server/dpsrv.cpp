@@ -187,6 +187,11 @@ int main(int argc, char** argv)
 	{
 		switch (opt)
 		{
+			/*
+			case 'a': // address to listen on
+				
+				break;
+			*/
 			case 'p': // port to listen on
 				lo_port = atoi(optarg);
 				{
@@ -253,6 +258,10 @@ int main(int argc, char** argv)
 		bool bound = false;
 		for (int bport=lo_port; bport < hi_port+1; bport++)
 		{
+			#ifndef NDEBUG
+			std::cout << "trying: " << INADDR_ANY << ":" << bport << std::endl;
+			#endif
+			
 			if (lsock.bindTo(INADDR_ANY, bport) == SOCKET_ERROR)
 			{
 				if (lsock.getError() == EBADF)

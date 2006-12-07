@@ -1,3 +1,5 @@
+# src/
+
 project ( DrawPile CXX C )
 
 cmake_minimum_required( VERSION 2.4.5 )
@@ -7,6 +9,9 @@ cmake_minimum_required( VERSION 2.4.5 )
 option ( NOCLIENT "Don't compile client" OFF )
 option ( NOSERVER "Don't compile server" OFF )
 option ( UNITTEST "Compile unittests" OFF )
+option ( NOEPOLL "Disable epoll(4) support" OFF )
+option ( NOPSELECT "Disable pselect() support" OFF )
+option ( NOKQUEUE "Disable kqueue() support" OFF )
 
 
 ### binary and library output ###
@@ -14,40 +19,57 @@ option ( UNITTEST "Compile unittests" OFF )
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../lib )
 
-
 ### config.h ###
 
 configure_file ( config.h.cmake config.h )
 
+
+# check portability stuff
+
+include ( CheckSymbolExists )
+include ( CheckFunctionExists )
 include ( CheckIncludeFiles )
+
 check_include_files ( stdint.h HAVE_STDINT_H )
+
+# EPOLL
+if ( NOT NOEPOLL )
+	check_include_files ( sys/epoll.h HAVE_EPOLL_H )
+endif ( NOT NOEPOLL )
+
+# KQUEUE
+if ( NOT NOKQUEUE )
+	check_function_exists ( kqueue KQUEUE )
+endif ( NOT NOKQUEUE )
+
+# PSELECT
+if ( NOT NOPSELECT )
+	check_function_exists ( pselect PSELECT )
+endif ( NOT NOPSELECT )
 
 
 ### tests ###
 
 include ( TestForSTDNamespace )
 
+#! needs C in project ()
 include ( TestBigEndian )
 test_big_endian ( BIG_ENDIAN )
-
 include ( CheckVariableExists )
 check_variable_exists ( BIG_ENDIAN BIG_ENDIAN )
+
 
 ### subdirs ###
 
 add_subdirectory ( shared/ )
 
-if ( NOSERVER )
-	#
-else ( NOSERVER )
+if ( NOT NOSERVER )
 	add_subdirectory ( server/ )
-endif ( NOSERVER )
+endif ( NOT NOSERVER )
 
-if ( NOCLIENT )
-	#
-else ( NOCLIENT )
+if ( NOT NOCLIENT )
 	add_subdirectory ( client/ )
-endif ( NOCLIENT )
+endif ( NOT NOCLIENT )
 
 if ( UNITTEST )
 	add_subdirectory ( unittest/ )

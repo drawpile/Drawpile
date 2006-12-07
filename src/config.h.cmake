@@ -1,2 +1,7 @@
 #cmakedefine HAVE_STDINT_H
-#cmakedefine IS_BIG_ENDIAN
+
+#cmakedefine BIG_ENDIAN
+
+#cmakedefine HAVE_PSELECT
+#cmakedefine HAVE_EPOLL
+#cmakedefine HAVE_KQUEUE

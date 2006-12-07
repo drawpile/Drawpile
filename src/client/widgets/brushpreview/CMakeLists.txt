@@ -1,3 +1,5 @@
+# src/client/widgets/brushpreview/
+
 set ( Preview_Headers
 	plugin.h
 )
