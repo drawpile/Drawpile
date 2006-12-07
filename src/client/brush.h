@@ -21,6 +21,7 @@
 #define BRUSH_H
 
 #include <QImage>
+#include <QVector>
 #include <QColor>
 
 namespace drawingboard {
@@ -66,8 +67,8 @@ class Brush
 		//! Get interpolated color
 		QColor color(qreal pressure) const;
 
-		//! Get a brush image to paint with
-		QImage getBrush(qreal pressure) const;
+		//! Draw the brush on an image
+		void draw(QImage &image, const QPoint& pos, qreal pressure) const;
 
 		//! Copy operator
 		Brush& operator=(const Brush& brush);
@@ -78,6 +79,7 @@ class Brush
 		//! Inequality test
 		bool operator!=(const Brush& brush) const;
 	private:
+		void updateCache() const;
 		void checkSensitivity();
 
 		int radius1_, radius2_;
@@ -86,7 +88,7 @@ class Brush
 		QColor color1_, color2_;
 		bool sensitive_;
 
-		mutable QImage cache_;
+		mutable QVector<uchar> cache_;
 		mutable qreal cachepressure_;
 };
 

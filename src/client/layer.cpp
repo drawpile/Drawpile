@@ -57,8 +57,7 @@ QImage Layer::image() const
 void Layer::drawLine(const QPoint& point1, qreal pressure1,
 		const QPoint& point2, qreal pressure2, const Brush& brush)
 {
-	QPainter painter(&image_);
-	painter.setOpacity(1.0);
+	int rad = qMax(brush.radius(pressure1),brush.radius(pressure2));
 	qreal pressure = pressure1;
 #if 0 // TODO
 	qreal deltapressure;
@@ -69,10 +68,10 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 #endif
 
 	// Based on interpolatePoints() in kolourpaint
-	const int x1 = point1.x (),
-		y1 = point1.y (),
-		x2 = point2.x (),
-		y2 = point2.y ();
+	const int x1 = point1.x ()-rad,
+		y1 = point1.y ()-rad,
+		x2 = point2.x ()-rad,
+		y2 = point2.y ()-rad;
 
 	// Difference of x and y values
 	const int dx = x2 - x1;
@@ -119,7 +118,7 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 		}
 
 		if (plot)
-			drawPoint(painter, plotx, ploty, pressure, brush);
+			brush.draw(image_, QPoint(plotx,ploty), pressure);
 	}
 
 	// Update screen
@@ -127,47 +126,23 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 	const int right = qMax(point1.x(), point2.x());
 	const int top = qMin(point1.y(), point2.y());
 	const int bottom = qMax(point1.y(), point2.y());
-	int rad = qMax(brush.radius(pressure1),brush.radius(pressure2));
 	if(rad==0) rad=1;
 	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
 }
 
 /**
- * This function sets up a painting environment and calls the internal drawPoint()
+ * Draw a single point
  * @param point coordinates
  * @param pressure pen pressure
  * @param brush brush to use
  */
 void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
 {
-	int r = brush.radius(pressure);
-	QPainter painter(&image_);
-	drawPoint(painter,point.x(),point.y(), pressure, brush);
-	update(point.x()-r,point.y()-r,point.x()+r,point.y()+r);
-}
-
-/**
- * Prepare painter and draw a single dot with the brush. The dot will be
- * drawn centered at the x and y coordinates. If brush diameter is 1,
- * the dot will be drawn with QPainters drawPoint().
- * @param painter painter to use
- * @param x center x coordinate
- * @param y center y coordinate
- * @param pressure pen pressure
- * @param brush brush to use
- */
-void Layer::drawPoint(QPainter &painter, int x,int y, qreal pressure, const Brush& brush)
-{
 	const int r = brush.radius(pressure);
-	QPoint p(x-r,y-r);
-	if(r==0) {
-		painter.setOpacity(brush.opacity(pressure));
-		painter.setPen(brush.color(pressure));
-		painter.drawPoint(p);
-	} else {
-		painter.drawImage(p, brush.getBrush(pressure));
-	}
-
+	const int x = point.x()-r;
+	const int y = point.y()-r;
+	brush.draw(image_, QPoint(x,y), pressure);
+	update(point.x()-r,point.y()-r,point.x()+r,point.y()+r);
 }
 
 QRectF Layer::boundingRect() const

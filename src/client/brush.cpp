@@ -72,8 +72,6 @@ void Brush::setOpacity(qreal opacity)
 void Brush::setColor(const QColor& color)
 {
 	color1_ = color;
-	checkSensitivity();
-	cachepressure_ = -1;
 }
 
 
@@ -101,8 +99,6 @@ void Brush::setOpacity2(qreal opacity)
 void Brush::setColor2(const QColor& color)
 {
 	color2_ = color;
-	checkSensitivity();
-	cachepressure_ = -1;
 }
 
 /**
@@ -112,8 +108,7 @@ void Brush::checkSensitivity()
 {
 	sensitive_ = radius1_ != radius2_ ||
 			fabs(hardness1_ - hardness2_) >= 0.01 ||
-			fabs(opacity1_ - opacity2_) >= 0.01 ||
-			color1_ != color2_;
+			fabs(opacity1_ - opacity2_) >= 0.01;
 }
 
 /**
@@ -167,74 +162,103 @@ QColor Brush::color(qreal pressure) const
  * @param pressure pen pressure. Range is [0..1]
  * @return brush image
  */
-QImage Brush::getBrush(qreal pressure) const
+void Brush::updateCache() const
 {
+	const int rad = radius(cachepressure_);
+	const qreal o = opacity(cachepressure_);
+	qreal hard = pow(2*rad,2*hardness(cachepressure_)-1);
+	if(hard<0.01) hard=0.01;
+
+	const int dia = rad*2;
+	cache_.resize(dia*dia);
+
+	// 1/radius^2
+	const qreal rr = 1.0/qreal(rad*rad);
+
+	// Only one quarter of the pixels are unique.
+	// Quarter 1 is top left, quarter 2 is top right,
+	// quarter 3 is bottom left and quarter 4 is bottom right.
+	unsigned int scanline = dia - 1;
+	unsigned int scanline15= dia + rad;
+	unsigned int scanline2 = rad;
+	uchar *q1 = cache_.data();
+	uchar *q2 = q1 + scanline;
+	uchar *q3 = q1 + dia*(dia-1);
+	uchar *q4 = q3 + scanline;
+	for(int y=0;y<rad;++y) {
+		qreal yy = (y-rad+0.5) * (y-rad+0.5);
+		for(int x=0;x<rad;++x) {
+			qreal xx = (x-rad+0.5) * (x-rad+0.5);
+			qreal intensity = (1-pow( (xx+yy)*(rr) ,hard)) * o;
+
+			if(intensity<0) intensity=0;
+			else if(intensity>1) intensity=1;
+			int a = int(intensity*255);
+
+			*(q1++) = a;
+			*(q2--) = a;
+			*(q3++) = a;
+			*(q4--) = a;
+		}
+		q1 += scanline2;
+		q2 += scanline15;
+		q3 -= scanline15;
+		q4 -= scanline2;
+	}
+}
+
+void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
+{
+	const int dia = radius(pressure) * 2;
+	const QColor col = color(pressure);
+
+	const int red = col.red();
+	const int green = col.green();
+	const int blue= col.blue();
+
+	// Make sure we are inside the image
+	int offx = 0;
+	int offy = 0;
+	if(pos.x()<0)
+		offx = -pos.x();
+	if(pos.y()<0)
+		offy = -pos.y();
+	uchar *dest = image.bits() + ((pos.y()+offy)*image.width()+pos.x()+offx)*4;
+
+	// Special case, single pixel brush
+	if(dia==0) {
+		const qreal a = opacity(pressure);
+		*dest = int(*dest * (1-a) + blue * a + 0.5);  ++dest;
+		*dest = int(*dest * (1-a) + green * a + 0.5); ++dest;
+		*dest = int(*dest * (1-a) + red * a + 0.5);
+		return;
+	}
+
+	// Update brush cache if out of date
 	if(cachepressure_<0 ||
 			(sensitive_ && fabs(pressure - cachepressure_) > 1.0/256.0)) {
-		// Regenerate brush (we currently support 256 levels of pressure)
-
-		QColor brushcolor = color(pressure);
-		qreal alpha = opacity(pressure);
-		int rad = radius(pressure);
-		if(rad==0) {
-			// Special case zero radius (usually not used)
-			QImage pix(1,1,QImage::Format_ARGB32_Premultiplied);
-			uchar *bits = pix.bits();
-			*(bits++) = qRound(brushcolor.blue() * alpha);
-			*(bits++) = qRound(brushcolor.green() * alpha);
-			*(bits++) = qRound(brushcolor.red() * alpha);
-			*bits = qRound(alpha*255);
-			return pix;
-		}
-		qreal hard = pow(2*rad,2*hardness(pressure)-1);
-		if(hard<0.01) hard=0.01;
-
-		QImage brush(rad*2,rad*2,QImage::Format_ARGB32_Premultiplied);
-
-		qreal red = brushcolor.red();
-		qreal green = brushcolor.green();
-		qreal blue = brushcolor.blue();
-
-		// 1/radius^2
-		qreal rr = 1.0/double(rad*rad);
-
-		// Only one quarter of the pixels are unique.
-		// Quarter 1 is top left, quarter 2 is top right,
-		// quarter 3 is bottom left and quarter 4 is bottom right.
-		unsigned int scanline = brush.width()*4 - 1;
-		unsigned int scanline15= brush.width()*4 + brush.width()*2 + 2*(brush.width()%2);
-		unsigned int scanline2 = brush.width()/2*4;
-		uchar *q1 = brush.bits();
-		uchar *q2 = q1 + scanline;
-		uchar *q3 = q1 + brush.width()*(brush.height()-1)*4;
-		uchar *q4 = q3 + scanline;
-		for(int y=0;y<rad;++y) {
-			qreal yy = (y-rad+0.5) * (y-rad+0.5);
-			for(int x=0;x<rad;++x) {
-				qreal xx = (x-rad+0.5) * (x-rad+0.5);
-				qreal intensity = (1-pow( (xx+yy)*(rr) ,hard)) * alpha;
-
-				if(intensity<0) intensity=0;
-				else if(intensity>1) intensity=1;
-
-				uchar r = qRound(red * intensity);
-				uchar g = qRound(green * intensity);
-				uchar b = qRound(blue * intensity);
-				uchar a = qRound(intensity*255);
-				*(q1++) = b; *(q1++) = g; *(q1++) = r; *(q1++) = a;
-				*(q2--) = a; *(q2--) = r; *(q2--) = g; *(q2--) = b;
-				*(q3++) = b; *(q3++) = g; *(q3++) = r; *(q3++) = a;
-				*(q4--) = a; *(q4--) = r; *(q4--) = g; *(q4--) = b;
-			}
-			q1 += scanline2;
-			q2 += scanline15;
-			q3 -= scanline15;
-			q4 -= scanline2;
-		}
-		cache_ = brush;
 		cachepressure_ = pressure;
+		updateCache();
 	}
-	return cache_;
+
+	const uchar *src = cache_.constData() + offy*dia + offx;
+	const unsigned int nextline = (image.width() - dia + offx) * 4;
+
+	const int w = (pos.x()+dia)>image.width()?image.width()-pos.x():dia;
+	const int h = (pos.y()+dia)>image.height()?image.height()-pos.y():dia;
+
+	// Composite brush on image
+	for(int y=offy;y<h;++y) {
+		for(int x=offx;x<w;++x) {
+			const int a = *(src++);
+			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
+			*dest = a*(green - *dest) / 256 + *dest; ++dest;
+			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+			++dest;
+		}
+		dest += nextline + (dia-w)*4;
+		src += offx + dia-w;
+	}
 }
 
 /**
@@ -246,7 +270,12 @@ QImage Brush::getBrush(qreal pressure) const
  */
 Brush& Brush::operator=(const Brush& brush)
 {
-	bool isEqual = (*this == brush);
+	bool isdifferent =
+		radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
+		fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
+		fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
+		fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
+		fabs(opacity2_ - brush.opacity2_) >= 0.01;
 	radius1_ = brush.radius1_ ;
 	radius2_ = brush.radius2_ ;
 	hardness1_ = brush.hardness1_;
@@ -257,7 +286,7 @@ Brush& Brush::operator=(const Brush& brush)
 	color2_ = brush.color2_;
 	sensitive_ = brush.sensitive_;
 
-	if(isEqual==false || cachepressure_<0 || brush.cachepressure_>=0) {
+	if(isdifferent || cachepressure_<0 || brush.cachepressure_>=0) {
 		cachepressure_ = brush.cachepressure_;
 		cache_ = brush.cache_;
 	}

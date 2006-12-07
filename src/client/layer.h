@@ -54,8 +54,6 @@ class Layer : public QGraphicsItem
 			 QWidget *);
 
 	private:
-		void drawPoint(QPainter &painter, int x, int y, qreal pressure,
-				const Brush &brush);
 
 		QImage image_;
 

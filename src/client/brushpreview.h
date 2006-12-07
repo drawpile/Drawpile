@@ -69,11 +69,15 @@ class PLUGIN_EXPORT BrushPreview : public QWidget {
 		void setColorPressure(bool enable);
 
 	protected:
-		void paintEvent(QPaintEvent *event);
+		void paintEvent(QPaintEvent *);
+		void resizeEvent(QResizeEvent *);
 		void changeEvent(QEvent *event);
 
 	private:
+		void updatePreview();
+
 		drawingboard::Brush brush_;
+		QImage preview_;
 		bool sizepressure_;
 		bool opacitypressure_;
 		bool hardnesspressure_;
