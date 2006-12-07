@@ -1,5 +1,3 @@
-project (DrawPile)
-
 set (SHARED_HEADERS protocol.h sockets.h SHA1.h protocol.admin.h protocol.defaults.h protocol.errors.h protocol.tools.h protocol.flags.h protocol.types.h)
 
 if (WIN32)
