@@ -49,6 +49,9 @@ class DualColorButton : public QWidget, public interface::ColorSource {
 		//! Set background color
 		void setBackground(const QColor &c);
 
+		//! Swap foreground and background colors
+		void swapColors();
+
 	signals:
 		//! Emitted when foreground color is changed
 		void foregroundChanged(const QColor &c);

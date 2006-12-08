@@ -107,8 +107,8 @@ void Brush::setColor2(const QColor& color)
 void Brush::checkSensitivity()
 {
 	sensitive_ = radius1_ != radius2_ ||
-			fabs(hardness1_ - hardness2_) >= 0.01 ||
-			fabs(opacity1_ - opacity2_) >= 0.01;
+			fabs(hardness1_ - hardness2_) >= 1.0/256.0 ||
+			fabs(opacity1_ - opacity2_) >= 1.0/256.0;
 }
 
 /**
@@ -275,10 +275,10 @@ Brush& Brush::operator=(const Brush& brush)
 {
 	bool isdifferent =
 		radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
-		fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
-		fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
-		fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
-		fabs(opacity2_ - brush.opacity2_) >= 0.01;
+		fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
+		fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
+		fabs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
+		fabs(opacity2_ - brush.opacity2_) >= 1.0/256.0;
 	radius1_ = brush.radius1_ ;
 	radius2_ = brush.radius2_ ;
 	hardness1_ = brush.hardness1_;
@@ -300,10 +300,10 @@ Brush& Brush::operator=(const Brush& brush)
 bool Brush::operator==(const Brush& brush) const
 {
 	return radius1_ == brush.radius1_ && radius2_ == brush.radius2_ &&
-			fabs(hardness1_ - brush.hardness1_) <= 0.01 &&
-			fabs(hardness2_ - brush.hardness2_) <= 0.01 &&
-			fabs(opacity1_ - brush.opacity1_) <= 0.01 &&
-			fabs(opacity2_ - brush.opacity2_) <= 0.01 &&
+			fabs(hardness1_ - brush.hardness1_) <= 1.0/256.0 &&
+			fabs(hardness2_ - brush.hardness2_) <= 1.0/256.0 &&
+			fabs(opacity1_ - brush.opacity1_) <= 1.0/256.0 &&
+			fabs(opacity2_ - brush.opacity2_) <= 1.0/256.0 &&
 			color1_ == brush.color1_ &&
 			color2_ == brush.color2_;
 }
@@ -311,10 +311,10 @@ bool Brush::operator==(const Brush& brush) const
 bool Brush::operator!=(const Brush& brush) const
 {
 	return radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
-			fabs(hardness1_ - brush.hardness1_) >= 0.01 ||
-			fabs(hardness2_ - brush.hardness2_) >= 0.01 ||
-			fabs(opacity1_ - brush.opacity1_) >= 0.01 ||
-			fabs(opacity2_ - brush.opacity2_) >= 0.01 ||
+			fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
+			fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
+			fabs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
+			fabs(opacity2_ - brush.opacity2_) >= 1.0/256.0 ||
 			color1_ != brush.color1_ ||
 			color2_ != brush.color2_;
 }

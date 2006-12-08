@@ -43,6 +43,19 @@ void DualColorButton::setBackground(const QColor &c)
 	update();
 }
 
+/**
+ * Foreground and background colors switch places and signals are emitted.
+ */
+void DualColorButton::swapColors()
+{
+	QColor tmp = foreground_;
+	foreground_ = background_;
+	background_ = tmp;
+	emit foregroundChanged(foreground_);
+	emit backgroundChanged(background_);
+	update();
+}
+
 QRect DualColorButton::foregroundRect() const
 {
 	// foreground rectangle fills the upper left two thirds of the widget
@@ -161,12 +174,7 @@ void DualColorButton::mouseReleaseEvent(QMouseEvent *event)
 	} else if(backgroundRect().contains(event->pos())) {
 		emit backgroundClicked();
 	} else if(swaprect.contains(event->pos())) {
-		QColor tmp = foreground_;
-		foreground_ = background_;
-		background_ = tmp;
-		emit foregroundChanged(foreground_);
-		emit backgroundChanged(background_);
-		update();
+		swapColors();
 	}
 }
 
