@@ -25,9 +25,9 @@ include ( ${QT_USE_FILE} )
 
 # subdirs
 
-if ( PROCESS_WIDGETS )
-	add_subdirectory ( widgets/ )
-endif ( PROCESS_WIDGETS )
+#if ( PROCESS_WIDGETS )
+#	add_subdirectory ( widgets/ )
+#endif ( PROCESS_WIDGETS )
 
 # files
 
@@ -46,9 +46,6 @@ set (
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp interfaces.cpp boardeditor.cpp
 )
-
-include (AddFileDependencies)
-add_file_dependencies ( ${EXECNAME} shared )
 
 set ( Client_Resources ui/resources.qrc )
 set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui )
@@ -88,6 +85,9 @@ add_executable (
 	${Client_Resource_Sources}
 	${MOC_Sources}
 )
+
+include (AddFileDependencies)
+add_file_dependencies ( main.cpp shared )
 
 target_link_libraries(
 	${EXECNAME}

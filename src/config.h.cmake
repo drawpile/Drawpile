@@ -2,6 +2,8 @@
 
 #cmakedefine BIG_ENDIAN
 
-#cmakedefine HAVE_PSELECT
-#cmakedefine HAVE_EPOLL
-#cmakedefine HAVE_KQUEUE
+#cmakedefine HAVE_SELECT_COPY
+
+#cmakedefine EV_PSELECT
+#cmakedefine EV_EPOLL
+#cmakedefine EV_KQUEUE

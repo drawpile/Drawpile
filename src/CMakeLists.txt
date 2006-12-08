@@ -29,24 +29,30 @@ configure_file ( config.h.cmake config.h )
 include ( CheckSymbolExists )
 include ( CheckFunctionExists )
 include ( CheckIncludeFiles )
+include ( CheckVariableExists )
 
 check_include_files ( stdint.h HAVE_STDINT_H )
 
 # EPOLL
 if ( NOT NOEPOLL )
-	check_include_files ( sys/epoll.h HAVE_EPOLL_H )
+	check_include_files ( sys/epoll.h EV_EPOLL )
 endif ( NOT NOEPOLL )
 
 # KQUEUE
 if ( NOT NOKQUEUE )
-	check_function_exists ( kqueue KQUEUE )
+	check_function_exists ( kqueue EV_KQUEUE )
 endif ( NOT NOKQUEUE )
 
 # PSELECT
 if ( NOT NOPSELECT )
-	check_function_exists ( pselect PSELECT )
+	check_function_exists ( pselect EV_PSELECT )
 endif ( NOT NOPSELECT )
 
+# fall back to select
+set ( EV_SELECT 1 )
+check_variable_exists ( EV_SELECT EV_SELECT )
+
+check_symbol_exists ( FD_COPY "sys/select.h;unistd.h" HAVE_SELECT_COPY )
 
 ### tests ###
 
@@ -55,7 +61,6 @@ include ( TestForSTDNamespace )
 #! needs C in project ()
 include ( TestBigEndian )
 test_big_endian ( BIG_ENDIAN )
-include ( CheckVariableExists )
 check_variable_exists ( BIG_ENDIAN BIG_ENDIAN )
 
 
