@@ -3,24 +3,18 @@
    Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
    For more info, see: http://drawpile.sourceforge.net/
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
 
 *******************************************************************************/
 
-#ifndef USER_H_INCLUDED
-#define USER_H_INCLUDED
+#ifndef ServerUser_INCLUDED
+#define ServerUser_INCLUDED
 
 #include <stdint.h>
 #include <map>
@@ -36,6 +30,7 @@
 /**  */
 struct UserData
 {
+	//! ctor
 	UserData()
 		: session(protocol::Global),
 		mode(protocol::user::None),
@@ -43,30 +38,40 @@ struct UserData
 	{
 	}
 	
+	/*
 	UserData(const UserData& ud)
 		: session(ud.session),
 		mode(ud.mode),
 		owner(ud.owner)
 	{
 	}
+	*/
 	
+	//! dtor
 	~UserData()
 	{
 	}
 	
-	uint8_t session; // session id
+	//! Session identifier
+	uint8_t session;
 	
-	uint8_t mode; // user mode within session
+	//! User mode within session
+	uint8_t mode;
 	
-	bool owner; // is the owner of the session
+	//! Is the owner of the session
+	bool owner;
 };
 
 //! User
 /**  */
 struct User
 {
+	//! ctor
 	User()
-		: id(0), nlen(0), name(0), state(0)
+		: id(0),
+		nlen(0),
+		name(0),
+		state(0)
 	{
 		
 	}
@@ -85,6 +90,7 @@ struct User
 	}
 	*/
 	
+	//! dtor
 	~User()
 	{
 		delete [] name;
@@ -92,29 +98,34 @@ struct User
 		// TODO: clean sessions
 	}
 	
+	//! Socket
 	Socket *s;
 	
+	//! User identifier
 	uint8_t id;
 	
-	// name length
+	//! Name length
 	uint8_t nlen;
-	// username
+	//! User name
 	char* name;
 	
-	// currently active session
+	//! Currently active session
 	uint8_t session;
 	
-	// global user data
+	//! Global user data
 	UserData u;
 	
+	//! User state
 	uint8_t state;
 	
+	//! Subscribed sessions
 	std::map<uint8_t, UserData> sessions;
 	
-	// output buffers
+	//! Output buffers
 	std::queue<Buffer> buffers;
 	
+	//! Input buffer
 	Buffer input;
 };
 
-#endif // USER_H_INCLUDED
+#endif // ServerUser_INCLUDED
