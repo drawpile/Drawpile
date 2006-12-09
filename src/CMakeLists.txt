@@ -54,6 +54,10 @@ check_variable_exists ( EV_SELECT EV_SELECT )
 
 check_symbol_exists ( FD_COPY "sys/select.h;unistd.h" HAVE_SELECT_COPY )
 
+if ( WIN32 )
+	check_include_files ( winsock2.h USE_WINDOWS_SOCKET_API )
+endif ( WIN32 )
+
 ### tests ###
 
 include ( TestForSTDNamespace )
