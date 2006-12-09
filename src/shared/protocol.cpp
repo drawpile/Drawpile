@@ -40,18 +40,18 @@ char *Message::serialize(size_t &len) const
 	
 	size_t headerlen, length;
 	
-	if (bIsFlag(modifiers, message::isBundling))
+	if (fIsSet(modifiers, message::isBundling))
 	{
 		// If we are bundling packets, there will be no extra headers
 		headerlen = 0;
 		length = sizeof(type) + sizeof(null_count)
-			+ bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
+			+ fIsSet(modifiers, message::isUser)?sizeof(user_id):0;
 	}
 	else
 	{
 		// If messages are not bundled, simply concatenate whole messages
 		headerlen = sizeof(type)
-			+ bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
+			+ fIsSet(modifiers, message::isUser)?sizeof(user_id):0;
 		length = headerlen;
 	}
 	
@@ -83,10 +83,10 @@ char *Message::serialize(size_t &len) const
 	char *data = new char[length];
 	char *dataptr = data;
 
-	if(bIsFlag(modifiers, message::isBundling)) {
+	if(fIsSet(modifiers, message::isBundling)) {
 		// Write bundled packets
 		*(dataptr++) = type;
-		if(bIsFlag(modifiers, message::isUser))
+		if(fIsSet(modifiers, message::isUser))
 			*(dataptr++) = user_id;
 		*(dataptr++) = count;
 		
@@ -100,7 +100,7 @@ char *Message::serialize(size_t &len) const
 		while (ptr)
 		{
 			*(dataptr++) = ptr->type;
-			if(bIsFlag(modifiers, message::isUser))
+			if(fIsSet(modifiers, message::isUser))
 				*(dataptr++) = ptr->user_id;
 			dataptr += ptr->serializePayload(dataptr);
 			ptr=ptr->next;
@@ -128,7 +128,7 @@ size_t Message::reqDataLen(const char *buf, size_t len) const
 	assert(buf != 0 and len != 0);
 	assert(buf[0] == type);
 	
-	return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
+	return sizeof(type) + fIsSet(modifiers, message::isUser)?sizeof(user_id):0;
 }
 
 size_t Message::unserialize(const char* buf, size_t len)
@@ -137,12 +137,12 @@ size_t Message::unserialize(const char* buf, size_t len)
 	assert(buf[0] == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	if (bIsFlag(modifiers, message::isUser))
+	if (fIsSet(modifiers, message::isUser))
 	{
 		memcpy_t(user_id, buf+sizeof(type));
 	}
 	
-	return sizeof(type) + bIsFlag(modifiers, message::isUser)?sizeof(user_id):0;
+	return sizeof(type) + fIsSet(modifiers, message::isUser)?sizeof(user_id):0;
 }
 
 /*
