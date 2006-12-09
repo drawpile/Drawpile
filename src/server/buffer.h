@@ -1,31 +1,25 @@
 /*******************************************************************************
 
    Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
-   For more info, see: http://drawpile.sourceforge.net/
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
 
 *******************************************************************************/
 
-#ifndef BUFFER_H_INCLUDED
-#define BUFFER_H_INCLUDED
+#ifndef CircularBuffer_INCLUDED
+#define CircularBuffer_INCLUDED
 
-/** circular buffer of sorts */
+//! Circular buffer.
 struct Buffer
 {
-	Buffer()
+	//! ctor
+	Buffer() throw()
 		: data(0),
 		wpos(0),
 		rpos(0),
@@ -34,16 +28,20 @@ struct Buffer
 	{
 	}
 	
-	Buffer(char* buf, size_t buflen)
+	//! ctor with buffer assignment
+	Buffer(char* buf, size_t buflen) throw()
 		: data(buf),
 		wpos(buf),
 		rpos(buf),
 		left(0),
 		size(buflen)
 	{
+		assert(buf != 0);
+		assert(buflen > 1);
 	}
 	
-	~Buffer()
+	//! dtor
+	~Buffer() throw()
 	{
 	}
 	
@@ -54,14 +52,12 @@ struct Buffer
 	 * @param buf
 	 * @param buflen
 	 */
-	void setBuffer(char* buf, size_t buflen)
+	void setBuffer(char* buf, size_t buflen) throw()
 	{
 		assert(buf != 0);
 		assert(buflen > 1);
 		
-		data = buf;
-		rpos = buf;
-		wpos = buf;
+		data = rpos = wpos = buf;
 		
 		size = buflen;
 		left = 0;
@@ -75,8 +71,11 @@ struct Buffer
 	 *
 	 * @param len
 	 */
-	void read(size_t len)
+	void read(size_t len) throw()
 	{
+		assert(data != 0);
+		assert(size > 1);
+		
 		assert(len <= canRead());
 		
 		rpos += len;
@@ -94,8 +93,11 @@ struct Buffer
 	 *
 	 * @return number of bytes you can read in one go.
 	 */
-	size_t canRead() const
+	size_t canRead() const throw()
 	{
+		assert(data != 0);
+		assert(size > 1);
+		
 		return ((rpos>wpos) ? (data+size) : wpos) - rpos;
 	}
 	
@@ -106,8 +108,11 @@ struct Buffer
 	 *
 	 * @param len states the number of bytes you wrote to buffer.
 	 */
-	void write(size_t len)
+	void write(size_t len) throw()
 	{
+		assert(data != 0);
+		assert(size > 1);
+		
 		assert(len <= canWrite());
 		
 		wpos += len;
@@ -123,8 +128,11 @@ struct Buffer
 	/**
 	 * @return number of bytes you can write in one go.
 	 */
-	size_t canWrite()
+	size_t canWrite() const throw()
 	{
+		assert(data != 0);
+		assert(size > 1);
+		
 		// this should never return more than .size - .left bytes
 		return ((rpos<wpos) ? (data+size) : rpos) - wpos;
 	}
@@ -158,4 +166,4 @@ struct Buffer
 		size;
 };
 
-#endif // BUFFER_H_INCLUDED
+#endif // CircularBuffer_INCLUDED
