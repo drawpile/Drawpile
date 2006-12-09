@@ -11,5 +11,5 @@ win32* {
 
 *:release { DEFINES += NDEBUG }
 
-HEADERS = event.h
-SOURCES = dpsrv.cpp event.cpp
+HEADERS = server.h event.h
+SOURCES = dpsrv.cpp server.cpp event.cpp

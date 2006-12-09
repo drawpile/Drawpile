@@ -2,6 +2,7 @@
 
 set (
 	Server_Headers
+	server.h
 	user.h
 	event.h
 	buffer.h
@@ -10,6 +11,7 @@ set (
 set (
 	Server_Sources
 	dpsrv.cpp
+	server.cpp
 	event.cpp
 )
 
