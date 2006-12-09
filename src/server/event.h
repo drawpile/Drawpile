@@ -1,21 +1,28 @@
 /*******************************************************************************
 
    Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
-   For more info, see: http://drawpile.sourceforge.net/
+   
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+   
+   Except as contained in this notice, the name(s) of the above copyright
+   holders shall not be used in advertising or otherwise to promote the sale,
+   use or other dealings in this Software without prior written authorization.
+   
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
 
 *******************************************************************************/
 
@@ -24,59 +31,90 @@
 
 // #include <set>
 #include <stdint.h>
+//#include <cassert>
 
+#include <signal.h>
+
+#include <sys/time.h>
 #ifdef WIN32
 	#include <winsock2.h>
 #else
-	#include <sys/time.h>
 	#include <sys/select.h> // fd_set, FD* macros, etc.
 #endif
 
-//! Event I/O
-/**
- * Needs work, similar structure is not optimal for event systems like epoll(4).
- */
+#include <list>
+#include <vector>
+
+#if defined(EV_EPOLL)
+#error epoll() not implemented.
+#elif defined(EV_KQUEUE)
+#error kqueue() not implemented.
+#elif defined(EV_PSELECT)
+#error pselect() not impletemented.
+#elif !defined(EV_SELECT)
+#define EV_SELECT
+#endif
+
+//! Event info container
+struct EventInfo
+{
+	//! Associated file descriptor.
+	uint32_t fd;
+	
+	//! Triggered events.
+	uint8_t events;
+};
+
+typedef std::vector<EventInfo> EvList;
+
+//! Event I/O abstraction
 class Event
 {
 protected:
-	//std::set<uint32_t> fdc[3];
+	#ifndef EV_NO_EVENT_LIST
+	std::list<EventInfo> fd_list;
+	#endif
 	
-	fd_set fds[3];
-	fd_set t_fds[3];
+	#if defined(EV_EPOLL)
+	#elif defined(EV_KQUEUE)
+	#elif defined(EV_PSELECT) || defined(EV_SELECT)
+	fd_set fds[2], t_fds[2];
+	#endif
+	
+	sigset_t *sigmask;
+	
+	//! Returns the set ID for event type 'ev'.
+	inline
+	int inSet(int ev) throw();
 	
 public:
 	
-	static const int
-		/** identifier for 'read' fd set */
+	const uint8_t
+		//! identifier for 'read' event
 		read,
-		/** identifier for 'write' fd set */
-		write,
-		/** identifier for 'exception' fd set */
-		except;
+		//! identifier for 'write' event
+		write;
 	
-	/**
-	 * ctor
-	 */
+	//! ctor
 	Event();
 	
-	/**
-	 * dtor
-	 */
+	//! dtor
 	~Event() throw();
 	
+	//! Set signal mask.
 	/**
-	 * Initialize event system.
+	 * Only used by pselect() so far
 	 */
-	void init();
+	void setMask(sigset_t* mask) throw() { sigmask = mask; }
 	
-	/**
-	 * Finish.
-	 */
+	//! Initialize event system.
+	void init() throw();
+	
+	//! Finish event system.
 	void finish() throw();
 	
+	//! Wait for events.
 	/**
-	 * Wait for events.
-	 *
 	 * @param secs seconds to wait.
 	 * @param nsecs nanoseconds to wait (may be truncated to milli/microseconds
 	 * depending on event system)
@@ -85,35 +123,37 @@ public:
 	 */
 	int wait(uint32_t secs, uint32_t nsecs) throw();
 	
-	/**
-	 * Adds file descriptor to set.
-	 *
-	 * @param fd is the file descriptor to be added to a set.
-	 * @param set is the fd set in which fd is to be found.
-	 *
-	 * @return 
-	 */
-	int add(uint32_t fd, int set) throw();
+	#ifndef EV_NO_EVENT_LIST
+	//! Returns a vector of triggered sockets.
+	EvList getEvents( int count ) const;
+	#endif
 	
+	//! Adds file descriptor to event polling.
 	/**
-	 * Removes file descriptor from set.
+	 * @param fd is the file descriptor to be added to event stack.
+	 * @param ev is the events in which fd is to be found.
 	 *
-	 * @param fd is the file descriptor to be removed from a set.
-	 * @param set is the fd set in which fd is to be found.
-	 *
-	 * @return true if the fd was removed, false if not (or was not part of the set)
+	 * @return true if the fd was added, false if not
 	 */
-	int remove(uint32_t fd, int set) throw();
+	int add(uint32_t fd, int ev) throw();
 	
+	//! Removes file descriptor from event set.
 	/**
-	 * Tests if the file descriptor was triggered in set.
+	 * @param fd is the file descriptor to be removed from a event set.
+	 * @param ev is the event sets in which fd is to be found.
 	 *
+	 * @return true if the fd was removed, false if not (or was not part of the event set)
+	 */
+	int remove(uint32_t fd, int ev) throw();
+	
+	//! Tests if the file descriptor was triggered in event set.
+	/**
 	 * @param fd is the file descriptor to be tested in a set.
-	 * @param set is the fd set in which fd is to be found.
+	 * @param ev is the fd set in which fd is to be found.
 	 *
 	 * @return true if fd was triggered, false if not (or was not part of the set)
 	 */
-	int isset(uint32_t fd, int set) throw();
+	int isset(uint32_t fd, int ev) throw();
 };
 
 #endif // EVENT_H_INCLUDED
