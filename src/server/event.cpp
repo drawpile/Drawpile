@@ -55,7 +55,7 @@ const int
 		#endif
 
 Event::Event()
-	#if defined( EV_SELECT ) or defined( EV_PSELECT )
+	#if (defined( EV_SELECT ) or defined( EV_PSELECT )) and !defined( WIN32 )
 	: nfds_r(0),
 	nfds_w(0)
 	#if defined( EV_USE_SIGMASK )
@@ -114,6 +114,29 @@ void Event::init()
 	
 	#if defined(EV_EPOLL)
 	evfd = epoll_create(10);
+	error = errno;
+	if (evfd == -1)
+	{
+		switch (error)
+		{
+		case EINVAL:
+			std::cerr << "Size not positive." << std::endl;
+			assert(1);
+			break;
+		case ENFILE:
+			std::cerr << "System open FD limit reached." << std::endl;
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			throw new std::bad_alloc;
+			break;
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			assert(1);
+			break;
+		}
+	}
+	
 	events = new epoll_event[10];
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -211,6 +234,44 @@ int Event::wait(uint32_t msecs) throw()
 	sigprocmask(SIG_SETMASK, &sigsaved, NULL); // restore mask
 	#endif // EV_[P]SELECT
 	
+	if (nfds == -1)
+	{
+		switch (error)
+		{
+		#if defined(EV_SELECT) or defined(EV_PSELECT)
+		case EBADF:
+			std::cerr << "Bad FD in set." << std::endl;
+			break;
+		case EINTR:
+			std::cerr << "Interrupted by signal." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Timeout or sigmask invalid." << std::endl;
+			assert(1);
+			break;
+		#elif defined(EV_EPOLL)
+		case EBADF:
+			std::cerr << "Bad epoll FD." << std::endl;
+			assert(1);
+			break;
+		case EFAULT:
+			std::cerr << "Events not writable." << std::endl;
+			assert(1);
+			break;
+		case EINTR:
+			std::cerr << "Interrupted by signal/timeout." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Epoll FD is not an epoll FD.. or maxevents is <= 0" << std::endl;
+			assert(1);
+			break;
+		#endif
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			break;
+		}
+	}
+	
 	return nfds;
 	#endif // EV_*
 }
@@ -229,7 +290,36 @@ int Event::add(uint32_t fd, int ev) throw()
 	ev.data.fd = fd;
 	ev.events = ev;
 	
-	epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev);
+	int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev);
+	error = errno;
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EBADF:
+			std::cerr << "Epoll FD is invalid." << std::endl;
+			assert(1);
+			break;
+		case EEXIST:
+			std::cerr << "FD already in set." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
+			assert(1);
+			break;
+		case ENOENT:
+			std::cerr << "FD not in set." << std::endl;
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			throw new std::bad_alloc;
+			break;
+		case EPERM:
+			std::cerr << "Target FD does not support epoll." << std::endl;
+			assert(1);
+			break;
+		}
+	}
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	if (fIsSet(ev, read)) 
@@ -268,7 +358,36 @@ int Event::modify(uint32_t fd, int ev) throw()
 	ev.data.fd = fd;
 	ev.events = ev;
 	
-	epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev);
+	int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev);
+	error = errno;
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EBADF:
+			std::cerr << "Epoll FD is invalid." << std::endl;
+			assert(1);
+			break;
+		case EEXIST:
+			std::cerr << "FD already in set." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
+			assert(1);
+			break;
+		case ENOENT:
+			std::cerr << "FD not in set." << std::endl;
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			throw new std::bad_alloc;
+			break;
+		case EPERM:
+			std::cerr << "Target FD does not support epoll." << std::endl;
+			assert(1);
+			break;
+		}
+	}
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	// too complicated for now.
@@ -287,7 +406,36 @@ int Event::remove(uint32_t fd, int ev) throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
-	epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
+	int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
+	error = errno;
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EBADF:
+			std::cerr << "Epoll FD is invalid." << std::endl;
+			assert(1);
+			break;
+		case EEXIST:
+			std::cerr << "FD already in set." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
+			assert(1);
+			break;
+		case ENOENT:
+			std::cerr << "FD not in set." << std::endl;
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			throw new std::bad_alloc;
+			break;
+		case EPERM:
+			std::cerr << "Target FD does not support epoll." << std::endl;
+			assert(1);
+			break;
+		}
+	}
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	if (fIsSet(ev, read))
@@ -326,7 +474,7 @@ int Event::isset(uint32_t fd, int ev) throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
-	
+	// no equivalent :<
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	return (FD_ISSET(fd, &t_fds[ev]) != -1);
