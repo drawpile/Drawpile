@@ -154,7 +154,7 @@ void Server::uWrite(uint32_t fd)
 		buf.canRead()
 	);
 	
-	std::cout << "Sent " << rb << " bytes.." << std::endl;
+	std::cout << "Sent " << sb << " bytes.." << std::endl;
 	
 	if (sb > 0)
 	{
