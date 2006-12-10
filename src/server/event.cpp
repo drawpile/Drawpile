@@ -40,21 +40,21 @@
 const int
 	//! identifier for 'read' event
 	Event::read
-		#if defined (EV_EPOLL)
+		#if defined( EV_EPOLL )
 		= EPOLLIN,
 		#else
 		= 0x01,
 		#endif
 	//! identifier for 'write' event
 	Event::write
-		#if defined (EV_EPOLL)
+		#if defined( EV_EPOLL )
 		= EPOLLOUT;
 		#else
 		= 0x02;
 		#endif
 
 Event::Event()
-	#if defined( EV_USE_SIGMASK)
+	#if defined( EV_USE_SIGMASK )
 	: _sigmask(0)
 	#endif
 {

@@ -149,22 +149,27 @@ void Server::uWrite(uint32_t fd)
 	
 	Buffer buf = u->buffers.front();
 	
-	int rb = u->s->send(
+	int sb = u->s->send(
 		buf.rpos,
 		buf.canRead()
 	);
 	
-	if (rb > 0)
+	std::cout << "Sent " << rb << " bytes.." << std::endl;
+	
+	if (sb > 0)
 	{
-		buf.read(rb);
+		buf.read(sb);
 		
 		// just to ensure we don't need to do anything for it.
 		assert(buf.rpos == u->buffers.front().rpos);
 		
 		if (buf.left == 0)
 		{
+			// remove buffer
 			delete [] buf.data;
 			u->buffers.pop();
+			
+			// remove fd from write list if no buffers left.
 			if (u->buffers.empty())
 				ev.remove(fd, ev.write);
 		}
@@ -176,6 +181,30 @@ void Server::uRead(uint32_t fd)
 	#ifndef NDEBUG
 	std::cout << "Server::uRead(" << fd << ")" << std::endl;
 	#endif
+	
+	User* u = users[fd];
+	
+	std::cout << "From user: " << static_cast<int>(u->id) << std::endl;
+	
+	int rb = u->s->recv(
+		u->input.wpos,
+		u->input.canWrite()
+	);
+	
+	std::cout << "Received " << rb << " bytes.." << std::endl;
+	
+	if (rb > 0)
+	{
+		u->input.write(rb);
+	}
+	else if (rb == 0)
+	{
+		std::cout << "User disconnected!" << std::endl;
+		ev.remove(fd, ev.write|ev.read);
+		freeUserID(u->id);
+		users.erase(u->id);
+	}
+	
 	//users[fd]
 	// TODO
 }
