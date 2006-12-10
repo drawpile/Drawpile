@@ -37,6 +37,7 @@
 
 #include <sys/time.h>
 
+#include <set>
 #include <list>
 #include <vector>
 
@@ -85,6 +86,14 @@ protected:
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
 	fd_set fds[2], t_fds[2];
+	
+	#ifndef WIN32
+	std::set<uint32_t> select_set_r;
+	std::set<uint32_t> select_set_w;
+	
+	uint32_t nfds_r, nfds_w;
+	#endif
+	
 	#endif
 	
 	#if defined(EV_USE_SIGMASK)

@@ -161,7 +161,11 @@ int Event::wait(uint32_t msecs) throw()
 	memcpy(&t_fds[inSet(write)], &fds[inSet(write)], sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
+	#ifndef WIN32
+	int nfds = nfds_w >? nfds_r;
+	#else
 	int nfds=0;
+	#endif
 	
 	#if defined(EV_SELECT)
 	timeval tv;
@@ -218,8 +222,22 @@ int Event::add(uint32_t fd, int ev) throw()
 	epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev);
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	if (fIsSet(ev, read)) FD_SET(fd, &fds[inSet(read)]);
-	if (fIsSet(ev, write)) FD_SET(fd, &fds[inSet(write)]);
+	if (fIsSet(ev, read)) 
+	{
+		FD_SET(fd, &fds[inSet(read)]);
+		#ifndef WIN32
+		select_set_r.insert(select_set_r.end(), fd);
+		nfds_r = *(--select_set_r.end());
+		#endif
+	}
+	if (fIsSet(ev, write))
+	{
+		FD_SET(fd, &fds[inSet(write)]);
+		#ifndef WIN32
+		select_set_w.insert(select_set_w.end(), fd);
+		nfds_r = *(--select_set_w.end());
+		#endif
+	}
 	#endif // EV_*
 	
 	EventInfo i;
@@ -262,8 +280,22 @@ int Event::remove(uint32_t fd, int ev) throw()
 	epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	if (fIsSet(ev, read)) FD_CLR(fd, &fds[inSet(read)]);
-	if (fIsSet(ev, write)) FD_CLR(fd, &fds[inSet(write)]);
+	if (fIsSet(ev, read))
+	{
+		FD_CLR(fd, &fds[inSet(read)]);
+		#ifndef WIN32
+		select_set_r.erase(fd);
+		nfds_r = *--select_set_r.end();
+		#endif
+	}
+	if (fIsSet(ev, write))
+	{
+		FD_CLR(fd, &fds[inSet(write)]);
+		#ifndef WIN32
+		select_set_w.erase(fd);
+		nfds_w = *--select_set_w.end();
+		#endif
+	}
 	#endif // EV_*
 	
 	EventInfo i;
