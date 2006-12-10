@@ -78,12 +78,13 @@ class Event
 protected:
 	#ifndef EV_NO_EVENT_LIST
 	std::list<EventInfo> fd_list;
-	#endif
+	#endif // !EV_NO_EVENT_LIST
 	
 	#if defined(EV_EPOLL)
 	int evfd;
 	epoll_event* events;
 	#elif defined(EV_KQUEUE)
+	//
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
 	fd_set fds[2], t_fds[2];
 	
@@ -92,13 +93,15 @@ protected:
 	std::set<uint32_t> select_set_w;
 	
 	uint32_t nfds_r, nfds_w;
-	#endif
+	#endif // !WIN32
 	
-	#endif
+	#endif // EV_*
 	
 	#if defined(EV_USE_SIGMASK)
 	sigset_t *_sigmask;
-	#endif
+	#endif // EV_USE_SIGMASK
+	
+	int error;
 	
 	//! Returns the set ID for event type 'ev'.
 	inline
@@ -145,7 +148,7 @@ public:
 	#ifndef EV_NO_EVENT_LIST
 	//! Returns a vector of triggered sockets.
 	EvList getEvents( int count ) const;
-	#endif
+	#endif // !EV_NO_EVENT_LIST
 	
 	//! Adds file descriptor to event polling.
 	/**

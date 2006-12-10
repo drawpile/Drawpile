@@ -148,7 +148,8 @@ int Event::wait(uint32_t msecs) throw()
 	
 	#if defined(EV_EPOLL)
 	// timeout in milliseconds
-	epoll_wait(evfd, events, 10, msecs);
+	int nfds = epoll_wait(evfd, events, 10, msecs);
+	error = errno;
 	#elif defined(EV_KQUEUE)
 	// 
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -165,7 +166,7 @@ int Event::wait(uint32_t msecs) throw()
 	int nfds = (nfds_w > nfds_r ? nfds_w : nfds_r) + 1;
 	#else
 	int nfds=0;
-	#endif
+	#endif // !WIN32
 	
 	#if defined(EV_SELECT)
 	timeval tv;
@@ -178,25 +179,29 @@ int Event::wait(uint32_t msecs) throw()
 	#if defined(EV_SELECT)
 	tv.tv_usec = msecs * 1000; // microseconds
 	
-	return select(
+	nfds = select(
 		nfds,
 		&t_fds[inSet(read)],
 		&t_fds[inSet(write)],
 		NULL,
 		&tv);
+	
+	error = errno;
 	#elif defined(EV_PSELECT)
 	tv.tv_nsec = msecs * 1000000;
 	
 	sigset_t sigsaved;
 	sigprocmask(SIG_SETMASK, _sigmask, &sigsaved); // save mask
 	
-	return pselect(
+	nfds = pselect(
 		nfds,
 		&t_fds[inSet(read)],
 		&t_fds[inSet(write)],
 		NULL,
 		&tv,
 		_sigmask);
+	
+	error = errno;
 	
 	sigprocmask(SIG_SETMASK, &sigsaved, NULL); // restore mask
 	#endif // EV_[P]SELECT
