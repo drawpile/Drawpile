@@ -194,6 +194,8 @@ int Event::add(uint32_t fd, int ev) throw()
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
+	if (fIsSet(ev, read)) FD_SET(fd, &fds[inSet(read)]);
+	if (fIsSet(ev, write)) FD_SET(fd, &fds[inSet(write)]);
 	#endif // EV_*
 	
 	EventInfo i;
