@@ -94,7 +94,10 @@ struct User
 	//! dtor
 	~User()
 	{
-		delete [] name;
+		delete [] name,
+		delete [] s;
+		s = 0;
+		name = 0;
 		
 		// TODO: clean sessions
 	}
