@@ -28,6 +28,10 @@
 
 #include "sockets.h"
 
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
 #include <fcntl.h>
 #include <cassert>
 
