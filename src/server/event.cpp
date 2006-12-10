@@ -218,8 +218,8 @@ int Event::remove(uint32_t fd, int ev) throw()
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	if (fIsSet(ev, read)) FD_CLR(fd, &fds[read]);
-	if (fIsSet(ev, write)) FD_CLR(fd, &fds[write]);
+	if (fIsSet(ev, read)) FD_CLR(fd, &fds[inSet(read)]);
+	if (fIsSet(ev, write)) FD_CLR(fd, &fds[inSet(write)]);
 	#endif // EV_*
 
 	EventInfo i;
