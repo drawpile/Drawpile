@@ -147,7 +147,7 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 		&fds[inSet(write)],
 		NULL,
 		&tv,
-		&_sigmask);
+		_sigmask);
 	
 	sigprocmask(SIG_SETMASK, &sigsaved, NULL); // restore mask
 	#endif // EV_[P]SELECT
