@@ -80,7 +80,7 @@ protected:
 	fd_set fds[2], t_fds[2];
 	#endif
 	
-	sigset_t *sigmask;
+	static sigset_t *sigmask;
 	
 	//! Returns the set ID for event type 'ev'.
 	inline
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Only used by pselect() so far
 	 */
-	void setMask(sigset_t* mask) throw() { sigmask = mask; }
+	void setMask(sigset_t* mask) throw() { Event::sigmask = mask; }
 	
 	//! Initialize event system.
 	void init() throw();
