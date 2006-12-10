@@ -55,9 +55,13 @@ const int
 		#endif
 
 Event::Event()
+	#if defined( EV_SELECT ) or defined( EV_PSELECT )
+	: nfds_r(0),
+	nfds_w(0)
 	#if defined( EV_USE_SIGMASK )
-	: _sigmask(0)
-	#endif
+	, _sigmask(0)
+	#endif // EV_USE_SIGMASK
+	#endif // EV_[P]SELECT
 {
 	#ifndef NDEBUG
 	std::cout << "Event()" << std::endl;
@@ -166,7 +170,7 @@ int Event::wait(uint32_t msecs) throw()
 	#ifndef WIN32
 	int nfds = (nfds_w > nfds_r ? nfds_w : nfds_r) + 1;
 	#else
-	int nfds=0;
+	int nfds = 0;
 	#endif // !WIN32
 	
 	#if defined(EV_SELECT)
@@ -241,7 +245,7 @@ int Event::add(uint32_t fd, int ev) throw()
 		FD_SET(fd, &fds[inSet(write)]);
 		#ifndef WIN32
 		select_set_w.insert(select_set_w.end(), fd);
-		nfds_r = *(--select_set_w.end());
+		nfds_w = *(--select_set_w.end());
 		#endif
 	}
 	#endif // EV_*
