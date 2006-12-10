@@ -159,7 +159,7 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 int Event::add(uint32_t fd, int ev) throw()
 {
 	assert( ev == read or ev == write or ev == read|write );
-	assert(fd != INVALID_SOCKET);
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
@@ -179,7 +179,7 @@ int Event::add(uint32_t fd, int ev) throw()
 int Event::remove(uint32_t fd, int ev) throw()
 {
 	assert( ev == read or ev == write or ev == read|write );
-	assert(fd != INVALID_SOCKET);
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
@@ -199,7 +199,7 @@ int Event::remove(uint32_t fd, int ev) throw()
 int Event::isset(uint32_t fd, int ev) throw()
 {
 	assert( ev == read or ev == write );
-	assert(fd != INVALID_SOCKET);
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
