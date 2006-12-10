@@ -37,14 +37,16 @@
 //#include <cassert> // assert()
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const uint8_t
+const int
 	//! identifier for 'read' event
 	Event::read = 0x01,
 	//! identifier for 'write' event
 	Event::write = 0x02;
 
 Event::Event()
+	#if defined( EV_USE_SIGMASK)
 	: _sigmask(0)
+	#endif
 {
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)

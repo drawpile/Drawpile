@@ -84,7 +84,9 @@ protected:
 	fd_set fds[2], t_fds[2];
 	#endif
 	
+	#if defined(EV_USE_SIGMASK)
 	sigset_t *_sigmask;
+	#endif
 	
 	//! Returns the set ID for event type 'ev'.
 	inline
@@ -93,7 +95,7 @@ protected:
 public:
 	
 	// MinGW is buggy... think happy thoughts :D
-	static const uint8_t
+	static const int
 		//! identifier for 'read' event
 		read,
 		//! identifier for 'write' event
@@ -105,11 +107,13 @@ public:
 	//! dtor
 	~Event() throw();
 	
+	#if defined(EV_USE_SIGMASK)
 	//! Set signal mask.
 	/**
 	 * Only used by pselect() so far
 	 */
 	void setMask(sigset_t* mask) throw() { _sigmask = mask; }
+	#endif
 	
 	//! Initialize event system.
 	void init() throw();
