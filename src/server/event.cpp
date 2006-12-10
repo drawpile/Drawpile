@@ -48,6 +48,10 @@ Event::Event()
 	: _sigmask(0)
 	#endif
 {
+	#ifndef NDEBUG
+	std::cout << "Event()" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -58,7 +62,7 @@ Event::Event()
 Event::~Event() throw()
 {
 	#ifndef NDEBUG
-	std::cout << "~Event()" << std::flush << std::endl;
+	std::cout << "~Event()" << std::endl;
 	#endif
 
 	#if defined(EV_EPOLL)
@@ -72,6 +76,10 @@ int Event::inSet(int ev) throw()
 {
 	assert( ev == read or ev == write or ev == read|write );
 	
+	#ifndef NDEBUG
+	std::cout << "~inSet(" << ev << ")" << std::flush << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -82,6 +90,10 @@ int Event::inSet(int ev) throw()
 
 void Event::init() throw()
 {
+	#ifndef NDEBUG
+	std::cout << "init()" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -92,6 +104,10 @@ void Event::init() throw()
 
 void Event::finish() throw()
 {
+	#ifndef NDEBUG
+	std::cout << "finish()" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -101,11 +117,19 @@ void Event::finish() throw()
 
 EvList Event::getEvents( int count ) const
 {
+	#ifndef NDEBUG
+	std::cout << "getEvents(" << count << ")" << std::endl;
+	#endif
+	
 	EvList ls;
 }
 
 int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "wait(" << secs << ", " << nsecs << ")" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -163,6 +187,10 @@ int Event::add(uint32_t fd, int ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd > 0 );
 	
+	#ifndef NDEBUG
+	std::cout << "add(" << fd << ", " << ev << ")" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -183,6 +211,10 @@ int Event::remove(uint32_t fd, int ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd > 0 );
 	
+	#ifndef NDEBUG
+	std::cout << "remove(" << fd << ", " << ev << ")" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -202,6 +234,10 @@ int Event::isset(uint32_t fd, int ev) throw()
 {
 	assert( ev == read or ev == write );
 	assert( fd > 0 );
+	
+	#ifndef NDEBUG
+	std::cout << "isset(" << fd << ", " << ev << ")" << std::endl;
+	#endif
 	
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
