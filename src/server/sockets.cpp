@@ -55,21 +55,25 @@ Socket* Socket::accept()
 	#ifndef NDEBUG
 	std::cout << "Socket::accept()" << std::endl;
 	#endif
-
-	Socket* s = new Socket();
-	sockaddr_in* a = s->getAddr();
-	int n_fd = ::accept(sock, (sockaddr*)a, NULL);
+	
+	sockaddr_in sa; // temporary
+	int n_fd = ::accept(sock, (sockaddr*)&sa, NULL);
 	error = errno;
-	if (n_fd > 0)
+	
+	if (n_fd >= 0)
 	{
 		std::cout << "New connection" << std::endl;
+		
+		Socket *s = new Socket();
+		memcpy(s->getAddr(), &sa, sizeof(sockaddr));
+		
 		s->fd(n_fd);
+		
 		return s;
 	}
 	else
 	{
 		std::cout << "Invalid socket" << std::endl;
-		delete s;
 		return 0;
 	}
 }
@@ -79,7 +83,7 @@ int Socket::block(bool x) throw()
 	#ifndef NDEBUG
 	std::cout << "Socket::block(" << (x?"true":"false") << ")" << std::endl;
 	#endif
-
+	
 	#ifdef WIN32
 	unsigned long arg = !x;
 	return ioctlsocket(sock, FIONBIO, &arg);
