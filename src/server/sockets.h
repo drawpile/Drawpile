@@ -79,7 +79,7 @@ class Socket
 {
 protected:
 	//! Assigned file descriptor
-	uint32_t sock;
+	int sock;
 	
 	//! Remote address
 	sockaddr_in addr;
@@ -112,7 +112,7 @@ public:
 	 *
 	 * @return file descriptor associated with the class.
 	 */
-	uint32_t fd(uint32_t nsock) throw()
+	int fd(int nsock) throw()
 	{
 		if (sock != INVALID_SOCKET) close();
 		return sock = nsock;
@@ -122,7 +122,7 @@ public:
 	/**
 	 * @return file descriptor associated with the class.
 	 */
-	uint32_t fd() const throw() { return sock; }
+	int fd() const throw() { return sock; }
 	
 	//! Accept new connection.
 	/**
