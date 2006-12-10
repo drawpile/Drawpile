@@ -39,9 +39,19 @@
 /* Because MinGW is buggy, we have to do this fuglyness */
 const int
 	//! identifier for 'read' event
-	Event::read = 0x01,
+	Event::read
+		#if defined (EV_EPOLL)
+		= EPOLLIN,
+		#else
+		= 0x01,
+		#endif
 	//! identifier for 'write' event
-	Event::write = 0x02;
+	Event::write
+		#if defined (EV_EPOLL)
+		= EPOLLOUT;
+		#else
+		= 0x02;
+		#endif
 
 Event::Event()
 	#if defined( EV_USE_SIGMASK)
@@ -53,6 +63,7 @@ Event::Event()
 	#endif
 	
 	#if defined(EV_EPOLL)
+	// needs nothing
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	// needs nothing
@@ -66,6 +77,7 @@ Event::~Event() throw()
 	#endif
 
 	#if defined(EV_EPOLL)
+	// needs nothing
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	// needs nothing
@@ -81,6 +93,7 @@ int Event::inSet(int ev) throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
+	// needs nothing
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	return ( ev == read ? 0 : ev == write ? 1 : -1);
@@ -88,13 +101,15 @@ int Event::inSet(int ev) throw()
 }
 
 
-void Event::init() throw()
+void Event::init()
 {
 	#ifndef NDEBUG
 	std::cout << "Event::init()" << std::endl;
 	#endif
 	
 	#if defined(EV_EPOLL)
+	evfd = epoll_create(10);
+	events = new epoll_events[10];
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	FD_ZERO(&fds[inSet(read)]);
@@ -109,6 +124,7 @@ void Event::finish() throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
+	delete [] events;
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	// needs nothing
@@ -124,19 +140,22 @@ EvList Event::getEvents( int count ) const
 	EvList ls;
 }
 
-int Event::wait(uint32_t secs, uint32_t nsecs) throw()
+int Event::wait(uint32_t msecs) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::wait(" << secs << ", " << nsecs << ")" << std::endl;
+	std::cout << "Event::wait(" << msecs << ")" << std::endl;
 	#endif
 	
 	#if defined(EV_EPOLL)
+	// timeout in milliseconds
+	epoll_wait(evfd, events, 10, msecs);
 	#elif defined(EV_KQUEUE)
+	// 
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	
 	#ifdef HAVE_SELECT_COPY
-	FD_COPY(&fds[read], &t_fds[read]),
-	FD_COPY(&fds[write], &t_fds[write]);
+	FD_COPY(&fds[inSet(read)], &t_fds[inSet(read)]),
+	FD_COPY(&fds[inSet(write)], &t_fds[inSet(write)]);
 	#else
 	memcpy(&t_fds[inSet(read)], &fds[inSet(read)], sizeof(fd_set)),
 	memcpy(&t_fds[inSet(write)], &fds[inSet(write)], sizeof(fd_set));
@@ -150,10 +169,10 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 	timespec tv;
 	#endif // EV_[P]SELECT
 	
-	tv.tv_sec = secs;
+	tv.tv_sec = 0;
 	
 	#if defined(EV_SELECT)
-	tv.tv_usec = nsecs / 1000; // microseconds
+	tv.tv_usec = msecs * 1000; // microseconds
 	
 	return select(
 		nfds,
@@ -162,7 +181,7 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 		NULL,
 		&tv);
 	#elif defined(EV_PSELECT)
-	tv.tv_nsec = nsecs;
+	tv.tv_nsec = msecs * 1000000;
 	
 	sigset_t sigsaved;
 	sigprocmask(SIG_SETMASK, _sigmask, &sigsaved); // save mask
@@ -192,6 +211,11 @@ int Event::add(uint32_t fd, int ev) throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
+	epoll_event ev;
+	ev.data.fd = fd;
+	ev.events = ev;
+	
+	epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev);
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	if (fIsSet(ev, read)) FD_SET(fd, &fds[inSet(read)]);
@@ -206,6 +230,25 @@ int Event::add(uint32_t fd, int ev) throw()
 	return true;
 }
 
+int Event::modify(uint32_t fd, int ev) throw()
+{
+	assert( ev == read or ev == write or ev == read|write );
+	assert( fd > 0 );
+	
+	#if defined(EV_EPOLL)
+	epoll_event ev;
+	ev.data.fd = fd;
+	ev.events = ev;
+	
+	epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev);
+	#elif defined(EV_KQUEUE)
+	#elif defined(EV_PSELECT) or defined(EV_SELECT)
+	// too complicated for now.
+	#endif // EV_*
+	
+	return 0;
+}
+
 int Event::remove(uint32_t fd, int ev) throw()
 {
 	assert( ev == read or ev == write or ev == read|write );
@@ -216,12 +259,13 @@ int Event::remove(uint32_t fd, int ev) throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
+	epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	if (fIsSet(ev, read)) FD_CLR(fd, &fds[inSet(read)]);
 	if (fIsSet(ev, write)) FD_CLR(fd, &fds[inSet(write)]);
 	#endif // EV_*
-
+	
 	EventInfo i;
 	i.fd = fd;
 	i.events = ev;
@@ -240,6 +284,7 @@ int Event::isset(uint32_t fd, int ev) throw()
 	#endif
 	
 	#if defined(EV_EPOLL)
+	
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	return (FD_ISSET(fd, &t_fds[ev]) != 0);

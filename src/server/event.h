@@ -41,6 +41,7 @@
 #include <vector>
 
 #if defined(EV_EPOLL)
+	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
 #elif defined(EV_PSELECT)
@@ -79,6 +80,8 @@ protected:
 	#endif
 	
 	#if defined(EV_EPOLL)
+	int evfd;
+	epoll_event* events;
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
 	fd_set fds[2], t_fds[2];
@@ -116,7 +119,7 @@ public:
 	#endif
 	
 	//! Initialize event system.
-	void init() throw();
+	void init();
 	
 	//! Finish event system.
 	void finish() throw();
@@ -124,12 +127,11 @@ public:
 	//! Wait for events.
 	/**
 	 * @param secs seconds to wait.
-	 * @param nsecs nanoseconds to wait (may be truncated to milli/microseconds
-	 * depending on event system)
+	 * @param msecs milliseconds to wait.
 	 *
 	 * @return number of file descriptors triggered, -1 on error, and 0 otherwise.
 	 */
-	int wait(uint32_t secs, uint32_t nsecs) throw();
+	int wait(uint32_t msecs) throw();
 	
 	#ifndef EV_NO_EVENT_LIST
 	//! Returns a vector of triggered sockets.
@@ -153,6 +155,17 @@ public:
 	 * @return true if the fd was removed, false if not (or was not part of the event set)
 	 */
 	int remove(uint32_t fd, int ev) throw();
+	
+	//! Modifies previously added fd for different events.
+	/**
+	 * INCOMPLETE
+	 *
+	 * @param fd is the file descriptor to be modified.
+	 * @param ev has the event flags.
+	 *
+	 * @return something undefined
+	 */
+	int modify(uint32_t fd, int ev) throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**
