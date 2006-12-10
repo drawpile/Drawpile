@@ -139,7 +139,7 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 	tv.tv_nsec = nsecs;
 	
 	sigset_t sigsaved;
-	sigprocmask(SIG_SETMASK, sigmask, &sigsaved); // save mask
+	sigprocmask(SIG_SETMASK, _sigmask, &sigsaved); // save mask
 	
 	return pselect(
 		nfds,
@@ -147,7 +147,7 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 		&fds[inSet(write)],
 		NULL,
 		&tv,
-		&sigmask);
+		&_sigmask);
 	
 	sigprocmask(SIG_SETMASK, &sigsaved, NULL); // restore mask
 	#endif // EV_[P]SELECT
