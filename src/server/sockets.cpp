@@ -33,6 +33,10 @@
 
 void Socket::close() throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Socket::close()" << std::endl;
+	#endif
+
 	#ifdef WIN32
 	closesocket(sock);
 	#else
@@ -44,17 +48,23 @@ void Socket::close() throw()
 
 Socket* Socket::accept()
 {
+	#ifndef NDEBUG
+	std::cout << "Socket::accept()" << std::endl;
+	#endif
+
 	Socket* s = new Socket();
 	sockaddr_in* a = s->getAddr();
 	int n_fd = ::accept(sock, (sockaddr*)a, NULL);
 	error = errno;
 	if (n_fd > 0)
 	{
+		std::cout << "New connection" << std::endl;
 		s->fd(n_fd);
 		return s;
 	}
 	else
 	{
+		std::cout << "Invalid socket" << std::endl;
 		delete s;
 		return 0;
 	}
@@ -62,6 +72,10 @@ Socket* Socket::accept()
 
 int Socket::block(bool x) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Socket::block(" << (x?"true":"false") << ")" << std::endl;
+	#endif
+
 	#ifdef WIN32
 	unsigned long arg = !x;
 	return ioctlsocket(sock, FIONBIO, &arg);
@@ -73,6 +87,10 @@ int Socket::block(bool x) throw()
 
 int Socket::bindTo(uint32_t address, uint16_t port) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Socket::bindTo(" << address << ", " << port << ")" << std::endl;
+	#endif
+
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(address);
 	addr.sin_port = htons(port);
@@ -85,6 +103,10 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 
 int Socket::listen() throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Socket::listen()" << std::endl;
+	#endif
+
 	int r = ::listen(sock, 4);
 	error = errno;
 	return r;
@@ -94,6 +116,10 @@ int Socket::send(char* buffer, size_t buflen) throw()
 {
 	assert(buffer != 0);
 	assert(buflen != 0);
+	
+	#ifndef NDEBUG
+	std::cout << "Socket::send(*buffer, " << buflen << ")" << std::endl;
+	#endif
 	
 	int r = ::send(sock, buffer, buflen, MSG_NOSIGNAL);
 	
@@ -105,6 +131,10 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 {
 	assert(buffer != 0);
 	assert(buflen != 0);
+	
+	#ifndef NDEBUG
+	std::cout << "Socket::recv(*buffer, " << buflen << ")" << std::endl;
+	#endif
 	
 	int r = ::recv(sock, buffer, buflen, 0);
 	error = errno;

@@ -340,7 +340,8 @@ int Server::run()
 		}
 		else
 		{
-			evl = ev.getEvents( ec );
+			//evl = ev.getEvents( ec );
+			std::cout << "Events waiting: " << ec << std::endl;
 			
 			if (ev.isset(lsock.fd(), ev.read))
 			{
