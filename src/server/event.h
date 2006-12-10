@@ -44,7 +44,7 @@
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
 #elif defined(EV_PSELECT)
-	#error pselect() not impletemented.
+	#include <sys/select.h> // fd_set, FD* macros, etc.
 #elif !defined(EV_SELECT)
 	#define EV_SELECT
 	#ifdef WIN32
@@ -52,6 +52,10 @@
 	#else
 		#include <sys/select.h> // fd_set, FD* macros, etc.
 	#endif
+#endif
+
+#if defined( EV_PSELECT )
+	#define EV_USE_SIGMASK
 #endif
 
 //! Event info container
