@@ -15,6 +15,9 @@
 #ifndef CircularBuffer_INCLUDED
 #define CircularBuffer_INCLUDED
 
+#include <stddef.h> // size_t?
+#include <cassert>
+
 //! Circular buffer.
 struct Buffer
 {
