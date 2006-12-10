@@ -42,7 +42,7 @@
 	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <unistd.h> // close()
-	#include <errno.h> // errno
+	#include <cerrno> // errno
 	
 	// not defined in non-win32 systems
 	#define INVALID_SOCKET 0

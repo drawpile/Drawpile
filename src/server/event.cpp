@@ -33,6 +33,7 @@
 	#include <iostream>
 #endif
 
+#include <cerrno>
 #include <memory> // memcpy()
 //#include <cassert> // assert()
 
