@@ -36,23 +36,23 @@
 #include <signal.h>
 
 #include <sys/time.h>
-#ifdef WIN32
-	#include <winsock2.h>
-#else
-	#include <sys/select.h> // fd_set, FD* macros, etc.
-#endif
 
 #include <list>
 #include <vector>
 
 #if defined(EV_EPOLL)
-#error epoll() not implemented.
+	#error epoll() not implemented.
 #elif defined(EV_KQUEUE)
-#error kqueue() not implemented.
+	#error kqueue() not implemented.
 #elif defined(EV_PSELECT)
-#error pselect() not impletemented.
+	#error pselect() not impletemented.
 #elif !defined(EV_SELECT)
-#define EV_SELECT
+	#define EV_SELECT
+	#ifdef WIN32
+		#include <winsock2.h>
+	#else
+		#include <sys/select.h> // fd_set, FD* macros, etc.
+	#endif
 #endif
 
 //! Event info container

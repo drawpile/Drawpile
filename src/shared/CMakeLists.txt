@@ -2,7 +2,6 @@
 
 set (
 	Shared_Headers
-	sockets.h
 	SHA1.h
 	protocol.h
 	protocol.admin.h
@@ -16,7 +15,6 @@ set (
 set (
 	Shared_Sources
 	protocol.cpp
-	sockets.cpp
 	SHA1.cpp
 )
 

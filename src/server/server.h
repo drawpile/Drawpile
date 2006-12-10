@@ -33,7 +33,7 @@
 #ifndef Server_C_Included
 #define Server_C_Included
 
-#include "../shared/sockets.h"
+#include "sockets.h"
 #include "event.h"
 #include "user.h"
 

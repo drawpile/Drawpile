@@ -5,6 +5,7 @@ set (
 	server.h
 	user.h
 	event.h
+	sockets.h
 	buffer.h
 )
 
@@ -13,6 +14,7 @@ set (
 	dpsrv.cpp
 	server.cpp
 	event.cpp
+	sockets.cpp
 )
 
 if ( WIN32 )

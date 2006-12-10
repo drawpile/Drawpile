@@ -27,7 +27,6 @@
 *******************************************************************************/
 
 #include "../shared/templates.h"
-#include "../shared/sockets.h"
 #include "event.h"
 
 #ifndef NDEBUG
@@ -38,7 +37,9 @@
 //#include <cassert> // assert()
 
 Event::Event()
-	: read(0x01), write(0x02), sigmask(0)
+	: read(0x01),
+	write(0x02),
+	sigmask(0)
 {
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)

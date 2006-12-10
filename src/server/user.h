@@ -24,7 +24,8 @@
 
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.flags.h"
-#include "../shared/sockets.h"
+
+#include "sockets.h"
 
 //! User session data
 /**  */

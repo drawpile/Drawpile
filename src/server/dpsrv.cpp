@@ -31,8 +31,8 @@
 *******************************************************************************/
 
 #include "../shared/protocol.h"
-#include "../shared/sockets.h"
 
+#include "sockets.h"
 #include "user.h"
 #include "event.h"
 #include "server.h"
