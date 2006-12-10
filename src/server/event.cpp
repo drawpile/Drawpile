@@ -109,7 +109,7 @@ void Event::init()
 	
 	#if defined(EV_EPOLL)
 	evfd = epoll_create(10);
-	events = new epoll_events[10];
+	events = new epoll_event[10];
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	FD_ZERO(&fds[inSet(read)]);
