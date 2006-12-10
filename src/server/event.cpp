@@ -162,7 +162,7 @@ int Event::wait(uint32_t msecs) throw()
 	#endif // HAVE_SELECT_COPY
 	
 	#ifndef WIN32
-	int nfds = nfds_w >? nfds_r;
+	int nfds = (nfds_w > nfds_r ? nfds_w : nfds_r) + 1;
 	#else
 	int nfds=0;
 	#endif
