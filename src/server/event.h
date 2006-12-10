@@ -41,7 +41,6 @@
 #include <vector>
 
 #if defined(EV_EPOLL)
-	#error epoll() not implemented.
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
 #elif defined(EV_PSELECT)
@@ -89,7 +88,8 @@ protected:
 	
 public:
 	
-	const uint8_t
+	// MinGW is buggy... think happy thoughts :D
+	static const uint8_t
 		//! identifier for 'read' event
 		read,
 		//! identifier for 'write' event

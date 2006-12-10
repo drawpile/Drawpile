@@ -11,7 +11,7 @@
 
    Except as contained in this notice, the name(s) of the above copyright
    holders shall not be used in advertising or otherwise to promote the sale,
-   use or other dealings in this Software without prior written authorization.
+   use or other dealings in this Software without prior writeitten authorization.
    
    The above copyright notice and this permission notice shall be included in
    all copies or substantial portions of the Software.
@@ -36,10 +36,15 @@
 #include <memory> // memcpy()
 //#include <cassert> // assert()
 
+/* Because MinGW is buggy, we have to do this fuglyness */
+const uint8_t
+	//! identifier for 'read' event
+	Event::read = 0x01,
+	//! identifier for 'write' event
+	Event::write = 0x02;
+
 Event::Event()
-	: read(0x01),
-	write(0x02),
-	sigmask(0)
+	: sigmask(0)
 {
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
