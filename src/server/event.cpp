@@ -74,7 +74,7 @@ Event::~Event() throw()
 
 int Event::inSet(int ev) throw()
 {
-	assert( ev == read or ev == write or ev == read|write );
+	assert( ev == read or ev == write );
 	
 	#ifndef NDEBUG
 	//std::cout << "Event::inSet(" << ev << ")" << std::flush << std::endl;
@@ -157,8 +157,8 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 	
 	return select(
 		nfds,
-		&fds[inSet(read)],
-		&fds[inSet(write)],
+		&t_fds[inSet(read)],
+		&t_fds[inSet(write)],
 		NULL,
 		&tv);
 	#elif defined(EV_PSELECT)
@@ -169,8 +169,8 @@ int Event::wait(uint32_t secs, uint32_t nsecs) throw()
 	
 	return pselect(
 		nfds,
-		&fds[inSet(read)],
-		&fds[inSet(write)],
+		&t_fds[inSet(read)],
+		&t_fds[inSet(write)],
 		NULL,
 		&tv,
 		_sigmask);
