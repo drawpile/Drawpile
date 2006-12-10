@@ -80,7 +80,7 @@ protected:
 	fd_set fds[2], t_fds[2];
 	#endif
 	
-	static sigset_t *sigmask;
+	sigset_t *_sigmask;
 	
 	//! Returns the set ID for event type 'ev'.
 	inline

@@ -43,9 +43,8 @@ const uint8_t
 	//! identifier for 'write' event
 	Event::write = 0x02;
 
-sigset_t Event::*sigmask = 0;
-
 Event::Event()
+	: _sigmask(0)
 {
 	#if defined(EV_EPOLL)
 	#elif defined(EV_KQUEUE)
