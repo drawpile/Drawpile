@@ -406,7 +406,7 @@ int Server::run()
 					else
 					{
 						#ifndef NDEBUG
-						std::cout << "assigned ID: " << id << std::endl;
+						std::cout << "assigned ID: " << static_cast<uint32_t>(id) << std::endl;
 						#endif
 						
 						User *ud = new User;
