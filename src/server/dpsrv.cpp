@@ -56,20 +56,18 @@ int main(int argc, char** argv)
 	
 	srv.getArgs(argc, argv);
 	
-	#ifdef WIN32
-	std::cout << "initializing WSA" << std::endl;
-	WSADATA info;
-    if (WSAStartup(MAKEWORD(2,0), &info)) { exit(1); }
-    #endif
-
 	if (srv.init() != 0)
 		return 1;
+	
+	netInit();
 	
 	std::cout << "running main" << std::endl;
 	
 	srv.run();
 	
 	std::cout << "done" << std::endl;
+	
+	netStop();
 	
 	return 0; // never reached
 }
