@@ -287,6 +287,6 @@ int Event::isset(uint32_t fd, int ev) throw()
 	
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	return (FD_ISSET(fd, &t_fds[ev]) != 0);
+	return (FD_ISSET(fd, &t_fds[ev]) != -1);
 	#endif // EV_*
 }
