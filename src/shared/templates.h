@@ -97,10 +97,9 @@ T& memcpy_t(T& dst, const char* src)
  *
  * @return modified flag container.
  */
-template <class T, class X>
-T& fSet(T& u, X& x)
+template <class T>
+T& fSet(T& u, const T& x)
 {
-	assert( sizeof(T) == sizeof(X) );
 	return u |= x;
 }
 
@@ -111,10 +110,9 @@ T& fSet(T& u, X& x)
  *
  * @return modified flag container.
  */
-template <class T, class X>
-T& fClr(T& u, X& x)
+template <class T>
+T& fClr(T& u, const T& x)
 {
-	assert( sizeof(T) == sizeof(X) );
 	return u ^= x;
 }
 
