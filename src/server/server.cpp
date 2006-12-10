@@ -327,7 +327,7 @@ int Server::run()
 	int ec;
 	while (1) // yay for infinite loops
 	{
-		ec = ev.wait(0, 500000);
+		ec = ev.wait(0, 500000000);
 		
 		if (ec == 0)
 		{
