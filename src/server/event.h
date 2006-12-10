@@ -105,7 +105,7 @@ public:
 	/**
 	 * Only used by pselect() so far
 	 */
-	void setMask(sigset_t* mask) throw() { Event::sigmask = mask; }
+	void setMask(sigset_t* mask) throw() { _sigmask = mask; }
 	
 	//! Initialize event system.
 	void init() throw();
