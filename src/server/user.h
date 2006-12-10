@@ -62,7 +62,7 @@ struct UserData
 	bool owner;
 };
 
-//! User
+//! User information
 /**  */
 struct User
 {
@@ -106,6 +106,7 @@ struct User
 	
 	//! Name length
 	uint8_t nlen;
+	
 	//! User name
 	char* name;
 	

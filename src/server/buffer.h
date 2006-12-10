@@ -103,7 +103,7 @@ struct Buffer
 	
 	//! Wrote 'n' bytes to buffer.
 	/**
-	 * Increments .left and moves ´*wpos by 'n' bytes. Possibly resets .*wpos back
+	 * Increments .left and moves .*wpos by 'n' bytes. Possibly resets .*wpos back
 	 * to beginning of the circular buffer.
 	 *
 	 * @param len states the number of bytes you wrote to buffer.
