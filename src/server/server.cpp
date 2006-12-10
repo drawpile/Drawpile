@@ -47,16 +47,24 @@ Server::Server()
 	hi_port(0),
 	lo_port(0)
 {
-	
+	#ifndef NDEBUG
+	std::cout << "Server::Server()" << std::endl;
+	#endif
 }
 
 Server::~Server()
 {
-	
+	#ifndef NDEBUG
+	std::cout << "Server::~Server()" << std::endl;
+	#endif
 }
 
 uint8_t Server::getUserID()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::getUserID()" << std::endl;
+	#endif
+	
 	for (int i=1; i != 256; i++)
 	{
 		if (!user_ids.test(i))
@@ -71,6 +79,10 @@ uint8_t Server::getUserID()
 
 uint8_t Server::getSessionID()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::getSessionID()" << std::endl;
+	#endif
+	
 	for (int i=1; i != 256; i++)
 	{
 		if (!session_ids.test(i))
@@ -86,6 +98,11 @@ uint8_t Server::getSessionID()
 void Server::freeUserID(uint8_t id)
 {
 	assert(user_ids.test(id) == true);
+	
+	#ifndef NDEBUG
+	std::cout << "Server::freeUserID(" << id << ")" << std::endl;
+	#endif
+	
 	user_ids.set(id, false);
 }
 
@@ -93,12 +110,18 @@ void Server::freeSessionID(uint8_t id)
 {
 	assert(session_ids.test(id) == true);
 	
+	#ifndef NDEBUG
+	std::cout << "Server::freeSessionID(" << id << ")" << std::endl;
+	#endif
+	
 	session_ids.set(id, false);
 }
 
 void Server::cleanup(int rc)
 {
-	std::cout << "closing" << std::endl;
+	#ifndef NDEBUG
+	std::cout << "Server::cleanup()" << std::endl;
+	#endif
 	
 	// close listening socket
 	lsock.close();
@@ -107,23 +130,20 @@ void Server::cleanup(int rc)
 	ev.finish();
 	
 	/*
-	std::vector<Socket*>::iterator s(sockets.begin());
-	for (; s != sockets.end(); s++)
+	std::map<uint32_t, User>::iterator u(users.begin());
+	for (; u != users.end(); u++)
 	{
-		(*s)->close();
+		delete (*u)->s;
 	}
 	*/
-	
-	#if defined( USE_WINDOWS_SOCKET_API )
-	// Call WSA cleanup.
-	WSACleanup();
-	#endif
-	
-	exit(rc);
 }
 
 void Server::uWrite(uint32_t fd)
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uWrite(" << fd << ")" << std::endl;
+	#endif
+	
 	//users[fd]
 	User* u = users[fd];
 	
@@ -153,12 +173,19 @@ void Server::uWrite(uint32_t fd)
 
 void Server::uRead(uint32_t fd)
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uRead(" << fd << ")" << std::endl;
+	#endif
 	//users[fd]
 	// TODO
 }
 
 void Server::getArgs(int argc, char** argv)
 {
+	#ifndef NDEBUG
+	std::cout << "Server::getArgs(" << argc << ", **argv)" << std::endl;
+	#endif
+	
 	int32_t opt = 0;
 	
 	while ((opt = getopt( argc, argv, "p:Vhc:")) != -1)
@@ -215,6 +242,10 @@ void Server::getArgs(int argc, char** argv)
 
 int Server::init()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::init()" << std::endl;
+	#endif
+	
 	#ifndef NDEBUG
 	std::cout << "creating socket" << std::endl;
 	#endif
@@ -314,6 +345,10 @@ int Server::init()
 
 int Server::run()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::run()" << std::endl;
+	#endif
+	
 	Socket *nu;
 	
 	std::vector<uint32_t>::iterator si;
@@ -327,7 +362,7 @@ int Server::run()
 	int ec;
 	while (1) // yay for infinite loops
 	{
-		ec = ev.wait(0, 500000000);
+		ec = ev.wait(500);
 		
 		if (ec == 0)
 		{
@@ -341,10 +376,16 @@ int Server::run()
 		else
 		{
 			//evl = ev.getEvents( ec );
+			#ifndef NDEBUG
 			std::cout << "Events waiting: " << ec << std::endl;
+			#endif
 			
 			if (ev.isset(lsock.fd(), ev.read))
 			{
+				#ifndef NDEBUG
+				std::cout << "server socket triggered" << std::endl;
+				#endif
+				
 				ec--;
 				
 				nu = lsock.accept();
@@ -378,6 +419,8 @@ int Server::run()
 						
 						users[nu->fd()] = ud;
 						user_id_map[id] = nu->fd();
+						
+						std::cout << "Known sockets: " << sockets.size() << std::endl;
 					}
 				}
 				else
@@ -389,18 +432,21 @@ int Server::run()
 				// new connection?
 			}
 			
-			if (ec != 0)
+			if (ec > 0)
 			{
 				#ifndef NDEBUG
-				std::cout << "still triggered sockets!" << std::endl;
+				std::cout << "Triggered sockets left: " << ec << std::endl;
 				#endif
+				
 				for (si = sockets.begin(); si != sockets.end(); si++)
 				{
+					std::cout << "Testing: " << *si << std::endl;
 					if (ev.isset(*si, ev.read))
 					{
 						#ifndef NDEBUG
 						std::cout << "Reading from client" << std::endl;
 						#endif
+						
 						ec--;
 						uRead(*si);
 					}
@@ -409,12 +455,18 @@ int Server::run()
 						#ifndef NDEBUG
 						std::cout << "Writing to client" << std::endl;
 						#endif
+						
 						ec--;
 						uWrite(*si);
 					}
 					
 					if (ec == 0) break;
 				}
+				
+				#ifndef NDEBUG
+				if (ec > 0)
+					std::cout << "Not in clients..." << std::endl;
+				#endif
 			}
 			
 			// do something

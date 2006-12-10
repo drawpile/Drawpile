@@ -56,10 +56,10 @@ int main(int argc, char** argv)
 	
 	srv.getArgs(argc, argv);
 	
+	netInit();
+	
 	if (srv.init() != 0)
 		return 1;
-	
-	netInit();
 	
 	std::cout << "running main" << std::endl;
 	

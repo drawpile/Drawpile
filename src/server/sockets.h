@@ -29,6 +29,10 @@
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
+#ifndef NDEBUG
+	#include <iostream>
+#endif
+
 #include <stdint.h>
 
 #ifdef WIN32
@@ -48,6 +52,10 @@
 inline
 bool netInit()
 {
+	#ifndef NDEBUG
+	std::cout << "netInit()" << std::endl;
+	#endif
+	
 	#ifdef WIN32
 	WSADATA info;
 	return !WSAStartup(MAKEWORD(2,0), &info);
@@ -57,6 +65,10 @@ bool netInit()
 inline
 int netStop()
 {
+	#ifndef NDEBUG
+	std::cout << "netStop()" << std::endl;
+	#endif
+	
 	#ifdef WIN32
 	WSACleanup();
 	#endif
