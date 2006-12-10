@@ -335,6 +335,7 @@ int Server::run()
 		}
 		else if (ec == -1)
 		{
+			std::cout << "Error in event system." << std::endl;
 			// TODO (error)
 		}
 		else
@@ -350,12 +351,22 @@ int Server::run()
 				if (nu != 0)
 				{
 					uint8_t id = getUserID();
+					#ifndef NDEBUG
+					std::cout << "New connection, ";
+					#endif
 					if (id == 0)
 					{
+						#ifndef NDEBUG
+						std::cout << "but server is full." << std::endl;
+						#endif
 						delete nu;
 					}
 					else
 					{
+						#ifndef NDEBUG
+						std::cout << "assigned ID: " << id << std::endl;
+						#endif
+						
 						User *ud = new User;
 						ud->s = nu;
 						ud->id = id;
@@ -367,6 +378,12 @@ int Server::run()
 						users[nu->fd()] = ud;
 						user_id_map[id] = nu->fd();
 					}
+				}
+				else
+				{
+					#ifndef NDEBUG
+					std::cout << "New connection but no socket?" << std::endl;
+					#endif
 				}
 				// new connection?
 			}
@@ -380,11 +397,17 @@ int Server::run()
 				{
 					if (ev.isset(*si, ev.read))
 					{
+						#ifndef NDEBUG
+						std::cout << "Reading from client" << std::endl;
+						#endif
 						ec--;
 						uRead(*si);
 					}
 					else if (ev.isset(*si, ev.write))
 					{
+						#ifndef NDEBUG
+						std::cout << "Writing to client" << std::endl;
+						#endif
 						ec--;
 						uWrite(*si);
 					}
