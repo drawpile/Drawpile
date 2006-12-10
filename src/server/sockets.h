@@ -45,6 +45,23 @@
 	#define SOCKET_ERROR -1
 #endif
 
+inline
+bool netInit()
+{
+	#ifdef WIN32
+	WSADATA info;
+	return !WSAStartup(MAKEWORD(2,0), &info);
+	#endif
+}
+
+inline
+int netStop()
+{
+	#ifdef WIN32
+	WSACleanup();
+	#endif
+}
+
 //! Socket abstraction
 class Socket
 {
