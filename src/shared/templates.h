@@ -125,10 +125,9 @@ T& fClr(T& u, X& x)
  *
  * @return test result
  */
-template <class T, class X>
-bool fIsSet(T& u, X& x)
+template <class T>
+bool fIsSet(const T& u, const T& x)
 {
-	assert( sizeof(T) == sizeof(X) );
 	return (u & x) == x;
 }
 
