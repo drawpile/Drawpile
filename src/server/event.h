@@ -31,7 +31,6 @@
 
 // #include <set>
 #include <stdint.h>
-//#include <cassert>
 
 #include <signal.h>
 
@@ -120,6 +119,9 @@ public:
 	Event();
 	
 	//! dtor
+	/**
+	 * finish() MUST be called before destructor!
+	 */
 	~Event() throw();
 	
 	#if defined(EV_USE_SIGMASK)
@@ -147,6 +149,13 @@ public:
 	
 	#ifndef EV_NO_EVENT_LIST
 	//! Returns a vector of triggered sockets.
+	/**
+	 * NOT IMPLEMENTED
+	 *
+	 * @param count is the number of events that was returned by wait()
+	 *
+	 * @return EvList of the events.
+	 */
 	EvList getEvents( int count ) const;
 	#endif // !EV_NO_EVENT_LIST
 	
@@ -170,7 +179,7 @@ public:
 	
 	//! Modifies previously added fd for different events.
 	/**
-	 * INCOMPLETE
+	 * This should be preferred over add and remove!
 	 *
 	 * @param fd is the file descriptor to be modified.
 	 * @param ev has the event flags.
