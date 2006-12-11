@@ -33,9 +33,10 @@
 	#include <iostream>
 #endif
 
+#include <ios>
 #include <cerrno>
 #include <memory> // memcpy()
-//#include <cassert> // assert()
+#include <cassert> // assert()
 
 /* Because MinGW is buggy, we have to do this fuglyness */
 const int
@@ -43,25 +44,28 @@ const int
 	Event::read
 		#if defined( EV_EPOLL )
 		= EPOLLIN,
-		#else
+		#else // EV_[P]SELECT
 		= 0x01,
-		#endif
+		#endif // EV_*
 	//! identifier for 'write' event
 	Event::write
 		#if defined( EV_EPOLL )
 		= EPOLLOUT;
-		#else
+		#else // EV_[P]SELECT
 		= 0x02;
-		#endif
+		#endif // EV_*
 
 Event::Event()
-	#if (defined( EV_SELECT ) or defined( EV_PSELECT )) and !defined( WIN32 )
+	#if defined( EV_EPOLL )
+	: evfd(0),
+	events(0)
+	#elif (defined( EV_SELECT ) or defined( EV_PSELECT )) and !defined( WIN32 )
 	: nfds_r(0),
 	nfds_w(0)
 	#if defined( EV_USE_SIGMASK )
 	, _sigmask(0)
 	#endif // EV_USE_SIGMASK
-	#endif // EV_[P]SELECT
+	#endif // EV_*
 {
 	#ifndef NDEBUG
 	std::cout << "Event()" << std::endl;
@@ -82,7 +86,9 @@ Event::~Event() throw()
 	#endif
 
 	#if defined(EV_EPOLL)
-	// needs nothing
+	// call finish() before destructing!
+	assert(events == 0);
+	assert(evfd == -1);
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	// needs nothing
@@ -153,19 +159,38 @@ void Event::finish() throw()
 	
 	#if defined(EV_EPOLL)
 	delete [] events;
+	events = 0;
+	close(evfd);
+	evfd = -1;
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	// needs nothing
 	#endif // EV_*
 }
 
-EvList Event::getEvents( int count ) const
+EvList Event::getEvents() const throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::getEvents(" << count << ")" << std::endl;
+	std::cout << "Event::getEvents()" << std::endl;
 	#endif
 	
 	EvList ls;
+	ls.reserve( nfds );
+	
+	#if defined( EV_EPOLL )
+	for (int n=0; n != nfds; n++)
+	{
+		/*
+		EventInfo evinfo;
+		evinfo.events = events[n].events;
+		evinfo.fd = events[n].data.fd;
+		*/
+		ls.push_back( EventInfo(events[n].data.fd, events[n].events) );
+	}
+	#else
+	#endif
+	
+	return ls;
 }
 
 int Event::wait(uint32_t msecs) throw()
@@ -176,7 +201,7 @@ int Event::wait(uint32_t msecs) throw()
 	
 	#if defined(EV_EPOLL)
 	// timeout in milliseconds
-	int nfds = epoll_wait(evfd, events, 10, msecs);
+	nfds = epoll_wait(evfd, events, 10, msecs);
 	error = errno;
 	#elif defined(EV_KQUEUE)
 	// 
@@ -191,9 +216,9 @@ int Event::wait(uint32_t msecs) throw()
 	#endif // HAVE_SELECT_COPY
 	
 	#ifndef WIN32
-	int nfds = (nfds_w > nfds_r ? nfds_w : nfds_r) + 1;
+	nfds = (nfds_w > nfds_r ? nfds_w : nfds_r) + 1;
 	#else
-	int nfds = 0;
+	nfds = 0;
 	#endif // !WIN32
 	
 	#if defined(EV_SELECT)
@@ -282,7 +307,13 @@ int Event::add(uint32_t fd, int ev) throw()
 	assert( fd > 0 );
 	
 	#ifndef NDEBUG
-	std::cout << "Event::add(" << fd << ", " << ev << ")" << std::endl;
+	std::cout << "Event::add(" << fd << ", ";
+	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+	std::cout.setf ( std::ios_base::showbase );
+	std::cout << ev;
+	std::cout.setf ( std::ios_base::dec );
+	std::cout.setf ( ~std::ios_base::showbase );
+	std::cout << ")" << std::endl;
 	#endif
 	
 	#if defined(EV_EPOLL)
@@ -353,6 +384,16 @@ int Event::modify(uint32_t fd, int ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd > 0 );
 	
+	#ifndef NDEBUG
+	std::cout << "Event::modify(" << fd << ", ";
+	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+	std::cout.setf ( std::ios_base::showbase );
+	std::cout << ev;
+	std::cout.setf ( std::ios_base::dec );
+	std::cout.setf ( ~std::ios_base::showbase );
+	std::cout << ")" << std::endl;
+	#endif
+	
 	#if defined(EV_EPOLL)
 	epoll_event ev;
 	ev.data.fd = fd;
@@ -390,7 +431,14 @@ int Event::modify(uint32_t fd, int ev) throw()
 	}
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	// too complicated for now.
+	// act like a wrapper.
+	if (fIsSet(ev, read) || fIsSet(ev, write))
+		add(fd, ev);
+	
+	if (!fIsSet(ev, read))
+		remove(fd, read);
+	if (!fIsSet(ev, write))
+		remove(fd, write);
 	#endif // EV_*
 	
 	return 0;
@@ -402,7 +450,13 @@ int Event::remove(uint32_t fd, int ev) throw()
 	assert( fd > 0 );
 	
 	#ifndef NDEBUG
-	std::cout << "Event::remove(" << fd << ", " << ev << ")" << std::endl;
+	std::cout << "Event::remove(" << fd << ", ";
+	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+	std::cout.setf ( std::ios_base::showbase );
+	std::cout << ev;
+	std::cout.setf ( std::ios_base::dec );
+	std::cout.setf ( ~std::ios_base::showbase );
+	std::cout << ")" << std::endl;
 	#endif
 	
 	#if defined(EV_EPOLL)
@@ -470,13 +524,35 @@ int Event::isset(uint32_t fd, int ev) throw()
 	assert( fd > 0 );
 	
 	#ifndef NDEBUG
-	std::cout << "Event::isset(" << fd << ", " << ev << ")" << std::endl;
+	std::cout << "Event::isset(" << fd << ", ";
+	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+	std::cout.setf ( std::ios_base::showbase );
+	std::cout << ev;
+	std::cout.setf ( std::ios_base::dec );
+	std::cout.setf ( ~std::ios_base::showbase );
+	std::cout << ")" << std::endl;
 	#endif
 	
 	#if defined(EV_EPOLL)
+	for (int n=0; n != nfds; n++)
+	{
+		if (events[n].data.fd == fd)
+		{
+			if (fIsSet(events[n].events, ev))
+				return true;
+			else
+			{
+				#ifndef NDEBUG
+				std::cout << "Descriptor in set, but not for that event." << std::endl;
+				#endif
+			}
+		}
+	}
 	// no equivalent :<
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	return (FD_ISSET(fd, &t_fds[ev]) != -1);
 	#endif // EV_*
+	
+	return false;
 }
