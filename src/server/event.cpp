@@ -95,7 +95,7 @@ Event::~Event() throw()
 	#endif // EV_*
 }
 
-int Event::inSet(int ev) throw()
+int Event::inSet(const int ev) const throw()
 {
 	assert( ev == read or ev == write );
 	
@@ -107,7 +107,7 @@ int Event::inSet(int ev) throw()
 	// needs nothing
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	return ( ev == read ? 0 : ev == write ? 1 : -1);
+	return ( ev == read ? 0 : 1 );
 	#endif // EV_*
 }
 
@@ -355,26 +355,35 @@ int Event::add(uint32_t fd, int ev) throw()
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	if (fIsSet(ev, read)) 
 	{
+		std::cout << "set read" << std::endl;
 		FD_SET(fd, &fds[inSet(read)]);
 		#ifndef WIN32
 		select_set_r.insert(select_set_r.end(), fd);
+		std::cout << nfds_r << " -> ";
 		nfds_r = *(--select_set_r.end());
+		std::cout << nfds_r << std::endl;
 		#endif
 	}
 	if (fIsSet(ev, write))
 	{
+		std::cout << "set write" << std::endl;
 		FD_SET(fd, &fds[inSet(write)]);
 		#ifndef WIN32
 		select_set_w.insert(select_set_w.end(), fd);
+		std::cout << nfds_w << " -> ";
 		nfds_w = *(--select_set_w.end());
+		std::cout << nfds_w << std::endl;
 		#endif
 	}
+	#else
 	#endif // EV_*
 	
+	/*
 	EventInfo i;
 	i.fd = fd;
 	i.events = ev;
 	fd_list.push_back( i );
+	*/
 	
 	return true;
 }
@@ -497,7 +506,9 @@ int Event::remove(uint32_t fd, int ev) throw()
 		FD_CLR(fd, &fds[inSet(read)]);
 		#ifndef WIN32
 		select_set_r.erase(fd);
+		std::cout << nfds_r << " -> ";
 		nfds_r = *--select_set_r.end();
+		std::cout << nfds_r << std::endl;
 		#endif
 	}
 	if (fIsSet(ev, write))
@@ -505,15 +516,19 @@ int Event::remove(uint32_t fd, int ev) throw()
 		FD_CLR(fd, &fds[inSet(write)]);
 		#ifndef WIN32
 		select_set_w.erase(fd);
+		std::cout << nfds_w << " -> ";
 		nfds_w = *--select_set_w.end();
+		std::cout << nfds_w << std::endl;
 		#endif
 	}
 	#endif // EV_*
 	
+	/*
 	EventInfo i;
 	i.fd = fd;
 	i.events = ev;
 	fd_list.push_back( i );
+	*/
 	
 	return true;
 }
@@ -551,7 +566,7 @@ int Event::isset(uint32_t fd, int ev) throw()
 	// no equivalent :<
 	#elif defined(EV_KQUEUE)
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
-	return (FD_ISSET(fd, &t_fds[ev]) != -1);
+	return (FD_ISSET(fd, &t_fds[inSet(ev)]) != 0);
 	#endif // EV_*
 	
 	return false;

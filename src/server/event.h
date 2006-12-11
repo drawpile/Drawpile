@@ -114,7 +114,7 @@ protected:
 	
 	//! Returns the set ID for event type 'ev'.
 	inline
-	int inSet(int ev) throw();
+	int inSet(const int ev) const throw();
 	
 public:
 	
@@ -215,9 +215,12 @@ public:
 	 * @param fd is the file descriptor to be tested in a set.
 	 * @param ev is the fd set in which fd is to be found.
 	 *
-	 * @return true if fd was triggered, false if not (or was not part of the set)
+	 * @return bool
 	 */
-	int isset(uint32_t fd, int ev) throw();
+	bool isset(uint32_t fd, int ev) const throw();
+	
+	int triggered(uint32_t fd) const throw();
+
 };
 
 #endif // EVENT_H_INCLUDED
