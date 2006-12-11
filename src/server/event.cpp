@@ -533,7 +533,7 @@ int Event::remove(uint32_t fd, int ev) throw()
 	return true;
 }
 
-int Event::isset(uint32_t fd, int ev) throw()
+bool Event::isset(uint32_t fd, int ev) const throw()
 {
 	assert( ev == read or ev == write );
 	assert( fd > 0 );
