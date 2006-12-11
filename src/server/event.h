@@ -62,11 +62,21 @@
 //! Event info container
 struct EventInfo
 {
+	//! ctor
+	EventInfo() { }
+	
+	//! ctor with vars
+	EventInfo(int nfd, int nevs)
+		: fd(nfd),
+		events(nevs)
+	{
+	}
+	
 	//! Associated file descriptor.
-	uint32_t fd;
+	int fd;
 	
 	//! Triggered events.
-	uint8_t events;
+	int events;
 };
 
 typedef std::vector<EventInfo> EvList;
@@ -100,7 +110,7 @@ protected:
 	sigset_t *_sigmask;
 	#endif // EV_USE_SIGMASK
 	
-	int error;
+	int error, nfds;
 	
 	//! Returns the set ID for event type 'ev'.
 	inline
@@ -156,8 +166,20 @@ public:
 	 *
 	 * @return EvList of the events.
 	 */
-	EvList getEvents( int count ) const;
+	EvList getEvents() const throw();
 	#endif // !EV_NO_EVENT_LIST
+	
+	//! Get raw event list if supported by event mechanism.
+	/**
+	 * Currently only supported by epoll.
+	 *
+	 * @return raw event list.
+	 */
+	#if defined( EV_EPOLL )
+	epoll_event* getRawEvents() const throw() { return events; }
+	#else // defined( EV_SELECT ) or defined( EV_PSELECT )
+	void* getRawEvents() const throw() { return 0; }
+	#endif // EV_*
 	
 	//! Adds file descriptor to event polling.
 	/**
