@@ -60,6 +60,7 @@ void ColorDialog::setColor(const QColor& color)
 	ui_->hue->setValue(h);
 	ui_->saturation->setValue(s);
 	ui_->value->setValue(v);
+	ui_->colorTriangle->setColor(color);
 	updating_ = false;
 }
 
