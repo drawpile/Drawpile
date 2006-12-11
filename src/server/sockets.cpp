@@ -57,7 +57,7 @@ Socket* Socket::accept()
 	#endif
 	
 	sockaddr_in sa; // temporary
-	int tmp = sizeof(sockaddr);
+	socklen_t tmp = sizeof(sockaddr);
 	int n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
 	error = errno;
 	
