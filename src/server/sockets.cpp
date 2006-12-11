@@ -57,7 +57,8 @@ Socket* Socket::accept()
 	#endif
 	
 	sockaddr_in sa; // temporary
-	int n_fd = ::accept(sock, (sockaddr*)&sa, NULL);
+	int tmp = sizeof(sockaddr);
+	int n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
 	error = errno;
 	
 	if (n_fd != -1)
@@ -65,7 +66,7 @@ Socket* Socket::accept()
 		std::cout << "New connection" << std::endl;
 		
 		Socket *s = new Socket();
-		memcpy(s->getAddr(), &sa, sizeof(sockaddr));
+		memcpy(reinterpret_cast<sockaddr*>(s->getAddr()), &sa, sizeof(sockaddr));
 		
 		s->fd(n_fd);
 		
