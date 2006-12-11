@@ -297,7 +297,7 @@ int Socket::send(char* buffer, size_t buflen) throw()
 		case ECONNRESET:
 			std::cerr << "Connection reset by peer" << std::endl;
 			break;
-		case EDESTADDREQ: // likely result of sendmsg()
+		case EDESTADDRREQ: // likely result of sendmsg()
 			std::cerr << "Not connceted, and no peer defined." << std::endl;
 			assert(1);
 			break;
