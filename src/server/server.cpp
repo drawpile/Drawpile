@@ -171,8 +171,29 @@ void Server::uWrite(uint32_t fd)
 			
 			// remove fd from write list if no buffers left.
 			if (u->buffers.empty())
-				ev.remove(fd, ev.write);
+			{
+				fClr(u->events, ev.write);
+				if (u->events == 0)
+					ev.remove(fd, u->events);
+				else
+					ev.modify(fd, u->events);
+			}
 		}
+	}
+	else if (sb == 0)
+	{
+		// nothing
+	}
+	else
+	{
+		std::cerr << "Error occured while sending to user: "
+			<< static_cast<int>(u->id) << std::endl;
+		
+		fClr(u->events, ev.read);
+		if (u->events == 0)
+			ev.remove(fd, u->events);
+		else
+			ev.modify(fd, u->events);
 	}
 }
 
@@ -191,10 +212,10 @@ void Server::uRead(uint32_t fd)
 		u->input.canWrite()
 	);
 	
-	std::cout << "Received " << rb << " bytes.." << std::endl;
-	
 	if (rb > 0)
 	{
+		std::cout << "Received " << rb << " bytes.." << std::endl;
+		
 		u->input.write(rb);
 	}
 	else if (rb == 0)
@@ -203,6 +224,13 @@ void Server::uRead(uint32_t fd)
 		ev.remove(fd, ev.write|ev.read);
 		freeUserID(u->id);
 		users.erase(u->id);
+	}
+	else
+	{
+		std::cerr << "Error occured while reading from user: "
+			<< static_cast<int>(u->id) << std::endl;
+		
+		ev.remove(fd, ev.read);
 	}
 	
 	//users[fd]
@@ -280,6 +308,9 @@ int Server::init()
 	#endif
 	
 	lsock.fd(socket(AF_INET, SOCK_STREAM, 0));
+	#ifndef NDEBUG
+	std::cout << "New socket: " << lsock.fd() << std::endl;
+	#endif
 	
 	if (lsock.fd() == INVALID_SOCKET)
 	{
@@ -391,7 +422,7 @@ int Server::run()
 	int ec;
 	while (1) // yay for infinite loops
 	{
-		ec = ev.wait(500);
+		ec = ev.wait(5000);
 		
 		if (ec == 0)
 		{
@@ -444,7 +475,8 @@ int Server::run()
 						
 						sockets.push_back(nu->fd());
 						
-						ev.add(nu->fd(), ev.read);
+						fSet(ud->events, ev.read);
+						ev.add(ud->s->fd(), ud->events);
 						
 						users[nu->fd()] = ud;
 						user_id_map[id] = nu->fd();
