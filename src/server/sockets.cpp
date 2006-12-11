@@ -57,7 +57,11 @@ Socket* Socket::accept()
 	#endif
 	
 	sockaddr_in sa; // temporary
+	#ifndef WIN32
 	socklen_t tmp = sizeof(sockaddr);
+	#else
+	int tmp = sizeof(sockaddr);
+	#endif
 	int n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
 	error = errno;
 	
