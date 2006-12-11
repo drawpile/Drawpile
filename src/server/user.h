@@ -129,6 +129,9 @@ struct User
 	//! Output buffers
 	std::queue<Buffer> buffers;
 	
+	//! Event I/O registered events.
+	int events;
+	
 	//! Input buffer
 	Buffer input;
 };
