@@ -58,8 +58,11 @@ bool netInit()
 	
 	#ifdef WIN32
 	WSADATA info;
-	return !WSAStartup(MAKEWORD(2,0), &info);
+	if (WSAStartup(MAKEWORD(2,0), &info))
+		return false;
 	#endif
+	
+	return true;
 }
 
 inline
