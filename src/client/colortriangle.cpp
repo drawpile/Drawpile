@@ -70,55 +70,12 @@ QColor ColorTriangle::color() const
 	return QColor::fromHsvF(hue_, saturation_, value_);
 }
 
-void ColorTriangle::setHue(int hue)
-{
-	hue_ = hue/359.0;
-	if(hue_>1.0) hue_ = 1.0;
-	else if(hue_<0.0) hue_ = 0;
-	updateVertices();
-	makeTriangle();
-	update();
-}
-
-void ColorTriangle::setSaturation(int saturation)
-{
-	saturation_ = saturation / 255.0;
-	update();
-}
-
-void ColorTriangle::setValue(int value)
-{
-	value_ = value / 255.0;
-	update();
-}
-
 void ColorTriangle::setColor(const QColor& color)
 {
 	color.getHsvF(&hue_,&saturation_,&value_);
 	updateVertices();
 	makeTriangle();
 	update();
-}
-
-void ColorTriangle::setRed(int red)
-{
-	QColor col = color();
-	col.setRed(red);
-	setColor(col);
-}
-
-void ColorTriangle::setGreen(int green)
-{
-	QColor col = color();
-	col.setGreen(green);
-	setColor(col);
-}
-
-void ColorTriangle::setBlue(int blue)
-{
-	QColor col = color();
-	col.setBlue(blue);
-	setColor(col);
 }
 
 static inline qreal INTENSITY(const QColor& color) {
@@ -181,23 +138,12 @@ void ColorTriangle::mousePressEvent(QMouseEvent *event)
 		update();
 		mode_ = DRAGHUE;
 
-		QColor col= color();
-		emit hueChanged(qRound(hue_ * 359));
-		emit redChanged(col.red());
-		emit greenChanged(col.green());
-		emit blueChanged(col.blue());
-		emit colorChanged(col);
+		emit colorChanged(color());
 	} else if(isInTriangle(pos.x(), pos.y())) {
 		setSv(pos.x(), pos.y());
 		update();
 		mode_ = DRAGSV;
-		emit saturationChanged(qRound(saturation_ * 256));
-		emit valueChanged(qRound(value_ * 256));
-		QColor col= color();
-		emit redChanged(col.red());
-		emit greenChanged(col.green());
-		emit blueChanged(col.blue());
-		emit colorChanged(col);
+		emit colorChanged(color());
 	}
 }
 
@@ -212,19 +158,12 @@ void ColorTriangle::mouseMoveEvent(QMouseEvent *event)
 		setHue(pos.x(), pos.y());
 		makeTriangle();
 		update();
-		emit hueChanged(qRound(hue_ * 359));
 		emit colorChanged(color());
 	} else if(mode_==DRAGSV) {
 		if(isInTriangle(pos.x(), pos.y())) {
 			setSv(pos.x(), pos.y());
 			update();
-			emit saturationChanged(qRound(saturation_ * 256));
-			emit valueChanged(qRound(value_ * 256));
-			QColor col= color();
-			emit redChanged(col.red());
-			emit greenChanged(col.green());
-			emit blueChanged(col.blue());
-			emit colorChanged(col);
+			emit colorChanged(color());
 		}
 	}
 }
@@ -365,12 +304,8 @@ void ColorTriangle::setSv(qreal x, qreal y)
 
 void ColorTriangle::makeRing()
 {
-	QImage ring(diameter_, diameter_, QImage::Format_RGB32);
+	QImage ring(diameter_, diameter_, QImage::Format_ARGB32_Premultiplied);
 	uchar *buf = ring.bits();
-
-	uchar bgr = palette().color(QPalette::Window).red();
-	uchar bgg = palette().color(QPalette::Window).green();
-	uchar bgb = palette().color(QPalette::Window).blue();
 
 	qreal inner2 = (inner_-1) * (inner_-1);
 	qreal outer2 = (outer_-1) * (outer_-1);
@@ -383,10 +318,10 @@ void ColorTriangle::makeRing()
 
 			qreal dist = dx * dx + dy * dy;
 			if (dist < inner2 || dist > outer2) {
-				*buf++ = bgb;
-				*buf++ = bgg;
-				*buf++ = bgr;
-				++buf;
+				*buf++ = 0;
+				*buf++ = 0;
+				*buf++ = 0;
+				*buf++ = 0;
 				continue;
 			}
 
@@ -403,7 +338,7 @@ void ColorTriangle::makeRing()
 			*buf++ = color.blue();
 			*buf++ = color.green();
 			*buf++ = color.red();
-			++buf;
+			*buf++ = 255;
 		}
 	}
 	wheel_ = QPixmap::fromImage(ring);
@@ -470,7 +405,7 @@ void ColorTriangle::makeTriangle()
 	}
 
 	// Shade the triangle
-	QImage triangle(diameter_, diameter_, QImage::Format_ARGB32);
+	QImage triangle(diameter_, diameter_, QImage::Format_ARGB32_Premultiplied);
 	uchar *buf = triangle.bits();
 
 	for (yy = 0; yy < diameter_; ++yy) {

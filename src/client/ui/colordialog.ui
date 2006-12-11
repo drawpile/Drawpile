@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>273</width>
-    <height>318</height>
+    <width>233</width>
+    <height>292</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
@@ -164,7 +164,7 @@
     </widget>
    </item>
    <item row="0" column="1" >
-    <widget class="ColorTriangle" name="colorTriangle" >
+    <widget class="ColorTriangle" native="1" name="colorTriangle" >
      <property name="minimumSize" >
       <size>
        <width>128</width>
@@ -199,12 +199,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>166</x>
-     <y>153</y>
+     <x>172</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>158</y>
+     <x>220</x>
+     <y>154</y>
     </hint>
    </hints>
   </connection>
@@ -215,12 +215,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>202</x>
-     <y>184</y>
+     <x>172</x>
+     <y>176</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>189</y>
+     <x>220</x>
+     <y>179</y>
     </hint>
    </hints>
   </connection>
@@ -231,12 +231,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>193</x>
-     <y>215</y>
+     <x>172</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>220</y>
+     <x>220</x>
+     <y>185</y>
     </hint>
    </hints>
   </connection>
@@ -247,12 +247,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>270</x>
-     <y>220</y>
+     <x>220</x>
+     <y>185</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>91</x>
-     <y>215</y>
+     <x>115</x>
+     <y>201</y>
     </hint>
    </hints>
   </connection>
@@ -263,12 +263,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>270</x>
-     <y>189</y>
+     <x>220</x>
+     <y>179</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>135</x>
-     <y>184</y>
+     <x>159</x>
+     <y>176</y>
     </hint>
    </hints>
   </connection>
@@ -279,12 +279,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>270</x>
-     <y>146</y>
+     <x>220</x>
+     <y>154</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>106</x>
-     <y>153</y>
+     <x>130</x>
+     <y>151</y>
     </hint>
    </hints>
   </connection>
@@ -295,12 +295,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>213</x>
-     <y>246</y>
+     <x>172</x>
+     <y>226</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>251</y>
+     <x>220</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>
@@ -311,12 +311,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>213</x>
-     <y>277</y>
+     <x>172</x>
+     <y>242</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>282</y>
+     <x>220</x>
+     <y>247</y>
     </hint>
    </hints>
   </connection>
@@ -327,12 +327,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>213</x>
-     <y>308</y>
+     <x>172</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>270</x>
-     <y>313</y>
+     <x>220</x>
+     <y>278</y>
     </hint>
    </hints>
   </connection>
@@ -343,12 +343,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>270</x>
-     <y>251</y>
+     <x>220</x>
+     <y>216</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>94</x>
-     <y>246</y>
+     <x>118</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
@@ -359,12 +359,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>270</x>
-     <y>282</y>
+     <x>220</x>
+     <y>247</y>
     </hint>
     <hint type="destinationlabel" >
      <x>92</x>
-     <y>277</y>
+     <y>242</y>
     </hint>
    </hints>
   </connection>
@@ -375,204 +375,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>270</x>
-     <y>313</y>
+     <x>220</x>
+     <y>278</y>
     </hint>
     <hint type="destinationlabel" >
      <x>82</x>
-     <y>308</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>red</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorTriangle</receiver>
-   <slot>setRed(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>60</x>
-     <y>146</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>70</x>
-     <y>71</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>green</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorTriangle</receiver>
-   <slot>setGreen(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>41</x>
-     <y>170</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>47</x>
-     <y>114</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>blue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorTriangle</receiver>
-   <slot>setBlue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>30</x>
-     <y>203</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>104</x>
-     <y>60</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>hue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorTriangle</receiver>
-   <slot>setHue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>27</x>
-     <y>233</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>65</x>
-     <y>28</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saturation</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorTriangle</receiver>
-   <slot>setSaturation(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>30</x>
-     <y>268</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>191</x>
-     <y>34</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>value</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>colorTriangle</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>35</x>
-     <y>299</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>161</x>
-     <y>18</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorTriangle</sender>
-   <signal>redChanged(int)</signal>
-   <receiver>red</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>44</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>34</x>
-     <y>141</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorTriangle</sender>
-   <signal>greenChanged(int)</signal>
-   <receiver>green</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>61</x>
-     <y>12</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>115</x>
-     <y>176</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorTriangle</sender>
-   <signal>blueChanged(int)</signal>
-   <receiver>blue</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>146</x>
-     <y>28</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>152</x>
-     <y>209</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorTriangle</sender>
-   <signal>hueChanged(int)</signal>
-   <receiver>hue</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>132</x>
-     <y>11</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>134</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorTriangle</sender>
-   <signal>saturationChanged(int)</signal>
-   <receiver>saturation</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>167</x>
-     <y>11</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>168</x>
-     <y>271</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>colorTriangle</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>value</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>204</x>
-     <y>10</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>36</x>
-     <y>299</y>
+     <y>273</y>
     </hint>
    </hints>
   </connection>

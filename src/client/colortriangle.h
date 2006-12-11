@@ -46,21 +46,9 @@ class PLUGIN_EXPORT ColorTriangle : public QWidget {
 		QColor color() const;
 
 	public slots:
-		void setHue(int hue);
-		void setSaturation(int saturation);
-		void setValue(int value);
-		void setRed(int red);
-		void setGreen(int green);
-		void setBlue(int blue);
 		void setColor(const QColor& color);
 
 	signals:
-		void hueChanged(int hue);
-		void saturationChanged(int hue);
-		void valueChanged(int hue);
-		void redChanged(int red);
-		void greenChanged(int green);
-		void blueChanged(int blue);
 		void colorChanged(const QColor& color);
 
 	protected:

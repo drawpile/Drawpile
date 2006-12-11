@@ -53,6 +53,7 @@ class ColorDialog : public QDialog
 	private slots:
 		void updateRgb();
 		void updateHsv();
+		void updateTriangle(const QColor& color);
 
 	private:
 		Ui_ColorDialog *ui_;

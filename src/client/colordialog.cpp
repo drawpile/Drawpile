@@ -37,6 +37,9 @@ ColorDialog::ColorDialog(QString title, QWidget *parent)
 	connect(ui_->hue, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
 	connect(ui_->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
 	connect(ui_->value, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
+
+	connect(ui_->colorTriangle, SIGNAL(colorChanged(const QColor&)),
+			this, SLOT(updateTriangle(const QColor&)));
 	setWindowTitle(title);
 }
 
@@ -81,6 +84,7 @@ void ColorDialog::updateRgb()
 		ui_->hue->setValue(h);
 		ui_->saturation->setValue(s);
 		ui_->value->setValue(v);
+		ui_->colorTriangle->setColor(col);
 		emit colorChanged(col);
 		updating_ = false;
 	}
@@ -101,7 +105,30 @@ void ColorDialog::updateHsv()
 		ui_->red->setValue(col.red());
 		ui_->green->setValue(col.green());
 		ui_->blue->setValue(col.blue());
+		ui_->colorTriangle->setColor(col);
 		emit colorChanged(col);
+		updating_ = false;
+	}
+}
+
+/**
+ * Color triangle has been used, update sliders to match
+ */
+void ColorDialog::updateTriangle(const QColor& color)
+{
+	if(!updating_) {
+		updating_ = true;
+		ui_->red->setValue(color.red());
+		ui_->green->setValue(color.green());
+		ui_->blue->setValue(color.blue());
+
+		int h,s,v;
+		color.getHsv(&h,&s,&v);
+		ui_->hue->setValue(h);
+		ui_->saturation->setValue(s);
+		ui_->value->setValue(v);
+		emit colorChanged(color);
+
 		updating_ = false;
 	}
 }
