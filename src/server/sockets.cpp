@@ -60,7 +60,7 @@ Socket* Socket::accept()
 	int n_fd = ::accept(sock, (sockaddr*)&sa, NULL);
 	error = errno;
 	
-	if (n_fd >= 0)
+	if (n_fd != -1)
 	{
 		std::cout << "New connection" << std::endl;
 		
@@ -73,7 +73,82 @@ Socket* Socket::accept()
 	}
 	else
 	{
-		std::cout << "Invalid socket" << std::endl;
+		switch (error)
+		{
+		#ifdef EWOULDBLOCK
+		case EWOULDBLOCK:
+		#else
+		case EAGAIN:
+		#endif
+			std::cerr << "Would block, try again." << std::endl;
+			break;
+		case EBADF:
+			std::cerr << "Invalid FD" << std::endl;
+			assert(1);
+			break;
+		case EINTR:
+			std::cerr << "Interrupted by signal." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Not listening." << std::endl;
+			break;
+		case EMFILE:
+			std::cerr << "Per-process open FD limit reached." << std::endl;
+			break;
+		case ENFILE:
+			std::cerr << "System open FD limit reached." << std::endl;
+			break;
+		case EFAULT:
+			std::cerr << "Addr not writable" << std::endl;
+			assert(1);
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory." << std::endl;
+			break;
+		case EPERM:
+			std::cerr << "Firewall forbids." << std::endl;
+			break;
+		#ifndef WIN32
+		case ENOTSOCK:
+			std::cerr << "Not a socket." << std::endl;
+			assert(1);
+			break;
+		case EOPNOTSUPP:
+			std::cerr << "Not of type, SOCK_STREAM." << std::endl;
+			assert(1);
+			break;
+		case ECONNABORTED:
+			std::cerr << "Connection aborted" << std::endl;
+			break;
+		case ENOBUFS:
+			std::cerr << "Out of network buffers" << std::endl;
+			break;
+		case EPROTO:
+			std::cerr << "Protocol error." << std::endl;
+			break;
+		#endif // !WIN32
+		#ifdef LINUX
+		case ENOSR:
+			std::cerr << "ENOSR" << std::endl;
+			break;
+		case ESOCKTNOSUPPORT:
+			std::cerr << "ESOCKTNOSUPPORT" << std::endl;
+			break;
+		case EPROTONOSUPPORT:
+			std::cerr << "EPROTONOSUPPORT" << std::endl;
+			break;
+		case ETIMEDOUT:
+			std::cerr << "ETIMEDOUT" << std::endl;
+			break;
+		case ERESTARTSYS:
+			std::cerr << "ERESTARTSYS" << std::endl;
+			break;
+		#endif // LINUX
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			break;
+		}
+		
 		return 0;
 	}
 }
@@ -106,6 +181,35 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 	int r = bind(sock, (struct sockaddr *) &addr, sizeof(addr));
 	error = errno;
 	
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EBADF:
+			std::cerr << "Invalid FD" << std::endl;
+			assert(1);
+			break;
+		case EINVAL:
+			// According to docks, this may change in the future.
+			std::cerr << "Socket already bound" << std::endl;
+			assert(1);
+			break;
+		case EACCES:
+			std::cerr << "Can't bind to super-user port." << std::endl;
+			assert(1);
+			break;
+		#ifndef WIN32
+		case ENOTSOCK:
+			std::cerr << "Not a socket." << std::endl;
+			assert(1);
+			break;
+		#endif // !WIN32
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			break;
+		}
+	}
+	
 	return r;
 }
 
@@ -117,6 +221,31 @@ int Socket::listen() throw()
 
 	int r = ::listen(sock, 4);
 	error = errno;
+	
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EBADF:
+			std::cerr << "Invalid FD" << std::endl;
+			assert(1);
+			break;
+		#ifndef WIN32
+		case ENOTSOCK:
+			std::cerr << "Not a socket." << std::endl;
+			assert(1);
+			break;
+		case EOPNOTSUPP:
+			std::cerr << "Does not support listen." << std::endl;
+			assert(1);
+			break;
+		#endif // !WIN32
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			break;
+		}
+	}
+	
 	return r;
 }
 
@@ -130,8 +259,78 @@ int Socket::send(char* buffer, size_t buflen) throw()
 	#endif
 	
 	int r = ::send(sock, buffer, buflen, MSG_NOSIGNAL);
-	
 	error = errno;
+	
+	if (r == -1)
+	{
+		switch (error)
+		{
+		#ifdef EWOULDBLOCK
+		case EWOULDBLOCK:
+		#else
+		case EAGAIN:
+		#endif
+			std::cerr << "Would block, try again" << std::endl;
+			break;
+		case EBADF:
+			std::cerr << "Invalid fD" << std::endl;
+			assert(1);
+			break;
+		case EFAULT:
+			std::cerr << "Invalid parameter address." << std::endl;
+			assert(1);
+			break;
+		case EINTR:
+			std::cerr << "Interrupted by signal." << std::endl;
+			break;
+		case EINVAL:
+			std::cerr << "Invalid argument" << std::endl;
+			assert(1);
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			break;
+		case EPIPE:
+			std::cerr << "Pipe broken, connection closed on local end." << std::endl;
+			break;
+		#ifndef WIN32
+		case ECONNRESET:
+			std::cerr << "Connection reset by peer" << std::endl;
+			break;
+		case EDESTADDREQ: // likely result of sendmsg()
+			std::cerr << "Not connceted, and no peer defined." << std::endl;
+			assert(1);
+			break;
+		case ENOTCONN:
+			std::cerr << "Not connected" << std::endl;
+			assert(1);
+			break;
+		case ENOTSOCK:
+			std::cerr << "Not a socket" << std::endl;
+			assert(1);
+			break;
+		case EOPNOTSUPP:
+			std::cerr << "Invalid flags" << std::endl;
+			assert(1);
+			break;
+		case EISCONN: // likely result of sendmsg()
+			std::cerr << "Already connected, but recipient was specified." << std::endl;
+			assert(1);
+			break;
+		case EMSGSIZE:
+			std::cerr << "Socket requires atomic sending." << std::endl;
+			assert(1);
+			break;
+		case ENOBUFS:
+			std::cerr << "Out of buffers" << std::endl;
+			break;
+		#endif // !WIN32
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			break;
+		}
+	}
+	
 	return r;
 }
 
@@ -146,5 +345,54 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 	
 	int r = ::recv(sock, buffer, buflen, 0);
 	error = errno;
+	
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EBADF:
+			std::cerr << "Invalid FD" << std::endl;
+			assert(1);
+			break;
+		#ifdef EWOULDBLOCK
+		case EWOULDBLOCK:
+		#else
+		case EAGAIN:
+		#endif
+			std::cerr << "Would block, try again." << std::endl;
+			break;
+		case EINTR:
+			std::cerr << "Interrupted by signal." << std::endl;
+			break;
+		case EFAULT:
+			std::cerr << "Buffer points to invalid address" << std::endl;
+			assert(1);
+			break;
+		case EINVAL:
+			std::cerr << "Invalid argument." << std::endl;
+			assert(1);
+			break;
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			break;
+		#ifndef WIN32
+		case ECONNREFUSED:
+			std::cerr << "Connection refused" << std::endl;
+			break;
+		case ENOTCONN:
+			std::cerr << "Not connected" << std::endl;
+			assert(1);
+			break;
+		case ENOTSOCK:
+			std::cerr << "Not a socket" << std::endl;
+			assert(1);
+			break;
+		#endif // !WIN32
+		default:
+			std::cerr << "Unknown error." << std::endl;
+			break;
+		}
+	}
+	
 	return r;
 }
