@@ -507,17 +507,18 @@ int Event::remove(uint32_t fd, int ev) throw()
 		#ifndef WIN32
 		select_set_r.erase(fd);
 		std::cout << nfds_r << " -> ";
-		nfds_r = *--select_set_r.end();
+		nfds_r = (select_set_r.size() > 0 ? *(--select_set_r.end()) : 0);
 		std::cout << nfds_r << std::endl;
 		#endif
 	}
+	
 	if (fIsSet(ev, write))
 	{
 		FD_CLR(fd, &fds[inSet(write)]);
 		#ifndef WIN32
 		select_set_w.erase(fd);
 		std::cout << nfds_w << " -> ";
-		nfds_w = *--select_set_w.end();
+		nfds_w = (select_set_w.size() > 0 ? *(--select_set_w.end()) : 0);
 		std::cout << nfds_w << std::endl;
 		#endif
 	}
