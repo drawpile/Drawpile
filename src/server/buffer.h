@@ -180,6 +180,21 @@ struct Buffer
 		return 0;
 	}
 	
+	//! Rewinds wpos and rpos to beginning of the buffer.
+	/**
+	 * You probably shouldn't use this before you have handled all data in the buffer.
+	 * Just check that canRead() returns 0.
+	 * 
+	 * Effectively allows the next write to occupy largest possible space.
+	 */
+	void rewind() throw()
+	{
+		assert(data != 0);
+		assert(size > 0);
+		wpos = rpos = data;
+		left = 0;
+	}
+	
 	char
 		//! Circular buffer data. DON'T TOUCH (unless you're scrapping the buffer)
 		*data,
