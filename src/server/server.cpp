@@ -33,7 +33,7 @@
 #include "server.h"
 
 #include "../shared/templates.h"
-#include "../shared/protocol.h"
+#include "../shared/protocol.defaults.h"
 
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -44,8 +44,8 @@ Server::Server()
 	pw_len(0),
 	user_limit(0),
 	cur_users(0),
-	hi_port(0),
-	lo_port(0)
+	hi_port(protocol::default_port),
+	lo_port(protocol::default_port)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::Server()" << std::endl;
@@ -207,6 +207,22 @@ void Server::uRead(uint32_t fd)
 	
 	std::cout << "From user: " << static_cast<int>(u->id) << std::endl;
 	
+	if (u->input.data == 0)
+	{
+		std::cout << "Assigning buffer to user." << std::endl;
+		size_t buf_size = 8196;
+		u->input.setBuffer(new char[buf_size], buf_size);
+		std::cout << "Can write: " << u->input.canWrite() << std::endl
+			<< "Can read: " << u->input.canRead() << std::endl;
+		
+	}
+	
+	if (u->input.canWrite() == 0)
+	{
+		std::cerr << "User input buffer full!" << std::endl;
+		return;
+	}
+	
 	int rb = u->s->recv(
 		u->input.wpos,
 		u->input.canWrite()
@@ -230,11 +246,10 @@ void Server::uRead(uint32_t fd)
 		std::cerr << "Error occured while reading from user: "
 			<< static_cast<int>(u->id) << std::endl;
 		
+		// TODO (EAGAIN and such)
+		
 		ev.remove(fd, ev.read);
 	}
-	
-	//users[fd]
-	// TODO
 }
 
 void Server::getArgs(int argc, char** argv)
@@ -261,7 +276,7 @@ void Server::getArgs(int argc, char** argv)
 					hi_port = (off != 0 ? atoi(off+1) : lo_port);
 				}
 				
-				if (lo_port <= 1024 or hi_port <= 1024)
+				if (lo_port <= 1023 or hi_port <= 1023)
 				{
 					std::cerr << "Super-user ports not allowed!" << std::endl;
 					exit(1);
@@ -284,8 +299,8 @@ void Server::getArgs(int argc, char** argv)
 			case 'h': // help
 				std::cout << "Syntax: dbsrv [options]\n\n"
 					<< "Options...\n\n"
-					<< "   -p [port]   listen on 'port'.\n"
-					<< "   -h      This output (a.k.a. Help)" << std::endl;
+					<< "   -p [port]  listen on 'port' (1024 - 65535).\n"
+					<< "   -h         This output (a.k.a. Help)" << std::endl;
 				exit(1);
 				break;
 			case 'V': // version
@@ -419,7 +434,7 @@ int Server::run()
 	
 	EvList evl;
 	
-	int ec;
+	int ec, evs;
 	while (1) // yay for infinite loops
 	{
 		ec = ev.wait(5000);
@@ -439,6 +454,17 @@ int Server::run()
 			#ifndef NDEBUG
 			std::cout << "Events waiting: " << ec << std::endl;
 			#endif
+			
+			/*
+			evs = ev.triggered(lsock.fd());
+			std::cout << "Server events: ";
+			std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+			std::cout.setf ( std::ios_base::showbase );
+			std::cout << evs;
+			std::cout.setf ( std::ios_base::dec );
+			std::cout.setf ( ~std::ios_base::showbase );
+			std::cout << std::endl;
+			*/
 			
 			if (ev.isset(lsock.fd(), ev.read))
 			{
