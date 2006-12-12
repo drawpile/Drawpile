@@ -39,7 +39,7 @@
 #include <cstdlib>
 #include <iostream>
 
-Server::Server()
+Server::Server() throw()
 	: password(0),
 	pw_len(0),
 	user_limit(0),
@@ -52,18 +52,16 @@ Server::Server()
 	#endif
 }
 
-Server::~Server()
+Server::~Server() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::~Server()" << std::endl;
 	#endif
 	
-	
-	
 	cleanup();
 }
 
-uint8_t Server::getUserID()
+uint8_t Server::getUserID() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::getUserID()" << std::endl;
@@ -81,7 +79,7 @@ uint8_t Server::getUserID()
 	return 0;
 }
 
-uint8_t Server::getSessionID()
+uint8_t Server::getSessionID() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::getSessionID()" << std::endl;
@@ -99,7 +97,7 @@ uint8_t Server::getSessionID()
 	return 0;
 }
 
-void Server::freeUserID(uint8_t id)
+void Server::freeUserID(uint8_t id) throw()
 {
 	assert(user_ids.test(id) == true);
 	
@@ -110,7 +108,7 @@ void Server::freeUserID(uint8_t id)
 	user_ids.set(id, false);
 }
 
-void Server::freeSessionID(uint8_t id)
+void Server::freeSessionID(uint8_t id) throw()
 {
 	assert(session_ids.test(id) == true);
 	
@@ -121,7 +119,7 @@ void Server::freeSessionID(uint8_t id)
 	session_ids.set(id, false);
 }
 
-void Server::cleanup()
+void Server::cleanup() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::cleanup()" << std::endl;
@@ -148,7 +146,7 @@ void Server::cleanup()
 	#endif // FULL_CLEANUP
 }
 
-void Server::uWrite(User* u)
+void Server::uWrite(User* u) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uWrite(" << u->s->fd() << ")" << std::endl;
@@ -204,7 +202,7 @@ void Server::uWrite(User* u)
 	}
 }
 
-void Server::uRead(User* u)
+void Server::uRead(User* u) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uRead(" << u->s->fd() << ")" << std::endl;
@@ -257,7 +255,39 @@ void Server::uRead(User* u)
 	}
 }
 
-void Server::uRemove(User* u)
+void Server::uAdd(Socket* sock) throw(std::bad_alloc)
+{
+	uint8_t id = getUserID();
+	
+	if (id == 0)
+	{
+		#ifndef NDEBUG
+		std::cout << "... server is full." << std::endl;
+		#endif
+		
+		delete sock;
+	}
+	else
+	{
+		#ifndef NDEBUG
+		std::cout << "... assigned ID: " << static_cast<uint32_t>(id) << std::endl;
+		#endif
+		
+		User *ud = new User(id, sock);
+		
+		fSet(ud->events, ev.read);
+		ev.add(ud->s->fd(), ud->events);
+		
+		users.insert( std::make_pair(sock->fd(), ud) );
+		user_id_map.insert( std::make_pair(id, ud) );
+		
+		#ifndef NDEBUG
+		std::cout << "Known users: " << users.size() << std::endl;
+		#endif
+	}
+}
+
+void Server::uRemove(User* u) throw()
 {
 	ev.remove(u->s->fd(), ev.write|ev.read);
 	
@@ -271,7 +301,7 @@ void Server::uRemove(User* u)
 	users.erase(id);
 }
 
-void Server::getArgs(int argc, char** argv)
+void Server::getArgs(int argc, char** argv) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::getArgs(" << argc << ", **argv)" << std::endl;
@@ -312,8 +342,11 @@ void Server::getArgs(int argc, char** argv)
 				break;
 			case 'c': // password
 				pw_len = strlen(optarg);
-				password = new char[pw_len];
-				memcpy(password, optarg, pw_len);
+				if (pw_len > 0)
+				{
+					password = new char[pw_len];
+					memcpy(password, optarg, pw_len);
+				}
 				break;
 			case 'h': // help
 				std::cout << "Syntax: dbsrv [options]\n\n"
@@ -331,7 +364,11 @@ void Server::getArgs(int argc, char** argv)
 	}
 }
 
-int Server::init()
+#if defined( EV_EPOLL )
+int Server::init() throw(std::bad_alloc)
+#else
+int Server::init() throw()
+#endif
 {
 	#ifndef NDEBUG
 	std::cout << "Server::init()" << std::endl;
@@ -435,7 +472,7 @@ int Server::init()
 	return 0;
 }
 
-int Server::run()
+int Server::run() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::run()" << std::endl;
@@ -496,34 +533,11 @@ int Server::run()
 				
 				if (nu != 0)
 				{
-					uint8_t id = getUserID();
 					#ifndef NDEBUG
-					std::cout << "New connection, ";
+					std::cout << "New connection" << std::endl;
 					#endif
-					if (id == 0)
-					{
-						#ifndef NDEBUG
-						std::cout << "but server is full." << std::endl;
-						#endif
-						
-						delete nu;
-					}
-					else
-					{
-						#ifndef NDEBUG
-						std::cout << "assigned ID: " << static_cast<uint32_t>(id) << std::endl;
-						#endif
-						
-						User *ud = new User(id, nu);
-						
-						fSet(ud->events, ev.read);
-						ev.add(ud->s->fd(), ud->events);
-						
-						users.insert( std::make_pair(nu->fd(), ud) );
-						user_id_map.insert( std::make_pair(id, ud) );
-						
-						std::cout << "Known users: " << users.size() << std::endl;
-					}
+					
+					uAdd( nu );
 				}
 				else
 				{

@@ -83,44 +83,54 @@ protected:
 	/* functions */
 
 	//! Frees user ID
-	void freeUserID(uint8_t id);
+	void freeUserID(uint8_t id) throw();
 
 	//! Frees session ID
-	void freeSessionID(uint8_t id);
+	void freeSessionID(uint8_t id) throw();
 
 	//! Cleanup anything that's left.
 	inline
-	void cleanup();
+	void cleanup() throw();
 	
 	//! Get free user ID
-	uint8_t getUserID();
+	uint8_t getUserID() throw();
 
 	//! Get free session ID
-	uint8_t getSessionID();
+	uint8_t getSessionID() throw();
 
 	//! Write to user socket
-	void uWrite(User* u);
+	void uWrite(User* u) throw();
 
 	//! Read from user socket
-	void uRead(User* u);
+	void uRead(User* u) throw(std::bad_alloc);
+	
+	//! Adds user
+	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	//! Removes user and does cleaning..
-	void uRemove(User* u);
+	void uRemove(User* u) throw();
 public:
 	//! ctor
-	Server();
+	Server() throw();
 	
 	//! dtor
-	~Server();
+	~Server() throw();
 	
 	//! Initializes anything that need to be done so.
-	int init();
+	/**
+	 * @throw std::bad_alloc if EV_EPOLL is defined.
+	 */
+	#if defined( EV_EPOLL )
+	int init() throw(std::bad_alloc);
+	#else
+	int init() throw();
+	#endif
 	
 	//! Parses command-line args
-	void getArgs(int argc, char** argv);
+	void getArgs(int argc, char** argv) throw(std::bad_alloc);
 	
 	//! Enter main loop
-	int run();
+	int run() throw();
 }; // class Server
 
 #endif // Server_C_Included
