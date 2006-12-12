@@ -95,11 +95,28 @@ public:
 		: sock(INVALID_SOCKET),
 		error(0)
 	{
+		#ifndef NDEBUG
+		std::cout << "Socket::Socket()" << std::endl;
+		#endif
+	}
+	
+	//! ctor
+	Socket(int nsock) throw()
+		: sock(nsock),
+		error(0)
+	{
+		#ifndef NDEBUG
+		std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
+		#endif
 	}
 	
 	//! dtor
 	virtual ~Socket() throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Socket::~Socket()" << std::endl;
+		#endif
+		
 		close();
 	}
 	
