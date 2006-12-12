@@ -68,38 +68,43 @@ struct UserData
 struct User
 {
 	//! ctor
-	User()
+	User() throw()
 		: id(0),
 		nlen(0),
 		name(0),
-		state(0)
+		state(0),
+		s(0)
 	{
-		
+		#ifndef NDEBUG
+		std::cout << "User::User()" << std::endl;
+		#endif
 	}
 	
-	/*
-	User(const User& nu)
-		: s(nu.s),
-		nlen(nu.nlen),
-		name(nu.name),
-		session(nu.session),
-		u(nu.u),
-		state(nu.state),
-		sessions(nu.sessions)
+	//! ctor
+	User(uint8_t _id, Socket* sock) throw()
+		: id(_id),
+		nlen(0),
+		name(0),
+		state(0),
+		s(sock)
 	{
-		
+		#ifndef NDEBUG
+		std::cout << "User::User(" << static_cast<int>(_id)
+			<< ", " << s->fd() << ")" << std::endl;
+		#endif
 	}
-	*/
 	
 	//! dtor
-	~User()
+	~User() throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "User::~User()" << std::endl;
+		#endif
+		
 		delete [] name,
-		delete [] s;
+		delete s;
 		s = 0;
 		name = 0;
-		
-		// TODO: clean sessions
 	}
 	
 	//! Socket
