@@ -256,12 +256,12 @@ int Socket::listen() throw()
 
 int Socket::send(char* buffer, size_t buflen) throw()
 {
-	assert(buffer != 0);
-	assert(buflen != 0);
-	
 	#ifndef NDEBUG
 	std::cout << "Socket::send(*buffer, " << buflen << ")" << std::endl;
 	#endif
+	
+	assert(buffer != 0);
+	assert(buflen != 0);
 	
 	int r = ::send(sock, buffer, buflen, MSG_NOSIGNAL);
 	error = errno;
@@ -341,12 +341,12 @@ int Socket::send(char* buffer, size_t buflen) throw()
 
 int Socket::recv(char* buffer, size_t buflen) throw()
 {
-	assert(buffer != 0);
-	assert(buflen != 0);
-	
 	#ifndef NDEBUG
 	std::cout << "Socket::recv(*buffer, " << buflen << ")" << std::endl;
 	#endif
+	
+	assert(buffer != 0);
+	assert(buflen != 0);
 	
 	int r = ::recv(sock, buffer, buflen, 0);
 	error = errno;
@@ -364,9 +364,11 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 		#else
 		case EAGAIN:
 		#endif
+			// Should retry
 			std::cerr << "Would block, try again." << std::endl;
 			break;
 		case EINTR:
+			// Should retry
 			std::cerr << "Interrupted by signal." << std::endl;
 			break;
 		case EFAULT:
@@ -379,6 +381,7 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
+			//throw new std::bad_alloc;
 			break;
 		#ifndef WIN32
 		case ECONNREFUSED:
@@ -394,6 +397,7 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 			break;
 		#endif // !WIN32
 		default:
+			// Should not happen
 			std::cerr << "Unknown error." << std::endl;
 			break;
 		}
