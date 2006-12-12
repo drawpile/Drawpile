@@ -32,7 +32,7 @@
 struct UserData
 {
 	//! ctor
-	UserData()
+	UserData() throw()
 		: session(protocol::Global),
 		mode(protocol::user::None),
 		owner(false)
@@ -49,7 +49,7 @@ struct UserData
 	*/
 	
 	//! dtor
-	~UserData()
+	~UserData() throw()
 	{
 	}
 	

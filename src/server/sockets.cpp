@@ -50,7 +50,7 @@ void Socket::close() throw()
 	sock = INVALID_SOCKET;
 }
 
-Socket* Socket::accept()
+Socket* Socket::accept() throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Socket::accept()" << std::endl;

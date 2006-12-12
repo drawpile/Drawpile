@@ -63,10 +63,12 @@
 struct EventInfo
 {
 	//! ctor
-	EventInfo() { }
+	EventInfo() throw ()
+	{
+	}
 	
 	//! ctor with vars
-	EventInfo(int nfd, int nevs)
+	EventInfo(int nfd, int nevs) throw()
 		: fd(nfd),
 		events(nevs)
 	{
@@ -126,7 +128,7 @@ public:
 		write;
 	
 	//! ctor
-	Event();
+	Event() throw();
 	
 	//! dtor
 	/**
@@ -143,7 +145,7 @@ public:
 	#endif
 	
 	//! Initialize event system.
-	void init();
+	void init() throw(std::bad_alloc);
 	
 	//! Finish event system.
 	void finish() throw();

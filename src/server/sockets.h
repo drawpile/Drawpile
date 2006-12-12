@@ -50,7 +50,7 @@
 #endif
 
 inline
-bool netInit()
+bool netInit() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "netInit()" << std::endl;
@@ -66,7 +66,7 @@ bool netInit()
 }
 
 inline
-int netStop()
+int netStop() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "netStop()" << std::endl;
@@ -149,7 +149,7 @@ public:
 	 * @return NULL if no new connection was made.
 	 * @return Socket* if new connection was accepted.
 	 */
-	Socket* accept();
+	Socket* accept() throw(std::bad_alloc);
 	
 	//! Set blocking
 	/**

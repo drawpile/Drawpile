@@ -55,7 +55,7 @@ const int
 		= 0x02;
 		#endif // EV_*
 
-Event::Event()
+Event::Event() throw()
 	#if defined( EV_EPOLL )
 	: evfd(0),
 	events(0)
@@ -112,7 +112,7 @@ int Event::inSet(const int ev) const throw()
 }
 
 
-void Event::init()
+void Event::init() throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Event::init()" << std::endl;
