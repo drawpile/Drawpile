@@ -56,6 +56,7 @@ check_symbol_exists ( FD_COPY "sys/select.h;unistd.h" HAVE_SELECT_COPY )
 
 if ( WIN32 )
 	check_include_files ( winsock2.h USE_WINDOWS_SOCKET_API )
+	check_symbol_exists ( WSAEWOULDBLOCK "winsock2.h" HAVE_WSA )
 endif ( WIN32 )
 
 ### tests ###

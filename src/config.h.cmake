@@ -9,3 +9,5 @@
 #cmakedefine EV_KQUEUE
 
 #cmakedefine USE_WINDOWS_SOCKET_API
+
+#cmakedefine HAVE_WSA
