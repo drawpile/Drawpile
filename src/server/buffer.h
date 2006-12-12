@@ -15,6 +15,9 @@
 #ifndef CircularBuffer_INCLUDED
 #define CircularBuffer_INCLUDED
 
+#ifndef NDEBUG
+	#include <iostream>
+#endif
 #include <stddef.h> // size_t?
 #include <cassert>
 
@@ -29,16 +32,23 @@ struct Buffer
 		left(0),
 		size(0)
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::Buffer()" << std::endl;
+		#endif
 	}
 	
 	//! ctor with buffer assignment
-	Buffer(char* buf, size_t buflen) throw()
+	Buffer(char* buf, const size_t buflen) throw()
 		: data(buf),
 		wpos(buf),
 		rpos(buf),
 		left(0),
 		size(buflen)
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::Buffer(*buf, " << buflen << ")" << std::endl;
+		#endif
+		
 		assert(buf != 0);
 		assert(buflen > 1);
 	}
@@ -46,6 +56,9 @@ struct Buffer
 	//! dtor
 	~Buffer() throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::~Buffer()" << std::endl;
+		#endif
 	}
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
@@ -55,8 +68,12 @@ struct Buffer
 	 * @param buf
 	 * @param buflen
 	 */
-	void setBuffer(char* buf, size_t buflen) throw()
+	void setBuffer(char* buf, const size_t buflen) throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::setBuffer(*buf, " << buflen << ")" << std::endl;
+		#endif
+		
 		assert(buf != 0);
 		assert(buflen > 1);
 		
@@ -74,8 +91,12 @@ struct Buffer
 	 *
 	 * @param len
 	 */
-	void read(size_t len) throw()
+	void read(const size_t len) throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::read(" << len << ")" << std::endl;
+		#endif
+		
 		assert(data != 0);
 		assert(size > 1);
 		
@@ -98,10 +119,16 @@ struct Buffer
 	 */
 	size_t canRead() const throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::canRead()" << std::endl;
+		#endif
+		
 		assert(data != 0);
 		assert(size > 1);
 		
-		return ((rpos>wpos) ? (data+size) : wpos) - rpos;
+		if (left > 0)
+			return ((rpos>wpos) ? (data+size) : wpos) - rpos;
+		return 0;
 	}
 	
 	//! Wrote 'n' bytes to buffer.
@@ -111,8 +138,12 @@ struct Buffer
 	 *
 	 * @param len states the number of bytes you wrote to buffer.
 	 */
-	void write(size_t len) throw()
+	void write(const size_t len) throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::write(" << len << ")" << std::endl;
+		#endif
+		
 		assert(data != 0);
 		assert(size > 1);
 		
@@ -133,11 +164,17 @@ struct Buffer
 	 */
 	size_t canWrite() const throw()
 	{
+		#ifndef NDEBUG
+		std::cout << "Buffer::canWrite()" << std::endl;
+		#endif
+		
 		assert(data != 0);
 		assert(size > 1);
 		
 		// this should never return more than .size - .left bytes
-		return ((rpos<wpos) ? (data+size) : rpos) - wpos;
+		if (left < size)
+			return ((rpos<=wpos) ? (data+size) : rpos) - wpos;
+		return 0;
 	}
 	
 	char
