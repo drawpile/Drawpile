@@ -39,12 +39,9 @@ namespace protocol
 {
 
 //! Scrambled input buffer.
-class scrambled_buffer
-	: public std::exception
+struct scrambled_buffer : std::exception
 {
-public:
-	scrambled_buffer() { }
-	~scrambled_buffer() throw() { }
+	char const* what() const throw();
 };
 
 //! Errors

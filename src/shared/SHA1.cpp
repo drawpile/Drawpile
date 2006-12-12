@@ -1,24 +1,14 @@
-/**
-Modified by M.K.A. 06-12-2006.
-**/
+/******************************************************************************
 
-/*
-	100% free public domain implementation of the SHA-1 algorithm
-	by Dominik Reichl <dominik.reichl@t-online.de>
-	Web: http://www.dominik-reichl.de/
+   Modified by M.K.A. <wyrmchild@sourceforge.net> - 2006-12-12
 
-	Version 1.6 - 2005-02-07
-	======== Test Vectors (from FIPS PUB 180-1) ========
+   100% free public domain implementation of the SHA-1 algorithm
+   by Dominik Reichl <dominik.reichl@t-online.de>
+   Web: http://www.dominik-reichl.de/
 
-	SHA1("abc") =
-		A9993E36 4706816A BA3E2571 7850C26C 9CD0D89D
+   Version 1.6 - 2005-02-07
 
-	SHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") =
-		84983E44 1C3BD26E BAAE4AA1 F95129E5 E54670F1
-
-	SHA1(A million repetitions of "a") =
-		34AA973C D4C4DAA4 F61EEB2B DBAD2731 6534016F
-*/
+******************************************************************************/
 
 #include "SHA1.h"
 
@@ -26,7 +16,7 @@ Modified by M.K.A. 06-12-2006.
 #include <memory.h> // memset(), memcpy()
 
 #ifdef _MSC_VER
-#include <stdlib.h>
+#include <stdlib.h> // ?
 #endif
 
 // Rotate x bits to the left
@@ -57,7 +47,8 @@ Modified by M.K.A. 06-12-2006.
 #define _R3(v,w,x,y,z,i) { z+=(((w|x)&y)|(w&x))+SHABLK(i)+0x8F1BBCDC+ROL32(v,5); w=ROL32(w,30); }
 #define _R4(v,w,x,y,z,i) { z+=(w^x^y)+SHABLK(i)+0xCA62C1D6+ROL32(v,5); w=ROL32(w,30); }
 
-CSHA1::CSHA1() :
+CSHA1::CSHA1() throw()
+	:
 	#ifndef NDEBUG
 	finalized(false),
 	#endif
@@ -67,14 +58,14 @@ CSHA1::CSHA1() :
 	Reset();
 }
 
-CSHA1::~CSHA1()
+CSHA1::~CSHA1() throw()
 {
 	#ifdef SHA1_WIPE_VARIABLES
 	Reset();
 	#endif
 }
 
-void CSHA1::Reset()
+void CSHA1::Reset() throw()
 {
 	// SHA1 initialization constants
 	m_state[0] = 0x67452301;
@@ -92,7 +83,7 @@ void CSHA1::Reset()
 }
 
 inline
-int CSHA1::SHABLK0(int i)
+int CSHA1::SHABLK0(int i) throw()
 {
 	uint16_t endian = 0x0001;
 	if (*(reinterpret_cast<uint8_t*>(&endian)) == 0)
@@ -106,7 +97,7 @@ int CSHA1::SHABLK0(int i)
 	}
 }
 
-void CSHA1::Transform(uint32_t *state, uint8_t *buffer)
+void CSHA1::Transform(uint32_t *state, uint8_t *buffer) throw()
 {
 	// Copy state[] to working vars
 	uint32_t a = state[0], b = state[1], c = state[2], d = state[3], e = state[4];
@@ -149,7 +140,7 @@ void CSHA1::Transform(uint32_t *state, uint8_t *buffer)
 }
 
 // Use this function to hash in binary data and strings
-void CSHA1::Update(uint8_t *data, uint32_t len)
+void CSHA1::Update(uint8_t *data, uint32_t len) throw()
 {
 	assert(len > 0);
 	assert(data != 0);
@@ -181,7 +172,7 @@ void CSHA1::Update(uint8_t *data, uint32_t len)
 	#endif
 }
 
-void CSHA1::Final()
+void CSHA1::Final() throw()
 {
 	uint32_t i;
 	uint8_t finalcount[8];
@@ -220,7 +211,7 @@ void CSHA1::Final()
 #include "templates.h"
 
 // Get the final hash as a pre-formatted string
-void CSHA1::HexDigest(char *szReport)
+void CSHA1::HexDigest(char *szReport) throw()
 {
 	assert(finalized);
 	assert(szReport != 0);
@@ -237,7 +228,7 @@ void CSHA1::HexDigest(char *szReport)
 }
 
 // Get the raw message digest
-void CSHA1::GetHash(uint8_t *puDest)
+void CSHA1::GetHash(uint8_t *puDest) throw()
 {
 	assert(finalized);
 	assert(puDest != 0);

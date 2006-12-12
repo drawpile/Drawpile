@@ -134,7 +134,7 @@ void Event::init() throw(std::bad_alloc)
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
-			throw new std::bad_alloc;
+			throw std::bad_alloc();
 			break;
 		default:
 			std::cerr << "Unknown error." << std::endl;

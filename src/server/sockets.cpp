@@ -381,7 +381,7 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
-			//throw new std::bad_alloc;
+			//throw std::bad_alloc();
 			break;
 		#ifndef WIN32
 		case ECONNREFUSED:
