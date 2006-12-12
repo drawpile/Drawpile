@@ -68,6 +68,9 @@ const uint8_t password_hash_size = 20;
 //! Protocol identifier string.
 const char identifierString[identifier_size] = {'D','r','a','w','P','i','l','e'};
 
+//! Default listening port.
+const uint16_t default_port = 27750;
+
 } // namespace protocol
 
 #endif // Protocol_Defaults_INCLUDED
