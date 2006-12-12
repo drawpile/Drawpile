@@ -43,7 +43,6 @@
 #include <bitset>
 #include <map>
 #include <list>
-#include <vector>
 
 //! foo
 namespace defaults
@@ -65,9 +64,9 @@ protected:
 	std::bitset<defaults::hard_limit> user_ids;
 	std::bitset<defaults::hard_limit> session_ids;
 	
-	std::vector<uint32_t> sockets;
-	std::map<uint32_t, User*> users;
-	std::map<uint8_t, uint32_t> user_id_map;
+	//! FD to user mapping
+	std::map<int, User*> users;
+	std::map<uint8_t, User*> user_id_map;
 	
 	// listening socket
 	Socket lsock;
@@ -91,7 +90,7 @@ protected:
 
 	//! Cleanup anything that's left.
 	inline
-	void cleanup(int rc);
+	void cleanup();
 	
 	//! Get free user ID
 	uint8_t getUserID();
@@ -100,11 +99,13 @@ protected:
 	uint8_t getSessionID();
 
 	//! Write to user socket
-	void uWrite(uint32_t fd);
+	void uWrite(User* u);
 
 	//! Read from user socket
-	void uRead(uint32_t fd);
-
+	void uRead(User* u);
+	
+	//! Removes user and does cleaning..
+	void uRemove(User* u);
 public:
 	//! ctor
 	Server();

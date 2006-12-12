@@ -57,6 +57,10 @@ Server::~Server()
 	#ifndef NDEBUG
 	std::cout << "Server::~Server()" << std::endl;
 	#endif
+	
+	
+	
+	cleanup();
 }
 
 uint8_t Server::getUserID()
@@ -100,7 +104,7 @@ void Server::freeUserID(uint8_t id)
 	assert(user_ids.test(id) == true);
 	
 	#ifndef NDEBUG
-	std::cout << "Server::freeUserID(" << id << ")" << std::endl;
+	std::cout << "Server::freeUserID(" << static_cast<int>(id) << ")" << std::endl;
 	#endif
 	
 	user_ids.set(id, false);
@@ -111,41 +115,44 @@ void Server::freeSessionID(uint8_t id)
 	assert(session_ids.test(id) == true);
 	
 	#ifndef NDEBUG
-	std::cout << "Server::freeSessionID(" << id << ")" << std::endl;
+	std::cout << "Server::freeSessionID(" << static_cast<int>(id) << ")" << std::endl;
 	#endif
 	
 	session_ids.set(id, false);
 }
 
-void Server::cleanup(int rc)
+void Server::cleanup()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::cleanup()" << std::endl;
 	#endif
 	
-	// close listening socket
-	lsock.close();
-	
 	// finish event system
 	ev.finish();
 	
-	/*
-	std::map<uint32_t, User>::iterator u(users.begin());
-	for (; u != users.end(); u++)
+	// close listening socket
+	lsock.close();
+	
+	// delete users
+	for (std::map<int, User*>::iterator u(users.begin()); u != users.end(); u++)
 	{
-		delete (*u)->s;
+		#if defined( FULL_CLEANUP )
+		delete u->second;
+		#else
+		u->second->s->close();
+		#endif
 	}
-	*/
+	
+	#if defined( FULL_CLEANUP )
+	users.clear();
+	#endif // FULL_CLEANUP
 }
 
-void Server::uWrite(uint32_t fd)
+void Server::uWrite(User* u)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uWrite(" << fd << ")" << std::endl;
+	std::cout << "Server::uWrite(" << u->s->fd() << ")" << std::endl;
 	#endif
-	
-	//users[fd]
-	User* u = users[fd];
 	
 	Buffer buf = u->buffers.front();
 	
@@ -174,9 +181,9 @@ void Server::uWrite(uint32_t fd)
 			{
 				fClr(u->events, ev.write);
 				if (u->events == 0)
-					ev.remove(fd, u->events);
+					ev.remove(u->s->fd(), u->events);
 				else
-					ev.modify(fd, u->events);
+					ev.modify(u->s->fd(), u->events);
 			}
 		}
 	}
@@ -191,19 +198,17 @@ void Server::uWrite(uint32_t fd)
 		
 		fClr(u->events, ev.read);
 		if (u->events == 0)
-			ev.remove(fd, u->events);
+			ev.remove(u->s->fd(), u->events);
 		else
-			ev.modify(fd, u->events);
+			ev.modify(u->s->fd(), u->events);
 	}
 }
 
-void Server::uRead(uint32_t fd)
+void Server::uRead(User* u)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uRead(" << fd << ")" << std::endl;
+	std::cout << "Server::uRead(" << u->s->fd() << ")" << std::endl;
 	#endif
-	
-	User* u = users[fd];
 	
 	std::cout << "From user: " << static_cast<int>(u->id) << std::endl;
 	
@@ -237,9 +242,8 @@ void Server::uRead(uint32_t fd)
 	else if (rb == 0)
 	{
 		std::cout << "User disconnected!" << std::endl;
-		ev.remove(fd, ev.write|ev.read);
-		freeUserID(u->id);
-		users.erase(u->id);
+		
+		uRemove(u);
 	}
 	else
 	{
@@ -248,8 +252,23 @@ void Server::uRead(uint32_t fd)
 		
 		// TODO (EAGAIN and such)
 		
-		ev.remove(fd, ev.read);
+		u->events = fClr(u->events, ev.read);
+		ev.modify(u->s->fd(), u->events);
 	}
+}
+
+void Server::uRemove(User* u)
+{
+	ev.remove(u->s->fd(), ev.write|ev.read);
+	
+	freeUserID(u->id);
+	
+	int id = u->s->fd();
+	std::cout << "Deleting user.." << std::endl;
+	delete u;
+	
+	std::cout << "Removing from mappings" << std::endl;
+	users.erase(id);
 }
 
 void Server::getArgs(int argc, char** argv)
@@ -409,8 +428,6 @@ int Server::init()
 	
 	std::cerr << "listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
 	
-	sockets.reserve(10);
-	
 	ev.init();
 	
 	ev.add(lsock.fd(), ev.read);
@@ -427,6 +444,7 @@ int Server::run()
 	Socket *nu;
 	
 	std::vector<uint32_t>::iterator si;
+	std::map<int, User*>::iterator ui;
 	
 	#ifndef NDEBUG
 	std::cout << "eternity" << std::endl;
@@ -487,6 +505,7 @@ int Server::run()
 						#ifndef NDEBUG
 						std::cout << "but server is full." << std::endl;
 						#endif
+						
 						delete nu;
 					}
 					else
@@ -495,19 +514,15 @@ int Server::run()
 						std::cout << "assigned ID: " << static_cast<uint32_t>(id) << std::endl;
 						#endif
 						
-						User *ud = new User;
-						ud->s = nu;
-						ud->id = id;
-						
-						sockets.push_back(nu->fd());
+						User *ud = new User(id, nu);
 						
 						fSet(ud->events, ev.read);
 						ev.add(ud->s->fd(), ud->events);
 						
-						users[nu->fd()] = ud;
-						user_id_map[id] = nu->fd();
+						users.insert( std::make_pair(nu->fd(), ud) );
+						user_id_map.insert( std::make_pair(id, ud) );
 						
-						std::cout << "Known sockets: " << sockets.size() << std::endl;
+						std::cout << "Known users: " << users.size() << std::endl;
 					}
 				}
 				else
@@ -525,26 +540,27 @@ int Server::run()
 				std::cout << "Triggered sockets left: " << ec << std::endl;
 				#endif
 				
-				for (si = sockets.begin(); si != sockets.end(); si++)
+				
+				for (ui = users.begin(); ui != users.end(); ui++)
 				{
-					std::cout << "Testing: " << *si << std::endl;
-					if (ev.isset(*si, ev.read))
+					std::cout << "Testing: " << ui->first << std::endl;
+					if (ev.isset(ui->first, ev.read))
 					{
 						#ifndef NDEBUG
 						std::cout << "Reading from client" << std::endl;
 						#endif
 						
 						ec--;
-						uRead(*si);
+						uRead(ui->second);
 					}
-					else if (ev.isset(*si, ev.write))
+					else if (ev.isset(ui->first, ev.write))
 					{
 						#ifndef NDEBUG
 						std::cout << "Writing to client" << std::endl;
 						#endif
 						
 						ec--;
-						uWrite(*si);
+						uWrite(ui->second);
 					}
 					
 					if (ec == 0) break;
