@@ -24,10 +24,14 @@
 #include <QStatusBar>
 #include <QSettings>
 #include <QFileDialog>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QMessageBox>
 
 #include "mainwindow.h"
 #include "netstatus.h"
 #include "hostlabel.h"
+#include "aboutdialog.h"
 #include "dualcolorbutton.h"
 #include "editorview.h"
 #include "board.h"
@@ -45,6 +49,12 @@ MainWindow::MainWindow()
 	createMenus();
 	createToolbars();
 	createDocks();
+
+	aboutdlg_ = new dialogs::AboutDialog(this);
+	msgbox_ = new QMessageBox(this);
+	msgbox_->setWindowTitle(windowTitle());
+	msgbox_->setWindowModality(Qt::WindowModal);
+	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
@@ -146,15 +156,23 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	QApplication::quit();
 }
 
+/**
+ * If no file name has been selected, \a saveas is called.
+ */
 void MainWindow::save()
 {
 	if(filename_.isEmpty()) {
 		saveas();
 	} else {
-		board_->save(filename_);
+		if(board_->save(filename_) == false)
+			showSaveErrorMessage();
 	}
 }
 
+/**
+ * A standard file dialog is used to get the name of the file to save.
+ * If no suffix is entered, ".png" is used.
+ */
 void MainWindow::saveas()
 {
 	QString file = QFileDialog::getSaveFileName(this,
@@ -166,25 +184,47 @@ void MainWindow::saveas()
 		filename_ = info.absoluteFilePath();
 		if(info.suffix().isEmpty())
 			filename_ += ".png";
-		board_->save(filename_);
+		if(board_->save(filename_) == false)
+			showSaveErrorMessage();
+					
 	}
 }
 
+void MainWindow::showSaveErrorMessage()
+{
+	msgbox_->setStandardButtons(QMessageBox::Ok);
+	msgbox_->setIcon(QMessageBox::Warning);
+	msgbox_->setText(tr("An error occured while trying to save the image"));
+	msgbox_->show();
+}
+
+/**
+ * View translation matrix is scaled
+ */
 void MainWindow::zoomin()
 {
 	view_->scale(2.0,2.0);
 }
 
+/**
+ * View translation matrix is scaled
+ */
 void MainWindow::zoomout()
 {
 	view_->scale(0.5,0.5);
 }
 
+/**
+ * View translation matrix is reset
+ */
 void MainWindow::zoomone()
 {
 	view_->resetMatrix();
 }
 
+/**
+ * 
+ */
 void MainWindow::selectTool(QAction *tool)
 {
 	tools::Type type;
@@ -198,6 +238,16 @@ void MainWindow::selectTool(QAction *tool)
 		return;
 	}
 	emit toolChanged(type);
+}
+
+void MainWindow::about()
+{
+	aboutdlg_->show();
+}
+
+void MainWindow::help()
+{
+	QDesktopServices::openUrl(QUrl("http://drawpile.sourceforge.net/"));
 }
 
 void MainWindow::initActions()
@@ -273,8 +323,10 @@ void MainWindow::initActions()
 	// Help actions
 	help_ = new QAction(tr("DrawPile Help"), this);
 	help_->setShortcut(QKeySequence("F1"));
+	connect(help_,SIGNAL(triggered()), this, SLOT(help()));
 	about_ = new QAction(tr("About DrawPile"), this);
 	about_->setMenuRole(QAction::AboutRole);
+	connect(about_,SIGNAL(triggered()), this, SLOT(about()));
 }
 
 void MainWindow::createMenus()
@@ -348,13 +400,13 @@ void MainWindow::createToolbars()
 	interface::Global::setColorSource(fgbgcolor_);
 
 	// Create color changer dialog for foreground
-	fgdialog_ = new widgets::ColorDialog(tr("Foreground color"), this);
+	fgdialog_ = new dialogs::ColorDialog(tr("Foreground color"), this);
 	connect(fgbgcolor_,SIGNAL(foregroundClicked()), fgdialog_, SLOT(show()));
 	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)), fgdialog_, SLOT(setColor(QColor)));
 	connect(fgdialog_,SIGNAL(colorChanged(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 
 	// Create color changer dialog for background
-	bgdialog_ = new widgets::ColorDialog(tr("Background color"), this);
+	bgdialog_ = new dialogs::ColorDialog(tr("Background color"), this);
 	connect(fgbgcolor_,SIGNAL(backgroundClicked()), bgdialog_, SLOT(show()));
 	connect(fgbgcolor_,SIGNAL(backgroundChanged(QColor)), bgdialog_, SLOT(setColor(QColor)));
 	connect(bgdialog_,SIGNAL(colorChanged(QColor)), fgbgcolor_, SLOT(setBackground(QColor)));
@@ -379,6 +431,10 @@ void MainWindow::createToolSettings(QMenu *toggles)
 	interface::Global::setBrushSource(toolsettings_);
 	toolsettings_->setObjectName("toolsettingsdock");
 	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+#ifdef Q_WS_WIN
+	// Dock widget floating is buggy on Windows.
+	toolsettings_->setFeatures(toolsettings_->features() & ~QDockWidget::DockWidgetFloatable);
+#endif
 	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
 	toggles->addAction(toolsettings_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);

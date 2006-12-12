@@ -23,10 +23,10 @@ using widgets::ColorTriangle;
 
 #include "ui_colordialog.h"
 
-namespace widgets {
+namespace dialogs {
 
 ColorDialog::ColorDialog(QString title, QWidget *parent)
-	: QDialog(parent), updating_(false)
+	: QDialog(parent, Qt::Tool), updating_(false)
 {
 	ui_ = new Ui_ColorDialog;
 	ui_->setupUi(this);

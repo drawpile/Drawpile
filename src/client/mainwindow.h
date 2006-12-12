@@ -25,12 +25,16 @@
 #include "tools.h"
 
 class QActionGroup;
+class QMessageBox;
+
 namespace widgets {
 	class NetStatus;
 	class HostLabel;
 	class EditorView;
 	class DualColorButton;
 	class ToolSettings;
+}
+namespace dialogs {
 	class ColorDialog;
 }
 namespace drawingboard {
@@ -45,27 +49,49 @@ class MainWindow : public QMainWindow {
 		MainWindow();
 
 	public slots:
+		//! Save current document
 		void save();
+		//! Save current document with a new name
 		void saveas();
+		//! Zoom in
 		void zoomin();
+		//! Zoom out
 		void zoomout();
+		//! Reset to 1:1 zoom
 		void zoomone();
+		//! Change current tool
 		void selectTool(QAction *tool);
+		//! Display about dialog
+		void about();
+		//! Display online help
+		void help();
 
 	signals:
+		//! This signal is emitted when the current tool is changed
 		void toolChanged(tools::Type);
 
 	protected:
+		//! Handle closing of the main window
 		void closeEvent(QCloseEvent *event);
 
 	private:
+		//! Display the "error while saving" message box
+		void showSaveErrorMessage();
+
+		//! Read settings from file/registry
 		void readSettings();
+		//! Write settings to file/reqistry
 		void writeSettings();
 
+		//! Initialise QActions
 		void initActions();
+		//! Create menus
 		void createMenus();
+		//! Create toolbars
 		void createToolbars();
+		//! Create all dock windows
 		void createDocks();
+		//! Create tool settings dock
 		void createToolSettings(QMenu *menu);
 
 		widgets::ToolSettings *toolsettings_;
@@ -73,7 +99,9 @@ class MainWindow : public QMainWindow {
 		widgets::NetStatus *netstatus_;
 		widgets::HostLabel *hostaddress_;
 		widgets::EditorView *view_;
-		widgets::ColorDialog *fgdialog_,*bgdialog_;
+		dialogs::ColorDialog *fgdialog_,*bgdialog_;
+		QDialog *aboutdlg_;
+		QMessageBox *msgbox_;
 		drawingboard::Board *board_;
 		Controller *controller_;
 

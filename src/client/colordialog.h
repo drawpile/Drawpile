@@ -24,7 +24,7 @@
 
 class Ui_ColorDialog;
 
-namespace widgets {
+namespace dialogs {
 //! Color selection dialog
 /**
  * The color selection dialog provides sliders for chaning a color's
