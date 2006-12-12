@@ -59,6 +59,9 @@ struct Buffer
 		#ifndef NDEBUG
 		std::cout << "Buffer::~Buffer()" << std::endl;
 		#endif
+		
+		delete [] data;
+		data = rpos = wpos = 0;
 	}
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
