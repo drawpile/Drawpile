@@ -24,7 +24,7 @@ endif ( WIN32 )
 include ( AddFileDependencies )
 add_file_dependencies (
 	dpsrv
-	shared
+	src/shared
 )
 
 link_libraries( dpshared )

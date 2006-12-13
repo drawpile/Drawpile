@@ -1,8 +1,6 @@
-# src/
-
 project ( DrawPile CXX C )
 
-cmake_minimum_required( VERSION 2.4.5 )
+cmake_minimum_required( VERSION 2.4.0 )
 
 ### config options ###
 
@@ -16,8 +14,8 @@ option ( NOKQUEUE "Disable kqueue() support" OFF )
 
 ### binary and library output ###
 
-set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../bin )
-set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/../lib )
+set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
+set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
 
 ### config.h ###
 
@@ -71,16 +69,4 @@ check_variable_exists ( BIG_ENDIAN BIG_ENDIAN )
 
 ### subdirs ###
 
-add_subdirectory ( shared/ )
-
-if ( NOT NOSERVER )
-	add_subdirectory ( server/ )
-endif ( NOT NOSERVER )
-
-if ( NOT NOCLIENT )
-	add_subdirectory ( client/ )
-endif ( NOT NOCLIENT )
-
-if ( UNITTEST )
-	add_subdirectory ( unittest/ )
-endif ( UNITTEST )
+add_subdirectory( src/ )

@@ -87,7 +87,7 @@ add_executable (
 )
 
 include (AddFileDependencies)
-add_file_dependencies ( main.cpp shared )
+add_file_dependencies ( main.cpp src/shared )
 
 target_link_libraries(
 	${EXECNAME}
