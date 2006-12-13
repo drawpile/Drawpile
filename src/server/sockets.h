@@ -56,7 +56,7 @@ bool netInit() throw()
 	std::cout << "netInit()" << std::endl;
 	#endif
 	
-	#ifdef WIN32
+	#if defined( WIN32 ) and defined( HAVE_WSA )
 	WSADATA info;
 	if (WSAStartup(MAKEWORD(2,0), &info))
 		return false;
@@ -72,7 +72,7 @@ int netStop() throw()
 	std::cout << "netStop()" << std::endl;
 	#endif
 	
-	#ifdef WIN32
+	#if defined( WIN32 ) and defined( HAVE_WSA )
 	WSACleanup();
 	#endif
 }
