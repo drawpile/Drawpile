@@ -5,5 +5,6 @@ DEFINES += DESIGNER_PLUGIN
 INSTALLS += target
 
 # Input
+RESOURCES = resources.qrc
 HEADERS += ../../colortriangle.h plugin.h
 SOURCES += ../../colortriangle.cpp plugin.cpp

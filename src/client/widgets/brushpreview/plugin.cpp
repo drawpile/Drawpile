@@ -39,7 +39,7 @@ QString BrushPreviewPlugin::group() const
 
 QIcon BrushPreviewPlugin::icon() const
 {
-    return QIcon();
+    return QIcon(":brushpreview.png");
 }
 
 QString BrushPreviewPlugin::toolTip() const

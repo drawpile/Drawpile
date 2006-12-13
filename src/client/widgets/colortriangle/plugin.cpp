@@ -39,7 +39,7 @@ QString ColorTrianglePlugin::group() const
 
 QIcon ColorTrianglePlugin::icon() const
 {
-    return QIcon();
+    return QIcon(":colortriangle.png");
 }
 
 QString ColorTrianglePlugin::toolTip() const

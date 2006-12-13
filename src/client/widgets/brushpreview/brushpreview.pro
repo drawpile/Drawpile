@@ -5,5 +5,6 @@ DEFINES += DESIGNER_PLUGIN
 INSTALLS += target
 
 # Input
+RESOURCES = resources.qrc
 HEADERS += ../../brushpreview.h ../../brush.h plugin.h
 SOURCES += ../../brushpreview.cpp ../../brush.cpp plugin.cpp
