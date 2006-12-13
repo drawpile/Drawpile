@@ -63,8 +63,8 @@ include ( TestForSTDNamespace )
 
 #! needs C in project ()
 include ( TestBigEndian )
-test_big_endian ( BIG_ENDIAN )
-check_variable_exists ( BIG_ENDIAN BIG_ENDIAN )
+test_big_endian ( IS_BIG_ENDIAN )
+check_variable_exists ( IS_BIG_ENDIAN IS_BIG_ENDIAN )
 
 
 ### subdirs ###

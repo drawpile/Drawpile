@@ -1,6 +1,6 @@
 #cmakedefine HAVE_STDINT_H
 
-#cmakedefine BIG_ENDIAN
+#cmakedefine IS_BIG_ENDIAN
 
 #cmakedefine HAVE_SELECT_COPY
 
