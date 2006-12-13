@@ -203,6 +203,9 @@ int Event::wait(uint32_t msecs) throw()
 	// timeout in milliseconds
 	nfds = epoll_wait(evfd, events, 10, msecs);
 	error = errno;
+	
+	// all errors from epoll_wait are programmer errors.
+	
 	#elif defined(EV_KQUEUE)
 	// 
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
@@ -264,17 +267,23 @@ int Event::wait(uint32_t msecs) throw()
 		switch (error)
 		{
 		#if defined(EV_SELECT) or defined(EV_PSELECT)
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Bad FD in set." << std::endl;
+			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EINTR:
 			std::cerr << "Interrupted by signal." << std::endl;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EINVAL:
 			std::cerr << "Timeout or sigmask invalid." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		#elif defined(EV_EPOLL)
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Bad epoll FD." << std::endl;
 			assert(1);
@@ -283,14 +292,17 @@ int Event::wait(uint32_t msecs) throw()
 			std::cerr << "Events not writable." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EINTR:
 			std::cerr << "Interrupted by signal/timeout." << std::endl;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EINVAL:
 			std::cerr << "Epoll FD is not an epoll FD.. or maxevents is <= 0" << std::endl;
 			assert(1);
 			break;
-		#endif
+		#endif // TRAP_CODER_ERROR
+		#endif // EV_*
 		default:
 			std::cerr << "Unknown error." << std::endl;
 			break;
@@ -327,13 +339,16 @@ int Event::add(uint32_t fd, int ev) throw()
 	{
 		switch (error)
 		{
+		#ifdef TRAP_CODER_ERROR
 		case EBADF:
 			std::cerr << "Epoll FD is invalid." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EEXIST:
 			std::cerr << "FD already in set." << std::endl;
 			break;
+		#ifdef TRAP_CODER_ERROR
 		case EINVAL:
 			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
 			assert(1);
@@ -341,13 +356,19 @@ int Event::add(uint32_t fd, int ev) throw()
 		case ENOENT:
 			std::cerr << "FD not in set." << std::endl;
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
 			throw new std::bad_alloc;
 			break;
+		#ifdef TRAP_CODER_ERROR
 		case EPERM:
 			std::cerr << "Target FD does not support epoll." << std::endl;
 			assert(1);
+			break;
+		#endif // TRAP_CODER_ERROR
+		default:
+			std::cerr << "Unkown error" << std::endl;
 			break;
 		}
 	}
@@ -414,17 +435,16 @@ int Event::modify(uint32_t fd, int ev) throw()
 	{
 		switch (error)
 		{
+		#ifdef TRAP_CODER_ERROR
 		case EBADF:
 			std::cerr << "Epoll FD is invalid." << std::endl;
 			assert(1);
-			break;
-		case EEXIST:
-			std::cerr << "FD already in set." << std::endl;
 			break;
 		case EINVAL:
 			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ENOENT:
 			std::cerr << "FD not in set." << std::endl;
 			break;
@@ -432,9 +452,14 @@ int Event::modify(uint32_t fd, int ev) throw()
 			std::cerr << "Out of memory" << std::endl;
 			throw new std::bad_alloc;
 			break;
+		#ifdef TRAP_CODER_ERROR
 		case EPERM:
 			std::cerr << "Target FD does not support epoll." << std::endl;
 			assert(1);
+			break;
+		#endif
+		default:
+			std::cerr << "Unknown error" << std::endl;
 			break;
 		}
 	}
@@ -475,17 +500,16 @@ int Event::remove(uint32_t fd, int ev) throw()
 	{
 		switch (error)
 		{
+		#ifdef TRAP_CODER_ERROR
 		case EBADF:
 			std::cerr << "Epoll FD is invalid." << std::endl;
 			assert(1);
-			break;
-		case EEXIST:
-			std::cerr << "FD already in set." << std::endl;
 			break;
 		case EINVAL:
 			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ENOENT:
 			std::cerr << "FD not in set." << std::endl;
 			break;
@@ -493,9 +517,14 @@ int Event::remove(uint32_t fd, int ev) throw()
 			std::cerr << "Out of memory" << std::endl;
 			throw new std::bad_alloc;
 			break;
+		#ifdef TRAP_CODER_ERROR
 		case EPERM:
 			std::cerr << "Target FD does not support epoll." << std::endl;
 			assert(1);
+			break;
+		#endif // TRAP_CODER_ERROR
+		default:
+			std::cerr << "Unknown error"  << std::endl;
 			break;
 		}
 	}
