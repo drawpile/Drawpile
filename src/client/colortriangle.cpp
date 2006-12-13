@@ -24,6 +24,8 @@
 
 #include "colortriangle.h"
 
+#include "../../config.h"
+
 #ifndef DESIGNER_PLUGIN
 namespace widgets {
 #endif
@@ -335,10 +337,17 @@ void ColorTriangle::makeRing()
 					1.0
 					);
 
+#ifdef BIG_ENDIAN
 			*buf++ = color.blue();
 			*buf++ = color.green();
 			*buf++ = color.red();
 			*buf++ = 255;
+#else
+			*buf++ = 255;
+			*buf++ = color.red();
+			*buf++ = color.green();
+			*buf++ = color.blue();
+#endif
 		}
 	}
 	wheel_ = QPixmap::fromImage(ring);
@@ -451,10 +460,17 @@ void ColorTriangle::makeTriangle()
 					*buf++ = 0;
 					*buf++ = 0;
 				} else {
+#ifdef BIG_ENDIAN
 					*buf++ = LERP (bl, br, xl, xr, xx);
 					*buf++ = LERP (gl, gr, xl, xr, xx);
 					*buf++ = LERP (rl, rr, xl, xr, xx);
 					*buf++ = 0xff;
+#else
+					*buf++ = 0xff;
+					*buf++ = LERP (rl, br, xl, xr, xx);
+					*buf++ = LERP (gl, gr, xl, xr, xx);
+					*buf++ = LERP (bl, rr, xl, xr, xx);
+#endif
 				}
 			}
 		}
