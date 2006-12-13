@@ -337,16 +337,16 @@ void ColorTriangle::makeRing()
 					1.0
 					);
 
-#ifdef BIG_ENDIAN
-			*buf++ = color.blue();
-			*buf++ = color.green();
-			*buf++ = color.red();
+#ifdef IS_BIG_ENDIAN
 			*buf++ = 255;
+			*buf++ = color.red();
+			*buf++ = color.green();
+			*buf++ = color.blue();
 #else
-			*buf++ = 255;
-			*buf++ = color.red();
-			*buf++ = color.green();
 			*buf++ = color.blue();
+			*buf++ = color.green();
+			*buf++ = color.red();
+			*buf++ = 255;
 #endif
 		}
 	}
@@ -460,16 +460,16 @@ void ColorTriangle::makeTriangle()
 					*buf++ = 0;
 					*buf++ = 0;
 				} else {
-#ifdef BIG_ENDIAN
-					*buf++ = LERP (bl, br, xl, xr, xx);
-					*buf++ = LERP (gl, gr, xl, xr, xx);
-					*buf++ = LERP (rl, rr, xl, xr, xx);
-					*buf++ = 0xff;
-#else
+#ifdef IS_BIG_ENDIAN
 					*buf++ = 0xff;
 					*buf++ = LERP (rl, br, xl, xr, xx);
 					*buf++ = LERP (gl, gr, xl, xr, xx);
 					*buf++ = LERP (bl, rr, xl, xr, xx);
+#else
+					*buf++ = LERP (bl, br, xl, xr, xx);
+					*buf++ = LERP (gl, gr, xl, xr, xx);
+					*buf++ = LERP (rl, rr, xl, xr, xx);
+					*buf++ = 0xff;
 #endif
 				}
 			}

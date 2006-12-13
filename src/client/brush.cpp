@@ -255,16 +255,16 @@ void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 	for(int y=offy;y<h;++y) {
 		for(int x=offx;x<w;++x) {
 			const int a = *(src++);
-#ifdef BIG_ENDIAN
-			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
-			*dest = a*(green - *dest) / 256 + *dest; ++dest;
-			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+#ifdef IS_BIG_ENDIAN
 			++dest;
+			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+			*dest = a*(green - *dest) / 256 + *dest; ++dest;
+			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
 #else
-			++dest;
-			*dest = a*(red - *dest) / 256 + *dest; ++dest;
-			*dest = a*(green - *dest) / 256 + *dest; ++dest;
 			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
+			*dest = a*(green - *dest) / 256 + *dest; ++dest;
+			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+			++dest;
 #endif
 		}
 		dest += nextline + (dia-w)*4;
