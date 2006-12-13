@@ -87,26 +87,32 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		#endif
 			std::cerr << "Would block, try again." << std::endl;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Invalid FD" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EINTR:
 			std::cerr << "Interrupted by signal." << std::endl;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EINVAL:
 			std::cerr << "Not listening." << std::endl;
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EMFILE:
 			std::cerr << "Per-process open FD limit reached." << std::endl;
 			break;
 		case ENFILE:
 			std::cerr << "System open FD limit reached." << std::endl;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EFAULT:
 			std::cerr << "Addr not writable" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ENOMEM:
 			std::cerr << "Out of memory." << std::endl;
 			break;
@@ -114,6 +120,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			std::cerr << "Firewall forbids." << std::endl;
 			break;
 		#ifndef WIN32
+		#if defined( TRAP_CODER_ERROR )
 		case ENOTSOCK:
 			std::cerr << "Not a socket." << std::endl;
 			assert(1);
@@ -122,6 +129,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			std::cerr << "Not of type, SOCK_STREAM." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ECONNABORTED:
 			std::cerr << "Connection aborted" << std::endl;
 			break;
@@ -129,10 +137,12 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			std::cerr << "Out of network buffers" << std::endl;
 			break;
 		case EPROTO:
+			// whatever this is?
 			std::cerr << "Protocol error." << std::endl;
 			break;
 		#endif // !WIN32
 		#ifdef LINUX
+		// no idea what these are mostly.
 		case ENOSR:
 			std::cerr << "ENOSR" << std::endl;
 			break;
@@ -190,10 +200,12 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 	{
 		switch (error)
 		{
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Invalid FD" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EINVAL:
 			// According to docks, this may change in the future.
 			std::cerr << "Socket already bound" << std::endl;
@@ -204,10 +216,12 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 			assert(1);
 			break;
 		#ifndef WIN32
+		#if defined( TRAP_CODER_ERROR )
 		case ENOTSOCK:
 			std::cerr << "Not a socket." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		#endif // !WIN32
 		default:
 			std::cerr << "Unknown error." << std::endl;
@@ -231,11 +245,14 @@ int Socket::listen() throw()
 	{
 		switch (error)
 		{
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Invalid FD" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		#ifndef WIN32
+		#if defined( TRAP_CODER_ERROR )
 		case ENOTSOCK:
 			std::cerr << "Not a socket." << std::endl;
 			assert(1);
@@ -244,6 +261,7 @@ int Socket::listen() throw()
 			std::cerr << "Does not support listen." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		#endif // !WIN32
 		default:
 			std::cerr << "Unknown error." << std::endl;
@@ -276,7 +294,9 @@ int Socket::send(char* buffer, size_t buflen) throw()
 		case EAGAIN:
 		#endif
 			std::cerr << "Would block, try again" << std::endl;
+			return SOCKET_ERROR - 1;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Invalid fD" << std::endl;
 			assert(1);
@@ -285,15 +305,20 @@ int Socket::send(char* buffer, size_t buflen) throw()
 			std::cerr << "Invalid parameter address." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EINTR:
 			std::cerr << "Interrupted by signal." << std::endl;
+			return SOCKET_ERROR - 1;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EINVAL:
 			std::cerr << "Invalid argument" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
+			return SOCKET_ERROR - 1;
 			break;
 		case EPIPE:
 			std::cerr << "Pipe broken, connection closed on local end." << std::endl;
@@ -302,6 +327,7 @@ int Socket::send(char* buffer, size_t buflen) throw()
 		case ECONNRESET:
 			std::cerr << "Connection reset by peer" << std::endl;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EDESTADDRREQ: // likely result of sendmsg()
 			std::cerr << "Not connceted, and no peer defined." << std::endl;
 			assert(1);
@@ -322,12 +348,14 @@ int Socket::send(char* buffer, size_t buflen) throw()
 			std::cerr << "Already connected, but recipient was specified." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case EMSGSIZE:
 			std::cerr << "Socket requires atomic sending." << std::endl;
 			assert(1);
 			break;
 		case ENOBUFS:
 			std::cerr << "Out of buffers" << std::endl;
+			return SOCKET_ERROR - 1;
 			break;
 		#endif // !WIN32
 		default:
@@ -355,10 +383,12 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 	{
 		switch (error)
 		{
+		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
 			std::cerr << "Invalid FD" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		#ifdef EWOULDBLOCK
 		case EWOULDBLOCK:
 		#else
@@ -366,11 +396,14 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 		#endif
 			// Should retry
 			std::cerr << "Would block, try again." << std::endl;
+			return SOCKET_ERROR - 1;
 			break;
 		case EINTR:
 			// Should retry
 			std::cerr << "Interrupted by signal." << std::endl;
+			return SOCKET_ERROR - 1;
 			break;
+		#if defined( TRAP_CODER_ERROR )
 		case EFAULT:
 			std::cerr << "Buffer points to invalid address" << std::endl;
 			assert(1);
@@ -379,11 +412,13 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 			std::cerr << "Invalid argument." << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
-			//throw std::bad_alloc();
+			return SOCKET_ERROR - 1;
 			break;
 		#ifndef WIN32
+		#if defined( TRAP_CODER_ERROR )
 		case ECONNREFUSED:
 			std::cerr << "Connection refused" << std::endl;
 			break;
@@ -395,6 +430,7 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 			std::cerr << "Not a socket" << std::endl;
 			assert(1);
 			break;
+		#endif // TRAP_CODER_ERROR
 		#endif // !WIN32
 		default:
 			// Should not happen

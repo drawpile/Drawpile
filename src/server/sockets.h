@@ -178,6 +178,7 @@ public:
 	 * @param buflen declares the number of bytes to be sent from buffer.
 	 *
 	 * @return number of bytes actually sent.
+	 * @return (SOCKET_ERROR - 1) if the operation would block.
 	 * @return SOCKET_ERROR otherwise.
 	 */
 	int send(char* buffer, size_t buflen) throw();
@@ -189,6 +190,7 @@ public:
 	 *
 	 * @return number of bytes read.
 	 * @return 0 if connection was closed on the other end.
+	 * @return (SOCKET_ERROR - 1) if the operation would block.
 	 * @return SOCKET_ERROR otherwise.
 	 */
 	int recv(char* buffer, size_t buflen) throw();
