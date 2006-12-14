@@ -36,6 +36,10 @@ namespace widgets {
  */
 class PLUGIN_EXPORT ColorTriangle : public QWidget {
 	Q_OBJECT
+	Q_PROPERTY(QColor color READ color WRITE setColor)
+	Q_PROPERTY(int hue READ hue)
+	Q_PROPERTY(int saturation READ saturation)
+	Q_PROPERTY(int value READ value)
 	public:
 		ColorTriangle(QWidget *parent=0,const QColor& color = Qt::white);
 
@@ -57,6 +61,9 @@ class PLUGIN_EXPORT ColorTriangle : public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
+		void dragEnterEvent(QDragEnterEvent *event);
+		void dropEvent(QDropEvent *event);
+
 	private:
 		//! Update the entire color triangle
 		void updateColorTriangle();

@@ -34,6 +34,7 @@ ColorTriangle::ColorTriangle(QWidget *parent,const QColor& color)
 	: QWidget(parent), mode_(NODRAG)
 {
 	color.getHsvF(&hue_,&saturation_,&value_);
+	setAcceptDrops(true);
 	updateColorTriangle();
 }
 
@@ -178,6 +179,27 @@ void ColorTriangle::mouseReleaseEvent(QMouseEvent *event)
 {
 	(void)event;
 	mode_ = NODRAG;
+}
+
+/**
+ * @brief accept color drops
+ * @param event event info
+ */
+void ColorTriangle::dragEnterEvent(QDragEnterEvent *event)
+{
+        if(event->mimeData()->hasFormat("application/x-color"))
+                event->acceptProposedAction();
+}
+
+/**
+ * @brief handle color drops
+ * @param event event info
+ */
+void ColorTriangle::dropEvent(QDropEvent *event)
+{
+        QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
+		setColor(col);
+		emit colorChanged(col);
 }
 
 /**
