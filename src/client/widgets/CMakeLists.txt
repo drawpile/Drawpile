@@ -3,4 +3,5 @@
 subdirs (
 	brushpreview/
 	colortriangle/
+	gradientslider/
 )

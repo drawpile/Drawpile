@@ -56,6 +56,7 @@ class ColorDialog : public QDialog
 		void updateTriangle(const QColor& color);
 
 	private:
+		void updateBars();
 		Ui_ColorDialog *ui_;
 		bool updating_;
 };

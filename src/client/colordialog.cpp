@@ -19,7 +19,9 @@
 */
 #include "colordialog.h"
 #include "colortriangle.h"
+#include "gradientslider.h"
 using widgets::ColorTriangle;
+using widgets::GradientSlider;
 
 #include "ui_colordialog.h"
 
@@ -61,6 +63,7 @@ void ColorDialog::setColor(const QColor& color)
 	ui_->saturation->setValue(s);
 	ui_->value->setValue(v);
 	ui_->colorTriangle->setColor(color);
+	updateBars();
 	updating_ = false;
 }
 
@@ -86,6 +89,7 @@ void ColorDialog::updateRgb()
 		ui_->saturation->setValue(s);
 		ui_->value->setValue(v);
 		ui_->colorTriangle->setColor(col);
+		updateBars();
 		emit colorChanged(col);
 		updating_ = false;
 	}
@@ -107,6 +111,7 @@ void ColorDialog::updateHsv()
 		ui_->green->setValue(col.green());
 		ui_->blue->setValue(col.blue());
 		ui_->colorTriangle->setColor(col);
+		updateBars();
 		emit colorChanged(col);
 		updating_ = false;
 	}
@@ -132,6 +137,37 @@ void ColorDialog::updateTriangle(const QColor& color)
 
 		updating_ = false;
 	}
+}
+
+/**
+ * Update the gradient bar colors
+ */
+void ColorDialog::updateBars()
+{
+	QColor col = color();
+	int r,g,b;
+	qreal h,s,v;
+	col.getRgb(&r,&g,&b);
+	col.getHsvF(&h,&s,&v);
+
+	ui_->red->setColor1(QColor(0,g,b));
+	ui_->red->setColor2(QColor(255,g,b));
+
+	ui_->green->setColor1(QColor(r,0,b));
+	ui_->green->setColor2(QColor(r,255,b));
+
+	ui_->blue->setColor1(QColor(r,g,0));
+	ui_->blue->setColor2(QColor(r,g,255));
+
+	ui_->hue->setColorSaturation(s);
+	ui_->hue->setColorValue(v);
+
+	ui_->saturation->setColor1(QColor::fromHsvF(h,0,v));
+	ui_->saturation->setColor2(QColor::fromHsvF(h,1,v));
+
+	ui_->value->setColor1(QColor::fromHsvF(h,s,0));
+	ui_->value->setColor2(QColor::fromHsvF(h,s,1));
+
 }
 
 }
