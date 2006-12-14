@@ -29,4 +29,8 @@ add_file_dependencies (
 
 link_libraries( dpshared )
 
-add_executable ( dpsrv ${Server_Sources} ${Server_Headers} )
+if (MACOSX)
+	set ( EXEFORMAT MACOSX_BUNDLE )
+endif (MACOSX)
+
+add_executable ( dpsrv ${EXEFORMAT} ${Server_Sources} ${Server_Headers} )
