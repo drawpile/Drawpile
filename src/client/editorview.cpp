@@ -1,4 +1,3 @@
-#include <iostream>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -115,6 +114,11 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 		pendown_ = false;
 		emit penUp();
 	}
+}
+
+void EditorView::mouseDoubleClickEvent(QMouseEvent*)
+{
+	// Ignore doubleclicks
 }
 
 void EditorView::tabletEvent(QTabletEvent *event)
