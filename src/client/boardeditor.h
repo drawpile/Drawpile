@@ -22,6 +22,11 @@
 
 #include <QColor>
 
+namespace interface {
+	class BrushSource;
+	class ColorSource;
+}
+
 namespace drawingboard {
 
 class Board;
@@ -43,8 +48,23 @@ class BoardEditor {
 		BoardEditor(Board *board, User *user) : board_(board), user_(user) {}
 		virtual ~BoardEditor() {}
 
-		//! Get the brush currently in use
-		const Brush& currentBrush();
+		//! Set the brush source
+		void setBrushSource(interface::BrushSource *src);
+
+		//! Set the color source
+		void setColorSource(interface::ColorSource *src);
+
+		//! Get the brush currently in use by the local user
+		const Brush& currentBrush() const;
+
+		//! Get the brush from the local UI
+		Brush localBrush() const;
+
+		//! Set foreground color associated with the current board
+		void setLocalForeground(const QColor& color);
+
+		//! Set background color associated with the current board
+		void setLocalBackground(const QColor& color);
 
 		//! Get color from the board at the specified coordinates
 		QColor colorAt(int x,int y);
@@ -61,6 +81,9 @@ class BoardEditor {
 	protected:
 		Board *board_;
 		User *user_;
+	private:
+		interface::BrushSource *brush_;
+		interface::ColorSource *color_;
 };
 
 //! Board editor that modifies the local board

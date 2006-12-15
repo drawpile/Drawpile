@@ -46,8 +46,7 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 		~ToolSettings();
 
 		//! Get a brush with the current settings
-		drawingboard::Brush getBrush(const QColor& foreground,
-				const QColor& background) const;
+		drawingboard::Brush getBrush() const;
 
 	signals:
 		//! This signal is emitted when the current tool changes its size
@@ -56,6 +55,12 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 	public slots:
 		//! Set the tool for which settings are shown
 		void setTool(tools::Type tool);
+
+		//! Set foreground color
+		void setForeground(const QColor& color);
+
+		//! Set background color
+		void setBackground(const QColor& color);
 
 	private:
 		ToolSettings(const ToolSettings& ts);
@@ -67,6 +72,7 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 
 		tools::ToolSettings *currenttool_;
 		QStackedWidget *widgets_;
+		QColor fgcolor_, bgcolor_;
 };
 
 }

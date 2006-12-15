@@ -50,6 +50,12 @@ class ToolSettings {
 		//! Get the UI widget
 		QWidget *getUi() { return widget_; }
 
+		//! Set the foreground color
+		virtual void setForeground(const QColor& color) = 0;
+
+		//! Set the background color
+		virtual void setBackground(const QColor& color) = 0;
+
 		//! Get a brush based on the settings in the UI
 		/**
 		 * An UI widget must have been created before this can be called.
@@ -57,8 +63,7 @@ class ToolSettings {
 		 * @param background background color
 		 * @return brush with values from the UI widget
 		 */
-		virtual drawingboard::Brush getBrush(const QColor& foreground,
-				const QColor& background) const = 0;
+		virtual drawingboard::Brush getBrush() const = 0;
 
 		//! Get the brush size
 		/**
@@ -100,13 +105,15 @@ class BrushSettings : public ToolSettings {
 
 		QWidget *createUi(QWidget *parent);
 
-		drawingboard::Brush getBrush(const QColor& foreground,
-				const QColor& background) const;
+		void setForeground(const QColor& color);
+		void setBackground(const QColor& color);
+		drawingboard::Brush getBrush() const;
 
 		int getSize() const;
 
 	private:
 		Ui_BrushSettings *ui_;
+		QColor fg_,bg_;
 		bool swapcolors_;
 };
 
@@ -120,8 +127,9 @@ class NoSettings : public ToolSettings {
 
 		QWidget *createUi(QWidget *parent);
 
-		drawingboard::Brush getBrush(const QColor& foreground,
-				const QColor& background) const;
+		void setForeground(const QColor&);
+		void setBackground(const QColor&);
+		drawingboard::Brush getBrush() const;
 
 		int getSize() const { return 0; }
 };

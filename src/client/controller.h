@@ -29,6 +29,11 @@ namespace drawingboard {
 	class BoardEditor;
 }
 
+namespace interface {
+	class BrushSource;
+	class ColorSource;
+}
+
 //! Controller for drawing and network operations
 /**
  * The controller handles all drawing commands coming in from the
@@ -48,7 +53,9 @@ class Controller : public QObject
 	public:
 		Controller(QObject *parent=0);
 
-		void setBoard(drawingboard::Board *board);
+		void setModel(drawingboard::Board *board,
+				interface::BrushSource *brush,
+				interface::ColorSource *color);
 
 	public slots:
 		void penDown(int x,int y, qreal pressure, bool isEraser);

@@ -31,16 +31,12 @@ namespace interface {
 //! Interface for brush sources
 class BrushSource {
 	public:
-		virtual ~BrushSource() {}
-		virtual drawingboard::Brush getBrush(const QColor& foreground,
-				const QColor& background) const = 0;
+		virtual drawingboard::Brush getBrush() const = 0;
 };
 
 //! Interface for color sources
 class ColorSource {
 	public:
-		virtual ~ColorSource() {}
-
 		//! Get the foreground color
 		virtual QColor foreground() const = 0;
 
@@ -53,18 +49,6 @@ class ColorSource {
         //! Set background color
         virtual void setBackground(const QColor &c) = 0;
 
-};
-
-class Global {
-	public:
-		static void setBrushSource(BrushSource *src) { brush_ = src; }
-		static void setColorSource(ColorSource *src) { color_ = src; }
-
-		static BrushSource *brushSource() { return brush_; }
-		static ColorSource *colorSource() { return color_; }
-	private:
-		static BrushSource *brush_;
-		static ColorSource *color_;
 };
 
 }

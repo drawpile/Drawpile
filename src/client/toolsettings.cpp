@@ -97,27 +97,45 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	return widget;
 }
 
-drawingboard::Brush BrushSettings::getBrush(const QColor& foreground,
-		const QColor& background) const
+void BrushSettings::setForeground(const QColor& color)
+{
+	fg_ = color;
+	QPalette palette = ui_->preview->palette();
+	palette.setColor(swapcolors_?QPalette::Window:QPalette::WindowText, color);
+	ui_->preview->setPalette(palette);
+}
+
+void BrushSettings::setBackground(const QColor& color)
+{
+	bg_ = color;
+	QPalette palette = ui_->preview->palette();
+	palette.setColor(swapcolors_?QPalette::WindowText:QPalette::Window, color);
+	ui_->preview->setPalette(palette);
+}
+
+drawingboard::Brush BrushSettings::getBrush() const
 {
 	int radius = ui_->brushsize->value();
 	qreal hardness = ui_->brushhardness->value()/qreal(ui_->brushhardness->maximum());
 	qreal opacity = ui_->brushopacity->value()/qreal(ui_->brushopacity->maximum());
 	int radius2 = radius;
 	qreal hardness2 = hardness,opacity2 = opacity;
+	QColor color2 = swapcolors_?bg_:fg_;
 	if(ui_->pressuresize->isChecked())
 		radius2 = 0;
 	if(ui_->pressurehardness->isChecked())
 		hardness2 = 0;
 	if(ui_->pressureopacity->isChecked())
 		opacity2 = 0;
+	if(ui_->pressurecolor->isChecked())
+		color2 = swapcolors_?fg_:bg_;
 
-	drawingboard::Brush brush(radius,hardness,opacity,
-			swapcolors_?background:foreground);
+	drawingboard::Brush brush(radius,hardness,opacity, swapcolors_?bg_:fg_);
+
 	brush.setRadius2(radius2);
 	brush.setHardness2(hardness2);
 	brush.setOpacity2(opacity2);
-	brush.setColor2(swapcolors_?foreground:background);
+	brush.setColor2(color2);
 	return brush;
 }
 
@@ -139,12 +157,18 @@ QWidget *NoSettings::createUi(QWidget *parent)
 	return ui;
 }
 
-drawingboard::Brush NoSettings::getBrush(const QColor& foreground,
-		const QColor& background) const
+void NoSettings::setForeground(const QColor&)
 {
-	(void)background;
+}
+
+void NoSettings::setBackground(const QColor&)
+{
+}
+
+drawingboard::Brush NoSettings::getBrush() const
+{
 	// return a default brush
-	return drawingboard::Brush(1,1,1,foreground);
+	return drawingboard::Brush(1,1,1,Qt::black);
 }
 
 }

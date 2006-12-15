@@ -44,7 +44,7 @@ set (
 	main.cpp mainwindow.cpp netstatus.cpp hostlabel.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
-	tools.cpp toolsettings.cpp interfaces.cpp boardeditor.cpp aboutdialog.cpp
+	tools.cpp toolsettings.cpp boardeditor.cpp aboutdialog.cpp
 	gradientslider.cpp
 )
 

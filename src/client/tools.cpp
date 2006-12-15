@@ -23,7 +23,6 @@
 #include "brush.h"
 #include "board.h"
 #include "boardeditor.h"
-#include "interfaces.h"
 
 namespace tools {
 
@@ -57,10 +56,7 @@ Tool *Tool::get(drawingboard::BoardEditor *editor, Type type)
 
 void BrushBase::begin(int x,int y, qreal pressure)
 {
-	drawingboard::Brush brush = interface::Global::brushSource()->getBrush(
-			interface::Global::colorSource()->foreground(),
-			interface::Global::colorSource()->background()
-			);
+	drawingboard::Brush brush = editor_->localBrush();
 
 	if(editor_->currentBrush() != brush)
 		editor_->setTool(brush);
@@ -81,15 +77,13 @@ void BrushBase::end()
 void ColorPicker::begin(int x, int y, qreal pressure)
 {
 	(void)pressure;
-	interface::Global::colorSource()->setForeground(
-			editor_->colorAt(x,y));
+	editor_->setLocalForeground(editor_->colorAt(x,y));
 }
 
 void ColorPicker::motion(int x,int y, qreal pressure)
 {
 	(void)pressure;
-	interface::Global::colorSource()->setForeground(
-			editor_->colorAt(x,y));
+	editor_->setLocalForeground(editor_->colorAt(x,y));
 }
 
 void ColorPicker::end()

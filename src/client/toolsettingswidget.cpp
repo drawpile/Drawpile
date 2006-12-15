@@ -65,7 +65,21 @@ void ToolSettings::setTool(tools::Type tool) {
 	}
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());
+	currenttool_->setForeground(fgcolor_);
+	currenttool_->setBackground(bgcolor_);
 	emit sizeChanged(currenttool_->getSize());
+}
+
+void ToolSettings::setForeground(const QColor& color)
+{
+	fgcolor_ = color;
+	currenttool_->setForeground(color);
+}
+
+void ToolSettings::setBackground(const QColor& color)
+{
+	bgcolor_ = color;
+	currenttool_->setBackground(color);
 }
 
 /**
@@ -74,10 +88,9 @@ void ToolSettings::setTool(tools::Type tool) {
  * @param background background color
  * @return brush
  */
-drawingboard::Brush ToolSettings::getBrush(const QColor& foreground,
-				const QColor& background) const
+drawingboard::Brush ToolSettings::getBrush() const
 {
-	return currenttool_->getBrush(foreground, background);
+	return currenttool_->getBrush();
 }
 
 }

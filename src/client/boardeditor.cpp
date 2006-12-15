@@ -22,12 +22,38 @@
 #include "layer.h"
 #include "board.h"
 #include "user.h"
+#include "interfaces.h"
 
 namespace drawingboard {
 
-const Brush& BoardEditor::currentBrush()
+void BoardEditor::setBrushSource(interface::BrushSource *src)
+{
+	brush_ = src;
+}
+
+void BoardEditor::setColorSource(interface::ColorSource *src)
+{
+	color_ = src;
+}
+
+const Brush& BoardEditor::currentBrush() const
 {
 	return user_->brush();
+}
+
+Brush BoardEditor::localBrush() const
+{
+	return brush_->getBrush();
+}
+
+void BoardEditor::setLocalForeground(const QColor& color)
+{
+	color_->setForeground(color);
+}
+
+void BoardEditor::setLocalBackground(const QColor& color)
+{
+	color_->setBackground(color);
 }
 
 QColor BoardEditor::colorAt(int x,int y)

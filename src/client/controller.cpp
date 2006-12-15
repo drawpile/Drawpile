@@ -22,20 +22,22 @@
 #include "board.h"
 #include "brush.h"
 #include "tools.h"
-#include "dualcolorbutton.h"
-#include "toolsettingswidget.h"
+#include "boardeditor.h"
 
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), editor_(0)
 {
 }
 
-void Controller::setBoard(drawingboard::Board *board)
+void Controller::setModel(drawingboard::Board *board,
+		interface::BrushSource *brush,
+		interface::ColorSource *color)
 {
 	board_ = board;
 	board_->addUser(0);
 	editor_ = board->getEditor(true);
-
+	editor_->setBrushSource(brush);
+	editor_->setColorSource(color);
 }
 
 void Controller::setTool(tools::Type tool)
