@@ -240,7 +240,8 @@ void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 
 	// Update brush cache if out of date
 	if(cachepressure_<0 ||
-			(sensitive_ && fabs(pressure - cachepressure_) > 1.0/256.0)) {
+			(sensitive_ && (dia!=radius(cachepressure_)*2 ||
+							fabs(pressure - cachepressure_) > 1.0/256.0))) {
 		cachepressure_ = pressure;
 		updateCache();
 	}
