@@ -69,9 +69,11 @@ Qt4_add_resources ( Client_Resource_Sources ${Client_Resources} )
 
 Qt4_wrap_CPP ( MOC_Sources ${Client_Headers} )
 
+if (NOT DEBUG)
 if (WIN32)
 	set ( EXEFORMAT WIN32 )
 endif (WIN32)
+endif (NOT DEBUG)
 
 if (MACOSX)
 	set ( EXEFORMAT MACOSX_BUNDLE )
