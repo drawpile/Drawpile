@@ -292,7 +292,7 @@ void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 
 /**
  * This copy operator tries to preserve the brush cache.
- * If both brushes contain equal parameters (opacity excluded)
+ * If both brushes contain equal parameters (color excluded)
  * and the brush that is being overwritten (but not the other one)
  * has a cached brush image, then the old cache is preserved.
  * @param brush brush to replace this with

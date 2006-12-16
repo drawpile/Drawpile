@@ -70,6 +70,7 @@ Qt4_add_resources ( Client_Resource_Sources ${Client_Resources} )
 Qt4_wrap_CPP ( MOC_Sources ${Client_Headers} )
 
 if (NOT DEBUG)
+add_definitions(-DQT_NO_DEBUG)
 if (WIN32)
 	set ( EXEFORMAT WIN32 )
 endif (WIN32)

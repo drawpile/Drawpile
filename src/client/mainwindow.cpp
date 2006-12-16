@@ -246,6 +246,10 @@ void MainWindow::about()
 
 void MainWindow::help()
 {
+}
+
+void MainWindow::homepage()
+{
 	QDesktopServices::openUrl(QUrl("http://drawpile.sourceforge.net/"));
 }
 
@@ -322,7 +326,10 @@ void MainWindow::initActions()
 	// Help actions
 	help_ = new QAction(tr("DrawPile Help"), this);
 	help_->setShortcut(QKeySequence("F1"));
+	help_->setEnabled(false);
 	connect(help_,SIGNAL(triggered()), this, SLOT(help()));
+	homepage_ = new QAction(tr("DrawPile homepage"), this);
+	connect(homepage_,SIGNAL(triggered()), this, SLOT(homepage()));
 	about_ = new QAction(tr("About DrawPile"), this);
 	about_->setMenuRole(QAction::AboutRole);
 	connect(about_,SIGNAL(triggered()), this, SLOT(about()));
@@ -365,6 +372,7 @@ void MainWindow::createMenus()
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(help_);
+	helpmenu->addAction(homepage_);
 	helpmenu->addSeparator();
 	helpmenu->addAction(about_);
 }

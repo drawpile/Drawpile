@@ -65,6 +65,8 @@ class MainWindow : public QMainWindow {
 		void about();
 		//! Display online help
 		void help();
+		//! Go to drawpile homepage
+		void homepage();
 
 	signals:
 		//! This signal is emitted when the current tool is changed
@@ -136,6 +138,7 @@ class MainWindow : public QMainWindow {
 		QAction *docktoggles_;
 
 		QAction *help_;
+		QAction *homepage_;
 		QAction *about_;
 };
 
