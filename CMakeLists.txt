@@ -2,6 +2,38 @@ project ( DrawPile CXX C )
 
 cmake_minimum_required( VERSION 2.4.5 )
 
+### Optimize ###
+
+include ( Optimize.cmake )
+
+if ( STRIP_EXE )
+	# Doesn't work for some reason
+	
+	add_custom_command (
+		TARGET drawpile
+		POST_BUILD
+		COMMAND strip ARGS drawpile.*
+		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+		VERBATIM
+	)
+	
+	add_custom_command (
+		TARGET server
+		POST_BUILD
+		COMMAND strip ARGS dpserver.*
+		WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+		VERBATIM
+	)
+	
+	add_custom_command (
+		TARGET shared
+		POST_BUILD
+		COMMAND strip ARGS *dpshared.*
+		WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}
+		VERBATIM
+	)
+endif ( STRIP_EXE )
+
 ### config options ###
 
 option ( NOCLIENT "Don't compile client" OFF )
@@ -131,9 +163,9 @@ test_big_endian ( IS_BIG_ENDIAN )
 
 ### subdirs ###
 
-add_subdirectory( src/ )
-
 export_library_dependencies( cmake.depend )
 
 configure_file ( config.h.cmake config.h )
 add_definitions ( -DHAVE_CONFIG_H )
+
+add_subdirectory( src/ )

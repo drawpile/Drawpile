@@ -33,4 +33,4 @@ if (MACOSX)
 	set ( EXEFORMAT MACOSX_BUNDLE )
 endif (MACOSX)
 
-add_executable ( dpsrv ${EXEFORMAT} ${Server_Sources} ${Server_Headers} )
+add_executable ( dpserver ${EXEFORMAT} ${Server_Sources} ${Server_Headers} )
