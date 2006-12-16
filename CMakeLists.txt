@@ -104,7 +104,8 @@ if ( WIN32 )
 	endif ( HAVE_WSA )
 	
 	if ( NOT EV_SELECT )
-		message ( "!! select(2) not found, even though it should've" )
+		message ( "++ Assuming select(2) exists" )
+		set ( EV_SELECT ON )
 	endif ( NOT EV_SELECT )
 endif ( WIN32 )
 
