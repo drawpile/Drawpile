@@ -101,8 +101,10 @@ include ( TestForSTDNamespace )
 #! needs C in project ()
 include ( TestBigEndian )
 test_big_endian ( IS_BIG_ENDIAN )
-add_definitions( -DIS_BIG_ENDIAN )
-#check_variable_exists ( IS_BIG_ENDIAN IS_BIG_ENDIAN )
+if ( IS_BIG_ENDIAN )
+	check_variable_exists ( IS_BIG_ENDIAN IS_BIG_ENDIAN )
+	add_definitions( -DIS_BIG_ENDIAN )
+endif ( IS_BIG_ENDIAN )
 
 ### subdirs ###
 
