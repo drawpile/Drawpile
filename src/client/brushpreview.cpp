@@ -27,24 +27,30 @@
 namespace widgets {
 #endif
 
-BrushPreview::BrushPreview(QWidget *parent)
-	: QWidget(parent)
+BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
+	: QFrame(parent,f), bg_(32,32)
 {
 	setMinimumSize(32,32);
-	brush_.setColor(palette().color(QPalette::WindowText));
-	brush_.setColor2(palette().color(QPalette::WindowText));
+	updateBackground();
 }
 
-void BrushPreview::changeEvent(QEvent *event)
+void BrushPreview::setColor1(const QColor& color)
 {
-	QWidget::changeEvent(event);
-	if(event->type() == QEvent::PaletteChange) {
-		brush_.setColor(palette().color(QPalette::WindowText));
-		if(colorpressure_)
-			brush_.setColor2(palette().color(QPalette::Window));
-		else
-			brush_.setColor2(palette().color(QPalette::WindowText));
+	color1_ = color;
+	brush_.setColor(color);
+	if(colorpressure_==false)
+		brush_.setColor2(color);
+	updatePreview();
+	update();
+}
+
+void BrushPreview::setColor2(const QColor& color)
+{
+	color2_ = color;
+	if(colorpressure_) {
+		brush_.setColor2(color);
 		updatePreview();
+		update();
 	}
 }
 
@@ -53,17 +59,40 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 	updatePreview();
 }
 
+void BrushPreview::changeEvent(QEvent *event)
+{
+	updateBackground();
+	updatePreview();
+	update();
+}
+
 void BrushPreview::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	painter.drawImage(QPoint(0,0), preview_);
+	painter.drawImage(contentsRect().topLeft(), preview_);
+}
+
+void BrushPreview::updateBackground()
+{
+	QPainter painter(&bg_);
+	bg_.fill(palette().light().color());
+	QRectF rect(0,0,bg_.width()/2, bg_.height()/2);
+	painter.fillRect(rect,palette().mid());
+	rect.moveTo(rect.width(),rect.height());
+	painter.fillRect(rect,palette().mid());
 }
 
 void BrushPreview::updatePreview()
 {
-	if(preview_.size() != size())
-		preview_ = QImage(size(), QImage::Format_RGB32);
-	preview_.fill(palette().color(QPalette::Window).rgb());
+	if(preview_.size() != contentsRect().size())
+		preview_ = QImage(contentsRect().size(), QImage::Format_RGB32);
+
+	// Paint background
+	{
+		QPainter painter(&preview_);
+		painter.fillRect(QRect(0,0,preview_.width(),preview_.height()),
+				bg_);
+	}
 
 	const int strokew = width() - width()/4;
 	const int strokeh = height() / 4;
@@ -169,9 +198,9 @@ void BrushPreview::setColorPressure(bool enable)
 {
 	colorpressure_ = enable;
 	if(enable)
-		brush_.setColor2(palette().color(QPalette::Window));
+		brush_.setColor2(color2_);
 	else
-		brush_.setColor2(palette().color(QPalette::WindowText));
+		brush_.setColor2(color1_);
 	updatePreview();
 	update();
 }

@@ -56,14 +56,6 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	widget->hide();
 	setUiWidget(widget);
 
-	if(swapcolors_) {
-		QPalette palette = ui_->preview->palette();
-		QColor tmp = palette.color(QPalette::Window);
-		palette.setColor(QPalette::Window, palette.color(QPalette::WindowText));
-		palette.setColor(QPalette::WindowText,tmp);
-		ui_->preview->setPalette(palette);
-	}
-
 	// Load previous settings
 	QSettings cfg;
 	cfg.beginGroup("tools");
@@ -100,17 +92,13 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 void BrushSettings::setForeground(const QColor& color)
 {
 	fg_ = color;
-	QPalette palette = ui_->preview->palette();
-	palette.setColor(swapcolors_?QPalette::Window:QPalette::WindowText, color);
-	ui_->preview->setPalette(palette);
+	ui_->preview->setColor1(color);
 }
 
 void BrushSettings::setBackground(const QColor& color)
 {
 	bg_ = color;
-	QPalette palette = ui_->preview->palette();
-	palette.setColor(swapcolors_?QPalette::WindowText:QPalette::Window, color);
-	ui_->preview->setPalette(palette);
+	ui_->preview->setColor2(color);
 }
 
 drawingboard::Brush BrushSettings::getBrush() const

@@ -20,7 +20,7 @@
 #ifndef BRUSHPREVIEW_H
 #define BRUSHPREVIEW_H
 
-#include <QWidget>
+#include <QFrame>
 
 #include "brush.h"
 
@@ -35,10 +35,10 @@ namespace widgets {
 //! Brush previewing widget
 /**
  */
-class PLUGIN_EXPORT BrushPreview : public QWidget {
+class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT
 	public:
-		BrushPreview(QWidget *parent=0);
+		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
 
 	public slots:
 		//! Set the brush to preview
@@ -59,6 +59,12 @@ class PLUGIN_EXPORT BrushPreview : public QWidget {
 		//! Enable/disable default size pressure sensitivity
 		void setSizePressure(bool enable);
 
+		//! Set foreground color
+		void setColor1(const QColor& color);
+
+		//! Set background color
+		void setColor2(const QColor& color);
+
 		//! Enable/disable default opacity pressure sensitivity
 		void setOpacityPressure(bool enable);
 
@@ -71,17 +77,20 @@ class PLUGIN_EXPORT BrushPreview : public QWidget {
 	protected:
 		void paintEvent(QPaintEvent *);
 		void resizeEvent(QResizeEvent *);
-		void changeEvent(QEvent *event);
+		void changeEvent(QEvent *);
 
 	private:
 		void updatePreview();
+		void updateBackground();
 
 		drawingboard::Brush brush_;
 		QImage preview_;
+		QPixmap bg_;
 		bool sizepressure_;
 		bool opacitypressure_;
 		bool hardnesspressure_;
 		bool colorpressure_;
+		QColor color1_, color2_;
 };
 
 #ifndef DESIGNER_PLUGIN
