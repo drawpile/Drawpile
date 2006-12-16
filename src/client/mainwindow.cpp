@@ -292,7 +292,7 @@ void MainWindow::initActions()
 	brushtool_->setCheckable(true); brushtool_->setChecked(true);
 	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("Eraser"), this);
 	erasertool_->setCheckable(true);
-	pickertool_ = new QAction(/*QIcon(":icons/draw-picker.png"),*/tr("Color picker"), this);
+	pickertool_ = new QAction(QIcon(":icons/draw-picker.png"),tr("Color picker"), this);
 	pickertool_->setCheckable(true);
 	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom in"), this);
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
