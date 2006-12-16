@@ -113,7 +113,6 @@ class BrushSettings : public ToolSettings {
 
 	private:
 		Ui_BrushSettings *ui_;
-		QColor fg_,bg_;
 		bool swapcolors_;
 };
 

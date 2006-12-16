@@ -91,40 +91,23 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	fg_ = color;
-	ui_->preview->setColor1(color);
+	if(swapcolors_)
+		ui_->preview->setColor2(color);
+	else
+		ui_->preview->setColor1(color);
 }
 
 void BrushSettings::setBackground(const QColor& color)
 {
-	bg_ = color;
-	ui_->preview->setColor2(color);
+	if(swapcolors_)
+		ui_->preview->setColor1(color);
+	else
+		ui_->preview->setColor2(color);
 }
 
 drawingboard::Brush BrushSettings::getBrush() const
 {
-	int radius = ui_->brushsize->value();
-	qreal hardness = ui_->brushhardness->value()/qreal(ui_->brushhardness->maximum());
-	qreal opacity = ui_->brushopacity->value()/qreal(ui_->brushopacity->maximum());
-	int radius2 = radius;
-	qreal hardness2 = hardness,opacity2 = opacity;
-	QColor color2 = swapcolors_?bg_:fg_;
-	if(ui_->pressuresize->isChecked())
-		radius2 = 0;
-	if(ui_->pressurehardness->isChecked())
-		hardness2 = 0;
-	if(ui_->pressureopacity->isChecked())
-		opacity2 = 0;
-	if(ui_->pressurecolor->isChecked())
-		color2 = swapcolors_?fg_:bg_;
-
-	drawingboard::Brush brush(radius,hardness,opacity, swapcolors_?bg_:fg_);
-
-	brush.setRadius2(radius2);
-	brush.setHardness2(hardness2);
-	brush.setOpacity2(opacity2);
-	brush.setColor2(color2);
-	return brush;
+	return ui_->preview->brush();
 }
 
 int BrushSettings::getSize() const
