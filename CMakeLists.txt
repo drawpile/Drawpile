@@ -32,16 +32,16 @@ include ( CheckIncludeFiles )
 
 check_include_files ( stdint.h HAVE_STDINT_H )
 
-#set ( EV_SELECT OFF CACHE BOOL "select(2) event mechanism" )
-#set ( EV_PSELECT OFF CACHE BOOL "pselect(2) event mechanism" )
-#set ( EV_EPOLL OFF CACHE BOOL "epoll(4) event mechanism" )
-#set ( EV_KQUEUE OFF CACHE BOOL "kqueue(2) event mechanism" )
-#set ( EV_KEVENT OFF CACHE BOOL "kevent(2) event mechanism" )
-#set ( NDEBUG ON CACHE BOOL "No debug; disables assert()" )
+set ( EV_SELECT OFF CACHE BOOL "select(2) event mechanism" )
+set ( EV_PSELECT OFF CACHE BOOL "pselect(2) event mechanism" )
+set ( EV_EPOLL OFF CACHE BOOL "epoll(4) event mechanism" )
+set ( EV_KQUEUE OFF CACHE BOOL "kqueue(2) event mechanism" )
+set ( EV_KEVENT OFF CACHE BOOL "kevent(2) event mechanism" )
+set ( NDEBUG ON CACHE BOOL "No debug; disables assert()" )
 
 # EPOLL
 if ( NOT NOEPOLL )
-	check_include_files ( sys/epoll.h EV_EPOLL )
+	check_include_files ( "sys/epoll.h" EV_EPOLL )
 	if ( EV_EPOLL )
 		#add_definitions ( -DEV_EPOLL )
 		message("++ epoll(4) event mechanism found")
@@ -75,6 +75,12 @@ if ( NOT NOSELECT )
 	
 	# find sys/select.h
 	check_include_files ( "sys/select.h" HAVE_SELECT_H )
+	if ( NOT EV_SELECT )
+		if ( HAVE_SELECT_H )
+			message ( "++ Assuming select(2) exists" )
+			set ( EV_SELECT ON )
+		endif ( HAVE_SELECT_H )
+	endif ( NOT EV_SELECT )
 	
 	if ( EV_SELECT )
 		message("++ select(2) event mechanism found")
@@ -107,6 +113,7 @@ if ( NOT DEBUG )
 	add_definitions( -DNDEBUG )
 else ( NOT DEBUG )
 	message ( "++ Debugging enabled" )
+	set ( NDEBUG OFF )
 endif ( NOT DEBUG )
 
 ### tests ###
