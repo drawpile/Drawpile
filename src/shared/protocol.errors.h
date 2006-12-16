@@ -33,7 +33,7 @@
 #ifndef Protocol_Errors_INCLUDED
 #define Protocol_Errors_INCLUDED
 
-// #include <exception>
+// #include <stdexcept>
 
 namespace protocol
 {

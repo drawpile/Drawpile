@@ -210,7 +210,7 @@ int Event::wait(uint32_t msecs) throw()
 	// 
 	#elif defined(EV_PSELECT) or defined(EV_SELECT)
 	
-	#ifdef HAVE_SELECT_COPY
+	#ifdef EV_SELECT_COPY
 	FD_COPY(&fds[inSet(read)], &t_fds[inSet(read)]),
 	FD_COPY(&fds[inSet(write)], &t_fds[inSet(write)]);
 	#else

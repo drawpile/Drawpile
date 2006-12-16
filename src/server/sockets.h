@@ -29,14 +29,22 @@
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
+#include "../../config.h"
+
 #ifndef NDEBUG
 	#include <iostream>
 #endif
 
+#include <stdexcept>
+
 #include <stdint.h>
 
 #ifdef WIN32
+	#if defined( HAVE_WSA )
 	#include <winsock2.h>
+	#else
+	#error Windows socket API was not detected.
+	#endif // WSA
 	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
 #else
 	#include <sys/socket.h>

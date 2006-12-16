@@ -524,7 +524,7 @@ int Server::run() throw()
 			if (ev.isset(lsock.fd(), ev.read))
 			{
 				#ifndef NDEBUG
-				std::cout << "server socket triggered" << std::endl;
+				std::cout << "Server socket triggered" << std::endl;
 				#endif
 				
 				ec--;
@@ -545,7 +545,6 @@ int Server::run() throw()
 					std::cout << "New connection but no socket?" << std::endl;
 					#endif
 				}
-				// new connection?
 			}
 			
 			if (ec > 0)

@@ -40,6 +40,8 @@
 //#include <sys/time.h>
 #include <getopt.h> // for command-line opts
 
+#include <stdexcept>
+
 #include <bitset>
 #include <map>
 #include <list>

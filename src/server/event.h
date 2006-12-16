@@ -46,8 +46,11 @@
 	#error kqueue() not implemented.
 #elif defined(EV_PSELECT)
 	#include <sys/select.h> // fd_set, FD* macros, etc.
-#elif !defined(EV_SELECT)
-	#define EV_SELECT
+#else
+	#if !defined(EV_SELECT)
+		#define EV_SELECT
+	#endif
+	
 	#ifdef WIN32
 		#include <winsock2.h>
 	#else
