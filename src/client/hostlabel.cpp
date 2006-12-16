@@ -32,6 +32,7 @@ HostLabel::HostLabel(QWidget *parent)
 {
 	setTextInteractionFlags(Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard);
 	setCursor(Qt::IBeamCursor);
+	setContentsMargins(3,1,3,1);
 	menu_ = new QMenu(this);
 	QAction *copy = menu_->addAction(tr("Copy address to clipboard"));
 	connect(copy,SIGNAL(triggered()),this,SLOT(copyAddress()));
