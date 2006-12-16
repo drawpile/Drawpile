@@ -40,6 +40,7 @@ drawingboard::BoardEditor *Tool::editor_;
  */
 Tool *Tool::get(drawingboard::BoardEditor *editor, Type type)
 {
+	Q_ASSERT(editor);
 	// When and if we support joining to multiple boards,
 	// tools can no longer be shared.
 	static Tool *brush = new Brush();

@@ -39,6 +39,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
  */
 void Brush::setRadius(int radius)
 {
+	Q_ASSERT(radius>=0);
 	radius1_ = radius;
 	checkSensitivity();
 	cachepressure_ = -1;
@@ -50,6 +51,7 @@ void Brush::setRadius(int radius)
  */
 void Brush::setHardness(qreal hardness)
 {
+	Q_ASSERT(hardness>=0 && hardness<=1);
 	hardness1_ = hardness;
 	checkSensitivity();
 	cachepressure_ = -1;
@@ -61,6 +63,7 @@ void Brush::setHardness(qreal hardness)
  */
 void Brush::setOpacity(qreal opacity)
 {
+	Q_ASSERT(opacity>=0 && opacity<=1);
 	opacity1_ = opacity;
 	checkSensitivity();
 	cachepressure_ = -1;
@@ -78,6 +81,7 @@ void Brush::setColor(const QColor& color)
 
 void Brush::setRadius2(int radius)
 {
+	Q_ASSERT(radius>=0);
 	radius2_  = radius;
 	checkSensitivity();
 	cachepressure_ = -1;
@@ -85,6 +89,7 @@ void Brush::setRadius2(int radius)
 
 void Brush::setHardness2(qreal hardness)
 {
+	Q_ASSERT(hardness>=0 && hardness<=1);
 	hardness2_ = hardness;
 	checkSensitivity();
 	cachepressure_ = -1;
@@ -92,6 +97,7 @@ void Brush::setHardness2(qreal hardness)
 
 void Brush::setOpacity2(qreal opacity)
 {
+	Q_ASSERT(opacity>=0 && opacity<=1);
 	opacity2_ = opacity;
 	checkSensitivity();
 	cachepressure_ = -1;
@@ -119,6 +125,7 @@ void Brush::checkSensitivity()
  */
 int Brush::radius(qreal pressure) const
 {
+	Q_ASSERT(pressure>=0 && pressure<=1);
 	return int(ceil(radius2_ + (radius1_ - radius2_) * pressure));
 }
 
@@ -129,6 +136,7 @@ int Brush::radius(qreal pressure) const
  */
 qreal Brush::hardness(qreal pressure) const
 {
+	Q_ASSERT(pressure>=0 && pressure<=1);
 	return hardness2_ + (hardness1_ - hardness2_) * pressure;
 }
 
@@ -149,6 +157,7 @@ qreal Brush::opacity(qreal pressure) const
  */
 QColor Brush::color(qreal pressure) const
 {
+	Q_ASSERT(pressure>=0 && pressure<=1);
 	int r = qRound(color2_.red() + (color1_.red() - color2_.red()) * pressure);
 	int g = qRound(color2_.green() + (color1_.green() - color2_.green()) * pressure);
 	int b = qRound(color2_.blue() + (color1_.blue() - color2_.blue()) * pressure);
@@ -210,6 +219,7 @@ void Brush::updateCache() const
 
 void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 {
+	Q_ASSERT(pressure>=0 && pressure<=1);
 	const int dia = radius(pressure) * 2;
 	const QColor col = color(pressure);
 
