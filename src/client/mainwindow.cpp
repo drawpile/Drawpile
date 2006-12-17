@@ -92,7 +92,15 @@ MainWindow::MainWindow()
 
 void MainWindow::setTitle()
 {
-	setWindowTitle(tr("DrawPile[*] - %1").arg(filename_.isEmpty()?tr("Untitled"):filename_));
+	QString name;
+	if(filename_.isEmpty()) {
+		name = tr("Untitled");
+	} else {
+		QFileInfo info(filename_);
+		name = info.baseName();
+	}
+
+	setWindowTitle(tr("DrawPile[*] - %1").arg(name));
 }
 
 void MainWindow::readSettings()
