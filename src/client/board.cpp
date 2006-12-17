@@ -29,7 +29,7 @@
 namespace drawingboard {
 
 Board::Board(QObject *parent)
-	: QGraphicsScene(parent)
+	: QGraphicsScene(parent), image_(0)
 {
 	setItemIndexMethod(NoIndex);
 	outline_ = new QGraphicsEllipseItem(0,this);
@@ -57,7 +57,13 @@ void Board::initBoard(const QSize& size, const QColor& background)
 	image.fill(background.rgb());
 
 	setSceneRect(0,0,size.width(), size.height());
+	delete image_;
 	image_ = new Layer(image,0,this);
+	foreach(User *u, users_)
+		u->setLayer(image_);
+	QList<QRectF> regions;
+	regions.append(sceneRect());
+	emit changed(regions);
 }
 
 /**
@@ -67,7 +73,13 @@ void Board::initBoard(const QSize& size, const QColor& background)
 void Board::initBoard(QImage image)
 {
 	setSceneRect(0,0,image.width(), image.height());
-	image_ = new Layer(image, 0, this);
+	delete image_;
+	image_ = new Layer(image.convertToFormat(QImage::Format_RGB32), 0, this);
+	foreach(User *u, users_)
+		u->setLayer(image_);
+	QList<QRectF> regions;
+	regions.append(sceneRect());
+	emit changed(regions);
 }
 
 /**

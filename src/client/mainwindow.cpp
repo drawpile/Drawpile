@@ -38,11 +38,12 @@
 #include "controller.h"
 #include "toolsettingswidget.h"
 #include "colordialog.h"
+#include "newdialog.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
 {
-	setWindowTitle(tr("DrawPile"));
+	setTitle();
 
 	initActions();
 	createMenus();
@@ -50,8 +51,10 @@ MainWindow::MainWindow()
 	createDocks();
 
 	aboutdlg_ = new dialogs::AboutDialog(this);
+	newdlg_ = new dialogs::NewDialog(this);
+	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
 	msgbox_ = new QMessageBox(this);
-	msgbox_->setWindowTitle(windowTitle());
+	msgbox_->setWindowTitle(tr("DrawPile"));
 	msgbox_->setWindowModality(Qt::WindowModal);
 	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
 
@@ -85,6 +88,11 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 
 	readSettings();
+}
+
+void MainWindow::setTitle()
+{
+	setWindowTitle(tr("DrawPile[*] - %1").arg(filename_.isEmpty()?tr("Untitled"):filename_));
 }
 
 void MainWindow::readSettings()
@@ -155,6 +163,36 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	QApplication::quit();
 }
 
+void MainWindow::showNewDialog()
+{
+	newdlg_->show();
+}
+
+void MainWindow::newDocument()
+{
+	board_->initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
+			newdlg_->newBackground());
+	filename_ = "";
+	setTitle();
+}
+
+void MainWindow::open()
+{
+	QString file = QFileDialog::getOpenFileName(this,
+			tr("Open image"), lastpath_,
+			tr("Images (*.png *.jpg *.bmp);;All files (*)"));
+	if(file.isEmpty()==false) {
+		QImage img(file);
+		if(img.isNull()) {
+			showErrorMessage(ERR_OPEN);
+		} else {
+			board_->initBoard(img);
+			filename_ = file;
+			setTitle();
+		}
+	}
+}
+
 /**
  * If no file name has been selected, \a saveas is called.
  */
@@ -164,7 +202,7 @@ void MainWindow::save()
 		saveas();
 	} else {
 		if(board_->save(filename_) == false)
-			showSaveErrorMessage();
+			showErrorMessage(ERR_SAVE);
 	}
 }
 
@@ -180,20 +218,29 @@ void MainWindow::saveas()
 	if(file.isEmpty()==false) {
 		QFileInfo info(file);
 		lastpath_ = info.absolutePath();
-		filename_ = info.absoluteFilePath();
 		if(info.suffix().isEmpty())
-			filename_ += ".png";
-		if(board_->save(filename_) == false)
-			showSaveErrorMessage();
-					
+			file += ".png";
+		if(board_->save(file) == false) {
+			showErrorMessage(ERR_SAVE);
+		} else {
+			filename_ = file;
+			setTitle();
+		}
 	}
 }
 
-void MainWindow::showSaveErrorMessage()
+void MainWindow::showErrorMessage(ErrorType type)
 {
+	QString msg;
+	switch(type) {
+		case ERR_SAVE: msg = tr("An error occured while trying to save the image"); break;
+		case ERR_OPEN: msg = tr("An error occured while trying to open the image"); break;
+		default: qFatal("no such error type");
+	}
+
 	msgbox_->setStandardButtons(QMessageBox::Ok);
 	msgbox_->setIcon(QMessageBox::Warning);
-	msgbox_->setText(tr("An error occured while trying to save the image"));
+	msgbox_->setText(msg);
 	msgbox_->show();
 }
 
@@ -256,16 +303,24 @@ void MainWindow::homepage()
 void MainWindow::initActions()
 {
 	// File actions
+	new_ = new QAction(QIcon(":icons/document-new.png"),tr("&New"), this);
+	new_->setShortcut(QKeySequence::New);
+	new_->setStatusTip(tr("Start a new drawing"));
+	open_ = new QAction(QIcon(":icons/document-open.png"),tr("&Open"), this);
+	open_->setShortcut(QKeySequence::Open);
+	open_->setStatusTip(tr("Open an existing drawing"));
 	save_ = new QAction(QIcon(":icons/document-save.png"),tr("&Save"), this);
 	save_->setShortcut(QKeySequence::Save);
-	save_->setStatusTip(tr("Save picture to file"));
+	save_->setStatusTip(tr("Save drawing to file"));
 	saveas_ = new QAction(QIcon(":icons/document-save-as.png"),tr("Save &As..."), this);
-	saveas_->setStatusTip(tr("Save picture to file with a new name"));
+	saveas_->setStatusTip(tr("Save drawing to file with a new name"));
 	quit_ = new QAction(QIcon(":icons/system-log-out.png"),tr("&Quit"), this);
 	quit_->setStatusTip(tr("Quit the program"));
 	quit_->setShortcut(QKeySequence("Ctrl+Q"));
 	quit_->setMenuRole(QAction::QuitRole);
 
+	connect(new_,SIGNAL(triggered()), this, SLOT(showNewDialog()));
+	connect(open_,SIGNAL(triggered()), this, SLOT(open()));
 	connect(save_,SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas_,SIGNAL(triggered()), this, SLOT(saveas()));
 	connect(quit_,SIGNAL(triggered()), this, SLOT(close()));
@@ -338,6 +393,8 @@ void MainWindow::initActions()
 void MainWindow::createMenus()
 {
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
+	filemenu->addAction(new_);
+	filemenu->addAction(open_);
 	filemenu->addAction(save_);
 	filemenu->addAction(saveas_);
 	filemenu->addSeparator();
@@ -384,6 +441,8 @@ void MainWindow::createToolbars()
 	QToolBar *filetools = new QToolBar(tr("File tools"));
 	filetools->setObjectName("filetoolsbar");
 	togglemenu->addAction(filetools->toggleViewAction());
+	filetools->addAction(new_);
+	filetools->addAction(open_);
 	filetools->addAction(save_);
 	filetools->addAction(saveas_);
 	addToolBar(Qt::TopToolBarArea, filetools);

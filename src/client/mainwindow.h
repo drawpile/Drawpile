@@ -36,6 +36,7 @@ namespace widgets {
 }
 namespace dialogs {
 	class ColorDialog;
+	class NewDialog;
 }
 namespace drawingboard {
 	class Board;
@@ -45,10 +46,17 @@ class Controller;
 //! The application main window
 class MainWindow : public QMainWindow {
 	Q_OBJECT
+	enum ErrorType {ERR_SAVE, ERR_OPEN};
 	public:
 		MainWindow();
 
 	public slots:
+		//! Show new document dialog
+		void showNewDialog();
+		//! Create new document
+		void newDocument();
+		//! Open existing document
+		void open();
 		//! Save current document
 		void save();
 		//! Save current document with a new name
@@ -77,8 +85,11 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
-		//! Display the "error while saving" message box
-		void showSaveErrorMessage();
+		//! Set the window title according to open file name
+		void setTitle();
+
+		//! Display an error message
+		void showErrorMessage(ErrorType type);
 
 		//! Read settings from file/registry
 		void readSettings();
@@ -103,6 +114,7 @@ class MainWindow : public QMainWindow {
 		widgets::EditorView *view_;
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		QDialog *aboutdlg_;
+		dialogs::NewDialog *newdlg_;
 		QMessageBox *msgbox_;
 		drawingboard::Board *board_;
 		Controller *controller_;
@@ -110,6 +122,8 @@ class MainWindow : public QMainWindow {
 		QString filename_;
 		QString lastpath_;
 
+		QAction *new_;
+		QAction *open_;
 		QAction *save_;
 		QAction *saveas_;
 		QAction *quit_;

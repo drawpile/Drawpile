@@ -96,6 +96,10 @@ class Board : public QGraphicsScene
 		//! User ends a stroke
 		void userEndStroke(int user);
 
+	signals:
+		//! This signal is emitted when the board contents changes
+		void boardChanged();
+
 	private:
 		Layer *image_;
 		QGraphicsEllipseItem *outline_;

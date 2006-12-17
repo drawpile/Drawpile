@@ -36,11 +36,13 @@ Layer::Layer(QGraphicsItem *parent, QGraphicsScene *scene)
 Layer::Layer(const QImage& image, QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsItem(parent,scene), image_(image)
 {
+	Q_ASSERT(image_.format() == QImage::Format_RGB32 || image_.format() == QImage::Format_ARGB32);
 }
 
 void Layer::setImage(const QImage& image)
 {
 	image_ = image;
+	Q_ASSERT(image_.format() == QImage::Format_RGB32 || image_.format() == QImage::Format_ARGB32);
 }
 
 QImage Layer::image() const
@@ -142,7 +144,7 @@ void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
 	const int x = point.x()-r;
 	const int y = point.y()-r;
 	brush.draw(image_, QPoint(x,y), pressure);
-	update(point.x()-r,point.y()-r,point.x()+r,point.y()+r);
+	update(point.x()-r,point.y()-r,r*2,r*2);
 }
 
 QRectF Layer::boundingRect() const
