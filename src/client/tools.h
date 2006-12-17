@@ -36,8 +36,8 @@ enum Type {BRUSH, ERASER, PICKER};
 class Tool
 {
 	public:
-		Tool(Type type)
-			: type_(type) {}
+		Tool(Type type, bool readonly)
+			: type_(type), readonly_(readonly) {}
 		virtual ~Tool() {};
 
 		//! Get an instance of a specific tool
@@ -45,6 +45,9 @@ class Tool
 
 		//! Get the type of this tool
 		Type type() const { return type_; }
+
+		//! Is this a read only tool (ie. color picker)
+		bool readonly() const { return readonly_; }
 
 		//! Begin drawing
 		virtual void begin(int x,int y, qreal pressure) = 0;
@@ -59,7 +62,8 @@ class Tool
 		static drawingboard::BoardEditor *editor_;
 
 	private:
-		Type type_;
+		const Type type_;
+		const bool readonly_;
 
 };
 
@@ -70,7 +74,7 @@ class Tool
 class BrushBase : public Tool
 {
 	public:
-		BrushBase(Type type) : Tool(type) {}
+		BrushBase(Type type) : Tool(type, false) {}
 
 		void begin(int x,int y, qreal perssure);
 		void motion(int x,int y, qreal pressure);
@@ -95,7 +99,7 @@ class Eraser : public BrushBase {
  */
 class ColorPicker : public Tool {
 	public:
-		ColorPicker() : Tool(PICKER) {}
+		ColorPicker() : Tool(PICKER, true) {}
 
 		void begin(int x,int y, qreal perssure);
 		void motion(int x,int y, qreal pressure);

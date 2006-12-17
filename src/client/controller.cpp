@@ -48,6 +48,8 @@ void Controller::setTool(tools::Type tool)
 void Controller::penDown(int x,int y, qreal pressure, bool isEraser)
 {
 	tool_->begin(x,y,pressure);
+	if(tool_->readonly()==false)
+		emit changed();
 }
 
 void Controller::penMove(int x,int y, qreal pressure)

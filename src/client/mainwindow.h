@@ -51,16 +51,14 @@ class MainWindow : public QMainWindow {
 		MainWindow();
 
 	public slots:
-		//! Show new document dialog
-		void showNewDialog();
-		//! Create new document
-		void newDocument();
-		//! Open existing document
+		//! Check if document is changed and show New dialog
+		void showNew();
+		//! Show file open dialog
 		void open();
 		//! Save current document
-		void save();
+		bool save();
 		//! Save current document with a new name
-		void saveas();
+		bool saveas();
 		//! Zoom in
 		void zoomin();
 		//! Zoom out
@@ -75,6 +73,19 @@ class MainWindow : public QMainWindow {
 		void help();
 		//! Go to drawpile homepage
 		void homepage();
+	private slots:
+		//! Create new document
+		void newDocument();
+		//! Show new document dialog
+		void showNewDialog();
+		//! Mark unsaved changes
+		void boardChanged();
+		//! Save and create a new image
+		void finishNew(int i);
+		//! Save and open another image
+		void finishOpen(int i);
+		//! Save and exit
+		void finishExit(int i);
 
 	signals:
 		//! This signal is emitted when the current tool is changed
@@ -87,6 +98,12 @@ class MainWindow : public QMainWindow {
 	private:
 		//! Set the window title according to open file name
 		void setTitle();
+
+		//! Open new file (without checking if current is unchanged)
+		void reallyOpen();
+
+		//! Save settings and exit
+		void exit();
 
 		//! Display an error message
 		void showErrorMessage(ErrorType type);
@@ -106,6 +123,8 @@ class MainWindow : public QMainWindow {
 		void createDocks();
 		//! Create tool settings dock
 		void createToolSettings(QMenu *menu);
+		//! Create dialogs
+		void createDialogs();
 
 		widgets::ToolSettings *toolsettings_;
 		widgets::DualColorButton *fgbgcolor_;
@@ -116,6 +135,7 @@ class MainWindow : public QMainWindow {
 		QDialog *aboutdlg_;
 		dialogs::NewDialog *newdlg_;
 		QMessageBox *msgbox_;
+		QMessageBox *unsavedbox_;
 		drawingboard::Board *board_;
 		Controller *controller_;
 

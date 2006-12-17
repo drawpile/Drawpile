@@ -63,6 +63,10 @@ class Controller : public QObject
 		void penUp();
 		void setTool(tools::Type tool);
 
+	signals:
+		//! This signal indicates that the drawing board has been changed
+		void changed();
+
 	private:
 		drawingboard::Board *board_;
 		tools::Tool *tool_;

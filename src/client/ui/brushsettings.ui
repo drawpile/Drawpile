@@ -46,7 +46,7 @@
    <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Size</string>
+      <string>Radius</string>
      </property>
     </widget>
    </item>

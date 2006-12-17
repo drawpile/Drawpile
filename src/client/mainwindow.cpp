@@ -27,6 +27,7 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QMessageBox>
+#include <QCloseEvent>
 
 #include "mainwindow.h"
 #include "netstatus.h"
@@ -49,14 +50,7 @@ MainWindow::MainWindow()
 	createMenus();
 	createToolbars();
 	createDocks();
-
-	aboutdlg_ = new dialogs::AboutDialog(this);
-	newdlg_ = new dialogs::NewDialog(this);
-	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
-	msgbox_ = new QMessageBox(this);
-	msgbox_->setWindowTitle(tr("DrawPile"));
-	msgbox_->setWindowModality(Qt::WindowModal);
-	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
+	createDialogs();
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
@@ -81,6 +75,7 @@ MainWindow::MainWindow()
 
 	controller_ = new Controller(this);
 	controller_->setModel(board_, toolsettings_, fgbgcolor_);
+	connect(controller_, SIGNAL(changed()), this, SLOT(boardChanged()));
 	connect(this, SIGNAL(toolChanged(tools::Type)), controller_, SLOT(setTool(tools::Type)));
 
 	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
@@ -100,7 +95,7 @@ void MainWindow::setTitle()
 		name = info.baseName();
 	}
 
-	setWindowTitle(tr("DrawPile[*] - %1").arg(name));
+	setWindowTitle(tr("%1[*] - DrawPile").arg(name));
 }
 
 void MainWindow::readSettings()
@@ -166,13 +161,38 @@ void MainWindow::writeSettings()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	(void)event;
-	writeSettings();
-	QApplication::quit();
+	if(isWindowModified()) {
+		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
+		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishExit(int)));
+		unsavedbox_->show();
+		event->ignore();
+	} else {
+		exit();
+	}
+}
+
+void MainWindow::boardChanged()
+{
+	setWindowModified(true);
+}
+
+void MainWindow::showNew()
+{
+	if(isWindowModified()) {
+		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
+		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishNew(int)));
+		unsavedbox_->show();
+	} else {
+		showNewDialog();
+	}
 }
 
 void MainWindow::showNewDialog()
 {
+	QSize size = board_->sceneRect().size().toSize();
+	newdlg_->setNewWidth(size.width());
+	newdlg_->setNewHeight(size.height());
+	newdlg_->setNewBackground(fgbgcolor_->background());
 	newdlg_->show();
 }
 
@@ -180,11 +200,24 @@ void MainWindow::newDocument()
 {
 	board_->initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
 			newdlg_->newBackground());
+	fgbgcolor_->setBackground(newdlg_->newBackground());
 	filename_ = "";
+	setWindowModified(false);
 	setTitle();
 }
 
 void MainWindow::open()
+{
+	if(isWindowModified()) {
+		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
+		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishOpen(int)));
+		unsavedbox_->show();
+	} else {
+		reallyOpen();
+	}
+}
+
+void MainWindow::reallyOpen()
 {
 	QString file = QFileDialog::getOpenFileName(this,
 			tr("Open image"), lastpath_,
@@ -196,6 +229,7 @@ void MainWindow::open()
 		} else {
 			board_->initBoard(img);
 			filename_ = file;
+			setWindowModified(false);
 			setTitle();
 		}
 	}
@@ -204,13 +238,18 @@ void MainWindow::open()
 /**
  * If no file name has been selected, \a saveas is called.
  */
-void MainWindow::save()
+bool MainWindow::save()
 {
 	if(filename_.isEmpty()) {
-		saveas();
+		return saveas();
 	} else {
-		if(board_->save(filename_) == false)
+		if(board_->save(filename_) == false) {
 			showErrorMessage(ERR_SAVE);
+			return false;
+		} else {
+			setWindowModified(false);
+			return true;
+		}
 	}
 }
 
@@ -218,7 +257,7 @@ void MainWindow::save()
  * A standard file dialog is used to get the name of the file to save.
  * If no suffix is entered, ".png" is used.
  */
-void MainWindow::saveas()
+bool MainWindow::saveas()
 {
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save image"), lastpath_,
@@ -230,11 +269,62 @@ void MainWindow::saveas()
 			file += ".png";
 		if(board_->save(file) == false) {
 			showErrorMessage(ERR_SAVE);
+			return false;
 		} else {
 			filename_ = file;
+			setWindowModified(false);
 			setTitle();
+			return true;
 		}
 	}
+}
+
+void MainWindow::finishNew(int i)
+{
+	switch(i) {
+		case QMessageBox::Save:
+			if(save()==false)
+				break;
+		case QMessageBox::No:
+			showNewDialog();
+			break;
+		default:
+			break;
+	}
+}
+
+void MainWindow::finishOpen(int i)
+{
+	switch(i) {
+		case QMessageBox::Save:
+			if(save()==false)
+				break;
+		case QMessageBox::No:
+			reallyOpen();
+			break;
+		default:
+			break;
+	}
+}
+
+void MainWindow::finishExit(int i)
+{
+	switch(i) {
+		case QMessageBox::Save:
+			if(save()==false)
+				break;
+		case QMessageBox::No:
+			exit();
+			break;
+		default:
+			break;
+	}
+}
+
+void MainWindow::exit()
+{
+	writeSettings();
+	QApplication::quit();
 }
 
 void MainWindow::showErrorMessage(ErrorType type)
@@ -327,7 +417,7 @@ void MainWindow::initActions()
 	quit_->setShortcut(QKeySequence("Ctrl+Q"));
 	quit_->setMenuRole(QAction::QuitRole);
 
-	connect(new_,SIGNAL(triggered()), this, SLOT(showNewDialog()));
+	connect(new_,SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open_,SIGNAL(triggered()), this, SLOT(open()));
 	connect(save_,SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas_,SIGNAL(triggered()), this, SLOT(saveas()));
@@ -353,10 +443,13 @@ void MainWindow::initActions()
 	// Drawing tool actions
 	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("Brush"), this);
 	brushtool_->setCheckable(true); brushtool_->setChecked(true);
+	brushtool_->setShortcut(QKeySequence("B"));
 	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("Eraser"), this);
 	erasertool_->setCheckable(true);
+	erasertool_->setShortcut(QKeySequence("E"));
 	pickertool_ = new QAction(QIcon(":icons/draw-picker.png"),tr("Color picker"), this);
 	pickertool_->setCheckable(true);
+	pickertool_->setShortcut(QKeySequence("I"));
 	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom in"), this);
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
 	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom out"), this);
@@ -416,6 +509,7 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(lockboard_);
 	sessionmenu->addAction(lockuser_);
 	sessionmenu->addAction(kickuser_);
+	sessionmenu->setEnabled(false); // no network support yet
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(brushtool_);
@@ -512,5 +606,26 @@ void MainWindow::createToolSettings(QMenu *toggles)
 	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
 	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), toolsettings_, SLOT(setForeground(const QColor&)));
 	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), toolsettings_, SLOT(setBackground(const QColor&)));
+}
+
+void MainWindow::createDialogs()
+{
+	aboutdlg_ = new dialogs::AboutDialog(this);
+	newdlg_ = new dialogs::NewDialog(this);
+	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
+
+	msgbox_ = new QMessageBox(this);
+	msgbox_->setWindowTitle(tr("DrawPile"));
+	msgbox_->setWindowModality(Qt::WindowModal);
+	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
+
+	unsavedbox_ = new QMessageBox(tr("DrawPile"),
+                tr("The drawing has been modified.\n"
+                    "Do you want to save your changes?"),
+                QMessageBox::Warning,
+                QMessageBox::Save | QMessageBox::Default,
+                QMessageBox::No,
+                QMessageBox::Cancel | QMessageBox::Escape,
+                this, Qt::Sheet);
 }
 
