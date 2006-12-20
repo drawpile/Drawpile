@@ -29,7 +29,7 @@ namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(false), isdragging_(false),
-	prevpoint_(0,0),outlinesize_(10), showoutline_(true), crosshair_(false)
+	prevpoint_(0,0),outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 }
 
@@ -41,7 +41,7 @@ void EditorView::setBoard(drawingboard::Board *board)
 
 void EditorView::setOutline(bool enable)
 {
-	showoutline_ = enable;
+	enableoutline_ = enable;
 	if(enable)
 		viewport()->setMouseTracking(true);
 	else
@@ -62,24 +62,47 @@ void EditorView::setCrosshair(bool enable)
 		viewport()->setCursor(Qt::ArrowCursor);
 }
 
+void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
+{
+	if(enableoutline_ && showoutline_) {
+		painter->drawEllipse(
+				QRectF(prevpoint_-QPointF(outlinesize_,outlinesize_),
+				QSizeF(outlinesize_*2,outlinesize_*2))
+				);
+	}
+}
+
 void EditorView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
-	if(showoutline_)
-		board_->showCursorOutline(prevpoint_,outlinesize_);
+	showoutline_ = true;
 }
 
 void EditorView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
-	board_->hideCursorOutline();
+	if(enableoutline_) {
+		showoutline_ = false;
+		QList<QRectF> rect;
+		rect.append(QRectF(prevpoint_.x() - outlinesize_,
+					prevpoint_.y() - outlinesize_,
+					outlinesize_*2, outlinesize_*2));
+		updateScene(rect);
+	}
 }
 
 void EditorView::mousePressEvent(QMouseEvent *event)
 {
 	if(event->button() == Qt::MidButton) {
 		startDrag(event->x(), event->y());
-		board_->hideCursorOutline();
+		if(enableoutline_) {
+			showoutline_ = false;
+			QList<QRectF> rect;
+			rect.append(QRectF(prevpoint_.x() - outlinesize_,
+						prevpoint_.y() - outlinesize_,
+						outlinesize_*2, outlinesize_*2));
+			updateScene(rect);
+		}
 	} else {
 		pendown_ = true;
 		QPoint point = mapToScene(event->pos()).toPoint();
@@ -96,7 +119,15 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		if(point != prevpoint_) {
 			if(pendown_)
 				emit penMove(point.x(), point.y(), 1.0);
-			board_->moveCursorOutline(point);
+			else if(enableoutline_ && showoutline_) {
+				QList<QRectF> rect;
+				const int dia = outlinesize_*2;
+				rect.append(QRectF(prevpoint_.x() - outlinesize_,
+							prevpoint_.y() - outlinesize_, dia,dia));
+				rect.append(QRectF(point.x() - outlinesize_,
+							point.y() - outlinesize_, dia,dia));
+				updateScene(rect);
+			}
 			prevpoint_ = point;
 		}
 	}
@@ -104,12 +135,10 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 
 void EditorView::mouseReleaseEvent(QMouseEvent *event)
 {
+	prevpoint_ = mapToScene(event->pos()).toPoint();
 	if(isdragging_) {
 		stopDrag();
-		if(showoutline_) {
-			prevpoint_ = mapToScene(event->pos()).toPoint();
-			board_->showCursorOutline(prevpoint_, outlinesize_);
-		}
+		showoutline_ = true;
 	} else {
 		pendown_ = false;
 		emit penUp();
@@ -126,8 +155,10 @@ void EditorView::tabletEvent(QTabletEvent *event)
 	event->accept();
 	QPoint point = mapToScene(event->pos()).toPoint();
 
+#if 0
 	if(prevpoint_ != point)
 		board_->moveCursorOutline(point);
+#endif
 
 	if(event->pressure()==0) {
 		// Pressure 0, pen is not touching the tablet

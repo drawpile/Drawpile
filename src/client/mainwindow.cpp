@@ -28,6 +28,7 @@
 #include <QUrl>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QAbstractButton>
 
 #include "mainwindow.h"
 #include "netstatus.h"
@@ -164,6 +165,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	if(isWindowModified()) {
 		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
 		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishExit(int)));
+		unsavedbox_->button(QMessageBox::No)->setText(tr("Quit without saving"));
 		unsavedbox_->show();
 		event->ignore();
 	} else {
@@ -181,6 +183,7 @@ void MainWindow::showNew()
 	if(isWindowModified()) {
 		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
 		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishNew(int)));
+		unsavedbox_->button(QMessageBox::No)->setText(tr("Discard changes"));
 		unsavedbox_->show();
 	} else {
 		showNewDialog();
@@ -211,6 +214,7 @@ void MainWindow::open()
 	if(isWindowModified()) {
 		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
 		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishOpen(int)));
+		unsavedbox_->button(QMessageBox::No)->setText(tr("Discard changes"));
 		unsavedbox_->show();
 	} else {
 		reallyOpen();
@@ -470,9 +474,11 @@ void MainWindow::initActions()
 
 	// Tool cursor settings
 	toggleoutline_ = new QAction(tr("Show brush outline"), this);
+	toggleoutline_->setStatusTip(tr("Display the brush outline around the cursor"));
 	toggleoutline_->setCheckable(true);
 
 	togglecrosshair_ = new QAction(tr("Crosshair cursor"), this);
+	togglecrosshair_->setStatusTip(tr("Use a crosshair cursor"));
 	togglecrosshair_->setCheckable(true);
 
 	// Toolbar toggling actions

@@ -32,10 +32,6 @@ Board::Board(QObject *parent)
 	: QGraphicsScene(parent), image_(0)
 {
 	setItemIndexMethod(NoIndex);
-	outline_ = new QGraphicsEllipseItem(0,this);
-	outline_->hide();
-	outline_->setZValue(9999);
-	outline_->setPen(Qt::DotLine);
 }
 
 Board::~Board()
@@ -126,38 +122,6 @@ BoardEditor *Board::getEditor(bool local)
 	BoardEditor *editor;
 	editor = new LocalBoardEditor(this, users_.value(0)); // TODO local user
 	return editor;
-}
-
-/**
- * Move cursor outline to the specified location, set its size and show it.
- * The outline will not be shown if its width is smaller than 2.
- * @param x x coordinate
- * @param y y coordinate
- * @param radius brush radius
- */
-void Board::showCursorOutline(const QPoint& pos, int radius)
-{
-	if(radius>0) {
-		outline_->setPos(pos);
-		outline_->setRect(-radius,-radius,radius*2,radius*2);
-		outline_->show();
-	}
-}
-
-/**
- * @param x x coordinate
- * @param y y coordinate
- */
-void Board::moveCursorOutline(const QPoint& pos)
-{
-	outline_->setPos(pos);
-}
-
-/**
- */
-void Board::hideCursorOutline()
-{
-	outline_->hide();
 }
 
 #if 0

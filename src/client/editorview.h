@@ -73,6 +73,7 @@ class EditorView : public QGraphicsView
 		void mouseReleaseEvent(QMouseEvent *event);
 		void mouseDoubleClickEvent(QMouseEvent*);
 		void tabletEvent(QTabletEvent *event);
+		void drawForeground(QPainter *painter, const QRectF& rect);
 	private:
 		void startDrag(int x, int y);
 		void moveDrag(int x, int y);
@@ -86,7 +87,7 @@ class EditorView : public QGraphicsView
 
 		QPoint prevpoint_;
 		int outlinesize_;
-		bool showoutline_;
+		bool enableoutline_,showoutline_;
 		bool crosshair_;
 
 		drawingboard::Board *board_;
