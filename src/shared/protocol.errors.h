@@ -33,15 +33,16 @@
 #ifndef Protocol_Errors_INCLUDED
 #define Protocol_Errors_INCLUDED
 
-// #include <stdexcept>
+#include <stdint.h>
+#include <stdexcept>
 
 namespace protocol
 {
 
 //! Scrambled input buffer.
-struct scrambled_buffer : std::exception
+struct scrambled_buffer
+	: std::exception
 {
-	char const* what() const throw();
 };
 
 //! Errors
