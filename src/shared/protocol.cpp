@@ -35,6 +35,12 @@
 #include <cassert> // assert()
 #include <memory> // memcpy()
 
+#if defined(HAVE_BOOST)
+#include <boost/static_assert.hpp>
+using namespace boost;
+#endif
+
+#include "protocol.errors.h"
 #include "templates.h"
 
 namespace protocol {
@@ -168,6 +174,7 @@ size_t Identifier::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf+i, bswap(copy(revision))); i += sizeof(revision);
 	memcpy_t(buf+i, bswap(copy(level))); i += sizeof(level);
+	memcpy_t(buf+i, flags); i += sizeof(flags);
 	memcpy_t(buf+i, extensions); i += sizeof(extensions);
 	
 	return i;
@@ -175,7 +182,8 @@ size_t Identifier::serializePayload(char *buf) const throw()
 
 size_t Identifier::payloadLength() const throw()
 {
-	return identifier_size + sizeof(revision) + sizeof(level) + sizeof(extensions);
+	return identifier_size + sizeof(revision) + sizeof(level)
+		+ sizeof(flags) + sizeof(extensions);
 }
 
 size_t Identifier::unserialize(const char* buf, size_t len) throw()
@@ -189,6 +197,7 @@ size_t Identifier::unserialize(const char* buf, size_t len) throw()
 	
 	memcpy_t(revision, buf+i); i += sizeof(revision);
 	memcpy_t(level, buf+i); i += sizeof(level);
+	memcpy_t(flags, buf+i); i += sizeof(flags);
 	memcpy_t(extensions, buf+i); i += sizeof(extensions);
 	
 	bswap(revision);

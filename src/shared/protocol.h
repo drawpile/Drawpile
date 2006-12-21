@@ -186,6 +186,9 @@ struct Identifier
 		//! Client feature implementation level.
 		level;
 	
+	//! Operation flags (see protocol::)
+	uint8_t flags;
+	
 	//! Extension flags (see protocol::extensions for full list).
 	uint8_t extensions;
 	
