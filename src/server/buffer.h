@@ -60,8 +60,40 @@ struct Buffer
 		std::cout << "Buffer::~Buffer()" << std::endl;
 		#endif
 		
+		#ifndef CBUFFER_UNMANAGED
 		delete [] data;
-		data = rpos = wpos = 0;
+		#endif
+	}
+	
+	//! Resizes the buffer to new size.
+	/**
+	 * This is expensive since it calls reposition(), which may cause another alloc.
+	 */
+	void resize(size_t nsize, char* nbuf=0)
+	{
+		assert(nsize > 0);
+		assert(nsize >= left);
+		
+		// create new array if it doesn't exist.
+		if (nbuf == 0)
+			nbuf = new char[nsize];
+		
+		reposition();
+		
+		size_t off = canRead();
+		memmove(nbuf, data, off);
+		
+		#ifdef CBUFFER_UNMANAGED
+		// causes memory leak otherwise
+		delete [] data;
+		data = 0;
+		#endif
+		
+		// set the buffer as our current one.
+		setBuffer(nbuf, nsize);
+		
+		// move the offset to the real position.
+		write(off);
 	}
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
@@ -80,16 +112,68 @@ struct Buffer
 		assert(buf != 0);
 		assert(buflen > 1);
 		
+		#ifndef CBUFFER_UNMANAGED
+		delete [] data;
+		#endif
+		
 		data = rpos = wpos = buf;
 		
 		size = buflen;
 		left = 0;
 	}
 	
+	//! Repositions data for maximum contiguous length.
+	void reposition()
+	{
+		#ifndef NDEBUG
+		size_t oleft = left;
+		#endif
+		
+		if (left > 0)
+		{
+			if (canRead() < left)
+			{ // we can't read all in one go
+				// create temporary
+				size_t oversize = left-canRead();
+				size_t tmp_len = canRead();
+				char* tmp = new char[tmp_len];
+				// move data at the end to the temporary
+				memmove(tmp, rpos, tmp_len);
+				// move write pointer to target address
+				wpos = data + tmp_len;
+				// move data at the beginning to after
+				memmove(wpos, data, oversize);
+				// move write pointer to end of actual data.
+				wpos = wpos + oversize;
+				// move data in temporary to the beginning
+				rpos = data;
+				memmove(rpos, tmp, tmp_len);
+				// delete temporary
+				delete [] tmp;
+			}
+			else
+			{ // we can read all the data in one go.
+				// just move the data to the beginning.
+				size_t off = canRead();
+				memmove(data, rpos, off);
+				// adjust rpos and wpos
+				rewind();
+				write(off);
+			}
+		}
+		else
+		{
+			// since there's no data, we can just rewind the buffer.
+			rewind();
+		}
+		
+		assert(oleft == left);
+	}
+	
 	//! Did read of 'n' bytes.
 	/**
 	 * Tells the buffer how many bytes you did read.
-	 * Decrements left and moves .*rpos by 'n' bytes, possibly resetting the
+	 * Decrements .left and moves .*rpos by 'n' bytes, possibly resetting the
 	 * position back to the beginning of the buffer.
 	 *
 	 * @param len
@@ -177,7 +261,14 @@ struct Buffer
 		// this should never return more than .size - .left bytes
 		if (left < size)
 			return ((rpos<=wpos) ? (data+size) : rpos) - wpos;
+		
 		return 0;
+	}
+	
+	//! Returns the number of free bytes in buffer.
+	size_t free()
+	{
+		return size - left;
 	}
 	
 	//! Rewinds wpos and rpos to beginning of the buffer.
@@ -218,7 +309,7 @@ struct Buffer
 		*rpos;
 	
 	size_t
-		//! Number of bytes left to read.
+		//! Number of bytes left to read (how many bytes filled).
 		left,
 		//! Total size of the circular buffer (size of .data)
 		size;
