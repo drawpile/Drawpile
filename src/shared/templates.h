@@ -73,17 +73,19 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 
 /* memmory */
 
-template <class X>
-char* memcpy_t(char* dst, const X& src) throw()
+template <class T>
+char* memcpy_t(char* dst, const T& src) throw()
 {
 	assert(dst != 0);
-	memcpy(dst, &src, sizeof(X));
+	memcpy(dst, &src, sizeof(T));
 	return dst;
 }
 
 template <class T>
 T& memcpy_t(T& dst, const char* src) throw()
 {
+	assert(src != 0);
+	
 	memcpy(&dst, src, sizeof(T));
 	return dst;
 }
