@@ -13,7 +13,7 @@ set (
 	Server_Sources
 	dpsrv.cpp
 	server.cpp
-	event.cpp
+	event.select.cpp
 	sockets.cpp
 )
 

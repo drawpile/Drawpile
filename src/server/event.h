@@ -144,13 +144,13 @@ public:
 	 */
 	~Event() throw();
 	
-	#if defined(EV_USE_SIGMASK)
+	#if defined(EV_PSELECT)
 	//! Set signal mask.
 	/**
 	 * Only used by pselect() so far
 	 */
 	void setMask(sigset_t* mask) throw() { _sigmask = mask; }
-	#endif // EV_USE_SIGMASK
+	#endif // EV_PSELECT
 	
 	//! Initialize event system.
 	bool init() throw(std::bad_alloc);
