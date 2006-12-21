@@ -21,6 +21,7 @@
 #include <QEvent>
 #include <cmath>
 
+#include "point.h"
 #include "brushpreview.h"
 
 #ifndef DESIGNER_PLUGIN
@@ -109,7 +110,7 @@ void BrushPreview::updatePreview()
 			pressure = 1;
 		const int rad = brush_.radius(pressure);
 		const int y = qRound(sin(phase) * strokeh);
-		brush_.draw(preview_,QPoint(offx+x-rad,offy+y-rad),pressure);
+		brush_.draw(preview_,drawingboard::Point(offx+x-rad,offy+y-rad,pressure));
 	}
 }
 

@@ -24,6 +24,7 @@
 
 #include "editorview.h"
 #include "board.h"
+#include "point.h"
 
 namespace widgets {
 
@@ -106,7 +107,7 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	} else {
 		pendown_ = true;
 		QPoint point = mapToScene(event->pos()).toPoint();
-		emit penDown(point.x(), point.y(), 1.0, false);
+		emit penDown(drawingboard::Point(point.x(), point.y(), 1.0), false);
 	}
 }
 
@@ -118,7 +119,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		QPoint point = mapToScene(event->pos()).toPoint();
 		if(point != prevpoint_) {
 			if(pendown_)
-				emit penMove(point.x(), point.y(), 1.0);
+				emit penMove(drawingboard::Point(point.x(), point.y(), 1.0));
 			else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
 				const int dia = outlinesize_*2;
@@ -170,10 +171,12 @@ void EditorView::tabletEvent(QTabletEvent *event)
 		// Pressure>0, pen is touching the tablet
 		if(pendown_) {
 			if(prevpoint_ != point)
-				emit penMove(point.x(), point.y(), event->pressure());
+				emit penMove(drawingboard::Point(point.x(), point.y(), event->pressure()));
 		} else {
-			emit penDown(point.x(), point.y(), event->pressure(),
-					event->pointerType()==QTabletEvent::Eraser);
+			emit penDown(
+					drawingboard::Point(point.x(),point.y(),event->pressure()),
+					event->pointerType()==QTabletEvent::Eraser
+					);
 			pendown_ = true;
 			prevpoint_ = point;
 		}

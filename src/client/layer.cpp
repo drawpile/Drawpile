@@ -23,6 +23,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <cmath>
 
+#include "point.h"
 #include "layer.h"
 #include "brush.h"
 
@@ -55,12 +56,14 @@ QImage Layer::image() const
  * Pressure values are interpolated between the points.
  * First pixel is not drawn. This is done on purpose, as drawLine is usually
  * used to draw multiple joined lines.
+ * @param point1 start coordinates
+ * @param point2 end coordinates
+ * @param brush brush to draw with
  */
-void Layer::drawLine(const QPoint& point1, qreal pressure1,
-		const QPoint& point2, qreal pressure2, const Brush& brush)
+void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brush)
 {
-	int rad = qMax(brush.radius(pressure1),brush.radius(pressure2));
-	qreal pressure = pressure1;
+	int rad = brush.radius(point1.pressure());
+	qreal pressure = point1.pressure();
 #if 0 // TODO
 	qreal deltapressure;
 	if(qAbs(pressure2-pressure1) < 1.0/255.0)
@@ -70,6 +73,7 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 #endif
 
 	// Based on interpolatePoints() in kolourpaint
+	// Bug here, what happens when radius changes?
 	const int x1 = point1.x ()-rad,
 		y1 = point1.y ()-rad,
 		x2 = point2.x ()-rad,
@@ -120,7 +124,7 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 		}
 
 		if (plot)
-			brush.draw(image_, QPoint(plotx,ploty), pressure);
+			brush.draw(image_, Point(plotx,ploty, pressure));
 	}
 
 	// Update screen
@@ -133,17 +137,14 @@ void Layer::drawLine(const QPoint& point1, qreal pressure1,
 }
 
 /**
- * Draw a single point
  * @param point coordinates
- * @param pressure pen pressure
  * @param brush brush to use
  */
-void Layer::drawPoint(const QPoint& point, qreal pressure, const Brush& brush)
+void Layer::drawPoint(const Point& point, const Brush& brush)
 {
-	const int r = brush.radius(pressure);
-	const int x = point.x()-r;
-	const int y = point.y()-r;
-	brush.draw(image_, QPoint(x,y), pressure);
+	const int r = brush.radius(point.pressure());
+	QPoint rp(r,r);
+	brush.draw(image_, point-rp);
 	update(point.x()-r,point.y()-r,r*2,r*2);
 }
 

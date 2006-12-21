@@ -35,6 +35,8 @@ class ColorDialog : public QDialog
 	Q_OBJECT
 	public:
 		ColorDialog(QString title,QWidget *parent=0);
+		~ColorDialog();
+
 		//! Get the current color
 		QColor color() const;
 	signals:

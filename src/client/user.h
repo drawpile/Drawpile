@@ -20,6 +20,7 @@
 #ifndef USER_H
 #define USER_H
 
+#include "point.h"
 #include "brush.h"
 
 namespace drawingboard {
@@ -49,7 +50,7 @@ class User
 		const Brush& brush() const { return brush_; }
 
 		//! Stroke info
-		void addStroke(int x,int y, qreal pressure);
+		void addStroke(const Point& point);
 
 		//! End stroke
 		void endStroke();
@@ -59,8 +60,7 @@ class User
 		Brush brush_;
 
 		Layer *layer_;
-		QPoint lastpoint_;
-		qreal lastpressure_;
+		Point lastpoint_;
 		bool strokestarted_;
 };
 

@@ -37,7 +37,7 @@ set (
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
-	newdialog.h
+	newdialog.h point.h
 )
 
 set (

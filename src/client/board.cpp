@@ -165,15 +165,13 @@ void Board::userSetTool(int user, const Brush& brush)
 
 /**
  * @param user user id
- * @param x x coordinate
- * @param y y coordinate
- * @param pressure pen pressure
+ * @param point coordinates
  */
-void Board::userStroke(int user, int x, int y, qreal pressure)
+void Board::userStroke(int user, const Point& point)
 {
 	if(users_.contains(user)) {
 		User *u = users_.value(user);
-		u->addStroke(x,y,pressure);
+		u->addStroke(point);
 	}
 }
 

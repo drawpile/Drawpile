@@ -45,16 +45,16 @@ void Controller::setTool(tools::Type tool)
 	tool_ = tools::Tool::get(editor_,tool);
 }
 
-void Controller::penDown(int x,int y, qreal pressure, bool isEraser)
+void Controller::penDown(const drawingboard::Point& point, bool isEraser)
 {
-	tool_->begin(x,y,pressure);
+	tool_->begin(point);
 	if(tool_->readonly()==false)
 		emit changed();
 }
 
-void Controller::penMove(int x,int y, qreal pressure)
+void Controller::penMove(const drawingboard::Point& point)
 {
-	tool_->motion(x,y,pressure);
+	tool_->motion(point);
 }
 
 void Controller::penUp()

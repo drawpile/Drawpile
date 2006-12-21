@@ -23,6 +23,7 @@
 #include "brush.h"
 #include "board.h"
 #include "boardeditor.h"
+#include "point.h"
 
 namespace tools {
 
@@ -55,19 +56,19 @@ Tool *Tool::get(drawingboard::BoardEditor *editor, Type type)
 	return 0;
 }
 
-void BrushBase::begin(int x,int y, qreal pressure)
+void BrushBase::begin(const drawingboard::Point& point)
 {
 	drawingboard::Brush brush = editor_->localBrush();
 
 	if(editor_->currentBrush() != brush)
 		editor_->setTool(brush);
 
-	editor_->addStroke(x,y,pressure);
+	editor_->addStroke(point);
 }
 
-void BrushBase::motion(int x,int y, qreal pressure)
+void BrushBase::motion(const drawingboard::Point& point)
 {
-	editor_->addStroke(x,y,pressure);
+	editor_->addStroke(point);
 }
 
 void BrushBase::end()
@@ -75,16 +76,14 @@ void BrushBase::end()
 	editor_->endStroke();
 }
 
-void ColorPicker::begin(int x, int y, qreal pressure)
+void ColorPicker::begin(const drawingboard::Point& point)
 {
-	(void)pressure;
-	editor_->setLocalForeground(editor_->colorAt(x,y));
+	editor_->setLocalForeground(editor_->colorAt(point));
 }
 
-void ColorPicker::motion(int x,int y, qreal pressure)
+void ColorPicker::motion(const drawingboard::Point& point)
 {
-	(void)pressure;
-	editor_->setLocalForeground(editor_->colorAt(x,y));
+	editor_->setLocalForeground(editor_->colorAt(point));
 }
 
 void ColorPicker::end()

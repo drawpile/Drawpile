@@ -26,6 +26,8 @@
 
 namespace drawingboard {
 
+class Point;
+
 //! A brush for drawing onto a layer
 /**
  * This class produces an image that can be used as a brush.
@@ -68,7 +70,7 @@ class Brush
 		QColor color(qreal pressure) const;
 
 		//! Draw the brush on an image
-		void draw(QImage &image, const QPoint& pos, qreal pressure) const;
+		void draw(QImage &image, const Point& pos) const;
 
 		//! Copy operator
 		Brush& operator=(const Brush& brush);

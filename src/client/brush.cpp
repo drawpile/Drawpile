@@ -19,6 +19,7 @@
 */
 
 #include <cmath>
+#include "point.h"
 #include "brush.h"
 #include "../../config.h"
 
@@ -217,11 +218,10 @@ void Brush::updateCache() const
 	}
 }
 
-void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
+void Brush::draw(QImage &image, const Point& pos) const
 {
-	Q_ASSERT(pressure>=0 && pressure<=1);
-	const int dia = radius(pressure) * 2;
-	const QColor col = color(pressure);
+	const int dia = radius(pos.pressure()) * 2;
+	const QColor col = color(pos.pressure());
 
 	const int red = col.red();
 	const int green = col.green();
@@ -240,7 +240,7 @@ void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const qreal a = opacity(pressure);
+			const qreal a = opacity(pos.pressure());
 #ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest = int(*dest * (1-a) + red * a + 0.5);
@@ -258,8 +258,8 @@ void Brush::draw(QImage &image, const QPoint& pos, qreal pressure) const
 	// Update brush cache if out of date
 	if(cachepressure_<0 ||
 			(sensitive_ && (dia!=radius(cachepressure_)*2 ||
-							fabs(pressure - cachepressure_) > 1.0/256.0))) {
-		cachepressure_ = pressure;
+							fabs(pos.pressure()-cachepressure_) > 1.0/256.0))) {
+		cachepressure_ = pos.pressure();
 		updateCache();
 	}
 

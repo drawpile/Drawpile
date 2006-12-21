@@ -22,13 +22,17 @@
 
 #include <QGraphicsItem>
 
+
 namespace drawingboard {
 
 class Brush;
+class Point;
 
 //! A drawing layer item item for QGraphicsScene
 /**
- * The actual drawing code is implemented here.
+ * The layer item provides a modifiable image item for QGraphicsScene.
+ * Methods are provided for drawing lines and points using Brush.
+ *
  */
 class Layer : public QGraphicsItem
 {
@@ -43,13 +47,16 @@ class Layer : public QGraphicsItem
 		QImage image() const;
 
 		//! Draw a line between two points with interpolated pressure values
-		void drawLine(const QPoint& point1, qreal pressure1,
-				const QPoint& point2, qreal pressure2, const Brush& brush);
+		void drawLine(const Point& point1, const Point& point2,
+				const Brush& brush);
 
 		//! Draw a single point
-		void drawPoint(const QPoint& point, qreal pressure, const Brush& brush);
+		void drawPoint(const Point& point, const Brush& brush);
 
+		/** reimplematation */
 		QRectF boundingRect() const;
+
+		/** reimplementation */
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 			 QWidget *);
 

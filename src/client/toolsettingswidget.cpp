@@ -84,8 +84,6 @@ void ToolSettings::setBackground(const QColor& color)
 
 /**
  * Get a brush with settings from the currently visible widget
- * @param foreground foreground color
- * @param background background color
  * @return brush
  */
 drawingboard::Brush ToolSettings::getBrush() const

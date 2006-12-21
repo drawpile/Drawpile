@@ -24,7 +24,9 @@
 
 class Ui_AboutDialog;
 
+//! Dialog classes
 namespace dialogs {
+
 //! About dialog
 class AboutDialog : public QDialog
 {

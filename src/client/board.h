@@ -30,6 +30,7 @@ class Layer;
 class User;
 class Brush;
 class BoardEditor;
+class Point;
 
 //! The drawing board
 /**
@@ -82,14 +83,10 @@ class Board : public QGraphicsScene
 		void userSetTool(int user, const Brush& brush);
 
 		//! User stroke information
-		void userStroke(int user, int x, int y, qreal pressure);
+		void userStroke(int user, const Point& point);
 
 		//! User ends a stroke
 		void userEndStroke(int user);
-
-	signals:
-		//! This signal is emitted when the board contents changes
-		void boardChanged();
 
 	private:
 		Layer *image_;

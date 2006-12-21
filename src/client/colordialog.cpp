@@ -45,6 +45,11 @@ ColorDialog::ColorDialog(QString title, QWidget *parent)
 	setWindowTitle(title);
 }
 
+ColorDialog::~ColorDialog()
+{
+	delete ui_;
+}
+
 /**
  * The contents of the widget is updated to reflect the new color.
  * No signal is emitted.

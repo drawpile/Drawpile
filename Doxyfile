@@ -87,9 +87,9 @@ FILE_PATTERNS          = *.cpp \
                          *.h \
                          *.dox
 RECURSIVE              = YES
-EXCLUDE                = 
+EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       = moc_*.c* ui_*.h qrc_resources.c*
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO

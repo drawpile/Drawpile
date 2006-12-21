@@ -27,6 +27,7 @@
 namespace drawingboard {
 	class Board;
 	class BoardEditor;
+	class Point;
 }
 
 namespace interface {
@@ -58,8 +59,8 @@ class Controller : public QObject
 				interface::ColorSource *color);
 
 	public slots:
-		void penDown(int x,int y, qreal pressure, bool isEraser);
-		void penMove(int x,int y, qreal pressure);
+		void penDown(const drawingboard::Point& point, bool isEraser);
+		void penMove(const drawingboard::Point& point);
 		void penUp();
 		void setTool(tools::Type tool);
 

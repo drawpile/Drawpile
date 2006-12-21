@@ -27,6 +27,8 @@ class Ui_NewDialog;
 namespace dialogs {
 //! Dialog to set new drawing settings
 /**
+ * The "new drawing" dialog allows the user to set the width, height
+ * and background color of a new image.
  */
 class NewDialog : public QDialog
 {

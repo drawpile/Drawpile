@@ -10,7 +10,7 @@ HEADERS = mainwindow.h \
 	netstatus.h hostlabel.h dualcolorbutton.h editorview.h \
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h \
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h interfaces.h \
-	boardeditor.h aboutdialog.h gradientslider.h newdialog.h
+	boardeditor.h aboutdialog.h gradientslider.h newdialog.h point.h
 SOURCES = main.cpp mainwindow.cpp \
 	netstatus.cpp hostlabel.cpp dualcolorbutton.cpp editorview.cpp \
 	toolsettingswidget.cpp colordialog.cpp brushpreview.cpp colortriangle.cpp \

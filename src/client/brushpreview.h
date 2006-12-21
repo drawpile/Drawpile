@@ -25,6 +25,7 @@
 #include "brush.h"
 
 #ifndef DESIGNER_PLUGIN
+//! Custom widgets
 namespace widgets {
 #define PLUGIN_EXPORT
 #else

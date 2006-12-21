@@ -22,8 +22,19 @@
 
 namespace drawingboard {
 	class BoardEditor;
+	class Point;
 }
 
+//! Tools
+/**
+ * Tools translate commands from the local user into messages that
+ * can be sent over the network or directly modify the drawingboard
+ * if in offline mode. Some tools do not modify the drawing board
+ * and always access the board directly.
+ *
+ * The BoardEditor class is used to abstract away the difference between
+ * local and a remote drawing board.
+ */
 namespace tools {
 
 enum Type {BRUSH, ERASER, PICKER};
@@ -50,10 +61,10 @@ class Tool
 		bool readonly() const { return readonly_; }
 
 		//! Begin drawing
-		virtual void begin(int x,int y, qreal pressure) = 0;
+		virtual void begin(const drawingboard::Point& point) = 0;
 
 		//! Draw stroke
-		virtual void motion(int x,int y, qreal pressure) = 0;
+		virtual void motion(const drawingboard::Point& point) = 0;
 
 		//! End drawing
 		virtual void end() = 0;
@@ -76,8 +87,8 @@ class BrushBase : public Tool
 	public:
 		BrushBase(Type type) : Tool(type, false) {}
 
-		void begin(int x,int y, qreal perssure);
-		void motion(int x,int y, qreal pressure);
+		void begin(const drawingboard::Point& point);
+		void motion(const drawingboard::Point& point);
 		void end();
 };
 
@@ -101,8 +112,8 @@ class ColorPicker : public Tool {
 	public:
 		ColorPicker() : Tool(PICKER, true) {}
 
-		void begin(int x,int y, qreal perssure);
-		void motion(int x,int y, qreal pressure);
+		void begin(const drawingboard::Point& point);
+		void motion(const drawingboard::Point& point);
 		void end();
 };
 

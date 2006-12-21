@@ -56,9 +56,9 @@ void BoardEditor::setLocalBackground(const QColor& color)
 	color_->setBackground(color);
 }
 
-QColor BoardEditor::colorAt(int x,int y)
+QColor BoardEditor::colorAt(const QPoint& point)
 {
-	return board_->image_->image().pixel(x,y);
+	return board_->image_->image().pixel(point);
 }
 
 void LocalBoardEditor::setTool(const Brush& brush)
@@ -66,9 +66,9 @@ void LocalBoardEditor::setTool(const Brush& brush)
 	user_->setBrush(brush);
 }
 
-void LocalBoardEditor::addStroke(int x, int y, qreal pressure)
+void LocalBoardEditor::addStroke(const Point& point)
 {
-	user_->addStroke(x,y,pressure);
+	user_->addStroke(point);
 }
 
 void LocalBoardEditor::endStroke()

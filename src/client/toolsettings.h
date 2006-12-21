@@ -59,8 +59,6 @@ class ToolSettings {
 		//! Get a brush based on the settings in the UI
 		/**
 		 * An UI widget must have been created before this can be called.
-		 * @param foreground foreground color
-		 * @param background background color
 		 * @return brush with values from the UI widget
 		 */
 		virtual drawingboard::Brush getBrush() const = 0;

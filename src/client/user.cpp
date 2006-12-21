@@ -39,27 +39,23 @@ void User::setBrush(const Brush& brush)
 }
 
 /**
-  @param x x coordinate
-  @param y y coordinate
-  @param pressure pressure [0..1]
+  @param point stroke coordinates
  */
-void User::addStroke(int x,int y, qreal pressure)
+void User::addStroke(const Point& point)
 {
-	QPoint point(x,y);
 	if(strokestarted_) {
 		// Continuing stroke
 		layer_->drawLine(
-				lastpoint_, lastpressure_,
-				point, pressure,
+				lastpoint_,
+				point,
 				brush_
 				);
 	} else {
 		// First point
-		layer_->drawPoint(point, pressure, brush_);
+		layer_->drawPoint(point, brush_);
 		strokestarted_ = true;
 	}
 	lastpoint_ = point;
-	lastpressure_ = pressure;
 }
 
 /**

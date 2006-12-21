@@ -79,8 +79,8 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(changed()), this, SLOT(boardChanged()));
 	connect(this, SIGNAL(toolChanged(tools::Type)), controller_, SLOT(setTool(tools::Type)));
 
-	connect(view_,SIGNAL(penDown(int,int,qreal,bool)),controller_,SLOT(penDown(int,int,qreal,bool)));
-	connect(view_,SIGNAL(penMove(int,int,qreal)),controller_,SLOT(penMove(int,int,qreal)));
+	connect(view_,SIGNAL(penDown(drawingboard::Point,bool)),controller_,SLOT(penDown(drawingboard::Point,bool)));
+	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 
 	readSettings();

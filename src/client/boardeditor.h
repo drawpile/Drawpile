@@ -22,6 +22,8 @@
 
 #include <QColor>
 
+class QPoint;
+
 namespace interface {
 	class BrushSource;
 	class ColorSource;
@@ -32,6 +34,7 @@ namespace drawingboard {
 class Board;
 class User;
 class Brush;
+class Point;
 
 //! A delegate for accessing the board contents
 /**
@@ -67,13 +70,13 @@ class BoardEditor {
 		void setLocalBackground(const QColor& color);
 
 		//! Get color from the board at the specified coordinates
-		QColor colorAt(int x,int y);
+		QColor colorAt(const QPoint& point);
 
 		//! Set the tool used for drawing
 		virtual void setTool(const Brush& brush) = 0;
 
 		//! Add a new point to a stroke.
-		virtual void addStroke(int x, int y, qreal pressure) = 0;
+		virtual void addStroke(const Point& point) = 0;
 
 		//! End current stroke. Next addStroke will begin a new one.
 		virtual void endStroke() = 0;
@@ -92,7 +95,7 @@ class LocalBoardEditor : public BoardEditor {
 		LocalBoardEditor(Board *board, User *user) : BoardEditor(board,user) {}
 
 		void setTool(const Brush& brush);
-		void addStroke(int x, int y, qreal pressure);
+		void addStroke(const Point& point);
 		void endStroke();
 };
 

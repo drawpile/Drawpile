@@ -24,6 +24,7 @@
 
 namespace drawingboard {
 	class Board;
+	class Point;
 }
 
 namespace widgets {
@@ -43,14 +44,12 @@ class EditorView : public QGraphicsView
 	signals:
 		//! This signal is emitted when a mouse button is pressed or the pen touches the tablet
 		/**
-		 * @param x initial x coordinate
-		 * @param y initial y coordinate
-		 * @param pressure initial pressure (always 1.0 if not supported)
+		 * @param point coordinates
 		 * @param isEraser is the input device the wide end of a tablet stylus?
 		 */
-		void penDown(int x,int y, qreal pressure, bool isEraser);
+		void penDown(const drawingboard::Point& point, bool isEraser);
 		//! This signal is emitted when the pen or mouse pointer is moved while drawing
-		void penMove(int x,int y, qreal pressure);
+		void penMove(const drawingboard::Point& point);
 
 		//! This signal is emitted when the pen is lifted or the mouse button released.
 		void penUp();
