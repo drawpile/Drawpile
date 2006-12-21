@@ -112,7 +112,7 @@ int Event::inSet(const int ev) const throw()
 }
 
 
-void Event::init() throw(std::bad_alloc)
+bool Event::init() throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Event::init()" << std::endl;
@@ -131,6 +131,7 @@ void Event::init() throw(std::bad_alloc)
 			break;
 		case ENFILE:
 			std::cerr << "System open FD limit reached." << std::endl;
+			return false;
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
@@ -149,6 +150,8 @@ void Event::init() throw(std::bad_alloc)
 	FD_ZERO(&fds[inSet(read)]);
 	FD_ZERO(&fds[inSet(write)]);
 	#endif // EV_*
+	
+	return true;
 }
 
 void Event::finish() throw()
@@ -328,7 +331,7 @@ int Event::add(int fd, int ev) throw()
 	#endif
 	
 	assert( ev == read or ev == write or ev == read|write );
-	assert( fd > 0 );
+	assert( fd >= 0 );
 	
 	#if defined(EV_EPOLL)
 	epoll_event ev;
@@ -424,7 +427,7 @@ int Event::modify(int fd, int ev) throw()
 	#endif
 	
 	assert( ev == read or ev == write or ev == read|write );
-	assert( fd > 0 );
+	assert( fd >= 0 );
 	
 	#if defined(EV_EPOLL)
 	epoll_event ev;
@@ -493,7 +496,7 @@ int Event::remove(int fd, int ev) throw()
 	#endif
 	
 	assert( ev == read or ev == write or ev == read|write );
-	assert( fd > 0 );
+	assert( fd >= 0 );
 	
 	#if defined(EV_EPOLL)
 	int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
@@ -578,7 +581,7 @@ bool Event::isset(int fd, int ev) const throw()
 	#endif
 	
 	assert( ev == read or ev == write );
-	assert( fd > 0 );
+	assert( fd >= 0 );
 	
 	#if defined(EV_EPOLL)
 	for (int n=0; n != nfds; n++)

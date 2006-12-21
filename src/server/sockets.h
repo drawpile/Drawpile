@@ -53,7 +53,7 @@
 	#include <cerrno> // errno
 	
 	// not defined in non-win32 systems
-	#define INVALID_SOCKET 0
+	#define INVALID_SOCKET -1
 	#define SOCKET_ERROR -1
 #endif
 
@@ -74,7 +74,7 @@ bool netInit() throw()
 }
 
 inline
-int netStop() throw()
+bool netStop() throw()
 {
 	#ifndef NDEBUG
 	std::cout << "netStop()" << std::endl;
@@ -84,7 +84,7 @@ int netStop() throw()
 	WSACleanup();
 	#endif
 	
-	return 0;
+	return true;
 }
 
 //! Socket abstraction
@@ -144,7 +144,7 @@ public:
 	 */
 	int fd(int nsock) throw()
 	{
-		if (sock != INVALID_SOCKET) close();
+		if (sock >= 0) close();
 		return sock = nsock;
 	}
 	

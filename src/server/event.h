@@ -150,7 +150,7 @@ public:
 	#endif
 	
 	//! Initialize event system.
-	void init() throw(std::bad_alloc);
+	bool init() throw(std::bad_alloc);
 	
 	//! Finish event system.
 	void finish() throw();

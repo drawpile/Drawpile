@@ -40,7 +40,7 @@ void Socket::close() throw()
 	#ifndef NDEBUG
 	std::cout << "Socket::close()" << std::endl;
 	#endif
-
+	
 	#ifdef WIN32
 	closesocket(sock);
 	#else
@@ -56,6 +56,8 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	std::cout << "Socket::accept()" << std::endl;
 	#endif
 	
+	assert(sock >= 0);
+	
 	sockaddr_in sa; // temporary
 	#ifndef WIN32
 	socklen_t tmp = sizeof(sockaddr);
@@ -65,7 +67,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	int n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
 	error = errno;
 	
-	if (n_fd != -1)
+	if (n_fd >= 0)
 	{
 		#ifndef NDEBUG
 		std::cout << "New connection" << std::endl;
@@ -216,6 +218,8 @@ int Socket::block(bool x) throw()
 	std::cout << "Socket::block(" << (x?"true":"false") << ")" << std::endl;
 	#endif
 	
+	assert(sock >= 0);
+	
 	#ifdef WIN32
 	unsigned long arg = !x;
 	return ioctlsocket(sock, FIONBIO, &arg);
@@ -230,7 +234,9 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 	#ifndef NDEBUG
 	std::cout << "Socket::bindTo(" << address << ", " << port << ")" << std::endl;
 	#endif
-
+	
+	assert(sock >= 0);
+	
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(address);
 	addr.sin_port = htons(port);
@@ -289,7 +295,9 @@ int Socket::listen() throw()
 	#ifndef NDEBUG
 	std::cout << "Socket::listen()" << std::endl;
 	#endif
-
+	
+	assert(sock >= 0);
+	
 	int r = ::listen(sock, 4);
 	error = errno;
 	
@@ -340,6 +348,7 @@ int Socket::send(char* buffer, size_t buflen) throw()
 	
 	assert(buffer != 0);
 	assert(buflen != 0);
+	assert(sock >= 0);
 	
 	int r = ::send(sock, buffer, buflen, MSG_NOSIGNAL);
 	error = errno;
@@ -465,6 +474,7 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 	std::cout << "Socket::recv(*buffer, " << buflen << ")" << std::endl;
 	#endif
 	
+	assert(sock >= 0);
 	assert(buffer != 0);
 	assert(buflen != 0);
 	
