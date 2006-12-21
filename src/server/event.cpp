@@ -198,7 +198,7 @@ EvList Event::getEvents() const throw()
 int Event::wait(uint32_t msecs) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::wait(" << msecs << ")" << std::endl;
+	std::cout << "Event::wait(msecs: " << msecs << ")" << std::endl;
 	#endif
 	
 	#if defined(EV_EPOLL)
@@ -315,13 +315,10 @@ int Event::wait(uint32_t msecs) throw()
 	#endif // EV_*
 }
 
-int Event::add(uint32_t fd, int ev) throw()
+int Event::add(int fd, int ev) throw()
 {
-	assert( ev == read or ev == write or ev == read|write );
-	assert( fd > 0 );
-	
 	#ifndef NDEBUG
-	std::cout << "Event::add(" << fd << ", ";
+	std::cout << "Event::add(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -329,6 +326,9 @@ int Event::add(uint32_t fd, int ev) throw()
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
 	#endif
+	
+	assert( ev == read or ev == write or ev == read|write );
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	epoll_event ev;
@@ -411,13 +411,10 @@ int Event::add(uint32_t fd, int ev) throw()
 	return true;
 }
 
-int Event::modify(uint32_t fd, int ev) throw()
+int Event::modify(int fd, int ev) throw()
 {
-	assert( ev == read or ev == write or ev == read|write );
-	assert( fd > 0 );
-	
 	#ifndef NDEBUG
-	std::cout << "Event::modify(" << fd << ", ";
+	std::cout << "Event::modify(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -425,6 +422,9 @@ int Event::modify(uint32_t fd, int ev) throw()
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
 	#endif
+	
+	assert( ev == read or ev == write or ev == read|write );
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	epoll_event ev;
@@ -480,13 +480,10 @@ int Event::modify(uint32_t fd, int ev) throw()
 	return 0;
 }
 
-int Event::remove(uint32_t fd, int ev) throw()
+int Event::remove(int fd, int ev) throw()
 {
-	assert( ev == read or ev == write or ev == read|write );
-	assert( fd > 0 );
-	
 	#ifndef NDEBUG
-	std::cout << "Event::remove(" << fd << ", ";
+	std::cout << "Event::remove(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -494,6 +491,9 @@ int Event::remove(uint32_t fd, int ev) throw()
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
 	#endif
+	
+	assert( ev == read or ev == write or ev == read|write );
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
@@ -565,13 +565,10 @@ int Event::remove(uint32_t fd, int ev) throw()
 	return true;
 }
 
-bool Event::isset(uint32_t fd, int ev) const throw()
+bool Event::isset(int fd, int ev) const throw()
 {
-	assert( ev == read or ev == write );
-	assert( fd > 0 );
-	
 	#ifndef NDEBUG
-	std::cout << "Event::isset(" << fd << ", ";
+	std::cout << "Event::isset(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -579,6 +576,9 @@ bool Event::isset(uint32_t fd, int ev) const throw()
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
 	#endif
+	
+	assert( ev == read or ev == write );
+	assert( fd > 0 );
 	
 	#if defined(EV_EPOLL)
 	for (int n=0; n != nfds; n++)

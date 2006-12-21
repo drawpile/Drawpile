@@ -105,10 +105,10 @@ protected:
 	fd_set fds[2], t_fds[2];
 	
 	#ifndef WIN32
-	std::set<uint32_t> select_set_r;
-	std::set<uint32_t> select_set_w;
+	std::set<int> select_set_r;
+	std::set<int> select_set_w;
 	
-	uint32_t nfds_r, nfds_w;
+	int nfds_r, nfds_w;
 	#endif // !WIN32
 	
 	#endif // EV_*
@@ -197,7 +197,7 @@ public:
 	 *
 	 * @return true if the fd was added, false if not
 	 */
-	int add(uint32_t fd, int ev) throw();
+	int add(int fd, int ev) throw();
 	
 	//! Removes file descriptor from event set.
 	/**
@@ -206,7 +206,7 @@ public:
 	 *
 	 * @return true if the fd was removed, false if not (or was not part of the event set)
 	 */
-	int remove(uint32_t fd, int ev) throw();
+	int remove(int fd, int ev) throw();
 	
 	//! Modifies previously added fd for different events.
 	/**
@@ -217,7 +217,7 @@ public:
 	 *
 	 * @return something undefined
 	 */
-	int modify(uint32_t fd, int ev) throw();
+	int modify(int fd, int ev) throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**
@@ -226,9 +226,9 @@ public:
 	 *
 	 * @return bool
 	 */
-	bool isset(uint32_t fd, int ev) const throw();
+	bool isset(int fd, int ev) const throw();
 	
-	int triggered(uint32_t fd) const throw();
+	int triggered(int fd) const throw();
 
 };
 
