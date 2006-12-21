@@ -168,6 +168,7 @@ void Event::finish() throw()
 	#endif // EV_*
 }
 
+#ifdef EV_HAVE_LIST
 EvList Event::getEvents() const throw()
 {
 	#ifndef NDEBUG
@@ -192,6 +193,7 @@ EvList Event::getEvents() const throw()
 	
 	return ls;
 }
+#endif // EV_HAVE_LIST
 
 int Event::wait(uint32_t msecs) throw()
 {

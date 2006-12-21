@@ -41,6 +41,8 @@
 #include <vector>
 
 #if defined(EV_EPOLL)
+	#define EV_HAVE_RAWLIST
+	#define EV_HAVE_LIST
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
@@ -162,7 +164,7 @@ public:
 	 */
 	int wait(uint32_t msecs) throw();
 	
-	#ifndef EV_NO_EVENT_LIST
+	#ifdef EV_HAVE_LIST
 	//! Returns a vector of triggered sockets.
 	/**
 	 * NOT IMPLEMENTED
@@ -172,8 +174,9 @@ public:
 	 * @return EvList of the events.
 	 */
 	EvList getEvents() const throw();
-	#endif // !EV_NO_EVENT_LIST
+	#endif // EV_HAVE_LIST
 	
+	#ifdef EV_HAVE_RAWLIST
 	//! Get raw event list if supported by event mechanism.
 	/**
 	 * Currently only supported by epoll.
@@ -185,6 +188,7 @@ public:
 	#else // defined( EV_SELECT ) or defined( EV_PSELECT )
 	void* getRawEvents() const throw() { return 0; }
 	#endif // EV_*
+	#endif // EV_HAVE_RAWLIST
 	
 	//! Adds file descriptor to event polling.
 	/**
