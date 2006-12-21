@@ -45,9 +45,9 @@ check_include_files ( stdint.h HAVE_STDINT_H )
 
 ### Boost library
 
-set ( BOOST_LIB_DIAGNOSTIC true )
+set ( BOOST_LIB_DIAGNOSTIC ON )
 
-find_package ( Boost 1.33 QUIET )
+find_package ( Boost QUIET )
 
 if ( Boost_FOUND )
 	message ( STATUS "libBoost found" )
@@ -132,6 +132,26 @@ if ( WIN32 )
 		set ( EV_SELECT ON )
 	endif ( NOT EV_SELECT )
 endif ( WIN32 )
+
+# cull mechanisms
+
+if ( EV_EPOLL )
+	set ( EV_KEVENT OFF )
+	set ( EV_KQUEUE OFF )
+	set ( EV_SELECT OFF )
+	set ( EV_PSELECT OFF )
+endif ( EV_EPOLL )
+
+if ( EV_KEVENT )
+	set ( EV_KQUEUE OFF )
+	set ( EV_SELECT OFF )
+	set ( EV_PSELECT OFF )
+endif ( EV_KEVENT )
+
+if ( EV_KQUEUE )
+	set ( EV_PSELECT OFF )
+	set ( EV_SELECT OFF )
+endif ( EV_KQUEUE )
 
 ###
 

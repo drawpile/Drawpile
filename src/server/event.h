@@ -29,6 +29,8 @@
 #ifndef EVENT_H_INCLUDED
 #define EVENT_H_INCLUDED
 
+#include "../../config.h"
+
 // #include <set>
 #include <stdint.h>
 

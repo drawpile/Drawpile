@@ -118,6 +118,9 @@ Message* getMessage(uint8_t type) throw(std::exception)
 		break;
 		/*
 	case type::SessionSelect:
+		#ifndef NDEBUG
+		std::cout << "Type: Session Select" << std::endl;
+		#endif
 		return new SessionSelect();
 		break;
 		*/
