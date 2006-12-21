@@ -239,10 +239,18 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		
 		usr->input.write(rb);
 		
-		protocol::Message* msg = protocol::getMessage(usr->input.rpos[0]);
+		protocol::Message* msg;
+		try {
+			msg = protocol::getMessage(usr->input.rpos[0]);
+		}
+		catch (std::exception &e) {
+			std::cerr << "Invalid data from user: " << usr->id << std::endl;
+			uRemove(usr);
+			return;
+		}
 		
 		size_t len = 0;
-		// = protocol::getMsgLength(usr->input.rpos, usr->input.canRead());
+		std::cout << msg->reqDataLen(usr->input.rpos, usr->input.canRead()) << std::endl;
 		
 		std::cout << "Still need: "
 			<< len
@@ -422,7 +430,7 @@ int Server::init() throw()
 	std::cout << "New socket: " << lsock.fd() << std::endl;
 	#endif
 	
-	if (lsock.fd() == INVALID_SOCKET)
+	if (lsock.fd() == -1)
 	{
 		std::cerr << "failed to create a socket." << std::endl;
 		return -1;
