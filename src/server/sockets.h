@@ -83,6 +83,8 @@ int netStop() throw()
 	#if defined( WIN32 ) and defined( HAVE_WSA )
 	WSACleanup();
 	#endif
+	
+	return 0;
 }
 
 //! Socket abstraction
