@@ -121,10 +121,11 @@ protected:
 	
 	int error, nfds;
 	
+	#if defined(EV_SELECT) or defined(EV_PSELECT)
 	//! Returns the set ID for event type 'ev'.
 	inline
-	int inSet(const int ev) const throw();
-	
+	int inSet(const int ev) const throw() { return ( ev == read ? 0 : 1 ); }
+	#endif
 public:
 	
 	// MinGW is buggy... think happy thoughts :D
@@ -149,7 +150,7 @@ public:
 	 * Only used by pselect() so far
 	 */
 	void setMask(sigset_t* mask) throw() { _sigmask = mask; }
-	#endif
+	#endif // EV_USE_SIGMASK
 	
 	//! Initialize event system.
 	bool init() throw(std::bad_alloc);
@@ -230,8 +231,8 @@ public:
 	 */
 	bool isset(int fd, int ev) const throw();
 	
+	//! TODO
 	int triggered(int fd) const throw();
-
 };
 
 #endif // EVENT_H_INCLUDED
