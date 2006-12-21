@@ -25,6 +25,8 @@
 #include "testing.h"
 #include "../shared/templates.h"
 
+#include <iostream>
+
 /** for unittest related things */
 namespace test
 {
@@ -39,7 +41,7 @@ void simple_memcpy()
 		uint8_t int8_o = 0;
 		uint8_t int8_i = 0xF1;
 		
-		memcpy_t((char*)&int8_o, int8_i);
+		memcpy_t(reinterpret_cast<char*>(&int8_o), int8_i);
 		testvars( 
 			int8_i,
 			int8_o,
@@ -53,7 +55,7 @@ void simple_memcpy()
 		uint8_t int8_o = 0;
 		int8_t int8_i = 0xF1;
 		
-		memcpy_t((char*)&int8_o, int8_i);
+		memcpy_t(reinterpret_cast<char*>(&int8_o), int8_i);
 		testvars(
 			int8_i,
 			(int8_t)int8_o,
@@ -62,34 +64,54 @@ void simple_memcpy()
 	}
 	
 	{
-		testing("uint32_t -> char*");
-		char char_i[4] = {0x11,0x22,0x33,0x44};
-		char char_out[4] = {0,0,0,0};
-		uint32_t int_i = 0x11223344;
+		testing("int16_t -> char*");
+		char char_i[3] = {0,0,0};
+		char char_out[3] = {0,0,0};
+		int16_t int_i = 0x6463; // cd 
 		
-		memcpy_t((char*)&char_out, int_i);
+		memcpy(&char_i, &int_i, 2);
+		
+		memcpy_t(reinterpret_cast<char*>(&char_out), int_i);
 		testvars(
-			int_i,
-			&char_out,
-			&char_i,
-			false,
-			4
+			int_i, // input
+			&char_out, // output
+			&char_i, // expected output
+			false, // must fail
+			2 // array size
 		);
 	}
-		
+	
 	{
-		testing("char* -> uint32_t");
-		char char_i[4] = {0x11,0x22,0x33,0x44};
-		uint32_t int_i = 0x11223344;
-		uint32_t int_out = 0;
+		testing("uint32_t -> char*");
+		char char_i[5] = {0,0,0,0,0};
+		char char_out[5] = {0,0,0,0,0};
+		uint32_t int_i = 0x64636261; // "abcd"
 		
-		memcpy_t(int_out, (char*)&char_i);
+		memcpy(&char_i, &int_i, 4);
+		
+		memcpy_t(reinterpret_cast<char*>(&char_out), int_i);
 		testvars(
-			&char_i,
-			int_out,
-			int_i,
-			false,
-			4
+			int_i, // input
+			&char_out, // output
+			&char_i, // expected output
+			false, // must fail
+			4 // array size
+		);
+	}
+	
+	{
+		testing("uint32_t <- char*");
+		char char_i[5] = "abcd";
+		uint32_t int_i;
+		uint32_t int_out = 0x00000000;
+		memcpy(&int_i, &char_i, sizeof(int_i));
+		memcpy_t(int_out, reinterpret_cast<char*>(&char_i));
+		testvars(
+			&char_i, // in
+			int_out, // out
+			int_i, // should be
+			false, // must fail
+			4 // array size
 		);
 	}
 }

@@ -29,6 +29,9 @@ int main(int argc, char** argv)
 {
 	std::ios::sync_with_stdio(false);
 	
+	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+	std::cout.setf ( std::ios_base::showbase );
+	
 	std::cout << "[ DrawPile Unittesting ]\n" << std::endl;
 	
 	/* start tests */
@@ -40,6 +43,8 @@ int main(int argc, char** argv)
 	/* end tests*/
 	
 	/* stats */
+	
+	std::cout.setf ( std::ios_base::dec, std::ios_base::basefield );
 	
 	std::cout
 		<< "\nTests run:    " << total

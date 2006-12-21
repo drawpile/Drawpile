@@ -39,15 +39,51 @@ bool testoutput(T o, T x, size_t s)
 	return (o == x);
 }
 
-template <> inline
-bool testoutput(char* o, char* x, size_t s)
+template <class T> inline
+bool testoutput(T* o, T* x, size_t s)
 {
 	return (memcmp(o, x, s) == 0);
 }
 
+template <class T, class X>
+void show_vars(T input, X output, X expect)
+{
+	std::cout
+		<< "input:    " << input
+		<< "\noutput:   " << output
+		<< "\nexpected: " << expect << std::endl;
+}
+
+template <class T, class X>
+void show_vars(T input, X* output, X* expect)
+{
+	std::cout
+		<< "input:    " << input
+		<< "\noutput:   " << *output
+		<< "\nexpected: " << *expect << std::endl;
+}
+
+template <class T, class X>
+void show_vars(T* input, X output, X expect)
+{
+	std::cout
+		<< "input:    " << *input
+		<< "\noutput:   " << output
+		<< "\nexpected: " << expect << std::endl;
+}
+
+template <class T, class X>
+void show_vars(T* input, X* output, X* expect)
+{
+	std::cout
+		<< "input:    " << *input
+		<< "\noutput:   " << *output
+		<< "\nexpected: " << *expect << std::endl;
+}
+
 /* informal */
 template <class T, class X>
-void testvars(T input, X output, X expect, bool fail=false, size_t array_size=0)
+void testvars(T input, X output, X expect, bool fail=false, size_t array_size=1)
 {
 	if (fail)
 		xpectfail++;
@@ -63,10 +99,8 @@ void testvars(T input, X output, X expect, bool fail=false, size_t array_size=0)
 		}
 		else
 		{
-			std::cout << " failed!"
-				<< "\ninput:    " << input
-				<< "\noutput:   " << output
-				<< "\nexpected: " << expect << std::endl;
+			std::cout << " failed!" << std::endl;
+			show_vars(input, output, expect);
 			
 			failed++;
 		}
@@ -75,10 +109,8 @@ void testvars(T input, X output, X expect, bool fail=false, size_t array_size=0)
 	{
 		if (fail)
 		{
-			std::cout << " failed (f)"
-				<< "\ninput:        " << input
-				<< "\noutput:       " << output
-				<< "\nnot-expected: " << expect << std::endl;
+			std::cout << " failed (f)" << std::endl;
+			show_vars(input, output, expect);
 			
 			mustfail_passed++;
 		}
