@@ -10,6 +10,7 @@ set (
 	protocol.tools.h
 	protocol.flags.h
 	protocol.types.h
+	protocol.helper.h
 )
 
 set (
