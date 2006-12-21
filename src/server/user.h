@@ -63,17 +63,25 @@ struct UserData
 	bool owner;
 };
 
+namespace uState
+{
+	const uint8_t init = 255;
+	const uint8_t login = 10;
+	const uint8_t active = 0;
+}
+
 //! User information
 /**  */
 struct User
 {
 	//! ctor
 	User() throw()
-		: id(0),
+		:
+		sock(0),
+		id(0),
 		nlen(0),
 		name(0),
-		state(0),
-		s(0)
+		state(uState::init)
 	{
 		#ifndef NDEBUG
 		std::cout << "User::User()" << std::endl;
@@ -81,16 +89,17 @@ struct User
 	}
 	
 	//! ctor
-	User(uint8_t _id, Socket* sock) throw()
-		: id(_id),
+	User(uint8_t _id, Socket* nsock) throw()
+		:
+		sock(nsock),
+		id(_id),
 		nlen(0),
 		name(0),
-		state(0),
-		s(sock)
+		state(uState::init)
 	{
 		#ifndef NDEBUG
 		std::cout << "User::User(" << static_cast<int>(_id)
-			<< ", " << s->fd() << ")" << std::endl;
+			<< ", " << sock->fd() << ")" << std::endl;
 		#endif
 	}
 	
@@ -102,13 +111,13 @@ struct User
 		#endif
 		
 		delete [] name,
-		delete s;
-		s = 0;
+		delete sock;
+		sock = 0;
 		name = 0;
 	}
 	
 	//! Socket
-	Socket *s;
+	Socket *sock;
 	
 	//! User identifier
 	uint8_t id;

@@ -101,16 +101,19 @@ protected:
 	uint8_t getSessionID() throw();
 
 	//! Write to user socket
-	void uWrite(User* u) throw();
+	void uWrite(User* usr) throw();
 
 	//! Read from user socket
-	void uRead(User* u) throw(std::bad_alloc);
+	void uRead(User* usr) throw(std::bad_alloc);
+	
+	//! Handle user message.
+	void uHandleMsg(User* usr) throw(std::bad_alloc);
 	
 	//! Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	//! Removes user and does cleaning..
-	void uRemove(User* u) throw();
+	void uRemove(User* usr) throw();
 public:
 	//! ctor
 	Server() throw();

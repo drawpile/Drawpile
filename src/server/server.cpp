@@ -34,6 +34,8 @@
 
 #include "../shared/templates.h"
 #include "../shared/protocol.defaults.h"
+#include "../shared/protocol.helper.h"
+#include "../shared/protocol.h"
 
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -132,12 +134,12 @@ void Server::cleanup() throw()
 	lsock.close();
 	
 	// delete users
-	for (std::map<int, User*>::iterator u(users.begin()); u != users.end(); u++)
+	for (std::map<int, User*>::iterator uiter(users.begin()); uiter != users.end(); uiter++)
 	{
 		#if defined( FULL_CLEANUP )
-		delete u->second;
+		delete uiter->second;
 		#else
-		u->second->s->close();
+		uiter->second->sock->close();
 		#endif
 	}
 	
@@ -146,15 +148,15 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-void Server::uWrite(User* u) throw()
+void Server::uWrite(User* usr) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uWrite(" << u->s->fd() << ")" << std::endl;
+	std::cout << "Server::uWrite(" << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	Buffer buf = u->buffers.front();
+	Buffer buf = usr->buffers.front();
 	
-	int sb = u->s->send(
+	int sb = usr->sock->send(
 		buf.rpos,
 		buf.canRead()
 	);
@@ -166,22 +168,22 @@ void Server::uWrite(User* u) throw()
 		buf.read(sb);
 		
 		// just to ensure we don't need to do anything for it.
-		assert(buf.rpos == u->buffers.front().rpos);
+		assert(buf.rpos == usr->buffers.front().rpos);
 		
 		if (buf.left == 0)
 		{
 			// remove buffer
 			delete [] buf.data;
-			u->buffers.pop();
+			usr->buffers.pop();
 			
 			// remove fd from write list if no buffers left.
-			if (u->buffers.empty())
+			if (usr->buffers.empty())
 			{
-				fClr(u->events, ev.write);
-				if (u->events == 0)
-					ev.remove(u->s->fd(), u->events);
+				fClr(usr->events, ev.write);
+				if (usr->events == 0)
+					ev.remove(usr->sock->fd(), usr->events);
 				else
-					ev.modify(u->s->fd(), u->events);
+					ev.modify(usr->sock->fd(), usr->events);
 			}
 		}
 	}
@@ -192,66 +194,103 @@ void Server::uWrite(User* u) throw()
 	else
 	{
 		std::cerr << "Error occured while sending to user: "
-			<< static_cast<int>(u->id) << std::endl;
+			<< static_cast<int>(usr->id) << std::endl;
 		
-		fClr(u->events, ev.read);
-		if (u->events == 0)
-			ev.remove(u->s->fd(), u->events);
+		fClr(usr->events, ev.read);
+		if (usr->events == 0)
+			ev.remove(usr->sock->fd(), usr->events);
 		else
-			ev.modify(u->s->fd(), u->events);
+			ev.modify(usr->sock->fd(), usr->events);
 	}
 }
 
-void Server::uRead(User* u) throw(std::bad_alloc)
+void Server::uRead(User* usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uRead(" << u->s->fd() << ")" << std::endl;
+	std::cout << "Server::uRead(" << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	std::cout << "From user: " << static_cast<int>(u->id) << std::endl;
+	std::cout << "From user: " << static_cast<int>(usr->id) << std::endl;
 	
-	if (u->input.data == 0)
+	if (usr->input.data == 0)
 	{
 		std::cout << "Assigning buffer to user." << std::endl;
 		size_t buf_size = 8196;
-		u->input.setBuffer(new char[buf_size], buf_size);
-		std::cout << "Can write: " << u->input.canWrite() << std::endl
-			<< "Can read: " << u->input.canRead() << std::endl;
+		usr->input.setBuffer(new char[buf_size], buf_size);
+		std::cout << "Can write: " << usr->input.canWrite() << std::endl
+			<< "Can read: " << usr->input.canRead() << std::endl;
 		
 	}
 	
-	if (u->input.canWrite() == 0)
+	if (usr->input.canWrite() == 0)
 	{
 		std::cerr << "User input buffer full!" << std::endl;
 		return;
 	}
 	
-	int rb = u->s->recv(
-		u->input.wpos,
-		u->input.canWrite()
+	int rb = usr->sock->recv(
+		usr->input.wpos,
+		usr->input.canWrite()
 	);
 	
 	if (rb > 0)
 	{
 		std::cout << "Received " << rb << " bytes.." << std::endl;
 		
-		u->input.write(rb);
+		usr->input.write(rb);
+		
+		protocol::Message* msg = protocol::getMessage(usr->input.rpos[0]);
+		
+		size_t len = 0;
+		// = protocol::getMsgLength(usr->input.rpos, usr->input.canRead());
+		
+		std::cout << "Still need: "
+			<< len
+			<< std::endl;
+		
+		uHandleMsg(usr);
 	}
 	else if (rb == 0)
 	{
 		std::cout << "User disconnected!" << std::endl;
 		
-		uRemove(u);
+		uRemove(usr);
 	}
 	else
 	{
 		std::cerr << "Error occured while reading from user: "
-			<< static_cast<int>(u->id) << std::endl;
+			<< static_cast<int>(usr->id) << std::endl;
 		
 		// TODO (EAGAIN and such)
 		
-		u->events = fClr(u->events, ev.read);
-		ev.modify(u->s->fd(), u->events);
+		usr->events = fClr(usr->events, ev.read);
+		ev.modify(usr->sock->fd(), usr->events);
+	}
+}
+
+void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
+{
+	#ifndef NDEBUG
+	std::cout << "Server::uHandleMsg(" << static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	
+	switch (usr->state)
+	{
+	case uState::active:
+		std::cout << "active" << std::endl;
+		
+		break;
+	case uState::login:
+		std::cout << "login" << std::endl;
+		
+		break;
+	case uState::init:
+		std::cout << "init" << std::endl;
+		
+		break;
+	default:
+		assert(!"user state was something strange");
+		break;
 	}
 }
 
@@ -276,7 +315,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		User *ud = new User(id, sock);
 		
 		fSet(ud->events, ev.read);
-		ev.add(ud->s->fd(), ud->events);
+		ev.add(ud->sock->fd(), ud->events);
 		
 		users.insert( std::make_pair(sock->fd(), ud) );
 		user_id_map.insert( std::make_pair(id, ud) );
@@ -287,15 +326,15 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::uRemove(User* u) throw()
+void Server::uRemove(User* usr) throw()
 {
-	ev.remove(u->s->fd(), ev.write|ev.read);
+	ev.remove(usr->sock->fd(), ev.write|ev.read);
 	
-	freeUserID(u->id);
+	freeUserID(usr->id);
 	
-	int id = u->s->fd();
+	int id = usr->sock->fd();
 	std::cout << "Deleting user.." << std::endl;
-	delete u;
+	delete usr;
 	
 	std::cout << "Removing from mappings" << std::endl;
 	users.erase(id);
@@ -457,15 +496,16 @@ int Server::init() throw()
 		}
 	}
 	
-	if (lsock.listen() == SOCKET_ERROR)
+	if (lsock.listen() == -1)
 	{
 		std::cerr << "Failed to open listening port." << std::endl;
 		return -1;
 	}
 	
-	std::cerr << "listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
+	std::cout << "listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
 	
-	ev.init();
+	if (!ev.init())
+		return -1;
 	
 	ev.add(lsock.fd(), ev.read);
 	
@@ -478,8 +518,10 @@ int Server::run() throw()
 	std::cout << "Server::run()" << std::endl;
 	#endif
 	
+	// define temporary socket
 	Socket *nu;
 	
+	// define iterators
 	std::vector<uint32_t>::iterator si;
 	std::map<int, User*>::iterator ui;
 	
@@ -487,10 +529,13 @@ int Server::run() throw()
 	std::cout << "eternity" << std::endl;
 	#endif
 	
-	EvList evl;
+	//EvList evl;
 	
-	int ec, evs;
-	while (1) // yay for infinite loops
+	// event count
+	int ec /*, evs */;
+	
+	// main loop
+	while (1)
 	{
 		ec = ev.wait(5000);
 		
@@ -509,17 +554,6 @@ int Server::run() throw()
 			#ifndef NDEBUG
 			std::cout << "Events waiting: " << ec << std::endl;
 			#endif
-			
-			/*
-			evs = ev.triggered(lsock.fd());
-			std::cout << "Server events: ";
-			std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-			std::cout.setf ( std::ios_base::showbase );
-			std::cout << evs;
-			std::cout.setf ( std::ios_base::dec );
-			std::cout.setf ( ~std::ios_base::showbase );
-			std::cout << std::endl;
-			*/
 			
 			if (ev.isset(lsock.fd(), ev.read))
 			{
