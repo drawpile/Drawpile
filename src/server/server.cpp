@@ -217,9 +217,6 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		std::cout << "Assigning buffer to user." << std::endl;
 		size_t buf_size = 8196;
 		usr->input.setBuffer(new char[buf_size], buf_size);
-		std::cout << "Can write: " << usr->input.canWrite() << std::endl
-			<< "Can read: " << usr->input.canRead() << std::endl;
-		
 	}
 	
 	if (usr->input.canWrite() == 0)
@@ -239,24 +236,33 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		
 		usr->input.write(rb);
 		
-		protocol::Message* msg;
-		try {
-			msg = protocol::getMessage(usr->input.rpos[0]);
+		if (usr->inMsg == 0)
+		{
+			try {
+				usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
+			}
+			catch (std::exception &e) {
+				std::cerr << "Invalid data from user: " << usr->id << std::endl;
+				uRemove(usr);
+				return;
+			}
 		}
-		catch (std::exception &e) {
-			std::cerr << "Invalid data from user: " << usr->id << std::endl;
-			uRemove(usr);
+		
+		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, usr->input.canRead());
+		
+		if (len > usr->input.canRead())
+		{
+			std::cout << "Still need more data." << std::endl;
 			return;
 		}
 		
-		size_t len = 0;
-		std::cout << msg->reqDataLen(usr->input.rpos, usr->input.canRead()) << std::endl;
+		// unserialize message...
+		usr->input.read(
+			usr->inMsg->unserialize(usr->input.rpos, usr->input.canRead())
+		);
 		
-		std::cout << "Still need: "
-			<< len
-			<< std::endl;
-		
-		uHandleMsg(usr);
+		// TODO: Handle message
+		//uHandleMsg(usr);
 	}
 	else if (rb == 0)
 	{
