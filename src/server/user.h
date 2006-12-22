@@ -22,6 +22,7 @@
 
 #include "buffer.h"
 
+#include "../shared/protocol.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.flags.h"
 
@@ -81,7 +82,8 @@ struct User
 		id(0),
 		nlen(0),
 		name(0),
-		state(uState::init)
+		state(uState::init),
+		inMsg(0)
 	{
 		#ifndef NDEBUG
 		std::cout << "User::User()" << std::endl;
@@ -95,7 +97,8 @@ struct User
 		id(_id),
 		nlen(0),
 		name(0),
-		state(uState::init)
+		state(uState::init),
+		inMsg(0)
 	{
 		#ifndef NDEBUG
 		std::cout << "User::User(" << static_cast<int>(_id)
@@ -111,9 +114,8 @@ struct User
 		#endif
 		
 		delete [] name,
-		delete sock;
-		sock = 0;
-		name = 0;
+		delete sock,
+		delete inMsg;
 	}
 	
 	//! Socket
@@ -148,6 +150,9 @@ struct User
 	
 	//! Input buffer
 	Buffer input;
+	
+	//! Currently incoming message.
+	protocol::Message *inMsg;
 };
 
 #endif // ServerUser_INCLUDED
