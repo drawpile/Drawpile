@@ -74,8 +74,8 @@ bool Event::init() throw(std::bad_alloc)
 	std::cout << "Event::init()" << std::endl;
 	#endif
 	
-	FD_ZERO(&fds[inSet(read)]);
-	FD_ZERO(&fds[inSet(write)]);
+	FD_ZERO(&fds_r);
+	FD_ZERO(&fds_w);
 	
 	return true;
 }
@@ -94,11 +94,11 @@ int Event::wait(uint32_t msecs) throw()
 	#endif
 	
 	#ifdef EV_SELECT_COPY
-	FD_COPY(&fds[inSet(read)], &t_fds[inSet(read)]),
-	FD_COPY(&fds[inSet(write)], &t_fds[inSet(write)]);
+	FD_COPY(&fds_r, &t_fds_r),
+	FD_COPY(&fds_w, &t_fds_w);
 	#else
-	memcpy(&t_fds[inSet(read)], &fds[inSet(read)], sizeof(fd_set)),
-	memcpy(&t_fds[inSet(write)], &fds[inSet(write)], sizeof(fd_set));
+	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
+	memcpy(&t_fds_w, &fds_w, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
 	#if defined(EV_SELECT)
@@ -125,8 +125,8 @@ int Event::wait(uint32_t msecs) throw()
 	#else
 		(nfds_w > nfds_r ? nfds_w : nfds_r) + 1,
 	#endif
-		&t_fds[inSet(read)],
-		&t_fds[inSet(write)],
+		&t_fds_r,
+		&t_fds_w,
 		NULL,
 		&tv
 	#if defined(EV_PSELECT)
@@ -184,7 +184,7 @@ int Event::add(int fd, int ev) throw()
 	if (fIsSet(ev, read)) 
 	{
 		std::cout << "set read" << std::endl;
-		FD_SET(fd, &fds[inSet(read)]);
+		FD_SET(fd, &fds_r);
 		#ifndef WIN32
 		select_set_r.insert(select_set_r.end(), fd);
 		std::cout << nfds_r << " -> ";
@@ -195,7 +195,7 @@ int Event::add(int fd, int ev) throw()
 	if (fIsSet(ev, write))
 	{
 		std::cout << "set write" << std::endl;
-		FD_SET(fd, &fds[inSet(write)]);
+		FD_SET(fd, &fds_w);
 		#ifndef WIN32
 		select_set_w.insert(select_set_w.end(), fd);
 		std::cout << nfds_w << " -> ";
@@ -251,7 +251,7 @@ int Event::remove(int fd, int ev) throw()
 	
 	if (fIsSet(ev, read))
 	{
-		FD_CLR(fd, &fds[inSet(read)]);
+		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
 		select_set_r.erase(fd);
 		std::cout << nfds_r << " -> ";
@@ -262,7 +262,7 @@ int Event::remove(int fd, int ev) throw()
 	
 	if (fIsSet(ev, write))
 	{
-		FD_CLR(fd, &fds[inSet(write)]);
+		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
 		select_set_w.erase(fd);
 		std::cout << nfds_w << " -> ";
@@ -288,8 +288,14 @@ bool Event::isset(int fd, int ev) const throw()
 	
 	assert( ev == read or ev == write );
 	assert( fd >= 0 );
-	
-	return (FD_ISSET(fd, &t_fds[inSet(ev)]) != 0);
-	
-	return false;
+	switch (ev)
+	{
+	case read:
+		return (FD_ISSET(fd, &t_fds_r) != 0);
+	case write:
+		return (FD_ISSET(fd, &t_fds_w) != 0);
+	default:
+		assert(!"switch(ev) defaulted even when it is impossible");
+		return false;
+	}
 }

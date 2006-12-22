@@ -104,7 +104,7 @@ protected:
 	#elif defined(EV_KQUEUE)
 	//
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
-	fd_set fds[2], t_fds[2];
+	fd_set fds_r, fds_w, t_fds_r, t_fds_w;
 	
 	#ifndef WIN32
 	std::set<int> select_set_r;
@@ -121,11 +121,6 @@ protected:
 	
 	int error, nfds;
 	
-	#if defined(EV_SELECT) or defined(EV_PSELECT)
-	//! Returns the set ID for event type 'ev'.
-	inline
-	int inSet(const int ev) const throw() { return ( ev == read ? 0 : 1 ); }
-	#endif
 public:
 	
 	// MinGW is buggy... think happy thoughts :D
