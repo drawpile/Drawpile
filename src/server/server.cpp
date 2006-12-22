@@ -239,7 +239,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		if (usr->inMsg == 0)
 		{
 			try {
-				usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
+				usr->inMsg  = protocol::stack::get(usr->input.rpos[0]);
 			}
 			catch (std::exception &e) {
 				std::cerr << "Invalid data from user: " << usr->id << std::endl;
@@ -262,7 +262,10 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		);
 		
 		// TODO: Handle message
-		//uHandleMsg(usr);
+		//uHandleMsg(usr->inMsg);
+		
+		protocol::stack::free(usr->inMsg);
+		usr->inMsg = 0;
 	}
 	else if (rb == 0)
 	{
