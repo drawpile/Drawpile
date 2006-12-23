@@ -35,7 +35,7 @@
 #include "../shared/templates.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
-#include "../shared/protocol.h"
+//#include "../shared/protocol.h"
 
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -136,7 +136,7 @@ void Server::cleanup() throw()
 	// delete users
 	for (std::map<int, User*>::iterator uiter(users.begin()); uiter != users.end(); uiter++)
 	{
-		#if defined( FULL_CLEANUP )
+		#if defined(FULL_CLEANUP)
 		delete uiter->second;
 		#else
 		uiter->second->sock->close();
@@ -255,7 +255,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		);
 		
 		// TODO: Handle message
-		//uHandleMsg(usr->inMsg);
+		uHandleMsg(usr, usr->inMsg);
 		
 		protocol::stack::free(usr->inMsg);
 		usr->inMsg = 0;
@@ -278,7 +278,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
+void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleMsg(" << static_cast<int>(usr->id) << ")" << std::endl;
@@ -292,11 +292,41 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		break;
 	case uState::login:
 		std::cout << "login" << std::endl;
-		
-		break;
-	case uState::init:
-		std::cout << "init" << std::endl;
-		
+		if (msg->type == protocol::type::Identifier)
+		{
+			protocol::Identifier *i = static_cast<protocol::Identifier*>(msg);
+			bool str = (
+				memcmp((char*)&i->identifier,
+					&protocol::identifierString,
+					protocol::identifier_size
+				) == 0);
+			bool rev = (i->revision == protocol::revision);
+			
+			if (!str)
+			{
+				std::cerr << "Protocol string mismatch" << std::endl;
+				uRemove(usr);
+				return;
+			}
+			if (!rev)
+			{
+				std::cerr << "Protocol revision mismatch" << std::endl;
+				uRemove(usr);
+				return;
+			}
+			
+			usr->state = uState::active;
+			
+			// TODO: send Auth Request
+			// TODO: send Host Info.
+		}
+		else
+		{
+			std::cerr << "Invalid data from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			
+			uRemove(usr);
+		}
 		break;
 	default:
 		assert(!"user state was something strange");
@@ -423,11 +453,7 @@ void Server::getArgs(int argc, char** argv) throw(std::bad_alloc)
 	}
 }
 
-#if defined( EV_EPOLL )
 int Server::init() throw(std::bad_alloc)
-#else
-int Server::init() throw()
-#endif
 {
 	#ifndef NDEBUG
 	std::cout << "Server::init()" << std::endl;

@@ -37,6 +37,8 @@
 #include "event.h"
 #include "user.h"
 
+#include "../shared/protocol.h"
+
 //#include <sys/time.h>
 #include <getopt.h> // for command-line opts
 
@@ -107,7 +109,7 @@ protected:
 	void uRead(User* usr) throw(std::bad_alloc);
 	
 	//! Handle user message.
-	void uHandleMsg(User* usr) throw(std::bad_alloc);
+	void uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc);
 	
 	//! Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
@@ -123,13 +125,9 @@ public:
 	
 	//! Initializes anything that need to be done so.
 	/**
-	 * @throw std::bad_alloc if EV_EPOLL is defined.
+	 * @throw std::bad_alloc (only if EV_EPOLL is defined.)
 	 */
-	#if defined( EV_EPOLL )
 	int init() throw(std::bad_alloc);
-	#else
-	int init() throw();
-	#endif
 	
 	//! Parses command-line args
 	void getArgs(int argc, char** argv) throw(std::bad_alloc);
