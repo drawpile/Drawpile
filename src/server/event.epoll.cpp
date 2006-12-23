@@ -151,7 +151,6 @@ int Event::wait(uint32_t msecs) throw()
 	}
 	
 	return nfds;
-	#endif // EV_*
 }
 
 int Event::add(int fd, int ev) throw()
@@ -169,11 +168,11 @@ int Event::add(int fd, int ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
-	epoll_event ev;
-	ev.data.fd = fd;
-	ev.events = ev;
+	epoll_event ev_info;
+	ev_info.data.fd = fd;
+	ev_info.events = ev;
 	
-	int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev);
+	int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
 	error = errno;
 	if (r == -1)
 	{
@@ -231,11 +230,11 @@ int Event::modify(int fd, int ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
-	epoll_event ev;
-	ev.data.fd = fd;
-	ev.events = ev;
+	epoll_event ev_info;
+	ev_info.data.fd = fd;
+	ev_info.events = ev;
 	
-	int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev);
+	int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
 	error = errno;
 	if (r == -1)
 	{
