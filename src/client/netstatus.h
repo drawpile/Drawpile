@@ -20,23 +20,34 @@
 #ifndef NETSTATUS_H
 #define NETSTATUS_H
 
-#include <QWidget>
+#include <QLabel>
 #include <QPixmap>
 
 namespace widgets {
 //! Network connection status widget
 /**
- * This widget displays the current status of the connection with the server.
+ * This widget displays the current status of the connection with the server
+ * and the address of the host.
  */
 class NetStatus : public QWidget
 {
 	Q_OBJECT
 	public:
 		NetStatus(QWidget *parent);
-	protected:
-		void paintEvent(QPaintEvent *event);
+	
+	public slots:
+		//! Set the address
+		void setAddress(const QString& address);
+		//! Set message to indicate lack of connection with host
+		void disconnect();
+		//! Copy the address to clipboard
+		void copyAddress();
+
 	private:
-		QPixmap icon_;
+		QLabel *label_, *icon_;
+		QPixmap offlineicon_;
+		QString address_;
+		QAction *copyaction_;
 };
 
 }

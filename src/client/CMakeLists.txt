@@ -33,7 +33,7 @@ include ( ${QT_USE_FILE} )
 
 set (
 	Client_Headers
-	mainwindow.h netstatus.h hostlabel.h dualcolorbutton.h editorview.h
+	mainwindow.h netstatus.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
@@ -42,7 +42,7 @@ set (
 
 set (
 	Client_Sources
-	main.cpp mainwindow.cpp netstatus.cpp hostlabel.cpp dualcolorbutton.cpp
+	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp aboutdialog.cpp

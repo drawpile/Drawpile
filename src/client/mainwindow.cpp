@@ -32,7 +32,6 @@
 
 #include "mainwindow.h"
 #include "netstatus.h"
-#include "hostlabel.h"
 #include "aboutdialog.h"
 #include "dualcolorbutton.h"
 #include "editorview.h"
@@ -55,9 +54,6 @@ MainWindow::MainWindow()
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
-
-	hostaddress_ = new widgets::HostLabel();
-	statusbar->addPermanentWidget(hostaddress_);
 
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
@@ -281,6 +277,7 @@ bool MainWindow::saveas()
 			return true;
 		}
 	}
+	return false;
 }
 
 void MainWindow::finishNew(int i)

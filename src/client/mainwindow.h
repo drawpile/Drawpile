@@ -29,7 +29,6 @@ class QMessageBox;
 
 namespace widgets {
 	class NetStatus;
-	class HostLabel;
 	class EditorView;
 	class DualColorButton;
 	class ToolSettings;
@@ -129,7 +128,6 @@ class MainWindow : public QMainWindow {
 		widgets::ToolSettings *toolsettings_;
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
-		widgets::HostLabel *hostaddress_;
 		widgets::EditorView *view_;
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		QDialog *aboutdlg_;

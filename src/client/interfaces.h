@@ -31,12 +31,15 @@ namespace interface {
 //! Interface for brush sources
 class BrushSource {
 	public:
+		virtual ~BrushSource() {}
 		virtual drawingboard::Brush getBrush() const = 0;
 };
 
 //! Interface for color sources
 class ColorSource {
 	public:
+		virtual ~ColorSource() {}
+
 		//! Get the foreground color
 		virtual QColor foreground() const = 0;
 
