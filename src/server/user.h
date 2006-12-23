@@ -66,8 +66,7 @@ struct UserData
 
 namespace uState
 {
-	const uint8_t init = 255;
-	const uint8_t login = 10;
+	const uint8_t login = 1;
 	const uint8_t active = 0;
 }
 
@@ -77,12 +76,11 @@ struct User
 {
 	//! ctor
 	User() throw()
-		:
-		sock(0),
+		: sock(0),
 		id(0),
 		nlen(0),
 		name(0),
-		state(uState::init),
+		state(uState::login),
 		inMsg(0)
 	{
 		#ifndef NDEBUG
@@ -92,12 +90,11 @@ struct User
 	
 	//! ctor
 	User(uint8_t _id, Socket* nsock) throw()
-		:
-		sock(nsock),
+		: sock(nsock),
 		id(_id),
 		nlen(0),
 		name(0),
-		state(uState::init),
+		state(uState::login),
 		inMsg(0)
 	{
 		#ifndef NDEBUG
