@@ -27,7 +27,7 @@ using widgets::GradientSlider;
 
 namespace dialogs {
 
-ColorDialog::ColorDialog(QString title, QWidget *parent)
+ColorDialog::ColorDialog(const QString& title, QWidget *parent)
 	: QDialog(parent, Qt::Tool), updating_(false)
 {
 	ui_ = new Ui_ColorDialog;
@@ -79,6 +79,8 @@ void ColorDialog::setColor(const QColor& color)
 	ui_->saturation->setValue(s);
 	ui_->value->setValue(v);
 	ui_->colorTriangle->setColor(color);
+	if(h!=-1)
+		validhue_ = h;
 	updateBars();
 	updating_ = false;
 }
@@ -100,6 +102,10 @@ void ColorDialog::updateRgb()
 		QColor col = color();
 		int h,s,v;
 		col.getHsv(&h,&s,&v);
+		if(h==-1)
+			h = validhue_;
+		else
+			validhue_ = h;
 		updating_ = true;
 		ui_->hue->setValue(h);
 		ui_->saturation->setValue(s);
@@ -123,6 +129,7 @@ void ColorDialog::updateHsv()
 				ui_->value->value()
 				);
 		updating_ = true;
+		validhue_ = ui_->hue->value();
 		ui_->red->setValue(col.red());
 		ui_->green->setValue(col.green());
 		ui_->blue->setValue(col.blue());
@@ -146,6 +153,8 @@ void ColorDialog::updateTriangle(const QColor& color)
 
 		int h,s,v;
 		color.getHsv(&h,&s,&v);
+		if(h==-1)
+			h = validhue_;
 		ui_->hue->setValue(h);
 		ui_->saturation->setValue(s);
 		ui_->value->setValue(v);
@@ -165,6 +174,8 @@ void ColorDialog::updateBars()
 	qreal h,s,v;
 	col.getRgb(&r,&g,&b);
 	col.getHsvF(&h,&s,&v);
+	if(h<0)
+		h = validhue_/360.0;
 
 	ui_->red->setColor1(QColor(0,g,b));
 	ui_->red->setColor2(QColor(255,g,b));

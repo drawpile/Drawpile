@@ -42,8 +42,9 @@ void ColorTriangle::updateColorTriangle()
 {
 	diameter_ = qMin(width(), height());
 	center_ = diameter_/2.0;
-	outer_ =  center_ - 10;
-	inner_ = outer_ - 20; // ring width
+	outer_ =  center_ - 2;
+	inner_ = outer_ - 15; // ring width
+	innert_ = inner_ - 5; // triangle point
 
 	xoff_ = width() / 2 - diameter_/2;
 	yoff_ = height() / 2 - diameter_/2;
@@ -208,12 +209,12 @@ void ColorTriangle::updateVertices()
 {
 	qreal angle = hueAngle();
 
-	hx_ = int (center_ + cos (angle) * inner_ + 0.5);
-	hy_ = int (center_ - sin (angle) * inner_ + 0.5);
-	sx_ = int (center_ + cos (angle + 2.0 * M_PI / 3.0) * inner_ + 0.5);
-	sy_ = int (center_ - sin (angle + 2.0 * M_PI / 3.0) * inner_ + 0.5);
-	vx_ = int (center_ + cos (angle + 4.0 * M_PI / 3.0) * inner_ + 0.5);
-	vy_ = int (center_ - sin (angle + 4.0 * M_PI / 3.0) * inner_ + 0.5);
+	hx_ = int (center_ + cos (angle) * innert_ + 0.5);
+	hy_ = int (center_ - sin (angle) * innert_ + 0.5);
+	sx_ = int (center_ + cos (angle + 2.0 * M_PI / 3.0) * innert_ + 0.5);
+	sy_ = int (center_ - sin (angle + 2.0 * M_PI / 3.0) * innert_ + 0.5);
+	vx_ = int (center_ + cos (angle + 4.0 * M_PI / 3.0) * innert_ + 0.5);
+	vy_ = int (center_ - sin (angle + 4.0 * M_PI / 3.0) * innert_ + 0.5);
 }
 
 /**

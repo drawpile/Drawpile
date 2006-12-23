@@ -14,7 +14,7 @@
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
-    <number>5</number>
+    <number>1</number>
    </property>
    <property name="spacing" >
     <number>0</number>
@@ -77,7 +77,7 @@
      <widget class="QWidget" name="page_2" >
       <layout class="QGridLayout" >
        <property name="margin" >
-        <number>4</number>
+        <number>1</number>
        </property>
        <property name="spacing" >
         <number>2</number>
