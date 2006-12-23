@@ -147,7 +147,7 @@ int Event::wait(uint32_t msecs) throw()
 		case EINVAL:
 			#ifndef NDEBUG
 			std::cerr << "Epoll FD is not an epoll FD.. or maxevents is <= 0" << std::endl;
-			#include <iostream>
+			#endif
 			assert(1);
 			break;
 		#endif // TRAP_CODER_ERROR
