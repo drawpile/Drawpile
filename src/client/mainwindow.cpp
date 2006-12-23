@@ -29,6 +29,7 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QAbstractButton>
+#include <QImageWriter>
 
 #include "mainwindow.h"
 #include "netstatus.h"
@@ -219,10 +220,19 @@ void MainWindow::open()
 
 void MainWindow::reallyOpen()
 {
+	// Get a list of supported formats
+	QString formats;
+	foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
+		formats += "*." + format + " ";
+	}
+	QString filter = tr("Images (%1);;All files (*)").arg(formats);
+
+	// Get the file name to open
 	QString file = QFileDialog::getOpenFileName(this,
-			tr("Open image"), lastpath_,
-			tr("Images (*.png *.jpg *.bmp);;All files (*)"));
+			tr("Open image"), lastpath_, filter);
+
 	if(file.isEmpty()==false) {
+		// Open the file
 		QImage img(file);
 		if(img.isNull()) {
 			showErrorMessage(ERR_OPEN);
@@ -259,14 +269,31 @@ bool MainWindow::save()
  */
 bool MainWindow::saveas()
 {
+	QString selfilter;
+	QString filter;
+	// Get a list of supported formats
+	foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
+		filter += QString(format).toUpper() + " (*." + format + ");;";
+	}
+	filter += tr("All files (*)");
+
+	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Save image"), lastpath_,
-			tr("Images (*.png *.jpg *.bmp)"));
+			tr("Save image"), lastpath_, filter, &selfilter);
 	if(file.isEmpty()==false) {
+		// Get the default suffix to use
+		QRegExp extexp("\\(\\*\\.(.*)\\)");
+		QString defaultsuffix;
+		if(extexp.indexIn(selfilter)!=-1)
+			defaultsuffix = extexp.cap(1);
+
+		// Add suffix if missing
 		QFileInfo info(file);
 		lastpath_ = info.absolutePath();
-		if(info.suffix().isEmpty())
-			file += ".png";
+		if(defaultsuffix.isEmpty()==false && info.suffix().compare(defaultsuffix)!=0)
+			file += "." + defaultsuffix;
+
+		// Save the image
 		if(board_->save(file) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
@@ -332,8 +359,8 @@ void MainWindow::showErrorMessage(ErrorType type)
 {
 	QString msg;
 	switch(type) {
-		case ERR_SAVE: msg = tr("An error occured while trying to save the image"); break;
-		case ERR_OPEN: msg = tr("An error occured while trying to open the image"); break;
+		case ERR_SAVE: msg = tr("An error occured while trying to save the image."); break;
+		case ERR_OPEN: msg = tr("An error occured while trying to open the image."); break;
 		default: qFatal("no such error type");
 	}
 
@@ -425,13 +452,13 @@ void MainWindow::initActions()
 	connect(quit_,SIGNAL(triggered()), this, SLOT(close()));
 
 	// Session actions
-	host_ = new QAction("Host...", this);
+	host_ = new QAction("&Host...", this);
 	host_->setStatusTip(tr("Host a new drawing session"));
-	join_ = new QAction("Join...", this);
+	join_ = new QAction("&Join...", this);
 	join_->setStatusTip(tr("Join an existing drawing session"));
-	logout_ = new QAction("Leave", this);
+	logout_ = new QAction("&Leave", this);
 	logout_->setStatusTip(tr("Leave this drawing session"));
-	lockboard_ = new QAction("Lock the board", this);
+	lockboard_ = new QAction("Lo&ck the board", this);
 	lockboard_->setStatusTip(tr("Prevent others from making changes"));
 	kickuser_ = new QAction("Kick", this);
 	lockuser_ = new QAction("Lock", this);
@@ -442,20 +469,20 @@ void MainWindow::initActions()
 	adminTools_->addAction(lockuser_);
 
 	// Drawing tool actions
-	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("Brush"), this);
+	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("&Brush"), this);
 	brushtool_->setCheckable(true); brushtool_->setChecked(true);
 	brushtool_->setShortcut(QKeySequence("B"));
-	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("Eraser"), this);
+	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("&Eraser"), this);
 	erasertool_->setCheckable(true);
 	erasertool_->setShortcut(QKeySequence("E"));
-	pickertool_ = new QAction(QIcon(":icons/draw-picker.png"),tr("Color picker"), this);
+	pickertool_ = new QAction(QIcon(":icons/draw-picker.png"),tr("&Color picker"), this);
 	pickertool_->setCheckable(true);
 	pickertool_->setShortcut(QKeySequence("I"));
-	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom in"), this);
+	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom &in"), this);
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
-	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom out"), this);
+	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom &out"), this);
 	zoomout_->setShortcut(QKeySequence::ZoomOut);
-	zoomorig_ = new QAction(QIcon(":icons/zoom-original.png"),tr("Actual size"), this);
+	zoomorig_ = new QAction(QIcon(":icons/zoom-original.png"),tr("&Normal size"), this);
 	//zoomorig_->setShortcut(QKeySequence::ZoomOut);
 
 	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
@@ -470,26 +497,26 @@ void MainWindow::initActions()
 	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Tool cursor settings
-	toggleoutline_ = new QAction(tr("Show brush outline"), this);
+	toggleoutline_ = new QAction(tr("Show brush &outline"), this);
 	toggleoutline_->setStatusTip(tr("Display the brush outline around the cursor"));
 	toggleoutline_->setCheckable(true);
 
-	togglecrosshair_ = new QAction(tr("Crosshair cursor"), this);
+	togglecrosshair_ = new QAction(tr("Crosshair c&ursor"), this);
 	togglecrosshair_->setStatusTip(tr("Use a crosshair cursor"));
 	togglecrosshair_->setCheckable(true);
 
 	// Toolbar toggling actions
-	toolbartoggles_ = new QAction(tr("Toolbars"), this);
-	docktoggles_ = new QAction(tr("Docks"), this);
+	toolbartoggles_ = new QAction(tr("&Toolbars"), this);
+	docktoggles_ = new QAction(tr("&Docks"), this);
 
 	// Help actions
-	help_ = new QAction(tr("DrawPile Help"), this);
+	help_ = new QAction(tr("DrawPile &Help"), this);
 	help_->setShortcut(QKeySequence("F1"));
 	help_->setEnabled(false);
 	connect(help_,SIGNAL(triggered()), this, SLOT(help()));
-	homepage_ = new QAction(tr("DrawPile homepage"), this);
+	homepage_ = new QAction(tr("&DrawPile homepage"), this);
 	connect(homepage_,SIGNAL(triggered()), this, SLOT(homepage()));
-	about_ = new QAction(tr("About DrawPile"), this);
+	about_ = new QAction(tr("&About DrawPile"), this);
 	about_->setMenuRole(QAction::AboutRole);
 	connect(about_,SIGNAL(triggered()), this, SLOT(about()));
 }
