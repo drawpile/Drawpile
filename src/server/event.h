@@ -155,7 +155,6 @@ public:
 	
 	//! Wait for events.
 	/**
-	 * @param secs seconds to wait.
 	 * @param msecs milliseconds to wait.
 	 *
 	 * @return number of file descriptors triggered, -1 on error, and 0 otherwise.
