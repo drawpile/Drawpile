@@ -212,16 +212,9 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	
 	std::cout << "From user: " << static_cast<int>(usr->id) << std::endl;
 	
-	if (usr->input.data == 0)
-	{
-		std::cout << "Assigning buffer to user." << std::endl;
-		size_t buf_size = 8196;
-		usr->input.setBuffer(new char[buf_size], buf_size);
-	}
-	
 	if (usr->input.canWrite() == 0)
 	{
-		std::cerr << "User input buffer full!" << std::endl;
+		std::cerr << "User #" << static_cast<int>(usr->id) << " input buffer full!" << std::endl;
 		return;
 	}
 	
@@ -242,17 +235,17 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 				usr->inMsg  = protocol::stack::get(usr->input.rpos[0]);
 			}
 			catch (std::exception &e) {
-				std::cerr << "Invalid data from user: " << usr->id << std::endl;
+				std::cerr << "Invalid data from user: "
+					<< static_cast<int>(usr->id) << std::endl;
 				uRemove(usr);
 				return;
 			}
 		}
 		
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, usr->input.canRead());
-		
 		if (len > usr->input.canRead())
 		{
-			std::cout << "Still need more data." << std::endl;
+			// still need more data
 			return;
 		}
 		
@@ -329,17 +322,27 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		std::cout << "... assigned ID: " << static_cast<uint32_t>(id) << std::endl;
 		#endif
 		
-		User *ud = new User(id, sock);
+		User *usr = new User(id, sock);
 		
-		fSet(ud->events, ev.read);
-		ev.add(ud->sock->fd(), ud->events);
+		fSet(usr->events, ev.read);
+		ev.add(usr->sock->fd(), usr->events);
 		
-		users.insert( std::make_pair(sock->fd(), ud) );
-		user_id_map.insert( std::make_pair(id, ud) );
+		users.insert( std::make_pair(sock->fd(), usr) );
+		user_id_map.insert( std::make_pair(id, usr) );
 		
 		#ifndef NDEBUG
 		std::cout << "Known users: " << users.size() << std::endl;
 		#endif
+		
+		if (usr->input.data == 0)
+		{
+			#ifndef NDEBUG
+			std::cout << "Assigning buffer to user." << std::endl;
+			#endif
+			
+			size_t buf_size = 8196;
+			usr->input.setBuffer(new char[buf_size], buf_size);
+		}
 	}
 }
 
