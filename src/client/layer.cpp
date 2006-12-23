@@ -157,7 +157,8 @@ void Layer::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
 	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
-    painter->drawImage(exposed, image_, exposed);
+	exposed &= QRectF(0,0,image_.width(),image_.height());
+	painter->drawImage(exposed, image_, exposed);
 }
 
 }
