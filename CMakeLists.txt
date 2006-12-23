@@ -5,10 +5,6 @@ project ( DrawPile CXX C )
 
 cmake_minimum_required( VERSION 2.4.5 )
 
-### defines ###
-
-add_definitions ( -Wall )
-
 ### Optimize ###
 
 include ( Optimize.cmake )
@@ -70,7 +66,6 @@ include ( CheckIncludeFiles )
 #set ( EV_EPOLL OFF )
 #set ( EV_KQUEUE OFF )
 #set ( EV_KEVENT OFF )
-set ( NDEBUG ON )
 
 # EPOLL
 if ( NOT NOEPOLL )
@@ -137,12 +132,19 @@ endif ( WIN32 )
 
 if ( NOT DEBUG )
 	message ( STATUS "Debugging disabled" )
-	set ( NDEBUG ON )
-	#add_definitions( -DNDEBUG )
 else ( NOT DEBUG )
 	message ( STATUS "Debugging enabled" )
-	set ( NDEBUG OFF )
 endif ( NOT DEBUG )
+
+
+set (CMAKE_BUILD_TYPE Release )
+
+if ( DEBUG )
+	set ( CMAKE_BUILD_TYPE Debug )
+else ( DEBUG )
+	set ( CMAKE_BUILD_TYPE Release )
+endif ( DEBUG )
+
 
 ### mode tests ###
 

@@ -1,24 +1,45 @@
+# Optimize.cmake
 
-add_definitions ( -O2 )
+# i386
+# i686 - MMX
+# pentium2 - MMX, SSE
+# athlon - MMX, 3DNow
+# athlon-xp - MMX, SSE, 3DNow!, Ext 3DNow!
 
-# Intel 386
-# Nothing
+set ( CPU pentium2 )
 
-#add_definitions ( -march=i386 )
+# 0 - no optimization
+# 1 - minimal optimization
+# 2 - recommended optimization level
+# 3 - highest optimization level, may break.
+# s - optimize for small size (both executable and memory-wise)
 
-# Intel 686
-# MMX
+set ( OPTIMIZATION 2 )
 
-#add_definitions ( -march=i686 )
+### DO NOT TOUCH THE FOLLOWING ###
 
-# Pentium2.. works for AthlonXP and newer Pentiums
-# Has support for MMX and SSE
+### Set args ###
 
-add_definitions ( -march=pentium2 )
+if ( NOT NOARCH )
+	set ( ARCH "-march=${CPU}" )
+endif ( NOT NOARCH )
 
-# AthlonXP
-# SSE, MMX, 3DNow!, Ext 3DNow!
+set ( DEBUG_FLAGS "-g -Wall" )
+set ( OPT "-O${OPTIMIZATION}")
 
-#add_definitions ( -march=athlon-xp )
+### Test them ###
+
+include ( TestCXXAcceptsFlag )
+
+check_Cxx_accepts_flag (  ${ARCH} COMPILE_MARCH )
+
+if ( NOT COMPILE_MARCH )
+	set ( ARCH "" )
+endif ( NOT COMPILE_MARCH )
+
+### Set flags ###
+
+set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${DEBUG_FLAGS}" )
+set ( CMAKE_CXX_FLAGS_RELEASE " ${ARCH} ${OPT} -DNDEBUG" )
 
 

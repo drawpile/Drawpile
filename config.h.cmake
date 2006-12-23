@@ -12,5 +12,3 @@
 #cmakedefine EV_KEVENT
 #cmakedefine HAVE_SELECT_H
 #cmakedefine HAVE_WSA
-
-#cmakedefine NDEBUG
