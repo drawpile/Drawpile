@@ -288,7 +288,7 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 	{
 	case uState::active:
 		std::cout << "active" << std::endl;
-		
+		// TODO
 		break;
 	case uState::login:
 		std::cout << "login" << std::endl;
@@ -345,6 +345,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		#endif
 		
 		delete sock;
+		return;
 	}
 	else
 	{
@@ -360,10 +361,6 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		users.insert( std::make_pair(sock->fd(), usr) );
 		user_id_map.insert( std::make_pair(id, usr) );
 		
-		#ifndef NDEBUG
-		std::cout << "Known users: " << users.size() << std::endl;
-		#endif
-		
 		if (usr->input.data == 0)
 		{
 			#ifndef NDEBUG
@@ -373,6 +370,10 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 			size_t buf_size = 8196;
 			usr->input.setBuffer(new char[buf_size], buf_size);
 		}
+		
+		#ifndef NDEBUG
+		std::cout << "Known users: " << users.size() << std::endl;
+		#endif
 	}
 }
 
