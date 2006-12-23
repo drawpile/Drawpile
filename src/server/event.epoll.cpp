@@ -26,11 +26,11 @@
 
 *******************************************************************************/
 
-#include "../shared/templates.h"
+//#include "../shared/templates.h"
 #include "event.h"
 
+#include <iostream>
 #ifndef NDEBUG
-	#include <iostream>
 	#include <ios>
 #endif
 
@@ -78,7 +78,9 @@ bool Event::init() throw(std::bad_alloc)
 		switch (error)
 		{
 		case EINVAL:
+			#ifndef NDEBUG
 			std::cerr << "Size not positive." << std::endl;
+			#endif
 			assert(1);
 			break;
 		case ENFILE:
@@ -90,7 +92,9 @@ bool Event::init() throw(std::bad_alloc)
 			throw std::bad_alloc();
 			break;
 		default:
+			#ifndef NDEBUG
 			std::cerr << "Unknown error." << std::endl;
+			#endif
 			assert(1);
 			break;
 		}
@@ -129,15 +133,21 @@ int Event::wait(uint32_t msecs) throw()
 		{
 		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
+			#ifndef NDEBUG
 			std::cerr << "Bad epoll FD." << std::endl;
+			#endif
 			assert(1);
 			break;
 		case EFAULT:
+			#ifndef NDEBUG
 			std::cerr << "Events not writable." << std::endl;
+			#endif
 			assert(1);
 			break;
 		case EINVAL:
+			#ifndef NDEBUG
 			std::cerr << "Epoll FD is not an epoll FD.. or maxevents is <= 0" << std::endl;
+			#include <iostream>
 			assert(1);
 			break;
 		#endif // TRAP_CODER_ERROR
@@ -146,6 +156,7 @@ int Event::wait(uint32_t msecs) throw()
 			break;
 		default:
 			std::cerr << "Unknown error." << std::endl;
+			// TODO
 			break;
 		}
 	}
@@ -340,7 +351,7 @@ bool Event::isset(int fd, int ev) const throw()
 	{
 		if (events[n].data.fd == fd)
 		{
-			if (fIsSet(events[n].events, ev))
+			if (events[n].events == static_cast<uint32_t>(ev))
 				return true;
 			else
 			{
