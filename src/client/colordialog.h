@@ -53,6 +53,7 @@ class ColorDialog : public QDialog
 		void setColor(const QColor& color);
 	
 	private slots:
+		void switchPage(QAction *action);
 		void updateRgb();
 		void updateHsv();
 		void updateTriangle(const QColor& color);

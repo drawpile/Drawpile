@@ -5,194 +5,265 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>233</width>
-    <height>322</height>
+    <width>227</width>
+    <height>192</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
+  <property name="windowTitle" >
+   <string>Dialog</string>
+  </property>
+  <layout class="QHBoxLayout" >
    <property name="margin" >
-    <number>9</number>
+    <number>5</number>
    </property>
    <property name="spacing" >
-    <number>6</number>
+    <number>0</number>
    </property>
    <item>
-    <widget class="ColorTriangle" name="colorTriangle" >
-     <property name="minimumSize" >
-      <size>
-       <width>128</width>
-       <height>128</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QGridLayout" >
+    <layout class="QVBoxLayout" >
      <property name="margin" >
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>0</number>
      </property>
-     <item row="3" column="0" >
-      <widget class="GradientSlider" name="hue" >
-       <property name="toolTip" >
-        <string>Hue</string>
+     <item>
+      <widget class="QToolButton" name="CtButton" >
+       <property name="text" >
+        <string>...</string>
        </property>
-       <property name="maximum" >
-        <number>359</number>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="sliderButton" >
+       <property name="text" >
+        <string>...</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
        <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="mode" >
-        <enum>GradientSlider::Hsv</enum>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-      </widget>
-     </item>
-     <item row="3" column="1" >
-      <widget class="QSpinBox" name="huebox" >
-       <property name="wrapping" >
-        <bool>true</bool>
-       </property>
-       <property name="maximum" >
-        <number>359</number>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1" >
-      <widget class="QSpinBox" name="valuebox" >
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0" >
-      <widget class="GradientSlider" name="saturation" >
-       <property name="toolTip" >
-        <string>Saturation</string>
-       </property>
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" >
-      <widget class="QSpinBox" name="bluebox" >
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1" >
-      <widget class="QSpinBox" name="saturationbox" >
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="0" >
-      <widget class="GradientSlider" name="blue" >
-       <property name="toolTip" >
-        <string>Blue</string>
-       </property>
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QSpinBox" name="redbox" >
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QSpinBox" name="greenbox" >
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" >
-      <widget class="GradientSlider" name="red" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>3</hsizetype>
-         <vsizetype>5</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip" >
-        <string>Red</string>
-       </property>
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" >
-      <widget class="GradientSlider" name="green" >
-       <property name="toolTip" >
-        <string>Green</string>
-       </property>
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0" >
-      <widget class="GradientSlider" name="value" >
-       <property name="toolTip" >
-        <string>Value</string>
-       </property>
-       <property name="maximum" >
-        <number>255</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
+      </spacer>
      </item>
     </layout>
    </item>
+   <item>
+    <widget class="QStackedWidget" name="widgetstack" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="page" >
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="ColorTriangle" name="colorTriangle" />
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2" >
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>4</number>
+       </property>
+       <property name="spacing" >
+        <number>2</number>
+       </property>
+       <item row="4" column="1" >
+        <widget class="QSpinBox" name="saturationbox" >
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="GradientSlider" name="hue" >
+         <property name="toolTip" >
+          <string>Hue</string>
+         </property>
+         <property name="maximum" >
+          <number>359</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="mode" >
+          <enum>GradientSlider::Hsv</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QSpinBox" name="redbox" >
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="GradientSlider" name="blue" >
+         <property name="toolTip" >
+          <string>Blue</string>
+         </property>
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QSpinBox" name="bluebox" >
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QSpinBox" name="huebox" >
+         <property name="wrapping" >
+          <bool>true</bool>
+         </property>
+         <property name="maximum" >
+          <number>359</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" >
+        <widget class="GradientSlider" name="value" >
+         <property name="toolTip" >
+          <string>Value</string>
+         </property>
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="GradientSlider" name="red" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>3</hsizetype>
+           <vsizetype>5</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip" >
+          <string>Red</string>
+         </property>
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QSpinBox" name="greenbox" >
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" >
+        <widget class="QSpinBox" name="valuebox" >
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="GradientSlider" name="green" >
+         <property name="toolTip" >
+          <string>Green</string>
+         </property>
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="GradientSlider" name="saturation" >
+         <property name="toolTip" >
+          <string>Saturation</string>
+         </property>
+         <property name="maximum" >
+          <number>255</number>
+         </property>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
   </layout>
+  <actiongroup name="pageActions" >
+   <action name="actionCT" >
+    <property name="checkable" >
+     <bool>true</bool>
+    </property>
+    <property name="checked" >
+     <bool>true</bool>
+    </property>
+    <property name="icon" >
+     <iconset>:icons/colortriangle.png</iconset>
+    </property>
+    <property name="text" >
+     <string>Show color triangle</string>
+    </property>
+   </action>
+   <action name="actionSliders" >
+    <property name="checkable" >
+     <bool>true</bool>
+    </property>
+    <property name="icon" >
+     <iconset>:icons/sliders.png</iconset>
+    </property>
+    <property name="text" >
+     <string>Show color sliders</string>
+    </property>
+   </action>
+  </actiongroup>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>GradientSlider</class>
-   <extends>QWidget</extends>
-   <header>gradientslider.h</header>
-  </customwidget>
   <customwidget>
    <class>ColorTriangle</class>
    <extends>QWidget</extends>
    <header>colortriangle.h</header>
   </customwidget>
+  <customwidget>
+   <class>GradientSlider</class>
+   <extends>QWidget</extends>
+   <header>gradientslider.h</header>
+  </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>redbox</tabstop>
-  <tabstop>greenbox</tabstop>
-  <tabstop>bluebox</tabstop>
-  <tabstop>huebox</tabstop>
-  <tabstop>saturationbox</tabstop>
-  <tabstop>valuebox</tabstop>
- </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc" />
+ </resources>
  <connections>
   <connection>
    <sender>red</sender>
@@ -201,172 +272,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>158</x>
-     <y>155</y>
+     <x>380</x>
+     <y>41</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>184</x>
-     <y>152</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>green</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>greenbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>137</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>215</x>
-     <y>184</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>blue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>bluebox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>130</x>
-     <y>217</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>211</x>
-     <y>217</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>hue</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>huebox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>132</x>
-     <y>234</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>193</x>
-     <y>241</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saturation</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>saturationbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>128</x>
-     <y>266</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>219</x>
-     <y>271</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>value</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>valuebox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>127</x>
-     <y>294</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>216</x>
-     <y>304</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>valuebox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>value</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>198</x>
-     <y>292</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>295</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>saturationbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>saturation</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>182</x>
-     <y>261</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>31</x>
-     <y>265</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>huebox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>hue</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>183</x>
-     <y>250</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>34</x>
-     <y>238</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>bluebox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>blue</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>192</x>
-     <y>205</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>39</x>
-     <y>203</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>greenbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>green</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>186</x>
-     <y>174</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>35</x>
-     <y>177</y>
+     <x>449</x>
+     <y>37</y>
     </hint>
    </hints>
   </connection>
@@ -377,12 +288,172 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>190</x>
-     <y>162</y>
+     <x>441</x>
+     <y>50</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>38</x>
-     <y>156</y>
+     <x>267</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>green</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>greenbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>357</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>435</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>greenbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>green</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>431</x>
+     <y>100</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>257</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>bluebox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>341</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>435</x>
+     <y>137</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bluebox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>blue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>436</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>270</x>
+     <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>huebox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>367</x>
+     <y>187</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>455</x>
+     <y>187</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>huebox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>hue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>425</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>281</x>
+     <y>189</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saturation</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>saturationbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>341</x>
+     <y>231</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>439</x>
+     <y>231</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>value</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>valuebox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>388</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>461</x>
+     <y>290</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saturationbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>saturation</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>438</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>386</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>valuebox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>value</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>430</x>
+     <y>276</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>346</x>
+     <y>276</y>
     </hint>
    </hints>
   </connection>

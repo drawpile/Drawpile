@@ -13,5 +13,7 @@
 	<file>icons/system-log-out.png</file>
 	<file>icons/network-error.png</file>
 	<file>icons/network-transmit-receive.png</file>
+	<file>icons/colortriangle.png</file>
+	<file>icons/sliders.png</file>
 </qresource>
 </RCC>

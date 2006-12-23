@@ -32,6 +32,9 @@ ColorDialog::ColorDialog(QString title, QWidget *parent)
 {
 	ui_ = new Ui_ColorDialog;
 	ui_->setupUi(this);
+	ui_->CtButton->setDefaultAction(ui_->actionCT);
+	ui_->sliderButton->setDefaultAction(ui_->actionSliders);
+	connect(ui_->pageActions, SIGNAL(triggered(QAction*)), this, SLOT(switchPage(QAction*)));
 	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
 	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
 	connect(ui_->blue, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
@@ -48,6 +51,14 @@ ColorDialog::ColorDialog(QString title, QWidget *parent)
 ColorDialog::~ColorDialog()
 {
 	delete ui_;
+}
+
+void ColorDialog::switchPage(QAction *action)
+{
+	if(action == ui_->actionCT)
+		ui_->widgetstack->setCurrentIndex(0);
+	else if(action == ui_->actionSliders)
+		ui_->widgetstack->setCurrentIndex(1);
 }
 
 /**
