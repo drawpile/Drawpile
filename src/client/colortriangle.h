@@ -105,7 +105,7 @@ class PLUGIN_EXPORT ColorTriangle : public QWidget {
 		qreal inner_,innert_;
 		int hx_, hy_, sx_, sy_, vx_, vy_;
 		QPixmap wheel_;
-		QPixmap triangle_;
+		QImage triangle_;
 };
 
 #ifndef DESIGNER_PLUGIN

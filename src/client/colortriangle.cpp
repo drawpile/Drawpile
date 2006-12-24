@@ -51,6 +51,7 @@ void ColorTriangle::updateColorTriangle()
 
 	updateVertices();
 	makeRing();
+	triangle_ = QImage(diameter_, diameter_, QImage::Format_ARGB32_Premultiplied);
 	makeTriangle();
 }
 
@@ -96,7 +97,7 @@ void ColorTriangle::paintEvent(QPaintEvent *event)
 	QPainter painter(this);
 	QPoint offset(xoff_, yoff_);
 	painter.drawPixmap(offset, wheel_);
-	painter.drawPixmap(offset, triangle_);
+	painter.drawImage(offset, triangle_);
 
 	QPen pen(Qt::black);
 	pen.setWidth(2);
@@ -141,7 +142,6 @@ void ColorTriangle::mousePressEvent(QMouseEvent *event)
 		makeTriangle();
 		update();
 		mode_ = DRAGHUE;
-
 		emit colorChanged(color());
 	} else if(isInTriangle(pos.x(), pos.y())) {
 		setSv(pos.x(), pos.y());
@@ -164,11 +164,9 @@ void ColorTriangle::mouseMoveEvent(QMouseEvent *event)
 		update();
 		emit colorChanged(color());
 	} else if(mode_==DRAGSV) {
-		if(isInTriangle(pos.x(), pos.y())) {
-			setSv(pos.x(), pos.y());
-			update();
-			emit colorChanged(color());
-		}
+		setSv(pos.x(), pos.y());
+		update();
+		emit colorChanged(color());
 	}
 }
 
@@ -437,8 +435,7 @@ void ColorTriangle::makeTriangle()
 	}
 
 	// Shade the triangle
-	QImage triangle(diameter_, diameter_, QImage::Format_ARGB32_Premultiplied);
-	uchar *buf = triangle.bits();
+	uchar *buf = triangle_.bits();
 
 	for (yy = 0; yy < diameter_; ++yy) {
 		if (yy < y1 || yy > y3) {
@@ -498,8 +495,6 @@ void ColorTriangle::makeTriangle()
 			}
 		}
 	}
-
-	triangle_ = QPixmap::fromImage(triangle);
 }
 
 #ifndef DESIGNER_PLUGIN
