@@ -40,6 +40,9 @@ void EditorView::setBoard(drawingboard::Board *board)
 	setScene(board);
 }
 
+/**
+ * @param enable if true, brush outline is shown
+ */
 void EditorView::setOutline(bool enable)
 {
 	enableoutline_ = enable;
@@ -49,9 +52,41 @@ void EditorView::setOutline(bool enable)
 		viewport()->setMouseTracking(false);
 }
 
+/**
+ * A solid circle is first drawn with the background color,
+ * then a dottet circle is drawn over it using the foreground color.
+ * @param fg foreground color for outline
+ * @param bg background color for outline
+ */
+void EditorView::setOutlineColors(const QColor& fg, const QColor& bg)
+{
+	foreground_ = fg;
+	background_ = bg;
+	if(enableoutline_ && showoutline_) {
+		QList<QRectF> rect;
+		rect.append(QRectF(prevpoint_.x() - outlinesize_,
+					prevpoint_.y() - outlinesize_,
+					outlinesize_*2, outlinesize_*2));
+		updateScene(rect);
+	}
+}
+
+/**
+ * @param radius circle radius
+ */
 void EditorView::setOutlineRadius(int radius)
 {
+	int updatesize = outlinesize_;
 	outlinesize_ = radius;
+	if(enableoutline_ && showoutline_) {
+		if(outlinesize_>updatesize)
+			updatesize = outlinesize_;
+		QList<QRectF> rect;
+		rect.append(QRectF(prevpoint_.x() - updatesize,
+					prevpoint_.y() - updatesize,
+					updatesize*2, updatesize*2));
+		updateScene(rect);
+	}
 }
 
 void EditorView::setCrosshair(bool enable)
@@ -65,11 +100,18 @@ void EditorView::setCrosshair(bool enable)
 
 void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
-	if(enableoutline_ && showoutline_) {
-		painter->drawEllipse(
-				QRectF(prevpoint_-QPointF(outlinesize_,outlinesize_),
-				QSizeF(outlinesize_*2,outlinesize_*2))
-				);
+	if(enableoutline_ && showoutline_ && outlinesize_>0) {
+		QRectF rect(prevpoint_-QPointF(outlinesize_,outlinesize_),
+					QSizeF(outlinesize_*2,outlinesize_*2));
+		painter->setRenderHint(QPainter::Antialiasing, true);
+		QPen pen(background_);
+		painter->setPen(pen);
+		painter->drawEllipse(rect);
+		pen.setColor(foreground_);
+		pen.setStyle(Qt::DashLine);
+		painter->setPen(pen);
+		painter->drawEllipse(rect);
+
 	}
 }
 
@@ -106,8 +148,10 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 		}
 	} else {
 		pendown_ = true;
-		QPoint point = mapToScene(event->pos()).toPoint();
-		emit penDown(drawingboard::Point(point.x(), point.y(), 1.0), false);
+		emit penDown(
+				drawingboard::Point(mapToScene(event->pos()).toPoint(), 1.0),
+				false
+				);
 	}
 }
 
@@ -119,7 +163,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		QPoint point = mapToScene(event->pos()).toPoint();
 		if(point != prevpoint_) {
 			if(pendown_)
-				emit penMove(drawingboard::Point(point.x(), point.y(), 1.0));
+				emit penMove(drawingboard::Point(point, 1.0));
 			else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
 				const int dia = outlinesize_*2;
@@ -178,12 +222,12 @@ void EditorView::tabletEvent(QTabletEvent *event)
 					event->pointerType()==QTabletEvent::Eraser
 					);
 			pendown_ = true;
-			prevpoint_ = point;
 		}
 	}
 	prevpoint_ = point;
 }
 
+//! Start dragging the view
 void EditorView::startDrag(int x,int y)
 {
 	oldcursor_ = cursor();
@@ -193,6 +237,7 @@ void EditorView::startDrag(int x,int y)
 	isdragging_ = true;
 }
 
+//! Drag the view
 void EditorView::moveDrag(int x, int y)
 {
 	int dx = dragx_ - x;
@@ -207,6 +252,7 @@ void EditorView::moveDrag(int x, int y)
 	hor->setSliderPosition(hor->sliderPosition()+dx);
 }
 
+//! Stop dragging
 void EditorView::stopDrag()
 {
 	setCursor(oldcursor_);

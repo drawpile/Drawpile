@@ -63,6 +63,7 @@ MainWindow::MainWindow()
 	connect(toolsettings_, SIGNAL(sizeChanged(int)), view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)), view_, SLOT(setOutline(bool)));
 	connect(togglecrosshair_, SIGNAL(triggered(bool)), view_, SLOT(setCrosshair(bool)));
+	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)), view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
 	setCentralWidget(view_);
 
 	board_ = new drawingboard::Board(this);

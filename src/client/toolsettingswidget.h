@@ -52,6 +52,9 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 		//! This signal is emitted when the current tool changes its size
 		void sizeChanged(int size);
 
+		//! This signal is emitted when the tool's colors are changed
+		void colorsChanged(const QColor& fg, const QColor& bg);
+
 	public slots:
 		//! Set the tool for which settings are shown
 		void setTool(tools::Type tool);

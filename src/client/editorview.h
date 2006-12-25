@@ -60,7 +60,10 @@ class EditorView : public QGraphicsView
 
 		//! Enable or disable cursor outline
 		void setOutline(bool enable);
-		//
+
+		//! Set brush outline colors
+		void setOutlineColors(const QColor& fg, const QColor& bg);
+
 		//! Enable or disable crosshair cursor
 		void setCrosshair(bool enable);
 
@@ -88,6 +91,7 @@ class EditorView : public QGraphicsView
 		int outlinesize_;
 		bool enableoutline_,showoutline_;
 		bool crosshair_;
+		QColor foreground_, background_;
 
 		drawingboard::Board *board_;
 };
