@@ -9,7 +9,7 @@ macro ( strip_exe target )
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
-			COMMAND ${strip_cmd} ${target}
+			COMMAND ${STRIP_CMD} ${target}
 		)
 	endif ( STRIP_CMD )
 endmacro ( strip_exe target )
