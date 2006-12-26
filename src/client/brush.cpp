@@ -203,10 +203,10 @@ void Brush::updateCache() const
 	unsigned int scanline = dia - 1;
 	unsigned int scanline15= dia + rad;
 	unsigned int scanline2 = rad;
-	uchar *q1 = cache_.data();
-	uchar *q2 = q1 + scanline;
-	uchar *q3 = q1 + dia*(dia-1);
-	uchar *q4 = q3 + scanline;
+	unsigned short *q1 = cache_.data();
+	unsigned short *q2 = q1 + scanline;
+	unsigned short *q3 = q1 + dia*(dia-1);
+	unsigned short *q4 = q3 + scanline;
 	for(int y=0;y<rad;++y) {
 		qreal yy = (y-rad+0.5) * (y-rad+0.5);
 		for(int x=0;x<rad;++x) {
@@ -215,7 +215,7 @@ void Brush::updateCache() const
 
 			if(intensity<0) intensity=0;
 			else if(intensity>1) intensity=1;
-			const unsigned int a = int(intensity*255);
+			const unsigned short a = int(intensity*256);
 
 			*(q1++) = a;
 			*(q2--) = a;
@@ -234,9 +234,9 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const int dia = radius(pos.pressure()) * 2;
 	const QColor col = color(pos.pressure());
 
-	const unsigned int red = col.red();
-	const unsigned int green = col.green();
-	const unsigned int blue= col.blue();
+	const int red = col.red();
+	const int green = col.green();
+	const int blue= col.blue();
 
 	// Make sure we are inside the image
 	const unsigned int offx = pos.x()<0 ? -pos.x() : 0;
@@ -247,16 +247,16 @@ void Brush::draw(QImage &image, const Point& pos) const
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const qreal a = opacity(pos.pressure());
+			const int a = int(opacity(pos.pressure())*256);
 #ifdef IS_BIG_ENDIAN
 			++dest;
-			*dest = int(*dest * (1-a) + red * a + 0.5);
-			*dest = int(*dest * (1-a) + green * a + 0.5); ++dest;
-			*dest = int(*dest * (1-a) + blue * a + 0.5);  ++dest;
+			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+			*dest = a*(green - *dest) / 256 + *dest; ++dest;
+			*dest = a*(blue - *dest) / 256 + *dest;
 #else
-			*dest = int(*dest * (1-a) + blue * a + 0.5);  ++dest;
-			*dest = int(*dest * (1-a) + green * a + 0.5); ++dest;
-			*dest = int(*dest * (1-a) + red * a + 0.5);
+			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
+			*dest = a*(green - *dest) / 256 + *dest; ++dest;
+			*dest = a*(red - *dest) / 256 + *dest; ++dest;
 #endif
 		}
 		return;
@@ -270,7 +270,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 		updateCache();
 	}
 
-	const uchar *src = cache_.constData() + offy*dia + offx;
+	const unsigned short *src = cache_.constData() + offy*dia + offx;
 	const unsigned int nextline = (image.width() - dia + offx) * 4;
 
 	const unsigned int w = (pos.x()+dia)>image.width()?image.width()-pos.x():dia;
@@ -279,7 +279,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 	// Composite brush on image
 	for(unsigned int y=offy;y<h;++y) {
 		for(unsigned int x=offx;x<w;++x) {
-			const unsigned int a = *(src++);
+			const int a = *(src++);
 #ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest = a*(red - *dest) / 256 + *dest; ++dest;
