@@ -54,4 +54,8 @@ if (MACOSX)
 	set ( EXEFORMAT MACOSX_BUNDLE )
 endif (MACOSX)
 
+if ( NOT DEBUG )
+	strip_exe ( dpserver )
+endif ( NOT DEBUG )
+
 add_executable ( dpserver ${EXEFORMAT} ${Server_Sources} ${EV_SRC} ${Server_Headers} )

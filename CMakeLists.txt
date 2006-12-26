@@ -8,6 +8,7 @@ cmake_minimum_required( VERSION 2.4.5 )
 ### Optimize ###
 
 include ( Optimize.cmake )
+include ( Macros.cmake )
 
 ### config options ###
 

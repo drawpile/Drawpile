@@ -94,6 +94,10 @@ add_executable (
 include (AddFileDependencies)
 add_file_dependencies ( main.cpp src/shared )
 
+if ( NOT DEBUG )
+	strip_exe ( ${EXECNAME} )
+endif ( NOT DEBUG )
+
 target_link_libraries(
 	${EXECNAME}
 	${QT_LIBRARIES}

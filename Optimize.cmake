@@ -31,7 +31,7 @@ set ( OPT "-O${OPTIMIZATION}")
 
 include ( TestCXXAcceptsFlag )
 
-check_Cxx_accepts_flag (  ${ARCH} COMPILE_MARCH )
+check_Cxx_accepts_flag ( ${ARCH} COMPILE_MARCH )
 
 if ( NOT COMPILE_MARCH )
 	set ( ARCH "" )
@@ -40,6 +40,4 @@ endif ( NOT COMPILE_MARCH )
 ### Set flags ###
 
 set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${DEBUG_FLAGS}" )
-set ( CMAKE_CXX_FLAGS_RELEASE " ${ARCH} ${OPT} -DNDEBUG" )
-
-
+set ( CMAKE_CXX_FLAGS_RELEASE "${ARCH} ${OPT} -DNDEBUG" )
