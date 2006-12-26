@@ -34,6 +34,8 @@ ColorTriangle::ColorTriangle(QWidget *parent,const QColor& color)
 	: QWidget(parent), mode_(NODRAG)
 {
 	color.getHsvF(&hue_,&saturation_,&value_);
+	if(hue_<0)
+		hue_ = 0;
 	setAcceptDrops(true);
 	updateColorTriangle();
 }
@@ -77,7 +79,10 @@ QColor ColorTriangle::color() const
 
 void ColorTriangle::setColor(const QColor& color)
 {
+	qreal h = hue_;
 	color.getHsvF(&hue_,&saturation_,&value_);
+	if(hue_<0)
+		hue_ = h;
 	updateVertices();
 	makeTriangle();
 	update();
