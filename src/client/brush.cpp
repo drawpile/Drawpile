@@ -135,10 +135,10 @@ void Brush::checkSensitivity()
  * @param pressure pen pressure. Range is [0..1]
  * @return radius
  */
-int Brush::radius(qreal pressure) const
+unsigned int Brush::radius(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	return int(ceil(radius2_ + (radius1_ - radius2_) * pressure));
+	return unsigned(ceil(radius2_ + (radius1_ - radius2_) * pressure));
 }
 
 /**
@@ -215,7 +215,7 @@ void Brush::updateCache() const
 
 			if(intensity<0) intensity=0;
 			else if(intensity>1) intensity=1;
-			int a = int(intensity*255);
+			const unsigned int a = int(intensity*255);
 
 			*(q1++) = a;
 			*(q2--) = a;
@@ -231,20 +231,16 @@ void Brush::updateCache() const
 
 void Brush::draw(QImage &image, const Point& pos) const
 {
-	const int dia = radius(pos.pressure()) * 2;
+	const unsigned int dia = radius(pos.pressure()) * 2;
 	const QColor col = color(pos.pressure());
 
-	const int red = col.red();
-	const int green = col.green();
-	const int blue= col.blue();
+	const unsigned int red = col.red();
+	const unsigned int green = col.green();
+	const unsigned int blue= col.blue();
 
 	// Make sure we are inside the image
-	int offx = 0;
-	int offy = 0;
-	if(pos.x()<0)
-		offx = -pos.x();
-	if(pos.y()<0)
-		offy = -pos.y();
+	const unsigned int offx = pos.x()<0 ? -pos.x() : 0;
+	const unsigned int offy = pos.y()<0 ? -pos.y() : 0;
 	uchar *dest = image.bits() + ((pos.y()+offy)*image.width()+pos.x()+offx)*4;
 
 	// Special case, single pixel brush
@@ -277,13 +273,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const uchar *src = cache_.constData() + offy*dia + offx;
 	const unsigned int nextline = (image.width() - dia + offx) * 4;
 
-	const int w = (pos.x()+dia)>image.width()?image.width()-pos.x():dia;
-	const int h = (pos.y()+dia)>image.height()?image.height()-pos.y():dia;
+	const unsigned int w = (pos.x()+dia)>unsigned(image.width())?image.width()-pos.x():dia;
+	const unsigned int h = (pos.y()+dia)>unsigned(image.height())?image.height()-pos.y():dia;
 
 	// Composite brush on image
-	for(int y=offy;y<h;++y) {
-		for(int x=offx;x<w;++x) {
-			const int a = *(src++);
+	for(unsigned int y=offy;y<h;++y) {
+		for(unsigned int x=offx;x<w;++x) {
+			const unsigned int a = *(src++);
 #ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest = a*(red - *dest) / 256 + *dest; ++dest;

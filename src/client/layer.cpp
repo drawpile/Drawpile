@@ -106,8 +106,9 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 	const int inc = ix > iy ? ix : iy;
 
 	// Plot location
-	int plotx = x1;
-	int ploty = y1;
+	Point point(x1,y1,pressure);
+	int &plotx = point.rx();
+	int &ploty = point.ry();
 
 	int x = 0;
 	int y = 0;
@@ -139,7 +140,7 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 		}
 
 		if (plot)
-			brush.draw(image_, Point(plotx,ploty, pressure));
+			brush.draw(image_, point);
 	}
 
 	// Update screen
@@ -157,7 +158,8 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
  */
 void Layer::drawPoint(const Point& point, const Brush& brush)
 {
-	const int r = brush.radius(point.pressure());
+	int r = brush.radius(point.pressure());
+	if(r==0) r=1;
 	QPoint rp(r,r);
 	brush.draw(image_, point-rp);
 	update(point.x()-r,point.y()-r,r*2,r*2);
