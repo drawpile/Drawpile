@@ -90,6 +90,7 @@ QRect DualColorButton::resetWhiteRect() const
 void DualColorButton::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
+	painter.setPen(QPen(Qt::black));
 
 	// Draw background box
 	QRect bgbox = backgroundRect();

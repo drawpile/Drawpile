@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <iostream>
 #include <QApplication>
 
 #include "mainwindow.h"
@@ -32,6 +33,17 @@ int main(int argc, char *argv[]) {
 
 	// Create and show the main window
 	MainWindow win;
+
+	if(argc>1) {
+		// A parameter was given. We assume it to be a filename
+		if(win.initBoard(argv[1])==false) {
+			std::cerr << argv[1] << ": couldn't load image.\n";
+			return 1;
+		}
+	} else {
+		// Create a default board
+		win.initBoard(QSize(800,600), Qt::white);
+	}
 	win.show();
 
 	return app.exec();

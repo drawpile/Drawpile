@@ -117,6 +117,11 @@ bool Board::save(QIODevice *device, const char *format, int quality)
 	return image_->image().save(device, format, quality);
 }
 
+/**
+ * Returns a BoardEditor for modifying the drawing board either
+ * directly or over the network.
+ * @param local if true, get an editor for modifying the board directly.
+ */
 BoardEditor *Board::getEditor(bool local)
 {
 	BoardEditor *editor;

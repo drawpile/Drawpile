@@ -28,7 +28,7 @@ using widgets::GradientSlider;
 namespace dialogs {
 
 ColorDialog::ColorDialog(const QString& title, QWidget *parent)
-	: QDialog(parent, Qt::Tool), updating_(false)
+	: QDialog(parent, Qt::Tool), updating_(false), validhue_(0)
 {
 	ui_ = new Ui_ColorDialog;
 	ui_->setupUi(this);

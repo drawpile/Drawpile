@@ -69,7 +69,7 @@ MainWindow::MainWindow()
 	board_ = new drawingboard::Board(this);
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
-	board_->initBoard(QSize(800,600),Qt::white);
+	//board_->initBoard(QSize(800,600),Qt::white);
 	view_->setBoard(board_);
 
 	controller_ = new Controller(this);
@@ -82,6 +82,34 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 
 	readSettings();
+}
+
+/**
+ * @param filename file to open
+ * @return true on success
+ */
+bool MainWindow::initBoard(const QString& filename)
+{
+	QImage image;
+	if(image.load(filename)==false)
+		return false;
+	board_->initBoard(image);
+	setWindowModified(false);
+	filename_ = filename;
+	setTitle();
+	return true;
+}
+
+/**
+ * @param size board size
+ * @param color background color
+ */
+void MainWindow::initBoard(const QSize& size, const QColor& color)
+{
+	board_->initBoard(size,color);
+	filename_ = "";
+	setWindowModified(false);
+	setTitle();
 }
 
 void MainWindow::setTitle()
@@ -199,12 +227,9 @@ void MainWindow::showNewDialog()
 
 void MainWindow::newDocument()
 {
-	board_->initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
+	initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
 			newdlg_->newBackground());
 	fgbgcolor_->setBackground(newdlg_->newBackground());
-	filename_ = "";
-	setWindowModified(false);
-	setTitle();
 }
 
 void MainWindow::open()
@@ -234,15 +259,8 @@ void MainWindow::reallyOpen()
 
 	if(file.isEmpty()==false) {
 		// Open the file
-		QImage img(file);
-		if(img.isNull()) {
+		if(initBoard(file)==false)
 			showErrorMessage(ERR_OPEN);
-		} else {
-			board_->initBoard(img);
-			filename_ = file;
-			setWindowModified(false);
-			setTitle();
-		}
 	}
 }
 

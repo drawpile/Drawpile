@@ -49,6 +49,12 @@ class MainWindow : public QMainWindow {
 	public:
 		MainWindow();
 
+		//! Initialize the drawing board from an existing image
+		bool initBoard(const QString& filename);
+
+		//! Initialize a blank drawing board
+		void initBoard(const QSize& size, const QColor& color);
+
 	public slots:
 		//! Check if document is changed and show New dialog
 		void showNew();

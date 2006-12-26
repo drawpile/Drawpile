@@ -24,7 +24,7 @@
 namespace drawingboard {
 
 User::User(int id)
-	: id_(id), strokestarted_(false)
+	: id_(id), layer_(0), strokestarted_(false)
 {
 }
 
@@ -45,19 +45,21 @@ void User::setBrush(const Brush& brush)
  */
 void User::addStroke(const Point& point)
 {
-	if(strokestarted_) {
-		// Continuing stroke
-		layer_->drawLine(
-				lastpoint_,
-				point,
-				brush_
-				);
-	} else {
-		// First point
-		layer_->drawPoint(point, brush_);
-		strokestarted_ = true;
+	if(layer_) {
+		if(strokestarted_) {
+			// Continuing stroke
+			layer_->drawLine(
+					lastpoint_,
+					point,
+					brush_
+					);
+		} else {
+			// First point
+			layer_->drawPoint(point, brush_);
+			strokestarted_ = true;
+		}
+		lastpoint_ = point;
 	}
-	lastpoint_ = point;
 }
 
 /**
