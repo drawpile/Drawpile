@@ -36,10 +36,10 @@ class NetStatus : public QWidget
 		NetStatus(QWidget *parent);
 	
 	public slots:
-		//! Set the address
-		void setAddress(const QString& address);
-		//! Set message to indicate lack of connection with host
-		void disconnect();
+		//! Connect to a host
+		void connectHost(const QString& address);
+		//! Disconnect from host
+		void disconnectHost();
 		//! Copy the address to clipboard
 		void copyAddress();
 

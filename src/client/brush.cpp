@@ -25,6 +25,14 @@
 
 namespace drawingboard {
 
+/**
+ * A brush with the specified settings is constructed. The brush is
+ * pressure insensitive by default.
+ * @param radius brush radius. Zero means a single pixel brush
+ * @param hardness brush hardness
+ * @param opacity brush opacity
+ * @param color brush color
+ */
 Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
 	: radius1_(radius), radius2_(radius),
 	hardness1_(hardness), hardness2_(hardness),
@@ -32,6 +40,9 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
 	color1_(color), color2_(color),
 	sensitive_(false), cachepressure_(-1)
 {
+	Q_ASSERT(radius>=0);
+	Q_ASSERT(hardness>=0 && hardness <=1);
+	Q_ASSERT(opacity>=0 && opacity <=1);
 }
 
 /**

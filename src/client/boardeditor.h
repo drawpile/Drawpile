@@ -48,6 +48,11 @@ class Point;
 class BoardEditor {
 	public:
 
+		//! Construct a board editor
+		/**
+		 * @param board drawing board to edit
+		 * @param user user to commit the changes as
+		 */
 		BoardEditor(Board *board, User *user) : board_(board), user_(user) {}
 		virtual ~BoardEditor() {}
 
@@ -90,8 +95,12 @@ class BoardEditor {
 };
 
 //! Board editor that modifies the local board
+/**
+ * The commands are relayed to the local user object.
+ */
 class LocalBoardEditor : public BoardEditor {
 	public:
+		//! Construct a local board editor
 		LocalBoardEditor(Board *board, User *user) : BoardEditor(board,user) {}
 
 		void setTool(const Brush& brush);

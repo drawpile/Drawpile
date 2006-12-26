@@ -39,7 +39,9 @@ void User::setBrush(const Brush& brush)
 }
 
 /**
-  @param point stroke coordinates
+ * Starts or continues a stroke. If continuing, a line is drawn from the
+ * previous coordinates to \a point.
+ * @param point stroke coordinates
  */
 void User::addStroke(const Point& point)
 {

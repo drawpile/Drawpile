@@ -29,23 +29,38 @@
 
 namespace drawingboard {
 
+/**
+ * @param parent use another QGraphicsItem as a parent
+ * @param scene the picture to which this layer belongs to
+ */
 Layer::Layer(QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsItem(parent,scene)
 {
 }
 
+/**
+ * @param image image to use
+ * @param parent use another QGraphicsItem as a parent
+ * @param scene the picture to which this layer belongs to
+ */
 Layer::Layer(const QImage& image, QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsItem(parent,scene), image_(image)
 {
 	Q_ASSERT(image_.format() == QImage::Format_RGB32 || image_.format() == QImage::Format_ARGB32);
 }
 
+/**
+ * @param image image to use
+ */
 void Layer::setImage(const QImage& image)
 {
 	image_ = image;
 	Q_ASSERT(image_.format() == QImage::Format_RGB32 || image_.format() == QImage::Format_ARGB32);
 }
 
+/**
+ * @return layer contents
+ */
 QImage Layer::image() const
 {
 	return image_;

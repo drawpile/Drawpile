@@ -30,10 +30,10 @@ namespace drawingboard {
  * Tools translate commands from the local user into messages that
  * can be sent over the network or directly modify the drawingboard
  * if in offline mode. Some tools do not modify the drawing board
- * and always access the board directly.
+ * and always access the it directly.
  *
  * The BoardEditor class is used to abstract away the difference between
- * local and a remote drawing board.
+ * local and remote drawing boards.
  */
 namespace tools {
 

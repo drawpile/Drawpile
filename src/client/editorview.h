@@ -30,8 +30,9 @@ namespace drawingboard {
 namespace widgets {
 //! Editor view
 /**
- * The editor view is a customized QGraphicsView that translates
- * user input to drawing commands.
+ * The editor view is a customized QGraphicsView that displays
+ * the drawing board and handes user input.
+ * It also provides other features, such as brush outline preview.
  */
 class EditorView : public QGraphicsView
 {

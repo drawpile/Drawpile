@@ -43,10 +43,16 @@ class PLUGIN_EXPORT ColorTriangle : public QWidget {
 	public:
 		ColorTriangle(QWidget *parent=0,const QColor& color = Qt::white);
 
+		//! Get hue
 		int hue() const;
+
+		//! Get saturation
 		int saturation() const;
+
+		//! Get value
 		int value() const;
 
+		//! Get color
 		QColor color() const;
 
 	public slots:

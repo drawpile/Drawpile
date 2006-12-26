@@ -55,7 +55,7 @@ NetStatus::NetStatus(QWidget *parent)
 	icon_->setFixedSize(offlineicon_.size());
 	layout->addWidget(icon_);
 
-	disconnect();
+	disconnectHost();
 }
 
 /**
@@ -63,7 +63,7 @@ NetStatus::NetStatus(QWidget *parent)
  * A context menu to copy the address to clipboard will be enabled.
  * @param address the address to display
  */
-void NetStatus::setAddress(const QString& address)
+void NetStatus::connectHost(const QString& address)
 {
 	address_ = address;
 	label_->setText(tr("Host: %1").arg(address_));
@@ -74,7 +74,7 @@ void NetStatus::setAddress(const QString& address)
  * Set the label to indicate a lack of connection.
  * Context menu will be disabled.
  */
-void NetStatus::disconnect()
+void NetStatus::disconnectHost()
 {
 	address_ = QString();
 	label_->setText(tr("not connected"));

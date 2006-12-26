@@ -37,6 +37,7 @@ class Point;
 class Brush
 {
 	public:
+		//! Construct a brush
 		Brush(int radius=8, qreal hardness=0, qreal opacity=1.0,
 				const QColor& color=Qt::black);
 

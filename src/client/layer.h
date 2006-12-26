@@ -31,13 +31,16 @@ class Point;
 //! A drawing layer item item for QGraphicsScene
 /**
  * The layer item provides a modifiable image item for QGraphicsScene.
- * Methods are provided for drawing lines and points using Brush.
+ * Methods are provided for drawing lines and points with a Brush object.
  *
  */
 class Layer : public QGraphicsItem
 {
 	public:
+		//! Construct an empty layer
 		Layer(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+
+		//! Construct a layer from a QImage
 		Layer(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 
 		//! Set layer contents
