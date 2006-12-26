@@ -62,7 +62,7 @@ class Brush
 		void setColor2(const QColor& color);
 
 		//! Get interpolated radius
-		unsigned int radius(qreal pressure) const;
+		int radius(qreal pressure) const;
 		//! Get interpolated hardness
 		qreal hardness(qreal pressure) const;
 		//! Get interpolated opacity
