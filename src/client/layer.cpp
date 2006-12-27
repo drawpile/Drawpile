@@ -79,6 +79,7 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 {
 	int rad = brush.radius(point1.pressure());
 	qreal pressure = point1.pressure();
+	if(rad==0) rad=1;
 #if 0 // TODO
 	qreal deltapressure;
 	if(qAbs(pressure2-pressure1) < 1.0/255.0)
@@ -148,7 +149,6 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 	const int right = qMax(point1.x(), point2.x());
 	const int top = qMin(point1.y(), point2.y());
 	const int bottom = qMax(point1.y(), point2.y());
-	if(rad==0) rad=1;
 	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
 }
 
