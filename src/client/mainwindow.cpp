@@ -44,6 +44,7 @@
 #include "colordialog.h"
 #include "newdialog.h"
 #include "hostdialog.h"
+#include "joindialog.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
@@ -336,12 +337,26 @@ void MainWindow::host()
 	hostdlg_->show();
 }
 
+void MainWindow::join()
+{
+	joindlg_ = new dialogs::JoinDialog(this);
+	connect(joindlg_, SIGNAL(finished(int)), this, SLOT(finishJoin(int)));
+	joindlg_->show();
+}
+
 void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
 		QMessageBox::information(this,"todo","host!");
 	}
 	hostdlg_->deleteLater();
+}
+
+void MainWindow::finishJoin(int i) {
+	if(i==QDialog::Accepted) {
+		QMessageBox::information(this,"todo","join!");
+	}
+	joindlg_->deleteLater();
 }
 
 void MainWindow::finishNew(int i)
@@ -506,6 +521,7 @@ void MainWindow::initActions()
 	adminTools_->addAction(lockuser_);
 
 	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
+	connect(join_, SIGNAL(triggered()), this, SLOT(join()));
 
 	// Drawing tool actions
 	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("&Brush"), this);

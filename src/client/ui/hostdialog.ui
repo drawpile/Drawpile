@@ -5,12 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>405</width>
-    <height>389</height>
+    <width>442</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Host session</string>
+   <string>Host a session</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -20,76 +20,166 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox" >
-     <property name="title" >
-      <string>Session</string>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
      </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>6</number>
-      </property>
-      <property name="spacing" >
-       <number>3</number>
-      </property>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="label" >
-        <property name="text" >
-         <string>Title</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1" >
-       <widget class="QLineEdit" name="sessionpassword" >
-        <property name="toolTip" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+     <widget class="QWidget" name="sessiontab" >
+      <attribute name="title" >
+       <string>Session</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="1" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="1" colspan="2" >
+        <widget class="QLineEdit" name="sessiontitle" >
+         <property name="toolTip" >
+          <string>A title that is shown to users</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="sessionpassword" >
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
 &lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
 &lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Set a password to protect this session or leave blank to allow anyone to join&lt;/p>&lt;/body>&lt;/html></string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" >
-       <widget class="QLineEdit" name="username" >
-        <property name="toolTip" >
-         <string>Your username</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QLabel" name="label_2" >
-        <property name="text" >
-         <string>Username</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0" >
-       <widget class="QLabel" name="label_3" >
-        <property name="text" >
-         <string>Password</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1" colspan="2" >
-       <widget class="QLineEdit" name="sessiontitle" >
-        <property name="toolTip" >
-         <string>A title that is shown to users</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="username" >
+         <property name="toolTip" >
+          <string>Your username</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="label_3" >
+         <property name="text" >
+          <string>Password</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="label_2" >
+         <property name="text" >
+          <string>Username</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>Title</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="advancedtab" >
+      <attribute name="title" >
+       <string>Advanced</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="1" colspan="2" >
+        <widget class="QLineEdit" name="remotehost" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Address of host server&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="2" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QCheckBox" name="useremote" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>Host a session using a server that is running on another computer</string>
+         </property>
+         <property name="text" >
+          <string>Use remote server</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QSpinBox" name="port" >
+         <property name="maximum" >
+          <number>99999</number>
+         </property>
+         <property name="minimum" >
+          <number>1</number>
+         </property>
+         <property name="value" >
+          <number>1234</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="label_6" >
+         <property name="text" >
+          <string>Port</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -104,29 +194,13 @@ p, li { white-space: pre-wrap; }
       <property name="spacing" >
        <number>3</number>
       </property>
-      <item row="5" column="0" >
-       <widget class="QSpinBox" name="picturewidth" >
-        <property name="enabled" >
-         <bool>false</bool>
+      <item row="1" column="2" >
+       <widget class="QRadioButton" name="solidcolor" >
+        <property name="toolTip" >
+         <string>Use a solid color</string>
         </property>
-        <property name="maximum" >
-         <number>160000</number>
-        </property>
-        <property name="minimum" >
-         <number>1</number>
-        </property>
-        <property name="singleStep" >
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="label_4" >
         <property name="text" >
-         <string>Width</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+         <string>Solid color</string>
         </property>
        </widget>
       </item>
@@ -134,6 +208,32 @@ p, li { white-space: pre-wrap; }
        <widget class="ImageSelector" name="imageSelector" >
         <property name="frameShape" >
          <enum>QFrame::StyledPanel</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3" >
+       <widget class="QPushButton" name="selectPicCol" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="toolTip" >
+         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Select a picture or color&lt;/p>&lt;/body>&lt;/html></string>
+        </property>
+        <property name="text" >
+         <string>Select...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <widget class="QLabel" name="label_5" >
+        <property name="text" >
+         <string>Height</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
         </property>
        </widget>
       </item>
@@ -150,23 +250,19 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="1" column="2" >
-       <widget class="QRadioButton" name="solidcolor" >
-        <property name="toolTip" >
-         <string>Use a solid color</string>
+      <item row="5" column="0" >
+       <widget class="QSpinBox" name="picturewidth" >
+        <property name="enabled" >
+         <bool>false</bool>
         </property>
-        <property name="text" >
-         <string>Solid color</string>
+        <property name="maximum" >
+         <number>160000</number>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QRadioButton" name="newpicture" >
-        <property name="toolTip" >
-         <string>Select a new picture</string>
+        <property name="minimum" >
+         <number>1</number>
         </property>
-        <property name="text" >
-         <string>New picture</string>
+        <property name="singleStep" >
+         <number>10</number>
         </property>
        </widget>
       </item>
@@ -186,23 +282,23 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="4" column="1" >
-       <widget class="QLabel" name="label_5" >
-        <property name="text" >
-         <string>Height</string>
+      <item row="2" column="2" >
+       <widget class="QRadioButton" name="newpicture" >
+        <property name="toolTip" >
+         <string>Select a new picture</string>
         </property>
-        <property name="alignment" >
-         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+        <property name="text" >
+         <string>New picture</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="3" >
-       <widget class="QPushButton" name="selectPicCol" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="label_4" >
         <property name="text" >
-         <string>Select...</string>
+         <string>Width</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
         </property>
        </widget>
       </item>
@@ -228,6 +324,22 @@ p, li { white-space: pre-wrap; }
    <header>imageselector.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>sessiontitle</tabstop>
+  <tabstop>username</tabstop>
+  <tabstop>sessionpassword</tabstop>
+  <tabstop>existingpicture</tabstop>
+  <tabstop>solidcolor</tabstop>
+  <tabstop>newpicture</tabstop>
+  <tabstop>picturewidth</tabstop>
+  <tabstop>pictureheight</tabstop>
+  <tabstop>selectPicCol</tabstop>
+  <tabstop>buttons</tabstop>
+  <tabstop>remotehost</tabstop>
+  <tabstop>useremote</tabstop>
+  <tabstop>port</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -269,12 +381,12 @@ p, li { white-space: pre-wrap; }
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>196</x>
-     <y>188</y>
+     <x>326</x>
+     <y>211</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>346</x>
-     <y>260</y>
+     <x>421</x>
+     <y>293</y>
     </hint>
    </hints>
   </connection>
@@ -285,8 +397,8 @@ p, li { white-space: pre-wrap; }
    <slot>chooseOriginal()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>183</x>
-     <y>181</y>
+     <x>326</x>
+     <y>211</y>
     </hint>
     <hint type="destinationlabel" >
      <x>119</x>
@@ -301,8 +413,8 @@ p, li { white-space: pre-wrap; }
    <slot>chooseColor()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>199</x>
-     <y>205</y>
+     <x>326</x>
+     <y>237</y>
     </hint>
     <hint type="destinationlabel" >
      <x>111</x>
@@ -317,8 +429,8 @@ p, li { white-space: pre-wrap; }
    <slot>chooseImage()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>198</x>
-     <y>230</y>
+     <x>326</x>
+     <y>263</y>
     </hint>
     <hint type="destinationlabel" >
      <x>112</x>
@@ -337,8 +449,8 @@ p, li { white-space: pre-wrap; }
      <y>268</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>245</x>
-     <y>212</y>
+     <x>326</x>
+     <y>237</y>
     </hint>
    </hints>
   </connection>
@@ -353,8 +465,8 @@ p, li { white-space: pre-wrap; }
      <y>271</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>225</x>
-     <y>235</y>
+     <x>326</x>
+     <y>263</y>
     </hint>
    </hints>
   </connection>
@@ -369,8 +481,8 @@ p, li { white-space: pre-wrap; }
      <y>198</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>33</x>
-     <y>316</y>
+     <x>53</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
@@ -385,8 +497,8 @@ p, li { white-space: pre-wrap; }
      <y>205</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>117</x>
-     <y>309</y>
+     <x>205</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
@@ -397,12 +509,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>257</x>
-     <y>211</y>
+     <x>326</x>
+     <y>237</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>67</x>
-     <y>307</y>
+     <x>87</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
@@ -413,12 +525,12 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>212</x>
-     <y>212</y>
+     <x>326</x>
+     <y>237</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>133</x>
-     <y>312</y>
+     <x>205</x>
+     <y>347</y>
     </hint>
    </hints>
   </connection>
@@ -429,8 +541,8 @@ p, li { white-space: pre-wrap; }
    <slot>setWidth(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>83</x>
-     <y>301</y>
+     <x>103</x>
+     <y>347</y>
     </hint>
     <hint type="destinationlabel" >
      <x>57</x>
@@ -445,12 +557,12 @@ p, li { white-space: pre-wrap; }
    <slot>setHeight(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>162</x>
-     <y>310</y>
+     <x>205</x>
+     <y>347</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>80</x>
-     <y>175</y>
+     <x>100</x>
+     <y>293</y>
     </hint>
    </hints>
   </connection>

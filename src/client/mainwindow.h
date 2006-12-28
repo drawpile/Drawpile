@@ -37,6 +37,7 @@ namespace dialogs {
 	class ColorDialog;
 	class NewDialog;
 	class HostDialog;
+	class JoinDialog;
 }
 namespace drawingboard {
 	class Board;
@@ -67,6 +68,8 @@ class MainWindow : public QMainWindow {
 		bool saveas();
 		//! Show host session dialog
 		void host();
+		//! Show join session dialog
+		void join();
 		//! Zoom in
 		void zoomin();
 		//! Zoom out
@@ -96,6 +99,8 @@ class MainWindow : public QMainWindow {
 		void finishExit(int i);
 		//! Cancel or start hosting
 		void finishHost(int i);
+		//! Cancel or join
+		void finishJoin(int i);
 
 	signals:
 		//! This signal is emitted when the current tool is changed
@@ -144,6 +149,7 @@ class MainWindow : public QMainWindow {
 		QDialog *aboutdlg_;
 		dialogs::NewDialog *newdlg_;
 		dialogs::HostDialog *hostdlg_;
+		dialogs::JoinDialog *joindlg_;
 		QMessageBox *msgbox_;
 		QMessageBox *unsavedbox_;
 		drawingboard::Board *board_;
