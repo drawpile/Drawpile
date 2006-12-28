@@ -53,11 +53,8 @@ class Board : public QGraphicsScene
 		//! Initialize the board using an existing image as base
 		void initBoard(QImage image);
 
-		//! Save board contents to file.
-		bool save(QString filename);
-
-		//! Save board contents to a QIODevice
-		bool save(QIODevice *device, const char *format, int quality);
+		//! Get board contents as an image
+		QImage image() const;
 
 		//! Add a new user to the board
 		void addUser(int id);

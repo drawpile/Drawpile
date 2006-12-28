@@ -36,6 +36,7 @@ namespace widgets {
 namespace dialogs {
 	class ColorDialog;
 	class NewDialog;
+	class HostDialog;
 }
 namespace drawingboard {
 	class Board;
@@ -64,6 +65,8 @@ class MainWindow : public QMainWindow {
 		bool save();
 		//! Save current document with a new name
 		bool saveas();
+		//! Show host session dialog
+		void host();
 		//! Zoom in
 		void zoomin();
 		//! Zoom out
@@ -91,6 +94,8 @@ class MainWindow : public QMainWindow {
 		void finishOpen(int i);
 		//! Save and exit
 		void finishExit(int i);
+		//! Cancel or start hosting
+		void finishHost(int i);
 
 	signals:
 		//! This signal is emitted when the current tool is changed
@@ -138,6 +143,7 @@ class MainWindow : public QMainWindow {
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		QDialog *aboutdlg_;
 		dialogs::NewDialog *newdlg_;
+		dialogs::HostDialog *hostdlg_;
 		QMessageBox *msgbox_;
 		QMessageBox *unsavedbox_;
 		drawingboard::Board *board_;

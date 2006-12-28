@@ -1,0 +1,458 @@
+<ui version="4.0" >
+ <class>HostDialog</class>
+ <widget class="QDialog" name="HostDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>405</width>
+    <height>389</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Host session</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Session</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>6</number>
+      </property>
+      <property name="spacing" >
+       <number>3</number>
+      </property>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Title</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QLineEdit" name="sessionpassword" >
+        <property name="toolTip" >
+         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Set a password to protect this session or leave blank to allow anyone to join&lt;/p>&lt;/body>&lt;/html></string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLineEdit" name="username" >
+        <property name="toolTip" >
+         <string>Your username</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="label_2" >
+        <property name="text" >
+         <string>Username</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="label_3" >
+        <property name="text" >
+         <string>Password</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="1" colspan="2" >
+       <widget class="QLineEdit" name="sessiontitle" >
+        <property name="toolTip" >
+         <string>A title that is shown to users</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Picture</string>
+     </property>
+     <layout class="QGridLayout" >
+      <property name="margin" >
+       <number>9</number>
+      </property>
+      <property name="spacing" >
+       <number>3</number>
+      </property>
+      <item row="5" column="0" >
+       <widget class="QSpinBox" name="picturewidth" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="maximum" >
+         <number>160000</number>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="singleStep" >
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0" >
+       <widget class="QLabel" name="label_4" >
+        <property name="text" >
+         <string>Width</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item rowspan="4" row="0" column="0" colspan="2" >
+       <widget class="ImageSelector" name="imageSelector" >
+        <property name="frameShape" >
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
+       <widget class="QRadioButton" name="existingpicture" >
+        <property name="toolTip" >
+         <string>Use the old picture</string>
+        </property>
+        <property name="text" >
+         <string>Existing picture</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <widget class="QRadioButton" name="solidcolor" >
+        <property name="toolTip" >
+         <string>Use a solid color</string>
+        </property>
+        <property name="text" >
+         <string>Solid color</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" >
+       <widget class="QRadioButton" name="newpicture" >
+        <property name="toolTip" >
+         <string>Select a new picture</string>
+        </property>
+        <property name="text" >
+         <string>New picture</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" >
+       <widget class="QSpinBox" name="pictureheight" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="maximum" >
+         <number>16000</number>
+        </property>
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="singleStep" >
+         <number>10</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1" >
+       <widget class="QLabel" name="label_5" >
+        <property name="text" >
+         <string>Height</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3" >
+       <widget class="QPushButton" name="selectPicCol" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Select...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttons" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ImageSelector</class>
+   <extends>QFrame</extends>
+   <header>imageselector.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttons</sender>
+   <signal>accepted()</signal>
+   <receiver>HostDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>257</x>
+     <y>374</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttons</sender>
+   <signal>rejected()</signal>
+   <receiver>HostDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>325</x>
+     <y>374</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>existingpicture</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>selectPicCol</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>196</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>346</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>existingpicture</sender>
+   <signal>clicked()</signal>
+   <receiver>imageSelector</receiver>
+   <slot>chooseOriginal()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>183</x>
+     <y>181</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>119</x>
+     <y>193</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solidcolor</sender>
+   <signal>clicked()</signal>
+   <receiver>imageSelector</receiver>
+   <slot>chooseColor()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>199</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>111</x>
+     <y>219</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newpicture</sender>
+   <signal>clicked()</signal>
+   <receiver>imageSelector</receiver>
+   <slot>chooseImage()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>198</x>
+     <y>230</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>112</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>colorDropped()</signal>
+   <receiver>solidcolor</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>80</x>
+     <y>268</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>245</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>imageDropped()</signal>
+   <receiver>newpicture</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>87</x>
+     <y>271</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>225</x>
+     <y>235</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>widthChanged(int)</signal>
+   <receiver>picturewidth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>27</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>33</x>
+     <y>316</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>heightChanged(int)</signal>
+   <receiver>pictureheight</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>134</x>
+     <y>205</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>117</x>
+     <y>309</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solidcolor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>picturewidth</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>257</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>67</x>
+     <y>307</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solidcolor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pictureheight</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>212</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>133</x>
+     <y>312</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>picturewidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>imageSelector</receiver>
+   <slot>setWidth(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>83</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>57</x>
+     <y>200</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pictureheight</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>imageSelector</receiver>
+   <slot>setHeight(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>162</x>
+     <y>310</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>80</x>
+     <y>175</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -29,18 +29,21 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QAbstractButton>
+#include <QImageReader>
 #include <QImageWriter>
 
 #include "mainwindow.h"
 #include "netstatus.h"
-#include "aboutdialog.h"
-#include "dualcolorbutton.h"
 #include "editorview.h"
 #include "board.h"
 #include "controller.h"
 #include "toolsettingswidget.h"
+#include "dualcolorbutton.h"
+
+#include "aboutdialog.h"
 #include "colordialog.h"
 #include "newdialog.h"
+#include "hostdialog.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
@@ -248,7 +251,7 @@ void MainWindow::reallyOpen()
 {
 	// Get a list of supported formats
 	QString formats;
-	foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
+	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
 	QString filter = tr("Images (%1);;All files (*)").arg(formats);
@@ -272,7 +275,7 @@ bool MainWindow::save()
 	if(filename_.isEmpty()) {
 		return saveas();
 	} else {
-		if(board_->save(filename_) == false) {
+		if(board_->image().save(filename_) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
 		} else {
@@ -313,7 +316,7 @@ bool MainWindow::saveas()
 			file += "." + defaultsuffix;
 
 		// Save the image
-		if(board_->save(file) == false) {
+		if(board_->image().save(file) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
 		} else {
@@ -324,6 +327,21 @@ bool MainWindow::saveas()
 		}
 	}
 	return false;
+}
+
+void MainWindow::host()
+{
+	hostdlg_ = new dialogs::HostDialog(board_->image(), this);
+	connect(hostdlg_, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
+	hostdlg_->show();
+}
+
+void MainWindow::finishHost(int i)
+{
+	if(i==QDialog::Accepted) {
+		QMessageBox::information(this,"todo","host!");
+	}
+	hostdlg_->deleteLater();
 }
 
 void MainWindow::finishNew(int i)
@@ -487,6 +505,8 @@ void MainWindow::initActions()
 	adminTools_->addAction(kickuser_);
 	adminTools_->addAction(lockuser_);
 
+	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
+
 	// Drawing tool actions
 	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("&Brush"), this);
 	brushtool_->setCheckable(true); brushtool_->setChecked(true);
@@ -558,7 +578,6 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(lockboard_);
 	sessionmenu->addAction(lockuser_);
 	sessionmenu->addAction(kickuser_);
-	sessionmenu->setEnabled(false); // no network support yet
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(brushtool_);

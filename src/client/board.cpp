@@ -97,24 +97,11 @@ void Board::removeUser(int id)
 }
 
 /**
- * File format is deduced from the filename.
- * @param filename filename
- * @return false on failure.
+ * @return board contents
  */
-bool Board::save(QString filename)
+QImage Board::image() const
 {
-	return image_->image().save(filename);
-}
-
-/**
- * @param device QIODevice to which the image is saved
- * @param format image format. Eg. "PNG"
- * @param quality image quality. Range is [0..100]
- * @return false on failure.
- */
-bool Board::save(QIODevice *device, const char *format, int quality)
-{
-	return image_->image().save(device, format, quality);
+	return image_->image();
 }
 
 /**
