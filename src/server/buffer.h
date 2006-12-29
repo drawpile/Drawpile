@@ -125,6 +125,15 @@ struct Buffer
 	//! Repositions data for maximum contiguous length.
 	void reposition()
 	{
+		if (wpos == data)
+			return;
+		
+		if (left == 0)
+		{
+			rewind();
+			return;
+		}
+		
 		#ifndef NDEBUG
 		size_t oleft = left;
 		#endif
