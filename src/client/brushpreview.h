@@ -43,12 +43,12 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 
 	public slots:
 		//! Set the brush to preview
-		void setBrush(const drawingboard::Brush& brush);
-
-		//! Get the displayed brush
 		/**
 		 * @param brush brush to set
 		 */
+		void setBrush(const drawingboard::Brush& brush);
+
+		//! Get the displayed brush
 		const drawingboard::Brush& brush() const { return brush_; }
 
 		//! Set preview brush size
