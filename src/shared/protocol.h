@@ -34,10 +34,12 @@
 #define Protocol_INCLUDED
 
 #include <cassert> // assert()
-#include <stddef.h> // size_t
+#include <cstddef> // size_t
 #include <stdint.h> // [u]int#_t
 
 #include "templates.h"
+
+#include "memstack.h" // MemoryStack<>
 
 #include "protocol.errors.h"
 #include "protocol.defaults.h"
@@ -53,7 +55,7 @@ namespace protocol
 {
 
 //! Implemented protocol revision number.
-const uint16_t revision = 6;
+const uint16_t revision = 7;
 
 //! Base for all message types.
 /**
@@ -68,6 +70,11 @@ const uint16_t revision = 6;
  */
 struct Message
 {
+	// friend list "should" be done, but not really necessary
+	/*
+	friend ToolInfo;
+	*/
+	
 	Message(uint8_t _type, uint8_t _flags=protocol::message::None) throw()
 		: type(_type),
 		user_id(protocol::null_user),
@@ -164,7 +171,7 @@ struct Message
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Protocol_identifier
  */
 struct Identifier
-	: Message
+	: Message//, MemoryStack<Identifier>
 {
 	Identifier() throw()
 		: Message(protocol::type::Identifier),
@@ -207,7 +214,7 @@ struct Identifier
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Stroke_info
  */
 struct StrokeInfo
-	: Message
+	: Message //, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
 		: Message(protocol::type::StrokeInfo, message::isUser|message::isBundling),
@@ -246,7 +253,7 @@ struct StrokeInfo
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Stroke_end
  */
 struct StrokeEnd
-	: Message
+	: Message //, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
 		: Message(protocol::type::StrokeEnd, message::isUser)
@@ -270,7 +277,7 @@ struct StrokeEnd
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Tool_info
  */
 struct ToolInfo
-	: Message
+	: Message //, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
 		: Message(protocol::type::ToolInfo, message::isUser),
@@ -321,7 +328,7 @@ struct ToolInfo
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Synchronize
  */
 struct Synchronize
-	: Message
+	: Message //, MemoryStack<Synchronize>
 {
 	Synchronize() throw()
 		: Message(protocol::type::Synchronize)
@@ -345,7 +352,7 @@ struct Synchronize
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Raster
  */
 struct Raster
-	: Message
+	: Message //, MemoryStack<Raster>
 {
 	Raster() throw()
 		: Message(protocol::type::Raster),
@@ -385,7 +392,7 @@ struct Raster
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#SyncWait
  */
 struct SyncWait
-	: Message
+	: Message //, MemoryStack<SyncWait>
 {
 	SyncWait() throw()
 		: Message(protocol::type::SyncWait)
@@ -409,7 +416,7 @@ struct SyncWait
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Authentication
  */
 struct Authentication
-	: Message
+	: Message //, MemoryStack<Authentication>
 {
 	Authentication() throw()
 		: Message(protocol::type::Authentication),
@@ -440,7 +447,7 @@ struct Authentication
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Password
  */
 struct Password
-	: Message
+	: Message //, MemoryStack<Password>
 {
 	Password() throw()
 		: Message(protocol::type::Password)
@@ -469,7 +476,7 @@ struct Password
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Subscribe
  */
 struct Subscribe
-	: Message
+	: Message //, MemoryStack<Subscribe>
 {
 	Subscribe() throw()
 		: Message(protocol::type::Subscribe),
@@ -496,7 +503,7 @@ struct Subscribe
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Unsubscribe
  */
 struct Unsubscribe
-	: Message
+	: Message //, MemoryStack<Unsubscribe>
 {
 	Unsubscribe() throw()
 		: Message(protocol::type::Unsubscribe),
@@ -523,7 +530,7 @@ struct Unsubscribe
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Instruction
  */
 struct Instruction
-	: Message
+	: Message //, MemoryStack<Instruction>
 {
 	Instruction() throw()
 		: Message(protocol::type::Instruction),
@@ -558,7 +565,7 @@ struct Instruction
  * have been described to mark the end of list.
  */
 struct ListSessions
-	: Message
+	: Message //, MemoryStack<ListSessions>
 {
 	ListSessions() throw()
 		: Message(protocol::type::ListSessions)
@@ -580,7 +587,7 @@ struct ListSessions
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Cancel
  */
 struct Cancel
-	: Message
+	: Message //, MemoryStack<Cancel>
 {
 	Cancel() throw()
 		: Message(protocol::type::Cancel)
@@ -602,7 +609,7 @@ struct Cancel
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#User_info
  */
 struct UserInfo
-	: Message
+	: Message //, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
 		: Message(protocol::type::UserInfo, message::isUser),
@@ -639,7 +646,7 @@ struct UserInfo
 
 //! Host info message
 struct HostInfo
-	: Message
+	: Message //, MemoryStack<HostInfo>
 {
 	HostInfo() throw()
 		: Message(protocol::type::HostInfo),
@@ -685,7 +692,7 @@ struct HostInfo
 
 //! Session Info message.
 struct SessionInfo
-	: Message
+	: Message //, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
 		: Message(protocol::type::SessionInfo),
@@ -741,7 +748,7 @@ struct SessionInfo
 
 //! Acknowledgement message.
 struct Acknowledgement
-	: Message
+	: Message //, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
 		: Message(protocol::type::Acknowledgement),
@@ -765,7 +772,7 @@ struct Acknowledgement
 
 //! Error message.
 struct Error
-	: Message
+	: Message //, MemoryStack<Error>
 {
 	Error() throw()
 		: Message(protocol::type::Error),
@@ -789,7 +796,7 @@ struct Error
 
 //! Deflate Extension message.
 struct Deflate
-	: Message
+	: Message //, MemoryStack<Deflate>
 {
 	Deflate() throw()
 		: Message(protocol::type::Deflate),
@@ -824,7 +831,7 @@ struct Deflate
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Chat
  */
 struct Chat
-	: Message
+	: Message //, MemoryStack<Chat>
 {
 	Chat() throw()
 		: Message(protocol::type::Chat, message::isUser),
@@ -859,7 +866,7 @@ struct Chat
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Palette
  */
 struct Palette
-	: Message
+	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
 		: Message(protocol::type::Palette),
@@ -894,7 +901,7 @@ struct Palette
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Palette
  */
 struct SessionSelect
-	: Message
+	: Message, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
 		: Message(protocol::type::SessionSelect,
