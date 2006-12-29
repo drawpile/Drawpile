@@ -45,9 +45,13 @@ Server::Server() throw()
 	: password(0),
 	pw_len(0),
 	user_limit(0),
-	cur_users(0),
+	session_limit(1),
+	max_subscriptions(1),
+	name_len_limit(8),
 	hi_port(protocol::default_port),
-	lo_port(protocol::default_port)
+	lo_port(protocol::default_port),
+	requirements(0),
+	extensions(0)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::Server()" << std::endl;
@@ -173,7 +177,7 @@ void Server::uWrite(User* usr) throw()
 		if (buf.left == 0)
 		{
 			// remove buffer
-			delete [] buf.data;
+			//delete [] buf.data;
 			usr->buffers.pop();
 			
 			// remove fd from write list if no buffers left.
@@ -329,9 +333,18 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 			// TODO: send Auth Request
 			// TODO: send Host Info.
 			
+			protocol::HostInfo *himsg = new protocol::HostInfo;
 			
+			himsg->sessions = session_ids.count();
+			himsg->sessionLimit = session_limit;
+			himsg->users = user_ids.count();
+			himsg->userLimit = user_limit;
+			himsg->nameLenLimit = name_len_limit;
+			himsg->maxSubscriptions = max_subscriptions;
+			himsg->requirements = requirements;
+			himsg->extensions = extensions;
 			
-			uSendMsg(usr, msg);
+			uSendMsg(usr, himsg);
 		}
 		else
 		{
@@ -363,10 +376,10 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 	
 	usr->buffers.push( Buffer(buf, len) );
 	
-	if (!fIsSet(usr->events, ev.read))
+	if (!fIsSet(usr->events, ev.write))
 	{
-		fSet(usr->events, ev.read);
-		ev.add(usr->sock->fd(), ev.read);
+		fSet(usr->events, ev.write);
+		ev.modify(usr->sock->fd(), usr->events);
 	}
 }
 

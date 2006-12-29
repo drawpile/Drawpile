@@ -82,11 +82,17 @@ protected:
 	char* password;
 	size_t pw_len,
 		user_limit,
-		cur_users;
+		session_limit,
+		max_subscriptions,
+		name_len_limit;
 	
 	uint16_t
 		hi_port,
 		lo_port;
+	
+	uint8_t
+		requirements,
+		extensions;
 	
 	/* functions */
 	
