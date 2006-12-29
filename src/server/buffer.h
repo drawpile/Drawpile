@@ -18,7 +18,7 @@
 #ifndef NDEBUG
 	#include <iostream>
 #endif
-#include <stddef.h> // size_t?
+#include <cstddef> // size_t?
 #include <cassert>
 
 //! Circular buffer.
