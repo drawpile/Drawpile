@@ -237,6 +237,20 @@ public:
 	 */
 	int recv(char* buffer, size_t buflen) throw();
 	
+	#if defined(WITH_SENDFILE)
+	//! Sendfile interface
+	/**
+	 * @param fd FD of the file to be sent.
+	 * @param offset is the starting offset in the file for sending.
+	 * @param nbytes is the number of bytes to be sent.
+	 * @param hdtr is the header/footer data to be sent alongside the file.
+	 * @param sbytes is the sent bytes.
+	 *
+	 * @return -1 on error, 0 otherwise.
+	 */
+	int sendfile(int fd, off_t offset, size_t nbytes, sf_hdtr *hdtr=0, off_t *sbytes=0) throw();
+	#endif // WITH_SENDFILE
+	
 	//! Get last error number
 	/**
 	 * @return last errno.

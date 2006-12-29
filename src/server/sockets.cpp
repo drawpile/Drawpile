@@ -551,3 +551,67 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 	
 	return r;
 }
+
+#if defined(WITH_SENDFILE)
+int Socket::sendfile(int fd, off_t offset, size_t nbytes, sf_hdtr *hdtr, off_t *sbytes) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Socket::recv(*buffer, " << buflen << ")" << std::endl;
+	#endif
+	
+	assert(fd >= 0);
+	assert(offset >= 0);
+	
+	// call the real sendfile()
+	int r = ::sendfile(fd, sock, offset, nbytes, hdtr, sbytes, 0);
+	error = errno;
+	if (r == -1)
+	{
+		switch (error)
+		{
+		#ifndef NDEBUG
+		case EBADF:
+			std::cerr << "fd is not a valid file descriptor." << std::endl;
+			assert(1);
+			break;
+		case ENOTSOCK:
+			std::cerr << "Not a socket" << std::endl;
+			assert(1);
+			break;
+		case EINVAL:
+			std::cerr << "FD is not a regular file or socket is not of type SOCK_STREAM" << std::endl;
+			assert(1);
+			break;
+		case ENOTCONN:
+			std::cerr << "Not connected." << std::endl;
+			assert(1);
+			break;
+		#endif // NDEBUG
+		case EPIPE:
+			#ifndef NDEBUG
+			std::cerr << "The socket peer has closed the connection." << std::endl;
+			#endif
+			return -1;
+		case EIO:
+			#ifndef NDEBUG
+			std::cerr << "An error occurred while reading from fd." << std::endl;
+			#endif
+			return -1;
+		case EFAULT:
+			#ifndef NDEBUG
+			std::cerr << "An invalid address was specified for a parameter." << std::endl;
+			assert(1);
+			#endif
+			break;
+		case EAGAIN:
+			// retry
+			return 0;
+			break;
+		default:
+			return -1;
+		}
+	}
+	
+	return 0;
+}
+#endif // WITH_SENDFILE
