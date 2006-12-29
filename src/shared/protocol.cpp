@@ -209,7 +209,7 @@ size_t Identifier::unserialize(const char* buf, size_t len) throw()
 size_t Identifier::reqDataLen(const char *buf, size_t len) const throw()
 {
 	assert(buf != 0 and len != 0);
-	assert(static_cast<uint8_t>(buf[0]) == protocol::type::Identifier);
+	assert(buf[0] == type);
 	
 	return sizeof(type) + identifier_size + sizeof(revision)
 		+ sizeof(level) + sizeof(extensions);
