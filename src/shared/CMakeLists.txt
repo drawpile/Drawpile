@@ -11,6 +11,7 @@ set (
 	protocol.flags.h
 	protocol.types.h
 	protocol.helper.h
+	memstack.h
 )
 
 set (
