@@ -84,35 +84,27 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	{
 		switch (error)
 		{
-		#ifdef EWOULDBLOCK
-		case EWOULDBLOCK:
-		#else
 		case EAGAIN:
-		#endif
 			#ifndef NDEBUG
 			std::cerr << "Would block, try again." << std::endl;
 			#endif
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EBADF:
-			#ifndef NDEBUG
 			std::cerr << "Invalid FD" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case EINTR:
 			#ifndef NDEBUG
 			std::cerr << "Interrupted by signal." << std::endl;
 			#endif
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EINVAL:
-			#ifndef NDEBUG
 			std::cerr << "Not listening." << std::endl;
-			#endif
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case EMFILE:
 			#ifndef NDEBUG
 			std::cerr << "Per-process open FD limit reached." << std::endl;
@@ -123,14 +115,12 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			std::cerr << "System open FD limit reached." << std::endl;
 			#endif
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EFAULT:
-			#ifndef NDEBUG
 			std::cerr << "Addr not writable" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case ENOMEM:
 			#ifndef NDEBUG
 			std::cerr << "Out of memory." << std::endl;
@@ -141,21 +131,16 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			std::cerr << "Firewall forbids." << std::endl;
 			#endif
 			break;
-		#ifndef WIN32
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case ENOTSOCK:
-			#ifndef NDEBUG
 			std::cerr << "Not a socket." << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EOPNOTSUPP:
-			#ifndef NDEBUG
 			std::cerr << "Not of type, SOCK_STREAM." << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case ECONNABORTED:
 			#ifndef NDEBUG
 			std::cerr << "Connection aborted" << std::endl;
@@ -166,13 +151,14 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			std::cerr << "Out of network buffers" << std::endl;
 			#endif
 			break;
+		#ifndef WIN32
 		case EPROTO:
 			// whatever this is?
 			#ifndef NDEBUG
 			std::cerr << "Protocol error." << std::endl;
 			#endif
 			break;
-		#endif // !WIN32
+		#endif
 		#ifdef LINUX
 		// no idea what these are mostly.
 		case ENOSR:
@@ -244,18 +230,16 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 	int r = bind(sock, (struct sockaddr *) &addr, sizeof(addr));
 	error = errno;
 	
-	if (r == -1)
+	if (r == SOCKET_ERROR)
 	{
 		switch (error)
 		{
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EBADF:
-			#ifndef NDEBUG
 			std::cerr << "Invalid FD" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case EINVAL:
 			// According to docks, this may change in the future.
 			#ifndef NDEBUG
@@ -269,16 +253,12 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 			#endif
 			assert(1);
 			break;
-		#ifndef WIN32
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case ENOTSOCK:
-			#ifndef NDEBUG
 			std::cerr << "Not a socket." << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
-		#endif // !WIN32
+		#endif
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Unknown error." << std::endl;
@@ -288,6 +268,62 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 	}
 	
 	return r;
+}
+
+int Socket::connect(sockaddr_in* rhost) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Socket::connect()" << std::endl;
+	#endif
+	
+	assert(sock >= 0);
+	
+	int r = ::connect(sock, (sockaddr*) rhost, sizeof(rhost));
+	error = errno;
+	
+	if (r == -1)
+	{
+		switch (error)
+		{
+		case EINPROGRESS:
+			std::cout << "Connection in progress." << std::endl;
+			return 0;
+		#ifndef NDEBUG
+		case EBADF:
+		case EFAULT:
+		case ENOTSOCK:
+		case EISCONN:
+		case EADDRINUSE:
+		case EAFNOSUPPORT:
+			assert(1);
+			break;
+		#endif
+		case EACCES:
+		case EPERM:
+			std::cerr << "Firewall denied connection?" << std::endl;
+			return -1;
+		case ECONNREFUSED:
+			std::cout << "Connection refused" << std::endl;
+			return 1;
+			break;
+		case ETIMEDOUT:
+			std::cout << "Connection timed-out" << std::endl;
+			return 2;
+			break;
+		case ENETUNREACH:
+			std::cout << "Network unreachable" << std::endl;
+			return 2;
+			break;
+		case EALREADY:
+			std::cout << "Already connected" << std::endl;
+			return 3;
+		case EAGAIN:
+			std::cout << "No free local ports left, try again later." << std::endl;
+			return 2;
+		}
+	}
+	
+	return 0;
 }
 
 int Socket::listen() throw()
@@ -301,34 +337,26 @@ int Socket::listen() throw()
 	int r = ::listen(sock, 4);
 	error = errno;
 	
-	if (r == -1)
+	if (r == SOCKET_ERROR)
 	{
 		switch (error)
 		{
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EBADF:
-			#ifndef NDEBUG
 			std::cerr << "Invalid FD" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
-		#ifndef WIN32
-		#if defined( TRAP_CODER_ERROR )
+		#endif
+		#ifndef NDEBUG
 		case ENOTSOCK:
-			#ifndef NDEBUG
 			std::cerr << "Not a socket." << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EOPNOTSUPP:
-			#ifndef NDEBUG
 			std::cerr << "Does not support listen." << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
-		#endif // !WIN32
+		#endif
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Unknown error." << std::endl;
@@ -353,48 +381,38 @@ int Socket::send(char* buffer, size_t buflen) throw()
 	int r = ::send(sock, buffer, buflen, MSG_NOSIGNAL);
 	error = errno;
 	
-	if (r == -1)
+	if (r == SOCKET_ERROR)
 	{
 		switch (error)
 		{
-		#ifdef EWOULDBLOCK
-		case EWOULDBLOCK:
-		#else
 		case EAGAIN:
-		#endif
 			#ifndef NDEBUG
 			std::cerr << "Would block, try again" << std::endl;
 			#endif
 			return SOCKET_ERROR - 1;
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EBADF:
-			#ifndef NDEBUG
 			std::cerr << "Invalid fD" << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EFAULT:
-			#ifndef NDEBUG
 			std::cerr << "Invalid parameter address." << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case EINTR:
 			#ifndef NDEBUG
 			std::cerr << "Interrupted by signal." << std::endl;
 			#endif
 			return SOCKET_ERROR - 1;
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EINVAL:
-			#ifndef NDEBUG
 			std::cerr << "Invalid argument" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case ENOMEM:
 			#ifndef NDEBUG
 			std::cerr << "Out of memory" << std::endl;
@@ -406,44 +424,33 @@ int Socket::send(char* buffer, size_t buflen) throw()
 			std::cerr << "Pipe broken, connection closed on local end." << std::endl;
 			#endif
 			break;
-		#ifndef WIN32
 		case ECONNRESET:
 			#ifndef NDEBUG
 			std::cerr << "Connection reset by peer" << std::endl;
 			#endif
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EDESTADDRREQ: // likely result of sendmsg()
-			#ifndef NDEBUG
 			std::cerr << "Not connceted, and no peer defined." << std::endl;
-			#endif
 			assert(1);
 			break;
 		case ENOTCONN:
-			#ifndef NDEBUG
 			std::cerr << "Not connected" << std::endl;
-			#endif
 			assert(1);
 			break;
 		case ENOTSOCK:
-			#ifndef NDEBUG
 			std::cerr << "Not a socket" << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EOPNOTSUPP:
-			#ifndef NDEBUG
 			std::cerr << "Invalid flags" << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EISCONN: // likely result of sendmsg()
-			#ifndef NDEBUG
 			std::cerr << "Already connected, but recipient was specified." << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case EMSGSIZE:
 			#ifndef NDEBUG
 			std::cerr << "Socket requires atomic sending." << std::endl;
@@ -456,7 +463,6 @@ int Socket::send(char* buffer, size_t buflen) throw()
 			#endif
 			return SOCKET_ERROR - 1;
 			break;
-		#endif // !WIN32
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Unknown error." << std::endl;
@@ -481,23 +487,17 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 	int r = ::recv(sock, buffer, buflen, 0);
 	error = errno;
 	
-	if (r == -1)
+	if (r == SOCKET_ERROR)
 	{
 		switch (error)
 		{
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EBADF:
-			#ifndef NDEBUG
 			std::cerr << "Invalid FD" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
-		#ifdef EWOULDBLOCK
-		case EWOULDBLOCK:
-		#else
-		case EAGAIN:
 		#endif
+		case EAGAIN:
 			// Should retry
 			#ifndef NDEBUG
 			std::cerr << "Would block, try again." << std::endl;
@@ -511,47 +511,35 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 			#endif
 			return SOCKET_ERROR - 1;
 			break;
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EFAULT:
-			#ifndef NDEBUG
 			std::cerr << "Buffer points to invalid address" << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EINVAL:
-			#ifndef NDEBUG
 			std::cerr << "Invalid argument." << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case ENOMEM:
 			#ifndef NDEBUG
 			std::cerr << "Out of memory" << std::endl;
 			#endif
 			return SOCKET_ERROR - 1;
 			break;
-		#ifndef WIN32
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case ECONNREFUSED:
-			#ifndef NDEBUG
 			std::cerr << "Connection refused" << std::endl;
-			#endif
 			break;
 		case ENOTCONN:
-			#ifndef NDEBUG
 			std::cerr << "Not connected" << std::endl;
-			#endif
 			assert(1);
 			break;
 		case ENOTSOCK:
-			#ifndef NDEBUG
 			std::cerr << "Not a socket" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
-		#endif // !WIN32
+		#endif
 		default:
 			// Should not happen
 			#ifndef NDEBUG

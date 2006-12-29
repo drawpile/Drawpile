@@ -46,6 +46,26 @@
 	#error Windows socket API was not detected.
 	#endif // WSA
 	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
+	
+	// Because MS decided to break BSD socket compatibility.
+	#define EINPROGRESS WSAEINPROGRESS
+	#define ENOTSOCK WSAENOTSOCK
+	#define EISCONN WSAEISCONN
+	#define EADDRINUSE WSAEADDRINUSE
+	#define EAFNOSUPPORT WSAEAFNOSUPPORT
+	//#define EACCES WSAEACCES
+	#define ECONNREFUSED WSAECONNREFUSED
+	#define ETIMEDOUT WSAETIMEDOUT
+	#define ENETUNREACH WSAENETUNREACH
+	#define EALREADY WSAEALREADY
+	#define ENOTCONN WSAENOTCONN
+	#define ECONNRESET WSAECONNRESET
+	#define EOPNOTSUPP WSAEOPNOTSUPP
+	#define ECONNABORTED WSAECONNABORTED
+	#define ENOBUFS WSAENOBUFS
+	//#define EPROTO WSAEPROTO
+	#define EDESTADDRREQ WSAEDESTADDRREQ
+	#define EMSGSIZE WSAEMSGSIZE
 #else
 	#include <sys/socket.h>
 	#include <netinet/in.h>
@@ -55,6 +75,10 @@
 	// not defined in non-win32 systems
 	#define INVALID_SOCKET -1
 	#define SOCKET_ERROR -1
+#endif
+
+#ifndef EAGAIN
+	#define EAGAIN EWOULDBLOCK
 #endif
 
 inline
@@ -94,8 +118,11 @@ protected:
 	//! Assigned file descriptor
 	int sock;
 	
-	//! Remote address
+	//! Local address
 	sockaddr_in addr;
+	
+	//! Remote address
+	sockaddr_in raddr;
 	
 	//! Last error number
 	int error;
@@ -163,6 +190,8 @@ public:
 	
 	//! Set blocking
 	/**
+	 * @bug You can't enable blocking on non-Win32 systems.
+	 *
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise.
 	 */
@@ -174,6 +203,9 @@ public:
 	 * @return SOCKET_ERROR otherwise
 	 */
 	int bindTo(uint32_t address, uint16_t port) throw();
+	
+	//! Connect to remote address
+	int connect(sockaddr_in* rhost) throw();
 	
 	//! Set listening
 	/**
@@ -217,13 +249,13 @@ public:
 	 */
 	sockaddr_in* getAddr() throw() { return &addr; }
 	
-	//! Get remote IP address
+	//! Get local IP address
 	/**
 	 * @return IP address.
 	 */
 	int address() const throw() { return ntohl(addr.sin_addr.s_addr); }
 	
-	//! Get remote port
+	//! Get local port
 	/**
 	 * @return port number.
 	 */
