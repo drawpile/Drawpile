@@ -10,6 +10,7 @@ include_directories (
 	${QT_INCLUDE_DIR}
 	${QT_QTGUI_INCLUDE_DIR}
 	${QT_QTCORE_INCLUDE_DIR}
+	${QT_QTNETWORK_INCLUDE_DIR}
 )
 
 include ( ${QT_USE_FILE} )
@@ -37,7 +38,7 @@ set (
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
-	newdialog.h point.h imageselector.h hostdialog.h joindialog.h
+	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
 )
 
 set (
@@ -47,7 +48,7 @@ set (
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp aboutdialog.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp
+	hostdialog.cpp joindialog.cpp network.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )
@@ -102,4 +103,5 @@ add_file_dependencies ( main.cpp src/shared )
 target_link_libraries(
 	${EXECNAME}
 	${QT_LIBRARIES}
+	${QT_QTNETWORK_LIBRARIES}
 )

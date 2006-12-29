@@ -28,7 +28,8 @@
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), offlineicon_(":/icons/network-error.png")
+	: QWidget(parent), offlineicon_(":/icons/network-error.png"),
+	onlineicon_(":/icons/network-transmit-receive.png")
 {
 	setMinimumHeight(offlineicon_.height()+2);
 
@@ -67,6 +68,7 @@ void NetStatus::connectHost(const QString& address)
 {
 	address_ = address;
 	label_->setText(tr("Host: %1").arg(address_));
+	icon_->setPixmap(onlineicon_);
 	copyaction_->setEnabled(true);
 }
 

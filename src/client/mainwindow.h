@@ -70,6 +70,8 @@ class MainWindow : public QMainWindow {
 		void host();
 		//! Show join session dialog
 		void join();
+		//! Leave session
+		void leave();
 		//! Zoom in
 		void zoomin();
 		//! Zoom out

@@ -17,37 +17,31 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef NETSTATUS_H
-#define NETSTATUS_H
+#ifndef HOSTDIALOG_H
+#define HOSTDIALOG_H
 
-#include <QLabel>
-#include <QPixmap>
+#include <QDialog>
 
-namespace widgets {
-//! Network connection status widget
-/**
- * This widget displays the current status of the connection with the server
- * and the address of the host.
- */
-class NetStatus : public QWidget
+class Ui_HostDialog;
+
+namespace dialogs {
+
+class HostDialog : public QDialog
 {
 	Q_OBJECT
 	public:
-		NetStatus(QWidget *parent);
-	
-	public slots:
-		//! Connect to a host
-		void connectHost(const QString& address);
-		//! Disconnect from host
-		void disconnectHost();
-		//! Copy the address to clipboard
-		void copyAddress();
+		HostDialog(const QImage &original, QWidget *parent=0);
+		~HostDialog();
+
+		//! Get the username
+		QString getUserName() const;
+
+	private slots:
+		void selectPicture();
 
 	private:
-		QLabel *label_, *icon_;
-		QPixmap offlineicon_,onlineicon_;
-		QString address_;
-		QAction *copyaction_;
+		Ui_HostDialog *ui_;
+		QString prevpath_;
 };
 
 }

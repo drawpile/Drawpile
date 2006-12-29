@@ -160,14 +160,17 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="1" column="1" >
         <widget class="QSpinBox" name="port" >
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Start or connect to server on this port&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
          <property name="maximum" >
           <number>99999</number>
          </property>
          <property name="minimum" >
           <number>1</number>
-         </property>
-         <property name="value" >
-          <number>1234</number>
          </property>
         </widget>
        </item>
@@ -255,6 +258,9 @@ p, li { white-space: pre-wrap; }
         <property name="enabled" >
          <bool>false</bool>
         </property>
+        <property name="buttonSymbols" >
+         <enum>QAbstractSpinBox::PlusMinus</enum>
+        </property>
         <property name="maximum" >
          <number>160000</number>
         </property>
@@ -270,6 +276,9 @@ p, li { white-space: pre-wrap; }
        <widget class="QSpinBox" name="pictureheight" >
         <property name="enabled" >
          <bool>false</bool>
+        </property>
+        <property name="buttonSymbols" >
+         <enum>QAbstractSpinBox::PlusMinus</enum>
         </property>
         <property name="maximum" >
          <number>16000</number>

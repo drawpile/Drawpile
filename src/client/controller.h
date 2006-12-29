@@ -35,6 +35,8 @@ namespace interface {
 	class ColorSource;
 }
 
+class Network;
+
 //! Controller for drawing and network operations
 /**
  * The controller handles all drawing commands coming in from the
@@ -58,6 +60,12 @@ class Controller : public QObject
 				interface::BrushSource *brush,
 				interface::ColorSource *color);
 
+		//! Connect to host
+		void connectHost(const QString& address, const QString& username);
+
+		//! Disconnect from host
+		void disconnectHost();
+
 	public slots:
 		void penDown(const drawingboard::Point& point, bool isEraser);
 		void penMove(const drawingboard::Point& point);
@@ -68,10 +76,24 @@ class Controller : public QObject
 		//! This signal indicates that the drawing board has been changed
 		void changed();
 
+		//! Connection with remote host established
+		void connected(const QString& address);
+
+		//! Host disconnected
+		void disconnected();
+
+	private slots:
+		void netConnected();
+		void netDisconnected(const QString& message);
+		void netError(const QString& message);
+		void netReceived();
+
 	private:
 		drawingboard::Board *board_;
 		tools::Tool *tool_;
 		drawingboard::BoardEditor *editor_;
+		Network *net_;
+		QString address_;
 };
 
 #endif

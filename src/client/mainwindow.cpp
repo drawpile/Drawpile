@@ -60,9 +60,11 @@ MainWindow::MainWindow()
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
+	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
 
+	// Create view
 	view_ = new widgets::EditorView(this);
 	connect(toolsettings_, SIGNAL(sizeChanged(int)), view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)), view_, SLOT(setOutline(bool)));
@@ -70,12 +72,14 @@ MainWindow::MainWindow()
 	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)), view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
 	setCentralWidget(view_);
 
+	// Create board
 	board_ = new drawingboard::Board(this);
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	//board_->initBoard(QSize(800,600),Qt::white);
 	view_->setBoard(board_);
 
+	// Create controller
 	controller_ = new Controller(this);
 	controller_->setModel(board_, toolsettings_, fgbgcolor_);
 	connect(controller_, SIGNAL(changed()), this, SLOT(boardChanged()));
@@ -84,6 +88,8 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penDown(drawingboard::Point,bool)),controller_,SLOT(penDown(drawingboard::Point,bool)));
 	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
+	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
+	connect(controller_, SIGNAL(disconnected()), netstatus_, SLOT(disconnectHost()));
 
 	readSettings();
 }
@@ -344,10 +350,23 @@ void MainWindow::join()
 	joindlg_->show();
 }
 
+void MainWindow::leave()
+{
+	controller_->disconnectHost();
+}
+
 void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
-		QMessageBox::information(this,"todo","host!");
+		QString user = hostdlg_->getUserName();
+
+		// Remember some settings
+		QSettings cfg;
+		cfg.beginGroup("network");
+		cfg.setValue("username", user);
+
+		// Connect
+		controller_->connectHost("localhost", user);
 	}
 	hostdlg_->deleteLater();
 }
@@ -522,6 +541,7 @@ void MainWindow::initActions()
 
 	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
 	connect(join_, SIGNAL(triggered()), this, SLOT(join()));
+	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
 
 	// Drawing tool actions
 	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("&Brush"), this);
