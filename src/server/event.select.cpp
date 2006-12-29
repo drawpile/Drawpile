@@ -29,9 +29,7 @@
 #include "../shared/templates.h"
 #include "event.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
+#include <iostream>
 
 #include <ios>
 #include <cerrno>
@@ -155,7 +153,9 @@ int Event::wait(uint32_t msecs) throw()
 			break;
 		#endif // TRAP_CODER_ERROR
 		case EINTR:
+			#ifndef NDEBUG
 			std::cerr << "Interrupted by signal." << std::endl;
+			#endif
 			break;
 		default:
 			std::cerr << "Unknown error." << std::endl;
