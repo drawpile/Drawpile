@@ -35,7 +35,7 @@
 #include "../shared/templates.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
-//#include "../shared/protocol.h"
+#include "../shared/protocol.h" // Message()
 
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -287,11 +287,15 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 	switch (usr->state)
 	{
 	case uState::active:
+		#ifndef NDEBUG
 		std::cout << "active" << std::endl;
+		#endif
 		// TODO
 		break;
 	case uState::login:
+		#ifndef NDEBUG
 		std::cout << "login" << std::endl;
+		#endif
 		if (msg->type == protocol::type::Identifier)
 		{
 			protocol::Identifier *i = static_cast<protocol::Identifier*>(msg);
@@ -304,13 +308,18 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 			
 			if (!str)
 			{
+				#ifndef NDEBUG
 				std::cerr << "Protocol string mismatch" << std::endl;
+				#endif
 				uRemove(usr);
 				return;
 			}
+			
 			if (!rev)
 			{
+				#ifndef NDEBUG
 				std::cerr << "Protocol revision mismatch" << std::endl;
+				#endif
 				uRemove(usr);
 				return;
 			}
@@ -319,11 +328,17 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 			
 			// TODO: send Auth Request
 			// TODO: send Host Info.
+			
+			
+			
+			uSendMsg(usr, msg);
 		}
 		else
 		{
+			#ifndef NDEBUG
 			std::cerr << "Invalid data from user: "
 				<< static_cast<int>(usr->id) << std::endl;
+			#endif
 			
 			uRemove(usr);
 		}
@@ -334,8 +349,33 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 	}
 }
 
+void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Server::uSendMsg()" << std::endl;
+	#endif
+	
+	assert(usr != 0);
+	assert(msg != 0);
+	
+	size_t len;
+	char* buf = msg->serialize(len);
+	
+	usr->buffers.push( Buffer(buf, len) );
+	
+	if (!fIsSet(usr->events, ev.read))
+	{
+		fSet(usr->events, ev.read);
+		ev.add(usr->sock->fd(), ev.read);
+	}
+}
+
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uAdd()" << std::endl;
+	#endif
+	
 	uint8_t id = getUserID();
 	
 	if (id == 0)
@@ -379,15 +419,23 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 
 void Server::uRemove(User* usr) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uRemove()" << std::endl;
+	#endif
+	
 	ev.remove(usr->sock->fd(), ev.write|ev.read);
 	
 	freeUserID(usr->id);
 	
 	int id = usr->sock->fd();
+	#ifndef NDEBUG
 	std::cout << "Deleting user.." << std::endl;
+	#endif
 	delete usr;
 	
+	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
+	#endif
 	users.erase(id);
 }
 
@@ -439,13 +487,18 @@ void Server::getArgs(int argc, char** argv) throw(std::bad_alloc)
 				}
 				break;
 			case 'h': // help
-				std::cout << "Syntax: dbsrv [options]\n\n"
-					<< "Options...\n\n"
-					<< "   -p [port]  listen on 'port' (1024 - 65535).\n"
-					<< "   -h         This output (a.k.a. Help)" << std::endl;
+				std::cout << "Syntax: dbsrv [options]" << std::endl
+					<< std::endl
+					<< "Options:" << std::endl
+					<< std::endl
+					<< "   -p [port]    listen on 'port' (1024 - 65535)" << std::endl
+					<< "   -h           this output (a.k.a. Help)" << std::endl
+					//<< "   -d           daemon mode" << std::endl
+					<< "   -c [string]  password string" << std::endl;
 				exit(1);
 				break;
 			case 'V': // version
+				std::cout << "dpserver v0.0a" << std::endl;
 				exit(0);
 			default:
 				std::cerr << "What?" << std::endl;

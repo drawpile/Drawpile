@@ -63,9 +63,13 @@ class Server
 protected:
 	/* data */
 	
+	// Event interface
 	Event ev;
 	
+	// Used and free user IDs
 	std::bitset<defaults::hard_limit> user_ids;
+	
+	// Used and free session IDs
 	std::bitset<defaults::hard_limit> session_ids;
 	
 	//! FD to user mapping
@@ -79,19 +83,19 @@ protected:
 	size_t pw_len,
 		user_limit,
 		cur_users;
-
+	
 	uint16_t
 		hi_port,
 		lo_port;
-
+	
 	/* functions */
-
+	
 	//! Frees user ID
 	void freeUserID(uint8_t id) throw();
-
+	
 	//! Frees session ID
 	void freeSessionID(uint8_t id) throw();
-
+	
 	//! Cleanup anything that's left.
 	inline
 	void cleanup() throw();
@@ -110,6 +114,9 @@ protected:
 	
 	//! Handle user message.
 	void uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc);
+	
+	//! Send message to user
+	void uSendMsg(User* usr, protocol::Message* msg) throw();
 	
 	//! Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
