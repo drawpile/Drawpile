@@ -26,6 +26,7 @@
 #include "network.h"
 
 #include "../shared/protocol.defaults.h"
+#include "../shared/protocol.h"
 
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), editor_(0), net_(0)
@@ -94,6 +95,9 @@ void Controller::penUp()
 
 void Controller::netConnected()
 {
+	// Connection established, log in
+	protocol::Identifier *msg = new protocol::Identifier;
+	net_->send(msg);
 	emit connected(address_);
 }
 
@@ -114,5 +118,17 @@ void Controller::netError(const QString& message)
 void Controller::netReceived()
 {
 	qDebug() << "data received";
+	protocol::Message *msg;
+	while((msg = net_->receive())) {
+		switch(msg->type) {
+			default:
+				qDebug() << "unhandled message type " << int(msg->type);
+				while(msg) {
+					protocol::Message *next = msg->next;
+					delete msg;
+					msg = next;
+				}
+		}
+	}
 }
 

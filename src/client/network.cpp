@@ -155,6 +155,7 @@ void NetworkPrivate::sendMessages()
 			}
 			if(sent == bytesleft) {
 				delete sendbuffer;
+				sendlen = 0;
 				serializeMessage();
 			} else {
 				sentlen += sent;
@@ -179,7 +180,6 @@ void NetworkPrivate::serializeMessage()
 	if(sendqueue.isEmpty()) {
 		sendmutex.unlock();
 		sendbuffer = 0;
-		sendlen = 0;
 	} else {
 		protocol::Message *msg = sendqueue.dequeue();
 		sendmutex.unlock();
