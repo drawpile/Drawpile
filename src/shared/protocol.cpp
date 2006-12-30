@@ -170,7 +170,7 @@ size_t Identifier::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy(buf, &identifier, identifier_size); size_t i = identifier_size;
+	memcpy(buf, identifier, identifier_size); size_t i = identifier_size;
 	
 	memcpy_t(buf+i, bswap(copy(revision))); i += sizeof(revision);
 	memcpy_t(buf+i, bswap(copy(level))); i += sizeof(level);
@@ -194,7 +194,7 @@ size_t Identifier::unserialize(const char* buf, size_t len) throw()
 	
 	size_t i = sizeof(type);
 	
-	memcpy(&identifier, buf+i, identifier_size); i += identifier_size;
+	memcpy(identifier, buf+i, identifier_size); i += identifier_size;
 	
 	memcpy_t(revision, buf+i); i += sizeof(revision);
 	memcpy_t(level, buf+i); i += sizeof(level);
@@ -473,7 +473,7 @@ size_t Password::unserialize(const char* buf, size_t len) throw()
 	
 	size_t i = sizeof(type);
 	memcpy_t(session_id, buf+i); i += sizeof(session_id);
-	memcpy(&data, buf+i, password_hash_size); i += password_hash_size;
+	memcpy(data, buf+i, password_hash_size); i += password_hash_size;
 	
 	return i;
 }
