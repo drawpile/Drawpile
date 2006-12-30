@@ -453,6 +453,8 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 	char* buf = msg->serialize(len);
 	
 	usr->buffers.push( Buffer(buf, len) );
+	usr->buffers.back().write(len);
+	buf = 0;
 	
 	if (!fIsSet(usr->events, ev.write))
 	{
