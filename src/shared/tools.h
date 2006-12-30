@@ -33,11 +33,12 @@
 #ifndef Protocol_Tools_INCLUDED
 #define Protocol_Tools_INCLUDED
 
-namespace protocol
+//! Tools
+namespace tool
 {
 
 //! Tool identifier codes for ToolInfo message.
-namespace tool
+namespace type
 {
 
 const uint8_t
@@ -48,6 +49,16 @@ const uint8_t
 
 } // namespace tool
 
-} // namespace protocol
+//! Tool composition modes
+namespace mode
+{
+
+const uint8_t
+	//! Normal
+	Normal = 0;
+
+} // namespace mode
+
+} // namespace tool
 
 #endif // Protocol_Tools_INCLUDED

@@ -43,9 +43,9 @@
 
 #include "protocol.errors.h"
 #include "protocol.defaults.h"
-#include "protocol.tools.h"
 #include "protocol.types.h"
 #include "protocol.flags.h"
+#include "tools.h"
 
 //! DrawPile network protocol.
 /**
@@ -279,7 +279,8 @@ struct ToolInfo
 {
 	ToolInfo() throw()
 		: Message(protocol::type::ToolInfo, message::isUser),
-		tool_id(protocol::tool::None),
+		tool_id(tool::type::None),
+		mode(tool::mode::Normal),
 		lo_color(0),
 		hi_color(0),
 		lo_size(0),
@@ -294,6 +295,12 @@ struct ToolInfo
 	
 	//! Tool identifier (for full list, see protocol::tool).
 	uint8_t tool_id;
+	
+	//! Composition mode
+	/**
+	 * @see protocol::mode
+	 */
+	uint8_t mode;
 	
 	uint32_t
 		//! Lo pressure color (RGBA)

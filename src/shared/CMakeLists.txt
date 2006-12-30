@@ -7,11 +7,11 @@ set (
 	protocol.admin.h
 	protocol.defaults.h
 	protocol.errors.h
-	protocol.tools.h
 	protocol.flags.h
 	protocol.types.h
 	protocol.helper.h
 	memstack.h
+	tools.h
 )
 
 set (
