@@ -299,13 +299,19 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 	else
 	{
-		std::cerr << "Error occured while reading from user: "
-			<< static_cast<int>(usr->id) << std::endl;
-		
-		// TODO (EAGAIN and such)
-		
-		usr->events = fClr(usr->events, ev.read);
-		ev.modify(usr->sock->fd(), usr->events);
+		switch (usr->sock->getError())
+		{
+		case EAGAIN:
+		case EINTR:
+			// retry later
+			return;
+		default:
+			std::cerr << "Error unrecoverable occured while reading from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			
+			uRemove(usr);
+			return;
+		}
 	}
 }
 
