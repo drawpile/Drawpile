@@ -89,6 +89,9 @@ const uint8_t
 	//! Enforces unique user and session names.
 	EnforceUnique = 0x01,
 	
+	//! Strings use UTF-16 format instead of default UTF-8.
+	WideStrings = 0x08,
+	
 	//! Server does not allow global Chat messages.
 	NoGlobalChat = 0x10;
 
