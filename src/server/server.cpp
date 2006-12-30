@@ -52,7 +52,8 @@ Server::Server() throw()
 	lo_port(protocol::default_port),
 	requirements(0),
 	extensions(0),
-	default_user_mode(protocol::user::None)
+	default_user_mode(protocol::user::None),
+	localhost_admin(true)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::Server()" << std::endl;
@@ -329,7 +330,11 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		#ifndef NDEBUG
 		std::cout << "active" << std::endl;
 		#endif
+		
 		// TODO
+		
+		uRemove(usr);
+		
 		break;
 	case uState::login:
 		#ifndef NDEBUG
@@ -381,7 +386,12 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			
 			// set user mode
 			m->mode = default_user_mode;
-			// TODO: auto-admin promotion
+			
+			// auto admin promotion
+			if (localhost_admin && usr->sock->address() == INADDR_LOOPBACK)
+			{
+				fSet(m->mode, protocol::user::Administrator);
+			}
 			
 			// reply
 			uSendMsg(usr, m);

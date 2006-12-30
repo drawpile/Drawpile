@@ -96,6 +96,8 @@ protected:
 	uint8_t
 		default_user_mode;
 	
+	bool localhost_admin;
+	
 	/* functions */
 	
 	// Frees user ID
