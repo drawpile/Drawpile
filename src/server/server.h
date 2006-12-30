@@ -72,7 +72,7 @@ protected:
 	// Used and free session IDs
 	std::bitset<defaults::hard_limit> session_ids;
 	
-	//! FD to user mapping
+	// FD to user mapping
 	std::map<int, User*> users;
 	std::map<uint8_t, User*> user_id_map;
 	
@@ -96,38 +96,41 @@ protected:
 	
 	/* functions */
 	
-	//! Frees user ID
+	// Frees user ID
 	void freeUserID(uint8_t id) throw();
 	
-	//! Frees session ID
+	// Frees session ID
 	void freeSessionID(uint8_t id) throw();
 	
-	//! Cleanup anything that's left.
+	// Cleanup anything that's left.
 	inline
 	void cleanup() throw();
 	
-	//! Get free user ID
+	// Get free user ID
 	uint8_t getUserID() throw();
 
-	//! Get free session ID
+	// Get free session ID
 	uint8_t getSessionID() throw();
-
-	//! Write to user socket
+	
+	// Generate host info message
+	protocol::HostInfo* msgHostInfo() throw(std::bad_alloc);
+	
+	// Write to user socket
 	void uWrite(User* usr) throw();
 
-	//! Read from user socket
+	// Read from user socket
 	void uRead(User* usr) throw(std::bad_alloc);
 	
-	//! Handle user message.
+	// Handle user message.
 	void uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc);
 	
-	//! Send message to user
+	// Send message to user
 	void uSendMsg(User* usr, protocol::Message* msg) throw();
 	
-	//! Adds user
+	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
-	//! Removes user and does cleaning..
+	// Removes user and does cleaning..
 	void uRemove(User* usr) throw();
 public:
 	//! ctor
@@ -143,6 +146,7 @@ public:
 	int init() throw(std::bad_alloc);
 	
 	//! Parses command-line args
+	// THIS SHOULDN'T BE HERE!!!
 	void getArgs(int argc, char** argv) throw(std::bad_alloc);
 	
 	//! Enter main loop

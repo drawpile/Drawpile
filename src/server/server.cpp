@@ -152,6 +152,22 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
+protocol::HostInfo* Server::msgHostInfo() throw(std::bad_alloc)
+{
+	protocol::HostInfo *m = new protocol::HostInfo;
+	
+	m->sessions = session_ids.count();
+	m->sessionLimit = session_limit;
+	m->users = user_ids.count();
+	m->userLimit = user_limit;
+	m->nameLenLimit = name_len_limit;
+	m->maxSubscriptions = max_subscriptions;
+	m->requirements = requirements;
+	m->extensions = extensions;
+	
+	return m;
+}
+
 void Server::uWrite(User* usr) throw()
 {
 	#ifndef NDEBUG
@@ -167,7 +183,22 @@ void Server::uWrite(User* usr) throw()
 	
 	std::cout << "Sent " << sb << " bytes.." << std::endl;
 	
-	if (sb > 0)
+	if (sb == -1)
+	{
+		std::cerr << "Error occured while sending to user: "
+			<< static_cast<int>(usr->id) << std::endl;
+		
+		fClr(usr->events, ev.read);
+		if (usr->events == 0)
+			ev.remove(usr->sock->fd(), usr->events);
+		else
+			ev.modify(usr->sock->fd(), usr->events);
+	}
+	else if (sb == 0)
+	{
+		// no data was sent, and no error occured.
+	}
+	else
 	{
 		buf.read(sb);
 		
@@ -177,7 +208,6 @@ void Server::uWrite(User* usr) throw()
 		if (buf.left == 0)
 		{
 			// remove buffer
-			//delete [] buf.data;
 			usr->buffers.pop();
 			
 			// remove fd from write list if no buffers left.
@@ -190,21 +220,6 @@ void Server::uWrite(User* usr) throw()
 					ev.modify(usr->sock->fd(), usr->events);
 			}
 		}
-	}
-	else if (sb == 0)
-	{
-		// nothing
-	}
-	else
-	{
-		std::cerr << "Error occured while sending to user: "
-			<< static_cast<int>(usr->id) << std::endl;
-		
-		fClr(usr->events, ev.read);
-		if (usr->events == 0)
-			ev.remove(usr->sock->fd(), usr->events);
-		else
-			ev.modify(usr->sock->fd(), usr->events);
 	}
 }
 
@@ -298,7 +313,18 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		break;
 	case uState::login:
 		#ifndef NDEBUG
-		std::cout << "login" << std::endl;
+		std::cout << "verified" << std::endl;
+		#endif
+		if (msg->type == protocol::type::UserInfo)
+		{
+			
+		}
+	case uState::lobby_auth:
+		// TODO
+		break;
+	case uState::init:
+		#ifndef NDEBUG
+		std::cout << "init" << std::endl;
 		#endif
 		if (msg->type == protocol::type::Identifier)
 		{
@@ -328,23 +354,13 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 				return;
 			}
 			
-			usr->state = uState::active;
 			
-			// TODO: send Auth Request
-			// TODO: send Host Info.
+			usr->state = uState::login;
 			
-			protocol::HostInfo *himsg = new protocol::HostInfo;
+			// TODO: send Auth Request, if needed
+			//usr->state = uState::login_auth;
 			
-			himsg->sessions = session_ids.count();
-			himsg->sessionLimit = session_limit;
-			himsg->users = user_ids.count();
-			himsg->userLimit = user_limit;
-			himsg->nameLenLimit = name_len_limit;
-			himsg->maxSubscriptions = max_subscriptions;
-			himsg->requirements = requirements;
-			himsg->extensions = extensions;
-			
-			uSendMsg(usr, himsg);
+			uSendMsg(usr, msgHostInfo());
 		}
 		else
 		{
