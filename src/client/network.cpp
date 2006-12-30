@@ -206,7 +206,7 @@ void Network::dataAvailable()
 	while(p_->recvbuffer.length()>0) {
 		// Identify packet
 		if(p_->newmsg==0) {
-			p_->newmsg = protocol::stack::get(p_->recvbuffer[0]);
+			p_->newmsg = protocol::getMessage(p_->recvbuffer[0]);
 		}
 		// Unserialize message if it has been received fully
 		int reqlen = p_->newmsg->reqDataLen(p_->recvbuffer.constData(),
