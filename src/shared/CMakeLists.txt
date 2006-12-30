@@ -17,6 +17,7 @@ set (
 set (
 	Shared_Sources
 	protocol.cpp
+	protocol.helper.cpp
 	SHA1.cpp
 )
 
