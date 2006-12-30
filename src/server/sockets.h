@@ -66,6 +66,7 @@
 	//#define EPROTO WSAEPROTO
 	#define EDESTADDRREQ WSAEDESTADDRREQ
 	#define EMSGSIZE WSAEMSGSIZE
+	#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
 #else
 	#include <sys/socket.h>
 	#include <netinet/in.h>
