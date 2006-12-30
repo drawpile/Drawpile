@@ -37,12 +37,6 @@
 namespace protocol
 {
 
-//! Get new message struct.
-/**
- * Allocates memory for specific message type and returns pointer to it.
- *
- * @param type is the message type to be generated (see protocol::type).
- */
 Message* getMessage(const uint8_t type) throw(std::exception)
 {
 	#ifndef NDEBUG
