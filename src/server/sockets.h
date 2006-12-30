@@ -195,7 +195,13 @@ public:
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise.
 	 */
-	int block(bool x) throw();
+	bool block(bool x) throw();
+	
+	//! Re-use socket address
+	/**
+	 * Sets SO_REUSEADDR for the socket.
+	 */
+	bool reuse(uint8_t x) throw();
 	
 	//! Bind socket to port and address
 	/**

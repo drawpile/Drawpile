@@ -198,7 +198,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	}
 }
 
-int Socket::block(bool x) throw()
+bool Socket::block(bool x) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Socket::block(" << (x?"true":"false") << ")" << std::endl;
@@ -211,8 +211,20 @@ int Socket::block(bool x) throw()
 	return ioctlsocket(sock, FIONBIO, &arg);
 	#else
 	assert(x == false);
-	return fcntl(sock, F_SETFL, O_NONBLOCK) == SOCKET_ERROR ? SOCKET_ERROR : 0;
+	return fcntl(sock, F_SETFL, O_NONBLOCK) == SOCKET_ERROR ? false : true;
 	#endif
+}
+
+int Socket::reuse(bool x) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Socket::reuse(" << (x?"true":"false") << ")" << std::endl;
+	#endif
+	
+	assert(sock >= 0);
+	
+	char val = (x ? 1 : 0);
+	return (setsockopt(lsock.fd(), SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == 0);
 }
 
 int Socket::bindTo(uint32_t address, uint16_t port) throw()
