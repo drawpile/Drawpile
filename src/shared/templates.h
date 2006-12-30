@@ -43,11 +43,16 @@ T copy(T& x) throw() { return x; }
 template <class T>
 T& bswap(T& x) throw()
 {
-	assert("Default template should never be used!");
+	#ifndef BIG_ENDIAN
+	assert("Default template should never be used (on Little Endian systems)!");
+	#endif
 	return x;
 }
 
 // unsigned
+
+// no specializations for Big Endian systems
+#ifndef BIG_ENDIAN
 
 template <> inline
 uint32_t& bswap<uint32_t>(uint32_t& x) throw()
@@ -70,6 +75,8 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 	// (c) 2003 Juan Carlos Cobas
 	return x;
 }
+
+#endif // BIG_ENDIAN
 
 /* memmory */
 
