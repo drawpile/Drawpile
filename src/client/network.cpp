@@ -174,6 +174,12 @@ void NetworkPrivate::dataAvailable()
 		// Identify packet
 		if(newmsg==0) {
 			newmsg = protocol::getMessage(recvbuffer[0]);
+			if(newmsg==0) {
+				// Unknown message received
+				emit error(tr("Received unknown message type %1").arg(int(recvbuffer[0])));
+				emit disconnecting();
+				return;
+			}
 		}
 		// Unserialize message if it has been received fully
 		int reqlen = newmsg->reqDataLen(recvbuffer.constData(),
