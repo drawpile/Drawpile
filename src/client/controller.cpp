@@ -103,6 +103,9 @@ void Controller::netConnected()
 {
 	// Connection established, log in
 	protocol::Identifier *msg = new protocol::Identifier;
+	memcpy(msg->identifier, protocol::identifier_string,
+			protocol::identifier_size);
+	msg->revision = protocol::revision;
 	net_->send(msg);
 	emit connected(address_);
 }
