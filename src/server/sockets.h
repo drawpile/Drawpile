@@ -201,7 +201,7 @@ public:
 	/**
 	 * Sets SO_REUSEADDR for the socket.
 	 */
-	bool reuse(uint8_t x) throw();
+	bool reuse(bool x) throw();
 	
 	//! Bind socket to port and address
 	/**
