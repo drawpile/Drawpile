@@ -251,26 +251,37 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 			std::cerr << "Invalid FD" << std::endl;
 			assert(1);
 			break;
-		#endif
 		case EINVAL:
-			// According to docks, this may change in the future.
-			#ifndef NDEBUG
+			// According to docs, this may change in the future.
 			std::cerr << "Socket already bound" << std::endl;
-			#endif
 			assert(1);
 			break;
-		case EACCES:
-			#ifndef NDEBUG
-			std::cerr << "Can't bind to super-user port." << std::endl;
-			#endif
-			assert(1);
-			break;
-		#ifndef NDEBUG
 		case ENOTSOCK:
 			std::cerr << "Not a socket." << std::endl;
 			assert(1);
 			break;
+		case EOPNOTSUPP:
+			std::cerr << "does not support bind" << std::endl;
+			break;
+		case EAFNOSUPPORT:
+			std::cerr << "invalid address family" << std::endl;
+			break;
+		case EISCONN:
+			std::cerr << "already connected" << std::endl;
+			break;
 		#endif
+		case EADDRINUSE:
+			std::cerr << "address already in use" << std::endl;
+			break;
+		case EADDRNOTAVAIL:
+			std::cerr << "address not available" << std::endl;
+			break;
+		case ENOBUFS:
+			std::cerr << "insufficient resources" << std::endl;
+			break;
+		case EACCES:
+			std::cerr << "can't bind to superuser sockets" << std::endl;
+			break;
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Unknown error." << std::endl;
