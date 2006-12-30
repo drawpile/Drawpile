@@ -306,7 +306,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 			// retry later
 			return;
 		default:
-			std::cerr << "Error unrecoverable occured while reading from user: "
+			std::cerr << "Unrecoverable error occured while reading from user: "
 				<< static_cast<int>(usr->id) << std::endl;
 			
 			uRemove(usr);
