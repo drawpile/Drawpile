@@ -98,5 +98,15 @@ QString HostDialog::getUserName() const
 	return ui_->username->text();
 }
 
+QString HostDialog::getTitle() const
+{
+	return ui_->sessiontitle->text();
+}
+
+QString HostDialog::getPassword() const
+{
+	return ui_->sessionpassword->text();
+}
+
 }
 

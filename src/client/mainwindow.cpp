@@ -366,7 +366,8 @@ void MainWindow::finishHost(int i)
 		cfg.setValue("username", user);
 
 		// Connect
-		controller_->connectHost("localhost", user);
+		controller_->hostSession("localhost", user, hostdlg_->getTitle(),
+				hostdlg_->getPassword());
 	}
 	hostdlg_->deleteLater();
 }

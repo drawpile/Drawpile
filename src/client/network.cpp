@@ -189,9 +189,12 @@ void NetworkPrivate::dataAvailable()
 			
 			// Enqueue the received message
 			recvmutex.lock();
+			bool wasEmpty = recvqueue.isEmpty();
 			recvqueue.enqueue(newmsg);
 			recvmutex.unlock();
 			newmsg = 0;
+			if(wasEmpty)
+				emit received();
 
 			// Remove unserialized bytes from receive buffer
 			recvbuffer = recvbuffer.mid(reqlen);

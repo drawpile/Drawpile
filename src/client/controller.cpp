@@ -24,6 +24,7 @@
 #include "tools.h"
 #include "boardeditor.h"
 #include "network.h"
+#include "netstate.h"
 
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.h"
@@ -31,12 +32,11 @@
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), editor_(0), net_(0)
 {
+	netstate_ = new NetState(this);
 }
 
 Controller::~Controller()
 {
-	if(net_ && net_->isRunning())
-		disconnectHost();
 }
 
 void Controller::setModel(drawingboard::Board *board,
@@ -50,9 +50,29 @@ void Controller::setModel(drawingboard::Board *board,
 	editor_->setColorSource(color);
 }
 
-void Controller::connectHost(const QString& address, const QString& username)
+/**
+ * @param address address
+ * @param username username
+ * @param title session tile
+ * @param password
+ */
+void Controller::hostSession(const QString& address, const QString& username,
+		const QString& title, const QString& password)
+{
+	Q_ASSERT(username.isEmpty() == false);
+	connectHost(address);
+	netstate_->host(username, title, password);
+}
+
+/**
+ * Establish a connection with a server
+ * @param address host address. Format: address[:port]
+ * @param username username to use
+ */
+void Controller::connectHost(const QString& address)
 {
 	Q_ASSERT(net_ == 0);
+
 	// Parse address
 	address_ = address;
 	quint16 port = protocol::default_port;
@@ -68,6 +88,7 @@ void Controller::connectHost(const QString& address, const QString& username)
 	connect(net_,SIGNAL(received()), this, SLOT(netReceived()));
 
 	// Connect to host
+	netstate_->setConnection(net_);
 	net_->connectHost(addr[0], port);
 }
 
@@ -130,6 +151,11 @@ void Controller::netReceived()
 	protocol::Message *msg;
 	while((msg = net_->receive())) {
 		switch(msg->type) {
+			using namespace protocol;
+			case type::HostInfo:
+				netstate_->handleHostInfo(static_cast<HostInfo*>(msg));
+				break;
+								 
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
 				while(msg) {

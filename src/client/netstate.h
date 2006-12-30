@@ -17,40 +17,42 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef HOSTDIALOG_H
-#define HOSTDIALOG_H
+#ifndef NETSTATE_H
+#define NETSTATE_H
 
-#include <QDialog>
+#include <QObject>
 
-class Ui_HostDialog;
+namespace protocol {
+	class HostInfo;
+}
 
-namespace dialogs {
+class Network;
 
-class HostDialog : public QDialog
-{
+//! Network state machine
+class NetState : public QObject {
 	Q_OBJECT
 	public:
-		HostDialog(const QImage &original, QWidget *parent=0);
-		~HostDialog();
+		NetState(QObject *parent);
 
-		//! Get the username
-		QString getUserName() const;
+		//! Set network connection object to use
+		void setConnection(Network *net) { net_ = net; }
 
-		//! Get session title
-		QString getTitle() const;
+		//! Prepare to host a session
+		void host(const QString& username, const QString& title,
+				const QString& password);
 
-		//! Get session password
-		QString getPassword() const;
-
-	private slots:
-		void selectPicture();
+		//! Handle a HostInfo message
+		void handleHostInfo(protocol::HostInfo *msg);
 
 	private:
-		Ui_HostDialog *ui_;
-		QString prevpath_;
-};
+		Network *net_;
 
-}
+		QString username_;
+		QString title_;
+		QString password_;
+
+		enum {LOGIN, JOIN, DRAWING} state_;
+};
 
 #endif
 
