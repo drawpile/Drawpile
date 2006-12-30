@@ -260,7 +260,6 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		
 		usr->input.write(rb);
 		
-		if (usr->inMsg == 0)
 		{
 			try {
 				usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
@@ -273,6 +272,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 			}
 		}
 		
+		std::cout << "Verify size" << std::endl;
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, usr->input.canRead());
 		if (len > usr->input.canRead())
 		{
@@ -280,7 +280,8 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 			return;
 		}
 		
-		// unserialize message...
+		std::cout << "Unserialize message" << std::endl;
+		
 		usr->input.read(
 			usr->inMsg->unserialize(usr->input.rpos, usr->input.canRead())
 		);
@@ -312,7 +313,8 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uHandleMsg(" << static_cast<int>(usr->id) << ")" << std::endl;
+	std::cout << "Server::uHandleMsg(user id: " << static_cast<int>(usr->id)
+		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
 	switch (usr->state)
@@ -327,14 +329,17 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		#ifndef NDEBUG
 		std::cout << "login" << std::endl;
 		#endif
+		
 		if (msg->type == protocol::type::UserInfo)
 		{
 			// TODO
+			abort();
 		}
 		else
 		{
 			uRemove(usr);
 		}
+		break;
 	case uState::lobby_auth:
 		#ifndef NDEBUG
 		std::cout << "lobby_auth" << std::endl;
@@ -345,6 +350,7 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		#ifndef NDEBUG
 		std::cout << "login_auth" << std::endl;
 		#endif
+		
 		if (msg->type == protocol::type::Password)
 		{
 			// TODO
@@ -373,6 +379,7 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		#ifndef NDEBUG
 		std::cout << "init" << std::endl;
 		#endif
+		
 		if (msg->type == protocol::type::Identifier)
 		{
 			protocol::Identifier *i = static_cast<protocol::Identifier*>(msg);
@@ -403,12 +410,14 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 			
 			if (password == 0)
 			{
+				std::cout << "Proceed to login" << std::endl;
 				// no password set, 
 				usr->state = uState::login;
 				uSendMsg(usr, msgHostInfo());
 			}
 			else
 			{
+				std::cout << "Request password" << std::endl;
 				usr->state = uState::login_auth;
 				uSendMsg(usr, msgAuth(usr, protocol::Global));
 			}
@@ -751,10 +760,6 @@ int Server::run() throw()
 				
 				if (nu != 0)
 				{
-					#ifndef NDEBUG
-					std::cout << "New connection" << std::endl;
-					#endif
-					
 					uAdd( nu );
 				}
 				else
