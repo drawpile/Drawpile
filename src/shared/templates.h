@@ -29,30 +29,25 @@
 #ifndef Shared_Templates_INCLUDED
 #define Shared_Templates_INCLUDED
 
-//#include "sockets.h"
+#include "../../config.h"
+
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t
 #include <cassert>
-
-/* simple template to return copy of the parameter */
-template <class T>
-T copy(T& x) throw() { return x; }
 
 /* swapping endianess */
 
 template <class T>
 T& bswap(T& x) throw()
 {
-	#ifndef BIG_ENDIAN
+	#ifndef IS_BIG_ENDIAN
 	assert("Default template should never be used (on Little Endian systems)!");
 	#endif
 	return x;
 }
 
-// unsigned
-
 // no specializations for Big Endian systems
-#ifndef BIG_ENDIAN
+#ifndef IS_BIG_ENDIAN
 
 template <> inline
 uint32_t& bswap<uint32_t>(uint32_t& x) throw()
@@ -76,7 +71,7 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 	return x;
 }
 
-#endif // BIG_ENDIAN
+#endif // IS_BIG_ENDIAN
 
 /* memmory */
 
