@@ -385,12 +385,13 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			m->name = 0;
 			
 			// set user mode
-			m->mode = default_user_mode;
+			usr->mode = m->mode = default_user_mode;
 			
 			// auto admin promotion
 			if (localhost_admin && usr->sock->address() == INADDR_LOOPBACK)
 			{
-				fSet(m->mode, protocol::user::Administrator);
+				fSet(usr->mode, protocol::user::Administrator);
+				m->mode = usr->mode;
 			}
 			
 			// reply
