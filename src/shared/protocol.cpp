@@ -172,8 +172,10 @@ size_t Identifier::serializePayload(char *buf) const throw()
 	
 	memcpy(buf, identifier, identifier_size); size_t i = identifier_size;
 	
-	memcpy_t(buf+i, bswap(copy(revision))); i += sizeof(revision);
-	memcpy_t(buf+i, bswap(copy(level))); i += sizeof(level);
+	uint16_t rev_t = revision, lvl_t = level;
+	
+	memcpy_t(buf+i, bswap(rev_t)); i += sizeof(revision);
+	memcpy_t(buf+i, bswap(lvl_t)); i += sizeof(level);
 	memcpy_t(buf+i, flags); i += sizeof(flags);
 	memcpy_t(buf+i, extensions); i += sizeof(extensions);
 	
@@ -224,8 +226,10 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, bswap(copy(x))); size_t i = sizeof(x);
-	memcpy_t(buf+i, bswap(copy(y))); i += sizeof(y);
+	uint16_t x_t = x, y_t = y;
+	
+	memcpy_t(buf, bswap(x_t)); size_t i = sizeof(x);
+	memcpy_t(buf+i, bswap(y_t)); i += sizeof(y);
 	memcpy_t(buf+i, pressure); i += sizeof(pressure);
 	
 	return i;
@@ -399,9 +403,11 @@ size_t Raster::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, bswap(copy(offset))); size_t i = sizeof(offset);
-	memcpy_t(buf+i, bswap(copy(length))); i += sizeof(length);
-	memcpy_t(buf+i, bswap(copy(size))); i += sizeof(size);
+	uint32_t off_tmp = offset, len_tmp = length, size_tmp = size;
+	
+	memcpy_t(buf, bswap(off_tmp)); size_t i = sizeof(offset);
+	memcpy_t(buf+i, bswap(len_tmp)); i += sizeof(length);
+	memcpy_t(buf+i, bswap(size_tmp)); i += sizeof(size);
 	
 	memcpy(buf+i, data, length); i += length;
 	
@@ -946,8 +952,10 @@ size_t Deflate::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, bswap(copy(uncompressed))); size_t i = sizeof(uncompressed);
-	memcpy_t(buf+i, bswap(copy(length))); i += sizeof(length);
+	uint16_t unc_t = uncompressed, len_t = length;
+	
+	memcpy_t(buf, bswap(unc_t)); size_t i = sizeof(uncompressed);
+	memcpy_t(buf+i, bswap(len_t)); i += sizeof(length);
 	
 	memcpy(buf+i, data, length); i += length;
 	
