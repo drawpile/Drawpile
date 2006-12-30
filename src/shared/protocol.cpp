@@ -675,7 +675,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	size_t off = sizeof(type) + sizeof(session_id) + sizeof(mode) + sizeof(event);
+	size_t off = sizeof(type) + sizeof(user_id) + sizeof(session_id) + sizeof(mode) + sizeof(event);
 	if (len < off + sizeof(length))
 		return off + sizeof(length);
 	else
