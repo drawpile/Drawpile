@@ -149,8 +149,8 @@ struct User
 	//! Currently active session
 	uint8_t session;
 	
-	//! Global user data
-	UserData u;
+	//! User mode
+	uint8_t mode;
 	
 	//! User state
 	uint8_t state;
