@@ -695,7 +695,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 	memcpy_t(buf, session_id); size_t i = sizeof(session_id);
 	memcpy_t(buf+i, mode); i += sizeof(mode);
 	memcpy_t(buf+i, event); i += sizeof(event);
-	memcpy_t(buf+i, length); i+= sizeof(length);
+	memcpy_t(buf+i, length); i += sizeof(length);
 	
 	memcpy(buf+i, name, length); i += length;
 	
@@ -704,7 +704,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 
 size_t UserInfo::payloadLength() const throw()
 {
-	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
+	return sizeof(session_id) + sizeof(mode) + sizeof(event) + sizeof(length) + length;
 }
 
 /*
