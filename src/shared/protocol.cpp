@@ -62,13 +62,13 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 		// If we are bundling packets, there will be no extra headers
 		headerlen = 0;
 		length = sizeof(type) + sizeof(null_count)
-			+ fIsSet(modifiers, message::isUser)?sizeof(user_id):0;
+			+ (fIsSet(modifiers, message::isUser)?sizeof(user_id):0);
 	}
 	else
 	{
 		// If messages are not bundled, simply concatenate whole messages
 		headerlen = sizeof(type)
-			+ fIsSet(modifiers, message::isUser)?sizeof(user_id):0;
+			+ (fIsSet(modifiers, message::isUser)?sizeof(user_id):0);
 		length = headerlen;
 	}
 	
@@ -92,38 +92,43 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	}
 	else
 		ptr = this;
-	// ptr now points to the first message in list (0 if no list).
+	// ptr now points to the first message in list.
 	
 	assert(ptr != 0); // some problems with the constness?
 	
 	// Allocate memory and serialize.
 	char *data = new char[length];
 	char *dataptr = data;
-
-	if(fIsSet(modifiers, message::isBundling)) {
+	
+	if (fIsSet(modifiers, message::isBundling))
+	{
 		// Write bundled packets
-		*(dataptr++) = type;
+		memcpy_t(dataptr++, type);
 		if(fIsSet(modifiers, message::isUser))
-			*(dataptr++) = user_id;
-		*(dataptr++) = count;
+			memcpy_t(dataptr++, user_id);
+		memcpy_t(dataptr++, count);
 		
 		while (ptr)
 		{
 			dataptr += ptr->serializePayload(dataptr);
-			ptr=ptr->next;
+			ptr = ptr->next;
 		}
-	} else {
+	}
+	else
+	{
 		// Write whole packets
 		while (ptr)
 		{
-			*(dataptr++) = ptr->type;
+			memcpy_t(dataptr++, ptr->type);
 			if(fIsSet(modifiers, message::isUser))
-				*(dataptr++) = ptr->user_id;
+				memcpy_t(dataptr++, user_id);
+			
 			dataptr += ptr->serializePayload(dataptr);
-			ptr=ptr->next;
+			
+			ptr = ptr->next;
 		}
 	}
-
+	
 	len = length;
 	return data;
 }
@@ -681,7 +686,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const throw()
 	else
 	{
 		uint8_t rlen;
-	
+		
 		memcpy_t(rlen, buf+off);
 		
 		return off + sizeof(length) + rlen;
