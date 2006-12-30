@@ -66,7 +66,7 @@ const uint8_t password_seed_size = 4;
 const uint8_t password_hash_size = 20;
 
 //! Protocol identifier string.
-const char identifierString[identifier_size] = {'D','r','a','w','P','i','l','e'};
+const char identifier_string[identifier_size] = {'D','r','a','w','P','i','l','e'};
 
 //! Default listening port.
 const uint16_t default_port = 27750;
