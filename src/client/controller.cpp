@@ -33,6 +33,12 @@ Controller::Controller(QObject *parent)
 {
 }
 
+Controller::~Controller()
+{
+	if(net_ && net_->isRunning())
+		disconnectHost();
+}
+
 void Controller::setModel(drawingboard::Board *board,
 		interface::BrushSource *brush,
 		interface::ColorSource *color)

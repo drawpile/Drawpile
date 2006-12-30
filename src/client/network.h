@@ -70,12 +70,6 @@ class Network : public QThread {
 
 	protected:
 		void run();
-		void customEvent(QEvent *event);
-
-	private slots:
-		void dataAvailable();
-		void hostDisconnected();
-		void networkError();
 
 	private:
 		QString host_;

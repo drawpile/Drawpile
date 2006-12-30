@@ -39,6 +39,7 @@ set (
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
+	networkprivate.h
 )
 
 set (

@@ -55,6 +55,7 @@ class Controller : public QObject
 	friend class tools::ColorPicker;
 	public:
 		Controller(QObject *parent=0);
+		~Controller();
 
 		void setModel(drawingboard::Board *board,
 				interface::BrushSource *brush,
