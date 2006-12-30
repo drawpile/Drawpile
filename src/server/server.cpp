@@ -401,6 +401,7 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 			{
 				#ifndef NDEBUG
 				std::cerr << "Protocol revision mismatch" << std::endl;
+				std::cerr << "Expected: " << protocol::revision << ", Got: " << i->revision << std::endl;
 				#endif
 				uRemove(usr);
 				return;
@@ -530,74 +531,6 @@ void Server::uRemove(User* usr) throw()
 	std::cout << "Removing from mappings" << std::endl;
 	#endif
 	users.erase(id);
-}
-
-void Server::getArgs(int argc, char** argv) throw(std::bad_alloc)
-{
-	#ifndef NDEBUG
-	std::cout << "Server::getArgs(" << argc << ", **argv)" << std::endl;
-	#endif
-	
-	int32_t opt = 0;
-	
-	while ((opt = getopt( argc, argv, "p:Vhc:")) != -1)
-	{
-		switch (opt)
-		{
-			/*
-			case 'a': // address to listen on
-				
-				break;
-			*/
-			case 'p': // port to listen on
-				lo_port = atoi(optarg);
-				{
-					char* off = strchr(optarg, '-');
-					hi_port = (off != 0 ? atoi(off+1) : lo_port);
-				}
-				
-				if (lo_port <= 1023 or hi_port <= 1023)
-				{
-					std::cerr << "Super-user ports not allowed!" << std::endl;
-					exit(1);
-				}
-				
-				break;
-			/*
-			case 'l': // localhost admin
-				localhost_admin = true;
-				break;
-			*/
-			case 'u': // user limit
-				user_limit = atoi(optarg);
-				break;
-			case 'c': // password
-				pw_len = strlen(optarg);
-				if (pw_len > 0)
-				{
-					password = new char[pw_len];
-					memcpy(password, optarg, pw_len);
-				}
-				break;
-			case 'h': // help
-				std::cout << "Syntax: dbsrv [options]" << std::endl
-					<< std::endl
-					<< "Options:" << std::endl
-					<< std::endl
-					<< "   -p [port]    listen on 'port' (1024 - 65535)" << std::endl
-					<< "   -h           this output (a.k.a. Help)" << std::endl
-					//<< "   -d           daemon mode" << std::endl
-					<< "   -c [string]  password string" << std::endl;
-				exit(1);
-				break;
-			case 'V': // version
-				std::cout << "dpserver v0.0a" << std::endl;
-				exit(0);
-			default:
-				std::cerr << "What?" << std::endl;
-				exit(0);
-		}
-	}
 }
 
 int Server::init() throw(std::bad_alloc)

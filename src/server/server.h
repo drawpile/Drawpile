@@ -40,7 +40,6 @@
 #include "../shared/protocol.h"
 
 //#include <sys/time.h>
-#include <getopt.h> // for command-line opts
 
 #include <stdexcept>
 
@@ -150,9 +149,10 @@ public:
 	 */
 	int init() throw(std::bad_alloc);
 	
-	//! Parses command-line args
-	// THIS SHOULDN'T BE HERE!!!
-	void getArgs(int argc, char** argv) throw(std::bad_alloc);
+	//! Set server password
+	void setPassword(char* pwstr, size_t len) { password = pwstr; pw_len = len; }
+	void setUserLimit(size_t ulimit) { user_limit = ulimit; }
+	void setPorts(uint16_t lo, uint16_t hi) { lo_port = lo; hi_port = hi; }
 	
 	//! Enter main loop
 	int run() throw();

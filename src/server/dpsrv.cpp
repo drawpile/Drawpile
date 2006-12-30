@@ -39,12 +39,88 @@
 
 //#include <sys/time.h>
 
-#include <bitset>
-#include <map>
-#include <list>
-#include <vector>
+//#include <bitset>
+//#include <map>
+//#include <list>
+//#include <vector>
 #include <cstdlib>
 #include <iostream>
+#include <getopt.h> // for command-line opts
+
+void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
+{
+	#ifndef NDEBUG
+	std::cout << "getArgs(" << argc << ", **argv)" << std::endl;
+	#endif
+	
+	int32_t opt = 0;
+	
+	while ((opt = getopt( argc, argv, "p:Vhc:")) != -1)
+	{
+		switch (opt)
+		{
+			/*
+			case 'a': // address to listen on
+				
+				break;
+			*/
+			case 'p': // port to listen on
+				{
+					uint16_t lo_port = atoi(optarg), hi_port=0;
+					{
+						char* off = strchr(optarg, '-');
+						hi_port = (off != 0 ? atoi(off+1) : lo_port);
+					}
+					
+					if (lo_port <= 1023 or hi_port <= 1023)
+					{
+						std::cerr << "Super-user ports not allowed!" << std::endl;
+						exit(1);
+					}
+					srv->setPorts(lo_port, hi_port);
+				}
+				break;
+			/*
+			case 'l': // localhost admin
+				localhost_admin = true;
+				break;
+			*/
+			case 'u': // user limit
+				srv->setUserLimit(atoi(optarg));
+				break;
+			case 'c': // password
+				{
+					size_t pw_len = strlen(optarg);
+					char* password = 0;
+					if (pw_len > 0)
+					{
+						password = new char[pw_len];
+						memcpy(password, optarg, pw_len);
+					}
+					srv->setPassword(password, pw_len);
+				}
+				break;
+			case 'h': // help
+				std::cout << "Syntax: dbsrv [options]" << std::endl
+					<< std::endl
+					<< "Options:" << std::endl
+					<< std::endl
+					<< "   -p [port]    listen on 'port' (1024 - 65535)" << std::endl
+					<< "   -h           this output (a.k.a. Help)" << std::endl
+					//<< "   -d           daemon mode" << std::endl
+					<< "   -c [string]  password string" << std::endl;
+				exit(1);
+				break;
+			case 'V': // version
+				std::cout << "dpserver v0.0a" << std::endl;
+				exit(0);
+			default:
+				std::cerr << "What?" << std::endl;
+				exit(0);
+		}
+	}
+}
+
 
 int main(int argc, char** argv)
 {
@@ -54,7 +130,7 @@ int main(int argc, char** argv)
 	
 	Server srv;
 	
-	srv.getArgs(argc, argv);
+	getArgs(argc, argv, &srv);
 	
 	netInit();
 	
