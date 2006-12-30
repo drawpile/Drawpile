@@ -288,15 +288,13 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		
 		// TODO: Handle message
 		uHandleMsg(usr, usr->inMsg);
-		
-		delete usr->inMsg;
-		usr->inMsg = 0;
 	}
 	else if (rb == 0)
 	{
 		std::cout << "User disconnected!" << std::endl;
 		
 		uRemove(usr);
+		return;
 	}
 	else
 	{
@@ -384,8 +382,8 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		{
 			protocol::Identifier *i = static_cast<protocol::Identifier*>(msg);
 			bool str = (
-				memcmp((char*)&i->identifier,
-					&protocol::identifierString,
+				memcmp(i->identifier,
+					protocol::identifier_string,
 					protocol::identifier_size
 				) == 0);
 			bool rev = (i->revision == protocol::revision);
@@ -436,6 +434,9 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		assert(!"user state was something strange");
 		break;
 	}
+	
+	delete usr->inMsg;
+	usr->inMsg = 0;
 }
 
 void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
@@ -654,29 +655,15 @@ int Server::init() throw(std::bad_alloc)
 			int e = lsock.getError();
 			switch (e)
 			{
-				#ifndef WIN32
 				case EADDRINUSE:
-					std::cerr << "address already in use" << std::endl;
+					std::cerr << "address already in use " << std::endl;
 					break;
 				case EADDRNOTAVAIL:
 					std::cerr << "address not available" << std::endl;
 					break;
-				case EAFNOSUPPORT:
-					std::cerr << "invalid address family" << std::endl;
-					break;
-				case ENOTSOCK:
-					std::cerr << "not a socket" << std::endl;
-					break;
-				case EOPNOTSUPP:
-					std::cerr << "does not support bind" << std::endl;
-					break;
-				case EISCONN:
-					std::cerr << "already connected" << std::endl;
-					break;
 				case ENOBUFS:
 					std::cerr << "insufficient resources" << std::endl;
 					break;
-				#endif // WIN32
 				case EACCES:
 					std::cerr << "can't bind to superuser sockets" << std::endl;
 					break;
