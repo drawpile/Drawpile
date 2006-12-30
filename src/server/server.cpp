@@ -337,11 +337,34 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		
 		if (usr->inMsg->type == protocol::type::UserInfo)
 		{
-			// TODO
+			protocol::UserInfo *m = static_cast<protocol::UserInfo*>(usr->inMsg);
 			
+			if (m->session_id != protocol::Global)
+			{
+				std::cerr << "Wrong session identifier." << std::endl;
+				uRemove(usr);
+				return;
+			}
+			
+			if (m->event != protocol::user_event::Login)
+			{
+				std::cerr << "Wrong user event." << std::endl;
+				uRemove(usr);
+				return;
+			}
+			
+			if (m->length > name_len_limit)
+			{
+				std::cerr << "Name too long." << std::endl;
+				uRemove(usr);
+				return;
+			}
+			
+			// TODO
 		}
 		else
 		{
+			// wrong message type
 			uRemove(usr);
 		}
 		break;
