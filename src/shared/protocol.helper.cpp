@@ -37,7 +37,7 @@
 namespace protocol
 {
 
-Message* getMessage(const uint8_t type) throw(std::exception)
+Message* getMessage(const uint8_t type) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "protocol::getMessage("<< static_cast<int>(type) << ")" << std::endl;
@@ -174,7 +174,6 @@ Message* getMessage(const uint8_t type) throw(std::exception)
 	*/
 	default:
 		std::cerr << "Unknown message type: " << static_cast<int>(type) << std::endl;
-		throw std::exception();
 		break;
 	}
 	

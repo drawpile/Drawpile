@@ -46,7 +46,7 @@ namespace protocol
  *
  * @param type is the message type to be generated (see protocol::type).
  */
-Message* getMessage(const uint8_t type) throw(std::exception);
+Message* getMessage(const uint8_t type) throw();
 
 } // namespace protocol
 
