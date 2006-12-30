@@ -339,6 +339,13 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		{
 			protocol::UserInfo *m = static_cast<protocol::UserInfo*>(usr->inMsg);
 			
+			if (m->user_id != protocol::null_user)
+			{
+				std::cerr << "User made blasphemous assumption." << std::endl;
+				uRemove(usr);
+				return;
+			}
+			
 			if (m->session_id != protocol::Global)
 			{
 				std::cerr << "Wrong session identifier." << std::endl;
@@ -359,6 +366,8 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				uRemove(usr);
 				return;
 			}
+			
+			
 			
 			// TODO
 		}
