@@ -51,7 +51,8 @@ Server::Server() throw()
 	hi_port(protocol::default_port),
 	lo_port(protocol::default_port),
 	requirements(0),
-	extensions(0)
+	extensions(0),
+	default_user_mode(protocol::user::None)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::Server()" << std::endl;
@@ -367,9 +368,23 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
+			// assign message the user's id
+			m->user_id = usr->id;
 			
+			// assign user their own name
+			usr->name = m->name;
+			usr->nlen = m->length;
 			
-			// TODO
+			// null the message's name information
+			m->length = 0;
+			m->name = 0;
+			
+			// set user mode
+			m->mode = default_user_mode;
+			// TODO: auto-admin promotion
+			
+			// reply
+			uSendMsg(usr, m);
 		}
 		else
 		{
