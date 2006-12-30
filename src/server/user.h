@@ -107,7 +107,7 @@ struct User
 		id(_id),
 		nlen(0),
 		name(0),
-		state(uState::login),
+		state(uState::init),
 		inMsg(0)
 	{
 		#ifndef NDEBUG
