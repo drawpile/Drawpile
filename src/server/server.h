@@ -122,7 +122,7 @@ protected:
 	void uRead(User* usr) throw(std::bad_alloc);
 	
 	// Handle user message.
-	void uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc);
+	void uHandleMsg(User* usr) throw(std::bad_alloc);
 	
 	// Send message to user
 	/*

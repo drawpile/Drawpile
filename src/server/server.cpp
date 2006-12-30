@@ -288,7 +288,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		);
 		
 		// TODO: Handle message
-		uHandleMsg(usr, usr->inMsg);
+		uHandleMsg(usr);
 	}
 	else if (rb == 0)
 	{
@@ -315,11 +315,11 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
+void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleMsg(user id: " << static_cast<int>(usr->id)
-		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
+		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
 	
 	switch (usr->state)
@@ -335,10 +335,10 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		std::cout << "login" << std::endl;
 		#endif
 		
-		if (msg->type == protocol::type::UserInfo)
+		if (usr->inMsg->type == protocol::type::UserInfo)
 		{
 			// TODO
-			abort();
+			
 		}
 		else
 		{
@@ -356,11 +356,11 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		std::cout << "login_auth" << std::endl;
 		#endif
 		
-		if (msg->type == protocol::type::Password)
+		if (usr->inMsg->type == protocol::type::Password)
 		{
 			// TODO
 			/*
-			if (memcmp(static_cast<protocol::Password*>(msg)->data, , password_hash_size) == 0)
+			if (memcmp(static_cast<protocol::Password*>(usr->inMsg)->data, , password_hash_size) == 0)
 			{
 				
 			}
@@ -385,9 +385,9 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		std::cout << "init" << std::endl;
 		#endif
 		
-		if (msg->type == protocol::type::Identifier)
+		if (usr->inMsg->type == protocol::type::Identifier)
 		{
-			protocol::Identifier *i = static_cast<protocol::Identifier*>(msg);
+			protocol::Identifier *i = static_cast<protocol::Identifier*>(usr->inMsg);
 			bool str = (
 				memcmp(i->identifier,
 					protocol::identifier_string,
