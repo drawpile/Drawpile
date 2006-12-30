@@ -385,6 +385,9 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			
 			// reply
 			uSendMsg(usr, m);
+			
+			usr->inMsg = 0;
+			return;
 		}
 		else
 		{
