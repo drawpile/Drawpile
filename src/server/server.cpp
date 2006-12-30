@@ -289,8 +289,18 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 			usr->inMsg->unserialize(usr->input.rpos, usr->input.canRead())
 		);
 		
-		// TODO: Handle message
-		uHandleMsg(usr);
+		switch (usr->state)
+		{
+		case uState::active:
+			uHandleMsg(usr);
+			break;
+		default:
+			uHandleLogin(usr);
+			break;
+		}
+		
+		delete usr->inMsg;
+		usr->inMsg = 0;
 	}
 	else if (rb == 0)
 	{
@@ -324,18 +334,21 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
 	
+	// TODO
+	
+	
+	uRemove(usr);
+}
+
+void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
+{
+	#ifndef NDEBUG
+	std::cout << "Server::uHandleLogin(user id: " << static_cast<int>(usr->id)
+		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
+	#endif
+	
 	switch (usr->state)
 	{
-	case uState::active:
-		#ifndef NDEBUG
-		std::cout << "active" << std::endl;
-		#endif
-		
-		// TODO
-		
-		uRemove(usr);
-		
-		break;
 	case uState::login:
 		#ifndef NDEBUG
 		std::cout << "login" << std::endl;
@@ -505,9 +518,6 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		assert(!"user state was something strange");
 		break;
 	}
-	
-	delete usr->inMsg;
-	usr->inMsg = 0;
 }
 
 void Server::uSendMsg(User* usr, protocol::Message* msg) throw()

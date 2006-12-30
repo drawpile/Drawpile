@@ -129,6 +129,9 @@ protected:
 	// Handle user message.
 	void uHandleMsg(User* usr) throw(std::bad_alloc);
 	
+	// Handle user login.
+	void uHandleLogin(User* usr) throw(std::bad_alloc);
+	
 	// Send message to user
 	/*
 	 * Appends the message to user's output buffer,
