@@ -5,11 +5,6 @@ project ( DrawPile CXX C )
 
 cmake_minimum_required( VERSION 2.4.5 )
 
-### Optimize ###
-
-include ( Optimize.cmake )
-include ( Macros.cmake )
-
 ### config options ###
 
 # do these even work?
@@ -25,6 +20,16 @@ option ( NOKEVENT "Disable kevent(2) support" OFF )
 option ( UNITTEST "Compile unittests" OFF )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
+
+option ( NOOPT "Disable any and all optimizations" OFF )
+
+### Optimize ###
+
+if ( NOT NOOPT )
+	include ( Optimize.cmake )
+endif ( NOT NOOPT)
+
+include ( Macros.cmake )
 
 ### binary and library output ###
 
