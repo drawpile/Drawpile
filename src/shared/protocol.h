@@ -174,6 +174,7 @@ struct Identifier
 		: Message(protocol::type::Identifier),
 		revision(protocol::null_revision),
 		level(protocol::null_implementation),
+		flags(protocol::requirements::None),
 		extensions(protocol::extensions::None)
 	{ }
 	
