@@ -223,8 +223,13 @@ bool Socket::reuse(bool x) throw()
 	
 	assert(sock >= 0);
 	
+	#ifndef SO_REUSEPORT
+	// Windows (for example) does not have it
+	return true;
+	#else
 	char val = (x ? 1 : 0);
-	return (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == 0);
+	return (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val)) == 0);
+	#endif
 }
 
 int Socket::bindTo(uint32_t address, uint16_t port) throw()
