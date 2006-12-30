@@ -114,7 +114,7 @@ protected:
 	
 	// Generate messages
 	protocol::HostInfo* msgHostInfo() throw(std::bad_alloc);
-	protocol::Authentication* Server::msgAuth(User* usr, uint8_t session) throw(std::bad_alloc);
+	protocol::Authentication* msgAuth(User* usr, uint8_t session) throw(std::bad_alloc);
 	
 	// Write to user socket
 	void uWrite(User* usr) throw();
