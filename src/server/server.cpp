@@ -325,19 +325,39 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 		break;
 	case uState::login:
 		#ifndef NDEBUG
-		std::cout << "verified" << std::endl;
+		std::cout << "login" << std::endl;
 		#endif
 		if (msg->type == protocol::type::UserInfo)
 		{
-			
+			// TODO
+		}
+		else
+		{
+			uRemove(usr);
 		}
 	case uState::lobby_auth:
+		#ifndef NDEBUG
+		std::cout << "lobby_auth" << std::endl;
+		#endif
 		// TODO
 		break;
 	case uState::login_auth:
+		#ifndef NDEBUG
+		std::cout << "login_auth" << std::endl;
+		#endif
 		if (msg->type == protocol::type::Password)
 		{
 			// TODO
+			/*
+			if (memcmp(static_cast<protocol::Password*>(msg)->data, , password_hash_size) == 0)
+			{
+				
+			}
+			else
+			{
+				// mismatch, send error or disconnect.
+			}
+			*/
 		}
 		else
 		{
@@ -592,6 +612,7 @@ int Server::init() throw(std::bad_alloc)
 	}
 	
 	lsock.block(0); // nonblocking
+	lsock.reuse(1); // reuse address
 	
 	#ifndef NDEBUG
 	std::cout << "binding socket address" << std::endl;
