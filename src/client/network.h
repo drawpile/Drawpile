@@ -26,6 +26,11 @@ namespace protocol {
 	class Message;
 }
 
+//! Client network classes
+/**
+ */
+namespace network {
+
 class NetworkPrivate;
 
 //! Network connection handling thread
@@ -37,11 +42,11 @@ class NetworkPrivate;
  * The signal \a received is emitted when new messages have become available
  * and can be read with \a receive.
  */
-class Network : public QThread {
+class Connection : public QThread {
 	Q_OBJECT
 	public:
-		Network(QObject *parent=0);
-		~Network();
+		Connection(QObject *parent=0);
+		~Connection();
 
 		//! Connect to host
 		void connectHost(const QString& host, quint16 port);
@@ -76,6 +81,8 @@ class Network : public QThread {
 		quint16 port_;
 		NetworkPrivate *p_;
 };
+
+}
 
 #endif
 

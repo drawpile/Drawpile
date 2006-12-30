@@ -27,12 +27,11 @@
 #include "netstate.h"
 
 #include "../shared/protocol.defaults.h"
-#include "../shared/protocol.h"
 
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), editor_(0), net_(0)
 {
-	netstate_ = new NetState(this);
+	netstate_ = new network::HostState(this);
 }
 
 Controller::~Controller()
@@ -81,11 +80,11 @@ void Controller::connectHost(const QString& address)
 		port = addr[1].toInt();
 
 	// Create network thread object
-	net_ = new Network(this);
+	net_ = new network::Connection(this);
 	connect(net_,SIGNAL(connected()), this, SLOT(netConnected()));
 	connect(net_,SIGNAL(disconnected(QString)), this, SLOT(netDisconnected(QString)));
 	connect(net_,SIGNAL(error(QString)), this, SLOT(netError(QString)));
-	connect(net_,SIGNAL(received()), this, SLOT(netReceived()));
+	connect(net_,SIGNAL(received()), netstate_, SLOT(receiveMessage()));
 
 	// Connect to host
 	netstate_->setConnection(net_);
@@ -122,12 +121,7 @@ void Controller::penUp()
 
 void Controller::netConnected()
 {
-	// Connection established, log in
-	protocol::Identifier *msg = new protocol::Identifier;
-	memcpy(msg->identifier, protocol::identifier_string,
-			protocol::identifier_size);
-	msg->revision = protocol::revision;
-	net_->send(msg);
+	netstate_->login();
 	emit connected(address_);
 }
 
@@ -143,27 +137,5 @@ void Controller::netDisconnected(const QString& message)
 void Controller::netError(const QString& message)
 {
 	qDebug() << "error: " << message;
-}
-
-void Controller::netReceived()
-{
-	qDebug() << "data received";
-	protocol::Message *msg;
-	while((msg = net_->receive())) {
-		switch(msg->type) {
-			using namespace protocol;
-			case type::HostInfo:
-				netstate_->handleHostInfo(static_cast<HostInfo*>(msg));
-				break;
-								 
-			default:
-				qDebug() << "unhandled message type " << int(msg->type);
-				while(msg) {
-					protocol::Message *next = msg->next;
-					delete msg;
-					msg = next;
-				}
-		}
-	}
 }
 

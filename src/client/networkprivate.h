@@ -30,6 +30,8 @@ namespace protocol {
 	class Message;
 }
 
+namespace network {
+
 typedef QQueue<protocol::Message*> MessageQueue;
 
 //! Network private data
@@ -109,4 +111,6 @@ class NetworkPrivate : public QObject {
 		//! Serialize first message in send queue
 		void serializeMessage();
 };
+
+}
 

@@ -27,6 +27,8 @@
 #include "../shared/protocol.h"
 #include "../shared/protocol.helper.h"
 
+namespace network {
+
 NetworkPrivate::NetworkPrivate(QObject *parent) :
 	QObject(parent), sendbuffer(0), sentlen(0), sendlen(0), newmsg(0)
 {
@@ -218,13 +220,13 @@ void NetworkPrivate::networkError()
 	emit error(socket.errorString());
 }
 
-Network::Network(QObject *parent)
+Connection::Connection(QObject *parent)
 	: QThread(parent), p_(0)
 {
 
 }
 
-Network::~Network()
+Connection::~Connection()
 {
 	delete p_;
 }
@@ -232,7 +234,7 @@ Network::~Network()
 /**
  * Start the networking thread and connect to a host
  */
-void Network::connectHost(const QString& host, quint16 port)
+void Connection::connectHost(const QString& host, quint16 port)
 {
 	Q_ASSERT(isRunning() == false);
 
@@ -244,7 +246,7 @@ void Network::connectHost(const QString& host, quint16 port)
 /**
  * Calls NetworkPrivate::disconnectHost
  */
-void Network::disconnectHost()
+void Connection::disconnectHost()
 {
 	Q_ASSERT(isRunning());
 	p_->disconnectFromHost();
@@ -253,7 +255,7 @@ void Network::disconnectHost()
 /**
  * Calls NetworkPrivate::send
  */
-void Network::send(protocol::Message *msg)
+void Connection::send(protocol::Message *msg)
 {
 	Q_ASSERT(isRunning() && p_);
 	p_->send(msg);
@@ -262,14 +264,14 @@ void Network::send(protocol::Message *msg)
 /**
  * Calls NetworkPrivate::receive
  */
-protocol::Message *Network::receive()
+protocol::Message *Connection::receive()
 {
 	Q_ASSERT(p_);
 	return p_->receive();
 }
 
 //! Thread entry point
-void Network::run()
+void Connection::run()
 {
 	qDebug() << "network thread starting";
 
@@ -291,5 +293,7 @@ void Network::run()
 	}
 
 	qDebug() << "network thread finished";
+}
+
 }
 

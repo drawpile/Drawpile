@@ -24,35 +24,83 @@
 
 namespace protocol {
 	class HostInfo;
-}
+	class UserInfo;
+	class Authentication;
+	class Error;
+};
 
-class Network;
+namespace network {
+
+class Connection;
 
 //! Network state machine
-class NetState : public QObject {
+/**
+ * This class handles the state of a host connection.
+ */
+class HostState : public QObject {
 	Q_OBJECT
 	public:
-		NetState(QObject *parent);
+		HostState(QObject *parent);
+
+		//! Get the local user ID as assigned by the server
+		int localUserId() const { return userid_; }
 
 		//! Set network connection object to use
-		void setConnection(Network *net) { net_ = net; }
+		void setConnection(Connection *net) { net_ = net; }
 
 		//! Prepare to host a session
 		void host(const QString& username, const QString& title,
 				const QString& password);
 
+		//! Initiate login sequence
+		void login();
+
+		//! Send a password
+		void sendPassword(const QString& password);
+
+	public slots:
+		//! Get a message from the network handler object
+		void receiveMessage();
+
+	signals:
+		//! A password must be requested from the user
+		/**
+		 * A password can be needed to log in to the server and to join
+		 * a drawing session.
+		 * @param session if true, the password is for a session
+		 */
+		void needPasword(bool session);
+
+		//! An error message was received from the host
+		void error(const QString& message);
+
+	private:
 		//! Handle a HostInfo message
 		void handleHostInfo(protocol::HostInfo *msg);
 
+		//! Handle a UserInfo message
+		void handleUserInfo(protocol::UserInfo *msg);
+
+		//! Handle authentication request
+		void handleAuthentication(protocol::Authentication *msg);
+
+		//! Handle errors
+		void handleError(protocol::Error *msg);
+
 	private:
-		Network *net_;
+		Connection *net_;
 
 		QString username_;
 		QString title_;
 		QString password_;
 
+		int userid_;
+
 		enum {LOGIN, JOIN, DRAWING} state_;
+		enum {HOSTSESSION, JOINSESSION} mode_;
 };
+
+}
 
 #endif
 

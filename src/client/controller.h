@@ -35,8 +35,10 @@ namespace interface {
 	class ColorSource;
 }
 
-class Network;
-class NetState;
+namespace network {
+	class Connection;
+	class HostState;
+}
 
 //! Controller for drawing and network operations
 /**
@@ -89,7 +91,6 @@ class Controller : public QObject
 		void netConnected();
 		void netDisconnected(const QString& message);
 		void netError(const QString& message);
-		void netReceived();
 
 	private:
 		//! Connect to host
@@ -98,8 +99,8 @@ class Controller : public QObject
 		drawingboard::Board *board_;
 		tools::Tool *tool_;
 		drawingboard::BoardEditor *editor_;
-		Network *net_;
-		NetState *netstate_;
+		network::Connection *net_;
+		network::HostState *netstate_;
 		QString address_;
 };
 
