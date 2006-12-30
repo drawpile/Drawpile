@@ -150,9 +150,26 @@ public:
 	int init() throw(std::bad_alloc);
 	
 	//! Set server password
-	void setPassword(char* pwstr, size_t len) { password = pwstr; pw_len = len; }
-	void setUserLimit(size_t ulimit) { user_limit = ulimit; }
-	void setPorts(uint16_t lo, uint16_t hi) { lo_port = lo; hi_port = hi; }
+	void setPassword(char* pwstr, uint8_t len) { password = pwstr; pw_len = len; }
+	
+	//! Set user limit
+	void setUserLimit(uint8_t ulimit) { user_limit = ulimit; }
+	
+	//! Set listening port range
+	void setPorts(uint16_t lo, uint16_t hi)
+	{
+		lo_port = lo;
+		hi_port = (hi < lo ? lo : hi);
+	}
+	
+	//! Set UTF-16 support
+	void setUTF16(bool x)
+	{
+		if (x)
+			fSet(requirements, protocol::requirements::WideStrings );
+		else
+			fClr(requirements, protocol::requirements::WideStrings );
+	}
 	
 	//! Enter main loop
 	int run() throw();
