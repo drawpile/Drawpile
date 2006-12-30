@@ -126,6 +126,12 @@ struct User
 		delete [] name,
 		delete sock,
 		delete inMsg;
+		
+		while (buffers.size() != 0)
+		{
+			delete buffers.front();
+			buffers.pop();
+		}
 	}
 	
 	//! Socket
@@ -153,7 +159,7 @@ struct User
 	std::map<uint8_t, UserData> sessions;
 	
 	//! Output buffers
-	std::queue<Buffer> buffers;
+	std::queue<Buffer*> buffers;
 	
 	//! Event I/O registered events.
 	int events;

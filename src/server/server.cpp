@@ -186,11 +186,11 @@ void Server::uWrite(User* usr) throw()
 	std::cout << "Server::uWrite(" << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	Buffer buf = usr->buffers.front();
+	Buffer *buf = usr->buffers.front();
 	
 	int sb = usr->sock->send(
-		buf.rpos,
-		buf.canRead()
+		buf->rpos,
+		buf->canRead()
 	);
 	
 	std::cout << "Sent " << sb << " bytes.." << std::endl;
@@ -212,14 +212,15 @@ void Server::uWrite(User* usr) throw()
 	}
 	else
 	{
-		buf.read(sb);
+		buf->read(sb);
 		
 		// just to ensure we don't need to do anything for it.
-		assert(buf.rpos == usr->buffers.front().rpos);
+		assert(buf->rpos == usr->buffers.front()->rpos);
 		
-		if (buf.left == 0)
+		if (buf->left == 0)
 		{
 			// remove buffer
+			delete buf;
 			usr->buffers.pop();
 			
 			// remove fd from write list if no buffers left.
@@ -452,8 +453,8 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 	size_t len;
 	char* buf = msg->serialize(len);
 	
-	usr->buffers.push( Buffer(buf, len) );
-	usr->buffers.back().write(len);
+	usr->buffers.push( new Buffer(buf, len) );
+	usr->buffers.back()->write(len);
 	buf = 0;
 	
 	if (!fIsSet(usr->events, ev.write))
