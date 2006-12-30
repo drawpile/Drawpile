@@ -41,13 +41,14 @@
 namespace protocol
 {
 
-//! Data storage
-namespace stack
-{
-
 //! Get new message struct.
+/**
+ * Allocates memory for specific message type and returns pointer to it.
+ *
+ * @param type is the message type to be generated (see protocol::type).
+ */
 inline
-Message* get(uint8_t type) throw(std::exception)
+Message* getMessage(uint8_t type) throw(std::exception)
 {
 	#ifndef NDEBUG
 	std::cout << "protocol::getMessage("<< static_cast<int>(type) << ")" << std::endl;
@@ -178,9 +179,9 @@ Message* get(uint8_t type) throw(std::exception)
 		return new Error();
 		break;
 	/*
-	case Deflate:
-	case Chat:
-	case Palette:
+	case type::Deflate:
+	case type::Chat:
+	case type::Palette:
 	*/
 	default:
 		std::cerr << "Unknown message type: " << static_cast<int>(type) << std::endl;
@@ -190,152 +191,6 @@ Message* get(uint8_t type) throw(std::exception)
 	
 	return 0;
 }
-
-//! Frees message struct.
-inline
-void free(Message* msg) throw(std::exception)
-{
-	#ifndef NDEBUG
-	std::cout << "protocol::freeMessage("<< static_cast<int>(msg->type) << ")" << std::endl;
-	#endif
-	
-	// TODO
-	/* This and the getMessage should actually manage stacks of Message's... */
-	
-	switch (msg->type)
-	{
-	case type::Identifier:
-		#ifndef NDEBUG
-		std::cout << "Type: Identifier" << std::endl;
-		#endif
-		break;
-	case type::StrokeInfo:
-		#ifndef NDEBUG
-		std::cout << "Type: Stroke Info" << std::endl;
-		#endif
-		break;
-	case type::StrokeEnd:
-		#ifndef NDEBUG
-		std::cout << "Type: Stroke End" << std::endl;
-		#endif
-		break;
-	case type::ToolInfo:
-		#ifndef NDEBUG
-		std::cout << "Type: Tool Info" << std::endl;
-		#endif
-		break;
-	case type::Authentication:
-		#ifndef NDEBUG
-		std::cout << "Type: Authentication" << std::endl;
-		#endif
-		break;
-	case type::Password:
-		#ifndef NDEBUG
-		std::cout << "Type: Password" << std::endl;
-		#endif
-		break;
-	case type::Synchronize:
-		#ifndef NDEBUG
-		std::cout << "Type: Synchronize" << std::endl;
-		#endif
-		break;
-	case type::Raster:
-		#ifndef NDEBUG
-		std::cout << "Type: Raster" << std::endl;
-		#endif
-		break;
-	case type::SyncWait:
-		#ifndef NDEBUG
-		std::cout << "Type: SyncWait" << std::endl;
-		#endif
-		break;
-	case type::Subscribe:
-		#ifndef NDEBUG
-		std::cout << "Type: Subscribe" << std::endl;
-		#endif
-		break;
-	case type::Unsubscribe:
-		#ifndef NDEBUG
-		std::cout << "Type: Unsubscribe" << std::endl;
-		#endif
-		break;
-		/*
-	case type::SessionSelect:
-		#ifndef NDEBUG
-		std::cout << "Type: Session Select" << std::endl;
-		#endif
-		break;
-		*/
-	case type::Instruction:
-		#ifndef NDEBUG
-		std::cout << "Type: Instruction" << std::endl;
-		#endif
-		break;
-	case type::ListSessions:
-		#ifndef NDEBUG
-		std::cout << "Type: List Sessions" << std::endl;
-		#endif
-		break;
-	case type::Cancel:
-		#ifndef NDEBUG
-		std::cout << "Type: Cancel" << std::endl;
-		#endif
-		break;
-	case type::UserInfo:
-		#ifndef NDEBUG
-		std::cout << "Type: User Info" << std::endl;
-		#endif
-		break;
-	case type::HostInfo:
-		#ifndef NDEBUG
-		std::cout << "Type: Host Info" << std::endl;
-		#endif
-		break;
-	case type::SessionInfo:
-		#ifndef NDEBUG
-		std::cout << "Type: Session Info" << std::endl;
-		#endif
-		break;
-	case type::Acknowledgement:
-		#ifndef NDEBUG
-		std::cout << "Type: Acknowledgement" << std::endl;
-		#endif
-		break;
-	case type::Error:
-		#ifndef NDEBUG
-		std::cout << "Type: Error" << std::endl;
-		#endif
-		break;
-	/*
-	case Deflate:
-	case Chat:
-	case Palette:
-	*/
-	default:
-		std::cerr << "Unknown message type: " << static_cast<int>(msg->type) << std::endl;
-		throw std::exception();
-		break;
-	}
-	
-	delete msg;
-	return;
-}
-
-//! For freeing up memory.
-inline
-void cull()
-{
-	// TODO
-}
-
-//! Clears the stacks completely.
-inline
-void clear()
-{
-	// TODO
-}
-
-} // namespace stack
 
 } // namespace protocol
 
