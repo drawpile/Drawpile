@@ -66,7 +66,20 @@ struct UserData
 
 namespace uState
 {
+	//! When user has just connected
+	const uint8_t init = 3;
+	
+	//! User has been verified to be using correct protocol.
+	const uint8_t verified = 2;
+	
+	//! Waiting for proper user info
 	const uint8_t login = 1;
+	
+	//! Waiting for password
+	const uint8_t login_auth = 9;
+	const uint8_t lobby_auth = 8;
+	
+	//! Normal operation
 	const uint8_t active = 0;
 }
 
@@ -80,7 +93,7 @@ struct User
 		id(0),
 		nlen(0),
 		name(0),
-		state(uState::login),
+		state(uState::init),
 		inMsg(0)
 	{
 		#ifndef NDEBUG
