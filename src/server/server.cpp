@@ -152,6 +152,18 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
+protocol::Authentication* Server::msgAuth(User* usr, uint8_t session) throw(std::bad_alloc)
+{
+	protocol::Authentication* m = new protocol::Authentication;
+	
+	m->session_id = session;
+	
+	// FIXME
+	memcpy(m->seed, "1234", protocol::password_seed_size);
+	
+	return m;
+}
+
 protocol::HostInfo* Server::msgHostInfo() throw(std::bad_alloc)
 {
 	protocol::HostInfo *m = new protocol::HostInfo;
@@ -322,6 +334,21 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 	case uState::lobby_auth:
 		// TODO
 		break;
+	case uState::login_auth:
+		if (msg->type == protocol::type::Password)
+		{
+			// TODO
+		}
+		else
+		{
+			uRemove(usr);
+			return;
+		}
+		
+		usr->state = uState::login;
+		uSendMsg(usr, msgHostInfo());
+		
+		break;
 	case uState::init:
 		#ifndef NDEBUG
 		std::cout << "init" << std::endl;
@@ -354,13 +381,17 @@ void Server::uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc)
 				return;
 			}
 			
-			
-			usr->state = uState::login;
-			
-			// TODO: send Auth Request, if needed
-			//usr->state = uState::login_auth;
-			
-			uSendMsg(usr, msgHostInfo());
+			if (password == 0)
+			{
+				// no password set, 
+				usr->state = uState::login;
+				uSendMsg(usr, msgHostInfo());
+			}
+			else
+			{
+				usr->state = uState::login_auth;
+				uSendMsg(usr, msgAuth(usr, protocol::Global));
+			}
 		}
 		else
 		{
@@ -397,6 +428,9 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 		fSet(usr->events, ev.write);
 		ev.modify(usr->sock->fd(), usr->events);
 	}
+	
+	delete msg;
+	msg = 0;
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)

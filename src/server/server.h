@@ -112,8 +112,9 @@ protected:
 	// Get free session ID
 	uint8_t getSessionID() throw();
 	
-	// Generate host info message
+	// Generate messages
 	protocol::HostInfo* msgHostInfo() throw(std::bad_alloc);
+	protocol::Authentication* Server::msgAuth(User* usr, uint8_t session) throw(std::bad_alloc);
 	
 	// Write to user socket
 	void uWrite(User* usr) throw();
@@ -125,6 +126,10 @@ protected:
 	void uHandleMsg(User* usr, protocol::Message* msg) throw(std::bad_alloc);
 	
 	// Send message to user
+	/*
+	 * Appends the message to user's output buffer,
+	 * and manipulates event system.
+	 */
 	void uSendMsg(User* usr, protocol::Message* msg) throw();
 	
 	// Adds user
