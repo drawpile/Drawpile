@@ -43,7 +43,7 @@ namespace protocol
  *
  * @param type is the message type to be generated (see protocol::type).
  */
-Message* getMessage(uint8_t type) throw(std::exception)
+Message* getMessage(const uint8_t type) throw(std::exception)
 {
 	#ifndef NDEBUG
 	std::cout << "protocol::getMessage("<< static_cast<int>(type) << ")" << std::endl;
