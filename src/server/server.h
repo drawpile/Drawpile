@@ -93,6 +93,9 @@ protected:
 		requirements,
 		extensions;
 	
+	uint8_t
+		default_user_mode;
+	
 	/* functions */
 	
 	// Frees user ID
@@ -169,6 +172,13 @@ public:
 			fSet(requirements, protocol::requirements::WideStrings );
 		else
 			fClr(requirements, protocol::requirements::WideStrings );
+	}
+	
+	//! Set default user mode
+	bool setUserMode(uint8_t x)
+	{
+		default_user_mode = x;
+		return true;
 	}
 	
 	//! Enter main loop
