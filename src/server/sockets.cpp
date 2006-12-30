@@ -215,7 +215,7 @@ bool Socket::block(bool x) throw()
 	#endif
 }
 
-int Socket::reuse(bool x) throw()
+bool Socket::reuse(bool x) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Socket::reuse(" << (x?"true":"false") << ")" << std::endl;
@@ -224,7 +224,7 @@ int Socket::reuse(bool x) throw()
 	assert(sock >= 0);
 	
 	char val = (x ? 1 : 0);
-	return (setsockopt(lsock.fd(), SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == 0);
+	return (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val)) == 0);
 }
 
 int Socket::bindTo(uint32_t address, uint16_t port) throw()
