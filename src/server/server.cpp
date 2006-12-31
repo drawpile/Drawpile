@@ -38,6 +38,8 @@
 #include "../shared/protocol.helper.h"
 #include "../shared/protocol.h" // Message()
 
+#include "../shared/SHA1.h"
+
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
 #include <iostream>
@@ -577,16 +579,21 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 		if (usr->inMsg->type == protocol::type::Password)
 		{
 			// TODO
-			/*
-			if (memcmp(static_cast<protocol::Password*>(usr->inMsg)->data, , password_hash_size) == 0)
-			{
-				
-			}
-			else
+			protocol::Password *m = static_cast<protocol::Password*>(usr->inMsg);
+			
+			CSHA1 h;
+			h.Update(reinterpret_cast<uint8_t*>(password), pw_len);
+			h.Update(reinterpret_cast<const uint8_t*>("1234"), 4);
+			h.Final();
+			char digest[protocol::password_hash_size];
+			h.GetHash(reinterpret_cast<uint8_t*>(digest));
+			
+			if (memcmp(digest, m->data, protocol::password_hash_size) != 0)
 			{
 				// mismatch, send error or disconnect.
+				uRemove(usr);
+				return;
 			}
-			*/
 		}
 		else
 		{
