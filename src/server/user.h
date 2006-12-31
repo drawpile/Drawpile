@@ -33,10 +33,9 @@
 // User session data
 struct UserData
 {
-	UserData() throw()
-		: session(protocol::Global),
-		mode(protocol::user::None),
-		owner(false)
+	UserData(uint8_t s=protocol::Global, uint8_t m=protocol::user::None) throw()
+		: session(s),
+		mode(m)
 	{
 	}
 	
@@ -49,9 +48,6 @@ struct UserData
 	
 	// User mode within session
 	uint8_t mode;
-	
-	// Is the owner of the session
-	bool owner;
 };
 
 // User states
@@ -135,6 +131,7 @@ struct User
 	
 	// Output buffers
 	std::queue<Buffer*> buffers;
+	//std::queue<Message*> messages;
 	
 	// Event I/O registered events.
 	int events;
