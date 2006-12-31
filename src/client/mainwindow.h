@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -103,6 +103,8 @@ class MainWindow : public QMainWindow {
 		void finishHost(int i);
 		//! Cancel or join
 		void finishJoin(int i);
+		//! Logged in, host session
+		void loggedinHost();
 
 	signals:
 		//! This signal is emitted when the current tool is changed

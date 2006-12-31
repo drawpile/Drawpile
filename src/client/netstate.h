@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,32 +46,30 @@ class HostState : public QObject {
 	Q_OBJECT
 	friend class SessionState;
 	public:
+		//! Construct a HostState object
 		HostState(QObject *parent);
 
 		//! Get the local user ID as assigned by the server
 		int localUserId() const { return userid_; }
 
+		//! Get the session state
+		SessionState *session(int id) { return mysessions_.value(id); }
+
 		//! Set network connection object to use
 		void setConnection(Connection *net) { net_ = net; }
 
-		//! Prepare to host a session
-		void prepareHost(const QString& username, const QString& title,
-				const QString& password, quint16 width, quint16 height);
-
-		//! Prepare to join a session
-		void prepareJoin(const QString& username);
-
 		//! Initiate login sequence
-		void login();
+		void login(const QString& username);
 
 		//! Send a password
 		void sendPassword(const QString& password);
 
+		//! Host a session
+		void host(const QString& title, const QString& password,
+				quint16 width, quint16 height);
+
 		//! Join a specific session
 		void join(int id);
-
-		//! Refresh the list of sessions
-		void listSessions();
 
 	public slots:
 		//! Get a message from the network handler object
@@ -86,10 +84,25 @@ class HostState : public QObject {
 		 */
 		void needPasword(bool session);
 
+		//! Login sequence completed succesfully
+		void loggedin();
+
+		//! Session joined succesfully
+		/**
+		 * @param id session id
+		 */
+		void joined(int id);
+
+		//! Session left
+		/**
+		 * @param id session id
+		 */
+		void parted(int id);
+
 		//! An error message was received from the host
 		void error(const QString& message);
 
-		//! Session list was refreshes
+		//! Session list was refreshed
 		void sessionsListed();
 
 	private slots:
@@ -97,9 +110,8 @@ class HostState : public QObject {
 		void joinLatest();
 
 	private:
-
-		//! Create a new session
-		void createSession();
+		//! Refresh the list of sessions
+		void listSessions();
 
 		//! Handle a HostInfo message
 		void handleHostInfo(protocol::HostInfo *msg);
@@ -107,6 +119,7 @@ class HostState : public QObject {
 		//! Handle a UserInfo message
 		void handleUserInfo(protocol::UserInfo *msg);
 
+		//! Handle a SessionInfo message
 		void handleSessionInfo(protocol::SessionInfo *msg);
 
 		//! Handle authentication request
@@ -118,7 +131,6 @@ class HostState : public QObject {
 		//! Handle errors
 		void handleError(protocol::Error *msg);
 
-	private:
 		Connection *net_;
 
 		QString username_;
@@ -129,8 +141,7 @@ class HostState : public QObject {
 		QHash<int, SessionState*> mysessions_;
 		QList<protocol::SessionInfo*> sessions_;
 
-		enum {LOGIN, JOIN, DRAWING} state_;
-		enum {HOSTSESSION, JOINSESSION} mode_;
+		bool loggedin_;
 };
 
 //! Network session state machine
@@ -141,17 +152,7 @@ class SessionState : public QObject {
 	Q_OBJECT
 	public:
 		//! Construct a session state object
-		SessionState(HostState *parent);
-
-		//! Initialize state for session creation
-		void init(const QString& title_, const QString& password_,
-				quint16 width, quint16 height);
-
-		//! Initialize state for joining
-		void init(const protocol::SessionInfo *info);
-
-		//! Instruct the server to create the specified sesion
-		void create();
+		SessionState(HostState *parent, const protocol::SessionInfo *info);
 
 		//! Get session id
 		/**
@@ -177,6 +178,9 @@ class SessionState : public QObject {
 		 * @return session title
 		 */
 		const QString& title() const { return title_; }
+
+		//! Handle session specific user info
+		void handleUserInfo(protocol::UserInfo *msg);
 
 	private:
 		HostState *host_;

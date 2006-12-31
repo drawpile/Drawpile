@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -366,9 +366,22 @@ void MainWindow::finishHost(int i)
 		cfg.setValue("username", user);
 
 		// Connect
-		controller_->hostSession("localhost", user, hostdlg_->getTitle(),
-				hostdlg_->getPassword(),hostdlg_->getImage());
+		disconnect(controller_, SIGNAL(loggedin()), this, 0);
+		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
+		controller_->connectHost("localhost", user);
+	} else {
+		hostdlg_->deleteLater();
 	}
+}
+
+/**
+ * User has logged in, now create a session
+ */
+void MainWindow::loggedinHost()
+{
+	controller_->hostSession(hostdlg_->getTitle(), hostdlg_->getPassword(),
+			hostdlg_->getImage());
+	// Host dialog is no longer needed
 	hostdlg_->deleteLater();
 }
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ namespace interface {
 namespace network {
 	class Connection;
 	class HostState;
+	class SessionState;
 }
 
 class QImage;
@@ -66,9 +67,11 @@ class Controller : public QObject
 				interface::BrushSource *brush,
 				interface::ColorSource *color);
 
+		//! Connect to host
+		void connectHost(const QString& address, const QString& username);
+
 		//! Start hosting a session
-		void hostSession(const QString& address, const QString& username,
-				const QString& title, const QString& password,
+		void hostSession(const QString& title, const QString& password,
 				const QImage& image);
 
 		//! Disconnect from host
@@ -87,6 +90,9 @@ class Controller : public QObject
 		//! Connection with remote host established
 		void connected(const QString& address);
 
+		//! Login succesfull
+		void loggedin();
+
 		//! Host disconnected
 		void disconnected();
 
@@ -94,17 +100,19 @@ class Controller : public QObject
 		void netConnected();
 		void netDisconnected(const QString& message);
 		void netError(const QString& message);
+		void sessionJoined(int id);
+		void sessionParted();
 
 	private:
-		//! Connect to host
-		void connectHost(const QString& address);
-
 		drawingboard::Board *board_;
 		tools::Tool *tool_;
 		drawingboard::BoardEditor *editor_;
 		network::Connection *net_;
 		network::HostState *netstate_;
+		network::SessionState *session_;
 		QString address_;
+
+		QString username_;
 };
 
 #endif

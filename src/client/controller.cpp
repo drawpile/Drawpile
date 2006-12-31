@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,9 +29,12 @@
 #include "../shared/protocol.defaults.h"
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), editor_(0), net_(0)
+	: QObject(parent), board_(0), editor_(0), net_(0), session_(0)
 {
 	netstate_ = new network::HostState(this);
+	connect(netstate_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
+	connect(netstate_, SIGNAL(joined(int)), this, SIGNAL(sessionJoined(int)));
+	connect(netstate_, SIGNAL(parted(int)), this, SIGNAL(sessionParted()));
 }
 
 Controller::~Controller()
@@ -50,28 +53,17 @@ void Controller::setModel(drawingboard::Board *board,
 }
 
 /**
- * @param address address
- * @param username username
- * @param title session tile
- * @param password
- */
-void Controller::hostSession(const QString& address, const QString& username,
-		const QString& title, const QString& password, const QImage& image)
-{
-	Q_ASSERT(username.isEmpty() == false);
-	connectHost(address);
-	netstate_->prepareHost(username, title, password,
-			image.width(), image.height());
-}
-
-/**
- * Establish a connection with a server
+ * Establish a connection with a server.
+ * The connected signal will be emitted when connection is established
+ * and loggedin when login is succesful.
  * @param address host address. Format: address[:port]
  * @param username username to use
  */
-void Controller::connectHost(const QString& address)
+void Controller::connectHost(const QString& address, const QString& username)
 {
 	Q_ASSERT(net_ == 0);
+
+	username_ = username;
 
 	// Parse address
 	address_ = address;
@@ -92,10 +84,39 @@ void Controller::connectHost(const QString& address)
 	net_->connectHost(addr[0], port);
 }
 
+/**
+ * A new session is created and joined.
+ * @param title session title
+ * @param password session password. If empty, no password is set
+ * @param image initial board image
+ * @pre host connection must be established and user logged in.
+ */
+void Controller::hostSession(const QString& title, const QString& password,
+		const QImage& image)
+{
+	netstate_->host(title, password, image.width(), image.height());
+}
+
 void Controller::disconnectHost()
 {
 	Q_ASSERT(net_);
 	net_->disconnectHost();
+}
+
+/**
+ * A session was joined
+ */
+void Controller::sessionJoined(int id)
+{
+	session_ = netstate_->session(id);
+}
+
+/**
+ * A session was left
+ */
+void Controller::sessionParted()
+{
+	session_ = 0;
 }
 
 void Controller::setTool(tools::Type tool)
@@ -122,7 +143,7 @@ void Controller::penUp()
 
 void Controller::netConnected()
 {
-	netstate_->login();
+	netstate_->login(username_);
 	emit connected(address_);
 }
 
