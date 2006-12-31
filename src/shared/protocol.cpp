@@ -807,12 +807,12 @@ size_t SessionInfo::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	memcpy_t(owner, buf+i); i += sizeof(owner);
 	memcpy_t(users, buf+i); i += sizeof(users);
 	memcpy_t(limit, buf+i); i += sizeof(limit);
-	memcpy_t(uflags, buf+i); i += sizeof(uflags);
-	memcpy_t(flags, buf+i); i += sizeof(uflags);
+	memcpy_t(mode, buf+i); i += sizeof(mode);
+	memcpy_t(flags, buf+i); i += sizeof(flags);
 	memcpy_t(length, buf+i); i += sizeof(width);
 	
-	name = new char[length];
-	memcpy(name, buf+i, length); i += length;
+	title = new char[length];
+	memcpy(title, buf+i, length); i += length;
 	
 	return i;
 }
@@ -823,7 +823,7 @@ size_t SessionInfo::reqDataLen(const char *buf, size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	size_t p = sizeof(type) + sizeof(identifier) + sizeof(width) + sizeof(height)
-		+ sizeof(owner) + sizeof(users) + sizeof(limit) + sizeof(limit);
+		+ sizeof(owner) + sizeof(users) + sizeof(mode) + sizeof(flags) + sizeof(limit);
 	if (len < p + sizeof(length))
 		return p + sizeof(length);
 	else
@@ -841,16 +841,17 @@ size_t SessionInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy(buf, &identifier, sizeof(identifier)); size_t i = sizeof(identifier);
-	
+	memcpy_t(buf, identifier); size_t i = sizeof(identifier);
 	memcpy_t(buf+i, width); i += sizeof(width);
 	memcpy_t(buf+i, height); i += sizeof(height);
 	memcpy_t(buf+i, owner); i += sizeof(owner);
 	memcpy_t(buf+i, users); i += sizeof(users);
 	memcpy_t(buf+i, limit); i += sizeof(limit);
+	memcpy_t(buf+i, mode); i += sizeof(mode);
+	memcpy_t(buf+i, flags); i += sizeof(flags);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
-	memcpy(buf+i, name, length); i += length;
+	memcpy(buf+i, title, length); i += length;
 
 	return i;
 }
@@ -858,7 +859,8 @@ size_t SessionInfo::serializePayload(char *buf) const throw()
 size_t SessionInfo::payloadLength() const throw()
 {
 	return sizeof(identifier) + sizeof(width) + sizeof(height) + sizeof(owner)
-		+ sizeof(users) + sizeof(limit) + sizeof(limit) + length;
+		+ sizeof(users) + sizeof(limit) + sizeof(mode) + sizeof(flags)
+		+ sizeof(length) + length;
 }
 
 /*

@@ -163,9 +163,11 @@ public:
 
 //! Protocol identifier.
 /**
- * The first message sent to the server.
+ * The first message sent by client.
+ * If the host can't make heads or tails what this is,
+ * it should close the connection.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Protocol_identifier
+ * Response: HostInfo
  */
 struct Identifier
 	: Message//, MemoryStack<Identifier>
@@ -209,7 +211,9 @@ struct Identifier
 /**
  * Minimal data required for drawing with the tool provided by ToolInfo.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Stroke_info
+ * Pressure should be set to 255 for tools that do not provide pressure info.
+ *
+ * Response: none
  */
 struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
@@ -225,19 +229,16 @@ struct StrokeInfo
 	/* unique data */
 	
 	uint16_t
-		//! Horizontal coordinate.
+		//! Horizontal (X) coordinate.
 		x,
-		//! Vertical coordinate.
+		//! Vertical (Y) coordinate.
 		y;
 	
-	//! Should default to 255 for devices that do not support it.
+	//! Applied pressure.
 	uint8_t pressure;
 	
 	/* functions */
 	
-	/**
-	 * @throw std::exception
-	 */
 	size_t unserialize(const char* buf, size_t len) throw(std::exception, std::bad_alloc);
 	size_t reqDataLen(const char *buf, size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
@@ -247,8 +248,6 @@ struct StrokeInfo
 //! Stroke End message
 /**
  * Marks the end of a line defined by StrokeInfo messages.
- *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Stroke_end
  */
 struct StrokeEnd
 	: Message//, MemoryStack<StrokeEnd>
@@ -270,9 +269,12 @@ struct StrokeEnd
 
 //! Tool Info message.
 /**
- * Describes interpolating brush or some other tool.
+ * The selected tool's information and settings.
+ * Sent only when it changes, and just before sending first stroke message for this tool.
+ * Contains info for two extremes of tool's settings that are used to
+ * create the interpolating brush.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Tool_info
+ * Response: none
  */
 struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
@@ -296,10 +298,7 @@ struct ToolInfo
 	//! Tool identifier (for full list, see protocol::tool).
 	uint8_t tool_id;
 	
-	//! Composition mode
-	/**
-	 * @see protocol::mode
-	 */
+	//! Composition mode (tool::mode)
 	uint8_t mode;
 	
 	uint32_t
@@ -330,7 +329,11 @@ struct ToolInfo
 /**
  * Requests raster data.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Synchronize
+ * - Client MUST create copy of the raster right after any ongoing drawing,
+ * and start sending it to server.
+ * - The copy is what is sent to the server and MUST NOT be altered during transfer.
+ *
+ * Response: Raster
  */
 struct Synchronize
 	: Message//, MemoryStack<Synchronize>
@@ -352,9 +355,17 @@ struct Synchronize
 
 //! Raster data message.
 /**
- * Serves raster data request delivered by Synchronize message.
+ * Sends the image data, capable of serving only parts until the whole dataset is served.
+ * Client that is to fullfill this request should make a copy of the raster data
+ * since it MUST NOT change until the transfer is completed. The data MUST be in
+ * lossless PNG format, other factors of the format are left for the client to decide,
+ * though compression levels of 5 to 8 are recommended.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Raster
+ * This message is formed so that it can be send in chunks instead of one big message,
+ * client is free to split the sent data into chunks if it sees fit, but the complete
+ * raster must be transferred in order!
+ *
+ * Response: none
  */
 struct Raster
 	: Message//, MemoryStack<Raster>
@@ -372,14 +383,14 @@ struct Raster
 	/* unique data */
 	
 	uint32_t
-		//! Offset of raster data.
+		//! Offset of data chunk.
 		offset,
-		//! Length of raster data.
+		//! Size of raster data sent in this chunk.
 		length,
-		//! Size of the whole raster.
+		//! Size of the whole raster data.
 		size;
 	
-	//! Raster data.
+	//! Raster data chunk.
 	char* data;
 	
 	/* functions */
@@ -393,8 +404,14 @@ struct Raster
 //! SyncWait message.
 /**
  * Instructs client to enter SyncWait state.
- *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#SyncWait
+ * No drawing data may be sent out after receiving this
+ * (except if it completes already sent partial data).
+ * 
+ * - Client MUST wait for ACK/Sync from server before resuming.
+ * - Client MUST fullfil any other requests by the server in timely manner.
+ * - The response MUST be sent AFTER sending any remainder of incomplete data.
+ * 
+ * Response: Acknowledgement with event set to protocol::type::SyncWait.
  */
 struct SyncWait
 	: Message//, MemoryStack<SyncWait>
@@ -418,7 +435,7 @@ struct SyncWait
 /**
  * Request for password to login or join session.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Authentication
+ * Response: Password
  */
 struct Authentication
 	: Message//, MemoryStack<Authentication>
@@ -435,7 +452,8 @@ struct Authentication
 	//! Session identifier for which the auth request is aimed at (protocol::Global for server).
 	uint8_t session_id;
 	
-	char seed[password_seed_size]; // n bytes of gibberish
+	//! Password seed; append this to the password string for hashing
+	char seed[password_seed_size];
 	
 	/* functions */
 	
@@ -448,8 +466,6 @@ struct Authentication
 //! Password message.
 /**
  * Response to Authentication request.
- *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Password
  */
 struct Password
 	: Message//, MemoryStack<Password>
@@ -465,7 +481,7 @@ struct Password
 	//! Session identifier, must be the same as in the auth request this is response to.
 	uint8_t session_id;
 	
-	//! Password data.
+	//! Password hash (SHA-1)
 	char data[password_hash_size];
 	
 	/* functions */
@@ -478,7 +494,9 @@ struct Password
 
 //! Subscribe message.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Subscribe
+ * Client subscribes to the session.
+ *
+ * Response: Acknowledgement with event set to protocol::type::Subscribe.
  */
 struct Subscribe
 	: Message//, MemoryStack<Subscribe>
@@ -505,7 +523,9 @@ struct Subscribe
 
 //! Unsubscribe message.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Unsubscribe
+ * Client unsubscribes from session.
+ *
+ * Response: Acknowledgement with event set to protocol::type::Unsubscribe.
  */
 struct Unsubscribe
 	: Message//, MemoryStack<Unsubscribe>
@@ -532,7 +552,11 @@ struct Unsubscribe
 
 //! Admin Instruction message.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Instruction
+ * Only accepted from an admin, or from session owner for altering the session.
+ *
+ * Response: Error or Acknowledgement with event set to protocol::type::Instruction.
+ *
+ * @see http://drawpile.sourceforge.net/wiki/index.php/Admin_interface
  */
 struct Instruction
 	: Message//, MemoryStack<Instruction>
@@ -575,11 +599,10 @@ struct Instruction
 
 //! List sessions request.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#List_sessions
+ * Request to list the sessions on host.
  *
- * Client requests info for all sessions on server. Server should response with
- * sequential SessionInfo messages for all sessions, and append ACK after all sessions
- * have been described to mark the end of list.
+ * Response: sequential SessionInfo messages for all sessions,
+ * followed by Acknowledgement with event set to protocol::type::ListSessions.
  */
 struct ListSessions
 	: Message//, MemoryStack<ListSessions>
@@ -601,7 +624,7 @@ struct ListSessions
 
 //! Cancel instruction.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Cancel
+ * Cancels the last request (such as Synchronize).
  */
 struct Cancel
 	: Message//, MemoryStack<Cancel>
@@ -623,7 +646,9 @@ struct Cancel
 
 //! User Info message.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#User_info
+ * Modifiers: protocol::message::isUser
+ *
+ * Response: none
  */
 struct UserInfo
 	: Message//, MemoryStack<UserInfo>
@@ -643,9 +668,9 @@ struct UserInfo
 	uint8_t
 		//! Session ID
 		session_id,
-		//! User mode flags (see protocol::user for full list)
+		//! User mode flags (protocol::user)
 		mode,
-		//! User event (see protocol::user_event for full list)
+		//! User event (protocol::user_event)
 		event,
 		//! Name length in bytes.
 		length;
@@ -662,6 +687,11 @@ struct UserInfo
 };
 
 //! Host info message
+/**
+ * Describes host limits, capabilities and load.
+ *
+ * Response: none
+ */
 struct HostInfo
 	: Message//, MemoryStack<HostInfo>
 {
@@ -688,15 +718,15 @@ struct HostInfo
 		sessionLimit,
 		//! Connected users.
 		users,
-		//! Max connected users (1 always reserved for admin over this).
+		//! Max connected users
 		userLimit,
 		//! User/session name length limit.
 		nameLenLimit,
 		//! Max session subscriptions per user.
 		maxSubscriptions,
-		//! Server operation flags (see protocol::requirements).
+		//! Server operation flags (protocol::requirements).
 		requirements,
-		//! Extension support (see protocol::extensions).
+		//! Extension support (protocol::extensions).
 		extensions;
 	
 	/* functions */
@@ -719,10 +749,10 @@ struct SessionInfo
 		owner(protocol::null_user),
 		users(0),
 		limit(0),
-		uflags(protocol::user::None),
+		mode(protocol::user::None),
 		flags(protocol::session::None),
 		length(0),
-		name(0)
+		title(0)
 	{ }
 	
 	~SessionInfo() throw() { /* delete [] name; */ }
@@ -739,21 +769,21 @@ struct SessionInfo
 		height;
 	
 	uint8_t
-		//! Session owner user identifier.
+		//! Session owner ID.
 		owner,
-		//! Session users.
+		//! Number of subscribed users.
 		users,
-		//! Session user limit.
+		//! User limit.
 		limit,
-		//! Default user flags.
-		uflags,
+		//! Default user mode.
+		mode,
 		//! Session flags.
 		flags,
-		//! Session name length.
+		//! Title length.
 		length;
 	
 	//! Session name.
-	char* name;
+	char* title;
 	
 	/* functions */
 	
@@ -764,6 +794,9 @@ struct SessionInfo
 };
 
 //! Acknowledgement message.
+/**
+ * Acknowledges some action or event.
+ */
 struct Acknowledgement
 	: Message //, MemoryStack<Acknowledgement>
 {
@@ -776,7 +809,7 @@ struct Acknowledgement
 	
 	/* unique data */
 	
-	//! Event identifier.
+	//! Event identifier for which this is an acknowledgement for.
 	uint8_t event;
 	
 	/* functions */
@@ -788,6 +821,9 @@ struct Acknowledgement
 };
 
 //! Error message.
+/**
+ * Arbitrary error code message.
+ */
 struct Error
 	: Message //, MemoryStack<Error>
 {
@@ -800,7 +836,7 @@ struct Error
 	
 	/* unique data */
 	
-	//! Error code.
+	//! Error code (protocol::error).
 	uint16_t code;
 	
 	/* functions */
@@ -812,6 +848,18 @@ struct Error
 };
 
 //! Deflate Extension message.
+/**
+ * Contains an arbitrary number of messages compressed using Deflate algorithm.
+ * Compression levels of 5 to 8 are recommended. This message is decompressed at
+ * the host for proper propagation of the contained messages. The data inside may
+ * contain any and all types of messages except raster message which is already
+ * compressed and would not benefit from this. It is also recommended that the
+ * minimum amount of data to be compressed is at least 300 bytes or so. The only
+ * limit to this is that capacity of uncompressed size MUST NOT be exceeded
+ * (about 65kbytes).
+ *
+ * Response: none
+ */
 struct Deflate
 	: Message //, MemoryStack<Deflate>
 {
@@ -827,9 +875,9 @@ struct Deflate
 	/* unique data */
 	
 	uint16_t
-		//! Size of the data when uncompressed.
+		//! Size of the uncompressed data.
 		uncompressed,
-		//! Data length.
+		//! Compressed data length.
 		length;
 	
 	//! Compressed data.
@@ -845,7 +893,8 @@ struct Deflate
 
 //! Chat Extension message.
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Chat
+ * Sends a text string to be propagated to other users.
+ * Client MUST NOT send chat messages with 0 length.
  */
 struct Chat
 	: Message //, MemoryStack<Chat>
@@ -867,7 +916,7 @@ struct Chat
 		//! Message string length.
 		length;
 	
-	//! Message string data.
+	//! Message string (in UTF-8 format).
 	char* data;
 	
 	/* functions */
@@ -880,7 +929,7 @@ struct Chat
 
 //! Shared Palette message (proposed).
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Palette
+ * Contains partial data of the shared palette
  */
 struct Palette
 	: Message//, MemoryStack<Palette>
@@ -915,7 +964,10 @@ struct Palette
 
 //! Session selector
 /**
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Palette
+ * Client tells which session any subsequent packages
+ * (marked with the session modifier) are part of.
+ *
+ * Response: Error or Acknowledgement with event set to protocol::type::SessionSelect.
  */
 struct SessionSelect
 	: Message//, MemoryStack<SessionSelect>

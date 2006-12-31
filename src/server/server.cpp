@@ -346,7 +346,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	{
 	case protocol::type::Acknowledgement:
 		std::cout << "Acknowledgement" << std::endl;
-		
+		// for what?
 		break;
 	case protocol::type::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
@@ -373,9 +373,9 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				nfo->owner = si->second->owner;
 				nfo->users = si->second->users.size();
 				nfo->limit = si->second->limit;
-				nfo->uflags = si->second->mode;
+				nfo->mode = si->second->mode;
 				nfo->length = si->second->len;
-				nfo->name = si->second->title;
+				nfo->title = si->second->title;
 				
 				uSendMsg(usr, nfo);
 			}
