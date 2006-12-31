@@ -97,7 +97,7 @@ int CSHA1::SHABLK0(int i) throw()
 	}
 }
 
-void CSHA1::Transform(uint32_t *state, uint8_t *buffer) throw()
+void CSHA1::Transform(uint32_t *state, const uint8_t *buffer) throw()
 {
 	// Copy state[] to working vars
 	uint32_t a = state[0], b = state[1], c = state[2], d = state[3], e = state[4];
@@ -140,7 +140,7 @@ void CSHA1::Transform(uint32_t *state, uint8_t *buffer) throw()
 }
 
 // Use this function to hash in binary data and strings
-void CSHA1::Update(uint8_t *data, uint32_t len) throw()
+void CSHA1::Update(const uint8_t *data, uint32_t len) throw()
 {
 	assert(len > 0);
 	assert(data != 0);

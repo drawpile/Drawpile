@@ -33,15 +33,15 @@ public:
 	
 	uint32_t m_state[5];
 	uint32_t m_count[2];
-	uint32_t __reserved1[1];
+	//uint32_t __reserved1[1];
 	uint8_t  m_buffer[64];
 	uint8_t  m_digest[20];
-	uint32_t __reserved2[3];
+	//uint32_t __reserved2[3];
 
 	void Reset() throw();
 
 	// Update the hash value
-	void Update(uint8_t *data, uint32_t len) throw();
+	void Update(const uint8_t *data, uint32_t len) throw();
 
 	// Finalize hash and report
 	void Final() throw();
@@ -55,7 +55,7 @@ private:
 	int SHABLK0(int i) throw();
 	
 	// Private SHA-1 transformation
-	void Transform(uint32_t *state, uint8_t *buffer) throw();
+	void Transform(uint32_t *state, const uint8_t *buffer) throw();
 	
 	#ifndef NDEBUG
 	bool finalized;
