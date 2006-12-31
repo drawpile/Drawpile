@@ -21,12 +21,13 @@
 #include <QDebug>
 #include <memory>
 
-#include <netinet/in.h>
+#include "../config.h"
 
 #include "network.h"
 #include "netstate.h"
 #include "../shared/protocol.h"
 #include "../shared/protocol.admin.h"
+#include "../shared/templates.h" // for bswap
 
 namespace network {
 
@@ -343,8 +344,10 @@ void SessionState::create()
 	QByteArray title = title_.toUtf8();
 	char *data = new char[sizeof(width_)+sizeof(height_)+title.length()];
 	unsigned int off = 0;
-	quint16 width = htons(width_);
-	quint16 height = htons(height_);
+	quint16 width = width_;
+	quint16 height = height_;
+	bswap(width);
+	bswap(height);
 	memcpy(data+off, &width, sizeof(width)); off += sizeof(width);
 	memcpy(data+off, &height, sizeof(height)); off += sizeof(height);
 	memcpy(data+off, title.constData(), title.length()); off += title.length();
