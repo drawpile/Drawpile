@@ -661,7 +661,7 @@ struct UserInfo
 		name(0)
 	{ }
 	
-	~UserInfo() throw() { /* delete [] name; */ }
+	~UserInfo() throw() { delete [] name; }
 	
 	/* unique data */
 	
@@ -755,7 +755,7 @@ struct SessionInfo
 		title(0)
 	{ }
 	
-	~SessionInfo() throw() { /* delete [] name; */ }
+	~SessionInfo() throw() { delete [] name; }
 	
 	/* unique data */
 	
@@ -906,7 +906,7 @@ struct Chat
 		data(0)
 	{ }
 	
-	~Chat() throw() { /* delete [] data; */ }
+	~Chat() throw() { delete [] data; }
 	
 	/* unique data */
 	
@@ -916,7 +916,7 @@ struct Chat
 		//! Message string length.
 		length;
 	
-	//! Message string (in UTF-8 format).
+	//! Message string (in UTF-8 format, or UTF-16 if the server so requires).
 	char* data;
 	
 	/* functions */
