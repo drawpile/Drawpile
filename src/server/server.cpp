@@ -33,6 +33,7 @@
 #include "server.h"
 
 #include "../shared/templates.h"
+#include "../shared/protocol.admin.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
 #include "../shared/protocol.h" // Message()
@@ -334,10 +335,66 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
 	
-	// TODO
+	assert(usr->state == uState::active);
+	assert(usr->inMsg != 0);
 	
+	// TODO
+	switch (usr->inMsg->type)
+	{
+	case protocol::type::Acknowledgement:
+		std::cout << "Acknowledgement" << std::endl;
+		
+		break;
+	case protocol::type::Unsubscribe:
+		std::cout << "Unsubscribe" << std::endl;
+		
+		break;
+	case protocol::type::Subscribe:
+		std::cout << "Subscribe" << std::endl;
+		
+		break;
+	case protocol::type::ListSessions:
+		std::cout << "List Sessions" << std::endl;
+		
+		break;
+	case protocol::type::Instruction:
+		std::cout << "Instruction" << std::endl;
+		uHandleInstruction(usr);
+		break;
+	default:
+		std::cerr << "Unexpected or unknown message type" << std::endl;
+		break;
+	}
 	
 	uRemove(usr);
+}
+
+void Server::uHandleInstruction(User* usr) throw()
+{
+	assert(usr != 0);
+	assert(usr->inMsg != 0);
+	assert(usr->inMsg->type == protocol::type::Instruction);
+	
+	protocol::Instruction* m = static_cast<protocol::Instruction*>(usr->inMsg);
+	
+	//fIsSet(usr->mode, protocol::user::Administrator);
+	
+	using std::string;
+	
+	string str(m->data, m->length);
+	
+	string::size_type off = str.find_first_of(protocol::admin::separator);
+	if (off == string::npos)
+	{
+		protocol::Error* errmsg = new protocol::Error(protocol::error::ParseFailure);
+		
+		errmsg->code = protocol::error::ParseFailure;
+		
+		uSendMsg(usr, errmsg);
+		return;
+	}
+	
+	
 }
 
 void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
