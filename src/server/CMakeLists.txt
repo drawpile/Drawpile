@@ -7,6 +7,7 @@ set (
 	event.h
 	sockets.h
 	buffer.h
+	session.h
 )
 
 set (
