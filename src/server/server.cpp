@@ -440,8 +440,11 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			if (s->limit < 2)
 			{
-				std::cerr << "Attempted to create user session." << std::endl;
+				std::cerr << "Attempted to create single user session." << std::endl;
 				delete s;
+				protocol::Error* errmsg = new protocol::Error;
+				errmsg->code = protocol::error::InvalidData;
+				uSendMsg(usr, errmsg);
 				return;
 			}
 			
@@ -482,6 +485,10 @@ void Server::uHandleInstruction(User* usr) throw()
 			std::cout << "Session created: " << s->id << std::endl
 				<< "With dimensions: " << s->width << " x " << s->height << std::endl;
 			
+			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+			ack->event = protocol::type::Instruction;
+			uSendMsg(usr, ack);
+			
 			// TODO
 			//registerSession(s);
 		}
@@ -500,6 +507,10 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			m->data = 0;
 			m->length = 0;
+			
+			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+			ack->event = protocol::type::Instruction;
+			uSendMsg(usr, ack);
 		}
 		else
 		{
