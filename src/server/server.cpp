@@ -267,6 +267,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 		
 		usr->input.write(rb);
 		
+		if (!usr->inMsg)
 		{
 			try {
 				usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
@@ -277,6 +278,12 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 				uRemove(usr);
 				return;
 			}
+		}
+		else if (usr->inMsg->type != usr->input.rpos[0])
+		{
+			std::cerr << "Attempted receiving different message type." << std::endl;
+			uRemove(usr);
+			return;
 		}
 		
 		std::cout << "Verify size" << std::endl;
@@ -303,8 +310,11 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 			break;
 		}
 		
-		delete usr->inMsg;
-		usr->inMsg = 0;
+		if (usr->inMsg)
+		{
+			delete usr->inMsg;
+			usr->inMsg = 0;
+		}
 	}
 	else if (rb == 0)
 	{
@@ -387,12 +397,13 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			ack->event = protocol::type::ListSessions;
 			
 			uSendMsg(usr, ack);
+			return;
 		}
 		break;
 	case protocol::type::Instruction:
 		std::cout << "Instruction" << std::endl;
 		uHandleInstruction(usr);
-		break;
+		return;
 	default:
 		std::cerr << "Unexpected or unknown message type" << std::endl;
 		break;
@@ -404,8 +415,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 void Server::uHandleInstruction(User* usr) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uHandleInstruction(user id: "
-		<< static_cast<int>(usr->id) << ")" << std::endl;
+	std::cout << "Server::uHandleInstruction()" << std::endl;
 	#endif
 	
 	assert(usr != 0);
@@ -482,17 +492,16 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			s->owner = usr->id;
 			
+			// TODO
+			//registerSession(s);
 			session_id_map.insert( std::make_pair(s->id, s) );
 			
-			std::cout << "Session created: " << s->id << std::endl
+			std::cout << "Session created: " << static_cast<int>(s->id) << std::endl
 				<< "With dimensions: " << s->width << " x " << s->height << std::endl;
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::Instruction;
 			uSendMsg(usr, ack);
-			
-			// TODO
-			//registerSession(s);
 		}
 		break;
 	case protocol::admin::command::Destroy:
