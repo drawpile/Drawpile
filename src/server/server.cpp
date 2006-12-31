@@ -407,29 +407,38 @@ void Server::uHandleInstruction(User* usr) throw()
 					return;
 				}
 				
-				uint16_t width, height;
-				size_t crop = sizeof(width) + sizeof(height);
+				Session *s = new Session;
+				s->id = session_id;
+				s->limit = m->user;
+				s->mode = m->aux_data;
+				
+				if (s->limit < 2)
+				{
+					std::cerr << "Attempted to create user session." << std::endl;
+					delete s;
+					return;
+				}
+				
+				size_t crop = sizeof(s->width) + sizeof(s->height);
 				if (m->length < crop)
 				{
 					std::cerr << "Less data than required" << std::endl;
 					uRemove(usr);
+					delete s;
 					return;
 				}
 				
-				memcpy_t(width, m->data);
-				memcpy_t(height, m->data+sizeof(width));
+				memcpy_t(s->width, m->data);
+				memcpy_t(s->height, m->data+sizeof(s->width));
 				
-				if (width < min_dimension or height < min_dimension)
+				if (s->width < min_dimension or s->height < min_dimension)
 				{
 					protocol::Error* errmsg = new protocol::Error;
 					errmsg->code = protocol::error::TooSmall;
 					uSendMsg(usr, errmsg);
+					delete s;
 					return;
 				}
-				
-				Session *s = new Session;
-				s->id = session_id;
-				s->limit = m->aux_data;
 				
 				if (m->length > crop)
 				{
