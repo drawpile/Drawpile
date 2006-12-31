@@ -36,133 +36,49 @@
 namespace protocol
 {
 
-//! Admin Instruction message command words.
-/**
- * For now, the format of admin instructions is as follows.
- * \code
- * [instruction target][separator][command] [instruction specific data]
- * \endcode
- *
- * For example:
- * \code
- * session:create 200,200,8,Faust's session
- * \endcode
- *
- * All of the admin instructions emit ACK/Instruction response, but some will
- * give some additional response. Error will be returned in case there was a
- * problem interpreting the instruction or you had insufficient rights for it.
- *
- * Session owner may alter the session she is the owner of.
- * Since observer, mute, deaf and such statuses are hostwide, they can't be
- * enforced on per-session basis.
- */
+//! Admin interface
 namespace admin
 {
 
-//! Target/Command separator
-const char separator[] = ":";
+//! Command targets
+namespace target
+{
 
-//! Arg separator
-const char argsep[] = ",";
+const uint8_t
+	//! No target
+	None = 0,
+	
+	//! Server
+	Server = 1,
+	//! User
+	User = 2,
+	//! Session
+	Session = 3;
 
+}
 
-//! Set user as instruction target.
-const char user[] = "user";
+//! Commands
+namespace command
+{
 
-//! Set server as instruction target.
-const char server[] = "server";
+const uint8_t
+	//! No command
+	None = 0,
+	
+	//! Create session
+	Create = 1,
+	//! Destroy session
+	Destroy = 2,
+	//! Alter session
+	Alter = 3,
+	
+	//! Set password
+	Password = 7,
+	
+	//! Shutdown server
+	Shutdown = 9;
 
-//! Set session user as instruction target.
-const char session[] = "session";
-
-
-//! Bool.true
-const char bool_true[] = "true";
-
-//! Bool.false
-const char bool_false[] = "false";
-
-
-//! Create session
-/**
- * \code
- * session:create width,height,user_limit,name
- * \endcode
- *
- * Response: SessionInfo
- */
-const char create[] = "create";
-
-//! Alter session
-/**
- * \code
- * session:alter session_id width,height,user_limit,name
- * \endcode
- *
- * Session's board size can only be increased!
- */
-const char alter[] = "alter";
-
-//! Destroy session
-/**
- * \code
- * session:destroy session_id
- * \endcode
- */
-const char destroy[] = "destroy";
-
-//! Make session persistent
-/**
- * \code
- * session:persist session_id
- * \endcode
- *
- * Response: SessionInfo
- */
-const char persist[] = "persist";
-
-
-
-
-//! Kick user
-/**
- * \code
- * user:kick session_id user_id
- * \endcode
- *
- * Response: UserInfo with updated status
- */
-const char kick[] = "kick";
-
-//! User/Observe
-/**
- * \code
- * user:observe session_id user_id bool
- * \endcode
- *
- * Response: UserInfo with updated status
- */
-const char observe[] = "observe";
-
-//! Mute user
-/**
- * \code
- * user:mute session_id user_id bool
- * \endcode
- *
- * Response: UserInfo with updated status
- */
-const char mute[] = "mute";
-
-//! User/Deafen
-/**
- * \code
- * user:deaf session_id user_id bool
- * \endcode
- *
- * Response: UserInfo with updated status
- */
-const char deaf[] = "deaf";
+}
 
 } // namespace admin
 

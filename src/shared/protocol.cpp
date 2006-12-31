@@ -598,6 +598,14 @@ size_t Instruction::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
+	
+	memcpy_t(target, buf+i); i += sizeof(target);
+	memcpy_t(command, buf+i); i += sizeof(command);
+	memcpy_t(session, buf+i); i += sizeof(session);
+	memcpy_t(user, buf+i); i += sizeof(user);
+	memcpy_t(action, buf+i); i += sizeof(action);
+	memcpy_t(aux_data, buf+i); i += sizeof(aux_data);
+	
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	data = new char[length];
@@ -611,15 +619,19 @@ size_t Instruction::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	if (len < sizeof(type) + sizeof(length))
-		return sizeof(type) + sizeof(length);
+	size_t off = sizeof(type) + sizeof(target) + sizeof(command)
+		+ sizeof(session) + sizeof(user) + sizeof(action)
+		+ sizeof(aux_data) + sizeof(length);
+	
+	if (len < off)
+		return off;
 	else
 	{
 		uint8_t rlen;
 		
-		memcpy_t(rlen, buf+sizeof(type));
+		memcpy_t(rlen, buf+off);
 		
-		return sizeof(type) + sizeof(length) + rlen;
+		return off + rlen;
 	}
 }
 
@@ -627,15 +639,27 @@ size_t Instruction::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, length);
-	memcpy(buf+sizeof(length), data, length);
+	size_t i=0;
 	
-	return sizeof(length) + length;
+	memcpy_t(buf+i, target); i += sizeof(target);
+	memcpy_t(buf+i, command); i += sizeof(command);
+	memcpy_t(buf+i, session); i += sizeof(session);
+	memcpy_t(buf+i, user); i += sizeof(user);
+	memcpy_t(buf+i, action); i += sizeof(action);
+	memcpy_t(buf+i, aux_data); i += sizeof(aux_data);
+	
+	memcpy_t(buf+i, length); i += sizeof(length);
+	
+	memcpy(buf+i, data, length); i += length;
+	
+	return i;
 }
 
 size_t Instruction::payloadLength() const throw()
 {
-	return sizeof(length) + length;
+	return sizeof(target) + sizeof(command)
+		+ sizeof(session) + sizeof(user) + sizeof(action)
+		+ sizeof(aux_data) + sizeof(length) + length;
 }
 
 /*

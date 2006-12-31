@@ -547,10 +547,24 @@ struct Instruction
 	
 	/* unique data */
 	
-	//! Instruction string length.
+	uint8_t
+		//! protocol::admin::target
+		target,
+		//! protocol::admin::command
+		command,
+		//! target session
+		session,
+		//! target user
+		user,
+		//! action to perform
+		action,
+		//! aux data
+		aux_data;
+	
+	//! arb data length
 	uint8_t length;
 	
-	//! Instruction string data.
+	//! arb data
 	char* data;
 	
 	/* functions */
