@@ -39,8 +39,7 @@ struct Buffer
 		std::cout << "Buffer::Buffer(*buf, " << len << ")" << std::endl;
 		#endif
 		
-		assert(buf != 0 && len == 0);
-		assert(buf == 0 && len > 0);
+		assert((!buf and len == 0) or (buf and len > 0));
 	}
 	
 	//! dtor
