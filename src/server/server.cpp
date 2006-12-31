@@ -377,24 +377,58 @@ void Server::uHandleInstruction(User* usr) throw()
 	
 	protocol::Instruction* m = static_cast<protocol::Instruction*>(usr->inMsg);
 	
-	//fIsSet(usr->mode, protocol::user::Administrator);
-	
-	using std::string;
-	
-	string str(m->data, m->length);
-	
-	string::size_type off = str.find_first_of(protocol::admin::separator);
-	if (off == string::npos)
+	if (!fIsSet(usr->mode, protocol::user::Administrator))
 	{
-		protocol::Error* errmsg = new protocol::Error(protocol::error::ParseFailure);
-		
-		errmsg->code = protocol::error::ParseFailure;
-		
-		uSendMsg(usr, errmsg);
+		std::cout << "Non-admin tries to pass instructions" << std::endl;
+		uRemove(usr);
 		return;
 	}
 	
-	
+	switch (m->target)
+	{
+	case protocol::admin::target::Session:
+		switch (m->command)
+		{
+		case protocol::admin::command::Create:
+			// TODO
+			break;
+		case protocol::admin::command::Destroy:
+			// TODO
+			break;
+		case protocol::admin::command::Alter:
+			// TODO
+			break;
+		case protocol::admin::command::Password:
+			if (m->session == protocol::Global)
+			{
+				password = m->data;
+				pw_len = m->length;
+				
+				m->data = 0;
+				m->length = 0;
+			}
+			else
+			{
+				// TODO
+			}
+			break;
+		default:
+			std::cerr << "Unrecognized command: "
+				<< static_cast<int>(m->command) << std::endl;
+			break;
+		}
+		break;
+	case protocol::admin::target::Server:
+		// TODO
+		break;
+	case protocol::admin::target::User:
+		// TODO
+		break;
+	default:
+		std::cerr << "Unrecognized target: "
+			<< static_cast<int>(m->target) << std::endl;
+		break;
+	}
 }
 
 void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
