@@ -21,8 +21,11 @@
 #include <cstddef> // size_t?
 #include <cassert>
 
+#include "../shared/memstack.h"
+
 //! Circular buffer.
 struct Buffer
+	//: MemoryStack<Buffer>
 {
 	//! ctor with buffer assignment
 	Buffer(char* buf=0, const size_t len=0) throw()

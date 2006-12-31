@@ -22,17 +22,17 @@
 
 #include "buffer.h"
 
+#include "../shared/memstack.h"
+
 #include "../shared/protocol.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.flags.h"
 
 #include "sockets.h"
 
-//! User session data
-/**  */
+// User session data
 struct UserData
 {
-	//! ctor
 	UserData() throw()
 		: session(protocol::Global),
 		mode(protocol::user::None),
@@ -40,52 +40,43 @@ struct UserData
 	{
 	}
 	
-	/*
-	UserData(const UserData& ud)
-		: session(ud.session),
-		mode(ud.mode),
-		owner(ud.owner)
-	{
-	}
-	*/
-	
-	//! dtor
 	~UserData() throw()
 	{
 	}
 	
-	//! Session identifier
+	// Session identifier
 	uint8_t session;
 	
-	//! User mode within session
+	// User mode within session
 	uint8_t mode;
 	
-	//! Is the owner of the session
+	// Is the owner of the session
 	bool owner;
 };
 
+// User states
 namespace uState
 {
-	//! When user has just connected
+	// When user has just connected
 	const uint8_t init = 3;
 	
-	//! User has been verified to be using correct protocol.
+	// User has been verified to be using correct protocol.
 	const uint8_t verified = 2;
 	
-	//! Waiting for proper user info
+	// Waiting for proper user info
 	const uint8_t login = 1;
 	
-	//! Waiting for password
+	// Waiting for password
 	const uint8_t login_auth = 9;
 	const uint8_t lobby_auth = 8;
 	
-	//! Normal operation
+	// Normal operation
 	const uint8_t active = 0;
 }
 
-//! User information
-/**  */
+// User information
 struct User
+	//: MemoryStack<User>
 {
 	User(uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
 		: sock(nsock),
@@ -101,7 +92,6 @@ struct User
 		#endif
 	}
 	
-	//! dtor
 	~User() throw()
 	{
 		#ifndef NDEBUG
@@ -119,40 +109,40 @@ struct User
 		}
 	}
 	
-	//! Socket
+	// Socket
 	Socket *sock;
 	
-	//! User identifier
+	// User identifier
 	uint8_t id;
 	
-	//! Name length
+	// Name length
 	uint8_t nlen;
 	
-	//! User name
+	// User name
 	char* name;
 	
-	//! Currently active session
+	// Currently active session
 	uint8_t session;
 	
-	//! User mode
+	// User mode
 	uint8_t mode;
 	
-	//! User state
+	// User state
 	uint8_t state;
 	
-	//! Subscribed sessions
+	// Subscribed sessions
 	std::map<uint8_t, UserData> sessions;
 	
-	//! Output buffers
+	// Output buffers
 	std::queue<Buffer*> buffers;
 	
-	//! Event I/O registered events.
+	// Event I/O registered events.
 	int events;
 	
-	//! Input buffer
+	// Input buffer
 	Buffer input;
 	
-	//! Currently incoming message.
+	// Currently incoming message.
 	protocol::Message *inMsg;
 };
 
