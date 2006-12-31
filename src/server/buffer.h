@@ -24,33 +24,20 @@
 //! Circular buffer.
 struct Buffer
 {
-	//! ctor
-	Buffer() throw()
-		: data(0),
-		wpos(0),
-		rpos(0),
-		left(0),
-		size(0)
-	{
-		#ifndef NDEBUG
-		std::cout << "Buffer::Buffer()" << std::endl;
-		#endif
-	}
-	
 	//! ctor with buffer assignment
-	Buffer(char* buf, const size_t buflen) throw()
+	Buffer(char* buf=0, const size_t len=0) throw()
 		: data(buf),
 		wpos(buf),
 		rpos(buf),
 		left(0),
-		size(buflen)
+		size(len)
 	{
 		#ifndef NDEBUG
-		std::cout << "Buffer::Buffer(*buf, " << buflen << ")" << std::endl;
+		std::cout << "Buffer::Buffer(*buf, " << len << ")" << std::endl;
 		#endif
 		
-		assert(buf != 0);
-		assert(buflen > 1);
+		assert(buf != 0 && len == 0);
+		assert(buf == 0 && len > 0);
 	}
 	
 	//! dtor

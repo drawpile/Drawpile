@@ -87,22 +87,7 @@ namespace uState
 /**  */
 struct User
 {
-	//! ctor
-	User() throw()
-		: sock(0),
-		id(0),
-		nlen(0),
-		name(0),
-		state(uState::init),
-		inMsg(0)
-	{
-		#ifndef NDEBUG
-		std::cout << "User::User()" << std::endl;
-		#endif
-	}
-	
-	//! ctor
-	User(uint8_t _id, Socket* nsock) throw()
+	User(uint8_t nid=protocol::null_user, Socket* nsock=0) throw()
 		: sock(nsock),
 		id(_id),
 		nlen(0),
