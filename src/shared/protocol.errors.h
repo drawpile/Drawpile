@@ -79,8 +79,8 @@ const uint16_t
 	
 	/* Admin errors. */
 	
-	//! Unrecognized instruction target.
-	UnrecognizedTarget = 50,
+	//! Invalid data value in the message
+	InvalidData = 50,
 	//! Unrecognized instruction command.
 	UnrecognizedCommand = 52,
 	//! Garbage in instruction, couldn't parse.
