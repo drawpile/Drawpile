@@ -556,10 +556,10 @@ struct Instruction
 		session,
 		//! target user
 		user,
-		//! action to perform
-		action,
-		//! aux data
-		aux_data;
+		//! aux_data
+		aux_data,
+		//! aux data 2
+		aux_data2;
 	
 	//! arb data length
 	uint8_t length;

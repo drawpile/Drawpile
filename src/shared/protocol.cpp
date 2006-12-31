@@ -603,8 +603,8 @@ size_t Instruction::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	memcpy_t(command, buf+i); i += sizeof(command);
 	memcpy_t(session, buf+i); i += sizeof(session);
 	memcpy_t(user, buf+i); i += sizeof(user);
-	memcpy_t(action, buf+i); i += sizeof(action);
 	memcpy_t(aux_data, buf+i); i += sizeof(aux_data);
+	memcpy_t(aux_data2, buf+i); i += sizeof(aux_data2);
 	
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
@@ -620,8 +620,8 @@ size_t Instruction::reqDataLen(const char *buf, size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	size_t off = sizeof(type) + sizeof(target) + sizeof(command)
-		+ sizeof(session) + sizeof(user) + sizeof(action)
-		+ sizeof(aux_data) + sizeof(length);
+		+ sizeof(session) + sizeof(user) + sizeof(aux_data)
+		+ sizeof(aux_data2) + sizeof(length);
 	
 	if (len < off)
 		return off;
@@ -645,8 +645,8 @@ size_t Instruction::serializePayload(char *buf) const throw()
 	memcpy_t(buf+i, command); i += sizeof(command);
 	memcpy_t(buf+i, session); i += sizeof(session);
 	memcpy_t(buf+i, user); i += sizeof(user);
-	memcpy_t(buf+i, action); i += sizeof(action);
 	memcpy_t(buf+i, aux_data); i += sizeof(aux_data);
+	memcpy_t(buf+i, aux_data2); i += sizeof(aux_data2);
 	
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
@@ -658,8 +658,8 @@ size_t Instruction::serializePayload(char *buf) const throw()
 size_t Instruction::payloadLength() const throw()
 {
 	return sizeof(target) + sizeof(command)
-		+ sizeof(session) + sizeof(user) + sizeof(action)
-		+ sizeof(aux_data) + sizeof(length) + length;
+		+ sizeof(session) + sizeof(user) + sizeof(aux_data)
+		+ sizeof(aux_data2) + sizeof(length) + length;
 }
 
 /*
