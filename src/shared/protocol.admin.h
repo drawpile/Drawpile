@@ -60,10 +60,11 @@ namespace admin
 {
 
 //! Target/Command separator
-const char separator = ":";
+const char separator[] = ":";
 
 //! Arg separator
-const char argsep = ",";
+const char argsep[] = ",";
+
 
 //! Set user as instruction target.
 const char user[] = "user";
@@ -74,11 +75,13 @@ const char server[] = "server";
 //! Set session user as instruction target.
 const char session[] = "session";
 
+
 //! Bool.true
 const char bool_true[] = "true";
 
 //! Bool.false
 const char bool_false[] = "false";
+
 
 //! Create session
 /**
