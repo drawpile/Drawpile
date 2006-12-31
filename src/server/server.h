@@ -36,6 +36,7 @@
 #include "sockets.h"
 #include "event.h"
 #include "user.h"
+#include "session.h"
 
 #include "../shared/protocol.h"
 
@@ -73,7 +74,12 @@ protected:
 	
 	// FD to user mapping
 	std::map<int, User*> users;
+	
+	// User ID to user mapping
 	std::map<uint8_t, User*> user_id_map;
+	
+	// Session ID to session mapping
+	std::map<uint8_t, Session*> session_id_map;
 	
 	// listening socket
 	Socket lsock;
@@ -87,7 +93,8 @@ protected:
 	
 	uint16_t
 		hi_port,
-		lo_port;
+		lo_port,
+		min_dimension;
 	
 	uint8_t
 		requirements,
