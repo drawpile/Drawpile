@@ -755,7 +755,7 @@ struct SessionInfo
 		title(0)
 	{ }
 	
-	~SessionInfo() throw() { delete [] name; }
+	~SessionInfo() throw() { delete [] title; }
 	
 	/* unique data */
 	
