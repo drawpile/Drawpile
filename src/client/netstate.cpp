@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <memory>
 
-#include "../config.h"
+#include "../../config.h"
 
 #include "network.h"
 #include "netstate.h"
