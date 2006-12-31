@@ -59,8 +59,10 @@ const uint16_t
 	
 	/* Server status things that can be considered errors. */
 	
-	//! Server full.
-	Overloaded = 7,
+	//! User limit reached
+	UserLimit = 7,
+	//! Session limit reached
+	SessionLimit = 8,
 	
 	/* Session errors. */
 	
@@ -83,6 +85,11 @@ const uint16_t
 	UnrecognizedCommand = 52,
 	//! Garbage in instruction, couldn't parse.
 	ParseFailure = 55,
+	
+	/* Canvas related */
+	
+	//! Too small canvas
+	TooSmall = 57,
 	
 	/* Auth errors. */ 
 	
