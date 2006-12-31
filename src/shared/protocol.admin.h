@@ -40,23 +40,6 @@ namespace protocol
 namespace admin
 {
 
-//! Command targets
-namespace target
-{
-
-const uint8_t
-	//! No target
-	None = 0,
-	
-	//! Server
-	Server = 1,
-	//! User
-	User = 2,
-	//! Session
-	Session = 3;
-
-}
-
 //! Commands
 namespace command
 {

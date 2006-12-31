@@ -548,8 +548,6 @@ struct Instruction
 	/* unique data */
 	
 	uint8_t
-		//! protocol::admin::target
-		target,
 		//! protocol::admin::command
 		command,
 		//! target session

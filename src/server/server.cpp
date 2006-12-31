@@ -390,109 +390,94 @@ void Server::uHandleInstruction(User* usr) throw()
 		return;
 	}
 	
-	switch (m->target)
+	switch (m->command)
 	{
-	case protocol::admin::target::Session:
-		switch (m->command)
+	case protocol::admin::command::Create:
 		{
-		case protocol::admin::command::Create:
+			uint8_t session_id = getSessionID();
+			
+			if (session_id == protocol::Global)
 			{
-				uint8_t session_id = getSessionID();
-				
-				if (session_id == protocol::Global)
-				{
-					protocol::Error* errmsg = new protocol::Error;
-					errmsg->code = protocol::error::SessionLimit;
-					uSendMsg(usr, errmsg);
-					return;
-				}
-				
-				Session *s = new Session;
-				s->id = session_id;
-				s->limit = m->user;
-				s->mode = m->aux_data;
-				
-				if (s->limit < 2)
-				{
-					std::cerr << "Attempted to create user session." << std::endl;
-					delete s;
-					return;
-				}
-				
-				size_t crop = sizeof(s->width) + sizeof(s->height);
-				if (m->length < crop)
-				{
-					std::cerr << "Less data than required" << std::endl;
-					uRemove(usr);
-					delete s;
-					return;
-				}
-				
-				memcpy_t(s->width, m->data);
-				memcpy_t(s->height, m->data+sizeof(s->width));
-				
-				bswap(s->width);
-				bswap(s->height);
-				
-				if (s->width < min_dimension or s->height < min_dimension)
-				{
-					protocol::Error* errmsg = new protocol::Error;
-					errmsg->code = protocol::error::TooSmall;
-					uSendMsg(usr, errmsg);
-					delete s;
-					return;
-				}
-				
-				if (m->length > crop)
-				{
-					s->title = new char[m->length - crop];
-					memcpy(s->title, m->data+crop, m->length-crop);
-				}
-				
-				session_id_map.insert( std::make_pair(s->id, s) );
-				
-				std::cout << "Session created: " << s->id << std::endl
-					<< "With dimensions: " << s->width << " x " << s->height << std::endl;
-				
-				// TODO
-				//registerSession(s);
+				protocol::Error* errmsg = new protocol::Error;
+				errmsg->code = protocol::error::SessionLimit;
+				uSendMsg(usr, errmsg);
+				return;
 			}
-			break;
-		case protocol::admin::command::Destroy:
+			
+			Session *s = new Session;
+			s->id = session_id;
+			s->limit = m->aux_data;
+			s->mode = m->aux_data2;
+			
+			if (s->limit < 2)
+			{
+				std::cerr << "Attempted to create user session." << std::endl;
+				delete s;
+				return;
+			}
+			
+			size_t crop = sizeof(s->width) + sizeof(s->height);
+			if (m->length < crop)
+			{
+				std::cerr << "Less data than required" << std::endl;
+				uRemove(usr);
+				delete s;
+				return;
+			}
+			
+			memcpy_t(s->width, m->data);
+			memcpy_t(s->height, m->data+sizeof(s->width));
+			
+			bswap(s->width);
+			bswap(s->height);
+			
+			if (s->width < min_dimension or s->height < min_dimension)
+			{
+				protocol::Error* errmsg = new protocol::Error;
+				errmsg->code = protocol::error::TooSmall;
+				uSendMsg(usr, errmsg);
+				delete s;
+				return;
+			}
+			
+			if (m->length > crop)
+			{
+				s->title = new char[m->length - crop];
+				memcpy(s->title, m->data+crop, m->length-crop);
+			}
+			
+			session_id_map.insert( std::make_pair(s->id, s) );
+			
+			std::cout << "Session created: " << s->id << std::endl
+				<< "With dimensions: " << s->width << " x " << s->height << std::endl;
+			
 			// TODO
-			break;
-		case protocol::admin::command::Alter:
-			// TODO
-			break;
-		case protocol::admin::command::Password:
-			if (m->session == protocol::Global)
-			{
-				password = m->data;
-				pw_len = m->length;
-				
-				m->data = 0;
-				m->length = 0;
-			}
-			else
-			{
-				// TODO
-			}
-			break;
-		default:
-			std::cerr << "Unrecognized command: "
-				<< static_cast<int>(m->command) << std::endl;
-			break;
+			//registerSession(s);
 		}
 		break;
-	case protocol::admin::target::Server:
+	case protocol::admin::command::Destroy:
 		// TODO
 		break;
-	case protocol::admin::target::User:
+	case protocol::admin::command::Alter:
 		// TODO
+		break;
+	case protocol::admin::command::Password:
+		if (m->session == protocol::Global)
+		{
+			password = m->data;
+			pw_len = m->length;
+			
+			m->data = 0;
+			m->length = 0;
+		}
+		else
+		{
+			// TODO
+		}
 		break;
 	default:
-		std::cerr << "Unrecognized target: "
-			<< static_cast<int>(m->target) << std::endl;
+		std::cerr << "Unrecognized command: "
+			<< static_cast<int>(m->command) << std::endl;
 		break;
 	}
 }
