@@ -51,6 +51,7 @@ Server::Server() throw()
 	name_len_limit(8),
 	hi_port(protocol::default_port),
 	lo_port(protocol::default_port),
+	min_dimension(400),
 	requirements(0),
 	extensions(0),
 	default_user_mode(protocol::user::None),
@@ -103,7 +104,7 @@ uint8_t Server::getSessionID() throw()
 		}
 	}
 	
-	return 0;
+	return protocol::Global;
 }
 
 void Server::freeUserID(uint8_t id) throw()
@@ -371,6 +372,11 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 
 void Server::uHandleInstruction(User* usr) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uHandleInstruction(user id: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
@@ -379,7 +385,7 @@ void Server::uHandleInstruction(User* usr) throw()
 	
 	if (!fIsSet(usr->mode, protocol::user::Administrator))
 	{
-		std::cout << "Non-admin tries to pass instructions" << std::endl;
+		std::cerr << "Non-admin tries to pass instructions" << std::endl;
 		uRemove(usr);
 		return;
 	}
@@ -391,6 +397,50 @@ void Server::uHandleInstruction(User* usr) throw()
 		{
 		case protocol::admin::command::Create:
 			// TODO
+			{
+				uint8_t session_id = getSessionID();
+				if (session_id == protocol::Global)
+				{
+					protocol::Error* errmsg = new protocol::Error;
+					errmsg->code = protocol::error::SessionLimit;
+					uSendMsg(usr, errmsg);
+					return;
+				}
+				
+				uint16_t width, height;
+				size_t crop = sizeof(width) + sizeof(height);
+				if (m->length < crop)
+				{
+					std::cerr << "Less data than required" << std::endl;
+					uRemove(usr);
+					return;
+				}
+				
+				memcpy_t(width, m->data);
+				memcpy_t(height, m->data+sizeof(width));
+				
+				if (width < min_dimension or height < min_dimension)
+				{
+					protocol::Error* errmsg = new protocol::Error;
+					errmsg->code = protocol::error::TooSmall;
+					uSendMsg(usr, errmsg);
+					return;
+				}
+				
+				Session *s = new Session;
+				s->id = session_id;
+				s->limit = m->aux_data;
+				
+				if (m->length > crop)
+				{
+					s->title = new char[m->length - crop];
+					memcpy(s->title, m->data+crop, m->length-crop);
+				}
+				
+				
+				
+				//registerSession(s);
+			}
 			break;
 		case protocol::admin::command::Destroy:
 			// TODO
@@ -692,9 +742,10 @@ void Server::uRemove(User* usr) throw()
 	
 	ev.remove(usr->sock->fd(), ev.write|ev.read);
 	
+	uint8_t id = usr->id;
 	freeUserID(usr->id);
 	
-	int id = usr->sock->fd();
+	int fd = usr->sock->fd();
 	#ifndef NDEBUG
 	std::cout << "Deleting user.." << std::endl;
 	#endif
@@ -703,7 +754,8 @@ void Server::uRemove(User* usr) throw()
 	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
 	#endif
-	users.erase(id);
+	users.erase(fd);
+	user_id_map.erase(id);
 }
 
 int Server::init() throw(std::bad_alloc)
