@@ -691,8 +691,9 @@ size_t UserInfo::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	memcpy_t(event, buf+i); i += sizeof(event);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
-	name = new char[length];
+	name = new char[length+1];
 	memcpy(name, buf+i, length); i += length;
+	name[length] = '\0';
 	
 	return i;
 }
@@ -811,8 +812,9 @@ size_t SessionInfo::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	memcpy_t(flags, buf+i); i += sizeof(flags);
 	memcpy_t(length, buf+i); i += sizeof(width);
 	
-	title = new char[length];
+	title = new char[length+1];
 	memcpy(title, buf+i, length); i += length;
+	title[length] = '\0';
 	
 	return i;
 }
@@ -1011,8 +1013,9 @@ size_t Chat::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	memcpy_t(session_id, buf+i); i += sizeof(session_id);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
-	data = new char[length];
+	data = new char[length+1];
 	memcpy(data, buf+i, length); i += length;
+	data[length] = '\0';
 	
 	return i;
 }
