@@ -396,9 +396,9 @@ void Server::uHandleInstruction(User* usr) throw()
 		switch (m->command)
 		{
 		case protocol::admin::command::Create:
-			// TODO
 			{
 				uint8_t session_id = getSessionID();
+				
 				if (session_id == protocol::Global)
 				{
 					protocol::Error* errmsg = new protocol::Error;
@@ -437,8 +437,12 @@ void Server::uHandleInstruction(User* usr) throw()
 					memcpy(s->title, m->data+crop, m->length-crop);
 				}
 				
+				session_id_map.insert( std::make_pair(s->id, s) );
 				
+				std::cout << "Session created: " << s->id << std::endl
+					<< "With dimensions: " << s->width << " x " << s->height << std::endl;
 				
+				// TODO
 				//registerSession(s);
 			}
 			break;
