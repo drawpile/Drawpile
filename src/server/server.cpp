@@ -358,7 +358,34 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::ListSessions:
 		std::cout << "List Sessions" << std::endl;
-		
+		{
+			protocol::SessionInfo *nfo = 0;
+			std::map<uint8_t, Session*>::iterator si(session_id_map.begin());
+			for (; si != session_id_map.end(); si++)
+			{
+				nfo = new protocol::SessionInfo;
+				
+				nfo->identifier = si->second->id;
+				
+				nfo->width = si->second->width;
+				nfo->height = si->second->height;
+				
+				nfo->owner = si->second->owner;
+				nfo->users = si->second->users.size();
+				nfo->limit = si->second->limit;
+				nfo->uflags = si->second->mode;
+				nfo->length = si->second->len;
+				nfo->name = si->second->title;
+				
+				uSendMsg(usr, nfo);
+			}
+			
+			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+			
+			ack->event = protocol::type::ListSessions;
+			
+			uSendMsg(usr, ack);
+		}
 		break;
 	case protocol::type::Instruction:
 		std::cout << "Instruction" << std::endl;
