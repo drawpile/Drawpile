@@ -448,6 +448,8 @@ void Server::uHandleInstruction(User* usr) throw()
 				memcpy(s->title, m->data+crop, m->length-crop);
 			}
 			
+			s->owner = usr->id;
+			
 			session_id_map.insert( std::make_pair(s->id, s) );
 			
 			std::cout << "Session created: " << s->id << std::endl
