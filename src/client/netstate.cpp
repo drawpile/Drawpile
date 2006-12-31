@@ -52,6 +52,9 @@ void HostState::receiveMessage()
 			case type::HostInfo:
 				handleHostInfo(static_cast<HostInfo*>(msg));
 				break;
+			case type::SessionInfo:
+				handleSessionInfo(static_cast<SessionInfo*>(msg));
+				break;
 			case type::Acknowledgement:
 				handleAck(static_cast<Acknowledgement*>(msg));
 				break;
@@ -61,16 +64,16 @@ void HostState::receiveMessage()
 			case type::Authentication:
 				handleAuthentication(static_cast<Authentication*>(msg));
 				break;
-								 
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
-				while(msg) {
-					protocol::Message *next = msg->next;
-					delete msg;
-					msg = next;
-				}
 				break;
 		}
+	}
+	// Free the message(s)
+	while(msg) {
+		protocol::Message *next = msg->next;
+		delete msg;
+		msg = next;
 	}
 }
 
@@ -163,6 +166,7 @@ void HostState::join(int id)
 	if(found==false)
 		return;
 	// Join the session
+	qDebug() << "joining session " << id;
 	protocol::Subscribe *msg = new protocol::Subscribe;
 	msg->session_id = id;
 	net_->send(msg);
@@ -176,14 +180,17 @@ void HostState::join(int id)
 void HostState::joinLatest()
 {
 	Q_ASSERT(sessions_.count() > 0);
+	bool found = false;
 	QList<protocol::SessionInfo*>::const_iterator i = sessions_.constEnd();
 	do {
 		--i;
 		if((*i)->owner == userid_) {
 			join((*i)->identifier);
+			found = true;
 			break;
 		}
 	} while(i!=sessions_.constBegin());
+	Q_ASSERT(found==false);
 }
 
 /**
@@ -265,13 +272,15 @@ void HostState::handleAck(protocol::Acknowledgement *msg)
 		disconnect(this, SIGNAL(sessionsListed()), this, 0);
 		connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
 		listSessions();
-	} else if(msg->event == protocol::type::SessionInfo) {
+	} else if(msg->event == protocol::type::ListSessions) {
 		// A full session list has been downloaded
 		emit sessionsListed();
 	} else if(msg->event == protocol::type::Subscribe) {
 		// A session has been joined
 		mysessions_.insert(newsession_->id(), newsession_);
 		newsession_ = 0;
+	} else {
+		qDebug() << "\tunhandled ack";
 	}
 }
 
