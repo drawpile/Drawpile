@@ -42,6 +42,9 @@ class HostDialog : public QDialog
 		//! Get session password
 		QString getPassword() const;
 
+		//! Get session image
+		QImage getImage() const;
+
 	private slots:
 		void selectPicture();
 

@@ -21,17 +21,22 @@
 #define NETSTATE_H
 
 #include <QObject>
+#include <QHash>
+#include <QList>
 
 namespace protocol {
 	class HostInfo;
 	class UserInfo;
+	class SessionInfo;
 	class Authentication;
 	class Error;
+	class Acknowledgement;
 };
 
 namespace network {
 
 class Connection;
+class SessionState;
 
 //! Network state machine
 /**
@@ -39,6 +44,7 @@ class Connection;
  */
 class HostState : public QObject {
 	Q_OBJECT
+	friend class SessionState;
 	public:
 		HostState(QObject *parent);
 
@@ -49,14 +55,23 @@ class HostState : public QObject {
 		void setConnection(Connection *net) { net_ = net; }
 
 		//! Prepare to host a session
-		void host(const QString& username, const QString& title,
-				const QString& password);
+		void prepareHost(const QString& username, const QString& title,
+				const QString& password, quint16 width, quint16 height);
+
+		//! Prepare to join a session
+		void prepareJoin(const QString& username);
 
 		//! Initiate login sequence
 		void login();
 
 		//! Send a password
 		void sendPassword(const QString& password);
+
+		//! Join a specific session
+		void join(int id);
+
+		//! Refresh the list of sessions
+		void listSessions();
 
 	public slots:
 		//! Get a message from the network handler object
@@ -74,15 +89,31 @@ class HostState : public QObject {
 		//! An error message was received from the host
 		void error(const QString& message);
 
+		//! Session list was refreshes
+		void sessionsListed();
+
+	private slots:
+		//! Join the latest session that the local user owns.
+		void joinLatest();
+
 	private:
+
+		//! Create a new session
+		void createSession();
+
 		//! Handle a HostInfo message
 		void handleHostInfo(protocol::HostInfo *msg);
 
 		//! Handle a UserInfo message
 		void handleUserInfo(protocol::UserInfo *msg);
 
+		void handleSessionInfo(protocol::SessionInfo *msg);
+
 		//! Handle authentication request
 		void handleAuthentication(protocol::Authentication *msg);
+
+		//! Handle Acknowledgements
+		void handleAck(protocol::Acknowledgement *msg);
 
 		//! Handle errors
 		void handleError(protocol::Error *msg);
@@ -91,13 +122,68 @@ class HostState : public QObject {
 		Connection *net_;
 
 		QString username_;
-		QString title_;
-		QString password_;
 
 		int userid_;
 
+		SessionState *newsession_;
+		QHash<int, SessionState*> mysessions_;
+		QList<protocol::SessionInfo*> sessions_;
+
 		enum {LOGIN, JOIN, DRAWING} state_;
 		enum {HOSTSESSION, JOINSESSION} mode_;
+};
+
+//! Network session state machine
+/**
+ * This class handles the state of a single session.
+ */
+class SessionState : public QObject {
+	Q_OBJECT
+	public:
+		//! Construct a session state object
+		SessionState(HostState *parent);
+
+		//! Initialize state for session creation
+		void init(const QString& title_, const QString& password_,
+				quint16 width, quint16 height);
+
+		//! Initialize state for joining
+		void init(const protocol::SessionInfo *info);
+
+		//! Instruct the server to create the specified sesion
+		void create();
+
+		//! Get session id
+		/**
+		 * @return session ID number
+		 * @retval -1 if session does not yet have an ID
+		 */
+		int id() const { return id_; }
+
+		//! Get the width of the board
+		/**
+		 * @return board width
+		 */
+		quint16 width() const { return width_; }
+
+		//! Get the height of the board
+		/**
+		 * @return board height
+		 */
+		quint16 height() const { return height_; }
+
+		//! Get the title of the board
+		/**
+		 * @return session title
+		 */
+		const QString& title() const { return title_; }
+
+	private:
+		HostState *host_;
+		QString title_;
+		QString password_;
+		quint16 width_, height_;
+		int id_;
 };
 
 }

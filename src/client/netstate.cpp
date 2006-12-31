@@ -21,14 +21,17 @@
 #include <QDebug>
 #include <memory>
 
+#include <netinet/in.h>
+
 #include "network.h"
 #include "netstate.h"
 #include "../shared/protocol.h"
+#include "../shared/protocol.admin.h"
 
 namespace network {
 
 HostState::HostState(QObject *parent)
-	: QObject(parent), net_(0)
+	: QObject(parent), net_(0), newsession_(0)
 {
 }
 
@@ -47,6 +50,9 @@ void HostState::receiveMessage()
 				break;
 			case type::HostInfo:
 				handleHostInfo(static_cast<HostInfo*>(msg));
+				break;
+			case type::Acknowledgement:
+				handleAck(static_cast<Acknowledgement*>(msg));
 				break;
 			case type::Error:
 				handleError(static_cast<Error*>(msg));
@@ -73,20 +79,23 @@ void HostState::receiveMessage()
  * @param username username
  * @param title session title
  * @param password session password. If empty, no password is required to join.
+ * @pre previous session creation (if any) has been finished
  */
-void HostState::host(const QString& username, const QString& title,
-		const QString& password)
+void HostState::prepareHost(const QString& username, const QString& title,
+		const QString& password, quint16 width, quint16 height)
 {
+	Q_ASSERT(newsession_ == 0);
 	state_ = LOGIN;
+	mode_ = HOSTSESSION;
 	username_ = username;
-	title_ = title;
-	password_ = password;
+	newsession_ = new SessionState(this);
+	newsession_->init(title, password, width, height);
 }
 
 /**
  * Send Identifier message to log in. Server will disconnect or respond with
  * Authentication or HostInfo
- * @pre host or join should be called first to set the proper login sequence
+ * @pre prepareHost or prepareJoin should be called first to set the proper login sequence
  * @pre \a setConnection must have been called.
  */
 void HostState::login()
@@ -110,6 +119,70 @@ void HostState::sendPassword(const QString& password)
 	protocol::Password *msg = new protocol::Password;
 	// TODO
 	net_->send(msg);
+}
+
+/**
+ * Send a ListSessions message to request a list of sessions.
+ * The server will reply with SessionInfo messages, and an Acknowledgement
+ * message to indicate a full list has been transmitted.
+ *
+ * When the complete list is downloaded, a sessionsList signal is emitted.
+ */
+void HostState::listSessions()
+{
+	// First clear out the old session list
+	foreach(protocol::SessionInfo *i, sessions_)
+		delete i;
+	sessions_.clear();
+
+	// Then request a new one
+	protocol::ListSessions *msg = new protocol::ListSessions;
+	net_->send(msg);
+}
+
+/**
+ * The server will respond with Acknowledgement if join was succesfull.
+ * @param id session id to join
+ * @pre session list must include the id of the session
+ */
+void HostState::join(int id)
+{
+	bool found = false;
+	// Get session parameters from list
+	foreach(protocol::SessionInfo *i, sessions_) {
+		if(i->identifier == id) {
+			if(newsession_==0)
+				newsession_ = new SessionState(this);
+			newsession_->init(i);
+			found = true;
+			break;
+		}
+	}
+	Q_ASSERT(found);
+	if(found==false)
+		return;
+	// Join the session
+	protocol::Subscribe *msg = new protocol::Subscribe;
+	msg->session_id = id;
+	net_->send(msg);
+}
+
+/**
+ * The session list is searched for the newest session that is owned
+ * by the current user.
+ * @pre session list has been refreshed
+ */
+void HostState::joinLatest()
+{
+	Q_ASSERT(sessions_.count() > 0);
+	QList<protocol::SessionInfo*>::const_iterator i = sessions_.constEnd();
+	do {
+		--i;
+		if((*i)->owner == userid_) {
+			join((*i)->identifier);
+			break;
+		}
+	} while(i!=sessions_.constBegin());
 }
 
 /**
@@ -150,6 +223,7 @@ void HostState::handleUserInfo(protocol::UserInfo *msg)
 		state_ = JOIN;
 		if(mode_ == HOSTSESSION) {
 			// Now host a session
+			newsession_->create();
 		} else {
 			// Join an existing session, but first we need the list of session
 		}
@@ -160,10 +234,44 @@ void HostState::handleUserInfo(protocol::UserInfo *msg)
 }
 
 /**
+ * Session info is appended to a list.
+ * @param msg SessionInfo message
+ */
+void HostState::handleSessionInfo(protocol::SessionInfo *msg)
+{
+	qDebug() << "session info " << int(msg->identifier);
+	sessions_.append(msg);
+}
+
+/**
  * @param msg Authentication message
  */
 void HostState::handleAuthentication(protocol::Authentication *msg)
 {
+	qDebug() << "authentication";
+}
+
+/**
+ * @param msg Acknowledgement message
+ */
+void HostState::handleAck(protocol::Acknowledgement *msg)
+{
+	qDebug() << "ack " << int(msg->event);
+	if(msg->event == protocol::type::Instruction) {
+		// Confirm instruction. Currently, the only instruction used is
+		// Create, so this means the session was created. Proceed to request
+		// a list of sessions
+		disconnect(this, SIGNAL(sessionsListed()), this, 0);
+		connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
+		listSessions();
+	} else if(msg->event == protocol::type::SessionInfo) {
+		// A full session list has been downloaded
+		emit sessionsListed();
+	} else if(msg->event == protocol::type::Subscribe) {
+		// A session has been joined
+		mysessions_.insert(newsession_->id(), newsession_);
+		newsession_ = 0;
+	}
 }
 
 /**
@@ -171,8 +279,80 @@ void HostState::handleAuthentication(protocol::Authentication *msg)
  */
 void HostState::handleError(protocol::Error *msg)
 {
+	qDebug() << "error " << int(msg->code);
 	// TODO
 	emit error(tr("An error occured (%1)").arg(int(msg->code)));
+}
+
+/**
+ * @param parent parent HostState
+ */
+SessionState::SessionState(HostState *parent)
+	: QObject(parent), host_(parent)
+{
+	Q_ASSERT(parent);
+}
+
+/**
+ * Session state is initialized so create() can be called. For actual use,
+ * init(SessionInfo*) has to be called.
+ *
+ * @param title session title
+ * @param password session password. If empty, no password is set
+ * @param width board width
+ * @param height board height
+ */
+void SessionState::init(const QString& title, const QString& password,
+		quint16 width, quint16 height)
+{
+	title_ = title;
+	password_ = password;
+	width_ = width;
+	height_ = height;
+}
+
+/**
+ * Session state is initialized based on actual information received
+ * from the server. The session will then be ready for use.
+ *
+ * @param info SessionInfo message from which parameters are extracted
+ */
+void SessionState::init(const protocol::SessionInfo *info)
+{
+	Q_ASSERT(info);
+	id_ = info->identifier;
+	width_ = info->width;
+	height_ = info->height;
+	title_ = QString::fromUtf8(info->title);
+}
+
+/**
+ * Use an Instruction message to create a new session. The server will
+ * respond with an Ack or Error message.
+ *
+ * @pre init must have been called to set the session parameters.
+ */
+void SessionState::create()
+{
+	protocol::Instruction *msg = new protocol::Instruction;
+	msg->command = protocol::admin::command::Create;
+	msg->session = protocol::Global;
+	msg->aux_data = 20; // User limit (TODO)
+	msg->aux_data2 = protocol::user::None; // Default user mode (TODO)
+
+	QByteArray title = title_.toUtf8();
+	char *data = new char[sizeof(width_)+sizeof(height_)+title.length()];
+	unsigned int off = 0;
+	quint16 width = htons(width_);
+	quint16 height = htons(height_);
+	memcpy(data+off, &width, sizeof(width)); off += sizeof(width);
+	memcpy(data+off, &height, sizeof(height)); off += sizeof(height);
+	memcpy(data+off, title.constData(), title.length()); off += title.length();
+
+	msg->length = off;
+	msg->data = data;
+
+	host_->net_->send(msg);
 }
 
 }

@@ -367,7 +367,7 @@ void MainWindow::finishHost(int i)
 
 		// Connect
 		controller_->hostSession("localhost", user, hostdlg_->getTitle(),
-				hostdlg_->getPassword());
+				hostdlg_->getPassword(),hostdlg_->getImage());
 	}
 	hostdlg_->deleteLater();
 }

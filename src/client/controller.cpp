@@ -56,11 +56,12 @@ void Controller::setModel(drawingboard::Board *board,
  * @param password
  */
 void Controller::hostSession(const QString& address, const QString& username,
-		const QString& title, const QString& password)
+		const QString& title, const QString& password, const QImage& image)
 {
 	Q_ASSERT(username.isEmpty() == false);
 	connectHost(address);
-	netstate_->host(username, title, password);
+	netstate_->prepareHost(username, title, password,
+			image.width(), image.height());
 }
 
 /**

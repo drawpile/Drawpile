@@ -40,6 +40,8 @@ namespace network {
 	class HostState;
 }
 
+class QImage;
+
 //! Controller for drawing and network operations
 /**
  * The controller handles all drawing commands coming in from the
@@ -66,7 +68,8 @@ class Controller : public QObject
 
 		//! Start hosting a session
 		void hostSession(const QString& address, const QString& username,
-				const QString& title, const QString& password);
+				const QString& title, const QString& password,
+				const QImage& image);
 
 		//! Disconnect from host
 		void disconnectHost();

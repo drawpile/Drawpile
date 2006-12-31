@@ -108,5 +108,10 @@ QString HostDialog::getPassword() const
 	return ui_->sessionpassword->text();
 }
 
+QImage HostDialog::getImage() const
+{
+	return ui_->imageSelector->image();
+}
+
 }
 
