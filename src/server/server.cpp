@@ -364,8 +364,33 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Subscribe:
 		std::cout << "Subscribe" << std::endl;
-		
-		break;
+		{
+			protocol::Subscribe *m = static_cast<protocol::Subscribe*>(usr->inMsg);
+			
+			std::map<uint8_t, Session*>::iterator i = session_id_map.find(m->session_id);
+			if (i == session_id_map.end())
+			{
+				std::cerr << "No such session: "
+					<< static_cast<int>(m->session_id) << std::endl;
+				
+				protocol::Error* errmsg = new protocol::Error;
+				errmsg->code = protocol::error::UnknownSession;
+				uSendMsg(usr, errmsg);
+			}
+			else
+			{
+				i->second->users.insert( std::make_pair(usr->id, usr) );
+				
+				usr->sessions.insert(
+					std::make_pair(i->second->id, UserData(i->second->id, i->second->mode))
+				);
+				
+				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+				ack->event = protocol::type::Subscribe;
+				uSendMsg(usr, ack);
+			}
+		}
+		return;
 	case protocol::type::ListSessions:
 		std::cout << "List Sessions" << std::endl;
 		{
@@ -393,10 +418,9 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			}
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-			
 			ack->event = protocol::type::ListSessions;
-			
 			uSendMsg(usr, ack);
+			
 			return;
 		}
 		break;
@@ -728,6 +752,8 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 	
 	assert(usr != 0);
 	assert(msg != 0);
+	
+	// TODO: Improve memory efficiency
 	
 	size_t len;
 	char* buf = msg->serialize(len);
