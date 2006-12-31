@@ -87,7 +87,7 @@ namespace uState
 /**  */
 struct User
 {
-	User(uint8_t nid=protocol::null_user, Socket* nsock=0) throw()
+	User(uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
 		: sock(nsock),
 		id(_id),
 		nlen(0),
