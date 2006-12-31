@@ -375,7 +375,9 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				nfo->limit = si->second->limit;
 				nfo->mode = si->second->mode;
 				nfo->length = si->second->len;
-				nfo->title = si->second->title;
+				
+				nfo->title = new char[si->second->len];
+				memcpy(nfo->title, si->second->title, si->second->len);
 				
 				uSendMsg(usr, nfo);
 			}
@@ -577,7 +579,7 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 			usr->name = m->name;
 			usr->nlen = m->length;
 			
-			// null the message's name information
+			// null the message's name information, so they don't get deleted
 			m->length = 0;
 			m->name = 0;
 			
