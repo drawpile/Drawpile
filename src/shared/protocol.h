@@ -636,7 +636,7 @@ struct UserInfo
 		name(0)
 	{ }
 	
-	~UserInfo() throw() { delete [] name; }
+	~UserInfo() throw() { /* delete [] name; */ }
 	
 	/* unique data */
 	
@@ -725,7 +725,7 @@ struct SessionInfo
 		name(0)
 	{ }
 	
-	~SessionInfo() throw() { delete [] name; }
+	~SessionInfo() throw() { /* delete [] name; */ }
 	
 	/* unique data */
 	
@@ -857,7 +857,7 @@ struct Chat
 		data(0)
 	{ }
 	
-	~Chat() throw() { delete [] data; }
+	~Chat() throw() { /* delete [] data; */ }
 	
 	/* unique data */
 	
