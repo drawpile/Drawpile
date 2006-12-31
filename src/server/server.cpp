@@ -431,6 +431,9 @@ void Server::uHandleInstruction(User* usr) throw()
 				memcpy_t(s->width, m->data);
 				memcpy_t(s->height, m->data+sizeof(s->width));
 				
+				bswap(s->width);
+				bswap(s->height);
+				
 				if (s->width < min_dimension or s->height < min_dimension)
 				{
 					protocol::Error* errmsg = new protocol::Error;
