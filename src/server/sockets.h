@@ -31,12 +31,8 @@
 
 #include "../../config.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-
+#include <iostream>
 #include <stdexcept>
-
 #include <stdint.h>
 
 #ifdef WIN32
