@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -111,14 +111,12 @@ Message* getMessage(const uint8_t type) throw()
 		#endif
 		return new Unsubscribe();
 		break;
-		/*
 	case type::SessionSelect:
 		#ifndef NDEBUG
 		std::cout << "Type: Session Select" << std::endl;
 		#endif
 		return new SessionSelect();
 		break;
-		*/
 	case type::Instruction:
 		#ifndef NDEBUG
 		std::cout << "Type: Instruction" << std::endl;
