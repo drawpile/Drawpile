@@ -28,6 +28,9 @@
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.flags.h"
 
+#include <boost/shared_ptr.hpp>
+typedef boost::shared_ptr<protocol::Message> message_ref;
+
 #include "sockets.h"
 
 // User session data
@@ -98,11 +101,8 @@ struct User
 		delete sock,
 		delete inMsg;
 		
-		while (buffers.size() != 0)
-		{
-			delete buffers.front();
-			buffers.pop();
-		}
+		while (!queue.empty())
+			queue.pop();
 	}
 	
 	// Socket
@@ -129,15 +129,14 @@ struct User
 	// Subscribed sessions
 	std::map<uint8_t, UserData> sessions;
 	
-	// Output buffers
-	std::queue<Buffer*> buffers;
-	//std::queue<Message*> messages;
+	// Output queue
+	std::queue<message_ref> queue;
 	
 	// Event I/O registered events.
 	int events;
 	
-	// Input buffer
-	Buffer input;
+	// Input/output buffer
+	Buffer input, output;
 	
 	// Currently incoming message.
 	protocol::Message *inMsg;

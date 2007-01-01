@@ -188,11 +188,16 @@ void Server::uWrite(user_ref usr) throw()
 	std::cout << "Server::uWrite(" << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	Buffer *buf = usr->buffers.front();
+	if (usr->output.canRead() == 0)
+	{
+		size_t len=0;
+		char* buf = usr->queue.front()->serialize(len);
+		usr->output.setBuffer(buf, len);
+	}
 	
 	int sb = usr->sock->send(
-		buf->rpos,
-		buf->canRead()
+		usr->output.rpos,
+		usr->output.canRead()
 	);
 	
 	std::cout << "Sent " << sb << " bytes.." << std::endl;
@@ -214,19 +219,17 @@ void Server::uWrite(user_ref usr) throw()
 	}
 	else
 	{
-		buf->read(sb);
+		usr->output.read(sb);
 		
 		// just to ensure we don't need to do anything for it.
-		assert(buf->rpos == usr->buffers.front()->rpos);
 		
-		if (buf->left == 0)
+		if (usr->output.left == 0)
 		{
 			// remove buffer
-			delete buf;
-			usr->buffers.pop();
+			usr->output.rewind();
 			
 			// remove fd from write list if no buffers left.
-			if (usr->buffers.empty())
+			if (usr->queue.empty())
 			{
 				fClr(usr->events, ev.write);
 				if (usr->events == 0)
@@ -508,7 +511,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 			{
 				std::cerr << "Attempted to create single user session." << std::endl;
 				//delete s;
-				s.reset();
+				//s.reset();
 				protocol::Error* errmsg = new protocol::Error;
 				errmsg->code = protocol::error::InvalidData;
 				uSendMsg(usr, message_ref(errmsg));
@@ -521,7 +524,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 				std::cerr << "Less data than required" << std::endl;
 				uRemove(usr);
 				//delete s;
-				s.reset();
+				//s.reset();
 				return;
 			}
 			
@@ -537,7 +540,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 				errmsg->code = protocol::error::TooSmall;
 				uSendMsg(usr, message_ref(errmsg));
 				//delete s;
-				s.reset();
+				//s.reset();
 				return;
 			}
 			
@@ -812,12 +815,7 @@ void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 	
 	// TODO: Improve memory efficiency
 	
-	size_t len;
-	char* buf = msg->serialize(len);
-	
-	usr->buffers.push( new Buffer(buf, len) );
-	usr->buffers.back()->write(len);
-	buf = 0;
+	usr->queue.push( msg );
 	
 	if (!fIsSet(usr->events, ev.write))
 	{
@@ -826,7 +824,7 @@ void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 	}
 	
 	//delete msg;
-	msg.reset();
+	//msg.reset();
 	//msg = 0;
 }
 
@@ -914,7 +912,7 @@ void Server::uRemove(user_ref usr) throw()
 	std::cout << "Deleting user.." << std::endl;
 	#endif
 	//delete usr;
-	usr.reset();
+	//usr.reset();
 	
 	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
