@@ -40,6 +40,11 @@
 
 #include "../shared/protocol.h"
 
+#include <boost/shared_ptr.hpp>
+typedef boost::shared_ptr<User> user_ref;
+typedef boost::shared_ptr<Session> session_ref;
+typedef boost::shared_ptr<protocol::Message> message_ref;
+
 //#include <sys/time.h>
 
 #include <stdexcept>
@@ -73,13 +78,13 @@ protected:
 	std::bitset<defaults::hard_limit> session_ids;
 	
 	// FD to user mapping
-	std::map<int, User*> users;
+	std::map<int, user_ref> users;
 	
 	// User ID to user mapping
-	std::map<uint8_t, User*> user_id_map;
+	std::map<uint8_t, user_ref> user_id_map;
 	
 	// Session ID to session mapping
-	std::map<uint8_t, Session*> session_id_map;
+	std::map<uint8_t, session_ref> session_id_map;
 	
 	// listening socket
 	Socket lsock;
@@ -125,44 +130,44 @@ protected:
 	
 	// Generate messages
 	protocol::HostInfo* msgHostInfo() throw(std::bad_alloc);
-	protocol::Authentication* msgAuth(User* usr, uint8_t session) throw(std::bad_alloc);
+	protocol::Authentication* msgAuth(user_ref usr, uint8_t session) throw(std::bad_alloc);
 	
 	// Write to user socket
-	void uWrite(User* usr) throw();
+	void uWrite(user_ref usr) throw();
 
 	// Read from user socket
-	void uRead(User* usr) throw(std::bad_alloc);
+	void uRead(user_ref usr) throw(std::bad_alloc);
 	
 	// create user info for event
-	protocol::UserInfo* uCreateEvent(User* usr, uint8_t session, uint8_t event);
+	protocol::UserInfo* uCreateEvent(user_ref usr, uint8_t session, uint8_t event);
 	
 	// Handle user message.
-	void uHandleMsg(User* usr) throw(std::bad_alloc);
+	void uHandleMsg(user_ref usr) throw(std::bad_alloc);
 	
 	// Handle instruction message
-	void uHandleInstruction(User* usr) throw();
+	void uHandleInstruction(user_ref usr) throw();
 	
 	// Handle user login.
-	void uHandleLogin(User* usr) throw(std::bad_alloc);
+	void uHandleLogin(user_ref usr) throw(std::bad_alloc);
 	
 	// Send message to session
-	void Propagate(uint8_t session_id, protocol::Message* msg) throw();
+	void Propagate(uint8_t session_id, message_ref msg) throw();
 	
 	// Send message to user
 	/*
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
-	void uSendMsg(User* usr, protocol::Message* msg) throw();
+	void uSendMsg(user_ref usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
-	void uSyncSession(User* usr, Session* session) throw();
+	void uSyncSession(user_ref usr, session_ref session) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
-	void uRemove(User* usr) throw();
+	void uRemove(user_ref usr) throw();
 public:
 	//! ctor
 	Server() throw();

@@ -49,7 +49,7 @@ check_include_files ( stdint.h HAVE_STDINT_H )
 
 set ( BOOST_LIB_DIAGNOSTIC ON )
 
-find_package ( Boost 1.33 QUIET )
+find_package ( Boost 1.33 REQUIRED )
 
 if ( Boost_FOUND )
 	message ( STATUS "libBoost found" )

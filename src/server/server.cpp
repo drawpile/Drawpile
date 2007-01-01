@@ -144,10 +144,10 @@ void Server::cleanup() throw()
 	lsock.close();
 	
 	// delete users
-	for (std::map<int, User*>::iterator uiter(users.begin()); uiter != users.end(); uiter++)
+	for (std::map<int, user_ref>::iterator uiter(users.begin()); uiter != users.end(); uiter++)
 	{
 		#if defined(FULL_CLEANUP)
-		delete uiter->second;
+		//delete uiter->second;
 		#else
 		uiter->second->sock->close();
 		#endif
@@ -158,7 +158,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-protocol::Authentication* Server::msgAuth(User* usr, uint8_t session) throw(std::bad_alloc)
+protocol::Authentication* Server::msgAuth(user_ref usr, uint8_t session) throw(std::bad_alloc)
 {
 	protocol::Authentication* m = new protocol::Authentication;
 	m->session_id = session;
@@ -182,7 +182,7 @@ protocol::HostInfo* Server::msgHostInfo() throw(std::bad_alloc)
 	return m;
 }
 
-void Server::uWrite(User* usr) throw()
+void Server::uWrite(user_ref usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uWrite(" << static_cast<int>(usr->id) << ")" << std::endl;
@@ -238,7 +238,7 @@ void Server::uWrite(User* usr) throw()
 	}
 }
 
-void Server::uRead(User* usr) throw(std::bad_alloc)
+void Server::uRead(user_ref usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uRead(" << static_cast<int>(usr->id) << ")" << std::endl;
@@ -337,7 +337,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 }
 
-protocol::UserInfo* Server::uCreateEvent(User* usr, uint8_t session, uint8_t event)
+protocol::UserInfo* Server::uCreateEvent(user_ref usr, uint8_t session, uint8_t event)
 {
 	protocol::UserInfo *e = new protocol::UserInfo;
 	
@@ -356,7 +356,7 @@ protocol::UserInfo* Server::uCreateEvent(User* usr, uint8_t session, uint8_t eve
 	return e;
 }
 
-void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
+void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleMsg(user id: " << static_cast<int>(usr->id)
@@ -382,7 +382,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		{
 			protocol::Subscribe *m = static_cast<protocol::Subscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, Session*>::iterator i = session_id_map.find(m->session_id);
+			std::map<uint8_t, session_ref>::iterator i = session_id_map.find(m->session_id);
 			if (i == session_id_map.end())
 			{
 				std::cerr << "No such session: "
@@ -390,7 +390,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				
 				protocol::Error* errmsg = new protocol::Error;
 				errmsg->code = protocol::error::UnknownSession;
-				uSendMsg(usr, errmsg);
+				uSendMsg(usr, message_ref(errmsg));
 			}
 			else
 			{
@@ -404,17 +404,17 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				// Ack to user
 				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 				ack->event = protocol::type::Subscribe;
-				uSendMsg(usr, ack);
+				uSendMsg(usr, message_ref(ack));
 				
 				// Tell session members there's a new user.
-				Propagate(i->first, uCreateEvent(usr, i->first, protocol::user_event::Join));
+				Propagate(i->first, message_ref(uCreateEvent(usr, i->first, protocol::user_event::Join)));
 				
 				// Announce active session
 				usr->session = i->first;
 				protocol::SessionSelect *ss = new protocol::SessionSelect;
 				ss->user_id = usr->id;
 				ss->session_id = i->first;
-				Propagate(i->first, ss);
+				Propagate(i->first, message_ref(ss));
 				
 				// Start client sync
 				uSyncSession(usr, i->second);
@@ -425,7 +425,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		std::cout << "List Sessions" << std::endl;
 		{
 			protocol::SessionInfo *nfo = 0;
-			std::map<uint8_t, Session*>::iterator si(session_id_map.begin());
+			std::map<uint8_t, session_ref>::iterator si(session_id_map.begin());
 			for (; si != session_id_map.end(); si++)
 			{
 				nfo = new protocol::SessionInfo;
@@ -444,12 +444,12 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				nfo->title = new char[si->second->len];
 				memcpy(nfo->title, si->second->title, si->second->len);
 				
-				uSendMsg(usr, nfo);
+				uSendMsg(usr, message_ref(nfo));
 			}
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::ListSessions;
-			uSendMsg(usr, ack);
+			uSendMsg(usr, message_ref(ack));
 			
 			return;
 		}
@@ -466,13 +466,13 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	uRemove(usr);
 }
 
-void Server::uHandleInstruction(User* usr) throw()
+void Server::uHandleInstruction(user_ref usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleInstruction()" << std::endl;
 	#endif
 	
-	assert(usr != 0);
+	//assert(usr != 0);
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
 	
@@ -495,11 +495,11 @@ void Server::uHandleInstruction(User* usr) throw()
 			{
 				protocol::Error* errmsg = new protocol::Error;
 				errmsg->code = protocol::error::SessionLimit;
-				uSendMsg(usr, errmsg);
+				uSendMsg(usr, message_ref(errmsg));
 				return;
 			}
 			
-			Session *s = new Session;
+			session_ref s(new Session);
 			s->id = session_id;
 			s->limit = m->aux_data;
 			s->mode = m->aux_data2;
@@ -507,10 +507,11 @@ void Server::uHandleInstruction(User* usr) throw()
 			if (s->limit < 2)
 			{
 				std::cerr << "Attempted to create single user session." << std::endl;
-				delete s;
+				//delete s;
+				s.reset();
 				protocol::Error* errmsg = new protocol::Error;
 				errmsg->code = protocol::error::InvalidData;
-				uSendMsg(usr, errmsg);
+				uSendMsg(usr, message_ref(errmsg));
 				return;
 			}
 			
@@ -519,7 +520,8 @@ void Server::uHandleInstruction(User* usr) throw()
 			{
 				std::cerr << "Less data than required" << std::endl;
 				uRemove(usr);
-				delete s;
+				//delete s;
+				s.reset();
 				return;
 			}
 			
@@ -533,8 +535,9 @@ void Server::uHandleInstruction(User* usr) throw()
 			{
 				protocol::Error* errmsg = new protocol::Error;
 				errmsg->code = protocol::error::TooSmall;
-				uSendMsg(usr, errmsg);
-				delete s;
+				uSendMsg(usr, message_ref(errmsg));
+				//delete s;
+				s.reset();
 				return;
 			}
 			
@@ -555,7 +558,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::Instruction;
-			uSendMsg(usr, ack);
+			uSendMsg(usr, message_ref(ack));
 		}
 		break;
 	case protocol::admin::command::Destroy:
@@ -575,7 +578,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::Instruction;
-			uSendMsg(usr, ack);
+			uSendMsg(usr, message_ref(ack));
 		}
 		else
 		{
@@ -589,7 +592,7 @@ void Server::uHandleInstruction(User* usr) throw()
 	}
 }
 
-void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
+void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleLogin(user id: " << static_cast<int>(usr->id)
@@ -657,7 +660,7 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 			}
 			
 			// reply
-			uSendMsg(usr, m);
+			uSendMsg(usr, message_ref(m));
 			
 			usr->state = uState::active;
 			
@@ -707,7 +710,7 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 		}
 		
 		usr->state = uState::login;
-		uSendMsg(usr, msgHostInfo());
+		uSendMsg(usr, message_ref(msgHostInfo()));
 		
 		break;
 	case uState::init:
@@ -749,13 +752,13 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 				std::cout << "Proceed to login" << std::endl;
 				// no password set, 
 				usr->state = uState::login;
-				uSendMsg(usr, msgHostInfo());
+				uSendMsg(usr, message_ref(msgHostInfo()));
 			}
 			else
 			{
 				std::cout << "Request password" << std::endl;
 				usr->state = uState::login_auth;
-				uSendMsg(usr, msgAuth(usr, protocol::Global));
+				uSendMsg(usr, message_ref(msgAuth(usr, protocol::Global)));
 			}
 		}
 		else
@@ -774,30 +777,37 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::Propagate(uint8_t session_id, protocol::Message* msg) throw()
+void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::Propagate(session: " << static_cast<int>(session_id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
-	Session *s = session_id_map[session_id];
+	message_ref msg_ref(msg);
 	
-	std::map<uint8_t, User*>::iterator ui( s->users.begin() );
+	std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
+	if (si == session_id_map.end())
+	{
+		std::cerr << "No such session!" << std::endl;
+	}
+	session_ref s(si->second);
+	
+	std::map<uint8_t, user_ref>::iterator ui( s->users.begin() );
 	for (; ui != s->users.end(); ui++)
 	{
 		// TODO: Somehow prevent some messages from being propagated back to originator
-		uSendMsg(ui->second, msg);
+		uSendMsg(ui->second, msg_ref);
 	}
 }
 
-void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
+void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uSendMsg()" << std::endl;
 	#endif
 	
-	assert(usr != 0);
+	//assert(usr != 0);
 	assert(msg != 0);
 	
 	// TODO: Improve memory efficiency
@@ -815,11 +825,12 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 		ev.modify(usr->sock->fd(), usr->events);
 	}
 	
-	delete msg;
-	msg = 0;
+	//delete msg;
+	msg.reset();
+	//msg = 0;
 }
 
-void Server::uSyncSession(User* usr, Session* session) throw()
+void Server::uSyncSession(user_ref usr, session_ref session) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uSyncSession(user: " << static_cast<int>(usr->id)
@@ -835,7 +846,7 @@ void Server::uSyncSession(User* usr, Session* session) throw()
 	
 	// This is WRONG
 	protocol::Raster *r = new protocol::Raster;
-	uSendMsg(usr, r);
+	uSendMsg(usr, message_ref(r));
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
@@ -861,7 +872,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		std::cout << "... assigned ID: " << static_cast<uint32_t>(id) << std::endl;
 		#endif
 		
-		User *usr = new User(id, sock);
+		user_ref usr( new User(id, sock) );
 		
 		usr->session = protocol::Global;
 		
@@ -887,7 +898,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::uRemove(User* usr) throw()
+void Server::uRemove(user_ref usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uRemove()" << std::endl;
@@ -902,7 +913,8 @@ void Server::uRemove(User* usr) throw()
 	#ifndef NDEBUG
 	std::cout << "Deleting user.." << std::endl;
 	#endif
-	delete usr;
+	//delete usr;
+	usr.reset();
 	
 	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
@@ -1014,7 +1026,7 @@ int Server::run() throw()
 	
 	// define iterators
 	std::vector<uint32_t>::iterator si;
-	std::map<int, User*>::iterator ui;
+	std::map<int, user_ref>::iterator ui;
 	
 	#ifndef NDEBUG
 	std::cout << "eternity" << std::endl;
