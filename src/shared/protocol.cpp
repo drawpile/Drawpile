@@ -1214,7 +1214,7 @@ size_t SessionSelect::unserialize(const char* buf, size_t len) throw()
 	
 	memcpy_t(session_id, buf+sizeof(session_id));
 	
-	return sizeof(type) + sizeof(session_id);
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
 size_t SessionSelect::reqDataLen(const char *buf, size_t len) const throw()
@@ -1222,7 +1222,7 @@ size_t SessionSelect::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	return sizeof(type) + sizeof(session_id);
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
 size_t SessionSelect::serializePayload(char *buf) const throw()
