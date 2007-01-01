@@ -98,9 +98,6 @@ add_executable (
 	${MOC_Sources}
 )
 
-include (AddFileDependencies)
-add_file_dependencies ( main.cpp src/shared )
-
 target_link_libraries(
 	${EXECNAME}
 	${QT_LIBRARIES}

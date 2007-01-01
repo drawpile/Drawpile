@@ -43,12 +43,6 @@ if ( WIN32 )
 	link_libraries ( ws2_32 )
 endif ( WIN32 )
 
-include ( AddFileDependencies )
-add_file_dependencies (
-	dpsrv
-	src/shared
-)
-
 link_libraries( dpshared )
 
 if (MACOSX)
