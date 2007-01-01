@@ -339,18 +339,26 @@ struct Synchronize
 	: Message//, MemoryStack<Synchronize>
 {
 	Synchronize() throw()
-		: Message(protocol::type::Synchronize)
+		: Message(protocol::type::Synchronize),
+		session_id(protocol::Global)
 	{ }
 	
 	~Synchronize() throw() { }
 	
 	/* unique data */
 	
+	//! Session to synchronize
+	uint8_t session_id;
+	
 	// does not have any.
 	
 	/* functions */
 	
-	// needs none
+	size_t unserialize(const char* buf, size_t len) throw();
+	size_t reqDataLen(const char *buf, size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
+
 };
 
 //! Raster data message.
@@ -372,6 +380,7 @@ struct Raster
 {
 	Raster() throw()
 		: Message(protocol::type::Raster),
+		session_id(protocol::Global),
 		offset(0),
 		length(0),
 		size(0),
@@ -381,6 +390,9 @@ struct Raster
 	~Raster() throw() { delete [] data; }
 	
 	/* unique data */
+	
+	//! Source session ID
+	uint8_t session_id;
 	
 	uint32_t
 		//! Offset of data chunk.
@@ -417,18 +429,22 @@ struct SyncWait
 	: Message//, MemoryStack<SyncWait>
 {
 	SyncWait() throw()
-		: Message(protocol::type::SyncWait)
+		: Message(protocol::type::SyncWait),
+		session_id(protocol::Global)
 	{ }
 	
 	~SyncWait() throw() { }
 	
 	/* unique data */
 	
-	// does not have any.
+	uint8_t session_id;
 	
 	/* functions */
 	
-	// needs none
+	size_t unserialize(const char* buf, size_t len) throw();
+	size_t reqDataLen(const char *buf, size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! Authentication request message.
@@ -471,7 +487,8 @@ struct Password
 	: Message//, MemoryStack<Password>
 {
 	Password() throw()
-		: Message(protocol::type::Password)
+		: Message(protocol::type::Password),
+		session_id(protocol::Global)
 	{ }
 	
 	~Password() throw() { delete [] data; }
@@ -630,18 +647,23 @@ struct Cancel
 	: Message//, MemoryStack<Cancel>
 {
 	Cancel() throw()
-		: Message(protocol::type::Cancel)
+		: Message(protocol::type::Cancel),
+		session_id(protocol::Global)
 	{ }
 	
 	~Cancel() throw() { }
 	
 	/* unique data */
 	
-	// does not have any.
+	//! Session identifier
+	uint8_t session_id;
 	
 	/* functions */
 	
-	// needs none
+	size_t unserialize(const char* buf, size_t len) throw();
+	size_t reqDataLen(const char *buf, size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
 };
 
 //! User Info message.
@@ -655,6 +677,7 @@ struct UserInfo
 {
 	UserInfo() throw()
 		: Message(protocol::type::UserInfo, message::isUser),
+		session_id(protocol::Global),
 		mode(protocol::user::None),
 		event(protocol::user_event::None),
 		length(0),

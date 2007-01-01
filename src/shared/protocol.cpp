@@ -363,7 +363,38 @@ size_t ToolInfo::payloadLength() const throw()
  * struct Synchronize
  */
 
-// no special implementation required
+size_t Synchronize::unserialize(const char* buf, size_t len) throw()
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	memcpy_t(session_id, buf+sizeof(session_id));
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t Synchronize::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t Synchronize::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, session_id);
+	
+	return sizeof(session_id);
+}
+
+size_t Synchronize::payloadLength() const throw()
+{
+	return sizeof(session_id);
+}
 
 /*
  * struct Raster
@@ -376,6 +407,7 @@ size_t Raster::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	assert(reqDataLen(buf, len) <= len);
 	
 	size_t i = sizeof(type);
+	memcpy_t(session_id, buf+i); i += sizeof(session_id);
 	memcpy_t(offset, buf+i); i += sizeof(offset);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	memcpy_t(size, buf+i); i += sizeof(size);
@@ -395,13 +427,14 @@ size_t Raster::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	if (len < sizeof(type) + sizeof(offset) + sizeof(length))
-		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size);
+	if (len < sizeof(type) + sizeof(session_id) + sizeof(offset) + sizeof(length))
+		return sizeof(type) + sizeof(session_id) +sizeof(offset)
+			+ sizeof(length) + sizeof(size);
 	else
 	{
 		uint32_t tmp = *(buf+sizeof(type)+sizeof(offset));
-		return sizeof(type) + sizeof(offset) + sizeof(length) + sizeof(size)
-			+ tmp;
+		return sizeof(type) + sizeof(session_id) + sizeof(offset)
+			+ sizeof(length) + sizeof(size) + tmp;
 	}
 }
 
@@ -411,7 +444,8 @@ size_t Raster::serializePayload(char *buf) const throw()
 	
 	uint32_t off_tmp = offset, len_tmp = length, size_tmp = size;
 	
-	memcpy_t(buf, bswap(off_tmp)); size_t i = sizeof(offset);
+	memcpy_t(buf, session_id); size_t i = sizeof(session_id);
+	memcpy_t(buf+i, bswap(off_tmp)); i += sizeof(offset);
 	memcpy_t(buf+i, bswap(len_tmp)); i += sizeof(length);
 	memcpy_t(buf+i, bswap(size_tmp)); i += sizeof(size);
 	
@@ -422,14 +456,45 @@ size_t Raster::serializePayload(char *buf) const throw()
 
 size_t Raster::payloadLength() const throw()
 {
-	return sizeof(offset) + sizeof(length) + sizeof(size) + length;
+	return sizeof(session_id) + sizeof(offset) + sizeof(length) + sizeof(size) + length;
 }
 
 /*
  * struct SyncWait
  */
 
-// no special implementation required
+size_t SyncWait::unserialize(const char* buf, size_t len) throw()
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	memcpy_t(session_id, buf+sizeof(session_id));
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t SyncWait::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t SyncWait::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, session_id);
+	
+	return sizeof(session_id);
+}
+
+size_t SyncWait::payloadLength() const throw()
+{
+	return sizeof(session_id);
+}
 
 /*
  * struct Authentication
@@ -470,8 +535,6 @@ size_t Authentication::payloadLength() const throw()
 {
 	return sizeof(session_id) + password_seed_size;
 }
-
-// no special implementation required
 
 /*
  * struct Password
@@ -670,7 +733,38 @@ size_t Instruction::payloadLength() const throw()
  * struct Cancel
  */
 
-// no special implementation required
+size_t Cancel::unserialize(const char* buf, size_t len) throw()
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	memcpy_t(session_id, buf+sizeof(session_id));
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t Cancel::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t Cancel::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, session_id);
+	
+	return sizeof(session_id);
+}
+
+size_t Cancel::payloadLength() const throw()
+{
+	return sizeof(session_id);
+}
 
 /*
  * struct UserInfo
@@ -1105,6 +1199,43 @@ size_t Palette::serializePayload(char *buf) const throw()
 size_t Palette::payloadLength() const throw()
 {
 	return sizeof(offset) + sizeof(count) + count * RGB_size;
+}
+
+/*
+ * struct SessionSelect
+ */
+
+size_t SessionSelect::unserialize(const char* buf, size_t len) throw()
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	memcpy_t(session_id, buf+sizeof(session_id));
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t SessionSelect::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return sizeof(type) + sizeof(session_id);
+}
+
+size_t SessionSelect::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, session_id);
+	
+	return sizeof(session_id);
+}
+
+size_t SessionSelect::payloadLength() const throw()
+{
+	return sizeof(session_id);
 }
 
 } // namespace protocol
