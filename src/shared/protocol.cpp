@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -49,27 +49,35 @@ namespace protocol {
  * struct Message
  */
 
+//
+char* Message::serializeHeader(char* ptr, const Message* msg) const throw()
+{
+	memcpy_t(ptr++, msg->type);
+	if (fIsSet(msg->modifiers, message::isUser))
+		memcpy_t(ptr++, msg->user_id);
+	return ptr;
+}
+
 // Base serialization
 char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 {
 	// This _must_ be the last message in bundle.
 	assert(next == 0);
 	
-	size_t headerlen, length;
+	size_t
+		headerlen,
+		length = sizeof(type) + (fIsSet(modifiers, message::isUser)?sizeof(user_id):0);
 	
 	if (fIsSet(modifiers, message::isBundling))
 	{
 		// If we are bundling packets, there will be no extra headers
 		headerlen = 0;
-		length = sizeof(type) + sizeof(null_count)
-			+ (fIsSet(modifiers, message::isUser)?sizeof(user_id):0);
+		length += sizeof(null_count);
 	}
 	else
 	{
 		// If messages are not bundled, simply concatenate whole messages
-		headerlen = sizeof(type)
-			+ (fIsSet(modifiers, message::isUser)?sizeof(user_id):0);
-		length = headerlen;
+		headerlen = sizeof(type) + (fIsSet(modifiers, message::isUser)?sizeof(user_id):0);
 	}
 	
 	// At least one message is serialized (the last)
@@ -99,15 +107,13 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	// Allocate memory and serialize.
 	char *data = new char[length];
 	char *dataptr = data;
+	len = length;
 	
 	if (fIsSet(modifiers, message::isBundling))
 	{
 		// Write bundled packets
-		memcpy_t(dataptr++, type);
-		if(fIsSet(modifiers, message::isUser))
-			memcpy_t(dataptr++, user_id);
+		dataptr = serializeHeader(dataptr, this);
 		memcpy_t(dataptr++, count);
-		
 		while (ptr)
 		{
 			dataptr += ptr->serializePayload(dataptr);
@@ -119,17 +125,12 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 		// Write whole packets
 		while (ptr)
 		{
-			memcpy_t(dataptr++, ptr->type);
-			if(fIsSet(modifiers, message::isUser))
-				memcpy_t(dataptr++, user_id);
-			
+			dataptr = serializeHeader(dataptr, ptr);
 			dataptr += ptr->serializePayload(dataptr);
-			
 			ptr = ptr->next;
 		}
 	}
 	
-	len = length;
 	return data;
 }
 

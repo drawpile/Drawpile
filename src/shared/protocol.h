@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -78,6 +78,10 @@ protected:
 		next(0),
 		prev(0)
 	{ }
+	
+	// write header (for serialize())
+	inline
+	char* serializeHeader(char* ptr, const Message* msg) const throw();
 	
 public:
 	virtual ~Message() throw() { }
