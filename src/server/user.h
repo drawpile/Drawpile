@@ -1,7 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
-   For more info, see: http://drawpile.sourceforge.net/
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -22,6 +21,9 @@
 
 #include "buffer.h"
 
+struct User;
+#include "session.h"
+
 #include "../shared/memstack.h"
 
 #include "../shared/protocol.h"
@@ -30,24 +32,30 @@
 
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<protocol::Message> message_ref;
+typedef boost::shared_ptr<Session> session_ref;
 
 #include "sockets.h"
 
 // User session data
-struct UserData
+struct SessionData
 {
-	UserData(uint8_t s=protocol::Global, uint8_t m=protocol::user::None) throw()
-		: session(s),
-		mode(m)
+	SessionData(uint8_t id=protocol::null_user, session_ref s=session_ref()) throw()
+		: user(id),
+		session(s),
+		mode(s->mode)
+	{
+		
+	}
+	
+	~SessionData() throw()
 	{
 	}
 	
-	~UserData() throw()
-	{
-	}
+	// user who this describes
+	uint8_t user;
 	
-	// Session identifier
-	uint8_t session;
+	// Session reference
+	session_ref session;
 	
 	// User mode within session
 	uint8_t mode;
@@ -101,6 +109,8 @@ struct User
 		delete sock,
 		delete inMsg;
 		
+		sessions.clear();
+		
 		while (!queue.empty())
 			queue.pop();
 	}
@@ -127,7 +137,7 @@ struct User
 	uint8_t state;
 	
 	// Subscribed sessions
-	std::map<uint8_t, UserData> sessions;
+	std::map<uint8_t, SessionData> sessions;
 	
 	// Output queue
 	std::queue<message_ref> queue;
@@ -141,5 +151,4 @@ struct User
 	// Currently incoming message.
 	protocol::Message *inMsg;
 };
-
 #endif // ServerUser_INCLUDED

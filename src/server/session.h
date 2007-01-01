@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
    For more info, see: http://drawpile.sourceforge.net/
 
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
@@ -16,16 +16,19 @@
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
+//#include "../shared/protocol.types.h"
+#include "../shared/protocol.flags.h"
 #include "../shared/protocol.defaults.h"
 
 #include "../shared/memstack.h"
 
+struct Session;
 #include "user.h"
 
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<User> user_ref;
 //typedef boost::shared_ptr<Session> session_ref;
-typedef boost::shared_ptr<protocol::Message> message_ref;
+//typedef boost::shared_ptr<protocol::Message> message_ref;
 
 #include <stdint.h>
 
@@ -53,6 +56,8 @@ struct Session
 		#ifndef NDEBUG
 		std::cout << "Session::~Session()" << std::endl;
 		#endif
+		
+		users.clear();
 		
 		delete [] title;
 	}

@@ -163,6 +163,12 @@ protected:
 	// Begin synchronizing the session
 	void uSyncSession(user_ref usr, session_ref session) throw();
 	
+	//
+	void uJoinSession(user_ref usr, session_ref session) throw();
+	
+	//
+	void uLeaveSession(user_ref usr, session_ref session) throw();
+	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	

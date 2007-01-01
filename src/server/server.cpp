@@ -191,7 +191,8 @@ void Server::uWrite(user_ref usr) throw()
 	if (!usr->output.data or usr->output.canRead() == 0)
 	{
 		size_t len=0;
-		char* buf = usr->queue.front()->serialize(len);
+		char* buf=0;
+		buf = usr->queue.front()->serialize(len);
 		usr->queue.pop();
 		usr->output.setBuffer(buf, len);
 		usr->output.write(len);
@@ -380,8 +381,30 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
-		
-		break;
+		{
+			protocol::Unsubscribe *m = static_cast<protocol::Unsubscribe*>(usr->inMsg);
+			
+			std::map<uint8_t, session_ref>::iterator i = session_id_map.find(m->session_id);
+			
+			if (i == session_id_map.end())
+			{
+				std::cerr << "No such session: "
+					<< static_cast<int>(m->session_id) << std::endl;
+				
+				protocol::Error* errmsg = new protocol::Error;
+				errmsg->code = protocol::error::UnknownSession;
+				uSendMsg(usr, message_ref(errmsg));
+			}
+			else
+			{
+				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+				ack->event = protocol::type::Unsubscribe;
+				uSendMsg(usr, message_ref(ack));
+				
+				uLeaveSession(usr, i->second);
+			}
+		}
+		return;
 	case protocol::type::Subscribe:
 		std::cout << "Subscribe" << std::endl;
 		{
@@ -399,30 +422,12 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				i->second->users.insert( std::make_pair(usr->id, usr) );
-				
-				// Add session to users session list.
-				usr->sessions.insert(
-					std::make_pair(i->first, UserData(i->first, i->second->mode))
-				);
-				
 				// Ack to user
 				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 				ack->event = protocol::type::Subscribe;
 				uSendMsg(usr, message_ref(ack));
 				
-				// Tell session members there's a new user.
-				Propagate(i->first, message_ref(uCreateEvent(usr, i->first, protocol::user_event::Join)));
-				
-				// Announce active session
-				usr->session = i->first;
-				protocol::SessionSelect *ss = new protocol::SessionSelect;
-				ss->user_id = usr->id;
-				ss->session_id = i->first;
-				Propagate(i->first, message_ref(ss));
-				
-				// Start client sync
-				uSyncSession(usr, i->second);
+				uJoinSession(usr, i->second);
 			}
 		}
 		return;
@@ -847,6 +852,57 @@ void Server::uSyncSession(user_ref usr, session_ref session) throw()
 	// This is WRONG
 	protocol::Raster *r = new protocol::Raster;
 	uSendMsg(usr, message_ref(r));
+}
+
+void Server::uJoinSession(user_ref usr, session_ref session) throw()
+{
+	session->users.insert( std::make_pair(usr->id, usr) );
+	
+	// Add session to users session list.
+	usr->sessions.insert(
+		std::make_pair( session->id, SessionData(usr->id, session) )
+	);
+	
+	// Tell session members there's a new user.
+	Propagate(session->id, message_ref(uCreateEvent(usr, session->id, protocol::user_event::Join)));
+	
+	// Announce active session
+	usr->session = session->id;
+	protocol::SessionSelect *ss = new protocol::SessionSelect;
+	ss->user_id = usr->id;
+	ss->session_id = session->id;
+	Propagate(session->id, message_ref(ss));
+	// TODO: Propagate to all users who see this user
+	
+	// Start client sync
+	uSyncSession(usr, session);
+}
+
+void Server::uLeaveSession(user_ref usr, session_ref session) throw()
+{
+	session->users.erase(usr->id);
+	
+	// Tell session members there's a new user.
+	Propagate(session->id, message_ref(uCreateEvent(usr, session->id, protocol::user_event::Leave)));
+	
+	if (usr->session == session->id)
+	{
+		protocol::SessionSelect *ss = new protocol::SessionSelect;
+		
+		ss->user_id = usr->id;
+		ss->session_id = protocol::Global;
+		
+		message_ref ss_ref(ss);
+		
+		Propagate(session->id, ss_ref);
+		uSendMsg(usr, ss_ref);
+		// TODO: Propagate to all users who see this user
+		
+		usr->session = protocol::Global;
+	}
+	
+	// remove
+	usr->sessions.erase(session->id);
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
