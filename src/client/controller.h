@@ -74,10 +74,10 @@ class Controller : public QObject
 		void hostSession(const QString& title, const QString& password,
 				const QImage& image);
 
+	public slots:
 		//! Disconnect from host
 		void disconnectHost();
 
-	public slots:
 		void penDown(const drawingboard::Point& point, bool isEraser);
 		void penMove(const drawingboard::Point& point);
 		void penUp();
@@ -95,6 +95,12 @@ class Controller : public QObject
 
 		//! Host disconnected
 		void disconnected();
+
+		//! Session was joined
+		void joined();
+
+		//! Session was left
+		void parted();
 
 	private slots:
 		void netConnected();

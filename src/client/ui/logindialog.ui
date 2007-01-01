@@ -1,0 +1,227 @@
+<ui version="4.0" >
+ <class>LoginDialog</class>
+ <widget class="QDialog" name="LoginDialog" >
+  <property name="windowModality" >
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>391</width>
+    <height>190</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Connecting</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="titlemessage" >
+       <property name="text" >
+        <string>Connecting</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="progress" >
+       <property name="value" >
+        <number>0</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QStackedWidget" name="stackedWidget" >
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="connectpage" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="connectmessage" >
+           <property name="text" >
+            <string>Connecting...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_2" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string>Password needed</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLineEdit" name="password" >
+             <property name="echoMode" >
+              <enum>QLineEdit::Password</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="passwordbutton" >
+             <property name="text" >
+              <string>login</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="page_3" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label_4" >
+           <property name="text" >
+            <string>Select session to join</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QListWidget" name="sessionlist" />
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
+           <property name="spacing" >
+            <number>6</number>
+           </property>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="joinbutton" >
+             <property name="text" >
+              <string>join</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttons" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Cancel</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttons</sender>
+   <signal>accepted()</signal>
+   <receiver>LoginDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttons</sender>
+   <signal>rejected()</signal>
+   <receiver>LoginDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

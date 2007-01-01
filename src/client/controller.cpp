@@ -33,8 +33,8 @@ Controller::Controller(QObject *parent)
 {
 	netstate_ = new network::HostState(this);
 	connect(netstate_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
-	connect(netstate_, SIGNAL(joined(int)), this, SIGNAL(sessionJoined(int)));
-	connect(netstate_, SIGNAL(parted(int)), this, SIGNAL(sessionParted()));
+	connect(netstate_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
+	connect(netstate_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
 }
 
 Controller::~Controller()
@@ -109,6 +109,7 @@ void Controller::disconnectHost()
 void Controller::sessionJoined(int id)
 {
 	session_ = netstate_->session(id);
+	emit joined();
 }
 
 /**
@@ -117,6 +118,7 @@ void Controller::sessionJoined(int id)
 void Controller::sessionParted()
 {
 	session_ = 0;
+	emit parted();
 }
 
 void Controller::setTool(tools::Type tool)

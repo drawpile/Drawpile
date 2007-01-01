@@ -39,7 +39,7 @@ set (
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
-	networkprivate.h netstate.h
+	networkprivate.h netstate.h logindialog.h
 )
 
 set (
@@ -49,11 +49,11 @@ set (
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp aboutdialog.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp
+	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp logindialog.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )
-set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui ui/newdialog.ui ui/about.ui ui/hostdialog.ui ui/joindialog.ui )
+set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui ui/newdialog.ui ui/about.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui )
 
 if ( WIN32 )
 	link_libraries ( ws2_32 )

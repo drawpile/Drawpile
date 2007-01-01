@@ -38,6 +38,7 @@ namespace dialogs {
 	class NewDialog;
 	class HostDialog;
 	class JoinDialog;
+	class LoginDialog;
 }
 namespace drawingboard {
 	class Board;
@@ -154,6 +155,7 @@ class MainWindow : public QMainWindow {
 		dialogs::NewDialog *newdlg_;
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
+		dialogs::LoginDialog *logindlg_;
 		QMessageBox *msgbox_;
 		QMessageBox *unsavedbox_;
 		drawingboard::Board *board_;

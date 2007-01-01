@@ -64,6 +64,10 @@ void HostState::receiveMessage()
 			case type::Authentication:
 				handleAuthentication(static_cast<Authentication*>(msg));
 				break;
+			case type::SessionSelect:
+				// Since the client currently only supports single session
+				// at a time, SessionSelect messages are ignored.
+				break;
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
 				break;

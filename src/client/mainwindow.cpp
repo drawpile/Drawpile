@@ -45,6 +45,7 @@
 #include "newdialog.h"
 #include "hostdialog.h"
 #include "joindialog.h"
+#include "logindialog.h"
 
 MainWindow::MainWindow()
 	: QMainWindow()
@@ -88,8 +89,13 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penDown(drawingboard::Point,bool)),controller_,SLOT(penDown(drawingboard::Point,bool)));
 	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
-	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
 	connect(controller_, SIGNAL(disconnected()), netstatus_, SLOT(disconnectHost()));
+	// Controller <-> login dialog connections
+	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
+	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
+	connect(controller_, SIGNAL(disconnected()), logindlg_, SLOT(disconnected()));
+	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
+	connect(controller_, SIGNAL(joined()), logindlg_, SLOT(joined()));
 
 	readSettings();
 }
@@ -358,6 +364,7 @@ void MainWindow::leave()
 void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
+		QString address = "localhost";
 		QString user = hostdlg_->getUserName();
 
 		// Remember some settings
@@ -368,7 +375,9 @@ void MainWindow::finishHost(int i)
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
 		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
-		controller_->connectHost("localhost", user);
+		controller_->connectHost(address, user);
+		logindlg_->connecting(address);
+		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 	} else {
 		hostdlg_->deleteLater();
 	}
@@ -745,5 +754,7 @@ void MainWindow::createDialogs()
                 QMessageBox::No,
                 QMessageBox::Cancel | QMessageBox::Escape,
                 this, Qt::Sheet);
+
+	logindlg_ = new dialogs::LoginDialog(this);
 }
 
