@@ -111,7 +111,7 @@ void HostState::host(const QString& title,
 {
 	protocol::Instruction *msg = new protocol::Instruction;
 	msg->command = protocol::admin::command::Create;
-	msg->session = protocol::Global;
+	msg->session_id = protocol::Global;
 	msg->aux_data = 20; // User limit (TODO)
 	msg->aux_data2 = protocol::user::None; // Default user mode (TODO)
 
@@ -176,7 +176,7 @@ void HostState::join(int id)
 	bool found = false;
 	// Get session parameters from list
 	foreach(protocol::SessionInfo *i, sessions_) {
-		if(i->identifier == id) {
+		if(i->session_id == id) {
 			newsession_ = new SessionState(this,i);
 			found = true;
 			break;
@@ -205,7 +205,7 @@ void HostState::joinLatest()
 	do {
 		--i;
 		if((*i)->owner == userid_) {
-			join((*i)->identifier);
+			join((*i)->session_id);
 			found = true;
 			break;
 		}
@@ -264,7 +264,7 @@ void HostState::handleUserInfo(protocol::UserInfo *msg)
  */
 void HostState::handleSessionInfo(protocol::SessionInfo *msg)
 {
-	qDebug() << "session info " << int(msg->identifier);
+	qDebug() << "session info " << int(msg->session_id);
 	sessions_.append(msg);
 }
 
@@ -321,7 +321,7 @@ SessionState::SessionState(HostState *parent, const protocol::SessionInfo* info)
 {
 	Q_ASSERT(parent);
 	Q_ASSERT(info);
-	id_ = info->identifier;
+	id_ = info->session_id;
 	width_ = info->width;
 	height_ = info->height;
 	title_ = QString::fromUtf8(info->title);

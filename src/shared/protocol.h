@@ -74,6 +74,7 @@ protected:
 	Message(uint8_t _type, uint8_t _flags=protocol::message::None) throw()
 		: type(_type),
 		user_id(protocol::null_user),
+		session_id(protocol::Global),
 		modifiers(_flags),
 		next(0),
 		prev(0)
@@ -81,7 +82,13 @@ protected:
 	
 	// write header (for serialize())
 	inline
-	char* serializeHeader(char* ptr, const Message* msg) const throw();
+	size_t serializeHeader(char* ptr, const Message* msg) const throw();
+	
+	inline
+	size_t unserializeHeader(const char* ptr) throw();
+	
+	inline
+	size_t headerSize() const throw();
 	
 public:
 	virtual ~Message() throw() { }
@@ -89,8 +96,11 @@ public:
 	//! Message type identifier (full list in protocol::type namespace).
 	const uint8_t type;
 	
-	//! Originating user for the message, as assigned by the server.
-	uint8_t user_id;
+	uint8_t
+		//! Originating user for the message, as assigned by the server.
+		user_id,
+		//! Target or referred session
+		session_id;
 	
 	const uint8_t
 		//! Message modifiers
@@ -223,7 +233,8 @@ struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
-		: Message(protocol::type::StrokeInfo, message::isUser|message::isBundling),
+		: Message(protocol::type::StrokeInfo,
+			message::isUser|message::isBundling|message::isSelected),
 		x(0),
 		y(0)
 	{ }
@@ -257,7 +268,8 @@ struct StrokeEnd
 	: Message//, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
-		: Message(protocol::type::StrokeEnd, message::isUser)
+		: Message(protocol::type::StrokeEnd,
+			message::isUser|message::isSelected)
 	{ }
 	
 	~StrokeEnd() throw() { }
@@ -343,26 +355,20 @@ struct Synchronize
 	: Message//, MemoryStack<Synchronize>
 {
 	Synchronize() throw()
-		: Message(protocol::type::Synchronize),
-		session_id(protocol::Global)
+		: Message(type::Synchronize, message::isSession)
 	{ }
 	
 	~Synchronize() throw() { }
 	
 	/* unique data */
 	
-	//! Session to synchronize
-	uint8_t session_id;
+	// nothing needed
 	
 	// does not have any.
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len) throw();
-	size_t reqDataLen(const char *buf, size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
-
+	// nothing needed
 };
 
 //! Raster data message.
@@ -383,8 +389,7 @@ struct Raster
 	: Message//, MemoryStack<Raster>
 {
 	Raster() throw()
-		: Message(protocol::type::Raster),
-		session_id(protocol::Global),
+		: Message(type::Raster, message::isSession),
 		offset(0),
 		length(0),
 		size(0),
@@ -394,9 +399,6 @@ struct Raster
 	~Raster() throw() { delete [] data; }
 	
 	/* unique data */
-	
-	//! Source session ID
-	uint8_t session_id;
 	
 	uint32_t
 		//! Offset of data chunk.
@@ -433,22 +435,18 @@ struct SyncWait
 	: Message//, MemoryStack<SyncWait>
 {
 	SyncWait() throw()
-		: Message(protocol::type::SyncWait),
-		session_id(protocol::Global)
+		: Message(type::SyncWait, message::isSession)
 	{ }
 	
 	~SyncWait() throw() { }
 	
 	/* unique data */
 	
-	uint8_t session_id;
+	// nothing needed
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len) throw();
-	size_t reqDataLen(const char *buf, size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	// nothing needed
 };
 
 //! Authentication request message.
@@ -461,16 +459,12 @@ struct Authentication
 	: Message//, MemoryStack<Authentication>
 {
 	Authentication() throw()
-		: Message(protocol::type::Authentication),
-		session_id(protocol::Global)
+		: Message(type::Authentication, message::isSession)
 	{ }
 	
 	~Authentication() throw() { }
 	
 	/* unique data */
-	
-	//! Session identifier for which the auth request is aimed at (protocol::Global for server).
-	uint8_t session_id;
 	
 	//! Password seed; append this to the password string for hashing
 	char seed[password_seed_size];
@@ -491,16 +485,12 @@ struct Password
 	: Message//, MemoryStack<Password>
 {
 	Password() throw()
-		: Message(protocol::type::Password),
-		session_id(protocol::Global)
+		: Message(type::Password, message::isSession)
 	{ }
 	
 	~Password() throw() { delete [] data; }
 	
 	/* unique data */
-	
-	//! Session identifier, must be the same as in the auth request this is response to.
-	uint8_t session_id;
 	
 	//! Password hash (SHA-1)
 	char data[password_hash_size];
@@ -523,23 +513,18 @@ struct Subscribe
 	: Message//, MemoryStack<Subscribe>
 {
 	Subscribe() throw()
-		: Message(protocol::type::Subscribe),
-		session_id(protocol::Global)
+		: Message(type::Subscribe, message::isSession)
 	{ }
 	
 	~Subscribe() throw() { }
 	
 	/* unique data */
 	
-	//! Session identifier.
-	uint8_t session_id;
+	// nothing needed
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len) throw();
-	size_t reqDataLen(const char *buf, size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	// nothing needed
 };
 
 //! Unsubscribe message.
@@ -552,23 +537,18 @@ struct Unsubscribe
 	: Message//, MemoryStack<Unsubscribe>
 {
 	Unsubscribe() throw()
-		: Message(protocol::type::Unsubscribe),
-		session_id(protocol::Global)
+		: Message(type::Unsubscribe, message::isSession)
 	{ }
 	
 	~Unsubscribe() throw() { }
 	
 	/* unique data */
 	
-	//! Session identifier;
-	uint8_t session_id;
+	// nothing needed
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len) throw();
-	size_t reqDataLen(const char *buf, size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	// nothing needed
 };
 
 //! Admin Instruction message.
@@ -595,8 +575,6 @@ struct Instruction
 	uint8_t
 		//! protocol::admin::command
 		command,
-		//! target session
-		session,
 		//! target user
 		user,
 		//! aux_data
@@ -629,7 +607,7 @@ struct ListSessions
 	: Message//, MemoryStack<ListSessions>
 {
 	ListSessions() throw()
-		: Message(protocol::type::ListSessions)
+		: Message(type::ListSessions)
 	{ }
 	
 	~ListSessions() throw() { }
@@ -651,23 +629,18 @@ struct Cancel
 	: Message//, MemoryStack<Cancel>
 {
 	Cancel() throw()
-		: Message(protocol::type::Cancel),
-		session_id(protocol::Global)
+		: Message(type::Cancel, message::isSession)
 	{ }
 	
 	~Cancel() throw() { }
 	
 	/* unique data */
 	
-	//! Session identifier
-	uint8_t session_id;
+	// nothing needed
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len) throw();
-	size_t reqDataLen(const char *buf, size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	// nothing needed
 };
 
 //! User Info message.
@@ -680,8 +653,7 @@ struct UserInfo
 	: Message//, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
-		: Message(protocol::type::UserInfo, message::isUser),
-		session_id(protocol::Global),
+		: Message(protocol::type::UserInfo, message::isUser|message::isSession),
 		mode(protocol::user::None),
 		event(protocol::user_event::None),
 		length(0),
@@ -693,8 +665,6 @@ struct UserInfo
 	/* unique data */
 	
 	uint8_t
-		//! Session ID
-		session_id,
 		//! User mode flags (protocol::user)
 		mode,
 		//! User event (protocol::user_event)
@@ -769,8 +739,7 @@ struct SessionInfo
 	: Message//, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
-		: Message(protocol::type::SessionInfo),
-		identifier(protocol::Global),
+		: Message(protocol::type::SessionInfo, message::isSession),
 		width(0),
 		height(0),
 		owner(protocol::null_user),
@@ -785,9 +754,6 @@ struct SessionInfo
 	~SessionInfo() throw() { delete [] title; }
 	
 	/* unique data */
-	
-	//! Session identifier.
-	uint8_t identifier;
 	
 	uint16_t
 		//! Board width.
@@ -927,8 +893,7 @@ struct Chat
 	: Message //, MemoryStack<Chat>
 {
 	Chat() throw()
-		: Message(protocol::type::Chat, message::isUser),
-		session_id(protocol::Global),
+		: Message(protocol::type::Chat, message::isUser|message::isSession),
 		length(0),
 		data(0)
 	{ }
@@ -937,11 +902,8 @@ struct Chat
 	
 	/* unique data */
 	
-	uint8_t
-		//! Target session identifier (use protocol::Global for global messages).
-		session_id,
-		//! Message string length.
-		length;
+	//! Message string length.
+	uint8_t length;
 	
 	//! Message string (in UTF-8 format, or UTF-16 if the server so requires).
 	char* data;
@@ -1001,23 +963,18 @@ struct SessionSelect
 {
 	SessionSelect() throw()
 		: Message(protocol::type::SessionSelect,
-			protocol::message::isUser),
-		session_id(protocol::Global)
+			message::isUser|message::isSession)
 	{ }
 	
 	~SessionSelect() throw() { }
 	
 	/* unique data */
 	
-	//! Session identifier
-	uint8_t session_id;
+	// nothing needed
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, size_t len) throw();
-	size_t reqDataLen(const char *buf, size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	// nothing needed
 };
 
 } // namespace protocol

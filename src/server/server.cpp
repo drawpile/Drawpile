@@ -290,6 +290,7 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 		
 		std::cout << "Verify size" << std::endl;
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, usr->input.canRead());
+		std::cout << "Need: " << len << " bytes" << std::endl;
 		if (len > usr->input.canRead())
 		{
 			// still need more data
@@ -343,16 +344,20 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 	}
 }
 
-protocol::UserInfo* Server::uCreateEvent(user_ref usr, uint8_t session, uint8_t event)
+protocol::UserInfo* Server::uCreateEvent(user_ref usr, session_ref session, uint8_t event)
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uCreateEvent()" << std::endl;
+	#endif
+	
 	protocol::UserInfo *e = new protocol::UserInfo;
 	
 	e->user_id = usr->id;
 	
-	e->session_id = session;
+	e->session_id = session->id;
 	
 	e->event = event;
-	e->mode = usr->sessions[session].mode;
+	e->mode = session->mode;
 	
 	e->length = usr->nlen;
 	
@@ -440,7 +445,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 			{
 				nfo = new protocol::SessionInfo;
 				
-				nfo->identifier = si->first;
+				nfo->session_id = si->first;
 				
 				nfo->width = si->second->width;
 				nfo->height = si->second->height;
@@ -578,7 +583,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 		// TODO
 		break;
 	case protocol::admin::command::Password:
-		if (m->session == protocol::Global)
+		if (m->session_id == protocol::Global)
 		{
 			password = m->data;
 			pw_len = m->length;
@@ -864,7 +869,7 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 	);
 	
 	// Tell session members there's a new user.
-	Propagate(session->id, message_ref(uCreateEvent(usr, session->id, protocol::user_event::Join)));
+	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Join)));
 	
 	// Announce active session
 	usr->session = session->id;
@@ -883,7 +888,7 @@ void Server::uLeaveSession(user_ref usr, session_ref session) throw()
 	session->users.erase(usr->id);
 	
 	// Tell session members there's a new user.
-	Propagate(session->id, message_ref(uCreateEvent(usr, session->id, protocol::user_event::Leave)));
+	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Leave)));
 	
 	if (usr->session == session->id)
 	{

@@ -139,7 +139,7 @@ protected:
 	void uRead(user_ref usr) throw(std::bad_alloc);
 	
 	// create user info for event
-	protocol::UserInfo* uCreateEvent(user_ref usr, uint8_t session, uint8_t event);
+	protocol::UserInfo* uCreateEvent(user_ref usr, session_ref session, uint8_t event);
 	
 	// Handle user message.
 	void uHandleMsg(user_ref usr) throw(std::bad_alloc);

@@ -46,12 +46,14 @@ namespace message
 const uint8_t
 	//! No message modifiers.
 	None = 0x00,
-	//! Has user modifier.
+	//! Has user identifier
 	isUser = 0x01,
-	//! Has bundling modifier.
-	isBundling = 0x02,
+	//! Has session identifier
+	isSession = 0x02,
+	//! Is bundling
+	isBundling = 0x04,
 	//! Is directed by SessionSelect message.
-	isSession = 0x04;
+	isSelected = 0x08;
 }
 
 //! Protocol extension flags.
@@ -67,11 +69,14 @@ const uint8_t
 	//! No supported extensions.
 	None = 0x00,
 	
-	//! Deflate extension.
-	Deflate = 0x01,
-	
 	//! Chat extension
-	Chat = 0x04;
+	Chat = 0x01,
+	
+	//! Shared palette extension
+	Palette = 0x02,
+	
+	//! Deflate extension
+	Deflate = 0x08;
 
 } // namespace extensions
 
