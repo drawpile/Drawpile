@@ -161,12 +161,8 @@ void Server::cleanup() throw()
 protocol::Authentication* Server::msgAuth(User* usr, uint8_t session) throw(std::bad_alloc)
 {
 	protocol::Authentication* m = new protocol::Authentication;
-	
 	m->session_id = session;
-	
-	// FIXME
-	memcpy(m->seed, "1234", protocol::password_seed_size);
-	
+	memcpy(m->seed, "1234", protocol::password_seed_size); // FIXME
 	return m;
 }
 
@@ -345,6 +341,8 @@ protocol::UserInfo* Server::uCreateEvent(User* usr, uint8_t session, uint8_t eve
 {
 	protocol::UserInfo *e = new protocol::UserInfo;
 	
+	e->user_id = usr->id;
+	
 	e->session_id = session;
 	
 	e->event = event;
@@ -398,16 +396,27 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			{
 				i->second->users.insert( std::make_pair(usr->id, usr) );
 				
+				// Add session to users session list.
 				usr->sessions.insert(
 					std::make_pair(i->first, UserData(i->first, i->second->mode))
 				);
 				
-				Propagate(i->first, uCreateEvent(usr, i->first, protocol::user_event::Join));
-				
+				// Ack to user
 				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 				ack->event = protocol::type::Subscribe;
 				uSendMsg(usr, ack);
 				
+				// Tell session members there's a new user.
+				Propagate(i->first, uCreateEvent(usr, i->first, protocol::user_event::Join));
+				
+				// Announce active session
+				usr->session = i->first;
+				protocol::SessionSelect *ss = new protocol::SessionSelect;
+				ss->user_id = usr->id;
+				ss->session_id = i->first;
+				Propagate(i->first, ss);
+				
+				// Start client sync
 				uSyncSession(usr, i->second);
 			}
 		}
@@ -570,7 +579,7 @@ void Server::uHandleInstruction(User* usr) throw()
 		}
 		else
 		{
-			// TODO
+			// TODO: Behaviour for setting session password
 		}
 		break;
 	default:
@@ -853,6 +862,8 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		#endif
 		
 		User *usr = new User(id, sock);
+		
+		usr->session = protocol::Global;
 		
 		fSet(usr->events, ev.read);
 		ev.add(usr->sock->fd(), usr->events);
