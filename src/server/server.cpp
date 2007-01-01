@@ -188,11 +188,13 @@ void Server::uWrite(user_ref usr) throw()
 	std::cout << "Server::uWrite(" << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	if (usr->output.canRead() == 0)
+	if (!usr->output.data or usr->output.canRead() == 0)
 	{
 		size_t len=0;
 		char* buf = usr->queue.front()->serialize(len);
+		usr->queue.pop();
 		usr->output.setBuffer(buf, len);
+		usr->output.write(len);
 	}
 	
 	int sb = usr->sock->send(
