@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -341,6 +341,23 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 }
 
+protocol::UserInfo* Server::uCreateEvent(User* usr, uint8_t session, uint8_t event)
+{
+	protocol::UserInfo *e = new protocol::UserInfo;
+	
+	e->session_id = session;
+	
+	e->event = event;
+	e->mode = usr->sessions[session].mode;
+	
+	e->length = usr->nlen;
+	
+	e->name = new char[usr->nlen];
+	memcpy(e->name, usr->name, usr->nlen);
+	
+	return e;
+}
+
 void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
@@ -382,12 +399,16 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				i->second->users.insert( std::make_pair(usr->id, usr) );
 				
 				usr->sessions.insert(
-					std::make_pair(i->second->id, UserData(i->second->id, i->second->mode))
+					std::make_pair(i->first, UserData(i->first, i->second->mode))
 				);
+				
+				Propagate(i->first, uCreateEvent(usr, i->first, protocol::user_event::Join));
 				
 				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 				ack->event = protocol::type::Subscribe;
 				uSendMsg(usr, ack);
+				
+				uSyncSession(usr, i->second);
 			}
 		}
 		return;
@@ -400,7 +421,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			{
 				nfo = new protocol::SessionInfo;
 				
-				nfo->identifier = si->second->id;
+				nfo->identifier = si->first;
 				
 				nfo->width = si->second->width;
 				nfo->height = si->second->height;
@@ -744,6 +765,23 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 	}
 }
 
+void Server::Propagate(uint8_t session_id, protocol::Message* msg) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Server::Propagate(session: " << static_cast<int>(session_id)
+		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
+	#endif
+	
+	Session *s = session_id_map[session_id];
+	
+	std::map<uint8_t, User*>::iterator ui( s->users.begin() );
+	for (; ui != s->users.end(); ui++)
+	{
+		// TODO: Somehow prevent some messages from being propagated back to originator
+		uSendMsg(ui->second, msg);
+	}
+}
+
 void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 {
 	#ifndef NDEBUG
@@ -770,6 +808,25 @@ void Server::uSendMsg(User* usr, protocol::Message* msg) throw()
 	
 	delete msg;
 	msg = 0;
+}
+
+void Server::uSyncSession(User* usr, Session* session) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Server::uSyncSession(user: " << static_cast<int>(usr->id)
+		<< ", session: " << static_cast<int>(session->id) << ")" << std::endl;
+	#endif
+	
+	// TODO: Pick user for requesting raster from, and send raster request.
+	
+	/*
+	protocol::Synchronize *s = new protocol::Synchronize;
+	uSendMsg(old_usr, s);
+	*/
+	
+	// This is WRONG
+	protocol::Raster *r = new protocol::Raster;
+	uSendMsg(usr, r);
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)

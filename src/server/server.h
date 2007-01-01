@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -133,6 +133,9 @@ protected:
 	// Read from user socket
 	void uRead(User* usr) throw(std::bad_alloc);
 	
+	// create user info for event
+	protocol::UserInfo* uCreateEvent(User* usr, uint8_t session, uint8_t event);
+	
 	// Handle user message.
 	void uHandleMsg(User* usr) throw(std::bad_alloc);
 	
@@ -142,12 +145,18 @@ protected:
 	// Handle user login.
 	void uHandleLogin(User* usr) throw(std::bad_alloc);
 	
+	// Send message to session
+	void Propagate(uint8_t session_id, protocol::Message* msg) throw();
+	
 	// Send message to user
 	/*
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
 	void uSendMsg(User* usr, protocol::Message* msg) throw();
+	
+	// Begin synchronizing the session
+	void uSyncSession(User* usr, Session* session) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
