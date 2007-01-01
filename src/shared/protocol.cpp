@@ -269,8 +269,7 @@ size_t Identifier::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	return headerSize() + identifier_size + sizeof(revision)
-		+ sizeof(level) + sizeof(extensions);
+	return headerSize() + payloadLength();
 }
 
 /*
@@ -864,7 +863,7 @@ size_t Acknowledgement::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	return headerSize() + sizeof(event);
+	return headerSize() + payloadLength();
 }
 
 size_t Acknowledgement::serializePayload(char *buf) const throw()
@@ -903,7 +902,7 @@ size_t Error::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	return headerSize() + sizeof(code);
+	return headerSize() + payloadLength();
 }
 
 size_t Error::serializePayload(char *buf) const throw()
