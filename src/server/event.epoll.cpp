@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -39,12 +39,10 @@
 
 /* Because MinGW is buggy, we have to do this fuglyness */
 const int
-	//! identifier for 'read' event
-	Event::read
-		= EPOLLIN,
-	//! identifier for 'write' event
-	Event::write
-		= EPOLLOUT;
+	Event::read = EPOLLIN,
+	Event::write = EPOLLOUT,
+	Event::error = EPOLLERR,
+	Event::hangup = EPOLLHUP;
 
 Event::Event() throw()
 	: evfd(0),
@@ -60,7 +58,7 @@ Event::~Event() throw()
 	#ifndef NDEBUG
 	std::cout << "~Event()" << std::endl;
 	#endif
-
+	
 	assert(events == 0);
 	assert(evfd == -1);
 }
@@ -72,10 +70,10 @@ bool Event::init() throw(std::bad_alloc)
 	#endif
 	
 	evfd = epoll_create(10);
-	error = errno;
+	_error = errno;
 	if (evfd == -1)
 	{
-		switch (error)
+		switch (_error)
 		{
 		case EINVAL:
 			#ifndef NDEBUG
@@ -125,11 +123,11 @@ int Event::wait(uint32_t msecs) throw()
 	
 	// timeout in milliseconds
 	nfds = epoll_wait(evfd, events, 10, msecs);
-	error = errno;
+	_error = errno;
 	
 	if (nfds == -1)
 	{
-		switch (error)
+		switch (_error)
 		{
 		#if defined( TRAP_CODER_ERROR )
 		case EBADF:
@@ -176,7 +174,6 @@ int Event::add(int fd, int ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
 	epoll_event ev_info;
@@ -184,10 +181,10 @@ int Event::add(int fd, int ev) throw()
 	ev_info.events = ev;
 	
 	int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
-	error = errno;
+	_error = errno;
 	if (r == -1)
 	{
-		switch (error)
+		switch (_error)
 		{
 		#ifdef TRAP_CODER_ERROR
 		case EBADF:
@@ -238,7 +235,6 @@ int Event::modify(int fd, int ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
 	epoll_event ev_info;
@@ -246,10 +242,10 @@ int Event::modify(int fd, int ev) throw()
 	ev_info.events = ev;
 	
 	int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
-	error = errno;
+	_error = errno;
 	if (r == -1)
 	{
-		switch (error)
+		switch (_error)
 		{
 		#ifdef TRAP_CODER_ERROR
 		case EBADF:
@@ -293,14 +289,13 @@ int Event::remove(int fd, int ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
 	int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
-	error = errno;
+	_error = errno;
 	if (r == -1)
 	{
-		switch (error)
+		switch (_error)
 		{
 		#ifdef TRAP_CODER_ERROR
 		case EBADF:
@@ -344,7 +339,6 @@ bool Event::isset(int fd, int ev) const throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write );
 	assert( fd >= 0 );
 	
 	for (int n=0; n != nfds; n++)

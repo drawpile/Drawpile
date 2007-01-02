@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -43,8 +43,9 @@
 #include <vector>
 
 #if defined(EV_EPOLL)
+	#define EV_HAVE_HANGUP
 	#define EV_HAVE_RAWLIST
-	#define EV_HAVE_LIST
+	//#define EV_HAVE_LIST
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
@@ -66,6 +67,7 @@
 	#define EV_USE_SIGMASK
 #endif
 
+#ifdef EV_HAVE_LIST
 //! Event info container
 struct EventInfo
 {
@@ -89,28 +91,26 @@ struct EventInfo
 };
 
 typedef std::vector<EventInfo> EvList;
+#endif // EV_HAVE_LIST
 
 //! Event I/O abstraction
 class Event
 {
 protected:
-	#ifndef EV_NO_EVENT_LIST
-	std::list<EventInfo> fd_list;
-	#endif // !EV_NO_EVENT_LIST
-	
 	#if defined(EV_EPOLL)
 	int evfd;
 	epoll_event* events;
 	#elif defined(EV_KQUEUE)
 	//
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
-	fd_set fds_r, fds_w, t_fds_r, t_fds_w;
+	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
 	#ifndef WIN32
 	std::set<int> select_set_r;
 	std::set<int> select_set_w;
+	std::set<int> select_set_e;
 	
-	int nfds_r, nfds_w;
+	int nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
 	
 	#endif // EV_*
@@ -119,16 +119,20 @@ protected:
 	sigset_t *_sigmask;
 	#endif // EV_USE_SIGMASK
 	
-	int error, nfds;
+	int _error, nfds;
 	
 public:
 	
 	// MinGW is buggy... think happy thoughts :D
 	static const int
-		//! identifier for 'read' event
+		//! Identifier for 'read' event
 		read,
-		//! identifier for 'write' event
-		write;
+		//! Identifier for 'write' event
+		write,
+		//! Identifier for 'error' event
+		error,
+		//! Identifier for 'hangup' event
+		hangup;
 	
 	//! ctor
 	Event() throw();
