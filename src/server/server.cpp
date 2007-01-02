@@ -185,7 +185,7 @@ protocol::HostInfo* Server::msgHostInfo() throw(std::bad_alloc)
 void Server::uWrite(user_ref usr) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uWrite(" << static_cast<int>(usr->id) << ")" << std::endl;
+	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
 	if (!usr->output.data or usr->output.canRead() == 0)
@@ -352,7 +352,7 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 protocol::UserInfo* Server::uCreateEvent(user_ref usr, session_ref session, uint8_t event)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uCreateEvent()" << std::endl;
+	std::cout << "Server::uCreateEvent(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
 	protocol::UserInfo *e = new protocol::UserInfo;
@@ -375,7 +375,7 @@ protocol::UserInfo* Server::uCreateEvent(user_ref usr, session_ref session, uint
 void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uHandleMsg(user id: " << static_cast<int>(usr->id)
+	std::cout << "Server::uHandleMsg(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
 	
@@ -615,7 +615,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uHandleLogin(user id: " << static_cast<int>(usr->id)
+	std::cout << "Server::uHandleLogin(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
 	
@@ -827,11 +827,12 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uSendMsg()" << std::endl;
+	std::cout << "Server::uSendMsg(user: " << static_cast<int>(usr->id)
+		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
 	//assert(usr != 0);
-	assert(msg != 0);
+	//assert(msg != 0);
 	
 	// TODO: Improve memory efficiency
 	
@@ -997,7 +998,7 @@ void Server::uRemove(user_ref usr) throw()
 	std::cout << "Server::uRemove()" << std::endl;
 	#endif
 	
-	ev.remove(usr->sock->fd(), ev.write|ev.read);
+	ev.remove(usr->sock->fd(), ev.write|ev.read|ev.error|ev.hangup);
 	
 	freeUserID(usr->id);
 	
@@ -1154,14 +1155,11 @@ int Server::run() throw()
 			
 			if (ec > 0)
 			{
-				#ifndef NDEBUG
-				std::cout << "Triggered sockets left: " << ec << std::endl;
-				#endif
-				
-				
 				for (ui = users.begin(); ui != users.end(); ui++)
 				{
+					#if 0
 					std::cout << "Testing: " << ui->first << std::endl;
+					#endif
 					if (ev.isset(ui->first, ev.read))
 					{
 						#ifndef NDEBUG
