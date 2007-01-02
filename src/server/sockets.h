@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -63,6 +63,8 @@
 	#define EDESTADDRREQ WSAEDESTADDRREQ
 	#define EMSGSIZE WSAEMSGSIZE
 	#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
+	//#define ENETDOWN WSAENETDOWN
+	typedef SOCKET fd_t;
 #else
 	#include <sys/socket.h>
 	#include <netinet/in.h>
@@ -72,6 +74,7 @@
 	// not defined in non-win32 systems
 	#define INVALID_SOCKET -1
 	#define SOCKET_ERROR -1
+	typedef int fd_t;
 #endif
 
 #ifndef EAGAIN
@@ -113,7 +116,7 @@ class Socket
 {
 protected:
 	//! Assigned file descriptor
-	int sock;
+	fd_t sock;
 	
 	//! Local address
 	sockaddr_in addr;
@@ -129,26 +132,32 @@ public:
 		: sock(INVALID_SOCKET),
 		error(0)
 	{
+		#ifdef DEBUG_SOCKETS
 		#ifndef NDEBUG
 		std::cout << "Socket::Socket()" << std::endl;
+		#endif
 		#endif
 	}
 	
 	//! ctor
-	Socket(int nsock) throw()
+	Socket(fd_t nsock) throw()
 		: sock(nsock),
 		error(0)
 	{
+		#ifdef DEBUG_SOCKETS
 		#ifndef NDEBUG
 		std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
+		#endif
 		#endif
 	}
 	
 	//! dtor
 	virtual ~Socket() throw()
 	{
+		#ifdef DEBUG_SOCKETS
 		#ifndef NDEBUG
 		std::cout << "Socket::~Socket()" << std::endl;
+		#endif
 		#endif
 		
 		close();
@@ -166,7 +175,7 @@ public:
 	 *
 	 * @return file descriptor associated with the class.
 	 */
-	int fd(int nsock) throw()
+	fd_t fd(fd_t nsock) throw()
 	{
 		if (sock >= 0) close();
 		return sock = nsock;
@@ -176,7 +185,7 @@ public:
 	/**
 	 * @return file descriptor associated with the class.
 	 */
-	int fd() const throw() { return sock; }
+	fd_t fd() const throw() { return sock; }
 	
 	//! Accept new connection.
 	/**
@@ -251,7 +260,7 @@ public:
 	 *
 	 * @return -1 on error, 0 otherwise.
 	 */
-	int sendfile(int fd, off_t offset, size_t nbytes, sf_hdtr *hdtr=0, off_t *sbytes=0) throw();
+	int sendfile(fd_t fd, off_t offset, size_t nbytes, sf_hdtr *hdtr=0, off_t *sbytes=0) throw();
 	#endif // WITH_SENDFILE
 	
 	//! Get last error number
@@ -270,13 +279,13 @@ public:
 	/**
 	 * @return IP address.
 	 */
-	int address() const throw() { return ntohl(addr.sin_addr.s_addr); }
+	uint32_t address() const throw() { return ntohl(addr.sin_addr.s_addr); }
 	
 	//! Get local port
 	/**
 	 * @return port number.
 	 */
-	int port() const throw() { return ntohs(addr.sin_port); }
+	uint16_t port() const throw() { return ntohs(addr.sin_port); }
 };
 
 #endif // Sockets_INCLUDED

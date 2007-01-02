@@ -129,28 +129,23 @@ int Event::wait(uint32_t msecs) throw()
 	{
 		switch (_error)
 		{
-		#if defined( TRAP_CODER_ERROR )
+		#ifndef NDEBUG
 		case EBADF:
-			#ifndef NDEBUG
 			std::cerr << "Bad epoll FD." << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EFAULT:
-			#ifndef NDEBUG
 			std::cerr << "Events not writable." << std::endl;
-			#endif
 			assert(1);
 			break;
 		case EINVAL:
-			#ifndef NDEBUG
 			std::cerr << "Epoll FD is not an epoll FD.. or maxevents is <= 0" << std::endl;
-			#endif
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case EINTR:
 			std::cerr << "Interrupted by signal/timeout." << std::endl;
+			nfsd = 0;
 			break;
 		default:
 			std::cerr << "Unknown error." << std::endl;
@@ -174,7 +169,7 @@ int Event::add(int fd, int ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -186,16 +181,14 @@ int Event::add(int fd, int ev) throw()
 	{
 		switch (_error)
 		{
-		#ifdef TRAP_CODER_ERROR
+		#ifndef NDEBUG
 		case EBADF:
 			std::cerr << "Epoll FD is invalid." << std::endl;
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
 		case EEXIST:
 			std::cerr << "FD already in set." << std::endl;
 			break;
-		#ifdef TRAP_CODER_ERROR
 		case EINVAL:
 			std::cerr << "Epoll FD is invalid, or FD is the same as epoll FD." << std::endl;
 			assert(1);
@@ -203,17 +196,15 @@ int Event::add(int fd, int ev) throw()
 		case ENOENT:
 			std::cerr << "FD not in set." << std::endl;
 			break;
-		#endif // TRAP_CODER_ERROR
-		case ENOMEM:
-			std::cerr << "Out of memory" << std::endl;
-			throw new std::bad_alloc;
-			break;
-		#ifdef TRAP_CODER_ERROR
 		case EPERM:
 			std::cerr << "Target FD does not support epoll." << std::endl;
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
+		case ENOMEM:
+			std::cerr << "Out of memory" << std::endl;
+			throw new std::bad_alloc;
+			break;
 		default:
 			std::cerr << "Unkown error" << std::endl;
 			break;
@@ -235,7 +226,7 @@ int Event::modify(int fd, int ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -247,7 +238,7 @@ int Event::modify(int fd, int ev) throw()
 	{
 		switch (_error)
 		{
-		#ifdef TRAP_CODER_ERROR
+		#ifndef NDEBUG
 		case EBADF:
 			std::cerr << "Epoll FD is invalid." << std::endl;
 			assert(1);
@@ -260,13 +251,13 @@ int Event::modify(int fd, int ev) throw()
 			std::cerr << "Target FD does not support epoll." << std::endl;
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case ENOENT:
 			std::cerr << "FD not in set." << std::endl;
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
-			throw new std::bad_alloc;
+			throw std::bad_alloc;
 			break;
 		default:
 			std::cerr << "Unknown error" << std::endl;
@@ -289,7 +280,7 @@ int Event::remove(int fd, int ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	_error = errno;
@@ -297,7 +288,7 @@ int Event::remove(int fd, int ev) throw()
 	{
 		switch (_error)
 		{
-		#ifdef TRAP_CODER_ERROR
+		#ifndef NDEBUG
 		case EBADF:
 			std::cerr << "Epoll FD is invalid." << std::endl;
 			assert(1);
@@ -310,7 +301,7 @@ int Event::remove(int fd, int ev) throw()
 			std::cerr << "Target FD does not support epoll." << std::endl;
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
+		#endif
 		case ENOENT:
 			std::cerr << "FD not in set." << std::endl;
 			break;
@@ -339,7 +330,7 @@ bool Event::isset(int fd, int ev) const throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	for (int n=0; n != nfds; n++)
 	{

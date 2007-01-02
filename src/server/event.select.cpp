@@ -103,11 +103,11 @@ int Event::wait(uint32_t msecs) throw()
 	
 	#ifdef EV_SELECT_COPY
 	FD_COPY(&fds_r, &t_fds_r),
-	FD_COPY(&fds_w, &t_fds_w);
+	FD_COPY(&fds_w, &t_fds_w),
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
 	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
-	memcpy(&t_fds_w, &fds_w, sizeof(fd_set));
+	memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
 	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
@@ -125,7 +125,7 @@ int Event::wait(uint32_t msecs) throw()
 	tv.tv_sec = 0;
 	
 	#ifndef WIN32
-	int largest_nfds = (nfds_w > nfds_r ? nfds_w : nfds_r );
+	fd_t largest_nfds = (nfds_w > nfds_r ? nfds_w : nfds_r );
 	if (largest_nfds < nfds_e) largest_nfds = nfds_e;
 	#endif
 	
@@ -133,7 +133,7 @@ int Event::wait(uint32_t msecs) throw()
 	#if defined(EV_SELECT)
 		select(
 	#elif defined(EV_PSELECT)
-	nfds = pselect(
+		pselect(
 	#endif
 	#ifdef WIN32
 		0,
@@ -159,7 +159,37 @@ int Event::wait(uint32_t msecs) throw()
 	{
 		switch (_error)
 		{
-		#if defined( TRAP_CODER_ERROR )
+		case EINTR:
+			#ifndef NDEBUG
+			std::cerr << "Interrupted by signal." << std::endl;
+			#endif
+			nfds = 0;
+			break;
+		#ifdef WIN32
+		#ifndef NDEBUG
+		case WSANOTINITIALISED:
+			#ifndef NDEBUG
+			std::cerr << "netInit() was not called." << std::endl;
+			#endif
+			assert(1);
+			break;
+		case WSAENOTSOCK:
+			std::cerr << "Non-socket in one of the FD sets." << std::endl;
+			assert(1);
+			break;
+		#endif // NDEBUG
+		case WSAEFAULT:
+			#ifndef NDEBUG
+			std::cerr << "Horribles" << std::endl;
+			#endif
+			break;
+		case WSAENETDOWN:
+			#ifndef NDEBUG
+			std::cerr << "The network subsystem has failed." << std::endl;
+			#endif
+			break;
+		#endif // WIN32
+		#ifndef NDEBUG
 		case EBADF:
 			std::cerr << "Bad FD in set." << std::endl;
 			assert(1);
@@ -168,14 +198,9 @@ int Event::wait(uint32_t msecs) throw()
 			std::cerr << "Timeout or sigmask invalid." << std::endl;
 			assert(1);
 			break;
-		#endif // TRAP_CODER_ERROR
-		case EINTR:
-			#ifndef NDEBUG
-			std::cerr << "Interrupted by signal." << std::endl;
-			#endif
-			break;
+		#endif // NDEBUG
 		default:
-			std::cerr << "Unknown error." << std::endl;
+			std::cerr << "Unknown error: " << _error << std::endl;
 			break;
 		}
 	}
@@ -183,7 +208,7 @@ int Event::wait(uint32_t msecs) throw()
 	return nfds;
 }
 
-int Event::add(int fd, int ev) throw()
+int Event::add(fd_t fd, int ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -197,7 +222,7 @@ int Event::add(int fd, int ev) throw()
 	#endif
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	if (fIsSet(ev, read)) 
 	{
@@ -252,7 +277,7 @@ int Event::add(int fd, int ev) throw()
 	return true;
 }
 
-int Event::modify(int fd, int ev) throw()
+int Event::modify(fd_t fd, int ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -266,7 +291,7 @@ int Event::modify(int fd, int ev) throw()
 	#endif
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	// act like a wrapper.
 	if (fIsSet(ev, read) || fIsSet(ev, write) || fIsSet(ev, error))
@@ -274,15 +299,17 @@ int Event::modify(int fd, int ev) throw()
 	
 	if (!fIsSet(ev, read))
 		remove(fd, read);
+	
 	if (!fIsSet(ev, write))
 		remove(fd, write);
+	
 	if (!fIsSet(ev, error))
 		remove(fd, error);
 	
 	return 0;
 }
 
-int Event::remove(int fd, int ev) throw()
+int Event::remove(fd_t fd, int ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -296,7 +323,7 @@ int Event::remove(int fd, int ev) throw()
 	#endif
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	if (fIsSet(ev, read))
 	{
@@ -310,7 +337,7 @@ int Event::remove(int fd, int ev) throw()
 		#if 0
 		std::cout << nfds_r << std::endl;
 		#endif // 0
-		#endif
+		#endif // WIN32
 	}
 	
 	if (fIsSet(ev, write))
@@ -325,10 +352,10 @@ int Event::remove(int fd, int ev) throw()
 		#if 0
 		std::cout << nfds_w << std::endl;
 		#endif // 0
-		#endif
+		#endif // WIN32
 	}
 	
-	if (fIsSet(ev, error))
+	if (fIsSet(ev, error|hangup))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
@@ -336,17 +363,17 @@ int Event::remove(int fd, int ev) throw()
 		#if 0
 		std::cout << nfds_e << " -> ";
 		#endif // 0
-		nfds_w = (select_set_e.size() > 0 ? *(--select_set_e.end()) : 0);
+		nfds_e = (select_set_e.size() > 0 ? *(--select_set_e.end()) : 0);
 		#if 0
 		std::cout << nfds_e << std::endl;
 		#endif // 0
-		#endif
+		#endif // WIN32
 	}
 	
 	return true;
 }
 
-bool Event::isset(int fd, int ev) const throw()
+bool Event::isset(fd_t fd, int ev) const throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -360,7 +387,7 @@ bool Event::isset(int fd, int ev) const throw()
 	#endif
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	switch (ev)
 	{
 	case read:

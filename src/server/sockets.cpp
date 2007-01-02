@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -37,8 +37,10 @@
 
 void Socket::close() throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::close()" << std::endl;
+	#endif
 	#endif
 	
 	#ifdef WIN32
@@ -52,8 +54,10 @@ void Socket::close() throw()
 
 Socket* Socket::accept() throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::accept()" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -64,13 +68,15 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	#else
 	int tmp = sizeof(sockaddr);
 	#endif
-	int n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
+	fd_t n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
 	error = errno;
 	
 	if (n_fd >= 0)
 	{
+		#ifdef DEBUG_SOCKETS
 		#ifndef NDEBUG
 		std::cout << "New connection" << std::endl;
+		#endif
 		#endif
 		
 		Socket *s = new Socket();
@@ -200,8 +206,10 @@ Socket* Socket::accept() throw(std::bad_alloc)
 
 bool Socket::block(bool x) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::block(" << (x?"true":"false") << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -217,8 +225,10 @@ bool Socket::block(bool x) throw()
 
 bool Socket::reuse(bool x) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::reuse(" << (x?"true":"false") << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -234,8 +244,10 @@ bool Socket::reuse(bool x) throw()
 
 int Socket::bindTo(uint32_t address, uint16_t port) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::bindTo(" << address << ", " << port << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -300,8 +312,10 @@ int Socket::bindTo(uint32_t address, uint16_t port) throw()
 
 int Socket::connect(sockaddr_in* rhost) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::connect()" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -356,8 +370,10 @@ int Socket::connect(sockaddr_in* rhost) throw()
 
 int Socket::listen() throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::listen()" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -398,8 +414,10 @@ int Socket::listen() throw()
 
 int Socket::send(char* buffer, size_t buflen) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::send(*buffer, " << buflen << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(buffer != 0);
@@ -504,8 +522,10 @@ int Socket::send(char* buffer, size_t buflen) throw()
 
 int Socket::recv(char* buffer, size_t buflen) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::recv(*buffer, " << buflen << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(sock >= 0);
@@ -581,10 +601,12 @@ int Socket::recv(char* buffer, size_t buflen) throw()
 }
 
 #if defined(WITH_SENDFILE)
-int Socket::sendfile(int fd, off_t offset, size_t nbytes, sf_hdtr *hdtr, off_t *sbytes) throw()
+int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, sf_hdtr *hdtr, off_t *sbytes) throw()
 {
+	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
-	std::cout << "Socket::recv(*buffer, " << buflen << ")" << std::endl;
+	std::cout << "Socket::sendfile()" << std::endl;
+	#endif
 	#endif
 	
 	assert(fd >= 0);

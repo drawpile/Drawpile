@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -14,6 +14,8 @@
 
 #ifndef CircularBuffer_INCLUDED
 #define CircularBuffer_INCLUDED
+
+#include "../../config.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -35,8 +37,10 @@ struct Buffer
 		left(0),
 		size(len)
 	{
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::Buffer(*buf, " << len << ")" << std::endl;
+		#endif
 		#endif
 		
 		assert((!buf and len == 0) or (buf and len > 0));
@@ -45,8 +49,10 @@ struct Buffer
 	//! dtor
 	~Buffer() throw()
 	{
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::~Buffer()" << std::endl;
+		#endif
 		#endif
 		
 		#ifndef CBUFFER_UNMANAGED
@@ -94,8 +100,10 @@ struct Buffer
 	 */
 	void setBuffer(char* buf, const size_t buflen) throw()
 	{
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::setBuffer(*buf, " << buflen << ")" << std::endl;
+		#endif
 		#endif
 		
 		assert(buf != 0);
@@ -178,8 +186,10 @@ struct Buffer
 	 */
 	void read(const size_t len) throw()
 	{
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::read(" << len << ")" << std::endl;
+		#endif
 		#endif
 		
 		assert(data != 0);
@@ -204,8 +214,12 @@ struct Buffer
 	 */
 	size_t canRead() const throw()
 	{
+		#if 0
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::canRead()" << std::endl;
+		#endif
+		#endif
 		#endif
 		
 		assert(data != 0);
@@ -225,8 +239,10 @@ struct Buffer
 	 */
 	void write(const size_t len) throw()
 	{
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::write(" << len << ")" << std::endl;
+		#endif
 		#endif
 		
 		assert(data != 0);
@@ -249,8 +265,12 @@ struct Buffer
 	 */
 	size_t canWrite() const throw()
 	{
+		#if 0
+		#ifdef DEBUG_CIRCULAR_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::canWrite()" << std::endl;
+		#endif
+		#endif
 		#endif
 		
 		assert(data != 0);

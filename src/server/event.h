@@ -36,10 +36,10 @@
 
 #include <signal.h>
 
-#include <sys/time.h>
+//#include <sys/time.h>
 
 #include <set>
-#include <list>
+//#include <list>
 #include <vector>
 
 #if defined(EV_EPOLL)
@@ -57,14 +57,22 @@
 	#endif
 	
 	#ifdef WIN32
-		#include <winsock2.h>
+		#include "sockets.h"
 	#else
 		#include <sys/select.h> // fd_set, FD* macros, etc.
 	#endif
 #endif
 
+#ifndef WIN32
+typedef int fd_t;
+#endif
+
 #if defined( EV_PSELECT )
 	#define EV_USE_SIGMASK
+#endif
+
+#ifndef INVALID_SOCKET
+	#define INVALID_SOCKET -1
 #endif
 
 #ifdef EV_HAVE_LIST
@@ -77,14 +85,14 @@ struct EventInfo
 	}
 	
 	//! ctor with vars
-	EventInfo(int nfd, int nevs) throw()
+	EventInfo(fd_t nfd, int nevs) throw()
 		: fd(nfd),
 		events(nevs)
 	{
 	}
 	
 	//! Associated file descriptor.
-	int fd;
+	fd_t fd;
 	
 	//! Triggered events.
 	int events;
@@ -98,7 +106,7 @@ class Event
 {
 protected:
 	#if defined(EV_EPOLL)
-	int evfd;
+	fd_t evfd;
 	epoll_event* events;
 	#elif defined(EV_KQUEUE)
 	//
@@ -106,11 +114,11 @@ protected:
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
 	#ifndef WIN32
-	std::set<int> select_set_r;
-	std::set<int> select_set_w;
-	std::set<int> select_set_e;
+	std::set<fd_t> select_set_r;
+	std::set<fd_t> select_set_w;
+	std::set<fd_t> select_set_e;
 	
-	int nfds_r, nfds_w, nfds_e;
+	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
 	
 	#endif // EV_*
@@ -198,7 +206,7 @@ public:
 	 *
 	 * @return true if the fd was added, false if not
 	 */
-	int add(int fd, int ev) throw();
+	int add(fd_t fd, int ev) throw();
 	
 	//! Removes file descriptor from event set.
 	/**
@@ -207,7 +215,7 @@ public:
 	 *
 	 * @return true if the fd was removed, false if not (or was not part of the event set)
 	 */
-	int remove(int fd, int ev) throw();
+	int remove(fd_t fd, int ev) throw();
 	
 	//! Modifies previously added fd for different events.
 	/**
@@ -218,7 +226,7 @@ public:
 	 *
 	 * @return something undefined
 	 */
-	int modify(int fd, int ev) throw();
+	int modify(fd_t fd, int ev) throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**
@@ -227,10 +235,10 @@ public:
 	 *
 	 * @return bool
 	 */
-	bool isset(int fd, int ev) const throw();
+	bool isset(fd_t fd, int ev) const throw();
 	
 	//! TODO
-	int triggered(int fd) const throw();
+	int triggered(fd_t fd) const throw();
 };
 
 #endif // EVENT_H_INCLUDED
