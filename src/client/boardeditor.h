@@ -45,7 +45,7 @@ class Point;
  * The board editor class provides an interface for local tools to
  * access the board directly and over the network.
  *
- * Read only methods always access the board directly, whereas those that
+ * Read only methods always access the board directly whereas those that
  * modify the board will either access directly or construct and dispatch
  * network packets.
  */
@@ -83,8 +83,8 @@ class BoardEditor {
 
 	protected:
 		User *user_;
-	private:
 		Board *board_;
+	private:
 		interface::BrushSource *brush_;
 		interface::ColorSource *color_;
 };

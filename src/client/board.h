@@ -22,6 +22,7 @@
 
 #include <QGraphicsScene>
 #include <QHash>
+#include <QQueue>
 
 namespace network {
 	class SessionState;
@@ -40,6 +41,7 @@ class User;
 class Brush;
 class BoardEditor;
 class Point;
+class Preview;
 
 //! The drawing board
 /**
@@ -65,32 +67,36 @@ class Board : public QGraphicsScene
 		//! Get board contents as an image
 		QImage image() const;
 
+		//! Delete all users
+		void clearUsers();
+
+		//! Set local user
+		void setLocalUser(int id);
+
+		//! Get a board editor
+		BoardEditor *getEditor(network::SessionState *session=0);
+
+		//! Add a preview stroke
+		void addPreview(const Point& point);
+
+		//! End a preview stroke
+		void endPreview();
+
+		//! Delete all preview strokes
+		void clearPreviews();
+
+	public slots:
 		//! Add a new user to the board
 		void addUser(int id);
 
 		//! Remove a user from the board
 		void removeUser(int id);
 
-		//! Get a board editor
-		BoardEditor *getEditor(network::SessionState *session=0);
-
-#if 0 // move these to BoardEditor?
-		//! Begin a new preview stroke
-		void previewBegin(int x,int y, qreal pressure);
-
-		//! Pen motion info for preview stroke
-		void previewMotion(int x,int y, qreal pressure);
-
-		//! End a preview stroke
-		void previewEnd();
-#endif
-
-	public slots:
 		//! User switches tools
-		void userSetTool(int user, const Brush& brush);
+		void userSetTool(int user, const drawingboard::Brush& brush);
 
 		//! User stroke information
-		void userStroke(int user, const Point& point);
+		void userStroke(int user, const drawingboard::Point& point);
 
 		//! User ends a stroke
 		void userEndStroke(int user);
@@ -98,6 +104,10 @@ class Board : public QGraphicsScene
 	private:
 		Layer *image_;
 		QHash<int,User*> users_;
+		int localuser_;
+
+		QQueue<Preview*> previews_;
+		bool previewstarted_;
 
 		interface::BrushSource *brushsrc_;
 		interface::ColorSource *colorsrc_;
@@ -106,5 +116,4 @@ class Board : public QGraphicsScene
 }
 
 #endif
-
 

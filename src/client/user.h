@@ -41,10 +41,13 @@ class User
 		int id() const { return id_; }
 
 		//! Set the layer on which to draw
-		void setLayer(Layer *layer);
+		void setLayer(Layer *layer) { layer_ = layer; }
+
+		//! Get the used layer
+		Layer *layer() const { return layer_; }
 
 		//! Set brush to use
-		void setBrush(const Brush& brush);
+		void setBrush(const Brush& brush) { brush_ = brush; }
 
 		//! Get the brush
 		const Brush& brush() const { return brush_; }

@@ -192,6 +192,7 @@ void Brush::updateCache() const
 	if(hard<0.01) hard=0.01;
 
 	const int dia = rad*2;
+	cache_.reserve(dia*dia);
 	cache_.resize(dia*dia);
 
 	// 1/radius^2
@@ -328,7 +329,6 @@ Brush& Brush::operator=(const Brush& brush)
 	}
 	return *this;
 }
-
 
 bool Brush::operator==(const Brush& brush) const
 {

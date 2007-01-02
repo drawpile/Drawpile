@@ -45,6 +45,7 @@ void Controller::setModel(drawingboard::Board *board)
 {
 	board_ = board;
 	board_->addUser(0);
+	board_->setLocalUser(0);
 	editor_ = board->getEditor();
 	tools::Tool::setEditor(editor_);
 }
@@ -106,10 +107,21 @@ void Controller::disconnectHost()
 void Controller::sessionJoined(int id)
 {
 	session_ = netstate_->session(id);
+
+	// Update user list
+	board_->clearUsers();
+	foreach(const network::User& ui, session_->users())
+		board_->addUser(ui.id);
+	board_->addUser(netstate_->localUserId());
+	board_->setLocalUser(netstate_->localUserId());
+
+	// Make session <-> board connections
 	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
 	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
+	connect(session_, SIGNAL(userJoined(int)), board_, SLOT(addUser(int)));
+	connect(session_, SIGNAL(userLeft(int)), board_, SLOT(removeUser(int)));
 
 	// Get a remote board editor
 	delete editor_;
@@ -124,6 +136,12 @@ void Controller::sessionJoined(int id)
  */
 void Controller::sessionParted()
 {
+	// Remove remote users
+	board_->clearUsers();
+	board_->addUser(0);
+	board_->setLocalUser(0);
+	board_->clearPreviews();
+
 	// Get a local board editor
 	delete editor_;
 	editor_ = board_->getEditor();
@@ -190,6 +208,8 @@ void Controller::netDisconnected(const QString& message)
 	net_->wait();
 	delete net_;
 	net_ = 0;
+	netstate_->setConnection(0);
+	session_ = 0;
 }
 
 void Controller::netError(const QString& message)

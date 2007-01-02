@@ -28,16 +28,6 @@ User::User(int id)
 {
 }
 
-void User::setLayer(Layer *layer)
-{
-	layer_ = layer;
-}
-
-void User::setBrush(const Brush& brush)
-{
-	brush_ = brush;
-}
-
 /**
  * Starts or continues a stroke. If continuing, a line is drawn from the
  * previous coordinates to \a point.

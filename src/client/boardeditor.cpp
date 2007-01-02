@@ -133,11 +133,13 @@ void RemoteBoardEditor::setTool(const Brush& brush)
 void RemoteBoardEditor::addStroke(const Point& point)
 {
 	session_->sendStrokeInfo(point);
+	board_->addPreview(point);
 }
 
 void RemoteBoardEditor::endStroke()
 {
 	session_->sendStrokeEnd();
+	board_->endPreview();
 }
 
 }

@@ -45,6 +45,11 @@ Session::Session(const protocol::SessionInfo *info)
 {
 }
 
+User::User(const QString& n, int i)
+	: name(n), id(i)
+{
+}
+
 HostState::HostState(QObject *parent)
 	: QObject(parent), net_(0), newsession_(0), loggedin_(false)
 {
@@ -110,6 +115,25 @@ void HostState::receiveMessage()
 		protocol::Message *next = msg->next;
 		delete msg;
 		msg = next;
+	}
+}
+
+/**
+ * @param net connection to use
+ */
+void HostState::setConnection(Connection *net)
+{
+	net_ = net;
+	if(net==0) {
+		if(newsession_)
+			delete newsession_;
+		newsession_ = 0;
+		selsession_ = 0;
+		foreach(SessionState *s, mysessions_) {
+			emit parted(s->info().id);
+			delete s;
+		}
+		mysessions_.clear();
 	}
 }
 
@@ -440,7 +464,26 @@ void SessionState::sendStrokeEnd()
  */
 void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
-	qDebug() << __FILE__ << ":" << __LINE__ << ": TODO handleUserInfo";
+	if(msg->event == protocol::user_event::Join) {
+		users_.append(User(msg->name, msg->user_id));
+		emit userJoined(msg->user_id);
+	} else if(msg->event == protocol::user_event::Leave ||
+			msg->event == protocol::user_event::Disconnect ||
+			msg->event == protocol::user_event::BrokenPipe ||
+			msg->event == protocol::user_event::TimedOut ||
+			msg->event == protocol::user_event::Dropped ||
+			msg->event == protocol::user_event::Kicked) {
+		UserList::iterator i = users_.begin();
+		for(;i!=users_.end();++i) {
+			if(i->id == msg->user_id) {
+				users_.erase(i);
+				emit userLeft(msg->user_id);
+				break;
+			}
+		}
+	} else {
+		qDebug() << "unhandled user event " << int(msg->event);
+	}
 }
 
 /**

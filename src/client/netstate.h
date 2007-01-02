@@ -61,7 +61,15 @@ struct Session {
 	quint16 height;
 };
 
+struct User {
+	User(const QString& n, int i);
+
+	QString name;
+	int id;
+};
+
 typedef QList<Session> SessionList;
+typedef QList<User> UserList;
 
 //! Network state machine
 /**
@@ -81,7 +89,7 @@ class HostState : public QObject {
 		SessionState *session(int id) { return mysessions_.value(id); }
 
 		//! Set network connection object to use
-		void setConnection(Connection *net) { net_ = net; }
+		void setConnection(Connection *net);
 
 		//! Initiate login sequence
 		void login(const QString& username);
@@ -186,6 +194,9 @@ class SessionState : public QObject {
 		//! Get session info
 		const Session& info() const { return info_; }
 
+		//! Get the list of users
+		const UserList& users() const { return users_; }
+
 		//! Get an image from received raster data
 		bool sessionImage(QImage& image) const;
 
@@ -223,6 +234,12 @@ class SessionState : public QObject {
 		 */
 		void rasterReceived(int percent);
 
+		//! A user has joined the session
+		void userJoined(int id);
+
+		//! A user has left the session
+		void userLeft(int id);
+
 		//! Results of a ToolInfo message
 		void toolReceived(int user, const drawingboard::Brush& brush);
 
@@ -235,6 +252,7 @@ class SessionState : public QObject {
 	private:
 		HostState *host_;
 		Session info_;
+		UserList users_;
 		QString password_;
 		QByteArray raster_;
 };

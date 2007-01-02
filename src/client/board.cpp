@@ -18,27 +18,23 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QGraphicsEllipseItem>
-#include <QPainter>
-
 #include "board.h"
 #include "layer.h"
 #include "user.h"
 #include "boardeditor.h"
+#include "preview.h"
 
 namespace drawingboard {
 
 Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
-	: QGraphicsScene(parent), image_(0), brushsrc_(brush), colorsrc_(color)
+	: QGraphicsScene(parent), image_(0),localuser_(-1), brushsrc_(brush), colorsrc_(color)
 {
 	setItemIndexMethod(NoIndex);
 }
 
 Board::~Board()
 {
-	foreach(User *u, users_) {
-		delete u;
-	}
+	clearUsers();
 }
 
 /**
@@ -60,6 +56,7 @@ void Board::initBoard(const QSize& size, const QColor& background)
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
+	previewstarted_ = false;
 }
 
 /**
@@ -76,6 +73,20 @@ void Board::initBoard(QImage image)
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
+	previewstarted_ = false;
+}
+
+/**
+ * A single (local) user is needed to modify the drawing board, be sure
+ * to create one after deleting everyone.
+ */
+void Board::clearUsers()
+{
+	foreach(User *u, users_) {
+		delete u;
+	}
+	users_.clear();
+	localuser_ = -1;
 }
 
 /**
@@ -89,10 +100,23 @@ void Board::addUser(int id)
 }
 
 /**
+ * Designates one user as the local user
  * @param id user id
+ * @pre id must have been added with addUser
+ */
+void Board::setLocalUser(int id)
+{
+	Q_ASSERT(users_.contains(id));
+	localuser_ = id;
+}
+
+/**
+ * @param id user id
+ * @pre id must have been added with addUser
  */
 void Board::removeUser(int id)
 {
+	Q_ASSERT(users_.contains(id));
 	delete users_.take(id);
 }
 
@@ -111,14 +135,14 @@ QImage Board::image() const
  */
 BoardEditor *Board::getEditor(network::SessionState *session)
 {
-	User *user = users_.value(0); // TODO local user
+	Q_ASSERT(localuser_ != -1);
+	User *user = users_.value(localuser_);
 	if(session)
 		return new RemoteBoardEditor(this, user, session, brushsrc_, colorsrc_);
 	else
 		return new LocalBoardEditor(this, user, brushsrc_, colorsrc_);
 }
 
-#if 0
 /**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
@@ -127,25 +151,33 @@ BoardEditor *Board::getEditor(network::SessionState *session)
  * @param y initial stroke coordinate
  * @param pressure stroke pressure
  */
-void Board::previewBegin(int x,int y, qreal pressure)
+void Board::addPreview(const Point& point)
 {
+	Q_ASSERT(localuser_ != -1);
+	User *user = users_.value(localuser_);
+	Preview *pre;
+	if(previewstarted_) {
+		pre = new Preview(previews_.last(), point, user->layer(), this);
+	} else {
+		pre = new Preview(0, point, user->layer(), this);
+		previewstarted_ = true;
+	}
+	previews_.enqueue(pre);
 }
 
 /**
- * @param x stroke x coordinate
- * @param y stroke y coordinate
- * @param pressure stroke pressure
  */
-void Board::previewMotion(int x,int y, qreal pressure)
+void Board::endPreview()
 {
+	previewstarted_ = false;
 }
 
-/**
- */
-void Board::previewEnd()
+void Board::clearPreviews()
 {
+	foreach(Preview *p, previews_)
+		delete p;
+	previews_.clear();
 }
-#endif
 
 /**
  * @param user user id
@@ -166,6 +198,9 @@ void Board::userStroke(int user, const Point& point)
 	if(users_.contains(user)) {
 		User *u = users_.value(user);
 		u->addStroke(point);
+
+		if(user == localuser_ && previews_.isEmpty() == false)
+			delete previews_.dequeue();
 	}
 }
 
