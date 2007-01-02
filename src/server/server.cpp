@@ -829,6 +829,7 @@ void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 	#ifndef NDEBUG
 	std::cout << "Server::uSendMsg(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
+	protocol::msgName(msg->type);
 	#endif
 	
 	//assert(usr != 0);
