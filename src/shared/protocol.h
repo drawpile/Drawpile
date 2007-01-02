@@ -296,7 +296,7 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
-		: Message(protocol::type::ToolInfo, message::isUser),
+		: Message(protocol::type::ToolInfo, message::isUser|message::isSelected),
 		tool_id(tool::type::None),
 		mode(tool::mode::Normal),
 		lo_color(0),
