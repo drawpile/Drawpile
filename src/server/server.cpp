@@ -940,6 +940,15 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	std::cout << "Server::uAdd()" << std::endl;
 	#endif
 	
+	if (sock == 0)
+	{
+		#ifndef NDEBUG
+		std::cout << "Null socket, aborting." << std::endl;
+		#endif
+		
+		return;
+	}
+	
 	uint8_t id = getUserID();
 	
 	if (id == 0)
@@ -990,21 +999,19 @@ void Server::uRemove(user_ref usr) throw()
 	
 	ev.remove(usr->sock->fd(), ev.write|ev.read);
 	
-	uint8_t id = usr->id;
 	freeUserID(usr->id);
-	
-	int fd = usr->sock->fd();
-	#ifndef NDEBUG
-	std::cout << "Deleting user.." << std::endl;
-	#endif
-	//delete usr;
-	//usr.reset();
 	
 	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
 	#endif
-	users.erase(fd);
-	user_id_map.erase(id);
+	users.erase(usr->sock->fd());
+	user_id_map.erase(usr->id);
+	
+	#ifndef NDEBUG
+	std::cout << "Still in use in " << usr.use_count() << " place/s." << std::endl;
+	#endif
+	
+	usr.reset();
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1105,16 +1112,8 @@ int Server::run() throw()
 	std::cout << "Server::run()" << std::endl;
 	#endif
 	
-	// define temporary socket
-	Socket *nu;
-	
-	// define iterators
-	std::vector<uint32_t>::iterator si;
+	// user map iterator
 	std::map<int, user_ref>::iterator ui;
-	
-	#ifndef NDEBUG
-	std::cout << "eternity" << std::endl;
-	#endif
 	
 	//EvList evl;
 	
@@ -1150,18 +1149,7 @@ int Server::run() throw()
 				
 				ec--;
 				
-				nu = lsock.accept();
-				
-				if (nu != 0)
-				{
-					uAdd( nu );
-				}
-				else
-				{
-					#ifndef NDEBUG
-					std::cout << "New connection but no socket?" << std::endl;
-					#endif
-				}
+				uAdd( lsock.accept() );
 			}
 			
 			if (ec > 0)
@@ -1181,6 +1169,7 @@ int Server::run() throw()
 						#endif
 						
 						ec--;
+						
 						uRead(ui->second);
 					}
 					else if (ev.isset(ui->first, ev.write))
@@ -1190,8 +1179,31 @@ int Server::run() throw()
 						#endif
 						
 						ec--;
+						
 						uWrite(ui->second);
 					}
+					else if (ev.isset(ui->first, ev.error))
+					{
+						#ifndef NDEBUG
+						std::cout << "Error with client" << std::endl;
+						#endif
+						
+						ec--;
+						
+						uRemove(ui->second);
+					}
+					#ifdef EV_HAS_HANGUP
+					else if (ev.isset(ui->first, ev.hangup))
+					{
+						#ifndef NDEBUG
+						std::cout << "Client hung up" << std::endl;
+						#endif
+						
+						ec--;
+						
+						uRemove(ui->second);
+					}
+					#endif
 					
 					if (ec == 0) break;
 				}
