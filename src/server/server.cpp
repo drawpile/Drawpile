@@ -247,15 +247,13 @@ void Server::uWrite(user_ref usr) throw()
 void Server::uRead(user_ref usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uRead(" << static_cast<int>(usr->id) << ")" << std::endl;
+	std::cout << "Server::uRead(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
-	
-	std::cout << "From user: " << static_cast<int>(usr->id) << std::endl;
 	
 	if (usr->input.canWrite() == 0)
 	{
-		std::cerr << "User #" << static_cast<int>(usr->id) << " input buffer full!" << std::endl;
-		return;
+		std::cerr << "Input buffer full, increasing size" << std::endl;
+		usr->input.resize(usr->input.size + 8192);
 	}
 	
 	int rb = usr->sock->recv(
@@ -283,24 +281,27 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 		}
 		else if (usr->inMsg->type != usr->input.rpos[0])
 		{
+			// Input buffer frelled
 			std::cerr << "Attempted receiving different message type." << std::endl;
 			uRemove(usr);
 			return;
 		}
 		
-		std::cout << "Verify size" << std::endl;
-		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, usr->input.canRead());
-		std::cout << "Need: " << len << " bytes" << std::endl;
-		if (len > usr->input.canRead())
+		size_t have = usr->input.canRead();
+		
+		std::cout << "Verify size... ";
+		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, have);
+		if (len > have)
 		{
+			std::cout << "need " << (len - have) << " bytes more" << std::endl;
 			// still need more data
 			return;
 		}
+		std::cout << "complete." << std::endl;
 		
 		std::cout << "Unserialize message" << std::endl;
-		
 		usr->input.read(
-			usr->inMsg->unserialize(usr->input.rpos, usr->input.canRead())
+			usr->inMsg->unserialize(usr->input.rpos, have)
 		);
 		
 		switch (usr->state)
@@ -318,6 +319,10 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 			delete usr->inMsg;
 			usr->inMsg = 0;
 		}
+		
+		// rewind circular buffer if there's no more data in it.
+		if (usr->input.left == 0)
+			usr->input.rewind();
 	}
 	else if (rb == 0)
 	{
@@ -862,6 +867,15 @@ void Server::uSyncSession(user_ref usr, session_ref session) throw()
 
 void Server::uJoinSession(user_ref usr, session_ref session) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uJoinSession()" << std::endl;
+	#endif
+	
+	if (session->users.size() > 0)
+	{
+		//uGetRaster(session);
+	}
+	
 	session->users.insert( std::make_pair(usr->id, usr) );
 	
 	// Add session to users session list.
@@ -886,6 +900,12 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 
 void Server::uLeaveSession(user_ref usr, session_ref session) throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::uLeaveSession()" << std::endl;
+	#endif
+	
+	// TODO: Cancel any pending messages related to this user.
+	
 	session->users.erase(usr->id);
 	
 	// Tell session members there's a new user.
@@ -950,8 +970,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 			std::cout << "Assigning buffer to user." << std::endl;
 			#endif
 			
-			size_t buf_size = 8196;
-			usr->input.setBuffer(new char[buf_size], buf_size);
+			usr->input.setBuffer(new char[8192], 8192);
 		}
 		
 		#ifndef NDEBUG
