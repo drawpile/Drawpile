@@ -143,22 +143,12 @@ void Server::cleanup() throw()
 	// close listening socket
 	lsock.close();
 	
-	// delete users
-	for (std::map<int, user_ref>::iterator uiter(users.begin()); uiter != users.end(); uiter++)
-	{
-		#if defined(FULL_CLEANUP)
-		//delete uiter->second;
-		#else
-		uiter->second->sock->close();
-		#endif
-	}
-	
 	#if defined( FULL_CLEANUP )
 	users.clear();
 	#endif // FULL_CLEANUP
 }
 
-protocol::Authentication* Server::msgAuth(user_ref usr, uint8_t session) throw(std::bad_alloc)
+protocol::Authentication* Server::msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc)
 {
 	protocol::Authentication* m = new protocol::Authentication;
 	m->session_id = session;
@@ -182,7 +172,7 @@ protocol::HostInfo* Server::msgHostInfo() throw(std::bad_alloc)
 	return m;
 }
 
-void Server::uWrite(user_ref usr) throw()
+void Server::uWrite(user_ref& usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
@@ -261,7 +251,30 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 		usr->input.canWrite()
 	);
 	
-	if (rb > 0)
+	if (rb == -1)
+	{
+		switch (usr->sock->getError())
+		{
+		case EAGAIN:
+		case EINTR:
+			// retry later
+			return;
+		default:
+			std::cerr << "Unrecoverable error occured while reading from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			
+			uRemove(usr);
+			return;
+		}
+	}
+	else if (rb == 0)
+	{
+		std::cout << "User disconnected!" << std::endl;
+		
+		uRemove(usr);
+		return;
+	}
+	else
 	{
 		std::cout << "Received " << rb << " bytes.." << std::endl;
 		
@@ -304,6 +317,10 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 			usr->inMsg->unserialize(usr->input.rpos, have)
 		);
 		
+		// rewind circular buffer if there's no more data in it.
+		if (usr->input.left == 0)
+			usr->input.rewind();
+		
 		switch (usr->state)
 		{
 		case uState::active:
@@ -319,37 +336,10 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 			delete usr->inMsg;
 			usr->inMsg = 0;
 		}
-		
-		// rewind circular buffer if there's no more data in it.
-		if (usr->input.left == 0)
-			usr->input.rewind();
-	}
-	else if (rb == 0)
-	{
-		std::cout << "User disconnected!" << std::endl;
-		
-		uRemove(usr);
-		return;
-	}
-	else
-	{
-		switch (usr->sock->getError())
-		{
-		case EAGAIN:
-		case EINTR:
-			// retry later
-			return;
-		default:
-			std::cerr << "Unrecoverable error occured while reading from user: "
-				<< static_cast<int>(usr->id) << std::endl;
-			
-			uRemove(usr);
-			return;
-		}
 	}
 }
 
-protocol::UserInfo* Server::uCreateEvent(user_ref usr, session_ref session, uint8_t event)
+protocol::UserInfo* Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uCreateEvent(user: " << static_cast<int>(usr->id) << ")" << std::endl;
@@ -372,7 +362,7 @@ protocol::UserInfo* Server::uCreateEvent(user_ref usr, session_ref session, uint
 	return e;
 }
 
-void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
+void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleMsg(user: " << static_cast<int>(usr->id)
@@ -385,10 +375,6 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 	// TODO
 	switch (usr->inMsg->type)
 	{
-	case protocol::type::Acknowledgement:
-		std::cout << "Acknowledgement" << std::endl;
-		// for what?
-		break;
 	case protocol::type::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
 		{
@@ -414,7 +400,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 				uLeaveSession(usr, i->second);
 			}
 		}
-		return;
+		break;
 	case protocol::type::Subscribe:
 		std::cout << "Subscribe" << std::endl;
 		{
@@ -440,7 +426,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 				uJoinSession(usr, i->second);
 			}
 		}
-		return;
+		break;
 	case protocol::type::ListSessions:
 		std::cout << "List Sessions" << std::endl;
 		{
@@ -470,23 +456,20 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::ListSessions;
 			uSendMsg(usr, message_ref(ack));
-			
-			return;
 		}
 		break;
 	case protocol::type::Instruction:
 		std::cout << "Instruction" << std::endl;
 		uHandleInstruction(usr);
-		return;
+		break;
 	default:
 		std::cerr << "Unexpected or unknown message type" << std::endl;
+		uRemove(usr);
 		break;
 	}
-	
-	uRemove(usr);
 }
 
-void Server::uHandleInstruction(user_ref usr) throw()
+void Server::uHandleInstruction(user_ref& usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleInstruction()" << std::endl;
@@ -612,7 +595,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 	}
 }
 
-void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
+void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleLogin(user: " << static_cast<int>(usr->id)
@@ -688,7 +671,6 @@ void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
 			usr->state = uState::active;
 			
 			usr->inMsg = 0;
-			return;
 		}
 		else
 		{
@@ -824,7 +806,7 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 	}
 }
 
-void Server::uSendMsg(user_ref usr, message_ref msg) throw()
+void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uSendMsg(user: " << static_cast<int>(usr->id)
@@ -850,7 +832,7 @@ void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 	//msg = 0;
 }
 
-void Server::uSyncSession(user_ref usr, session_ref session) throw()
+void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uSyncSession(user: " << static_cast<int>(usr->id)
@@ -870,7 +852,7 @@ void Server::uSyncSession(user_ref usr, session_ref session) throw()
 	uSendMsg(usr, message_ref(r));
 }
 
-void Server::uJoinSession(user_ref usr, session_ref session) throw()
+void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uJoinSession()" << std::endl;
@@ -903,7 +885,7 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 	uSyncSession(usr, session);
 }
 
-void Server::uLeaveSession(user_ref usr, session_ref session) throw()
+void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uLeaveSession()" << std::endl;
@@ -976,7 +958,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		ev.add(usr->sock->fd(), usr->events);
 		
 		users.insert( std::make_pair(sock->fd(), usr) );
-		user_id_map.insert( std::make_pair(id, usr) );
+		//user_id_map.insert( std::make_pair(id, usr) );
 		
 		if (usr->input.data == 0)
 		{
@@ -993,7 +975,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::uRemove(user_ref usr) throw()
+void Server::uRemove(user_ref& usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uRemove()" << std::endl;
@@ -1003,17 +985,25 @@ void Server::uRemove(user_ref usr) throw()
 	
 	freeUserID(usr->id);
 	
+	std::map<uint8_t, SessionData>::iterator si( usr->sessions.begin() );
+	for (; si != usr->sessions.end(); si++ )
+	{
+		si->second.session->users.erase(usr->id);
+	}
+	
 	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
 	#endif
 	users.erase(usr->sock->fd());
-	user_id_map.erase(usr->id);
+	//user_id_map.erase(usr->id);
 	
+	#if 0
 	#ifndef NDEBUG
 	std::cout << "Still in use in " << usr.use_count() << " place/s." << std::endl;
 	#endif
 	
 	usr.reset();
+	#endif
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1031,7 +1021,7 @@ int Server::init() throw(std::bad_alloc)
 	std::cout << "New socket: " << lsock.fd() << std::endl;
 	#endif
 	
-	if (lsock.fd() == -1)
+	if (lsock.fd() == INVALID_SOCKET)
 	{
 		std::cerr << "failed to create a socket." << std::endl;
 		return -1;
@@ -1135,6 +1125,7 @@ int Server::run() throw()
 		{
 			std::cout << "Error in event system." << std::endl;
 			// TODO (error)
+			return -1;
 		}
 		else
 		{
@@ -1167,40 +1158,40 @@ int Server::run() throw()
 						std::cout << "Reading from client" << std::endl;
 						#endif
 						
-						ec--;
-						
 						uRead(ui->second);
+						
+						if (--ec == 0) break;
 					}
-					else if (ev.isset(ui->first, ev.write))
+					if (ec != 0 && ev.isset(ui->first, ev.write))
 					{
 						#ifndef NDEBUG
 						std::cout << "Writing to client" << std::endl;
 						#endif
 						
-						ec--;
-						
 						uWrite(ui->second);
+						
+						if (--ec == 0) break;
 					}
-					else if (ev.isset(ui->first, ev.error))
+					if (ec != 0 && ev.isset(ui->first, ev.error))
 					{
 						#ifndef NDEBUG
 						std::cout << "Error with client" << std::endl;
 						#endif
 						
-						ec--;
-						
 						uRemove(ui->second);
+						
+						if (--ec == 0) break;
 					}
 					#ifdef EV_HAS_HANGUP
-					else if (ev.isset(ui->first, ev.hangup))
+					if (ec != 0 && ev.isset(ui->first, ev.hangup))
 					{
 						#ifndef NDEBUG
 						std::cout << "Client hung up" << std::endl;
 						#endif
 						
-						ec--;
-						
 						uRemove(ui->second);
+						
+						if (--ec == 0) break;
 					}
 					#endif
 					
