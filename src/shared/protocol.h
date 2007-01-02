@@ -45,7 +45,7 @@
 #include "protocol.defaults.h"
 #include "protocol.types.h"
 #include "protocol.flags.h"
-#include "tools.h"
+#include "protocol.tools.h"
 
 //! DrawPile network protocol.
 /**
@@ -71,7 +71,7 @@ const uint16_t revision = 7;
 struct Message
 {
 protected:
-	Message(uint8_t _type, uint8_t _flags=protocol::message::None) throw()
+	Message(uint8_t _type, uint8_t _flags=message::None) throw()
 		: type(_type),
 		user_id(protocol::null_user),
 		session_id(protocol::Global),
@@ -187,11 +187,11 @@ struct Identifier
 	: Message//, MemoryStack<Identifier>
 {
 	Identifier() throw()
-		: Message(protocol::type::Identifier),
+		: Message(type::Identifier),
 		revision(protocol::null_revision),
 		level(protocol::null_implementation),
-		flags(protocol::requirements::None),
-		extensions(protocol::extensions::None)
+		flags(requirements::None),
+		extensions(extensions::None)
 	{ }
 	
 	~Identifier() throw() { }
@@ -233,7 +233,7 @@ struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
-		: Message(protocol::type::StrokeInfo,
+		: Message(type::StrokeInfo,
 			message::isUser|message::isBundling|message::isSelected),
 		x(0),
 		y(0)
@@ -268,7 +268,7 @@ struct StrokeEnd
 	: Message//, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
-		: Message(protocol::type::StrokeEnd,
+		: Message(type::StrokeEnd,
 			message::isUser|message::isSelected)
 	{ }
 	
@@ -296,9 +296,9 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
-		: Message(protocol::type::ToolInfo, message::isUser|message::isSelected),
-		tool_id(tool::type::None),
-		mode(tool::mode::Normal),
+		: Message(type::ToolInfo, message::isUser|message::isSelected),
+		tool_id(tool_type::None),
+		mode(tool_mode::Normal),
 		lo_color(0),
 		hi_color(0),
 		lo_size(0),
@@ -563,7 +563,7 @@ struct Instruction
 	: Message//, MemoryStack<Instruction>
 {
 	Instruction() throw()
-		: Message(protocol::type::Instruction, message::isUser|message::isSession),
+		: Message(type::Instruction, message::isUser|message::isSession),
 		length(0),
 		data(0)
 	{ }
@@ -651,9 +651,9 @@ struct UserInfo
 	: Message//, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
-		: Message(protocol::type::UserInfo, message::isUser|message::isSession),
-		mode(protocol::user::None),
-		event(protocol::user_event::None),
+		: Message(type::UserInfo, message::isUser|message::isSession),
+		mode(user_mode::None),
+		event(user_event::None),
 		length(0),
 		name(0)
 	{ }
@@ -691,15 +691,15 @@ struct HostInfo
 	: Message//, MemoryStack<HostInfo>
 {
 	HostInfo() throw()
-		: Message(protocol::type::HostInfo),
+		: Message(type::HostInfo),
 		sessions(0),
 		sessionLimit(0),
 		users(0),
 		userLimit(0),
 		nameLenLimit(0),
 		maxSubscriptions(0),
-		requirements(protocol::requirements::None),
-		extensions(protocol::extensions::None)
+		requirements(requirements::None),
+		extensions(extensions::None)
 	{ }
 	
 	~HostInfo() throw() { }
@@ -737,14 +737,14 @@ struct SessionInfo
 	: Message//, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
-		: Message(protocol::type::SessionInfo, message::isSession),
+		: Message(type::SessionInfo, message::isSession),
 		width(0),
 		height(0),
 		owner(protocol::null_user),
 		users(0),
 		limit(0),
-		mode(protocol::user::None),
-		flags(protocol::session::None),
+		mode(user_mode::None),
+		flags(0),
 		length(0),
 		title(0)
 	{ }
@@ -773,7 +773,7 @@ struct SessionInfo
 		//! Title length.
 		length;
 	
-	//! Session name.
+	//! Session title.
 	char* title;
 	
 	/* functions */
@@ -792,8 +792,8 @@ struct Acknowledgement
 	: Message //, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
-		: Message(protocol::type::Acknowledgement),
-		event(protocol::type::None)
+		: Message(type::Acknowledgement),
+		event(type::None)
 	{ }
 	
 	~Acknowledgement() throw() { }
@@ -819,8 +819,8 @@ struct Error
 	: Message //, MemoryStack<Error>
 {
 	Error() throw()
-		: Message(protocol::type::Error),
-		code(protocol::error::None)
+		: Message(type::Error),
+		code(error::None)
 	{ }
 	
 	~Error() throw() { }
@@ -855,7 +855,7 @@ struct Deflate
 	: Message //, MemoryStack<Deflate>
 {
 	Deflate() throw()
-		: Message(protocol::type::Deflate),
+		: Message(type::Deflate),
 		uncompressed(0),
 		length(0),
 		data(0)
@@ -891,7 +891,7 @@ struct Chat
 	: Message //, MemoryStack<Chat>
 {
 	Chat() throw()
-		: Message(protocol::type::Chat, message::isUser|message::isSession),
+		: Message(type::Chat, message::isUser|message::isSession),
 		length(0),
 		data(0)
 	{ }
@@ -922,7 +922,7 @@ struct Palette
 	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
-		: Message(protocol::type::Palette),
+		: Message(type::Palette),
 		offset(0),
 		count(0),
 		data(0)
@@ -960,7 +960,7 @@ struct SessionSelect
 	: Message//, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
-		: Message(protocol::type::SessionSelect,
+		: Message(type::SessionSelect,
 			message::isUser|message::isSession)
 	{ }
 	

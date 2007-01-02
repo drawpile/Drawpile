@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -107,9 +107,9 @@ const uint8_t
 
 //! User mode flags.
 /**
- * @see protocol::UserInfo message
+ * Used in protocol::UserInfo and protocol::SessionInfo messages
  */
-namespace user
+namespace user_mode
 {
 
 const uint8_t
@@ -117,6 +117,7 @@ const uint8_t
 	None = 0x00,
 	
 	//! User is identified as admin by the server (may use Instruction messages).
+	/** Only applied to user */
 	Administrator = 0x01,
 	
 	//! User is not able to draw.
@@ -128,27 +129,6 @@ const uint8_t
 	Deaf = 0x20;
 
 } // namespace user
-
-//! Session specific flags
-/**
- * @see protocol::SessionInfo message
- */
-namespace session
-{
-
-const uint8_t
-	//! No session flags
-	None = user::None,
-	
-	//! Users join the session in observer mode.
-	Observer = user::Observer,
-	
-	//! Users join the session muted.
-	Mute = user::Mute,
-	//! Users join the session deafened.
-	Deaf = user::Deaf;
-
-} // namespace session
 
 } // namespace protocol
 

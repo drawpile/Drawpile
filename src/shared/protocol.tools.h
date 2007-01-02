@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -33,12 +33,11 @@
 #ifndef Protocol_Tools_INCLUDED
 #define Protocol_Tools_INCLUDED
 
-//! Tools
-namespace tool
+namespace protocol
 {
 
 //! Tool identifier codes for ToolInfo message.
-namespace type
+namespace tool_type
 {
 
 const uint8_t
@@ -47,18 +46,18 @@ const uint8_t
 	//! Default brush tool type.
 	Brush = 1;
 
-} // namespace tool
+} // namespace tool_type
 
 //! Tool composition modes
-namespace mode
+namespace tool_mode
 {
 
 const uint8_t
 	//! Normal
 	Normal = 0;
 
-} // namespace mode
+} // namespace tool_mode
 
-} // namespace tool
+} // namespace protocol
 
 #endif // Protocol_Tools_INCLUDED

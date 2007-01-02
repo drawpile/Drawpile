@@ -31,7 +31,7 @@
 
 #include "../shared/protocol.h"
 #include "../shared/protocol.admin.h"
-#include "../shared/tools.h"
+#include "../shared/protocol.tools.h"
 #include "../shared/templates.h" // for bswap
 
 namespace network {
@@ -145,7 +145,7 @@ void HostState::host(const QString& title,
 	msg->command = protocol::admin::command::Create;
 	msg->session_id = protocol::Global;
 	msg->aux_data = 20; // User limit (TODO)
-	msg->aux_data2 = protocol::user::None; // Default user mode (TODO)
+	msg->aux_data2 = protocol::user_mode::None; // Default user mode (TODO)
 
 	QByteArray tbytes = title.toUtf8();
 	char *data = new char[sizeof(width)+sizeof(height)+tbytes.length()];
@@ -404,8 +404,8 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	protocol::ToolInfo *msg = new protocol::ToolInfo;
 
 	msg->session_id = info_.id;;
-	msg->tool_id = tool::type::Brush;
-	msg->mode = tool::mode::Normal;
+	msg->tool_id = protocol::tool_type::Brush;
+	msg->mode = protocol::tool_mode::Normal;
 	msg->lo_color = lo.red() << 24 | lo.green() << 16 | lo.blue() << 8 | loo;
 	msg->hi_color = hi.red() << 24 | hi.green() << 16 | hi.blue() << 8 | hio;
 	msg->lo_size = brush.radius(0);
