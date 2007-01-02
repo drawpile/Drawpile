@@ -584,7 +584,6 @@ size_t Instruction::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	size_t i = unserializeHeader(buf);
 	
 	memcpy_t(command, buf+i); i += sizeof(command);
-	memcpy_t(user, buf+i); i += sizeof(user);
 	memcpy_t(aux_data, buf+i); i += sizeof(aux_data);
 	memcpy_t(aux_data2, buf+i); i += sizeof(aux_data2);
 	
@@ -602,8 +601,7 @@ size_t Instruction::reqDataLen(const char *buf, size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	size_t off = headerSize() + sizeof(command)
-		+ sizeof(user) + sizeof(aux_data)
-		+ sizeof(aux_data2) + sizeof(length);
+		+ sizeof(aux_data) + sizeof(aux_data2) + sizeof(length);
 	
 	if (len < off)
 		return off;
@@ -624,7 +622,6 @@ size_t Instruction::serializePayload(char *buf) const throw()
 	size_t i=0;
 	
 	memcpy_t(buf+i, command); i += sizeof(command);
-	memcpy_t(buf+i, user); i += sizeof(user);
 	memcpy_t(buf+i, aux_data); i += sizeof(aux_data);
 	memcpy_t(buf+i, aux_data2); i += sizeof(aux_data2);
 	
@@ -638,8 +635,7 @@ size_t Instruction::serializePayload(char *buf) const throw()
 size_t Instruction::payloadLength() const throw()
 {
 	return sizeof(command)
-		+ sizeof(user) + sizeof(aux_data)
-		+ sizeof(aux_data2) + sizeof(length) + length;
+		+ sizeof(aux_data) + sizeof(aux_data2) + sizeof(length) + length;
 }
 
 /*

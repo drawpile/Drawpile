@@ -563,7 +563,7 @@ struct Instruction
 	: Message//, MemoryStack<Instruction>
 {
 	Instruction() throw()
-		: Message(protocol::type::Instruction),
+		: Message(protocol::type::Instruction, message::isUser|message::isSession),
 		length(0),
 		data(0)
 	{ }
@@ -575,8 +575,6 @@ struct Instruction
 	uint8_t
 		//! protocol::admin::command
 		command,
-		//! target user
-		user,
 		//! aux_data
 		aux_data,
 		//! aux data 2
