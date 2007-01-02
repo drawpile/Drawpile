@@ -40,6 +40,11 @@
 namespace protocol
 {
 
+#ifndef NDEBUG
+// for outputting the message name in console
+void msgName(const uint8_t type) throw();
+#endif
+
 //! Get new message struct.
 /**
  * Allocates memory for specific message type and returns pointer to it.
