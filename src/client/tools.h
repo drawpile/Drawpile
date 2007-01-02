@@ -51,8 +51,11 @@ class Tool
 			: type_(type), readonly_(readonly) {}
 		virtual ~Tool() {};
 
+		//! Set board editor to use
+		static void setEditor(drawingboard::BoardEditor *editor);
+
 		//! Get an instance of a specific tool
-		static Tool *get(drawingboard::BoardEditor *editor, Type type);
+		static Tool *get(Type type);
 
 		//! Get the type of this tool
 		Type type() const { return type_; }

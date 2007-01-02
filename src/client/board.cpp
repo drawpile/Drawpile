@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@
 
 namespace drawingboard {
 
-Board::Board(QObject *parent)
-	: QGraphicsScene(parent), image_(0)
+Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
+	: QGraphicsScene(parent), image_(0), brushsrc_(brush), colorsrc_(color)
 {
 	setItemIndexMethod(NoIndex);
 }
@@ -107,13 +107,15 @@ QImage Board::image() const
 /**
  * Returns a BoardEditor for modifying the drawing board either
  * directly or over the network.
- * @param local if true, get an editor for modifying the board directly.
+ * @param session which network session the editor works over. If 0, a local editor is returned
  */
-BoardEditor *Board::getEditor(bool local)
+BoardEditor *Board::getEditor(network::SessionState *session)
 {
-	BoardEditor *editor;
-	editor = new LocalBoardEditor(this, users_.value(0)); // TODO local user
-	return editor;
+	User *user = users_.value(0); // TODO local user
+	if(session)
+		return new RemoteBoardEditor(this, user, session, brushsrc_, colorsrc_);
+	else
+		return new LocalBoardEditor(this, user, brushsrc_, colorsrc_);
 }
 
 #if 0

@@ -63,9 +63,7 @@ class Controller : public QObject
 		Controller(QObject *parent=0);
 		~Controller();
 
-		void setModel(drawingboard::Board *board,
-				interface::BrushSource *brush,
-				interface::ColorSource *color);
+		void setModel(drawingboard::Board *board);
 
 		//! Connect to host
 		void connectHost(const QString& address, const QString& username);
@@ -93,6 +91,9 @@ class Controller : public QObject
 		//! Login succesfull
 		void loggedin();
 
+		//! Raster data transfer progress
+		void rasterProgress(int percent);
+
 		//! Host disconnected
 		void disconnected();
 
@@ -108,6 +109,7 @@ class Controller : public QObject
 		void netError(const QString& message);
 		void sessionJoined(int id);
 		void sessionParted();
+		void rasterDownload(int p);
 
 	private:
 		drawingboard::Board *board_;

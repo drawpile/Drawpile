@@ -58,6 +58,9 @@ class LoginDialog : public QDialog
 		//! Joined a session
 		void joined();
 
+		//! Raster data received
+		void raster(int p);
+
 		//! Request password from user
 		void getPassword(bool session);
 

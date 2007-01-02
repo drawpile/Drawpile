@@ -24,19 +24,44 @@
 #include <QHash>
 #include <QList>
 
+class QImage;
+
 namespace protocol {
 	class HostInfo;
 	class UserInfo;
 	class SessionInfo;
+	class SessionSelect;
 	class Authentication;
 	class Error;
 	class Acknowledgement;
+	class Raster;
+	class ToolInfo;
+	class StrokeInfo;
+	class StrokeEnd;
 };
+
+namespace drawingboard {
+	class Brush;
+	class Point;
+}
 
 namespace network {
 
 class Connection;
 class SessionState;
+
+//! Information about a session
+struct Session {
+	Session(const protocol::SessionInfo *info);
+
+	int id;
+	int owner;
+	QString title;
+	quint16 width;
+	quint16 height;
+};
+
+typedef QList<Session> SessionList;
 
 //! Network state machine
 /**
@@ -114,22 +139,25 @@ class HostState : public QObject {
 		void listSessions();
 
 		//! Handle a HostInfo message
-		void handleHostInfo(protocol::HostInfo *msg);
+		void handleHostInfo(const protocol::HostInfo *msg);
 
 		//! Handle a UserInfo message
-		void handleUserInfo(protocol::UserInfo *msg);
+		void handleUserInfo(const protocol::UserInfo *msg);
 
 		//! Handle a SessionInfo message
-		void handleSessionInfo(protocol::SessionInfo *msg);
+		void handleSessionInfo(const protocol::SessionInfo *msg);
+
+		//! Handle a SessionSelect message
+		void handleSessionSelect(const protocol::SessionSelect *msg);
 
 		//! Handle authentication request
-		void handleAuthentication(protocol::Authentication *msg);
+		void handleAuthentication(const protocol::Authentication *msg);
 
 		//! Handle Acknowledgements
-		void handleAck(protocol::Acknowledgement *msg);
+		void handleAck(const protocol::Acknowledgement *msg);
 
 		//! Handle errors
-		void handleError(protocol::Error *msg);
+		void handleError(const protocol::Error *msg);
 
 		Connection *net_;
 
@@ -138,8 +166,9 @@ class HostState : public QObject {
 		int userid_;
 
 		SessionState *newsession_;
+		SessionState *selsession_;
 		QHash<int, SessionState*> mysessions_;
-		QList<protocol::SessionInfo*> sessions_;
+		SessionList sessions_;
 
 		bool loggedin_;
 };
@@ -152,42 +181,62 @@ class SessionState : public QObject {
 	Q_OBJECT
 	public:
 		//! Construct a session state object
-		SessionState(HostState *parent, const protocol::SessionInfo *info);
+		SessionState(HostState *parent, const Session& info);
 
-		//! Get session id
-		/**
-		 * @return session ID number
-		 * @retval -1 if session does not yet have an ID
-		 */
-		int id() const { return id_; }
+		//! Get session info
+		const Session& info() const { return info_; }
 
-		//! Get the width of the board
-		/**
-		 * @return board width
-		 */
-		quint16 width() const { return width_; }
+		//! Get an image from received raster data
+		bool sessionImage(QImage& image) const;
 
-		//! Get the height of the board
-		/**
-		 * @return board height
-		 */
-		quint16 height() const { return height_; }
+		//! Release raster data
+		void releaseRaster();
 
-		//! Get the title of the board
-		/**
-		 * @return session title
-		 */
-		const QString& title() const { return title_; }
+		//! Send a tool info message
+		void sendToolInfo(const drawingboard::Brush& brush);
+
+		//! Send a stroke info message
+		void sendStrokeInfo(const drawingboard::Point& point);
+
+		//! Send a stroke end message
+		void sendStrokeEnd();
 
 		//! Handle session specific user info
-		void handleUserInfo(protocol::UserInfo *msg);
+		void handleUserInfo(const protocol::UserInfo *msg);
+
+		//! Handle raster data
+		void handleRaster(const protocol::Raster *msg);
+
+		//! Handle ToolInfo messages
+		void handleToolInfo(const protocol::ToolInfo *msg);
+		//
+		//! Handle StrokeInfo messages
+		void handleStrokeInfo(const protocol::StrokeInfo *msg);
+
+		//! Handle StrokeEnd messages
+		void handleStrokeEnd(const protocol::StrokeEnd *msg);
+
+	signals:
+		//! Raster data has been received
+		/**
+		 * @param percent percent of data received, range is [0..100]
+		 */
+		void rasterReceived(int percent);
+
+		//! Results of a ToolInfo message
+		void toolReceived(int user, const drawingboard::Brush& brush);
+
+		//! Results of a StrokeInfo message
+		void strokeReceived(int user, const drawingboard::Point& point);
+
+		//! Results of a StrokeEnd message
+		void strokeEndReceived(int user);
 
 	private:
 		HostState *host_;
-		QString title_;
+		Session info_;
 		QString password_;
-		quint16 width_, height_;
-		int id_;
+		QByteArray raster_;
 };
 
 }

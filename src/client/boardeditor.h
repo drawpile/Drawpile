@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@
 #include <QColor>
 
 class QPoint;
+
+namespace network {
+	class SessionState;
+}
 
 namespace interface {
 	class BrushSource;
@@ -49,18 +53,9 @@ class BoardEditor {
 	public:
 
 		//! Construct a board editor
-		/**
-		 * @param board drawing board to edit
-		 * @param user user to commit the changes as
-		 */
-		BoardEditor(Board *board, User *user) : board_(board), user_(user) {}
+		BoardEditor(Board *board, User *user, interface::BrushSource *brush,
+				interface::ColorSource *color);
 		virtual ~BoardEditor() {}
-
-		//! Set the brush source
-		void setBrushSource(interface::BrushSource *src);
-
-		//! Set the color source
-		void setColorSource(interface::ColorSource *src);
 
 		//! Get the brush currently in use by the local user
 		const Brush& currentBrush() const;
@@ -87,9 +82,9 @@ class BoardEditor {
 		virtual void endStroke() = 0;
 
 	protected:
-		Board *board_;
 		User *user_;
 	private:
+		Board *board_;
 		interface::BrushSource *brush_;
 		interface::ColorSource *color_;
 };
@@ -101,11 +96,31 @@ class BoardEditor {
 class LocalBoardEditor : public BoardEditor {
 	public:
 		//! Construct a local board editor
-		LocalBoardEditor(Board *board, User *user) : BoardEditor(board,user) {}
+		LocalBoardEditor(Board *board, User *user,
+				interface::BrushSource *brush, interface::ColorSource *color)
+			: BoardEditor(board,user, brush, color) {}
 
 		void setTool(const Brush& brush);
 		void addStroke(const Point& point);
 		void endStroke();
+};
+
+//! Board editor that modifies the board through the network
+/**
+ * The editing commands are sent to the hosting server.
+ */
+class RemoteBoardEditor : public BoardEditor {
+	public:
+		//! Construct a remote board editor
+		RemoteBoardEditor(Board *board, User *user,
+				network::SessionState *session, interface::BrushSource *brush,
+				interface::ColorSource *color);
+
+		void setTool(const Brush& brush);
+		void addStroke(const Point& point);
+		void endStroke();
+	private:
+		network::SessionState *session_;
 };
 
 }

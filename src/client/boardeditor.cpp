@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,27 +23,25 @@
 #include "board.h"
 #include "user.h"
 #include "interfaces.h"
+#include "netstate.h"
 
 namespace drawingboard {
 
 /**
- * The brush source is usually a graphical UI widget that allows
- * the user to specify the brush settings.
- * @param src brush source object
+ * @param board drawing board to edit
+ * @param user user to commit the changes as
+ * @param brush brush source
+ * @param color color source
  */
-void BoardEditor::setBrushSource(interface::BrushSource *src)
+BoardEditor::BoardEditor(Board *board, User *user,
+		interface::BrushSource *brush,
+		interface::ColorSource *color)
+	: user_(user), board_(board), brush_(brush), color_(color)
 {
-	brush_ = src;
-}
-
-/**
- * The color source is usually a graphical UI widget that allows
- * the user to select foreground and background colors.
- * @param src color source object.
- */
-void BoardEditor::setColorSource(interface::ColorSource *src)
-{
-	color_ = src;
+	Q_ASSERT(board);
+	Q_ASSERT(user);
+	Q_ASSERT(brush);
+	Q_ASSERT(color);
 }
 
 /**
@@ -105,6 +103,41 @@ void LocalBoardEditor::addStroke(const Point& point)
 void LocalBoardEditor::endStroke()
 {
 	user_->endStroke();
+}
+
+/**
+ * @param board board to user
+ * @param user user to draw as
+ * @param session network session over which commands are transmitted
+ */
+RemoteBoardEditor::RemoteBoardEditor(Board *board, User *user,
+		network::SessionState *session,
+		interface::BrushSource *brush,
+		interface::ColorSource *color)
+	: BoardEditor(board, user, brush, color), session_(session)
+{
+	Q_ASSERT(session);
+}
+
+/**
+ * @param brush brush to set
+ */
+void RemoteBoardEditor::setTool(const Brush& brush)
+{
+	session_->sendToolInfo(brush);
+}
+
+/**
+ * @param point stroke coordinates
+ */
+void RemoteBoardEditor::addStroke(const Point& point)
+{
+	session_->sendStrokeInfo(point);
+}
+
+void RemoteBoardEditor::endStroke()
+{
+	session_->sendStrokeEnd();
 }
 
 }

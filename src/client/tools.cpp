@@ -29,6 +29,12 @@ namespace tools {
 
 drawingboard::BoardEditor *Tool::editor_;
 
+void Tool::setEditor(drawingboard::BoardEditor *editor)
+{
+	Q_ASSERT(editor);
+	editor_ = editor;
+}
+
 /**
  * The returned tool can be used to perform actions on the board
  * controlled by the specified controller.
@@ -39,15 +45,13 @@ drawingboard::BoardEditor *Tool::editor_;
  * @param type type of tool wanted
  * @return the requested tool
  */
-Tool *Tool::get(drawingboard::BoardEditor *editor, Type type)
+Tool *Tool::get(Type type)
 {
-	Q_ASSERT(editor);
 	// When and if we support joining to multiple boards,
 	// tools can no longer be shared.
 	static Tool *brush = new Brush();
 	static Tool *eraser = new Eraser();
 	static Tool *picker = new ColorPicker();
-	editor_ = editor;
 	switch(type) {
 		case BRUSH: return brush;
 		case ERASER: return eraser;

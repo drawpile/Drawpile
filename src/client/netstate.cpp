@@ -19,17 +19,31 @@
 */
 
 #include <QDebug>
+#include <QImage>
 #include <memory>
 
 #include "../../config.h"
 
 #include "network.h"
 #include "netstate.h"
+#include "brush.h"
+#include "point.h"
+
 #include "../shared/protocol.h"
 #include "../shared/protocol.admin.h"
+#include "../shared/tools.h"
 #include "../shared/templates.h" // for bswap
 
 namespace network {
+
+Session::Session(const protocol::SessionInfo *info)
+	: id(info->session_id),
+	owner(info->owner),
+	title(QString::fromUtf8(info->title)),
+	width(info->width),
+	height(info->height)
+{
+}
 
 HostState::HostState(QObject *parent)
 	: QObject(parent), net_(0), newsession_(0), loggedin_(false)
@@ -65,8 +79,26 @@ void HostState::receiveMessage()
 				handleAuthentication(static_cast<Authentication*>(msg));
 				break;
 			case type::SessionSelect:
-				// Since the client currently only supports single session
-				// at a time, SessionSelect messages are ignored.
+				handleSessionSelect(static_cast<SessionSelect*>(msg));
+				break;
+			case type::Raster:
+				if(mysessions_.contains(msg->session_id))
+					mysessions_.value(msg->session_id)->handleRaster(
+							static_cast<Raster*>(msg));
+				else
+					qDebug() << "received raster data for unsubscribed session" << int(msg->session_id);
+				break;
+			case type::ToolInfo:
+				Q_ASSERT(selsession_);
+				selsession_->handleToolInfo(static_cast<ToolInfo*>(msg));
+				break;
+			case type::StrokeInfo:
+				Q_ASSERT(selsession_);
+				selsession_->handleStrokeInfo(static_cast<StrokeInfo*>(msg));
+				break;
+			case type::StrokeEnd:
+				Q_ASSERT(selsession_);
+				selsession_->handleStrokeEnd(static_cast<StrokeEnd*>(msg));
 				break;
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
@@ -156,8 +188,6 @@ void HostState::sendPassword(const QString& password)
 void HostState::listSessions()
 {
 	// First clear out the old session list
-	foreach(protocol::SessionInfo *i, sessions_)
-		delete i;
 	sessions_.clear();
 
 	// Then request a new one
@@ -175,8 +205,8 @@ void HostState::join(int id)
 {
 	bool found = false;
 	// Get session parameters from list
-	foreach(protocol::SessionInfo *i, sessions_) {
-		if(i->session_id == id) {
+	foreach(const Session &i, sessions_) {
+		if(i.id == id) {
 			newsession_ = new SessionState(this,i);
 			found = true;
 			break;
@@ -201,11 +231,11 @@ void HostState::joinLatest()
 {
 	Q_ASSERT(sessions_.count() > 0);
 	bool found = false;
-	QList<protocol::SessionInfo*>::const_iterator i = sessions_.constEnd();
+	SessionList::const_iterator i = sessions_.constEnd();
 	do {
 		--i;
-		if((*i)->owner == userid_) {
-			join((*i)->session_id);
+		if(i->owner == userid_) {
+			join(i->id);
 			found = true;
 			break;
 		}
@@ -214,14 +244,14 @@ void HostState::joinLatest()
 }
 
 /**
- * Host info provides information about the server and it's capabilities.
+ * Host info provides information about the server and its capabilities.
  * It is received in response to Identifier message to indicate that
  * the connection was accepted.
  *
  * User info will be sent in reply
  * @param msg HostInfo message
  */
-void HostState::handleHostInfo(protocol::HostInfo *msg)
+void HostState::handleHostInfo(const protocol::HostInfo *msg)
 {
 	// Handle host info
 	qDebug() << "host info";
@@ -242,7 +272,7 @@ void HostState::handleHostInfo(protocol::HostInfo *msg)
  * states it provides information about other users.
  * @param msg UserInfo message
  */
-void HostState::handleUserInfo(protocol::UserInfo *msg)
+void HostState::handleUserInfo(const protocol::UserInfo *msg)
 {
 	qDebug() << "user info";
 	if(loggedin_) {
@@ -262,16 +292,29 @@ void HostState::handleUserInfo(protocol::UserInfo *msg)
  * Session info is appended to a list.
  * @param msg SessionInfo message
  */
-void HostState::handleSessionInfo(protocol::SessionInfo *msg)
+void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 {
 	qDebug() << "session info " << int(msg->session_id);
 	sessions_.append(msg);
 }
 
 /**
+ * Select active session
+ * @param msg SessionSelect message
+ */
+void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
+{
+	if(mysessions_.contains(msg->session_id)) {
+		selsession_ = mysessions_.value(msg->session_id);
+	} else {
+		qDebug() << "Selected unsubscribed session" << int(msg->session_id);
+	}
+}
+
+/**
  * @param msg Authentication message
  */
-void HostState::handleAuthentication(protocol::Authentication *msg)
+void HostState::handleAuthentication(const protocol::Authentication *msg)
 {
 	qDebug() << "authentication";
 }
@@ -280,7 +323,7 @@ void HostState::handleAuthentication(protocol::Authentication *msg)
  * Acknowledgement messages confirm previously sent commands.
  * @param msg Acknowledgement message
  */
-void HostState::handleAck(protocol::Acknowledgement *msg)
+void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
 	qDebug() << "ack " << int(msg->event);
 	if(msg->event == protocol::type::Instruction) {
@@ -295,8 +338,8 @@ void HostState::handleAck(protocol::Acknowledgement *msg)
 		emit sessionsListed();
 	} else if(msg->event == protocol::type::Subscribe) {
 		// A session has been joined
-		mysessions_.insert(newsession_->id(), newsession_);
-		emit joined(newsession_->id());
+		mysessions_.insert(newsession_->info().id, newsession_);
+		emit joined(newsession_->info().id);
 		newsession_ = 0;
 	} else {
 		qDebug() << "\tunhandled ack";
@@ -306,7 +349,7 @@ void HostState::handleAck(protocol::Acknowledgement *msg)
 /**
  * @param msg Error message
  */
-void HostState::handleError(protocol::Error *msg)
+void HostState::handleError(const protocol::Error *msg)
 {
 	qDebug() << "error " << int(msg->code);
 	// TODO
@@ -316,23 +359,134 @@ void HostState::handleError(protocol::Error *msg)
 /**
  * @param parent parent HostState
  */
-SessionState::SessionState(HostState *parent, const protocol::SessionInfo* info)
-	: QObject(parent), host_(parent)
+SessionState::SessionState(HostState *parent, const Session& info)
+	: QObject(parent), host_(parent), info_(info)
 {
 	Q_ASSERT(parent);
-	Q_ASSERT(info);
-	id_ = info->session_id;
-	width_ = info->width;
-	height_ = info->height;
-	title_ = QString::fromUtf8(info->title);
+}
+
+/**
+ * Get an image from received raster data. If received raster was empty,
+ * a null image is loaded.
+ * @param[out] loaded image is put here
+ * @retval false if buffer contained invalid data
+ */
+bool SessionState::sessionImage(QImage &image) const
+{
+	QImage img;
+	if(raster_.isEmpty()) {
+		image = QImage();
+	} else {
+		if(img.loadFromData(raster_)==false)
+			return false;
+		image = img;
+	}
+	return true;
+}
+
+/**
+ * Release raster data
+ */
+void SessionState::releaseRaster()
+{
+	raster_ = QByteArray();
+}
+
+/**
+ * @param brush brush info to send
+ */
+void SessionState::sendToolInfo(const drawingboard::Brush& brush)
+{
+	const QColor hi = brush.color(1);
+	const QColor lo = brush.color(0);
+	const uchar hio = qRound(brush.opacity(1) * 100);
+	const uchar loo = qRound(brush.opacity(0) * 100);
+	protocol::ToolInfo *msg = new protocol::ToolInfo;
+
+	msg->session_id = info_.id;;
+	msg->tool_id = tool::type::Brush;
+	msg->mode = tool::mode::Normal;
+	msg->lo_color = lo.red() << 24 | lo.green() << 16 | lo.blue() << 8 | loo;
+	msg->hi_color = hi.red() << 24 | hi.green() << 16 | hi.blue() << 8 | hio;
+	msg->lo_size = brush.radius(0);
+	msg->hi_size = brush.radius(1);
+	msg->lo_softness = qRound(brush.hardness(0)*100);
+	msg->hi_softness = qRound(brush.hardness(1)*100);
+	host_->net_->send(msg);
+}
+
+/**
+ * @param point stroke coordinates to send
+ */
+void SessionState::sendStrokeInfo(const drawingboard::Point& point)
+{
+	protocol::StrokeInfo *msg = new protocol::StrokeInfo;
+	msg->session_id = info_.id;;
+	msg->x = point.x();
+	msg->y = point.y();
+	msg->pressure = qRound(point.pressure()*255);
+	host_->net_->send(msg);
+}
+
+void SessionState::sendStrokeEnd()
+{
+	protocol::StrokeEnd *msg = new protocol::StrokeEnd;
+	msg->session_id = info_.id;;
+	host_->net_->send(msg);
 }
 
 /**
  * @param msg UserInfo message
  */
-void SessionState::handleUserInfo(protocol::UserInfo *msg)
+void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
 	qDebug() << __FILE__ << ":" << __LINE__ << ": TODO handleUserInfo";
+}
+
+/**
+ * Receive raster data. When joining an empty session, a raster message
+ * with all fields zeroed is received.
+ * The rasterReceived signal is emitted every time data is received.
+ * @param msg Raster data message
+ */
+void SessionState::handleRaster(const protocol::Raster *msg)
+{
+	if(msg->size==0) {
+		// Special case, zero size raster
+		emit rasterReceived(100);
+	} else {
+		// Note. We make an assumption here that the data is sent in a 
+		// sequential manner with no gaps in between.
+		raster_.append(QByteArray(msg->data,msg->length));
+		emit rasterReceived(100*(msg->offset+msg->length)/msg->size);
+	}
+}
+
+/**
+ * @param msg ToolInfo message
+ */
+void SessionState::handleToolInfo(const protocol::ToolInfo *msg)
+{
+	// TODO
+	drawingboard::Brush brush(msg->hi_size, msg->hi_softness/255.0, 1);
+	emit toolReceived(msg->user_id, brush);
+}
+
+/**
+ * @param msg StrokeInfo message
+ */
+void SessionState::handleStrokeInfo(const protocol::StrokeInfo *msg)
+{
+	emit strokeReceived(msg->user_id,
+			drawingboard::Point(msg->x, msg->y, msg->pressure/255.0));
+}
+
+/**
+ * @param msg StrokeEnd message
+ */
+void SessionState::handleStrokeEnd(const protocol::StrokeEnd *msg)
+{
+	emit strokeEndReceived(msg->user_id);
 }
 
 }

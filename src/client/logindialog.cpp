@@ -29,7 +29,7 @@ LoginDialog::LoginDialog(QWidget *parent)
 {
 	ui_ = new Ui_LoginDialog;
 	ui_->setupUi(this);
-	ui_->progress->setMaximum(7);
+	ui_->progress->setMaximum(107);
 
 	connect(ui_->passwordbutton, SIGNAL(clicked()), this, SLOT(sendPassword()));
 }
@@ -88,7 +88,19 @@ void LoginDialog::disconnected()
  */
 void LoginDialog::joined()
 {
-	hide();
+	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->connectmessage->setText(tr("Joined session, downloading image..."));
+}
+
+/**
+ * Raster data download progresses
+ * @param p progress percentage. When 100, login sequence is complete
+ */
+void LoginDialog::raster(int p)
+{
+	ui_->progress->setValue(7+p);
+	if(p>=100)
+		hide();
 }
 
 /**

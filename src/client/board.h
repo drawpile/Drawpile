@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,15 @@
 
 #include <QGraphicsScene>
 #include <QHash>
+
+namespace network {
+	class SessionState;
+}
+
+namespace interface {
+	class BrushSource;
+	class ColorSource;
+}
 
 //! Drawing board related classes
 namespace drawingboard {
@@ -44,7 +53,7 @@ class Board : public QGraphicsScene
 	friend class BoardEditor;
 
 	public:
-		Board(QObject *parent=0);
+		Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color);
 		~Board();
 
 		//! Initialize to a solid color
@@ -63,7 +72,7 @@ class Board : public QGraphicsScene
 		void removeUser(int id);
 
 		//! Get a board editor
-		BoardEditor *getEditor(bool local);
+		BoardEditor *getEditor(network::SessionState *session=0);
 
 #if 0 // move these to BoardEditor?
 		//! Begin a new preview stroke
@@ -76,6 +85,7 @@ class Board : public QGraphicsScene
 		void previewEnd();
 #endif
 
+	public slots:
 		//! User switches tools
 		void userSetTool(int user, const Brush& brush);
 
@@ -88,6 +98,9 @@ class Board : public QGraphicsScene
 	private:
 		Layer *image_;
 		QHash<int,User*> users_;
+
+		interface::BrushSource *brushsrc_;
+		interface::ColorSource *colorsrc_;
 };
 
 }

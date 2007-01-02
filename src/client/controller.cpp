@@ -41,15 +41,12 @@ Controller::~Controller()
 {
 }
 
-void Controller::setModel(drawingboard::Board *board,
-		interface::BrushSource *brush,
-		interface::ColorSource *color)
+void Controller::setModel(drawingboard::Board *board)
 {
 	board_ = board;
 	board_->addUser(0);
-	editor_ = board->getEditor(true);
-	editor_->setBrushSource(brush);
-	editor_->setColorSource(color);
+	editor_ = board->getEditor();
+	tools::Tool::setEditor(editor_);
 }
 
 /**
@@ -109,6 +106,16 @@ void Controller::disconnectHost()
 void Controller::sessionJoined(int id)
 {
 	session_ = netstate_->session(id);
+	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
+	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
+	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
+	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
+
+	// Get a remote board editor
+	delete editor_;
+	editor_ = board_->getEditor(session_);
+	tools::Tool::setEditor(editor_);
+
 	emit joined();
 }
 
@@ -117,13 +124,40 @@ void Controller::sessionJoined(int id)
  */
 void Controller::sessionParted()
 {
+	// Get a local board editor
+	delete editor_;
+	editor_ = board_->getEditor();
+	tools::Tool::setEditor(editor_);
+
 	session_ = 0;
 	emit parted();
 }
 
+/**
+ * Raster data download
+ * @param p download progress [0..100]
+ */
+void Controller::rasterDownload(int p)
+{
+	if(p>=100) {
+		QImage img;
+		if(session_->sessionImage(img)) {
+			if(img.isNull()==false) {
+				board_->initBoard(img);
+				emit changed();
+				session_->releaseRaster();
+			}
+		} else {
+			// TODO, downloaded invalid image
+			Q_ASSERT(false);
+		}
+	}
+	emit rasterProgress(p);
+}
+
 void Controller::setTool(tools::Type tool)
 {
-	tool_ = tools::Tool::get(editor_,tool);
+	tool_ = tools::Tool::get(tool);
 }
 
 void Controller::penDown(const drawingboard::Point& point, bool isEraser)

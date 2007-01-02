@@ -74,7 +74,7 @@ MainWindow::MainWindow()
 	setCentralWidget(view_);
 
 	// Create board
-	board_ = new drawingboard::Board(this);
+	board_ = new drawingboard::Board(this, toolsettings_, fgbgcolor_);
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	//board_->initBoard(QSize(800,600),Qt::white);
@@ -82,7 +82,7 @@ MainWindow::MainWindow()
 
 	// Create controller
 	controller_ = new Controller(this);
-	controller_->setModel(board_, toolsettings_, fgbgcolor_);
+	controller_->setModel(board_);
 	connect(controller_, SIGNAL(changed()), this, SLOT(boardChanged()));
 	connect(this, SIGNAL(toolChanged(tools::Type)), controller_, SLOT(setTool(tools::Type)));
 
@@ -96,6 +96,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(disconnected()), logindlg_, SLOT(disconnected()));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined()), logindlg_, SLOT(joined()));
+	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
 
 	readSettings();
 }
