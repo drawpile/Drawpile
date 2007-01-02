@@ -856,6 +856,7 @@ void Server::uSyncSession(user_ref usr, session_ref session) throw()
 	
 	// This is WRONG
 	protocol::Raster *r = new protocol::Raster;
+	r->session_id = session->id;
 	uSendMsg(usr, message_ref(r));
 }
 
