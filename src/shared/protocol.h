@@ -190,7 +190,7 @@ struct Identifier
 		: Message(type::Identifier),
 		revision(protocol::null_revision),
 		level(protocol::null_implementation),
-		flags(requirements::None),
+		flags(client::None),
 		extensions(extensions::None)
 	{ }
 	
@@ -207,7 +207,7 @@ struct Identifier
 		//! Client feature implementation level.
 		level;
 	
-	//! Operation flags (see protocol::)
+	//! Client capabilities (see protocol::client)
 	uint8_t flags;
 	
 	//! Extension flags (see protocol::extensions for full list).
@@ -922,7 +922,7 @@ struct Palette
 	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
-		: Message(type::Palette),
+		: Message(type::Palette, message::isSession|message::isUser),
 		offset(0),
 		count(0),
 		data(0)

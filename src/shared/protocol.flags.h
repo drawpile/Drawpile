@@ -36,6 +36,51 @@
 namespace protocol
 {
 
+//! Client capabilities
+/**
+ * Protocol related client capabilities.
+ */
+namespace client
+{
+
+const uint8_t
+	//! No capabilities
+	None = 0,
+	
+	//! Ack feedback
+	/**
+	 * Client can operate with just ACKs as feedback from stroke info and chat messages.
+	 * 
+	 * Why? It lowers bandwidth! An ACK is only 2 bytes long compared to what the other
+	 * messages are!
+	 * 
+	 * Without this, the messages get returned back to the client as if they were from
+	 * some other user. Like boomerang, except you gain nothing.
+	 */
+	AckFeedback = 0x01,
+	
+	//!
+	Reserved1 = 0x02,
+	
+	//!
+	Reserved2 = 0x04,
+	
+	//!
+	Reserved3 = 0x08,
+	
+	//!
+	Reserved4 = 0x10,
+	
+	//!
+	Reserved5 = 0x20,
+	
+	//!
+	Reserved6 = 0x40,
+	
+	//!
+	Reserved7 = 0x80;
+}
+
 //! Message modifiers
 /**
  * http://drawpile.sourceforge.net/wiki/index.php/Protocol#Message_modifiers
@@ -46,14 +91,30 @@ namespace message
 const uint8_t
 	//! No message modifiers.
 	None = 0x00,
+	
 	//! Has user identifier
 	isUser = 0x01,
+	
 	//! Has session identifier
 	isSession = 0x02,
+	
 	//! Is bundling
 	isBundling = 0x04,
+	
 	//! Is directed by SessionSelect message.
-	isSelected = 0x08;
+	isSelected = 0x08,
+	
+	//!
+	Reserved1 = 0x10,
+	
+	//!
+	Reserved2 = 0x20,
+	
+	//!
+	Reserved3 = 0x40,
+	
+	//!
+	Reserved4 = 0x80;
 }
 
 //! Protocol extension flags.
@@ -75,8 +136,23 @@ const uint8_t
 	//! Shared palette extension
 	Palette = 0x02,
 	
+	//!
+	Reserved1 = 0x04,
+	
 	//! Deflate extension
-	Deflate = 0x08;
+	Deflate = 0x08,
+	
+	//!
+	Reserved2 = 0x10,
+	
+	//!
+	Reserved3 = 0x20,
+	
+	//!
+	Reserved4 = 0x40,
+	
+	//!
+	Reserved5 = 0x80;
 
 } // namespace extensions
 
@@ -94,6 +170,9 @@ const uint8_t
 	//! Enforces unique user and session names.
 	EnforceUnique = 0x01,
 	
+	//!
+	Reserved1 = 0x02,
+	
 	//! Multi-session support
 	MultiSession = 0x04,
 	
@@ -101,7 +180,16 @@ const uint8_t
 	WideStrings = 0x08,
 	
 	//! Server does not allow global Chat messages.
-	NoGlobalChat = 0x10;
+	NoGlobalChat = 0x10,
+	
+	//!
+	Reserved2 = 0x20,
+	
+	//!
+	Reserved3 = 0x40,
+	
+	//!
+	Reserved4 = 0x80;
 
 } // namespace operation
 
