@@ -40,7 +40,7 @@ struct Session
 		: id(_id),
 		len(0),
 		title(0),
-		mode(protocol::user::None),
+		mode(protocol::user_mode::None),
 		limit(10),
 		owner(protocol::null_user),
 		width(0),

@@ -56,7 +56,7 @@ Server::Server() throw()
 	min_dimension(400),
 	requirements(0),
 	extensions(0),
-	default_user_mode(protocol::user::None),
+	default_user_mode(protocol::user_mode::None),
 	localhost_admin(true)
 {
 	#ifndef NDEBUG
@@ -498,7 +498,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 	
 	protocol::Instruction* m = static_cast<protocol::Instruction*>(usr->inMsg);
 	
-	if (!fIsSet(usr->mode, protocol::user::Administrator))
+	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
 		std::cerr << "Non-admin tries to pass instructions" << std::endl;
 		uRemove(usr);
@@ -669,15 +669,18 @@ void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
 			m->length = 0;
 			m->name = 0;
 			
-			// set user mode
-			usr->mode = m->mode = default_user_mode;
-			
-			// auto admin promotion
 			if (localhost_admin && usr->sock->address() == INADDR_LOOPBACK)
 			{
-				fSet(usr->mode, protocol::user::Administrator);
-				m->mode = usr->mode;
+				// auto admin promotion.
+				// also, don't put any other flags on the user.
+				usr->mode = protocol::user_mode::Administrator;
 			}
+			else
+			{
+				// set user mode
+				usr->mode = default_user_mode;
+			}
+			m->mode = usr->mode;
 			
 			// reply
 			uSendMsg(usr, message_ref(m));
