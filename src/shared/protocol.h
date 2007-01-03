@@ -303,8 +303,8 @@ struct ToolInfo
 		hi_color(0),
 		lo_size(0),
 		hi_size(0),
-		lo_softness(0),
-		hi_softness(0)
+		lo_hardness(0),
+		hi_hardness(0)
 	{ }
 	
 	~ToolInfo() throw() { }
@@ -328,10 +328,10 @@ struct ToolInfo
 		lo_size,
 		//! Hi pressure size.
 		hi_size,
-		//! Lo pressure softness.
-		lo_softness,
-		//! Hi pressure softness.
-		hi_softness;
+		//! Lo pressure hardness.
+		lo_hardness,
+		//! Hi pressure hardness.
+		hi_hardness;
 	
 	/* functions */
 	

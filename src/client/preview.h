@@ -34,7 +34,7 @@ namespace drawingboard {
  */
 class Preview : public QGraphicsLineItem {
 	public:
-		Preview(Preview *last, const Point& point,
+		Preview(const Point *prev, const Point& point,
 				QGraphicsItem *parent, QGraphicsScene *scene);
 };
 

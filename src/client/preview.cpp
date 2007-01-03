@@ -25,18 +25,17 @@ namespace drawingboard {
 
 //! Construct a stroke preview object
 /**
- * @param last if not null, continue a previous stroke
+ * @param prev if not null, continue a previous stroke
  * @param point stroke end point
  * @param parent parent layer
  * @param scene board to which this object belongs to
  */
-Preview::Preview(Preview *last, const Point& point,
+Preview::Preview(const Point *prev, const Point& point,
 		QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsLineItem(parent, scene)
 {
-	if(last) {
-		QPointF lastp = last->line().p2();
-		setLine(lastp.x(), lastp.y(), point.x(), point.y());
+	if(prev) {
+		setLine(prev->x(), prev->y(), point.x(), point.y());
 	} else {
 		setLine(point.x(), point.y(), point.x(), point.y());
 	}

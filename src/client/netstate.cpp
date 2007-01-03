@@ -434,8 +434,8 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	msg->hi_color = hi.red() << 24 | hi.green() << 16 | hi.blue() << 8 | hio;
 	msg->lo_size = brush.radius(0);
 	msg->hi_size = brush.radius(1);
-	msg->lo_softness = qRound(brush.hardness(0)*100);
-	msg->hi_softness = qRound(brush.hardness(1)*100);
+	msg->lo_hardness = qRound(brush.hardness(0)*100);
+	msg->hi_hardness = qRound(brush.hardness(1)*100);
 	host_->net_->send(msg);
 }
 
@@ -510,8 +510,23 @@ void SessionState::handleRaster(const protocol::Raster *msg)
  */
 void SessionState::handleToolInfo(const protocol::ToolInfo *msg)
 {
-	// TODO
-	drawingboard::Brush brush(msg->hi_size, msg->hi_softness/255.0, 1);
+	uchar r1 = (msg->hi_color & 0xff000000) >> 24;
+	uchar g1 = (msg->hi_color & 0x00ff0000) >> 16;
+	uchar b1 = (msg->hi_color & 0x0000ff00) >> 8;
+	uchar a1 = (msg->hi_color & 0x000000ff);
+	uchar r2 = (msg->lo_color & 0xff000000) >> 24;
+	uchar g2 = (msg->lo_color & 0x00ff0000) >> 16;
+	uchar b2 = (msg->lo_color & 0x0000ff00) >> 8;
+	uchar a2 = (msg->lo_color & 0x000000ff);
+	drawingboard::Brush brush(
+			msg->hi_size,
+			msg->hi_hardness/100.0,
+			a1/100.0,
+			QColor(r1,g1,b1));
+	brush.setRadius2(msg->lo_size);
+	brush.setColor2(QColor(r2,g2,b2));
+	brush.setHardness2(msg->lo_hardness/100.0);
+	brush.setOpacity(a2/100.0);
 	emit toolReceived(msg->user_id, brush);
 }
 

@@ -24,6 +24,8 @@
 #include <QHash>
 #include <QQueue>
 
+#include "point.h"
+
 namespace network {
 	class SessionState;
 }
@@ -40,7 +42,6 @@ class Layer;
 class User;
 class Brush;
 class BoardEditor;
-class Point;
 class Preview;
 
 //! The drawing board
@@ -108,6 +109,7 @@ class Board : public QGraphicsScene
 
 		QQueue<Preview*> previews_;
 		bool previewstarted_;
+		Point lastpreview_;
 
 		interface::BrushSource *brushsrc_;
 		interface::ColorSource *colorsrc_;

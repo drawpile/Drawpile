@@ -17,6 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QDebug>
 
 #include "board.h"
 #include "layer.h"
@@ -157,11 +158,12 @@ void Board::addPreview(const Point& point)
 	User *user = users_.value(localuser_);
 	Preview *pre;
 	if(previewstarted_) {
-		pre = new Preview(previews_.last(), point, user->layer(), this);
+		pre = new Preview(&lastpreview_, point, user->layer(), this);
 	} else {
 		pre = new Preview(0, point, user->layer(), this);
 		previewstarted_ = true;
 	}
+	lastpreview_ = point;
 	previews_.enqueue(pre);
 }
 
@@ -182,37 +184,36 @@ void Board::clearPreviews()
 /**
  * @param user user id
  * @param brush brush to use
+ * @pre user must exist
  */
 void Board::userSetTool(int user, const Brush& brush)
 {
-	if(users_.contains(user))
-		users_.value(user)->setBrush(brush);
+	Q_ASSERT(users_.contains(user));
+	users_.value(user)->setBrush(brush);
 }
 
 /**
  * @param user user id
  * @param point coordinates
+ * @pre user must exist
  */
 void Board::userStroke(int user, const Point& point)
 {
-	if(users_.contains(user)) {
-		User *u = users_.value(user);
-		u->addStroke(point);
+	Q_ASSERT(users_.contains(user));
+	users_.value(user)->addStroke(point);
 
-		if(user == localuser_ && previews_.isEmpty() == false)
-			delete previews_.dequeue();
-	}
+	if(user == localuser_ && previews_.isEmpty() == false)
+		delete previews_.dequeue();
 }
 
 /**
  * @param user user id
+ * @pre user must exist
  */
 void Board::userEndStroke(int user)
 {
-	if(users_.contains(user)) {
-		User *u = users_.value(user);
-		u->endStroke();
-	}
+	Q_ASSERT(users_.contains(user));
+	users_.value(user)->endStroke();
 }
 
 }
