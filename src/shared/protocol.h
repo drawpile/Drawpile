@@ -91,7 +91,7 @@ protected:
 	size_t headerSize() const throw();
 	
 public:
-	virtual ~Message() throw() { }
+	virtual ~Message() throw() { delete next, delete prev; }
 	
 	//! Message type identifier (full list in protocol::type namespace).
 	const uint8_t type;
