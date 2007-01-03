@@ -200,11 +200,7 @@ void Server::uWrite(user_ref& usr) throw()
 		std::cerr << "Error occured while sending to user: "
 			<< static_cast<int>(usr->id) << std::endl;
 		
-		fClr(usr->events, ev.read);
-		if (usr->events == 0)
-			ev.remove(usr->sock->fd(), usr->events);
-		else
-			ev.modify(usr->sock->fd(), usr->events);
+		uRemove(usr);
 	}
 	else if (sb == 0)
 	{
