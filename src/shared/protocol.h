@@ -114,6 +114,8 @@ public:
 	
 	//! Turn message (list) to char* buffer and set 'len' to the length of the buffer.
 	/**
+	 * You \b must call this for the \b last message in the list.
+	 * 
 	 * @param len refers to size_t to which the length of returned buffer is stored.
 	 *
 	 * @return Buffer ready to be sent to network.
@@ -160,6 +162,9 @@ public:
 	
 	//! Unserializes char* buffer to associated message struct.
 	/**
+	 * The base message struct will be the first of linked list if the message is of
+	 * bundling sort. Otherwise, there's no linked list created.
+	 * 
 	 * Before calling unserialize(), you MUST ensure the buffer has enough data
 	 * by calling reqDataLen(). Also, reqDataLen() is the only thing that can
 	 * tell you how much data the call to unserialize() actually processed or will
@@ -173,6 +178,17 @@ public:
 	 */
 	virtual
 	size_t unserialize(const char* buf, size_t len) throw(std::exception, std::bad_alloc);
+	
+	//! Validate the message contents.
+	/**
+	 * Checks the message contents for any deviations that should not occur.
+	 * 
+	 * @return 0 if nothing was detected to be wrong.
+	 * @return 1 if the payload was invalid
+	 * @return 2 if the payload was correct but the header was not.
+	 */
+	virtual
+	int isValid() const throw();
 };
 
 //! Protocol identifier.

@@ -217,6 +217,11 @@ size_t Message::unserialize(const char* buf, size_t len) throw(std::exception, s
 	return i;
 }
 
+int Message::isValid() const throw()
+{
+	return true;
+}
+
 /*
  * struct Identifier
  */
