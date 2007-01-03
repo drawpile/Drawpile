@@ -290,7 +290,8 @@ void Server::uProcessData(user_ref& usr) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uProcessData(user: "
-		<< static_cast<int>(usr->id) << ")" << std::endl;
+		<< static_cast<int>(usr->id) << ", in buffer: "
+		<< usr->input.left << " bytes)" << std::endl;
 	#endif
 	
 	while (usr->input.canRead() != 0)
@@ -310,7 +311,7 @@ void Server::uProcessData(user_ref& usr) throw()
 		else if (usr->inMsg->type != usr->input.rpos[0])
 		{
 			// Input buffer frelled
-			std::cerr << "Attempted receiving different message type." << std::endl;
+			std::cerr << "Buffer corruption, message type changed." << std::endl;
 			uRemove(usr);
 			return;
 		}
@@ -321,7 +322,7 @@ void Server::uProcessData(user_ref& usr) throw()
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, have);
 		if (len > have)
 		{
-			std::cout << "need " << (len - have) << " bytes more" << std::endl;
+			std::cout << "Need " << (len - have) << " bytes more." << std::endl;
 			// still need more data
 			return;
 		}
@@ -927,34 +928,54 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Server::uLeaveSession()" << std::endl;
+	std::cout << "Server::uLeaveSession(user: "
+		<< static_cast<int>(usr->id) << ", session: "
+		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	
 	// TODO: Cancel any pending messages related to this user.
 	
 	session->users.erase(usr->id);
 	
-	// Tell session members there's a new user.
+	// remove
+	usr->sessions.erase(session->id);
+	
+	// last user in session.. destruct it
+	if (session->users.size() == 0)
+	{
+		freeSessionID(session->id);
+		
+		session_id_map.erase(session->id);
+		
+		return;
+	}
+	
+	// Tell session members the user left
 	Propagate(session->id, uCreateEvent(usr, session, protocol::user_event::Leave));
+	
+	if (session->owner = usr->id)
+	{
+		session->owner == protocol::null_user;
+		
+		// TODO: Announce owner disappearance..
+	}
 	
 	if (usr->session == session->id)
 	{
+		// TODO: This is WRONG
+		
 		protocol::SessionSelect *ss = new protocol::SessionSelect;
 		
 		ss->user_id = usr->id;
-		ss->session_id = protocol::Global;
+		usr->session = ss->session_id = protocol::Global;
 		
 		message_ref ss_ref(ss);
 		
 		Propagate(session->id, ss_ref);
 		uSendMsg(usr, ss_ref);
-		// TODO: Propagate to all users who see this user
 		
-		usr->session = protocol::Global;
+		// TODO: Propagate to all users who see this user
 	}
-	
-	// remove
-	usr->sessions.erase(session->id);
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
@@ -1027,7 +1048,8 @@ void Server::uRemove(user_ref& usr) throw()
 	std::map<uint8_t, SessionData>::iterator si( usr->sessions.begin() );
 	for (; si != usr->sessions.end(); si++ )
 	{
-		si->second.session->users.erase(usr->id);
+		//si->second.session->users.erase(usr->id);
+		uLeaveSession(usr, si->second.session);
 	}
 	
 	#ifndef NDEBUG
