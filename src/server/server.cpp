@@ -181,7 +181,7 @@ void Server::uWrite(user_ref& usr) throw()
 	if (!usr->output.data or usr->output.canRead() == 0)
 	{
 		size_t len=0;
-		protocol::Message *msg = usr->queue.front();
+		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
 		while (msg->next != 0)
 			msg = msg->next;
