@@ -394,6 +394,8 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 				usr->session,
 				message_ref(usr->inMsg)
 			);
+			
+			usr->inMsg = 0;
 		}
 		break;
 	case protocol::type::Unsubscribe:
