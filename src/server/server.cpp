@@ -181,11 +181,17 @@ void Server::uWrite(user_ref& usr) throw()
 	if (!usr->output.data or usr->output.canRead() == 0)
 	{
 		size_t len=0;
-		char* buf=0;
-		buf = usr->queue.front()->serialize(len);
-		usr->queue.pop();
+		protocol::Message *msg = usr->queue.front();
+		
+		while (msg->next != 0)
+			msg = msg->next;
+		
+		char* buf = msg->serialize(len);
+		
 		usr->output.setBuffer(buf, len);
 		usr->output.write(len);
+		
+		usr->queue.pop();
 	}
 	
 	int sb = usr->sock->send(
