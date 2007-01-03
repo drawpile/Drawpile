@@ -26,7 +26,7 @@
 
 *******************************************************************************/
 
-//#include "../shared/templates.h"
+#include "../shared/templates.h"
 #include "event.h"
 
 #include <iostream>
