@@ -40,6 +40,7 @@
 
 #include "../shared/SHA1.h"
 
+#include <ctime>
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
 #include <iostream>
@@ -152,7 +153,13 @@ message_ref Server::msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc
 {
 	protocol::Authentication* auth = new protocol::Authentication;
 	auth->session_id = session;
-	memcpy(auth->seed, "1234", protocol::password_seed_size); // FIXME
+	
+	usr->seed[0] = (rand() % 255) + 1;
+	usr->seed[1] = (rand() % 255) + 1;
+	usr->seed[2] = (rand() % 255) + 1;
+	usr->seed[3] = (rand() % 255) + 1;
+	
+	memcpy(auth->seed, usr->seed, protocol::password_seed_size);
 	return message_ref(auth);
 }
 
@@ -183,9 +190,12 @@ void Server::uWrite(user_ref& usr) throw()
 		size_t len=0;
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
+		uint8_t id = msg->user_id;
+		
 		while (msg->next != 0)
 			msg = msg->next;
 		
+		msg->user_id = id;
 		char* buf = msg->serialize(len);
 		
 		usr->output.setBuffer(buf, len);
@@ -546,6 +556,13 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			s->limit = m->aux_data;
 			s->mode = m->aux_data2;
 			
+			if (fIsSet(s->mode, protocol::user_mode::Administrator))
+			{
+				std::cerr << "Administrator flag in default mode." << std::endl;
+				uRemove(usr);
+				return;
+			}
+			
 			if (s->limit < 2)
 			{
 				std::cerr << "Attempted to create single user session." << std::endl;
@@ -730,12 +747,11 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		
 		if (usr->inMsg->type == protocol::type::Password)
 		{
-			// TODO
 			protocol::Password *m = static_cast<protocol::Password*>(usr->inMsg);
 			
 			CSHA1 h;
 			h.Update(reinterpret_cast<uint8_t*>(password), pw_len);
-			h.Update(reinterpret_cast<const uint8_t*>("1234"), 4);
+			h.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 			h.Final();
 			char digest[protocol::password_hash_size];
 			h.GetHash(reinterpret_cast<uint8_t*>(digest));
@@ -1072,6 +1088,8 @@ int Server::init() throw(std::bad_alloc)
 	#ifndef NDEBUG
 	std::cout << "Server::init()" << std::endl;
 	#endif
+	
+	srand(time(0) - 513); // FIXME
 	
 	#ifndef NDEBUG
 	std::cout << "creating socket" << std::endl;

@@ -150,5 +150,8 @@ struct User
 	
 	// Currently incoming message.
 	protocol::Message *inMsg;
+	
+	// for storing the password seed associated with this user.
+	char seed[4];
 };
 #endif // ServerUser_INCLUDED
