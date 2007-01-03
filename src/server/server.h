@@ -124,7 +124,7 @@ protected:
 	
 	// Get free user ID
 	uint8_t getUserID() throw();
-
+	
 	// Get free session ID
 	uint8_t getSessionID() throw();
 	
@@ -134,9 +134,12 @@ protected:
 	
 	// Write to user socket
 	void uWrite(user_ref& usr) throw();
-
+	
 	// Read from user socket
 	void uRead(user_ref usr) throw(std::bad_alloc);
+	
+	// Process all read data.
+	void uProcessData(user_ref& usr) throw();
 	
 	// create user info for event
 	message_ref uCreateEvent(user_ref& usr, session_ref session, uint8_t event);

@@ -282,6 +282,19 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 		
 		usr->input.write(rb);
 		
+		uProcessData(usr);
+	}
+}
+
+void Server::uProcessData(user_ref& usr) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Server::uProcessData(user: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	
+	while (usr->input.canRead() != 0)
+	{
 		if (!usr->inMsg)
 		{
 			try {
