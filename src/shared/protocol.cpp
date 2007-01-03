@@ -386,7 +386,7 @@ size_t ToolInfo::serializePayload(char *buf) const throw()
 	assert(tool_id != tool_type::None);
 	
 	memcpy_t(buf, tool_id); size_t i = sizeof(tool_id);
-	memcpy_t(buf, mode); i += sizeof(mode);
+	memcpy_t(buf+i, mode); i += sizeof(mode);
 	
 	memcpy(buf+i, &lo_color, sizeof(lo_color)); i += sizeof(lo_color);
 	memcpy(buf+i, &hi_color, sizeof(hi_color)); i += sizeof(hi_color);
