@@ -340,7 +340,7 @@ bool Event::isset(int fd, int ev) const throw()
 	{
 		if (events[n].data.fd == fd)
 		{
-			if (fIsSet(events[n].events, ev))
+			if (fIsSet(events[n].events, static_cast<uint32_t>(ev)))
 				return true;
 			else
 			{
