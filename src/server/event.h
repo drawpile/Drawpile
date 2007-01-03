@@ -132,7 +132,7 @@ protected:
 public:
 	
 	// MinGW is buggy... think happy thoughts :D
-	static const int
+	static const uint32_t
 		//! Identifier for 'read' event
 		read,
 		//! Identifier for 'write' event
@@ -206,7 +206,7 @@ public:
 	 *
 	 * @return true if the fd was added, false if not
 	 */
-	int add(fd_t fd, int ev) throw();
+	int add(fd_t fd, uint32_t ev) throw();
 	
 	//! Removes file descriptor from event set.
 	/**
@@ -215,7 +215,7 @@ public:
 	 *
 	 * @return true if the fd was removed, false if not (or was not part of the event set)
 	 */
-	int remove(fd_t fd, int ev) throw();
+	int remove(fd_t fd, uint32_t ev) throw();
 	
 	//! Modifies previously added fd for different events.
 	/**
@@ -226,7 +226,7 @@ public:
 	 *
 	 * @return something undefined
 	 */
-	int modify(fd_t fd, int ev) throw();
+	int modify(fd_t fd, uint32_t ev) throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**
@@ -235,7 +235,7 @@ public:
 	 *
 	 * @return bool
 	 */
-	bool isset(fd_t fd, int ev) const throw();
+	bool isset(fd_t fd, uint32_t ev) const throw();
 	
 	//! TODO
 	int triggered(fd_t fd) const throw();

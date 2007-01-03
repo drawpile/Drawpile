@@ -38,7 +38,7 @@
 #include <cassert> // assert()
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const int
+const uint32_t
 	Event::read = EPOLLIN,
 	Event::write = EPOLLOUT,
 	Event::error = EPOLLERR,
@@ -159,7 +159,7 @@ int Event::wait(uint32_t msecs) throw()
 	return nfds;
 }
 
-int Event::add(int fd, int ev) throw()
+int Event::add(int fd, uint32_t ev) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Event::add(fd: " << fd << ", event: ";
@@ -216,7 +216,7 @@ int Event::add(int fd, int ev) throw()
 	return true;
 }
 
-int Event::modify(int fd, int ev) throw()
+int Event::modify(int fd, uint32_t ev) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Event::modify(fd: " << fd << ", event: ";
@@ -272,7 +272,7 @@ int Event::modify(int fd, int ev) throw()
 	return 0;
 }
 
-int Event::remove(int fd, int ev) throw()
+int Event::remove(int fd, uint32_t ev) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Event::remove(fd: " << fd << ", event: ";
@@ -322,7 +322,7 @@ int Event::remove(int fd, int ev) throw()
 	return true;
 }
 
-bool Event::isset(int fd, int ev) const throw()
+bool Event::isset(int fd, uint32_t ev) const throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Event::isset(fd: " << fd << ", event: ";
@@ -340,7 +340,7 @@ bool Event::isset(int fd, int ev) const throw()
 	{
 		if (events[n].data.fd == fd)
 		{
-			if (fIsSet(events[n].events, static_cast<uint32_t>(ev)))
+			if (fIsSet(events[n].events, ev))
 				return true;
 			else
 			{

@@ -37,7 +37,7 @@
 #include <cassert> // assert()
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const int
+const uint32_t
 	Event::read = 0x01,
 	Event::write = 0x02,
 	Event::error = 0x04,
@@ -208,7 +208,7 @@ int Event::wait(uint32_t msecs) throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, int ev) throw()
+int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -277,7 +277,7 @@ int Event::add(fd_t fd, int ev) throw()
 	return true;
 }
 
-int Event::modify(fd_t fd, int ev) throw()
+int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -309,7 +309,7 @@ int Event::modify(fd_t fd, int ev) throw()
 	return 0;
 }
 
-int Event::remove(fd_t fd, int ev) throw()
+int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -373,7 +373,7 @@ int Event::remove(fd_t fd, int ev) throw()
 	return true;
 }
 
-bool Event::isset(fd_t fd, int ev) const throw()
+bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG

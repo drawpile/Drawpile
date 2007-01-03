@@ -143,7 +143,7 @@ struct User
 	std::queue<message_ref> queue;
 	
 	// Event I/O registered events.
-	int events;
+	uint32_t events;
 	
 	// Input/output buffer
 	Buffer input, output;
