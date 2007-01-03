@@ -91,7 +91,7 @@ bool Event::init() throw(std::bad_alloc)
 			break;
 		default:
 			#ifndef NDEBUG
-			std::cerr << "Unknown error." << std::endl;
+			std::cerr << "Event(epoll).init() : Unknown error" << std::endl;
 			#endif
 			assert(1);
 			break;
@@ -150,7 +150,7 @@ int Event::wait(uint32_t msecs) throw()
 			nfds = 0;
 			break;
 		default:
-			std::cerr << "Unknown error." << std::endl;
+			std::cerr << "Event(epoll).wait() : Unknown error" << std::endl;
 			// TODO
 			break;
 		}
@@ -208,7 +208,7 @@ int Event::add(int fd, int ev) throw()
 			throw new std::bad_alloc;
 			break;
 		default:
-			std::cerr << "Unkown error" << std::endl;
+			std::cerr << "Event(epoll).add() : Unknown error" << std::endl;
 			break;
 		}
 	}
@@ -255,14 +255,16 @@ int Event::modify(int fd, int ev) throw()
 			break;
 		#endif
 		case ENOENT:
+			#ifndef NDEBUG
 			std::cerr << "FD not in set." << std::endl;
+			#endif
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
 			throw new std::bad_alloc;
 			break;
 		default:
-			std::cerr << "Unknown error" << std::endl;
+			std::cerr << "Event(epoll).modify() : Unknown error" << std::endl;
 			break;
 		}
 	}
@@ -312,7 +314,7 @@ int Event::remove(int fd, int ev) throw()
 			throw new std::bad_alloc;
 			break;
 		default:
-			std::cerr << "Unknown error"  << std::endl;
+			std::cerr << "Event(epoll).remove() : Unknown error" << std::endl;
 			break;
 		}
 	}
@@ -338,12 +340,19 @@ bool Event::isset(int fd, int ev) const throw()
 	{
 		if (events[n].data.fd == fd)
 		{
-			if (events[n].events == static_cast<uint32_t>(ev))
+			if (fIsSet(events[n].events, ev))
 				return true;
 			else
 			{
 				#ifndef NDEBUG
 				std::cout << "Descriptor in set, but not for that event." << std::endl;
+				std::cout << "Events: ";
+				std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+				std::cout.setf ( std::ios_base::showbase );
+				std::cout << events[n].events;
+				std::cout.setf ( std::ios_base::dec );
+				std::cout.setf ( ~std::ios_base::showbase );
+				std::cout << std::endl;
 				#endif
 			}
 		}
