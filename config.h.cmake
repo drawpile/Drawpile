@@ -12,3 +12,6 @@
 #cmakedefine EV_KEVENT
 #cmakedefine HAVE_SELECT_H
 #cmakedefine HAVE_WSA
+
+#cmakedefine DEBUG_CIRCULAR_BUFFER
+#cmakedefine DEBUG_EVENTS
