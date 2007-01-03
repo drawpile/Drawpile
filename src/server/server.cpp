@@ -148,28 +148,28 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-protocol::Authentication* Server::msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc)
+message_ref Server::msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc)
 {
-	protocol::Authentication* m = new protocol::Authentication;
-	m->session_id = session;
-	memcpy(m->seed, "1234", protocol::password_seed_size); // FIXME
-	return m;
+	protocol::Authentication* auth = new protocol::Authentication;
+	auth->session_id = session;
+	memcpy(auth->seed, "1234", protocol::password_seed_size); // FIXME
+	return message_ref(auth);
 }
 
-protocol::HostInfo* Server::msgHostInfo() throw(std::bad_alloc)
+message_ref Server::msgHostInfo() throw(std::bad_alloc)
 {
-	protocol::HostInfo *m = new protocol::HostInfo;
+	protocol::HostInfo *hostnfo = new protocol::HostInfo;
 	
-	m->sessions = session_ids.count();
-	m->sessionLimit = session_limit;
-	m->users = user_ids.count();
-	m->userLimit = user_limit;
-	m->nameLenLimit = name_len_limit;
-	m->maxSubscriptions = max_subscriptions;
-	m->requirements = requirements;
-	m->extensions = extensions;
+	hostnfo->sessions = session_ids.count();
+	hostnfo->sessionLimit = session_limit;
+	hostnfo->users = user_ids.count();
+	hostnfo->userLimit = user_limit;
+	hostnfo->nameLenLimit = name_len_limit;
+	hostnfo->maxSubscriptions = max_subscriptions;
+	hostnfo->requirements = requirements;
+	hostnfo->extensions = extensions;
 	
-	return m;
+	return message_ref(hostnfo);
 }
 
 void Server::uWrite(user_ref& usr) throw()
@@ -339,27 +339,27 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 	}
 }
 
-protocol::UserInfo* Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event)
+message_ref Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uCreateEvent(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	protocol::UserInfo *e = new protocol::UserInfo;
+	protocol::UserInfo *uevent = new protocol::UserInfo;
 	
-	e->user_id = usr->id;
+	uevent->user_id = usr->id;
 	
-	e->session_id = session->id;
+	uevent->session_id = session->id;
 	
-	e->event = event;
-	e->mode = session->mode;
+	uevent->event = event;
+	uevent->mode = session->mode;
 	
-	e->length = usr->nlen;
+	uevent->length = usr->nlen;
 	
-	e->name = new char[usr->nlen];
-	memcpy(e->name, usr->name, usr->nlen);
+	uevent->name = new char[usr->nlen];
+	memcpy(uevent->name, usr->name, usr->nlen);
 	
-	return e;
+	return message_ref(uevent);
 }
 
 void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
@@ -375,12 +375,33 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 	// TODO
 	switch (usr->inMsg->type)
 	{
+	case protocol::type::ToolInfo:
+	case protocol::type::StrokeInfo:
+	case protocol::type::StrokeEnd:
+		// handle all message with 'selected' modifier the same
+		if (usr->inMsg->user_id != protocol::null_user)
+		{
+			std::cerr << "Client attempts to impersonate someone." << std::endl;
+			uRemove(usr);
+			break;
+		}
+		
+		{
+			// make sure the user id is correct
+			usr->inMsg->user_id = usr->id;
+			
+			Propagate(
+				usr->session,
+				message_ref(usr->inMsg)
+			);
+		}
+		break;
 	case protocol::type::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
 		{
 			protocol::Unsubscribe *m = static_cast<protocol::Unsubscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, session_ref>::iterator i = session_id_map.find(m->session_id);
+			std::map<uint8_t, session_ref>::iterator i(session_id_map.find(m->session_id));
 			
 			if (i == session_id_map.end())
 			{
@@ -406,7 +427,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		{
 			protocol::Subscribe *m = static_cast<protocol::Subscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, session_ref>::iterator i = session_id_map.find(m->session_id);
+			std::map<uint8_t, session_ref>::iterator i(session_id_map.find(m->session_id));
 			if (i == session_id_map.end())
 			{
 				std::cerr << "No such session: "
@@ -789,20 +810,19 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
-	message_ref msg_ref(msg);
-	
 	std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
 	if (si == session_id_map.end())
 	{
 		std::cerr << "No such session!" << std::endl;
+		return;
 	}
-	session_ref s(si->second);
+	session_ref session(si->second);
 	
-	std::map<uint8_t, user_ref>::iterator ui( s->users.begin() );
-	for (; ui != s->users.end(); ui++)
+	std::map<uint8_t, user_ref>::iterator ui( session->users.begin() );
+	for (; ui != session->users.end(); ui++)
 	{
 		// TODO: Somehow prevent some messages from being propagated back to originator
-		uSendMsg(ui->second, msg_ref);
+		uSendMsg(ui->second, msg);
 	}
 }
 
@@ -847,9 +867,9 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	*/
 	
 	// This is WRONG
-	protocol::Raster *r = new protocol::Raster;
-	r->session_id = session->id;
-	uSendMsg(usr, message_ref(r));
+	protocol::Raster *raster = new protocol::Raster;
+	raster->session_id = session->id;
+	uSendMsg(usr, message_ref(raster));
 }
 
 void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
@@ -873,12 +893,14 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	// Tell session members there's a new user.
 	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Join)));
 	
-	// Announce active session
+	// set user's active session
 	usr->session = session->id;
-	protocol::SessionSelect *ss = new protocol::SessionSelect;
-	ss->user_id = usr->id;
-	ss->session_id = session->id;
-	Propagate(session->id, message_ref(ss));
+	
+	// Announce active session
+	message_ref msg_ref(new protocol::SessionSelect);
+	msg_ref->user_id = usr->id;
+	msg_ref->session_id = session->id;
+	Propagate(session->id, msg_ref);
 	// TODO: Propagate to all users who see this user
 	
 	// Start client sync
@@ -896,7 +918,7 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 	session->users.erase(usr->id);
 	
 	// Tell session members there's a new user.
-	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Leave)));
+	Propagate(session->id, uCreateEvent(usr, session, protocol::user_event::Leave));
 	
 	if (usr->session == session->id)
 	{
