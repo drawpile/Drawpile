@@ -144,8 +144,10 @@ int Event::wait(uint32_t msecs) throw()
 			break;
 		#endif
 		case EINTR:
+			#ifndef NDEBUG
 			std::cerr << "Interrupted by signal/timeout." << std::endl;
-			nfsd = 0;
+			#endif
+			nfds = 0;
 			break;
 		default:
 			std::cerr << "Unknown error." << std::endl;
@@ -257,7 +259,7 @@ int Event::modify(int fd, int ev) throw()
 			break;
 		case ENOMEM:
 			std::cerr << "Out of memory" << std::endl;
-			throw std::bad_alloc;
+			throw new std::bad_alloc;
 			break;
 		default:
 			std::cerr << "Unknown error" << std::endl;
