@@ -11,7 +11,7 @@ set (
 	protocol.types.h
 	protocol.helper.h
 	memstack.h
-	tools.h
+	protocol.tools.h
 )
 
 set (
