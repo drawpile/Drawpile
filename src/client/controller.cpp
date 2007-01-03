@@ -35,6 +35,8 @@ Controller::Controller(QObject *parent)
 	connect(netstate_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
 	connect(netstate_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
 	connect(netstate_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
+	connect(netstate_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
+	connect(netstate_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
 }
 
 Controller::~Controller()
@@ -93,6 +95,15 @@ void Controller::hostSession(const QString& title, const QString& password,
 		const QImage& image)
 {
 	netstate_->host(title, password, image.width(), image.height());
+}
+
+/**
+ * If there is only one session, it is joined automatically. Otherwise a
+ * list of sessions is presented to the user to choose from.
+ */
+void Controller::joinSession()
+{
+	netstate_->join();
 }
 
 void Controller::disconnectHost()

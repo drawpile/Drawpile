@@ -129,6 +129,7 @@ void HostState::setConnection(Connection *net)
 			delete newsession_;
 		newsession_ = 0;
 		selsession_ = 0;
+		loggedin_ = false;
 		foreach(SessionState *s, mysessions_) {
 			emit parted(s->info().id);
 			delete s;
@@ -186,6 +187,16 @@ void HostState::host(const QString& title,
 	msg->data = data;
 
 	net_->send(msg);
+}
+
+/**
+ * If there is only one session, automatically join it. Otherwise...
+ */
+void HostState::join()
+{
+	disconnect(this, SIGNAL(sessionsListed()), this, 0);
+	connect(this, SIGNAL(sessionsListed()), this, SLOT(autoJoin()));
+	listSessions();
 }
 
 /**
@@ -265,6 +276,21 @@ void HostState::joinLatest()
 		}
 	} while(i!=sessions_.constBegin());
 	Q_ASSERT(found);
+}
+
+/**
+ * Automatically join a session if it is the only one in list
+ * @pre session list has been refreshed
+ */
+void HostState::autoJoin()
+{
+	if(sessions_.count()==0) {
+		emit noSessions();
+	} else if(sessions_.count()>1) {
+		emit selectSession(sessions_);
+	} else {
+		join(sessions_.first().id);
+	}
 }
 
 /**

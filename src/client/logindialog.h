@@ -67,6 +67,9 @@ class LoginDialog : public QDialog
 		//! Disconnected before login sequence was finished
 		void disconnected();
 
+		//! No sessions were available
+		void noSessions();
+
 	signals:
 		//! User has entered a password
 		void password(const QString& password);
@@ -79,6 +82,7 @@ class LoginDialog : public QDialog
 
 	private:
 		Ui_LoginDialog *ui_;
+		bool appenddisconnect_;
 };
 
 }

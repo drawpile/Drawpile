@@ -97,6 +97,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined()), logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
+	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
 
 	readSettings();
 }
@@ -362,6 +363,11 @@ void MainWindow::leave()
 	controller_->disconnectHost();
 }
 
+/**
+ * User has finally decided to connect to a host (possibly localhost)
+ * and host a session.
+ * @param i dialog return value
+ */
 void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
@@ -377,6 +383,8 @@ void MainWindow::finishHost(int i)
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
 		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
 		controller_->connectHost(address, user);
+
+		// Set login dialog to correct state
 		logindlg_->connecting(address);
 		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 	} else {
@@ -395,11 +403,40 @@ void MainWindow::loggedinHost()
 	hostdlg_->deleteLater();
 }
 
+/**
+ * User has finally decided to connect to a server and join a session.
+ * If there are multiple sessions, we will have to ask the user which
+ * one to join later.
+ */
 void MainWindow::finishJoin(int i) {
 	if(i==QDialog::Accepted) {
-		QMessageBox::information(this,"todo","join!");
+		QString address = joindlg_->getAddress();
+		QString user = joindlg_->getUserName();
+
+		// Remember some settings
+		QSettings cfg;
+		cfg.beginGroup("network");
+		cfg.setValue("username", user);
+		cfg.setValue("joinaddress", address);
+
+		// Connect
+		disconnect(controller_, SIGNAL(loggedin()), this, 0);
+		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinJoin()));
+		controller_->connectHost(address, user);
+
+		// Set login dialog to correct state
+		logindlg_->connecting(address);
+		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 	}
 	joindlg_->deleteLater();
+}
+
+/**
+ * User has logged in, now join a session
+ */
+void MainWindow::loggedinJoin()
+{
+	controller_->joinSession();
 }
 
 void MainWindow::finishNew(int i)

@@ -25,7 +25,7 @@
 namespace dialogs {
 
 LoginDialog::LoginDialog(QWidget *parent)
-	: QDialog(parent)
+	: QDialog(parent), appenddisconnect_(false)
 {
 	ui_ = new Ui_LoginDialog;
 	ui_->setupUi(this);
@@ -46,7 +46,7 @@ LoginDialog::~LoginDialog()
  */
 void LoginDialog::connecting(const QString& address)
 {
-	ui_->titlemessage->setText(tr("Connecting to %1").arg(address));
+	ui_->titlemessage->setText(tr("Connecting to %1...").arg(address));
 	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->connectmessage->setText(tr("Connecting..."));
 	ui_->progress->setValue(0);
@@ -74,12 +74,28 @@ void LoginDialog::loggedin()
 }
 
 /**
+ * Disconnected, display no sessions message
+ */
+void LoginDialog::noSessions()
+{
+	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->connectmessage->setText(tr("No sessions were available on the host."));
+	appenddisconnect_ = true;
+}
+
+/**
  *
  */
 void LoginDialog::disconnected()
 {
 	ui_->stackedWidget->setCurrentIndex(0);
-	ui_->connectmessage->setText(tr("Disconnected"));
+	QString msg = tr("Disconnected");
+	if(appenddisconnect_) {
+		msg = ui_->connectmessage->text() + "\n" + msg;
+		appenddisconnect_ = false;
+	}
+	ui_->connectmessage->setText(msg);
+	ui_->progress->setValue(0);
 	disconnect(SIGNAL(rejected()));
 }
 

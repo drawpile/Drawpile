@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 */
 
 #include <QPushButton>
+#include <QSettings>
 
 #include "joindialog.h"
 
@@ -32,11 +33,26 @@ JoinDialog::JoinDialog(QWidget *parent)
 	ui_ = new Ui_JoinDialog;
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
+
+	// Set defaults
+	QSettings cfg;
+	cfg.beginGroup("network");
+	ui_->address->setText(cfg.value("joinaddress").toString());
+	ui_->username->setText(cfg.value("username",
+				QString(getenv("USER"))).toString());
 }
 
 JoinDialog::~JoinDialog()
 {
 	delete ui_;
+}
+
+QString JoinDialog::getAddress() const {
+	return ui_->address->text();
+}
+
+QString JoinDialog::getUserName() const {
+	return ui_->username->text();
 }
 
 }

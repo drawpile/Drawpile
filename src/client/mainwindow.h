@@ -106,6 +106,8 @@ class MainWindow : public QMainWindow {
 		void finishJoin(int i);
 		//! Logged in, host session
 		void loggedinHost();
+		//! Logged in, join session
+		void loggedinJoin();
 
 	signals:
 		//! This signal is emitted when the current tool is changed

@@ -101,6 +101,9 @@ class HostState : public QObject {
 		void host(const QString& title, const QString& password,
 				quint16 width, quint16 height);
 
+		//! Try joining automatically
+		void join();
+
 		//! Join a specific session
 		void join(int id);
 
@@ -135,12 +138,21 @@ class HostState : public QObject {
 		//! An error message was received from the host
 		void error(const QString& message);
 
+		//! Host has no sessions, cannot join
+		void noSessions();
+
+		//! A session should be selected from the list and joined
+		void selectSession(SessionList sessions);
+
 		//! Session list was refreshed
 		void sessionsListed();
 
 	private slots:
 		//! Join the latest session that the local user owns.
 		void joinLatest();
+
+		//! Automatically join the only session available
+		void autoJoin();
 
 	private:
 		//! Refresh the list of sessions

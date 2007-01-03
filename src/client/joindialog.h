@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,12 @@ class JoinDialog : public QDialog
 	public:
 		JoinDialog(QWidget *parent=0);
 		~JoinDialog();
+
+		//! Get the host address
+		QString getAddress() const;
+
+		//! Get the username
+		QString getUserName() const;
 
 	private:
 		Ui_JoinDialog *ui_;

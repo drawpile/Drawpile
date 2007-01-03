@@ -72,6 +72,9 @@ class Controller : public QObject
 		void hostSession(const QString& title, const QString& password,
 				const QImage& image);
 
+		//! Join a session
+		void joinSession();
+
 	public slots:
 		//! Disconnect from host
 		void disconnectHost();
@@ -102,6 +105,9 @@ class Controller : public QObject
 
 		//! Session was left
 		void parted();
+
+		//! There were no sessions to join
+		void noSessions();
 
 	private slots:
 		void netConnected();
