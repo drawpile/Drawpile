@@ -74,6 +74,8 @@ const uint8_t
 	Subscribe = 30,
 	//! for Unsubscribe.
 	Unsubscribe = 31,
+	//! for Session select.
+	SessionSelect = 37,
 	
 	//! for Instruction.
 	Instruction = 77,

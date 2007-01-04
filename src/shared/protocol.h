@@ -249,7 +249,8 @@ struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
-		: Message(type::StrokeInfo, message::isUser|message::isBundling),
+		: Message(type::StrokeInfo,
+			message::isUser|message::isBundling|message::isSelected),
 		x(0),
 		y(0)
 	{ }
@@ -284,7 +285,7 @@ struct StrokeEnd
 {
 	StrokeEnd() throw()
 		: Message(type::StrokeEnd,
-			message::isUser)
+			message::isUser|message::isSelected)
 	{ }
 	
 	~StrokeEnd() throw() { }
@@ -301,9 +302,9 @@ struct StrokeEnd
 //! Tool Info message.
 /**
  * The selected tool's information and settings.
- * Sent only when it or the active session changes, and just before sending first stroke
- * message for this tool. Contains info for two extremes of tool's settings that are used
- * to create the interpolating brush.
+ * Sent only when it changes, and just before sending first stroke message for this tool.
+ * Contains info for two extremes of tool's settings that are used to
+ * create the interpolating brush.
  *
  * Response: none
  */
@@ -311,7 +312,7 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
-		: Message(type::ToolInfo, message::isUser|message::isSession),
+		: Message(type::ToolInfo, message::isUser|message::isSelected),
 		tool_id(tool_type::None),
 		mode(tool_mode::Normal),
 		lo_color(0),
@@ -962,6 +963,32 @@ struct Palette
 	size_t reqDataLen(const char *buf, size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+};
+
+//! Session selector
+/**
+ * Client tells which session any subsequent packages
+ * (marked with the session modifier) are part of.
+ *
+ * Response: Error or Acknowledgement with event set to protocol::type::SessionSelect.
+ */
+struct SessionSelect
+	: Message//, MemoryStack<SessionSelect>
+{
+	SessionSelect() throw()
+		: Message(type::SessionSelect,
+			message::isUser|message::isSession)
+	{ }
+	
+	~SessionSelect() throw() { }
+	
+	/* unique data */
+	
+	// nothing needed
+	
+	/* functions */
+	
+	// nothing needed
 };
 
 } // namespace protocol
