@@ -528,14 +528,14 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
 	
-	protocol::Instruction* m = static_cast<protocol::Instruction*>(usr->inMsg);
-	
 	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
 		std::cerr << "Non-admin tries to pass instructions" << std::endl;
 		uRemove(usr);
 		return;
 	}
+	
+	protocol::Instruction* m = static_cast<protocol::Instruction*>(usr->inMsg);
 	
 	switch (m->command)
 	{
@@ -762,6 +762,10 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				uRemove(usr);
 				return;
 			}
+			
+			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+			ack->event = protocol::Password;
+			uSendMsg(usr, message_ref(ack));
 		}
 		else
 		{
