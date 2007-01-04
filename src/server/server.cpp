@@ -1010,11 +1010,11 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 	// Tell session members the user left
 	Propagate(session->id, uCreateEvent(usr, session, protocol::user_event::Leave));
 	
-	if (session->owner = usr->id)
+	if (session->owner == usr->id)
 	{
 		session->owner == protocol::null_user;
 		
-		// TODO: Announce owner disappearance..
+		// TODO: Announce owner disappearance.. or not
 	}
 }
 
