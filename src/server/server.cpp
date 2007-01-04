@@ -427,18 +427,18 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 	case protocol::type::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
 		{
-			protocol::Unsubscribe *m = static_cast<protocol::Unsubscribe*>(usr->inMsg);
+			protocol::Unsubscribe *msg = static_cast<protocol::Unsubscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, session_ref>::iterator i(session_id_map.find(m->session_id));
+			std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
 			
-			if (i == session_id_map.end())
+			if (si == session_id_map.end())
 			{
 				std::cerr << "No such session: "
-					<< static_cast<int>(m->session_id) << std::endl;
+					<< static_cast<int>(msg->session_id) << std::endl;
 				
-				protocol::Error* errmsg = new protocol::Error;
-				errmsg->code = protocol::error::UnknownSession;
-				uSendMsg(usr, message_ref(errmsg));
+				protocol::Error* err = new protocol::Error;
+				err->code = protocol::error::UnknownSession;
+				uSendMsg(usr, message_ref(err));
 			}
 			else
 			{
@@ -446,24 +446,24 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 				ack->event = protocol::type::Unsubscribe;
 				uSendMsg(usr, message_ref(ack));
 				
-				uLeaveSession(usr, i->second);
+				uLeaveSession(usr, si->second);
 			}
 		}
 		break;
 	case protocol::type::Subscribe:
 		std::cout << "Subscribe" << std::endl;
 		{
-			protocol::Subscribe *m = static_cast<protocol::Subscribe*>(usr->inMsg);
+			protocol::Subscribe *msg = static_cast<protocol::Subscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, session_ref>::iterator i(session_id_map.find(m->session_id));
-			if (i == session_id_map.end())
+			std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
+			if (si == session_id_map.end())
 			{
 				std::cerr << "No such session: "
-					<< static_cast<int>(m->session_id) << std::endl;
+					<< static_cast<int>(msg->session_id) << std::endl;
 				
-				protocol::Error* errmsg = new protocol::Error;
-				errmsg->code = protocol::error::UnknownSession;
-				uSendMsg(usr, message_ref(errmsg));
+				protocol::Error* err = new protocol::Error;
+				err->code = protocol::error::UnknownSession;
+				uSendMsg(usr, message_ref(err));
 			}
 			else
 			{
@@ -472,7 +472,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 				ack->event = protocol::type::Subscribe;
 				uSendMsg(usr, message_ref(ack));
 				
-				uJoinSession(usr, i->second);
+				uJoinSession(usr, si->second);
 			}
 		}
 		break;
@@ -538,9 +538,9 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 		return;
 	}
 	
-	protocol::Instruction* m = static_cast<protocol::Instruction*>(usr->inMsg);
+	protocol::Instruction* msg = static_cast<protocol::Instruction*>(usr->inMsg);
 	
-	switch (m->command)
+	switch (msg->command)
 	{
 	case protocol::admin::command::Create:
 		{
@@ -548,37 +548,37 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			
 			if (session_id == protocol::Global)
 			{
-				protocol::Error* errmsg = new protocol::Error;
-				errmsg->code = protocol::error::SessionLimit;
-				uSendMsg(usr, message_ref(errmsg));
+				protocol::Error* err = new protocol::Error;
+				err->code = protocol::error::SessionLimit;
+				uSendMsg(usr, message_ref(err));
 				return;
 			}
 			
-			session_ref s(new Session);
-			s->id = session_id;
-			s->limit = m->aux_data;
-			s->mode = m->aux_data2;
+			session_ref session(new Session);
+			session->id = session_id;
+			session->limit = msg->aux_data;
+			session->mode = msg->aux_data2;
 			
-			if (fIsSet(s->mode, protocol::user_mode::Administrator))
+			if (fIsSet(session->mode, protocol::user_mode::Administrator))
 			{
 				std::cerr << "Administrator flag in default mode." << std::endl;
 				uRemove(usr);
 				return;
 			}
 			
-			if (s->limit < 2)
+			if (session->limit < 2)
 			{
 				std::cerr << "Attempted to create single user session." << std::endl;
 				//delete s;
 				//s.reset();
-				protocol::Error* errmsg = new protocol::Error;
-				errmsg->code = protocol::error::InvalidData;
-				uSendMsg(usr, message_ref(errmsg));
+				protocol::Error* err = new protocol::Error;
+				err->code = protocol::error::InvalidData;
+				uSendMsg(usr, message_ref(err));
 				return;
 			}
 			
-			size_t crop = sizeof(s->width) + sizeof(s->height);
-			if (m->length < crop)
+			size_t crop = sizeof(session->width) + sizeof(session->height);
+			if (msg->length < crop)
 			{
 				std::cerr << "Less data than required" << std::endl;
 				uRemove(usr);
@@ -587,34 +587,34 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 				return;
 			}
 			
-			memcpy_t(s->width, m->data);
-			memcpy_t(s->height, m->data+sizeof(s->width));
+			memcpy_t(session->width, msg->data);
+			memcpy_t(session->height, msg->data+sizeof(session->width));
 			
-			bswap(s->width);
-			bswap(s->height);
+			bswap(session->width);
+			bswap(session->height);
 			
-			if (s->width < min_dimension or s->height < min_dimension)
+			if (session->width < min_dimension or session->height < min_dimension)
 			{
-				protocol::Error* errmsg = new protocol::Error;
-				errmsg->code = protocol::error::TooSmall;
-				uSendMsg(usr, message_ref(errmsg));
+				protocol::Error* err = new protocol::Error;
+				err->code = protocol::error::TooSmall;
+				uSendMsg(usr, message_ref(err));
 				return;
 			}
 			
-			if (m->length > crop)
+			if (msg->length > crop)
 			{
-				s->len = (m->length - crop);
-				s->title = new char[s->len];
-				memcpy(s->title, m->data+crop, s->len);
+				session->len = (msg->length - crop);
+				session->title = new char[session->len];
+				memcpy(session->title, msg->data+crop, session->len);
 			}
 			else
 			{
 				#ifndef NDEBUG
-				std::cout << "No title set for session."
+				std::cout << "No title set for session." << std::endl;
 				#endif
 			}
 			
-			if (!validateSessionTitle(s))
+			if (!validateSessionTitle(session))
 			{
 				std::cerr << "Title not unique." << std::endl;
 				
@@ -627,14 +627,14 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 				return;
 			}
 			
-			s->owner = usr->id;
+			session->owner = usr->id;
 			
 			// TODO
 			//registerSession(s);
-			session_id_map.insert( std::make_pair(s->id, s) );
+			session_id_map.insert( std::make_pair(session->id, session) );
 			
-			std::cout << "Session created: " << static_cast<int>(s->id) << std::endl
-				<< "With dimensions: " << s->width << " x " << s->height << std::endl;
+			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
+				<< "With dimensions: " << session->width << " x " << session->height << std::endl;
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::Instruction;
@@ -648,13 +648,13 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 		// TODO
 		break;
 	case protocol::admin::command::Password:
-		if (m->session_id == protocol::Global)
+		if (msg->session_id == protocol::Global)
 		{
-			password = m->data;
-			pw_len = m->length;
+			password = msg->data;
+			pw_len = msg->length;
 			
-			m->data = 0;
-			m->length = 0;
+			msg->data = 0;
+			msg->length = 0;
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 			ack->event = protocol::type::Instruction;
@@ -667,7 +667,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 		break;
 	default:
 		std::cerr << "Unrecognized command: "
-			<< static_cast<int>(m->command) << std::endl;
+			<< static_cast<int>(msg->command) << std::endl;
 		break;
 	}
 }
@@ -688,30 +688,30 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		
 		if (usr->inMsg->type == protocol::type::UserInfo)
 		{
-			protocol::UserInfo *m = static_cast<protocol::UserInfo*>(usr->inMsg);
+			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
 			
-			if (m->user_id != protocol::null_user)
+			if (msg->user_id != protocol::null_user)
 			{
 				std::cerr << "User made blasphemous assumption." << std::endl;
 				uRemove(usr);
 				return;
 			}
 			
-			if (m->session_id != protocol::Global)
+			if (msg->session_id != protocol::Global)
 			{
 				std::cerr << "Wrong session identifier." << std::endl;
 				uRemove(usr);
 				return;
 			}
 			
-			if (m->event != protocol::user_event::Login)
+			if (msg->event != protocol::user_event::Login)
 			{
 				std::cerr << "Wrong user event." << std::endl;
 				uRemove(usr);
 				return;
 			}
 			
-			if (m->length > name_len_limit)
+			if (msg->length > name_len_limit)
 			{
 				std::cerr << "Name too long." << std::endl;
 				
@@ -740,15 +740,15 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			}
 			
 			// assign message the user's id
-			m->user_id = usr->id;
+			msg->user_id = usr->id;
 			
 			// assign user their own name
-			usr->name = m->name;
-			usr->nlen = m->length;
+			usr->name = msg->name;
+			usr->nlen = msg->length;
 			
 			// null the message's name information, so they don't get deleted
-			m->length = 0;
-			m->name = 0;
+			msg->length = 0;
+			msg->name = 0;
 			
 			if (localhost_admin && usr->sock->address() == INADDR_LOOPBACK)
 			{
@@ -761,10 +761,10 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				// set user mode
 				usr->mode = default_user_mode;
 			}
-			m->mode = usr->mode;
+			msg->mode = usr->mode;
 			
 			// reply
-			uSendMsg(usr, message_ref(m));
+			uSendMsg(usr, message_ref(msg));
 			
 			usr->state = uState::active;
 			
@@ -789,16 +789,16 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		
 		if (usr->inMsg->type == protocol::type::Password)
 		{
-			protocol::Password *m = static_cast<protocol::Password*>(usr->inMsg);
+			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
 			
-			CSHA1 h;
-			h.Update(reinterpret_cast<uint8_t*>(password), pw_len);
-			h.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
-			h.Final();
+			CSHA1 hash;
+			hash.Update(reinterpret_cast<uint8_t*>(password), pw_len);
+			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+			hash.Final();
 			char digest[protocol::password_hash_size];
-			h.GetHash(reinterpret_cast<uint8_t*>(digest));
+			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
 			
-			if (memcmp(digest, m->data, protocol::password_hash_size) != 0)
+			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
 			{
 				// mismatch, send error or disconnect.
 				uRemove(usr);
@@ -826,13 +826,13 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		
 		if (usr->inMsg->type == protocol::type::Identifier)
 		{
-			protocol::Identifier *i = static_cast<protocol::Identifier*>(usr->inMsg);
+			protocol::Identifier *ident = static_cast<protocol::Identifier*>(usr->inMsg);
 			bool str = (
-				memcmp(i->identifier,
+				memcmp(ident->identifier,
 					protocol::identifier_string,
 					protocol::identifier_size
 				) == 0);
-			bool rev = (i->revision == protocol::revision);
+			bool rev = (ident->revision == protocol::revision);
 			
 			if (!str)
 			{
@@ -847,7 +847,8 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			{
 				#ifndef NDEBUG
 				std::cerr << "Protocol revision mismatch" << std::endl;
-				std::cerr << "Expected: " << protocol::revision << ", Got: " << i->revision << std::endl;
+				std::cerr << "Expected: " << protocol::revision
+					<< ", Got: " << ident->revision << std::endl;
 				#endif
 				uRemove(usr);
 				return;
@@ -934,9 +935,9 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	
 	user_ref src_usr;
 	
-	protocol::Synchronize *s = new protocol::Synchronize;
-	s->session_id = session->id;
-	uSendMsg(src_usr, message_ref(s));
+	protocol::Synchronize *sync = new protocol::Synchronize;
+	sync->session_id = session->id;
+	uSendMsg(src_usr, message_ref(sync));
 	
 	// create fake tunnel
 	session->tunnel.insert( std::make_pair(usr->id, src_usr->id) );
