@@ -124,8 +124,6 @@ const uint8_t
 	Join = 5,
 	//! Left session.
 	Leave = 6,
-	//! Active session changed
-	Changed = 7,
 	
 	/* verbose leave reasons */
 	

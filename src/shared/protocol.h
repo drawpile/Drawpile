@@ -249,8 +249,7 @@ struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
-		: Message(type::StrokeInfo,
-			message::isUser|message::isBundling|message::isSelected),
+		: Message(type::StrokeInfo, message::isUser|message::isBundling),
 		x(0),
 		y(0)
 	{ }
@@ -285,7 +284,7 @@ struct StrokeEnd
 {
 	StrokeEnd() throw()
 		: Message(type::StrokeEnd,
-			message::isUser|message::isSelected)
+			message::isUser)
 	{ }
 	
 	~StrokeEnd() throw() { }
@@ -302,9 +301,9 @@ struct StrokeEnd
 //! Tool Info message.
 /**
  * The selected tool's information and settings.
- * Sent only when it changes, and just before sending first stroke message for this tool.
- * Contains info for two extremes of tool's settings that are used to
- * create the interpolating brush.
+ * Sent only when it or the active session changes, and just before sending first stroke
+ * message for this tool. Contains info for two extremes of tool's settings that are used
+ * to create the interpolating brush.
  *
  * Response: none
  */
@@ -312,7 +311,7 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
-		: Message(type::ToolInfo, message::isUser|message::isSelected),
+		: Message(type::ToolInfo, message::isUser|message::isSession),
 		tool_id(tool_type::None),
 		mode(tool_mode::Normal),
 		lo_color(0),
@@ -668,7 +667,6 @@ struct UserInfo
 {
 	UserInfo() throw()
 		: Message(type::UserInfo, message::isUser|message::isSession),
-		selected(protocol::Global),
 		mode(user_mode::None),
 		event(user_event::None),
 		length(0),
@@ -680,8 +678,6 @@ struct UserInfo
 	/* unique data */
 	
 	uint8_t
-		//! Selected active session.
-		selected,
 		//! User mode flags (protocol::user)
 		mode,
 		//! User event (protocol::user_event)

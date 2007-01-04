@@ -668,7 +668,6 @@ size_t UserInfo::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	
 	size_t i = unserializeHeader(buf);
 	
-	memcpy_t(selected, buf+i); i += sizeof(selected);
 	memcpy_t(mode, buf+i); i += sizeof(mode);
 	memcpy_t(event, buf+i); i += sizeof(event);
 	memcpy_t(length, buf+i); i += sizeof(length);
@@ -685,7 +684,7 @@ size_t UserInfo::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	size_t off = headerSize() + sizeof(selected) + sizeof(mode) + sizeof(event);
+	size_t off = headerSize() + sizeof(mode) + sizeof(event);
 	if (len < off + sizeof(length))
 		return off + sizeof(length);
 	else
@@ -702,8 +701,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, selected); size_t i = sizeof(selected);
-	memcpy_t(buf+i, mode); i += sizeof(mode);
+	memcpy_t(buf, mode); size_t i += sizeof(mode);
 	memcpy_t(buf+i, event); i += sizeof(event);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
@@ -714,7 +712,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 
 size_t UserInfo::payloadLength() const throw()
 {
-	return sizeof(selected) + sizeof(mode) + sizeof(event) + sizeof(length) + length;
+	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
 }
 
 /*

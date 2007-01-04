@@ -101,8 +101,8 @@ const uint8_t
 	//! Is bundling
 	isBundling = 0x04,
 	
-	//! Is directed by SessionSelect message.
-	isSelected = 0x08,
+	//!
+	Reserved0 = 0x08,
 	
 	//!
 	Reserved1 = 0x10,
