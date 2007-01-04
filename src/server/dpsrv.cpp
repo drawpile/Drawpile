@@ -30,19 +30,12 @@
 
 *******************************************************************************/
 
+#include "../../config.h"
+
 #include "../shared/protocol.h"
 
-//#include "sockets.h"
-//#include "user.h"
-//#include "event.h"
 #include "server.h"
 
-//#include <sys/time.h>
-
-//#include <bitset>
-//#include <map>
-//#include <list>
-//#include <vector>
 #include <cstdlib>
 #include <iostream>
 #include <getopt.h> // for command-line opts
@@ -144,27 +137,36 @@ int main(int argc, char** argv)
 {
 	std::ios::sync_with_stdio(false);
 	
+	// application name, version, etc. info
 	std::cout << srv_info::applicationName << " v" << srv_info::versionString << std::endl
 		<< srv_info::copyrightNotice << std::endl
 		<< srv_info::websiteURL << std::endl
 		<< std::endl;
 	
-	Server srv;
-	
-	getArgs(argc, argv, &srv);
-	
-	netInit();
-	
-	if (srv.init() != 0)
-		return 1;
-	
-	std::cout << "running main" << std::endl;
-	
-	srv.run();
-	
-	std::cout << "done" << std::endl;
+	// limited scope for server
+	{
+		Server srv;
+		
+		getArgs(argc, argv, &srv);
+		
+		netInit();
+		
+		if (srv.init() != 0)
+			return 1;
+		
+		try {
+			srv.run();
+		}
+		catch (...) {
+			// do nothing
+		}
+	} // server scope
 	
 	netStop();
 	
-	return 0; // never reached
+	#ifndef NDEBUG
+	std::cout << "quitting" << std::endl;
+	#endif
+	
+	return 0;
 }
