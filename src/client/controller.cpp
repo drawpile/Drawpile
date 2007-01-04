@@ -37,6 +37,7 @@ Controller::Controller(QObject *parent)
 	connect(netstate_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
 	connect(netstate_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
 	connect(netstate_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
+	connect(netstate_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
 }
 
 Controller::~Controller()
@@ -104,6 +105,11 @@ void Controller::hostSession(const QString& title, const QString& password,
 void Controller::joinSession()
 {
 	netstate_->join();
+}
+
+void Controller::joinSession(int id)
+{
+	netstate_->join(id);
 }
 
 void Controller::disconnectHost()
@@ -214,13 +220,12 @@ void Controller::netConnected()
 
 void Controller::netDisconnected(const QString& message)
 {
-	qDebug() << "disconnect: " << message;
 	net_->wait();
 	delete net_;
 	net_ = 0;
 	netstate_->setConnection(0);
 	session_ = 0;
-	emit disconnected();
+	emit disconnected(message);
 }
 
 void Controller::netError(const QString& message)

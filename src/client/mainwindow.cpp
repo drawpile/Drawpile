@@ -89,15 +89,17 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penDown(drawingboard::Point,bool)),controller_,SLOT(penDown(drawingboard::Point,bool)));
 	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
-	connect(controller_, SIGNAL(disconnected()), netstatus_, SLOT(disconnectHost()));
+	connect(controller_, SIGNAL(disconnected(QString)), netstatus_, SLOT(disconnectHost()));
 	// Controller <-> login dialog connections
 	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
 	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
-	connect(controller_, SIGNAL(disconnected()), logindlg_, SLOT(disconnected()));
+	connect(controller_, SIGNAL(disconnected(QString)), logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined()), logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
+	connect(controller_, SIGNAL(selectSession(network::SessionList)),logindlg_, SLOT(selectSession(network::SessionList)));
+	connect(logindlg_, SIGNAL(session(int)), controller_, SLOT(joinSession(int)));
 
 	readSettings();
 }
@@ -214,7 +216,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		event->ignore();
 	} else {
 		if(controller_->isConnected()) {
-			connect(controller_, SIGNAL(disconnected()), this, SLOT(close()));
+			connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(close()));
 			controller_->disconnectHost();
 			event->ignore();
 		} else {
@@ -377,13 +379,26 @@ void MainWindow::leave()
 void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
-		QString address = "localhost";
+		bool useremote = hostdlg_->useRemoteAddress();
+		QString address;
 		QString user = hostdlg_->getUserName();
+
+		if(useremote) {
+			address = hostdlg_->getRemoteAddress();
+		} else {
+			address = "localhost";
+		}
 
 		// Remember some settings
 		QSettings cfg;
 		cfg.beginGroup("network");
 		cfg.setValue("username", user);
+		if(useremote)
+			cfg.setValue("remoteaddress", address);
+
+		// If we are not using the default port, add it to the address.
+		if(hostdlg_->isDefaultPort() == false)
+			address += ":" + QString::number(hostdlg_->getPort());
 
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);

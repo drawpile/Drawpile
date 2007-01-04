@@ -23,6 +23,7 @@
 #include <QObject>
 
 #include "tools.h"
+#include "netstate.h"
 
 namespace drawingboard {
 	class Board;
@@ -37,8 +38,6 @@ namespace interface {
 
 namespace network {
 	class Connection;
-	class HostState;
-	class SessionState;
 }
 
 class QImage;
@@ -79,6 +78,9 @@ class Controller : public QObject
 		bool isConnected() const { return net_ != 0; }
 
 	public slots:
+		//! Join a specific session
+		void joinSession(int id);
+
 		//! Disconnect from host
 		void disconnectHost();
 
@@ -101,7 +103,7 @@ class Controller : public QObject
 		void rasterProgress(int percent);
 
 		//! Host disconnected
-		void disconnected();
+		void disconnected(const QString& message);
 
 		//! Session was joined
 		void joined();
@@ -111,6 +113,9 @@ class Controller : public QObject
 
 		//! There were no sessions to join
 		void noSessions();
+
+		//! A session should be selected from the list and joined
+		void selectSession(const network::SessionList& list);
 
 	private slots:
 		void netConnected();

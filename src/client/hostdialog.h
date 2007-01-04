@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,6 +32,18 @@ class HostDialog : public QDialog
 	public:
 		HostDialog(const QImage &original, QWidget *parent=0);
 		~HostDialog();
+
+		//! Get the remote host address
+		QString getRemoteAddress() const;
+
+		//! Host on a remote server?
+		bool useRemoteAddress() const;
+
+		//! Get the port to use
+		int getPort() const;
+
+		//! Check if selected port is the built in default port
+		bool isDefaultPort() const;
 
 		//! Get the username
 		QString getUserName() const;

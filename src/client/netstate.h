@@ -142,7 +142,7 @@ class HostState : public QObject {
 		void noSessions();
 
 		//! A session should be selected from the list and joined
-		void selectSession(SessionList sessions);
+		void selectSession(const network::SessionList& sessions);
 
 		//! Session list was refreshed
 		void sessionsListed();

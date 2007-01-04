@@ -19,6 +19,7 @@
 */
 
 #include "logindialog.h"
+#include "netstate.h"
 
 #include "ui_logindialog.h"
 
@@ -32,6 +33,7 @@ LoginDialog::LoginDialog(QWidget *parent)
 	ui_->progress->setMaximum(107);
 
 	connect(ui_->passwordbutton, SIGNAL(clicked()), this, SLOT(sendPassword()));
+	connect(ui_->joinbutton, SIGNAL(clicked()), this, SLOT(sendSession()));
 }
 
 LoginDialog::~LoginDialog()
@@ -47,9 +49,9 @@ LoginDialog::~LoginDialog()
 void LoginDialog::connecting(const QString& address)
 {
 	ui_->titlemessage->setText(tr("Connecting to %1...").arg(address));
-	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->connectmessage->setText(tr("Connecting..."));
 	ui_->progress->setValue(0);
+	ui_->stackedWidget->setCurrentIndex(0);
 	show();
 }
 
@@ -58,8 +60,8 @@ void LoginDialog::connecting(const QString& address)
  */
 void LoginDialog::connected()
 {
-	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->connectmessage->setText(tr("Logging in..."));
+	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->progress->setValue(1);
 }
 
@@ -68,8 +70,8 @@ void LoginDialog::connected()
  */
 void LoginDialog::loggedin()
 {
-	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->connectmessage->setText(tr("Logged in"));
+	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->progress->setValue(2);
 }
 
@@ -78,24 +80,43 @@ void LoginDialog::loggedin()
  */
 void LoginDialog::noSessions()
 {
-	ui_->stackedWidget->setCurrentIndex(0);
 	ui_->connectmessage->setText(tr("No sessions were available on the host."));
+	ui_->stackedWidget->setCurrentIndex(0);
 	appenddisconnect_ = true;
 }
 
 /**
- *
+ * @param list list of sessions
  */
-void LoginDialog::disconnected()
+void LoginDialog::selectSession(const network::SessionList& list)
 {
-	ui_->stackedWidget->setCurrentIndex(0);
-	QString msg = tr("Disconnected");
-	if(appenddisconnect_) {
-		msg = ui_->connectmessage->text() + "\n" + msg;
-		appenddisconnect_ = false;
+	ui_->sessionlist->clear();
+	foreach(const network::Session& s, list) {
+		QString title = s.title;
+		if(title.isEmpty())
+			title = tr("<untitled session>");
+		QListWidgetItem *i = new QListWidgetItem(title, ui_->sessionlist);
+		i->setData(Qt::UserRole, s.id);
 	}
-	ui_->connectmessage->setText(msg);
+	ui_->stackedWidget->setCurrentIndex(2);
+}
+
+/**
+ * If the dialog is still visible when this is shown, it means
+ * the login/join/host sequence has failed.
+ */
+void LoginDialog::disconnected(const QString& message)
+{
+	if(appenddisconnect_) {
+		ui_->connectmessage->setText(ui_->connectmessage->text() + "\n"
+				+ message);
+		appenddisconnect_ = false;
+	} else {
+		ui_->connectmessage->setText(message);
+	}
+	ui_->titlemessage->setText(ui_->titlemessage->text() + " " + tr("Failed."));
 	ui_->progress->setValue(0);
+	ui_->stackedWidget->setCurrentIndex(0);
 	disconnect(SIGNAL(rejected()));
 }
 
@@ -125,8 +146,8 @@ void LoginDialog::raster(int p)
  */
 void LoginDialog::getPassword(bool session)
 {
-	ui_->stackedWidget->setCurrentIndex(1);
 	ui_->password->setText(QString());
+	ui_->stackedWidget->setCurrentIndex(1);
 }
 
 /**
@@ -134,7 +155,19 @@ void LoginDialog::getPassword(bool session)
  */
 void LoginDialog::sendPassword()
 {
+	ui_->connectmessage->setText(tr("Sending password..."));
+	ui_->stackedWidget->setCurrentIndex(0);
 	emit password(ui_->password->text());
+}
+
+/**
+ * Send the selected session id
+ */
+void LoginDialog::sendSession()
+{
+	ui_->connectmessage->setText(tr("Joining session..."));
+	ui_->stackedWidget->setCurrentIndex(0);
+	emit session(ui_->sessionlist->currentItem()->data(Qt::UserRole).toInt());
 }
 
 }

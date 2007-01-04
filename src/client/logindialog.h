@@ -22,6 +22,8 @@
 
 #include <QDialog>
 
+#include "netstate.h"
+
 class Ui_LoginDialog;
 
 namespace dialogs {
@@ -65,10 +67,13 @@ class LoginDialog : public QDialog
 		void getPassword(bool session);
 
 		//! Disconnected before login sequence was finished
-		void disconnected();
+		void disconnected(const QString& message);
 
 		//! No sessions were available
 		void noSessions();
+
+		//! Select a session from the provided list
+		void selectSession(const network::SessionList& list);
 
 	signals:
 		//! User has entered a password
@@ -79,6 +84,7 @@ class LoginDialog : public QDialog
 
 	private slots:
 		void sendPassword();
+		void sendSession();
 
 	private:
 		Ui_LoginDialog *ui_;
