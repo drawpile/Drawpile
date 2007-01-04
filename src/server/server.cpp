@@ -231,6 +231,14 @@ message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
 	return message_ref(ack);
 }
 
+message_ref Server::msgSelect(user_ref usr, session_ref session) const throw(std::bad_alloc)
+{
+	message_ref sel(new protocol::SessionSelect);
+	sel->user_id = usr->id;
+	sel->session_id = session->id;
+	return sel;
+}
+
 message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
 {
 	protocol::SyncWait *sync = new protocol::SyncWait;
@@ -502,13 +510,26 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		
 		// make sure the user id is correct
 		usr->inMsg->user_id = usr->id;
+		usr->inMsg->session_id = usr->session;
 		
-		Propagate(
-			usr->session,
-			message_ref(usr->inMsg)
-		);
+		Propagate(message_ref(usr->inMsg));
 		
 		usr->inMsg = 0;
+		break;
+	case protocol::type::SessionSelect:
+		if (usr->sessions.find(usr->inMsg->session_id) != usr->sessions.end())
+		{
+			uSendMsg(usr, msgAck(protocol::type::SessionSelect));
+			usr->session = usr->inMsg->session_id;
+			
+			Propagate(message_ref(usr->inMsg));
+			usr->inMsg = 0;
+		}
+		else
+		{
+			uSendMsg(usr, msgError(protocol::error::NotSubscribed));
+			usr->session = protocol::Global;
+		}
 		break;
 	case protocol::type::UserInfo:
 		// TODO!!!
@@ -912,7 +933,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		}
 		
 		usr->state = uState::login;
-		uSendMsg(usr, message_ref(msgHostInfo()));
+		uSendMsg(usr, msgHostInfo());
 		
 		break;
 	case uState::init:
@@ -963,7 +984,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				// no password set
 				
 				usr->state = uState::login;
-				uSendMsg(usr, message_ref(msgHostInfo()));
+				uSendMsg(usr, msgHostInfo());
 			}
 			else
 			{
@@ -972,7 +993,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				#endif
 				
 				usr->state = uState::login_auth;
-				uSendMsg(usr, message_ref(msgAuth(usr, protocol::Global)));
+				uSendMsg(usr, msgAuth(usr, protocol::Global));
 			}
 		}
 		else
@@ -991,16 +1012,16 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::Propagate(uint8_t session_id, message_ref msg) throw()
+void Server::Propagate(message_ref msg) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::Propagate(session: " << static_cast<int>(session_id)
+	std::cout << "Server::Propagate(session: " << static_cast<int>(msg->session_id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	#endif
 	
-	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
+	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
 	if (si == session_id_map.end())
 	{
 		#ifndef NDEBUG
@@ -1017,17 +1038,17 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 	}
 }
 
-void Server::lPropagate(uint8_t session_id, message_ref msg, user_ref usr) throw()
+void Server::lPropagate(message_ref msg, user_ref usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::lPropagate(session: " << static_cast<int>(session_id)
+	std::cout << "Server::lPropagate(session: " << static_cast<int>(msg->session_id)
 		<< ", type: " << static_cast<int>(msg->type) << ", not to: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	#endif
 	
-	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
+	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
 	if (si == session_id_map.end())
 	{
 		#ifndef NDEBUG
@@ -1115,7 +1136,7 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	usr->session = session->id;
 	
 	// Tell session members there's a new user.
-	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Join)));
+	Propagate(uCreateEvent(usr, session, protocol::user_event::Join));
 	
 	if (session->users.size() != 0)
 	{
@@ -1127,6 +1148,7 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 		for (; si != session->users.end(); si++)
 		{
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
+			uSendMsg(usr, msgSelect(si->second, session));
 		}
 		
 		// don't start new client sync if one is already in progress...
@@ -1136,7 +1158,7 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 			session->syncing = true;
 			
 			// tell session users to enter syncwait state.
-			Propagate(session->id, msgSyncWait(session));
+			Propagate(msgSyncWait(session));
 		}
 	}
 	else
@@ -1179,7 +1201,7 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 	}
 	
 	// Tell session members the user left
-	Propagate(session->id, uCreateEvent(usr, session, protocol::user_event::Leave));
+	Propagate(uCreateEvent(usr, session, protocol::user_event::Leave));
 	
 	if (session->owner == usr->id)
 	{
@@ -1542,6 +1564,8 @@ bool Server::validateUserName(user_ref& usr) const throw()
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
+	
+	
 	return true;
 }
 
@@ -1551,6 +1575,8 @@ bool Server::validateSessionTitle(session_ref& session) const throw()
 	std::cout << "Server::validateSessionTitle(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
+	
+	
 	
 	return true;
 }

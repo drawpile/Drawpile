@@ -145,6 +145,9 @@ protected:
 	message_ref uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
+	message_ref msgSelect(user_ref usr, session_ref session) const throw(std::bad_alloc);
+	
+	inline
 	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
 	
 	inline
@@ -174,10 +177,10 @@ protected:
 	void uHandleLogin(user_ref& usr) throw(std::bad_alloc);
 	
 	// Send message to session
-	void Propagate(uint8_t session_id, message_ref msg) throw();
+	void Propagate(message_ref msg) throw();
 	
 	// Send message to session, except to one user.
-	void lPropagate(uint8_t session_id, message_ref msg, user_ref usr) throw();
+	void lPropagate(message_ref msg, user_ref usr) throw();
 	
 	// Send message to user
 	/*
