@@ -74,8 +74,6 @@ const uint8_t
 	Subscribe = 30,
 	//! for Unsubscribe.
 	Unsubscribe = 31,
-	//! for Session select.
-	SessionSelect = 37,
 	
 	//! for Instruction.
 	Instruction = 77,
@@ -126,6 +124,8 @@ const uint8_t
 	Join = 5,
 	//! Left session.
 	Leave = 6,
+	//! Active session changed
+	Changed = 7,
 	
 	/* verbose leave reasons */
 	

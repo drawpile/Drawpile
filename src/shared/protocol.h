@@ -668,6 +668,7 @@ struct UserInfo
 {
 	UserInfo() throw()
 		: Message(type::UserInfo, message::isUser|message::isSession),
+		selected(protocol::Global),
 		mode(user_mode::None),
 		event(user_event::None),
 		length(0),
@@ -679,6 +680,8 @@ struct UserInfo
 	/* unique data */
 	
 	uint8_t
+		//! Selected active session.
+		selected,
 		//! User mode flags (protocol::user)
 		mode,
 		//! User event (protocol::user_event)
@@ -963,32 +966,6 @@ struct Palette
 	size_t reqDataLen(const char *buf, size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-};
-
-//! Session selector
-/**
- * Client tells which session any subsequent packages
- * (marked with the session modifier) are part of.
- *
- * Response: Error or Acknowledgement with event set to protocol::type::SessionSelect.
- */
-struct SessionSelect
-	: Message//, MemoryStack<SessionSelect>
-{
-	SessionSelect() throw()
-		: Message(type::SessionSelect,
-			message::isUser|message::isSession)
-	{ }
-	
-	~SessionSelect() throw() { }
-	
-	/* unique data */
-	
-	// nothing needed
-	
-	/* functions */
-	
-	// nothing needed
 };
 
 } // namespace protocol

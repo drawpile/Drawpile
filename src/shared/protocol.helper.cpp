@@ -76,9 +76,6 @@ void msgName(const uint8_t type) throw()
 	case type::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
 		break;
-	case type::SessionSelect:
-		std::cout << "Session Select" << std::endl;
-		break;
 	case type::Instruction:
 		std::cout << "Instruction" << std::endl;
 		break;
@@ -170,10 +167,6 @@ Message* getMessage(const uint8_t type) throw()
 	case type::Unsubscribe:
 		msgName(type);
 		return new Unsubscribe();
-		break;
-	case type::SessionSelect:
-		msgName(type);
-		return new SessionSelect();
 		break;
 	case type::Instruction:
 		msgName(type);
