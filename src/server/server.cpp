@@ -531,7 +531,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Unsubscribe:
 		#ifdef DEBUG_SERVER
-		#ifdef NDEBUG
+		#ifndef NDEBUG
 		std::cout << "Unsubscribe" << std::endl;
 		#endif
 		#endif
@@ -542,7 +542,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 			
 			if (si == session_id_map.end())
 			{
-				#ifdef NDEBUG
+				#ifndef NDEBUG
 				std::cerr << "No such session: "
 					<< static_cast<int>(msg->session_id) << std::endl;
 				#endif
@@ -559,7 +559,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Subscribe:
 		#ifdef DEBUG_SERVER
-		#ifdef NDEBUG
+		#ifndef NDEBUG
 		std::cout << "Subscribe" << std::endl;
 		#endif
 		#endif
@@ -698,7 +698,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			size_t crop = sizeof(session->width) + sizeof(session->height);
 			if (msg->length < crop)
 			{
-				#ifdef NDEBUG
+				#ifndef NDEBUG
 				std::cerr << "Less data than required" << std::endl;
 				#endif
 				
