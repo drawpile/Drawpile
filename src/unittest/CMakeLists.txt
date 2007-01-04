@@ -13,7 +13,7 @@ set (
 	unittest.cpp
 )
 
-link_libraries( dpshared )
+link_libraries( ${LIBNAME} )
 
 add_executable ( dptest ${UNITTEST_SRCS} ${UNITTEST_HDRS} )
 

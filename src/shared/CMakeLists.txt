@@ -26,7 +26,7 @@ if (WIN32)
 endif (WIN32)
 
 add_library (
-	dpshared
+	${LIBNAME}
 	${Shared_Sources}
 	${Shared_Headers}
 )

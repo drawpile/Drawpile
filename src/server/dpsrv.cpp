@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -32,9 +32,9 @@
 
 #include "../shared/protocol.h"
 
-#include "sockets.h"
-#include "user.h"
-#include "event.h"
+//#include "sockets.h"
+//#include "user.h"
+//#include "event.h"
 #include "server.h"
 
 //#include <sys/time.h>
@@ -47,15 +47,29 @@
 #include <iostream>
 #include <getopt.h> // for command-line opts
 
+namespace srv_info
+{
+
+#if 0
+const uint16_t
+	major_version = 0,
+	minor_version = 1;
+#endif // 0
+
+const char versionString[] = "0.1a";
+
+const char copyrightNotice[] = "Copyright (c) 2006-2007 M.K.A.";
+//const char contactAddress[] = "wyrmchild@users.sourceforge.net";
+const char applicationName[] = "drawpile-srv";
+const char websiteURL[] = "http://drawpile.sourceforge.net/";
+
+}
+
 void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
-	#ifndef NDEBUG
-	std::cout << "getArgs(" << argc << ", **argv)" << std::endl;
-	#endif
-	
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "p:Vhc:")) != -1)
+	while ((opt = getopt( argc, argv, "p:Vhs:")) != -1)
 	{
 		switch (opt)
 		{
@@ -108,25 +122,27 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					<< "   -p [port]    listen on 'port' (1024 - 65535)" << std::endl
 					<< "   -h           this output (a.k.a. Help)" << std::endl
 					//<< "   -d           daemon mode" << std::endl
-					<< "   -c [string]  password string" << std::endl;
+					<< "   -s [string]  password string" << std::endl
+					//<< "   -w           UTF-16 string" << std::endl
+					;
 				exit(1);
 				break;
-			case 'V': // version
-				std::cout << "dpserver v0.0a" << std::endl;
-				exit(0);
 			default:
 				std::cerr << "What?" << std::endl;
+			case 'V': // version
 				exit(0);
 		}
 	}
 }
 
-
 int main(int argc, char** argv)
 {
 	std::ios::sync_with_stdio(false);
 	
-	std::cout << "dpsrv v0.0a\n(C) 2006 M.K.A.\n" << std::endl;
+	std::cout << srv_info::applicationName << " v" << srv_info::versionString << std::endl
+		<< srv_info::copyrightNotice << std::endl
+		<< srv_info::websiteURL << std::endl
+		<< std::endl;
 	
 	Server srv;
 	

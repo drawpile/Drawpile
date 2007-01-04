@@ -1,4 +1,4 @@
-set ( EXECNAME drawpile )
+# client
 
 # Qt stuff
 
@@ -56,12 +56,6 @@ set (
 set ( Client_Resources ui/resources.qrc )
 set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui ui/newdialog.ui ui/about.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui )
 
-if ( WIN32 )
-	link_libraries ( ws2_32 )
-endif ( WIN32 )
-
-link_libraries( dpshared )
-
 # .MOC
 
 Qt4_automoc ( ${Client_Sources} )
@@ -75,23 +69,25 @@ Qt4_add_resources ( Client_Resource_Sources ${Client_Resources} )
 Qt4_wrap_CPP ( MOC_Sources ${Client_Headers} )
 
 if (NOT DEBUG)
-add_definitions(-DQT_NO_DEBUG)
-if (WIN32)
-	set ( EXEFORMAT WIN32 )
-endif (WIN32)
-endif (NOT DEBUG)
-
-if (MACOSX)
-	set ( EXEFORMAT MACOSX_BUNDLE )
-endif (MACOSX)
-
-if ( NOT DEBUG )
-	strip_exe ( ${EXECNAME} )
+	add_definitions(-DQT_NO_DEBUG)
+	
+	if (WIN32)
+		set ( EXEFORMAT WIN32 )
+	endif (WIN32)
+	
+	strip_exe ( ${CLIENTNAME} )
 endif ( NOT DEBUG )
 
+if ( WIN32 )
+	link_libraries ( ws2_32 )
+endif ( WIN32 )
+
+link_libraries( ${LIBNAME} )
+
 add_executable (
-	${EXECNAME}
+	${CLIENTNAME}
 	${EXEFORMAT}
+	MACOSX_BUNDLE
 	${Client_Sources}
 	${Client_Headers}
 	${Client_UI_Headers}
@@ -100,7 +96,7 @@ add_executable (
 )
 
 target_link_libraries(
-	${EXECNAME}
+	${CLIENTNAME}
 	${QT_LIBRARIES}
 	${QT_QTNETWORK_LIBRARIES}
 )

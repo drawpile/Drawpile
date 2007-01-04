@@ -7,6 +7,16 @@ cmake_minimum_required( VERSION 2.4.5 )
 
 ### config options ###
 
+set ( CLIENTVERSION "0.2" )
+set ( SERVERVERSION "0.1" )
+set ( LIBVERSION "0.1" )
+
+set ( LIBNAME "drawpile-${LIBVERSION}" )
+set ( CLIENTNAME drawpile )
+set ( SERVERNAME drawpile-srv )
+
+### options ###
+
 # do these even work?
 
 option ( NOCLIENT "Don't compile client" OFF )
@@ -46,8 +56,6 @@ include ( CheckIncludeFiles )
 check_include_files ( stdint.h HAVE_STDINT_H )
 
 ### Boost library
-
-set ( BOOST_LIB_DIAGNOSTIC ON )
 
 find_package ( Boost 1.33 REQUIRED )
 

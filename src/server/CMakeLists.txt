@@ -43,14 +43,10 @@ if ( WIN32 )
 	link_libraries ( ws2_32 )
 endif ( WIN32 )
 
-link_libraries( dpshared )
-
-if (MACOSX)
-	set ( EXEFORMAT MACOSX_BUNDLE )
-endif (MACOSX)
+link_libraries( ${LIBNAME} )
 
 if ( NOT DEBUG )
-	strip_exe ( dpserver )
+	strip_exe ( ${SERVERNAME} )
 endif ( NOT DEBUG )
 
-add_executable ( dpserver ${EXEFORMAT} ${Server_Sources} ${EV_SRC} ${Server_Headers} )
+add_executable ( ${SERVERNAME} MACOSX_BUNDLE ${Server_Sources} ${EV_SRC} ${Server_Headers} )
