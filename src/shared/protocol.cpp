@@ -701,7 +701,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy_t(buf, mode); size_t i += sizeof(mode);
+	memcpy_t(buf, mode); size_t i = sizeof(mode);
 	memcpy_t(buf+i, event); i += sizeof(event);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
