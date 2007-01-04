@@ -1485,9 +1485,8 @@ bool Server::validateUserName(user_ref& usr) const throw()
 bool Server::validateSessionTitle(session_ref& session) const throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Server::validateSessionTitle("
-		<< static_cast<int>()
-		<<")" << std::endl;
+	std::cout << "Server::validateSessionTitle(session: "
+		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	
 	return true;
