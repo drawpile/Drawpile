@@ -26,7 +26,6 @@
 
 class QActionGroup;
 class QMessageBox;
-class QLabel;
 
 namespace widgets {
 	class NetStatus;
@@ -89,6 +88,8 @@ class MainWindow : public QMainWindow {
 		//! Go to drawpile homepage
 		void homepage();
 	private slots:
+		//! Set session title
+		void setSessionTitle(const QString& title);
 		//! Create new document
 		void newDocument();
 		//! Show new document dialog
@@ -153,7 +154,6 @@ class MainWindow : public QMainWindow {
 		//! Create dialogs
 		void createDialogs();
 
-		QLabel *sessiontitle_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
@@ -169,6 +169,7 @@ class MainWindow : public QMainWindow {
 		drawingboard::Board *board_;
 		Controller *controller_;
 
+		QString sessiontitle_;
 		QString filename_;
 		QString lastpath_;
 

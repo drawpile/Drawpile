@@ -61,10 +61,6 @@ MainWindow::MainWindow()
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
-	// Create session title widget
-	sessiontitle_ = new QLabel(this);
-	statusbar->addWidget(sessiontitle_);
-
 	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
@@ -102,7 +98,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(disconnected(QString)), logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined(QString)), logindlg_, SLOT(joined()));
-	connect(controller_, SIGNAL(joined(QString)), sessiontitle_, SLOT(setText(QString)));
+	connect(controller_, SIGNAL(joined(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
 	connect(controller_, SIGNAL(selectSession(network::SessionList)),logindlg_, SLOT(selectSession(network::SessionList)));
@@ -151,7 +147,10 @@ void MainWindow::setTitle()
 		name = info.baseName();
 	}
 
-	setWindowTitle(tr("%1[*] - DrawPile").arg(name));
+	if(sessiontitle_.isEmpty())
+		setWindowTitle(tr("%1[*] - DrawPile").arg(name));
+	else
+		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(sessiontitle_));
 }
 
 void MainWindow::readSettings()
@@ -481,7 +480,13 @@ void MainWindow::disconnected()
 	host_->setEnabled(true);
 	join_->setEnabled(true);
 	logout_->setEnabled(false);
-	sessiontitle_->setText(QString());
+	setSessionTitle(QString());
+}
+
+void MainWindow::setSessionTitle(const QString& title)
+{
+	sessiontitle_ = title;
+	setTitle();
 }
 
 void MainWindow::finishNew(int i)
