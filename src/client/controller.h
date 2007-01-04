@@ -75,6 +75,9 @@ class Controller : public QObject
 		//! Join a session
 		void joinSession();
 
+		//! Check if connection is still established
+		bool isConnected() const { return net_ != 0; }
+
 	public slots:
 		//! Disconnect from host
 		void disconnectHost();

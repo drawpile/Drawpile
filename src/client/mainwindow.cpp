@@ -213,7 +213,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		unsavedbox_->show();
 		event->ignore();
 	} else {
-		exit();
+		if(controller_->isConnected()) {
+			connect(controller_, SIGNAL(disconnected()), this, SLOT(close()));
+			controller_->disconnectHost();
+			event->ignore();
+		} else {
+			exit();
+		}
 	}
 }
 
@@ -474,7 +480,8 @@ void MainWindow::finishExit(int i)
 			if(save()==false)
 				break;
 		case QMessageBox::No:
-			exit();
+			setWindowModified(false);
+			close();
 			break;
 		default:
 			break;
@@ -585,15 +592,19 @@ void MainWindow::initActions()
 
 	// Session actions
 	host_ = new QAction("&Host...", this);
-	host_->setStatusTip(tr("Host a new drawing session"));
+	host_->setStatusTip(tr("Share your drawingboard with others"));
 	join_ = new QAction("&Join...", this);
-	join_->setStatusTip(tr("Join an existing drawing session"));
+	join_->setStatusTip(tr("Join another user's drawing session"));
 	logout_ = new QAction("&Leave", this);
 	logout_->setStatusTip(tr("Leave this drawing session"));
 	lockboard_ = new QAction("Lo&ck the board", this);
 	lockboard_->setStatusTip(tr("Prevent others from making changes"));
 	kickuser_ = new QAction("Kick", this);
 	lockuser_ = new QAction("Lock", this);
+
+	lockboard_->setEnabled(false);
+	kickuser_->setEnabled(false);
+	lockuser_->setEnabled(false);
 
 	adminTools_ = new QActionGroup(this);
 	adminTools_->addAction(lockboard_);

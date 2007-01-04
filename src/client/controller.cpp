@@ -215,12 +215,12 @@ void Controller::netConnected()
 void Controller::netDisconnected(const QString& message)
 {
 	qDebug() << "disconnect: " << message;
-	emit disconnected();
 	net_->wait();
 	delete net_;
 	net_ = 0;
 	netstate_->setConnection(0);
 	session_ = 0;
+	emit disconnected();
 }
 
 void Controller::netError(const QString& message)
