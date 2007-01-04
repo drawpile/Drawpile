@@ -149,7 +149,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-message_ref Server::msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc)
+message_ref Server::msgAuth(user_ref& usr, uint8_t session) const throw(std::bad_alloc)
 {
 	protocol::Authentication* auth = new protocol::Authentication;
 	auth->session_id = session;
@@ -163,7 +163,7 @@ message_ref Server::msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc
 	return message_ref(auth);
 }
 
-message_ref Server::msgHostInfo() throw(std::bad_alloc)
+message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 {
 	protocol::HostInfo *hostnfo = new protocol::HostInfo;
 	
@@ -177,6 +177,20 @@ message_ref Server::msgHostInfo() throw(std::bad_alloc)
 	hostnfo->extensions = extensions;
 	
 	return message_ref(hostnfo);
+}
+
+message_ref Server::msgError(uint16_t code) const throw(std::bad_alloc)
+{
+	protocol::Error *err = new protocol::Error;
+	err->code = code;
+	return message_ref(err);
+}
+
+message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
+{
+	protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+	ack->event = type;
+	return message_ref(ack);
 }
 
 void Server::uWrite(user_ref& usr) throw()
@@ -365,7 +379,7 @@ void Server::uProcessData(user_ref& usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event)
+message_ref Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
 {
 	#ifndef NDEBUG
 	std::cout << "Server::uCreateEvent(user: " << static_cast<int>(usr->id) << ")" << std::endl;
@@ -436,15 +450,11 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 				std::cerr << "No such session: "
 					<< static_cast<int>(msg->session_id) << std::endl;
 				
-				protocol::Error* err = new protocol::Error;
-				err->code = protocol::error::UnknownSession;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::UnknownSession));
 			}
 			else
 			{
-				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-				ack->event = protocol::type::Unsubscribe;
-				uSendMsg(usr, message_ref(ack));
+				uSendMsg(usr, msgAck(protocol::type::Unsubscribe));
 				
 				uLeaveSession(usr, si->second);
 			}
@@ -461,16 +471,12 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 				std::cerr << "No such session: "
 					<< static_cast<int>(msg->session_id) << std::endl;
 				
-				protocol::Error* err = new protocol::Error;
-				err->code = protocol::error::UnknownSession;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::UnknownSession));
 			}
 			else
 			{
 				// Ack to user
-				protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-				ack->event = protocol::type::Subscribe;
-				uSendMsg(usr, message_ref(ack));
+				uSendMsg(usr, msgAck(protocol::type::Subscribe));
 				
 				uJoinSession(usr, si->second);
 			}
@@ -505,9 +511,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 				}
 			}
 			
-			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-			ack->event = protocol::type::ListSessions;
-			uSendMsg(usr, message_ref(ack));
+			uSendMsg(usr, msgAck(protocol::type::ListSessions));
 		}
 		break;
 	case protocol::type::Instruction:
@@ -548,9 +552,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			
 			if (session_id == protocol::Global)
 			{
-				protocol::Error* err = new protocol::Error;
-				err->code = protocol::error::SessionLimit;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::SessionLimit));
 				return;
 			}
 			
@@ -569,11 +571,8 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			if (session->limit < 2)
 			{
 				std::cerr << "Attempted to create single user session." << std::endl;
-				//delete s;
-				//s.reset();
-				protocol::Error* err = new protocol::Error;
-				err->code = protocol::error::InvalidData;
-				uSendMsg(usr, message_ref(err));
+				
+				uSendMsg(usr, msgError(protocol::error::InvalidData));
 				return;
 			}
 			
@@ -595,9 +594,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			
 			if (session->width < min_dimension or session->height < min_dimension)
 			{
-				protocol::Error* err = new protocol::Error;
-				err->code = protocol::error::TooSmall;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::TooSmall));
 				return;
 			}
 			
@@ -619,9 +616,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 				std::cerr << "Title not unique." << std::endl;
 				
 				#if 0
-				protocol::Error *err = new protocol::Error;
-				err->code = protocol::error::NotUnique;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::NotUnique));
 				#endif // 0
 				
 				return;
@@ -636,9 +631,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
 				<< "With dimensions: " << session->width << " x " << session->height << std::endl;
 			
-			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-			ack->event = protocol::type::Instruction;
-			uSendMsg(usr, message_ref(ack));
+			uSendMsg(usr, msgAck(protocol::type::Instruction));
 		}
 		break;
 	case protocol::admin::command::Destroy:
@@ -656,9 +649,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			msg->data = 0;
 			msg->length = 0;
 			
-			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-			ack->event = protocol::type::Instruction;
-			uSendMsg(usr, message_ref(ack));
+			uSendMsg(usr, msgAck(protocol::type::Instruction));
 		}
 		else
 		{
@@ -716,9 +707,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				std::cerr << "Name too long." << std::endl;
 				
 				#if 0
-				protocol::Error *err = new protocol::Error;
-				err->code = protocol::error::TooLong;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::TooLong));
 				#endif // 0
 				
 				uRemove(usr);
@@ -730,9 +719,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				std::cerr << "Name not unique." << std::endl;
 				
 				#if 0
-				protocol::Error *err = new protocol::Error;
-				err->code = protocol::error::NotUnique;
-				uSendMsg(usr, message_ref(err));
+				uSendMsg(usr, msgError(protocol::error::NotUnique));
 				#endif // 0
 				
 				uRemove(usr);
@@ -805,9 +792,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-			ack->event = protocol::type::Password;
-			uSendMsg(usr, message_ref(ack));
+			uSendMsg(usr, msgAck(protocol::type::Password));
 		}
 		else
 		{
@@ -933,6 +918,7 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	
 	// TODO: Pick user for requesting raster from, and send raster request.
 	
+	#if 0
 	user_ref src_usr;
 	
 	protocol::Synchronize *sync = new protocol::Synchronize;
@@ -941,6 +927,7 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	
 	// create fake tunnel
 	session->tunnel.insert( std::make_pair(usr->id, src_usr->id) );
+	#endif // 0
 	
 	// This is WRONG
 	protocol::Raster *raster = new protocol::Raster;

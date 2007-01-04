@@ -123,14 +123,31 @@ protected:
 	void cleanup() throw();
 	
 	// Get free user ID
+	inline
 	uint8_t getUserID() throw();
 	
 	// Get free session ID
+	inline
 	uint8_t getSessionID() throw();
 	
-	// Generate messages
-	message_ref msgHostInfo() throw(std::bad_alloc);
-	message_ref msgAuth(user_ref& usr, uint8_t session) throw(std::bad_alloc);
+	/* *** Generate messages *** */
+	
+	inline
+	message_ref msgHostInfo() const throw(std::bad_alloc);
+	
+	inline
+	message_ref msgAuth(user_ref& usr, uint8_t session) const throw(std::bad_alloc);
+	
+	inline
+	message_ref uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
+	
+	inline
+	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
+	
+	inline
+	message_ref msgAck(uint8_t msgtype) const throw(std::bad_alloc);
+	
+	/* *** Something else *** */
 	
 	// Write to user socket
 	void uWrite(user_ref& usr) throw();
@@ -140,9 +157,6 @@ protected:
 	
 	// Process all read data.
 	void uProcessData(user_ref& usr) throw();
-	
-	// create user info for event
-	message_ref uCreateEvent(user_ref& usr, session_ref session, uint8_t event);
 	
 	// Handle user message.
 	void uHandleMsg(user_ref& usr) throw(std::bad_alloc);
@@ -179,7 +193,10 @@ protected:
 	void uRemove(user_ref& usr) throw();
 	
 	// check name/title uniqueness
+	inline
 	bool validateUserName(user_ref& usr) const throw();
+	
+	inline
 	bool validateSessionTitle(session_ref& session) const throw();
 public:
 	//! ctor
