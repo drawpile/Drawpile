@@ -925,10 +925,14 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	
 	// TODO: Pick user for requesting raster from, and send raster request.
 	
-	/*
+	user_ref src_usr;
+	
 	protocol::Synchronize *s = new protocol::Synchronize;
-	uSendMsg(old_usr, s);
-	*/
+	s->session_id = session->id;
+	uSendMsg(src_usr, message_ref(s));
+	
+	// create fake tunnel
+	session->tunnel.insert( std::make_pair(usr->id, src_usr->id) );
 	
 	// This is WRONG
 	protocol::Raster *raster = new protocol::Raster;
@@ -956,6 +960,13 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	
 	// Tell session members there's a new user.
 	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Join)));
+	
+	// Tell the new user of the already existing users.
+	std::map<uint8_t, user_ref>::iterator si(session->users.begin());
+	for (; si != session->users.end(); si++)
+	{
+		uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
+	}
 	
 	// set user's active session
 	usr->session = session->id;
