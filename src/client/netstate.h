@@ -188,8 +188,8 @@ class HostState : public QObject {
 		int userid_;
 
 		SessionState *newsession_;
-		SessionState *selsession_;
 		QHash<int, SessionState*> mysessions_;
+		QHash<int,int> usersessions_;
 		SessionList sessions_;
 
 		bool loggedin_;
@@ -216,6 +216,9 @@ class SessionState : public QObject {
 
 		//! Release raster data
 		void releaseRaster();
+
+		//! Select this session as active
+		void select();
 
 		//! Send a tool info message
 		void sendToolInfo(const drawingboard::Brush& brush);

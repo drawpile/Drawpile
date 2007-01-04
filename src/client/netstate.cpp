@@ -95,16 +95,22 @@ void HostState::receiveMessage()
 					qDebug() << "received raster data for unsubscribed session" << int(msg->session_id);
 				break;
 			case type::ToolInfo:
-				Q_ASSERT(selsession_);
-				selsession_->handleToolInfo(static_cast<ToolInfo*>(msg));
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleToolInfo(static_cast<ToolInfo*>(msg));
 				break;
 			case type::StrokeInfo:
-				Q_ASSERT(selsession_);
-				selsession_->handleStrokeInfo(static_cast<StrokeInfo*>(msg));
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleStrokeInfo(static_cast<StrokeInfo*>(msg));
 				break;
 			case type::StrokeEnd:
-				Q_ASSERT(selsession_);
-				selsession_->handleStrokeEnd(static_cast<StrokeEnd*>(msg));
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleStrokeEnd(static_cast<StrokeEnd*>(msg));
 				break;
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
@@ -129,7 +135,7 @@ void HostState::setConnection(Connection *net)
 		if(newsession_)
 			delete newsession_;
 		newsession_ = 0;
-		selsession_ = 0;
+		usersessions_.clear();
 		loggedin_ = false;
 		foreach(SessionState *s, mysessions_) {
 			emit parted(s->info().id);
@@ -358,16 +364,14 @@ void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 }
 
 /**
- * Select active session
+ * Select active session. Note that some users session might point
+ * to one that is were are not subscribed to. In that case, drawing
+ * commands for that user should be discarded.
  * @param msg SessionSelect message
  */
 void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
 {
-	if(mysessions_.contains(msg->session_id)) {
-		selsession_ = mysessions_.value(msg->session_id);
-	} else {
-		qDebug() << "Selected unsubscribed session" << int(msg->session_id);
-	}
+	usersessions_[msg->user_id] = msg->session_id;
 }
 
 /**
@@ -400,8 +404,11 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 	} else if(msg->event == protocol::type::Subscribe) {
 		// A session has been joined
 		mysessions_.insert(newsession_->info().id, newsession_);
+		newsession_->select();
 		emit joined(newsession_->info().id);
 		newsession_ = 0;
+	} else if(msg->event == protocol::type::SessionSelect) {
+		// Ignore session select ack
 	} else {
 		qDebug() << "\tunhandled ack";
 	}
@@ -451,6 +458,18 @@ bool SessionState::sessionImage(QImage &image) const
 void SessionState::releaseRaster()
 {
 	raster_ = QByteArray();
+}
+
+/**
+ * Send a SessionSelect message to indicate this session as the one
+ * where drawing occurs.
+ */
+void SessionState::select()
+{
+	protocol::SessionSelect *msg = new protocol::SessionSelect;
+	msg->session_id = info_.id;
+	host_->usersessions_[host_->userid_] = info_.id;
+	host_->net_->send(msg);
 }
 
 /**
@@ -518,6 +537,7 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 				break;
 			}
 		}
+		host_->usersessions_.remove(msg->user_id);
 	} else {
 		qDebug() << "unhandled user event " << int(msg->event);
 	}
