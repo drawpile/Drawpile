@@ -603,8 +603,15 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			
 			if (m->length > crop)
 			{
-				s->title = new char[m->length - crop];
-				memcpy(s->title, m->data+crop, m->length-crop);
+				s->len = (m->length - crop);
+				s->title = new char[s->len];
+				memcpy(s->title, m->data+crop, s->len);
+			}
+			else
+			{
+				#ifndef NDEBUG
+				std::cout << "No title set for session."
+				#endif
 			}
 			
 			if (!validateSessionTitle(s))
@@ -1012,7 +1019,7 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 	
 	if (session->owner == usr->id)
 	{
-		session->owner == protocol::null_user;
+		session->owner = protocol::null_user;
 		
 		// TODO: Announce owner disappearance.. or not
 	}
