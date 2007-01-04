@@ -13,5 +13,7 @@
 #cmakedefine HAVE_SELECT_H
 #cmakedefine HAVE_WSA
 
-#cmakedefine DEBUG_CIRCULAR_BUFFER
+#cmakedefine DEBUG_BUFFER
 #cmakedefine DEBUG_EVENTS
+#cmakedefine DEBUG_SOCKETS
+#cmakedefine DEBUG_SERVER

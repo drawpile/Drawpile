@@ -60,15 +60,19 @@ Server::Server() throw()
 	default_user_mode(protocol::user_mode::None),
 	localhost_admin(true)
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::Server()" << std::endl;
+	#endif
 	#endif
 }
 
 Server::~Server() throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::~Server()" << std::endl;
+	#endif
 	#endif
 	
 	cleanup();
@@ -76,8 +80,10 @@ Server::~Server() throw()
 
 uint8_t Server::getUserID() throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::getUserID()" << std::endl;
+	#endif
 	#endif
 	
 	for (int i=1; i != 256; i++)
@@ -94,8 +100,10 @@ uint8_t Server::getUserID() throw()
 
 uint8_t Server::getSessionID() throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::getSessionID()" << std::endl;
+	#endif
 	#endif
 	
 	for (int i=1; i != 256; i++)
@@ -114,8 +122,10 @@ void Server::freeUserID(uint8_t id) throw()
 {
 	assert(user_ids.test(id) == true);
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::freeUserID(" << static_cast<int>(id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	user_ids.set(id, false);
@@ -125,8 +135,10 @@ void Server::freeSessionID(uint8_t id) throw()
 {
 	assert(session_ids.test(id) == true);
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::freeSessionID(" << static_cast<int>(id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	session_ids.set(id, false);
@@ -134,8 +146,10 @@ void Server::freeSessionID(uint8_t id) throw()
 
 void Server::cleanup() throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::cleanup()" << std::endl;
+	#endif
 	#endif
 	
 	// finish event system
@@ -151,6 +165,12 @@ void Server::cleanup() throw()
 
 message_ref Server::msgAuth(user_ref& usr, uint8_t session) const throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::msgAuth()" << std::endl;
+	#endif
+	#endif
+	
 	protocol::Authentication* auth = new protocol::Authentication;
 	auth->session_id = session;
 	
@@ -165,6 +185,12 @@ message_ref Server::msgAuth(user_ref& usr, uint8_t session) const throw(std::bad
 
 message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::msgHostInfo()" << std::endl;
+	#endif
+	#endif
+	
 	protocol::HostInfo *hostnfo = new protocol::HostInfo;
 	
 	hostnfo->sessions = session_ids.count();
@@ -181,6 +207,12 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 
 message_ref Server::msgError(uint16_t code) const throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::msgError()" << std::endl;
+	#endif
+	#endif
+	
 	protocol::Error *err = new protocol::Error;
 	err->code = code;
 	return message_ref(err);
@@ -188,6 +220,12 @@ message_ref Server::msgError(uint16_t code) const throw(std::bad_alloc)
 
 message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::msgAck()" << std::endl;
+	#endif
+	#endif
+	
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement;
 	ack->event = type;
 	return message_ref(ack);
@@ -195,8 +233,10 @@ message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
 
 void Server::uWrite(user_ref& usr) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	if (!usr->output.data or usr->output.canRead() == 0)
@@ -223,7 +263,11 @@ void Server::uWrite(user_ref& usr) throw()
 		usr->output.canRead()
 	);
 	
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
 	std::cout << "Sent " << sb << " bytes.." << std::endl;
+	#endif
+	#endif
 	
 	if (sb == -1)
 	{
@@ -262,13 +306,17 @@ void Server::uWrite(user_ref& usr) throw()
 
 void Server::uRead(user_ref usr) throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uRead(user: " << static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	if (usr->input.canWrite() == 0)
 	{
+		#ifndef NDEBUG
 		std::cerr << "Input buffer full, increasing size" << std::endl;
+		#endif
 		usr->input.resize(usr->input.size + 8192);
 	}
 	
@@ -295,14 +343,18 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 	}
 	else if (rb == 0)
 	{
-		std::cout << "User disconnected!" << std::endl;
+		#ifndef NDEBUG
+		std::cerr << "User disconnected!" << std::endl;
+		#endif
 		
 		uRemove(usr);
 		return;
 	}
 	else
 	{
+		#ifndef NDEBUG
 		std::cout << "Received " << rb << " bytes.." << std::endl;
+		#endif
 		
 		usr->input.write(rb);
 		
@@ -312,10 +364,12 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 
 void Server::uProcessData(user_ref& usr) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uProcessData(user: "
 		<< static_cast<int>(usr->id) << ", in buffer: "
 		<< usr->input.left << " bytes)" << std::endl;
+	#endif
 	#endif
 	
 	while (usr->input.canRead() != 0)
@@ -342,17 +396,23 @@ void Server::uProcessData(user_ref& usr) throw()
 		
 		size_t have = usr->input.canRead();
 		
+		#ifndef NDEBUG
 		std::cout << "Verify size... ";
+		#endif
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, have);
 		if (len > have)
 		{
+			#ifndef NDEBUG
 			std::cout << "Need " << (len - have) << " bytes more." << std::endl;
+			#endif
 			// still need more data
 			return;
 		}
+		#ifndef NDEBUG
 		std::cout << "complete." << std::endl;
 		
 		std::cout << "Unserialize message" << std::endl;
+		#endif
 		usr->input.read(
 			usr->inMsg->unserialize(usr->input.rpos, have)
 		);
@@ -381,8 +441,11 @@ void Server::uProcessData(user_ref& usr) throw()
 
 message_ref Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::uCreateEvent(user: " << static_cast<int>(usr->id) << ")" << std::endl;
+	std::cout << "Server::uCreateEvent(user: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	protocol::UserInfo *uevent = new protocol::UserInfo;
@@ -404,9 +467,11 @@ message_ref Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t eve
 
 void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleMsg(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(usr->state == uState::active);
@@ -419,27 +484,31 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 	case protocol::type::StrokeInfo:
 	case protocol::type::StrokeEnd:
 		// handle all message with 'selected' modifier the same
+		#if 0
 		if (usr->inMsg->user_id != protocol::null_user)
 		{
-			std::cerr << "Client attempts to impersonate someone." << std::endl;
+			std::cerr << "Client attempted to impersonate someone." << std::endl;
 			uRemove(usr);
 			break;
 		}
+		#endif // 0
 		
-		{
-			// make sure the user id is correct
-			usr->inMsg->user_id = usr->id;
-			
-			Propagate(
-				usr->session,
-				message_ref(usr->inMsg)
-			);
-			
-			usr->inMsg = 0;
-		}
+		// make sure the user id is correct
+		usr->inMsg->user_id = usr->id;
+		
+		Propagate(
+			usr->session,
+			message_ref(usr->inMsg)
+		);
+		
+		usr->inMsg = 0;
 		break;
 	case protocol::type::Unsubscribe:
+		#ifdef DEBUG_SERVER
+		#ifdef NDEBUG
 		std::cout << "Unsubscribe" << std::endl;
+		#endif
+		#endif
 		{
 			protocol::Unsubscribe *msg = static_cast<protocol::Unsubscribe*>(usr->inMsg);
 			
@@ -447,8 +516,10 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 			
 			if (si == session_id_map.end())
 			{
+				#ifdef NDEBUG
 				std::cerr << "No such session: "
 					<< static_cast<int>(msg->session_id) << std::endl;
+				#endif
 				
 				uSendMsg(usr, msgError(protocol::error::UnknownSession));
 			}
@@ -461,15 +532,19 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::Subscribe:
+		#ifdef NDEBUG
 		std::cout << "Subscribe" << std::endl;
+		#endif
 		{
 			protocol::Subscribe *msg = static_cast<protocol::Subscribe*>(usr->inMsg);
 			
 			std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
 			if (si == session_id_map.end())
 			{
+				#ifndef NDEBUG
 				std::cerr << "No such session: "
 					<< static_cast<int>(msg->session_id) << std::endl;
+				#endif
 				
 				uSendMsg(usr, msgError(protocol::error::UnknownSession));
 			}
@@ -483,43 +558,45 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::ListSessions:
+		#ifndef NDEBUG
 		std::cout << "List Sessions" << std::endl;
+		#endif
+		if (session_id_map.size() != 0)
 		{
-			if (session_id_map.size() != 0)
+			protocol::SessionInfo *nfo = 0;
+			std::map<uint8_t, session_ref>::iterator si(session_id_map.begin());
+			for (; si != session_id_map.end(); si++)
 			{
-				protocol::SessionInfo *nfo = 0;
-				std::map<uint8_t, session_ref>::iterator si(session_id_map.begin());
-				for (; si != session_id_map.end(); si++)
-				{
-					nfo = new protocol::SessionInfo;
-					
-					nfo->session_id = si->first;
-					
-					nfo->width = si->second->width;
-					nfo->height = si->second->height;
-					
-					nfo->owner = si->second->owner;
-					nfo->users = si->second->users.size();
-					nfo->limit = si->second->limit;
-					nfo->mode = si->second->mode;
-					nfo->length = si->second->len;
-					
-					nfo->title = new char[si->second->len];
-					memcpy(nfo->title, si->second->title, si->second->len);
-					
-					uSendMsg(usr, message_ref(nfo));
-				}
+				nfo = new protocol::SessionInfo;
+				
+				nfo->session_id = si->first;
+				
+				nfo->width = si->second->width;
+				nfo->height = si->second->height;
+				
+				nfo->owner = si->second->owner;
+				nfo->users = si->second->users.size();
+				nfo->limit = si->second->limit;
+				nfo->mode = si->second->mode;
+				nfo->length = si->second->len;
+				
+				nfo->title = new char[si->second->len];
+				memcpy(nfo->title, si->second->title, si->second->len);
+				
+				uSendMsg(usr, message_ref(nfo));
 			}
-			
-			uSendMsg(usr, msgAck(protocol::type::ListSessions));
 		}
+		
+		uSendMsg(usr, msgAck(protocol::type::ListSessions));
 		break;
 	case protocol::type::Instruction:
+		#ifndef NDEBUG
 		std::cout << "Instruction" << std::endl;
+		#endif
 		uHandleInstruction(usr);
 		break;
 	default:
-		std::cerr << "Unexpected or unknown message type" << std::endl;
+		std::cerr << "Unexpected or unknown message type." << std::endl;
 		uRemove(usr);
 		break;
 	}
@@ -527,8 +604,10 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 
 void Server::uHandleInstruction(user_ref& usr) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleInstruction()" << std::endl;
+	#endif
 	#endif
 	
 	//assert(usr != 0);
@@ -570,7 +649,9 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			
 			if (session->limit < 2)
 			{
+				#ifndef NDEBUG
 				std::cerr << "Attempted to create single user session." << std::endl;
+				#endif
 				
 				uSendMsg(usr, msgError(protocol::error::InvalidData));
 				return;
@@ -579,10 +660,11 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			size_t crop = sizeof(session->width) + sizeof(session->height);
 			if (msg->length < crop)
 			{
+				#ifdef NDEBUG
 				std::cerr << "Less data than required" << std::endl;
+				#endif
+				
 				uRemove(usr);
-				//delete s;
-				//s.reset();
 				return;
 			}
 			
@@ -607,13 +689,15 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			else
 			{
 				#ifndef NDEBUG
-				std::cout << "No title set for session." << std::endl;
+				std::cerr << "No title set for session." << std::endl;
 				#endif
 			}
 			
 			if (!validateSessionTitle(session))
 			{
+				#ifndef NDEBUG
 				std::cerr << "Title not unique." << std::endl;
+				#endif
 				
 				#if 0
 				uSendMsg(usr, msgError(protocol::error::NotUnique));
@@ -628,8 +712,10 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			//registerSession(s);
 			session_id_map.insert( std::make_pair(session->id, session) );
 			
+			#ifndef NDEBUG
 			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
 				<< "With dimensions: " << session->width << " x " << session->height << std::endl;
+			#endif
 			
 			uSendMsg(usr, msgAck(protocol::type::Instruction));
 		}
@@ -665,16 +751,20 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 
 void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleLogin(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
+	#endif
 	#endif
 	
 	switch (usr->state)
 	{
 	case uState::login:
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "login" << std::endl;
+		#endif
 		#endif
 		
 		if (usr->inMsg->type == protocol::type::UserInfo)
@@ -683,28 +773,39 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			
 			if (msg->user_id != protocol::null_user)
 			{
+				#ifndef NDEBUG
 				std::cerr << "User made blasphemous assumption." << std::endl;
+				#endif
+				
 				uRemove(usr);
 				return;
 			}
 			
 			if (msg->session_id != protocol::Global)
 			{
+				#ifndef NDEBUG
 				std::cerr << "Wrong session identifier." << std::endl;
+				#endif
+				
 				uRemove(usr);
 				return;
 			}
 			
 			if (msg->event != protocol::user_event::Login)
 			{
+				#ifndef NDEBUG
 				std::cerr << "Wrong user event." << std::endl;
+				#endif
+				
 				uRemove(usr);
 				return;
 			}
 			
 			if (msg->length > name_len_limit)
 			{
+				#ifndef NDEBUG
 				std::cerr << "Name too long." << std::endl;
+				#endif
 				
 				#if 0
 				uSendMsg(usr, msgError(protocol::error::TooLong));
@@ -716,7 +817,9 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			
 			if (!validateUserName(usr))
 			{
+				#ifndef NDEBUG
 				std::cerr << "Name not unique." << std::endl;
+				#endif
 				
 				#if 0
 				uSendMsg(usr, msgError(protocol::error::NotUnique));
@@ -805,8 +908,10 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		
 		break;
 	case uState::init:
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "init" << std::endl;
+		#endif
 		#endif
 		
 		if (usr->inMsg->type == protocol::type::Identifier)
@@ -824,6 +929,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				#ifndef NDEBUG
 				std::cerr << "Protocol string mismatch" << std::endl;
 				#endif
+				
 				uRemove(usr);
 				return;
 			}
@@ -835,20 +941,28 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				std::cerr << "Expected: " << protocol::revision
 					<< ", Got: " << ident->revision << std::endl;
 				#endif
+				
 				uRemove(usr);
 				return;
 			}
 			
 			if (password == 0)
 			{
+				#ifndef NDEBUG
 				std::cout << "Proceed to login" << std::endl;
-				// no password set, 
+				#endif
+				
+				// no password set
+				
 				usr->state = uState::login;
 				uSendMsg(usr, message_ref(msgHostInfo()));
 			}
 			else
 			{
+				#ifndef NDEBUG
 				std::cout << "Request password" << std::endl;
+				#endif
+				
 				usr->state = uState::login_auth;
 				uSendMsg(usr, message_ref(msgAuth(usr, protocol::Global)));
 			}
@@ -871,15 +985,20 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 
 void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::Propagate(session: " << static_cast<int>(session_id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
+	#endif
 	#endif
 	
 	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
 	if (si == session_id_map.end())
 	{
+		#ifndef NDEBUG
 		std::cerr << "No such session!" << std::endl;
+		#endif
+		
 		return;
 	}
 	
@@ -894,10 +1013,12 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 
 void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uSendMsg(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	protocol::msgName(msg->type);
+	#endif
 	#endif
 	
 	usr->queue.push( msg );
@@ -911,9 +1032,11 @@ void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 
 void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uSyncSession(user: " << static_cast<int>(usr->id)
 		<< ", session: " << static_cast<int>(session->id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	// TODO: Pick user for requesting raster from, and send raster request.
@@ -937,8 +1060,10 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 
 void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uJoinSession()" << std::endl;
+	#endif
 	#endif
 	
 	if (session->users.size() > 0)
@@ -979,10 +1104,12 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 
 void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uLeaveSession(user: "
 		<< static_cast<int>(usr->id) << ", session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
+	#endif
 	#endif
 	
 	// TODO: Cancel any pending messages related to this user.
@@ -1015,14 +1142,16 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uAdd()" << std::endl;
+	#endif
 	#endif
 	
 	if (sock == 0)
 	{
 		#ifndef NDEBUG
-		std::cout << "Null socket, aborting." << std::endl;
+		std::cout << "Null socket, aborting user creation." << std::endl;
 		#endif
 		
 		return;
@@ -1032,17 +1161,19 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	if (id == 0)
 	{
-		#ifndef NDEBUG
-		std::cout << "... server is full." << std::endl;
-		#endif
+		//#ifndef NDEBUG
+		std::cout << "Server is full, kicking user." << std::endl;
+		//#endif
 		
 		delete sock;
 		return;
 	}
 	else
 	{
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
-		std::cout << "... assigned ID: " << static_cast<uint32_t>(id) << std::endl;
+		std::cout << "New user: " << static_cast<uint32_t>(id) << std::endl;
+		#endif
 		#endif
 		
 		user_ref usr( new User(id, sock) );
@@ -1057,8 +1188,10 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		
 		if (usr->input.data == 0)
 		{
+			#ifdef DEBUG_BUFFER
 			#ifndef NDEBUG
 			std::cout << "Assigning buffer to user." << std::endl;
+			#endif
 			#endif
 			
 			usr->input.setBuffer(new char[8192], 8192);
@@ -1072,8 +1205,10 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 
 void Server::uRemove(user_ref& usr) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uRemove()" << std::endl;
+	#endif
 	#endif
 	
 	ev.remove(usr->sock->fd(), ev.write|ev.read|ev.error|ev.hangup);
@@ -1087,8 +1222,10 @@ void Server::uRemove(user_ref& usr) throw()
 		uLeaveSession(usr, si->second.session);
 	}
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Removing from mappings" << std::endl;
+	#endif
 	#endif
 	users.erase(usr->sock->fd());
 	//user_id_map.erase(usr->id);
@@ -1097,9 +1234,7 @@ void Server::uRemove(user_ref& usr) throw()
 	#ifndef NDEBUG
 	std::cout << "Still in use in " << usr.use_count() << " place/s." << std::endl;
 	#endif
-	
-	usr.reset();
-	#endif
+	#endif // 0
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1110,74 +1245,82 @@ int Server::init() throw(std::bad_alloc)
 	
 	srand(time(0) - 513); // FIXME
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "creating socket" << std::endl;
 	#endif
+	#endif
 	
 	lsock.fd(socket(AF_INET, SOCK_STREAM, 0));
+	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "New socket: " << lsock.fd() << std::endl;
+	#endif
 	#endif
 	
 	if (lsock.fd() == INVALID_SOCKET)
 	{
-		std::cerr << "failed to create a socket." << std::endl;
+		std::cerr << "Failed to create a socket." << std::endl;
 		return -1;
 	}
 	
 	lsock.block(0); // nonblocking
 	lsock.reuse(1); // reuse address
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "binding socket address" << std::endl;
 	#endif
-	{ // limited scope
-		bool bound = false;
-		for (int bport=lo_port; bport < hi_port+1; bport++)
+	#endif
+	
+	bool bound = false;
+	for (int bport=lo_port; bport < hi_port+1; bport++)
+	{
+		#ifdef DEBUG_SERVER
+		#ifndef NDEBUG
+		std::cout << "Trying: " << INADDR_ANY << ":" << bport << std::endl;
+		#endif
+		#endif
+		
+		if (lsock.bindTo(INADDR_ANY, bport) == SOCKET_ERROR)
 		{
-			#ifndef NDEBUG
-			std::cout << "trying: " << INADDR_ANY << ":" << bport << std::endl;
-			#endif
+			if (lsock.getError() == EBADF || lsock.getError() == EINVAL)
+				return -1;
 			
-			if (lsock.bindTo(INADDR_ANY, bport) == SOCKET_ERROR)
-			{
-				if (lsock.getError() == EBADF || lsock.getError() == EINVAL)
-					return -1;
-				
-				// continue
-			}
-			else
-			{
-				bound = true;
+			// continue
+		}
+		else
+		{
+			bound = true;
+			break;
+		}
+	}
+	
+	if (!bound)
+	{
+		std::cerr << "Failed to bind to any port." << std::endl;
+		int e = lsock.getError();
+		switch (e)
+		{
+			case EADDRINUSE:
+				std::cerr << "Address already in use " << std::endl;
 				break;
-			}
+			case EADDRNOTAVAIL:
+				std::cerr << "Address not available" << std::endl;
+				break;
+			case ENOBUFS:
+				std::cerr << "Insufficient resources" << std::endl;
+				break;
+			case EACCES:
+				std::cerr << "Can't bind to superuser sockets" << std::endl;
+				break;
+			default:
+				std::cerr << "Unknown error" << std::endl;
+				break;
 		}
 		
-		if (!bound)
-		{
-			std::cerr << "Failed to bind to any port." << std::endl;
-			int e = lsock.getError();
-			switch (e)
-			{
-				case EADDRINUSE:
-					std::cerr << "address already in use " << std::endl;
-					break;
-				case EADDRNOTAVAIL:
-					std::cerr << "address not available" << std::endl;
-					break;
-				case ENOBUFS:
-					std::cerr << "insufficient resources" << std::endl;
-					break;
-				case EACCES:
-					std::cerr << "can't bind to superuser sockets" << std::endl;
-					break;
-				default:
-					std::cerr << "unknown error" << std::endl;
-					break;
-			}
-			
-			return -1;
-		}
+		return -1;
 	}
 	
 	if (lsock.listen() == -1)
@@ -1186,7 +1329,7 @@ int Server::init() throw(std::bad_alloc)
 		return -1;
 	}
 	
-	std::cout << "listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
+	std::cout << "Listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
 	
 	if (!ev.init())
 		return -1;
@@ -1198,14 +1341,14 @@ int Server::init() throw(std::bad_alloc)
 
 int Server::run() throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::run()" << std::endl;
+	#endif
 	#endif
 	
 	// user map iterator
 	std::map<int, user_ref>::iterator ui;
-	
-	//EvList evl;
 	
 	// event count
 	int ec /*, evs */;
@@ -1228,14 +1371,18 @@ int Server::run() throw()
 		else
 		{
 			//evl = ev.getEvents( ec );
+			#ifdef DEBUG_SERVER
 			#ifndef NDEBUG
 			std::cout << "Events waiting: " << ec << std::endl;
+			#endif
 			#endif
 			
 			if (ev.isset(lsock.fd(), ev.read))
 			{
+				#ifdef DEBUG_SERVER
 				#ifndef NDEBUG
 				std::cout << "Server socket triggered" << std::endl;
+				#endif
 				#endif
 				
 				ec--;
@@ -1249,11 +1396,13 @@ int Server::run() throw()
 				{
 					#if 0
 					std::cout << "Testing: " << ui->first << std::endl;
-					#endif
+					#endif // 0
 					if (ev.isset(ui->first, ev.read))
 					{
+						#ifdef DEBUG_SERVER
 						#ifndef NDEBUG
 						std::cout << "Reading from client" << std::endl;
+						#endif
 						#endif
 						
 						uRead(ui->second);
@@ -1262,8 +1411,10 @@ int Server::run() throw()
 					}
 					if (ec != 0 && ev.isset(ui->first, ev.write))
 					{
+						#ifdef DEBUG_SERVER
 						#ifndef NDEBUG
 						std::cout << "Writing to client" << std::endl;
+						#endif
 						#endif
 						
 						uWrite(ui->second);
@@ -1272,8 +1423,10 @@ int Server::run() throw()
 					}
 					if (ec != 0 && ev.isset(ui->first, ev.error))
 					{
+						#ifdef DEBUG_SERVER
 						#ifndef NDEBUG
 						std::cout << "Error with client" << std::endl;
+						#endif
 						#endif
 						
 						uRemove(ui->second);
@@ -1283,8 +1436,10 @@ int Server::run() throw()
 					#ifdef EV_HAS_HANGUP
 					if (ec != 0 && ev.isset(ui->first, ev.hangup))
 					{
+						#ifdef DEBUG_SERVER
 						#ifndef NDEBUG
 						std::cout << "Client hung up" << std::endl;
+						#endif
 						#endif
 						
 						uRemove(ui->second);
@@ -1308,8 +1463,10 @@ int Server::run() throw()
 		// do something generic?
 	}
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "done?" << std::endl;
+	std::cout << "Done?" << std::endl;
+	#endif
 	#endif
 	
 	return 0;
@@ -1317,10 +1474,21 @@ int Server::run() throw()
 
 bool Server::validateUserName(user_ref& usr) const throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::validateUserName(user: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	
 	return true;
 }
 
 bool Server::validateSessionTitle(session_ref& session) const throw()
 {
+	#ifndef NDEBUG
+	std::cout << "Server::validateSessionTitle("
+		<< static_cast<int>()
+		<<")" << std::endl;
+	#endif
+	
 	return true;
 }
