@@ -461,6 +461,39 @@ void SessionState::releaseRaster()
 }
 
 /**
+ * Start sending raster data.
+ * The data will be sent in pieces, interleaved with other messages.
+ * @param raster raster data buffer
+ */
+void SessionState::sendRaster(const QByteArray& raster)
+{
+	raster_ = raster;
+	rasteroffset_ = 0;
+	connect(host_->net_, SIGNAL(sent()),
+			this, SLOT(sendRasterChunk()));
+}
+
+void SessionState::sendRasterChunk()
+{
+	unsigned int chunklen = 1024*10;
+	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
+		chunklen = rasteroffset_ + chunklen - raster_.length();
+	if(chunklen==0) {
+		disconnect(host_->net_, SIGNAL(sent()),
+				this, SLOT(sendRasterChunk()));
+		releaseRaster();
+		return;
+	}
+	protocol::Raster *msg = new protocol::Raster;
+	msg->offset = rasteroffset_;
+	msg->length = chunklen;
+	msg->size = raster_.length();
+	msg->data = new char[chunklen];
+	memcpy(msg->data, raster_.constData()+rasteroffset_, chunklen);
+	host_->net_->send(msg);
+}
+
+/**
  * Send a SessionSelect message to indicate this session as the one
  * where drawing occurs.
  */
@@ -560,6 +593,16 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 		raster_.append(QByteArray(msg->data,msg->length));
 		emit rasterReceived(100*(msg->offset+msg->length)/msg->size);
 	}
+}
+
+/**
+ * A synchronize request causes the client to start transmitting a copy of
+ * the drawingboard as soon as the user stops drawing.
+ * @param msg Synchronize message
+ */
+void SessionState::handleSynchronize(const protocol::Synchronize *msg)
+{
+	emit syncRequest();
 }
 
 /**

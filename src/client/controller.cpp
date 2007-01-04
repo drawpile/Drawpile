@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
+#include <QBuffer>
 #include "controller.h"
 #include "board.h"
 #include "brush.h"
@@ -29,7 +30,7 @@
 #include "../shared/protocol.defaults.h"
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), editor_(0), net_(0), session_(0)
+	: QObject(parent), board_(0), editor_(0), net_(0), session_(0), pendown_(false)
 {
 	netstate_ = new network::HostState(this);
 	connect(netstate_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
@@ -84,6 +85,8 @@ void Controller::connectHost(const QString& address, const QString& username)
 	// Connect to host
 	netstate_->setConnection(net_);
 	net_->connectHost(addr[0], port);
+
+	sync_ = false;
 }
 
 /**
@@ -140,6 +143,7 @@ void Controller::sessionJoined(int id)
 
 	// Make session <-> board connections
 	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
+	connect(session_, SIGNAL(syncRequested()), this, SLOT(rasterUpload()));
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
 	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
@@ -196,6 +200,25 @@ void Controller::rasterDownload(int p)
 	emit rasterProgress(p);
 }
 
+/**
+ * Raster upload requested
+ */
+void Controller::rasterUpload()
+{
+	if(pendown_)
+		sync_ = true;
+	else
+		sendRaster();
+}
+
+void Controller::sendRaster()
+{
+	QByteArray raster;
+	QBuffer buffer(&raster);
+	board_->image().save(&buffer, "PNG");
+	session_->sendRaster(raster);
+}
+
 void Controller::setTool(tools::Type tool)
 {
 	tool_ = tools::Tool::get(tool);
@@ -204,8 +227,10 @@ void Controller::setTool(tools::Type tool)
 void Controller::penDown(const drawingboard::Point& point, bool isEraser)
 {
 	tool_->begin(point);
-	if(tool_->readonly()==false)
+	if(tool_->readonly()==false) {
 		emit changed();
+		pendown_ = true;
+	}
 }
 
 void Controller::penMove(const drawingboard::Point& point)
@@ -216,6 +241,11 @@ void Controller::penMove(const drawingboard::Point& point)
 void Controller::penUp()
 {
 	tool_->end();
+	if(sync_) {
+		sync_ = false;
+		sendRaster();
+	}
+	pendown_ = false;
 }
 
 void Controller::netConnected()

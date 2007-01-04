@@ -68,6 +68,9 @@ class NetworkPrivate : public QObject {
 		//! One or more message available in receive buffer
 		void received();
 
+		//! Send buffer emptied
+		void sent();
+
 		//! An error occured
 		void error(const QString& message);
 

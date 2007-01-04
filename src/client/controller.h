@@ -130,8 +130,11 @@ class Controller : public QObject
 		void sessionJoined(int id);
 		void sessionParted();
 		void rasterDownload(int p);
+		void rasterUpload();
 
 	private:
+		void sendRaster();
+
 		drawingboard::Board *board_;
 		tools::Tool *tool_;
 		drawingboard::BoardEditor *editor_;
@@ -141,6 +144,9 @@ class Controller : public QObject
 		QString address_;
 
 		QString username_;
+
+		bool pendown_;
+		bool sync_;
 };
 
 #endif

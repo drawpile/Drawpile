@@ -38,6 +38,7 @@ namespace protocol {
 	class ToolInfo;
 	class StrokeInfo;
 	class StrokeEnd;
+	class Synchronize;
 };
 
 namespace drawingboard {
@@ -217,6 +218,9 @@ class SessionState : public QObject {
 		//! Release raster data
 		void releaseRaster();
 
+		//! Send raster data
+		void sendRaster(const QByteArray& raster);
+
 		//! Select this session as active
 		void select();
 
@@ -234,6 +238,9 @@ class SessionState : public QObject {
 
 		//! Handle raster data
 		void handleRaster(const protocol::Raster *msg);
+
+		//! Handle sync request
+		void handleSynchronize(const protocol::Synchronize *msg);
 
 		//! Handle ToolInfo messages
 		void handleToolInfo(const protocol::ToolInfo *msg);
@@ -257,6 +264,9 @@ class SessionState : public QObject {
 		//! A user has left the session
 		void userLeft(int id);
 
+		//! Raster data upload request
+		void syncRequest();
+
 		//! Results of a ToolInfo message
 		void toolReceived(int user, const drawingboard::Brush& brush);
 
@@ -266,12 +276,18 @@ class SessionState : public QObject {
 		//! Results of a StrokeEnd message
 		void strokeEndReceived(int user);
 
+	private slots:
+		//! Send a chunk of the raster buffer
+		void sendRasterChunk();
+
 	private:
+
 		HostState *host_;
 		Session info_;
 		UserList users_;
 		QString password_;
 		QByteArray raster_;
+		unsigned int rasteroffset_;
 };
 
 }
