@@ -177,6 +177,10 @@ protected:
 	
 	// Removes user and does cleaning..
 	void uRemove(user_ref& usr) throw();
+	
+	// check name/title uniqueness
+	bool validateUserName(user_ref& usr) const throw();
+	bool validateSessionTitle(session_ref& session) const throw();
 public:
 	//! ctor
 	Server() throw();

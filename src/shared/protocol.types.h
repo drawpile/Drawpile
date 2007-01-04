@@ -50,57 +50,57 @@ const uint8_t
 	
 	//! for Identifier.
 	Identifier = 200,
-
+	
 	//! for StrokeInfo.
 	StrokeInfo = 1,
 	//! for StrokeEnd.
 	StrokeEnd = 2,
 	//! for ToolInfo.
 	ToolInfo = 3,
-
+	
 	//! for Authentication.
 	Authentication = 25,
 	//! for Password.
 	Password = 26,
-
+	
 	//! for Synchronize.
 	Synchronize = 10,
 	//! for Raster.
 	Raster = 11,
 	//! for SyncWait.
 	SyncWait = 12,
-
+	
 	//! for Subscribe.
 	Subscribe = 30,
 	//! for Unsubscribe.
 	Unsubscribe = 31,
 	//! for Session select.
 	SessionSelect = 37,
-
+	
 	//! for Instruction.
 	Instruction = 77,
 	//! for ListSessions.
 	ListSessions = 72,
 	//! for Cancel.
 	Cancel = 73,
-
+	
 	//! for UserInfo.
 	UserInfo = 80,
 	//! for HostInfo.
 	HostInfo = 81,
 	//! for SessionInfo.
 	SessionInfo = 82,
-
+	
 	//! for Acknowledgement.
 	Acknowledgement = 20,
 	//! for Error.
 	Error = 21,
-
+	
 	//! for Deflate.
 	Deflate = 191,
 	//! for Chat.
 	Chat = 192,
-
+	
 	//! for Palette.
 	Palette = 91;
 
@@ -120,10 +120,14 @@ const uint8_t
 	//! Logging in.
 	Login = 1,
 	
+	/* session specific */
+	
 	//! Joined session.
 	Join = 5,
 	//! Left session.
 	Leave = 6,
+	
+	/* verbose leave reasons */
 	
 	//! User disconnected. Indication of poorly behaving client.
 	Disconnect = 10,
@@ -135,6 +139,8 @@ const uint8_t
 	Dropped = 13,
 	//! Kicked by admin.
 	Kicked = 14,
+	
+	/* user mode changes */
 	
 	//! Muted by admin.
 	Mute = 20,

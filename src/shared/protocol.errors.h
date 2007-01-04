@@ -103,10 +103,6 @@ const uint16_t
 	//! Name not unique, go frell it up some more.
 	NotUnique = 74,
 	
-	/* Bad behaving clients */
-	//! What? Who?
-	UnrecognizedMessage = 80,
-	
 	/* Completely unexpected error messages */
 	
 	//! Something bad happened to server, yet it managed to throw this up.

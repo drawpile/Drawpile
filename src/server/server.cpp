@@ -479,27 +479,30 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 	case protocol::type::ListSessions:
 		std::cout << "List Sessions" << std::endl;
 		{
-			protocol::SessionInfo *nfo = 0;
-			std::map<uint8_t, session_ref>::iterator si(session_id_map.begin());
-			for (; si != session_id_map.end(); si++)
+			if (session_id_map.size() != 0)
 			{
-				nfo = new protocol::SessionInfo;
-				
-				nfo->session_id = si->first;
-				
-				nfo->width = si->second->width;
-				nfo->height = si->second->height;
-				
-				nfo->owner = si->second->owner;
-				nfo->users = si->second->users.size();
-				nfo->limit = si->second->limit;
-				nfo->mode = si->second->mode;
-				nfo->length = si->second->len;
-				
-				nfo->title = new char[si->second->len];
-				memcpy(nfo->title, si->second->title, si->second->len);
-				
-				uSendMsg(usr, message_ref(nfo));
+				protocol::SessionInfo *nfo = 0;
+				std::map<uint8_t, session_ref>::iterator si(session_id_map.begin());
+				for (; si != session_id_map.end(); si++)
+				{
+					nfo = new protocol::SessionInfo;
+					
+					nfo->session_id = si->first;
+					
+					nfo->width = si->second->width;
+					nfo->height = si->second->height;
+					
+					nfo->owner = si->second->owner;
+					nfo->users = si->second->users.size();
+					nfo->limit = si->second->limit;
+					nfo->mode = si->second->mode;
+					nfo->length = si->second->len;
+					
+					nfo->title = new char[si->second->len];
+					memcpy(nfo->title, si->second->title, si->second->len);
+					
+					uSendMsg(usr, message_ref(nfo));
+				}
 			}
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
@@ -595,8 +598,6 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 				protocol::Error* errmsg = new protocol::Error;
 				errmsg->code = protocol::error::TooSmall;
 				uSendMsg(usr, message_ref(errmsg));
-				//delete s;
-				//s.reset();
 				return;
 			}
 			
@@ -604,6 +605,19 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			{
 				s->title = new char[m->length - crop];
 				memcpy(s->title, m->data+crop, m->length-crop);
+			}
+			
+			if (!validateSessionTitle(s))
+			{
+				std::cerr << "Title not unique." << std::endl;
+				
+				#if 0
+				protocol::Error *err = new protocol::Error;
+				err->code = protocol::error::NotUnique;
+				uSendMsg(usr, message_ref(err));
+				#endif // 0
+				
+				return;
 			}
 			
 			s->owner = usr->id;
@@ -693,6 +707,27 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			if (m->length > name_len_limit)
 			{
 				std::cerr << "Name too long." << std::endl;
+				
+				#if 0
+				protocol::Error *err = new protocol::Error;
+				err->code = protocol::error::TooLong;
+				uSendMsg(usr, message_ref(err));
+				#endif // 0
+				
+				uRemove(usr);
+				return;
+			}
+			
+			if (!validateUserName(usr))
+			{
+				std::cerr << "Name not unique." << std::endl;
+				
+				#if 0
+				protocol::Error *err = new protocol::Error;
+				err->code = protocol::error::NotUnique;
+				uSendMsg(usr, message_ref(err));
+				#endif // 0
+				
 				uRemove(usr);
 				return;
 			}
@@ -764,7 +799,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			}
 			
 			protocol::Acknowledgement *ack = new protocol::Acknowledgement;
-			ack->event = protocol::Password;
+			ack->event = protocol::type::Password;
 			uSendMsg(usr, message_ref(ack));
 		}
 		else
@@ -848,16 +883,15 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
-	std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
+	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
 	if (si == session_id_map.end())
 	{
 		std::cerr << "No such session!" << std::endl;
 		return;
 	}
-	session_ref session(si->second);
 	
-	std::map<uint8_t, user_ref>::iterator ui( session->users.begin() );
-	for (; ui != session->users.end(); ui++)
+	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
+	for (; ui != si->second->users.end(); ui++)
 	{
 		// TODO: Somehow prevent some messages from being propagated back to originator
 		
@@ -1273,4 +1307,14 @@ int Server::run() throw()
 	#endif
 	
 	return 0;
+}
+
+bool Server::validateUserName(user_ref& usr) const throw()
+{
+	return true;
+}
+
+bool Server::validateSessionTitle(session_ref& session) const throw()
+{
+	return true;
 }
