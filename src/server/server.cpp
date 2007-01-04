@@ -1119,9 +1119,6 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	
 	if (session->users.size() != 0)
 	{
-		// Put session to syncing state
-		session->syncing = true;
-		
 		// put user to wait sync list.
 		session->waitingSync.push( usr );
 		
@@ -1132,8 +1129,15 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
 		}
 		
-		// tell session users to enter syncwait state.
-		Propagate(session->id, msgSyncWait(session));
+		// don't start new client sync if one is already in progress...
+		if (!session->syncing)
+		{
+			// Put session to syncing state
+			session->syncing = true;
+			
+			// tell session users to enter syncwait state.
+			Propagate(session->id, msgSyncWait(session));
+		}
 	}
 	else
 	{

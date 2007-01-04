@@ -42,9 +42,9 @@ struct SessionData
 	SessionData(uint8_t id=protocol::null_user, session_ref s=session_ref()) throw()
 		: user(id),
 		session(s),
-		mode(s->mode)
+		mode(s->mode),
+		syncWait(false)
 	{
-		
 	}
 	
 	~SessionData() throw()
@@ -59,6 +59,8 @@ struct SessionData
 	
 	// User mode within session
 	uint8_t mode;
+	
+	bool syncWait;
 };
 
 // User states
