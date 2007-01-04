@@ -86,9 +86,6 @@ struct Session
 	
 	// Subscribed users
 	std::map<uint8_t, user_ref> users;
-	
-	// Fake tunnel between two users.
-	std::map<uint8_t, uint8_t> tunnel;
 };
 
 #endif // ServerSession_INCLUDED

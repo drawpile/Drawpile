@@ -86,6 +86,9 @@ protected:
 	// Session ID to session mapping
 	std::map<uint8_t, session_ref> session_id_map;
 	
+	// Fake tunnel between two users. Only used for passing raster, for now.
+	std::map<uint8_t, uint8_t> tunnel;
+	
 	// listening socket
 	Socket lsock;
 	

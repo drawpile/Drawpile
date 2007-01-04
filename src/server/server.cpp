@@ -1041,21 +1041,28 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	
 	// TODO: Pick user for requesting raster from, and send raster request.
 	
-	#if 0
-	user_ref src_usr;
-	
-	protocol::Synchronize *sync = new protocol::Synchronize;
-	sync->session_id = session->id;
-	uSendMsg(src_usr, message_ref(sync));
-	
-	// create fake tunnel
-	session->tunnel.insert( std::make_pair(usr->id, src_usr->id) );
-	#endif // 0
+	if (session->users.size() == 0)
+	{
+		// session is empty
+		protocol::Raster *raster = new protocol::Raster;
+		raster->session_id = session->id;
+		uSendMsg(usr, message_ref(raster));
+	}
+	else
+	{
+		#if 0
+		user_ref src_usr;
+		
+		protocol::Synchronize *sync = new protocol::Synchronize;
+		sync->session_id = session->id;
+		uSendMsg(src_usr, message_ref(sync));
+		
+		// create fake tunnel
+		tunnel.insert( std::make_pair(src_usr->id, usr->id) );
+		#endif // 0
+	}
 	
 	// This is WRONG
-	protocol::Raster *raster = new protocol::Raster;
-	raster->session_id = session->id;
-	uSendMsg(usr, message_ref(raster));
 }
 
 void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
@@ -1214,6 +1221,20 @@ void Server::uRemove(user_ref& usr) throw()
 	ev.remove(usr->sock->fd(), ev.write|ev.read|ev.error|ev.hangup);
 	
 	freeUserID(usr->id);
+	
+	// clear the fake tunnel of any possible instance of this user.
+	if ((usr->sessions.size() != 0) and (tunnel.size() != 0))
+	{
+		std::map<uint8_t,uint8_t>::iterator ti(tunnel.begin());
+		for (; ti != tunnel.end(); ti++)
+		{
+			if (ti->second == usr->id)
+			{
+				tunnel.erase(ti->first);
+				break;
+			}
+		}
+	}
 	
 	std::map<uint8_t, SessionData>::iterator si( usr->sessions.begin() );
 	for (; si != usr->sessions.end(); si++ )
