@@ -143,6 +143,8 @@ int main(int argc, char** argv)
 		<< srv_info::websiteURL << std::endl
 		<< std::endl;
 	
+	int rc = 0;
+	
 	// limited scope for server
 	{
 		Server srv;
@@ -155,9 +157,10 @@ int main(int argc, char** argv)
 			return 1;
 		
 		try {
-			srv.run();
+			rc = srv.run();
 		}
 		catch (...) {
+			rc = 9;
 			// do nothing
 		}
 	} // server scope
@@ -168,5 +171,5 @@ int main(int argc, char** argv)
 	std::cout << "quitting" << std::endl;
 	#endif
 	
-	return 0;
+	return rc;
 }
