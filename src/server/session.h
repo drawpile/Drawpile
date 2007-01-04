@@ -45,7 +45,7 @@ struct Session
 		owner(protocol::null_user),
 		width(0),
 		height(0),
-		syncing(false)
+		syncCounter(0)
 	{
 		#ifndef NDEBUG
 		std::cout << "Session::Session()" << std::endl;
@@ -91,7 +91,7 @@ struct Session
 	std::stack<user_ref> waitingSync;
 	
 	// Session sync in action.
-	bool syncing;
+	uint32_t syncCounter;
 };
 
 #endif // ServerSession_INCLUDED

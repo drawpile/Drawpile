@@ -148,7 +148,7 @@ protected:
 	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgAck(uint8_t msgtype) const throw(std::bad_alloc);
+	message_ref msgAck(uint8_t session, uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgSyncWait(session_ref session) const throw(std::bad_alloc);
@@ -166,6 +166,9 @@ protected:
 	
 	// Handle user message.
 	void uHandleMsg(user_ref& usr) throw(std::bad_alloc);
+	
+	// Handle ACKs
+	void Server::uHandleAck(user_ref& usr) throw();
 	
 	// Handle instruction message
 	void uHandleInstruction(user_ref& usr) throw();
@@ -186,10 +189,8 @@ protected:
 	 */
 	void uSendMsg(user_ref& usr, message_ref msg) throw();
 	
-	#if 0
 	// Begin synchronizing the session
-	void uSyncSession(user_ref& usr, session_ref& session) throw();
-	#endif // 0
+	void SyncSession(session_ref& session) throw();
 	
 	//
 	void uJoinSession(user_ref& usr, session_ref& session) throw();

@@ -218,7 +218,7 @@ message_ref Server::msgError(uint16_t code) const throw(std::bad_alloc)
 	return message_ref(err);
 }
 
-message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
+message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -227,6 +227,7 @@ message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
 	#endif
 	
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+	ack->session_id = session;
 	ack->event = type;
 	return message_ref(ack);
 }
@@ -502,6 +503,8 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		
 		// make sure the user id is correct
 		usr->inMsg->user_id = usr->id;
+		
+		// needed for Propagate()
 		usr->inMsg->session_id = usr->session;
 		
 		Propagate(message_ref(usr->inMsg));
@@ -509,12 +512,12 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		usr->inMsg = 0;
 		break;
 	case protocol::type::Acknowledgement:
-		// TODO!!!
+		uHandleAck(usr);
 		break;
 	case protocol::type::SessionSelect:
 		if (usr->sessions.find(usr->inMsg->session_id) != usr->sessions.end())
 		{
-			uSendMsg(usr, msgAck(protocol::type::SessionSelect));
+			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::SessionSelect));
 			usr->session = usr->inMsg->session_id;
 			
 			Propagate(message_ref(usr->inMsg));
@@ -551,7 +554,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				uSendMsg(usr, msgAck(protocol::type::Unsubscribe));
+				uSendMsg(usr, msgAck(msg->session_id, protocol::type::Unsubscribe));
 				
 				uLeaveSession(usr, si->second);
 			}
@@ -578,7 +581,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				uSendMsg(usr, msgAck(protocol::type::Subscribe));
+				uSendMsg(usr, msgAck(msg->session_id, protocol::type::Subscribe));
 				uJoinSession(usr, si->second);
 			}
 		}
@@ -615,7 +618,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 			}
 		}
 		
-		uSendMsg(usr, msgAck(protocol::type::ListSessions));
+		uSendMsg(usr, msgAck(protocol::Global, protocol::type::ListSessions));
 		break;
 	case protocol::type::Instruction:
 		#ifdef DEBUG_SERVER
@@ -635,6 +638,74 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		#endif
 		#endif
 		uRemove(usr);
+		break;
+	}
+}
+
+void Server::uHandleAck(user_ref& usr) throw()
+{
+	//#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::uHandleAck()" << std::endl;
+	#endif
+	//#endif
+	
+	protocol::Acknowledgement *ack = static_cast<protocol::Acknowledgement*>(usr->inMsg);
+	
+	switch (ack->event)
+	{
+	case protocol::type::SyncWait:
+		#ifndef NDEBUG
+		std::cout << "ACK/SyncWait!" << std::endl;
+		#endif
+		// TODO
+		
+		{
+			std::map<uint8_t, SessionData>::iterator us(usr->sessions.find(ack->session_id));
+			if (us == usr->sessions.end())
+			{
+				uSendMsg(usr, msgError(protocol::error::NotSubscribed));
+				return;
+			}
+			
+			if (us->second.syncWait)
+			{
+				#ifndef NDEBUG
+				std::cout << "Another ACK/SyncWait for same session. Kicin'!" << std::endl;
+				#endif
+				
+				uRemove(usr);
+				return;
+			}
+			else
+			{
+				us->second.syncWait = true;
+			}
+			
+			session_ref session(session_id_map.find(ack->session_id)->second);
+			session->syncCounter--;
+			
+			if (session->syncCounter == 0)
+			{
+				#ifndef NDEBUG
+				std::cout << "SyncWait counter reached 0." << std::endl;
+				#endif
+				
+				SyncSession(session);
+			}
+			else
+			{
+				#ifndef NDEBUG
+				std::cout << "ACK/SyncWait counter: " << session->syncCounter << std::endl;
+				#endif
+			}
+		}
+		break;
+	default:
+		#ifndef NDEBUG
+		std::cout << "ACK/SomethingWeDoNotCareAboutButShouldValidateNoneTheLess" << std::endl;
+		#endif
+		// don't care..
 		break;
 	}
 }
@@ -755,7 +826,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 				<< "With dimensions: " << session->width << " x " << session->height << std::endl;
 			#endif
 			
-			uSendMsg(usr, msgAck(protocol::type::Instruction));
+			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Instruction));
 		}
 		break;
 	case protocol::admin::command::Destroy:
@@ -773,7 +844,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 			msg->data = 0;
 			msg->length = 0;
 			
-			uSendMsg(usr, msgAck(protocol::type::Instruction));
+			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Instruction));
 		}
 		else
 		{
@@ -933,7 +1004,7 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			uSendMsg(usr, msgAck(protocol::type::Password));
+			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Password));
 		}
 		else
 		{
@@ -1094,39 +1165,45 @@ void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 	}
 }
 
-#if 0
-void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
+void Server::SyncSession(session_ref& session) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::uSyncSession(user: " << static_cast<int>(usr->id)
-		<< ", session: " << static_cast<int>(session->id) << ")" << std::endl;
+	std::cout << "Server::SyncSession(session: "
+		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	#endif
 	
-	if (session->users.size() == 0)
+	assert(session->syncCounter == 0);
+	
+	// TODO: Need better source user selection.
+	user_ref src(session->users.begin()->second);
+	
+	// request raster
+	message_ref syncreq(new protocol::Synchronize);
+	syncreq->session_id = session->id;
+	uSendMsg(src, syncreq);
+	
+	// release syncwait...
+	Propagate(msgAck(session->id, protocol::type::SyncWait));
+	
+	// put waiting clients to normal data propagation.
+	user_ref usr;
+	while (session->waitingSync.size() != 0)
 	{
-	}
-	else
-	{
-		// find source for raster.
-		user_ref src_usr;
-		std::map<uint8_t, user_ref>::iterator ui(session->users.begin());
-		for (; ui != session->users.end(); ui++)
-		{
-			if (ui->second->id != usr->id)
-				src_usr = ui->second;
-		}
+		// get user
+		usr = session->waitingSync.top();
+		session->waitingSync.pop();
 		
-		// send raster request to users (NOT HERE DAMNIT! AFTER ACK/SYNC!!!)
-		protocol::Synchronize *sync = new protocol::Synchronize;
-		sync->session_id = session->id;
-		uSendMsg(src_usr, message_ref(sync));
-		// create fake tunnel
-		tunnel.insert( std::make_pair(src_usr->id, usr->id) );
+		// Create fake tunnel
+		tunnel.insert( std::make_pair(src->id, usr->id) );
+		
+		// add user to normal data propagation.
+		session->users.insert( std::make_pair(usr->id, usr) );
 	}
+	
+	// TODO: Clean syncWait flags from users.
 }
-#endif // 0
 
 void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 {
@@ -1157,10 +1234,10 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 		}
 		
 		// don't start new client sync if one is already in progress...
-		if (!session->syncing)
+		if (session->syncCounter == 0)
 		{
 			// Put session to syncing state
-			session->syncing = true;
+			session->syncCounter = session->users.size();
 			
 			// tell session users to enter syncwait state.
 			Propagate(msgSyncWait(session));
