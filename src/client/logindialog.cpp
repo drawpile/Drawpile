@@ -142,9 +142,8 @@ void LoginDialog::raster(int p)
 
 /**
  * Shows password request page
- * @param session if true, get a session password
  */
-void LoginDialog::getPassword(bool session)
+void LoginDialog::getPassword()
 {
 	ui_->password->setText(QString());
 	ui_->stackedWidget->setCurrentIndex(1);

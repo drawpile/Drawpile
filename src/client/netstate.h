@@ -118,7 +118,7 @@ class HostState : public QObject {
 		 * a drawing session.
 		 * @param session if true, the password is for a session
 		 */
-		void needPasword(bool session);
+		void needPassword();
 
 		//! Login sequence completed succesfully
 		void loggedin();
@@ -182,6 +182,8 @@ class HostState : public QObject {
 		Connection *net_;
 
 		QString username_;
+		QByteArray passwordseed_;
+		int passwordsession_;
 
 		int userid_;
 

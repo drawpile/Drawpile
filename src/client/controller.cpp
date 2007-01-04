@@ -38,6 +38,7 @@ Controller::Controller(QObject *parent)
 	connect(netstate_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
 	connect(netstate_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
 	connect(netstate_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
+	connect(netstate_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
 }
 
 Controller::~Controller()
@@ -107,6 +108,11 @@ void Controller::joinSession()
 	netstate_->join();
 }
 
+void Controller::sendPassword(const QString& password)
+{
+	netstate_->sendPassword(password);
+}
+
 void Controller::joinSession(int id)
 {
 	netstate_->join(id);
@@ -145,7 +151,7 @@ void Controller::sessionJoined(int id)
 	editor_ = board_->getEditor(session_);
 	tools::Tool::setEditor(editor_);
 
-	emit joined();
+	emit joined(session_->info().title);
 }
 
 /**

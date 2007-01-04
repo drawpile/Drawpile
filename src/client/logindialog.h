@@ -64,7 +64,7 @@ class LoginDialog : public QDialog
 		void raster(int p);
 
 		//! Request password from user
-		void getPassword(bool session);
+		void getPassword();
 
 		//! Disconnected before login sequence was finished
 		void disconnected(const QString& message);

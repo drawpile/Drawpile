@@ -81,6 +81,9 @@ class Controller : public QObject
 		//! Join a specific session
 		void joinSession(int id);
 
+		//! Send a password
+		void sendPassword(const QString& password);
+
 		//! Disconnect from host
 		void disconnectHost();
 
@@ -106,7 +109,7 @@ class Controller : public QObject
 		void disconnected(const QString& message);
 
 		//! Session was joined
-		void joined();
+		void joined(const QString& title);
 
 		//! Session was left
 		void parted();
@@ -116,6 +119,9 @@ class Controller : public QObject
 
 		//! A session should be selected from the list and joined
 		void selectSession(const network::SessionList& list);
+
+		//! A password is required
+		void needPassword();
 
 	private slots:
 		void netConnected();

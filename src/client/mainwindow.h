@@ -26,6 +26,7 @@
 
 class QActionGroup;
 class QMessageBox;
+class QLabel;
 
 namespace widgets {
 	class NetStatus;
@@ -108,6 +109,10 @@ class MainWindow : public QMainWindow {
 		void loggedinHost();
 		//! Logged in, join session
 		void loggedinJoin();
+		//! Connection established
+		void connected();
+		//! Connection cut
+		void disconnected();
 
 	signals:
 		//! This signal is emitted when the current tool is changed
@@ -148,6 +153,7 @@ class MainWindow : public QMainWindow {
 		//! Create dialogs
 		void createDialogs();
 
+		QLabel *sessiontitle_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;

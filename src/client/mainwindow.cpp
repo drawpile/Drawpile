@@ -61,6 +61,10 @@ MainWindow::MainWindow()
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
+	// Create session title widget
+	sessiontitle_ = new QLabel(this);
+	statusbar->addWidget(sessiontitle_);
+
 	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
@@ -90,16 +94,21 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 	connect(controller_, SIGNAL(disconnected(QString)), netstatus_, SLOT(disconnectHost()));
+	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));
+	connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(disconnected()));
 	// Controller <-> login dialog connections
 	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
 	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
-	connect(controller_, SIGNAL(joined()), logindlg_, SLOT(joined()));
+	connect(controller_, SIGNAL(joined(QString)), logindlg_, SLOT(joined()));
+	connect(controller_, SIGNAL(joined(QString)), sessiontitle_, SLOT(setText(QString)));
 	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
 	connect(controller_, SIGNAL(selectSession(network::SessionList)),logindlg_, SLOT(selectSession(network::SessionList)));
+	connect(controller_, SIGNAL(needPassword()),logindlg_, SLOT(getPassword()));
 	connect(logindlg_, SIGNAL(session(int)), controller_, SLOT(joinSession(int)));
+	connect(logindlg_, SIGNAL(password(QString)), controller_, SLOT(sendPassword(QString)));
 
 	readSettings();
 }
@@ -460,6 +469,21 @@ void MainWindow::loggedinJoin()
 	controller_->joinSession();
 }
 
+void MainWindow::connected()
+{
+	host_->setEnabled(false);
+	join_->setEnabled(false);
+	logout_->setEnabled(true);
+}
+
+void MainWindow::disconnected()
+{
+	host_->setEnabled(true);
+	join_->setEnabled(true);
+	logout_->setEnabled(false);
+	sessiontitle_->setText(QString());
+}
+
 void MainWindow::finishNew(int i)
 {
 	switch(i) {
@@ -617,6 +641,7 @@ void MainWindow::initActions()
 	kickuser_ = new QAction("Kick", this);
 	lockuser_ = new QAction("Lock", this);
 
+	logout_->setEnabled(false);
 	lockboard_->setEnabled(false);
 	kickuser_->setEnabled(false);
 	lockuser_->setEnabled(false);

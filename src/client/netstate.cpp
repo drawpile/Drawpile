@@ -32,6 +32,7 @@
 #include "../shared/protocol.h"
 #include "../shared/protocol.admin.h"
 #include "../shared/protocol.tools.h"
+#include "../shared/SHA1.h"
 #include "../shared/templates.h" // for bswap
 
 namespace network {
@@ -208,7 +209,15 @@ void HostState::join()
 void HostState::sendPassword(const QString& password)
 {
 	protocol::Password *msg = new protocol::Password;
-	// TODO
+	msg->session_id = passwordsession_;
+	QByteArray pass = password.toUtf8();
+	CSHA1 hash;
+	hash.Update(reinterpret_cast<const uint8_t*>(pass.constData()),
+			pass.length());
+	hash.Update(reinterpret_cast<const uint8_t*>(passwordseed_.constData()),
+			passwordseed_.length());
+	hash.Final();
+	hash.GetHash(reinterpret_cast<uint8_t*>(msg->data));
 	net_->send(msg);
 }
 
@@ -344,7 +353,7 @@ void HostState::handleUserInfo(const protocol::UserInfo *msg)
  */
 void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 {
-	qDebug() << "session info " << int(msg->session_id);
+	qDebug() << "session info " << int(msg->session_id) << msg->title;
 	sessions_.append(msg);
 }
 
@@ -366,7 +375,9 @@ void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
  */
 void HostState::handleAuthentication(const protocol::Authentication *msg)
 {
-	qDebug() << "authentication";
+	passwordseed_ = QByteArray(msg->seed, protocol::password_seed_size);
+	passwordsession_ = msg->session_id;
+	emit needPassword();
 }
 
 /**
