@@ -69,7 +69,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "p:Vhs:")) != -1)
+	while ((opt = getopt( argc, argv, "p:Vhs:u")) != -1)
 	{
 		switch (opt)
 		{
@@ -94,15 +94,14 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					srv->setPorts(lo_port, hi_port);
 				}
 				break;
-			/*
 			case 'l': // localhost admin
-				localhost_admin = true;
+				// localhost_admin = true;
+				// TODO: Create server interface for setting this.
 				break;
-			*/
 			case 'u': // user limit
 				srv->setUserLimit(atoi(optarg));
 				break;
-			case 'c': // password
+			case 's': // password
 				{
 					size_t pw_len = strlen(optarg);
 					char* password = 0;
@@ -114,6 +113,9 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					srv->setPassword(password, pw_len);
 				}
 				break;
+			case 'e': // name enforcing
+				// TODO: Create server interface for setting this
+				break;
 			case 'h': // help
 				std::cout << "Syntax: dbsrv [options]" << std::endl
 					<< std::endl
@@ -121,9 +123,12 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					<< std::endl
 					<< "   -p [port]    listen on 'port' (1024 - 65535)" << std::endl
 					<< "   -h           this output (a.k.a. Help)" << std::endl
+					<< "   -l           localhost admin" << std::endl
 					//<< "   -d           daemon mode" << std::endl
+					<< "   -u [number]  set server user limit" << std::endl
 					<< "   -s [string]  password string" << std::endl
 					//<< "   -w           UTF-16 string" << std::endl
+					<< "   -e           unique name enforcing" << std::endl
 					;
 				exit(1);
 				break;
