@@ -150,6 +150,9 @@ protected:
 	inline
 	message_ref msgAck(uint8_t msgtype) const throw(std::bad_alloc);
 	
+	inline
+	message_ref msgSyncWait(session_ref session) const throw(std::bad_alloc);
+	
 	/* *** Something else *** */
 	
 	// Write to user socket
@@ -173,6 +176,9 @@ protected:
 	// Send message to session
 	void Propagate(uint8_t session_id, message_ref msg) throw();
 	
+	// Send message to session, except to one user.
+	void lPropagate(uint8_t session_id, message_ref msg, user_ref usr) throw();
+	
 	// Send message to user
 	/*
 	 * Appends the message to user's output buffer,
@@ -180,8 +186,10 @@ protected:
 	 */
 	void uSendMsg(user_ref& usr, message_ref msg) throw();
 	
+	#if 0
 	// Begin synchronizing the session
 	void uSyncSession(user_ref& usr, session_ref& session) throw();
+	#endif // 0
 	
 	//
 	void uJoinSession(user_ref& usr, session_ref& session) throw();

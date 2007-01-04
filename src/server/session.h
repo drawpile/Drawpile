@@ -44,7 +44,8 @@ struct Session
 		limit(10),
 		owner(protocol::null_user),
 		width(0),
-		height(0)
+		height(0),
+		syncing(false)
 	{
 		#ifndef NDEBUG
 		std::cout << "Session::Session()" << std::endl;
@@ -58,7 +59,6 @@ struct Session
 		#endif
 		
 		users.clear();
-		tunnel.clear();
 		
 		delete [] title;
 	}
@@ -86,6 +86,12 @@ struct Session
 	
 	// Subscribed users
 	std::map<uint8_t, user_ref> users;
+	
+	// Users waiting sync.
+	std::stack<user_ref> waitingSync;
+	
+	// Session sync in action.
+	bool syncing;
 };
 
 #endif // ServerSession_INCLUDED

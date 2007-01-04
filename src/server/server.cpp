@@ -231,6 +231,13 @@ message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
 	return message_ref(ack);
 }
 
+message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
+{
+	protocol::SyncWait *sync = new protocol::SyncWait;
+	sync->session_id = session->id;
+	return message_ref(sync);
+}
+
 void Server::uWrite(user_ref& usr) throw()
 {
 	#ifdef DEBUG_SERVER
@@ -503,6 +510,9 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		
 		usr->inMsg = 0;
 		break;
+	case protocol::type::UserInfo:
+		// TODO!!!
+		break;
 	case protocol::type::Unsubscribe:
 		#ifdef DEBUG_SERVER
 		#ifdef NDEBUG
@@ -550,9 +560,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				// Ack to user
 				uSendMsg(usr, msgAck(protocol::type::Subscribe));
-				
 				uJoinSession(usr, si->second);
 			}
 		}
@@ -1005,9 +1013,35 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
 	for (; ui != si->second->users.end(); ui++)
 	{
-		// TODO: Somehow prevent some messages from being propagated back to originator
-		
 		uSendMsg(ui->second, msg);
+	}
+}
+
+void Server::lPropagate(uint8_t session_id, message_ref msg, user_ref usr) throw()
+{
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::lPropagate(session: " << static_cast<int>(session_id)
+		<< ", type: " << static_cast<int>(msg->type) << ", not to: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	#endif
+	
+	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(session_id));
+	if (si == session_id_map.end())
+	{
+		#ifndef NDEBUG
+		std::cerr << "No such session!" << std::endl;
+		#endif
+		
+		return;
+	}
+	
+	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
+	for (; ui != si->second->users.end(); ui++)
+	{
+		if (ui->first != usr->id)
+			uSendMsg(ui->second, msg);
 	}
 }
 
@@ -1030,6 +1064,7 @@ void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 	}
 }
 
+#if 0
 void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 {
 	#ifdef DEBUG_SERVER
@@ -1039,31 +1074,29 @@ void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
 	#endif
 	#endif
 	
-	// TODO: Pick user for requesting raster from, and send raster request.
-	
 	if (session->users.size() == 0)
 	{
-		// session is empty
-		protocol::Raster *raster = new protocol::Raster;
-		raster->session_id = session->id;
-		uSendMsg(usr, message_ref(raster));
 	}
 	else
 	{
-		#if 0
+		// find source for raster.
 		user_ref src_usr;
+		std::map<uint8_t, user_ref>::iterator ui(session->users.begin());
+		for (; ui != session->users.end(); ui++)
+		{
+			if (ui->second->id != usr->id)
+				src_usr = ui->second;
+		}
 		
+		// send raster request to users (NOT HERE DAMNIT! AFTER ACK/SYNC!!!)
 		protocol::Synchronize *sync = new protocol::Synchronize;
 		sync->session_id = session->id;
 		uSendMsg(src_usr, message_ref(sync));
-		
 		// create fake tunnel
 		tunnel.insert( std::make_pair(src_usr->id, usr->id) );
-		#endif // 0
 	}
-	
-	// This is WRONG
 }
+#endif // 0
 
 void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 {
@@ -1073,40 +1106,45 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	#endif
 	#endif
 	
-	if (session->users.size() > 0)
-	{
-		//uGetRaster(session);
-	}
-	
-	session->users.insert( std::make_pair(usr->id, usr) );
-	
 	// Add session to users session list.
 	usr->sessions.insert(
 		std::make_pair( session->id, SessionData(usr->id, session) )
 	);
 	
-	// Tell session members there's a new user.
-	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Join)));
-	
-	// Tell the new user of the already existing users.
-	std::map<uint8_t, user_ref>::iterator si(session->users.begin());
-	for (; si != session->users.end(); si++)
-	{
-		uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
-	}
-	
 	// set user's active session
 	usr->session = session->id;
 	
-	// Announce active session
-	message_ref msg_ref(new protocol::SessionSelect);
-	msg_ref->user_id = usr->id;
-	msg_ref->session_id = session->id;
-	Propagate(session->id, msg_ref);
-	// TODO: Propagate to all users who see this user
+	// Tell session members there's a new user.
+	Propagate(session->id, message_ref(uCreateEvent(usr, session, protocol::user_event::Join)));
 	
-	// Start client sync
-	uSyncSession(usr, session);
+	if (session->users.size() != 0)
+	{
+		// Put session to syncing state
+		session->syncing = true;
+		
+		// put user to wait sync list.
+		session->waitingSync.push( usr );
+		
+		// Tell the new user of the already existing users.
+		std::map<uint8_t, user_ref>::iterator si(session->users.begin());
+		for (; si != session->users.end(); si++)
+		{
+			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
+		}
+		
+		// tell session users to enter syncwait state.
+		Propagate(session->id, msgSyncWait(session));
+	}
+	else
+	{
+		// session is empty
+		
+		session->users.insert( std::make_pair(usr->id, usr) );
+		
+		protocol::Raster *raster = new protocol::Raster;
+		raster->session_id = session->id;
+		uSendMsg(usr, message_ref(raster));
+	}
 }
 
 void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
