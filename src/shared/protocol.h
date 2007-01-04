@@ -504,7 +504,7 @@ struct Password
 		: Message(type::Password, message::isSession)
 	{ }
 	
-	~Password() throw() { delete [] data; }
+	~Password() throw() { }
 	
 	/* unique data */
 	

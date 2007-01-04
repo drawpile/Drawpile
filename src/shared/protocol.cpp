@@ -555,7 +555,7 @@ size_t Password::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	memcpy(buf, &data, password_hash_size);
+	memcpy(buf, data, password_hash_size);
 	
 	return password_hash_size;
 }
@@ -783,13 +783,13 @@ size_t SessionInfo::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	size_t i = unserializeHeader(buf);
 	
 	memcpy_t(width, buf+i); i += sizeof(width);
-	memcpy_t(height, buf+i); i += sizeof(width);
+	memcpy_t(height, buf+i); i += sizeof(height);
 	memcpy_t(owner, buf+i); i += sizeof(owner);
 	memcpy_t(users, buf+i); i += sizeof(users);
 	memcpy_t(limit, buf+i); i += sizeof(limit);
 	memcpy_t(mode, buf+i); i += sizeof(mode);
 	memcpy_t(flags, buf+i); i += sizeof(flags);
-	memcpy_t(length, buf+i); i += sizeof(width);
+	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	title = new char[length+1];
 	memcpy(title, buf+i, length); i += length;
