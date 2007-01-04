@@ -145,9 +145,6 @@ protected:
 	message_ref uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSelect(user_ref usr, session_ref session) const throw(std::bad_alloc);
-	
-	inline
 	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
 	
 	inline

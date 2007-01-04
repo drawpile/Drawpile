@@ -231,14 +231,6 @@ message_ref Server::msgAck(uint8_t type) const throw(std::bad_alloc)
 	return message_ref(ack);
 }
 
-message_ref Server::msgSelect(user_ref usr, session_ref session) const throw(std::bad_alloc)
-{
-	message_ref sel(new protocol::SessionSelect);
-	sel->user_id = usr->id;
-	sel->session_id = session->id;
-	return sel;
-}
-
 message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
 {
 	protocol::SyncWait *sync = new protocol::SyncWait;
@@ -516,6 +508,9 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		
 		usr->inMsg = 0;
 		break;
+	case protocol::type::Acknowledgement:
+		// TODO!!!
+		break;
 	case protocol::type::SessionSelect:
 		if (usr->sessions.find(usr->inMsg->session_id) != usr->sessions.end())
 		{
@@ -563,8 +558,10 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::Subscribe:
+		#ifdef DEBUG_SERVER
 		#ifdef NDEBUG
 		std::cout << "Subscribe" << std::endl;
+		#endif
 		#endif
 		{
 			protocol::Subscribe *msg = static_cast<protocol::Subscribe*>(usr->inMsg);
@@ -587,8 +584,10 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::ListSessions:
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "List Sessions" << std::endl;
+		#endif
 		#endif
 		if (session_id_map.size() != 0)
 		{
@@ -619,13 +618,22 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		uSendMsg(usr, msgAck(protocol::type::ListSessions));
 		break;
 	case protocol::type::Instruction:
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "Instruction" << std::endl;
+		#endif
 		#endif
 		uHandleInstruction(usr);
 		break;
 	default:
-		std::cerr << "Unexpected or unknown message type." << std::endl;
+		#ifdef DEBUG_SERVER
+		#ifndef NDEBUG
+		std::cerr << "Unexpected, unhandled or unknown message type." << std::endl;
+		protocol::msgType(usr->inMsg->type);
+		#else
+		std::cerr << "Garbage from user: " << static_cast<int>(usr->id) << std::endl;
+		#endif
+		#endif
 		uRemove(usr);
 		break;
 	}
@@ -643,6 +651,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
 	
+	// TODO: Allow session owners to alter sessions.
 	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
 		std::cerr << "Non-admin tries to pass instructions" << std::endl;
@@ -1132,9 +1141,6 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 		std::make_pair( session->id, SessionData(usr->id, session) )
 	);
 	
-	// set user's active session
-	usr->session = session->id;
-	
 	// Tell session members there's a new user.
 	Propagate(uCreateEvent(usr, session, protocol::user_event::Join));
 	
@@ -1148,7 +1154,6 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 		for (; si != session->users.end(); si++)
 		{
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
-			uSendMsg(usr, msgSelect(si->second, session));
 		}
 		
 		// don't start new client sync if one is already in progress...
@@ -1164,7 +1169,6 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	else
 	{
 		// session is empty
-		
 		session->users.insert( std::make_pair(usr->id, usr) );
 		
 		protocol::Raster *raster = new protocol::Raster;
