@@ -860,6 +860,7 @@ void Server::Propagate(uint8_t session_id, message_ref msg) throw()
 	for (; ui != session->users.end(); ui++)
 	{
 		// TODO: Somehow prevent some messages from being propagated back to originator
+		
 		uSendMsg(ui->second, msg);
 	}
 }
@@ -872,11 +873,6 @@ void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 	protocol::msgName(msg->type);
 	#endif
 	
-	//assert(usr != 0);
-	//assert(msg != 0);
-	
-	// TODO: Improve memory efficiency
-	
 	usr->queue.push( msg );
 	
 	if (!fIsSet(usr->events, ev.write))
@@ -884,10 +880,6 @@ void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
 		fSet(usr->events, ev.write);
 		ev.modify(usr->sock->fd(), usr->events);
 	}
-	
-	//delete msg;
-	//msg.reset();
-	//msg = 0;
 }
 
 void Server::uSyncSession(user_ref& usr, session_ref& session) throw()
@@ -978,23 +970,6 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 		session->owner == protocol::null_user;
 		
 		// TODO: Announce owner disappearance..
-	}
-	
-	if (usr->session == session->id)
-	{
-		// TODO: This is WRONG
-		
-		protocol::SessionSelect *ss = new protocol::SessionSelect;
-		
-		ss->user_id = usr->id;
-		usr->session = ss->session_id = protocol::Global;
-		
-		message_ref ss_ref(ss);
-		
-		Propagate(session->id, ss_ref);
-		uSendMsg(usr, ss_ref);
-		
-		// TODO: Propagate to all users who see this user
 	}
 }
 
