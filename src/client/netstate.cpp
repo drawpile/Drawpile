@@ -495,25 +495,28 @@ void SessionState::sendRaster(const QByteArray& raster)
 	rasteroffset_ = 0;
 	connect(host_->net_, SIGNAL(sent()),
 			this, SLOT(sendRasterChunk()));
+	sendRasterChunk();
 }
 
 void SessionState::sendRasterChunk()
 {
 	unsigned int chunklen = 1024*10;
 	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
-		chunklen = rasteroffset_ + chunklen - raster_.length();
+		chunklen = raster_.length() - rasteroffset_;
 	if(chunklen==0) {
 		disconnect(host_->net_, SIGNAL(sent()),
 				this, SLOT(sendRasterChunk()));
 		releaseRaster();
 		return;
 	}
+	qDebug() << "sending raster chunk from" << rasteroffset_ << "to" << rasteroffset_ + chunklen << "of" << raster_.length();
 	protocol::Raster *msg = new protocol::Raster;
 	msg->offset = rasteroffset_;
 	msg->length = chunklen;
 	msg->size = raster_.length();
 	msg->data = new char[chunklen];
 	memcpy(msg->data, raster_.constData()+rasteroffset_, chunklen);
+	rasteroffset_ += chunklen;
 	host_->net_->send(msg);
 }
 
