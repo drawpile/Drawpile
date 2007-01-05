@@ -346,8 +346,10 @@ std::pair<fd_t, uint32_t ev> Event::getEvent() const throw()
 
 uint32_t Event::getEvents(int fd) const throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::getEvents(fd: " << fd << ")" << std::endl;
+	#endif
 	#endif
 	
 	for (int n=0; n != nfds; n++)
