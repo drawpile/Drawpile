@@ -51,7 +51,7 @@ int Server::run() throw()
 	#endif
 	
 	#ifdef EVENT_BY_FD
-	bool triggered;
+	uint32_t t_events;
 	#endif
 	
 	// main loop
@@ -76,13 +76,12 @@ int Server::run() throw()
 			std::cout << "Events waiting: " << ec << std::endl;
 			#endif
 			#endif
-			ec--;
 			
 			#if defined(EVENT_BY_ORDER)
 			/* BY ORDER */
 			do
 			{
-				event = ev.getEvent(ec--);
+				event = ev.getEvent(--ec);
 				
 				if (event->first == lsock.fd())
 				{
@@ -118,7 +117,7 @@ int Server::run() throw()
 					break;
 				}
 			}
-			while (ec != -1);
+			while (ec != 0);
 			#elif defined(EVENT_BY_FD)
 			/* BY FD */
 			if (ev.isset(lsock.fd(), ev.read))
@@ -127,42 +126,39 @@ int Server::run() throw()
 				if (--ec == 0) continue;
 			}
 			
-			if (ec != 0)
+			for (usr = users.begin(); usr != users.end(); usr++)
 			{
-				for (usr = users.begin(); usr != users.end(); usr++)
+				t_events = ev.getEvents(usr->first);
+				if (t_events != 0)
 				{
-					bool triggered = false;
-					if (ev.isset(usr->first, ev.read))
+					if (fIsSet(t_events, ev.read))
 					{
 						uRead(usr->second);
-						triggered = true;
 					}
-					if (ev.isset(usr->first, ev.write))
+					if (fIsSet(t_events, ev.write))
 					{
 						uWrite(usr->second);
-						triggered = true;
 					}
-					if (ev.isset(usr->first, ev.error))
+					if (fIsSet(t_events, ev.error))
 					{
 						uRemove(usr->second);
-						triggered = true;
 					}
 					#ifdef EV_HAS_HANGUP
-					if (ev.isset(usr->first, ev.hangup))
+					if (fIsSet(t_events, ev.hangup))
 					{
 						uRemove(usr->second);
-						triggered = true;
 					}
 					#endif // EV_HAS_HANGUP
 					
-					if (triggered) ec--;
+					if (--ec == 0) break;
 				}
-				
-				#ifndef NDEBUG
-				if (ec != 0)
-					std::cout << "Not in clients..." << std::endl;
-				#endif //NDEBUG
 			}
+			
+			#ifndef NDEBUG
+			if (ec != 0)
+				std::cout << "Triggered FD not found." << std::endl;
+			#endif //NDEBUG
+			
 			#else
 			#error No event fetching method defined
 			#endif // EVENT_BY_*

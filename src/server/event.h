@@ -239,7 +239,6 @@ public:
 	std::pair<fd_t, uint32_t> getEvent(int ev_index) const throw();
 	
 	//! Fetches triggered events for FD.
-	inline
 	uint32_t getEvents(int fd) const throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
@@ -250,9 +249,6 @@ public:
 	 * @return bool
 	 */
 	bool isset(fd_t fd, uint32_t ev) const throw();
-	
-	//! TODO
-	int triggered(fd_t fd) const throw();
 };
 
 #endif // EVENT_H_INCLUDED

@@ -373,6 +373,33 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
+std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
+{
+	assert(1);
+}
+
+uint32_t Event::getEvents(int fd) const throw()
+{
+	#ifdef DEBUG_EVENTS
+	#ifndef NDEBUG
+	std::cout << "Event::getEvents(fd: " << fd << ")" << std::endl;
+	#endif
+	#endif
+	
+	assert(fd != INVALID_SOCKET);
+	
+	uint32_t events = 0;
+	
+	if (FD_ISSET(fd, &t_fds_r) != 0)
+		fSet(events, read);
+	if (FD_ISSET(fd, &t_fds_w) != 0)
+		fSet(events, write);
+	if (FD_ISSET(fd, &t_fds_e) != 0)
+		fSet(events, error);
+	
+	return events;
+}
+
 bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#ifdef DEBUG_EVENTS
