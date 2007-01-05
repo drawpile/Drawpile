@@ -449,15 +449,15 @@ size_t Raster::reqDataLen(const char *buf, size_t len) const throw()
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	if (len < headerSize() + sizeof(offset) + sizeof(length))
-		return headerSize() + sizeof(offset)
-			+ sizeof(length) + sizeof(size);
+	size_t off = headerSize() + sizeof(offset) + sizeof(length) + sizeof(size);
+	
+	if (len < off)
+		return off;
 	else
 	{
 		uint32_t tmp;
 		memcpy_t(tmp, buf+headerSize()+sizeof(offset));
-		return headerSize() + sizeof(offset)
-			+ sizeof(length) + sizeof(size) + tmp;
+		return off + bswap(tmp);
 	}
 }
 
