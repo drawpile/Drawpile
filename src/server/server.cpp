@@ -416,7 +416,9 @@ void Server::uProcessData(user_ref& usr) throw()
 		{
 			#ifdef DEBUG_SERVER
 			#ifndef NDEBUG
-			std::cout << "Need " << (len - have) << " bytes more." << std::endl;
+			std::cout << "Need " << (len - have) << " bytes more." << std::endl
+				<< "Required size: " << len << std::endl
+				<< "We already have: " << have << std::endl;
 			#endif
 			#endif
 			// still need more data
@@ -718,7 +720,7 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	bool last = (raster->offset + raster->length == raster->size);
 	
 	std::map<uint8_t, SessionData>::iterator si( usr->sessions.find(raster->session_id) );
-	for (; si != usr->sessions.end(); si++ )
+	if (si == usr->sessions.end())
 	{
 		std::cerr << "Raster for unsubscribed session: "
 			<< static_cast<int>(raster->session_id) << std::endl;
@@ -751,7 +753,8 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	}
 	
 	#ifndef NDEBUG
-	std::cout << "Tunnel raster to: " << ft->second << std::endl;
+	std::cout << "Tunnel raster to: " << ft->second
+		<< ", in session: " << raster->session_id << std::endl;
 	#endif
 	
 	// Forward to user.
