@@ -511,6 +511,7 @@ void SessionState::sendRasterChunk()
 	}
 	qDebug() << "sending raster chunk from" << rasteroffset_ << "to" << rasteroffset_ + chunklen << "of" << raster_.length();
 	protocol::Raster *msg = new protocol::Raster;
+	msg->session_id = info_.id;
 	msg->offset = rasteroffset_;
 	msg->length = chunklen;
 	msg->size = raster_.length();
