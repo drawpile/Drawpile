@@ -144,7 +144,7 @@ void Controller::sessionJoined(int id)
 
 	// Make session <-> controller connections
 	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
-	connect(session_, SIGNAL(syncRequested()), this, SLOT(rasterUpload()));
+	connect(session_, SIGNAL(syncRequest()), this, SLOT(rasterUpload()));
 	connect(session_, SIGNAL(syncWait()), this, SLOT(syncWait()));
 	connect(session_, SIGNAL(syncDone()), this, SLOT(syncDone()));
 

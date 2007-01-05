@@ -808,7 +808,7 @@ struct Acknowledgement
 	: Message //, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
-		: Message(type::Acknowledgement),
+		: Message(type::Acknowledgement, message::isSession),
 		event(type::None)
 	{ }
 	

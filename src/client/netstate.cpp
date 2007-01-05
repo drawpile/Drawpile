@@ -406,10 +406,20 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
 	qDebug() << "ack " << int(msg->event);
 	if(msg->session_id != protocol::Global) {
-		if(mysessions_.contains(msg->session_id)) {
-			mysessions_.value(msg->session_id)->handleAck(msg);
+		if(msg->event == protocol::type::Subscribe) {
+			// Special case. When subscribing, session is not yet in the list
+			mysessions_.insert(newsession_->info().id, newsession_);
+			newsession_->select();
+			emit joined(newsession_->info().id);
+			newsession_ = 0;
 		} else {
-			qDebug() << "received ack for unsubscribed session" << int(msg->session_id);
+			// Let the session handle the message
+			if(mysessions_.contains(msg->session_id)) {
+				mysessions_.value(msg->session_id)->handleAck(msg);
+			} else {
+				qDebug() << "received ack for unsubscribed session"
+					<< int(msg->session_id);
+			}
 		}
 		return;
 	}
@@ -423,14 +433,6 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 	} else if(msg->event == protocol::type::ListSessions) {
 		// A full session list has been downloaded
 		emit sessionsListed();
-	} else if(msg->event == protocol::type::Subscribe) {
-		// A session has been joined
-		mysessions_.insert(newsession_->info().id, newsession_);
-		newsession_->select();
-		emit joined(newsession_->info().id);
-		newsession_ = 0;
-	} else if(msg->event == protocol::type::SessionSelect) {
-		// Ignore session select ack
 	} else {
 		qDebug() << "\tunhandled host ack";
 	}
@@ -585,6 +587,8 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
 {
 	if(msg->event == protocol::type::SyncWait) {
 		emit syncDone();
+	} else if(msg->event == protocol::type::SessionSelect) {
+		// Ignore session select ack
 	} else {
 		qDebug() << "\tunhandled session ack";
 	}
