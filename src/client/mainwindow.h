@@ -114,6 +114,10 @@ class MainWindow : public QMainWindow {
 		void connected();
 		//! Connection cut
 		void disconnected();
+		//! Disallow changes to the board
+		void lock(const QString& reason);
+		//! Allow changes to the board
+		void unlock();
 
 	signals:
 		//! This signal is emitted when the current tool is changed

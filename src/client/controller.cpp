@@ -30,7 +30,7 @@
 #include "../shared/protocol.defaults.h"
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), editor_(0), net_(0), session_(0), pendown_(false)
+	: QObject(parent), board_(0), editor_(0), net_(0), session_(0), pendown_(false), lock_(false)
 {
 	netstate_ = new network::HostState(this);
 	connect(netstate_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
@@ -87,6 +87,7 @@ void Controller::connectHost(const QString& address, const QString& username)
 	net_->connectHost(addr[0], port);
 
 	sync_ = false;
+	syncwait_ = false;
 }
 
 /**
@@ -141,9 +142,13 @@ void Controller::sessionJoined(int id)
 	board_->addUser(netstate_->localUserId());
 	board_->setLocalUser(netstate_->localUserId());
 
-	// Make session <-> board connections
+	// Make session <-> controller connections
 	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
 	connect(session_, SIGNAL(syncRequested()), this, SLOT(rasterUpload()));
+	connect(session_, SIGNAL(syncWait()), this, SLOT(syncWait()));
+	connect(session_, SIGNAL(syncDone()), this, SLOT(syncDone()));
+
+	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
 	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
@@ -176,6 +181,10 @@ void Controller::sessionParted()
 
 	session_ = 0;
 	emit parted();
+	if(lock_) {
+		lock_ = false;
+		emit unlockboard();
+	}
 }
 
 /**
@@ -211,12 +220,39 @@ void Controller::rasterUpload()
 		sendRaster();
 }
 
+/**
+ * Synchronization request.
+ */
+void Controller::syncWait()
+{
+	if(pendown_)
+		syncwait_ = true;
+	else
+		lockForSync();
+}
+
+/**
+ * Synchronization complete
+ */
+void Controller::syncDone()
+{
+	emit unlockboard();
+	lock_ = false;
+}
+
 void Controller::sendRaster()
 {
 	QByteArray raster;
 	QBuffer buffer(&raster);
 	board_->image().save(&buffer, "PNG");
 	session_->sendRaster(raster);
+}
+
+void Controller::lockForSync()
+{
+	emit lockboard(tr("Synchronizing new user"));
+	lock_ = true;
+	session_->sendAckSync();
 }
 
 void Controller::setTool(tools::Type tool)
@@ -226,26 +262,36 @@ void Controller::setTool(tools::Type tool)
 
 void Controller::penDown(const drawingboard::Point& point, bool isEraser)
 {
-	tool_->begin(point);
-	if(tool_->readonly()==false) {
-		emit changed();
-		pendown_ = true;
+	if(lock_ == false || lock_ && tool_->readonly()) {
+		tool_->begin(point);
+		if(tool_->readonly()==false) {
+			emit changed();
+			pendown_ = true;
+		}
 	}
 }
 
 void Controller::penMove(const drawingboard::Point& point)
 {
-	tool_->motion(point);
+	if(lock_ == false || lock_ && tool_->readonly()) {
+		tool_->motion(point);
+	}
 }
 
 void Controller::penUp()
 {
-	tool_->end();
-	if(sync_) {
-		sync_ = false;
-		sendRaster();
+	if(lock_ == false || lock_ && tool_->readonly()) {
+		tool_->end();
+		if(sync_) {
+			sync_ = false;
+			sendRaster();
+		}
+		if(syncwait_) {
+			syncwait_ = false;
+			lockForSync();
+		}
+		pendown_ = false;
 	}
-	pendown_ = false;
 }
 
 void Controller::netConnected()

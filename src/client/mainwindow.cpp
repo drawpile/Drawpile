@@ -92,6 +92,8 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(disconnected(QString)), netstatus_, SLOT(disconnectHost()));
 	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(disconnected()));
+	connect(controller_, SIGNAL(lockboard(QString)), this, SLOT(lock(QString)));
+	connect(controller_, SIGNAL(unlockboard()), this, SLOT(unlock()));
 	// Controller <-> login dialog connections
 	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
 	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
@@ -481,6 +483,16 @@ void MainWindow::disconnected()
 	join_->setEnabled(true);
 	logout_->setEnabled(false);
 	setSessionTitle(QString());
+}
+
+void MainWindow::lock(const QString& reason)
+{
+	statusBar()->showMessage(tr("Board locked (%1)").arg(reason));
+}
+
+void MainWindow::unlock()
+{
+	statusBar()->showMessage(tr("Board unlocked"), 500);
 }
 
 void MainWindow::setSessionTitle(const QString& title)

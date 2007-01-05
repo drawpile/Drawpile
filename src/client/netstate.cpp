@@ -66,6 +66,24 @@ void HostState::receiveMessage()
 	while((msg = net_->receive())) {
 		switch(msg->type) {
 			using namespace protocol;
+			case type::StrokeInfo:
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleStrokeInfo(static_cast<StrokeInfo*>(msg));
+				break;
+			case type::StrokeEnd:
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleStrokeEnd(static_cast<StrokeEnd*>(msg));
+				break;
+			case type::ToolInfo:
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleToolInfo(static_cast<ToolInfo*>(msg));
+				break;
 			case type::UserInfo:
 				handleUserInfo(static_cast<UserInfo*>(msg));
 				break;
@@ -94,23 +112,19 @@ void HostState::receiveMessage()
 				else
 					qDebug() << "received raster data for unsubscribed session" << int(msg->session_id);
 				break;
-			case type::ToolInfo:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleToolInfo(static_cast<ToolInfo*>(msg));
+			case type::Synchronize:
+				if(mysessions_.contains(msg->session_id))
+					mysessions_.value(msg->session_id)->handleSynchronize(
+							static_cast<Synchronize*>(msg));
+				else
+					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
 				break;
-			case type::StrokeInfo:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleStrokeInfo(static_cast<StrokeInfo*>(msg));
-				break;
-			case type::StrokeEnd:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleStrokeEnd(static_cast<StrokeEnd*>(msg));
+			case type::SyncWait:
+				if(mysessions_.contains(msg->session_id))
+					mysessions_.value(msg->session_id)->handleSyncWait(
+							static_cast<SyncWait*>(msg));
+				else
+					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
 				break;
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
@@ -391,6 +405,14 @@ void HostState::handleAuthentication(const protocol::Authentication *msg)
 void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
 	qDebug() << "ack " << int(msg->event);
+	if(msg->session_id != protocol::Global) {
+		if(mysessions_.contains(msg->session_id)) {
+			mysessions_.value(msg->session_id)->handleAck(msg);
+		} else {
+			qDebug() << "received ack for unsubscribed session" << int(msg->session_id);
+		}
+		return;
+	}
 	if(msg->event == protocol::type::Instruction) {
 		// Confirm instruction. Currently, the only instruction used is
 		// Create, so this means the session was created. Automatically
@@ -410,7 +432,7 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 	} else if(msg->event == protocol::type::SessionSelect) {
 		// Ignore session select ack
 	} else {
-		qDebug() << "\tunhandled ack";
+		qDebug() << "\tunhandled host ack";
 	}
 }
 
@@ -548,6 +570,26 @@ void SessionState::sendStrokeEnd()
 	host_->net_->send(msg);
 }
 
+void SessionState::sendAckSync()
+{
+	protocol::Acknowledgement *msg = new protocol::Acknowledgement;
+	msg->session_id = info_.id;
+	msg->event = protocol::type::SyncWait;
+	host_->net_->send(msg);
+}
+
+/**
+ * @param msg Acknowledgement message
+ */
+void SessionState::handleAck(const protocol::Acknowledgement *msg)
+{
+	if(msg->event == protocol::type::SyncWait) {
+		emit syncDone();
+	} else {
+		qDebug() << "\tunhandled session ack";
+	}
+}
+
 /**
  * @param msg UserInfo message
  */
@@ -603,6 +645,17 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 void SessionState::handleSynchronize(const protocol::Synchronize *msg)
 {
 	emit syncRequest();
+}
+
+/**
+ * Client will enter SyncWait state. The board will be locked as soon as
+ * the current stroke is finished. The client will respond with Ack/SyncWait
+ * when the board is locked. Ack/sync from the server will unlock the board.
+ * @param msg SyncWait message
+ */
+void SessionState::handleSyncWait(const protocol::SyncWait *msg)
+{
+	emit syncWait();
 }
 
 /**

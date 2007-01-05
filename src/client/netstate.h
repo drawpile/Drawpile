@@ -39,6 +39,7 @@ namespace protocol {
 	class StrokeInfo;
 	class StrokeEnd;
 	class Synchronize;
+	class SyncWait;
 };
 
 namespace drawingboard {
@@ -233,6 +234,12 @@ class SessionState : public QObject {
 		//! Send a stroke end message
 		void sendStrokeEnd();
 
+		//! Send ack/sync message to readyness for synchronization
+		void sendAckSync();
+
+		//! Handle session acks
+		void handleAck(const protocol::Acknowledgement *msg);
+
 		//! Handle session specific user info
 		void handleUserInfo(const protocol::UserInfo *msg);
 
@@ -241,6 +248,9 @@ class SessionState : public QObject {
 
 		//! Handle sync request
 		void handleSynchronize(const protocol::Synchronize *msg);
+
+		//! Handle SyncWait command
+		void handleSyncWait(const protocol::SyncWait *msg);
 
 		//! Handle ToolInfo messages
 		void handleToolInfo(const protocol::ToolInfo *msg);
@@ -266,6 +276,12 @@ class SessionState : public QObject {
 
 		//! Raster data upload request
 		void syncRequest();
+
+		//! Lock the board when possible, in preparation for syncing a new user
+		void syncWait();
+
+		//! Synchronization complete, unlock board
+		void syncDone();
 
 		//! Results of a ToolInfo message
 		void toolReceived(int user, const drawingboard::Brush& brush);

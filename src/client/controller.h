@@ -123,6 +123,12 @@ class Controller : public QObject
 		//! A password is required
 		void needPassword();
 
+		//! Lock the board UI
+		void lockboard(const QString& reason);
+
+		//! Unlock the board UI
+		void unlockboard();
+
 	private slots:
 		void netConnected();
 		void netDisconnected(const QString& message);
@@ -131,9 +137,12 @@ class Controller : public QObject
 		void sessionParted();
 		void rasterDownload(int p);
 		void rasterUpload();
+		void syncWait();
+		void syncDone();
 
 	private:
 		void sendRaster();
+		void lockForSync();
 
 		drawingboard::Board *board_;
 		tools::Tool *tool_;
@@ -147,6 +156,8 @@ class Controller : public QObject
 
 		bool pendown_;
 		bool sync_;
+		bool syncwait_;
+		bool lock_;
 };
 
 #endif
