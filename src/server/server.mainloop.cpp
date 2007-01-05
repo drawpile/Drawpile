@@ -44,16 +44,20 @@ int Server::run() throw()
 	std::map<fd_t, user_ref>::iterator usr;
 	
 	// event count
-	int ec, evs;
+	int ec;
 	
-	#ifdef EVENT_HAS_ALL
+	#if defined(EVENT_HAS_ALL)
 	std::pair<fd_t, uint32_t> event;
+	#endif
+	
+	#ifdef EVENT_BY_FD
+	bool triggered;
 	#endif
 	
 	// main loop
 	while (1)
 	{
-		evs = ec = ev.wait(5000);
+		ec = ev.wait(5000);
 		
 		if (ec == 0)
 		{
@@ -67,19 +71,18 @@ int Server::run() throw()
 		}
 		else
 		{
-			//evl = ev.getEvents( ec );
 			#ifdef DEBUG_SERVER
 			#ifndef NDEBUG
 			std::cout << "Events waiting: " << ec << std::endl;
 			#endif
 			#endif
+			ec--;
 			
 			#if defined(EVENT_BY_ORDER)
 			/* BY ORDER */
-			
-			while (ec != 0)
+			do
 			{
-				event = ev.getEvent(evs - ec--);
+				event = ev.getEvent(ec--);
 				
 				if (event->first == lsock.fd())
 				{
@@ -115,6 +118,7 @@ int Server::run() throw()
 					break;
 				}
 			}
+			while (ec != 0);
 			#elif defined(EVENT_BY_FD)
 			/* BY FD */
 			if (ev.isset(lsock.fd(), ev.read))
@@ -123,32 +127,35 @@ int Server::run() throw()
 				if (--ec == 0) continue;
 			}
 			
-			if (ec > 0)
+			if (ec != 0)
 			{
 				for (usr = users.begin(); usr != users.end(); usr++)
 				{
+					bool triggered = false;
 					if (ev.isset(usr->first, ev.read))
 					{
 						uRead(usr->second);
-						if (--ec == 0) break;
+						triggered = true;
 					}
 					if (ev.isset(usr->first, ev.write))
 					{
 						uWrite(usr->second);
-						if (--ec == 0) break;
+						triggered = true;
 					}
 					if (ev.isset(usr->first, ev.error))
 					{
 						uRemove(usr->second);
-						if (--ec == 0) break;
+						triggered = true;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (ev.isset(usr->first, ev.hangup))
 					{
 						uRemove(usr->second);
-						if (--ec == 0) break;
+						triggered = true;
 					}
 					#endif // EV_HAS_HANGUP
+					
+					if (triggered) ec--;
 				}
 				
 				#ifndef NDEBUG
