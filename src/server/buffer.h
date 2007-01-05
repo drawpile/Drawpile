@@ -227,6 +227,7 @@ struct Buffer
 		
 		if (left > 0)
 			return ((rpos>wpos) ? (data+size) : wpos) - rpos;
+		
 		return 0;
 	}
 	
@@ -251,7 +252,9 @@ struct Buffer
 		assert(len <= canWrite());
 		
 		wpos += len;
-		if (wpos+len == data+size)
+		
+		// Set wpos to beginning of buffer if it reaches its end.
+		if (wpos == data+size)
 			wpos = data;
 		
 		left += len;
