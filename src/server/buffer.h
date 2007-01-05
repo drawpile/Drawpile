@@ -198,12 +198,13 @@ struct Buffer
 		assert(len <= canRead());
 		
 		rpos += len;
-		if (rpos+len == data+size)
-			rpos = data;
+		assert(rpos <= data+size);
 		
 		left -= len;
+		assert(left >= 0);
 		
-		assert(left >= 0UL);
+		if (rpos == data+size)
+			rpos = data;
 	}
 	
 	//! How many bytes can be read.
@@ -225,8 +226,13 @@ struct Buffer
 		assert(data != 0);
 		assert(size > 1);
 		
-		if (left > 0)
-			return ((rpos>wpos) ? (data+size) : wpos) - rpos;
+		if (left == 0)
+			return 0;
+		
+		if (wpos > rpos)
+			return wpos - rpos;
+		else
+			return data+size - rpos;
 		
 		return 0;
 	}
@@ -256,7 +262,10 @@ struct Buffer
 		
 		// Set wpos to beginning of buffer if it reaches its end.
 		if (wpos == data+size)
+		{
+			std::cout << "Resetting wpos to beginning.." << std::endl;
 			wpos = data;
+		}
 		
 		assert(left <= size);
 	}
