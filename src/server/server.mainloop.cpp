@@ -118,7 +118,7 @@ int Server::run() throw()
 					break;
 				}
 			}
-			while (ec != 0);
+			while (ec != -1);
 			#elif defined(EVENT_BY_FD)
 			/* BY FD */
 			if (ev.isset(lsock.fd(), ev.read))
