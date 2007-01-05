@@ -87,6 +87,7 @@ protected:
 	std::map<uint8_t, session_ref> session_id_map;
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
+	// first->source, second->target
 	std::map<uint8_t, uint8_t> tunnel;
 	
 	// listening socket
@@ -169,6 +170,9 @@ protected:
 	
 	// Handle ACKs
 	void uHandleAck(user_ref& usr) throw();
+	
+	// Forward raster to those expecting it.
+	void uTunnelRaster(user_ref& usr) throw();
 	
 	// Handle instruction message
 	void uHandleInstruction(user_ref& usr) throw();

@@ -540,12 +540,15 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 	case protocol::type::UserInfo:
 		// TODO!!!
 		break;
-	case protocol::type::Unsubscribe:
-		#ifdef DEBUG_SERVER
+	case protocol::type::Raster:
 		#ifndef NDEBUG
-		std::cout << "Unsubscribe" << std::endl;
+		std::cout << "Raster" << std::endl;
 		#endif
-		#endif
+		
+		uTunnelRaster(usr);
+		
+		break;
+	case protocol::type::Unsubscribe:
 		{
 			protocol::Unsubscribe *msg = static_cast<protocol::Unsubscribe*>(usr->inMsg);
 			
@@ -569,11 +572,6 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::Subscribe:
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "Subscribe" << std::endl;
-		#endif
-		#endif
 		{
 			protocol::Subscribe *msg = static_cast<protocol::Subscribe*>(usr->inMsg);
 			
@@ -595,11 +593,6 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::ListSessions:
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "List Sessions" << std::endl;
-		#endif
-		#endif
 		if (session_id_map.size() != 0)
 		{
 			protocol::SessionInfo *nfo = 0;
@@ -629,11 +622,6 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		uSendMsg(usr, msgAck(protocol::Global, protocol::type::ListSessions));
 		break;
 	case protocol::type::Instruction:
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "Instruction" << std::endl;
-		#endif
-		#endif
 		uHandleInstruction(usr);
 		break;
 	default:
@@ -716,6 +704,58 @@ void Server::uHandleAck(user_ref& usr) throw()
 		// don't care..
 		break;
 	}
+}
+
+void Server::uTunnelRaster(user_ref& usr) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Server::uTunnelRaster(from: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	
+	protocol::Raster *raster = static_cast<protocol::Raster*>(usr->inMsg);
+	
+	std::map<uint8_t, SessionData>::iterator si( usr->sessions.find(raster->session_id) );
+	for (; si != usr->sessions.end(); si++ )
+	{
+		std::cerr << "Raster for unsubscribed session: "
+			<< static_cast<int>(raster->session_id) << std::endl;
+		
+		// TODO: Send cancel only if the raster is incomplete.
+		
+		message_ref cancel(new protocol::Cancel);
+		cancel->session_id = raster->session_id;
+		uSendMsg(usr, cancel);
+		return;
+	}
+	
+	std::map<uint8_t, uint8_t>::iterator ft(tunnel.find(usr->id));
+	if (ft == tunnel.end())
+	{
+		std::cerr << "Un-tunneled raster from: "
+			<< static_cast<int>(usr->id) << std::endl;
+		
+		// TODO: Send cancel only if the raster is incomplete.
+		// We assume the raster was for user who disappeared
+		// before we could cancel the request.
+		
+		message_ref cancel(new protocol::Cancel);
+		cancel->session_id = raster->session_id;
+		uSendMsg(usr, cancel);
+		return;
+	}
+	
+	#ifndef NDEBUG
+	std::cout << "Tunnel raster to: " << ft->second << std::endl;
+	#endif
+	
+	// Forward to user.
+	uSendMsg(user_id_map.find(ft->second)->second, message_ref(raster));
+	
+	// TODO: Break tunnel if that was the last raster piece.
+	
+	// Avoid premature deletion of raster data.
+	usr->inMsg = 0;
 }
 
 void Server::uHandleInstruction(user_ref& usr) throw()
