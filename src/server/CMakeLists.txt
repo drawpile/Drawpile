@@ -14,6 +14,7 @@ set (
 	Server_Sources
 	dpsrv.cpp
 	server.cpp
+	server.mainloop.cpp
 	sockets.cpp
 )
 

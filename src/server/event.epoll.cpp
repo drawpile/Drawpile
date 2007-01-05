@@ -338,7 +338,7 @@ int Event::remove(int fd, uint32_t ev) throw()
 	return true;
 }
 
-std::pair<fd_t, uint32_t ev> Event::getEvent() const throw()
+std::pair<fd_t, uint32_t> Event::getEvent() const throw()
 {
 	int i = nfds - nfds_c--;
 	return std::make_pair(events[i].data.fd, events[i].events);
