@@ -143,7 +143,7 @@ protected:
 	message_ref msgAuth(user_ref& usr, uint8_t session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
+	message_ref uCreateEvent(user_ref& usr, session_ref& session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
@@ -152,7 +152,7 @@ protected:
 	message_ref msgAck(uint8_t session, uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSyncWait(session_ref session) const throw(std::bad_alloc);
+	message_ref msgSyncWait(session_ref& session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
@@ -160,7 +160,7 @@ protected:
 	void uWrite(user_ref& usr) throw();
 	
 	// Read from user socket
-	void uRead(user_ref usr) throw(std::bad_alloc);
+	void uRead(user_ref& usr) throw(std::bad_alloc);
 	
 	// Process all read data.
 	void uProcessData(user_ref& usr) throw();
@@ -182,9 +182,6 @@ protected:
 	
 	// Send message to session
 	void Propagate(message_ref msg) throw();
-	
-	// Send message to session, except to one user.
-	void lPropagate(message_ref msg, user_ref usr) throw();
 	
 	// Send message to user
 	/*

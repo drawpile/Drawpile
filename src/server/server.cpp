@@ -232,7 +232,7 @@ message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_a
 	return message_ref(ack);
 }
 
-message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
+message_ref Server::msgSyncWait(session_ref& session) const throw(std::bad_alloc)
 {
 	protocol::SyncWait *sync = new protocol::SyncWait;
 	sync->session_id = session->id;
@@ -312,7 +312,7 @@ void Server::uWrite(user_ref& usr) throw()
 	}
 }
 
-void Server::uRead(user_ref usr) throw(std::bad_alloc)
+void Server::uRead(user_ref& usr) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -409,8 +409,8 @@ void Server::uProcessData(user_ref& usr) throw()
 		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "Verify size... ";
-		#endif
-		#endif
+		#endif // NDEBUG
+		#endif // DEBUG_SERVER
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, have);
 		if (len > have)
 		{
@@ -419,18 +419,17 @@ void Server::uProcessData(user_ref& usr) throw()
 			std::cout << "Need " << (len - have) << " bytes more." << std::endl
 				<< "Required size: " << len << std::endl
 				<< "We already have: " << have << std::endl;
-			#endif
-			#endif
+			#endif // NDEBUG
+			#endif // DEBUG_SERVER
 			// still need more data
 			return;
 		}
 		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
-		std::cout << "complete." << std::endl;
-		
-		std::cout << "Unserialize message" << std::endl;
-		#endif
-		#endif
+		std::cout << "complete." << std::endl
+			<< "Unserialize message" << std::endl;
+		#endif // NDEBUG
+		#endif // DEBUG_SERVER
 		usr->input.read(
 			usr->inMsg->unserialize(usr->input.rpos, have)
 		);
@@ -457,7 +456,7 @@ void Server::uProcessData(user_ref& usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(user_ref& usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
+message_ref Server::uCreateEvent(user_ref& usr, session_ref& session, uint8_t event) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1033,12 +1032,6 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			uRemove(usr);
 		}
 		break;
-	case uState::lobby_auth:
-		#ifndef NDEBUG
-		std::cout << "lobby_auth" << std::endl;
-		#endif
-		// TODO
-		break;
 	case uState::login_auth:
 		#ifndef NDEBUG
 		std::cout << "login_auth" << std::endl;
@@ -1144,6 +1137,10 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 			uRemove(usr);
 		}
 		break;
+	case uState::dead:
+		std::cerr << "I see dead people." << std::endl;
+		usr.reset();
+		break;
 	default:
 		assert(!"user state was something strange");
 		break;
@@ -1173,34 +1170,6 @@ void Server::Propagate(message_ref msg) throw()
 	for (; ui != si->second->users.end(); ui++)
 	{
 		uSendMsg(ui->second, msg);
-	}
-}
-
-void Server::lPropagate(message_ref msg, user_ref usr) throw()
-{
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
-	std::cout << "Server::lPropagate(session: " << static_cast<int>(msg->session_id)
-		<< ", type: " << static_cast<int>(msg->type) << ", not to: "
-		<< static_cast<int>(usr->id) << ")" << std::endl;
-	#endif
-	#endif
-	
-	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
-	if (si == session_id_map.end())
-	{
-		#ifndef NDEBUG
-		std::cerr << "No such session!" << std::endl;
-		#endif
-		
-		return;
-	}
-	
-	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
-	for (; ui != si->second->users.end(); ui++)
-	{
-		if (ui->first != usr->id)
-			uSendMsg(ui->second, msg);
 	}
 }
 
@@ -1430,6 +1399,8 @@ void Server::uRemove(user_ref& usr) throw()
 	#endif
 	#endif
 	
+	usr->state = uState::dead;
+	
 	ev.remove(usr->sock->fd(), ev.write|ev.read|ev.error|ev.hangup);
 	
 	freeUserID(usr->id);
@@ -1468,6 +1439,9 @@ void Server::uRemove(user_ref& usr) throw()
 	std::cout << "Still in use in " << usr.use_count() << " place/s." << std::endl;
 	#endif
 	#endif // 0
+	
+	// kill current instance
+	usr.reset();
 }
 
 int Server::init() throw(std::bad_alloc)

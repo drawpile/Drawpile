@@ -66,21 +66,25 @@ struct SessionData
 // User states
 namespace uState
 {
+
+const uint8_t 
 	// When user has just connected
-	const uint8_t init = 3;
+	init = 3,
 	
 	// User has been verified to be using correct protocol.
-	const uint8_t verified = 2;
+	verified = 2,
 	
 	// Waiting for proper user info
-	const uint8_t login = 1;
+	login = 1,
 	
 	// Waiting for password
-	const uint8_t login_auth = 9;
-	const uint8_t lobby_auth = 8;
+	login_auth = 9,
+	
+	// Dead
+	dead = 70,
 	
 	// Normal operation
-	const uint8_t active = 0;
+	active = 0;
 }
 
 // User information
