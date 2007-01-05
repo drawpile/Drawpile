@@ -37,6 +37,7 @@
 namespace protocol
 {
 
+#ifdef DEBUG_PROTOCOL
 #ifndef NDEBUG
 void msgName(const uint8_t type) throw()
 {
@@ -118,12 +119,15 @@ void msgName(const uint8_t type) throw()
 {
 }
 #endif
+#endif
 
 Message* getMessage(const uint8_t type) throw()
 {
+	#ifdef DEBUG_PROTOCOL
 	#ifndef NDEBUG
 	std::cout << "protocol::getMessage - ";
 	msgName(type);
+	#endif
 	#endif
 	
 	switch (type)

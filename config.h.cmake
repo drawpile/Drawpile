@@ -17,3 +17,4 @@
 #cmakedefine DEBUG_EVENTS
 #cmakedefine DEBUG_SOCKETS
 #cmakedefine DEBUG_SERVER
+#cmakedefine DEBUG_PROTOCOL
