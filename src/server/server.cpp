@@ -360,8 +360,10 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 	}
 	else
 	{
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "Received " << rb << " bytes.." << std::endl;
+		#endif
 		#endif
 		
 		usr->input.write(rb);
@@ -404,22 +406,28 @@ void Server::uProcessData(user_ref& usr) throw()
 		
 		size_t have = usr->input.canRead();
 		
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "Verify size... ";
+		#endif
 		#endif
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, have);
 		if (len > have)
 		{
+			#ifdef DEBUG_SERVER
 			#ifndef NDEBUG
 			std::cout << "Need " << (len - have) << " bytes more." << std::endl;
+			#endif
 			#endif
 			// still need more data
 			return;
 		}
+		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cout << "complete." << std::endl;
 		
 		std::cout << "Unserialize message" << std::endl;
+		#endif
 		#endif
 		usr->input.read(
 			usr->inMsg->unserialize(usr->input.rpos, have)
@@ -1231,6 +1239,15 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 		for (; si != session->users.end(); si++)
 		{
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
+			
+			// Spawn session select messages for those who are drawing to this session.
+			if (si->second->session == session->id)
+			{
+				message_ref ssmsg(new protocol::SessionSelect);
+				ssmsg->user_id = si->second->id;
+				ssmsg->session_id = session->id;
+				uSendMsg(usr, ssmsg);
+			}
 		}
 		
 		// don't start new client sync if one is already in progress...
