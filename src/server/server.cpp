@@ -86,7 +86,7 @@ uint8_t Server::getUserID() throw()
 	#endif
 	#endif
 	
-	for (int i=1; i != 256; i++)
+	for (uint32_t i=1; i != user_ids.size(); i++)
 	{
 		if (!user_ids.test(i))
 		{
@@ -95,7 +95,7 @@ uint8_t Server::getUserID() throw()
 		}
 	}
 	
-	return 0;
+	return protocol::null_user;
 }
 
 uint8_t Server::getSessionID() throw()
@@ -106,7 +106,7 @@ uint8_t Server::getSessionID() throw()
 	#endif
 	#endif
 	
-	for (int i=1; i != 256; i++)
+	for (uint32_t i=1; i != session_ids.size(); i++)
 	{
 		if (!session_ids.test(i))
 		{
@@ -163,7 +163,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-message_ref Server::msgAuth(user_ref& usr, uint8_t session) const throw(std::bad_alloc)
+message_ref Server::msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -239,7 +239,7 @@ message_ref Server::msgSyncWait(session_ref& session) const throw(std::bad_alloc
 	return message_ref(sync);
 }
 
-void Server::uWrite(user_ref& usr) throw()
+void Server::uWrite(User* usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -303,16 +303,14 @@ void Server::uWrite(user_ref& usr) throw()
 			if (usr->queue.empty())
 			{
 				fClr(usr->events, ev.write);
-				if (usr->events == 0)
-					ev.remove(usr->sock->fd(), usr->events);
-				else
-					ev.modify(usr->sock->fd(), usr->events);
+				assert(usr->events == 0);
+				ev.modify(usr->sock->fd(), usr->events);
 			}
 		}
 	}
 }
 
-void Server::uRead(user_ref& usr) throw(std::bad_alloc)
+void Server::uRead(User* usr) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -372,7 +370,7 @@ void Server::uRead(user_ref& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uProcessData(user_ref& usr) throw()
+void Server::uProcessData(User* usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -456,7 +454,7 @@ void Server::uProcessData(user_ref& usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(user_ref& usr, session_ref& session, uint8_t event) const throw(std::bad_alloc)
+message_ref Server::uCreateEvent(User* usr, session_ref& session, uint8_t event) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -482,7 +480,7 @@ message_ref Server::uCreateEvent(user_ref& usr, session_ref& session, uint8_t ev
 	return message_ref(uevent);
 }
 
-void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
+void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -634,7 +632,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleAck(user_ref& usr) throw()
+void Server::uHandleAck(User* usr) throw()
 {
 	//#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -702,7 +700,7 @@ void Server::uHandleAck(user_ref& usr) throw()
 	}
 }
 
-void Server::uTunnelRaster(user_ref& usr) throw()
+void Server::uTunnelRaster(User* usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -748,11 +746,13 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 		return;
 	}
 	
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Tunnel raster to: "
 		<< static_cast<int>(users.find(ft->second)->second->id)
 		<< " from: " << static_cast<int>(usr->id)
 		<< ", in session: " << static_cast<int>(raster->session_id) << std::endl;
+	#endif
 	#endif
 	
 	// Forward to user.
@@ -766,7 +766,7 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	usr->inMsg = 0;
 }
 
-void Server::uHandleInstruction(user_ref& usr) throw()
+void Server::uHandleInstruction(User* usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -914,7 +914,7 @@ void Server::uHandleInstruction(user_ref& usr) throw()
 	}
 }
 
-void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
+void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1138,7 +1138,10 @@ void Server::uHandleLogin(user_ref& usr) throw(std::bad_alloc)
 		break;
 	case uState::dead:
 		std::cerr << "I see dead people." << std::endl;
-		usr.reset();
+		
+		delete usr;
+		usr = 0;
+		
 		break;
 	default:
 		assert(!"user state was something strange");
@@ -1165,14 +1168,14 @@ void Server::Propagate(message_ref msg) throw()
 		return;
 	}
 	
-	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
+	std::map<uint8_t, User*>::iterator ui( si->second->users.begin() );
 	for (; ui != si->second->users.end(); ui++)
 	{
 		uSendMsg(ui->second, msg);
 	}
 }
 
-void Server::uSendMsg(user_ref& usr, message_ref msg) throw()
+void Server::uSendMsg(User* usr, message_ref msg) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1203,7 +1206,7 @@ void Server::SyncSession(session_ref& session) throw()
 	assert(session->syncCounter == 0);
 	
 	// TODO: Need better source user selection.
-	user_ref src(session->users.begin()->second);
+	User* src = session->users.begin()->second;
 	
 	// request raster
 	message_ref syncreq(new protocol::Synchronize);
@@ -1214,7 +1217,7 @@ void Server::SyncSession(session_ref& session) throw()
 	Propagate(msgAck(session->id, protocol::type::SyncWait));
 	
 	// put waiting clients to normal data propagation.
-	user_ref usr;
+	User* usr;
 	while (session->waitingSync.size() != 0)
 	{
 		// get user
@@ -1231,7 +1234,7 @@ void Server::SyncSession(session_ref& session) throw()
 	// TODO: Clean syncWait flags from users.
 }
 
-void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
+void Server::uJoinSession(User* usr, session_ref& session) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1253,7 +1256,7 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 		session->waitingSync.push( usr );
 		
 		// Tell the new user of the already existing users.
-		std::map<uint8_t, user_ref>::iterator si(session->users.begin());
+		std::map<uint8_t, User*>::iterator si(session->users.begin());
 		for (; si != session->users.end(); si++)
 		{
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
@@ -1289,7 +1292,7 @@ void Server::uJoinSession(user_ref& usr, session_ref& session) throw()
 	}
 }
 
-void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
+void Server::uLeaveSession(User* usr, session_ref& session) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1312,6 +1315,11 @@ void Server::uLeaveSession(user_ref& usr, session_ref& session) throw()
 		freeSessionID(session->id);
 		
 		session_id_map.erase(session->id);
+		
+		/*
+		delete session;
+		session = 0;
+		*/
 		
 		return;
 	}
@@ -1346,7 +1354,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	uint8_t id = getUserID();
 	
-	if (id == 0)
+	if (id == protocol::null_user)
 	{
 		//#ifndef NDEBUG
 		std::cout << "Server is full, kicking user." << std::endl;
@@ -1363,7 +1371,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		#endif
 		#endif
 		
-		user_ref usr( new User(id, sock) );
+		User* usr( new User(id, sock) );
 		
 		usr->session = protocol::Global;
 		
@@ -1371,7 +1379,6 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		ev.add(usr->sock->fd(), usr->events);
 		
 		users.insert( std::make_pair(sock->fd(), usr) );
-		//user_id_map.insert( std::make_pair(id, usr) );
 		
 		if (usr->input.data == 0)
 		{
@@ -1390,7 +1397,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::uRemove(user_ref& usr) throw()
+void Server::uRemove(User* usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1400,24 +1407,21 @@ void Server::uRemove(user_ref& usr) throw()
 	
 	usr->state = uState::dead;
 	
-	ev.remove(usr->sock->fd(), ev.write|ev.read|ev.error|ev.hangup);
-	
-	freeUserID(usr->id);
+	// Remove from event system
+	ev.remove(usr->sock->fd(), ev.read|ev.write|ev.error|ev.hangup);
 	
 	// clear the fake tunnel of any possible instance of this user.
-	if ((usr->sessions.size() != 0) and (tunnel.size() != 0))
+	std::map<uint8_t,fd_t>::iterator ti(tunnel.begin());
+	for (; ti != tunnel.end(); ti++)
 	{
-		std::map<uint8_t,fd_t>::iterator ti(tunnel.begin());
-		for (; ti != tunnel.end(); ti++)
+		if (ti->second == usr->sock->fd())
 		{
-			if (ti->second == usr->sock->fd())
-			{
-				tunnel.erase(ti->first);
-				break;
-			}
+			tunnel.erase(ti->first);
+			break;
 		}
 	}
 	
+	// clean sessions
 	std::map<uint8_t, SessionData>::iterator si( usr->sessions.begin() );
 	for (; si != usr->sessions.end(); si++ )
 	{
@@ -1425,22 +1429,13 @@ void Server::uRemove(user_ref& usr) throw()
 		uLeaveSession(usr, si->second.session);
 	}
 	
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
-	std::cout << "Removing from mappings" << std::endl;
-	#endif
-	#endif
+	// remove from fd -> User* map
 	users.erase(usr->sock->fd());
-	//user_id_map.erase(usr->id);
 	
-	#if 0
-	#ifndef NDEBUG
-	std::cout << "Still in use in " << usr.use_count() << " place/s." << std::endl;
-	#endif
-	#endif // 0
+	freeUserID(usr->id);
 	
-	// kill current instance
-	usr.reset();
+	delete usr;
+	usr = 0;
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1545,7 +1540,7 @@ int Server::init() throw(std::bad_alloc)
 	return 0;
 }
 
-bool Server::validateUserName(user_ref& usr) const throw()
+bool Server::validateUserName(User* usr) const throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::validateUserName(user: "
