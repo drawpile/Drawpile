@@ -715,33 +715,38 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	
 	protocol::Raster *raster = static_cast<protocol::Raster*>(usr->inMsg);
 	
+	bool last = (raster->offset + raster->length == raster->size);
+	
 	std::map<uint8_t, SessionData>::iterator si( usr->sessions.find(raster->session_id) );
 	for (; si != usr->sessions.end(); si++ )
 	{
 		std::cerr << "Raster for unsubscribed session: "
 			<< static_cast<int>(raster->session_id) << std::endl;
 		
-		// TODO: Send cancel only if the raster is incomplete.
-		
-		message_ref cancel(new protocol::Cancel);
-		cancel->session_id = raster->session_id;
-		uSendMsg(usr, cancel);
+		if (!last)
+		{
+			message_ref cancel(new protocol::Cancel);
+			cancel->session_id = raster->session_id;
+			uSendMsg(usr, cancel);
+		}
 		return;
 	}
 	
-	std::map<uint8_t, uint8_t>::iterator ft(tunnel.find(usr->id));
+	std::map<uint8_t, fd_t>::iterator ft(tunnel.find(usr->id));
 	if (ft == tunnel.end())
 	{
 		std::cerr << "Un-tunneled raster from: "
 			<< static_cast<int>(usr->id) << std::endl;
 		
-		// TODO: Send cancel only if the raster is incomplete.
 		// We assume the raster was for user who disappeared
 		// before we could cancel the request.
 		
-		message_ref cancel(new protocol::Cancel);
-		cancel->session_id = raster->session_id;
-		uSendMsg(usr, cancel);
+		if (!last)
+		{
+			message_ref cancel(new protocol::Cancel);
+			cancel->session_id = raster->session_id;
+			uSendMsg(usr, cancel);
+		}
 		return;
 	}
 	
@@ -750,9 +755,11 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	#endif
 	
 	// Forward to user.
-	uSendMsg(user_id_map.find(ft->second)->second, message_ref(raster));
 	
-	// TODO: Break tunnel if that was the last raster piece.
+	uSendMsg(users.find(ft->second)->second, message_ref(raster));
+	
+	// Break tunnel if that was the last raster piece.
+	if (last) tunnel.erase(usr->id);
 	
 	// Avoid premature deletion of raster data.
 	usr->inMsg = 0;
@@ -1244,7 +1251,7 @@ void Server::SyncSession(session_ref& session) throw()
 		session->waitingSync.pop();
 		
 		// Create fake tunnel
-		tunnel.insert( std::make_pair(src->id, usr->id) );
+		tunnel.insert( std::make_pair(src->id, usr->sock->fd()) );
 		
 		// add user to normal data propagation.
 		session->users.insert( std::make_pair(usr->id, usr) );
@@ -1427,10 +1434,10 @@ void Server::uRemove(user_ref& usr) throw()
 	// clear the fake tunnel of any possible instance of this user.
 	if ((usr->sessions.size() != 0) and (tunnel.size() != 0))
 	{
-		std::map<uint8_t,uint8_t>::iterator ti(tunnel.begin());
+		std::map<uint8_t,fd_t>::iterator ti(tunnel.begin());
 		for (; ti != tunnel.end(); ti++)
 		{
-			if (ti->second == usr->id)
+			if (ti->second == usr->sock->fd())
 			{
 				tunnel.erase(ti->first);
 				break;

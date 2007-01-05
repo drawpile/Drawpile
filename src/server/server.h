@@ -88,7 +88,7 @@ protected:
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
 	// first->source, second->target
-	std::map<uint8_t, uint8_t> tunnel;
+	std::map<uint8_t, fd_t> tunnel;
 	
 	// listening socket
 	Socket lsock;
