@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	QApplication app(argc,argv);
 
 	// These are used by QSettings
-	app.setOrganizationName("drawpile");
+	app.setOrganizationName("DrawPile");
 	app.setOrganizationDomain("drawpile.sourceforge.net");
 	app.setApplicationName("DrawPile");
 
