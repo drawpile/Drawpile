@@ -165,6 +165,8 @@ void Server::cleanup() throw()
 
 message_ref Server::msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::msgAuth()" << std::endl;
@@ -241,6 +243,8 @@ message_ref Server::msgSyncWait(session_ref& session) const throw(std::bad_alloc
 
 void Server::uWrite(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
@@ -312,6 +316,8 @@ void Server::uWrite(User* usr) throw()
 
 void Server::uRead(User* usr) throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uRead(user: " << static_cast<int>(usr->id) << ")" << std::endl;
@@ -372,6 +378,8 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 
 void Server::uProcessData(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uProcessData(user: "
@@ -456,6 +464,8 @@ void Server::uProcessData(User* usr) throw()
 
 message_ref Server::uCreateEvent(User* usr, session_ref& session, uint8_t event) const throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uCreateEvent(user: "
@@ -482,6 +492,8 @@ message_ref Server::uCreateEvent(User* usr, session_ref& session, uint8_t event)
 
 void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleMsg(user: " << static_cast<int>(usr->id)
@@ -634,6 +646,8 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 
 void Server::uHandleAck(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	//#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleAck()" << std::endl;
@@ -702,6 +716,8 @@ void Server::uHandleAck(User* usr) throw()
 
 void Server::uTunnelRaster(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uTunnelRaster(from: "
@@ -768,6 +784,8 @@ void Server::uTunnelRaster(User* usr) throw()
 
 void Server::uHandleInstruction(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleInstruction()" << std::endl;
@@ -916,6 +934,8 @@ void Server::uHandleInstruction(User* usr) throw()
 
 void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleLogin(user: " << static_cast<int>(usr->id)
@@ -1177,6 +1197,8 @@ void Server::Propagate(message_ref msg) throw()
 
 void Server::uSendMsg(User* usr, message_ref msg) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uSendMsg(user: " << static_cast<int>(usr->id)
@@ -1217,7 +1239,6 @@ void Server::SyncSession(session_ref& session) throw()
 	Propagate(msgAck(session->id, protocol::type::SyncWait));
 	
 	// put waiting clients to normal data propagation.
-	User* usr;
 	while (session->waitingSync.size() != 0)
 	{
 		// get user
@@ -1236,6 +1257,8 @@ void Server::SyncSession(session_ref& session) throw()
 
 void Server::uJoinSession(User* usr, session_ref& session) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uJoinSession()" << std::endl;
@@ -1294,6 +1317,8 @@ void Server::uJoinSession(User* usr, session_ref& session) throw()
 
 void Server::uLeaveSession(User* usr, session_ref& session) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uLeaveSession(user: "
@@ -1399,6 +1424,8 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 
 void Server::uRemove(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uRemove()" << std::endl;
@@ -1542,6 +1569,8 @@ int Server::init() throw(std::bad_alloc)
 
 bool Server::validateUserName(User* usr) const throw()
 {
+	assert(usr != 0);
+	
 	#ifndef NDEBUG
 	std::cout << "Server::validateUserName(user: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
