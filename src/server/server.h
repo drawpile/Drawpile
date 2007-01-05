@@ -78,7 +78,7 @@ protected:
 	std::bitset<defaults::hard_limit> session_ids;
 	
 	// FD to user mapping
-	std::map<int, user_ref> users;
+	std::map<fd_t, user_ref> users;
 	
 	// User ID to user mapping
 	std::map<uint8_t, user_ref> user_id_map;

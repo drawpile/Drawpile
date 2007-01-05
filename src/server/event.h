@@ -63,6 +63,13 @@
 	#endif
 #endif
 
+#if defined(EV_SELECT) || defined(EV_PSELECT)
+	#define EVENT_BY_FD
+#elif defined(EV_EPOLL)
+	#define EVENT_BY_ORDER
+	#define EVENT_HAS_ALL
+#endif
+
 #ifndef WIN32
 typedef int fd_t;
 #endif
@@ -229,11 +236,11 @@ public:
 	int modify(fd_t fd, uint32_t ev) throw();
 	
 	//! Fetches next triggered event.
-	std::pair<fd_t, uint32_t> Event::getEvent() const throw();
+	std::pair<fd_t, uint32_t> getEvent() const throw();
 	
 	//! Fetches triggered events for FD.
 	inline
-	uint32_t Event::getEvents(int fd) const throw();
+	uint32_t getEvents(int fd) const throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**

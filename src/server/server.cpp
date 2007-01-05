@@ -671,7 +671,7 @@ void Server::uHandleAck(user_ref& usr) throw()
 			if (us->second.syncWait)
 			{
 				#ifndef NDEBUG
-				std::cout << "Another ACK/SyncWait for same session. Kicin'!" << std::endl;
+				std::cout << "Another ACK/SyncWait for same session. Kickin'!" << std::endl;
 				#endif
 				
 				uRemove(usr);
@@ -1501,139 +1501,6 @@ int Server::init() throw(std::bad_alloc)
 		return -1;
 	
 	ev.add(lsock.fd(), ev.read);
-	
-	return 0;
-}
-
-int Server::run() throw()
-{
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
-	std::cout << "Server::run()" << std::endl;
-	#endif
-	#endif
-	
-	// user map iterator
-	std::map<int, user_ref>::iterator ui;
-	
-	// event count
-	int ec /*, evs */;
-	
-	// main loop
-	while (1)
-	{
-		ec = ev.wait(5000);
-		
-		if (ec == 0)
-		{
-			// continue, no fds or time exceeded.
-		}
-		else if (ec == -1)
-		{
-			std::cout << "Error in event system." << std::endl;
-			// TODO (error)
-			return -1;
-		}
-		else
-		{
-			//evl = ev.getEvents( ec );
-			#ifdef DEBUG_SERVER
-			#ifndef NDEBUG
-			std::cout << "Events waiting: " << ec << std::endl;
-			#endif
-			#endif
-			
-			if (ev.isset(lsock.fd(), ev.read))
-			{
-				#ifdef DEBUG_SERVER
-				#ifndef NDEBUG
-				std::cout << "Server socket triggered" << std::endl;
-				#endif
-				#endif
-				
-				ec--;
-				
-				uAdd( lsock.accept() );
-			}
-			
-			if (ec > 0)
-			{
-				for (ui = users.begin(); ui != users.end(); ui++)
-				{
-					#if 0
-					std::cout << "Testing: " << ui->first << std::endl;
-					#endif // 0
-					if (ev.isset(ui->first, ev.read))
-					{
-						#ifdef DEBUG_SERVER
-						#ifndef NDEBUG
-						std::cout << "Reading from client" << std::endl;
-						#endif
-						#endif
-						
-						uRead(ui->second);
-						
-						if (--ec == 0) break;
-					}
-					if (ec != 0 && ev.isset(ui->first, ev.write))
-					{
-						#ifdef DEBUG_SERVER
-						#ifndef NDEBUG
-						std::cout << "Writing to client" << std::endl;
-						#endif
-						#endif
-						
-						uWrite(ui->second);
-						
-						if (--ec == 0) break;
-					}
-					if (ec != 0 && ev.isset(ui->first, ev.error))
-					{
-						#ifdef DEBUG_SERVER
-						#ifndef NDEBUG
-						std::cout << "Error with client" << std::endl;
-						#endif
-						#endif
-						
-						uRemove(ui->second);
-						
-						if (--ec == 0) break;
-					}
-					#ifdef EV_HAS_HANGUP
-					if (ec != 0 && ev.isset(ui->first, ev.hangup))
-					{
-						#ifdef DEBUG_SERVER
-						#ifndef NDEBUG
-						std::cout << "Client hung up" << std::endl;
-						#endif
-						#endif
-						
-						uRemove(ui->second);
-						
-						if (--ec == 0) break;
-					}
-					#endif
-					
-					if (ec == 0) break;
-				}
-				
-				#ifndef NDEBUG
-				if (ec > 0)
-					std::cout << "Not in clients..." << std::endl;
-				#endif
-			}
-			
-			// do something
-		}
-		
-		// do something generic?
-	}
-	
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
-	std::cout << "Done?" << std::endl;
-	#endif
-	#endif
 	
 	return 0;
 }
