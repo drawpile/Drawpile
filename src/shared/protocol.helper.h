@@ -40,12 +40,8 @@
 namespace protocol
 {
 
-#ifdef DEBUG_PROTOCOL
-#ifndef NDEBUG
 // for outputting the message name in console
 void msgName(const uint8_t type) throw();
-#endif
-#endif
 
 //! Get new message struct.
 /**

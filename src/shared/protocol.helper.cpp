@@ -37,8 +37,7 @@
 namespace protocol
 {
 
-#ifdef DEBUG_PROTOCOL
-#ifndef NDEBUG
+#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
 void msgName(const uint8_t type) throw()
 {
 	std::cout << "type (" << static_cast<int>(type) << "): ";
@@ -118,7 +117,6 @@ void msgName(const uint8_t type) throw()
 void msgName(const uint8_t type) throw()
 {
 }
-#endif
 #endif
 
 Message* getMessage(const uint8_t type) throw()
