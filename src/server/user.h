@@ -32,6 +32,7 @@ struct User;
 
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<Session> session_ref;
+typedef boost::shared_ptr<Message> message_ref;
 
 #include "sockets.h"
 
