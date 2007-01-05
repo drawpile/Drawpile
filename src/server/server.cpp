@@ -303,7 +303,7 @@ void Server::uWrite(User* usr) throw()
 			if (usr->queue.empty())
 			{
 				fClr(usr->events, ev.write);
-				assert(usr->events == 0);
+				assert(usr->events != 0);
 				ev.modify(usr->sock->fd(), usr->events);
 			}
 		}
