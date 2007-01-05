@@ -237,8 +237,35 @@ bool Socket::reuse(bool x) throw()
 	// Windows (for example) does not have it
 	return true;
 	#else
-	char val = (x ? 1 : 0);
-	return (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val)) == 0);
+	int val = (x ? 1 : 0);
+	int r = (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val)) == 0);
+	error = errno;
+	if (r == -1)
+	{
+		switch (error)
+		{
+		#ifndef NDEBUG
+		case EBADF:
+			std::cerr << "Bad FD" << std::endl;
+			assert(1);
+			break;
+		case ENOTSOCK:
+			std::cerr << "Not a socket." << std::endl;
+			assert(1);
+			break;
+		case ENOPROTOOPT:
+			std::cerr << "The option is unknown at the level SOL_SOCKET." << std::endl;
+			break;
+		case EFAULT:
+			std::cerr << "&val in invalid address space." << std::endl;
+			break;
+		#endif
+		default:
+			std::cerr << "unknown error from setsockopt() : " << error << std::endl;
+			break;
+		}
+	}
+	return (r == 0);
 	#endif
 }
 
