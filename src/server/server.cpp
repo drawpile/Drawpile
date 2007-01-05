@@ -632,7 +632,7 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
 		std::cerr << "Unexpected, unhandled or unknown message type." << std::endl;
-		protocol::msgType(usr->inMsg->type);
+		protocol::msgName(usr->inMsg->type);
 		#else
 		std::cerr << "Garbage from user: " << static_cast<int>(usr->id) << std::endl;
 		#endif

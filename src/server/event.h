@@ -239,7 +239,7 @@ public:
 	std::pair<fd_t, uint32_t> getEvent(int ev_index) const throw();
 	
 	//! Fetches triggered events for FD.
-	uint32_t getEvents(int fd) const throw();
+	uint32_t getEvents(fd_t fd) const throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**

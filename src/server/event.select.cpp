@@ -378,7 +378,7 @@ std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
 	assert(1);
 }
 
-uint32_t Event::getEvents(int fd) const throw()
+uint32_t Event::getEvents(fd_t fd) const throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
