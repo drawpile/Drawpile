@@ -31,7 +31,6 @@ struct User;
 #include "../shared/protocol.flags.h"
 
 #include <boost/shared_ptr.hpp>
-typedef boost::shared_ptr<protocol::Message> message_ref;
 typedef boost::shared_ptr<Session> session_ref;
 
 #include "sockets.h"

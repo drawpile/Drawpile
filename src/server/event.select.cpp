@@ -376,6 +376,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
 {
 	assert(1);
+	return std::make_pair(-1, 0);
 }
 
 uint32_t Event::getEvents(fd_t fd) const throw()
