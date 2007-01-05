@@ -284,6 +284,8 @@ struct Buffer
 		assert(data != 0);
 		assert(size > 1);
 		
+		if (left == size) return 0;
+		
 		// this should never return more than .size - .left bytes
 		if (wpos < rpos)
 			return rpos - wpos;
