@@ -122,7 +122,7 @@ void msgName(const uint8_t type) throw()
 Message* getMessage(const uint8_t type) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "protocol::getMessage("<< static_cast<int>(type) << ") ";
+	std::cout << "protocol::getMessage - ";
 	msgName(type);
 	#endif
 	
