@@ -232,7 +232,7 @@ struct Buffer
 		if (wpos > rpos)
 			return wpos - rpos;
 		else
-			return data+size - rpos;
+			return (data+size) - rpos;
 		
 		return 0;
 	}
@@ -262,10 +262,7 @@ struct Buffer
 		
 		// Set wpos to beginning of buffer if it reaches its end.
 		if (wpos == data+size)
-		{
-			std::cout << "Resetting wpos to beginning.." << std::endl;
 			wpos = data;
-		}
 		
 		assert(left <= size);
 	}
@@ -288,8 +285,10 @@ struct Buffer
 		assert(size > 1);
 		
 		// this should never return more than .size - .left bytes
-		if (left < size)
-			return ((rpos<=wpos) ? (data+size) : rpos) - wpos;
+		if (wpos < rpos)
+			return rpos - wpos;
+		else
+			return (data+size) - wpos;
 		
 		return 0;
 	}
