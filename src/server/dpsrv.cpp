@@ -51,9 +51,9 @@ const uint16_t
 
 const char versionString[] = "0.1a";
 
-const char copyrightNotice[] = "Copyright (c) 2006-2007 M.K.A.";
+const char copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.";
 //const char contactAddress[] = "wyrmchild@users.sourceforge.net";
-const char applicationName[] = "drawpile-srv";
+const char applicationName[] = "DrawPile Server";
 const char websiteURL[] = "http://drawpile.sourceforge.net/";
 
 }
