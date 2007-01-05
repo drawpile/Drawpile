@@ -753,8 +753,8 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	}
 	
 	#ifndef NDEBUG
-	std::cout << "Tunnel raster to: " << ft->second
-		<< ", in session: " << raster->session_id << std::endl;
+	std::cout << "Tunnel raster to: " << static_cast<int>(users.find(ft->second)->second->id)
+		<< ", in session: " << static_cast<int>(raster->session_id) << std::endl;
 	#endif
 	
 	// Forward to user.
