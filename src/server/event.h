@@ -134,7 +134,7 @@ protected:
 	sigset_t *_sigmask;
 	#endif // EV_USE_SIGMASK
 	
-	int _error, nfds, nfds_c;
+	int _error, nfds;
 	
 public:
 	
@@ -236,7 +236,7 @@ public:
 	int modify(fd_t fd, uint32_t ev) throw();
 	
 	//! Fetches next triggered event.
-	std::pair<fd_t, uint32_t> getEvent() const throw();
+	std::pair<fd_t, uint32_t> getEvent(int ev_index) const throw();
 	
 	//! Fetches triggered events for FD.
 	inline

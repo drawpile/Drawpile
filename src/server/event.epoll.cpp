@@ -132,7 +132,7 @@ int Event::wait(uint32_t msecs) throw()
 	#endif
 	
 	// timeout in milliseconds
-	nfds_c = nfds = epoll_wait(evfd, events, 10, msecs);
+	nfds = epoll_wait(evfd, events, 10, msecs);
 	_error = errno;
 	
 	if (nfds == -1)
@@ -338,10 +338,9 @@ int Event::remove(int fd, uint32_t ev) throw()
 	return true;
 }
 
-std::pair<fd_t, uint32_t> Event::getEvent() const throw()
+std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
 {
-	int i = nfds - nfds_c--;
-	return std::make_pair(events[i].data.fd, events[i].events);
+	return std::make_pair(events[ev_index].data.fd, events[ev_index].events);
 }
 
 uint32_t Event::getEvents(int fd) const throw()

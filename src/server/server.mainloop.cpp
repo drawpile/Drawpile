@@ -44,7 +44,7 @@ int Server::run() throw()
 	std::map<fd_t, user_ref>::iterator usr;
 	
 	// event count
-	int ec /*, evs */;
+	int ec, evs;
 	
 	#ifdef EVENT_HAS_ALL
 	std::pair<fd_t, uint32_t> event;
@@ -53,7 +53,7 @@ int Server::run() throw()
 	// main loop
 	while (1)
 	{
-		ec = ev.wait(5000);
+		evs = ec = ev.wait(5000);
 		
 		if (ec == 0)
 		{
@@ -76,27 +76,16 @@ int Server::run() throw()
 			
 			#if defined(EVENT_BY_ORDER)
 			/* BY ORDER */
-			event = ev.getEvent();
 			
-			if (event->first == lsock.fd())
-			{
-				ec--;
-				
-				uAdd( lsock.accept() );
-			}
-			
-			#ifndef NDEBUG
-			int last_ec = ec + 1;
-			#endif // NDEBUG
 			while (ec != 0)
 			{
-				#ifndef NDEBUG
-				if (ec == last_ec)
+				event = ev.getEvent(evs - ec--);
+				
+				if (event->first == lsock.fd())
 				{
-					std::cout << "Couldn't find one of the events." << std::endl;
-					break;
+					uAdd( lsock.accept() );
+					continue;
 				}
-				#endif // NDEBUG
 				
 				usr = users.find(event->first);
 				if (usr != users.end())
@@ -104,23 +93,19 @@ int Server::run() throw()
 					if (fIsSet(event->second, ev.read))
 					{
 						uRead(usr->second);
-						if (--ec == 0) break;
 					}
 					if (fIsSet(event->second, ev.write))
 					{
 						uWrite(usr->second);
-						if (--ec == 0) break;
 					}
 					if (fIsSet(event->second, ev.error))
 					{
 						uRemove(usr->second);
-						if (--ec == 0) break;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(event->second, ev.hangup))
 					{
 						uRemove(usr->second);
-						if (--ec == 0) break;
 					}
 					#endif // EV_HAS_HANGUP
 				}
@@ -129,10 +114,6 @@ int Server::run() throw()
 					std:cerr << "FD not in users." << std::endl;
 					break;
 				}
-				
-				#ifndef NDEBUG
-				last_ec = ec;
-				#endif // NDEBUG
 			}
 			#elif defined(EVENT_BY_FD)
 			/* BY FD */
