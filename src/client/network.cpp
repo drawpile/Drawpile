@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -93,6 +93,7 @@ void NetworkPrivate::send(protocol::Message *msg)
 
 /**
  * Get the oldest message from the receive queue.
+ * In case of a bundled message, a linked list is returned.
  * @return received message (may be a linked list). 0 if no messages in queue.
  */
 protocol::Message *NetworkPrivate::receive()
@@ -165,7 +166,7 @@ void NetworkPrivate::serializeMessage()
 void NetworkPrivate::dataAvailable()
 {
 	// Read available data
-	QByteArray buf = socket.read(99999);
+	QByteArray buf = socket.readAll();
 	if(buf.length() == 0)
 		return;
 	recvbuffer.append(buf);
@@ -200,7 +201,7 @@ void NetworkPrivate::dataAvailable()
 				emit received();
 
 			// Remove unserialized bytes from receive buffer
-			recvbuffer = recvbuffer.mid(reqlen);
+			recvbuffer.remove(0,reqlen);
 		}
 	}
 }

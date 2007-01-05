@@ -641,7 +641,10 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 		// Note. We make an assumption here that the data is sent in a 
 		// sequential manner with no gaps in between.
 		raster_.append(QByteArray(msg->data,msg->length));
-		emit rasterReceived(100*(msg->offset+msg->length)/msg->size);
+		if(msg->offset+msg->length<msg->size)
+			emit rasterReceived(99*(msg->offset+msg->length)/msg->size);
+		else
+			emit rasterReceived(100);
 	}
 }
 
