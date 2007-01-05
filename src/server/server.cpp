@@ -1239,6 +1239,7 @@ void Server::SyncSession(session_ref& session) throw()
 	Propagate(msgAck(session->id, protocol::type::SyncWait));
 	
 	// put waiting clients to normal data propagation.
+	User *usr=0;
 	while (session->waitingSync.size() != 0)
 	{
 		// get user
