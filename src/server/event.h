@@ -127,7 +127,7 @@ protected:
 	sigset_t *_sigmask;
 	#endif // EV_USE_SIGMASK
 	
-	int _error, nfds;
+	int _error, nfds, nfds_c;
 	
 public:
 	
@@ -227,6 +227,13 @@ public:
 	 * @return something undefined
 	 */
 	int modify(fd_t fd, uint32_t ev) throw();
+	
+	//! Fetches next triggered event.
+	std::pair<fd_t, uint32_t> Event::getEvent() const throw();
+	
+	//! Fetches triggered events for FD.
+	inline
+	uint32_t Event::getEvents(int fd) const throw();
 	
 	//! Tests if the file descriptor was triggered in event set.
 	/**

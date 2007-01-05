@@ -48,15 +48,19 @@ Event::Event() throw()
 	: evfd(0),
 	events(0)
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event()" << std::endl;
+	#endif
 	#endif
 }
 
 Event::~Event() throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "~Event()" << std::endl;
+	#endif
 	#endif
 	
 	assert(events == 0);
@@ -65,8 +69,10 @@ Event::~Event() throw()
 
 bool Event::init() throw(std::bad_alloc)
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::init()" << std::endl;
+	#endif
 	#endif
 	
 	evfd = epoll_create(10);
@@ -105,8 +111,10 @@ bool Event::init() throw(std::bad_alloc)
 
 void Event::finish() throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::finish()" << std::endl;
+	#endif
 	#endif
 	
 	delete [] events;
@@ -117,12 +125,14 @@ void Event::finish() throw()
 
 int Event::wait(uint32_t msecs) throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::wait(msecs: " << msecs << ")" << std::endl;
 	#endif
+	#endif
 	
 	// timeout in milliseconds
-	nfds = epoll_wait(evfd, events, 10, msecs);
+	nfds_c = nfds = epoll_wait(evfd, events, 10, msecs);
 	_error = errno;
 	
 	if (nfds == -1)
@@ -161,6 +171,7 @@ int Event::wait(uint32_t msecs) throw()
 
 int Event::add(int fd, uint32_t ev) throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::add(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
@@ -169,6 +180,7 @@ int Event::add(int fd, uint32_t ev) throw()
 	std::cout.setf ( std::ios_base::dec );
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -218,6 +230,7 @@ int Event::add(int fd, uint32_t ev) throw()
 
 int Event::modify(int fd, uint32_t ev) throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::modify(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
@@ -226,6 +239,7 @@ int Event::modify(int fd, uint32_t ev) throw()
 	std::cout.setf ( std::ios_base::dec );
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -274,6 +288,7 @@ int Event::modify(int fd, uint32_t ev) throw()
 
 int Event::remove(int fd, uint32_t ev) throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::remove(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
@@ -282,6 +297,7 @@ int Event::remove(int fd, uint32_t ev) throw()
 	std::cout.setf ( std::ios_base::dec );
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
+	#endif
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -322,8 +338,32 @@ int Event::remove(int fd, uint32_t ev) throw()
 	return true;
 }
 
+std::pair<fd_t, uint32_t ev> Event::getEvent() const throw()
+{
+	int i = nfds - nfds_c--;
+	return std::make_pair(events[i].data.fd, events[i].events);
+}
+
+uint32_t Event::getEvents(int fd) const throw()
+{
+	#ifndef NDEBUG
+	std::cout << "Event::getEvents(fd: " << fd << ")" << std::endl;
+	#endif
+	
+	for (int n=0; n != nfds; n++)
+	{
+		if (events[n].data.fd == fd)
+		{
+			return events[n].events;
+		}
+	}
+	
+	return 0;
+}
+
 bool Event::isset(int fd, uint32_t ev) const throw()
 {
+	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::isset(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
@@ -333,29 +373,26 @@ bool Event::isset(int fd, uint32_t ev) const throw()
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
 	#endif
+	#endif
 	
 	assert(fd != INVALID_SOCKET);
 	
-	for (int n=0; n != nfds; n++)
+	if (fIsSet(getEvents(fd), ev))
+		return true;
+	else
 	{
-		if (events[n].data.fd == fd)
-		{
-			if (fIsSet(events[n].events, ev))
-				return true;
-			else
-			{
-				#ifndef NDEBUG
-				std::cout << "Descriptor in set, but not for that event." << std::endl;
-				std::cout << "Events: ";
-				std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-				std::cout.setf ( std::ios_base::showbase );
-				std::cout << events[n].events;
-				std::cout.setf ( std::ios_base::dec );
-				std::cout.setf ( ~std::ios_base::showbase );
-				std::cout << std::endl;
-				#endif
-			}
-		}
+		#ifdef DEBUG_EVENTS
+		#ifndef NDEBUG
+		std::cout << "Descriptor in set, but not for that event." << std::endl;
+		std::cout << "Events: ";
+		std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
+		std::cout.setf ( std::ios_base::showbase );
+		std::cout << events[n].events;
+		std::cout.setf ( std::ios_base::dec );
+		std::cout.setf ( ~std::ios_base::showbase );
+		std::cout << std::endl;
+		#endif
+		#endif
 	}
 	
 	return false;
