@@ -37,7 +37,7 @@ struct Buffer
 		left(0),
 		size(len)
 	{
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::Buffer(*buf, " << len << ")" << std::endl;
 		#endif
@@ -49,7 +49,7 @@ struct Buffer
 	//! dtor
 	~Buffer() throw()
 	{
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::~Buffer()" << std::endl;
 		#endif
@@ -100,7 +100,7 @@ struct Buffer
 	 */
 	void setBuffer(char* buf, const size_t buflen) throw()
 	{
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::setBuffer(*buf, " << buflen << ")" << std::endl;
 		#endif
@@ -186,7 +186,7 @@ struct Buffer
 	 */
 	void read(const size_t len) throw()
 	{
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::read(" << len << ")" << std::endl;
 		#endif
@@ -215,7 +215,7 @@ struct Buffer
 	size_t canRead() const throw()
 	{
 		#if 0
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::canRead()" << std::endl;
 		#endif
@@ -240,7 +240,7 @@ struct Buffer
 	 */
 	void write(const size_t len) throw()
 	{
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::write(" << len << ")" << std::endl;
 		#endif
@@ -251,13 +251,12 @@ struct Buffer
 		
 		assert(len <= canWrite());
 		
-		wpos += len;
+		wpos += len; // increment wpos pointer
+		left += len; // increase number of bytes left to read
 		
 		// Set wpos to beginning of buffer if it reaches its end.
 		if (wpos == data+size)
 			wpos = data;
-		
-		left += len;
 		
 		assert(left <= size);
 	}
@@ -269,7 +268,7 @@ struct Buffer
 	size_t canWrite() const throw()
 	{
 		#if 0
-		#ifdef DEBUG_CIRCULAR_BUFFER
+		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::canWrite()" << std::endl;
 		#endif
