@@ -539,15 +539,10 @@ void Server::uHandleMsg(user_ref& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::UserInfo:
-		// TODO!!!
+		// TODO?
 		break;
 	case protocol::type::Raster:
-		#ifndef NDEBUG
-		std::cout << "Raster" << std::endl;
-		#endif
-		
 		uTunnelRaster(usr);
-		
 		break;
 	case protocol::type::Unsubscribe:
 		{
@@ -709,10 +704,12 @@ void Server::uHandleAck(user_ref& usr) throw()
 
 void Server::uTunnelRaster(user_ref& usr) throw()
 {
+	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uTunnelRaster(from: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
-	#endif
+	#endif // NDEBUG
+	#endif // DEBUG_SERVER
 	
 	protocol::Raster *raster = static_cast<protocol::Raster*>(usr->inMsg);
 	
@@ -752,7 +749,9 @@ void Server::uTunnelRaster(user_ref& usr) throw()
 	}
 	
 	#ifndef NDEBUG
-	std::cout << "Tunnel raster to: " << static_cast<int>(users.find(ft->second)->second->id)
+	std::cout << "Tunnel raster to: "
+		<< static_cast<int>(users.find(ft->second)->second->id)
+		<< " from: " << static_cast<int>(usr->id)
 		<< ", in session: " << static_cast<int>(raster->session_id) << std::endl;
 	#endif
 	

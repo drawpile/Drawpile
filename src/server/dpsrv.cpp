@@ -49,12 +49,12 @@ const uint16_t
 	minor_version = 1;
 #endif // 0
 
-const char versionString[] = "0.1a";
-
-const char copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.";
-//const char contactAddress[] = "wyrmchild@users.sourceforge.net";
-const char applicationName[] = "DrawPile Server";
-const char websiteURL[] = "http://drawpile.sourceforge.net/";
+const char
+	applicationName[] = "DrawPile Server",
+	versionString[] = "0.1",
+	copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.",
+	//contactAddress[] = "wyrmchild@users.sourceforge.net",
+	websiteURL[] = "http://drawpile.sourceforge.net/";
 
 }
 
@@ -62,15 +62,13 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "p:Vhs:u")) != -1)
+	while ((opt = getopt( argc, argv, "p:Vhs:ud:")) != -1)
 	{
 		switch (opt)
 		{
-			/*
 			case 'a': // address to listen on
-				
+				std::cerr << "Listening address setting not implemented." << std::endl;
 				break;
-			*/
 			case 'p': // port to listen on
 				{
 					uint16_t lo_port = atoi(optarg), hi_port=0;
@@ -106,22 +104,38 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					srv->setPassword(password, pw_len);
 				}
 				break;
+			case 'b':
+				std::cerr << "Daemon mode not implemented." << std::endl;
+				break;
+			case 'd': // adjust minimum dimension.
+				std::cerr << "Min. dimension setting not implemented." << std::endl;
+				/*
+				size_t mindim = atoi(optarg);
+				srv->setMinDimension(mindim);
+				*/
+				break;
 			case 'e': // name enforcing
+				std::cerr << "Name enforcing not implemented." << std::endl;
 				// TODO: Create server interface for setting this
 				break;
+			case 'w': // utf-16 string
+				std::cerr << "UTF-16 string requirement not implemented." << std::endl;
+				break;
 			case 'h': // help
-				std::cout << "Syntax: dbsrv [options]" << std::endl
+				std::cout << "Syntax: drawpile-srv [options]" << std::endl
 					<< std::endl
 					<< "Options:" << std::endl
 					<< std::endl
-					<< "   -p [port]    listen on 'port' (1024 - 65535)" << std::endl
-					<< "   -h           this output (a.k.a. Help)" << std::endl
-					<< "   -l           localhost admin" << std::endl
-					//<< "   -d           daemon mode" << std::endl
-					<< "   -u [number]  set server user limit" << std::endl
-					<< "   -s [string]  password string" << std::endl
-					//<< "   -w           UTF-16 string" << std::endl
-					<< "   -e           unique name enforcing" << std::endl
+					<< "   -a [address]  listen on this address" << std::endl
+					<< "   -p [port]     listen on 'port' (1024 - 65535)" << std::endl
+					<< "   -h            this output (a.k.a. Help)" << std::endl
+					<< "   -l            localhost admin" << std::endl
+					<< "   -b            daemon mode" << std::endl
+					<< "   -u [number]   set server user limit" << std::endl
+					<< "   -s [string]   password string" << std::endl
+					<< "   -w            UTF-16 strings" << std::endl
+					<< "   -e            unique name enforcing" << std::endl
+					<< "   -d [size]     minimum dimension for canvas" << std::endl
 					;
 				exit(1);
 				break;
