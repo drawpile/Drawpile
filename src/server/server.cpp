@@ -561,7 +561,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		{
 			protocol::Unsubscribe *msg = static_cast<protocol::Unsubscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
+			session_iterator si(session_id_map.find(msg->session_id));
 			
 			if (si == session_id_map.end())
 			{
@@ -584,7 +584,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		{
 			protocol::Subscribe *msg = static_cast<protocol::Subscribe*>(usr->inMsg);
 			
-			std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
+			session_iterator si(session_id_map.find(msg->session_id));
 			if (si == session_id_map.end())
 			{
 				#ifndef NDEBUG
@@ -605,7 +605,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		if (session_id_map.size() != 0)
 		{
 			protocol::SessionInfo *nfo = 0;
-			std::map<uint8_t, session_ref>::iterator si(session_id_map.begin());
+			session_iterator si(session_id_map.begin());
 			for (; si != session_id_map.end(); si++)
 			{
 				nfo = new protocol::SessionInfo;
@@ -668,7 +668,7 @@ void Server::uHandleAck(user_ref usr) throw()
 		// TODO
 		
 		{
-			std::map<uint8_t, SessionData>::iterator us(usr->sessions.find(ack->session_id));
+			usr_session_iterator us(usr->sessions.find(ack->session_id));
 			if (us == usr->sessions.end())
 			{
 				uSendMsg(usr, msgError(protocol::error::NotSubscribed));
@@ -732,7 +732,7 @@ void Server::uTunnelRaster(user_ref usr) throw()
 	
 	bool last = (raster->offset + raster->length == raster->size);
 	
-	std::map<uint8_t, SessionData>::iterator si( usr->sessions.find(raster->session_id) );
+	usr_session_iterator si( usr->sessions.find(raster->session_id) );
 	if (si == usr->sessions.end())
 	{
 		std::cerr << "Raster for unsubscribed session: "
@@ -747,13 +747,14 @@ void Server::uTunnelRaster(user_ref usr) throw()
 		return;
 	}
 	
-	std::map<uint8_t, fd_t>::iterator ft(tunnel.find(usr->id));
-	if (ft == tunnel.end())
+	// get users
+	std::pair<tunnel_iterator,tunnel_iterator> ft(tunnel.equal_range(usr->id));
+	if (ft.first == ft.second)
 	{
 		std::cerr << "Un-tunneled raster from: "
 			<< static_cast<int>(usr->id) << std::endl;
 		
-		// We assume the raster was for user who disappeared
+		// We assume the raster was for user/s who disappeared
 		// before we could cancel the request.
 		
 		if (!last)
@@ -765,18 +766,12 @@ void Server::uTunnelRaster(user_ref usr) throw()
 		return;
 	}
 	
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
-	std::cout << "Tunnel raster to: "
-		<< static_cast<int>(users.find(ft->second)->second->id)
-		<< " from: " << static_cast<int>(usr->id)
-		<< ", in session: " << static_cast<int>(raster->session_id) << std::endl;
-	#endif
-	#endif
-	
 	// Forward to user.
-	
-	uSendMsg(users.find(ft->second)->second, message_ref(raster));
+	tunnel_iterator ti(ft.first);
+	for (; ti != ft.second; ft.first++)
+	{
+		uSendMsg(users.find(ti->second)->second, message_ref(raster));
+	}
 	
 	// Break tunnel if that was the last raster piece.
 	if (last) tunnel.erase(usr->id);
@@ -1181,7 +1176,7 @@ void Server::Propagate(message_ref msg) throw()
 	#endif
 	#endif
 	
-	const std::map<uint8_t, session_ref>::iterator si(session_id_map.find(msg->session_id));
+	session_iterator si(session_id_map.find(msg->session_id));
 	if (si == session_id_map.end())
 	{
 		#ifndef NDEBUG
@@ -1191,7 +1186,7 @@ void Server::Propagate(message_ref msg) throw()
 		return;
 	}
 	
-	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
+	session_usr_iterator ui( si->second->users.begin() );
 	for (; ui != si->second->users.end(); ui++)
 	{
 		uSendMsg(ui->second, msg);
@@ -1294,7 +1289,7 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 		session->waitingSync.push(usr);
 		
 		// Tell the new user of the already existing users.
-		std::map<uint8_t, user_ref>::iterator si(session->users.begin());
+		session_usr_iterator si(session->users.begin());
 		message_ref ssmsg;
 		for (; si != session->users.end(); si++)
 		{
@@ -1454,7 +1449,12 @@ void Server::uRemove(user_ref usr) throw()
 	ev.remove(usr->sock->fd(), ev.read|ev.write|ev.error|ev.hangup);
 	
 	// clear the fake tunnel of any possible instance of this user.
-	std::map<uint8_t,fd_t>::iterator ti(tunnel.begin());
+	/*
+	 * TODO: Somehow figure out which of the sources are now without a tunnel
+	 * and send Cancel to them.
+	 *
+	 */
+	tunnel_iterator ti(tunnel.begin());
 	for (; ti != tunnel.end(); ti++)
 	{
 		if (ti->second == usr->sock->fd())

@@ -44,6 +44,11 @@
 typedef boost::shared_ptr<Session> session_ref;
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
+/* iterators */
+typedef std::map<uint8_t, session_ref>::iterator session_iterator;
+typedef std::map<fd_t, user_ref>::iterator user_iterator;
+typedef std::multimap<uint8_t, fd_t>::iterator tunnel_iterator;
+
 //#include <sys/time.h>
 
 #include <stdexcept>
@@ -84,7 +89,7 @@ protected:
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
 	// first->source, second->target
-	std::map<uint8_t, fd_t> tunnel;
+	std::multimap<uint8_t, fd_t> tunnel;
 	
 	// listening socket
 	Socket lsock;

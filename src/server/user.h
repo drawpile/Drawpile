@@ -34,6 +34,10 @@ struct User;
 typedef boost::shared_ptr<Session> session_ref;
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
+/* iterators */
+struct SessionData;
+typedef std::map<uint8_t, SessionData>::iterator usr_session_iterator;
+
 #include "sockets.h"
 
 // User session data

@@ -41,7 +41,7 @@ int Server::run() throw()
 	#endif
 	
 	// user map iterator
-	std::map<fd_t, user_ref>::iterator usr;
+	user_iterator usr;
 	
 	// event count
 	int ec;

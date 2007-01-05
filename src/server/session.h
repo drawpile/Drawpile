@@ -28,6 +28,9 @@ struct Session;
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<User> user_ref;
 
+/* iterators */
+typedef std::map<uint8_t, user_ref>::iterator session_usr_iterator;
+
 #include <stdint.h>
 
 // Session information
