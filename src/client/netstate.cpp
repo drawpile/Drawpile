@@ -443,9 +443,13 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
  */
 void HostState::handleError(const protocol::Error *msg)
 {
-	qDebug() << "error " << int(msg->code);
-	// TODO
-	emit error(tr("An error occured (%1)").arg(int(msg->code)));
+	QString errmsg;
+	switch(msg->code) {
+		using namespace protocol::error;
+		case TooSmall: errmsg = tr("Board too small"); break;
+		default: errmsg = tr("Error code %1").arg(int(msg->code));
+	}
+	emit error(errmsg);
 }
 
 /**
@@ -509,7 +513,6 @@ void SessionState::sendRasterChunk()
 		releaseRaster();
 		return;
 	}
-	qDebug() << "sending raster chunk from" << rasteroffset_ << "to" << rasteroffset_ + chunklen << "of" << raster_.length();
 	protocol::Raster *msg = new protocol::Raster;
 	msg->session_id = info_.id;
 	msg->offset = rasteroffset_;

@@ -40,6 +40,9 @@ Controller::Controller(QObject *parent)
 	connect(netstate_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
 	connect(netstate_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
 	connect(netstate_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
+	connect(netstate_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
+	// Disconnect on error
+	connect(netstate_, SIGNAL(error(QString)), this, SLOT(disconnectHost()));
 }
 
 Controller::~Controller()
@@ -308,10 +311,5 @@ void Controller::netDisconnected(const QString& message)
 	netstate_->setConnection(0);
 	session_ = 0;
 	emit disconnected(message);
-}
-
-void Controller::netError(const QString& message)
-{
-	qDebug() << "error: " << message;
 }
 

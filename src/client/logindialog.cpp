@@ -80,7 +80,12 @@ void LoginDialog::loggedin()
  */
 void LoginDialog::noSessions()
 {
-	ui_->connectmessage->setText(tr("No sessions were available on the host."));
+	error(tr("No sessions were available on the host."));
+}
+
+void LoginDialog::error(const QString& message)
+{
+	ui_->connectmessage->setText(message);
 	ui_->stackedWidget->setCurrentIndex(0);
 	appenddisconnect_ = true;
 }

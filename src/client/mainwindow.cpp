@@ -103,6 +103,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(joined(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
+	connect(controller_, SIGNAL(netError(QString)),logindlg_, SLOT(error(QString)));
 	connect(controller_, SIGNAL(selectSession(network::SessionList)),logindlg_, SLOT(selectSession(network::SessionList)));
 	connect(controller_, SIGNAL(needPassword()),logindlg_, SLOT(getPassword()));
 	connect(logindlg_, SIGNAL(session(int)), controller_, SLOT(joinSession(int)));

@@ -129,10 +129,12 @@ class Controller : public QObject
 		//! Unlock the board UI
 		void unlockboard();
 
+		//! A network error occured
+		void netError(const QString& message);
+
 	private slots:
 		void netConnected();
 		void netDisconnected(const QString& message);
-		void netError(const QString& message);
 		void sessionJoined(int id);
 		void sessionParted();
 		void rasterDownload(int p);

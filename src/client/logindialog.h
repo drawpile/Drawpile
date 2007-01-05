@@ -75,6 +75,9 @@ class LoginDialog : public QDialog
 		//! Select a session from the provided list
 		void selectSession(const network::SessionList& list);
 
+		//! An error occured (cannot proceed, user should press cancel)
+		void error(const QString& message);
+
 	signals:
 		//! User has entered a password
 		void password(const QString& password);

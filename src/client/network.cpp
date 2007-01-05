@@ -165,16 +165,15 @@ void NetworkPrivate::serializeMessage()
  */
 void NetworkPrivate::dataAvailable()
 {
-	// Read available data
-	QByteArray buf = socket.readAll();
-	if(buf.length() == 0)
-		return;
-	recvbuffer.append(buf);
+	do {
+		// Read available data
+		QByteArray buf = socket.readAll();
+		if(buf.length() > 0)
+			recvbuffer.append(buf);
 
-	// Try to unserialize as many messages as possible from buffer.
-	// The buffer might not contain even a single complete message, so
-	// state must be rememberd between calls.
-	while(recvbuffer.length()>0) {
+		// Try to unserialize as many messages as possible from buffer.
+		// The buffer might not contain even a single complete message, so
+		// state must be rememberd between calls.
 		// Identify packet
 		if(newmsg==0) {
 			newmsg = protocol::getMessage(recvbuffer[0]);
@@ -188,22 +187,22 @@ void NetworkPrivate::dataAvailable()
 		// Unserialize message if it has been received fully
 		int reqlen = newmsg->reqDataLen(recvbuffer.constData(),
 				recvbuffer.length());
-		if(reqlen <= recvbuffer.length()) {
-			newmsg->unserialize(recvbuffer.constData(), reqlen);
-			
-			// Enqueue the received message
-			recvmutex.lock();
-			bool wasEmpty = recvqueue.isEmpty();
-			recvqueue.enqueue(newmsg);
-			recvmutex.unlock();
-			newmsg = 0;
-			if(wasEmpty)
-				emit received();
+		if(reqlen > recvbuffer.length()) 
+			return ;
+		newmsg->unserialize(recvbuffer.constData(), reqlen);
+		
+		// Enqueue the received message
+		recvmutex.lock();
+		bool wasEmpty = recvqueue.isEmpty();
+		recvqueue.enqueue(newmsg);
+		recvmutex.unlock();
+		newmsg = 0;
+		if(wasEmpty)
+			emit received();
 
-			// Remove unserialized bytes from receive buffer
-			recvbuffer.remove(0,reqlen);
-		}
-	}
+		// Remove unserialized bytes from receive buffer
+		recvbuffer.remove(0,reqlen);
+	} while(recvbuffer.length()>0);
 }
 
 /**
