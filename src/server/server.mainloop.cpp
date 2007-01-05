@@ -163,8 +163,10 @@ int Server::run() throw()
 			}
 			
 			#ifndef NDEBUG
+			#if 0
 			if (ec != 0)
 				std::cout << "Events left: " << ec << std::endl;
+			#endif // 0
 			#endif //NDEBUG
 			
 			usr = users.end();

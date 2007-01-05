@@ -149,7 +149,9 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 
 int main(int argc, char** argv)
 {
+	#ifdef NDEBUG
 	std::ios::sync_with_stdio(false);
+	#endif
 	
 	// application name, version, etc. info
 	std::cout << srv_info::applicationName << " v" << srv_info::versionString << std::endl

@@ -281,7 +281,7 @@ void Server::uWrite(user_ref usr) throw()
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Sent " << sb << " bytes.." << std::endl;
+	//std::cout << "Sent " << sb << " bytes.." << std::endl;
 	#endif
 	#endif
 	
@@ -436,8 +436,7 @@ void Server::uProcessData(user_ref usr) throw()
 		}
 		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
-		std::cout << "complete." << std::endl
-			<< "Unserialize message" << std::endl;
+		std::cout << "complete." << std::endl;
 		#endif // NDEBUG
 		#endif // DEBUG_SERVER
 		usr->input.read(
@@ -1275,8 +1274,19 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 		std::make_pair( session->id, SessionData(usr->id, session) )
 	);
 	
+	// set user active session..
+	//usr->session = session->id;
+	
 	// Tell session members there's a new user.
 	Propagate(uCreateEvent(usr, session, protocol::user_event::Join));
+	
+	// tell old users this is our active session..
+	/*
+	message_ref ssmsg(new protocol::SessionSelect);
+	ssmsg->user_id = usr->id;
+	ssmsg->session_id = usr->session;
+	Propagate(ssmsg);
+	*/
 	
 	if (session->users.size() != 0)
 	{
@@ -1285,6 +1295,7 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 		
 		// Tell the new user of the already existing users.
 		std::map<uint8_t, user_ref>::iterator si(session->users.begin());
+		message_ref ssmsg;
 		for (; si != session->users.end(); si++)
 		{
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
@@ -1292,7 +1303,7 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 			// Spawn session select messages for those who are drawing to this session.
 			if (si->second->session == session->id)
 			{
-				message_ref ssmsg(new protocol::SessionSelect);
+				ssmsg.reset(new protocol::SessionSelect);
 				ssmsg->user_id = si->second->id;
 				ssmsg->session_id = session->id;
 				uSendMsg(usr, ssmsg);
