@@ -77,7 +77,7 @@ protected:
 	std::bitset<defaults::hard_limit> session_ids;
 	
 	// FD to user mapping
-	std::map<fd_t, User*> users;
+	std::map<fd_t, user_ref> users;
 	
 	// Session ID to session mapping
 	std::map<uint8_t, session_ref> session_id_map;
@@ -136,10 +136,10 @@ protected:
 	message_ref msgHostInfo() const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc);
+	message_ref msgAuth(user_ref usr, uint8_t session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref uCreateEvent(User* usr, session_ref& session, uint8_t event) const throw(std::bad_alloc);
+	message_ref uCreateEvent(user_ref usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
@@ -148,33 +148,33 @@ protected:
 	message_ref msgAck(uint8_t session, uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSyncWait(session_ref& session) const throw(std::bad_alloc);
+	message_ref msgSyncWait(session_ref session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
 	// Write to user socket
-	void uWrite(User* usr) throw();
+	void uWrite(user_ref usr) throw();
 	
 	// Read from user socket
-	void uRead(User* usr) throw(std::bad_alloc);
+	void uRead(user_ref usr) throw(std::bad_alloc);
 	
 	// Process all read data.
-	void uProcessData(User* usr) throw();
+	void uProcessData(user_ref usr) throw();
 	
 	// Handle user message.
-	void uHandleMsg(User* usr) throw(std::bad_alloc);
+	void uHandleMsg(user_ref usr) throw(std::bad_alloc);
 	
 	// Handle ACKs
-	void uHandleAck(User* usr) throw();
+	void uHandleAck(user_ref usr) throw();
 	
 	// Forward raster to those expecting it.
-	void uTunnelRaster(User* usr) throw();
+	void uTunnelRaster(user_ref usr) throw();
 	
 	// Handle instruction message
-	void uHandleInstruction(User* usr) throw();
+	void uHandleInstruction(user_ref usr) throw();
 	
 	// Handle user login.
-	void uHandleLogin(User* usr) throw(std::bad_alloc);
+	void uHandleLogin(user_ref usr) throw(std::bad_alloc);
 	
 	// Send message to session
 	void Propagate(message_ref msg) throw();
@@ -184,29 +184,29 @@ protected:
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
-	void uSendMsg(User* usr, message_ref msg) throw();
+	void uSendMsg(user_ref usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
-	void SyncSession(session_ref& session) throw();
+	void SyncSession(session_ref session) throw();
 	
 	//
-	void uJoinSession(User* usr, session_ref& session) throw();
+	void uJoinSession(user_ref usr, session_ref session) throw();
 	
 	//
-	void uLeaveSession(User* usr, session_ref& session) throw();
+	void uLeaveSession(user_ref usr, session_ref session) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
-	void uRemove(User* usr) throw();
+	void uRemove(user_ref usr) throw();
 	
 	// check name/title uniqueness
 	inline
-	bool validateUserName(User* usr) const throw();
+	bool validateUserName(user_ref usr) const throw();
 	
 	inline
-	bool validateSessionTitle(session_ref& session) const throw();
+	bool validateSessionTitle(session_ref session) const throw();
 public:
 	//! ctor
 	Server() throw();

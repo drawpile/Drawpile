@@ -41,7 +41,7 @@ int Server::run() throw()
 	#endif
 	
 	// user map iterator
-	std::map<fd_t, User*>::iterator usr;
+	std::map<fd_t, user_ref>::iterator usr;
 	
 	// event count
 	int ec;
@@ -92,24 +92,28 @@ int Server::run() throw()
 				usr = users.find(event->first);
 				if (usr != users.end())
 				{
-					if (fIsSet(event->second, ev.read))
-					{
-						uRead(usr->second);
-					}
-					if (fIsSet(event->second, ev.write))
-					{
-						uWrite(usr->second);
-					}
 					if (fIsSet(event->second, ev.error))
 					{
 						uRemove(usr->second);
+						continue;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(event->second, ev.hangup))
 					{
 						uRemove(usr->second);
+						continue;
 					}
 					#endif // EV_HAS_HANGUP
+					if (fIsSet(event->second, ev.read))
+					{
+						uRead(usr->second);
+						if (usr->second.unique()) continue;
+					}
+					if (fIsSet(event->second, ev.write))
+					{
+						uWrite(usr->second);
+						if (usr->second.unique()) continue;
+					}
 				}
 				else
 				{
@@ -131,24 +135,28 @@ int Server::run() throw()
 				t_events = ev.getEvents(usr->first);
 				if (t_events != 0)
 				{
-					if (fIsSet(t_events, ev.read))
-					{
-						uRead(usr->second);
-					}
-					if (fIsSet(t_events, ev.write))
-					{
-						uWrite(usr->second);
-					}
 					if (fIsSet(t_events, ev.error))
 					{
 						uRemove(usr->second);
+						if (--ec == 0) break;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(t_events, ev.hangup))
 					{
 						uRemove(usr->second);
+						if (--ec == 0) break;
 					}
 					#endif // EV_HAS_HANGUP
+					if (fIsSet(t_events, ev.read))
+					{
+						uRead(usr->second);
+						if (usr->second.unique()) continue;
+					}
+					if (fIsSet(t_events, ev.write))
+					{
+						uWrite(usr->second);
+						if (usr->second.unique()) continue;
+					}
 					
 					if (--ec == 0) break;
 				}
@@ -156,8 +164,10 @@ int Server::run() throw()
 			
 			#ifndef NDEBUG
 			if (ec != 0)
-				std::cout << "Triggered FD not found." << std::endl;
+				std::cout << "Events left: " << ec << std::endl;
 			#endif //NDEBUG
+			
+			usr = users.end();
 			
 			#else
 			#error No event fetching method defined

@@ -86,7 +86,7 @@ uint8_t Server::getUserID() throw()
 	#endif
 	#endif
 	
-	for (uint32_t i=1; i != user_ids.size(); i++)
+	for (int i=1; i != defaults::hard_limit+1; i++)
 	{
 		if (!user_ids.test(i))
 		{
@@ -106,7 +106,7 @@ uint8_t Server::getSessionID() throw()
 	#endif
 	#endif
 	
-	for (uint32_t i=1; i != session_ids.size(); i++)
+	for (int i=1; i != defaults::hard_limit+1; i++)
 	{
 		if (!session_ids.test(i))
 		{
@@ -128,7 +128,9 @@ void Server::freeUserID(uint8_t id) throw()
 	#endif
 	#endif
 	
-	user_ids.set(id, false);
+	assert(user_ids.test(id));
+	
+	user_ids.set(static_cast<int>(id), false);
 }
 
 void Server::freeSessionID(uint8_t id) throw()
@@ -141,7 +143,9 @@ void Server::freeSessionID(uint8_t id) throw()
 	#endif
 	#endif
 	
-	session_ids.set(id, false);
+	assert(session_ids.test(id));
+	
+	session_ids.set(static_cast<int>(id), false);
 }
 
 void Server::cleanup() throw()
@@ -163,7 +167,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-message_ref Server::msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc)
+message_ref Server::msgAuth(user_ref usr, uint8_t session) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -234,14 +238,14 @@ message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_a
 	return message_ref(ack);
 }
 
-message_ref Server::msgSyncWait(session_ref& session) const throw(std::bad_alloc)
+message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
 {
 	protocol::SyncWait *sync = new protocol::SyncWait;
 	sync->session_id = session->id;
 	return message_ref(sync);
 }
 
-void Server::uWrite(User* usr) throw()
+void Server::uWrite(user_ref usr) throw()
 {
 	assert(usr != 0);
 	
@@ -314,7 +318,7 @@ void Server::uWrite(User* usr) throw()
 	}
 }
 
-void Server::uRead(User* usr) throw(std::bad_alloc)
+void Server::uRead(user_ref usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -376,7 +380,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uProcessData(User* usr) throw()
+void Server::uProcessData(user_ref usr) throw()
 {
 	assert(usr != 0);
 	
@@ -462,7 +466,7 @@ void Server::uProcessData(User* usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(User* usr, session_ref& session, uint8_t event) const throw(std::bad_alloc)
+message_ref Server::uCreateEvent(user_ref usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -490,7 +494,7 @@ message_ref Server::uCreateEvent(User* usr, session_ref& session, uint8_t event)
 	return message_ref(uevent);
 }
 
-void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
+void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -644,7 +648,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleAck(User* usr) throw()
+void Server::uHandleAck(user_ref usr) throw()
 {
 	assert(usr != 0);
 	
@@ -714,7 +718,7 @@ void Server::uHandleAck(User* usr) throw()
 	}
 }
 
-void Server::uTunnelRaster(User* usr) throw()
+void Server::uTunnelRaster(user_ref usr) throw()
 {
 	assert(usr != 0);
 	
@@ -782,7 +786,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	usr->inMsg = 0;
 }
 
-void Server::uHandleInstruction(User* usr) throw()
+void Server::uHandleInstruction(user_ref usr) throw()
 {
 	assert(usr != 0);
 	
@@ -932,7 +936,7 @@ void Server::uHandleInstruction(User* usr) throw()
 	}
 }
 
-void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
+void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -1158,10 +1162,10 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 		break;
 	case uState::dead:
 		std::cerr << "I see dead people." << std::endl;
-		
+		/*
 		delete usr;
 		usr = 0;
-		
+		*/
 		break;
 	default:
 		assert(!"user state was something strange");
@@ -1188,20 +1192,20 @@ void Server::Propagate(message_ref msg) throw()
 		return;
 	}
 	
-	std::map<uint8_t, User*>::iterator ui( si->second->users.begin() );
+	std::map<uint8_t, user_ref>::iterator ui( si->second->users.begin() );
 	for (; ui != si->second->users.end(); ui++)
 	{
 		uSendMsg(ui->second, msg);
 	}
 }
 
-void Server::uSendMsg(User* usr, message_ref msg) throw()
+void Server::uSendMsg(user_ref usr, message_ref msg) throw()
 {
 	assert(usr != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::uSendMsg(user: " << static_cast<int>(usr->id)
+	std::cout << "Server::uSendMsg(to user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	protocol::msgName(msg->type);
 	#endif
@@ -1216,7 +1220,7 @@ void Server::uSendMsg(User* usr, message_ref msg) throw()
 	}
 }
 
-void Server::SyncSession(session_ref& session) throw()
+void Server::SyncSession(session_ref session) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1228,7 +1232,7 @@ void Server::SyncSession(session_ref& session) throw()
 	assert(session->syncCounter == 0);
 	
 	// TODO: Need better source user selection.
-	User* src = session->users.begin()->second;
+	user_ref src(session->users.begin()->second);
 	
 	// request raster
 	message_ref syncreq(new protocol::Synchronize);
@@ -1239,24 +1243,24 @@ void Server::SyncSession(session_ref& session) throw()
 	Propagate(msgAck(session->id, protocol::type::SyncWait));
 	
 	// put waiting clients to normal data propagation.
-	User *usr=0;
+	user_ref ref;
 	while (session->waitingSync.size() != 0)
 	{
 		// get user
-		usr = session->waitingSync.top();
+		ref = session->waitingSync.top();
 		session->waitingSync.pop();
 		
 		// Create fake tunnel
-		tunnel.insert( std::make_pair(src->id, usr->sock->fd()) );
+		tunnel.insert( std::make_pair(src->id, ref->sock->fd()) );
 		
 		// add user to normal data propagation.
-		session->users.insert( std::make_pair(usr->id, usr) );
+		session->users.insert( std::make_pair(ref->id, ref) );
 	}
 	
 	// TODO: Clean syncWait flags from users.
 }
 
-void Server::uJoinSession(User* usr, session_ref& session) throw()
+void Server::uJoinSession(user_ref usr, session_ref session) throw()
 {
 	assert(usr != 0);
 	
@@ -1277,10 +1281,10 @@ void Server::uJoinSession(User* usr, session_ref& session) throw()
 	if (session->users.size() != 0)
 	{
 		// put user to wait sync list.
-		session->waitingSync.push( usr );
+		session->waitingSync.push(usr);
 		
 		// Tell the new user of the already existing users.
-		std::map<uint8_t, User*>::iterator si(session->users.begin());
+		std::map<uint8_t, user_ref>::iterator si(session->users.begin());
 		for (; si != session->users.end(); si++)
 		{
 			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
@@ -1316,7 +1320,7 @@ void Server::uJoinSession(User* usr, session_ref& session) throw()
 	}
 }
 
-void Server::uLeaveSession(User* usr, session_ref& session) throw()
+void Server::uLeaveSession(user_ref usr, session_ref session) throw()
 {
 	assert(usr != 0);
 	
@@ -1387,6 +1391,8 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		//#endif
 		
 		delete sock;
+		sock = 0;
+		
 		return;
 	}
 	else
@@ -1397,25 +1403,23 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		#endif
 		#endif
 		
-		User* usr( new User(id, sock) );
+		user_ref usr(new User(id, sock));
 		
 		usr->session = protocol::Global;
 		
+		usr->events = 0;
 		fSet(usr->events, ev.read);
 		ev.add(usr->sock->fd(), usr->events);
 		
 		users.insert( std::make_pair(sock->fd(), usr) );
 		
-		if (usr->input.data == 0)
-		{
-			#ifdef DEBUG_BUFFER
-			#ifndef NDEBUG
-			std::cout << "Assigning buffer to user." << std::endl;
-			#endif
-			#endif
-			
-			usr->input.setBuffer(new char[8192], 8192);
-		}
+		#ifdef DEBUG_BUFFER
+		#ifndef NDEBUG
+		std::cout << "Assigning buffer to user." << std::endl;
+		#endif
+		#endif
+		
+		usr->input.setBuffer(new char[8192], 8192);
 		
 		#ifndef NDEBUG
 		std::cout << "Known users: " << users.size() << std::endl;
@@ -1423,7 +1427,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::uRemove(User* usr) throw()
+void Server::uRemove(user_ref usr) throw()
 {
 	assert(usr != 0);
 	
@@ -1450,20 +1454,15 @@ void Server::uRemove(User* usr) throw()
 	}
 	
 	// clean sessions
-	std::map<uint8_t, SessionData>::iterator si( usr->sessions.begin() );
-	for (; si != usr->sessions.end(); si++ )
+	while (usr->sessions.size() != 0)
 	{
-		//si->second.session->users.erase(usr->id);
-		uLeaveSession(usr, si->second.session);
+		uLeaveSession(usr, usr->sessions.begin()->second.session);
 	}
 	
-	// remove from fd -> User* map
+	// remove from fd -> user_ref map
 	users.erase(usr->sock->fd());
 	
 	freeUserID(usr->id);
-	
-	delete usr;
-	usr = 0;
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1568,7 +1567,7 @@ int Server::init() throw(std::bad_alloc)
 	return 0;
 }
 
-bool Server::validateUserName(User* usr) const throw()
+bool Server::validateUserName(user_ref usr) const throw()
 {
 	assert(usr != 0);
 	
@@ -1582,7 +1581,7 @@ bool Server::validateUserName(User* usr) const throw()
 	return true;
 }
 
-bool Server::validateSessionTitle(session_ref& session) const throw()
+bool Server::validateSessionTitle(session_ref session) const throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Server::validateSessionTitle(session: "

@@ -25,6 +25,9 @@
 struct Session;
 #include "user.h"
 
+#include <boost/shared_ptr.hpp>
+typedef boost::shared_ptr<User> user_ref;
+
 #include <stdint.h>
 
 // Session information
@@ -80,10 +83,10 @@ struct Session
 	uint16_t width, height;
 	
 	// Subscribed users
-	std::map<uint8_t, User*> users;
+	std::map<uint8_t, user_ref> users;
 	
 	// Users waiting sync.
-	std::stack<User*> waitingSync;
+	std::stack<user_ref> waitingSync;
 	
 	// Session sync in action.
 	uint32_t syncCounter;
