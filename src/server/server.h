@@ -168,7 +168,7 @@ protected:
 	void uHandleMsg(user_ref& usr) throw(std::bad_alloc);
 	
 	// Handle ACKs
-	void Server::uHandleAck(user_ref& usr) throw();
+	void uHandleAck(user_ref& usr) throw();
 	
 	// Handle instruction message
 	void uHandleInstruction(user_ref& usr) throw();
