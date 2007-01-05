@@ -40,7 +40,7 @@ namespace protocol
 #ifndef NDEBUG
 void msgName(const uint8_t type) throw()
 {
-	std::cout << "Message type (" << static_cast<int>(type) << "): ";
+	std::cout << "type (" << static_cast<int>(type) << "): ";
 	switch (type)
 	{
 	case type::Identifier:
@@ -122,102 +122,60 @@ void msgName(const uint8_t type) throw()
 Message* getMessage(const uint8_t type) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "protocol::getMessage("<< static_cast<int>(type) << ")" << std::endl;
+	std::cout << "protocol::getMessage("<< static_cast<int>(type) << ") ";
+	msgName(type);
 	#endif
 	
 	switch (type)
 	{
 	case type::Identifier:
-		msgName(type);
 		return new Identifier();
-		break;
 	case type::StrokeInfo:
-		msgName(type);
 		return new StrokeInfo();
-		break;
 	case type::StrokeEnd:
-		msgName(type);
 		return new StrokeEnd();
-		break;
 	case type::ToolInfo:
-		msgName(type);
 		return new ToolInfo();
-		break;
 	case type::Authentication:
-		msgName(type);
 		return new Authentication();
-		break;
 	case type::Password:
-		msgName(type);
 		return new Password();
-		break;
 	case type::Synchronize:
-		msgName(type);
 		return new Synchronize();
-		break;
 	case type::Raster:
-		msgName(type);
 		return new Raster();
-		break;
 	case type::SyncWait:
-		msgName(type);
 		return new SyncWait();
-		break;
 	case type::Subscribe:
-		msgName(type);
 		return new Subscribe();
-		break;
 	case type::Unsubscribe:
-		msgName(type);
 		return new Unsubscribe();
-		break;
 	case type::SessionSelect:
-		msgName(type);
 		return new SessionSelect();
-		break;
 	case type::Instruction:
-		msgName(type);
 		return new Instruction();
-		break;
 	case type::ListSessions:
-		msgName(type);
 		return new ListSessions();
-		break;
 	case type::Cancel:
-		msgName(type);
 		return new Cancel();
-		break;
 	case type::UserInfo:
-		msgName(type);
 		return new UserInfo();
-		break;
 	case type::HostInfo:
-		msgName(type);
 		return new HostInfo();
-		break;
 	case type::SessionInfo:
-		msgName(type);
 		return new SessionInfo();
-		break;
 	case type::Acknowledgement:
-		msgName(type);
 		return new Acknowledgement();
-		break;
 	case type::Error:
-		msgName(type);
 		return new Error();
-		break;
 	/*
 	case type::Deflate:
 	case type::Chat:
 	case type::Palette:
 	*/
 	default:
-		msgName(type);
-		break;
+		return 0;
 	}
-	
-	return 0;
 }
 
 } // namespace protocol
