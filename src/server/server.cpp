@@ -553,6 +553,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		if (usr->sessions.find(usr->inMsg->session_id) != usr->sessions.end())
 		{
 			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::SessionSelect));
+			usr->inMsg->user_id = usr->id;
 			usr->session = usr->inMsg->session_id;
 			
 			Propagate(message_ref(usr->inMsg));
