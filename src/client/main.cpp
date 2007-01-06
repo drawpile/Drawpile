@@ -22,6 +22,7 @@
 #include <QApplication>
 
 #include "mainwindow.h"
+#include "localserver.h"
 
 int main(int argc, char *argv[]) {
 	QApplication app(argc,argv);
@@ -30,6 +31,10 @@ int main(int argc, char *argv[]) {
 	app.setOrganizationName("DrawPile");
 	app.setOrganizationDomain("drawpile.sourceforge.net");
 	app.setApplicationName("DrawPile");
+
+	// Create the local server handler
+	LocalServer *srv = LocalServer::getInstance();
+	app.connect(&app, SIGNAL(aboutToQuit()), srv, SLOT(shutdown()));
 
 	// Create and show the main window
 	MainWindow win;

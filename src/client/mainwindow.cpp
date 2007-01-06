@@ -39,6 +39,7 @@
 #include "controller.h"
 #include "toolsettingswidget.h"
 #include "dualcolorbutton.h"
+#include "localserver.h"
 
 #include "aboutdialog.h"
 #include "colordialog.h"
@@ -419,7 +420,7 @@ void MainWindow::finishHost(int i)
 		if(useremote) {
 			address = hostdlg_->getRemoteAddress();
 		} else {
-			address = "localhost";
+			address = LocalServer::address();
 		}
 
 		// Remember some settings
@@ -432,6 +433,16 @@ void MainWindow::finishHost(int i)
 		// If we are not using the default port, add it to the address.
 		if(hostdlg_->isDefaultPort() == false)
 			address += ":" + QString::number(hostdlg_->getPort());
+
+		// Start server if hosting locally
+		if(useremote==false) {
+			LocalServer *srv = LocalServer::getInstance();
+			if(srv->ensureRunning(hostdlg_->getPort())==false) {
+				showErrorMessage(srv->errorString());
+				hostdlg_->deleteLater();
+				return;
+			}
+		}
 
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
@@ -630,7 +641,6 @@ void MainWindow::exit()
 }
 
 /**
- * Display an error message
  * @param type error type
  */
 void MainWindow::showErrorMessage(ErrorType type)
@@ -641,10 +651,17 @@ void MainWindow::showErrorMessage(ErrorType type)
 		case ERR_OPEN: msg = tr("An error occured while trying to open the image."); break;
 		default: qFatal("no such error type");
 	}
+	showErrorMessage(msg);
+}
 
+/**
+ * @param message error message
+ */
+void MainWindow::showErrorMessage(const QString& message)
+{
 	msgbox_->setStandardButtons(QMessageBox::Ok);
 	msgbox_->setIcon(QMessageBox::Warning);
-	msgbox_->setText(msg);
+	msgbox_->setText(message);
 	msgbox_->show();
 }
 

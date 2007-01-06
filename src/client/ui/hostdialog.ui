@@ -147,9 +147,6 @@ p, li { white-space: pre-wrap; }
        </item>
        <item row="0" column="0" >
         <widget class="QCheckBox" name="useremote" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
          <property name="toolTip" >
           <string>Host a session using a server that is running on another computer</string>
          </property>
@@ -572,6 +569,22 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel" >
      <x>100</x>
      <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>remotehost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>151</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>199</x>
+     <y>56</y>
     </hint>
    </hints>
   </connection>

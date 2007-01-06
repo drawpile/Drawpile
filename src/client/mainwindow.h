@@ -142,8 +142,11 @@ class MainWindow : public QMainWindow {
 		//! Save settings and exit
 		void exit();
 
-		//! Display an error message
+		//! Display a standardised error message
 		void showErrorMessage(ErrorType type);
+
+		//! Display an error message
+		void showErrorMessage(const QString& message);
 
 		//! Read settings from file/registry
 		void readSettings();
