@@ -35,8 +35,8 @@ class Brush;
  */
 class Preview : public QGraphicsLineItem {
 	public:
-		Preview(const Point *prev, const Point& point, const Brush& brush,
-				QGraphicsItem *parent, QGraphicsScene *scene);
+		Preview(QGraphicsItem *parent, QGraphicsScene *scene);
+		void previewLine(const Point& from, const Point& to, const Brush& brush);
 };
 
 }

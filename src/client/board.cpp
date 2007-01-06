@@ -118,6 +118,8 @@ void Board::setLocalUser(int id)
 void Board::removeUser(int id)
 {
 	Q_ASSERT(users_.contains(id));
+	if(id == localuser_)
+		clearPreviews();
 	delete users_.take(id);
 }
 
@@ -156,12 +158,16 @@ void Board::addPreview(const Point& point)
 {
 	Q_ASSERT(localuser_ != -1);
 	User *user = users_.value(localuser_);
+
 	Preview *pre;
+	if(previewcache_.isEmpty())
+		pre = new Preview(user->layer(), this);
+	else
+		pre = previewcache_.dequeue();
 	if(previewstarted_) {
-		pre = new Preview(&lastpreview_, point, user->brush(),
-				user->layer(), this);
+		pre->previewLine(lastpreview_, point, user->brush());
 	} else {
-		pre = new Preview(0, point, user->brush(), user->layer(), this);
+		pre->previewLine(point, point, user->brush());
 		previewstarted_ = true;
 	}
 	lastpreview_ = point;
@@ -203,8 +209,11 @@ void Board::userStroke(int user, const Point& point)
 	Q_ASSERT(users_.contains(user));
 	users_.value(user)->addStroke(point);
 
-	if(user == localuser_ && previews_.isEmpty() == false)
-		delete previews_.dequeue();
+	if(user == localuser_ && previews_.isEmpty() == false) {
+		Preview *pre = previews_.dequeue();
+		pre->hide();
+		previewcache_.enqueue(pre);
+	}
 }
 
 /**

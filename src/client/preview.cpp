@@ -31,21 +31,24 @@ namespace drawingboard {
  * @param parent parent layer
  * @param scene board to which this object belongs to
  */
-Preview::Preview(const Point *prev, const Point& point, const Brush& brush,
-		QGraphicsItem *parent, QGraphicsScene *scene)
+Preview::Preview(QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsLineItem(parent, scene)
 {
-	QPen pen(brush.color(point.pressure()));
-	int width = brush.radius(point.pressure())*2;
-	pen.setWidth(width==0?1:width);
-	pen.setCapStyle(Qt::RoundCap);
+}
+
+void Preview::previewLine(const Point& from, const Point& to, const Brush& brush)
+{
+	QPen pen(brush.color(to.pressure()));
+	int rad= brush.radius(to.pressure());
+	if(rad==0) {
+		pen.setWidth(1);
+	} else {
+		pen.setWidth(rad*2);
+		pen.setCapStyle(Qt::RoundCap);
+	}
 	setPen(pen);
 
-	if(prev) {
-		setLine(prev->x(), prev->y(), point.x(), point.y());
-	} else {
-		setLine(point.x(), point.y(), point.x(), point.y());
-	}
+	setLine(from.x(), from.y(), to.x(), to.y());
 }
 
 }

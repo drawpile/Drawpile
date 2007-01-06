@@ -108,6 +108,7 @@ class Board : public QGraphicsScene
 		int localuser_;
 
 		QQueue<Preview*> previews_;
+		QQueue<Preview*> previewcache_;
 		bool previewstarted_;
 		Point lastpreview_;
 
