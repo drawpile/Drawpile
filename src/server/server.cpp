@@ -766,9 +766,9 @@ void Server::uTunnelRaster(user_ref usr) throw()
 		return;
 	}
 	
-	// Forward to user.
+	// Forward to users.
 	tunnel_iterator ti(ft.first);
-	for (; ti != ft.second; ft.first++)
+	for (; ti != ft.second; ti++)
 	{
 		uSendMsg(users.find(ti->second)->second, message_ref(raster));
 	}
@@ -1225,6 +1225,8 @@ void Server::SyncSession(session_ref session) throw()
 	
 	assert(session->syncCounter == 0);
 	
+	std::list<user_ref> newc;
+	
 	// TODO: Need better source user selection.
 	user_ref src(session->users.begin()->second);
 	
@@ -1233,22 +1235,48 @@ void Server::SyncSession(session_ref session) throw()
 	syncreq->session_id = session->id;
 	uSendMsg(src, syncreq);
 	
-	// release syncwait...
+	// Release clients from syncwait...
 	Propagate(msgAck(session->id, protocol::type::SyncWait));
 	
-	// put waiting clients to normal data propagation.
-	user_ref ref;
+	// Get new clients
 	while (session->waitingSync.size() != 0)
 	{
-		// get user
-		ref = session->waitingSync.top();
+		newc.insert(newc.end(), session->waitingSync.top());
 		session->waitingSync.pop();
+	}
+	
+	// Send join and select session messages for old users.
+	session_usr_iterator old(session->users.begin());
+	std::list<user_ref>::iterator new_i;
+	message_ref msg, ssmsg;
+	for (; old != session->users.end(); old++)
+	{
+		// Generate messages
+		msg = uCreateEvent(old->second, session, protocol::user_event::Join);
+		if (old->second->session == session->id)
+		{
+			ssmsg.reset(new protocol::SessionSelect);
+			ssmsg->user_id = old->second->id;
+			ssmsg->session_id = session->id;
+		}
 		
+		// Send messages
+		for (new_i = newc.begin(); new_i != newc.end(); new_i++)
+		{
+			uSendMsg(*new_i, msg);
+			if (old->second->session == session->id)
+				uSendMsg(*new_i, ssmsg);
+		}
+	}
+	
+	// put waiting clients to normal data propagation and create tunnels.
+	for (new_i = newc.begin(); new_i != newc.end(); new_i++)
+	{
 		// Create fake tunnel
-		tunnel.insert( std::make_pair(src->id, ref->sock->fd()) );
+		tunnel.insert( std::make_pair(src->id, (*new_i)->sock->fd()) );
 		
 		// add user to normal data propagation.
-		session->users.insert( std::make_pair(ref->id, ref) );
+		session->users.insert( std::make_pair((*new_i)->id, (*new_i)) );
 	}
 	
 	// TODO: Clean syncWait flags from users.
@@ -1287,23 +1315,6 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 	{
 		// put user to wait sync list.
 		session->waitingSync.push(usr);
-		
-		// Tell the new user of the already existing users.
-		session_usr_iterator si(session->users.begin());
-		message_ref ssmsg;
-		for (; si != session->users.end(); si++)
-		{
-			uSendMsg(usr, uCreateEvent(si->second, session, protocol::user_event::Join));
-			
-			// Spawn session select messages for those who are drawing to this session.
-			if (si->second->session == session->id)
-			{
-				ssmsg.reset(new protocol::SessionSelect);
-				ssmsg->user_id = si->second->id;
-				ssmsg->session_id = session->id;
-				uSendMsg(usr, ssmsg);
-			}
-		}
 		
 		// don't start new client sync if one is already in progress...
 		if (session->syncCounter == 0)
@@ -1448,13 +1459,19 @@ void Server::uRemove(user_ref usr) throw()
 	// Remove from event system
 	ev.remove(usr->sock->fd(), ev.read|ev.write|ev.error|ev.hangup);
 	
-	// clear the fake tunnel of any possible instance of this user.
+	// Clear the fake tunnel of any possible instance of this user.
+	// We're the source...
+	tunnel_iterator ti;
+	while ((ti = tunnel.find(usr->id)) != tunnel.end())
+	{
+		tunnel.erase(ti->first);
+	}
+	
 	/*
 	 * TODO: Somehow figure out which of the sources are now without a tunnel
 	 * and send Cancel to them.
 	 *
 	 */
-	tunnel_iterator ti(tunnel.begin());
 	for (; ti != tunnel.end(); ti++)
 	{
 		if (ti->second == usr->sock->fd())
