@@ -476,6 +476,8 @@ void MainWindow::connected()
 	host_->setEnabled(false);
 	join_->setEnabled(false);
 	logout_->setEnabled(true);
+	new_->setEnabled(false);
+	open_->setEnabled(false);
 }
 
 void MainWindow::disconnected()
@@ -484,6 +486,8 @@ void MainWindow::disconnected()
 	join_->setEnabled(true);
 	logout_->setEnabled(false);
 	setSessionTitle(QString());
+	new_->setEnabled(true);
+	open_->setEnabled(true);
 }
 
 void MainWindow::lock(const QString& reason)

@@ -158,9 +158,10 @@ void Board::addPreview(const Point& point)
 	User *user = users_.value(localuser_);
 	Preview *pre;
 	if(previewstarted_) {
-		pre = new Preview(&lastpreview_, point, user->layer(), this);
+		pre = new Preview(&lastpreview_, point, user->brush(),
+				user->layer(), this);
 	} else {
-		pre = new Preview(0, point, user->layer(), this);
+		pre = new Preview(0, point, user->brush(), user->layer(), this);
 		previewstarted_ = true;
 	}
 	lastpreview_ = point;

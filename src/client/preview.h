@@ -1,4 +1,3 @@
-
 /*
    DrawPile - a collaborative drawing program.
 
@@ -25,6 +24,8 @@
 
 namespace drawingboard {
 
+class Brush;
+
 //! Stroke feedback
 /**
  * The stroke feedback object provides immediate feedback for the user
@@ -34,7 +35,7 @@ namespace drawingboard {
  */
 class Preview : public QGraphicsLineItem {
 	public:
-		Preview(const Point *prev, const Point& point,
+		Preview(const Point *prev, const Point& point, const Brush& brush,
 				QGraphicsItem *parent, QGraphicsScene *scene);
 };
 

@@ -1,4 +1,3 @@
-
 /*
    DrawPile - a collaborative drawing program.
 
@@ -18,7 +17,9 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QPen>
 #include "point.h"
+#include "brush.h"
 #include "preview.h"
 
 namespace drawingboard {
@@ -30,10 +31,16 @@ namespace drawingboard {
  * @param parent parent layer
  * @param scene board to which this object belongs to
  */
-Preview::Preview(const Point *prev, const Point& point,
+Preview::Preview(const Point *prev, const Point& point, const Brush& brush,
 		QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsLineItem(parent, scene)
 {
+	QPen pen(brush.color(point.pressure()));
+	int width = brush.radius(point.pressure())*2;
+	pen.setWidth(width==0?1:width);
+	pen.setCapStyle(Qt::RoundCap);
+	setPen(pen);
+
 	if(prev) {
 		setLine(prev->x(), prev->y(), point.x(), point.y());
 	} else {
