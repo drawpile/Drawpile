@@ -50,6 +50,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 		ui_->imageSelector->setOriginal(original);
 	}
 	connect(ui_->selectPicCol, SIGNAL(clicked()), this, SLOT(selectPicture()));
+	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
 	// Set defaults
 	ui_->port->setValue(protocol::default_port);
@@ -137,6 +138,15 @@ QImage HostDialog::getImage() const
 bool HostDialog::useOriginalImage() const
 {
 	return ui_->imageSelector->isOriginal();
+}
+
+void HostDialog::newSelected()
+{
+	selectPicture();
+	if(ui_->imageSelector->image().isNull()) {
+		ui_->existingpicture->setChecked(true);
+		ui_->imageSelector->chooseOriginal();
+	}
 }
 
 }

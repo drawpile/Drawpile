@@ -1,8 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen, based on the GTK+ color selector (C) The 
-Free Software Foundation
+   Copyright (C) 2006 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -173,6 +172,8 @@ void ImageSelector::chooseImage()
 	emit heightChanged(size_.height());
 	updateCache(image_);
 	update();
+	if(image_.isNull())
+		emit noImageSet();
 }
 
 /**

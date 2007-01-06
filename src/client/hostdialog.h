@@ -62,6 +62,7 @@ class HostDialog : public QDialog
 
 	private slots:
 		void selectPicture();
+		void newSelected();
 
 	private:
 		Ui_HostDialog *ui_;
