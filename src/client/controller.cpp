@@ -82,7 +82,7 @@ void Controller::connectHost(const QString& address, const QString& username)
 	net_ = new network::Connection(this);
 	connect(net_,SIGNAL(connected()), this, SLOT(netConnected()));
 	connect(net_,SIGNAL(disconnected(QString)), this, SLOT(netDisconnected(QString)));
-	connect(net_,SIGNAL(error(QString)), this, SLOT(netError(QString)));
+	connect(net_,SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	connect(net_,SIGNAL(received()), netstate_, SLOT(receiveMessage()));
 
 	// Connect to host

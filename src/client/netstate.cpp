@@ -69,20 +69,23 @@ void HostState::receiveMessage()
 			case type::StrokeInfo:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleStrokeInfo(static_cast<StrokeInfo*>(msg));
+					if(mysessions_.value(usersessions_.value(msg->user_id))
+						->handleStrokeInfo(static_cast<StrokeInfo*>(msg)))
+						msg = 0;
 				break;
 			case type::StrokeEnd:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleStrokeEnd(static_cast<StrokeEnd*>(msg));
+					if(mysessions_.value(usersessions_.value(msg->user_id))
+						->handleStrokeEnd(static_cast<StrokeEnd*>(msg)))
+						msg = 0;
 				break;
 			case type::ToolInfo:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleToolInfo(static_cast<ToolInfo*>(msg));
+					if(mysessions_.value(usersessions_.value(msg->user_id))
+						->handleToolInfo(static_cast<ToolInfo*>(msg)))
+						msg = 0;
 				break;
 			case type::UserInfo:
 				handleUserInfo(static_cast<UserInfo*>(msg));
@@ -386,6 +389,7 @@ void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
 {
 	usersessions_[msg->user_id] = msg->session_id;
+	qDebug() << "user" << int(msg->user_id) << "active session" << int(msg->session_id);
 }
 
 /**
@@ -404,7 +408,6 @@ void HostState::handleAuthentication(const protocol::Authentication *msg)
  */
 void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
-	qDebug() << "ack " << int(msg->event);
 	if(msg->session_id != protocol::Global) {
 		if(msg->event == protocol::type::Subscribe) {
 			// Special case. When subscribing, session is not yet in the list
@@ -434,7 +437,7 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		// A full session list has been downloaded
 		emit sessionsListed();
 	} else {
-		qDebug() << "\tunhandled host ack";
+		qDebug() << "unhandled host ack" << int(msg->event);
 	}
 }
 
@@ -456,7 +459,7 @@ void HostState::handleError(const protocol::Error *msg)
  * @param parent parent HostState
  */
 SessionState::SessionState(HostState *parent, const Session& info)
-	: QObject(parent), host_(parent), info_(info)
+	: QObject(parent), host_(parent), info_(info), bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
 }
@@ -597,7 +600,7 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
 	} else if(msg->event == protocol::type::SessionSelect) {
 		// Ignore session select ack
 	} else {
-		qDebug() << "\tunhandled session ack";
+		qDebug() << "unhandled session ack" << int(msg->event);
 	}
 }
 
@@ -640,14 +643,17 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 	if(msg->size==0) {
 		// Special case, zero size raster
 		emit rasterReceived(100);
+		flushDrawBuffer();
 	} else {
 		// Note. We make an assumption here that the data is sent in a 
 		// sequential manner with no gaps in between.
 		raster_.append(QByteArray(msg->data,msg->length));
-		if(msg->offset+msg->length<msg->size)
+		if(msg->offset+msg->length<msg->size) {
 			emit rasterReceived(99*(msg->offset+msg->length)/msg->size);
-		else
+		} else {
 			emit rasterReceived(100);
+			flushDrawBuffer();
+		}
 	}
 }
 
@@ -674,9 +680,14 @@ void SessionState::handleSyncWait(const protocol::SyncWait *msg)
 
 /**
  * @param msg ToolInfo message
+ * @retval true message was buffered, don't delete
  */
-void SessionState::handleToolInfo(const protocol::ToolInfo *msg)
+bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
 {
+	if(bufferdrawing_) {
+		drawbuffer_.enqueue(msg);
+		return true;
+	}
 	uchar r1 = (msg->hi_color & 0xff000000) >> 24;
 	uchar g1 = (msg->hi_color & 0x00ff0000) >> 16;
 	uchar b1 = (msg->hi_color & 0x0000ff00) >> 8;
@@ -695,24 +706,63 @@ void SessionState::handleToolInfo(const protocol::ToolInfo *msg)
 	brush.setHardness2(msg->lo_hardness/100.0);
 	brush.setOpacity(a2/100.0);
 	emit toolReceived(msg->user_id, brush);
+	return false;
 }
 
 /**
  * @param msg StrokeInfo message
+ * @retval true message was buffered, don't delete
  */
-void SessionState::handleStrokeInfo(const protocol::StrokeInfo *msg)
+bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 {
+	if(bufferdrawing_) {
+		drawbuffer_.enqueue(msg);
+		return true;
+	}
 	emit strokeReceived(msg->user_id,
 			drawingboard::Point(msg->x, msg->y, msg->pressure/255.0));
+	return false;
 }
 
 /**
  * @param msg StrokeEnd message
+ * @retval true message was buffered, don't delete
  */
-void SessionState::handleStrokeEnd(const protocol::StrokeEnd *msg)
+bool SessionState::handleStrokeEnd(protocol::StrokeEnd *msg)
 {
+	if(bufferdrawing_) {
+		drawbuffer_.enqueue(msg);
+		return true;
+	}
 	emit strokeEndReceived(msg->user_id);
+	return false;
 }
+
+/**
+ * Flush the drawing buffer and emit the commands.
+ * @post drawing buffer is disabled for the rest of the session
+ */
+void SessionState::flushDrawBuffer()
+{
+	bufferdrawing_ = false;
+	while(drawbuffer_.isEmpty() == false) {
+		protocol::Message *msg = drawbuffer_.dequeue();
+		if(msg->type == protocol::type::StrokeInfo)
+			handleStrokeInfo(static_cast<protocol::StrokeInfo*>(msg));
+		else if(msg->type == protocol::type::StrokeEnd)
+			handleStrokeEnd(static_cast<protocol::StrokeEnd*>(msg));
+		else
+			handleToolInfo(static_cast<protocol::ToolInfo*>(msg));
+
+		// Free the message(s)
+		while(msg) {
+			protocol::Message *next = msg->next;
+			delete msg;
+			msg = next;
+		}
+	}
+}
+
 
 }
 

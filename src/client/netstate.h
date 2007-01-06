@@ -23,10 +23,12 @@
 #include <QObject>
 #include <QHash>
 #include <QList>
+#include <QQueue>
 
 class QImage;
 
 namespace protocol {
+	class Message;
 	class HostInfo;
 	class UserInfo;
 	class SessionInfo;
@@ -253,13 +255,13 @@ class SessionState : public QObject {
 		void handleSyncWait(const protocol::SyncWait *msg);
 
 		//! Handle ToolInfo messages
-		void handleToolInfo(const protocol::ToolInfo *msg);
+		bool handleToolInfo(protocol::ToolInfo *msg);
 		//
 		//! Handle StrokeInfo messages
-		void handleStrokeInfo(const protocol::StrokeInfo *msg);
+		bool handleStrokeInfo(protocol::StrokeInfo *msg);
 
 		//! Handle StrokeEnd messages
-		void handleStrokeEnd(const protocol::StrokeEnd *msg);
+		bool handleStrokeEnd(protocol::StrokeEnd *msg);
 
 	signals:
 		//! Raster data has been received
@@ -297,6 +299,7 @@ class SessionState : public QObject {
 		void sendRasterChunk();
 
 	private:
+		void flushDrawBuffer();
 
 		HostState *host_;
 		Session info_;
@@ -304,6 +307,9 @@ class SessionState : public QObject {
 		QString password_;
 		QByteArray raster_;
 		unsigned int rasteroffset_;
+
+		bool bufferdrawing_;
+		QQueue<protocol::Message*> drawbuffer_;
 };
 
 }
