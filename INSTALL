@@ -5,6 +5,3 @@ DrawPile now uses cmake to generate its makefiles.
 Run "cmake ." in the root project directory and then "make" to compile.
 The client and server executables will be placed in bin/
 
-If cmake is not available, the client can still be compiled using qmake.
-
-
