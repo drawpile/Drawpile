@@ -49,6 +49,7 @@ void Preview::previewLine(const Point& from, const Point& to, const Brush& brush
 	setPen(pen);
 
 	setLine(from.x(), from.y(), to.x(), to.y());
+	show();
 }
 
 }
