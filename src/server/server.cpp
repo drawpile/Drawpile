@@ -414,33 +414,46 @@ void Server::uProcessData(user_ref usr) throw()
 			return;
 		}
 		
-		size_t have = usr->input.canRead();
+		size_t cread, len;
 		
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "Verify size... ";
-		#endif // NDEBUG
-		#endif // DEBUG_SERVER
-		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, have);
-		if (len > have)
+		cread = usr->input.canRead();
+		len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
+		if (len > cread)
 		{
-			#ifdef DEBUG_SERVER
-			#ifndef NDEBUG
-			std::cout << "Need " << (len - have) << " bytes more." << std::endl
-				<< "Required size: " << len << std::endl
-				<< "We already have: " << have << std::endl;
-			#endif // NDEBUG
-			#endif // DEBUG_SERVER
-			// still need more data
-			return;
+			// TODO: Make this work better!
+			if (len <= usr->input.left)
+			{
+				// reposition the buffer
+				#ifndef NDEBUG
+				std::cout << "Re-positioning buffer for maximum read length." << std::endl;
+				#endif
+				usr->input.reposition();
+				
+				// update cread and len
+				cread = usr->input.canRead();
+				len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
+				
+				if (len > cread)
+					return;
+			}
+			else
+			{
+				#ifdef DEBUG_SERVER
+				#ifndef NDEBUG
+				std::cout << "Need " << (len - cread) << " bytes more." << std::endl
+					<< "Required size: " << len << std::endl
+					<< "We already have: " << cread << std::endl;
+				
+				#endif // NDEBUG
+				#endif // DEBUG_SERVER
+				
+				// still need more data
+				return;
+			}
 		}
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "complete." << std::endl;
-		#endif // NDEBUG
-		#endif // DEBUG_SERVER
+		
 		usr->input.read(
-			usr->inMsg->unserialize(usr->input.rpos, have)
+			usr->inMsg->unserialize(usr->input.rpos, cread)
 		);
 		
 		// rewind circular buffer if there's no more data in it.
