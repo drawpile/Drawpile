@@ -291,7 +291,7 @@ void Connection::run()
 		emit connected();
 		exec();
 	} else {
-		emit disconnected(p_->errorString());
+		emit disconnected(tr("Couldn't connect."));
 	}
 
 	qDebug() << "network thread finished";
