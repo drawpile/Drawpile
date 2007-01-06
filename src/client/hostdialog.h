@@ -57,6 +57,9 @@ class HostDialog : public QDialog
 		//! Get session image
 		QImage getImage() const;
 
+		//! Use the original image?
+		bool useOriginalImage() const;
+
 	private slots:
 		void selectPicture();
 

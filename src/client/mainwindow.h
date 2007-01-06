@@ -53,6 +53,9 @@ class MainWindow : public QMainWindow {
 		MainWindow();
 
 		//! Initialize the drawing board from an existing image
+		void initBoard(const QImage& image);
+
+		//! Initialize the drawing board from a file
 		bool initBoard(const QString& filename);
 
 		//! Initialize a blank drawing board

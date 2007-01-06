@@ -78,7 +78,6 @@ MainWindow::MainWindow()
 	board_ = new drawingboard::Board(this, toolsettings_, fgbgcolor_);
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
-	//board_->initBoard(QSize(800,600),Qt::white);
 	view_->setBoard(board_);
 
 	// Create controller
@@ -136,6 +135,17 @@ bool MainWindow::initBoard(const QString& filename)
 void MainWindow::initBoard(const QSize& size, const QColor& color)
 {
 	board_->initBoard(size,color);
+	filename_ = "";
+	setWindowModified(false);
+	setTitle();
+}
+
+/**
+ * @param image board image
+ */
+void MainWindow::initBoard(const QImage& image)
+{
+	board_->initBoard(image);
 	filename_ = "";
 	setWindowModified(false);
 	setTitle();
@@ -442,6 +452,11 @@ void MainWindow::finishHost(int i)
 				hostdlg_->deleteLater();
 				return;
 			}
+		}
+
+		// If another image was selected, replace current board with it
+		if(hostdlg_->useOriginalImage() == false) {
+			initBoard(hostdlg_->getImage());
 		}
 
 		// Connect

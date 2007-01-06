@@ -50,10 +50,10 @@ class PLUGIN_EXPORT ImageSelector : public QFrame {
 		const QColor& color() const { return color_; }
 
 		//! Is solid color currently selected
-		/**
-		 * @return true if solid color was chosen
-		 */
 		bool isColor() const { return mode_ == COLOR; }
+
+		//! Is the original image currently selected
+		bool isOriginal() const { return mode_ == ORIGINAL; }
 
 	public slots:
 		void setOriginal(const QImage& image);

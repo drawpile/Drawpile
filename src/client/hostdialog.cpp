@@ -134,5 +134,10 @@ QImage HostDialog::getImage() const
 	return ui_->imageSelector->image();
 }
 
+bool HostDialog::useOriginalImage() const
+{
+	return ui_->imageSelector->isOriginal();
+}
+
 }
 
