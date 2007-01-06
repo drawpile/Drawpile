@@ -50,6 +50,7 @@ set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
 
 # check portability stuff
 
+include ( CheckVariableExists )
 include ( CheckIncludeFiles )
 
 # used by server & shared
