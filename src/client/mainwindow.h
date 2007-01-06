@@ -104,6 +104,8 @@ class MainWindow : public QMainWindow {
 		void finishExit(int i);
 		//! Cancel or start hosting
 		void finishHost(int i);
+		//! Show join dialog
+		void initJoin(int i);
 		//! Cancel or join
 		void finishJoin(int i);
 		//! Logged in, host session
@@ -131,7 +133,10 @@ class MainWindow : public QMainWindow {
 		//! Set the window title according to open file name
 		void setTitle();
 
-		//! Open new file (without checking if current is unchanged)
+		//! Show join dialog without checking for unsaved changes
+		void reallyJoin();
+
+		//! Show open dialog without checking for unsaved changes
 		void reallyOpen();
 
 		//! Save settings and exit

@@ -370,13 +370,35 @@ void MainWindow::host()
 	hostdlg_->show();
 }
 
+/**
+ * Join action triggered, if we have unsaved changes, show a confirmation box
+ * first.
+ */
 void MainWindow::join()
+{
+	if(isWindowModified()) {
+		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
+		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(initJoin(int)));
+		unsavedbox_->button(QMessageBox::No)->setText(tr("Discard changes"));
+		unsavedbox_->show();
+	} else {
+		reallyJoin();
+	}
+}
+
+/**
+ * Unsaved changes were confirmed or didn't exist, so display the join box
+ */
+void MainWindow::reallyJoin()
 {
 	joindlg_ = new dialogs::JoinDialog(this);
 	connect(joindlg_, SIGNAL(finished(int)), this, SLOT(finishJoin(int)));
 	joindlg_->show();
 }
 
+/**
+ * Leave action triggered, so disconnect
+ */
 void MainWindow::leave()
 {
 	controller_->disconnectHost();
@@ -471,6 +493,9 @@ void MainWindow::loggedinJoin()
 	controller_->joinSession();
 }
 
+/**
+ * Connection established, so disable and enable some UI elements
+ */
 void MainWindow::connected()
 {
 	host_->setEnabled(false);
@@ -480,6 +505,9 @@ void MainWindow::connected()
 	open_->setEnabled(false);
 }
 
+/**
+ * Connection lost, so disable and enable some UI elements
+ */
 void MainWindow::disconnected()
 {
 	host_->setEnabled(true);
@@ -490,22 +518,37 @@ void MainWindow::disconnected()
 	open_->setEnabled(true);
 }
 
+/**
+ * Board was locked, inform the user about it.
+ * @param reason the reason the board was locked
+ */
 void MainWindow::lock(const QString& reason)
 {
 	statusBar()->showMessage(tr("Board locked (%1)").arg(reason));
 }
 
+/**
+ * Board is no longer locked, inform the user about it.
+ */
 void MainWindow::unlock()
 {
 	statusBar()->showMessage(tr("Board unlocked"), 500);
 }
 
+/**
+ * Session title changed
+ * @param title new title
+ */
 void MainWindow::setSessionTitle(const QString& title)
 {
 	sessiontitle_ = title;
 	setTitle();
 }
 
+/**
+ * User decided what to do with unsaved changes before starting a new drawing
+ * @param i user response
+ */
 void MainWindow::finishNew(int i)
 {
 	switch(i) {
@@ -520,6 +563,10 @@ void MainWindow::finishNew(int i)
 	}
 }
 
+/**
+ * User decided what to do with unsaved changes before loading a new drawing.
+ * @param i user response
+ */
 void MainWindow::finishOpen(int i)
 {
 	switch(i) {
@@ -534,6 +581,30 @@ void MainWindow::finishOpen(int i)
 	}
 }
 
+/**
+ * User decided what to do with unsaved changes before joining a new session.
+ * Note that there is still a chance to cancel, only the join dialog is shown
+ * now.
+ * @param i user response
+ */
+void MainWindow::initJoin(int i)
+{
+	switch(i) {
+		case QMessageBox::Save:
+			if(save()==false)
+				break;
+		case QMessageBox::No:
+			reallyJoin();
+			break;
+		default:
+			break;
+	}
+}
+
+/**
+ * User decided what to do with unsaved changes before exiting.
+ * @param i user response
+ */
 void MainWindow::finishExit(int i)
 {
 	switch(i) {
@@ -549,12 +620,19 @@ void MainWindow::finishExit(int i)
 	}
 }
 
+/**
+ * Write settings and exit.
+ */
 void MainWindow::exit()
 {
 	writeSettings();
 	QApplication::quit();
 }
 
+/**
+ * Display an error message
+ * @param type error type
+ */
 void MainWindow::showErrorMessage(ErrorType type)
 {
 	QString msg;
@@ -595,7 +673,8 @@ void MainWindow::zoomone()
 }
 
 /**
- * 
+ * User selected a tool
+ * @param tool action representing the tool
  */
 void MainWindow::selectTool(QAction *tool)
 {
@@ -740,14 +819,24 @@ void MainWindow::createMenus()
 	filemenu->addSeparator();
 	filemenu->addAction(quit_);
 
+	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
+	viewmenu->addAction(toolbartoggles_);
+	viewmenu->addAction(docktoggles_);
+	viewmenu->addSeparator();
+	viewmenu->addAction(zoomin_);
+	viewmenu->addAction(zoomout_);
+	viewmenu->addAction(zoomorig_);
+
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host_);
 	sessionmenu->addAction(join_);
 	sessionmenu->addAction(logout_);
+#if 0 // these features are not yet implemented
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(lockboard_);
 	sessionmenu->addAction(lockuser_);
 	sessionmenu->addAction(kickuser_);
+#endif
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(brushtool_);
@@ -758,14 +847,6 @@ void MainWindow::createMenus()
 	toolsmenu->addAction(togglecrosshair_);
 
 	//QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
-
-	QMenu *windowmenu = menuBar()->addMenu(tr("&Window"));
-	windowmenu->addAction(toolbartoggles_);
-	windowmenu->addAction(docktoggles_);
-	windowmenu->addSeparator();
-	windowmenu->addAction(zoomin_);
-	windowmenu->addAction(zoomout_);
-	windowmenu->addAction(zoomorig_);
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(help_);
