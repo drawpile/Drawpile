@@ -158,6 +158,7 @@ void Controller::sessionJoined(int id)
 	connect(session_, SIGNAL(userJoined(int)), board_, SLOT(addUser(int)));
 	connect(session_, SIGNAL(userLeft(int)), board_, SLOT(removeUser(int)));
 
+
 	// Get a remote board editor
 	delete editor_;
 	editor_ = board_->getEditor(session_);
@@ -235,12 +236,14 @@ void Controller::syncWait()
 }
 
 /**
- * Synchronization complete
+ * Synchronization complete. Can start drawing again.
  */
 void Controller::syncDone()
 {
 	emit unlockboard();
 	lock_ = false;
+	// Resend brush so the new client is up to date
+	editor_->resendBrush();
 }
 
 void Controller::sendRaster()

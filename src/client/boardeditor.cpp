@@ -142,5 +142,10 @@ void RemoteBoardEditor::endStroke()
 	board_->endPreview();
 }
 
+void RemoteBoardEditor::resendBrush()
+{
+	session_->sendToolInfo(user_->brush());
+}
+
 }
 

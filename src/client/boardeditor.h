@@ -81,6 +81,9 @@ class BoardEditor {
 		//! End current stroke. Next addStroke will begin a new one.
 		virtual void endStroke() = 0;
 
+		//! Resend tool info. Does nothing on LocalBoardEditor
+		virtual void resendBrush() {}
+
 	protected:
 		User *user_;
 		Board *board_;
@@ -119,6 +122,7 @@ class RemoteBoardEditor : public BoardEditor {
 		void setTool(const Brush& brush);
 		void addStroke(const Point& point);
 		void endStroke();
+		void resendBrush();
 	private:
 		network::SessionState *session_;
 };
