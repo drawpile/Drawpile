@@ -119,10 +119,10 @@ struct Buffer
 		left = 0;
 	}
 	
-	//! Repositions data for maximum contiguous length.
+	//! Repositions data for maximum contiguous read length.
 	void reposition()
 	{
-		if (wpos == data)
+		if (rpos == data)
 			return;
 		
 		if (left == 0)
@@ -135,42 +135,34 @@ struct Buffer
 		size_t oleft = left;
 		#endif
 		
-		if (left > 0)
-		{
-			if (canRead() < left)
-			{ // we can't read all in one go
-				// create temporary
-				size_t oversize = left-canRead();
-				size_t tmp_len = canRead();
-				char* tmp = new char[tmp_len];
-				// move data at the end to the temporary
-				memmove(tmp, rpos, tmp_len);
-				// move write pointer to target address
-				wpos = data + tmp_len;
-				// move data at the beginning to after
-				memmove(wpos, data, oversize);
-				// move write pointer to end of actual data.
-				wpos = wpos + oversize;
-				// move data in temporary to the beginning
-				rpos = data;
-				memmove(rpos, tmp, tmp_len);
-				// delete temporary
-				delete [] tmp;
-			}
-			else
-			{ // we can read all the data in one go.
-				// just move the data to the beginning.
-				size_t off = canRead();
-				memmove(data, rpos, off);
-				// adjust rpos and wpos
-				rewind();
-				write(off);
-			}
+		if (canRead() < left)
+		{ // we can't read all in one go
+			// create temporary
+			size_t oversize = left-canRead();
+			size_t tmp_len = canRead();
+			char* tmp = new char[tmp_len];
+			// move data at the end to the temporary
+			memmove(tmp, rpos, tmp_len);
+			// move write pointer to target address
+			wpos = data + tmp_len;
+			// move data at the beginning to after
+			memmove(wpos, data, oversize);
+			// move write pointer to end of actual data.
+			wpos = wpos + oversize;
+			// move data in temporary to the beginning
+			rpos = data;
+			memmove(rpos, tmp, tmp_len);
+			// delete temporary
+			delete [] tmp;
 		}
 		else
-		{
-			// since there's no data, we can just rewind the buffer.
+		{ // we can read all the data in one go.
+			// just move the data to the beginning.
+			size_t off = canRead();
+			memmove(data, rpos, off);
+			// adjust rpos and wpos
 			rewind();
+			write(off);
 		}
 		
 		assert(oleft == left);
