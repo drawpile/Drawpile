@@ -138,13 +138,13 @@ int Server::run() throw()
 					if (fIsSet(t_events, ev.error))
 					{
 						uRemove(usr->second);
-						if (--ec == 0) break;
+						if (--ec == 0) continue;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(t_events, ev.hangup))
 					{
 						uRemove(usr->second);
-						if (--ec == 0) break;
+						if (--ec == 0) continue;
 					}
 					#endif // EV_HAS_HANGUP
 					if (fIsSet(t_events, ev.read))
