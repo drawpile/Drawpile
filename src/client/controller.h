@@ -21,6 +21,7 @@
 #define CONTROLLER_H
 
 #include <QObject>
+#include <QUrl>
 
 #include "tools.h"
 #include "netstate.h"
@@ -65,7 +66,7 @@ class Controller : public QObject
 		void setModel(drawingboard::Board *board);
 
 		//! Connect to host
-		void connectHost(const QString& address, const QString& username);
+		void connectHost(const QUrl& url);
 
 		//! Start hosting a session
 		void hostSession(const QString& title, const QString& password,
@@ -120,6 +121,9 @@ class Controller : public QObject
 		//! There were no sessions to join
 		void noSessions();
 
+		//! The requested session didn't exist
+		void sessionNotFound();
+
 		//! A session should be selected from the list and joined
 		void selectSession(const network::SessionList& list);
 
@@ -138,6 +142,7 @@ class Controller : public QObject
 	private slots:
 		void netConnected();
 		void netDisconnected(const QString& message);
+		void serverLoggedin();
 		void sessionJoined(int id);
 		void sessionParted();
 		void rasterDownload(int p);
@@ -152,12 +157,14 @@ class Controller : public QObject
 		drawingboard::Board *board_;
 		tools::Tool *tool_;
 		drawingboard::BoardEditor *editor_;
+
 		network::Connection *net_;
 		network::HostState *netstate_;
 		network::SessionState *session_;
-		QString address_;
 
+		QString address_;
 		QString username_;
+		QString autojoinpath_;
 
 		bool pendown_;
 		bool sync_;

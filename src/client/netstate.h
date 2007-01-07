@@ -106,7 +106,7 @@ class HostState : public QObject {
 				quint16 width, quint16 height);
 
 		//! Try joining automatically
-		void join();
+		void join(const QString& name = "");
 
 		//! Join a specific session
 		void join(int id);
@@ -144,6 +144,9 @@ class HostState : public QObject {
 
 		//! Host has no sessions, cannot join
 		void noSessions();
+
+		//! The session we tried to join didn't exist
+		void sessionNotFound();
 
 		//! A session should be selected from the list and joined
 		void selectSession(const network::SessionList& sessions);
@@ -188,6 +191,7 @@ class HostState : public QObject {
 		QString username_;
 		QByteArray passwordseed_;
 		int passwordsession_;
+		QString autojointitle_;
 
 		int userid_;
 

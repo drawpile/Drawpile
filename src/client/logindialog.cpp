@@ -83,6 +83,14 @@ void LoginDialog::noSessions()
 	error(tr("No sessions were available on the host."));
 }
 
+/**
+ * Disconnected, display session not found message
+ */
+void LoginDialog::sessionNotFound()
+{
+	error(tr("Selected session was not found on the host."));
+}
+
 void LoginDialog::error(const QString& message)
 {
 	ui_->connectmessage->setText(message);

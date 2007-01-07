@@ -214,10 +214,13 @@ void HostState::host(const QString& title,
 }
 
 /**
- * If there is only one session, automatically join it. Otherwise...
+ * If there is only one session, automatically join it. Otherwise ask
+ * the user to pick one.
+ * @param title if not empty, automatically join the session with a matching title.
  */
-void HostState::join()
+void HostState::join(const QString& title)
 {
+	autojointitle_ = title;
 	disconnect(this, SIGNAL(sessionsListed()), this, 0);
 	connect(this, SIGNAL(sessionsListed()), this, SLOT(autoJoin()));
 	listSessions();
@@ -318,10 +321,30 @@ void HostState::autoJoin()
 {
 	if(sessions_.count()==0) {
 		emit noSessions();
-	} else if(sessions_.count()>1) {
-		emit selectSession(sessions_);
 	} else {
-		join(sessions_.first().id);
+		if(autojointitle_.isEmpty()==false) {
+			// Join a preselected session based on its title
+			int id=-1;
+			foreach(const Session &i, sessions_) {
+				if(i.title.compare(autojointitle_)==0) {
+					id = i.id;
+					break;
+				}
+			}
+			if(id==-1) {
+				emit sessionNotFound();
+				return;
+			} else {
+				join(id);
+			}
+		} else {
+			// No preselected session
+			if(sessions_.count()>1) {
+				emit selectSession(sessions_);
+			} else {
+				join(sessions_.first().id);
+			}
+		}
 	}
 }
 

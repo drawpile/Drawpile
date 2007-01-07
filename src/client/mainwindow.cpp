@@ -104,6 +104,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),this, SLOT(rasterUp(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
+	connect(controller_, SIGNAL(sessionNotFound()),logindlg_, SLOT(sessionNotFound()));
 	connect(controller_, SIGNAL(netError(QString)),logindlg_, SLOT(error(QString)));
 	connect(controller_, SIGNAL(selectSession(network::SessionList)),logindlg_, SLOT(selectSession(network::SessionList)));
 	connect(controller_, SIGNAL(needPassword()),logindlg_, SLOT(getPassword()));
@@ -150,6 +151,23 @@ void MainWindow::initBoard(const QImage& image)
 	filename_ = "";
 	setWindowModified(false);
 	setTitle();
+}
+
+/**
+ * @param url URL
+ */
+void MainWindow::joinSession(const QUrl& url)
+{
+	disconnect(controller_, SIGNAL(loggedin()), this, 0);
+
+	// If a session was already specified, use that
+	if(url.path().length()<=1)
+		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinJoin()));
+	controller_->connectHost(url);
+
+	// Set login dialog to correct state
+	logindlg_->connecting(url.host());
+	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 }
 
 void MainWindow::setTitle()
@@ -425,25 +443,31 @@ void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
 		bool useremote = hostdlg_->useRemoteAddress();
-		QString address;
-		QString user = hostdlg_->getUserName();
+		QUrl address;
 
 		if(useremote) {
-			address = hostdlg_->getRemoteAddress();
+			address.setHost(hostdlg_->getRemoteAddress());
 		} else {
-			address = LocalServer::address();
+			address.setHost(LocalServer::address());
 		}
+
+		if(address.isValid() == false || address.host().isEmpty()) {
+			hostdlg_->show();
+			showErrorMessage(BAD_URL);
+			return;
+		}
+		address.setUserName(hostdlg_->getUserName());
 
 		// Remember some settings
 		QSettings cfg;
 		cfg.beginGroup("network");
-		cfg.setValue("username", user);
+		cfg.setValue("username", hostdlg_->getUserName());
 		if(useremote)
-			cfg.setValue("remoteaddress", address);
+			cfg.setValue("remoteaddress", address.host());
 
 		// If we are not using the default port, add it to the address.
 		if(hostdlg_->isDefaultPort() == false)
-			address += ":" + QString::number(hostdlg_->getPort());
+			address.setPort(hostdlg_->getPort());
 
 		// Start server if hosting locally
 		if(useremote==false) {
@@ -463,10 +487,10 @@ void MainWindow::finishHost(int i)
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
 		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
-		controller_->connectHost(address, user);
+		controller_->connectHost(address);
 
 		// Set login dialog to correct state
-		logindlg_->connecting(address);
+		logindlg_->connecting(address.host());
 		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 	} else {
 		hostdlg_->deleteLater();
@@ -491,23 +515,25 @@ void MainWindow::loggedinHost()
  */
 void MainWindow::finishJoin(int i) {
 	if(i==QDialog::Accepted) {
-		QString address = joindlg_->getAddress();
-		QString user = joindlg_->getUserName();
+		QString scheme;
+		if(joindlg_->getAddress().startsWith("drawpile://")==false)
+			scheme = "drawpile://";
+		QUrl address = QUrl(scheme + joindlg_->getAddress(),QUrl::TolerantMode);
+		if(address.isValid()==false || address.host().isEmpty()) {
+			joindlg_->show();
+			showErrorMessage(BAD_URL);
+			return;
+		}
+		address.setUserName(joindlg_->getUserName());
 
 		// Remember some settings
 		QSettings cfg;
 		cfg.beginGroup("network");
-		cfg.setValue("username", user);
-		cfg.setValue("joinaddress", address);
+		cfg.setValue("username", joindlg_->getUserName());
+		cfg.setValue("joinaddress", joindlg_->getAddress());
 
 		// Connect
-		disconnect(controller_, SIGNAL(loggedin()), this, 0);
-		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinJoin()));
-		controller_->connectHost(address, user);
-
-		// Set login dialog to correct state
-		logindlg_->connecting(address);
-		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
+		joinSession(address);
 	}
 	joindlg_->deleteLater();
 }
@@ -670,6 +696,7 @@ void MainWindow::showErrorMessage(ErrorType type)
 	switch(type) {
 		case ERR_SAVE: msg = tr("An error occured while trying to save the image."); break;
 		case ERR_OPEN: msg = tr("An error occured while trying to open the image."); break;
+		case BAD_URL: msg = tr("Invalid address entered."); break;
 		default: qFatal("no such error type");
 	}
 	showErrorMessage(msg);

@@ -30,16 +30,21 @@
 #include "../shared/protocol.defaults.h"
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), editor_(0), net_(0), session_(0), pendown_(false), lock_(false)
+	: QObject(parent), board_(0), editor_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
 	netstate_ = new network::HostState(this);
-	connect(netstate_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
+	connect(netstate_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
 	connect(netstate_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
 	connect(netstate_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
+
 	connect(netstate_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
 	connect(netstate_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
+	connect(netstate_, SIGNAL(sessionNotFound()), this, SLOT(disconnectHost()));
+	connect(netstate_, SIGNAL(sessionNotFound()), this, SIGNAL(sessionNotFound()));
+
 	connect(netstate_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
 	connect(netstate_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
+
 	connect(netstate_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	// Disconnect on error
 	connect(netstate_, SIGNAL(error(QString)), this, SLOT(disconnectHost()));
@@ -62,21 +67,23 @@ void Controller::setModel(drawingboard::Board *board)
  * Establish a connection with a server.
  * The connected signal will be emitted when connection is established
  * and loggedin when login is succesful.
- * @param address host address. Format: address[:port]
- * @param username username to use
+ * If a path is specified, the session with a matching name is automatically
+ * joined.
+ * @param url host url. Should contain an username. May contain a path
  */
-void Controller::connectHost(const QString& address, const QString& username)
+void Controller::connectHost(const QUrl& url)
 {
 	Q_ASSERT(net_ == 0);
+	Q_ASSERT(url.userName().isEmpty()==false);
 
-	username_ = username;
+	username_ = url.userName();
 
-	// Parse address
-	address_ = address;
-	quint16 port = protocol::default_port;
-	QStringList addr = address.split(":", QString::SkipEmptyParts);
-	if(addr.count()>1)
-		port = addr[1].toInt();
+	// This is purely cosmetic. This address is displayed to the user when
+	// connection is established. Show only the host and port if specified.
+	address_ = url.toString(QUrl::RemoveScheme|QUrl::RemovePassword|
+			QUrl::RemoveUserInfo|QUrl::RemovePath|QUrl::RemoveQuery|
+			QUrl::RemoveFragment|QUrl::StripTrailingSlash
+			).mid(2);
 
 	// Create network thread object
 	net_ = new network::Connection(this);
@@ -85,9 +92,12 @@ void Controller::connectHost(const QString& address, const QString& username)
 	connect(net_,SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	connect(net_,SIGNAL(received()), netstate_, SLOT(receiveMessage()));
 
+	// Autojoin if path is present
+	autojoinpath_ = url.path();
+
 	// Connect to host
 	netstate_->setConnection(net_);
-	net_->connectHost(addr[0], port);
+	net_->connectHost(url.host(), url.port(protocol::default_port));
 
 	sync_ = false;
 	syncwait_ = false;
@@ -129,6 +139,13 @@ void Controller::disconnectHost()
 {
 	Q_ASSERT(net_);
 	net_->disconnectHost();
+}
+
+void Controller::serverLoggedin()
+{
+	emit loggedin();
+	if(autojoinpath_.length()>1)
+		netstate_->join(autojoinpath_.mid(1));
 }
 
 /**
@@ -190,6 +207,8 @@ void Controller::sessionParted()
 		lock_ = false;
 		emit unlockboard();
 	}
+	sync_ = false;
+	syncwait_ = false;
 }
 
 /**
@@ -249,6 +268,7 @@ void Controller::syncDone()
 
 void Controller::sendRaster()
 {
+	Q_ASSERT(session_);
 	QByteArray raster;
 	QBuffer buffer(&raster);
 	board_->image().save(&buffer, "PNG");

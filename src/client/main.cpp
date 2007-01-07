@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 
 #include <iostream>
 #include <QApplication>
+#include <QSettings>
+#include <QUrl>
 
 #include "mainwindow.h"
 #include "localserver.h"
@@ -40,10 +42,29 @@ int main(int argc, char *argv[]) {
 	MainWindow win;
 
 	if(argc>1) {
-		// A parameter was given. We assume it to be a filename
-		if(win.initBoard(argv[1])==false) {
-			std::cerr << argv[1] << ": couldn't load image.\n";
-			return 1;
+		QString arg = argv[1];
+		// Parameter given, we assume it to be either an URL to a session
+		// or a filename.
+		if(arg.startsWith("drawpile://")) {
+			// Create a default board first, in case connection fails
+			win.initBoard(QSize(800,600), Qt::white);
+			// Join the session
+			QUrl url(arg, QUrl::TolerantMode);
+			if(url.userName().isEmpty()) {
+				// Set username if not specified
+				QSettings cfg;
+				cfg.beginGroup("network");
+				QString defaultname = getenv("USER");
+				if(defaultname.isEmpty())
+					defaultname = "user";
+				url.setUserName(cfg.value("username", defaultname).toString());
+			}
+			win.joinSession(url);
+		} else {
+			if(win.initBoard(argv[1])==false) {
+				std::cerr << argv[1] << ": couldn't load image.\n";
+				return 1;
+			}
 		}
 	} else {
 		// Create a default board

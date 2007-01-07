@@ -72,6 +72,9 @@ class LoginDialog : public QDialog
 		//! No sessions were available
 		void noSessions();
 
+		//! Selected session didn't exist
+		void sessionNotFound();
+
 		//! Select a session from the provided list
 		void selectSession(const network::SessionList& list);
 

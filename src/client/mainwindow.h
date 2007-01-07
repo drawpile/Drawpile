@@ -26,6 +26,7 @@
 
 class QActionGroup;
 class QMessageBox;
+class QUrl;
 
 namespace widgets {
 	class NetStatus;
@@ -48,7 +49,7 @@ class Controller;
 //! The application main window
 class MainWindow : public QMainWindow {
 	Q_OBJECT
-	enum ErrorType {ERR_SAVE, ERR_OPEN};
+	enum ErrorType {ERR_SAVE, ERR_OPEN, BAD_URL};
 	public:
 		MainWindow();
 
@@ -60,6 +61,9 @@ class MainWindow : public QMainWindow {
 
 		//! Initialize a blank drawing board
 		void initBoard(const QSize& size, const QColor& color);
+
+		//! Connect to a host and join a session if full URL is provided.
+		void joinSession(const QUrl& url);
 
 	public slots:
 		//! Check if document is changed and show New dialog
