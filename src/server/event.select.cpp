@@ -134,6 +134,7 @@ int Event::wait(uint32_t msecs) throw()
 		pselect(
 	#elif defined(EV_SELECT)
 		select(
+	#endif
 	#ifdef WIN32
 		0,
 	#else // !WIN32
