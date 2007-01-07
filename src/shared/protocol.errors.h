@@ -77,6 +77,9 @@ const uint16_t
 	//! Session lost (possibly because of protocol::admin::destroy)
 	SessionLost = 19,
 	
+	/* Generic errors */
+	InvalidRequest = 20,
+	
 	/* Admin errors. */
 	
 	//! Invalid data value in the message
