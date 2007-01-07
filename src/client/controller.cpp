@@ -26,6 +26,7 @@
 #include "boardeditor.h"
 #include "network.h"
 #include "netstate.h"
+#include "localserver.h"
 
 #include "../shared/protocol.defaults.h"
 
@@ -97,7 +98,12 @@ void Controller::connectHost(const QUrl& url)
 
 	// Connect to host
 	netstate_->setConnection(net_);
-	net_->connectHost(url.host(), url.port(protocol::default_port));
+	QString host = url.host();
+	if(host.compare(LocalServer::address())==0) {
+		qDebug() << "actually connecting to localhost instead of" << host;
+		host = "127.0.0.1"; // server only allows admin users from localhost
+	}
+	net_->connectHost(host, url.port(protocol::default_port));
 
 	sync_ = false;
 	syncwait_ = false;

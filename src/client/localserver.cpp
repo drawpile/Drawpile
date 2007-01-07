@@ -19,6 +19,7 @@
 */
 #include <QDebug>
 #include <QHostInfo>
+#include <QNetworkInterface>
 #include "localserver.h"
 
 LocalServer::LocalServer()
@@ -41,6 +42,15 @@ LocalServer *LocalServer::getInstance()
 	return server;
 }
 
+static bool isLocal(const QHostAddress& a)
+{
+	QString addr = a.toString();
+	// TODO, better and support IPv6
+	if(addr.startsWith("192.") || addr.startsWith("127.") || addr.startsWith("10."))
+		return true;
+	return false;
+}
+
 /**
  * Attempt to discover the address most likely reachable from the
  * outside.
@@ -48,9 +58,21 @@ LocalServer *LocalServer::getInstance()
  */
 QString LocalServer::address()
 {
-	// TODO, does this work well enough?
-	// other option would be to use QNetworkInterface
-	return QHostInfo::localHostName();
+	QString localname = QHostInfo::localHostName();
+	if(localname.contains(".")==false) {
+		// Name is not a fully qualified hostname.
+		// Try to get the address most likely available from the outside.
+		QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
+		localname = "localhost";
+		foreach(QHostAddress a, addresses) {
+			if(a != QHostAddress::LocalHost && a != QHostAddress::LocalHostIPv6 && a.protocol() == QAbstractSocket::IPv4Protocol) {
+				localname = a.toString();
+				if(isLocal(a)==false)
+					break;
+			}
+		}
+	}
+	return localname;
 }
 
 /**
