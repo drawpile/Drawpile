@@ -596,7 +596,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Subscribe:
 		{
-			session_iterator si(session_id_map.find(msg->session_id));
+			session_iterator si(session_id_map.find(usr->inMsg->session_id));
 			if (si == session_id_map.end())
 			{
 				// session not found
@@ -619,7 +619,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 			else
 			{
 				// join session
-				uSendMsg(usr, msgAck(msg->session_id, protocol::type::Subscribe));
+				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
 				uJoinSession(usr, si->second);
 			}
 		}
