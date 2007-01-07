@@ -78,6 +78,8 @@ const uint16_t
 	SessionLost = 19,
 	
 	/* Generic errors */
+	
+	//! Invalid request
 	InvalidRequest = 20,
 	
 	/* Admin errors. */
