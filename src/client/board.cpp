@@ -185,7 +185,10 @@ void Board::clearPreviews()
 {
 	foreach(Preview *p, previews_)
 		delete p;
+	foreach(Preview *p, previewcache_)
+		delete p;
 	previews_.clear();
+	previewcache_.clear();
 }
 
 /**
