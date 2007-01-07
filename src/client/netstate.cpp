@@ -507,7 +507,7 @@ void SessionState::sendRaster(const QByteArray& raster)
 
 void SessionState::sendRasterChunk()
 {
-	unsigned int chunklen = 1024*10;
+	unsigned int chunklen = 1024*4;
 	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
 		chunklen = raster_.length() - rasteroffset_;
 	if(chunklen==0) {
@@ -645,6 +645,10 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 		emit rasterReceived(100);
 		flushDrawBuffer();
 	} else {
+		if(msg->offset==0) {
+			// Raster data has just started or has been restarted.
+			raster_.truncate(0);
+		}
 		// Note. We make an assumption here that the data is sent in a 
 		// sequential manner with no gaps in between.
 		raster_.append(QByteArray(msg->data,msg->length));
