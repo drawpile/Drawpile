@@ -123,6 +123,8 @@ class MainWindow : public QMainWindow {
 		void lock(const QString& reason);
 		//! Allow changes to the board
 		void unlock();
+		//! Inform user about raster upload progress
+		void rasterUp(int p);
 
 	signals:
 		//! This signal is emitted when the current tool is changed

@@ -101,7 +101,8 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined(QString)), logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(joined(QString)), this, SLOT(setSessionTitle(QString)));
-	connect(controller_, SIGNAL(rasterProgress(int)), logindlg_, SLOT(raster(int)));
+	connect(controller_, SIGNAL(rasterDownloadProgress(int)), logindlg_, SLOT(raster(int)));
+	connect(controller_, SIGNAL(rasterUploadProgress(int)),this, SLOT(rasterUp(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
 	connect(controller_, SIGNAL(netError(QString)),logindlg_, SLOT(error(QString)));
 	connect(controller_, SIGNAL(selectSession(network::SessionList)),logindlg_, SLOT(selectSession(network::SessionList)));
@@ -559,6 +560,11 @@ void MainWindow::lock(const QString& reason)
 void MainWindow::unlock()
 {
 	statusBar()->showMessage(tr("Board unlocked"), 500);
+}
+
+void MainWindow::rasterUp(int p)
+{
+	statusBar()->showMessage(tr("Sending board contents to new user, %1% done").arg(QString::number(p)),1000);
 }
 
 /**

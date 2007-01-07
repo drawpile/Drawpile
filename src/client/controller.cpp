@@ -147,6 +147,7 @@ void Controller::sessionJoined(int id)
 
 	// Make session <-> controller connections
 	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
+	connect(session_, SIGNAL(rasterSent(int)), this, SIGNAL(rasterUploadProgress(int)));
 	connect(session_, SIGNAL(syncRequest()), this, SLOT(rasterUpload()));
 	connect(session_, SIGNAL(syncWait()), this, SLOT(syncWait()));
 	connect(session_, SIGNAL(syncDone()), this, SLOT(syncDone()));
@@ -210,7 +211,7 @@ void Controller::rasterDownload(int p)
 			Q_ASSERT(false);
 		}
 	}
-	emit rasterProgress(p);
+	emit rasterDownloadProgress(p);
 }
 
 /**

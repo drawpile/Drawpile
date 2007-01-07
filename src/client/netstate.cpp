@@ -525,6 +525,7 @@ void SessionState::sendRasterChunk()
 	memcpy(msg->data, raster_.constData()+rasteroffset_, chunklen);
 	rasteroffset_ += chunklen;
 	host_->net_->send(msg);
+	emit rasterSent(100*rasteroffset_/raster_.length());
 }
 
 /**

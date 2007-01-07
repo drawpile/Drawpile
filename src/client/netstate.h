@@ -270,6 +270,12 @@ class SessionState : public QObject {
 		 */
 		void rasterReceived(int percent);
 
+		//! Raster data has been sent
+		/**
+		  * @param percent percent of data uploaded, range is [0..100]
+		  */
+		void rasterSent(int percent);
+
 		//! A user has joined the session
 		void userJoined(int id);
 

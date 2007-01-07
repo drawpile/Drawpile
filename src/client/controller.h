@@ -102,8 +102,11 @@ class Controller : public QObject
 		//! Login succesfull
 		void loggedin();
 
-		//! Raster data transfer progress
-		void rasterProgress(int percent);
+		//! Raster data download progress
+		void rasterDownloadProgress(int percent);
+
+		//!  Raster data upload progress
+		void rasterUploadProgress(int percent);
 
 		//! Host disconnected
 		void disconnected(const QString& message);
