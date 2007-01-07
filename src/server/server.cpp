@@ -612,15 +612,15 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 			usr_session_iterator ui(usr->sessions.find(usr->inMsg->session_id));
 			if (ui == usr->sessions.end())
 			{
-				// already subscribed
-				uSendMsg(usr, msgError(protocol::error::InvalidRequest));
-				break;
-			}
-			else
-			{
 				// join session
 				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
 				uJoinSession(usr, si->second);
+			}
+			else
+			{
+				// already subscribed
+				uSendMsg(usr, msgError(protocol::error::InvalidRequest));
+				break;
 			}
 		}
 		break;
