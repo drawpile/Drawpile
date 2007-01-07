@@ -130,16 +130,15 @@ int Event::wait(uint32_t msecs) throw()
 	#endif
 	
 	nfds =
-	#if defined(EV_SELECT)
-		select(
-	#elif defined(EV_PSELECT)
+	#if defined(EV_PSELECT)
 		pselect(
-	#endif
+	#elif defined(EV_SELECT)
+		select(
 	#ifdef WIN32
 		0,
-	#else
-		largest_nfds + 1,
-	#endif
+	#else // !WIN32
+		(largest_nfds + 1),
+	#endif // WIN32
 		&t_fds_r,
 		&t_fds_w,
 		&t_fds_e,
