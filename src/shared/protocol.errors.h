@@ -69,11 +69,16 @@ const uint16_t
 	//! No sessions (likely a response to ListSessions).
 	NoSessions = 10,
 	//! Does not exist.
-	UnknownSession = 12,
+	UnknownSession = 11,
+	
 	//! Subscribe failed, session full.
-	SessionFull = 15,
+	SessionFull = 13,
 	//! Not subscribed (likely a response to invalid Unsubscribe)
-	NotSubscribed = 16,
+	NotSubscribed = 15,
+	
+	//! Client synchronization failure
+	SyncFailure = 17,
+	
 	//! Session lost (possibly because of protocol::admin::destroy)
 	SessionLost = 19,
 	
