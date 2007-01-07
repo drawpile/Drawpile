@@ -55,6 +55,9 @@ const uint8_t
 	//! Alter session
 	Alter = 3,
 	
+	//!
+	Authenticate = 5,
+	
 	//! Set password
 	Password = 7,
 	
