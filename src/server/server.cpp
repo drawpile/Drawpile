@@ -596,20 +596,29 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Subscribe:
 		{
-			protocol::Subscribe *msg = static_cast<protocol::Subscribe*>(usr->inMsg);
-			
 			session_iterator si(session_id_map.find(msg->session_id));
 			if (si == session_id_map.end())
 			{
+				// session not found
 				#ifndef NDEBUG
 				std::cerr << "No such session: "
-					<< static_cast<int>(msg->session_id) << std::endl;
+					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
 				uSendMsg(usr, msgError(protocol::error::UnknownSession));
+				break;
+			}
+			
+			usr_session_iterator ui(usr->sessions.find(usr->inMsg->session_id));
+			if (ui == usr->sessions.end())
+			{
+				// already subscribed
+				uSendMsg(usr, msgError(protocol::error::InvalidRequest));
+				break;
 			}
 			else
 			{
+				// join session
 				uSendMsg(usr, msgAck(msg->session_id, protocol::type::Subscribe));
 				uJoinSession(usr, si->second);
 			}
