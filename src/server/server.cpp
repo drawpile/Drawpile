@@ -685,6 +685,11 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 			
 			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Password));
 			
+			usr->seed[0] = (rand() % 255) + 1;
+			usr->seed[1] = (rand() % 255) + 1;
+			usr->seed[2] = (rand() % 255) + 1;
+			usr->seed[3] = (rand() % 255) + 1;
+			
 			usr->mode = protocol::user_mode::Administrator;
 		}
 		break;
@@ -820,6 +825,8 @@ void Server::uTunnelRaster(user_ref usr) throw()
 		}
 		return;
 	}
+	
+	uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Raster));
 	
 	// Forward to users.
 	tunnel_iterator ti(ft.first);
