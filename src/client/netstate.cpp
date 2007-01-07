@@ -747,8 +747,14 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 		drawbuffer_.enqueue(msg);
 		return true;
 	}
-	emit strokeReceived(msg->user_id,
-			drawingboard::Point(msg->x, msg->y, msg->pressure/255.0));
+	emit strokeReceived(
+			msg->user_id,
+			drawingboard::Point(
+				(signed short)(msg->x),
+				(signed short)(msg->y),
+				msg->pressure/255.0
+				)
+			);
 	return false;
 }
 

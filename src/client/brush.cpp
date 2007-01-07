@@ -230,6 +230,11 @@ void Brush::updateCache() const
 	}
 }
 
+/**
+ * Draw brush on a QImage
+ * @param image image to draw on
+ * @pos coordinates with pressure
+ */
 void Brush::draw(QImage &image, const Point& pos) const
 {
 	const int dia = radius(pos.pressure()) * 2;
@@ -274,12 +279,12 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const unsigned short *src = cache_.constData() + offy*dia + offx;
 	const unsigned int nextline = (image.width() - dia + offx) * 4;
 
-	const unsigned int w = (pos.x()+dia)>image.width()?image.width()-pos.x():dia;
-	const unsigned int h = (pos.y()+dia)>image.height()?image.height()-pos.y():dia;
+	const int w = (pos.x()+dia)>image.width()?image.width()-pos.x():dia;
+	const int h = (pos.y()+dia)>image.height()?image.height()-pos.y():dia;
 
 	// Composite brush on image
-	for(unsigned int y=offy;y<h;++y) {
-		for(unsigned int x=offx;x<w;++x) {
+	for(int y=offy;y<h;++y) {
+		for(int x=offx;x<w;++x) {
 			const int a = *(src++);
 #ifdef IS_BIG_ENDIAN
 			++dest;
