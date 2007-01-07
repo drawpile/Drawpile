@@ -189,6 +189,7 @@ int main(int argc, char** argv)
 			rc = srv.run();
 		}
 		catch (...) {
+			std::cerr << "Unknown exception caught." << std::endl;
 			rc = 9;
 			// do nothing
 		}
