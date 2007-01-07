@@ -41,6 +41,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_ = new Ui_HostDialog;
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
+	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
 	if(original.isNull()) {
 		ui_->imageSelector->setWidth(800);
 		ui_->imageSelector->setHeight(600);

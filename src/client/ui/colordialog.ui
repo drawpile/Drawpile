@@ -251,16 +251,26 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorTriangle</class>
-   <extends>QWidget</extends>
-   <header>colortriangle.h</header>
-  </customwidget>
-  <customwidget>
    <class>GradientSlider</class>
    <extends>QWidget</extends>
    <header>gradientslider.h</header>
   </customwidget>
+  <customwidget>
+   <class>ColorTriangle</class>
+   <extends>QWidget</extends>
+   <header>colortriangle.h</header>
+  </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>redbox</tabstop>
+  <tabstop>greenbox</tabstop>
+  <tabstop>bluebox</tabstop>
+  <tabstop>huebox</tabstop>
+  <tabstop>saturationbox</tabstop>
+  <tabstop>valuebox</tabstop>
+  <tabstop>CtButton</tabstop>
+  <tabstop>sliderButton</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc" />
  </resources>
