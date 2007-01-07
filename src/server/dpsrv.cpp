@@ -92,6 +92,18 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'u': // user limit
 				srv->setUserLimit(atoi(optarg));
 				break;
+			case 'S': // admin password
+				{
+					size_t pw_len = strlen(optarg);
+					char* password = 0;
+					if (pw_len > 0)
+					{
+						password = new char[pw_len];
+						memcpy(password, optarg, pw_len);
+					}
+					srv->setAdminPassword(password, pw_len);
+				}
+				break;
 			case 's': // password
 				{
 					size_t pw_len = strlen(optarg);
@@ -132,6 +144,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					<< "   -l            localhost admin" << std::endl
 					<< "   -b            daemon mode" << std::endl
 					<< "   -u [number]   set server user limit" << std::endl
+					<< "   -S [string]   admin password string" << std::endl
 					<< "   -s [string]   password string" << std::endl
 					<< "   -w            UTF-16 strings" << std::endl
 					<< "   -e            unique name enforcing" << std::endl

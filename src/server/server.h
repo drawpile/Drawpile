@@ -94,8 +94,8 @@ protected:
 	// listening socket
 	Socket lsock;
 	
-	char* password;
-	size_t pw_len,
+	char *password, *a_password;
+	size_t pw_len, a_pw_len,
 		user_limit,
 		session_limit,
 		max_subscriptions,
@@ -227,6 +227,9 @@ public:
 	
 	//! Set server password
 	void setPassword(char* pwstr, uint8_t len) { password = pwstr; pw_len = len; }
+	
+	//! Set admin server password
+	void setAdminPassword(char* pwstr, uint8_t len) { a_password = pwstr; a_pw_len = len; }
 	
 	//! Set user limit
 	void setUserLimit(uint8_t ulimit) { user_limit = ulimit; }

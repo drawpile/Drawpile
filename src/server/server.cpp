@@ -47,7 +47,9 @@
 
 Server::Server() throw()
 	: password(0),
+	a_password(0),
 	pw_len(0),
+	a_pw_len(0),
 	user_limit(0),
 	session_limit(1),
 	max_subscriptions(1),
@@ -656,6 +658,36 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 	case protocol::type::Instruction:
 		uHandleInstruction(usr);
 		break;
+	case protocol::type::Password:
+		{
+			if (a_password == 0)
+			{
+				std::cerr << "User tries to pass password even though we've disallowed it." << std::endl;
+				uSendMsg(usr, msgError(protocol::error::PasswordFailure));
+				return;
+			}
+			
+			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
+			
+			CSHA1 hash;
+			hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
+			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+			hash.Final();
+			char digest[protocol::password_hash_size];
+			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+			
+			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
+			{
+				// mismatch, send error or disconnect.
+				uSendMsg(usr, msgError(protocol::error::PasswordFailure));
+				return;
+			}
+			
+			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Password));
+			
+			usr->mode = protocol::user_mode::Administrator;
+		}
+		break;
 	default:
 		#ifdef DEBUG_SERVER
 		#ifndef NDEBUG
@@ -820,6 +852,21 @@ void Server::uHandleInstruction(user_ref usr) throw()
 	// TODO: Allow session owners to alter sessions.
 	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
+		if (static_cast<protocol::Instruction*>(usr->inMsg)->command
+			== protocol::admin::command::Authenticate)
+		{
+			std::cout << "User wishes to authenticate itself as an admin." << std::endl;
+			if (a_password == 0)
+			{
+				uSendMsg(usr, msgError(protocol::error::InvalidRequest));
+			}
+			else
+			{
+				uSendMsg(usr, msgAuth(usr, protocol::Global));
+			}
+			return;
+		}
+		
 		std::cerr << "Non-admin tries to pass instructions" << std::endl;
 		uRemove(usr);
 		return;
@@ -1096,6 +1143,12 @@ void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
 			}
 			
 			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Password));
+			
+			// make sure the same seed is not used for something else.
+			usr->seed[0] = (rand() % 255) + 1;
+			usr->seed[1] = (rand() % 255) + 1;
+			usr->seed[2] = (rand() % 255) + 1;
+			usr->seed[3] = (rand() % 255) + 1;
 		}
 		else
 		{
