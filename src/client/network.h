@@ -70,9 +70,6 @@ class Connection : public QThread {
 		//! One or more message available in receive buffer
 		void received();
 
-		//! All messages in send buffer have been transmitted
-		void sent();
-
 		//! An error occured
 		void error(const QString& message);
 

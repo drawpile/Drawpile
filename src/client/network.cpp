@@ -137,7 +137,6 @@ void NetworkPrivate::sendPending()
 		if(isempty)
 			break;
 	} while(1);
-	emit sent();
 }
 
 /**
@@ -283,7 +282,6 @@ void Connection::run()
 	connect(p_, SIGNAL(disconnected(QString)), this, SLOT(quit()));
 	connect(p_, SIGNAL(disconnected(QString)), this, SIGNAL(disconnected(QString)));
 	connect(p_, SIGNAL(received()), this, SIGNAL(received()));
-	connect(p_, SIGNAL(sent()), this, SIGNAL(sent()));
 	connect(p_, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
 
 	// Connect to host and enter event loop if succesfull

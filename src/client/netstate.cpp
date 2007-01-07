@@ -523,8 +523,6 @@ void SessionState::sendRaster(const QByteArray& raster)
 {
 	raster_ = raster;
 	rasteroffset_ = 0;
-	connect(host_->net_, SIGNAL(sent()),
-			this, SLOT(sendRasterChunk()));
 	sendRasterChunk();
 }
 
@@ -534,8 +532,6 @@ void SessionState::sendRasterChunk()
 	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
 		chunklen = raster_.length() - rasteroffset_;
 	if(chunklen==0) {
-		disconnect(host_->net_, SIGNAL(sent()),
-				this, SLOT(sendRasterChunk()));
 		releaseRaster();
 		return;
 	}
@@ -623,6 +619,8 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
 		emit syncDone();
 	} else if(msg->event == protocol::type::SessionSelect) {
 		// Ignore session select ack
+	} else if(msg->event == protocol::type::Raster) {
+		sendRasterChunk();
 	} else {
 		qDebug() << "unhandled session ack" << int(msg->event);
 	}
