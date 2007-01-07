@@ -111,15 +111,15 @@ int Event::wait(uint32_t msecs) throw()
 	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
-	#if defined(EV_SELECT)
-	timeval tv;
-	tv.tv_usec = msecs * 1000; // microseconds
-	#elif defined(EV_PSELECT)
+	#if defined(EV_PSELECT)
 	timespec tv;
 	tv.tv_nsec = msecs * 1000000;
 	
 	sigset_t sigsaved;
 	sigprocmask(SIG_SETMASK, _sigmask, &sigsaved); // save mask
+	#elif defined(EV_SELECT)
+	timeval tv;
+	tv.tv_usec = msecs * 1000; // microseconds
 	#endif // EV_[P]SELECT
 	
 	tv.tv_sec = 0;
@@ -134,7 +134,7 @@ int Event::wait(uint32_t msecs) throw()
 		pselect(
 	#elif defined(EV_SELECT)
 		select(
-	#endif
+	#endif // EV_[P]SELECT
 	#ifdef WIN32
 		0,
 	#else // !WIN32
