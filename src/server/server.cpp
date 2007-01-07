@@ -1557,14 +1557,18 @@ void Server::uRemove(user_ref usr) throw()
 	 * and send Cancel to them.
 	 *
 	 */
-	for (; ti != tunnel.end(); ti++)
+	do
 	{
-		if (ti->second == usr->sock->fd())
+		for (ti = tunnel.begin(); ti != tunnel.end(); ti++)
 		{
-			tunnel.erase(ti->first);
-			break;
+			if (ti->second == usr->sock->fd())
+			{
+				tunnel.erase(ti->first);
+				break;
+			}
 		}
 	}
+	while (ti != tunnel.end());
 	
 	// clean sessions
 	while (usr->sessions.size() != 0)
