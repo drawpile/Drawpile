@@ -1334,6 +1334,8 @@ void Server::SyncSession(session_ref session) throw()
 	message_ref msg, ssmsg;
 	for (; old != session->users.end(); old++)
 	{
+		old->second->sessions.find(session->id)->second.syncWait = false;
+		
 		// Generate messages
 		msg = uCreateEvent(old->second, session, protocol::user_event::Join);
 		if (old->second->session == session->id)
