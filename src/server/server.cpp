@@ -169,7 +169,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-message_ref Server::msgAuth(user_ref usr, uint8_t session) const throw(std::bad_alloc)
+message_ref Server::msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -247,7 +247,7 @@ message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
 	return message_ref(sync);
 }
 
-void Server::uWrite(user_ref usr) throw()
+void Server::uWrite(User* usr) throw()
 {
 	assert(usr != 0);
 	
@@ -320,7 +320,7 @@ void Server::uWrite(user_ref usr) throw()
 	}
 }
 
-void Server::uRead(user_ref usr) throw(std::bad_alloc)
+void Server::uRead(User* usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -382,7 +382,7 @@ void Server::uRead(user_ref usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uProcessData(user_ref usr) throw()
+void Server::uProcessData(User* usr) throw()
 {
 	assert(usr != 0);
 	
@@ -480,7 +480,7 @@ void Server::uProcessData(user_ref usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(user_ref usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
+message_ref Server::uCreateEvent(User* usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -508,7 +508,7 @@ message_ref Server::uCreateEvent(user_ref usr, session_ref session, uint8_t even
 	return message_ref(uevent);
 }
 
-void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
+void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -707,7 +707,7 @@ void Server::uHandleMsg(user_ref usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleAck(user_ref usr) throw()
+void Server::uHandleAck(User* usr) throw()
 {
 	assert(usr != 0);
 	
@@ -777,7 +777,7 @@ void Server::uHandleAck(user_ref usr) throw()
 	}
 }
 
-void Server::uTunnelRaster(user_ref usr) throw()
+void Server::uTunnelRaster(User* usr) throw()
 {
 	assert(usr != 0);
 	
@@ -842,7 +842,7 @@ void Server::uTunnelRaster(user_ref usr) throw()
 	usr->inMsg = 0;
 }
 
-void Server::uHandleInstruction(user_ref usr) throw()
+void Server::uHandleInstruction(User* usr) throw()
 {
 	assert(usr != 0);
 	
@@ -1007,7 +1007,7 @@ void Server::uHandleInstruction(user_ref usr) throw()
 	}
 }
 
-void Server::uHandleLogin(user_ref usr) throw(std::bad_alloc)
+void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -1276,7 +1276,7 @@ void Server::Propagate(message_ref msg) throw()
 	}
 }
 
-void Server::uSendMsg(user_ref usr, message_ref msg) throw()
+void Server::uSendMsg(User* usr, message_ref msg) throw()
 {
 	assert(usr != 0);
 	
@@ -1308,10 +1308,10 @@ void Server::SyncSession(session_ref session) throw()
 	
 	assert(session->syncCounter == 0);
 	
-	std::list<user_ref> newc;
+	std::list<User*> newc;
 	
 	// TODO: Need better source user selection.
-	user_ref src(session->users.begin()->second);
+	User* src(session->users.begin()->second);
 	
 	// request raster
 	message_ref syncreq(new protocol::Synchronize);
@@ -1330,7 +1330,7 @@ void Server::SyncSession(session_ref session) throw()
 	
 	// Send join and select session messages for old users.
 	session_usr_iterator old(session->users.begin());
-	std::list<user_ref>::iterator new_i;
+	std::list<User*>::iterator new_i;
 	message_ref msg, ssmsg;
 	for (; old != session->users.end(); old++)
 	{
@@ -1367,7 +1367,7 @@ void Server::SyncSession(session_ref session) throw()
 	// TODO: Clean syncWait flags from users.
 }
 
-void Server::uJoinSession(user_ref usr, session_ref session) throw()
+void Server::uJoinSession(User* usr, session_ref session) throw()
 {
 	assert(usr != 0);
 	
@@ -1422,7 +1422,7 @@ void Server::uJoinSession(user_ref usr, session_ref session) throw()
 	}
 }
 
-void Server::uLeaveSession(user_ref usr, session_ref session) throw()
+void Server::uLeaveSession(User* usr, session_ref session) throw()
 {
 	assert(usr != 0);
 	
@@ -1505,7 +1505,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		#endif
 		#endif
 		
-		user_ref usr(new User(id, sock));
+		User* usr(new User(id, sock));
 		
 		usr->session = protocol::Global;
 		
@@ -1529,7 +1529,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::uRemove(user_ref usr) throw()
+void Server::uRemove(User* usr) throw()
 {
 	assert(usr != 0);
 	
@@ -1576,10 +1576,13 @@ void Server::uRemove(user_ref usr) throw()
 		uLeaveSession(usr, usr->sessions.begin()->second.session);
 	}
 	
-	// remove from fd -> user_ref map
+	// remove from fd -> User* map
 	users.erase(usr->sock->fd());
 	
 	freeUserID(usr->id);
+	
+	delete usr;
+	usr = 0;
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1684,7 +1687,7 @@ int Server::init() throw(std::bad_alloc)
 	return 0;
 }
 
-bool Server::validateUserName(user_ref usr) const throw()
+bool Server::validateUserName(User* usr) const throw()
 {
 	assert(usr != 0);
 	

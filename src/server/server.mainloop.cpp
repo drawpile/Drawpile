@@ -107,12 +107,12 @@ int Server::run() throw()
 					if (fIsSet(event->second, ev.read))
 					{
 						uRead(usr->second);
-						if (usr->second.unique()) continue;
+						if (usr->second == 0) continue;
 					}
 					if (fIsSet(event->second, ev.write))
 					{
 						uWrite(usr->second);
-						if (usr->second.unique()) continue;
+						if (usr->second == 0) continue;
 					}
 				}
 				else
@@ -150,12 +150,12 @@ int Server::run() throw()
 					if (fIsSet(t_events, ev.read))
 					{
 						uRead(usr->second);
-						if (usr->second.unique()) break;
+						if (usr->second == 0) break;
 					}
 					if (fIsSet(t_events, ev.write))
 					{
 						uWrite(usr->second);
-						if (usr->second.unique()) break;
+						if (usr->second == 0) break;
 					}
 					
 					if (--ec == 0) break;

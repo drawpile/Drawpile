@@ -25,11 +25,8 @@
 struct Session;
 #include "user.h"
 
-#include <boost/shared_ptr.hpp>
-typedef boost::shared_ptr<User> user_ref;
-
 /* iterators */
-typedef std::map<uint8_t, user_ref>::iterator session_usr_iterator;
+typedef std::map<uint8_t, User*>::iterator session_usr_iterator;
 
 #include <stdint.h>
 
@@ -86,10 +83,10 @@ struct Session
 	uint16_t width, height;
 	
 	// Subscribed users
-	std::map<uint8_t, user_ref> users;
+	std::map<uint8_t, User*> users;
 	
 	// Users waiting sync.
-	std::stack<user_ref> waitingSync;
+	std::stack<User*> waitingSync;
 	
 	// Session sync in action.
 	uint32_t syncCounter;
