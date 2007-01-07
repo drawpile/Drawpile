@@ -472,7 +472,8 @@ void HostState::handleError(const protocol::Error *msg)
 	QString errmsg;
 	switch(msg->code) {
 		using namespace protocol::error;
-		case TooSmall: errmsg = tr("Board too small"); break;
+		case TooSmall: errmsg = tr("Board too small."); break;
+		case SyncFailure: errmsg = tr("Board synchronization failed, try again."); break;
 		default: errmsg = tr("Error code %1").arg(int(msg->code));
 	}
 	emit error(errmsg);
