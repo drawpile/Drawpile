@@ -33,6 +33,16 @@ option ( DEBUG "Enable debugging and asserts" OFF )
 
 option ( NOOPT "Disable any and all optimizations" OFF )
 
+### Build type ###
+
+if ( DEBUG )
+	set ( CMAKE_BUILD_TYPE Debug )
+else ( DEBUG )
+	set ( CMAKE_BUILD_TYPE Release )
+endif ( DEBUG )
+
+message ( STATUS "build type: ${CMAKE_BUILD_TYPE}" )
+
 ### Optimize ###
 
 if ( NOT NOOPT )
@@ -62,7 +72,7 @@ find_package ( Boost 1.33 REQUIRED )
 
 if ( Boost_FOUND )
 	message ( STATUS "libBoost found" )
-#check_variable_exists ( Boost_FOUND HAVE_BOOST )
+	check_variable_exists ( Boost_FOUND HAVE_BOOST )
 	include_directories( ${Boost_INCLUDE_DIRS} )
 	link_directories( ${Boost_LIBRARY_DIRS} )
 else ( Boost_FOUND )
