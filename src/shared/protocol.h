@@ -835,9 +835,10 @@ struct Error
 	: Message //, MemoryStack<Error>
 {
 	Error() throw()
-		: Message(type::Error),
+		: Message(type::Error, message::isSession),
 		code(error::None)
-	{ }
+	{
+	}
 	
 	~Error() throw() { }
 	
