@@ -1,11 +1,11 @@
 # src/
 add_subdirectory ( shared/ )
 
-if ( NOT NOSERVER )
+if ( SERVER )
 	add_subdirectory ( server/ )
 endif ( NOT NOSERVER )
 
-if ( NOT NOCLIENT )
+if ( CLIENT )
 	add_subdirectory ( client/ )
 endif ( NOT NOCLIENT )
 
