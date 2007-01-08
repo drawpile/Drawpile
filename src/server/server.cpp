@@ -58,7 +58,7 @@ Server::Server() throw()
 	lo_port(protocol::default_port),
 	min_dimension(400),
 	requirements(0),
-	extensions(0),
+	extensions(protocol::extensions::Chat|protocol::extensions::Palette),
 	default_user_mode(protocol::user_mode::None),
 	localhost_admin(true)
 {
@@ -573,6 +573,15 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Raster:
 		uTunnelRaster(usr);
+		break;
+	case protocol::type::Deflate:
+		// TODO
+		break;
+	case protocol::type::Chat:
+	case protocol::type::Palette:
+		message_ref pmsg(usr->inMsg);
+		Propagate(pmsg);
+		usr->inMsg = 0;
 		break;
 	case protocol::type::Unsubscribe:
 		{
