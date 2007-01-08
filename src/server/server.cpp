@@ -950,8 +950,8 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 			
 			Session* session(new Session);
 			session->id = session_id;
-			session->limit = msg->aux_data;
-			session->mode = msg->aux_data2;
+			session->limit = msg->aux_data; // user limit
+			session->mode = msg->aux_data2; // user mode
 			
 			if (fIsSet(session->mode, protocol::user_mode::Administrator))
 			{
@@ -972,7 +972,7 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			size_t crop = sizeof(session->width) + sizeof(session->height) + sizeof(pw_len);
+			size_t crop = sizeof(session->width) + sizeof(session->height) + sizeof(session->flags);
 			if (msg->length < crop)
 			{
 				#ifndef NDEBUG
@@ -997,9 +997,7 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			memcpy_t(session->pw_len, msg->data+(crop-1));
-			
-			if (msg->length < (crop + session->pw_len))
+			if (msg->length < crop)
 			{
 				std::cerr << "Invalid data size in instruction: 'Create'." << std::endl;
 				uSendMsg(usr, msgError(protocol::Global, protocol::error::InvalidData));
@@ -1007,9 +1005,9 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			if (msg->length > (crop + session->pw_len))
+			if (msg->length > crop)
 			{
-				session->len = (msg->length - crop - session->pw_len);
+				session->len = (msg->length - crop);
 				session->title = new char[session->len];
 				memcpy(session->title, msg->data+crop, session->len);
 			}
@@ -1018,18 +1016,6 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 				session->len = 0;
 				#ifndef NDEBUG
 				std::cout << "No title set for session." << std::endl;
-				#endif
-			}
-			
-			if (session->pw_len > 0)
-			{
-				session->password = new char[session->pw_len];
-				memcpy(session->password, msg->data+crop+session->len, session->pw_len);
-			}
-			else
-			{
-				#ifndef NDEBUG
-				std::cout << "No password set for session." << std::endl;
 				#endif
 			}
 			
