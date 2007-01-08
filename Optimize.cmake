@@ -21,7 +21,7 @@ set ( OPTIMIZATION 2 )
 
 ### Set args ###
 
-if ( NOT USE_NOARCH )
+if ( NOT NOARCH )
 	set ( ARCH "-march=${CPU}" )
 endif ( NOT NOARCH )
 

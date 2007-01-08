@@ -3,11 +3,11 @@ add_subdirectory ( shared/ )
 
 if ( SERVER )
 	add_subdirectory ( server/ )
-endif ( NOT NOSERVER )
+endif ( SERVER )
 
 if ( CLIENT )
 	add_subdirectory ( client/ )
-endif ( NOT NOCLIENT )
+endif ( CLIENT )
 
 if ( UNITTEST )
 	add_subdirectory ( unittest/ )
