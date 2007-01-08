@@ -123,6 +123,68 @@ void msgName(const uint8_t type) throw()
 }
 #endif
 
+Message* copyMessage(const Message* msg) throw(std::bad_alloc)
+{
+	#ifdef DEBUG_PROTOCOL
+	#ifndef NDEBUG
+	std::cout << "protocol::copyMessage - ";
+	msgName(msg->type);
+	#endif
+	#endif
+	
+	switch (msg->type)
+	{
+	case type::Identifier:
+		return new Identifier(*(static_cast<const Identifier*>(msg)));
+	case type::StrokeInfo:
+		return new StrokeInfo(*(static_cast<const StrokeInfo*>(msg)));
+	case type::StrokeEnd:
+		return new StrokeEnd(*(static_cast<const StrokeEnd*>(msg)));
+	case type::ToolInfo:
+		return new ToolInfo(*(static_cast<const ToolInfo*>(msg)));
+	case type::Authentication:
+		return new Authentication(*(static_cast<const Authentication*>(msg)));
+	case type::Password:
+		return new Password(*(static_cast<const Password*>(msg)));
+	case type::Synchronize:
+		return new Synchronize(*(static_cast<const Synchronize*>(msg)));
+	case type::Raster:
+		return new Raster(*(static_cast<const Raster*>(msg)));
+	case type::SyncWait:
+		return new SyncWait(*(static_cast<const SyncWait*>(msg)));
+	case type::Subscribe:
+		return new Subscribe(*(static_cast<const Subscribe*>(msg)));
+	case type::Unsubscribe:
+		return new Unsubscribe(*(static_cast<const Unsubscribe*>(msg)));
+	case type::SessionSelect:
+		return new SessionSelect(*(static_cast<const SessionSelect*>(msg)));
+	case type::Instruction:
+		return new Instruction(*(static_cast<const Instruction*>(msg)));
+	case type::ListSessions:
+		return new ListSessions(*(static_cast<const ListSessions*>(msg)));
+	case type::Cancel:
+		return new Cancel(*(static_cast<const Cancel*>(msg)));
+	case type::UserInfo:
+		return new UserInfo(*(static_cast<const UserInfo*>(msg)));
+	case type::HostInfo:
+		return new HostInfo(*(static_cast<const HostInfo*>(msg)));
+	case type::SessionInfo:
+		return new SessionInfo(*(static_cast<const SessionInfo*>(msg)));
+	case type::Acknowledgement:
+		return new Acknowledgement(*(static_cast<const Acknowledgement*>(msg)));
+	case type::Error:
+		return new Error(*(static_cast<const Error*>(msg)));
+	case type::Deflate:
+		return new Deflate(*(static_cast<const Deflate*>(msg)));
+	case type::Chat:
+		return new Chat(*(static_cast<const Chat*>(msg)));
+	case type::Palette:
+		return new Palette(*(static_cast<const Palette*>(msg)));
+	default:
+		return 0;
+	}
+}
+
 Message* getMessage(const uint8_t type) throw()
 {
 	#ifdef DEBUG_PROTOCOL

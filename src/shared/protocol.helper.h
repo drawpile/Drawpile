@@ -43,6 +43,8 @@ namespace protocol
 // for outputting the message name in console
 void msgName(const uint8_t type) throw();
 
+Message* copyMessage(const Message* msg) throw(std::bad_alloc);
+
 //! Get new message struct.
 /**
  * Allocates memory for specific message type and returns pointer to it.
