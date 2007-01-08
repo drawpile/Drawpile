@@ -326,7 +326,9 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len) throw(std::exception
 		bswap(ptr->x);
 		bswap(ptr->y);
 		
-		ptr = static_cast<StrokeInfo*>(next);
+		ptr->next = nes StrokeInfo;
+		pre->next->prev = ptr;
+		ptr = ptr->next;
 	}
 	while (ptr);
 	
