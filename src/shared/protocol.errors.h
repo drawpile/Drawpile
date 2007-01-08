@@ -78,6 +78,8 @@ const uint16_t
 	
 	//! Client synchronization failure
 	SyncFailure = 17,
+	//! Client is still syncing other session.
+	SyncInProgress = 18,
 	
 	//! Session lost (possibly because of protocol::admin::destroy)
 	SessionLost = 19,
