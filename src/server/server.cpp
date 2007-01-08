@@ -475,7 +475,7 @@ void Server::uProcessData(User* usr) throw()
 			break;
 		}
 		
-		if (usr->inMsg)
+		if (usr && usr->inMsg)
 		{
 			delete usr->inMsg;
 			usr->inMsg = 0;
