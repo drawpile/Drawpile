@@ -19,19 +19,19 @@ set ( SERVERNAME drawpile-srv )
 
 # do these even work?
 
-option ( NOCLIENT "Don't compile client" OFF )
-option ( NOSERVER "Don't compile server" OFF )
+option ( CLIENT "Don't compile client" ON )
+option ( SERVER "Don't compile server" ON )
 
-option ( NOEPOLL "Disable epoll(4) support" OFF )
-option ( NOPSELECT "Disable pselect(2) support" OFF )
-option ( NOKQUEUE "Disable kqueue(2) support" OFF )
-option ( NOKEVENT "Disable kevent(2) support" OFF )
+option ( EPOLL "Disable epoll(4) support" ON )
+option ( PSELECT "Disable pselect(2) support" ON )
+option ( KQUEUE "Disable kqueue(2) support" ON )
+option ( KEVENT "Disable kevent(2) support" ON )
 
 option ( UNITTEST "Compile unittests" OFF )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 
-option ( NOOPT "Disable any and all optimizations" OFF )
+option ( OPTIMIZE "Disable any and all optimizations" ON )
 
 ### Build type ###
 
@@ -45,9 +45,9 @@ message ( STATUS "build type: ${CMAKE_BUILD_TYPE}" )
 
 ### Optimize ###
 
-if ( NOT NOOPT )
+if ( OPTIMIZE )
 	include ( Optimize.cmake )
-endif ( NOT NOOPT)
+endif ( OPTIMIZE )
 
 include ( Macros.cmake )
 
@@ -92,8 +92,7 @@ include ( CheckIncludeFiles )
 #set ( EV_KQUEUE OFF )
 #set ( EV_KEVENT OFF )
 
-# EPOLL
-if ( NOT NOEPOLL )
+if ( EPOLL )
 	check_include_files ( sys/epoll.h HAVE_EPOLL_H )
 	
 	if ( HAVE_EPOLL_H )
@@ -101,26 +100,24 @@ if ( NOT NOEPOLL )
 		# add in config.h
 		set ( EV_EPOLL ON )
 	endif ( HAVE_EPOLL_H )
-endif ( NOT NOEPOLL )
+endif ( EPOLL )
 
-# KQUEUE
-if ( NOT NOKQUEUE )
+if ( KQUEUE )
 	check_function_exists ( kqueue EV_KQUEUE )
 	if ( EV_KQUEUE )
 		#add_definitions ( -DEV_KQUEUE )
 	endif ( EV_KQUEUE )
-endif ( NOT NOKQUEUE )
+endif ( KQUEUE )
 
-# PSELECT
-if ( NOT NOPSELECT )
+if ( PSELECT )
 	check_function_exists ( pselect EV_PSELECT )
 	if ( EV_PSELECT )
 		#add_definitions ( -DEV_PSELECT )
 	endif ( EV_PSELECT )
-endif ( NOT NOPSELECT )
+endif ( PSELECT )
 
 # fall back to select(2)
-if ( NOT NOSELECT )
+if ( SELECT )
 	check_include_files ( "sys/select.h" HAVE_SELECT_H )
 	if ( HAVE_SELECT_H )
 		set ( EV_SELECT ON )
@@ -138,7 +135,7 @@ if ( NOT NOSELECT )
 			endif ( EV_SELECT_COPY )
 		endif ( NOT WIN32 )
 	endif ( EV_SELECT )
-endif ( NOT NOSELECT )
+endif ( SELECT )
 
 if ( WIN32 )
 	check_include_files ( winsock2.h HAVE_WSA )

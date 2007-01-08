@@ -6,8 +6,8 @@
 # athlon - MMX, 3DNow
 # athlon-xp - MMX, SSE, 3DNow!, Ext 3DNow!
 
-#set ( CPU pentium2 )
-set ( CPU i686 )
+set ( CPU pentium2 )
+#set ( CPU i686 )
 
 # 0 - no optimization
 # 1 - minimal optimization
@@ -21,7 +21,7 @@ set ( OPTIMIZATION 2 )
 
 ### Set args ###
 
-if ( NOT NOARCH )
+if ( NOT USE_NOARCH )
 	set ( ARCH "-march=${CPU}" )
 endif ( NOT NOARCH )
 
