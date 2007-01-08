@@ -52,7 +52,7 @@ User::User(const QString& n, int i)
 }
 
 HostState::HostState(QObject *parent)
-	: QObject(parent), net_(0), newsession_(0), loggedin_(false)
+	: QObject(parent), net_(0), newsession_(0), lastinstruction_(-1), loggedin_(false)
 {
 }
 
@@ -210,6 +210,8 @@ void HostState::host(const QString& title,
 	msg->length = off;
 	msg->data = data;
 
+	lastinstruction_ = msg->command;
+	setsessionpassword_ = password;
 	net_->send(msg);
 }
 
@@ -229,6 +231,9 @@ void HostState::join(const QString& title)
 /**
  * A password must be sent in response to an Authentication message.
  * The \a needPassword signal is used to notify when a password is required.
+ * 
+ * sendPassword is secure, a hash of the password + previously received seed
+ * value is sent.
  * @param password password to send
  * @pre needPassword signal has been emitted
  */
@@ -244,6 +249,43 @@ void HostState::sendPassword(const QString& password)
 			passwordseed_.length());
 	hash.Final();
 	hash.GetHash(reinterpret_cast<uint8_t*>(msg->data));
+	net_->send(msg);
+}
+
+/**
+ * Uses the Instruction message to set the server password. User
+ * must have admin rights to do this.
+ *
+ * setPassword is insecure, the password is sent as cleartext.
+ *
+ * Server will respond with Ack/Instruction
+ * @param password
+ */
+void HostState::setPassword(const QString& password)
+{
+	setPassword(password, protocol::Global);
+}
+
+/**
+ * Send a password setting instruction. To set the global (server) password,
+ * admin rights are needed. To set a session password, user must be the
+ * session owner.
+ * @param password password to set
+ * @param session session id (use protocol::Global to set server password)
+ */
+void HostState::setPassword(const QString& password, int session)
+{
+	qDebug() << "sending password for session" << session;
+	protocol::Instruction *msg = new protocol::Instruction;
+	msg->command = protocol::admin::command::Password;
+	msg->session_id = session;
+	QByteArray passwd = password.toUtf8();
+
+	msg->length = passwd.length();
+	msg->data = new char[passwd.length()];
+	memcpy(msg->data,passwd.constData(),passwd.length());
+
+	lastinstruction_ = msg->command;
 	net_->send(msg);
 }
 
@@ -432,10 +474,14 @@ void HostState::handleAuthentication(const protocol::Authentication *msg)
 void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
 	if(msg->session_id != protocol::Global) {
+		// Handle session acks
 		if(msg->event == protocol::type::Subscribe) {
 			// Special case. When subscribing, session is not yet in the list
 			mysessions_.insert(newsession_->info().id, newsession_);
 			newsession_->select();
+			// TODO, use newsession_-> when server supports session passwds
+			if(setsessionpassword_.isEmpty()==false)
+				newsession_->setPassword(setsessionpassword_);
 			emit joined(newsession_->info().id);
 			newsession_ = 0;
 		} else {
@@ -449,13 +495,19 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		}
 		return;
 	}
+	// Handle global acks
 	if(msg->event == protocol::type::Instruction) {
-		// Confirm instruction. Currently, the only instruction used is
-		// Create, so this means the session was created. Automatically
-		// join it (should be the latest session in list)
-		disconnect(this, SIGNAL(sessionsListed()), this, 0);
-		connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
-		listSessions();
+		if(lastinstruction_ == protocol::admin::command::Create) {
+			// Automatically join the newest session created
+			disconnect(this, SIGNAL(sessionsListed()), this, 0);
+			connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
+			listSessions();
+		} else if(lastinstruction_ == protocol::admin::command::Password) {
+			// Password accepted
+			qDebug() << "server password set";
+		} else {
+			qFatal("BUG: unhandled lastinstruction_");
+		}
 	} else if(msg->event == protocol::type::ListSessions) {
 		// A full session list has been downloaded
 		emit sessionsListed();
@@ -582,6 +634,15 @@ void SessionState::select()
 	msg->session_id = info_.id;
 	host_->usersessions_[host_->userid_] = info_.id;
 	host_->net_->send(msg);
+}
+
+/**
+ * Set the session password.
+ * @param password password to set
+ */
+void SessionState::setPassword(const QString& password)
+{
+	host_->setPassword(password, info_.id);
 }
 
 /**

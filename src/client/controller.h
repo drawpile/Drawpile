@@ -63,6 +63,7 @@ class Controller : public QObject
 		Controller(QObject *parent=0);
 		~Controller();
 
+		//! Set drawing board to use
 		void setModel(drawingboard::Board *board);
 
 		//! Connect to host

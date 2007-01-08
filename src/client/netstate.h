@@ -65,6 +65,7 @@ struct Session {
 	quint16 height;
 };
 
+//! Information about a user (sesssion specific)
 struct User {
 	User(const QString& n, int i);
 
@@ -110,6 +111,9 @@ class HostState : public QObject {
 
 		//! Join a specific session
 		void join(int id);
+
+		//! Set server password
+		void setPassword(const QString& password);
 
 	public slots:
 		//! Get a message from the network handler object
@@ -162,6 +166,9 @@ class HostState : public QObject {
 		void autoJoin();
 
 	private:
+		//! Set server or session password
+		void setPassword(const QString& password, int session);
+
 		//! Refresh the list of sessions
 		void listSessions();
 
@@ -200,6 +207,9 @@ class HostState : public QObject {
 		QHash<int,int> usersessions_;
 		SessionList sessions_;
 
+		int lastinstruction_;
+		QString setsessionpassword_;
+
 		bool loggedin_;
 };
 
@@ -236,6 +246,9 @@ class SessionState : public QObject {
 
 		//! Select this session as active
 		void select();
+
+		//! Set password for this session
+		void setPassword(const QString& password);
 
 		//! Send a tool info message
 		void sendToolInfo(const drawingboard::Brush& brush);

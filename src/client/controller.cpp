@@ -126,6 +126,7 @@ bool Controller::isUploading() const
 void Controller::hostSession(const QString& title, const QString& password,
 		const QImage& image)
 {
+	Q_ASSERT(netstate_);
 	netstate_->host(title, password, image.width(), image.height());
 }
 
@@ -135,9 +136,14 @@ void Controller::hostSession(const QString& title, const QString& password,
  */
 void Controller::joinSession()
 {
+	Q_ASSERT(netstate_);
 	netstate_->join();
 }
 
+/**
+ * Send a password to log in or join.
+ * @param password password to send
+ */
 void Controller::sendPassword(const QString& password)
 {
 	netstate_->sendPassword(password);
