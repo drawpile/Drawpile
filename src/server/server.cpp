@@ -260,15 +260,17 @@ void Server::uWrite(User* usr) throw()
 	#endif
 	#endif
 	
-	if (!usr->output.data or usr->output.canRead() == 0)
+	if (!usr->output.data or usr->output.canWrite() == 0)
 	{
 		size_t len=0;
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
 		uint8_t id = msg->user_id;
 		
+		/*
 		while (msg->next != 0)
 			msg = msg->next;
+		*/
 		
 		msg->user_id = id;
 		char* buf = msg->serialize(len);
