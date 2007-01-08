@@ -31,7 +31,6 @@ struct User;
 #include "../shared/protocol.flags.h"
 
 #include <boost/shared_ptr.hpp>
-typedef boost::shared_ptr<Session> session_ref;
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
 /* iterators */
@@ -43,7 +42,7 @@ typedef std::map<uint8_t, SessionData>::iterator usr_session_iterator;
 // User session data
 struct SessionData
 {
-	SessionData(uint8_t id=protocol::null_user, session_ref s=session_ref()) throw()
+	SessionData(uint8_t id=protocol::null_user, Session *s=0) throw()
 		: user(id),
 		session(s),
 		mode(s->mode),
@@ -59,7 +58,7 @@ struct SessionData
 	uint8_t user;
 	
 	// Session reference
-	session_ref session;
+	Session *session;
 	
 	// User mode within session
 	uint8_t mode;

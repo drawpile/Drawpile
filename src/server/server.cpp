@@ -241,8 +241,10 @@ message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_a
 	return message_ref(ack);
 }
 
-message_ref Server::msgSyncWait(session_ref session) const throw(std::bad_alloc)
+message_ref Server::msgSyncWait(Session* session) const throw(std::bad_alloc)
 {
+	assert(session != 0);
+	
 	protocol::SyncWait *sync = new protocol::SyncWait;
 	sync->session_id = session->id;
 	return message_ref(sync);
@@ -481,9 +483,10 @@ void Server::uProcessData(User* usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(User* usr, session_ref session, uint8_t event) const throw(std::bad_alloc)
+message_ref Server::uCreateEvent(User* usr, Session* session, uint8_t event) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
+	assert(session != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -799,7 +802,7 @@ void Server::uHandleAck(User* usr) throw()
 				us->second.syncWait = true;
 			}
 			
-			session_ref session(session_id_map.find(ack->session_id)->second);
+			Session *session(session_id_map.find(ack->session_id)->second);
 			session->syncCounter--;
 			
 			if (session->syncCounter == 0)
@@ -894,7 +897,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	usr->inMsg = 0;
 }
 
-void Server::uHandleInstruction(User* usr) throw()
+void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -945,7 +948,7 @@ void Server::uHandleInstruction(User* usr) throw()
 				return;
 			}
 			
-			session_ref session(new Session);
+			Session* session(new Session);
 			session->id = session_id;
 			session->limit = msg->aux_data;
 			session->mode = msg->aux_data2;
@@ -954,6 +957,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			{
 				std::cerr << "Administrator flag in default mode." << std::endl;
 				uRemove(usr);
+				delete session;
 				return;
 			}
 			
@@ -964,6 +968,7 @@ void Server::uHandleInstruction(User* usr) throw()
 				#endif
 				
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidData));
+				delete session;
 				return;
 			}
 			
@@ -975,6 +980,7 @@ void Server::uHandleInstruction(User* usr) throw()
 				#endif
 				
 				uRemove(usr);
+				delete session;
 				return;
 			}
 			
@@ -987,6 +993,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			if (session->width < min_dimension or session->height < min_dimension)
 			{
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooSmall));
+				delete session;
 				return;
 			}
 			
@@ -996,6 +1003,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			{
 				std::cerr << "Invalid data size in instruction: 'Create'." << std::endl;
 				uSendMsg(usr, msgError(protocol::Global, protocol::error::InvalidData));
+				delete session;
 				return;
 			}
 			
@@ -1031,10 +1039,8 @@ void Server::uHandleInstruction(User* usr) throw()
 				std::cerr << "Title not unique." << std::endl;
 				#endif
 				
-				#if 0
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
-				#endif // 0
-				
+				delete session;
 				return;
 			}
 			
@@ -1371,7 +1377,7 @@ void Server::uSendMsg(User* usr, message_ref msg) throw()
 	}
 }
 
-void Server::SyncSession(session_ref session) throw()
+void Server::SyncSession(Session* session) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1380,6 +1386,7 @@ void Server::SyncSession(session_ref session) throw()
 	#endif
 	#endif
 	
+	assert(session != 0);
 	assert(session->syncCounter == 0);
 	
 	std::list<User*> newc;
@@ -1441,9 +1448,10 @@ void Server::SyncSession(session_ref session) throw()
 	// TODO: Clean syncWait flags from users.
 }
 
-void Server::uJoinSession(User* usr, session_ref session) throw()
+void Server::uJoinSession(User* usr, Session* session) throw()
 {
 	assert(usr != 0);
+	assert(session != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1497,9 +1505,10 @@ void Server::uJoinSession(User* usr, session_ref session) throw()
 	}
 }
 
-void Server::uLeaveSession(User* usr, session_ref session) throw()
+void Server::uLeaveSession(User* usr, Session* session) throw()
 {
 	assert(usr != 0);
+	assert(session != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1791,14 +1800,14 @@ bool Server::validateUserName(User* usr) const throw()
 	return true;
 }
 
-bool Server::validateSessionTitle(session_ref session) const throw()
+bool Server::validateSessionTitle(Session* session) const throw()
 {
+	assert(session != 0);
+	
 	#ifndef NDEBUG
 	std::cout << "Server::validateSessionTitle(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
-	
-	
 	
 	return true;
 }

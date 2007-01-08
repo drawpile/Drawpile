@@ -41,11 +41,10 @@
 #include "../shared/protocol.h"
 
 #include <boost/shared_ptr.hpp>
-typedef boost::shared_ptr<Session> session_ref;
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
 /* iterators */
-typedef std::map<uint8_t, session_ref>::iterator session_iterator;
+typedef std::map<uint8_t, Session*>::iterator session_iterator;
 typedef std::map<fd_t, User*>::iterator user_iterator;
 typedef std::multimap<uint8_t, fd_t>::iterator tunnel_iterator;
 
@@ -85,7 +84,7 @@ protected:
 	std::map<fd_t, User*> users;
 	
 	// Session ID to session mapping
-	std::map<uint8_t, session_ref> session_id_map;
+	std::map<uint8_t, Session*> session_id_map;
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
 	// first->source, second->target
@@ -144,7 +143,7 @@ protected:
 	message_ref msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref uCreateEvent(User* usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
+	message_ref uCreateEvent(User* usr, Session* session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgError(uint8_t session, uint16_t errorCode) const throw(std::bad_alloc);
@@ -153,7 +152,7 @@ protected:
 	message_ref msgAck(uint8_t session, uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSyncWait(session_ref session) const throw(std::bad_alloc);
+	message_ref msgSyncWait(Session* session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
@@ -176,7 +175,7 @@ protected:
 	void uTunnelRaster(User* usr) throw();
 	
 	// Handle instruction message
-	void uHandleInstruction(User* usr) throw();
+	void uHandleInstruction(User* usr) throw(std::bad_alloc);
 	
 	// Handle user login.
 	void uHandleLogin(User* usr) throw(std::bad_alloc);
@@ -192,7 +191,7 @@ protected:
 	void uSendMsg(User* usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
-	void SyncSession(session_ref session) throw();
+	void SyncSession(Session* session) throw();
 	
 	// Break synchronization with user.
 	void breakSync(User* usr) throw();
@@ -201,10 +200,10 @@ protected:
 	void cancelSync(User* usr) throw();
 	
 	//
-	void uJoinSession(User* usr, session_ref session) throw();
+	void uJoinSession(User* usr, Session* session) throw();
 	
 	//
-	void uLeaveSession(User* usr, session_ref session) throw();
+	void uLeaveSession(User* usr, Session* session) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
@@ -225,7 +224,7 @@ protected:
 	bool validateUserName(User* usr) const throw();
 	
 	inline
-	bool validateSessionTitle(session_ref session) const throw();
+	bool validateSessionTitle(Session* session) const throw();
 public:
 	//! ctor
 	Server() throw();
