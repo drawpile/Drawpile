@@ -41,8 +41,9 @@ int main(int argc, char *argv[]) {
 	// Create and show the main window
 	MainWindow win;
 
-	if(argc>1) {
-		QString arg = argv[1];
+	QStringList args = app.arguments();
+	if(args.isEmpty()==false) {
+		QString arg = args.at(1);
 		// Parameter given, we assume it to be either an URL to a session
 		// or a filename.
 		if(arg.startsWith("drawpile://")) {
