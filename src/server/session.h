@@ -42,6 +42,7 @@ struct Session
 		password(0),
 		mode(protocol::user_mode::None),
 		limit(10),
+		flags(0),
 		owner(protocol::null_user),
 		width(0),
 		height(0),
@@ -81,8 +82,11 @@ struct Session
 	// Default user mode
 	uint8_t mode;
 	
-	//! User limit
+	// User limit
 	uint8_t limit;
+	
+	// Session flags
+	uint8_t flags;
 	
 	// Session owner
 	uint8_t owner;

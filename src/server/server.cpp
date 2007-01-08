@@ -1514,14 +1514,12 @@ void Server::uLeaveSession(User* usr, Session* session) throw()
 	// last user in session.. destruct it
 	if (session->users.size() == 0)
 	{
-		freeSessionID(session->id);
-		
-		session_id_map.erase(session->id);
-		
-		/*
-		delete session;
-		session = 0;
-		*/
+		if (!fIsSet(session->flags, protocol::session::NoSelfDestruct))
+		{
+			freeSessionID(session->id);
+			session_id_map.erase(session->id);
+			delete session;
+		}
 		
 		return;
 	}
