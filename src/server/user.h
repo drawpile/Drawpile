@@ -17,7 +17,7 @@
 
 #include <stdint.h>
 #include <map>
-#include <queue>
+#include <deque>
 
 #include "buffer.h"
 
@@ -121,8 +121,7 @@ struct User
 		
 		sessions.clear();
 		
-		while (!queue.empty())
-			queue.pop();
+		queue.clear();
 	}
 	
 	// Socket
@@ -150,7 +149,7 @@ struct User
 	std::map<uint8_t, SessionData> sessions;
 	
 	// Output queue
-	std::queue<message_ref> queue;
+	std::deque<message_ref> queue;
 	
 	// Event I/O registered events.
 	uint32_t events;

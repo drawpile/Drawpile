@@ -276,7 +276,7 @@ void Server::uWrite(User* usr) throw()
 		usr->output.setBuffer(buf, len);
 		usr->output.write(len);
 		
-		usr->queue.pop();
+		usr->queue.pop_front();
 	}
 	
 	int sb = usr->sock->send(
@@ -1067,7 +1067,6 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 		}
 		else
 		{
-			// TODO: Behaviour for setting session password
 			session_iterator si(session_id_map.find(usr->inMsg->session_id));
 			if (si == session_id_map.end())
 			{
@@ -1376,7 +1375,7 @@ void Server::uSendMsg(User* usr, message_ref msg) throw()
 	#endif
 	#endif
 	
-	usr->queue.push( msg );
+	usr->queue.push_back( msg );
 	
 	if (!fIsSet(usr->events, ev.write))
 	{
