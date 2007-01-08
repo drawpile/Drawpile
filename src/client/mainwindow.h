@@ -116,7 +116,7 @@ class MainWindow : public QMainWindow {
 		//! Cancel or join
 		void finishJoin(int i);
 		//! Leave session
-		void finishLeave();
+		void finishLeave(int i);
 		//! Logged in, host session
 		void loggedinHost();
 		//! Logged in, join session

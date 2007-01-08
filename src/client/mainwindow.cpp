@@ -447,9 +447,10 @@ void MainWindow::leave()
  * TODO, do this more gracefully by first sending out an unsubscribe
  * message.
  */
-void MainWindow::finishLeave()
+void MainWindow::finishLeave(int i)
 {
-	controller_->disconnectHost();
+	if(i == 0)
+		controller_->disconnectHost();
 }
 
 /**
@@ -464,9 +465,16 @@ void MainWindow::finishHost(int i)
 		QUrl address;
 
 		if(useremote) {
-			address.setHost(hostdlg_->getRemoteAddress());
+			QString scheme;
+			if(hostdlg_->getRemoteAddress().startsWith("drawpile://")==false)
+				scheme = "drawpile://";
+			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
+					QUrl::TolerantMode);
 		} else {
 			address.setHost(LocalServer::address());
+			// If we are not using the default port, add it to the address.
+			if(hostdlg_->isDefaultPort() == false)
+				address.setPort(hostdlg_->getPort());
 		}
 
 		if(address.isValid() == false || address.host().isEmpty()) {
@@ -481,11 +489,8 @@ void MainWindow::finishHost(int i)
 		cfg.beginGroup("network");
 		cfg.setValue("username", hostdlg_->getUserName());
 		if(useremote)
-			cfg.setValue("remoteaddress", address.host());
+			cfg.setValue("remoteaddress", hostdlg_->getRemoteAddress());
 
-		// If we are not using the default port, add it to the address.
-		if(hostdlg_->isDefaultPort() == false)
-			address.setPort(hostdlg_->getPort());
 
 		// Start server if hosting locally
 		if(useremote==false) {
@@ -1038,7 +1043,7 @@ void MainWindow::createDialogs()
 	leavebox_->setDefaultButton(
 			leavebox_->addButton(tr("Stay"), QMessageBox::NoRole)
 			);
-	connect(leavebox_, SIGNAL(accepted()), this, SLOT(finishLeave()));
+	connect(leavebox_, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
 
 	logindlg_ = new dialogs::LoginDialog(this);
 }
