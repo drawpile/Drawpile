@@ -972,7 +972,7 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			size_t crop = sizeof(session->width) + sizeof(session->height) + sizeof(session->flags);
+			size_t crop = sizeof(session->width) + sizeof(session->height);
 			if (msg->length < crop)
 			{
 				#ifndef NDEBUG
