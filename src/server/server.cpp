@@ -967,7 +967,7 @@ void Server::uHandleInstruction(User* usr) throw()
 				return;
 			}
 			
-			size_t crop = sizeof(session->width) + sizeof(session->height);
+			size_t crop = sizeof(session->width) + sizeof(session->height) + sizeof(pw_len);
 			if (msg->length < crop)
 			{
 				#ifndef NDEBUG
@@ -990,16 +990,38 @@ void Server::uHandleInstruction(User* usr) throw()
 				return;
 			}
 			
-			if (msg->length > crop)
+			memcpy_t(session->pw_len, msg->data+(crop-1));
+			
+			if (msg->length < (crop + session->pw_len))
 			{
-				session->len = (msg->length - crop);
+				std::cerr << "Invalid data size in instruction: 'Create'." << std::endl;
+				uSendMsg(usr, msgError(protocol::Global, protocol::error::InvalidData));
+				return;
+			}
+			
+			if (msg->length > (crop + session->pw_len))
+			{
+				session->len = (msg->length - crop - session->pw_len);
 				session->title = new char[session->len];
 				memcpy(session->title, msg->data+crop, session->len);
 			}
 			else
 			{
+				session->len = 0;
 				#ifndef NDEBUG
-				std::cerr << "No title set for session." << std::endl;
+				std::cout << "No title set for session." << std::endl;
+				#endif
+			}
+			
+			if (session->pw_len > 0)
+			{
+				session->password = new char[session->pw_len];
+				memcpy(session->password, msg->data+crop+session->len, session->pw_len);
+			}
+			else
+			{
+				#ifndef NDEBUG
+				std::cout << "No password set for session." << std::endl;
 				#endif
 			}
 			

@@ -38,6 +38,8 @@ struct Session
 		: id(_id),
 		len(0),
 		title(0),
+		pw_len(0),
+		password(0),
 		mode(protocol::user_mode::None),
 		limit(10),
 		owner(protocol::null_user),
@@ -69,6 +71,12 @@ struct Session
 	
 	// Session title
 	char* title;
+	
+	// Password length
+	uint8_t pw_len;
+	
+	// Password string
+	char* password;
 	
 	// Default user mode
 	uint8_t mode;
