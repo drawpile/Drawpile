@@ -147,7 +147,7 @@ protected:
 	message_ref uCreateEvent(User* usr, session_ref session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgError(uint16_t errorCode) const throw(std::bad_alloc);
+	message_ref msgError(uint8_t session, uint16_t errorCode) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgAck(uint8_t session, uint8_t msgtype) const throw(std::bad_alloc);
@@ -193,6 +193,12 @@ protected:
 	
 	// Begin synchronizing the session
 	void SyncSession(session_ref session) throw();
+	
+	// Break synchronization with user.
+	void breakSync(User* usr) throw();
+	
+	// Cancel raster request.
+	void cancelSync(User* usr) throw();
 	
 	//
 	void uJoinSession(User* usr, session_ref session) throw();

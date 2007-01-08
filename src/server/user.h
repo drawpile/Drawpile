@@ -101,7 +101,8 @@ struct User
 		nlen(0),
 		name(0),
 		state(uState::init),
-		inMsg(0)
+		inMsg(0),
+		syncing(protocol::Global)
 	{
 		#ifndef NDEBUG
 		std::cout << "User::User(" << static_cast<int>(_id)
@@ -163,5 +164,8 @@ struct User
 	
 	// for storing the password seed associated with this user.
 	char seed[4];
+	
+	// Session we're currently syncing.
+	uint8_t syncing;
 };
 #endif // ServerUser_INCLUDED

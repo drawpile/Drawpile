@@ -213,7 +213,7 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 	return message_ref(hostnfo);
 }
 
-message_ref Server::msgError(uint16_t code) const throw(std::bad_alloc)
+message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -223,6 +223,7 @@ message_ref Server::msgError(uint16_t code) const throw(std::bad_alloc)
 	
 	protocol::Error *err = new protocol::Error;
 	err->code = code;
+	err->session_id = session;
 	return message_ref(err);
 }
 
@@ -563,7 +564,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		}
 		else
 		{
-			uSendMsg(usr, msgError(protocol::error::NotSubscribed));
+			uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			usr->session = protocol::Global;
 		}
 		break;
@@ -575,28 +576,27 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Unsubscribe:
 		{
-			protocol::Unsubscribe *msg = static_cast<protocol::Unsubscribe*>(usr->inMsg);
-			
-			session_iterator si(session_id_map.find(msg->session_id));
+			session_iterator si(session_id_map.find(usr->inMsg->session_id));
 			
 			if (si == session_id_map.end())
 			{
 				#ifndef NDEBUG
 				std::cerr << "No such session: "
-					<< static_cast<int>(msg->session_id) << std::endl;
+					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
-				uSendMsg(usr, msgError(protocol::error::UnknownSession));
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 			}
 			else
 			{
-				uSendMsg(usr, msgAck(msg->session_id, protocol::type::Unsubscribe));
+				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Unsubscribe));
 				
 				uLeaveSession(usr, si->second);
 			}
 		}
 		break;
 	case protocol::type::Subscribe:
+		if (usr->syncing == protocol::Global)
 		{
 			session_iterator si(session_id_map.find(usr->inMsg->session_id));
 			if (si == session_id_map.end())
@@ -607,7 +607,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
-				uSendMsg(usr, msgError(protocol::error::UnknownSession));
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 				break;
 			}
 			
@@ -621,9 +621,13 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			else
 			{
 				// already subscribed
-				uSendMsg(usr, msgError(protocol::error::InvalidRequest));
-				break;
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::InvalidRequest));
 			}
+		}
+		else
+		{
+			// already syncing some session, so we don't bother handling this request.
+			uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
 		}
 		break;
 	case protocol::type::ListSessions:
@@ -663,7 +667,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			if (a_password == 0)
 			{
 				std::cerr << "User tries to pass password even though we've disallowed it." << std::endl;
-				uSendMsg(usr, msgError(protocol::error::PasswordFailure));
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::PasswordFailure));
 				return;
 			}
 			
@@ -679,7 +683,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
 			{
 				// mismatch, send error or disconnect.
-				uSendMsg(usr, msgError(protocol::error::PasswordFailure));
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::PasswordFailure));
 				return;
 			}
 			
@@ -731,7 +735,7 @@ void Server::uHandleAck(User* usr) throw()
 			usr_session_iterator us(usr->sessions.find(ack->session_id));
 			if (us == usr->sessions.end())
 			{
-				uSendMsg(usr, msgError(protocol::error::NotSubscribed));
+				uSendMsg(usr, msgError(ack->session_id, protocol::error::NotSubscribed));
 				return;
 			}
 			
@@ -830,9 +834,12 @@ void Server::uTunnelRaster(User* usr) throw()
 	
 	// Forward to users.
 	tunnel_iterator ti(ft.first);
+	User* t_usr = 0;
 	for (; ti != ft.second; ti++)
 	{
-		uSendMsg(users.find(ti->second)->second, message_ref(raster));
+		t_usr = users.find(ti->second)->second;
+		uSendMsg(t_usr, message_ref(raster));
+		if (last) t_usr->syncing = false;
 	}
 	
 	// Break tunnel if that was the last raster piece.
@@ -865,7 +872,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			std::cout << "User wishes to authenticate itself as an admin." << std::endl;
 			if (a_password == 0)
 			{
-				uSendMsg(usr, msgError(protocol::error::InvalidRequest));
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::InvalidRequest));
 			}
 			else
 			{
@@ -889,7 +896,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			if (session_id == protocol::Global)
 			{
-				uSendMsg(usr, msgError(protocol::error::SessionLimit));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::SessionLimit));
 				return;
 			}
 			
@@ -911,7 +918,7 @@ void Server::uHandleInstruction(User* usr) throw()
 				std::cerr << "Attempted to create single user session." << std::endl;
 				#endif
 				
-				uSendMsg(usr, msgError(protocol::error::InvalidData));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidData));
 				return;
 			}
 			
@@ -934,7 +941,7 @@ void Server::uHandleInstruction(User* usr) throw()
 			
 			if (session->width < min_dimension or session->height < min_dimension)
 			{
-				uSendMsg(usr, msgError(protocol::error::TooSmall));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooSmall));
 				return;
 			}
 			
@@ -958,7 +965,7 @@ void Server::uHandleInstruction(User* usr) throw()
 				#endif
 				
 				#if 0
-				uSendMsg(usr, msgError(protocol::error::NotUnique));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
 				#endif // 0
 				
 				return;
@@ -1068,7 +1075,7 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 				#endif
 				
 				#if 0
-				uSendMsg(usr, msgError(protocol::error::TooLong));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
 				#endif // 0
 				
 				uRemove(usr);
@@ -1082,7 +1089,7 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 				#endif
 				
 				#if 0
-				uSendMsg(usr, msgError(protocol::error::NotUnique));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
 				#endif // 0
 				
 				uRemove(usr);
@@ -1400,6 +1407,7 @@ void Server::uJoinSession(User* usr, session_ref session) throw()
 	{
 		// put user to wait sync list.
 		session->waitingSync.push(usr);
+		usr->syncing = session->id;
 		
 		// don't start new client sync if one is already in progress...
 		if (session->syncCounter == 0)
@@ -1529,6 +1537,20 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
+void Server::breakSync(User* usr) throw()
+{
+	#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::breakSync(user: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	#endif
+	
+	uSendMsg(usr, msgError(usr->syncing, protocol::error::SyncFailure));
+	uLeaveSession(usr, session_id_map.find(usr->syncing)->second);
+	usr->syncing = protocol::Global;
+}
+
 void Server::uRemove(User* usr) throw()
 {
 	assert(usr != 0);
@@ -1549,6 +1571,7 @@ void Server::uRemove(User* usr) throw()
 	tunnel_iterator ti;
 	while ((ti = tunnel.find(usr->id)) != tunnel.end())
 	{
+		breakSync(users.find(ti->second)->second);
 		tunnel.erase(ti->first);
 	}
 	
