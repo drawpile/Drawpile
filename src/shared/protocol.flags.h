@@ -202,7 +202,7 @@ namespace user_mode
 
 const uint8_t
 	//! Null user mode.
-	None = 0x00,
+	None = 0,
 	
 	//! User is identified as admin by the server (may use Instruction messages).
 	/** Only applied to user */
@@ -217,6 +217,21 @@ const uint8_t
 	Deaf = 0x20;
 
 } // namespace user
+
+//! Session flags
+namespace session
+{
+
+const uint8_t
+	//! No flags set
+	None = 0,
+	
+	//! Session persists
+	Persist = 0x01,
+	
+	NoSelfDestruct = 0x08;
+
+}
 
 } // namespace protocol
 
