@@ -103,11 +103,15 @@ void msgName(const uint8_t type) throw()
 	case type::Error:
 		std::cout << "Error" << std::endl;
 		break;
-	/*
 	case type::Deflate:
+		std::cout << "Deflate" << std::endl;
+		break;
 	case type::Chat:
+		std::cout << "Chat" << std::endl;
+		break;
 	case type::Palette:
-	*/
+		std::cout << "Palette" << std::endl;
+		break;
 	default:
 		std::cout << "{unknown}" << std::endl;
 		break;
@@ -170,11 +174,12 @@ Message* getMessage(const uint8_t type) throw()
 		return new Acknowledgement();
 	case type::Error:
 		return new Error();
-	/*
 	case type::Deflate:
+		return new Deflate();
 	case type::Chat:
+		return new Chat();
 	case type::Palette:
-	*/
+		return new Palette();
 	default:
 		return 0;
 	}
