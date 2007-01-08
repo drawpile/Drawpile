@@ -1068,7 +1068,24 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 		else
 		{
 			// TODO: Behaviour for setting session password
-			//session_iterator si(session_id_map.find(usr->inMsg->session_id));
+			session_iterator si(session_id_map.find(usr->inMsg->session_id));
+			if (si == session_id_map.end())
+			{
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
+			}
+			else
+			{
+				#ifndef NDEBUG
+				std::cout << "Password set for session: "
+					<< static_cast<int>(msg->session_id) << std::endl;
+				#endif
+				
+				si->second->password = msg->data;
+				si->second->pw_len = msg->length;
+				msg->data = 0;
+				
+				uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
+			}
 		}
 		break;
 	default:
