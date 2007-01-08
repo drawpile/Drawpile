@@ -1057,13 +1057,18 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 			pw_len = msg->length;
 			
 			msg->data = 0;
-			msg->length = 0;
+			//msg->length = 0;
 			
-			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Instruction));
+			#ifndef NDEBUG
+			std::cout << "Server password changed." << std::endl;
+			#endif
+			
+			uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
 		}
 		else
 		{
 			// TODO: Behaviour for setting session password
+			//session_iterator si(session_id_map.find(usr->inMsg->session_id));
 		}
 		break;
 	default:
