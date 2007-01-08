@@ -427,9 +427,27 @@ void MainWindow::reallyJoin()
 }
 
 /**
- * Leave action triggered, so disconnect
+ * Leave action triggered, ask for confirmation
  */
 void MainWindow::leave()
+{
+	if(controller_->isUploading()) {
+		leavebox_->setIcon(QMessageBox::Warning);
+		leavebox_->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
+	} else {
+		leavebox_->setIcon(QMessageBox::Question);
+		leavebox_->setInformativeText(QString());
+	}
+	leavebox_->show();
+}
+
+/**
+ * Leave action confirmed, disconnected.
+ * 
+ * TODO, do this more gracefully by first sending out an unsubscribe
+ * message.
+ */
+void MainWindow::finishLeave()
 {
 	controller_->disconnectHost();
 }
@@ -1003,14 +1021,24 @@ void MainWindow::createDialogs()
 	msgbox_->setWindowModality(Qt::WindowModal);
 	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
 
-	unsavedbox_ = new QMessageBox(tr("DrawPile"),
-                tr("The drawing has been modified.\n"
-                    "Do you want to save your changes?"),
-                QMessageBox::Warning,
-                QMessageBox::Save | QMessageBox::Default,
-                QMessageBox::No,
-                QMessageBox::Cancel | QMessageBox::Escape,
-                this, Qt::Sheet);
+	unsavedbox_ = new QMessageBox(QMessageBox::Warning,
+			tr("DrawPile"),
+			tr("The drawing has been modified.\n"
+				"Do you want to save your changes?"),
+                QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel,
+                this, Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet);
+
+	leavebox_ = new QMessageBox(QMessageBox::Question,
+			tr("DrawPile"),
+			tr("Really leave the session?"),
+                QMessageBox::NoButton,
+                this, Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet);
+
+	leavebox_->addButton(tr("Leave"), QMessageBox::YesRole);
+	leavebox_->setDefaultButton(
+			leavebox_->addButton(tr("Stay"), QMessageBox::NoRole)
+			);
+	connect(leavebox_, SIGNAL(accepted()), this, SLOT(finishLeave()));
 
 	logindlg_ = new dialogs::LoginDialog(this);
 }

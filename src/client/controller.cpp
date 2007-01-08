@@ -109,6 +109,13 @@ void Controller::connectHost(const QUrl& url)
 	syncwait_ = false;
 }
 
+bool Controller::isUploading() const
+{
+	if(session_)
+		return session_->isUploading();
+	return false;
+}
+
 /**
  * A new session is created and joined.
  * @param title session title

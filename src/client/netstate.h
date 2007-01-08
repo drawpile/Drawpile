@@ -222,6 +222,9 @@ class SessionState : public QObject {
 		//! Get an image from received raster data
 		bool sessionImage(QImage& image) const;
 
+		//! Check if raster upload is in progress
+		bool isUploading() const;
+
 		//! Release raster data
 		void releaseRaster();
 

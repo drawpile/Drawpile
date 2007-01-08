@@ -78,7 +78,7 @@ class MainWindow : public QMainWindow {
 		void host();
 		//! Show join session dialog
 		void join();
-		//! Leave session
+		//! Leave session (ask confirmation first)
 		void leave();
 		//! Zoom in
 		void zoomin();
@@ -115,6 +115,8 @@ class MainWindow : public QMainWindow {
 		void initJoin(int i);
 		//! Cancel or join
 		void finishJoin(int i);
+		//! Leave session
+		void finishLeave();
 		//! Logged in, host session
 		void loggedinHost();
 		//! Logged in, join session
@@ -179,6 +181,7 @@ class MainWindow : public QMainWindow {
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;
+
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		QDialog *aboutdlg_;
 		dialogs::NewDialog *newdlg_;
@@ -187,6 +190,8 @@ class MainWindow : public QMainWindow {
 		dialogs::LoginDialog *logindlg_;
 		QMessageBox *msgbox_;
 		QMessageBox *unsavedbox_;
+		QMessageBox *leavebox_;
+
 		drawingboard::Board *board_;
 		Controller *controller_;
 

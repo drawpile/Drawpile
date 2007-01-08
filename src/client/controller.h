@@ -78,6 +78,9 @@ class Controller : public QObject
 		//! Check if connection is still established
 		bool isConnected() const { return net_ != 0; }
 
+		//! Check if raster upload is in progress
+		bool isUploading() const;
+
 	public slots:
 		//! Join a specific session
 		void joinSession(int id);

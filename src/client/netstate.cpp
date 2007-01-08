@@ -483,7 +483,7 @@ void HostState::handleError(const protocol::Error *msg)
  * @param parent parent HostState
  */
 SessionState::SessionState(HostState *parent, const Session& info)
-	: QObject(parent), host_(parent), info_(info), bufferdrawing_(true)
+	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
 }
@@ -505,6 +505,16 @@ bool SessionState::sessionImage(QImage &image) const
 		image = img;
 	}
 	return true;
+}
+
+/**
+ * @retval true if uploading
+ */
+bool SessionState::isUploading() const
+{
+	if(raster_.length()>0 && rasteroffset_>0)
+		return true;
+	return false;
 }
 
 /**
@@ -533,6 +543,7 @@ void SessionState::sendRasterChunk()
 	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
 		chunklen = raster_.length() - rasteroffset_;
 	if(chunklen==0) {
+		rasteroffset_ = 0;
 		releaseRaster();
 		return;
 	}
