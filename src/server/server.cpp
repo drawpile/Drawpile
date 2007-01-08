@@ -569,7 +569,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		uHandleAck(usr);
 		break;
 	case protocol::type::SessionSelect:
-		if (!uInSession(usr, usr->inMsg->session_id))
+		if (uInSession(usr, usr->inMsg->session_id))
 		{
 			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::SessionSelect));
 			usr->inMsg->user_id = usr->id;
