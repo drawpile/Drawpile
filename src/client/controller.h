@@ -121,6 +121,12 @@ class Controller : public QObject
 		//! Session was left
 		void parted();
 
+		//! A user joined the session
+		void userJoined(const QString& name);
+
+		//! A user left the session
+		void userParted(const QString& name);
+
 		//! There were no sessions to join
 		void noSessions();
 
@@ -148,6 +154,8 @@ class Controller : public QObject
 		void serverLoggedin();
 		void sessionJoined(int id);
 		void sessionParted();
+		void addUser(int id);
+		void removeUser(int id);
 		void rasterDownload(int p);
 		void rasterUpload();
 		void syncWait();

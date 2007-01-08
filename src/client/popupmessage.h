@@ -1,7 +1,8 @@
+
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,45 +18,39 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef NETSTATUS_H
-#define NETSTATUS_H
+#ifndef POPUPMESSAGE_H
+#define POPUPMESSAGE_H
 
-#include <QLabel>
-#include <QPixmap>
+#include <QWidget>
+#include <QTimer>
+
+class QLabel;
 
 namespace widgets {
 
-class PopupMessage;
-
-//! Network connection status widget
+//! Popup messagebox
 /**
- * This widget displays the current status of the connection with the server
- * and the address of the host.
+ * A simple box that can be popped up to display a message.
  */
-class NetStatus : public QWidget
+class PopupMessage : public QWidget
 {
 	Q_OBJECT
 	public:
-		NetStatus(QWidget *parent);
-	
-	public slots:
-		//! Connect to a host
-		void connectHost(const QString& address);
-		//! Disconnect from host
-		void disconnectHost();
-		//! Copy the address to clipboard
-		void copyAddress();
-		//! User joins
-		void join(const QString& username);
-		//! User leaves
-		void leave(const QString& username);
+		PopupMessage(QWidget *parent);
+
+		//! Set the message to display
+		void setMessage(const QString& message);
+
+		// Pop up at the specified point
+		void popupAt(const QPoint& point);
+
+	protected:
+		void resizeEvent(QResizeEvent *);
+		void paintEvent(QPaintEvent *);
 
 	private:
-		QLabel *label_, *icon_;
-		PopupMessage *popup_;
-		QPixmap offlineicon_,onlineicon_;
-		QString address_;
-		QAction *copyaction_;
+		QLabel *message_;
+		QTimer timer_;
 };
 
 }

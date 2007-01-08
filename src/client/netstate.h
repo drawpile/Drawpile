@@ -219,6 +219,9 @@ class SessionState : public QObject {
 		//! Get the list of users
 		const UserList& users() const { return users_; }
 
+		//! Get a specific user
+		const User *user(int id) const;
+
 		//! Get an image from received raster data
 		bool sessionImage(QImage& image) const;
 

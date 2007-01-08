@@ -89,13 +89,19 @@ MainWindow::MainWindow()
 	connect(view_,SIGNAL(penDown(drawingboard::Point,bool)),controller_,SLOT(penDown(drawingboard::Point,bool)));
 	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
+	// Controller -> netstatus
 	connect(controller_, SIGNAL(disconnected(QString)), netstatus_, SLOT(disconnectHost()));
+	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
+	connect(controller_, SIGNAL(userJoined(QString)), netstatus_, SLOT(join(QString)));
+	connect(controller_, SIGNAL(userParted(QString)), netstatus_, SLOT(leave(QString)));
+
+	// Controller -> mainwindow
 	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(disconnected()));
 	connect(controller_, SIGNAL(lockboard(QString)), this, SLOT(lock(QString)));
 	connect(controller_, SIGNAL(unlockboard()), this, SLOT(unlock()));
+
 	// Controller <-> login dialog connections
-	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
 	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));

@@ -182,6 +182,9 @@ void Controller::sessionJoined(int id)
 	connect(session_, SIGNAL(syncWait()), this, SLOT(syncWait()));
 	connect(session_, SIGNAL(syncDone()), this, SLOT(syncDone()));
 
+	connect(session_, SIGNAL(userJoined(int)), this, SLOT(addUser(int)));
+	connect(session_, SIGNAL(userLeft(int)), this, SLOT(removeUser(int)));
+
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
 	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
@@ -222,6 +225,20 @@ void Controller::sessionParted()
 	}
 	sync_ = false;
 	syncwait_ = false;
+}
+
+void Controller::addUser(int id)
+{
+	const network::User *user = session_->user(id);
+	Q_ASSERT(user);
+	emit userJoined(user->name);
+}
+
+void Controller::removeUser(int id)
+{
+	const network::User *user = session_->user(id);
+	Q_ASSERT(user);
+	emit userParted(user->name);
 }
 
 /**

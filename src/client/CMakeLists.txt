@@ -40,6 +40,7 @@ set (
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
 	networkprivate.h netstate.h logindialog.h preview.h localserver.h
+	popupmessage.h
 )
 
 set (
@@ -50,7 +51,7 @@ set (
 	tools.cpp toolsettings.cpp boardeditor.cpp aboutdialog.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
 	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp logindialog.cpp
-	preview.cpp localserver.cpp
+	preview.cpp localserver.cpp popupmessage.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )

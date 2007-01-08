@@ -476,6 +476,7 @@ void HostState::handleError(const protocol::Error *msg)
 		case SyncFailure: errmsg = tr("Board synchronization failed, try again."); break;
 		default: errmsg = tr("Error code %1").arg(int(msg->code));
 	}
+	qDebug() << "error" << errmsg << "for session" << msg->session_id;
 	emit error(errmsg);
 }
 
@@ -486,6 +487,18 @@ SessionState::SessionState(HostState *parent, const Session& info)
 	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
+}
+
+/**
+ * @param id user id
+ */
+const User *SessionState::user(int id) const
+{
+	foreach(const User& u, users_) {
+		if(u.id == id)
+			return &u;
+	}
+	return 0;
 }
 
 /**
@@ -655,8 +668,8 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 		UserList::iterator i = users_.begin();
 		for(;i!=users_.end();++i) {
 			if(i->id == msg->user_id) {
-				users_.erase(i);
 				emit userLeft(msg->user_id);
+				users_.erase(i);
 				break;
 			}
 		}

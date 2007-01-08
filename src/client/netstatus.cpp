@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <QHBoxLayout>
 
 #include "netstatus.h"
+#include "popupmessage.h"
 
 namespace widgets {
 
@@ -56,6 +57,9 @@ NetStatus::NetStatus(QWidget *parent)
 	icon_->setFixedSize(offlineicon_.size());
 	layout->addWidget(icon_);
 
+	// Popup label
+	popup_ = new PopupMessage(this);
+
 	disconnectHost();
 }
 
@@ -70,6 +74,8 @@ void NetStatus::connectHost(const QString& address)
 	label_->setText(tr("Host: %1").arg(address_));
 	icon_->setPixmap(onlineicon_);
 	copyaction_->setEnabled(true);
+	popup_->setMessage(tr("Connected to %1").arg(address_));
+	popup_->popupAt(mapToGlobal(rect().topLeft()));
 }
 
 /**
@@ -82,6 +88,8 @@ void NetStatus::disconnectHost()
 	label_->setText(tr("not connected"));
 	icon_->setPixmap(offlineicon_);
 	copyaction_->setEnabled(false);
+	popup_->setMessage(tr("Disconnected"));
+	popup_->popupAt(mapToGlobal(rect().topLeft()));
 }
 
 /**
@@ -94,6 +102,19 @@ void NetStatus::copyAddress()
 	// Put address also in selection buffer so it can be pasted with
 	// a middle mouse click where supported.
 	QApplication::clipboard()->setText(address_, QClipboard::Selection);
+}
+
+void NetStatus::join(const QString& username)
+{
+	popup_->setMessage(tr("<b>%1</b> joins").arg(username));
+	popup_->popupAt(mapToGlobal(rect().topLeft()));
+
+}
+
+void NetStatus::leave(const QString& username)
+{
+	popup_->setMessage(tr("<b>%1</b> leaves").arg(username));
+	popup_->popupAt(mapToGlobal(rect().topLeft()));
 }
 
 }
