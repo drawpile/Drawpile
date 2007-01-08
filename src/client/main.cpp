@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 	MainWindow win;
 
 	QStringList args = app.arguments();
-	if(args.isEmpty()==false) {
+	if(args.count()>1) {
 		QString arg = args.at(1);
 		// Parameter given, we assume it to be either an URL to a session
 		// or a filename.
