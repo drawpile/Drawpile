@@ -212,6 +212,14 @@ protected:
 	// Removes user and does cleaning..
 	void uRemove(User* usr) throw();
 	
+	// Tests if session exists
+	inline
+	bool sessionExists(uint8_t session) const throw();
+	
+	// Tests if user is in session
+	inline
+	bool uInSession(User* usr, uint8_t session) const throw();
+	
 	// check name/title uniqueness
 	inline
 	bool validateUserName(User* usr) const throw();

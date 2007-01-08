@@ -509,6 +509,22 @@ message_ref Server::uCreateEvent(User* usr, session_ref session, uint8_t event) 
 	return message_ref(uevent);
 }
 
+bool uInSession(User* usr, uint8_t session) const throw()
+{
+	if (usr->sessions.find(usr->inMsg->session_id) == usr->sessions.end())
+		return false;
+	
+	return true;
+}
+
+bool sessionExists(uint8_t session) const throw()
+{
+	if (session_id_map.find(usr->inMsg->session_id) == session_id_map.end())
+		return false;
+	
+	return true;
+}
+
 void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -553,7 +569,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		uHandleAck(usr);
 		break;
 	case protocol::type::SessionSelect:
-		if (usr->sessions.find(usr->inMsg->session_id) != usr->sessions.end())
+		if (!uInSession(usr->inMsg->session_id))
 		{
 			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::SessionSelect));
 			usr->inMsg->user_id = usr->id;
@@ -580,6 +596,20 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	case protocol::type::Chat:
 	case protocol::type::Palette:
 		message_ref pmsg(usr->inMsg);
+		pmsg->user_id = usr->id;
+		
+		if (!sessionExists(pmsg->session_id))
+		{
+			uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
+			break;
+		}
+		
+		if (!uInSession(usr, pmsg->session_id))
+		{
+			uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
+			break;
+		}
+		
 		Propagate(pmsg);
 		usr->inMsg = 0;
 		break;
@@ -607,8 +637,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	case protocol::type::Subscribe:
 		if (usr->syncing == protocol::Global)
 		{
-			session_iterator si(session_id_map.find(usr->inMsg->session_id));
-			if (si == session_id_map.end())
+			if (!sessionExists(usr->inMsg->session_id))
 			{
 				// session not found
 				#ifndef NDEBUG
@@ -620,8 +649,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			usr_session_iterator ui(usr->sessions.find(usr->inMsg->session_id));
-			if (ui == usr->sessions.end())
+			if (!uInSession(usr->inMsg->session_id))
 			{
 				// join session
 				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
@@ -805,8 +833,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	
 	bool last = (raster->offset + raster->length == raster->size);
 	
-	usr_session_iterator si( usr->sessions.find(raster->session_id) );
-	if (si == usr->sessions.end())
+	if (!uInSession(raster->session_id))
 	{
 		std::cerr << "Raster for unsubscribed session: "
 			<< static_cast<int>(raster->session_id) << std::endl;
