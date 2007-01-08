@@ -20,12 +20,21 @@
 #include <QDebug>
 #include <QHostInfo>
 #include <QNetworkInterface>
+#include <QFileInfo>
+#include <QApplication>
+#include <QDir>
+
 #include "localserver.h"
 
 LocalServer::LocalServer()
 	: port_(-1)
 {
 	server_.setProcessChannelMode(QProcess::MergedChannels);
+	// Locate the server executable
+	QFileInfo i;
+	i.setFile(QApplication::applicationDirPath(), "drawpile-srv");
+	binpath_ = i.absoluteFilePath();
+	available_ = i.isExecutable();
 }
 
 LocalServer::~LocalServer()
@@ -87,10 +96,10 @@ bool LocalServer::ensureRunning(int port)
 		shutdown();
 	if(server_.state()==QProcess::NotRunning) {
 		QStringList args;
-		args.append("-p " + QString::number(port));
+		args << "-p" << QString::number(port);
 		noerror_ = true;
 		qDebug() << "starting server on port" << port;
-		server_.start("drawpile-srv", args);
+		server_.start(binpath_, args);
 		if(server_.waitForStarted()==false) {
 			qDebug() << "Failed to start server!";
 			noerror_ = false;

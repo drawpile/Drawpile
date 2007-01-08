@@ -46,6 +46,9 @@ class LocalServer : public QObject {
 		//! Read server output
 		QString serverOutput();
 
+		//! Was the local server binary found
+		bool isAvailable() const { return available_; }
+
 	public slots:
 		//! Shutdown the server
 		void shutdown();
@@ -53,9 +56,11 @@ class LocalServer : public QObject {
 	private:
 		LocalServer();
 
+		QString binpath_;
 		QProcess server_;
 		int port_;
 		bool noerror_;
+		bool available_;
 };
 
 #endif
