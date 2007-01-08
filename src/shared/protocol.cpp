@@ -607,17 +607,17 @@ size_t Instruction::reqDataLen(const char *buf, size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	size_t off = headerSize() + sizeof(command)
-		+ sizeof(aux_data) + sizeof(aux_data2) + sizeof(length);
+		+ sizeof(aux_data) + sizeof(aux_data2);
 	
 	if (len < off)
-		return off;
+		return off + sizeof(length);
 	else
 	{
 		uint8_t rlen;
 		
 		memcpy_t(rlen, buf+off);
 		
-		return off + rlen;
+		return off + sizeof(length) + rlen;
 	}
 }
 
