@@ -68,6 +68,11 @@ void HostState::receiveMessage()
 	// with a single shared header and is now received as a linked list.
 	while((msg = net_->receive())) { while(msg) {
 		protocol::Message *next = msg->next;
+		if(next!=0) {
+			// The Message destructor will delete the entire list if we let it
+			msg->next = 0;
+			next->prev = 0;
+		}
 		switch(msg->type) {
 			using namespace protocol;
 			case type::StrokeInfo:
@@ -885,12 +890,7 @@ void SessionState::flushDrawBuffer()
 		else
 			handleToolInfo(static_cast<protocol::ToolInfo*>(msg));
 
-		// Free the message(s)
-		while(msg) {
-			protocol::Message *next = msg->next;
-			delete msg;
-			msg = next;
-		}
+		delete msg;
 	}
 }
 
