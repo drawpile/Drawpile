@@ -39,7 +39,7 @@
 
 #include "templates.h"
 
-//#include "memstack.h" // MemoryStack<>
+#include "memstack.h" // MemoryStack<>
 
 #include "protocol.errors.h"
 #include "protocol.defaults.h"
@@ -209,7 +209,7 @@ public:
  * Response: HostInfo
  */
 struct Identifier
-	: Message//, MemoryStack<Identifier>
+	: Message, MemoryStack<Identifier>
 {
 	Identifier() throw()
 		: Message(type::Identifier),
@@ -255,7 +255,7 @@ struct Identifier
  * Response: none
  */
 struct StrokeInfo
-	: Message//, MemoryStack<StrokeInfo>
+	: Message, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
 		: Message(type::StrokeInfo,
@@ -290,7 +290,7 @@ struct StrokeInfo
  * Marks the end of a line defined by StrokeInfo messages.
  */
 struct StrokeEnd
-	: Message//, MemoryStack<StrokeEnd>
+	: Message, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
 		: Message(type::StrokeEnd,
@@ -318,7 +318,7 @@ struct StrokeEnd
  * Response: none
  */
 struct ToolInfo
-	: Message//, MemoryStack<ToolInfo>
+	: Message, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
 		: Message(type::ToolInfo, message::isUser|message::isSelected),
@@ -377,7 +377,7 @@ struct ToolInfo
  * Response: Raster
  */
 struct Synchronize
-	: Message//, MemoryStack<Synchronize>
+	: Message, MemoryStack<Synchronize>
 {
 	Synchronize() throw()
 		: Message(type::Synchronize, message::isSession)
@@ -411,7 +411,7 @@ struct Synchronize
  * Response: none
  */
 struct Raster
-	: Message//, MemoryStack<Raster>
+	: Message, MemoryStack<Raster>
 {
 	Raster() throw()
 		: Message(type::Raster, message::isSession),
@@ -457,7 +457,7 @@ struct Raster
  * Response: Acknowledgement with event set to protocol::type::SyncWait.
  */
 struct SyncWait
-	: Message//, MemoryStack<SyncWait>
+	: Message, MemoryStack<SyncWait>
 {
 	SyncWait() throw()
 		: Message(type::SyncWait, message::isSession)
@@ -481,7 +481,7 @@ struct SyncWait
  * Response: Password
  */
 struct Authentication
-	: Message//, MemoryStack<Authentication>
+	: Message, MemoryStack<Authentication>
 {
 	Authentication() throw()
 		: Message(type::Authentication, message::isSession)
@@ -507,7 +507,7 @@ struct Authentication
  * Response to Authentication request.
  */
 struct Password
-	: Message//, MemoryStack<Password>
+	: Message, MemoryStack<Password>
 {
 	Password() throw()
 		: Message(type::Password, message::isSession)
@@ -535,7 +535,7 @@ struct Password
  * Response: Acknowledgement with event set to protocol::type::Subscribe.
  */
 struct Subscribe
-	: Message//, MemoryStack<Subscribe>
+	: Message, MemoryStack<Subscribe>
 {
 	Subscribe() throw()
 		: Message(type::Subscribe, message::isSession)
@@ -559,7 +559,7 @@ struct Subscribe
  * Response: Acknowledgement with event set to protocol::type::Unsubscribe.
  */
 struct Unsubscribe
-	: Message//, MemoryStack<Unsubscribe>
+	: Message, MemoryStack<Unsubscribe>
 {
 	Unsubscribe() throw()
 		: Message(type::Unsubscribe, message::isSession)
@@ -585,7 +585,7 @@ struct Unsubscribe
  * @see http://drawpile.sourceforge.net/wiki/index.php/Admin_interface
  */
 struct Instruction
-	: Message//, MemoryStack<Instruction>
+	: Message, MemoryStack<Instruction>
 {
 	Instruction() throw()
 		: Message(type::Instruction, message::isUser|message::isSession),
@@ -627,7 +627,7 @@ struct Instruction
  * followed by Acknowledgement with event set to protocol::type::ListSessions.
  */
 struct ListSessions
-	: Message//, MemoryStack<ListSessions>
+	: Message, MemoryStack<ListSessions>
 {
 	ListSessions() throw()
 		: Message(type::ListSessions)
@@ -649,7 +649,7 @@ struct ListSessions
  * Cancels the last request (such as Synchronize).
  */
 struct Cancel
-	: Message//, MemoryStack<Cancel>
+	: Message, MemoryStack<Cancel>
 {
 	Cancel() throw()
 		: Message(type::Cancel, message::isSession)
@@ -673,7 +673,7 @@ struct Cancel
  * Response: none
  */
 struct UserInfo
-	: Message//, MemoryStack<UserInfo>
+	: Message, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
 		: Message(type::UserInfo, message::isUser|message::isSession),
@@ -713,7 +713,7 @@ struct UserInfo
  * Response: none
  */
 struct HostInfo
-	: Message//, MemoryStack<HostInfo>
+	: Message, MemoryStack<HostInfo>
 {
 	HostInfo() throw()
 		: Message(type::HostInfo),
@@ -759,7 +759,7 @@ struct HostInfo
 
 //! Session Info message.
 struct SessionInfo
-	: Message//, MemoryStack<SessionInfo>
+	: Message, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
 		: Message(type::SessionInfo, message::isSession),
@@ -814,7 +814,7 @@ struct SessionInfo
  * Acknowledges some action or event.
  */
 struct Acknowledgement
-	: Message //, MemoryStack<Acknowledgement>
+	: Message, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
 		: Message(type::Acknowledgement, message::isSession),
@@ -841,7 +841,7 @@ struct Acknowledgement
  * Arbitrary error code message.
  */
 struct Error
-	: Message //, MemoryStack<Error>
+	: Message, MemoryStack<Error>
 {
 	Error() throw()
 		: Message(type::Error, message::isSession),
@@ -878,7 +878,7 @@ struct Error
  * Response: none
  */
 struct Deflate
-	: Message //, MemoryStack<Deflate>
+	: Message, MemoryStack<Deflate>
 {
 	Deflate() throw()
 		: Message(type::Deflate),
@@ -914,7 +914,7 @@ struct Deflate
  * Client MUST NOT send chat messages with 0 length.
  */
 struct Chat
-	: Message //, MemoryStack<Chat>
+	: Message, MemoryStack<Chat>
 {
 	Chat() throw()
 		: Message(type::Chat, message::isUser|message::isSession),
@@ -945,7 +945,7 @@ struct Chat
  * Contains partial data of the shared palette
  */
 struct Palette
-	: Message//, MemoryStack<Palette>
+	: Message, MemoryStack<Palette>
 {
 	Palette() throw()
 		: Message(type::Palette, message::isSession|message::isUser),
@@ -983,7 +983,7 @@ struct Palette
  * Response: Error or Acknowledgement with event set to protocol::type::SessionSelect.
  */
 struct SessionSelect
-	: Message//, MemoryStack<SessionSelect>
+	: Message, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
 		: Message(type::SessionSelect,
