@@ -55,7 +55,10 @@ const uint8_t
 	/**
 	 * Server will exit once all clients have disconnected.
 	 */
-	Transient = 0x08;
+	Transient = 0x08,
+	
+	//! Promote user connecting from localhost address to admin rights.
+	LocalhostAdmin = 0x80;
 
 }
 
