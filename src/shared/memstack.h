@@ -29,6 +29,9 @@
 #ifndef MemoryStack_INCLUDED
 #define MemoryStack_INCLUDED
 
+#ifndef NDEBUG
+#include <iostream>
+#endif
 #include <stack> // std::stack
 
 template <class T>
@@ -47,15 +50,27 @@ struct MemoryStack
 	{
 		if (obj != 0)
 			_memstack.push(static_cast<T*>(obj));
+		
+		#ifndef NDEBUG
+		std::cout << "MemoryStack<>::size()/del = " << _memstack.size() << std::endl;
+		#endif
 	}
 	
 	// new
 	void* operator new(size_t bytes) throw(std::bad_alloc)
 	{
 		if (_memstack.size() == 0)
+		{
+			#ifndef NDEBUG
+			std::cout << "MemoryStack<>::size()/NEW" << std::endl;
+			#endif
 			return ::new T;
+		}
 		else
 		{
+			#ifndef NDEBUG
+			std::cout << "MemoryStack<>::size()/get = " << _memstack.size() << std::endl;
+			#endif
 			T* obj = _memstack.top();
 			_memstack.pop();
 			return obj;
