@@ -265,8 +265,6 @@ void Server::uWrite(User* usr) throw()
 		// if buffer is null or no data left to read
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
-		//uint8_t id = msg->user_id;
-		
 		// create outgoing message list
 		std::vector<message_ref> outgoing;
 		message_ref n;
@@ -316,9 +314,11 @@ void Server::uWrite(User* usr) throw()
 		#ifndef NDEBUG
 		if (outgoing.size() > 1)
 		{
+			#ifndef NDEBUG
 			// user_id and type saved, count as additional header
 			std::cout << "Linked " << outgoing.size() << " messages, for total size: " << len << std::endl
 				<< "Bandwidth savings are [(7*n) - ((5*n)+3)]: " << (7 * outgoing.size()) - (3 + (outgoing.size() * 5)) << std::endl;
+			#endif
 		}
 		#endif
 		

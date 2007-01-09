@@ -29,6 +29,7 @@ struct Session;
 typedef std::map<uint8_t, User*>::iterator session_usr_iterator;
 
 #include <stdint.h>
+#include <list>
 
 // Session information
 struct Session
@@ -59,9 +60,30 @@ struct Session
 		std::cout << "Session::~Session()" << std::endl;
 		#endif
 		
+		waitingSync.clear();
 		users.clear();
 		
 		delete [] title;
+	}
+	
+	void reset(uint8_t _id=protocol::null_user)
+	{
+		delete [] title;
+		users.clear();
+		waitingSync.clear();
+		
+		id = _id;
+		len = 0;
+		title = 0;
+		pw_len = 0;
+		password = 0;
+		mode = protocol::user_mode::None;
+		limit = 10;
+		flags = 0;
+		owner = protocol::null_user;
+		width = 0;
+		height = 0;
+		syncCounter = 0;
 	}
 	
 	// Session identifier
@@ -98,7 +120,7 @@ struct Session
 	std::map<uint8_t, User*> users;
 	
 	// Users waiting sync.
-	std::stack<User*> waitingSync;
+	std::list<User*> waitingSync;
 	
 	// Session sync in action.
 	uint32_t syncCounter;
