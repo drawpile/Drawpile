@@ -616,19 +616,20 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		}
 		#endif // 0
 		
-		// make sure the user id is correct
-		usr->inMsg->user_id = usr->id;
-		
-		// needed for Propagate()
-		usr->inMsg->session_id = usr->session;
-		
-		// scroll to the last messag in linked-list
-		protocol::Message* msg = usr->inMsg;
-		while (msg->next != 0)
-			msg = msg->next;
-		
-		Propagate(message_ref(msg));
-		
+		{
+			// make sure the user id is correct
+			usr->inMsg->user_id = usr->id;
+			
+			// needed for Propagate()
+			usr->inMsg->session_id = usr->session;
+			
+			// scroll to the last messag in linked-list
+			protocol::Message* msg = usr->inMsg;
+			while (msg->next != 0)
+				msg = msg->next;
+			
+			Propagate(message_ref(msg));
+		}
 		usr->inMsg = 0;
 		break;
 	case protocol::type::Acknowledgement:
