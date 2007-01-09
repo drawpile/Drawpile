@@ -797,7 +797,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	case protocol::type::Password:
 		{
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
-			if (msg->session_id == protocol::global)
+			if (msg->session_id == protocol::Global)
 			{
 				// Admin login
 				if (a_password == 0)
@@ -833,7 +833,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 					break;
 				}
 				
-				if (uInSession(msg->session_id))
+				if (uInSession(usr, msg->session_id))
 				{
 					// already in session
 					uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
