@@ -262,6 +262,7 @@ void Server::uWrite(User* usr) throw()
 	
 	if (!usr->output.data or usr->output.canRead() == 0)
 	{
+		
 		// if buffer is null or no data left to read
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
@@ -624,11 +625,23 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			usr->inMsg->session_id = usr->session;
 			
 			// scroll to the last messag in linked-list
+			message_ref ref;
 			protocol::Message* msg = usr->inMsg;
-			while (msg->next != 0)
+			do
+			{
+				ref.reset(msg);
+				
 				msg = msg->next;
+				
+				ref->next = 0;
+				ref->prev = 0;
+				Propagate(ref);
+				
+				msg = msg->next;
+			}
+			while (msg != 0);
 			
-			Propagate(message_ref(msg));
+			//Propagate(message_ref(msg));
 		}
 		usr->inMsg = 0;
 		break;
