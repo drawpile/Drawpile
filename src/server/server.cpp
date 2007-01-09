@@ -38,8 +38,6 @@
 #include "../shared/protocol.helper.h"
 #include "../shared/protocol.h" // Message()
 
-#include "../shared/SHA1.h"
-
 #include <ctime>
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -807,12 +805,12 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 					return;
 				}
 				
-				CSHA1 hash;
 				hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
 				hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 				hash.Final();
 				char digest[protocol::password_hash_size];
 				hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+				hash.Reset();
 				
 				if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
 				{
@@ -825,6 +823,13 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			}
 			else
 			{
+				if (usr->syncing == protocol::Global)
+				{
+					// already syncing some session, so we don't bother handling this request.
+					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
+					break;
+				}
+				
 				session_iterator si(session_id_map.find(msg->session_id));
 				if (si == session_id_map.end())
 				{
@@ -840,12 +845,12 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 					break;
 				}
 				
-				CSHA1 hash;
 				hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
 				hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 				hash.Final();
 				char digest[protocol::password_hash_size];
 				hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+				hash.Reset();
 				
 				if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
 				{
@@ -853,6 +858,10 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 					uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
 					break;
 				}
+				
+				// join session
+				uSendMsg(usr, msgAck(si->second->id, protocol::type::Subscribe));
+				uJoinSession(usr, si->second);
 			}
 			
 			usr->seed[0] = (rand() % 255) + 1;
@@ -1339,12 +1348,12 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 		{
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
 			
-			CSHA1 hash;
 			hash.Update(reinterpret_cast<uint8_t*>(password), pw_len);
 			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 			hash.Final();
 			char digest[protocol::password_hash_size];
 			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+			hash.Reset();
 			
 			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
 			{
@@ -1596,24 +1605,17 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	#endif
 	#endif
 	
+	
+	
+	
+	
 	// Add session to users session list.
 	usr->sessions.insert(
 		std::make_pair( session->id, SessionData(usr->id, session) )
 	);
 	
-	// set user active session..
-	//usr->session = session->id;
-	
 	// Tell session members there's a new user.
 	Propagate(uCreateEvent(usr, session, protocol::user_event::Join));
-	
-	// tell old users this is our active session..
-	/*
-	message_ref ssmsg(new protocol::SessionSelect);
-	ssmsg->user_id = usr->id;
-	ssmsg->session_id = usr->session;
-	Propagate(ssmsg);
-	*/
 	
 	if (session->users.size() != 0)
 	{

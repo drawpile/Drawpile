@@ -33,6 +33,8 @@
 #ifndef Server_C_Included
 #define Server_C_Included
 
+#include "../shared/SHA1.h"
+
 #include "sockets.h"
 #include "event.h"
 #include "user.h"
@@ -133,6 +135,10 @@ protected:
 	// Get free session ID
 	inline
 	uint8_t getSessionID() throw();
+	
+	/* *** Instances *** */
+	
+	CSHA1 hash;
 	
 	/* *** Generate messages *** */
 	
