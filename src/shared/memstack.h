@@ -29,19 +29,17 @@
 #ifndef MemoryStack_INCLUDED
 #define MemoryStack_INCLUDED
 
-#ifndef NDEBUG
-#include <iostream>
+#ifdef DEBUG_MEMORY_STACK
+	#ifndef NDEBUG
+		#include <iostream>
+	#endif
 #endif
+
 #include <stack> // std::stack
 
 template <class T>
 struct MemoryStack
 {
-	/*
-	MemoryStack() throw() { }
-	virtual ~MemoryStack() throw() { }
-	*/
-	
 	// Memory stack for operators new and delete
 	static std::stack<T*> _memstack;
 	
@@ -51,8 +49,10 @@ struct MemoryStack
 		if (obj != 0)
 			_memstack.push(static_cast<T*>(obj));
 		
+		#ifdef DEBUG_MEMORY_STACK
 		#ifndef NDEBUG
 		std::cout << "MemoryStack<>::size()/del = " << _memstack.size() << std::endl;
+		#endif
 		#endif
 	}
 	
@@ -61,15 +61,19 @@ struct MemoryStack
 	{
 		if (_memstack.size() == 0)
 		{
+			#ifdef DEBUG_MEMORY_STACK
 			#ifndef NDEBUG
 			std::cout << "MemoryStack<>::size()/NEW" << std::endl;
+			#endif
 			#endif
 			return ::new T;
 		}
 		else
 		{
+			#ifdef DEBUG_MEMORY_STACK
 			#ifndef NDEBUG
 			std::cout << "MemoryStack<>::size()/get = " << _memstack.size() << std::endl;
+			#endif
 			#endif
 			T* obj = _memstack.top();
 			_memstack.pop();
