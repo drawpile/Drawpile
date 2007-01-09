@@ -75,7 +75,7 @@ class EditorView : public QGraphicsView
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 		void mouseDoubleClickEvent(QMouseEvent*);
-		void tabletEvent(QTabletEvent *event);
+		bool viewportEvent(QEvent *event);
 		void drawForeground(QPainter *painter, const QRectF& rect);
 	private:
 		void startDrag(int x, int y);

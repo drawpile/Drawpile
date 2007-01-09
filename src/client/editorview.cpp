@@ -196,16 +196,17 @@ void EditorView::mouseDoubleClickEvent(QMouseEvent*)
 	// Ignore doubleclicks
 }
 
-void EditorView::tabletEvent(QTabletEvent *event)
+bool EditorView::viewportEvent(QEvent *event)
 {
-	event->accept();
-	QPoint point = mapToScene(event->pos()).toPoint();
-
-	if(event->pressure()==0) {
-		// Pressure 0, pen is not touching the tablet
+	if(event->type() == QEvent::TabletMove) {
+		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		tabev->accept();
+		QPoint point = mapToScene(tabev->pos()).toPoint();
 		if(pendown_) {
-			pendown_ = false;
-			emit penUp();
+			emit penDown(
+					drawingboard::Point(point.x(),point.y(),tabev->pressure()),
+					tabev->pointerType()==QTabletEvent::Eraser
+					);
 		} else if(enableoutline_ && showoutline_) {
 			QList<QRectF> rect;
 			const int dia = outlinesize_*2;
@@ -215,20 +216,27 @@ void EditorView::tabletEvent(QTabletEvent *event)
 						point.y() - outlinesize_, dia,dia));
 			updateScene(rect);
 		}
-	} else {
-		// Pressure>0, pen is touching the tablet
-		if(pendown_) {
-			if(prevpoint_ != point)
-				emit penMove(drawingboard::Point(point.x(), point.y(), event->pressure()));
-		} else {
-			emit penDown(
-					drawingboard::Point(point.x(),point.y(),event->pressure()),
-					event->pointerType()==QTabletEvent::Eraser
-					);
-			pendown_ = true;
-		}
+		prevpoint_ = point;
+		return true;
+	} else if(event->type() == QEvent::TabletPress) {
+		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		tabev->accept();
+		QPoint point = mapToScene(tabev->pos()).toPoint();
+
+		pendown_ = true;
+		emit penDown(
+				drawingboard::Point(mapToScene(tabev->pos()).toPoint(),
+					tabev->pressure()),
+				false
+				);
+		prevpoint_ = point;
+		return true;
+	} else if(event->type() == QEvent::TabletRelease) {
+		pendown_ = false;
+		emit penUp();
+		return true;
 	}
-	prevpoint_ = point;
+	return QAbstractScrollArea::viewportEvent(event);
 }
 
 //! Start dragging the view
