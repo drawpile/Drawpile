@@ -85,7 +85,6 @@ class EditorView : public QGraphicsView
 		bool pendown_;
 
 		bool isdragging_;
-		QCursor oldcursor_;
 		int dragx_,dragy_;
 
 		QPoint prevpoint_;

@@ -1,3 +1,4 @@
+#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -200,16 +201,19 @@ void EditorView::tabletEvent(QTabletEvent *event)
 	event->accept();
 	QPoint point = mapToScene(event->pos()).toPoint();
 
-#if 0
-	if(prevpoint_ != point)
-		board_->moveCursorOutline(point);
-#endif
-
 	if(event->pressure()==0) {
 		// Pressure 0, pen is not touching the tablet
 		if(pendown_) {
 			pendown_ = false;
 			emit penUp();
+		} else if(enableoutline_ && showoutline_) {
+			QList<QRectF> rect;
+			const int dia = outlinesize_*2;
+			rect.append(QRectF(prevpoint_.x() - outlinesize_,
+						prevpoint_.y() - outlinesize_, dia,dia));
+			rect.append(QRectF(point.x() - outlinesize_,
+						point.y() - outlinesize_, dia,dia));
+			updateScene(rect);
 		}
 	} else {
 		// Pressure>0, pen is touching the tablet
@@ -230,8 +234,7 @@ void EditorView::tabletEvent(QTabletEvent *event)
 //! Start dragging the view
 void EditorView::startDrag(int x,int y)
 {
-	oldcursor_ = cursor();
-	setCursor(Qt::ClosedHandCursor);
+	viewport()->setCursor(Qt::ClosedHandCursor);
 	dragx_ = x;
 	dragy_ = y;
 	isdragging_ = true;
@@ -255,7 +258,7 @@ void EditorView::moveDrag(int x, int y)
 //! Stop dragging
 void EditorView::stopDrag()
 {
-	setCursor(oldcursor_);
+	setCrosshair(crosshair_);
 	isdragging_ = false;
 }
 
