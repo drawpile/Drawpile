@@ -738,6 +738,12 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			
 			if (!uInSession(usr, usr->inMsg->session_id))
 			{
+				if (si->second->password != 0)
+				{
+					uSendMsg(usr, msgAuth(usr, si->second->id));
+					break;
+				}
+				
 				// join session
 				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
 				uJoinSession(usr, si->second);
