@@ -34,28 +34,36 @@
 template <class T>
 struct MemoryStack
 {
+	/*
+	MemoryStack() throw() { }
+	virtual ~MemoryStack() throw() { }
+	*/
+	
 	// Memory stack for operators new and delete
-	static std::stack<T*> memstack;
+	static std::stack<T*> _memstack;
 	
 	// delete operator
 	void operator delete(void* obj) throw()
 	{
 		if (obj != 0)
-			memstack.push(static_cast<T*>(obj));
+			_memstack.push(static_cast<T*>(obj));
 	}
 	
 	// new
 	void* operator new(size_t bytes) throw(std::bad_alloc)
 	{
-		if (memstack.size() == 0)
+		if (_memstack.size() == 0)
 			return ::new T;
 		else
 		{
-			T* obj = memstack.top();
-			memstack.pop();
+			T* obj = _memstack.top();
+			_memstack.pop();
 			return obj;
 		}
 	}
 };
+
+template <class T>
+std::stack<T*> MemoryStack<T>::_memstack;
 
 #endif // MemoryStack_INCLUDED
