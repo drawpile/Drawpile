@@ -126,12 +126,14 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	size_t count = 1;
 	
 	// first message in bundle
-	const Message *ptr = 0;
+	const Message *ptr = this;
 	// Count number of messages to serialize and required size
 	if (prev)
 	{
 		do
 		{
+			assert(ptr != ptr->prev);
+			
 			ptr = ptr->prev;
 			++count;
 			length += headerlen + ptr->payloadLength();
@@ -309,7 +311,7 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len) throw(std::exception
 	
 	uint8_t uid = user_id;
 	
-	uint8_t count;
+	uint8_t count, ucount=0;
 	memcpy_t(count, buf+i); i += sizeof(count);
 	
 	if (count == 0)
@@ -326,11 +328,14 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len) throw(std::exception
 		bswap(ptr->x);
 		bswap(ptr->y);
 		
-		ptr->next = new StrokeInfo;
-		ptr->next->prev = ptr;
-		ptr = static_cast<StrokeInfo*>(ptr->next);
+		if (++ucount != count)
+		{
+			ptr->next = new StrokeInfo;
+			ptr->next->prev = ptr;
+			ptr = static_cast<StrokeInfo*>(ptr->next);
+		}
 	}
-	while (ptr);
+	while (ucount != count);
 	
 	return i;
 }
