@@ -527,8 +527,17 @@ void HostState::handleError(const protocol::Error *msg)
 	QString errmsg;
 	switch(msg->code) {
 		using namespace protocol::error;
+		case UserLimit: errmsg = tr("Server full."); break;
+		case SessionLimit: errmsg = tr("No room for more sessions."); break;
+		case NoSessions: errmsg = tr("No sessions."); break;
+		case UnknownSession: errmsg = tr("No such session found."); break;
+		case SessionFull: errmsg = tr("Session full."); break;
 		case TooSmall: errmsg = tr("Board too small."); break;
 		case SyncFailure: errmsg = tr("Board synchronization failed, try again."); break;
+		case PasswordFailure: errmsg = tr("Incorrect password."); break;
+		case SessionLost: errmsg = tr("Session lost."); break;
+		case TooLong: errmsg = tr("Name too long."); break;
+		case NotUnique: errmsg = tr("Name already in use."); break;
 		default: errmsg = tr("Error code %1").arg(int(msg->code));
 	}
 	qDebug() << "error" << errmsg << "for session" << msg->session_id;
