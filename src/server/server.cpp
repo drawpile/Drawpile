@@ -636,8 +636,6 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 				ref->next = 0;
 				ref->prev = 0;
 				Propagate(ref);
-				
-				msg = msg->next;
 			}
 			while (msg != 0);
 			
