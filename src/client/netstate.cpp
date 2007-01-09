@@ -480,8 +480,10 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 			mysessions_.insert(newsession_->info().id, newsession_);
 			newsession_->select();
 			// TODO, use newsession_-> when server supports session passwds
-			if(setsessionpassword_.isEmpty()==false)
+			if(setsessionpassword_.isEmpty()==false) {
 				newsession_->setPassword(setsessionpassword_);
+				setsessionpassword_ = "";
+			}
 			emit joined(newsession_->info().id);
 			newsession_ = 0;
 		} else {
@@ -502,9 +504,10 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 			disconnect(this, SIGNAL(sessionsListed()), this, 0);
 			connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
 			listSessions();
+			qDebug() << "session created, joining...";
 		} else if(lastinstruction_ == protocol::admin::command::Password) {
 			// Password accepted
-			qDebug() << "server password set";
+			qDebug() << "password set";
 		} else {
 			qFatal("BUG: unhandled lastinstruction_");
 		}
