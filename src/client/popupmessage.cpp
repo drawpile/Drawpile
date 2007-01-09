@@ -47,7 +47,7 @@ PopupMessage::PopupMessage(QWidget *parent)
 void PopupMessage::setMessage(const QString& message)
 {
 	if(isVisible())
-		message_->setText(message_->text() + "\n" + message);
+		message_->setText(message_->text() + "<br>" + message);
 	else
 		message_->setText(message);
 }
@@ -67,9 +67,10 @@ void PopupMessage::popupAt(const QPoint& point)
 void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	QPen pen;
 	QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	painter.drawRoundRect(rect,35,35);
+	int xrnd = qRound(20 * height()/double(width()));
+	painter.setBrush(palette().light());
+	painter.drawRoundRect(rect,xrnd,20);
 }
 
 void PopupMessage::resizeEvent(QResizeEvent *)
@@ -79,7 +80,8 @@ void PopupMessage::resizeEvent(QResizeEvent *)
 	QPainter painter(&mask);
 	painter.setBrush(Qt::color1);
 	QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	painter.drawRoundRect(rect,35,35);
+	int xrnd = qRound(20 * height()/double(width()));
+	painter.drawRoundRect(rect,xrnd,20);
 	setMask(mask);
 }
 

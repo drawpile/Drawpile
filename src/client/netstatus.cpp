@@ -106,14 +106,14 @@ void NetStatus::copyAddress()
 
 void NetStatus::join(const QString& username)
 {
-	popup_->setMessage(tr("<b>%1</b> joins").arg(username));
+	popup_->setMessage(tr("<b>%1</b> joined").arg(username));
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
 
 }
 
 void NetStatus::leave(const QString& username)
 {
-	popup_->setMessage(tr("<b>%1</b> leaves").arg(username));
+	popup_->setMessage(tr("<b>%1</b> left").arg(username));
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
 }
 
