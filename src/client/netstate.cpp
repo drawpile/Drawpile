@@ -63,7 +63,11 @@ HostState::HostState(QObject *parent)
 void HostState::receiveMessage()
 {
 	protocol::Message *msg;
-	while((msg = net_->receive())) {
+	// Get all available messages.
+	// The message may be a "bundled message", that is it came from the network
+	// with a single shared header and is now received as a linked list.
+	while((msg = net_->receive())) { while(msg) {
+		protocol::Message *next = msg->next;
 		switch(msg->type) {
 			using namespace protocol;
 			case type::StrokeInfo:
@@ -133,13 +137,9 @@ void HostState::receiveMessage()
 				qDebug() << "unhandled message type " << int(msg->type);
 				break;
 		}
-	}
-	// Free the message(s)
-	while(msg) {
-		protocol::Message *next = msg->next;
 		delete msg;
 		msg = next;
-	}
+	} }
 }
 
 /**
@@ -831,18 +831,15 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 		drawbuffer_.enqueue(msg);
 		return true;
 	}
-	while(msg) {
-		Q_ASSERT(msg->type == protocol::type::StrokeInfo);
-		emit strokeReceived(
-				msg->user_id,
-				drawingboard::Point(
-					(signed short)(msg->x),
-					(signed short)(msg->y),
-					msg->pressure/255.0
-					)
-				);
-		msg = static_cast<protocol::StrokeInfo*>(msg->next);
-	}
+	Q_ASSERT(msg->type == protocol::type::StrokeInfo);
+	emit strokeReceived(
+			msg->user_id,
+			drawingboard::Point(
+				(signed short)(msg->x),
+				(signed short)(msg->y),
+				msg->pressure/255.0
+				)
+			);
 	return false;
 }
 
