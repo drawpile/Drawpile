@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,10 @@
 #define INTERFACES_H
 
 #include <QColor>
-#include "brush.h"
+
+namespace drawingboard {
+	class Brush;
+}
 
 //! Interface classes
 //
@@ -32,7 +35,7 @@ namespace interface {
 class BrushSource {
 	public:
 		virtual ~BrushSource() {}
-		virtual drawingboard::Brush getBrush() const = 0;
+		virtual const drawingboard::Brush& getBrush() const = 0;
 };
 
 //! Interface for color sources

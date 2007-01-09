@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,15 +41,15 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 	public:
 		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
 
+		//! Get the displayed brush
+		const drawingboard::Brush& brush() const { return brush_; }
+
 	public slots:
 		//! Set the brush to preview
 		/**
 		 * @param brush brush to set
 		 */
 		void setBrush(const drawingboard::Brush& brush);
-
-		//! Get the displayed brush
-		const drawingboard::Brush& brush() const { return brush_; }
 
 		//! Set preview brush size
 		void setSize(int size);

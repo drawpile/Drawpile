@@ -105,7 +105,7 @@ void BrushSettings::setBackground(const QColor& color)
 		ui_->preview->setColor2(color);
 }
 
-drawingboard::Brush BrushSettings::getBrush() const
+const drawingboard::Brush& BrushSettings::getBrush() const
 {
 	return ui_->preview->brush();
 }
@@ -136,10 +136,11 @@ void NoSettings::setBackground(const QColor&)
 {
 }
 
-drawingboard::Brush NoSettings::getBrush() const
+const drawingboard::Brush& NoSettings::getBrush() const
 {
 	// return a default brush
-	return drawingboard::Brush(1,1,1,Qt::black);
+	static drawingboard::Brush dummy(0);
+	return dummy;
 }
 
 }

@@ -24,6 +24,7 @@
 #include "user.h"
 #include "boardeditor.h"
 #include "preview.h"
+#include "interfaces.h"
 
 namespace drawingboard {
 
@@ -165,9 +166,9 @@ void Board::addPreview(const Point& point)
 	else
 		pre = previewcache_.dequeue();
 	if(previewstarted_) {
-		pre->previewLine(lastpreview_, point, user->brush());
+		pre->previewLine(lastpreview_, point, brushsrc_->getBrush());
 	} else {
-		pre->previewLine(point, point, user->brush());
+		pre->previewLine(point, point, brushsrc_->getBrush());
 		previewstarted_ = true;
 	}
 	lastpreview_ = point;

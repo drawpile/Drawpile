@@ -61,7 +61,7 @@ class ToolSettings {
 		 * An UI widget must have been created before this can be called.
 		 * @return brush with values from the UI widget
 		 */
-		virtual drawingboard::Brush getBrush() const = 0;
+		virtual const drawingboard::Brush& getBrush() const = 0;
 
 		//! Get the brush size
 		/**
@@ -105,7 +105,7 @@ class BrushSettings : public ToolSettings {
 
 		void setForeground(const QColor& color);
 		void setBackground(const QColor& color);
-		drawingboard::Brush getBrush() const;
+		const drawingboard::Brush& getBrush() const;
 
 		int getSize() const;
 
@@ -126,7 +126,7 @@ class NoSettings : public ToolSettings {
 
 		void setForeground(const QColor&);
 		void setBackground(const QColor&);
-		drawingboard::Brush getBrush() const;
+		const drawingboard::Brush& getBrush() const;
 
 		int getSize() const { return 0; }
 };
