@@ -107,8 +107,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'l': // localhost admin
-				// localhost_admin = true;
-				// TODO: Create server interface for setting this.
+				srv->setMode(server::mode::LocalhostAdmin);
 				break;
 			case 'u': // user limit
 				srv->setUserLimit(atoi(optarg));
@@ -139,11 +138,11 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'T':
 				std::cerr << "Transient mode not implemented." << std::endl;
-				//srv->setMode(server::mode::Transient);
+				srv->setMode(server::mode::Transient);
 				break;
 			case 'b':
 				std::cerr << "Daemon mode not implemented." << std::endl;
-				//srv->setMode(server::mode::Daemon);
+				srv->setMode(server::mode::Daemon);
 				break;
 			case 'd': // adjust minimum dimension.
 				std::cerr << "Min. dimension setting not implemented." << std::endl;
@@ -159,10 +158,10 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'w': // utf-16 string
 				std::cerr << "UTF-16 string requirement not implemented." << std::endl;
 				break;
-			default:
-				std::cerr << "What?" << std::endl;
 			case 'V': // version
 				exit(0);
+			default:
+				std::cerr << "What?" << std::endl;
 		}
 	}
 }
