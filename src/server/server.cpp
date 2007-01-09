@@ -260,25 +260,79 @@ void Server::uWrite(User* usr) throw()
 	#endif
 	#endif
 	
-	if (!usr->output.data or usr->output.canWrite() == 0)
+	if (!usr->output.data or usr->output.canRead() == 0)
 	{
-		size_t len=0;
+		// if buffer is null or no data left to read
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
-		uint8_t id = msg->user_id;
+		//uint8_t id = msg->user_id;
 		
-		/*
-		while (msg->next != 0)
-			msg = msg->next;
-		*/
+		// create outgoing message list
+		std::vector<message_ref> outgoing;
+		message_ref n;
+		while (usr->queue.size() != 0)
+		{
+			// TODO: Support linked lists for other message types as well..
+			n = usr->queue.front();
+			if (msg->type != protocol::type::StrokeInfo
+				or (n->type != msg->type)
+				or (n->user_id != msg->user_id)
+				or (n->session_id != msg->session_id))
+			{
+				break;
+			}
+			
+			outgoing.push_back(n);
+			usr->queue.pop_front();
+		}
 		
-		msg->user_id = id;
+		std::vector<message_ref>::iterator mi;
+		protocol::Message *last = msg;
+		if (outgoing.size() > 1)
+		{
+			#ifndef NDEBUG
+			std::cout << "Linking " << outgoing.size() << " messages." << std::endl;
+			#endif
+			
+			// create linked list
+			for (mi = ++(outgoing.begin()); mi != outgoing.end(); mi++)
+			{
+				msg = boost::get_pointer(*mi);
+				msg->prev = last;
+				last->next = msg;
+				last = msg;
+			}
+		}
+		
+		//msg->user_id = id;
+		size_t len=0;
+		
+		// serialize linked list
 		char* buf = msg->serialize(len);
 		
 		usr->output.setBuffer(buf, len);
 		usr->output.write(len);
 		
-		usr->queue.pop_front();
+		#ifndef NDEBUG
+		if (outgoing.size() > 1)
+		{
+			std::cout << "Total linked buffer size: " << len << std::endl;
+		}
+		#endif
+		
+		// clear linked list...
+		if (outgoing.size() == 0)
+		{
+			usr->queue.pop_front();
+		}
+		else
+		{
+			for (mi = outgoing.begin(); mi != outgoing.end(); mi++)
+			{
+				(*mi)->next = 0;
+				(*mi)->prev = 0;
+			}
+		}
 	}
 	
 	int sb = usr->sock->send(
@@ -1398,8 +1452,6 @@ void Server::SyncSession(Session* session) throw()
 	assert(session != 0);
 	assert(session->syncCounter == 0);
 	
-	std::list<User*> newc;
-	
 	// TODO: Need better source user selection.
 	User* src(session->users.begin()->second);
 	
@@ -1411,6 +1463,7 @@ void Server::SyncSession(Session* session) throw()
 	// Release clients from syncwait...
 	Propagate(msgAck(session->id, protocol::type::SyncWait));
 	
+	std::list<User*> newc;
 	// Get new clients
 	while (session->waitingSync.size() != 0)
 	{
@@ -1418,33 +1471,39 @@ void Server::SyncSession(Session* session) throw()
 		session->waitingSync.pop();
 	}
 	
-	// Send join and select session messages for old users.
+	message_ref msg;
+	std::vector<message_ref> msg_queue;
 	session_usr_iterator old(session->users.begin());
-	std::list<User*>::iterator new_i;
-	message_ref msg, ssmsg;
+	// build msg_queue
 	for (; old != session->users.end(); old++)
 	{
+		// clear syncwait 
 		old->second->sessions.find(session->id)->second.syncWait = false;
 		
-		// Generate messages
-		msg = uCreateEvent(old->second, session, protocol::user_event::Join);
+		// add messages to msg_queue
+		msg_queue.push_back(uCreateEvent(old->second, session, protocol::user_event::Join));
 		if (old->second->session == session->id)
 		{
-			ssmsg.reset(new protocol::SessionSelect);
-			ssmsg->user_id = old->second->id;
-			ssmsg->session_id = session->id;
+			msg.reset(new protocol::SessionSelect);
+			msg->user_id = old->second->id;
+			msg->session_id = session->id;
+			msg_queue.push_back(msg);
 		}
 		
-		// Send messages
-		for (new_i = newc.begin(); new_i != newc.end(); new_i++)
+	}
+	
+	std::list<User*>::iterator new_i, new_i2;
+	std::vector<message_ref>::iterator msg_queue_i;
+	// Send messages
+	for (new_i = newc.begin(); new_i != newc.end(); new_i++)
+	{
+		for (msg_queue_i=msg_queue.begin(); msg_queue_i != msg_queue.end(); msg_queue_i++)
 		{
-			uSendMsg(*new_i, msg);
-			if (old->second->session == session->id)
-				uSendMsg(*new_i, ssmsg);
+			uSendMsg(*new_i, *msg_queue_i);
 		}
 	}
 	
-	// put waiting clients to normal data propagation and create tunnels.
+	// put waiting clients to normal data propagation and create raster tunnels.
 	for (new_i = newc.begin(); new_i != newc.end(); new_i++)
 	{
 		// Create fake tunnel
@@ -1452,9 +1511,15 @@ void Server::SyncSession(Session* session) throw()
 		
 		// add user to normal data propagation.
 		session->users.insert( std::make_pair((*new_i)->id, (*new_i)) );
+		
+		for (new_i2 = newc.begin(); new_i2 != newc.end(); new_i2++)
+		{
+			msg = uCreateEvent(old->second, session, protocol::user_event::Join);
+		}
 	}
 	
-	// TODO: Clean syncWait flags from users.
+	// TODO: Tell other syncWait users of the others..
+	
 }
 
 void Server::uJoinSession(User* usr, Session* session) throw()
