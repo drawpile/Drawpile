@@ -17,8 +17,6 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QDebug>
-
 #include "board.h"
 #include "layer.h"
 #include "user.h"
@@ -84,6 +82,7 @@ void Board::initBoard(QImage image)
  */
 void Board::clearUsers()
 {
+	commitPreviews();
 	foreach(User *u, users_) {
 		delete u;
 	}
@@ -120,7 +119,7 @@ void Board::removeUser(int id)
 {
 	Q_ASSERT(users_.contains(id));
 	if(id == localuser_)
-		clearPreviews();
+		commitPreviews();
 	delete users_.take(id);
 }
 
@@ -182,13 +181,25 @@ void Board::endPreview()
 	previewstarted_ = false;
 }
 
-void Board::clearPreviews()
+/**
+ * This is called when leaving a session. All pending preview strokes
+ * are immediately drawn on the board.
+ */
+void Board::commitPreviews()
 {
-	foreach(Preview *p, previews_)
+	Point lastpoint(-1,-1,0);
+	while(previews_.isEmpty()==false) {
+		Preview *p = previews_.dequeue();
+		if(p->from() != lastpoint)
+			image_->drawPoint(p->from(), p->brush());
+		else
+			image_->drawLine(p->from(), p->to(), p->brush());
+		lastpoint = p->to();
 		delete p;
-	foreach(Preview *p, previewcache_)
-		delete p;
-	previews_.clear();
+	}
+
+	while(previewcache_.isEmpty()==false)
+		delete previewcache_.dequeue();
 	previewcache_.clear();
 }
 

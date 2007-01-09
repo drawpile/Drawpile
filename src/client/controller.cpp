@@ -216,7 +216,6 @@ void Controller::sessionParted()
 	board_->clearUsers();
 	board_->addUser(0);
 	board_->setLocalUser(0);
-	board_->clearPreviews();
 
 	// Get a local board editor
 	delete editor_;

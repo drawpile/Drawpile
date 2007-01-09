@@ -22,6 +22,9 @@
 
 #include <QGraphicsLineItem>
 
+#include "brush.h"
+#include "point.h"
+
 namespace drawingboard {
 
 class Brush;
@@ -37,6 +40,14 @@ class Preview : public QGraphicsLineItem {
 	public:
 		Preview(QGraphicsItem *parent, QGraphicsScene *scene);
 		void previewLine(const Point& from, const Point& to, const Brush& brush);
+
+		const Brush& brush() const { return brush_; }
+		const Point& from() const { return from_; }
+		const Point& to() const { return to_; }
+
+	private:
+		Brush brush_;
+		Point from_, to_;
 };
 
 }

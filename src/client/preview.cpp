@@ -38,6 +38,9 @@ Preview::Preview(QGraphicsItem *parent, QGraphicsScene *scene)
 
 void Preview::previewLine(const Point& from, const Point& to, const Brush& brush)
 {
+	brush_ = brush;
+	from_ = from;
+	to_ = to;
 	QPen pen(brush.color(to.pressure()));
 	int rad= brush.radius(to.pressure());
 	if(rad==0) {

@@ -83,9 +83,6 @@ class Board : public QGraphicsScene
 		//! End a preview stroke
 		void endPreview();
 
-		//! Delete all preview strokes
-		void clearPreviews();
-
 	public slots:
 		//! Add a new user to the board
 		void addUser(int id);
@@ -103,6 +100,9 @@ class Board : public QGraphicsScene
 		void userEndStroke(int user);
 
 	private:
+		//! Commit preview strokes to the board
+		void commitPreviews();
+
 		Layer *image_;
 		QHash<int,User*> users_;
 		int localuser_;
