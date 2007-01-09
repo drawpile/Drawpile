@@ -289,10 +289,6 @@ void Server::uWrite(User* usr) throw()
 		protocol::Message *last = msg;
 		if (outgoing.size() > 1)
 		{
-			#ifndef NDEBUG
-			std::cout << "Linking " << outgoing.size() << " messages." << std::endl;
-			#endif
-			
 			// create linked list
 			for (mi = ++(outgoing.begin()); mi != outgoing.end(); mi++)
 			{
