@@ -796,37 +796,71 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Password:
 		{
-			if (a_password == 0)
-			{
-				std::cerr << "User tries to pass password even though we've disallowed it." << std::endl;
-				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::PasswordFailure));
-				return;
-			}
-			
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
-			
-			CSHA1 hash;
-			hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
-			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
-			hash.Final();
-			char digest[protocol::password_hash_size];
-			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-			
-			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
+			if (msg->session_id == protocol::global)
 			{
-				// mismatch, send error or disconnect.
-				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::PasswordFailure));
-				return;
+				// Admin login
+				if (a_password == 0)
+				{
+					std::cerr << "User tries to pass password even though we've disallowed it." << std::endl;
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+					return;
+				}
+				
+				CSHA1 hash;
+				hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
+				hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+				hash.Final();
+				char digest[protocol::password_hash_size];
+				hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+				
+				if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
+				{
+					// mismatch, send error or disconnect.
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+					return;
+				}
+				
+				usr->mode = protocol::user_mode::Administrator;
 			}
-			
-			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Password));
+			else
+			{
+				session_iterator si(session_id_map.find(msg->session_id));
+				if (si == session_id_map.end())
+				{
+					// session doesn't exist
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
+					break;
+				}
+				
+				if (uInSession(msg->session_id))
+				{
+					// already in session
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
+					break;
+				}
+				
+				CSHA1 hash;
+				hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
+				hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+				hash.Final();
+				char digest[protocol::password_hash_size];
+				hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+				
+				if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
+				{
+					// mismatch, send error or disconnect.
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+					break;
+				}
+			}
 			
 			usr->seed[0] = (rand() % 255) + 1;
 			usr->seed[1] = (rand() % 255) + 1;
 			usr->seed[2] = (rand() % 255) + 1;
 			usr->seed[3] = (rand() % 255) + 1;
 			
-			usr->mode = protocol::user_mode::Administrator;
+			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
 		}
 		break;
 	default:
