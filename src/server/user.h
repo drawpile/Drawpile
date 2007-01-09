@@ -124,27 +124,6 @@ struct User
 		queue.clear();
 	}
 	
-	void reset(uint8_t _id=protocol::null_user, Socket* nsock=0)
-	{
-		delete [] name,
-		delete sock,
-		delete inMsg;
-		
-		sock = nsock;
-		id = _id;
-		nlen = 0;
-		name = 0;
-		state = uState::init;
-		inMsg = 0;
-		syncing = protocol::Global;
-		
-		sessions.clear();
-		queue.clear();
-		
-		input.left = 0;
-		output.left = 0;
-	}
-	
 	// Socket
 	Socket *sock;
 	

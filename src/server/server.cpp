@@ -493,6 +493,7 @@ void Server::uProcessData(User* usr) throw()
 				cread = usr->input.canRead();
 				len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
 				
+				// need more data
 				if (len > cread)
 					return;
 			}
@@ -530,10 +531,14 @@ void Server::uProcessData(User* usr) throw()
 			break;
 		}
 		
-		if ((usr != 0) and (usr->inMsg != 0))
+		if (usr != 0)
 		{
 			delete usr->inMsg;
 			usr->inMsg = 0;
+		}
+		else
+		{
+			break;
 		}
 	}
 }
@@ -1035,7 +1040,7 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 	#endif
 	#endif
 	
-	//assert(usr != 0);
+	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
 	
@@ -1824,8 +1829,6 @@ void Server::uRemove(User* usr) throw()
 	
 	delete usr;
 	usr = 0;
-	
-	
 }
 
 int Server::init() throw(std::bad_alloc)
