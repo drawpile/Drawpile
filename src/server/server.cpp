@@ -1474,8 +1474,8 @@ void Server::SyncSession(Session* session) throw()
 	// Get new clients
 	while (session->waitingSync.size() != 0)
 	{
-		newc.insert(newc.end(), session->waitingSync.top());
-		session->waitingSync.pop();
+		newc.insert(newc.end(), session->waitingSync.front());
+		session->waitingSync.pop_front();
 	}
 	
 	message_ref msg;
@@ -1519,14 +1519,16 @@ void Server::SyncSession(Session* session) throw()
 		// add user to normal data propagation.
 		session->users.insert( std::make_pair((*new_i)->id, (*new_i)) );
 		
-		for (new_i2 = newc.begin(); new_i2 != newc.end(); new_i2++)
+		// Tell other syncWait users of the user..
+		if (newc.size() > 1)
 		{
-			msg = uCreateEvent(old->second, session, protocol::user_event::Join);
+			for (new_i2 = newc.begin(); new_i2 != newc.end(); new_i2++)
+			{
+				if (new_i2 == new_i) continue; // skip self
+				msg = uCreateEvent(old->second, session, protocol::user_event::Join);
+			}
 		}
 	}
-	
-	// TODO: Tell other syncWait users of the others..
-	
 }
 
 void Server::uJoinSession(User* usr, Session* session) throw()
@@ -1562,7 +1564,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	if (session->users.size() != 0)
 	{
 		// put user to wait sync list.
-		session->waitingSync.push(usr);
+		session->waitingSync.push_back(usr);
 		usr->syncing = session->id;
 		
 		// don't start new client sync if one is already in progress...
