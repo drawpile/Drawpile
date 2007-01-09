@@ -645,7 +645,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			while (msg != 0);
 			*/
 			
-			//Propagate(message_ref(msg));
+			Propagate(message_ref(msg));
 		}
 		usr->inMsg = 0;
 		break;
