@@ -86,7 +86,7 @@ protected:
 	std::map<fd_t, User*> users;
 	
 	// Session ID to session mapping
-	std::map<uint8_t, Session*> session_id_map;
+	std::map<uint8_t, Session*> sessions;
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
 	// first->source, second->target
@@ -114,7 +114,8 @@ protected:
 	uint8_t
 		default_user_mode;
 	
-	bool localhost_admin;
+	uint8_t
+		opmode;
 	
 	/* functions */
 	
@@ -245,20 +246,22 @@ public:
 	int init() throw(std::bad_alloc);
 	
 	//! Set server password
-	void setPassword(char* pwstr, uint8_t len) { password = pwstr; pw_len = len; }
+	void setPassword(char* pwstr, uint8_t len) throw() { password = pwstr; pw_len = len; }
 	
 	//! Set admin server password
-	void setAdminPassword(char* pwstr, uint8_t len) { a_password = pwstr; a_pw_len = len; }
+	void setAdminPassword(char* pwstr, uint8_t len) throw() { a_password = pwstr; a_pw_len = len; }
 	
 	//! Set user limit
-	void setUserLimit(uint8_t ulimit) { user_limit = ulimit; }
+	void setUserLimit(uint8_t ulimit) throw() { user_limit = ulimit; }
 	
 	//! Set listening port range
-	void setPorts(uint16_t lo, uint16_t hi)
+	void setPorts(uint16_t lo, uint16_t hi) throw()
 	{
 		lo_port = lo;
 		hi_port = (hi < lo ? lo : hi);
 	}
+	
+	void setMode(uint8_t mode) throw() { fSet(opmode, mode); }
 	
 	//! Set UTF-16 support
 	void setUTF16(bool x)

@@ -38,6 +38,8 @@
 #include "../shared/protocol.helper.h"
 #include "../shared/protocol.h" // Message()
 
+#include "server.flags.h"
+
 #include <ctime>
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -58,7 +60,7 @@ Server::Server() throw()
 	requirements(0),
 	extensions(protocol::extensions::Chat|protocol::extensions::Palette),
 	default_user_mode(protocol::user_mode::None),
-	localhost_admin(true)
+	opmode(0)
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -306,15 +308,15 @@ void Server::uWrite(User* usr) throw()
 		usr->output.setBuffer(buf, len);
 		usr->output.write(len);
 		
+		#ifdef DEBUG_LINKED_LIST
 		#ifndef NDEBUG
 		if (outgoing.size() > 1)
 		{
-			#ifndef NDEBUG
 			// user_id and type saved, count as additional header
 			std::cout << "Linked " << outgoing.size() << " messages, for total size: " << len << std::endl
 				<< "Bandwidth savings are [(7*n) - ((5*n)+3)]: " << (7 * outgoing.size()) - (3 + (outgoing.size() * 5)) << std::endl;
-			#endif
 		}
+		#endif
 		#endif
 		
 		// clear linked list...
@@ -528,7 +530,7 @@ void Server::uProcessData(User* usr) throw()
 			break;
 		}
 		
-		if (usr && usr->inMsg)
+		if ((usr != 0) and (usr->inMsg != 0))
 		{
 			delete usr->inMsg;
 			usr->inMsg = 0;
@@ -575,7 +577,7 @@ bool Server::uInSession(User* usr, uint8_t session) const throw()
 
 bool Server::sessionExists(uint8_t session) const throw()
 {
-	if (session_id_map.find(session) == session_id_map.end())
+	if (sessions.find(session) == sessions.end())
 		return false;
 	
 	return true;
@@ -694,14 +696,14 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			}
 			
 			Propagate(pmsg);
+			usr->inMsg = 0;
 		}
-		usr->inMsg = 0;
 		break;
 	case protocol::type::Unsubscribe:
 		{
-			session_iterator si(session_id_map.find(usr->inMsg->session_id));
+			session_iterator si(sessions.find(usr->inMsg->session_id));
 			
-			if (si == session_id_map.end())
+			if (si == sessions.end())
 			{
 				#ifndef NDEBUG
 				std::cerr << "No such session: "
@@ -721,8 +723,8 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	case protocol::type::Subscribe:
 		if (usr->syncing == protocol::Global)
 		{
-			session_iterator si(session_id_map.find(usr->inMsg->session_id));
-			if (si == session_id_map.end())
+			session_iterator si(sessions.find(usr->inMsg->session_id));
+			if (si == sessions.end())
 			{
 				// session not found
 				#ifndef NDEBUG
@@ -761,11 +763,11 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::ListSessions:
-		if (session_id_map.size() != 0)
+		if (sessions.size() != 0)
 		{
 			protocol::SessionInfo *nfo = 0;
-			session_iterator si(session_id_map.begin());
-			for (; si != session_id_map.end(); si++)
+			session_iterator si(sessions.begin());
+			for (; si != sessions.end(); si++)
 			{
 				nfo = new protocol::SessionInfo;
 				
@@ -830,8 +832,8 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 					break;
 				}
 				
-				session_iterator si(session_id_map.find(msg->session_id));
-				if (si == session_id_map.end())
+				session_iterator si(sessions.find(msg->session_id));
+				if (si == sessions.end())
 				{
 					// session doesn't exist
 					uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
@@ -928,7 +930,7 @@ void Server::uHandleAck(User* usr) throw()
 				us->second.syncWait = true;
 			}
 			
-			Session *session(session_id_map.find(ack->session_id)->second);
+			Session *session(sessions.find(ack->session_id)->second);
 			session->syncCounter--;
 			
 			if (session->syncCounter == 0)
@@ -1145,7 +1147,8 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 				#endif
 			}
 			
-			if (!validateSessionTitle(session))
+			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
+				and !validateSessionTitle(session))
 			{
 				#ifndef NDEBUG
 				std::cerr << "Title not unique." << std::endl;
@@ -1160,7 +1163,7 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 			
 			// TODO
 			//registerSession(s);
-			session_id_map.insert( std::make_pair(session->id, session) );
+			sessions.insert( std::make_pair(session->id, session) );
 			
 			#ifndef NDEBUG
 			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
@@ -1193,8 +1196,8 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 		}
 		else
 		{
-			session_iterator si(session_id_map.find(usr->inMsg->session_id));
-			if (si == session_id_map.end())
+			session_iterator si(sessions.find(msg->session_id));
+			if (si == sessions.end())
 			{
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
 			}
@@ -1288,7 +1291,8 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			if (!validateUserName(usr))
+			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
+				and !validateUserName(usr))
 			{
 				#ifndef NDEBUG
 				std::cerr << "Name not unique." << std::endl;
@@ -1313,7 +1317,8 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 			msg->length = 0;
 			msg->name = 0;
 			
-			if (localhost_admin && usr->sock->address() == INADDR_LOOPBACK)
+			if (fIsSet(opmode, server::mode::LocalhostAdmin)
+				and (usr->sock->address() == INADDR_LOOPBACK))
 			{
 				// auto admin promotion.
 				// also, don't put any other flags on the user.
@@ -1362,7 +1367,7 @@ void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Password));
+			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
 			
 			// make sure the same seed is not used for something else.
 			usr->seed[0] = (rand() % 255) + 1;
@@ -1472,8 +1477,8 @@ void Server::Propagate(message_ref msg) throw()
 	#endif
 	#endif
 	
-	session_iterator si(session_id_map.find(msg->session_id));
-	if (si == session_id_map.end())
+	session_iterator si(sessions.find(msg->session_id));
+	if (si == sessions.end())
 	{
 		#ifndef NDEBUG
 		std::cerr << "No such session!" << std::endl;
@@ -1670,7 +1675,7 @@ void Server::uLeaveSession(User* usr, Session* session) throw()
 		if (!fIsSet(session->flags, protocol::session::NoSelfDestruct))
 		{
 			freeSessionID(session->id);
-			session_id_map.erase(session->id);
+			sessions.erase(session->id);
 			delete session;
 		}
 		
@@ -1760,7 +1765,7 @@ void Server::breakSync(User* usr) throw()
 	#endif
 	
 	uSendMsg(usr, msgError(usr->syncing, protocol::error::SyncFailure));
-	uLeaveSession(usr, session_id_map.find(usr->syncing)->second);
+	uLeaveSession(usr, sessions.find(usr->syncing)->second);
 	usr->syncing = protocol::Global;
 }
 
@@ -1819,6 +1824,8 @@ void Server::uRemove(User* usr) throw()
 	
 	delete usr;
 	usr = 0;
+	
+	
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1932,7 +1939,18 @@ bool Server::validateUserName(User* usr) const throw()
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
+	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
+		return true;
 	
+	std::map<fd_t, User*>::const_iterator ui(users.begin());
+	for (; ui != users.end(); ui++)
+	{
+		if (usr->nlen == ui->second->nlen
+			and (memcmp(usr->name, ui->second->name, usr->nlen) == 0))
+		{
+			return false;
+		}
+	}
 	
 	return true;
 }
@@ -1945,6 +1963,19 @@ bool Server::validateSessionTitle(Session* session) const throw()
 	std::cout << "Server::validateSessionTitle(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
+	
+	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
+		return true;
+	
+	std::map<uint8_t, Session*>::const_iterator si(sessions.begin());
+	for (; si != sessions.end(); si++)
+	{
+		if (session->len == si->second->len
+			and (memcmp(session->title, si->second->title, session->len) == 0))
+		{
+			return false;
+		}
+	}
 	
 	return true;
 }
