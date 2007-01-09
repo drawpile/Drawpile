@@ -831,14 +831,18 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 		drawbuffer_.enqueue(msg);
 		return true;
 	}
-	emit strokeReceived(
-			msg->user_id,
-			drawingboard::Point(
-				(signed short)(msg->x),
-				(signed short)(msg->y),
-				msg->pressure/255.0
-				)
-			);
+	while(msg) {
+		Q_ASSERT(msg->type == protocol::type::StrokeInfo);
+		emit strokeReceived(
+				msg->user_id,
+				drawingboard::Point(
+					(signed short)(msg->x),
+					(signed short)(msg->y),
+					msg->pressure/255.0
+					)
+				);
+		msg = static_cast<protocol::StrokeInfo*>(msg->next);
+	}
 	return false;
 }
 

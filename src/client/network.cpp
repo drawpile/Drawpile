@@ -82,8 +82,19 @@ void NetworkPrivate::send(protocol::Message *msg)
 	Q_ASSERT(msg);
 	sendmutex.lock();
 	bool wasEmpty = sendqueue.isEmpty();
-	// TODO aggregate subsequent messages of same type
-	sendqueue.enqueue(msg);
+#if 0 // Aggregate messages.
+	if(wasempty==false) {
+		protocol::Message *last = sendqueue.last();
+		if(last->type == msg->type) {
+			last->next = msg;
+			msg->prev = last;
+			sendqueue.last() = msg;
+		} else {
+			sendqueue.enqueue(msg);
+		}
+	} else
+#endif
+		sendqueue.enqueue(msg);
 	sendmutex.unlock();
 
 	// If send queue was empty, notify network thread of new messages
