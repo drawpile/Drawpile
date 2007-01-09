@@ -625,19 +625,25 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 			usr->inMsg->session_id = usr->session;
 			
 			// scroll to the last messag in linked-list
-			message_ref ref;
+			//message_ref ref;
 			protocol::Message* msg = usr->inMsg;
+			while (msg->next != 0)
+				msg = msg->next;
+			/*
 			do
 			{
 				ref.reset(msg);
 				
 				msg = msg->next;
 				
+				// kill linked list, since it doesn't work properly with shared_ptr
 				ref->next = 0;
 				ref->prev = 0;
+				
 				Propagate(ref);
 			}
 			while (msg != 0);
+			*/
 			
 			//Propagate(message_ref(msg));
 		}
