@@ -209,7 +209,7 @@ public:
  * Response: HostInfo
  */
 struct Identifier
-	: Message //, MemoryStack<Identifier>
+	: Message//, MemoryStack<Identifier>
 {
 	Identifier() throw()
 		: Message(type::Identifier),
@@ -255,7 +255,7 @@ struct Identifier
  * Response: none
  */
 struct StrokeInfo
-	: Message, MemoryStack<StrokeInfo>
+	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
 		: Message(type::StrokeInfo,
@@ -290,7 +290,7 @@ struct StrokeInfo
  * Marks the end of a line defined by StrokeInfo messages.
  */
 struct StrokeEnd
-	: Message, MemoryStack<StrokeEnd>
+	: Message//, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
 		: Message(type::StrokeEnd,
@@ -318,7 +318,7 @@ struct StrokeEnd
  * Response: none
  */
 struct ToolInfo
-	: Message, MemoryStack<ToolInfo>
+	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
 		: Message(type::ToolInfo, message::isUser|message::isSelected),
@@ -814,7 +814,7 @@ struct SessionInfo
  * Acknowledges some action or event.
  */
 struct Acknowledgement
-	: Message, MemoryStack<Acknowledgement>
+	: Message//, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
 		: Message(type::Acknowledgement, message::isSession),
@@ -841,7 +841,7 @@ struct Acknowledgement
  * Arbitrary error code message.
  */
 struct Error
-	: Message, MemoryStack<Error>
+	: Message//, MemoryStack<Error>
 {
 	Error() throw()
 		: Message(type::Error, message::isSession),
@@ -983,7 +983,7 @@ struct Palette
  * Response: Error or Acknowledgement with event set to protocol::type::SessionSelect.
  */
 struct SessionSelect
-	: Message, MemoryStack<SessionSelect>
+	: Message//, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
 		: Message(type::SessionSelect,
