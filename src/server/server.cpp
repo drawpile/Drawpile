@@ -316,7 +316,9 @@ void Server::uWrite(User* usr) throw()
 		#ifndef NDEBUG
 		if (outgoing.size() > 1)
 		{
-			std::cout << "Total linked buffer size: " << len << std::endl;
+			// user_id and type saved, count as additional header
+			std::cout << "Linked " << outgoing.size() << " messages, for total size: " << len << std::endl
+				<< "Bandwidth savings are [(7*n) - ((5*n)+3)]: " << (7 * outgoing.size()) - (3 + (outgoing.size() * 5)) << std::endl;
 		}
 		#endif
 		
@@ -620,7 +622,12 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 		// needed for Propagate()
 		usr->inMsg->session_id = usr->session;
 		
-		Propagate(message_ref(usr->inMsg));
+		// scroll to the last messag in linked-list
+		protocol::Message* msg = usr->inMsg;
+		while (msg->next != 0)
+			msg = msg->next;
+		
+		Propagate(message_ref(msg));
 		
 		usr->inMsg = 0;
 		break;
