@@ -34,6 +34,7 @@
 
 #include "../shared/protocol.h"
 
+#include "server.flags.h"
 #include "server.h"
 
 #include <cstdlib>
@@ -62,10 +63,30 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "p:Vhs:ud:")) != -1)
+	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:T")) != -1)
 	{
 		switch (opt)
 		{
+			case 'h': // help
+				std::cout << "Syntax: drawpile-srv [options]" << std::endl
+					<< std::endl
+					<< "Options:" << std::endl
+					<< std::endl
+					<< "   -a [address]  listen on this address" << std::endl
+					<< "   -p [port]     listen on 'port' (1024 - 65535)" << std::endl
+					<< "   -h            this output (a.k.a. Help)" << std::endl
+					<< "   -l            localhost admin" << std::endl
+					<< "   -b            daemon mode" << std::endl
+					<< "   -u [number]   set server user limit" << std::endl
+					<< "   -S [string]   admin password string" << std::endl
+					<< "   -s [string]   password string" << std::endl
+					<< "   -w            UTF-16 strings" << std::endl
+					<< "   -e            unique name enforcing" << std::endl
+					<< "   -d [size]     minimum dimension for canvas" << std::endl
+					<< "   -T            enable transient mode" << std::endl
+					;
+				exit(1);
+				break;
 			case 'a': // address to listen on
 				std::cerr << "Listening address setting not implemented." << std::endl;
 				break;
@@ -116,8 +137,13 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					srv->setPassword(password, pw_len);
 				}
 				break;
+			case 'T':
+				std::cerr << "Transient mode not implemented." << std::endl;
+				//srv->setMode(server::mode::Transient);
+				break;
 			case 'b':
 				std::cerr << "Daemon mode not implemented." << std::endl;
+				//srv->setMode(server::mode::Daemon);
 				break;
 			case 'd': // adjust minimum dimension.
 				std::cerr << "Min. dimension setting not implemented." << std::endl;
@@ -132,25 +158,6 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'w': // utf-16 string
 				std::cerr << "UTF-16 string requirement not implemented." << std::endl;
-				break;
-			case 'h': // help
-				std::cout << "Syntax: drawpile-srv [options]" << std::endl
-					<< std::endl
-					<< "Options:" << std::endl
-					<< std::endl
-					<< "   -a [address]  listen on this address" << std::endl
-					<< "   -p [port]     listen on 'port' (1024 - 65535)" << std::endl
-					<< "   -h            this output (a.k.a. Help)" << std::endl
-					<< "   -l            localhost admin" << std::endl
-					<< "   -b            daemon mode" << std::endl
-					<< "   -u [number]   set server user limit" << std::endl
-					<< "   -S [string]   admin password string" << std::endl
-					<< "   -s [string]   password string" << std::endl
-					<< "   -w            UTF-16 strings" << std::endl
-					<< "   -e            unique name enforcing" << std::endl
-					<< "   -d [size]     minimum dimension for canvas" << std::endl
-					;
-				exit(1);
 				break;
 			default:
 				std::cerr << "What?" << std::endl;
