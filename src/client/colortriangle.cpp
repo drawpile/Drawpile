@@ -487,9 +487,9 @@ void ColorTriangle::makeTriangle()
 				} else {
 #ifdef IS_BIG_ENDIAN
 					*buf++ = 0xff;
-					*buf++ = LERP (rl, br, xl, xr, xx);
+					*buf++ = LERP (rl, rr, xl, xr, xx);
 					*buf++ = LERP (gl, gr, xl, xr, xx);
-					*buf++ = LERP (bl, rr, xl, xr, xx);
+					*buf++ = LERP (bl, br, xl, xr, xx);
 #else
 					*buf++ = LERP (bl, br, xl, xr, xx);
 					*buf++ = LERP (gl, gr, xl, xr, xx);
