@@ -829,7 +829,7 @@ bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
 	brush.setRadius2(msg->lo_size);
 	brush.setColor2(QColor(msg->lo_color[0], msg->lo_color[1], msg->lo_color[2]));
 	brush.setHardness2(msg->lo_hardness/255.0);
-	brush.setOpacity(msg->lo_color[3]/255.0);
+	brush.setOpacity2(msg->lo_color[3]/255.0);
 	emit toolReceived(msg->user_id, brush);
 	return false;
 }
