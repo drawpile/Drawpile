@@ -32,6 +32,11 @@
 
 #include "protocol.h"
 
+#ifndef NDEBUG
+#include <iostream>
+#endif // NDEBUG
+
+#include <limits>
 #include <cassert> // assert()
 #include <memory> // memcpy()
 
@@ -123,7 +128,7 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	// At least one message is serialized (the last)
 	length += payloadLength();
 	
-	size_t count = 1;
+	uint8_t count = 1;
 	
 	// first message in bundle
 	const Message *ptr = this;
@@ -132,7 +137,9 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	{
 		do
 		{
+			// ptr->prev should not point to ptr
 			assert(ptr != ptr->prev);
+			assert(count <= std::numeric_limits<uint8_t>::max());
 			
 			ptr = ptr->prev;
 			++count;
@@ -140,8 +147,6 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 		}
 		while (ptr->prev);
 	}
-	else
-		ptr = this;
 	// ptr now points to the first message in list.
 	
 	assert(ptr != 0); // some problems with the constness?
@@ -151,8 +156,9 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	char *dataptr = data;
 	len = length;
 	
-	if (fIsSet(modifiers, message::isBundling))
+	switch (fIsSet(modifiers, message::isBundling))
 	{
+	case true:
 		// Write bundled packets
 		dataptr += serializeHeader(dataptr, ptr);
 		memcpy_t(dataptr++, count);
@@ -161,9 +167,8 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 			dataptr += ptr->serializePayload(dataptr);
 			ptr = ptr->next;
 		}
-	}
-	else
-	{
+		break;
+	default: // case false:
 		// Write whole packets
 		while (ptr)
 		{
@@ -171,6 +176,7 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 			dataptr += ptr->serializePayload(dataptr);
 			ptr = ptr->next;
 		}
+		break;
 	}
 	
 	return data;
@@ -287,10 +293,12 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	uint16_t x_t = x, y_t = y;
+	uint16_t
+		x_tmp = x,
+		y_tmp = y;
 	
-	memcpy_t(buf, bswap(x_t)); size_t i = sizeof(x);
-	memcpy_t(buf+i, bswap(y_t)); i += sizeof(y);
+	memcpy_t(buf, bswap(x_tmp)); size_t i = sizeof(x);
+	memcpy_t(buf+i, bswap(y_tmp)); i += sizeof(y);
 	memcpy_t(buf+i, pressure); i += sizeof(pressure);
 	
 	return i;
@@ -318,21 +326,32 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len) throw(std::exception
 		throw scrambled_buffer();
 	
 	StrokeInfo *ptr = this;
+	Message* last = 0;
 	do
 	{
 		ptr->user_id = uid;
+		
+		// make sure we aren't overflowing the buffer
+		assert((i+sizeof(x)+sizeof(y)+sizeof(pressure)) <= len);
+		
+		// extract data
 		memcpy_t(ptr->x, buf+i); i += sizeof(x);
 		memcpy_t(ptr->y, buf+i); i += sizeof(y);
 		memcpy_t(ptr->pressure, buf+i); i += sizeof(pressure);
 		
+		// swap coords
 		bswap(ptr->x);
 		bswap(ptr->y);
 		
-		if (++ucount != count)
+		// increment count
+		++ucount;
+		
+		if (ucount != count)
 		{
-			ptr->next = new StrokeInfo;
-			ptr->next->prev = ptr;
-			ptr = static_cast<StrokeInfo*>(ptr->next);
+			last = ptr;
+			ptr = new StrokeInfo;
+			last->next = ptr;
+			ptr->prev = last;
 		}
 	}
 	while (ucount != count);
