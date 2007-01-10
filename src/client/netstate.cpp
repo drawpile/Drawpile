@@ -669,19 +669,23 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 {
 	const QColor hi = brush.color(1);
 	const QColor lo = brush.color(0);
-	const uchar hio = qRound(brush.opacity(1) * 100);
-	const uchar loo = qRound(brush.opacity(0) * 100);
 	protocol::ToolInfo *msg = new protocol::ToolInfo;
 
 	msg->session_id = info_.id;;
 	msg->tool_id = protocol::tool_type::Brush;
 	msg->mode = protocol::tool_mode::Normal;
-	msg->lo_color = lo.red() << 24 | lo.green() << 16 | lo.blue() << 8 | loo;
-	msg->hi_color = hi.red() << 24 | hi.green() << 16 | hi.blue() << 8 | hio;
+	msg->lo_color[0] = lo.red();
+	msg->lo_color[1] = lo.green();
+	msg->lo_color[2] = lo.blue();
+	msg->lo_color[3] = qRound(brush.opacity(0) * 255);
+	msg->hi_color[0] = hi.red();
+	msg->hi_color[1] = hi.green();
+	msg->hi_color[2] = hi.blue();
+	msg->hi_color[3] = qRound(brush.opacity(1) * 255);
 	msg->lo_size = brush.radius(0);
 	msg->hi_size = brush.radius(1);
-	msg->lo_hardness = qRound(brush.hardness(0)*100);
-	msg->hi_hardness = qRound(brush.hardness(1)*100);
+	msg->lo_hardness = qRound(brush.hardness(0)*255);
+	msg->hi_hardness = qRound(brush.hardness(1)*255);
 	host_->net_->send(msg);
 }
 
@@ -817,23 +821,15 @@ bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
 		drawbuffer_.enqueue(msg);
 		return true;
 	}
-	uchar r1 = (msg->hi_color & 0xff000000) >> 24;
-	uchar g1 = (msg->hi_color & 0x00ff0000) >> 16;
-	uchar b1 = (msg->hi_color & 0x0000ff00) >> 8;
-	uchar a1 = (msg->hi_color & 0x000000ff);
-	uchar r2 = (msg->lo_color & 0xff000000) >> 24;
-	uchar g2 = (msg->lo_color & 0x00ff0000) >> 16;
-	uchar b2 = (msg->lo_color & 0x0000ff00) >> 8;
-	uchar a2 = (msg->lo_color & 0x000000ff);
 	drawingboard::Brush brush(
 			msg->hi_size,
-			msg->hi_hardness/100.0,
-			a1/100.0,
-			QColor(r1,g1,b1));
+			msg->hi_hardness/255.0,
+			msg->hi_color[3]/255.0,
+			QColor(msg->hi_color[0], msg->hi_color[1], msg->hi_color[2]));
 	brush.setRadius2(msg->lo_size);
-	brush.setColor2(QColor(r2,g2,b2));
-	brush.setHardness2(msg->lo_hardness/100.0);
-	brush.setOpacity(a2/100.0);
+	brush.setColor2(QColor(msg->lo_color[0], msg->lo_color[1], msg->lo_color[2]));
+	brush.setHardness2(msg->lo_hardness/255.0);
+	brush.setOpacity(msg->lo_color[3]/255.0);
 	emit toolReceived(msg->user_id, brush);
 	return false;
 }

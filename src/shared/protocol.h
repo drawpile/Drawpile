@@ -324,8 +324,6 @@ struct ToolInfo
 		: Message(type::ToolInfo, message::isUser|message::isSelected),
 		tool_id(tool_type::None),
 		mode(tool_mode::Normal),
-		lo_color(0),
-		hi_color(0),
 		lo_size(0),
 		hi_size(0),
 		lo_hardness(0),
@@ -342,11 +340,11 @@ struct ToolInfo
 	//! Composition mode (tool::mode)
 	uint8_t mode;
 	
-	uint32_t
+	uint8_t
 		//! Lo pressure color (RGBA)
-		lo_color,
+		lo_color[4],
 		//! Hi pressure color (RGBA)
-		hi_color;
+		hi_color[4];
 	
 	uint8_t
 		//! Lo pressure size.
