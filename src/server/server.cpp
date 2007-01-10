@@ -831,7 +831,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				if (usr->syncing == protocol::Global)
+				if (usr->syncing != protocol::Global)
 				{
 					// already syncing some session, so we don't bother handling this request.
 					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
