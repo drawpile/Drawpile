@@ -264,7 +264,14 @@ public:
 		hi_port = (hi < lo ? lo : hi);
 	}
 	
+	//! Set operation mode
 	void setMode(uint8_t mode) throw() { fSet(opmode, mode); }
+	
+	//! Set client requirements
+	void setRequirement(uint8_t req) throw() { fSet(requirements, req); }
+	
+	//! Set minimum board dimension (width or height)
+	void setMinDimension(uint16_t mindim) throw() { min_dimension = mindim; }
 	
 	//! Set UTF-16 support
 	void setUTF16(bool x)

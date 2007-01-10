@@ -88,7 +88,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				exit(1);
 				break;
 			case 'a': // address to listen on
-				std::cerr << "Listening address setting not implemented." << std::endl;
+				std::cerr << "Setting listening address not implemented." << std::endl;
 				break;
 			case 'p': // port to listen on
 				{
@@ -104,13 +104,22 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						exit(1);
 					}
 					srv->setPorts(lo_port, hi_port);
+					
+					std::cout << "Set listening port range to: " << lo_port;
+					if (lo_port != hi_port)
+						std::cout << " - " << hi_port;
+					std::cout << std::endl;
 				}
 				break;
 			case 'l': // localhost admin
 				srv->setMode(server::mode::LocalhostAdmin);
 				break;
 			case 'u': // user limit
-				srv->setUserLimit(atoi(optarg));
+				{
+					size_t user_limit = atoi(optarg);
+					srv->setUserLimit(user_limit);
+				}
+				std::cout << "User limit set to: " << user_limit << std::endl;
 				break;
 			case 'S': // admin password
 				{
@@ -123,6 +132,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					}
 					srv->setAdminPassword(password, pw_len);
 				}
+				std::cout << "Admin password set." << mindim << std::endl;
 				break;
 			case 's': // password
 				{
@@ -135,28 +145,28 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					}
 					srv->setPassword(password, pw_len);
 				}
+				std::cout << "Server password set." << mindim << std::endl;
 				break;
 			case 'T':
-				std::cerr << "Transient mode not implemented." << std::endl;
 				srv->setMode(server::mode::Transient);
+				std::cout << "Transient mode enabled." << std::endl;
 				break;
 			case 'b':
 				std::cerr << "Daemon mode not implemented." << std::endl;
 				srv->setMode(server::mode::Daemon);
 				break;
 			case 'd': // adjust minimum dimension.
-				std::cerr << "Min. dimension setting not implemented." << std::endl;
-				/*
 				size_t mindim = atoi(optarg);
 				srv->setMinDimension(mindim);
-				*/
+				std::cout << "Set minimum board dimension to: " << mindim << std::endl;
 				break;
 			case 'e': // name enforcing
 				std::cerr << "Name enforcing not implemented." << std::endl;
 				// TODO: Create server interface for setting this
 				break;
 			case 'w': // utf-16 string
-				std::cerr << "UTF-16 string requirement not implemented." << std::endl;
+				srv->setRequirement(protocol::requirements::WideStrings);
+				std::cout << "UTF-16 string mode enabled." << std::endl;
 				break;
 			case 'V': // version
 				exit(0);
