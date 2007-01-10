@@ -1829,6 +1829,13 @@ void Server::uRemove(User *&usr) throw()
 	
 	delete usr;
 	usr = 0;
+	
+	// Transient mode exit.
+	if (fIsSet(mode, server::mode::Transient)
+		and users.size() == 0)
+	{
+		state = server::state::Exit;
+	}
 }
 
 int Server::init() throw(std::bad_alloc)
@@ -1929,6 +1936,8 @@ int Server::init() throw(std::bad_alloc)
 		return -1;
 	
 	ev.add(lsock.fd(), ev.read);
+	
+	state = server::state::Init;
 	
 	return 0;
 }

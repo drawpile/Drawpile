@@ -62,6 +62,23 @@ const uint8_t
 
 }
 
+//! Server states
+namespace state
+{
+
+uint8_t
+	None = 0,
+	
+	Init = 1,
+	
+	Active = 4,
+	
+	Exiting = 8,
+	
+	Dead = 9;
+
+}
+
 }
 
 #endif // Server_Flags_Included

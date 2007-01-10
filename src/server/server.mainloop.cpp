@@ -40,6 +40,9 @@ int Server::run() throw()
 	#endif
 	#endif
 	
+	assert(state == server::state::Init);
+	state = server::state::Active;
+	
 	// user map iterator
 	user_iterator usr;
 	
@@ -55,7 +58,7 @@ int Server::run() throw()
 	#endif
 	
 	// main loop
-	while (1)
+	while (state == server::state::Active)
 	{
 		ec = ev.wait(5000);
 		

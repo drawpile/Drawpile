@@ -73,6 +73,9 @@ class Server
 protected:
 	/* data */
 	
+	// Server state
+	uint8_t state;
+	
 	// Event interface
 	Event ev;
 	
