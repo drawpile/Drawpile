@@ -89,6 +89,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'a': // address to listen on
 				std::cerr << "Setting listening address not implemented." << std::endl;
+				exit(1);
 				break;
 			case 'p': // port to listen on
 				{
@@ -154,6 +155,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'b':
 				std::cerr << "Daemon mode not implemented." << std::endl;
 				srv->setMode(server::mode::Daemon);
+				exit(1);
 				break;
 			case 'd': // adjust minimum dimension.
 				{
@@ -165,6 +167,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'e': // name enforcing
 				std::cerr << "Name enforcing not implemented." << std::endl;
 				// TODO: Create server interface for setting this
+				exit(1);
 				break;
 			case 'w': // utf-16 string
 				srv->setRequirement(protocol::requirements::WideStrings);
@@ -174,6 +177,8 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				exit(0);
 			default:
 				std::cerr << "What?" << std::endl;
+				exit(1);
+				break;
 		}
 	}
 }
