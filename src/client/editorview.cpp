@@ -158,6 +158,12 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 
 void EditorView::mouseMoveEvent(QMouseEvent *event)
 {
+	if(pendown_ && event->buttons() == Qt::NoButton) {
+		// In case we missed a penup
+		mouseReleaseEvent(event);
+		return;
+	}
+
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
 	} else {
