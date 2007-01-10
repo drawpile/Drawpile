@@ -1831,10 +1831,10 @@ void Server::uRemove(User *&usr) throw()
 	usr = 0;
 	
 	// Transient mode exit.
-	if (fIsSet(mode, server::mode::Transient)
+	if (fIsSet(opmode, server::mode::Transient)
 		and users.size() == 0)
 	{
-		state = server::state::Exit;
+		state = server::state::Exiting;
 	}
 }
 

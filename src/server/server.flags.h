@@ -33,6 +33,8 @@
 #ifndef Server_Flags_Included
 #define Server_Flags_Included
 
+#include <stdint.h>
+
 //! Describes server parameters
 namespace server
 {
@@ -66,7 +68,7 @@ const uint8_t
 namespace state
 {
 
-uint8_t
+const uint8_t
 	None = 0,
 	
 	Init = 1,

@@ -30,6 +30,7 @@
 
 *******************************************************************************/
 
+#include "server.flags.h"
 #include "server.h"
 
 int Server::run() throw()
