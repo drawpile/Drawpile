@@ -98,6 +98,7 @@ bool LocalServer::ensureRunning(int port)
 		QStringList args;
 		args << "-p" << QString::number(port);
 		args << "-l"; // automatically make user from localhost admin
+		args << "-T"; // server will automatically shutdown when all clients have disconnected
 		noerror_ = true;
 		qDebug() << "starting server on port" << port;
 		server_.start(binpath_, args);
