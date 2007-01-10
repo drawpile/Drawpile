@@ -64,7 +64,7 @@ void BrushBase::begin(const drawingboard::Point& point)
 {
 	drawingboard::Brush brush = editor_->localBrush();
 
-	if(editor_->currentBrush() != brush)
+	if(editor_->isCurrentBrush(brush) == false)
 		editor_->setTool(brush);
 
 	editor_->addStroke(point);

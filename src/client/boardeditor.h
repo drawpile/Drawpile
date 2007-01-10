@@ -24,6 +24,8 @@
 
 class QPoint;
 
+#include "brush.h"
+
 namespace network {
 	class SessionState;
 }
@@ -37,7 +39,6 @@ namespace drawingboard {
 
 class Board;
 class User;
-class Brush;
 class Point;
 
 //! A delegate for accessing the board contents
@@ -57,8 +58,8 @@ class BoardEditor {
 				interface::ColorSource *color);
 		virtual ~BoardEditor() {}
 
-		//! Get the brush currently in use by the local user
-		const Brush& currentBrush() const;
+		//! Check if the brush is currently in use
+		virtual bool isCurrentBrush(const Brush& brush) const = 0;
 
 		//! Get the brush from the local UI
 		Brush localBrush() const;
@@ -103,6 +104,7 @@ class LocalBoardEditor : public BoardEditor {
 				interface::BrushSource *brush, interface::ColorSource *color)
 			: BoardEditor(board,user, brush, color) {}
 
+		bool isCurrentBrush(const Brush& brush) const;
 		void setTool(const Brush& brush);
 		void addStroke(const Point& point);
 		void endStroke();
@@ -119,12 +121,14 @@ class RemoteBoardEditor : public BoardEditor {
 				network::SessionState *session, interface::BrushSource *brush,
 				interface::ColorSource *color);
 
+		bool isCurrentBrush(const Brush& brush) const;
 		void setTool(const Brush& brush);
 		void addStroke(const Point& point);
 		void endStroke();
 		void resendBrush();
 	private:
 		network::SessionState *session_;
+		Brush lastbrush_;
 };
 
 }
