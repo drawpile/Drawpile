@@ -118,8 +118,8 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				{
 					size_t user_limit = atoi(optarg);
 					srv->setUserLimit(user_limit);
+					std::cout << "User limit set to: " << user_limit << std::endl;
 				}
-				std::cout << "User limit set to: " << user_limit << std::endl;
 				break;
 			case 'S': // admin password
 				{
@@ -132,7 +132,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					}
 					srv->setAdminPassword(password, pw_len);
 				}
-				std::cout << "Admin password set." << mindim << std::endl;
+				std::cout << "Admin password set." << std::endl;
 				break;
 			case 's': // password
 				{
@@ -145,7 +145,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					}
 					srv->setPassword(password, pw_len);
 				}
-				std::cout << "Server password set." << mindim << std::endl;
+				std::cout << "Server password set." << std::endl;
 				break;
 			case 'T':
 				srv->setMode(server::mode::Transient);
@@ -156,9 +156,11 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				srv->setMode(server::mode::Daemon);
 				break;
 			case 'd': // adjust minimum dimension.
-				size_t mindim = atoi(optarg);
-				srv->setMinDimension(mindim);
-				std::cout << "Set minimum board dimension to: " << mindim << std::endl;
+				{
+					size_t mindim = atoi(optarg);
+					srv->setMinDimension(mindim);
+					std::cout << "Set minimum board dimension to: " << mindim << std::endl;
+				}
 				break;
 			case 'e': // name enforcing
 				std::cerr << "Name enforcing not implemented." << std::endl;
