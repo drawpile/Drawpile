@@ -29,7 +29,8 @@ namespace widgets {
 #endif
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
-	: QFrame(parent,f), bg_(32,32)
+	: QFrame(parent,f), bg_(32,32), sizepressure_(false),
+	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false)
 {
 	setMinimumSize(32,32);
 	updateBackground();

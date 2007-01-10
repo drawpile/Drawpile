@@ -51,6 +51,7 @@ ToolSettings::~ToolSettings()
 {
 	delete brushsettings_;
 	delete erasersettings_;
+	delete pickersettings_;
 }
 
 /**
