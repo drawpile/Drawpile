@@ -250,7 +250,7 @@ message_ref Server::msgSyncWait(Session* session) const throw(std::bad_alloc)
 	return message_ref(sync);
 }
 
-void Server::uWrite(User* usr) throw()
+void Server::uWrite(User*& usr) throw()
 {
 	assert(usr != 0);
 	
@@ -351,6 +351,7 @@ void Server::uWrite(User* usr) throw()
 			<< static_cast<int>(usr->id) << std::endl;
 		
 		uRemove(usr);
+		return;
 	}
 	else if (sb == 0)
 	{
@@ -378,7 +379,7 @@ void Server::uWrite(User* usr) throw()
 	}
 }
 
-void Server::uRead(User* usr) throw(std::bad_alloc)
+void Server::uRead(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -440,7 +441,7 @@ void Server::uRead(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uProcessData(User* usr) throw()
+void Server::uProcessData(User*& usr) throw()
 {
 	assert(usr != 0);
 	
@@ -588,7 +589,7 @@ bool Server::sessionExists(uint8_t session) const throw()
 	return true;
 }
 
-void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
+void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -893,7 +894,7 @@ void Server::uHandleMsg(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleAck(User* usr) throw()
+void Server::uHandleAck(User*& usr) throw()
 {
 	assert(usr != 0);
 	
@@ -963,7 +964,7 @@ void Server::uHandleAck(User* usr) throw()
 	}
 }
 
-void Server::uTunnelRaster(User* usr) throw()
+void Server::uTunnelRaster(User*& usr) throw()
 {
 	assert(usr != 0);
 	
@@ -1015,12 +1016,12 @@ void Server::uTunnelRaster(User* usr) throw()
 	
 	// Forward to users.
 	tunnel_iterator ti(ft.first);
-	User* t_usr = 0;
+	user_iterator ui;
 	for (; ti != ft.second; ti++)
 	{
-		t_usr = users.find(ti->second)->second;
-		uSendMsg(t_usr, message_ref(raster));
-		if (last) t_usr->syncing = false;
+		ui = users.find(ti->second);
+		uSendMsg(ui->second, message_ref(raster));
+		if (last) ui->second->syncing = false;
 	}
 	
 	// Break tunnel if that was the last raster piece.
@@ -1030,7 +1031,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	usr->inMsg = 0;
 }
 
-void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
+void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -1044,16 +1045,17 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
 	
+	protocol::Instruction* msg = static_cast<protocol::Instruction*>(usr->inMsg);
+	
 	// TODO: Allow session owners to alter sessions.
 	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
-		if (static_cast<protocol::Instruction*>(usr->inMsg)->command
-			== protocol::admin::command::Authenticate)
+		if (msg->command == protocol::admin::command::Authenticate)
 		{
 			std::cout << "User wishes to authenticate itself as an admin." << std::endl;
 			if (a_password == 0)
 			{
-				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::InvalidRequest));
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
 			}
 			else
 			{
@@ -1066,8 +1068,6 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 		uRemove(usr);
 		return;
 	}
-	
-	protocol::Instruction* msg = static_cast<protocol::Instruction*>(usr->inMsg);
 	
 	switch (msg->command)
 	{
@@ -1228,7 +1228,7 @@ void Server::uHandleInstruction(User* usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uHandleLogin(User* usr) throw(std::bad_alloc)
+void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -1604,7 +1604,7 @@ void Server::SyncSession(Session* session) throw()
 	}
 }
 
-void Server::uJoinSession(User* usr, Session* session) throw()
+void Server::uJoinSession(User*& usr, Session* session) throw()
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -1654,7 +1654,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	}
 }
 
-void Server::uLeaveSession(User* usr, Session* session) throw()
+void Server::uLeaveSession(User*& usr, Session* session) throw()
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -1760,7 +1760,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 }
 
-void Server::breakSync(User* usr) throw()
+void Server::breakSync(User*& usr) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1774,7 +1774,7 @@ void Server::breakSync(User* usr) throw()
 	usr->syncing = protocol::Global;
 }
 
-void Server::uRemove(User* usr) throw()
+void Server::uRemove(User *&usr) throw()
 {
 	assert(usr != 0);
 	

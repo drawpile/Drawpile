@@ -164,28 +164,28 @@ protected:
 	/* *** Something else *** */
 	
 	// Write to user socket
-	void uWrite(User* usr) throw();
+	void uWrite(User*& usr) throw();
 	
 	// Read from user socket
-	void uRead(User* usr) throw(std::bad_alloc);
+	void uRead(User*& usr) throw(std::bad_alloc);
 	
 	// Process all read data.
-	void uProcessData(User* usr) throw();
+	void uProcessData(User*& usr) throw();
 	
 	// Handle user message.
-	void uHandleMsg(User* usr) throw(std::bad_alloc);
+	void uHandleMsg(User*& usr) throw(std::bad_alloc);
 	
 	// Handle ACKs
-	void uHandleAck(User* usr) throw();
+	void uHandleAck(User*& usr) throw();
 	
 	// Forward raster to those expecting it.
-	void uTunnelRaster(User* usr) throw();
+	void uTunnelRaster(User*& usr) throw();
 	
 	// Handle instruction message
-	void uHandleInstruction(User* usr) throw(std::bad_alloc);
+	void uHandleInstruction(User*& usr) throw(std::bad_alloc);
 	
 	// Handle user login.
-	void uHandleLogin(User* usr) throw(std::bad_alloc);
+	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
 	// Send message to session
 	void Propagate(message_ref msg) throw();
@@ -201,22 +201,22 @@ protected:
 	void SyncSession(Session* session) throw();
 	
 	// Break synchronization with user.
-	void breakSync(User* usr) throw();
+	void breakSync(User*& usr) throw();
 	
 	// Cancel raster request.
-	void cancelSync(User* usr) throw();
+	void cancelSync(User*& usr) throw();
 	
 	//
-	void uJoinSession(User* usr, Session* session) throw();
+	void uJoinSession(User*& usr, Session* session) throw();
 	
 	//
-	void uLeaveSession(User* usr, Session* session) throw();
+	void uLeaveSession(User*& usr, Session* session) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
-	void uRemove(User* usr) throw();
+	void uRemove(User*& usr) throw();
 	
 	// Tests if session exists
 	inline
