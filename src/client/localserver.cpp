@@ -97,6 +97,7 @@ bool LocalServer::ensureRunning(int port)
 	if(server_.state()==QProcess::NotRunning) {
 		QStringList args;
 		args << "-p" << QString::number(port);
+		args << "-l"; // automatically make user from localhost admin
 		noerror_ = true;
 		qDebug() << "starting server on port" << port;
 		server_.start(binpath_, args);
