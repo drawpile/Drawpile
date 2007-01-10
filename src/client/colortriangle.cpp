@@ -21,6 +21,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <cmath>
+#include <algorithm> // for std::swap
 
 #include "colortriangle.h"
 
@@ -379,8 +380,6 @@ void ColorTriangle::makeRing()
 	wheel_ = QPixmap::fromImage(ring);
 }
 
-static inline void SWAP(int &a,int &b) { int t = a; a = b; b = t; }
-
 static inline int LERP(int a,int b,int v1,int v2, int i)
 {
 	if(v2-v1 != 0)
@@ -391,6 +390,7 @@ static inline int LERP(int a,int b,int v1,int v2, int i)
 
 void ColorTriangle::makeTriangle()
 {
+	using std::swap;
 	int xl, xr, rl, rr, gl, gr, bl, br; /* Scanline data */
 	int xx, yy;
 
@@ -416,27 +416,27 @@ void ColorTriangle::makeTriangle()
 	int b3 = color.blue();
 
 	if (y2 > y3) {
-		SWAP (x2, x3);
-		SWAP (y2, y3);
-		SWAP (r2, r3);
-		SWAP (g2, g3);
-		SWAP (b2, b3);
+		swap (x2, x3);
+		swap (y2, y3);
+		swap (r2, r3);
+		swap (g2, g3);
+		swap (b2, b3);
 	}
 
 	if (y1 > y3) {
-		SWAP (x1, x3);
-		SWAP (y1, y3);
-		SWAP (r1, r3);
-		SWAP (g1, g3);
-		SWAP (b1, b3);
+		swap (x1, x3);
+		swap (y1, y3);
+		swap (r1, r3);
+		swap (g1, g3);
+		swap (b1, b3);
 	}
 
 	if (y1 > y2) {
-		SWAP (x1, x2);
-		SWAP (y1, y2);
-		SWAP (r1, r2);
-		SWAP (g1, g2);
-		SWAP (b1, b2);
+		swap (x1, x2);
+		swap (y1, y2);
+		swap (r1, r2);
+		swap (g1, g2);
+		swap (b1, b2);
 	}
 
 	// Shade the triangle
@@ -472,10 +472,10 @@ void ColorTriangle::makeTriangle()
 			br = LERP (b1, b3, y1, y3, yy);
 
 			if (xl > xr) {
-				SWAP (xl, xr);
-				SWAP (rl, rr);
-				SWAP (gl, gr);
-				SWAP (bl, br);
+				swap (xl, xr);
+				swap (rl, rr);
+				swap (gl, gr);
+				swap (bl, br);
 			}
 
 			for (xx = 0; xx < diameter_; ++xx) {
