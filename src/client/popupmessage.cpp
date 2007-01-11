@@ -22,6 +22,8 @@
 #include <QPainter>
 #include <QLabel>
 #include <QBitmap>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include "popupmessage.h"
 
@@ -53,13 +55,26 @@ void PopupMessage::setMessage(const QString& message)
 }
 
 /**
- * The message will popup with the lower left corner align at the
- * specified point.
+ * The message will popup with the lower left corner aligned at the
+ * specified point, with corrections so it will fit entirely on screen.
  * @param point popup coordinates
  */
 void PopupMessage::popupAt(const QPoint& point)
 {
-	move(point - QPoint(0,height()));
+	QRect rect(point - QPoint(0,height()), size());
+	QRect screen = qApp->desktop()->availableGeometry(parentWidget());
+
+	if(rect.x() + rect.width() > screen.x() + screen.width())
+		rect.moveRight(screen.x() + screen.width() - 1);
+	else if(rect.x() < screen.x())
+		rect.moveLeft(screen.x());
+	if(rect.y() + rect.height() > screen.y() + screen.height())
+		rect.moveBottom(screen.y() + screen.height() - 1);
+	else if(rect.y() < screen.y())
+		rect.moveTop(screen.y());
+
+
+	move(rect.topLeft());
 	show();
 	timer_.start();
 }
