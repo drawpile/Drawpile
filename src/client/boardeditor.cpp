@@ -70,6 +70,7 @@ void BoardEditor::setLocalBackground(const QColor& color)
 
 /**
  * @return color at specified coordinates
+ * @retval invalid color if point was outside the board
  */
 QColor BoardEditor::colorAt(const QPoint& point)
 {
@@ -77,7 +78,7 @@ QColor BoardEditor::colorAt(const QPoint& point)
 	if(img.rect().contains(point,true))
 		return img.pixel(point);
 	else
-		return Qt::black;
+		return QColor(-1,-1,-1);
 }
 
 /**
