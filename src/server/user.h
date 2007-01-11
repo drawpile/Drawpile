@@ -90,6 +90,16 @@ const uint8_t
 	active = 0;
 }
 
+//! Client tracking flags
+namespace uTag
+{
+
+const uint8_t
+	None = 0,
+	CanChange = 0x01,
+	HaveTool = 0x02;
+}
+
 // User information
 struct User
 	//: MemoryStack<User>
@@ -102,6 +112,9 @@ struct User
 		state(uState::init),
 		inMsg(0),
 		syncing(protocol::Global)
+		#ifdef CHECK_VIOLATIONS
+		, tags(0)
+		#endif // CHECK_VIOLATIONS
 	{
 		#ifndef NDEBUG
 		std::cout << "User::User(" << static_cast<int>(_id)
@@ -165,5 +178,9 @@ struct User
 	
 	// Session we're currently syncing.
 	uint8_t syncing;
+	
+	#ifdef CHECK_VIOLATIONS
+	uint8_t tags;
+	#endif
 };
 #endif // ServerUser_INCLUDED

@@ -607,18 +607,67 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	switch (usr->inMsg->type)
 	{
 	case protocol::type::ToolInfo:
+		// check for protocol violations
+		#ifdef CHECK_VIOLATIONS
+		if (!fIsSet(usr->tags, uTag::CanChange))
+		{
+			std::cerr << "Protocol violation from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			std::cerr << "Reason: Unexpected tool info" << std::endl;
+			uRemove(usr);
+			break;
+		}
+		fSet(usr->tags, uTag::HaveTool);
+		#endif // CHECK_VIOLATIONS
 	case protocol::type::StrokeInfo:
+		// check for protocol violations
+		#ifdef CHECK_VIOLATIONS
+		if (usr->inMsg->type == protocol::type::StrokeInfo)
+		{
+			/*
+			if (!fIsSet(usr->tags, uTag::HaveTool))
+			{
+				std::cerr << "Protocol violation from user: "
+					<< static_cast<int>(usr->id) << std::endl;
+				std::cerr << "Reason: Stroke info without tool." << std::endl;
+				uRemove(usr);
+				break;
+			}
+			*/
+			fClr(usr->tags, uTag::CanChange);
+		}
+		#endif // CHECK_VIOLATIONS
 	case protocol::type::StrokeEnd:
-		// handle all message with 'selected' modifier the same
-		#if 0
-		if (usr->inMsg->user_id != protocol::null_user)
+		// check for protocol violations
+		#ifdef CHECK_VIOLATIONS
+		if (usr->inMsg->type == protocol::type::StrokeEnd)
+		{
+			if (!fIsSet(usr->tags, uTag::HaveTool))
+			{
+				std::cerr << "Protocol violation from user: "
+					<< static_cast<int>(usr->id) << std::endl;
+				std::cerr << "Reason: Stroke info without tool." << std::endl;
+				uRemove(usr);
+				break;
+			}
+			fSet(usr->tags, uTag::CanChange);
+		}
+		#endif // CHECK_VIOLATIONS
+		
+		#ifdef CHECK_VIOLATIONS
+		if ((usr->inMsg->user_id != protocol::null_user)
+			#ifdef LENIENT
+			or (usr->inMsg->user_id != usr->id)
+			#endif // LENIENT
+		)
 		{
 			std::cerr << "Client attempted to impersonate someone." << std::endl;
 			uRemove(usr);
 			break;
 		}
-		#endif // 0
+		#endif // CHECK_VIOLATIONS
 		
+		// handle all message with 'selected' modifier the same
 		{
 			// make sure the user id is correct
 			usr->inMsg->user_id = usr->id;
@@ -655,6 +704,16 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uHandleAck(usr);
 		break;
 	case protocol::type::SessionSelect:
+		#ifdef CHECK_VIOLATIONS
+		if (!fIsSet(usr->tags, uTag::CanChange))
+		{
+			std::cerr << "Protocol violation from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			std::cerr << "Reason: Session change in middle of something." << std::endl;
+			uRemove(usr);
+			break;
+		}
+		#endif
 		if (uInSession(usr, usr->inMsg->session_id))
 		{
 			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::SessionSelect));
@@ -663,6 +722,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			Propagate(message_ref(usr->inMsg));
 			usr->inMsg = 0;
+			
+			#ifdef CHECK_VIOLATIONS
+			fSet(usr->tags, uTag::CanChange);
+			#endif
 		}
 		else
 		{
@@ -706,6 +769,16 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::Unsubscribe:
+		#ifdef CHECK_VIOLATIONS
+		if (!fIsSet(usr->tags, uTag::CanChange))
+		{
+			std::cerr << "Protocol violation from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			std::cerr << "Reason: Unsubscribe in middle of something." << std::endl;
+			uRemove(usr);
+			break;
+		}
+		#endif
 		{
 			session_iterator si(sessions.find(usr->inMsg->session_id));
 			
@@ -727,6 +800,16 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::Subscribe:
+		#ifdef CHECK_VIOLATIONS
+		if (!fIsSet(usr->tags, uTag::CanChange))
+		{
+			std::cerr << "Protocol violation from user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			std::cerr << "Reason: Subscribe in middle of something." << std::endl;
+			uRemove(usr);
+			break;
+		}
+		#endif
 		if (usr->syncing == protocol::Global)
 		{
 			session_iterator si(sessions.find(usr->inMsg->session_id));
@@ -1372,6 +1455,10 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				return;
 			}
 			
+			#ifdef CHECK_VIOLATIONS
+			fSet(usr->tags, uTag::CanChange);
+			#endif
+			
 			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
 			
 			// make sure the same seed is not used for something else.
@@ -1436,6 +1523,10 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				#endif
 				
 				// no password set
+				
+				#ifdef CHECK_VIOLATIONS
+				fSet(usr->tags, uTag::CanChange);
+				#endif
 				
 				usr->state = uState::login;
 				uSendMsg(usr, msgHostInfo());
