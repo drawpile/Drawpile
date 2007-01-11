@@ -114,7 +114,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'l': // localhost admin
 				srv->setMode(server::mode::LocalhostAdmin);
-				std::cout << "Localhost admin enabled."
+				std::cout << "Localhost admin enabled." << std::endl;
 				break;
 			case 'u': // user limit
 				{
