@@ -72,7 +72,7 @@ find_package ( Boost 1.33 REQUIRED )
 
 if ( Boost_FOUND )
 	message ( STATUS "libBoost found" )
-#	check_variable_exists ( Boost_FOUND HAVE_BOOST )
+	check_variable_exists ( Boost_FOUND HAVE_BOOST )
 	include_directories( ${Boost_INCLUDE_DIRS} )
 	link_directories( ${Boost_LIBRARY_DIRS} )
 else ( Boost_FOUND )
