@@ -106,7 +106,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					}
 					srv->setPorts(lo_port, hi_port);
 					
-					std::cout << "Set listening port range to: " << lo_port;
+					std::cout << "Listening port range set to: " << lo_port;
 					if (lo_port != hi_port)
 						std::cout << " - " << hi_port;
 					std::cout << std::endl;
@@ -114,6 +114,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'l': // localhost admin
 				srv->setMode(server::mode::LocalhostAdmin);
+				std::cout << "Localhost admin enabled."
 				break;
 			case 'u': // user limit
 				{
@@ -150,18 +151,18 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'T':
 				srv->setMode(server::mode::Transient);
-				std::cout << "Transient mode enabled." << std::endl;
+				std::cout << "Server will exit after all users have left." << std::endl;
 				break;
 			case 'b':
-				std::cerr << "Daemon mode not implemented." << std::endl;
 				srv->setMode(server::mode::Daemon);
+				std::cerr << "Daemon mode not implemented." << std::endl;
 				exit(1);
 				break;
 			case 'd': // adjust minimum dimension.
 				{
 					size_t mindim = atoi(optarg);
 					srv->setMinDimension(mindim);
-					std::cout << "Set minimum board dimension to: " << mindim << std::endl;
+					std::cout << "Minimum board dimension set to: " << mindim << std::endl;
 				}
 				break;
 			case 'e': // name enforcing
