@@ -1,0 +1,16 @@
+Release notes for DrawPile 0.2.0
+--------------------------------------------------------------------------------
+
+This is the second release of DrawPile, now with networking support.
+Session hosting and joining is now supported, but session administration
+commands like board locking and kicking users are not.
+
+The client can start the server automatically if both binaries are in
+the same directory. The server can also be started manually (with the -l
+parameter) and then connected to using the "host on remote server: localhost"
+option.
+
+Please note that this is still alpha software. There might be bugs that
+crash drawpile or  drop the network connection, so remember to save your
+work often!
+
