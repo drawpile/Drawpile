@@ -730,7 +730,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			if (fIsSet(usr->caps, protocol::client::AckFeedback))
 			{
-				uSendMsg(usr, msgAck(protocol::Global, msg->type));
+				uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
 			}
 			
 			Propagate(
@@ -780,10 +780,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			
 			if (fIsSet(usr->caps, protocol::client::AckFeedback))
 			{
-				uSendMsg(usr, msgAck(msg->session_id, msg->type));
+				uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 			}
 			
 			Propagate(
