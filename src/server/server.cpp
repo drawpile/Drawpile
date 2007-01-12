@@ -696,18 +696,15 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			while (msg != 0);
 			*/
 			
-			uint8_t source;
 			if (fIsSet(usr->caps, protocol::client::AckFeedback))
 			{
 				uSendMsg(usr, msgAck(usr->session, msg->type));
-				source = usr->id;
-			}
-			else
-			{
-				source = protocol::null_user;
 			}
 			
-			Propagate(message_ref(msg), source);
+			Propagate(
+				message_ref(msg),
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
 		}
 		usr->inMsg = 0;
 		break;
@@ -731,7 +728,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			usr->inMsg->user_id = usr->id;
 			usr->session = usr->inMsg->session_id;
 			
-			Propagate(message_ref(usr->inMsg));
+			Propagate(
+				message_ref(usr->inMsg),
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
 			usr->inMsg = 0;
 			
 			#ifdef CHECK_VIOLATIONS
@@ -775,7 +775,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			Propagate(pmsg);
+			Propagate(
+				pmsg,
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
 			usr->inMsg = 0;
 		}
 		break;
