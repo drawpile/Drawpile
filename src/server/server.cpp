@@ -1443,7 +1443,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		else
 		{
 			// wrong message type
-			uRemove(usr, protocol::user_mode::Violation);
+			uRemove(usr, protocol::user_event::Violation);
 		}
 		break;
 	case uState::login_auth:
@@ -1570,7 +1570,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		break;
 	case uState::dead:
 		std::cerr << "I see dead people." << std::endl;
-		uRemove(usr);
+		uRemove(usr, protocol::user_event::Dropped);
 		break;
 	default:
 		assert(!"user state was something strange");

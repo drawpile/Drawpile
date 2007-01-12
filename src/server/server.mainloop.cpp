@@ -98,13 +98,13 @@ int Server::run() throw()
 				{
 					if (fIsSet(event->second, ev.error))
 					{
-						uRemove(usr->second);
+						uRemove(usr->second, protocol::user_event::BrokenPipe);
 						continue;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(event->second, ev.hangup))
 					{
-						uRemove(usr->second);
+						uRemove(usr->second, protocol::user_event::Disconnect);
 						continue;
 					}
 					#endif // EV_HAS_HANGUP
@@ -141,13 +141,13 @@ int Server::run() throw()
 				{
 					if (fIsSet(t_events, ev.error))
 					{
-						uRemove(usr->second);
+						uRemove(usr->second, protocol::user_event::BrokenPipe);
 						if (--ec == 0) break;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(t_events, ev.hangup))
 					{
-						uRemove(usr->second);
+						uRemove(usr->second, protocol::user_event::Disconnect);
 						if (--ec == 0) break;
 					}
 					#endif // EV_HAS_HANGUP
