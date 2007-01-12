@@ -728,6 +728,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			usr->inMsg->user_id = usr->id;
 			usr->session = usr->inMsg->session_id;
 			
+			if (fIsSet(usr->caps, protocol::client::AckFeedback))
+			{
+				uSendMsg(usr, msgAck(protocol::Global, msg->type));
+			}
+			
 			Propagate(
 				message_ref(usr->inMsg),
 				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
@@ -773,6 +778,12 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					msgError(usr->inMsg->session_id, protocol::error::NotSubscribed)
 				);
 				break;
+			}
+			
+			
+			if (fIsSet(usr->caps, protocol::client::AckFeedback))
+			{
+				uSendMsg(usr, msgAck(msg->session_id, msg->type));
 			}
 			
 			Propagate(
