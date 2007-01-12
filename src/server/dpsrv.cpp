@@ -166,9 +166,8 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'e': // name enforcing
-				std::cerr << "Name enforcing not implemented." << std::endl;
-				// TODO: Create server interface for setting this
-				exit(1);
+				srv->setRequirement(protocol::requirements::EnforceUnique);
+				std::cout << "Unique name enforcing enabled." << std::endl;
 				break;
 			case 'w': // utf-16 string
 				srv->setRequirement(protocol::requirements::WideStrings);
