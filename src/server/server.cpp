@@ -696,7 +696,15 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			while (msg != 0);
 			*/
 			
-			Propagate(message_ref(msg));
+			if (fIsSet(usr->caps, protocol::client::AckFeedback))
+			{
+				uSendMsg(usr, msgAck(usr->session, msg->type));
+				// TODO: Propagation without sending back to user.
+			}
+			else
+			{
+				Propagate(message_ref(msg));
+			}
 		}
 		usr->inMsg = 0;
 		break;
@@ -1561,6 +1569,8 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				usr->state = uState::login_auth;
 				uSendMsg(usr, msgAuth(usr, protocol::Global));
 			}
+			
+			usr->caps = ident->flags;
 		}
 		else
 		{

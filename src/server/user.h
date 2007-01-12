@@ -155,6 +155,9 @@ struct User
 	// User mode
 	uint8_t mode;
 	
+	// Client capabilities
+	uint8_t caps;
+	
 	// User state
 	uint8_t state;
 	
