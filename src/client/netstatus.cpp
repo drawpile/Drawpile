@@ -23,6 +23,7 @@
 #include <QClipboard>
 #include <QHBoxLayout>
 
+#include "netstate.h"
 #include "netstatus.h"
 #include "popupmessage.h"
 
@@ -104,16 +105,16 @@ void NetStatus::copyAddress()
 	QApplication::clipboard()->setText(address_, QClipboard::Selection);
 }
 
-void NetStatus::join(const QString& username)
+void NetStatus::join(const network::User& user)
 {
-	popup_->setMessage(tr("<b>%1</b> joined").arg(username));
+	popup_->setMessage(tr("<b>%1</b> joined").arg(user.name));
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
 
 }
 
-void NetStatus::leave(const QString& username)
+void NetStatus::leave(const network::User& user)
 {
-	popup_->setMessage(tr("<b>%1</b> left").arg(username));
+	popup_->setMessage(tr("<b>%1</b> left").arg(user.name));
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
 }
 

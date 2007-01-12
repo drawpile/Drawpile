@@ -93,8 +93,12 @@ MainWindow::MainWindow()
 	// Controller -> netstatus
 	connect(controller_, SIGNAL(disconnected(QString)), netstatus_, SLOT(disconnectHost()));
 	connect(controller_, SIGNAL(connected(const QString&)), netstatus_, SLOT(connectHost(const QString&)));
-	connect(controller_, SIGNAL(userJoined(QString)), netstatus_, SLOT(join(QString)));
-	connect(controller_, SIGNAL(userParted(QString)), netstatus_, SLOT(leave(QString)));
+	connect(controller_, SIGNAL(userJoined(network::User)), netstatus_, SLOT(join(network::User)));
+	connect(controller_, SIGNAL(userParted(network::User)), netstatus_, SLOT(leave(network::User)));
+	// User list
+	connect(controller_, SIGNAL(userJoined(network::User)), userlist_, SLOT(addUser(network::User)));
+	connect(controller_, SIGNAL(userParted(network::User)), userlist_, SLOT(removeUser(network::User)));
+	connect(controller_, SIGNAL(disconnected(QString)), userlist_, SLOT(clearUsers()));
 
 	// Controller -> mainwindow
 	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));

@@ -123,10 +123,10 @@ class Controller : public QObject
 		void parted();
 
 		//! A user joined the session
-		void userJoined(const QString& name);
+		void userJoined(const network::User& user);
 
 		//! A user left the session
-		void userParted(const QString& name);
+		void userParted(const network::User& user);
 
 		//! There were no sessions to join
 		void noSessions();

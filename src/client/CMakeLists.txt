@@ -40,7 +40,7 @@ set (
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
 	networkprivate.h netstate.h logindialog.h preview.h localserver.h
-	popupmessage.h userlistwidget.h
+	popupmessage.h userlistwidget.h userlistmodel.h
 )
 
 set (

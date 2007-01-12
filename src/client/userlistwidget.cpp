@@ -18,48 +18,10 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QAbstractListModel>
 #include <QListView>
 
 #include "userlistwidget.h"
-#include "netstate.h"
-
-class UserListModel : public QAbstractListModel {
-	public:
-		QVariant data(const QModelIndex& index, int role = Qt::DisplayRole)
-		{
-			return users_.at(index.row()).name;
-		}
-
-		int rowCount(const QModelIndex& parent = QModelIndex()) const
-		{
-			return users_.count();
-		}
-
-		void addUser(const network::User& user)
-		{
-			users_.append(user);
-		}
-
-		void removeUser(int id)
-		{
-			for(network::UserList::iterator i = users_.begin();
-					i!=users_.end();++i) {
-				if(i->id == id) {
-					i.remove();
-					break;
-				}
-			}
-		}
-
-	private:
-		network::UserList users_;
-};
-
-QVariant UserListModel::data(const QModelIndex& index, int role)
-{
-	return users_.at(index.row());
-}
+#include "userlistmodel.h"
 
 namespace widgets {
 
@@ -68,10 +30,28 @@ UserList::UserList(QWidget *parent)
 {
 	list_ = new QListView(this);
 	setWidget(list_);
+
+	model_ = new UserListModel(this);
+	list_->setModel(model_);
 }
 
 UserList::~UserList()
 {
+}
+
+void UserList::addUser(const network::User& user)
+{
+	model_->addUser(user);
+}
+
+void UserList::removeUser(const network::User& user)
+{
+	model_->removeUser(user.id);
+}
+
+void UserList::clearUsers()
+{
+	model_->clearUsers();
 }
 
 }

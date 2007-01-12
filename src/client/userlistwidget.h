@@ -47,7 +47,7 @@ class UserList: public QDockWidget
 		//! Add a new user to the list
 		void addUser(const network::User& user);
 		//! Remove a user
-		void removeUser(int id);
+		void removeUser(const network::User& user);
 		//! Remove all users
 		void clearUsers();
 

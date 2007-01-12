@@ -23,6 +23,10 @@
 #include <QLabel>
 #include <QPixmap>
 
+namespace network {
+	class User;
+}
+
 namespace widgets {
 
 class PopupMessage;
@@ -46,9 +50,9 @@ class NetStatus : public QWidget
 		//! Copy the address to clipboard
 		void copyAddress();
 		//! User joins
-		void join(const QString& username);
+		void join(const network::User& user);
 		//! User leaves
-		void leave(const QString& username);
+		void leave(const network::User& user);
 
 	private:
 		QLabel *label_, *icon_;

@@ -236,14 +236,14 @@ void Controller::addUser(int id)
 {
 	const network::User *user = session_->user(id);
 	Q_ASSERT(user);
-	emit userJoined(user->name);
+	emit userJoined(*user);
 }
 
 void Controller::removeUser(int id)
 {
 	const network::User *user = session_->user(id);
 	Q_ASSERT(user);
-	emit userParted(user->name);
+	emit userParted(*user);
 }
 
 /**
