@@ -88,6 +88,7 @@ class EditorView : public QGraphicsView
 		int dragx_,dragy_;
 
 		QPoint prevpoint_;
+		qreal prevpressure_;
 		int outlinesize_;
 		bool enableoutline_,showoutline_;
 		bool crosshair_;

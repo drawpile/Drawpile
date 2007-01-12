@@ -31,7 +31,7 @@ namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(false), isdragging_(false),
-	prevpoint_(0,0),outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
+	prevpoint_(0,0),prevpressure_(0), outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 }
 
@@ -215,7 +215,18 @@ bool EditorView::viewportEvent(QEvent *event)
 					drawingboard::Point(point.x(),point.y(),tabev->pressure()),
 					tabev->pointerType()==QTabletEvent::Eraser
 					);
+			// Redraw the previous location, for the brush size might have
+			// changed.
+			if(enableoutline_ && showoutline_ &&
+					qAbs(prevpressure_-tabev->pressure()) > 1.0/256.0) {
+				QList<QRectF> rect;
+				const int dia = outlinesize_*2;
+				rect.append(QRectF(prevpoint_.x() - outlinesize_,
+							prevpoint_.y() - outlinesize_, dia,dia));
+				updateScene(rect);
+			}
 		} else if(enableoutline_ && showoutline_) {
+			// Update brush outline when nothing was drawn
 			QList<QRectF> rect;
 			const int dia = outlinesize_*2;
 			rect.append(QRectF(prevpoint_.x() - outlinesize_,
