@@ -236,6 +236,7 @@ bool EditorView::viewportEvent(QEvent *event)
 			updateScene(rect);
 		}
 		prevpoint_ = point;
+		prevpressure_ = tabev->pressure();
 		return true;
 	} else if(event->type() == QEvent::TabletPress) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
@@ -249,6 +250,7 @@ bool EditorView::viewportEvent(QEvent *event)
 				false
 				);
 		prevpoint_ = point;
+		prevpressure_ = tabev->pressure();
 		return true;
 	} else if(event->type() == QEvent::TabletRelease) {
 		pendown_ = false;
