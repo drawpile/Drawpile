@@ -1314,6 +1314,10 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			uSendMsg(usr, msgAuth(usr, protocol::Global));
 		}
 		return;
+	case protocol::admin::command::Shutdown:
+		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+		state = server::state::Exiting;
+		break;
 	default:
 		#ifndef NDEBUG
 		std::cerr << "Unrecognized command: "
