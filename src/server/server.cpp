@@ -350,7 +350,7 @@ void Server::uWrite(User*& usr) throw()
 		std::cerr << "Error occured while sending to user: "
 			<< static_cast<int>(usr->id) << std::endl;
 		
-		uRemove(usr);
+		uRemove(usr, protocol::user_event::BrokenPipe);
 		return;
 	}
 	else if (sb == 0)
@@ -414,7 +414,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 			std::cerr << "Unrecoverable error occured while reading from user: "
 				<< static_cast<int>(usr->id) << std::endl;
 			
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::BrokenPipe);
 			return;
 		}
 	}
@@ -424,7 +424,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		std::cerr << "User disconnected!" << std::endl;
 		#endif
 		
-		uRemove(usr);
+		uRemove(usr, protocol::user_event::Disconnect);
 		return;
 	}
 	else
@@ -463,7 +463,7 @@ void Server::uProcessData(User*& usr) throw()
 			catch (std::exception &e) {
 				std::cerr << "Invalid data from user: "
 					<< static_cast<int>(usr->id) << std::endl;
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 		}
@@ -471,7 +471,7 @@ void Server::uProcessData(User*& usr) throw()
 		{
 			// Input buffer frelled
 			std::cerr << "Buffer corruption, message type changed." << std::endl;
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Dropped);
 			return;
 		}
 		
@@ -592,6 +592,7 @@ bool Server::sessionExists(uint8_t session) const throw()
 void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
+	assert(usr->inMsg != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -601,7 +602,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	#endif
 	
 	assert(usr->state == uState::active);
-	assert(usr->inMsg != 0);
 	
 	// TODO
 	switch (usr->inMsg->type)
@@ -614,7 +614,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			std::cerr << "Protocol violation from user: "
 				<< static_cast<int>(usr->id) << std::endl;
 			std::cerr << "Reason: Unexpected tool info" << std::endl;
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
 		fSet(usr->tags, uTag::HaveTool);
@@ -630,7 +630,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Protocol violation from user: "
 					<< static_cast<int>(usr->id) << std::endl;
 				std::cerr << "Reason: Stroke info without tool." << std::endl;
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				break;
 			}
 			*/
@@ -647,7 +647,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Protocol violation from user: "
 					<< static_cast<int>(usr->id) << std::endl;
 				std::cerr << "Reason: Stroke info without tool." << std::endl;
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				break;
 			}
 			fSet(usr->tags, uTag::CanChange);
@@ -662,7 +662,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		)
 		{
 			std::cerr << "Client attempted to impersonate someone." << std::endl;
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
 		#endif // CHECK_VIOLATIONS
@@ -710,7 +710,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			std::cerr << "Protocol violation from user: "
 				<< static_cast<int>(usr->id) << std::endl;
 			std::cerr << "Reason: Session change in middle of something." << std::endl;
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
 		#endif
@@ -775,7 +775,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			std::cerr << "Protocol violation from user: "
 				<< static_cast<int>(usr->id) << std::endl;
 			std::cerr << "Reason: Unsubscribe in middle of something." << std::endl;
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
 		#endif
@@ -806,7 +806,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			std::cerr << "Protocol violation from user: "
 				<< static_cast<int>(usr->id) << std::endl;
 			std::cerr << "Reason: Subscribe in middle of something." << std::endl;
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
 		#endif
@@ -972,7 +972,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		std::cerr << "Garbage from user: " << static_cast<int>(usr->id) << std::endl;
 		#endif
 		#endif
-		uRemove(usr);
+		uRemove(usr, protocol::user_event::Dropped);
 		break;
 	}
 }
@@ -980,6 +980,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 void Server::uHandleAck(User*& usr) throw()
 {
 	assert(usr != 0);
+	assert(usr->inMsg != 0);
 	
 	//#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1011,7 +1012,7 @@ void Server::uHandleAck(User*& usr) throw()
 				std::cout << "Another ACK/SyncWait for same session. Kickin'!" << std::endl;
 				#endif
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			else
@@ -1050,6 +1051,7 @@ void Server::uHandleAck(User*& usr) throw()
 void Server::uTunnelRaster(User*& usr) throw()
 {
 	assert(usr != 0);
+	assert(usr->inMsg != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1116,8 +1118,6 @@ void Server::uTunnelRaster(User*& usr) throw()
 
 void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 {
-	assert(usr != 0);
-	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uHandleInstruction()" << std::endl;
@@ -1133,28 +1133,16 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 	// TODO: Allow session owners to alter sessions.
 	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
-		if (msg->command == protocol::admin::command::Authenticate)
-		{
-			std::cout << "User wishes to authenticate itself as an admin." << std::endl;
-			if (a_password == 0)
-			{
-				uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
-			}
-			else
-			{
-				uSendMsg(usr, msgAuth(usr, protocol::Global));
-			}
-			return;
-		}
-		
 		std::cerr << "Non-admin tries to pass instructions" << std::endl;
-		uRemove(usr);
+		uRemove(usr, protocol::user_event::Dropped);
 		return;
 	}
 	
 	switch (msg->command)
 	{
 	case protocol::admin::command::Create:
+		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+		// limited scope for switch/case
 		{
 			uint8_t session_id = getSessionID();
 			
@@ -1172,7 +1160,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			if (fIsSet(session->mode, protocol::user_mode::Administrator))
 			{
 				std::cerr << "Administrator flag in default mode." << std::endl;
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				delete session;
 				return;
 			}
@@ -1195,7 +1183,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Less data than required" << std::endl;
 				#endif
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				delete session;
 				return;
 			}
@@ -1262,14 +1250,18 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::admin::command::Destroy:
+		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
 		// TODO
 		break;
 	case protocol::admin::command::Alter:
+		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
 		// TODO
 		break;
 	case protocol::admin::command::Password:
 		if (msg->session_id == protocol::Global)
 		{
+			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+			
 			password = msg->data;
 			pw_len = msg->length;
 			
@@ -1284,6 +1276,9 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		else
 		{
+			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+			// TODO: Check session ownership
+			
 			session_iterator si(sessions.find(msg->session_id));
 			if (si == sessions.end())
 			{
@@ -1304,9 +1299,27 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			}
 		}
 		break;
+	case protocol::admin::command::Authenticate:
+		#ifndef NDEBUG
+		std::cout << "User wishes to authenticate itself as an admin." << std::endl;
+		#endif
+		if (a_password == 0)
+		{
+			// no admin password set
+			uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
+		}
+		else
+		{
+			// request password
+			uSendMsg(usr, msgAuth(usr, protocol::Global));
+		}
+		return;
 	default:
+		#ifndef NDEBUG
 		std::cerr << "Unrecognized command: "
 			<< static_cast<int>(msg->command) << std::endl;
+		#endif
+		uRemove(usr, protocol::user_event::Dropped);
 		break;
 	}
 }
@@ -1314,6 +1327,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
+	assert(usr->inMsg != 0);
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1341,7 +1355,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "User made blasphemous assumption." << std::endl;
 				#endif
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
 			
@@ -1351,7 +1365,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Wrong session identifier." << std::endl;
 				#endif
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
 			
@@ -1361,7 +1375,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Wrong user event." << std::endl;
 				#endif
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
 			
@@ -1375,7 +1389,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
 				#endif // 0
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			
@@ -1390,7 +1404,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
 				#endif // 0
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			
@@ -1429,7 +1443,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		else
 		{
 			// wrong message type
-			uRemove(usr);
+			uRemove(usr, protocol::user_mode::Violation);
 		}
 		break;
 	case uState::login_auth:
@@ -1451,7 +1465,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
 			{
 				// mismatch, send error or disconnect.
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			
@@ -1469,7 +1483,8 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		}
 		else
 		{
-			uRemove(usr);
+			// not a password
+			uRemove(usr, protocol::user_event::Violation);
 			return;
 		}
 		
@@ -1500,19 +1515,21 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Protocol string mismatch" << std::endl;
 				#endif
 				
-				uRemove(usr);
+				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
 			
 			if (!rev)
 			{
 				#ifndef NDEBUG
-				std::cerr << "Protocol revision mismatch" << std::endl;
-				std::cerr << "Expected: " << protocol::revision
-					<< ", Got: " << ident->revision << std::endl;
+				std::cerr << "Protocol revision mismatch ---  "
+					<< "expected: " << protocol::revision
+					<< ", got: " << ident->revision << std::endl;
 				#endif
 				
-				uRemove(usr);
+				// TODO: Implement some compatible way of announcing incompatibility
+				
+				uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			
@@ -1548,15 +1565,12 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				<< static_cast<int>(usr->id) << std::endl;
 			#endif
 			
-			uRemove(usr);
+			uRemove(usr, protocol::user_event::Dropped);
 		}
 		break;
 	case uState::dead:
 		std::cerr << "I see dead people." << std::endl;
-		/*
-		delete usr;
-		usr = 0;
-		*/
+		uRemove(usr);
 		break;
 	default:
 		assert(!"user state was something strange");
@@ -1683,7 +1697,7 @@ void Server::SyncSession(Session* session) throw()
 		// add user to normal data propagation.
 		session->users.insert( std::make_pair((*new_i)->id, (*new_i)) );
 		
-		// Tell other syncWait users of the user..
+		// Tell other syncWait users of this user..
 		if (newc.size() > 1)
 		{
 			for (new_i2 = newc.begin(); new_i2 != newc.end(); new_i2++)
@@ -1705,10 +1719,6 @@ void Server::uJoinSession(User*& usr, Session* session) throw()
 	std::cout << "Server::uJoinSession()" << std::endl;
 	#endif
 	#endif
-	
-	
-	
-	
 	
 	// Add session to users session list.
 	usr->sessions.insert(
@@ -1865,7 +1875,7 @@ void Server::breakSync(User*& usr) throw()
 	usr->syncing = protocol::Global;
 }
 
-void Server::uRemove(User *&usr) throw()
+void Server::uRemove(User *&usr, uint8_t reason) throw()
 {
 	assert(usr != 0);
 	

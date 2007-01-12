@@ -219,7 +219,7 @@ protected:
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
-	void uRemove(User*& usr) throw();
+	void uRemove(User*& usr, uint8_t reason) throw();
 	
 	// Tests if session exists
 	inline
