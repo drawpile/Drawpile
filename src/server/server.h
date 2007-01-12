@@ -142,7 +142,7 @@ protected:
 	
 	/* *** Instances *** */
 	
-	CSHA1 hash;
+	SHA1 hash;
 	
 	/* *** Generate messages *** */
 	

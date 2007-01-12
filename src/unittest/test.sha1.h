@@ -14,7 +14,7 @@ void hashing()
 {
 	testname("SHA-1 hashing");
 	
-	CSHA1 h;
+	SHA1 h;
 	
 	uint32_t res_len = 40;
 

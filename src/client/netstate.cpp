@@ -247,7 +247,7 @@ void HostState::sendPassword(const QString& password)
 	protocol::Password *msg = new protocol::Password;
 	msg->session_id = passwordsession_;
 	QByteArray pass = password.toUtf8();
-	CSHA1 hash;
+	SHA1 hash;
 	hash.Update(reinterpret_cast<const uint8_t*>(pass.constData()),
 			pass.length());
 	hash.Update(reinterpret_cast<const uint8_t*>(passwordseed_.constData()),

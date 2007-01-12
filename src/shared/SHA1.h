@@ -10,26 +10,22 @@
 
 ******************************************************************************/
 
-#ifndef CSHA1_INCLUDED
-#define CSHA1_INCLUDED
+#ifndef SHA1_INCLUDED
+#define SHA1_INCLUDED
 
 #include <stdint.h>
 
-/////////////////////////////////////////////////////////////////////////////
-// Declare SHA1 workspace
-
-typedef union
+class SHA1
 {
-	uint8_t  c[64];
-	uint32_t l[16];
-} SHA1_WORKSPACE_BLOCK;
-
-class CSHA1
-{
+	typedef union
+	{
+		uint8_t  c[64];
+		uint32_t l[16];
+	} Workspace;
 public:
 	// Constructor and Destructor
-	CSHA1() throw();
-	~CSHA1() throw();
+	SHA1() throw();
+	~SHA1() throw();
 	
 	uint32_t m_state[5];
 	uint32_t m_count[2];
@@ -37,24 +33,44 @@ public:
 	uint8_t  m_buffer[64];
 	uint8_t  m_digest[20];
 	//uint32_t __reserved2[3];
-
+	
 	void Reset() throw();
-
+	
 	// Update the hash value
 	void Update(const uint8_t *data, uint32_t len) throw();
-
+	
 	// Finalize hash and report
 	void Final() throw();
-
+	
 	// Report functions: as pre-formatted and raw data
-	void HexDigest(char *szReport) throw();
-	void GetHash(uint8_t *puDest) throw();
+	void HexDigest(char *szReport) const throw();
+	void GetHash(uint8_t *puDest) const throw();
 
 private:
 	inline
-	int SHABLK0(int i) throw();
+	uint32_t SHABLK0(uint32_t i) throw();
 	
-	// Private SHA-1 transformation
+	inline
+	uint32_t SHABLK1(uint32_t i) throw();
+	
+	inline
+	uint32_t ROL32(uint32_t v, uint32_t n) throw();
+	
+	inline
+	void _R0(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	
+	inline
+	void _R1(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	
+	inline
+	void _R2(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	
+	inline
+	void _R3(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	
+	inline
+	void _R4(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	
 	void Transform(uint32_t *state, const uint8_t *buffer) throw();
 	
 	#ifndef NDEBUG
@@ -62,8 +78,8 @@ private:
 	#endif
 	
 	// Member variables
-	uint8_t m_workspace[64];
-	SHA1_WORKSPACE_BLOCK *m_block; // SHA1 pointer to the byte array above
+	
+	Workspace m_block;
 };
 
 #endif // SHA1_INCLUDEd
