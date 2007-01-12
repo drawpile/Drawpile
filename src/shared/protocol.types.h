@@ -120,14 +120,14 @@ const uint8_t
 	//! Logging in.
 	Login = 1,
 	
-	/* session specific */
+	/** Session specific */
 	
 	//! Joined session.
 	Join = 5,
 	//! Left session.
 	Leave = 6,
 	
-	/* verbose leave reasons */
+	/** Verbose leave reasons */
 	
 	//! User disconnected. Indication of poorly behaving client.
 	Disconnect = 10,
@@ -139,8 +139,10 @@ const uint8_t
 	Dropped = 13,
 	//! Kicked by admin.
 	Kicked = 14,
+	//! Client is behaving badly / protocol violation
+	Violation = 17,
 	
-	/* user mode changes */
+	/** User mode changes */
 	
 	//! Muted by admin.
 	Mute = 20,
