@@ -31,7 +31,7 @@ namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(false), isdragging_(false),
-	prevpoint_(0,0),prevpressure_(0), outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
+	prevpoint_(0,0),outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 }
 
@@ -215,18 +215,10 @@ bool EditorView::viewportEvent(QEvent *event)
 					drawingboard::Point(point.x(),point.y(),tabev->pressure()),
 					tabev->pointerType()==QTabletEvent::Eraser
 					);
-			// Redraw the previous location, for the brush size might have
-			// changed.
-			if(enableoutline_ && showoutline_ &&
-					qAbs(prevpressure_-tabev->pressure()) > 1.0/256.0) {
-				QList<QRectF> rect;
-				const int dia = outlinesize_*2;
-				rect.append(QRectF(prevpoint_.x() - outlinesize_,
-							prevpoint_.y() - outlinesize_, dia,dia));
-				updateScene(rect);
-			}
-		} else if(enableoutline_ && showoutline_) {
-			// Update brush outline when nothing was drawn
+		}
+		// Update brush, even when drawing for brush size might have changed
+		// since the last point.
+		if(enableoutline_ && showoutline_) {
 			QList<QRectF> rect;
 			const int dia = outlinesize_*2;
 			rect.append(QRectF(prevpoint_.x() - outlinesize_,
@@ -236,7 +228,6 @@ bool EditorView::viewportEvent(QEvent *event)
 			updateScene(rect);
 		}
 		prevpoint_ = point;
-		prevpressure_ = tabev->pressure();
 		return true;
 	} else if(event->type() == QEvent::TabletPress) {
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
@@ -250,7 +241,6 @@ bool EditorView::viewportEvent(QEvent *event)
 				false
 				);
 		prevpoint_ = point;
-		prevpressure_ = tabev->pressure();
 		return true;
 	} else if(event->type() == QEvent::TabletRelease) {
 		pendown_ = false;
