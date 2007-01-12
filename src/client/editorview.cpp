@@ -102,17 +102,19 @@ void EditorView::setCrosshair(bool enable)
 void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	if(enableoutline_ && showoutline_ && outlinesize_>0) {
-		QRectF rect(prevpoint_-QPointF(outlinesize_,outlinesize_),
+		QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
 					QSizeF(outlinesize_*2,outlinesize_*2));
-		painter->setRenderHint(QPainter::Antialiasing, true);
-		QPen pen(background_);
-		painter->setPen(pen);
-		painter->drawEllipse(rect);
-		pen.setColor(foreground_);
-		pen.setStyle(Qt::DashLine);
-		painter->setPen(pen);
-		painter->drawEllipse(rect);
-
+		if(rect.intersects(outline)) {
+			painter->setClipRect(0,0, board_->width(), board_->height());
+			painter->setRenderHint(QPainter::Antialiasing, true);
+			QPen pen(background_);
+			painter->setPen(pen);
+			painter->drawEllipse(outline);
+			pen.setColor(foreground_);
+			pen.setStyle(Qt::DashLine);
+			painter->setPen(pen);
+			painter->drawEllipse(outline);
+		}
 	}
 }
 

@@ -132,6 +132,20 @@ QImage Board::image() const
 }
 
 /**
+ * @return board width
+ */
+int Board::width() const {
+	return int(image_->boundingRect().width());
+}
+
+/**
+ * @return board height
+ */
+int Board::height() const {
+	return int(image_->boundingRect().height());
+}
+
+/**
  * Returns a BoardEditor for modifying the drawing board either
  * directly or over the network.
  * @param session which network session the editor works over. If 0, a local editor is returned

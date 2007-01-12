@@ -65,6 +65,12 @@ class Board : public QGraphicsScene
 		//! Initialize the board using an existing image as base
 		void initBoard(QImage image);
 
+		//! Get board width
+		int width() const;
+
+		//! Get board height
+		int height() const;
+
 		//! Get board contents as an image
 		QImage image() const;
 
