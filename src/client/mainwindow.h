@@ -33,6 +33,7 @@ namespace widgets {
 	class EditorView;
 	class DualColorButton;
 	class ToolSettings;
+	class UserList;
 }
 namespace dialogs {
 	class ColorDialog;
@@ -174,10 +175,13 @@ class MainWindow : public QMainWindow {
 		void createDocks();
 		//! Create tool settings dock
 		void createToolSettings(QMenu *menu);
+		//! Create user list dock
+		void createUserList(QMenu *menu);
 		//! Create dialogs
 		void createDialogs();
 
 		widgets::ToolSettings *toolsettings_;
+		widgets::UserList *userlist_;
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;

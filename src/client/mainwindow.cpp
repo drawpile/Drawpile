@@ -38,6 +38,7 @@
 #include "board.h"
 #include "controller.h"
 #include "toolsettingswidget.h"
+#include "userlistwidget.h"
 #include "dualcolorbutton.h"
 #include "localserver.h"
 
@@ -1002,6 +1003,7 @@ void MainWindow::createDocks()
 {
 	QMenu *toggles = new QMenu(this);
 	createToolSettings(toggles);
+	createUserList(toggles);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1019,6 +1021,19 @@ void MainWindow::createToolSettings(QMenu *toggles)
 	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
 	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), toolsettings_, SLOT(setForeground(const QColor&)));
 	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), toolsettings_, SLOT(setBackground(const QColor&)));
+}
+
+void MainWindow::createUserList(QMenu *toggles)
+{
+	userlist_ = new widgets::UserList(this);
+	userlist_->setObjectName("userlistdock");
+	userlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+#ifdef Q_WS_WIN
+	// Dock widget floating is buggy on Windows.
+	userlist_->setFeatures(userlist_->features() & ~QDockWidget::DockWidgetFloatable);
+#endif
+	toggles->addAction(userlist_->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, userlist_);
 }
 
 void MainWindow::createDialogs()
