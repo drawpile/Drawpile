@@ -113,6 +113,56 @@ const uint8_t
 
 } // namespace type
 
+
+//! Session event/instruction
+namespace session_event
+{
+
+const uint8_t
+	//! No event
+	None = 0,
+	
+	//! Pass ownership to another user
+	Delegate = 5,
+	
+	//! Muted
+	Mute = 20,
+	//! Unmuted
+	Unmute = 21,
+	//! Deafened
+	Deaf = 22,
+	//! Undeafened
+	Undeafen = 23,
+	
+	//! Lock user
+	Lock = 28,
+	//! Unlock user
+	Unlock = 29,
+	
+	//! Kick user from session
+	Kick = 60;
+
+}
+
+//! Layer event/instruction
+namespace layer_event
+{
+
+const uint8_t
+	//! No event
+	None = 0,
+	
+	//! Create a layer
+	Create = 1,
+	
+	//! Destroy a layer
+	Destroy = 2,
+	
+	//! Modify layer's properties
+	Alter = 3;
+
+}
+
 //! User events
 /**
  * @see protocol::UserInfo message.
@@ -147,23 +197,7 @@ const uint8_t
 	//! Kicked by admin.
 	Kicked = 14,
 	//! Client is behaving badly / protocol violation
-	Violation = 17,
-	
-	/** User mode changes */
-	
-	//! Muted by admin.
-	Mute = 20,
-	//! Unmuted by admin.
-	UnMute = 21,
-	//! Deafened by admin.
-	Deaf = 22,
-	//! Undeafened by admin.
-	UnDeafen = 23,
-	
-	//! Forced to observer mode by admin.
-	Observer = 25,
-	//! Observer mode lifted by admin.
-	Participant = 26;
+	Violation = 17;
 
 } // namespace user_event
 

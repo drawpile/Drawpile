@@ -86,9 +86,14 @@ const uint16_t
 	
 	/* Layer errors */
 	
+	//! The layer doesn't exist
 	UnknownLayer = 21,
+	
+	//! Layer is locked
 	LayerLocked = 22,
-	LayerLost = 29,
+	
+	//! Invalid layer target
+	InvalidLayer = 25,
 	
 	/* Admin errors. */
 	

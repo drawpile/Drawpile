@@ -209,7 +209,7 @@ const uint8_t
 	Administrator = 0x01,
 	
 	//! User is not able to draw.
-	Observer = 0x08,
+	Locked = 0x08,
 	
 	//! User may not send Chat messages.
 	Mute = 0x10,

@@ -63,21 +63,6 @@ const uint8_t
 	
 	//! Shutdown server
 	Shutdown = 9;
-	
-	//! Set user's muteness
-	Mute = 20,
-	
-	//! Set user's deafness
-	Deaf = 21,
-	
-	//! Set user's participation
-	Observe = 22,
-	
-	//! Kick user from session or server
-	Kick = 23,
-	
-	//! Pass session ownership to another user.
-	Delegate = 12;
 
 }
 
