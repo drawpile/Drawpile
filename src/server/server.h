@@ -191,7 +191,7 @@ protected:
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
 	// Send message to session
-	void Propagate(message_ref msg) throw();
+	void Propagate(message_ref msg, uint8_t source=protocol::null_user) throw();
 	
 	// Send message to user
 	/*

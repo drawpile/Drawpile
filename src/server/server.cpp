@@ -696,15 +696,18 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			while (msg != 0);
 			*/
 			
+			uint8_t source;
 			if (fIsSet(usr->caps, protocol::client::AckFeedback))
 			{
 				uSendMsg(usr, msgAck(usr->session, msg->type));
-				// TODO: Propagation without sending back to user.
+				source = usr->id;
 			}
 			else
 			{
-				Propagate(message_ref(msg));
+				source = protocol::null_user;
 			}
+			
+			Propagate(message_ref(msg), source);
 		}
 		usr->inMsg = 0;
 		break;
@@ -1592,7 +1595,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::Propagate(message_ref msg) throw()
+void Server::Propagate(message_ref msg, uint8_t source) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1614,7 +1617,8 @@ void Server::Propagate(message_ref msg) throw()
 	session_usr_iterator ui( si->second->users.begin() );
 	for (; ui != si->second->users.end(); ui++)
 	{
-		uSendMsg(ui->second, msg);
+		if (ui->second->id != source)
+			uSendMsg(ui->second, msg);
 	}
 }
 
