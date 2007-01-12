@@ -2055,6 +2055,8 @@ bool Server::validateUserName(User* usr) const throw()
 	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
 		return true;
 	
+	if (user->nlen == 0) return false;
+	
 	std::map<fd_t, User*>::const_iterator ui(users.begin());
 	for (; ui != users.end(); ui++)
 	{
@@ -2079,6 +2081,8 @@ bool Server::validateSessionTitle(Session* session) const throw()
 	
 	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
 		return true;
+	
+	if (session->len == 0) return false;
 	
 	std::map<uint8_t, Session*>::const_iterator si(sessions.begin());
 	for (; si != sessions.end(); si++)
