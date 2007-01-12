@@ -74,8 +74,15 @@ const uint8_t
 	Subscribe = 30,
 	//! for Unsubscribe.
 	Unsubscribe = 31,
+	//! for Session event
+	SessionEvent = 32,
 	//! for Session select.
 	SessionSelect = 37,
+	
+	//! for Layer event
+	LayerEvent = 42,
+	//! for Layer select
+	LayerSelect = 47,
 	
 	//! for Instruction.
 	Instruction = 77,

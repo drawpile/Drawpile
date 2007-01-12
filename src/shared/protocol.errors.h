@@ -84,10 +84,11 @@ const uint16_t
 	//! Session lost (possibly because of protocol::admin::destroy)
 	SessionLost = 19,
 	
-	/* Generic errors */
+	/* Layer errors */
 	
-	//! Invalid request
-	InvalidRequest = 20,
+	UnknownLayer = 21,
+	LayerLocked = 22,
+	LayerLost = 29,
 	
 	/* Admin errors. */
 	
@@ -114,6 +115,11 @@ const uint16_t
 	TooLong = 72,
 	//! Name not unique, go frell it up some more.
 	NotUnique = 74,
+	
+	/* Generic errors */
+	
+	//! Invalid request
+	InvalidRequest = 90,
 	
 	/* Completely unexpected error messages */
 	

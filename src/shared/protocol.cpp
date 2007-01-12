@@ -57,9 +57,7 @@ namespace protocol {
 //
 size_t Message::serializeHeader(char* ptr, const Message* msg) const throw()
 {
-	size_t i = 0;
-	
-	memcpy_t(ptr, msg->type); i += sizeof(msg->type);
+	memcpy_t(ptr, msg->type); size_t i = sizeof(msg->type);
 	
 	if (fIsSet(msg->modifiers, message::isUser))
 	{
