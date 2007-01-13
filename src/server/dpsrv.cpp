@@ -44,12 +44,6 @@
 namespace srv_info
 {
 
-#if 0
-const uint16_t
-	major_version = 0,
-	minor_version = 1;
-#endif // 0
-
 const char
 	applicationName[] = "DrawPile Server",
 	versionString[] = "0.1",

@@ -207,13 +207,13 @@ struct Buffer
 	 */
 	size_t canRead() const throw()
 	{
-		#if 0
+		if (0) {
 		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::canRead()" << std::endl;
 		#endif
 		#endif
-		#endif
+		}
 		
 		assert(data != 0);
 		assert(size > 1);
@@ -265,13 +265,13 @@ struct Buffer
 	 */
 	size_t canWrite() const throw()
 	{
-		#if 0
+		if (0) {
 		#ifdef DEBUG_BUFFER
 		#ifndef NDEBUG
 		std::cout << "Buffer::canWrite()" << std::endl;
 		#endif
 		#endif
-		#endif
+		}
 		
 		assert(data != 0);
 		assert(size > 1);

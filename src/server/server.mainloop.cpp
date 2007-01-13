@@ -166,16 +166,15 @@ int Server::run() throw()
 				}
 			}
 			
+			if (0) {
 			#ifndef NDEBUG
-			#if 0
-			if (ec != 0)
-				std::cout << "Events left: " << ec << std::endl;
-			#endif // 0
+			if (ec != 0) { std::cout << "Events left: " << ec << std::endl; }
 			#endif //NDEBUG
+			}
 			
 			usr = users.end();
 			
-			#else
+			#else // EVENT_BY_*
 			#error No event fetching method defined
 			#endif // EVENT_BY_*
 			

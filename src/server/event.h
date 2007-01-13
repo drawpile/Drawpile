@@ -44,8 +44,6 @@
 
 #if defined(EV_EPOLL)
 	#define EV_HAVE_HANGUP
-	#define EV_HAVE_RAWLIST
-	//#define EV_HAVE_LIST
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
@@ -81,32 +79,6 @@ typedef int fd_t;
 #ifndef INVALID_SOCKET
 	#define INVALID_SOCKET -1
 #endif
-
-#ifdef EV_HAVE_LIST
-//! Event info container
-struct EventInfo
-{
-	//! ctor
-	EventInfo() throw ()
-	{
-	}
-	
-	//! ctor with vars
-	EventInfo(fd_t nfd, int nevs) throw()
-		: fd(nfd),
-		events(nevs)
-	{
-	}
-	
-	//! Associated file descriptor.
-	fd_t fd;
-	
-	//! Triggered events.
-	int events;
-};
-
-typedef std::vector<EventInfo> EvList;
-#endif // EV_HAVE_LIST
 
 //! Event I/O abstraction
 class Event
@@ -179,32 +151,6 @@ public:
 	 * @return number of file descriptors triggered, -1 on error, and 0 otherwise.
 	 */
 	int wait(uint32_t msecs) throw();
-	
-	#ifdef EV_HAVE_LIST
-	//! Returns a vector of triggered sockets.
-	/**
-	 * NOT IMPLEMENTED
-	 *
-	 * @param count is the number of events that was returned by wait()
-	 *
-	 * @return EvList of the events.
-	 */
-	EvList getEvents() const throw();
-	#endif // EV_HAVE_LIST
-	
-	#ifdef EV_HAVE_RAWLIST
-	//! Get raw event list if supported by event mechanism.
-	/**
-	 * Currently only supported by epoll.
-	 *
-	 * @return raw event list.
-	 */
-	#if defined( EV_EPOLL )
-	epoll_event* getRawEvents() const throw() { return events; }
-	#else // defined( EV_SELECT ) or defined( EV_PSELECT )
-	void* getRawEvents() const throw() { return 0; }
-	#endif // EV_*
-	#endif // EV_HAVE_RAWLIST
 	
 	//! Adds file descriptor to event polling.
 	/**

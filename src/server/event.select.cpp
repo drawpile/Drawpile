@@ -29,10 +29,12 @@
 #include "../shared/templates.h"
 #include "event.h"
 
-#include <iostream>
+#ifndef NDEBUG
+	#include <iostream>
+	#include <ios>
+#endif
 
-#include <ios>
-#include <cerrno>
+#include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()
 
@@ -264,13 +266,13 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		FD_SET(fd, &fds_e);
 		#ifndef WIN32
 		select_set_e.insert(select_set_e.end(), fd);
-		#if 0
-		std::cout << nfds_e << " -> ";
-		#endif // 0
+		if (0) {
+			std::cout << nfds_e << " -> ";
+		}
 		nfds_e = *(--select_set_e.end());
-		#if 0
-		std::cout << nfds_e << std::endl;
-		#endif // 0
+		if (0) {
+			std::cout << nfds_e << std::endl;
+		}
 		#endif
 	}
 	
@@ -330,13 +332,13 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
 		select_set_r.erase(fd);
-		#if 0
-		std::cout << nfds_r << " -> ";
-		#endif // 0
+		if (0) {
+			std::cout << nfds_r << " -> ";
+		}
 		nfds_r = (select_set_r.size() > 0 ? *(--select_set_r.end()) : 0);
-		#if 0
-		std::cout << nfds_r << std::endl;
-		#endif // 0
+		if (0) {
+			std::cout << nfds_r << std::endl;
+		}
 		#endif // WIN32
 	}
 	
@@ -345,13 +347,13 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
 		select_set_w.erase(fd);
-		#if 0
-		std::cout << nfds_w << " -> ";
-		#endif // 0
+		if (0) {
+			std::cout << nfds_w << " -> ";
+		}
 		nfds_w = (select_set_w.size() > 0 ? *(--select_set_w.end()) : 0);
-		#if 0
-		std::cout << nfds_w << std::endl;
-		#endif // 0
+		if (0) {
+			std::cout << nfds_w << std::endl;
+		}
 		#endif // WIN32
 	}
 	
@@ -360,13 +362,13 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
 		select_set_e.erase(fd);
-		#if 0
-		std::cout << nfds_e << " -> ";
-		#endif // 0
+		if (0) {
+			std::cout << nfds_e << " -> ";
+		}
 		nfds_e = (select_set_e.size() > 0 ? *(--select_set_e.end()) : 0);
-		#if 0
-		std::cout << nfds_e << std::endl;
-		#endif // 0
+		if (0) {
+			std::cout << nfds_e << std::endl;
+		}
 		#endif // WIN32
 	}
 	
@@ -384,8 +386,8 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
 	std::cout << "Event::getEvents(fd: " << fd << ")" << std::endl;
-	#endif
-	#endif
+	#endif // NDEBUG
+	#endif // DEBUG_EVENTS
 	
 	assert(fd != INVALID_SOCKET);
 	

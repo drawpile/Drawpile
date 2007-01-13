@@ -34,7 +34,7 @@
 	#include <ios>
 #endif
 
-#include <cerrno>
+#include <cerrno> // errno
 #include <cassert> // assert()
 
 /* Because MinGW is buggy, we have to do this fuglyness */

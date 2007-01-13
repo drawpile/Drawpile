@@ -1413,9 +1413,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Name too long." << std::endl;
 				#endif
 				
-				#if 0
-				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
-				#endif // 0
+				if (0) {
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
+				}
 				
 				uRemove(usr, protocol::user_event::Dropped);
 				return;
@@ -1428,9 +1428,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Name not unique." << std::endl;
 				#endif
 				
-				#if 0
-				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
-				#endif // 0
+				if (0) {
+					uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
+				}
 				
 				uRemove(usr, protocol::user_event::Dropped);
 				return;
