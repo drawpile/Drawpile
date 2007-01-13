@@ -194,6 +194,7 @@ class MainWindow : public QMainWindow {
 		dialogs::LoginDialog *logindlg_;
 		QMessageBox *msgbox_;
 		QMessageBox *unsavedbox_;
+		QMessageBox *confirmexitbox_;
 		QMessageBox *leavebox_;
 
 		drawingboard::Board *board_;

@@ -258,22 +258,40 @@ void MainWindow::writeSettings()
 	cfg.setValue("background",fgbgcolor_->background());
 }
 
+/**
+ * Confirm exit. A confirmation dialog is popped up if there are unsaved
+ * changes or network connection is open.
+ * @param event event info
+ */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-	if(isWindowModified()) {
-		disconnect(unsavedbox_, SIGNAL(finished(int)),0,0);
-		connect(unsavedbox_, SIGNAL(finished(int)), this, SLOT(finishExit(int)));
-		unsavedbox_->button(QMessageBox::No)->setText(tr("Quit without saving"));
-		unsavedbox_->show();
-		event->ignore();
+	if(isWindowModified() == false && controller_->isConnected() == false) {
+		exit();
 	} else {
 		if(controller_->isConnected()) {
-			connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(close()));
-			controller_->disconnectHost();
-			event->ignore();
+			// Network connection is open
+			if(controller_->isUploading())
+				confirmexitbox_->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
+			else
+				confirmexitbox_->setInformativeText(tr("You are still connected to a drawing session."));
+			confirmexitbox_->setStandardButtons(
+					QMessageBox::No | QMessageBox::Cancel
+					);
+			confirmexitbox_->button(QMessageBox::No)->setText(
+					tr("Quit and leave session")
+					);
 		} else {
-			exit();
+			// Board content has changed
+			confirmexitbox_->setInformativeText(tr("There are unsaved changes."));
+			confirmexitbox_->setStandardButtons(
+					QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel
+					);
+			confirmexitbox_->button(QMessageBox::No)->setText(
+					tr("Quit without saving")
+					);
 		}
+		confirmexitbox_->show();
+		event->ignore();
 	}
 }
 
@@ -694,9 +712,9 @@ void MainWindow::initJoin(int i)
 }
 
 /**
- * User decided what to do with unsaved changes before exiting.
- * @param i user response
- */
+* User decided what to do with unsaved changes before exiting.
+* @param i user response
+*/
 void MainWindow::finishExit(int i)
 {
 	switch(i) {
@@ -704,8 +722,14 @@ void MainWindow::finishExit(int i)
 			if(save()==false)
 				break;
 		case QMessageBox::No:
-			setWindowModified(false);
-			close();
+			if(controller_->isConnected()) {
+				connect(controller_, SIGNAL(disconnected(QString)),
+						this, SLOT(close()));
+				controller_->disconnectHost();
+			} else {
+				setWindowModified(false);
+				close();
+			}
 			break;
 		default:
 			break;
@@ -1050,6 +1074,15 @@ void MainWindow::createDialogs()
 	msgbox_->setWindowTitle(tr("DrawPile"));
 	msgbox_->setWindowModality(Qt::WindowModal);
 	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
+
+	confirmexitbox_ = new QMessageBox(QMessageBox::Warning,
+			tr("DrawPile"),
+			tr("Really exit DrawPile?"),
+                QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel,
+                this, Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet);
+
+
+	connect(confirmexitbox_, SIGNAL(finished(int)), this, SLOT(finishExit(int)));
 
 	unsavedbox_ = new QMessageBox(QMessageBox::Warning,
 			tr("DrawPile"),
