@@ -525,7 +525,7 @@ void MainWindow::finishHost(int i)
 		if(useremote==false) {
 			LocalServer *srv = LocalServer::getInstance();
 			if(srv->ensureRunning(hostdlg_->getPort())==false) {
-				showErrorMessage(srv->errorString());
+				showErrorMessage(srv->errorString(),srv->serverOutput());
 				hostdlg_->deleteLater();
 				return;
 			}
@@ -763,11 +763,12 @@ void MainWindow::showErrorMessage(ErrorType type)
 /**
  * @param message error message
  */
-void MainWindow::showErrorMessage(const QString& message)
+void MainWindow::showErrorMessage(const QString& message, const QString& details)
 {
 	msgbox_->setStandardButtons(QMessageBox::Ok);
 	msgbox_->setIcon(QMessageBox::Warning);
 	msgbox_->setText(message);
+	msgbox_->setDetailedText(details);
 	msgbox_->show();
 }
 

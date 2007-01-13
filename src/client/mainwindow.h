@@ -158,7 +158,7 @@ class MainWindow : public QMainWindow {
 		void showErrorMessage(ErrorType type);
 
 		//! Display an error message
-		void showErrorMessage(const QString& message);
+		void showErrorMessage(const QString& message, const QString& details=QString());
 
 		//! Read settings from file/registry
 		void readSettings();

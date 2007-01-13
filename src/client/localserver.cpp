@@ -109,7 +109,6 @@ bool LocalServer::ensureRunning(int port)
 		}
 		if(server_.waitForFinished(100)==true) {
 			qDebug() << "Server exited just after starting!";
-			qDebug() << serverOutput();
 			return false;
 		}
 		qDebug() << "Started server, PID" << server_.pid();
