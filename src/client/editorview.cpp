@@ -211,14 +211,19 @@ bool EditorView::viewportEvent(QEvent *event)
 		tabev->accept();
 		QPoint point = mapToScene(tabev->pos()).toPoint();
 		if(pendown_) {
-			emit penDown(
-					drawingboard::Point(point.x(),point.y(),tabev->pressure()),
-					tabev->pointerType()==QTabletEvent::Eraser
+			emit penMove(
+					drawingboard::Point(point.x(),point.y(),tabev->pressure())
 					);
-		}
-		// Update brush, even when drawing for brush size might have changed
-		// since the last point.
-		if(enableoutline_ && showoutline_) {
+			if(enableoutline_ && showoutline_) {
+				// Update previous location. This is needed if brush diameter
+				// has changed.
+				QList<QRectF> rect;
+				const int dia = outlinesize_*2;
+				rect.append(QRectF(prevpoint_.x() - outlinesize_,
+							prevpoint_.y() - outlinesize_, dia,dia));
+				updateScene(rect);
+			}
+		} else if(enableoutline_ && showoutline_) {
 			QList<QRectF> rect;
 			const int dia = outlinesize_*2;
 			rect.append(QRectF(prevpoint_.x() - outlinesize_,
