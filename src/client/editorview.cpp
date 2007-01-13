@@ -211,6 +211,11 @@ void EditorView::mouseDoubleClickEvent(QMouseEvent*)
 	// Ignore doubleclicks
 }
 
+//! Handle viewport events
+/**
+ * Tablet events are handled here
+ * @param event event info
+ */
 bool EditorView::viewportEvent(QEvent *event)
 {
 	if(event->type() == QEvent::TabletMove) {

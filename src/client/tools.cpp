@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ void Tool::setEditor(drawingboard::BoardEditor *editor)
  * 
  * This is not multiboard safe! This class needs to be reworked
  * if the support for joining multiple boards simultaneously is needed.
- * @param editor board editor delegate
  * @param type type of tool wanted
  * @return the requested tool
  */

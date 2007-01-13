@@ -164,9 +164,7 @@ BoardEditor *Board::getEditor(network::SessionState *session)
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
  * through the server.
- * @param x initial stroke coordinate
- * @param y initial stroke coordinate
- * @param pressure stroke pressure
+ * @param point stroke point
  */
 void Board::addPreview(const Point& point)
 {

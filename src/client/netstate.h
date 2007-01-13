@@ -121,11 +121,6 @@ class HostState : public QObject {
 
 	signals:
 		//! A password must be requested from the user
-		/**
-		 * A password can be needed to log in to the server and to join
-		 * a drawing session.
-		 * @param session if true, the password is for a session
-		 */
 		void needPassword();
 
 		//! Login sequence completed succesfully

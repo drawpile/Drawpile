@@ -233,7 +233,7 @@ void Brush::updateCache() const
 /**
  * Draw brush on a QImage
  * @param image image to draw on
- * @pos coordinates with pressure
+ * @param pos coordinates with pressure
  */
 void Brush::draw(QImage &image, const Point& pos) const
 {

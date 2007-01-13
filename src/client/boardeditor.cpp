@@ -115,6 +115,8 @@ void LocalBoardEditor::endStroke()
  * @param board board to user
  * @param user user to draw as
  * @param session network session over which commands are transmitted
+ * @param brush brush source
+ * @param color color source
  */
 RemoteBoardEditor::RemoteBoardEditor(Board *board, User *user,
 		network::SessionState *session,

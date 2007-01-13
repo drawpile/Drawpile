@@ -26,8 +26,6 @@ namespace drawingboard {
 
 //! Construct a stroke preview object
 /**
- * @param prev if not null, continue a previous stroke
- * @param point stroke end point
  * @param parent parent layer
  * @param scene board to which this object belongs to
  */
@@ -36,6 +34,11 @@ Preview::Preview(QGraphicsItem *parent, QGraphicsScene *scene)
 {
 }
 
+/**
+ * @param from point from which the line begins
+ * @param to point at which the line ends
+ * @param brush brush to draw the line with
+ */
 void Preview::previewLine(const Point& from, const Point& to, const Brush& brush)
 {
 	brush_ = brush;

@@ -187,9 +187,10 @@ void HostState::login(const QString& username)
  * Create a new session with Instruction command. (Must be admin to do this.)
  * Server responds with an Error or Acknowledgement message.
  *
- * @param username username
  * @param title session title
  * @param password session password. If empty, no password is required to join.
+ * @param width board width
+ * @param height board height
  * @pre user is logged in
  */
 void HostState::host(const QString& title,
@@ -551,6 +552,7 @@ void HostState::handleError(const protocol::Error *msg)
 
 /**
  * @param parent parent HostState
+ * @param info session information
  */
 SessionState::SessionState(HostState *parent, const Session& info)
 	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),bufferdrawing_(true)
@@ -573,7 +575,7 @@ const User *SessionState::user(int id) const
 /**
  * Get an image from received raster data. If received raster was empty,
  * a null image is loaded.
- * @param[out] loaded image is put here
+ * @param[out] image loaded image is put here
  * @retval false if buffer contained invalid data
  */
 bool SessionState::sessionImage(QImage &image) const
