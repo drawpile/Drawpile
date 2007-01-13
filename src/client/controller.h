@@ -92,7 +92,7 @@ class Controller : public QObject
 		//! Disconnect from host
 		void disconnectHost();
 
-		void penDown(const drawingboard::Point& point, bool isEraser);
+		void penDown(const drawingboard::Point& point);
 		void penMove(const drawingboard::Point& point);
 		void penUp();
 		void setTool(tools::Type tool);

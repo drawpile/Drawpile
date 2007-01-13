@@ -87,7 +87,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(changed()), this, SLOT(boardChanged()));
 	connect(this, SIGNAL(toolChanged(tools::Type)), controller_, SLOT(setTool(tools::Type)));
 
-	connect(view_,SIGNAL(penDown(drawingboard::Point,bool)),controller_,SLOT(penDown(drawingboard::Point,bool)));
+	connect(view_,SIGNAL(penDown(drawingboard::Point)),controller_,SLOT(penDown(drawingboard::Point)));
 	connect(view_,SIGNAL(penMove(drawingboard::Point)),controller_,SLOT(penMove(drawingboard::Point)));
 	connect(view_,SIGNAL(penUp()),controller_,SLOT(penUp()));
 	// Controller -> netstatus

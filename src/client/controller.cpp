@@ -322,9 +322,9 @@ void Controller::setTool(tools::Type tool)
 	tool_ = tools::Tool::get(tool);
 }
 
-void Controller::penDown(const drawingboard::Point& point, bool isEraser)
+void Controller::penDown(const drawingboard::Point& point)
 {
-	if(lock_ == false || lock_ && tool_->readonly()) {
+	if(lock_ == false || (lock_ && tool_->readonly())) {
 		tool_->begin(point);
 		if(tool_->readonly()==false) {
 			emit changed();

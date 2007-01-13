@@ -30,7 +30,7 @@
 namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(false), isdragging_(false),
+	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false),
 	prevpoint_(0,0),outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 }
@@ -139,6 +139,9 @@ void EditorView::leaveEvent(QEvent *event)
 
 void EditorView::mousePressEvent(QMouseEvent *event)
 {
+	// TODO why do we sometimes get mouse events for tablet strokes?
+	if(pendown_ != NOTDOWN)
+		return;
 	if(event->button() == Qt::MidButton) {
 		startDrag(event->x(), event->y());
 		if(enableoutline_) {
@@ -150,16 +153,18 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 			updateScene(rect);
 		}
 	} else {
-		pendown_ = true;
+		pendown_ = MOUSEDOWN;
 		emit penDown(
-				drawingboard::Point(mapToScene(event->pos()).toPoint(), 1.0),
-				false
+				drawingboard::Point(mapToScene(event->pos()).toPoint(), 1.0)
 				);
 	}
 }
 
 void EditorView::mouseMoveEvent(QMouseEvent *event)
 {
+	// TODO why do we sometimes get mouse events for tablet strokes?
+	if(pendown_ == TABLETDOWN)
+		return;
 	if(pendown_ && event->buttons() == Qt::NoButton) {
 		// In case we missed a penup
 		mouseReleaseEvent(event);
@@ -189,12 +194,14 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 
 void EditorView::mouseReleaseEvent(QMouseEvent *event)
 {
+	if(pendown_ == TABLETDOWN)
+		return;
 	prevpoint_ = mapToScene(event->pos()).toPoint();
 	if(isdragging_) {
 		stopDrag();
 		showoutline_ = true;
 	} else {
-		pendown_ = false;
+		pendown_ = NOTDOWN;
 		emit penUp();
 	}
 }
@@ -207,6 +214,7 @@ void EditorView::mouseDoubleClickEvent(QMouseEvent*)
 bool EditorView::viewportEvent(QEvent *event)
 {
 	if(event->type() == QEvent::TabletMove) {
+		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 		QPoint point = mapToScene(tabev->pos()).toPoint();
@@ -235,20 +243,27 @@ bool EditorView::viewportEvent(QEvent *event)
 		prevpoint_ = point;
 		return true;
 	} else if(event->type() == QEvent::TabletPress) {
+		//! Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 		QPoint point = mapToScene(tabev->pos()).toPoint();
 
-		pendown_ = true;
+		pendown_ = TABLETDOWN;
 		emit penDown(
-				drawingboard::Point(mapToScene(tabev->pos()).toPoint(),
-					tabev->pressure()),
-				false
+				drawingboard::Point(
+					mapToScene(tabev->pos()).toPoint(),
+					tabev->pressure()
+					)
 				);
 		prevpoint_ = point;
 		return true;
 	} else if(event->type() == QEvent::TabletRelease) {
-		pendown_ = false;
+		// Stylus lifted
+		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
+		tabev->accept();
+		prevpoint_ = mapToScene(tabev->pos()).toPoint();
+
+		pendown_ = NOTDOWN;
 		emit penUp();
 		return true;
 	}

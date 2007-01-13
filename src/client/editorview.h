@@ -46,9 +46,8 @@ class EditorView : public QGraphicsView
 		//! This signal is emitted when a mouse button is pressed or the pen touches the tablet
 		/**
 		 * @param point coordinates
-		 * @param isEraser is the input device the wide end of a tablet stylus?
 		 */
-		void penDown(const drawingboard::Point& point, bool isEraser);
+		void penDown(const drawingboard::Point& point);
 		//! This signal is emitted when the pen or mouse pointer is moved while drawing
 		void penMove(const drawingboard::Point& point);
 
@@ -82,7 +81,7 @@ class EditorView : public QGraphicsView
 		void moveDrag(int x, int y);
 		void stopDrag();
 
-		bool pendown_;
+		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} pendown_;
 
 		bool isdragging_;
 		int dragx_,dragy_;
