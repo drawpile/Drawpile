@@ -235,6 +235,8 @@ protected:
 	
 	inline
 	bool validateSessionTitle(Session* session) const throw();
+	
+	void uRegenSeed(User* usr) const throw();
 public:
 	//! ctor
 	Server() throw();

@@ -169,6 +169,14 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
+void Server::uRegenSeed(User* usr) const throw()
+{
+	usr->seed[0] = (rand() % 255) + 1;
+	usr->seed[1] = (rand() % 255) + 1;
+	usr->seed[2] = (rand() % 255) + 1;
+	usr->seed[3] = (rand() % 255) + 1;
+}
+
 message_ref Server::msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -182,10 +190,7 @@ message_ref Server::msgAuth(User* usr, uint8_t session) const throw(std::bad_all
 	protocol::Authentication* auth = new protocol::Authentication;
 	auth->session_id = session;
 	
-	usr->seed[0] = (rand() % 255) + 1;
-	usr->seed[1] = (rand() % 255) + 1;
-	usr->seed[2] = (rand() % 255) + 1;
-	usr->seed[3] = (rand() % 255) + 1;
+	uRegenSeed(usr);
 	
 	memcpy(auth->seed, usr->seed, protocol::password_seed_size);
 	return message_ref(auth);
@@ -921,20 +926,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				}
 				
 				hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
-				hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
-				hash.Final();
-				char digest[protocol::password_hash_size];
-				hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-				hash.Reset();
-				
-				if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
-				{
-					// mismatch, send error or disconnect.
-					uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
-					return;
-				}
-				
-				usr->mode = protocol::user_mode::Administrator;
 			}
 			else
 			{
@@ -961,30 +952,36 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				}
 				
 				hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
-				hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
-				hash.Final();
-				char digest[protocol::password_hash_size];
-				hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-				hash.Reset();
-				
-				if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
-				{
-					// mismatch, send error or disconnect.
-					uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
-					break;
-				}
-				
-				// join session
-				uSendMsg(usr, msgAck(si->second->id, protocol::type::Subscribe));
-				uJoinSession(usr, si->second);
 			}
 			
-			usr->seed[0] = (rand() % 255) + 1;
-			usr->seed[1] = (rand() % 255) + 1;
-			usr->seed[2] = (rand() % 255) + 1;
-			usr->seed[3] = (rand() % 255) + 1;
+			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+			hash.Final();
+			char digest[protocol::password_hash_size];
+			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+			hash.Reset();
+			
+			uRegenSeed(usr);
+			
+			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0)
+			{
+				// mismatch, send error or disconnect.
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+				return;
+			}
 			
 			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
+			
+			if (msg->session_id == protocol::Global)
+			{
+				// set as admin
+				usr->mode = protocol::user_mode::Administrator;
+			}
+			else
+			{
+				// join session
+				// uSendMsg(usr, msgAck(si->second->id, protocol::type::Subscribe));
+				uJoinSession(usr, si->second);
+			}
 		}
 		break;
 	default:
@@ -1504,10 +1501,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
 			
 			// make sure the same seed is not used for something else.
-			usr->seed[0] = (rand() % 255) + 1;
-			usr->seed[1] = (rand() % 255) + 1;
-			usr->seed[2] = (rand() % 255) + 1;
-			usr->seed[3] = (rand() % 255) + 1;
+			uRegenSeed(usr);
 		}
 		else
 		{
