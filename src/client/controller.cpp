@@ -194,6 +194,7 @@ void Controller::sessionJoined(int id)
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
 	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
+	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), this, SIGNAL(changed()));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
 	connect(session_, SIGNAL(userJoined(int)), board_, SLOT(addUser(int)));
 	connect(session_, SIGNAL(userLeft(int)), board_, SLOT(removeUser(int)));
