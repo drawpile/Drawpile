@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>368</width>
-    <height>378</height>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -35,20 +35,6 @@
        <property name="spacing" >
         <number>2</number>
        </property>
-       <item row="1" column="1" >
-        <widget class="QLineEdit" name="username" >
-         <property name="toolTip" >
-          <string>Your username</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string>Title</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0" >
         <widget class="QLabel" name="label_2" >
          <property name="text" >
@@ -73,13 +59,6 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="0" column="1" colspan="2" >
-        <widget class="QLineEdit" name="sessiontitle" >
-         <property name="toolTip" >
-          <string>A title that is shown to users</string>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="2" >
         <spacer>
          <property name="orientation" >
@@ -89,6 +68,40 @@ p, li { white-space: pre-wrap; }
           <size>
            <width>40</width>
            <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="username" >
+         <property name="toolTip" >
+          <string>Your username</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="label" >
+         <property name="text" >
+          <string>Title</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2" >
+        <widget class="QLineEdit" name="sessiontitle" >
+         <property name="toolTip" >
+          <string>A title that is shown to users</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
           </size>
          </property>
         </spacer>
@@ -106,18 +119,15 @@ p, li { white-space: pre-wrap; }
        <property name="spacing" >
         <number>3</number>
        </property>
-       <item row="0" column="3" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+       <item row="0" column="2" >
+        <widget class="QSpinBox" name="port" >
+         <property name="maximum" >
+          <number>99999</number>
          </property>
-         <property name="sizeHint" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
+         <property name="minimum" >
+          <number>1</number>
          </property>
-        </spacer>
+        </widget>
        </item>
        <item row="1" column="1" colspan="3" >
         <widget class="QLineEdit" name="remotehost" >
@@ -132,23 +142,6 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QRadioButton" name="useremote" >
-         <property name="text" >
-          <string>Host on remote server</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="port" >
-         <property name="maximum" >
-          <number>99999</number>
-         </property>
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0" colspan="2" >
         <widget class="QRadioButton" name="uselocal" >
          <property name="text" >
@@ -159,7 +152,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="3" >
+       <item row="3" column="0" colspan="3" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -171,6 +164,39 @@ p, li { white-space: pre-wrap; }
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QRadioButton" name="useremote" >
+         <property name="text" >
+          <string>Host on remote server</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="label_6" >
+         <property name="text" >
+          <string>Administrator password</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" >
+        <widget class="QLineEdit" name="adminpassword" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="toolTip" >
+          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Administrator password is usually required to create new sessions&lt;/p>&lt;/body>&lt;/html></string>
+         </property>
+         <property name="echoMode" >
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -348,8 +374,8 @@ p, li { white-space: pre-wrap; }
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>266</x>
-     <y>368</y>
+     <x>275</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -364,8 +390,8 @@ p, li { white-space: pre-wrap; }
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>334</x>
-     <y>368</y>
+     <x>343</x>
+     <y>430</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
@@ -381,11 +407,11 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel" >
      <x>347</x>
-     <y>182</y>
+     <y>228</y>
     </hint>
     <hint type="destinationlabel" >
      <x>347</x>
-     <y>270</y>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -397,11 +423,11 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel" >
      <x>347</x>
-     <y>182</y>
+     <y>228</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>119</x>
-     <y>193</y>
+     <x>139</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -413,7 +439,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel" >
      <x>347</x>
-     <y>210</y>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel" >
      <x>111</x>
@@ -429,7 +455,7 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel" >
      <x>347</x>
-     <y>238</y>
+     <y>286</y>
     </hint>
     <hint type="destinationlabel" >
      <x>112</x>
@@ -449,7 +475,7 @@ p, li { white-space: pre-wrap; }
     </hint>
     <hint type="destinationlabel" >
      <x>347</x>
-     <y>210</y>
+     <y>257</y>
     </hint>
    </hints>
   </connection>
@@ -465,7 +491,7 @@ p, li { white-space: pre-wrap; }
     </hint>
     <hint type="destinationlabel" >
      <x>347</x>
-     <y>238</y>
+     <y>286</y>
     </hint>
    </hints>
   </connection>
@@ -476,12 +502,12 @@ p, li { white-space: pre-wrap; }
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>27</x>
-     <y>198</y>
+     <x>47</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>73</x>
-     <y>324</y>
+     <x>93</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>
@@ -492,12 +518,12 @@ p, li { white-space: pre-wrap; }
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>134</x>
-     <y>205</y>
+     <x>154</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>232</x>
-     <y>324</y>
+     <x>225</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>
@@ -509,11 +535,11 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel" >
      <x>347</x>
-     <y>210</y>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>107</x>
-     <y>324</y>
+     <x>119</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>
@@ -525,11 +551,11 @@ p, li { white-space: pre-wrap; }
    <hints>
     <hint type="sourcelabel" >
      <x>347</x>
-     <y>210</y>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>232</x>
-     <y>324</y>
+     <x>225</x>
+     <y>379</y>
     </hint>
    </hints>
   </connection>
@@ -540,12 +566,12 @@ p, li { white-space: pre-wrap; }
    <slot>setWidth(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>123</x>
-     <y>324</y>
+     <x>119</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>57</x>
-     <y>200</y>
+     <x>77</x>
+     <y>319</y>
     </hint>
    </hints>
   </connection>
@@ -556,8 +582,8 @@ p, li { white-space: pre-wrap; }
    <slot>setHeight(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>232</x>
-     <y>324</y>
+     <x>225</x>
+     <y>379</y>
     </hint>
     <hint type="destinationlabel" >
      <x>120</x>
@@ -572,12 +598,44 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>76</y>
+     <x>128</x>
+     <y>100</y>
     </hint>
     <hint type="destinationlabel" >
      <x>232</x>
      <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>uselocal</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>port</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>186</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>297</x>
+     <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>adminpassword</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>149</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>256</x>
+     <y>123</y>
     </hint>
    </hints>
   </connection>

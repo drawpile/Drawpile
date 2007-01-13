@@ -54,6 +54,9 @@ class HostDialog : public QDialog
 		//! Get session password
 		QString getPassword() const;
 
+		//! Get server admin password
+		QString getAdminPassword() const;
+
 		//! Get session image
 		QImage getImage() const;
 

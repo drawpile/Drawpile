@@ -126,6 +126,11 @@ QString HostDialog::getTitle() const
 	return ui_->sessiontitle->text();
 }
 
+QString HostDialog::getAdminPassword() const
+{
+	return ui_->adminpassword->text();
+}
+
 QString HostDialog::getPassword() const
 {
 	return ui_->sessionpassword->text();
