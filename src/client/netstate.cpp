@@ -259,6 +259,22 @@ void HostState::sendPassword(const QString& password)
 }
 
 /**
+ * Sends an authentication request. Server will respond with an error
+ * (InvalidRequest) or Authentication message.
+ *
+ * @param password admin password
+ */
+void HostState::becomeAdmin(const QString& password)
+{
+	protocol::Instruction *msg = new protocol::Instruction;
+	msg->command = protocol::admin::command::Authenticate;
+	msg->session_id = protocol::Global;
+	sendadminpassword_ = password;
+	lastinstruction_ = msg->command;
+	net_->send(msg);
+}
+
+/**
  * Uses the Instruction message to set the server password. User
  * must have admin rights to do this.
  *
@@ -464,13 +480,20 @@ void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
 }
 
 /**
+ * Authentication request. Authentication may be required when logging in,
+ * joining a session or becoming administrator.
  * @param msg Authentication message
  */
 void HostState::handleAuthentication(const protocol::Authentication *msg)
 {
 	passwordseed_ = QByteArray(msg->seed, protocol::password_seed_size);
 	passwordsession_ = msg->session_id;
-	emit needPassword();
+	if(lastinstruction_ == protocol::admin::command::Authenticate) {
+		sendPassword(sendadminpassword_);
+		lastinstruction_ = -1;
+	} else {
+		emit needPassword();
+	}
 }
 
 /**
@@ -517,9 +540,14 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		} else {
 			qFatal("BUG: unhandled lastinstruction_");
 		}
+		lastinstruction_ = -1;
 	} else if(msg->event == protocol::type::ListSessions) {
 		// A full session list has been downloaded
 		emit sessionsListed();
+	} else if(msg->event == protocol::type::Password) {
+		qDebug() << "password ack";
+		if(lastinstruction_ == protocol::admin::command::Authenticate)
+			emit becameAdmin();
 	} else {
 		qDebug() << "unhandled host ack" << int(msg->event);
 	}
@@ -544,6 +572,7 @@ void HostState::handleError(const protocol::Error *msg)
 		case SessionLost: errmsg = tr("Session lost."); break;
 		case TooLong: errmsg = tr("Name too long."); break;
 		case NotUnique: errmsg = tr("Name already in use."); break;
+		case InvalidRequest: errmsg = tr("Invalid request"); break;
 		default: errmsg = tr("Error code %1").arg(int(msg->code));
 	}
 	qDebug() << "error" << errmsg << "for session" << msg->session_id;

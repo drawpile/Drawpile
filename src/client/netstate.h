@@ -102,6 +102,9 @@ class HostState : public QObject {
 		//! Send a password
 		void sendPassword(const QString& password);
 
+		//! Try to elevate to admin status
+		void becomeAdmin(const QString& password);
+
 		//! Host a session
 		void host(const QString& title, const QString& password,
 				quint16 width, quint16 height);
@@ -125,6 +128,9 @@ class HostState : public QObject {
 
 		//! Login sequence completed succesfully
 		void loggedin();
+
+		//! Admin password accepted
+		void becameAdmin();
 
 		//! Session joined succesfully
 		/**
@@ -204,6 +210,7 @@ class HostState : public QObject {
 
 		int lastinstruction_;
 		QString setsessionpassword_;
+		QString sendadminpassword_;
 
 		bool loggedin_;
 };

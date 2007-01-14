@@ -67,7 +67,7 @@ class Controller : public QObject
 		void setModel(drawingboard::Board *board);
 
 		//! Connect to host
-		void connectHost(const QUrl& url);
+		void connectHost(const QUrl& url, const QString& adminpasswd=QString());
 
 		//! Start hosting a session
 		void hostSession(const QString& title, const QString& password,
@@ -153,6 +153,7 @@ class Controller : public QObject
 		void netConnected();
 		void netDisconnected(const QString& message);
 		void serverLoggedin();
+		void finishLogin();
 		void sessionJoined(int id);
 		void sessionParted();
 		void addUser(int id);
@@ -177,6 +178,7 @@ class Controller : public QObject
 		QString address_;
 		QString username_;
 		QString autojoinpath_;
+		QString adminpasswd_;
 
 		bool pendown_;
 		bool sync_;

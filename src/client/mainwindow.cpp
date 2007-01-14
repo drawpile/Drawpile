@@ -492,6 +492,7 @@ void MainWindow::finishHost(int i)
 	if(i==QDialog::Accepted) {
 		bool useremote = hostdlg_->useRemoteAddress();
 		QUrl address;
+		QString admin;
 
 		if(useremote) {
 			QString scheme;
@@ -499,6 +500,7 @@ void MainWindow::finishHost(int i)
 				scheme = "drawpile://";
 			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
 					QUrl::TolerantMode);
+			admin = hostdlg_->getAdminPassword();
 		} else {
 			address.setHost(LocalServer::address());
 			// If we are not using the default port, add it to the address.
@@ -539,7 +541,7 @@ void MainWindow::finishHost(int i)
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
 		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
-		controller_->connectHost(address);
+		controller_->connectHost(address, admin);
 
 		// Set login dialog to correct state
 		logindlg_->connecting(address.host());

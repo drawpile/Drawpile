@@ -35,6 +35,7 @@ Controller::Controller(QObject *parent)
 {
 	netstate_ = new network::HostState(this);
 	connect(netstate_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
+	connect(netstate_, SIGNAL(becameAdmin()), this, SLOT(finishLogin()));
 	connect(netstate_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
 	connect(netstate_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
 
@@ -70,9 +71,14 @@ void Controller::setModel(drawingboard::Board *board)
  * and loggedin when login is succesful.
  * If a path is specified, the session with a matching name is automatically
  * joined.
+ *
+ * If hosting on a remote server, administrator password is usually required
+ * to create sessions.
+ *
  * @param url host url. Should contain an username. May contain a path
+ * @param adminpasswd administrator password (needed only in some cases)
  */
-void Controller::connectHost(const QUrl& url)
+void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 {
 	Q_ASSERT(net_ == 0);
 	Q_ASSERT(url.userName().isEmpty()==false);
@@ -95,6 +101,9 @@ void Controller::connectHost(const QUrl& url)
 
 	// Autojoin if path is present
 	autojoinpath_ = url.path();
+
+	// Become admin if password is set
+	adminpasswd_ = adminpasswd;
 
 	// Connect to host
 	netstate_->setConnection(net_);
@@ -161,6 +170,14 @@ void Controller::disconnectHost()
 }
 
 void Controller::serverLoggedin()
+{
+	if(adminpasswd_.isEmpty())
+		finishLogin();
+	else
+		netstate_->becomeAdmin(adminpasswd_);
+}
+
+void Controller::finishLogin()
 {
 	emit loggedin();
 	if(autojoinpath_.length()>1)
