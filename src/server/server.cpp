@@ -1290,6 +1290,13 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		else
 		{
+			session_iterator si(sessions.find(msg->session_id));
+			if (si == sessions.end())
+			{
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
+				return;
+			}
+			
 			// Check session ownership
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
 				and (si->second->owner != usr->id))
@@ -1297,24 +1304,16 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			session_iterator si(sessions.find(msg->session_id));
-			if (si == sessions.end())
-			{
-				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
-			}
-			else
-			{
-				#ifndef NDEBUG
-				std::cout << "Password set for session: "
-					<< static_cast<int>(msg->session_id) << std::endl;
-				#endif
-				
-				si->second->password = msg->data;
-				si->second->pw_len = msg->length;
-				msg->data = 0;
-				
-				uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
-			}
+			#ifndef NDEBUG
+			std::cout << "Password set for session: "
+				<< static_cast<int>(msg->session_id) << std::endl;
+			#endif
+			
+			si->second->password = msg->data;
+			si->second->pw_len = msg->length;
+			msg->data = 0;
+			
+			uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
 			return;
 		}
 		break;
