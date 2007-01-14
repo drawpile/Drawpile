@@ -914,6 +914,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Password:
 		{
+			session_iterator si;
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
 			if (msg->session_id == protocol::Global)
 			{
@@ -936,7 +937,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					break;
 				}
 				
-				session_iterator si(sessions.find(msg->session_id));
+				si = sessions.find(msg->session_id);
 				if (si == sessions.end())
 				{
 					// session doesn't exist
