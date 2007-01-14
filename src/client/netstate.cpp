@@ -495,7 +495,6 @@ void HostState::handleAuthentication(const protocol::Authentication *msg)
 	passwordsession_ = msg->session_id;
 	if(lastinstruction_ == protocol::admin::command::Authenticate) {
 		sendPassword(sendadminpassword_);
-		lastinstruction_ = -1;
 	} else {
 		emit needPassword();
 	}
@@ -550,9 +549,10 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		// A full session list has been downloaded
 		emit sessionsListed();
 	} else if(msg->event == protocol::type::Password) {
-		qDebug() << "password ack";
-		if(lastinstruction_ == protocol::admin::command::Authenticate)
+		if(lastinstruction_ == protocol::admin::command::Authenticate) {
 			emit becameAdmin();
+			lastinstruction_ = -1;
+		}
 	} else {
 		qDebug() << "unhandled host ack" << int(msg->event);
 	}
@@ -578,6 +578,7 @@ void HostState::handleError(const protocol::Error *msg)
 		case TooLong: errmsg = tr("Name too long."); break;
 		case NotUnique: errmsg = tr("Name already in use."); break;
 		case InvalidRequest: errmsg = tr("Invalid request"); break;
+		case Unauthorized: errmsg = tr("Unauthorized action"); break;
 		default: errmsg = tr("Error code %1").arg(int(msg->code));
 	}
 	qDebug() << "error" << errmsg << "for session" << msg->session_id;
