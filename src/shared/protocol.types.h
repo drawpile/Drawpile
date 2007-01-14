@@ -137,13 +137,10 @@ const uint8_t
 	//! Undeafened
 	Undeafen = 23,
 	
-	//! Lock user
+	//! Lock user/layer
 	Lock = 28,
-	//! Unlock user
+	//! Unlock user/layer
 	Unlock = 29,
-	
-	//! Lock layer
-	LockLayer = 50,
 	
 	//! Kick user from session
 	Kick = 60;
