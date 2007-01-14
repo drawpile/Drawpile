@@ -104,12 +104,17 @@ const uint16_t
 	//! Garbage in instruction, couldn't parse.
 	ParseFailure = 55,
 	
+	
+	
 	/* Canvas related */
 	
 	//! Too small canvas
 	TooSmall = 57,
 	
 	/* Auth errors. */ 
+	
+	//! Insufficient rights to perform the action
+	Unauthorized = 40,
 	
 	//! Wrong password
 	PasswordFailure = 45,
