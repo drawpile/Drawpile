@@ -124,6 +124,10 @@ struct Session
 	
 	// Session sync in action.
 	uint32_t syncCounter;
+	
+	/* *** Functions *** */
+	
+	bool canJoin() { return ((users.size() + waitingSync.size()) < limit); }
 };
 
 #endif // ServerSession_INCLUDED

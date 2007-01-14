@@ -856,6 +856,13 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			if (!uInSession(usr, usr->inMsg->session_id))
 			{
+				// Test userlimit
+				if (si->second->canJoin() == false)
+				{
+					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
+					break;
+				}
+				
 				if (si->second->password != 0)
 				{
 					uSendMsg(usr, msgAuth(usr, si->second->id));
@@ -949,6 +956,13 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				{
 					// already in session
 					uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
+					break;
+				}
+				
+				// Test userlimit
+				if (si->second->canJoin() == false)
+				{
+					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 					break;
 				}
 				
