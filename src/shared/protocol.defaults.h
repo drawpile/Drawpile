@@ -51,6 +51,9 @@ const uint8_t null_count = 0;
 //! No user identifier defined (not really null, as you can see).
 const uint8_t null_user = 0;
 
+//! No layer
+const uint8_t null_layer = 0;
+
 //! No protocol revision defined.
 const uint16_t null_revision = 0;
 

@@ -115,6 +115,9 @@ const uint8_t
 
 
 //! Session event/instruction
+/**
+ * @see protocol::SessionEvent
+ */
 namespace session_event
 {
 
@@ -139,12 +142,18 @@ const uint8_t
 	//! Unlock user
 	Unlock = 29,
 	
+	//! Lock layer
+	LockLayer = 50,
+	
 	//! Kick user from session
 	Kick = 60;
 
 }
 
 //! Layer event/instruction
+/**
+ * @see protocol::LayerEvent
+ */
 namespace layer_event
 {
 

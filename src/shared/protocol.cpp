@@ -1134,6 +1134,7 @@ size_t SessionEvent::unserialize(const char* buf, size_t len) throw(std::bad_all
 	
 	memcpy_t(action, buf+i); i += sizeof(action);
 	memcpy_t(target, buf+i); i += sizeof(target);
+	memcpy_t(aux, buf+i); i += sizeof(aux);
 	
 	return i;
 }
@@ -1152,13 +1153,14 @@ size_t SessionEvent::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf, action); size_t i = sizeof(action);
 	memcpy_t(buf+i, target); i += sizeof(target);
+	memcpy_t(buf+i, aux); i += sizeof(aux);
 	
 	return i;
 }
 
 size_t SessionEvent::payloadLength() const throw()
 {
-	return sizeof(action) + sizeof(target);
+	return sizeof(action) + sizeof(target) + sizeof(aux);
 }
 
 /*

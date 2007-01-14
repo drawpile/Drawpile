@@ -1004,14 +1004,22 @@ struct SessionEvent
 	: Message
 {
 	SessionEvent() throw()
-		: Message(type::SessionEvent, message::isUser|message::isSession)
+		: Message(type::SessionEvent, message::isSession),
+		target(protocol::null_user),
+		aux(protocol::null_layer)
 	{ }
 	
 	~SessionEvent() throw() { }
 	
 	/* unique data */
 	
-	uint8_t action, target;
+	uint8_t
+		//! Action to perform
+		action,
+		//! Target user
+		target,
+		//! Aux data for action
+		aux;
 	
 	/* functions */
 	
