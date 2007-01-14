@@ -223,27 +223,30 @@ bool EditorView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 		QPoint point = mapToScene(tabev->pos()).toPoint();
-		if(pendown_) {
-			emit penMove(
-					drawingboard::Point(point.x(),point.y(),tabev->pressure())
-					);
-			if(enableoutline_ && showoutline_) {
-				// Update previous location. This is needed if brush diameter
-				// has changed.
+		if(point != prevpoint_) {
+			if(pendown_) {
+				emit penMove(
+						drawingboard::Point(point.x(),point.y(),
+							tabev->pressure())
+						);
+				if(enableoutline_ && showoutline_) {
+					// Update previous location. This is needed if brush
+					// diameter has changed.
+					QList<QRectF> rect;
+					const int dia = outlinesize_*2;
+					rect.append(QRectF(prevpoint_.x() - outlinesize_,
+								prevpoint_.y() - outlinesize_, dia,dia));
+					updateScene(rect);
+				}
+			} else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
 				const int dia = outlinesize_*2;
 				rect.append(QRectF(prevpoint_.x() - outlinesize_,
 							prevpoint_.y() - outlinesize_, dia,dia));
+				rect.append(QRectF(point.x() - outlinesize_,
+							point.y() - outlinesize_, dia,dia));
 				updateScene(rect);
 			}
-		} else if(enableoutline_ && showoutline_) {
-			QList<QRectF> rect;
-			const int dia = outlinesize_*2;
-			rect.append(QRectF(prevpoint_.x() - outlinesize_,
-						prevpoint_.y() - outlinesize_, dia,dia));
-			rect.append(QRectF(point.x() - outlinesize_,
-						point.y() - outlinesize_, dia,dia));
-			updateScene(rect);
 		}
 		prevpoint_ = point;
 		return true;
