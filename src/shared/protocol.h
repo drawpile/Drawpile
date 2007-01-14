@@ -999,6 +999,72 @@ struct SessionSelect
 	// nothing needed
 };
 
+//! Session event/instruction
+struct SessionEvent
+	: Message
+{
+	SessionEvent() throw()
+		: Message(type::SessionEvent, message::isUser|message::isSession)
+	{ }
+	
+	~SessionEvent() throw() { }
+	
+	/* unique data */
+	
+	uint8_t action, target;
+	
+	/* functions */
+	
+	size_t unserialize(const char* buf, size_t len) throw(std::bad_alloc);
+	size_t reqDataLen(const char *buf, size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
+};
+
+//! Session event/instruction
+struct LayerEvent
+	: Message
+{
+	LayerEvent() throw()
+		: Message(type::LayerEvent, message::isSession)
+	{ }
+	
+	~LayerEvent() throw() { }
+	
+	/* unique data */
+	
+	uint8_t layer_id, action, mode, opacity;
+	
+	/* functions */
+	
+	size_t unserialize(const char* buf, size_t len) throw(std::bad_alloc);
+	size_t reqDataLen(const char *buf, size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
+};
+
+//! Layer selection
+struct LayerSelect
+	: Message
+{
+	LayerSelect() throw()
+		: Message(type::LayerSelect, message::isUser|message::isSession)
+	{ }
+	
+	~LayerSelect() throw() { }
+	
+	/* unique data */
+	
+	uint8_t layer_id;
+	
+	/* functions */
+	
+	size_t unserialize(const char* buf, size_t len) throw(std::bad_alloc);
+	size_t reqDataLen(const char *buf, size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
+};
+
 } // namespace protocol
 
 #endif // Protocol_INCLUDED

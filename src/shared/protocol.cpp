@@ -1120,4 +1120,129 @@ size_t Palette::payloadLength() const throw()
 
 // nothing needed
 
+/*
+ * struct SessionEvent
+ */
+
+size_t SessionEvent::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	size_t i = unserializeHeader(buf);
+	
+	memcpy_t(action, buf+i); i += sizeof(action);
+	memcpy_t(target, buf+i); i += sizeof(target);
+	
+	return i;
+}
+
+size_t SessionEvent::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return headerSize() + payloadLength();
+}
+
+size_t SessionEvent::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, action); size_t i = sizeof(action);
+	memcpy_t(buf+i, target); i += sizeof(target);
+	
+	return i;
+}
+
+size_t SessionEvent::payloadLength() const throw()
+{
+	return sizeof(action) + sizeof(target);
+}
+
+/*
+ * struct LayerEvent
+ */
+
+size_t LayerEvent::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	size_t i = unserializeHeader(buf);
+	
+	memcpy_t(layer_id, buf+i); i += sizeof(layer_id);
+	memcpy_t(action, buf+i); i += sizeof(action);
+	memcpy_t(mode, buf+i); i += sizeof(mode);
+	memcpy_t(opacity, buf+i); i += sizeof(opacity);
+	
+	return i;
+}
+
+size_t LayerEvent::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return headerSize() + payloadLength();
+}
+
+size_t LayerEvent::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, layer_id); size_t i = sizeof(layer_id);
+	memcpy_t(buf+i, action); i += sizeof(action);
+	memcpy_t(buf+i, mode); i += sizeof(mode);
+	memcpy_t(buf+i, opacity); i += sizeof(opacity);
+	
+	return i;
+}
+
+size_t LayerEvent::payloadLength() const throw()
+{
+	return sizeof(layer_id) + sizeof(action) + sizeof(mode) + sizeof(opacity);
+}
+
+/*
+ * struct LayerSelect
+ */
+
+size_t LayerSelect::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	size_t i = unserializeHeader(buf);
+	
+	memcpy_t(layer_id, buf+i); i += sizeof(layer_id);
+	
+	return i;
+}
+
+size_t LayerSelect::reqDataLen(const char *buf, size_t len) const throw()
+{
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	return headerSize() + sizeof(layer_id);
+}
+
+size_t LayerSelect::serializePayload(char *buf) const throw()
+{
+	assert(buf != 0);
+	
+	memcpy_t(buf, layer_id);
+	
+	return sizeof(layer_id);
+}
+
+size_t LayerSelect::payloadLength() const throw()
+{
+	return sizeof(layer_id);
+}
+
 } // namespace protocol
