@@ -1151,14 +1151,6 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 	
 	protocol::Instruction* msg = static_cast<protocol::Instruction*>(usr->inMsg);
 	
-	// TODO: Allow session owners to alter sessions.
-	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
-	{
-		std::cerr << "Non-admin tries to pass instructions" << std::endl;
-		uRemove(usr, protocol::user_event::Dropped);
-		return;
-	}
-	
 	switch (msg->command)
 	{
 	case protocol::admin::command::Create:
@@ -1269,7 +1261,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Instruction));
 		}
-		break;
+		return;
 	case protocol::admin::command::Destroy:
 		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
 		// TODO
@@ -1297,8 +1289,12 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		else
 		{
-			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
-			// TODO: Check session ownership
+			// Check session ownership
+			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+				and (si->second->owner != usr->id))
+			{
+				break;
+			}
 			
 			session_iterator si(sessions.find(msg->session_id));
 			if (si == sessions.end())
@@ -1318,6 +1314,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				
 				uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
 			}
+			return;
 		}
 		break;
 	case protocol::admin::command::Authenticate:
@@ -1345,7 +1342,16 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			<< static_cast<int>(msg->command) << std::endl;
 		#endif
 		uRemove(usr, protocol::user_event::Dropped);
-		break;
+		return;
+	}
+	
+	// TODO: Allow session owners to alter sessions.
+	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
+	{
+		std::cerr << "Non-admin tries to pass instructions: "
+			<< static_cast<int>(usr->id) << std::endl;
+		uSendMsg(usr, msgError(msg->session_id, protocol::error::Unauthorized));
+		//uRemove(usr, protocol::user_event::Dropped);
 	}
 }
 
