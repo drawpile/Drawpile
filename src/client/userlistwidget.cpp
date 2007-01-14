@@ -33,6 +33,11 @@ UserList::UserList(QWidget *parent)
 
 	model_ = new UserListModel(this);
 	list_->setModel(model_);
+
+	delegate_ =new UserListDelegate(this);
+	connect(delegate_, SIGNAL(kickUser(int)), this, SIGNAL(kick(int)));
+	connect(delegate_, SIGNAL(lockUser(int, bool)), this, SIGNAL(lock(int, bool)));
+	list_->setItemDelegate(delegate_);
 }
 
 UserList::~UserList()
@@ -52,6 +57,16 @@ void UserList::removeUser(const network::User& user)
 void UserList::clearUsers()
 {
 	model_->clearUsers();
+}
+
+void UserList::lockUser(int id, bool lock)
+{
+	model_->lockUser(id, lock);
+}
+
+void UserList::setAdminMode(bool enable)
+{
+	delegate_->setAdminMode(enable);
 }
 
 }

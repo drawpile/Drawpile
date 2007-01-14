@@ -140,6 +140,18 @@ void Controller::hostSession(const QString& title, const QString& password,
 }
 
 /**
+ * @retval true if user owns the current session
+ */
+bool Controller::amSessionOwner() const
+{
+	if(session_) {
+		if(session_->info().id == netstate_->localUserId())
+			return true;
+	}
+	return false;
+}
+
+/**
  * If there is only one session, it is joined automatically. Otherwise a
  * list of sessions is presented to the user to choose from.
  */
@@ -167,6 +179,24 @@ void Controller::disconnectHost()
 {
 	Q_ASSERT(net_);
 	net_->disconnectHost();
+}
+
+void Controller::kickUser(int id)
+{
+	Q_ASSERT(session_);
+	session_->kickUser(id);
+}
+
+void Controller::lockUser(int id, bool lock)
+{
+	Q_ASSERT(session_);
+	session_->lockUser(id, lock);
+}
+
+void Controller::lockBoard(bool lock)
+{
+	Q_ASSERT(session_);
+	session_->lockUser(0, lock);
 }
 
 void Controller::serverLoggedin()
@@ -317,6 +347,23 @@ void Controller::syncDone()
 	lock_ = false;
 	// Resend brush so the new client is up to date
 	editor_->resendBrush();
+}
+
+/**
+ * An ungraceful session lock.
+ * @param lock lock or unlock
+ */
+void Controller::sessionLock(bool lock)
+{
+	if(lock) {
+		emit lockboard(tr("Locked by session owner"));
+		if(pendown_ && tool_->readonly()==false) {
+			penUp();
+		}
+	} else {
+		emit unlockboard();
+	}
+	lock_ = lock;
 }
 
 void Controller::sendRaster()

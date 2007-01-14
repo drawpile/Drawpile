@@ -15,5 +15,8 @@
 	<file>icons/network-transmit-receive.png</file>
 	<file>icons/colortriangle.png</file>
 	<file>icons/sliders.png</file>
+	<file>icons/lock.png</file>
+	<file>icons/unlock.png</file>
+	<file>icons/kick.png</file>
 </qresource>
 </RCC>

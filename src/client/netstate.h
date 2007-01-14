@@ -67,10 +67,12 @@ struct Session {
 
 //! Information about a user (sesssion specific)
 struct User {
+	User();
 	User(const QString& n, int i);
 
 	QString name;
 	int id;
+	bool locked;
 };
 
 typedef QList<Session> SessionList;
@@ -251,6 +253,12 @@ class SessionState : public QObject {
 
 		//! Set password for this session
 		void setPassword(const QString& password);
+
+		//! Admin command. Remove a user from the drawing session
+		void kickUser(int id);
+
+		//! Admin command. Lock/unlock user
+		void lockUser(int id, bool lock);
 
 		//! Send a tool info message
 		void sendToolInfo(const drawingboard::Brush& brush);

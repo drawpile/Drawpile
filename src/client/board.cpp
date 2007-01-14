@@ -216,6 +216,18 @@ void Board::commitPreviews()
 }
 
 /**
+ * Remove all preview strokes from the board
+ */
+void Board::flushPreviews()
+{
+	while(previews_.isEmpty()==false) {
+		Preview *p = previews_.dequeue();
+		p->hide();
+		previewcache_.enqueue(p);
+	}
+}
+
+/**
  * @param user user id
  * @param brush brush to use
  * @pre user must exist

@@ -46,8 +46,13 @@ Session::Session(const protocol::SessionInfo *info)
 {
 }
 
+User::User()
+	: name(QString()), id(-1), locked(false)
+{
+}
+
 User::User(const QString& n, int i)
-	: name(n), id(i)
+	: name(n), id(i), locked(false)
 {
 }
 
@@ -691,6 +696,35 @@ void SessionState::select()
 void SessionState::setPassword(const QString& password)
 {
 	host_->setPassword(password, info_.id);
+}
+
+/**
+ * @param id user id
+ * @pre user is session owner
+ */
+void SessionState::kickUser(int id)
+{
+#if 0
+	protocol::Instruction *msg = new protocol::Instruction;
+	msg->session_id = info_.id;
+	msg->user_id = id;
+	host_->net_->send(msg);
+#endif
+}
+
+/**
+ * @param id user id
+ * @param lock lock status
+ * @pre user is session owner
+ */
+void SessionState::lockUser(int id, bool lock)
+{
+#if 0
+	protocol::Instruction *msg = new protocol::Instruction;
+	msg->session_id = info_.id;
+	msg->user_id = id;
+	host_->net_->send(msg);
+#endif
 }
 
 /**

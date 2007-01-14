@@ -126,6 +126,8 @@ class MainWindow : public QMainWindow {
 		void connected();
 		//! Connection cut
 		void disconnected();
+		//! Joined a session
+		void joined(const QString& title);
 		//! Disallow changes to the board
 		void lock(const QString& reason);
 		//! Allow changes to the board
@@ -216,8 +218,6 @@ class MainWindow : public QMainWindow {
 
 		QActionGroup *adminTools_;
 		QAction *lockboard_;
-		QAction *lockuser_;
-		QAction *kickuser_;
 
 		QActionGroup *drawingtools_;
 		QAction *brushtool_;

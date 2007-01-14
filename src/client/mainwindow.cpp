@@ -99,8 +99,11 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(userJoined(network::User)), userlist_, SLOT(addUser(network::User)));
 	connect(controller_, SIGNAL(userParted(network::User)), userlist_, SLOT(removeUser(network::User)));
 	connect(controller_, SIGNAL(disconnected(QString)), userlist_, SLOT(clearUsers()));
-
-	// Controller -> mainwindow
+	connect(userlist_, SIGNAL(kick(int)), controller_, SLOT(kickUser(int)));
+	connect(userlist_, SIGNAL(lock(int, bool)), controller_, SLOT(lockUser(int, bool)));
+	// Controller <- actions
+	connect(lockboard_, SIGNAL(toggled(bool)), controller_, SLOT(lockBoard(bool)));
+	// Controller <-> mainwindow
 	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(disconnected()));
 	connect(controller_, SIGNAL(lockboard(QString)), this, SLOT(lock(QString)));
@@ -111,7 +114,7 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(disconnected(QString)), logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined(QString)), logindlg_, SLOT(joined()));
-	connect(controller_, SIGNAL(joined(QString)), this, SLOT(setSessionTitle(QString)));
+	connect(controller_, SIGNAL(joined(QString)), this, SLOT(joined(QString)));
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),this, SLOT(rasterUp(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
@@ -620,9 +623,21 @@ void MainWindow::disconnected()
 	host_->setEnabled(true);
 	join_->setEnabled(true);
 	logout_->setEnabled(false);
+	adminTools_->setEnabled(false);
 	setSessionTitle(QString());
 	new_->setEnabled(true);
 	open_->setEnabled(true);
+}
+
+/**
+ * @param title session title
+ */
+void MainWindow::joined(const QString& title)
+{
+	setSessionTitle(title);
+	bool owner = controller_->amSessionOwner();
+	userlist_->setAdminMode(owner);
+	adminTools_->setEnabled(owner);
 }
 
 /**
@@ -865,18 +880,14 @@ void MainWindow::initActions()
 	logout_->setStatusTip(tr("Leave this drawing session"));
 	lockboard_ = new QAction("Lo&ck the board", this);
 	lockboard_->setStatusTip(tr("Prevent others from making changes"));
-	kickuser_ = new QAction("Kick", this);
-	lockuser_ = new QAction("Lock", this);
+	lockboard_->setCheckable(true);
 
 	logout_->setEnabled(false);
-	lockboard_->setEnabled(false);
-	kickuser_->setEnabled(false);
-	lockuser_->setEnabled(false);
 
 	adminTools_ = new QActionGroup(this);
+	adminTools_->setExclusive(false);
 	adminTools_->addAction(lockboard_);
-	adminTools_->addAction(kickuser_);
-	adminTools_->addAction(lockuser_);
+	adminTools_->setEnabled(false);
 
 	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
 	connect(join_, SIGNAL(triggered()), this, SLOT(join()));
@@ -957,12 +968,8 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(host_);
 	sessionmenu->addAction(join_);
 	sessionmenu->addAction(logout_);
-#if 0 // these features are not yet implemented
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(lockboard_);
-	sessionmenu->addAction(lockuser_);
-	sessionmenu->addAction(kickuser_);
-#endif
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(brushtool_);

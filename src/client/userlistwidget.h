@@ -24,6 +24,7 @@
 
 class QListView;
 class UserListModel;
+class UserListDelegate;
 
 namespace network {
 	class User;
@@ -43,6 +44,8 @@ class UserList: public QDockWidget
 		UserList(QWidget *parent=0);
 		~UserList();
 
+		void setAdminMode(bool enable);
+
 	public slots:
 		//! Add a new user to the list
 		void addUser(const network::User& user);
@@ -50,10 +53,17 @@ class UserList: public QDockWidget
 		void removeUser(const network::User& user);
 		//! Remove all users
 		void clearUsers();
+		//! Change user lock status
+		void lockUser(int id, bool lock);
+
+	signals:
+		void kick(int userid);
+		void lock(int userid, bool lock);
 
 	private:
 		QListView *list_;
 		UserListModel *model_;
+		UserListDelegate *delegate_;
 };
 
 }

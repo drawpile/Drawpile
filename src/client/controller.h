@@ -73,6 +73,9 @@ class Controller : public QObject
 		void hostSession(const QString& title, const QString& password,
 				const QImage& image);
 
+		//! Check if the local user owns the current session
+		bool amSessionOwner() const;
+
 		//! Join a session
 		void joinSession();
 
@@ -91,6 +94,15 @@ class Controller : public QObject
 
 		//! Disconnect from host
 		void disconnectHost();
+
+		//! Remove a user from the drawing session
+		void kickUser(int id);
+
+		//! Lock/unlock user
+		void lockUser(int id, bool lock);
+
+		//! Lock the entire board
+		void lockBoard(bool lock);
 
 		void penDown(const drawingboard::Point& point);
 		void penMove(const drawingboard::Point& point);
@@ -162,6 +174,7 @@ class Controller : public QObject
 		void rasterUpload();
 		void syncWait();
 		void syncDone();
+		void sessionLock(bool lock);
 
 	private:
 		void sendRaster();

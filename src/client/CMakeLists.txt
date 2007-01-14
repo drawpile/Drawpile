@@ -52,6 +52,7 @@ set (
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
 	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp logindialog.cpp
 	preview.cpp localserver.cpp popupmessage.cpp userlistwidget.cpp
+	userlistmodel.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )

@@ -89,6 +89,9 @@ class Board : public QGraphicsScene
 		//! End a preview stroke
 		void endPreview();
 
+		//! Scrap preview strokes
+		void flushPreviews();
+
 	public slots:
 		//! Add a new user to the board
 		void addUser(int id);

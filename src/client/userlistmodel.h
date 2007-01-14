@@ -2,6 +2,7 @@
 #define USERLISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QItemDelegate>
 
 #include "netstate.h"
 
@@ -11,52 +12,35 @@ class UserListModel : public QAbstractListModel {
 		UserListModel(QObject *parent=0) : QAbstractListModel(parent) {}
 		~UserListModel() {}
 
-		QVariant data(const QModelIndex& index, int role) const
-		{
-			if(index.row() < 0 || index.row() >= users_.size())
-				return QVariant();
-			if(role == Qt::DisplayRole)
-				return users_.at(index.row()).name;
-			return QVariant();
-		}
-
-		int rowCount(const QModelIndex& parent) const
-		{
-			if(parent.isValid())
-				return 0;
-			return users_.count();
-		}
-
-		void addUser(const network::User& user)
-		{
-			beginInsertRows(QModelIndex(),users_.size(),users_.size());
-			users_.append(user);
-			endInsertRows();
-		}
-
-		void removeUser(int id)
-		{
-			for(int i=0;i<users_.size();++i) {
-				if(users_.at(i).id == id) {
-					beginRemoveRows(QModelIndex(),i,i);
-					users_.removeAt(i);
-					endRemoveRows();
-					break;
-				}
-			}
-		}
-
-		void clearUsers()
-		{
-			if(users_.isEmpty()==false) {
-				beginRemoveRows(QModelIndex(), 0, users_.size()-1);
-				users_.clear();
-				endRemoveRows();
-			}
-		}
+		QVariant data(const QModelIndex& index, int role) const;
+		int rowCount(const QModelIndex& parent) const;
+		void addUser(const network::User& user);
+		void removeUser(int id);
+		void clearUsers();
+		void lockUser(int id, bool lock);
 
 	private:
 		network::UserList users_;
+};
+
+class UserListDelegate : public QItemDelegate {
+	Q_OBJECT
+	public:
+		UserListDelegate(QObject *parent=0);
+
+		//! Show or hide admin commands
+		void setAdminMode(bool enable);
+
+		void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+		QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+		bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
+	signals:
+		void lockUser(int id, bool lock);
+		void kickUser(int id);
+
+	private:
+		bool enableadmin_;
+		QPixmap lock_, unlock_, kick_;
 };
 
 #endif
