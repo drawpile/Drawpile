@@ -75,7 +75,8 @@ struct Session
 		owner(protocol::null_user),
 		width(0),
 		height(0),
-		syncCounter(0)
+		syncCounter(0),
+		locked(false)
 	{
 		#ifndef NDEBUG
 		std::cout << "Session::Session()" << std::endl;
@@ -94,26 +95,6 @@ struct Session
 		users.clear();
 		
 		delete [] title;
-	}
-	
-	void reset(uint8_t _id=protocol::null_user)
-	{
-		delete [] title;
-		users.clear();
-		waitingSync.clear();
-		
-		id = _id;
-		len = 0;
-		title = 0;
-		pw_len = 0;
-		password = 0;
-		mode = protocol::user_mode::None;
-		limit = 10;
-		flags = 0;
-		owner = protocol::null_user;
-		width = 0;
-		height = 0;
-		syncCounter = 0;
 	}
 	
 	// Session identifier
@@ -157,6 +138,9 @@ struct Session
 	
 	// Session sync in action.
 	uint32_t syncCounter;
+	
+	// Session is locked, preventing any drawing to take place.
+	bool locked;
 	
 	/* *** Functions *** */
 	

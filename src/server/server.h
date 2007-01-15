@@ -150,10 +150,10 @@ protected:
 	message_ref msgHostInfo() const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgAuth(User* usr, uint8_t session) const throw(std::bad_alloc);
+	message_ref msgAuth(User*& usr, uint8_t session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref uCreateEvent(User* usr, Session* session, uint8_t event) const throw(std::bad_alloc);
+	message_ref uCreateEvent(User*& usr, Session*& session, uint8_t event) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgError(uint8_t session, uint16_t errorCode) const throw(std::bad_alloc);
@@ -162,7 +162,7 @@ protected:
 	message_ref msgAck(uint8_t session, uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSyncWait(Session* session) const throw(std::bad_alloc);
+	message_ref msgSyncWait(Session*& session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
@@ -194,17 +194,17 @@ protected:
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
 	// Send message to session
-	void Propagate(message_ref msg, uint8_t source=protocol::null_user, bool toAll=false) throw();
+	void Propagate(Session*& session, message_ref msg, uint8_t source=protocol::null_user, bool toAll=false) throw();
 	
 	// Send message to user
 	/*
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
-	void uSendMsg(User* usr, message_ref msg) throw();
+	void uSendMsg(User*& usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
-	void SyncSession(Session* session) throw();
+	void SyncSession(Session*& session) throw();
 	
 	// Break synchronization with user.
 	void breakSync(User*& usr) throw();
@@ -213,10 +213,10 @@ protected:
 	void cancelSync(User*& usr) throw();
 	
 	//
-	void uJoinSession(User*& usr, Session* session) throw();
+	void uJoinSession(User*& usr, Session*& session) throw();
 	
 	//
-	void uLeaveSession(User*& usr, Session* session, uint8_t reason=protocol::user_event::Leave) throw();
+	void uLeaveSession(User*& usr, Session*& session, uint8_t reason=protocol::user_event::Leave) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
@@ -230,16 +230,16 @@ protected:
 	
 	// Tests if user is in session
 	inline
-	bool uInSession(User* usr, uint8_t session) const throw();
+	bool uInSession(User*& usr, uint8_t session) const throw();
 	
 	// check name/title uniqueness
 	inline
-	bool validateUserName(User* usr) const throw();
+	bool validateUserName(User*& usr) const throw();
 	
 	inline
-	bool validateSessionTitle(Session* session) const throw();
+	bool validateSessionTitle(Session*& session) const throw();
 	
-	void uRegenSeed(User* usr) const throw();
+	void uRegenSeed(User*& usr) const throw();
 public:
 	//! ctor
 	Server() throw();
