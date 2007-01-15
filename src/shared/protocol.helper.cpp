@@ -236,6 +236,12 @@ Message* getMessage(const uint8_t type) throw()
 		return new Acknowledgement();
 	case type::Error:
 		return new Error();
+	case type::SessionEvent:
+		return new SessionEvent();
+	case type::LayerEvent:
+		return new LayerEvent();
+	case type::LayerSelect:
+		return new LayerSelect();
 	case type::Deflate:
 		return new Deflate();
 	case type::Chat:
@@ -243,6 +249,7 @@ Message* getMessage(const uint8_t type) throw()
 	case type::Palette:
 		return new Palette();
 	default:
+		std::cerr << "Unknown message type: " << static_cast<int>(type) << std::endl;
 		return 0;
 	}
 }
