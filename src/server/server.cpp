@@ -460,15 +460,13 @@ void Server::uProcessData(User*& usr) throw()
 	
 	while (usr->input.canRead() != 0)
 	{
-		if (!usr->inMsg)
+		if (usr->inMsg == 0)
 		{
-			try {
-				usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
-			}
-			catch (std::exception &e) {
-				std::cerr << "Invalid data from user: "
-					<< static_cast<int>(usr->id) << std::endl;
-				uRemove(usr, protocol::user_event::Dropped);
+			usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
+			if (usr->inMsg == 0)
+			{
+				// unknown message type
+				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
 		}
