@@ -47,6 +47,7 @@ struct SessionData
 		session(s),
 		layer(protocol::null_layer),
 		mode(s->mode),
+		locked(false),
 		syncWait(false)
 	{
 	}
@@ -66,6 +67,8 @@ struct SessionData
 	
 	// User mode within session
 	uint8_t mode;
+	
+	bool locked;
 	
 	bool syncWait;
 };

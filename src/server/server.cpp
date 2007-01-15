@@ -1248,15 +1248,34 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				break;
 			}
 			Propagate(message_ref(event));
-			uLeaveSession(sui->second, session, protocol::user_event::Kicked);
 			usr->inMsg = 0;
+			
+			uLeaveSession(sui->second, session, protocol::user_event::Kicked);
 		}
 		break;
 	case protocol::session_event::Lock:
-		
-		break;
 	case protocol::session_event::Unlock:
-		
+		{
+			session_usr_iterator sui(session->users.find(event->target));
+			if (sui == session->users.end())
+			{
+				// user not found
+				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
+				break;
+			}
+			
+			usr_session_iterator usi(sui->sessions.find(session->id));
+			if (usi == sui->sessions.end())
+			{
+				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
+				break;
+			}
+			
+			sui->locked = (event->action == protocol::session_event::Lock ? true : false);
+			usr->inMsg = 0;
+			
+			Propagate(message_ref(event));
+		}
 		break;
 	case protocol::session_event::Delegate:
 		
