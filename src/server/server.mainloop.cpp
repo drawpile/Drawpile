@@ -45,7 +45,8 @@ int Server::run() throw()
 	state = server::state::Active;
 	
 	// user map iterator
-	user_iterator usr;
+	user_iterator usr_iter;
+	User *usr;
 	
 	// event count
 	int ec;
@@ -93,30 +94,31 @@ int Server::run() throw()
 					continue;
 				}
 				
-				usr = users.find(event->first);
-				if (usr != users.end())
+				usr_iter = users.find(event->first);
+				if (usr_iter != users.end())
 				{
+					usr = usr_iter->second;
 					if (fIsSet(event->second, ev.error))
 					{
-						uRemove(usr->second, protocol::user_event::BrokenPipe);
+						uRemove(usr, protocol::user_event::BrokenPipe);
 						continue;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(event->second, ev.hangup))
 					{
-						uRemove(usr->second, protocol::user_event::Disconnect);
+						uRemove(usr, protocol::user_event::Disconnect);
 						continue;
 					}
 					#endif // EV_HAS_HANGUP
 					if (fIsSet(event->second, ev.read))
 					{
-						uRead(usr->second);
-						if (usr->second == 0) continue;
+						uRead(usr);
+						if (usr == 0) continue;
 					}
 					if (fIsSet(event->second, ev.write))
 					{
-						uWrite(usr->second);
-						if (usr->second == 0) continue;
+						uWrite(usr);
+						if (usr == 0) continue;
 					}
 				}
 				else
@@ -134,32 +136,33 @@ int Server::run() throw()
 				if (--ec == 0) continue;
 			}
 			
-			for (usr = users.begin(); usr != users.end(); usr++)
+			for (usr_iter = users.begin(); usr_iter != users.end(); usr_iter++)
 			{
-				t_events = ev.getEvents(usr->first);
+				t_events = ev.getEvents(usr_iter->first);
 				if (t_events != 0)
 				{
+					usr = usr_iter->second;
 					if (fIsSet(t_events, ev.error))
 					{
-						uRemove(usr->second, protocol::user_event::BrokenPipe);
-						if (--ec == 0) break;
+						uRemove(usr, protocol::user_event::BrokenPipe);
+						break;
 					}
 					#ifdef EV_HAS_HANGUP
 					if (fIsSet(t_events, ev.hangup))
 					{
-						uRemove(usr->second, protocol::user_event::Disconnect);
-						if (--ec == 0) break;
+						uRemove(usr, protocol::user_event::Disconnect);
+						break;
 					}
 					#endif // EV_HAS_HANGUP
 					if (fIsSet(t_events, ev.read))
 					{
-						uRead(usr->second);
-						if (usr->second == 0) break;
+						uRead(usr);
+						if (usr == 0) break;
 					}
 					if (fIsSet(t_events, ev.write))
 					{
-						uWrite(usr->second);
-						if (usr->second == 0) break;
+						uWrite(usr);
+						if (usr == 0) break;
 					}
 					
 					if (--ec == 0) break;
@@ -171,8 +174,6 @@ int Server::run() throw()
 			if (ec != 0) { std::cout << "Events left: " << ec << std::endl; }
 			#endif //NDEBUG
 			}
-			
-			usr = users.end();
 			
 			#else // EVENT_BY_*
 			#error No event fetching method defined
