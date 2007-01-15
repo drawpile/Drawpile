@@ -934,8 +934,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			usr->inMsg->user_id = usr->id;
-			
-			uSessionEvent(si->second, usr);
+			Session *session = si->second;
+			uSessionEvent(session, usr);
 			//usr->inMsg = 0;
 		}
 		break;
@@ -1209,11 +1209,13 @@ void Server::uTunnelRaster(User*& usr) throw()
 	// Forward to users.
 	tunnel_iterator ti(ft.first);
 	user_iterator ui;
+	User *usr_ptr;
 	for (; ti != ft.second; ti++)
 	{
 		ui = users.find(ti->second);
-		uSendMsg(ui->second, message_ref(raster));
-		if (last) ui->second->syncing = false;
+		usr_ptr = ui->second;
+		uSendMsg(usr_ptr, message_ref(raster));
+		if (last) usr_ptr->syncing = false;
 	}
 	
 	// Break tunnel if that was the last raster piece.
@@ -1842,11 +1844,15 @@ void Server::Propagate(message_ref msg, uint8_t source, bool toAll) throw()
 		return;
 	}
 	
+	User *usr_ptr;
 	session_usr_iterator ui( si->second->users.begin() );
 	for (; ui != si->second->users.end(); ui++)
 	{
 		if (ui->second->id != source)
-			uSendMsg(ui->second, msg);
+		{
+			usr_ptr = ui->second;
+			uSendMsg(usr_ptr, msg);
+		}
 	}
 	
 	
@@ -1918,27 +1924,32 @@ void Server::SyncSession(Session* session) throw()
 	std::vector<message_ref> msg_queue;
 	session_usr_iterator old(session->users.begin());
 	// build msg_queue
+	User *usr_ptr;
 	for (; old != session->users.end(); old++)
 	{
 		// clear syncwait 
-		old->second->sessions.find(session->id)->second.syncWait = false;
+		usr_ptr = old->second;
+		usr_session_iterator usi(usr_ptr->sessions.find(session->id));
+		if (usi != usr_ptr->sessions.end())
+		{
+			usi->second.syncWait = false;
+		}
 		
 		// add messages to msg_queue
-		msg_queue.push_back(uCreateEvent(old->second, session, protocol::user_event::Join));
-		if (old->second->session == session->id)
+		msg_queue.push_back(uCreateEvent(usr_ptr, session, protocol::user_event::Join));
+		if (usr_ptr->session == session->id)
 		{
 			msg.reset(new protocol::SessionSelect);
-			msg->user_id = old->second->id;
+			msg->user_id = usr_ptr->id;
 			msg->session_id = session->id;
 			msg_queue.push_back(msg);
 		}
-		
 	}
 	
-	std::list<User*>::iterator new_i, new_i2;
+	std::list<User*>::iterator new_i(newc.begin()), new_i2;
 	std::vector<message_ref>::iterator msg_queue_i;
 	// Send messages
-	for (new_i = newc.begin(); new_i != newc.end(); new_i++)
+	for (; new_i != newc.end(); new_i++)
 	{
 		for (msg_queue_i=msg_queue.begin(); msg_queue_i != msg_queue.end(); msg_queue_i++)
 		{
@@ -1961,7 +1972,10 @@ void Server::SyncSession(Session* session) throw()
 			for (new_i2 = newc.begin(); new_i2 != newc.end(); new_i2++)
 			{
 				if (new_i2 == new_i) continue; // skip self
-				msg = uCreateEvent(old->second, session, protocol::user_event::Join);
+				uSendMsg(
+					(*new_i),
+					uCreateEvent((*new_i2), session, protocol::user_event::Join)
+				);
 			}
 		}
 	}
@@ -2134,7 +2148,15 @@ void Server::breakSync(User*& usr) throw()
 	#endif
 	
 	uSendMsg(usr, msgError(usr->syncing, protocol::error::SyncFailure));
-	uLeaveSession(usr, sessions.find(usr->syncing)->second);
+	
+	session_iterator sui(sessions.find(usr->syncing));
+	if (sui == sessions.end())
+	{
+		std::cerr << "Session to break sync with was not found!" << std::endl;
+		return;
+	}
+	
+	uLeaveSession(usr, sui->second);
 	usr->syncing = protocol::Global;
 }
 
@@ -2158,7 +2180,13 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	tunnel_iterator ti;
 	while ((ti = tunnel.find(usr->id)) != tunnel.end())
 	{
-		breakSync(users.find(ti->second)->second);
+		user_iterator usi(users.find(ti->second));
+		if (usi == users.end())
+		{
+			std::cerr << "Tunnel's other end was not found in users." << std::endl;
+			continue;
+		}
+		breakSync(usi->second);
 		tunnel.erase(ti->first);
 	}
 	
