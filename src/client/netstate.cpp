@@ -930,8 +930,10 @@ void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 				emit sessionLocked(false);
 			}
 			break;
+		case Kick:
+			emit userKicked(msg->target);
+			break;
 		case Delegate:
-			// TODO emit signal to indicate change of ownership
 			info_.owner = msg->target;
 			emit ownerChanged();
 			break;

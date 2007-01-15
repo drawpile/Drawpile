@@ -140,6 +140,9 @@ class Controller : public QObject
 		//! A user left the session
 		void userParted(const network::User& user);
 
+		//! A user got kicked out
+		void userKicked(const network::User& user);
+
 		//! User status has changed
 		void userChanged(const network::User& user);
 
@@ -180,6 +183,7 @@ class Controller : public QObject
 		void sessionLocked(bool lock);
 		void userLocked(int id, bool lock);
 		void sessionOwnerChanged();
+		void sessionKicked(int id);
 
 	private:
 		void sendRaster();

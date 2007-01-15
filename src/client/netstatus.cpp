@@ -118,5 +118,11 @@ void NetStatus::leave(const network::User& user)
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
 }
 
+void NetStatus::kicked(const network::User& user)
+{
+	popup_->setMessage(tr("<b>%1</b> was kicked by session owner").arg(user.name));
+	popup_->popupAt(mapToGlobal(rect().topLeft()));
+}
+
 }
 

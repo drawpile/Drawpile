@@ -331,6 +331,9 @@ class SessionState : public QObject {
 		//! Session owner changed
 		void ownerChanged();
 
+		//! A user got kicked from the session
+		void userKicked(int id);
+
 		//! Raster data upload request
 		void syncRequest();
 

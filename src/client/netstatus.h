@@ -53,6 +53,8 @@ class NetStatus : public QWidget
 		void join(const network::User& user);
 		//! User leaves
 		void leave(const network::User& user);
+		//! User got kicked out
+		void kicked(const network::User& user);
 
 	private:
 		QLabel *label_, *icon_;

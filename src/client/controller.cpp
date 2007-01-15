@@ -240,6 +240,7 @@ void Controller::sessionJoined(int id)
 	connect(session_, SIGNAL(sessionLocked(bool)), this, SLOT(sessionLocked(bool)));
 	connect(session_, SIGNAL(userLocked(int, bool)), this, SLOT(userLocked(int,bool)));
 	connect(session_, SIGNAL(ownerChanged()), this, SLOT(sessionOwnerChanged()));
+	connect(session_, SIGNAL(userKicked(int)), this, SLOT(sessionKicked(int)));
 
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
@@ -248,7 +249,6 @@ void Controller::sessionJoined(int id)
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
 	connect(session_, SIGNAL(userJoined(int)), board_, SLOT(addUser(int)));
 	connect(session_, SIGNAL(userLeft(int)), board_, SLOT(removeUser(int)));
-
 
 	// Get a remote board editor
 	delete editor_;
@@ -415,6 +415,17 @@ void Controller::userLocked(int id, bool lock)
 void Controller::sessionOwnerChanged()
 {
 	qDebug() << "owner changed, TODO";
+}
+
+/**
+ * User got kicked out
+ * @param id id of the kicked user
+ */
+void Controller::sessionKicked(int id)
+{
+	emit userKicked(*(session_->user(id)));
+	if(id == netstate_->localUserId())
+		disconnectHost();
 }
 
 void Controller::sendRaster()
