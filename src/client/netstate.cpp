@@ -896,7 +896,7 @@ void SessionState::handleSyncWait(const protocol::SyncWait *msg)
 void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 {
 	User *user = 0;
-	if(msg->target != 0) {
+	if(msg->target != protocol::null_user) {
 		for(int i=0;i<users_.size();++i) {
 			if(users_.at(i).id == msg->target) {
 				user = &users_[i];

@@ -196,7 +196,7 @@ void Controller::lockUser(int id, bool lock)
 void Controller::lockBoard(bool lock)
 {
 	Q_ASSERT(session_);
-	session_->lockUser(0, lock);
+	session_->lockUser(protocol::null_user, lock);
 }
 
 void Controller::serverLoggedin()
@@ -358,10 +358,6 @@ void Controller::syncDone()
  */
 void Controller::sessionLocked(bool lock)
 {
-	// Session owner cannot be locked
-	if(netstate_->localUserId() == session_->info().owner)
-		return;
-
 	if(lock) {
 		emit lockboard(tr("Locked by session owner"));
 		if(pendown_ && tool_->readonly()==false) {
@@ -389,7 +385,7 @@ void Controller::userLocked(int id, bool lock)
 	Q_ASSERT(user);
 	bool islocal = user->id == netstate_->localUserId();
 
-	// Session owner cannot be locked
+	// Session owner cannot be locked (except when entire board is locked)
 	if(netstate_->localUserId() == session_->info().owner && islocal)
 		return;
 
