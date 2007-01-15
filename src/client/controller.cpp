@@ -237,6 +237,9 @@ void Controller::sessionJoined(int id)
 
 	connect(session_, SIGNAL(userJoined(int)), this, SLOT(addUser(int)));
 	connect(session_, SIGNAL(userLeft(int)), this, SLOT(removeUser(int)));
+	connect(session_, SIGNAL(userChanged(int)), this, SLOT(userChanged(int)));
+	connect(session_, SIGNAL(sessionLocked(bool)), this, SLOT(sessionLocked(bool)));
+	connect(session_, SIGNAL(userLocked(int, bool)), this, SLOT(userLocked(int,bool)));
 
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
@@ -350,11 +353,15 @@ void Controller::syncDone()
 }
 
 /**
- * An ungraceful session lock.
+ * Session was locked ungracefully
  * @param lock lock or unlock
  */
-void Controller::sessionLock(bool lock)
+void Controller::sessionLocked(bool lock)
 {
+	// Session owner cannot be locked
+	if(netstate_->localUserId() == session_->info().owner)
+		return;
+
 	if(lock) {
 		emit lockboard(tr("Locked by session owner"));
 		if(pendown_ && tool_->readonly()==false) {
@@ -364,6 +371,31 @@ void Controller::sessionLock(bool lock)
 		emit unlockboard();
 	}
 	lock_ = lock;
+}
+
+/**
+ * User has been locked or unlocked
+ * @param id user id
+ */
+void Controller::userLocked(int id, bool lock)
+{
+	// Session owner cannot be locked
+	if(netstate_->localUserId() == session_->info().owner)
+		return;
+
+	const network::User *user = session_->user(id);
+	Q_ASSERT(user);
+	emit userChanged(*user);
+	if(lock) {
+		// Lock UI if local user was locked
+		if(id == netstate_->localUserId() && lock_==false)
+			sessionLocked(true);
+	} else {
+		// Unlock UI if local user was unlocked and general session lock
+		// is not in place.
+		if(id == netstate_->localUserId() && session_->isLocked()==false)
+			sessionLocked(false);
+	}
 }
 
 void Controller::sendRaster()

@@ -102,7 +102,7 @@ MainWindow::MainWindow()
 	connect(userlist_, SIGNAL(kick(int)), controller_, SLOT(kickUser(int)));
 	connect(userlist_, SIGNAL(lock(int, bool)), controller_, SLOT(lockUser(int, bool)));
 	// Controller <- actions
-	connect(lockboard_, SIGNAL(toggled(bool)), controller_, SLOT(lockBoard(bool)));
+	connect(lockboard_, SIGNAL(triggered(bool)), controller_, SLOT(lockBoard(bool)));
 	// Controller <-> mainwindow
 	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(disconnected()));
@@ -647,6 +647,7 @@ void MainWindow::joined(const QString& title)
 void MainWindow::lock(const QString& reason)
 {
 	statusBar()->showMessage(tr("Board locked (%1)").arg(reason));
+	lockboard_->setChecked(true);
 }
 
 /**
@@ -655,6 +656,7 @@ void MainWindow::lock(const QString& reason)
 void MainWindow::unlock()
 {
 	statusBar()->showMessage(tr("Board unlocked"), 500);
+	lockboard_->setChecked(false);
 }
 
 void MainWindow::rasterUp(int p)

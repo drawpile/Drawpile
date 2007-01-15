@@ -140,6 +140,9 @@ class Controller : public QObject
 		//! A user left the session
 		void userParted(const network::User& user);
 
+		//! User status has changed
+		void userChanged(const network::User& user);
+
 		//! There were no sessions to join
 		void noSessions();
 
@@ -174,7 +177,8 @@ class Controller : public QObject
 		void rasterUpload();
 		void syncWait();
 		void syncDone();
-		void sessionLock(bool lock);
+		void sessionLocked(bool lock);
+		void userLocked(int id, bool lock);
 
 	private:
 		void sendRaster();

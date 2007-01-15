@@ -143,6 +143,14 @@ void HostState::receiveMessage()
 				else
 					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
 				break;
+			case type::SessionEvent:
+				if(mysessions_.contains(msg->session_id))
+					mysessions_.value(msg->session_id)->handleSessionEvent(
+							static_cast<SessionEvent*>(msg));
+				else
+					qDebug() << "received event for unsubscribed session " << int(msg->session_id);
+				break;
+
 			default:
 				qDebug() << "unhandled message type " << int(msg->type);
 				break;
@@ -590,7 +598,7 @@ void HostState::handleError(const protocol::Error *msg)
  * @param info session information
  */
 SessionState::SessionState(HostState *parent, const Session& info)
-	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),bufferdrawing_(true)
+	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
 }
@@ -705,12 +713,11 @@ void SessionState::setPassword(const QString& password)
  */
 void SessionState::kickUser(int id)
 {
-#if 0
-	protocol::Instruction *msg = new protocol::Instruction;
+	protocol::SessionEvent *msg = new protocol::SessionEvent;
 	msg->session_id = info_.id;
-	msg->user_id = id;
+	msg->action = protocol::session_event::Kick;
+	msg->target = id;
 	host_->net_->send(msg);
-#endif
 }
 
 /**
@@ -720,12 +727,14 @@ void SessionState::kickUser(int id)
  */
 void SessionState::lockUser(int id, bool lock)
 {
-#if 0
-	protocol::Instruction *msg = new protocol::Instruction;
+	protocol::SessionEvent *msg = new protocol::SessionEvent;
 	msg->session_id = info_.id;
-	msg->user_id = id;
+	if(lock)
+		msg->action = protocol::session_event::Lock;
+	else
+		msg->action = protocol::session_event::Unlock;
+	msg->target = id;
 	host_->net_->send(msg);
-#endif
 }
 
 /**
@@ -875,6 +884,33 @@ void SessionState::handleSynchronize(const protocol::Synchronize *msg)
 void SessionState::handleSyncWait(const protocol::SyncWait *msg)
 {
 	emit syncWait();
+}
+
+/**
+ * Received session events contain information about other users in the
+ * session.
+ * @param msg SessionEvent message
+ */
+void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
+{
+	// TODO handle general session lock
+	switch(msg->action) {
+		using namespace protocol::session_event;
+		case Lock:
+			if(msg->target==0)
+				emit sessionLocked(true);
+			else
+				emit userLocked(msg->target, true);
+			break;
+		case Unlock:
+			if(msg->target==0)
+				emit sessionLocked(false);
+			else
+			emit userLocked(msg->target, false);
+			break;
+		default:
+			qDebug() << "unhandled session event action" << int(msg->action);
+	}
 }
 
 /**

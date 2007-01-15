@@ -42,6 +42,7 @@ namespace protocol {
 	class StrokeEnd;
 	class Synchronize;
 	class SyncWait;
+	class SessionEvent;
 };
 
 namespace drawingboard {
@@ -242,6 +243,9 @@ class SessionState : public QObject {
 		//! Check if raster upload is in progress
 		bool isUploading() const;
 
+		//! Check if general session lock is in place
+		bool isLocked() const { return lock_; }
+
 		//! Release raster data
 		void releaseRaster();
 
@@ -287,6 +291,9 @@ class SessionState : public QObject {
 		//! Handle SyncWait command
 		void handleSyncWait(const protocol::SyncWait *msg);
 
+		//! Handle session event
+		void handleSessionEvent(const protocol::SessionEvent *msg);
+
 		//! Handle ToolInfo messages
 		bool handleToolInfo(protocol::ToolInfo *msg);
 		//
@@ -314,6 +321,12 @@ class SessionState : public QObject {
 
 		//! A user has left the session
 		void userLeft(int id);
+
+		//! User has been (un)locked
+		void userLocked(int id, bool lock);
+
+		//! Session has been (un)locked
+		void sessionLocked(bool lock);
 
 		//! Raster data upload request
 		void syncRequest();
@@ -346,6 +359,7 @@ class SessionState : public QObject {
 		QString password_;
 		QByteArray raster_;
 		unsigned int rasteroffset_;
+		bool lock_;
 
 		bool bufferdrawing_;
 		QQueue<protocol::Message*> drawbuffer_;
