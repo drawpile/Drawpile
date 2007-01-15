@@ -185,7 +185,7 @@ protected:
 	void uTunnelRaster(User*& usr) throw();
 	
 	// Handle SessionEvent message
-	void uSessionEvent(Session*& session, protocol::SessionEvent* event) throw();
+	void uSessionEvent(Session*& session, User*& usr) throw();
 	
 	// Handle instruction message
 	void uHandleInstruction(User*& usr) throw(std::bad_alloc);
@@ -216,7 +216,7 @@ protected:
 	void uJoinSession(User*& usr, Session* session) throw();
 	
 	//
-	void uLeaveSession(User*& usr, Session* session, bool announce=true) throw();
+	void uLeaveSession(User*& usr, Session* session, uint8_t reason=protocol::user_event::Leave) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);

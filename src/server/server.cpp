@@ -924,17 +924,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
-				and (si->second->owner != usr->id))
-			{
-				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
-				break;
-			}
-			
 			usr->inMsg->user_id = usr->id;
 			
-			uSessionEvent(si->second, static_cast<protocol::SessionEvent*>(usr->inMsg));
-			usr->inMsg = 0;
+			uSessionEvent(si->second, usr);
+			//usr->inMsg = 0;
 		}
 		break;
 	case protocol::type::LayerEvent:
@@ -1221,23 +1214,43 @@ void Server::uTunnelRaster(User*& usr) throw()
 	usr->inMsg = 0;
 }
 
-void Server::uSessionEvent(Session*& session, protocol::SessionEvent* event) throw()
+void Server::uSessionEvent(Session*& session, User*& usr) throw()
 {
 	assert(session != 0);
-	assert(event != 0);
+	assert(usr != 0);
+	assert(usr->inMsg->type == protocol::type::SessionEvent);
 	
 	//#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "Server::uSessionEvent(session: "
-		<< static_cast<int>(session->id) << ", event: "
-		<< static_cast<int>(event->action) << ")" << std::endl;
+		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	//#endif
+	
+	if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+		and (session->owner != usr->id))
+	{
+		uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
+		return;
+	}
+	
+	protocol::SessionEvent* event = static_cast<protocol::SessionEvent*>(usr->inMsg);
 	
 	switch (event->action)
 	{
 	case protocol::session_event::Kick:
-		
+		{
+			session_usr_iterator sui(session->users.find(event->target));
+			if (sui == session->users.end())
+			{
+				// user not found
+				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
+				break;
+			}
+			Propagate(message_ref(event));
+			uLeaveSession(sui->second, session, protocol::user_event::Kicked);
+			usr->inMsg = 0;
+		}
 		break;
 	case protocol::session_event::Lock:
 		
@@ -1245,10 +1258,26 @@ void Server::uSessionEvent(Session*& session, protocol::SessionEvent* event) thr
 	case protocol::session_event::Unlock:
 		
 		break;
+	case protocol::session_event::Delegate:
+		
+		break;
+	case protocol::session_event::Mute:
+		
+		break;
+	case protocol::session_event::Unmute:
+		
+		break;
+	case protocol::session_event::Deaf:
+		
+		break;
+	case protocol::session_event::Undeafen:
+		
+		break;
 	default:
 		std::cerr << "Unknown session action: "
 			<< static_cast<int>(event->action) << ")" << std::endl;
-		break;
+		uRemove(usr, protocol::user_event::Violation);
+		return;
 	}
 }
 
@@ -1949,7 +1978,7 @@ void Server::uJoinSession(User*& usr, Session* session) throw()
 	}
 }
 
-void Server::uLeaveSession(User*& usr, Session* session, bool announce) throw()
+void Server::uLeaveSession(User*& usr, Session* session, uint8_t reason) throw()
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -1983,16 +2012,13 @@ void Server::uLeaveSession(User*& usr, Session* session, bool announce) throw()
 	}
 	
 	// Tell session members the user left
-	if (announce)
-	{
-		Propagate(uCreateEvent(usr, session, protocol::user_event::Leave));
-	}
+	Propagate(uCreateEvent(usr, session, reason));
 	
 	if (session->owner == usr->id)
 	{
 		session->owner = protocol::null_user;
 		
-		// Announce owner disappearance.. or not
+		// Announce owner disappearance.
 		protocol::SessionEvent *sev = new protocol::SessionEvent;
 		sev->session_id = session->id;
 		sev->action = protocol::session_event::Delegate;
