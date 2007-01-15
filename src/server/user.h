@@ -117,6 +117,8 @@ struct User
 		nlen(0),
 		name(0),
 		state(uState::init),
+		activeLocked(false),
+		events(0),
 		inMsg(0),
 		syncing(protocol::Global)
 		#ifdef CHECK_VIOLATIONS
@@ -170,6 +172,8 @@ struct User
 	
 	// Subscribed sessions
 	std::map<uint8_t, SessionData> sessions;
+	
+	bool activeLocked;
 	
 	// Output queue
 	std::deque<message_ref> queue;

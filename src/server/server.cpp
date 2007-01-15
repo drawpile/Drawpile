@@ -674,6 +674,12 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		
 		// handle all message with 'selected' modifier the same
 		{
+			if (usr->activeLocked)
+			{
+				// TODO: Warn user?
+				break;
+			}
+			
 			// make sure the user id is correct
 			usr->inMsg->user_id = usr->id;
 			
@@ -727,30 +733,35 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			break;
 		}
 		#endif
-		if (uInSession(usr, usr->inMsg->session_id))
 		{
-			usr->inMsg->user_id = usr->id;
-			usr->session = usr->inMsg->session_id;
+			usr_session_iterator usi(usr->sessions.find(usr->inMsg->session_id));
 			
-			if (fIsSet(usr->caps, protocol::client::AckFeedback))
+			if (usi != usr->sessions.end())
 			{
-				uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
+				usr->inMsg->user_id = usr->id;
+				usr->session = usr->inMsg->session_id;
+				usr->activeLocked = usi->second.locked;
+				
+				if (fIsSet(usr->caps, protocol::client::AckFeedback))
+				{
+					uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
+				}
+				
+				Propagate(
+					message_ref(usr->inMsg),
+					(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+				);
+				usr->inMsg = 0;
+				
+				#ifdef CHECK_VIOLATIONS
+				fSet(usr->tags, uTag::CanChange);
+				#endif
 			}
-			
-			Propagate(
-				message_ref(usr->inMsg),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
-			);
-			usr->inMsg = 0;
-			
-			#ifdef CHECK_VIOLATIONS
-			fSet(usr->tags, uTag::CanChange);
-			#endif
-		}
-		else
-		{
-			uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
-			usr->session = protocol::Global;
+			else
+			{
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
+				usr->session = protocol::Global;
+			}
 		}
 		break;
 	case protocol::type::UserInfo:
@@ -1264,14 +1275,19 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				break;
 			}
 			
-			usr_session_iterator usi(sui->sessions.find(session->id));
-			if (usi == sui->sessions.end())
+			usr_session_iterator usi(sui->second->sessions.find(session->id));
+			if (usi == sui->second->sessions.end())
 			{
 				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
 				break;
 			}
 			
-			sui->locked = (event->action == protocol::session_event::Lock ? true : false);
+			usi->second.locked = (event->action == protocol::session_event::Lock ? true : false);
+			if (usr->session == event->target)
+			{
+				usr->activeLocked = usi->second.locked;
+			}
+			
 			usr->inMsg = 0;
 			
 			Propagate(message_ref(event));
