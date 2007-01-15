@@ -18,18 +18,46 @@
 
 //#include "../shared/protocol.types.h"
 #include "../shared/protocol.flags.h"
+#include "../shared/protocol.tools.h"
 #include "../shared/protocol.defaults.h"
 
 #include "../shared/memstack.h"
 
+struct LayerData;
 struct Session;
 #include "user.h"
 
 /* iterators */
 typedef std::map<uint8_t, User*>::iterator session_usr_iterator;
+typedef std::map<uint8_t, LayerData>::iterator session_layer_iterator;
 
 #include <stdint.h>
 #include <list>
+
+struct LayerData
+{
+	LayerData() throw()
+		: id(protocol::null_layer),
+		mode(protocol::tool_mode::None),
+		opacity(0)
+	{
+		
+	}
+	~LayerData() throw()
+	{
+		
+	}
+	
+	uint8_t
+		// identifier
+		id,
+		// composition mode
+		mode,
+		// transparency/opacity
+		opacity;
+	
+	bool locked;
+};
 
 // Session information
 struct Session
@@ -116,6 +144,9 @@ struct Session
 	// Canvas size
 	uint16_t width, height;
 	
+	// 
+	std::map<uint8_t, LayerData> layers;
+	
 	// Subscribed users
 	std::map<uint8_t, User*> users;
 	
@@ -127,7 +158,11 @@ struct Session
 	
 	/* *** Functions *** */
 	
-	bool canJoin() { return ((users.size() + waitingSync.size()) < limit); }
+	// Session can be joined
+	bool canJoin()
+	{
+		return ((users.size() + waitingSync.size()) < limit);
+	}
 };
 
 #endif // ServerSession_INCLUDED

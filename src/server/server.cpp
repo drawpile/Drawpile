@@ -729,7 +729,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif
 		if (uInSession(usr, usr->inMsg->session_id))
 		{
-			uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::SessionSelect));
 			usr->inMsg->user_id = usr->id;
 			usr->session = usr->inMsg->session_id;
 			
@@ -822,7 +821,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Unsubscribe));
+				uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 				
 				uLeaveSession(usr, si->second);
 			}
@@ -870,7 +869,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				}
 				
 				// join session
-				uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
+				uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 				uJoinSession(usr, si->second);
 			}
 			else
@@ -914,7 +913,57 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 		}
 		
-		uSendMsg(usr, msgAck(protocol::Global, protocol::type::ListSessions));
+		uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
+		break;
+	case protocol::type::SessionEvent:
+		break;
+	case protocol::type::LayerEvent:
+		break;
+	case protocol::type::LayerSelect:
+		{
+			protocol::LayerSelect* layer = static_cast<protocol::LayerSelect*>(usr->inMsg);
+			usr_session_iterator ui(usr->sessions.find(layer->session_id));
+			if (ui == usr->sessions.end())
+			{
+				uSendMsg(usr, msgError(layer->session_id, protocol::error::NotSubscribed));
+				break;
+			}
+			
+			if (ui->second.layer == layer->layer_id)
+			{
+				// tries to select currently selected layer
+				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
+				break;
+			}
+			
+			session_layer_iterator li(ui->second.session->layers.find(layer->layer_id));
+			if (li == ui->second.session->layers.end())
+			{
+				uSendMsg(usr, msgError(layer->session_id, protocol::error::UnknownLayer));
+				break;
+			}
+			else if (li->second.locked)
+			{
+				uSendMsg(usr, msgError(layer->session_id, protocol::error::LayerLocked));
+				break;
+			}
+			
+			uSendMsg(usr, msgAck(layer->session_id, layer->type));
+			
+			layer->user_id = usr->id;
+			
+			if (fIsSet(usr->caps, protocol::client::AckFeedback))
+			{
+				uSendMsg(usr, msgAck(layer->session_id, layer->type));
+			}
+			
+			Propagate(
+				message_ref(layer),
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
+			
+			ui->second.layer = layer->layer_id;
+		}
 		break;
 	case protocol::type::Instruction:
 		uHandleInstruction(usr);
@@ -984,7 +1033,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
+			uSendMsg(usr, msgAck(msg->session_id, msg->type));
 			
 			if (msg->session_id == protocol::Global)
 			{
@@ -994,7 +1043,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			else
 			{
 				// join session
-				// uSendMsg(usr, msgAck(si->second->id, protocol::type::Subscribe));
+				// uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 				uJoinSession(usr, si->second);
 			}
 		}
@@ -1133,7 +1182,7 @@ void Server::uTunnelRaster(User*& usr) throw()
 		return;
 	}
 	
-	uSendMsg(usr, msgAck(usr->inMsg->session_id, protocol::type::Raster));
+	uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 	
 	// Forward to users.
 	tunnel_iterator ti(ft.first);
@@ -1274,7 +1323,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				<< "With dimensions: " << session->width << " x " << session->height << std::endl;
 			#endif
 			
-			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Instruction));
+			uSendMsg(usr, msgAck(msg->session_id, msg->type));
 		}
 		return;
 	case protocol::admin::command::Destroy:
@@ -1300,7 +1349,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			std::cout << "Server password changed." << std::endl;
 			#endif
 			
-			uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
+			uSendMsg(usr, msgAck(msg->session_id, msg->type));
 		}
 		else
 		{
@@ -1327,7 +1376,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			si->second->pw_len = msg->length;
 			msg->data = 0;
 			
-			uSendMsg(usr, msgAck(protocol::Global, protocol::type::Instruction));
+			uSendMsg(usr, msgAck(msg->session_id, msg->type));
 			return;
 		}
 		break;
@@ -1518,7 +1567,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			fSet(usr->tags, uTag::CanChange);
 			#endif
 			
-			uSendMsg(usr, msgAck(msg->session_id, protocol::type::Password));
+			uSendMsg(usr, msgAck(msg->session_id, msg->type));
 			
 			// make sure the same seed is not used for something else.
 			uRegenSeed(usr);

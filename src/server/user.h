@@ -45,6 +45,7 @@ struct SessionData
 	SessionData(uint8_t id=protocol::null_user, Session *s=0) throw()
 		: user(id),
 		session(s),
+		layer(protocol::null_layer),
 		mode(s->mode),
 		syncWait(false)
 	{
@@ -59,6 +60,9 @@ struct SessionData
 	
 	// Session reference
 	Session *session;
+	
+	// active layer
+	uint8_t layer;
 	
 	// User mode within session
 	uint8_t mode;
