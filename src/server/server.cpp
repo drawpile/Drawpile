@@ -1258,8 +1258,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 			Propagate(message_ref(event));
 			usr->inMsg = 0;
-			
-			uLeaveSession(sui->second, session, protocol::user_event::Kicked);
+			User *usr_ptr = sui->second;
+			uLeaveSession(usr_ptr, session, protocol::user_event::Kicked);
 		}
 		break;
 	case protocol::session_event::Lock:
