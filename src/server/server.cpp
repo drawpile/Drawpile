@@ -67,6 +67,12 @@ Server::Server() throw()
 	std::cout << "Server::Server()" << std::endl;
 	#endif
 	#endif
+	
+	for (uint8_t i=0; i != 255; i++)
+	{
+		user_ids.push(i+1);
+		session_ids.push(i+1);
+	}
 }
 
 Server::~Server() throw()
@@ -88,16 +94,13 @@ uint8_t Server::getUserID() throw()
 	#endif
 	#endif
 	
-	for (int i=1; i != defaults::hard_limit+1; i++)
-	{
-		if (!user_ids.test(i))
-		{
-			user_ids.set(i, true);
-			return i;
-		}
-	}
+	if (user_ids.empty())
+		return protocol::null_user;
 	
-	return protocol::null_user;
+	uint8_t n = user_ids.front();
+	user_ids.pop();
+	
+	return n;
 }
 
 uint8_t Server::getSessionID() throw()
@@ -108,21 +111,18 @@ uint8_t Server::getSessionID() throw()
 	#endif
 	#endif
 	
-	for (int i=1; i != defaults::hard_limit+1; i++)
-	{
-		if (!session_ids.test(i))
-		{
-			session_ids.set(i, true);
-			return i;
-		}
-	}
+	if (session_ids.empty())
+		return protocol::Global;
 	
-	return protocol::Global;
+	uint8_t n = session_ids.front();
+	session_ids.pop();
+	
+	return n;
 }
 
 void Server::freeUserID(uint8_t id) throw()
 {
-	assert(user_ids.test(id) == true);
+	if (id == protocol::null_user) return;
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -130,14 +130,14 @@ void Server::freeUserID(uint8_t id) throw()
 	#endif
 	#endif
 	
-	assert(user_ids.test(id));
+	//assert(user_ids.test(id));
 	
-	user_ids.set(static_cast<int>(id), false);
+	user_ids.push(id);
 }
 
 void Server::freeSessionID(uint8_t id) throw()
 {
-	assert(session_ids.test(id) == true);
+	if (id == protocol::null_user) return;
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -145,9 +145,9 @@ void Server::freeSessionID(uint8_t id) throw()
 	#endif
 	#endif
 	
-	assert(session_ids.test(id));
+	//assert(session_ids.test(id));
 	
-	session_ids.set(static_cast<int>(id), false);
+	session_ids.push(id);
 }
 
 void Server::cleanup() throw()
@@ -206,9 +206,9 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 	
 	protocol::HostInfo *hostnfo = new protocol::HostInfo;
 	
-	hostnfo->sessions = session_ids.count();
+	hostnfo->sessions = sessions.size();
 	hostnfo->sessionLimit = session_limit;
-	hostnfo->users = user_ids.count();
+	hostnfo->users = users.size();
 	hostnfo->userLimit = user_limit;
 	hostnfo->nameLenLimit = name_len_limit;
 	hostnfo->maxSubscriptions = max_subscriptions;
@@ -325,7 +325,7 @@ void Server::uWrite(User*& usr) throw()
 		#endif
 		
 		// clear linked list...
-		if (outgoing.size() == 0)
+		if (outgoing.empty())
 		{
 			usr->queue.pop_front();
 		}
@@ -1870,7 +1870,7 @@ void Server::uLeaveSession(User*& usr, Session* session) throw()
 	usr->sessions.erase(session->id);
 	
 	// last user in session.. destruct it
-	if (session->users.size() == 0)
+	if (session->users.empty())
 	{
 		if (!fIsSet(session->flags, protocol::session::NoSelfDestruct))
 		{
@@ -2027,7 +2027,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	
 	// Transient mode exit.
 	if (fIsSet(opmode, server::mode::Transient)
-		and users.size() == 0)
+		and users.empty())
 	{
 		state = server::state::Exiting;
 	}

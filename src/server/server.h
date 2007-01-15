@@ -54,7 +54,7 @@ typedef std::multimap<uint8_t, fd_t>::iterator tunnel_iterator;
 
 #include <stdexcept>
 
-#include <bitset>
+#include <queue>
 #include <map>
 #include <list>
 
@@ -80,10 +80,10 @@ protected:
 	Event ev;
 	
 	// Used and free user IDs
-	std::bitset<defaults::hard_limit> user_ids;
+	std::queue<uint8_t> user_ids;
 	
 	// Used and free session IDs
-	std::bitset<defaults::hard_limit> session_ids;
+	std::queue<uint8_t> session_ids;
 	
 	// FD to user mapping
 	std::map<fd_t, User*> users;
