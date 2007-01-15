@@ -184,6 +184,9 @@ protected:
 	// Forward raster to those expecting it.
 	void uTunnelRaster(User*& usr) throw();
 	
+	// Handle SessionEvent message
+	void uSessionEvent(Session*& session, protocol::SessionEvent* event) throw();
+	
 	// Handle instruction message
 	void uHandleInstruction(User*& usr) throw(std::bad_alloc);
 	

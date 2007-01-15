@@ -916,6 +916,26 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
 		break;
 	case protocol::type::SessionEvent:
+		{
+			session_iterator si(sessions.find(usr->inMsg->session_id));
+			if (si == sessions.end())
+			{
+				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
+				return;
+			}
+			
+			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+				and (si->second->owner != usr->id))
+			{
+				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
+				break;
+			}
+			
+			usr->inMsg->user_id = usr->id;
+			
+			uSessionEvent(si->second, static_cast<protocol::SessionEvent*>(usr->inMsg));
+			usr->inMsg = 0;
+		}
 		break;
 	case protocol::type::LayerEvent:
 		break;
@@ -1201,6 +1221,37 @@ void Server::uTunnelRaster(User*& usr) throw()
 	usr->inMsg = 0;
 }
 
+void Server::uSessionEvent(Session*& session, protocol::SessionEvent* event) throw()
+{
+	assert(session != 0);
+	assert(event != 0);
+	
+	//#ifdef DEBUG_SERVER
+	#ifndef NDEBUG
+	std::cout << "Server::uSessionEvent(session: "
+		<< static_cast<int>(session->id) << ", event: "
+		<< static_cast<int>(event->action) << ")" << std::endl;
+	#endif
+	//#endif
+	
+	switch (event->action)
+	{
+	case protocol::session_event::Kick:
+		
+		break;
+	case protocol::session_event::Lock:
+		
+		break;
+	case protocol::session_event::Unlock:
+		
+		break;
+	default:
+		std::cerr << "Unknown session action: "
+			<< static_cast<int>(event->action) << ")" << std::endl;
+		break;
+	}
+}
+
 void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
@@ -1339,6 +1390,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
 				and (si->second->owner != usr->id))
 			{
+				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
 				break;
 			}
 			
@@ -1362,10 +1414,9 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
 				and (si->second->owner != usr->id))
 			{
+				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
 				break;
 			}
-			
-			
 			
 			// TODO
 		}
@@ -1400,6 +1451,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
 				and (si->second->owner != usr->id))
 			{
+				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
 				break;
 			}
 			
@@ -1940,7 +1992,12 @@ void Server::uLeaveSession(User*& usr, Session* session, bool announce) throw()
 	{
 		session->owner = protocol::null_user;
 		
-		// TODO: Announce owner disappearance.. or not
+		// Announce owner disappearance.. or not
+		protocol::SessionEvent *sev = new protocol::SessionEvent;
+		sev->session_id = session->id;
+		sev->action = protocol::session_event::Delegate;
+		sev->target = session->owner;
+		Propagate(message_ref(sev));
 	}
 }
 
