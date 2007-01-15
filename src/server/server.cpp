@@ -1327,12 +1327,48 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		return;
 	case protocol::admin::command::Destroy:
-		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
-		// TODO
+		{
+			session_iterator si(sessions.find(msg->session_id));
+			if (si == sessions.end())
+			{
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
+				return;
+			}
+			
+			// Check session ownership
+			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+				and (si->second->owner != usr->id))
+			{
+				break;
+			}
+			
+			message_ref err = msgError(si->second->id, protocol::error::SessionLost);
+			Propagate(err, protocol::null_user, true);
+			
+			delete si->second;
+			sessions.erase(si->first);
+		}
 		break;
 	case protocol::admin::command::Alter:
-		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
-		// TODO
+		{
+			session_iterator si(sessions.find(msg->session_id));
+			if (si == sessions.end())
+			{
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
+				return;
+			}
+			
+			// Check session ownership
+			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+				and (si->second->owner != usr->id))
+			{
+				break;
+			}
+			
+			
+			
+			// TODO
+		}
 		break;
 	case protocol::admin::command::Password:
 		if (msg->session_id == protocol::Global)
@@ -1671,7 +1707,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::Propagate(message_ref msg, uint8_t source) throw()
+void Server::Propagate(message_ref msg, uint8_t source, bool toAll) throw()
 {
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -1695,6 +1731,18 @@ void Server::Propagate(message_ref msg, uint8_t source) throw()
 	{
 		if (ui->second->id != source)
 			uSendMsg(ui->second, msg);
+	}
+	
+	
+	if (toAll)
+	{
+		// send to users waiting sync as well.
+		std::list<User*>::iterator wui(si->second->waitingSync.begin());
+		for (; wui != si->second->waitingSync.end(); wui++)
+		{
+			if (wui->second->id != source)
+				uSendMsg(wui->second, msg);
+		}
 	}
 }
 
@@ -1849,7 +1897,7 @@ void Server::uJoinSession(User*& usr, Session* session) throw()
 	}
 }
 
-void Server::uLeaveSession(User*& usr, Session* session) throw()
+void Server::uLeaveSession(User*& usr, Session* session, bool announce) throw()
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -1883,7 +1931,10 @@ void Server::uLeaveSession(User*& usr, Session* session) throw()
 	}
 	
 	// Tell session members the user left
-	Propagate(uCreateEvent(usr, session, protocol::user_event::Leave));
+	if (announce)
+	{
+		Propagate(uCreateEvent(usr, session, protocol::user_event::Leave));
+	}
 	
 	if (session->owner == usr->id)
 	{

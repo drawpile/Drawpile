@@ -191,7 +191,7 @@ protected:
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
 	// Send message to session
-	void Propagate(message_ref msg, uint8_t source=protocol::null_user) throw();
+	void Propagate(message_ref msg, uint8_t source=protocol::null_user, bool toAll=false) throw();
 	
 	// Send message to user
 	/*
@@ -213,7 +213,7 @@ protected:
 	void uJoinSession(User*& usr, Session* session) throw();
 	
 	//
-	void uLeaveSession(User*& usr, Session* session) throw();
+	void uLeaveSession(User*& usr, Session* session, bool announce=true) throw();
 	
 	// Adds user
 	void uAdd(Socket* sock) throw(std::bad_alloc);
