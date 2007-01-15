@@ -137,7 +137,7 @@ void Server::freeUserID(uint8_t id) throw()
 
 void Server::freeSessionID(uint8_t id) throw()
 {
-	if (id == protocol::null_user) return;
+	if (id == protocol::Global) return;
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
@@ -2142,7 +2142,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::uRemove()" << std::endl;
+	std::cout << "Server::uRemove(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	#endif
 	
@@ -2181,7 +2181,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	// clean sessions
 	while (usr->sessions.size() != 0)
 	{
-		uLeaveSession(usr, usr->sessions.begin()->second.session);
+		uLeaveSession(usr, usr->sessions.begin()->second.session, reason);
 	}
 	
 	// remove from fd -> User* map
@@ -2193,8 +2193,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	usr = 0;
 	
 	// Transient mode exit.
-	if (fIsSet(opmode, server::mode::Transient)
-		and users.empty())
+	if (fIsSet(opmode, server::mode::Transient) and users.empty())
 	{
 		state = server::state::Exiting;
 	}
