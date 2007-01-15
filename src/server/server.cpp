@@ -1316,13 +1316,15 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 
 void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::uHandleInstruction()" << std::endl;
+	std::cout << "Server::uHandleInstruction(user: "
+		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	#endif
 	
-	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::Instruction);
 	
