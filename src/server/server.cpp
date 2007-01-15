@@ -1740,8 +1740,8 @@ void Server::Propagate(message_ref msg, uint8_t source, bool toAll) throw()
 		std::list<User*>::iterator wui(si->second->waitingSync.begin());
 		for (; wui != si->second->waitingSync.end(); wui++)
 		{
-			if (wui->second->id != source)
-				uSendMsg(wui->second, msg);
+			if ((*wui)->id != source)
+				uSendMsg(*wui, msg);
 		}
 	}
 }
