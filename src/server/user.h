@@ -15,6 +15,13 @@
 #ifndef ServerUser_INCLUDED
 #define ServerUser_INCLUDED
 
+#ifdef DEBUG_USER
+	#ifndef NDEBUG
+		#include <iostream>
+	#endif // NDEBUG
+#endif // DEBUG_USER
+
+
 #include <stdint.h>
 #include <map>
 #include <deque>
@@ -125,17 +132,21 @@ struct User
 		, tags(0)
 		#endif // CHECK_VIOLATIONS
 	{
+		#ifdef DEBUG_USER
 		#ifndef NDEBUG
 		std::cout << "User::User(" << static_cast<int>(_id)
 			<< ", " << sock->fd() << ")" << std::endl;
-		#endif
+		#endif // NDEBUG
+		#endif // DEBUG_USER
 	}
 	
 	~User() throw()
 	{
+		#ifdef DEBUG_USER
 		#ifndef NDEBUG
 		std::cout << "User::~User()" << std::endl;
-		#endif
+		#endif // NDEBUG
+		#endif // DEBUG_USER
 		
 		delete [] name,
 		delete sock,
