@@ -95,6 +95,9 @@ const uint16_t
 	//! Invalid layer target
 	InvalidLayer = 25,
 	
+	/* User errors */
+	UnknownUser = 30,
+	
 	/* Admin errors. */
 	
 	//! Invalid data value in the message
