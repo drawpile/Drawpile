@@ -97,6 +97,7 @@ const uint16_t
 	
 	/* User errors */
 	UnknownUser = 30,
+	NotInSession = 31,
 	
 	/* Admin errors. */
 	
