@@ -91,7 +91,7 @@ class HostState : public QObject {
 		HostState(QObject *parent);
 
 		//! Get the local user ID as assigned by the server
-		int localUserId() const { return userid_; }
+		int localUserId() const { return localuser_.id; }
 
 		//! Get the session state
 		SessionState *session(int id) { return mysessions_.value(id); }
@@ -204,7 +204,7 @@ class HostState : public QObject {
 		int passwordsession_;
 		QString autojointitle_;
 
-		int userid_;
+		User localuser_;
 
 		SessionState *newsession_;
 		QHash<int, SessionState*> mysessions_;
@@ -327,6 +327,9 @@ class SessionState : public QObject {
 
 		//! Session has been (un)locked
 		void sessionLocked(bool lock);
+
+		//! Session owner changed
+		void ownerChanged();
 
 		//! Raster data upload request
 		void syncRequest();

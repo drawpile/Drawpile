@@ -15,9 +15,10 @@ class UserListModel : public QAbstractListModel {
 		QVariant data(const QModelIndex& index, int role) const;
 		int rowCount(const QModelIndex& parent) const;
 		void addUser(const network::User& user);
+		void changeUser(const network::User& user);
+		bool hasUser(int id) const;
 		void removeUser(int id);
 		void clearUsers();
-		void lockUser(int id, bool lock);
 
 	private:
 		network::UserList users_;

@@ -179,6 +179,7 @@ class Controller : public QObject
 		void syncDone();
 		void sessionLocked(bool lock);
 		void userLocked(int id, bool lock);
+		void sessionOwnerChanged();
 
 	private:
 		void sendRaster();

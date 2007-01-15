@@ -381,7 +381,7 @@ void HostState::joinLatest()
 	SessionList::const_iterator i = sessions_.constEnd();
 	do {
 		--i;
-		if(i->owner == userid_) {
+		if(i->owner == localuser_.id) {
 			join(i->id);
 			found = true;
 			break;
@@ -465,7 +465,8 @@ void HostState::handleUserInfo(const protocol::UserInfo *msg)
 		}
 	} else {
 		loggedin_ = true;
-		userid_ = msg->user_id;
+		localuser_.name = msg->name;
+		localuser_.id = msg->user_id;
 		emit loggedin();
 	}
 }
@@ -601,6 +602,7 @@ SessionState::SessionState(HostState *parent, const Session& info)
 	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
+	users_.append(host_->localuser_);
 }
 
 /**
@@ -694,7 +696,7 @@ void SessionState::select()
 {
 	protocol::SessionSelect *msg = new protocol::SessionSelect;
 	msg->session_id = info_.id;
-	host_->usersessions_[host_->userid_] = info_.id;
+	host_->usersessions_[host_->localuser_.id] = info_.id;
 	host_->net_->send(msg);
 }
 
@@ -893,20 +895,45 @@ void SessionState::handleSyncWait(const protocol::SyncWait *msg)
  */
 void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 {
-	// TODO handle general session lock
+	User *user = 0;
+	if(msg->target != 0) {
+		for(int i=0;i<users_.size();++i) {
+			if(users_.at(i).id == msg->target) {
+				user = &users_[i];
+				break;
+			}
+		}
+		if(user==0) {
+			qDebug() << "received SessionEvent for user" << int(msg->target)
+				<< "not part of the session";
+			return;
+		}
+	}
+
 	switch(msg->action) {
 		using namespace protocol::session_event;
 		case Lock:
-			if(msg->target==0)
-				emit sessionLocked(true);
-			else
+			if(user) {
+				user->locked = true;
 				emit userLocked(msg->target, true);
+			} else {
+				lock_ = true;
+				emit sessionLocked(true);
+			}
 			break;
 		case Unlock:
-			if(msg->target==0)
+			if(user) {
+				user->locked = false;
+				emit userLocked(msg->target, false);
+			} else {
+				lock_ = false;
 				emit sessionLocked(false);
-			else
-			emit userLocked(msg->target, false);
+			}
+			break;
+		case Delegate:
+			// TODO emit signal to indicate change of ownership
+			info_.owner = msg->target;
+			emit ownerChanged();
 			break;
 		default:
 			qDebug() << "unhandled session event action" << int(msg->action);

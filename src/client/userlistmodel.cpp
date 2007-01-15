@@ -30,6 +30,26 @@ void UserListModel::addUser(const network::User& user)
 	endInsertRows();
 }
 
+void UserListModel::changeUser(const network::User& user)
+{
+	for(int i=0;i<users_.size();++i) {
+		if(users_.at(i).id == user.id) {
+			users_[i] = user;
+			QModelIndex ind = index(i,0);
+			emit dataChanged(ind,ind);
+			break;
+		}
+	}
+}
+
+bool UserListModel::hasUser(int id) const
+{
+	for(int i=0;i<users_.size();++i)
+		if(users_.at(i).id == id)
+			return true;
+	return false;
+}
+
 void UserListModel::removeUser(int id)
 {
 	for(int i=0;i<users_.size();++i) {
@@ -48,18 +68,6 @@ void UserListModel::clearUsers()
 		beginRemoveRows(QModelIndex(), 0, users_.size()-1);
 		users_.clear();
 		endRemoveRows();
-	}
-}
-
-void UserListModel::lockUser(int id, bool lock)
-{
-	for(int i=0;i<users_.size();++i) {
-		if(users_.at(i).id == id) {
-			users_.removeAt(i);
-			QModelIndex ind = index(i,0);
-			emit dataChanged(ind,ind);
-			break;
-		}
 	}
 }
 

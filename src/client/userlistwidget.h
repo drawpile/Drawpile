@@ -47,14 +47,12 @@ class UserList: public QDockWidget
 		void setAdminMode(bool enable);
 
 	public slots:
-		//! Add a new user to the list
-		void addUser(const network::User& user);
+		//! Change or add user
+		void updateUser(const network::User& user);
 		//! Remove a user
 		void removeUser(const network::User& user);
 		//! Remove all users
 		void clearUsers();
-		//! Change user lock status
-		void lockUser(int id, bool lock);
 
 	signals:
 		void kick(int userid);

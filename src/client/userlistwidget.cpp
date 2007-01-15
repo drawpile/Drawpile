@@ -44,9 +44,12 @@ UserList::~UserList()
 {
 }
 
-void UserList::addUser(const network::User& user)
+void UserList::updateUser(const network::User& user)
 {
-	model_->addUser(user);
+	if(model_->hasUser(user.id))
+		model_->changeUser(user);
+	else
+		model_->addUser(user);
 }
 
 void UserList::removeUser(const network::User& user)
@@ -57,11 +60,6 @@ void UserList::removeUser(const network::User& user)
 void UserList::clearUsers()
 {
 	model_->clearUsers();
-}
-
-void UserList::lockUser(int id, bool lock)
-{
-	model_->lockUser(id, lock);
 }
 
 void UserList::setAdminMode(bool enable)

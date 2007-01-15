@@ -237,9 +237,9 @@ void Controller::sessionJoined(int id)
 
 	connect(session_, SIGNAL(userJoined(int)), this, SLOT(addUser(int)));
 	connect(session_, SIGNAL(userLeft(int)), this, SLOT(removeUser(int)));
-	connect(session_, SIGNAL(userChanged(int)), this, SLOT(userChanged(int)));
 	connect(session_, SIGNAL(sessionLocked(bool)), this, SLOT(sessionLocked(bool)));
 	connect(session_, SIGNAL(userLocked(int, bool)), this, SLOT(userLocked(int,bool)));
+	connect(session_, SIGNAL(ownerChanged()), this, SLOT(sessionOwnerChanged()));
 
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
@@ -367,10 +367,16 @@ void Controller::sessionLocked(bool lock)
 		if(pendown_ && tool_->readonly()==false) {
 			penUp();
 		}
+		lock_ = true;
 	} else {
-		emit unlockboard();
+		const network::User *localuser = session_->user(netstate_->localUserId());
+		Q_ASSERT(localuser);
+		// Unlock if local user is not locked and general session lock was lifted
+		if(localuser->locked==false && session_->isLocked()==false) {
+			emit unlockboard();
+			lock_ = false;
+		}
 	}
-	lock_ = lock;
 }
 
 /**
@@ -379,23 +385,36 @@ void Controller::sessionLocked(bool lock)
  */
 void Controller::userLocked(int id, bool lock)
 {
-	// Session owner cannot be locked
-	if(netstate_->localUserId() == session_->info().owner)
-		return;
-
 	const network::User *user = session_->user(id);
 	Q_ASSERT(user);
-	emit userChanged(*user);
+	bool islocal = user->id == netstate_->localUserId();
+
+	// Session owner cannot be locked
+	if(netstate_->localUserId() == session_->info().owner && islocal)
+		return;
+
+	qDebug() << "user locked" << id << lock;
+	if(!islocal)
+		emit userChanged(*user);
+
 	if(lock) {
 		// Lock UI if local user was locked
-		if(id == netstate_->localUserId() && lock_==false)
+		if(islocal && lock_==false)
 			sessionLocked(true);
 	} else {
 		// Unlock UI if local user was unlocked and general session lock
 		// is not in place.
-		if(id == netstate_->localUserId() && session_->isLocked()==false)
+		if(islocal && session_->isLocked()==false)
 			sessionLocked(false);
 	}
+}
+
+/**
+ * Handle session ownership change
+ */
+void Controller::sessionOwnerChanged()
+{
+	qDebug() << "owner changed, TODO";
 }
 
 void Controller::sendRaster()

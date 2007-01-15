@@ -96,8 +96,9 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(userJoined(network::User)), netstatus_, SLOT(join(network::User)));
 	connect(controller_, SIGNAL(userParted(network::User)), netstatus_, SLOT(leave(network::User)));
 	// User list
-	connect(controller_, SIGNAL(userJoined(network::User)), userlist_, SLOT(addUser(network::User)));
+	connect(controller_, SIGNAL(userJoined(network::User)), userlist_, SLOT(updateUser(network::User)));
 	connect(controller_, SIGNAL(userParted(network::User)), userlist_, SLOT(removeUser(network::User)));
+	connect(controller_, SIGNAL(userChanged(network::User)), userlist_, SLOT(updateUser(network::User)));
 	connect(controller_, SIGNAL(disconnected(QString)), userlist_, SLOT(clearUsers()));
 	connect(userlist_, SIGNAL(kick(int)), controller_, SLOT(kickUser(int)));
 	connect(userlist_, SIGNAL(lock(int, bool)), controller_, SLOT(lockUser(int, bool)));
