@@ -53,8 +53,11 @@ namespace tool_mode
 {
 
 const uint8_t
+	//! No mode set
+	None = 0,
+	
 	//! Normal
-	Normal = 0;
+	Normal = 1;
 
 } // namespace tool_mode
 
