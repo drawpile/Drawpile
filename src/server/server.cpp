@@ -726,8 +726,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#ifdef CHECK_VIOLATIONS
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
-			log.Error << "Protocol violation from user." << usr->id;
-			log.Clarify << "Session change in middle of something.";
+			std::cerr << "Protocol violation from user." << usr->id << std::endl
+				<< "Session change in middle of something." << std::endl;
 			
 			uRemove(usr, protocol::user_event::Violation);
 			break;
