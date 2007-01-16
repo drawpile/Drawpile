@@ -54,6 +54,9 @@ class EditorView : public QGraphicsView
 		//! This signal is emitted when the pen is lifted or the mouse button released.
 		void penUp();
 
+		//! An image has been dropped on the widget
+		void imageDropped(const QString& filename);
+
 	public slots:
 		//! Set the radius of the brush preview outline
 		void setOutlineRadius(int radius);
@@ -76,6 +79,8 @@ class EditorView : public QGraphicsView
 		void mouseDoubleClickEvent(QMouseEvent*);
 		bool viewportEvent(QEvent *event);
 		void drawForeground(QPainter *painter, const QRectF& rect);
+		void dragEnterEvent(QDragEnterEvent *event);
+		void dropEvent(QDropEvent *event);
 	private:
 		void startDrag(int x, int y);
 		void moveDrag(int x, int y);

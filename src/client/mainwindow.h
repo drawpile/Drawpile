@@ -108,6 +108,8 @@ class MainWindow : public QMainWindow {
 		void finishNew(int i);
 		//! Save and open another image
 		void finishOpen(int i);
+		//! Confirm and open image
+		void openImage(const QString& filename);
 		//! Save and exit
 		void finishExit(int i);
 		//! Cancel or start hosting
@@ -205,6 +207,7 @@ class MainWindow : public QMainWindow {
 		QString sessiontitle_;
 		QString filename_;
 		QString lastpath_;
+		QString openimagenext_;
 
 		QAction *new_;
 		QAction *open_;

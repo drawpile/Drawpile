@@ -69,10 +69,12 @@ MainWindow::MainWindow()
 
 	// Create view
 	view_ = new widgets::EditorView(this);
+	view_->setAcceptDrops(true);
 	connect(toolsettings_, SIGNAL(sizeChanged(int)), view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)), view_, SLOT(setOutline(bool)));
 	connect(togglecrosshair_, SIGNAL(triggered(bool)), view_, SLOT(setCrosshair(bool)));
 	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)), view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
+	connect(view_, SIGNAL(imageDropped(QString)), this, SLOT(openImage(QString)));
 	setCentralWidget(view_);
 
 	// Create board
@@ -170,6 +172,9 @@ void MainWindow::initBoard(const QImage& image)
 }
 
 /**
+ * If a session (path) was present in the url, use it. Otherwise connect
+ * normally. (automatically join if there is only one session, otherwise
+ * display a list for the user)
  * @param url URL
  */
 void MainWindow::joinSession(const QUrl& url)
@@ -186,6 +191,9 @@ void MainWindow::joinSession(const QUrl& url)
 	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 }
 
+/**
+ * Set window title according to currently open file and session
+ */
 void MainWindow::setTitle()
 {
 	QString name;
@@ -202,6 +210,9 @@ void MainWindow::setTitle()
 		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(sessiontitle_));
 }
 
+/**
+ * Read settings
+ */
 void MainWindow::readSettings()
 {
 	QSettings cfg;
@@ -243,6 +254,9 @@ void MainWindow::readSettings()
 	bgdialog_->setColor(bg);
 }
 
+/**
+ * Write out settings
+ */
 void MainWindow::writeSettings()
 {
 	QSettings cfg;
@@ -300,11 +314,18 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	}
 }
 
+/**
+ * Mark window as modified
+ */
 void MainWindow::boardChanged()
 {
 	setWindowModified(true);
 }
 
+/**
+ * Check if document is changed and call showNewDialog(). If document
+ * was changed, show confirmation dialog first.
+ */
 void MainWindow::showNew()
 {
 	if(isWindowModified()) {
@@ -317,6 +338,9 @@ void MainWindow::showNew()
 	}
 }
 
+/**
+ * Show "new document" dialog
+ */
 void MainWindow::showNewDialog()
 {
 	QSize size = board_->sceneRect().size().toSize();
@@ -326,6 +350,10 @@ void MainWindow::showNewDialog()
 	newdlg_->show();
 }
 
+/**
+ * Initialize the board and set background color to the one
+ * chosen in the dialog.
+ */
 void MainWindow::newDocument()
 {
 	initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
@@ -333,6 +361,11 @@ void MainWindow::newDocument()
 	fgbgcolor_->setBackground(newdlg_->newBackground());
 }
 
+/**
+ * Check if there are unsaved changes and call reallyOpen() to show a file
+ * selector dialog. If there were unsaved changes, show a confirmation dialog
+ * first.
+ */
 void MainWindow::open()
 {
 	if(isWindowModified()) {
@@ -345,18 +378,34 @@ void MainWindow::open()
 	}
 }
 
+/**
+ * Preset filename to open and call open().
+ * @param filename image file to open
+ * @pre open action is enabled
+ */
+void MainWindow::openImage(const QString& filename)
+{
+	Q_ASSERT(open_->isEnabled());
+	openimagenext_ = filename;
+	open();
+}
+
 void MainWindow::reallyOpen()
 {
 	// Get a list of supported formats
-	QString formats;
-	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
-		formats += "*." + format + " ";
-	}
-	QString filter = tr("Images (%1);;All files (*)").arg(formats);
+	QString file = openimagenext_;
+	if(file.isEmpty()) {
+		QString formats;
+		foreach(QByteArray format, QImageReader::supportedImageFormats()) {
+			formats += "*." + format + " ";
+		}
+		QString filter = tr("Images (%1);;All files (*)").arg(formats);
 
-	// Get the file name to open
-	QString file = QFileDialog::getOpenFileName(this,
-			tr("Open image"), lastpath_, filter);
+		// Get the file name to open
+		file = QFileDialog::getOpenFileName(this,
+				tr("Open image"), lastpath_, filter);
+	}
+	openimagenext_ = QString();
 
 	if(file.isEmpty()==false) {
 		// Open the file
@@ -615,6 +664,7 @@ void MainWindow::connected()
 	logout_->setEnabled(true);
 	new_->setEnabled(false);
 	open_->setEnabled(false);
+	view_->setAcceptDrops(false);
 }
 
 /**
@@ -629,6 +679,7 @@ void MainWindow::disconnected()
 	setSessionTitle(QString());
 	new_->setEnabled(true);
 	open_->setEnabled(true);
+	view_->setAcceptDrops(true);
 }
 
 /**

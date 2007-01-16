@@ -22,6 +22,7 @@
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
+#include <QUrl>
 
 #include "editorview.h"
 #include "board.h"
@@ -33,6 +34,7 @@ EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false),
 	prevpoint_(0,0),outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
+	viewport()->setAcceptDrops(true);
 }
 
 void EditorView::setBoard(drawingboard::Board *board)
@@ -307,6 +309,28 @@ void EditorView::stopDrag()
 {
 	setCrosshair(crosshair_);
 	isdragging_ = false;
+}
+
+/**
+ * @brief accept image drops
+ * @param event event info
+ */
+void EditorView::dragEnterEvent(QDragEnterEvent *event)
+{
+	// TODO, check file extensions
+	if(event->mimeData()->hasUrls()) {
+		// TODO, why doesn't this work?
+		event->acceptProposedAction();
+	}
+}
+
+/**
+ * @brief handle color and image drops
+ * @param event event info
+ */
+void EditorView::dropEvent(QDropEvent *event)
+{
+	emit imageDropped(event->mimeData()->urls().first().toLocalFile());
 }
 
 }
