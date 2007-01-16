@@ -726,12 +726,13 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#ifdef CHECK_VIOLATIONS
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
-			std::cerr << "Protocol violation from user: "
-				<< static_cast<int>(usr->id) << std::endl;
-			std::cerr << "Reason: Session change in middle of something." << std::endl;
+			log.Error << "Protocol violation from user." << usr->id;
+			log.Clarify << "Session change in middle of something.";
+			
 			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
+		else
 		#endif
 		{
 			usr_session_iterator usi(usr->sessions.find(usr->inMsg->session_id));
@@ -879,25 +880,26 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 				break;
 			}
+			Session *session = si->second;
 			
 			if (!uInSession(usr, usr->inMsg->session_id))
 			{
 				// Test userlimit
-				if (si->second->canJoin() == false)
+				if (session->canJoin() == false)
 				{
 					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 					break;
 				}
 				
-				if (si->second->password != 0)
+				if (session->password != 0)
 				{
-					uSendMsg(usr, msgAuth(usr, si->second->id));
+					uSendMsg(usr, msgAuth(usr, session->id));
 					break;
 				}
 				
 				// join session
 				uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
-				uJoinSession(usr, si->second);
+				uJoinSession(usr, session);
 			}
 			else
 			{
@@ -917,24 +919,26 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		if (sessions.size() != 0)
 		{
 			protocol::SessionInfo *nfo = 0;
+			Session *session;
 			session_iterator si(sessions.begin());
 			for (; si != sessions.end(); si++)
 			{
+				session = si->second;
 				nfo = new protocol::SessionInfo;
 				
 				nfo->session_id = si->first;
 				
-				nfo->width = si->second->width;
-				nfo->height = si->second->height;
+				nfo->width = session->width;
+				nfo->height = session->height;
 				
-				nfo->owner = si->second->owner;
-				nfo->users = si->second->users.size();
-				nfo->limit = si->second->limit;
-				nfo->mode = si->second->mode;
-				nfo->length = si->second->len;
+				nfo->owner = session->owner;
+				nfo->users = session->users.size();
+				nfo->limit = session->limit;
+				nfo->mode = session->mode;
+				nfo->length = session->len;
 				
-				nfo->title = new char[si->second->len];
-				memcpy(nfo->title, si->second->title, si->second->len);
+				nfo->title = new char[session->len];
+				memcpy(nfo->title, session->title, session->len);
 				
 				uSendMsg(usr, message_ref(nfo));
 			}
@@ -1023,6 +1027,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::type::Password:
 		{
 			session_iterator si;
+			Session *session=0;
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
 			if (msg->session_id == protocol::Global)
 			{
@@ -1052,6 +1057,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
 					break;
 				}
+				session = si->second;
 				
 				if (uInSession(usr, msg->session_id))
 				{
@@ -1061,13 +1067,13 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				}
 				
 				// Test userlimit
-				if (si->second->canJoin() == false)
+				if (session->canJoin() == false)
 				{
 					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 					break;
 				}
 				
-				hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
+				hash.Update(reinterpret_cast<uint8_t*>(session->password), session->pw_len);
 			}
 			
 			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
@@ -1096,7 +1102,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				// join session
 				// uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
-				uJoinSession(usr, si->second);
+				uJoinSession(usr, session);
 			}
 		}
 		break;
@@ -1157,7 +1163,7 @@ void Server::uHandleAck(User*& usr) throw()
 				us->second.syncWait = true;
 			}
 			
-			Session *session(sessions.find(ack->session_id)->second);
+			Session *session = sessions.find(ack->session_id)->second;
 			session->syncCounter--;
 			
 			if (session->syncCounter == 0)
@@ -1496,16 +1502,27 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			// Check session ownership
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
-				and (si->second->owner != usr->id))
+				and (session->owner != usr->id))
 			{
-				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
+				uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
 				break;
 			}
 			
-			message_ref err = msgError(si->second->id, protocol::error::SessionLost);
+			// tell users session was lost
+			message_ref err = msgError(session->id, protocol::error::SessionLost);
 			Propagate(session, err, protocol::null_user, true);
 			
-			delete si->second;
+			// clean session users
+			session_usr_iterator sui(session->users.begin());
+			User* usr_ptr;
+			for (; sui != session->users.end(); sui++)
+			{
+				usr_ptr = sui->second;
+				uLeaveSession(usr_ptr, session, protocol::user_event::None);
+			}
+			
+			// destruct
+			delete session;
 			sessions.erase(si->first);
 		}
 		break;
@@ -1517,12 +1534,13 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
 				return;
 			}
+			Session *session = si->second;
 			
 			// Check session ownership
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
-				and (si->second->owner != usr->id))
+				and (session->owner != usr->id))
 			{
-				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
+				uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
 				break;
 			}
 			
@@ -1533,6 +1551,9 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		if (msg->session_id == protocol::Global)
 		{
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+			
+			if (password != 0)
+				delete [] password;
 			
 			password = msg->data;
 			pw_len = msg->length;
@@ -1554,12 +1575,13 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
 				return;
 			}
+			Session *session = si->second;
 			
 			// Check session ownership
 			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
-				and (si->second->owner != usr->id))
+				and (session->owner != usr->id))
 			{
-				uSendMsg(usr, msgError(si->second->id, protocol::error::Unauthorized));
+				uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
 				break;
 			}
 			
@@ -1568,8 +1590,11 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				<< static_cast<int>(msg->session_id) << std::endl;
 			#endif
 			
-			si->second->password = msg->data;
-			si->second->pw_len = msg->length;
+			if (session->password != 0)
+				delete [] session->password;
+			
+			session->password = msg->data;
+			session->pw_len = msg->length;
 			msg->data = 0;
 			
 			uSendMsg(usr, msgAck(msg->session_id, msg->type));
@@ -1583,7 +1608,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		if (a_password == 0)
 		{
 			// no admin password set
-			uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidRequest));
+			uSendMsg(usr, msgError(msg->session_id, protocol::error::Unauthorized));
 		}
 		else
 		{
@@ -1593,6 +1618,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		return;
 	case protocol::admin::command::Shutdown:
 		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+		// Shutdown server..
 		state = server::state::Exiting;
 		break;
 	default:
@@ -1604,7 +1630,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		return;
 	}
 	
-	// TODO: Allow session owners to alter sessions.
+	// Allow session owners to alter sessions, but warn others.
 	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
 	{
 		std::cerr << "Non-admin tries to pass instructions: "
@@ -2109,18 +2135,21 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 	}
 	
 	// Tell session members the user left
-	Propagate(session, uCreateEvent(usr, session, reason));
-	
-	if (session->owner == usr->id)
+	if (reason != protocol::user_event::None)
 	{
-		session->owner = protocol::null_user;
+		Propagate(session, uCreateEvent(usr, session, reason));
 		
-		// Announce owner disappearance.
-		protocol::SessionEvent *sev = new protocol::SessionEvent;
-		sev->session_id = session->id;
-		sev->action = protocol::session_event::Delegate;
-		sev->target = session->owner;
-		Propagate(session, message_ref(sev));
+		if (session->owner == usr->id)
+		{
+			session->owner = protocol::null_user;
+			
+			// Announce owner disappearance.
+			protocol::SessionEvent *sev = new protocol::SessionEvent;
+			sev->session_id = session->id;
+			sev->action = protocol::session_event::Delegate;
+			sev->target = session->owner;
+			Propagate(session, message_ref(sev));
+		}
 	}
 }
 
