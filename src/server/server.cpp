@@ -736,7 +736,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		else
 		#endif
 		{
-			session_iterator si(sessions.find(usr->session));
+			session_iterator si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
 			{
 				#ifndef NDEBUG
@@ -749,33 +749,32 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			Session *session = si->second;
 			
 			usr_session_iterator usi(usr->sessions.find(session->id));
-			if (usi != usr->sessions.end())
-			{
-				usr->inMsg->user_id = usr->id;
-				usr->session = usr->inMsg->session_id;
-				usr->activeLocked = usi->second.locked;
-				
-				if (fIsSet(usr->caps, protocol::client::AckFeedback))
-				{
-					uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
-				}
-				
-				Propagate(
-					session,
-					message_ref(usr->inMsg),
-					(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
-				);
-				usr->inMsg = 0;
-				
-				#ifdef CHECK_VIOLATIONS
-				fSet(usr->tags, uTag::CanChange);
-				#endif
-			}
-			else
+			if (usi == usr->sessions.end())
 			{
 				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 				usr->session = protocol::Global;
+				break;
 			}
+			
+			usr->inMsg->user_id = usr->id;
+			usr->session = usr->inMsg->session_id;
+			usr->activeLocked = usi->second.locked;
+			
+			if (fIsSet(usr->caps, protocol::client::AckFeedback))
+			{
+				uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
+			}
+			
+			Propagate(
+				session,
+				message_ref(usr->inMsg),
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
+			usr->inMsg = 0;
+			
+			#ifdef CHECK_VIOLATIONS
+			fSet(usr->tags, uTag::CanChange);
+			#endif
 		}
 		break;
 	case protocol::type::UserInfo:
