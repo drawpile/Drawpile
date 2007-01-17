@@ -1303,15 +1303,31 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	case protocol::session_event::Lock:
 	case protocol::session_event::Unlock:
 		{
+			
 			if (event->target == protocol::null_user)
 			{
 				// locking whole board
+				
+				#ifndef NDEBUG
+				std::cout << "Changing lock for session: "
+					<< static_cast<int>(session->id)
+					<< ", locked: "
+					<< (event->action == protocol::session_event::Lock ? "true" : "false") << std::endl;
+				#endif
 				
 				session->locked = (event->action == protocol::session_event::Lock ? true : false);
 			}
 			else
 			{
 				// locking single user
+				
+				#ifndef NDEBUG
+				std::cout << "Changing lock for user: "
+					<< static_cast<int>(event->target)
+					<< ", locked: "
+					<< (event->action == protocol::session_event::Lock ? "true" : "false")
+					<< ", in session: " << static_cast<int>(session->id) << std::endl;
+				#endif
 				
 				session_usr_iterator sui(session->users.find(event->target));
 				if (sui == session->users.end())
