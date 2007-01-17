@@ -687,7 +687,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (si == sessions.end())
 			{
 				#ifndef NDEBUG
-				std::cerr << "No such session as "
+				std::cerr << "(draw) no such session as "
 					<< static_cast<int>(usr->session) << "!" << std::endl;
 				#endif
 				
@@ -744,7 +744,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				if (si == sessions.end())
 				{
 					#ifndef NDEBUG
-					std::cerr << "No such session as "
+					std::cerr << "(select) no such session as "
 						<< static_cast<int>(usr->session) << "!" << std::endl;
 					#endif
 					
@@ -843,7 +843,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (si == sessions.end())
 			{
 				#ifndef NDEBUG
-				std::cerr << "No such session: "
+				std::cerr << "(unsubscribe) no such session: "
 					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
@@ -875,7 +875,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				// session not found
 				#ifndef NDEBUG
-				std::cerr << "No such session: "
+				std::cerr << "(subscribe) no such session: "
 					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
@@ -1512,8 +1512,6 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			session->owner = usr->id;
 			
-			// TODO
-			//registerSession(s);
 			sessions.insert( std::make_pair(session->id, session) );
 			
 			#ifndef NDEBUG
