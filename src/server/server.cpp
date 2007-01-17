@@ -673,21 +673,22 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif // CHECK_VIOLATIONS
 		
 		// handle all message with 'selected' modifier the same
+		if (usr->activeLocked)
 		{
-			if (usr->activeLocked)
-			{
-				// TODO: Warn user?
-				break;
-			}
-			
-			// make sure the user id is correct
-			usr->inMsg->user_id = usr->id;
-			
+			// TODO: Warn user?
+			break;
+		}
+		
+		// make sure the user id is correct
+		usr->inMsg->user_id = usr->id;
+		
+		{
 			session_iterator si(sessions.find(usr->session));
 			if (si == sessions.end())
 			{
 				#ifndef NDEBUG
-				std::cerr << "No such session!" << std::endl;
+				std::cerr << "No such session as "
+					<< static_cast<int>(usr->session) << "!" << std::endl;
 				#endif
 				
 				break;
@@ -743,7 +744,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				if (si == sessions.end())
 				{
 					#ifndef NDEBUG
-					std::cerr << "No such session!" << std::endl;
+					std::cerr << "No such session as "
+						<< static_cast<int>(usr->session) << "!" << std::endl;
 					#endif
 					
 					break;
@@ -1354,7 +1356,26 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		
 		break;
 	case protocol::session_event::Delegate:
-		
+		{
+			session_usr_iterator sui(session->users.find(event->target));
+			if (sui == session->users.end())
+			{
+				// user not found
+				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
+				break;
+			}
+			
+			usr_session_iterator usi(sui->second->sessions.find(session->id));
+			if (usi == sui->second->sessions.end())
+			{
+				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
+				break;
+			}
+			
+			//message_ref event(event);
+			
+			//uSendMsg()
+		}
 		break;
 	case protocol::session_event::Mute:
 		
@@ -2075,7 +2096,8 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
-	std::cout << "Server::uJoinSession()" << std::endl;
+	std::cout << "Server::uJoinSession(session: "
+		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	#endif
 	
