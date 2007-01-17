@@ -707,11 +707,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			while (msg->next != 0)
 				msg = msg->next;
 			
-			if (fIsSet(usr->caps, protocol::client::AckFeedback))
-			{
-				uSendMsg(usr, msgAck(usr->session, msg->type));
-			}
-			
 			Propagate(
 				session,
 				message_ref(msg),
@@ -759,11 +754,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			usr->session = si->second->id;
 			usr->activeLocked = usi->second.locked;
 			
-			if (fIsSet(usr->caps, protocol::client::AckFeedback))
-			{
-				uSendMsg(usr, msgAck(protocol::Global, usr->inMsg->type));
-			}
-			
 			Propagate(
 				si->second,
 				message_ref(usr->inMsg),
@@ -800,7 +790,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				
 				break;
 			}
-			Session *session = si->second;
 			
 			if (!uInSession(usr, pmsg->session_id))
 			{
@@ -810,13 +799,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			if (fIsSet(usr->caps, protocol::client::AckFeedback))
-			{
-				uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
-			}
-			
 			Propagate(
-				session,
+				si->second,
 				pmsg,
 				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
 			);
@@ -1005,11 +989,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			uSendMsg(usr, msgAck(layer->session_id, layer->type));
 			
 			layer->user_id = usr->id;
-			
-			if (fIsSet(usr->caps, protocol::client::AckFeedback))
-			{
-				uSendMsg(usr, msgAck(layer->session_id, layer->type));
-			}
 			
 			Propagate(
 				session,
@@ -1288,6 +1267,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
 				break;
 			}
+			
 			Propagate(session, message_ref(event));
 			usr->inMsg = 0;
 			User *usr_ptr = sui->second;
@@ -1366,8 +1346,12 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			
 			session->owner = sui->second->id;
 			
-			uSendMsg(sui->second, message_ref(event));
-			uSendMsg(usr, msgAck(session->id, protocol::type::SessionEvent));
+			Propagate(
+				session,
+				message_ref(event),
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
+			
 			usr->inMsg = 0;
 		}
 		break;
@@ -1928,6 +1912,12 @@ void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool 
 	#endif
 	#endif
 	
+	if (source != protocol::null_user)
+	{
+		user_iterator sui(users.find(source));
+		uSendMsg(sui->second, msgAck(session->id, msg->type));
+	}
+	
 	User *usr_ptr;
 	session_usr_iterator ui( session->users.begin() );
 	for (; ui != session->users.end(); ui++)
@@ -1938,7 +1928,6 @@ void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool 
 			uSendMsg(usr_ptr, msg);
 		}
 	}
-	
 	
 	if (toAll)
 	{
