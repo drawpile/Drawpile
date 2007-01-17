@@ -1303,14 +1303,6 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	case protocol::session_event::Lock:
 	case protocol::session_event::Unlock:
 		{
-			session_usr_iterator sui(session->users.find(event->target));
-			if (sui == session->users.end())
-			{
-				// session not found
-				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
-				break;
-			}
-			
 			if (event->target == protocol::null_user)
 			{
 				// locking whole board
@@ -1320,6 +1312,14 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			else
 			{
 				// locking single user
+				
+				session_usr_iterator sui(session->users.find(event->target));
+				if (sui == session->users.end())
+				{
+					// user not found
+					uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
+					break;
+				}
 				
 				usr_session_iterator usi(sui->second->sessions.find(session->id));
 				if (usi == sui->second->sessions.end())
