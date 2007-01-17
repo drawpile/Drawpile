@@ -1302,59 +1302,56 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		break;
 	case protocol::session_event::Lock:
 	case protocol::session_event::Unlock:
+		if (event->target == protocol::null_user)
 		{
+			// locking whole board
 			
-			if (event->target == protocol::null_user)
-			{
-				// locking whole board
-				
-				#ifndef NDEBUG
-				std::cout << "Changing lock for session: "
-					<< static_cast<int>(session->id)
-					<< ", locked: "
-					<< (event->action == protocol::session_event::Lock ? "true" : "false") << std::endl;
-				#endif
-				
-				session->locked = (event->action == protocol::session_event::Lock ? true : false);
-			}
-			else
-			{
-				// locking single user
-				
-				#ifndef NDEBUG
-				std::cout << "Changing lock for user: "
-					<< static_cast<int>(event->target)
-					<< ", locked: "
-					<< (event->action == protocol::session_event::Lock ? "true" : "false")
-					<< ", in session: " << static_cast<int>(session->id) << std::endl;
-				#endif
-				
-				session_usr_iterator sui(session->users.find(event->target));
-				if (sui == session->users.end())
-				{
-					// user not found
-					uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
-					break;
-				}
-				
-				usr_session_iterator usi(sui->second->sessions.find(session->id));
-				if (usi == sui->second->sessions.end())
-				{
-					uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
-					break;
-				}
-				
-				usi->second.locked = (event->action == protocol::session_event::Lock ? true : false);
-				if (usr->session == event->target)
-				{
-					usr->activeLocked = usi->second.locked;
-				}
-			}
+			#ifndef NDEBUG
+			std::cout << "Changing lock for session: "
+				<< static_cast<int>(session->id)
+				<< ", locked: "
+				<< (event->action == protocol::session_event::Lock ? "true" : "false") << std::endl;
+			#endif
 			
-			usr->inMsg = 0;
-			
-			Propagate(session, message_ref(event));
+			session->locked = (event->action == protocol::session_event::Lock ? true : false);
 		}
+		else
+		{
+			// locking single user
+			
+			#ifndef NDEBUG
+			std::cout << "Changing lock for user: "
+				<< static_cast<int>(event->target)
+				<< ", locked: "
+				<< (event->action == protocol::session_event::Lock ? "true" : "false")
+				<< ", in session: " << static_cast<int>(session->id) << std::endl;
+			#endif
+			
+			session_usr_iterator sui(session->users.find(event->target));
+			if (sui == session->users.end())
+			{
+				// user not found
+				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
+				break;
+			}
+			
+			usr_session_iterator usi(sui->second->sessions.find(session->id));
+			if (usi == sui->second->sessions.end())
+			{
+				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
+				break;
+			}
+			
+			usi->second.locked = (event->action == protocol::session_event::Lock ? true : false);
+			if (usr->session == event->target)
+			{
+				usr->activeLocked = usi->second.locked;
+			}
+		}
+		
+		Propagate(session, message_ref(event));
+		usr->inMsg = 0;
+		
 		break;
 	case protocol::session_event::Delegate:
 		
