@@ -617,8 +617,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
 			std::cerr << "Protocol violation from user: "
-				<< static_cast<int>(usr->id) << std::endl;
-			std::cerr << "Reason: Unexpected tool info" << std::endl;
+				<< static_cast<int>(usr->id) << std::endl
+				<< "Reason: Unexpected tool info" << std::endl;
 			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
@@ -633,8 +633,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (!fIsSet(usr->tags, uTag::HaveTool))
 			{
 				std::cerr << "Protocol violation from user: "
-					<< static_cast<int>(usr->id) << std::endl;
-				std::cerr << "Reason: Stroke info without tool." << std::endl;
+					<< static_cast<int>(usr->id) << std::endl
+					<< "Reason: Stroke info without tool." << std::endl;
 				uRemove(usr, protocol::user_event::Violation);
 				break;
 			}
@@ -650,8 +650,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (!fIsSet(usr->tags, uTag::HaveTool))
 			{
 				std::cerr << "Protocol violation from user: "
-					<< static_cast<int>(usr->id) << std::endl;
-				std::cerr << "Reason: Stroke info without tool." << std::endl;
+					<< static_cast<int>(usr->id) << std::endl
+					<< "Reason: Stroke info without tool." << std::endl;
 				uRemove(usr, protocol::user_event::Violation);
 				break;
 			}
@@ -736,22 +736,21 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		else
 		#endif
 		{
-			usr_session_iterator usi(usr->sessions.find(usr->inMsg->session_id));
+			session_iterator si(sessions.find(usr->session));
+			if (si == sessions.end())
+			{
+				#ifndef NDEBUG
+				std::cerr << "(select) no such session as "
+					<< static_cast<int>(usr->session) << "!" << std::endl;
+				#endif
+				
+				break;
+			}
+			Session *session = si->second;
 			
+			usr_session_iterator usi(usr->sessions.find(session->id));
 			if (usi != usr->sessions.end())
 			{
-				session_iterator si(sessions.find(usr->session));
-				if (si == sessions.end())
-				{
-					#ifndef NDEBUG
-					std::cerr << "(select) no such session as "
-						<< static_cast<int>(usr->session) << "!" << std::endl;
-					#endif
-					
-					break;
-				}
-				Session *session = si->second;
-				
 				usr->inMsg->user_id = usr->id;
 				usr->session = usr->inMsg->session_id;
 				usr->activeLocked = usi->second.locked;
@@ -831,8 +830,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
 			std::cerr << "Protocol violation from user: "
-				<< static_cast<int>(usr->id) << std::endl;
-			std::cerr << "Reason: Unsubscribe in middle of something." << std::endl;
+				<< static_cast<int>(usr->id) << std::endl
+				<< "Reason: Unsubscribe in middle of something." << std::endl;
 			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
@@ -862,8 +861,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
 			std::cerr << "Protocol violation from user: "
-				<< static_cast<int>(usr->id) << std::endl;
-			std::cerr << "Reason: Subscribe in middle of something." << std::endl;
+				<< static_cast<int>(usr->id) << std::endl
+				<< "Reason: Subscribe in middle of something." << std::endl;
 			uRemove(usr, protocol::user_event::Violation);
 			break;
 		}
@@ -1109,14 +1108,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	default:
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cerr << "Unexpected, unhandled or unknown message type." << std::endl;
-		protocol::msgName(usr->inMsg->type);
-		#else
-		std::cerr << "Garbage from user: " << static_cast<int>(usr->id) << std::endl;
-		#endif
-		#endif
+		std::cerr << "Unknown message: #" << static_cast<int>(usr->inMsg->type)
+			<< ", from user: #" << static_cast<int>(usr->id)
+			<< " (dropping)" << std::endl;
 		uRemove(usr, protocol::user_event::Dropped);
 		break;
 	}
