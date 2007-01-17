@@ -746,9 +746,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				
 				break;
 			}
-			Session *session = si->second;
 			
-			usr_session_iterator usi(usr->sessions.find(session->id));
+			usr_session_iterator usi(usr->sessions.find(si->second->id));
 			if (usi == usr->sessions.end())
 			{
 				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
@@ -757,7 +756,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			usr->inMsg->user_id = usr->id;
-			usr->session = usr->inMsg->session_id;
+			usr->session = si->second->id;
 			usr->activeLocked = usi->second.locked;
 			
 			if (fIsSet(usr->caps, protocol::client::AckFeedback))
@@ -766,7 +765,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			Propagate(
-				session,
+				si->second,
 				message_ref(usr->inMsg),
 				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
 			);
@@ -1365,9 +1364,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				break;
 			}
 			
-			//message_ref event(event);
+			session->owner = sui->second->id;
 			
-			//uSendMsg()
+			uSendMsg(sui->second, message_ref(event));
+			uSendMsg(usr, msgAck(session->id, protocol::type::SessionEvent));
+			usr->inMsg = 0;
 		}
 		break;
 	case protocol::session_event::Mute:
