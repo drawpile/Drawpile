@@ -213,6 +213,7 @@ const uint8_t
 	
 	//! User may not send Chat messages.
 	Mute = 0x10,
+	
 	//! User can't see Chat messages.
 	Deaf = 0x20;
 
@@ -229,6 +230,7 @@ const uint8_t
 	//! Session persists
 	Persist = 0x01,
 	
+	//! Do not destroy session after all users have left
 	NoSelfDestruct = 0x08;
 
 }
