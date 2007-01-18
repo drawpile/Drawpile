@@ -323,16 +323,16 @@ void Server::uWrite(User*& usr) throw()
 				<< "Bandwidth savings are [(7*n) - ((5*n)+3)]: "
 				<< (7 * outgoing.size()) - (3 + (outgoing.size() * 5)) << std::endl;
 		}
-		#endif
-		#endif
+		#endif // NDEBUG
+		#endif // DEBUG_LINKED_LIST
 		
-		// clear linked list...
 		if (outgoing.empty())
 		{
 			usr->queue.pop_front();
 		}
 		else
 		{
+			// clear linked list...
 			for (mi = outgoing.begin(); mi != outgoing.end(); mi++)
 			{
 				(*mi)->next = 0;
@@ -673,7 +673,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif // CHECK_VIOLATIONS
 		
 		// handle all message with 'selected' modifier the same
-		if (usr->activeLocked)
+		if (fIsSet(usr->a_mode, protocol::user_mode::Locked))
 		{
 			// TODO: Warn user?
 			break;
@@ -752,7 +752,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			usr->inMsg->user_id = usr->id;
 			usr->session = si->second->id;
-			usr->activeLocked = fIsSet(usi->second.mode, protocol::user_mode::Locked);
+			usr->a_mode = usi->second.mode;
 			
 			Propagate(
 				si->second,
@@ -1074,7 +1074,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (msg->session_id == protocol::Global)
 			{
 				// set as admin
-				usr->mode = protocol::user_mode::Administrator;
+				fSet(usr->mode, protocol::user_mode::Administrator);
 			}
 			else
 			{
@@ -1327,7 +1327,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			
 			if (usr->session == event->target)
 			{
-				usr->activeLocked = fIsSet(usi->second.mode, protocol::user_mode::Locked);
+				usr->a_mode = usi->second.mode;
 			}
 		}
 		
@@ -1341,13 +1341,6 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			if (sui == session->users.end())
 			{
 				// user not found
-				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
-				break;
-			}
-			
-			usr_session_iterator usi(sui->second->sessions.find(session->id));
-			if (usi == sui->second->sessions.end())
-			{
 				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
 				break;
 			}
@@ -1364,16 +1357,42 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		}
 		break;
 	case protocol::session_event::Mute:
-		
-		break;
 	case protocol::session_event::Unmute:
-		
-		break;
-	case protocol::session_event::Deaf:
-		
-		break;
-	case protocol::session_event::Undeafen:
-		
+		{
+			session_usr_iterator sui(session->users.find(event->target));
+			if (sui == session->users.end())
+			{
+				// user not found
+				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
+				break;
+			}
+			
+			usr_session_iterator usi(sui->second->sessions.find(session->id));
+			if (usi == sui->second->sessions.end())
+			{
+				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
+				break;
+			}
+			
+			// Set mode
+			if (event->action == protocol::session_event::Mute)
+				fSet(usi->second.mode, protocol::user_mode::Mute);
+			else
+				fClr(usi->second.mode, protocol::user_mode::Mute);
+			
+			if (usr->session == event->target)
+			{
+				usr->a_mode = usi->second.mode;
+			}
+			
+			Propagate(
+				session,
+				message_ref(event),
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			);
+			
+			usr->inMsg = 0;
+		}
 		break;
 	default:
 		std::cerr << "Unknown session action: "
@@ -1683,31 +1702,25 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
 			
-			if (msg->user_id != protocol::null_user)
+			if ((msg->user_id != protocol::null_user)
+				or (msg->session_id != protocol::Global)
+				or (msg->event != protocol::user_event::Login))
 			{
-				#ifndef NDEBUG
-				std::cerr << "User made blasphemous assumption." << std::endl;
-				#endif
-				
-				uRemove(usr, protocol::user_event::Violation);
-				return;
-			}
-			
-			if (msg->session_id != protocol::Global)
-			{
-				#ifndef NDEBUG
-				std::cerr << "Wrong session identifier." << std::endl;
-				#endif
-				
-				uRemove(usr, protocol::user_event::Violation);
-				return;
-			}
-			
-			if (msg->event != protocol::user_event::Login)
-			{
-				#ifndef NDEBUG
-				std::cerr << "Wrong user event." << std::endl;
-				#endif
+				std::cerr << "Protocol violation from user: "
+					<< static_cast<int>(usr->id) << std::endl
+					<< "Reason: ";
+				if (msg->user_id != protocol::null_user)
+				{
+					std::cerr << "Client assumed it knows its user ID." << std::endl;
+				}
+				else if (msg->session_id != protocol::Global)
+				{
+					std::cerr << "Wrong session identifier." << std::endl;
+				}
+				else if (msg->event != protocol::user_event::Login)
+				{
+					std::cerr << "Wrong user event for login." << std::endl;
+				}
 				
 				uRemove(usr, protocol::user_event::Violation);
 				return;
@@ -1719,11 +1732,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Name too long." << std::endl;
 				#endif
 				
-				if (0) {
-					uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
-				}
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
 				
-				uRemove(usr, protocol::user_event::Dropped);
+				//uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			
@@ -1734,11 +1745,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				std::cerr << "Name not unique." << std::endl;
 				#endif
 				
-				if (0) {
-					uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
-				}
+				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
 				
-				uRemove(usr, protocol::user_event::Dropped);
+				//uRemove(usr, protocol::user_event::Dropped);
 				return;
 			}
 			
@@ -1753,18 +1762,16 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			msg->length = 0;
 			msg->name = 0;
 			
+			usr->mode = default_user_mode;
+			
 			if (fIsSet(opmode, server::mode::LocalhostAdmin)
 				and (usr->sock->address() == INADDR_LOOPBACK))
 			{
 				// auto admin promotion.
 				// also, don't put any other flags on the user.
-				usr->mode = protocol::user_mode::Administrator;
+				fSet(usr->mode, protocol::user_mode::Administrator);
 			}
-			else
-			{
-				// set user mode
-				usr->mode = default_user_mode;
-			}
+			
 			msg->mode = usr->mode;
 			
 			// reply
@@ -1890,6 +1897,10 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			}
 			
 			usr->caps = ident->flags;
+			usr->extensions = ident->extensions;
+			usr->mode = default_user_mode;
+			if (!fIsSet(usr->extensions, protocol::extensions::Chat))
+				fSet(usr->mode, protocol::user_mode::Deaf);
 		}
 		else
 		{
@@ -1960,6 +1971,20 @@ void Server::uSendMsg(User*& usr, message_ref msg) throw()
 	protocol::msgName(msg->type);
 	#endif
 	#endif
+	
+	switch (msg->type)
+	{
+	case protocol::type::Chat:
+		if (!fIsSet(usr->extensions, protocol::extensions::Chat))
+			return;
+		break;
+	case protocol::type::Palette:
+		if (!fIsSet(usr->extensions, protocol::extensions::Palette))
+			return;
+		break;
+	default:
+		break;
+	}
 	
 	usr->queue.push_back( msg );
 	

@@ -117,16 +117,20 @@ struct User
 	User(uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
 		: sock(nsock),
 		id(_id),
-		nlen(0),
-		name(0),
-		state(uState::init),
-		activeLocked(false),
 		events(0),
-		inMsg(0),
-		syncing(protocol::Global)
 		#ifdef CHECK_VIOLATIONS
-		, tags(0)
+		tags(0),
 		#endif // CHECK_VIOLATIONS
+		state(uState::init),
+		session(protocol::Global),
+		a_mode(protocol::user_mode::None),
+		mode(protocol::user_mode::None),
+		syncing(protocol::Global),
+		caps(protocol::client::None),
+		extensions(protocol::extensions::None),
+		inMsg(0),
+		nlen(0),
+		name(0)
 	{
 		#ifdef DEBUG_USER
 		#ifndef NDEBUG
@@ -159,34 +163,34 @@ struct User
 	// User identifier
 	uint8_t id;
 	
-	// Name length
-	uint8_t nlen;
+	// Event I/O registered events.
+	uint32_t events;
 	
-	// User name
-	char* name;
-	
-	// Currently active session
-	uint8_t session;
-	
-	// User mode
-	uint8_t mode;
-	
-	// Client capabilities
-	uint8_t caps;
-	
-	// User state
-	uint8_t state;
+	uint8_t
+		#ifdef CHECK_VIOLATIONS
+		// Tags for protocol violation checking
+		tags,
+		#endif
+		// User state
+		state,
+		// Currently active session
+		session,
+		// User mode
+		a_mode,
+		// Session we're currently syncing.
+		mode,
+		// Selected session's mode
+		syncing,
+		// Client capabilities
+		caps,
+		// Client's supported extensions
+		extensions;
 	
 	// Subscribed sessions
 	std::map<uint8_t, SessionData> sessions;
 	
-	bool activeLocked;
-	
 	// Output queue
 	std::deque<message_ref> queue;
-	
-	// Event I/O registered events.
-	uint32_t events;
 	
 	// Input/output buffer
 	Buffer input, output;
@@ -197,11 +201,10 @@ struct User
 	// for storing the password seed associated with this user.
 	char seed[4];
 	
-	// Session we're currently syncing.
-	uint8_t syncing;
+	// Name length
+	uint8_t nlen;
 	
-	#ifdef CHECK_VIOLATIONS
-	uint8_t tags;
-	#endif
+	// User name
+	char* name;
 };
 #endif // ServerUser_INCLUDED
