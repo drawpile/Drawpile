@@ -1,3 +1,9 @@
+2007-01-18 Vesion 0.3.0
+ * Several tablet handling bugs were fixed
+ * Client now shows a list of logged in users
+ * Session administration commands (kick, lock)
+ * Chat
+
 2007-01-11 Version 0.2.0
  * Added networking support, hosting and joinin sessions now possible.
 
