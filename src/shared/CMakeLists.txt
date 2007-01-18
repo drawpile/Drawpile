@@ -4,7 +4,6 @@ set (
 	Shared_Headers
 	SHA1.h
 	protocol.h
-	protocol.admin.h
 	protocol.defaults.h
 	protocol.errors.h
 	protocol.flags.h
