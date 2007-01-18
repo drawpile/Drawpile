@@ -1056,7 +1056,7 @@ struct LayerSelect
 	: Message
 {
 	LayerSelect() throw()
-		: Message(type::LayerSelect, message::isUser|message::isSession)
+		: Message(type::LayerSelect, message::isUser|message::isSelected)
 	{ }
 	
 	~LayerSelect() throw() { }
