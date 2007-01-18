@@ -46,7 +46,7 @@ namespace srv_info
 
 const char
 	applicationName[] = "DrawPile Server",
-	versionString[] = "0.2a",
+	versionString[] = "0.2",
 	copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.",
 	//contactAddress[] = "wyrmchild@users.sourceforge.net",
 	websiteURL[] = "http://drawpile.sourceforge.net/";

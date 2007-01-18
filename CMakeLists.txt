@@ -7,9 +7,9 @@ cmake_minimum_required( VERSION 2.4.5 )
 
 ### config options ###
 
-set ( CLIENTVERSION "0.2" )
-set ( SERVERVERSION "0.1" )
-set ( LIBVERSION "0.1" )
+set ( CLIENTVERSION "0.3" )
+set ( SERVERVERSION "0.2" )
+set ( LIBVERSION "0.2" )
 
 set ( LIBNAME "drawpile-${LIBVERSION}" )
 set ( CLIENTNAME drawpile )
