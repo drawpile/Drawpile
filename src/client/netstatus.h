@@ -55,6 +55,9 @@ class NetStatus : public QWidget
 		void leave(const network::User& user);
 		//! User got kicked out
 		void kicked(const network::User& user);
+	signals:
+		//! A status message
+		void statusMessage(const QString& message);
 
 	private:
 		QLabel *label_, *icon_;

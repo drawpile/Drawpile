@@ -199,6 +199,7 @@ void HostState::login(const QString& username)
 	memcpy(msg->identifier, protocol::identifier_string,
 			protocol::identifier_size);
 	msg->revision = protocol::revision;
+	msg->extensions = protocol::extensions::Chat;
 	net_->send(msg);
 }
 

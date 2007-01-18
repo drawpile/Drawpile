@@ -45,7 +45,7 @@ class ChatBox: public QDockWidget
 		void systemMessage(const QString& message);
 
 		//! A session was joined
-		void joined(const QString& mynick);
+		void joined(const QString& title, const QString& mynick);
 
 		//! A session was left
 		void parted();

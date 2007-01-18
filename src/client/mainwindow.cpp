@@ -120,7 +120,6 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
 	connect(controller_, SIGNAL(joined(QString,QString)), logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(joined(QString,QString)), this, SLOT(joined(QString,QString)));
-	connect(controller_, SIGNAL(parted()), chatbox_, SLOT(parted()));
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),this, SLOT(rasterUp(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
@@ -130,6 +129,12 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(needPassword()),logindlg_, SLOT(getPassword()));
 	connect(logindlg_, SIGNAL(session(int)), controller_, SLOT(joinSession(int)));
 	connect(logindlg_, SIGNAL(password(QString)), controller_, SLOT(sendPassword(QString)));
+
+	// Chatbox connections
+	connect(controller_, SIGNAL(chat(QString,QString)), chatbox_, SLOT(receiveMessage(QString,QString)));
+	connect(controller_, SIGNAL(parted()), chatbox_, SLOT(parted()));
+	connect(chatbox_, SIGNAL(message(QString)), controller_, SLOT(sendChat(QString)));
+	connect(netstatus_, SIGNAL(statusMessage(QString)), chatbox_, SLOT(systemMessage(QString)));
 
 	readSettings();
 }
@@ -693,7 +698,7 @@ void MainWindow::joined(const QString& title, const QString& myname)
 	bool owner = controller_->amSessionOwner();
 	userlist_->setAdminMode(owner);
 	adminTools_->setEnabled(owner);
-	chatbox_->joined(myname);
+	chatbox_->joined(title, myname);
 }
 
 /**
@@ -937,7 +942,7 @@ void MainWindow::initActions()
 	logout_ = new QAction("&Leave", this);
 	logout_->setStatusTip(tr("Leave this drawing session"));
 	lockboard_ = new QAction("Lo&ck the board", this);
-	lockboard_->setStatusTip(tr("Prevent others from making changes"));
+	lockboard_->setStatusTip(tr("Prevent changes to the drawing board"));
 	lockboard_->setCheckable(true);
 
 	logout_->setEnabled(false);

@@ -30,6 +30,7 @@ ChatBox::ChatBox(QWidget *parent)
 	setWidget(w);
 	ui_->setupUi(w);
 
+	ui_->sendbutton->setEnabled(false);
 	connect(ui_->sendbutton, SIGNAL(clicked()), this, SLOT(sendMessage()));
 }
 
@@ -43,11 +44,11 @@ void ChatBox::clear()
 	ui_->chatbox->clear();
 }
 
-void ChatBox::joined(const QString& mynick)
+void ChatBox::joined(const QString& title, const QString& mynick)
 {
 	mynick_ = mynick;
 	ui_->sendbutton->setEnabled(true);
-	systemMessage(tr("Joined session"));
+	systemMessage(title.isEmpty()?tr("Joined session"):tr("Joined session. Title is <em>%1</em>").arg(title));
 }
 
 void ChatBox::parted()
@@ -61,9 +62,16 @@ void ChatBox::sendMessage()
 	QString msg = ui_->chatline->text().trimmed();
 	if(msg.isEmpty())
 		return;
+#if 0 /* this is needed if server doesn't echo chat messages */
 	receiveMessage(mynick_, msg);
+#endif
 	emit message(msg);
 	ui_->chatline->clear();
+}
+
+static QString escapeString(QString str)
+{
+	return str.replace('<', "&lt;").replace('>', "&gt;");
 }
 
 /**
@@ -77,7 +85,7 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message)
 			"<b>" +
 			nick +
 			":</b> " +
-			message
+			escapeString(message)
 			);
 }
 
