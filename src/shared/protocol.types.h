@@ -138,6 +138,12 @@ const uint8_t
 	//! Unlock user/layer
 	Unlock = 29,
 	
+	//! Session will not auto-destruct
+	Persist = 40,
+	
+	//! Session will cache the image raster (implies persistence)
+	CacheRaster = 41,
+	
 	//! Kick user from session
 	Kick = 60;
 
