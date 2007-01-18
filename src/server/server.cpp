@@ -752,7 +752,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			usr->inMsg->user_id = usr->id;
 			usr->session = si->second->id;
-			usr->activeLocked = usi->second.locked;
+			usr->activeLocked = fIsSet(usi->second.mode, protocol::user_mode::Locked);
 			
 			Propagate(
 				si->second,
@@ -1316,10 +1316,18 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				break;
 			}
 			
-			usi->second.locked = (event->action == protocol::session_event::Lock ? true : false);
+			if (event->action == protocol::session_event::Lock)
+			{
+				fSet(usi->second.mode, protocol::user_mode::Locked);
+			}
+			else
+			{
+				fClr(usi->second.mode, protocol::user_mode::Locked);
+			}
+			
 			if (usr->session == event->target)
 			{
-				usr->activeLocked = usi->second.locked;
+				usr->activeLocked = fIsSet(usi->second.mode, protocol::user_mode::Locked);
 			}
 		}
 		

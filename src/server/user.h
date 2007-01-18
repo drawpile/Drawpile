@@ -50,11 +50,9 @@ typedef std::map<uint8_t, SessionData>::iterator usr_session_iterator;
 struct SessionData
 {
 	SessionData(uint8_t id=protocol::null_user, Session *s=0) throw()
-		: user(id),
-		session(s),
+		: session(s),
 		layer(protocol::null_layer),
 		mode(s->mode),
-		locked(false),
 		syncWait(false)
 	{
 	}
@@ -62,9 +60,6 @@ struct SessionData
 	~SessionData() throw()
 	{
 	}
-	
-	// user who this describes
-	uint8_t user;
 	
 	// Session reference
 	Session *session;
@@ -74,8 +69,6 @@ struct SessionData
 	
 	// User mode within session
 	uint8_t mode;
-	
-	bool locked;
 	
 	bool syncWait;
 };
@@ -104,6 +97,7 @@ const uint8_t
 	active = 0;
 }
 
+#ifdef CHECK_VIOLATIONS
 //! Client tracking flags
 namespace uTag
 {
@@ -112,7 +106,9 @@ const uint8_t
 	None = 0,
 	CanChange = 0x01,
 	HaveTool = 0x02;
+
 }
+#endif // CHECK_VIOLATIONS
 
 // User information
 struct User
