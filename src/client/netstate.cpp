@@ -30,7 +30,7 @@
 #include "point.h"
 
 #include "../shared/protocol.h"
-#include "../shared/protocol.admin.h"
+#include "../shared/protocol.types.h"
 #include "../shared/protocol.tools.h"
 #include "../shared/SHA1.h"
 #include "../shared/templates.h" // for bswap
