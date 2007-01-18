@@ -67,7 +67,7 @@ Event::~Event() throw()
 	assert(evfd == -1);
 }
 
-bool Event::init() throw(std::bad_alloc)
+bool Event::init() throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -104,7 +104,7 @@ bool Event::init() throw(std::bad_alloc)
 		}
 	}
 	
-	events = new epoll_event[10];
+	//events = new epoll_event[10];
 	
 	return true;
 }

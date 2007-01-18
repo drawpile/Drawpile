@@ -43,7 +43,6 @@
 #include <vector>
 
 #if defined(EV_EPOLL)
-	#define EV_HAVE_HANGUP
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
@@ -59,13 +58,6 @@
 	#else
 		#include <sys/select.h> // fd_set, FD* macros, etc.
 	#endif
-#endif
-
-#if defined(EV_SELECT) || defined(EV_PSELECT)
-	#define EVENT_BY_FD
-#elif defined(EV_EPOLL)
-	#define EVENT_BY_ORDER
-	#define EVENT_HAS_ALL
 #endif
 
 #ifndef WIN32
@@ -86,7 +78,7 @@ class Event
 protected:
 	#if defined(EV_EPOLL)
 	fd_t evfd;
-	epoll_event* events;
+	epoll_event events[10]; // stack allocation
 	#elif defined(EV_KQUEUE)
 	//
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
@@ -139,7 +131,7 @@ public:
 	#endif // EV_PSELECT
 	
 	//! Initialize event system.
-	bool init() throw(std::bad_alloc);
+	bool init() throw();
 	
 	//! Finish event system.
 	void finish() throw();
