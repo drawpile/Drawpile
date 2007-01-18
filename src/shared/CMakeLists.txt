@@ -26,6 +26,7 @@ endif (WIN32)
 
 add_library (
 	${LIBNAME}
+	${LIBTYPE}
 	${Shared_Sources}
 	${Shared_Headers}
 )

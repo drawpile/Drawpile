@@ -29,6 +29,8 @@ option ( KEVENT "Disable kevent(2) support" ON )
 
 option ( UNITTEST "Compile unittests" OFF )
 
+option ( SHARED "Build shared library" OFF )
+
 option ( DEBUG "Enable debugging and asserts" OFF )
 
 option ( OPTIMIZE "Disable any and all optimizations" ON )
@@ -55,6 +57,12 @@ include ( Macros.cmake )
 
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
+
+if ( SHARED )
+	set ( LIBTYPE SHARED )
+else ( SHARED )
+	set ( LIBTYPE STATIC )
+endif ( SHARED )
 
 ### config.h ###
 
