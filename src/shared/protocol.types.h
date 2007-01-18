@@ -132,10 +132,6 @@ const uint8_t
 	Mute = 20,
 	//! Unmuted
 	Unmute = 21,
-	//! Deafened
-	Deaf = 22,
-	//! Undeafened
-	Undeafen = 23,
 	
 	//! Lock user/layer
 	Lock = 28,
