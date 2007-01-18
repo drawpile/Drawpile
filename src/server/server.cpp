@@ -33,7 +33,7 @@
 #include "server.h"
 
 #include "../shared/templates.h"
-#include "../shared/protocol.admin.h"
+#include "../shared/protocol.types.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
 #include "../shared/protocol.h" // Message()
