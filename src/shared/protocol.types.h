@@ -209,6 +209,38 @@ const uint8_t
 
 } // namespace user_event
 
+//! Admin interface
+namespace admin
+{
+
+//! Commands
+namespace command
+{
+
+const uint8_t
+	//! No command
+	None = 0,
+	
+	//! Create session
+	Create = 1,
+	//! Destroy session
+	Destroy = 2,
+	//! Alter session
+	Alter = 3,
+	
+	//! Authenticate user as server admin
+	Authenticate = 5,
+	
+	//! Set server or session password
+	Password = 7,
+	
+	//! Shutdown server
+	Shutdown = 9;
+
+}
+
+} // namespace admin
+
 } // namespace protocol
 
 #endif // PROTOCOL_MESSAGE_TYPES_INCLUDED
