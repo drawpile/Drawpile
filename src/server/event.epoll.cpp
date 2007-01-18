@@ -169,7 +169,7 @@ int Event::wait(uint32_t msecs) throw()
 	return nfds;
 }
 
-int Event::add(int fd, uint32_t ev) throw()
+int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -228,7 +228,7 @@ int Event::add(int fd, uint32_t ev) throw()
 	return true;
 }
 
-int Event::modify(int fd, uint32_t ev) throw()
+int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -286,7 +286,7 @@ int Event::modify(int fd, uint32_t ev) throw()
 	return 0;
 }
 
-int Event::remove(int fd, uint32_t ev) throw()
+int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -343,7 +343,7 @@ std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
 	return std::make_pair(events[ev_index].data.fd, events[ev_index].events);
 }
 
-uint32_t Event::getEvents(int fd) const throw()
+uint32_t Event::getEvents(fd_t fd) const throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -362,7 +362,7 @@ uint32_t Event::getEvents(int fd) const throw()
 	return 0;
 }
 
-bool Event::isset(int fd, uint32_t ev) const throw()
+bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
