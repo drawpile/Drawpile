@@ -43,6 +43,7 @@ namespace protocol {
 	class Synchronize;
 	class SyncWait;
 	class SessionEvent;
+	class Chat;
 };
 
 namespace drawingboard {
@@ -90,8 +91,8 @@ class HostState : public QObject {
 		//! Construct a HostState object
 		HostState(QObject *parent);
 
-		//! Get the local user ID as assigned by the server
-		int localUserId() const { return localuser_.id; }
+		//! Get local user info
+		const User& localUser() const { return localuser_; }
 
 		//! Get the session state
 		SessionState *session(int id) { return mysessions_.value(id); }
@@ -276,6 +277,9 @@ class SessionState : public QObject {
 		//! Send ack/sync message to readyness for synchronization
 		void sendAckSync();
 
+		//! Send a chat message
+		void sendChat(const QString& message);
+
 		//! Handle session acks
 		void handleAck(const protocol::Acknowledgement *msg);
 
@@ -302,6 +306,9 @@ class SessionState : public QObject {
 
 		//! Handle StrokeEnd messages
 		bool handleStrokeEnd(protocol::StrokeEnd *msg);
+
+		//! Handle chat messages
+		void handleChat(const protocol::Chat *msg);
 
 	signals:
 		//! Raster data has been received
@@ -351,6 +358,9 @@ class SessionState : public QObject {
 
 		//! Results of a StrokeEnd message
 		void strokeEndReceived(int user);
+
+		//! A chat message
+		void chatMessage(const QString& nick, const QString& msg);
 
 	private slots:
 		//! Send a chunk of the raster buffer

@@ -39,6 +39,7 @@
 #include "controller.h"
 #include "toolsettingswidget.h"
 #include "userlistwidget.h"
+#include "chatwidget.h"
 #include "dualcolorbutton.h"
 #include "localserver.h"
 
@@ -117,8 +118,9 @@ MainWindow::MainWindow()
 	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_, SLOT(loggedin()));
-	connect(controller_, SIGNAL(joined(QString)), logindlg_, SLOT(joined()));
-	connect(controller_, SIGNAL(joined(QString)), this, SLOT(joined(QString)));
+	connect(controller_, SIGNAL(joined(QString,QString)), logindlg_, SLOT(joined()));
+	connect(controller_, SIGNAL(joined(QString,QString)), this, SLOT(joined(QString,QString)));
+	connect(controller_, SIGNAL(parted()), chatbox_, SLOT(parted()));
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)), logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),this, SLOT(rasterUp(int)));
 	connect(controller_, SIGNAL(noSessions()),logindlg_, SLOT(noSessions()));
@@ -685,12 +687,13 @@ void MainWindow::disconnected()
 /**
  * @param title session title
  */
-void MainWindow::joined(const QString& title)
+void MainWindow::joined(const QString& title, const QString& myname)
 {
 	setSessionTitle(title);
 	bool owner = controller_->amSessionOwner();
 	userlist_->setAdminMode(owner);
 	adminTools_->setEnabled(owner);
+	chatbox_->joined(myname);
 }
 
 /**
@@ -1097,6 +1100,7 @@ void MainWindow::createDocks()
 	QMenu *toggles = new QMenu(this);
 	createToolSettings(toggles);
 	createUserList(toggles);
+	createChatBox(toggles);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1127,6 +1131,19 @@ void MainWindow::createUserList(QMenu *toggles)
 #endif
 	toggles->addAction(userlist_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, userlist_);
+}
+
+void MainWindow::createChatBox(QMenu *toggles)
+{
+	chatbox_ = new widgets::ChatBox(this);
+	chatbox_->setObjectName("chatboxdock");
+	chatbox_->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
+#ifdef Q_WS_WIN
+	// Dock widget floating is buggy on Windows.
+	chatbox_->setFeatures(chatbox_->features() & ~QDockWidget::DockWidgetFloatable);
+#endif
+	toggles->addAction(chatbox_->toggleViewAction());
+	addDockWidget(Qt::BottomDockWidgetArea, chatbox_);
 }
 
 void MainWindow::createDialogs()

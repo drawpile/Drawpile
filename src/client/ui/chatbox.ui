@@ -1,0 +1,73 @@
+<ui version="4.0" >
+ <class>ChatBox</class>
+ <widget class="QWidget" name="ChatBox" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>513</width>
+    <height>186</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Chat</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <property name="spacing" >
+    <number>2</number>
+   </property>
+   <item>
+    <widget class="QTextEdit" name="chatbox" >
+     <property name="verticalScrollBarPolicy" >
+      <enum>Qt::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="readOnly" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>2</number>
+     </property>
+     <item>
+      <widget class="QLineEdit" name="chatline" />
+     </item>
+     <item>
+      <widget class="QPushButton" name="sendbutton" >
+       <property name="text" >
+        <string>Say</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>chatline</sender>
+   <signal>editingFinished()</signal>
+   <receiver>sendbutton</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>398</x>
+     <y>165</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>454</x>
+     <y>155</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

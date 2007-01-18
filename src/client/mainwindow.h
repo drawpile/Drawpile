@@ -34,6 +34,7 @@ namespace widgets {
 	class DualColorButton;
 	class ToolSettings;
 	class UserList;
+	class ChatBox;
 }
 namespace dialogs {
 	class ColorDialog;
@@ -129,7 +130,7 @@ class MainWindow : public QMainWindow {
 		//! Connection cut
 		void disconnected();
 		//! Joined a session
-		void joined(const QString& title);
+		void joined(const QString& title, const QString& myname);
 		//! Disallow changes to the board
 		void lock(const QString& reason);
 		//! Allow changes to the board
@@ -181,11 +182,15 @@ class MainWindow : public QMainWindow {
 		void createToolSettings(QMenu *menu);
 		//! Create user list dock
 		void createUserList(QMenu *menu);
+		//! Create chat box dock
+		void createChatBox(QMenu *menu);
 		//! Create dialogs
 		void createDialogs();
 
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
+		widgets::ChatBox *chatbox_;
+
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;

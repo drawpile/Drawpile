@@ -40,7 +40,7 @@ set (
 	interfaces.h boardeditor.h aboutdialog.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
 	networkprivate.h netstate.h logindialog.h preview.h localserver.h
-	popupmessage.h userlistwidget.h userlistmodel.h
+	popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 )
 
 set (
@@ -52,11 +52,12 @@ set (
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
 	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp logindialog.cpp
 	preview.cpp localserver.cpp popupmessage.cpp userlistwidget.cpp
-	userlistmodel.cpp
+	userlistmodel.cpp chatwidget.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )
-set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui ui/newdialog.ui ui/about.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui )
+set ( Client_UIs ui/brushsettings.ui ui/colordialog.ui ui/newdialog.ui
+ui/about.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui ui/chatbox.ui )
 
 # .MOC
 

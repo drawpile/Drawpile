@@ -101,6 +101,12 @@ void HostState::receiveMessage()
 						->handleToolInfo(static_cast<ToolInfo*>(msg)))
 						msg = 0;
 				break;
+			case type::Chat:
+				Q_ASSERT(usersessions_.contains(msg->user_id));
+				if(mysessions_.contains(usersessions_.value(msg->user_id)))
+					mysessions_.value(usersessions_.value(msg->user_id))
+						->handleChat(static_cast<Chat*>(msg));
+				break;
 			case type::UserInfo:
 				handleUserInfo(static_cast<UserInfo*>(msg));
 				break;
@@ -465,7 +471,7 @@ void HostState::handleUserInfo(const protocol::UserInfo *msg)
 		}
 	} else {
 		loggedin_ = true;
-		localuser_.name = msg->name;
+		localuser_.name = username_;
 		localuser_.id = msg->user_id;
 		emit loggedin();
 	}
@@ -794,6 +800,17 @@ void SessionState::sendAckSync()
 	host_->net_->send(msg);
 }
 
+void SessionState::sendChat(const QString& message)
+{
+	QByteArray arr = message.toUtf8();
+	protocol::Chat *msg = new protocol::Chat;
+	msg->session_id = info_.id;
+	msg->length = arr.length();
+	msg->data = new char[arr.length()];
+	memcpy(msg->data,arr.constData(),arr.length());
+	host_->net_->send(msg);
+}
+
 /**
  * @param msg Acknowledgement message
  */
@@ -999,6 +1016,16 @@ bool SessionState::handleStrokeEnd(protocol::StrokeEnd *msg)
 	}
 	emit strokeEndReceived(msg->user_id);
 	return false;
+}
+
+/**
+ * @param msg chat message
+ */
+void SessionState::handleChat(const protocol::Chat *msg)
+{
+	const User *u = user(msg->user_id);
+	QString str = QString::fromUtf8(msg->data, msg->length);
+	emit chatMessage(u?u->name:"<unknown>", str);
 }
 
 /**

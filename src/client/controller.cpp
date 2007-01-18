@@ -145,7 +145,7 @@ void Controller::hostSession(const QString& title, const QString& password,
 bool Controller::amSessionOwner() const
 {
 	if(session_) {
-		if(session_->info().id == netstate_->localUserId())
+		if(session_->info().id == netstate_->localUser().id)
 			return true;
 	}
 	return false;
@@ -199,6 +199,12 @@ void Controller::lockBoard(bool lock)
 	session_->lockUser(protocol::null_user, lock);
 }
 
+void Controller::sendChat(const QString& message)
+{
+	Q_ASSERT(session_);
+	session_->sendChat(message);
+}
+
 void Controller::serverLoggedin()
 {
 	if(adminpasswd_.isEmpty())
@@ -225,8 +231,8 @@ void Controller::sessionJoined(int id)
 	board_->clearUsers();
 	foreach(const network::User& ui, session_->users())
 		board_->addUser(ui.id);
-	board_->addUser(netstate_->localUserId());
-	board_->setLocalUser(netstate_->localUserId());
+	board_->addUser(netstate_->localUser().id);
+	board_->setLocalUser(netstate_->localUser().id);
 
 	// Make session <-> controller connections
 	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
@@ -241,6 +247,7 @@ void Controller::sessionJoined(int id)
 	connect(session_, SIGNAL(userLocked(int, bool)), this, SLOT(userLocked(int,bool)));
 	connect(session_, SIGNAL(ownerChanged()), this, SLOT(sessionOwnerChanged()));
 	connect(session_, SIGNAL(userKicked(int)), this, SLOT(sessionKicked(int)));
+	connect(session_, SIGNAL(chatMessage(QString, QString)), this, SIGNAL(chat(QString,QString)));
 
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
@@ -255,7 +262,7 @@ void Controller::sessionJoined(int id)
 	editor_ = board_->getEditor(session_);
 	tools::Tool::setEditor(editor_);
 
-	emit joined(session_->info().title);
+	emit joined(session_->info().title, netstate_->localUser().name);
 }
 
 /**
@@ -365,7 +372,7 @@ void Controller::sessionLocked(bool lock)
 		}
 		lock_ = true;
 	} else {
-		const network::User *localuser = session_->user(netstate_->localUserId());
+		const network::User *localuser = session_->user(netstate_->localUser().id);
 		Q_ASSERT(localuser);
 		// Unlock if local user is not locked and general session lock was lifted
 		if(localuser->locked==false && session_->isLocked()==false) {
@@ -383,10 +390,10 @@ void Controller::userLocked(int id, bool lock)
 {
 	const network::User *user = session_->user(id);
 	Q_ASSERT(user);
-	bool islocal = user->id == netstate_->localUserId();
+	bool islocal = user->id == netstate_->localUser().id;
 
 	// Session owner cannot be locked (except when entire board is locked)
-	if(netstate_->localUserId() == session_->info().owner && islocal)
+	if(netstate_->localUser().id == session_->info().owner && islocal)
 		return;
 
 	qDebug() << "user locked" << id << lock;
@@ -420,7 +427,7 @@ void Controller::sessionOwnerChanged()
 void Controller::sessionKicked(int id)
 {
 	emit userKicked(*(session_->user(id)));
-	if(id == netstate_->localUserId())
+	if(id == netstate_->localUser().id)
 		disconnectHost();
 }
 

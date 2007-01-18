@@ -104,6 +104,9 @@ class Controller : public QObject
 		//! Lock the entire board
 		void lockBoard(bool lock);
 
+		//! Send chat message
+		void sendChat(const QString& msg);
+
 		void penDown(const drawingboard::Point& point);
 		void penMove(const drawingboard::Point& point);
 		void penUp();
@@ -129,7 +132,7 @@ class Controller : public QObject
 		void disconnected(const QString& message);
 
 		//! Session was joined
-		void joined(const QString& title);
+		void joined(const QString& title, const QString& myname);
 
 		//! Session was left
 		void parted();
@@ -166,6 +169,9 @@ class Controller : public QObject
 
 		//! A network error occured
 		void netError(const QString& message);
+
+		//! Chat message received
+		void chat(const QString& nick, const QString& msg);
 
 	private slots:
 		void netConnected();
