@@ -164,6 +164,9 @@ protected:
 	inline
 	message_ref msgSyncWait(Session*& session) const throw(std::bad_alloc);
 	
+	inline
+	message_ref msgSessionInfo(Session*& session) const throw();
+	
 	/* *** Something else *** */
 	
 	// Write to user socket

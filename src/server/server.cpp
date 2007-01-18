@@ -177,6 +177,7 @@ void Server::uRegenSeed(User*& usr) const throw()
 	usr->seed[3] = (rand() % 255) + 1;
 }
 
+inline
 message_ref Server::msgAuth(User*& usr, uint8_t session) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -195,7 +196,7 @@ message_ref Server::msgAuth(User*& usr, uint8_t session) const throw(std::bad_al
 	memcpy(auth->seed, usr->seed, protocol::password_seed_size);
 	return message_ref(auth);
 }
-
+inline
 message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
@@ -218,6 +219,29 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 	return message_ref(hostnfo);
 }
 
+inline
+message_ref Server::msgSessionInfo(Session*& session) const throw()
+{
+	protocol::SessionInfo *nfo = new protocol::SessionInfo;
+	
+	nfo->session_id = session->id;
+	
+	nfo->width = session->width;
+	nfo->height = session->height;
+	
+	nfo->owner = session->owner;
+	nfo->users = session->users.size();
+	nfo->limit = session->limit;
+	nfo->mode = session->mode;
+	nfo->length = session->len;
+	
+	nfo->title = new char[session->len];
+	memcpy(nfo->title, session->title, session->len);
+	
+	return message_ref(nfo);
+}
+
+inline
 message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
@@ -232,6 +256,7 @@ message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::ba
 	return message_ref(err);
 }
 
+inline
 message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_alloc)
 {
 	#ifdef DEBUG_SERVER
@@ -246,6 +271,7 @@ message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_a
 	return message_ref(ack);
 }
 
+inline
 message_ref Server::msgSyncWait(Session*& session) const throw(std::bad_alloc)
 {
 	assert(session != 0);
@@ -901,29 +927,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::type::ListSessions:
 		if (sessions.size() != 0)
 		{
-			protocol::SessionInfo *nfo = 0;
-			Session *session;
 			session_iterator si(sessions.begin());
 			for (; si != sessions.end(); si++)
 			{
-				session = si->second;
-				nfo = new protocol::SessionInfo;
-				
-				nfo->session_id = si->first;
-				
-				nfo->width = session->width;
-				nfo->height = session->height;
-				
-				nfo->owner = session->owner;
-				nfo->users = session->users.size();
-				nfo->limit = session->limit;
-				nfo->mode = session->mode;
-				nfo->length = session->len;
-				
-				nfo->title = new char[session->len];
-				memcpy(nfo->title, session->title, session->len);
-				
-				uSendMsg(usr, message_ref(nfo));
+				uSendMsg(usr, msgSessionInfo(si->second));
 			}
 		}
 		
@@ -945,6 +952,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::LayerEvent:
+		// TODO
 		break;
 	case protocol::type::LayerSelect:
 		{
@@ -1394,6 +1402,10 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			usr->inMsg = 0;
 		}
 		break;
+	case protocol::session_event::Persist:
+		break;
+	case protocol::session_event::CacheRaster:
+		break;
 	default:
 		std::cerr << "Unknown session action: "
 			<< static_cast<int>(event->action) << ")" << std::endl;
@@ -1521,7 +1533,9 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			#ifndef NDEBUG
 			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
-				<< "With dimensions: " << session->width << " x " << session->height << std::endl;
+				<< "Dimensions: " << session->width << " x " << session->height << std::endl
+				<< "User limit: " << static_cast<int>(session->limit) << ", default mode: "
+				<< static_cast<int>(session->mode) << std::endl;
 			#endif
 			
 			uSendMsg(usr, msgAck(msg->session_id, msg->type));
@@ -1581,7 +1595,58 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			// TODO
+			if (msg->length < sizeof(session->width) + sizeof(session->height))
+			{
+				std::cerr << "Protocol violation from user: "
+					<< static_cast<int>(usr->id) << std::endl
+					<< "Reason: Too little data for Alter instruction." << std::endl;
+				uRemove(usr, protocol::user_event::Violation);
+				return;
+			}
+			
+			// user limit adjustment
+			session->limit = msg->aux_data;
+			
+			// default user mode adjustment
+			session->mode = msg->aux_data2;
+			
+			// session canvas's size
+			uint16_t width, height;
+			
+			memcpy_t(width, msg->data),
+			memcpy_t(height, msg->data+sizeof(width));
+			
+			bswap(width), bswap(height);
+			
+			if ((width < session->width) or (height < session->height))
+			{
+				std::cerr << "Protocol violation from user: "
+					<< static_cast<int>(usr->id) << std::endl
+					<< "Reason: Attempted to reduce session's canvas size." << std::endl;
+				uRemove(usr, protocol::user_event::Violation);
+				return;
+			}
+			
+			session->height = height,
+			session->width = width;
+			
+			// new title
+			if (msg->length > (sizeof(width) + sizeof(height)))
+			{
+				session->len = msg->length - (sizeof(width) + sizeof(height));
+				delete [] session->title;
+				session->title = new char[session->len];
+				memcpy(session->title, msg->data+sizeof(width)+sizeof(height), session->len);
+			}
+			
+			#ifndef NDEBUG
+			std::cout << "Session #" << static_cast<int>(session->id) << " altered." << std::endl
+				<< "Dimensions: " << width << " x " << height << std::endl
+				<< "User limit: " << static_cast<int>(session->limit) << ", default mode: "
+				<< static_cast<int>(session->mode) << std::endl;
+			#endif // NDEBUG
+			
+			Propagate(session, msgSessionInfo(session));
 		}
 		break;
 	case protocol::admin::command::Password:
