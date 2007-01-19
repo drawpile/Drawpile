@@ -28,8 +28,6 @@ option ( PSELECT "Disable pselect(2) support" ON )
 option ( KQUEUE "Disable kqueue(2) support" ON )
 option ( KEVENT "Disable kevent(2) support" ON )
 
-option ( XMLCONFIG "Enable XML config file support" ON )
-
 option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
@@ -88,15 +86,6 @@ if ( Boost_FOUND )
 else ( Boost_FOUND )
 	message ( STATUS "libBoost missing" )
 endif ( Boost_FOUND )
-
-### TinyXML for Server ###
-
-check_include_file_cxx ( tinyxml.h HAVE_TINYXML )
-if ( HAVE_TINYXML )
-	message ( STATUS "TinyXML found" )
-else ( HAVE_TINYXML )
-	message ( STATUS "TinyXML missing" )
-endif ( HAVE_TINYXML )
 
 ### Event mechanism
 
