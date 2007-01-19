@@ -71,7 +71,7 @@ Event::~Event() throw()
 	#endif
 }
 
-bool Event::init() throw(std::bad_alloc)
+bool Event::init() throw()
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
