@@ -113,18 +113,30 @@ int Event::wait(uint32_t msecs) throw()
 	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
+	uint32_t secs = 0;
+	
 	#if defined(EV_PSELECT)
 	timespec tv;
-	tv.tv_nsec = msecs * 1000000;
 	
 	sigset_t sigsaved;
 	sigprocmask(SIG_SETMASK, _sigmask, &sigsaved); // save mask
 	#elif defined(EV_SELECT)
 	timeval tv;
-	tv.tv_usec = msecs * 1000; // microseconds
 	#endif // EV_[P]SELECT
 	
 	tv.tv_sec = 0;
+	if (msecs > 1000)
+	{
+		secs = msecs/1000;
+		msecs -= secs*1000;
+	}
+	
+	#if defined(EV_PSELECT)
+	tv.tv_nsec = msecs * 1000000;
+	#elif defined(EV_SELECT)
+	tv.tv_usec = msecs * 1000; // microseconds
+	#endif // EV_[P]SELECT
+	
 	
 	#ifndef WIN32
 	fd_t largest_nfds = (nfds_w > nfds_r ? nfds_w : nfds_r );
