@@ -3,7 +3,7 @@ project ( DrawPile CXX C )
 # CMake version requirement. CMake might whine on older version, but will
 # work unless compatibility is broken.
 
-cmake_minimum_required( VERSION 2.4.5 )
+cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 
 ### config options ###
 
@@ -27,6 +27,8 @@ option ( EPOLL "Disable epoll(4) support" ON )
 option ( PSELECT "Disable pselect(2) support" ON )
 option ( KQUEUE "Disable kqueue(2) support" ON )
 option ( KEVENT "Disable kevent(2) support" ON )
+
+option ( XMLCONFIG "Enable XML config file support" ON )
 
 option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
 
@@ -68,10 +70,11 @@ endif ( SHARED )
 # check portability stuff
 
 include ( CheckVariableExists )
-include ( CheckIncludeFiles )
+include ( CheckIncludeFile )
+include ( CheckIncludeFileCXX )
 
 # used by server & shared
-check_include_files ( stdint.h HAVE_STDINT_H )
+check_include_file ( stdint.h HAVE_STDINT_H )
 
 ### Boost library
 
@@ -86,6 +89,15 @@ else ( Boost_FOUND )
 	message ( STATUS "libBoost missing" )
 endif ( Boost_FOUND )
 
+### TinyXML for Server ###
+
+check_include_file_cxx ( tinyxml.h HAVE_TINYXML )
+if ( HAVE_TINYXML )
+	message ( STATUS "TinyXML found" )
+else ( HAVE_TINYXML )
+	message ( STATUS "TinyXML missing" )
+endif ( HAVE_TINYXML )
+
 ### Event mechanism
 
 include ( CheckSymbolExists )
@@ -93,14 +105,8 @@ include ( CheckFunctionExists )
 include ( CheckVariableExists )
 include ( CheckIncludeFiles )
 
-#set ( EV_SELECT OFF )
-#set ( EV_PSELECT OFF )
-#set ( EV_EPOLL OFF )
-#set ( EV_KQUEUE OFF )
-#set ( EV_KEVENT OFF )
-
 if ( EPOLL )
-	check_include_files ( sys/epoll.h HAVE_EPOLL_H )
+	check_include_file ( sys/epoll.h HAVE_EPOLL_H )
 	
 	if ( HAVE_EPOLL_H )
 		#add_definitions ( -DEV_EPOLL )
@@ -125,7 +131,7 @@ endif ( PSELECT )
 
 # fall back to select(2)
 if ( SELECT )
-	check_include_files ( "sys/select.h" HAVE_SELECT_H )
+	check_include_file ( "sys/select.h" HAVE_SELECT_H )
 	if ( HAVE_SELECT_H )
 		set ( EV_SELECT ON )
 	else ( HAVE_SELECT_H )
@@ -145,7 +151,7 @@ if ( SELECT )
 endif ( SELECT )
 
 if ( WIN32 )
-	check_include_files ( winsock2.h HAVE_WSA )
+	check_include_file ( winsock2.h HAVE_WSA )
 	#check_symbol_exists ( WSAEWOULDBLOCK "winsock2.h" HAVE_WSA )
 	if ( HAVE_WSA )
 		message( STATUS "Windows Socket API found")
@@ -165,7 +171,6 @@ else ( NOT DEBUG )
 	message ( STATUS "Debugging enabled" )
 endif ( NOT DEBUG )
 
-
 set (CMAKE_BUILD_TYPE Release )
 
 if ( DEBUG )
@@ -173,7 +178,6 @@ if ( DEBUG )
 else ( DEBUG )
 	set ( CMAKE_BUILD_TYPE Release )
 endif ( DEBUG )
-
 
 ### mode tests ###
 
