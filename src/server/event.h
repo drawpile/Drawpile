@@ -43,6 +43,7 @@
 #include <vector>
 
 #if defined(EV_EPOLL)
+	#define EV_HAVE_HANGUP
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
@@ -58,6 +59,13 @@
 	#else
 		#include <sys/select.h> // fd_set, FD* macros, etc.
 	#endif
+#endif
+
+#if defined(EV_SELECT) || defined(EV_PSELECT)
+	#define EVENT_BY_FD
+#elif defined(EV_EPOLL)
+	#define EVENT_BY_ORDER
+	#define EVENT_HAS_ALL
 #endif
 
 #ifndef WIN32
