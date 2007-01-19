@@ -33,6 +33,8 @@
 #ifndef Server_C_Included
 #define Server_C_Included
 
+#include <ctime>
+
 #include "../shared/SHA1.h"
 
 #include "sockets.h"
@@ -95,6 +97,8 @@ protected:
 	// first->source, second->target
 	std::multimap<uint8_t, fd_t> tunnel;
 	
+	std::set<User*> utimer;
+	
 	// listening socket
 	Socket lsock;
 	
@@ -104,6 +108,11 @@ protected:
 		session_limit,
 		max_subscriptions,
 		name_len_limit;
+	
+	time_t
+		time_limit,
+		current_time,
+		next_timer;
 	
 	uint16_t
 		hi_port,
@@ -242,6 +251,10 @@ protected:
 	inline
 	bool validateSessionTitle(Session*& session) const throw();
 	
+	// cull idle users
+	void cullIdlers() throw();
+	
+	// regenerate password seed
 	void uRegenSeed(User*& usr) const throw();
 public:
 	//! ctor

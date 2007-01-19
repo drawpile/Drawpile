@@ -63,25 +63,21 @@ int Server::run() throw()
 	while (state == server::state::Active)
 	{
 		ec = ev.wait(5000);
+		current_time = time(0);
 		
 		if (ec == 0)
 		{
 			// continue, no fds or time exceeded.
+			continue;
 		}
 		else if (ec == -1)
 		{
-			std::cout << "Error in event system." << std::endl;
+			std::cerr << "Error in event system." << std::endl;
 			// TODO (error)
 			return -1;
 		}
 		else
 		{
-			#ifdef DEBUG_SERVER
-			#ifndef NDEBUG
-			std::cout << "Events waiting: " << ec << std::endl;
-			#endif
-			#endif
-			
 			#if defined(EVENT_BY_ORDER)
 			/* BY ORDER */
 			do
@@ -170,9 +166,9 @@ int Server::run() throw()
 			}
 			
 			if (0) {
-			#ifndef NDEBUG
-			if (ec != 0) { std::cout << "Events left: " << ec << std::endl; }
-			#endif //NDEBUG
+				#ifndef NDEBUG
+				if (ec != 0) { std::cout << "Events left: " << ec << std::endl; }
+				#endif //NDEBUG
 			}
 			
 			#else // EVENT_BY_*
@@ -183,13 +179,18 @@ int Server::run() throw()
 		}
 		
 		// do something generic?
+		
+		// check timer
+		if (next_timer < current_time)
+		{
+			// schedule next
+			next_timer = current_time + 600;
+			
+			// check list
+			if (!utimer.empty())
+				cullIdlers();
+		}
 	}
-	
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
-	std::cout << "Done?" << std::endl;
-	#endif
-	#endif
 	
 	return 0;
 }

@@ -129,6 +129,7 @@ struct User
 		caps(protocol::client::None),
 		extensions(protocol::extensions::None),
 		inMsg(0),
+		deadtime(0),
 		nlen(0),
 		name(0)
 	{
@@ -200,6 +201,9 @@ struct User
 	
 	// for storing the password seed associated with this user.
 	char seed[4];
+	
+	// Last touched.
+	time_t deadtime;
 	
 	// Name length
 	uint8_t nlen;

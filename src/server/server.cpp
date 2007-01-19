@@ -54,6 +54,9 @@ Server::Server() throw()
 	session_limit(1),
 	max_subscriptions(1),
 	name_len_limit(8),
+	time_limit(180),
+	current_time(0),
+	next_timer(0),
 	hi_port(protocol::default_port),
 	lo_port(protocol::default_port),
 	min_dimension(400),
@@ -1844,6 +1847,11 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			usr->state = uState::active;
 			
+			// remove fake timer
+			utimer.erase(utimer.find(usr));
+			
+			usr->deadtime = 0;
+			
 			usr->inMsg = 0;
 		}
 		else
@@ -2315,11 +2323,14 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		
 		users.insert( std::make_pair(sock->fd(), usr) );
 		
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Assigning buffer to user." << std::endl;
-		#endif
-		#endif
+		usr->deadtime = time(0) + time_limit;
+		
+		// re-schedule user culling
+		if (next_timer > usr->deadtime)
+			next_timer = usr->deadtime;
+		
+		// add timer
+		utimer.insert(utimer.end(), usr);
 		
 		usr->input.setBuffer(new char[8192], 8192);
 		
@@ -2409,6 +2420,11 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	users.erase(usr->sock->fd());
 	
 	freeUserID(usr->id);
+	
+	// clear any idle timer associated with this user.
+	std::set<User*>::iterator tui(utimer.find(usr));
+	if (tui != utimer.end())
+		utimer.erase(tui);
 	
 	delete usr;
 	usr = 0;
@@ -2576,4 +2592,39 @@ bool Server::validateSessionTitle(Session*& session) const throw()
 	}
 	
 	return true;
+}
+
+void Server::cullIdlers() throw()
+{
+	// cull idlers
+	User *usr;
+	std::set<User*>::iterator tui(utimer.begin());
+	do
+	{
+		usr = *tui;
+		
+		if (usr->deadtime <= current_time)
+		{
+			#ifndef NDEBUG
+			std::cout << "Killing idle user: "
+				<< static_cast<int>(usr->id) << std::endl;
+			#endif
+			
+			utimer.erase(tui);
+			uRemove(usr, protocol::user_event::TimedOut);
+			
+			tui = utimer.begin();
+		}
+		else
+		{
+			if (usr->deadtime < next_timer)
+			{
+				// re-schedule next culling to come sooner
+				next_timer = usr->deadtime;
+			}
+			
+			tui++;
+		}
+	}
+	while (tui != utimer.end());
 }
