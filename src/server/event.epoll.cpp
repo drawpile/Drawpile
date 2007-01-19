@@ -45,8 +45,8 @@ const uint32_t
 	Event::hangup = EPOLLHUP;
 
 Event::Event() throw()
-	: evfd(0),
-	events(0)
+	: evfd(0)//,
+	//events(0)
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
