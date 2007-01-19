@@ -117,8 +117,8 @@ void Event::finish() throw()
 	#endif
 	#endif
 	
-	delete [] events;
-	events = 0;
+	//delete [] events;
+	//events = 0;
 	close(evfd);
 	evfd = -1;
 }
