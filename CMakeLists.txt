@@ -7,8 +7,8 @@ cmake_minimum_required( VERSION 2.4.5 )
 
 ### config options ###
 
-set ( CLIENTVERSION "0.3" )
-set ( SERVERVERSION "0.2" )
+set ( CLIENTVERSION "0.4" )
+set ( SERVERVERSION "0.3" )
 set ( LIBVERSION "0.2" )
 
 set ( LIBNAME "drawpile-${LIBVERSION}" )
@@ -21,19 +21,18 @@ set ( SERVERNAME drawpile-srv )
 
 option ( CLIENT "Don't compile client" ON )
 option ( SERVER "Don't compile server" ON )
+option ( UNITTEST "Compile unittests" OFF )
 
 option ( EPOLL "Disable epoll(4) support" ON )
 option ( PSELECT "Disable pselect(2) support" ON )
 option ( KQUEUE "Disable kqueue(2) support" ON )
 option ( KEVENT "Disable kevent(2) support" ON )
 
-option ( UNITTEST "Compile unittests" OFF )
-
-option ( SHARED "Build shared library" OFF )
+option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
-
 option ( OPTIMIZE "Disable any and all optimizations" ON )
+option ( SHARED "Build shared library" OFF )
 
 ### Build type ###
 
@@ -182,11 +181,13 @@ endif ( DEBUG )
 include ( TestBigEndian )
 test_big_endian ( IS_BIG_ENDIAN )
 
-### subdirs ###
+### Output config.h ###
 
 export_library_dependencies( cmake.depend )
 
 configure_file ( config.h.cmake config.h )
 add_definitions ( -DHAVE_CONFIG_H )
+
+### subdirs ###
 
 add_subdirectory( src/ )
