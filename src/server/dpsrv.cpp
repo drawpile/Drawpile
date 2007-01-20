@@ -192,12 +192,14 @@ int main(int argc, char** argv)
 	int rc = 0;
 	
 	// limited scope for server
+	#ifdef NEED_NET
+	Net _net; // :)
+	#endif // NEED_NET
+	
 	{
 		Server srv;
 		
 		getArgs(argc, argv, &srv);
-		
-		netInit();
 		
 		if (srv.init() != 0)
 			return 1;
@@ -211,8 +213,6 @@ int main(int argc, char** argv)
 			// do nothing
 		}
 	} // server scope
-	
-	netStop();
 	
 	#ifndef NDEBUG
 	std::cout << "quitting" << std::endl;

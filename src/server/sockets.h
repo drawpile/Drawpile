@@ -81,35 +81,42 @@
 	#define EAGAIN EWOULDBLOCK
 #endif
 
-inline
-bool netInit() throw()
-{
-	#ifndef NDEBUG
-	std::cout << "netInit()" << std::endl;
-	#endif
-	
-	#if defined( WIN32 ) and defined( HAVE_WSA )
-	WSADATA info;
-	if (WSAStartup(MAKEWORD(2,0), &info))
-		return false;
-	#endif
-	
-	return true;
-}
+#ifdef WIN32
+	#define NEED_NET
+#endif
 
-inline
-bool netStop() throw()
+//! Net automaton
+/**
+ * Initializes WSA (ctor) and cleans up after it (dtor).
+ *
+ * Throws std::exception if it couldn't initialize WSA.
+ */
+struct Net
 {
-	#ifndef NDEBUG
-	std::cout << "netStop()" << std::endl;
-	#endif
+	Net() throw(std::exception)
+	{
+		#ifndef NDEBUG
+		std::cout << "Net::Net()" << std::endl;
+		#endif
+		
+		#if defined( WIN32 ) and defined( HAVE_WSA )
+		WSADATA info;
+		if (WSAStartup(MAKEWORD(2,0), &info))
+			throw std::exception();
+		#endif
+	}
 	
-	#if defined( WIN32 ) and defined( HAVE_WSA )
-	WSACleanup();
-	#endif
-	
-	return true;
-}
+	~Net() throw()
+	{
+		#ifndef NDEBUG
+		std::cout << "Net::~Net()" << std::endl;
+		#endif
+		
+		#if defined( WIN32 ) and defined( HAVE_WSA )
+		WSACleanup();
+		#endif
+	}
+};
 
 //! Socket abstraction
 class Socket
