@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd" [
+<!ENTITY dp "<application>DrawPile</application>">
+]>
+
+<book lang="en">
+<bookinfo>
+<title>DrawPile User Guide</title>
+<author><firstname>Calle</firstname><surname>Laakkonen</surname></author>
+<copyright><year>2007</year><holder>Calle Laakkonen</holder></copyright>
+</bookinfo>
+
+<!--
+<preface><title>Preface</title>
+<para>TODO</para>
+</preface>
+-->
+
+<chapter id="introduction"><title>Introduction</title>
+<para>
+&dp; is a collaborative drawing program, it allows multiple people to
+simultaneously draw on the same image.
+</para>
+</chapter>
+
+<chapter id="gettingstarted"><title>Getting started</title>
+<sect1 id="starting"><title>Starting drawpile</title>
+<screenshot>
+<mediaobject>
+<imageobject> <imagedata fileref="img/mainwindow.png"/> </imageobject>
+<caption><para>DrawPile main window</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>When you first start &dp;, you are presented with a blank white canvas.
+If you want a canvas of different size or color, click on the new button.
+</para>
+</sect1>
+
+<sect1 id="hosting"><title>Hosting a session</title>
+<screenshot>
+<mediaobject>
+<imageobject> <imagedata fileref="img/host.png"/> </imageobject>
+<caption><para>Hosting dialog</para></caption>
+</mediaobject>
+</screenshot>
+
+<para>Hosting allows you to share your drawingboard with other users. By defaul,
+&dp; will automatically start a server in the background to allow others to
+connect to your computer. It is also possible to set up a server on a remote
+computer and host a session there.
+</para><para>
+Hosting a session makes you its owner, this means that session administrations
+commands are available to you. See the <link linkend="sessionadmin">session administration</link> chapter for details.
+</para>
+</sect1>
+
+<sect1 id="joining"><title>Joining a session</title>
+<screenshot>
+<mediaobject>
+<imageobject> <imagedata fileref="img/join.png"/> </imageobject>
+<caption><para>Join dialog</para></caption>
+</mediaobject>
+</screenshot>
+<para>To join a drawing session, enter the address of the host in Host address
+field. Username should not be left blank.
+</para>
+<caution><para>The new session will replace the contents of your drawing board,
+so make sure you have saved any changes you might want to keep.</para></caution>
+</sect1>
+</chapter>
+
+<chapter id="sessionadmin"><title>Session administration</title>
+<sect1 id="locking"><title>Locking</title>
+<para>The drawing board can be locked to prevent users from making changes.
+You can quickly lock the board for all users (yourself included) by clicking
+<guimenuitem>Lock the board</guimenuitem> from <guimenu>Session</guimenu> menu.
+</para>
+<para>Individual users can be locked by clicking on the little lock symbol
+next to their names in the user list.
+</para>
+<para>Note that the general board lock and user locks are separate. Lifting the general lock will not unlock users that have been individually locked.</para>
+</sect1>
+
+<sect1 id="kicking"><title>Kicking</title>
+<para>Unruly users can be kicked from the drawing session by clicking on the
+X symbol next to their names in the user list.
+</para>
+</sect1>
+</chapter>
+
+<chapter id="tools"><title>Tools</title>
+<sect1 id="brush"><title>Brush and eraser</title>
+<para>Basic drawing tools. The only difference between brush and eraser is
+that eraser draws with the background color.</para>
+<para>Brush and eraser can respond to pressure if a tablet is used. Pressure
+sensitivity can be enabled individually for size, opacity, hardness and color.
+</para>
+</sect1>
+
+<sect1 id="colorpicker"><title>Color picker</title>
+<para>Allows you to pick colors from the image by clicking on it. The
+picked color will be set as the foreground color. This tool works even
+when the board is locked.</para>
+</sect1>
+</chapter>
+
+<chapter id="technical"><title>Technical details</title>
+<sect1 id="techsync"><title>Synchronization</title>
+<para>The problem with a network drawing program like this, is how to keep
+all the users in sync? Transmitting pixel data everytime something is changed
+would consume too much bandwidth to be usable, so the obvious solution is to
+only transmit the drawing commands.</para>
+<para>The next problem is, what happens when two or more users draw in the same
+spot at the same time? If each user would first draw on their own board and then
+send information about the stroke to others, each would get the strokes in
+a different order. The solution to this problem is to use a server that
+acts as a traffic controller. Users send all drawing commands to the server
+and never draw anything directly. The server distributes the commands in the
+same order to each user who then commit them to their boards.</para>
+<para>This all works when the users have been in the session before anyone
+has started drawing yet. To allow new users to join in the middle of a session,
+the server selects a single user and request it to send a copy of its board
+contents to the new user.</para>
+<para>To get a board snapshot at a known state, each user will be temporarily
+locked when a new user joins. The lock is a graceful one, it won't take place
+until the client has finished any stroke that might be in progress.</para>
+<para>When each user has been locked
+<footnote><para>In parallel computing, this method of synchronization
+is known as a "barrier"</para></footnote>
+, the board snapshot is made and regular operation is resumed.</para>
+</sect1>
+</chapter>
+
+</book>
+
