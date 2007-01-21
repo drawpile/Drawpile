@@ -1833,7 +1833,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			usr->mode = default_user_mode;
 			
 			if (fIsSet(opmode, server::mode::LocalhostAdmin)
-				and (usr->sock->address() == INADDR_LOOPBACK))
+				and (usr->sock->address() == "::1")) // Loopback
 			{
 				// auto admin promotion.
 				// also, don't put any other flags on the user.
@@ -2450,19 +2450,17 @@ int Server::init() throw(std::bad_alloc)
 	#endif
 	#endif
 	
-	lsock.fd(socket(AF_INET, SOCK_STREAM, 0));
+	if (!lsock.create())
+	{
+		std::cerr << "Failed to create a socket." << std::endl;
+		return -1;
+	}
 	
 	#ifdef DEBUG_SERVER
 	#ifndef NDEBUG
 	std::cout << "New socket: " << lsock.fd() << std::endl;
 	#endif
 	#endif
-	
-	if (lsock.fd() == INVALID_SOCKET)
-	{
-		std::cerr << "Failed to create a socket." << std::endl;
-		return -1;
-	}
 	
 	lsock.block(0); // nonblocking
 	lsock.reuse(1); // reuse address
@@ -2482,7 +2480,11 @@ int Server::init() throw(std::bad_alloc)
 		#endif
 		#endif
 		
-		if (lsock.bindTo(INADDR_ANY, bport) == SOCKET_ERROR)
+		#ifdef IPV6_SUPPORT
+		if (lsock.bindTo("::", bport) == SOCKET_ERROR)
+		#else
+		if (lsock.bindTo("0.0.0.0", bport) == SOCKET_ERROR)
+		#endif
 		{
 			if (lsock.getError() == EBADF || lsock.getError() == EINVAL)
 				return -1;
@@ -2528,7 +2530,7 @@ int Server::init() throw(std::bad_alloc)
 		return -1;
 	}
 	
-	std::cout << "Listening on: " << lsock.address() << ":" << lsock.port() << std::endl;
+	std::cout << "Listening on: " << lsock.port() << std::endl;
 	
 	if (!ev.init())
 		return -1;

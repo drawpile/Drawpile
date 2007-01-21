@@ -31,16 +31,26 @@
 
 #include "../../config.h"
 
+#include "../shared/templates.h"
+
 #include <iostream>
 #include <stdexcept>
 #include <stdint.h>
 
 #ifdef WIN32
 	#if defined( HAVE_WSA )
-	#include <winsock2.h>
+		#ifdef IPV6_SUPPORT
+			#include <ws2tcpip.h> // IPv6
+		#else
+			#include <winsock2.h>
+		#endif
+		#if defined( HAVE_XPWSA )
+			#include <mswsock.h>
+		#endif
 	#else
-	#error Windows socket API was not detected.
+		#error Windows Socket API 2.x required!
 	#endif // WSA
+	
 	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
 	
 	// Because MS decided to break BSD socket compatibility.
@@ -99,10 +109,21 @@ struct Net
 		std::cout << "Net::Net()" << std::endl;
 		#endif
 		
-		#if defined( WIN32 ) and defined( HAVE_WSA )
+		#if defined( HAVE_WSA )
 		WSADATA info;
 		if (WSAStartup(MAKEWORD(2,0), &info))
+		{
 			throw std::exception();
+		}
+		
+		if (LOBYTE(info.wVersion) != 2
+			or HIBYTE(info.wVersion) != 0)
+		{
+			std::cerr << "Invalid WSA version." << std::endl;
+			WSACleanup( );
+			return; 
+		}
+		
 		#endif
 	}
 	
@@ -112,7 +133,7 @@ struct Net
 		std::cout << "Net::~Net()" << std::endl;
 		#endif
 		
-		#if defined( WIN32 ) and defined( HAVE_WSA )
+		#if defined( HAVE_WSA )
 		WSACleanup();
 		#endif
 	}
@@ -125,11 +146,15 @@ protected:
 	//! Assigned file descriptor
 	fd_t sock;
 	
-	//! Local address
-	sockaddr_in addr;
-	
-	//! Remote address
-	sockaddr_in raddr;
+	#ifdef IPV6_SUPPORT
+	sockaddr_in6
+	#else
+	sockaddr_in
+	#endif
+		//! Local address
+		addr,
+		//! Remote address
+		raddr;
 	
 	//! Last error number
 	int error;
@@ -144,6 +169,23 @@ public:
 		std::cout << "Socket::Socket()" << std::endl;
 		#endif
 		#endif
+	}
+	
+	#ifdef IPV6_SUPPORT
+	Socket(fd_t& nsock, sockaddr_in6 saddr) throw()
+	#else
+	Socket(fd_t& nsock, sockaddr_in saddr) throw()
+	#endif
+		: sock(nsock),
+		error(0)
+	{
+		#ifdef DEBUG_SOCKETS
+		#ifndef NDEBUG
+		std::cout << "Socket::Socket(fd_t)" << std::endl;
+		#endif
+		#endif
+		
+		memcpy(&addr, &saddr, sizeof(addr));
 	}
 	
 	//! ctor
@@ -170,6 +212,9 @@ public:
 		close();
 	}
 	
+	//! Create new socket
+	bool create() throw();
+	
 	//! Close socket
 	/**
 	 * Closes the socket, and therefore, closes the connection associated with it.
@@ -184,13 +229,13 @@ public:
 	 */
 	fd_t fd(fd_t nsock) throw()
 	{
-		if (sock >= 0) close();
+		if (sock != INVALID_SOCKET) close();
 		return sock = nsock;
 	}
 	
 	//! Get file descriptor
 	/**
-	 * @return file descriptor associated with the class.
+	 * @return reference to file descriptor associated with the class.
 	 */
 	fd_t fd() const throw() { return sock; }
 	
@@ -221,10 +266,14 @@ public:
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise
 	 */
-	int bindTo(uint32_t address, uint16_t port) throw();
+	int bindTo(std::string address, uint16_t port) throw();
 	
 	//! Connect to remote address
+	#ifdef IPV6_SUPPORT
+	int connect(sockaddr_in6* rhost) throw();
+	#else
 	int connect(sockaddr_in* rhost) throw();
+	#endif
 	
 	//! Set listening
 	/**
@@ -256,19 +305,22 @@ public:
 	 */
 	int recv(char* buffer, size_t buflen) throw();
 	
-	#if defined(WITH_SENDFILE)
+	#if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
 	//! Sendfile interface
 	/**
+	 * Note for Windows!
+	 * - Blocks and sends full data in one go.
+	 * - Offset is also ignored.
+	 *
 	 * @param fd FD of the file to be sent.
 	 * @param offset is the starting offset in the file for sending.
 	 * @param nbytes is the number of bytes to be sent.
-	 * @param hdtr is the header/footer data to be sent alongside the file.
 	 * @param sbytes is the sent bytes.
 	 *
 	 * @return -1 on error, 0 otherwise.
 	 */
-	int sendfile(fd_t fd, off_t offset, size_t nbytes, sf_hdtr *hdtr=0, off_t *sbytes=0) throw();
-	#endif // WITH_SENDFILE
+	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes=0) throw();
+	#endif // WITH_SENDFILE or HAVE_XPWSA
 	
 	//! Get last error number
 	/**
@@ -280,19 +332,56 @@ public:
 	/**
 	 * @return associated address structure.
 	 */
+	#ifdef IPV6_SUPPORT
+	sockaddr_in6* getAddr() throw() { return &addr; }
+	#else
 	sockaddr_in* getAddr() throw() { return &addr; }
+	#endif
 	
 	//! Get local IP address
 	/**
 	 * @return IP address.
 	 */
-	uint32_t address() const throw() { return ntohl(addr.sin_addr.s_addr); }
+	std::string address() const throw()
+	{
+		#ifdef IPV6_SUPPORT
+		char straddr[INET6_ADDRSTRLEN+1];
+		#else // no IPv6
+		char straddr[14+1];
+		#endif // IPv6
+		#ifdef HAVE_WSA
+		#ifdef IPV6_SUPPORT
+		DWORD len = INET6_ADDRSTRLEN;
+		#else // No IPv6
+		DWORD len = 14+1;
+		#endif // IPv6
+		sockaddr sa;
+		memcpy(&sa, &addr, sizeof(addr));
+		WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
+		straddr[len] = '\0';
+		#else // No WSA
+		#ifdef IPV6_SUPPORT
+		inet_ntop(AF_INET6, &addr.sin6_addr, straddr, sizeof(straddr));
+		#else // No IPv6
+		inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
+		#endif // IPV6
+		#endif // HAVE_WSA
+		return std::string(straddr);
+	}
 	
 	//! Get local port
 	/**
-	 * @return port number.
+	 * @return local port number.
 	 */
-	uint16_t port() const throw() { return ntohs(addr.sin_port); }
+	uint16_t port() const throw()
+	{
+		#ifdef IPV6_SUPPORT
+		uint16_t _port = addr.sin6_port;
+		#else
+		uint16_t _port = addr.sin_port;
+		#endif
+		return bswap(_port);
+	}
 };
 
 #endif // Sockets_INCLUDED
