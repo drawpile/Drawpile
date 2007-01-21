@@ -76,7 +76,9 @@
 	//#define ENETDOWN WSAENETDOWN
 	typedef SOCKET fd_t;
 #else
+	#include <sys/types.h>
 	#include <sys/socket.h>
+	#include <arpa/inet.h>
 	#include <netinet/in.h>
 	#include <unistd.h> // close()
 	#include <cerrno> // errno
