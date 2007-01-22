@@ -479,7 +479,7 @@ int Socket::connect(sockaddr_in* rhost) throw()
 	#ifdef HAVE_WSA
 	int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost), 0, 0, 0, 0);
 	#else
-	int r = ::connect(sock, rhost, sizeof(rhost));
+	int r = ::connect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost));
 	#endif
 	
 	if (r == -1)
