@@ -40,7 +40,7 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->setSpacing(4);
 
 	// Host address label
-	label_ = new QLabel(QString(), this);
+	label_ = new QLabel(tr("not connected"), this);
 	label_->setTextInteractionFlags(
 			Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard
 			);
@@ -49,19 +49,19 @@ NetStatus::NetStatus(QWidget *parent)
 
 	// Action to copy address to clipboard
 	copyaction_ = new QAction(tr("Copy address to clipboard"), this);
+	copyaction_->setEnabled(false);
 	label_->addAction(copyaction_);
 	label_->setContextMenuPolicy(Qt::ActionsContextMenu);
 	connect(copyaction_,SIGNAL(triggered()),this,SLOT(copyAddress()));
 
 	// Network connection status icon
 	icon_ = new QLabel(QString(), this);
+	icon_->setPixmap(offlineicon_);
 	icon_->setFixedSize(offlineicon_.size());
 	layout->addWidget(icon_);
 
 	// Popup label
 	popup_ = new PopupMessage(this);
-
-	disconnectHost();
 }
 
 /**
