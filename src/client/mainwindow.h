@@ -196,7 +196,6 @@ class MainWindow : public QMainWindow {
 		widgets::EditorView *view_;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
-		QDialog *aboutdlg_;
 		dialogs::NewDialog *newdlg_;
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;

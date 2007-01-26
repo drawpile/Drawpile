@@ -43,7 +43,6 @@
 #include "dualcolorbutton.h"
 #include "localserver.h"
 
-#include "aboutdialog.h"
 #include "colordialog.h"
 #include "newdialog.h"
 #include "hostdialog.h"
@@ -897,7 +896,18 @@ void MainWindow::selectTool(QAction *tool)
 
 void MainWindow::about()
 {
-	aboutdlg_->show();
+	QMessageBox::about(this, "About DrawPile",
+			"<p><b>DrawPile 0.3.0</b><br>"
+			"A collaborative drawing program.</p>"
+			"<p>This program is free software; you may redistribute it and/or "
+			"modify it under the terms of the GNU General Public License as" 
+			"published by the Free Software Foundation, either version 2, or "
+			"(at your opinion) any later version.</p>"
+			"<p>Programming: Calle Laakkonen<br>"
+			"Graphics and UI design: wuf<br>"
+			"Server: M.K.A<br>"
+			"Icons are from the Tango Desktop Project</p>"
+			);
 }
 
 void MainWindow::help()
@@ -1153,7 +1163,6 @@ void MainWindow::createChatBox(QMenu *toggles)
 
 void MainWindow::createDialogs()
 {
-	aboutdlg_ = new dialogs::AboutDialog(this);
 	newdlg_ = new dialogs::NewDialog(this);
 	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
 
