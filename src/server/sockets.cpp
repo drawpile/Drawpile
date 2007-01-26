@@ -682,7 +682,7 @@ int Socket::send(char* buffer, size_t len) throw()
 			break;
 		case EOPNOTSUPP:
 			std::cerr << "Invalid flags" << std::endl;
-			assert(!(error == ENOTSUPP));
+			assert(!(error == EOPNOTSUPP));
 			break;
 		#endif // NDEBUG
 		case EAGAIN:
