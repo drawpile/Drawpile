@@ -335,39 +335,56 @@ public:
 	 * @return associated address structure.
 	 */
 	#ifdef IPV6_SUPPORT
-	sockaddr_in6* getAddr() throw() { return &addr; }
+	sockaddr_in6*
 	#else
-	sockaddr_in* getAddr() throw() { return &addr; }
+	sockaddr_in*
+	#endif
+		getAddr() throw() { return &addr; }
 	#endif
 	
 	//! Get local IP address
 	/**
-	 * @return IP address.
+	 * @return IP address string.
+	 * 	e.g. ::1:30000 or 127.0.0.1:300000
 	 */
 	std::string address() const throw()
 	{
-		#ifdef IPV6_SUPPORT
-		char straddr[INET6_ADDRSTRLEN+1];
-		#else // no IPv6
-		char straddr[14+1];
-		#endif // IPv6
+		// define 
 		#ifdef HAVE_WSA
 		#ifdef IPV6_SUPPORT
 		DWORD len = INET6_ADDRSTRLEN;
-		#else // No IPv6
-		DWORD len = 14+1;
-		#endif // IPv6
+		#else
+		DWORD len = 14;
+		#endif // IPV6_SUPPORT
+		#endif // HAVE_WSA
+		
+		// create temporary string array for address
+		#ifdef IPV6_SUPPORT
+		char straddr[INET6_ADDRSTRLEN+1];
+		#else
+		char straddr[14+1];
+		#endif // IPV6_SUPPORT
+		
+		// convert address to string
+		#ifdef HAVE_WSA
 		sockaddr sa;
 		memcpy(&sa, &addr, sizeof(addr));
 		WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
-		straddr[len] = '\0';
-		#else // No WSA
+		#else
+		// POSIX
+		inet_ntop(
 		#ifdef IPV6_SUPPORT
-		inet_ntop(AF_INET6, &addr.sin6_addr, straddr, sizeof(straddr));
-		#else // No IPv6
-		inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
-		#endif // IPV6
+			AF_INET6,
+			&addr.sin6_addr,
+		#else // IPv4
+			AF_INET,
+			&addr.sin_addr,
+		#endif // IPV6_SUPPORT
+			straddr,
+			sizeof(straddr)
+		);
 		#endif // HAVE_WSA
+		
 		return std::string(straddr);
 	}
 	
@@ -377,11 +394,13 @@ public:
 	 */
 	uint16_t port() const throw()
 	{
+		uint16_t _port = 
 		#ifdef IPV6_SUPPORT
-		uint16_t _port = addr.sin6_port;
+			addr.sin6_port;
 		#else
-		uint16_t _port = addr.sin_port;
+			addr.sin_port;
 		#endif
+		
 		return bswap(_port);
 	}
 };
