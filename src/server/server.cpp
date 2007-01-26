@@ -1760,12 +1760,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	switch (usr->state)
 	{
 	case uState::login:
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "login" << std::endl;
-		#endif
-		#endif
-		
 		if (usr->inMsg->type == protocol::type::UserInfo)
 		{
 			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
@@ -1832,8 +1826,23 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			usr->mode = default_user_mode;
 			
+			
+			std::string IPPort(usr->sock->address());
+			std::string IP(
+				IPPort.substr(
+					0,
+					IPPort.find_last_of(":", IPPort.length()-1)
+				)
+			);
+			
+			std::cout << "Connection from: " << IPPort << std::endl;
+			
 			if (fIsSet(opmode, server::mode::LocalhostAdmin)
-				and (usr->sock->address() == "::1")) // Loopback
+				#ifdef IPV6_SUPPORT
+				and (IP == "::1")) // Loopback
+				#else
+				and (IP == "127.0.0.1")) // Loopback
+				#endif // IPV6_SUPPORT
 			{
 				// auto admin promotion.
 				// also, don't put any other flags on the user.
@@ -1861,10 +1870,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case uState::login_auth:
-		#ifndef NDEBUG
-		std::cout << "login_auth" << std::endl;
-		#endif
-		
 		if (usr->inMsg->type == protocol::type::Password)
 		{
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
@@ -1904,12 +1909,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		
 		break;
 	case uState::init:
-		#ifdef DEBUG_SERVER
-		#ifndef NDEBUG
-		std::cout << "init" << std::endl;
-		#endif
-		#endif
-		
 		if (usr->inMsg->type == protocol::type::Identifier)
 		{
 			protocol::Identifier *ident = static_cast<protocol::Identifier*>(usr->inMsg);
