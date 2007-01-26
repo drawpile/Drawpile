@@ -335,12 +335,13 @@ public:
 	 * @return associated address structure.
 	 */
 	#ifdef IPV6_SUPPORT
-	sockaddr_in6*
-	#else
-	sockaddr_in*
-	#endif
-		getAddr() throw() { return &addr; }
-	#endif
+	sockaddr_in6* getAddr() throw()
+	#else // IPv4
+	sockaddr_in* getAddr() throw()
+	#endif // IPV6_SUPPORT
+	{
+		return &addr;
+	}
 	
 	//! Get local IP address
 	/**
@@ -353,7 +354,7 @@ public:
 		#ifdef HAVE_WSA
 		#ifdef IPV6_SUPPORT
 		DWORD len = INET6_ADDRSTRLEN;
-		#else
+		#else // IPv4
 		DWORD len = 14;
 		#endif // IPV6_SUPPORT
 		#endif // HAVE_WSA
@@ -370,7 +371,7 @@ public:
 		sockaddr sa;
 		memcpy(&sa, &addr, sizeof(addr));
 		WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
-		#else
+		#else // No WSA
 		// POSIX
 		inet_ntop(
 		#ifdef IPV6_SUPPORT
@@ -397,9 +398,9 @@ public:
 		uint16_t _port = 
 		#ifdef IPV6_SUPPORT
 			addr.sin6_port;
-		#else
+		#else // IPv4
 			addr.sin_port;
-		#endif
+		#endif // IPV6_SUPPORT
 		
 		return bswap(_port);
 	}

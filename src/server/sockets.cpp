@@ -360,8 +360,8 @@ int Socket::bindTo(std::string address, uint16_t port) throw()
 	#ifdef DEBUG_SOCKETS
 	#ifndef NDEBUG
 	std::cout << "Socket::bindTo([" << address << "], " << port << ")" << std::endl;
-	#endif
-	#endif
+	#endif // NDEBUG
+	#endif // DEBUG_SOCKETS
 	
 	assert(sock != INVALID_SOCKET);
 	
@@ -369,36 +369,44 @@ int Socket::bindTo(std::string address, uint16_t port) throw()
 	int size = sizeof(addr);
 	#ifdef IPV6_SUPPORT
 	char straddr[INET6_ADDRSTRLEN+1];
-	#else
+	#else // IPv6
 	char straddr[14+1];
-	#endif // IPV6
+	#endif // IPV6_SUPPORT
 	memcpy(straddr, address.c_str(), address.length());
 	WSAStringToAddress(
 		straddr,
 		#ifdef IPV6_SUPPORT
 		AF_INET6,
-		#else
+		#else // IPv4
 		AF_INET,
-		#endif
+		#endif // IPV6_SUPPORT
 		0,
 		reinterpret_cast<sockaddr*>(&addr),
 		&size
 	);
-	#else
-	#ifdef IPV6_SUPPORT
-	inet_pton(AF_INET6, address.c_str(), &(addr.sin6_addr));
-	#else
-	inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
-	#endif // IPV6
-	#endif
+	#else // No WSA
+	inet_pton(
+		#ifdef IPV6_SUPPORT
+		AF_INET6,
+		#else // IPv4
+		AF_INET,
+		#endif // IPV6_SUPPORT
+		address.c_str(),
+		#ifdef IPV6_SUPPORT
+		&(addr.sin6_addr)
+		#else // IPv4
+		&(addr.sin_addr)
+		#endif // IPV6_SUPPORT
+	);
+	#endif // HAVE_WSA
 	
 	#ifdef IPV6_SUPPORT
 	addr.sin6_family = AF_INET6;
 	addr.sin6_port = bswap(port);
-	#else
+	#else // IPv4
 	addr.sin_family = AF_INET;
 	addr.sin_port = bswap(port);
-	#endif
+	#endif // IPV6_SUPPORT
 	
 	int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
 	
@@ -408,7 +416,7 @@ int Socket::bindTo(std::string address, uint16_t port) throw()
 		error = WSAGetLastError();
 		#else
 		error = errno;
-		#endif
+		#endif // HAVE_WSA
 		
 		switch (error)
 		{
@@ -513,7 +521,7 @@ int Socket::connect(sockaddr_in* rhost) throw()
 		case EALREADY: // already connected
 			assert(!(error == EALREADY));
 			break;
-		#endif
+		#endif // NDEBUG
 		case EACCES:
 		case EPERM:
 			std::cerr << "Firewall denied connection" << std::endl;
@@ -563,16 +571,14 @@ int Socket::listen() throw()
 		{
 		#ifndef NDEBUG
 		case EBADF:
-			std::cerr << "Invalid FD" << std::endl;
-			assert(1);
+			assert(!(error == EBADF));
 			break;
 		case ENOTSOCK:
-			std::cerr << "Not a socket." << std::endl;
-			assert(1);
+			assert(!(error == ENOTSOCK));
 			break;
 		case EOPNOTSUPP:
 			std::cerr << "Does not support listen." << std::endl;
-			assert(1);
+			assert(!(error == EOPNOTSUPP));
 			break;
 		#endif // NDEBUG
 		default:
@@ -598,7 +604,16 @@ int Socket::send(char* buffer, size_t len) throw()
 	assert(len > 0);
 	assert(sock != INVALID_SOCKET);
 	
+	#ifdef HAVE_WSA
+	WSABUF wbuf;
+	wbuf.buf = buffer;
+	wbuf.len = len;
+	DWORD sb;
+	int r = WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
+	if (r != SOCKET_ERROR) r = sb;
+	#else
 	int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
+	#endif // HAVE_WSA
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -610,80 +625,81 @@ int Socket::send(char* buffer, size_t len) throw()
 		
 		switch (error)
 		{
+		#ifdef HAVE_WSA
+		#ifndef NDEBUG
+		case WSAEFAULT:
+			// invalid address for
+			// lpBuffers, lpNumberOfBytesSent, lpOverlapped, lpCompletionRoutine
+			std::cerr << "Invalid address given" << std::endl;
+			assert(!(error == WSAEFAULT));
+			break;
+		case WSAEINVAL:
+			std::cerr << "Socket not overlapped" << std::endl;
+			assert(!(error == WSAEINVAL));
+			break;
+		case WSAENOTCONN:
+			assert(!(error == WSAENOTCONN));
+			break;
+		case WSAENOTSOCK:
+			assert(!(error == WSAENOTSOCK));
+			break;
+		case WSANOTINITIALISED:
+			assert(!(error == WSANOTINITIALISED));
+			break;
+		#endif // NDEBUG
+		case WSAENOBUFS: // Out of buffers
+		case WSAENETRESET: // Keep-alive reset
+		case WSAECONNABORTED: // Connection timed-out
+		case WSA_IO_PENDING: // Operation will be completed later
+		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
+		case WSAENETDOWN: // Network sub-system failure
+			break;
+		case WSAECONNRESET:
+			// Connection reset by remote host
+			close();
+			break;
+		case WSAEWOULDBLOCK:
+			// Would block, or can't complete the request currently.
+			return SOCKET_ERROR - 1;
+		#else // no WSA
 		#ifndef NDEBUG
 		case EBADF:
-			std::cerr << "Socket::send() - invalid FD" << std::endl;
-			assert(1);
+			assert(!(error == EBADF));
 			break;
 		case EFAULT:
-			std::cerr << "Socket::send() - invalid buffer address" << std::endl;
-			assert(1);
+			std::cerr << "invalid buffer address" << std::endl;
+			assert(!(error == EFAULT));
 			break;
 		case EINVAL:
 			std::cerr << "Invalid argument" << std::endl;
-			assert(1);
-			break;
-		case EDESTADDRREQ: // likely result of sendmsg()
-			std::cerr << "Not connceted, and no peer defined." << std::endl;
-			assert(1);
+			assert(!(error == EINVAL));
 			break;
 		case ENOTCONN:
-			std::cerr << "Not connected" << std::endl;
-			assert(1);
+			assert(!(error == ENOTCONN));
 			break;
 		case ENOTSOCK:
-			std::cerr << "Not a socket" << std::endl;
-			assert(1);
+			assert(!(error == ENOTSOCK));
 			break;
 		case EOPNOTSUPP:
 			std::cerr << "Invalid flags" << std::endl;
-			assert(1);
-			break;
-		case EISCONN: // likely result of sendmsg()
-			std::cerr << "Already connected, but recipient was specified." << std::endl;
-			assert(1);
+			assert(!(error == ENOTSUPP));
 			break;
 		#endif // NDEBUG
 		case EAGAIN:
-			#ifndef NDEBUG
-			std::cerr << "Would block, try again" << std::endl;
-			#endif // NDEBUG
-			return SOCKET_ERROR - 1;
-			break;
 		case EINTR:
-			#ifndef NDEBUG
-			std::cerr << "Interrupted by signal." << std::endl;
-			#endif // NDEBUG
-			return SOCKET_ERROR - 1;
-			break;
 		case ENOMEM:
-			#ifndef NDEBUG
-			std::cerr << "Out of memory" << std::endl;
-			#endif // NDEBUG
 			return SOCKET_ERROR - 1;
 			break;
 		case EPIPE:
-			#ifndef NDEBUG
-			std::cerr << "Pipe broken, connection closed on local end." << std::endl;
-			#endif // NDEBUG
-			break;
 		case ECONNRESET:
-			#ifndef NDEBUG
-			std::cerr << "Connection reset by peer" << std::endl;
-			#endif // NDEBUG
-			break;
-		case EMSGSIZE:
-			#ifndef NDEBUG
-			std::cerr << "Socket requires atomic sending." << std::endl;
-			#endif // NDEBUG
-			assert(1);
+			close();
 			break;
 		case ENOBUFS:
 			#ifndef NDEBUG
-			std::cerr << "Out of buffers" << std::endl;
+			std::cerr << "Out of network buffers" << std::endl;
 			#endif // NDEBUG
 			return SOCKET_ERROR - 1;
-			break;
+		#endif // HAVE_WSA
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Socket::send() - unknown error" << std::endl;
@@ -707,7 +723,16 @@ int Socket::recv(char* buffer, size_t len) throw()
 	assert(buffer != 0);
 	assert(len > 0);
 	
+	#ifdef HAVE_WSA
+	WSABUF wbuf;
+	wbuf.buf = buffer;
+	wbuf.len = len;
+	DWORD rb;
+	int r = WSARecv(sock, &wbuf, 1, &rb, 0, 0, 0);
+	if (r != SOCKET_ERROR) r = rb;
+	#else
 	int r = ::recv(sock, buffer, len, 0);
+	#endif // HAVE_WSA
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -715,55 +740,74 @@ int Socket::recv(char* buffer, size_t len) throw()
 		error = WSAGetLastError();
 		#else
 		error = errno;
-		#endif
+		#endif // HAVE_WSA
 		
 		switch (error)
 		{
+		#ifdef HAVE_WSA
+		#ifndef NDEBUG
+		case WSAEFAULT:
+			assert(!(error == WSAEFAULT));
+			break;
+		case WSAENOTCONN:
+			assert(!(error == WSAENOTCONN));
+			break;
+		case WSAENOTSOCK:
+			assert(!(error == WSAENOTSOCK));
+			break;
+		case WSAEOPNOTSUPP:
+			assert(!(error == WSAEOPNOTSUPP));
+			break;
+		case WSANOTINITIALISED:
+			assert(!(error == WSANOTINITIALISED));
+			break;
+		#endif // NDEBUG
+		case WSAEWOULDBLOCK:
+			return SOCKET_ERROR - 1;
+			break;
+		case WSAEDISCON:
+		case WSAECONNRESET: // Connection was reset
+			close();
+		case WSAESHUTDOWN:
+		case WSAENOBUFS: // Out of buffers
+		case WSAENETDOWN: // Network sub-system failure
+		case WSAENETRESET: // Keep-alive reset
+		case WSAECONNABORTED: // Connection timed-out
+		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
+			break;
+		case WSA_IO_PENDING: // Operation will be completed later
+			error = 0;
+			break;
+		#else // No WSA
 		#ifndef NDEBUG
 		case EBADF:
-			std::cerr << "Invalid FD" << std::endl;
-			assert(1);
+			assert(!(error == EBADF));
 			break;
 		case EFAULT:
 			std::cerr << "Buffer points to invalid address" << std::endl;
-			assert(1);
+			assert(!(error == EFAULT));
 			break;
 		case EINVAL:
 			std::cerr << "Invalid argument." << std::endl;
-			assert(1);
-			break;
-		case ECONNREFUSED:
-			std::cerr << "Connection refused" << std::endl;
+			assert(!(error == EINVAL));
 			break;
 		case ENOTCONN:
-			std::cerr << "Not connected" << std::endl;
-			assert(1);
+			assert(!(error == ENOTCONN));
 			break;
 		case ENOTSOCK:
-			std::cerr << "Not a socket" << std::endl;
-			assert(1);
+			assert(!(error == ENOTSOCK));
 			break;
 		#endif // NDEBUG
+		case ECONNREFUSED:
+			#ifndef NDEBUG
+			std::cerr << "Connection refused" << std::endl;
+			#endif
+			break;
 		case EAGAIN:
-			// Should retry
-			#ifndef NDEBUG
-			std::cerr << "Would block, try again." << std::endl;
-			#endif // NDEBUG
-			return SOCKET_ERROR - 1;
-			break;
 		case EINTR:
-			// Should retry
-			#ifndef NDEBUG
-			std::cerr << "Interrupted by signal." << std::endl;
-			#endif // NDEBUG
-			return SOCKET_ERROR - 1;
-			break;
 		case ENOMEM:
-			#ifndef NDEBUG
-			std::cerr << "Out of memory" << std::endl;
-			#endif // NDEBUG
 			return SOCKET_ERROR - 1;
-			break;
+		#endif // HAVE_WSA
 		default:
 			// Should not happen
 			#ifndef NDEBUG
