@@ -567,7 +567,6 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 	} else if(msg->event == protocol::type::Password) {
 		if(lastinstruction_ == protocol::admin::command::Authenticate) {
 			emit becameAdmin();
-			lastinstruction_ = -1;
 		}
 	} else {
 		qDebug() << "unhandled host ack" << int(msg->event);
