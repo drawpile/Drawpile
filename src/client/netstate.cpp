@@ -779,9 +779,8 @@ void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 {
 	protocol::StrokeInfo *msg = new protocol::StrokeInfo;
 	msg->session_id = info_.id;;
-	// TODO, pack subpixel information
-	msg->x = point.x();
-	msg->y = point.y();
+	msg->x = uint16_t(point.x()) << 2 | point.subx();
+	msg->y = uint16_t(point.y()) << 2 | point.suby();
 	msg->pressure = qRound(point.pressure()*255);
 	host_->net_->send(msg);
 }
@@ -994,11 +993,13 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 		return true;
 	}
 	Q_ASSERT(msg->type == protocol::type::StrokeInfo);
+	qreal x = (msg->x >> 2) + (msg->x&0x3) / 3.0;
+	qreal y = (msg->y >> 2) + (msg->y&0x3) / 3.0;
 	emit strokeReceived(
 			msg->user_id,
 			drawingboard::Point(
-				(signed short)(msg->x),
-				(signed short)(msg->y),
+				x,
+				y,
 				msg->pressure/255.0
 				)
 			);
