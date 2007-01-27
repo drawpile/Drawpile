@@ -39,11 +39,8 @@
 
 #ifdef WIN32
 	#if defined( HAVE_WSA )
-		#ifdef IPV6_SUPPORT
-			#include <ws2tcpip.h> // IPv6
-		#else
-			#include <winsock2.h>
-		#endif
+		#include <ws2tcpip.h>
+		#include <winsock2.h>
 		#if defined( HAVE_XPWSA )
 			#include <mswsock.h>
 		#endif
@@ -69,6 +66,7 @@
 	#define EOPNOTSUPP WSAEOPNOTSUPP
 	#define ECONNABORTED WSAECONNABORTED
 	#define ENOBUFS WSAENOBUFS
+	#define EWOULDBLOCK WSAEWOULDBLOCK
 	//#define EPROTO WSAEPROTO
 	#define EDESTADDRREQ WSAEDESTADDRREQ
 	#define EMSGSIZE WSAEMSGSIZE
@@ -350,24 +348,23 @@ public:
 	 */
 	std::string address() const throw()
 	{
-		// define 
-		#ifdef HAVE_WSA
-		#ifdef IPV6_SUPPORT
-		DWORD len = INET6_ADDRSTRLEN;
-		#else // IPv4
-		DWORD len = 14;
-		#endif // IPV6_SUPPORT
-		#endif // HAVE_WSA
-		
 		// create temporary string array for address
 		#ifdef IPV6_SUPPORT
 		char straddr[INET6_ADDRSTRLEN+1];
-		#else
-		char straddr[14+1];
+		straddr[INET6_ADDRSTRLEN] = '\0';
+		#else // IPv4
+		char straddr[INET_ADDRSTRLEN+1];
+		straddr[INET_ADDRSTRLEN] = '\0';
 		#endif // IPV6_SUPPORT
 		
 		// convert address to string
 		#ifdef HAVE_WSA
+		#ifdef IPV6_SUPPORT
+		DWORD len = INET6_ADDRSTRLEN;
+		#else // IPv4
+		DWORD len = INET_ADDRSTRLEN;
+		#endif // IPV6_SUPPORT
+		
 		sockaddr sa;
 		memcpy(&sa, &addr, sizeof(addr));
 		WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);

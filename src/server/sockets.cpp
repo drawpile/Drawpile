@@ -101,7 +101,7 @@ bool Socket::create() throw()
 		#endif // HAVE_WSA
 		// TODO: Non-WSA errors
 		default:
-			std::cerr << "! Socket::create() - unknown error" << std::endl;
+			std::cerr << "! Socket::create() - unknown error: " << error << std::endl;
 			break;
 		}
 	}
@@ -272,7 +272,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		#endif // LINUX
 		default:
 			#ifndef NDEBUG
-			std::cerr << "Socket::accept() - unknown error." << std::endl;
+			std::cerr << "Socket::accept() - unknown error: " << error << std::endl;
 			#endif // NDEBUG
 			break;
 		}
@@ -461,7 +461,7 @@ int Socket::bindTo(std::string address, uint16_t port) throw()
 			break;
 		default:
 			#ifndef NDEBUG
-			std::cerr << "Socket::bindTo() - unknown error" << std::endl;
+			std::cerr << "Socket::bindTo() - unknown error: " << error << std::endl;
 			#endif
 			break;
 		}
@@ -583,7 +583,7 @@ int Socket::listen() throw()
 		#endif // NDEBUG
 		default:
 			#ifndef NDEBUG
-			std::cerr << "Socket::listen() - unknown error" << std::endl;
+			std::cerr << "Socket::listen() - unknown error: " << error << std::endl;
 			#endif // NDEBUG
 			break;
 		}
@@ -637,31 +637,20 @@ int Socket::send(char* buffer, size_t len) throw()
 			std::cerr << "Socket not overlapped" << std::endl;
 			assert(!(error == WSAEINVAL));
 			break;
-		case WSAENOTCONN:
-			assert(!(error == WSAENOTCONN));
-			break;
-		case WSAENOTSOCK:
-			assert(!(error == WSAENOTSOCK));
-			break;
 		case WSANOTINITIALISED:
 			assert(!(error == WSANOTINITIALISED));
 			break;
 		#endif // NDEBUG
-		case WSAENOBUFS: // Out of buffers
 		case WSAENETRESET: // Keep-alive reset
 		case WSAECONNABORTED: // Connection timed-out
 		case WSA_IO_PENDING: // Operation will be completed later
 		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
 		case WSAENETDOWN: // Network sub-system failure
 			break;
-		case WSAECONNRESET:
-			// Connection reset by remote host
-			close();
-			break;
 		case WSAEWOULDBLOCK:
 			// Would block, or can't complete the request currently.
 			return SOCKET_ERROR - 1;
-		#else // no WSA
+		#endif
 		#ifndef NDEBUG
 		case EBADF:
 			assert(!(error == EBADF));
@@ -699,10 +688,9 @@ int Socket::send(char* buffer, size_t len) throw()
 			std::cerr << "Out of network buffers" << std::endl;
 			#endif // NDEBUG
 			return SOCKET_ERROR - 1;
-		#endif // HAVE_WSA
 		default:
 			#ifndef NDEBUG
-			std::cerr << "Socket::send() - unknown error" << std::endl;
+			std::cerr << "Socket::send() - unknown error: " << error << std::endl;
 			#endif // NDEBUG
 			break;
 		}
@@ -723,6 +711,9 @@ int Socket::recv(char* buffer, size_t len) throw()
 	assert(buffer != 0);
 	assert(len > 0);
 	
+	// WSA causes WSAEFAULT error to occur for some reason
+	
+	/*
 	#ifdef HAVE_WSA
 	WSABUF wbuf;
 	wbuf.buf = buffer;
@@ -731,42 +722,35 @@ int Socket::recv(char* buffer, size_t len) throw()
 	int r = WSARecv(sock, &wbuf, 1, &rb, 0, 0, 0);
 	if (r != SOCKET_ERROR) r = rb;
 	#else
+	*/
 	int r = ::recv(sock, buffer, len, 0);
+	/*
 	#endif // HAVE_WSA
+	*/
 	
 	if (r == SOCKET_ERROR)
 	{
+		/*
 		#ifdef HAVE_WSA
 		error = WSAGetLastError();
 		#else
+		*/
 		error = errno;
-		#endif // HAVE_WSA
+		//#endif // HAVE_WSA
 		
 		switch (error)
 		{
 		#ifdef HAVE_WSA
 		#ifndef NDEBUG
-		case WSAEFAULT:
-			assert(!(error == WSAEFAULT));
-			break;
-		case WSAENOTCONN:
-			assert(!(error == WSAENOTCONN));
-			break;
-		case WSAENOTSOCK:
-			assert(!(error == WSAENOTSOCK));
-			break;
-		case WSAEOPNOTSUPP:
-			assert(!(error == WSAEOPNOTSUPP));
-			break;
 		case WSANOTINITIALISED:
 			assert(!(error == WSANOTINITIALISED));
 			break;
 		#endif // NDEBUG
-		case WSAEWOULDBLOCK:
-			return SOCKET_ERROR - 1;
+		case WSAEFAULT:
+			std::cerr << "WSABUF in invalid address space" << std::endl;
+			assert(!(error == WSAEFAULT));
 			break;
 		case WSAEDISCON:
-		case WSAECONNRESET: // Connection was reset
 			close();
 		case WSAESHUTDOWN:
 		case WSAENOBUFS: // Out of buffers
@@ -778,7 +762,7 @@ int Socket::recv(char* buffer, size_t len) throw()
 		case WSA_IO_PENDING: // Operation will be completed later
 			error = 0;
 			break;
-		#else // No WSA
+		#endif
 		#ifndef NDEBUG
 		case EBADF:
 			assert(!(error == EBADF));
@@ -798,6 +782,9 @@ int Socket::recv(char* buffer, size_t len) throw()
 			assert(!(error == ENOTSOCK));
 			break;
 		#endif // NDEBUG
+		case ECONNRESET:
+			close();
+			break;
 		case ECONNREFUSED:
 			#ifndef NDEBUG
 			std::cerr << "Connection refused" << std::endl;
@@ -807,11 +794,10 @@ int Socket::recv(char* buffer, size_t len) throw()
 		case EINTR:
 		case ENOMEM:
 			return SOCKET_ERROR - 1;
-		#endif // HAVE_WSA
 		default:
 			// Should not happen
 			#ifndef NDEBUG
-			std::cerr << "Socket::recv() - unknown error" << std::endl;
+			std::cerr << "Socket::recv() - unknown error: " << error << std::endl;
 			#endif // NDEBUG
 			break;
 		}
