@@ -157,7 +157,7 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	} else {
 		pendown_ = MOUSEDOWN;
 		emit penDown(
-				drawingboard::Point(mapToScene(event->pos()).toPoint(), 1.0)
+				drawingboard::Point(mapToScene(event->pos()), 1.0)
 				);
 	}
 }
@@ -176,8 +176,8 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
 	} else {
-		QPoint point = mapToScene(event->pos()).toPoint();
-		if(point != prevpoint_) {
+		QPointF point = mapToScene(event->pos());
+		if(point.toPoint() != prevpoint_) {
 			if(pendown_)
 				emit penMove(drawingboard::Point(point, 1.0));
 			else if(enableoutline_ && showoutline_) {
@@ -189,7 +189,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 							point.y() - outlinesize_, dia,dia));
 				updateScene(rect);
 			}
-			prevpoint_ = point;
+			prevpoint_ = point.toPoint();
 		}
 	}
 }
@@ -224,12 +224,11 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		QPoint point = mapToScene(tabev->pos()).toPoint();
-		if(point != prevpoint_) {
+		QPointF point = mapToScene(tabev->pos());
+		if(point.toPoint() != prevpoint_) {
 			if(pendown_) {
 				emit penMove(
-						drawingboard::Point(point.x(),point.y(),
-							tabev->pressure())
+						drawingboard::Point(point, tabev->pressure())
 						);
 				if(enableoutline_ && showoutline_) {
 					// Update previous location. This is needed if brush
@@ -250,22 +249,17 @@ bool EditorView::viewportEvent(QEvent *event)
 				updateScene(rect);
 			}
 		}
-		prevpoint_ = point;
+		prevpoint_ = point.toPoint();
 		return true;
 	} else if(event->type() == QEvent::TabletPress) {
 		//! Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		QPoint point = mapToScene(tabev->pos()).toPoint();
+		QPointF point = mapToScene(tabev->pos());
 
 		pendown_ = TABLETDOWN;
-		emit penDown(
-				drawingboard::Point(
-					mapToScene(tabev->pos()).toPoint(),
-					tabev->pressure()
-					)
-				);
-		prevpoint_ = point;
+		emit penDown( drawingboard::Point(point, tabev->pressure()));
+		prevpoint_ = point.toPoint();
 		return true;
 	} else if(event->type() == QEvent::TabletRelease) {
 		// Stylus lifted

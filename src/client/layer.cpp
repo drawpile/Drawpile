@@ -89,11 +89,10 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 #endif
 
 	// Based on interpolatePoints() in kolourpaint
-	// Bug here, what happens when radius changes?
-	const int x1 = point1.x ()-rad,
-		y1 = point1.y ()-rad,
-		x2 = point2.x ()-rad,
-		y2 = point2.y ()-rad;
+	const int x1 = int(point1.x()),
+		y1 = int(point1.y ()),
+		x2 = int(point2.x ()),
+		y2 = int(point2.y ());
 
 	// Difference of x and y values
 	const int dx = x2 - x1;
@@ -108,8 +107,8 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 
 	// Plot location
 	Point point(x1,y1,pressure);
-	int &plotx = point.rx();
-	int &ploty = point.ry();
+	qreal &plotx = point.rx();
+	qreal &ploty = point.ry();
 
 	int x = 0;
 	int y = 0;
@@ -125,9 +124,9 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 			x -= inc;
 
 			if (dx < 0)
-				plotx--;
+				plotx-=1.0;
 			else
-				plotx++;
+				plotx+=1.0;
 		}
 
 		if (y > inc) {
@@ -135,9 +134,9 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 			y -= inc;
 
 			if (dy < 0)
-				ploty--;
+				ploty-=1.0;
 			else
-				ploty++;
+				ploty+=1.0;
 		}
 
 		if (plot)
@@ -145,12 +144,66 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 	}
 
 	// Update screen
-	const int left = qMin(point1.x(), point2.x());
-	const int right = qMax(point1.x(), point2.x());
-	const int top = qMin(point1.y(), point2.y());
-	const int bottom = qMax(point1.y(), point2.y());
+	const int left = int(qMin(point1.x(), point2.x()));
+	const int right = int(qMax(point1.x(), point2.x()));
+	const int top = int(qMin(point1.y(), point2.y()));
+	const int bottom = int(qMax(point1.y(), point2.y()));
 	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
 }
+
+/**
+ * The brush pixmap is drawn at each point between point1 and point2.
+ * Pressure values are interpolated between the points.
+ * First pixel is not drawn. This is done on purpose, as drawLine is usually
+ * used to draw multiple joined lines.
+ * @param point1 start coordinates
+ * @param point2 end coordinates
+ * @param brush brush to draw with
+ */
+void Layer::drawSmoothLine(const Point& point1, const Point& point2, const Brush& brush)
+{
+	// Difference of x, y and pressure values
+	const qreal dx = point2.x() - point1.x();
+	const qreal dy = point2.y() - point1.y();
+	const qreal dp = point2.pressure() - point1.pressure();
+
+
+	// Absolute values of differences
+	const qreal ix = qAbs (dx);
+	const qreal iy = qAbs (dy);
+
+	// Larger of the x and y differences
+	const qreal inc = ix > iy ? ix : iy;
+
+	// Plot location
+	Point point = point1;
+	qreal &plotx = point.rx();
+	qreal &ploty = point.ry();
+	qreal &plotp = point.rpressure();
+
+	for (int i = 0; i < inc; i++) {
+
+		plotx += dx/inc;
+		ploty += dy/inc;
+		plotp += dp/inc;
+		if(plotp<0)
+			plotp=0;
+		else if(plotp>1)
+			plotp=1;
+
+		brush.draw(image_, point);
+	}
+
+	// Update screen
+	int rad = brush.radius(point1.pressure());
+	if(rad==0) rad=1;
+	const int left = int(qMin(point1.x(), point2.x()));
+	const int right = int(qMax(point1.x(), point2.x()));
+	const int top = int(qMin(point1.y(), point2.y()));
+	const int bottom = int(qMax(point1.y(), point2.y()));
+	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
+}
+
 
 /**
  * @param point coordinates
@@ -160,8 +213,7 @@ void Layer::drawPoint(const Point& point, const Brush& brush)
 {
 	int r = brush.radius(point.pressure());
 	if(r==0) r=1;
-	QPoint rp(r,r);
-	brush.draw(image_, point-rp);
+	brush.draw(image_, point);
 	update(point.x()-r,point.y()-r,r*2,r*2);
 }
 

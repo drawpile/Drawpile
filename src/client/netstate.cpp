@@ -779,6 +779,7 @@ void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 {
 	protocol::StrokeInfo *msg = new protocol::StrokeInfo;
 	msg->session_id = info_.id;;
+	// TODO, pack subpixel information
 	msg->x = point.x();
 	msg->y = point.y();
 	msg->pressure = qRound(point.pressure()*255);

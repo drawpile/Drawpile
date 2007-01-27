@@ -38,7 +38,7 @@ void User::addStroke(const Point& point)
 	if(layer_) {
 		if(strokestarted_) {
 			// Continuing stroke
-			layer_->drawLine(
+			layer_->drawSmoothLine(
 					lastpoint_,
 					point,
 					brush_

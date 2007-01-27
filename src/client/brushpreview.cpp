@@ -109,9 +109,8 @@ void BrushPreview::updatePreview()
 			pressure = 0;
 		else if(pressure>1)
 			pressure = 1;
-		const int rad = brush_.radius(pressure);
 		const int y = qRound(sin(phase) * strokeh);
-		brush_.draw(preview_,drawingboard::Point(offx+x-rad,offy+y-rad,pressure));
+		brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
 	}
 }
 
