@@ -31,16 +31,7 @@
 
 #include "../../config.h"
 
-// #include <set>
 #include <stdint.h>
-
-#include <signal.h>
-
-//#include <sys/time.h>
-
-#include <set>
-//#include <list>
-#include <vector>
 
 #if defined(EV_EPOLL)
 	#define EV_HAVE_HANGUP
@@ -50,7 +41,9 @@
 #elif defined(EV_PSELECT)
 	#include <sys/select.h> // fd_set, FD* macros, etc.
 #else
-	#if !defined(EV_SELECT)
+	#if defined(EV_WSA)
+		#include <map>
+	#else
 		#define EV_SELECT
 	#endif
 	
@@ -62,10 +55,13 @@
 #endif
 
 #if defined(EV_SELECT) || defined(EV_PSELECT)
+	#include <set>
 	#define EVENT_BY_FD
 #elif defined(EV_EPOLL)
 	#define EVENT_BY_ORDER
 	#define EVENT_HAS_ALL
+#elif defined(EV_WSA)
+	#define EVENT_BY_ORDER
 #endif
 
 #ifndef WIN32
@@ -73,6 +69,7 @@ typedef int fd_t;
 #endif
 
 #if defined( EV_PSELECT )
+	#include <signal.h>
 	#define EV_USE_SIGMASK
 #endif
 
@@ -87,8 +84,6 @@ protected:
 	#if defined(EV_EPOLL)
 	fd_t evfd;
 	epoll_event events[10]; // stack allocation
-	#elif defined(EV_KQUEUE)
-	//
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
@@ -105,6 +100,12 @@ protected:
 	#if defined(EV_USE_SIGMASK)
 	sigset_t *_sigmask;
 	#endif // EV_USE_SIGMASK
+	
+	#if defined(EV_WSA)
+	std::map<fd_t, WSAEVENT> events;
+	WSAEVENT w_ev[WSA_MAXIMUM_WAIT_EVENTS];
+	uint32_t w_ev_count;
+	#endif
 	
 	int _error, nfds;
 	

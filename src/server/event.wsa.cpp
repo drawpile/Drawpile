@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -26,47 +26,48 @@
 
 *******************************************************************************/
 
-#error not implemented
-
-#include "../shared/templates.h"
+//#include "../shared/templates.h"
 #include "event.h"
 
 #ifndef NDEBUG
 	#include <iostream>
+	#include <ios>
 #endif
 
-#include <ios>
-#include <cerrno>
+#include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()
 
-/* Because MinGW is buggy, we have to do this fuglyness */
-const int
+const uint32_t
 	//! identifier for 'read' event
-	Event::read
-		= 0x01,
+	Event::read = FD_READ,
 	//! identifier for 'write' event
-	Event::write
-		= 0x02;
+	Event::write = FD_WRITE,
+	//! error event
+	Event::error = 0xFFFF,
+	//! hangup event
+	Event::hangup = FD_CLOSE;
 
 Event::Event() throw()
+	: w_ev_count(0)
 {
 	#ifndef NDEBUG
-	std::cout << "Event()" << std::endl;
+	std::cout << "Event(wsa)()" << std::endl;
+	std::cout << "Max events: " << WSA_MAXIMUM_WAIT_EVENTS << std::endl;
 	#endif
 }
 
 Event::~Event() throw()
 {
 	#ifndef NDEBUG
-	std::cout << "~Event()" << std::endl;
+	std::cout << "~Event(wsa)()" << std::endl;
 	#endif
 }
 
-bool Event::init() throw(std::bad_alloc)
+bool Event::init() throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::init()" << std::endl;
+	std::cout << "Event(wsa).init()" << std::endl;
 	#endif
 	
 	return true;
@@ -82,16 +83,58 @@ void Event::finish() throw()
 int Event::wait(uint32_t msecs) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::wait(msecs: " << msecs << ")" << std::endl;
+	std::cout << "Event(wsa).wait(msecs: " << msecs << ")" << std::endl;
 	#endif
+	
+	assert(events.size() != 0);
+	
+	uint32_t r = WSAWaitForMultipleEvents(w_ev_count, w_ev, 0, msecs, true);
+	
+	if (r == WSA_WAIT_FAILED)
+	{
+		_error = WSAGetLastError();
+		switch (_error)
+		{
+		#ifndef NDEBUG
+		case WSA_INVALID_HANDLE:
+			assert(!(_error == WSA_INVALID_HANDLE));
+			break;
+		case WSANOTINITIALISED:
+			assert(!(_error == WSANOTINITIALISED));
+			break;
+		case WSA_INVALID_PARAMETER:
+			assert(!(_error == WSA_INVALID_PARAMETER));
+			break;
+		#endif
+		case WSAENETDOWN:
+		case WSAEINPROGRESS:
+		case WSA_NOT_ENOUGH_MEMORY:
+			break;
+		default:
+			std::cerr << "Event(wsa).wait() - unknown error: " << r << std::endl;
+			break;
+		}
+	}
+	else
+	{
+		switch (r)
+		{
+		case WSA_WAIT_IO_COMPLETION:
+		case WSA_WAIT_TIMEOUT:
+			return 0;
+		default:
+			nfds = r - WSA_WAIT_EVENT_0;
+			break;
+		}
+	}
 	
 	return nfds;
 }
 
-int Event::add(int fd, int ev) throw()
+int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::add(fd: " << fd << ", event: ";
+	std::cout << "Event(wsa).add(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -102,14 +145,20 @@ int Event::add(int fd, int ev) throw()
 	
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
+	
+	WSAEVENT ev_s = WSACreateEvent();
+	if (!ev_s) return false;
+	
+	
+	events.insert(std::make_pair(fd, ev_s));
 	
 	return true;
 }
 
-int Event::modify(int fd, int ev) throw()
+int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::modify(fd: " << fd << ", event: ";
+	std::cout << "Event(wsa).modify(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -120,14 +169,21 @@ int Event::modify(int fd, int ev) throw()
 	
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
+	
+	std::map<fd_t, WSAEVENT>::iterator fev(events.find(fd));
+	if (fev == events.end())
+	{
+		assert(fev == events.end());
+		return false;
+	}
 	
 	return 0;
 }
 
-int Event::remove(int fd, int ev) throw()
+int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::remove(fd: " << fd << ", event: ";
+	std::cout << "Event(wsa).remove(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -139,13 +195,80 @@ int Event::remove(int fd, int ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
+	std::map<fd_t, WSAEVENT>::iterator fev(events.find(fd));
+	if (fev == events.end())
+	{
+		assert(fev == events.end());
+		return false;
+	}
+	
+	WSACloseEvent(fev->second);
+	
+	events.erase(fev);
+	
 	return true;
 }
 
-bool Event::isset(int fd, int ev) const throw()
+uint32_t Event::getEvents(fd_t fd) const throw()
+{
+	std::map<fd_t, WSAEVENT>::const_iterator fev(events.find(fd));
+	if (fev == events.end())
+	{
+		assert(fev == events.end());
+		return 0;
+	}
+	
+	LPWSANETWORKEVENTS set(0);
+	
+	int r = WSAEnumNetworkEvents(fd, fev->second, set);
+	
+	if (r == SOCKET_ERROR)
+	{
+		//_error = WSAGetLastError();
+		
+		switch (WSAGetLastError())
+		{
+		#ifndef NDEBUG
+		case WSAEFAULT:
+			assert(!(_error == WSAEFAULT));
+			break;
+		case WSANOTINITIALISED:
+			assert(!(_error == WSANOTINITIALISED));
+			break;
+		case WSAEINVAL:
+			assert(!(_error == WSAEINVAL));
+			break;
+		case WSAENOTSOCK:
+			assert(!(_error == WSAEFAULT));
+			break;
+		case WSAEAFNOSUPPORT:
+			assert(!(_error == WSAEAFNOSUPPORT));
+			break;
+		#endif
+		case WSAECONNRESET: // reset by remote
+		case WSAECONNABORTED: // connection aborted
+		case WSAETIMEDOUT: // connection timed-out
+		case WSAENETUNREACH: // network unreachable
+		case WSAECONNREFUSED: // connection refused/rejected
+			return FD_CLOSE;
+		case WSAENOBUFS: // out of network buffers
+		case WSAENETDOWN: // network sub-system failure
+		case WSAEINPROGRESS: // something's in progress
+			return 0;
+		default:
+			std::cerr << "Event(wsa).getEvents() - unknown error: " << _error << std::endl;
+			break;
+		}
+		return 0;
+	}
+	
+	return set->lNetworkEvents;
+}
+
+bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#ifndef NDEBUG
-	std::cout << "Event::isset(fd: " << fd << ", event: ";
+	std::cout << "Event(wsa).isset(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -154,8 +277,9 @@ bool Event::isset(int fd, int ev) const throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write );
-	assert( fd >= 0 );
+	assert(ev == read or ev == write or ev == hangup or ev == error);
+	assert(fd >= 0);
+	assert(1);
 	
 	return false;
 }

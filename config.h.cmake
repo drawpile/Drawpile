@@ -11,11 +11,17 @@
 #cmakedefine EV_EPOLL
 #cmakedefine EV_KQUEUE
 #cmakedefine EV_KEVENT
+#cmakedefine EV_WSA
 #cmakedefine HAVE_SELECT_H
+
+#cmakedefine WSA_SOCKETS
 #cmakedefine HAVE_WSA
+#cmakedefine HAVE_XPWSA
 
 #cmakedefine DEBUG_BUFFER
 #cmakedefine DEBUG_EVENTS
 #cmakedefine DEBUG_SOCKETS
 #cmakedefine DEBUG_SERVER
 #cmakedefine DEBUG_PROTOCOL
+
+#cmakedefine IPV6_SUPPORT

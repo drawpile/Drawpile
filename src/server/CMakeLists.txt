@@ -23,7 +23,7 @@ set (
 set ( EV_SRC event.select.cpp )
 
 if ( EV_WSA )
-	set ( EV_SRC event.select.cpp )
+	set ( EV_SRC event.wsa.cpp )
 endif ( EV_WSA )
 
 if ( EV_KQUEUE )

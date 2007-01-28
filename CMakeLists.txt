@@ -27,8 +27,11 @@ option ( EPOLL "Disable epoll(4) support" ON )
 option ( PSELECT "Disable pselect(2) support" ON )
 option ( KQUEUE "Disable kqueue(2) support" ON )
 option ( KEVENT "Disable kevent(2) support" ON )
+option ( WSA "Enable WSA event support" OFF )
 
 option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
+
+option ( WSA_SOCKETS "Use WSA sockets" OFF )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Disable any and all optimizations" ON )
@@ -141,9 +144,13 @@ endif ( SELECT )
 
 if ( WIN32 )
 	check_include_file ( winsock2.h HAVE_WSA )
+	check_include_file ( mswsock.h HAVE_XPWSA )
 	#check_symbol_exists ( WSAEWOULDBLOCK "winsock2.h" HAVE_WSA )
 	if ( HAVE_WSA )
 		message( STATUS "Windows Socket API found")
+		if ( WSA )
+			set ( EV_WSA ON )
+		endif ( WSA )
 	endif ( HAVE_WSA )
 	
 	if ( NOT EV_SELECT )

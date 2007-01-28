@@ -37,7 +37,7 @@
 
 bool Socket::create() throw()
 {
-	#ifdef HAVE_WSA
+	#ifdef WSA_SOCKETS
 	#ifdef IPV6_SUPPORT
 	sock = WSASocket(AF_INET6, SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	#else // No IPv6
@@ -49,19 +49,19 @@ bool Socket::create() throw()
 	#else
 	sock = socket(AF_INET, SOCK_STREAM, 0);
 	#endif // IPv6
-	#endif // HAVE_WSA
+	#endif // WSA_SOCKETS
 	
 	if (sock == INVALID_SOCKET)
 	{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
 		#else // No WSA
 		error = errno;
-		#endif // HAVE_WSA
+		#endif // WSA_SOCKETS
 		
 		switch (error)
 		{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		case WSAENETDOWN:
 			std::cerr << "! network subsystem failed" << std::endl;
 			break;
@@ -98,7 +98,7 @@ bool Socket::create() throw()
 		case WSAENOBUFS:
 			std::cerr << "! Out of buffers" << std::endl;
 			break;
-		#endif // HAVE_WSA
+		#endif // WSA_SOCKETS
 		// TODO: Non-WSA errors
 		default:
 			std::cerr << "! Socket::create() - unknown error: " << error << std::endl;
@@ -153,7 +153,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	#endif
 		= sizeof(sa);
 	
-	#ifdef HAVE_WSA
+	#ifdef WSA_SOCKETS
 	fd_t n_fd = WSAAccept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp, 0, 0);
 	#else // No WSA
 	fd_t n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
@@ -174,11 +174,11 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	}
 	else
 	{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
 		#else // No WSA
 		error = errno;
-		#endif // HAVE_WSA
+		#endif // WSA_SOCKETS
 		
 		switch (error)
 		{
@@ -292,12 +292,13 @@ bool Socket::block(bool x) throw()
 	assert(sock != INVALID_SOCKET);
 	
 	#ifdef WIN32
-	uint32_t arg = !x;
-	#ifdef HAVE_WSA
+	#ifdef WSA_SOCKETS
+	uint32_t arg = (x ? 1 : 0);
 	return (WSAIoctl(sock, FIONBIO, &arg, sizeof(arg), 0, 0, 0, 0, 0) == 0);
 	#else
+	u_long arg = (x ? 1 : 0);
 	return ioctlsocket(sock, FIONBIO, &arg);
-	#endif // HAVE_WSA
+	#endif // WSA_SOCKETS
 	#else // Non-Win32
 	assert(x == false);
 	return fcntl(sock, F_SETFL, O_NONBLOCK) == SOCKET_ERROR ? false : true;
@@ -484,7 +485,7 @@ int Socket::connect(sockaddr_in* rhost) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	#ifdef HAVE_WSA
+	#ifdef WSA_SOCKETS
 	int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost), 0, 0, 0, 0);
 	#else
 	int r = ::connect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost));
@@ -492,7 +493,7 @@ int Socket::connect(sockaddr_in* rhost) throw()
 	
 	if (r == -1)
 	{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
 		#else
 		error = errno;
@@ -604,7 +605,7 @@ int Socket::send(char* buffer, size_t len) throw()
 	assert(len > 0);
 	assert(sock != INVALID_SOCKET);
 	
-	#ifdef HAVE_WSA
+	#ifdef WSA_SOCKETS
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = len;
@@ -613,11 +614,11 @@ int Socket::send(char* buffer, size_t len) throw()
 	if (r != SOCKET_ERROR) r = sb;
 	#else
 	int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
-	#endif // HAVE_WSA
+	#endif // WSA_SOCKETS
 	
 	if (r == SOCKET_ERROR)
 	{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
 		#else
 		error = errno;
@@ -625,7 +626,7 @@ int Socket::send(char* buffer, size_t len) throw()
 		
 		switch (error)
 		{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		#ifndef NDEBUG
 		case WSAEFAULT:
 			// invalid address for
@@ -650,7 +651,7 @@ int Socket::send(char* buffer, size_t len) throw()
 		case WSAEWOULDBLOCK:
 			// Would block, or can't complete the request currently.
 			return SOCKET_ERROR - 1;
-		#endif
+		#endif // WSA_SOCKETS
 		#ifndef NDEBUG
 		case EBADF:
 			assert(!(error == EBADF));
@@ -713,8 +714,7 @@ int Socket::recv(char* buffer, size_t len) throw()
 	
 	// WSA causes WSAEFAULT error to occur for some reason
 	
-	/*
-	#ifdef HAVE_WSA
+	#ifdef WSA_SOCKETS
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = len;
@@ -722,25 +722,20 @@ int Socket::recv(char* buffer, size_t len) throw()
 	int r = WSARecv(sock, &wbuf, 1, &rb, 0, 0, 0);
 	if (r != SOCKET_ERROR) r = rb;
 	#else
-	*/
 	int r = ::recv(sock, buffer, len, 0);
-	/*
-	#endif // HAVE_WSA
-	*/
+	#endif // WSA_SOCKETS
 	
 	if (r == SOCKET_ERROR)
 	{
-		/*
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
 		#else
-		*/
 		error = errno;
-		//#endif // HAVE_WSA
+		#endif // WSA_SOCKETS
 		
 		switch (error)
 		{
-		#ifdef HAVE_WSA
+		#ifdef WSA_SOCKETS
 		#ifndef NDEBUG
 		case WSANOTINITIALISED:
 			assert(!(error == WSANOTINITIALISED));
