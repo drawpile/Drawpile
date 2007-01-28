@@ -71,7 +71,7 @@ Server::Server() throw()
 	#endif
 	#endif
 	
-	for (uint8_t i=0; i != 255; i++)
+	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); i++)
 	{
 		user_ids.push(i+1);
 		session_ids.push(i+1);
@@ -1826,16 +1826,17 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			usr->mode = default_user_mode;
 			
-			
 			std::string IPPort(usr->sock->address());
+			std::cout << "Connection from: " << IPPort << std::endl;
+			
+			std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
+			assert(ns != std::string::npos);
 			std::string IP(
 				IPPort.substr(
 					0,
-					IPPort.find_last_of(":", IPPort.length()-1)
+					ns
 				)
 			);
-			
-			std::cout << "Connection from: " << IPPort << std::endl;
 			
 			if (fIsSet(opmode, server::mode::LocalhostAdmin)
 				#ifdef IPV6_SUPPORT

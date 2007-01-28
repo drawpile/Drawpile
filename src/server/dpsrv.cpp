@@ -192,14 +192,14 @@ int main(int argc, char** argv)
 	int rc = 0;
 	
 	// limited scope for server
-	#ifdef NEED_NET
-	Net _net; // :)
-	#endif // NEED_NET
-	
 	{
 		Server srv;
 		
 		getArgs(argc, argv, &srv);
+		
+		#ifdef NEED_NET
+		Net _net; // :)
+		#endif // NEED_NET
 		
 		if (srv.init() != 0)
 			return 1;

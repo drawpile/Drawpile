@@ -60,15 +60,6 @@ typedef std::multimap<uint8_t, fd_t>::iterator tunnel_iterator;
 #include <map>
 #include <list>
 
-//! foo
-namespace defaults
-{
-
-//! Hard limit for users and sessions.
-const int hard_limit = 255;
-
-} // namespace defaults
-
 //! Server
 class Server
 {
