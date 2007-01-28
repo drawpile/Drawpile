@@ -49,12 +49,8 @@ class Layer : public QGraphicsItem
 		//! Get layer contents
 		QImage image() const;
 
-		//! Draw a line between two points
+		//! Draw a line between two points with interpolated pressure values
 		void drawLine(const Point& point1, const Point& point2,
-				const Brush& brush);
-
-		//! Draw a smooth line between two points
-		void drawSmoothLine(const Point& point1, const Point& point2,
 				const Brush& brush);
 
 		//! Draw a single point

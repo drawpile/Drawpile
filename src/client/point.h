@@ -25,55 +25,24 @@
 namespace drawingboard {
 
 //! An extended point class that includes pressure information.
-/**
- * Describes a point on the drawing board with pressure and subpixel
- * information. Pressure ranges from 0 to 1.
- *
- * If no subpixel accuracy is desired, round() should be called.
- */
-class Point : public QPointF {
+class Point : public QPoint {
 	public:
-		Point() : QPointF(), p_(1) {}
-		Point(qreal x, qreal y, qreal p)
-			: QPointF(x,y), p_(p)
+		Point() : QPoint(), p_(1) {}
+		Point(int x, int y, qreal p)
+			: QPoint(x,y), p_(p)
 		{
 			Q_ASSERT(p>=0 && p<=1);
 		}
 
-		Point(const QPointF& point, qreal p)
-			: QPointF(point), p_(p)
+		Point(const QPoint& point, qreal p)
+			: QPoint(point), p_(p)
 		{
 			Q_ASSERT(p>=0 && p<=1);
 		}
 
-		//! Get the pressure
 		qreal pressure() const { return p_; }
-
-		//! Get a reference to pressure
 		qreal &rpressure() { return p_; }
-
-		//! Set the pressure
 		void setPressure(qreal p) { p_ = p; }
-
-		//! Get horizontal subpixel offset
-		int subx() const { return qRound((x() - int(x()))*2.0); }
-
-		//! Get vertical subpixel offset
-		int suby() const { return qRound((y() - int(y()))*2.0); }
-
-		//! Round the coordinates and loose the subpixel information
-		Point& round() {
-			setX(qRound(x()));
-			setY(qRound(y()));
-			return *this;
-		}
-
-		//! Get a rounded copy
-		Point round() const {
-			Point p = *this;
-			return p.round();
-		}
-
 	private:
 		qreal p_;
 };

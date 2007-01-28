@@ -93,7 +93,6 @@ class Brush
 
 		mutable QVector<unsigned short> cache_;
 		mutable qreal cachepressure_;
-		mutable int cachexoff_,cacheyoff_;
 };
 
 }

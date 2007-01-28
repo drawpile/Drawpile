@@ -81,14 +81,14 @@ void BrushBase::end()
 
 void ColorPicker::begin(const drawingboard::Point& point)
 {
-	QColor col = editor_->colorAt(point.toPoint());
+	QColor col = editor_->colorAt(point);
 	if(col.isValid())
 		editor_->setLocalForeground(col);
 }
 
 void ColorPicker::motion(const drawingboard::Point& point)
 {
-	QColor col = editor_->colorAt(point.toPoint());
+	QColor col = editor_->colorAt(point);
 	if(col.isValid())
 		editor_->setLocalForeground(col);
 }
