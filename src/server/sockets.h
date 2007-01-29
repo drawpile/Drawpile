@@ -156,8 +156,10 @@ protected:
 		//! Remote address
 		raddr;
 	
-	//! Last error number
+	//! Last error number (from errno or equivalent)
 	int error;
+	//! Socket state
+	bool active;
 public:
 	//! ctor
 	Socket() throw()
@@ -213,7 +215,7 @@ public:
 	}
 	
 	//! Create new socket
-	bool create() throw();
+	fd_t create() throw();
 	
 	//! Close socket
 	/**
@@ -230,6 +232,7 @@ public:
 	fd_t fd(fd_t nsock) throw()
 	{
 		if (sock != INVALID_SOCKET) close();
+		if (nsock != INVALID_SOCKET) active = true;
 		return sock = nsock;
 	}
 	
