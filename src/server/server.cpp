@@ -1449,7 +1449,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				<< "User limit: " << static_cast<int>(session->limit)
 				<< ", default mode: " << static_cast<int>(session->mode) << std::endl
 				<< "Owner: " << static_cast<int>(usr->id)
-				<< ", from: " << usr->sock->address << std::endl;
+				<< ", from: " << usr->sock->address() << std::endl;
 			
 			uSendMsg(usr, msgAck(msg->session_id, msg->type));
 		}
