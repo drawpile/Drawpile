@@ -65,10 +65,6 @@ Server::Server() throw()
 	default_user_mode(protocol::user_mode::None),
 	opmode(0)
 {
-	#ifndef NDEBUG
-	std::cout << "Server::Server()" << std::endl;
-	#endif
-	
 	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); i++)
 	{
 		user_ids.push(i+1);
@@ -78,10 +74,6 @@ Server::Server() throw()
 
 Server::~Server() throw()
 {
-	#ifndef NDEBUG
-	std::cout << "Server::~Server()" << std::endl;
-	#endif
-	
 	cleanup();
 }
 
@@ -230,7 +222,7 @@ void Server::uWrite(User*& usr) throw()
 {
 	assert(usr != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
@@ -369,7 +361,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uRead(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
@@ -420,7 +412,7 @@ void Server::uProcessData(User*& usr) throw()
 {
 	assert(usr != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uProcessData(user: "
 		<< static_cast<int>(usr->id) << ", in buffer: "
 		<< usr->input.left << " bytes)" << std::endl;
@@ -471,7 +463,7 @@ void Server::uProcessData(User*& usr) throw()
 			}
 			else
 			{
-				#if defined(DEBUG_SERVER) and defined(NDEBUG)
+				#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 				std::cout << "Need " << (len - cread) << " bytes more." << std::endl
 					<< "Required size: " << len << std::endl
 					<< "We already have: " << cread << std::endl;
@@ -517,7 +509,7 @@ message_ref Server::uCreateEvent(User*& usr, Session*& session, uint8_t event) c
 	assert(usr != 0);
 	assert(session != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uCreateEvent(user: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
@@ -560,7 +552,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uHandleMsg(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
@@ -1099,7 +1091,7 @@ void Server::uTunnelRaster(User*& usr) throw()
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uTunnelRaster(from: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
@@ -1173,7 +1165,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	assert(usr != 0);
 	assert(usr->inMsg->type == protocol::type::SessionEvent);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uSessionEvent(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
@@ -1341,7 +1333,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uHandleInstruction(user: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
@@ -1668,7 +1660,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uHandleLogin(user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << std::endl;
 	#endif
@@ -1911,7 +1903,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 
 void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool toAll) throw()
 {
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::Propagate(session: " << static_cast<int>(msg->session_id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
@@ -1949,7 +1941,7 @@ void Server::uSendMsg(User*& usr, message_ref msg) throw()
 {
 	assert(usr != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uSendMsg(to user: " << static_cast<int>(usr->id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	protocol::msgName(msg->type);
@@ -1980,7 +1972,7 @@ void Server::uSendMsg(User*& usr, message_ref msg) throw()
 
 void Server::SyncSession(Session*& session) throw()
 {
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::SyncSession(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
@@ -2089,7 +2081,7 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 	assert(usr != 0);
 	assert(session != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uJoinSession(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
@@ -2134,7 +2126,7 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 	assert(usr != 0);
 	assert(session != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uLeaveSession(user: "
 		<< static_cast<int>(usr->id) << ", session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
@@ -2181,10 +2173,6 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 {
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
-	std::cout << "Server::uAdd()" << std::endl;
-	#endif
-	
 	if (sock == 0)
 	{
 		#ifndef NDEBUG
@@ -2198,50 +2186,48 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	if (id == protocol::null_user)
 	{
-		//#ifndef NDEBUG
-		std::cout << "Server is full, kicking user." << std::endl;
-		//#endif
+		#ifndef NDEBUG
+		std::cout << "Disconnecting new user: " << sock->address() << std::endl;
+		#endif
 		
 		delete sock;
 		sock = 0;
 		
 		return;
 	}
-	else
-	{
-		std::cout << "New user: " << static_cast<int>(id)
-			<< ", from: " << sock->address() << std::endl;
-		
-		User* usr(new User(id, sock));
-		
-		usr->session = protocol::Global;
-		
-		usr->events = 0;
-		fSet(usr->events, ev.read);
-		ev.add(usr->sock->fd(), usr->events);
-		
-		users.insert( std::make_pair(sock->fd(), usr) );
-		
-		usr->deadtime = time(0) + time_limit;
-		
-		// re-schedule user culling
-		if (next_timer > usr->deadtime)
-			next_timer = usr->deadtime;
-		
-		// add timer
-		utimer.insert(utimer.end(), usr);
-		
-		usr->input.setBuffer(new char[8192], 8192);
-		
-		#ifndef NDEBUG
-		std::cout << "Known users: " << users.size() << std::endl;
-		#endif
-	}
+	
+	std::cout << "New user: " << static_cast<int>(id)
+		<< ", from: " << sock->address() << std::endl;
+	
+	User* usr(new User(id, sock));
+	
+	usr->session = protocol::Global;
+	
+	usr->events = 0;
+	fSet(usr->events, ev.read);
+	ev.add(usr->sock->fd(), usr->events);
+	
+	users.insert( std::make_pair(sock->fd(), usr) );
+	
+	usr->deadtime = time(0) + time_limit;
+	
+	// re-schedule user culling
+	if (next_timer > usr->deadtime)
+		next_timer = usr->deadtime;
+	
+	// add timer
+	utimer.insert(utimer.end(), usr);
+	
+	usr->input.setBuffer(new char[8192], 8192);
+	
+	#ifndef NDEBUG
+	std::cout << "Known users: " << users.size() << std::endl;
+	#endif
 }
 
 void Server::breakSync(User*& usr) throw()
 {
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::breakSync(user: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
@@ -2251,7 +2237,10 @@ void Server::breakSync(User*& usr) throw()
 	session_iterator sui(sessions.find(usr->syncing));
 	if (sui == sessions.end())
 	{
+		#ifndef NDEBUG
 		std::cerr << "Session to break sync with was not found!" << std::endl;
+		#endif
+		
 		return;
 	}
 	
@@ -2263,7 +2252,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 {
 	assert(usr != 0);
 	
-	#if defined(DEBUG_SERVER) and defined(NDEBUG)
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uRemove(user: " << static_cast<int>(usr->id)
 		<< ", at address: " << usr->sock->address() << ")" << std::endl;
 	#endif
@@ -2281,7 +2270,9 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 		user_iterator usi(users.find(ti->second));
 		if (usi == users.end())
 		{
+			#ifndef NDEBUG
 			std::cerr << "Tunnel's other end was not found in users." << std::endl;
+			#endif
 			continue;
 		}
 		breakSync(usi->second);
@@ -2334,10 +2325,6 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 
 int Server::init() throw(std::bad_alloc)
 {
-	#ifndef NDEBUG
-	std::cout << "Server::init()" << std::endl;
-	#endif
-	
 	srand(time(0) - 513); // FIXME
 	
 	if (lsock.create() == INVALID_SOCKET)
@@ -2372,7 +2359,7 @@ int Server::init() throw(std::bad_alloc)
 	
 	if (!bound)
 	{
-		std::cerr << "! Failed to bind to any port" << std::endl;
+		std::cerr << "Failed to bind to any port" << std::endl;
 		return -1;
 	}
 	
@@ -2398,11 +2385,6 @@ bool Server::validateUserName(User*& usr) const throw()
 {
 	assert(usr != 0);
 	
-	#ifndef NDEBUG
-	std::cout << "Server::validateUserName(user: "
-		<< static_cast<int>(usr->id) << ")" << std::endl;
-	#endif
-	
 	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
 		return true;
 	
@@ -2424,11 +2406,6 @@ bool Server::validateUserName(User*& usr) const throw()
 bool Server::validateSessionTitle(Session*& session) const throw()
 {
 	assert(session != 0);
-	
-	#ifndef NDEBUG
-	std::cout << "Server::validateSessionTitle(session: "
-		<< static_cast<int>(session->id) << ")" << std::endl;
-	#endif
 	
 	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
 		return true;

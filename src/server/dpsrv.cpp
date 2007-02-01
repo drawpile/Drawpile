@@ -179,7 +179,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 
 int main(int argc, char** argv)
 {
-	#ifdef NDEBUG
+	#ifndef NDEBUG
 	std::ios::sync_with_stdio(false);
 	#endif
 	
