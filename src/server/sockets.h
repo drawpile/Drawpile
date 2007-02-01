@@ -361,6 +361,7 @@ public:
 		#endif // IPV6_SUPPORT
 		
 		// convert address to string
+		
 		#ifdef HAVE_WSA
 		#ifdef IPV6_SUPPORT
 		DWORD len = INET6_ADDRSTRLEN;
@@ -371,8 +372,11 @@ public:
 		sockaddr sa;
 		memcpy(&sa, &addr, sizeof(addr));
 		WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
-		#else // No WSA
-		// POSIX
+		
+		return std::string(straddr);
+		
+		#else // POSIX
+		
 		inet_ntop(
 		#ifdef IPV6_SUPPORT
 			AF_INET6,
@@ -384,9 +388,16 @@ public:
 			straddr,
 			sizeof(straddr)
 		);
-		#endif // HAVE_WSA
 		
-		return std::string(straddr);
+		std::string str(straddr);
+		
+		char buf[7];
+		sscanf(buf, ":%d", port());
+		str.insert(str.length(), buf);
+		
+		return str;
+		
+		#endif // WSA/POSIX
 	}
 	
 	//! Get local port
