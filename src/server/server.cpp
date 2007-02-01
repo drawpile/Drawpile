@@ -2298,9 +2298,11 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	while (ti != tunnel.end());
 	
 	// clean sessions
+	Session *session;
 	while (usr->sessions.size() != 0)
 	{
-		uLeaveSession(usr, usr->sessions.begin()->second.session, reason);
+		session = usr->sessions.begin()->second.session;
+		uLeaveSession(usr, session, reason);
 	}
 	
 	// remove from fd -> User* map
