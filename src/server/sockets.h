@@ -392,7 +392,7 @@ public:
 		std::string str(straddr);
 		
 		char buf[7];
-		sscanf(buf, ":%d", port());
+		sprintf(buf, ":%d", port());
 		str.insert(str.length(), buf);
 		
 		return str;
