@@ -77,9 +77,7 @@ QImage Layer::image() const
  */
 void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brush)
 {
-	int rad = brush.radius(point1.pressure());
 	qreal pressure = point1.pressure();
-	if(rad==0) rad=1;
 #if 0 // TODO
 	qreal deltapressure;
 	if(qAbs(pressure2-pressure1) < 1.0/255.0)
@@ -89,11 +87,10 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 #endif
 
 	// Based on interpolatePoints() in kolourpaint
-	// Bug here, what happens when radius changes?
-	const int x1 = point1.x ()-rad,
-		y1 = point1.y ()-rad,
-		x2 = point2.x ()-rad,
-		y2 = point2.y ()-rad;
+	const int x1 = point1.x (),
+		y1 = point1.y (),
+		x2 = point2.x (),
+		y2 = point2.y ();
 
 	// Difference of x and y values
 	const int dx = x2 - x1;
@@ -149,6 +146,8 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 	const int right = qMax(point1.x(), point2.x());
 	const int top = qMin(point1.y(), point2.y());
 	const int bottom = qMax(point1.y(), point2.y());
+	int rad = brush.radius(point1.pressure());
+	if(rad==0) rad=1;
 	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
 }
 
@@ -160,8 +159,7 @@ void Layer::drawPoint(const Point& point, const Brush& brush)
 {
 	int r = brush.radius(point.pressure());
 	if(r==0) r=1;
-	QPoint rp(r,r);
-	brush.draw(image_, point-rp);
+	brush.draw(image_, point);
 	update(point.x()-r,point.y()-r,r*2,r*2);
 }
 

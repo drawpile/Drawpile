@@ -227,10 +227,7 @@ bool EditorView::viewportEvent(QEvent *event)
 		QPoint point = mapToScene(tabev->pos()).toPoint();
 		if(point != prevpoint_) {
 			if(pendown_) {
-				emit penMove(
-						drawingboard::Point(point.x(),point.y(),
-							tabev->pressure())
-						);
+				emit penMove( drawingboard::Point(point, tabev->pressure()) );
 				if(enableoutline_ && showoutline_) {
 					// Update previous location. This is needed if brush
 					// diameter has changed.
@@ -259,12 +256,7 @@ bool EditorView::viewportEvent(QEvent *event)
 		QPoint point = mapToScene(tabev->pos()).toPoint();
 
 		pendown_ = TABLETDOWN;
-		emit penDown(
-				drawingboard::Point(
-					mapToScene(tabev->pos()).toPoint(),
-					tabev->pressure()
-					)
-				);
+		emit penDown( drawingboard::Point(point, tabev->pressure()) );
 		prevpoint_ = point;
 		return true;
 	} else if(event->type() == QEvent::TabletRelease) {

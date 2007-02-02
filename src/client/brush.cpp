@@ -231,23 +231,26 @@ void Brush::updateCache() const
 }
 
 /**
- * Draw brush on a QImage
+ * The brush will be drawn centered at \a pos
  * @param image image to draw on
  * @param pos coordinates with pressure
  */
 void Brush::draw(QImage &image, const Point& pos) const
 {
-	const int dia = radius(pos.pressure()) * 2;
-	const QColor col = color(pos.pressure());
+	const int rad = radius(pos.pressure());
+	const int dia = rad * 2;
+	const int cx = pos.x()-rad;
+	const int cy = pos.y()-rad;
 
+	const QColor col = color(pos.pressure());
 	const int red = col.red();
 	const int green = col.green();
 	const int blue= col.blue();
 
 	// Make sure we are inside the image
-	const unsigned int offx = pos.x()<0 ? -pos.x() : 0;
-	const unsigned int offy = pos.y()<0 ? -pos.y() : 0;
-	uchar *dest = image.bits() + ((pos.y()+offy)*image.width()+pos.x()+offx)*4;
+	const unsigned int offx = cx<0 ? -cx : 0;
+	const unsigned int offy = cy<0 ? -cy : 0;
+	uchar *dest = image.bits() + ((cy+offy)*image.width()+cx+offx)*4;
 
 	// Special case, single pixel brush
 	if(dia==0) {
@@ -270,7 +273,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 
 	// Update brush cache if out of date
 	if(cachepressure_<0 ||
-			(sensitive_ && (dia!=radius(cachepressure_)*2 ||
+			(sensitive_ && (rad!=radius(cachepressure_) ||
 							fabs(pos.pressure()-cachepressure_) > 1.0/256.0))) {
 		cachepressure_ = pos.pressure();
 		updateCache();
@@ -279,8 +282,8 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const unsigned short *src = cache_.constData() + offy*dia + offx;
 	const unsigned int nextline = (image.width() - dia + offx) * 4;
 
-	const int w = (pos.x()+dia)>image.width()?image.width()-pos.x():dia;
-	const int h = (pos.y()+dia)>image.height()?image.height()-pos.y():dia;
+	const int w = (cx+dia)>image.width()?image.width()-cx:dia;
+	const int h = (cy+dia)>image.height()?image.height()-cy:dia;
 
 	// Composite brush on image
 	for(int y=offy;y<h;++y) {
