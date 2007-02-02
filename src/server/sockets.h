@@ -415,6 +415,33 @@ public:
 		
 		return bswap(_port);
 	}
+	
+	bool matchAddress(Socket* tsock) throw()
+	{
+		#ifdef IPV6_SUPPORT
+		// TODO: Similar checking for IPv6 addresses
+		return false;
+		#else // IPv4
+		return (
+			memcmp(
+				&(addr.sin_addr.s_addr),
+				&(tsock->getAddr()->sin_addr.s_addr),
+				sizeof(addr.sin_addr.s_addr)
+			) == 0
+		);
+		#endif
+	}
+	
+	bool matchPort(const Socket* tsock)
+	{
+		return (port() == tsock->port());
+	}
+	
+	bool operator== (Socket* tsock)
+	{
+		if (tsock == this) return true;
+		return (matchPort(tsock) and matchAddress(tsock));
+	}
 };
 
 #endif // Sockets_INCLUDED

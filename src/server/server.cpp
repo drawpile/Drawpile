@@ -2182,6 +2182,28 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		return;
 	}
 	
+	// Check duplicate connections.
+	user_iterator ui(users.begin());
+	User* usr=0;
+	for (; ui != users.end(); ui++)
+	{
+		usr = ui->second;
+		
+		if (sock->matchAddress(usr->sock))
+		{
+			#ifndef NDEBUG
+			std::cout << "Duplicate source address: " << sock->address() << std::endl;
+			#endif // NDEBUG
+			
+			#ifdef NO_DUPLICATE_CONNECTIONS
+			delete sock;
+			return;
+			#endif // NO_DUPLICATE_CONNECTIONS
+			
+			break;
+		}
+	}
+	
 	uint8_t id = getUserID();
 	
 	if (id == protocol::null_user)
@@ -2199,7 +2221,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	std::cout << "New user: " << static_cast<int>(id)
 		<< ", from: " << sock->address() << std::endl;
 	
-	User* usr(new User(id, sock));
+	usr = new User(id, sock);
 	
 	usr->session = protocol::Global;
 	
@@ -2265,9 +2287,10 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
 	tunnel_iterator ti;
+	user_iterator usi;
 	while ((ti = tunnel.find(usr->id)) != tunnel.end())
 	{
-		user_iterator usi(users.find(ti->second));
+		usi = users.find(ti->second);
 		if (usi == users.end())
 		{
 			#ifndef NDEBUG
