@@ -360,6 +360,20 @@ public:
 	
 	//! Check if the port matches
 	bool matchPort(const Socket* tsock) const throw();
+	
+	/* Operator overloads */
+	
+	//! operator== overload (Socket*)
+	bool operator== (const Socket* tsock) const throw() { return (sock == tsock->fd()); }
+	
+	//! operator== overload (fd_t)
+	bool operator== (fd_t _fd) const throw() { return (sock == _fd); }
+	
+	//! operator= overload (Socket*)
+	Socket* operator= (Socket* tsock) throw() { fd(tsock->fd()); return this; }
+	
+	//! operator= overload (fd_t)
+	fd_t operator= (fd_t _fd) throw() { fd(_fd); return sock; }
 };
 
 #endif // Sockets_INCLUDED
