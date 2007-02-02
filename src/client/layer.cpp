@@ -77,8 +77,8 @@ QImage Layer::image() const
  */
 void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brush)
 {
-	qreal pressure = point1.pressure();
 #if 0 // TODO
+	qreal pressure = point1.pressure();
 	qreal deltapressure;
 	if(qAbs(pressure2-pressure1) < 1.0/255.0)
 		deltapressure = 0;
@@ -86,61 +86,54 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 		deltapressure = (pressure2-pressure1) / hypot(point1.x()-point2.x(), point1.y()-point2.y());
 #endif
 
-	// Based on interpolatePoints() in kolourpaint
-	const int x1 = point1.x (),
-		y1 = point1.y (),
-		x2 = point2.x (),
-		y2 = point2.y ();
+	Point point = point1;
+	int &x0 = point.rx();
+	int &y0 = point.ry();
+	int x1 = point2.x();
+	int y1 = point2.y();
+	int dy = y1 - y0;
+	int dx = x1 - x0;
+	int stepx, stepy;
 
-	// Difference of x and y values
-	const int dx = x2 - x1;
-	const int dy = y2 - y1;
-
-	// Absolute values of differences
-	const int ix = qAbs (dx);
-	const int iy = qAbs (dy);
-
-	// Larger of the x and y differences
-	const int inc = ix > iy ? ix : iy;
-
-	// Plot location
-	Point point(x1,y1,pressure);
-	int &plotx = point.rx();
-	int &ploty = point.ry();
-
-	int x = 0;
-	int y = 0;
-
-	for (int i = 0; i <= inc; i++) {
-		int plot = 0;
-
-		x += ix;
-		y += iy;
-
-		if (x > inc) {
-			plot++;
-			x -= inc;
-
-			if (dx < 0)
-				plotx--;
-			else
-				plotx++;
-		}
-
-		if (y > inc) {
-			plot++;
-			y -= inc;
-
-			if (dy < 0)
-				ploty--;
-			else
-				ploty++;
-		}
-
-		if (plot)
-			brush.draw(image_, point);
+	if (dy < 0) {
+		dy = -dy;
+		stepy = -1;
+	} else {
+		stepy = 1;
+	}
+	if (dx < 0) {
+		dx = -dx;
+		stepx = -1;
+	} else {
+		stepx = 1;
 	}
 
+	dy *= 2;
+	dx *= 2;
+
+	if (dx > dy) {
+		int fraction = dy - (dx >> 1);
+		while (x0 != x1) {
+			if (fraction >= 0) {
+				y0 += stepy;
+				fraction -= dx;
+			}
+			x0 += stepx;
+			fraction += dy;
+			brush.draw(image_, point);
+		}
+	} else {
+		int fraction = dx - (dy >> 1);
+		while (y0 != y1) {
+			if (fraction >= 0) {
+				x0 += stepx;
+				fraction -= dy;
+			}
+			y0 += stepy;
+			fraction += dx;
+			brush.draw(image_, point);
+		}
+	}
 	// Update screen
 	const int left = qMin(point1.x(), point2.x());
 	const int right = qMax(point1.x(), point2.x());
