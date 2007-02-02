@@ -55,6 +55,8 @@ Event::Event() throw()
 	std::cout << "Event(wsa)()" << std::endl;
 	std::cout << "Max events: " << WSA_MAXIMUM_WAIT_EVENTS << std::endl;
 	#endif
+	
+	memset(w_ev, 0, WSA_MAXIMUM_WAIT_EVENTS);
 }
 
 Event::~Event() throw()
@@ -86,9 +88,9 @@ int Event::wait(uint32_t msecs) throw()
 	std::cout << "Event(wsa).wait(msecs: " << msecs << ")" << std::endl;
 	#endif
 	
-	assert(events.size() != 0);
+	assert(fd_to_ev.size() != 0);
 	
-	uint32_t r = WSAWaitForMultipleEvents(w_ev_count, w_ev, 0, msecs, true);
+	uint32_t r = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, 0, msecs, true);
 	
 	if (r == WSA_WAIT_FAILED)
 	{
@@ -149,10 +151,22 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	WSAEVENT ev_s = WSACreateEvent();
 	if (!ev_s) return false;
 	
+	for (uint32_t i=0; i != WSA_MAXIMUM_WAIT_EVENTS; i++)
+	{
+		if (w_ev[i] == 0)
+		{
+			WSAEventSelect(fd, ev_s, ev);
+			w_ev[i] = ev_s;
+			ev_to_fd.insert(std::make_pair(i, fd));
+			fd_to_ev.insert(std::make_pair(fd, i));
+			event_index.insert(std::make_pair(ev_s, i));
+			return true;
+		}
+	}
 	
-	events.insert(std::make_pair(fd, ev_s));
+	WSACloseEvent(ev_s);
 	
-	return true;
+	return false;
 }
 
 int Event::modify(fd_t fd, uint32_t ev) throw()
@@ -170,12 +184,11 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
-	std::map<fd_t, WSAEVENT>::iterator fev(events.find(fd));
-	if (fev == events.end())
-	{
-		assert(fev == events.end());
+	std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	if (fi == fd_to_ev.end())
 		return false;
-	}
+	
+	WSAEventSelect(fd, w_ev[fi->second], ev);
 	
 	return 0;
 }
@@ -195,32 +208,28 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
-	std::map<fd_t, WSAEVENT>::iterator fev(events.find(fd));
-	if (fev == events.end())
-	{
-		assert(fev == events.end());
+	std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	if (fi == fd_to_ev.end())
 		return false;
-	}
 	
-	WSACloseEvent(fev->second);
+	WSACloseEvent(w_ev[fi->second]);
 	
-	events.erase(fev);
+	w_ev[fi->second] = 0;
+	
+	fd_to_ev.erase(fd);
 	
 	return true;
 }
 
 uint32_t Event::getEvents(fd_t fd) const throw()
 {
-	std::map<fd_t, WSAEVENT>::const_iterator fev(events.find(fd));
-	if (fev == events.end())
-	{
-		assert(fev == events.end());
+	std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
+	if (fev == fd_to_ev.end())
 		return 0;
-	}
 	
 	LPWSANETWORKEVENTS set(0);
 	
-	int r = WSAEnumNetworkEvents(fd, fev->second, set);
+	int r = WSAEnumNetworkEvents(fd, w_ev[fev->second], set);
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -279,7 +288,6 @@ bool Event::isset(fd_t fd, uint32_t ev) const throw()
 	
 	assert(ev == read or ev == write or ev == hangup or ev == error);
 	assert(fd >= 0);
-	assert(1);
 	
-	return false;
+	return fIsSet(getEvents(fd), ev);
 }

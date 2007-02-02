@@ -34,7 +34,6 @@
 #include <stdint.h>
 
 #if defined(EV_EPOLL)
-	#define EV_HAVE_HANGUP
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
 	#error kqueue() not implemented.
@@ -58,10 +57,11 @@
 	#include <set>
 	#define EVENT_BY_FD
 #elif defined(EV_EPOLL)
-	#define EVENT_BY_ORDER
+	#define EV_HAVE_HANGUP
+	#define EVENT_BY_INDEX
 	#define EVENT_HAS_ALL
 #elif defined(EV_WSA)
-	#define EVENT_BY_ORDER
+	#define EVENT_BY_INDEX
 #endif
 
 #ifndef WIN32
@@ -102,9 +102,13 @@ protected:
 	#endif // EV_USE_SIGMASK
 	
 	#if defined(EV_WSA)
-	std::map<fd_t, WSAEVENT> events;
+	std::map<WSAEVENT, uint32_t> event_index;
+	std::map<fd_t, uint32_t> fd_to_ev;
+	std::map<uint32_t, fd_t> ev_to_fd;
+	
 	WSAEVENT w_ev[WSA_MAXIMUM_WAIT_EVENTS];
 	uint32_t w_ev_count;
+	
 	#endif
 	
 	int _error, nfds;
