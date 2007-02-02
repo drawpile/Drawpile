@@ -742,3 +742,81 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 	return 0;
 }
 #endif // WITH_SENDFILE
+
+std::string Socket::address() const throw()
+{
+	// create temporary string array for address
+	#ifdef IPV6_SUPPORT
+	char straddr[INET6_ADDRSTRLEN+1];
+	straddr[INET6_ADDRSTRLEN] = '\0';
+	#else // IPv4
+	char straddr[INET_ADDRSTRLEN+1];
+	straddr[INET_ADDRSTRLEN] = '\0';
+	#endif // IPV6_SUPPORT
+	
+	// convert address to string
+	
+	#ifdef HAVE_WSA
+	#ifdef IPV6_SUPPORT
+	DWORD len = INET6_ADDRSTRLEN;
+	#else // IPv4
+	DWORD len = INET_ADDRSTRLEN;
+	#endif // IPV6_SUPPORT
+	
+	sockaddr sa;
+	memcpy(&sa, &addr, sizeof(addr));
+	WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
+	
+	return std::string(straddr);
+	
+	#else // POSIX
+	
+	inet_ntop(
+	#ifdef IPV6_SUPPORT
+		AF_INET6,
+		&addr.sin6_addr,
+	#else // IPv4
+		AF_INET,
+		&addr.sin_addr,
+	#endif // IPV6_SUPPORT
+		straddr,
+		sizeof(straddr)
+	);
+	
+	std::string str(straddr);
+	
+	char buf[7];
+	sprintf(buf, ":%d", port());
+	str.insert(str.length(), buf);
+	
+	return str;
+	
+	#endif // WSA/POSIX
+}
+
+uint16_t Socket::port() const throw()
+{
+	uint16_t _port = 
+	#ifdef IPV6_SUPPORT
+		addr.sin6_port;
+	#else // IPv4
+		addr.sin_port;
+	#endif // IPV6_SUPPORT
+	
+	return bswap(_port);
+}
+
+bool Socket::matchAddress(Socket* tsock) throw()
+{
+	#ifdef IPV6_SUPPORT
+	// TODO: Similar checking for IPv6 addresses
+	return false;
+	#else // IPv4
+	return (addr.sin_addr.s_addr == tsock->getAddr()->sin_addr.s_addr);
+	#endif
+}
+
+bool Socket::matchPort(const Socket* tsock) const throw()
+{
+	return (port() == tsock->port());
+}

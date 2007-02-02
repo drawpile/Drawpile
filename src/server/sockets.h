@@ -151,10 +151,8 @@ protected:
 	#else
 	sockaddr_in
 	#endif
-		//! Local address
-		addr,
-		//! Remote address
-		raddr;
+		//! Address
+		addr;
 	
 	//! Last error number (from errno or equivalent)
 	int error;
@@ -344,104 +342,24 @@ public:
 		return &addr;
 	}
 	
-	//! Get local IP address
+	//! Get IP address
 	/**
 	 * @return IP address string.
 	 * 	e.g. ::1:30000 or 127.0.0.1:300000
 	 */
-	std::string address() const throw()
-	{
-		// create temporary string array for address
-		#ifdef IPV6_SUPPORT
-		char straddr[INET6_ADDRSTRLEN+1];
-		straddr[INET6_ADDRSTRLEN] = '\0';
-		#else // IPv4
-		char straddr[INET_ADDRSTRLEN+1];
-		straddr[INET_ADDRSTRLEN] = '\0';
-		#endif // IPV6_SUPPORT
-		
-		// convert address to string
-		
-		#ifdef HAVE_WSA
-		#ifdef IPV6_SUPPORT
-		DWORD len = INET6_ADDRSTRLEN;
-		#else // IPv4
-		DWORD len = INET_ADDRSTRLEN;
-		#endif // IPV6_SUPPORT
-		
-		sockaddr sa;
-		memcpy(&sa, &addr, sizeof(addr));
-		WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
-		
-		return std::string(straddr);
-		
-		#else // POSIX
-		
-		inet_ntop(
-		#ifdef IPV6_SUPPORT
-			AF_INET6,
-			&addr.sin6_addr,
-		#else // IPv4
-			AF_INET,
-			&addr.sin_addr,
-		#endif // IPV6_SUPPORT
-			straddr,
-			sizeof(straddr)
-		);
-		
-		std::string str(straddr);
-		
-		char buf[7];
-		sprintf(buf, ":%d", port());
-		str.insert(str.length(), buf);
-		
-		return str;
-		
-		#endif // WSA/POSIX
-	}
+	std::string address() const throw();
 	
-	//! Get local port
+	//! Get port
 	/**
-	 * @return local port number.
+	 * @return port number.
 	 */
-	uint16_t port() const throw()
-	{
-		uint16_t _port = 
-		#ifdef IPV6_SUPPORT
-			addr.sin6_port;
-		#else // IPv4
-			addr.sin_port;
-		#endif // IPV6_SUPPORT
-		
-		return bswap(_port);
-	}
+	uint16_t port() const throw();
 	
-	bool matchAddress(Socket* tsock) throw()
-	{
-		#ifdef IPV6_SUPPORT
-		// TODO: Similar checking for IPv6 addresses
-		return false;
-		#else // IPv4
-		return (
-			memcmp(
-				&(addr.sin_addr.s_addr),
-				&(tsock->getAddr()->sin_addr.s_addr),
-				sizeof(addr.sin_addr.s_addr)
-			) == 0
-		);
-		#endif
-	}
+	//! Check if the address matches
+	bool matchAddress(Socket* tsock) throw();
 	
-	bool matchPort(const Socket* tsock)
-	{
-		return (port() == tsock->port());
-	}
-	
-	bool operator== (Socket* tsock)
-	{
-		if (tsock == this) return true;
-		return (matchPort(tsock) and matchAddress(tsock));
-	}
+	//! Check if the port matches
+	bool matchPort(const Socket* tsock) const throw();
 };
 
 #endif // Sockets_INCLUDED
