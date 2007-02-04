@@ -88,6 +88,8 @@ class MainWindow : public QMainWindow {
 		void zoomout();
 		//! Reset to 1:1 zoom
 		void zoomone();
+		//! Toggle fullscreen mode
+		void fullscreen(bool enable);
 		//! Change current tool
 		void selectTool(QAction *tool);
 		//! Display about dialog
@@ -233,6 +235,7 @@ class MainWindow : public QMainWindow {
 		QAction *zoomin_;
 		QAction *zoomout_;
 		QAction *zoomorig_;
+		QAction *fullscreen_;
 
 		QAction *toggleoutline_;
 		QAction *togglecrosshair_;

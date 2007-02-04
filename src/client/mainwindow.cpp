@@ -820,6 +820,8 @@ void MainWindow::finishExit(int i)
  */
 void MainWindow::exit()
 {
+	if(windowState().testFlag(Qt::WindowFullScreen))
+		fullscreen(false);
 	writeSettings();
 	QApplication::quit();
 }
@@ -873,6 +875,40 @@ void MainWindow::zoomout()
 void MainWindow::zoomone()
 {
 	view_->resetMatrix();
+}
+
+/**
+ * Toggle fullscreen mode for editor view
+ */
+void MainWindow::fullscreen(bool enable)
+{
+	static QByteArray oldstate;
+	static QPoint oldpos;
+	static QSize oldsize;
+	if(enable) {
+		Q_ASSERT(windowState().testFlag(Qt::WindowFullScreen)==false);
+		// Save state
+		oldstate = saveState();
+		oldpos = pos();
+		oldsize = size();
+		// Hide everything except the central widget
+		// TODO, hiding the menu bar disables shortcut keys
+		statusBar()->hide();
+		QObjectList c = children();
+		foreach(QObject *child, c) {
+			if(child->inherits("QToolBar") || child->inherits("QDockWidget"))
+				(qobject_cast<QWidget*>(child))->hide();
+		}
+		showFullScreen();
+	} else {
+		Q_ASSERT(windowState().testFlag(Qt::WindowFullScreen)==true);
+		// Restore old state
+		showNormal();
+		statusBar()->show();
+		resize(oldsize);
+		move(oldpos);
+		restoreState(oldstate);
+	}
 }
 
 /**
@@ -982,10 +1018,14 @@ void MainWindow::initActions()
 	zoomout_->setShortcut(QKeySequence::ZoomOut);
 	zoomorig_ = new QAction(QIcon(":icons/zoom-original.png"),tr("&Normal size"), this);
 	//zoomorig_->setShortcut(QKeySequence::ZoomOut);
+	fullscreen_ = new QAction(tr("&Full Screen"), this);
+	fullscreen_->setCheckable(true);
+	fullscreen_->setShortcut(QKeySequence("F11"));
 
 	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
 	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
 	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
+	connect(fullscreen_, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
 
 	drawingtools_ = new QActionGroup(this);
 	drawingtools_->setExclusive(true);
@@ -1036,6 +1076,7 @@ void MainWindow::createMenus()
 	viewmenu->addAction(zoomin_);
 	viewmenu->addAction(zoomout_);
 	viewmenu->addAction(zoomorig_);
+	viewmenu->addAction(fullscreen_);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host_);
