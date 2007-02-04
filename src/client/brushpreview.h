@@ -38,8 +38,18 @@ namespace widgets {
  */
 class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT
+	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
+	Q_ENUMS(PreviewShape)
 	public:
+		enum PreviewShape {Stroke, Line};
+
 		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
+
+		//! Set preview shape
+		void setPreviewShape(PreviewShape shape);
+
+		//! Get preview shape
+		PreviewShape previewShape() const { return shape_; }
 
 		//! Get the displayed brush
 		const drawingboard::Brush& brush() const { return brush_; }
@@ -95,6 +105,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		bool hardnesspressure_;
 		bool colorpressure_;
 		QColor color1_, color2_;
+		PreviewShape shape_;
 };
 
 #ifndef DESIGNER_PLUGIN

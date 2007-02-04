@@ -232,6 +232,7 @@ class MainWindow : public QMainWindow {
 		QAction *brushtool_;
 		QAction *erasertool_;
 		QAction *pickertool_;
+		QAction *linetool_;
 		QAction *zoomin_;
 		QAction *zoomout_;
 		QAction *zoomorig_;

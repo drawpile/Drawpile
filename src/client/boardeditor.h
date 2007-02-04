@@ -73,6 +73,15 @@ class BoardEditor {
 		//! Get color from the board at the specified coordinates
 		QColor colorAt(const QPoint& point);
 
+		//! Start a (line) preview
+		void startPreview(const Point& point, const Brush& brush);
+
+		//! Continue the preview
+		void continuePreview(const Point& point);
+
+		//! Remove the preview
+		void endPreview();
+
 		//! Set the tool used for drawing
 		virtual void setTool(const Brush& brush) = 0;
 

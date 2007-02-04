@@ -72,6 +72,7 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 		tools::ToolSettings *brushsettings_;
 		tools::ToolSettings *erasersettings_;
 		tools::ToolSettings *pickersettings_;
+		tools::ToolSettings *linesettings_;
 
 		tools::ToolSettings *currenttool_;
 		QStackedWidget *widgets_;

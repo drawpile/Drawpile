@@ -23,6 +23,7 @@
 #include "brush.h"
 
 class Ui_BrushSettings;
+class Ui_LineSettings;
 
 namespace tools {
 
@@ -112,6 +113,26 @@ class BrushSettings : public ToolSettings {
 	private:
 		Ui_BrushSettings *ui_;
 		bool swapcolors_;
+};
+
+//! Line tool settings
+/**
+ */
+class LineSettings : public ToolSettings {
+	public:
+		LineSettings(QString name, QString title);
+		~LineSettings();
+
+		QWidget *createUi(QWidget *parent);
+
+		void setForeground(const QColor& color);
+		void setBackground(const QColor& color);
+		const drawingboard::Brush& getBrush() const;
+
+		int getSize() const;
+
+	private:
+		Ui_LineSettings *ui_;
 };
 
 //! No settings

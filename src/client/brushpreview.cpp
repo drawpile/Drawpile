@@ -30,10 +30,18 @@ namespace widgets {
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), bg_(32,32), sizepressure_(false),
-	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false)
+	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
+	shape_(Stroke)
 {
 	setMinimumSize(32,32);
 	updateBackground();
+}
+
+void BrushPreview::setPreviewShape(PreviewShape shape)
+{
+	shape_ = shape;
+	updatePreview();
+	update();
 }
 
 void BrushPreview::setColor1(const QColor& color)
@@ -109,7 +117,7 @@ void BrushPreview::updatePreview()
 			pressure = 0;
 		else if(pressure>1)
 			pressure = 1;
-		const int y = qRound(sin(phase) * strokeh);
+		const int y = shape_==Stroke?(qRound(sin(phase) * strokeh)):0;
 		brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
 	}
 }

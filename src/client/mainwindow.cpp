@@ -924,6 +924,8 @@ void MainWindow::selectTool(QAction *tool)
 		type = tools::ERASER;
 	} else if(tool == pickertool_) {
 		type = tools::PICKER;
+	} else if(tool == linetool_) {
+		type = tools::LINE;
 	} else {
 		return;
 	}
@@ -1012,6 +1014,11 @@ void MainWindow::initActions()
 	pickertool_ = new QAction(QIcon(":icons/draw-picker.png"),tr("&Color picker"), this);
 	pickertool_->setCheckable(true);
 	pickertool_->setShortcut(QKeySequence("I"));
+	linetool_ = new QAction(QIcon(":icons/draw-line.png"),tr("&Line"), this);
+	linetool_->setCheckable(true);
+	linetool_->setShortcut(QKeySequence("U"));
+
+	// View actions
 	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom &in"), this);
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
 	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom &out"), this);
@@ -1032,6 +1039,7 @@ void MainWindow::initActions()
 	drawingtools_->addAction(brushtool_);
 	drawingtools_->addAction(erasertool_);
 	drawingtools_->addAction(pickertool_);
+	drawingtools_->addAction(linetool_);
 	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Tool cursor settings
@@ -1089,6 +1097,7 @@ void MainWindow::createMenus()
 	toolsmenu->addAction(brushtool_);
 	toolsmenu->addAction(erasertool_);
 	toolsmenu->addAction(pickertool_);
+	toolsmenu->addAction(linetool_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
 	toolsmenu->addAction(togglecrosshair_);
@@ -1123,6 +1132,7 @@ void MainWindow::createToolbars()
 	drawtools->addAction(brushtool_);
 	drawtools->addAction(erasertool_);
 	drawtools->addAction(pickertool_);
+	drawtools->addAction(linetool_);
 	drawtools->addSeparator();
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);

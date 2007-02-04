@@ -24,6 +24,7 @@
 #include "user.h"
 #include "interfaces.h"
 #include "netstate.h"
+#include "preview.h"
 
 namespace drawingboard {
 
@@ -79,6 +80,30 @@ QColor BoardEditor::colorAt(const QPoint& point)
 		return img.pixel(point);
 	else
 		return QColor(-1,-1,-1);
+}
+
+void BoardEditor::startPreview(const Point& point, const Brush& brush)
+{
+	Q_ASSERT(board_->linepreview_ == 0);
+	board_->linepreview_ = new Preview(user_->layer(), board_);
+	board_->linepreview_->previewLine(point,point, brush);
+}
+
+void BoardEditor::continuePreview(const Point& point)
+{
+	Q_ASSERT(board_->linepreview_);
+	board_->linepreview_->previewLine(
+			board_->linepreview_->from(),
+			point,
+			board_->linepreview_->brush()
+			);
+}
+
+void BoardEditor::endPreview()
+{
+	Q_ASSERT(board_->linepreview_);
+	delete board_->linepreview_;
+	board_->linepreview_ = 0;
 }
 
 /**

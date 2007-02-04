@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include "point.h"
+
 namespace drawingboard {
 	class BoardEditor;
-	class Point;
 }
 
 //! Tools
@@ -37,7 +38,7 @@ namespace drawingboard {
  */
 namespace tools {
 
-enum Type {BRUSH, ERASER, PICKER};
+enum Type {BRUSH, ERASER, PICKER, LINE};
 
 //! Base class for all tools
 /**
@@ -118,6 +119,22 @@ class ColorPicker : public Tool {
 		void begin(const drawingboard::Point& point);
 		void motion(const drawingboard::Point& point);
 		void end();
+};
+
+//! Line tool
+/**
+ * The line is not drawn until \a end() is called.
+ */
+class Line : public Tool {
+	public:
+		Line() : Tool(LINE, false) {}
+
+		void begin(const drawingboard::Point& point);
+		void motion(const drawingboard::Point& point);
+		void end();
+	private:
+		drawingboard::Point start_;
+		drawingboard::Point end_;
 };
 
 }

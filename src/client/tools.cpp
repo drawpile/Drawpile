@@ -23,7 +23,6 @@
 #include "brush.h"
 #include "board.h"
 #include "boardeditor.h"
-#include "point.h"
 
 namespace tools {
 
@@ -40,7 +39,7 @@ void Tool::setEditor(drawingboard::BoardEditor *editor)
  * controlled by the specified controller.
  * 
  * This is not multiboard safe! This class needs to be reworked
- * if the support for joining multiple boards simultaneously is needed.
+ * if support for joining multiple boards simultaneously is needed.
  * @param type type of tool wanted
  * @return the requested tool
  */
@@ -51,10 +50,12 @@ Tool *Tool::get(Type type)
 	static Tool *brush = new Brush();
 	static Tool *eraser = new Eraser();
 	static Tool *picker = new ColorPicker();
+	static Line *line = new Line();
 	switch(type) {
 		case BRUSH: return brush;
 		case ERASER: return eraser;
 		case PICKER: return picker;
+		case LINE: return line;
 	}
 	return 0;
 }
@@ -95,6 +96,30 @@ void ColorPicker::motion(const drawingboard::Point& point)
 
 void ColorPicker::end()
 {
+}
+
+void Line::begin(const drawingboard::Point& point)
+{
+	editor_->startPreview(point, editor_->localBrush());
+	start_ = point;
+	end_ = point;
+}
+
+void Line::motion(const drawingboard::Point& point)
+{
+	editor_->continuePreview(point);
+	end_ = point;
+}
+
+void Line::end()
+{
+	editor_->endPreview();
+	drawingboard::Brush brush = editor_->localBrush();
+	if(editor_->isCurrentBrush(brush) == false)
+		editor_->setTool(brush);
+	editor_->addStroke(start_);
+	editor_->addStroke(end_);
+	editor_->endStroke();
 }
 
 }

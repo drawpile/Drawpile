@@ -22,6 +22,7 @@
 #include "brushpreview.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces
 #include "ui_brushsettings.h"
+#include "ui_linesettings.h"
 
 namespace tools {
 
@@ -111,6 +112,74 @@ const drawingboard::Brush& BrushSettings::getBrush() const
 }
 
 int BrushSettings::getSize() const
+{
+	return ui_->brushsize->value();
+}
+
+LineSettings::LineSettings(QString name, QString title)
+	: ToolSettings(name,title)
+{
+	ui_ = new Ui_LineSettings();
+}
+
+LineSettings::~LineSettings()
+{
+	if(ui_) {
+		// Remember settings
+		QSettings cfg;
+		cfg.beginGroup("tools");
+		cfg.beginGroup(getName());
+		cfg.setValue("size", ui_->brushsize->value());
+		cfg.setValue("opacity", ui_->brushopacity->value());
+		cfg.setValue("hardness", ui_->brushhardness->value());
+		delete ui_;
+	}
+}
+
+QWidget *LineSettings::createUi(QWidget *parent)
+{
+	QWidget *widget = new QWidget(parent);
+	ui_->setupUi(widget);
+	widget->hide();
+	setUiWidget(widget);
+
+	// Load previous settings
+	QSettings cfg;
+	cfg.beginGroup("tools");
+	cfg.beginGroup(getName());
+	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
+	ui_->brushsizebox->setValue(ui_->brushsize->value());
+	ui_->preview->setSize(ui_->brushsize->value());
+
+	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
+	ui_->preview->setOpacity(ui_->brushopacity->value());
+
+	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
+	ui_->preview->setHardness(ui_->brushhardness->value());
+
+	// Connect size change signal
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	return widget;
+}
+
+void LineSettings::setForeground(const QColor& color)
+{
+	ui_->preview->setColor1(color);
+}
+
+void LineSettings::setBackground(const QColor& color)
+{
+	ui_->preview->setColor2(color);
+}
+
+const drawingboard::Brush& LineSettings::getBrush() const
+{
+	return ui_->preview->brush();
+}
+
+int LineSettings::getSize() const
 {
 	return ui_->brushsize->value();
 }
