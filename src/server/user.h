@@ -52,6 +52,7 @@ struct SessionData
 	SessionData(uint8_t id=protocol::null_user, Session *s=0) throw()
 		: session(s),
 		layer(protocol::null_layer),
+		layer_lock(protocol::null_layer),
 		mode(s->mode),
 		syncWait(false)
 	{
@@ -64,8 +65,11 @@ struct SessionData
 	// Session reference
 	Session *session;
 	
-	// active layer
-	uint8_t layer;
+	uint8_t
+		// Active layer
+		layer,
+		// Layer to which the user is locked to
+		layer_lock;
 	
 	// User mode within session
 	uint8_t mode;
@@ -123,6 +127,7 @@ struct User
 		#endif // CHECK_VIOLATIONS
 		state(uState::init),
 		session(protocol::Global),
+		layer(protocol::null_layer),
 		a_mode(protocol::user_mode::None),
 		mode(protocol::user_mode::None),
 		syncing(protocol::Global),
@@ -131,7 +136,8 @@ struct User
 		inMsg(0),
 		deadtime(0),
 		nlen(0),
-		name(0)
+		name(0),
+		strokes(0)
 	{
 		#ifdef DEBUG_USER
 		#ifndef NDEBUG
@@ -176,6 +182,8 @@ struct User
 		state,
 		// Currently active session
 		session,
+		// Active layer in session
+		layer,
 		// User mode
 		a_mode,
 		// Session we're currently syncing.
@@ -210,5 +218,9 @@ struct User
 	
 	// User name
 	char* name;
+	
+	/* counters */
+	
+	u_long strokes;
 };
 #endif // ServerUser_INCLUDED

@@ -610,6 +610,27 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		#endif // CHECK_VIOLATIONS
 		
+		if (usr->inMsg->type == protocol::type::StrokeInfo)
+			usr->strokes++;
+		else if (usr->inMsg->type == protocol::type::StrokeEnd)
+			usr->strokes = 0;
+		
+		if (usr->inMsg->type != protocol::type::ToolInfo
+			and usr->layer == protocol::null_layer)
+		{
+			#ifndef NDEBUG
+			if (usr->strokes == 1)
+			{
+				std::cout << "User #" << static_cast<int>(usr->id)
+					<< " is drawing on null layer!" << std::endl;
+			}
+			#endif
+			
+			#ifdef LAYER_SUPPORT
+			break;
+			#endif
+		}
+		
 		#ifdef CHECK_VIOLATIONS
 		if ((usr->inMsg->user_id != protocol::null_user)
 			#ifdef LENIENT
@@ -882,6 +903,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::type::LayerSelect:
 		{
 			protocol::LayerSelect *layer = static_cast<protocol::LayerSelect*>(usr->inMsg);
+			
+			// Find user's session instance
 			usr_session_iterator ui(usr->sessions.find(layer->session_id));
 			if (ui == usr->sessions.end())
 			{
@@ -889,26 +912,26 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			session_iterator si(sessions.find(usr->session));
-			if (si == sessions.end())
+			if (layer->layer_id == ui->second.layer)
 			{
-				uSendMsg(usr,
-					msgError(usr->inMsg->session_id, protocol::error::UnknownSession)
-				);
-				
-				break;
-			}
-			Session *session = si->second;
-			
-			if (ui->second.layer == layer->layer_id)
-			{
-				// tries to select currently selected layer
+				// Tries to select currently selected layer
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
 				break;
 			}
 			
-			session_layer_iterator li(ui->second.session->layers.find(layer->layer_id));
-			if (li == ui->second.session->layers.end())
+			// Check if user is locked to another layer
+			if (ui->second.layer_lock != protocol::null_layer
+				and ui->second.layer_lock != layer->layer_id)
+			{
+				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
+				break;
+			}
+			
+			Session *session = ui->second.session;
+			
+			// Find layer and check if its locked
+			session_layer_iterator li(session->layers.find(layer->layer_id));
+			if (li == session->layers.end())
 			{
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::UnknownLayer));
 				break;
@@ -1201,7 +1224,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	case protocol::session_event::Unlock:
 		if (event->target == protocol::null_user)
 		{
-			// locking whole board
+			// Lock whole board
 			
 			#ifndef NDEBUG
 			std::cout << "Changing lock for session: "
@@ -1214,7 +1237,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		}
 		else
 		{
-			// locking single user
+			// Lock single user
 			
 			#ifndef NDEBUG
 			std::cout << "Changing lock for user: "
@@ -1224,33 +1247,65 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				<< ", in session: " << static_cast<int>(session->id) << std::endl;
 			#endif
 			
-			session_usr_iterator sui(session->users.find(event->target));
-			if (sui == session->users.end())
+			// Find user
+			session_usr_iterator session_usr(session->users.find(event->target));
+			if (session_usr == session->users.end())
 			{
-				// user not found
 				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
 				break;
 			}
+			User *usr = session_usr->second;
 			
-			usr_session_iterator usi(sui->second->sessions.find(session->id));
-			if (usi == sui->second->sessions.end())
+			// Find user's session instance (SessionData&)
+			usr_session_iterator usr_session(usr->sessions.find(session->id));
+			if (usr_session == usr->sessions.end())
 			{
 				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
 				break;
 			}
 			
-			if (event->action == protocol::session_event::Lock)
+			if (event->aux == protocol::null_layer)
 			{
-				fSet(usi->second.mode, protocol::user_mode::Locked);
+				// Set session flags
+				if (event->action == protocol::session_event::Lock)
+				{
+					fSet(usr_session->second.mode, protocol::user_mode::Locked);
+				}
+				else
+				{
+					fClr(usr_session->second.mode, protocol::user_mode::Locked);
+				}
+				
+				// Copy active session flags
+				if (usr->session == event->session_id)
+					usr->a_mode = usr_session->second.mode;
 			}
 			else
 			{
-				fClr(usi->second.mode, protocol::user_mode::Locked);
-			}
-			
-			if (usr->session == event->target)
-			{
-				usr->a_mode = usi->second.mode;
+				if (event->action == protocol::session_event::Lock)
+				{
+					#ifndef NDEBUG
+					std::cout << "Lock ignored, limiting user to layer: "
+						<< static_cast<int>(event->aux) << std::endl;
+					#endif
+					
+					usr_session->second.layer_lock = event->aux;
+					
+					// Null-ize the active layer if the target layer is not the active one.
+					if (usr_session->second.layer != usr_session->second.layer_lock)
+						usr_session->second.layer = protocol::null_layer;
+					if (usr->session == event->session_id)
+						usr->layer = protocol::null_layer;
+				}
+				else // unlock
+				{
+					#ifndef NDEBUG
+					std::cout << "Lock ignored, releasing user from layer: "
+						<< static_cast<int>(event->aux) << std::endl;
+					#endif
+					
+					usr_session->second.layer_lock = protocol::null_layer;
+				}
 			}
 		}
 		
@@ -1263,7 +1318,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			session_usr_iterator sui(session->users.find(event->target));
 			if (sui == session->users.end())
 			{
-				// user not found
+				// User not found
 				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
 				break;
 			}
@@ -2000,6 +2055,8 @@ void Server::SyncSession(Session*& session) throw()
 	}
 	
 	message_ref msg;
+	protocol::LayerSelect *layer=0;
+	protocol::SessionSelect *select=0;
 	std::vector<message_ref> msg_queue;
 	session_usr_iterator old(session->users.begin());
 	// build msg_queue
@@ -2018,10 +2075,19 @@ void Server::SyncSession(Session*& session) throw()
 		msg_queue.push_back(uCreateEvent(usr_ptr, session, protocol::user_event::Join));
 		if (usr_ptr->session == session->id)
 		{
-			msg.reset(new protocol::SessionSelect);
-			msg->user_id = usr_ptr->id;
-			msg->session_id = session->id;
-			msg_queue.push_back(msg);
+			select = new protocol::SessionSelect;
+			select->user_id = usr_ptr->id;
+			select->session_id = session->id;
+			msg_queue.push_back(message_ref(select));
+			
+			if (usr_ptr->layer != protocol::null_layer)
+			{
+				layer = new protocol::LayerSelect;
+				layer->user_id = usr_ptr->id;
+				layer->session_id = session->id;
+				layer->layer_id = usr_ptr->layer;
+				msg_queue.push_back(message_ref(layer));
+			}
 		}
 	}
 	
