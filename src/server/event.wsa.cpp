@@ -90,7 +90,7 @@ int Event::wait(uint32_t msecs) throw()
 	
 	assert(fd_to_ev.size() != 0);
 	
-	uint32_t r = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, 0, msecs, true);
+	u_long r = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, 0, msecs, true);
 	
 	if (r == WSA_WAIT_FAILED)
 	{
@@ -116,6 +116,8 @@ int Event::wait(uint32_t msecs) throw()
 			std::cerr << "Event(wsa).wait() - unknown error: " << r << std::endl;
 			break;
 		}
+		
+		return -1;
 	}
 	else
 	{
@@ -125,10 +127,12 @@ int Event::wait(uint32_t msecs) throw()
 		case WSA_WAIT_TIMEOUT:
 			return 0;
 		default:
-			nfds = r - WSA_WAIT_EVENT_0;
+			// events ready
 			break;
 		}
 	}
+	
+	nfds = fd_to_ev.size();
 	
 	return nfds;
 }
@@ -150,6 +154,10 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	WSAEVENT ev_s = WSACreateEvent();
 	if (!ev_s) return false;
+	
+	// hack for WSA
+	if (fIsSet(ev, read));
+		fSet(ev, static_cast<uint32_t>(FD_ACCEPT));
 	
 	for (uint32_t i=0; i != WSA_MAXIMUM_WAIT_EVENTS; i++)
 	{
@@ -271,23 +279,11 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		return 0;
 	}
 	
+	// hack for WSA
+	if (fIsSet(set->lNetworkEvents, static_cast<long int>(FD_ACCEPT)));
+		fSet(set->lNetworkEvents, static_cast<long int>(FD_READ));
+	
+	WSAResetEvent(w_ev[fev->second]);
+	
 	return set->lNetworkEvents;
-}
-
-bool Event::isset(fd_t fd, uint32_t ev) const throw()
-{
-	#ifndef NDEBUG
-	std::cout << "Event(wsa).isset(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
-	#endif
-	
-	assert(ev == read or ev == write or ev == hangup or ev == error);
-	assert(fd >= 0);
-	
-	return fIsSet(getEvents(fd), ev);
 }
