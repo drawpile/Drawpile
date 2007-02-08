@@ -61,7 +61,7 @@
 	#define EVENT_BY_INDEX
 	#define EVENT_HAS_ALL
 #elif defined(EV_WSA)
-	#define EVENT_BY_INDEX
+	#define EVENT_BY_FD
 #endif
 
 #ifndef WIN32

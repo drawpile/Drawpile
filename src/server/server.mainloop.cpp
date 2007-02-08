@@ -126,7 +126,9 @@ int Server::run() throw()
 			while (ec != 0);
 			#elif defined(EVENT_BY_FD)
 			/* BY FD */
-			if (ev.isset(lsock.fd(), ev.read))
+			
+			t_events = ev.getEvents(lsock.fd());
+			if (fIsSet(t_events, ev.read))
 			{
 				uAdd( lsock.accept() );
 				if (--ec == 0) continue;
@@ -163,12 +165,6 @@ int Server::run() throw()
 					
 					if (--ec == 0) break;
 				}
-			}
-			
-			if (0) {
-				#ifndef NDEBUG
-				if (ec != 0) { std::cout << "Events left: " << ec << std::endl; }
-				#endif //NDEBUG
 			}
 			
 			#else // EVENT_BY_*

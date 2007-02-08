@@ -55,28 +55,22 @@ Event::Event() throw()
 	#endif // EV_PSELECT
 	#endif // !WIN32
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event()" << std::endl;
-	#endif
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select)()" << std::endl;
 	#endif
 }
 
 Event::~Event() throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "~Event()" << std::endl;
-	#endif
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "~Event(select)()" << std::endl;
 	#endif
 }
 
 bool Event::init() throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::init()" << std::endl;
-	#endif
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).init()" << std::endl;
 	#endif
 	
 	FD_ZERO(&fds_r);
@@ -88,19 +82,15 @@ bool Event::init() throw()
 
 void Event::finish() throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::finish()" << std::endl;
-	#endif
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).finish()" << std::endl;
 	#endif
 }
 
 int Event::wait(uint32_t msecs) throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::wait(msecs: " << msecs << ")" << std::endl;
-	#endif
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).wait(msecs: " << msecs << ")" << std::endl;
 	#endif
 	
 	#ifdef EV_SELECT_COPY
@@ -182,14 +172,10 @@ int Event::wait(uint32_t msecs) throw()
 		#ifdef WIN32
 		#ifndef NDEBUG
 		case WSANOTINITIALISED:
-			#ifndef NDEBUG
-			std::cerr << "netInit() was not called." << std::endl;
-			#endif
-			assert(1);
+			assert(!(error == WSANOTINITIALISED));
 			break;
 		case WSAENOTSOCK:
-			std::cerr << "Non-socket in one of the FD sets." << std::endl;
-			assert(1);
+			assert(!(error == WSAENOTSOCK));
 			break;
 		#endif // NDEBUG
 		case WSAEFAULT:
@@ -205,12 +191,10 @@ int Event::wait(uint32_t msecs) throw()
 		#endif // WIN32
 		#ifndef NDEBUG
 		case EBADF:
-			std::cerr << "Bad FD in set." << std::endl;
-			assert(1);
+			assert(!(error == EBADF));
 			break;
 		case EINVAL:
-			std::cerr << "Timeout or sigmask invalid." << std::endl;
-			assert(1);
+			assert(!(error == EINVAL));
 			break;
 		#endif // NDEBUG
 		default:
@@ -224,9 +208,8 @@ int Event::wait(uint32_t msecs) throw()
 
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::add(fd: " << fd << ", event: ";
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).add(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
@@ -234,17 +217,14 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
 	#endif
-	#endif
 	
 	assert(fd != INVALID_SOCKET);
 	
 	if (fIsSet(ev, read)) 
 	{
-		#ifdef DEBUG_EVENTS
-		#ifndef NDEBUG
+		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 		std::cout << "set read" << std::endl;
 		#endif
-		#endif // DEBUG_EVENTS
 		FD_SET(fd, &fds_r);
 		#ifndef WIN32
 		select_set_r.insert(select_set_r.end(), fd);
@@ -255,10 +235,8 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	}
 	if (fIsSet(ev, write))
 	{
-		#ifdef DEBUG_EVENTS
-		#ifndef NDEBUG
+		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 		std::cout << "set write" << std::endl;
-		#endif
 		#endif
 		FD_SET(fd, &fds_w);
 		#ifndef WIN32
@@ -270,10 +248,8 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	}
 	if (fIsSet(ev, error))
 	{
-		#ifdef DEBUG_EVENTS
-		#ifndef NDEBUG
+		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 		std::cout << "set error" << std::endl;
-		#endif
 		#endif
 		FD_SET(fd, &fds_e);
 		#ifndef WIN32
@@ -293,8 +269,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event::modify(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
@@ -302,7 +277,6 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	std::cout.setf ( std::ios_base::dec );
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
-	#endif
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -325,16 +299,14 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::remove(fd: " << fd << ", event: ";
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).remove(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
 	std::cout.setf ( std::ios_base::dec );
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
-	#endif
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -395,11 +367,9 @@ std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
 
 uint32_t Event::getEvents(fd_t fd) const throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::getEvents(fd: " << fd << ")" << std::endl;
-	#endif // NDEBUG
-	#endif // DEBUG_EVENTS
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).getEvents(fd: " << fd << ")" << std::endl;
+	#endif
 	
 	assert(fd != INVALID_SOCKET);
 	
@@ -417,16 +387,14 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 
 bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
-	std::cout << "Event::isset(fd: " << fd << ", event: ";
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	std::cout << "Event(select).isset(fd: " << fd << ", event: ";
 	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
 	std::cout.setf ( std::ios_base::showbase );
 	std::cout << ev;
 	std::cout.setf ( std::ios_base::dec );
 	std::cout.setf ( ~std::ios_base::showbase );
 	std::cout << ")" << std::endl;
-	#endif
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
