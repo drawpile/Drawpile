@@ -82,4 +82,17 @@ private:
 	Workspace m_block;
 };
 
+#ifdef SHA1_OSTREAM
+#include <ostream>
+
+//! ostream extension for sha1
+std::ostream& operator<< (std::ostream& os, const SHA1& hash)
+{
+	char digest[41];
+	digest[40] = '\0';
+	hash.HexDigest(digest);
+	return os << digest;
+}
+#endif // SHA1_OSTREAM
+
 #endif // SHA1_INCLUDEd

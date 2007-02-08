@@ -376,4 +376,11 @@ public:
 	fd_t operator= (fd_t _fd) throw() { fd(_fd); return sock; }
 };
 
+#ifdef SOCKET_OSTREAM
+std::ostream& operator<< (std::ostream& os, const Socket& sock)
+{
+	os << sock.address();
+}
+#endif
+
 #endif // Sockets_INCLUDED
