@@ -62,9 +62,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 		switch (opt)
 		{
 			case 'h': // help
-				std::cout << "Syntax: drawpile-srv [options]" << std::endl
-					<< std::endl
-					<< "Options:" << std::endl
+				std::cout << "Options:" << std::endl
 					<< std::endl
 					<< "   -a [address]  listen on this address" << std::endl
 					<< "   -p [port]     listen on 'port' (1024 - 65535)" << std::endl
