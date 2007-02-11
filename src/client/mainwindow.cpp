@@ -107,11 +107,13 @@ MainWindow::MainWindow()
 	connect(userlist_, SIGNAL(lock(int, bool)), controller_, SLOT(lockUser(int, bool)));
 	// Controller <- actions
 	connect(lockboard_, SIGNAL(triggered(bool)), controller_, SLOT(lockBoard(bool)));
+	connect(disallowjoins_, SIGNAL(triggered(bool)), controller_, SLOT(disallowJoins(bool)));
 	// Controller <-> mainwindow
 	connect(controller_, SIGNAL(connected(QString)), this, SLOT(connected()));
 	connect(controller_, SIGNAL(disconnected(QString)), this, SLOT(disconnected()));
 	connect(controller_, SIGNAL(lockboard(QString)), this, SLOT(lock(QString)));
 	connect(controller_, SIGNAL(unlockboard()), this, SLOT(unlock()));
+	connect(controller_, SIGNAL(joinsDisallowed(bool)), disallowjoins_, SLOT(setChecked(bool)));
 
 	// Controller <-> login dialog connections
 	connect(controller_, SIGNAL(connected(const QString&)), logindlg_, SLOT(connected()));
@@ -719,6 +721,15 @@ void MainWindow::unlock()
 	lockboard_->setChecked(false);
 }
 
+/**
+ * Updates the allow join action checked status.
+ * @param allow if true, new users may join
+ */
+void MainWindow::allowJoins(bool allow)
+{
+	disallowjoins_->setChecked(!allow);
+}
+
 void MainWindow::rasterUp(int p)
 {
 	statusBar()->showMessage(tr("Sending board contents to new user, %1% done").arg(QString::number(p)),1000);
@@ -992,12 +1003,16 @@ void MainWindow::initActions()
 	lockboard_ = new QAction("Lo&ck the board", this);
 	lockboard_->setStatusTip(tr("Prevent changes to the drawing board"));
 	lockboard_->setCheckable(true);
+	disallowjoins_ = new QAction("&Deny joins", this);
+	disallowjoins_->setStatusTip(tr("Prevent new users from joining the session"));
+	disallowjoins_->setCheckable(true);
 
 	logout_->setEnabled(false);
 
 	adminTools_ = new QActionGroup(this);
 	adminTools_->setExclusive(false);
 	adminTools_->addAction(lockboard_);
+	adminTools_->addAction(disallowjoins_);
 	adminTools_->setEnabled(false);
 
 	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
@@ -1092,6 +1107,7 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(logout_);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(lockboard_);
+	sessionmenu->addAction(disallowjoins_);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(brushtool_);

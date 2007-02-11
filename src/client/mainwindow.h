@@ -137,6 +137,8 @@ class MainWindow : public QMainWindow {
 		void lock(const QString& reason);
 		//! Allow changes to the board
 		void unlock();
+		//! New joins have been allowed/disallowed
+		void allowJoins(bool allow);
 		//! Inform user about raster upload progress
 		void rasterUp(int p);
 
@@ -227,6 +229,7 @@ class MainWindow : public QMainWindow {
 
 		QActionGroup *adminTools_;
 		QAction *lockboard_;
+		QAction *disallowjoins_;
 
 		QActionGroup *drawingtools_;
 		QAction *brushtool_;

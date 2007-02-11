@@ -104,6 +104,9 @@ class Controller : public QObject
 		//! Lock the entire board
 		void lockBoard(bool lock);
 
+		//! Allow/disallow new users to join the session
+		void disallowJoins(bool disallow);
+
 		//! Send chat message
 		void sendChat(const QString& msg);
 
@@ -167,6 +170,9 @@ class Controller : public QObject
 		//! Unlock the board UI
 		void unlockboard();
 
+		//! Allow/disallow new joins
+		void joinsDisallowed(bool allow);
+
 		//! A network error occured
 		void netError(const QString& message);
 
@@ -190,6 +196,7 @@ class Controller : public QObject
 		void userLocked(int id, bool lock);
 		void sessionOwnerChanged();
 		void sessionKicked(int id);
+		void sessionUserLimitChanged(int count);
 
 	private:
 		void sendRaster();

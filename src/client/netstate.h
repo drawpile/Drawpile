@@ -65,6 +65,8 @@ struct Session {
 	QString title;
 	quint16 width;
 	quint16 height;
+	quint8 mode;
+	int maxusers;
 };
 
 //! Information about a user (sesssion specific)
@@ -232,6 +234,9 @@ class SessionState : public QObject {
 		//! Get session info
 		const Session& info() const { return info_; }
 
+		//! Update session description
+		void update(const Session& info);
+
 		//! Get the list of users
 		const UserList& users() const { return users_; }
 
@@ -264,6 +269,9 @@ class SessionState : public QObject {
 
 		//! Admin command. Lock/unlock user
 		void lockUser(int id, bool lock);
+
+		//! Admin command. Set session user limit
+		void setUserLimit(int count);
 
 		//! Send a tool info message
 		void sendToolInfo(const drawingboard::Brush& brush);
@@ -334,6 +342,9 @@ class SessionState : public QObject {
 
 		//! Session has been (un)locked
 		void sessionLocked(bool lock);
+
+		//! User limit has changed
+		void userLimitChanged(int limit);
 
 		//! Session owner changed
 		void ownerChanged();

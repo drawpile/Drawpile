@@ -42,7 +42,9 @@ Session::Session(const protocol::SessionInfo *info)
 	owner(info->owner),
 	title(QString::fromUtf8(info->title)),
 	width(info->width),
-	height(info->height)
+	height(info->height),
+	mode(info->mode),
+	maxusers(info->limit)
 {
 }
 
@@ -479,13 +481,25 @@ void HostState::handleUserInfo(const protocol::UserInfo *msg)
 }
 
 /**
- * Session info is appended to a list.
+ * If the session does not exist, it is added to the list. Otherwise
+ * its description is updated.
  * @param msg SessionInfo message
  */
 void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 {
 	qDebug() << "session info " << int(msg->session_id) << msg->title;
-	sessions_.append(msg);
+	bool updated = false;
+	for(int i=0;i<sessions_.size();++i) {
+		if(sessions_.at(i).id == msg->session_id) {
+			sessions_.replace(i, Session(msg));
+			if(mysessions_.contains(sessions_.at(i).id))
+				mysessions_[sessions_.at(i).id]->update(sessions_.at(i));
+			updated = true;
+			break;
+		}
+	}
+	if(updated==false)
+		sessions_.append(msg);
 }
 
 /**
@@ -557,6 +571,8 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		} else if(lastinstruction_ == protocol::admin::command::Password) {
 			// Password accepted
 			qDebug() << "password set";
+		} else if(lastinstruction_ == protocol::admin::command::Alter) {
+			qDebug() << "Warning: Ack for Instruction Alter not expected";
 		} else {
 			qFatal("BUG: unhandled lastinstruction_");
 		}
@@ -609,6 +625,18 @@ SessionState::SessionState(HostState *parent, const Session& info)
 {
 	Q_ASSERT(parent);
 	users_.append(host_->localuser_);
+}
+
+/**
+ * @param info new session info
+ */
+void SessionState::update(const Session& info)
+{
+	if(info_.maxusers != info.maxusers) {
+		emit userLimitChanged(info.maxusers);
+	}
+	// TODO check for other changes too
+	info_ = info;
 }
 
 /**
@@ -742,6 +770,42 @@ void SessionState::lockUser(int id, bool lock)
 	else
 		msg->action = protocol::session_event::Unlock;
 	msg->target = id;
+	host_->net_->send(msg);
+}
+
+/**
+ * Changes the user limit for the session. This doesn't affect current users,
+ * setting the limit lower than the number of users currently logged in will
+ * just prevent new users from joining.
+ * 
+ * @param count number of users allowed
+ */
+void SessionState::setUserLimit(int count)
+{
+	qDebug() << "Chaning user limit to" << count;
+	protocol::Instruction *msg = new protocol::Instruction;
+	msg->command = protocol::admin::command::Alter;
+	msg->session_id = info_.id;
+
+	// Set width and height (unchanged)
+	char *data = new char[sizeof(quint16)*2];
+	quint16 w = info_.width;
+	quint16 h = info_.height;
+	bswap(w);
+	bswap(h);
+	memcpy(data, &w, sizeof(w));
+	memcpy(data+sizeof(w), &h, sizeof(h));
+
+	msg->length = sizeof(quint16)*2;
+	msg->data = data;
+
+	// Set user limit
+	msg->aux_data = count;
+
+	// Set user mode (unchanged)
+	msg->aux_data2 = info_.mode;
+
+	host_->lastinstruction_ = msg->command;
 	host_->net_->send(msg);
 }
 

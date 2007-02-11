@@ -199,6 +199,13 @@ void Controller::lockBoard(bool lock)
 	session_->lockUser(protocol::null_user, lock);
 }
 
+void Controller::disallowJoins(bool disallow)
+{
+	Q_ASSERT(session_);
+	// TODO, proper max user limit.
+	session_->setUserLimit(disallow?1:20);
+}
+
 void Controller::sendChat(const QString& message)
 {
 	Q_ASSERT(session_);
@@ -248,6 +255,7 @@ void Controller::sessionJoined(int id)
 	connect(session_, SIGNAL(ownerChanged()), this, SLOT(sessionOwnerChanged()));
 	connect(session_, SIGNAL(userKicked(int)), this, SLOT(sessionKicked(int)));
 	connect(session_, SIGNAL(chatMessage(QString, QString)), this, SIGNAL(chat(QString,QString)));
+	connect(session_, SIGNAL(userLimitChanged(int)), this, SLOT(sessionUserLimitChanged(int)));
 
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
@@ -429,6 +437,15 @@ void Controller::sessionKicked(int id)
 	emit userKicked(*(session_->user(id)));
 	if(id == netstate_->localUser().id)
 		disconnectHost();
+}
+
+/**
+ * User limit of the session was changed
+ * @param count max. number of users
+ */
+void Controller::sessionUserLimitChanged(int count)
+{
+	emit joinsDisallowed(count<2);
 }
 
 void Controller::sendRaster()
