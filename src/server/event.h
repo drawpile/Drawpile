@@ -196,10 +196,7 @@ public:
 	int modify(fd_t fd, uint32_t ev) throw();
 	
 	//! Fetches next triggered event.
-	/**
-	 * ev_index is ignored with [p]select.
-	 */
-	std::pair<fd_t, uint32_t> getEvent(int ev_index) throw();
+	std::pair<fd_t, uint32_t> getEvent() throw();
 	
 	//! Fetches triggered events for FD.
 	uint32_t getEvents(fd_t fd) const throw();

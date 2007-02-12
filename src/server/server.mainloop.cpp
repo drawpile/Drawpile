@@ -74,7 +74,8 @@ int Server::run() throw()
 		{
 			do
 			{
-				event = ev.getEvent(--ec); // fd+events pair
+				--ec;
+				event = ev.getEvent(); // fd+events pair
 				
 				if (event.first == 0)
 					break;

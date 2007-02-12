@@ -326,11 +326,12 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
+std::pair<fd_t, uint32_t> Event::getEvent() throw()
 {
-	if (ev_index < 0 or ev_index > max_events)
+	if (nfds == 0)
 		return std::make_pair(0, 0);
 	
+	int ev_index = --nfds;
 	return std::make_pair(events[ev_index].data.fd, events[ev_index].events);
 }
 

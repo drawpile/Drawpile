@@ -369,7 +369,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) throw()
+std::pair<fd_t, uint32_t> Event::getEvent() throw()
 {
 	uint32_t events=0;
 	fd_t fd=0;
