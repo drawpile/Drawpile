@@ -30,7 +30,7 @@
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), offlineicon_(":/icons/network-error.png"),
+	: QWidget(parent), offlineicon_(":/icons/network-offline.png"),
 	onlineicon_(":/icons/network-transmit-receive.png")
 {
 	setMinimumHeight(offlineicon_.height()+2);

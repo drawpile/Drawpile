@@ -1026,10 +1026,10 @@ void MainWindow::initActions()
 	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("&Eraser"), this);
 	erasertool_->setCheckable(true);
 	erasertool_->setShortcut(QKeySequence("E"));
-	pickertool_ = new QAction(QIcon(":icons/draw-picker.png"),tr("&Color picker"), this);
+	pickertool_ = new QAction(QIcon(":icons/color-picker.png"),tr("&Color picker"), this);
 	pickertool_->setCheckable(true);
 	pickertool_->setShortcut(QKeySequence("I"));
-	linetool_ = new QAction(QIcon(":icons/draw-line.png"),tr("&Line"), this);
+	linetool_ = new QAction(QIcon(":icons/todo-line.png"),tr("&Line"), this);
 	linetool_->setCheckable(true);
 	linetool_->setShortcut(QKeySequence("U"));
 
