@@ -27,7 +27,7 @@
 namespace drawingboard {
 
 Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
-	: QGraphicsScene(parent), image_(0),localuser_(-1), brushsrc_(brush), colorsrc_(color), linepreview_(0)
+	: QGraphicsScene(parent), image_(0),localuser_(-1), linepreview_(0), brushsrc_(brush), colorsrc_(color)
 {
 	setItemIndexMethod(NoIndex);
 }
