@@ -1763,11 +1763,15 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				return;
 			}
 			
+			// assign user their own name
+			usr->name = msg->name;
+			usr->nlen = msg->length;
+			
 			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
 				and !validateUserName(usr))
 			{
 				#ifndef NDEBUG
-				std::cerr << "Name not unique." << std::endl;
+				std::cerr << "User name not unique." << std::endl;
 				#endif
 				
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
@@ -1776,12 +1780,8 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			// assign message the user's id
+			// assign message the user's id (for sending back)
 			msg->user_id = usr->id;
-			
-			// assign user their own name
-			usr->name = msg->name;
-			usr->nlen = msg->length;
 			
 			// null the message's name information, so they don't get deleted
 			msg->length = 0;
@@ -2479,14 +2479,27 @@ bool Server::validateUserName(User*& usr) const throw()
 	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
 		return true;
 	
-	if (usr->nlen == 0) return false;
+	if (usr->nlen == 0)
+	{
+		#ifndef NDEBUG
+		std::cerr << "Name: zero length" << std::endl;
+		#endif
+		
+		return false;
+	}
 	
 	std::map<fd_t, User*>::const_iterator ui(users.begin());
 	for (; ui != users.end(); ui++)
 	{
+		if (ui->second == usr) continue; // skip self
+		
 		if (usr->nlen == ui->second->nlen
 			and (memcmp(usr->name, ui->second->name, usr->nlen) == 0))
 		{
+			#ifndef NDEBUG
+			std::cerr << "Name: conflicts with user #"
+				<< static_cast<int>(ui->second->id) << std::endl;
+			#endif
 			return false;
 		}
 	}
@@ -2506,6 +2519,8 @@ bool Server::validateSessionTitle(Session*& session) const throw()
 	std::map<uint8_t, Session*>::const_iterator si(sessions.begin());
 	for (; si != sessions.end(); si++)
 	{
+		if (si->second == session) continue; // skip self
+		
 		if (session->len == si->second->len
 			and (memcmp(session->title, si->second->title, session->len) == 0))
 		{
