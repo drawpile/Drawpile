@@ -73,7 +73,7 @@ bool Event::init() throw()
 	std::cout << "Event(epoll).init()" << std::endl;
 	#endif
 	
-	evfd = epoll_create(10);
+	evfd = epoll_create(max_events);
 	_error = errno;
 	if (evfd == -1)
 	{
@@ -102,7 +102,7 @@ bool Event::init() throw()
 		}
 	}
 	
-	//events = new epoll_event[10];
+	//events = new epoll_event[max_events];
 	
 	return true;
 }
@@ -126,7 +126,7 @@ int Event::wait(uint32_t msecs) throw()
 	#endif
 	
 	// timeout in milliseconds
-	nfds = epoll_wait(evfd, events, 10, msecs);
+	nfds = epoll_wait(evfd, events, max_events, msecs);
 	_error = errno;
 	
 	if (nfds == -1)
@@ -328,6 +328,9 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 
 std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
 {
+	if (ev_index < 0 or ev_index > max_events)
+		return std::make_pair(0, 0);
+	
 	return std::make_pair(events[ev_index].data.fd, events[ev_index].events);
 }
 

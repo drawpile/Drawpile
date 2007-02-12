@@ -33,6 +33,8 @@
 
 #include <stdint.h>
 
+#include <map>
+
 #if defined(EV_EPOLL)
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
@@ -40,9 +42,7 @@
 #elif defined(EV_PSELECT)
 	#include <sys/select.h> // fd_set, FD* macros, etc.
 #else
-	#if defined(EV_WSA)
-		#include <map>
-	#else
+	#if !defined(EV_WSA)
 		#define EV_SELECT
 	#endif
 	
@@ -77,20 +77,30 @@ typedef int fd_t;
 	#define INVALID_SOCKET -1
 #endif
 
+const uint32_t max_events =
+#if defined(EV_EPOLL)
+	10;
+#elif defined(EV_WSA)
+	WSA_MAXIMUM_WAIT_EVENTS;
+#else
+	std::numeric_limits<uint32_t>::max();
+#endif
+
 //! Event I/O abstraction
 class Event
 {
 protected:
 	#if defined(EV_EPOLL)
 	fd_t evfd;
-	epoll_event events[10]; // stack allocation
+	epoll_event events[max_events]; // stack allocation
 	#elif defined(EV_PSELECT) || defined(EV_SELECT)
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
+	std::map<fd_t, uint32_t> fd_list;
+	std::map<fd_t, uint32_t>::iterator fd_iter;
+	
 	#ifndef WIN32
-	std::set<fd_t> select_set_r;
-	std::set<fd_t> select_set_w;
-	std::set<fd_t> select_set_e;
+	std::set<fd_t> read_set, write_set, error_set;
 	
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
@@ -102,11 +112,10 @@ protected:
 	#endif // EV_USE_SIGMASK
 	
 	#if defined(EV_WSA)
-	std::map<WSAEVENT, uint32_t> event_index;
 	std::map<fd_t, uint32_t> fd_to_ev;
-	std::map<uint32_t, fd_t> ev_to_fd;
+	std::map<fd_t, uint32_t>::iterator ev_iter;
 	
-	WSAEVENT w_ev[WSA_MAXIMUM_WAIT_EVENTS];
+	WSAEVENT w_ev[max_events];
 	uint32_t w_ev_count;
 	
 	#endif
@@ -187,7 +196,10 @@ public:
 	int modify(fd_t fd, uint32_t ev) throw();
 	
 	//! Fetches next triggered event.
-	std::pair<fd_t, uint32_t> getEvent(int ev_index) const throw();
+	/**
+	 * ev_index is ignored with [p]select.
+	 */
+	std::pair<fd_t, uint32_t> getEvent(int ev_index) throw();
 	
 	//! Fetches triggered events for FD.
 	uint32_t getEvents(fd_t fd) const throw();

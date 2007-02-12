@@ -202,6 +202,10 @@ int Event::wait(uint32_t msecs) throw()
 			break;
 		}
 	}
+	else if (nfds > 0)
+	{
+		fd_iter = fd_list.begin();
+	}
 	
 	return nfds;
 }
@@ -220,18 +224,21 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
-	if (fIsSet(ev, read)) 
+	bool rc=false;
+	
+	if (fIsSet(ev, read))
 	{
 		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 		std::cout << "set read" << std::endl;
 		#endif
 		FD_SET(fd, &fds_r);
 		#ifndef WIN32
-		select_set_r.insert(select_set_r.end(), fd);
+		read_set.insert(read_set.end(), fd);
 		std::cout << nfds_r << " -> ";
-		nfds_r = *(--select_set_r.end());
+		nfds_r = *(--read_set.end());
 		std::cout << nfds_r << std::endl;
-		#endif
+		#endif // !Win32
+		rc = true;
 	}
 	if (fIsSet(ev, write))
 	{
@@ -240,11 +247,12 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		#endif
 		FD_SET(fd, &fds_w);
 		#ifndef WIN32
-		select_set_w.insert(select_set_w.end(), fd);
+		write_set.insert(write_set.end(), fd);
 		std::cout << nfds_w << " -> ";
-		nfds_w = *(--select_set_w.end());
+		nfds_w = *(--write_set.end());
 		std::cout << nfds_w << std::endl;
-		#endif
+		#endif // !Win32
+		rc = true;
 	}
 	if (fIsSet(ev, error))
 	{
@@ -253,18 +261,20 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		#endif
 		FD_SET(fd, &fds_e);
 		#ifndef WIN32
-		select_set_e.insert(select_set_e.end(), fd);
-		if (0) {
-			std::cout << nfds_e << " -> ";
-		}
-		nfds_e = *(--select_set_e.end());
-		if (0) {
-			std::cout << nfds_e << std::endl;
-		}
-		#endif
+		error_set.insert(error_set.end(), fd);
+		nfds_e = *(--error_set.end());
+		#endif // !Win32
+		rc = true;
 	}
 	
-	return true;
+	// maintain fd_list
+	std::map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
+	if (iter == fd_list.end())
+		fd_list.insert(iter, std::make_pair(fd, ev));
+	else
+		iter->second = ev;
+	
+	return rc;
 }
 
 int Event::modify(fd_t fd, uint32_t ev) throw()
@@ -311,58 +321,72 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
+	std::map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
+	if (iter == fd_list.end())
+		return false;
+	
 	if (fIsSet(ev, read))
 	{
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
-		select_set_r.erase(fd);
-		if (0) {
-			std::cout << nfds_r << " -> ";
-		}
-		nfds_r = (select_set_r.size() > 0 ? *(--select_set_r.end()) : 0);
-		if (0) {
-			std::cout << nfds_r << std::endl;
-		}
+		read_set.erase(fd);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
 		#endif // WIN32
+		
+		fClr(iter->second, read);
 	}
 	
 	if (fIsSet(ev, write))
 	{
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
-		select_set_w.erase(fd);
-		if (0) {
-			std::cout << nfds_w << " -> ";
-		}
-		nfds_w = (select_set_w.size() > 0 ? *(--select_set_w.end()) : 0);
-		if (0) {
-			std::cout << nfds_w << std::endl;
-		}
+		write_set.erase(fd);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 		#endif // WIN32
+		
+		fClr(iter->second, write);
 	}
 	
 	if (fIsSet(ev, error|hangup))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
-		select_set_e.erase(fd);
-		if (0) {
-			std::cout << nfds_e << " -> ";
-		}
-		nfds_e = (select_set_e.size() > 0 ? *(--select_set_e.end()) : 0);
-		if (0) {
-			std::cout << nfds_e << std::endl;
-		}
+		error_set.erase(fd);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
 		#endif // WIN32
+		
+		fClr(iter->second, error);
+	}
+	
+	if (iter->second == 0)
+	{
+		fd_iter = iter;
+		fd_iter--;
+		fd_list.erase(iter);
+		fd_iter++;
 	}
 	
 	return true;
 }
 
-std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) const throw()
+std::pair<fd_t, uint32_t> Event::getEvent(int ev_index) throw()
 {
-	assert(1);
-	return std::make_pair(-1, 0);
+	uint32_t events=0;
+	fd_t fd=0;
+	
+	while (fd_iter != fd_list.end())
+	{
+		fd = fd_iter->first;
+		fd_iter++;
+		
+		events = getEvents(fd);
+		if (events == 0)
+			continue;
+		else
+			return std::make_pair(fd, events);
+	}
+	
+	return std::make_pair(0, 0);
 }
 
 uint32_t Event::getEvents(fd_t fd) const throw()

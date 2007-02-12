@@ -49,14 +49,14 @@ const uint32_t
 	Event::hangup = FD_CLOSE;
 
 Event::Event() throw()
-	: w_ev_count(0)
+	: ev_iter(fd_to_ev.end()), w_ev_count(0)
 {
 	#ifndef NDEBUG
 	std::cout << "Event(wsa)()" << std::endl;
-	std::cout << "Max events: " << WSA_MAXIMUM_WAIT_EVENTS << std::endl;
+	std::cout << "Max events: " << max_events<< std::endl;
 	#endif
 	
-	memset(w_ev, 0, WSA_MAXIMUM_WAIT_EVENTS);
+	memset(w_ev, 0, max_events);
 }
 
 Event::~Event() throw()
@@ -159,15 +159,13 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	if (fIsSet(ev, read));
 		fSet(ev, static_cast<uint32_t>(FD_ACCEPT));
 	
-	for (uint32_t i=0; i != WSA_MAXIMUM_WAIT_EVENTS; i++)
+	for (uint32_t i=0; i != max_events; i++)
 	{
 		if (w_ev[i] == 0)
 		{
 			WSAEventSelect(fd, ev_s, ev);
 			w_ev[i] = ev_s;
-			ev_to_fd.insert(std::make_pair(i, fd));
 			fd_to_ev.insert(std::make_pair(fd, i));
-			event_index.insert(std::make_pair(ev_s, i));
 			return true;
 		}
 	}

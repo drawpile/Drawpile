@@ -51,13 +51,7 @@ int Server::run() throw()
 	// event count
 	int ec;
 	
-	#if defined(EVENT_HAS_ALL)
 	std::pair<fd_t, uint32_t> event;
-	#endif
-	
-	#ifdef EVENT_BY_FD
-	uint32_t t_events;
-	#endif
 	
 	// main loop
 	while (state == server::state::Active)
@@ -78,40 +72,43 @@ int Server::run() throw()
 		}
 		else
 		{
-			#if defined(EVENT_BY_ORDER)
-			/* BY ORDER */
 			do
 			{
-				event = ev.getEvent(--ec);
+				event = ev.getEvent(--ec); // fd+events pair
 				
-				if (event->first == lsock.fd())
+				if (event.first == 0)
+					break;
+				else if (event.second == 0) // shouldn't happen
+					continue;
+				
+				if (event.first == lsock.fd())
 				{
 					uAdd( lsock.accept() );
 					continue;
 				}
 				
-				usr_iter = users.find(event->first);
+				usr_iter = users.find(event.first);
 				if (usr_iter != users.end())
 				{
 					usr = usr_iter->second;
-					if (fIsSet(event->second, ev.error))
+					if (fIsSet(event.second, ev.error))
 					{
 						uRemove(usr, protocol::user_event::BrokenPipe);
 						continue;
 					}
 					#ifdef EV_HAS_HANGUP
-					if (fIsSet(event->second, ev.hangup))
+					if (fIsSet(event.second, ev.hangup))
 					{
 						uRemove(usr, protocol::user_event::Disconnect);
 						continue;
 					}
 					#endif // EV_HAS_HANGUP
-					if (fIsSet(event->second, ev.read))
+					if (fIsSet(event.second, ev.read))
 					{
 						uRead(usr);
 						if (usr == 0) continue;
 					}
-					if (fIsSet(event->second, ev.write))
+					if (fIsSet(event.second, ev.write))
 					{
 						uWrite(usr);
 						if (usr == 0) continue;
@@ -119,57 +116,11 @@ int Server::run() throw()
 				}
 				else
 				{
-					std:cerr << "FD not in users." << std::endl;
+					std::cerr << "FD not in users." << std::endl;
 					break;
 				}
 			}
 			while (ec != 0);
-			#elif defined(EVENT_BY_FD)
-			/* BY FD */
-			
-			t_events = ev.getEvents(lsock.fd());
-			if (fIsSet(t_events, ev.read))
-			{
-				uAdd( lsock.accept() );
-				if (--ec == 0) continue;
-			}
-			
-			for (usr_iter = users.begin(); usr_iter != users.end(); usr_iter++)
-			{
-				t_events = ev.getEvents(usr_iter->first);
-				if (t_events != 0)
-				{
-					usr = usr_iter->second;
-					if (fIsSet(t_events, ev.error))
-					{
-						uRemove(usr, protocol::user_event::BrokenPipe);
-						break;
-					}
-					#ifdef EV_HAS_HANGUP
-					if (fIsSet(t_events, ev.hangup))
-					{
-						uRemove(usr, protocol::user_event::Disconnect);
-						break;
-					}
-					#endif // EV_HAS_HANGUP
-					if (fIsSet(t_events, ev.read))
-					{
-						uRead(usr);
-						if (usr == 0) break;
-					}
-					if (fIsSet(t_events, ev.write))
-					{
-						uWrite(usr);
-						if (usr == 0) break;
-					}
-					
-					if (--ec == 0) break;
-				}
-			}
-			
-			#else // EVENT_BY_*
-			#error No event fetching method defined
-			#endif // EVENT_BY_*
 			
 			// do something
 		}
