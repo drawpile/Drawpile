@@ -224,12 +224,7 @@ struct Identifier
 	~Identifier() throw() { }
 	
 	//! Populate message
-	void set(
-		uint16_t _revision,
-		uint16_t _level,
-		uint8_t _flags,
-		uint8_t _extensions
-	)
+	void set(uint16_t _revision, uint16_t _level, uint8_t _flags, uint8_t _extensions) throw()
 	{
 		revision = _revision,
 		level = _level,
@@ -283,11 +278,7 @@ struct StrokeInfo
 	~StrokeInfo() throw() { }
 	
 	//! Populate message
-	void set(
-		uint16_t _x,
-		uint16_t _y,
-		uint8_t _pressure
-	)
+	void set(uint16_t _x, uint16_t _y, uint8_t _pressure) throw()
 	{
 		x = _x,
 		y = _y,
@@ -360,14 +351,8 @@ struct ToolInfo
 	
 	~ToolInfo() throw() { }
 	
-	void set(
-		uint8_t _tool_id,
-		uint8_t _mode,
-		uint8_t _lo_size,
-		uint8_t _hi_size,
-		uint8_t _lo_hardness,
-		uint8_t _hi_hardness
-	)
+	void set(uint8_t _tool_id, uint8_t _mode, uint8_t _lo_size,
+		uint8_t _hi_size, uint8_t _lo_hardness, uint8_t _hi_hardness) throw()
 	{
 		tool_id = _tool_id,
 		mode = _mode,
@@ -467,12 +452,7 @@ struct Raster
 	~Raster() throw() { delete [] data; }
 	
 	//! Populate message
-	void set(
-		uint32_t _offset,
-		uint32_t _length,
-		uint32_t _size,
-		char* _data
-	)
+	void set(uint32_t _offset, uint32_t _length, uint32_t _size, char* _data) throw()
 	{
 		offset = _offset,
 		length = _length,
@@ -653,13 +633,8 @@ struct Instruction
 	~Instruction() throw() { delete [] data; }
 	
 	//! Populate message
-	void set(
-		uint8_t _command,
-		uint8_t _aux_data,
-		uint8_t _aux_data2,
-		uint8_t _length,
-		char* _data
-	)
+	void set(uint8_t _command, uint8_t _aux_data,
+		uint8_t _aux_data2, uint8_t _length, char* _data) throw()
 	{
 		command = _command,
 		aux_data = _aux_data,
@@ -759,12 +734,7 @@ struct UserInfo
 	~UserInfo() throw() { delete [] name; }
 	
 	//! Populate message
-	void set(
-		uint8_t _mode,
-		uint8_t _event,
-		uint8_t _length,
-		char* _name
-	)
+	void set(uint8_t _mode, uint8_t _event, uint8_t _length, char* _name) throw()
 	{
 		mode = _mode,
 		event = _event,
@@ -817,16 +787,9 @@ struct HostInfo
 	~HostInfo() throw() { }
 	
 	//! Populate message
-	void set(
-		uint8_t _sessions,
-		uint8_t _sessionLimit,
-		uint8_t _users,
-		uint8_t _userLimit,
-		uint8_t _nameLenLimit,
-		uint8_t _maxSubscriptions,
-		uint8_t _requirements,
-		uint8_t _extensions
-	)
+	void set(uint8_t _sessions, uint8_t _sessionLimit, uint8_t _users,
+		uint8_t _userLimit, uint8_t _nameLenLimit, uint8_t _maxSubscriptions,
+		uint8_t _requirements, uint8_t _extensions) throw()
 	{
 		sessions = _sessions,
 		sessionLimit = _sessionLimit,
@@ -886,17 +849,8 @@ struct SessionInfo
 	~SessionInfo() throw() { delete [] title; }
 	
 	//! Populate message
-	void set(
-		uint16_t _width,
-		uint16_t _height,
-		uint8_t _owner,
-		uint8_t _users,
-		uint8_t _limit,
-		uint8_t _mode,
-		uint8_t _flags,
-		uint8_t _length,
-		char* _title
-	)
+	void set(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users,
+		uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title) throw()
 	{
 		width = _width,
 		height = _height,
@@ -957,7 +911,7 @@ struct Acknowledgement
 	~Acknowledgement() throw() { }
 	
 	//! Populate message
-	void set(uint8_t _event)
+	void set(uint8_t _event) throw()
 	{
 		event = _event;
 	}
@@ -990,7 +944,7 @@ struct Error
 	
 	~Error() throw() { }
 	
-	void set(uint16_t _code)
+	void set(uint16_t _code) throw()
 	{
 		code = _code;
 	}
@@ -1034,11 +988,7 @@ struct Deflate
 	~Deflate() throw() { delete [] data; }
 	
 	//! Populate message
-	void set(
-		uint16_t _uncompressed,
-		uint16_t _length,
-		char* _data
-	)
+	void set(uint16_t _uncompressed, uint16_t _length, char* _data) throw()
 	{
 		uncompressed = _uncompressed,
 		length = _length,
@@ -1081,10 +1031,7 @@ struct Chat
 	~Chat() throw() { delete [] data; }
 	
 	//! Populate message
-	void set(
-		uint8_t _length,
-		char* _data
-	)
+	void set(uint8_t _length, char* _data) throw()
 	{
 		length = _length,
 		data = _data;
@@ -1123,11 +1070,7 @@ struct Palette
 	~Palette() throw() { delete [] data; }
 	
 	//! Populate message
-	void set(
-		uint8_t _offset,
-		uint8_t _count,
-		char* _data
-	)
+	void set(uint8_t _offset, uint8_t _count, char* _data) throw()
 	{
 		offset = _offset,
 		count = _count,
@@ -1192,11 +1135,7 @@ struct SessionEvent
 	~SessionEvent() throw() { }
 	
 	//! Populate message
-	void set(
-		uint8_t _action,
-		uint8_t _target,
-		uint8_t _aux
-	)
+	void set(uint8_t _action, uint8_t _target, uint8_t _aux) throw()
 	{
 		action = _action,
 		target = _target,
@@ -1232,12 +1171,7 @@ struct LayerEvent
 	~LayerEvent() throw() { }
 	
 	//! Populate message
-	void set(
-		uint8_t _layer,
-		uint8_t _action,
-		uint8_t _mode,
-		uint8_t _opacity
-	)
+	void set(uint8_t _layer, uint8_t _action, uint8_t _mode, uint8_t _opacity) throw()
 	{
 		layer_id = _layer,
 		action = _action,
@@ -1276,7 +1210,7 @@ struct LayerSelect
 	~LayerSelect() throw() { }
 	
 	//! Populate message
-	void set(uint8_t _layer)
+	void set(uint8_t _layer) throw()
 	{
 		layer_id = _layer;
 	}
