@@ -44,6 +44,7 @@ class Preview : public QGraphicsLineItem {
 		const Brush& brush() const { return brush_; }
 		const Point& from() const { return from_; }
 		const Point& to() const { return to_; }
+		void moveTo(const Point& to);
 
 	private:
 		Brush brush_;

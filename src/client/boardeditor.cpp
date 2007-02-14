@@ -92,11 +92,7 @@ void BoardEditor::startPreview(const Point& point, const Brush& brush)
 void BoardEditor::continuePreview(const Point& point)
 {
 	Q_ASSERT(board_->linepreview_);
-	board_->linepreview_->previewLine(
-			board_->linepreview_->from(),
-			point,
-			board_->linepreview_->brush()
-			);
+	board_->linepreview_->moveTo(point);
 }
 
 void BoardEditor::endPreview()

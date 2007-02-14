@@ -58,5 +58,15 @@ void Preview::previewLine(const Point& from, const Point& to, const Brush& brush
 	show();
 }
 
+/**
+ * Change the end point of the preview stroke
+ * @param to new endpoint
+ */
+void Preview::moveTo(const Point& to)
+{
+	to_ = to;
+	setLine(from_.x(), from_.y(), to_.x(), to_.y());
+}
+
 }
 
