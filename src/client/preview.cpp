@@ -29,7 +29,7 @@ namespace drawingboard {
  * @param parent parent layer
  * @param scene board to which this object belongs to
  */
-Preview::Preview(QGraphicsItem *parent, QGraphicsScene *scene)
+StrokePreview::StrokePreview(QGraphicsItem *parent, QGraphicsScene *scene)
 	: QGraphicsLineItem(parent, scene)
 {
 }
@@ -39,7 +39,7 @@ Preview::Preview(QGraphicsItem *parent, QGraphicsScene *scene)
  * @param to point at which the line ends
  * @param brush brush to draw the line with
  */
-void Preview::previewLine(const Point& from, const Point& to, const Brush& brush)
+void Preview::preview(const Point& from, const Point& to, const Brush& brush)
 {
 	brush_ = brush;
 	from_ = from;
@@ -52,20 +52,90 @@ void Preview::previewLine(const Point& from, const Point& to, const Brush& brush
 		pen.setWidth(rad*2);
 		pen.setCapStyle(Qt::RoundCap);
 	}
-	setPen(pen);
-
-	setLine(from.x(), from.y(), to.x(), to.y());
-	show();
+	initAppearance(pen);
 }
 
 /**
- * Change the end point of the preview stroke
  * @param to new endpoint
  */
 void Preview::moveTo(const Point& to)
 {
 	to_ = to;
-	setLine(from_.x(), from_.y(), to_.x(), to_.y());
+}
+
+void StrokePreview::initAppearance(const QPen& pen)
+{
+	setPen(pen);
+}
+
+void StrokePreview::preview(const Point& from, const Point& to, const Brush& brush)
+{
+	Preview::preview(from, to, brush);
+
+	setLine(from.x(), from.y(), to.x(), to.y());
+	show();
+}
+
+void StrokePreview::moveTo(const Point& to)
+{
+	Preview::moveTo(to);
+	setLine(from().x(), from().y(), to.x(), to.y());
+}
+
+RectanglePreview::RectanglePreview(QGraphicsItem *parent, QGraphicsScene *scene)
+	: QGraphicsRectItem(parent, scene)
+{
+}
+
+void RectanglePreview::initAppearance(const QPen& pen)
+{
+	setPen(pen);
+}
+
+void RectanglePreview::preview(const Point& from, const Point& to, const Brush& brush)
+{
+	Preview::preview(from, to, brush);
+
+	qreal x,w;
+	if(from.x() < to.x()) {
+		x = from.x();
+		w = to.x() - from.x();
+	} else {
+		x = to.x();
+		w = from.x() - to.x();
+	}
+	qreal y,h;
+	if(from.y() < to.y()) {
+		y = from.y();
+		h = to.y() - from.y();
+	} else {
+		y = to.y();
+		h = from.y() - to.y();
+	}
+	setRect(x,y,w,h);
+	show();
+}
+
+void RectanglePreview::moveTo(const Point& to)
+{
+	Preview::moveTo(to);
+	qreal x,w;
+	if(from().x() < to.x()) {
+		x = from().x();
+		w = to.x() - from().x();
+	} else {
+		x = to.x();
+		w = from().x() - to.x();
+	}
+	qreal y,h;
+	if(from().y() < to.y()) {
+		y = from().y();
+		h = to.y() - from().y();
+	} else {
+		y = to.y();
+		h = from().y() - to.y();
+	}
+	setRect(x,y,w,h);
 }
 
 }

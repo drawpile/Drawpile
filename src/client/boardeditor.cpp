@@ -82,24 +82,33 @@ QColor BoardEditor::colorAt(const QPoint& point)
 		return QColor(-1,-1,-1);
 }
 
-void BoardEditor::startPreview(const Point& point, const Brush& brush)
+/**
+ * @param tool tool type to use
+ * @param point starting point
+ * @param brush brush to preview with
+ */
+void BoardEditor::startPreview(tools::Type tool, const Point& point, const Brush& brush)
 {
-	Q_ASSERT(board_->linepreview_ == 0);
-	board_->linepreview_ = new Preview(user_->layer(), board_);
-	board_->linepreview_->previewLine(point,point, brush);
+	Q_ASSERT(board_->toolpreview_ == 0);
+	Q_ASSERT(tool == tools::LINE || tool == tools::RECTANGLE);
+	if(tool == tools::LINE)
+		board_->toolpreview_ = new StrokePreview(user_->layer(), board_);
+	else
+		board_->toolpreview_ = new RectanglePreview(user_->layer(), board_);
+	board_->toolpreview_->preview(point,point, brush);
 }
 
 void BoardEditor::continuePreview(const Point& point)
 {
-	Q_ASSERT(board_->linepreview_);
-	board_->linepreview_->moveTo(point);
+	Q_ASSERT(board_->toolpreview_);
+	board_->toolpreview_->moveTo(point);
 }
 
 void BoardEditor::endPreview()
 {
-	Q_ASSERT(board_->linepreview_);
-	delete board_->linepreview_;
-	board_->linepreview_ = 0;
+	Q_ASSERT(board_->toolpreview_);
+	delete board_->toolpreview_;
+	board_->toolpreview_ = 0;
 }
 
 /**

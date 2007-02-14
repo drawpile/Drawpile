@@ -27,7 +27,7 @@
 namespace drawingboard {
 
 Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
-	: QGraphicsScene(parent), image_(0),localuser_(-1), linepreview_(0), brushsrc_(brush), colorsrc_(color)
+	: QGraphicsScene(parent), image_(0),localuser_(-1), toolpreview_(0), brushsrc_(brush), colorsrc_(color)
 {
 	setItemIndexMethod(NoIndex);
 }
@@ -173,13 +173,13 @@ void Board::addPreview(const Point& point)
 
 	Preview *pre;
 	if(previewcache_.isEmpty())
-		pre = new Preview(user->layer(), this);
+		pre = new StrokePreview(user->layer(), this);
 	else
 		pre = previewcache_.dequeue();
 	if(previewstarted_) {
-		pre->previewLine(lastpreview_, point, brushsrc_->getBrush());
+		pre->preview(lastpreview_, point, brushsrc_->getBrush());
 	} else {
-		pre->previewLine(point, point, brushsrc_->getBrush());
+		pre->preview(point, point, brushsrc_->getBrush());
 		previewstarted_ = true;
 	}
 	lastpreview_ = point;
@@ -222,7 +222,7 @@ void Board::flushPreviews()
 {
 	while(previews_.isEmpty()==false) {
 		Preview *p = previews_.dequeue();
-		p->hide();
+		p->hidePreview();
 		previewcache_.enqueue(p);
 	}
 }
@@ -250,7 +250,7 @@ void Board::userStroke(int user, const Point& point)
 
 	if(user == localuser_ && previews_.isEmpty() == false) {
 		Preview *pre = previews_.dequeue();
-		pre->hide();
+		pre->hidePreview();
 		previewcache_.enqueue(pre);
 	}
 }

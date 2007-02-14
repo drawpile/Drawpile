@@ -38,7 +38,7 @@ namespace drawingboard {
  */
 namespace tools {
 
-enum Type {BRUSH, ERASER, PICKER, LINE};
+enum Type {BRUSH, ERASER, PICKER, LINE, RECTANGLE};
 
 //! Base class for all tools
 /**
@@ -121,20 +121,43 @@ class ColorPicker : public Tool {
 		void end();
 };
 
-//! Line tool
+//! Base class for complex tools
 /**
- * The line is not drawn until \a end() is called.
+ * This is a base class for tools that have special previewing
+ * needs.
  */
-class Line : public Tool {
+class ComplexBase : public Tool {
 	public:
-		Line() : Tool(LINE, false) {}
+		ComplexBase(Type type) : Tool(type, false) {}
 
 		void begin(const drawingboard::Point& point);
 		void motion(const drawingboard::Point& point);
 		void end();
-	private:
+
+	protected:
+		virtual void commit() = 0;
+
 		drawingboard::Point start_;
 		drawingboard::Point end_;
+};
+
+//! Line tool
+class Line : public ComplexBase {
+	public:
+		Line() : ComplexBase(LINE) {}
+
+	protected:
+		void commit();
+
+};
+
+//! Rectangle tool
+class Rectangle : public ComplexBase {
+	public:
+		Rectangle() : ComplexBase(RECTANGLE) {}
+
+	protected:
+		void commit();
 };
 
 }

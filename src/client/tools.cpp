@@ -51,11 +51,13 @@ Tool *Tool::get(Type type)
 	static Tool *eraser = new Eraser();
 	static Tool *picker = new ColorPicker();
 	static Line *line = new Line();
+	static Rectangle *rect = new Rectangle();
 	switch(type) {
 		case BRUSH: return brush;
 		case ERASER: return eraser;
 		case PICKER: return picker;
 		case LINE: return line;
+		case RECTANGLE: return rect;
 	}
 	return 0;
 }
@@ -98,27 +100,43 @@ void ColorPicker::end()
 {
 }
 
-void Line::begin(const drawingboard::Point& point)
+void ComplexBase::begin(const drawingboard::Point& point)
 {
-	editor_->startPreview(point, editor_->localBrush());
+	editor_->startPreview(type(), point, editor_->localBrush());
 	start_ = point;
 	end_ = point;
 }
 
-void Line::motion(const drawingboard::Point& point)
+void ComplexBase::motion(const drawingboard::Point& point)
 {
 	editor_->continuePreview(point);
 	end_ = point;
 }
 
-void Line::end()
+void ComplexBase::end()
 {
 	editor_->endPreview();
 	drawingboard::Brush brush = editor_->localBrush();
 	if(editor_->isCurrentBrush(brush) == false)
 		editor_->setTool(brush);
+	commit();
+}
+
+void Line::commit()
+{
 	editor_->addStroke(start_);
 	editor_->addStroke(end_);
+	editor_->endStroke();
+}
+
+void Rectangle::commit()
+{
+	using drawingboard::Point;
+	editor_->addStroke(start_);
+	editor_->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
+	editor_->addStroke(end_);
+	editor_->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
+	editor_->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
 	editor_->endStroke();
 }
 

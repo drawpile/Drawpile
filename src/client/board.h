@@ -120,7 +120,7 @@ class Board : public QGraphicsScene
 		QQueue<Preview*> previewcache_;
 		bool previewstarted_;
 		Point lastpreview_;
-		Preview *linepreview_;
+		Preview *toolpreview_;
 
 		interface::BrushSource *brushsrc_;
 		interface::ColorSource *colorsrc_;

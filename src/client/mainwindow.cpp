@@ -937,6 +937,8 @@ void MainWindow::selectTool(QAction *tool)
 		type = tools::PICKER;
 	} else if(tool == linetool_) {
 		type = tools::LINE;
+	} else if(tool == recttool_) {
+		type = tools::RECTANGLE;
 	} else {
 		return;
 	}
@@ -1032,6 +1034,9 @@ void MainWindow::initActions()
 	linetool_ = new QAction(QIcon(":icons/todo-line.png"),tr("&Line"), this);
 	linetool_->setCheckable(true);
 	linetool_->setShortcut(QKeySequence("U"));
+	recttool_ = new QAction(QIcon(":icons/draw-rectangle.png"),tr("&Rectangle"), this);
+	recttool_->setCheckable(true);
+	recttool_->setShortcut(QKeySequence("R"));
 
 	// View actions
 	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom &in"), this);
@@ -1055,6 +1060,7 @@ void MainWindow::initActions()
 	drawingtools_->addAction(erasertool_);
 	drawingtools_->addAction(pickertool_);
 	drawingtools_->addAction(linetool_);
+	drawingtools_->addAction(recttool_);
 	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Tool cursor settings
@@ -1114,6 +1120,7 @@ void MainWindow::createMenus()
 	toolsmenu->addAction(erasertool_);
 	toolsmenu->addAction(pickertool_);
 	toolsmenu->addAction(linetool_);
+	toolsmenu->addAction(recttool_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
 	toolsmenu->addAction(togglecrosshair_);
@@ -1149,6 +1156,7 @@ void MainWindow::createToolbars()
 	drawtools->addAction(erasertool_);
 	drawtools->addAction(pickertool_);
 	drawtools->addAction(linetool_);
+	drawtools->addAction(recttool_);
 	drawtools->addSeparator();
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);

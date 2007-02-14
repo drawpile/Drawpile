@@ -25,6 +25,7 @@
 class QPoint;
 
 #include "brush.h"
+#include "tools.h"
 
 namespace network {
 	class SessionState;
@@ -73,8 +74,8 @@ class BoardEditor {
 		//! Get color from the board at the specified coordinates
 		QColor colorAt(const QPoint& point);
 
-		//! Start a (line) preview
-		void startPreview(const Point& point, const Brush& brush);
+		//! Start a preview
+		void startPreview(tools::Type tool, const Point& point, const Brush& brush);
 
 		//! Continue the preview
 		void continuePreview(const Point& point);

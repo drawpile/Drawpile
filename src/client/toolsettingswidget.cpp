@@ -49,6 +49,10 @@ ToolSettings::ToolSettings(QWidget *parent)
 	linesettings_ = new tools::LineSettings("line", tr("Line"));
 	widgets_->addWidget(linesettings_->createUi(this));
 
+	// Create settings widget for line
+	rectsettings_ = new tools::LineSettings("rectangle", tr("Rectangle"));
+	widgets_->addWidget(rectsettings_->createUi(this));
+
 
 }
 
@@ -58,6 +62,7 @@ ToolSettings::~ToolSettings()
 	delete erasersettings_;
 	delete pickersettings_;
 	delete linesettings_;
+	delete rectsettings_;
 }
 
 /**
@@ -70,6 +75,7 @@ void ToolSettings::setTool(tools::Type tool) {
 		case tools::ERASER: currenttool_ = erasersettings_; break;
 		case tools::PICKER: currenttool_ = pickersettings_; break;
 		case tools::LINE: currenttool_ = linesettings_; break;
+		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
 	}
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());
