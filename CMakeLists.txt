@@ -31,7 +31,7 @@ option ( WSA "Enable WSA event support" OFF )
 
 option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
 
-option ( WSA_SOCKETS "Use WSA sockets" OFF )
+option ( WSA_SOCKETS "Use WSA sockets" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Disable any and all optimizations" ON )

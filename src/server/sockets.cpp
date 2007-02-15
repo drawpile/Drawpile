@@ -615,8 +615,9 @@ int Socket::recv(char* buffer, size_t len) throw()
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = len;
+	DWORD flags=0;
 	DWORD rb;
-	int r = WSARecv(sock, &wbuf, 1, &rb, 0, 0, 0);
+	int r = WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
 	if (r != SOCKET_ERROR) r = rb;
 	#else
 	int r = ::recv(sock, buffer, len, 0);
