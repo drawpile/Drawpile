@@ -46,11 +46,11 @@ ToolSettings::ToolSettings(QWidget *parent)
 	widgets_->addWidget(pickersettings_->createUi(this));
 
 	// Create settings widget for line
-	linesettings_ = new tools::LineSettings("line", tr("Line"));
+	linesettings_ = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line);
 	widgets_->addWidget(linesettings_->createUi(this));
 
 	// Create settings widget for line
-	rectsettings_ = new tools::LineSettings("rectangle", tr("Rectangle"));
+	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle);
 	widgets_->addWidget(rectsettings_->createUi(this));
 
 

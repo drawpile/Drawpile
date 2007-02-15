@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>LineSettings</class>
- <widget class="QWidget" name="LineSettings" >
+ <class>SimpleSettings</class>
+ <widget class="QWidget" name="SimpleSettings" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -40,9 +40,6 @@
        <width>16777215</width>
        <height>128</height>
       </size>
-     </property>
-     <property name="previewShape" >
-      <enum>BrushPreview::Line</enum>
      </property>
     </widget>
    </item>

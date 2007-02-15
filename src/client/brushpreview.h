@@ -41,7 +41,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
 	Q_ENUMS(PreviewShape)
 	public:
-		enum PreviewShape {Stroke, Line};
+		enum PreviewShape {Stroke, Line, Rectangle};
 
 		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
 

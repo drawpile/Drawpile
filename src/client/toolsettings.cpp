@@ -22,7 +22,7 @@
 #include "brushpreview.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces
 #include "ui_brushsettings.h"
-#include "ui_linesettings.h"
+#include "ui_simplesettings.h"
 
 namespace tools {
 
@@ -116,13 +116,13 @@ int BrushSettings::getSize() const
 	return ui_->brushsize->value();
 }
 
-LineSettings::LineSettings(QString name, QString title)
-	: ToolSettings(name,title)
+SimpleSettings::SimpleSettings(QString name, QString title, Type type)
+	: ToolSettings(name,title), type_(type)
 {
-	ui_ = new Ui_LineSettings();
+	ui_ = new Ui_SimpleSettings();
 }
 
-LineSettings::~LineSettings()
+SimpleSettings::~SimpleSettings()
 {
 	if(ui_) {
 		// Remember settings
@@ -136,12 +136,18 @@ LineSettings::~LineSettings()
 	}
 }
 
-QWidget *LineSettings::createUi(QWidget *parent)
+QWidget *SimpleSettings::createUi(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
 	ui_->setupUi(widget);
 	widget->hide();
 	setUiWidget(widget);
+
+	// Set proper preview shape
+	if(type_==Line)
+		ui_->preview->setPreviewShape(BrushPreview::Line);
+	else if(type_==Rectangle)
+		ui_->preview->setPreviewShape(BrushPreview::Rectangle);
 
 	// Load previous settings
 	QSettings cfg;
@@ -164,22 +170,22 @@ QWidget *LineSettings::createUi(QWidget *parent)
 	return widget;
 }
 
-void LineSettings::setForeground(const QColor& color)
+void SimpleSettings::setForeground(const QColor& color)
 {
 	ui_->preview->setColor1(color);
 }
 
-void LineSettings::setBackground(const QColor& color)
+void SimpleSettings::setBackground(const QColor& color)
 {
 	ui_->preview->setColor2(color);
 }
 
-const drawingboard::Brush& LineSettings::getBrush() const
+const drawingboard::Brush& SimpleSettings::getBrush() const
 {
 	return ui_->preview->brush();
 }
 
-int LineSettings::getSize() const
+int SimpleSettings::getSize() const
 {
 	return ui_->brushsize->value();
 }

@@ -108,17 +108,32 @@ void BrushPreview::updatePreview()
 	const int strokeh = height() / 4;
 	const int offx = width()/8;
 	const int offy = height()/2;
-	const double dphase = (2*M_PI)/double(strokew);
-	double phase = 0;
-	for(int x=0;x<strokew;x++, phase += dphase) {
-		const qreal fx = x/qreal(strokew);
-		qreal pressure = ((fx*fx) - (fx*fx*fx))*6.756;
-		if(pressure<0)
-			pressure = 0;
-		else if(pressure>1)
-			pressure = 1;
-		const int y = shape_==Stroke?(qRound(sin(phase) * strokeh)):0;
-		brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
+	if(shape_ == Stroke) {
+		const double dphase = (2*M_PI)/double(strokew);
+		double phase = 0;
+		for(int x=0;x<strokew;x++, phase += dphase) {
+			const qreal fx = x/qreal(strokew);
+			qreal pressure = ((fx*fx) - (fx*fx*fx))*6.756;
+			if(pressure<0)
+				pressure = 0;
+			else if(pressure>1)
+				pressure = 1;
+			const int y = qRound(sin(phase) * strokeh);
+			brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
+		}
+	} else if(shape_ == Line) {
+		for(int x=0;x<strokew;x++) {
+			brush_.draw(preview_,drawingboard::Point(offx+x,offy,1));
+		}
+	} else {
+		for(int x=0;x<strokew;x++) {
+			brush_.draw(preview_,drawingboard::Point(offx+x,offy-strokeh,1));
+			brush_.draw(preview_,drawingboard::Point(offx+x,offy+strokeh,1));
+		}
+		for(int y=-strokeh;y<strokeh;y++) {
+			brush_.draw(preview_,drawingboard::Point(offx,offy+y,1));
+			brush_.draw(preview_,drawingboard::Point(offx+strokew,offy+y,1));
+		}
 	}
 }
 

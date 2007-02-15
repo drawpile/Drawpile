@@ -56,7 +56,7 @@ set (
 )
 
 set ( Client_Resources ui/resources.qrc )
-set ( Client_UIs ui/brushsettings.ui ui/linesettings.ui ui/colordialog.ui
+set ( Client_UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
 	ui/chatbox.ui )
 

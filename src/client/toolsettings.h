@@ -23,7 +23,7 @@
 #include "brush.h"
 
 class Ui_BrushSettings;
-class Ui_LineSettings;
+class Ui_SimpleSettings;
 
 namespace tools {
 
@@ -115,13 +115,15 @@ class BrushSettings : public ToolSettings {
 		bool swapcolors_;
 };
 
-//! Line tool settings
+//! Settings for tools without pressure sensitivity
 /**
  */
-class LineSettings : public ToolSettings {
+class SimpleSettings : public ToolSettings {
 	public:
-		LineSettings(QString name, QString title);
-		~LineSettings();
+		enum Type {Line, Rectangle};
+
+		SimpleSettings(QString name, QString title, Type type);
+		~SimpleSettings();
 
 		QWidget *createUi(QWidget *parent);
 
@@ -132,7 +134,8 @@ class LineSettings : public ToolSettings {
 		int getSize() const;
 
 	private:
-		Ui_LineSettings *ui_;
+		Ui_SimpleSettings *ui_;
+		Type type_;
 };
 
 //! No settings
