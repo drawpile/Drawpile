@@ -51,6 +51,7 @@ void Preview::preview(const Point& from, const Point& to, const Brush& brush)
 	} else {
 		pen.setWidth(rad*2);
 		pen.setCapStyle(Qt::RoundCap);
+		pen.setJoinStyle(Qt::RoundJoin);
 	}
 	initAppearance(pen);
 }
