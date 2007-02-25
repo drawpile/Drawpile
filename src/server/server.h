@@ -50,7 +50,7 @@ typedef boost::shared_ptr<protocol::Message> message_ref;
 /* iterators */
 typedef std::map<uint8_t, Session*>::iterator session_iterator;
 typedef std::map<fd_t, User*>::iterator user_iterator;
-typedef std::multimap<uint8_t, fd_t>::iterator tunnel_iterator;
+typedef std::multimap<fd_t, fd_t>::iterator tunnel_iterator;
 
 //#include <sys/time.h>
 
@@ -85,8 +85,8 @@ protected:
 	std::map<uint8_t, Session*> sessions;
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
-	// first->source, second->target
-	std::multimap<uint8_t, fd_t> tunnel;
+	// source_fd -> target_fd
+	std::multimap<fd_t, fd_t> tunnel;
 	
 	std::set<User*> utimer;
 	
@@ -165,7 +165,7 @@ protected:
 	message_ref msgSyncWait(Session*& session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSessionInfo(Session*& session) const throw();
+	message_ref msgSessionInfo(Session*& session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
@@ -211,9 +211,6 @@ protected:
 	
 	// Break synchronization with user.
 	void breakSync(User*& usr) throw();
-	
-	// Cancel raster request.
-	void cancelSync(User*& usr) throw();
 	
 	//
 	void uJoinSession(User*& usr, Session*& session) throw();

@@ -169,7 +169,7 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 }
 
 inline
-message_ref Server::msgSessionInfo(Session*& session) const throw()
+message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc)
 {
 	protocol::SessionInfo *nfo = new protocol::SessionInfo;
 	
@@ -1141,7 +1141,7 @@ void Server::uTunnelRaster(User*& usr) throw()
 	}
 	
 	// get users
-	std::pair<tunnel_iterator,tunnel_iterator> ft(tunnel.equal_range(usr->id));
+	std::pair<tunnel_iterator,tunnel_iterator> ft(tunnel.equal_range(usr->sock->fd()));
 	if (ft.first == ft.second)
 	{
 		std::cerr << "Un-tunneled raster from: "
@@ -1154,29 +1154,33 @@ void Server::uTunnelRaster(User*& usr) throw()
 		
 		if (!last)
 		{
-			message_ref cancel(new protocol::Cancel);
+			protocol::Cancel *cancel = new protocol::Cancel;
 			cancel->session_id = raster->session_id;
-			uSendMsg(usr, cancel);
+			uSendMsg(usr, message_ref(cancel));
 		}
 		return;
 	}
 	
+	// ACK raster
 	uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 	
 	// Forward to users.
 	tunnel_iterator ti(ft.first);
 	user_iterator ui;
 	User *usr_ptr;
+	
+	message_ref raster_ref(raster);
+	
 	for (; ti != ft.second; ti++)
 	{
 		ui = users.find(ti->second);
 		usr_ptr = ui->second;
-		uSendMsg(usr_ptr, message_ref(raster));
+		uSendMsg(usr_ptr, raster_ref);
 		if (last) usr_ptr->syncing = false;
 	}
 	
-	// Break tunnel if that was the last raster piece.
-	if (last) tunnel.erase(usr->id);
+	// Break tunnel/s if that was the last raster piece.
+	if (last) tunnel.erase(usr->sock->fd());
 	
 	// Avoid premature deletion of raster data.
 	usr->inMsg = 0;
@@ -2117,7 +2121,7 @@ void Server::SyncSession(Session*& session) throw()
 	for (new_i = newc.begin(); new_i != newc.end(); new_i++)
 	{
 		// Create fake tunnel
-		tunnel.insert( std::make_pair(src->id, (*new_i)->sock->fd()) );
+		tunnel.insert( std::make_pair(src->sock->fd(), (*new_i)->sock->fd()) );
 		
 		// add user to normal data propagation.
 		session->users.insert( std::make_pair((*new_i)->id, (*new_i)) );
@@ -2198,8 +2202,6 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	
-	// TODO: Cancel any pending messages related to this user.
-	
 	session->users.erase(usr->id);
 	
 	// remove
@@ -2216,6 +2218,32 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 		}
 		
 		return;
+	}
+	else
+	{
+		// Cancel raster sending for this user
+		User* usr;
+		std::multimap<fd_t, fd_t>::iterator tunnel_i(tunnel.begin());
+		while (tunnel_i != tunnel.end())
+		{
+			if (tunnel_i->second == usr->sock->fd())
+			{
+				// In case we've not cleaned the tunnel properly from dead users.
+				assert(users.find(tunnel_i->first) != users.end());
+				
+				usr = users.find(tunnel_i->first)->second;
+				protocol::Cancel *cancel = new protocol::Cancel;
+				// TODO: Figure out which session it is from
+				//cancel->session_id = session->id;
+				uSendMsg(usr, message_ref(cancel));
+				
+				tunnel.erase(tunnel_i);
+				// iterator was invalidated
+				tunnel_i = tunnel.begin();
+			}
+			else
+				++tunnel_i;
+		}
 	}
 	
 	// Tell session members the user left
@@ -2354,7 +2382,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	// We're the source...
 	tunnel_iterator ti;
 	user_iterator usi;
-	while ((ti = tunnel.find(usr->id)) != tunnel.end())
+	while ((ti = tunnel.find(usr->sock->fd())) != tunnel.end())
 	{
 		usi = users.find(ti->second);
 		if (usi == users.end())
@@ -2365,26 +2393,32 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 			continue;
 		}
 		breakSync(usi->second);
-		tunnel.erase(ti->first);
+		tunnel.erase(ti);
 	}
 	
 	/*
 	 * TODO: Somehow figure out which of the sources are now without a tunnel
 	 * and send Cancel to them.
-	 *
 	 */
-	do
+	ti = tunnel.begin();
+	while (ti != tunnel.end())
 	{
-		for (ti = tunnel.begin(); ti != tunnel.end(); ti++)
+		if (ti->second == usr->sock->fd())
 		{
-			if (ti->second == usr->sock->fd())
-			{
-				tunnel.erase(ti->first);
-				break;
-			}
+			// TODO: Send cancel
+			/*
+			protocol::Cancel *cancel = new protocol::Cancel;
+			cancel->session_id = session->id;
+			uSendMsg(src_usr, message_ref(cancel));
+			*/
+			
+			tunnel.erase(ti);
+			// iterator was invalidated
+			ti = tunnel.begin();
 		}
+		else
+			++ti;
 	}
-	while (ti != tunnel.end());
 	
 	// clean sessions
 	Session *session;
