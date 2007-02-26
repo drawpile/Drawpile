@@ -149,42 +149,43 @@ message_ref Server::msgAuth(User*& usr, uint8_t session) const throw(std::bad_al
 	uRegenSeed(usr);
 	
 	memcpy(auth->seed, usr->seed, protocol::password_seed_size);
+	
 	return message_ref(auth);
 }
 inline
 message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 {
-	protocol::HostInfo *hostnfo = new protocol::HostInfo;
-	
-	hostnfo->sessions = sessions.size();
-	hostnfo->sessionLimit = session_limit;
-	hostnfo->users = users.size();
-	hostnfo->userLimit = user_limit;
-	hostnfo->nameLenLimit = name_len_limit;
-	hostnfo->maxSubscriptions = max_subscriptions;
-	hostnfo->requirements = requirements;
-	hostnfo->extensions = extensions;
-	
-	return message_ref(hostnfo);
+	return message_ref(
+		new protocol::HostInfo(
+			sessions.size(),
+			session_limit,
+			users.size(),
+			user_limit,
+			name_len_limit,
+			max_subscriptions,
+			requirements,
+			extensions
+		)
+	);
 }
 
 inline
 message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc)
 {
-	protocol::SessionInfo *nfo = new protocol::SessionInfo;
+	protocol::SessionInfo *nfo = new protocol::SessionInfo(
+		session->width,
+		session->height,
+		session->owner,
+		session->users.size(),
+		session->limit,
+		session->mode,
+		session->flags,
+		session->len,
+		new char[session->len]
+	);
 	
 	nfo->session_id = session->id;
 	
-	nfo->width = session->width;
-	nfo->height = session->height;
-	
-	nfo->owner = session->owner;
-	nfo->users = session->users.size();
-	nfo->limit = session->limit;
-	nfo->mode = session->mode;
-	nfo->length = session->len;
-	
-	nfo->title = new char[session->len];
 	memcpy(nfo->title, session->title, session->len);
 	
 	return message_ref(nfo);
@@ -193,8 +194,7 @@ message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc
 inline
 message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::bad_alloc)
 {
-	protocol::Error *err = new protocol::Error;
-	err->code = code;
+	protocol::Error *err = new protocol::Error(code);
 	err->session_id = session;
 	return message_ref(err);
 }
@@ -202,9 +202,8 @@ message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::ba
 inline
 message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_alloc)
 {
-	protocol::Acknowledgement *ack = new protocol::Acknowledgement;
+	protocol::Acknowledgement *ack = new protocol::Acknowledgement(type);
 	ack->session_id = session;
-	ack->event = type;
 	return message_ref(ack);
 }
 
@@ -213,9 +212,9 @@ message_ref Server::msgSyncWait(Session*& session) const throw(std::bad_alloc)
 {
 	assert(session != 0);
 	
-	protocol::SyncWait *sync = new protocol::SyncWait;
-	sync->session_id = session->id;
-	return message_ref(sync);
+	message_ref sync_ref(new protocol::SyncWait);
+	sync_ref->session_id = session->id;
+	return sync_ref;
 }
 
 void Server::uWrite(User*& usr) throw()
@@ -514,18 +513,16 @@ message_ref Server::uCreateEvent(User*& usr, Session*& session, uint8_t event) c
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	protocol::UserInfo *uevent = new protocol::UserInfo;
+	protocol::UserInfo *uevent = new protocol::UserInfo(
+		session->mode,
+		event,
+		usr->nlen,
+		new char[usr->nlen]
+	);
 	
 	uevent->user_id = usr->id;
-	
 	uevent->session_id = session->id;
 	
-	uevent->event = event;
-	uevent->mode = session->mode;
-	
-	uevent->length = usr->nlen;
-	
-	uevent->name = new char[usr->nlen];
 	memcpy(uevent->name, usr->name, usr->nlen);
 	
 	return message_ref(uevent);
@@ -1132,9 +1129,9 @@ void Server::uTunnelRaster(User*& usr) throw()
 		
 		if (!last)
 		{
-			message_ref cancel(new protocol::Cancel);
-			cancel->session_id = raster->session_id;
-			uSendMsg(usr, cancel);
+			message_ref cancel_ref(new protocol::Cancel);
+			cancel_ref->session_id = raster->session_id;
+			uSendMsg(usr, cancel_ref);
 		}
 		
 		return;
@@ -1154,9 +1151,9 @@ void Server::uTunnelRaster(User*& usr) throw()
 		
 		if (!last)
 		{
-			protocol::Cancel *cancel = new protocol::Cancel;
-			cancel->session_id = raster->session_id;
-			uSendMsg(usr, message_ref(cancel));
+			message_ref cancel_ref(new protocol::Cancel);
+			cancel_ref->session_id = raster->session_id;
+			uSendMsg(usr, cancel_ref);
 		}
 		return;
 	}
@@ -2043,9 +2040,9 @@ void Server::SyncSession(Session*& session) throw()
 	User* src(session->users.begin()->second);
 	
 	// request raster
-	message_ref syncreq(new protocol::Synchronize);
-	syncreq->session_id = session->id;
-	uSendMsg(src, syncreq);
+	message_ref sync_ref(new protocol::Synchronize);
+	sync_ref->session_id = session->id;
+	uSendMsg(src, sync_ref);
 	
 	// Release clients from syncwait...
 	Propagate(session, msgAck(session->id, protocol::type::SyncWait));
@@ -2058,7 +2055,7 @@ void Server::SyncSession(Session*& session) throw()
 		session->waitingSync.pop_front();
 	}
 	
-	message_ref msg;
+	//message_ref msg;
 	protocol::LayerSelect *layer=0;
 	protocol::SessionSelect *select=0;
 	std::vector<message_ref> msg_queue;
@@ -2086,11 +2083,10 @@ void Server::SyncSession(Session*& session) throw()
 			
 			if (usr_ptr->layer != protocol::null_layer)
 			{
-				layer = new protocol::LayerSelect;
-				layer->user_id = usr_ptr->id;
-				layer->session_id = session->id;
-				layer->layer_id = usr_ptr->layer;
-				msg_queue.push_back(message_ref(layer));
+				message_ref layer_ref(new protocol::LayerSelect(usr_ptr->layer));
+				layer_ref->user_id = usr_ptr->id;
+				layer_ref->session_id = session->id;
+				msg_queue.push_back(layer_ref);
 			}
 		}
 	}
@@ -2106,15 +2102,10 @@ void Server::SyncSession(Session*& session) throw()
 		}
 	}
 	
-	protocol::SessionEvent *sev=0;
 	message_ref sev_ref;
 	if (session->locked)
 	{
-		sev = new protocol::SessionEvent;
-		sev->action = protocol::session_event::Lock;
-		sev->target = protocol::null_user;
-		sev->aux = 0;
-		sev_ref.reset(sev);
+		sev_ref.reset(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0));
 	}
 	
 	// put waiting clients to normal data propagation and create raster tunnels.
@@ -2185,9 +2176,9 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 		// session is empty
 		session->users.insert( std::make_pair(usr->id, usr) );
 		
-		protocol::Raster *raster = new protocol::Raster;
-		raster->session_id = session->id;
-		uSendMsg(usr, message_ref(raster));
+		message_ref raster_ref(new protocol::Raster);
+		raster_ref->session_id = session->id;
+		uSendMsg(usr, raster_ref);
 	}
 }
 
@@ -2232,10 +2223,10 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 				assert(users.find(tunnel_i->first) != users.end());
 				
 				usr = users.find(tunnel_i->first)->second;
-				protocol::Cancel *cancel = new protocol::Cancel;
+				message_ref cancel_ref(new protocol::Cancel);
 				// TODO: Figure out which session it is from
 				//cancel->session_id = session->id;
-				uSendMsg(usr, message_ref(cancel));
+				uSendMsg(usr, cancel_ref);
 				
 				tunnel.erase(tunnel_i);
 				// iterator was invalidated
@@ -2256,11 +2247,9 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 			session->owner = protocol::null_user;
 			
 			// Announce owner disappearance.
-			protocol::SessionEvent *sev = new protocol::SessionEvent;
-			sev->session_id = session->id;
-			sev->action = protocol::session_event::Delegate;
-			sev->target = session->owner;
-			Propagate(session, message_ref(sev));
+			message_ref sev_ref(new protocol::SessionEvent(protocol::session_event::Delegate, session->owner, 0));
+			sev_ref->session_id = session->id;
+			Propagate(session, sev_ref);
 		}
 	}
 }
@@ -2407,9 +2396,9 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 		{
 			// TODO: Send cancel
 			/*
-			protocol::Cancel *cancel = new protocol::Cancel;
-			cancel->session_id = session->id;
-			uSendMsg(src_usr, message_ref(cancel));
+			message_ref cancel_ref(new protocol::Cancel);
+			cancel_ref->session_id = session->id;
+			uSendMsg(src_usr, cancel_ref);
 			*/
 			
 			tunnel.erase(ti);
