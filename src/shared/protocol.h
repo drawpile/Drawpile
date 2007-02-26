@@ -214,23 +214,18 @@ struct Identifier
 	: Message//, MemoryStack<Identifier>
 {
 	Identifier() throw()
+		: Message(type::Identifier)
+	{ }
+	
+	Identifier(uint16_t _revision, uint16_t _level, uint8_t _flags, uint8_t _extensions) throw()
 		: Message(type::Identifier),
-		revision(protocol::null_revision),
-		level(protocol::null_implementation),
-		flags(client::None),
-		extensions(extensions::None)
+		revision(_revision),
+		level(_level),
+		flags(_flags),
+		extensions(_extensions)
 	{ }
 	
 	~Identifier() throw() { }
-	
-	//! Populate message
-	void set(uint16_t _revision, uint16_t _level, uint8_t _flags, uint8_t _extensions) throw()
-	{
-		revision = _revision,
-		level = _level,
-		flags = _flags,
-		extensions = _extensions;
-	}
 	
 	/* unique data */
 	
@@ -269,21 +264,18 @@ struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
+		: Message(type::StrokeInfo, message::isUser|message::isBundling|message::isSelected)
+	{ }
+	
+	StrokeInfo(uint16_t _x, uint16_t _y, uint8_t _pressure) throw()
 		: Message(type::StrokeInfo,
 			message::isUser|message::isBundling|message::isSelected),
-		x(0),
-		y(0)
+		x(_x),
+		y(_y),
+		pressure(_pressure)
 	{ }
 	
 	~StrokeInfo() throw() { }
-	
-	//! Populate message
-	void set(uint16_t _x, uint16_t _y, uint8_t _pressure) throw()
-	{
-		x = _x,
-		y = _y,
-		pressure = _pressure;
-	}
 	
 	/* unique data */
 	
@@ -312,8 +304,7 @@ struct StrokeEnd
 	: Message//, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
-		: Message(type::StrokeEnd,
-			message::isUser|message::isSelected)
+		: Message(type::StrokeEnd, message::isUser|message::isSelected)
 	{ }
 	
 	~StrokeEnd() throw() { }
@@ -340,27 +331,20 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
+		: Message(type::ToolInfo, message::isUser|message::isSelected)
+	{ }
+	
+	ToolInfo(uint8_t _tool_id, uint8_t _mode, uint8_t _lo_size, uint8_t _hi_size, uint8_t _lo_hardness, uint8_t _hi_hardness) throw()
 		: Message(type::ToolInfo, message::isUser|message::isSelected),
-		tool_id(tool_type::None),
-		mode(tool_mode::Normal),
-		lo_size(0),
-		hi_size(0),
-		lo_hardness(0),
-		hi_hardness(0)
+		tool_id(_tool_id),
+		mode(_mode),
+		lo_size(_lo_size),
+		hi_size(_hi_size),
+		lo_hardness(_lo_hardness),
+		hi_hardness(_hi_hardness)
 	{ }
 	
 	~ToolInfo() throw() { }
-	
-	void set(uint8_t _tool_id, uint8_t _mode, uint8_t _lo_size,
-		uint8_t _hi_size, uint8_t _lo_hardness, uint8_t _hi_hardness) throw()
-	{
-		tool_id = _tool_id,
-		mode = _mode,
-		lo_size = _lo_size,
-		hi_size = _hi_size,
-		lo_hardness = _lo_hardness,
-		hi_hardness = _hi_hardness;
-	}
 	
 	/* unique data */
 	
@@ -442,23 +426,18 @@ struct Raster
 	: Message//, MemoryStack<Raster>
 {
 	Raster() throw()
+		: Message(type::Raster, message::isSession)
+	{ }
+	
+	Raster(uint32_t _offset, uint32_t _length, uint32_t _size, char* _data) throw()
 		: Message(type::Raster, message::isSession),
-		offset(0),
-		length(0),
-		size(0),
-		data(0)
+		offset(_offset),
+		length(_length),
+		size(_size),
+		data(_data)
 	{ }
 	
 	~Raster() throw() { delete [] data; }
-	
-	//! Populate message
-	void set(uint32_t _offset, uint32_t _length, uint32_t _size, char* _data) throw()
-	{
-		offset = _offset,
-		length = _length,
-		size = _size,
-		data = _data;
-	}
 	
 	/* unique data */
 	
@@ -625,23 +604,19 @@ struct Instruction
 	: Message//, MemoryStack<Instruction>
 {
 	Instruction() throw()
+		: Message(type::Instruction, message::isUser|message::isSession)
+	{ }
+	
+	Instruction(uint8_t _command, uint8_t _aux_data, uint8_t _aux_data2, uint8_t _length, char* _data) throw()
 		: Message(type::Instruction, message::isUser|message::isSession),
-		length(0),
-		data(0)
+		command(_command),
+		aux_data(_aux_data),
+		aux_data2(_aux_data2),
+		length(_length),
+		data(_data)
 	{ }
 	
 	~Instruction() throw() { delete [] data; }
-	
-	//! Populate message
-	void set(uint8_t _command, uint8_t _aux_data,
-		uint8_t _aux_data2, uint8_t _length, char* _data) throw()
-	{
-		command = _command,
-		aux_data = _aux_data,
-		aux_data2 = _aux_data2,
-		length = _length,
-		data = _data;
-	}
 	
 	/* unique data */
 	
@@ -724,23 +699,18 @@ struct UserInfo
 	: Message//, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
+		: Message(type::UserInfo, message::isUser|message::isSession)
+	{ }
+	
+	UserInfo(uint8_t _mode, uint8_t _event, uint8_t _length, char* _name) throw()
 		: Message(type::UserInfo, message::isUser|message::isSession),
-		mode(user_mode::None),
-		event(user_event::None),
-		length(0),
-		name(0)
+		mode(_mode),
+		event(_event),
+		length(_length),
+		name(_name)
 	{ }
 	
 	~UserInfo() throw() { delete [] name; }
-	
-	//! Populate message
-	void set(uint8_t _mode, uint8_t _event, uint8_t _length, char* _name) throw()
-	{
-		mode = _mode,
-		event = _event,
-		length = _length,
-		name = _name;
-	}
 	
 	/* unique data */
 	
@@ -773,33 +743,22 @@ struct HostInfo
 	: Message//, MemoryStack<HostInfo>
 {
 	HostInfo() throw()
+		: Message(type::HostInfo)
+	{ }
+	
+	HostInfo(uint8_t _sessions, uint8_t _sessionLimit, uint8_t _users, uint8_t _userLimit, uint8_t _nameLenLimit, uint8_t _maxSubscriptions, uint8_t _requirements, uint8_t _extensions) throw()
 		: Message(type::HostInfo),
-		sessions(0),
-		sessionLimit(0),
-		users(0),
-		userLimit(0),
-		nameLenLimit(0),
-		maxSubscriptions(0),
-		requirements(requirements::None),
-		extensions(extensions::None)
+		sessions(_sessions),
+		sessionLimit(_sessionLimit),
+		users(_users),
+		userLimit(_userLimit),
+		nameLenLimit(_nameLenLimit),
+		maxSubscriptions(_maxSubscriptions),
+		requirements(_requirements),
+		extensions(_extensions)
 	{ }
 	
 	~HostInfo() throw() { }
-	
-	//! Populate message
-	void set(uint8_t _sessions, uint8_t _sessionLimit, uint8_t _users,
-		uint8_t _userLimit, uint8_t _nameLenLimit, uint8_t _maxSubscriptions,
-		uint8_t _requirements, uint8_t _extensions) throw()
-	{
-		sessions = _sessions,
-		sessionLimit = _sessionLimit,
-		users = _users,
-		userLimit = _userLimit,
-		nameLenLimit = _nameLenLimit,
-		maxSubscriptions = _maxSubscriptions,
-		requirements = _requirements,
-		extensions = _extensions;
-	}
 	
 	/* unique data */
 	
@@ -834,34 +793,23 @@ struct SessionInfo
 	: Message//, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
+		: Message(type::SessionInfo, message::isSession)
+	{ }
+	
+	SessionInfo(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users, uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title) throw()
 		: Message(type::SessionInfo, message::isSession),
-		width(0),
-		height(0),
-		owner(protocol::null_user),
-		users(0),
-		limit(0),
-		mode(user_mode::None),
-		flags(0),
-		length(0),
-		title(0)
+		width(_width),
+		height(_height),
+		owner(_owner),
+		users(_users),
+		limit(_limit),
+		mode(_mode),
+		flags(_flags),
+		length(_length),
+		title(_title)
 	{ }
 	
 	~SessionInfo() throw() { delete [] title; }
-	
-	//! Populate message
-	void set(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users,
-		uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title) throw()
-	{
-		width = _width,
-		height = _height,
-		owner = _owner,
-		users = _users,
-		limit = _limit,
-		mode = _mode,
-		flags = _flags,
-		length = _length,
-		title = _title;
-	}
 	
 	/* unique data */
 	
@@ -904,17 +852,15 @@ struct Acknowledgement
 	: Message//, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
+		: Message(type::Acknowledgement, message::isSession)
+	{ }
+	
+	Acknowledgement(uint8_t _event) throw()
 		: Message(type::Acknowledgement, message::isSession),
-		event(type::None)
+		event(_event)
 	{ }
 	
 	~Acknowledgement() throw() { }
-	
-	//! Populate message
-	void set(uint8_t _event) throw()
-	{
-		event = _event;
-	}
 	
 	/* unique data */
 	
@@ -937,17 +883,15 @@ struct Error
 	: Message//, MemoryStack<Error>
 {
 	Error() throw()
+		: Message(type::Error, message::isSession)
+	{ }
+	
+	Error(uint16_t _code) throw()
 		: Message(type::Error, message::isSession),
-		code(error::None)
-	{
-	}
+		code(_code)
+	{ }
 	
 	~Error() throw() { }
-	
-	void set(uint16_t _code) throw()
-	{
-		code = _code;
-	}
 	
 	/* unique data */
 	
@@ -979,21 +923,17 @@ struct Deflate
 	: Message//, MemoryStack<Deflate>
 {
 	Deflate() throw()
+		: Message(type::Deflate)
+	{ }
+	
+	Deflate(uint16_t _uncompressed, uint16_t _length, char* _data) throw()
 		: Message(type::Deflate),
-		uncompressed(0),
-		length(0),
-		data(0)
+		uncompressed(_uncompressed),
+		length(_length),
+		data(_data)
 	{ }
 	
 	~Deflate() throw() { delete [] data; }
-	
-	//! Populate message
-	void set(uint16_t _uncompressed, uint16_t _length, char* _data) throw()
-	{
-		uncompressed = _uncompressed,
-		length = _length,
-		data = _data;
-	}
 	
 	/* unique data */
 	
@@ -1023,19 +963,16 @@ struct Chat
 	: Message//, MemoryStack<Chat>
 {
 	Chat() throw()
+		: Message(type::Chat, message::isUser|message::isSession)
+	{ }
+	
+	Chat(uint8_t _length, char* _data) throw()
 		: Message(type::Chat, message::isUser|message::isSession),
-		length(0),
-		data(0)
+		length(_length),
+		data(_data)
 	{ }
 	
 	~Chat() throw() { delete [] data; }
-	
-	//! Populate message
-	void set(uint8_t _length, char* _data) throw()
-	{
-		length = _length,
-		data = _data;
-	}
 	
 	/* unique data */
 	
@@ -1061,21 +998,17 @@ struct Palette
 	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
+		: Message(type::Palette, message::isSession|message::isUser)
+	{ }
+	
+	Palette(uint8_t _offset, uint8_t _count, char* _data) throw()
 		: Message(type::Palette, message::isSession|message::isUser),
-		offset(0),
-		count(0),
-		data(0)
+		offset(_offset),
+		count(_count),
+		data(_data)
 	{ }
 	
 	~Palette() throw() { delete [] data; }
-	
-	//! Populate message
-	void set(uint8_t _offset, uint8_t _count, char* _data) throw()
-	{
-		offset = _offset,
-		count = _count,
-		data = _data;
-	}
 	
 	/* unique data */
 	
@@ -1107,8 +1040,7 @@ struct SessionSelect
 	: Message//, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
-		: Message(type::SessionSelect,
-			message::isUser|message::isSession)
+		: Message(type::SessionSelect, message::isUser|message::isSession)
 	{ }
 	
 	~SessionSelect() throw() { }
@@ -1127,20 +1059,17 @@ struct SessionEvent
 	: Message//, MemoryStack<Palette>
 {
 	SessionEvent() throw()
+		: Message(type::SessionEvent, message::isSession)
+	{ }
+	
+	SessionEvent(uint8_t _action, uint8_t _target, uint8_t _aux) throw()
 		: Message(type::SessionEvent, message::isSession),
-		target(protocol::null_user),
-		aux(protocol::null_layer)
+		action(_action),
+		target(_target),
+		aux(_aux)
 	{ }
 	
 	~SessionEvent() throw() { }
-	
-	//! Populate message
-	void set(uint8_t _action, uint8_t _target, uint8_t _aux) throw()
-	{
-		action = _action,
-		target = _target,
-		aux = _aux;
-	}
 	
 	/* unique data */
 	
@@ -1168,27 +1097,26 @@ struct LayerEvent
 		: Message(type::LayerEvent, message::isSession)
 	{ }
 	
-	~LayerEvent() throw() { }
+	LayerEvent(uint8_t _layer_id, uint8_t _action, uint8_t _mode, uint8_t _opacity) throw()
+		: Message(type::LayerEvent, message::isSession),
+		layer_id(_layer_id),
+		action(_action),
+		mode(_mode),
+		opacity(_opacity)
+	{ }
 	
-	//! Populate message
-	void set(uint8_t _layer, uint8_t _action, uint8_t _mode, uint8_t _opacity) throw()
-	{
-		layer_id = _layer,
-		action = _action,
-		mode = _mode,
-		opacity = _opacity;
-	}
+	~LayerEvent() throw() { }
 	
 	/* unique data */
 	
 	uint8_t
-		//! Layer identifier
+		//! Identifier
 		layer_id,
-		//! Action to perform
+		//! Action to perform (see: protocol::layer_event)
 		action,
-		//! Layer composition mode
+		//! Composition mode (see: protocol::tool_mode)
 		mode,
-		//! Layer opacity
+		//! Opacity
 		opacity;
 	
 	/* functions */
@@ -1207,13 +1135,12 @@ struct LayerSelect
 		: Message(type::LayerSelect, message::isUser|message::isSelected)
 	{ }
 	
-	~LayerSelect() throw() { }
+	LayerSelect(uint8_t _layer_id) throw()
+		: Message(type::LayerSelect, message::isUser|message::isSelected),
+		layer_id(_layer_id)
+	{ }
 	
-	//! Populate message
-	void set(uint8_t _layer) throw()
-	{
-		layer_id = _layer;
-	}
+	~LayerSelect() throw() { }
 	
 	/* unique data */
 	
