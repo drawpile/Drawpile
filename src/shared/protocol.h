@@ -73,8 +73,6 @@ struct Message
 protected:
 	Message(uint8_t _type, uint8_t _flags=message::None) throw()
 		: type(_type),
-		user_id(protocol::null_user),
-		session_id(protocol::Global),
 		modifiers(_flags),
 		next(0),
 		prev(0)
@@ -217,6 +215,7 @@ struct Identifier
 		: Message(type::Identifier)
 	{ }
 	
+	//! Constructor with params for payload
 	Identifier(uint16_t _revision, uint16_t _level, uint8_t _flags, uint8_t _extensions) throw()
 		: Message(type::Identifier),
 		revision(_revision),
@@ -267,6 +266,7 @@ struct StrokeInfo
 		: Message(type::StrokeInfo, message::isUser|message::isBundling|message::isSelected)
 	{ }
 	
+	//! Constructor with params for payload
 	StrokeInfo(uint16_t _x, uint16_t _y, uint8_t _pressure) throw()
 		: Message(type::StrokeInfo,
 			message::isUser|message::isBundling|message::isSelected),
@@ -334,6 +334,7 @@ struct ToolInfo
 		: Message(type::ToolInfo, message::isUser|message::isSelected)
 	{ }
 	
+	//! Constructor with params for payload
 	ToolInfo(uint8_t _tool_id, uint8_t _mode, uint8_t _lo_size, uint8_t _hi_size, uint8_t _lo_hardness, uint8_t _hi_hardness) throw()
 		: Message(type::ToolInfo, message::isUser|message::isSelected),
 		tool_id(_tool_id),
@@ -429,6 +430,7 @@ struct Raster
 		: Message(type::Raster, message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	Raster(uint32_t _offset, uint32_t _length, uint32_t _size, char* _data) throw()
 		: Message(type::Raster, message::isSession),
 		offset(_offset),
@@ -607,6 +609,7 @@ struct Instruction
 		: Message(type::Instruction, message::isUser|message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	Instruction(uint8_t _command, uint8_t _aux_data, uint8_t _aux_data2, uint8_t _length, char* _data) throw()
 		: Message(type::Instruction, message::isUser|message::isSession),
 		command(_command),
@@ -702,6 +705,7 @@ struct UserInfo
 		: Message(type::UserInfo, message::isUser|message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	UserInfo(uint8_t _mode, uint8_t _event, uint8_t _length, char* _name) throw()
 		: Message(type::UserInfo, message::isUser|message::isSession),
 		mode(_mode),
@@ -746,6 +750,7 @@ struct HostInfo
 		: Message(type::HostInfo)
 	{ }
 	
+	//! Constructor with params for payload
 	HostInfo(uint8_t _sessions, uint8_t _sessionLimit, uint8_t _users, uint8_t _userLimit, uint8_t _nameLenLimit, uint8_t _maxSubscriptions, uint8_t _requirements, uint8_t _extensions) throw()
 		: Message(type::HostInfo),
 		sessions(_sessions),
@@ -796,6 +801,7 @@ struct SessionInfo
 		: Message(type::SessionInfo, message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	SessionInfo(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users, uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title) throw()
 		: Message(type::SessionInfo, message::isSession),
 		width(_width),
@@ -855,6 +861,7 @@ struct Acknowledgement
 		: Message(type::Acknowledgement, message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	Acknowledgement(uint8_t _event) throw()
 		: Message(type::Acknowledgement, message::isSession),
 		event(_event)
@@ -886,6 +893,7 @@ struct Error
 		: Message(type::Error, message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	Error(uint16_t _code) throw()
 		: Message(type::Error, message::isSession),
 		code(_code)
@@ -926,6 +934,7 @@ struct Deflate
 		: Message(type::Deflate)
 	{ }
 	
+	//! Constructor with params for payload
 	Deflate(uint16_t _uncompressed, uint16_t _length, char* _data) throw()
 		: Message(type::Deflate),
 		uncompressed(_uncompressed),
@@ -966,6 +975,7 @@ struct Chat
 		: Message(type::Chat, message::isUser|message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	Chat(uint8_t _length, char* _data) throw()
 		: Message(type::Chat, message::isUser|message::isSession),
 		length(_length),
@@ -1001,6 +1011,7 @@ struct Palette
 		: Message(type::Palette, message::isSession|message::isUser)
 	{ }
 	
+	//! Constructor with params for payload
 	Palette(uint8_t _offset, uint8_t _count, char* _data) throw()
 		: Message(type::Palette, message::isSession|message::isUser),
 		offset(_offset),
@@ -1062,6 +1073,7 @@ struct SessionEvent
 		: Message(type::SessionEvent, message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	SessionEvent(uint8_t _action, uint8_t _target, uint8_t _aux) throw()
 		: Message(type::SessionEvent, message::isSession),
 		action(_action),
@@ -1097,6 +1109,7 @@ struct LayerEvent
 		: Message(type::LayerEvent, message::isSession)
 	{ }
 	
+	//! Constructor with params for payload
 	LayerEvent(uint8_t _layer_id, uint8_t _action, uint8_t _mode, uint8_t _opacity) throw()
 		: Message(type::LayerEvent, message::isSession),
 		layer_id(_layer_id),
@@ -1135,6 +1148,7 @@ struct LayerSelect
 		: Message(type::LayerSelect, message::isUser|message::isSelected)
 	{ }
 	
+	//! Constructor with params for payload
 	LayerSelect(uint8_t _layer_id) throw()
 		: Message(type::LayerSelect, message::isUser|message::isSelected),
 		layer_id(_layer_id)
