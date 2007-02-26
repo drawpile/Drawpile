@@ -321,7 +321,7 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len) throw(std::exception
 	memcpy_t(count, buf+i); i += sizeof(count);
 	
 	if (count == 0)
-		throw scrambled_buffer();
+		throw std::exception(); // TODO: Need better exception
 	
 	StrokeInfo *ptr = this;
 	Message* last = 0;

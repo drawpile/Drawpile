@@ -39,12 +39,6 @@
 namespace protocol
 {
 
-//! Scrambled input buffer.
-struct scrambled_buffer
-	: std::exception
-{
-};
-
 //! Errors
 /**
  * @see protocol::Error message
