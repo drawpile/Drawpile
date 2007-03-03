@@ -58,7 +58,8 @@ typedef std::multimap<fd_t, fd_t>::iterator tunnel_iterator;
 
 #include <queue>
 #include <map>
-#include <list>
+#include <set>
+//#include <list>
 
 //! Server
 class Server

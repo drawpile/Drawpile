@@ -2056,7 +2056,7 @@ void Server::SyncSession(Session*& session) throw()
 	}
 	
 	//message_ref msg;
-	protocol::LayerSelect *layer=0;
+	//protocol::LayerSelect *layer=0;
 	protocol::SessionSelect *select=0;
 	std::vector<message_ref> msg_queue;
 	session_usr_iterator old(session->users.begin());
