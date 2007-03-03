@@ -46,9 +46,8 @@ namespace srv_info
 
 const char
 	applicationName[] = "DrawPile Server",
-	versionString[] = "0.2",
+	versionString[] = "0.3",
 	copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.",
-	//contactAddress[] = "wyrmchild@users.sourceforge.net",
 	websiteURL[] = "http://drawpile.sourceforge.net/";
 
 }
@@ -182,7 +181,11 @@ int main(int argc, char** argv)
 	#endif
 	
 	// application name, version, etc. info
-	std::cout << srv_info::applicationName << " v" << srv_info::versionString << std::endl
+	std::cout << srv_info::applicationName << " v" << srv_info::versionString
+		#ifndef NDEBUG
+		<< " DEBUG"
+		#endif
+		<< std::endl
 		<< srv_info::copyrightNotice << std::endl
 		<< srv_info::websiteURL << std::endl
 		<< std::endl;
