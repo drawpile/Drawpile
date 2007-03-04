@@ -78,7 +78,7 @@ struct Buffer
 		size_t off = canRead();
 		memmove(nbuf, data, off);
 		
-		#ifdef CBUFFER_UNMANAGED
+		#ifndef CBUFFER_UNMANAGED
 		// causes memory leak otherwise
 		delete [] data;
 		data = 0;
