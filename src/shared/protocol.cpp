@@ -495,7 +495,10 @@ size_t Raster::serializePayload(char *buf) const throw()
 	memcpy_t(buf+i, bswap(len_tmp)); i += sizeof(length);
 	memcpy_t(buf+i, bswap(size_tmp)); i += sizeof(size);
 	
-	memcpy(buf+i, data, length); i += length;
+	if (length != 0)
+	{
+		memcpy(buf+i, data, length); i += length;
+	}
 	
 	return i;
 }
