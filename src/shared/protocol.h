@@ -427,7 +427,8 @@ struct Raster
 	: Message//, MemoryStack<Raster>
 {
 	Raster() throw()
-		: Message(type::Raster, message::isSession)
+		: Message(type::Raster, message::isSession),
+		data(0)
 	{ }
 	
 	//! Constructor with params for payload
@@ -606,7 +607,8 @@ struct Instruction
 	: Message//, MemoryStack<Instruction>
 {
 	Instruction() throw()
-		: Message(type::Instruction, message::isUser|message::isSession)
+		: Message(type::Instruction, message::isUser|message::isSession),
+		data(0)
 	{ }
 	
 	//! Constructor with params for payload
@@ -702,7 +704,8 @@ struct UserInfo
 	: Message//, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
-		: Message(type::UserInfo, message::isUser|message::isSession)
+		: Message(type::UserInfo, message::isUser|message::isSession),
+		name(0)
 	{ }
 	
 	//! Constructor with params for payload
@@ -798,7 +801,8 @@ struct SessionInfo
 	: Message//, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
-		: Message(type::SessionInfo, message::isSession)
+		: Message(type::SessionInfo, message::isSession),
+		title(0)
 	{ }
 	
 	//! Constructor with params for payload
@@ -931,7 +935,8 @@ struct Deflate
 	: Message//, MemoryStack<Deflate>
 {
 	Deflate() throw()
-		: Message(type::Deflate)
+		: Message(type::Deflate),
+		data(0)
 	{ }
 	
 	//! Constructor with params for payload
@@ -972,7 +977,8 @@ struct Chat
 	: Message//, MemoryStack<Chat>
 {
 	Chat() throw()
-		: Message(type::Chat, message::isUser|message::isSession)
+		: Message(type::Chat, message::isUser|message::isSession),
+		data(0)
 	{ }
 	
 	//! Constructor with params for payload
@@ -1008,7 +1014,8 @@ struct Palette
 	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
-		: Message(type::Palette, message::isSession|message::isUser)
+		: Message(type::Palette, message::isSession|message::isUser),
+		data(0)
 	{ }
 	
 	//! Constructor with params for payload
