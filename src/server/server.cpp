@@ -2171,7 +2171,7 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 		// session is empty
 		session->users.insert( std::make_pair(usr->id, usr) );
 		
-		message_ref raster_ref(new protocol::Raster);
+		message_ref raster_ref(new protocol::Raster(0, 0, 0, 0));
 		raster_ref->session_id = session->id;
 		uSendMsg(usr, raster_ref);
 	}
