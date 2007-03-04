@@ -51,7 +51,7 @@ Event::Event() throw()
 	nfds_w(0),
 	nfds_e(0)
 	#if defined(EV_PSELECT)
-	, _sigmask(0)
+	, _sigmask(0), _sigsaved(0)
 	#endif // EV_PSELECT
 	#endif // !WIN32
 {
@@ -87,10 +87,10 @@ void Event::finish() throw()
 	#endif
 }
 
-int Event::wait(uint32_t msecs) throw()
+int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).wait(msecs: " << msecs << ")" << std::endl;
+	std::cout << "Event(select).wait()" << std::endl;
 	#endif
 	
 	#ifdef EV_SELECT_COPY
@@ -103,30 +103,10 @@ int Event::wait(uint32_t msecs) throw()
 	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
-	uint32_t secs = 0;
-	
 	#if defined(EV_PSELECT)
-	timespec tv;
-	
-	sigset_t sigsaved;
-	sigprocmask(SIG_SETMASK, _sigmask, &sigsaved); // save mask
-	#elif defined(EV_SELECT)
-	timeval tv;
-	#endif // EV_[P]SELECT
-	
-	tv.tv_sec = 0;
-	if (msecs > 1000)
-	{
-		secs = msecs/1000;
-		msecs -= secs*1000;
-	}
-	
-	#if defined(EV_PSELECT)
-	tv.tv_nsec = msecs * 1000000;
-	#elif defined(EV_SELECT)
-	tv.tv_usec = msecs * 1000; // microseconds
-	#endif // EV_[P]SELECT
-	
+	// save sigmask
+	sigprocmask(SIG_SETMASK, _sigmask, _sigsaved);
+	#endif // EV_PSELECT
 	
 	#ifndef WIN32
 	fd_t largest_nfds = (nfds_w > nfds_r ? nfds_w : nfds_r );
@@ -136,9 +116,9 @@ int Event::wait(uint32_t msecs) throw()
 	nfds =
 	#if defined(EV_PSELECT)
 		pselect(
-	#elif defined(EV_SELECT)
+	#else
 		select(
-	#endif // EV_[P]SELECT
+	#endif // EV_PSELECT
 	#ifdef WIN32
 		0,
 	#else // !WIN32
@@ -147,17 +127,18 @@ int Event::wait(uint32_t msecs) throw()
 		&t_fds_r,
 		&t_fds_w,
 		&t_fds_e,
-		&tv
+		&_timeout
 	#if defined(EV_PSELECT)
 		, _sigmask
-	#endif
+	#endif // EV_PSELECT
 		);
 	
 	_error = errno;
 	
 	#if defined(EV_PSELECT)
-	sigprocmask(SIG_SETMASK, &sigsaved, NULL); // restore mask
-	#endif // EV_[P]SELECT
+	// restore mask
+	sigprocmask(SIG_SETMASK, &sigsaved, NULL);
+	#endif // EV_PSELECT
 	
 	if (nfds == -1)
 	{

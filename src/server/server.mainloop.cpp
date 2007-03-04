@@ -30,6 +30,7 @@
 
 *******************************************************************************/
 
+#include <time.h>
 #include "server.flags.h"
 #include "server.h"
 
@@ -53,12 +54,14 @@ int Server::run() throw()
 	
 	std::pair<fd_t, uint32_t> event;
 	
+	// set event timeout
+	ev.timeout(5000);
+	
 	// main loop
 	while (state == server::state::Active)
 	{
-		ec = ev.wait(5000);
+		ec = ev.wait();
 		current_time = time(0);
-		
 		if (ec == 0)
 		{
 			// continue, no fds or time exceeded.
@@ -124,6 +127,7 @@ int Server::run() throw()
 			while (ec != 0);
 			
 			// do something
+			Sleep(300);
 		}
 		
 		// do something generic?

@@ -49,7 +49,6 @@ const uint32_t
 	Event::hangup = FD_CLOSE;
 
 Event::Event() throw()
-	: w_ev_count(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event(wsa)()" << std::endl;
@@ -83,7 +82,7 @@ void Event::finish() throw()
 	#endif
 }
 
-int Event::wait(uint32_t msecs) throw()
+int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event(wsa).wait(msecs: " << msecs << ")" << std::endl;
@@ -91,7 +90,7 @@ int Event::wait(uint32_t msecs) throw()
 	
 	assert(fd_to_ev.size() != 0);
 	
-	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, 0, msecs, true);
+	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, 0, _timeout, true);
 	if (nfds == WSA_WAIT_FAILED)
 	{
 		_error = WSAGetLastError();

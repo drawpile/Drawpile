@@ -93,7 +93,9 @@ protected:
 	#if defined(EV_EPOLL)
 	fd_t evfd;
 	epoll_event events[max_events]; // stack allocation
-	#elif defined(EV_PSELECT) || defined(EV_SELECT)
+	#endif // EV_EPOLL
+	
+	#if defined(EV_PSELECT) || defined(EV_SELECT)
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
 	std::map<fd_t, uint32_t> fd_list;
@@ -101,14 +103,12 @@ protected:
 	
 	#ifndef WIN32
 	std::set<fd_t> read_set, write_set, error_set;
-	
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
-	
-	#endif // EV_*
+	#endif // EV_[P]SELECT
 	
 	#if defined(EV_USE_SIGMASK)
-	sigset_t *_sigmask;
+	sigset_t *_sigmask, *_sigsaved;
 	#endif // EV_USE_SIGMASK
 	
 	#if defined(EV_WSA)
@@ -117,8 +117,14 @@ protected:
 	std::map<fd_t, uint32_t>::iterator ev_iter;
 	
 	WSAEVENT w_ev[max_events];
-	uint32_t w_ev_count;
+	#endif
 	
+	#if defined(EV_PSELECT)
+	timespec _timeout;
+	#elif defined(EV_EPOLL) or defined(EV_WSA)
+	uint32_t _timeout;
+	#else
+	timeval _timeout;
 	#endif
 	
 	int _error, nfds;
@@ -159,13 +165,42 @@ public:
 	//! Finish event system.
 	void finish() throw();
 	
-	//! Wait for events.
+	//! Set timeout for wait()
 	/**
 	 * @param msecs milliseconds to wait.
-	 *
+	 */
+	void timeout(uint32_t msecs) throw()
+	{
+		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+		std::cout << "Event(-).timeout(msecs: " << msecs << ")" << std::endl;
+		#endif
+		
+		#if defined(EV_EPOLL) or defined(EV_WSA)
+		_timeout = msecs;
+		#else
+		if (msecs > 1000)
+		{
+			_timeout.tv_sec = msecs/1000;
+			msecs -= _timeout.tv_sec*1000;
+		}
+		else
+		{
+			_timeout.tv_sec = 0;
+		}
+		
+		#if defined(EV_PSELECT)
+		_timeout.tv_nsec = msecs * 1000000; // nanoseconds
+		#else
+		_timeout.tv_usec = msecs * 1000; // microseconds
+		#endif // EV_PSELECT
+		#endif // EV_EPOLL
+	}
+	
+	//! Wait for events.
+	/**
 	 * @return number of file descriptors triggered, -1 on error, and 0 otherwise.
 	 */
-	int wait(uint32_t msecs) throw();
+	int wait() throw();
 	
 	//! Adds file descriptor to event polling.
 	/**

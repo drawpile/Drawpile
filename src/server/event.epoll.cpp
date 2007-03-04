@@ -119,14 +119,13 @@ void Event::finish() throw()
 	evfd = -1;
 }
 
-int Event::wait(uint32_t msecs) throw()
+int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(epoll).wait(msecs: " << msecs << ")" << std::endl;
+	std::cout << "Event(epoll).wait()" << std::endl;
 	#endif
 	
-	// timeout in milliseconds
-	nfds = epoll_wait(evfd, events, max_events, msecs);
+	nfds = epoll_wait(evfd, events, max_events, _timeout);
 	_error = errno;
 	
 	if (nfds == -1)
