@@ -462,8 +462,13 @@ size_t Raster::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	bswap(length);
 	bswap(size);
 	
-	data = new char[length];
-	memcpy(data, buf+i, length); i += length;
+	if (length != 0)
+	{
+		data = new char[length];
+		memcpy(data, buf+i, length); i += length;
+	}
+	else
+		data = 0;
 	
 	return i;
 }
@@ -622,8 +627,13 @@ size_t Instruction::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
-	data = new char[length];
-	memcpy(data, buf+i, length); i += length;
+	if (length != 0)
+	{
+		data = new char[length];
+		memcpy(data, buf+i, length); i += length;
+	}
+	else
+		data = 0;
 	
 	return i;
 }
@@ -660,7 +670,10 @@ size_t Instruction::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
-	memcpy(buf+i, data, length); i += length;
+	if (length != 0)
+	{
+		memcpy(buf+i, data, length); i += length;
+	}
 	
 	return i;
 }
@@ -699,9 +712,14 @@ size_t UserInfo::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	memcpy_t(event, buf+i); i += sizeof(event);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
-	name = new char[length+1];
-	memcpy(name, buf+i, length); i += length;
-	name[length] = '\0';
+	if (length != 0)
+	{
+		name = new char[length+1];
+		memcpy(name, buf+i, length); i += length;
+		name[length] = '\0';
+	}
+	else
+		name = 0;
 	
 	return i;
 }
@@ -732,7 +750,10 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 	memcpy_t(buf+i, event); i += sizeof(event);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
-	memcpy(buf+i, name, length); i += length;
+	if (length != 0)
+	{
+		memcpy(buf+i, name, length); i += length;
+	}
 	
 	return i;
 }
@@ -818,9 +839,14 @@ size_t SessionInfo::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	memcpy_t(flags, buf+i); i += sizeof(flags);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
-	title = new char[length+1];
-	memcpy(title, buf+i, length); i += length;
-	title[length] = '\0';
+	if (length != 0)
+	{
+		title = new char[length+1];
+		memcpy(title, buf+i, length); i += length;
+		title[length] = '\0';
+	}
+	else
+		title = 0;
 	
 	return i;
 }
@@ -858,8 +884,11 @@ size_t SessionInfo::serializePayload(char *buf) const throw()
 	memcpy_t(buf+i, flags); i += sizeof(flags);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
-	memcpy(buf+i, title, length); i += length;
-
+	if (length != 0)
+	{
+		memcpy(buf+i, title, length); i += length;
+	}
+	
 	return i;
 }
 
@@ -966,8 +995,13 @@ size_t Deflate::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	bswap(uncompressed);
 	bswap(length);
 	
-	data = new char[length];
-	memcpy(data, buf+i, length);  i += length;
+	if (length != 0)
+	{
+		data = new char[length];
+		memcpy(data, buf+i, length);  i += length;
+	}
+	else
+		data = 0;
 	
 	return i;
 }
@@ -999,7 +1033,10 @@ size_t Deflate::serializePayload(char *buf) const throw()
 	memcpy_t(buf, bswap(unc_t)); size_t i = sizeof(uncompressed);
 	memcpy_t(buf+i, bswap(len_t)); i += sizeof(length);
 	
-	memcpy(buf+i, data, length); i += length;
+	if (length != 0)
+	{
+		memcpy(buf+i, data, length); i += length;
+	}
 	
 	return i;
 }
@@ -1023,9 +1060,14 @@ size_t Chat::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
-	data = new char[length+1];
-	memcpy(data, buf+i, length); i += length;
-	data[length] = '\0';
+	if (length != 0)
+	{
+		data = new char[length+1];
+		memcpy(data, buf+i, length); i += length;
+		data[length] = '\0';
+	}
+	else
+		data = 0;
 	
 	return i;
 }
@@ -1050,10 +1092,14 @@ size_t Chat::reqDataLen(const char *buf, size_t len) const throw()
 size_t Chat::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
+	assert(data != 0); // protocol violation
 	
 	memcpy_t(buf, length); size_t i = sizeof(length);
 	
-	memcpy(buf+i, data, length); i += length;
+	if (length != 0)
+	{
+		memcpy(buf+i, data, length); i += length;
+	}
 	
 	return i;
 }
@@ -1078,8 +1124,13 @@ size_t Palette::unserialize(const char* buf, size_t len) throw(std::bad_alloc)
 	memcpy_t(offset, buf+i); i += sizeof(offset);
 	memcpy_t(count, buf+i); i += sizeof(count);
 	
-	data = new char[count*RGB_size];
-	memcpy(data, buf+i, count*RGB_size); i += count*RGB_size;
+	if (count != 0)
+	{
+		data = new char[count*RGB_size];
+		memcpy(data, buf+i, count*RGB_size); i += count*RGB_size;
+	}
+	else
+		data = 0;
 	
 	return i;
 }
@@ -1103,11 +1154,15 @@ size_t Palette::reqDataLen(const char *buf, size_t len) const throw()
 size_t Palette::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
+	assert(count != 0); // protocol violation
 	
 	memcpy_t(buf, offset); size_t i = sizeof(offset);
 	memcpy_t(buf+i, count); i += sizeof(count);
 	
-	memcpy(buf+i, data, count*RGB_size); i += count*RGB_size;
+	if (count != 0)
+	{
+		memcpy(buf+i, data, count*RGB_size); i += count*RGB_size;
+	}
 	
 	return i;
 }
