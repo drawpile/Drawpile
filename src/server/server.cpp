@@ -612,6 +612,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		else if (usr->inMsg->type == protocol::type::StrokeEnd)
 			usr->strokes = 0;
 		
+		// no session selected
+		if (usr->session == 0)
+			break;
+		
+		#ifdef LAYER_SUPPORT
 		if (usr->inMsg->type != protocol::type::ToolInfo
 			and usr->layer == protocol::null_layer)
 		{
@@ -623,10 +628,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			#endif
 			
-			#ifdef LAYER_SUPPORT
 			break;
-			#endif
 		}
+		#endif
 		
 		#ifdef CHECK_VIOLATIONS
 		if ((usr->inMsg->user_id != protocol::null_user)
@@ -641,8 +645,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		#endif // CHECK_VIOLATIONS
 		
-		// handle all message with 'selected' modifier the same
-		if (fIsSet(usr->a_mode, protocol::user_mode::Locked))
+		// user or session is locked
+		if (usr->session->locked or fIsSet(usr->a_mode, protocol::user_mode::Locked))
 		{
 			// TODO: Warn user?
 			break;
@@ -651,37 +655,22 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		// make sure the user id is correct
 		usr->inMsg->user_id = usr->id;
 		
+		/*
 		{
-			session_iterator si(sessions.find(usr->session));
-			if (si == sessions.end())
-			{
-				#ifndef NDEBUG
-				std::cerr << "(draw) no such session as "
-					<< static_cast<int>(usr->session) << "!" << std::endl;
-				#endif
-				
-				break;
-			}
-			else if (si->second->locked)
-			{
-				// session is in full lock
-				break;
-			}
-			
-			Session *session = si->second;
-			
 			// scroll to the last messag in linked-list
 			//message_ref ref;
 			protocol::Message* msg = usr->inMsg;
 			while (msg->next != 0)
 				msg = msg->next;
-			
-			Propagate(
-				session,
-				message_ref(msg),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
-			);
 		}
+		*/
+		
+		Propagate(
+			usr->session,
+			message_ref(usr->inMsg),
+			(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+		);
+		
 		usr->inMsg = 0;
 		break;
 	case protocol::type::Acknowledgement:
@@ -703,9 +692,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			session_iterator si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
 			{
+				// session not found
 				#ifndef NDEBUG
 				std::cerr << "(select) no such session as "
-					<< static_cast<int>(usr->session) << "!" << std::endl;
+					<< static_cast<int>(usr->inMsg->session_id) << "!" << std::endl;
 				#endif
 				
 				break;
@@ -714,13 +704,14 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			usr_session_iterator usi(usr->sessions.find(si->second->id));
 			if (usi == usr->sessions.end())
 			{
+				// user not in the selected session, null selected session
 				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
-				usr->session = protocol::Global;
+				usr->session = 0;
 				break;
 			}
 			
 			usr->inMsg->user_id = usr->id;
-			usr->session = si->second->id;
+			usr->session = si->second;
 			usr->a_mode = usi->second.mode;
 			
 			Propagate(
@@ -1278,7 +1269,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				}
 				
 				// Copy active session flags
-				if (usr->session == event->session_id)
+				if (usr->session->id == event->session_id)
 					usr->a_mode = usr_session->second.mode;
 			}
 			else
@@ -1295,7 +1286,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					// Null-ize the active layer if the target layer is not the active one.
 					if (usr_session->second.layer != usr_session->second.layer_lock)
 						usr_session->second.layer = protocol::null_layer;
-					if (usr->session == event->session_id)
+					if (usr->session->id == event->session_id)
 						usr->layer = protocol::null_layer;
 				}
 				else // unlock
@@ -1359,7 +1350,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			else
 				fClr(usi->second.mode, protocol::user_mode::Mute);
 			
-			if (usr->session == event->target)
+			// Copy to active session's mode, too
+			if (usr->session->id == event->target)
 			{
 				usr->a_mode = usi->second.mode;
 			}
@@ -2074,7 +2066,7 @@ void Server::SyncSession(Session*& session) throw()
 		
 		// add messages to msg_queue
 		msg_queue.push_back(uCreateEvent(usr_ptr, session, protocol::user_event::Join));
-		if (usr_ptr->session == session->id)
+		if (usr_ptr->session->id == session->id)
 		{
 			select = new protocol::SessionSelect;
 			select->user_id = usr_ptr->id;
@@ -2306,9 +2298,6 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	usr = new User(id, sock);
 	
-	usr->session = protocol::Global;
-	
-	usr->events = 0;
 	fSet(usr->events, ev.read);
 	ev.add(usr->sock->fd(), usr->events);
 	

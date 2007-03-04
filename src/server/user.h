@@ -126,7 +126,7 @@ struct User
 		tags(0),
 		#endif // CHECK_VIOLATIONS
 		state(uState::init),
-		session(protocol::Global),
+		session(0),
 		layer(protocol::null_layer),
 		a_mode(protocol::user_mode::None),
 		mode(protocol::user_mode::None),
@@ -167,6 +167,9 @@ struct User
 	// Socket
 	Socket *sock;
 	
+	// Currently active session
+	Session *session;
+	
 	// User identifier
 	uint8_t id;
 	
@@ -180,8 +183,6 @@ struct User
 		#endif
 		// User state
 		state,
-		// Currently active session
-		session,
 		// Active layer in session
 		layer,
 		// User mode
