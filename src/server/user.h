@@ -120,13 +120,13 @@ struct User
 {
 	User(uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
 		: sock(nsock),
+		session(0),
 		id(_id),
 		events(0),
 		#ifdef CHECK_VIOLATIONS
 		tags(0),
 		#endif // CHECK_VIOLATIONS
 		state(uState::init),
-		session(0),
 		layer(protocol::null_layer),
 		a_mode(protocol::user_mode::None),
 		mode(protocol::user_mode::None),
@@ -139,21 +139,17 @@ struct User
 		name(0),
 		strokes(0)
 	{
-		#ifdef DEBUG_USER
-		#ifndef NDEBUG
+		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "User::User(" << static_cast<int>(_id)
 			<< ", " << sock->fd() << ")" << std::endl;
-		#endif // NDEBUG
-		#endif // DEBUG_USER
+		#endif
 	}
 	
 	~User() throw()
 	{
-		#ifdef DEBUG_USER
-		#ifndef NDEBUG
+		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "User::~User()" << std::endl;
-		#endif // NDEBUG
-		#endif // DEBUG_USER
+		#endif
 		
 		delete [] name,
 		delete sock,

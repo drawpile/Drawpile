@@ -225,29 +225,32 @@ void Server::uWrite(User*& usr) throw()
 	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
+	// if buffer is null or no data left to read
 	if (!usr->output.data or usr->output.canRead() == 0)
 	{
-		
-		// if buffer is null or no data left to read
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
 		// create outgoing message list
 		std::vector<message_ref> outgoing;
-		message_ref n;
-		while (usr->queue.size() != 0)
+		
+		// TODO: Support linked lists for other message types as well..
+		if (msg->type == protocol::type::StrokeInfo)
 		{
-			// TODO: Support linked lists for other message types as well..
-			n = usr->queue.front();
-			if (msg->type != protocol::type::StrokeInfo
-				or (n->type != msg->type)
-				or (n->user_id != msg->user_id)
-				or (n->session_id != msg->session_id))
+			message_ref n;
+			while (usr->queue.size() != 0)
 			{
-				break;
+				n = usr->queue.front();
+				if ((n->type != msg->type) // different type
+					or (n->user_id != msg->user_id) // different user
+					or (n->session_id != msg->session_id) // different session
+				)
+				{
+					break;
+				}
+				
+				outgoing.push_back(n);
+				usr->queue.pop_front();
 			}
-			
-			outgoing.push_back(n);
-			usr->queue.pop_front();
 		}
 		
 		std::vector<message_ref>::iterator mi;
@@ -343,7 +346,7 @@ void Server::uWrite(User*& usr) throw()
 		if (usr->output.left == 0)
 		{
 			// remove buffer
-			usr->output.rewind();
+			// usr->output.rewind();
 			
 			// remove fd from write list if no buffers left.
 			if (usr->queue.empty())
@@ -741,7 +744,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			message_ref pmsg(usr->inMsg);
 			pmsg->user_id = usr->id;
 			
-			session_iterator si(sessions.find(usr->session));
+			session_iterator si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
 			{
 				uSendMsg(usr,
