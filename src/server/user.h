@@ -53,9 +53,11 @@ struct SessionData
 		: session(s),
 		layer(protocol::null_layer),
 		layer_lock(protocol::null_layer),
-		mode(s->mode),
+		mode(0),
 		syncWait(false)
 	{
+		if (s)
+			mode = s->mode;
 	}
 	
 	~SessionData() throw()

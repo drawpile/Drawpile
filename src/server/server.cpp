@@ -692,19 +692,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		else
 		#endif
 		{
-			session_iterator si(sessions.find(usr->inMsg->session_id));
-			if (si == sessions.end())
-			{
-				// session not found
-				#ifndef NDEBUG
-				std::cerr << "(select) no such session as "
-					<< static_cast<int>(usr->inMsg->session_id) << "!" << std::endl;
-				#endif
-				
-				break;
-			}
-			
-			usr_session_iterator usi(usr->sessions.find(si->second->id));
+			// check other sessions
+			usr_session_iterator usi(usr->sessions.find(usr->inMsg->session_id));
 			if (usi == usr->sessions.end())
 			{
 				// user not in the selected session, null selected session
@@ -714,11 +703,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			usr->inMsg->user_id = usr->id;
-			usr->session = si->second;
+			usr->session = usi->second.session;
 			usr->a_mode = usi->second.mode;
 			
 			Propagate(
-				si->second,
+				usr->session,
 				message_ref(usr->inMsg),
 				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
 			);
@@ -744,26 +733,18 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			message_ref pmsg(usr->inMsg);
 			pmsg->user_id = usr->id;
 			
-			session_iterator si(sessions.find(usr->inMsg->session_id));
-			if (si == sessions.end())
+			usr_session_iterator usi(usr->sessions.find(usr->inMsg->session_id));
+			if (usi == usr->sessions.end())
 			{
 				uSendMsg(usr,
-					msgError(usr->inMsg->session_id, protocol::error::UnknownSession)
+					msgError(usr->inMsg->session_id, protocol::error::NotSubscribed)
 				);
 				
 				break;
 			}
 			
-			if (!uInSession(usr, pmsg->session_id))
-			{
-				uSendMsg(usr,
-					msgError(usr->inMsg->session_id, protocol::error::NotSubscribed)
-				);
-				break;
-			}
-			
 			Propagate(
-				si->second,
+				usi->second.session,
 				pmsg,
 				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
 			);
@@ -895,29 +876,28 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		{
 			protocol::LayerSelect *layer = static_cast<protocol::LayerSelect*>(usr->inMsg);
 			
-			// Find user's session instance
 			usr_session_iterator ui(usr->sessions.find(layer->session_id));
 			if (ui == usr->sessions.end())
 			{
+				// layer select for non-subscribed session
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::NotSubscribed));
 				break;
 			}
-			
-			if (layer->layer_id == ui->second.layer)
+			else if (layer->layer_id == ui->second.layer)
 			{
-				// Tries to select currently selected layer
+				// tried to select currently selected layer
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
 				break;
 			}
-			
-			// Check if user is locked to another layer
-			if (ui->second.layer_lock != protocol::null_layer
+			else if (ui->second.layer_lock != protocol::null_layer
 				and ui->second.layer_lock != layer->layer_id)
 			{
+				// if user is locked to another layer
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
 				break;
 			}
 			
+			// useless temporary
 			Session *session = ui->second.session;
 			
 			// Find layer and check if its locked
@@ -1051,14 +1031,14 @@ void Server::uHandleAck(User*& usr) throw()
 	{
 	case protocol::type::SyncWait:
 		{
+			// check active session first
 			usr_session_iterator us(usr->sessions.find(ack->session_id));
 			if (us == usr->sessions.end())
 			{
 				uSendMsg(usr, msgError(ack->session_id, protocol::error::NotSubscribed));
 				return;
 			}
-			
-			if (us->second.syncWait)
+			else if (us->second.syncWait)
 			{
 				#ifndef NDEBUG
 				std::cout << "Another ACK/SyncWait for same session. Kickin'!" << std::endl;
@@ -1072,7 +1052,7 @@ void Server::uHandleAck(User*& usr) throw()
 				us->second.syncWait = true;
 			}
 			
-			Session *session = sessions.find(ack->session_id)->second;
+			Session *session = us->second.session;
 			session->syncCounter--;
 			
 			if (session->syncCounter == 0)
@@ -1164,8 +1144,7 @@ void Server::uTunnelRaster(User*& usr) throw()
 	
 	for (; ti != ft.second; ti++)
 	{
-		ui = users.find(ti->second);
-		usr_ptr = ui->second;
+		usr_ptr = users[ti->second];
 		uSendMsg(usr_ptr, raster_ref);
 		if (last) usr_ptr->syncing = false;
 	}
@@ -1204,7 +1183,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			session_usr_iterator sui(session->users.find(event->target));
 			if (sui == session->users.end())
 			{
-				// user not found
+				// user not found in session
 				uSendMsg(usr, msgError(session->id, protocol::error::UnknownUser));
 				break;
 			}
@@ -1343,6 +1322,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			usr_session_iterator usi(sui->second->sessions.find(session->id));
 			if (usi == sui->second->sessions.end())
 			{
+				// user not in session
 				uSendMsg(usr, msgError(session->id, protocol::error::NotInSession));
 				break;
 			}
@@ -1493,7 +1473,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			session->owner = usr->id;
 			
-			sessions.insert( std::make_pair(session->id, session) );
+			sessions[session->id] = session;
 			
 			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
 				<< "Dimensions: " << session->width << " x " << session->height << std::endl
@@ -1652,7 +1632,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			#ifndef NDEBUG
-			std::cout << "Password set for session: "
+			std::cout << "Password set for session #"
 				<< static_cast<int>(msg->session_id) << std::endl;
 			#endif
 			
@@ -1727,7 +1707,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				or (msg->session_id != protocol::Global)
 				or (msg->event != protocol::user_event::Login))
 			{
-				std::cerr << "Protocol violation from user: "
+				std::cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << std::endl
 					<< "Reason: ";
 				if (msg->user_id != protocol::null_user)
@@ -1935,7 +1915,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		else
 		{
 			#ifndef NDEBUG
-			std::cerr << "Invalid data from user: "
+			std::cerr << "Invalid data from user #"
 				<< static_cast<int>(usr->id) << std::endl;
 			#endif
 			
@@ -1961,8 +1941,7 @@ void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool 
 	
 	if (source != protocol::null_user)
 	{
-		user_iterator sui(users.find(source));
-		uSendMsg(sui->second, msgAck(session->id, msg->type));
+		uSendMsg(users[source], msgAck(session->id, msg->type));
 	}
 	
 	User *usr_ptr;
@@ -2110,7 +2089,7 @@ void Server::SyncSession(Session*& session) throw()
 		tunnel.insert( std::make_pair(src->sock->fd(), (*new_i)->sock->fd()) );
 		
 		// add user to normal data propagation.
-		session->users.insert( std::make_pair((*new_i)->id, (*new_i)) );
+		session->users[(*new_i)->id] = (*new_i);
 		
 		// Tell other syncWait users of this user..
 		if (newc.size() > 1)
@@ -2143,9 +2122,7 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 	#endif
 	
 	// Add session to users session list.
-	usr->sessions.insert(
-		std::make_pair( session->id, SessionData(usr->id, session) )
-	);
+	usr->sessions[session->id] = SessionData(usr->id, session);
 	
 	// Tell session members there's a new user.
 	Propagate(session, uCreateEvent(usr, session, protocol::user_event::Join));
@@ -2169,7 +2146,7 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 	else
 	{
 		// session is empty
-		session->users.insert( std::make_pair(usr->id, usr) );
+		session->users[usr->id] = usr;
 		
 		message_ref raster_ref(new protocol::Raster(0, 0, 0, 0));
 		raster_ref->session_id = session->id;
@@ -2201,6 +2178,7 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 			freeSessionID(session->id);
 			sessions.erase(session->id);
 			delete session;
+			session = 0;
 		}
 		
 		return;
@@ -2217,7 +2195,7 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 				// In case we've not cleaned the tunnel properly from dead users.
 				assert(users.find(tunnel_i->first) != users.end());
 				
-				usr = users.find(tunnel_i->first)->second;
+				usr = users[tunnel_i->first];
 				message_ref cancel_ref(new protocol::Cancel);
 				// TODO: Figure out which session it is from
 				//cancel->session_id = session->id;
@@ -2247,6 +2225,8 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 			Propagate(session, sev_ref);
 		}
 	}
+	
+	std::cout << "left" << std::endl;
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
@@ -2296,7 +2276,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		return;
 	}
 	
-	std::cout << "New user: " << static_cast<int>(id)
+	std::cout << "New user #" << static_cast<int>(id)
 		<< ", from: " << sock->address() << std::endl;
 	
 	usr = new User(id, sock);
@@ -2304,7 +2284,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	fSet(usr->events, ev.read);
 	ev.add(usr->sock->fd(), usr->events);
 	
-	users.insert( std::make_pair(sock->fd(), usr) );
+	users[sock->fd()] = usr;
 	
 	usr->deadtime = time(0) + time_limit;
 	
@@ -2434,9 +2414,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 	freeUserID(usr->id);
 	
 	// clear any idle timer associated with this user.
-	std::set<User*>::iterator tui(utimer.find(usr));
-	if (tui != utimer.end())
-		utimer.erase(tui);
+	utimer.erase(usr);
 	
 	delete usr;
 	usr = 0;

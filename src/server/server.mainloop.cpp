@@ -35,17 +35,13 @@
 
 int Server::run() throw()
 {
-	#ifdef DEBUG_SERVER
-	#ifndef NDEBUG
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::run()" << std::endl;
-	#endif
 	#endif
 	
 	assert(state == server::state::Init);
 	state = server::state::Active;
 	
-	// user map iterator
-	user_iterator usr_iter;
 	User *usr;
 	
 	// event count
@@ -90,37 +86,31 @@ int Server::run() throw()
 					continue;
 				}
 				
-				usr_iter = users.find(event.first);
-				if (usr_iter != users.end())
+				assert(users.find(event.first) != users.end());
+				
+				usr = users[event.first];
+				
+				if (fIsSet(event.second, ev.error))
 				{
-					usr = usr_iter->second;
-					if (fIsSet(event.second, ev.error))
-					{
-						uRemove(usr, protocol::user_event::BrokenPipe);
-						continue;
-					}
-					#ifdef EV_HAS_HANGUP
-					if (fIsSet(event.second, ev.hangup))
-					{
-						uRemove(usr, protocol::user_event::Disconnect);
-						continue;
-					}
-					#endif // EV_HAS_HANGUP
-					if (fIsSet(event.second, ev.read))
-					{
-						uRead(usr);
-						if (usr == 0) continue;
-					}
-					if (fIsSet(event.second, ev.write))
-					{
-						uWrite(usr);
-						if (usr == 0) continue;
-					}
+					uRemove(usr, protocol::user_event::BrokenPipe);
+					continue;
 				}
-				else
+				#ifdef EV_HAS_HANGUP
+				if (fIsSet(event.second, ev.hangup))
 				{
-					std::cerr << "FD not in users." << std::endl;
-					break;
+					uRemove(usr, protocol::user_event::Disconnect);
+					continue;
+				}
+				#endif // EV_HAS_HANGUP
+				if (fIsSet(event.second, ev.read))
+				{
+					uRead(usr);
+					if (usr == 0) continue;
+				}
+				if (fIsSet(event.second, ev.write))
+				{
+					uWrite(usr);
+					if (usr == 0) continue;
 				}
 			}
 			while (ec != 0);
