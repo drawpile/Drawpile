@@ -30,7 +30,6 @@
 
 *******************************************************************************/
 
-#include <time.h>
 #include "server.flags.h"
 #include "server.h"
 
@@ -127,7 +126,6 @@ int Server::run() throw()
 			while (ec != 0);
 			
 			// do something
-			Sleep(300);
 		}
 		
 		// do something generic?
