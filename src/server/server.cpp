@@ -2377,21 +2377,14 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 		tunnel.erase(ti);
 	}
 	
-	/*
-	 * TODO: Somehow figure out which of the sources are now without a tunnel
-	 * and send Cancel to them.
-	 */
+	// break tunnels
 	ti = tunnel.begin();
+	//std::set<fd_t> sources;
 	while (ti != tunnel.end())
 	{
 		if (ti->second == usr->sock->fd())
 		{
-			// TODO: Send cancel
-			/*
-			message_ref cancel_ref(new protocol::Cancel);
-			cancel_ref->session_id = session->id;
-			uSendMsg(src_usr, cancel_ref);
-			*/
+			//sources.insert(sources.end(), ti->first);
 			
 			tunnel.erase(ti);
 			// iterator was invalidated
@@ -2400,6 +2393,32 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 		else
 			++ti;
 	}
+	
+	/*
+	// cancel target-less rasters
+	if (!sources.empty())
+	{
+		User *src_usr;
+		message_ref cancel_ref(new protocol::Cancel);
+		cancel_ref->session_id = session->id;
+		
+		for (std::set<User*>::iterator src_i(sources.begin()); src_i != sources.end(); src_i++)
+		{
+			ti = tunnel.find(*src_i);
+			
+			if (ti == tunnel.end())
+			{
+				User *src_usr
+				usi = users.find(ti->first);
+				if (usi != users.end())
+				{
+					src_usr = usi->second;
+					uSendMsg(src_usr, cancel_ref);
+				}
+			}
+		}
+	}
+	*/
 	
 	// clean sessions
 	Session *session;
