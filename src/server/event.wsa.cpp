@@ -164,8 +164,8 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 			
 			WSAEventSelect(fd, w_ev[i], ev);
 			
-			fd_to_ev.insert(std::make_pair(fd, i));
-			ev_to_fd.insert(std::make_pair(i, fd));
+			fd_to_ev[fd] = i;
+			ev_to_fd[i] = fd;
 			
 			return true;
 		}

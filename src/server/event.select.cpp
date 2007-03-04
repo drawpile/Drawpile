@@ -249,11 +249,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	}
 	
 	// maintain fd_list
-	std::map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
-	if (iter == fd_list.end())
-		fd_list.insert(iter, std::make_pair(fd, ev));
-	else
-		iter->second = ev;
+	fd_list[fd] = ev;
 	
 	return rc;
 }
