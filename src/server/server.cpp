@@ -2230,54 +2230,46 @@ void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw(
 			Propagate(session, sev_ref);
 		}
 	}
-	
-	std::cout << "left" << std::endl;
 }
 
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 {
 	if (sock == 0)
 	{
-		#ifndef NDEBUG
+		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		std::cout << "Null socket, aborting user creation." << std::endl;
 		#endif
 		
 		return;
 	}
 	
-	// Check duplicate connections.
+	// Check duplicate connections (should be enabled with command-line switch instead)
+	User* usr;
+	#ifdef NO_DUPLICATE_CONNECTIONS
 	user_iterator ui(users.begin());
-	User* usr=0;
 	for (; ui != users.end(); ui++)
 	{
-		usr = ui->second;
-		
-		if (sock->matchAddress(usr->sock))
+		if (sock->matchAddress(ui->second->sock))
 		{
 			#ifndef NDEBUG
-			std::cout << "Duplicate source address: " << sock->address() << std::endl;
+			std::cout << "Multiple connections from: " << sock->address() << std::endl;
 			#endif // NDEBUG
 			
-			#ifdef NO_DUPLICATE_CONNECTIONS
 			delete sock;
 			return;
-			#endif // NO_DUPLICATE_CONNECTIONS
-			
-			break;
 		}
 	}
+	#endif // NO_DUPLICATE_CONNECTIONS
 	
 	uint8_t id = getUserID();
 	
 	if (id == protocol::null_user)
 	{
 		#ifndef NDEBUG
-		std::cout << "Disconnecting new user: " << sock->address() << std::endl;
+		std::cout << "Server full, disconnecting user: " << sock->address() << std::endl;
 		#endif
 		
 		delete sock;
-		sock = 0;
-		
 		return;
 	}
 	
@@ -2288,8 +2280,6 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	fSet(usr->events, ev.read);
 	ev.add(usr->sock->fd(), usr->events);
-	
-	users[sock->fd()] = usr;
 	
 	usr->deadtime = time(0) + time_limit;
 	
@@ -2302,7 +2292,9 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	usr->input.setBuffer(new char[8192], 8192);
 	
-	#ifndef NDEBUG
+	users[sock->fd()] = usr;
+	
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Known users: " << users.size() << std::endl;
 	#endif
 }
@@ -2319,7 +2311,7 @@ void Server::breakSync(User*& usr) throw()
 	session_iterator sui(sessions.find(usr->syncing));
 	if (sui == sessions.end())
 	{
-		#ifndef NDEBUG
+		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		std::cerr << "Session to break sync with was not found!" << std::endl;
 		#endif
 		
@@ -2353,7 +2345,7 @@ void Server::uRemove(User *&usr, uint8_t reason) throw()
 		usi = users.find(ti->second);
 		if (usi == users.end())
 		{
-			#ifndef NDEBUG
+			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 			std::cerr << "Tunnel's other end was not found in users." << std::endl;
 			#endif
 			continue;
@@ -2499,7 +2491,7 @@ bool Server::validateUserName(User*& usr) const throw()
 	if (usr->nlen == 0)
 	{
 		#ifndef NDEBUG
-		std::cerr << "Name: zero length" << std::endl;
+		std::cerr << "Zero length user name." << std::endl;
 		#endif
 		
 		return false;
@@ -2514,7 +2506,7 @@ bool Server::validateUserName(User*& usr) const throw()
 			and (memcmp(usr->name, ui->second->name, usr->nlen) == 0))
 		{
 			#ifndef NDEBUG
-			std::cerr << "Name: conflicts with user #"
+			std::cerr << "Name conflicts with user #"
 				<< static_cast<int>(ui->second->id) << std::endl;
 			#endif
 			return false;
@@ -2550,31 +2542,31 @@ bool Server::validateSessionTitle(Session*& session) const throw()
 
 void Server::cullIdlers() throw()
 {
-	// cull idlers
 	User *usr;
 	std::set<User*>::iterator tui(utimer.begin());
+	
 	do
 	{
-		usr = *tui;
-		
-		if (usr->deadtime <= current_time)
+		if ((*tui)->deadtime <= current_time)
 		{
 			#ifndef NDEBUG
 			std::cout << "Killing idle user: "
-				<< static_cast<int>(usr->id) << std::endl;
+				<< static_cast<int>((*tui)->id) << std::endl;
 			#endif
 			
 			utimer.erase(tui);
+			
+			usr = *tui;
 			uRemove(usr, protocol::user_event::TimedOut);
 			
 			tui = utimer.begin();
 		}
 		else
 		{
-			if (usr->deadtime < next_timer)
+			if ((*tui)->deadtime < next_timer)
 			{
 				// re-schedule next culling to come sooner
-				next_timer = usr->deadtime;
+				next_timer = (*tui)->deadtime;
 			}
 			
 			tui++;
