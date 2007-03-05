@@ -1939,14 +1939,15 @@ void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool 
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
+	// Send ACK for the message we're about to share..
 	if (source != protocol::null_user)
 	{
+		assert(users.find(source) != users.end());
 		uSendMsg(users[source], msgAck(session->id, msg->type));
 	}
 	
 	User *usr_ptr;
-	session_usr_iterator ui( session->users.begin() );
-	for (; ui != session->users.end(); ui++)
+	for (session_usr_iterator ui(session->users.begin()); ui != session->users.end(); ui++)
 	{
 		if (ui->second->id != source)
 		{
@@ -1958,11 +1959,13 @@ void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool 
 	if (toAll)
 	{
 		// send to users waiting sync as well.
-		std::list<User*>::iterator wui(session->waitingSync.begin());
-		for (; wui != session->waitingSync.end(); wui++)
+		for (std::list<User*>::iterator wui(session->waitingSync.begin()); wui != session->waitingSync.end(); wui++)
 		{
 			if ((*wui)->id != source)
-				uSendMsg(*wui, msg);
+			{
+				usr_ptr = *wui;
+				uSendMsg(usr_ptr, msg);
+			}
 		}
 	}
 }
@@ -2011,7 +2014,9 @@ void Server::SyncSession(Session*& session) throw()
 	assert(session->syncCounter == 0);
 	
 	// TODO: Need better source user selection.
-	User* src(session->users.begin()->second);
+	session_usr_iterator sui(session->users.begin());
+	assert(sui != session->users.end());
+	User* src(sui->second);
 	
 	// request raster
 	message_ref sync_ref(new protocol::Synchronize);
