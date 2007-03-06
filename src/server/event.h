@@ -193,7 +193,7 @@ public:
 		#else
 		_timeout.tv_usec = msecs * 1000; // microseconds
 		#endif // EV_PSELECT
-		#endif // EV_EPOLL
+		#endif // EV_EPOLL/WSA
 	}
 	
 	//! Wait for events.

@@ -34,9 +34,39 @@
 	#include <ios>
 #endif
 
+#include <time.h>
 #include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()
+
+namespace hack
+{
+namespace events
+{
+
+// "Hack" for WSA
+inline
+uint32_t& prepare_events(uint32_t& evs) throw()
+{
+	if (fIsSet(evs, static_cast<uint32_t>(FD_ACCEPT)));
+		fSet(evs, static_cast<uint32_t>(FD_READ));
+	
+	if (fIsSet(evs, static_cast<uint32_t>(FD_CONNECT)))
+		fSet(evs, static_cast<uint32_t>(FD_READ));
+	
+	if (fIsSet(evs, static_cast<uint32_t>(FD_CLOSE)))
+		fSet(evs, static_cast<uint32_t>(/* FD_WRITE| */ FD_READ));
+	
+	if (fIsSet(evs, Event::read));
+		fSet(evs, static_cast<uint32_t>(FD_ACCEPT|FD_CLOSE));
+	if (fIsSet(evs, Event::read) or fIsSet(evs, Event::write));
+		fSet(evs, static_cast<uint32_t>(FD_CLOSE|FD_CONNECT));
+	
+	return evs;
+}
+
+} // namespace events
+} // namespace hack
 
 const uint32_t
 	//! identifier for 'read' event
@@ -85,7 +115,7 @@ void Event::finish() throw()
 int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).wait(msecs: " << msecs << ")" << std::endl;
+	std::cout << "Event(wsa).wait()" << std::endl;
 	#endif
 	
 	assert(fd_to_ev.size() != 0);
@@ -149,11 +179,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
-	// hack for WSA
-	if (fIsSet(ev, read));
-		fSet(ev, static_cast<uint32_t>(FD_ACCEPT));
-	if (fIsSet(ev, read) or fIsSet(ev, write));
-		fSet(ev, static_cast<uint32_t>(FD_CLOSE|FD_CONNECT));
+	hack::events::prepare_events(ev);
 	
 	for (uint32_t i=0; i != max_events; i++)
 	{
@@ -189,7 +215,10 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
+	hack::events::prepare_events(ev);
+	
 	std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	
 	if (fi == fd_to_ev.end())
 		return false;
 	
@@ -212,6 +241,8 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	
 	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
+	
+	hack::events::prepare_events(ev);
 	
 	std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
 	if (fi == fd_to_ev.end())
@@ -249,12 +280,8 @@ std::pair<fd_t, uint32_t> Event::getEvent() throw()
 			if ((evs = getEvents(ev_to_fd_iter->second)) != 0)
 			{
 				nfds++;
-				std::cout << "fd #" << ev_to_fd_iter->second << " was triggered!" << std::endl;
+				hack::events::prepare_events(evs);
 				return std::make_pair(ev_to_fd_iter->second, evs);
-			}
-			else
-			{
-				std::cout << "fd #" << ev_to_fd_iter->second << " was NOT triggered!" << std::endl;
 			}
 		}
 	}
@@ -272,31 +299,31 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	if (fev == fd_to_ev.end())
 		return 0;
 	
-	LPWSANETWORKEVENTS set(0);
+	WSANETWORKEVENTS set;
 	
-	int r = WSAEnumNetworkEvents(fd, w_ev[fev->second], set);
+	int r = WSAEnumNetworkEvents(fd, w_ev[fev->second], &set);
 	
 	if (r == SOCKET_ERROR)
 	{
-		//_error = WSAGetLastError();
+		int error = WSAGetLastError();
 		
-		switch (WSAGetLastError())
+		switch (error)
 		{
 		#ifndef NDEBUG
 		case WSAEFAULT:
-			assert(!(_error == WSAEFAULT));
+			assert(!(error == WSAEFAULT));
 			break;
 		case WSANOTINITIALISED:
-			assert(!(_error == WSANOTINITIALISED));
+			assert(!(error == WSANOTINITIALISED));
 			break;
 		case WSAEINVAL:
-			assert(!(_error == WSAEINVAL));
+			assert(!(error == WSAEINVAL));
 			break;
 		case WSAENOTSOCK:
-			assert(!(_error == WSAEFAULT));
+			assert(!(error == WSAEFAULT));
 			break;
 		case WSAEAFNOSUPPORT:
-			assert(!(_error == WSAEAFNOSUPPORT));
+			assert(!(error == WSAEAFNOSUPPORT));
 			break;
 		#endif
 		case WSAECONNRESET: // reset by remote
@@ -310,23 +337,18 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		case WSAEINPROGRESS: // something's in progress
 			return 0;
 		default:
-			std::cerr << "Event(wsa).getEvents() - unknown error: " << _error << std::endl;
+			std::cerr << "Event(wsa).getEvents() - unknown error: " << error << std::endl;
 			break;
 		}
+		
 		return 0;
 	}
 	
-	// "Hack" for WSA's FD_ACCEPT
-	if (fIsSet(set->lNetworkEvents, static_cast<long int>(FD_ACCEPT)));
-		fSet(set->lNetworkEvents, static_cast<long int>(FD_READ));
-	
-	if (fIsSet(set->lNetworkEvents, static_cast<long int>(FD_CONNECT)))
-		fSet(set->lNetworkEvents, static_cast<long int>(FD_WRITE));
-	if (fIsSet(set->lNetworkEvents, static_cast<long int>(FD_CLOSE)))
-		fSet(set->lNetworkEvents, static_cast<long int>(FD_WRITE|FD_READ));
+	uint32_t evs = static_cast<uint32_t>(set.lNetworkEvents);
+	hack::events::prepare_events(evs);
 	
 	// enum already resets the event..
 	// WSAResetEvent(w_ev[fev->second]);
 	
-	return set->lNetworkEvents;
+	return evs;
 }
