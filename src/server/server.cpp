@@ -228,6 +228,8 @@ void Server::uWrite(User*& usr) throw()
 	// if buffer is null or no data left to read
 	if (!usr->output.data or usr->output.canRead() == 0)
 	{
+		assert(!usr->queue.empty());
+		
 		protocol::Message *msg = boost::get_pointer(usr->queue.front());
 		
 		// create outgoing message list
@@ -384,7 +386,11 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	{
 		switch (usr->sock->getError())
 		{
+		#ifdef WSA_SOCKETS
+		case WSAEWOULDBLOCK:
+		#else
 		case EAGAIN:
+		#endif
 		case EINTR:
 			// retry later
 			return;
@@ -1463,7 +1469,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				and !validateSessionTitle(session))
 			{
 				#ifndef NDEBUG
-				std::cerr << "Title not unique." << std::endl;
+				std::cerr << "Session title not unique." << std::endl;
 				#endif
 				
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
