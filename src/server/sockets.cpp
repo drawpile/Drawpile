@@ -166,6 +166,11 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		
 		switch (error)
 		{
+		#ifdef WSA_SOCKETS
+		case WSAEWOULDBLOCK:
+			// Would block, or can't complete the request currently.
+			break;
+		#endif
 		case EINTR:
 		case EAGAIN:
 			// retry
@@ -652,6 +657,9 @@ int Socket::recv(char* buffer, size_t len) throw()
 		case WSAECONNABORTED: // Connection timed-out
 		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
 		case WSA_IO_PENDING: // Operation will be completed later
+			break;
+		case WSAEWOULDBLOCK:
+			// Would block, or can't complete the request currently.
 			break;
 		#endif // WSA_SOCKETS
 		#ifndef NDEBUG
