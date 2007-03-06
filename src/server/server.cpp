@@ -99,7 +99,7 @@ uint8_t Server::getSessionID() throw()
 	return n;
 }
 
-void Server::freeUserID(uint8_t id) throw()
+void Server::freeUserID(const uint8_t id) throw()
 {
 	assert(id != protocol::null_user);
 	
@@ -108,7 +108,7 @@ void Server::freeUserID(uint8_t id) throw()
 	user_ids.push(id);
 }
 
-void Server::freeSessionID(uint8_t id) throw()
+void Server::freeSessionID(const uint8_t id) throw()
 {
 	assert(id != protocol::Global);
 	
@@ -130,7 +130,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
-void Server::uRegenSeed(User*& usr) const throw()
+void Server::uRegenSeed(User* usr) const throw()
 {
 	usr->seed[0] = (rand() % 255) + 1;
 	usr->seed[1] = (rand() % 255) + 1;
@@ -139,7 +139,7 @@ void Server::uRegenSeed(User*& usr) const throw()
 }
 
 inline
-message_ref Server::msgAuth(User*& usr, uint8_t session) const throw(std::bad_alloc)
+message_ref Server::msgAuth(User* usr, const uint8_t session) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	
@@ -192,7 +192,7 @@ message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc
 }
 
 inline
-message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::bad_alloc)
+message_ref Server::msgError(const uint8_t session, const uint16_t code) const throw(std::bad_alloc)
 {
 	protocol::Error *err = new protocol::Error(code);
 	err->session_id = session;
@@ -200,7 +200,7 @@ message_ref Server::msgError(uint8_t session, uint16_t code) const throw(std::ba
 }
 
 inline
-message_ref Server::msgAck(uint8_t session, uint8_t type) const throw(std::bad_alloc)
+message_ref Server::msgAck(const uint8_t session, const uint8_t type) const throw(std::bad_alloc)
 {
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement(type);
 	ack->session_id = session;
@@ -512,7 +512,7 @@ void Server::uProcessData(User*& usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(User*& usr, Session*& session, uint8_t event) const throw(std::bad_alloc)
+message_ref Server::uCreateEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -526,7 +526,7 @@ message_ref Server::uCreateEvent(User*& usr, Session*& session, uint8_t event) c
 		session->mode,
 		event,
 		usr->nlen,
-		new char[usr->nlen]
+		(usr->nlen == 0 ? 0 : new char[usr->nlen])
 	);
 	
 	uevent->user_id = usr->id;
@@ -537,12 +537,10 @@ message_ref Server::uCreateEvent(User*& usr, Session*& session, uint8_t event) c
 	return message_ref(uevent);
 }
 
-bool Server::uInSession(User*& usr, uint8_t session) const throw()
+inline
+bool Server::uInSession(User* usr, const uint8_t session) const throw()
 {
-	if (usr->sessions.find(session) == usr->sessions.end())
-		return false;
-	
-	return true;
+	return usr->sessions.find(session) != usr->sessions.end();
 }
 
 bool Server::sessionExists(uint8_t session) const throw()
@@ -1086,7 +1084,7 @@ void Server::uHandleAck(User*& usr) throw()
 	}
 }
 
-void Server::uTunnelRaster(User*& usr) throw()
+void Server::uTunnelRaster(User* usr) throw()
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -1938,7 +1936,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool toAll) throw()
+void Server::Propagate(Session* session, message_ref msg, const uint8_t source, const bool toAll) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::Propagate(session: " << static_cast<int>(msg->session_id)
@@ -1976,7 +1974,7 @@ void Server::Propagate(Session*& session, message_ref msg, uint8_t source, bool 
 	}
 }
 
-void Server::uSendMsg(User*& usr, message_ref msg) throw()
+void Server::uSendMsg(User* usr, message_ref msg) throw()
 {
 	assert(usr != 0);
 	
@@ -2009,7 +2007,7 @@ void Server::uSendMsg(User*& usr, message_ref msg) throw()
 	}
 }
 
-void Server::SyncSession(Session*& session) throw()
+void Server::SyncSession(Session* session) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::SyncSession(session: "
@@ -2122,7 +2120,7 @@ void Server::SyncSession(Session*& session) throw()
 	}
 }
 
-void Server::uJoinSession(User*& usr, Session*& session) throw()
+void Server::uJoinSession(User* usr, Session* session) throw()
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -2165,7 +2163,7 @@ void Server::uJoinSession(User*& usr, Session*& session) throw()
 	}
 }
 
-void Server::uLeaveSession(User*& usr, Session*& session, uint8_t reason) throw()
+void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) throw()
 {
 	assert(usr != 0);
 	assert(session != 0);
@@ -2305,7 +2303,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	#endif
 }
 
-void Server::breakSync(User*& usr) throw()
+void Server::breakSync(User* usr) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::breakSync(user: "
@@ -2328,7 +2326,7 @@ void Server::breakSync(User*& usr) throw()
 	usr->syncing = protocol::Global;
 }
 
-void Server::uRemove(User *&usr, uint8_t reason) throw()
+void Server::uRemove(User *&usr, const uint8_t reason) throw()
 {
 	assert(usr != 0);
 	
@@ -2487,7 +2485,7 @@ int Server::init() throw(std::bad_alloc)
 	return 0;
 }
 
-bool Server::validateUserName(User*& usr) const throw()
+bool Server::validateUserName(User* usr) const throw()
 {
 	assert(usr != 0);
 	
@@ -2522,7 +2520,7 @@ bool Server::validateUserName(User*& usr) const throw()
 	return true;
 }
 
-bool Server::validateSessionTitle(Session*& session) const throw()
+bool Server::validateSessionTitle(Session* session) const throw()
 {
 	assert(session != 0);
 	
