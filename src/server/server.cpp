@@ -40,6 +40,10 @@
 
 #include "server.flags.h"
 
+#if defined(HAVE_ZLIB)
+	#include <zlib.h>
+#endif
+
 #include <ctime>
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -729,7 +733,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uTunnelRaster(usr);
 		break;
 	case protocol::type::Deflate:
-		// TODO
+		// TODO: Deflate extension support
+		#if defined(HAVE_ZLIB)
+		DeflateReprocess(usr, usr->inMsg);
+		#endif
 		break;
 	case protocol::type::Chat:
 	case protocol::type::Palette:
@@ -1023,6 +1030,54 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	}
 }
+
+#if defined(HAVE_ZLIB)
+void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad_alloc)
+{
+	#if !defined(NDEBUG)
+	std::cout << "Server::DeflateReprocess(user: " << static_cast<int>(usr->id) << ")" << std::endl;
+	#endif
+	
+	protocol::Deflate* stream = static_cast<protocol::Deflate*>(usr->inMsg);
+	usr->inMsg = 0;
+	
+	#if !defined(NDEBUG)
+	std::cout << "Compressed: " << stream->length
+		<< " bytes, uncompressed: " << stream->uncompressed << " bytes." << std::endl;
+	#endif
+	
+	char* outbuf = new char[stream->uncompressed];
+	unsigned long outlen = stream->uncompressed;
+	int r = uncompress(reinterpret_cast<unsigned char*>(outbuf), &outlen, reinterpret_cast<unsigned char*>(stream->data), stream->length);
+	
+	switch (r)
+	{
+	default:
+	case Z_OK:
+		{
+			Buffer temp = usr->input;
+			usr->input = Buffer(outbuf, stream->uncompressed);
+			
+			uProcessData(usr);
+			
+			if (usr != 0)
+				usr->input = temp;
+		}
+		break;
+	case Z_MEM_ERROR:
+		// TODO: Out of Memory
+		throw std::bad_alloc();
+		//break;
+	case Z_BUF_ERROR:
+	case Z_DATA_ERROR:
+		// Input buffer corrupted
+		std::cout << "Corrupted data from user #" << static_cast<int>(usr->id)
+			<< ", dropping." << std::endl;
+		uRemove(usr, protocol::user_event::Dropped);
+		break;
+	}
+}
+#endif
 
 void Server::uHandleAck(User*& usr) throw()
 {

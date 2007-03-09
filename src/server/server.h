@@ -240,6 +240,9 @@ protected:
 	inline
 	bool validateSessionTitle(Session* session) const throw();
 	
+	// Reprocesses deflated data stream
+	void DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad_alloc);
+	
 	// cull idle users
 	void cullIdlers() throw();
 	

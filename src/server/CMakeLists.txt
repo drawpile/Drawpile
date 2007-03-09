@@ -46,6 +46,11 @@ endif ( WIN32 )
 
 link_libraries( ${LIBNAME} )
 
+# zlib for deflate extensions
+if ( HAVE_ZLIB )
+	link_libraries ( "z" )
+endif ( HAVE_ZLIB )
+
 if ( NOT DEBUG )
 	strip_exe ( ${SERVERNAME} )
 endif ( NOT DEBUG )
