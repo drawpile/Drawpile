@@ -48,18 +48,16 @@ namespace events
 inline
 uint32_t& prepare_events(uint32_t& evs) throw()
 {
-	if (fIsSet(evs, static_cast<uint32_t>(FD_ACCEPT)));
-		fSet(evs, static_cast<uint32_t>(FD_READ));
-	
-	if (fIsSet(evs, static_cast<uint32_t>(FD_CONNECT)))
-		fSet(evs, static_cast<uint32_t>(FD_READ));
-	
-	if (fIsSet(evs, static_cast<uint32_t>(FD_CLOSE)))
-		fSet(evs, static_cast<uint32_t>(/* FD_WRITE| */ FD_READ));
+	if (fIsSet(evs, static_cast<uint32_t>(FD_ACCEPT))
+		or fIsSet(evs, static_cast<uint32_t>(FD_CONNECT))
+		or fIsSet(evs, static_cast<uint32_t>(FD_CLOSE)))
+		fSet(evs, Event::read);
 	
 	if (fIsSet(evs, Event::read));
 		fSet(evs, static_cast<uint32_t>(FD_ACCEPT|FD_CLOSE));
-	if (fIsSet(evs, Event::read) or fIsSet(evs, Event::write));
+	
+	if (fIsSet(evs, Event::read)
+		or fIsSet(evs, Event::write));
 		fSet(evs, static_cast<uint32_t>(FD_CLOSE|FD_CONNECT));
 	
 	return evs;
@@ -74,15 +72,15 @@ const uint32_t
 	//! identifier for 'write' event
 	Event::write = FD_WRITE,
 	//! error event
-	Event::error = 0xFFFF,
+	Event::error = 0, // WSA doesn't have it
 	//! hangup event
 	Event::hangup = FD_CLOSE;
 
 Event::Event() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa)()" << std::endl;
-	std::cout << "Max events: " << max_events<< std::endl;
+	std::cout << "Event(wsa)()" << std::endl
+		<< "Max events: " << max_events<< std::endl;
 	#endif
 	
 	// null the ev set
@@ -120,7 +118,7 @@ int Event::wait() throw()
 	
 	assert(fd_to_ev.size() != 0);
 	
-	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, 0, _timeout, true);
+	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, false, _timeout, true);
 	if (nfds == WSA_WAIT_FAILED)
 	{
 		_error = WSAGetLastError();
@@ -176,7 +174,6 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
 	hack::events::prepare_events(ev);
@@ -212,7 +209,6 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
 	hack::events::prepare_events(ev);
@@ -239,7 +235,6 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
-	assert( ev == read or ev == write or ev == read|write );
 	assert( fd >= 0 );
 	
 	hack::events::prepare_events(ev);
@@ -295,9 +290,14 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	std::cout << "Event(wsa).getEvents(fd: " << fd << ")" << std::endl;
 	#endif
 	
+	assert(fd != 0);
+	
 	std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
 	if (fev == fd_to_ev.end())
+	{
+		assert(fev == fd_to_ev.end());
 		return 0;
+	}
 	
 	WSANETWORKEVENTS set;
 	
@@ -346,9 +346,6 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	
 	uint32_t evs = static_cast<uint32_t>(set.lNetworkEvents);
 	hack::events::prepare_events(evs);
-	
-	// enum already resets the event..
-	// WSAResetEvent(w_ev[fev->second]);
 	
 	return evs;
 }

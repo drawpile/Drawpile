@@ -77,6 +77,10 @@ typedef int fd_t;
 	#define INVALID_SOCKET -1
 #endif
 
+#ifndef EV_WSA
+	#define EV_HAS_ERROR
+#endif
+
 const uint32_t max_events =
 #if defined(EV_EPOLL)
 	10;
