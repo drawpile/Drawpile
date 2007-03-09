@@ -1199,10 +1199,6 @@ void MainWindow::createToolSettings(QMenu *toggles)
 	toolsettings_ = new widgets::ToolSettings(this);
 	toolsettings_->setObjectName("toolsettingsdock");
 	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-#ifdef Q_WS_WIN
-	// Dock widget floating is buggy on Windows.
-	toolsettings_->setFeatures(toolsettings_->features() & ~QDockWidget::DockWidgetFloatable);
-#endif
 	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
 	toggles->addAction(toolsettings_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
@@ -1215,10 +1211,6 @@ void MainWindow::createUserList(QMenu *toggles)
 	userlist_ = new widgets::UserList(this);
 	userlist_->setObjectName("userlistdock");
 	userlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-#ifdef Q_WS_WIN
-	// Dock widget floating is buggy on Windows.
-	userlist_->setFeatures(userlist_->features() & ~QDockWidget::DockWidgetFloatable);
-#endif
 	toggles->addAction(userlist_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, userlist_);
 }
@@ -1228,10 +1220,6 @@ void MainWindow::createChatBox(QMenu *toggles)
 	chatbox_ = new widgets::ChatBox(this);
 	chatbox_->setObjectName("chatboxdock");
 	chatbox_->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-#ifdef Q_WS_WIN
-	// Dock widget floating is buggy on Windows.
-	chatbox_->setFeatures(chatbox_->features() & ~QDockWidget::DockWidgetFloatable);
-#endif
 	toggles->addAction(chatbox_->toggleViewAction());
 	addDockWidget(Qt::BottomDockWidgetArea, chatbox_);
 }
