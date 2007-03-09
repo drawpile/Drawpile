@@ -65,7 +65,12 @@ Server::Server() throw()
 	lo_port(protocol::default_port),
 	min_dimension(400),
 	requirements(0),
-	extensions(protocol::extensions::Chat|protocol::extensions::Palette),
+	extensions(
+		protocol::extensions::Chat|protocol::extensions::Palette
+		#ifdef HAVE_ZLIB
+		|protocol::extensions::Deflate
+		#endif // HAVE_ZLIB
+	),
 	default_user_mode(protocol::user_mode::None),
 	opmode(0)
 {
@@ -308,6 +313,40 @@ void Server::uWrite(User*& usr) throw()
 				(*mi)->prev = 0;
 			}
 		}
+		
+		#if defined(HAVE_ZLIB)
+		if (fIsSet(usr->extensions, protocol::extensions::Deflate) and usr->output.canRead() > 300)
+		{
+			unsigned long buffer_len = len + 12 + static_cast<int>(len * 0.12);
+			char* temp = new char[buffer_len];
+			int r = compress2(reinterpret_cast<unsigned char*>(temp), &buffer_len, reinterpret_cast<unsigned char*>(usr->output.rpos), len, 5);
+			
+			assert(r != Z_BUF_ERROR);
+			assert(r != Z_STREAM_ERROR);
+			
+			switch (r)
+			{
+			default:
+			case Z_OK:
+				delete [] buf;
+				{
+					msg = new protocol::Deflate(len, buffer_len, temp);
+					buf = msg->serialize(len);
+					usr->output.setBuffer(buf, len);
+					usr->output.write(len);
+				}
+				break;
+			case Z_MEM_ERROR:
+				throw std::bad_alloc();
+			case Z_BUF_ERROR:
+				#ifndef NDEBUG
+				std::cerr << "zlib: output buffer is too small." << std::endl
+					<< "source size: " << len << ", target size: " << buffer_len << std::endl;
+				#endif
+				break;
+			}
+		}
+		#endif // HAVE_ZLIB
 	}
 	
 	int sb = usr->sock->send(
@@ -734,9 +773,14 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Deflate:
 		// TODO: Deflate extension support
-		#if defined(HAVE_ZLIB)
-		DeflateReprocess(usr, usr->inMsg);
-		#endif
+		if (!fIsSet(usr->extensions, protocol::extensions::Deflate))
+			uRemove(usr, protocol::user_event::Dropped);
+		else
+		{
+			#if defined(HAVE_ZLIB)
+			DeflateReprocess(usr, usr->inMsg);
+			#endif
+		}
 		break;
 	case protocol::type::Chat:
 	case protocol::type::Palette:
