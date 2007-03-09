@@ -80,6 +80,10 @@ include ( CheckIncludeFileCXX )
 # used by server & shared
 check_include_file ( stdint.h HAVE_STDINT_H )
 
+### For deflate extension
+
+check_include_file ( zlib.h HAVE_ZLIB )
+
 ### Boost library
 
 find_package ( Boost 1.33 REQUIRED )

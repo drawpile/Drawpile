@@ -3,7 +3,7 @@
 #cmakedefine IS_BIG_ENDIAN
 
 #cmakedefine HAVE_BOOST
-#cmakedefine HAVE_TINYXML
+#cmakedefine HAVE_ZLIB
 
 #cmakedefine EV_SELECT_COPY
 #cmakedefine EV_SELECT
