@@ -50,7 +50,7 @@ int Server::run() throw()
 	std::pair<fd_t, uint32_t> event;
 	
 	// set event timeout
-	ev.timeout(5000);
+	ev.timeout(30000);
 	
 	// main loop
 	while (state == server::state::Active)
@@ -90,11 +90,13 @@ int Server::run() throw()
 				
 				usr = users[event.first];
 				
+				#ifdef EV_HAS_ERROR
 				if (fIsSet(event.second, ev.error))
 				{
 					uRemove(usr, protocol::user_event::BrokenPipe);
 					continue;
 				}
+				#endif // EV_HAS_ERROR
 				#ifdef EV_HAS_HANGUP
 				if (fIsSet(event.second, ev.hangup))
 				{
