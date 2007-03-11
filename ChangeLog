@@ -1,5 +1,8 @@
 2007-0?-?? Version 0.4.0
  * Support multiple windows
+ * Implemented line and rectangle tools
+ * Added a menu item to disable new users from joining the session
+ * Full screen mode
 
 2007-01-18 Vesion 0.3.0
  * Several tablet handling bugs were fixed
