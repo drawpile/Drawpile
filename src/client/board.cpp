@@ -132,17 +132,30 @@ QImage Board::image() const
 }
 
 /**
+ * @retval true if the board contains an image
+ */
+bool Board::hasImage() const {
+	return image_!=0;
+}
+
+/**
  * @return board width
  */
 int Board::width() const {
-	return int(image_->boundingRect().width());
+	if(image_)
+		return int(image_->boundingRect().width());
+	else
+		return -1;
 }
 
 /**
  * @return board height
  */
 int Board::height() const {
-	return int(image_->boundingRect().height());
+	if(image_)
+		return int(image_->boundingRect().height());
+	else
+		return -1;
 }
 
 /**

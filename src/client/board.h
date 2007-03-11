@@ -74,6 +74,9 @@ class Board : public QGraphicsScene
 		//! Get board contents as an image
 		QImage image() const;
 
+		//! Is there an image on the drawing board
+		bool hasImage() const;
+
 		//! Delete all users
 		void clearUsers();
 

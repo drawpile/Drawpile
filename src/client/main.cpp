@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	app.connect(&app, SIGNAL(aboutToQuit()), srv, SLOT(shutdown()));
 
 	// Create and show the main window
-	MainWindow win;
+	MainWindow *win = new MainWindow;
 
 	QStringList args = app.arguments();
 	if(args.count()>1) {
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 		// or a filename.
 		if(arg.startsWith("drawpile://")) {
 			// Create a default board first, in case connection fails
-			win.initBoard(QSize(800,600), Qt::white);
+			win->initBoard(QSize(800,600), Qt::white);
 			// Join the session
 			QUrl url(arg, QUrl::TolerantMode);
 			if(url.userName().isEmpty()) {
@@ -60,18 +60,18 @@ int main(int argc, char *argv[]) {
 					defaultname = "user";
 				url.setUserName(cfg.value("username", defaultname).toString());
 			}
-			win.joinSession(url);
+			win->joinSession(url);
 		} else {
-			if(win.initBoard(argv[1])==false) {
+			if(win->initBoard(argv[1])==false) {
 				std::cerr << argv[1] << ": couldn't load image.\n";
 				return 1;
 			}
 		}
 	} else {
 		// Create a default board
-		win.initBoard(QSize(800,600), Qt::white);
+		win->initBoard(QSize(800,600), Qt::white);
 	}
-	win.show();
+	win->show();
 
 	return app.exec();
 }

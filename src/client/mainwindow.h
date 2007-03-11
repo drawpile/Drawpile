@@ -54,6 +54,7 @@ class MainWindow : public QMainWindow {
 	enum ErrorType {ERR_SAVE, ERR_OPEN, BAD_URL};
 	public:
 		MainWindow();
+		~MainWindow();
 
 		//! Initialize the drawing board from an existing image
 		void initBoard(const QImage& image);
@@ -103,22 +104,12 @@ class MainWindow : public QMainWindow {
 		void setSessionTitle(const QString& title);
 		//! Create new document
 		void newDocument();
-		//! Show new document dialog
-		void showNewDialog();
 		//! Mark unsaved changes
 		void boardChanged();
-		//! Save and create a new image
-		void finishNew(int i);
-		//! Save and open another image
-		void finishOpen(int i);
 		//! Confirm and open image
 		void openImage(const QString& filename);
-		//! Save and exit
-		void finishExit(int i);
 		//! Cancel or start hosting
 		void finishHost(int i);
-		//! Show join dialog
-		void initJoin(int i);
 		//! Cancel or join
 		void finishJoin(int i);
 		//! Leave session
@@ -151,14 +142,11 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
+		//! Check if the current board can be replaced
+		bool canReplace() const;
+
 		//! Set the window title according to open file name
 		void setTitle();
-
-		//! Show join dialog without checking for unsaved changes
-		void reallyJoin();
-
-		//! Show open dialog without checking for unsaved changes
-		void reallyOpen();
 
 		//! Save settings and exit
 		void exit();
@@ -205,8 +193,6 @@ class MainWindow : public QMainWindow {
 		dialogs::JoinDialog *joindlg_;
 		dialogs::LoginDialog *logindlg_;
 		QMessageBox *msgbox_;
-		QMessageBox *unsavedbox_;
-		QMessageBox *confirmexitbox_;
 		QMessageBox *leavebox_;
 
 		drawingboard::Board *board_;
@@ -251,6 +237,8 @@ class MainWindow : public QMainWindow {
 		QAction *help_;
 		QAction *homepage_;
 		QAction *about_;
+
+		static int windows_;
 };
 
 #endif

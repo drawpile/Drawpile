@@ -241,29 +241,47 @@ void Controller::sessionJoined(int id)
 	board_->addUser(netstate_->localUser().id);
 	board_->setLocalUser(netstate_->localUser().id);
 
-	// Make session <-> controller connections
-	connect(session_, SIGNAL(rasterReceived(int)), this, SLOT(rasterDownload(int)));
-	connect(session_, SIGNAL(rasterSent(int)), this, SIGNAL(rasterUploadProgress(int)));
-	connect(session_, SIGNAL(syncRequest()), this, SLOT(rasterUpload()));
-	connect(session_, SIGNAL(syncWait()), this, SLOT(syncWait()));
-	connect(session_, SIGNAL(syncDone()), this, SLOT(syncDone()));
-
-	connect(session_, SIGNAL(userJoined(int)), this, SLOT(addUser(int)));
-	connect(session_, SIGNAL(userLeft(int)), this, SLOT(removeUser(int)));
-	connect(session_, SIGNAL(sessionLocked(bool)), this, SLOT(sessionLocked(bool)));
-	connect(session_, SIGNAL(userLocked(int, bool)), this, SLOT(userLocked(int,bool)));
-	connect(session_, SIGNAL(ownerChanged()), this, SLOT(sessionOwnerChanged()));
-	connect(session_, SIGNAL(userKicked(int)), this, SLOT(sessionKicked(int)));
-	connect(session_, SIGNAL(chatMessage(QString, QString)), this, SIGNAL(chat(QString,QString)));
-	connect(session_, SIGNAL(userLimitChanged(int)), this, SLOT(sessionUserLimitChanged(int)));
+	// Make session -> controller connections
+	connect(session_, SIGNAL(rasterReceived(int)),
+			this, SLOT(rasterDownload(int)));
+	connect(session_, SIGNAL(rasterSent(int)),
+			this, SIGNAL(rasterUploadProgress(int)));
+	connect(session_, SIGNAL(syncRequest()),
+			this, SLOT(rasterUpload()));
+	connect(session_, SIGNAL(syncWait()),
+			this, SLOT(syncWait()));
+	connect(session_, SIGNAL(syncDone()),
+			this, SLOT(syncDone()));
+	connect(session_, SIGNAL(userJoined(int)),
+			this, SLOT(addUser(int)));
+	connect(session_, SIGNAL(userLeft(int)),
+			this, SLOT(removeUser(int)));
+	connect(session_, SIGNAL(sessionLocked(bool)),
+			this, SLOT(sessionLocked(bool)));
+	connect(session_, SIGNAL(userLocked(int, bool)),
+			this, SLOT(userLocked(int,bool)));
+	connect(session_, SIGNAL(ownerChanged()),
+			this, SLOT(sessionOwnerChanged()));
+	connect(session_, SIGNAL(userKicked(int)),
+			this, SLOT(sessionKicked(int)));
+	connect(session_, SIGNAL(chatMessage(QString, QString)),
+			this, SIGNAL(chat(QString,QString)));
+	connect(session_, SIGNAL(userLimitChanged(int)),
+			this, SLOT(sessionUserLimitChanged(int)));
 
 	// Make session -> board connections
-	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)), board_, SLOT(userSetTool(int,drawingboard::Brush)));
-	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), board_, SLOT(userStroke(int,drawingboard::Point)));
-	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)), this, SIGNAL(changed()));
-	connect(session_, SIGNAL(strokeEndReceived(int)), board_, SLOT(userEndStroke(int)));
-	connect(session_, SIGNAL(userJoined(int)), board_, SLOT(addUser(int)));
-	connect(session_, SIGNAL(userLeft(int)), board_, SLOT(removeUser(int)));
+	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)),
+			board_, SLOT(userSetTool(int,drawingboard::Brush)));
+	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)),
+			board_, SLOT(userStroke(int,drawingboard::Point)));
+	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)),
+			this, SIGNAL(changed()));
+	connect(session_, SIGNAL(strokeEndReceived(int)), board_,
+			SLOT(userEndStroke(int)));
+	connect(session_, SIGNAL(userJoined(int)), board_,
+			SLOT(addUser(int)));
+	connect(session_, SIGNAL(userLeft(int)), board_,
+			SLOT(removeUser(int)));
 
 	// Get a remote board editor
 	delete editor_;
@@ -474,7 +492,8 @@ void Controller::penDown(const drawingboard::Point& point)
 	if(lock_ == false || (lock_ && tool_->readonly())) {
 		tool_->begin(point);
 		if(tool_->readonly()==false) {
-			emit changed();
+			if(board_->hasImage())
+				emit changed();
 			pendown_ = true;
 		}
 	}
