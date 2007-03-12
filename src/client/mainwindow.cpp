@@ -25,6 +25,7 @@
 #include <QSettings>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QDesktopWidget>
 #include <QUrl>
 #include <QMessageBox>
 #include <QCloseEvent>
@@ -51,7 +52,10 @@
 
 int MainWindow::windows_ = 0;
 
-MainWindow::MainWindow()
+/**
+ * @param restoreposition if true, the window is placed at its previous position
+ */
+MainWindow::MainWindow(bool restoreposition)
 	: QMainWindow()
 {
 	++windows_;
@@ -192,7 +196,7 @@ MainWindow::MainWindow()
 	connect(netstatus_, SIGNAL(statusMessage(QString)),
 			chatbox_, SLOT(systemMessage(QString)));
 
-	readSettings();
+	readSettings(restoreposition);
 
 }
 
@@ -294,17 +298,25 @@ void MainWindow::setTitle()
 
 /**
  * Read settings
+ * @param restorepos place window at its previous position
  */
-void MainWindow::readSettings()
+void MainWindow::readSettings(bool restorepos)
 {
 	QSettings cfg;
 	cfg.beginGroup("mainwindow");
 
+	// Restore previously used window size
 	resize(cfg.value("size",QSize(800,600)).toSize());
 
-	if(cfg.contains("pos"))
-		move(cfg.value("pos").toPoint());
+	// Restore previous position if restorepos==true, previous position
+	// is remembered and it is inside the screen.
+	if(restorepos && cfg.contains("pos")) {
+		QPoint pos = cfg.value("pos").toPoint();
+		if(qApp->desktop()->availableGeometry().contains(pos))
+			move(pos);
+	}
 
+	// Restore dock and toolbar states
 	if(cfg.contains("state")) {
 		restoreState(cfg.value("state").toByteArray());
 	}
@@ -376,7 +388,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
-			QPushButton *cancelbtn = box.addButton(tr("Cancel"),
+			box.addButton(tr("Cancel"),
 					QMessageBox::RejectRole);
 
 			box.exec();
@@ -396,7 +408,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					tr("There are unsaved changes. Save them before exiting?"));
 			QPushButton *savebtn = box.addButton(tr("Save changes"),
 					QMessageBox::AcceptRole);
-			QPushButton *exitbtn = box.addButton(tr("Exit without saving"),
+			box.addButton(tr("Exit without saving"),
 					QMessageBox::DestructiveRole);
 			QPushButton *cancelbtn = box.addButton(tr("Cancel"),
 					QMessageBox::RejectRole);

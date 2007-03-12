@@ -53,7 +53,7 @@ class MainWindow : public QMainWindow {
 	Q_OBJECT
 	enum ErrorType {ERR_SAVE, ERR_OPEN, BAD_URL};
 	public:
-		MainWindow();
+		MainWindow(bool restoreposition=false);
 		~MainWindow();
 
 		//! Initialize the drawing board from an existing image
@@ -158,7 +158,7 @@ class MainWindow : public QMainWindow {
 		void showErrorMessage(const QString& message, const QString& details=QString());
 
 		//! Read settings from file/registry
-		void readSettings();
+		void readSettings(bool restorepos);
 		//! Write settings to file/reqistry
 		void writeSettings();
 

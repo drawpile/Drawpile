@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 	app.connect(&app, SIGNAL(aboutToQuit()), srv, SLOT(shutdown()));
 
 	// Create and show the main window
-	MainWindow *win = new MainWindow;
+	MainWindow *win = new MainWindow(true);
 
 	QStringList args = app.arguments();
 	if(args.count()>1) {
