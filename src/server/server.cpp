@@ -2062,11 +2062,11 @@ void Server::Propagate(Session* session, message_ref msg, const uint8_t source, 
 		#ifndef NDEBUG
 		if (users.find(source) == users.end())
 		{
-			std::cerr << "Source user #" << static_cast<int>(source) <<
+			std::cerr << "Source user #" << static_cast<int>(source)
 				<< " not found for message." << std::endl
 				<< "Known users: " << users.size() << std::endl
-				<< protocol::msgName(msg->type) << std::endl
 				<< "Target session: " << session->id << std::endl;
+			protocol::msgName(msg->type);
 		}
 		#endif
 		assert(users.find(source) != users.end());
