@@ -2065,7 +2065,7 @@ void Server::Propagate(Session* session, message_ref msg, const uint8_t source, 
 			std::cerr << "Source user #" << static_cast<int>(source)
 				<< " not found for message." << std::endl
 				<< "Known users: " << users.size() << std::endl
-				<< "Target session: " << session->id << std::endl;
+				<< "Target session: " << static_cast<int>(session->id) << std::endl;
 			protocol::msgName(msg->type);
 		}
 		#endif
