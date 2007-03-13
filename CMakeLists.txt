@@ -31,6 +31,8 @@ option ( WSA "Enable WSA event support" OFF )
 
 option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
 
+option ( DEFLATE "Enable deflate compression" OFF )
+
 option ( WSA_SOCKETS "Use WSA sockets" OFF )
 if ( WIN32 )
 	set ( WSA_SOCKETS ON )
@@ -82,7 +84,9 @@ check_include_file ( stdint.h HAVE_STDINT_H )
 
 ### For deflate extension
 
-check_include_file ( zlib.h HAVE_ZLIB )
+if ( DEFLATE )
+	check_include_file ( zlib.h HAVE_ZLIB )
+endif ( DEFLATE )
 
 ### Boost library
 
