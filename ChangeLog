@@ -3,6 +3,7 @@
  * Implemented line and rectangle tools
  * Added a menu item to disable new users from joining the session
  * Full screen mode
+ * Client now informs the user if the (local) server crashes
 
 2007-01-18 Vesion 0.3.0
  * Several tablet handling bugs were fixed

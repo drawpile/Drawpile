@@ -49,9 +49,15 @@ class LocalServer : public QObject {
 		//! Was the local server binary found
 		bool isAvailable() const { return available_; }
 
+	signals:
+		void serverCrashed();
+
 	public slots:
 		//! Shutdown the server
 		void shutdown();
+
+	private slots:
+		void serverFinished(int exitcode, QProcess::ExitStatus exitstatus);
 
 	private:
 		LocalServer();

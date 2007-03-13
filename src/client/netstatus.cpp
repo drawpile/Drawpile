@@ -129,5 +129,13 @@ void NetStatus::kicked(const network::User& user)
 	emit statusMessage(msg);
 }
 
+void NetStatus::serverCrashed()
+{
+	QString msg = tr("<b>Server crashed!</b>");
+	popup_->setMessage(msg);
+	popup_->popupAt(mapToGlobal(rect().topLeft()));
+	emit statusMessage(msg);
+}
+
 }
 

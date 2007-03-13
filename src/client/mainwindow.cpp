@@ -74,6 +74,8 @@ MainWindow::MainWindow(bool restoreposition)
 	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
+	connect(LocalServer::getInstance(), SIGNAL(serverCrashed()),
+			netstatus_, SLOT(serverCrashed()));
 
 	// Create view
 	view_ = new widgets::EditorView(this);

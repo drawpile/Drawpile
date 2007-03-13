@@ -30,6 +30,9 @@ LocalServer::LocalServer()
 	: port_(-1)
 {
 	server_.setProcessChannelMode(QProcess::MergedChannels);
+	connect(&server_, SIGNAL(finished(int, QProcess::ExitStatus)),
+			this, SLOT(serverFinished(int, QProcess::ExitStatus)));
+
 	// Locate the server executable
 	QFileInfo i;
 	i.setFile(QApplication::applicationDirPath(), "drawpile-srv");
@@ -156,6 +159,16 @@ void LocalServer::shutdown()
 		if(server_.waitForFinished() == false)
 			server_.kill();
 		server_.waitForFinished();
+	}
+}
+
+/**
+ */
+void LocalServer::serverFinished(int exitcode, QProcess::ExitStatus exitstatus)
+{
+	if(exitstatus == QProcess::CrashExit) {
+		qDebug() << "Server crashed" << serverOutput();
+		emit serverCrashed();
 	}
 }
 
