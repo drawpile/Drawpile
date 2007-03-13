@@ -154,7 +154,7 @@ protected:
 	message_ref msgAuth(User* usr, const uint8_t session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref uCreateEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc);
+	message_ref msgUserEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgError(const uint8_t session, const uint16_t errorCode) const throw(std::bad_alloc);

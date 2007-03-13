@@ -141,6 +141,8 @@ void Server::cleanup() throw()
 
 void Server::uRegenSeed(User* usr) const throw()
 {
+	assert(usr != 0);
+	
 	usr->seed[0] = (rand() % 255) + 1;
 	usr->seed[1] = (rand() % 255) + 1;
 	usr->seed[2] = (rand() % 255) + 1;
@@ -181,6 +183,8 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 inline
 message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc)
 {
+	assert(session != 0);
+	
 	protocol::SessionInfo *nfo = new protocol::SessionInfo(
 		session->width,
 		session->height,
@@ -315,7 +319,9 @@ void Server::uWrite(User*& usr) throw()
 		}
 		
 		#if defined(HAVE_ZLIB)
-		if (fIsSet(usr->extensions, protocol::extensions::Deflate) and usr->output.canRead() > 300)
+		if (fIsSet(usr->extensions, protocol::extensions::Deflate)
+			and usr->output.canRead() > 300
+			and msg->type != protocol::type::Raster)
 		{
 			unsigned long buffer_len = len + 12 + static_cast<int>(len * 0.12);
 			char* temp = new char[buffer_len];
@@ -555,13 +561,13 @@ void Server::uProcessData(User*& usr) throw()
 	}
 }
 
-message_ref Server::uCreateEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc)
+message_ref Server::msgUserEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	assert(session != 0);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	std::cout << "Server::uCreateEvent(user: "
+	std::cout << "Server::msgUserEvent(user: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
@@ -583,11 +589,14 @@ message_ref Server::uCreateEvent(const User* usr, const Session* session, const 
 inline
 bool Server::uInSession(User* usr, const uint8_t session) const throw()
 {
+	assert(usr != 0);
 	return usr->sessions.find(session) != usr->sessions.end();
 }
 
 bool Server::sessionExists(uint8_t session) const throw()
 {
+	assert(session != protocol::Global);
+	
 	if (sessions.find(session) == sessions.end())
 		return false;
 	
@@ -1078,6 +1087,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 #if defined(HAVE_ZLIB)
 void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad_alloc)
 {
+	assert(usr != 0);
+	assert(msg != 0);
+	
 	#if !defined(NDEBUG)
 	std::cout << "Server::DeflateReprocess(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
@@ -2042,9 +2054,21 @@ void Server::Propagate(Session* session, message_ref msg, const uint8_t source, 
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
+	assert(session != 0);
+	
 	// Send ACK for the message we're about to share..
 	if (source != protocol::null_user)
 	{
+		#ifndef NDEBUG
+		if (users.find(source) == users.end())
+		{
+			std::cerr << "Source user #" << static_cast<int>(source) <<
+				<< " not found for message." << std::endl
+				<< "Known users: " << users.size() << std::endl
+				<< protocol::msgName(msg->type) << std::endl
+				<< "Target session: " << session->id << std::endl;
+		}
+		#endif
 		assert(users.find(source) != users.end());
 		uSendMsg(users[source], msgAck(session->id, msg->type));
 	}
@@ -2108,12 +2132,13 @@ void Server::uSendMsg(User* usr, message_ref msg) throw()
 
 void Server::SyncSession(Session* session) throw()
 {
+	assert(session != 0);
+	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::SyncSession(session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	
-	assert(session != 0);
 	assert(session->syncCounter == 0);
 	
 	// TODO: Need better source user selection.
@@ -2155,7 +2180,7 @@ void Server::SyncSession(Session* session) throw()
 		}
 		
 		// add messages to msg_queue
-		msg_queue.push_back(uCreateEvent(usr_ptr, session, protocol::user_event::Join));
+		msg_queue.push_back(msgUserEvent(usr_ptr, session, protocol::user_event::Join));
 		if (usr_ptr->session->id == session->id)
 		{
 			select = new protocol::SessionSelect;
@@ -2207,7 +2232,7 @@ void Server::SyncSession(Session* session) throw()
 				if (new_i2 == new_i) continue; // skip self
 				uSendMsg(
 					(*new_i),
-					uCreateEvent((*new_i2), session, protocol::user_event::Join)
+					msgUserEvent((*new_i2), session, protocol::user_event::Join)
 				);
 			}
 		}
@@ -2233,7 +2258,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	usr->sessions[session->id] = SessionData(usr->id, session);
 	
 	// Tell session members there's a new user.
-	Propagate(session, uCreateEvent(usr, session, protocol::user_event::Join));
+	Propagate(session, msgUserEvent(usr, session, protocol::user_event::Join));
 	
 	if (session->users.size() != 0)
 	{
@@ -2321,7 +2346,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	// Tell session members the user left
 	if (reason != protocol::user_event::None)
 	{
-		Propagate(session, uCreateEvent(usr, session, reason));
+		Propagate(session, msgUserEvent(usr, session, reason));
 		
 		if (session->owner == usr->id)
 		{
@@ -2404,6 +2429,8 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 
 void Server::breakSync(User* usr) throw()
 {
+	assert(usr != 0);
+	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::breakSync(user: "
 		<< static_cast<int>(usr->id) << ")" << std::endl;
@@ -2425,7 +2452,7 @@ void Server::breakSync(User* usr) throw()
 	usr->syncing = protocol::Global;
 }
 
-void Server::uRemove(User *&usr, const uint8_t reason) throw()
+void Server::uRemove(User*& usr, const uint8_t reason) throw()
 {
 	assert(usr != 0);
 	
