@@ -727,7 +727,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		Propagate(
 			usr->session,
 			message_ref(usr->inMsg),
-			(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+			(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
 		);
 		
 		usr->inMsg = 0;
@@ -765,7 +765,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			Propagate(
 				usr->session,
 				message_ref(usr->inMsg),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
 			);
 			usr->inMsg = 0;
 			
@@ -810,7 +810,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			Propagate(
 				usi->second.session,
 				pmsg,
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
 			);
 			usr->inMsg = 0;
 		}
@@ -984,7 +984,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			Propagate(
 				session,
 				message_ref(layer),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
 			);
 			
 			ui->second.layer = layer->layer_id;
@@ -1173,7 +1173,8 @@ void Server::uHandleAck(User*& usr) throw()
 			if (session->syncCounter == 0)
 			{
 				#ifndef NDEBUG
-				std::cout << "SyncWait counter reached 0." << std::endl;
+				std::cout << "Synchronizing raster for session #"
+					<< static_cast<int>(session->id) << "." << std::endl;
 				#endif
 				
 				SyncSession(session);
@@ -1417,7 +1418,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			Propagate(
 				session,
 				message_ref(event),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
 			);
 			
 			usr->inMsg = 0;
@@ -1457,7 +1458,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			Propagate(
 				session,
 				message_ref(event),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr->id : protocol::null_user)
+				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
 			);
 			
 			usr->inMsg = 0;
@@ -1620,7 +1621,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			// tell users session was lost
 			message_ref err = msgError(session->id, protocol::error::SessionLost);
-			Propagate(session, err, protocol::null_user, true);
+			Propagate(session, err, 0, true);
 			
 			// clean session users
 			session_usr_iterator sui(session->users.begin());
@@ -1998,10 +1999,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			if (password == 0)
 			{
-				#ifndef NDEBUG
-				std::cout << "Proceed to login" << std::endl;
-				#endif
-				
 				// no password set
 				
 				#ifdef CHECK_VIOLATIONS
@@ -2047,7 +2044,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::Propagate(Session* session, message_ref msg, const uint8_t source, const bool toAll) throw()
+void Server::Propagate(Session* session, message_ref msg, User* source, const bool toAll) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::Propagate(session: " << static_cast<int>(msg->session_id)
@@ -2057,26 +2054,15 @@ void Server::Propagate(Session* session, message_ref msg, const uint8_t source, 
 	assert(session != 0);
 	
 	// Send ACK for the message we're about to share..
-	if (source != protocol::null_user)
+	if (source != 0)
 	{
-		#ifndef NDEBUG
-		if (users.find(source) == users.end())
-		{
-			std::cerr << "Source user #" << static_cast<int>(source)
-				<< " not found for message." << std::endl
-				<< "Known users: " << users.size() << std::endl
-				<< "Target session: " << static_cast<int>(session->id) << std::endl;
-			protocol::msgName(msg->type);
-		}
-		#endif
-		assert(users.find(source) != users.end());
-		uSendMsg(users[source], msgAck(session->id, msg->type));
+		uSendMsg(source, msgAck(session->id, msg->type));
 	}
 	
 	User *usr_ptr;
 	for (session_usr_iterator ui(session->users.begin()); ui != session->users.end(); ui++)
 	{
-		if (ui->second->id != source)
+		if (ui->second != source)
 		{
 			usr_ptr = ui->second;
 			uSendMsg(usr_ptr, msg);
@@ -2088,7 +2074,7 @@ void Server::Propagate(Session* session, message_ref msg, const uint8_t source, 
 		// send to users waiting sync as well.
 		for (std::list<User*>::iterator wui(session->waitingSync.begin()); wui != session->waitingSync.end(); wui++)
 		{
-			if ((*wui)->id != source)
+			if ((*wui) != source)
 			{
 				usr_ptr = *wui;
 				uSendMsg(usr_ptr, msg);
