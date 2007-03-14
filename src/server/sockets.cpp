@@ -294,6 +294,7 @@ bool Socket::reuse(bool x) throw()
 			break;
 		}
 	}
+	
 	return (r == 0);
 	#endif
 }
@@ -308,6 +309,30 @@ bool Socket::linger(bool x) throw()
 	val = (x ? 1 : 0);
 	
 	int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, &val, sizeof(val));
+	
+	if (r == SOCKET_ERROR)
+	{
+		error = errno;
+		
+		switch (error)
+		{
+		#ifndef NDEBUG
+		case EBADF:
+			assert(!(error == EBADF));
+		case ENOTSOCK:
+			assert(!(error == ENOTSOCK));
+		case ENOPROTOOPT:
+			assert(!(error == ENOPROTOOPT));
+		case EFAULT:
+			assert(!(error == EFAULT));
+			break;
+		#endif // NDEBUG
+		default:
+			std::cerr << "unhandled error from setsockopt() : " << error << std::endl;
+			assert(error);
+			break;
+		}
+	}
 	
 	return (r == 0);
 }
