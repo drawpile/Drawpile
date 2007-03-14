@@ -299,24 +299,36 @@ bool Socket::reuse(bool x) throw()
 	#endif
 }
 
-bool Socket::linger(bool x) throw()
+bool Socket::linger(bool x, uint16_t delay) throw()
 {
-	#ifdef WIN32
-	char val;
-	#else
-	int val;
-	#endif
-	val = (x ? 1 : 0);
+	::linger lval;
+	lval.l_onoff = (x ? 1 : 0);
+	lval.l_linger = delay;
 	
-	int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, &val, sizeof(val));
+	int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&lval), sizeof(lval));
 	
 	if (r == SOCKET_ERROR)
 	{
+		#ifdef WIN32
+		error = WSAGetLastError();
+		#else
 		error = errno;
+		#endif
 		
 		switch (error)
 		{
 		#ifndef NDEBUG
+		#ifdef WIN32
+		case WSAEBADF:
+			assert(!(error == WSAEBADF));
+		case WSAENOTSOCK:
+			assert(!(error == WSAENOTSOCK));
+		case WSAENOPROTOOPT:
+			assert(!(error == WSAENOPROTOOPT));
+		case WSAEFAULT:
+			assert(!(error == WSAEFAULT));
+			break;
+		#else
 		case EBADF:
 			assert(!(error == EBADF));
 		case ENOTSOCK:
@@ -326,6 +338,7 @@ bool Socket::linger(bool x) throw()
 		case EFAULT:
 			assert(!(error == EFAULT));
 			break;
+		#endif
 		#endif // NDEBUG
 		default:
 			std::cerr << "unhandled error from setsockopt() : " << error << std::endl;

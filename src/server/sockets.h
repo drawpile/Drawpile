@@ -258,15 +258,17 @@ public:
 	
 	//! Re-use socket address
 	/**
-	 * Sets SO_REUSEADDR for the socket.
+	 * Sets SO_REUSEPORT for the socket.
 	 */
 	bool reuse(bool x) throw();
 	
 	//! Set/unset lingering
 	/**
 	 * Sets SO_LINGER for the socket.
+	 *
+	 * "Lingers on close if unsent data is present."
 	 */
-	bool linger(bool x) throw();
+	bool linger(bool x, uint16_t delay) throw();
 	
 	//! Bind socket to port and address
 	/**
