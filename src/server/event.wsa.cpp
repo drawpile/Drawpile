@@ -80,7 +80,8 @@ Event::Event() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event(wsa)()" << std::endl
-		<< "Max events: " << max_events<< std::endl;
+		<< "Max events: " << max_events << std::endl
+		<< "FD_MAX_EVENTS: " << FD_MAX_EVENTS << std::endl;
 	#endif
 	
 	// null the ev set
@@ -331,7 +332,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		case WSAETIMEDOUT: // connection timed-out
 		case WSAENETUNREACH: // network unreachable
 		case WSAECONNREFUSED: // connection refused/rejected
-			return FD_CLOSE;
+			return FD_WRITE|FD_CLOSE;
 		case WSAENOBUFS: // out of network buffers
 		case WSAENETDOWN: // network sub-system failure
 		case WSAEINPROGRESS: // something's in progress
