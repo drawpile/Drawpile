@@ -262,6 +262,12 @@ public:
 	 */
 	bool reuse(bool x) throw();
 	
+	//! Set/unset lingering
+	/**
+	 * Sets SO_LINGER for the socket.
+	 */
+	bool linger(bool x) throw();
+	
 	//! Bind socket to port and address
 	/**
 	 * @return 0 on success.

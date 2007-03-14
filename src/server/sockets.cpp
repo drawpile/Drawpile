@@ -269,7 +269,7 @@ bool Socket::reuse(bool x) throw()
 	#else
 	int val = (x ? 1 : 0);
 	
-	int r = (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val)) == 0);
+	int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -296,6 +296,20 @@ bool Socket::reuse(bool x) throw()
 	}
 	return (r == 0);
 	#endif
+}
+
+bool Socket::linger(bool x) throw()
+{
+	#ifdef WIN32
+	char val;
+	#else
+	int val;
+	#endif
+	val = (x ? 1 : 0);
+	
+	int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, &val, sizeof(val));
+	
+	return (r == 0);
 }
 
 int Socket::bindTo(std::string address, uint16_t port) throw()
