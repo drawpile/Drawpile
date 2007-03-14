@@ -20,6 +20,8 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+#include <QHash>
+
 #include "point.h"
 
 namespace drawingboard {
@@ -40,6 +42,8 @@ namespace tools {
 
 enum Type {BRUSH, ERASER, PICKER, LINE, RECTANGLE};
 
+class ToolCollection;
+
 //! Base class for all tools
 /**
  * Tool classes interpret mouse/pen commands into editing actions.
@@ -48,15 +52,9 @@ enum Type {BRUSH, ERASER, PICKER, LINE, RECTANGLE};
 class Tool
 {
 	public:
-		Tool(Type type, bool readonly)
-			: type_(type), readonly_(readonly) {}
+		Tool(ToolCollection &owner, Type type, bool readonly)
+			: owner_(owner), type_(type), readonly_(readonly) {}
 		virtual ~Tool() {};
-
-		//! Set board editor to use
-		static void setEditor(drawingboard::BoardEditor *editor);
-
-		//! Get an instance of a specific tool
-		static Tool *get(Type type);
 
 		//! Get the type of this tool
 		Type type() const { return type_; }
@@ -74,9 +72,10 @@ class Tool
 		virtual void end() = 0;
 
 	protected:
-		static drawingboard::BoardEditor *editor_;
+		inline drawingboard::BoardEditor *editor();
 
 	private:
+		ToolCollection &owner_;
 		const Type type_;
 		const bool readonly_;
 
@@ -89,7 +88,7 @@ class Tool
 class BrushBase : public Tool
 {
 	public:
-		BrushBase(Type type) : Tool(type, false) {}
+		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type, false) {}
 
 		void begin(const drawingboard::Point& point);
 		void motion(const drawingboard::Point& point);
@@ -99,13 +98,13 @@ class BrushBase : public Tool
 //! Regular brush
 class Brush : public BrushBase {
 	public:
-		Brush() : BrushBase(BRUSH) {}
+		Brush(ToolCollection &owner) : BrushBase(owner, BRUSH) {}
 };
 
 //! Eraser
 class Eraser : public BrushBase {
 	public:
-		Eraser() : BrushBase(ERASER) {}
+		Eraser(ToolCollection &owner) : BrushBase(owner, ERASER) {}
 };
 
 //! Color picker
@@ -114,7 +113,7 @@ class Eraser : public BrushBase {
  */
 class ColorPicker : public Tool {
 	public:
-		ColorPicker() : Tool(PICKER, true) {}
+		ColorPicker(ToolCollection &owner) : Tool(owner, PICKER, true) {}
 
 		void begin(const drawingboard::Point& point);
 		void motion(const drawingboard::Point& point);
@@ -128,7 +127,7 @@ class ColorPicker : public Tool {
  */
 class ComplexBase : public Tool {
 	public:
-		ComplexBase(Type type) : Tool(type, false) {}
+		ComplexBase(ToolCollection &owner, Type type) : Tool(owner, type, false) {}
 
 		void begin(const drawingboard::Point& point);
 		void motion(const drawingboard::Point& point);
@@ -144,7 +143,7 @@ class ComplexBase : public Tool {
 //! Line tool
 class Line : public ComplexBase {
 	public:
-		Line() : ComplexBase(LINE) {}
+		Line(ToolCollection &owner) : ComplexBase(owner, LINE) {}
 
 	protected:
 		void commit();
@@ -154,11 +153,36 @@ class Line : public ComplexBase {
 //! Rectangle tool
 class Rectangle : public ComplexBase {
 	public:
-		Rectangle() : ComplexBase(RECTANGLE) {}
+		Rectangle(ToolCollection &owner) : ComplexBase(owner, RECTANGLE) {}
 
 	protected:
 		void commit();
 };
+
+/**
+ * A collection for tools, specific to a single controller.
+ */
+class ToolCollection {
+	public:
+		ToolCollection();
+		~ToolCollection();
+
+		//! Get editor
+		drawingboard::BoardEditor *editor() const { return editor_; }
+
+		//! Set board editor to use
+		void setEditor(drawingboard::BoardEditor *editor);
+
+		//! Get an instance of a specific tool
+		Tool *get(Type type);
+
+	private:
+		drawingboard::BoardEditor *editor_;
+		QHash<Type, Tool*> tools_;
+
+};
+
+drawingboard::BoardEditor *Tool::editor() { return owner_.editor(); }
 
 }
 

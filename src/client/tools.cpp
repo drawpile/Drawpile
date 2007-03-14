@@ -26,9 +26,33 @@
 
 namespace tools {
 
-drawingboard::BoardEditor *Tool::editor_;
+/**
+ * Construct one of each tool for the collection
+ */
+ToolCollection::ToolCollection()
+	: editor_(0)
+{
+	tools_[BRUSH] = new Brush(*this);
+	tools_[ERASER] = new Eraser(*this);
+	tools_[PICKER] = new ColorPicker(*this);
+	tools_[LINE] = new Line(*this);
+	tools_[RECTANGLE] = new Rectangle(*this);
+}
 
-void Tool::setEditor(drawingboard::BoardEditor *editor)
+/**
+ * Delete the tools
+ */
+ToolCollection::~ToolCollection()
+{
+	foreach(Tool *t, tools_)
+		delete t;
+}
+
+/**
+ * Set the board editor for this collection
+ * @param editor BoardEditor to use
+ */
+void ToolCollection::setEditor(drawingboard::BoardEditor *editor)
 {
 	Q_ASSERT(editor);
 	editor_ = editor;
@@ -38,62 +62,47 @@ void Tool::setEditor(drawingboard::BoardEditor *editor)
  * The returned tool can be used to perform actions on the board
  * controlled by the specified controller.
  * 
- * This is not multiboard safe! This class needs to be reworked
- * if support for joining multiple boards simultaneously is needed.
  * @param type type of tool wanted
  * @return the requested tool
  */
-Tool *Tool::get(Type type)
+Tool *ToolCollection::get(Type type)
 {
-	// When and if we support joining to multiple boards,
-	// tools can no longer be shared.
-	static Tool *brush = new Brush();
-	static Tool *eraser = new Eraser();
-	static Tool *picker = new ColorPicker();
-	static Line *line = new Line();
-	static Rectangle *rect = new Rectangle();
-	switch(type) {
-		case BRUSH: return brush;
-		case ERASER: return eraser;
-		case PICKER: return picker;
-		case LINE: return line;
-		case RECTANGLE: return rect;
-	}
-	return 0;
+	Q_ASSERT(tools_.contains(type));
+	return tools_.value(type);
 }
 
 void BrushBase::begin(const drawingboard::Point& point)
 {
-	drawingboard::Brush brush = editor_->localBrush();
+	drawingboard::Brush brush = editor()->localBrush();
 
-	if(editor_->isCurrentBrush(brush) == false)
-		editor_->setTool(brush);
+	if(editor()->isCurrentBrush(brush) == false)
+		editor()->setTool(brush);
 
-	editor_->addStroke(point);
+	editor()->addStroke(point);
 }
 
 void BrushBase::motion(const drawingboard::Point& point)
 {
-	editor_->addStroke(point);
+	editor()->addStroke(point);
 }
 
 void BrushBase::end()
 {
-	editor_->endStroke();
+	editor()->endStroke();
 }
 
 void ColorPicker::begin(const drawingboard::Point& point)
 {
-	QColor col = editor_->colorAt(point);
+	QColor col = editor()->colorAt(point);
 	if(col.isValid())
-		editor_->setLocalForeground(col);
+		editor()->setLocalForeground(col);
 }
 
 void ColorPicker::motion(const drawingboard::Point& point)
 {
-	QColor col = editor_->colorAt(point);
+	QColor col = editor()->colorAt(point);
 	if(col.isValid())
-		editor_->setLocalForeground(col);
+		editor()->setLocalForeground(col);
 }
 
 void ColorPicker::end()
@@ -102,42 +111,42 @@ void ColorPicker::end()
 
 void ComplexBase::begin(const drawingboard::Point& point)
 {
-	editor_->startPreview(type(), point, editor_->localBrush());
+	editor()->startPreview(type(), point, editor()->localBrush());
 	start_ = point;
 	end_ = point;
 }
 
 void ComplexBase::motion(const drawingboard::Point& point)
 {
-	editor_->continuePreview(point);
+	editor()->continuePreview(point);
 	end_ = point;
 }
 
 void ComplexBase::end()
 {
-	editor_->endPreview();
-	drawingboard::Brush brush = editor_->localBrush();
-	if(editor_->isCurrentBrush(brush) == false)
-		editor_->setTool(brush);
+	editor()->endPreview();
+	drawingboard::Brush brush = editor()->localBrush();
+	if(editor()->isCurrentBrush(brush) == false)
+		editor()->setTool(brush);
 	commit();
 }
 
 void Line::commit()
 {
-	editor_->addStroke(start_);
-	editor_->addStroke(end_);
-	editor_->endStroke();
+	editor()->addStroke(start_);
+	editor()->addStroke(end_);
+	editor()->endStroke();
 }
 
 void Rectangle::commit()
 {
 	using drawingboard::Point;
-	editor_->addStroke(start_);
-	editor_->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
-	editor_->addStroke(end_);
-	editor_->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
-	editor_->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
-	editor_->endStroke();
+	editor()->addStroke(start_);
+	editor()->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
+	editor()->addStroke(end_);
+	editor()->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
+	editor()->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
+	editor()->endStroke();
 }
 
 }

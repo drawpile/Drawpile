@@ -31,7 +31,7 @@
 #include "../shared/protocol.defaults.h"
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), editor_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
+	: QObject(parent), board_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
 	netstate_ = new network::HostState(this);
 	connect(netstate_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
@@ -61,8 +61,7 @@ void Controller::setModel(drawingboard::Board *board)
 	board_ = board;
 	board_->addUser(0);
 	board_->setLocalUser(0);
-	editor_ = board->getEditor();
-	tools::Tool::setEditor(editor_);
+	toolbox_.setEditor( board->getEditor() );
 }
 
 /**
@@ -284,9 +283,8 @@ void Controller::sessionJoined(int id)
 			SLOT(removeUser(int)));
 
 	// Get a remote board editor
-	delete editor_;
-	editor_ = board_->getEditor(session_);
-	tools::Tool::setEditor(editor_);
+	delete toolbox_.editor();
+	toolbox_.setEditor( board_->getEditor(session_) );
 
 	emit joined(session_->info().title, netstate_->localUser().name);
 }
@@ -302,9 +300,8 @@ void Controller::sessionParted()
 	board_->setLocalUser(0);
 
 	// Get a local board editor
-	delete editor_;
-	editor_ = board_->getEditor();
-	tools::Tool::setEditor(editor_);
+	delete toolbox_.editor();
+	toolbox_.setEditor( board_->getEditor() );
 
 	session_ = 0;
 	emit parted();
@@ -382,7 +379,7 @@ void Controller::syncDone()
 	emit unlockboard();
 	lock_ = false;
 	// Resend brush so the new client is up to date
-	editor_->resendBrush();
+	toolbox_.editor()->resendBrush();
 }
 
 /**
@@ -484,7 +481,7 @@ void Controller::lockForSync()
 
 void Controller::setTool(tools::Type tool)
 {
-	tool_ = tools::Tool::get(tool);
+	tool_ = toolbox_.get(tool);
 }
 
 void Controller::penDown(const drawingboard::Point& point)

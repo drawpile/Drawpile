@@ -203,8 +203,8 @@ class Controller : public QObject
 		void lockForSync();
 
 		drawingboard::Board *board_;
+		tools::ToolCollection toolbox_;
 		tools::Tool *tool_;
-		drawingboard::BoardEditor *editor_;
 
 		network::Connection *net_;
 		network::HostState *netstate_;
