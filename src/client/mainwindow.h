@@ -71,6 +71,8 @@ class MainWindow : public QMainWindow {
 	public slots:
 		//! Check if document is changed and show New dialog
 		void showNew();
+		//! Open the file
+		void open(const QString& file);
 		//! Show file open dialog
 		void open();
 		//! Save current document
@@ -106,8 +108,6 @@ class MainWindow : public QMainWindow {
 		void newDocument();
 		//! Mark unsaved changes
 		void boardChanged();
-		//! Confirm and open image
-		void openImage(const QString& filename);
 		//! Cancel or start hosting
 		void finishHost(int i);
 		//! Cancel or join

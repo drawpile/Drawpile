@@ -89,7 +89,7 @@ MainWindow::MainWindow(bool restoreposition)
 	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)),
 			view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
 	connect(view_, SIGNAL(imageDropped(QString)),
-			this, SLOT(openImage(QString)));
+			this, SLOT(open(QString)));
 
 	setCentralWidget(view_);
 
@@ -472,53 +472,47 @@ void MainWindow::newDocument()
 }
 
 /**
+ * Open the selected file
+ * @param file file to open
+ * @pre file.isEmpty()!=false
+ */
+void MainWindow::open(const QString& file)
+{
+	if(canReplace()) {
+		if(initBoard(file)==false)
+			showErrorMessage(ERR_OPEN);
+	} else {
+		MainWindow *win = new MainWindow;
+		if(win->initBoard(file)==false) {
+			showErrorMessage(ERR_OPEN);
+			delete win;
+		} else {
+			win->show();
+		}
+	}
+}
+
+/**
  * Show a file selector dialog. If there are unsaved changes, open the file
  * in a new window.
  */
 void MainWindow::open()
 {
 	// Get a list of supported formats
-	QString file = openimagenext_;
-	if(file.isEmpty()) {
-		QString formats;
-		foreach(QByteArray format, QImageReader::supportedImageFormats()) {
-			formats += "*." + format + " ";
-		}
-		QString filter = tr("Images (%1);;All files (*)").arg(formats);
-
-		// Get the file name to open
-		file = QFileDialog::getOpenFileName(this,
-				tr("Open image"), lastpath_, filter);
+	QString formats;
+	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
+		formats += "*." + format + " ";
 	}
-	openimagenext_ = QString();
+	QString filter = tr("Images (%1);;All files (*)").arg(formats);
 
-	if(file.isEmpty()==false) {
-		// Open the file
-		if(canReplace()) {
-			if(initBoard(file)==false)
-				showErrorMessage(ERR_OPEN);
-		} else {
-			MainWindow *win = new MainWindow;
-			if(win->initBoard(file)==false) {
-				showErrorMessage(ERR_OPEN);
-				delete win;
-			} else {
-				win->show();
-			}
-		}
-	}
-}
+	// Get the file name to open
+	QString file = QFileDialog::getOpenFileName(this,
+			tr("Open image"), lastpath_, filter);
 
-/**
- * Preset filename to open and call open().
- * @param filename image file to open
- * @pre open action is enabled
- */
-void MainWindow::openImage(const QString& filename)
-{
-	Q_ASSERT(open_->isEnabled());
-	openimagenext_ = filename;
-	open();
+	// Open the file if it was selected
+	if(file.isEmpty()==false)
+		open(file);
+
 }
 
 /**
