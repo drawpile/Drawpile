@@ -244,10 +244,10 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	if (fi == fd_to_ev.end())
 		return false;
 	
-	WSAEventSelect(fd, w_ev[fi->second], 0);
+	//WSAEventSelect(fd, w_ev[fi->second], 0);
 	WSACloseEvent(w_ev[fi->second]);
 	
-	w_ev[fi->second] = 0;
+	w_ev[fi->second] = WSA_INVALID_EVENT;
 	
 	ev_to_fd.erase(fi->second);
 	fd_to_ev.erase(fd);
