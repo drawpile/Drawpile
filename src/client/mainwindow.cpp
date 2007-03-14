@@ -43,6 +43,7 @@
 #include "chatwidget.h"
 #include "dualcolorbutton.h"
 #include "localserver.h"
+#include "recentfiles.h"
 
 #include "colordialog.h"
 #include "newdialog.h"
@@ -280,6 +281,19 @@ bool MainWindow::canReplace() const {
 }
 
 /**
+ * @param file filename to add
+ */
+void MainWindow::addRecentFile(const QString& file)
+{
+	RecentFiles::addFile(file);
+	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+		MainWindow *win = qobject_cast<MainWindow*>(widget);
+		if(win)
+			RecentFiles::initMenu(win->recent_);
+	}
+}
+
+/**
  * Set window title according to currently open file and session
  */
 void MainWindow::setTitle()
@@ -348,6 +362,9 @@ void MainWindow::readSettings(bool restorepos)
 	fgbgcolor_->setBackground(bg);
 	fgdialog_->setColor(fg);
 	bgdialog_->setColor(bg);
+
+	// Remember recent files
+	RecentFiles::initMenu(recent_);
 }
 
 /**
@@ -472,6 +489,14 @@ void MainWindow::newDocument()
 }
 
 /**
+ * @param action
+ */
+void MainWindow::openRecent(QAction *action)
+{
+	open(action->property("path").toString());
+}
+
+/**
  * Open the selected file
  * @param file file to open
  * @pre file.isEmpty()!=false
@@ -481,12 +506,15 @@ void MainWindow::open(const QString& file)
 	if(canReplace()) {
 		if(initBoard(file)==false)
 			showErrorMessage(ERR_OPEN);
+		else
+			addRecentFile(file);
 	} else {
 		MainWindow *win = new MainWindow;
 		if(win->initBoard(file)==false) {
 			showErrorMessage(ERR_OPEN);
 			delete win;
 		} else {
+			addRecentFile(file);
 			win->show();
 		}
 	}
@@ -510,8 +538,12 @@ void MainWindow::open()
 			tr("Open image"), lastpath_, filter);
 
 	// Open the file if it was selected
-	if(file.isEmpty()==false)
+	if(file.isEmpty()==false) {
+		QFileInfo info(file);
+		lastpath_ = info.absolutePath();
+
 		open(file);
+	}
 
 }
 
@@ -528,6 +560,7 @@ bool MainWindow::save()
 			return false;
 		} else {
 			setWindowModified(false);
+			addRecentFile(filename_);
 			return true;
 		}
 	}
@@ -1091,10 +1124,14 @@ void MainWindow::createMenus()
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(new_);
 	filemenu->addAction(open_);
+	recent_ = filemenu->addMenu(tr("Open recent"));
 	filemenu->addAction(save_);
 	filemenu->addAction(saveas_);
 	filemenu->addSeparator();
 	filemenu->addAction(quit_);
+
+	connect(recent_, SIGNAL(triggered(QAction*)),
+			this, SLOT(openRecent(QAction*)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles_);

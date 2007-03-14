@@ -40,7 +40,7 @@ set (
 	interfaces.h boardeditor.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
 	networkprivate.h netstate.h logindialog.h preview.h localserver.h
-	popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
+	popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h recentfiles.h
 )
 
 set (
@@ -52,7 +52,7 @@ set (
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
 	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp logindialog.cpp
 	preview.cpp localserver.cpp popupmessage.cpp userlistwidget.cpp
-	userlistmodel.cpp chatwidget.cpp
+	userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )

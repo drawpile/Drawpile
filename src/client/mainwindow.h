@@ -106,6 +106,8 @@ class MainWindow : public QMainWindow {
 		void setSessionTitle(const QString& title);
 		//! Create new document
 		void newDocument();
+		//! Open a recent file
+		void openRecent(QAction *action);
 		//! Mark unsaved changes
 		void boardChanged();
 		//! Cancel or start hosting
@@ -144,6 +146,9 @@ class MainWindow : public QMainWindow {
 	private:
 		//! Check if the current board can be replaced
 		bool canReplace() const;
+
+		//! Add a new entry to recent files list
+		void addRecentFile(const QString& file);
 
 		//! Set the window title according to open file name
 		void setTitle();
@@ -205,6 +210,7 @@ class MainWindow : public QMainWindow {
 
 		QAction *new_;
 		QAction *open_;
+		QMenu *recent_;
 		QAction *save_;
 		QAction *saveas_;
 		QAction *quit_;
