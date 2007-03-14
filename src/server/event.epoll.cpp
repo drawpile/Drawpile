@@ -63,7 +63,7 @@ Event::~Event() throw()
 	#endif
 	#endif
 	
-	assert(events == 0);
+	// Make sure the event fd was closed.
 	assert(evfd == -1);
 }
 
