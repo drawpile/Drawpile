@@ -60,6 +60,31 @@ struct Buffer
 		#endif
 	}
 	
+	//! Moves buffer contents to another buffer struct
+	Buffer& operator<< (Buffer& buffer) throw()
+	{
+		delete [] data;
+		
+		data = buffer.data;
+		wpos = buffer.wpos;
+		rpos = buffer.rpos;
+		left = buffer.left;
+		size = buffer.size;
+		
+		buffer.data = 0;
+		
+		buffer.reset();
+		
+		return *this;
+	}
+	
+	void reset() throw()
+	{
+		delete [] data;
+		data = wpos = rpos = 0;
+		left = size = 0;
+	}
+	
 	//! Resizes the buffer to new size.
 	/**
 	 * This is expensive since it calls reposition(), which may cause another alloc.
