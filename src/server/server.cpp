@@ -1119,13 +1119,20 @@ void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad
 	default:
 	case Z_OK:
 		{
-			Buffer temp = usr->input;
-			usr->input = Buffer(outbuf, stream->uncompressed);
+			// Store input buffer. (... why?)
+			Buffer temp << usr->input;
 			
+			// Set the uncompressed data stream as the input buffer.
+			usr->input.setBuffer(outbuf, stream->uncompressed);
+			
+			// Process the data.
 			uProcessData(usr);
 			
-			if (usr != 0)
-				usr->input = temp;
+			// Since uProcessData might've deleted the user
+			if (usr != 0) break;
+			
+			// Restore input buffer
+			usr->input << temp;
 		}
 		break;
 	case Z_MEM_ERROR:
@@ -1138,6 +1145,7 @@ void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad
 		std::cout << "Corrupted data from user #" << static_cast<int>(usr->id)
 			<< ", dropping." << std::endl;
 		uRemove(usr, protocol::user_event::Dropped);
+		delete [] outbuf;
 		break;
 	}
 }
