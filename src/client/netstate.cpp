@@ -32,6 +32,7 @@
 #include "../shared/protocol.h"
 #include "../shared/protocol.types.h"
 #include "../shared/protocol.tools.h"
+#include "../shared/protocol.flags.h"
 #include "../shared/SHA1.h"
 #include "../shared/templates.h" // for bswap
 
@@ -53,8 +54,8 @@ User::User()
 {
 }
 
-User::User(const QString& n, int i)
-	: name(n), id(i), locked(false)
+User::User(const QString& n, int i, bool lock)
+	: name(n), id(i), locked(lock)
 {
 }
 
@@ -633,7 +634,9 @@ SessionState::SessionState(HostState *parent, const Session& info)
 	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
-	users_.append(host_->localuser_);
+	User localuser = host_->localuser_;
+	localuser.locked = fIsSet(info.mode, protocol::user_mode::Locked);
+	users_.append(localuser);
 }
 
 /**
@@ -906,7 +909,8 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
 void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
 	if(msg->event == protocol::user_event::Join) {
-		users_.append(User(msg->name, msg->user_id));
+		bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
+		users_.append(User(msg->name, msg->user_id, islocked));
 		emit userJoined(msg->user_id);
 	} else if(msg->event == protocol::user_event::Leave ||
 			msg->event == protocol::user_event::Disconnect ||

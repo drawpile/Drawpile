@@ -234,6 +234,7 @@ void Controller::finishLogin()
  */
 void Controller::sessionJoined(int id)
 {
+	int userid = netstate_->localUser().id;
 	session_ = netstate_->session(id);
 
 	// Remember maximum user count
@@ -243,8 +244,7 @@ void Controller::sessionJoined(int id)
 	board_->clearUsers();
 	foreach(const network::User& ui, session_->users())
 		board_->addUser(ui.id);
-	board_->addUser(netstate_->localUser().id);
-	board_->setLocalUser(netstate_->localUser().id);
+	board_->setLocalUser(userid);
 
 	// Make session -> controller connections
 	connect(session_, SIGNAL(rasterReceived(int)),
@@ -293,6 +293,10 @@ void Controller::sessionJoined(int id)
 	toolbox_.setEditor( board_->getEditor(session_) );
 
 	emit joined(session_->info().title, netstate_->localUser().name);
+
+	// Set lock
+	if(session_->user(userid)->locked)
+		userLocked(userid, true);
 }
 
 /**

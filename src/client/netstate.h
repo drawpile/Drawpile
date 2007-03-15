@@ -72,7 +72,7 @@ struct Session {
 //! Information about a user (sesssion specific)
 struct User {
 	User();
-	User(const QString& n, int i);
+	User(const QString& n, int i, bool lock);
 
 	QString name;
 	int id;
