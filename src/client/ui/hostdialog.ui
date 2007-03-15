@@ -8,7 +8,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>385</width>
+    <width>384</width>
     <height>384</height>
    </rect>
   </property>
@@ -65,7 +65,10 @@
          <item row="0" column="1" >
           <widget class="QLabel" name="label" >
            <property name="text" >
-            <string>Title:</string>
+            <string>&amp;Title:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>sessiontitle</cstring>
            </property>
           </widget>
          </item>
@@ -87,7 +90,10 @@
          <item row="1" column="1" >
           <widget class="QLabel" name="label_2" >
            <property name="text" >
-            <string>Username:</string>
+            <string>&amp;Username:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>username</cstring>
            </property>
           </widget>
          </item>
@@ -116,7 +122,10 @@
          <item row="2" column="1" >
           <widget class="QLabel" name="label_3" >
            <property name="text" >
-            <string>Password:</string>
+            <string>&amp;Password:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>sessionpassword</cstring>
            </property>
           </widget>
          </item>
@@ -177,6 +186,9 @@
          </property>
          <item row="2" column="2" >
           <widget class="QToolButton" name="selectPicture" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip" >
             <string>Select an image file</string>
            </property>
@@ -244,6 +256,9 @@
          </item>
          <item row="1" column="2" >
           <widget class="QToolButton" name="selectColor" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
            <property name="toolTip" >
             <string>Pick a color</string>
            </property>
@@ -312,7 +327,10 @@
          <item row="1" column="1" >
           <widget class="QLabel" name="label_5" >
            <property name="text" >
-            <string>Height:</string>
+            <string>&amp;Height:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>pictureheight</cstring>
            </property>
           </widget>
          </item>
@@ -341,7 +359,10 @@
             </size>
            </property>
            <property name="text" >
-            <string>Width:</string>
+            <string>&amp;Width:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>picturewidth</cstring>
            </property>
           </widget>
          </item>
@@ -469,7 +490,10 @@
             <bool>false</bool>
            </property>
            <property name="text" >
-            <string>Administrator password:</string>
+            <string>Administrator &amp;password:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>adminpassword</cstring>
            </property>
           </widget>
          </item>
@@ -603,7 +627,10 @@
             </size>
            </property>
            <property name="text" >
-            <string>Maximum number of users:</string>
+            <string>Maximum number of &amp;users:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>userlimit</cstring>
            </property>
           </widget>
          </item>
@@ -658,6 +685,26 @@
    <header>imageselector.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>sessiontitle</tabstop>
+  <tabstop>username</tabstop>
+  <tabstop>sessionpassword</tabstop>
+  <tabstop>existingpicture</tabstop>
+  <tabstop>solidcolor</tabstop>
+  <tabstop>otherpicture</tabstop>
+  <tabstop>picturewidth</tabstop>
+  <tabstop>pictureheight</tabstop>
+  <tabstop>uselocal</tabstop>
+  <tabstop>port</tabstop>
+  <tabstop>useremote</tabstop>
+  <tabstop>remotehost</tabstop>
+  <tabstop>adminpassword</tabstop>
+  <tabstop>userlimit</tabstop>
+  <tabstop>allowdrawing</tabstop>
+  <tabstop>allowchat</tabstop>
+  <tabstop>buttons</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
