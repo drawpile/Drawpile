@@ -334,12 +334,16 @@ void Server::uWrite(User*& usr) throw()
 			{
 			default:
 			case Z_OK:
-				delete [] buf;
 				{
 					msg = new protocol::Deflate(len, buffer_len, temp);
 					buf = msg->serialize(len);
+					// set buffer deletes the old buffer
 					usr->output.setBuffer(buf, len);
 					usr->output.write(len);
+					
+					// cleanup
+					delete msg;
+					msg = 0;
 				}
 				break;
 			case Z_MEM_ERROR:
