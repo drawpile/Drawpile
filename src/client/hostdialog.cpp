@@ -50,7 +50,8 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	} else {
 		ui_->imageSelector->setOriginal(original);
 	}
-	connect(ui_->selectPicCol, SIGNAL(clicked()), this, SLOT(selectPicture()));
+	connect(ui_->selectColor, SIGNAL(clicked()), this, SLOT(selectColor()));
+	connect(ui_->selectPicture, SIGNAL(clicked()), this, SLOT(selectPicture()));
 	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
 	// Set defaults
@@ -66,33 +67,37 @@ HostDialog::~HostDialog()
 	delete ui_;
 }
 
+void HostDialog::selectColor()
+{
+	QColor oldcolor = ui_->imageSelector->color();
+	QColor col = QColorDialog::getColor(oldcolor, this);
+	if(col.isValid() && col != oldcolor) {
+		ui_->imageSelector->setColor(col);
+		ui_->solidcolor->click();
+	}
+}
+
 void HostDialog::selectPicture()
 {
-	if(ui_->imageSelector->isColor()) {
-		QColor oldcolor = ui_->imageSelector->color();
-		QColor col = QColorDialog::getColor(oldcolor, this);
-		if(col.isValid() && col != oldcolor) {
-			ui_->imageSelector->setColor(col);
+	 // Get a list of supported formats
+	QString formats;
+	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
+			formats += "*." + format + " ";
+	}
+	QString filter = tr("Images (%1);;All files (*)").arg(formats);
+
+	// Get the file name to open
+	QString file = QFileDialog::getOpenFileName(this,
+					tr("Open image"), prevpath_, filter);
+
+	if(file.isEmpty()==false) {
+		// Open the file
+		QImage img(file);
+		if(img.isNull()==false) {
+			ui_->imageSelector->setImage(img);
+			ui_->otherpicture->click();
 		}
-	} else {
-		 // Get a list of supported formats
-        QString formats;
-        foreach(QByteArray format, QImageReader::supportedImageFormats()) {
-                formats += "*." + format + " ";
-        }
-        QString filter = tr("Images (%1);;All files (*)").arg(formats);
-
-        // Get the file name to open
-        QString file = QFileDialog::getOpenFileName(this,
-                        tr("Open image"), prevpath_, filter);
-
-        if(file.isEmpty()==false) {
-			// Open the file
-			QImage img(file);
-			if(img.isNull()==false)
-				ui_->imageSelector->setImage(img);
-			prevpath_ = file;
-        }
+		prevpath_ = file;
 	}
 }
 
@@ -131,6 +136,11 @@ QString HostDialog::getAdminPassword() const
 	return ui_->adminpassword->text();
 }
 
+int HostDialog::getUserLimit() const
+{
+	return ui_->userlimit->value();
+}
+
 QString HostDialog::getPassword() const
 {
 	return ui_->sessionpassword->text();
@@ -153,6 +163,16 @@ void HostDialog::newSelected()
 		ui_->existingpicture->setChecked(true);
 		ui_->imageSelector->chooseOriginal();
 	}
+}
+
+bool HostDialog::getAllowDrawing() const
+{
+	return ui_->allowdrawing->isChecked();
+}
+
+bool HostDialog::getAllowChat() const
+{
+	return ui_->allowchat->isChecked();
 }
 
 }

@@ -33,7 +33,7 @@
      <item row="0" column="0" >
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>&amp;Host address</string>
+        <string>&amp;Host address:</string>
        </property>
        <property name="buddy" >
         <cstring>address</cstring>
@@ -43,7 +43,7 @@
      <item row="1" column="0" >
       <widget class="QLabel" name="label_2" >
        <property name="text" >
-        <string>&amp;Username</string>
+        <string>&amp;Username:</string>
        </property>
        <property name="buddy" >
         <cstring>username</cstring>

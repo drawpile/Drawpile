@@ -57,6 +57,15 @@ class HostDialog : public QDialog
 		//! Get server admin password
 		QString getAdminPassword() const;
 
+		//! Get max. user count
+		int getUserLimit() const;
+
+		//! Should users be allowed to draw by default
+		bool getAllowDrawing() const;
+
+		//! Should users be allowed to chat by default
+		bool getAllowChat() const;
+
 		//! Get session image
 		QImage getImage() const;
 
@@ -64,6 +73,7 @@ class HostDialog : public QDialog
 		bool useOriginalImage() const;
 
 	private slots:
+		void selectColor();
 		void selectPicture();
 		void newSelected();
 

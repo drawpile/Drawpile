@@ -1,12 +1,15 @@
 <ui version="4.0" >
  <class>HostDialog</class>
  <widget class="QDialog" name="HostDialog" >
+  <property name="windowModality" >
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>368</width>
-    <height>440</height>
+    <width>385</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -24,135 +27,602 @@
      <property name="currentIndex" >
       <number>0</number>
      </property>
-     <widget class="QWidget" name="sessiontab" >
+     <widget class="QWidget" name="tab" >
       <attribute name="title" >
        <string>Session</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>2</number>
-       </property>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
-          <string>Username</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
-          <string>Password</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="QLineEdit" name="sessionpassword" >
-         <property name="toolTip" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Set a password to protect this session or leave blank to allow anyone to join&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QLineEdit" name="username" >
-         <property name="toolTip" >
-          <string>Your username</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
-          <string>Title</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" colspan="2" >
-        <widget class="QLineEdit" name="sessiontitle" >
-         <property name="toolTip" >
-          <string>A title that is shown to users</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="advancedtab" >
-      <attribute name="title" >
-       <string>Advanced</string>
-      </attribute>
-      <layout class="QGridLayout" >
+      <layout class="QVBoxLayout" >
        <property name="margin" >
         <number>9</number>
        </property>
        <property name="spacing" >
-        <number>3</number>
+        <number>6</number>
        </property>
-       <item row="0" column="2" >
-        <widget class="QSpinBox" name="port" >
-         <property name="maximum" >
-          <number>99999</number>
+       <item>
+        <widget class="QLabel" name="label_7" >
+         <property name="font" >
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
-         <property name="minimum" >
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" colspan="3" >
-        <widget class="QLineEdit" name="remotehost" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="toolTip" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Address of host server&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" colspan="2" >
-        <widget class="QRadioButton" name="uselocal" >
          <property name="text" >
-          <string>Start local server on port</string>
+          <string>General</string>
          </property>
-         <property name="checked" >
-          <bool>true</bool>
+         <property name="textFormat" >
+          <enum>Qt::PlainText</enum>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" colspan="3" >
+       <item>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>Title:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" >
+          <widget class="QLineEdit" name="sessionpassword" >
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>0</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip" >
+            <string>Password for this session. If left blank, anyone can join the session</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Username:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" colspan="2" >
+          <widget class="QLineEdit" name="sessiontitle" >
+           <property name="toolTip" >
+            <string>A title that is shown to users</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QLineEdit" name="username" >
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>0</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip" >
+            <string>Your username</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string>Password:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="3" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_6" >
+         <property name="font" >
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Picture</string>
+         </property>
+         <property name="textFormat" >
+          <enum>Qt::PlainText</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="2" column="2" >
+          <widget class="QToolButton" name="selectPicture" >
+           <property name="toolTip" >
+            <string>Select an image file</string>
+           </property>
+           <property name="icon" >
+            <iconset>:icons/document-open.png</iconset>
+           </property>
+           <property name="autoRaise" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item rowspan="3" row="0" column="3" >
+          <widget class="ImageSelector" name="imageSelector" >
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>5</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>152</width>
+             <height>16</height>
+            </size>
+           </property>
+           <property name="frameShape" >
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="solidcolor" >
+           <property name="text" >
+            <string>Solid color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QRadioButton" name="existingpicture" >
+           <property name="text" >
+            <string>Current picture</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QToolButton" name="selectColor" >
+           <property name="toolTip" >
+            <string>Pick a color</string>
+           </property>
+           <property name="icon" >
+            <iconset>:icons/color-picker.png</iconset>
+           </property>
+           <property name="autoRaise" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QRadioButton" name="otherpicture" >
+           <property name="text" >
+            <string>Other picture</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="3" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QSpinBox" name="pictureheight" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>0</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximum" >
+            <number>65535</number>
+           </property>
+           <property name="minimum" >
+            <number>1</number>
+           </property>
+           <property name="value" >
+            <number>600</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLabel" name="label_5" >
+           <property name="text" >
+            <string>Height:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_4" >
+           <property name="minimumSize" >
+            <size>
+             <width>68</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string>Width:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QSpinBox" name="picturewidth" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>5</hsizetype>
+             <vsizetype>0</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximum" >
+            <number>65535</number>
+           </property>
+           <property name="minimum" >
+            <number>1</number>
+           </property>
+           <property name="value" >
+            <number>800</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>331</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Advanced</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="label_8" >
+         <property name="font" >
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Server</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="2" >
+          <widget class="QSpinBox" name="port" >
+           <property name="minimumSize" >
+            <size>
+             <width>60</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximum" >
+            <number>65536</number>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QRadioButton" name="uselocal" >
+           <property name="minimumSize" >
+            <size>
+             <width>178</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string>Start a local server on port:</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QLabel" name="label_9" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Administrator password:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="useremote" >
+           <property name="text" >
+            <string>Host on a remote server:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="2" colspan="2" >
+          <widget class="QLineEdit" name="remotehost" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="toolTip" >
+            <string>Address of the remote server</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" colspan="2" >
+          <widget class="QLineEdit" name="adminpassword" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="toolTip" >
+            <string>Administrator password for the remote server</string>
+           </property>
+           <property name="echoMode" >
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_10" >
+         <property name="font" >
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text" >
+          <string>Users</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QCheckBox" name="allowchat" >
+           <property name="text" >
+            <string>Allow chat</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QSpinBox" name="userlimit" >
+           <property name="minimumSize" >
+            <size>
+             <width>60</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximum" >
+            <number>255</number>
+           </property>
+           <property name="minimum" >
+            <number>2</number>
+           </property>
+           <property name="value" >
+            <number>20</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QCheckBox" name="allowdrawing" >
+           <property name="text" >
+            <string>Allow drawing</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="label_11" >
+           <property name="minimumSize" >
+            <size>
+             <width>178</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text" >
+            <string>Maximum number of users:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -165,170 +635,8 @@ p, li { white-space: pre-wrap; }
          </property>
         </spacer>
        </item>
-       <item row="1" column="0" >
-        <widget class="QRadioButton" name="useremote" >
-         <property name="text" >
-          <string>Host on remote server</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="label_6" >
-         <property name="text" >
-          <string>Administrator password</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2" >
-        <widget class="QLineEdit" name="adminpassword" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="toolTip" >
-          <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Administrator password is usually required to create new sessions&lt;/p>&lt;/body>&lt;/html></string>
-         </property>
-         <property name="echoMode" >
-          <enum>QLineEdit::Password</enum>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-      <string>Picture</string>
-     </property>
-     <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>9</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item row="3" column="2" >
-       <widget class="QPushButton" name="selectPicCol" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="toolTip" >
-         <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">Select a picture or color&lt;/p>&lt;/body>&lt;/html></string>
-        </property>
-        <property name="text" >
-         <string>Select...</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0" >
-       <widget class="QLabel" name="label_4" >
-        <property name="text" >
-         <string>Width</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" >
-       <widget class="QRadioButton" name="newpicture" >
-        <property name="toolTip" >
-         <string>Select a new picture</string>
-        </property>
-        <property name="text" >
-         <string>Other picture</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1" >
-       <widget class="QSpinBox" name="pictureheight" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="buttonSymbols" >
-         <enum>QAbstractSpinBox::PlusMinus</enum>
-        </property>
-        <property name="maximum" >
-         <number>16000</number>
-        </property>
-        <property name="minimum" >
-         <number>1</number>
-        </property>
-        <property name="singleStep" >
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0" >
-       <widget class="QSpinBox" name="picturewidth" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="buttonSymbols" >
-         <enum>QAbstractSpinBox::PlusMinus</enum>
-        </property>
-        <property name="maximum" >
-         <number>160000</number>
-        </property>
-        <property name="minimum" >
-         <number>1</number>
-        </property>
-        <property name="singleStep" >
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2" >
-       <widget class="QRadioButton" name="existingpicture" >
-        <property name="toolTip" >
-         <string>Use the old picture</string>
-        </property>
-        <property name="text" >
-         <string>Current picture</string>
-        </property>
-        <property name="checked" >
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1" >
-       <widget class="QLabel" name="label_5" >
-        <property name="text" >
-         <string>Height</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignBottom|Qt::AlignHCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item rowspan="4" row="0" column="0" colspan="2" >
-       <widget class="ImageSelector" name="imageSelector" >
-        <property name="frameShape" >
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2" >
-       <widget class="QRadioButton" name="solidcolor" >
-        <property name="toolTip" >
-         <string>Use a solid color</string>
-        </property>
-        <property name="text" >
-         <string>Solid color</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
    <item>
@@ -350,21 +658,6 @@ p, li { white-space: pre-wrap; }
    <header>imageselector.h</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>sessiontitle</tabstop>
-  <tabstop>username</tabstop>
-  <tabstop>sessionpassword</tabstop>
-  <tabstop>existingpicture</tabstop>
-  <tabstop>solidcolor</tabstop>
-  <tabstop>newpicture</tabstop>
-  <tabstop>picturewidth</tabstop>
-  <tabstop>pictureheight</tabstop>
-  <tabstop>selectPicCol</tabstop>
-  <tabstop>buttons</tabstop>
-  <tabstop>remotehost</tabstop>
-  <tabstop>port</tabstop>
- </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -374,8 +667,8 @@ p, li { white-space: pre-wrap; }
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>275</x>
-     <y>430</y>
+     <x>227</x>
+     <y>493</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -390,220 +683,12 @@ p, li { white-space: pre-wrap; }
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>343</x>
-     <y>430</y>
+     <x>295</x>
+     <y>499</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>existingpicture</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>selectPicCol</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>347</x>
-     <y>228</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>347</x>
-     <y>319</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>existingpicture</sender>
-   <signal>clicked()</signal>
-   <receiver>imageSelector</receiver>
-   <slot>chooseOriginal()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>347</x>
-     <y>228</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>139</x>
-     <y>319</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>solidcolor</sender>
-   <signal>clicked()</signal>
-   <receiver>imageSelector</receiver>
-   <slot>chooseColor()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>347</x>
-     <y>257</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>111</x>
-     <y>219</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>newpicture</sender>
-   <signal>clicked()</signal>
-   <receiver>imageSelector</receiver>
-   <slot>chooseImage()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>347</x>
-     <y>286</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>112</x>
-     <y>246</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>imageSelector</sender>
-   <signal>colorDropped()</signal>
-   <receiver>solidcolor</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>80</x>
-     <y>268</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>347</x>
-     <y>257</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>imageSelector</sender>
-   <signal>imageDropped()</signal>
-   <receiver>newpicture</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>107</x>
-     <y>270</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>347</x>
-     <y>286</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>imageSelector</sender>
-   <signal>widthChanged(int)</signal>
-   <receiver>picturewidth</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>47</x>
-     <y>319</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>93</x>
-     <y>379</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>imageSelector</sender>
-   <signal>heightChanged(int)</signal>
-   <receiver>pictureheight</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>154</x>
-     <y>319</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>225</x>
-     <y>379</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>solidcolor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>picturewidth</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>347</x>
-     <y>257</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>119</x>
-     <y>379</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>solidcolor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>pictureheight</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>347</x>
-     <y>257</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>225</x>
-     <y>379</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>picturewidth</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>imageSelector</receiver>
-   <slot>setWidth(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>119</x>
-     <y>379</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>77</x>
-     <y>319</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pictureheight</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>imageSelector</receiver>
-   <slot>setHeight(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>225</x>
-     <y>379</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>120</x>
-     <y>270</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useremote</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>remotehost</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>128</x>
-     <y>100</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>232</x>
-     <y>81</y>
     </hint>
    </hints>
   </connection>
@@ -614,12 +699,44 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>186</x>
-     <y>53</y>
+     <x>168</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>297</x>
-     <y>57</y>
+     <x>259</x>
+     <y>79</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>remotehost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>130</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>273</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>label_9</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>91</x>
+     <y>103</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>101</x>
+     <y>128</y>
     </hint>
    </hints>
   </connection>
@@ -630,12 +747,188 @@ p, li { white-space: pre-wrap; }
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>149</x>
-     <y>95</y>
+     <x>67</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>256</x>
-     <y>123</y>
+     <x>276</x>
+     <y>133</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solidcolor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>picturewidth</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>87</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>143</x>
+     <y>290</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solidcolor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pictureheight</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>123</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>146</x>
+     <y>313</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>imageDropped()</signal>
+   <receiver>otherpicture</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>339</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>137</x>
+     <y>251</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>colorDropped()</signal>
+   <receiver>solidcolor</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>343</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>144</x>
+     <y>214</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>existingpicture</sender>
+   <signal>clicked()</signal>
+   <receiver>imageSelector</receiver>
+   <slot>chooseOriginal()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>60</x>
+     <y>194</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>328</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>solidcolor</sender>
+   <signal>clicked()</signal>
+   <receiver>imageSelector</receiver>
+   <slot>chooseColor()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>63</x>
+     <y>221</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>334</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>otherpicture</sender>
+   <signal>clicked()</signal>
+   <receiver>imageSelector</receiver>
+   <slot>chooseImage()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>64</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>340</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>widthChanged(int)</signal>
+   <receiver>picturewidth</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>298</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>171</x>
+     <y>278</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>heightChanged(int)</signal>
+   <receiver>pictureheight</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>328</x>
+     <y>231</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>148</x>
+     <y>302</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pictureheight</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>imageSelector</receiver>
+   <slot>setHeight(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>133</x>
+     <y>302</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>324</x>
+     <y>236</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>picturewidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>imageSelector</receiver>
+   <slot>setWidth(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>152</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>287</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>

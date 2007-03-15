@@ -202,6 +202,7 @@ void HostState::login(const QString& username)
 			protocol::identifier_size);
 	msg->revision = protocol::revision;
 	msg->extensions = protocol::extensions::Chat;
+	msg->flags = protocol::client::None;
 	net_->send(msg);
 }
 
@@ -213,16 +214,24 @@ void HostState::login(const QString& username)
  * @param password session password. If empty, no password is required to join.
  * @param width board width
  * @param height board height
+ * @param userlimit max. number of users
+ * @param allowdraw allow drawing by default
+ * @param allowchat allow chat by default
  * @pre user is logged in
  */
 void HostState::host(const QString& title,
-		const QString& password, quint16 width, quint16 height)
+		const QString& password, quint16 width, quint16 height, int userlimit,
+		bool allowdraw, bool allowchat)
 {
 	protocol::Instruction *msg = new protocol::Instruction;
 	msg->command = protocol::admin::command::Create;
 	msg->session_id = protocol::Global;
-	msg->aux_data = 20; // User limit (TODO)
-	msg->aux_data2 = protocol::user_mode::None; // Default user mode (TODO)
+	msg->aux_data = userlimit;
+	msg->aux_data2 = protocol::user_mode::None;
+	if(allowdraw==false)
+		fSet(msg->aux_data2, protocol::user_mode::Locked);
+	if(allowchat==false)
+		fSet(msg->aux_data2, protocol::user_mode::Mute);
 
 	QByteArray tbytes = title.toUtf8();
 	char *data = new char[sizeof(width)+sizeof(height)+tbytes.length()];

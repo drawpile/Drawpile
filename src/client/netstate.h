@@ -113,7 +113,8 @@ class HostState : public QObject {
 
 		//! Host a session
 		void host(const QString& title, const QString& password,
-				quint16 width, quint16 height);
+				quint16 width, quint16 height, int userlimit,
+				bool allowdraw, bool allowchat);
 
 		//! Try joining automatically
 		void join(const QString& name = "");

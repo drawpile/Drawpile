@@ -129,13 +129,17 @@ bool Controller::isUploading() const
  * @param title session title
  * @param password session password. If empty, no password is set
  * @param image initial board image
+ * @param userlimit max. number of users
+ * @param allowdraw allow drawing by default
+ * @param allowchat allow chatting by default
  * @pre host connection must be established and user logged in.
  */
 void Controller::hostSession(const QString& title, const QString& password,
-		const QImage& image)
+		const QImage& image, int userlimit, bool allowdraw, bool allowchat)
 {
 	Q_ASSERT(netstate_);
-	netstate_->host(title, password, image.width(), image.height());
+	netstate_->host(title, password, image.width(), image.height(),
+			userlimit, allowdraw, allowchat);
 }
 
 /**
@@ -201,8 +205,7 @@ void Controller::lockBoard(bool lock)
 void Controller::disallowJoins(bool disallow)
 {
 	Q_ASSERT(session_);
-	// TODO, proper max user limit.
-	session_->setUserLimit(disallow?1:20);
+	session_->setUserLimit(disallow?1:maxusers_);
 }
 
 void Controller::sendChat(const QString& message)
@@ -232,6 +235,9 @@ void Controller::finishLogin()
 void Controller::sessionJoined(int id)
 {
 	session_ = netstate_->session(id);
+
+	// Remember maximum user count
+	maxusers_ = session_->info().maxusers;
 
 	// Update user list
 	board_->clearUsers();

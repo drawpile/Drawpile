@@ -706,6 +706,7 @@ void MainWindow::finishHost(int i)
 		}
 
 		// If another image was selected, replace current board with it
+		// TODO, what if there were unsaved changes?
 		if(hostdlg_->useOriginalImage() == false) {
 			initBoard(hostdlg_->getImage());
 		}
@@ -729,7 +730,8 @@ void MainWindow::finishHost(int i)
 void MainWindow::loggedinHost()
 {
 	controller_->hostSession(hostdlg_->getTitle(), hostdlg_->getPassword(),
-			hostdlg_->getImage());
+			hostdlg_->getImage(), hostdlg_->getUserLimit(),
+			hostdlg_->getAllowDrawing(), hostdlg_->getAllowChat());
 	// Host dialog is no longer needed
 	hostdlg_->deleteLater();
 }

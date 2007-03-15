@@ -71,7 +71,8 @@ class Controller : public QObject
 
 		//! Start hosting a session
 		void hostSession(const QString& title, const QString& password,
-				const QImage& image);
+				const QImage& image, int userlimit, bool allowdraw,
+				bool allowchat);
 
 		//! Check if the local user owns the current session
 		bool amSessionOwner() const;
@@ -214,6 +215,7 @@ class Controller : public QObject
 		QString username_;
 		QString autojoinpath_;
 		QString adminpasswd_;
+		int maxusers_;
 
 		bool pendown_;
 		bool sync_;
