@@ -323,28 +323,30 @@ void Server::uWrite(User*& usr) throw()
 			and usr->output.canRead() > 300
 			and msg->type != protocol::type::Raster)
 		{
-			unsigned long buffer_len = len + 12 + static_cast<int>(len * 0.12);
+			unsigned long buffer_len = len + 12 /* + static_cast<int>(len * 0.12) */;
+			uint32_t buffer_size = buffer_len;
 			char* temp = new char[buffer_len];
 			int r = compress2(reinterpret_cast<unsigned char*>(temp), &buffer_len, reinterpret_cast<unsigned char*>(usr->output.rpos), len, 5);
 			
-			assert(r != Z_BUF_ERROR);
 			assert(r != Z_STREAM_ERROR);
 			
 			switch (r)
 			{
 			default:
 			case Z_OK:
-				{
-					msg = new protocol::Deflate(len, buffer_len, temp);
-					buf = msg->serialize(len);
-					// set buffer deletes the old buffer
-					usr->output.setBuffer(buf, len);
-					usr->output.write(len);
-					
-					// cleanup
-					delete msg;
-					msg = 0;
-				}
+				#ifndef NDEBUG
+				std::cout << "zlib: " << len << "B compressed down to " << buffer_len << "B." << std::endl;
+				#endif
+				
+				msg = new protocol::Deflate(len, buffer_len, temp);
+				buf = msg->serialize(len);
+				// set buffer deletes the old buffer
+				usr->output.setBuffer(buf, buffer_size);
+				usr->output.write(len);
+				
+				// cleanup
+				delete msg;
+				msg = 0;
 				break;
 			case Z_MEM_ERROR:
 				throw std::bad_alloc();
@@ -353,6 +355,8 @@ void Server::uWrite(User*& usr) throw()
 				std::cerr << "zlib: output buffer is too small." << std::endl
 					<< "source size: " << len << ", target size: " << buffer_len << std::endl;
 				#endif
+				assert(r != Z_BUF_ERROR);
+				delete [] temp;
 				break;
 			}
 		}
