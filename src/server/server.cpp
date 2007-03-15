@@ -2243,6 +2243,16 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	// Add session to users session list.
 	usr->sessions[session->id] = SessionData(usr->id, session);
 	
+	// Remove locked and mute, if the user is the session's owner.
+	if (session->owner == usr->id)
+	{
+		fClr(usr->sessions[session->id].mode, protocol::user_mode::Locked);
+		fClr(usr->sessions[session->id].mode, protocol::user_mode::Mute);
+	}
+	// Remove mute if the user is server admin.
+	else if (fIsSet(usr->mode, protocol::user_mode::Administrator))
+		fClr(usr->sessions[session->id].mode, protocol::user_mode::Mute);
+	
 	// Tell session members there's a new user.
 	Propagate(session, msgUserEvent(usr, session, protocol::user_event::Join));
 	
