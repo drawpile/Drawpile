@@ -21,7 +21,6 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <cmath>
-#include <algorithm> // for std::swap
 
 #include "colortriangle.h"
 
@@ -390,7 +389,6 @@ static inline int LERP(int a,int b,int v1,int v2, int i)
 
 void ColorTriangle::makeTriangle()
 {
-	using std::swap;
 	int xl, xr, rl, rr, gl, gr, bl, br; /* Scanline data */
 	int xx, yy;
 
@@ -416,27 +414,27 @@ void ColorTriangle::makeTriangle()
 	int b3 = color.blue();
 
 	if (y2 > y3) {
-		swap (x2, x3);
-		swap (y2, y3);
-		swap (r2, r3);
-		swap (g2, g3);
-		swap (b2, b3);
+		qSwap (x2, x3);
+		qSwap (y2, y3);
+		qSwap (r2, r3);
+		qSwap (g2, g3);
+		qSwap (b2, b3);
 	}
 
 	if (y1 > y3) {
-		swap (x1, x3);
-		swap (y1, y3);
-		swap (r1, r3);
-		swap (g1, g3);
-		swap (b1, b3);
+		qSwap (x1, x3);
+		qSwap (y1, y3);
+		qSwap (r1, r3);
+		qSwap (g1, g3);
+		qSwap (b1, b3);
 	}
 
 	if (y1 > y2) {
-		swap (x1, x2);
-		swap (y1, y2);
-		swap (r1, r2);
-		swap (g1, g2);
-		swap (b1, b2);
+		qSwap (x1, x2);
+		qSwap (y1, y2);
+		qSwap (r1, r2);
+		qSwap (g1, g2);
+		qSwap (b1, b2);
 	}
 
 	// Shade the triangle
@@ -472,10 +470,10 @@ void ColorTriangle::makeTriangle()
 			br = LERP (b1, b3, y1, y3, yy);
 
 			if (xl > xr) {
-				swap (xl, xr);
-				swap (rl, rr);
-				swap (gl, gr);
-				swap (bl, br);
+				qSwap (xl, xr);
+				qSwap (rl, rr);
+				qSwap (gl, gr);
+				qSwap (bl, br);
 			}
 
 			for (xx = 0; xx < diameter_; ++xx) {
