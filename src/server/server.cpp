@@ -732,10 +732,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				
 				if (usr->session->locked)
 					std::cerr << "Clarification: Sesssion #"
-						<< static_cast<int>(session->id) << " is locked." << std::endl;
+						<< static_cast<int>(usr->session->id) << " is locked." << std::endl;
 				else
 					std::cerr << "Clarification: User is locked in session #"
-						<< static_cast<int>(session->id) << "." << std::endl;
+						<< static_cast<int>(usr->session->id) << "." << std::endl;
 			}
 			#endif
 			break;
