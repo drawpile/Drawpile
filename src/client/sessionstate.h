@@ -25,7 +25,7 @@
 #include <QList>
 #include <QQueue>
 
-#include "sessionuser.h"
+#include "sessioninfo.h"
 
 class QImage;
 

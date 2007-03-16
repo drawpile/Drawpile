@@ -41,7 +41,7 @@ set (
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
 	networkprivate.h netstate.h sessionstate.h logindialog.h preview.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
-	recentfiles.h sessionuser.h
+	recentfiles.h sessioninfo.h
 )
 
 set (
@@ -54,7 +54,7 @@ set (
 	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp sessionstate.cpp
 	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
-	sessionuser.cpp
+	sessioninfo.cpp
 )
 
 set ( Client_Resources ui/resources.qrc )

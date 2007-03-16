@@ -4,7 +4,7 @@
 #include <QAbstractListModel>
 #include <QItemDelegate>
 
-#include "sessionuser.h"
+#include "sessioninfo.h"
 
 class UserListModel : public QAbstractListModel {
 	Q_OBJECT

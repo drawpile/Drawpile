@@ -24,7 +24,7 @@
 #include <QHash>
 #include <QList>
 
-#include "sessionuser.h"
+#include "sessioninfo.h"
 
 namespace protocol {
 	class HostInfo;
