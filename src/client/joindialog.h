@@ -39,6 +39,9 @@ class JoinDialog : public QDialog
 		//! Get the username
 		QString getUserName() const;
 
+		//! Store settings in configuration file
+		void rememberSettings() const;
+
 	private:
 		Ui_JoinDialog *ui_;
 };

@@ -33,6 +33,9 @@ class HostDialog : public QDialog
 		HostDialog(const QImage &original, QWidget *parent=0);
 		~HostDialog();
 
+		//! Store settings in configuration file
+		void rememberSettings() const;
+
 		//! Get the remote host address
 		QString getRemoteAddress() const;
 

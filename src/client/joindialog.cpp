@@ -37,10 +37,21 @@ JoinDialog::JoinDialog(QWidget *parent)
 
 	// Set defaults
 	QSettings cfg;
-	cfg.beginGroup("network");
-	ui_->address->setText(cfg.value("joinaddress").toString());
+	cfg.beginGroup("history");
+	ui_->address->insertItems(0, cfg.value("recenthosts").toStringList());
 	ui_->username->setText(cfg.value("username",
 				QString(getenv("USER"))).toString());
+}
+
+void JoinDialog::rememberSettings() const
+{
+	QSettings cfg;
+	cfg.beginGroup("history");
+	cfg.setValue("username", getUserName());
+	QStringList hosts;
+	for(int i=0;i<ui_->address->count();++i)
+		hosts << ui_->address->itemText(i);
+	cfg.setValue("recenthosts", hosts);
 }
 
 JoinDialog::~JoinDialog()
@@ -49,7 +60,7 @@ JoinDialog::~JoinDialog()
 }
 
 QString JoinDialog::getAddress() const {
-	return ui_->address->text();
+	return ui_->address->currentText();
 }
 
 QString JoinDialog::getUserName() const {

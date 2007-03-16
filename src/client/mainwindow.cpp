@@ -319,7 +319,7 @@ void MainWindow::setTitle()
 void MainWindow::readSettings(bool restorepos)
 {
 	QSettings cfg;
-	cfg.beginGroup("mainwindow");
+	cfg.beginGroup("window");
 
 	// Restore previously used window size
 	resize(cfg.value("size",QSize(800,600)).toSize());
@@ -373,7 +373,7 @@ void MainWindow::readSettings(bool restorepos)
 void MainWindow::writeSettings()
 {
 	QSettings cfg;
-	cfg.beginGroup("mainwindow");
+	cfg.beginGroup("window");
 
 	cfg.setValue("pos", pos());
 	cfg.setValue("size", size());
@@ -688,12 +688,7 @@ void MainWindow::finishHost(int i)
 		address.setUserName(hostdlg_->getUserName());
 
 		// Remember some settings
-		QSettings cfg;
-		cfg.beginGroup("network");
-		cfg.setValue("username", hostdlg_->getUserName());
-		if(useremote)
-			cfg.setValue("remoteaddress", hostdlg_->getRemoteAddress());
-
+		hostdlg_->rememberSettings();
 
 		// Start server if hosting locally
 		if(useremote==false) {
@@ -755,10 +750,7 @@ void MainWindow::finishJoin(int i) {
 		address.setUserName(joindlg_->getUserName());
 
 		// Remember some settings
-		QSettings cfg;
-		cfg.beginGroup("network");
-		cfg.setValue("username", joindlg_->getUserName());
-		cfg.setValue("joinaddress", joindlg_->getAddress());
+		joindlg_->rememberSettings();
 
 		// Connect
 		MainWindow *win;

@@ -57,14 +57,26 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	// Set defaults
 	ui_->port->setValue(protocol::default_port);
 	QSettings cfg;
-	cfg.beginGroup("network");
+	cfg.beginGroup("history");
 	ui_->username->setText(cfg.value("username", QString(getenv("USER"))).toString());
-	ui_->remotehost->setText(cfg.value("remoteaddress").toString());
+	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
 }
 
 HostDialog::~HostDialog()
 {
 	delete ui_;
+}
+
+void HostDialog::rememberSettings() const
+{
+	QSettings cfg;
+	cfg.beginGroup("history");
+	cfg.setValue("username", getUserName());
+	QStringList hosts;
+	for(int i=0;i<ui_->remotehost->count();++i)
+			hosts << ui_->remotehost->itemText(i);
+	cfg.setValue("recentremotehosts", hosts);
+
 }
 
 void HostDialog::selectColor()
@@ -103,7 +115,7 @@ void HostDialog::selectPicture()
 
 QString HostDialog::getRemoteAddress() const
 {
-	return ui_->remotehost->text();
+	return ui_->remotehost->currentText();
 }
 
 bool HostDialog::useRemoteAddress() const

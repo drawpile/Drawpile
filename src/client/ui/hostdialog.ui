@@ -193,7 +193,7 @@
             <string>Select an image file</string>
            </property>
            <property name="icon" >
-            <iconset>:icons/document-open.png</iconset>
+            <iconset>../../../../../../../:icons/document-open.png</iconset>
            </property>
            <property name="autoRaise" >
             <bool>true</bool>
@@ -263,7 +263,7 @@
             <string>Pick a color</string>
            </property>
            <property name="icon" >
-            <iconset>:icons/color-picker.png</iconset>
+            <iconset>../../../../../../../:icons/color-picker.png</iconset>
            </property>
            <property name="autoRaise" >
             <bool>true</bool>
@@ -517,16 +517,6 @@
            </property>
           </spacer>
          </item>
-         <item row="1" column="2" colspan="2" >
-          <widget class="QLineEdit" name="remotehost" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="toolTip" >
-            <string>Address of the remote server</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="2" colspan="2" >
           <widget class="QLineEdit" name="adminpassword" >
            <property name="enabled" >
@@ -537,6 +527,22 @@
            </property>
            <property name="echoMode" >
             <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" colspan="2" >
+          <widget class="QComboBox" name="remotehost" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="editable" >
+            <bool>true</bool>
+           </property>
+           <property name="maxCount" >
+            <number>10</number>
+           </property>
+           <property name="insertPolicy" >
+            <enum>QComboBox::InsertAtTop</enum>
            </property>
           </widget>
          </item>
@@ -698,7 +704,6 @@
   <tabstop>uselocal</tabstop>
   <tabstop>port</tabstop>
   <tabstop>useremote</tabstop>
-  <tabstop>remotehost</tabstop>
   <tabstop>adminpassword</tabstop>
   <tabstop>userlimit</tabstop>
   <tabstop>allowdrawing</tabstop>
@@ -714,8 +719,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>227</x>
-     <y>493</y>
+     <x>236</x>
+     <y>374</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -730,8 +735,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>295</x>
-     <y>499</y>
+     <x>304</x>
+     <y>374</y>
     </hint>
     <hint type="destinationlabel" >
      <x>286</x>
@@ -752,22 +757,6 @@
     <hint type="destinationlabel" >
      <x>259</x>
      <y>79</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useremote</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>remotehost</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>130</x>
-     <y>102</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>273</x>
-     <y>102</y>
     </hint>
    </hints>
   </connection>
@@ -810,12 +799,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>87</x>
-     <y>215</y>
+     <x>98</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>143</x>
-     <y>290</y>
+     <x>119</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -826,12 +815,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>123</x>
-     <y>215</y>
+     <x>119</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>146</x>
-     <y>313</y>
+     <x>119</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -842,12 +831,12 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>339</x>
-     <y>221</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>137</x>
-     <y>251</y>
+     <x>119</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -858,12 +847,12 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>343</x>
-     <y>189</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>144</x>
-     <y>214</y>
+     <x>119</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -878,8 +867,8 @@
      <y>194</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>328</x>
-     <y>213</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -890,12 +879,12 @@
    <slot>chooseColor()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>63</x>
-     <y>221</y>
+     <x>74</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>334</x>
-     <y>209</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -906,12 +895,12 @@
    <slot>chooseImage()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>64</x>
-     <y>249</y>
+     <x>75</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>340</x>
-     <y>209</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -922,12 +911,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>298</x>
-     <y>227</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>171</x>
-     <y>278</y>
+     <x>119</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -938,12 +927,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>328</x>
-     <y>231</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>148</x>
-     <y>302</y>
+     <x>119</x>
+     <y>299</y>
     </hint>
    </hints>
   </connection>
@@ -954,12 +943,12 @@
    <slot>setHeight(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>133</x>
-     <y>302</y>
+     <x>119</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>324</x>
-     <y>236</y>
+     <x>171</x>
+     <y>207</y>
     </hint>
    </hints>
   </connection>
@@ -970,12 +959,28 @@
    <slot>setWidth(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>152</x>
-     <y>282</y>
+     <x>119</x>
+     <y>299</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>287</x>
-     <y>220</y>
+     <x>171</x>
+     <y>207</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>remotehost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>196</x>
+     <y>105</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>281</x>
+     <y>104</y>
     </hint>
    </hints>
   </connection>

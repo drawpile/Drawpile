@@ -33,7 +33,7 @@ void RecentFiles::addFile(const QString& filename)
 	int maxrecent = getMaxFileCount();
 
 	QSettings cfg;
-	cfg.beginGroup("mainwindow");
+	cfg.beginGroup("history");
 
 	QStringList files = cfg.value("recentfiles").toStringList();
 	files.removeAll(filename);
@@ -51,7 +51,7 @@ void RecentFiles::addFile(const QString& filename)
 void RecentFiles::setMaxFileCount(int max)
 {
 	QSettings cfg;
-	cfg.beginGroup("mainwindow");
+	cfg.beginGroup("history");
 	cfg.setValue("maxrecentfiles",max);
 }
 
@@ -61,7 +61,7 @@ void RecentFiles::setMaxFileCount(int max)
 int RecentFiles::getMaxFileCount()
 {
 	QSettings cfg;
-	cfg.beginGroup("mainwindow");
+	cfg.beginGroup("history");
 	int maxrecent = cfg.value("maxrecentfiles").toInt();
 	if(maxrecent<=0)
 		maxrecent = 6;
@@ -75,7 +75,7 @@ int RecentFiles::getMaxFileCount()
 void RecentFiles::initMenu(QMenu *menu)
 {
 	QSettings cfg;
-	cfg.beginGroup("mainwindow");
+	cfg.beginGroup("history");
 
 	QStringList files = cfg.value("recentfiles").toStringList();
 
