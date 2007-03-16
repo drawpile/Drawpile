@@ -2279,20 +2279,12 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	// Remove locked and mute, if the user is the session's owner.
 	if (session->owner == usr->id)
 	{
-		#ifndef NDEBUG
-		std::cout << "Owner joining, clearing locked/muted flags." << std::endl;
-		#endif
 		fClr(usr->sessions[session->id].mode, protocol::user_mode::Locked);
 		fClr(usr->sessions[session->id].mode, protocol::user_mode::Mute);
 	}
 	// Remove mute if the user is server admin.
 	else if (fIsSet(usr->mode, protocol::user_mode::Administrator))
-	{
-		#ifndef NDEBUG
-		std::cout << "Admin joining, clearing mute flag." << std::endl;
-		#endif
 		fClr(usr->sessions[session->id].mode, protocol::user_mode::Mute);
-	}
 	
 	// Tell session members there's a new user.
 	Propagate(session, msgUserEvent(usr, session, protocol::user_event::Join));
