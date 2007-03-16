@@ -37,7 +37,7 @@
 
 /* swapping endianess */
 
-template <class T>
+template <class T> inline
 T& bswap(T& x) throw()
 {
 	#ifndef IS_BIG_ENDIAN
@@ -75,7 +75,7 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 
 /* memmory */
 
-template <class T>
+template <class T> inline
 char* memcpy_t(char* dst, const T& src) throw()
 {
 	assert(dst != 0);
@@ -83,7 +83,7 @@ char* memcpy_t(char* dst, const T& src) throw()
 	return dst;
 }
 
-template <class T>
+template <class T> inline
 T& memcpy_t(T& dst, const char* src) throw()
 {
 	assert(src != 0);
@@ -101,7 +101,7 @@ T& memcpy_t(T& dst, const char* src) throw()
  *
  * @return modified flag container.
  */
-template <class T>
+template <class T> inline
 T& fSet(T& u, const T& x) throw()
 {
 	return u |= x;
@@ -114,10 +114,10 @@ T& fSet(T& u, const T& x) throw()
  *
  * @return modified flag container.
  */
-template <class T>
+template <class T> inline
 T& fClr(T& u, const T& x) throw()
 {
-	return u ^= x;
+	return u &= ~x;
 }
 
 //! Test bit flag
@@ -127,7 +127,7 @@ T& fClr(T& u, const T& x) throw()
  *
  * @return test result
  */
-template <class T>
+template <class T> inline
 bool fIsSet(const T& u, const T& x) throw()
 {
 	return (u & x) == x;
