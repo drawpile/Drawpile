@@ -23,7 +23,7 @@
 #include "board.h"
 #include "user.h"
 #include "interfaces.h"
-#include "netstate.h"
+#include "sessionstate.h"
 #include "preview.h"
 
 namespace drawingboard {

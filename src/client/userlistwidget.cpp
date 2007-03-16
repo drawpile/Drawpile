@@ -46,7 +46,7 @@ UserList::~UserList()
 
 void UserList::updateUser(const network::User& user)
 {
-	if(model_->hasUser(user.id))
+	if(model_->hasUser(user.id()))
 		model_->changeUser(user);
 	else
 		model_->addUser(user);
@@ -54,7 +54,7 @@ void UserList::updateUser(const network::User& user)
 
 void UserList::removeUser(const network::User& user)
 {
-	model_->removeUser(user.id);
+	model_->removeUser(user.id());
 }
 
 void UserList::clearUsers()

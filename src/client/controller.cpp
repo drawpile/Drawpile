@@ -25,7 +25,7 @@
 #include "tools.h"
 #include "boardeditor.h"
 #include "network.h"
-#include "netstate.h"
+#include "sessionstate.h"
 #include "localserver.h"
 
 #include "../shared/protocol.defaults.h"
@@ -148,7 +148,7 @@ void Controller::hostSession(const QString& title, const QString& password,
 bool Controller::amSessionOwner() const
 {
 	if(session_) {
-		if(session_->info().id == netstate_->localUser().id)
+		if(session_->info().id == netstate_->localUser().id())
 			return true;
 	}
 	return false;
@@ -234,7 +234,7 @@ void Controller::finishLogin()
  */
 void Controller::sessionJoined(int id)
 {
-	int userid = netstate_->localUser().id;
+	int userid = netstate_->localUser().id();
 	session_ = netstate_->session(id);
 
 	// Remember maximum user count
@@ -242,8 +242,9 @@ void Controller::sessionJoined(int id)
 
 	// Update user list
 	board_->clearUsers();
-	foreach(const network::User& ui, session_->users())
-		board_->addUser(ui.id);
+	QList<int> users = session_->users();
+	foreach(int id, users)
+		board_->addUser(id);
 	board_->setLocalUser(userid);
 
 	// Make session -> controller connections
@@ -292,10 +293,10 @@ void Controller::sessionJoined(int id)
 	delete toolbox_.editor();
 	toolbox_.setEditor( board_->getEditor(session_) );
 
-	emit joined(session_->info().title, netstate_->localUser().name);
+	emit joined(session_->info().title, netstate_->localUser().name());
 
 	// Set lock
-	if(session_->user(userid)->locked)
+	if(session_->user(userid).locked())
 		userLocked(userid, true);
 }
 
@@ -325,16 +326,12 @@ void Controller::sessionParted()
 
 void Controller::addUser(int id)
 {
-	const network::User *user = session_->user(id);
-	Q_ASSERT(user);
-	emit userJoined(*user);
+	emit userJoined(session_->user(id));
 }
 
 void Controller::removeUser(int id)
 {
-	const network::User *user = session_->user(id);
-	Q_ASSERT(user);
-	emit userParted(*user);
+	emit userParted(session_->user(id));
 }
 
 /**
@@ -405,10 +402,9 @@ void Controller::sessionLocked(bool lock)
 		}
 		lock_ = true;
 	} else {
-		const network::User *localuser = session_->user(netstate_->localUser().id);
-		Q_ASSERT(localuser);
+		const network::User &localuser = session_->user(netstate_->localUser().id());
 		// Unlock if local user is not locked and general session lock was lifted
-		if(localuser->locked==false && session_->isLocked()==false) {
+		if(localuser.locked()==false && session_->isLocked()==false) {
 			emit unlockboard();
 			lock_ = false;
 		}
@@ -421,26 +417,24 @@ void Controller::sessionLocked(bool lock)
  */
 void Controller::userLocked(int id, bool lock)
 {
-	const network::User *user = session_->user(id);
-	Q_ASSERT(user);
-	bool islocal = user->id == netstate_->localUser().id;
+	const network::User &user = session_->user(id);
 
 	// Session owner cannot be locked (except when entire board is locked)
-	if(netstate_->localUser().id == session_->info().owner && islocal)
+	if(user.isOwner() && user.isLocal())
 		return;
 
 	qDebug() << "user locked" << id << lock;
-	if(!islocal)
-		emit userChanged(*user);
+	if(!user.isLocal())
+		emit userChanged(user);
 
 	if(lock) {
 		// Lock UI if local user was locked
-		if(islocal && lock_==false)
+		if(user.isLocal() && lock_==false)
 			sessionLocked(true);
 	} else {
 		// Unlock UI if local user was unlocked and general session lock
 		// is not in place.
-		if(islocal && session_->isLocked()==false)
+		if(user.isLocal() && session_->isLocked()==false)
 			sessionLocked(false);
 	}
 }
@@ -459,8 +453,8 @@ void Controller::sessionOwnerChanged()
  */
 void Controller::sessionKicked(int id)
 {
-	emit userKicked(*(session_->user(id)));
-	if(id == netstate_->localUser().id)
+	emit userKicked(session_->user(id));
+	if(session_->user(id).isLocal())
 		disconnectHost();
 }
 

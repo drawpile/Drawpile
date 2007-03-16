@@ -33,7 +33,7 @@ void UserListModel::addUser(const network::User& user)
 void UserListModel::changeUser(const network::User& user)
 {
 	for(int i=0;i<users_.size();++i) {
-		if(users_.at(i).id == user.id) {
+		if(users_.at(i).id() == user.id()) {
 			users_[i] = user;
 			QModelIndex ind = index(i,0);
 			emit dataChanged(ind,ind);
@@ -45,7 +45,7 @@ void UserListModel::changeUser(const network::User& user)
 bool UserListModel::hasUser(int id) const
 {
 	for(int i=0;i<users_.size();++i)
-		if(users_.at(i).id == id)
+		if(users_.at(i).id() == id)
 			return true;
 	return false;
 }
@@ -53,7 +53,7 @@ bool UserListModel::hasUser(int id) const
 void UserListModel::removeUser(int id)
 {
 	for(int i=0;i<users_.size();++i) {
-		if(users_.at(i).id == id) {
+		if(users_.at(i).id() == id) {
 			beginRemoveRows(QModelIndex(),i,i);
 			users_.removeAt(i);
 			endRemoveRows();
@@ -102,12 +102,12 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	drawBackground(painter, opt, index);
 
 	// Lock button/indicator. This is shown even when not in admin mode.
-	painter->drawPixmap(opt.rect.topLeft(), user.locked?lock_:unlock_);
+	painter->drawPixmap(opt.rect.topLeft(), user.locked()?lock_:unlock_);
 	QRect textrect = opt.rect;
 
 	// Name
 	textrect.setX(kick_.width() + 5);
-	drawDisplay(painter, opt, textrect, user.name);
+	drawDisplay(painter, opt, textrect, user.name());
 
 	// Kick button (only in admin mode)
 	if(enableadmin_)
@@ -130,11 +130,11 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 		network::User user = index.data().value<network::User>();
 		if(me->x() <= lock_.width()) {
 			// User pressed lock button
-			emit lockUser(user.id, !user.locked);
+			emit lockUser(user.id(), !user.locked());
 			return true;
 		} else if(me->x() >= option.rect.width()-kick_.width()) {
 			// User pressed kick button
-			emit kickUser(user.id);
+			emit kickUser(user.id());
 			return true;
 		}
 	}

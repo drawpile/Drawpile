@@ -4,7 +4,7 @@
 #include <QAbstractListModel>
 #include <QItemDelegate>
 
-#include "netstate.h"
+#include "sessionuser.h"
 
 class UserListModel : public QAbstractListModel {
 	Q_OBJECT
@@ -21,7 +21,7 @@ class UserListModel : public QAbstractListModel {
 		void clearUsers();
 
 	private:
-		network::UserList users_;
+		QList<network::User> users_;
 };
 
 class UserListDelegate : public QItemDelegate {
