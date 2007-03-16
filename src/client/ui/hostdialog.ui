@@ -193,7 +193,7 @@
             <string>Select an image file</string>
            </property>
            <property name="icon" >
-            <iconset>../../../../../../../:icons/document-open.png</iconset>
+            <iconset>:icons/document-open.png</iconset>
            </property>
            <property name="autoRaise" >
             <bool>true</bool>
@@ -247,7 +247,7 @@
          <item row="0" column="1" >
           <widget class="QRadioButton" name="existingpicture" >
            <property name="text" >
-            <string>Current picture</string>
+            <string>Current</string>
            </property>
            <property name="checked" >
             <bool>true</bool>
@@ -263,7 +263,7 @@
             <string>Pick a color</string>
            </property>
            <property name="icon" >
-            <iconset>../../../../../../../:icons/color-picker.png</iconset>
+            <iconset>:icons/color-picker.png</iconset>
            </property>
            <property name="autoRaise" >
             <bool>true</bool>
@@ -273,7 +273,7 @@
          <item row="2" column="1" >
           <widget class="QRadioButton" name="otherpicture" >
            <property name="text" >
-            <string>Other picture</string>
+            <string>From file</string>
            </property>
           </widget>
          </item>
