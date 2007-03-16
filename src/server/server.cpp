@@ -681,7 +681,14 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		
 		// no session selected
 		if (usr->session == 0)
+		{
+			#ifndef NDEBUG
+			if (usr->strokes == 1)
+				std::cerr << "User #" << static_cast<int>(usr->id)
+					<< " attempts to draw on null session." << std::endl;
+			#endif
 			break;
+		}
 		
 		#ifdef LAYER_SUPPORT
 		if (usr->inMsg->type != protocol::type::ToolInfo
@@ -713,9 +720,24 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif // CHECK_VIOLATIONS
 		
 		// user or session is locked
-		if (usr->session->locked or fIsSet(usr->a_mode, protocol::user_mode::Locked))
+		if (usr->session->locked
+			or fIsSet(usr->a_mode, protocol::user_mode::Locked))
 		{
 			// TODO: Warn user?
+			#ifndef NDEBUG
+			if (usr->strokes == 1)
+			{
+				std::cerr << "User #" << static_cast<int>(usr->id)
+					<< " tries to draw, despite the lock." << std::endl;
+				
+				if (usr->session->locked)
+					std::cerr << "Clarification: Sesssion #"
+						<< static_cast<int>(session->id) << " is locked." << std::endl;
+				else
+					std::cerr << "Clarification: User is locked in session #"
+						<< static_cast<int>(session->id) << "." << std::endl;
+			}
+			#endif
 			break;
 		}
 		
