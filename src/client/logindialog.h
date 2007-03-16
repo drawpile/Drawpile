@@ -22,7 +22,7 @@
 
 #include <QDialog>
 
-#include "netstate.h"
+#include "sessioninfo.h"
 
 class Ui_LoginDialog;
 

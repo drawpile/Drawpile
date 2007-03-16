@@ -25,6 +25,7 @@
 #include "tools.h"
 #include "boardeditor.h"
 #include "network.h"
+#include "hoststate.h"
 #include "sessionstate.h"
 #include "localserver.h"
 
@@ -33,23 +34,23 @@
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
-	netstate_ = new network::HostState(this);
-	connect(netstate_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
-	connect(netstate_, SIGNAL(becameAdmin()), this, SLOT(finishLogin()));
-	connect(netstate_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
-	connect(netstate_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
+	host_ = new network::HostState(this);
+	connect(host_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
+	connect(host_, SIGNAL(becameAdmin()), this, SLOT(finishLogin()));
+	connect(host_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
+	connect(host_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
 
-	connect(netstate_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
-	connect(netstate_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
-	connect(netstate_, SIGNAL(sessionNotFound()), this, SLOT(disconnectHost()));
-	connect(netstate_, SIGNAL(sessionNotFound()), this, SIGNAL(sessionNotFound()));
+	connect(host_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
+	connect(host_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
+	connect(host_, SIGNAL(sessionNotFound()), this, SLOT(disconnectHost()));
+	connect(host_, SIGNAL(sessionNotFound()), this, SIGNAL(sessionNotFound()));
 
-	connect(netstate_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
-	connect(netstate_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
+	connect(host_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
+	connect(host_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
 
-	connect(netstate_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
+	connect(host_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	// Disconnect on error
-	connect(netstate_, SIGNAL(error(QString)), this, SLOT(disconnectHost()));
+	connect(host_, SIGNAL(error(QString)), this, SLOT(disconnectHost()));
 }
 
 Controller::~Controller()
@@ -96,7 +97,7 @@ void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 	connect(net_,SIGNAL(connected()), this, SLOT(netConnected()));
 	connect(net_,SIGNAL(disconnected(QString)), this, SLOT(netDisconnected(QString)));
 	connect(net_,SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
-	connect(net_,SIGNAL(received()), netstate_, SLOT(receiveMessage()));
+	connect(net_,SIGNAL(received()), host_, SLOT(receiveMessage()));
 
 	// Autojoin if path is present
 	autojoinpath_ = url.path();
@@ -105,7 +106,7 @@ void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 	adminpasswd_ = adminpasswd;
 
 	// Connect to host
-	netstate_->setConnection(net_);
+	host_->setConnection(net_);
 	QString host = url.host();
 	if(host.compare(LocalServer::address())==0) {
 		qDebug() << "actually connecting to localhost instead of" << host;
@@ -137,21 +138,9 @@ bool Controller::isUploading() const
 void Controller::hostSession(const QString& title, const QString& password,
 		const QImage& image, int userlimit, bool allowdraw, bool allowchat)
 {
-	Q_ASSERT(netstate_);
-	netstate_->host(title, password, image.width(), image.height(),
+	Q_ASSERT(host_);
+	host_->host(title, password, image.width(), image.height(),
 			userlimit, allowdraw, allowchat);
-}
-
-/**
- * @retval true if user owns the current session
- */
-bool Controller::amSessionOwner() const
-{
-	if(session_) {
-		if(session_->info().id == netstate_->localUser().id())
-			return true;
-	}
-	return false;
 }
 
 /**
@@ -160,8 +149,8 @@ bool Controller::amSessionOwner() const
  */
 void Controller::joinSession()
 {
-	Q_ASSERT(netstate_);
-	netstate_->join();
+	Q_ASSERT(host_);
+	host_->join();
 }
 
 /**
@@ -170,12 +159,12 @@ void Controller::joinSession()
  */
 void Controller::sendPassword(const QString& password)
 {
-	netstate_->sendPassword(password);
+	host_->sendPassword(password);
 }
 
 void Controller::joinSession(int id)
 {
-	netstate_->join(id);
+	host_->join(id);
 }
 
 void Controller::disconnectHost()
@@ -219,14 +208,14 @@ void Controller::serverLoggedin()
 	if(adminpasswd_.isEmpty())
 		finishLogin();
 	else
-		netstate_->becomeAdmin(adminpasswd_);
+		host_->becomeAdmin(adminpasswd_);
 }
 
 void Controller::finishLogin()
 {
 	emit loggedin();
 	if(autojoinpath_.length()>1)
-		netstate_->join(autojoinpath_.mid(1));
+		host_->join(autojoinpath_.mid(1));
 }
 
 /**
@@ -234,8 +223,8 @@ void Controller::finishLogin()
  */
 void Controller::sessionJoined(int id)
 {
-	int userid = netstate_->localUser().id();
-	session_ = netstate_->session(id);
+	int userid = host_->localUser().id();
+	session_ = host_->session(id);
 
 	// Remember maximum user count
 	maxusers_ = session_->info().maxusers;
@@ -293,7 +282,7 @@ void Controller::sessionJoined(int id)
 	delete toolbox_.editor();
 	toolbox_.setEditor( board_->getEditor(session_) );
 
-	emit joined(session_->info().title, netstate_->localUser().name());
+	emit joined(session_);
 
 	// Set lock
 	if(session_->user(userid).locked())
@@ -402,7 +391,7 @@ void Controller::sessionLocked(bool lock)
 		}
 		lock_ = true;
 	} else {
-		const network::User &localuser = session_->user(netstate_->localUser().id());
+		const network::User &localuser = session_->user(host_->localUser().id());
 		// Unlock if local user is not locked and general session lock was lifted
 		if(localuser.locked()==false && session_->isLocked()==false) {
 			emit unlockboard();
@@ -444,7 +433,9 @@ void Controller::userLocked(int id, bool lock)
  */
 void Controller::sessionOwnerChanged()
 {
-	qDebug() << "owner changed, TODO";
+	qDebug() << "owner changed to " << session_->info().owner;
+	if(session_->info().owner == host_->localUser().id())
+		emit becameOwner();
 }
 
 /**
@@ -525,7 +516,7 @@ void Controller::penUp()
 
 void Controller::netConnected()
 {
-	netstate_->login(username_);
+	host_->login(username_);
 	emit connected(address_);
 }
 
@@ -534,7 +525,7 @@ void Controller::netDisconnected(const QString& message)
 	net_->wait();
 	delete net_;
 	net_ = 0;
-	netstate_->setConnection(0);
+	host_->setConnection(0);
 	session_ = 0;
 	emit disconnected(message);
 }

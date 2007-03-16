@@ -46,6 +46,11 @@ namespace dialogs {
 namespace drawingboard {
 	class Board;
 }
+
+namespace network {
+	class SessionState;
+}
+
 class Controller;
 
 //! The application main window
@@ -125,13 +130,15 @@ class MainWindow : public QMainWindow {
 		//! Connection cut
 		void disconnected();
 		//! Joined a session
-		void joined(const QString& title, const QString& myname);
+		void joined(network::SessionState *session);
 		//! Disallow changes to the board
 		void lock(const QString& reason);
 		//! Allow changes to the board
 		void unlock();
 		//! New joins have been allowed/disallowed
 		void allowJoins(bool allow);
+		//! The user became session owner
+		void becameOwner();
 		//! Inform user about raster upload progress
 		void rasterUp(int p);
 

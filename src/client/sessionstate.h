@@ -81,6 +81,9 @@ class SessionState : public QObject {
 		//! Get a list of user ids in session
 		QList<int> users() const { return users_.uniqueKeys(); }
 
+		//! Get the number of users
+		int userCount() const { return users_.count(); }
+
 		//! Get an image from received raster data
 		bool sessionImage(QImage& image) const;
 

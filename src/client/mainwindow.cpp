@@ -44,6 +44,8 @@
 #include "dualcolorbutton.h"
 #include "localserver.h"
 #include "recentfiles.h"
+#include "hoststate.h"
+#include "sessionstate.h"
 
 #include "colordialog.h"
 #include "newdialog.h"
@@ -127,20 +129,6 @@ MainWindow::MainWindow(bool restoreposition)
 	connect(controller_, SIGNAL(userKicked(network::User)),
 			netstatus_, SLOT(kicked(network::User)));
 
-	// Controller <-> User list
-	connect(controller_, SIGNAL(userJoined(network::User)),
-			userlist_, SLOT(updateUser(network::User)));
-	connect(controller_, SIGNAL(userParted(network::User)),
-			userlist_, SLOT(removeUser(network::User)));
-	connect(controller_, SIGNAL(userChanged(network::User)),
-			userlist_, SLOT(updateUser(network::User)));
-	connect(controller_, SIGNAL(disconnected(QString)),
-			userlist_, SLOT(clearUsers()));
-	connect(userlist_, SIGNAL(kick(int)),
-			controller_, SLOT(kickUser(int)));
-	connect(userlist_, SIGNAL(lock(int, bool)),
-			controller_, SLOT(lockUser(int, bool)));
-
 	// Actions -> controller
 	connect(lockboard_, SIGNAL(triggered(bool)),
 			controller_, SLOT(lockBoard(bool)));
@@ -158,8 +146,10 @@ MainWindow::MainWindow(bool restoreposition)
 			this, SLOT(unlock()));
 	connect(controller_, SIGNAL(joinsDisallowed(bool)),
 			disallowjoins_, SLOT(setChecked(bool)));
-	connect(controller_, SIGNAL(joined(QString,QString)),
-			this, SLOT(joined(QString,QString)));
+	connect(controller_, SIGNAL(joined(network::SessionState*)),
+			this, SLOT(joined(network::SessionState*)));
+	connect(controller_, SIGNAL(becameOwner()),
+			this, SLOT(becameOwner()));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),
 			this, SLOT(rasterUp(int)));
 
@@ -170,7 +160,7 @@ MainWindow::MainWindow(bool restoreposition)
 			logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_,
 			SLOT(loggedin()));
-	connect(controller_, SIGNAL(joined(QString,QString)),
+	connect(controller_, SIGNAL(joined(network::SessionState*)),
 			logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)),
 			logindlg_, SLOT(raster(int)));
@@ -791,18 +781,26 @@ void MainWindow::disconnected()
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
 	setSessionTitle(QString());
+	userlist_->setSession(0);
 }
 
 /**
- * @param title session title
+ * @param session the session that was joined
  */
-void MainWindow::joined(const QString& title, const QString& myname)
+void MainWindow::joined(network::SessionState *session)
 {
-	setSessionTitle(title);
-	bool owner = controller_->amSessionOwner();
-	userlist_->setAdminMode(owner);
-	adminTools_->setEnabled(owner);
-	chatbox_->joined(title, myname);
+	setSessionTitle(session->info().title);
+	bool isowner = session->info().id == session->host()->localUser().id();
+	userlist_->setSession(session);
+	userlist_->setAdminMode(isowner);
+	adminTools_->setEnabled(isowner);
+	chatbox_->joined(session->info().title, session->host()->localUser().name());
+}
+
+void MainWindow::becameOwner()
+{
+	adminTools_->setEnabled(true);
+	userlist_->setAdminMode(true);
 }
 
 /**

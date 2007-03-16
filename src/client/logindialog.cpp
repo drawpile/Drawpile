@@ -19,7 +19,6 @@
 */
 
 #include "logindialog.h"
-#include "netstate.h"
 
 #include "ui_logindialog.h"
 

@@ -23,7 +23,7 @@
 #include <QClipboard>
 #include <QHBoxLayout>
 
-#include "netstate.h"
+#include "sessioninfo.h"
 #include "netstatus.h"
 #include "popupmessage.h"
 

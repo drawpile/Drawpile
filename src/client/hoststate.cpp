@@ -25,7 +25,7 @@
 #include "../../config.h"
 
 #include "network.h"
-#include "netstate.h"
+#include "hoststate.h"
 #include "sessionstate.h"
 #include "brush.h"
 #include "point.h"

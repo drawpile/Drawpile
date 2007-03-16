@@ -39,7 +39,7 @@ set (
 	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
 	interfaces.h boardeditor.h gradientslider.h colorbutton.h
 	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
-	networkprivate.h netstate.h sessionstate.h logindialog.h preview.h
+	networkprivate.h hoststate.h sessionstate.h logindialog.h preview.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	recentfiles.h sessioninfo.h
 )
@@ -51,7 +51,7 @@ set (
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp network.cpp netstate.cpp sessionstate.cpp
+	hostdialog.cpp joindialog.cpp network.cpp hoststate.cpp sessionstate.cpp
 	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp

@@ -25,7 +25,7 @@
 #include "../../config.h"
 
 #include "network.h"
-#include "netstate.h"
+#include "hoststate.h"
 #include "sessionstate.h"
 #include "brush.h"
 #include "point.h"
@@ -47,9 +47,9 @@ SessionState::SessionState(HostState *parent, const Session& info)
 	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
-	users_[host_->localuser_.id()] = User(
-			host_->localuser_.name(),
-			host_->localuser_.id(),
+	users_[host_->localUser().id()] = User(
+			host_->localUser().name(),
+			host_->localUser().id(),
 			fIsSet(info.mode, protocol::user_mode::Locked),
 			this
 			);

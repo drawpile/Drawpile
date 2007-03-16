@@ -21,6 +21,7 @@
 #define SESSIONINFO_H
 
 #include <QString>
+#include <QList>
 
 namespace protocol {
 	class SessionInfo;

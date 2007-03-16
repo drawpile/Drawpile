@@ -28,6 +28,7 @@ class UserListDelegate;
 
 namespace network {
 	class User;
+	class SessionState;
 }
 
 namespace widgets {
@@ -45,18 +46,7 @@ class UserList: public QDockWidget
 		~UserList();
 
 		void setAdminMode(bool enable);
-
-	public slots:
-		//! Change or add user
-		void updateUser(const network::User& user);
-		//! Remove a user
-		void removeUser(const network::User& user);
-		//! Remove all users
-		void clearUsers();
-
-	signals:
-		void kick(int userid);
-		void lock(int userid, bool lock);
+		void setSession(network::SessionState *session);
 
 	private:
 		QListView *list_;

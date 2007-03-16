@@ -22,7 +22,6 @@
 
 #include <QObject>
 #include <QHash>
-#include <QList>
 
 #include "sessioninfo.h"
 

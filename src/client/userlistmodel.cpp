@@ -1,18 +1,61 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2007 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 #include <QDebug>
 #include <QStyleOptionViewItemV2>
 #include <QPainter>
 #include <QMouseEvent>
+
 #include "userlistmodel.h"
-#include "netstate.h"
+#include "sessionstate.h"
 
 Q_DECLARE_METATYPE(network::User)
+
+UserListModel::UserListModel(QObject *parent)
+	: QAbstractListModel(parent), session_(0)
+{
+}
+
+void UserListModel::setSession(network::SessionState *session)
+{
+	session_ = session;
+	if(session_) {
+		beginInsertRows(QModelIndex(),0,session_->userCount()-1);
+		users_ = session_->users();
+		connect(session_, SIGNAL(userJoined(int)), this, SLOT(addUser(int)));
+		connect(session_, SIGNAL(userLeft(int)), this, SLOT(removeUser(int)));
+		connect(session_, SIGNAL(userLocked(int,bool)), this, SLOT(updateUsers()));
+		connect(session_, SIGNAL(ownerChanged()), this, SLOT(updateUsers()));
+		endInsertRows();
+	} else {
+		beginRemoveRows(QModelIndex(), 0, users_.size()-1);
+		users_.clear();
+		endRemoveRows();
+	}
+}
 
 QVariant UserListModel::data(const QModelIndex& index, int role) const
 {
 	if(index.row() < 0 || index.row() >= users_.size())
 		return QVariant();
-	if(role == Qt::DisplayRole)
-		return QVariant::fromValue(users_.at(index.row()));
+	if(role == Qt::DisplayRole && session_)
+		return QVariant::fromValue(session_->user(users_.at(index.row())));
 	return QVariant();
 }
 
@@ -23,52 +66,30 @@ int UserListModel::rowCount(const QModelIndex& parent) const
 	return users_.count();
 }
 
-void UserListModel::addUser(const network::User& user)
+void UserListModel::addUser(int id)
 {
-	beginInsertRows(QModelIndex(),users_.size(),users_.size());
-	users_.append(user);
-	endInsertRows();
-}
-
-void UserListModel::changeUser(const network::User& user)
-{
-	for(int i=0;i<users_.size();++i) {
-		if(users_.at(i).id() == user.id()) {
-			users_[i] = user;
-			QModelIndex ind = index(i,0);
-			emit dataChanged(ind,ind);
+	int pos=0;
+	while(pos < users_.count()) {
+		if(users_.at(pos) > id)
 			break;
-		}
+		++pos;
 	}
-}
-
-bool UserListModel::hasUser(int id) const
-{
-	for(int i=0;i<users_.size();++i)
-		if(users_.at(i).id() == id)
-			return true;
-	return false;
+	beginInsertRows(QModelIndex(),pos,pos);
+	users_.insert(pos,id);
+	endInsertRows();
 }
 
 void UserListModel::removeUser(int id)
 {
-	for(int i=0;i<users_.size();++i) {
-		if(users_.at(i).id() == id) {
-			beginRemoveRows(QModelIndex(),i,i);
-			users_.removeAt(i);
-			endRemoveRows();
-			break;
-		}
-	}
+	int pos = users_.indexOf(id);
+	beginRemoveRows(QModelIndex(),pos,pos);
+	users_.removeAt(pos);
+	endRemoveRows();
 }
 
-void UserListModel::clearUsers()
+void UserListModel::updateUsers()
 {
-	if(users_.isEmpty()==false) {
-		beginRemoveRows(QModelIndex(), 0, users_.size()-1);
-		users_.clear();
-		endRemoveRows();
-	}
+	emit dataChanged(index(0,0), index(users_.count()-1,0));
 }
 
 UserListDelegate::UserListDelegate(QObject *parent)
@@ -95,22 +116,25 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>(&option);
 	opt.features = v2 ? v2->features : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
 
-	network::User user = index.data().value<network::User>();
+	const network::User user = index.data().value<network::User>();
 	//qDebug() << user.name;
 
 	// Background
 	drawBackground(painter, opt, index);
 
-	// Lock button/indicator. This is shown even when not in admin mode.
-	painter->drawPixmap(opt.rect.topLeft(), user.locked()?lock_:unlock_);
-	QRect textrect = opt.rect;
+	// Lock button/indicator. This is shown even when not in admin mode, except for the session owner
+	if(user.isOwner()==false)
+		painter->drawPixmap(opt.rect.topLeft(), user.locked()?lock_:unlock_);
 
 	// Name
+	QRect textrect = opt.rect;
 	textrect.setX(kick_.width() + 5);
+	if(user.isLocal())
+		opt.font.setStyle(QFont::StyleItalic);
 	drawDisplay(painter, opt, textrect, user.name());
 
-	// Kick button (only in admin mode)
-	if(enableadmin_)
+	// Kick button (only in admin mode and for nonadmin users)
+	if(enableadmin_ && user.isOwner()==false)
 		painter->drawPixmap(opt.rect.topRight()-QPoint(kick_.width(),0), kick_);
 }
 
@@ -128,14 +152,16 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 		QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
 		network::User user = index.data().value<network::User>();
-		if(me->x() <= lock_.width()) {
-			// User pressed lock button
-			emit lockUser(user.id(), !user.locked());
-			return true;
-		} else if(me->x() >= option.rect.width()-kick_.width()) {
-			// User pressed kick button
-			emit kickUser(user.id());
-			return true;
+		if(user.isOwner()==false) {
+			if(me->x() <= lock_.width()) {
+				// User pressed lock button
+				emit lockUser(user.id(), !user.locked());
+				return true;
+			} else if(me->x() >= option.rect.width()-kick_.width()) {
+				// User pressed kick button
+				emit kickUser(user.id());
+				return true;
+			}
 		}
 	}
 	return QItemDelegate::editorEvent(event, model, option, index);

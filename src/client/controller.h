@@ -24,7 +24,7 @@
 #include <QUrl>
 
 #include "tools.h"
-#include "netstate.h"
+#include "sessioninfo.h"
 
 namespace drawingboard {
 	class Board;
@@ -39,6 +39,8 @@ namespace interface {
 
 namespace network {
 	class Connection;
+	class HostState;
+	class SessionState;
 }
 
 class QImage;
@@ -73,9 +75,6 @@ class Controller : public QObject
 		void hostSession(const QString& title, const QString& password,
 				const QImage& image, int userlimit, bool allowdraw,
 				bool allowchat);
-
-		//! Check if the local user owns the current session
-		bool amSessionOwner() const;
 
 		//! Join a session
 		void joinSession();
@@ -136,7 +135,7 @@ class Controller : public QObject
 		void disconnected(const QString& message);
 
 		//! Session was joined
-		void joined(const QString& title, const QString& myname);
+		void joined(network::SessionState *session);
 
 		//! Session was left
 		void parted();
@@ -152,6 +151,9 @@ class Controller : public QObject
 
 		//! User status has changed
 		void userChanged(const network::User& user);
+
+		//! The local user became session owner
+		void becameOwner();
 
 		//! There were no sessions to join
 		void noSessions();
@@ -208,7 +210,7 @@ class Controller : public QObject
 		tools::Tool *tool_;
 
 		network::Connection *net_;
-		network::HostState *netstate_;
+		network::HostState *host_;
 		network::SessionState *session_;
 
 		QString address_;
