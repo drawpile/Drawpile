@@ -2334,7 +2334,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	else
 	{
 		// Cancel raster sending for this user
-		User* usr;
+		User* usr=0;
 		std::multimap<fd_t, fd_t>::iterator tunnel_i(tunnel.begin());
 		while (tunnel_i != tunnel.end())
 		{
