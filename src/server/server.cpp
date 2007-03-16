@@ -1120,7 +1120,8 @@ void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad
 	case Z_OK:
 		{
 			// Store input buffer. (... why?)
-			Buffer temp << usr->input;
+			Buffer temp;
+			temp << usr->input;
 			
 			// Set the uncompressed data stream as the input buffer.
 			usr->input.setBuffer(outbuf, stream->uncompressed);
