@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>LoginDialog</class>
- <widget class="QDialog" name="LoginDialog" >
+ <class>SessionSelectDialog</class>
+ <widget class="QDialog" name="SessionSelectDialog" >
   <property name="windowModality" >
    <enum>Qt::WindowModal</enum>
   </property>
@@ -9,11 +9,11 @@
     <x>0</x>
     <y>0</y>
     <width>326</width>
-    <height>145</height>
+    <height>233</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Dialog</string>
+   <string>Select a session</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
@@ -23,39 +23,26 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="QLabel" name="titlemessage" >
-     <property name="font" >
-      <font>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
+    <widget class="QLabel" name="label" >
      <property name="text" >
-      <string>Joining a drawing session</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QProgressBar" name="progress" >
-     <property name="value" >
-      <number>24</number>
-     </property>
-     <property name="textVisible" >
-      <bool>false</bool>
-     </property>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="statustext" >
-     <property name="text" >
-      <string>Connecting...</string>
+      <string>Multiple sessions are hosted on the server.
+Please select one.</string>
      </property>
      <property name="textFormat" >
       <enum>Qt::PlainText</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableView" name="sessionlist" >
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::SingleSelection</enum>
+     </property>
+     <property name="selectionBehavior" >
+      <enum>QAbstractItemView::SelectRows</enum>
+     </property>
+     <property name="showGrid" >
+      <bool>false</bool>
      </property>
     </widget>
    </item>
@@ -65,7 +52,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons" >
-      <set>QDialogButtonBox::Abort</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -76,7 +63,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>LoginDialog</receiver>
+   <receiver>SessionSelectDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -92,7 +79,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>LoginDialog</receiver>
+   <receiver>SessionSelectDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >

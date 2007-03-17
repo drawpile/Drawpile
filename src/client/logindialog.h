@@ -88,10 +88,6 @@ class LoginDialog : public QDialog
 		//! User has selected a session
 		void session(int id);
 
-	private slots:
-		void sendPassword();
-		void sendSession();
-
 	private:
 		Ui_LoginDialog *ui_;
 		bool appenddisconnect_;

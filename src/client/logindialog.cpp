@@ -18,9 +18,12 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QInputDialog>
 #include "logindialog.h"
 
 #include "ui_logindialog.h"
+#include "ui_sessiondialog.h"
+#include "sessionlistmodel.h"
 
 namespace dialogs {
 
@@ -30,9 +33,6 @@ LoginDialog::LoginDialog(QWidget *parent)
 	ui_ = new Ui_LoginDialog;
 	ui_->setupUi(this);
 	ui_->progress->setMaximum(107);
-
-	connect(ui_->passwordbutton, SIGNAL(clicked()), this, SLOT(sendPassword()));
-	connect(ui_->joinbutton, SIGNAL(clicked()), this, SLOT(sendSession()));
 }
 
 LoginDialog::~LoginDialog()
@@ -47,35 +47,32 @@ LoginDialog::~LoginDialog()
  */
 void LoginDialog::connecting(const QString& address)
 {
-	ui_->titlemessage->setText(tr("Connecting to %1...").arg(address));
-	ui_->connectmessage->setText(tr("Connecting..."));
+	ui_->statustext->setText(tr("Connecting to %1...").arg(address));
 	ui_->progress->setValue(0);
-	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
 	show();
 }
 
 /**
- * Move on to the login screen.
+ * Connection established. Next step is the login handshake.
  */
 void LoginDialog::connected()
 {
-	ui_->connectmessage->setText(tr("Logging in..."));
-	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->statustext->setText(tr("Logging in..."));
 	ui_->progress->setValue(1);
 }
 
 /**
- * User is now logged in
+ * User is now logged in.
  */
 void LoginDialog::loggedin()
 {
-	ui_->connectmessage->setText(tr("Logged in"));
-	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->statustext->setText(tr("Logged in"));
 	ui_->progress->setValue(2);
 }
 
 /**
- * Disconnected, display no sessions message
+ * Disconnected, display no sessions message.
  */
 void LoginDialog::noSessions()
 {
@@ -83,7 +80,7 @@ void LoginDialog::noSessions()
 }
 
 /**
- * Disconnected, display session not found message
+ * Disconnected, display session not found message.
  */
 void LoginDialog::sessionNotFound()
 {
@@ -92,8 +89,7 @@ void LoginDialog::sessionNotFound()
 
 void LoginDialog::error(const QString& message)
 {
-	ui_->connectmessage->setText(message);
-	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->statustext->setText(message);
 	appenddisconnect_ = true;
 }
 
@@ -102,15 +98,17 @@ void LoginDialog::error(const QString& message)
  */
 void LoginDialog::selectSession(const network::SessionList& list)
 {
-	ui_->sessionlist->clear();
-	foreach(const network::Session& s, list) {
-		QString title = s.title;
-		if(title.isEmpty())
-			title = tr("<untitled session>");
-		QListWidgetItem *i = new QListWidgetItem(title, ui_->sessionlist);
-		i->setData(Qt::UserRole, s.id);
+	QDialog sessiondialog(this);
+	Ui_SessionSelectDialog sessionselect;
+	sessionselect.setupUi(&sessiondialog);
+	sessionselect.sessionlist->setModel(new SessionListModel(list));
+	sessionselect.sessionlist->selectRow(0);
+	if(sessiondialog.exec() == QDialog::Rejected) {
+		reject();
+	} else {
+		ui_->statustext->setText(tr("Joining session..."));
+		emit session(list.at(sessionselect.sessionlist->currentIndex().row()).id);
 	}
-	ui_->stackedWidget->setCurrentIndex(2);
 }
 
 /**
@@ -120,30 +118,29 @@ void LoginDialog::selectSession(const network::SessionList& list)
 void LoginDialog::disconnected(const QString& message)
 {
 	if(appenddisconnect_) {
-		ui_->connectmessage->setText(ui_->connectmessage->text() + "\n"
-				+ message);
+		ui_->statustext->setText(ui_->statustext->text() + "\n" + message);
 		appenddisconnect_ = false;
 	} else {
-		ui_->connectmessage->setText(message);
+		ui_->statustext->setText(message);
 	}
-	ui_->titlemessage->setText(ui_->titlemessage->text() + " " + tr("Failed."));
 	ui_->progress->setValue(0);
-	ui_->stackedWidget->setCurrentIndex(0);
+	ui_->titlemessage->setText(tr("Couldn't join a session"));
 	disconnect(SIGNAL(rejected()));
+	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
 /**
- * A session was joined. Login sequence is now complete, so hide the dialog
+ * A session was joined. Board contents is now being downloaded.
  */
 void LoginDialog::joined()
 {
-	ui_->stackedWidget->setCurrentIndex(0);
-	ui_->connectmessage->setText(tr("Joined session, downloading image..."));
+	ui_->statustext->setText(tr("Downloading board contents..."));
 }
 
 /**
- * Raster data download progresses
- * @param p progress percentage. When 100, login sequence is complete
+ * Raster data download progresses. When progress hits 100, the download
+ * sequence is complete and the dialog is hidden.
+ * @param p progress percentage.
  */
 void LoginDialog::raster(int p)
 {
@@ -153,32 +150,24 @@ void LoginDialog::raster(int p)
 }
 
 /**
- * Shows password request page
+ * Request a password. TODO, session or host password?
+ * @param session is it a session password?
  */
 void LoginDialog::getPassword()
 {
-	ui_->password->setText(QString());
-	ui_->stackedWidget->setCurrentIndex(1);
-}
-
-/**
- * Send the password
- */
-void LoginDialog::sendPassword()
-{
-	ui_->connectmessage->setText(tr("Sending password..."));
-	ui_->stackedWidget->setCurrentIndex(0);
-	emit password(ui_->password->text());
-}
-
-/**
- * Send the selected session id
- */
-void LoginDialog::sendSession()
-{
-	ui_->connectmessage->setText(tr("Joining session..."));
-	ui_->stackedWidget->setCurrentIndex(0);
-	emit session(ui_->sessionlist->currentItem()->data(Qt::UserRole).toInt());
+	bool ok;
+	QString passwd = QInputDialog::getText(this,
+			tr("Password required"),
+			tr("Password:"),
+			QLineEdit::Password,
+			QString(),
+			&ok);
+	if(ok) {
+		ui_->statustext->setText(tr("Sending password..."));
+		emit password(passwd);
+	} else {
+		reject();
+	}
 }
 
 }
