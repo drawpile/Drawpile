@@ -105,11 +105,8 @@ class SessionState : public QObject {
 		//! Set password for this session
 		void setPassword(const QString& password);
 
-		//! Admin command. Remove a user from the drawing session
-		void kickUser(int id);
-
-		//! Admin command. Lock/unlock user
-		void lockUser(int id, bool lock);
+		//! Admin command. Lock/unlock the session
+		void lock(bool l);
 
 		//! Admin command. Set session user limit
 		void setUserLimit(int count);

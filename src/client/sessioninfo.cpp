@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include "sessioninfo.h"
+#include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "../shared/protocol.h"
@@ -57,6 +58,37 @@ bool User::isLocal() const
 bool User::isOwner() const
 {
 	return owner_->info().owner == id_;
+}
+
+/**
+ * Sends a request to the server to lock or unlock the user.
+ * Only the session owner may use this command.
+ * @param l lock or unlock
+ */
+void User::lock(bool l)
+{
+	protocol::SessionEvent *msg = new protocol::SessionEvent;
+	msg->session_id = owner_->info().id;
+	if(l)
+		msg->action = protocol::session_event::Lock;
+	else
+		msg->action = protocol::session_event::Unlock;
+	msg->target = id_;
+	owner_->host()->connection()->send(msg);
+
+}
+
+/**
+ * Sends a request to the server to kick the user from the session.
+ * Only the session owner may use this command.
+ */
+void User::kick()
+{
+	protocol::SessionEvent *msg = new protocol::SessionEvent;
+	msg->session_id = owner_->info().id;
+	msg->action = protocol::session_event::Kick;
+	msg->target = id_;
+	owner_->host()->connection()->send(msg);
 }
 
 }

@@ -173,22 +173,10 @@ void Controller::disconnectHost()
 	net_->disconnectHost();
 }
 
-void Controller::kickUser(int id)
-{
-	Q_ASSERT(session_);
-	session_->kickUser(id);
-}
-
-void Controller::lockUser(int id, bool lock)
-{
-	Q_ASSERT(session_);
-	session_->lockUser(id, lock);
-}
-
 void Controller::lockBoard(bool lock)
 {
 	Q_ASSERT(session_);
-	session_->lockUser(protocol::null_user, lock);
+	session_->lock(lock);
 }
 
 void Controller::disallowJoins(bool disallow)

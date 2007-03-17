@@ -52,14 +52,29 @@ class User {
 		User();
 		User(const QString& name, int id, bool locked, SessionState *owner);
 
+		//! Get the name of the user
 		const QString& name() const { return name_; }
+
+		//! Get the ID of the user
 		int id() const { return id_; }
+
+		//! Is the user locked
 		bool locked() const { return locked_; }
 
+		//! Set lock status
 		void setLocked(bool lock);
 
+		//! Is the user the local user
 		bool isLocal() const;
+
+		//! Is the user the session owner
 		bool isOwner() const;
+
+		//! Lock or unlock the user
+		void lock(bool l);
+
+		//! Kick the user out of the session
+		void kick();
 
 	private:
 		QString name_;

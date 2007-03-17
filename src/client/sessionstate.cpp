@@ -153,7 +153,7 @@ void SessionState::sendRasterChunk()
 	msg->data = new char[chunklen];
 	memcpy(msg->data, raster_.constData()+rasteroffset_, chunklen);
 	rasteroffset_ += chunklen;
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 	emit rasterSent(100*rasteroffset_/raster_.length());
 }
 
@@ -166,7 +166,7 @@ void SessionState::select()
 	protocol::SessionSelect *msg = new protocol::SessionSelect;
 	msg->session_id = info_.id;
 	host_->usersessions_[host_->localuser_.id()] = info_.id;
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 /**
@@ -179,33 +179,19 @@ void SessionState::setPassword(const QString& password)
 }
 
 /**
- * @param id user id
- * @pre user is session owner
- */
-void SessionState::kickUser(int id)
-{
-	protocol::SessionEvent *msg = new protocol::SessionEvent;
-	msg->session_id = info_.id;
-	msg->action = protocol::session_event::Kick;
-	msg->target = id;
-	host_->net_->send(msg);
-}
-
-/**
- * @param id user id
  * @param lock lock status
  * @pre user is session owner
  */
-void SessionState::lockUser(int id, bool lock)
+void SessionState::lock(bool l)
 {
 	protocol::SessionEvent *msg = new protocol::SessionEvent;
 	msg->session_id = info_.id;
-	if(lock)
+	if(l)
 		msg->action = protocol::session_event::Lock;
 	else
 		msg->action = protocol::session_event::Unlock;
-	msg->target = id;
-	host_->net_->send(msg);
+	msg->target = protocol::null_user;
+	host_->connection()->send(msg);
 }
 
 /**
@@ -241,7 +227,7 @@ void SessionState::setUserLimit(int count)
 	msg->aux_data2 = info_.mode;
 
 	host_->lastinstruction_ = msg->command;
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 /**
@@ -268,7 +254,7 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	msg->hi_size = brush.radius(1);
 	msg->lo_hardness = qRound(brush.hardness(0)*255);
 	msg->hi_hardness = qRound(brush.hardness(1)*255);
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 /**
@@ -281,14 +267,14 @@ void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 	msg->x = point.x();
 	msg->y = point.y();
 	msg->pressure = qRound(point.pressure()*255);
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 void SessionState::sendStrokeEnd()
 {
 	protocol::StrokeEnd *msg = new protocol::StrokeEnd;
 	msg->session_id = info_.id;;
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 void SessionState::sendAckSync()
@@ -296,7 +282,7 @@ void SessionState::sendAckSync()
 	protocol::Acknowledgement *msg = new protocol::Acknowledgement;
 	msg->session_id = info_.id;
 	msg->event = protocol::type::SyncWait;
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 void SessionState::sendChat(const QString& message)
@@ -307,7 +293,7 @@ void SessionState::sendChat(const QString& message)
 	msg->length = arr.length();
 	msg->data = new char[arr.length()];
 	memcpy(msg->data,arr.constData(),arr.length());
-	host_->net_->send(msg);
+	host_->connection()->send(msg);
 }
 
 /**

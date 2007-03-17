@@ -155,11 +155,11 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 		if(user.isOwner()==false) {
 			if(me->x() <= lock_.width()) {
 				// User pressed lock button
-				emit lockUser(user.id(), !user.locked());
+				user.lock( !user.locked() );
 				return true;
 			} else if(me->x() >= option.rect.width()-kick_.width()) {
 				// User pressed kick button
-				emit kickUser(user.id());
+				user.kick();
 				return true;
 			}
 		}

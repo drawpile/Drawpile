@@ -95,12 +95,6 @@ class Controller : public QObject
 		//! Disconnect from host
 		void disconnectHost();
 
-		//! Remove a user from the drawing session
-		void kickUser(int id);
-
-		//! Lock/unlock user
-		void lockUser(int id, bool lock);
-
 		//! Lock the entire board
 		void lockBoard(bool lock);
 

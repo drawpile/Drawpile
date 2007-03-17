@@ -60,6 +60,9 @@ class HostState : public QObject {
 		//! Set network connection object to use
 		void setConnection(Connection *net);
 
+		//! Get the used network connection object
+		Connection *connection() { return net_; }
+
 		//! Initiate login sequence
 		void login(const QString& username);
 
