@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = brushpreview/ colortriangle/ gradientslider/ imageselector/
+SUBDIRS = brushpreview/ colortriangle/ gradientslider/ imageselector/ dualcolorbutton/

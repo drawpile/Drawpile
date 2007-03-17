@@ -23,14 +23,20 @@
 #include <QWidget>
 #include "interfaces.h"
 
+#ifndef DESIGNER_PLUGIN
 namespace widgets {
+#define PLUGIN_EXPORT
+#else
+#include <QtDesigner/QDesignerExportWidget>
+#define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
+#endif
 
 //! Color button for foreground and background colors
 /**
  * The DualColorButton provides two colors and signals to notify when they
  * have changed.
  */
-class DualColorButton : public QWidget, public interface::ColorSource {
+class PLUGIN_EXPORT DualColorButton : public QWidget, public interface::ColorSource {
 	Q_OBJECT
 	public:
 		DualColorButton(QWidget *parent=0);
@@ -41,6 +47,9 @@ class DualColorButton : public QWidget, public interface::ColorSource {
 
 		//! Get the background color
 		QColor background() const { return background_; }
+
+		//! Prefer square shape
+		int heightForWidth(int w) const { return w; }
 
 	public slots:
 		//! Set foreground color
@@ -86,7 +95,9 @@ class DualColorButton : public QWidget, public interface::ColorSource {
 		enum {NODRAG,FOREGROUND,BACKGROUND} dragSource_;
 };
 
+#ifndef DESIGNER_PLUGIN
 }
+#endif
 
 #endif
 

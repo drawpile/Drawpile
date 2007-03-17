@@ -5,7 +5,9 @@
 
 #include "dualcolorbutton.h"
 
+#ifndef DESIGNER_PLUGIN
 namespace widgets {
+#endif
 
 DualColorButton::DualColorButton(QWidget *parent)
 	: QWidget(parent), foreground_(Qt::black), background_(Qt::white)
@@ -198,5 +200,7 @@ void DualColorButton::dropEvent(QDropEvent *event)
 	update();
 }
 
+#ifndef DESIGNER_PLUGIN
 }
+#endif
 
