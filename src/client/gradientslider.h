@@ -42,7 +42,6 @@ class PLUGIN_EXPORT GradientSlider : public QAbstractSlider {
 	Q_PROPERTY(QColor color2 READ color2 WRITE setColor2)
 	Q_PROPERTY(qreal colorSaturation READ colorSaturation WRITE setColorSaturation)
 	Q_PROPERTY(qreal colorValue READ colorValue WRITE setColorValue)
-	Q_PROPERTY(int borderWidth READ borderWidth WRITE setBorderWidth)
 	Q_ENUMS(Mode)
 	public:
 		enum Mode {Color, Hsv};
@@ -56,9 +55,6 @@ class PLUGIN_EXPORT GradientSlider : public QAbstractSlider {
 		const QColor& color2() const { return color2_; }
 		qreal colorSaturation() const { return saturation_; }
 		qreal colorValue() const { return value_; }
-
-		void setBorderWidth(int width);
-		int borderWidth() const { return border_; }
 
 	public slots:
 		//! Set the first color (used in simple gradient mode)
@@ -86,7 +82,6 @@ class PLUGIN_EXPORT GradientSlider : public QAbstractSlider {
 		qreal saturation_,value_;
 
 		Mode mode_;
-		int border_;
 };
 
 #ifndef DESIGNER_PLUGIN

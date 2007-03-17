@@ -32,7 +32,7 @@ namespace widgets {
 
 GradientSlider::GradientSlider(QWidget *parent)
 	: QAbstractSlider(parent), color1_(Qt::black), color2_(Qt::white),
-	saturation_(1), value_(1), mode_(Color), border_(4)
+	saturation_(1), value_(1), mode_(Color)
 {
 }
 
@@ -41,21 +41,27 @@ void GradientSlider::paintEvent(QPaintEvent *)
 	QPainter painter(this);
 
 	// Draw the frame
+#if 0
 	QStyleOptionFrameV2 frame;
 	frame.initFrom(this);
 	frame.midLineWidth = border_;
 	frame.state = QStyle::State_Sunken;
 
 	style()->drawPrimitive(QStyle::PE_Frame, &frame, &painter, this);
+#endif
 
 	// Draw the gradient
 	QPointF endpoint;
-	if(orientation() == Qt::Horizontal)
-		endpoint = QPointF(width()-border_,border_);
-	else
-		endpoint = QPointF(border_,height()-border_);
+	QRect gradrect;
+	if(orientation() == Qt::Horizontal) {
+		endpoint = QPointF(width(),0);
+		gradrect = contentsRect().adjusted(0,height()/4+1,-1,-height()/4 - 2);
+	} else {
+		endpoint = QPointF(0,height());
+		gradrect = contentsRect().adjusted(width()/4-1,0,-width()/4 - 2,-1);
+	}
 
-	QLinearGradient grad(QPointF(border_,border_),endpoint);
+	QLinearGradient grad(QPointF(0,0),endpoint);
 
 	if(mode_ == Color) {
 		grad.setColorAt(0, color1_);
@@ -65,50 +71,34 @@ void GradientSlider::paintEvent(QPaintEvent *)
 			grad.setColorAt(i/7.0,
 					QColor::fromHsvF(i/7.001, saturation_, value_));
 	}
-	QRect gradrect = contentsRect().adjusted(border_,border_,-border_,-border_);
-	painter.setClipRect(gradrect);
+
 	painter.fillRect(gradrect, QBrush(grad));
+	painter.setPen(palette().color(QPalette::Mid));
+	painter.drawLine(gradrect.topLeft(), gradrect.bottomLeft());
+	painter.drawLine(gradrect.topLeft(), gradrect.topRight());
+	painter.setPen(palette().color(QPalette::Light));
+	painter.drawLine(gradrect.topRight(), gradrect.bottomRight());
+	painter.drawLine(gradrect.bottomLeft(), gradrect.bottomRight());
 
 	// Draw pointer
-	qreal pos = (value() - minimum()) / qreal(maximum()-minimum()) *
-		(((orientation()==Qt::Horizontal)?width():height())-border_*2);
+	int pos = qRound((value() - minimum()) / qreal(maximum()-minimum()) *
+		(((orientation()==Qt::Horizontal)?width():height())));
 
-	static const QPointF hor[6] = {
-		QPointF(-0.5,0),
-		QPointF(0.5,0),
-		QPointF(0,0.5),
-		QPointF(-0.5,2),
-		QPointF(0.5,2),
-		QPointF(0,1.5)
-	};
-	static const QPointF ver[6] = {
-		QPointF(0,-0.5),
-		QPointF(0,0.5),
-		QPointF(0.5,0),
-		QPointF(2,-0.5),
-		QPointF(2,0.5),
-		QPointF(1.5,0)
-	};
+	QPoint points[3];
 
-	const QPointF *points;
-	painter.save();
-	qreal scale;
 	if(orientation() == Qt::Horizontal) {
-		scale = height();
-		painter.translate(border_+pos,border_);
-		points = hor;
+		int w = height()/4;
+		points[0] = QPoint(pos-w,0);
+		points[1] = QPoint(pos+w,0);
+		points[2] = QPoint(pos,w);
 	} else {
-		scale = width();
-		painter.translate(border_,border_+pos);
-		points = ver;
+		int h = width()/4;
+		points[0] = QPoint(0, pos-h);
+		points[1] = QPoint(0, pos+h);
+		points[2] = QPoint(h, pos);
 	}
-	scale = scale/2 - border_ - 0.5;
-	painter.scale(scale,scale);
-	painter.setBrush(Qt::black);
+	painter.setPen(palette().color(QPalette::Dark));
 	painter.drawPolygon(points,3);
-	painter.setBrush(Qt::white);
-	painter.drawPolygon(points+3,3);
-	painter.restore();
 
 	// Focus rectangle
 	if(hasFocus()) {
@@ -138,9 +128,9 @@ void GradientSlider::setPosition(int x,int y)
 {
 	qreal pos;
 	if(orientation() == Qt::Horizontal)
-		pos = (x-border_) / qreal(width()-border_*2);
+		pos = x / qreal(width());
 	else
-		pos = (y-border_) / qreal(height()-border_*2);
+		pos = y / qreal(height());
 	setValue(qRound(minimum() + pos * (maximum()-minimum())));
 }
 
@@ -179,14 +169,6 @@ void GradientSlider::setColorValue(qreal value)
 	else if(value>1)
 		value = 1;
 	value_ = value;
-	update();
-}
-
-void GradientSlider::setBorderWidth(int width)
-{
-	if(width<0)
-		width = 0;
-	border_ = width;
 	update();
 }
 
