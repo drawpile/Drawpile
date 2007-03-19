@@ -974,11 +974,11 @@ void MainWindow::about()
 			"<p><b>DrawPile 0.3.0</b><br>"
 			"A collaborative drawing program.</p>"
 			"<p>This program is free software; you may redistribute it and/or "
-			"modify it under the terms of the GNU General Public License as" 
+			"modify it under the terms of the GNU General Public License as " 
 			"published by the Free Software Foundation, either version 2, or "
 			"(at your opinion) any later version.</p>"
 			"<p>Programming: Calle Laakkonen<br>"
-			"Graphics and UI design: wuf<br>"
+			"Graphic design: wuf<br>"
 			"Server: M.K.A<br>"
 			"Icons are from the Tango Desktop Project</p>"
 			);
@@ -999,7 +999,7 @@ void MainWindow::initActions()
 	new_ = new QAction(QIcon(":icons/document-new.png"),tr("&New"), this);
 	new_->setShortcut(QKeySequence::New);
 	new_->setStatusTip(tr("Start a new drawing"));
-	open_ = new QAction(QIcon(":icons/document-open.png"),tr("&Open"), this);
+	open_ = new QAction(QIcon(":icons/document-open.png"),tr("&Open..."), this);
 	open_->setShortcut(QKeySequence::Open);
 	open_->setStatusTip(tr("Open an existing drawing"));
 	save_ = new QAction(QIcon(":icons/document-save.png"),tr("&Save"), this);

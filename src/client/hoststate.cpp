@@ -531,7 +531,6 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 			// Special case. When subscribing, session is not yet in the list
 			mysessions_.insert(newsession_->info().id, newsession_);
 			newsession_->select();
-			// TODO, use newsession_-> when server supports session passwds
 			if(setsessionpassword_.isEmpty()==false) {
 				newsession_->setPassword(setsessionpassword_);
 				setsessionpassword_ = "";
