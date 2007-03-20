@@ -252,8 +252,6 @@ class MainWindow : public QMainWindow {
 		QAction *help_;
 		QAction *homepage_;
 		QAction *about_;
-
-		static int windows_;
 };
 
 #endif

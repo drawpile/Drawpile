@@ -1,3 +1,4 @@
+#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -54,16 +55,12 @@
 #include "joindialog.h"
 #include "logindialog.h"
 
-int MainWindow::windows_ = 0;
-
 /**
  * @param restoreposition if true, the window is placed at its previous position
  */
 MainWindow::MainWindow(bool restoreposition)
 	: QMainWindow()
 {
-	++windows_;
-
 	setTitle();
 
 	initActions();
@@ -202,7 +199,11 @@ MainWindow::MainWindow(bool restoreposition)
 
 MainWindow::~MainWindow()
 {
-	--windows_;
+	// Make sure all child dialogs are closed
+	foreach(QObject *obj, children()) {
+		QDialog *child = qobject_cast<QDialog*>(obj);
+		delete child;
+	}
 }
 
 /**
@@ -866,9 +867,7 @@ void MainWindow::exit()
 	if(windowState().testFlag(Qt::WindowFullScreen))
 		fullscreen(false);
 	writeSettings();
-
-	if(windows_ == 1)
-		QApplication::quit();
+	deleteLater();
 }
 
 /**
