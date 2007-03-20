@@ -39,8 +39,7 @@ JoinDialog::JoinDialog(QWidget *parent)
 	QSettings cfg;
 	cfg.beginGroup("history");
 	ui_->address->insertItems(0, cfg.value("recenthosts").toStringList());
-	ui_->username->setText(cfg.value("username",
-				QString(getenv("USER"))).toString());
+	ui_->username->setText(cfg.value("username").toString());
 }
 
 void JoinDialog::rememberSettings() const

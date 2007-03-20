@@ -58,7 +58,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->port->setValue(protocol::default_port);
 	QSettings cfg;
 	cfg.beginGroup("history");
-	ui_->username->setText(cfg.value("username", QString(getenv("USER"))).toString());
+	ui_->username->setText(cfg.value("username").toString());
 	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
 }
 

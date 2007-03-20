@@ -26,6 +26,23 @@
 #include "mainwindow.h"
 #include "localserver.h"
 
+// Set default username
+static void initUsername() {
+	QSettings cfg;
+	cfg.beginGroup("history");
+	if(cfg.contains("username") == false ||
+			cfg.value("username").toString().isEmpty())
+	{
+#ifdef Q_WS_WIN
+		QString defaultname = getenv("USERNAME");
+#else
+		QString defaultname = getenv("USER");
+#endif
+
+		cfg.setValue("username", defaultname);
+	}
+}
+
 int main(int argc, char *argv[]) {
 	QApplication app(argc,argv);
 
@@ -33,6 +50,8 @@ int main(int argc, char *argv[]) {
 	app.setOrganizationName("DrawPile");
 	app.setOrganizationDomain("drawpile.sourceforge.net");
 	app.setApplicationName("DrawPile");
+
+	initUsername();
 
 	// Create the local server handler
 	LocalServer *srv = LocalServer::getInstance();
@@ -54,11 +73,8 @@ int main(int argc, char *argv[]) {
 			if(url.userName().isEmpty()) {
 				// Set username if not specified
 				QSettings cfg;
-				cfg.beginGroup("network");
-				QString defaultname = getenv("USER");
-				if(defaultname.isEmpty())
-					defaultname = "user";
-				url.setUserName(cfg.value("username", defaultname).toString());
+				cfg.beginGroup("history");
+				url.setUserName(cfg.value("username").toString());
 			}
 			win->joinSession(url);
 		} else {
