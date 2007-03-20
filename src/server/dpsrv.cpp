@@ -85,8 +85,15 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'n': // name length limit
 				{
-					uint8_t tmp = atoi(optarg);
-					srv->setNameLengthLimit(tmp);
+					int tmp = atoi(optarg);
+					
+					uint8_t len;
+					if (tmp > 255)
+						len = 255;
+					else
+						len = tmp;
+					
+					srv->setNameLengthLimit(len);
 					std::cout << "Name length limit set to: "
 						<< static_cast<int>(tmp) << std::endl;
 				}
