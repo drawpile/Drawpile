@@ -1207,7 +1207,7 @@ void MainWindow::createToolbars()
 
 	drawtools->addWidget(fgbgcolor_);
 
-	addToolBar(Qt::LeftToolBarArea, drawtools);
+	addToolBar(Qt::TopToolBarArea, drawtools);
 
 	toolbartoggles_->setMenu(togglemenu);
 }
