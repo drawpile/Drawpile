@@ -26,14 +26,14 @@
 #include "sessioninfo.h"
 #include "netstatus.h"
 #include "popupmessage.h"
+#include "icons.h"
 
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent), offlineicon_(":/icons/network-offline.png"),
-	onlineicon_(":/icons/network-transmit-receive.png")
+	: QWidget(parent)
 {
-	setMinimumHeight(offlineicon_.height()+2);
+	setMinimumHeight(16+2);
 
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	layout->setMargin(1);
@@ -56,8 +56,8 @@ NetStatus::NetStatus(QWidget *parent)
 
 	// Network connection status icon
 	icon_ = new QLabel(QString(), this);
-	icon_->setPixmap(offlineicon_);
-	icon_->setFixedSize(offlineicon_.size());
+	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
+	icon_->setFixedSize(icon::network().actualSize(QSize(16,16)));
 	layout->addWidget(icon_);
 
 	// Popup label
@@ -73,7 +73,7 @@ void NetStatus::connectHost(const QString& address)
 {
 	address_ = address;
 	label_->setText(tr("Host: %1").arg(address_));
-	icon_->setPixmap(onlineicon_);
+	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::On));
 	copyaction_->setEnabled(true);
 	popup_->setMessage(tr("Connected to %1").arg(address_));
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
@@ -87,7 +87,7 @@ void NetStatus::disconnectHost()
 {
 	address_ = QString();
 	label_->setText(tr("not connected"));
-	icon_->setPixmap(offlineicon_);
+	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
 	copyaction_->setEnabled(false);
 	popup_->setMessage(tr("Disconnected"));
 	popup_->popupAt(mapToGlobal(rect().topLeft()));

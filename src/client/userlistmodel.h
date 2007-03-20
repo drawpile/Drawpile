@@ -69,7 +69,6 @@ class UserListDelegate : public QItemDelegate {
 
 	private:
 		bool enableadmin_;
-		QPixmap lock_, unlock_, kick_;
 };
 
 #endif

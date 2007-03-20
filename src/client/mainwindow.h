@@ -27,6 +27,7 @@
 class QActionGroup;
 class QMessageBox;
 class QUrl;
+class QLabel;
 
 namespace widgets {
 	class NetStatus;
@@ -198,6 +199,7 @@ class MainWindow : public QMainWindow {
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;
+		QLabel *lockstatus_;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		dialogs::NewDialog *newdlg_;

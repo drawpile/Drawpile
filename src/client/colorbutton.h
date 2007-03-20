@@ -21,7 +21,6 @@
 #define COLORBUTTON_H
 
 #include <QWidget>
-#include <QPixmap>
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets {

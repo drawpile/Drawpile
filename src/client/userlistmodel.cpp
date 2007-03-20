@@ -24,6 +24,7 @@
 
 #include "userlistmodel.h"
 #include "sessionstate.h"
+#include "icons.h"
 
 Q_DECLARE_METATYPE(network::User)
 
@@ -93,8 +94,7 @@ void UserListModel::updateUsers()
 }
 
 UserListDelegate::UserListDelegate(QObject *parent)
-	: QItemDelegate(parent), enableadmin_(false), lock_(":icons/lock.png"),
-	unlock_(":icons/unlock.png"), kick_(":icons/kick.png")
+	: QItemDelegate(parent), enableadmin_(false)
 {
 }
 
@@ -124,25 +124,33 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	// Lock button/indicator. This is shown even when not in admin mode, except for the session owner
 	if(user.isOwner()==false)
-		painter->drawPixmap(opt.rect.topLeft(), user.locked()?lock_:unlock_);
+		painter->drawPixmap(
+				opt.rect.topLeft(),
+				icon::lock().pixmap(
+					16,
+					QIcon::Normal,
+					user.locked()?QIcon::On:QIcon::Off)
+				);
 
 	// Name
 	QRect textrect = opt.rect;
-	textrect.setX(kick_.width() + 5);
+	const int kickwidth = icon::kick().actualSize(QSize(16,16)).width();
+	textrect.setX(kickwidth + 5);
 	if(user.isLocal())
 		opt.font.setStyle(QFont::StyleItalic);
 	drawDisplay(painter, opt, textrect, user.name());
 
 	// Kick button (only in admin mode and for nonadmin users)
 	if(enableadmin_ && user.isOwner()==false)
-		painter->drawPixmap(opt.rect.topRight()-QPoint(kick_.width(),0), kick_);
+		painter->drawPixmap(opt.rect.topRight()-QPoint(kickwidth,0),icon::kick().pixmap(16));
 }
 
 QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	if(size.height() < lock_.height())
-		size.setHeight(lock_.height());
+	QSize iconsize = icon::lock().actualSize(QSize(16,16));
+	if(size.height() < iconsize.height())
+		size.setHeight(iconsize.height());
 	return size;
 }
 
@@ -151,13 +159,15 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 	if(enableadmin_ && event->type() == QEvent::MouseButtonPress) {
 		QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
+		int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
+
 		network::User user = index.data().value<network::User>();
 		if(user.isOwner()==false) {
-			if(me->x() <= lock_.width()) {
+			if(me->x() <= btnwidth) {
 				// User pressed lock button
 				user.lock( !user.locked() );
 				return true;
-			} else if(me->x() >= option.rect.width()-kick_.width()) {
+			} else if(me->x() >= option.rect.width()-btnwidth) {
 				// User pressed kick button
 				user.kick();
 				return true;

@@ -21,7 +21,6 @@
 #define NETSTATUS_H
 
 #include <QLabel>
-#include <QPixmap>
 
 namespace network {
 	class User;
@@ -65,7 +64,6 @@ class NetStatus : public QWidget
 	private:
 		QLabel *label_, *icon_;
 		PopupMessage *popup_;
-		QPixmap offlineicon_,onlineicon_;
 		QString address_;
 		QAction *copyaction_;
 };

@@ -46,6 +46,7 @@
 #include "recentfiles.h"
 #include "hoststate.h"
 #include "sessionstate.h"
+#include "icons.h"
 
 #include "colordialog.h"
 #include "newdialog.h"
@@ -79,6 +80,12 @@ MainWindow::MainWindow(bool restoreposition)
 	statusbar->addPermanentWidget(netstatus_);
 	connect(LocalServer::getInstance(), SIGNAL(serverCrashed()),
 			netstatus_, SLOT(serverCrashed()));
+
+	// Create lock status widget
+	lockstatus_ = new QLabel(this);
+	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+	lockstatus_->setToolTip(tr("Board is not locked"));
+	statusbar->addPermanentWidget(lockstatus_);
 
 	// Create view
 	view_ = new widgets::EditorView(this);
@@ -811,6 +818,8 @@ void MainWindow::lock(const QString& reason)
 {
 	statusBar()->showMessage(tr("Board locked (%1)").arg(reason));
 	lockboard_->setChecked(true);
+	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
+	lockstatus_->setToolTip(tr("Board is locked"));
 }
 
 /**
@@ -820,6 +829,8 @@ void MainWindow::unlock()
 {
 	statusBar()->showMessage(tr("Board unlocked"), 500);
 	lockboard_->setChecked(false);
+	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+	lockstatus_->setToolTip(tr("Board is not locked"));
 }
 
 /**
