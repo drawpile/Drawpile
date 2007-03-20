@@ -95,7 +95,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					
 					srv->setNameLengthLimit(len);
 					std::cout << "Name length limit set to: "
-						<< static_cast<int>(tmp) << std::endl;
+						<< static_cast<int>(len) << std::endl;
 				}
 			case 'p': // port to listen on
 				{
