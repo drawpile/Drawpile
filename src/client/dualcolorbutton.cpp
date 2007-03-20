@@ -150,7 +150,7 @@ void DualColorButton::mouseMoveEvent(QMouseEvent *event)
 {
 	if(dragSource_ != NODRAG && (event->buttons() & Qt::LeftButton) &&
 			(event->pos() - dragStart_).manhattanLength()
-		< QApplication::startDragDistance())
+		> QApplication::startDragDistance())
 	{
 		QDrag *drag = new QDrag(this);
 
