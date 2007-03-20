@@ -1879,7 +1879,8 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			if (msg->length > name_len_limit)
 			{
 				#ifndef NDEBUG
-				std::cerr << "Name too long." << std::endl;
+				std::cerr << "Name too long: " << static_cast<int>(msg->length)
+					<< " > " << static_cast<int>(name_len_limit) << std::endl;
 				#endif
 				
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));

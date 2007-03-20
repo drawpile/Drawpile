@@ -261,6 +261,9 @@ public:
 	 */
 	int init() throw(std::bad_alloc);
 	
+	//! Set name length limit (default: 8)
+	void setNameLengthLimit(uint8_t limit) throw() { name_len_limit = limit; }
+	
 	//! Set server password
 	void setPassword(char* pwstr, uint8_t len) throw() { password = pwstr; pw_len = len; }
 	

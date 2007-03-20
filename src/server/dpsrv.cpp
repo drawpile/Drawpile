@@ -56,7 +56,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:T")) != -1)
+	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:Tn:")) != -1)
 	{
 		switch (opt)
 		{
@@ -74,6 +74,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					<< "   -w            UTF-16 strings" << std::endl
 					<< "   -e            unique name enforcing" << std::endl
 					<< "   -d [size]     minimum dimension for canvas" << std::endl
+					<< "   -n [size]     name length limit" << std::endl
 					<< "   -T            enable transient mode" << std::endl
 					;
 				exit(1);
@@ -82,6 +83,13 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				std::cerr << "Setting listening address not implemented." << std::endl;
 				exit(1);
 				break;
+			case 'n': // name length limit
+				{
+					uint8_t tmp = atoi(optarg);
+					srv->setNameLengthLimit(tmp);
+					std::cout << "Name length limit set to: "
+						<< static_cast<int>(tmp) << std::endl;
+				}
 			case 'p': // port to listen on
 				{
 					uint16_t lo_port = atoi(optarg), hi_port=0;
