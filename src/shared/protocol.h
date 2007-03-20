@@ -80,7 +80,7 @@ protected:
 	
 	// Write header (for serialize())
 	inline
-	size_t serializeHeader(char* ptr, const Message* msg) const throw();
+	size_t serializeHeader(char* ptr /*, const Message* msg */) const throw();
 	
 	// Read header
 	inline

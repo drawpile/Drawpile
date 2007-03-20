@@ -54,29 +54,31 @@ namespace protocol {
  * struct Message
  */
 
-//
-size_t Message::serializeHeader(char* ptr, const Message* msg) const throw()
+size_t Message::serializeHeader(char* ptr /*, const Message* msg */) const throw()
 {
-	memcpy_t(ptr, msg->type); size_t i = sizeof(msg->type);
+	assert(ptr != 0);
 	
-	if (fIsSet(msg->modifiers, message::isUser))
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	if (fIsSet(modifiers, message::isUser))
 	{
-		memcpy_t(ptr+i, msg->user_id);
-		i += sizeof(msg->user_id);
+		memcpy_t(ptr+i, user_id);
+		i += sizeof(user_id);
 	}
 	
-	if (fIsSet(msg->modifiers, message::isSession))
+	if (fIsSet(modifiers, message::isSession))
 	{
-		memcpy_t(ptr+i, msg->session_id);
-		i += sizeof(msg->session_id);
+		memcpy_t(ptr+i, session_id);
+		i += sizeof(session_id);
 	}
 	
 	return i;
 }
 
-//
 size_t Message::unserializeHeader(const char* ptr) throw()
 {
+	assert(ptr != 0);
+	
 	size_t i = sizeof(type);
 	
 	if (fIsSet(modifiers, message::isUser))
@@ -94,7 +96,6 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 	return i;
 }
 
-//
 size_t Message::headerSize() const throw()
 {
 	return sizeof(type) + (fIsSet(modifiers, message::isUser)?sizeof(user_id):0)
@@ -102,24 +103,25 @@ size_t Message::headerSize() const throw()
 }
 
 // Base serialization
-char *Message::serialize(size_t &len) const throw(std::bad_alloc)
+char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad_alloc)
 {
 	// This _must_ be the last message in bundle.
 	assert(next == 0);
 	
 	size_t
-		headerlen,
-		length = headerSize();
+		headerlen;
+	
+	length = headerSize();
 	
 	if (fIsSet(modifiers, message::isBundling))
 	{
-		// If we are bundling packets, there will be no extra headers
+		// no extra headers for bundling
 		headerlen = 0;
+		// just add message count
 		length += sizeof(null_count);
 	}
 	else
 	{
-		// If messages are not bundled, simply concatenate whole messages
 		headerlen = headerSize();
 	}
 	
@@ -130,35 +132,27 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 	
 	// first message in bundle
 	const Message *ptr = this;
-	// Count number of messages to serialize and required size
-	if (prev)
-	{
-		do
-		{
-			// ptr->prev should not point to ptr
-			assert(ptr != ptr->prev);
-			assert(count <= std::numeric_limits<uint8_t>::max());
-			
-			ptr = ptr->prev;
-			++count;
-			length += headerlen + ptr->payloadLength();
-		}
-		while (ptr->prev);
-	}
-	// ptr now points to the first message in list.
 	
-	assert(ptr != 0); // some problems with the constness?
+	// Count number of messages to serialize and required size
+	while (ptr->prev != 0)
+	{
+		assert(ptr != ptr->prev); // infinite loop
+		ptr = ptr->prev;
+		
+		length += headerlen + ptr->payloadLength();
+		
+		++count;
+	}
 	
 	// Allocate memory and serialize.
 	char *data = new char[length];
 	char *dataptr = data;
-	len = length;
 	
 	switch (fIsSet(modifiers, message::isBundling))
 	{
 	case true:
 		// Write bundled packets
-		dataptr += serializeHeader(dataptr, ptr);
+		dataptr += serializeHeader(dataptr /*, ptr */);
 		memcpy_t(dataptr++, count);
 		while (ptr)
 		{
@@ -170,7 +164,7 @@ char *Message::serialize(size_t &len) const throw(std::bad_alloc)
 		// Write whole packets
 		while (ptr)
 		{
-			dataptr += serializeHeader(dataptr, ptr);
+			dataptr += serializeHeader(dataptr /*, ptr */);
 			dataptr += ptr->serializePayload(dataptr);
 			ptr = ptr->next;
 		}
@@ -295,11 +289,11 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 		x_tmp = x,
 		y_tmp = y;
 	
-	memcpy_t(buf, bswap(x_tmp)); size_t i = sizeof(x);
-	memcpy_t(buf+i, bswap(y_tmp)); i += sizeof(y);
-	memcpy_t(buf+i, pressure); i += sizeof(pressure);
+	memcpy_t(buf, bswap(x_tmp));
+	memcpy_t(buf+sizeof(x), bswap(y_tmp));
+	memcpy_t(buf+sizeof(x)+sizeof(y), pressure);
 	
-	return i;
+	return payloadLength();
 }
 
 size_t StrokeInfo::payloadLength() const throw()
@@ -315,44 +309,57 @@ size_t StrokeInfo::unserialize(const char* buf, size_t len) throw(std::exception
 	
 	size_t i = unserializeHeader(buf);
 	
-	uint8_t uid = user_id;
-	
-	uint8_t count, ucount=0;
+	uint8_t count;
 	memcpy_t(count, buf+i); i += sizeof(count);
 	
 	if (count == 0)
 		throw std::exception(); // TODO: Need better exception
 	
-	StrokeInfo *ptr = this;
-	Message* last = 0;
-	do
+	// make sure we aren't overflowing the buffer
+	assert(i + payloadLength() <= len);
+	
+	// extract data
+	memcpy_t(x, buf+i),
+	memcpy_t(y, buf+(i+=sizeof(x))),
+	memcpy_t(pressure, buf+(i+=sizeof(y)));
+	i += sizeof(pressure);
+	
+	// swap coords
+	bswap(x),
+	bswap(y);
+	
+	if (count != 1)
 	{
-		ptr->user_id = uid;
+		--count; // remove first from count
 		
-		// make sure we aren't overflowing the buffer
-		assert((i+sizeof(x)+sizeof(y)+sizeof(pressure)) <= len);
+		StrokeInfo *ptr;
+		Message* last = this;
 		
-		// extract data
-		memcpy_t(ptr->x, buf+i); i += sizeof(x);
-		memcpy_t(ptr->y, buf+i); i += sizeof(y);
-		memcpy_t(ptr->pressure, buf+i); i += sizeof(pressure);
-		
-		// swap coords
-		bswap(ptr->x);
-		bswap(ptr->y);
-		
-		// increment count
-		++ucount;
-		
-		if (ucount != count)
+		do
 		{
-			last = ptr;
+			// make sure we aren't overflowing the buffer
+			assert(i + payloadLength() <= len);
+			
 			ptr = new StrokeInfo;
-			last->next = ptr;
+			
+			// extract data to temporaries
+			memcpy_t(ptr->x, buf+i),
+			memcpy_t(ptr->y, buf+i+sizeof(x)),
+			memcpy_t(ptr->pressure, buf+i+sizeof(y)+sizeof(x));
+			i += payloadLength();
+			
+			// swap coords
+			bswap(ptr->x), bswap(ptr->y);
+			
+			// set user ID
+			ptr->user_id = user_id;
+			
+			// create link from previous to the new..
 			ptr->prev = last;
+			last = last->next = ptr;
 		}
+		while (--count != 0);
 	}
-	while (ucount != count);
 	
 	return i;
 }
@@ -930,7 +937,7 @@ size_t Acknowledgement::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf, event);
 	
-	return sizeof(event);
+	return payloadLength();
 }
 
 size_t Acknowledgement::payloadLength() const throw()
@@ -969,7 +976,7 @@ size_t Error::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf, code);
 	
-	return sizeof(code);
+	return payloadLength();
 }
 
 size_t Error::payloadLength() const throw()
@@ -1297,7 +1304,7 @@ size_t LayerSelect::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf, layer_id);
 	
-	return sizeof(layer_id);
+	return payloadLength();
 }
 
 size_t LayerSelect::payloadLength() const throw()
