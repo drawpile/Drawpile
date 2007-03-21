@@ -22,6 +22,7 @@
 #include <QSettings>
 
 #include "joindialog.h"
+#include "mandatoryfields.h"
 
 #include "ui_joindialog.h"
 
@@ -34,12 +35,16 @@ JoinDialog::JoinDialog(QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	ui_->username->setProperty("mandatoryfield",true);
+	ui_->address->setProperty("mandatoryfield",true);
 
 	// Set defaults
 	QSettings cfg;
 	cfg.beginGroup("history");
 	ui_->address->insertItems(0, cfg.value("recenthosts").toStringList());
 	ui_->username->setText(cfg.value("username").toString());
+
+	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
 }
 
 void JoinDialog::rememberSettings() const

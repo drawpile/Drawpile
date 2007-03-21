@@ -25,6 +25,7 @@
 
 #include "hostdialog.h"
 #include "imageselector.h"
+#include "mandatoryfields.h"
 using widgets::ImageSelector;
 
 #include <QSettings>
@@ -42,6 +43,8 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	ui_->username->setProperty("mandatoryfield", true);
+
 	if(original.isNull()) {
 		ui_->imageSelector->setWidth(800);
 		ui_->imageSelector->setHeight(600);
@@ -60,6 +63,8 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	cfg.beginGroup("history");
 	ui_->username->setText(cfg.value("username").toString());
 	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
+
+	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
 }
 
 HostDialog::~HostDialog()
