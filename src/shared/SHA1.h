@@ -43,7 +43,9 @@ public:
 	void Final() throw();
 	
 	// Report functions: as pre-formatted and raw data
+	// Requires you to provide pre-allocated string with length of at least 40 bytes
 	void HexDigest(char *szReport) const throw();
+	// Requires a string of at least 20 bytes
 	void GetHash(uint8_t *puDest) const throw();
 
 private:

@@ -168,6 +168,8 @@ void SHA1::Update(const uint8_t *data, uint32_t len) throw()
 	assert(len > 0);
 	assert(data != 0);
 	
+	assert(not finalized);
+	
 	uint32_t i, j;
 	
 	j = (m_count[0] >> 3) & 63;
@@ -198,6 +200,8 @@ void SHA1::Update(const uint8_t *data, uint32_t len) throw()
 
 void SHA1::Final() throw()
 {
+	assert(not finalized);
+	
 	uint32_t i;
 	uint8_t finalcount[8];
 	

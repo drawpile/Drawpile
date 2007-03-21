@@ -47,27 +47,26 @@ T& bswap(T& x) throw()
 }
 
 // no specializations for Big Endian systems
-#ifndef IS_BIG_ENDIAN
+#if !defined(IS_BIG_ENDIAN)
 
 template <> inline
 uint32_t& bswap<uint32_t>(uint32_t& x) throw()
 {
-	// (c) 2003 Juan Carlos Cobas
-	return x = (((x&0x000000FF)<<24) + ((x&0x0000FF00)<<8) +
-		((x&0x00FF0000)>>8) + ((x&0xFF000000)>>24));
+	// Code snippet (c) 2003 Juan Carlos Cobas
+	return x = ((x&0x000000FF)<<24) | ((x&0x0000FF00)<<8) |
+		((x&0x00FF0000)>>8) | ((x&0xFF000000)>>24);
 }
 
 template <> inline
 uint16_t& bswap<uint16_t>(uint16_t& x) throw()
 {
-	// (c) 2003 Juan Carlos Cobas
-	return x = (((x >> 8)) | (x << 8));
+	// Code snippet (c) 2003 Juan Carlos Cobas
+	return x = ((x >> 8)) | (x << 8);
 }
 
 template <> inline
 uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 {
-	// (c) 2003 Juan Carlos Cobas
 	return x;
 }
 
@@ -75,6 +74,8 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 
 /* memmory */
 
+// copies src& bytes to dst*
+// automation of memcpy(dst*, &src, sizeof(src));
 template <class T> inline
 char* memcpy_t(char* dst, const T& src) throw()
 {
@@ -83,6 +84,8 @@ char* memcpy_t(char* dst, const T& src) throw()
 	return dst;
 }
 
+// copies sizeof(dst) bytes from src* to dst
+// automation of memcpy(&dst, src*, sizeof(dst));
 template <class T> inline
 T& memcpy_t(T& dst, const char* src) throw()
 {
