@@ -181,7 +181,7 @@ struct User
 		delete sock,
 		delete inMsg;
 		
-		for (usr_session_iterator usi(sessions.begin()); usi != sessions.end(); usi++)
+		for (usr_session_iterator usi(sessions.begin()); usi != sessions.end(); ++usi)
 			delete usi->second;
 		
 		sessions.clear();

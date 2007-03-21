@@ -174,7 +174,7 @@ void SHA1::Update(const uint8_t *data, uint32_t len) throw()
 	
 	j = (m_count[0] >> 3) & 63;
 	
-	if((m_count[0] += len << 3) < (len << 3)) m_count[1]++;
+	if((m_count[0] += len << 3) < (len << 3)) ++m_count[1];
 	
 	m_count[1] += (len >> 29);
 	
@@ -205,7 +205,7 @@ void SHA1::Final() throw()
 	uint32_t i;
 	uint8_t finalcount[8];
 	
-	for(i = 0; i < 8; i++)
+	for(i = 0; i < 8; ++i)
 		finalcount[i] = (uint8_t)((m_count[((i >= 4) ? 0 : 1)]
 			>> ((3 - (i & 3)) * 8) ) & 255); // Endian independent
 	
@@ -216,7 +216,7 @@ void SHA1::Final() throw()
 	
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
-	for(i = 0; i < 20; i++)
+	for(i = 0; i < 20; ++i)
 	{
 		m_digest[i] = (uint8_t)((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
 	}
@@ -246,7 +246,7 @@ void SHA1::HexDigest(char *szReport) const throw()
 	static unsigned char saucHex[16] =
 		{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
-	for (int i=0; i != 20; i++)
+	for (int i=0; i != 20; ++i)
 	{
 		*(szReport+(i*2)) = saucHex[m_digest[i] >> 4];
 		*(szReport+(i*2)+1) = saucHex[m_digest[i] & 0xF];

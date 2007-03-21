@@ -179,7 +179,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	hack::events::prepare_events(ev);
 	
-	for (uint32_t i=0; i != max_events; i++)
+	for (uint32_t i=0; i != max_events; ++i)
 	{
 		if (w_ev[i] == 0)
 		{
@@ -265,7 +265,7 @@ std::pair<fd_t, uint32_t> Event::getEvent() throw()
 	
 	uint32_t evs;
 	std::map<uint32_t, fd_t>::iterator ev_to_fd_iter;
-	for (; get_event != max_events; get_event++, nfds++)
+	for (; get_event != max_events; ++get_event, ++nfds)
 	{
 		if (w_ev[get_event])
 		{
@@ -275,7 +275,7 @@ std::pair<fd_t, uint32_t> Event::getEvent() throw()
 			
 			if ((evs = getEvents(ev_to_fd_iter->second)) != 0)
 			{
-				nfds++;
+				++nfds;
 				hack::events::prepare_events(evs);
 				return std::make_pair(ev_to_fd_iter->second, evs);
 			}

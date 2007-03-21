@@ -338,9 +338,9 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	if (iter->second == 0)
 	{
 		fd_iter = iter;
-		fd_iter--;
+		--fd_iter; // make sure the iterator doesn't get invalidated
 		fd_list.erase(iter);
-		fd_iter++;
+		++fd_iter; // increment to the next
 	}
 	
 	return true;
@@ -354,7 +354,7 @@ std::pair<fd_t, uint32_t> Event::getEvent() throw()
 	while (fd_iter != fd_list.end())
 	{
 		fd = fd_iter->first;
-		fd_iter++;
+		++fd_iter;
 		
 		events = getEvents(fd);
 		if (events == 0)

@@ -74,7 +74,7 @@ Server::Server() throw()
 	default_user_mode(protocol::user_mode::None),
 	opmode(0)
 {
-	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); i++)
+	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
 	{
 		user_ids.push(i+1);
 		session_ids.push(i+1);
@@ -273,7 +273,7 @@ void Server::uWrite(User*& usr) throw()
 		if (outgoing.size() > 1)
 		{
 			// create linked list
-			for (mi = ++(outgoing.begin()); mi != outgoing.end(); mi++)
+			for (mi = ++(outgoing.begin()); mi != outgoing.end(); ++mi)
 			{
 				msg = boost::get_pointer(*mi);
 				msg->prev = last;
@@ -311,7 +311,7 @@ void Server::uWrite(User*& usr) throw()
 		else
 		{
 			// clear linked list...
-			for (mi = outgoing.begin(); mi != outgoing.end(); mi++)
+			for (mi = outgoing.begin(); mi != outgoing.end(); ++mi)
 			{
 				(*mi)->next = 0;
 				(*mi)->prev = 0;
@@ -675,7 +675,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif // CHECK_VIOLATIONS
 		
 		if (usr->inMsg->type == protocol::type::StrokeInfo)
-			usr->strokes++;
+			++usr->strokes;
 		else if (usr->inMsg->type == protocol::type::StrokeEnd)
 			usr->strokes = 0;
 		
@@ -939,7 +939,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		if (sessions.size() != 0)
 		{
 			session_iterator si(sessions.begin());
-			for (; si != sessions.end(); si++)
+			for (; si != sessions.end(); ++si)
 			{
 				uSendMsg(usr, msgSessionInfo(si->second));
 			}
@@ -1296,7 +1296,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	
 	message_ref raster_ref(raster);
 	
-	for (; ti != ft.second; ti++)
+	for (; ti != ft.second; ++ti)
 	{
 		usr_ptr = users[ti->second];
 		uSendMsg(usr_ptr, raster_ref);
@@ -1644,7 +1644,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			// clean session users
 			session_usr_iterator sui(session->users.begin());
 			User* usr_ptr;
-			for (; sui != session->users.end(); sui++)
+			for (; sui != session->users.end(); ++sui)
 			{
 				usr_ptr = sui->second;
 				uLeaveSession(usr_ptr, session, protocol::user_event::None);
@@ -2079,7 +2079,7 @@ void Server::Propagate(Session* session, message_ref msg, User* source, const bo
 	}
 	
 	User *usr_ptr;
-	for (session_usr_iterator ui(session->users.begin()); ui != session->users.end(); ui++)
+	for (session_usr_iterator ui(session->users.begin()); ui != session->users.end(); ++ui)
 	{
 		if (ui->second != source)
 		{
@@ -2091,7 +2091,7 @@ void Server::Propagate(Session* session, message_ref msg, User* source, const bo
 	if (toAll)
 	{
 		// send to users waiting sync as well.
-		for (std::list<User*>::iterator wui(session->waitingSync.begin()); wui != session->waitingSync.end(); wui++)
+		for (std::list<User*>::iterator wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
 		{
 			if ((*wui) != source)
 			{
@@ -2175,7 +2175,7 @@ void Server::SyncSession(Session* session) throw()
 	session_usr_iterator old(session->users.begin());
 	// build msg_queue
 	User *usr_ptr;
-	for (; old != session->users.end(); old++)
+	for (; old != session->users.end(); ++old)
 	{
 		// clear syncwait 
 		usr_ptr = old->second;
@@ -2207,9 +2207,9 @@ void Server::SyncSession(Session* session) throw()
 	std::list<User*>::iterator new_i(newc.begin()), new_i2;
 	std::vector<message_ref>::iterator msg_queue_i;
 	// Send messages
-	for (; new_i != newc.end(); new_i++)
+	for (; new_i != newc.end(); ++new_i)
 	{
-		for (msg_queue_i=msg_queue.begin(); msg_queue_i != msg_queue.end(); msg_queue_i++)
+		for (msg_queue_i=msg_queue.begin(); msg_queue_i != msg_queue.end(); ++msg_queue_i)
 		{
 			uSendMsg(*new_i, *msg_queue_i);
 		}
@@ -2222,7 +2222,7 @@ void Server::SyncSession(Session* session) throw()
 	}
 	
 	// put waiting clients to normal data propagation and create raster tunnels.
-	for (new_i = newc.begin(); new_i != newc.end(); new_i++)
+	for (new_i = newc.begin(); new_i != newc.end(); ++new_i)
 	{
 		// Create fake tunnel
 		tunnel.insert( std::make_pair(src->sock->fd(), (*new_i)->sock->fd()) );
@@ -2233,7 +2233,7 @@ void Server::SyncSession(Session* session) throw()
 		// Tell other syncWait users of this user..
 		if (newc.size() > 1)
 		{
-			for (new_i2 = newc.begin(); new_i2 != newc.end(); new_i2++)
+			for (new_i2 = newc.begin(); new_i2 != newc.end(); ++new_i2)
 			{
 				if (new_i2 == new_i) continue; // skip self
 				uSendMsg(
@@ -2394,7 +2394,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	User* usr;
 	#ifdef NO_DUPLICATE_CONNECTIONS
 	user_iterator ui(users.begin());
-	for (; ui != users.end(); ui++)
+	for (; ui != users.end(); ++ui)
 	{
 		if (sock->matchAddress(ui->second->sock))
 		{
@@ -2586,7 +2586,7 @@ int Server::init() throw(std::bad_alloc)
 	lsock.reuse(true); // reuse address
 	
 	bool bound = false;
-	for (int bport=lo_port; bport < hi_port+1; bport++)
+	for (int bport=lo_port; bport < hi_port+1; ++bport)
 	{
 		#ifdef IPV6_SUPPORT
 		if (lsock.bindTo("::", bport) == SOCKET_ERROR)
@@ -2647,7 +2647,7 @@ bool Server::validateUserName(User* usr) const throw()
 	}
 	
 	std::map<fd_t, User*>::const_iterator ui(users.begin());
-	for (; ui != users.end(); ui++)
+	for (; ui != users.end(); ++ui)
 	{
 		if (ui->second == usr) continue; // skip self
 		
@@ -2677,7 +2677,7 @@ bool Server::validateSessionTitle(Session* session) const throw()
 	if (session->len == 0) return false;
 	
 	std::map<uint8_t, Session*>::const_iterator si(sessions.begin());
-	for (; si != sessions.end(); si++)
+	for (; si != sessions.end(); ++si)
 	{
 		if (si->second == session) continue; // skip self
 		
@@ -2720,7 +2720,7 @@ void Server::cullIdlers() throw()
 				next_timer = (*tui)->deadtime;
 			}
 			
-			tui++;
+			++tui;
 		}
 	}
 	while (tui != utimer.end());

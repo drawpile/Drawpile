@@ -45,8 +45,7 @@ const uint32_t
 	Event::hangup = EPOLLHUP;
 
 Event::Event() throw()
-	: evfd(0)//,
-	//events(0)
+	: evfd(0)
 {
 	#ifdef DEBUG_EVENTS
 	#ifndef NDEBUG
@@ -340,7 +339,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	std::cout << "Event(epoll).getEvents(fd: " << fd << ")" << std::endl;
 	#endif
 	
-	for (int n=0; n != nfds; n++)
+	for (int n=0; n != nfds; ++n)
 	{
 		if (events[n].data.fd == fd)
 		{
