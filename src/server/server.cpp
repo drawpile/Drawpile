@@ -319,7 +319,7 @@ void Server::uWrite(User*& usr) throw()
 		}
 		
 		#if defined(HAVE_ZLIB)
-		if (usr->ext_deflate)
+		if (usr->ext_deflate
 			and usr->output.canRead() > 300
 			and msg->type != protocol::type::Raster)
 		{
