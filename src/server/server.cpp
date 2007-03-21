@@ -788,11 +788,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			usr->inMsg->user_id = usr->id;
-			usr->session = usi->second.session;
+			usr->session = usi->second->session;
 			
-			usr->a_locked = usi->second.locked;
-			usr->a_deaf = usi->second.deaf;
-			usr->a_muted = usi->second.muted;
+			usr->a_locked = usi->second->locked;
+			usr->a_deaf = usi->second->deaf;
+			usr->a_muted = usi->second->muted;
 			
 			Propagate(
 				usr->session,
@@ -837,7 +837,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			Propagate(
-				usi->second.session,
+				usi->second->session,
 				pmsg,
 				(usr->c_acks ? usr : 0)
 			);
@@ -976,14 +976,14 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::NotSubscribed));
 				break;
 			}
-			else if (layer->layer_id == ui->second.layer)
+			else if (layer->layer_id == ui->second->layer)
 			{
 				// tried to select currently selected layer
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
 				break;
 			}
-			else if (ui->second.layer_lock != protocol::null_layer
-				and ui->second.layer_lock != layer->layer_id)
+			else if (ui->second->layer_lock != protocol::null_layer
+				and ui->second->layer_lock != layer->layer_id)
 			{
 				// if user is locked to another layer
 				uSendMsg(usr, msgError(layer->session_id, protocol::error::InvalidLayer));
@@ -991,7 +991,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 			
 			// useless temporary
-			Session *session = ui->second.session;
+			Session *session = ui->second->session;
 			
 			// Find layer and check if its locked
 			session_layer_iterator li(session->layers.find(layer->layer_id));
@@ -1016,7 +1016,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				(usr->c_acks ? usr : 0)
 			);
 			
-			ui->second.layer = layer->layer_id;
+			ui->second->layer = layer->layer_id;
 		}
 		break;
 	case protocol::type::Instruction:
@@ -1191,7 +1191,7 @@ void Server::uHandleAck(User*& usr) throw()
 				uSendMsg(usr, msgError(ack->session_id, protocol::error::NotSubscribed));
 				return;
 			}
-			else if (us->second.syncWait)
+			else if (us->second->syncWait)
 			{
 				#ifndef NDEBUG
 				std::cout << "Another ACK/SyncWait for same session. Kickin'!" << std::endl;
@@ -1202,10 +1202,10 @@ void Server::uHandleAck(User*& usr) throw()
 			}
 			else
 			{
-				us->second.syncWait = true;
+				us->second->syncWait = true;
 			}
 			
-			Session *session = us->second.session;
+			Session *session = us->second->session;
 			session->syncCounter--;
 			
 			if (session->syncCounter == 0)
@@ -1384,7 +1384,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 			User *usr = session_usr->second;
 			
-			// Find user's session instance (SessionData&)
+			// Find user's session instance (SessionData*)
 			usr_session_iterator usr_session(usr->sessions.find(session->id));
 			if (usr_session == usr->sessions.end())
 			{
@@ -1395,11 +1395,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			if (event->aux == protocol::null_layer)
 			{
 				// Set session flags
-				usr_session->second.locked = (event->action == protocol::session_event::Lock);
+				usr_session->second->locked = (event->action == protocol::session_event::Lock);
 				
 				// Copy active session flags
 				if (usr->session->id == event->session_id)
-					usr->a_locked = usr_session->second.locked;
+					usr->a_locked = usr_session->second->locked;
 			}
 			else
 			{
@@ -1410,11 +1410,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 						<< static_cast<int>(event->aux) << std::endl;
 					#endif
 					
-					usr_session->second.layer_lock = event->aux;
+					usr_session->second->layer_lock = event->aux;
 					
 					// Null-ize the active layer if the target layer is not the active one.
-					if (usr_session->second.layer != usr_session->second.layer_lock)
-						usr_session->second.layer = protocol::null_layer;
+					if (usr_session->second->layer != usr_session->second->layer_lock)
+						usr_session->second->layer = protocol::null_layer;
 					if (usr->session->id == event->session_id)
 						usr->layer = protocol::null_layer;
 				}
@@ -1425,7 +1425,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 						<< static_cast<int>(event->aux) << std::endl;
 					#endif
 					
-					usr_session->second.layer_lock = protocol::null_layer;
+					usr_session->second->layer_lock = protocol::null_layer;
 				}
 			}
 		}
@@ -1475,11 +1475,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 			
 			// Set mode
-			usi->second.muted = (event->action == protocol::session_event::Mute);
+			usi->second->muted = (event->action == protocol::session_event::Mute);
 			
 			// Copy to active session's mode, too.
 			if (usr->session->id == event->target)
-				usr->a_muted = usi->second.muted;
+				usr->a_muted = usi->second->muted;
 			
 			Propagate(
 				session,
@@ -2182,7 +2182,7 @@ void Server::SyncSession(Session* session) throw()
 		usr_session_iterator usi(usr_ptr->sessions.find(session->id));
 		if (usi != usr_ptr->sessions.end())
 		{
-			usi->second.syncWait = false;
+			usi->second->syncWait = false;
 		}
 		
 		// add messages to msg_queue
@@ -2261,18 +2261,18 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	#endif
 	
 	// Add session to users session list.
-	usr->sessions[session->id] = SessionData(session);
-	assert(usr->sessions[session->id].session != 0);
+	usr->sessions[session->id] = new SessionData(session);
+	assert(usr->sessions[session->id]->session != 0);
 	
 	// Remove locked and mute, if the user is the session's owner.
 	if (session->owner == usr->id)
 	{
-		usr->sessions[session->id].locked = false;
-		usr->sessions[session->id].muted = false;
+		usr->sessions[session->id]->locked = false;
+		usr->sessions[session->id]->muted = false;
 	}
 	// Remove mute if the user is server admin.
 	else if (usr->isAdmin)
-		usr->sessions[session->id].muted = false;
+		usr->sessions[session->id]->muted = false;
 	
 	// Tell session members there's a new user.
 	Propagate(session, msgUserEvent(usr, session, protocol::user_event::Join));
@@ -2319,6 +2319,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	session->users.erase(usr->id);
 	
 	// remove
+	delete usr->sessions.find(session->id)->second;
 	usr->sessions.erase(session->id);
 	
 	// last user in session.. destruct it
@@ -2549,7 +2550,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	Session *session;
 	while (usr->sessions.size() != 0)
 	{
-		session = usr->sessions.begin()->second.session;
+		session = usr->sessions.begin()->second->session;
 		uLeaveSession(usr, session, reason);
 	}
 	

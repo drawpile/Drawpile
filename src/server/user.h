@@ -43,7 +43,7 @@ typedef boost::shared_ptr<protocol::Message> message_ref;
 
 /* iterators */
 struct SessionData;
-typedef std::map<uint8_t, SessionData>::iterator usr_session_iterator;
+typedef std::map<uint8_t, SessionData*>::iterator usr_session_iterator;
 
 #include "sockets.h"
 
@@ -54,15 +54,12 @@ struct SessionData
 		: session(s),
 		layer(protocol::null_layer),
 		layer_lock(protocol::null_layer),
-		/*
-		locked(false),
-		muted(false),
-		deaf(false),
-		*/
+		locked(fIsSet(s->mode, protocol::user_mode::Locked)),
+		muted(fIsSet(s->mode, protocol::user_mode::Mute)),
+		deaf(fIsSet(s->mode, protocol::user_mode::Deaf)),
 		syncWait(false)
 	{
 		assert(session != 0);
-		setMode(session->mode);
 	}
 	
 	~SessionData() throw()
@@ -184,6 +181,9 @@ struct User
 		delete sock,
 		delete inMsg;
 		
+		for (usr_session_iterator usi(sessions.begin()); usi != sessions.end(); usi++)
+			delete usi->second;
+		
 		sessions.clear();
 		
 		queue.clear();
@@ -264,7 +264,7 @@ struct User
 	}
 	
 	// Subscribed sessions
-	std::map<uint8_t, SessionData> sessions;
+	std::map<uint8_t, SessionData*> sessions;
 	
 	// Output queue
 	std::deque<message_ref> queue;
