@@ -319,7 +319,7 @@ void Server::uWrite(User*& usr) throw()
 		}
 		
 		#if defined(HAVE_ZLIB)
-		if (fIsSet(usr->extensions, protocol::extensions::Deflate)
+		if (usr->ext_deflate)
 			and usr->output.canRead() > 300
 			and msg->type != protocol::type::Raster)
 		{
@@ -720,8 +720,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif // CHECK_VIOLATIONS
 		
 		// user or session is locked
-		if (usr->session->locked
-			or fIsSet(usr->a_mode, protocol::user_mode::Locked))
+		if (usr->session->locked or usr->a_locked)
 		{
 			// TODO: Warn user?
 			#ifndef NDEBUG
@@ -757,7 +756,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		Propagate(
 			usr->session,
 			message_ref(usr->inMsg),
-			(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
+			(usr->c_acks ? usr : 0)
 		);
 		
 		usr->inMsg = 0;
@@ -790,12 +789,15 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			usr->inMsg->user_id = usr->id;
 			usr->session = usi->second.session;
-			usr->a_mode = usi->second.mode;
+			
+			usr->a_locked = usi->second.locked;
+			usr->a_deaf = usi->second.deaf;
+			usr->a_muted = usi->second.muted;
 			
 			Propagate(
 				usr->session,
 				message_ref(usr->inMsg),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
+				(usr->c_acks ? usr : 0)
 			);
 			usr->inMsg = 0;
 			
@@ -811,15 +813,12 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uTunnelRaster(usr);
 		break;
 	case protocol::type::Deflate:
-		// TODO: Deflate extension support
-		if (!fIsSet(usr->extensions, protocol::extensions::Deflate))
-			uRemove(usr, protocol::user_event::Dropped);
-		else
-		{
-			#if defined(HAVE_ZLIB)
-			DeflateReprocess(usr, usr->inMsg);
-			#endif
-		}
+		// Deflate extension
+		#if !defined(HAVE_ZLIB)
+		uRemove(usr, protocol::user_event::Dropped);
+		#else
+		DeflateReprocess(usr, usr->inMsg);
+		#endif
 		break;
 	case protocol::type::Chat:
 	case protocol::type::Palette:
@@ -840,7 +839,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			Propagate(
 				usi->second.session,
 				pmsg,
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
+				(usr->c_acks ? usr : 0)
 			);
 			usr->inMsg = 0;
 		}
@@ -1014,7 +1013,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			Propagate(
 				session,
 				message_ref(layer),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
+				(usr->c_acks ? usr : 0)
 			);
 			
 			ui->second.layer = layer->layer_id;
@@ -1095,7 +1094,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (msg->session_id == protocol::Global)
 			{
 				// set as admin
-				fSet(usr->mode, protocol::user_mode::Administrator);
+				usr->isAdmin = true;
 			}
 			else
 			{
@@ -1322,7 +1321,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	
-	if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+	if (!usr->isAdmin
 		and (session->owner != usr->id))
 	{
 		uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
@@ -1396,14 +1395,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			if (event->aux == protocol::null_layer)
 			{
 				// Set session flags
-				if (event->action == protocol::session_event::Lock)
-					fSet(usr_session->second.mode, protocol::user_mode::Locked);
-				else
-					fClr(usr_session->second.mode, protocol::user_mode::Locked);
+				usr_session->second.locked = (event->action == protocol::session_event::Lock);
 				
 				// Copy active session flags
 				if (usr->session->id == event->session_id)
-					usr->a_mode = usr_session->second.mode;
+					usr->a_locked = usr_session->second.locked;
 			}
 			else
 			{
@@ -1453,7 +1449,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			Propagate(
 				session,
 				message_ref(event),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
+				(usr->c_acks ? usr : 0)
 			);
 			
 			usr->inMsg = 0;
@@ -1479,19 +1475,16 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 			
 			// Set mode
-			if (event->action == protocol::session_event::Mute)
-				fSet(usi->second.mode, protocol::user_mode::Mute);
-			else
-				fClr(usi->second.mode, protocol::user_mode::Mute);
+			usi->second.muted = (event->action == protocol::session_event::Mute);
 			
 			// Copy to active session's mode, too.
 			if (usr->session->id == event->target)
-				usr->a_mode = usi->second.mode;
+				usr->a_muted = usi->second.muted;
 			
 			Propagate(
 				session,
 				message_ref(event),
-				(fIsSet(usr->caps, protocol::client::AckFeedback) ? usr : 0)
+				(usr->c_acks ? usr : 0)
 			);
 			
 			usr->inMsg = 0;
@@ -1526,7 +1519,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 	switch (msg->command)
 	{
 	case protocol::admin::command::Create:
-		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+		if (!usr->isAdmin) { break; }
 		// limited scope for switch/case
 		{
 			uint8_t session_id = getSessionID();
@@ -1541,14 +1534,6 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			session->id = session_id;
 			session->limit = msg->aux_data; // user limit
 			session->mode = msg->aux_data2; // user mode
-			
-			if (fIsSet(session->mode, protocol::user_mode::Administrator))
-			{
-				std::cerr << "Administrator flag in default mode." << std::endl;
-				uRemove(usr, protocol::user_event::Violation);
-				delete session;
-				return;
-			}
 			
 			if (session->limit < 2)
 			{
@@ -1645,7 +1630,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			Session *session = si->second;
 			
 			// Check session ownership
-			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+			if (!usr->isAdmin
 				and (session->owner != usr->id))
 			{
 				uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
@@ -1681,7 +1666,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			Session *session = si->second;
 			
 			// Check session ownership
-			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+			if (!usr->isAdmin
 				and (session->owner != usr->id))
 			{
 				uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
@@ -1745,7 +1730,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 	case protocol::admin::command::Password:
 		if (msg->session_id == protocol::Global)
 		{
-			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+			if (!usr->isAdmin) { break; }
 			
 			if (password != 0)
 				delete [] password;
@@ -1773,7 +1758,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			Session *session = si->second;
 			
 			// Check session ownership
-			if (!fIsSet(usr->mode, protocol::user_mode::Administrator)
+			if (!usr->isAdmin
 				and (session->owner != usr->id))
 			{
 				uSendMsg(usr, msgError(session->id, protocol::error::Unauthorized));
@@ -1812,7 +1797,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		return;
 	case protocol::admin::command::Shutdown:
-		if (!fIsSet(usr->mode, protocol::user_mode::Administrator)) { break; }
+		if (!usr->isAdmin) { break; }
 		// Shutdown server..
 		state = server::state::Exiting;
 		break;
@@ -1826,7 +1811,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 	}
 	
 	// Allow session owners to alter sessions, but warn others.
-	if (!fIsSet(usr->mode, protocol::user_mode::Administrator))
+	if (!usr->isAdmin)
 	{
 		std::cerr << "Non-admin tries to pass instructions: "
 			<< static_cast<int>(usr->id) << std::endl;
@@ -1913,7 +1898,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			msg->length = 0;
 			msg->name = 0;
 			
-			usr->mode = default_user_mode;
+			usr->setAMode(default_user_mode);
 			
 			std::string IPPort(usr->sock->address());
 			std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
@@ -1934,10 +1919,10 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			{
 				// auto admin promotion.
 				// also, don't put any other flags on the user.
-				fSet(usr->mode, protocol::user_mode::Administrator);
+				usr->isAdmin = true;
 			}
 			
-			msg->mode = usr->mode;
+			msg->mode = usr->getAMode();
 			
 			// reply
 			uSendMsg(usr, message_ref(msg));
@@ -2052,11 +2037,11 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgAuth(usr, protocol::Global));
 			}
 			
-			usr->caps = ident->flags;
-			usr->extensions = ident->extensions;
-			usr->mode = default_user_mode;
-			if (!fIsSet(usr->extensions, protocol::extensions::Chat))
-				fSet(usr->mode, protocol::user_mode::Deaf);
+			usr->setCapabilities(ident->flags);
+			usr->setExtensions(ident->extensions);
+			usr->setAMode(default_user_mode);
+			if (!usr->ext_chat)
+				usr->a_deaf = true;
 		}
 		else
 		{
@@ -2130,14 +2115,15 @@ void Server::uSendMsg(User* usr, message_ref msg) throw()
 	switch (msg->type)
 	{
 	case protocol::type::Chat:
-		if (!fIsSet(usr->extensions, protocol::extensions::Chat))
+		if (!usr->ext_chat or usr->a_deaf) // TODO: Check the correct session for deaf flag
 			return;
 		break;
 	case protocol::type::Palette:
-		if (!fIsSet(usr->extensions, protocol::extensions::Palette))
+		if (!usr->ext_palette)
 			return;
 		break;
 	default:
+		// do nothing
 		break;
 	}
 	
@@ -2275,17 +2261,18 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	#endif
 	
 	// Add session to users session list.
-	usr->sessions[session->id] = SessionData(usr->id, session);
+	usr->sessions[session->id] = SessionData(session);
+	assert(usr->sessions[session->id].session != 0);
 	
 	// Remove locked and mute, if the user is the session's owner.
 	if (session->owner == usr->id)
 	{
-		fClr(usr->sessions[session->id].mode, protocol::user_mode::Locked);
-		fClr(usr->sessions[session->id].mode, protocol::user_mode::Mute);
+		usr->sessions[session->id].locked = false;
+		usr->sessions[session->id].muted = false;
 	}
 	// Remove mute if the user is server admin.
-	else if (fIsSet(usr->mode, protocol::user_mode::Administrator))
-		fClr(usr->sessions[session->id].mode, protocol::user_mode::Mute);
+	else if (usr->isAdmin)
+		usr->sessions[session->id].muted = false;
 	
 	// Tell session members there's a new user.
 	Propagate(session, msgUserEvent(usr, session, protocol::user_event::Join));
@@ -2313,6 +2300,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 		
 		message_ref raster_ref(new protocol::Raster(0, 0, 0, 0));
 		raster_ref->session_id = session->id;
+		
 		uSendMsg(usr, raster_ref);
 	}
 }
