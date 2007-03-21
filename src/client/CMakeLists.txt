@@ -77,10 +77,6 @@ Qt4_wrap_CPP ( MOC_Sources ${Client_Headers} )
 if (NOT DEBUG)
 	add_definitions(-DQT_NO_DEBUG)
 	
-	if (WIN32)
-		set ( EXEFORMAT WIN32 )
-	endif (WIN32)
-	
 	strip_exe ( ${CLIENTNAME} )
 endif ( NOT DEBUG )
 
@@ -92,7 +88,7 @@ link_libraries( ${LIBNAME} )
 
 add_executable (
 	${CLIENTNAME}
-	${EXEFORMAT}
+	WIN32
 	MACOSX_BUNDLE
 	${Client_Sources}
 	${Client_Headers}
