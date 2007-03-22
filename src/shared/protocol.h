@@ -815,7 +815,7 @@ struct SessionInfo
 	{ }
 	
 	//! Constructor with params for payload
-	SessionInfo(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users, uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title) throw()
+	SessionInfo(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users, uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title, uint16_t _level) throw()
 		: Message(type::SessionInfo, message::isSession),
 		width(_width),
 		height(_height),
@@ -824,6 +824,7 @@ struct SessionInfo
 		limit(_limit),
 		mode(_mode),
 		flags(_flags),
+		level(_level),
 		length(_length),
 		title(_title)
 	{ }
@@ -848,9 +849,13 @@ struct SessionInfo
 		//! Default user mode.
 		mode,
 		//! Session flags.
-		flags,
-		//! Title length.
-		length;
+		flags;
+	
+	//! Feature level requirement
+	uint16_t level;
+	
+	//! Title length.
+	uint8_t length;
 	
 	//! Session title.
 	char* title;

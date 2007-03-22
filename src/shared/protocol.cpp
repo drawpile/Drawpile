@@ -843,6 +843,7 @@ size_t SessionInfo::unserialize(const char* buf, size_t len) throw(std::bad_allo
 	memcpy_t(limit, buf+i); i += sizeof(limit);
 	memcpy_t(mode, buf+i); i += sizeof(mode);
 	memcpy_t(flags, buf+i); i += sizeof(flags);
+	memcpy_t(level, buf+i); i += sizeof(level);
 	memcpy_t(length, buf+i); i += sizeof(length);
 	
 	if (length != 0)
@@ -863,7 +864,8 @@ size_t SessionInfo::reqDataLen(const char *buf, size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	size_t p = headerSize() + sizeof(width) + sizeof(height)
-		+ sizeof(owner) + sizeof(users) + sizeof(mode) + sizeof(flags) + sizeof(limit);
+		+ sizeof(owner) + sizeof(users) + sizeof(mode) + sizeof(flags)
+		+ sizeof(limit) + sizeof(level);
 	if (len < p + sizeof(length))
 		return p + sizeof(length);
 	else
@@ -888,6 +890,7 @@ size_t SessionInfo::serializePayload(char *buf) const throw()
 	memcpy_t(buf+i, limit); i += sizeof(limit);
 	memcpy_t(buf+i, mode); i += sizeof(mode);
 	memcpy_t(buf+i, flags); i += sizeof(flags);
+	memcpy_t(buf+i, level); i += sizeof(level);
 	memcpy_t(buf+i, length); i += sizeof(length);
 	
 	if (length != 0)
@@ -902,7 +905,7 @@ size_t SessionInfo::payloadLength() const throw()
 {
 	return sizeof(width) + sizeof(height) + sizeof(owner)
 		+ sizeof(users) + sizeof(limit) + sizeof(mode) + sizeof(flags)
-		+ sizeof(length) + length;
+		+ sizeof(level) + sizeof(length) + length;
 }
 
 /*
