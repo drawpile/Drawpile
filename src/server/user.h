@@ -295,3 +295,5 @@ struct User
 	
 	u_long strokes;
 };
+
+#endif // ServerUser_INCLUDED
