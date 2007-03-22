@@ -1906,18 +1906,13 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			std::string IPPort(usr->sock->address());
 			std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
 			assert(ns != std::string::npos);
-			std::string IP(
-				IPPort.substr(
-					0,
-					ns
-				)
-			);
+			std::string IP(IPPort.substr(0, ns));
 			
 			if (LocalhostAdmin
 				#ifdef IPV6_SUPPORT
-				and (IP == "::1")) // Loopback
+				and (IP == std::string("::1"))) // Loopback
 				#else
-				and (IP == "127.0.0.1")) // Loopback
+				and (IP == std::string("127.0.0.1"))) // Loopback
 				#endif // IPV6_SUPPORT
 			{
 				// auto admin promotion.
