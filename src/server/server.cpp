@@ -194,6 +194,7 @@ message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc
 		session->limit,
 		session->mode,
 		session->getFlags(),
+		session->level,
 		session->len,
 		new char[session->len]
 	);
@@ -912,6 +913,12 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					break;
 				}
 				
+				if (session->level != usr->level)
+				{
+					uSendMsg(usr, msgError(protocol::Global, protocol::error::ImplementationMismatch));
+					break;
+				}
+				
 				if (session->password != 0)
 				{
 					uSendMsg(usr, msgAuth(usr, session->id));
@@ -1026,7 +1033,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::type::Password:
 		{
 			session_iterator si;
-			Session *session=0;
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
 			if (msg->session_id == protocol::Global)
 			{
@@ -1056,7 +1062,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
 					break;
 				}
-				session = si->second;
 				
 				if (uInSession(usr, msg->session_id))
 				{
@@ -1066,13 +1071,13 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				}
 				
 				// Test userlimit
-				if (session->canJoin() == false)
+				if (si->second->canJoin() == false)
 				{
 					uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 					break;
 				}
 				
-				hash.Update(reinterpret_cast<uint8_t*>(session->password), session->pw_len);
+				hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
 			}
 			
 			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
@@ -1101,6 +1106,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				// join session
 				// uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
+				Session* session = si->second;
 				uJoinSession(usr, session);
 			}
 		}
@@ -1532,6 +1538,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			Session *session(new Session);
 			session->id = session_id;
+			session->level = usr->level; // inherit user's feature level
 			session->limit = msg->aux_data; // user limit
 			session->mode = msg->aux_data2; // user mode
 			
@@ -1612,7 +1619,8 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
 				<< "Dimensions: " << session->width << " x " << session->height << std::endl
 				<< "User limit: " << static_cast<int>(session->limit)
-				<< ", default mode: " << static_cast<int>(session->mode) << std::endl
+				<< ", default mode: " << static_cast<int>(session->mode)
+				<< ", level: " << static_cast<int>(session->level) << std::endl
 				<< "Owner: " << static_cast<int>(usr->id)
 				<< ", from: " << usr->sock->address() << std::endl;
 			
@@ -2035,6 +2043,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgAuth(usr, protocol::Global));
 			}
 			
+			usr->level = ident->level; // feature level used by client
 			usr->setCapabilities(ident->flags);
 			usr->setExtensions(ident->extensions);
 			usr->setAMode(default_user_mode);
@@ -2166,9 +2175,8 @@ void Server::SyncSession(Session* session) throw()
 		session->waitingSync.pop_front();
 	}
 	
-	//message_ref msg;
-	//protocol::LayerSelect *layer=0;
-	protocol::SessionSelect *select=0;
+	protocol::SessionSelect *select; // warning from compiler
+	
 	std::vector<message_ref> msg_queue;
 	session_usr_iterator old(session->users.begin());
 	// build msg_queue
@@ -2336,7 +2344,8 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	else
 	{
 		// Cancel raster sending for this user
-		User* usr=0;
+		User* usr; // warning from compiler
+		
 		std::multimap<fd_t, fd_t>::iterator tunnel_i(tunnel.begin());
 		while (tunnel_i != tunnel.end())
 		{

@@ -74,6 +74,7 @@ struct Session
 		owner(protocol::null_user),
 		width(0),
 		height(0),
+		level(0),
 		SelfDestruct(true),
 		syncCounter(0),
 		locked(false)
@@ -123,6 +124,9 @@ struct Session
 	
 	// Canvas size
 	uint16_t width, height;
+	
+	// Feature level required
+	uint16_t level;
 	
 	// Will the session be destructed when all users leave..?
 	bool SelfDestruct;

@@ -160,6 +160,7 @@ struct User
 		a_deaf(false),
 		// other
 		inMsg(0),
+		level(0),
 		deadtime(0),
 		nlen(0),
 		name(0),
@@ -275,6 +276,9 @@ struct User
 	// Currently incoming message.
 	protocol::Message *inMsg;
 	
+	// Feature level used by client
+	uint16_t level;
+	
 	// for storing the password seed associated with this user.
 	char seed[4];
 	
@@ -291,4 +295,3 @@ struct User
 	
 	u_long strokes;
 };
-#endif // ServerUser_INCLUDED
