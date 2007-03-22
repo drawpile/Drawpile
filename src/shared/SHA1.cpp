@@ -53,7 +53,7 @@ void SHA1::Reset() throw()
 
 // Rotate x bits to the left
 inline
-uint32_t SHA1::ROL32(uint32_t v, uint32_t n) throw()
+uint32_t SHA1::ROL32(uint32_t v, uint32_t n) const throw()
 {
 	return (v << n) | (v >> (32 - n));
 }
@@ -163,7 +163,7 @@ void SHA1::Transform(uint32_t *state, const uint8_t *buffer) throw()
 }
 
 // Use this function to hash in binary data and strings
-void SHA1::Update(const uint8_t *data, uint32_t len) throw()
+void SHA1::Update(const uint8_t *data, const uint32_t len) throw()
 {
 	assert(len > 0);
 	assert(data != 0);

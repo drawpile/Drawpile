@@ -37,7 +37,7 @@ public:
 	void Reset() throw();
 	
 	// Update the hash value
-	void Update(const uint8_t *data, uint32_t len) throw();
+	void Update(const uint8_t *data, const uint32_t len) throw();
 	
 	// Finalize hash and report
 	void Final() throw();
@@ -56,7 +56,7 @@ private:
 	uint32_t SHABLK1(uint32_t i) throw();
 	
 	inline
-	uint32_t ROL32(uint32_t v, uint32_t n) throw();
+	uint32_t ROL32(uint32_t v, uint32_t n) const throw();
 	
 	inline
 	void _R0(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
