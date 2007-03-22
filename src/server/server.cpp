@@ -1837,20 +1837,22 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
 			
-			if ((msg->user_id != protocol::null_user)
+			#ifdef CHECK_VIOLATIONS
+			if ( (msg->user_id != protocol::null_user)
 				or (msg->session_id != protocol::Global)
 				or (msg->event != protocol::user_event::Login))
 			{
 				std::cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << std::endl
 					<< "Reason: ";
+				
 				if (msg->user_id != protocol::null_user)
 				{
 					std::cerr << "Client assumed it knows its user ID." << std::endl;
 				}
 				else if (msg->session_id != protocol::Global)
 				{
-					std::cerr << "Wrong session identifier." << std::endl;
+					std::cerr << "Incorrect login session identifier." << std::endl;
 				}
 				else if (msg->event != protocol::user_event::Login)
 				{
@@ -1860,6 +1862,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
+			#endif // CHECK_VIOLATIONS
 			
 			if (msg->length > name_len_limit)
 			{
