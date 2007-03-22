@@ -281,6 +281,7 @@ void HostState::becomeAdmin(const QString& password)
 	protocol::Instruction *msg = new protocol::Instruction;
 	msg->command = protocol::admin::command::Authenticate;
 	msg->session_id = protocol::Global;
+	msg->length = 0;
 	sendadminpassword_ = password;
 	lastinstruction_ = msg->command;
 	net_->send(msg);

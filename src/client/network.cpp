@@ -48,7 +48,7 @@ NetworkPrivate::NetworkPrivate(QObject *parent) :
 
 NetworkPrivate::~NetworkPrivate()
 {
-	delete sendbuffer;
+	delete [] sendbuffer;
 	delete newmsg;
 }
 
@@ -135,7 +135,7 @@ void NetworkPrivate::sendPending()
 				// Error occured
 			}
 			if(sent == bytesleft) {
-				delete sendbuffer;
+				delete [] sendbuffer;
 				sendlen = 0;
 				serializeMessage();
 			} else {
