@@ -815,7 +815,7 @@ struct SessionInfo
 	{ }
 	
 	//! Constructor with params for payload
-	SessionInfo(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users, uint8_t _limit, uint8_t _mode, uint8_t _flags, uint8_t _length, char* _title, uint16_t _level) throw()
+	SessionInfo(uint16_t _width, uint16_t _height, uint8_t _owner, uint8_t _users, uint8_t _limit, uint8_t _mode, uint8_t _flags, uint16_t _level, uint8_t _length, char* _title) throw()
 		: Message(type::SessionInfo, message::isSession),
 		width(_width),
 		height(_height),
