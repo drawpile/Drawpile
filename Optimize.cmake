@@ -25,6 +25,9 @@ if ( NOT NOARCH )
 	set ( ARCH "-march=${CPU}" )
 endif ( NOT NOARCH )
 
+set ( FASTMATH "-ffast-math" )
+
+set ( PROFILING "-pg" )
 set ( DEBUG_FLAGS "-g -Wall" )
 set ( OPT "-O${OPTIMIZATION}")
 
@@ -32,13 +35,20 @@ set ( OPT "-O${OPTIMIZATION}")
 
 include ( TestCXXAcceptsFlag )
 
-check_Cxx_accepts_flag ( ${ARCH} COMPILE_MARCH )
+check_cxx_accepts_flag ( ${ARCH} COMPILE_MARCH )
 
 if ( NOT COMPILE_MARCH )
 	set ( ARCH "" )
 endif ( NOT COMPILE_MARCH )
 
+check_cxx_accepts_flag ( ${FASTMATH} FAST_MATH )
+
+if ( NOT FAST_MATH )
+	set ( FASTMATH "" )
+endif ( NOT FAST_MATH )
+
+
 ### Set flags ###
 
-set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${DEBUG_FLAGS}" )
-set ( CMAKE_CXX_FLAGS_RELEASE "${ARCH} ${OPT} -DNDEBUG" )
+set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS}" )
+set ( CMAKE_CXX_FLAGS_RELEASE "${ARCH} ${OPT} ${FASTMATH} -DNDEBUG" )
