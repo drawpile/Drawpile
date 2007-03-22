@@ -129,6 +129,9 @@ const uint16_t
 	//! Invalid request
 	InvalidRequest = 90,
 	
+	//! Feature level mismatch
+	ImplementationMismatch = 93,
+	
 	/* Completely unexpected error messages */
 	
 	//! Something bad happened to server, yet it managed to throw this up.
