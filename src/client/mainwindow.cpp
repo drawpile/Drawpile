@@ -48,6 +48,7 @@
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "icons.h"
+#include "version.h"
 
 #include "colordialog.h"
 #include "newdialog.h"
@@ -980,8 +981,8 @@ void MainWindow::selectTool(QAction *tool)
 
 void MainWindow::about()
 {
-	QMessageBox::about(this, "About DrawPile",
-			"<p><b>DrawPile 0.3.0</b><br>"
+	QMessageBox::about(this, tr("About DrawPile"),
+			tr("<p><b>DrawPile %1</b><br>"
 			"A collaborative drawing program.</p>"
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as " 
@@ -990,7 +991,7 @@ void MainWindow::about()
 			"<p>Programming: Calle Laakkonen<br>"
 			"Graphic design: wuf<br>"
 			"Server: M.K.A<br>"
-			"Icons are from the Tango Desktop Project</p>"
+			"Icons are from the Tango Desktop Project</p>").arg(version::string)
 			);
 }
 

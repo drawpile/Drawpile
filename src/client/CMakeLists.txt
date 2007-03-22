@@ -42,6 +42,7 @@ set (
 	networkprivate.h hoststate.h sessionstate.h logindialog.h preview.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	recentfiles.h sessioninfo.h sessionlistmodel.h icons.h mandatoryfields.h
+	version.h
 )
 
 set (

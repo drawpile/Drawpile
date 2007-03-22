@@ -32,7 +32,8 @@ Session::Session(const protocol::SessionInfo *info)
 	width(info->width),
 	height(info->height),
 	mode(info->mode),
-	maxusers(info->limit)
+	maxusers(info->limit),
+	protocollevel(info->level)
 {
 }
 

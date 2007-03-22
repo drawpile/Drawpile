@@ -27,8 +27,7 @@
 #include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
-#include "brush.h"
-#include "point.h"
+#include "version.h"
 
 #include "../shared/protocol.h"
 #include "../shared/protocol.types.h"
@@ -178,12 +177,14 @@ void HostState::login(const QString& username)
 {
 	Q_ASSERT(net_);
 	username_ = username;
-	protocol::Identifier *msg = new protocol::Identifier;
+	protocol::Identifier *msg = new protocol::Identifier(
+			protocol::revision,
+			version::level,
+			protocol::client::None,
+			protocol::extensions::Chat
+			);
 	memcpy(msg->identifier, protocol::identifier_string,
 			protocol::identifier_size);
-	msg->revision = protocol::revision;
-	msg->extensions = protocol::extensions::Chat;
-	msg->flags = protocol::client::None;
 	net_->send(msg);
 }
 
@@ -597,8 +598,9 @@ void HostState::handleError(const protocol::Error *msg)
 		case SessionLost: errmsg = tr("Session lost."); break;
 		case TooLong: errmsg = tr("Name too long."); break;
 		case NotUnique: errmsg = tr("Name already in use."); break;
-		case InvalidRequest: errmsg = tr("Invalid request"); break;
-		case Unauthorized: errmsg = tr("Unauthorized action"); break;
+		case InvalidRequest: errmsg = tr("Invalid request."); break;
+		case Unauthorized: errmsg = tr("Unauthorized action."); break;
+		case ImplementationMismatch: errmsg = tr("Client version mismatch."); break;
 		default: errmsg = tr("Error code %1").arg(int(msg->code));
 	}
 	qDebug() << "error" << errmsg << "for session" << msg->session_id;

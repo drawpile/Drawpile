@@ -42,6 +42,7 @@ struct Session {
 	quint16 height;
 	quint8 mode;
 	int maxusers;
+	int protocollevel;
 };
 
 typedef QList<Session> SessionList;
