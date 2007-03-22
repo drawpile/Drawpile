@@ -89,6 +89,9 @@ class LoginDialog : public QDialog
 		void session(int id);
 
 	private:
+		//! Set a title message
+		void setTitleMessage(const QString& message);
+
 		Ui_LoginDialog *ui_;
 		bool appenddisconnect_;
 };

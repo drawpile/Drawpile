@@ -41,12 +41,23 @@ LoginDialog::~LoginDialog()
 }
 
 /**
+ * The message is set to the title message label and the window title
+ * @param message title message to set
+ */
+void LoginDialog::setTitleMessage(const QString& message)
+{
+	setWindowTitle(message);
+	ui_->titlemessage->setText(message);
+}
+
+/**
  * Show the dialog and display the connecting message.
  * The address is displayed
  * @param address remote host address
  */
 void LoginDialog::connecting(const QString& address)
 {
+	setTitleMessage(tr("Joining a drawing session"));
 	ui_->statustext->setText(tr("Connecting to %1...").arg(address));
 	ui_->progress->setValue(0);
 	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
@@ -124,7 +135,7 @@ void LoginDialog::disconnected(const QString& message)
 		ui_->statustext->setText(message);
 	}
 	ui_->progress->setValue(0);
-	ui_->titlemessage->setText(tr("Couldn't join a session"));
+	setTitleMessage(tr("Couldn't join a session"));
 	disconnect(SIGNAL(rejected()));
 	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
