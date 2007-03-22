@@ -151,7 +151,6 @@ void LoginDialog::raster(int p)
 
 /**
  * Request a password. TODO, session or host password?
- * @param session is it a session password?
  */
 void LoginDialog::getPassword()
 {

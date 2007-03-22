@@ -179,7 +179,7 @@ void SessionState::setPassword(const QString& password)
 }
 
 /**
- * @param lock lock status
+ * @param l lock status
  * @pre user is session owner
  */
 void SessionState::lock(bool l)
