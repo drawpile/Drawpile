@@ -60,13 +60,13 @@ size_t Message::serializeHeader(char* ptr /*, const Message* msg */) const throw
 	
 	memcpy_t(ptr, type); size_t i = sizeof(type);
 	
-	if (fIsSet(modifiers, message::isUser))
+	if (isUser)
 	{
 		memcpy_t(ptr+i, user_id);
 		i += sizeof(user_id);
 	}
 	
-	if (fIsSet(modifiers, message::isSession))
+	if (isSession)
 	{
 		memcpy_t(ptr+i, session_id);
 		i += sizeof(session_id);
@@ -81,13 +81,13 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 	
 	size_t i = sizeof(type);
 	
-	if (fIsSet(modifiers, message::isUser))
+	if (isUser)
 	{
 		memcpy_t(user_id, ptr+i);
 		i += sizeof(user_id);
 	}
 	
-	if (fIsSet(modifiers, message::isSession))
+	if (isSession)
 	{
 		memcpy_t(session_id, ptr+i);
 		i += sizeof(session_id);
@@ -98,8 +98,8 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 
 size_t Message::headerSize() const throw()
 {
-	return sizeof(type) + (fIsSet(modifiers, message::isUser)?sizeof(user_id):0)
-		+ (fIsSet(modifiers, message::isSession)?sizeof(session_id):0);
+	return sizeof(type) + (isUser?sizeof(user_id):0)
+		+ (isSession?sizeof(session_id):0);
 }
 
 // Base serialization
@@ -113,7 +113,7 @@ char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad
 	
 	length = headerSize();
 	
-	if (fIsSet(modifiers, message::isBundling))
+	if (isBundling)
 	{
 		// no extra headers for bundling
 		headerlen = 0;
@@ -148,9 +148,8 @@ char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad
 	char *data = new char[length];
 	char *dataptr = data;
 	
-	switch (fIsSet(modifiers, message::isBundling))
+	if (isBundling)
 	{
-	case true:
 		// Write bundled packets
 		dataptr += serializeHeader(dataptr /*, ptr */);
 		memcpy_t(dataptr++, count);
@@ -159,8 +158,9 @@ char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad
 			dataptr += ptr->serializePayload(dataptr);
 			ptr = ptr->next;
 		}
-		break;
-	default: // case false:
+	}
+	else
+	{
 		// Write whole packets
 		while (ptr)
 		{
@@ -168,7 +168,6 @@ char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad
 			dataptr += ptr->serializePayload(dataptr);
 			ptr = ptr->next;
 		}
-		break;
 	}
 	
 	return data;
@@ -202,13 +201,13 @@ size_t Message::unserialize(const char* buf, size_t len) throw(std::exception, s
 	
 	size_t i = sizeof(type);
 	
-	if (fIsSet(modifiers, message::isUser))
+	if (isUser)
 	{
 		memcpy_t(user_id, buf+i);
 		i += sizeof(user_id);
 	}
 	
-	if (fIsSet(modifiers, message::isSession))
+	if (isSession)
 	{
 		memcpy_t(session_id, buf+i);
 		i += sizeof(session_id);

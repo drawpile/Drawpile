@@ -73,7 +73,10 @@ struct Message
 protected:
 	Message(uint8_t _type, uint8_t _flags=message::None) throw()
 		: type(_type),
-		modifiers(_flags),
+		isUser(fIsSet(_flags, protocol::message::isUser)),
+		isSession(fIsSet(_flags, protocol::message::isSession)),
+		isSelected(fIsSet(_flags, protocol::message::isSelected)),
+		isBundling(fIsSet(_flags, protocol::message::isBundling)),
 		next(0),
 		prev(0)
 	{ }
@@ -111,9 +114,15 @@ public:
 		//! Target or referred session
 		session_id;
 	
-	const uint8_t
-		//! Message modifiers
-		modifiers;
+	const bool
+		//! User modifier
+		isUser,
+		//! Session modifier
+		isSession,
+		//! Selected modifier
+		isSelected,
+		//! Bundling modifier
+		isBundling;
 	
 	Message
 		//! Next message (of same type) in queue.
