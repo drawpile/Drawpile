@@ -118,8 +118,7 @@ protected:
 	uint8_t
 		default_user_mode;
 	
-	uint8_t
-		opmode;
+	bool Transient, LocalhostAdmin, DaemonMode;
 	
 	/* functions */
 	
@@ -281,7 +280,9 @@ public:
 	}
 	
 	//! Set operation mode
-	void setMode(uint8_t mode) throw() { fSet(opmode, mode); }
+	void setTransient(bool x) throw() { Transient = x; }
+	void setLocalhostAdmin(bool x) throw() { LocalhostAdmin = x; }
+	void setDaemonMode(bool x) throw() { DaemonMode = x; }
 	
 	//! Set client requirements
 	void setRequirement(uint8_t req) throw() { fSet(requirements, req); }

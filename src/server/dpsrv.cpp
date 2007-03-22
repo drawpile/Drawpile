@@ -119,7 +119,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'l': // localhost admin
-				srv->setMode(server::mode::LocalhostAdmin);
+				srv->setLocalhostAdmin(true);
 				std::cout << "Localhost admin enabled." << std::endl;
 				break;
 			case 'u': // user limit
@@ -156,11 +156,11 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				std::cout << "Server password set." << std::endl;
 				break;
 			case 'T':
-				srv->setMode(server::mode::Transient);
+				srv->setTransient(true);
 				std::cout << "Server will exit after all users have left." << std::endl;
 				break;
 			case 'b':
-				srv->setMode(server::mode::Daemon);
+				srv->setDaemonMode(true);
 				std::cerr << "Daemon mode not implemented." << std::endl;
 				exit(1);
 				break;

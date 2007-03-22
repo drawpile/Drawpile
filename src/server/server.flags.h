@@ -39,31 +39,6 @@
 namespace server
 {
 
-//! Server operation mode
-namespace mode
-{
-
-const uint8_t
-	//! No mode set
-	None = 0,
-	
-	//! Daemon
-	/**
-	 * Server will fork a background process.
-	 */
-	Daemon = 0x04,
-	
-	//! Transient
-	/**
-	 * Server will exit once all clients have disconnected.
-	 */
-	Transient = 0x08,
-	
-	//! Promote user connecting from localhost address to admin rights.
-	LocalhostAdmin = 0x80;
-
-}
-
 //! Server states
 namespace state
 {

@@ -71,10 +71,10 @@ struct Session
 		password(0),
 		mode(protocol::user_mode::None),
 		limit(10),
-		flags(0),
 		owner(protocol::null_user),
 		width(0),
 		height(0),
+		SelfDestruct(true),
 		syncCounter(0),
 		locked(false)
 	{
@@ -118,14 +118,19 @@ struct Session
 	// User limit
 	uint8_t limit;
 	
-	// Session flags
-	uint8_t flags;
-	
 	// Session owner
 	uint8_t owner;
 	
 	// Canvas size
 	uint16_t width, height;
+	
+	// Will the session be destructed when all users leave..?
+	bool SelfDestruct;
+	
+	uint8_t getFlags() const throw()
+	{
+		return (SelfDestruct?0:protocol::session::NoSelfDestruct);
+	}
 	
 	// 
 	std::map<uint8_t, LayerData> layers;

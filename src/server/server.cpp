@@ -72,7 +72,8 @@ Server::Server() throw()
 		#endif // HAVE_ZLIB
 	),
 	default_user_mode(protocol::user_mode::None),
-	opmode(0)
+	Transient(false),
+	LocalhostAdmin(false)
 {
 	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
 	{
@@ -192,7 +193,7 @@ message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc
 		session->users.size(),
 		session->limit,
 		session->mode,
-		session->flags,
+		session->getFlags(),
 		session->len,
 		new char[session->len]
 	);
@@ -1206,7 +1207,7 @@ void Server::uHandleAck(User*& usr) throw()
 			}
 			
 			Session *session = us->second->session;
-			session->syncCounter--;
+			--session->syncCounter;
 			
 			if (session->syncCounter == 0)
 			{
@@ -1394,10 +1395,9 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			
 			if (event->aux == protocol::null_layer)
 			{
-				// Set session flags
 				usr_session->second->locked = (event->action == protocol::session_event::Lock);
 				
-				// Copy active session flags
+				// Copy active session
 				if (usr->session->id == event->session_id)
 					usr->a_locked = usr_session->second->locked;
 			}
@@ -1910,7 +1910,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				)
 			);
 			
-			if (fIsSet(opmode, server::mode::LocalhostAdmin)
+			if (LocalhostAdmin
 				#ifdef IPV6_SUPPORT
 				and (IP == "::1")) // Loopback
 				#else
@@ -2325,7 +2325,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	// last user in session.. destruct it
 	if (session->users.empty())
 	{
-		if (!fIsSet(session->flags, protocol::session::NoSelfDestruct))
+		if (session->SelfDestruct)
 		{
 			freeSessionID(session->id);
 			sessions.erase(session->id);
@@ -2566,7 +2566,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	usr = 0;
 	
 	// Transient mode exit.
-	if (fIsSet(opmode, server::mode::Transient) and users.empty())
+	if (Transient and users.empty())
 	{
 		state = server::state::Exiting;
 	}
