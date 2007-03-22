@@ -37,6 +37,7 @@
 
 /* swapping endianess */
 
+//! Base template for byte swapping
 template <class T> inline
 T& bswap(T& x) throw()
 {
@@ -49,6 +50,7 @@ T& bswap(T& x) throw()
 // no specializations for Big Endian systems
 #if !defined(IS_BIG_ENDIAN)
 
+//! uint32_t specialization of bswap()
 template <> inline
 uint32_t& bswap<uint32_t>(uint32_t& x) throw()
 {
@@ -57,6 +59,7 @@ uint32_t& bswap<uint32_t>(uint32_t& x) throw()
 		((x&0x00FF0000)>>8) | ((x&0xFF000000)>>24);
 }
 
+//! uint16_t specialization of bswap()
 template <> inline
 uint16_t& bswap<uint16_t>(uint16_t& x) throw()
 {
@@ -64,6 +67,7 @@ uint16_t& bswap<uint16_t>(uint16_t& x) throw()
 	return x = ((x >> 8)) | (x << 8);
 }
 
+//! uint8_t specialization of bswap()
 template <> inline
 uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 {
