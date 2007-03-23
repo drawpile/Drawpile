@@ -287,10 +287,15 @@ void Server::uWrite(User*& usr) throw()
 		//msg->user_id = id;
 		size_t len=0;
 		
-		// serialize linked list
-		char* buf = msg->serialize(len);
+		// serialize message/s
+		assert(usr->output.canRead() == 0);
 		
-		usr->output.setBuffer(buf, len);
+		size_t size = usr->output.canWrite();
+		char* buf = msg->serialize(len, usr->output.wpos, size);
+		
+		if (buf != usr->output.data)
+			usr->output.setBuffer(buf, size);
+		
 		usr->output.write(len);
 		
 		#ifdef DEBUG_LINKED_LIST
@@ -325,9 +330,25 @@ void Server::uWrite(User*& usr) throw()
 			and usr->output.canRead() > 300
 			and msg->type != protocol::type::Raster)
 		{
-			unsigned long buffer_len = len + 12 /* + static_cast<int>(len * 0.12) */;
-			uint32_t buffer_size = buffer_len;
-			char* temp = new char[buffer_len];
+			char* temp;
+			unsigned long buffer_len = len + 12;
+			// make the potential new buffer generous in its size
+			
+			bool inBuffer;
+			
+			if (usr->output.canWrite() < buffer_len)
+			{ // can't write continuous stream of data in buffer
+				assert(usr->output.free() < buffer_len);
+				size = buffer_len + usr->output.size + 1024;
+				temp = new char[size];
+				inBuffer = false;
+			}
+			else
+			{
+				temp = usr->output.wpos;
+				inBuffer = true;
+			}
+			
 			int r = compress2(reinterpret_cast<unsigned char*>(temp), &buffer_len, reinterpret_cast<unsigned char*>(usr->output.rpos), len, 5);
 			
 			assert(r != Z_STREAM_ERROR);
@@ -340,15 +361,39 @@ void Server::uWrite(User*& usr) throw()
 				std::cout << "zlib: " << len << "B compressed down to " << buffer_len << "B." << std::endl;
 				#endif
 				
-				msg = new protocol::Deflate(len, buffer_len, temp);
-				buf = msg->serialize(len);
-				// set buffer deletes the old buffer
-				usr->output.setBuffer(buf, buffer_size);
-				usr->output.write(len);
+				if (inBuffer)
+				{
+					size = usr->output.canWrite();
+					usr->output.read(len);
+				}
+				else
+					usr->output.setBuffer(temp, size);
 				
-				// cleanup
-				delete msg;
-				msg = 0;
+				usr->output.write(buffer_len);
+				
+				{
+					protocol::Deflate t_deflate(len, buffer_len, temp);
+					
+					/*
+					if (usr->output.canWrite() < buffer_len + 9)
+						if (usr->output.free() >= buffer_len + 9)
+						{
+							reposition();
+							size = usr->output.canWrite();
+						}
+					*/
+					
+					buf = t_deflate.serialize(len, usr->output.wpos, size);
+					
+					if (buf != usr->output.wpos)
+						usr->output.setBuffer(buf, size);
+					
+					usr->output.write(len);
+					
+					// cleanup
+					delete msg;
+					msg = 0;
+				}
 				break;
 			case Z_MEM_ERROR:
 				throw std::bad_alloc();
@@ -358,7 +403,10 @@ void Server::uWrite(User*& usr) throw()
 					<< "source size: " << len << ", target size: " << buffer_len << std::endl;
 				#endif
 				assert(r != Z_BUF_ERROR);
-				delete [] temp;
+				
+				if (!inBuffer)
+					delete [] temp;
+				
 				break;
 			}
 		}

@@ -164,7 +164,8 @@ void NetworkPrivate::serializeMessage()
 	} else {
 		protocol::Message *msg = sendqueue.dequeue();
 		sendmutex.unlock();
-		sendbuffer = msg->serialize(sendlen);
+		size_t tmp=0;
+		sendbuffer = msg->serialize(sendlen, 0, tmp);
 		delete msg;
 	}
 	sentlen = 0;
