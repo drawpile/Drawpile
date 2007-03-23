@@ -109,7 +109,10 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	// This _must_ be the last message in bundle.
 	assert(next == 0);
 	
-	assert((data == 0 and size != 0) or (size == 0 and data != 0));
+	#ifndef NDEBUG
+	if (data == 0 || size == 0)
+		assert(size == 0 and data == 0);
+	#endif
 	
 	size_t
 		headerlen;
