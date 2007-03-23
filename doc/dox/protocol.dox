@@ -6,10 +6,9 @@
 and propagate messages is described here. The protocol uses standard TCP/IP
 for passing the messages, and the message format is described below.
 
-\author M.K.A.
-\contact <wyrmchild@users.sourceforge.net>
+\author M.K.A. <wyrmchild@users.sourceforge.net>
 
-\section seealso See also
+\section see_also See also
 
 \subpage protocol_flow
 
