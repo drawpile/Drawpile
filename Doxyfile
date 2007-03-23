@@ -81,7 +81,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./src/client ./src/server ./src/shared
+INPUT                  = ./doc/dox ./src/client ./src/server ./src/shared
 FILE_PATTERNS          = *.cpp \
                          *.h \
                          *.dox
