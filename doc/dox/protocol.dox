@@ -1,0 +1,122 @@
+/*!
+
+\page protocol Network protocol
+
+\brief The network protocol, by which the clients (and possibly host) communicate
+and propagate messages is described here. The protocol uses standard TCP/IP
+for passing the messages, and the message format is described below.
+
+\author M.K.A.
+\contact <wyrmchild@users.sourceforge.net>
+
+\section seealso See also
+
+\subpage protocol_flow
+
+\section msg_structure Message structure
+
+All messages are prefixed with a byte that identifies the message data following it.
+
+- Payload is the number of bytes in the message and does not take into account
+possible modifiers or the byte for identifying message type.
+- Any data described as a flag or flags indicates the data is a bitfield.
+- Any #-symbol in byte count indicates that the length is dependant on previous
+data that declared length (should be obvious from the naming).
+- Numbers are unsigned integers in Big Endian byte order.
+- Messages may have any number of modifiers described below. 
+
+So, we then have the following data stream.
+- 1 byte: Identifier (protocol::type)
+- 1 byte: User ID [user modifier]
+- 1 byte: Session ID [session modifier]
+- 1 byte: Count [bundling modifier]
+- # bytes: message payload
+
+At minimum, the message consists only of the message type and nothing else.
+The rest depends on the message itself.
+
+\section msg_modifiers Message modifiers
+
+Messages may have a modifier that alters their structure slightly.
+
+\b Bundling (protocol::Message::isBundling)
+- For messages that can be bundled together. It appears as single byte
+before message data that declares the message count. The count declares
+how many messages of that type (from the same user, if it has user as its
+type, too) follow. All the following messages in that bundle MUST NOT have
+their message type or user identifier included. The count is present even
+if there's only one message in the bundle. 
+
+\note Bundles should be sized so they leave on single write to the network,
+anything larger should be a warning sign that must followed by smaller bundles.
+
+For those interested, this modifier is purely for bandwidth saving reasons.
+As an example, bandwidth savings done with this in Stroke Info
+messages can be calculated simply with:
+
+ 7*n - (5*n + 3)
+
+As you can perhaps see, it causes the message to be one byte larger if we cannot
+bundle messages, but if we can bundle even two together, we've saved 1 byte over
+non-bundled, and extra 2 bytes for each extra message after that.
+This might not seem like much, but it can add up, especially heavily loaded networks.
+And normally people don't draw so slow that the messages would go un-bundled..
+
+\b User (protocol::Message::isUser)
+- User ID (UID for short) identifies the originating user of messages.
+It is placed after message type. Server likely overwrites this, so clients
+need not define it, just have a byte reserved for it. 
+
+\b Session (protocol::Message::isSession)
+- Message carries session identifier, placed after user identifier.
+This is the target session for the message. 
+
+\b Selected (protocol::Message::isSelected)
+- Session modifier identifies messages that are directed only to the session
+chosen with the session select message. Messages marked with session modifier
+may not be sent unless proper session is selected, doing otherwise is assumed
+to be a reason of corrupted data stream or out-of-sync event and the client
+will be dropped. 
+
+\section messages Messages
+
+\subsection coreprotocol Core protocol
+
+- Identifier (protocol::Identifier)
+- User Info (protocol::UserInfo)
+- Host Info (protocol::HostInfo)
+- Session Info (protocol::SessionInfo)
+
+- Tool Info (protocol::ToolInfo)
+- Stroke Info (protocol::StrokeInfo)
+- Stroke End (protocol::StrokeEnd)
+
+- List Sesssions (protocol::ListSessions)
+- Subscribe (protocol::Subscribe)
+- Unsubscribe (protocol::Unsubscribe)
+- Session Selection (protocol::SessionSelect)
+- Layer Selection (protocol::LayerSelect)
+
+- Synchronize (protocol::Synchronize)
+- Raster data (protocol::Raster)
+- Sync Wait (protocol::SyncWait)
+
+- Instruction (protocol::Instruction)
+- Session Event (protocol::SessionEvent)
+- Layer Event (protocol::LayerEvent)
+
+- ACK (protocol::Acknowledgement)
+- Error (protocol::Error)
+- Cancel (protocol::Cancel)
+
+- Auth request (protocol::Authentication)
+- Password (protocol::Password)
+
+\subsection Extensions
+Optionally supported message types.
+
+- Deflate (protocol::Deflate)
+- Chat (protocol::Chat)
+- Palette (protocol::Palette)
+
+*/
