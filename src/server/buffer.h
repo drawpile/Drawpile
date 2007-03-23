@@ -155,7 +155,7 @@ struct Buffer
 		{
 			rewind();
 		}
-		else if (chunk1 < left)
+		else if (canRead() < left)
 		{ // we can't read all in one go
 			size_t chunk1 = canRead(), chunk2 = left - canRead();
 			
@@ -163,10 +163,10 @@ struct Buffer
 			{ // there's more free space than used
 				// move second chunk to free space between the chunks
 				wpos = data+chunk1;
-				memmove(wpos, data, chunk2);
+				memcpy(wpos, data, chunk2);
 				
 				// move first chunk to the beginning of the buffer
-				memmove(data, rpos, chunk1);
+				memcpy(data, rpos, chunk1);
 				
 				// adjust wpos to the end of second chunk
 				wpos += chunk2;
@@ -177,15 +177,15 @@ struct Buffer
 				char* tmp = new char[chunk2];
 				
 				// move second chunk to temporary
-				memmove(tmp, data, chunk2);
+				memcpy(tmp, data, chunk2);
 				// move first chunk to the front of buffer
-				memmove(data, rpos, chunk1);
+				memcpy(data, rpos, chunk1);
 				
 				// move wpos to the end of first chunk
 				wpos = data+chunk1;
 				
 				// move second chunk to wpos
-				memmove(wpos, tmp, chunk2);
+				memcpy(wpos, tmp, chunk2);
 				
 				// cleanup
 				delete [] tmp;
