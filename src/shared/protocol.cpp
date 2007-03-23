@@ -110,8 +110,8 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	assert(next == 0);
 	
 	#ifndef NDEBUG
-	if (data == 0 || size == 0)
-		assert(size == 0 and data == 0);
+	if (data == 0)
+		assert(size == 0);
 	#endif
 	
 	size_t

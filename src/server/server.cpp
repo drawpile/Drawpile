@@ -288,12 +288,10 @@ void Server::uWrite(User*& usr) throw()
 		size_t len=0;
 		
 		// serialize message/s
-		assert(usr->output.canRead() == 0);
-		
-		size_t size = usr->output.canWrite();
+		size_t size = 0;
 		char* buf = msg->serialize(len, usr->output.wpos, size);
 		
-		if (buf != usr->output.data)
+		if (buf != usr->output.wpos)
 			usr->output.setBuffer(buf, size);
 		
 		usr->output.write(len);
