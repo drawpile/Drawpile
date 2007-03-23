@@ -236,7 +236,7 @@ public:
 	int modify(fd_t fd, uint32_t ev) throw();
 	
 	//! Fetches next triggered event.
-	std::pair<fd_t, uint32_t> getEvent() throw();
+	bool getEvent(fd_t &fd, uint32_t &events) throw();
 	
 	//! Fetches triggered events for FD.
 	uint32_t getEvents(fd_t fd) const throw();

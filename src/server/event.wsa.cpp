@@ -255,7 +255,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-std::pair<fd_t, uint32_t> Event::getEvent() throw()
+bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event(wsa).getEvent()" << std::endl;
@@ -263,7 +263,6 @@ std::pair<fd_t, uint32_t> Event::getEvent() throw()
 	
 	uint32_t get_event = nfds - WSA_WAIT_EVENT_0;
 	
-	uint32_t evs;
 	std::map<uint32_t, fd_t>::iterator ev_to_fd_iter;
 	for (; get_event != max_events; ++get_event, ++nfds)
 	{
@@ -273,16 +272,19 @@ std::pair<fd_t, uint32_t> Event::getEvent() throw()
 			if (ev_to_fd_iter == ev_to_fd.end())
 				break;
 			
-			if ((evs = getEvents(ev_to_fd_iter->second)) != 0)
+			if ((events = getEvents(ev_to_fd_iter->second)) != 0)
 			{
 				++nfds;
-				hack::events::prepare_events(evs);
-				return std::make_pair(ev_to_fd_iter->second, evs);
+				hack::events::prepare_events(events);
+				
+				fd = ev_to_fd_iter->second;
+				
+				return true;
 			}
 		}
 	}
 	
-	return std::make_pair(static_cast<fd_t>(0), static_cast<uint32_t>(0));
+	return false;
 }
 
 uint32_t Event::getEvents(fd_t fd) const throw()

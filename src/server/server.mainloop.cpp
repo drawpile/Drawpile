@@ -47,7 +47,8 @@ int Server::run() throw()
 	// event count
 	int ec;
 	
-	std::pair<fd_t, uint32_t> event;
+	fd_t fd;
+	uint32_t events;
 	
 	// set event timeout
 	ev.timeout(30000);
@@ -72,50 +73,59 @@ int Server::run() throw()
 		{
 			do
 			{
+				#ifndef EV_WSA // non-WSA
 				--ec;
-				event = ev.getEvent(); // fd+events pair
+				#endif
 				
-				if (event.first == 0)
+				if (!ev.getEvent(fd, events))
 					break;
-				else if (event.second == 0) // shouldn't happen
-					continue;
 				
-				if (event.first == lsock.fd())
+				if (fd == lsock.fd())
 				{
 					uAdd( lsock.accept() );
 					continue;
 				}
 				
-				assert(users.find(event.first) != users.end());
+				assert(users.find(fd) != users.end());
 				
-				usr = users[event.first];
+				usr = users.find(fd)->second;
+				
+				/*
+				#ifdef EV_WSA
+				ev.modify(usr->sock->fd(), usr->events);
+				#endif
+				*/
 				
 				#ifdef EV_HAS_ERROR
-				if (fIsSet(event.second, ev.error))
+				if (fIsSet(events, ev.error))
 				{
 					uRemove(usr, protocol::user_event::BrokenPipe);
 					continue;
 				}
 				#endif // EV_HAS_ERROR
 				#ifdef EV_HAS_HANGUP
-				if (fIsSet(event.second, ev.hangup))
+				if (fIsSet(events, ev.hangup))
 				{
 					uRemove(usr, protocol::user_event::Disconnect);
 					continue;
 				}
 				#endif // EV_HAS_HANGUP
-				if (fIsSet(event.second, ev.read))
+				if (fIsSet(events, ev.read))
 				{
 					uRead(usr);
 					if (usr == 0) continue;
 				}
-				if (fIsSet(event.second, ev.write))
+				if (fIsSet(events, ev.write))
 				{
 					uWrite(usr);
 					if (usr == 0) continue;
 				}
 			}
+			#if !defined(EV_WSA) // non-WSA
 			while (ec != 0);
+			#else // WSA
+			while (1);
+			#endif
 			
 			// do something
 		}

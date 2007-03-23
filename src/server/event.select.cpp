@@ -346,24 +346,22 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-std::pair<fd_t, uint32_t> Event::getEvent() throw()
+bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 {
-	uint32_t events=0;
-	fd_t fd=0;
-	
 	while (fd_iter != fd_list.end())
 	{
 		fd = fd_iter->first;
 		++fd_iter;
 		
 		events = getEvents(fd);
+		
 		if (events == 0)
 			continue;
 		else
-			return std::make_pair(fd, events);
+			return true;
 	}
 	
-	return std::make_pair(0, 0);
+	return false;
 }
 
 uint32_t Event::getEvents(fd_t fd) const throw()
