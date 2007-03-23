@@ -54,7 +54,7 @@ namespace protocol {
  * struct Message
  */
 
-size_t Message::serializeHeader(char* ptr /*, const Message* msg */) const throw()
+size_t Message::serializeHeader(char* ptr) const throw()
 {
 	assert(ptr != 0);
 	
@@ -79,6 +79,7 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 {
 	assert(ptr != 0);
 	
+	// skip message type
 	size_t i = sizeof(type);
 	
 	if (isUser)
@@ -103,10 +104,12 @@ size_t Message::headerSize() const throw()
 }
 
 // Base serialization
-char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad_alloc)
+char* Message::serialize(size_t &length, char* data, size_t &size) const throw(std::bad_alloc)
 {
 	// This _must_ be the last message in bundle.
 	assert(next == 0);
+	
+	assert((data == 0 and size != 0) or (size == 0 and data != 0));
 	
 	size_t
 		headerlen;
@@ -144,14 +147,19 @@ char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad
 		++count;
 	}
 	
-	// Allocate memory and serialize.
-	char *data = new char[length];
+	// Allocate memory if necessary
+	if (size < length)
+	{
+		data = new char[length];
+		size = length;
+	}
+	
 	char *dataptr = data;
 	
 	if (isBundling)
 	{
 		// Write bundled packets
-		dataptr += serializeHeader(dataptr /*, ptr */);
+		dataptr += serializeHeader(dataptr);
 		memcpy_t(dataptr++, count);
 		while (ptr)
 		{
@@ -164,7 +172,7 @@ char* Message::serialize(/* char* buf=0, */ size_t &length) const throw(std::bad
 		// Write whole packets
 		while (ptr)
 		{
-			dataptr += serializeHeader(dataptr /*, ptr */);
+			dataptr += serializeHeader(dataptr);
 			dataptr += ptr->serializePayload(dataptr);
 			ptr = ptr->next;
 		}

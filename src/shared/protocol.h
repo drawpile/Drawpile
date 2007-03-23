@@ -59,14 +59,14 @@ const uint16_t revision = 8;
 
 //! Base for all message types.
 /**
- * Minimum requirements for derived structs is the definitions of _type.
+ * Minimum requirements for derived structs is the definition of _type.
  *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Message_structure
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Message_modifiers
- * @see protocol::type for full list of message types.
+ * \see \ref protocol
+ * \see \ref msg_modifiers
+ * \see protocol::type for full list of message types.
  *
- * @param _type message type.
- * @param _flags indicates message modifiers (see protocol::message namespace)
+ * \param _type message type.
+ * \param _flags indicates message modifiers (see protocol::message namespace)
  */
 struct Message
 {
@@ -83,7 +83,7 @@ protected:
 	
 	// Write header (for serialize())
 	inline
-	size_t serializeHeader(char* ptr /*, const Message* msg */) const throw();
+	size_t serializeHeader(char* ptr) const throw();
 	
 	// Read header
 	inline
@@ -134,13 +134,17 @@ public:
 	/**
 	 * You \b must call this for the \b last message in the list.
 	 * 
+	 * @param buffer is optional pre-allocated buffer
 	 * @param len refers to size_t to which the length of returned buffer is stored.
+	 * @param size refers to the complete size of the returned buffer, not only how
+	 * much of it was filled with actual data. This should be set to the size of
+	 * the pre-allocated buffer if provided.
 	 *
 	 * @return Buffer ready to be sent to network.
 	 *
 	 * @throw std::bad_alloc
 	 */
-	char* serialize(size_t &len) const throw(std::bad_alloc);
+	char* serialize(size_t &len, char* buffer, size_t &size) const throw(std::bad_alloc);
 	
 	//! Get the number of bytes required to serialize the message payload.
 	/**
