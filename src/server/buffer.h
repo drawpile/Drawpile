@@ -89,7 +89,7 @@ struct Buffer
 	/**
 	 * This is expensive since it calls reposition(), which may cause another alloc.
 	 */
-	void resize(size_t nsize, char* nbuf=0)
+	void resize(size_t nsize, char* nbuf=0) throw(std::bad_alloc)
 	{
 		assert(nsize > 0);
 		assert(nsize >= left);
@@ -145,52 +145,70 @@ struct Buffer
 	}
 	
 	//! Repositions data for maximum contiguous read length.
-	void reposition()
+	void reposition() throw(std::bad_alloc)
 	{
-		if (rpos == data)
-			return;
-		
-		if (left == 0)
+		if (rpos == data) // already optimally positioned
+		{
+			// do nothing
+		}
+		else if (left == 0)
 		{
 			rewind();
-			return;
 		}
-		
-		#ifndef NDEBUG
-		size_t oleft = left;
-		#endif
-		
-		if (canRead() < left)
+		else if (chunk1 < left)
 		{ // we can't read all in one go
-			// create temporary
-			size_t oversize = left-canRead();
-			size_t tmp_len = canRead();
-			char* tmp = new char[tmp_len];
-			// move data at the end to the temporary
-			memmove(tmp, rpos, tmp_len);
-			// move write pointer to target address
-			wpos = data + tmp_len;
-			// move data at the beginning to after
-			memmove(wpos, data, oversize);
-			// move write pointer to end of actual data.
-			wpos = wpos + oversize;
-			// move data in temporary to the beginning
+			size_t chunk1 = canRead(), chunk2 = left - canRead();
+			
+			if (left <= free())
+			{ // there's more free space than used
+				// move second chunk to free space between the chunks
+				wpos = data+chunk1;
+				memmove(wpos, data, chunk2);
+				
+				// move first chunk to the beginning of the buffer
+				memmove(data, rpos, chunk1);
+				
+				// adjust wpos to the end of second chunk
+				wpos += chunk2;
+			}
+			else
+			{
+				// create temporary
+				char* tmp = new char[chunk2];
+				
+				// move second chunk to temporary
+				memmove(tmp, data, chunk2);
+				// move first chunk to the front of buffer
+				memmove(data, rpos, chunk1);
+				
+				// move wpos to the end of first chunk
+				wpos = data+chunk1;
+				
+				// move second chunk to wpos
+				memmove(wpos, tmp, chunk2);
+				
+				// cleanup
+				delete [] tmp;
+				
+				// move wpos to the end of allocated space
+				wpos += chunk2;
+			}
+			
+			// set rpos to the beginning of the buffer
 			rpos = data;
-			memmove(rpos, tmp, tmp_len);
-			// delete temporary
-			delete [] tmp;
 		}
 		else
 		{ // we can read all the data in one go.
+			size_t chunk1 = canRead();
 			// just move the data to the beginning.
-			size_t off = canRead();
-			memmove(data, rpos, off);
+			memmove(data, rpos, chunk1);
+			
+			// set rpos to the beginning of the buffer
+			rpos = data;
+			
 			// adjust rpos and wpos
-			rewind();
-			write(off);
+			wpos = data+chunk1;
 		}
-		
-		assert(oleft == left);
 	}
 	
 	//! Did read of 'n' bytes.
@@ -313,7 +331,7 @@ struct Buffer
 	}
 	
 	//! Returns the number of free bytes in buffer.
-	size_t free()
+	size_t free() const throw()
 	{
 		return size - left;
 	}
