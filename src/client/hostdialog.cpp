@@ -78,6 +78,10 @@ void HostDialog::rememberSettings() const
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
 	QStringList hosts;
+	// Move current address to the top of the list
+	QString current = ui_->remotehost->currentText();
+	ui_->remotehost->removeItem(ui_->remotehost->findText(current));
+	hosts << current;
 	for(int i=0;i<ui_->remotehost->count();++i)
 			hosts << ui_->remotehost->itemText(i);
 	cfg.setValue("recentremotehosts", hosts);

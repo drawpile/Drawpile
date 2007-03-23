@@ -53,6 +53,10 @@ void JoinDialog::rememberSettings() const
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
 	QStringList hosts;
+	// Move current item to the top of the list
+	QString current = ui_->address->currentText();
+	ui_->address->removeItem(ui_->address->findText(current));
+	hosts << current;
 	for(int i=0;i<ui_->address->count();++i)
 		hosts << ui_->address->itemText(i);
 	cfg.setValue("recenthosts", hosts);
