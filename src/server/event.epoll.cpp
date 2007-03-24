@@ -324,15 +324,13 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
+bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 {
 	if (nfds == 0)
 		return false;
 	
-	int ev_index = --nfds;
-	
-	fd = events[ev_index].data.fd;
-	events = events[ev_index].events;
+	fd = events[--nfds].data.fd;
+	r_events = events[nfds].events;
 	
 	return true;
 }
