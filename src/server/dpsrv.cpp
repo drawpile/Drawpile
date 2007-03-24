@@ -56,26 +56,28 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:Tn:")) != -1)
+	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:Tn:L:J:V")) != -1)
 	{
 		switch (opt)
 		{
 			case 'h': // help
 				std::cout << "Options:" << std::endl
 					<< std::endl
-					<< "   -a [address]  listen on this address" << std::endl
-					<< "   -p [port]     listen on 'port' (1024 - 65535)" << std::endl
-					<< "   -h            this output (a.k.a. Help)" << std::endl
-					<< "   -l            localhost admin" << std::endl
-					<< "   -b            daemon mode" << std::endl
-					<< "   -u [number]   set server user limit" << std::endl
-					<< "   -S [string]   admin password string" << std::endl
-					<< "   -s [string]   password string" << std::endl
+					<< "   -a [address]  Listen on address" << std::endl
+					<< "   -p [port]     Listen on port (1024 - 65535)" << std::endl
+					<< "   -h            This output (a.k.a. Help)" << std::endl
+					<< "   -l            Localhost admin" << std::endl
+					<< "   -b            Daemon mode" << std::endl
+					<< "   -u [number]   Set user limit" << std::endl
+					<< "   -S [string]   Admin password" << std::endl
+					<< "   -s [string]   Server password" << std::endl
 					<< "   -w            UTF-16 strings" << std::endl
-					<< "   -e            unique name enforcing" << std::endl
-					<< "   -d [size]     minimum dimension for canvas" << std::endl
-					<< "   -n [size]     name length limit" << std::endl
-					<< "   -T            enable transient mode" << std::endl
+					<< "   -e            Enable unique name enforcing" << std::endl
+					<< "   -d [size]     Minimum dimension for canvas" << std::endl
+					<< "   -n [size]     Name length limit" << std::endl
+					<< "   -T            Enable transient mode " << std::endl
+					<< "   -L [num]      Set session limit" << std::endl
+					<< "   -J [num]      Set subscription limit" << std::endl
 					;
 				exit(1);
 				break;
@@ -88,8 +90,8 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					int tmp = atoi(optarg);
 					
 					uint8_t len;
-					if (tmp > 255)
-						len = 255;
+					if (tmp > std::numeric_limits<uint8_t>::max())
+						len = std::numeric_limits<uint8_t>::max();
 					else
 						len = tmp;
 					
@@ -129,6 +131,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						std::cerr << "Too low user limit." << std::endl;
 						exit(1);
 					}
+					
 					srv->setUserLimit(user_limit);
 					std::cout << "User limit set to: " << user_limit << std::endl;
 				}
@@ -136,35 +139,31 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'S': // admin password
 				{
 					size_t pw_len = strlen(optarg);
-					if (pw_len > 0)
-					{
-						char* password = new char[pw_len];
-						memcpy(password, optarg, pw_len);
-						srv->setAdminPassword(password, pw_len);
-						std::cout << "Admin password set." << std::endl;
-					}
-					else
+					if (pw_len == 0)
 					{
 						std::cerr << "Zero length admin password?" << std::endl;
 						exit(1);
 					}
+					
+					char* password = new char[pw_len];
+					memcpy(password, optarg, pw_len);
+					srv->setAdminPassword(password, pw_len);
+					std::cout << "Admin password set." << std::endl;
 				}
 				break;
 			case 's': // password
 				{
 					size_t pw_len = strlen(optarg);
-					if (pw_len > 0)
-					{
-						char* password = new char[pw_len];
-						memcpy(password, optarg, pw_len);
-						srv->setPassword(password, pw_len);
-						std::cout << "Server password set." << std::endl;
-					}
-					else
+					if (pw_len == 0)
 					{
 						std::cerr << "Zero length server password?" << std::endl;
 						exit(1);
 					}
+					
+					char* password = new char[pw_len];
+					memcpy(password, optarg, pw_len);
+					srv->setPassword(password, pw_len);
+					std::cout << "Server password set." << std::endl;
 				}
 				
 				break;
@@ -180,6 +179,15 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'd': // adjust minimum dimension.
 				{
 					size_t mindim = atoi(optarg);
+					if (mindim < 400) // just a reasonably nice lower bound
+					{
+						std::cerr << "Min. dimension must be at least 400" << std::endl;
+						exit(1);
+					}
+					
+					if (mindim > std::numeric_limits<uint16_t>::max())
+						mindim = std::numeric_limits<uint16_t>::max();
+					
 					srv->setMinDimension(mindim);
 					std::cout << "Minimum board dimension set to: " << mindim << std::endl;
 				}
@@ -191,6 +199,38 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'w': // utf-16 string (wide chars)
 				srv->setRequirement(protocol::requirements::WideStrings);
 				std::cout << "UTF-16 string mode enabled." << std::endl;
+				break;
+			case 'L': // session limit
+				{
+					int limit = atoi(optarg);
+					if (limit < 1)
+					{
+						std::cerr << "Limit must be greater than 0" << std::endl;
+						exit(1);
+					}
+					
+					if (limit > std::numeric_limits<uint8_t>::max())
+						limit = std::numeric_limits<uint8_t>::max();
+					
+					srv->setSessionLimit(limit);
+					std::cout << "Session limit set to: " << limit << std::endl;
+				}
+				break;
+			case 'J': // subscription limit
+				{
+					int limit = atoi(optarg);
+					if (limit < 1)
+					{
+						std::cerr << "Limit must be greater than 0" << std::endl;
+						exit(1);
+					}
+					
+					if (limit > std::numeric_limits<uint8_t>::max())
+						limit = std::numeric_limits<uint8_t>::max();
+					
+					srv->setSubscriptionLimit(limit);
+					std::cout << "Subscription limit set to: " << limit << std::endl;
+				}
 				break;
 			case 'V': // version
 				exit(0);

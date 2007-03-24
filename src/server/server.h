@@ -61,6 +61,17 @@ typedef std::multimap<fd_t, fd_t>::iterator tunnel_iterator;
 #include <set>
 //#include <list>
 
+namespace srv_defaults
+{
+
+const time_t time_limit(180);
+const uint8_t name_len_limit(8);
+const uint16_t min_dimension(400);
+const uint8_t max_subscriptions(1);
+const uint8_t session_limit(1);
+
+}
+
 //! Server
 class Server
 {
@@ -73,11 +84,11 @@ protected:
 	// Event interface
 	Event ev;
 	
-	// Used and free user IDs
-	std::queue<uint8_t> user_ids;
-	
-	// Used and free session IDs
-	std::queue<uint8_t> session_ids;
+	std::queue<uint8_t>
+		// Free user IDs
+		user_ids,
+		// Free session IDs
+		session_ids;
 	
 	// FD to user mapping
 	std::map<fd_t, User*> users;
@@ -89,6 +100,7 @@ protected:
 	// source_fd -> target_fd
 	std::multimap<fd_t, fd_t> tunnel;
 	
+	// for killing users idling in login
 	std::set<User*> utimer;
 	
 	// listening socket
@@ -300,11 +312,13 @@ public:
 	}
 	
 	//! Set default user mode
-	bool setUserMode(uint8_t x)
-	{
-		default_user_mode = x;
-		return true;
-	}
+	void setUserMode(uint8_t x) { default_user_mode = x; }
+	
+	//! Set session limit on server
+	void setSessionLimit(uint8_t x) { session_limit = x; }
+	
+	//! Set per user subscription limit
+	void setSubscriptionLimit(uint8_t x) { max_subscriptions = x; }
 	
 	//! Enter main loop
 	int run() throw();

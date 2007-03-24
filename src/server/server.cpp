@@ -55,15 +55,15 @@ Server::Server() throw()
 	pw_len(0),
 	a_pw_len(0),
 	user_limit(0),
-	session_limit(1),
-	max_subscriptions(1),
-	name_len_limit(8),
-	time_limit(180),
+	session_limit(srv_defaults::session_limit),
+	max_subscriptions(srv_defaults::max_subscriptions),
+	name_len_limit(srv_defaults::name_len_limit),
+	time_limit(srv_defaults::time_limit),
 	current_time(0),
 	next_timer(0),
 	hi_port(protocol::default_port),
 	lo_port(protocol::default_port),
-	min_dimension(400),
+	min_dimension(srv_defaults::min_dimension),
 	requirements(0),
 	extensions(
 		protocol::extensions::Chat|protocol::extensions::Palette
@@ -2480,6 +2480,13 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	fSet(usr->events, ev.read);
 	ev.add(usr->sock->fd(), usr->events);
+	
+	if (utimer.size() > 20)
+		time_limit = 30;
+	else if (utimer.size() > 10)
+		time_limit = 60; // 1 minute
+	else
+		time_limit = 180; // 3 minutes
 	
 	usr->deadtime = time(0) + time_limit;
 	
