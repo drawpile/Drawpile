@@ -99,11 +99,10 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				}
 			case 'p': // port to listen on
 				{
-					uint16_t lo_port = atoi(optarg), hi_port=0;
-					{
-						char* off = strchr(optarg, '-');
-						hi_port = (off != 0 ? atoi(off+1) : lo_port);
-					}
+					uint16_t lo_port = atoi(optarg), hi_port;
+					
+					char* off = strchr(optarg, '-');
+					hi_port = (off != 0 ? atoi(off+1) : lo_port);
 					
 					if (lo_port <= 1023 or hi_port <= 1023)
 					{
@@ -125,6 +124,11 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'u': // user limit
 				{
 					size_t user_limit = atoi(optarg);
+					if (user_limit < 2)
+					{
+						std::cerr << "Too low user limit." << std::endl;
+						exit(1);
+					}
 					srv->setUserLimit(user_limit);
 					std::cout << "User limit set to: " << user_limit << std::endl;
 				}
@@ -132,34 +136,43 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 			case 'S': // admin password
 				{
 					size_t pw_len = strlen(optarg);
-					char* password = 0;
 					if (pw_len > 0)
 					{
-						password = new char[pw_len];
+						char* password = new char[pw_len];
 						memcpy(password, optarg, pw_len);
+						srv->setAdminPassword(password, pw_len);
+						std::cout << "Admin password set." << std::endl;
 					}
-					srv->setAdminPassword(password, pw_len);
+					else
+					{
+						std::cerr << "Zero length admin password?" << std::endl;
+						exit(1);
+					}
 				}
-				std::cout << "Admin password set." << std::endl;
 				break;
 			case 's': // password
 				{
 					size_t pw_len = strlen(optarg);
-					char* password = 0;
 					if (pw_len > 0)
 					{
-						password = new char[pw_len];
+						char* password = new char[pw_len];
 						memcpy(password, optarg, pw_len);
+						srv->setPassword(password, pw_len);
+						std::cout << "Server password set." << std::endl;
 					}
-					srv->setPassword(password, pw_len);
+					else
+					{
+						std::cerr << "Zero length server password?" << std::endl;
+						exit(1);
+					}
 				}
-				std::cout << "Server password set." << std::endl;
+				
 				break;
-			case 'T':
+			case 'T': // transient/temporary
 				srv->setTransient(true);
 				std::cout << "Server will exit after all users have left." << std::endl;
 				break;
-			case 'b':
+			case 'b': // background
 				srv->setDaemonMode(true);
 				std::cerr << "Daemon mode not implemented." << std::endl;
 				exit(1);
@@ -175,7 +188,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				srv->setRequirement(protocol::requirements::EnforceUnique);
 				std::cout << "Unique name enforcing enabled." << std::endl;
 				break;
-			case 'w': // utf-16 string
+			case 'w': // utf-16 string (wide chars)
 				srv->setRequirement(protocol::requirements::WideStrings);
 				std::cout << "UTF-16 string mode enabled." << std::endl;
 				break;
