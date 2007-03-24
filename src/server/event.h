@@ -53,7 +53,7 @@
 	#endif
 #endif
 
-#if defined(EV_SELECT) || defined(EV_PSELECT)
+#if defined(EV_SELECT) or defined(EV_PSELECT)
 	#include <set>
 	#define EVENT_BY_FD
 #elif defined(EV_EPOLL)
@@ -81,6 +81,7 @@ typedef int fd_t;
 	#define EV_HAS_ERROR
 #endif
 
+// The meaning of this changes a bit with the event systems.
 const uint32_t max_events =
 #if defined(EV_EPOLL)
 	10;
@@ -99,7 +100,7 @@ protected:
 	epoll_event events[max_events]; // stack allocation
 	#endif // EV_EPOLL
 	
-	#if defined(EV_PSELECT) || defined(EV_SELECT)
+	#if defined(EV_PSELECT) or defined(EV_SELECT)
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
 	std::map<fd_t, uint32_t> fd_list;

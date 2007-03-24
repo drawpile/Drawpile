@@ -745,7 +745,7 @@ int Socket::recv(char* buffer, size_t len) throw()
 	return r;
 }
 
-#if defined(WITH_SENDFILE) || defined(HAVE_XPWSA)
+#if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
 int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw()
 {
 	#ifdef DEBUG_SOCKETS

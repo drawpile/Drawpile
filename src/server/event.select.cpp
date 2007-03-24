@@ -269,7 +269,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	// act like a wrapper.
-	if (fIsSet(ev, read) || fIsSet(ev, write) || fIsSet(ev, error))
+	if (fIsSet(ev, read) or fIsSet(ev, write) or fIsSet(ev, error))
 		add(fd, ev);
 	
 	if (!fIsSet(ev, read))

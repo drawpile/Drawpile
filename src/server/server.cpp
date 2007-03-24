@@ -2647,7 +2647,7 @@ int Server::init() throw(std::bad_alloc)
 		if (lsock.bindTo("0.0.0.0", bport) == SOCKET_ERROR)
 		#endif
 		{
-			if (lsock.getError() == EBADF || lsock.getError() == EINVAL)
+			if (lsock.getError() == EBADF or lsock.getError() == EINVAL)
 				return -1;
 			
 			// continue
