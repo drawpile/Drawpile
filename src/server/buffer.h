@@ -101,7 +101,7 @@ struct Buffer
 		reposition();
 		
 		size_t off = canRead();
-		memmove(nbuf, data, off);
+		memcpy(nbuf, data, off);
 		
 		#ifndef CBUFFER_UNMANAGED
 		// causes memory leak otherwise
