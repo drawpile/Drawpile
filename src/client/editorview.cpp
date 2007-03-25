@@ -32,7 +32,7 @@ namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false),
-	prevpoint_(0,0),outlinesize_(10), enableoutline_(true), showoutline_(true), crosshair_(false)
+	prevpoint_(0,0),outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 	viewport()->setAcceptDrops(true);
 }
@@ -69,7 +69,7 @@ void EditorView::setOutlineColors(const QColor& fg, const QColor& bg)
 		QList<QRectF> rect;
 		rect.append(QRectF(prevpoint_.x() - outlinesize_,
 					prevpoint_.y() - outlinesize_,
-					outlinesize_*2, outlinesize_*2));
+					dia_, dia_));
 		updateScene(rect);
 	}
 }
@@ -81,6 +81,7 @@ void EditorView::setOutlineRadius(int radius)
 {
 	int updatesize = outlinesize_;
 	outlinesize_ = radius;
+	dia_ = radius*2;
 	if(enableoutline_ && showoutline_) {
 		if(outlinesize_>updatesize)
 			updatesize = outlinesize_;
@@ -105,7 +106,7 @@ void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	if(enableoutline_ && showoutline_ && outlinesize_>0) {
 		QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
-					QSizeF(outlinesize_*2,outlinesize_*2));
+					QSizeF(dia_, dia_));
 		if(rect.intersects(outline)) {
 			painter->setClipRect(0,0, board_->width(), board_->height());
 			painter->setRenderHint(QPainter::Antialiasing, true);
@@ -134,7 +135,7 @@ void EditorView::leaveEvent(QEvent *event)
 		QList<QRectF> rect;
 		rect.append(QRectF(prevpoint_.x() - outlinesize_,
 					prevpoint_.y() - outlinesize_,
-					outlinesize_*2, outlinesize_*2));
+					dia_, dia_));
 		updateScene(rect);
 	}
 }
@@ -151,7 +152,7 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 			QList<QRectF> rect;
 			rect.append(QRectF(prevpoint_.x() - outlinesize_,
 						prevpoint_.y() - outlinesize_,
-						outlinesize_*2, outlinesize_*2));
+						dia_, dia_));
 			updateScene(rect);
 		}
 	} else {
@@ -182,11 +183,10 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 				emit penMove(drawingboard::Point(point, 1.0));
 			else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
-				const int dia = outlinesize_*2;
 				rect.append(QRectF(prevpoint_.x() - outlinesize_,
-							prevpoint_.y() - outlinesize_, dia,dia));
+							prevpoint_.y() - outlinesize_, dia_, dia_));
 				rect.append(QRectF(point.x() - outlinesize_,
-							point.y() - outlinesize_, dia,dia));
+							point.y() - outlinesize_, dia_, dia_));
 				updateScene(rect);
 			}
 			prevpoint_ = point;
@@ -232,18 +232,16 @@ bool EditorView::viewportEvent(QEvent *event)
 					// Update previous location. This is needed if brush
 					// diameter has changed.
 					QList<QRectF> rect;
-					const int dia = outlinesize_*2;
 					rect.append(QRectF(prevpoint_.x() - outlinesize_,
-								prevpoint_.y() - outlinesize_, dia,dia));
+								prevpoint_.y() - outlinesize_, dia_, dia_));
 					updateScene(rect);
 				}
 			} else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
-				const int dia = outlinesize_*2;
 				rect.append(QRectF(prevpoint_.x() - outlinesize_,
-							prevpoint_.y() - outlinesize_, dia,dia));
+							prevpoint_.y() - outlinesize_, dia_, dia_));
 				rect.append(QRectF(point.x() - outlinesize_,
-							point.y() - outlinesize_, dia,dia));
+							point.y() - outlinesize_, dia_, dia_));
 				updateScene(rect);
 			}
 		}

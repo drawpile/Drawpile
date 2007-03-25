@@ -92,7 +92,7 @@ class EditorView : public QGraphicsView
 		int dragx_,dragy_;
 
 		QPoint prevpoint_;
-		int outlinesize_;
+		int outlinesize_, dia_;
 		bool enableoutline_,showoutline_;
 		bool crosshair_;
 		QColor foreground_, background_;
