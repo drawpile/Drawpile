@@ -81,15 +81,20 @@ if (NOT DEBUG)
 	strip_exe ( ${CLIENTNAME} )
 endif ( NOT DEBUG )
 
+set ( EXETYPE "" )
+
 if ( WIN32 )
 	link_libraries ( ws2_32 )
+	if ( NDEBUG )
+		set ( EXETYPE WIN32 )
+	endif ( NDEBUG )
 endif ( WIN32 )
 
 link_libraries( ${LIBNAME} )
 
 add_executable (
 	${CLIENTNAME}
-	WIN32
+	${EXETYPE}
 	MACOSX_BUNDLE
 	${Client_Sources}
 	${Client_Headers}
