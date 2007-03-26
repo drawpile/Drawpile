@@ -18,6 +18,8 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QtGlobal>
+
 #include <cmath>
 #include "point.h"
 #include "brush.h"
@@ -192,7 +194,6 @@ void Brush::updateCache() const
 	if(hard<0.01) hard=0.01;
 
 	const int dia = rad*2;
-	cache_.reserve(dia*dia);
 	cache_.resize(dia*dia);
 
 	// 1/radius^2
@@ -212,12 +213,8 @@ void Brush::updateCache() const
 		qreal yy = (y-rad+0.5) * (y-rad+0.5);
 		for(int x=0;x<rad;++x) {
 			qreal xx = (x-rad+0.5) * (x-rad+0.5);
-			qreal intensity = (1-pow( (xx+yy)*(rr) ,hard)) * o;
-
-			if(intensity<0) intensity=0;
-			else if(intensity>1) intensity=1;
-			const unsigned short a = int(intensity*256);
-
+			const unsigned short a = qBound(0, int((1-pow( (xx+yy)*(rr) ,hard)) * o * 256), 256);
+			
 			*(q1++) = a;
 			*(q2--) = a;
 			*(q3++) = a;
@@ -265,7 +262,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 #else
 			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
 			*dest = a*(green - *dest) / 256 + *dest; ++dest;
-			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+			*dest = a*(red - *dest) / 256 + *dest;
 #endif
 		}
 		return;
@@ -289,6 +286,12 @@ void Brush::draw(QImage &image, const Point& pos) const
 	for(int y=offy;y<h;++y) {
 		for(int x=offx;x<w;++x) {
 			const int a = *(src++);
+			#ifdef TESTING
+			if (a == 0) {
+				dest += 4;
+				continue;
+			}
+			#endif // TESTING
 #ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest = a*(red - *dest) / 256 + *dest; ++dest;
