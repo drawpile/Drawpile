@@ -318,16 +318,6 @@ void Brush::draw(QImage &image, const Point& pos) const
  */
 Brush& Brush::operator=(const Brush& brush)
 {
-	radius1_ = brush.radius1_ ;
-	radius2_ = brush.radius2_ ;
-	hardness1_ = brush.hardness1_;
-	hardness2_ = brush.hardness2_;
-	opacity1_ = brush.opacity1_;
-	opacity2_ = brush.opacity2_;
-	color1_ = brush.color1_;
-	color2_ = brush.color2_;
-	sensitive_ = brush.sensitive_;
-
 	if(radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
 		fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
 		fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
@@ -337,6 +327,17 @@ Brush& Brush::operator=(const Brush& brush)
 		cachepressure_ = brush.cachepressure_;
 		cache_ = brush.cache_;
 	}
+	
+	radius1_ = brush.radius1_ ;
+	radius2_ = brush.radius2_ ;
+	hardness1_ = brush.hardness1_;
+	hardness2_ = brush.hardness2_;
+	opacity1_ = brush.opacity1_;
+	opacity2_ = brush.opacity2_;
+	color1_ = brush.color1_;
+	color2_ = brush.color2_;
+	sensitive_ = brush.sensitive_;
+	
 	return *this;
 }
 
