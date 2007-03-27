@@ -50,28 +50,28 @@ public:
 
 private:
 	inline
-	uint32_t SHABLK0(uint32_t i) throw();
+	uint32_t SHABLK0(const uint32_t i) throw();
 	
 	inline
-	uint32_t SHABLK1(uint32_t i) throw();
+	uint32_t SHABLK1(const uint32_t i) throw();
 	
 	inline
-	uint32_t ROL32(uint32_t v, uint32_t n) const throw();
+	uint32_t ROL32(const uint32_t v, const uint32_t n) const throw();
 	
 	inline
-	void _R0(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	void _R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R1(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	void _R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R2(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	void _R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R3(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	void _R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R4(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw();
+	void _R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	void Transform(uint32_t *state, const uint8_t *buffer) throw();
 	

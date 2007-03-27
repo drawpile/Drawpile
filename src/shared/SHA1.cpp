@@ -53,14 +53,14 @@ void SHA1::Reset() throw()
 
 // Rotate x bits to the left
 inline
-uint32_t SHA1::ROL32(uint32_t v, uint32_t n) const throw()
+uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
 {
 	return (v << n) | (v >> (32 - n));
 }
 
 
 inline
-uint32_t SHA1::SHABLK0(uint32_t i) throw()
+uint32_t SHA1::SHABLK0(const uint32_t i) throw()
 {
 	#ifdef IS_BIG_ENDIAN
 	return m_block.l[i];
@@ -72,7 +72,7 @@ uint32_t SHA1::SHABLK0(uint32_t i) throw()
 }
 
 inline
-uint32_t SHA1::SHABLK1(uint32_t i) throw()
+uint32_t SHA1::SHABLK1(const uint32_t i) throw()
 {
 	return (m_block.l[i&15]
 		= ROL32(
@@ -86,35 +86,35 @@ uint32_t SHA1::SHABLK1(uint32_t i) throw()
 }
 
 inline
-void SHA1::_R0(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw()
+void SHA1::_R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += ((w & (x ^ y)) ^ y) + SHABLK0(i) + 0x5A827999 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
 inline
-void SHA1::_R1(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw()
+void SHA1::_R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += ((w & (x ^ y)) ^ y) + SHABLK1(i) + 0x5A827999 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
 inline
-void SHA1::_R2(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw()
+void SHA1::_R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += (w ^ x ^ y) + SHABLK1(i) + 0x6ED9EBA1 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
 inline
-void SHA1::_R3(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw()
+void SHA1::_R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += (((w | x) & y) | (w & x)) + SHABLK1(i) + 0x8F1BBCDC + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
 inline
-void SHA1::_R4(uint32_t v, uint32_t &w, uint32_t x, uint32_t y, uint32_t &z, uint32_t i) throw()
+void SHA1::_R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += (w ^ x ^ y) + SHABLK1(i) + 0xCA62C1D6 + ROL32(v, 5);
 	w = ROL32(w, 30);
@@ -170,15 +170,15 @@ void SHA1::Update(const uint8_t *data, const uint32_t len) throw()
 	
 	assert(not finalized);
 	
-	uint32_t i, j;
+	const uint32_t j = (m_count[0] >> 3) & 63;
 	
-	j = (m_count[0] >> 3) & 63;
-	
-	if((m_count[0] += len << 3) < (len << 3)) ++m_count[1];
+	if ((m_count[0] += len << 3) < (len << 3))
+		++m_count[1];
 	
 	m_count[1] += (len >> 29);
 	
-	if ((j + len) > 63)
+	uint32_t i;
+	if (j + len > 63)
 	{
 		i = 64 - j;
 		memcpy(&m_buffer[j], data, i);
@@ -187,15 +187,12 @@ void SHA1::Update(const uint8_t *data, const uint32_t len) throw()
 		for (; i + 63 < len; i += 64)
 			Transform(m_state, &data[i]);
 		
-		j = 0;
+		memcpy(&m_buffer[0], &data[i], len - i);
 	}
-	else i = 0;
-	
-	memcpy(&m_buffer[j], &data[i], len - i);
-	
-	#ifndef NDEBUG
-	finalized = false;
-	#endif
+	else
+	{
+		memcpy(&m_buffer[j], &data[0], len);
+	}
 }
 
 void SHA1::Final() throw()
@@ -209,16 +206,16 @@ void SHA1::Final() throw()
 		finalcount[i] = (uint8_t)((m_count[((i >= 4) ? 0 : 1)]
 			>> ((3 - (i & 3)) * 8) ) & 255); // Endian independent
 	
-	Update((uint8_t *)"\200", 1);
+	Update((uint8_t *)200, 1);
 	
 	while ((m_count[0] & 504) != 448)
-		Update((uint8_t *)"\0", 1);
+		Update((uint8_t *)0, 1);
 	
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
-	for(i = 0; i < 20; ++i)
+	for (i = 0; i != 20; ++i)
 	{
-		m_digest[i] = (uint8_t)((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+		m_digest[i] = static_cast<uint8_t>((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
 	}
 	
 	// Wipe variables for security reasons
@@ -243,7 +240,7 @@ void SHA1::HexDigest(char *szReport) const throw()
 	assert(szReport != 0);
 	
 	// Hex magic by George Anescu.
-	static unsigned char saucHex[16] =
+	static const unsigned char saucHex[16] =
 		{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
 	for (int i=0; i != 20; ++i)
