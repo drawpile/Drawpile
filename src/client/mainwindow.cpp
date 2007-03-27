@@ -47,6 +47,7 @@
 #include "recentfiles.h"
 #include "hoststate.h"
 #include "sessionstate.h"
+#include "palettebox.h"
 #include "icons.h"
 #include "version.h"
 
@@ -1227,6 +1228,7 @@ void MainWindow::createDocks()
 {
 	QMenu *toggles = new QMenu(this);
 	createToolSettings(toggles);
+	createPalette(toggles);
 	createUserList(toggles);
 	createChatBox(toggles);
 	docktoggles_->setMenu(toggles);
@@ -1261,6 +1263,19 @@ void MainWindow::createChatBox(QMenu *toggles)
 	toggles->addAction(chatbox_->toggleViewAction());
 	addDockWidget(Qt::BottomDockWidgetArea, chatbox_);
 }
+
+void MainWindow::createPalette(QMenu *toggles)
+{
+	palette_ = new widgets::PaletteBox(tr("Palette"), this);
+	palette_->setObjectName("palettedock");
+	toggles->addAction(palette_->toggleViewAction());
+
+	connect(palette_, SIGNAL(colorSelected(QColor)),
+			fgbgcolor_, SLOT(setForeground(QColor)));
+
+	addDockWidget(Qt::RightDockWidgetArea, palette_);
+}
+
 
 void MainWindow::createDialogs()
 {
