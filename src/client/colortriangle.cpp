@@ -316,7 +316,7 @@ void ColorTriangle::setSv(qreal x, qreal y)
 			if (value_ > 1.0)
 			value_ = 1.0;
 
-			if (fabs (hy - vy) < fabs (hx - vx))
+			if (qAbs(hy - vy) < qAbs(hx - vx))
 				saturation_ = (x - sx - value_ * (vx - sx)) / (value_ * (hx - vx));
 			else
 				saturation_ = (y - sy - value_ * (vy - sy)) / (value_ * (hy - vy));

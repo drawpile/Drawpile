@@ -131,8 +131,8 @@ void Brush::setColor2(const QColor& color)
 void Brush::checkSensitivity()
 {
 	sensitive_ = radius1_ != radius2_ ||
-			fabs(hardness1_ - hardness2_) >= 1.0/256.0 ||
-			fabs(opacity1_ - opacity2_) >= 1.0/256.0;
+			qAbs(hardness1_ - hardness2_) >= 1.0/256.0 ||
+			qAbs(opacity1_ - opacity2_) >= 1.0/256.0;
 }
 
 /**
@@ -207,17 +207,17 @@ void Brush::updateCache() const
 	// Only one quarter of the pixels are unique.
 	// Quarter 1 is top left, quarter 2 is top right,
 	// quarter 3 is bottom left and quarter 4 is bottom right.
-	const unsigned int scanline = dia - 1;
-	const unsigned int scanline15= dia + rad;
-	const unsigned int scanline2 = rad;
-	unsigned short *q1 = cache_.data();
-	unsigned short *q2 = q1 + scanline;
-	unsigned short *q3 = q1 + dia*(dia-1);
-	unsigned short *q4 = q3 + scanline;
+	const uint scanline = dia - 1;
+	const uint scanline15= dia + rad;
+	const uint scanline2 = rad;
+	ushort *q1 = cache_.data();
+	ushort *q2 = q1 + scanline;
+	ushort *q3 = q1 + dia*(dia-1);
+	ushort *q4 = q3 + scanline;
 	for(int y=rad;y!=0;--y) {
 		const qreal yy = (y-.5) * (y-.5);
 		for(int x=rad;x!=0;--x) {
-			const unsigned short a = qBound(0, int((1-pow( (((x-.5)*(x-.5))+(yy))*(rr) ,hard)) * o * 256), 256);
+			const ushort a = qBound(0, int((1-pow( (((x-.5)*(x-.5))+(yy))*(rr) ,hard)) * o * 256), 256);
 			
 			*(q1++) = a;
 			*(q2--) = a;
@@ -249,8 +249,8 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const int blue= col.blue();
 
 	// Make sure we are inside the image
-	const unsigned int offx = cx<0 ? -cx : 0;
-	const unsigned int offy = cy<0 ? -cy : 0;
+	const uint offx = cx<0 ? -cx : 0;
+	const uint offy = cy<0 ? -cy : 0;
 	uchar *dest = image.bits() + ((cy+offy)*image.width()+cx+offx)*4;
 	
 	// for avoiding
@@ -279,13 +279,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 	// Update brush cache if out of date
 	if(cachepressure_<0 ||
 			(sensitive_ && (rad!=radius(cachepressure_) ||
-							fabs(pos.pressure()-cachepressure_) > 1.0/256.0))) {
+							qAbs(pos.pressure()-cachepressure_) > 1.0/256.0))) {
 		cachepressure_ = pos.pressure();
 		updateCache();
 	}
 	
-	const unsigned short *src = cache_.constData() + offy*dia + offx;
-	const unsigned int nextline = (image.width() - dia + offx) * 4;
+	const ushort *src = cache_.constData() + offy*dia + offx;
+	const uint nextline = (image.width() - dia + offx) * 4;
 	
 	const int w = (cx+dia)>image.width()?image.width()-cx:dia;
 	const int h = (cy+dia)>image.height()?image.height()-cy:dia;
@@ -329,10 +329,10 @@ void Brush::draw(QImage &image, const Point& pos) const
 Brush& Brush::operator=(const Brush& brush)
 {
 	if(radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
-		fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
-		fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
-		fabs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
-		fabs(opacity2_ - brush.opacity2_) >= 1.0/256.0 ||
+		qAbs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
+		qAbs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
+		qAbs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
+		qAbs(opacity2_ - brush.opacity2_) >= 1.0/256.0 ||
 		cachepressure_<0 || brush.cachepressure_>=0) {
 		cachepressure_ = brush.cachepressure_;
 		cache_ = brush.cache_;
@@ -354,10 +354,10 @@ Brush& Brush::operator=(const Brush& brush)
 bool Brush::operator==(const Brush& brush) const
 {
 	return radius1_ == brush.radius1_ && radius2_ == brush.radius2_ &&
-			fabs(hardness1_ - brush.hardness1_) <= 1.0/256.0 &&
-			fabs(hardness2_ - brush.hardness2_) <= 1.0/256.0 &&
-			fabs(opacity1_ - brush.opacity1_) <= 1.0/256.0 &&
-			fabs(opacity2_ - brush.opacity2_) <= 1.0/256.0 &&
+			qAbs(hardness1_ - brush.hardness1_) <= 1.0/256.0 &&
+			qAbs(hardness2_ - brush.hardness2_) <= 1.0/256.0 &&
+			qAbs(opacity1_ - brush.opacity1_) <= 1.0/256.0 &&
+			qAbs(opacity2_ - brush.opacity2_) <= 1.0/256.0 &&
 			color1_ == brush.color1_ &&
 			color2_ == brush.color2_;
 }

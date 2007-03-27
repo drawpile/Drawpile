@@ -223,7 +223,7 @@ class SessionState : public QObject {
 		QHash<int, User> users_;
 		QString password_;
 		QByteArray raster_;
-		unsigned int rasteroffset_;
+		uint rasteroffset_;
 		bool lock_;
 
 		bool bufferdrawing_;

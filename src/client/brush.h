@@ -91,7 +91,7 @@ class Brush
 		QColor color1_, color2_;
 		bool sensitive_;
 
-		mutable QVector<unsigned short> cache_;
+		mutable QVector<ushort> cache_;
 		mutable qreal cachepressure_;
 };
 

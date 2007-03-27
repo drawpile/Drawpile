@@ -137,7 +137,7 @@ void SessionState::sendRaster(const QByteArray& raster)
 
 void SessionState::sendRasterChunk()
 {
-	unsigned int chunklen = 1024*4;
+	uint chunklen = 1024*4;
 	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
 		chunklen = raster_.length() - rasteroffset_;
 	if(chunklen==0) {
@@ -477,8 +477,8 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 	emit strokeReceived(
 			msg->user_id,
 			drawingboard::Point(
-				(signed short)(msg->x),
-				(signed short)(msg->y),
+				(qint16)(msg->x),
+				(qint16)(msg->y),
 				msg->pressure/255.0
 				)
 			);

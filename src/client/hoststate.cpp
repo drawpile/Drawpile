@@ -217,7 +217,7 @@ void HostState::host(const QString& title,
 
 	QByteArray tbytes = title.toUtf8();
 	char *data = new char[sizeof(width)+sizeof(height)+tbytes.length()];
-	unsigned int off = 0;
+	uint off = 0;
 	quint16 w = width;
 	quint16 h = height;
 	bswap(w);
