@@ -161,7 +161,32 @@ qreal Brush::hardness(qreal pressure) const
  */
 qreal Brush::opacity(qreal pressure) const
 {
-	return opacity2_ + (opacity1_ - opacity2_) * pressure;
+	return opacity1_ * pressure + opacity2_ * (1.0-pressure);
+	/*
+	 * The original calculation fails with interpolating brush.
+	 *
+	 * e.g.
+	 *
+	 * opacity2_ = 1.0
+	 * opacity1_ = 0.5
+	 * pressure  = 0.5 // the midpoint between the two endpoints
+	 * 
+	 * (temp = opacity1_ - opacity2_) == -0.5
+	 * (temp *= pressure) == 0.25
+	 * (temp += opacity2_) == 1.25
+	 * opacity == 1.25
+	 *
+	 * With the other method (currently in use),
+	 * the calculation gets into something more sane.
+	 *
+	 * (temp1     = opacity1_ * pressure) == 0.25
+	 * (pressure2 = 1.0 - pressure) == 0.5
+	 * (temp2     = opacity2_ * pressure2) == 0.5
+	 * (temp1 += temp2) == 0.75
+	 * opacity == 0.75
+	 *
+	 */
+	//return opacity2_ + (opacity1_ - opacity2_) * pressure;
 }
 
 /**
