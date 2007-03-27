@@ -212,7 +212,7 @@ void Brush::updateCache() const
 	for(int y=0;y<rad;++y) {
 		qreal yy = (y-rad+0.5) * (y-rad+0.5);
 		for(int x=0;x<rad;++x) {
-			qreal xx = (x-rad+0.5) * (x-rad+0.5);
+			const qreal xx = (x-rad+0.5) * (x-rad+0.5);
 			const unsigned short a = qBound(0, int((1-pow( (xx+yy)*(rr) ,hard)) * o * 256), 256);
 			
 			*(q1++) = a;
