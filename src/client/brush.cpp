@@ -202,18 +202,17 @@ void Brush::updateCache() const
 	// Only one quarter of the pixels are unique.
 	// Quarter 1 is top left, quarter 2 is top right,
 	// quarter 3 is bottom left and quarter 4 is bottom right.
-	unsigned int scanline = dia - 1;
-	unsigned int scanline15= dia + rad;
-	unsigned int scanline2 = rad;
+	const unsigned int scanline = dia - 1;
+	const unsigned int scanline15= dia + rad;
+	const unsigned int scanline2 = rad;
 	unsigned short *q1 = cache_.data();
 	unsigned short *q2 = q1 + scanline;
 	unsigned short *q3 = q1 + dia*(dia-1);
 	unsigned short *q4 = q3 + scanline;
-	for(int y=0;y<rad;++y) {
-		qreal yy = (y-rad+0.5) * (y-rad+0.5);
-		for(int x=0;x<rad;++x) {
-			const qreal xx = (x-rad+0.5) * (x-rad+0.5);
-			const unsigned short a = qBound(0, int((1-pow( (xx+yy)*(rr) ,hard)) * o * 256), 256);
+	for(int y=rad;y!=0;--y) {
+		const qreal yy = y * y;
+		for(int x=rad;x!=0;--x) {
+			const unsigned short a = qBound(0, int((1-pow( ((x*x)+(yy))*(rr) ,hard)) * o * 256), 256);
 			
 			*(q1++) = a;
 			*(q2--) = a;
@@ -253,7 +252,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const int a = int(opacity(pos.pressure())*256);
+			const int a = int(opacity(pos.pressure())*256); // 256?
 #ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest += a*(red - *dest) / 2560; ++dest;
@@ -275,13 +274,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 		cachepressure_ = pos.pressure();
 		updateCache();
 	}
-
+	
 	const unsigned short *src = cache_.constData() + offy*dia + offx;
 	const unsigned int nextline = (image.width() - dia + offx) * 4;
-
+	
 	const int w = (cx+dia)>image.width()?image.width()-cx:dia;
 	const int h = (cy+dia)>image.height()?image.height()-cy:dia;
-
+	
 	// Composite brush on image
 	for(int y=offy;y<h;++y) {
 		for(int x=offx;x<w;++x) {
@@ -292,17 +291,20 @@ void Brush::draw(QImage &image, const Point& pos) const
 				continue;
 			}
 			#endif // TESTING
-#ifdef IS_BIG_ENDIAN
+			#define CALCULATE_COLOR(color, target, alpha) \
+				alpha * (color - target) / 2560
+			#ifdef IS_BIG_ENDIAN
 			++dest;
-			*dest += a*(red - *dest) / 2560; ++dest;
-			*dest += a*(green - *dest) / 2560; ++dest;
-			*dest += a*(blue - *dest) / 2560; ++dest;
-#else
-			*dest += a*(blue - *dest) / 2560; ++dest;
-			*dest += a*(green - *dest) / 2560; ++dest;
-			*dest += a*(red - *dest) / 2560; ++dest;
+			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
+			#else
+			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
 			++dest;
-#endif
+			#endif
+			#undef CALCULATE_COLOR
 		}
 		dest += nextline + (dia-w)*4;
 		src += offx + dia-w;
