@@ -154,7 +154,7 @@ int Brush::radius(qreal pressure) const
 qreal Brush::hardness(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	return ADJUST_BY_PRESSURE(opacity1_, opacity2_, pressure);
+	return ADJUST_BY_PRESSURE(hardness1_, hardness2_, pressure);
 }
 
 /**
@@ -255,13 +255,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 	
 	// for avoiding
 	#define CALCULATE_COLOR(color, target, alpha) \
-		alpha * (color - target) / 2560
+		alpha * (color - target) / 256
 	
 	// Special case, single pixel brush
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const int a = int(opacity(pos.pressure())*2560);
+			const int a = int(opacity(pos.pressure())*256);
 			#ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
