@@ -261,7 +261,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const int a = int(opacity(pos.pressure())*256);
+			const int a = int(opacity(pos.pressure())*2560);
 			#ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
