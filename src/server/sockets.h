@@ -172,9 +172,9 @@ public:
 	}
 	
 	#ifdef IPV6_SUPPORT
-	Socket(fd_t& nsock, sockaddr_in6 saddr) throw()
+	Socket(fd_t& nsock, const sockaddr_in6 saddr) throw()
 	#else
-	Socket(fd_t& nsock, sockaddr_in saddr) throw()
+	Socket(fd_t& nsock, const sockaddr_in saddr) throw()
 	#endif
 		: sock(nsock),
 		error(0)
@@ -254,13 +254,13 @@ public:
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise.
 	 */
-	bool block(bool x) throw();
+	bool block(const bool x) throw();
 	
 	//! Re-use socket address
 	/**
 	 * Sets SO_REUSEPORT for the socket.
 	 */
-	bool reuse(bool x) throw();
+	bool reuse(const bool x) throw();
 	
 	//! Set/unset lingering
 	/**
@@ -268,20 +268,20 @@ public:
 	 *
 	 * "Lingers on close if unsent data is present."
 	 */
-	bool linger(bool x, uint16_t delay) throw();
+	bool linger(const bool x, const uint16_t delay) throw();
 	
 	//! Bind socket to port and address
 	/**
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise
 	 */
-	int bindTo(std::string address, uint16_t port) throw();
+	int bindTo(const std::string address, const uint16_t port) throw();
 	
 	//! Connect to remote address
 	#ifdef IPV6_SUPPORT
-	int connect(sockaddr_in6* rhost) throw();
+	int connect(const sockaddr_in6* rhost) throw();
 	#else
-	int connect(sockaddr_in* rhost) throw();
+	int connect(const sockaddr_in* rhost) throw();
 	#endif
 	
 	//! Set listening
@@ -300,7 +300,7 @@ public:
 	 * @return (SOCKET_ERROR - 1) if the operation would block.
 	 * @return SOCKET_ERROR otherwise.
 	 */
-	int send(char* buffer, size_t buflen) throw();
+	int send(char* buffer, const size_t buflen) throw();
 	
 	//! Receive data
 	/**
@@ -312,7 +312,7 @@ public:
 	 * @return (SOCKET_ERROR - 1) if the operation would block.
 	 * @return SOCKET_ERROR otherwise.
 	 */
-	int recv(char* buffer, size_t buflen) throw();
+	int recv(char* buffer, const size_t buflen) throw();
 	
 	#if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
 	//! Sendfile interface
@@ -328,7 +328,7 @@ public:
 	 *
 	 * @return -1 on error, 0 otherwise.
 	 */
-	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes=0) throw();
+	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) throw();
 	#endif // WITH_SENDFILE or HAVE_XPWSA
 	
 	//! Get last error number
@@ -375,13 +375,13 @@ public:
 	bool operator== (const Socket* tsock) const throw() { return (sock == tsock->fd()); }
 	
 	//! operator== overload (fd_t)
-	bool operator== (fd_t _fd) const throw() { return (sock == _fd); }
+	bool operator== (const fd_t& _fd) const throw() { return (sock == _fd); }
 	
 	//! operator= overload (Socket*)
 	Socket* operator= (Socket* tsock) throw() { fd(tsock->fd()); return this; }
 	
 	//! operator= overload (fd_t)
-	fd_t operator= (fd_t _fd) throw() { fd(_fd); return sock; }
+	fd_t operator= (fd_t& _fd) throw() { fd(_fd); return sock; }
 };
 
 #ifdef SOCKET_OSTREAM

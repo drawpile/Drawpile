@@ -30,6 +30,11 @@
 
 *******************************************************************************/
 
+// win32 macro workaround
+#ifndef NOMINMAX
+	#define NOMINMAX
+#endif
+
 #include "../../config.h"
 
 #include "../shared/protocol.h"
@@ -37,6 +42,7 @@
 #include "server.flags.h"
 #include "server.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <getopt.h> // for command-line opts
@@ -87,13 +93,9 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'n': // name length limit
 				{
-					int tmp = atoi(optarg);
+					const int tmp = atoi(optarg);
 					
-					uint8_t len;
-					if (tmp > std::numeric_limits<uint8_t>::max())
-						len = std::numeric_limits<uint8_t>::max();
-					else
-						len = tmp;
+					const uint8_t len = std::min(tmp, static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					
 					srv->setNameLengthLimit(len);
 					std::cout << "Name length limit set to: "
@@ -101,10 +103,10 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				}
 			case 'p': // port to listen on
 				{
-					uint16_t lo_port = atoi(optarg), hi_port;
+					const uint16_t lo_port = atoi(optarg);
 					
 					char* off = strchr(optarg, '-');
-					hi_port = (off != 0 ? atoi(off+1) : lo_port);
+					uint16_t hi_port = (off != 0 ? atoi(off+1) : lo_port);
 					
 					if (lo_port <= 1023 or hi_port <= 1023)
 					{
@@ -125,7 +127,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'u': // user limit
 				{
-					size_t user_limit = atoi(optarg);
+					const size_t user_limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					if (user_limit < 2)
 					{
 						std::cerr << "Too low user limit." << std::endl;
@@ -138,10 +140,15 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'S': // admin password
 				{
-					size_t pw_len = strlen(optarg);
+					const size_t pw_len = strlen(optarg);
 					if (pw_len == 0)
 					{
 						std::cerr << "Zero length admin password?" << std::endl;
+						exit(1);
+					}
+					else if (pw_len > std::numeric_limits<uint8_t>::max())
+					{
+						std::cerr << "Admin password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << std::endl;
 						exit(1);
 					}
 					
@@ -153,10 +160,15 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 's': // password
 				{
-					size_t pw_len = strlen(optarg);
+					const size_t pw_len = strlen(optarg);
 					if (pw_len == 0)
 					{
 						std::cerr << "Zero length server password?" << std::endl;
+						exit(1);
+					}
+					else if (pw_len > std::numeric_limits<uint8_t>::max())
+					{
+						std::cerr << "Server password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << std::endl;
 						exit(1);
 					}
 					
@@ -178,15 +190,12 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'd': // adjust minimum dimension.
 				{
-					size_t mindim = atoi(optarg);
+					const size_t mindim = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint16_t>::max()));
 					if (mindim < 400) // just a reasonably nice lower bound
 					{
 						std::cerr << "Min. dimension must be at least 400" << std::endl;
 						exit(1);
 					}
-					
-					if (mindim > std::numeric_limits<uint16_t>::max())
-						mindim = std::numeric_limits<uint16_t>::max();
 					
 					srv->setMinDimension(mindim);
 					std::cout << "Minimum board dimension set to: " << mindim << std::endl;
@@ -202,15 +211,12 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'L': // session limit
 				{
-					int limit = atoi(optarg);
+					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					if (limit < 1)
 					{
 						std::cerr << "Limit must be greater than 0" << std::endl;
 						exit(1);
 					}
-					
-					if (limit > std::numeric_limits<uint8_t>::max())
-						limit = std::numeric_limits<uint8_t>::max();
 					
 					srv->setSessionLimit(limit);
 					std::cout << "Session limit set to: " << limit << std::endl;
@@ -218,15 +224,12 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				break;
 			case 'J': // subscription limit
 				{
-					int limit = atoi(optarg);
+					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					if (limit < 1)
 					{
 						std::cerr << "Limit must be greater than 0" << std::endl;
 						exit(1);
 					}
-					
-					if (limit > std::numeric_limits<uint8_t>::max())
-						limit = std::numeric_limits<uint8_t>::max();
 					
 					srv->setSubscriptionLimit(limit);
 					std::cout << "Subscription limit set to: " << limit << std::endl;
@@ -267,7 +270,7 @@ int main(int argc, char** argv)
 		getArgs(argc, argv, &srv);
 		
 		#ifdef NEED_NET
-		Net _net; // :)
+		const Net _net; // :)
 		#endif // NEED_NET
 		
 		if (srv.init() != 0)

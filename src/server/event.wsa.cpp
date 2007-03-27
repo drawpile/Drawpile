@@ -214,7 +214,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	
 	hack::events::prepare_events(ev);
 	
-	std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
 	
 	if (fi == fd_to_ev.end())
 		return false;
@@ -240,7 +240,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	
 	hack::events::prepare_events(ev);
 	
-	std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
 	if (fi == fd_to_ev.end())
 		return false;
 	
@@ -295,7 +295,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	
 	assert(fd != 0);
 	
-	std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
+	const std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
 	if (fev == fd_to_ev.end())
 	{
 		assert(fev == fd_to_ev.end());
@@ -304,7 +304,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	
 	WSANETWORKEVENTS set;
 	
-	int r = WSAEnumNetworkEvents(fd, w_ev[fev->second], &set);
+	const int r = WSAEnumNetworkEvents(fd, w_ev[fev->second], &set);
 	
 	if (r == SOCKET_ERROR)
 	{

@@ -179,7 +179,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	ev_info.data.fd = fd;
 	ev_info.events = ev;
 	
-	int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
+	const int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
 	_error = errno;
 	if (r == -1)
 	{
@@ -236,7 +236,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	ev_info.data.fd = fd;
 	ev_info.events = ev;
 	
-	int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
+	const int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
 	_error = errno;
 	if (r == -1)
 	{
@@ -288,7 +288,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
-	int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
+	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	_error = errno;
 	if (r == -1)
 	{

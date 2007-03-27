@@ -233,7 +233,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	}
 }
 
-bool Socket::block(bool x) throw()
+bool Socket::block(const bool x) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Socket::block(fd: " << sock << ", " << (x?"true":"false") << ")" << std::endl;
@@ -255,7 +255,7 @@ bool Socket::block(bool x) throw()
 	#endif // WIN32
 }
 
-bool Socket::reuse(bool x) throw()
+bool Socket::reuse(const bool x) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "Socket::reuse(fd: " << sock << ", " << (x?"true":"false") << ")" << std::endl;
@@ -269,7 +269,7 @@ bool Socket::reuse(bool x) throw()
 	#else
 	int val = (x ? 1 : 0);
 	
-	int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
+	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -299,13 +299,13 @@ bool Socket::reuse(bool x) throw()
 	#endif
 }
 
-bool Socket::linger(bool x, uint16_t delay) throw()
+bool Socket::linger(const bool x, const uint16_t delay) throw()
 {
 	::linger lval;
 	lval.l_onoff = (x ? 1 : 0);
 	lval.l_linger = delay;
 	
-	int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&lval), sizeof(lval));
+	const int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&lval), sizeof(lval));
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -350,7 +350,7 @@ bool Socket::linger(bool x, uint16_t delay) throw()
 	return (r == 0);
 }
 
-int Socket::bindTo(std::string address, uint16_t port) throw()
+int Socket::bindTo(const std::string address, const uint16_t port) throw()
 {
 	#ifdef DEBUG_SOCKETS
 	std::cout << "Socket::bindTo([" << address << "], " << port << ")" << std::endl;
@@ -401,7 +401,7 @@ int Socket::bindTo(std::string address, uint16_t port) throw()
 	addr.sin_port = bswap(port);
 	#endif // IPV6_SUPPORT
 	
-	int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+	const int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -455,9 +455,9 @@ int Socket::bindTo(std::string address, uint16_t port) throw()
 }
 
 #ifdef IPV6_SUPPORT
-int Socket::connect(sockaddr_in6* rhost) throw()
+int Socket::connect(const sockaddr_in6* rhost) throw()
 #else
-int Socket::connect(sockaddr_in* rhost) throw()
+int Socket::connect(const sockaddr_in* rhost) throw()
 #endif
 {
 	#ifdef DEBUG_SOCKETS
@@ -467,9 +467,9 @@ int Socket::connect(sockaddr_in* rhost) throw()
 	assert(sock != INVALID_SOCKET);
 	
 	#ifdef WSA_SOCKETS
-	int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost), 0, 0, 0, 0);
+	const int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost), 0, 0, 0, 0);
 	#else
-	int r = ::connect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost));
+	const int r = ::connect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost));
 	#endif
 	
 	if (r == SOCKET_ERROR)
@@ -531,7 +531,7 @@ int Socket::listen() throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	int r = ::listen(sock, 4);
+	const int r = ::listen(sock, 4);
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -564,7 +564,7 @@ int Socket::listen() throw()
 	return r;
 }
 
-int Socket::send(char* buffer, size_t len) throw()
+int Socket::send(char* buffer, const size_t len) throw()
 {
 	#ifdef DEBUG_SOCKETS
 	std::cout << "Socket::send(*buffer, " << len << ")" << std::endl;
@@ -582,7 +582,7 @@ int Socket::send(char* buffer, size_t len) throw()
 	int r = WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
 	if (r != SOCKET_ERROR) r = sb;
 	#else
-	int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
+	const int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
 	#endif // WSA_SOCKETS
 	
 	if (r == SOCKET_ERROR)
@@ -656,7 +656,7 @@ int Socket::send(char* buffer, size_t len) throw()
 	return r;
 }
 
-int Socket::recv(char* buffer, size_t len) throw()
+int Socket::recv(char* buffer, const size_t len) throw()
 {
 	#ifdef DEBUG_SOCKETS
 	std::cout << "Socket::recv(*buffer, " << len << ")" << std::endl;
@@ -677,7 +677,7 @@ int Socket::recv(char* buffer, size_t len) throw()
 	int r = WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
 	if (r != SOCKET_ERROR) r = rb;
 	#else
-	int r = ::recv(sock, buffer, len, 0);
+	const int r = ::recv(sock, buffer, len, 0);
 	#endif // WSA_SOCKETS
 	
 	if (r == SOCKET_ERROR)
@@ -757,9 +757,9 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 	
 	// call the real sendfile()
 	#ifdef HAVE_XPWSA
-	int r = TransmitFile(sock, fd, nbytes, 0, 0, 0, TF_WRITE_BEHIND);
+	const int r = TransmitFile(sock, fd, nbytes, 0, 0, 0, TF_WRITE_BEHIND);
 	#else // non-windows
-	int r = ::sendfile(fd, sock, offset, nbytes, 0, sbytes, 0);
+	const int r = ::sendfile(fd, sock, offset, nbytes, 0, sbytes, 0);
 	#endif
 	
 	if (r == SOCKET_ERROR)

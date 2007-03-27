@@ -109,8 +109,7 @@ int Event::wait() throw()
 	#endif // EV_PSELECT
 	
 	#ifndef WIN32
-	fd_t largest_nfds = (nfds_w > nfds_r ? nfds_w : nfds_r );
-	if (largest_nfds < nfds_e) largest_nfds = nfds_e;
+	const fd_t largest_nfds = std::max(std::max(nfds_w, nfds_r), nfds_e);
 	#endif
 	
 	nfds =
@@ -209,39 +208,26 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	if (fIsSet(ev, read))
 	{
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		std::cout << "set read" << std::endl;
-		#endif
 		FD_SET(fd, &fds_r);
-		#ifndef WIN32
+		#ifndef WIN32 // win32 ignores the argument
 		read_set.insert(read_set.end(), fd);
-		std::cout << nfds_r << " -> ";
 		nfds_r = *(--read_set.end());
-		std::cout << nfds_r << std::endl;
 		#endif // !Win32
 		rc = true;
 	}
 	if (fIsSet(ev, write))
 	{
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		std::cout << "set write" << std::endl;
-		#endif
 		FD_SET(fd, &fds_w);
-		#ifndef WIN32
+		#ifndef WIN32 // win32 ignores the argument
 		write_set.insert(write_set.end(), fd);
-		std::cout << nfds_w << " -> ";
 		nfds_w = *(--write_set.end());
-		std::cout << nfds_w << std::endl;
 		#endif // !Win32
 		rc = true;
 	}
 	if (fIsSet(ev, error))
 	{
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		std::cout << "set error" << std::endl;
-		#endif
 		FD_SET(fd, &fds_e);
-		#ifndef WIN32
+		#ifndef WIN32 // win32 ignores the argument
 		error_set.insert(error_set.end(), fd);
 		nfds_e = *(--error_set.end());
 		#endif // !Win32

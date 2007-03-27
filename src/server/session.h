@@ -63,7 +63,7 @@ struct LayerData
 struct Session
 	//: MemoryStack<Session>
 {
-	Session(uint8_t _id=protocol::null_user) throw()
+	Session(const uint8_t _id=protocol::null_user) throw()
 		: id(_id),
 		len(0),
 		title(0),

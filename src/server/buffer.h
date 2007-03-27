@@ -100,7 +100,7 @@ struct Buffer
 		
 		reposition();
 		
-		size_t off = canRead();
+		const size_t off = canRead();
 		memcpy(nbuf, data, off);
 		
 		#ifndef CBUFFER_UNMANAGED
@@ -144,7 +144,7 @@ struct Buffer
 		left = 0;
 	}
 	
-	//! Repositions data for maximum contiguous read length.
+	//! Repositions data for maximum contiguous _read_ length.
 	void reposition() throw(std::bad_alloc)
 	{
 		if (rpos == data) // already optimally positioned
@@ -157,7 +157,7 @@ struct Buffer
 		}
 		else if (canRead() < left)
 		{ // we can't read all in one go
-			size_t chunk1 = canRead(), chunk2 = left - canRead();
+			const size_t chunk1 = canRead(), chunk2 = left - canRead();
 			
 			if (left <= free())
 			{ // there's more free space than used
@@ -199,7 +199,7 @@ struct Buffer
 		}
 		else
 		{ // we can read all the data in one go.
-			size_t chunk1 = canRead();
+			const size_t chunk1 = canRead();
 			// just move the data to the beginning.
 			memmove(data, rpos, chunk1);
 			

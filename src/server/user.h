@@ -85,7 +85,7 @@ struct SessionData
 			+ (deaf?(protocol::user_mode::Deaf):0);
 	}
 	
-	void setMode(uint8_t flags) throw()
+	void setMode(const uint8_t flags) throw()
 	{
 		locked = fIsSet(flags, protocol::user_mode::Locked);
 		muted = fIsSet(flags, protocol::user_mode::Mute);
@@ -136,7 +136,7 @@ const uint8_t
 struct User
 	//: MemoryStack<User>
 {
-	User(uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
+	User(const uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
 		: sock(nsock),
 		session(0),
 		id(_id),
@@ -225,7 +225,7 @@ struct User
 		return (c_acks?(protocol::client::AckFeedback):0);
 	}
 	
-	void setCapabilities(uint8_t flags) throw()
+	void setCapabilities(const uint8_t flags) throw()
 	{
 		c_acks = fIsSet(flags, protocol::client::AckFeedback);
 	}
@@ -240,7 +240,7 @@ struct User
 			+ (ext_palette?(protocol::extensions::Palette):0);
 	}
 	
-	void setExtensions(uint8_t flags) throw()
+	void setExtensions(const uint8_t flags) throw()
 	{
 		ext_deflate = fIsSet(flags, protocol::extensions::Deflate);
 		ext_chat = fIsSet(flags, protocol::extensions::Chat);
@@ -257,7 +257,7 @@ struct User
 			+ (a_deaf?(protocol::user_mode::Deaf):0);
 	}
 	
-	void setAMode(uint8_t flags) throw()
+	void setAMode(const uint8_t flags) throw()
 	{
 		a_locked = fIsSet(flags, protocol::user_mode::Locked);
 		a_muted = fIsSet(flags, protocol::user_mode::Mute);

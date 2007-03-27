@@ -33,6 +33,7 @@
 #ifndef Server_C_Included
 #define Server_C_Included
 
+#include <algorithm>
 #include <ctime>
 
 #include "../shared/SHA1.h"
@@ -273,37 +274,37 @@ public:
 	int init() throw(std::bad_alloc);
 	
 	//! Set name length limit (default: 8)
-	void setNameLengthLimit(uint8_t limit) throw() { name_len_limit = limit; }
+	void setNameLengthLimit(const uint8_t limit) throw() { name_len_limit = limit; }
 	
 	//! Set server password
-	void setPassword(char* pwstr, uint8_t len) throw() { password = pwstr; pw_len = len; }
+	void setPassword(char* pwstr, const uint8_t len) throw() { password = pwstr; pw_len = len; }
 	
 	//! Set admin server password
-	void setAdminPassword(char* pwstr, uint8_t len) throw() { a_password = pwstr; a_pw_len = len; }
+	void setAdminPassword(char* pwstr, const uint8_t len) throw() { a_password = pwstr; a_pw_len = len; }
 	
 	//! Set user limit
-	void setUserLimit(uint8_t ulimit) throw() { user_limit = ulimit; }
+	void setUserLimit(const uint8_t ulimit) throw() { user_limit = ulimit; }
 	
 	//! Set listening port range
-	void setPorts(uint16_t lo, uint16_t hi) throw()
+	void setPorts(const uint16_t lo, const uint16_t hi) throw()
 	{
 		lo_port = lo;
-		hi_port = (hi < lo ? lo : hi);
+		hi_port = std::max(hi, lo);
 	}
 	
 	//! Set operation mode
-	void setTransient(bool x) throw() { Transient = x; }
-	void setLocalhostAdmin(bool x) throw() { LocalhostAdmin = x; }
-	void setDaemonMode(bool x) throw() { DaemonMode = x; }
+	void setTransient(const bool x) throw() { Transient = x; }
+	void setLocalhostAdmin(const bool x) throw() { LocalhostAdmin = x; }
+	void setDaemonMode(const bool x) throw() { DaemonMode = x; }
 	
 	//! Set client requirements
-	void setRequirement(uint8_t req) throw() { fSet(requirements, req); }
+	void setRequirement(const uint8_t req) throw() { fSet(requirements, req); }
 	
 	//! Set minimum board dimension (width or height)
-	void setMinDimension(uint16_t mindim) throw() { min_dimension = mindim; }
+	void setMinDimension(const uint16_t mindim) throw() { min_dimension = mindim; }
 	
 	//! Set UTF-16 support
-	void setUTF16(bool x)
+	void setUTF16(const bool x)
 	{
 		if (x)
 			fSet(requirements, protocol::requirements::WideStrings );
@@ -312,13 +313,13 @@ public:
 	}
 	
 	//! Set default user mode
-	void setUserMode(uint8_t x) { default_user_mode = x; }
+	void setUserMode(const uint8_t x) { default_user_mode = x; }
 	
 	//! Set session limit on server
-	void setSessionLimit(uint8_t x) { session_limit = x; }
+	void setSessionLimit(const uint8_t x) { session_limit = x; }
 	
 	//! Set per user subscription limit
-	void setSubscriptionLimit(uint8_t x) { max_subscriptions = x; }
+	void setSubscriptionLimit(const uint8_t x) { max_subscriptions = x; }
 	
 	//! Enter main loop
 	int run() throw();
