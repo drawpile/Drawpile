@@ -318,12 +318,6 @@ void Brush::draw(QImage &image, const Point& pos) const
  */
 Brush& Brush::operator=(const Brush& brush)
 {
-	bool isdifferent =
-		radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
-		fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
-		fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
-		fabs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
-		fabs(opacity2_ - brush.opacity2_) >= 1.0/256.0;
 	radius1_ = brush.radius1_ ;
 	radius2_ = brush.radius2_ ;
 	hardness1_ = brush.hardness1_;
@@ -334,7 +328,12 @@ Brush& Brush::operator=(const Brush& brush)
 	color2_ = brush.color2_;
 	sensitive_ = brush.sensitive_;
 
-	if(isdifferent || cachepressure_<0 || brush.cachepressure_>=0) {
+	if(radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
+		fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
+		fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
+		fabs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
+		fabs(opacity2_ - brush.opacity2_) >= 1.0/256.0 ||
+		cachepressure_<0 || brush.cachepressure_>=0) {
 		cachepressure_ = brush.cachepressure_;
 		cache_ = brush.cache_;
 	}
@@ -354,13 +353,7 @@ bool Brush::operator==(const Brush& brush) const
 
 bool Brush::operator!=(const Brush& brush) const
 {
-	return radius1_ != brush.radius1_ || radius2_ != brush.radius2_ ||
-			fabs(hardness1_ - brush.hardness1_) >= 1.0/256.0 ||
-			fabs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
-			fabs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
-			fabs(opacity2_ - brush.opacity2_) >= 1.0/256.0 ||
-			color1_ != brush.color1_ ||
-			color2_ != brush.color2_;
+	return !(*this == brush);
 }
 
 }
