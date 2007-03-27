@@ -172,9 +172,9 @@ qreal Brush::opacity(qreal pressure) const
 QColor Brush::color(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	int r = qRound(color2_.red() + (color1_.red() - color2_.red()) * pressure);
-	int g = qRound(color2_.green() + (color1_.green() - color2_.green()) * pressure);
-	int b = qRound(color2_.blue() + (color1_.blue() - color2_.blue()) * pressure);
+	const int r = qRound(color2_.red() + (color1_.red() - color2_.red()) * pressure);
+	const int g = qRound(color2_.green() + (color1_.green() - color2_.green()) * pressure);
+	const int b = qRound(color2_.blue() + (color1_.blue() - color2_.blue()) * pressure);
 	return QColor(r,g,b);
 }
 
