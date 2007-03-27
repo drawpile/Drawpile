@@ -27,6 +27,9 @@
 
 namespace drawingboard {
 
+#define ADJUST_BY_PRESSURE(var1, var2, pressure) \
+	var1 * pressure + var2 * (1.0-pressure)
+
 /**
  * A brush with the specified settings is constructed. The brush is
  * pressure insensitive by default.
@@ -140,7 +143,7 @@ void Brush::checkSensitivity()
 int Brush::radius(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	return unsigned(ceil(radius2_ + (radius1_ - radius2_) * pressure));
+	return unsigned(ceil(ADJUST_BY_PRESSURE(radius1_, radius2_, pressure)));
 }
 
 /**
@@ -151,7 +154,7 @@ int Brush::radius(qreal pressure) const
 qreal Brush::hardness(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	return hardness2_ + (hardness1_ - hardness2_) * pressure;
+	return ADJUST_BY_PRESSURE(opacity1_, opacity2_, pressure);
 }
 
 /**
@@ -161,32 +164,7 @@ qreal Brush::hardness(qreal pressure) const
  */
 qreal Brush::opacity(qreal pressure) const
 {
-	return opacity1_ * pressure + opacity2_ * (1.0-pressure);
-	/*
-	 * The original calculation fails with interpolating brush.
-	 *
-	 * e.g.
-	 *
-	 * opacity2_ = 1.0
-	 * opacity1_ = 0.5
-	 * pressure  = 0.5 // the midpoint between the two endpoints
-	 * 
-	 * (temp = opacity1_ - opacity2_) == -0.5
-	 * (temp *= pressure) == 0.25
-	 * (temp += opacity2_) == 1.25
-	 * opacity == 1.25
-	 *
-	 * With the other method (currently in use),
-	 * the calculation gets into something more sane.
-	 *
-	 * (temp1     = opacity1_ * pressure) == 0.25
-	 * (pressure2 = 1.0 - pressure) == 0.5
-	 * (temp2     = opacity2_ * pressure2) == 0.5
-	 * (temp1 += temp2) == 0.75
-	 * opacity == 0.75
-	 *
-	 */
-	//return opacity2_ + (opacity1_ - opacity2_) * pressure;
+	return ADJUST_BY_PRESSURE(opacity1_, opacity2_, pressure);
 }
 
 /**
@@ -197,9 +175,11 @@ qreal Brush::opacity(qreal pressure) const
 QColor Brush::color(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	const int r = qRound(color2_.red() + (color1_.red() - color2_.red()) * pressure);
-	const int g = qRound(color2_.green() + (color1_.green() - color2_.green()) * pressure);
-	const int b = qRound(color2_.blue() + (color1_.blue() - color2_.blue()) * pressure);
+	
+	const int r = qRound(ADJUST_BY_PRESSURE(color1_.red(), color2_.red(), pressure));
+	const int g = qRound(ADJUST_BY_PRESSURE(color1_.green(), color2_.green(), pressure));
+	const int b = qRound(ADJUST_BY_PRESSURE(color1_.blue(), color2_.blue(), pressure));
+	
 	return QColor(r,g,b);
 }
 
@@ -272,22 +252,26 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const unsigned int offx = cx<0 ? -cx : 0;
 	const unsigned int offy = cy<0 ? -cy : 0;
 	uchar *dest = image.bits() + ((cy+offy)*image.width()+cx+offx)*4;
-
+	
+	// for avoiding
+	#define CALCULATE_COLOR(color, target, alpha) \
+		alpha * (color - target) / 2560
+	
 	// Special case, single pixel brush
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const int a = int(opacity(pos.pressure())*256); // 256?
-#ifdef IS_BIG_ENDIAN
+			const int a = int(opacity(pos.pressure())*256);
+			#ifdef IS_BIG_ENDIAN
 			++dest;
-			*dest += a*(red - *dest) / 2560; ++dest;
-			*dest += a*(green - *dest) / 2560; ++dest;
-			*dest += a*(blue - *dest) / 2560;
-#else
-			*dest += a*(blue - *dest) / 2560; ++dest;
-			*dest += a*(green - *dest) / 2560; ++dest;
-			*dest += a*(red - *dest) / 2560;
-#endif
+			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
+			#else
+			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
+			*dest += CALCULATE_COLOR(red, *dest, a);
+			#endif
 		}
 		return;
 	}
@@ -316,8 +300,6 @@ void Brush::draw(QImage &image, const Point& pos) const
 				continue;
 			}
 			#endif // TESTING
-			#define CALCULATE_COLOR(color, target, alpha) \
-				alpha * (color - target) / 2560
 			#ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
@@ -329,11 +311,12 @@ void Brush::draw(QImage &image, const Point& pos) const
 			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
 			++dest;
 			#endif
-			#undef CALCULATE_COLOR
 		}
 		dest += nextline + (dia-w)*4;
 		src += offx + dia-w;
 	}
+	
+	#undef CALCULATE_COLOR // remove macro function
 }
 
 /**
@@ -383,5 +366,7 @@ bool Brush::operator!=(const Brush& brush) const
 {
 	return !(*this == brush);
 }
+
+#undef ADJUST_BY_PRESSURE // remove macro function
 
 }
