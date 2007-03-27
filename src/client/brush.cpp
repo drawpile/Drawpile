@@ -294,13 +294,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 			#endif // TESTING
 #ifdef IS_BIG_ENDIAN
 			++dest;
-			*dest = a*(red - *dest) / 256 + *dest; ++dest;
-			*dest = a*(green - *dest) / 256 + *dest; ++dest;
-			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
+			*dest += a*(red - *dest) / 256; ++dest;
+			*dest += a*(green - *dest) / 256; ++dest;
+			*dest += a*(blue - *dest) / 256; ++dest;
 #else
-			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
-			*dest = a*(green - *dest) / 256 + *dest; ++dest;
-			*dest = a*(red - *dest) / 256 + *dest; ++dest;
+			*dest += a*(blue - *dest) / 256; ++dest;
+			*dest += a*(green - *dest) / 256; ++dest;
+			*dest += a*(red - *dest) / 256; ++dest;
 			++dest;
 #endif
 		}
