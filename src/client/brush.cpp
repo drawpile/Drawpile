@@ -215,9 +215,9 @@ void Brush::updateCache() const
 	unsigned short *q3 = q1 + dia*(dia-1);
 	unsigned short *q4 = q3 + scanline;
 	for(int y=rad;y!=0;--y) {
-		const qreal yy = y * y + .5;
+		const qreal yy = (y-.5) * (y-.5);
 		for(int x=rad;x!=0;--x) {
-			const unsigned short a = qBound(0, int((1-pow( ((x*x+.5)+(yy))*(rr) ,hard)) * o * 256), 256);
+			const unsigned short a = qBound(0, int((1-pow( (((x-.5)*(x-.5))+(yy))*(rr) ,hard)) * o * 256), 256);
 			
 			*(q1++) = a;
 			*(q2--) = a;
