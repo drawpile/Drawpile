@@ -141,7 +141,7 @@ void ColorTriangle::resizeEvent(QResizeEvent *event)
  */
 void ColorTriangle::mousePressEvent(QMouseEvent *event)
 {
-	QPoint pos = event->pos() - QPoint(xoff_,yoff_);
+	const QPoint pos = event->pos() - QPoint(xoff_,yoff_);
 	if(isInRing(pos.x(), pos.y())) {
 		setHue(pos.x(), pos.y());
 		makeTriangle();
@@ -339,7 +339,7 @@ void ColorTriangle::makeRing()
 		for (int xx = 0; xx < diameter_; xx++) {
 			const qreal dx = xx - center_;
 
-			qreal dist = dx * dx + dy * dy;
+			const qreal dist = dx * dx + dy * dy;
 			if (dist < inner2 || dist > outer2) {
 				*buf++ = 0;
 				*buf++ = 0;
