@@ -55,8 +55,8 @@ QImage ImageSelector::image() const {
 void ImageSelector::paintEvent(QPaintEvent *event)
 {
 	QFrame::paintEvent(event);
-	int w = frameWidth();
-	QRect bounds = frameRect().adjusted(w,w,-w,-w);
+	const int w = frameWidth();
+	const QRect bounds = frameRect().adjusted(w,w,-w,-w);
 	QPainter painter(this);
 	if(mode_ == COLOR) {
 		// Draw a rectangle of solid color
@@ -92,8 +92,8 @@ void ImageSelector::resizeEvent(QResizeEvent *)
 
 void ImageSelector::updateCache(const QImage& src)
 {
-	int w = frameWidth();
-	QRect bounds = frameRect().adjusted(w,w,-w,-w);
+	const int w = frameWidth();
+	const QRect bounds = frameRect().adjusted(w,w,-w,-w);
 	if(src.width() > bounds.width() || src.height() > bounds.height()) {
 		cache_ = QPixmap::fromImage(
 				src.scaled(bounds.size(), Qt::KeepAspectRatio)
@@ -195,21 +195,21 @@ void ImageSelector::dropEvent(QDropEvent *event)
 {
 	if(event->mimeData()->hasColor()) {
 		// Drop color
-		QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
+		const QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
 		setColor(col);
 		chooseColor();
 		//emit colorChanged(col);
 		emit colorDropped();
 	} else if(event->mimeData()->hasImage()) {
 		// Drop image
-		QImage img = qvariant_cast<QImage>(event->mimeData()->imageData());
+		const QImage img = qvariant_cast<QImage>(event->mimeData()->imageData());
 		setImage(img);
 		chooseImage();
 		emit imageDropped();
 	} else if(event->mimeData()->hasUrls()) {
 		// Drop URL, hopefully to an image
 		QList<QUrl> urls = event->mimeData()->urls();
-		QImage img(urls.first().toLocalFile());
+		const QImage img(urls.first().toLocalFile());
 		if(img.isNull()==false) {
 			setImage(img);
 			chooseImage();

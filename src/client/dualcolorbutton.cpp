@@ -68,17 +68,17 @@ QRect DualColorButton::backgroundRect() const
 {
 	// Background rectangle filles the lower right two thirds of the widget.
 	// It is partially obscured by the foreground rectangle
-	int x = qRound(width() / 3.0);
-	int y = qRound(height() / 3.0);
+	const int x = qRound(width() / 3.0);
+	const int y = qRound(height() / 3.0);
 	return QRect(x-1,y-1, x*2-1, y*2-1);
 }
 
 QRect DualColorButton::resetBlackRect() const
 {
-	int x = qRound(width()/9.0);
-	int y = qRound(height()/9.0*7);
-	int w = qRound(width() / 9.0);
-	int h = qRound(height() / 9.0);
+	const int x = qRound(width()/9.0);
+	const int y = qRound(height()/9.0*7);
+	const int w = qRound(width() / 9.0);
+	const int h = qRound(height() / 9.0);
 	return QRect(x-w/3,y-h/3,w,h);
 }
 
@@ -95,17 +95,17 @@ void DualColorButton::paintEvent(QPaintEvent *event)
 	painter.setPen(QPen(Qt::black));
 
 	// Draw background box
-	QRect bgbox = backgroundRect();
+	const QRect bgbox = backgroundRect();
 	painter.fillRect(bgbox, background_);
 	painter.drawRect(bgbox);
 
 	// Draw foreground box
-	QRect fgbox = foregroundRect();
+	const QRect fgbox = foregroundRect();
 	painter.fillRect(fgbox, foreground_);
 	painter.drawRect(fgbox);
 
 	// Draw reset boxes
-	QRect rwhite = resetWhiteRect();
+	const QRect rwhite = resetWhiteRect();
 	painter.fillRect(rwhite, Qt::white);
 	painter.drawRect(rwhite);
 	painter.fillRect(resetBlackRect(), Qt::black);
@@ -155,7 +155,7 @@ void DualColorButton::mouseMoveEvent(QMouseEvent *event)
 		QDrag *drag = new QDrag(this);
 
 		QMimeData *mimedata = new QMimeData;
-		QColor color = (dragSource_ == FOREGROUND)?foreground_:background_;
+		const QColor color = (dragSource_ == FOREGROUND)?foreground_:background_;
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
@@ -165,7 +165,7 @@ void DualColorButton::mouseMoveEvent(QMouseEvent *event)
 
 void DualColorButton::mouseReleaseEvent(QMouseEvent *event)
 {
-	QRect swaprect(qRound(width()*2.0/3.0),0,width()/3,height()/3);
+	const QRect swaprect(qRound(width()*2.0/3.0),0,width()/3,height()/3);
 	if(resetBlackRect().contains(event->pos()) || resetWhiteRect().contains(event->pos())) {
 		foreground_ = Qt::black;
 		background_ = Qt::white;
@@ -189,7 +189,7 @@ void DualColorButton::dragEnterEvent(QDragEnterEvent *event)
 
 void DualColorButton::dropEvent(QDropEvent *event)
 {
-	QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
+	const QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
 	if(foregroundRect().contains(event->pos())) {
 		foreground_ = color;
 		emit foregroundChanged(color);

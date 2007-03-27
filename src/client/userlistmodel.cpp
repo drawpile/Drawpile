@@ -82,7 +82,7 @@ void UserListModel::addUser(int id)
 
 void UserListModel::removeUser(int id)
 {
-	int pos = users_.indexOf(id);
+	const int pos = users_.indexOf(id);
 	beginRemoveRows(QModelIndex(),pos,pos);
 	users_.removeAt(pos);
 	endRemoveRows();
@@ -148,7 +148,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	QSize iconsize = icon::lock().actualSize(QSize(16,16));
+	const QSize iconsize = icon::lock().actualSize(QSize(16,16));
 	if(size.height() < iconsize.height())
 		size.setHeight(iconsize.height());
 	return size;
@@ -157,9 +157,9 @@ QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMod
 bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	if(enableadmin_ && event->type() == QEvent::MouseButtonPress) {
-		QMouseEvent *me = static_cast<QMouseEvent*>(event);
+		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
-		int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
+		const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
 
 		network::User user = index.data().value<network::User>();
 		if(user.isOwner()==false) {

@@ -81,18 +81,18 @@ void GradientSlider::paintEvent(QPaintEvent *)
 	painter.drawLine(gradrect.bottomLeft(), gradrect.bottomRight());
 
 	// Draw pointer
-	int pos = qRound((value() - minimum()) / qreal(maximum()-minimum()) *
+	const int pos = qRound((value() - minimum()) / qreal(maximum()-minimum()) *
 		(((orientation()==Qt::Horizontal)?width():height())));
 
 	QPoint points[3];
 
 	if(orientation() == Qt::Horizontal) {
-		int w = height()/4;
+		const int w = height()/4;
 		points[0] = QPoint(pos-w,0);
 		points[1] = QPoint(pos+w,0);
 		points[2] = QPoint(pos,w);
 	} else {
-		int h = width()/4;
+		const int h = width()/4;
 		points[0] = QPoint(0, pos-h);
 		points[1] = QPoint(0, pos+h);
 		points[2] = QPoint(h, pos);

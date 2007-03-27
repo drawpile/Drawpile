@@ -62,7 +62,7 @@ void PopupMessage::setMessage(const QString& message)
 void PopupMessage::popupAt(const QPoint& point)
 {
 	QRect rect(point - QPoint(0,height()), size());
-	QRect screen = qApp->desktop()->availableGeometry(parentWidget());
+	const QRect screen = qApp->desktop()->availableGeometry(parentWidget());
 
 	if(rect.x() + rect.width() > screen.x() + screen.width())
 		rect.moveRight(screen.x() + screen.width() - 1);
@@ -82,8 +82,8 @@ void PopupMessage::popupAt(const QPoint& point)
 void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	int xrnd = qRound(20 * height()/double(width()));
+	const QRect rect = contentsRect().adjusted(0,0,-1,-1);
+	int xrnd = qRound(20 * height()/qreal(width()));
 	painter.setBrush(palette().light());
 	painter.drawRoundRect(rect,xrnd,20);
 }
@@ -94,8 +94,8 @@ void PopupMessage::resizeEvent(QResizeEvent *)
 	mask.fill(Qt::color0);
 	QPainter painter(&mask);
 	painter.setBrush(Qt::color1);
-	QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	int xrnd = qRound(20 * height()/double(width()));
+	const QRect rect = contentsRect().adjusted(0,0,-1,-1);
+	const int xrnd = qRound(20 * height()/qreal(width()));
 	painter.drawRoundRect(rect,xrnd,20);
 	setMask(mask);
 }

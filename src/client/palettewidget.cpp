@@ -53,7 +53,7 @@ void PaletteWidget::resizeEvent(QResizeEvent *event)
 			)
 		);
 
-	int rows = palette_->count() / columns() * (swatchsize_.height()+spacing_);
+	const int rows = palette_->count() / columns() * (swatchsize_.height()+spacing_);
 	if(rows < height())
 		scrollbar_->setMaximum( 0 );
 	else
@@ -66,10 +66,9 @@ void PaletteWidget::resizeEvent(QResizeEvent *event)
  * @return number of swatches per row
  */
 int PaletteWidget::columns() const {
-	int c = (contentsRect().width()-scrollbar_->width()) /
+	const int c = (contentsRect().width()-scrollbar_->width()) /
 		(swatchsize_.width()+spacing_);
-	if(c<1) c = 1;
-	return c;
+	return qMax(c, 1);
 }
 
 void PaletteWidget::scroll(int pos)
@@ -98,7 +97,7 @@ void PaletteWidget::paintEvent(QPaintEvent *)
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
 	if(event->button() == Qt::LeftButton) {
-		int i = indexAt(event->pos());
+		const int i = indexAt(event->pos());
 		if(i!=-1) {
 			dragstart_ = event->pos();
 			dragsource_ = i;
@@ -138,9 +137,9 @@ void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
-	QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
-	int index = indexAt(event->pos());
+	const int index = indexAt(event->pos());
 	if(index != -1) {
+		const QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
 		palette_->setColor(index, color);
 		update();
 	}
@@ -161,17 +160,16 @@ void PaletteWidget::wheelEvent(QWheelEvent *event)
 int PaletteWidget::indexAt(const QPoint& point) const
 {
 	const int xw = spacing_ + swatchsize_.width();
-	const int yw = spacing_ + swatchsize_.height();
-
-	int x = point.x() / xw;
+	const int x = point.x() / xw;
 	if(point.x() < x * xw + spacing_)
 		return -1;
 
-	int y = (point.y()+scroll_) / yw;
+	const int yw = spacing_ + swatchsize_.height();
+	const int y = (point.y()+scroll_) / yw;
 	if(point.y()+scroll_ < y * yw + spacing_)
 		return -1;
 
-	int index = y * columns() + x;
+	const int index = y * columns() + x;
 	if(index >= palette_->count())
 		return -1;
 	return index;

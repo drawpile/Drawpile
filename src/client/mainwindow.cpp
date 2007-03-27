@@ -327,7 +327,7 @@ void MainWindow::readSettings(bool restorepos)
 	// Restore previous position if restorepos==true, previous position
 	// is remembered and it is inside the screen.
 	if(restorepos && cfg.contains("pos")) {
-		QPoint pos = cfg.value("pos").toPoint();
+		const QPoint pos = cfg.value("pos").toPoint();
 		if(qApp->desktop()->availableGeometry().contains(pos))
 			move(pos);
 	}
@@ -356,8 +356,8 @@ void MainWindow::readSettings(bool restorepos)
 	view_->setCrosshair(togglecrosshair_->isChecked());
 
 	// Remember foreground and background colors
-	QColor fg = cfg.value("foreground", Qt::black).value<QColor>();
-	QColor bg = cfg.value("background", Qt::white).value<QColor>();
+	const QColor fg = cfg.value("foreground", Qt::black).value<QColor>();
+	const QColor bg = cfg.value("background", Qt::white).value<QColor>();
 	fgbgcolor_->setForeground(fg);
 	fgbgcolor_->setBackground(bg);
 	fgdialog_->setColor(fg);
@@ -382,7 +382,7 @@ void MainWindow::writeSettings()
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
-	int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
+	const int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
 	cfg.setValue("tool", tool);
 	cfg.setValue("outline", toggleoutline_->isChecked());
 	cfg.setValue("crosshair", togglecrosshair_->isChecked());
@@ -461,7 +461,7 @@ void MainWindow::boardChanged()
  */
 void MainWindow::showNew()
 {
-	QSize size = board_->sceneRect().size().toSize();
+	const QSize size = board_->sceneRect().size().toSize();
 	newdlg_->setNewWidth(size.width());
 	newdlg_->setNewHeight(size.height());
 	newdlg_->setNewBackground(fgbgcolor_->background());
@@ -531,10 +531,10 @@ void MainWindow::open()
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
-	QString filter = tr("Images (%1);;All files (*)").arg(formats);
+	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
 
 	// Get the file name to open
-	QString file = QFileDialog::getOpenFileName(this,
+	const QString file = QFileDialog::getOpenFileName(this,
 			tr("Open image"), lastpath_, filter);
 
 	// Open the file if it was selected
@@ -591,7 +591,7 @@ bool MainWindow::saveas()
 			defaultsuffix = extexp.cap(1);
 
 		// Add suffix if missing
-		QFileInfo info(file);
+		const QFileInfo info(file);
 		lastpath_ = info.absolutePath();
 		if(defaultsuffix.isEmpty()==false && info.suffix().compare(defaultsuffix)!=0)
 			file += "." + defaultsuffix;
@@ -662,7 +662,7 @@ void MainWindow::finishLeave(int i)
 void MainWindow::finishHost(int i)
 {
 	if(i==QDialog::Accepted) {
-		bool useremote = hostdlg_->useRemoteAddress();
+		const bool useremote = hostdlg_->useRemoteAddress();
 		QUrl address;
 		QString admin;
 
@@ -800,7 +800,7 @@ void MainWindow::disconnected()
 void MainWindow::joined(network::SessionState *session)
 {
 	setSessionTitle(session->info().title);
-	bool isowner = session->info().id == session->host()->localUser().id();
+	const bool isowner = session->info().id == session->host()->localUser().id();
 	userlist_->setSession(session);
 	userlist_->setAdminMode(isowner);
 	adminTools_->setEnabled(isowner);

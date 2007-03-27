@@ -109,7 +109,7 @@ void ColorTriangle::paintEvent(QPaintEvent *event)
 	painter.setPen(pen);
 
 	// Markers
-	qreal angle = hueAngle();
+	const qreal angle = hueAngle();
 	int x = int(center_ + cos(angle) * (inner_+(outer_-inner_)/2.0) + 0.5);
 	int y = int(center_ - sin(angle) * (inner_+(outer_-inner_)/2.0) + 0.5);
 	painter.drawEllipse(x-4+xoff_, y-4+yoff_, 8, 8);
@@ -162,7 +162,7 @@ void ColorTriangle::mousePressEvent(QMouseEvent *event)
  */
 void ColorTriangle::mouseMoveEvent(QMouseEvent *event)
 {
-	QPoint pos = event->pos() - QPoint(xoff_,yoff_);
+	const QPoint pos = event->pos() - QPoint(xoff_,yoff_);
 	if(mode_==DRAGHUE) {
 		setHue(pos.x(), pos.y());
 		makeTriangle();
@@ -191,8 +191,8 @@ void ColorTriangle::mouseReleaseEvent(QMouseEvent *event)
  */
 void ColorTriangle::dragEnterEvent(QDragEnterEvent *event)
 {
-        if(event->mimeData()->hasFormat("application/x-color"))
-                event->acceptProposedAction();
+	if(event->mimeData()->hasFormat("application/x-color"))
+		event->acceptProposedAction();
 }
 
 /**
@@ -201,16 +201,16 @@ void ColorTriangle::dragEnterEvent(QDragEnterEvent *event)
  */
 void ColorTriangle::dropEvent(QDropEvent *event)
 {
-        QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
-		setColor(col);
-		emit colorChanged(col);
+	const QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
+	setColor(col);
+	emit colorChanged(col);
 }
 
 /**
  */
 void ColorTriangle::updateVertices()
 {
-	qreal angle = hueAngle();
+	const qreal angle = hueAngle();
 
 	hx_ = int (center_ + cos (angle) * innert_ + 0.5);
 	hy_ = int (center_ - sin (angle) * innert_ + 0.5);
@@ -227,24 +227,19 @@ void ColorTriangle::updateVertices()
  */
 bool ColorTriangle::isInRing(qreal x, qreal y) const
 {
-	qreal dx, dy, dist;
-
-	dx = x - center_;
-	dy = center_ - y;
-	dist = dx * dx + dy * dy;
-
+	const qreal dx = x - center_;
+	const qreal dy = center_ - y;
+	const qreal dist = dx * dx + dy * dy;
+	
 	return (dist >= inner_ * inner_ && dist <= outer_ * outer_);
 }
 
 bool ColorTriangle::isInTriangle(qreal x, qreal y) const
 {
-	double det, s, v;
-
-	det = (vx_ - sx_) * (hy_ - sy_) - (vy_ - sy_) * (hx_ - sx_);
-
-	s = ((x - sx_) * (hy_ - sy_) - (y - sy_) * (hx_ - sx_)) / det;
-	v = ((vx_ - sx_) * (y - sy_) - (vy_ - sy_) * (x - sx_)) / det;
-
+	const qreal det = (vx_ - sx_) * (hy_ - sy_) - (vy_ - sy_) * (hx_ - sx_);
+	const qreal s = ((x - sx_) * (hy_ - sy_) - (y - sy_) * (hx_ - sx_)) / det;
+	const qreal v = ((vx_ - sx_) * (y - sy_) - (vy_ - sy_) * (x - sx_)) / det;
+	
 	return (s >= 0.0 && v >= 0.0 && s + v <= 1.0);
 }
 
@@ -255,10 +250,10 @@ qreal ColorTriangle::hueAngle() const
 
 void ColorTriangle::setHue(qreal x, qreal y)
 {
-	double dx = x - center_;
-	double dy = center_ - y;
+	const qreal dx = x - center_;
+	const qreal dy = center_ - y;
 
-	double angle = atan2 (dy, dx);
+	qreal angle = atan2 (dy, dx);
 	if (angle < 0.0)
 	angle += 2.0 * M_PI;
 
@@ -269,12 +264,12 @@ void ColorTriangle::setHue(qreal x, qreal y)
 
 void ColorTriangle::setSv(qreal x, qreal y)
 {
-	qreal hx = hx_ - center_;
-	qreal hy = center_ - hy_;
-	qreal sx = sx_ - center_;
-	qreal sy = center_ - sy_;
-	qreal vx = vx_ - center_;
-	qreal vy = center_ - vy_;
+	const qreal hx = hx_ - center_;
+	const qreal hy = center_ - hy_;
+	const qreal sx = sx_ - center_;
+	const qreal sy = center_ - sy_;
+	const qreal vx = vx_ - center_;
+	const qreal vy = center_ - vy_;
 	x -= center_;
 	y = center_ - y;
 
@@ -335,14 +330,14 @@ void ColorTriangle::makeRing()
 	QImage ring(diameter_, diameter_, QImage::Format_ARGB32_Premultiplied);
 	uchar *buf = ring.bits();
 
-	qreal inner2 = (inner_-1) * (inner_-1);
-	qreal outer2 = (outer_-1) * (outer_-1);
+	const qreal inner2 = (inner_-1) * (inner_-1);
+	const qreal outer2 = (outer_-1) * (outer_-1);
 
 	for (int yy = 0; yy < diameter_; yy++) {
-		qreal dy = -(yy - center_);
+		const qreal dy = -(yy - center_);
 
 		for (int xx = 0; xx < diameter_; xx++) {
-			qreal dx = xx - center_;
+			const qreal dx = xx - center_;
 
 			qreal dist = dx * dx + dy * dy;
 			if (dist < inner2 || dist > outer2) {
@@ -357,7 +352,7 @@ void ColorTriangle::makeRing()
 			if (angle < 0.0)
 				angle += 2.0 * M_PI;
 
-			QColor color = QColor::fromHsvF(
+			const QColor color = QColor::fromHsvF(
 					angle / (2.0 * M_PI),
 					1.0,
 					1.0
@@ -389,9 +384,6 @@ static inline int LERP(int a,int b,int v1,int v2, int i)
 
 void ColorTriangle::makeTriangle()
 {
-	int xl, xr, rl, rr, gl, gr, bl, br; /* Scanline data */
-	int xx, yy;
-
 	int x1 = hx_;
 	int y1 = hy_;
 	QColor color = QColor::fromHsvF(hue_, 1.0, 1.0);
@@ -440,6 +432,9 @@ void ColorTriangle::makeTriangle()
 	// Shade the triangle
 	uchar *buf = triangle_.bits();
 
+	int xl, xr, rl, rr, gl, gr, bl, br; /* Scanline data */
+	int yy, xx;
+	
 	for (yy = 0; yy < diameter_; ++yy) {
 		if (yy < y1 || yy > y3) {
 			for (xx = 0; xx < diameter_; ++xx) {

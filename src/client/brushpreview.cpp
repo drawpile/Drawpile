@@ -109,8 +109,8 @@ void BrushPreview::updatePreview()
 	const int offx = width()/8;
 	const int offy = height()/2;
 	if(shape_ == Stroke) {
-		const double dphase = (2*M_PI)/double(strokew);
-		double phase = 0;
+		const qreal dphase = (2*M_PI)/qreal(strokew);
+		qreal phase = 0;
 		for(int x=0;x<strokew;x++, phase += dphase) {
 			const qreal fx = x/qreal(strokew);
 			qreal pressure = ((fx*fx) - (fx*fx*fx))*6.756;

@@ -211,7 +211,7 @@ void Controller::finishLogin()
  */
 void Controller::sessionJoined(int id)
 {
-	int userid = host_->localUser().id();
+	const int userid = host_->localUser().id();
 	session_ = host_->session(id);
 
 	// Remember maximum user count

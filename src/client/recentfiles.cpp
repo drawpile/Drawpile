@@ -30,7 +30,7 @@
  */
 void RecentFiles::addFile(const QString& filename)
 {
-	int maxrecent = getMaxFileCount();
+	const int maxrecent = getMaxFileCount();
 
 	QSettings cfg;
 	cfg.beginGroup("history");
@@ -77,7 +77,7 @@ void RecentFiles::initMenu(QMenu *menu)
 	QSettings cfg;
 	cfg.beginGroup("history");
 
-	QStringList files = cfg.value("recentfiles").toStringList();
+	const QStringList files = cfg.value("recentfiles").toStringList();
 
 	menu->clear();
 	foreach(QString filename, files) {

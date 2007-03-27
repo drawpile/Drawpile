@@ -105,7 +105,7 @@ void EditorView::setCrosshair(bool enable)
 void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	if(enableoutline_ && showoutline_ && outlinesize_>0) {
-		QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
+		const QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
 					QSizeF(dia_, dia_));
 		if(rect.intersects(outline)) {
 			painter->setClipRect(0,0, board_->width(), board_->height());
@@ -177,7 +177,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
 	} else {
-		QPoint point = mapToScene(event->pos()).toPoint();
+		const QPoint point = mapToScene(event->pos()).toPoint();
 		if(point != prevpoint_) {
 			if(pendown_)
 				emit penMove(drawingboard::Point(point, 1.0));
@@ -224,7 +224,7 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		QPoint point = mapToScene(tabev->pos()).toPoint();
+		const QPoint point = mapToScene(tabev->pos()).toPoint();
 		if(point != prevpoint_) {
 			if(pendown_) {
 				emit penMove( drawingboard::Point(point, tabev->pressure()) );
@@ -251,7 +251,7 @@ bool EditorView::viewportEvent(QEvent *event)
 		//! Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		QPoint point = mapToScene(tabev->pos()).toPoint();
+		const QPoint point = mapToScene(tabev->pos()).toPoint();
 
 		pendown_ = TABLETDOWN;
 		emit penDown( drawingboard::Point(point, tabev->pressure()) );
@@ -282,8 +282,8 @@ void EditorView::startDrag(int x,int y)
 //! Drag the view
 void EditorView::moveDrag(int x, int y)
 {
-	int dx = dragx_ - x;
-	int dy = dragy_ - y;
+	const int dx = dragx_ - x;
+	const int dy = dragy_ - y;
 
 	dragx_ = x;
 	dragy_ = y;
