@@ -256,13 +256,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 			const int a = int(opacity(pos.pressure())*256);
 #ifdef IS_BIG_ENDIAN
 			++dest;
-			*dest = a*(red - *dest) / 256 + *dest; ++dest;
-			*dest = a*(green - *dest) / 256 + *dest; ++dest;
-			*dest = a*(blue - *dest) / 256 + *dest;
+			*dest += a*(red - *dest) / 2560; ++dest;
+			*dest += a*(green - *dest) / 2560; ++dest;
+			*dest += a*(blue - *dest) / 2560;
 #else
-			*dest = a*(blue - *dest) / 256 + *dest; ++dest;
-			*dest = a*(green - *dest) / 256 + *dest; ++dest;
-			*dest = a*(red - *dest) / 256 + *dest;
+			*dest += a*(blue - *dest) / 2560; ++dest;
+			*dest += a*(green - *dest) / 2560; ++dest;
+			*dest += a*(red - *dest) / 2560;
 #endif
 		}
 		return;
@@ -294,13 +294,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 			#endif // TESTING
 #ifdef IS_BIG_ENDIAN
 			++dest;
-			*dest += a*(red - *dest) / 256; ++dest;
-			*dest += a*(green - *dest) / 256; ++dest;
-			*dest += a*(blue - *dest) / 256; ++dest;
+			*dest += a*(red - *dest) / 2560; ++dest;
+			*dest += a*(green - *dest) / 2560; ++dest;
+			*dest += a*(blue - *dest) / 2560; ++dest;
 #else
-			*dest += a*(blue - *dest) / 256; ++dest;
-			*dest += a*(green - *dest) / 256; ++dest;
-			*dest += a*(red - *dest) / 256; ++dest;
+			*dest += a*(blue - *dest) / 2560; ++dest;
+			*dest += a*(green - *dest) / 2560; ++dest;
+			*dest += a*(red - *dest) / 2560; ++dest;
 			++dest;
 #endif
 		}
