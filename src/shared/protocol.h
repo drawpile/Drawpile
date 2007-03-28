@@ -100,9 +100,11 @@ public:
 		if (next != 0) next->prev = 0;
 		if (prev != 0) prev->next = 0;
 		
+		#if 0 // seems to cause more work than reduce it
 		// delete our ptr's;
 		delete next,
 		delete prev;
+		#endif // 0
 	}
 	
 	//! Message type identifier (full list in protocol::type namespace).
