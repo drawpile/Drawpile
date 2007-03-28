@@ -280,7 +280,7 @@ void Server::uWrite(User*& usr) throw()
 		size_t len=0, size=usr->output.canWrite();
 		
 		// serialize message/s
-		char* buf = (*f_msg)->serialize(len, usr->output.wpos, size);
+		char* buf = (*--l_msg)->serialize(len, usr->output.wpos, size);
 		
 		// in case new buffer was allocated
 		if (buf != usr->output.wpos)
@@ -382,7 +382,7 @@ void Server::uWrite(User*& usr) throw()
 		}
 		#endif // HAVE_ZLIB
 		
-		usr->queue.erase(f_msg, l_msg);
+		usr->queue.erase(f_msg, ++l_msg);
 	}
 	
 	const int sb = usr->sock->send(
