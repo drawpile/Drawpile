@@ -27,8 +27,15 @@
 
 namespace drawingboard {
 
-#define ADJUST_BY_PRESSURE(var1, var2, pressure) \
-	var1 * pressure + var2 * (1.0-pressure)
+/**
+ * \brief Linear interpolation
+ * This is used to figure out correct radius, opacity, hardness and
+ * color values.
+ */
+static inline qreal interpolate(qreal a, qreal b, qreal alpha)
+{
+	return a*alpha + b*(1-alpha);
+}
 
 /**
  * A brush with the specified settings is constructed. The brush is
@@ -53,6 +60,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
 /**
  * Set the radius for pressure=1.0
  * @param radius brush radius. 0 means single pixel brush
+ * @pre 0 <= radius
  */
 void Brush::setRadius(int radius)
 {
@@ -64,7 +72,8 @@ void Brush::setRadius(int radius)
 
 /**
  * Set the hardness for pressure=1.0
- * @param hardness brush hardness. Range is [-1..1]
+ * @param hardness brush hardness
+ * @pre 0 <= hardness <= 1
  */
 void Brush::setHardness(qreal hardness)
 {
@@ -76,7 +85,8 @@ void Brush::setHardness(qreal hardness)
 
 /**
  * Set the opacity for pressure=1.0
- * @param opacity brush opacity. Range is [0..1]
+ * @param opacity brush opacity
+ * @pre 0 <= opacity <= 1
  */
 void Brush::setOpacity(qreal opacity)
 {
@@ -96,6 +106,11 @@ void Brush::setColor(const QColor& color)
 }
 
 
+/**
+ * Set the radius for pressure=0.0
+ * @param radius brush radius. 0 means single pixel brush
+ * @pre 0 <= radius
+ */
 void Brush::setRadius2(int radius)
 {
 	Q_ASSERT(radius>=0);
@@ -104,6 +119,11 @@ void Brush::setRadius2(int radius)
 	cachepressure_ = -1;
 }
 
+/**
+ * Set the hardness for pressure=0.0
+ * @param hardness brush hardness
+ * @pre 0 <= hardness <= 1
+ */
 void Brush::setHardness2(qreal hardness)
 {
 	Q_ASSERT(hardness>=0 && hardness<=1);
@@ -112,6 +132,11 @@ void Brush::setHardness2(qreal hardness)
 	cachepressure_ = -1;
 }
 
+/**
+ * Set the opacity for pressure=0.0
+ * @param opacity brush hardness
+ * @pre 0 <= opacity <= 1
+ */
 void Brush::setOpacity2(qreal opacity)
 {
 	Q_ASSERT(opacity>=0 && opacity<=1);
@@ -120,6 +145,10 @@ void Brush::setOpacity2(qreal opacity)
 	cachepressure_ = -1;
 }
 
+/**
+ * Set the color for pressure=0.0
+ * @param color brush color.
+ */
 void Brush::setColor2(const QColor& color)
 {
 	color2_ = color;
@@ -137,87 +166,105 @@ void Brush::checkSensitivity()
 
 /**
  * Get the brush radius for certain pressure.
- * @param pressure pen pressure. Range is [0..1]
+ * @param pressure pen pressure
  * @return radius
+ * @pre 0 <= pressure <= 1
+ * @post 0 <= RESULT
  */
 int Brush::radius(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	return unsigned(ceil(ADJUST_BY_PRESSURE(radius1_, radius2_, pressure)));
+	return unsigned(ceil(interpolate(radius1_, radius2_, pressure)));
 }
 
 /**
  * Get the brush hardness for certain pressure.
- * @param pressure pen pressure. Range is [0..1]
+ * @param pressure pen pressure
  * @return hardness
+ * @pre 0 <= pressure <= 1
+ * @post 0 <=  RESULT <= 1
  */
 qreal Brush::hardness(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
-	return ADJUST_BY_PRESSURE(hardness1_, hardness2_, pressure);
+	return interpolate(hardness1_, hardness2_, pressure);
 }
 
 /**
  * Get the brush opacity for certain pressure.
- * @param pressure pen pressure. Range is [0..1]
+ * @param pressure pen pressure
  * @return opacity
+ * @pre 0 <= pressure <= 1
+ * @post 0 <= RESULT <= 1
  */
 qreal Brush::opacity(qreal pressure) const
 {
-	return ADJUST_BY_PRESSURE(opacity1_, opacity2_, pressure);
+	Q_ASSERT(pressure>=0 && pressure<=1);
+	return interpolate(opacity1_, opacity2_, pressure);
 }
 
 /**
  * Get the brush color for certain pressure.
  * @param pressure pen pressure. Range is [0..1]
  * @return color
+ * @pre 0 <= pressure <= 1
  */
 QColor Brush::color(qreal pressure) const
 {
 	Q_ASSERT(pressure>=0 && pressure<=1);
 	
-	const int r = qRound(ADJUST_BY_PRESSURE(color1_.red(), color2_.red(), pressure));
-	const int g = qRound(ADJUST_BY_PRESSURE(color1_.green(), color2_.green(), pressure));
-	const int b = qRound(ADJUST_BY_PRESSURE(color1_.blue(), color2_.blue(), pressure));
-	
-	return QColor(r,g,b);
+	return QColor(
+			qRound(interpolate(color1_.red(), color2_.red(), pressure)),
+			qRound(interpolate(color1_.green(), color2_.green(), pressure)),
+			qRound(interpolate(color1_.blue(), color2_.blue(), pressure))
+			);
+
+
 }
 
 /**
  * A brush is basically an image filled with a single color and an alpha
  * channel that defines its shape.
- * The alpha channel is produced with the formula \f$a(x,y) = (1-\frac{x^2+y^2}{r^2}^{2r^{2h-1}})*o\f$.
- * getBrush will cache the previously used brush.
- * @param pressure pen pressure. Range is [0..1]
+ * @param pressure pen pressure
  * @return brush image
+ * @pre 0 <= pressure <= 1
  */
 void Brush::updateCache() const
 {
 	const int rad = radius(cachepressure_);
 	const qreal o = opacity(cachepressure_);
-	qreal hard = pow(2*rad,2*hardness(cachepressure_)-1);
-	if(hard<0.01) hard=0.01;
+	const int oversample = 2;
 
-	const int dia = rad*2;
-	cache_.resize(dia*dia);
+	cache_.resize(rad*rad*4);
 
-	// 1/radius^2
-	const qreal rr = 1.0/qreal(rad*rad);
+	// Compute a lookup table
+	ushort lookup[rad*oversample];
+	const int grad = int((1 - hardness(cachepressure_)) * rad * oversample);
+	for(int i=0;i<grad;++i)
+		lookup[i] = int( 256 * i/qreal(grad) * o );
+	for(int i=grad;i<rad*oversample;++i)
+		lookup[i] = int(256 * o);
 
+	// Generate an alpha map for the brush.
 	// Only one quarter of the pixels are unique.
 	// Quarter 1 is top left, quarter 2 is top right,
 	// quarter 3 is bottom left and quarter 4 is bottom right.
-	const uint scanline = dia - 1;
-	const uint scanline15= dia + rad;
+	const uint scanline = rad*2 - 1;
+	const uint scanline15= rad*3;
 	const uint scanline2 = rad;
 	ushort *q1 = cache_.data();
 	ushort *q2 = q1 + scanline;
-	ushort *q3 = q1 + dia*(dia-1);
+	ushort *q3 = q1 + (rad*2) * ((rad*2)-1);
 	ushort *q4 = q3 + scanline;
-	for(int y=rad;y!=0;--y) {
-		const qreal yy = (y-.5) * (y-.5);
-		for(int x=rad;x!=0;--x) {
-			const ushort a = qBound(0, int((1-pow( (((x-.5)*(x-.5))+(yy))*(rr) ,hard)) * o * 256), 256);
+	for(int y=-rad;y<0;++y) {
+		const qreal yy = y*y;
+		for(int x=-rad;x<0;++x) {
+			const qreal dist = sqrt(x*x + yy);
+			ushort a;
+			if(dist<rad)
+				a = lookup[rad*oversample-int(dist*oversample)-1];
+			else
+				a = 0;
 			
 			*(q1++) = a;
 			*(q2--) = a;
@@ -261,7 +308,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 	if(dia==0) {
 		if(offx==0 && offy==0 &&
 				pos.x() < image.width() && pos.y() < image.height()) {
-			const int a = int(opacity(pos.pressure())*256);
+			const int a = int(opacity(pos.pressure())* hardness(pos.pressure())*256);
 			#ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
@@ -333,7 +380,8 @@ Brush& Brush::operator=(const Brush& brush)
 		qAbs(hardness2_ - brush.hardness2_) >= 1.0/256.0 ||
 		qAbs(opacity1_ - brush.opacity1_) >= 1.0/256.0 ||
 		qAbs(opacity2_ - brush.opacity2_) >= 1.0/256.0 ||
-		cachepressure_<0 || brush.cachepressure_>=0) {
+		cachepressure_<0 || brush.cachepressure_>=0)
+	{
 		cachepressure_ = brush.cachepressure_;
 		cache_ = brush.cache_;
 	}
@@ -366,7 +414,5 @@ bool Brush::operator!=(const Brush& brush) const
 {
 	return !(*this == brush);
 }
-
-#undef ADJUST_BY_PRESSURE // remove macro function
 
 }
