@@ -49,6 +49,22 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <set>
+#include <vector>
+#include <list>
+
+/* iterators */
+typedef std::map<uint8_t, Session*>::iterator sessionmap_iterator;
+typedef std::map<uint8_t, Session*>::const_iterator sessionmap_const_iterator;
+typedef std::map<fd_t, User*>::iterator usermap_iterator;
+typedef std::map<fd_t, User*>::const_iterator usermap_const_iterator;
+typedef std::multimap<fd_t, fd_t>::iterator tunnelmap_iterator;
+typedef std::multimap<fd_t, fd_t>::const_iterator tunnelmap_const_iterator;
+typedef std::list<User*>::iterator userlist_iterator;
+typedef std::list<User*>::const_iterator userlist_const_iterator;
+typedef std::vector<message_ref>::iterator msgvector_iterator;
+typedef std::vector<message_ref>::const_iterator msgvector_const_iterator;
+
 Server::Server() throw()
 	: password(0),
 	a_password(0),
@@ -87,7 +103,7 @@ Server::~Server() throw()
 	cleanup();
 }
 
-uint8_t Server::getUserID() throw()
+const uint8_t Server::getUserID() throw()
 {
 	if (user_ids.empty())
 		return protocol::null_user;
@@ -98,7 +114,7 @@ uint8_t Server::getUserID() throw()
 	return n;
 }
 
-uint8_t Server::getSessionID() throw()
+const uint8_t Server::getSessionID() throw()
 {
 	if (session_ids.empty())
 		return protocol::Global;
@@ -240,55 +256,31 @@ void Server::uWrite(User*& usr) throw()
 	std::cout << "Server::uWrite(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	// if buffer is null or no data left to read
-	if (!usr->output.data or usr->output.canRead() == 0)
+	// if buffer is empty
+	if (usr->output.isEmpty())
 	{
 		assert(!usr->queue.empty());
 		
-		protocol::Message *msg = boost::get_pointer(usr->queue.front());
-		
-		// create outgoing message list
-		std::vector<message_ref> outgoing;
-		
-		// TODO: Support linked lists for other message types as well..
-		if (msg->type == protocol::type::StrokeInfo)
+		const std::deque<message_ref>::iterator f_msg(usr->queue.begin());
+		std::deque<message_ref>::iterator l_msg(f_msg+1), iter(f_msg);
+		for (; l_msg != usr->queue.end(); ++l_msg, ++iter)
 		{
-			message_ref n;
-			while (usr->queue.size() != 0)
-			{
-				n = usr->queue.front();
-				if ((n->type != msg->type) // different type
-					or (n->user_id != msg->user_id) // different user
-					or (n->session_id != msg->session_id) // different session
-				)
-				{
-					break;
-				}
-				
-				outgoing.push_back(n);
-				usr->queue.pop_front();
-			}
-		}
-		
-		std::vector<message_ref>::iterator mi;
-		protocol::Message *last = msg;
-		if (outgoing.size() > 1)
-		{
+			if (((*l_msg)->type != (*f_msg)->type)
+				or ((*l_msg)->user_id != (*f_msg)->user_id)
+				or ((*l_msg)->session_id != (*f_msg)->session_id)
+			)
+				break; // type changed
+			
 			// create linked list
-			for (mi = ++(outgoing.begin()); mi != outgoing.end(); ++mi)
-			{
-				msg = boost::get_pointer(*mi);
-				msg->prev = last;
-				last->next = msg;
-				last = msg;
-			}
+			(*l_msg)->prev = boost::get_pointer(*iter);
+			(*iter)->next = boost::get_pointer(*l_msg);
 		}
 		
 		//msg->user_id = id;
 		size_t len=0, size=usr->output.canWrite();
 		
 		// serialize message/s
-		char* buf = msg->serialize(len, usr->output.wpos, size);
+		char* buf = (*f_msg)->serialize(len, usr->output.wpos, size);
 		
 		// in case new buffer was allocated
 		if (buf != usr->output.wpos)
@@ -296,32 +288,14 @@ void Server::uWrite(User*& usr) throw()
 		
 		usr->output.write(len);
 		
-		#ifdef DEBUG_LINKED_LIST
-		#ifndef NDEBUG
-		if (outgoing.size() > 1)
-		{
-			// user_id and type saved, count as additional header
-			std::cout << "Linked " << outgoing.size()
-				<< " messages, for total size: " << len << std::endl
-				<< "Bandwidth savings are [(7*n) - ((5*n)+3)]: "
-				<< (7 * outgoing.size()) - (3 + (outgoing.size() * 5)) << std::endl;
-		}
-		#endif // NDEBUG
-		#endif // DEBUG_LINKED_LIST
+		// clear linked list...
+		/*
+		// no longer needed
+		for (iter = f_msg; iter != l_msg; ++iter)
+			(*iter)->next = (*iter)->prev = 0;
+		*/
 		
-		if (outgoing.empty())
-		{
-			usr->queue.pop_front();
-		}
-		else
-		{
-			// clear linked list...
-			for (mi = outgoing.begin(); mi != outgoing.end(); ++mi)
-			{
-				(*mi)->next = 0;
-				(*mi)->prev = 0;
-			}
-		}
+		usr->queue.erase(f_msg, l_msg);
 		
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
@@ -450,7 +424,7 @@ void Server::uWrite(User*& usr) throw()
 		
 		// just to ensure we don't need to do anything for it.
 		
-		if (usr->output.left == 0)
+		if (usr->output.isEmpty())
 		{
 			// remove buffer
 			// usr->output.rewind();
@@ -479,7 +453,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		#ifndef NDEBUG
 		std::cerr << "Input buffer full, increasing size by 8 kiB." << std::endl;
 		#endif
-		usr->input.resize(usr->input.size + 8192);
+		usr->input.resize(usr->input.size + 4096);
 	}
 	
 	const int rb = usr->sock->recv(
@@ -591,7 +565,7 @@ void Server::uProcessData(User*& usr) throw()
 			usr->inMsg = 0;
 			
 			// rewind circular buffer if there's no more data in it.
-			if (usr->input.left == 0)
+			if (usr->input.isEmpty())
 				usr->input.rewind();
 		}
 		else // quite dead
@@ -886,7 +860,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		#endif
 		{
-			const session_iterator si(sessions.find(usr->inMsg->session_id));
+			const sessionmap_iterator si(sessions.find(usr->inMsg->session_id));
 			
 			if (si == sessions.end())
 			{
@@ -918,7 +892,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#endif
 		if (usr->syncing == protocol::Global)
 		{
-			const session_iterator si(sessions.find(usr->inMsg->session_id));
+			const sessionmap_iterator si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
 			{
 				// session not found
@@ -974,7 +948,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::type::ListSessions:
 		if (sessions.size() != 0)
 		{
-			session_iterator si(sessions.begin());
+			sessionmap_iterator si(sessions.begin());
 			for (; si != sessions.end(); ++si)
 			{
 				uSendMsg(usr, msgSessionInfo(si->second));
@@ -985,7 +959,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::SessionEvent:
 		{
-			const session_iterator si(sessions.find(usr->inMsg->session_id));
+			const sessionmap_iterator si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
 			{
 				uSendMsg(usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
@@ -1060,7 +1034,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Password:
 		{
-			session_iterator si;
+			sessionmap_iterator si;
 			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
 			if (msg->session_id == protocol::Global)
 			{
@@ -1301,7 +1275,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	}
 	
 	// get users
-	const std::pair<tunnel_iterator,tunnel_iterator> ft(tunnel.equal_range(usr->sock->fd()));
+	const std::pair<tunnelmap_iterator,tunnelmap_iterator> ft(tunnel.equal_range(usr->sock->fd()));
 	if (ft.first == ft.second)
 	{
 		std::cerr << "Un-tunneled raster from: "
@@ -1325,8 +1299,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	uSendMsg(usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 	
 	// Forward to users.
-	tunnel_iterator ti(ft.first);
-	//user_iterator ui;
+	tunnelmap_iterator ti(ft.first);
 	User *usr_ptr;
 	
 	message_ref raster_ref(raster);
@@ -1659,7 +1632,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		return;
 	case protocol::admin::command::Destroy:
 		{
-			const session_iterator si(sessions.find(msg->session_id));
+			const sessionmap_iterator si(sessions.find(msg->session_id));
 			if (si == sessions.end())
 			{
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
@@ -1695,7 +1668,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::admin::command::Alter:
 		{
-			const session_iterator si(sessions.find(msg->session_id));
+			const sessionmap_iterator si(sessions.find(msg->session_id));
 			if (si == sessions.end())
 			{
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
@@ -1787,7 +1760,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		else
 		{
-			const session_iterator si(sessions.find(msg->session_id));
+			const sessionmap_iterator si(sessions.find(msg->session_id));
 			if (si == sessions.end())
 			{
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::UnknownSession));
@@ -2123,7 +2096,7 @@ void Server::Propagate(Session* session, message_ref msg, User* source, const bo
 	if (toAll)
 	{
 		// send to users waiting sync as well.
-		for (std::list<User*>::iterator wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
+		for (userlist_iterator wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
 		{
 			if ((*wui) != source)
 			{
@@ -2234,8 +2207,8 @@ void Server::SyncSession(Session* session) throw()
 		}
 	}
 	
-	std::list<User*>::iterator new_i(newc.begin()), new_i2;
-	std::vector<message_ref>::iterator msg_queue_i;
+	userlist_iterator new_i(newc.begin()), new_i2;
+	msgvector_iterator msg_queue_i;
 	// Send messages
 	for (; new_i != newc.end(); ++new_i)
 	{
@@ -2370,7 +2343,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 		// Cancel raster sending for this user
 		User* usr; // warning from compiler
 		
-		std::multimap<fd_t, fd_t>::iterator tunnel_i(tunnel.begin());
+		tunnelmap_iterator tunnel_i(tunnel.begin());
 		while (tunnel_i != tunnel.end())
 		{
 			if (tunnel_i->second == usr->sock->fd())
@@ -2423,7 +2396,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	// Check duplicate connections (should be enabled with command-line switch instead)
 	#ifdef NO_DUPLICATE_CONNECTIONS
-	for (user_iterator ui(users.begin()); ui != users.end(); ++ui)
+	for (usermap_iterator ui(users.begin()); ui != users.end(); ++ui)
 	{
 		if (sock->matchAddress(ui->second->sock))
 		{
@@ -2473,7 +2446,10 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	// add timer
 	utimer.insert(utimer.end(), usr);
 	
-	usr->input.setBuffer(new char[8192], 8192);
+	const size_t nwbuffer = 4096;
+	
+	usr->input.setBuffer(new char[nwbuffer], nwbuffer);
+	usr->output.setBuffer(new char[nwbuffer], nwbuffer);
 	
 	users[sock->fd()] = usr;
 	
@@ -2493,7 +2469,7 @@ void Server::breakSync(User* usr) throw()
 	
 	uSendMsg(usr, msgError(usr->syncing, protocol::error::SyncFailure));
 	
-	const session_iterator sui(sessions.find(usr->syncing));
+	const sessionmap_iterator sui(sessions.find(usr->syncing));
 	if (sui == sessions.end())
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2523,8 +2499,8 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
-	tunnel_iterator ti;
-	user_iterator usi;
+	tunnelmap_iterator ti;
+	usermap_iterator usi;
 	while ((ti = tunnel.find(usr->sock->fd())) != tunnel.end())
 	{
 		usi = users.find(ti->second);
@@ -2608,21 +2584,21 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	}
 }
 
-int Server::init() throw(std::bad_alloc)
+bool Server::init() throw(std::bad_alloc)
 {
 	srand(time(0) - 513); // FIXME
 	
 	if (lsock.create() == INVALID_SOCKET)
 	{
 		std::cerr << "! Failed to create a socket." << std::endl;
-		return -1;
+		return false;
 	}
 	
 	lsock.block(false); // nonblocking
 	lsock.reuse(true); // reuse address
 	
 	bool bound = false;
-	for (int bport=lo_port; bport < hi_port+1; ++bport)
+	for (u_short bport=lo_port; bport < hi_port+1; ++bport)
 	{
 		#ifdef IPV6_SUPPORT
 		if (lsock.bindTo("::", bport) == SOCKET_ERROR)
@@ -2631,7 +2607,7 @@ int Server::init() throw(std::bad_alloc)
 		#endif
 		{
 			if (lsock.getError() == EBADF or lsock.getError() == EINVAL)
-				return -1;
+				return false;
 			
 			// continue
 		}
@@ -2645,19 +2621,22 @@ int Server::init() throw(std::bad_alloc)
 	if (!bound)
 	{
 		std::cerr << "Failed to bind to any port" << std::endl;
-		return -1;
+		return false;
 	}
 	
 	if (lsock.listen() == SOCKET_ERROR)
 	{
 		std::cerr << "Failed to open listening port." << std::endl;
-		return -1;
+		return false;
 	}
 	
 	std::cout << "Listening on: " << lsock.address() << std::endl;
 	
 	if (!ev.init())
-		return -1;
+	{
+		std::cerr << "Event system initialization failed." << std::endl;
+		return false;
+	}
 	
 	ev.add(lsock.fd(), ev.read);
 	
@@ -2682,8 +2661,7 @@ bool Server::validateUserName(User* usr) const throw()
 		return false;
 	}
 	
-	std::map<fd_t, User*>::const_iterator ui(users.begin());
-	for (; ui != users.end(); ++ui)
+	for (std::map<fd_t, User*>::const_iterator ui(users.begin()); ui != users.end(); ++ui)
 	{
 		if (ui->second == usr) continue; // skip self
 		
@@ -2712,8 +2690,7 @@ bool Server::validateSessionTitle(Session* session) const throw()
 	// Session title is never unique if it's an empty string.
 	if (session->len == 0) return false;
 	
-	std::map<uint8_t, Session*>::const_iterator si(sessions.begin());
-	for (; si != sessions.end(); ++si)
+	for (sessionmap_const_iterator si(sessions.begin()); si != sessions.end(); ++si)
 	{
 		if (si->second == session) continue; // skip self
 		
@@ -2730,34 +2707,25 @@ bool Server::validateSessionTitle(Session* session) const throw()
 void Server::cullIdlers() throw()
 {
 	User *usr;
-	std::set<User*>::iterator tui(utimer.begin());
-	
-	do
+	for (std::set<User*>::iterator tui(utimer.begin()); tui != utimer.end(); ++tui)
 	{
-		if ((*tui)->deadtime <= current_time)
+		if ((*tui)->deadtime < current_time)
 		{
 			#ifndef NDEBUG
 			std::cout << "Killing idle user: "
 				<< static_cast<int>((*tui)->id) << std::endl;
 			#endif
 			
-			utimer.erase(tui);
-			
 			usr = *tui;
+			--tui;
+			
 			uRemove(usr, protocol::user_event::TimedOut);
-			
-			tui = utimer.begin();
 		}
-		else
+		else if ((*tui)->deadtime < next_timer)
 		{
-			if ((*tui)->deadtime < next_timer)
-			{
-				// re-schedule next culling to come sooner
-				next_timer = (*tui)->deadtime;
-			}
-			
-			++tui;
+			// re-schedule next culling to come sooner
+			next_timer = (*tui)->deadtime;
+		
 		}
 	}
-	while (tui != utimer.end());
 }

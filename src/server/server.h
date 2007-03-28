@@ -48,19 +48,11 @@
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
-/* iterators */
-typedef std::map<uint8_t, Session*>::iterator session_iterator;
-typedef std::map<fd_t, User*>::iterator user_iterator;
-typedef std::multimap<fd_t, fd_t>::iterator tunnel_iterator;
+#include <queue> // user and session ID queue
+#include <map> // user and session maps
+#include <set> // utimer set
 
-//#include <sys/time.h>
-
-#include <stdexcept>
-
-#include <queue>
-#include <map>
-#include <set>
-//#include <list>
+#include <stdexcept> // std::exception class
 
 namespace srv_defaults
 {
@@ -147,11 +139,11 @@ protected:
 	
 	// Get free user ID
 	inline
-	uint8_t getUserID() throw();
+	const uint8_t getUserID() throw();
 	
 	// Get free session ID
 	inline
-	uint8_t getSessionID() throw();
+	const uint8_t getSessionID() throw();
 	
 	/* *** Instances *** */
 	
@@ -269,9 +261,10 @@ public:
 	
 	//! Initializes anything that need to be done so.
 	/**
+	 * @return false on error, true otherwise
 	 * @throw std::bad_alloc (only if EV_EPOLL is defined.)
 	 */
-	int init() throw(std::bad_alloc);
+	bool init() throw(std::bad_alloc);
 	
 	//! Set name length limit (default: 8)
 	void setNameLengthLimit(const uint8_t limit) throw() { name_len_limit = limit; }
