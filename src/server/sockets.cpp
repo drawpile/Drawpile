@@ -395,10 +395,10 @@ int Socket::bindTo(const std::string address, const uint16_t port) throw()
 	
 	#ifdef IPV6_SUPPORT
 	addr.sin6_family = AF_INET6;
-	addr.sin6_port = bswap(port);
+	bswap(addr.sin6_port = port);
 	#else // IPv4
 	addr.sin_family = AF_INET;
-	addr.sin_port = bswap(port);
+	bswap(addr.sin_port = port);
 	#endif // IPV6_SUPPORT
 	
 	const int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
