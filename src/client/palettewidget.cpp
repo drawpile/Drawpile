@@ -23,6 +23,7 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QRubberBand>
+#include <QMenu>
 
 #include "palettewidget.h"
 #include "palette.h"
@@ -34,9 +35,13 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	dragsource_(-1)
 {
 	setAcceptDrops(true);
-	scrollbar_ = new QScrollBar(this);
 	dragtarget_ = new QRubberBand(QRubberBand::Rectangle, this);
 
+	contextmenu_ = new QMenu(this);
+	QAction *remove = contextmenu_->addAction(tr("Remove"));
+	connect(remove, SIGNAL(triggered()), this, SLOT(removeColor()));
+
+	scrollbar_ = new QScrollBar(this);
 	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 }
 
@@ -80,6 +85,12 @@ void PaletteWidget::scroll(int pos)
 	update();
 }
 
+void PaletteWidget::removeColor()
+{
+	palette_->removeColor(dragsource_);
+	update();
+}
+
 void PaletteWidget::paintEvent(QPaintEvent *)
 {
 	if(palette_==0)
@@ -99,12 +110,10 @@ void PaletteWidget::paintEvent(QPaintEvent *)
 
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
-	if(event->button() == Qt::LeftButton) {
-		const int i = indexAt(event->pos());
-		if(i!=-1) {
-			dragstart_ = event->pos();
-			dragsource_ = i;
-		}
+	const int i = indexAt(event->pos());
+	if(i!=-1) {
+		dragstart_ = event->pos();
+		dragsource_ = i;
 	}
 }
 
@@ -127,8 +136,12 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(dragsource_ != -1)
-		emit colorSelected(palette_->color(dragsource_));
+	if(dragsource_ != -1) {
+		if(event->button()==Qt::LeftButton)
+			emit colorSelected(palette_->color(dragsource_));
+		else if(event->button()==Qt::RightButton)
+			contextmenu_->popup(mapToGlobal(event->pos()));
+	}
 }
 
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)

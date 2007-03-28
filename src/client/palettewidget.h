@@ -25,6 +25,7 @@
 class Palette;
 class QScrollBar;
 class QRubberBand;
+class QMenu;
 
 namespace widgets {
 
@@ -53,6 +54,7 @@ class PaletteWidget : public QWidget {
 
 	private slots:
 		void scroll(int pos);
+		void removeColor();
 
 	private:
 		int columns() const;
@@ -69,6 +71,7 @@ class PaletteWidget : public QWidget {
 		QPoint dragstart_;
 		int dragsource_;
 		QRubberBand *dragtarget_;
+		QMenu *contextmenu_;
 };
 
 }
