@@ -70,7 +70,7 @@ class PaletteWidget : public QWidget {
 		int scroll_;
 		QPoint dragstart_;
 		int dragsource_;
-		QRubberBand *dragtarget_;
+		QRubberBand *outline_;
 		QMenu *contextmenu_;
 };
 

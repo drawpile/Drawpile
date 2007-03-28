@@ -35,7 +35,7 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	dragsource_(-1)
 {
 	setAcceptDrops(true);
-	dragtarget_ = new QRubberBand(QRubberBand::Rectangle, this);
+	outline_ = new QRubberBand(QRubberBand::Rectangle, this);
 
 	contextmenu_ = new QMenu(this);
 	QAction *remove = contextmenu_->addAction(tr("Remove"));
@@ -114,6 +114,8 @@ void PaletteWidget::mousePressEvent(QMouseEvent *event)
 	if(i!=-1) {
 		dragstart_ = event->pos();
 		dragsource_ = i;
+		outline_->setGeometry(swatchRect(i));
+		outline_->show();
 	}
 }
 
@@ -136,6 +138,7 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 {
+	outline_->hide();
 	if(dragsource_ != -1) {
 		if(event->button()==Qt::LeftButton)
 			emit colorSelected(palette_->color(dragsource_));
@@ -148,7 +151,7 @@ void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 {
 	if(event->mimeData()->hasFormat("application/x-color")) {
 		event->acceptProposedAction();
-		dragtarget_->show();
+		outline_->show();
 	}
 }
 
@@ -156,22 +159,22 @@ void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
 {
 	int index = indexAt(event->pos());
 	if(index != -1) {
-		dragtarget_->setGeometry(swatchRect(index));
+		outline_->setGeometry(swatchRect(index));
 	} else {
-		dragtarget_->setGeometry(betweenRect(nearestAt(event->pos())));
+		outline_->setGeometry(betweenRect(nearestAt(event->pos())));
 	}
 }
 
 void PaletteWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
-	dragtarget_->hide();
+	outline_->hide();
 }
 
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
 	int index = indexAt(event->pos());
-	dragtarget_->hide();
+	outline_->hide();
 	if(index != -1) {
 		palette_->setColor(
 				index,
