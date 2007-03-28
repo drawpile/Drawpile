@@ -405,7 +405,7 @@ void Server::uWrite(User*& usr) throw()
 			// retry
 			break;
 		default:
-			std::cerr << "Error occured while sending to user: "
+			std::cerr << "Error occured while sending to user #"
 				<< static_cast<int>(usr->id) << std::endl;
 			
 			uRemove(usr, protocol::user_event::BrokenPipe);
@@ -474,7 +474,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 			// retry later
 			return;
 		default:
-			std::cerr << "Unrecoverable error occured while reading from user: "
+			std::cerr << "Unrecoverable error occured while reading from user #"
 				<< static_cast<int>(usr->id) << std::endl;
 			
 			uRemove(usr, protocol::user_event::BrokenPipe);
@@ -483,7 +483,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	}
 	else if (rb == 0)
 	{
-		std::cerr << "User disconnected: " << static_cast<int>(usr->id) << std::endl;
+		std::cerr << "User disconnected #" << static_cast<int>(usr->id) << std::endl;
 		uRemove(usr, protocol::user_event::Disconnect);
 		return;
 	}
@@ -635,7 +635,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#ifdef CHECK_VIOLATIONS
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
-			std::cerr << "Protocol violation from user: "
+			std::cerr << "Protocol violation from user #"
 				<< static_cast<int>(usr->id) << std::endl
 				<< "Reason: Unexpected tool info" << std::endl;
 			uRemove(usr, protocol::user_event::Violation);
@@ -668,7 +668,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		{
 			if (!fIsSet(usr->tags, uTag::HaveTool))
 			{
-				std::cerr << "Protocol violation from user: "
+				std::cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << std::endl
 					<< "Reason: Stroke info without tool." << std::endl;
 				uRemove(usr, protocol::user_event::Violation);
@@ -852,7 +852,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#ifdef CHECK_VIOLATIONS
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
-			std::cerr << "Protocol violation from user: "
+			std::cerr << "Protocol violation from user #"
 				<< static_cast<int>(usr->id) << std::endl
 				<< "Reason: Unsubscribe in middle of something." << std::endl;
 			uRemove(usr, protocol::user_event::Violation);
@@ -865,7 +865,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			if (si == sessions.end())
 			{
 				#ifndef NDEBUG
-				std::cerr << "(unsubscribe) no such session: "
+				std::cerr << "(unsubscribe) no such session #"
 					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
@@ -883,7 +883,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		#ifdef CHECK_VIOLATIONS
 		if (!fIsSet(usr->tags, uTag::CanChange))
 		{
-			std::cerr << "Protocol violation from user: "
+			std::cerr << "Protocol violation from user #"
 				<< static_cast<int>(usr->id) << std::endl
 				<< "Reason: Subscribe in middle of something." << std::endl;
 			uRemove(usr, protocol::user_event::Violation);
@@ -897,7 +897,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				// session not found
 				#ifndef NDEBUG
-				std::cerr << "(subscribe) no such session: "
+				std::cerr << "(subscribe) no such session #"
 					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
 				#endif
 				
@@ -1259,9 +1259,9 @@ void Server::uTunnelRaster(User* usr) throw()
 	
 	if (!uInSession(usr, raster->session_id))
 	{
-		std::cerr << "Raster for unsubscribed session: "
+		std::cerr << "Raster for unsubscribed session #"
 			<< static_cast<int>(raster->session_id)
-			<< ", from: " << static_cast<int>(usr->id)
+			<< ", from user #" << static_cast<int>(usr->id)
 			<< std::endl;
 		
 		if (!last)
@@ -1278,9 +1278,9 @@ void Server::uTunnelRaster(User* usr) throw()
 	const std::pair<tunnelmap_iterator,tunnelmap_iterator> ft(tunnel.equal_range(usr->sock->fd()));
 	if (ft.first == ft.second)
 	{
-		std::cerr << "Un-tunneled raster from: "
+		std::cerr << "Un-tunneled raster from user #"
 			<< static_cast<int>(usr->id)
-			<< ", for session: " << static_cast<int>(raster->session_id)
+			<< ", for session #" << static_cast<int>(raster->session_id)
 			<< std::endl;
 		
 		// We assume the raster was for user/s who disappeared
@@ -1363,10 +1363,10 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			// Lock whole board
 			
 			#ifndef NDEBUG
-			std::cout << "Changing lock for session: "
+			std::cout << "Changing lock state for session #"
 				<< static_cast<int>(session->id)
-				<< ", locked: "
-				<< (event->action == protocol::session_event::Lock ? "true" : "false") << std::endl;
+				<< " to "
+				<< (event->action == protocol::session_event::Lock ? "enabled" : "disabled") << std::endl;
 			#endif
 			
 			session->locked = (event->action == protocol::session_event::Lock ? true : false);
@@ -1376,11 +1376,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			// Lock single user
 			
 			#ifndef NDEBUG
-			std::cout << "Changing lock for user: "
+			std::cout << "Changing lock state for user #"
 				<< static_cast<int>(event->target)
-				<< ", locked: "
-				<< (event->action == protocol::session_event::Lock ? "true" : "false")
-				<< ", in session: " << static_cast<int>(session->id) << std::endl;
+				<< " to "
+				<< (event->action == protocol::session_event::Lock ? "enabled" : "disabled")
+				<< " in session #" << static_cast<int>(session->id) << std::endl;
 			#endif
 			
 			// Find user
@@ -1413,7 +1413,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				if (event->action == protocol::session_event::Lock)
 				{
 					#ifndef NDEBUG
-					std::cout << "Lock ignored, limiting user to layer: "
+					std::cout << "Lock ignored, limiting user to layer #"
 						<< static_cast<int>(event->aux) << std::endl;
 					#endif
 					
@@ -1428,7 +1428,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				else // unlock
 				{
 					#ifndef NDEBUG
-					std::cout << "Lock ignored, releasing user from layer: "
+					std::cout << "Lock ignored, releasing user from layer #"
 						<< static_cast<int>(event->aux) << std::endl;
 					#endif
 					
@@ -1619,7 +1619,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			sessions[session->id] = session;
 			
-			std::cout << "Session created: " << static_cast<int>(session->id) << std::endl
+			std::cout << "Session #" << static_cast<int>(session->id) << " created!" << std::endl
 				<< "Dimensions: " << session->width << " x " << session->height << std::endl
 				<< "User limit: " << static_cast<int>(session->limit)
 				<< ", default mode: " << static_cast<int>(session->mode)
@@ -1686,7 +1686,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			if (msg->length < sizeof(session->width) + sizeof(session->height))
 			{
-				std::cerr << "Protocol violation from user: "
+				std::cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << std::endl
 					<< "Reason: Too little data for Alter instruction." << std::endl;
 				uRemove(usr, protocol::user_event::Violation);
@@ -1709,7 +1709,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			if ((width < session->width) or (height < session->height))
 			{
-				std::cerr << "Protocol violation from user: "
+				std::cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << std::endl
 					<< "Reason: Attempted to reduce session's canvas size." << std::endl;
 				uRemove(usr, protocol::user_event::Violation);
@@ -1729,7 +1729,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			#ifndef NDEBUG
-			std::cout << "Session #" << static_cast<int>(session->id) << " altered." << std::endl
+			std::cout << "Session #" << static_cast<int>(session->id) << " altered!" << std::endl
 				<< "Dimensions: " << width << " x " << height << std::endl
 				<< "User limit: " << static_cast<int>(session->limit) << ", default mode: "
 				<< static_cast<int>(session->mode) << std::endl;
@@ -1794,7 +1794,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::admin::command::Authenticate:
 		#ifndef NDEBUG
-		std::cout << "User wishes to authenticate itself as an admin." << std::endl;
+		std::cout << "User #" << static_cast<int>(usr->id) << " wishes to authenticate itself as an admin." << std::endl;
 		#endif
 		if (a_password == 0)
 		{
@@ -1823,12 +1823,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 	
 	// Allow session owners to alter sessions, but warn others.
 	if (!usr->isAdmin)
-	{
-		std::cerr << "Non-admin tries to pass instructions: "
-			<< static_cast<int>(usr->id) << std::endl;
 		uSendMsg(usr, msgError(msg->session_id, protocol::error::Unauthorized));
-		//uRemove(usr, protocol::user_event::Dropped);
-	}
 }
 
 void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
