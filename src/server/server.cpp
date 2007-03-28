@@ -295,13 +295,13 @@ void Server::uWrite(User*& usr) throw()
 			(*iter)->next = (*iter)->prev = 0;
 		*/
 		
-		usr->queue.erase(f_msg, l_msg);
-		
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
 			and usr->output.canRead() > 300
-			and msg->type != protocol::type::Raster)
+			and (*f_msg)->type != protocol::type::Raster)
 		{
+			// TODO: Move to separate function
+			
 			char* temp;
 			unsigned long buffer_len = len + 12;
 			// make the potential new buffer generous in its size
@@ -363,8 +363,6 @@ void Server::uWrite(User*& usr) throw()
 					usr->output.write(len);
 					
 					// cleanup
-					delete msg;
-					msg = 0;
 				}
 				break;
 			case Z_MEM_ERROR:
@@ -383,6 +381,8 @@ void Server::uWrite(User*& usr) throw()
 			}
 		}
 		#endif // HAVE_ZLIB
+		
+		usr->queue.erase(f_msg, l_msg);
 	}
 	
 	const int sb = usr->sock->send(
@@ -2431,11 +2431,11 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	ev.add(usr->sock->fd(), usr->events);
 	
 	if (utimer.size() > 20)
-		time_limit = 30;
+		time_limit = srv_defaults::time_limit / 6;
 	else if (utimer.size() > 10)
-		time_limit = 60; // 1 minute
+		time_limit = srv_defaults::time_limit / 3; // 1 minute
 	else
-		time_limit = 180; // 3 minutes
+		time_limit = srv_defaults::time_limit; // 3 minutes
 	
 	usr->deadtime = time(0) + time_limit;
 	
