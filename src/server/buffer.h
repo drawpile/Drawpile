@@ -17,9 +17,6 @@
 
 #include "../../config.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
 #include <cstddef> // size_t?
 #include <cassert>
 
@@ -37,24 +34,12 @@ struct Buffer
 		left(0),
 		size(len)
 	{
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::Buffer(*buf, " << len << ")" << std::endl;
-		#endif
-		#endif
-		
 		assert((!buf and len == 0) or (buf and len > 0));
 	}
 	
 	//! dtor
 	~Buffer() throw()
 	{
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::~Buffer()" << std::endl;
-		#endif
-		#endif
-		
 		#ifndef CBUFFER_UNMANAGED
 		delete [] data;
 		#endif
@@ -125,12 +110,6 @@ struct Buffer
 	 */
 	void setBuffer(char* buf, const size_t buflen) throw()
 	{
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::setBuffer(*buf, " << buflen << ")" << std::endl;
-		#endif
-		#endif
-		
 		assert(buf != 0);
 		assert(buflen > 1);
 		
@@ -226,12 +205,6 @@ struct Buffer
 	 */
 	void read(const size_t len) throw()
 	{
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::read(" << len << ")" << std::endl;
-		#endif
-		#endif
-		
 		assert(data != 0);
 		assert(size > 1);
 		
@@ -255,14 +228,6 @@ struct Buffer
 	 */
 	size_t canRead() const throw()
 	{
-		if (0) {
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::canRead()" << std::endl;
-		#endif
-		#endif
-		}
-		
 		assert(data != 0);
 		assert(size > 1);
 		
@@ -286,12 +251,6 @@ struct Buffer
 	 */
 	void write(const size_t len) throw()
 	{
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::write(" << len << ")" << std::endl;
-		#endif
-		#endif
-		
 		assert(data != 0);
 		assert(size > 1);
 		
@@ -313,20 +272,13 @@ struct Buffer
 	 */
 	size_t canWrite() const throw()
 	{
-		if (0) {
-		#ifdef DEBUG_BUFFER
-		#ifndef NDEBUG
-		std::cout << "Buffer::canWrite()" << std::endl;
-		#endif
-		#endif
-		}
-		
 		assert(data != 0);
 		assert(size > 1);
 		
+		// this should never return more than free() bytes
 		if (left == size) return 0;
 		
-		// this should never return more than .size - .left bytes
+		
 		if (wpos < rpos)
 			return rpos - wpos;
 		else
