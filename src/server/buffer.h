@@ -211,6 +211,11 @@ struct Buffer
 		}
 	}
 	
+	const bool isEmpty() const throw()
+	{
+		return (left == 0);
+	}
+	
 	//! Did read of 'n' bytes.
 	/**
 	 * Tells the buffer how many bytes you did read.
