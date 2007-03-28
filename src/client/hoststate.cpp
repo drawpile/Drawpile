@@ -529,8 +529,11 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
 	if(msg->session_id != protocol::Global) {
 		// Handle session acks
-		if(msg->event == protocol::type::Subscribe) {
-			// Special case. When subscribing, session is not yet in the list
+		if(msg->event == protocol::type::Subscribe ||
+				msg->event == protocol::type::Password) {
+			// Special case. When subscribing, session is not yet in the list.
+			// When a session is protected by a password, Password
+			// ack is used instead.
 			mysessions_.insert(newsession_->info().id, newsession_);
 			newsession_->select();
 			if(setsessionpassword_.isEmpty()==false) {
@@ -544,8 +547,8 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 			if(mysessions_.contains(msg->session_id)) {
 				mysessions_.value(msg->session_id)->handleAck(msg);
 			} else {
-				qDebug() << "received ack for unsubscribed session"
-					<< int(msg->session_id);
+				qDebug() << "received ack" << int(msg->event)
+					<< "for unsubscribed session" << int(msg->session_id);
 			}
 		}
 		return;
