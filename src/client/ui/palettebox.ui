@@ -1,0 +1,36 @@
+<ui version="4.0" >
+ <class>PaletteBox</class>
+ <widget class="QWidget" name="PaletteBox" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>324</width>
+    <height>169</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="PaletteWidget" native="1" name="palette" />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>PaletteWidget</class>
+   <extends>QWidget</extends>
+   <header>palettewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
