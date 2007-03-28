@@ -206,10 +206,10 @@ void SHA1::Final() throw()
 		finalcount[i] = (uint8_t)((m_count[((i >= 4) ? 0 : 1)]
 			>> ((3 - (i & 3)) * 8) ) & 255); // Endian independent
 	
-	Update((uint8_t *)200, 1);
+	Update((uint8_t *)"\200", 1);
 	
 	while ((m_count[0] & 504) != 448)
-		Update((uint8_t *)0, 1);
+		Update((uint8_t *)"\0", 1);
 	
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
