@@ -22,6 +22,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QRubberBand>
 
 #include "palettewidget.h"
 #include "palette.h"
@@ -34,6 +35,8 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 {
 	setAcceptDrops(true);
 	scrollbar_ = new QScrollBar(this);
+	dragtarget_ = new QRubberBand(QRubberBand::Rectangle, this);
+
 	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 }
 
@@ -130,19 +133,45 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasFormat("application/x-color"))
+	if(event->mimeData()->hasFormat("application/x-color")) {
 		event->acceptProposedAction();
-
+		dragtarget_->show();
+	}
 }
+
+void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
+{
+	int index = indexAt(event->pos());
+	if(index != -1) {
+		dragtarget_->setGeometry(swatchRect(index));
+	} else {
+		dragtarget_->setGeometry(betweenRect(nearestAt(event->pos())));
+	}
+}
+
+void PaletteWidget::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	dragtarget_->hide();
+}
+
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
-	const int index = indexAt(event->pos());
+	int index = indexAt(event->pos());
+	dragtarget_->hide();
 	if(index != -1) {
-		const QColor color = qvariant_cast<QColor>(event->mimeData()->colorData());
-		palette_->setColor(index, color);
-		update();
+		palette_->setColor(
+				index,
+				qvariant_cast<QColor>(event->mimeData()->colorData())
+				);
+	} else {
+		index = nearestAt(event->pos());
+		palette_->insertColor(
+				index,
+				qvariant_cast<QColor>(event->mimeData()->colorData())
+				);
 	}
+	update();
 }
 
 void PaletteWidget::wheelEvent(QWheelEvent *event)
@@ -173,6 +202,57 @@ int PaletteWidget::indexAt(const QPoint& point) const
 	if(index >= palette_->count())
 		return -1;
 	return index;
+}
+
+/**
+ * Return the index nearest to the point. If the position is after
+ * the last palette entry, Palette::count() is returned.
+ * @param point coordinates inside the widget
+ * @return index of the color swatch nearest
+ */
+int PaletteWidget::nearestAt(const QPoint& point) const
+{
+	const int x = point.x() / (spacing_ + swatchsize_.width());
+	const int y = (point.y()+scroll_) / (spacing_ + swatchsize_.height());
+
+	const int index = y * columns() + x;
+	if(index > palette_->count())
+		return palette_->count();
+
+	return index;
+}
+
+/**
+ * Get the position of the color swatch
+ * @param index of the color swatch
+ * @return swatch geometry
+ * @pre 0 <= index
+ */
+QRect PaletteWidget::swatchRect(int index) const
+{
+	const int cols = columns();
+	return QRect(
+			spacing_ + (swatchsize_.width()+spacing_) * (index%cols),
+			spacing_ + (swatchsize_.height()+spacing_) * (index/cols) - scroll_,
+			swatchsize_.width(),
+			swatchsize_.height()
+			);
+}
+
+/**
+ * Get a rectangle between two color swatches.
+ * @param index swatch index after the space
+ * @return separator area between two swatches
+ */
+QRect PaletteWidget::betweenRect(int index) const
+{
+	const int cols = columns();
+	return QRect(
+			spacing_/2 + (swatchsize_.width()+spacing_) * (index%cols),
+			spacing_ + (swatchsize_.height()+spacing_) * (index/cols) - scroll_,
+			spacing_/2,
+			swatchsize_.height()
+			);
 }
 
 }

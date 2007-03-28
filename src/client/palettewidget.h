@@ -24,6 +24,7 @@
 
 class Palette;
 class QScrollBar;
+class QRubberBand;
 
 namespace widgets {
 
@@ -39,11 +40,15 @@ class PaletteWidget : public QWidget {
 	protected:
 		void resizeEvent(QResizeEvent *event);
 		void paintEvent(QPaintEvent *);
+
 		void mousePressEvent(QMouseEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 		void wheelEvent(QWheelEvent *event);
+
 		void dragEnterEvent(QDragEnterEvent *event);
+		void dragMoveEvent(QDragMoveEvent *event);
+		void dragLeaveEvent(QDragLeaveEvent *event);
 		void dropEvent(QDropEvent *event);
 
 	private slots:
@@ -52,6 +57,9 @@ class PaletteWidget : public QWidget {
 	private:
 		int columns() const;
 		int indexAt(const QPoint& point) const;
+		int nearestAt(const QPoint& point) const;
+		QRect swatchRect(int index) const;
+		QRect betweenRect(int index) const;
 
 		::Palette *palette_;
 		QScrollBar *scrollbar_;
@@ -60,6 +68,7 @@ class PaletteWidget : public QWidget {
 		int scroll_;
 		QPoint dragstart_;
 		int dragsource_;
+		QRubberBand *dragtarget_;
 };
 
 }
