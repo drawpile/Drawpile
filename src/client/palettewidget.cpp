@@ -23,6 +23,8 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QRubberBand>
+#include <QHelpEvent>
+#include <QToolTip>
 #include <QMenu>
 
 #include "palettewidget.h"
@@ -89,6 +91,26 @@ void PaletteWidget::removeColor()
 {
 	palette_->removeColor(dragsource_);
 	update();
+}
+
+bool PaletteWidget::event(QEvent *event)
+{
+	if(event->type() == QEvent::ToolTip) {
+		QPoint pos = (static_cast<const QHelpEvent*>(event))->pos();
+		const int index = indexAt(pos);
+		if(index != -1) {
+			const QColor c = palette_->color(index);
+			QToolTip::showText(
+					mapToGlobal(pos),
+					tr("Red: %1\nGreen: %2\nBlue: %3").arg(c.red()).arg(c.green()).arg(c.blue()),
+					this,
+					swatchRect(index)
+					);
+			event->accept();
+			return true;
+		}
+	}
+	return QWidget::event(event);
 }
 
 void PaletteWidget::paintEvent(QPaintEvent *)

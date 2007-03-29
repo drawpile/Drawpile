@@ -39,6 +39,7 @@ class PaletteWidget : public QWidget {
 		void colorSelected(const QColor& color);
 
 	protected:
+		bool event(QEvent *event);
 		void resizeEvent(QResizeEvent *event);
 		void paintEvent(QPaintEvent *);
 
