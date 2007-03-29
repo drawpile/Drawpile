@@ -132,7 +132,7 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
-		drag->start(Qt::CopyAction);
+		drag->start(Qt::CopyAction|Qt::MoveAction);
 	}
 }
 
@@ -150,7 +150,9 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 {
 	if(event->mimeData()->hasFormat("application/x-color")) {
-		event->acceptProposedAction();
+		if(event->source() == this)
+			event->setDropAction(Qt::MoveAction);
+		event->accept();
 		outline_->show();
 	}
 }
@@ -176,12 +178,22 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 	int index = indexAt(event->pos());
 	outline_->hide();
 	if(index != -1) {
+		if(event->source() == this) {
+			// Switch colors
+			palette_->setColor(dragsource_, palette_->color(index));
+		}
 		palette_->setColor(
 				index,
 				qvariant_cast<QColor>(event->mimeData()->colorData())
 				);
 	} else {
 		index = nearestAt(event->pos());
+		if(event->source() == this) {
+			// Move color
+			palette_->removeColor(dragsource_);
+			if(index >= dragsource_)
+				--index;
+		}
 		palette_->insertColor(
 				index,
 				qvariant_cast<QColor>(event->mimeData()->colorData())
