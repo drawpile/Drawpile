@@ -27,6 +27,12 @@ class QScrollBar;
 class QRubberBand;
 class QMenu;
 
+namespace dialogs {
+
+	class ColorDialog;
+
+}
+
 namespace widgets {
 
 class PaletteWidget : public QWidget {
@@ -46,6 +52,7 @@ class PaletteWidget : public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
+		void mouseDoubleClickEvent(QMouseEvent *event);
 		void wheelEvent(QWheelEvent *event);
 
 		void dragEnterEvent(QDragEnterEvent *event);
@@ -56,6 +63,8 @@ class PaletteWidget : public QWidget {
 	private slots:
 		void scroll(int pos);
 		void removeColor();
+		void editCurrentColor();
+		void setCurrentColor(const QColor& color);
 
 	private:
 		int columns() const;
@@ -73,6 +82,7 @@ class PaletteWidget : public QWidget {
 		int dragsource_;
 		QRubberBand *outline_;
 		QMenu *contextmenu_;
+		dialogs::ColorDialog *colordlg_;
 };
 
 }

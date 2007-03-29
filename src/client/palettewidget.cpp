@@ -27,6 +27,7 @@
 #include <QToolTip>
 #include <QMenu>
 
+#include "colordialog.h"
 #include "palettewidget.h"
 #include "palette.h"
 
@@ -40,11 +41,19 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	outline_ = new QRubberBand(QRubberBand::Rectangle, this);
 
 	contextmenu_ = new QMenu(this);
+	QAction *edit = contextmenu_->addAction(tr("Modify"));
 	QAction *remove = contextmenu_->addAction(tr("Remove"));
+	connect(edit, SIGNAL(triggered()), this, SLOT(editCurrentColor()));
 	connect(remove, SIGNAL(triggered()), this, SLOT(removeColor()));
 
 	scrollbar_ = new QScrollBar(this);
 	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
+
+	colordlg_ = new dialogs::ColorDialog(tr("Select color"), this);
+	colordlg_->setWindowModality(Qt::WindowModal);
+
+	connect(colordlg_, SIGNAL(colorSelected(QColor)),
+			this, SLOT(setCurrentColor(QColor)));
 }
 
 void PaletteWidget::setPalette(Palette *palette)
@@ -64,13 +73,20 @@ void PaletteWidget::resizeEvent(QResizeEvent *event)
 		);
 
 	int rows = 0;
-	if(palette_)
-		rows = palette_->count() / columns() * (swatchsize_.height()+spacing_);
+	scrollbar_->setVisible(false);
+	if(palette_) {
+		// First calculate required space without scrollbar
+		rows = (palette_->count() / columns()+1) * (swatchsize_.height()+spacing_);
+	}
 
-	if(rows < height())
+	if(rows <= height()) {
 		scrollbar_->setMaximum( 0 );
-	else
+	} else {
+		// not enough room even without scrollbar, recalculate with scrollbar
+		scrollbar_->setVisible(true);
+		rows = (palette_->count() / columns()+1) * (swatchsize_.height()+spacing_);
 		scrollbar_->setMaximum( rows - height() );
+	}
 	scrollbar_->setPageStep( height() );
 			
 }
@@ -79,8 +95,7 @@ void PaletteWidget::resizeEvent(QResizeEvent *event)
  * @return number of swatches per row
  */
 int PaletteWidget::columns() const {
-	const int c = (contentsRect().width()-scrollbar_->width()) /
-		(swatchsize_.width()+spacing_);
+	const int c = (contentsRect().width()-(scrollbar_->isVisible()?scrollbar_->width():0)) / (swatchsize_.width()+spacing_);
 	return qMax(c, 1);
 }
 
@@ -94,6 +109,18 @@ void PaletteWidget::removeColor()
 {
 	palette_->removeColor(dragsource_);
 	outline_->hide();
+	update();
+}
+
+void PaletteWidget::editCurrentColor()
+{
+	colordlg_->setColor(palette_->color(dragsource_));
+	colordlg_->show();
+}
+
+void PaletteWidget::setCurrentColor(const QColor& color)
+{
+	palette_->setColor(dragsource_, color);
 	update();
 }
 
@@ -169,6 +196,14 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 	if(dragsource_ != -1) {
 		if(event->button()==Qt::LeftButton)
 			emit colorSelected(palette_->color(dragsource_));
+	}
+}
+
+void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *event)
+{
+	outline_->hide();
+	if(dragsource_ != -1 && event->button() == Qt::LeftButton) {
+		editCurrentColor();
 	}
 }
 
