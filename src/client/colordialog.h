@@ -37,29 +37,29 @@ class ColorDialog : public QDialog
 		ColorDialog(const QString& title,QWidget *parent=0);
 		~ColorDialog();
 
-		//! Get the current color
-		QColor color() const;
-	signals:
-		//! This signal is emitted when the color is changed
-		/**
-		 * The signal is only emitted when the color is changed
-		 * from within the dialog.
-		 * @param color new color
-		 */
-		void colorChanged(const QColor& color);
-
-	public slots:
 		//! Set the color
 		void setColor(const QColor& color);
+
+		//! Get the current color
+		QColor color() const;
 	
+	public slots:
+		void accept();
+
+	signals:
+		//! This signal is emitted when Ok is pressed
+		void colorSelected(const QColor& color);
+
 	private slots:
-		void switchPage(QAction *action);
+		void reset();
 		void updateRgb();
 		void updateHsv();
 		void updateTriangle(const QColor& color);
 
 	private:
 		void updateBars();
+		void updateCurrent(const QColor& color);
+
 		Ui_ColorDialog *ui_;
 		bool updating_;
 		int validhue_;

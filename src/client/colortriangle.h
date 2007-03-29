@@ -55,6 +55,9 @@ class PLUGIN_EXPORT ColorTriangle : public QWidget {
 		//! Get color
 		QColor color() const;
 
+		//! Prefer a square shape
+		int heightForWidth(int w) const { return w; }
+
 	public slots:
 		void setColor(const QColor& color);
 

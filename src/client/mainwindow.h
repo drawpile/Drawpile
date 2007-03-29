@@ -110,6 +110,10 @@ class MainWindow : public QMainWindow {
 		//! Go to drawpile homepage
 		void homepage();
 	private slots:
+		//! Show a color dialog and set foreground color
+		void setForegroundColor();
+		//! Show a color dialog and set background color
+		void setBackgroundColor();
 		//! Set session title
 		void setSessionTitle(const QString& title);
 		//! Create new document

@@ -17,6 +17,9 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+
+#include <QPushButton>
+
 #include "colordialog.h"
 #include "colortriangle.h"
 #include "gradientslider.h"
@@ -32,9 +35,10 @@ ColorDialog::ColorDialog(const QString& title, QWidget *parent)
 {
 	ui_ = new Ui_ColorDialog;
 	ui_->setupUi(this);
-	ui_->CtButton->setDefaultAction(ui_->actionCT);
-	ui_->sliderButton->setDefaultAction(ui_->actionSliders);
-	connect(ui_->pageActions, SIGNAL(triggered(QAction*)), this, SLOT(switchPage(QAction*)));
+
+	ui_->current->setAutoFillBackground(true);
+	ui_->old->setAutoFillBackground(true);
+
 	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
 	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
 	connect(ui_->blue, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
@@ -45,20 +49,16 @@ ColorDialog::ColorDialog(const QString& title, QWidget *parent)
 
 	connect(ui_->colorTriangle, SIGNAL(colorChanged(const QColor&)),
 			this, SLOT(updateTriangle(const QColor&)));
+
+	connect(ui_->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
+			this, SLOT(reset()));
+
 	setWindowTitle(title);
 }
 
 ColorDialog::~ColorDialog()
 {
 	delete ui_;
-}
-
-void ColorDialog::switchPage(QAction *action)
-{
-	if(action == ui_->actionCT)
-		ui_->widgetstack->setCurrentIndex(0);
-	else if(action == ui_->actionSliders)
-		ui_->widgetstack->setCurrentIndex(1);
 }
 
 /**
@@ -82,6 +82,10 @@ void ColorDialog::setColor(const QColor& color)
 	if(h!=-1)
 		validhue_ = h;
 	updateBars();
+	QPalette palette;
+	palette.setColor(ui_->current->backgroundRole(), color);
+	ui_->current->setPalette(palette);
+	ui_->old->setPalette(palette);
 	updating_ = false;
 }
 
@@ -91,6 +95,23 @@ void ColorDialog::setColor(const QColor& color)
 QColor ColorDialog::color() const
 {
 	return QColor(ui_->red->value(), ui_->green->value(), ui_->blue->value());
+}
+
+/**
+ * Emit colorSelected before closing the dialog
+ */
+void ColorDialog::accept()
+{
+	emit colorSelected(color());
+	QDialog::accept();
+}
+
+/**
+ * Reset to the old color
+ */
+void ColorDialog::reset()
+{
+	setColor(ui_->old->palette().color(ui_->old->backgroundRole()));
 }
 
 /**
@@ -112,7 +133,8 @@ void ColorDialog::updateRgb()
 		ui_->value->setValue(v);
 		ui_->colorTriangle->setColor(col);
 		updateBars();
-		emit colorChanged(col);
+
+		updateCurrent(col);
 		updating_ = false;
 	}
 }
@@ -135,7 +157,7 @@ void ColorDialog::updateHsv()
 		ui_->blue->setValue(col.blue());
 		ui_->colorTriangle->setColor(col);
 		updateBars();
-		emit colorChanged(col);
+		updateCurrent(col);
 		updating_ = false;
 	}
 }
@@ -158,7 +180,7 @@ void ColorDialog::updateTriangle(const QColor& color)
 		ui_->hue->setValue(h);
 		ui_->saturation->setValue(s);
 		ui_->value->setValue(v);
-		emit colorChanged(color);
+		updateCurrent(color);
 
 		updating_ = false;
 	}
@@ -195,6 +217,13 @@ void ColorDialog::updateBars()
 	ui_->value->setColor1(QColor::fromHsvF(h,s,0));
 	ui_->value->setColor2(QColor::fromHsvF(h,s,1));
 
+}
+
+void ColorDialog::updateCurrent(const QColor& color)
+{
+	QPalette palette;
+	palette.setColor(ui_->current->backgroundRole(), color);
+	ui_->current->setPalette(palette);
 }
 
 }

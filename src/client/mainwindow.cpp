@@ -851,6 +851,18 @@ void MainWindow::rasterUp(int p)
 	statusBar()->showMessage(tr("Sending board contents to new user, %1% done").arg(QString::number(p)),1000);
 }
 
+void MainWindow::setForegroundColor()
+{
+	fgdialog_->setColor(fgbgcolor_->foreground());
+	fgdialog_->show();
+}
+
+void MainWindow::setBackgroundColor()
+{
+	bgdialog_->setColor(fgbgcolor_->background());
+	bgdialog_->show();
+}
+
 /**
  * Session title changed
  * @param title new title
@@ -1206,17 +1218,20 @@ void MainWindow::createToolbars()
 	// Create color button
 	fgbgcolor_ = new widgets::DualColorButton(drawtools);
 
-	// Create color changer dialog for foreground
-	fgdialog_ = new dialogs::ColorDialog(tr("Foreground color"), this);
-	connect(fgbgcolor_,SIGNAL(foregroundClicked()), fgdialog_, SLOT(show()));
-	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)), fgdialog_, SLOT(setColor(QColor)));
-	connect(fgdialog_,SIGNAL(colorChanged(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+	connect(fgbgcolor_,SIGNAL(foregroundClicked()),
+			this, SLOT(setForegroundColor()));
 
-	// Create color changer dialog for background
+	connect(fgbgcolor_,SIGNAL(backgroundClicked()),
+			this, SLOT(setBackgroundColor()));
+
+	// Create color changer dialogs
+	fgdialog_ = new dialogs::ColorDialog(tr("Foreground color"), this);
+	connect(fgdialog_, SIGNAL(colorSelected(QColor)),
+			fgbgcolor_, SLOT(setForeground(QColor)));
+
 	bgdialog_ = new dialogs::ColorDialog(tr("Background color"), this);
-	connect(fgbgcolor_,SIGNAL(backgroundClicked()), bgdialog_, SLOT(show()));
-	connect(fgbgcolor_,SIGNAL(backgroundChanged(QColor)), bgdialog_, SLOT(setColor(QColor)));
-	connect(bgdialog_,SIGNAL(colorChanged(QColor)), fgbgcolor_, SLOT(setBackground(QColor)));
+	connect(bgdialog_, SIGNAL(colorSelected(QColor)),
+			fgbgcolor_, SLOT(setBackground(QColor)));
 
 	drawtools->addWidget(fgbgcolor_);
 
