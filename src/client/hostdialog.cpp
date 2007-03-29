@@ -48,8 +48,9 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	if(original.isNull()) {
 		ui_->imageSelector->setWidth(800);
 		ui_->imageSelector->setHeight(600);
-		ui_->imageSelector->chooseColor();
 		ui_->existingpicture->setEnabled(false);
+		ui_->imageSelector->chooseColor();
+		ui_->solidcolor->setChecked(true);
 	} else {
 		ui_->imageSelector->setOriginal(original);
 	}

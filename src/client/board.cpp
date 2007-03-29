@@ -128,7 +128,10 @@ void Board::removeUser(int id)
  */
 QImage Board::image() const
 {
-	return image_->image();
+	if(image_)
+		return image_->image();
+	else
+		return QImage();
 }
 
 /**
