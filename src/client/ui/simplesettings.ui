@@ -193,13 +193,13 @@
      <item>
       <widget class="QSlider" name="brushspacing" >
        <property name="minimum" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="maximum" >
-        <number>100</number>
+        <number>50</number>
        </property>
        <property name="value" >
-        <number>50</number>
+        <number>15</number>
        </property>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
@@ -209,16 +209,16 @@
      <item>
       <widget class="QSpinBox" name="brushspacingbox" >
        <property name="suffix" >
-        <string> %</string>
+        <string>%</string>
        </property>
        <property name="maximum" >
-        <number>100</number>
+        <number>50</number>
        </property>
        <property name="minimum" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="value" >
-        <number>50</number>
+        <number>15</number>
        </property>
       </widget>
      </item>
@@ -231,8 +231,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>5</height>
+       <width>216</width>
+       <height>16</height>
       </size>
      </property>
     </spacer>

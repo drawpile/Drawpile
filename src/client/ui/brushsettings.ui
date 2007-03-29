@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>257</width>
+    <width>259</width>
     <height>330</height>
    </rect>
   </property>
@@ -193,10 +193,10 @@
      <item>
       <widget class="QSlider" name="brushspacing" >
        <property name="minimum" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="maximum" >
-        <number>100</number>
+        <number>50</number>
        </property>
        <property name="value" >
         <number>15</number>
@@ -209,13 +209,13 @@
      <item>
       <widget class="QSpinBox" name="brushspacingbox" >
        <property name="suffix" >
-        <string> %</string>
+        <string>%</string>
        </property>
        <property name="maximum" >
-        <number>100</number>
+        <number>50</number>
        </property>
        <property name="minimum" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="value" >
         <number>15</number>
@@ -274,8 +274,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>20</width>
-       <height>5</height>
+       <width>251</width>
+       <height>16</height>
       </size>
      </property>
     </spacer>
