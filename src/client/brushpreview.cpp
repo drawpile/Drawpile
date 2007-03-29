@@ -108,7 +108,7 @@ void BrushPreview::updatePreview()
 	const int strokeh = height() / 4;
 	const int offx = width()/8;
 	const int offy = height()/2;
-	const int spacing = brush_.spacing() * brush_.radius(1) / 100 + 1;
+	int spacing = brush_.spacing() * brush_.radius(1) / 100 + 1;
 	int distance = 0;
 	int lastx=0,lasty=0;
 	if(shape_ == Stroke) {
@@ -132,10 +132,14 @@ void BrushPreview::updatePreview()
 			lasty = y;
 		}
 	} else if(shape_ == Line) {
+		if(spacing==0)
+			spacing = 1;
 		for(int x=0;x<strokew;x+=spacing) {
 			brush_.draw(preview_,drawingboard::Point(offx+x,offy,1));
 		}
 	} else {
+		if(spacing==0)
+			spacing = 1;
 		for(int x=0;x<strokew;x+=spacing) {
 			brush_.draw(preview_,drawingboard::Point(offx+x,offy-strokeh,1));
 			brush_.draw(preview_,drawingboard::Point(offx+x,offy+strokeh,1));

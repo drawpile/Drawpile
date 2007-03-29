@@ -42,6 +42,7 @@ BrushSettings::~BrushSettings()
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
+		cfg.setValue("spacing", ui_->brushspacing->value());
 		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
 		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
 		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
@@ -72,6 +73,10 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
 	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
 	ui_->preview->setHardness(ui_->brushhardness->value());
+
+	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
+	ui_->preview->setSpacing(ui_->brushspacing->value());
 
 	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
 	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
@@ -132,6 +137,7 @@ SimpleSettings::~SimpleSettings()
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
+		cfg.setValue("spacing", ui_->brushspacing->value());
 		delete ui_;
 	}
 }
@@ -164,6 +170,10 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
 	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
 	ui_->preview->setHardness(ui_->brushhardness->value());
+
+	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
+	ui_->preview->setHardness(ui_->brushspacing->value());
 
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
