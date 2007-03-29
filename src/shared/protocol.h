@@ -350,14 +350,15 @@ struct ToolInfo
 	{ }
 	
 	//! Constructor with params for payload
-	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness) throw()
+	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing) throw()
 		: Message(type::ToolInfo, message::isUser|message::isSelected),
 		tool_id(_tool_id),
 		mode(_mode),
 		lo_size(_lo_size),
 		hi_size(_hi_size),
 		lo_hardness(_lo_hardness),
-		hi_hardness(_hi_hardness)
+		hi_hardness(_hi_hardness),
+		spacing(_spacing)
 	{ }
 	
 	~ToolInfo() throw() { }
@@ -384,7 +385,9 @@ struct ToolInfo
 		//! Lo pressure hardness.
 		lo_hardness,
 		//! Hi pressure hardness.
-		hi_hardness;
+		hi_hardness,
+		//! Brush spacing
+		spacing;
 	
 	/* functions */
 	

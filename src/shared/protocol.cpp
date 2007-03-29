@@ -415,6 +415,7 @@ size_t ToolInfo::unserialize(const char* buf, const size_t len) throw()
 	memcpy_t(hi_size, buf+i); i += sizeof(hi_size);
 	memcpy_t(lo_hardness, buf+i); i += sizeof(lo_hardness);
 	memcpy_t(hi_hardness, buf+i); i += sizeof(hi_hardness);
+	memcpy_t(spacing, buf+i); i += sizeof(spacing);
 	
 	return i;
 }
@@ -442,6 +443,7 @@ size_t ToolInfo::serializePayload(char *buf) const throw()
 	memcpy_t(buf+i, hi_size); i += sizeof(hi_size);
 	memcpy_t(buf+i, lo_hardness); i += sizeof(lo_hardness);
 	memcpy_t(buf+i, hi_hardness); i += sizeof(hi_hardness);
+	memcpy_t(buf+i, spacing); i += sizeof(spacing);
 	
 	return i;
 }
@@ -450,7 +452,7 @@ size_t ToolInfo::payloadLength() const throw()
 {
 	return sizeof(tool_id) + sizeof(mode) + sizeof(lo_color)
 		+ sizeof(hi_color) + sizeof(lo_size) + sizeof(hi_size)
-		+ sizeof(lo_hardness) + sizeof(hi_hardness);
+		+ sizeof(lo_hardness) + sizeof(hi_hardness) + sizeof(spacing);
 }
 
 /*
