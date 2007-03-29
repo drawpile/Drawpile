@@ -448,12 +448,18 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	std::cout << "Server::uRead(user: " << static_cast<int>(usr->id) << ")" << std::endl;
 	#endif
 	
-	if (usr->input.canWrite() == 0)
+	if (usr->input.free() == 0)
 	{
+		// buffer full
 		#ifndef NDEBUG
-		std::cerr << "Input buffer full, increasing size by 8 kiB." << std::endl;
+		std::cerr << "Input buffer full, increasing size by 4 kiB." << std::endl;
 		#endif
 		usr->input.resize(usr->input.size + 4096);
+	}
+	else if (usr->input.canWrite() == 0)
+	{
+		// can't write, but buffer isn't full.
+		usr->input.reposition();
 	}
 	
 	const int rb = usr->sock->recv(
@@ -472,6 +478,9 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		#endif
 		case EINTR:
 			// retry later
+			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+			std::cerr << "# Operation would block / interrupted" << std::endl;
+			#endif
 			return;
 		default:
 			std::cerr << "Unrecoverable error occured while reading from user #"
