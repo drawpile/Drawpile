@@ -52,7 +52,7 @@ fd_t Socket::create() throw()
 		WSA_FLAG_OVERLAPPED
 	);
 	
-	#else // No WSA
+	#else // POSIX
 	
 	sock = socket(
 	#ifdef IPV6_SUPPORT
@@ -64,15 +64,15 @@ fd_t Socket::create() throw()
 		IPPROTO_TCP
 	);
 	
-	#endif // WSA_SOCKETS
+	#endif
 	
 	if (sock == INVALID_SOCKET)
 	{
 		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
-		#else // No WSA
+		#else // POSIX
 		error = errno;
-		#endif // WSA_SOCKETS
+		#endif
 		
 		switch (error)
 		{
@@ -145,7 +145,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	
 	#ifdef WSA_SOCKETS
 	fd_t n_fd = WSAAccept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp, 0, 0);
-	#else // No WSA
+	#else // POSIX
 	fd_t n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
 	#endif
 	
@@ -160,9 +160,9 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	{
 		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
-		#else // No WSA
+		#else // POSIX
 		error = errno;
-		#endif // WSA_SOCKETS
+		#endif
 		
 		switch (error)
 		{
@@ -245,11 +245,11 @@ bool Socket::block(const bool x) throw()
 	#ifdef WSA_SOCKETS
 	uint32_t arg = (x ? 1 : 0);
 	return (WSAIoctl(sock, FIONBIO, &arg, sizeof(arg), 0, 0, 0, 0, 0) == 0);
-	#else
+	#else // POSIX
 	u_long arg = (x ? 1 : 0);
 	return ioctlsocket(sock, FIONBIO, &arg);
-	#endif // WSA_SOCKETS
-	#else // Not Win32
+	#endif
+	#else // POSIX
 	assert(x == false);
 	return fcntl(sock, F_SETFL, O_NONBLOCK) == SOCKET_ERROR ? false : true;
 	#endif // WIN32
@@ -468,7 +468,7 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 	
 	#ifdef WSA_SOCKETS
 	const int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost), 0, 0, 0, 0);
-	#else
+	#else // POSIX
 	const int r = ::connect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost));
 	#endif
 	
@@ -476,7 +476,7 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 	{
 		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
-		#else
+		#else // POSIX
 		error = errno;
 		#endif
 		
@@ -579,17 +579,16 @@ int Socket::send(char* buffer, const size_t len) throw()
 	wbuf.buf = buffer;
 	wbuf.len = len;
 	DWORD sb;
-	int r = WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
-	if (r != SOCKET_ERROR) r = sb;
-	#else
+	const int r = WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
+	#else // POSIX
 	const int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
-	#endif // WSA_SOCKETS
+	#endif
 	
 	if (r == SOCKET_ERROR)
 	{
 		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
-		#else
+		#else // POSIX
 		error = errno;
 		#endif
 		
@@ -651,9 +650,17 @@ int Socket::send(char* buffer, const size_t len) throw()
 			assert(error);
 			break;
 		}
+		
+		#ifdef WSA_SOCKETS
+		return r;
+		#endif
 	}
 	
+	#ifdef WSA_SOCKETS
+	return sb;
+	#else
 	return r;
+	#endif
 }
 
 int Socket::recv(char* buffer, const size_t len) throw()
@@ -674,19 +681,18 @@ int Socket::recv(char* buffer, const size_t len) throw()
 	wbuf.len = len;
 	DWORD flags=0;
 	DWORD rb;
-	int r = WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
-	if (r != SOCKET_ERROR) r = rb;
-	#else
+	const int r = WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
+	#else // POSIX
 	const int r = ::recv(sock, buffer, len, 0);
-	#endif // WSA_SOCKETS
+	#endif
 	
 	if (r == SOCKET_ERROR)
 	{
 		#ifdef WSA_SOCKETS
 		error = WSAGetLastError();
-		#else
+		#else // POSIX
 		error = errno;
-		#endif // WSA_SOCKETS
+		#endif
 		
 		switch (error)
 		{
@@ -740,9 +746,17 @@ int Socket::recv(char* buffer, const size_t len) throw()
 			assert(error);
 			break;
 		}
+		
+		#ifdef WSA_SOCKETS
+		return r;
+		#endif
 	}
 	
+	#ifdef WSA_SOCKETS
+	return rb;
+	#else
 	return r;
+	#endif
 }
 
 #if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
