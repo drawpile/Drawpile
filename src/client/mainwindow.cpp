@@ -48,6 +48,7 @@
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "palettebox.h"
+#include "colorbox.h"
 #include "icons.h"
 #include "version.h"
 
@@ -1228,9 +1229,11 @@ void MainWindow::createDocks()
 {
 	QMenu *toggles = new QMenu(this);
 	createToolSettings(toggles);
+	createColorBox(toggles);
 	createPalette(toggles);
 	createUserList(toggles);
 	createChatBox(toggles);
+	tabifyDockWidget(color_, palette_);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1274,6 +1277,21 @@ void MainWindow::createPalette(QMenu *toggles)
 			fgbgcolor_, SLOT(setForeground(QColor)));
 
 	addDockWidget(Qt::RightDockWidgetArea, palette_);
+}
+
+void MainWindow::createColorBox(QMenu *toggles)
+{
+	color_ = new widgets::ColorBox(tr("Color"), this);
+	color_->setObjectName("colordock");
+	toggles->addAction(color_->toggleViewAction());
+
+	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)),
+			color_, SLOT(setColor(QColor)));
+
+	connect(color_, SIGNAL(colorChanged(QColor)),
+			fgbgcolor_, SLOT(setForeground(QColor)));
+
+	addDockWidget(Qt::RightDockWidgetArea, color_);
 }
 
 

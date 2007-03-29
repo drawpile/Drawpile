@@ -1,0 +1,254 @@
+<ui version="4.0" >
+ <class>ColorBox</class>
+ <widget class="QWidget" name="ColorBox" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>214</width>
+    <height>107</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QGridLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item row="1" column="1" >
+      <widget class="GradientSlider" name="green" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>7</hsizetype>
+         <vsizetype>5</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximum" >
+        <number>255</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="color2" >
+        <color>
+         <red>0</red>
+         <green>255</green>
+         <blue>0</blue>
+        </color>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>B</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2" >
+      <widget class="QSpinBox" name="bluebox" >
+       <property name="maximum" >
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="QSpinBox" name="redbox" >
+       <property name="maximum" >
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>R</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="GradientSlider" name="blue" >
+       <property name="maximum" >
+        <number>255</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="color2" >
+        <color>
+         <red>0</red>
+         <green>0</green>
+         <blue>255</blue>
+        </color>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>G</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" >
+      <widget class="QSpinBox" name="greenbox" >
+       <property name="maximum" >
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="GradientSlider" name="red" >
+       <property name="maximum" >
+        <number>255</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="color2" >
+        <color>
+         <red>255</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>5</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GradientSlider</class>
+   <extends>QWidget</extends>
+   <header>gradientslider.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>red</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>redbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>167</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>215</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>redbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>red</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>202</x>
+     <y>38</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>135</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>green</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>greenbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>163</x>
+     <y>72</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>227</x>
+     <y>72</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>greenbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>green</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>199</x>
+     <y>58</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>145</x>
+     <y>58</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>blue</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>bluebox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>128</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>208</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>bluebox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>blue</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>200</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>118</x>
+     <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

@@ -37,6 +37,7 @@ namespace widgets {
 	class UserList;
 	class ChatBox;
 	class PaletteBox;
+	class ColorBox;
 }
 namespace dialogs {
 	class ColorDialog;
@@ -192,6 +193,8 @@ class MainWindow : public QMainWindow {
 		void createChatBox(QMenu *menu);
 		//! Create palette dock
 		void createPalette(QMenu *menu);
+		//! Create color dock
+		void createColorBox(QMenu *menu);
 		//! Create dialogs
 		void createDialogs();
 
@@ -203,6 +206,7 @@ class MainWindow : public QMainWindow {
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;
 		widgets::PaletteBox *palette_;
+		widgets::ColorBox *color_;
 		QLabel *lockstatus_;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
