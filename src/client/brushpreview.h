@@ -79,6 +79,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Set background color
 		void setColor2(const QColor& color);
 
+		//! Set dab spacing
+		void setSpacing(int spacing);
+
 		//! Enable/disable default opacity pressure sensitivity
 		void setOpacityPressure(bool enable);
 

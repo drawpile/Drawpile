@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>257</width>
-    <height>302</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <number>3</number>
    </property>
    <property name="spacing" >
-    <number>2</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="BrushPreview" name="preview" >
@@ -176,6 +176,55 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
+      <string>Spacing</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QSlider" name="brushspacing" >
+       <property name="minimum" >
+        <number>0</number>
+       </property>
+       <property name="maximum" >
+        <number>100</number>
+       </property>
+       <property name="value" >
+        <number>15</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="brushspacingbox" >
+       <property name="suffix" >
+        <string> %</string>
+       </property>
+       <property name="maximum" >
+        <number>100</number>
+       </property>
+       <property name="minimum" >
+        <number>0</number>
+       </property>
+       <property name="value" >
+        <number>15</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
       <string>Pressure sensitivity</string>
@@ -226,7 +275,7 @@
      <property name="sizeHint" >
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>5</height>
       </size>
      </property>
     </spacer>
@@ -261,12 +310,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>146</x>
-     <y>110</y>
+     <x>150</x>
+     <y>108</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
-     <y>115</y>
+     <y>112</y>
     </hint>
    </hints>
   </connection>
@@ -281,8 +330,8 @@
      <y>112</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>27</x>
-     <y>110</y>
+     <x>31</x>
+     <y>108</y>
     </hint>
    </hints>
   </connection>
@@ -293,12 +342,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>162</y>
+     <x>111</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
-     <y>167</y>
+     <y>159</y>
     </hint>
    </hints>
   </connection>
@@ -310,11 +359,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>252</x>
-     <y>167</y>
+     <y>159</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>40</x>
-     <y>162</y>
+     <x>44</x>
+     <y>155</y>
     </hint>
    </hints>
   </connection>
@@ -325,12 +374,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>147</x>
-     <y>214</y>
+     <x>151</x>
+     <y>202</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
-     <y>219</y>
+     <y>206</y>
     </hint>
    </hints>
   </connection>
@@ -342,11 +391,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>252</x>
-     <y>219</y>
+     <y>206</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>16</x>
-     <y>214</y>
+     <x>20</x>
+     <y>202</y>
     </hint>
    </hints>
   </connection>
@@ -373,8 +422,8 @@
    <slot>setHardness(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>175</x>
-     <y>207</y>
+     <x>179</x>
+     <y>202</y>
     </hint>
     <hint type="destinationlabel" >
      <x>220</x>
@@ -405,8 +454,8 @@
    <slot>setSizePressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>36</x>
-     <y>257</y>
+     <x>43</x>
+     <y>298</y>
     </hint>
     <hint type="destinationlabel" >
      <x>60</x>
@@ -421,8 +470,8 @@
    <slot>setOpacityPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>157</x>
-     <y>257</y>
+     <x>249</x>
+     <y>298</y>
     </hint>
     <hint type="destinationlabel" >
      <x>167</x>
@@ -437,8 +486,8 @@
    <slot>setHardnessPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>31</x>
-     <y>280</y>
+     <x>38</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel" >
      <x>43</x>
@@ -453,12 +502,60 @@
    <slot>setColorPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>181</x>
-     <y>280</y>
+     <x>249</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel" >
      <x>235</x>
      <y>19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacing</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushspacingbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>141</x>
+     <y>236</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>225</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacingbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushspacing</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>227</x>
+     <y>232</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>79</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacing</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setSpacing(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>13</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>106</x>
+     <y>28</y>
     </hint>
    </hints>
   </connection>

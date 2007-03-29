@@ -45,16 +45,17 @@ static inline qreal interpolate(qreal a, qreal b, qreal alpha)
  * @param opacity brush opacity
  * @param color brush color
  */
-Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color)
+Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int spacing)
 	: radius1_(radius), radius2_(radius),
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
-	color1_(color), color2_(color),
+	color1_(color), color2_(color), spacing_(spacing),
 	sensitive_(false), cachepressure_(-1)
 {
 	Q_ASSERT(radius>=0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
 	Q_ASSERT(opacity>=0 && opacity <=1);
+	Q_ASSERT(spacing>=0 && spacing <=100);
 }
 
 /**
@@ -155,6 +156,16 @@ void Brush::setColor2(const QColor& color)
 }
 
 /**
+ * @param spacing brush spacing is a percentage of brush radius
+ * @pre 0 <= spacing <= 100
+ */
+void Brush::setSpacing(int spacing)
+{
+	Q_ASSERT(spacing >= 0 && spacing <= 100);
+	spacing_ = spacing;
+}
+
+/**
  * Check if brush is sensitive to pressure.
  */
 void Brush::checkSensitivity()
@@ -220,6 +231,17 @@ QColor Brush::color(qreal pressure) const
 			);
 
 
+}
+
+/**
+ * Spacing is not used internally by the brush, but is provided here because
+ * it is closely related to how the brush is drawn.
+ * @return spacing as a percentage of brush radius
+ * @post 0 <= RESULT <= 100
+ */
+int Brush::spacing() const
+{
+	return spacing_;
 }
 
 /**
@@ -395,6 +417,7 @@ Brush& Brush::operator=(const Brush& brush)
 	color1_ = brush.color1_;
 	color2_ = brush.color2_;
 	sensitive_ = brush.sensitive_;
+	spacing_ = brush.spacing_;
 	
 	return *this;
 }
@@ -407,7 +430,8 @@ bool Brush::operator==(const Brush& brush) const
 			qAbs(opacity1_ - brush.opacity1_) <= 1.0/256.0 &&
 			qAbs(opacity2_ - brush.opacity2_) <= 1.0/256.0 &&
 			color1_ == brush.color1_ &&
-			color2_ == brush.color2_;
+			color2_ == brush.color2_ &&
+			spacing_ == brush.spacing_;
 }
 
 bool Brush::operator!=(const Brush& brush) const

@@ -71,11 +71,14 @@ QImage Layer::image() const
  * Pressure values are interpolated between the points.
  * First pixel is not drawn. This is done on purpose, as drawLine is usually
  * used to draw multiple joined lines.
+ *
+ * If distance is not null, it is used to add spacing between dabs.
  * @param point1 start coordinates
  * @param point2 end coordinates
  * @param brush brush to draw with
+ * @param distance total drawn line length
  */
-void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brush)
+void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brush,int *distance)
 {
 #if 0 // TODO
 	qreal pressure = point1.pressure();
@@ -85,6 +88,8 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 	else
 		deltapressure = (pressure2-pressure1) / hypot(point1.x()-point2.x(), point1.y()-point2.y());
 #endif
+
+	const int spacing = brush.spacing()*brush.radius(point1.pressure())/100;
 
 	Point point = point1;
 	int &x0 = point.rx();
@@ -120,7 +125,14 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 			}
 			x0 += stepx;
 			fraction += dy;
-			brush.draw(image_, point);
+			if(distance) {
+				if(++*distance > spacing) {
+					brush.draw(image_, point);
+					*distance = 0;
+				}
+			} else {
+				brush.draw(image_, point);
+			}
 		}
 	} else {
 		int fraction = dx - (dy >> 1);
@@ -131,7 +143,14 @@ void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brus
 			}
 			y0 += stepy;
 			fraction += dx;
-			brush.draw(image_, point);
+			if(distance) {
+				if(++*distance > spacing) {
+					brush.draw(image_, point);
+					*distance = 0;
+				}
+			} else {
+				brush.draw(image_, point);
+			}
 		}
 	}
 	// Update screen

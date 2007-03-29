@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class Brush
 	public:
 		//! Construct a brush
 		Brush(int radius=8, qreal hardness=0, qreal opacity=1.0,
-				const QColor& color=Qt::black);
+				const QColor& color=Qt::black, int spacing=25);
 
 		//! Set radius heavy brush
 		void setRadius(int radius);
@@ -61,6 +61,9 @@ class Brush
 		//! Set color for light brush
 		void setColor2(const QColor& color);
 
+		//! Set spacing hint
+		void setSpacing(int spacing);
+
 		//! Get interpolated radius
 		int radius(qreal pressure) const;
 		//! Get interpolated hardness
@@ -69,6 +72,8 @@ class Brush
 		qreal opacity(qreal pressure) const;
 		//! Get interpolated color
 		QColor color(qreal pressure) const;
+		//! Get spacing hint
+		int spacing() const;
 
 		//! Draw the brush on an image
 		void draw(QImage &image, const Point& pos) const;
@@ -89,6 +94,7 @@ class Brush
 		qreal hardness1_, hardness2_;
 		qreal opacity1_, opacity2_;
 		QColor color1_, color2_;
+		int spacing_;
 		bool sensitive_;
 
 		mutable QVector<ushort> cache_;

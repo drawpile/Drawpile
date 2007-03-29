@@ -41,12 +41,14 @@ void User::addStroke(const Point& point)
 			layer_->drawLine(
 					lastpoint_,
 					point,
-					brush_
+					brush_,
+					&strokelen_
 					);
 		} else {
 			// First point
 			layer_->drawPoint(point, brush_);
 			strokestarted_ = true;
+			strokelen_ = 0;
 		}
 		lastpoint_ = point;
 	}

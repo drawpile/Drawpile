@@ -254,6 +254,7 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	msg->hi_size = brush.radius(1);
 	msg->lo_hardness = qRound(brush.hardness(0)*255);
 	msg->hi_hardness = qRound(brush.hardness(1)*255);
+	msg->spacing = brush.spacing();
 	host_->connection()->send(msg);
 }
 
@@ -454,7 +455,8 @@ bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
 			msg->hi_size,
 			msg->hi_hardness/255.0,
 			msg->hi_color[3]/255.0,
-			QColor(msg->hi_color[0], msg->hi_color[1], msg->hi_color[2]));
+			QColor(msg->hi_color[0], msg->hi_color[1], msg->hi_color[2]),
+			msg->spacing);
 	brush.setRadius2(msg->lo_size);
 	brush.setColor2(QColor(msg->lo_color[0], msg->lo_color[1], msg->lo_color[2]));
 	brush.setHardness2(msg->lo_hardness/255.0);

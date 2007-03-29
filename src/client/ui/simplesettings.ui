@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>257</width>
-    <height>242</height>
+    <width>222</width>
+    <height>261</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <number>3</number>
    </property>
    <property name="spacing" >
-    <number>2</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="BrushPreview" name="preview" >
@@ -176,6 +176,55 @@
     </layout>
    </item>
    <item>
+    <widget class="QLabel" name="label_4" >
+     <property name="text" >
+      <string>Spacing</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QSlider" name="brushspacing" >
+       <property name="minimum" >
+        <number>0</number>
+       </property>
+       <property name="maximum" >
+        <number>100</number>
+       </property>
+       <property name="value" >
+        <number>50</number>
+       </property>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="brushspacingbox" >
+       <property name="suffix" >
+        <string> %</string>
+       </property>
+       <property name="maximum" >
+        <number>100</number>
+       </property>
+       <property name="minimum" >
+        <number>0</number>
+       </property>
+       <property name="value" >
+        <number>50</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -183,7 +232,7 @@
      <property name="sizeHint" >
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>5</height>
       </size>
      </property>
     </spacer>
@@ -214,12 +263,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>146</x>
-     <y>110</y>
+     <x>150</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
-     <y>115</y>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -231,11 +280,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>252</x>
-     <y>112</y>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>27</x>
-     <y>110</y>
+     <x>31</x>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -246,12 +295,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>162</y>
+     <x>111</x>
+     <y>151</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
-     <y>167</y>
+     <y>155</y>
     </hint>
    </hints>
   </connection>
@@ -263,11 +312,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>252</x>
-     <y>167</y>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>40</x>
-     <y>162</y>
+     <x>44</x>
+     <y>151</y>
     </hint>
    </hints>
   </connection>
@@ -278,12 +327,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>147</x>
-     <y>214</y>
+     <x>151</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel" >
      <x>252</x>
-     <y>219</y>
+     <y>200</y>
     </hint>
    </hints>
   </connection>
@@ -295,11 +344,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>252</x>
-     <y>219</y>
+     <y>200</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>16</x>
-     <y>214</y>
+     <x>20</x>
+     <y>196</y>
     </hint>
    </hints>
   </connection>
@@ -326,8 +375,8 @@
    <slot>setHardness(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>175</x>
-     <y>207</y>
+     <x>179</x>
+     <y>196</y>
     </hint>
     <hint type="destinationlabel" >
      <x>220</x>
@@ -348,6 +397,54 @@
     <hint type="destinationlabel" >
      <x>192</x>
      <y>50</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacing</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushspacingbox</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>163</x>
+     <y>244</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>241</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacingbox</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>brushspacing</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>221</x>
+     <y>251</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>76</x>
+     <y>244</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacing</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setSpacing(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>36</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>61</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>

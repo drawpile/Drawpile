@@ -108,10 +108,13 @@ void BrushPreview::updatePreview()
 	const int strokeh = height() / 4;
 	const int offx = width()/8;
 	const int offy = height()/2;
+	const int spacing = brush_.spacing() * brush_.radius(1) / 100 + 1;
+	int distance = 0;
+	int lastx=0,lasty=0;
 	if(shape_ == Stroke) {
 		const qreal dphase = (2*M_PI)/qreal(strokew);
 		qreal phase = 0;
-		for(int x=0;x<strokew;x++, phase += dphase) {
+		for(int x=0;x<strokew;++x, phase += dphase) {
 			const qreal fx = x/qreal(strokew);
 			qreal pressure = ((fx*fx) - (fx*fx*fx))*6.756;
 			if(pressure<0)
@@ -119,18 +122,25 @@ void BrushPreview::updatePreview()
 			else if(pressure>1)
 				pressure = 1;
 			const int y = qRound(sin(phase) * strokeh);
-			brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
+			if(distance >= spacing) {
+				brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
+				distance=0;
+			} else { 
+				distance += qRound(hypot(lastx-x,lasty-y));
+			}
+			lastx = x;
+			lasty = y;
 		}
 	} else if(shape_ == Line) {
-		for(int x=0;x<strokew;x++) {
+		for(int x=0;x<strokew;x+=spacing) {
 			brush_.draw(preview_,drawingboard::Point(offx+x,offy,1));
 		}
 	} else {
-		for(int x=0;x<strokew;x++) {
+		for(int x=0;x<strokew;x+=spacing) {
 			brush_.draw(preview_,drawingboard::Point(offx+x,offy-strokeh,1));
 			brush_.draw(preview_,drawingboard::Point(offx+x,offy+strokeh,1));
 		}
-		for(int y=-strokeh;y<strokeh;y++) {
+		for(int y=-strokeh;y<strokeh;y+=spacing) {
 			brush_.draw(preview_,drawingboard::Point(offx,offy+y,1));
 			brush_.draw(preview_,drawingboard::Point(offx+strokew,offy+y,1));
 		}
@@ -160,7 +170,8 @@ void BrushPreview::setSize(int size)
 }
 
 /**
- * @param opacity brush opacity. Range is [0..100]
+ * @param opacity brush opacity
+ * @pre 0 <= opacity <= 100
  */
 void BrushPreview::setOpacity(int opacity)
 {
@@ -173,7 +184,8 @@ void BrushPreview::setOpacity(int opacity)
 }
 
 /**
- * @param hardness brush hardness . Range is [0..100]
+ * @param hardness brush hardness
+ * @pre 0 <= hardness <= 100
  */
 void BrushPreview::setHardness(int hardness)
 {
@@ -181,6 +193,17 @@ void BrushPreview::setHardness(int hardness)
 	brush_.setHardness(h);
 	if(hardnesspressure_==false)
 		brush_.setHardness2(h);
+	updatePreview();
+	update();
+}
+
+/**
+ * @param spacing dab spacing
+ * @pre 0 <= spacing <= 100
+ */
+void BrushPreview::setSpacing(int spacing)
+{
+	brush_.setSpacing(spacing);
 	updatePreview();
 	update();
 }

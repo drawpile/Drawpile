@@ -51,7 +51,7 @@ class Layer : public QGraphicsItem
 
 		//! Draw a line between two points with interpolated pressure values
 		void drawLine(const Point& point1, const Point& point2,
-				const Brush& brush);
+				const Brush& brush, int *distance=0);
 
 		//! Draw a single point
 		void drawPoint(const Point& point, const Brush& brush);

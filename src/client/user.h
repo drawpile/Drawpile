@@ -65,6 +65,7 @@ class User
 		Layer *layer_;
 		Point lastpoint_;
 		bool strokestarted_;
+		int strokelen_;
 };
 
 }
