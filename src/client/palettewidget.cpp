@@ -47,7 +47,7 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 }
 
-void PaletteWidget::setPalette(::Palette *palette)
+void PaletteWidget::setPalette(Palette *palette)
 {
 	palette_ = palette;
 	update();
@@ -63,7 +63,10 @@ void PaletteWidget::resizeEvent(QResizeEvent *event)
 			)
 		);
 
-	const int rows = palette_->count() / columns() * (swatchsize_.height()+spacing_);
+	int rows = 0;
+	if(palette_)
+		rows = palette_->count() / columns() * (swatchsize_.height()+spacing_);
+
 	if(rows < height())
 		scrollbar_->setMaximum( 0 );
 	else
@@ -90,6 +93,7 @@ void PaletteWidget::scroll(int pos)
 void PaletteWidget::removeColor()
 {
 	palette_->removeColor(dragsource_);
+	outline_->hide();
 	update();
 }
 
@@ -132,12 +136,13 @@ void PaletteWidget::paintEvent(QPaintEvent *)
 
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
-	const int i = indexAt(event->pos());
-	if(i!=-1) {
-		dragstart_ = event->pos();
-		dragsource_ = i;
-		outline_->setGeometry(swatchRect(i));
+	dragstart_ = event->pos();
+	dragsource_ = indexAt(event->pos());
+	if(dragsource_!=-1) {
+		outline_->setGeometry(swatchRect(dragsource_));
 		outline_->show();
+		if(event->button()==Qt::RightButton)
+			contextmenu_->popup(mapToGlobal(event->pos()));
 	}
 }
 
@@ -164,14 +169,13 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 	if(dragsource_ != -1) {
 		if(event->button()==Qt::LeftButton)
 			emit colorSelected(palette_->color(dragsource_));
-		else if(event->button()==Qt::RightButton)
-			contextmenu_->popup(mapToGlobal(event->pos()));
 	}
 }
 
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasFormat("application/x-color")) {
+	if(event->mimeData()->hasFormat("application/x-color")
+			&& palette_ != 0) {
 		if(event->source() == this)
 			event->setDropAction(Qt::MoveAction);
 		event->accept();
@@ -238,6 +242,8 @@ void PaletteWidget::wheelEvent(QWheelEvent *event)
  */
 int PaletteWidget::indexAt(const QPoint& point) const
 {
+	if(palette_ == 0)
+		return -1;
 	const int xw = spacing_ + swatchsize_.width();
 	const int x = point.x() / xw;
 	if(point.x() < x * xw + spacing_)
@@ -259,6 +265,7 @@ int PaletteWidget::indexAt(const QPoint& point) const
  * the last palette entry, Palette::count() is returned.
  * @param point coordinates inside the widget
  * @return index of the color swatch nearest
+ * @pre palette_ != 0
  */
 int PaletteWidget::nearestAt(const QPoint& point) const
 {

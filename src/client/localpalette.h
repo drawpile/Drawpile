@@ -21,18 +21,29 @@
 #define LOCALPALETTE_H
 
 #include <QList>
+#include <QVariant>
 
 #include "palette.h"
 
 class LocalPalette : public Palette {
 	public:
+		LocalPalette(const QString& name) : name_(name) {}
+		LocalPalette(const QString& name, const QList<QVariant>& list);
+
+		void setName(const QString& name) { name_ = name; }
+		const QString& name() const { return name_; }
+
 		int count() const;
 		QColor color(int index) const;
 		void setColor(int index, const QColor& color);
 		void insertColor(int index, const QColor& color);
 		void removeColor(int index);
+
+		QList<QVariant> toVariantList() const;
+
 	private:
 		QList<QColor> colors_;
+		QString name_;
 };
 
 #endif

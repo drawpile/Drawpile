@@ -33,7 +33,7 @@ class PaletteWidget : public QWidget {
 	Q_OBJECT
 	public:
 		PaletteWidget(QWidget *parent);
-		void setPalette(::Palette *palette);
+		void setPalette(Palette *palette);
 
 	signals:
 		void colorSelected(const QColor& color);
@@ -64,7 +64,7 @@ class PaletteWidget : public QWidget {
 		QRect swatchRect(int index) const;
 		QRect betweenRect(int index) const;
 
-		::Palette *palette_;
+		Palette *palette_;
 		QScrollBar *scrollbar_;
 		QSize swatchsize_;
 		int spacing_;

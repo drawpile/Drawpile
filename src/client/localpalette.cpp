@@ -19,6 +19,13 @@
 */
 #include "localpalette.h"
 
+LocalPalette::LocalPalette(const QString& name, const QList<QVariant>& list)
+	: name_(name)
+{
+	foreach(QVariant v, list)
+		colors_.append(v.value<QColor>());
+}
+
 int LocalPalette::count() const
 {
 	return colors_.count();
@@ -42,6 +49,14 @@ void LocalPalette::insertColor(int index, const QColor& color)
 void LocalPalette::removeColor(int index)
 {
 	colors_.removeAt(index);
+}
+
+QList<QVariant> LocalPalette::toVariantList() const
+{
+	QList<QVariant> list;
+	foreach(QColor col, colors_)
+		list.append(QVariant(col));
+	return list;
 }
 
 

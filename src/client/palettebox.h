@@ -21,12 +21,13 @@
 #define PALETTEBOX_H
 
 #include <QDockWidget>
-
+#include <QList>
 class Ui_PaletteBox;
 
-namespace widgets {
-
 class Palette;
+class LocalPalette;
+
+namespace widgets {
 
 class PaletteBox : public QDockWidget {
 	Q_OBJECT
@@ -37,8 +38,15 @@ class PaletteBox : public QDockWidget {
 	signals:
 		void colorSelected(const QColor& color);
 
+	private slots:
+		void paletteChanged(int index);
+		void nameChanged(const QString& name);
+		void addPalette();
+		void deletePalette();
+
 	private:
 		Ui_PaletteBox *ui_;
+		QList<LocalPalette*> palettes_;
 };
 
 }
