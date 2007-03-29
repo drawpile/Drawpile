@@ -78,7 +78,7 @@ endif ( NOT ACCEPT_FOMIT )
 ###   TEST -pg   ###
 
 if ( PROFILING )
-	check_cxx_accepts_flag ( ${PROFILING_FLAGS} ACCEPT_FOMIT )
+	check_cxx_accepts_flag ( ${PROFILING_FLAGS} ACCEPT_PROFILE )
 endif ( PROFILING )
 
 if ( NOT ACCEPT_PROFILE )
