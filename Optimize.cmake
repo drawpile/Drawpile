@@ -33,7 +33,7 @@ endif ( NOT NOARCH )
 
 set ( FASTMATH "-ffast-math" )
 
-set ( PROFILING "-pg" )
+set ( PROFILING_FLAGS "-pg" )
 set ( DEBUG_FLAGS "-g -Wall" )
 set ( OPT "-O${OPTIMIZATION}")
 
@@ -75,7 +75,17 @@ if ( NOT ACCEPT_FOMIT )
 	set ( FOMIT "" )
 endif ( NOT ACCEPT_FOMIT )
 
+###   TEST -pg   ###
+
+if ( PROFILING )
+	check_cxx_accepts_flag ( ${PROFILING_FLAGS} ACCEPT_FOMIT )
+endif ( PROFILING )
+
+if ( NOT ACCEPT_PROFILE )
+	set ( PROFILING_FLAGS "" )
+endif ( NOT ACCEPT_PROFILE )
+
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS}" )
-set ( CMAKE_CXX_FLAGS_RELEASE "${ARCH} ${OPT} ${FASTMATH} ${FOMIT} -DNDEBUG" )
+set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS} ${PROFILING_FLAGS}" )
+set ( CMAKE_CXX_FLAGS_RELEASE "${ARCH} ${OPT} ${FASTMATH} ${FOMIT} ${PROFILING_FLAGS} -DNDEBUG" )

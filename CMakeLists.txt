@@ -42,6 +42,8 @@ option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Disable any and all optimizations" ON )
 option ( SHARED "Build shared library" OFF )
 
+option ( PROFILE "Enable profiling (-pg)" OFF )
+
 ### Build type ###
 
 if ( DEBUG )
