@@ -87,9 +87,9 @@ set ( EXETYPE "" )
 
 if ( WIN32 )
 	link_libraries ( ws2_32 )
-	if ( NDEBUG )
+	if ( NOT DEBUG )
 		set ( EXETYPE WIN32 )
-	endif ( NDEBUG )
+	endif ( NOT DEBUG )
 endif ( WIN32 )
 
 link_libraries( ${LIBNAME} )
