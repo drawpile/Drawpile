@@ -27,11 +27,11 @@ option ( EPOLL "Disable epoll(4) support" ON )
 option ( PSELECT "Disable pselect(2) support" ON )
 option ( KQUEUE "Disable kqueue(2) support" ON )
 option ( KEVENT "Disable kevent(2) support" ON )
-option ( WSA "Enable WSA event support" OFF )
+option ( WSA "Enable WSA event support" OFF ) # still broken
 
-option ( BOEHMGC "Enable Boehm Garbage Collector" OFF )
+option ( BOEHMGC "Enable Boehm Garbage Collector" OFF ) # Not used
 
-option ( DEFLATE "Enable deflate compression" OFF )
+option ( DEFLATE "Disable deflate compression" ON )
 
 option ( WSA_SOCKETS "Use WSA sockets" OFF )
 if ( WIN32 )
