@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>183</width>
-    <height>261</height>
+    <width>147</width>
+    <height>262</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <number>3</number>
    </property>
    <property name="spacing" >
-    <number>3</number>
+    <number>0</number>
    </property>
    <item>
     <widget class="BrushPreview" name="preview" >
@@ -56,7 +56,7 @@
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>3</number>
      </property>
      <item>
       <widget class="QSlider" name="brushsize" >
@@ -96,7 +96,7 @@
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>3</number>
      </property>
      <item>
       <widget class="QSlider" name="brushopacity" >
@@ -142,7 +142,7 @@
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>3</number>
      </property>
      <item>
       <widget class="QSlider" name="brushhardness" >
@@ -188,7 +188,7 @@
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>3</number>
      </property>
      <item>
       <widget class="QSlider" name="brushspacing" >
@@ -231,8 +231,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>50</width>
-       <height>16</height>
+       <width>5</width>
+       <height>5</height>
       </size>
      </property>
     </spacer>
