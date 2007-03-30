@@ -82,8 +82,8 @@ struct Buffer
 		// create new array if it doesn't exist.
 		if (nbuf == 0)
 			nbuf = new char[nsize];
-		
-		reposition();
+		else
+			reposition(); // make sure the already existing data is at the beginning
 		
 		const size_t off = canRead();
 		memcpy(nbuf, data, off);
@@ -99,6 +99,20 @@ struct Buffer
 		
 		// move the offset to the real position.
 		write(off);
+	}
+	
+	//! Copies the still readable portion of the data to the provided buffer
+	bool getBuffer(char*& buf, const size_t buflen)
+	{
+		if (buflen < left)
+			return false;
+		
+		const size_t chunk1 = canRead();
+		if (chunk1 < left)
+			memcpy(buf+chunk1, data, left - chunk1);
+		memcpy(buf, rpos, chunk1);
+		
+		return true;
 	}
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
@@ -208,6 +222,7 @@ struct Buffer
 		assert(data != 0);
 		assert(size > 1);
 		
+		assert(len > 0);
 		assert(len <= canRead());
 		
 		rpos += len;
@@ -254,6 +269,7 @@ struct Buffer
 		assert(data != 0);
 		assert(size > 1);
 		
+		assert(len > 0);
 		assert(len <= canWrite());
 		
 		wpos += len; // increment wpos pointer
