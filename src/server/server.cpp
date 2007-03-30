@@ -263,13 +263,14 @@ void Server::uWrite(User*& usr) throw()
 		
 		const std::deque<message_ref>::iterator f_msg(usr->queue.begin());
 		std::deque<message_ref>::iterator l_msg(f_msg+1), iter(f_msg);
-		for (; l_msg != usr->queue.end(); ++l_msg, ++iter)
+		for (int i=1; l_msg != usr->queue.end(); ++l_msg, ++iter, ++i)
 		{
-			if (((*l_msg)->type != (*f_msg)->type)
+			if (i == std::numeric_limits<uint8_t>::max()
+				or ((*l_msg)->type != (*f_msg)->type)
 				or ((*l_msg)->user_id != (*f_msg)->user_id)
 				or ((*l_msg)->session_id != (*f_msg)->session_id)
 			)
-				break; // type changed
+				break; // type changed or reached maximum size of linked list
 			
 			// create linked list
 			(*l_msg)->prev = boost::get_pointer(*iter);
@@ -536,27 +537,28 @@ void Server::uProcessData(User*& usr) throw()
 		
 		size_t cread = usr->input.canRead();
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
-		if (len > cread)
-		{ // required size is greater than can be read from buffer
-			if (len <= usr->input.left)
-			{ // required size is less or equal to the total data in buffer
-				// so, we reposition the buffer
-				usr->input.reposition();
-				
-				// update cread and len
-				cread = usr->input.canRead();
-				len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
-				
-				if (len > cread)
-					return;
-			}
-			else
-				return; // need more data
+		if (len > usr->input.left)
+			return; // need more data
+		else if (len > cread)
+		{
+			// so, we reposition the buffer
+			usr->input.reposition();
+			
+			// update cread and len
+			cread = usr->input.canRead();
+			len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
 		}
 		
 		usr->input.read(
 			usr->inMsg->unserialize(usr->input.rpos, cread)
 		);
+		
+		if (!usr->inMsg->isValid())
+		{
+			std::cerr << "Message is invalid, dropping user." << std::endl;
+			uRemove(usr, protocol::user_event::Dropped);
+			return;
+		}
 		
 		switch (usr->state)
 		{
@@ -1597,8 +1599,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				delete session;
 				return;
 			}
-			
-			if (msg->length != crop)
+			else if (msg->length != crop)
 			{
 				session->len = (msg->length - crop);
 				session->title = new char[session->len];
