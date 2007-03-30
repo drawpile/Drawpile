@@ -85,11 +85,7 @@ struct Buffer
 		
 		getBuffer(nbuf, nsize);
 		
-		#ifndef CBUFFER_UNMANAGED
-		// causes memory leak otherwise
-		delete [] data;
-		data = 0;
-		#endif
+		const size_t off = left;
 		
 		// set the buffer as our current one.
 		setBuffer(nbuf, nsize);
