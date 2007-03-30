@@ -1244,11 +1244,12 @@ void MainWindow::createDocks()
 {
 	QMenu *toggles = new QMenu(this);
 	createToolSettings(toggles);
-	createColorBox(toggles);
+	createColorBoxes(toggles);
 	createPalette(toggles);
 	createUserList(toggles);
 	createChatBox(toggles);
-	tabifyDockWidget(color_, palette_);
+	//tabifyDockWidget(rgb_, palette_);
+	tabifyDockWidget(hsv_, rgb_);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1294,19 +1295,28 @@ void MainWindow::createPalette(QMenu *toggles)
 	addDockWidget(Qt::RightDockWidgetArea, palette_);
 }
 
-void MainWindow::createColorBox(QMenu *toggles)
+void MainWindow::createColorBoxes(QMenu *toggles)
 {
-	color_ = new widgets::ColorBox(tr("Color"), this);
-	color_->setObjectName("colordock");
-	toggles->addAction(color_->toggleViewAction());
+	rgb_ = new widgets::ColorBox("RGB", widgets::ColorBox::RGB, this);
+	rgb_->setObjectName("rgbdock");
+	toggles->addAction(rgb_->toggleViewAction());
+
+	hsv_ = new widgets::ColorBox("HSV", widgets::ColorBox::HSV, this);
+	hsv_->setObjectName("hsvdock");
+	toggles->addAction(hsv_->toggleViewAction());
 
 	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)),
-			color_, SLOT(setColor(QColor)));
+			rgb_, SLOT(setColor(QColor)));
+	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)),
+			hsv_, SLOT(setColor(QColor)));
 
-	connect(color_, SIGNAL(colorChanged(QColor)),
+	connect(rgb_, SIGNAL(colorChanged(QColor)),
+			fgbgcolor_, SLOT(setForeground(QColor)));
+	connect(hsv_, SIGNAL(colorChanged(QColor)),
 			fgbgcolor_, SLOT(setForeground(QColor)));
 
-	addDockWidget(Qt::RightDockWidgetArea, color_);
+	addDockWidget(Qt::RightDockWidgetArea, rgb_);
+	addDockWidget(Qt::RightDockWidgetArea, hsv_);
 }
 
 

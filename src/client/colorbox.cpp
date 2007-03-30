@@ -30,17 +30,25 @@ using widgets::GradientSlider;
 
 namespace widgets {
 
-ColorBox::ColorBox(const QString& title, QWidget *parent)
-	: QDockWidget(title, parent), updating_(false)
+ColorBox::ColorBox(const QString& title, Mode mode, QWidget *parent)
+	: QDockWidget(title, parent), updating_(false), mode_(mode)
 {
 	ui_ = new Ui_ColorBox;
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	ui_->setupUi(w);
 
-	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
-	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
-	connect(ui_->blue, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
+	if(mode_ == HSV) {
+		ui_->c1label->setText("H");
+		ui_->c2label->setText("S");
+		ui_->c3label->setText("V");
+		ui_->c1->setMode(GradientSlider::Hsv);
+		ui_->c1->setMaximum(359);
+	}
+
+	connect(ui_->c1, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
+	connect(ui_->c2, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
+	connect(ui_->c3, SIGNAL(valueChanged(int)), this, SLOT(updateColor()));
 }
 
 ColorBox::~ColorBox()
@@ -51,9 +59,15 @@ ColorBox::~ColorBox()
 void ColorBox::setColor(const QColor& color)
 {
 	updating_ = true;
-	ui_->red->setValue(color.red());
-	ui_->green->setValue(color.green());
-	ui_->blue->setValue(color.blue());
+	if(mode_ == RGB) {
+		ui_->c1->setValue(color.red());
+		ui_->c2->setValue(color.green());
+		ui_->c3->setValue(color.blue());
+	} else {
+		ui_->c1->setValue(color.hue());
+		ui_->c2->setValue(color.saturation());
+		ui_->c3->setValue(color.value());
+	}
 	updateSliders();
 	updating_ = false;
 }
@@ -62,30 +76,49 @@ void ColorBox::updateColor()
 {
 	if(updating_==false) {
 		updateSliders();
-		emit colorChanged(
-				QColor(
-					ui_->red->value(),
-					ui_->green->value(),
-					ui_->blue->value()
-					)
-				);
+		QColor color;
+		if(mode_ == RGB)
+			color = QColor(
+					ui_->c1->value(),
+					ui_->c2->value(),
+					ui_->c3->value()
+					);
+		else
+			color = QColor::fromHsv(
+					ui_->c1->value(),
+					ui_->c2->value(),
+					ui_->c3->value()
+					);
+				
+		emit colorChanged(color);
 	}
 }
 
 void ColorBox::updateSliders()
 {
-	const int r = ui_->red->value();
-	const int g = ui_->green->value();
-	const int b = ui_->blue->value();
+	const int c1 = ui_->c1->value();
+	const int c2 = ui_->c2->value();
+	const int c3 = ui_->c3->value();
 
-	ui_->red->setColor1(QColor(0,g,b));
-	ui_->red->setColor2(QColor(255,g,b));
+	if(mode_ == RGB) {
+		ui_->c1->setColor1(QColor(0,c2,c3));
+		ui_->c1->setColor2(QColor(255,c2,c3));
 
-	ui_->green->setColor1(QColor(r,0,b));
-	ui_->green->setColor2(QColor(r,255,b));
+		ui_->c2->setColor1(QColor(c1,0,c3));
+		ui_->c2->setColor2(QColor(c1,255,c3));
 
-	ui_->blue->setColor1(QColor(r,g,0));
-	ui_->blue->setColor2(QColor(r,g,255));
+		ui_->c3->setColor1(QColor(c1,c2,0));
+		ui_->c3->setColor2(QColor(c1,c2,255));
+	} else {
+		ui_->c1->setColorSaturation(c2/359.0);
+		ui_->c1->setColorValue(c3/255.0);
+
+		ui_->c2->setColor1(QColor::fromHsv(c1,0,c3));
+		ui_->c2->setColor2(QColor::fromHsv(c1,255,c3));
+
+		ui_->c3->setColor1(QColor::fromHsv(c1,c2,0));
+		ui_->c3->setColor2(QColor::fromHsv(c1,c2,255));
+	}
 }
 
 }

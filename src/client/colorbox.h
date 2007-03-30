@@ -29,7 +29,9 @@ namespace widgets {
 class ColorBox : public QDockWidget {
 	Q_OBJECT
 	public:
-		ColorBox(const QString& title, QWidget *parent);
+		enum Mode {RGB, HSV};
+
+		ColorBox(const QString& title, Mode mode, QWidget *parent);
 		~ColorBox();
 
 	public slots:
@@ -45,6 +47,7 @@ class ColorBox : public QDockWidget {
 		void updateSliders();
 		Ui_ColorBox *ui_;
 		bool updating_;
+		Mode mode_;
 };
 
 }

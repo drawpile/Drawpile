@@ -197,8 +197,8 @@ class MainWindow : public QMainWindow {
 		void createChatBox(QMenu *menu);
 		//! Create palette dock
 		void createPalette(QMenu *menu);
-		//! Create color dock
-		void createColorBox(QMenu *menu);
+		//! Create color docks
+		void createColorBoxes(QMenu *menu);
 		//! Create dialogs
 		void createDialogs();
 
@@ -210,7 +210,7 @@ class MainWindow : public QMainWindow {
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;
 		widgets::PaletteBox *palette_;
-		widgets::ColorBox *color_;
+		widgets::ColorBox *rgb_, *hsv_;
 		QLabel *lockstatus_;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
