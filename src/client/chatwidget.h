@@ -20,17 +20,17 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
-#include <QDockWidget>
+#include <QWidget>
 
 class Ui_ChatBox;
 
 namespace widgets {
 
-//! Chat dock window
+//! Chat window
 /**
- * A dock widget for chatting with other users
+ * A widget for chatting with other users
  */
-class ChatBox: public QDockWidget
+class ChatBox: public QWidget
 {
 	Q_OBJECT
 	public:

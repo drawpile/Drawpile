@@ -23,12 +23,10 @@
 namespace widgets {
 
 ChatBox::ChatBox(QWidget *parent)
-	: QDockWidget(tr("Chat"), parent)
+	:  QWidget(parent)
 {
 	ui_ = new Ui_ChatBox;
-	QWidget *w = new QWidget(this);
-	setWidget(w);
-	ui_->setupUi(w);
+	ui_->setupUi(this);
 
 	ui_->sendbutton->setEnabled(false);
 	connect(ui_->sendbutton, SIGNAL(clicked()), this, SLOT(sendMessage()));

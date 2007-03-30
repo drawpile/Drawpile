@@ -28,6 +28,7 @@ class QActionGroup;
 class QMessageBox;
 class QUrl;
 class QLabel;
+class QSplitter;
 
 namespace widgets {
 	class NetStatus;
@@ -193,8 +194,6 @@ class MainWindow : public QMainWindow {
 		void createToolSettings(QMenu *menu);
 		//! Create user list dock
 		void createUserList(QMenu *menu);
-		//! Create chat box dock
-		void createChatBox(QMenu *menu);
 		//! Create palette dock
 		void createPalette(QMenu *menu);
 		//! Create color docks
@@ -202,6 +201,7 @@ class MainWindow : public QMainWindow {
 		//! Create dialogs
 		void createDialogs();
 
+		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
 		widgets::ChatBox *chatbox_;

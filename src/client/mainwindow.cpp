@@ -33,6 +33,7 @@
 #include <QPushButton>
 #include <QImageReader>
 #include <QImageWriter>
+#include <QSplitter>
 
 #include "mainwindow.h"
 #include "netstatus.h"
@@ -87,9 +88,17 @@ MainWindow::MainWindow(bool restoreposition)
 	lockstatus_->setToolTip(tr("Board is not locked"));
 	statusbar->addPermanentWidget(lockstatus_);
 
+	// Work area is split between the view and the chatbox
+	splitter_ = new QSplitter(Qt::Vertical, this);
+	setCentralWidget(splitter_);
+
 	// Create view
 	view_ = new widgets::EditorView(this);
 	view_->setAcceptDrops(true);
+
+	splitter_->addWidget(view_);
+	splitter_->setCollapsible(0, false);
+
 	connect(toolsettings_, SIGNAL(sizeChanged(int)),
 			view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)),
@@ -101,7 +110,10 @@ MainWindow::MainWindow(bool restoreposition)
 	connect(view_, SIGNAL(imageDropped(QString)),
 			this, SLOT(open(QString)));
 
-	setCentralWidget(view_);
+
+	// Create the chatbox
+	chatbox_ = new widgets::ChatBox(this);
+	splitter_->addWidget(chatbox_);
 
 	// Create board
 	board_ = new drawingboard::Board(this, toolsettings_, fgbgcolor_);
@@ -333,9 +345,12 @@ void MainWindow::readSettings(bool restorepos)
 			move(pos);
 	}
 
-	// Restore dock and toolbar states
+	// Restore dock, toolbar and view states
 	if(cfg.contains("state")) {
 		restoreState(cfg.value("state").toByteArray());
+	}
+	if(cfg.contains("viewstate")) {
+		splitter_->restoreState(cfg.value("viewstate").toByteArray());
 	}
 
 	lastpath_ = cfg.value("lastpath").toString();
@@ -379,6 +394,7 @@ void MainWindow::writeSettings()
 	cfg.setValue("pos", pos());
 	cfg.setValue("size", size());
 	cfg.setValue("state", saveState());
+	cfg.setValue("viewstate", splitter_->saveState());
 	cfg.setValue("lastpath", lastpath_);
 
 	cfg.endGroup();
@@ -1247,7 +1263,6 @@ void MainWindow::createDocks()
 	createColorBoxes(toggles);
 	createPalette(toggles);
 	createUserList(toggles);
-	createChatBox(toggles);
 	//tabifyDockWidget(rgb_, palette_);
 	tabifyDockWidget(hsv_, rgb_);
 	docktoggles_->setMenu(toggles);
@@ -1272,15 +1287,6 @@ void MainWindow::createUserList(QMenu *toggles)
 	userlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	toggles->addAction(userlist_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, userlist_);
-}
-
-void MainWindow::createChatBox(QMenu *toggles)
-{
-	chatbox_ = new widgets::ChatBox(this);
-	chatbox_->setObjectName("chatboxdock");
-	chatbox_->setAllowedAreas(Qt::BottomDockWidgetArea | Qt::TopDockWidgetArea);
-	toggles->addAction(chatbox_->toggleViewAction());
-	addDockWidget(Qt::BottomDockWidgetArea, chatbox_);
 }
 
 void MainWindow::createPalette(QMenu *toggles)
