@@ -312,7 +312,7 @@ void Server::uWrite(User*& usr) throw()
 			if (usr->output.canWrite() < buffer_len)
 			{ // can't write continuous stream of data in buffer
 				assert(usr->output.free() < buffer_len);
-				size = buffer_len + usr->output.size + 1024;
+				size = buffer_len*2048+1024;
 				temp = new char[size];
 				inBuffer = false;
 			}
@@ -334,15 +334,18 @@ void Server::uWrite(User*& usr) throw()
 				std::cout << "zlib: " << len << "B compressed down to " << buffer_len << "B." << std::endl;
 				#endif
 				
+				usr->output.read(len);
+				
 				if (inBuffer)
 				{
+					usr->output.write(buffer_len);
 					size = usr->output.canWrite();
-					usr->output.read(len);
 				}
 				else
+				{
 					usr->output.setBuffer(temp, size);
-				
-				usr->output.write(buffer_len);
+					usr->output.write(buffer_len);
+				}
 				
 				{
 					const protocol::Deflate t_deflate(len, buffer_len, temp);
@@ -359,7 +362,17 @@ void Server::uWrite(User*& usr) throw()
 					buf = t_deflate.serialize(len, usr->output.wpos, size);
 					
 					if (buf != usr->output.wpos)
+					{
+						#ifndef NDEBUG
+						if (!inBuffer)
+						{
+							std::cout << "Pre-allocated buffer was too small!" << std::endl
+								<< "Allocated: " << buffer_len*2+1024
+								<< ", actually needed: " << size << std::endl;
+						}
+						#endif
 						usr->output.setBuffer(buf, size);
+					}
 					
 					usr->output.write(len);
 					
