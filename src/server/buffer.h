@@ -82,11 +82,8 @@ struct Buffer
 		// create new array if it doesn't exist.
 		if (nbuf == 0)
 			nbuf = new char[nsize];
-		else
-			reposition(); // make sure the already existing data is at the beginning
 		
-		const size_t off = canRead();
-		memcpy(nbuf, data, off);
+		getBuffer(nbuf, nsize);
 		
 		#ifndef CBUFFER_UNMANAGED
 		// causes memory leak otherwise
@@ -102,8 +99,11 @@ struct Buffer
 	}
 	
 	//! Copies the still readable portion of the data to the provided buffer
-	bool getBuffer(char*& buf, const size_t buflen)
+	bool getBuffer(char*& buf, const size_t buflen) const throw()
 	{
+		assert(buflen < left);
+		assert(buf != 0);
+		
 		if (buflen < left)
 			return false;
 		
