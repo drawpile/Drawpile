@@ -43,6 +43,7 @@ ColorBox::ColorBox(const QString& title, Mode mode, QWidget *parent)
 		ui_->c2label->setText("S");
 		ui_->c3label->setText("V");
 		ui_->c1->setMode(GradientSlider::Hsv);
+		ui_->c1box->setMaximum(359);
 		ui_->c1->setMaximum(359);
 	}
 
