@@ -173,7 +173,7 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 
 	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
 	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
-	ui_->preview->setHardness(ui_->brushspacing->value());
+	ui_->preview->setSpacing(ui_->brushspacing->value());
 
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
