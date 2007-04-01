@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -99,7 +99,8 @@ class NetworkPrivate : public QObject {
 		// Sending
 		QMutex sendmutex;
 		MessageQueue sendqueue;
-		char *sendbuffer;
+		char sendbuffer[1024];
+		char *tmpbuffer; // tmpbuffer is used when sendbuffer is too short
 		size_t sentlen, sendlen;
 
 		// Receiving

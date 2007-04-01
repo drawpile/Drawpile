@@ -30,7 +30,7 @@
 namespace network {
 
 NetworkPrivate::NetworkPrivate(QObject *parent) :
-	QObject(parent), sendbuffer(0), sentlen(0), sendlen(0), newmsg(0)
+	QObject(parent), tmpbuffer(0), sentlen(0), sendlen(0), newmsg(0)
 {
 	// Indirect socket handling for thread safety
 	connect(this, SIGNAL(sending()), this, SLOT(sendPending()),
@@ -48,7 +48,7 @@ NetworkPrivate::NetworkPrivate(QObject *parent) :
 
 NetworkPrivate::~NetworkPrivate()
 {
-	delete [] sendbuffer;
+	delete [] tmpbuffer;
 	delete newmsg;
 }
 
@@ -130,12 +130,16 @@ void NetworkPrivate::sendPending()
 		// Loop until send queue is empty
 		while(sendlen>0) {
 			qint64 bytesleft = sendlen - sentlen;
-			qint64 sent = socket.write(sendbuffer + sentlen, bytesleft);
+			qint64 sent = socket.write((tmpbuffer?tmpbuffer:sendbuffer) + sentlen, bytesleft);
 			if(sent==-1) {
 				// Error occured
+				qDebug() << __FUNCTION__ << "sent==-1";
 			}
 			if(sent == bytesleft) {
-				delete [] sendbuffer;
+				if(tmpbuffer) {
+					delete [] tmpbuffer;
+					tmpbuffer = 0;
+				}
 				sendlen = 0;
 				serializeMessage();
 			} else {
@@ -160,12 +164,16 @@ void NetworkPrivate::serializeMessage()
 	sendmutex.lock();
 	if(sendqueue.isEmpty()) {
 		sendmutex.unlock();
-		sendbuffer = 0;
 	} else {
 		protocol::Message *msg = sendqueue.dequeue();
 		sendmutex.unlock();
-		size_t tmp=0;
-		sendbuffer = msg->serialize(sendlen, 0, tmp);
+		// Serialize the message. By default, try to use the preallocated
+		// buffer. If it is not long enough, a new buffer is allocated
+		// and returned.
+		size_t tmp=sizeof(sendbuffer);
+		char *buffer = msg->serialize(sendlen, sendbuffer, tmp);
+		if(buffer != sendbuffer)
+			tmpbuffer = buffer;
 		delete msg;
 	}
 	sentlen = 0;
@@ -187,6 +195,10 @@ void NetworkPrivate::dataAvailable()
 		// state must be rememberd between calls.
 		// Identify packet
 		if(newmsg==0) {
+			if(recvbuffer.isEmpty()) {
+				qDebug() << __FUNCTION__ << "newmsg==0 and recvbuffer is empty!";
+				return;
+			}
 			newmsg = protocol::getMessage(recvbuffer[0]);
 			if(newmsg==0) {
 				// Unknown message received
