@@ -108,7 +108,7 @@ void BrushPreview::updatePreview()
 	const int strokeh = height() / 4;
 	const int offx = width()/8;
 	const int offy = height()/2;
-	int spacing = brush_.spacing() * brush_.radius(1) / 100 + 1;
+	int spacing = brush_.spacing() * brush_.radius(1) / 100;
 	int distance = 0;
 	int lastx=0,lasty=0;
 	if(shape_ == Stroke) {
