@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>177</width>
-    <height>92</height>
+    <width>167</width>
+    <height>95</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,7 +17,7 @@
     <number>3</number>
    </property>
    <property name="spacing" >
-    <number>3</number>
+    <number>0</number>
    </property>
    <item>
     <layout class="QGridLayout" >
@@ -25,7 +25,7 @@
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>6</number>
+      <number>0</number>
      </property>
      <item row="1" column="1" >
       <widget class="GradientSlider" name="c2" >
