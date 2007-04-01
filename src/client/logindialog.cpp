@@ -60,7 +60,7 @@ void LoginDialog::connecting(const QString& address)
 	setTitleMessage(tr("Joining a drawing session"));
 	ui_->statustext->setText(tr("Connecting to %1...").arg(address));
 	ui_->progress->setValue(0);
-	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Abort);
+	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
 	show();
 }
 
