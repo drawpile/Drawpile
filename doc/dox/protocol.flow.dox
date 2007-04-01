@@ -1,0 +1,62 @@
+/*!
+
+\page protocol_flow Protocol flow
+
+\brief 
+
+\author M.K.A. <wyrmchild@users.sourceforge.net>
+
+\section login Login
+
+Client sends protocol identifier, server responds with host info, client
+replies with user info, and server returns the user info with missing information filled in.
+
+More in-depth explanation follows:
+
+1. Client connects to server and sends the protocol identifier (protocol::Identifier)
+and waits for response.
+- If the identifier was invalid, the connection is dropped by server.
+- If the server is password protected, the server will send authentication
+request (protocol::Authentication) to which the client must respond with correct
+password (protocol::Password) before login process may continue. Server is free to
+send error on invalid password or disconnect the client.
+
+2. If the identifier was valid and the client responded with correct password
+(if it was requested), the server will reply with host info (protocol::HostInfo)
+message.
+
+3. Client must respond with user info, with user event set to login, and user name
+set if such is required by server.
+- If the user info does not match the server's requirements, the server is free to send
+an error message or disconnect the user.
+- If the user info is valid, the server must fill out the missing pieces
+(user ID and mode) and send it back to the user, the name field may be emptied
+to save bandwidth, since the client should know its username already
+(it was the one to provide it).
+
+4. Client should be deemed logged in at the moment the client receives the user info back.
+
+\todo Make this section less confusing.
+
+\section drawing Drawing
+
+Tool info describes the tool used for drawing. Stroke info describes
+the stroke, or the path which was taken to draw the line, and the applied pressure (set to
+max if the device used does not support pressure). Stroke end is to announce the end
+of a line, the point at which the mouse button was de-pressed or the stylus lifted.
+
+- Tool info message precedes any stroke info or stroke end when the tool is not
+already described.
+- Since only one tool can be described at a time, the tool info must be re-sent if
+the tool changes.
+- Tool info messages may not be sent in middle of drawing (between stroke info and
+stroke end messages)
+- Stroke info messages sent may not contain the same coordinates as the one
+immediately preceded it.
+
+\section synchronization Client synchronization
+
+\todo Not much else than copy&paste everything from the wiki:
+http://drawpile.sourceforge.net/wiki/index.php/Protocol_flow#Client_synchronization
+
+*/
