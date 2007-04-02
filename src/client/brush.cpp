@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -278,9 +278,9 @@ void Brush::updateCache() const
 	ushort *q2 = q1 + scanline;
 	ushort *q3 = q1 + (rad*2) * ((rad*2)-1);
 	ushort *q4 = q3 + scanline;
-	for(int y=-rad;y<0;++y) {
+	for(int y=-rad+1;y<=0;++y) {
 		const qreal yy = y*y;
-		for(int x=-rad;x<0;++x) {
+		for(int x=-rad+1;x<=0;++x) {
 			const qreal dist = sqrt(x*x + yy);
 			ushort a;
 			if(dist<rad)
