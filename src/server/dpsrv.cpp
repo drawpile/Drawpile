@@ -273,8 +273,11 @@ int main(int argc, char** argv)
 		const Net _net; // :)
 		#endif // NEED_NET
 		
-		if (srv.init() != 0)
+		if (!srv.init())
+		{
+			std::cerr << "Server initialization failed!" << std::endl;
 			return 1;
+		}
 		
 		try {
 			rc = srv.run();
