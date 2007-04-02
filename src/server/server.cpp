@@ -66,7 +66,8 @@ typedef std::vector<message_ref>::iterator msgvector_iterator;
 typedef std::vector<message_ref>::const_iterator msgvector_const_iterator;
 
 Server::Server() throw()
-	: password(0),
+	: state(server::state::None),
+	password(0),
 	a_password(0),
 	pw_len(0),
 	a_pw_len(0),
