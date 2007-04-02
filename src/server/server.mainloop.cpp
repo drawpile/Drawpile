@@ -135,12 +135,12 @@ int Server::run() throw()
 		// check timer
 		if (next_timer < current_time)
 		{
-			// schedule next
-			next_timer = current_time + 600;
-			
-			// check list
 			if (!utimer.empty())
 				cullIdlers();
+			
+			// reschedule to much later time if there's no users left
+			if (utimer.empty())
+				next_timer = current_time + 1800;
 		}
 	}
 	
