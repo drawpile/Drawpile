@@ -55,7 +55,7 @@ namespace protocol
 {
 
 //! Implemented protocol revision number.
-const uint16_t revision = 8;
+const uint16_t revision = 9;
 
 //! Base for all message types.
 /**
