@@ -116,23 +116,6 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 		assert(data == 0);
 	#endif
 	
-	size_t
-		headerlen;
-	
-	length = headerSize();
-	
-	if (isBundling)
-	{
-		// no extra headers for bundling
-		headerlen = 0;
-		// just add message count
-		length += sizeof(null_count);
-	}
-	else
-	{
-		headerlen = length;
-	}
-	
 	// At least one message is serialized (the last)
 	length += payloadLength();
 	
@@ -147,10 +130,16 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 		assert(ptr != ptr->prev); // infinite loop
 		ptr = ptr->prev;
 		
-		length += headerlen + ptr->payloadLength();
+		length += ptr->payloadLength();
 		
 		++count;
 	}
+	
+	// headers
+	if (isBundling)
+		length += headerSize() + sizeof(null_count);
+	else
+		length += headerSize() * count;
 	
 	// Allocate memory if necessary
 	if (size < length)
