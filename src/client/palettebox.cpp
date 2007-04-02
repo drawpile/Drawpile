@@ -44,11 +44,15 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	// Load palettes
 	QSettings cfg;
 	cfg.beginGroup("palettes");
-	QStringList palettes = cfg.childKeys();
+	QRegExp names("palette\\d+$");
+	QStringList palettes = cfg.childKeys().filter(names);
 	foreach(QString pal, palettes) {
-		LocalPalette *p = new LocalPalette(pal, cfg.value(pal).toList());
+		LocalPalette *p = new LocalPalette(
+				cfg.value(pal).toString(),
+				cfg.value(pal + "data").toList()
+				);
 		palettes_.append(p);
-		ui_->palettelist->addItem(pal);
+		ui_->palettelist->addItem(p->name());
 	}
 	cfg.endGroup();
 
@@ -85,9 +89,12 @@ PaletteBox::~PaletteBox()
 	cfg.setValue("history/lastpalette", ui_->palettelist->currentIndex());
 	cfg.beginGroup("palettes");
 	cfg.remove("");
+	int index = 0;
 	while(palettes_.isEmpty()==false) {
 		LocalPalette *pal = palettes_.takeFirst();
-		cfg.setValue(pal->name(), pal->toVariantList());
+		cfg.setValue(QString("palette%1").arg(index), pal->name());
+		cfg.setValue(QString("palette%1data").arg(index), pal->toVariantList());
+		++index;
 		delete pal;
 	}
 
