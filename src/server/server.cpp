@@ -2358,21 +2358,21 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	else
 	{
 		// Cancel raster sending for this user
-		User* usr; // warning from compiler
+		User* usr_ptr; // warning from compiler
 		
 		tunnelmap_iterator tunnel_i(tunnel.begin());
 		while (tunnel_i != tunnel.end())
 		{
-			if (tunnel_i->second == usr->sock->fd())
+			if (tunnel_i->second == usr_ptr->sock->fd())
 			{
 				// In case we've not cleaned the tunnel properly from dead users.
 				assert(users.find(tunnel_i->first) != users.end());
 				
-				usr = users[tunnel_i->first];
+				usr_ptr = users[tunnel_i->first];
 				message_ref cancel_ref(new protocol::Cancel);
 				// TODO: Figure out which session it is from
 				//cancel->session_id = session->id;
-				uSendMsg(usr, cancel_ref);
+				uSendMsg(usr_ptr, cancel_ref);
 				
 				tunnel.erase(tunnel_i);
 				// iterator was invalidated
