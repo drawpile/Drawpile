@@ -567,12 +567,15 @@ void Server::uProcessData(User*& usr) throw()
 			usr->inMsg->unserialize(usr->input.rpos, cread)
 		);
 		
+		/*
+		// isValid() can't be used before it is properly implemented!
 		if (!usr->inMsg->isValid())
 		{
 			std::cerr << "Message is invalid, dropping user." << std::endl;
 			uRemove(usr, protocol::user_event::Dropped);
 			return;
 		}
+		*/
 		
 		switch (usr->state)
 		{
