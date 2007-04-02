@@ -1889,7 +1889,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				}
 				
 				uRemove(usr, protocol::user_event::Violation);
-				return;
+				break;
 			}
 			#endif // CHECK_VIOLATIONS
 			
@@ -1903,7 +1903,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooLong));
 				
 				//uRemove(usr, protocol::user_event::Dropped);
-				return;
+				break;
 			}
 			
 			// assign user their own name
@@ -1920,7 +1920,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
 				
 				//uRemove(usr, protocol::user_event::Dropped);
-				return;
+				break;
 			}
 			
 			// assign message the user's id (for sending back)
@@ -1986,7 +1986,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			{
 				// mismatch, send error or disconnect.
 				uRemove(usr, protocol::user_event::Dropped);
-				return;
+				break;
 			}
 			
 			#ifdef CHECK_VIOLATIONS
@@ -2002,7 +2002,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			// not a password
 			uRemove(usr, protocol::user_event::Violation);
-			return;
+			break;
 		}
 		
 		usr->state = uState::login;
@@ -2021,7 +2021,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				#endif
 				
 				uRemove(usr, protocol::user_event::Violation);
-				return;
+				break;
 			}
 			
 			if (ident->revision != protocol::revision)
@@ -2035,7 +2035,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				// TODO: Implement some compatible way of announcing incompatibility
 				
 				uRemove(usr, protocol::user_event::Dropped);
-				return;
+				break;
 			}
 			
 			if (password == 0)
@@ -2353,8 +2353,6 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 			delete session;
 			session = 0;
 		}
-		
-		return;
 	}
 	else
 	{
@@ -2382,21 +2380,25 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 			else
 				++tunnel_i;
 		}
-	}
-	
-	// Tell session members the user left
-	if (reason != protocol::user_event::None)
-	{
-		Propagate(session, msgUserEvent(usr, session, reason));
 		
-		if (session->owner == usr->id)
+		// Tell session members the user left
+		if (reason != protocol::user_event::None)
 		{
-			session->owner = protocol::null_user;
+			Propagate(session, msgUserEvent(usr, session, reason));
 			
-			// Announce owner disappearance.
-			message_ref sev_ref(new protocol::SessionEvent(protocol::session_event::Delegate, session->owner, 0));
-			sev_ref->session_id = session->id;
-			Propagate(session, sev_ref);
+			if (session->owner == usr->id)
+			{
+				session->owner = protocol::null_user;
+				
+				// Announce owner disappearance.
+				message_ref sev_ref(
+					new protocol::SessionEvent(
+						protocol::session_event::Delegate, session->owner, 0
+					)
+				);
+				sev_ref->session_id = session->id;
+				Propagate(session, sev_ref);
+			}
 		}
 	}
 }
@@ -2448,9 +2450,11 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	fSet(usr->events, ev.read);
 	ev.add(usr->sock->fd(), usr->events);
 	
-	if (utimer.size() > 20)
-		time_limit = srv_defaults::time_limit / 6;
-	else if (utimer.size() > 10)
+	const size_t ts = utimer.size();
+	
+	if (ts > 20)
+		time_limit = srv_defaults::time_limit / 6; // half-a-minute
+	else if (ts > 10)
 		time_limit = srv_defaults::time_limit / 3; // 1 minute
 	else
 		time_limit = srv_defaults::time_limit; // 3 minutes
@@ -2459,9 +2463,9 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	// re-schedule user culling
 	if (next_timer > usr->deadtime)
-		next_timer = usr->deadtime;
+		next_timer = usr->deadtime + 1;
 	
-	// add timer
+	// add user to timer
 	utimer.insert(utimer.end(), usr);
 	
 	const size_t nwbuffer = 4096;
@@ -2604,6 +2608,8 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 
 bool Server::init() throw(std::bad_alloc)
 {
+	assert(state == server::state::None);
+	
 	srand(time(0) - 513); // FIXME
 	
 	if (lsock.create() == INVALID_SOCKET)
@@ -2616,7 +2622,7 @@ bool Server::init() throw(std::bad_alloc)
 	lsock.reuse(true); // reuse address
 	
 	bool bound = false;
-	for (u_short bport=lo_port; bport < hi_port+1; ++bport)
+	for (uint16_t bport=lo_port; bport != hi_port+1; ++bport)
 	{
 		#ifdef IPV6_SUPPORT
 		if (lsock.bindTo("::", bport) == SOCKET_ERROR)
@@ -2624,7 +2630,8 @@ bool Server::init() throw(std::bad_alloc)
 		if (lsock.bindTo("0.0.0.0", bport) == SOCKET_ERROR)
 		#endif
 		{
-			if (lsock.getError() == EBADF or lsock.getError() == EINVAL)
+			const int bind_err = lsock.getError();
+			if (bind_err == EBADF or bind_err == EINVAL)
 				return false;
 			
 			// continue
@@ -2660,7 +2667,7 @@ bool Server::init() throw(std::bad_alloc)
 	
 	state = server::state::Init;
 	
-	return 0;
+	return true;
 }
 
 bool Server::validateUserName(User* usr) const throw()
@@ -2679,7 +2686,7 @@ bool Server::validateUserName(User* usr) const throw()
 		return false;
 	}
 	
-	for (std::map<fd_t, User*>::const_iterator ui(users.begin()); ui != users.end(); ++ui)
+	for (usermap_const_iterator ui(users.begin()); ui != users.end(); ++ui)
 	{
 		if (ui->second == usr) continue; // skip self
 		
@@ -2743,7 +2750,6 @@ void Server::cullIdlers() throw()
 		{
 			// re-schedule next culling to come sooner
 			next_timer = (*tui)->deadtime;
-		
 		}
 	}
 }
