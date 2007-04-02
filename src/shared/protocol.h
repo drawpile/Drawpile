@@ -90,8 +90,7 @@ protected:
 	size_t unserializeHeader(const char* ptr) throw();
 	
 	// Get header size
-	inline
-	size_t headerSize() const throw();
+	virtual size_t headerSize() const throw();
 	
 public:
 	virtual ~Message() throw()
@@ -309,6 +308,7 @@ struct StrokeInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Stroke End message
@@ -330,7 +330,7 @@ struct StrokeEnd
 	
 	/* functions */
 	
-	// none needed
+	size_t headerSize() const throw();
 };
 
 //! Tool Info message.
@@ -395,6 +395,7 @@ struct ToolInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Synchronization request message.
@@ -424,7 +425,7 @@ struct Synchronize
 	
 	/* functions */
 	
-	// nothing needed
+	size_t headerSize() const throw();
 };
 
 //! Raster data message.
@@ -479,6 +480,7 @@ struct Raster
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! SyncWait message.
@@ -508,7 +510,7 @@ struct SyncWait
 	
 	/* functions */
 	
-	// nothing needed
+	size_t headerSize() const throw();
 };
 
 //! Authentication request message.
@@ -537,6 +539,7 @@ struct Authentication
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Password message.
@@ -563,6 +566,7 @@ struct Password
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Subscribe message.
@@ -586,7 +590,7 @@ struct Subscribe
 	
 	/* functions */
 	
-	// nothing needed
+	size_t headerSize() const throw();
 };
 
 //! Unsubscribe message.
@@ -610,7 +614,7 @@ struct Unsubscribe
 	
 	/* functions */
 	
-	// nothing needed
+	size_t headerSize() const throw();
 };
 
 //! Admin Instruction message.
@@ -663,6 +667,7 @@ struct Instruction
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! List sessions request.
@@ -709,7 +714,7 @@ struct Cancel
 	
 	/* functions */
 	
-	// nothing needed
+	size_t headerSize() const throw();
 };
 
 //! User Info message.
@@ -756,6 +761,7 @@ struct UserInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Host info message
@@ -875,6 +881,7 @@ struct SessionInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Acknowledgement message.
@@ -907,6 +914,7 @@ struct Acknowledgement
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Error message.
@@ -939,6 +947,7 @@ struct Error
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Deflate Extension message.
@@ -1027,6 +1036,7 @@ struct Chat
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Shared Palette message (proposed).
@@ -1068,6 +1078,7 @@ struct Palette
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Session selector
@@ -1092,7 +1103,7 @@ struct SessionSelect
 	
 	/* functions */
 	
-	// nothing needed
+	size_t headerSize() const throw();
 };
 
 //! Session event/instruction
@@ -1129,6 +1140,7 @@ struct SessionEvent
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Session event/instruction
@@ -1168,6 +1180,7 @@ struct LayerEvent
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 //! Layer selection
@@ -1197,6 +1210,7 @@ struct LayerSelect
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t headerSize() const throw();
 };
 
 } // namespace protocol

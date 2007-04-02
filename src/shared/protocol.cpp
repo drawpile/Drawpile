@@ -99,8 +99,7 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 
 size_t Message::headerSize() const throw()
 {
-	return sizeof(type) + (isUser?sizeof(user_id):0)
-		+ (isSession?sizeof(session_id):0);
+	return sizeof(type);
 }
 
 // Base serialization
@@ -305,6 +304,11 @@ size_t StrokeInfo::payloadLength() const throw()
 	return sizeof(x) + sizeof(y) + sizeof(pressure);
 }
 
+size_t StrokeInfo::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id);
+}
+
 size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc)
 {
 	assert(buf != 0 and len > 0);
@@ -385,7 +389,10 @@ size_t StrokeInfo::reqDataLen(const char *buf, const size_t len) const throw()
  * struct StrokeEnd
  */
 
-// nothing special needed
+size_t StrokeEnd::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id);
+}
 
 /*
  * struct ToolInfo
@@ -449,11 +456,19 @@ size_t ToolInfo::payloadLength() const throw()
 		+ sizeof(lo_hardness) + sizeof(hi_hardness) + sizeof(spacing);
 }
 
+size_t ToolInfo::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id);
+}
+
 /*
  * struct Synchronize
  */
 
-// nothing needed
+size_t Synchronize::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
 
 /*
  * struct Raster
@@ -526,11 +541,19 @@ size_t Raster::payloadLength() const throw()
 	return sizeof(offset) + sizeof(length) + sizeof(size) + length;
 }
 
+size_t Raster::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
+
 /*
  * struct SyncWait
  */
 
-// nothing needed
+size_t SyncWait::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
 
 /*
  * struct Authentication
@@ -569,6 +592,11 @@ size_t Authentication::serializePayload(char *buf) const throw()
 size_t Authentication::payloadLength() const throw()
 {
 	return password_seed_size;
+}
+
+size_t Authentication::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
 }
 
 /*
@@ -610,17 +638,28 @@ size_t Password::payloadLength() const throw()
 	return password_hash_size;
 }
 
+size_t Password::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
+
 /*
  * struct Subscribe
  */
 
-// nothing needed
+size_t Subscribe::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
 
 /*
  * struct Unsubscribe
  */
 
-// nothing needed
+size_t Unsubscribe::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
 
 /*
  * struct Instruction
@@ -697,6 +736,11 @@ size_t Instruction::payloadLength() const throw()
 		+ sizeof(aux_data) + sizeof(aux_data2) + sizeof(length) + length;
 }
 
+size_t Instruction::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
+}
+
 /*
  * struct ListSessions
  */
@@ -707,7 +751,10 @@ size_t Instruction::payloadLength() const throw()
  * struct Cancel
  */
 
-// nothing needed
+size_t Cancel::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
 
 /*
  * struct UserInfo
@@ -774,6 +821,11 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 size_t UserInfo::payloadLength() const throw()
 {
 	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
+}
+
+size_t UserInfo::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
 /*
@@ -914,6 +966,11 @@ size_t SessionInfo::payloadLength() const throw()
 		+ sizeof(level) + sizeof(length) + length;
 }
 
+size_t SessionInfo::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
+
 /*
  * struct Acknowledgement
  */
@@ -953,6 +1010,11 @@ size_t Acknowledgement::payloadLength() const throw()
 	return sizeof(event);
 }
 
+size_t Acknowledgement::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
+
 /*
  * struct Error
  */
@@ -990,6 +1052,11 @@ size_t Error::serializePayload(char *buf) const throw()
 size_t Error::payloadLength() const throw()
 {
 	return sizeof(code);
+}
+
+size_t Error::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
 }
 
 /*
@@ -1125,6 +1192,11 @@ size_t Chat::payloadLength() const throw()
 	return sizeof(length) + length;
 }
 
+size_t Chat::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
+}
+
 /*
  * struct Palette
  */
@@ -1188,11 +1260,19 @@ size_t Palette::payloadLength() const throw()
 	return sizeof(offset) + sizeof(count) + count * RGB_size;
 }
 
+size_t Palette::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
+}
+
 /*
  * struct SessionSelect
  */
 
-// nothing needed
+size_t SessionSelect::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
+}
 
 /*
  * struct SessionEvent
@@ -1235,6 +1315,11 @@ size_t SessionEvent::serializePayload(char *buf) const throw()
 size_t SessionEvent::payloadLength() const throw()
 {
 	return sizeof(action) + sizeof(target) + sizeof(aux);
+}
+
+size_t SessionEvent::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
 }
 
 /*
@@ -1282,6 +1367,11 @@ size_t LayerEvent::payloadLength() const throw()
 	return sizeof(layer_id) + sizeof(action) + sizeof(mode) + sizeof(opacity);
 }
 
+size_t LayerEvent::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(session_id);
+}
+
 /*
  * struct LayerSelect
  */
@@ -1319,6 +1409,11 @@ size_t LayerSelect::serializePayload(char *buf) const throw()
 size_t LayerSelect::payloadLength() const throw()
 {
 	return sizeof(layer_id);
+}
+
+size_t LayerSelect::headerSize() const throw()
+{
+	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
 } // namespace protocol
