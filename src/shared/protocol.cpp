@@ -203,21 +203,7 @@ size_t Message::unserialize(const char* buf, const size_t len) throw(std::except
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	assert(reqDataLen(buf, len) <= len);
 	
-	size_t i = sizeof(type);
-	
-	if (isUser)
-	{
-		memcpy_t(user_id, buf+i);
-		i += sizeof(user_id);
-	}
-	
-	if (isSession)
-	{
-		memcpy_t(session_id, buf+i);
-		i += sizeof(session_id);
-	}
-	
-	return i;
+	return unserializeHeader(buf);
 }
 
 bool Message::isValid() const throw()
@@ -362,7 +348,7 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exc
 			memcpy_t(ptr->x, buf+i),
 			memcpy_t(ptr->y, buf+i+sizeof(x)),
 			memcpy_t(ptr->pressure, buf+i+sizeof(y)+sizeof(x));
-			i += payloadLength();
+			i += sizeof(y)+sizeof(x)+sizeof(pressure);
 			
 			// swap coords
 			bswap(ptr->x), bswap(ptr->y);
