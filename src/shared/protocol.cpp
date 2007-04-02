@@ -396,7 +396,6 @@ size_t StrokeEnd::unserializeHeader(const char* ptr) throw()
 {
 	assert(ptr != 0);
 	
-	// skip message type
 	size_t i = sizeof(type);
 	
 	memcpy_t(user_id, ptr+i);
@@ -519,17 +518,8 @@ size_t Synchronize::serializeHeader(char* ptr) const throw()
 	
 	memcpy_t(ptr, type); size_t i = sizeof(type);
 	
-	if (isUser)
-	{
-		memcpy_t(ptr+i, user_id);
-		i += sizeof(user_id);
-	}
-	
-	if (isSession)
-	{
-		memcpy_t(ptr+i, session_id);
-		i += sizeof(session_id);
-	}
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
 	
 	return i;
 }
@@ -846,9 +836,6 @@ size_t Subscribe::unserializeHeader(const char* ptr) throw()
 	assert(ptr != 0);
 	
 	size_t i = sizeof(type);
-	
-	memcpy_t(user_id, ptr+i);
-	i += sizeof(user_id);
 	
 	memcpy_t(session_id, ptr+i);
 	i += sizeof(session_id);
@@ -1405,9 +1392,6 @@ size_t Acknowledgement::serializeHeader(char* ptr) const throw()
 	assert(ptr != 0);
 	
 	memcpy_t(ptr, type); size_t i = sizeof(type);
-	
-	memcpy_t(ptr+i, user_id);
-	i += sizeof(user_id);
 	
 	memcpy_t(ptr+i, session_id);
 	i += sizeof(session_id);
