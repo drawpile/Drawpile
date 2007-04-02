@@ -97,7 +97,7 @@ struct Buffer
 	//! Copies the still readable portion of the data to the provided buffer
 	bool getBuffer(char*& buf, const size_t buflen) const throw()
 	{
-		assert(buflen < left);
+		assert(buflen >= left);
 		assert(buf != 0);
 		
 		if (buflen < left)
