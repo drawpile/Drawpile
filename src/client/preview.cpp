@@ -44,15 +44,21 @@ void Preview::preview(const Point& from, const Point& to, const Brush& brush)
 	brush_ = brush;
 	from_ = from;
 	to_ = to;
-	QPen pen(brush.color(to.pressure()));
-	int rad= brush.radius(to.pressure());
+	const int rad = brush.radius(to.pressure());
+	QColor color = brush.color(to.pressure());
+	QPen pen;
 	if(rad==0) {
 		pen.setWidth(1);
+		color.setAlphaF(brush.opacity(to.pressure()));
 	} else {
 		pen.setWidth(rad*2);
 		pen.setCapStyle(Qt::RoundCap);
 		pen.setJoinStyle(Qt::RoundJoin);
+		// Approximate brush transparency
+		const qreal a = brush.opacity(to.pressure()) * rad * (1-brush.spacing()/100.0);
+		color.setAlphaF(a>1?1:a);
 	}
+	pen.setColor(color);
 	initAppearance(pen);
 }
 
