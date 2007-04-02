@@ -130,7 +130,7 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	}
 	else
 	{
-		headerlen = headerSize();
+		headerlen = length;
 	}
 	
 	// At least one message is serialized (the last)
@@ -159,6 +159,7 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 		size = length;
 	}
 	
+	// 'iterator'
 	char *dataptr = data;
 	
 	if (isBundling)
