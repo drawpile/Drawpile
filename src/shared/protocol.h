@@ -202,16 +202,14 @@ public:
 	virtual
 	size_t unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc);
 	
-	//! Validate the message contents.
+	//! Validate the message _contents_.
 	/**
 	 * Checks the message contents for any deviations that should not occur.
 	 * 
-	 * @return 0 if nothing was detected to be wrong.
-	 * @return 1 if the payload was invalid
-	 * @return 2 if the payload was correct but the header was not.
+	 * @return false if anything in the payload was invalid, true otherwise
 	 */
 	virtual
-	int isValid() const throw();
+	bool isValid() const throw();
 };
 
 //! Protocol identifier.
@@ -263,6 +261,7 @@ struct Identifier
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	bool isValid() const throw();
 };
 
 //! Stroke info message.
@@ -396,6 +395,7 @@ struct ToolInfo
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Synchronization request message.
@@ -481,6 +481,7 @@ struct Raster
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! SyncWait message.
@@ -668,6 +669,7 @@ struct Instruction
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! List sessions request.
@@ -762,6 +764,7 @@ struct UserInfo
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Host info message
@@ -818,6 +821,7 @@ struct HostInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	bool isValid() const throw();
 };
 
 //! Session Info message.
@@ -882,6 +886,7 @@ struct SessionInfo
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Acknowledgement message.
@@ -915,6 +920,7 @@ struct Acknowledgement
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Error message.
@@ -948,6 +954,7 @@ struct Error
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Deflate Extension message.
@@ -998,6 +1005,7 @@ struct Deflate
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	bool isValid() const throw();
 };
 
 //! Chat Extension message.
@@ -1037,6 +1045,7 @@ struct Chat
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Shared Palette message (proposed).
@@ -1079,6 +1088,8 @@ struct Palette
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
+
 };
 
 //! Session selector
@@ -1141,6 +1152,7 @@ struct SessionEvent
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Session event/instruction
@@ -1181,6 +1193,7 @@ struct LayerEvent
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
 	size_t headerSize() const throw();
+	bool isValid() const throw();
 };
 
 //! Layer selection

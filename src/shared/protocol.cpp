@@ -220,7 +220,7 @@ size_t Message::unserialize(const char* buf, const size_t len) throw(std::except
 	return i;
 }
 
-int Message::isValid() const throw()
+bool Message::isValid() const throw()
 {
 	return true;
 }
@@ -278,6 +278,14 @@ size_t Identifier::reqDataLen(const char *buf, const size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	return headerSize() + payloadLength();
+}
+
+bool Identifier::isValid() const throw()
+{
+	// TODO
+	const bool r1 = true; // flags
+	const bool r2 = true; // extensions
+	return (r1 and r2 and memcmp(identifier, identifier_string, 8) == 0);
 }
 
 /*
@@ -461,6 +469,14 @@ size_t ToolInfo::headerSize() const throw()
 	return sizeof(type) + sizeof(user_id);
 }
 
+bool ToolInfo::isValid() const throw()
+{
+	// TODO
+	const bool r1 = true; // tool ID
+	const bool r2 = true; // composition mode
+	return (r1 and r2);
+}
+
 /*
  * struct Synchronize
  */
@@ -544,6 +560,11 @@ size_t Raster::payloadLength() const throw()
 size_t Raster::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
+}
+
+bool Raster::isValid() const throw()
+{
+	return (offset+length <= size);
 }
 
 /*
@@ -741,6 +762,20 @@ size_t Instruction::headerSize() const throw()
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
+bool Instruction::isValid() const throw()
+{
+	// TODO
+	switch (command)
+	{
+	case 3:
+	case 2:
+	case 1:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /*
  * struct ListSessions
  */
@@ -828,6 +863,25 @@ size_t UserInfo::headerSize() const throw()
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
+bool UserInfo::isValid() const throw()
+{
+	// TODO
+	const bool r1 = true; // mode
+	bool r2 = true;
+	switch (event)
+	{
+	case 3:
+	case 2:
+	case 1:
+		r2 = true;
+		break;
+	default:
+		r2 = false;
+		break;
+	}
+	return (r1 and r2);
+}
+
 /*
  * struct HostInfo
  */
@@ -881,6 +935,14 @@ size_t HostInfo::payloadLength() const throw()
 	return sizeof(sessions) + sizeof(sessionLimit) + sizeof(users)
 		+ sizeof(userLimit) + sizeof(nameLenLimit) + sizeof(maxSubscriptions)
 		+ sizeof(requirements) + sizeof(extensions);
+}
+
+bool HostInfo::isValid() const throw()
+{
+	// TODO
+	const bool r1 = true; // extensions
+	const bool r2 = true; // requirements
+	return (r1 and r2);
 }
 
 /*
@@ -971,6 +1033,14 @@ size_t SessionInfo::headerSize() const throw()
 	return sizeof(type) + sizeof(session_id);
 }
 
+bool SessionInfo::isValid() const throw()
+{
+	// TODO
+	const bool c1 = true; // mode
+	const bool c2 = true; // flags
+	return (width != 0 and height != 0 and c1 and c2);
+}
+
 /*
  * struct Acknowledgement
  */
@@ -1015,6 +1085,20 @@ size_t Acknowledgement::headerSize() const throw()
 	return sizeof(type) + sizeof(session_id);
 }
 
+bool Acknowledgement::isValid() const throw()
+{
+	// TODO
+	switch (event)
+	{
+	case 3:
+	case 2:
+	case 1:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /*
  * struct Error
  */
@@ -1057,6 +1141,20 @@ size_t Error::payloadLength() const throw()
 size_t Error::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
+}
+
+bool Error::isValid() const throw()
+{
+	// TODO
+	switch (code)
+	{
+	case 3:
+	case 2:
+	case 1:
+		return true;
+	default:
+		return false;
+	}
 }
 
 /*
@@ -1129,6 +1227,11 @@ size_t Deflate::payloadLength() const throw()
 	return sizeof(uncompressed) + sizeof(length) + length;
 }
 
+bool Deflate::isValid() const throw()
+{
+	return (uncompressed != 0 and length != 0);
+}
+
 /*
  * struct Chat
  */
@@ -1195,6 +1298,11 @@ size_t Chat::payloadLength() const throw()
 size_t Chat::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
+}
+
+bool Chat::isValid() const throw()
+{
+	return (length != 0);
 }
 
 /*
@@ -1265,6 +1373,11 @@ size_t Palette::headerSize() const throw()
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
 }
 
+bool Palette::isValid() const throw()
+{
+	return (count != 0);
+}
+
 /*
  * struct SessionSelect
  */
@@ -1322,6 +1435,12 @@ size_t SessionEvent::headerSize() const throw()
 	return sizeof(type) + sizeof(session_id);
 }
 
+bool SessionEvent::isValid() const throw()
+{
+	// TODO: action is the only thing we can test
+	return true;
+}
+
 /*
  * struct LayerEvent
  */
@@ -1370,6 +1489,12 @@ size_t LayerEvent::payloadLength() const throw()
 size_t LayerEvent::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
+}
+
+bool LayerEvent::isValid() const throw()
+{
+	// TODO: action is the only one we can test
+	return true;
 }
 
 /*
