@@ -134,6 +134,7 @@ void NetworkPrivate::sendPending()
 			if(sent==-1) {
 				// Error occured
 				qDebug() << __FUNCTION__ << "sent==-1";
+				return;
 			}
 			if(sent == bytesleft) {
 				if(tmpbuffer) {
