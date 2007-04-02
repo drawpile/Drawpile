@@ -58,43 +58,16 @@ size_t Message::serializeHeader(char* ptr) const throw()
 {
 	assert(ptr != 0);
 	
-	memcpy_t(ptr, type); size_t i = sizeof(type);
+	memcpy_t(ptr, type);
 	
-	if (isUser)
-	{
-		memcpy_t(ptr+i, user_id);
-		i += sizeof(user_id);
-	}
-	
-	if (isSession)
-	{
-		memcpy_t(ptr+i, session_id);
-		i += sizeof(session_id);
-	}
-	
-	return i;
+	return sizeof(type);
 }
 
 size_t Message::unserializeHeader(const char* ptr) throw()
 {
 	assert(ptr != 0);
 	
-	// skip message type
-	size_t i = sizeof(type);
-	
-	if (isUser)
-	{
-		memcpy_t(user_id, ptr+i);
-		i += sizeof(user_id);
-	}
-	
-	if (isSession)
-	{
-		memcpy_t(session_id, ptr+i);
-		i += sizeof(session_id);
-	}
-	
-	return i;
+	return sizeof(type);
 }
 
 size_t Message::headerSize() const throw()
@@ -298,6 +271,30 @@ size_t StrokeInfo::payloadLength() const throw()
 	return sizeof(x) + sizeof(y) + sizeof(pressure);
 }
 
+size_t StrokeInfo::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	return i;
+}
+
+size_t StrokeInfo::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	return i;
+}
+
 size_t StrokeInfo::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id);
@@ -383,6 +380,31 @@ size_t StrokeInfo::reqDataLen(const char *buf, const size_t len) const throw()
  * struct StrokeEnd
  */
 
+size_t StrokeEnd::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	return i;
+}
+
+size_t StrokeEnd::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	// skip message type
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	return i;
+}
+
 size_t StrokeEnd::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id);
@@ -450,6 +472,30 @@ size_t ToolInfo::payloadLength() const throw()
 		+ sizeof(lo_hardness) + sizeof(hi_hardness) + sizeof(spacing);
 }
 
+size_t ToolInfo::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	return i;
+}
+
+size_t ToolInfo::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	return i;
+}
+
 size_t ToolInfo::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id);
@@ -466,6 +512,39 @@ bool ToolInfo::isValid() const throw()
 /*
  * struct Synchronize
  */
+
+size_t Synchronize::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	if (isUser)
+	{
+		memcpy_t(ptr+i, user_id);
+		i += sizeof(user_id);
+	}
+	
+	if (isSession)
+	{
+		memcpy_t(ptr+i, session_id);
+		i += sizeof(session_id);
+	}
+	
+	return i;
+}
+
+size_t Synchronize::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
 
 size_t Synchronize::headerSize() const throw()
 {
@@ -543,6 +622,30 @@ size_t Raster::payloadLength() const throw()
 	return sizeof(offset) + sizeof(length) + sizeof(size) + length;
 }
 
+size_t Raster::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Raster::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t Raster::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
@@ -556,6 +659,30 @@ bool Raster::isValid() const throw()
 /*
  * struct SyncWait
  */
+
+size_t SyncWait::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t SyncWait::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
 
 size_t SyncWait::headerSize() const throw()
 {
@@ -599,6 +726,30 @@ size_t Authentication::serializePayload(char *buf) const throw()
 size_t Authentication::payloadLength() const throw()
 {
 	return password_seed_size;
+}
+
+size_t Authentication::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Authentication::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
 }
 
 size_t Authentication::headerSize() const throw()
@@ -645,6 +796,30 @@ size_t Password::payloadLength() const throw()
 	return password_hash_size;
 }
 
+size_t Password::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Password::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t Password::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
@@ -654,6 +829,33 @@ size_t Password::headerSize() const throw()
  * struct Subscribe
  */
 
+size_t Subscribe::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Subscribe::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t Subscribe::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
@@ -662,6 +864,30 @@ size_t Subscribe::headerSize() const throw()
 /*
  * struct Unsubscribe
  */
+
+size_t Unsubscribe::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Unsubscribe::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
 
 size_t Unsubscribe::headerSize() const throw()
 {
@@ -743,6 +969,36 @@ size_t Instruction::payloadLength() const throw()
 		+ sizeof(aux_data) + sizeof(aux_data2) + sizeof(length) + length;
 }
 
+size_t Instruction::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Instruction::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t Instruction::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
@@ -771,6 +1027,30 @@ bool Instruction::isValid() const throw()
 /*
  * struct Cancel
  */
+
+size_t Cancel::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Cancel::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
 
 size_t Cancel::headerSize() const throw()
 {
@@ -842,6 +1122,36 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 size_t UserInfo::payloadLength() const throw()
 {
 	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
+}
+
+size_t UserInfo::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t UserInfo::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
 }
 
 size_t UserInfo::headerSize() const throw()
@@ -1014,6 +1324,30 @@ size_t SessionInfo::payloadLength() const throw()
 		+ sizeof(level) + sizeof(length) + length;
 }
 
+size_t SessionInfo::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t SessionInfo::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t SessionInfo::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
@@ -1064,6 +1398,33 @@ size_t Acknowledgement::serializePayload(char *buf) const throw()
 size_t Acknowledgement::payloadLength() const throw()
 {
 	return sizeof(event);
+}
+
+size_t Acknowledgement::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Acknowledgement::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
 }
 
 size_t Acknowledgement::headerSize() const throw()
@@ -1122,6 +1483,30 @@ size_t Error::serializePayload(char *buf) const throw()
 size_t Error::payloadLength() const throw()
 {
 	return sizeof(code);
+}
+
+size_t Error::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Error::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
 }
 
 size_t Error::headerSize() const throw()
@@ -1281,6 +1666,36 @@ size_t Chat::payloadLength() const throw()
 	return sizeof(length) + length;
 }
 
+size_t Chat::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Chat::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t Chat::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
@@ -1354,6 +1769,36 @@ size_t Palette::payloadLength() const throw()
 	return sizeof(offset) + sizeof(count) + count * RGB_size;
 }
 
+size_t Palette::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t Palette::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t Palette::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(user_id) + sizeof(session_id);
@@ -1367,6 +1812,36 @@ bool Palette::isValid() const throw()
 /*
  * struct SessionSelect
  */
+
+size_t SessionSelect::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t SessionSelect::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
 
 size_t SessionSelect::headerSize() const throw()
 {
@@ -1414,6 +1889,30 @@ size_t SessionEvent::serializePayload(char *buf) const throw()
 size_t SessionEvent::payloadLength() const throw()
 {
 	return sizeof(action) + sizeof(target) + sizeof(aux);
+}
+
+size_t SessionEvent::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t SessionEvent::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
 }
 
 size_t SessionEvent::headerSize() const throw()
@@ -1472,6 +1971,30 @@ size_t LayerEvent::payloadLength() const throw()
 	return sizeof(layer_id) + sizeof(action) + sizeof(mode) + sizeof(opacity);
 }
 
+size_t LayerEvent::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t LayerEvent::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
 size_t LayerEvent::headerSize() const throw()
 {
 	return sizeof(type) + sizeof(session_id);
@@ -1520,6 +2043,36 @@ size_t LayerSelect::serializePayload(char *buf) const throw()
 size_t LayerSelect::payloadLength() const throw()
 {
 	return sizeof(layer_id);
+}
+
+size_t LayerSelect::serializeHeader(char* ptr) const throw()
+{
+	assert(ptr != 0);
+	
+	memcpy_t(ptr, type); size_t i = sizeof(type);
+	
+	memcpy_t(ptr+i, user_id);
+	i += sizeof(user_id);
+	
+	memcpy_t(ptr+i, session_id);
+	i += sizeof(session_id);
+	
+	return i;
+}
+
+size_t LayerSelect::unserializeHeader(const char* ptr) throw()
+{
+	assert(ptr != 0);
+	
+	size_t i = sizeof(type);
+	
+	memcpy_t(user_id, ptr+i);
+	i += sizeof(user_id);
+	
+	memcpy_t(session_id, ptr+i);
+	i += sizeof(session_id);
+	
+	return i;
 }
 
 size_t LayerSelect::headerSize() const throw()

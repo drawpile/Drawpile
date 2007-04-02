@@ -82,12 +82,10 @@ protected:
 	{ }
 	
 	// Write header (for serialize())
-	inline
-	size_t serializeHeader(char* ptr) const throw();
+	virtual size_t serializeHeader(char* ptr) const throw();
 	
-	// Read header
-	inline
-	size_t unserializeHeader(const char* ptr) throw();
+	// Read header (for unserialize())
+	virtual size_t unserializeHeader(const char* ptr) throw();
 	
 	// Get header size
 	virtual size_t headerSize() const throw();
@@ -307,6 +305,8 @@ struct StrokeInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -329,6 +329,8 @@ struct StrokeEnd
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -394,6 +396,8 @@ struct ToolInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -425,6 +429,8 @@ struct Synchronize
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -480,6 +486,8 @@ struct Raster
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -511,6 +519,8 @@ struct SyncWait
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -540,6 +550,8 @@ struct Authentication
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -567,6 +579,8 @@ struct Password
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -591,6 +605,8 @@ struct Subscribe
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -615,6 +631,8 @@ struct Unsubscribe
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -668,6 +686,8 @@ struct Instruction
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -716,6 +736,8 @@ struct Cancel
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -763,6 +785,8 @@ struct UserInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -885,6 +909,8 @@ struct SessionInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -919,6 +945,8 @@ struct Acknowledgement
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -953,6 +981,8 @@ struct Error
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -1044,6 +1074,8 @@ struct Chat
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -1087,6 +1119,8 @@ struct Palette
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 
@@ -1114,6 +1148,8 @@ struct SessionSelect
 	
 	/* functions */
 	
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
@@ -1151,6 +1187,8 @@ struct SessionEvent
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -1192,6 +1230,8 @@ struct LayerEvent
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
@@ -1223,6 +1263,8 @@ struct LayerSelect
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
+	size_t serializeHeader(char* ptr) const throw();
+	size_t unserializeHeader(const char* ptr) throw();
 	size_t headerSize() const throw();
 };
 
