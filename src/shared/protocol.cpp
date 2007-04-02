@@ -128,6 +128,8 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	while (ptr->prev != 0)
 	{
 		assert(ptr != ptr->prev); // infinite loop
+		assert(count != std::numeric_limits<uint8_t>::max()); // overflow
+		
 		ptr = ptr->prev;
 		
 		length += ptr->payloadLength();
