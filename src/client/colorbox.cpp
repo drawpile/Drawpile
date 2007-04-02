@@ -111,7 +111,7 @@ void ColorBox::updateSliders()
 		ui_->c3->setColor1(QColor(c1,c2,0));
 		ui_->c3->setColor2(QColor(c1,c2,255));
 	} else {
-		ui_->c1->setColorSaturation(c2/359.0);
+		ui_->c1->setColorSaturation(c2/255.0);
 		ui_->c1->setColorValue(c3/255.0);
 
 		ui_->c2->setColor1(QColor::fromHsv(c1,0,c3));
