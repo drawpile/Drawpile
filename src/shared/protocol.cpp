@@ -112,6 +112,8 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	#ifndef NDEBUG
 	if (data == 0)
 		assert(size == 0);
+	if (size == 0)
+		assert(data == 0);
 	#endif
 	
 	size_t
@@ -164,21 +166,21 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 		// Write bundled packets
 		dataptr += serializeHeader(dataptr);
 		memcpy_t(dataptr++, count);
-		while (ptr)
+		do
 		{
 			dataptr += ptr->serializePayload(dataptr);
-			ptr = ptr->next;
 		}
+		while (ptr = ptr->next);
 	}
 	else
 	{
 		// Write whole packets
-		while (ptr)
+		do
 		{
 			dataptr += serializeHeader(dataptr);
 			dataptr += ptr->serializePayload(dataptr);
-			ptr = ptr->next;
 		}
+		while (ptr = ptr->next);
 	}
 	
 	return data;
@@ -295,12 +297,12 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	uint16_t
-		x_tmp = x,
-		y_tmp = y;
+	uint16_t tmp;
 	
-	memcpy_t(buf, bswap(x_tmp));
-	memcpy_t(buf+sizeof(x), bswap(y_tmp));
+	tmp = x;
+	memcpy_t(buf, bswap(tmp));
+	tmp = y;
+	memcpy_t(buf+sizeof(x), bswap(tmp));
 	memcpy_t(buf+sizeof(x)+sizeof(y), pressure);
 	
 	return payloadLength();
