@@ -61,8 +61,9 @@
 
 /**
  * @param restoreposition if true, the window is placed at its previous position
+ * @param source if not null, clone settings from this window
  */
-MainWindow::MainWindow(bool restoreposition)
+MainWindow::MainWindow(const MainWindow *source)
 	: QMainWindow()
 {
 	setTitle();
@@ -212,7 +213,10 @@ MainWindow::MainWindow(bool restoreposition)
 	connect(netstatus_, SIGNAL(statusMessage(QString)),
 			chatbox_, SLOT(systemMessage(QString)));
 
-	readSettings(restoreposition);
+	if(source)
+		cloneSettings(source);
+	else
+		readSettings();
 
 }
 
@@ -333,17 +337,15 @@ void MainWindow::setTitle()
  * Read settings
  * @param restorepos place window at its previous position
  */
-void MainWindow::readSettings(bool restorepos)
+void MainWindow::readSettings()
 {
 	QSettings cfg;
 	cfg.beginGroup("window");
 
-	// Restore previously used window size
+	// Restore previously used window size and position
 	resize(cfg.value("size",QSize(800,600)).toSize());
 
-	// Restore previous position if restorepos==true, previous position
-	// is remembered and it is inside the screen.
-	if(restorepos && cfg.contains("pos")) {
+	if(cfg.contains("pos")) {
 		const QPoint pos = cfg.value("pos").toPoint();
 		if(qApp->desktop()->availableGeometry().contains(pos))
 			move(pos);
@@ -380,12 +382,38 @@ void MainWindow::readSettings(bool restorepos)
 	const QColor bg = cfg.value("background", Qt::white).value<QColor>();
 	fgbgcolor_->setForeground(fg);
 	fgbgcolor_->setBackground(bg);
-	fgdialog_->setColor(fg);
-	bgdialog_->setColor(bg);
 
 	// Remember recent files
 	RecentFiles::initMenu(recent_);
 }
+
+/**
+ * @param source window whose settings are cloned
+ */
+void MainWindow::cloneSettings(const MainWindow *source)
+{
+	// Clone size, but let the window manager position this window
+	resize(source->size());
+
+	// Copy dock and view states
+	restoreState(source->saveState());
+	splitter_->restoreState(source->splitter_->saveState());
+
+	lastpath_ = source->lastpath_;
+
+	// Copy tool selection
+	const int tool = source->drawingtools_->actions().indexOf(
+			source->drawingtools_->checkedAction()
+			);
+	drawingtools_->actions()[tool]->trigger();
+	toolsettings_->setTool(tools::Type(tool));
+	controller_->setTool(tools::Type(tool));
+
+	// Copy foreground and background colors
+	fgbgcolor_->setForeground(source->fgbgcolor_->foreground());
+	fgbgcolor_->setBackground(source->fgbgcolor_->background());
+}
+
 
 /**
  * Write out settings
@@ -500,7 +528,7 @@ void MainWindow::newDocument()
 	if(canReplace()) {
 		win = this;
 	} else {
-		win = new MainWindow;
+		win = new MainWindow(this);
 		win->show();
 	}
 
@@ -530,7 +558,7 @@ void MainWindow::open(const QString& file)
 		else
 			addRecentFile(file);
 	} else {
-		MainWindow *win = new MainWindow;
+		MainWindow *win = new MainWindow(this);
 		if(win->initBoard(file)==false) {
 			showErrorMessage(ERR_OPEN);
 			delete win;
@@ -778,7 +806,7 @@ void MainWindow::finishJoin(int i) {
 		if(canReplace()) {
 			win = this;
 		} else {
-			win = new MainWindow;
+			win = new MainWindow(this);
 			win->show();
 		}
 		win->joinSession(address);
