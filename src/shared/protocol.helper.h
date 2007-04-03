@@ -40,14 +40,13 @@
 namespace protocol
 {
 
-// for outputting the message name in console
+//! Outputs the name of the message type in terminal
 void msgName(const uint8_t type) throw();
-
-Message* copyMessage(const Message* msg) throw(std::bad_alloc);
 
 //! Get new message struct.
 /**
  * Allocates memory for specific message type and returns pointer to it.
+ * Supplied as a helper function to simplify some tasks.
  *
  * @param type is the message type to be generated (see protocol::type).
  */
