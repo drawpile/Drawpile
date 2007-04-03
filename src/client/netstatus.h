@@ -54,6 +54,10 @@ class NetStatus : public QWidget
 		void leave(const network::User& user);
 		//! User got kicked out
 		void kicked(const network::User& user);
+		//! Board was locked
+		void lock(const QString& reason);
+		//! Board was unlocked
+		void unlock();
 		//! Show a server crash message
 		void serverCrashed();
 
@@ -62,6 +66,8 @@ class NetStatus : public QWidget
 		void statusMessage(const QString& message);
 
 	private:
+		void message(const QString& msg);
+
 		QLabel *label_, *icon_;
 		PopupMessage *popup_;
 		QString address_;

@@ -147,6 +147,10 @@ MainWindow::MainWindow(bool restoreposition)
 			netstatus_, SLOT(leave(network::User)));
 	connect(controller_, SIGNAL(userKicked(network::User)),
 			netstatus_, SLOT(kicked(network::User)));
+	connect(controller_, SIGNAL(lockboard(QString)),
+			netstatus_, SLOT(lock(QString)));
+	connect(controller_, SIGNAL(unlockboard()),
+			netstatus_, SLOT(unlock()));
 
 	// Actions -> controller
 	connect(lockboard_, SIGNAL(triggered(bool)),
@@ -836,7 +840,6 @@ void MainWindow::becameOwner()
  */
 void MainWindow::lock(const QString& reason)
 {
-	statusBar()->showMessage(tr("Board locked (%1)").arg(reason));
 	lockboard_->setChecked(true);
 	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
 	lockstatus_->setToolTip(tr("Board is locked"));
@@ -847,7 +850,6 @@ void MainWindow::lock(const QString& reason)
  */
 void MainWindow::unlock()
 {
-	statusBar()->showMessage(tr("Board unlocked"), 500);
 	lockboard_->setChecked(false);
 	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
 	lockstatus_->setToolTip(tr("Board is not locked"));

@@ -107,31 +107,36 @@ void NetStatus::copyAddress()
 
 void NetStatus::join(const network::User& user)
 {
-	QString msg = tr("<b>%1</b> has joined").arg(user.name());
-	popup_->setMessage(msg);
-	popup_->popupAt(mapToGlobal(rect().topLeft()));
-	emit statusMessage(msg);
+	message(tr("<b>%1</b> has joined").arg(user.name()));
 }
 
 void NetStatus::leave(const network::User& user)
 {
-	QString msg = tr("<b>%1</b> has left").arg(user.name());
-	popup_->setMessage(msg);
-	popup_->popupAt(mapToGlobal(rect().topLeft()));
-	emit statusMessage(msg);
+	message(tr("<b>%1</b> has left").arg(user.name()));
 }
 
 void NetStatus::kicked(const network::User& user)
 {
-	QString msg = tr("<b>%1</b> was kicked by session owner").arg(user.name());
-	popup_->setMessage(msg);
-	popup_->popupAt(mapToGlobal(rect().topLeft()));
-	emit statusMessage(msg);
+	message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
+}
+
+void NetStatus::lock(const QString& reason)
+{
+	message(tr("Board locked (%1)").arg(reason));
+}
+
+void NetStatus::unlock()
+{
+	message(tr("Board unlocked"));
 }
 
 void NetStatus::serverCrashed()
 {
-	QString msg = tr("<b>Server crashed!</b>");
+	message(tr("<b>Server crashed!</b>"));
+}
+
+void NetStatus::message(const QString& msg)
+{
 	popup_->setMessage(msg);
 	popup_->popupAt(mapToGlobal(rect().topLeft()));
 	emit statusMessage(msg);
