@@ -82,8 +82,8 @@ protected:
 		prev(0)
 	{
 		assert(
-			headerSize <= 0 or
-			headerSize >= sizeof(type)+sizeof(user_id)+sizeof(session_id)+sizeof(null_count)
+			headerSize > 0 and
+			headerSize <= sizeof(type)+sizeof(user_id)+sizeof(session_id)
 		);
 		
 		#ifndef NDEBUG
