@@ -318,6 +318,10 @@ void Server::uWrite(User*& usr) throw()
 		{
 			#ifndef NDEBUG
 			++protocolReallocation; // stats
+			
+			std::cout << "Output buffer was too small!" << std::endl
+				<< "Original size: " << usr->output.size
+				<< ", actually needed: " << size << std::endl;
 			#endif
 			
 			usr->output.setBuffer(buf, size);
@@ -381,6 +385,10 @@ void Server::uWrite(User*& usr) throw()
 					#ifndef NDEBUG
 					++discardedCompressions; // stats
 					#endif
+					
+					if (!inBuffer)
+						delete [] temp;
+					
 					break;
 				}
 				
@@ -432,6 +440,12 @@ void Server::uWrite(User*& usr) throw()
 						{
 							std::cout << "Pre-allocated buffer was too small!" << std::endl
 								<< "Allocated: " << buffer_len*2+1024
+								<< ", actually needed: " << size << std::endl;
+						}
+						else
+						{
+							std::cout << "Output buffer was too small!" << std::endl
+								<< "Original size: " << usr->output.canWrite()
 								<< ", actually needed: " << size << std::endl;
 						}
 						#endif
