@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
 #include <cmath>
@@ -33,6 +34,7 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
 	shape_(Stroke)
 {
+	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
 	updateBackground();
 }
@@ -76,10 +78,10 @@ void BrushPreview::changeEvent(QEvent *event)
 	update();
 }
 
-void BrushPreview::paintEvent(QPaintEvent *)
+void BrushPreview::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	painter.drawImage(contentsRect().topLeft(), preview_);
+	painter.drawImage(event->rect(), preview_, event->rect());
 }
 
 void BrushPreview::updateBackground()

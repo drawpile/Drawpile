@@ -92,7 +92,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void setColorPressure(bool enable);
 
 	protected:
-		void paintEvent(QPaintEvent *);
+		void paintEvent(QPaintEvent *event);
 		void resizeEvent(QResizeEvent *);
 		void changeEvent(QEvent *);
 
