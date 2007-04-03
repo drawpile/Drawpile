@@ -44,6 +44,8 @@
 	#include <zlib.h>
 #endif
 
+#include <limits>
+
 #include <ctime>
 #include <getopt.h> // for command-line opts
 #include <cstdlib>
@@ -90,7 +92,20 @@ Server::Server() throw()
 	),
 	default_user_mode(protocol::user_mode::None),
 	Transient(false),
-	LocalhostAdmin(false)
+	LocalhostAdmin(false),
+	DaemonMode(false)
+	// stats
+	#ifndef NDEBUG
+	,
+	protocolReallocation(0),
+	largestLinkList(0),
+	largestOutputBuffer(0),
+	largestInputBuffer(0),
+	bufferRepositions(0),
+	bufferResets(0),
+	discardedCompressions(0),
+	smallestCompression(std::numeric_limits<size_t>::max())
+	#endif
 {
 	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
 	{
@@ -272,9 +287,10 @@ void Server::uWrite(User*& usr) throw()
 		
 		const std::deque<message_ref>::iterator f_msg(usr->queue.begin());
 		std::deque<message_ref>::iterator l_msg(f_msg+1), iter(f_msg);
-		for (int i=1; l_msg != usr->queue.end(); ++l_msg, ++iter, ++i)
+		int links=1;
+		for (; l_msg != usr->queue.end(); ++l_msg, ++iter, ++links)
 		{
-			if (i == std::numeric_limits<uint8_t>::max()
+			if (links == std::numeric_limits<uint8_t>::max()
 				or ((*l_msg)->type != (*f_msg)->type)
 				or ((*l_msg)->user_id != (*f_msg)->user_id)
 				or ((*l_msg)->session_id != (*f_msg)->session_id)
@@ -286,6 +302,11 @@ void Server::uWrite(User*& usr) throw()
 			(*iter)->next = boost::get_pointer(*l_msg);
 		}
 		
+		#ifndef NDEBUG
+		if (links > largestLinkList)
+			largestLinkList = links; // stats
+		#endif
+		
 		//msg->user_id = id;
 		size_t len=0, size=usr->output.canWrite();
 		
@@ -294,7 +315,18 @@ void Server::uWrite(User*& usr) throw()
 		
 		// in case new buffer was allocated
 		if (buf != usr->output.wpos)
+		{
+			#ifndef NDEBUG
+			++protocolReallocation; // stats
+			#endif
+			
 			usr->output.setBuffer(buf, size);
+			#ifndef NDEBUG
+			++bufferResets; // stats
+			if (usr->output.size > largestOutputBuffer)
+				largestOutputBuffer = usr->output.size; // stats
+			#endif
+		}
 		
 		usr->output.write(len);
 		
@@ -343,6 +375,20 @@ void Server::uWrite(User*& usr) throw()
 				std::cout << "zlib: " << len << "B compressed down to " << buffer_len << "B." << std::endl;
 				#endif
 				
+				// compressed size was equal or larger than original size
+				if (buffer_len >= len)
+				{
+					#ifndef NDEBUG
+					++discardedCompressions; // stats
+					#endif
+					break;
+				}
+				
+				#ifndef NDEBUG
+				if (len < smallestCompression)
+					smallestCompression = len; // stats
+				#endif
+				
 				usr->output.read(len);
 				
 				if (inBuffer)
@@ -353,6 +399,11 @@ void Server::uWrite(User*& usr) throw()
 				else
 				{
 					usr->output.setBuffer(temp, size);
+					#ifndef NDEBUG
+					++bufferResets; // stats
+					if (usr->output.size > largestOutputBuffer)
+						largestOutputBuffer = usr->output.size; // stats
+					#endif
 					usr->output.write(buffer_len);
 				}
 				
@@ -373,6 +424,10 @@ void Server::uWrite(User*& usr) throw()
 					if (buf != usr->output.wpos)
 					{
 						#ifndef NDEBUG
+						++protocolReallocation; // stats
+						#endif
+						
+						#ifndef NDEBUG
 						if (!inBuffer)
 						{
 							std::cout << "Pre-allocated buffer was too small!" << std::endl
@@ -381,6 +436,11 @@ void Server::uWrite(User*& usr) throw()
 						}
 						#endif
 						usr->output.setBuffer(buf, size);
+						#ifndef NDEBUG
+						++bufferResets; // stats
+						if (usr->output.size > largestOutputBuffer)
+							largestOutputBuffer = usr->output.size; // stats
+						#endif
 					}
 					
 					usr->output.write(len);
@@ -477,13 +537,18 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		// buffer full
 		#ifndef NDEBUG
 		std::cerr << "Input buffer full, increasing size by 4 kiB." << std::endl;
-		#endif
 		usr->input.resize(usr->input.size + 4096);
+		if (usr->input.size > largestInputBuffer)
+			largestInputBuffer = usr->input.size;
+		#endif
 	}
 	else if (usr->input.canWrite() == 0)
 	{
 		// can't write, but buffer isn't full.
 		usr->input.reposition();
+		#ifndef NDEBUG
+		++bufferRepositions;
+		#endif
 	}
 	
 	const int rb = usr->sock->recv(
@@ -567,6 +632,9 @@ void Server::uProcessData(User*& usr) throw()
 		{
 			// so, we reposition the buffer
 			usr->input.reposition();
+			#ifndef NDEBUG
+			++bufferRepositions;
+			#endif
 			
 			// update cread and len
 			cread = usr->input.canRead();
@@ -1197,6 +1265,12 @@ void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad
 			
 			// Set the uncompressed data stream as the input buffer.
 			usr->input.setBuffer(outbuf, stream->uncompressed);
+			
+			#ifndef NDEBUG
+			++bufferResets; // stats
+			if (usr->input.size > largestInputBuffer)
+				largestInputBuffer = usr->input.size; // stats
+			#endif
 			
 			// Process the data.
 			uProcessData(usr);
@@ -2498,8 +2572,17 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	
 	const size_t nwbuffer = 4096;
 	
+	// these two don't count towards bufferResets because the buffers are empty at this point
 	usr->input.setBuffer(new char[nwbuffer], nwbuffer);
+	#ifndef NDEBUG
+	if (usr->input.size > largestInputBuffer)
+		largestInputBuffer = usr->input.size; // stats
+	#endif
 	usr->output.setBuffer(new char[nwbuffer], nwbuffer);
+	#ifndef NDEBUG
+	if (usr->output.size > largestOutputBuffer)
+		largestOutputBuffer = usr->output.size; // stats
+	#endif
 	
 	users[sock->fd()] = usr;
 	
@@ -2889,3 +2972,21 @@ int Server::run() throw()
 	
 	return 0;
 }
+
+#ifndef NDEBUG
+void Server::stats() const throw()
+{
+	std::cout << "Statistics:" << std::endl
+		<< std::endl
+		<< "Under allocations:     " << protocolReallocation << std::endl
+		<< "Largest linked list:   " << largestLinkList << std::endl
+		<< "Largest output buffer: " << largestOutputBuffer << std::endl
+		<< "Largest input buffer:  " << largestInputBuffer << std::endl
+		<< "Buffer repositionings: " << bufferRepositions << std::endl
+		<< "Buffer resets:         " << bufferResets << std::endl
+		<< "Deflates discarded:    " << discardedCompressions << std::endl
+		<< "Smallest deflate set:  " << smallestCompression << std::endl
+		<< std::endl
+		<< "Note: in all cases (except largest linked list), smaller value is better!" << std::endl;
+}
+#endif

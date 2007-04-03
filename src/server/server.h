@@ -125,6 +125,28 @@ protected:
 	
 	bool Transient, LocalhostAdmin, DaemonMode;
 	
+	/* statistics */
+	
+	#ifndef NDEBUG
+	size_t
+		// Number of times pre-allocation was under-estimated
+		protocolReallocation,
+		// Largest number of messages linked
+		largestLinkList,
+		// largest user output buffer
+		largestOutputBuffer,
+		// largest user input buffer
+		largestInputBuffer,
+		// number of times buffer.reposition() was called from server
+		bufferRepositions,
+		// number of times buffer.setBuffer() was called from server
+		bufferResets,
+		// number of times compressed data was discarded
+		discardedCompressions,
+		// smallest data set size with beneficial compression ratio
+		smallestCompression;
+	#endif
+	
 	/* functions */
 	
 	// Frees user ID
@@ -352,6 +374,11 @@ public:
 	
 	//! Enter main loop
 	int run() throw();
+	
+	#ifndef NDEBUG
+	//! Show statistics
+	void stats() const throw();
+	#endif
 }; // class Server
 
 #endif // Server_C_Included
