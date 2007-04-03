@@ -71,24 +71,47 @@ const uint16_t revision = 9;
 struct Message
 {
 protected:
-	Message(const uint8_t _type, const uint8_t _flags=message::None) throw()
-		: type(_type),
+	Message(const uint8_t _type, const size_t _header=0, const uint8_t _flags=message::None) throw()
+		: headerSize(_header),
 		isUser(fIsSet(_flags, protocol::message::isUser)),
 		isSession(fIsSet(_flags, protocol::message::isSession)),
 		isSelected(fIsSet(_flags, protocol::message::isSelected)),
 		isBundling(fIsSet(_flags, protocol::message::isBundling)),
+		type(_type),
 		next(0),
 		prev(0)
-	{ }
+	{
+		assert(
+			headerSize <= 0 or
+			headerSize >= sizeof(type)+sizeof(user_id)+sizeof(session_id)+sizeof(null_count)
+		);
+		
+		#ifndef NDEBUG
+		assert(isSelected ? !isSession : true);
+		assert(isSession ? !isSelected : true);
+		#endif
+	}
 	
 	// Write header (for serialize())
-	virtual size_t serializeHeader(char* ptr) const throw();
+	inline
+	size_t serializeHeader(char* ptr) const throw();
 	
 	// Read header (for unserialize())
-	virtual size_t unserializeHeader(const char* ptr) throw();
+	inline
+	size_t unserializeHeader(const char* ptr) throw();
 	
-	// Get header size
-	virtual size_t headerSize() const throw();
+	// Header size
+	const size_t headerSize;
+	
+	const bool
+		//! User modifier
+		isUser,
+		//! Session modifier
+		isSession,
+		//! Selected modifier
+		isSelected,
+		//! Bundling modifier
+		isBundling;
 	
 public:
 	virtual ~Message() throw()
@@ -112,16 +135,6 @@ public:
 		user_id,
 		//! Target or referred session
 		session_id;
-	
-	const bool
-		//! User modifier
-		isUser,
-		//! Session modifier
-		isSession,
-		//! Selected modifier
-		isSelected,
-		//! Bundling modifier
-		isBundling;
 	
 	Message
 		//! Next message (of same type) in queue.
@@ -222,12 +235,12 @@ struct Identifier
 	: Message//, MemoryStack<Identifier>
 {
 	Identifier() throw()
-		: Message(type::Identifier)
+		: Message(type::Identifier, sizeof(type))
 	{ }
 	
 	//! Constructor with params for payload
 	Identifier(const uint16_t _revision, const uint16_t _level, const uint8_t _flags, const uint8_t _extensions) throw()
-		: Message(type::Identifier),
+		: Message(type::Identifier, sizeof(type)),
 		revision(_revision),
 		level(_level),
 		flags(_flags),
@@ -274,13 +287,20 @@ struct StrokeInfo
 	: Message//, MemoryStack<StrokeInfo>
 {
 	StrokeInfo() throw()
-		: Message(type::StrokeInfo, message::isUser|message::isBundling|message::isSelected)
+		: Message(
+			type::StrokeInfo,
+			sizeof(type)+sizeof(user_id),
+			message::isUser|message::isBundling|message::isSelected
+		)
 	{ }
 	
 	//! Constructor with params for payload
 	StrokeInfo(const uint16_t _x, const uint16_t _y, const uint8_t _pressure) throw()
-		: Message(type::StrokeInfo,
-			message::isUser|message::isBundling|message::isSelected),
+		: Message(
+			type::StrokeInfo,
+			sizeof(type)+sizeof(user_id)+sizeof(null_count),
+			message::isUser|message::isBundling|message::isSelected
+		),
 		x(_x),
 		y(_y),
 		pressure(_pressure)
@@ -305,9 +325,6 @@ struct StrokeInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 };
 
 //! Stroke End message
@@ -318,7 +335,7 @@ struct StrokeEnd
 	: Message//, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
-		: Message(type::StrokeEnd, message::isUser|message::isSelected)
+		: Message(type::StrokeEnd, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	~StrokeEnd() throw() { }
@@ -329,9 +346,7 @@ struct StrokeEnd
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! Tool Info message.
@@ -347,12 +362,12 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
-		: Message(type::ToolInfo, message::isUser|message::isSelected)
+		: Message(type::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	//! Constructor with params for payload
 	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing) throw()
-		: Message(type::ToolInfo, message::isUser|message::isSelected),
+		: Message(type::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		tool_id(_tool_id),
 		mode(_mode),
 		lo_size(_lo_size),
@@ -396,9 +411,6 @@ struct ToolInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -416,7 +428,7 @@ struct Synchronize
 	: Message//, MemoryStack<Synchronize>
 {
 	Synchronize() throw()
-		: Message(type::Synchronize, message::isSession)
+		: Message(type::Synchronize, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Synchronize() throw() { }
@@ -429,9 +441,7 @@ struct Synchronize
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! Raster data message.
@@ -452,13 +462,13 @@ struct Raster
 	: Message//, MemoryStack<Raster>
 {
 	Raster() throw()
-		: Message(type::Raster, message::isSession),
+		: Message(type::Raster, sizeof(type)+sizeof(session_id), message::isSession),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Raster(const uint32_t _offset, const uint32_t _length, const uint32_t _size, char* _data) throw()
-		: Message(type::Raster, message::isSession),
+		: Message(type::Raster, sizeof(type)+sizeof(session_id), message::isSession),
 		offset(_offset),
 		length(_length),
 		size(_size),
@@ -486,9 +496,6 @@ struct Raster
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -508,7 +515,7 @@ struct SyncWait
 	: Message//, MemoryStack<SyncWait>
 {
 	SyncWait() throw()
-		: Message(type::SyncWait, message::isSession)
+		: Message(type::SyncWait, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~SyncWait() throw() { }
@@ -519,9 +526,7 @@ struct SyncWait
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! Authentication request message.
@@ -534,7 +539,7 @@ struct Authentication
 	: Message//, MemoryStack<Authentication>
 {
 	Authentication() throw()
-		: Message(type::Authentication, message::isSession)
+		: Message(type::Authentication, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Authentication() throw() { }
@@ -550,9 +555,6 @@ struct Authentication
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 };
 
 //! Password message.
@@ -563,7 +565,7 @@ struct Password
 	: Message//, MemoryStack<Password>
 {
 	Password() throw()
-		: Message(type::Password, message::isSession)
+		: Message(type::Password, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Password() throw() { }
@@ -579,9 +581,6 @@ struct Password
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 };
 
 //! Subscribe message.
@@ -594,7 +593,7 @@ struct Subscribe
 	: Message//, MemoryStack<Subscribe>
 {
 	Subscribe() throw()
-		: Message(type::Subscribe, message::isSession)
+		: Message(type::Subscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Subscribe() throw() { }
@@ -605,9 +604,7 @@ struct Subscribe
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! Unsubscribe message.
@@ -620,7 +617,7 @@ struct Unsubscribe
 	: Message//, MemoryStack<Unsubscribe>
 {
 	Unsubscribe() throw()
-		: Message(type::Unsubscribe, message::isSession)
+		: Message(type::Unsubscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Unsubscribe() throw() { }
@@ -631,9 +628,7 @@ struct Unsubscribe
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! Admin Instruction message.
@@ -648,13 +643,21 @@ struct Instruction
 	: Message//, MemoryStack<Instruction>
 {
 	Instruction() throw()
-		: Message(type::Instruction, message::isUser|message::isSession),
+		: Message(
+			type::Instruction,
+			sizeof(type)+sizeof(user_id)+sizeof(session_id),
+			message::isUser|message::isSession
+		),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Instruction(const uint8_t _command, const uint8_t _aux_data, const uint8_t _aux_data2, const uint8_t _length, char* _data) throw()
-		: Message(type::Instruction, message::isUser|message::isSession),
+		: Message(
+			type::Instruction,
+			sizeof(type)+sizeof(user_id)+sizeof(session_id),
+			message::isUser|message::isSession
+		),
 		command(_command),
 		aux_data(_aux_data),
 		aux_data2(_aux_data2),
@@ -686,9 +689,6 @@ struct Instruction
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -703,7 +703,7 @@ struct ListSessions
 	: Message//, MemoryStack<ListSessions>
 {
 	ListSessions() throw()
-		: Message(type::ListSessions)
+		: Message(type::ListSessions, sizeof(type))
 	{ }
 	
 	~ListSessions() throw() { }
@@ -725,7 +725,7 @@ struct Cancel
 	: Message//, MemoryStack<Cancel>
 {
 	Cancel() throw()
-		: Message(type::Cancel, message::isSession)
+		: Message(type::Cancel, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Cancel() throw() { }
@@ -736,9 +736,7 @@ struct Cancel
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! User Info message.
@@ -751,13 +749,21 @@ struct UserInfo
 	: Message//, MemoryStack<UserInfo>
 {
 	UserInfo() throw()
-		: Message(type::UserInfo, message::isUser|message::isSession),
+		: Message(
+			type::UserInfo,
+			sizeof(type)+sizeof(user_id)+sizeof(session_id),
+			message::isUser|message::isSession
+		),
 		name(0)
 	{ }
 	
 	//! Constructor with params for payload
 	UserInfo(const uint8_t _mode, const uint8_t _event, const uint8_t _length, char* _name) throw()
-		: Message(type::UserInfo, message::isUser|message::isSession),
+		: Message(
+			type::UserInfo,
+			sizeof(type)+sizeof(user_id)+sizeof(session_id),
+			message::isUser|message::isSession
+		),
 		mode(_mode),
 		event(_event),
 		length(_length),
@@ -785,9 +791,6 @@ struct UserInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -801,12 +804,12 @@ struct HostInfo
 	: Message//, MemoryStack<HostInfo>
 {
 	HostInfo() throw()
-		: Message(type::HostInfo)
+		: Message(type::HostInfo, sizeof(type))
 	{ }
 	
 	//! Constructor with params for payload
 	HostInfo(const uint8_t _sessions, const uint8_t _sessionLimit, const uint8_t _users, const uint8_t _userLimit, const uint8_t _nameLenLimit, const uint8_t _maxSubscriptions, const uint8_t _requirements, const uint8_t _extensions) throw()
-		: Message(type::HostInfo),
+		: Message(type::HostInfo, sizeof(type)),
 		sessions(_sessions),
 		sessionLimit(_sessionLimit),
 		users(_users),
@@ -853,13 +856,13 @@ struct SessionInfo
 	: Message//, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
-		: Message(type::SessionInfo, message::isSession),
+		: Message(type::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
 		title(0)
 	{ }
 	
 	//! Constructor with params for payload
 	SessionInfo(const uint16_t _width, const uint16_t _height, const uint8_t _owner, const uint8_t _users, const uint8_t _limit, const uint8_t _mode, const uint8_t _flags, const uint16_t _level, const uint8_t _length, char* _title) throw()
-		: Message(type::SessionInfo, message::isSession),
+		: Message(type::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
 		width(_width),
 		height(_height),
 		owner(_owner),
@@ -909,9 +912,6 @@ struct SessionInfo
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -923,12 +923,12 @@ struct Acknowledgement
 	: Message//, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
-		: Message(type::Acknowledgement, message::isSession)
+		: Message(type::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	Acknowledgement(const uint8_t _event) throw()
-		: Message(type::Acknowledgement, message::isSession),
+		: Message(type::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession),
 		event(_event)
 	{ }
 	
@@ -945,9 +945,6 @@ struct Acknowledgement
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -959,12 +956,12 @@ struct Error
 	: Message//, MemoryStack<Error>
 {
 	Error() throw()
-		: Message(type::Error, message::isSession)
+		: Message(type::Error, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	Error(const uint16_t _code) throw()
-		: Message(type::Error, message::isSession),
+		: Message(type::Error, sizeof(type)+sizeof(session_id), message::isSession),
 		code(_code)
 	{ }
 	
@@ -981,9 +978,6 @@ struct Error
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -1004,13 +998,13 @@ struct Deflate
 	: Message//, MemoryStack<Deflate>
 {
 	Deflate() throw()
-		: Message(type::Deflate),
+		: Message(type::Deflate, sizeof(type)),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Deflate(const uint16_t _uncompressed, const uint16_t _length, char* _data) throw()
-		: Message(type::Deflate),
+		: Message(type::Deflate, sizeof(type)),
 		uncompressed(_uncompressed),
 		length(_length),
 		data(_data)
@@ -1047,13 +1041,13 @@ struct Chat
 	: Message//, MemoryStack<Chat>
 {
 	Chat() throw()
-		: Message(type::Chat, message::isUser|message::isSession),
+		: Message(type::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Chat(const uint8_t _length, char* _data) throw()
-		: Message(type::Chat, message::isUser|message::isSession),
+		: Message(type::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
 		length(_length),
 		data(_data)
 	{ }
@@ -1074,9 +1068,6 @@ struct Chat
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -1088,13 +1079,13 @@ struct Palette
 	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
-		: Message(type::Palette, message::isSession|message::isUser),
+		: Message(type::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Palette(const uint8_t _offset, const uint8_t _count, char* _data) throw()
-		: Message(type::Palette, message::isSession|message::isUser),
+		: Message(type::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
 		offset(_offset),
 		count(_count),
 		data(_data)
@@ -1119,9 +1110,6 @@ struct Palette
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 
 };
@@ -1137,7 +1125,7 @@ struct SessionSelect
 	: Message//, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
-		: Message(type::SessionSelect, message::isUser|message::isSession)
+		: Message(type::SessionSelect, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession)
 	{ }
 	
 	~SessionSelect() throw() { }
@@ -1148,9 +1136,7 @@ struct SessionSelect
 	
 	/* functions */
 	
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
+	// none needed
 };
 
 //! Session event/instruction
@@ -1158,12 +1144,12 @@ struct SessionEvent
 	: Message//, MemoryStack<Palette>
 {
 	SessionEvent() throw()
-		: Message(type::SessionEvent, message::isSession)
+		: Message(type::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	SessionEvent(const uint8_t _action, const uint8_t _target, const uint8_t _aux) throw()
-		: Message(type::SessionEvent, message::isSession),
+		: Message(type::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession),
 		action(_action),
 		target(_target),
 		aux(_aux)
@@ -1187,9 +1173,6 @@ struct SessionEvent
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -1198,12 +1181,12 @@ struct LayerEvent
 	: Message//, MemoryStack<Palette>
 {
 	LayerEvent() throw()
-		: Message(type::LayerEvent, message::isSession)
+		: Message(type::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	LayerEvent(const uint8_t _layer_id, const uint8_t _action, const uint8_t _mode, const uint8_t _opacity) throw()
-		: Message(type::LayerEvent, message::isSession),
+		: Message(type::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession),
 		layer_id(_layer_id),
 		action(_action),
 		mode(_mode),
@@ -1230,9 +1213,6 @@ struct LayerEvent
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 	bool isValid() const throw();
 };
 
@@ -1241,12 +1221,12 @@ struct LayerSelect
 	: Message//, MemoryStack<Palette>
 {
 	LayerSelect() throw()
-		: Message(type::LayerSelect, message::isUser|message::isSelected)
+		: Message(type::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	//! Constructor with params for payload
 	LayerSelect(const uint8_t _layer_id) throw()
-		: Message(type::LayerSelect, message::isUser|message::isSelected),
+		: Message(type::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		layer_id(_layer_id)
 	{ }
 	
@@ -1263,9 +1243,6 @@ struct LayerSelect
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	size_t serializeHeader(char* ptr) const throw();
-	size_t unserializeHeader(const char* ptr) throw();
-	size_t headerSize() const throw();
 };
 
 } // namespace protocol
