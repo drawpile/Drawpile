@@ -128,9 +128,11 @@ protected:
 	/* functions */
 	
 	// Frees user ID
+	inline
 	void freeUserID(const uint8_t id) throw();
 	
 	// Frees session ID
+	inline
 	void freeSessionID(const uint8_t id) throw();
 	
 	// Cleanup anything that's left.
@@ -175,33 +177,43 @@ protected:
 	/* *** Something else *** */
 	
 	// Write to user socket
+	inline
 	void uWrite(User*& usr) throw();
 	
 	// Read from user socket
+	inline
 	void uRead(User*& usr) throw(std::bad_alloc);
 	
 	// Process all read data.
+	inline
 	void uProcessData(User*& usr) throw();
 	
 	// Handle user message.
+	inline
 	void uHandleMsg(User*& usr) throw(std::bad_alloc);
 	
 	// Handle ACKs
+	inline
 	void uHandleAck(User*& usr) throw();
 	
 	// Forward raster to those expecting it.
+	inline
 	void uTunnelRaster(User* usr) throw();
 	
 	// Handle SessionEvent message
+	inline
 	void uSessionEvent(Session*& session, User*& usr) throw();
 	
 	// Handle instruction message
+	inline
 	void uHandleInstruction(User*& usr) throw(std::bad_alloc);
 	
 	// Handle user login.
+	inline
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
 	// Send message to session
+	inline
 	void Propagate(Session* session, message_ref msg, User* source=0, const bool toAll=false) throw();
 	
 	// Send message to user
@@ -209,24 +221,31 @@ protected:
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
+	inline
 	void uSendMsg(User* usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
+	inline
 	void SyncSession(Session* session) throw();
 	
 	// Break synchronization with user.
+	inline
 	void breakSync(User* usr) throw();
 	
 	//
+	inline
 	void uJoinSession(User* usr, Session* session) throw();
 	
 	// Needs session reference because it might get destroyed.
+	inline
 	void uLeaveSession(User* usr, Session*& session, const uint8_t reason=protocol::user_event::Leave) throw();
 	
 	// Adds user
+	inline
 	void uAdd(Socket* sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
+	inline
 	void uRemove(User*& usr, const uint8_t reason) throw();
 	
 	// Tests if session exists
@@ -245,12 +264,15 @@ protected:
 	bool validateSessionTitle(Session* session) const throw();
 	
 	// Reprocesses deflated data stream
+	inline
 	void DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad_alloc);
 	
 	// cull idle users
+	inline
 	void cullIdlers() throw();
 	
 	// regenerate password seed
+	inline
 	void uRegenSeed(User* usr) const throw();
 public:
 	//! ctor
@@ -267,18 +289,23 @@ public:
 	bool init() throw(std::bad_alloc);
 	
 	//! Set name length limit (default: 8)
+	inline
 	void setNameLengthLimit(const uint8_t limit) throw() { name_len_limit = limit; }
 	
 	//! Set server password
+	inline
 	void setPassword(char* pwstr, const uint8_t len) throw() { password = pwstr; pw_len = len; }
 	
 	//! Set admin server password
+	inline
 	void setAdminPassword(char* pwstr, const uint8_t len) throw() { a_password = pwstr; a_pw_len = len; }
 	
 	//! Set user limit
+	inline
 	void setUserLimit(const uint8_t ulimit) throw() { user_limit = ulimit; }
 	
 	//! Set listening port range
+	inline
 	void setPorts(const uint16_t lo, const uint16_t hi) throw()
 	{
 		lo_port = lo;
@@ -286,17 +313,23 @@ public:
 	}
 	
 	//! Set operation mode
+	inline
 	void setTransient(const bool x) throw() { Transient = x; }
+	inline
 	void setLocalhostAdmin(const bool x) throw() { LocalhostAdmin = x; }
+	inline
 	void setDaemonMode(const bool x) throw() { DaemonMode = x; }
 	
 	//! Set client requirements
+	inline
 	void setRequirement(const uint8_t req) throw() { fSet(requirements, req); }
 	
 	//! Set minimum board dimension (width or height)
+	inline
 	void setMinDimension(const uint16_t mindim) throw() { min_dimension = mindim; }
 	
 	//! Set UTF-16 support
+	inline
 	void setUTF16(const bool x)
 	{
 		if (x)
@@ -306,12 +339,15 @@ public:
 	}
 	
 	//! Set default user mode
+	inline
 	void setUserMode(const uint8_t x) { default_user_mode = x; }
 	
 	//! Set session limit on server
+	inline
 	void setSessionLimit(const uint8_t x) { session_limit = x; }
 	
 	//! Set per user subscription limit
+	inline
 	void setSubscriptionLimit(const uint8_t x) { max_subscriptions = x; }
 	
 	//! Enter main loop

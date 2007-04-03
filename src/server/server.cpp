@@ -104,6 +104,7 @@ Server::~Server() throw()
 	cleanup();
 }
 
+inline
 const uint8_t Server::getUserID() throw()
 {
 	if (user_ids.empty())
@@ -115,6 +116,7 @@ const uint8_t Server::getUserID() throw()
 	return n;
 }
 
+inline
 const uint8_t Server::getSessionID() throw()
 {
 	if (session_ids.empty())
@@ -126,6 +128,7 @@ const uint8_t Server::getSessionID() throw()
 	return n;
 }
 
+inline
 void Server::freeUserID(const uint8_t id) throw()
 {
 	assert(id != protocol::null_user);
@@ -135,6 +138,7 @@ void Server::freeUserID(const uint8_t id) throw()
 	user_ids.push(id);
 }
 
+inline
 void Server::freeSessionID(const uint8_t id) throw()
 {
 	assert(id != protocol::Global);
@@ -144,6 +148,7 @@ void Server::freeSessionID(const uint8_t id) throw()
 	session_ids.push(id);
 }
 
+inline
 void Server::cleanup() throw()
 {
 	// finish event system
@@ -157,6 +162,7 @@ void Server::cleanup() throw()
 	#endif // FULL_CLEANUP
 }
 
+inline
 void Server::uRegenSeed(User* usr) const throw()
 {
 	assert(usr != 0);
@@ -181,6 +187,7 @@ message_ref Server::msgAuth(User* usr, const uint8_t session) const throw(std::b
 	
 	return message_ref(auth);
 }
+
 inline
 message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 {
@@ -249,6 +256,7 @@ message_ref Server::msgSyncWait(Session*& session) const throw(std::bad_alloc)
 	return sync_ref;
 }
 
+inline
 void Server::uWrite(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -455,6 +463,7 @@ void Server::uWrite(User*& usr) throw()
 	}
 }
 
+inline
 void Server::uRead(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -519,6 +528,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	}
 }
 
+inline
 void Server::uProcessData(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -601,6 +611,7 @@ void Server::uProcessData(User*& usr) throw()
 	}
 }
 
+inline
 message_ref Server::msgUserEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -633,6 +644,7 @@ bool Server::uInSession(User* usr, const uint8_t session) const throw()
 	return usr->sessions.find(session) != usr->sessions.end();
 }
 
+inline
 bool Server::sessionExists(uint8_t session) const throw()
 {
 	assert(session != protocol::Global);
@@ -643,6 +655,7 @@ bool Server::sessionExists(uint8_t session) const throw()
 	return true;
 }
 
+inline
 void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1151,6 +1164,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 }
 
 #if defined(HAVE_ZLIB)
+inline
 void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1210,6 +1224,7 @@ void Server::DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad
 }
 #endif
 
+inline
 void Server::uHandleAck(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -1271,6 +1286,7 @@ void Server::uHandleAck(User*& usr) throw()
 	}
 }
 
+inline
 void Server::uTunnelRaster(User* usr) throw()
 {
 	assert(usr != 0);
@@ -1346,6 +1362,7 @@ void Server::uTunnelRaster(User* usr) throw()
 	usr->inMsg = 0;
 }
 
+inline
 void Server::uSessionEvent(Session*& session, User*& usr) throw()
 {
 	assert(session != 0);
@@ -1539,6 +1556,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	}
 }
 
+inline
 void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1853,6 +1871,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 		uSendMsg(usr, msgError(msg->session_id, protocol::error::Unauthorized));
 }
 
+inline
 void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -2090,6 +2109,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
+inline
 void Server::Propagate(Session* session, message_ref msg, User* source, const bool toAll) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2129,6 +2149,7 @@ void Server::Propagate(Session* session, message_ref msg, User* source, const bo
 	}
 }
 
+inline
 void Server::uSendMsg(User* usr, message_ref msg) throw()
 {
 	assert(usr != 0);
@@ -2163,6 +2184,7 @@ void Server::uSendMsg(User* usr, message_ref msg) throw()
 	}
 }
 
+inline
 void Server::SyncSession(Session* session) throw()
 {
 	assert(session != 0);
@@ -2275,6 +2297,7 @@ void Server::SyncSession(Session* session) throw()
 	}
 }
 
+inline
 void Server::uJoinSession(User* usr, Session* session) throw()
 {
 	assert(usr != 0);
@@ -2330,6 +2353,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	}
 }
 
+inline
 void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) throw()
 {
 	assert(usr != 0);
@@ -2406,6 +2430,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	}
 }
 
+inline
 void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 {
 	if (sock == 0)
@@ -2483,6 +2508,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	#endif
 }
 
+inline
 void Server::breakSync(User* usr) throw()
 {
 	assert(usr != 0);
@@ -2508,6 +2534,7 @@ void Server::breakSync(User* usr) throw()
 	usr->syncing = protocol::Global;
 }
 
+inline
 void Server::uRemove(User*& usr, const uint8_t reason) throw()
 {
 	assert(usr != 0);
@@ -2673,6 +2700,7 @@ bool Server::init() throw(std::bad_alloc)
 	return true;
 }
 
+inline
 bool Server::validateUserName(User* usr) const throw()
 {
 	assert(usr != 0);
@@ -2707,6 +2735,7 @@ bool Server::validateUserName(User* usr) const throw()
 	return true;
 }
 
+inline
 bool Server::validateSessionTitle(Session* session) const throw()
 {
 	assert(session != 0);
@@ -2732,6 +2761,7 @@ bool Server::validateSessionTitle(Session* session) const throw()
 	return true;
 }
 
+inline
 void Server::cullIdlers() throw()
 {
 	User *usr;
@@ -2755,4 +2785,107 @@ void Server::cullIdlers() throw()
 			next_timer = (*tui)->deadtime;
 		}
 	}
+}
+
+/* main loop */
+int Server::run() throw()
+{
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+	std::cout << "Server::run()" << std::endl;
+	#endif
+	
+	assert(state == server::state::Init);
+	state = server::state::Active;
+	
+	User *usr;
+	
+	// event count
+	int ec;
+	
+	fd_t fd;
+	uint32_t events;
+	
+	// set event timeout
+	ev.timeout(30000);
+	
+	// main loop
+	while (state == server::state::Active)
+	{
+		ec = ev.wait();
+		current_time = time(0);
+		if (ec == 0)
+		{
+			// continue, no fds or time exceeded.
+			//continue;
+		}
+		else if (ec == -1)
+		{
+			std::cerr << "Error in event system." << std::endl;
+			// TODO (error)
+			return -1;
+		}
+		else
+		{
+			while (ev.getEvent(fd, events))
+			{
+				#ifndef EV_WSA // non-WSA
+				--ec;
+				#endif
+				
+				if (fd == lsock.fd())
+				{
+					uAdd( lsock.accept() );
+					continue;
+				}
+				
+				assert(users.find(fd) != users.end());
+				
+				usr = users.find(fd)->second;
+				
+				/*
+				#ifdef EV_WSA
+				ev.modify(usr->sock->fd(), usr->events);
+				#endif
+				*/
+				
+				#ifdef EV_HAS_ERROR
+				if (fIsSet(events, ev.error))
+				{
+					uRemove(usr, protocol::user_event::BrokenPipe);
+					continue;
+				}
+				#endif // EV_HAS_ERROR
+				#ifdef EV_HAS_HANGUP
+				if (fIsSet(events, ev.hangup))
+				{
+					uRemove(usr, protocol::user_event::Disconnect);
+					continue;
+				}
+				#endif // EV_HAS_HANGUP
+				if (fIsSet(events, ev.read))
+				{
+					uRead(usr);
+					if (usr == 0) continue;
+				}
+				if (fIsSet(events, ev.write))
+				{
+					uWrite(usr);
+					if (usr == 0) continue;
+				}
+			}
+		}
+		
+		// check timer
+		if (next_timer < current_time)
+		{
+			if (!utimer.empty())
+				cullIdlers();
+			
+			// reschedule to much later time if there's no users left
+			if (utimer.empty())
+				next_timer = current_time + 1800;
+		}
+	}
+	
+	return 0;
 }
