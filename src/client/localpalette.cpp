@@ -17,6 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QApplication>
 #include "localpalette.h"
 
 LocalPalette::LocalPalette(const QString& name, const QList<QVariant>& list)
@@ -24,6 +25,22 @@ LocalPalette::LocalPalette(const QString& name, const QList<QVariant>& list)
 {
 	foreach(QVariant v, list)
 		colors_.append(v.value<QColor>());
+}
+
+/**
+ * Generates a palette with some predefined colors.
+ * @return a new palette
+ */
+LocalPalette *LocalPalette::makeDefaultPalette()
+{
+	LocalPalette *pal = new LocalPalette(QApplication::tr("Default"));
+
+	int index = 0;
+	for(int value=25;value<255;value+=25) {
+		for(int hue=0;hue<345;hue+=35)
+			pal->insertColor(index, QColor::fromHsv(hue,255,value));
+	}
+	return pal;
 }
 
 int LocalPalette::count() const

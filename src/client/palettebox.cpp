@@ -55,11 +55,15 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 		ui_->palettelist->addItem(p->name());
 	}
 	cfg.endGroup();
-
-	if(ui_->palettelist->count() == 0) {
-		ui_->palettelist->setEnabled(false);
-		ui_->delpalette->setEnabled(false);
+	
+	// Create a default palette if there were none
+	if(palettes.count() == 0) {
+		LocalPalette * p = LocalPalette::makeDefaultPalette();
+		palettes_.append(p);
+		ui_->palettelist->addItem(p->name());
+		ui_->palette->setPalette(p);
 	} else {
+		// If there were palettes, remember which one was used the last time
 		int last = cfg.value("history/lastpalette", 0).toInt();
 		if(last<0 || last>= palettes_.count())
 			last = 0;

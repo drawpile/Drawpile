@@ -27,10 +27,18 @@
 
 class LocalPalette : public Palette {
 	public:
+		//! Construct a blank palette
 		LocalPalette(const QString& name) : name_(name) {}
+		//! Construct a palette from a list of QVariants that contain QColors
 		LocalPalette(const QString& name, const QList<QVariant>& list);
 
+		//! Generate a default palette
+		static LocalPalette *makeDefaultPalette();
+
+		//! Set the name of the palette
 		void setName(const QString& name) { name_ = name; }
+
+		//! Get the name of the palette
 		const QString& name() const { return name_; }
 
 		int count() const;
@@ -39,6 +47,7 @@ class LocalPalette : public Palette {
 		void insertColor(int index, const QColor& color);
 		void removeColor(int index);
 
+		//! Get the palette contents as a list of QVariants
 		QList<QVariant> toVariantList() const;
 
 	private:
