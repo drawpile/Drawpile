@@ -321,7 +321,8 @@ void Server::uWrite(User*& usr) throw()
 			
 			std::cout << __LINE__ << ": Output buffer was too small!" << std::endl
 				<< "Original size: " << usr->output.canWrite()
-				<< ", actually needed: " << size << std::endl;
+				<< ", actually needed: " << size << std::endl
+				<< "... for user #" << static_cast<int>(usr->id) << std::endl;
 			#endif
 			
 			usr->output.setBuffer(buf, size);
@@ -440,13 +441,15 @@ void Server::uWrite(User*& usr) throw()
 						{
 							std::cout << __LINE__ << ": Pre-allocated buffer was too small!" << std::endl
 								<< "Allocated: " << buffer_len*2+1024
-								<< ", actually needed: " << size << std::endl;
+								<< ", actually needed: " << size << std::endl
+								<< "... for user #" << static_cast<int>(usr->id) << std::endl;
 						}
 						else
 						{
 							std::cout << __LINE__ << ": Output buffer was too small!" << std::endl
 								<< "Original size: " << usr->output.canWrite()
-								<< ", actually needed: " << size << std::endl;
+								<< ", actually needed: " << size << std::endl
+								<< "... for user #" << static_cast<int>(usr->id) << std::endl;
 						}
 						#endif
 						usr->output.setBuffer(buf, size);
@@ -523,8 +526,8 @@ void Server::uWrite(User*& usr) throw()
 		
 		if (usr->output.isEmpty())
 		{
-			// remove buffer
-			// usr->output.rewind();
+			// rewind buffer
+			usr->output.rewind();
 			
 			// remove fd from write list if no buffers left.
 			if (usr->queue.empty())
