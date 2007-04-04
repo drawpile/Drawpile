@@ -551,7 +551,11 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		// buffer full
 		#ifndef NDEBUG
 		std::cerr << "Input buffer full, increasing size by 4 kiB." << std::endl;
+		#endif
+		
 		usr->input.resize(usr->input.size + 4096);
+		
+		#ifndef NDEBUG
 		if (usr->input.size > largestInputBuffer)
 			largestInputBuffer = usr->input.size;
 		#endif
