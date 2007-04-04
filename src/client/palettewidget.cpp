@@ -127,7 +127,7 @@ void PaletteWidget::setCurrentColor(const QColor& color)
 bool PaletteWidget::event(QEvent *event)
 {
 	if(event->type() == QEvent::ToolTip) {
-		QPoint pos = (static_cast<const QHelpEvent*>(event))->pos();
+		const QPoint pos = (static_cast<const QHelpEvent*>(event))->pos();
 		const int index = indexAt(pos);
 		if(index != -1) {
 			const QColor c = palette_->color(index);
@@ -182,7 +182,7 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 		QDrag *drag = new QDrag(this);
 
 		QMimeData *mimedata = new QMimeData;
-		QColor color = palette_->color(dragsource_);
+		const QColor color = palette_->color(dragsource_);
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
@@ -220,7 +220,7 @@ void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
 {
-	int index = indexAt(event->pos());
+	const int index = indexAt(event->pos());
 	if(index != -1) {
 		outline_->setGeometry(swatchRect(index));
 	} else {

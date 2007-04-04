@@ -219,7 +219,7 @@ void Controller::sessionJoined(int id)
 
 	// Update user list
 	board_->clearUsers();
-	QList<int> users = session_->users();
+	const QList<int> users = session_->users();
 	foreach(int id, users)
 		board_->addUser(id);
 	board_->setLocalUser(userid);

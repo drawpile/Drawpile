@@ -282,11 +282,7 @@ void Brush::updateCache() const
 		const qreal yy = y*y;
 		for(int x=-rad+1;x<=0;++x) {
 			const qreal dist = sqrt(x*x + yy);
-			ushort a;
-			if(dist<rad)
-				a = lookup[rad*oversample-int(dist*oversample)-1];
-			else
-				a = 0;
+			const ushort a = (dist<rad ? lookup[rad*oversample-int(dist*oversample)-1] : 0);
 			
 			*(q1++) = a;
 			*(q2--) = a;

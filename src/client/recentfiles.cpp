@@ -81,7 +81,7 @@ void RecentFiles::initMenu(QMenu *menu)
 
 	menu->clear();
 	foreach(QString filename, files) {
-		QFileInfo file(filename);
+		const QFileInfo file(filename);
 		QAction *a = menu->addAction(file.fileName());
 		a->setProperty("path",file.absoluteFilePath());
 	}

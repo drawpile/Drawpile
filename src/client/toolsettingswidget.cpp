@@ -58,10 +58,10 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 ToolSettings::~ToolSettings()
 {
-	delete brushsettings_;
-	delete erasersettings_;
-	delete pickersettings_;
-	delete linesettings_;
+	delete brushsettings_,
+	delete erasersettings_,
+	delete pickersettings_,
+	delete linesettings_,
 	delete rectsettings_;
 }
 

@@ -100,7 +100,7 @@ void ColorTriangle::paintEvent(QPaintEvent *event)
 {
 	(void)event;
 	QPainter painter(this);
-	QPoint offset(xoff_, yoff_);
+	const QPoint offset(xoff_, yoff_);
 	painter.drawPixmap(offset, wheel_);
 	painter.drawImage(offset, triangle_);
 
@@ -275,31 +275,16 @@ void ColorTriangle::setSv(qreal x, qreal y)
 
 	if (vx * (x - sx) + vy * (y - sy) < 0.0) {
 		saturation_ = 1.0;
-		value_ = (((x - sx) * (hx - sx) + (y - sy) * (hy-sy))
-				/ ((hx - sx) * (hx - sx) + (hy - sy) * (hy - sy)));
-
-		if (value_ < 0.0)
-			value_ = 0.0;
-		else if (value_ > 1.0)
-			value_ = 1.0;
+		value_ = qBound(0.0, (((x - sx) * (hx - sx) + (y - sy) * (hy-sy))
+				/ ((hx - sx) * (hx - sx) + (hy - sy) * (hy - sy))), 1.0);
 	} else if (hx * (x - sx) + hy * (y - sy) < 0.0) {
 		saturation_ = 0.0;
-		value_ = (((x - sx) * (vx - sx) + (y - sy) * (vy - sy))
-				/ ((vx - sx) * (vx - sx) + (vy - sy) * (vy - sy)));
-
-		if (value_ < 0.0)
-			value_ = 0.0;
-		else if (value_ > 1.0)
-			value_ = 1.0;
+		value_ = qBound(0.0, (((x - sx) * (vx - sx) + (y - sy) * (vy - sy))
+				/ ((vx - sx) * (vx - sx) + (vy - sy) * (vy - sy))), 1.0);
 	} else if (sx * (x - hx) + sy * (y - hy) < 0.0) {
 		value_ = 1.0;
-		saturation_ = (((x - vx) * (hx - vx) + (y - vy) * (hy - vy)) /
-				((hx - vx) * (hx - vx) + (hy - vy) * (hy - vy)));
-
-		if (saturation_ < 0.0)
-			saturation_ = 0.0;
-		else if (saturation_ > 1.0)
-			saturation_ = 1.0;
+		saturation_ = qBound(0.0, (((x - vx) * (hx - vx) + (y - vy) * (hy - vy)) /
+				((hx - vx) * (hx - vx) + (hy - vy) * (hy - vy))), 1.0);
 	} else {
 		value_ = (((x - sx) * (hy - vy) - (y - sy) * (hx - vx))
 				/ ((vx - sx) * (hy - vy) - (vy - sy) * (hx - vx)));

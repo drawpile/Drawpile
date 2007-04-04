@@ -57,7 +57,7 @@ void ChatBox::parted()
 
 void ChatBox::sendMessage()
 {
-	QString msg = ui_->chatline->text().trimmed();
+	const QString msg = ui_->chatline->text().trimmed();
 	if(msg.isEmpty())
 		return;
 #if 0 /* this is needed if server doesn't echo chat messages */

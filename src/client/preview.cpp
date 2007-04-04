@@ -17,6 +17,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+
+#include <QtGlobal>
 #include <QPen>
 #include "point.h"
 #include "brush.h"
@@ -56,7 +58,7 @@ void Preview::preview(const Point& from, const Point& to, const Brush& brush)
 		pen.setJoinStyle(Qt::RoundJoin);
 		// Approximate brush transparency
 		const qreal a = brush.opacity(to.pressure()) * rad * (1-brush.spacing()/100.0);
-		color.setAlphaF(a>1?1:a);
+		color.setAlphaF(qMin(a, 1.0));
 	}
 	pen.setColor(color);
 	initAppearance(pen);

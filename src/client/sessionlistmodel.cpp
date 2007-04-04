@@ -29,12 +29,15 @@ QVariant SessionListModel::headerData(int section, Qt::Orientation orientation,
 		int role) const
 {
 	if(role == Qt::DisplayRole && orientation==Qt::Horizontal) {
-		if(section==0)
+		switch (section)
+		{
+		case 0:
 			return tr("Title");
-		else if(section==1)
+		case 1:
 			return tr("Width");
-		else if(section==2)
+		case 2:
 			return tr("Height");
+		}
 	}
 	return QVariant();
 }
@@ -44,12 +47,15 @@ QVariant SessionListModel::data(const QModelIndex& index, int role) const
 	if(index.row() < 0 || index.row() >= sessions_.count())
 		return QVariant();
 	if(role == Qt::DisplayRole) {
-		if(index.column() == 0)
+		switch (index.column())
+		{
+		case 0:
 			return sessions_.at(index.row()).title;
-		else if(index.column() == 1)
+		case 1:
 			return sessions_.at(index.row()).width;
-		else if(index.column() == 2)
+		case 2:
 			return sessions_.at(index.row()).height;
+		}
 	}
 	return QVariant();
 }

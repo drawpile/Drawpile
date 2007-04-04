@@ -145,12 +145,13 @@ void SessionState::sendRasterChunk()
 		releaseRaster();
 		return;
 	}
-	protocol::Raster *msg = new protocol::Raster;
+	protocol::Raster *msg = new protocol::Raster(
+			rasteroffset_,
+			chunklen,
+			raster_.length(),
+			new char[chunklen]
+			);
 	msg->session_id = info_.id;
-	msg->offset = rasteroffset_;
-	msg->length = chunklen;
-	msg->size = raster_.length();
-	msg->data = new char[chunklen];
 	memcpy(msg->data, raster_.constData()+rasteroffset_, chunklen);
 	rasteroffset_ += chunklen;
 	host_->connection()->send(msg);
@@ -204,27 +205,22 @@ void SessionState::lock(bool l)
 void SessionState::setUserLimit(int count)
 {
 	qDebug() << "Chaning user limit to" << count;
-	protocol::Instruction *msg = new protocol::Instruction;
-	msg->command = protocol::admin::command::Alter;
+	protocol::Instruction *msg = new protocol::Instruction(
+			protocol::admin::command::Alter,
+			count, // Set user limit
+			info_.mode, // Set user mode (unchanged)
+			sizeof(quint16)*2,
+			new char[sizeof(quint16)*2]
+			);
 	msg->session_id = info_.id;
 
 	// Set width and height (unchanged)
-	char *data = new char[sizeof(quint16)*2];
 	quint16 w = info_.width;
 	quint16 h = info_.height;
 	bswap(w);
 	bswap(h);
-	memcpy(data, &w, sizeof(w));
-	memcpy(data+sizeof(w), &h, sizeof(h));
-
-	msg->length = sizeof(quint16)*2;
-	msg->data = data;
-
-	// Set user limit
-	msg->aux_data = count;
-
-	// Set user mode (unchanged)
-	msg->aux_data2 = info_.mode;
+	memcpy(msg->data, &w, sizeof(w));
+	memcpy(msg->data+sizeof(w), &h, sizeof(h));
 
 	host_->lastinstruction_ = msg->command;
 	host_->connection()->send(msg);
@@ -237,11 +233,17 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 {
 	const QColor hi = brush.color(1);
 	const QColor lo = brush.color(0);
-	protocol::ToolInfo *msg = new protocol::ToolInfo;
+	protocol::ToolInfo *msg = new protocol::ToolInfo(
+			protocol::tool_type::Brush,
+			protocol::tool_mode::Normal,
+			brush.radius(0),
+			brush.radius(1),
+			qRound(brush.hardness(0)*255),
+			qRound(brush.hardness(1)*255),
+			brush.spacing()
+			);
 
 	msg->session_id = info_.id;;
-	msg->tool_id = protocol::tool_type::Brush;
-	msg->mode = protocol::tool_mode::Normal;
 	msg->lo_color[0] = lo.red();
 	msg->lo_color[1] = lo.green();
 	msg->lo_color[2] = lo.blue();
@@ -250,11 +252,6 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	msg->hi_color[1] = hi.green();
 	msg->hi_color[2] = hi.blue();
 	msg->hi_color[3] = qRound(brush.opacity(1) * 255);
-	msg->lo_size = brush.radius(0);
-	msg->hi_size = brush.radius(1);
-	msg->lo_hardness = qRound(brush.hardness(0)*255);
-	msg->hi_hardness = qRound(brush.hardness(1)*255);
-	msg->spacing = brush.spacing();
 	host_->connection()->send(msg);
 }
 
@@ -263,11 +260,12 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
  */
 void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 {
-	protocol::StrokeInfo *msg = new protocol::StrokeInfo;
-	msg->session_id = info_.id;;
-	msg->x = point.x();
-	msg->y = point.y();
-	msg->pressure = qRound(point.pressure()*255);
+	protocol::StrokeInfo *msg = new protocol::StrokeInfo(
+			point.x(),
+			point.y(),
+			qRound(point.pressure()*255)
+			);
+	msg->session_id = info_.id;
 	host_->connection()->send(msg);
 }
 
@@ -280,19 +278,21 @@ void SessionState::sendStrokeEnd()
 
 void SessionState::sendAckSync()
 {
-	protocol::Acknowledgement *msg = new protocol::Acknowledgement;
+	protocol::Acknowledgement *msg = new protocol::Acknowledgement(
+			protocol::type::SyncWait
+			);
 	msg->session_id = info_.id;
-	msg->event = protocol::type::SyncWait;
 	host_->connection()->send(msg);
 }
 
 void SessionState::sendChat(const QString& message)
 {
 	QByteArray arr = message.toUtf8();
-	protocol::Chat *msg = new protocol::Chat;
+	protocol::Chat *msg = new protocol::Chat(
+			arr.length(),
+			new char[arr.length()]
+			);
 	msg->session_id = info_.id;
-	msg->length = arr.length();
-	msg->data = new char[arr.length()];
 	memcpy(msg->data,arr.constData(),arr.length());
 	host_->connection()->send(msg);
 }
@@ -302,14 +302,18 @@ void SessionState::sendChat(const QString& message)
  */
 void SessionState::handleAck(const protocol::Acknowledgement *msg)
 {
-	if(msg->event == protocol::type::SyncWait) {
-		emit syncDone();
-	} else if(msg->event == protocol::type::SessionSelect) {
-		// Ignore session select ack
-	} else if(msg->event == protocol::type::Raster) {
-		sendRasterChunk();
-	} else {
-		qDebug() << "unhandled session ack" << int(msg->event);
+	switch(msg->event) {
+		case protocol::type::SyncWait:
+			emit syncDone();
+		case protocol::type::SessionSelect:
+			// Ignore session select ack
+			break;
+		case protocol::type::Raster:
+			sendRasterChunk();
+			break;
+		default:
+			qDebug() << "unhandled session ack" << int(msg->event);
+			break;
 	}
 }
 
@@ -318,26 +322,30 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
  */
 void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
-	if(msg->event == protocol::user_event::Join) {
-		bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
-		users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
-		emit userJoined(msg->user_id);
-	} else if(msg->event == protocol::user_event::Leave ||
-			msg->event == protocol::user_event::Disconnect ||
-			msg->event == protocol::user_event::BrokenPipe ||
-			msg->event == protocol::user_event::TimedOut ||
-			msg->event == protocol::user_event::Dropped ||
-			msg->event == protocol::user_event::Kicked) {
-		if(users_.contains(msg->user_id)) {
-			emit userLeft(msg->user_id);
-			users_.remove(msg->user_id);
-		} else {
-			qDebug() << "got logout message for user not in session!";
-		}
-			
-		host_->usersessions_.remove(msg->user_id);
-	} else {
-		qDebug() << "unhandled user event " << int(msg->event);
+	switch(msg->event) {
+		case protocol::user_event::Join:
+			bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
+			users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
+			emit userJoined(msg->user_id);
+			break;
+		case protocol::user_event::Leave:
+		case protocol::user_event::Disconnect:
+		case protocol::user_event::BrokenPipe:
+		case protocol::user_event::TimedOut:
+		case protocol::user_event::Dropped:
+		case protocol::user_event::Kicked:
+			if(users_.contains(msg->user_id)) {
+				emit userLeft(msg->user_id);
+				users_.remove(msg->user_id);
+			} else {
+				qDebug() << "got logout message for user not in session!";
+			}
+				
+			host_->usersessions_.remove(msg->user_id);
+			break;
+		default:
+			qDebug() << "unhandled user event " << int(msg->event);
+			break;
 	}
 }
 
@@ -522,13 +530,17 @@ void SessionState::flushDrawBuffer()
 	bufferdrawing_ = false;
 	while(drawbuffer_.isEmpty() == false) {
 		protocol::Message *msg = drawbuffer_.dequeue();
-		if(msg->type == protocol::type::StrokeInfo)
-			handleStrokeInfo(static_cast<protocol::StrokeInfo*>(msg));
-		else if(msg->type == protocol::type::StrokeEnd)
-			handleStrokeEnd(static_cast<protocol::StrokeEnd*>(msg));
-		else
-			handleToolInfo(static_cast<protocol::ToolInfo*>(msg));
-
+		switch(msg->type) {
+			case protocol::type::StrokeInfo:
+				handleStrokeInfo(static_cast<protocol::StrokeInfo*>(msg));
+				break;
+			case protocol::type::StrokeEnd:
+				handleStrokeEnd(static_cast<protocol::StrokeEnd*>(msg));
+				break;
+			default:
+				handleToolInfo(static_cast<protocol::ToolInfo*>(msg));
+				break;
+		}
 		delete msg;
 	}
 }

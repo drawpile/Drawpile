@@ -76,7 +76,7 @@ void ColorButton::mouseReleaseEvent(QMouseEvent *)
 	isdown_ = false;
 	update();
 #ifndef DESIGNER_PLUGIN
-	QColor col = QColorDialog::getColor(color_, this);
+	const QColor col = QColorDialog::getColor(color_, this);
 	if(col.isValid() && col != color_) {
 		setColor(col);
 		emit colorChanged(col);
@@ -100,7 +100,7 @@ void ColorButton::dragEnterEvent(QDragEnterEvent *event)
  */
 void ColorButton::dropEvent(QDropEvent *event)
 {
-	QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
+	const QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
 	setColor(col);
 	emit colorChanged(col);
 }

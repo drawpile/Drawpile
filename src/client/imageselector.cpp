@@ -74,7 +74,7 @@ void ImageSelector::paintEvent(QPaintEvent *event)
 				QBrush(color_)
 				);
 	} else {
-		QPoint p(
+		const QPoint p(
 				w + bounds.width()/2 - cache_.width()/2,
 				w + bounds.height()/2 - cache_.height()/2
 				);
@@ -208,7 +208,7 @@ void ImageSelector::dropEvent(QDropEvent *event)
 		emit imageDropped();
 	} else if(event->mimeData()->hasUrls()) {
 		// Drop URL, hopefully to an image
-		QList<QUrl> urls = event->mimeData()->urls();
+		const QList<QUrl> urls = event->mimeData()->urls();
 		const QImage img(urls.first().toLocalFile());
 		if(img.isNull()==false) {
 			setImage(img);

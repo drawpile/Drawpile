@@ -80,7 +80,7 @@ void HostDialog::rememberSettings() const
 	cfg.setValue("username", getUserName());
 	QStringList hosts;
 	// Move current address to the top of the list
-	QString current = ui_->remotehost->currentText();
+	const QString current = ui_->remotehost->currentText();
 	ui_->remotehost->removeItem(ui_->remotehost->findText(current));
 	hosts << current;
 	for(int i=0;i<ui_->remotehost->count();++i)
@@ -91,8 +91,8 @@ void HostDialog::rememberSettings() const
 
 void HostDialog::selectColor()
 {
-	QColor oldcolor = ui_->imageSelector->color();
-	QColor col = QColorDialog::getColor(oldcolor, this);
+	const QColor oldcolor = ui_->imageSelector->color();
+	const QColor col = QColorDialog::getColor(oldcolor, this);
 	if(col.isValid() && col != oldcolor) {
 		ui_->imageSelector->setColor(col);
 		ui_->solidcolor->click();
@@ -106,10 +106,10 @@ void HostDialog::selectPicture()
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 			formats += "*." + format + " ";
 	}
-	QString filter = tr("Images (%1);;All files (*)").arg(formats);
+	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
 
 	// Get the file name to open
-	QString file = QFileDialog::getOpenFileName(this,
+	const QString file = QFileDialog::getOpenFileName(this,
 					tr("Open image"), prevpath_, filter);
 
 	if(file.isEmpty()==false) {

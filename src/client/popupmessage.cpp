@@ -73,7 +73,6 @@ void PopupMessage::popupAt(const QPoint& point)
 	else if(rect.y() < screen.y())
 		rect.moveTop(screen.y());
 
-
 	move(rect.topLeft());
 	show();
 	timer_.start();
@@ -83,7 +82,7 @@ void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 	const QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	int xrnd = qRound(20 * height()/qreal(width()));
+	const int xrnd = qRound(20 * height()/qreal(width()));
 	painter.setBrush(palette().light());
 	painter.drawRoundRect(rect,xrnd,20);
 }

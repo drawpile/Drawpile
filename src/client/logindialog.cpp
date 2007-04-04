@@ -166,7 +166,7 @@ void LoginDialog::raster(int p)
 void LoginDialog::getPassword()
 {
 	bool ok;
-	QString passwd = QInputDialog::getText(this,
+	const QString passwd = QInputDialog::getText(this,
 			tr("Password required"),
 			tr("Password:"),
 			QLineEdit::Password,

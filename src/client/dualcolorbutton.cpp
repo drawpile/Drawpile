@@ -50,7 +50,7 @@ void DualColorButton::setBackground(const QColor &c)
  */
 void DualColorButton::swapColors()
 {
-	QColor tmp = foreground_;
+	const QColor tmp = foreground_;
 	foreground_ = background_;
 	background_ = tmp;
 	emit foregroundChanged(foreground_);

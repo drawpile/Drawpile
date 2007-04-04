@@ -35,7 +35,7 @@ LocalPalette *LocalPalette::makeDefaultPalette()
 {
 	LocalPalette *pal = new LocalPalette(QApplication::tr("Default"));
 
-	int index = 0;
+	const int index = 0;
 	for(int value=25;value<255;value+=25) {
 		for(int hue=0;hue<345;hue+=35)
 			pal->insertColor(index, QColor::fromHsv(hue,255,value));

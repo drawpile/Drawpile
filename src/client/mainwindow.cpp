@@ -323,7 +323,7 @@ void MainWindow::setTitle()
 	if(filename_.isEmpty()) {
 		name = tr("Untitled");
 	} else {
-		QFileInfo info(filename_);
+		const QFileInfo info(filename_);
 		name = info.baseName();
 	}
 
@@ -454,7 +454,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."):
 					tr("You are still connected to a drawing session."));
 
-			QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
+			const QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
 			box.addButton(tr("Cancel"),
 					QMessageBox::RejectRole);
@@ -474,11 +474,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		if(isWindowModified()) {
 			QMessageBox box(QMessageBox::Question, tr("DrawPile"),
 					tr("There are unsaved changes. Save them before exiting?"));
-			QPushButton *savebtn = box.addButton(tr("Save changes"),
+			const QPushButton *savebtn = box.addButton(tr("Save changes"),
 					QMessageBox::AcceptRole);
 			box.addButton(tr("Exit without saving"),
 					QMessageBox::DestructiveRole);
-			QPushButton *cancelbtn = box.addButton(tr("Cancel"),
+			const QPushButton *cancelbtn = box.addButton(tr("Cancel"),
 					QMessageBox::RejectRole);
 
 			box.exec();
@@ -588,7 +588,7 @@ void MainWindow::open()
 
 	// Open the file if it was selected
 	if(file.isEmpty()==false) {
-		QFileInfo info(file);
+		const QFileInfo info(file);
 		lastpath_ = info.absolutePath();
 
 		open(file);
@@ -999,7 +999,7 @@ void MainWindow::fullscreen(bool enable)
 		// Hide everything except the central widget
 		// TODO, hiding the menu bar disables shortcut keys
 		statusBar()->hide();
-		QObjectList c = children();
+		const QObjectList c = children();
 		foreach(QObject *child, c) {
 			if(child->inherits("QToolBar") || child->inherits("QDockWidget"))
 				(qobject_cast<QWidget*>(child))->hide();

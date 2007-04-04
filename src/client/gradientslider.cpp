@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QtGlobal>
 #include <QPainter>
 #include <QStyle>
 #include <QStyleOptionFocusRect>
@@ -154,21 +155,13 @@ void GradientSlider::setColor2(const QColor& color)
 
 void GradientSlider::setColorSaturation(qreal saturation)
 {
-	if(saturation<0)
-		saturation = 0;
-	else if(saturation>1)
-		saturation = 1;
-	saturation_ = saturation;
+	saturation_ = qBound(0.0, saturation, 1.0);
 	update();
 }
 
 void GradientSlider::setColorValue(qreal value)
 {
-	if(value<0)
-		value = 0;
-	else if(value>1)
-		value = 1;
-	value_ = value;
+	value_ = qBound(0.0, value, 1.0);
 	update();
 }
 

@@ -111,18 +111,14 @@ void BrushPreview::updatePreview()
 	const int offx = width()/8;
 	const int offy = height()/2;
 	int spacing = brush_.spacing() * brush_.radius(1) / 100;
-	int distance = 0;
-	int lastx=0,lasty=0;
 	if(shape_ == Stroke) {
+		int lastx=0,lasty=0;
+		int distance = 0;
 		const qreal dphase = (2*M_PI)/qreal(strokew);
 		qreal phase = 0;
 		for(int x=0;x<strokew;++x, phase += dphase) {
 			const qreal fx = x/qreal(strokew);
-			qreal pressure = ((fx*fx) - (fx*fx*fx))*6.756;
-			if(pressure<0)
-				pressure = 0;
-			else if(pressure>1)
-				pressure = 1;
+			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(sin(phase) * strokeh);
 			if(distance >= spacing) {
 				brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
@@ -181,7 +177,7 @@ void BrushPreview::setSize(int size)
  */
 void BrushPreview::setOpacity(int opacity)
 {
-	qreal o = opacity/100.0;
+	const qreal o = opacity/100.0;
 	brush_.setOpacity(o);
 	if(opacitypressure_==false)
 		brush_.setOpacity2(o);
@@ -195,7 +191,7 @@ void BrushPreview::setOpacity(int opacity)
  */
 void BrushPreview::setHardness(int hardness)
 {
-	qreal h = hardness/100.0;
+	const qreal h = hardness/100.0;
 	brush_.setHardness(h);
 	if(hardnesspressure_==false)
 		brush_.setHardness2(h);

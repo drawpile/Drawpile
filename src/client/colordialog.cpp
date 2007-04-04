@@ -145,7 +145,7 @@ void ColorDialog::updateRgb()
 void ColorDialog::updateHsv()
 {
 	if(!updating_) {
-		QColor col = QColor::fromHsv(
+		const QColor col = QColor::fromHsv(
 				ui_->hue->value(),
 				ui_->saturation->value(),
 				ui_->value->value()

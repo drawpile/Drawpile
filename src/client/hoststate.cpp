@@ -55,11 +55,6 @@ void HostState::receiveMessage()
 	// with a single shared header and is now received as a linked list.
 	while((msg = net_->receive())) { while(msg) {
 		protocol::Message *next = msg->next;
-		if(next!=0) {
-			// The Message destructor will delete the entire list if we let it
-			msg->next = 0;
-			next->prev = 0;
-		}
 		switch(msg->type) {
 			using namespace protocol;
 			case type::StrokeInfo:
@@ -215,7 +210,7 @@ void HostState::host(const QString& title,
 	if(allowchat==false)
 		fSet(msg->aux_data2, protocol::user_mode::Mute);
 
-	QByteArray tbytes = title.toUtf8();
+	const QByteArray tbytes = title.toUtf8();
 	char *data = new char[sizeof(width)+sizeof(height)+tbytes.length()];
 	uint off = 0;
 	quint16 w = width;
@@ -260,7 +255,7 @@ void HostState::sendPassword(const QString& password)
 {
 	protocol::Password *msg = new protocol::Password;
 	msg->session_id = passwordsession_;
-	QByteArray pass = password.toUtf8();
+	const QByteArray pass = password.toUtf8();
 	SHA1 hash;
 	hash.Update(reinterpret_cast<const uint8_t*>(pass.constData()),
 			pass.length());
@@ -315,7 +310,7 @@ void HostState::setPassword(const QString& password, int session)
 	protocol::Instruction *msg = new protocol::Instruction;
 	msg->command = protocol::admin::command::Password;
 	msg->session_id = session;
-	QByteArray passwd = password.toUtf8();
+	const QByteArray passwd = password.toUtf8();
 
 	msg->length = passwd.length();
 	msg->data = new char[passwd.length()];
@@ -442,7 +437,7 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 	// Reply with user info
 	protocol::UserInfo *user = new protocol::UserInfo;
 	user->event = protocol::user_event::Login;
-	QByteArray name = username_.toUtf8();
+	const QByteArray name = username_.toUtf8();
 	user->length = name.length();
 	user->name = new char[name.length()];
 	memcpy(user->name,name.constData(), name.length());

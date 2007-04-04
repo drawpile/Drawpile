@@ -46,8 +46,9 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	cfg.beginGroup("palettes");
 	QRegExp names("palette\\d+$");
 	QStringList palettes = cfg.childKeys().filter(names);
+	LocalPalette *p;
 	foreach(QString pal, palettes) {
-		LocalPalette *p = new LocalPalette(
+		p = new LocalPalette(
 				cfg.value(pal).toString(),
 				cfg.value(pal + "data").toList()
 				);
@@ -58,7 +59,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	
 	// Create a default palette if there were none
 	if(palettes.count() == 0) {
-		LocalPalette * p = LocalPalette::makeDefaultPalette();
+		p = LocalPalette::makeDefaultPalette();
 		palettes_.append(p);
 		ui_->palettelist->addItem(p->name());
 		ui_->palette->setPalette(p);
@@ -94,8 +95,9 @@ PaletteBox::~PaletteBox()
 	cfg.beginGroup("palettes");
 	cfg.remove("");
 	int index = 0;
+	LocalPalette *pal;
 	while(palettes_.isEmpty()==false) {
-		LocalPalette *pal = palettes_.takeFirst();
+		pal = palettes_.takeFirst();
 		cfg.setValue(QString("palette%1").arg(index), pal->name());
 		cfg.setValue(QString("palette%1data").arg(index), pal->toVariantList());
 		++index;
@@ -126,8 +128,7 @@ void PaletteBox::addPalette()
 	QString name = QInputDialog::getText(this, tr("Add new palette"),
 			QString("Name of the palette"));
 	if(name.isEmpty()==false) {
-		LocalPalette *pal = new LocalPalette(name);
-		palettes_.append(pal);
+		palettes_.append(new LocalPalette(name));
 		ui_->palettelist->addItem(name);
 		ui_->palettelist->setCurrentIndex(ui_->palettelist->count()-1);
 		ui_->palettelist->setEnabled(true);
@@ -137,8 +138,8 @@ void PaletteBox::addPalette()
 
 void PaletteBox::deletePalette()
 {
-	int index = ui_->palettelist->currentIndex();
-	int ret = QMessageBox::question(
+	const int index = ui_->palettelist->currentIndex();
+	const int ret = QMessageBox::question(
 			this,
 			tr("DrawPile"),
 			tr("Delete palette \"%1\"?").arg(palettes_.at(index)->name()),
