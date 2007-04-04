@@ -39,6 +39,13 @@ set ( OPT "-O${OPTIMIZATION}")
 
 set ( FOMIT "-fomit-frame-pointer")
 
+# a bit questionable optimizations
+set ( U_MFPMATH "-mfpmath=sse,387" )
+set ( U_MALIGN "-malign-double" )
+set ( U_SCHED "-fschedule-insns" )
+set ( U_NOTRAP "-fno-trapping-math" )
+set ( U_UNSAFE "-funsafe-math-optimizations" )
+
 ###   Test them   ###
 
 include ( TestCXXAcceptsFlag )
@@ -84,6 +91,37 @@ endif ( PROFILE )
 if ( NOT ACCEPT_PROFILE )
 	set ( PROFILING_FLAGS "" )
 endif ( NOT ACCEPT_PROFILE )
+
+
+###   TEST unsafe math optimizations   ###
+
+if ( UNSAFE_MATH )
+	check_cxx_accepts_flag ( ${U_MFPMATH} ACCEPT_MFPMATH )
+	check_cxx_accepts_flag ( ${U_MALIGN} ACCEPT_MALIGN )
+	check_cxx_accepts_flag ( ${U_SCHED} ACCEPT_SCHED )
+	check_cxx_accepts_flag ( ${U_NOTRAP} ACCEPT_NOTRAP )
+	check_cxx_accepts_flag ( ${U_UNSAFE} ACCEPT_UNSAFE )
+	
+	if ( NOT ACCEPT_MFPMATH )
+		set ( U_MFPMATH "" )
+	endif ( NOT ACCEPT_MFPMATH )
+	if ( NOT ACCEPT_MALIGN )
+		set ( U_MALIGN "" )
+	endif ( NOT ACCEPT_MALIGN )
+	if ( NOT ACCEPT_SCHED )
+		set ( U_SCHED "" )
+	endif ( NOT ACCEPT_SCHED )
+	if ( NOT ACCEPT_NOTRAP )
+		set ( U_NOTRAP "" )
+	endif ( NOT ACCEPT_NOTRAP )
+	if ( NOT ACCEPT_UNSAFE )
+		set ( U_UNSAFE "" )
+	endif ( NOT ACCEPT_UNSAFE )
+	
+	set ( UNSAFE_MATH_OPT "${U_MFPMATH} ${U_MALIGN} ${U_SCHED} ${U_NOTRAP} ${U_UNSAFE}")
+else ( UNSAFE_MATH )
+	set ( UNSAFE_MATH_OPT "" )
+endif ( UNSAFE_MATH )
 
 ###   Set flags   ###
 

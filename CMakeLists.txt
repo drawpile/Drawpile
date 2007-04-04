@@ -44,6 +44,8 @@ option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
+option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
+
 ### Build type ###
 
 if ( DEBUG )
