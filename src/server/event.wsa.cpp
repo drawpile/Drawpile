@@ -84,8 +84,8 @@ Event::Event() throw()
 		<< "FD_MAX_EVENTS: " << FD_MAX_EVENTS << std::endl;
 	#endif
 	
-	// null the ev set
-	memset(w_ev, 0, max_events);
+	for (unsigned int i=0; i != max_events; i++)
+		w_ev[i] = WSA_INVALID_EVENT;
 }
 
 Event::~Event() throw()
@@ -181,19 +181,24 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	for (uint32_t i=0; i != max_events; ++i)
 	{
-		if (w_ev[i] == 0)
+		if (w_ev[i] == WSA_INVALID_EVENT)
 		{
 			w_ev[i] = WSACreateEvent();
 			if (!(w_ev[i])) return false;
 			
 			WSAEventSelect(fd, w_ev[i], ev);
 			
+			// update ev_to_fd and fd_to_ev maps
 			fd_to_ev[fd] = i;
 			ev_to_fd[i] = fd;
 			
 			return true;
 		}
 	}
+	
+	#ifndef NDEBUG
+	std::cerr << "Event system overloaded!" << std::endl;
+	#endif
 	
 	return false;
 }
@@ -210,14 +215,31 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	std::cout << ")" << std::endl;
 	#endif
 	
+	#ifndef NDEBUG
+	std::cout << "Events: " << ev << ", for FD: " << fd << std::endl;
+	
+	if (fIsSet(ev, static_cast<uint32_t>(FD_READ)))
+		std::cout << "#read: " << FD_READ << std::endl;
+	if (fIsSet(ev, static_cast<uint32_t>(FD_WRITE)))
+		std::cout << "#write: " << FD_WRITE << std::endl;
+	if (fIsSet(ev, static_cast<uint32_t>(FD_OOB)))
+		std::cout << "#oob: " << FD_OOB << std::endl;
+	if (fIsSet(ev, static_cast<uint32_t>(FD_ACCEPT)))
+		std::cout << "#accept: " << FD_ACCEPT << std::endl;
+	if (fIsSet(ev, static_cast<uint32_t>(FD_CONNECT)))
+		std::cout << "#connect: " << FD_CONNECT << std::endl;
+	if (fIsSet(ev, static_cast<uint32_t>(FD_CLOSE)))
+		std::cout << "#close:" << FD_CLOSE << std::endl;
+	#endif
+	
 	assert( fd >= 0 );
 	
 	hack::events::prepare_events(ev);
 	
 	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
-	
-	if (fi == fd_to_ev.end())
-		return false;
+	assert(fi != fd_to_ev.end());
+	//if (fi == fd_to_ev.end())
+	//	return false;
 	
 	WSAEventSelect(fd, w_ev[fi->second], ev);
 	
@@ -241,8 +263,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	hack::events::prepare_events(ev);
 	
 	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
-	if (fi == fd_to_ev.end())
-		return false;
+	assert(fi != fd_to_ev.end());
 	
 	//WSAEventSelect(fd, w_ev[fi->second], 0);
 	WSACloseEvent(w_ev[fi->second]);
@@ -262,27 +283,76 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	#endif
 	
 	uint32_t get_event = nfds - WSA_WAIT_EVENT_0;
+	WSANETWORKEVENTS set;
 	
-	std::map<uint32_t, fd_t>::iterator ev_to_fd_iter;
-	for (; get_event != max_events; ++get_event, ++nfds)
+	std::map<uint32_t, fd_t>::iterator fd_iter;
+	for (; get_event != max_events; ++get_event)
 	{
-		if (w_ev[get_event])
+		if (w_ev[get_event] != WSA_INVALID_EVENT)
 		{
-			ev_to_fd_iter = ev_to_fd.find(get_event);
-			if (ev_to_fd_iter == ev_to_fd.end())
-				break;
+			fd_iter = ev_to_fd.find(get_event);
+			assert(fd_iter != ev_to_fd.end());
+			fd = fd_iter->second;
 			
-			if ((events = getEvents(ev_to_fd_iter->second)) != 0)
+			const int r = WSAEnumNetworkEvents(fd, w_ev[get_event], &set);
+			
+			if (r == SOCKET_ERROR)
 			{
+				int error = WSAGetLastError();
+				
+				switch (error)
+				{
+				case WSAECONNRESET: // reset by remote
+				case WSAECONNABORTED: // connection aborted
+				case WSAETIMEDOUT: // connection timed-out
+				case WSAENETUNREACH: // network unreachable
+				case WSAECONNREFUSED: // connection refused/rejected
+					events = FD_WRITE|FD_CLOSE;
+					break;
+				case WSAENOBUFS: // out of network buffers
+				case WSAENETDOWN: // network sub-system failure
+				case WSAEINPROGRESS: // something's in progress
+					events = 0;
+					break;
+				default:
+					std::cerr << "Event(wsa).getEvents() - unknown error: " << error << std::endl;
+					events = 0;
+					break;
+				}
+			}
+			
+			if (events != 0)
+			{
+				#ifndef NDEBUG
+				std::cout << "Events: " << events << ", for FD: " << fd << std::endl;
+				
+				if (fIsSet(events, static_cast<uint32_t>(FD_READ)))
+					std::cout << "#read: " << FD_READ << std::endl;
+				if (fIsSet(events, static_cast<uint32_t>(FD_WRITE)))
+					std::cout << "#write: " << FD_WRITE << std::endl;
+				if (fIsSet(events, static_cast<uint32_t>(FD_OOB)))
+					std::cout << "#oob: " << FD_OOB << std::endl;
+				if (fIsSet(events, static_cast<uint32_t>(FD_ACCEPT)))
+					std::cout << "#accept: " << FD_ACCEPT << std::endl;
+				if (fIsSet(events, static_cast<uint32_t>(FD_CONNECT)))
+					std::cout << "#connect: " << FD_CONNECT << std::endl;
+				if (fIsSet(events, static_cast<uint32_t>(FD_CLOSE)))
+					std::cout << "#close:" << FD_CLOSE << std::endl;
+				#endif
+				
 				++nfds;
 				hack::events::prepare_events(events);
 				
-				fd = ev_to_fd_iter->second;
+				std::cout << "triggered!" << std::endl;
 				
 				return true;
 			}
 		}
 	}
+	
+	#ifndef NDEBUG
+	std::cerr << "No events triggered!" << std::endl;
+	#endif
 	
 	return false;
 }
@@ -298,7 +368,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	const std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
 	if (fev == fd_to_ev.end())
 	{
-		assert(fev == fd_to_ev.end());
+		assert(fev != fd_to_ev.end());
 		return 0;
 	}
 	
