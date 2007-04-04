@@ -50,6 +50,8 @@
 	
 	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
 	
+	// TODO: Remove the following defines
+	
 	// Because MS decided to break BSD socket compatibility.
 	#define EINPROGRESS WSAEINPROGRESS
 	#define ENOTSOCK WSAENOTSOCK
@@ -103,40 +105,8 @@
  */
 struct Net
 {
-	Net() throw(std::exception)
-	{
-		#ifndef NDEBUG
-		std::cout << "Net::Net()" << std::endl;
-		#endif
-		
-		#if defined( HAVE_WSA )
-		WSADATA info;
-		if (WSAStartup(MAKEWORD(2,0), &info))
-		{
-			throw std::exception();
-		}
-		
-		if (LOBYTE(info.wVersion) != 2
-			or HIBYTE(info.wVersion) != 0)
-		{
-			std::cerr << "Invalid WSA version." << std::endl;
-			WSACleanup( );
-			return; 
-		}
-		
-		#endif
-	}
-	
-	~Net() throw()
-	{
-		#ifndef NDEBUG
-		std::cout << "Net::~Net()" << std::endl;
-		#endif
-		
-		#if defined( HAVE_WSA )
-		WSACleanup();
-		#endif
-	}
+	Net() throw(std::exception);
+	~Net() throw();
 };
 
 //! Socket abstraction
@@ -146,67 +116,67 @@ protected:
 	//! Assigned file descriptor
 	fd_t sock;
 	
+	//! Address
 	#ifdef IPV6_SUPPORT
-	sockaddr_in6
-	#else
-	sockaddr_in
+	sockaddr_in6 addr;
+	#else // IPv4
+	sockaddr_in addr;
 	#endif
-		//! Address
-		addr;
 	
 	//! Last error number (from errno or equivalent)
-	int error;
+	int s_error;
 	//! Socket state
 	bool active;
 public:
 	//! ctor
 	Socket() throw()
 		: sock(INVALID_SOCKET),
-		error(0)
+		s_error(0)
 	{
-		#ifdef DEBUG_SOCKETS
-		#ifndef NDEBUG
+		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 		std::cout << "Socket::Socket()" << std::endl;
-		#endif
 		#endif
 	}
 	
 	#ifdef IPV6_SUPPORT
 	Socket(fd_t& nsock, const sockaddr_in6 saddr) throw()
-	#else
-	Socket(fd_t& nsock, const sockaddr_in saddr) throw()
-	#endif
 		: sock(nsock),
-		error(0)
+		s_error(0)
 	{
-		#ifdef DEBUG_SOCKETS
-		#ifndef NDEBUG
+		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 		std::cout << "Socket::Socket(fd_t)" << std::endl;
 		#endif
+		
+		memcpy(&addr, &saddr, sizeof(saddr));
+	}
+	#endif
+	
+	Socket(fd_t& nsock, const sockaddr_in saddr) throw()
+		: sock(nsock),
+		s_error(0)
+	{
+		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
+		std::cout << "Socket::Socket(fd_t)" << std::endl;
 		#endif
 		
-		memcpy(&addr, &saddr, sizeof(addr));
+		memcpy(&addr, &saddr, sizeof(saddr));
 	}
 	
 	//! ctor
 	Socket(fd_t nsock) throw()
 		: sock(nsock),
-		error(0)
+		s_error(0)
 	{
-		#ifdef DEBUG_SOCKETS
-		#ifndef NDEBUG
+		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 		std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
-		#endif
 		#endif
 	}
 	
 	//! dtor
 	virtual ~Socket() throw()
 	{
-		#ifdef DEBUG_SOCKETS
-		#ifndef NDEBUG
+		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 		std::cout << "Socket::~Socket()" << std::endl;
-		#endif
 		#endif
 		
 		close();
@@ -280,9 +250,8 @@ public:
 	//! Connect to remote address
 	#ifdef IPV6_SUPPORT
 	int connect(const sockaddr_in6* rhost) throw();
-	#else
-	int connect(const sockaddr_in* rhost) throw();
 	#endif
+	int connect(const sockaddr_in* rhost) throw();
 	
 	//! Set listening
 	/**
@@ -335,7 +304,7 @@ public:
 	/**
 	 * @return last errno.
 	 */
-	int getError() const throw() { return error; }
+	int getError() const throw() { return s_error; }
 	
 	//! Get address structure
 	/**
@@ -345,7 +314,7 @@ public:
 	sockaddr_in6* getAddr() throw()
 	#else // IPv4
 	sockaddr_in* getAddr() throw()
-	#endif // IPV6_SUPPORT
+	#endif
 	{
 		return &addr;
 	}
@@ -368,6 +337,11 @@ public:
 	
 	//! Check if the port matches
 	bool matchPort(const Socket* tsock) const throw();
+	
+	#ifdef IPV6_SUPPORT
+	std::string AddrToString(const sockaddr_in6 saddr) const throw();
+	#endif
+	std::string AddrToString(const sockaddr_in saddr) const throw();
 	
 	/* Operator overloads */
 	
