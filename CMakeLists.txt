@@ -171,7 +171,6 @@ if ( NOT EV_FOUND )
 	if ( WIN32 )
 		check_include_file ( winsock2.h HAVE_WSA )
 		check_include_file ( mswsock.h HAVE_XPWSA )
-		#check_symbol_exists ( WSAEWOULDBLOCK "winsock2.h" HAVE_WSA )
 		if ( HAVE_WSA )
 			message( STATUS "Windows Socket API found")
 			if ( WSA )
@@ -186,6 +185,10 @@ if ( NOT EV_FOUND )
 		endif ( NOT EV_FOUND )
 	endif ( WIN32 )
 endif ( NOT EV_FOUND )
+
+if ( NOT HAVE_WSA )
+	message ( STATUS "Using POSIX Socket API" )
+endif ( NOT HAVE_WSA )
 
 ###
 
