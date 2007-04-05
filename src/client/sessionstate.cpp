@@ -324,10 +324,12 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
 	switch(msg->event) {
 		case protocol::user_event::Join:
+			{
 			bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
 			users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
 			emit userJoined(msg->user_id);
 			break;
+			}
 		case protocol::user_event::Leave:
 		case protocol::user_event::Disconnect:
 		case protocol::user_event::BrokenPipe:
