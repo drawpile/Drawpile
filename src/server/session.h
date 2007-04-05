@@ -84,7 +84,7 @@ struct Session
 		#endif
 	}
 	
-	Session(const uint8_t _id=protocol::Global, uint8_t _mode, uint8_t _limit, uint8_t _owner,
+	Session(const uint8_t _id, uint8_t _mode, uint8_t _limit, uint8_t _owner,
 		uint8_t _width, uint8_t _height, uint8_t _level, uint8_t title_len, char* _title) throw()
 		: id(_id),
 		len(title_len),
