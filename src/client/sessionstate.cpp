@@ -260,11 +260,10 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
  */
 void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 {
-	protocol::StrokeInfo *msg = new protocol::StrokeInfo(
-			point.x(),
-			point.y(),
-			qRound(point.pressure()*255)
-			);
+	protocol::StrokeInfo *msg = new protocol::StrokeInfo;
+	msg->x = point.x();
+	msg->y = point.y();
+	msg->pressure = qRound(point.pressure()*255);
 	msg->session_id = info_.id;
 	host_->connection()->send(msg);
 }
