@@ -74,9 +74,9 @@ fd_t Socket::create() throw()
 	#ifdef WIN32
 	
 	#ifdef IPV6_SUPPORT
-	sock = WSASocket(AF_INET6, SOCK_STREAM, 0, 0, 0, 0/*WSA_FLAG_OVERLAPPED*/);
+	sock = WSASocket(AF_INET6, SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	#else // IPv4
-	sock = WSASocket(AF_INET, SOCK_STREAM, 0, 0, 0, 0/*WSA_FLAG_OVERLAPPED*/);
+	sock = WSASocket(AF_INET, SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	#endif
 	
 	#else // POSIX
