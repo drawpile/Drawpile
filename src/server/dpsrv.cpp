@@ -294,9 +294,7 @@ int main(int argc, char** argv)
 		#endif
 	} // server scope
 	
-	#ifndef NDEBUG
-	std::cout << "quitting" << std::endl;
-	#endif
+	std::cout << ": Quitting..." << std::endl;
 	
 	return rc;
 }

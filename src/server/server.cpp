@@ -287,7 +287,7 @@ void Server::uWrite(User*& usr) throw()
 		
 		const std::deque<message_ref>::iterator f_msg(usr->queue.begin());
 		std::deque<message_ref>::iterator l_msg(f_msg+1), iter(f_msg);
-		int links=1;
+		size_t links=1;
 		for (; l_msg != usr->queue.end(); ++l_msg, ++iter, ++links)
 		{
 			if (links == std::numeric_limits<uint8_t>::max()
@@ -633,6 +633,8 @@ void Server::uProcessData(User*& usr) throw()
 			if (usr->inMsg == 0)
 			{
 				// unknown message type
+				std::cerr << "Unknown data from user #"
+					<< static_cast<int>(usr->id) << std::endl;
 				uRemove(usr, protocol::user_event::Violation);
 				return;
 			}
@@ -2312,8 +2314,6 @@ void Server::SyncSession(Session* session) throw()
 	// Release clients from syncwait...
 	Propagate(session, msgAck(session->id, protocol::type::SyncWait));
 	
-	protocol::SessionSelect *select; // warning from compiler
-	
 	std::vector<message_ref> msg_queue;
 	// build msg_queue of the old users
 	User *usr_ptr;
@@ -2825,7 +2825,7 @@ bool Server::validateUserName(User* usr) const throw()
 inline
 bool Server::validateSessionTitle(const char* name, const uint8_t len) const throw()
 {
-	assert(session != 0);
+	assert(name != 0);
 	
 	// Session title is never unique if it's an empty string.
 	if (len == 0) return false;
@@ -2890,7 +2890,7 @@ int Server::run() throw()
 	ev.timeout(30000);
 	
 	// main loop
-	while (state == server::state::Active)
+	do
 	{
 		ec = ev.wait();
 		current_time = time(0);
@@ -2967,6 +2967,7 @@ int Server::run() throw()
 				next_timer = current_time + 1800;
 		}
 	}
+	while (state == server::state::Active);
 	
 	return 0;
 }
