@@ -14,7 +14,6 @@
 #cmakedefine EV_WSA
 #cmakedefine HAVE_SELECT_H
 
-#cmakedefine WSA_SOCKETS
 #cmakedefine HAVE_WSA
 #cmakedefine HAVE_XPWSA
 

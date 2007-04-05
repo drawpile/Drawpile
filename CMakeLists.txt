@@ -33,11 +33,6 @@ option ( BOEHMGC "Enable Boehm Garbage Collector" OFF ) # Not used
 
 option ( DEFLATE "Disable deflate compression" ON )
 
-option ( WSA_SOCKETS "Use WSA sockets" OFF )
-if ( WIN32 )
-	set ( WSA_SOCKETS ON )
-endif ( WIN32 )
-
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Disable any and all optimizations" ON )
 option ( SHARED "Build shared library" OFF )

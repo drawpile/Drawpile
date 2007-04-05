@@ -497,12 +497,11 @@ void Server::uWrite(User*& usr) throw()
 	case SOCKET_ERROR:
 		switch (usr->sock->getError())
 		{
-		#ifdef WSA_SOCKETS
+		#ifdef WIN32
 		case WSA_IO_PENDING:
 		case WSAEWOULDBLOCK:
 		case WSAEINTR:
 		case WSAENOBUFS:
-		case WSAENOMEM:
 			// retry
 			break;
 		#else // POSIX
@@ -586,12 +585,13 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	case SOCKET_ERROR:
 		switch (usr->sock->getError())
 		{
-		#ifdef WSA_SOCKETS
+		#ifdef WIN32
 		case WSAEWOULDBLOCK:
+		case WSAEINTR:
 		#else
 		case EAGAIN:
-		#endif
 		case EINTR:
+		#endif
 			// retry later
 			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 			std::cerr << "# Operation would block / interrupted" << std::endl;
