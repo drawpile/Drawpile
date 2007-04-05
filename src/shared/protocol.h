@@ -298,7 +298,7 @@ struct StrokeInfo
 	StrokeInfo(const uint16_t _x, const uint16_t _y, const uint8_t _pressure) throw()
 		: Message(
 			type::StrokeInfo,
-			sizeof(type)+sizeof(user_id)+sizeof(null_count),
+			sizeof(type)+sizeof(user_id),
 			message::isUser|message::isBundling|message::isSelected
 		),
 		x(_x),
