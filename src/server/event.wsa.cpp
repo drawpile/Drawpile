@@ -77,6 +77,9 @@ const uint32_t
 	Event::hangup = FD_CLOSE;
 
 Event::Event() throw()
+	: last_event(0),
+	_error(0),
+	nfds(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event(wsa)()" << std::endl
@@ -192,6 +195,9 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 			fd_to_ev[fd] = i;
 			ev_to_fd[i] = fd;
 			
+			if (i > last_event)
+				last_event = i;
+			
 			return true;
 		}
 	}
@@ -216,20 +222,16 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	#endif
 	
 	#ifndef NDEBUG
-	std::cout << "Events: " << ev << ", for FD: " << fd << std::endl;
+	std::cout << ": Setting events: " << ev << ", for FD: " << fd << std::endl;
 	
 	if (fIsSet(ev, static_cast<uint32_t>(FD_READ)))
-		std::cout << "#read: " << FD_READ << std::endl;
+		std::cout << "   #read:   " << FD_READ << std::endl;
 	if (fIsSet(ev, static_cast<uint32_t>(FD_WRITE)))
-		std::cout << "#write: " << FD_WRITE << std::endl;
-	if (fIsSet(ev, static_cast<uint32_t>(FD_OOB)))
-		std::cout << "#oob: " << FD_OOB << std::endl;
+		std::cout << "   #write:  " << FD_WRITE << std::endl;
 	if (fIsSet(ev, static_cast<uint32_t>(FD_ACCEPT)))
-		std::cout << "#accept: " << FD_ACCEPT << std::endl;
-	if (fIsSet(ev, static_cast<uint32_t>(FD_CONNECT)))
-		std::cout << "#connect: " << FD_CONNECT << std::endl;
+		std::cout << "   #accept: " << FD_ACCEPT << std::endl;
 	if (fIsSet(ev, static_cast<uint32_t>(FD_CLOSE)))
-		std::cout << "#close:" << FD_CLOSE << std::endl;
+		std::cout << "   #close:  " << FD_CLOSE << std::endl;
 	#endif
 	
 	assert( fd >= 0 );
@@ -273,6 +275,9 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	ev_to_fd.erase(fi->second);
 	fd_to_ev.erase(fd);
 	
+	// find last event
+	for (; w_ev[last_event] != WSA_INVALID_EVENT; --last_event);
+	
 	return true;
 }
 
@@ -285,14 +290,22 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	uint32_t get_event = nfds - WSA_WAIT_EVENT_0;
 	WSANETWORKEVENTS set;
 	
+	#ifndef NDEBUG
+	std::cout << "Getting events, offset: " << get_event << std::endl;
+	#endif
+	
 	std::map<uint32_t, fd_t>::iterator fd_iter;
-	for (; get_event != max_events; ++get_event)
+	for (; get_event <= last_event; ++get_event)
 	{
 		if (w_ev[get_event] != WSA_INVALID_EVENT)
 		{
 			fd_iter = ev_to_fd.find(get_event);
 			assert(fd_iter != ev_to_fd.end());
 			fd = fd_iter->second;
+			
+			#ifndef NDEBUG
+			std::cout << "Checking FD: " << fd << std::endl;
+			#endif
 			
 			const int r = WSAEnumNetworkEvents(fd, w_ev[get_event], &set);
 			
@@ -320,30 +333,28 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 					break;
 				}
 			}
+			else
+				events = static_cast<uint32_t>(set.lNetworkEvents);
 			
 			if (events != 0)
 			{
 				#ifndef NDEBUG
-				std::cout << "Events: " << events << ", for FD: " << fd << std::endl;
+				std::cout << ": Events triggered: " << events << ", for FD: " << fd << std::endl;
 				
 				if (fIsSet(events, static_cast<uint32_t>(FD_READ)))
-					std::cout << "#read: " << FD_READ << std::endl;
+					std::cout << "   #read:   " << FD_READ << std::endl;
 				if (fIsSet(events, static_cast<uint32_t>(FD_WRITE)))
-					std::cout << "#write: " << FD_WRITE << std::endl;
-				if (fIsSet(events, static_cast<uint32_t>(FD_OOB)))
-					std::cout << "#oob: " << FD_OOB << std::endl;
+					std::cout << "   #write:  " << FD_WRITE << std::endl;
 				if (fIsSet(events, static_cast<uint32_t>(FD_ACCEPT)))
-					std::cout << "#accept: " << FD_ACCEPT << std::endl;
-				if (fIsSet(events, static_cast<uint32_t>(FD_CONNECT)))
-					std::cout << "#connect: " << FD_CONNECT << std::endl;
+					std::cout << "   #accept: " << FD_ACCEPT << std::endl;
 				if (fIsSet(events, static_cast<uint32_t>(FD_CLOSE)))
-					std::cout << "#close:" << FD_CLOSE << std::endl;
+					std::cout << "   #close:  " << FD_CLOSE << std::endl;
 				#endif
 				
 				++nfds;
 				hack::events::prepare_events(events);
 				
-				std::cout << "triggered!" << std::endl;
+				std::cout << "+ Triggered!" << std::endl;
 				
 				return true;
 			}
@@ -351,7 +362,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	}
 	
 	#ifndef NDEBUG
-	std::cerr << "No events triggered!" << std::endl;
+	std::cerr << "No events triggered! " << std::endl;
 	#endif
 	
 	return false;
@@ -366,11 +377,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	assert(fd != 0);
 	
 	const std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
-	if (fev == fd_to_ev.end())
-	{
-		assert(fev != fd_to_ev.end());
-		return 0;
-	}
+	assert(fev != fd_to_ev.end());
 	
 	WSANETWORKEVENTS set;
 	

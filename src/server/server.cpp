@@ -535,7 +535,6 @@ void Server::uWrite(User*& usr) throw()
 			if (usr->queue.empty())
 			{
 				fClr(usr->events, ev.write);
-				assert(usr->events != 0);
 				ev.modify(usr->sock->fd(), usr->events);
 			}
 		}
@@ -2905,10 +2904,13 @@ int Server::run() throw()
 		switch (ec)
 		{
 		case 0:
+			#ifndef NDEBUG
+			std::cout << "+ Idling..." << std::endl;
+			#endif
 			break; // Nothing triggered
 		case -1:
-			std::cerr << "Error in event system." << std::endl;
-			// TODO (error)
+			std::cerr << "- Error in event system." << std::endl;
+			state = server::state::Error;
 			return -1;
 		default:
 			while (ev.getEvent(fd, events))
@@ -2926,12 +2928,6 @@ int Server::run() throw()
 				assert(users.find(fd) != users.end());
 				
 				usr = users.find(fd)->second;
-				
-				/*
-				#ifdef EV_WSA
-				ev.modify(usr->sock->fd(), usr->events);
-				#endif
-				*/
 				
 				#ifdef EV_HAS_ERROR
 				if (fIsSet(events, ev.error))

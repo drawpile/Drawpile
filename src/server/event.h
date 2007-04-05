@@ -117,6 +117,8 @@ protected:
 	#endif // EV_USE_SIGMASK
 	
 	#if defined(EV_WSA)
+	uint32_t last_event;
+	
 	std::map<fd_t, uint32_t> fd_to_ev;
 	std::map<uint32_t, fd_t> ev_to_fd;
 	std::map<fd_t, uint32_t>::iterator ev_iter;

@@ -52,7 +52,9 @@ const uint8_t
 	
 	Exiting = 8,
 	
-	Dead = 9;
+	Dead = 9,
+	
+	Error = 20;
 
 }
 
