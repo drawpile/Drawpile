@@ -344,8 +344,7 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 		return (r == 0);
 }
 
-/** \todo move string-to-address to its own function */
-int Socket::bindTo(const std::string address, const uint16_t port) throw()
+int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket::bindTo([" << address << "], " << port << ")" << std::endl;
@@ -353,38 +352,14 @@ int Socket::bindTo(const std::string address, const uint16_t port) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	#ifdef HAVE_WSA
-	#ifdef IPV6_SUPPORT
-	char straddr[INET6_ADDRSTRLEN+1];
-	#else // IPv4
-	char straddr[14+1];
-	#endif
-	
-	memcpy(straddr, address.c_str(), address.length());
-	
-	int size = sizeof(addr);
-	#ifdef IPV6_SUPPORT
-	WSAStringToAddress(straddr, AF_INET6, 0, reinterpret_cast<sockaddr*>(&addr), &size);
-	#else // IPv4
-	WSAStringToAddress(straddr, AF_INET, 0, reinterpret_cast<sockaddr*>(&addr), &size);
-	#endif
-	
-	#else // POSIX
-	
-	#ifdef IPV6_SUPPORT
-	inet_pton(AF_INET6, address.c_str(), &(addr.sin6_addr));
-	#else // IPv4
-	inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
-	#endif
-	
-	#endif
+	addr = Socket::StringToAddr(address);
 	
 	#ifdef IPV6_SUPPORT
 	addr.sin6_family = AF_INET6;
-	bswap(addr.sin6_port = port);
+	bswap(addr.sin6_port = _port);
 	#else // IPv4
 	addr.sin_family = AF_INET;
-	bswap(addr.sin_port = port);
+	bswap(addr.sin_port = _port);
 	#endif // IPV6_SUPPORT
 	
 	const int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
@@ -809,48 +784,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 
 std::string Socket::address() const throw()
 {
-	// create temporary string array for address
-	#ifdef IPV6_SUPPORT
-	char straddr[INET6_ADDRSTRLEN+1];
-	straddr[INET6_ADDRSTRLEN] = '\0';
-	#else // IPv4
-	char straddr[INET_ADDRSTRLEN+1];
-	straddr[INET_ADDRSTRLEN] = '\0';
-	#endif // IPV6_SUPPORT
-	
-	// convert address to string
-	
-	#ifdef HAVE_WSA
-	
-	#ifdef IPV6_SUPPORT
-	DWORD len = INET6_ADDRSTRLEN;
-	#else // IPv4
-	DWORD len = INET_ADDRSTRLEN;
-	#endif // IPV6_SUPPORT
-	
-	sockaddr sa;
-	memcpy(&sa, &addr, sizeof(addr));
-	WSAAddressToString(&sa, sizeof(addr), 0, straddr, &len);
-	
-	return std::string(straddr);
-	
-	#else // POSIX
-	
-	#ifdef IPV6_SUPPORT
-	inet_ntop(AF_INET6, &addr.sin6_addr, straddr, sizeof(straddr));
-	#else // IPv4
-	inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
-	#endif // IPV6_SUPPORT
-	
-	std::string str(straddr);
-	
-	char buf[7];
-	sprintf(buf, ":%d", port());
-	str.insert(str.length(), buf);
-	
-	return str;
-	
-	#endif
+	return AddrToString(addr);
 }
 
 uint16_t Socket::port() const throw()
@@ -877,4 +811,114 @@ bool Socket::matchAddress(Socket* tsock) throw()
 bool Socket::matchPort(const Socket* tsock) const throw()
 {
 	return (port() == tsock->port());
+}
+
+/* string functions */
+
+#ifdef IPV6_SUPPORT
+//static
+std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
+{
+	char straddr[INET_ADDRSTRLEN+1];
+	straddr[INET_ADDRSTRLEN] = '\0';
+	
+	// convert address to string
+	
+	#ifdef HAVE_WSA
+	
+	DWORD len = INET6_ADDRSTRLEN;
+	
+	sockaddr sa;
+	memcpy(&sa, &raddr, sizeof(raddr));
+	WSAAddressToString(&sa, sizeof(raddr), 0, straddr, &len);
+	
+	return std::string(straddr);
+	
+	#else // POSIX
+	
+	inet_ntop(AF_INET6, &raddr.sin6_addr, straddr, sizeof(straddr));
+	
+	bswap(uint16_t _port = raddr.sin6_port);
+	//std::string str(straddr).insert(str.length(), ":").insert(str.length(), _port);
+	
+	char buf[7];
+	sprintf(buf, ":%d", _port);
+	str.insert(str.length(), buf);
+	
+	return str;
+	#endif
+}
+#endif
+
+//static
+std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
+{
+	char straddr[INET_ADDRSTRLEN+1];
+	straddr[INET_ADDRSTRLEN] = '\0';
+	
+	#ifdef HAVE_WSA
+	
+	DWORD len = INET_ADDRSTRLEN;
+	
+	sockaddr sa;
+	memcpy(&sa, &raddr, sizeof(raddr));
+	WSAAddressToString(&sa, sizeof(raddr), 0, straddr, &len);
+	
+	return std::string(straddr);
+	
+	#else // POSIX
+	
+	inet_ntop(AF_INET, &raddr.sin_addr, straddr, sizeof(straddr));
+	
+	bswap(uint16_t _port = raddr.sin6_port);
+	
+	std::string str(straddr);
+	//std::string str(straddr).insert(str.length(), ":").insert(str.length(), _port);
+	
+	char buf[7];
+	sprintf(buf, ":%d", _port);
+	str.insert(str.length(), buf);
+	
+	return str;
+	#endif
+}
+
+
+#ifdef IPV6_SUPPORT
+//static
+sockaddr_in6 Socket::StringToAddr(const std::string& address) throw()
+{
+	sockaddr_in6 naddr;
+	naddr.sin6_family = AF_INET6;
+	
+	#ifdef HAVE_WSA
+	char straddr[128];
+	memcpy(straddr, address.c_str(), address.length());
+	
+	int size = sizeof(naddr);
+	WSAStringToAddress(straddr, AF_INET6, 0, reinterpret_cast<sockaddr*>(&naddr), &size);
+	#else // POSIX
+	inet_pton(AF_INET6, address.c_str(), &(naddr.sin6_addr));
+	#endif
+	
+	return naddr;
+}
+#endif
+
+sockaddr_in Socket::StringToAddr(const std::string& address) throw()
+{
+	sockaddr_in naddr;
+	naddr.sin_family = AF_INET;
+	
+	#ifdef HAVE_WSA
+	char straddr[128];
+	memcpy(straddr, address.c_str(), address.length());
+	
+	int size = sizeof(naddr);
+	WSAStringToAddress(straddr, AF_INET, 0, reinterpret_cast<sockaddr*>(&naddr), &size);
+	#else // POSIX
+	inet_pton(AF_INET, address.c_str(), &(naddr.sin_addr));
+	#endif
+	
+	return naddr;
 }

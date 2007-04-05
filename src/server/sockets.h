@@ -220,7 +220,7 @@ public:
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise
 	 */
-	int bindTo(const std::string address, const uint16_t port) throw();
+	int bindTo(const std::string& address, const uint16_t port) throw();
 	
 	//! Connect to remote address
 	#ifdef IPV6_SUPPORT
@@ -314,9 +314,14 @@ public:
 	bool matchPort(const Socket* tsock) const throw();
 	
 	#ifdef IPV6_SUPPORT
-	std::string AddrToString(const sockaddr_in6 saddr) const throw();
+	static std::string AddrToString(const sockaddr_in6& raddr) throw();
 	#endif
-	std::string AddrToString(const sockaddr_in saddr) const throw();
+	static std::string AddrToString(const sockaddr_in& raddr) throw();
+	
+	#ifdef IPV6_SUPPORT
+	static sockaddr_in6 StringToAddr(std::string const& address) throw();
+	#endif
+	static sockaddr_in StringToAddr(std::string const& address) throw();
 	
 	/* Operator overloads */
 	
