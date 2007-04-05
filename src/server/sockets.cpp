@@ -73,30 +73,19 @@ fd_t Socket::create() throw()
 {
 	#ifdef WSA_SOCKETS
 	
-	sock = WSASocket(
 	#ifdef IPV6_SUPPORT
-		AF_INET6,
-	#else // No IPv6
-		AF_INET,
-	#endif // IPv6
-		SOCK_STREAM,
-		0,
-		0,
-		0,
-		WSA_FLAG_OVERLAPPED
-	);
+	sock = WSASocket(AF_INET6, SOCK_STREAM, 0, 0, 0, /*WSA_FLAG_OVERLAPPED*/);
+	#else // IPv4
+	sock = WSASocket(AF_INET, SOCK_STREAM, 0, 0, 0, /*WSA_FLAG_OVERLAPPED*/);
+	#endif
 	
 	#else // POSIX
 	
-	sock = socket(
 	#ifdef IPV6_SUPPORT
-		AF_INET6,
-	#else
-		AF_INET,
-	#endif // IPv6
-		SOCK_STREAM,
-		IPPROTO_TCP
-	);
+	sock = socket(AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+	#else // IPv4
+	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	#endif
 	
 	#endif
 	
@@ -129,8 +118,9 @@ fd_t Socket::create() throw()
 		case WSAENOBUFS:
 			std::cerr << "socket: out of buffers" << std::endl;
 			break;
-		#endif // WSA_SOCKETS
-		// TODO: Non-WSA errors
+		#else // POSIX
+		// TODO
+		#endif
 		default:
 			std::cerr << "Socket::create() - unknown error: " << s_error << std::endl;
 			assert(s_error);
@@ -144,9 +134,9 @@ fd_t Socket::create() throw()
 void Socket::close() throw()
 {
 	#if defined(HAVE_XPWSA)
-	DisconnectEx(sock, 0, TF_REUSE_SOCKET, 0);
+	::DisconnectEx(sock, 0, TF_REUSE_SOCKET, 0);
 	#elif defined(WSA_SOCKETS)
-	closesocket(sock);
+	::closesocket(sock);
 	#else // POSIX
 	::close(sock);
 	#endif
@@ -158,23 +148,24 @@ Socket* Socket::accept() throw(std::bad_alloc)
 {
 	assert(sock != INVALID_SOCKET);
 	
+	// temporary address struct
 	#ifdef IPV6_SUPPORT
-	sockaddr_in6 sa; // temporary
+	sockaddr_in6 sa;
 	#else
-	sockaddr_in sa; // temporary
+	sockaddr_in sa;
 	#endif
 	
 	#ifdef WSA_SOCKETS
-	int tmp
+	int addrlen
 	#else
-	socklen_t tmp
+	socklen_t addrlen
 	#endif
 		= sizeof(sa);
 	
 	#ifdef WSA_SOCKETS
-	fd_t n_fd = WSAAccept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp, 0, 0);
+	fd_t n_fd = ::WSAAccept(sock, reinterpret_cast<sockaddr*>(&sa), &addrlen, 0, 0);
 	#else // POSIX
-	fd_t n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &tmp);
+	fd_t n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &addrlen);
 	#endif
 	
 	if (n_fd != INVALID_SOCKET)
@@ -202,13 +193,40 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		assert(s_error != EPROTO);
 		#endif
 		
+		#ifdef LINUX
+		// no idea what these are
+		assert(s_error != ENOSR); // ?
+		assert(s_error != ESOCKTNOSUPPORT); // ?
+		assert(s_error != EPROTONOSUPPORT); // Protocol not supported
+		assert(s_error != ETIMEDOUT); // Timed out
+		assert(s_error != ERESTARTSYS); // ?
+		#endif
+		
 		switch (s_error)
 		{
 		#ifdef WSA_SOCKETS
-		case WSAEWOULDBLOCK:
-			// Would block, or can't complete the request currently.
+		case WSAEINTR: // interrupted
+		case WSAEWOULDBLOCK: // would block
 			break;
-		#endif
+		case WSAEMFILE:
+			std::cerr << "socket: process FD limit reached" << std::endl;
+			break;
+		case WSAENFILE:
+			std::cerr << "socket: system FD limit reached" << std::endl;
+			break;
+		case WSAENOMEM:
+			std::cerr << "socket: out of memory" << std::endl;
+			break;
+		case WSAENOBUFS:
+			std::cerr << "socket: out of network buffers" << std::endl;
+			break;
+		case WSAEPERM:
+			std::cerr << "socket: firewall blocked incoming connection" << std::endl;
+			break;
+		case WSAECONNABORTED:
+			std::cerr << "socket: incoming connection aborted" << std::endl;
+			break;
+		#else // POSIX
 		case EINTR:
 		case EAGAIN:
 			// retry
@@ -231,16 +249,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		case ECONNABORTED:
 			std::cerr << "socket: incoming connection aborted" << std::endl;
 			break;
-		#ifdef LINUX
-		// no idea what these are mostly.
-		case ENOSR:
-		case ESOCKTNOSUPPORT:
-		case EPROTONOSUPPORT:
-		case ETIMEDOUT:
-		case ERESTARTSYS:
-			assert(s_error);
-			break;
-		#endif // LINUX
+		#endif
 		default:
 			std::cerr << "Socket::accept() - unknown error: " << s_error << std::endl;
 			exit(1);
@@ -278,7 +287,7 @@ bool Socket::reuse(const bool x) throw()
 	#ifndef SO_REUSEPORT
 	// Windows (for example) does not have it
 	return (x==true);
-	#else
+	#else // POSIX
 	int val = (x ? 1 : 0);
 	
 	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
@@ -296,8 +305,8 @@ bool Socket::reuse(const bool x) throw()
 		std::cerr << "Socket::reuse() - unknown error: " << s_error << std::endl;
 		exit(1);
 	}
-	else
-		return (r == 0);
+	
+	return (r == 0);
 	#endif
 }
 
@@ -346,39 +355,30 @@ int Socket::bindTo(const std::string address, const uint16_t port) throw()
 	assert(sock != INVALID_SOCKET);
 	
 	#ifdef HAVE_WSA
-	int size = sizeof(addr);
 	#ifdef IPV6_SUPPORT
 	char straddr[INET6_ADDRSTRLEN+1];
-	#else // IPv6
+	#else // IPv4
 	char straddr[14+1];
-	#endif // IPV6_SUPPORT
+	#endif
+	
 	memcpy(straddr, address.c_str(), address.length());
-	WSAStringToAddress(
-		straddr,
-		#ifdef IPV6_SUPPORT
-		AF_INET6,
-		#else // IPv4
-		AF_INET,
-		#endif // IPV6_SUPPORT
-		0,
-		reinterpret_cast<sockaddr*>(&addr),
-		&size
-	);
-	#else // No WSA
-	inet_pton(
-		#ifdef IPV6_SUPPORT
-		AF_INET6,
-		#else // IPv4
-		AF_INET,
-		#endif // IPV6_SUPPORT
-		address.c_str(),
-		#ifdef IPV6_SUPPORT
-		&(addr.sin6_addr)
-		#else // IPv4
-		&(addr.sin_addr)
-		#endif // IPV6_SUPPORT
-	);
-	#endif // HAVE_WSA
+	
+	int size = sizeof(addr);
+	#ifdef IPV6_SUPPORT
+	WSAStringToAddress(straddr, AF_INET6, 0, reinterpret_cast<sockaddr*>(&addr), &size);
+	#else // IPv4
+	WSAStringToAddress(straddr, AF_INET, 0, reinterpret_cast<sockaddr*>(&addr), &size);
+	#endif
+	
+	#else // POSIX
+	
+	#ifdef IPV6_SUPPORT
+	inet_pton(AF_INET6, address.c_str(), &(addr.sin6_addr));
+	#else // IPv4
+	inet_pton(AF_INET, address.c_str(), &(addr.sin_addr));
+	#endif
+	
+	#endif
 	
 	#ifdef IPV6_SUPPORT
 	addr.sin6_family = AF_INET6;
@@ -410,6 +410,20 @@ int Socket::bindTo(const std::string address, const uint16_t port) throw()
 		
 		switch (s_error)
 		{
+		#ifdef WSA_SOCKETS
+		case WSAEADDRINUSE:
+			std::cerr << "socket: address already in use" << std::endl;
+			break;
+		case WSAEADDRNOTAVAIL:
+			std::cerr << "socket: address not available" << std::endl;
+			break;
+		case WSAENOBUFS:
+			std::cerr << "socket: out of network buffers" << std::endl;
+			break;
+		case WSAEACCES:
+			std::cerr << "socket: can't bind to super-user sockets" << std::endl;
+			break;
+		#else // POSIX
 		case EADDRINUSE:
 			std::cerr << "socket: address already in use" << std::endl;
 			break;
@@ -422,6 +436,7 @@ int Socket::bindTo(const std::string address, const uint16_t port) throw()
 		case EACCES:
 			std::cerr << "socket: can't bind to super-user sockets" << std::endl;
 			break;
+		#endif
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Socket::bindTo() - unknown error: " << s_error << std::endl;
@@ -475,6 +490,20 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 		
 		switch (s_error)
 		{
+		#ifdef WSA_SOCKETS
+		case WSAEWOULDBLOCK:
+			return 2;
+		case WSAEINPROGRESS:
+			break;
+		case WSAEACCES:
+		case WSAEPERM:
+			// firewall rule blocked operation
+			break;
+		case WSAECONNREFUSED:
+		case WSAETIMEDOUT:
+		case WSAENETUNREACH:
+			break;
+		#else // POSIX
 		case EINPROGRESS:
 			break;
 		case EACCES:
@@ -482,17 +511,13 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 			std::cerr << "socket: firewall denied connection" << std::endl;
 			break;
 		case ECONNREFUSED:
-			std::cerr << "socket: connection refused" << std::endl;
-			break;
 		case ETIMEDOUT:
-			std::cerr << "socket: connection timed-out" << std::endl;
-			break;
 		case ENETUNREACH:
-			std::cerr << "socket: network unreachable" << std::endl;
 			break;
 		case EAGAIN:
 			// retry
 			return 2;
+		#endif
 		}
 	}
 	
@@ -545,7 +570,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 	wbuf.buf = buffer;
 	wbuf.len = len;
 	DWORD sb;
-	const int r = WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
+	const int r = ::WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
 	#else // POSIX
 	const int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
 	#endif
@@ -553,9 +578,9 @@ int Socket::send(char* buffer, const size_t len) throw()
 	if (r == SOCKET_ERROR)
 	{
 		#ifdef WSA_SOCKETS
-		s_error = WSAGetLastError();
+		s_error = ::WSAGetLastError();
 		#else // POSIX
-		s_error = errno;
+		s_error = ::errno;
 		#endif
 		
 		// programming errors
@@ -582,10 +607,16 @@ int Socket::send(char* buffer, const size_t len) throw()
 		case WSA_IO_PENDING: // Operation will be completed later
 		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
 			break;
-		case WSAEWOULDBLOCK:
-			// Would block, or can't complete the request currently.
+		case WSAEINTR: // iterrupted
+		case WSAEWOULDBLOCK: // would block
 			break;
-		#endif // WSA_SOCKETS
+		case WSAEPIPE: // pipe broken
+		case WSAECONNRESET: // connection reset
+			break;
+		case WSAENOMEM: // out of memory
+		case WSAENOBUFS: // out of network buffers
+			break;
+		#else // POSIX
 		case EAGAIN:
 		case EINTR:
 			break;
@@ -593,11 +624,9 @@ int Socket::send(char* buffer, const size_t len) throw()
 		case ECONNRESET:
 			break;
 		case ENOMEM:
-			std::cerr << "socket: out of memory" << std::endl;
-			break;
 		case ENOBUFS:
-			std::cerr << "socket: out of network buffers" << std::endl;
 			break;
+		#endif
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Socket::send() - unknown error: " << s_error << std::endl;
@@ -679,13 +708,18 @@ int Socket::recv(char* buffer, const size_t len) throw()
 		case WSAEWOULDBLOCK:
 			// Would block, or can't complete the request currently.
 			break;
-		#endif // WSA_SOCKETS
+		case WSAECONNRESET:
+		case WSAECONNREFUSED:
+			break;
+		case WSAENOMEM:
+			break;
+		#else // POSIX
 		case ECONNRESET:
 		case ECONNREFUSED:
 			break;
 		case ENOMEM:
-			std::cerr << "socket: out of memory" << std::endl;
 			break;
+		#endif
 		default:
 			#ifndef NDEBUG
 			std::cerr << "Socket::recv() - unknown error: " << s_error << std::endl;
@@ -744,12 +778,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 			// retry
 			break;
 		case EPIPE:
-			// broken pipe
-			break;
 		case EIO: // should be handled by the caller
-			#ifndef NDEBUG
-			std::cerr << "Socket::sendfile() - error while reading file." << std::endl;
-			#endif
 			break;
 		default:
 			std::cerr << "Socket::sendfile() - unknown error: " << s_error << std::endl;
@@ -775,6 +804,7 @@ std::string Socket::address() const throw()
 	// convert address to string
 	
 	#ifdef HAVE_WSA
+	
 	#ifdef IPV6_SUPPORT
 	DWORD len = INET6_ADDRSTRLEN;
 	#else // IPv4
@@ -789,17 +819,11 @@ std::string Socket::address() const throw()
 	
 	#else // POSIX
 	
-	inet_ntop(
 	#ifdef IPV6_SUPPORT
-		AF_INET6,
-		&addr.sin6_addr,
+	inet_ntop(AF_INET6, &addr.sin6_addr, straddr, sizeof(straddr));
 	#else // IPv4
-		AF_INET,
-		&addr.sin_addr,
+	inet_ntop(AF_INET, &addr.sin_addr, straddr, sizeof(straddr));
 	#endif // IPV6_SUPPORT
-		straddr,
-		sizeof(straddr)
-	);
 	
 	std::string str(straddr);
 	
@@ -809,17 +833,16 @@ std::string Socket::address() const throw()
 	
 	return str;
 	
-	#endif // WSA/POSIX
+	#endif
 }
 
 uint16_t Socket::port() const throw()
 {
-	uint16_t _port = 
 	#ifdef IPV6_SUPPORT
-		addr.sin6_port;
+	uint16_t _port =  addr.sin6_port;
 	#else // IPv4
-		addr.sin_port;
-	#endif // IPV6_SUPPORT
+	uint16_t _port =  addr.sin_port;
+	#endif
 	
 	return bswap(_port);
 }

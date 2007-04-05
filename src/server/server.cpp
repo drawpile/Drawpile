@@ -104,7 +104,9 @@ Server::Server() throw()
 	bufferRepositions(0),
 	bufferResets(0),
 	discardedCompressions(0),
-	smallestCompression(std::numeric_limits<size_t>::max())
+	smallestCompression(std::numeric_limits<size_t>::max()),
+	deflateSaved(0),
+	linkingSaved(0)
 	#endif
 {
 	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
@@ -221,7 +223,7 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 }
 
 inline
-message_ref Server::msgSessionInfo(Session*& session) const throw(std::bad_alloc)
+message_ref Server::msgSessionInfo(Session* session) const throw(std::bad_alloc)
 {
 	assert(session != 0);
 	
@@ -262,7 +264,7 @@ message_ref Server::msgAck(const uint8_t session, const uint8_t type) const thro
 }
 
 inline
-message_ref Server::msgSyncWait(Session*& session) const throw(std::bad_alloc)
+message_ref Server::msgSyncWait(Session* session) const throw(std::bad_alloc)
 {
 	assert(session != 0);
 	
@@ -490,20 +492,27 @@ void Server::uWrite(User*& usr) throw()
 		usr->output.canRead()
 	);
 	
-	if (sb == SOCKET_ERROR)
+	switch (sb)
 	{
+	case SOCKET_ERROR:
 		switch (usr->sock->getError())
 		{
-		#ifdef WSA_SOCKET
+		#ifdef WSA_SOCKETS
 		case WSA_IO_PENDING:
 		case WSAEWOULDBLOCK:
-		#endif // WSA_SOCKET
+		case WSAEINTR:
+		case WSAENOBUFS:
+		case WSAENOMEM:
+			// retry
+			break;
+		#else // POSIX
 		case EINTR:
 		case EAGAIN:
 		case ENOBUFS:
 		case ENOMEM:
 			// retry
 			break;
+		#endif
 		default:
 			std::cerr << "Error occured while sending to user #"
 				<< static_cast<int>(usr->id) << std::endl;
@@ -511,18 +520,12 @@ void Server::uWrite(User*& usr) throw()
 			uRemove(usr, protocol::user_event::BrokenPipe);
 			break;
 		}
-		
-		return;
-	}
-	else if (sb == 0)
-	{
+		break;
+	case 0:
 		// no data was sent, and no error occured.
-	}
-	else
-	{
+		break;
+	default:
 		usr->output.read(sb);
-		
-		// just to ensure we don't need to do anything for it.
 		
 		if (usr->output.isEmpty())
 		{
@@ -537,6 +540,7 @@ void Server::uWrite(User*& usr) throw()
 				ev.modify(usr->sock->fd(), usr->events);
 			}
 		}
+		break;
 	}
 }
 
@@ -577,8 +581,9 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		usr->input.canWrite()
 	);
 	
-	if (rb == SOCKET_ERROR)
+	switch (rb)
 	{
+	case SOCKET_ERROR:
 		switch (usr->sock->getError())
 		{
 		#ifdef WSA_SOCKETS
@@ -591,26 +596,23 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 			std::cerr << "# Operation would block / interrupted" << std::endl;
 			#endif
-			return;
+			break;
 		default:
 			std::cerr << "Unrecoverable error occured while reading from user #"
 				<< static_cast<int>(usr->id) << std::endl;
 			
 			uRemove(usr, protocol::user_event::BrokenPipe);
-			return;
+			break;
 		}
-	}
-	else if (rb == 0)
-	{
+		break;
+	case 0:
 		std::cerr << "User disconnected #" << static_cast<int>(usr->id) << std::endl;
 		uRemove(usr, protocol::user_event::Disconnect);
-		return;
-	}
-	else
-	{
+		break;
+	default:
 		usr->input.write(rb);
-		
 		uProcessData(usr);
+		break;
 	}
 }
 
@@ -810,10 +812,15 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		#endif // CHECK_VIOLATIONS
 		
-		if (usr->inMsg->type == protocol::type::StrokeInfo)
+		switch (usr->inMsg->type)
+		{
+		case protocol::type::StrokeInfo:
 			++usr->strokes;
-		else if (usr->inMsg->type == protocol::type::StrokeEnd)
+			break;
+		case protocol::type::StrokeEnd:
 			usr->strokes = 0;
+			break;
+		}
 		
 		// no session selected
 		if (usr->session == 0)
@@ -1771,7 +1778,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			sessions[session->id] = session;
 			
 			std::cout << "Session #" << static_cast<int>(session->id) << " created!" << std::endl
-				<< "Dimensions: " << session->width << " x " << session->height << std::endl
+				<< "Dimensions: " << static_cast<int>(session->width) << " x " << static_cast<int>(session->height) << std::endl
 				<< "User limit: " << static_cast<int>(session->limit)
 				<< ", default mode: " << static_cast<int>(session->mode)
 				<< ", level: " << static_cast<int>(session->level) << std::endl
@@ -2315,6 +2322,7 @@ void Server::SyncSession(Session* session) throw()
 	Propagate(session, msgAck(session->id, protocol::type::SyncWait));
 	
 	std::vector<message_ref> msg_queue;
+	msg_queue.reserve(4);
 	// build msg_queue of the old users
 	User *usr_ptr;
 	for (session_usr_iterator old(session->users.begin()); old != session->users.end(); ++old)
@@ -2894,19 +2902,15 @@ int Server::run() throw()
 	{
 		ec = ev.wait();
 		current_time = time(0);
-		if (ec == 0)
+		switch (ec)
 		{
-			// continue, no fds or time exceeded.
-			//continue;
-		}
-		else if (ec == -1)
-		{
+		case 0:
+			break; // Nothing triggered
+		case -1:
 			std::cerr << "Error in event system." << std::endl;
 			// TODO (error)
 			return -1;
-		}
-		else
-		{
+		default:
 			while (ev.getEvent(fd, events))
 			{
 				#ifndef EV_WSA // non-WSA
@@ -2954,6 +2958,7 @@ int Server::run() throw()
 					if (usr == 0) continue;
 				}
 			}
+			break;
 		}
 		
 		// check timer

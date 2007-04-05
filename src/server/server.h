@@ -144,7 +144,11 @@ protected:
 		// number of times compressed data was discarded
 		discardedCompressions,
 		// smallest data set size with beneficial compression ratio
-		smallestCompression;
+		smallestCompression,
+		// bandwidth saved by deflate
+		deflateSaved,
+		// bandwidth saved by linking
+		linkingSaved;
 	#endif
 	
 	/* functions */
@@ -191,10 +195,10 @@ protected:
 	message_ref msgAck(const uint8_t session, const uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSyncWait(Session*& session) const throw(std::bad_alloc);
+	message_ref msgSyncWait(Session* session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSessionInfo(Session*& session) const throw(std::bad_alloc);
+	message_ref msgSessionInfo(Session* session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
