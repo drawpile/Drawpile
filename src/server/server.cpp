@@ -1680,24 +1680,17 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				return;
 			}
 			
-			Session *session(new Session);
-			session->id = session_id;
-			session->level = usr->level; // inherit user's feature level
-			session->limit = msg->aux_data; // user limit
-			session->mode = msg->aux_data2; // user mode
-			
-			if (session->limit < 2)
+			if (msg->aux_data < 2)
 			{
 				#ifndef NDEBUG
 				std::cerr << "Attempted to create single user session." << std::endl;
 				#endif
 				
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::InvalidData));
-				delete session;
 				return;
 			}
 			
-			const size_t crop = sizeof(session->width) + sizeof(session->height);
+			const size_t crop = sizeof(uint16_t)*2;
 			if (msg->length < crop)
 			{
 				#ifndef NDEBUG
@@ -1705,57 +1698,73 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				#endif
 				
 				uRemove(usr, protocol::user_event::Violation);
-				delete session;
 				return;
 			}
 			
-			memcpy_t(session->width, msg->data);
-			memcpy_t(session->height, msg->data+sizeof(session->width));
+			// temporaries
+			uint16_t w,h;
 			
-			bswap(session->width);
-			bswap(session->height);
+			memcpy_t(w, msg->data);
+			memcpy_t(h, msg->data+sizeof(uint16_t));
 			
-			if (session->width < min_dimension or session->height < min_dimension)
+			bswap(w);
+			bswap(h);
+			
+			if (w < min_dimension or h < min_dimension)
 			{
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::TooSmall));
-				delete session;
 				return;
 			}
 			
+			
+			uint8_t title_len;
+			char* title_tmp;
 			if (msg->length < crop)
 			{
 				std::cerr << "Invalid data size in instruction: 'Create'." << std::endl;
 				uSendMsg(usr, msgError(protocol::Global, protocol::error::InvalidData));
-				delete session;
 				return;
 			}
 			else if (msg->length != crop)
 			{
-				session->len = (msg->length - crop);
-				session->title = new char[session->len];
-				memcpy(session->title, msg->data+crop, session->len);
+				title_len = (msg->length - crop);
+				title_tmp = msg->data;
+				memmove(title_tmp, title_tmp+crop, title_len);
+				title_tmp[title_len] = '\0';
 			}
 			else
 			{
-				session->len = 0;
+				title_len = 0;
+				title_tmp = 0;
 				#ifndef NDEBUG
 				std::cout << "No title set for session." << std::endl;
 				#endif
 			}
 			
 			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
-				and !validateSessionTitle(session))
+				and !validateSessionTitle(title_tmp, title_len))
 			{
 				#ifndef NDEBUG
 				std::cerr << "Session title not unique." << std::endl;
 				#endif
 				
 				uSendMsg(usr, msgError(msg->session_id, protocol::error::NotUnique));
-				delete session;
 				return;
 			}
+			else
+				msg->data = 0; // prevent from being deleted
 			
-			session->owner = usr->id;
+			Session *session = new Session(
+				session_id, // identifier
+				msg->aux_data2, // mode
+				msg->aux_data, // user limit
+				usr->id, // owner
+				w, // width
+				h, // height
+				usr->level, // inherit user's feature level
+				title_len,
+				title_tmp
+			);
 			
 			sessions[session->id] = session;
 			
@@ -1802,8 +1811,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			// destruct
-			delete session;
-			sessions.erase(si->first);
+			sRemove(session);
 		}
 		break;
 	case protocol::admin::command::Alter:
@@ -2470,12 +2478,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	if (session->users.empty())
 	{
 		if (session->SelfDestruct)
-		{
-			freeSessionID(session->id);
-			sessions.erase(session->id);
-			delete session;
-			session = 0;
-		}
+			sRemove(session);
 	}
 	else
 	{
@@ -2740,6 +2743,14 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	}
 }
 
+inline
+void Server::sRemove(Session*& session) throw()
+{
+	freeSessionID(session->id);
+	sessions.erase(session->id);
+	session = 0;
+}
+
 bool Server::init() throw(std::bad_alloc)
 {
 	assert(state == server::state::None);
@@ -2840,23 +2851,17 @@ bool Server::validateUserName(User* usr) const throw()
 }
 
 inline
-bool Server::validateSessionTitle(Session* session) const throw()
+bool Server::validateSessionTitle(const char* name, const uint8_t len) const throw()
 {
 	assert(session != 0);
 	
-	// Session title is always unique if name enforcing is not enabled.
-	if (!fIsSet(requirements, protocol::requirements::EnforceUnique))
-		return true;
-	
 	// Session title is never unique if it's an empty string.
-	if (session->len == 0) return false;
+	if (len == 0) return false;
 	
 	for (sessionmap_const_iterator si(sessions.begin()); si != sessions.end(); ++si)
 	{
-		if (si->second == session) continue; // skip self
-		
-		if (session->len == si->second->len
-			and (memcmp(session->title, si->second->title, session->len) == 0))
+		if (len == si->second->len
+			and (memcmp(name, si->second->title, len) == 0))
 		{
 			return false;
 		}

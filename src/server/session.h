@@ -63,7 +63,7 @@ struct LayerData
 struct Session
 	//: MemoryStack<Session>
 {
-	Session(const uint8_t _id=protocol::null_user) throw()
+	Session(const uint8_t _id=protocol::Global) throw()
 		: id(_id),
 		len(0),
 		title(0),
@@ -75,6 +75,28 @@ struct Session
 		width(0),
 		height(0),
 		level(0),
+		SelfDestruct(true),
+		syncCounter(0),
+		locked(false)
+	{
+		#ifndef NDEBUG
+		std::cout << "Session::Session()" << std::endl;
+		#endif
+	}
+	
+	Session(const uint8_t _id=protocol::Global, uint8_t _mode, uint8_t _limit, uint8_t _owner,
+		uint8_t _width, uint8_t _height, uint8_t _level, uint8_t title_len, char* _title) throw()
+		: id(_id),
+		len(title_len),
+		title(_title),
+		pw_len(0),
+		password(0),
+		mode(_mode),
+		limit(_limit),
+		owner(_owner),
+		width(_width),
+		height(_height),
+		level(_level),
 		SelfDestruct(true),
 		syncCounter(0),
 		locked(false)

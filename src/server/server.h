@@ -270,6 +270,10 @@ protected:
 	inline
 	void uRemove(User*& usr, const uint8_t reason) throw();
 	
+	// Delete session and do some cleaning
+	inline
+	void sRemove(Session*& session) throw();
+	
 	// Tests if session exists
 	inline
 	bool sessionExists(const uint8_t session) const throw();
@@ -278,12 +282,13 @@ protected:
 	inline
 	bool uInSession(User* usr, const uint8_t session) const throw();
 	
-	// check name/title uniqueness
+	// check user name uniqueness
 	inline
 	bool validateUserName(User* usr) const throw();
 	
+	// check session title uniqueness
 	inline
-	bool validateSessionTitle(Session* session) const throw();
+	bool validateSessionTitle(const char* name, const uint8_t len) const throw();
 	
 	// Reprocesses deflated data stream
 	inline
