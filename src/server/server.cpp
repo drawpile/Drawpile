@@ -524,18 +524,37 @@ void Server::uWrite(User*& usr) throw()
 		// no data was sent, and no error occured.
 		break;
 	default:
+		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+		std::cout << "Sent " << sb << " bytes to user #" << static_cast<int>(usr->id) << std::endl;
+		#endif
+		
 		usr->output.read(sb);
 		
 		if (usr->output.isEmpty())
 		{
+			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+			std::cout << "Output buffer empty, rewinding." << std::endl;
+			#endif
+			
 			// rewind buffer
 			usr->output.rewind();
 			
 			// remove fd from write list if no buffers left.
 			if (usr->queue.empty())
 			{
+				#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+				std::cout << "Output queue empty, clearing event flag." << std::endl;
+				#endif
+				
 				fClr(usr->events, ev.write);
 				ev.modify(usr->sock->fd(), usr->events);
+			}
+			else
+			{
+				#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+				std::cout << "Still have " << usr->queue.size() << " message/s in queue." << std::endl
+					<< "... first is of type: " << static_cast<int>(usr->queue.front()->type) << std::endl;
+				#endif
 			}
 		}
 		break;

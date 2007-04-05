@@ -189,7 +189,22 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 			w_ev[i] = WSACreateEvent();
 			if (!(w_ev[i])) return false;
 			
-			WSAEventSelect(fd, w_ev[i], ev);
+			const int r = WSAEventSelect(fd, w_ev[i], ev);
+			
+			if (r == SOCKET_ERROR)
+			{
+				_error = WSAGetLastError();
+				assert(_error != WSAENOTSOCK);
+				assert(_error != WSAEINVAL);
+				assert(_error != WSANOTINITIALISED);
+				
+				#ifndef NDEBUG
+				if (_error == WSAENETDOWN)
+					std::cerr << "- Network down." << std::endl;
+				#endif
+				
+				return false;
+			}
 			
 			// update ev_to_fd and fd_to_ev maps
 			fd_to_ev[fd] = i;
@@ -240,10 +255,24 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	
 	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
-	//if (fi == fd_to_ev.end())
-	//	return false;
 	
-	WSAEventSelect(fd, w_ev[fi->second], ev);
+	const int r = WSAEventSelect(fd, w_ev[fi->second], ev);
+	
+	if (r == SOCKET_ERROR)
+	{
+		_error = WSAGetLastError();
+		
+		assert(_error != WSAENOTSOCK);
+		assert(_error != WSAEINVAL);
+		assert(_error != WSANOTINITIALISED);
+		
+		#ifndef NDEBUG
+		if (_error == WSAENETDOWN)
+			std::cerr << "- Network down." << std::endl;
+		#endif
+		
+		return false;
+	}
 	
 	return 0;
 }
