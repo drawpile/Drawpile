@@ -103,7 +103,7 @@ protected:
 	#if defined(EV_PSELECT) or defined(EV_SELECT)
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
-	std::map<fd_t, uint32_t> fd_list;
+	std::map<fd_t, uint32_t> fd_list; // events set for FD
 	std::map<fd_t, uint32_t>::iterator fd_iter;
 	
 	#ifndef WIN32

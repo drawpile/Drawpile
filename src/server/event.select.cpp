@@ -132,7 +132,11 @@ int Event::wait() throw()
 	#endif // EV_PSELECT
 		);
 	
+	#ifdef WIN32
+	_error = WSAGetLastError();
+	#else
 	_error = errno;
+	#endif
 	
 	#if defined(EV_PSELECT)
 	// restore mask
@@ -143,22 +147,21 @@ int Event::wait() throw()
 	{
 		switch (_error)
 		{
-		case EINTR:
-			#ifndef NDEBUG
-			std::cerr << "Interrupted by signal." << std::endl;
-			#endif
-			nfds = 0;
-			break;
 		#ifdef WIN32
 		#ifndef NDEBUG
 		case WSANOTINITIALISED:
-			assert(!(error == WSANOTINITIALISED));
+			assert(!(_error == WSANOTINITIALISED));
 			break;
 		case WSAENOTSOCK:
-			assert(!(error == WSAENOTSOCK));
+			std::cerr << "Not a socket" << std::endl;
+			assert(!(_error == WSAENOTSOCK));
+			break;
+		case WSAEINVAL:
+			assert(!(_error == WSAEINVAL));
 			break;
 		#endif // NDEBUG
 		case WSAEFAULT:
+			assert(!(_error == WSAEFAULT));
 			#ifndef NDEBUG
 			std::cerr << "Horribles" << std::endl;
 			#endif
@@ -168,17 +171,30 @@ int Event::wait() throw()
 			std::cerr << "The network subsystem has failed." << std::endl;
 			#endif
 			break;
-		#endif // WIN32
+		case WSAEINTR:
+			#ifndef NDEBUG
+			std::cerr << "Interrupted." << std::endl;
+			#endif
+			nfds = 0;
+			break;
+		#else // POSIX
 		#ifndef NDEBUG
 		case EBADF:
-			assert(!(error == EBADF));
+			assert(!(_error == EBADF));
 			break;
 		case EINVAL:
-			assert(!(error == EINVAL));
+			assert(!(_error == EINVAL));
 			break;
 		#endif // NDEBUG
+		case EINTR:
+			#ifndef NDEBUG
+			std::cerr << "Interrupted by signal." << std::endl;
+			#endif
+			nfds = 0;
+			break;
+		#endif
 		default:
-			std::cerr << "Unknown error: " << _error << std::endl;
+			std::cerr << "Event(select).wait() Unknown error: " << _error << std::endl;
 			break;
 		}
 	}
@@ -324,9 +340,17 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	if (iter->second == 0)
 	{
 		fd_iter = iter;
-		--fd_iter; // make sure the iterator doesn't get invalidated
-		fd_list.erase(iter);
-		++fd_iter; // increment to the next
+		if (fd_iter != fd_list.begin())
+		{
+			--fd_iter; // make sure the iterator doesn't get invalidated
+			fd_list.erase(iter);
+			++fd_iter; // increment to the next
+		}
+		else
+		{
+			fd_list.erase(iter);
+			fd_iter = fd_list.end();
+		}
 	}
 	
 	return true;
