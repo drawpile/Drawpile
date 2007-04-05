@@ -2305,99 +2305,71 @@ void Server::SyncSession(Session* session) throw()
 	User* src(sui->second);
 	
 	// request raster
-	message_ref sync_ref(new protocol::Synchronize);
-	sync_ref->session_id = session->id;
-	uSendMsg(src, sync_ref);
+	message_ref ref(new protocol::Synchronize);
+	ref->session_id = session->id;
+	uSendMsg(src, ref);
 	
 	// Release clients from syncwait...
 	Propagate(session, msgAck(session->id, protocol::type::SyncWait));
 	
-	std::list<User*> newc;
-	// Get new clients
-	while (session->waitingSync.size() != 0)
-	{
-		newc.insert(newc.end(), session->waitingSync.front());
-		session->waitingSync.pop_front();
-	}
-	
 	protocol::SessionSelect *select; // warning from compiler
 	
 	std::vector<message_ref> msg_queue;
-	// build msg_queue
+	// build msg_queue of the old users
 	User *usr_ptr;
 	for (session_usr_iterator old(session->users.begin()); old != session->users.end(); ++old)
 	{
 		// clear syncwait 
 		usr_ptr = old->second;
 		const usr_session_iterator usi(usr_ptr->sessions.find(session->id));
-		if (usi != usr_ptr->sessions.end())
-		{
-			usi->second->syncWait = false;
-		}
+		assert(usi != usr_ptr->sessions.end());
+		usi->second->syncWait = false;
 		
-		// add messages to msg_queue
+		// add join
 		msg_queue.push_back(msgUserEvent(usr_ptr, session, protocol::user_event::Join));
 		if (usr_ptr->session->id == session->id)
 		{
-			select = new protocol::SessionSelect;
-			select->user_id = usr_ptr->id;
-			select->session_id = session->id;
-			msg_queue.push_back(message_ref(select));
+			// add session select
+			ref.reset(new protocol::SessionSelect);
+			ref->user_id = usr_ptr->id;
+			ref->session_id = session->id;
+			msg_queue.push_back(ref);
 			
 			if (usr_ptr->layer != protocol::null_layer)
 			{
-				message_ref layer_ref(new protocol::LayerSelect(usr_ptr->layer));
-				layer_ref->user_id = usr_ptr->id;
-				layer_ref->session_id = session->id;
-				msg_queue.push_back(layer_ref);
+				// add layer select
+				ref.reset(new protocol::LayerSelect(usr_ptr->layer));
+				ref->user_id = usr_ptr->id;
+				ref->session_id = session->id;
+				msg_queue.push_back(ref);
 			}
 		}
 	}
 	
-	userlist_iterator new_i(newc.begin()), new_i2;
-	msgvector_iterator msg_queue_i;
-	// Send messages
-	for (; new_i != newc.end(); ++new_i)
-	{
-		for (msg_queue_i=msg_queue.begin(); msg_queue_i != msg_queue.end(); ++msg_queue_i)
-		{
-			uSendMsg(*new_i, *msg_queue_i);
-		}
-	}
-	
-	message_ref sev_ref;
 	if (session->locked)
-	{
-		sev_ref.reset(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0));
-	}
+		msg_queue.push_back(message_ref(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0)));
 	
-	// put waiting clients to normal data propagation and create raster tunnels.
-	for (new_i = newc.begin(); new_i != newc.end(); ++new_i)
+	userlist_iterator n_user;
+	msgvector_iterator m_iter;
+	
+	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
 	{
-		// Create fake tunnel
-		tunnel.insert( std::make_pair(src->sock->fd(), (*new_i)->sock->fd()) );
+		// Send messages
+		for (m_iter=msg_queue.begin(); m_iter != msg_queue.end(); ++m_iter)
+			uSendMsg(*n_user, *m_iter);
+		
+		// Create fake tunnel so the user can receive raster data
+		tunnel.insert( std::make_pair(src->sock->fd(), (*n_user)->sock->fd()) );
 		
 		// add user to normal data propagation.
-		session->users[(*new_i)->id] = (*new_i);
-		
-		// Tell other syncWait users of this user..
-		if (newc.size() > 1)
-		{
-			for (new_i2 = newc.begin(); new_i2 != newc.end(); ++new_i2)
-			{
-				if (new_i2 == new_i) continue; // skip self
-				uSendMsg(
-					(*new_i),
-					msgUserEvent((*new_i2), session, protocol::user_event::Join)
-				);
-			}
-		}
-		
-		if (session->locked)
-		{
-			uSendMsg(*new_i, sev_ref);
-		}
+		session->users[(*n_user)->id] = *n_user;
 	}
+	
+	// announce the new users
+	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
+		Propagate(session, msgUserEvent(*n_user, session, protocol::user_event::Join), *n_user);
+	
+	session->waitingSync.clear();
 }
 
 inline
