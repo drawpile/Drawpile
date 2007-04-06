@@ -8,8 +8,10 @@
 # athlon    - MMX, 3DNow
 # athlon-xp - MMX, SSE, 3DNow!, Ext 3DNow!
 
-set ( CPU pentium2 )
+#set ( CPU pentium2 )
+set ( CPU pentium3 )
 #set ( CPU i686 )
+#set ( CPU athlon-xp )
 
 # 0 - no optimization
 # 1 - minimal optimization
