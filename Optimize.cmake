@@ -48,6 +48,8 @@ set ( U_SCHED "-fschedule-insns" )
 set ( U_NOTRAP "-fno-trapping-math" )
 set ( U_UNSAFE "-funsafe-math-optimizations" )
 
+set ( PIPE "-pipe " )
+
 ###   Test them   ###
 
 include ( TestCXXAcceptsFlag )
@@ -94,6 +96,12 @@ if ( NOT ACCEPT_PROFILE )
 	set ( PROFILING_FLAGS "" )
 endif ( NOT ACCEPT_PROFILE )
 
+###   TEST -pipe   ###
+
+check_cxx_accepts_flag ( ${PIPE} ACCEPT_PIPE )
+if ( NOT ACCEPT_PIPE )
+	set ( PIPE "" )
+endif ( NOT ACCEPT_PIPE )
 
 ###   TEST unsafe math optimizations   ###
 
@@ -127,5 +135,5 @@ endif ( UNSAFE_MATH )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS_DEBUG "${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS} ${PROFILING_FLAGS}" )
-set ( CMAKE_CXX_FLAGS_RELEASE "${ARCH} ${OPT} ${FASTMATH} ${FOMIT} ${PROFILING_FLAGS} -DNDEBUG" )
+set ( CMAKE_CXX_FLAGS_DEBUG "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS} ${PROFILING_FLAGS}" )
+set ( CMAKE_CXX_FLAGS_RELEASE "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${FOMIT} ${PROFILING_FLAGS} -DNDEBUG" )
