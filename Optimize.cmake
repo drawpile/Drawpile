@@ -42,8 +42,8 @@ set ( OPT "-O${OPTIMIZATION}")
 set ( FOMIT "-fomit-frame-pointer")
 
 # a bit questionable optimizations
-set ( U_MFPMATH "-mfpmath=sse,387" )
-set ( U_MALIGN "-malign-double" )
+set ( U_MFPMATH "-mfpmath=sse,387" ) # does not break anything, only requires SSE to be present
+set ( U_MALIGN "-malign-double" ) # breaks binary compatibility?
 set ( U_SCHED "-fschedule-insns" )
 set ( U_NOTRAP "-fno-trapping-math" )
 set ( U_UNSAFE "-funsafe-math-optimizations" )
@@ -136,5 +136,6 @@ endif ( UNSAFE_MATH )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS_DEBUG "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT}" )
-set ( CMAKE_CXX_FLAGS_RELEASE "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${FOMIT} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} -DNDEBUG" )
+set ( CMAKE_CXX_FLAGS "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT}" )
+set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
+set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${FOMIT} -DNDEBUG" )

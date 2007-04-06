@@ -214,11 +214,18 @@ test_big_endian ( IS_BIG_ENDIAN )
 
 ### Output config.h ###
 
-export_library_dependencies( cmake.depend )
+#export_library_dependencies( cmake.depend )
 
 configure_file ( config.h.cmake config.h )
 add_definitions ( -DHAVE_CONFIG_H )
 
 ### subdirs ###
+
+if ( DEBUG )
+	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+else ( DEBUG )
+	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_RELEASE}")
+endif ( DEBUG)
+
 
 add_subdirectory( src/ )
