@@ -48,6 +48,7 @@ set ( U_SCHED "-fschedule-insns" )
 set ( U_NOTRAP "-fno-trapping-math" )
 set ( U_UNSAFE "-funsafe-math-optimizations" )
 
+# only speeds up compilation
 set ( PIPE "-pipe " )
 
 ###   Test them   ###
@@ -135,5 +136,5 @@ endif ( UNSAFE_MATH )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS_DEBUG "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS} ${PROFILING_FLAGS}" )
-set ( CMAKE_CXX_FLAGS_RELEASE "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${FOMIT} ${PROFILING_FLAGS} -DNDEBUG" )
+set ( CMAKE_CXX_FLAGS_DEBUG "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${DEBUG_FLAGS} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT}" )
+set ( CMAKE_CXX_FLAGS_RELEASE "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${FOMIT} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} -DNDEBUG" )
