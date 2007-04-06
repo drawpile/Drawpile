@@ -29,7 +29,7 @@
 #ifndef Shared_Templates_INCLUDED
 #define Shared_Templates_INCLUDED
 
-#include "../../config.h"
+#include "../config.h"
 
 #include <memory> // memcpy()
 #include <stdint.h> // [u]int#_t

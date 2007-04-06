@@ -22,7 +22,7 @@
 #include <QImage>
 #include <memory>
 
-#include "../../config.h"
+#include "../config.h"
 
 #include "network.h"
 #include "hoststate.h"

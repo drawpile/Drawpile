@@ -24,7 +24,7 @@
 
 #include "colortriangle.h"
 
-#include "../../config.h"
+#include "../config.h"
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets {

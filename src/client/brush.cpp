@@ -23,7 +23,7 @@
 #include <cmath>
 #include "point.h"
 #include "brush.h"
-#include "../../config.h"
+#include "../config.h"
 
 namespace drawingboard {
 

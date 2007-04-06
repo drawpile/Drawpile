@@ -15,12 +15,12 @@
 #ifndef CircularBuffer_INCLUDED
 #define CircularBuffer_INCLUDED
 
-#include "../../config.h"
+#include "../config.h"
 
 #include <cstddef> // size_t?
 #include <cassert>
 
-#include "../shared/memstack.h"
+//#include "../shared/memstack.h"
 
 //! Circular buffer.
 struct Buffer

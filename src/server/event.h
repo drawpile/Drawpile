@@ -29,7 +29,7 @@
 #ifndef EVENT_H_INCLUDED
 #define EVENT_H_INCLUDED
 
-#include "../../config.h"
+#include "../config.h"
 
 #include <stdint.h>
 

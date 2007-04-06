@@ -216,7 +216,7 @@ test_big_endian ( IS_BIG_ENDIAN )
 
 #export_library_dependencies( cmake.depend )
 
-configure_file ( config.h.cmake config.h )
+configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
 
 ### subdirs ###

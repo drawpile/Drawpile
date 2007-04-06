@@ -29,7 +29,7 @@
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
-#include "../../config.h"
+#include "../config.h"
 
 #include "../shared/templates.h"
 
