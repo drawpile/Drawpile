@@ -2,7 +2,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,10 +49,7 @@ void EditorView::setBoard(drawingboard::Board *board)
 void EditorView::setOutline(bool enable)
 {
 	enableoutline_ = enable;
-	if(enable)
-		viewport()->setMouseTracking(true);
-	else
-		viewport()->setMouseTracking(false);
+	viewport()->setMouseTracking(enable);
 }
 
 /**
@@ -225,16 +222,23 @@ bool EditorView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 		const QPoint point = mapToScene(tabev->pos()).toPoint();
+
 		if(point != prevpoint_) {
 			if(pendown_) {
-				emit penMove( drawingboard::Point(point, tabev->pressure()) );
-				if(enableoutline_ && showoutline_) {
-					// Update previous location. This is needed if brush
-					// diameter has changed.
-					QList<QRectF> rect;
-					rect.append(QRectF(prevpoint_.x() - outlinesize_,
-								prevpoint_.y() - outlinesize_, dia_, dia_));
-					updateScene(rect);
+				if(tabev->pressure()==0) {
+					// Missed a release event
+					pendown_ = NOTDOWN;
+					emit penUp();
+				} else {
+					emit penMove( drawingboard::Point(point, tabev->pressure()) );
+					if(enableoutline_ && showoutline_) {
+						// Update previous location. This is needed if brush
+						// diameter has changed.
+						QList<QRectF> rect;
+						rect.append(QRectF(prevpoint_.x() - outlinesize_,
+									prevpoint_.y() - outlinesize_, dia_, dia_));
+						updateScene(rect);
+					}
 				}
 			} else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
@@ -244,8 +248,8 @@ bool EditorView::viewportEvent(QEvent *event)
 							point.y() - outlinesize_, dia_, dia_));
 				updateScene(rect);
 			}
+			prevpoint_ = point;
 		}
-		prevpoint_ = point;
 		return true;
 	} else if(event->type() == QEvent::TabletPress) {
 		//! Stylus touches the tablet surface
@@ -261,10 +265,11 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus lifted
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		prevpoint_ = mapToScene(tabev->pos()).toPoint();
-
-		pendown_ = NOTDOWN;
-		emit penUp();
+		if(pendown_ == TABLETDOWN) {
+			prevpoint_ = mapToScene(tabev->pos()).toPoint();
+			pendown_ = NOTDOWN;
+			emit penUp();
+		}
 		return true;
 	}
 	return QAbstractScrollArea::viewportEvent(event);

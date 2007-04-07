@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2007 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,6 +81,7 @@ class EditorView : public QGraphicsView
 		void drawForeground(QPainter *painter, const QRectF& rect);
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dropEvent(QDropEvent *event);
+
 	private:
 		void startDrag(int x, int y);
 		void moveDrag(int x, int y);
