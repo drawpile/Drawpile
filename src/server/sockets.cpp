@@ -98,11 +98,19 @@ fd_t Socket::create() throw()
 		#endif
 		
 		// programming errors
+		#ifdef WIN32
 		assert(s_error != WSAEAFNOSUPPORT);
 		assert(s_error != WSAEPROTONOSUPPORT);
 		assert(s_error != WSAEPROTOTYPE);
 		assert(s_error != WSAESOCKTNOSUPPORT);
 		assert(s_error != WSAEINVAL);
+		#else // POSIX
+		assert(s_error != EAFNOSUPPORT);
+		assert(s_error != EPROTONOSUPPORT);
+		assert(s_error != EPROTOTYPE);
+		assert(s_error != ESOCKTNOSUPPORT);
+		assert(s_error != EINVAL);
+		#endif
 		
 		switch (s_error)
 		{
