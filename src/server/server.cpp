@@ -2341,6 +2341,10 @@ void Server::SyncSession(Session* session) throw()
 	
 	std::vector<message_ref> msg_queue;
 	msg_queue.reserve(4);
+	
+	if (session->locked)
+		msg_queue.push_back(message_ref(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0)));
+	
 	// build msg_queue of the old users
 	User *usr_ptr;
 	for (session_usr_iterator old(session->users.begin()); old != session->users.end(); ++old)
@@ -2372,12 +2376,13 @@ void Server::SyncSession(Session* session) throw()
 		}
 	}
 	
-	if (session->locked)
-		msg_queue.push_back(message_ref(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0)));
-	
 	userlist_iterator n_user;
-	msgvector_iterator m_iter;
 	
+	// announce the new users
+	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
+		msg_queue.push_back(msgUserEvent(*n_user, session, protocol::user_event::Join), *n_user);
+	
+	msgvector_iterator m_iter;
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
 	{
 		// Send messages
@@ -2390,10 +2395,6 @@ void Server::SyncSession(Session* session) throw()
 		// add user to normal data propagation.
 		session->users[(*n_user)->id] = *n_user;
 	}
-	
-	// announce the new users
-	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
-		Propagate(session, msgUserEvent(*n_user, session, protocol::user_event::Join), *n_user);
 	
 	session->waitingSync.clear();
 }
