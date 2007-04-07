@@ -32,6 +32,10 @@
 	#include <iostream>
 #endif
 
+#ifndef WIN32
+	#include <string>
+#endif
+
 #include <fcntl.h>
 #include <cassert>
 
@@ -584,7 +588,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 		#ifdef WIN32
 		s_error = ::WSAGetLastError();
 		#else // POSIX
-		s_error = ::errno;
+		s_error = errno;
 		#endif
 		
 		// programming errors
@@ -658,8 +662,6 @@ int Socket::recv(char* buffer, const size_t len) throw()
 	assert(sock != INVALID_SOCKET);
 	assert(buffer != 0);
 	assert(len > 0);
-	
-	// WSA causes WSAEFAULT error to occur for some reason
 	
 	#ifdef WIN32
 	WSABUF wbuf;
