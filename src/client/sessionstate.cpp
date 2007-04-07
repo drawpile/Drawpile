@@ -324,12 +324,15 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
 	switch(msg->event) {
 		case protocol::user_event::Join:
-			{
-			bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
-			users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
-			emit userJoined(msg->user_id);
-			break;
+			if(users_.contains(msg->user_id)) {
+				qDebug() << "Got join event for user " << int(msg->user_id)
+					<< "who is already in session!";
+			} else {
+				bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
+				users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
+				emit userJoined(msg->user_id);
 			}
+			break;
 		case protocol::user_event::Leave:
 		case protocol::user_event::Disconnect:
 		case protocol::user_event::BrokenPipe:
@@ -339,11 +342,11 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 			if(users_.contains(msg->user_id)) {
 				emit userLeft(msg->user_id);
 				users_.remove(msg->user_id);
+				host_->usersessions_.remove(msg->user_id);
 			} else {
-				qDebug() << "got logout message for user not in session!";
+				qDebug() << "got logout message for user" << int(msg->user_id)
+				   << "who is not in session!";
 			}
-				
-			host_->usersessions_.remove(msg->user_id);
 			break;
 		default:
 			qDebug() << "unhandled user event " << int(msg->event);
