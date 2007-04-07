@@ -32,9 +32,7 @@
 	#include <iostream>
 #endif
 
-#ifndef WIN32
-	#include <string>
-#endif
+#include <string>
 
 #include <fcntl.h>
 #include <cassert>
