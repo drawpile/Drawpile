@@ -2380,7 +2380,7 @@ void Server::SyncSession(Session* session) throw()
 	
 	// announce the new users
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
-		msg_queue.push_back(msgUserEvent(*n_user, session, protocol::user_event::Join), *n_user);
+		msg_queue.push_back(msgUserEvent(*n_user, session, protocol::user_event::Join));
 	
 	msgvector_iterator m_iter;
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
