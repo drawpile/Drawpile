@@ -736,7 +736,8 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	
 	inet_ntop(AF_INET6, &raddr.sin6_addr, straddr, sizeof(straddr));
 	
-	bswap(uint16_t _port = raddr.sin6_port);
+	uint16_t _port = raddr.sin6_port;
+	bswap(_port);
 	//std::string str(straddr).insert(str.length(), ":").insert(str.length(), _port);
 	
 	char buf[7];
@@ -768,7 +769,8 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	
 	inet_ntop(AF_INET, &raddr.sin_addr, straddr, sizeof(straddr));
 	
-	bswap(uint16_t _port = raddr.sin6_port);
+	uint16_t _port = raddr.sin6_port;
+	bswap(_port);
 	
 	std::string str(straddr);
 	//std::string str(straddr).insert(str.length(), ":").insert(str.length(), _port);
