@@ -48,8 +48,40 @@
 		#error Windows Socket API 2.x required!
 	#endif // WSA
 	
+	#define EWOULDBLOCK WSAEWOULDBLOCK
+	
+	#define EINPROGRESS WSAEINPROGRESS
+	#define ENETDOWN WSAENETDOWN
+	//#define EMFILE WSAEMFILE
+	#define ENOBUFS WSAENOBUFS
+	//#define EINTR WSAEINTR
+	#define EWOULDBLOCK WSAEWOULDBLOCK
+	#define ECONNABORTED WSAECONNABORTED
+	#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
+	#define EADDRINUSE WSAEADDRINUSE
+	//#define EACCES WSAEACCES
+	#define ECONNREFUSED WSAECONNREFUSED
+	#define ETIMEDOUT WSAETIMEDOUT
+	#define ENETUNREACH WSAENETUNREACH
+	#define ECONNRESET WSAECONNRESET
+	#define ESHUTDOWN WSAESHUTDOWN
+	#define EDISCON WSAEDISCON
+	#define ENETRESET WSAENETRESET
+	
+	// winows only
+	//#define WSA_IO_PENDING
+	//#define WSA_OPERATION_ABORTED
+	
+	// programming errors
+	//#define EFAULT WSAEFAULT
+	//#define EBADF WSAEBADF
+	#define ENOTSOCK WSAENOTSOCK
+	#define ENOPROTOOPT WSAENOPROTOOPT
+	
 	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
 	typedef SOCKET fd_t;
+	
+	#define NEED_NET
 #else
 	#include <sys/types.h>
 	#include <sys/socket.h>
@@ -66,10 +98,6 @@
 
 #ifndef EAGAIN
 	#define EAGAIN EWOULDBLOCK
-#endif
-
-#ifdef WIN32
-	#define NEED_NET
 #endif
 
 //! Net automaton

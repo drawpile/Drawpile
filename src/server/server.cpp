@@ -499,19 +499,13 @@ void Server::uWrite(User*& usr) throw()
 		{
 		#ifdef WIN32
 		case WSA_IO_PENDING:
-		case WSAEWOULDBLOCK:
-		case WSAEINTR:
-		case WSAENOBUFS:
-			// retry
-			break;
-		#else // POSIX
+		#endif
 		case EINTR:
 		case EAGAIN:
 		case ENOBUFS:
 		case ENOMEM:
 			// retry
 			break;
-		#endif
 		default:
 			std::cerr << "Error occured while sending to user #"
 				<< static_cast<int>(usr->id) << std::endl;
@@ -603,13 +597,8 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	case SOCKET_ERROR:
 		switch (usr->sock->getError())
 		{
-		#ifdef WIN32
-		case WSAEWOULDBLOCK:
-		case WSAEINTR:
-		#else
 		case EAGAIN:
 		case EINTR:
-		#endif
 			// retry later
 			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 			std::cerr << "# Operation would block / interrupted" << std::endl;
@@ -2935,10 +2924,6 @@ int Server::run() throw()
 		default:
 			while (ev.getEvent(fd, events))
 			{
-				#ifndef EV_WSA // non-WSA
-				--ec;
-				#endif
-				
 				if (fd == lsock.fd())
 				{
 					uAdd( lsock.accept() );

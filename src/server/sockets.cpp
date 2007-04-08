@@ -100,37 +100,29 @@ fd_t Socket::create() throw()
 		#endif
 		
 		// programming errors
-		#ifdef WIN32
-		assert(s_error != WSAEAFNOSUPPORT);
-		assert(s_error != WSAEPROTONOSUPPORT);
-		assert(s_error != WSAEPROTOTYPE);
-		assert(s_error != WSAESOCKTNOSUPPORT);
-		assert(s_error != WSAEINVAL);
-		#else // POSIX
 		assert(s_error != EAFNOSUPPORT);
 		assert(s_error != EPROTONOSUPPORT);
 		assert(s_error != EPROTOTYPE);
 		assert(s_error != ESOCKTNOSUPPORT);
 		assert(s_error != EINVAL);
-		#endif
 		
 		switch (s_error)
 		{
 		#ifdef WIN32
-		case WSAEINPROGRESS:
+		case EINPROGRESS:
 			break;
-		case WSAENETDOWN:
+		case ENETDOWN:
 			std::cerr << "socket: network sub-system failure" << std::endl;
-			break;
-		case WSAEMFILE:
-			std::cerr << "socket: socket limit reached" << std::endl;
-			break;
-		case WSAENOBUFS:
-			std::cerr << "socket: out of buffers" << std::endl;
 			break;
 		#else // POSIX
 		// TODO
 		#endif
+		case EMFILE:
+			std::cerr << "socket: socket limit reached" << std::endl;
+			break;
+		case ENOBUFS:
+			std::cerr << "socket: out of buffers" << std::endl;
+			break;
 		default:
 			std::cerr << "Socket::create() - unknown error: " << s_error << std::endl;
 			assert(s_error);
@@ -194,21 +186,14 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		#endif
 		
 		// programming errors
-		#ifdef WIN32
-		assert(s_error != WSAEBADF);
-		assert(s_error != WSAEINVAL);
-		assert(s_error != WSAEFAULT);
-		assert(s_error != WSAENOTSOCK);
-		assert(s_error != WSAEOPNOTSUPP);
-		#else // POSIX
 		assert(s_error != EBADF);
 		assert(s_error != EINVAL);
 		assert(s_error != EFAULT);
 		assert(s_error != ENOTSOCK);
 		assert(s_error != EOPNOTSUPP);
+		
 		#ifdef EPROTO
 		assert(s_error != EPROTO);
-		#endif
 		#endif
 		
 		#ifdef LINUX
@@ -222,41 +207,27 @@ Socket* Socket::accept() throw(std::bad_alloc)
 		
 		switch (s_error)
 		{
-		#ifdef WIN32
-		case WSAEINTR: // interrupted
-		case WSAEWOULDBLOCK: // would block
-			break;
-		case WSAEMFILE:
-			std::cerr << "socket: process FD limit reached" << std::endl;
-			break;
-		case WSAENOBUFS:
-			std::cerr << "socket: out of network buffers" << std::endl;
-			break;
-		case WSAECONNABORTED:
-			std::cerr << "socket: incoming connection aborted" << std::endl;
-			break;
-		#else // POSIX
-		case EINTR:
-		case EAGAIN:
-			// retry
+		case EINTR: // interrupted
+		case EAGAIN: // would block
 			break;
 		case EMFILE:
 			std::cerr << "socket: process FD limit reached" << std::endl;
 			break;
-		case ENFILE:
-			std::cerr << "socket: system FD limit reached" << std::endl;
+		case ENOBUFS:
+			std::cerr << "socket: out of network buffers" << std::endl;
+			break;
+		case ECONNABORTED:
+			std::cerr << "socket: incoming connection aborted" << std::endl;
 			break;
 		case ENOMEM:
 			std::cerr << "socket: out of memory" << std::endl;
 			break;
-		case ENOBUFS:
-			std::cerr << "socket: out of network buffers" << std::endl;
-			break;
 		case EPERM:
 			std::cerr << "socket: firewall blocked incoming connection" << std::endl;
 			break;
-		case ECONNABORTED:
-			std::cerr << "socket: incoming connection aborted" << std::endl;
+		#ifndef WIN32 // POSIX
+		case ENFILE:
+			std::cerr << "socket: system FD limit reached" << std::endl;
 			break;
 		#endif
 		default:
@@ -335,17 +306,10 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 		s_error = errno;
 		#endif
 		
-		#ifdef WIN32
-		assert(s_error != WSAEBADF);
-		assert(s_error != WSAENOTSOCK);
-		assert(s_error != WSAENOPROTOOPT);
-		assert(s_error != WSAEFAULT);
-		#else // POSIX
 		assert(s_error != EBADF);
 		assert(s_error != ENOTSOCK);
 		assert(s_error != ENOPROTOOPT);
 		assert(s_error != EFAULT);
-		#endif
 		
 		std::cerr << "Socket::linger() - unknown error: " << s_error << std::endl;
 		exit(1);
@@ -384,38 +348,15 @@ int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 		
 		// programming errors
 		
-		#ifdef WIN32
-		assert(s_error != WSAEBADF);
-		assert(s_error != WSAEINVAL);
-		assert(s_error != WSAENOTSOCK);
-		assert(s_error != WSAEOPNOTSUPP);
-		assert(s_error != WSAEAFNOSUPPORT);
-		assert(s_error != WSAEISCONN);
-		#else // POSIX
 		assert(s_error != EBADF);
 		assert(s_error != EINVAL);
 		assert(s_error != ENOTSOCK);
 		assert(s_error != EOPNOTSUPP);
 		assert(s_error != EAFNOSUPPORT);
 		assert(s_error != EISCONN);
-		#endif
 		
 		switch (s_error)
 		{
-		#ifdef WIN32
-		case WSAEADDRINUSE:
-			std::cerr << "socket: address already in use" << std::endl;
-			break;
-		case WSAEADDRNOTAVAIL:
-			std::cerr << "socket: address not available" << std::endl;
-			break;
-		case WSAENOBUFS:
-			std::cerr << "socket: out of network buffers" << std::endl;
-			break;
-		case WSAEACCES:
-			std::cerr << "socket: can't bind to super-user sockets" << std::endl;
-			break;
-		#else // POSIX
 		case EADDRINUSE:
 			std::cerr << "socket: address already in use" << std::endl;
 			break;
@@ -428,12 +369,6 @@ int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 		case EACCES:
 			std::cerr << "socket: can't bind to super-user sockets" << std::endl;
 			break;
-		#endif
-		default:
-			#ifndef NDEBUG
-			std::cerr << "Socket::bindTo() - unknown error: " << s_error << std::endl;
-			#endif // NDEBUG
-			exit(1);
 		}
 	}
 	
@@ -472,15 +407,6 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 		#endif
 		
 		// programming errors
-		#ifdef WIN32
-		assert(s_error != WSAEBADF);
-		assert(s_error != WSAEFAULT);
-		assert(s_error != WSAENOTSOCK);
-		assert(s_error != WSAEISCONN);
-		assert(s_error != WSAEADDRINUSE);
-		assert(s_error != WSAEAFNOSUPPORT);
-		assert(s_error != WSAEALREADY);
-		#else // POSIX
 		assert(s_error != EBADF);
 		assert(s_error != EFAULT);
 		assert(s_error != ENOTSOCK);
@@ -488,28 +414,17 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 		assert(s_error != EADDRINUSE);
 		assert(s_error != EAFNOSUPPORT);
 		assert(s_error != EALREADY);
-		#endif
 		
 		switch (s_error)
 		{
-		#ifdef WIN32
-		case WSAEWOULDBLOCK:
-			return 2;
-		case WSAEINPROGRESS:
-			break;
-		case WSAEACCES:
-			break;
-		case WSAECONNREFUSED:
-		case WSAETIMEDOUT:
-		case WSAENETUNREACH:
-			break;
-		#else // POSIX
 		case EINPROGRESS:
 			break;
 		case EACCES:
+		#ifdef EPERM
 		case EPERM:
 			std::cerr << "socket: firewall denied connection" << std::endl;
 			break;
+		#endif
 		case ECONNREFUSED:
 		case ETIMEDOUT:
 		case ENETUNREACH:
@@ -517,7 +432,6 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 		case EAGAIN:
 			// retry
 			return 2;
-		#endif
 		}
 	}
 	
@@ -542,15 +456,9 @@ int Socket::listen() throw()
 		s_error = errno;
 		#endif
 		
-		#ifdef WIN32
-		assert(s_error != WSAEBADF);
-		assert(s_error != WSAENOTSOCK);
-		assert(s_error != WSAEOPNOTSUPP);
-		#else // POSIX
 		assert(s_error != EBADF);
 		assert(s_error != ENOTSOCK);
 		assert(s_error != EOPNOTSUPP);
-		#endif
 		
 		#ifndef NDEBUG
 		std::cerr << "Socket::listen() - unknown error: " << s_error << std::endl;
@@ -590,37 +498,19 @@ int Socket::send(char* buffer, const size_t len) throw()
 		#endif
 		
 		// programming errors
-		#ifdef WIN32
-		// invalid address for: lpBuffers, lpNumberOfBytesSent, lpOverlapped, lpCompletionRoutine
-		assert(s_error != WSAEFAULT);
-		assert(s_error != WSAEINVAL);
-		assert(s_error != WSANOTINITIALISED);
-		#else
-		assert(s_error != EBADF);
 		assert(s_error != EFAULT);
 		assert(s_error != EINVAL);
+		assert(s_error != EBADF);
 		assert(s_error != ENOTCONN);
 		assert(s_error != ENOTSOCK);
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#else
 		assert(s_error != EOPNOTSUPP);
 		#endif
 		
 		switch (s_error)
 		{
-		#ifdef WIN32
-		case WSAENETDOWN: // Network sub-system failure
-		case WSAENETRESET: // Keep-alive reset
-		case WSAECONNABORTED: // Connection timed-out
-		case WSA_IO_PENDING: // Operation will be completed later
-		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
-			break;
-		case WSAEINTR: // iterrupted
-		case WSAEWOULDBLOCK: // would block
-			break;
-		case WSAECONNRESET: // connection reset
-			break;
-		case WSAENOBUFS: // out of network buffers
-			break;
-		#else // POSIX
 		case EAGAIN:
 		case EINTR:
 			break;
@@ -629,6 +519,13 @@ int Socket::send(char* buffer, const size_t len) throw()
 			break;
 		case ENOMEM:
 		case ENOBUFS:
+			break;
+		#ifdef WIN32
+		case WSAENETDOWN: // Network sub-system failure
+		case WSAENETRESET: // Keep-alive reset
+		case WSAECONNABORTED: // Connection timed-out
+		case WSA_IO_PENDING: // Operation will be completed later
+		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
 			break;
 		#endif
 		default:
@@ -667,7 +564,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 	wbuf.len = len;
 	DWORD flags=0;
 	DWORD rb;
-	const int r = WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
+	const int r = ::WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
 	#else // POSIX
 	const int r = ::recv(sock, buffer, len, 0);
 	#endif
@@ -675,7 +572,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 	if (r == SOCKET_ERROR)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		s_error = ::WSAGetLastError();
 		#else // POSIX
 		s_error = errno;
 		#endif
@@ -683,41 +580,32 @@ int Socket::recv(char* buffer, const size_t len) throw()
 		// programming errors
 		#ifdef WIN32
 		assert(s_error != WSANOTINITIALISED);
-		assert(s_error != WSAEFAULT);
-		#else // POSIX
+		#endif
 		assert(s_error != EBADF);
 		assert(s_error != EFAULT);
 		assert(s_error != EINVAL);
 		assert(s_error != ENOTCONN);
 		assert(s_error != ENOTSOCK);
-		#endif
 		
 		switch (s_error)
 		{
 		case EAGAIN:
 		case EINTR:
 			break;
+		case ENOBUFS: // Out of buffers
+		case ECONNRESET:
+		case ECONNREFUSED:
+			break;
+		case ENOMEM:
+			break;
 		#ifdef WIN32
 		case WSAEDISCON:
 		case WSAESHUTDOWN:
-		case WSAENOBUFS: // Out of buffers
 		case WSAENETDOWN: // Network sub-system failure
 		case WSAENETRESET: // Keep-alive reset
 		case WSAECONNABORTED: // Connection timed-out
 		case WSA_OPERATION_ABORTED: // Overlapped operation aborted
 		case WSA_IO_PENDING: // Operation will be completed later
-			break;
-		case WSAEWOULDBLOCK:
-			// Would block, or can't complete the request currently.
-			break;
-		case WSAECONNRESET:
-		case WSAECONNREFUSED:
-			break;
-		#else // POSIX
-		case ECONNRESET:
-		case ECONNREFUSED:
-			break;
-		case ENOMEM:
 			break;
 		#endif
 		default:
@@ -777,9 +665,11 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 		case EAGAIN:
 			// retry
 			break;
+		#ifndef WIN32 // POSIX
 		case EPIPE:
 		case EIO: // should be handled by the caller
 			break;
+		#endif
 		default:
 			std::cerr << "Socket::sendfile() - unknown error: " << s_error << std::endl;
 			exit(1);
