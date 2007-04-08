@@ -769,7 +769,7 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	
 	inet_ntop(AF_INET, &raddr.sin_addr, straddr, sizeof(straddr));
 	
-	uint16_t _port = raddr.sin6_port;
+	uint16_t _port = raddr.sin_port;
 	bswap(_port);
 	
 	std::string str(straddr);
