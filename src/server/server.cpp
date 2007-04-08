@@ -1785,11 +1785,11 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			sessions[session->id] = session;
 			
 			std::cout << "Session #" << static_cast<int>(session->id) << " created!" << std::endl
-				<< "Dimensions: " << static_cast<int>(session->width) << " x " << static_cast<int>(session->height) << std::endl
-				<< "User limit: " << static_cast<int>(session->limit)
+				<< "  Dimensions: " << session->width << " x " << session->height << std::endl
+				<< "  User limit: " << static_cast<int>(session->limit)
 				<< ", default mode: " << static_cast<int>(session->mode)
 				<< ", level: " << static_cast<int>(session->level) << std::endl
-				<< "Owner: " << static_cast<int>(usr->id)
+				<< "  Owner: " << static_cast<int>(usr->id)
 				<< ", from: " << usr->sock->address() << std::endl;
 			
 			uSendMsg(usr, msgAck(msg->session_id, msg->type));
@@ -1894,8 +1894,8 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			
 			#ifndef NDEBUG
 			std::cout << "Session #" << static_cast<int>(session->id) << " altered!" << std::endl
-				<< "Dimensions: " << width << " x " << height << std::endl
-				<< "User limit: " << static_cast<int>(session->limit) << ", default mode: "
+				<< "  Dimensions: " << width << " x " << height << std::endl
+				<< "  User limit: " << static_cast<int>(session->limit) << ", default mode: "
 				<< static_cast<int>(session->mode) << std::endl;
 			#endif // NDEBUG
 			
@@ -2788,7 +2788,7 @@ bool Server::init() throw(std::bad_alloc)
 		return false;
 	}
 	
-	std::cout << "Listening on: " << lsock.address() << std::endl;
+	std::cout << "Listening on: " << lsock.address() << std::endl << std::endl;
 	
 	if (!ev.init())
 	{

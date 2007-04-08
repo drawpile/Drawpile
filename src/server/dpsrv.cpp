@@ -269,6 +269,8 @@ int main(int argc, char** argv)
 		
 		getArgs(argc, argv, &srv);
 		
+		std::cout << std::endl;
+		
 		#ifdef NEED_NET
 		const Net _net; // :)
 		#endif // NEED_NET
