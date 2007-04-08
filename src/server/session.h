@@ -85,7 +85,7 @@ struct Session
 	}
 	
 	Session(const uint8_t _id, uint8_t _mode, uint8_t _limit, uint8_t _owner,
-		uint8_t _width, uint8_t _height, uint8_t _level, uint8_t title_len, char* _title) throw()
+		uint16_t _width, uint16_t _height, uint16_t _level, uint8_t title_len, char* _title) throw()
 		: id(_id),
 		len(title_len),
 		title(_title),
