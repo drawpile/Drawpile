@@ -5,6 +5,10 @@
  * Full screen mode
  * Client now informs the user if the (local) server crashes
  * Added a "Open recent" menu
+ * Changed the brush generation algorithm
+ * Added HSV and RGB color selection docks
+ * Added a palette dock
+ * Various UI improvements
 
 2007-01-18 Vesion 0.3.0
  * Several tablet handling bugs were fixed
