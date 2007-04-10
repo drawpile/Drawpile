@@ -91,7 +91,7 @@ protected:
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
 	// source_fd -> target_fd
-	std::multimap<fd_t, fd_t> tunnel;
+	std::multimap<User*, User*> tunnel;
 	
 	// for killing users idling in login
 	std::set<User*> utimer;
@@ -256,7 +256,7 @@ protected:
 	
 	// Break synchronization with user.
 	inline
-	void breakSync(User* usr) throw();
+	void breakSync(User& usr) throw();
 	
 	//
 	inline
@@ -264,7 +264,7 @@ protected:
 	
 	// Needs session reference because it might get destroyed.
 	inline
-	void uLeaveSession(User* usr, Session*& session, const uint8_t reason=protocol::user_event::Leave) throw();
+	void uLeaveSession(User& usr, Session*& session, const uint8_t reason=protocol::user_event::Leave) throw();
 	
 	// Adds user
 	inline

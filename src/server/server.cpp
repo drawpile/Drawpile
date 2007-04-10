@@ -60,8 +60,8 @@ typedef std::map<uint8_t, Session*>::iterator sessions_i;
 typedef std::map<uint8_t, Session*>::const_iterator sessions_const_i;
 typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
-typedef std::multimap<fd_t, fd_t>::iterator tunnel_i;
-typedef std::multimap<fd_t, fd_t>::const_iterator tunnel_const_i;
+typedef std::multimap<User*, User*>::iterator tunnel_i;
+typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
 
@@ -972,7 +972,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				uSendMsg(*usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
 				
-				uLeaveSession(usr, smi->second);
+				uLeaveSession(*usr, smi->second);
 			}
 		}
 		break;
@@ -1378,7 +1378,7 @@ void Server::uTunnelRaster(User& usr) throw()
 	}
 	
 	// get users
-	const std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(usr.sock->fd()));
+	const std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
 	if (ft.first == ft.second)
 	{
 		std::cerr << "Un-tunneled raster from user #"
@@ -1401,8 +1401,8 @@ void Server::uTunnelRaster(User& usr) throw()
 		// ACK raster
 		uSendMsg(usr, msgAck(usr.inMsg->session_id, usr.inMsg->type));
 		
+		tunnel_i ti(ft.first);
 		// Forward raster data to users.
-		tunnel_const_i ti(ft.first);
 		User *usr_ptr;
 		
 		message_ref raster_ref(raster);
@@ -1411,13 +1411,13 @@ void Server::uTunnelRaster(User& usr) throw()
 		
 		for (; ti != ft.second; ++ti)
 		{
-			usr_ptr = users[ti->second];
+			usr_ptr = ti->second;
 			uSendMsg(*usr_ptr, raster_ref);
 			if (last) usr_ptr->syncing = false;
 		}
 		
 		// Break tunnel/s if that was the last raster piece.
-		if (last) tunnel.erase(usr.sock->fd());
+		if (last) tunnel.erase(&usr);
 	}
 }
 
@@ -1458,7 +1458,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			Propagate(*session, message_ref(event));
 			usr->inMsg = 0;
 			User *usr_ptr = sui->second;
-			uLeaveSession(usr_ptr, session, protocol::user_event::Kicked);
+			uLeaveSession(*usr_ptr, session, protocol::user_event::Kicked);
 		}
 		break;
 	case protocol::session_event::Lock:
@@ -1771,7 +1771,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			for (; sui != session->users.end(); ++sui)
 			{
 				usr_ptr = sui->second;
-				uLeaveSession(usr_ptr, session, protocol::user_event::None);
+				uLeaveSession(*usr_ptr, session, protocol::user_event::None);
 			}
 			
 			// destruct
@@ -2317,7 +2317,7 @@ void Server::SyncSession(Session* session) throw()
 			uSendMsg(**n_user, *m_iter);
 		
 		// Create fake tunnel so the user can receive raster data
-		tunnel.insert( std::make_pair(src->sock->fd(), (*n_user)->sock->fd()) );
+		tunnel.insert( std::make_pair(src, *n_user) );
 		
 		// add user to normal data propagation.
 		session->users[(*n_user)->id] = *n_user;
@@ -2384,18 +2384,17 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 
 // Calls sRemove, uSendMsg, Propagate
 inline
-void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) throw()
+void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) throw()
 {
-	assert(usr != 0);
 	assert(session != 0);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uLeaveSession(user: "
-		<< static_cast<int>(usr->id) << ", session: "
+		<< static_cast<int>(usr.id) << ", session: "
 		<< static_cast<int>(session->id) << ")" << std::endl;
 	#endif
 	
-	session->users.erase(usr->id);
+	session->users.erase(usr.id);
 	
 	const uint8_t session_id = session->id;
 	
@@ -2407,18 +2406,14 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	}
 	else
 	{
-		std::cerr << "Still have " << session->users.size() << " users." << std::endl;
 		// Cancel raster sending for this user
 		User* usr_ptr;
 		tunnel_i t_iter(tunnel.begin());
 		while (t_iter != tunnel.end())
 		{
-			if (t_iter->second == usr->sock->fd())
+			if (t_iter->second == &usr)
 			{
-				// In case we've not cleaned the tunnel properly from dead users.
-				assert(users.find(t_iter->first) != users.end());
-				
-				usr_ptr = users[t_iter->first];
+				usr_ptr = t_iter->first;
 				message_ref cancel_ref(new protocol::Cancel);
 				// TODO: Figure out which session it is from
 				//cancel->session_id = session->id;
@@ -2435,18 +2430,14 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 		// Tell session members the user left
 		if (reason != protocol::user_event::None)
 		{
-			Propagate(*session, msgUserEvent(*usr, session_id, reason));
+			Propagate(*session, msgUserEvent(usr, session_id, reason));
 			
-			if (isOwner(*usr, *session))
+			if (isOwner(usr, *session))
 			{
 				session->owner = protocol::null_user;
 				
 				// Announce owner disappearance.
-				message_ref sev_ref(
-					new protocol::SessionEvent(
-						protocol::session_event::Delegate, session->owner, 0
-					)
-				);
+				message_ref sev_ref(new protocol::SessionEvent(protocol::session_event::Delegate, session->owner, 0));
 				sev_ref->session_id = session_id;
 				Propagate(*session, sev_ref);
 			}
@@ -2454,8 +2445,8 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	}
 	
 	// remove user session instance
-	delete usr->sessions.find(session_id)->second;
-	usr->sessions.erase(session_id);
+	delete usr.sessions.find(session_id)->second;
+	usr.sessions.erase(session_id);
 }
 
 inline
@@ -2548,18 +2539,16 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 
 // Calls uSendMsg, uLeaveSession
 inline
-void Server::breakSync(User* usr) throw()
+void Server::breakSync(User& usr) throw()
 {
-	assert(usr != 0);
-	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::breakSync(user: "
-		<< static_cast<int>(usr->id) << ")" << std::endl;
+		<< static_cast<int>(usr.id) << ")" << std::endl;
 	#endif
 	
-	uSendMsg(*usr, msgError(usr->syncing, protocol::error::SyncFailure));
+	uSendMsg(usr, msgError(usr.syncing, protocol::error::SyncFailure));
 	
-	const sessions_i sui(sessions.find(usr->syncing));
+	const sessions_i sui(sessions.find(usr.syncing));
 	if (sui == sessions.end())
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2569,7 +2558,7 @@ void Server::breakSync(User* usr) throw()
 	else
 	{
 		uLeaveSession(usr, sui->second);
-		usr->syncing = protocol::Global;
+		usr.syncing = protocol::Global;
 	}
 }
 
@@ -2592,19 +2581,9 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	// We're the source...
 	tunnel_i ti;
 	users_const_i usi;
-	while ((ti = tunnel.find(usr->sock->fd())) != tunnel.end())
+	while ((ti = tunnel.find(usr)) != tunnel.end())
 	{
-		usi = users.find(ti->second);
-		
-		if (usi != users.end())
-			breakSync(usi->second);
-		else
-		{
-			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-			std::cerr << "Tunnel's other end was not found in users." << std::endl;
-			#endif
-		}
-		
+		breakSync(*(ti->second));
 		tunnel.erase(ti);
 	}
 	
@@ -2613,13 +2592,10 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	//std::set<fd_t> sources;
 	while (ti != tunnel.end())
 	{
-		if (ti->second == usr->sock->fd())
+		if (ti->second == usr)
 		{
-			//sources.insert(sources.end(), ti->first);
-			
 			tunnel.erase(ti);
-			
-			// iterator was invalidated
+			//iterator was invalidated?
 			ti = tunnel.begin();
 		}
 		else
@@ -2631,7 +2607,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	while (usr->sessions.size() != 0)
 	{
 		session = usr->sessions.begin()->second->session;
-		uLeaveSession(usr, session, reason);
+		uLeaveSession(*usr, session, reason);
 	}
 	
 	// remove from fd -> User* map
