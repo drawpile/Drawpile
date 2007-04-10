@@ -52,16 +52,22 @@ class PaletteWidget : public QWidget {
 		void mousePressEvent(QMouseEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
-		void mouseDoubleClickEvent(QMouseEvent *event);
+		void mouseDoubleClickEvent(QMouseEvent *);
 		void wheelEvent(QWheelEvent *event);
+		void contextMenuEvent(QContextMenuEvent *event);
+		void keyReleaseEvent(QKeyEvent *event);
 
 		void dragEnterEvent(QDragEnterEvent *event);
 		void dragMoveEvent(QDragMoveEvent *event);
 		void dragLeaveEvent(QDragLeaveEvent *event);
 		void dropEvent(QDropEvent *event);
 
+		void focusInEvent(QFocusEvent*);
+		void focusOutEvent(QFocusEvent*);
+
 	private slots:
 		void scroll(int pos);
+		void addColor();
 		void removeColor();
 		void editCurrentColor();
 		void setCurrentColor(const QColor& color);
@@ -79,7 +85,7 @@ class PaletteWidget : public QWidget {
 		int spacing_;
 		int scroll_;
 		QPoint dragstart_;
-		int dragsource_;
+		int selection_;
 		QRubberBand *outline_;
 		QMenu *contextmenu_;
 		dialogs::ColorDialog *colordlg_;

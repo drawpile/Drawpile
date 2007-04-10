@@ -34,15 +34,19 @@
 namespace widgets {
 
 PaletteWidget::PaletteWidget(QWidget *parent)
-	: QWidget(parent), palette_(0), swatchsize_(13,8), spacing_(3), scroll_(0),
-	dragsource_(-1)
+	: QWidget(parent), palette_(0), swatchsize_(13,8), spacing_(1), scroll_(0),
+	selection_(-1)
 {
 	setAcceptDrops(true);
+	setFocusPolicy(Qt::StrongFocus);
+
 	outline_ = new QRubberBand(QRubberBand::Rectangle, this);
 
 	contextmenu_ = new QMenu(this);
+	QAction *add= contextmenu_->addAction(tr("Add"));
 	QAction *edit = contextmenu_->addAction(tr("Modify"));
 	QAction *remove = contextmenu_->addAction(tr("Remove"));
+	connect(add, SIGNAL(triggered()), this, SLOT(addColor()));
 	connect(edit, SIGNAL(triggered()), this, SLOT(editCurrentColor()));
 	connect(remove, SIGNAL(triggered()), this, SLOT(removeColor()));
 
@@ -105,22 +109,33 @@ void PaletteWidget::scroll(int pos)
 	update();
 }
 
+void PaletteWidget::addColor()
+{
+	if(selection_ == -1)
+		selection_ = palette_->count();
+	palette_->insertColor(selection_, Qt::black);
+	editCurrentColor();
+}
+
 void PaletteWidget::removeColor()
 {
-	palette_->removeColor(dragsource_);
-	outline_->hide();
+	palette_->removeColor(selection_);
+	if(selection_ >= palette_->count()) {
+		outline_->hide();
+		selection_ = -1;
+	}
 	update();
 }
 
 void PaletteWidget::editCurrentColor()
 {
-	colordlg_->setColor(palette_->color(dragsource_));
+	colordlg_->setColor(palette_->color(selection_));
 	colordlg_->show();
 }
 
 void PaletteWidget::setCurrentColor(const QColor& color)
 {
-	palette_->setColor(dragsource_, color);
+	palette_->setColor(selection_, color);
 	update();
 }
 
@@ -164,25 +179,30 @@ void PaletteWidget::paintEvent(QPaintEvent *)
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
 	dragstart_ = event->pos();
-	dragsource_ = indexAt(event->pos());
-	if(dragsource_!=-1) {
-		outline_->setGeometry(swatchRect(dragsource_));
+	selection_ = indexAt(event->pos());
+	if(selection_!=-1) {
+		outline_->setGeometry(swatchRect(selection_).adjusted(-1,-1,1,1));
 		outline_->show();
-		if(event->button()==Qt::RightButton)
-			contextmenu_->popup(mapToGlobal(event->pos()));
+	} else {
+		outline_->hide();
 	}
+}
+
+void PaletteWidget::contextMenuEvent(QContextMenuEvent *event)
+{
+	contextmenu_->popup(mapToGlobal(event->pos()));
 }
 
 void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	if(dragsource_ != -1 && (event->buttons() & Qt::LeftButton) &&
+	if(selection_ != -1 && (event->buttons() & Qt::LeftButton) &&
 			(event->pos() - dragstart_).manhattanLength() >
 			QApplication::startDragDistance())
 	{
 		QDrag *drag = new QDrag(this);
 
 		QMimeData *mimedata = new QMimeData;
-		const QColor color = palette_->color(dragsource_);
+		const QColor color = palette_->color(selection_);
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
@@ -192,19 +212,24 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	outline_->hide();
-	if(dragsource_ != -1) {
+	if(selection_ != -1) {
 		if(event->button()==Qt::LeftButton)
-			emit colorSelected(palette_->color(dragsource_));
+			emit colorSelected(palette_->color(selection_));
 	}
 }
 
-void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *event)
+void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
-	outline_->hide();
-	if(dragsource_ != -1 && event->button() == Qt::LeftButton) {
+	if(selection_ != -1)
 		editCurrentColor();
-	}
+	else
+		addColor();
+}
+
+void PaletteWidget::keyReleaseEvent(QKeyEvent *event)
+{
+	if(selection_ != -1 && event->key() == Qt::Key_Delete)
+		removeColor();
 }
 
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
@@ -224,24 +249,37 @@ void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
 	if(index != -1) {
 		outline_->setGeometry(swatchRect(index));
 	} else {
-		outline_->setGeometry(betweenRect(nearestAt(event->pos())));
+		outline_->setGeometry(betweenRect(nearestAt(event->pos())).adjusted(-1,-1,1,1));
 	}
 }
 
 void PaletteWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
-	outline_->hide();
+	if(selection_!=-1 && hasFocus()) {
+		outline_->setGeometry(swatchRect(selection_).adjusted(-1,-1,1,1));
+	} else {
+		outline_->hide();
+	}
 }
 
+void PaletteWidget::focusInEvent(QFocusEvent*)
+{
+	if(selection_!=-1)
+		outline_->setGeometry(swatchRect(selection_).adjusted(-1,-1,1,1));
+}
+
+void PaletteWidget::focusOutEvent(QFocusEvent*)
+{
+	outline_->hide();
+}
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
 	int index = indexAt(event->pos());
-	outline_->hide();
 	if(index != -1) {
 		if(event->source() == this) {
 			// Switch colors
-			palette_->setColor(dragsource_, palette_->color(index));
+			palette_->setColor(selection_, palette_->color(index));
 		}
 		palette_->setColor(
 				index,
@@ -251,8 +289,8 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 		index = nearestAt(event->pos());
 		if(event->source() == this) {
 			// Move color
-			palette_->removeColor(dragsource_);
-			if(index >= dragsource_)
+			palette_->removeColor(selection_);
+			if(index >= selection_)
 				--index;
 		}
 		palette_->insertColor(
@@ -260,6 +298,7 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 				qvariant_cast<QColor>(event->mimeData()->colorData())
 				);
 	}
+	selection_ = index;
 	update();
 }
 
