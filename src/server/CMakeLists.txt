@@ -17,6 +17,132 @@ set (
 	sockets.cpp
 )
 
+# include some stuff
+
+include ( CheckIncludeFileCXX )
+include ( CheckSymbolExists )
+include ( CheckFunctionExists )
+include ( CheckVariableExists )
+
+### For deflate extension
+
+if ( DEFLATE )
+	find_package ( ZLIB )
+	if ( ZLIB_FOUND )
+		set ( HAVE_ZLIB ON )
+		link_libraries ( ${ZLIB_LIBRARIES} )
+	else ( ZLIB_FOUND )
+		check_include_file_cxx ( zlib.h HAVE_ZLIB )
+		if ( HAVE_ZLIB )
+			link_libraries ( "z" )
+		else ( HAVE_ZLIB )
+			message ( STATUS "ZLIB disabled!" )
+			set ( DEFLATE OFF )
+		endif ( HAVE_ZLIB )
+	endif ( ZLIB_FOUND )
+endif ( DEFLATE )
+
+### Boost library
+
+find_package ( Boost 1.33 REQUIRED )
+
+if ( Boost_FOUND )
+	message ( STATUS "Boost C++ Libraries found" )
+	include_directories( ${Boost_INCLUDE_DIRS} )
+	link_directories( ${Boost_LIBRARY_DIRS} )
+else ( Boost_FOUND )
+	message ( FATAL_ERROR "Boost C++ Libraries missing" )
+endif ( Boost_FOUND )
+
+### Event mechanism
+
+set ( EV_FOUND OFF )
+
+if ( EPOLL )
+	check_include_file_cxx ( sys/epoll.h HAVE_EPOLL_H )
+	
+	if ( HAVE_EPOLL_H )
+		#add_definitions ( -DEV_EPOLL )
+		# add in config.h
+		set ( EV_EPOLL ON )
+		set ( EV_FOUND ON )
+	endif ( HAVE_EPOLL_H )
+endif ( EPOLL )
+
+if ( NOT EV_FOUND )
+	if ( KQUEUE )
+		check_function_exists ( kqueue EV_KQUEUE )
+		if ( EV_KQUEUE )
+			#add_definitions ( -DEV_KQUEUE )
+			set ( EV_FOUND ON )
+		endif ( EV_KQUEUE )
+	endif ( KQUEUE )
+endif ( NOT EV_FOUND )
+
+if ( NOT EV_FOUND )
+	if ( PSELECT )
+		check_function_exists ( pselect EV_PSELECT )
+		if ( EV_PSELECT )
+			#add_definitions ( -DEV_PSELECT )
+			set ( EV_FOUND ON )
+		endif ( EV_PSELECT )
+	endif ( PSELECT )
+endif ( NOT EV_FOUND )
+
+# fall back to select(2)
+if ( NOT EV_FOUND )
+	if ( SELECT )
+		check_include_file ( "sys/select.h" HAVE_SELECT_H )
+		if ( HAVE_SELECT_H )
+			set ( EV_SELECT ON )
+			set ( EV_FOUND ON )
+		else ( HAVE_SELECT_H )
+			check_function_exists ( select EV_SELECT )
+			if ( EV_SELECT )
+				set ( EV_FOUND ON )
+			endif ( EV_SELECT )
+		endif ( HAVE_SELECT_H )
+		
+		# FD_COPY macro
+		if ( EV_SELECT )
+			if ( NOT WIN32 )
+				check_symbol_exists ( FD_COPY "sys/select.h;unistd.h" EV_SELECT_COPY )
+				if ( EV_SELECT_COPY )
+					#add_definitions( -DEV_SELECT_COPY )
+					message( STATUS "FD_COPY found" )
+				endif ( EV_SELECT_COPY )
+			endif ( NOT WIN32 )
+		else ( EV_SELECT )
+			if ( NOT WIN32 )
+				message ( FATAL_ERROR "No event system found!" )
+			endif ( NOT WIN32 )
+		endif ( EV_SELECT )
+	endif ( SELECT )
+endif ( NOT EV_FOUND )
+
+if ( NOT EV_FOUND )
+	if ( WIN32 )
+		check_include_file_cxx ( winsock2.h HAVE_WSA )
+		check_include_file_cxx ( mswsock.h HAVE_XPWSA )
+		if ( HAVE_WSA )
+			message( STATUS "Windows Socket API found")
+			if ( WSA )
+				set ( EV_WSA ON )
+				set ( EV_FOUND ON )
+			endif ( WSA )
+		endif ( HAVE_WSA )
+		
+		if ( NOT EV_FOUND )
+			message ( STATUS "Assuming select(2) exists" )
+			set ( EV_SELECT ON )
+		endif ( NOT EV_FOUND )
+	endif ( WIN32 )
+endif ( NOT EV_FOUND )
+
+if ( NOT HAVE_WSA )
+	message ( STATUS "Using POSIX Socket API" )
+endif ( NOT HAVE_WSA )
+
 ### Event mechanism sources.
 
 set ( EV_SRC event.select.cpp )
@@ -43,12 +169,7 @@ if ( WIN32 )
 	link_libraries ( ws2_32 )
 endif ( WIN32 )
 
-link_libraries( ${LIBNAME} )
-
-# zlib for deflate extensions
-if ( HAVE_ZLIB )
-	link_libraries ( "z" )
-endif ( HAVE_ZLIB )
+link_libraries( ${LIBNAME} ) # DP shared library
 
 if ( NOT DEBUG )
 	strip_exe ( ${SERVERNAME} )

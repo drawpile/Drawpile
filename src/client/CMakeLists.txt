@@ -2,29 +2,12 @@
 
 # Qt stuff
 
+# enable Qt Network
+set ( QT_USE_QTNETWORK ON )
+
 find_package ( Qt4 REQUIRED )
 
-# Qt_definitions ( foo )
-
-include_directories (
-	${QT_INCLUDE_DIR}
-	${QT_QTGUI_INCLUDE_DIR}
-	${QT_QTCORE_INCLUDE_DIR}
-	${QT_QTNETWORK_INCLUDE_DIR}
-)
-
 include ( ${QT_USE_FILE} )
-
-#set ( QT_USE_QTASSISTANT TRUE )
-#set ( QT_USE_QTDESIGNER TRUE )
-#set ( QT_USE_QTMAIN TREU )
-#set ( QT_USE_QTNETWORK TRUE )
-#set ( QT_USE_QTOPENGL TRUE )
-#set ( QT_USE_QTXML TRUE )
-
-#message ( "DEVNOTE | Qt found at: " ${QT_INCLUDE_DIR} )
-
-# subdirs
 
 #if ( PROCESS_WIDGETS )
 #	add_subdirectory ( widgets/ )
@@ -92,7 +75,7 @@ if ( WIN32 )
 	endif ( NOT DEBUG )
 endif ( WIN32 )
 
-link_libraries( ${LIBNAME} )
+link_libraries( ${LIBNAME} ) # DP shared library
 
 add_executable (
 	${CLIENTNAME}
@@ -108,5 +91,4 @@ add_executable (
 target_link_libraries(
 	${CLIENTNAME}
 	${QT_LIBRARIES}
-	${QT_QTNETWORK_LIBRARIES}
 )
