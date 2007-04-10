@@ -116,7 +116,6 @@ Server::Server() throw()
 
 Server::~Server() throw()
 {
-	cleanup();
 }
 
 inline
@@ -161,20 +160,6 @@ void Server::freeSessionID(const uint8_t id) throw()
 	// unfortunately queue can't be iterated, so we can't test if the ID is valid
 	
 	session_ids.push(id);
-}
-
-inline
-void Server::cleanup() throw()
-{
-	// finish event system
-	ev.finish();
-	
-	// close listening socket
-	lsock.close();
-	
-	#if defined( FULL_CLEANUP )
-	users.clear();
-	#endif // FULL_CLEANUP
 }
 
 inline

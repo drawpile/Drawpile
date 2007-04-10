@@ -161,10 +161,6 @@ protected:
 	inline
 	void freeSessionID(const uint8_t id) throw();
 	
-	// Cleanup anything that's left.
-	inline
-	void cleanup() throw();
-	
 	// Get free user ID
 	inline
 	const uint8_t getUserID() throw();
