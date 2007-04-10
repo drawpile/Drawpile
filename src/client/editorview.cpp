@@ -100,7 +100,7 @@ void EditorView::setCrosshair(bool enable)
 
 void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
-	if(enableoutline_ && showoutline_ && outlinesize_>0) {
+	if(enableoutline_ && showoutline_ && outlinesize_>1) {
 		const QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
 					QSizeF(dia_, dia_));
 		if(rect.intersects(outline)) {
