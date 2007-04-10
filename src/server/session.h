@@ -114,8 +114,6 @@ struct Session
 		std::cout << "Session::~Session()" << std::endl;
 		#endif
 		
-		// TODO: Clear user and waiting user lists.
-		
 		waitingSync.clear();
 		users.clear();
 		

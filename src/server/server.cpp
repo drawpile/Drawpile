@@ -180,8 +180,6 @@ void Server::cleanup() throw()
 inline
 void Server::uRegenSeed(User& usr) const throw()
 {
-	//assert(usr != 0);
-	
 	usr.seed[0] = (rand() % 255) + 1;
 	usr.seed[1] = (rand() % 255) + 1;
 	usr.seed[2] = (rand() % 255) + 1;
@@ -191,8 +189,6 @@ void Server::uRegenSeed(User& usr) const throw()
 inline
 message_ref Server::msgAuth(User& usr, const uint8_t session) const throw(std::bad_alloc)
 {
-	//assert(usr != 0);
-	
 	protocol::Authentication* auth = new protocol::Authentication;
 	auth->session_id = session;
 	
@@ -223,8 +219,6 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 inline
 message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_alloc)
 {
-	//assert(session != 0);
-	
 	protocol::SessionInfo *nfo = new protocol::SessionInfo(
 		session.width,
 		session.height,
@@ -264,8 +258,6 @@ message_ref Server::msgAck(const uint8_t session, const uint8_t type) const thro
 inline
 message_ref Server::msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc)
 {
-	//assert(session != 0);
-	
 	message_ref sync_ref(new protocol::SyncWait);
 	sync_ref->session_id = session_id;
 	return sync_ref;
@@ -705,25 +697,25 @@ void Server::uProcessData(User*& usr) throw()
 }
 
 inline
-message_ref Server::msgUserEvent(const User& usr, const Session& session, const uint8_t event) const throw(std::bad_alloc)
+message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc)
 {
-	//assert(usr != 0);
-	//assert(session != 0);
-	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::msgUserEvent(user: "
 		<< static_cast<int>(usr.id) << ")" << std::endl;
 	#endif
 	
+	usr_session_const_i usi(usr.sessions.find(session_id));
+	assert(usi != usr.sessions.end());
+	
 	protocol::UserInfo *uevent = new protocol::UserInfo(
-		session.mode,
+		usi->second->getMode(),
 		event,
 		usr.nlen,
 		(usr.nlen == 0 ? 0 : new char[usr.nlen])
 	);
 	
 	uevent->user_id = usr.id;
-	uevent->session_id = session.id;
+	uevent->session_id = session_id;
 	
 	memcpy(uevent->name, usr.name, usr.nlen);
 	
@@ -733,7 +725,6 @@ message_ref Server::msgUserEvent(const User& usr, const Session& session, const 
 inline
 bool Server::uInSession(const User& usr, const uint8_t session) const throw()
 {
-	//assert(usr != 0);
 	return usr.sessions.find(session) != usr.sessions.end();
 }
 
@@ -1358,7 +1349,6 @@ void Server::uHandleAck(User*& usr) throw()
 inline
 void Server::uTunnelRaster(User& usr) throw()
 {
-	//assert(usr != 0);
 	assert(usr.inMsg != 0);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2193,8 +2183,8 @@ void Server::Propagate(const Session& session, message_ref msg, User* source, co
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
 	#endif
 	
-	//assert(session != 0);
-	assert(session.id == msg->session_id);
+	//the assert fails with messages that are session selected
+	//assert(session.id == msg->session_id);
 	
 	// Send ACK for the message we're about to share..
 	if (source != 0)
@@ -2208,7 +2198,8 @@ void Server::Propagate(const Session& session, message_ref msg, User* source, co
 			uSendMsg(*usr_ptr, msg);
 		}
 	
-	if (toAll) // send to users waiting sync as well.
+	// send to users in waitingSync list, too
+	if (toAll)
 		for (userlist_const_i wui(session.waitingSync.begin()); wui != session.waitingSync.end(); ++wui)
 			if ((*wui) != source)
 			{
@@ -2220,8 +2211,6 @@ void Server::Propagate(const Session& session, message_ref msg, User* source, co
 inline
 void Server::uSendMsg(User& usr, message_ref msg) throw()
 {
-	//assert(usr != 0);
-	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uSendMsg(to user: " << static_cast<int>(usr.id)
 		<< ", type: " << static_cast<int>(msg->type) << ")" << std::endl;
@@ -2294,7 +2283,7 @@ void Server::SyncSession(Session* session) throw()
 		usi->second->syncWait = false;
 		
 		// add join
-		msg_queue.push_back(msgUserEvent(*usr_ptr, *session, protocol::user_event::Join));
+		msg_queue.push_back(msgUserEvent(*usr_ptr, session->id, protocol::user_event::Join));
 		if (usr_ptr->session->id == session->id)
 		{
 			// add session select
@@ -2318,7 +2307,7 @@ void Server::SyncSession(Session* session) throw()
 	
 	// announce the new users
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
-		msg_queue.push_back(msgUserEvent(**n_user, *session, protocol::user_event::Join));
+		msg_queue.push_back(msgUserEvent(**n_user, session->id, protocol::user_event::Join));
 	
 	std::vector<message_ref>::const_iterator m_iter;
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
@@ -2365,7 +2354,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	if (session->users.size() != 0)
 	{
 		// Tell session members there's a new user.
-		Propagate(*session, msgUserEvent(*usr, *session, protocol::user_event::Join));
+		Propagate(*session, msgUserEvent(*usr, session->id, protocol::user_event::Join));
 		
 		// put user to wait sync list.
 		session->waitingSync.push_back(usr);
@@ -2408,9 +2397,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	
 	session->users.erase(usr->id);
 	
-	// remove
-	delete usr->sessions.find(session->id)->second;
-	usr->sessions.erase(session->id);
+	const uint8_t session_id = session->id;
 	
 	// last user in session.. destruct it
 	if (session->users.empty())
@@ -2420,6 +2407,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 	}
 	else
 	{
+		std::cerr << "Still have " << session->users.size() << " users." << std::endl;
 		// Cancel raster sending for this user
 		User* usr_ptr;
 		tunnel_i t_iter(tunnel.begin());
@@ -2447,7 +2435,7 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 		// Tell session members the user left
 		if (reason != protocol::user_event::None)
 		{
-			Propagate(*session, msgUserEvent(*usr, *session, reason));
+			Propagate(*session, msgUserEvent(*usr, session_id, reason));
 			
 			if (isOwner(*usr, *session))
 			{
@@ -2459,11 +2447,15 @@ void Server::uLeaveSession(User* usr, Session*& session, const uint8_t reason) t
 						protocol::session_event::Delegate, session->owner, 0
 					)
 				);
-				sev_ref->session_id = session->id;
+				sev_ref->session_id = session_id;
 				Propagate(*session, sev_ref);
 			}
 		}
 	}
+	
+	// remove user session instance
+	delete usr->sessions.find(session_id)->second;
+	usr->sessions.erase(session_id);
 }
 
 inline
@@ -2663,8 +2655,13 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 inline
 void Server::sRemove(Session*& session) throw()
 {
+	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
+	std::cout << "Server::sRemove(session: " << static_cast<int>(session->id) << ")" << std::endl;
+	#endif
+	
 	freeSessionID(session->id);
 	sessions.erase(session->id);
+	delete session;
 	session = 0;
 }
 
