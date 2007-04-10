@@ -456,10 +456,7 @@ void Server::uWrite(User*& usr) throw()
 		usr->queue.erase(f_msg, ++l_msg);
 	}
 	
-	const int sb = usr->sock->send(
-		usr->output.rpos,
-		usr->output.canRead()
-	);
+	const int sb = usr->sock->send( usr->output.rpos, usr->output.canRead() );
 	
 	switch (sb)
 	{
@@ -605,11 +602,11 @@ void Server::uProcessData(User*& usr) throw()
 		<< usr->input.left << " bytes)" << std::endl;
 	#endif
 	
-	while (usr->input.canRead() != 0)
+	while (!usr->input.isEmpty())
 	{
 		if (usr->inMsg == 0)
 		{
-			usr->inMsg  = protocol::getMessage(usr->input.rpos[0]);
+			usr->inMsg = protocol::getMessage(usr->input.rpos[0]);
 			if (usr->inMsg == 0)
 			{
 				// unknown message type
@@ -619,13 +616,8 @@ void Server::uProcessData(User*& usr) throw()
 				return;
 			}
 		}
-		else if (usr->inMsg->type != usr->input.rpos[0])
-		{
-			// Input buffer frelled
-			std::cerr << "Buffer corruption, message type changed." << std::endl;
-			uRemove(usr, protocol::user_event::Dropped);
-			return;
-		}
+		
+		assert(usr->inMsg->type == usr->input.rpos[0]);
 		
 		size_t cread = usr->input.canRead();
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
@@ -638,15 +630,10 @@ void Server::uProcessData(User*& usr) throw()
 			#ifndef NDEBUG
 			++bufferRepositions;
 			#endif
-			
-			// update cread and len
-			cread = usr->input.canRead();
-			len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
+			continue;
 		}
 		
-		usr->input.read(
-			usr->inMsg->unserialize(usr->input.rpos, cread)
-		);
+		usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
 		
 		#if 0 // isValid() can't be used before it is properly implemented!
 		if (!usr->inMsg->isValid())
@@ -671,14 +658,13 @@ void Server::uProcessData(User*& usr) throw()
 		{ // user is still alive.
 			delete usr->inMsg;
 			usr->inMsg = 0;
-			
-			// rewind circular buffer if there's no more data in it.
-			if (usr->input.isEmpty())
-				usr->input.rewind();
 		}
 		else // quite dead
 			break;
 	}
+	
+	// rewind circular buffer
+	usr->input.rewind();
 }
 
 inline
