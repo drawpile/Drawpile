@@ -617,7 +617,7 @@ void Server::uProcessData(User*& usr) throw()
 			}
 		}
 		
-		assert(usr->inMsg->type == usr->input.rpos[0]);
+		assert(usr->inMsg->type == static_cast<uint8_t>(usr->input.rpos[0]));
 		
 		size_t cread = usr->input.canRead();
 		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
