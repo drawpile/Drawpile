@@ -278,11 +278,11 @@ void Brush::updateCache() const
 	ushort *q2 = q1 + scanline;
 	ushort *q3 = q1 + (rad*2) * ((rad*2)-1);
 	ushort *q4 = q3 + scanline;
-	for(int y=-rad+1;y<=0;++y) {
+	for(qreal y=-rad+0.5;y<=0;++y) {
 		const qreal yy = y*y;
-		for(int x=-rad+1;x<=0;++x) {
+		for(qreal x=-rad+0.5;x<=0;++x) {
 			const qreal dist = sqrt(x*x + yy);
-			const ushort a = (dist<rad ? lookup[rad*oversample-int(dist*oversample)-1] : 0);
+			const ushort a = (dist<rad ? lookup[rad*oversample-int(dist*oversample)] : 0);
 			
 			*(q1++) = a;
 			*(q2--) = a;
