@@ -47,20 +47,19 @@ const uint32_t
 Event::Event() throw()
 	: evfd(0)
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "Event()" << std::endl;
-	#endif
 	#endif
 }
 
 Event::~Event() throw()
 {
-	#ifdef DEBUG_EVENTS
-	#ifndef NDEBUG
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	std::cout << "~Event()" << std::endl;
 	#endif
-	#endif
+	
+	if (evfd != -1)
+		finish();
 	
 	// Make sure the event fd was closed.
 	assert(evfd == -1);
@@ -101,8 +100,6 @@ bool Event::init() throw()
 		}
 	}
 	
-	//events = new epoll_event[max_events];
-	
 	return true;
 }
 
@@ -112,8 +109,6 @@ void Event::finish() throw()
 	std::cout << "Event(epoll).finish()" << std::endl;
 	#endif
 	
-	//delete [] events;
-	//events = 0;
 	close(evfd);
 	evfd = -1;
 }
