@@ -274,10 +274,6 @@ protected:
 	inline
 	void sRemove(Session*& session) throw();
 	
-	// Tests if user is in session
-	inline
-	bool uInSession(const User& usr, const uint8_t session) const throw();
-	
 	// check user name uniqueness
 	inline
 	bool validateUserName(User* usr) const throw();

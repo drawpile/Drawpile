@@ -707,12 +707,6 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 	return message_ref(uevent);
 }
 
-inline
-bool Server::uInSession(const User& usr, const uint8_t session) const throw()
-{
-	return usr.sessions.find(session) != usr.sessions.end();
-}
-
 // May delete User*
 inline
 void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
@@ -731,52 +725,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	switch (usr->inMsg->type)
 	{
 	case protocol::type::ToolInfo:
-		// check for protocol violations
-		#ifdef CHECK_VIOLATIONS
-		if (!fIsSet(usr->tags, uTag::CanChange))
-		{
-			std::cerr << "Protocol violation from user #"
-				<< static_cast<int>(usr->id) << std::endl
-				<< "Reason: Unexpected tool info" << std::endl;
-			uRemove(usr, protocol::user_event::Violation);
-			break;
-		}
-		fSet(usr->tags, uTag::HaveTool);
-		#endif // CHECK_VIOLATIONS
 	case protocol::type::StrokeInfo:
-		// check for protocol violations
-		#ifdef CHECK_VIOLATIONS
-		if (usr->inMsg->type == protocol::type::StrokeInfo)
-		{
-			if (!fIsSet(usr->tags, uTag::HaveTool))
-			{
-				std::cerr << "Protocol violation from user: "
-					<< static_cast<int>(usr->id) << std::endl
-					<< "Reason: Stroke info without tool." << std::endl;
-				uRemove(usr, protocol::user_event::Violation);
-				break;
-			}
-			
-			fClr(usr->tags, uTag::CanChange);
-		}
-		#endif // CHECK_VIOLATIONS
 	case protocol::type::StrokeEnd:
-		// check for protocol violations
-		#ifdef CHECK_VIOLATIONS
-		if (usr->inMsg->type == protocol::type::StrokeEnd)
-		{
-			if (!fIsSet(usr->tags, uTag::HaveTool))
-			{
-				std::cerr << "Protocol violation from user #"
-					<< static_cast<int>(usr->id) << std::endl
-					<< "Reason: Stroke info without tool." << std::endl;
-				uRemove(usr, protocol::user_event::Violation);
-				break;
-			}
-			fSet(usr->tags, uTag::CanChange);
-		}
-		#endif // CHECK_VIOLATIONS
-		
 		switch (usr->inMsg->type)
 		{
 		case protocol::type::StrokeInfo:
@@ -814,19 +764,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		#endif
 		
-		#ifdef CHECK_VIOLATIONS
-		if ((usr->inMsg->user_id != protocol::null_user)
-			#ifdef LENIENT
-			or (usr->inMsg->user_id != usr->id)
-			#endif // LENIENT
-		)
-		{
-			std::cerr << "Client attempted to impersonate someone." << std::endl;
-			uRemove(usr, protocol::user_event::Violation);
-			break;
-		}
-		#endif // CHECK_VIOLATIONS
-		
 		// user or session is locked
 		if (usr->session->locked or usr->a_locked)
 		{
@@ -859,33 +796,16 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uHandleAck(usr);
 		break;
 	case protocol::type::SessionSelect:
-		#ifdef CHECK_VIOLATIONS
-		if (!fIsSet(usr->tags, uTag::CanChange))
+		if (usr->makeActive(usr->inMsg->session_id))
 		{
-			std::cerr << "Protocol violation from user." << usr->id << std::endl
-				<< "Session change in middle of something." << std::endl;
-			
-			uRemove(usr, protocol::user_event::Violation);
-			break;
+			usr->inMsg->user_id = usr->id;
+			Propagate(*usr->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
+			usr->inMsg = 0;
 		}
 		else
-		#endif
 		{
-			if (usr->makeActive(usr->inMsg->session_id))
-			{
-				usr->inMsg->user_id = usr->id;
-				Propagate(*usr->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
-				usr->inMsg = 0;
-			}
-			else
-			{
-				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
-				usr->session = 0;
-			}
-			
-			#ifdef CHECK_VIOLATIONS
-			fSet(usr->tags, uTag::CanChange);
-			#endif
+			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
+			usr->session = 0;
 		}
 		break;
 	case protocol::type::UserInfo:
@@ -894,14 +814,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::type::Raster:
 		uTunnelRaster(*usr);
 		break;
+	#if defined(HAVE_ZLIB)
 	case protocol::type::Deflate:
-		// Deflate extension
-		#if !defined(HAVE_ZLIB)
-		uRemove(usr, protocol::user_event::Dropped);
-		#else
 		DeflateReprocess(usr);
-		#endif
 		break;
+	#endif
 	case protocol::type::Chat:
 	case protocol::type::Palette:
 		{
@@ -923,64 +840,29 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::Unsubscribe:
-		#ifdef CHECK_VIOLATIONS
-		if (!fIsSet(usr->tags, uTag::CanChange))
-		{
-			std::cerr << "Protocol violation from user #"
-				<< static_cast<int>(usr->id) << std::endl
-				<< "Reason: Unsubscribe in middle of something." << std::endl;
-			uRemove(usr, protocol::user_event::Violation);
-			break;
-		}
-		#endif
 		{
 			const sessions_i smi(sessions.find(usr->inMsg->session_id));
-			
 			if (smi == sessions.end())
-			{
-				#ifndef NDEBUG
-				std::cerr << "(unsubscribe) no such session #"
-					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
-				#endif
-				
 				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
-			}
 			else
 			{
 				uSendMsg(*usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
-				
 				uLeaveSession(*usr, smi->second);
 			}
 		}
 		break;
 	case protocol::type::Subscribe:
-		#ifdef CHECK_VIOLATIONS
-		if (!fIsSet(usr->tags, uTag::CanChange))
-		{
-			std::cerr << "Protocol violation from user #"
-				<< static_cast<int>(usr->id) << std::endl
-				<< "Reason: Subscribe in middle of something." << std::endl;
-			uRemove(usr, protocol::user_event::Violation);
-			break;
-		}
-		#endif
 		if (usr->syncing == protocol::Global)
 		{
 			const sessions_const_i si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
 			{
-				// session not found
-				#ifndef NDEBUG
-				std::cerr << "(subscribe) no such session #"
-					<< static_cast<int>(usr->inMsg->session_id) << std::endl;
-				#endif
-				
 				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 				break;
 			}
 			Session *session = si->second;
 			
-			if (!uInSession(*usr, usr->inMsg->session_id))
+			if (!usr->inSession(usr->inMsg->session_id))
 			{
 				// Test userlimit
 				if (session->canJoin() == false)
@@ -1116,7 +998,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					break;
 				}
 				
-				if (uInSession(*usr, msg->session_id))
+				if (usr->inSession(msg->session_id))
 				{
 					// already in session
 					uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidRequest));
@@ -1318,7 +1200,7 @@ void Server::uTunnelRaster(User& usr) throw()
 	
 	const bool last = (raster->offset + raster->length == raster->size);
 	
-	if (!uInSession(usr, raster->session_id))
+	if (!usr.inSession(raster->session_id))
 	{
 		std::cerr << "Raster for unsubscribed session #"
 			<< static_cast<int>(raster->session_id)
@@ -1481,6 +1363,9 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					#endif
 					
 					usr_session->second->layer_lock = event->aux;
+					// copy to active session
+					if (session->id == usr->session->id)
+						usr->a_layer_lock = event->aux;
 					
 					// Null-ize the active layer if the target layer is not the active one.
 					if (usr_session->second->layer != usr_session->second->layer_lock)
@@ -1496,6 +1381,10 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					#endif
 					
 					usr_session->second->layer_lock = protocol::null_layer;
+					
+					// copy to active session
+					if (session->id == usr->session->id)
+						usr->a_layer_lock = protocol::null_layer;
 				}
 			}
 		}
@@ -1912,33 +1801,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
 			
-			#ifdef CHECK_VIOLATIONS
-			if ( (msg->user_id != protocol::null_user)
-				or (msg->session_id != protocol::Global)
-				or (msg->event != protocol::user_event::Login))
-			{
-				std::cerr << "Protocol violation from user #"
-					<< static_cast<int>(usr->id) << std::endl
-					<< "Reason: ";
-				
-				if (msg->user_id != protocol::null_user)
-				{
-					std::cerr << "Client assumed it knows its user ID." << std::endl;
-				}
-				else if (msg->session_id != protocol::Global)
-				{
-					std::cerr << "Incorrect login session identifier." << std::endl;
-				}
-				else if (msg->event != protocol::user_event::Login)
-				{
-					std::cerr << "Wrong user event for login." << std::endl;
-				}
-				
-				uRemove(usr, protocol::user_event::Violation);
-				break;
-			}
-			#endif // CHECK_VIOLATIONS
-			
 			if (msg->length > name_len_limit)
 			{
 				#ifndef NDEBUG
@@ -2035,10 +1897,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			#ifdef CHECK_VIOLATIONS
-			fSet(usr->tags, uTag::CanChange);
-			#endif
-			
 			uSendMsg(*usr, msgAck(msg->session_id, msg->type));
 			
 			// make sure the same seed is not used for something else.
@@ -2087,10 +1945,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			if (password == 0)
 			{
 				// no password set
-				
-				#ifdef CHECK_VIOLATIONS
-				fSet(usr->tags, uTag::CanChange);
-				#endif
 				
 				usr->state = uState::login;
 				uSendMsg(*usr, msgHostInfo());
@@ -2581,9 +2435,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	
 	// Transient mode exit.
 	if (Transient and users.empty())
-	{
 		state = server::state::Exiting;
-	}
 }
 
 inline
@@ -2717,13 +2569,8 @@ bool Server::validateSessionTitle(const char* name, const uint8_t len) const thr
 		return false;
 	
 	for (sessions_const_i si(sessions.begin()); si != sessions.end(); ++si)
-	{
-		if (len == si->second->len
-			and (memcmp(name, si->second->title, len) == 0))
-		{
+		if (len == si->second->len and (memcmp(name, si->second->title, len) == 0))
 			return false;
-		}
-	}
 	
 	return true;
 }

@@ -120,19 +120,6 @@ const uint8_t
 	active = 0;
 }
 
-#ifdef CHECK_VIOLATIONS
-//! Client tracking flags
-namespace uTag
-{
-
-const uint8_t
-	None = 0,
-	CanChange = 0x01,
-	HaveTool = 0x02;
-
-}
-#endif // CHECK_VIOLATIONS
-
 // User information
 struct User
 	//: MemoryStack<User>
@@ -142,9 +129,6 @@ struct User
 		session(0),
 		id(_id),
 		events(0),
-		#ifdef CHECK_VIOLATIONS
-		tags(0),
-		#endif // CHECK_VIOLATIONS
 		state(uState::init),
 		layer(protocol::null_layer),
 		syncing(protocol::Global),
@@ -214,6 +198,12 @@ struct User
 			return false;
 	}
 	
+	inline
+	bool inSession(uint8_t session_id) const throw()
+	{
+		return sessions.find(session_id) != sessions.end();
+	}
+	
 	// Socket
 	Socket *sock;
 	
@@ -227,10 +217,6 @@ struct User
 	uint32_t events;
 	
 	uint8_t
-		#ifdef CHECK_VIOLATIONS
-		// Tags for protocol violation checking
-		tags,
-		#endif
 		// User state
 		state,
 		// Active layer in session
