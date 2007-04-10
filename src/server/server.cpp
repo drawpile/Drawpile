@@ -871,25 +871,17 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		else
 		#endif
 		{
-			// check other sessions
-			const usr_session_const_i usi(usr->sessions.find(usr->inMsg->session_id));
-			if (usi == usr->sessions.end())
+			if (usr->makeActive(usr->inMsg->session_id))
 			{
-				// user not in the selected session, null selected session
+				usr->inMsg->user_id = usr->id;
+				Propagate(*usr->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
+				usr->inMsg = 0;
+			}
+			else
+			{
 				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 				usr->session = 0;
-				break;
 			}
-			
-			usr->inMsg->user_id = usr->id;
-			usr->session = usi->second->session;
-			
-			usr->a_locked = usi->second->locked;
-			usr->a_deaf = usi->second->deaf;
-			usr->a_muted = usi->second->muted;
-			
-			Propagate(*usr->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
-			usr->inMsg = 0;
 			
 			#ifdef CHECK_VIOLATIONS
 			fSet(usr->tags, uTag::CanChange);
@@ -1061,50 +1053,31 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		{
 			protocol::LayerSelect *layer = static_cast<protocol::LayerSelect*>(usr->inMsg);
 			
-			const usr_session_const_i ui(usr->sessions.find(layer->session_id));
-			if (ui == usr->sessions.end())
-			{
-				// layer select for non-subscribed session
-				uSendMsg(*usr, msgError(layer->session_id, protocol::error::NotSubscribed));
-				break;
-			}
-			else if (layer->layer_id == ui->second->layer)
-			{
-				// tried to select currently selected layer
+			if (layer->layer_id == usr->a_layer // trying to select current layer
+				or (usr->a_layer_lock != protocol::null_layer
+				and usr->a_layer_lock != layer->layer_id)) // locked to another
 				uSendMsg(*usr, msgError(layer->session_id, protocol::error::InvalidLayer));
-				break;
-			}
-			else if (ui->second->layer_lock != protocol::null_layer
-				and ui->second->layer_lock != layer->layer_id)
+			else
 			{
-				// if user is locked to another layer
-				uSendMsg(*usr, msgError(layer->session_id, protocol::error::InvalidLayer));
-				break;
+				// find layer
+				const session_layer_const_i li(usr->session->layers.find(layer->layer_id));
+				if (li == usr->session->layers.end()) // target layer doesn't exist
+					uSendMsg(*usr, msgError(layer->session_id, protocol::error::UnknownLayer));
+				else if (li->second.locked) // target layer is locked
+					uSendMsg(*usr, msgError(layer->session_id, protocol::error::LayerLocked));
+				else
+				{
+					// set user id to message
+					layer->user_id = usr->id;
+					
+					// set user's layer
+					usr->a_layer = layer->layer_id;
+					// TODO: store active layer in target SessionData, too.
+					
+					// Tell other users about it
+					Propagate(*usr->session, message_ref(layer), (usr->c_acks ? usr : 0));
+				}
 			}
-			
-			// useless temporary
-			Session *session = ui->second->session;
-			
-			// Find layer and check if its locked
-			const session_layer_const_i li(session->layers.find(layer->layer_id));
-			if (li == session->layers.end())
-			{
-				uSendMsg(*usr, msgError(layer->session_id, protocol::error::UnknownLayer));
-				break;
-			}
-			else if (li->second.locked)
-			{
-				uSendMsg(*usr, msgError(layer->session_id, protocol::error::LayerLocked));
-				break;
-			}
-			
-			uSendMsg(*usr, msgAck(layer->session_id, layer->type));
-			
-			layer->user_id = usr->id;
-			
-			Propagate(*session, message_ref(layer), (usr->c_acks ? usr : 0));
-			
-			ui->second->layer = layer->layer_id;
 		}
 		break;
 	case protocol::type::Instruction:

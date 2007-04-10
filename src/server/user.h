@@ -155,7 +155,9 @@ struct User
 		ext_deflate(false),
 		ext_chat(false),
 		ext_palette(false),
-		// active mode
+		// active session
+		a_layer(protocol::null_layer),
+		a_layer_lock(protocol::null_layer),
 		a_locked(false),
 		a_muted(false),
 		a_deaf(false),
@@ -189,6 +191,27 @@ struct User
 		sessions.clear();
 		
 		queue.clear();
+	}
+	
+	inline
+	bool makeActive(uint8_t session_id) throw()
+	{
+		const usr_session_const_i usi(sessions.find(session_id));
+		if (usi != sessions.end())
+		{
+			session = usi->second->session;
+			
+			a_layer = usi->second->layer;
+			a_layer_lock = usi->second->layer_lock;
+			
+			a_locked = usi->second->locked;
+			a_deaf = usi->second->deaf;
+			a_muted = usi->second->muted;
+			
+			return true;
+		}
+		else
+			return false;
 	}
 	
 	// Socket
@@ -247,6 +270,12 @@ struct User
 		ext_chat = fIsSet(flags, protocol::extensions::Chat);
 		ext_palette = fIsSet(flags, protocol::extensions::Palette);
 	}
+	
+	uint8_t
+		// active layer in current session
+		a_layer,
+		// locked to this layer in current session
+		a_layer_lock;
 	
 	// user mode
 	bool a_locked, a_muted, a_deaf;
