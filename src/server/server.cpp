@@ -2313,7 +2313,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	// add user to timer
 	utimer.insert(utimer.end(), usr);
 	
-	const size_t nwbuffer = 4096;
+	const size_t nwbuffer = 4096*2;
 	
 	// these two don't count towards bufferResets because the buffers are empty at this point
 	usr->input.setBuffer(new char[nwbuffer], nwbuffer);
