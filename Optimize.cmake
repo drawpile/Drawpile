@@ -41,6 +41,8 @@ set ( OPT "-O${OPTIMIZATION}")
 
 set ( FOMIT "-fomit-frame-pointer")
 
+set ( WARNALL "-Wall" )
+
 # a bit questionable optimizations
 set ( U_MFPMATH "-mfpmath=sse,387" ) # does not break anything, only requires SSE to be present
 set ( U_MALIGN "-malign-double" ) # breaks binary compatibility?
@@ -134,8 +136,15 @@ else ( UNSAFE_MATH )
 	set ( UNSAFE_MATH_OPT "" )
 endif ( UNSAFE_MATH )
 
+###   TEST -Wall   ###
+
+check_cxx_accepts_flag ( ${WARNALL} ACCEPT_WALL )
+if ( NOT ACCEPT_WALL )
+	set ( WARNALL "" )
+endif ( NOT ACCEPT_WALL )
+
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS "${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT}" )
+set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT}" )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${FOMIT} -DNDEBUG" )
