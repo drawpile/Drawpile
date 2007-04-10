@@ -773,7 +773,7 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	bswap(_port);
 	
 	std::string str(straddr);
-	//std::string str(straddr).insert(str.length(), ":").insert(str.length(), _port);
+	//return std::string(straddr).push_back(":").push_back(_port);
 	
 	char buf[7];
 	sprintf(buf, ":%d", _port);
