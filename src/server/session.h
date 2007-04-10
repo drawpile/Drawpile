@@ -28,8 +28,10 @@ struct Session;
 #include "user.h"
 
 /* iterators */
-typedef std::map<uint8_t, User*>::iterator session_usr_iterator;
-typedef std::map<uint8_t, LayerData>::iterator session_layer_iterator;
+typedef std::map<uint8_t, User*>::iterator session_usr_i;
+typedef std::map<uint8_t, User*>::const_iterator session_usr_const_i;
+typedef std::map<uint8_t, LayerData>::iterator session_layer_i;
+typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 
 #include <stdint.h>
 #include <list>

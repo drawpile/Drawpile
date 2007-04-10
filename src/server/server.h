@@ -183,10 +183,10 @@ protected:
 	message_ref msgHostInfo() const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgAuth(User* usr, const uint8_t session) const throw(std::bad_alloc);
+	message_ref msgAuth(User& usr, const uint8_t session) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgUserEvent(const User* usr, const Session* session, const uint8_t event) const throw(std::bad_alloc);
+	message_ref msgUserEvent(const User& usr, const Session& session, const uint8_t event) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgError(const uint8_t session, const uint16_t errorCode) const throw(std::bad_alloc);
@@ -195,10 +195,10 @@ protected:
 	message_ref msgAck(const uint8_t session, const uint8_t msgtype) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSyncWait(Session* session) const throw(std::bad_alloc);
+	message_ref msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgSessionInfo(Session* session) const throw(std::bad_alloc);
+	message_ref msgSessionInfo(const Session& session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
@@ -224,7 +224,7 @@ protected:
 	
 	// Forward raster to those expecting it.
 	inline
-	void uTunnelRaster(User* usr) throw();
+	void uTunnelRaster(User& usr) throw();
 	
 	// Handle SessionEvent message
 	inline
@@ -240,7 +240,7 @@ protected:
 	
 	// Send message to session
 	inline
-	void Propagate(Session* session, message_ref msg, User* source=0, const bool toAll=false) throw();
+	void Propagate(const Session& session, message_ref msg, User* source=0, const bool toAll=false) throw();
 	
 	// Send message to user
 	/*
@@ -248,7 +248,7 @@ protected:
 	 * and manipulates event system.
 	 */
 	inline
-	void uSendMsg(User* usr, message_ref msg) throw();
+	void uSendMsg(User& usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
 	inline
@@ -278,13 +278,9 @@ protected:
 	inline
 	void sRemove(Session*& session) throw();
 	
-	// Tests if session exists
-	inline
-	bool sessionExists(const uint8_t session) const throw();
-	
 	// Tests if user is in session
 	inline
-	bool uInSession(User* usr, const uint8_t session) const throw();
+	bool uInSession(const User& usr, const uint8_t session) const throw();
 	
 	// check user name uniqueness
 	inline
@@ -296,7 +292,7 @@ protected:
 	
 	// Reprocesses deflated data stream
 	inline
-	void DeflateReprocess(User*& usr, protocol::Message* msg) throw(std::bad_alloc);
+	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
 	
 	// cull idle users
 	inline
@@ -304,7 +300,10 @@ protected:
 	
 	// regenerate password seed
 	inline
-	void uRegenSeed(User* usr) const throw();
+	void uRegenSeed(User& usr) const throw();
+	
+	inline
+	bool isOwner(const User& usr, const Session& session) const throw();
 public:
 	//! ctor
 	Server() throw();

@@ -43,7 +43,8 @@ typedef boost::shared_ptr<protocol::Message> message_ref;
 
 /* iterators */
 struct SessionData;
-typedef std::map<uint8_t, SessionData*>::iterator usr_session_iterator;
+typedef std::map<uint8_t, SessionData*>::iterator usr_session_i;
+typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
 
 #include "sockets.h"
 
@@ -182,7 +183,7 @@ struct User
 		delete sock,
 		delete inMsg;
 		
-		for (usr_session_iterator usi(sessions.begin()); usi != sessions.end(); ++usi)
+		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
 			delete usi->second;
 		
 		sessions.clear();
