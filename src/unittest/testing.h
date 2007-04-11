@@ -32,7 +32,6 @@ void testing(char* name)
 	std::cout << name << std::flush;
 }
 
-
 template <class T>
 bool testoutput(T o, T x, size_t s)
 {

@@ -6,6 +6,7 @@ set (
 	test.sha1.h
 	test.memcpy_t.h
 	test.bswap.h
+	test.bounds.h
 )
 
 set (

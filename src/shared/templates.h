@@ -140,4 +140,12 @@ bool fIsSet(const T& u, const T& x) throw()
 	return (u & x) == x;
 }
 
+/* type ops */
+
+template <typename T, typename U> inline
+bool inBoundsOf(const U& u) throw()
+{
+	return (static_cast<T>(u) == u);
+}
+
 #endif

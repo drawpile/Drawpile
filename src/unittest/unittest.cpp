@@ -27,6 +27,7 @@
 #include "test.sha1.h"
 #include "test.bswap.h"
 #include "test.memcpy_t.h"
+#include "test.bounds.h"
 
 int main(int argc, char** argv)
 {
@@ -42,6 +43,7 @@ int main(int argc, char** argv)
 	test::byteswapping();
 	test::simple_memcpy();
 	test::hashing();
+	test::boundscheck();
 	
 	/* end tests*/
 	
