@@ -19,6 +19,7 @@ set (
 
 # include some stuff
 
+include ( CheckIncludeFile )
 include ( CheckIncludeFileCXX )
 include ( CheckSymbolExists )
 include ( CheckFunctionExists )
@@ -32,7 +33,7 @@ if ( DEFLATE )
 		set ( HAVE_ZLIB ON )
 		link_libraries ( ${ZLIB_LIBRARIES} )
 	else ( ZLIB_FOUND )
-		check_include_file_cxx ( zlib.h HAVE_ZLIB )
+		check_include_file ( zlib.h HAVE_ZLIB )
 		if ( HAVE_ZLIB )
 			link_libraries ( "z" )
 		else ( HAVE_ZLIB )
@@ -59,7 +60,7 @@ endif ( Boost_FOUND )
 set ( EV_FOUND OFF )
 
 if ( EPOLL )
-	check_include_file_cxx ( sys/epoll.h HAVE_EPOLL_H )
+	check_include_file ( sys/epoll.h HAVE_EPOLL_H )
 	
 	if ( HAVE_EPOLL_H )
 		#add_definitions ( -DEV_EPOLL )
@@ -122,8 +123,8 @@ endif ( NOT EV_FOUND )
 
 if ( NOT EV_FOUND )
 	if ( WIN32 )
-		check_include_file_cxx ( winsock2.h HAVE_WSA )
-		check_include_file_cxx ( mswsock.h HAVE_XPWSA )
+		check_include_file ( winsock2.h HAVE_WSA )
+		check_include_file ( mswsock.h HAVE_XPWSA )
 		if ( HAVE_WSA )
 			message( STATUS "Windows Socket API found")
 			if ( WSA )
@@ -162,6 +163,10 @@ endif ( EV_EPOLL )
 if ( EV_KEVENT )
 	set ( EV_SRC event.kevent.cpp )
 endif ( EV_KEVENT )
+
+### GNU Extensions
+
+check_include_file_cxx ( ext/slist HAVE_SLIST )
 
 ### link
 

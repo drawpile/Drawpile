@@ -53,7 +53,11 @@
 
 #include <set>
 #include <vector>
-#include <list>
+#if defined(HAVE_SLIST)
+	#include <ext/slist>
+#else
+	#include <list>
+#endif
 
 // iterators
 typedef std::map<uint8_t, Session*>::iterator sessions_i;
@@ -62,8 +66,13 @@ typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
 typedef std::multimap<User*, User*>::iterator tunnel_i;
 typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
+#if defined(HAVE_SLIST)
+typedef __gnu_cxx::slist<User*>::iterator userlist_i;
+typedef __gnu_cxx::slist<User*>::const_iterator userlist_const_i;
+#else
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
+#endif
 
 Server::Server() throw()
 	: state(server::state::None),
@@ -175,6 +184,9 @@ inline
 message_ref Server::msgAuth(User& usr, const uint8_t session) const throw(std::bad_alloc)
 {
 	protocol::Authentication* auth = new protocol::Authentication;
+	
+	assert(inBoundsOf<uint8_t>(session));
+	
 	auth->session_id = session;
 	
 	uRegenSeed(usr);
@@ -2136,18 +2148,19 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	#endif
 	
 	// Add session to users session list.
-	usr->sessions[session->id] = new SessionData(session);
+	SessionData *sdata = new SessionData(session);
+	usr->sessions[session->id] = sdata;
 	assert(usr->sessions[session->id]->session != 0);
 	
 	// Remove locked and mute, if the user is the session's owner.
 	if (isOwner(*usr, *session))
 	{
-		usr->sessions[session->id]->locked = false;
-		usr->sessions[session->id]->muted = false;
+		sdata->locked = false;
+		sdata->muted = false;
 	}
 	// Remove mute if the user is server admin.
 	else if (usr->isAdmin)
-		usr->sessions[session->id]->muted = false;
+		sdata->muted = false;
 	
 	if (session->users.size() != 0)
 	{
@@ -2155,7 +2168,8 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 		Propagate(*session, msgUserEvent(*usr, session->id, protocol::user_event::Join));
 		
 		// put user to wait sync list.
-		session->waitingSync.push_back(usr);
+		//session->waitingSync.push_back(usr);
+		session->waitingSync.insert(session->waitingSync.begin(), usr);
 		usr->syncing = session->id;
 		
 		// don't start new client sync if one is already in progress...

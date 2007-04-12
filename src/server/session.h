@@ -34,7 +34,11 @@ typedef std::map<uint8_t, LayerData>::iterator session_layer_i;
 typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 
 #include <stdint.h>
-#include <list>
+#if defined(HAVE_SLIST)
+	#include <ext/slist>
+#else
+	#include <list>
+#endif
 
 struct LayerData
 {
@@ -165,7 +169,11 @@ struct Session
 	std::map<uint8_t, User*> users;
 	
 	// Users waiting sync.
+	#if defined(HAVE_SLIST)
+	__gnu_cxx::slist<User*> waitingSync;
+	#else // 
 	std::list<User*> waitingSync;
+	#endif
 	
 	// Session sync in action.
 	uint32_t syncCounter;

@@ -24,3 +24,5 @@
 #cmakedefine DEBUG_PROTOCOL
 
 #cmakedefine IPV6_SUPPORT
+
+#cmakedefine HAVE_SLIST
