@@ -65,7 +65,8 @@ struct SessionData
 		locked(fIsSet(s->mode, protocol::user_mode::Locked)),
 		muted(fIsSet(s->mode, protocol::user_mode::Mute)),
 		deaf(fIsSet(s->mode, protocol::user_mode::Deaf)),
-		syncWait(false)
+		syncWait(false),
+		cachedToolInfo(0)
 	{
 		assert(session != 0);
 	}
@@ -101,6 +102,10 @@ struct SessionData
 	}
 	
 	bool syncWait;
+	
+	/* cached messages */
+	
+	protocol::Message *cachedToolInfo;
 };
 
 // User states
@@ -158,6 +163,7 @@ struct User
 		deadtime(0),
 		nlen(0),
 		name(0),
+		cachedToolInfo(0),
 		strokes(0)
 	{
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
@@ -190,6 +196,17 @@ struct User
 		const usr_session_const_i usi(sessions.find(session_id));
 		if (usi != sessions.end())
 		{
+			if (session != 0)
+			{
+				const usr_session_const_i usio(sessions.find(session->id));
+				assert(usio != sessions.end());
+				
+				// these aren't copied to session otherwise
+				usio->second->layer = a_layer;
+				usio->second->cachedToolInfo = cachedToolInfo;
+			}
+			
+			// copy 
 			session = usi->second->session;
 			
 			a_layer = usi->second->layer;
@@ -198,6 +215,8 @@ struct User
 			a_locked = usi->second->locked;
 			a_deaf = usi->second->deaf;
 			a_muted = usi->second->muted;
+			
+			cachedToolInfo = usi->second->cachedToolInfo;
 			
 			return true;
 		}
@@ -317,6 +336,10 @@ struct User
 	
 	// User name
 	char* name;
+	
+	/* cached messages */
+	
+	protocol::Message *cachedToolInfo;
 	
 	/* counters */
 	
