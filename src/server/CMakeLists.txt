@@ -166,7 +166,9 @@ endif ( EV_KEVENT )
 
 ### GNU Extensions
 
-check_include_file_cxx ( ext/slist HAVE_SLIST )
+if ( GNUEXT )
+	check_include_file_cxx ( ext/slist HAVE_SLIST )
+endif ( GNUEXT )
 
 ### link
 

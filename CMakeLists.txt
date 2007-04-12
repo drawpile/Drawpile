@@ -19,23 +19,25 @@ set ( SERVERNAME drawpile-srv )
 
 # do these even work?
 
-option ( CLIENT "Don't compile client" ON )
-option ( SERVER "Don't compile server" ON )
+option ( CLIENT "Compile client" ON )
+option ( SERVER "Compile server" ON )
 option ( UNITTEST "Compile unittests" OFF )
 
-option ( EPOLL "Disable epoll(4) support" ON )
-option ( PSELECT "Disable pselect(2) support" ON )
-option ( KQUEUE "Disable kqueue(2) support" ON )
-option ( KEVENT "Disable kevent(2) support" ON )
+option ( EPOLL "Enable epoll(4) support" ON )
+option ( PSELECT "Enable pselect(2) support" ON )
+option ( KQUEUE "Enable kqueue(2) support" ON )
+option ( KEVENT "Enable kevent(2) support" ON )
 option ( WSA "Enable WSA event support" OFF ) # still broken
 
-option ( DEFLATE "Disable deflate compression" ON )
+option ( DEFLATE "Enable deflate compression" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
-option ( OPTIMIZE "Disable any and all optimizations" ON )
+option ( OPTIMIZE "Apply several optimization flags" ON )
 option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
+
+option ( GNUEXT "Use GNU extensions" ON )
 
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
 
