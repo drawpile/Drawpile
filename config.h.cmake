@@ -26,3 +26,5 @@
 #cmakedefine IPV6_SUPPORT
 
 #cmakedefine HAVE_SLIST
+#cmakedefine HAVE_HASH_SET
+#cmakedefine HAVE_HASH_MAP

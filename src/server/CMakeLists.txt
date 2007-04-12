@@ -168,6 +168,8 @@ endif ( EV_KEVENT )
 
 if ( GNUEXT )
 	check_include_file_cxx ( ext/slist HAVE_SLIST )
+	check_include_file_cxx ( ext/hash_set HAVE_HASH_SET )
+	check_include_file_cxx ( ext/hash_map HAVE_HASH_MAP )
 endif ( GNUEXT )
 
 ### link

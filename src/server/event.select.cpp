@@ -300,7 +300,11 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
+	#if defined(HAVE_HASH_MAP)
+	__gnu_cxx::hash_map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
+	#else
 	std::map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
+	#endif
 	if (iter == fd_list.end())
 		return false;
 	
@@ -340,17 +344,22 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	if (iter->second == 0)
 	{
 		fd_iter = iter;
+		fd_list.erase(iter);
+		fd_iter = fd_list.begin();
+		/*
 		if (fd_iter != fd_list.begin())
 		{
-			--fd_iter; // make sure the iterator doesn't get invalidated
+			//--fd_iter; // make sure the iterator doesn't get invalidated
 			fd_list.erase(iter);
-			++fd_iter; // increment to the next
+			fd_iter = fd_list.begin();
+			//++fd_iter; // increment to the next
 		}
 		else
 		{
 			fd_list.erase(iter);
 			fd_iter = fd_list.end();
 		}
+		*/
 	}
 	
 	return true;

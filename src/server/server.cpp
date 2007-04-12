@@ -51,28 +51,37 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <set>
 #include <vector>
-#if defined(HAVE_SLIST)
-	#include <ext/slist>
-#else
-	#include <list>
-#endif
+#include <map>
 
 // iterators
+#if defined(HAVE_HASH_MAP)
+typedef __gnu_cxx::hash_map<uint8_t, Session*>::iterator sessions_i;
+typedef __gnu_cxx::hash_map<uint8_t, Session*>::const_iterator sessions_const_i;
+typedef __gnu_cxx::hash_map<fd_t, User*>::iterator users_i;
+typedef __gnu_cxx::hash_map<fd_t, User*>::const_iterator users_const_i;
+#else
 typedef std::map<uint8_t, Session*>::iterator sessions_i;
 typedef std::map<uint8_t, Session*>::const_iterator sessions_const_i;
 typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
+#endif
+
 typedef std::multimap<User*, User*>::iterator tunnel_i;
 typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
+
 #if defined(HAVE_SLIST)
+	#include <ext/slist>
 typedef __gnu_cxx::slist<User*>::iterator userlist_i;
 typedef __gnu_cxx::slist<User*>::const_iterator userlist_const_i;
 #else
+	#include <list>
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
 #endif
+
+typedef std::set<User*>::iterator userset_i;
+typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
 	: state(server::state::None),
@@ -2401,7 +2410,6 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	
 	// break tunnels with the user in the receiving end
 	ti = tunnel.begin();
-	//std::set<fd_t> sources;
 	while (ti != tunnel.end())
 	{
 		if (ti->second == usr)
@@ -2579,7 +2587,7 @@ inline
 void Server::cullIdlers() throw()
 {
 	User *usr;
-	for (std::set<User*>::iterator tui(utimer.begin()); tui != utimer.end(); ++tui)
+	for (userset_i tui(utimer.begin()); tui != utimer.end(); ++tui)
 	{
 		if ((*tui)->deadtime < current_time)
 		{

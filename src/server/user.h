@@ -23,8 +23,7 @@
 
 #include "../shared/templates.h" // f~()
 
-#include <stdint.h>
-#include <map>
+#include <stdint.h> // [u]int##_t
 #include <deque>
 
 #include "buffer.h"
@@ -41,10 +40,18 @@ struct User;
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
+struct SessionData; // forward declaration
+
 /* iterators */
-struct SessionData;
+#if defined(HAVE_HASH_MAP)
+#include <ext/hash_map>
+typedef __gnu_cxx::hash_map<uint8_t, SessionData*>::iterator usr_session_i;
+typedef __gnu_cxx::hash_map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
+#else
+#include <map>
 typedef std::map<uint8_t, SessionData*>::iterator usr_session_i;
 typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
+#endif
 
 #include "sockets.h"
 
@@ -92,7 +99,7 @@ struct SessionData
 		muted = fIsSet(flags, protocol::user_mode::Mute);
 		deaf = fIsSet(flags, protocol::user_mode::Deaf);
 	}
-
+	
 	bool syncWait;
 };
 
@@ -281,7 +288,11 @@ struct User
 	}
 	
 	// Subscribed sessions
+	#if defined(HAVE_HASH_MAP)
+	__gnu_cxx::hash_map<uint8_t, SessionData*> sessions;
+	#else
 	std::map<uint8_t, SessionData*> sessions;
+	#endif
 	
 	// Output queue
 	std::deque<message_ref> queue;
