@@ -109,7 +109,8 @@ Server::Server() throw()
 	default_user_mode(protocol::user_mode::None),
 	Transient(false),
 	LocalhostAdmin(false),
-	DaemonMode(false)
+	DaemonMode(false),
+	blockDuplicateConnections(true)
 	// stats
 	#ifndef NDEBUG
 	,
@@ -2283,20 +2284,14 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	}
 	
 	// Check duplicate connections (should be enabled with command-line switch instead)
-	#ifdef NO_DUPLICATE_CONNECTIONS
-	for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
-	{
-		if (sock->matchAddress(ui->second->sock))
-		{
-			#ifndef NDEBUG
-			std::cout << "Multiple connections from: " << sock->address() << std::endl;
-			#endif // NDEBUG
-			
-			delete sock;
-			return;
-		}
-	}
-	#endif // NO_DUPLICATE_CONNECTIONS
+	if (blockDuplicateConnections)
+		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
+			if (sock->matchAddress(ui->second->sock))
+			{
+				std::cout << "Duplicate connection from: " << sock->address() << std::endl;
+				delete sock;
+				return;
+			}
 	
 	const uint8_t id = getUserID();
 	

@@ -136,7 +136,7 @@ protected:
 	uint8_t
 		default_user_mode;
 	
-	bool Transient, LocalhostAdmin, DaemonMode;
+	bool Transient, LocalhostAdmin, DaemonMode, blockDuplicateConnections;
 	
 	/* statistics */
 	
@@ -384,6 +384,10 @@ public:
 	//! Set per user subscription limit
 	inline
 	void setSubscriptionLimit(const uint8_t x) { max_subscriptions = x; }
+	
+	//! Allow/disallow duplicate connections from same address
+	inline
+	void blockDuplicateConnectsion(const bool x) { blockDuplicateConnections = x; }
 	
 	//! Enter main loop
 	int run() throw();

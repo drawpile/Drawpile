@@ -62,7 +62,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
-	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:Tn:L:J:V")) != -1)
+	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:Tn:L:J:VM")) != -1)
 	{
 		switch (opt)
 		{
@@ -84,6 +84,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					<< "   -T            Enable transient mode " << std::endl
 					<< "   -L [num]      Set session limit" << std::endl
 					<< "   -J [num]      Set subscription limit" << std::endl
+					<< "   -M            Allow duplicate connections" << std::endl
 					;
 				exit(1);
 				break;
@@ -234,6 +235,10 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					srv->setSubscriptionLimit(limit);
 					std::cout << "Subscription limit set to: " << limit << std::endl;
 				}
+				break;
+			case 'M': // allow multiple connections from same address
+				srv->blockDuplicateConnectsion(false);
+				std::cout << "Multiple connections allowed from same source address." << std::endl;
 				break;
 			case 'V': // version
 				exit(0);
