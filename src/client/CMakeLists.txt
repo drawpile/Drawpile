@@ -77,6 +77,10 @@ endif ( WIN32 )
 
 link_libraries( ${LIBNAME} ) # DP shared library
 
+if ( ACCEPT_MTHREADS )
+	set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads" )
+endif ( ACCEPT_MTHREADS )
+
 add_executable (
 	${CLIENTNAME}
 	${EXETYPE}

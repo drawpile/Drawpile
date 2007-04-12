@@ -57,6 +57,11 @@ endif ( OPTIMIZE )
 
 include ( Macros.cmake )
 
+###
+
+set ( MTHREADS "-mthreads" )
+check_cxx_accepts_flag ( ${MTHREADS} ACCEPT_MTHREADS )
+
 ### binary and library output ###
 
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
