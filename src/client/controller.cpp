@@ -362,8 +362,6 @@ void Controller::syncDone()
 {
 	emit unlockboard();
 	lock_ = false;
-	// Resend brush so the new client is up to date
-	toolbox_.editor()->resendBrush();
 }
 
 /**
