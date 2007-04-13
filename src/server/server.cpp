@@ -488,12 +488,12 @@ void Server::uWrite(User*& usr) throw()
 		usr->queue.erase(f_msg, ++l_msg);
 	}
 	
-	const int sb = usr->sock->send( usr->output.rpos, usr->output.canRead() );
+	const int sb = usr->sock.send( usr->output.rpos, usr->output.canRead() );
 	
 	switch (sb)
 	{
 	case SOCKET_ERROR:
-		switch (usr->sock->getError())
+		switch (usr->sock.getError())
 		{
 		#ifdef WIN32
 		case WSA_IO_PENDING:
@@ -539,7 +539,7 @@ void Server::uWrite(User*& usr) throw()
 				#endif
 				
 				fClr(usr->events, ev.write);
-				ev.modify(usr->sock->fd(), usr->events);
+				ev.modify(usr->sock.fd(), usr->events);
 			}
 			else
 			{
@@ -586,7 +586,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		#endif
 	}
 	
-	const int rb = usr->sock->recv(
+	const int rb = usr->sock.recv(
 		usr->input.wpos,
 		usr->input.canWrite()
 	);
@@ -594,7 +594,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	switch (rb)
 	{
 	case SOCKET_ERROR:
-		switch (usr->sock->getError())
+		switch (usr->sock.getError())
 		{
 		case EAGAIN:
 		case EINTR:
@@ -742,7 +742,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	switch (usr->inMsg->type)
 	{
 	case protocol::type::ToolInfo:
-		usr->updateTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
+		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
 	case protocol::type::StrokeInfo:
 	case protocol::type::StrokeEnd:
 		switch (usr->inMsg->type)
@@ -978,8 +978,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
 					return;
 				}
-				
-				hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
+				else
+					hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
 			}
 			else
 			{
@@ -1544,7 +1544,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 					<< ", default mode: " << static_cast<int>(session->mode)
 					<< ", level: " << static_cast<int>(session->level) << std::endl
 					<< "  Owner: " << static_cast<int>(usr->id)
-					<< ", from: " << usr->sock->address() << std::endl;
+					<< ", from: " << usr->sock.address() << std::endl;
 				
 				uSendMsg(*usr, msgAck(msg->session_id, msg->type));
 			}
@@ -1644,6 +1644,7 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				const int nlen = msg->length - crop;
 				if (session->title_len < nlen)
 				{
+					// re-alloc session title only if the new one is longer than old one
 					delete [] session->title;
 					session->title = new char[nlen];
 				}
@@ -1802,7 +1803,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			if (LocalhostAdmin)
 			{
-				const std::string IPPort(usr->sock->address());
+				const std::string IPPort(usr->sock.address());
 				const std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
 				assert(ns != std::string::npos);
 				const std::string IP(IPPort.substr(0, ns));
@@ -1984,7 +1985,7 @@ void Server::uSendMsg(User& usr, message_ref msg) throw()
 	if (!fIsSet(usr.events, ev.write))
 	{
 		fSet(usr.events, ev.write);
-		ev.modify(usr.sock->fd(), usr.events);
+		ev.modify(usr.sock.fd(), usr.events);
 	}
 }
 
@@ -2219,12 +2220,12 @@ void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) t
 }
 
 inline
-void Server::uAdd(Socket* sock) throw(std::bad_alloc)
+void Server::uAdd(Socket sock) throw(std::bad_alloc)
 {
-	if (sock == 0)
+	if (sock.fd() == INVALID_SOCKET)
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-		std::cout << "Null socket, aborting user creation." << std::endl;
+		std::cout << "Invalid socket, aborting user creation." << std::endl;
 		#endif
 		
 		return;
@@ -2233,10 +2234,9 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	// Check duplicate connections (should be enabled with command-line switch instead)
 	if (blockDuplicateConnections)
 		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
-			if (sock->matchAddress(ui->second->sock))
+			if (sock.matchAddress(ui->second->sock))
 			{
-				std::cout << "Duplicate connection from: " << sock->address() << std::endl;
-				delete sock;
+				std::cout << "Duplicate connection from: " << sock.address() << std::endl;
 				return;
 			}
 	
@@ -2245,20 +2245,19 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 	if (id == protocol::null_user)
 	{
 		#ifndef NDEBUG
-		std::cout << "Server full, disconnecting user: " << sock->address() << std::endl;
+		std::cout << "Server full, disconnecting user: " << sock.address() << std::endl;
 		#endif
 		
-		delete sock;
 		return;
 	}
 	
 	std::cout << "User #" << static_cast<int>(id)
-		<< " connected from " << sock->address() << std::endl;
+		<< " connected from " << sock.address() << std::endl;
 	
 	User* usr = new User(id, sock);
 	
 	fSet(usr->events, ev.read);
-	ev.add(usr->sock->fd(), usr->events);
+	ev.add(usr->sock.fd(), usr->events);
 	
 	const size_t ts = utimer.size();
 	
@@ -2293,7 +2292,7 @@ void Server::uAdd(Socket* sock) throw(std::bad_alloc)
 		largestOutputBuffer = usr->output.size; // stats
 	#endif
 	
-	users[sock->fd()] = usr;
+	users[sock.fd()] = usr;
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Known users: " << users.size() << std::endl;
@@ -2332,13 +2331,13 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Server::uRemove(user: " << static_cast<int>(usr->id)
-		<< ", at address: " << usr->sock->address() << ")" << std::endl;
+		<< ", at address: " << usr->sock.address() << ")" << std::endl;
 	#endif
 	
 	usr->state = uState::dead;
 	
 	// Remove from event system
-	ev.remove(usr->sock->fd(), ev.read|ev.write|ev.error|ev.hangup);
+	ev.remove(usr->sock.fd(), ev.read|ev.write|ev.error|ev.hangup);
 	
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
@@ -2373,7 +2372,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	}
 	
 	// remove from fd -> User* map
-	users.erase(usr->sock->fd());
+	users.erase(usr->sock.fd());
 	
 	freeUserID(usr->id);
 	

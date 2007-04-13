@@ -285,7 +285,7 @@ protected:
 	
 	// Adds user
 	inline
-	void uAdd(Socket* sock) throw(std::bad_alloc);
+	void uAdd(Socket sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
 	inline

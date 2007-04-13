@@ -137,7 +137,7 @@ const uint8_t
 struct User
 	//: MemoryStack<User>
 {
-	User(const uint8_t _id=protocol::null_user, Socket* nsock=0) throw()
+	User(const uint8_t _id=protocol::null_user, const Socket& nsock) throw()
 		: sock(nsock),
 		session(0),
 		id(_id),
@@ -170,7 +170,7 @@ struct User
 	{
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "User::User(" << static_cast<int>(_id)
-			<< ", " << sock->fd() << ")" << std::endl;
+			<< ", " << sock.fd() << ")" << std::endl;
 		#endif
 	}
 	
@@ -181,7 +181,7 @@ struct User
 		#endif
 		
 		delete [] name,
-		delete sock,
+		//delete sock,
 		delete inMsg;
 		
 		if (toolChanged)
@@ -249,25 +249,25 @@ struct User
 	}
 	
 	inline
-	void updateTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
+	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
 	{
-		#ifndef NDEBUG
+		assert(ti != cachedToolInfo); // attempted to re-cache same tool
+		
+		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "Caching Tool Info for user #" << static_cast<int>(id) << std::endl;
 		#endif
-		if (ti != cachedToolInfo)
-		{
-			delete cachedToolInfo;
-			cachedToolInfo = new protocol::ToolInfo(ti->tool_id, ti->mode, ti->lo_size, ti->hi_size, ti->lo_hardness, ti->hi_hardness, ti->spacing);
-			
-			memcpy(cachedToolInfo->lo_color, ti->lo_color, 4);
-			memcpy(cachedToolInfo->hi_color, ti->hi_color, 4);
-			
-			toolChanged = true;
-		}
+		
+		delete cachedToolInfo;
+		cachedToolInfo = new protocol::ToolInfo(ti->tool_id, ti->mode, ti->lo_size, ti->hi_size, ti->lo_hardness, ti->hi_hardness, ti->spacing);
+		
+		memcpy(cachedToolInfo->lo_color, ti->lo_color, 4);
+		memcpy(cachedToolInfo->hi_color, ti->hi_color, 4);
+		
+		toolChanged = true;
 	}
 	
 	// Socket
-	Socket *sock;
+	Socket sock;
 	
 	// Currently active session
 	Session *session;

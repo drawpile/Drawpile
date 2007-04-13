@@ -129,9 +129,9 @@ protected:
 	
 	//! Address
 	#ifdef IPV6_SUPPORT
-	sockaddr_in6 addr;
+	sockaddr_in6 addr, r_addr;
 	#else // IPv4
-	sockaddr_in addr;
+	sockaddr_in addr, r_addr;
 	#endif
 	
 	//! Last error number (from errno or equivalent)
@@ -223,10 +223,9 @@ public:
 	
 	//! Accept new connection.
 	/**
-	 * @return NULL if no new connection was made.
-	 * @return Socket* if new connection was accepted.
+	 * @return Socket* if new connection was accepted, NULL otherwise.
 	 */
-	Socket* accept() throw(std::bad_alloc);
+	Socket accept() throw();
 	
 	//! Set blocking
 	/**
@@ -253,16 +252,15 @@ public:
 	
 	//! Bind socket to port and address
 	/**
-	 * @return 0 on success.
-	 * @return SOCKET_ERROR otherwise
+	 * @return 0 on success, SOCKET_ERROR otherwise.
 	 */
 	int bindTo(const std::string& address, const uint16_t port) throw();
 	
 	//! Connect to remote address
 	#ifdef IPV6_SUPPORT
-	int connect(const sockaddr_in6* rhost) throw();
+	int connect(const sockaddr_in6& rhost) throw();
 	#endif
-	int connect(const sockaddr_in* rhost) throw();
+	int connect(const sockaddr_in& rhost) throw();
 	
 	//! Set listening
 	/**
@@ -322,12 +320,12 @@ public:
 	 * @return associated address structure.
 	 */
 	#ifdef IPV6_SUPPORT
-	sockaddr_in6* getAddr() throw()
+	sockaddr_in6& getAddr() throw()
 	#else // IPv4
-	sockaddr_in* getAddr() throw()
+	sockaddr_in& getAddr() throw()
 	#endif
 	{
-		return &addr;
+		return addr;
 	}
 	
 	//! Get IP address
@@ -344,10 +342,10 @@ public:
 	uint16_t port() const throw();
 	
 	//! Check if the address matches
-	bool matchAddress(Socket* tsock) throw();
+	bool matchAddress(Socket& tsock) throw();
 	
 	//! Check if the port matches
-	bool matchPort(const Socket* tsock) const throw();
+	bool matchPort(const Socket& tsock) const throw();
 	
 	#ifdef IPV6_SUPPORT
 	static std::string AddrToString(const sockaddr_in6& raddr) throw();
@@ -362,13 +360,13 @@ public:
 	/* Operator overloads */
 	
 	//! operator== overload (Socket*)
-	bool operator== (const Socket* tsock) const throw() { return (sock == tsock->fd()); }
+	bool operator== (const Socket& tsock) const throw() { return (sock == tsock.fd()); }
 	
 	//! operator== overload (fd_t)
 	bool operator== (const fd_t& _fd) const throw() { return (sock == _fd); }
 	
 	//! operator= overload (Socket*)
-	Socket* operator= (Socket* tsock) throw() { fd(tsock->fd()); return this; }
+	Socket* operator= (Socket& tsock) throw() { fd(tsock.fd()); return this; }
 	
 	//! operator= overload (fd_t)
 	fd_t operator= (fd_t& _fd) throw() { fd(_fd); return sock; }

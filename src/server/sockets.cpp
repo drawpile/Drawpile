@@ -146,7 +146,7 @@ void Socket::close() throw()
 	sock = INVALID_SOCKET;
 }
 
-Socket* Socket::accept() throw(std::bad_alloc)
+Socket Socket::accept() throw()
 {
 	assert(sock != INVALID_SOCKET);
 	
@@ -172,10 +172,10 @@ Socket* Socket::accept() throw(std::bad_alloc)
 	
 	if (n_fd != INVALID_SOCKET)
 	{
-		Socket *s = new Socket(n_fd, sa);
-		memcpy(s->getAddr(), &sa, sizeof(addr));
+		Socket nsock(n_fd, sa);
+		memcpy(&nsock.getAddr(), &sa, sizeof(addr));
 		
-		return s;
+		return nsock;
 	}
 	else
 	{
@@ -235,7 +235,7 @@ Socket* Socket::accept() throw(std::bad_alloc)
 			exit(1);
 		}
 		
-		return 0;
+		return Socket();
 	}
 }
 
@@ -376,7 +376,7 @@ int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 }
 
 #ifdef IPV6_SUPPORT
-int Socket::connect(const sockaddr_in6* rhost) throw()
+int Socket::connect(const sockaddr_in6& rhost) throw()
 {
 	// TODO
 	assert(1);
@@ -384,7 +384,7 @@ int Socket::connect(const sockaddr_in6* rhost) throw()
 }
 #endif
 
-int Socket::connect(const sockaddr_in* rhost) throw()
+int Socket::connect(const sockaddr_in& rhost) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket::connect()" << std::endl;
@@ -392,10 +392,12 @@ int Socket::connect(const sockaddr_in* rhost) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
+	r_addr = rhost;
+	
 	#ifdef WIN32
-	const int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost), 0, 0, 0, 0);
+	const int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&r_addr), sizeof(r_addr), 0, 0, 0, 0);
 	#else // POSIX
-	const int r = ::connect(sock, reinterpret_cast<sockaddr*>(&rhost), sizeof(rhost));
+	const int r = ::connect(sock, reinterpret_cast<sockaddr*>(&r_addr), sizeof(r_addr));
 	#endif
 	
 	if (r == SOCKET_ERROR)
@@ -696,19 +698,19 @@ uint16_t Socket::port() const throw()
 	return bswap(_port);
 }
 
-bool Socket::matchAddress(Socket* tsock) throw()
+bool Socket::matchAddress(Socket& tsock) throw()
 {
 	#ifdef IPV6_SUPPORT
 	// TODO: Similar checking for IPv6 addresses
 	return false;
 	#else // IPv4
-	return (addr.sin_addr.s_addr == tsock->getAddr()->sin_addr.s_addr);
+	return (addr.sin_addr.s_addr == tsock.getAddr().sin_addr.s_addr);
 	#endif
 }
 
-bool Socket::matchPort(const Socket* tsock) const throw()
+bool Socket::matchPort(const Socket& tsock) const throw()
 {
-	return (port() == tsock->port());
+	return (port() == tsock.port());
 }
 
 /* string functions */
