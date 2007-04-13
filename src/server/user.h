@@ -257,7 +257,11 @@ struct User
 		if (ti != cachedToolInfo)
 		{
 			delete cachedToolInfo;
-			cachedToolInfo = ti->clone();
+			cachedToolInfo = new protocol::ToolInfo(ti->tool_id, ti->mode, ti->lo_size, ti->hi_size, ti->lo_hardness, ti->hi_hardness, ti->spacing);
+			
+			memcpy(cachedToolInfo->lo_color, ti->lo_color, 4);
+			memcpy(cachedToolInfo->hi_color, ti->hi_color, 4);
+			
 			toolChanged = true;
 		}
 	}
