@@ -105,7 +105,7 @@ struct SessionData
 	
 	/* cached messages */
 	
-	protocol::Message *cachedToolInfo;
+	protocol::ToolInfo *cachedToolInfo;
 };
 
 // User states
@@ -161,7 +161,7 @@ struct User
 		inMsg(0),
 		level(0),
 		deadtime(0),
-		nlen(0),
+		name_len(0),
 		name(0),
 		cachedToolInfo(0),
 		strokes(0)
@@ -180,10 +180,15 @@ struct User
 		
 		delete [] name,
 		delete sock,
-		delete inMsg;
+		delete inMsg,
+		delete cachedToolInfo;
 		
 		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
+		{
+			if (session != usi->second->session)
+				delete usi->second->cachedToolInfo;
 			delete usi->second;
+		}
 		
 		sessions.clear();
 		
@@ -216,6 +221,7 @@ struct User
 			a_deaf = usi->second->deaf;
 			a_muted = usi->second->muted;
 			
+			if (usi->second->cachedToolInfo)
 			cachedToolInfo = usi->second->cachedToolInfo;
 			
 			return true;
@@ -228,6 +234,16 @@ struct User
 	bool inSession(uint8_t session_id) const throw()
 	{
 		return sessions.find(session_id) != sessions.end();
+	}
+	
+	inline
+	void updateTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
+	{
+		#ifndef NDEBUG
+		std::cout << "Caching Tool Info for user #" << static_cast<int>(id);
+		#endif
+		delete cachedToolInfo;
+		cachedToolInfo = ti->clone();
 	}
 	
 	// Socket
@@ -332,14 +348,14 @@ struct User
 	time_t deadtime;
 	
 	// Name length
-	uint8_t nlen;
+	uint8_t name_len;
 	
 	// User name
 	char* name;
 	
 	/* cached messages */
 	
-	protocol::Message *cachedToolInfo;
+	protocol::ToolInfo *cachedToolInfo;
 	
 	/* counters */
 	

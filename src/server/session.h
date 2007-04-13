@@ -80,7 +80,7 @@ struct Session
 {
 	Session(const uint8_t _id=protocol::Global) throw()
 		: id(_id),
-		len(0),
+		title_len(0),
 		title(0),
 		pw_len(0),
 		password(0),
@@ -100,9 +100,9 @@ struct Session
 	}
 	
 	Session(const uint8_t _id, uint8_t _mode, uint8_t _limit, uint8_t _owner,
-		uint16_t _width, uint16_t _height, uint16_t _level, uint8_t title_len, char* _title) throw()
+		uint16_t _width, uint16_t _height, uint16_t _level, uint8_t _title_len, char* _title) throw()
 		: id(_id),
-		len(title_len),
+		title_len(_title_len),
 		title(_title),
 		pw_len(0),
 		password(0),
@@ -137,7 +137,7 @@ struct Session
 	uint8_t id;
 	
 	// Title length
-	uint8_t len;
+	uint8_t title_len;
 	
 	// Session title
 	char* title;

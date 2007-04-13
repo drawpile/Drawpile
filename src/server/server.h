@@ -133,6 +133,14 @@ protected:
 		requirements,
 		extensions;
 	
+	bool
+		enforceUnique,
+		wideStrings,
+		noGlobalChat,
+		extDeflate,
+		extPalette,
+		extChat;
+	
 	uint8_t
 		default_user_mode;
 	

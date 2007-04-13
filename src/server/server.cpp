@@ -106,6 +106,16 @@ Server::Server() throw()
 		|protocol::extensions::Deflate
 		#endif // HAVE_ZLIB
 	),
+	enforceUnique(false),
+	wideStrings(false),
+	noGlobalChat(false),
+	#ifdef HAVE_ZLIB
+	extDeflate(true),
+	#else
+	extDeflate(false),
+	#endif
+	extPalette(true),
+	extChat(true),
 	default_user_mode(protocol::user_mode::None),
 	Transient(false),
 	LocalhostAdmin(false),
@@ -235,13 +245,13 @@ message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_
 		session.mode,
 		session.getFlags(),
 		session.level,
-		session.len,
-		new char[session.len]
+		session.title_len,
+		new char[session.title_len]
 	);
 	
 	nfo->session_id = session.id;
 	
-	memcpy(nfo->title, session.title, session.len);
+	memcpy(nfo->title, session.title, session.title_len);
 	
 	return message_ref(nfo);
 }
@@ -703,14 +713,14 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 	protocol::UserInfo *uevent = new protocol::UserInfo(
 		usi->second->getMode(),
 		event,
-		usr.nlen,
-		(usr.nlen == 0 ? 0 : new char[usr.nlen])
+		usr.name_len,
+		(usr.name_len == 0 ? 0 : new char[usr.name_len])
 	);
 	
 	uevent->user_id = usr.id;
 	uevent->session_id = session_id;
 	
-	memcpy(uevent->name, usr.name, usr.nlen);
+	memcpy(uevent->name, usr.name, usr.name_len);
 	
 	return message_ref(uevent);
 }
@@ -732,7 +742,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	switch (usr->inMsg->type)
 	{
 	case protocol::type::ToolInfo:
-		usr->cachedToolInfo = usr->inMsg;
+		usr->updateTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
 	case protocol::type::StrokeInfo:
 	case protocol::type::StrokeEnd:
 		switch (usr->inMsg->type)
@@ -1632,14 +1642,14 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			if (msg->length > crop)
 			{
 				const int nlen = msg->length - crop;
-				if (session->len < nlen)
+				if (session->title_len < nlen)
 				{
 					delete [] session->title;
 					session->title = new char[nlen];
 				}
 				
 				memcpy(session->title, msg->data+crop, nlen);
-				session->len = nlen;
+				session->title_len = nlen;
 			}
 			
 			#ifndef NDEBUG
@@ -1766,7 +1776,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			// assign user their own name
 			usr->name = msg->name;
-			usr->nlen = msg->length;
+			usr->name_len = msg->length;
 			
 			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
 				and !validateUserName(usr))
@@ -2436,14 +2446,14 @@ bool Server::validateUserName(User* usr) const throw()
 	assert(usr != 0);
 	assert(fIsSet(requirements, protocol::requirements::EnforceUnique));
 	
-	if (usr->nlen == 0)
+	if (usr->name_len == 0)
 		return false;
 	
 	for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
 	{
 		if (ui->second != usr // skip self
-			and usr->nlen == ui->second->nlen // equal length
-			and (memcmp(usr->name, ui->second->name, usr->nlen) == 0))
+			and usr->name_len == ui->second->name_len // equal length
+			and (memcmp(usr->name, ui->second->name, usr->name_len) == 0))
 			return false;
 	}
 	
@@ -2465,7 +2475,7 @@ bool Server::validateSessionTitle(const char* name, const uint8_t len) const thr
 		return false;
 	
 	for (sessions_const_i si(sessions.begin()); si != sessions.end(); ++si)
-		if (len == si->second->len and (memcmp(name, si->second->title, len) == 0))
+		if (len == si->second->title_len and (memcmp(name, si->second->title, len) == 0))
 			return false;
 	
 	return true;
