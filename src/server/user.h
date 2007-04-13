@@ -190,7 +190,10 @@ struct User
 		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
 		{
 			if (session != usi->second->session)
+			{
 				delete usi->second->cachedToolInfo;
+				usi->second->cachedToolInfo = 0;
+			}
 			delete usi->second;
 		}
 		
@@ -215,7 +218,7 @@ struct User
 				
 				if (usio->second->cachedToolInfo != cachedToolInfo)
 				{
-					delete usio->second->cachedToolInfo;
+					// usio->second->cachedToolInfo;
 					usio->second->cachedToolInfo = cachedToolInfo;
 				}
 			}
@@ -249,11 +252,14 @@ struct User
 	void updateTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
 	{
 		#ifndef NDEBUG
-		std::cout << "Caching Tool Info for user #" << static_cast<int>(id);
+		std::cout << "Caching Tool Info for user #" << static_cast<int>(id) << std::endl;
 		#endif
-		delete cachedToolInfo;
-		cachedToolInfo = ti->clone();
-		toolChanged = true;
+		if (ti != cachedToolInfo)
+		{
+			delete cachedToolInfo;
+			cachedToolInfo = ti->clone();
+			toolChanged = true;
+		}
 	}
 	
 	// Socket

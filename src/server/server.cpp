@@ -2150,6 +2150,8 @@ void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) t
 	if (usr.session == session)
 	{
 		delete usr.cachedToolInfo;
+		usr.cachedToolInfo = 0;
+		usr.toolChanged = false;
 		usr.session = 0;
 	}
 	
