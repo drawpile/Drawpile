@@ -2147,6 +2147,12 @@ void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) t
 	
 	const uint8_t session_id = session->id;
 	
+	if (usr.session == session)
+	{
+		delete usr.cachedToolInfo;
+		usr.session = 0;
+	}
+	
 	// last user in session.. destruct it
 	if (session->users.empty())
 	{

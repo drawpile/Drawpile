@@ -58,7 +58,7 @@ typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
 // User session data
 struct SessionData
 {
-	SessionData(Session *s=0) throw()
+	SessionData(Session *s) throw()
 		: session(s),
 		layer(protocol::null_layer),
 		layer_lock(protocol::null_layer),
@@ -73,6 +73,7 @@ struct SessionData
 	
 	~SessionData() throw()
 	{
+		delete cachedToolInfo;
 	}
 	
 	// Session reference
@@ -163,6 +164,7 @@ struct User
 		deadtime(0),
 		name_len(0),
 		name(0),
+		toolChanged(false),
 		cachedToolInfo(0),
 		strokes(0)
 	{
@@ -180,8 +182,10 @@ struct User
 		
 		delete [] name,
 		delete sock,
-		delete inMsg,
-		delete cachedToolInfo;
+		delete inMsg;
+		
+		if (toolChanged)
+			delete cachedToolInfo;
 		
 		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
 		{
@@ -203,12 +207,17 @@ struct User
 		{
 			if (session != 0)
 			{
-				const usr_session_const_i usio(sessions.find(session->id));
+				const usr_session_i usio(sessions.find(session->id));
 				assert(usio != sessions.end());
 				
 				// these aren't copied to session otherwise
 				usio->second->layer = a_layer;
-				usio->second->cachedToolInfo = cachedToolInfo;
+				
+				if (usio->second->cachedToolInfo != cachedToolInfo)
+				{
+					delete usio->second->cachedToolInfo;
+					usio->second->cachedToolInfo = cachedToolInfo;
+				}
 			}
 			
 			// copy 
@@ -221,8 +230,8 @@ struct User
 			a_deaf = usi->second->deaf;
 			a_muted = usi->second->muted;
 			
-			if (usi->second->cachedToolInfo)
 			cachedToolInfo = usi->second->cachedToolInfo;
+			toolChanged = false;
 			
 			return true;
 		}
@@ -244,6 +253,7 @@ struct User
 		#endif
 		delete cachedToolInfo;
 		cachedToolInfo = ti->clone();
+		toolChanged = true;
 	}
 	
 	// Socket
@@ -355,6 +365,7 @@ struct User
 	
 	/* cached messages */
 	
+	bool toolChanged;
 	protocol::ToolInfo *cachedToolInfo;
 	
 	/* counters */
