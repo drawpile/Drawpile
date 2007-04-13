@@ -2021,6 +2021,7 @@ void Server::SyncSession(Session* session) throw()
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
+	protocol::ToolInfo *nfo;
 	for (session_usr_const_i old(session->users.begin()); old != session->users.end(); ++old)
 	{
 		// clear syncwait 
@@ -2047,6 +2048,17 @@ void Server::SyncSession(Session* session) throw()
 				ref->session_id = session->id;
 				msg_queue.push_back(ref);
 			}
+		}
+		
+		if (usi->second->cachedToolInfo != 0)
+		{
+			const protocol::ToolInfo *u_nfo = usi->second->cachedToolInfo;
+			nfo = new protocol::ToolInfo(u_nfo->tool_id, u_nfo->mode, u_nfo->lo_size, u_nfo->hi_size, u_nfo->lo_hardness, u_nfo->hi_hardness, u_nfo->spacing);
+			
+			memcpy(nfo->lo_color, u_nfo->lo_color, 4);
+			memcpy(nfo->hi_color, u_nfo->hi_color, 4);
+			
+			msg_queue.push_back(message_ref(nfo));
 		}
 	}
 	
