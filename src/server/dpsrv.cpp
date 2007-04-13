@@ -42,6 +42,7 @@
 #include "server.flags.h"
 #include "server.h"
 
+#include <string>
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -50,15 +51,15 @@
 namespace srv_info
 {
 
-const char
-	applicationName[] = "DrawPile Server",
-	versionString[] = "0.4",
-	copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.",
-	websiteURL[] = "http://drawpile.sourceforge.net/";
+const std::string
+	applicationName("DrawPile Server"),
+	versionString("0.4"),
+	copyrightNotice("Copyright (c) 2006,2007 M.K.A."),
+	websiteURL("http://drawpile.sourceforge.net/");
 
 }
 
-void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
+void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 {
 	int32_t opt = 0;
 	
@@ -98,7 +99,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					
 					const uint8_t len = std::min(tmp, static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					
-					srv->setNameLengthLimit(len);
+					srv.setNameLengthLimit(len);
 					std::cout << "Name length limit set to: "
 						<< static_cast<int>(len) << std::endl;
 				}
@@ -114,7 +115,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						std::cerr << "Super-user ports not allowed!" << std::endl;
 						exit(1);
 					}
-					srv->setPorts(lo_port, hi_port);
+					srv.setPorts(lo_port, hi_port);
 					
 					std::cout << "Listening port range set to: " << lo_port;
 					if (lo_port != hi_port)
@@ -123,7 +124,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'l': // localhost admin
-				srv->setLocalhostAdmin(true);
+				srv.setLocalhostAdmin(true);
 				std::cout << "Localhost admin enabled." << std::endl;
 				break;
 			case 'u': // user limit
@@ -135,7 +136,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						exit(1);
 					}
 					
-					srv->setUserLimit(user_limit);
+					srv.setUserLimit(user_limit);
 					std::cout << "User limit set to: " << user_limit << std::endl;
 				}
 				break;
@@ -155,7 +156,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					
 					char* password = new char[pw_len];
 					memcpy(password, optarg, pw_len);
-					srv->setAdminPassword(password, pw_len);
+					srv.setAdminPassword(password, pw_len);
 					std::cout << "Admin password set." << std::endl;
 				}
 				break;
@@ -175,17 +176,17 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 					
 					char* password = new char[pw_len];
 					memcpy(password, optarg, pw_len);
-					srv->setPassword(password, pw_len);
+					srv.setPassword(password, pw_len);
 					std::cout << "Server password set." << std::endl;
 				}
 				
 				break;
 			case 'T': // transient/temporary
-				srv->setTransient(true);
+				srv.setTransient(true);
 				std::cout << "Server will exit after all users have left." << std::endl;
 				break;
 			case 'b': // background
-				srv->setDaemonMode(true);
+				srv.setDaemonMode(true);
 				std::cerr << "Daemon mode not implemented." << std::endl;
 				exit(1);
 				break;
@@ -198,16 +199,16 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						exit(1);
 					}
 					
-					srv->setMinDimension(mindim);
+					srv.setMinDimension(mindim);
 					std::cout << "Minimum board dimension set to: " << mindim << std::endl;
 				}
 				break;
 			case 'e': // name enforcing
-				srv->setRequirement(protocol::requirements::EnforceUnique);
+				srv.setRequirement(protocol::requirements::EnforceUnique);
 				std::cout << "Unique name enforcing enabled." << std::endl;
 				break;
 			case 'w': // utf-16 string (wide chars)
-				srv->setRequirement(protocol::requirements::WideStrings);
+				srv.setRequirement(protocol::requirements::WideStrings);
 				std::cout << "UTF-16 string mode enabled." << std::endl;
 				break;
 			case 'L': // session limit
@@ -219,7 +220,7 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						exit(1);
 					}
 					
-					srv->setSessionLimit(limit);
+					srv.setSessionLimit(limit);
 					std::cout << "Session limit set to: " << limit << std::endl;
 				}
 				break;
@@ -232,12 +233,12 @@ void getArgs(int argc, char** argv, Server* srv) throw(std::bad_alloc)
 						exit(1);
 					}
 					
-					srv->setSubscriptionLimit(limit);
+					srv.setSubscriptionLimit(limit);
 					std::cout << "Subscription limit set to: " << limit << std::endl;
 				}
 				break;
 			case 'M': // allow multiple connections from same address
-				srv->blockDuplicateConnectsion(false);
+				srv.blockDuplicateConnectsion(false);
 				std::cout << "Multiple connections allowed from same source address." << std::endl;
 				break;
 			case 'V': // version
@@ -272,7 +273,7 @@ int main(int argc, char** argv)
 	{
 		Server srv;
 		
-		getArgs(argc, argv, &srv);
+		getArgs(argc, argv, srv);
 		
 		std::cout << std::endl;
 		
