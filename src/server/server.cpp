@@ -1127,16 +1127,16 @@ void Server::uHandleAck(User*& usr) throw()
 	case protocol::type::SyncWait:
 		{
 			// check active session first
-			const usr_session_const_i us(usr->sessions.find(ack->session_id));
-			if (us == usr->sessions.end())
+			const usr_session_const_i usi(usr->sessions.find(ack->session_id));
+			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(ack->session_id, protocol::error::NotSubscribed));
-			else if (us->second->syncWait) // duplicate syncwait
+			else if (usi->second->syncWait) // duplicate syncwait
 				uRemove(usr, protocol::user_event::Dropped);
 			else
 			{
-				us->second->syncWait = true;
+				usi->second->syncWait = true;
 				
-				Session *session = us->second->session;
+				Session *session = usi->second->session;
 				--session->syncCounter;
 				
 				if (session->syncCounter == 0)
@@ -1317,16 +1317,16 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			User *usr = session_usr->second;
 			
 			// Find user's session instance (SessionData*)
-			const usr_session_const_i usr_session(usr->sessions.find(session->id));
-			if (usr_session == usr->sessions.end())
+			const usr_session_const_i usi(usr->sessions.find(session->id));
+			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(session->id, protocol::error::NotInSession));
 			else if (event->aux == protocol::null_layer)
 			{
-				usr_session->second->locked = (event->action == protocol::session_event::Lock);
+				usi->second->locked = (event->action == protocol::session_event::Lock);
 				
 				// Copy active session
 				if (usr->session->id == event->session_id)
-					usr->a_locked = usr_session->second->locked;
+					usr->a_locked = usi->second->locked;
 			}
 			else if (event->action == protocol::session_event::Lock)
 			{
@@ -1335,14 +1335,14 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					<< static_cast<int>(event->aux) << std::endl;
 				#endif
 				
-				usr_session->second->layer_lock = event->aux;
+				usi->second->layer_lock = event->aux;
 				// copy to active session
 				if (session->id == usr->session->id)
 					usr->a_layer_lock = event->aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
-				if (usr_session->second->layer != usr_session->second->layer_lock)
-					usr_session->second->layer = protocol::null_layer;
+				if (usi->second->layer != usi->second->layer_lock)
+					usi->second->layer = protocol::null_layer;
 				if (usr->session->id == event->session_id)
 					usr->layer = protocol::null_layer;
 			}
@@ -1353,7 +1353,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					<< static_cast<int>(event->aux) << std::endl;
 				#endif
 				
-				usr_session->second->layer_lock = protocol::null_layer;
+				usi->second->layer_lock = protocol::null_layer;
 				
 				// copy to active session
 				if (session->id == usr->session->id)
