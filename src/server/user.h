@@ -137,7 +137,7 @@ const uint8_t
 struct User
 	//: MemoryStack<User>
 {
-	User(const uint8_t _id=protocol::null_user, const Socket& nsock) throw()
+	User(const uint8_t _id, const Socket& nsock) throw()
 		: sock(nsock),
 		session(0),
 		id(_id),
@@ -172,6 +172,7 @@ struct User
 		std::cout << "User::User(" << static_cast<int>(_id)
 			<< ", " << sock.fd() << ")" << std::endl;
 		#endif
+		assert(_id != protocol::null_user);
 	}
 	
 	~User() throw()
