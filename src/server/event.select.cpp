@@ -145,54 +145,29 @@ int Event::wait() throw()
 	
 	if (nfds == -1)
 	{
+		#ifdef WIN32
+		assert(_error != WSANOTINITIALISED);
+		#endif
+		assert(_error != EBADF);
+		assert(_error != ENOTSOCK);
+		assert(_error != EINVAL);
+		assert(_error != EFAULT);
+		
 		switch (_error)
 		{
 		#ifdef WIN32
-		#ifndef NDEBUG
-		case WSANOTINITIALISED:
-			assert(!(_error == WSANOTINITIALISED));
-			break;
-		case WSAENOTSOCK:
-			std::cerr << "Not a socket" << std::endl;
-			assert(!(_error == WSAENOTSOCK));
-			break;
-		case WSAEINVAL:
-			assert(!(_error == WSAEINVAL));
-			break;
-		#endif // NDEBUG
-		case WSAEFAULT:
-			assert(!(_error == WSAEFAULT));
-			#ifndef NDEBUG
-			std::cerr << "Horribles" << std::endl;
-			#endif
-			break;
 		case WSAENETDOWN:
 			#ifndef NDEBUG
 			std::cerr << "The network subsystem has failed." << std::endl;
 			#endif
 			break;
-		case WSAEINTR:
-			#ifndef NDEBUG
-			std::cerr << "Interrupted." << std::endl;
-			#endif
-			nfds = 0;
-			break;
-		#else // POSIX
-		#ifndef NDEBUG
-		case EBADF:
-			assert(!(_error == EBADF));
-			break;
-		case EINVAL:
-			assert(!(_error == EINVAL));
-			break;
-		#endif // NDEBUG
+		#endif
 		case EINTR:
 			#ifndef NDEBUG
 			std::cerr << "Interrupted by signal." << std::endl;
 			#endif
 			nfds = 0;
 			break;
-		#endif
 		default:
 			std::cerr << "Event(select).wait() Unknown error: " << _error << std::endl;
 			break;
