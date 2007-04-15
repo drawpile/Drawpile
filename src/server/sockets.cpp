@@ -172,10 +172,7 @@ Socket Socket::accept() throw()
 	
 	if (n_fd != INVALID_SOCKET)
 	{
-		Socket nsock(n_fd, sa);
-		memcpy(&nsock.getAddr(), &sa, sizeof(addr));
-		
-		return nsock;
+		return Socket(n_fd, sa);
 	}
 	else
 	{
@@ -698,13 +695,14 @@ uint16_t Socket::port() const throw()
 	return bswap(_port);
 }
 
-bool Socket::matchAddress(Socket& tsock) throw()
+bool Socket::matchAddress(const Socket& tsock) const throw()
 {
 	#ifdef IPV6_SUPPORT
 	// TODO: Similar checking for IPv6 addresses
+	assert(IPV6_SUPPORT_INCOMPLETE);
 	return false;
 	#else // IPv4
-	return (addr.sin_addr.s_addr == tsock.getAddr().sin_addr.s_addr);
+	return (addr.sin_addr.s_addr == tsock.addr.sin_addr.s_addr);
 	#endif
 }
 

@@ -37,6 +37,10 @@
 #include <stdexcept>
 #include <stdint.h>
 
+#ifdef IPV6_SUPPORT
+#define IPV6_SUPPORT_INCOMPLETE 1
+#endif
+
 #ifdef WIN32
 	#if defined( HAVE_WSA )
 		#include <ws2tcpip.h>
@@ -136,8 +140,6 @@ protected:
 	
 	//! Last error number (from errno or equivalent)
 	int s_error;
-	//! Socket state
-	bool active;
 public:
 	//! ctor
 	Socket() throw()
@@ -184,10 +186,10 @@ public:
 	}
 	
 	//! dtor
-	virtual ~Socket() throw()
+	~Socket() throw()
 	{
 		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket::~Socket()" << std::endl;
+		std::cout << "Socket::~Socket(fd: " << sock << ")" << std::endl;
 		#endif
 		
 		close();
@@ -202,6 +204,14 @@ public:
 	 */
 	void close() throw();
 	
+	//! releases FD association from this
+	fd_t release() throw()
+	{
+		fd_t t_sock = sock;
+		sock = INVALID_SOCKET;
+		return t_sock;
+	}
+	
 	//! Set file descriptor
 	/**
 	 * @param nsock is the new file descriptor.
@@ -211,7 +221,6 @@ public:
 	fd_t fd(fd_t nsock) throw()
 	{
 		if (sock != INVALID_SOCKET) close();
-		if (nsock != INVALID_SOCKET) active = true;
 		return sock = nsock;
 	}
 	
@@ -342,7 +351,7 @@ public:
 	uint16_t port() const throw();
 	
 	//! Check if the address matches
-	bool matchAddress(Socket& tsock) throw();
+	bool matchAddress(const Socket& tsock) const throw();
 	
 	//! Check if the port matches
 	bool matchPort(const Socket& tsock) const throw();
@@ -360,16 +369,30 @@ public:
 	/* Operator overloads */
 	
 	//! operator== overload (Socket*)
-	bool operator== (const Socket& tsock) const throw() { return (sock == tsock.fd()); }
+	bool operator== (const Socket& tsock) const throw()
+	{
+		return (sock == tsock.sock);
+	}
 	
 	//! operator== overload (fd_t)
-	bool operator== (const fd_t& _fd) const throw() { return (sock == _fd); }
+	bool operator== (const fd_t& _fd) const throw()
+	{
+		return (sock == _fd);
+	}
 	
 	//! operator= overload (Socket*)
-	Socket* operator= (Socket& tsock) throw() { fd(tsock.fd()); return this; }
+	Socket& operator= (Socket& tsock) throw()
+	{
+		sock = tsock.sock;
+		return *this;
+	}
 	
 	//! operator= overload (fd_t)
-	fd_t operator= (fd_t& _fd) throw() { fd(_fd); return sock; }
+	fd_t operator= (fd_t& _fd) throw()
+	{
+		sock = _fd;
+		return sock;
+	}
 };
 
 #ifdef SOCKET_OSTREAM
