@@ -2294,6 +2294,8 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	
 	users[sock.fd()] = usr;
 	
+	sock.release(); // invalidate local copy
+	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	std::cout << "Known users: " << users.size() << std::endl;
 	#endif
