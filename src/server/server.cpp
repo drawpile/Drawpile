@@ -725,6 +725,158 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 	return message_ref(uevent);
 }
 
+inline
+void Server::uHandleDrawing(User& usr) throw()
+{
+	assert(usr.inMsg != 0);
+	
+	#ifndef NDEBUG
+	switch (usr.inMsg->type)
+	{
+	case protocol::type::StrokeInfo:
+		++usr.strokes;
+		break;
+	case protocol::type::StrokeEnd:
+		usr.strokes = 0;
+		break;
+	}
+	#endif
+	
+	// no session selected
+	if (usr.session == 0)
+	{
+		#ifndef NDEBUG
+		if (usr.strokes == 1)
+			std::cerr << "User #" << static_cast<int>(usr.id)
+				<< " attempts to draw on null session." << std::endl;
+		#endif
+		return;
+	}
+	
+	#ifdef LAYER_SUPPORT
+	if (usr.inMsg->type != protocol::type::ToolInfo
+		and usr.layer == protocol::null_layer)
+	{
+		#ifndef NDEBUG
+		if (usr.strokes == 1)
+		{
+			std::cout << "User #" << static_cast<int>(usr.id)
+				<< " is drawing on null layer!" << std::endl;
+		}
+		#endif
+		
+		return;
+	}
+	#endif
+	
+	// user or session is locked
+	if (usr.session->locked or usr.a_locked)
+	{
+		// TODO: Warn user?
+		#ifndef NDEBUG
+		if (usr.strokes == 1)
+		{
+			std::cerr << "User #" << static_cast<int>(usr.id)
+				<< " tries to draw, despite the lock." << std::endl;
+			
+			if (usr.session->locked)
+				std::cerr << "Clarification: Sesssion #"
+					<< static_cast<int>(usr.session->id) << " is locked." << std::endl;
+			else
+				std::cerr << "Clarification: User is locked in session #"
+					<< static_cast<int>(usr.session->id) << "." << std::endl;
+		}
+		#endif
+	}
+	else
+	{
+		// make sure the user id is correct
+		usr.inMsg->user_id = usr.id;
+		
+		Propagate(*usr.session, message_ref(usr.inMsg), (usr.c_acks ? &usr : 0));
+		
+		usr.inMsg = 0;
+	}
+}
+
+// calls uSendMsg, Propagate, uJoinSession
+inline
+void Server::uHandlePassword(User*& usr) throw()
+{
+	assert(usr != 0);
+	assert(usr->inMsg != 0);
+	
+	sessions_const_i si;
+	protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
+	if (msg->session_id == protocol::Global)
+	{
+		// Admin login
+		if (a_password == 0)
+		{
+			std::cerr << "User tries to pass password even though we've disallowed it." << std::endl;
+			uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+			return;
+		}
+		else
+			hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
+	}
+	else
+	{
+		if (usr->syncing != protocol::Global)
+		{
+			// already syncing some session, so we don't bother handling this request.
+			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
+			return;
+		}
+		
+		si = sessions.find(msg->session_id);
+		if (si == sessions.end())
+		{
+			// session doesn't exist
+			uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
+			return;
+		}
+		else if (usr->inSession(msg->session_id))
+		{
+			// already in session
+			uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidRequest));
+			return;
+		}
+		else if (si->second->canJoin() == false)
+		{
+			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
+			return;
+		}
+		else
+			hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
+	}
+	
+	hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+	hash.Final();
+	char digest[protocol::password_hash_size];
+	hash.GetHash(reinterpret_cast<uint8_t*>(digest));
+	hash.Reset();
+	
+	uRegenSeed(*usr);
+	
+	if (memcmp(digest, msg->data, protocol::password_hash_size) != 0) // mismatch
+		uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+	else
+	{
+		// ACK the password
+		uSendMsg(*usr, msgAck(msg->session_id, msg->type));
+		
+		if (msg->session_id == protocol::Global)
+			usr->isAdmin = true;
+		else
+		{
+			// join session
+			Session* session = si->second;
+			uJoinSession(usr, session);
+		}
+	}
+}
+
 // May delete User*
 inline
 void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
@@ -745,70 +897,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
 	case protocol::type::StrokeInfo:
 	case protocol::type::StrokeEnd:
-		switch (usr->inMsg->type)
-		{
-		case protocol::type::StrokeInfo:
-			++usr->strokes;
-			break;
-		case protocol::type::StrokeEnd:
-			usr->strokes = 0;
-			break;
-		}
-		
-		// no session selected
-		if (usr->session == 0)
-		{
-			#ifndef NDEBUG
-			if (usr->strokes == 1)
-				std::cerr << "User #" << static_cast<int>(usr->id)
-					<< " attempts to draw on null session." << std::endl;
-			#endif
-			break;
-		}
-		
-		#ifdef LAYER_SUPPORT
-		if (usr->inMsg->type != protocol::type::ToolInfo
-			and usr->layer == protocol::null_layer)
-		{
-			#ifndef NDEBUG
-			if (usr->strokes == 1)
-			{
-				std::cout << "User #" << static_cast<int>(usr->id)
-					<< " is drawing on null layer!" << std::endl;
-			}
-			#endif
-			
-			break;
-		}
-		#endif
-		
-		// user or session is locked
-		if (usr->session->locked or usr->a_locked)
-		{
-			// TODO: Warn user?
-			#ifndef NDEBUG
-			if (usr->strokes == 1)
-			{
-				std::cerr << "User #" << static_cast<int>(usr->id)
-					<< " tries to draw, despite the lock." << std::endl;
-				
-				if (usr->session->locked)
-					std::cerr << "Clarification: Sesssion #"
-						<< static_cast<int>(usr->session->id) << " is locked." << std::endl;
-				else
-					std::cerr << "Clarification: User is locked in session #"
-						<< static_cast<int>(usr->session->id) << "." << std::endl;
-			}
-			#endif
-			break;
-		}
-		
-		// make sure the user id is correct
-		usr->inMsg->user_id = usr->id;
-		
-		Propagate(*usr->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
-		
-		usr->inMsg = 0;
+		uHandleDrawing(*usr);
 		break;
 	case protocol::type::Acknowledgement:
 		uHandleAck(usr);
@@ -966,77 +1055,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uHandleInstruction(usr);
 		break;
 	case protocol::type::Password:
-		{
-			sessions_const_i si;
-			protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
-			if (msg->session_id == protocol::Global)
-			{
-				// Admin login
-				if (a_password == 0)
-				{
-					std::cerr << "User tries to pass password even though we've disallowed it." << std::endl;
-					uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
-					return;
-				}
-				else
-					hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
-			}
-			else
-			{
-				if (usr->syncing != protocol::Global)
-				{
-					// already syncing some session, so we don't bother handling this request.
-					uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
-					break;
-				}
-				
-				si = sessions.find(msg->session_id);
-				if (si == sessions.end())
-				{
-					// session doesn't exist
-					uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
-					break;
-				}
-				else if (usr->inSession(msg->session_id))
-				{
-					// already in session
-					uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidRequest));
-					break;
-				}
-				else if (si->second->canJoin() == false)
-				{
-					uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
-					break;
-				}
-				else
-					hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
-			}
-			
-			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
-			hash.Final();
-			char digest[protocol::password_hash_size];
-			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-			hash.Reset();
-			
-			uRegenSeed(*usr);
-			
-			if (memcmp(digest, msg->data, protocol::password_hash_size) != 0) // mismatch
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
-			else
-			{
-				// ACK the password
-				uSendMsg(*usr, msgAck(msg->session_id, msg->type));
-				
-				if (msg->session_id == protocol::Global)
-					usr->isAdmin = true;
-				else
-				{
-					// join session
-					Session* session = si->second;
-					uJoinSession(usr, session);
-				}
-			}
-		}
+		uHandlePassword(usr);
 		break;
 	default:
 		std::cerr << "Unknown message: #" << static_cast<int>(usr->inMsg->type)

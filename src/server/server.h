@@ -231,6 +231,13 @@ protected:
 	inline
 	void uProcessData(User*& usr) throw();
 	
+	// Process stroke info, stroke end and tool info
+	inline
+	void uHandleDrawing(User& usr) throw();
+	
+	inline
+	void uHandlePassword(User*& usr) throw();
+	
 	// Handle user message.
 	inline
 	void uHandleMsg(User*& usr) throw(std::bad_alloc);
