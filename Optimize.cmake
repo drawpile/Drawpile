@@ -83,7 +83,9 @@ endif ( NOT FAST_MATH )
 
 ###   TEST -fomit-frame-pointer   ###
 
-check_cxx_accepts_flag ( ${FOMIT} ACCEPT_FOMIT )
+if ( NOT PROFILE )
+	check_cxx_accepts_flag ( ${FOMIT} ACCEPT_FOMIT )
+endif ( NOT PROFILE )
 
 if ( NOT ACCEPT_FOMIT )
 	set ( FOMIT "" )
