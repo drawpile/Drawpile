@@ -53,6 +53,9 @@ typedef std::map<uint8_t, SessionData*>::iterator usr_session_i;
 typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
 #endif
 
+typedef std::deque<message_ref>::iterator usr_message_i;
+typedef std::deque<message_ref>::const_iterator usr_message_const_i;
+
 #include "sockets.h"
 
 // User session data
