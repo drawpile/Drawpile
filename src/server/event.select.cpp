@@ -26,8 +26,13 @@
 
 *******************************************************************************/
 
+#include "../config.h"
 #include "../shared/templates.h"
 #include "event.h"
+
+#ifndef EV_SELECT
+	#error EV_SELECT not defined
+#endif
 
 #ifndef NDEBUG
 	#include <iostream>

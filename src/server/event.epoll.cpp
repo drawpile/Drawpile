@@ -26,8 +26,13 @@
 
 *******************************************************************************/
 
+#include "../config.h"
 #include "../shared/templates.h"
 #include "event.h"
+
+#ifndef EV_EPOLL
+	#error EV_EPOLL not defined
+#endif
 
 #include <iostream>
 #ifndef NDEBUG

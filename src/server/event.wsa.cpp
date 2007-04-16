@@ -26,8 +26,12 @@
 
 *******************************************************************************/
 
-//#include "../shared/templates.h"
+#include "../config.h"
 #include "event.h"
+
+#ifndef EV_WSA
+	#error EV_WSA not defined
+#endif
 
 #ifndef NDEBUG
 	#include <iostream>
