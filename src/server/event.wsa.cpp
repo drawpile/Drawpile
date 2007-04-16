@@ -33,8 +33,8 @@
 	#error EV_WSA not defined
 #endif
 
+#include <iostream>
 #ifndef NDEBUG
-	#include <iostream>
 	#include <ios>
 #endif
 
@@ -42,6 +42,10 @@
 #include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()
+
+using std::cout;
+using std::endl;
+using std::cerr;
 
 namespace hack
 {
@@ -86,9 +90,9 @@ Event::Event() throw()
 	nfds(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa)()" << std::endl
-		<< "Max events: " << max_events << std::endl
-		<< "FD_MAX_EVENTS: " << FD_MAX_EVENTS << std::endl;
+	cout << "Event(wsa)()" << endl
+		<< "Max events: " << max_events << endl
+		<< "FD_MAX_EVENTS: " << FD_MAX_EVENTS << endl;
 	#endif
 	
 	for (unsigned int i=0; i != max_events; i++)
@@ -98,14 +102,14 @@ Event::Event() throw()
 Event::~Event() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "~Event(wsa)()" << std::endl;
+	cout << "~Event(wsa)()" << endl;
 	#endif
 }
 
 bool Event::init() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).init()" << std::endl;
+	cout << "Event(wsa).init()" << endl;
 	#endif
 	
 	return true;
@@ -114,14 +118,14 @@ bool Event::init() throw()
 void Event::finish() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event::finish()" << std::endl;
+	cout << "Event::finish()" << endl;
 	#endif
 }
 
 int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).wait()" << std::endl;
+	cout << "Event(wsa).wait()" << endl;
 	#endif
 	
 	assert(fd_to_ev.size() != 0);
@@ -148,7 +152,7 @@ int Event::wait() throw()
 		case WSA_NOT_ENOUGH_MEMORY:
 			break;
 		default:
-			std::cerr << "Event(wsa).wait() - unknown error: " << nfds << std::endl;
+			cerr << "Event(wsa).wait() - unknown error: " << nfds << endl;
 			break;
 		}
 		
@@ -173,13 +177,14 @@ int Event::wait() throw()
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).add(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event(wsa).add(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	assert( fd >= 0 );
@@ -204,7 +209,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 				
 				#ifndef NDEBUG
 				if (_error == WSAENETDOWN)
-					std::cerr << "- Network down." << std::endl;
+					cerr << "- Network down." << endl;
 				#endif
 				
 				return false;
@@ -222,7 +227,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	}
 	
 	#ifndef NDEBUG
-	std::cerr << "Event system overloaded!" << std::endl;
+	cerr << "Event system overloaded!" << endl;
 	#endif
 	
 	return false;
@@ -231,26 +236,27 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).modify(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event(wsa).modify(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	#ifndef NDEBUG
-	std::cout << ": Setting events: " << ev << ", for FD: " << fd << std::endl;
+	cout << ": Setting events: " << ev << ", for FD: " << fd << endl;
 	
 	if (fIsSet(ev, static_cast<uint32_t>(FD_READ)))
-		std::cout << "   #read:   " << FD_READ << std::endl;
+		cout << "   #read:   " << FD_READ << endl;
 	if (fIsSet(ev, static_cast<uint32_t>(FD_WRITE)))
-		std::cout << "   #write:  " << FD_WRITE << std::endl;
+		cout << "   #write:  " << FD_WRITE << endl;
 	if (fIsSet(ev, static_cast<uint32_t>(FD_ACCEPT)))
-		std::cout << "   #accept: " << FD_ACCEPT << std::endl;
+		cout << "   #accept: " << FD_ACCEPT << endl;
 	if (fIsSet(ev, static_cast<uint32_t>(FD_CLOSE)))
-		std::cout << "   #close:  " << FD_CLOSE << std::endl;
+		cout << "   #close:  " << FD_CLOSE << endl;
 	#endif
 	
 	assert( fd >= 0 );
@@ -272,7 +278,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 		
 		#ifndef NDEBUG
 		if (_error == WSAENETDOWN)
-			std::cerr << "- Network down." << std::endl;
+			cerr << "- Network down." << endl;
 		#endif
 		
 		return false;
@@ -284,13 +290,14 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).remove(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event(wsa).remove(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	assert( fd >= 0 );
@@ -317,14 +324,14 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).getEvent()" << std::endl;
+	cout << "Event(wsa).getEvent()" << endl;
 	#endif
 	
 	uint32_t get_event = nfds - WSA_WAIT_EVENT_0;
 	WSANETWORKEVENTS set;
 	
 	#ifndef NDEBUG
-	std::cout << "Getting events, offset: " << get_event << std::endl;
+	cout << "Getting events, offset: " << get_event << endl;
 	#endif
 	
 	std::map<uint32_t, fd_t>::iterator fd_iter;
@@ -337,7 +344,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 			fd = fd_iter->second;
 			
 			#ifndef NDEBUG
-			std::cout << "Checking FD: " << fd << std::endl;
+			cout << "Checking FD: " << fd << endl;
 			#endif
 			
 			const int r = WSAEnumNetworkEvents(fd, w_ev[get_event], &set);
@@ -361,7 +368,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 					events = 0;
 					break;
 				default:
-					std::cerr << "Event(wsa).getEvents() - unknown error: " << error << std::endl;
+					cerr << "Event(wsa).getEvents() - unknown error: " << error << endl;
 					events = 0;
 					break;
 				}
@@ -372,22 +379,22 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 			if (events != 0)
 			{
 				#ifndef NDEBUG
-				std::cout << ": Events triggered: " << events << ", for FD: " << fd << std::endl;
+				cout << ": Events triggered: " << events << ", for FD: " << fd << endl;
 				
 				if (fIsSet(events, static_cast<uint32_t>(FD_READ)))
-					std::cout << "   #read:   " << FD_READ << std::endl;
+					cout << "   #read:   " << FD_READ << endl;
 				if (fIsSet(events, static_cast<uint32_t>(FD_WRITE)))
-					std::cout << "   #write:  " << FD_WRITE << std::endl;
+					cout << "   #write:  " << FD_WRITE << endl;
 				if (fIsSet(events, static_cast<uint32_t>(FD_ACCEPT)))
-					std::cout << "   #accept: " << FD_ACCEPT << std::endl;
+					cout << "   #accept: " << FD_ACCEPT << endl;
 				if (fIsSet(events, static_cast<uint32_t>(FD_CLOSE)))
-					std::cout << "   #close:  " << FD_CLOSE << std::endl;
+					cout << "   #close:  " << FD_CLOSE << endl;
 				#endif
 				
 				++nfds;
 				hack::events::prepare_events(events);
 				
-				std::cout << "+ Triggered!" << std::endl;
+				cout << "+ Triggered!" << endl;
 				
 				return true;
 			}
@@ -395,7 +402,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	}
 	
 	#ifndef NDEBUG
-	std::cerr << "No events triggered! " << std::endl;
+	cerr << "No events triggered! " << endl;
 	#endif
 	
 	return false;
@@ -404,7 +411,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 uint32_t Event::getEvents(fd_t fd) const throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(wsa).getEvents(fd: " << fd << ")" << std::endl;
+	cout << "Event(wsa).getEvents(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != 0);
@@ -450,7 +457,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		case WSAEINPROGRESS: // something's in progress
 			return 0;
 		default:
-			std::cerr << "Event(wsa).getEvents() - unknown error: " << error << std::endl;
+			cerr << "Event(wsa).getEvents() - unknown error: " << error << endl;
 			break;
 		}
 		

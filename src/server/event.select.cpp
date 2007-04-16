@@ -34,14 +34,18 @@
 	#error EV_SELECT not defined
 #endif
 
+#include <iostream>
 #ifndef NDEBUG
-	#include <iostream>
 	#include <ios>
 #endif
 
 #include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()
+
+using std::cout;
+using std::endl;
+using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
 const uint32_t
@@ -61,21 +65,21 @@ Event::Event() throw()
 	#endif // !WIN32
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select)()" << std::endl;
+	cout << "Event(select)()" << endl;
 	#endif
 }
 
 Event::~Event() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "~Event(select)()" << std::endl;
+	cout << "~Event(select)()" << endl;
 	#endif
 }
 
 bool Event::init() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).init()" << std::endl;
+	cout << "Event(select).init()" << endl;
 	#endif
 	
 	FD_ZERO(&fds_r);
@@ -88,14 +92,14 @@ bool Event::init() throw()
 void Event::finish() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).finish()" << std::endl;
+	cout << "Event(select).finish()" << endl;
 	#endif
 }
 
 int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).wait()" << std::endl;
+	cout << "Event(select).wait()" << endl;
 	#endif
 	
 	#ifdef EV_SELECT_COPY
@@ -163,18 +167,18 @@ int Event::wait() throw()
 		#ifdef WIN32
 		case WSAENETDOWN:
 			#ifndef NDEBUG
-			std::cerr << "The network subsystem has failed." << std::endl;
+			cerr << "The network subsystem has failed." << endl;
 			#endif
 			break;
 		#endif
 		case EINTR:
 			#ifndef NDEBUG
-			std::cerr << "Interrupted by signal." << std::endl;
+			cerr << "Interrupted by signal." << endl;
 			#endif
 			nfds = 0;
 			break;
 		default:
-			std::cerr << "Event(select).wait() Unknown error: " << _error << std::endl;
+			cerr << "Event(select).wait() Unknown error: " << _error << endl;
 			break;
 		}
 	}
@@ -189,13 +193,14 @@ int Event::wait() throw()
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).add(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event(select).add(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -239,13 +244,14 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event::modify(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event::modify(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -269,13 +275,14 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).remove(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event(select).remove(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -366,7 +373,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 uint32_t Event::getEvents(fd_t fd) const throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).getEvents(fd: " << fd << ")" << std::endl;
+	cout << "Event(select).getEvents(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -386,13 +393,14 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	std::cout << "Event(select).isset(fd: " << fd << ", event: ";
-	std::cout.setf ( std::ios_base::hex, std::ios_base::basefield );
-	std::cout.setf ( std::ios_base::showbase );
-	std::cout << ev;
-	std::cout.setf ( std::ios_base::dec );
-	std::cout.setf ( ~std::ios_base::showbase );
-	std::cout << ")" << std::endl;
+	using std::ios_base;
+	cout << "Event(select).isset(fd: " << fd << ", event: ";
+	cout.setf ( ios_base::hex, ios_base::basefield );
+	cout.setf ( ios_base::showbase );
+	cout << ev;
+	cout.setf ( ios_base::dec );
+	cout.setf ( ~ios_base::showbase );
+	cout << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
