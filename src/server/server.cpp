@@ -937,7 +937,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		{
 			const usr_session_i usi(usr->sessions.find(usr->inMsg->session_id));
 			if (usi == usr->sessions.end())
-				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
+				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
 				uSendMsg(*usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
