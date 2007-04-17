@@ -259,16 +259,14 @@ struct User
 	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
 	{
 		assert(ti != cachedToolInfo); // attempted to re-cache same tool
+		assert(ti != 0);
 		
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "Caching Tool Info for user #" << static_cast<int>(id) << std::endl;
 		#endif
 		
 		delete cachedToolInfo;
-		cachedToolInfo = new protocol::ToolInfo(ti->tool_id, ti->mode, ti->lo_size, ti->hi_size, ti->lo_hardness, ti->hi_hardness, ti->spacing);
-		
-		memcpy(cachedToolInfo->lo_color, ti->lo_color, 4);
-		memcpy(cachedToolInfo->hi_color, ti->hi_color, 4);
+		cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor
 		
 		toolChanged = true;
 	}

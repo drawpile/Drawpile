@@ -154,10 +154,6 @@ protected:
 		protocolReallocation,
 		// Largest number of messages linked
 		largestLinkList,
-		// largest user output buffer
-		largestOutputBuffer,
-		// largest user input buffer
-		largestInputBuffer,
 		// number of times buffer.reposition() was called from server
 		bufferRepositions,
 		// number of times buffer.setBuffer() was called from server

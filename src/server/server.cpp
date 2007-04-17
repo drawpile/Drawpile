@@ -130,8 +130,6 @@ Server::Server() throw()
 	,
 	protocolReallocation(0),
 	largestLinkList(0),
-	largestOutputBuffer(0),
-	largestInputBuffer(0),
 	bufferRepositions(0),
 	bufferResets(0),
 	discardedCompressions(0),
@@ -198,10 +196,10 @@ void Server::freeSessionID(const uint8_t id) throw()
 inline
 void Server::uRegenSeed(User& usr) const throw()
 {
-	usr.seed[0] = (rand() % 255) + 1;
-	usr.seed[1] = (rand() % 255) + 1;
-	usr.seed[2] = (rand() % 255) + 1;
-	usr.seed[3] = (rand() % 255) + 1;
+	usr.seed[0] = rand() % 256; // 0 - 255
+	usr.seed[1] = rand() % 256;
+	usr.seed[2] = rand() % 256;
+	usr.seed[3] = rand() % 256;
 }
 
 inline
@@ -342,8 +340,6 @@ void Server::uWrite(User*& usr) throw()
 			usr->output.setBuffer(buf, size);
 			#ifndef NDEBUG
 			++bufferResets; // stats
-			if (usr->output.size > largestOutputBuffer)
-				largestOutputBuffer = usr->output.size; // stats
 			#endif
 		}
 		
@@ -417,8 +413,6 @@ void Server::uWrite(User*& usr) throw()
 					usr->output.setBuffer(temp, size);
 					#ifndef NDEBUG
 					++bufferResets; // stats
-					if (usr->output.size > largestOutputBuffer)
-						largestOutputBuffer = usr->output.size; // stats
 					#endif
 					usr->output.write(buffer_len);
 				}
@@ -462,8 +456,6 @@ void Server::uWrite(User*& usr) throw()
 						usr->output.setBuffer(buf, size);
 						#ifndef NDEBUG
 						++bufferResets; // stats
-						if (usr->output.size > largestOutputBuffer)
-							largestOutputBuffer = usr->output.size; // stats
 						#endif
 					}
 					
@@ -575,11 +567,6 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		#endif
 		
 		usr->input.resize(usr->input.size + 4096);
-		
-		#ifndef NDEBUG
-		if (usr->input.size > largestInputBuffer)
-			largestInputBuffer = usr->input.size;
-		#endif
 	}
 	else if (usr->input.canWrite() == 0)
 	{
@@ -1108,8 +1095,6 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 			
 			#ifndef NDEBUG
 			++bufferResets; // stats
-			if (usr->input.size > largestInputBuffer)
-				largestInputBuffer = usr->input.size; // stats
 			#endif
 			
 			// Process the data.
@@ -2045,7 +2030,6 @@ void Server::SyncSession(Session* session) throw()
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
-	protocol::ToolInfo *nfo;
 	for (session_usr_const_i old(session->users.begin()); old != session->users.end(); ++old)
 	{
 		// clear syncwait 
@@ -2075,15 +2059,7 @@ void Server::SyncSession(Session* session) throw()
 		}
 		
 		if (usi->second->cachedToolInfo != 0)
-		{
-			const protocol::ToolInfo *u_nfo = usi->second->cachedToolInfo;
-			nfo = new protocol::ToolInfo(u_nfo->tool_id, u_nfo->mode, u_nfo->lo_size, u_nfo->hi_size, u_nfo->lo_hardness, u_nfo->hi_hardness, u_nfo->spacing);
-			
-			memcpy(nfo->lo_color, u_nfo->lo_color, 4);
-			memcpy(nfo->hi_color, u_nfo->hi_color, 4);
-			
-			msg_queue.push_back(message_ref(nfo));
-		}
+			msg_queue.push_back(message_ref(new protocol::ToolInfo(*usi->second->cachedToolInfo)));
 	}
 	
 	userlist_const_i n_user;
@@ -2291,7 +2267,7 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	else
 		time_limit = srv_defaults::time_limit; // 3 minutes
 	
-	usr->deadtime = time(0) + time_limit;
+	usr->deadtime = current_time + time_limit;
 	
 	// re-schedule user culling
 	if (next_timer > usr->deadtime)
@@ -2304,24 +2280,11 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	
 	// these two don't count towards bufferResets because the buffers are empty at this point
 	usr->input.setBuffer(new char[nwbuffer], nwbuffer);
-	#ifndef NDEBUG
-	if (usr->input.size > largestInputBuffer)
-		largestInputBuffer = usr->input.size; // stats
-	#endif
-	
 	usr->output.setBuffer(new char[nwbuffer], nwbuffer);
-	#ifndef NDEBUG
-	if (usr->output.size > largestOutputBuffer)
-		largestOutputBuffer = usr->output.size; // stats
-	#endif
 	
 	users[sock.fd()] = usr;
 	
-	sock.release(); // invalidate local copy
-	
-	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "Known users: " << users.size() << endl;
-	#endif
+	sock.release(); // invalidate local copy so it won't be closed prematurely
 }
 
 // Calls uSendMsg, uLeaveSession
@@ -2648,8 +2611,6 @@ void Server::stats() const throw()
 	cout << "Statistics:" << endl << endl
 		<< "Under allocations:     " << protocolReallocation << endl
 		<< "Largest linked list:   " << largestLinkList << endl
-		<< "Largest output buffer: " << largestOutputBuffer << endl
-		<< "Largest input buffer:  " << largestInputBuffer << endl
 		<< "Buffer repositionings: " << bufferRepositions << endl
 		<< "Buffer resets:         " << bufferResets << endl
 		<< "Deflates discarded:    " << discardedCompressions << endl

@@ -46,6 +46,7 @@
 #include "protocol.types.h"
 #include "protocol.flags.h"
 #include "protocol.tools.h"
+#include "datatypes.h"
 
 //! DrawPile network protocol.
 /**
@@ -116,15 +117,6 @@ protected:
 public:
 	virtual ~Message() throw()
 	{
-		// break potential links back to this ptr*
-		if (next != 0) next->prev = 0;
-		if (prev != 0) prev->next = 0;
-		
-		#if 0 // seems to cause more work than reduce it
-		// delete our ptr's;
-		delete next,
-		delete prev;
-		#endif // 0
 	}
 	
 	//! Message type identifier (full list in protocol::type namespace).
@@ -366,10 +358,12 @@ struct ToolInfo
 	{ }
 	
 	//! Constructor with params for payload
-	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing) throw()
+	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint32_t _lo_color, const uint32_t _hi_color, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing) throw()
 		: Message(type::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		tool_id(_tool_id),
 		mode(_mode),
+		lo_color(_lo_color),
+		hi_color(_hi_color),
 		lo_size(_lo_size),
 		hi_size(_hi_size),
 		lo_hardness(_lo_hardness),
@@ -387,11 +381,8 @@ struct ToolInfo
 	//! Composition mode (tool::mode)
 	uint8_t mode;
 	
-	uint8_t
-		//! Lo pressure color (RGBA)
-		lo_color[4],
-		//! Hi pressure color (RGBA)
-		hi_color[4];
+	RGBAColor lo_color;
+	RGBAColor hi_color;
 	
 	uint8_t
 		//! Lo pressure size.

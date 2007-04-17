@@ -236,6 +236,8 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	protocol::ToolInfo *msg = new protocol::ToolInfo(
 			protocol::tool_type::Brush,
 			protocol::tool_mode::Normal,
+			0, // lo color
+			0, // hi color
 			brush.radius(0),
 			brush.radius(1),
 			qRound(brush.hardness(0)*255),
@@ -243,15 +245,15 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 			brush.spacing()
 			);
 
-	msg->session_id = info_.id;;
-	msg->lo_color[0] = lo.red();
-	msg->lo_color[1] = lo.green();
-	msg->lo_color[2] = lo.blue();
-	msg->lo_color[3] = qRound(brush.opacity(0) * 255);
-	msg->hi_color[0] = hi.red();
-	msg->hi_color[1] = hi.green();
-	msg->hi_color[2] = hi.blue();
-	msg->hi_color[3] = qRound(brush.opacity(1) * 255);
+	msg->session_id = info_.id;
+	msg->lo_color.red = lo.red();
+	msg->lo_color.green = lo.green();
+	msg->lo_color.blue = lo.blue();
+	msg->lo_color.alpha = qRound(brush.opacity(0) * 255);
+	msg->hi_color.red = hi.red();
+	msg->hi_color.green = hi.green();
+	msg->hi_color.blue = hi.blue();
+	msg->hi_color.alpha = qRound(brush.opacity(1) * 255);
 	host_->connection()->send(msg);
 }
 
@@ -467,13 +469,13 @@ bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
 	drawingboard::Brush brush(
 			msg->hi_size,
 			msg->hi_hardness/255.0,
-			msg->hi_color[3]/255.0,
-			QColor(msg->hi_color[0], msg->hi_color[1], msg->hi_color[2]),
+			msg->hi_color.alpha/255.0,
+			QColor(msg->hi_color.red, msg->hi_color.green, msg->hi_color.blue),
 			msg->spacing);
 	brush.setRadius2(msg->lo_size);
-	brush.setColor2(QColor(msg->lo_color[0], msg->lo_color[1], msg->lo_color[2]));
+	brush.setColor2(QColor(msg->lo_color.red, msg->lo_color.green, msg->lo_color.blue));
 	brush.setHardness2(msg->lo_hardness/255.0);
-	brush.setOpacity2(msg->lo_color[3]/255.0);
+	brush.setOpacity2(msg->lo_color.alpha/255.0);
 	emit toolReceived(msg->user_id, brush);
 	return false;
 }

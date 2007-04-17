@@ -379,8 +379,8 @@ size_t ToolInfo::unserialize(const char* buf, const size_t len) throw()
 	memcpy_t(tool_id, buf+i); i += sizeof(tool_id);
 	memcpy_t(mode, buf+i); i += sizeof(mode);
 	
-	memcpy(lo_color, buf+i, sizeof(lo_color)); i += sizeof(lo_color);
-	memcpy(hi_color, buf+i, sizeof(hi_color)); i += sizeof(hi_color);
+	memcpy_t(lo_color.RGBA, buf+i); i += sizeof(lo_color.RGBA);
+	memcpy_t(hi_color.RGBA, buf+i); i += sizeof(hi_color.RGBA);
 	
 	memcpy_t(lo_size, buf+i); i += sizeof(lo_size);
 	memcpy_t(hi_size, buf+i); i += sizeof(hi_size);
@@ -407,8 +407,8 @@ size_t ToolInfo::serializePayload(char *buf) const throw()
 	memcpy_t(buf, tool_id); size_t i = sizeof(tool_id);
 	memcpy_t(buf+i, mode); i += sizeof(mode);
 	
-	memcpy(buf+i, lo_color, sizeof(lo_color)); i += sizeof(lo_color);
-	memcpy(buf+i, hi_color, sizeof(hi_color)); i += sizeof(hi_color);
+	memcpy_t(buf+i, lo_color.RGBA); i += sizeof(lo_color.RGBA);
+	memcpy_t(buf+i, hi_color.RGBA); i += sizeof(hi_color.RGBA);
 	
 	memcpy_t(buf+i, lo_size); i += sizeof(lo_size);
 	memcpy_t(buf+i, hi_size); i += sizeof(hi_size);
@@ -421,8 +421,8 @@ size_t ToolInfo::serializePayload(char *buf) const throw()
 
 size_t ToolInfo::payloadLength() const throw()
 {
-	return sizeof(tool_id) + sizeof(mode) + sizeof(lo_color)
-		+ sizeof(hi_color) + sizeof(lo_size) + sizeof(hi_size)
+	return sizeof(tool_id) + sizeof(mode) + sizeof(lo_color.RGBA)
+		+ sizeof(hi_color.RGBA) + sizeof(lo_size) + sizeof(hi_size)
 		+ sizeof(lo_hardness) + sizeof(hi_hardness) + sizeof(spacing);
 }
 
