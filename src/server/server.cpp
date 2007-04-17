@@ -935,13 +935,13 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::Unsubscribe:
 		{
-			const sessions_i smi(sessions.find(usr->inMsg->session_id));
-			if (smi == sessions.end())
+			const usr_session_i usi(usr->sessions.find(usr->inMsg->session_id));
+			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 			else
 			{
 				uSendMsg(*usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
-				uLeaveSession(*usr, smi->second);
+				uLeaveSession(*usr, usi->second->session);
 			}
 		}
 		break;
@@ -972,13 +972,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uJoinSession(usr, session);
 				}
 			}
-			else
-			{
-				// already subscribed
-				uSendMsg(*usr, msgError(
-					usr->inMsg->session_id, protocol::error::InvalidRequest)
-				);
-			}
+			else // already subscribed
+				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::InvalidRequest));
 		}
 		else
 		{
