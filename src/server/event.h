@@ -130,7 +130,7 @@ protected:
 	#endif // EV_[P]SELECT
 	
 	#if defined(EV_USE_SIGMASK)
-	sigset_t *_sigmask, *_sigsaved;
+	sigset_t _sigmask, _sigsaved;
 	#endif // EV_USE_SIGMASK
 	
 	#if defined(EV_WSA)
@@ -186,7 +186,7 @@ public:
 	/**
 	 * Only used by pselect() so far
 	 */
-	void setMask(sigset_t* mask) throw() { _sigmask = mask; }
+	void setMask(const sigset_t& mask) throw() { _sigmask = mask; }
 	#endif // EV_PSELECT
 	
 	//! Initialize event system.

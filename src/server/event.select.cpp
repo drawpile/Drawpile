@@ -60,7 +60,7 @@ Event::Event() throw()
 	nfds_w(0),
 	nfds_e(0)
 	#if defined(EV_PSELECT)
-	, _sigmask(0), _sigsaved(0)
+	//, _sigmask(0), _sigsaved(0)
 	#endif // EV_PSELECT
 	#endif // !WIN32
 {
@@ -114,7 +114,7 @@ int Event::wait() throw()
 	
 	#if defined(EV_PSELECT)
 	// save sigmask
-	sigprocmask(SIG_SETMASK, _sigmask, _sigsaved);
+	sigprocmask(SIG_SETMASK, &_sigmask, &_sigsaved);
 	#endif // EV_PSELECT
 	
 	#ifndef WIN32
@@ -137,7 +137,7 @@ int Event::wait() throw()
 		&t_fds_e,
 		&_timeout
 	#if defined(EV_PSELECT)
-		, _sigmask
+		, &_sigmask
 	#endif // EV_PSELECT
 		);
 	
@@ -149,7 +149,7 @@ int Event::wait() throw()
 	
 	#if defined(EV_PSELECT)
 	// restore mask
-	sigprocmask(SIG_SETMASK, &sigsaved, NULL);
+	sigprocmask(SIG_SETMASK, &_sigsaved, NULL);
 	#endif // EV_PSELECT
 	
 	if (nfds == -1)
@@ -211,8 +211,12 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	{
 		FD_SET(fd, &fds_r);
 		#ifndef WIN32 // win32 ignores the argument
+		#ifdef HAVE_HASH_SET
+		read_set.insert(fd);
+		#else // std::set
 		read_set.insert(read_set.end(), fd);
-		nfds_r = *(--read_set.end());
+		#endif
+		nfds_r = *(read_set.end());
 		#endif // !Win32
 		rc = true;
 	}
@@ -220,7 +224,11 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	{
 		FD_SET(fd, &fds_w);
 		#ifndef WIN32 // win32 ignores the argument
+		#ifdef HAVE_HASH_SET
+		write_set.insert(fd);
+		#else // std::set
 		write_set.insert(write_set.end(), fd);
+		#endif
 		nfds_w = *(--write_set.end());
 		#endif // !Win32
 		rc = true;
@@ -229,7 +237,11 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	{
 		FD_SET(fd, &fds_e);
 		#ifndef WIN32 // win32 ignores the argument
+		#ifdef HAVE_HASH_SET
+		error_set.insert(fd);
+		#else // std::set
 		error_set.insert(error_set.end(), fd);
+		#endif
 		nfds_e = *(--error_set.end());
 		#endif // !Win32
 		rc = true;
