@@ -157,7 +157,7 @@ public:
 		s_error(0)
 	{
 		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket::Socket(fd_t)" << std::endl;
+		std::cout << "Socket(FD: "<<nsock<<", address: " << AddrToString(saddr) << ") constructed" << std::endl;
 		#endif
 		
 		memcpy(&addr, &saddr, sizeof(saddr));
@@ -169,7 +169,7 @@ public:
 		s_error(0)
 	{
 		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket::Socket(fd_t)" << std::endl;
+		std::cout << "Socket(FD: "<<nsock<<", address: " << AddrToString(saddr) << ") constructed" << std::endl;
 		#endif
 		
 		memcpy(&addr, &saddr, sizeof(saddr));
@@ -181,7 +181,7 @@ public:
 		s_error(0)
 	{
 		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
+		std::cout << "Socket(FD: " << nsock << ") constructed" << std::endl;
 		#endif
 	}
 	
@@ -189,7 +189,7 @@ public:
 	~Socket() throw()
 	{
 		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket::~Socket(fd: " << sock << ")" << std::endl;
+		std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
 		#endif
 		
 		close();

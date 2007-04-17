@@ -37,6 +37,10 @@
 #include <fcntl.h>
 #include <cassert>
 
+#ifndef WIN32
+	#include <sstream>
+#endif
+
 using std::cout;
 using std::endl;
 using std::cerr;
@@ -44,7 +48,7 @@ using std::cerr;
 Net::Net() throw(std::exception)
 {
 	#ifndef NDEBUG
-	cout << "Net::Net()" << endl;
+	cout << "Net()" << endl;
 	#endif
 	
 	#if defined( HAVE_WSA )
@@ -55,7 +59,8 @@ Net::Net() throw(std::exception)
 	if (LOBYTE(info.wVersion) != 2
 		or HIBYTE(info.wVersion) != 0)
 	{
-		cerr << "Invalid WSA version." << endl;
+		cerr << "Invalid WSA version: "
+			<< LOBYTE(info.wVersion) << "." << HIBYTE(info.wVersion) << endl;
 		WSACleanup( );
 		exit(1); 
 	}
@@ -65,7 +70,7 @@ Net::Net() throw(std::exception)
 Net::~Net() throw()
 {
 	#ifndef NDEBUG
-	cout << "Net::~Net()" << endl;
+	cout << "~Net()" << endl;
 	#endif
 	
 	#if defined( HAVE_WSA )
@@ -232,7 +237,7 @@ Socket Socket::accept() throw()
 			break;
 		#endif
 		default:
-			cerr << "Socket::accept() - unknown error: " << s_error << endl;
+			cerr << "Socket.accept() - unknown error: " << s_error << endl;
 			exit(1);
 		}
 		
@@ -243,7 +248,7 @@ Socket Socket::accept() throw()
 bool Socket::block(const bool x) throw()
 {
 	#ifndef NDEBUG
-	cout << "Socket::block(fd: " << sock << ", " << (x?"true":"false") << ")" << endl;
+	cout << "Socket.block(fd: " << sock << ", " << (x?"true":"false") << ")" << endl;
 	#endif // NDEBUG
 	
 	assert(sock != INVALID_SOCKET);
@@ -260,7 +265,7 @@ bool Socket::block(const bool x) throw()
 bool Socket::reuse(const bool x) throw()
 {
 	#ifndef NDEBUG
-	cout << "Socket::reuse(fd: " << sock << ", " << (x?"true":"false") << ")" << endl;
+	cout << "Socket.reuse(fd: " << sock << ", " << (x?"true":"false") << ")" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -283,7 +288,7 @@ bool Socket::reuse(const bool x) throw()
 		assert(s_error != ENOPROTOOPT);
 		assert(s_error != EFAULT);
 		
-		cerr << "Socket::reuse() - unknown error: " << s_error << endl;
+		cerr << "Socket.reuse() - unknown error: " << s_error << endl;
 		exit(1);
 	}
 	
@@ -312,7 +317,7 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 		assert(s_error != ENOPROTOOPT);
 		assert(s_error != EFAULT);
 		
-		cerr << "Socket::linger() - unknown error: " << s_error << endl;
+		cerr << "Socket.linger() - unknown error: " << s_error << endl;
 		exit(1);
 	}
 	else
@@ -322,7 +327,7 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket::bindTo([" << address << "], " << port << ")" << endl;
+	cout << "Socket.bindTo([" << address << "], " << port << ")" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -388,7 +393,7 @@ int Socket::connect(const sockaddr_in6& rhost) throw()
 int Socket::connect(const sockaddr_in& rhost) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket::connect()" << endl;
+	cout << "Socket.connect()" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -444,7 +449,7 @@ int Socket::connect(const sockaddr_in& rhost) throw()
 int Socket::listen() throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket::listen()" << endl;
+	cout << "Socket.listen()" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -464,7 +469,7 @@ int Socket::listen() throw()
 		assert(s_error != EOPNOTSUPP);
 		
 		#ifndef NDEBUG
-		cerr << "Socket::listen() - unknown error: " << s_error << endl;
+		cerr << "Socket.listen() - unknown error: " << s_error << endl;
 		#endif // NDEBUG
 		exit(1);
 	}
@@ -475,7 +480,7 @@ int Socket::listen() throw()
 int Socket::send(char* buffer, const size_t len) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket::send(*buffer, " << len << ")" << endl;
+	cout << "Socket.send(*buffer, " << len << ")" << endl;
 	#endif
 	
 	assert(buffer != 0);
@@ -533,7 +538,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 		#endif
 		default:
 			#ifndef NDEBUG
-			cerr << "Socket::send() - unknown error: " << s_error << endl;
+			cerr << "Socket.send() - unknown error: " << s_error << endl;
 			#endif // NDEBUG
 			assert(s_error);
 			break;
@@ -554,7 +559,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 int Socket::recv(char* buffer, const size_t len) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket::recv(*buffer, " << len << ")" << endl;
+	cout << "Socket.recv(*buffer, " << len << ")" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -613,7 +618,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 		#endif
 		default:
 			#ifndef NDEBUG
-			cerr << "Socket::recv() - unknown error: " << s_error << endl;
+			cerr << "Socket.recv() - unknown error: " << s_error << endl;
 			#endif // NDEBUG
 			assert(s_error);
 			break;
@@ -635,7 +640,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket::sendfile()" << endl;
+	cout << "Socket.sendfile()" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -674,7 +679,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 			break;
 		#endif
 		default:
-			cerr << "Socket::sendfile() - unknown error: " << s_error << endl;
+			cerr << "Socket.sendfile() - unknown error: " << s_error << endl;
 			exit(1);
 		}
 	}
@@ -727,7 +732,6 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	// convert address to string
 	
 	#ifdef HAVE_WSA
-	
 	DWORD len = INET6_ADDRSTRLEN;
 	
 	sockaddr sa;
@@ -742,13 +746,10 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	
 	uint16_t _port = raddr.sin6_port;
 	bswap(_port);
-	//std::string str(straddr).insert(str.length(), ":").insert(str.length(), _port);
 	
-	char buf[7];
-	sprintf(buf, ":%d", _port);
-	str.insert(str.length(), buf);
-	
-	return str;
+	std::ostringstream stream;
+	stream << "[" << straddr << "]:" << _port; // ?
+	return stream.str();
 	#endif
 }
 #endif
@@ -760,7 +761,6 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	straddr[INET_ADDRSTRLEN] = '\0';
 	
 	#ifdef HAVE_WSA
-	
 	DWORD len = INET_ADDRSTRLEN;
 	
 	sockaddr sa;
@@ -776,14 +776,9 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	uint16_t _port = raddr.sin_port;
 	bswap(_port);
 	
-	std::string str(straddr);
-	//return std::string(straddr).push_back(":").push_back(_port);
-	
-	char buf[7];
-	sprintf(buf, ":%d", _port);
-	str.insert(str.length(), buf);
-	
-	return str;
+	std::ostringstream stream;
+	stream << straddr << ":" << _port;
+	return stream.str();
 	#endif
 }
 

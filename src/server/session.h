@@ -117,14 +117,14 @@ struct Session
 		locked(false)
 	{
 		#ifndef NDEBUG
-		std::cout << "Session::Session()" << std::endl;
+		std::cout << "Session #" << static_cast<int>(id) << " constructed" << std::endl;
 		#endif
 	}
 	
 	~Session() throw()
 	{
 		#ifndef NDEBUG
-		std::cout << "Session::~Session()" << std::endl;
+		std::cout << "~Session #" << static_cast<int>(id) << " destructed" << std::endl;
 		#endif
 		
 		waitingSync.clear();
