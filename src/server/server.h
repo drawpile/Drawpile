@@ -258,6 +258,9 @@ protected:
 	inline
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
+	inline
+	void uLayerEvent(User*& usr) throw();
+	
 	// Send message to session
 	inline
 	void Propagate(const Session& session, message_ref msg, User* source=0, const bool toAll=false) throw();

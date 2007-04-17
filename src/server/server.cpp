@@ -1010,7 +1010,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case protocol::type::LayerEvent:
-		// TODO
+		uLayerEvent(usr);
 		break;
 	case protocol::type::LayerSelect:
 		{
@@ -1112,7 +1112,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 	case Z_BUF_ERROR:
 	case Z_DATA_ERROR:
 		// Input buffer corrupted
-		cout << "Corrupted data from user #" << static_cast<int>(usr->id)
+		cerr << "Corrupted data from user #" << static_cast<int>(usr->id)
 			<< ", dropping." << endl;
 		uRemove(usr, protocol::user_event::Dropped);
 		delete [] outbuf;
@@ -1147,21 +1147,12 @@ void Server::uHandleAck(User*& usr) throw()
 				Session *session = usi->second->session;
 				--session->syncCounter;
 				
-				if (session->syncCounter == 0)
-				{
-					#ifndef NDEBUG
-					cout << "Synchronizing raster for session #"
-						<< static_cast<int>(session->id) << "." << endl;
-					#endif
-					
-					SyncSession(session);
-				}
 				#ifndef NDEBUG
-				else
-				{
-					cout << "ACK/SyncWait counter: " << session->syncCounter << endl;
-				}
+				cout << "ACK/SyncWait counter: " << session->syncCounter << endl;
 				#endif
+				
+				if (session->syncCounter == 0)
+					SyncSession(session);
 			}
 		}
 		break;
@@ -1330,6 +1321,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				uSendMsg(*usr, msgError(session->id, protocol::error::NotInSession));
 			else if (event->aux == protocol::null_layer)
 			{
+				// lock completely
 				usi->second->locked = (event->action == protocol::session_event::Lock);
 				
 				// Copy active session
@@ -1414,9 +1406,11 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		}
 		break;
 	case protocol::session_event::Persist:
+		cerr << "Setting 'Persist' for session not supported." << endl;
 		// TODO
 		break;
 	case protocol::session_event::CacheRaster:
+		cerr << "Setting 'Cache Raster' for session not supported." << endl;
 		// TODO
 		break;
 	default:
@@ -1928,6 +1922,69 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		assert(!"user state was something strange");
 		break;
 	}
+}
+
+inline
+void Server::uLayerEvent(User*& usr) throw()
+{
+	assert(usr != 0);
+	assert(usr->inMsg != 0);
+	assert(usr->inMsg->type == protocol::type::LayerEvent);
+	
+	#ifndef NDEBUG
+	cout << "Server::uLayerEvent(session: " << usr->inMsg->session_id << ")" << endl;
+	#endif
+	
+	protocol::LayerEvent *levent = static_cast<protocol::LayerEvent*>(usr->inMsg);
+	
+	sessions_i si(sessions.find(levent->session_id));
+	if (si == sessions.end()) // session not found
+	{
+		uSendMsg(*usr, msgError(levent->session_id, protocol::error::UnknownSession));
+		return;
+	}
+	
+	Session *session = si->second;
+	if (!isOwner(*usr, *session) and !usr->isAdmin)
+	{
+		uSendMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
+		return;
+	}
+	
+	switch (levent->action)
+	{
+	case protocol::layer_event::Create:
+		{
+			// TODO: Figure out what to do with the layer ID
+			uint8_t lastLayer = levent->layer_id;
+			session->layers[lastLayer] = LayerData(lastLayer, levent->mode, levent->opacity);
+		}
+		break;
+	case protocol::layer_event::Destroy:
+		session->layers.erase(levent->layer_id);
+		// TODO: Cleanup
+		break;
+	case protocol::layer_event::Alter:
+		{
+			session_layer_i sli = session->layers.find(levent->layer_id);
+			if (sli == session->layers.end())
+			{
+				uSendMsg(*usr, msgError(session->id, protocol::error::UnknownLayer));
+				return;
+			}
+			sli->second = LayerData(levent->layer_id, levent->mode, levent->opacity);
+		}
+		break;
+	default:
+		cerr << "Unknown layer event: " << levent->action << std::endl;
+		uRemove(usr, protocol::user_event::Violation);
+		return;
+	}
+	
+	levent->user_id = usr->id;
+	
+	Propagate(*session, message_ref(levent), (usr->c_acks ? usr : 0));
+	usr->inMsg = 0;
 }
 
 // Calls uSendMsg

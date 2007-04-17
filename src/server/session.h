@@ -16,6 +16,8 @@
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
+#include <limits>
+
 //#include "../shared/protocol.types.h"
 #include "../shared/protocol.flags.h"
 #include "../shared/protocol.tools.h"
@@ -39,10 +41,19 @@ struct LayerData
 	LayerData() throw()
 		: id(protocol::null_layer),
 		mode(protocol::tool_mode::None),
-		opacity(0)
+		opacity(0),
+		locked(false)
 	{
-		
 	}
+	
+	LayerData(const uint8_t _id, const uint8_t _mode, const uint8_t _opacity=std::numeric_limits<uint8_t>::max(), const bool _locked=false) throw()
+		: id(_id),
+		mode(_mode),
+		opacity(_opacity),
+		locked(_locked)
+	{
+	}
+	
 	~LayerData() throw()
 	{
 		
@@ -174,8 +185,10 @@ struct Session
 	// 
 	#if defined(HAVE_HASH_MAP)
 	__gnu_cxx::hash_map<uint8_t, LayerData> layers;
+	//__gnu_cxx::hash_set<LayerData> layers;
 	#else
 	std::map<uint8_t, LayerData> layers;
+	//std::set<LayerData> layers;
 	#endif
 	
 	// Subscribed users
@@ -201,7 +214,7 @@ struct Session
 	/* *** Functions *** */
 	
 	// Session can be joined
-	bool canJoin()
+	bool canJoin() const throw()
 	{
 		return ((users.size() + waitingSync.size()) < limit);
 	}
