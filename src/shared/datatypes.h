@@ -42,12 +42,19 @@ union RGBAColor {
 		: RGBA(old.RGBA)
 	{ }
 	
+	//! RGBA
 	uint32_t RGBA;
+	
+	//! anonymous struct
 	struct {
 		uint8_t
+			//! Red
 			red,
+			//! Green
 			green,
+			//! Blue
 			blue,
+			//! Alpha
 			alpha;
 	};
 };

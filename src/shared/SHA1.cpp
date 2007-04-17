@@ -120,7 +120,7 @@ void SHA1::_R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y
 	w = ROL32(w, 30);
 }
 
-void SHA1::Transform(uint32_t *state, const uint8_t *buffer) throw()
+void SHA1::Transform(uint32_t *state, const unsigned char *buffer) throw()
 {
 	// Copy state[] to working vars
 	uint32_t a = state[0], b = state[1], c = state[2], d = state[3], e = state[4];
@@ -163,7 +163,7 @@ void SHA1::Transform(uint32_t *state, const uint8_t *buffer) throw()
 }
 
 // Use this function to hash in binary data and strings
-void SHA1::Update(const uint8_t *data, const uint32_t len) throw()
+void SHA1::Update(const unsigned char *data, const uint32_t len) throw()
 {
 	assert(len > 0);
 	assert(data != 0);
@@ -206,16 +206,16 @@ void SHA1::Final() throw()
 		finalcount[i] = (uint8_t)((m_count[((i >= 4) ? 0 : 1)]
 			>> ((3 - (i & 3)) * 8) ) & 255); // Endian independent
 	
-	Update((uint8_t *)"\200", 1);
+	Update((unsigned char *)"\200", 1);
 	
 	while ((m_count[0] & 504) != 448)
-		Update((uint8_t *)"\0", 1);
+		Update((unsigned char *)"\0", 1);
 	
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
 	for (i = 0; i != 20; ++i)
 	{
-		m_digest[i] = static_cast<uint8_t>((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+		m_digest[i] = static_cast<unsigned char>((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
 	}
 	
 	// Wipe variables for security reasons
@@ -251,7 +251,7 @@ void SHA1::HexDigest(char *szReport) const throw()
 }
 
 // Get the raw message digest
-void SHA1::GetHash(uint8_t *puDest) const throw()
+void SHA1::GetHash(unsigned char *puDest) const throw()
 {
 	assert(finalized);
 	assert(puDest != 0);

@@ -132,6 +132,9 @@ const uint16_t
 	//! Feature level mismatch
 	ImplementationMismatch = 93,
 	
+	//! 
+	RequestIgnored = 95,
+	
 	/* Completely unexpected error messages */
 	
 	//! Something bad happened to server, yet it managed to throw this up.

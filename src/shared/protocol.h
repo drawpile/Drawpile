@@ -381,8 +381,11 @@ struct ToolInfo
 	//! Composition mode (tool::mode)
 	uint8_t mode;
 	
-	RGBAColor lo_color;
-	RGBAColor hi_color;
+	RGBAColor
+		//! Low pressure color
+		lo_color,
+		//! High pressure color
+		hi_color;
 	
 	uint8_t
 		//! Lo pressure size.

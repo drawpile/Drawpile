@@ -173,8 +173,8 @@ const uint8_t
 	//!
 	Reserved1 = 0x02,
 	
-	//! Multi-session support
-	MultiSession = 0x04,
+	//!
+	Reserved1_2 = 0x04,
 	
 	//! Strings use UTF-16 format instead of default UTF-8.
 	WideStrings = 0x08,

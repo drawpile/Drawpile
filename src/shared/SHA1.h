@@ -37,7 +37,7 @@ public:
 	void Reset() throw();
 	
 	// Update the hash value
-	void Update(const uint8_t *data, const uint32_t len) throw();
+	void Update(const unsigned char *data, const uint32_t len) throw();
 	
 	// Finalize hash and report
 	void Final() throw();
@@ -46,7 +46,7 @@ public:
 	// Requires you to provide pre-allocated string with length of at least 40 bytes
 	void HexDigest(char *szReport) const throw();
 	// Requires a string of at least 20 bytes
-	void GetHash(uint8_t *puDest) const throw();
+	void GetHash(unsigned char *puDest) const throw();
 
 private:
 	inline
@@ -73,7 +73,7 @@ private:
 	inline
 	void _R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	void Transform(uint32_t *state, const uint8_t *buffer) throw();
+	void Transform(uint32_t *state, const unsigned char *buffer) throw();
 	
 	#ifndef NDEBUG
 	bool finalized;
