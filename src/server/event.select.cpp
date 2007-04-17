@@ -30,8 +30,8 @@
 #include "../shared/templates.h"
 #include "event.h"
 
-#ifndef EV_SELECT
-	#error EV_SELECT not defined
+#if !defined(EV_SELECT) and !defined(EV_PSELECT)
+	#error EV_[P]SELECT not defined
 #endif
 
 #include <iostream>
