@@ -465,6 +465,8 @@ void Server::uWrite(User*& usr) throw()
 				}
 				break;
 			case Z_MEM_ERROR:
+				if (!inBuffer)
+					delete [] temp;
 				throw std::bad_alloc();
 			case Z_BUF_ERROR:
 				#ifndef NDEBUG
@@ -537,13 +539,13 @@ void Server::uWrite(User*& usr) throw()
 				fClr(usr->events, ev.write);
 				ev.modify(usr->sock.fd(), usr->events);
 			}
+			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 			else
 			{
-				#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 				cout << "Still have " << usr->queue.size() << " message/s in queue." << endl
 					<< "... first is of type: " << static_cast<int>(usr->queue.front()->type) << endl;
-				#endif
 			}
+			#endif
 		}
 		break;
 	}
@@ -567,14 +569,6 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		#endif
 		
 		usr->input.resize(usr->input.size + 4096);
-	}
-	else if (usr->input.canWrite() == 0)
-	{
-		// can't write, but buffer isn't full.
-		usr->input.reposition();
-		#ifndef NDEBUG
-		++bufferRepositions;
-		#endif
 	}
 	
 	const int rb = usr->sock.recv(
@@ -2455,7 +2449,6 @@ bool Server::init() throw(std::bad_alloc)
 	lsock.block(false); // nonblocking
 	lsock.reuse(true); // reuse address
 	
-	bool bound = false;
 	for (uint16_t bport=lo_port; bport != hi_port+1; ++bport)
 	{
 		#ifdef IPV6_SUPPORT
@@ -2469,15 +2462,13 @@ bool Server::init() throw(std::bad_alloc)
 				break;
 		}
 		else
-		{
-			bound = true;
-			break;
-		}
+			goto resume;
 	}
+	cerr << "Failed to bind to any port" << endl;
+	return false;
 	
-	if (!bound)
-		cerr << "Failed to bind to any port" << endl;
-	else if (lsock.listen() == SOCKET_ERROR)
+	resume:
+	if (lsock.listen() == SOCKET_ERROR)
 		cerr << "Failed to open listening port." << endl;
 	else if (!ev.init())
 		cerr << "Event system initialization failed." << endl;
@@ -2644,12 +2635,10 @@ int Server::run() throw()
 		// check timer
 		if (next_timer < current_time)
 		{
-			if (!utimer.empty())
-				cullIdlers();
-			
-			// reschedule to much later time if there's no users left
 			if (utimer.empty())
 				next_timer = current_time + 1800;
+			else
+				cullIdlers();
 		}
 	}
 	while (state == server::state::Active);
