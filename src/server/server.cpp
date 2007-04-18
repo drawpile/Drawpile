@@ -203,19 +203,17 @@ void Server::uRegenSeed(User& usr) const throw()
 }
 
 inline
-message_ref Server::msgAuth(User& usr, const uint8_t session) const throw(std::bad_alloc)
+message_ref Server::msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc)
 {
-	protocol::Authentication* auth = new protocol::Authentication;
+	protocol::PasswordRequest* pwreq = new protocol::PasswordRequest;
 	
-	assert(inBoundsOf<uint8_t>(session));
-	
-	auth->session_id = session;
+	pwreq->session_id = session;
 	
 	uRegenSeed(usr);
 	
-	memcpy(auth->seed, usr.seed, protocol::password_seed_size);
+	memcpy(pwreq->seed, usr.seed, protocol::password_seed_size);
 	
-	return message_ref(auth);
+	return message_ref(pwreq);
 }
 
 inline
@@ -834,7 +832,7 @@ void Server::uHandlePassword(User*& usr) throw()
 	else
 	{
 		// ACK the password
-		uSendMsg(*usr, msgAck(msg->session_id, msg->type));
+		uSendMsg(*usr, msgAck(msg->session_id, protocol::type::Password));
 		
 		if (msg->session_id == protocol::Global)
 			usr->isAdmin = true;
@@ -921,7 +919,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
-				uSendMsg(*usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
+				uSendMsg(*usr, msgAck(usr->inMsg->session_id, protocol::type::Unsubscribe));
 				uLeaveSession(*usr, usi->second->session);
 			}
 		}
@@ -946,10 +944,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				else if (session->level != usr->level)
 					uSendMsg(*usr, msgError(protocol::Global, protocol::error::ImplementationMismatch));
 				else if (session->password != 0)
-					uSendMsg(*usr, msgAuth(*usr, session->id));
+					uSendMsg(*usr, msgPWRequest(*usr, session->id));
 				else // join session
 				{
-					uSendMsg(*usr, msgAck(usr->inMsg->session_id, usr->inMsg->type));
+					uSendMsg(*usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
 					uJoinSession(usr, session);
 				}
 			}
@@ -970,7 +968,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uSendMsg(*usr, msgSessionInfo(*si->second));
 		}
 		
-		uSendMsg(*usr, msgAck(protocol::Global, usr->inMsg->type));
+		uSendMsg(*usr, msgAck(protocol::Global, protocol::type::ListSessions));
 		break;
 	case protocol::type::SessionEvent:
 		{
@@ -1017,8 +1015,20 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	#endif
-	case protocol::type::Instruction:
-		uHandleInstruction(usr);
+	case protocol::type::SessionInstruction:
+		uSessionInstruction(usr);
+		break;
+	case protocol::type::SetPassword:
+		
+	case protocol::type::Shutdown:
+		if (usr->isAdmin)
+			state = server::state::Exiting;
+		break;
+	case protocol::type::Authenticate:
+		if (a_password == 0) // no admin password set
+			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::Unauthorized));
+		else // request password
+			uSendMsg(*usr, msgPWRequest(*usr, protocol::Global));
 		break;
 	case protocol::type::Password:
 		uHandlePassword(usr);
@@ -1214,7 +1224,7 @@ void Server::uTunnelRaster(User& usr) throw()
 	else
 	{
 		// ACK raster
-		uSendMsg(usr, msgAck(usr.inMsg->session_id, usr.inMsg->type));
+		uSendMsg(usr, msgAck(usr.inMsg->session_id, protocol::type::Raster));
 		
 		tunnel_i ti(ft.first);
 		// Forward raster data to users.
@@ -1425,35 +1435,33 @@ bool Server::isOwner(const User& usr, const Session& session) const throw()
 // Calls uSendMsg, Propagate, sRemove, uLeaveSession
 // May delete User*
 inline
-void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
+void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
+	assert(usr->inMsg != 0);
+	assert(usr->inMsg->type == protocol::type::SessionInstruction);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "Server::uHandleInstruction(user: "
+	cout << "Server::uSessionInstruction(user: "
 		<< static_cast<int>(usr->id) << ")" << endl;
 	#endif
 	
-	assert(usr->inMsg != 0);
-	assert(usr->inMsg->type == protocol::type::Instruction);
+	protocol::SessionInstruction *msg = static_cast<protocol::SessionInstruction*>(usr->inMsg);
 	
-	protocol::Instruction *msg = static_cast<protocol::Instruction*>(usr->inMsg);
-	
-	switch (msg->command)
+	switch (msg->action)
 	{
-	case protocol::admin::command::Create:
+	case protocol::session_command::Create:
 		if (!usr->isAdmin) { break; }
 		// limited scope for switch/case
 		{
 			const uint8_t session_id = getSessionID();
-			static const size_t crop = sizeof(uint16_t)*2;
 			
 			if (session_id == protocol::Global)
 			{
 				uSendMsg(*usr, msgError(msg->session_id, protocol::error::SessionLimit));
 				break;
 			}
-			else if (msg->aux_data < 2)
+			else if (msg->user_limit < 2)
 			{
 				#ifndef NDEBUG
 				cerr << "Attempted to create single user session." << endl;
@@ -1462,54 +1470,28 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidData));
 				break;
 			}
-			else if (msg->length < crop)
+			/*
+			else if (fIsSet(msg->user_mode, )) // admin flag
 			{
-				uRemove(usr, protocol::user_event::Violation);
-				return;
+				// TODO
+				break;
 			}
+			*/
 			
-			// temporaries
-			uint16_t w, h;
-			
-			memcpy_t(w, msg->data);
-			memcpy_t(h, msg->data+sizeof(uint16_t));
-			
-			bswap(w);
-			bswap(h);
-			
-			if (w < min_dimension or h < min_dimension)
+			if (msg->width < min_dimension or msg->height < min_dimension
+				or msg->width > protocol::max_dimension or msg->height > protocol::max_dimension)
 			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::TooSmall));
+				uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidSize));
 				break;
 			}
 			
-			// more temporaries
-			uint8_t title_len;
-			char* title_tmp;
-			if (msg->length < crop)
-			{
-				cerr << "Invalid data size in instruction: 'Create'." << endl;
-				uSendMsg(*usr, msgError(protocol::Global, protocol::error::InvalidData));
-				break;
-			}
-			else if (msg->length != crop)
-			{
-				title_len = (msg->length - crop);
-				title_tmp = msg->data;
-				memmove(title_tmp, title_tmp+crop, title_len);
-				title_tmp[title_len] = '\0';
-			}
-			else
-			{
-				title_len = 0;
-				title_tmp = 0;
-				#ifndef NDEBUG
+			#ifndef NDEBUG
+			if (msg->title == 0)
 				cout << "No title set for session." << endl;
-				#endif
-			}
+			#endif
 			
 			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
-				and !validateSessionTitle(title_tmp, title_len))
+				and !validateSessionTitle(msg->title, msg->title_len))
 			{
 				#ifndef NDEBUG
 				cerr << "Session title not unique." << endl;
@@ -1519,18 +1501,16 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				msg->data = 0; // prevent title from being deleted
-				
 				Session *session = new Session(
 					session_id, // identifier
-					msg->aux_data2, // mode
-					msg->aux_data, // user limit
+					msg->user_mode, // mode
+					msg->user_limit, // user limit
 					usr->id, // owner
-					w, // width
-					h, // height
+					msg->width, // width
+					msg->height, // height
 					usr->level, // inherit user's feature level
-					title_len,
-					title_tmp
+					msg->title_len,
+					msg->title
 				);
 				
 				sessions[session->id] = session;
@@ -1543,11 +1523,13 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 					<< "  Owner: " << static_cast<int>(usr->id)
 					<< ", from: " << usr->sock.address() << endl;
 				
-				uSendMsg(*usr, msgAck(msg->session_id, msg->type));
+				msg->title = 0; // prevent title from being deleted
+				
+				uSendMsg(*usr, msgAck(msg->session_id, protocol::type::SessionInstruction));
 			}
 		}
 		return; // because session owner might've done this
-	case protocol::admin::command::Destroy:
+	case protocol::session_command::Destroy:
 		{
 			const sessions_const_i si(sessions.find(msg->session_id));
 			if (si == sessions.end())
@@ -1581,13 +1563,13 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			sRemove(session);
 		}
 		break;
-	case protocol::admin::command::Alter:
+	case protocol::session_command::Alter:
 		{
 			const sessions_const_i si(sessions.find(msg->session_id));
 			if (si == sessions.end())
 			{
 				uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
-				return;
+				break;
 			}
 			Session *session = si->second;
 			
@@ -1598,61 +1580,42 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			static const int crop = sizeof(uint16_t)*2;
-			
-			if (msg->length < crop)
-			{
-				cerr << "Protocol violation from user #"
-					<< static_cast<int>(usr->id) << endl
-					<< "Reason: Too little data for Alter instruction." << endl;
-				uRemove(usr, protocol::user_event::Violation);
-				return;
-			}
-			
 			// user limit adjustment
-			session->limit = msg->aux_data;
+			session->limit = msg->user_limit;
 			
 			// default user mode adjustment
-			session->mode = msg->aux_data2;
+			session->mode = msg->user_mode;
 			
-			// session canvas's size
-			uint16_t width, height;
-			
-			memcpy_t(width, msg->data),
-			memcpy_t(height, msg->data+sizeof(width));
-			
-			bswap(width), bswap(height);
-			
-			if ((width < session->width) or (height < session->height))
+			if ((msg->width < session->width) or (msg->height < session->height))
 			{
 				cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << endl
 					<< "Reason: Attempted to reduce session's canvas size." << endl;
 				uRemove(usr, protocol::user_event::Violation);
-				return;
+				break;
+			}
+			else if (msg->width > protocol::max_dimension or msg->height > protocol::max_dimension)
+			{
+				uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidSize));
+				break;
 			}
 			
-			session->height = height,
-			session->width = width;
+			session->width = msg->width;
+			session->height = msg->height;
 			
 			// new title
-			if (msg->length > crop)
+			delete [] session->title;
+			if (msg->title_len != 0)
 			{
-				const int nlen = msg->length - crop;
-				if (session->title_len < nlen)
-				{
-					// re-alloc session title only if the new one is longer than old one
-					delete [] session->title;
-					session->title = new char[nlen];
-				}
-				
-				memcpy(session->title, msg->data+crop, nlen);
-				session->title_len = nlen;
+				session->title = msg->title;
+				session->title_len = msg->title_len;
 			}
+			else
+				session->title_len = 0;
 			
 			#ifndef NDEBUG
 			cout << "Session #" << static_cast<int>(session->id) << " altered!" << endl
-				<< "  Dimensions: " << width << " x " << height << endl
+				<< "  Dimensions: " << session->width << " x " << session->height << endl
 				<< "  User limit: " << static_cast<int>(session->limit) << ", default mode: "
 				<< static_cast<int>(session->mode) << endl;
 			#endif // NDEBUG
@@ -1660,85 +1623,70 @@ void Server::uHandleInstruction(User*& usr) throw(std::bad_alloc)
 			Propagate(*session, msgSessionInfo(*session));
 		}
 		break;
-	case protocol::admin::command::Password:
-		if (msg->session_id == protocol::Global)
+	default:
+		#ifndef NDEBUG
+		cerr << "Unrecognized action: " << static_cast<int>(msg->action) << endl;
+		#endif
+		uRemove(usr, protocol::user_event::Dropped);
+		return;
+	}
+}
+
+inline
+void Server::uSetPassword(User*& usr) throw()
+{
+	assert(usr != 0);
+	assert(usr->inMsg != 0);
+	assert(usr->inMsg->type == protocol::type::SetPassword);
+	
+	protocol::SetPassword *setpw = static_cast<protocol::SetPassword*>(usr->inMsg);
+	if (setpw->session_id == protocol::Global)
+	{
+		if (usr->isAdmin)
 		{
-			if (!usr->isAdmin) { break; }
-			
-			if (password != 0)
-				delete [] password;
-			
-			password = msg->data;
-			pw_len = msg->length;
-			
-			msg->data = 0;
-			//msg->length = 0;
+			setPassword(setpw->password, setpw->password_len);
+			setpw->password = 0;
 			
 			#ifndef NDEBUG
 			cout << "Server password changed." << endl;
 			#endif
 			
-			uSendMsg(*usr, msgAck(msg->session_id, msg->type));
+			uSendMsg(*usr, msgAck(protocol::Global, protocol::type::SetPassword));
 		}
 		else
+			uSendMsg(*usr, msgError(protocol::Global, protocol::error::Unauthorized));
+	}
+	else
+	{
+		const sessions_const_i si(sessions.find(setpw->session_id));
+		if (si == sessions.end())
 		{
-			const sessions_const_i si(sessions.find(msg->session_id));
-			if (si == sessions.end())
-			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
-				return;
-			}
-			Session *session = si->second;
-			
-			// Check session ownership
-			if (!usr->isAdmin and !isOwner(*usr, *session))
-			{
-				uSendMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
-				return;
-			}
-			
-			#ifndef NDEBUG
-			cout << "Password set for session #"
-				<< static_cast<int>(msg->session_id) << endl;
-			#endif
-			
-			if (session->password != 0)
-				delete [] session->password;
-			
-			session->password = msg->data;
-			session->pw_len = msg->length;
-			msg->data = 0;
-			
-			uSendMsg(*usr, msgAck(msg->session_id, msg->type));
+			uSendMsg(*usr, msgError(setpw->session_id, protocol::error::UnknownSession));
 			return;
 		}
-		break;
-	case protocol::admin::command::Authenticate:
+		Session *session = si->second;
+		
+		// Check session ownership
+		if (!usr->isAdmin and !isOwner(*usr, *session))
+		{
+			uSendMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
+			return;
+		}
+		
 		#ifndef NDEBUG
-		cout << "User #" << static_cast<int>(usr->id) << " wishes to authenticate itself as an admin." << endl;
+		cout << "Password set for session #"
+			<< static_cast<int>(setpw->session_id) << endl;
 		#endif
-		if (a_password == 0) // no admin password set
-			uSendMsg(*usr, msgError(msg->session_id, protocol::error::Unauthorized));
-		else // request password
-			uSendMsg(*usr, msgAuth(*usr, protocol::Global));
-		return;
-	case protocol::admin::command::Shutdown:
-		if (!usr->isAdmin) { break; }
-		// Shutdown server..
-		state = server::state::Exiting;
-		break;
-	default:
-		#ifndef NDEBUG
-		cerr << "Unrecognized command: "
-			<< static_cast<int>(msg->command) << endl;
-		#endif
-		uRemove(usr, protocol::user_event::Dropped);
-		return;
+		
+		if (session->password != 0)
+			delete [] session->password;
+		
+		session->password = setpw->password;
+		session->pw_len = setpw->password_len;
+		setpw->password = 0;
+		
+		uSendMsg(*usr, msgAck(setpw->session_id, protocol::type::SetPassword));
 	}
-	
-	// Allow session owners to alter sessions, but warn others.
-	if (!usr->isAdmin)
-		uSendMsg(*usr, msgError(msg->session_id, protocol::error::Unauthorized));
 }
 
 inline
@@ -1845,7 +1793,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			if (memcmp(digest, msg->data, protocol::password_hash_size) == 0)
 			{
-				uSendMsg(*usr, msgAck(msg->session_id, msg->type)); // ACK
+				uSendMsg(*usr, msgAck(msg->session_id, protocol::type::Password)); // ACK
 				uRegenSeed(*usr); // mangle seed
 				usr->state = uState::login; // set state
 				uSendMsg(*usr, msgHostInfo()); // send hostinfo
@@ -1891,7 +1839,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				else
 				{
 					usr->state = uState::login_auth;
-					uSendMsg(*usr, msgAuth(*usr, protocol::Global));
+					uSendMsg(*usr, msgPWRequest(*usr, protocol::Global));
 				}
 				
 				usr->level = ident->level; // feature level used by client

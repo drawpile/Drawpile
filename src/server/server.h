@@ -196,7 +196,7 @@ protected:
 	message_ref msgHostInfo() const throw(std::bad_alloc);
 	
 	inline
-	message_ref msgAuth(User& usr, const uint8_t session) const throw(std::bad_alloc);
+	message_ref msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc);
 	
 	inline
 	message_ref msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc);
@@ -252,7 +252,10 @@ protected:
 	
 	// Handle instruction message
 	inline
-	void uHandleInstruction(User*& usr) throw(std::bad_alloc);
+	void uSessionInstruction(User*& usr) throw(std::bad_alloc);
+	
+	inline
+	void uSetPassword(User*& usr) throw();
 	
 	// Handle user login.
 	inline
@@ -343,15 +346,30 @@ public:
 	
 	//! Set server password
 	inline
-	void setPassword(char* pwstr, const uint8_t len) throw() { password = pwstr; pw_len = len; }
+	void setPassword(char* pwstr, const uint8_t len) throw()
+	{
+		if (password != 0)
+			delete [] password;
+		password = pwstr;
+		pw_len = len;
+	}
 	
 	//! Set admin server password
 	inline
-	void setAdminPassword(char* pwstr, const uint8_t len) throw() { a_password = pwstr; a_pw_len = len; }
+	void setAdminPassword(char* pwstr, const uint8_t len) throw()
+	{
+		if (a_password != 0)
+			delete [] a_password;
+		a_password = pwstr;
+		a_pw_len = len;
+	}
 	
 	//! Set user limit
 	inline
-	void setUserLimit(const uint8_t ulimit) throw() { user_limit = ulimit; }
+	void setUserLimit(const uint8_t ulimit) throw()
+	{
+		user_limit = ulimit;
+	}
 	
 	//! Set listening port range
 	inline
@@ -363,11 +381,24 @@ public:
 	
 	//! Set operation mode
 	inline
-	void setTransient(const bool x) throw() { Transient = x; }
+	void setTransient(const bool x) throw()
+	{
+		Transient = x;
+	}
+	
+	//!
 	inline
-	void setLocalhostAdmin(const bool x) throw() { LocalhostAdmin = x; }
+	void setLocalhostAdmin(const bool x) throw()
+	{
+		LocalhostAdmin = x;
+	}
+	
+	//!
 	inline
-	void setDaemonMode(const bool x) throw() { DaemonMode = x; }
+	void setDaemonMode(const bool x) throw()
+	{
+		DaemonMode = x;
+	}
 	
 	//! Set client requirements
 	inline
