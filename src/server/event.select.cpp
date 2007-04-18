@@ -35,9 +35,6 @@
 #endif
 
 #include <iostream>
-#ifndef NDEBUG
-	#include <ios>
-#endif
 
 #include <cerrno> // errno
 #include <memory> // memcpy()
@@ -193,14 +190,7 @@ int Event::wait() throw()
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(select).add(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(select).add(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -256,14 +246,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event::modify(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event::modify(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -287,14 +270,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(select).remove(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(select).remove(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -405,14 +381,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(select).isset(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(select).isset(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);

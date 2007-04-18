@@ -34,9 +34,6 @@
 #endif
 
 #include <iostream>
-#ifndef NDEBUG
-	#include <ios>
-#endif
 
 #include <time.h>
 #include <cerrno> // errno
@@ -177,14 +174,7 @@ int Event::wait() throw()
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(wsa).add(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(wsa).add(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert( fd >= 0 );
@@ -236,14 +226,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(wsa).modify(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(wsa).modify(fd: " << fd << ")" << endl;
 	#endif
 	
 	#ifndef NDEBUG
@@ -290,14 +273,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(wsa).remove(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(wsa).remove(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert( fd >= 0 );
