@@ -200,33 +200,29 @@ void HostState::host(const QString& title,
 		const QString& password, quint16 width, quint16 height, int userlimit,
 		bool allowdraw, bool allowchat)
 {
-	protocol::SessionInstruction *msg = new protocol::SessionInstruction;
-	msg->action = protocol::session_command::Create;
+	const QByteArray tbytes = title.toUtf8();
+	
+	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
+			protocol::session_command::Create,
+			width,
+			height,
+			protocol::user_mode::None,
+			userlimit,
+			0, // flags (unused)
+			tbytes.length(),
+			0
+			);
+	
 	msg->session_id = protocol::Global;
-	msg->user_limit = userlimit;
-	msg->user_mode = protocol::user_mode::None;
 	if(allowdraw==false)
 		fSet(msg->user_mode, protocol::user_mode::Locked);
 	if(allowchat==false)
 		fSet(msg->user_mode, protocol::user_mode::Mute);
 	
-	const QByteArray tbytes = title.toUtf8();
-	
-	msg->width = width;
-	msg->height = height;
-	
-	bswap(msg->width);
-	bswap(msg->height);
-	
-	if (tbytes.length() != 0)
+	if (msg->title_len != 0)
 	{
 		msg->title = new char[tbytes.length()];
 		memcpy(msg->title, tbytes.constData(), tbytes.length());
-	}
-	else
-	{
-		msg->title_len = 0;
-		msg->title = 0;
 	}
 	
 	lastinstruction_ = msg->action; // FIXME
