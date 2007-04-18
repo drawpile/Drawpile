@@ -74,6 +74,9 @@ const char identifier_string[identifier_size] = {'D','r','a','w','P','i','l','e'
 //! Default listening port.
 const uint16_t default_port = 27750;
 
+//! Max size of canvas (x or y coord, not surface area)
+const uint16_t max_dimension = 16384;
+
 } // namespace protocol
 
 #endif // Protocol_Defaults_INCLUDED
