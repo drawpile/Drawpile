@@ -7,8 +7,6 @@ cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 
 ### config options ###
 
-set ( CLIENTVERSION "0.5" )
-set ( SERVERVERSION "0.5" )
 set ( LIBVERSION "0.3" )
 
 set ( LIBNAME "drawpile-${LIBVERSION}" )
@@ -25,8 +23,8 @@ option ( UNITTEST "Compile unittests" OFF )
 
 option ( EPOLL "Enable epoll(4) support" ON )
 option ( PSELECT "Enable pselect(2) support" ON )
-option ( KQUEUE "Enable kqueue(2) support" ON )
-option ( KEVENT "Enable kevent(2) support" ON )
+option ( KQUEUE "Enable kqueue(2) support" OFF )
+option ( KEVENT "Enable kevent(2) support" OFF )
 option ( WSA "Enable WSA event support" OFF ) # still broken
 
 option ( DEFLATE "Enable deflate compression" ON )
