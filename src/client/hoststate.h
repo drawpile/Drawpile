@@ -30,7 +30,7 @@ namespace protocol {
 	class UserInfo;
 	class SessionInfo;
 	class SessionSelect;
-	class Authentication;
+	class PasswordRequest;
 	class Error;
 	class Acknowledgement;
 };
@@ -154,7 +154,7 @@ class HostState : public QObject {
 		void handleSessionSelect(const protocol::SessionSelect *msg);
 
 		//! Handle authentication request
-		void handleAuthentication(const protocol::Authentication *msg);
+		void handleAuthentication(const protocol::PasswordRequest *msg);
 
 		//! Handle Acknowledgements
 		void handleAck(const protocol::Acknowledgement *msg);

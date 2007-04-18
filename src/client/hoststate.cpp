@@ -99,8 +99,8 @@ void HostState::receiveMessage()
 			case type::Error:
 				handleError(static_cast<Error*>(msg));
 				break;
-			case type::Authentication:
-				handleAuthentication(static_cast<Authentication*>(msg));
+			case type::PasswordRequest:
+				handleAuthentication(static_cast<PasswordRequest*>(msg));
 				break;
 			case type::SessionSelect:
 				handleSessionSelect(static_cast<SessionSelect*>(msg));
@@ -200,31 +200,36 @@ void HostState::host(const QString& title,
 		const QString& password, quint16 width, quint16 height, int userlimit,
 		bool allowdraw, bool allowchat)
 {
-	protocol::Instruction *msg = new protocol::Instruction;
-	msg->command = protocol::admin::command::Create;
+	protocol::SessionInstruction *msg = new protocol::SessionInstruction;
+	msg->action = protocol::session_command::Create;
 	msg->session_id = protocol::Global;
-	msg->aux_data = userlimit;
-	msg->aux_data2 = protocol::user_mode::None;
+	msg->user_limit = userlimit;
+	msg->user_mode = protocol::user_mode::None;
 	if(allowdraw==false)
-		fSet(msg->aux_data2, protocol::user_mode::Locked);
+		fSet(msg->user_mode, protocol::user_mode::Locked);
 	if(allowchat==false)
-		fSet(msg->aux_data2, protocol::user_mode::Mute);
-
+		fSet(msg->user_mode, protocol::user_mode::Mute);
+	
 	const QByteArray tbytes = title.toUtf8();
-	char *data = new char[sizeof(width)+sizeof(height)+tbytes.length()];
-	uint off = 0;
-	quint16 w = width;
-	quint16 h = height;
-	bswap(w);
-	bswap(h);
-	memcpy(data+off, &w, sizeof(w)); off += sizeof(w);
-	memcpy(data+off, &h, sizeof(h)); off += sizeof(h);
-	memcpy(data+off, tbytes.constData(), tbytes.length()); off += tbytes.length();
-
-	msg->length = off;
-	msg->data = data;
-
-	lastinstruction_ = msg->command;
+	
+	msg->width = width;
+	msg->height = height;
+	
+	bswap(msg->width);
+	bswap(msg->height);
+	
+	if (tbytes.length() != 0)
+	{
+		msg->title = new char[tbytes.length()];
+		memcpy(msg->title, tbytes.constData(), tbytes.length());
+	}
+	else
+	{
+		msg->title_len = 0;
+		msg->title = 0;
+	}
+	
+	lastinstruction_ = msg->action; // FIXME
 	setsessionpassword_ = password;
 	net_->send(msg);
 }
@@ -274,12 +279,9 @@ void HostState::sendPassword(const QString& password)
  */
 void HostState::becomeAdmin(const QString& password)
 {
-	protocol::Instruction *msg = new protocol::Instruction;
-	msg->command = protocol::admin::command::Authenticate;
-	msg->session_id = protocol::Global;
-	msg->length = 0;
+	protocol::Authenticate *msg = new protocol::Authenticate;
 	sendadminpassword_ = password;
-	lastinstruction_ = msg->command;
+	//lastinstruction_ = msg->command; // FIXME
 	net_->send(msg);
 }
 
@@ -307,16 +309,15 @@ void HostState::setPassword(const QString& password)
 void HostState::setPassword(const QString& password, int session)
 {
 	qDebug() << "sending password for session" << session;
-	protocol::Instruction *msg = new protocol::Instruction;
-	msg->command = protocol::admin::command::Password;
+	protocol::SetPassword *msg = new protocol::SetPassword;
 	msg->session_id = session;
 	const QByteArray passwd = password.toUtf8();
-
-	msg->length = passwd.length();
-	msg->data = new char[passwd.length()];
-	memcpy(msg->data,passwd.constData(),passwd.length());
-
-	lastinstruction_ = msg->command;
+	
+	msg->password_len = passwd.length();
+	msg->password = new char[passwd.length()];
+	memcpy(msg->password,passwd.constData(),passwd.length());
+	
+	//lastinstruction_ = msg->command; // FIXME
 	net_->send(msg);
 }
 
@@ -505,15 +506,18 @@ void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
  * joining a session or becoming administrator.
  * @param msg Authentication message
  */
-void HostState::handleAuthentication(const protocol::Authentication *msg)
+void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
 {
 	passwordseed_ = QByteArray(msg->seed, protocol::password_seed_size);
 	passwordsession_ = msg->session_id;
-	if(lastinstruction_ == protocol::admin::command::Authenticate) {
+	// FIXME!
+	/*
+	if(lastinstruction_ == protocol::session_command::Authenticate) {
 		sendPassword(sendadminpassword_);
 	} else {
 		emit needPassword();
 	}
+	*/
 }
 
 /**
@@ -549,29 +553,31 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		return;
 	}
 	// Handle global acks
-	if(msg->event == protocol::type::Instruction) {
-		if(lastinstruction_ == protocol::admin::command::Create) {
+	if(msg->event == protocol::type::SessionInstruction) {
+		if(lastinstruction_ == protocol::session_command::Create) {
 			// Automatically join the newest session created
 			disconnect(this, SIGNAL(sessionsListed()), this, 0);
 			connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
 			listSessions();
 			qDebug() << "session created, joining...";
-		} else if(lastinstruction_ == protocol::admin::command::Password) {
-			// Password accepted
-			qDebug() << "password set";
-		} else if(lastinstruction_ == protocol::admin::command::Alter) {
+		} else if(lastinstruction_ == protocol::session_command::Alter) {
 			qDebug() << "Warning: Ack for Instruction Alter not expected";
 		} else {
 			qFatal("BUG: unhandled lastinstruction_");
 		}
 		lastinstruction_ = -1;
+	} else if(msg->event == protocol::type::SetPassword) {
+		// Password accepted
+		qDebug() << "password set";
 	} else if(msg->event == protocol::type::ListSessions) {
 		// A full session list has been downloaded
 		emit sessionsListed();
 	} else if(msg->event == protocol::type::Password) {
+		/* // FIXME
 		if(lastinstruction_ == protocol::admin::command::Authenticate) {
 			emit becameAdmin();
 		}
+		*/
 	} else {
 		qDebug() << "unhandled host ack" << int(msg->event);
 	}
@@ -590,7 +596,7 @@ void HostState::handleError(const protocol::Error *msg)
 		case NoSessions: errmsg = tr("No sessions."); break;
 		case UnknownSession: errmsg = tr("No such session found."); break;
 		case SessionFull: errmsg = tr("Session full."); break;
-		case TooSmall: errmsg = tr("Board too small."); break;
+		case InvalidSize: errmsg = tr("Board has invalid size."); break;
 		case SyncFailure: errmsg = tr("Board synchronization failed, try again."); break;
 		case PasswordFailure: errmsg = tr("Incorrect password."); break;
 		case SessionLost: errmsg = tr("Session lost."); break;

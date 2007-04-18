@@ -205,24 +205,19 @@ void SessionState::lock(bool l)
 void SessionState::setUserLimit(int count)
 {
 	qDebug() << "Chaning user limit to" << count;
-	protocol::Instruction *msg = new protocol::Instruction(
-			protocol::admin::command::Alter,
-			count, // Set user limit
+	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
+			protocol::session_command::Alter,
+			info_.width,
+			info_.height,
 			info_.mode, // Set user mode (unchanged)
-			sizeof(quint16)*2,
-			new char[sizeof(quint16)*2]
+			count, // Set user limit
+			0, // flags (unused)
+			0, // title length (FIXME, empties the session title)
+			0 // title (FIXME)
 			);
 	msg->session_id = info_.id;
 
-	// Set width and height (unchanged)
-	quint16 w = info_.width;
-	quint16 h = info_.height;
-	bswap(w);
-	bswap(h);
-	memcpy(msg->data, &w, sizeof(w));
-	memcpy(msg->data+sizeof(w), &h, sizeof(h));
-
-	host_->lastinstruction_ = msg->command;
+	host_->lastinstruction_ = msg->action; // FIXME
 	host_->connection()->send(msg);
 }
 
