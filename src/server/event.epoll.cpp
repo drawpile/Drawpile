@@ -282,11 +282,12 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 
 bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 {
-	if (nfds == 0)
+	if (nfds == -1)
 		return false;
 	
-	fd = events[--nfds].data.fd;
+	fd = events[nfds].data.fd;
 	r_events = events[nfds].events;
+	--nfds;
 	
 	return true;
 }
