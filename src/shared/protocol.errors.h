@@ -104,8 +104,8 @@ const uint16_t
 	
 	/* Canvas related */
 	
-	//! Too small canvas
-	TooSmall = 57,
+	//! Too small or large canvas
+	InvalidSize = 57,
 	
 	/* Auth errors. */ 
 	
