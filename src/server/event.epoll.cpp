@@ -35,9 +35,6 @@
 #endif
 
 #include <iostream>
-#ifndef NDEBUG
-	#include <ios>
-#endif
 
 #include <cerrno> // errno
 #include <cassert> // assert()
@@ -157,14 +154,7 @@ int Event::wait() throw()
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(epoll).add(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(epoll).add(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -180,7 +170,6 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		assert(_error != EBADF);
 		assert(_error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
 		assert(_error != EEXIST); // fd already in set
-		assert(_error != ENOENT); // fd not in set(???)
 		assert(_error != EPERM); // target fd not supported by epoll
 		
 		switch (_error)
@@ -201,14 +190,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(epoll).modify(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(epoll).modify(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -223,7 +205,6 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	{
 		assert(_error != EBADF); // epoll fd is invalid
 		assert(_error != EINVAL); // evfd is invalid or fd is the same as evfd
-		assert(_error != EPERM); // target fd is not suppoerted by epoll
 		assert(_error != ENOENT); // fd not in set
 		
 		switch (_error)
@@ -244,14 +225,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(epoll).remove(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(epoll).remove(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -262,7 +236,6 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	{
 		assert(_error != EBADF); // evfd is invalid
 		assert(_error != EINVAL); // evfd is invalid, or evfd is the same as fd
-		assert(_error != EPERM); // fd not supported by epoll
 		assert(_error != ENOENT); // fd not in set
 		
 		switch (_error)
@@ -295,7 +268,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 uint32_t Event::getEvents(fd_t fd) const throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).getEvents(fd: " << fd << ")" << endl;
+	cout << "Event(epoll).getEvents(FD: " << fd << ")" << endl;
 	#endif
 	
 	for (int n=0; n != nfds; ++n)
@@ -308,14 +281,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 bool Event::isset(fd_t fd, uint32_t ev) const throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	using std::ios_base;
-	cout << "Event(epoll).isset(fd: " << fd << ", event: ";
-	cout.setf ( ios_base::hex, ios_base::basefield );
-	cout.setf ( ios_base::showbase );
-	cout << ev;
-	cout.setf ( ios_base::dec );
-	cout.setf ( ~ios_base::showbase );
-	cout << ")" << endl;
+	cout << "Event(epoll).isset(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
