@@ -361,7 +361,7 @@ void Server::uWrite(User*& usr) throw()
 			if (usr->output.canWrite() < buffer_len)
 			{ // can't write continuous stream of data in buffer
 				assert(usr->output.free() < buffer_len);
-				size = use->output.size*2;
+				size = usr->output.size*2;
 				temp = new char[size];
 				inBuffer = false;
 			}
@@ -389,11 +389,7 @@ void Server::uWrite(User*& usr) throw()
 					#ifndef NDEBUG
 					++discardedCompressions; // stats
 					#endif
-					
-					if (!inBuffer)
-						delete [] temp;
-					
-					break;
+					goto cleanup;
 				}
 				
 				#ifndef NDEBUG
@@ -460,26 +456,22 @@ void Server::uWrite(User*& usr) throw()
 					}
 					
 					usr->output.write(len);
-					
-					// cleanup
 				}
 				break;
-			case Z_MEM_ERROR:
-				if (!inBuffer)
-					delete [] temp;
-				throw std::bad_alloc();
 			case Z_BUF_ERROR:
 				#ifndef NDEBUG
 				cerr << "zlib: output buffer is too small." << endl
 					<< "source size: " << len << ", target size: " << buffer_len << endl;
 				#endif
 				assert(r != Z_BUF_ERROR);
-				
-				if (!inBuffer)
-					delete [] temp;
-				
-				break;
+				// pass on to the next case-label
+			case Z_MEM_ERROR:
+				goto cleanup;
 			}
+			
+			cleanup:
+			if (!inBuffer)
+				delete [] temp;
 		}
 		#endif // HAVE_ZLIB
 		
@@ -661,15 +653,10 @@ void Server::uProcessData(User*& usr) throw()
 		}
 		#endif
 		
-		switch (usr->state)
-		{
-		case uState::active:
+		if (usr->state == uState::active)
 			uHandleMsg(usr);
-			break;
-		default:
+		else
 			uHandleLogin(usr);
-			break;
-		}
 		
 		if (usr != 0)
 		{ // user is still alive.
@@ -738,22 +725,6 @@ void Server::uHandleDrawing(User& usr) throw()
 		return;
 	}
 	
-	#ifdef LAYER_SUPPORT
-	if (usr.inMsg->type != protocol::type::ToolInfo
-		and usr.layer == protocol::null_layer)
-	{
-		#ifndef NDEBUG
-		if (usr.strokes == 1)
-		{
-			cout << "User #" << static_cast<int>(usr.id)
-				<< " is drawing on null layer!" << endl;
-		}
-		#endif
-		
-		return;
-	}
-	#endif
-	
 	// user or session is locked
 	if (usr.session->locked or usr.a_locked)
 	{
@@ -765,16 +736,32 @@ void Server::uHandleDrawing(User& usr) throw()
 				<< " tries to draw, despite the lock." << endl;
 			
 			if (usr.session->locked)
-				cerr << "Clarification: Sesssion #"
+				cerr << "... Sesssion #"
 					<< static_cast<int>(usr.session->id) << " is locked." << endl;
 			else
-				cerr << "Clarification: User is locked in session #"
+				cerr << "... User is locked in session #"
 					<< static_cast<int>(usr.session->id) << "." << endl;
 		}
 		#endif
 	}
 	else
 	{
+		#ifdef LAYER_SUPPORT
+		if (usr.inMsg->type != protocol::type::ToolInfo
+			and usr.layer == protocol::null_layer)
+		{
+			#ifndef NDEBUG
+			if (usr.strokes == 1)
+			{
+				cout << "User #" << static_cast<int>(usr.id)
+					<< " is drawing on null layer!" << endl;
+			}
+			#endif
+			
+			return;
+		}
+		#endif
+		
 		// make sure the user id is correct
 		usr.inMsg->user_id = usr.id;
 		
@@ -842,8 +829,6 @@ void Server::uHandlePassword(User*& usr) throw()
 	hash.GetHash(reinterpret_cast<uint8_t*>(digest));
 	hash.Reset();
 	
-	uRegenSeed(*usr);
-	
 	if (memcmp(digest, msg->data, protocol::password_hash_size) != 0) // mismatch
 		uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
 	else
@@ -860,6 +845,8 @@ void Server::uHandlePassword(User*& usr) throw()
 			uJoinSession(usr, session);
 		}
 	}
+	
+	uRegenSeed(*usr);
 }
 
 // May delete User*
@@ -998,6 +985,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 		}
 		break;
+	#ifdef LAYER_SUPPORT
 	case protocol::type::LayerEvent:
 		uLayerEvent(usr);
 		break;
@@ -1019,11 +1007,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uSendMsg(*usr, msgError(layer->session_id, protocol::error::LayerLocked));
 				else
 				{
-					// set user id to message
-					layer->user_id = usr->id;
-					
-					// set user's layer
-					usr->a_layer = layer->layer_id;
+					layer->user_id = usr->id; // set user id
+					usr->a_layer = layer->layer_id; // set active layer
 					
 					// Tell other users about it
 					Propagate(*usr->session, message_ref(layer), (usr->c_acks ? usr : 0));
@@ -1031,6 +1016,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 		}
 		break;
+	#endif
 	case protocol::type::Instruction:
 		uHandleInstruction(usr);
 		break;
@@ -1066,21 +1052,40 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		<< " bytes, uncompressed: " << stream->uncompressed << " bytes." << endl;
 	#endif
 	
-	char* outbuf = new char[stream->uncompressed];
-	unsigned long outlen = stream->uncompressed;
-	const int r = uncompress(reinterpret_cast<unsigned char*>(outbuf), &outlen, reinterpret_cast<unsigned char*>(stream->data), stream->length);
+	bool inBuffer;
+	char *temp;
+	unsigned long tmplen = stream->uncompressed;
+	if (usr->input.canWrite() < stream->uncompressed)
+	{
+		temp = new char[stream->uncompressed];
+		inBuffer = false;
+	}
+	else
+	{
+		temp = usr->input.wpos;
+		inBuffer = true;
+	}
+	
+	const int r = uncompress(reinterpret_cast<unsigned char*>(temp), &tmplen, reinterpret_cast<unsigned char*>(stream->data), stream->length);
 	
 	switch (r)
 	{
 	default:
 	case Z_OK:
+		if (inBuffer)
 		{
-			// Store input buffer. (... why?)
-			Buffer temp;
-			temp << usr->input;
+			usr->input.write(tmplen);
+			uProcessData(usr);
+		}
+		else
+		{
+			// Store input buffer, it might not be empty
+			Buffer tmpbuf;
+			if (usr->input.left != 0)
+				tmpbuf << usr->input;
 			
 			// Set the uncompressed data stream as the input buffer.
-			usr->input.setBuffer(outbuf, stream->uncompressed);
+			usr->input.setBuffer(temp, stream->uncompressed);
 			
 			#ifndef NDEBUG
 			++bufferResets; // stats
@@ -1090,8 +1095,8 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 			uProcessData(usr);
 			
 			// Since uProcessData might've deleted the user
-			if (usr != 0)
-				usr->input << temp; // Restore input buffer
+			if (usr != 0 and tmpbuf.left != 0)
+				usr->input << tmpbuf; // Restore input buffer
 		}
 		break;
 	case Z_MEM_ERROR:
@@ -1104,7 +1109,8 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		cerr << "Corrupted data from user #" << static_cast<int>(usr->id)
 			<< ", dropping." << endl;
 		uRemove(usr, protocol::user_event::Dropped);
-		delete [] outbuf;
+		if (!inBuffer)
+			delete [] temp;
 		break;
 	}
 }
