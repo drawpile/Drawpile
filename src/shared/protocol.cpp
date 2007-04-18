@@ -523,10 +523,10 @@ bool Raster::isValid() const throw()
 // none needed
 
 /*
- * struct Authentication
+ * struct PasswordRequest
  */
 
-size_t Authentication::unserialize(const char* buf, const size_t len) throw()
+size_t PasswordRequest::unserialize(const char* buf, const size_t len) throw()
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -539,7 +539,7 @@ size_t Authentication::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t Authentication::reqDataLen(const char *buf, const size_t len) const throw()
+size_t PasswordRequest::reqDataLen(const char *buf, const size_t len) const throw()
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -547,7 +547,7 @@ size_t Authentication::reqDataLen(const char *buf, const size_t len) const throw
 	return headerSize + password_seed_size;
 }
 
-size_t Authentication::serializePayload(char *buf) const throw()
+size_t PasswordRequest::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
@@ -556,7 +556,7 @@ size_t Authentication::serializePayload(char *buf) const throw()
 	return password_seed_size;
 }
 
-size_t Authentication::payloadLength() const throw()
+size_t PasswordRequest::payloadLength() const throw()
 {
 	return password_seed_size;
 }
@@ -613,10 +613,10 @@ size_t Password::payloadLength() const throw()
 // none needed
 
 /*
- * struct Instruction
+ * struct SessionInstruction
  */
 
-size_t Instruction::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t SessionInstruction::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -624,81 +624,120 @@ size_t Instruction::unserialize(const char* buf, const size_t len) throw(std::ba
 	
 	size_t i = unserializeHeader(buf);
 	
-	memcpy_t(command, buf+i); i += sizeof(command);
-	memcpy_t(aux_data, buf+i); i += sizeof(aux_data);
-	memcpy_t(aux_data2, buf+i); i += sizeof(aux_data2);
-	
-	memcpy_t(length, buf+i); i += sizeof(length);
-	
-	if (length != 0)
+	memcpy_t(action, buf); i += sizeof(action);
+	memcpy_t(width, buf+i); i += sizeof(width);
+	memcpy_t(height, buf+i); i += sizeof(height);
+	memcpy_t(user_mode, buf+i); i += sizeof(user_mode);
+	memcpy_t(user_limit, buf+i); i += sizeof(user_limit);
+	memcpy_t(flags, buf+i); i += sizeof(flags);
+	memcpy_t(title_len, buf+i); i += sizeof(title_len);
+	if (title_len != 0)
 	{
-		data = new char[length];
-		memcpy(data, buf+i, length); i += length;
+		title = new char[title_len];
+		memcpy(title, buf+i, title_len); i += title_len;
 	}
-	else
-		data = 0;
+	
+	bswap(height);
+	bswap(width);
 	
 	return i;
 }
 
-size_t Instruction::reqDataLen(const char *buf, const size_t len) const throw()
+size_t SessionInstruction::reqDataLen(const char *buf, const size_t len) const throw()
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
-	const size_t off = headerSize + sizeof(command)
-		+ sizeof(aux_data) + sizeof(aux_data2);
+	const size_t off = headerSize + sizeof(action) + sizeof(width) + sizeof(height)
+		+ sizeof(user_mode) + sizeof(user_limit) + sizeof(flags);
 	
-	if (len < off)
-		return off + sizeof(length);
+	if (len < off+sizeof(title_len))
+		return off+sizeof(title_len);
 	else
 	{
-		uint8_t rlen;
-		
-		memcpy_t(rlen, buf+off);
-		
-		return off + sizeof(length) + rlen;
+		uint8_t tlen;
+		memcpy_t(tlen, buf+off);
+		return off + sizeof(title_len) + tlen;
 	}
 }
 
-size_t Instruction::serializePayload(char *buf) const throw()
+size_t SessionInstruction::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	size_t i=0;
+	memcpy_t(buf, action); size_t i = sizeof(action);
 	
-	memcpy_t(buf+i, command); i += sizeof(command);
-	memcpy_t(buf+i, aux_data); i += sizeof(aux_data);
-	memcpy_t(buf+i, aux_data2); i += sizeof(aux_data2);
+	uint16_t tmp_w=width, tmp_h=height;
 	
-	memcpy_t(buf+i, length); i += sizeof(length);
+	memcpy_t(buf+i, bswap(tmp_w)); i += sizeof(width);
+	memcpy_t(buf+i, bswap(tmp_h)); i += sizeof(height);
+	memcpy_t(buf+i, user_mode); i += sizeof(user_mode);
+	memcpy_t(buf+i, user_limit); i += sizeof(user_limit);
+	memcpy_t(buf+i, flags); i += sizeof(flags);
+	memcpy_t(buf+i, title_len); i += sizeof(title_len);
+	memcpy(buf+i, title, title_len); i += title_len;
 	
-	if (length != 0)
+	return i;
+}
+
+size_t SessionInstruction::payloadLength() const throw()
+{
+	return sizeof(action) + sizeof(width) + sizeof(height)
+		+ sizeof(user_mode) + sizeof(user_limit) + sizeof(flags) + sizeof(title_len)
+		+ title_len;
+}
+
+/*
+ * struct SetPassword
+ */
+
+size_t SetPassword::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+{
+	assert(buf != 0 and len > 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	assert(reqDataLen(buf, len) <= len);
+	
+	size_t i = unserializeHeader(buf);
+	
+	memcpy_t(password_len, buf+i); i += sizeof(password_len);
+	if (password_len != 0)
 	{
-		memcpy(buf+i, data, length); i += length;
+		password = new char[password_len];
+		memcpy(password, buf+i, password_len); i += password_len;
 	}
 	
 	return i;
 }
 
-size_t Instruction::payloadLength() const throw()
+size_t SetPassword::reqDataLen(const char *buf, const size_t len) const throw()
 {
-	return sizeof(command)
-		+ sizeof(aux_data) + sizeof(aux_data2) + sizeof(length) + length;
+	assert(buf != 0 and len != 0);
+	assert(static_cast<uint8_t>(buf[0]) == type);
+	
+	const size_t off = headerSize;
+	if (len < off + sizeof(password_len))
+		return off + sizeof(password_len);
+	else
+	{
+		uint8_t pwlen;
+		memcpy_t(pwlen, buf+off);
+		return off + sizeof(password_len) + pwlen;
+	}
 }
 
-bool Instruction::isValid() const throw()
+size_t SetPassword::serializePayload(char *buf) const throw()
 {
-	// TODO
-	switch (command)
-	{
-	case 3:
-	case 2:
-	case 1:
-		return true;
-	default:
-		return false;
-	}
+	assert(buf != 0);
+	
+	memcpy_t(buf, password_len); size_t i = sizeof(password_len);
+	memcpy(buf+i, password, password_len); i += password_len;
+	
+	return i;
+}
+
+size_t SetPassword::payloadLength() const throw()
+{
+	return sizeof(password_len) + password_len;
 }
 
 /*

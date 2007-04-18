@@ -56,7 +56,7 @@ namespace protocol
 {
 
 //! Implemented protocol revision number.
-const uint16_t revision = 9;
+const uint16_t revision = 10;
 
 //! Base for all message types.
 /**
@@ -526,20 +526,20 @@ struct SyncWait
 	// none needed
 };
 
-//! Authentication request message.
+//! Password request message.
 /**
  * Request for password to login or join session.
  *
  * Response: Password
  */
-struct Authentication
-	: Message//, MemoryStack<Authentication>
+struct PasswordRequest
+	: Message//, MemoryStack<PasswordRequest>
 {
-	Authentication() throw()
-		: Message(type::Authentication, sizeof(type)+sizeof(session_id), message::isSession)
+	PasswordRequest() throw()
+		: Message(type::PasswordRequest, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
-	~Authentication() throw() { }
+	~PasswordRequest() throw() { }
 	
 	/* unique data */
 	
@@ -556,7 +556,7 @@ struct Authentication
 
 //! Password message.
 /**
- * Response to Authentication request.
+ * Response to Password request.
  */
 struct Password
 	: Message//, MemoryStack<Password>
@@ -628,57 +628,52 @@ struct Unsubscribe
 	// none needed
 };
 
-//! Admin Instruction message.
-/**
- * Only accepted from an admin, or from session owner for altering the session.
- *
- * Response: Error or Acknowledgement with event set to protocol::type::Instruction.
- *
- * @see http://drawpile.sourceforge.net/wiki/index.php/Admin_interface
- */
-struct Instruction
-	: Message//, MemoryStack<Instruction>
+struct SessionInstruction
+	: Message
 {
-	Instruction() throw()
-		: Message(
-			type::Instruction,
-			sizeof(type)+sizeof(user_id)+sizeof(session_id),
-			message::isUser|message::isSession
-		),
-		data(0)
+	SessionInstruction() throw()
+		: Message(type::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
+		title(0)
 	{ }
 	
-	//! Constructor with params for payload
-	Instruction(const uint8_t _command, const uint8_t _aux_data, const uint8_t _aux_data2, const uint8_t _length, char* _data) throw()
-		: Message(
-			type::Instruction,
-			sizeof(type)+sizeof(user_id)+sizeof(session_id),
-			message::isUser|message::isSession
-		),
-		command(_command),
-		aux_data(_aux_data),
-		aux_data2(_aux_data2),
-		length(_length),
-		data(_data)
+	SessionInstruction(const uint8_t _action, const uint16_t _width, const uint16_t _height, const uint8_t _umode, const uint8_t _ulimit, const uint8_t _flags, const uint8_t _tlen, char* _title) throw()
+		: Message(type::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
+		action(_action),
+		width(_width),
+		height(_height),
+		user_mode(_umode),
+		user_limit(_ulimit),
+		flags(_flags),
+		title_len(_tlen),
+		title(_title)
 	{ }
 	
-	~Instruction() throw() { delete [] data; }
+	
+	~SessionInstruction() throw() { }
 	
 	/* unique data */
 	
+	//! Action to perform: create, alter, destroy
+	uint8_t action;
+	
+	uint16_t
+		//! Width
+		width,
+		//! Height
+		height;
+	
 	uint8_t
-		//! protocol::admin::command
-		command,
-		//! aux_data
-		aux_data,
-		//! aux data 2
-		aux_data2;
+		//! User mode
+		user_mode,
+		//! User limit
+		user_limit,
+		//! Flags
+		flags,
+		//! Title length
+		title_len;
 	
-	//! arb data length
-	uint8_t length;
-	
-	//! arb data
-	char* data;
+	//! Title string
+	char* title;
 	
 	/* functions */
 	
@@ -686,7 +681,76 @@ struct Instruction
 	size_t reqDataLen(const char *buf, const size_t len) const throw();
 	size_t serializePayload(char *buf) const throw();
 	size_t payloadLength() const throw();
-	bool isValid() const throw();
+};
+
+//! Set session or server password
+struct SetPassword
+	: Message
+{
+	SetPassword() throw()
+		: Message(type::SetPassword, sizeof(type)+sizeof(session_id), message::isSession)
+	{ }
+	
+	SetPassword(const uint8_t _pwlen, char* _pw) throw()
+		: Message(type::SetPassword, sizeof(type)+sizeof(session_id), message::isSession),
+		password_len(_pwlen),
+		password(_pw)
+	{ }
+	
+	~SetPassword() throw() { }
+	
+	/* unique data */
+	
+	//! Password length
+	uint8_t password_len;
+	
+	//! Password string
+	char* password;
+	
+	/* functions */
+	
+	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
+	size_t reqDataLen(const char *buf, const size_t len) const throw();
+	size_t serializePayload(char *buf) const throw();
+	size_t payloadLength() const throw();
+};
+
+//! Request admin rights
+struct Authenticate
+	: Message
+{
+	Authenticate() throw()
+		: Message(type::Authenticate, sizeof(type))
+	{ }
+	
+	~Authenticate() throw() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	
+	// needs none
+};
+
+//! Shutdown server
+struct Shutdown
+	: Message
+{
+	Shutdown() throw()
+		: Message(type::Authenticate, sizeof(type))
+	{ }
+	
+	~Shutdown() throw() { }
+	
+	/* unique data */
+	
+	// does not have any.
+	
+	/* functions */
+	
+	// needs none
 };
 
 //! List sessions request.

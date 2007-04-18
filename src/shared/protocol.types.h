@@ -58,8 +58,8 @@ const uint8_t
 	//! for ToolInfo.
 	ToolInfo = 3,
 	
-	//! for Authentication.
-	Authentication = 25,
+	//! for Password Request
+	PasswordRequest = 25,
 	//! for Password.
 	Password = 26,
 	
@@ -84,8 +84,13 @@ const uint8_t
 	//! for Layer select
 	LayerSelect = 47,
 	
-	//! for Instruction.
-	Instruction = 77,
+	//! for Authenticate
+	Authenticate = 75,
+	//! for Session Instruction
+	SessionInstruction = 78,
+	//! for Set Password
+	SetPassword = 79,
+	
 	//! for ListSessions.
 	ListSessions = 72,
 	//! for Cancel.
@@ -107,9 +112,11 @@ const uint8_t
 	Deflate = 191,
 	//! for Chat.
 	Chat = 192,
-	
 	//! for Palette.
-	Palette = 91;
+	Palette = 193,
+	
+	//! for Shutdown
+	Shutdown = 255;
 
 } // namespace type
 
@@ -210,11 +217,7 @@ const uint8_t
 } // namespace user_event
 
 //! Admin interface
-namespace admin
-{
-
-//! Commands
-namespace command
+namespace session_command
 {
 
 const uint8_t
@@ -226,20 +229,9 @@ const uint8_t
 	//! Destroy session
 	Destroy = 2,
 	//! Alter session
-	Alter = 3,
-	
-	//! Authenticate user as server admin
-	Authenticate = 5,
-	
-	//! Set server or session password
-	Password = 7,
-	
-	//! Shutdown server
-	Shutdown = 9;
+	Alter = 3;
 
-}
-
-} // namespace admin
+} // namespace session_command
 
 } // namespace protocol
 

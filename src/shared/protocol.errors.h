@@ -97,12 +97,10 @@ const uint16_t
 	
 	//! Invalid data value in the message
 	InvalidData = 50,
-	//! Unrecognized instruction command.
-	UnrecognizedCommand = 52,
-	//! Garbage in instruction, couldn't parse.
+	//! Unrecognized command/action.
+	UnrecognizedAction = 52,
+	//! Couldn't parse message FNAR.
 	ParseFailure = 55,
-	
-	
 	
 	/* Canvas related */
 	

@@ -204,7 +204,7 @@ const uint8_t
 	//! Null user mode.
 	None = 0,
 	
-	//! User is identified as admin by the server (may use Instruction messages).
+	//! User is identified as admin by the server
 	/** Only applied to user */
 	Administrator = 0x01,
 	

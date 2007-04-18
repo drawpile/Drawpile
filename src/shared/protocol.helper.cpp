@@ -55,8 +55,8 @@ void msgName(const uint8_t type) throw()
 	case type::ToolInfo:
 		std::cout << "Tool Info" << std::endl;
 		break;
-	case type::Authentication:
-		std::cout << "Authentication" << std::endl;
+	case type::PasswordRequest:
+		std::cout << "Password Request" << std::endl;
 		break;
 	case type::Password:
 		std::cout << "Password" << std::endl;
@@ -79,8 +79,17 @@ void msgName(const uint8_t type) throw()
 	case type::SessionSelect:
 		std::cout << "Session Select" << std::endl;
 		break;
-	case type::Instruction:
-		std::cout << "Instruction" << std::endl;
+	case type::SessionInstruction:
+		std::cout << "SessionInstruction" << std::endl;
+		break;
+	case type::Shutdown:
+		std::cout << "Shutdown" << std::endl;
+		break;
+	case type::SetPassword:
+		std::cout << "Set Password" << std::endl;
+		break;
+	case type::Authenticate:
+		std::cout << "Authenticate" << std::endl;
 		break;
 	case type::ListSessions:
 		std::cout << "List Sessions" << std::endl;
@@ -142,8 +151,8 @@ Message* getMessage(const uint8_t type) throw()
 		return new StrokeEnd();
 	case type::ToolInfo:
 		return new ToolInfo();
-	case type::Authentication:
-		return new Authentication();
+	case type::PasswordRequest:
+		return new PasswordRequest();
 	case type::Password:
 		return new Password();
 	case type::Synchronize:
@@ -158,8 +167,14 @@ Message* getMessage(const uint8_t type) throw()
 		return new Unsubscribe();
 	case type::SessionSelect:
 		return new SessionSelect();
-	case type::Instruction:
-		return new Instruction();
+	case type::SessionInstruction:
+		return new SessionInstruction();
+	case type::SetPassword:
+		return new SetPassword();
+	case type::Shutdown:
+		return new Shutdown();
+	case type::Authenticate:
+		return new Authenticate();
 	case type::ListSessions:
 		return new ListSessions();
 	case type::Cancel:
