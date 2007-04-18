@@ -103,6 +103,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					std::cout << "Name length limit set to: "
 						<< static_cast<int>(len) << std::endl;
 				}
+				break;
 			case 'p': // port to listen on
 				{
 					const uint16_t lo_port = atoi(optarg);
