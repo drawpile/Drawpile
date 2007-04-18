@@ -252,7 +252,6 @@ bool EditorView::viewportEvent(QEvent *event)
 			}
 			prevpoint_ = point;
 		}
-		return true;
 	} else if(event->type() == QEvent::TabletPress) {
 		// Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
@@ -264,7 +263,6 @@ bool EditorView::viewportEvent(QEvent *event)
 			emit penDown( drawingboard::Point(point, tabev->pressure()) );
 			prevpoint_ = point;
 		}
-		return true;
 	} else if(event->type() == QEvent::TabletRelease) {
 		// Stylus lifted
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
@@ -274,9 +272,11 @@ bool EditorView::viewportEvent(QEvent *event)
 			pendown_ = NOTDOWN;
 			emit penUp();
 		}
-		return true;
+	} else {
+		return QAbstractScrollArea::viewportEvent(event);
 	}
-	return QAbstractScrollArea::viewportEvent(event);
+	
+	return true;
 }
 
 //! Start dragging the view
