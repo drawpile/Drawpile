@@ -32,3 +32,6 @@ add_library (
 	${Shared_Headers}
 )
 
+if ( SHARED )
+	install ( TARGETS ${LIBNAME} LIBRARY DESTINATION lib )
+endif ( SHARED )

@@ -7,8 +7,8 @@ cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 
 ### config options ###
 
-set ( CLIENTVERSION "0.4" )
-set ( SERVERVERSION "0.3" )
+set ( CLIENTVERSION "0.5" )
+set ( SERVERVERSION "0.5" )
 set ( LIBVERSION "0.3" )
 
 set ( LIBNAME "drawpile-${LIBVERSION}" )

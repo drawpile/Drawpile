@@ -180,3 +180,5 @@ if ( NOT DEBUG )
 endif ( NOT DEBUG )
 
 add_executable ( ${SERVERNAME} MACOSX_BUNDLE ${Server_Sources} ${EV_SRC} ${Server_Headers} )
+
+install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )

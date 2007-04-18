@@ -101,3 +101,5 @@ target_link_libraries(
 	${CLIENTNAME}
 	${QT_LIBRARIES}
 )
+
+install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
