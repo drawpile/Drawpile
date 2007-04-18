@@ -361,7 +361,7 @@ void Server::uWrite(User*& usr) throw()
 			if (usr->output.canWrite() < buffer_len)
 			{ // can't write continuous stream of data in buffer
 				assert(usr->output.free() < buffer_len);
-				size = buffer_len*2048+1024;
+				size = use->output.size*2;
 				temp = new char[size];
 				inBuffer = false;
 			}
