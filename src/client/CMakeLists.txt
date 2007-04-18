@@ -50,6 +50,9 @@ set ( Client_UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 
 # .MOC
 
+set ( TEMP ${CMAKE_CURRENT_BINARY_DIR} ) # backup binary dir
+set ( CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
+
 Qt4_automoc ( ${Client_Sources} )
 
 # .UI
@@ -59,6 +62,8 @@ Qt4_wrap_UI ( Client_UI_Headers ${Client_UIs} )
 Qt4_add_resources ( Client_Resource_Sources ${Client_Resources} )
 
 Qt4_wrap_CPP ( MOC_Sources ${Client_Headers} )
+
+set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
 
 if (NOT DEBUG)
 	add_definitions(-DQT_NO_DEBUG)
