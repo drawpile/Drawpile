@@ -68,13 +68,14 @@ bool User::isOwner() const
  */
 void User::lock(bool l)
 {
-	protocol::SessionEvent *msg = new protocol::SessionEvent;
+	protocol::SessionEvent *msg = new protocol::SessionEvent(
+			(l ? protocol::session_event::Lock : protocol::session_event::Unlock),
+			id_,
+			0 // aux (unused)
+			);
+	
 	msg->session_id = owner_->info().id;
-	if(l)
-		msg->action = protocol::session_event::Lock;
-	else
-		msg->action = protocol::session_event::Unlock;
-	msg->target = id_;
+	
 	owner_->host()->connection()->send(msg);
 
 }
@@ -85,10 +86,14 @@ void User::lock(bool l)
  */
 void User::kick()
 {
-	protocol::SessionEvent *msg = new protocol::SessionEvent;
+	protocol::SessionEvent *msg = new protocol::SessionEvent(
+			protocol::session_event::Kick,
+			id_,
+			0 // aux (unused)
+			);
+	
 	msg->session_id = owner_->info().id;
-	msg->action = protocol::session_event::Kick;
-	msg->target = id_;
+	
 	owner_->host()->connection()->send(msg);
 }
 

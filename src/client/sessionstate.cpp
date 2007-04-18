@@ -185,13 +185,14 @@ void SessionState::setPassword(const QString& password)
  */
 void SessionState::lock(bool l)
 {
-	protocol::SessionEvent *msg = new protocol::SessionEvent;
+	protocol::SessionEvent *msg = new protocol::SessionEvent(
+			(l ? protocol::session_event::Lock : protocol::session_event::Unlock),
+			protocol::null_user,
+			0 // aux (unused)
+			);
+	
 	msg->session_id = info_.id;
-	if(l)
-		msg->action = protocol::session_event::Lock;
-	else
-		msg->action = protocol::session_event::Unlock;
-	msg->target = protocol::null_user;
+	
 	host_->connection()->send(msg);
 }
 

@@ -305,12 +305,15 @@ void HostState::setPassword(const QString& password)
 void HostState::setPassword(const QString& password, int session)
 {
 	qDebug() << "sending password for session" << session;
-	protocol::SetPassword *msg = new protocol::SetPassword;
-	msg->session_id = session;
+	
 	const QByteArray passwd = password.toUtf8();
 	
-	msg->password_len = passwd.length();
-	msg->password = new char[passwd.length()];
+	protocol::SetPassword *msg = new protocol::SetPassword(
+			passwd.length(),
+			new char[passwd.length()]
+			);
+	
+	msg->session_id = session;
 	memcpy(msg->password,passwd.constData(),passwd.length());
 	
 	//lastinstruction_ = msg->command; // FIXME
@@ -430,15 +433,19 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 {
 	// Handle host info
 	qDebug() << "host info";
-
-	// Reply with user info
-	protocol::UserInfo *user = new protocol::UserInfo;
-	user->event = protocol::user_event::Login;
+	
 	const QByteArray name = username_.toUtf8();
-	user->length = name.length();
-	user->name = new char[name.length()];
+	
+	// Reply with user info
+	protocol::UserInfo *user = new protocol::UserInfo(
+			0, // mode (ignored)
+			protocol::user_event::Login,
+			name.length(),
+			new char[name.length()]
+			);
+	
 	memcpy(user->name,name.constData(), name.length());
-
+	
 	net_->send(user);
 }
 
