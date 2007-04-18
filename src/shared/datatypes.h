@@ -29,19 +29,8 @@
 #ifndef DataTypes_INCLUDED
 #define DataTypes_INCLUDED
 
-//! RGBA color container
+//! RGBA color container (POD)
 union RGBAColor {
-	RGBAColor() { }
-	RGBAColor(const uint32_t& nRGBA)
-		: RGBA(nRGBA)
-	{ }
-	RGBAColor(const uint8_t _red, const uint8_t _green, const uint8_t _blue, const uint8_t _alpha)
-		: red(_red), green(_green), blue(_blue), alpha(_alpha)
-	{ }
-	RGBAColor(const RGBAColor& old) // copy ctor
-		: RGBA(old.RGBA)
-	{ }
-	
 	//! RGBA
 	uint32_t RGBA;
 	

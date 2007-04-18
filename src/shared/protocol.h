@@ -362,14 +362,17 @@ struct ToolInfo
 		: Message(type::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		tool_id(_tool_id),
 		mode(_mode),
-		lo_color(_lo_color),
-		hi_color(_hi_color),
+		//lo_color(_lo_color),
+		//hi_color(_hi_color),
 		lo_size(_lo_size),
 		hi_size(_hi_size),
 		lo_hardness(_lo_hardness),
 		hi_hardness(_hi_hardness),
 		spacing(_spacing)
-	{ }
+	{
+		lo_color.RGBA = _lo_color;
+		hi_color.RGBA = _hi_color;
+	}
 	
 	~ToolInfo() throw() { }
 	
