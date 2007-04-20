@@ -47,16 +47,16 @@
 	#include <sys/time.h>
 #elif defined(EV_PSELECT)
 	#include <sys/select.h> // fd_set, FD* macros, etc.
-#else
-	#if !defined(EV_WSA)
-		#define EV_SELECT
-	#endif
-	
+#elif defined(EV_SELECT)
 	#ifdef WIN32
 		#include "sockets.h"
 	#else
 		#include <sys/select.h> // fd_set, FD* macros, etc.
 	#endif
+#elif defined(EV_WSA)
+	#include "sockets.h"
+#else
+	#error No event system defined
 #endif
 
 #if defined(EV_SELECT) or defined(EV_PSELECT)
