@@ -51,7 +51,6 @@ const uint32_t
 Event::Event() throw()
 	: evfd(0),
 	chlist_count(0),
-	evtrigr_count(0),
 	evtrigr_size(max_events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -108,7 +107,7 @@ int Event::wait() throw()
 	cout << "Event(kqueue).wait()" << endl;
 	#endif
 	
-	nfds = kevent(evfd, &chlist, chlist_count, evtrigr, evtrigr_count, _timeout);
+	nfds = kevent(evfd, &chlist, chlist_count, evtrigr, evtrigr_size, _timeout);
 	chlist_count = 0;
 	
 	if (nfds == -1)
@@ -171,7 +170,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 
 bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 {
-	if (nfds == evtrigr_count)
+	if (nfds == evtrigr_size)
 		return false;
 	
 	assert(!(evtrigr[nfds].flags & EV_ERROR));
@@ -190,7 +189,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	cout << "Event(kqueue).getEvents(FD: " << fd << ")" << endl;
 	#endif
 	
-	for (int i=0; i < evtrigr_count)
+	for (int i=0; i < evtrigr_size)
 		if (evtrigr[i].ident == fd)
 			return evtrigr[i].filter;
 	

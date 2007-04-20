@@ -156,7 +156,7 @@ protected:
 	
 	#if defined(EV_KQUEUE)
 	kevent chlist[max_events], *evtrigr;
-	size_t chlist_count, evtrigr_count, evtrigr_size;
+	size_t chlist_count, evtrigr_size;
 	#endif
 	
 	// timeout
