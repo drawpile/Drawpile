@@ -35,7 +35,7 @@
 	#define NOMINMAX
 #endif
 
-#include "../config.h"
+#include "config.h"
 
 #include "../shared/protocol.h"
 

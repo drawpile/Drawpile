@@ -29,7 +29,7 @@
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
-#include "../config.h"
+#include "config.h"
 
 #include "../shared/templates.h"
 
@@ -42,15 +42,11 @@
 #endif
 
 #ifdef WIN32
-	#if defined( HAVE_WSA )
-		#include <ws2tcpip.h>
-		#include <winsock2.h>
-		#if defined( HAVE_XPWSA )
-			#include <mswsock.h>
-		#endif
-	#else
-		#error Windows Socket API 2.x required!
-	#endif // WSA
+	#include <ws2tcpip.h>
+	#include <winsock2.h>
+	#if defined( HAVE_XPWSA )
+		#include <mswsock.h>
+	#endif
 	
 	#define EWOULDBLOCK WSAEWOULDBLOCK
 	

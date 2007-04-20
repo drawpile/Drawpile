@@ -26,7 +26,7 @@
 
 *******************************************************************************/
 
-#include "../config.h"
+#include "config.h"
 #include "../shared/templates.h"
 #include "event.h"
 

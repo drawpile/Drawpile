@@ -57,7 +57,7 @@ endif ( Boost_FOUND )
 
 ### Event mechanism
 
-set ( EV_FOUND OFF )
+#set ( EV_FOUND OFF )
 
 if ( EPOLL )
 	check_include_file ( sys/epoll.h EV_EPOLL )
@@ -95,11 +95,6 @@ if ( NOT EV_FOUND )
 		check_include_file ( "sys/select.h" EV_SELECT )
 		if ( EV_SELECT )
 			set ( EV_FOUND ON )
-		else ( EV_SELECT )
-			check_function_exists ( select EV_SELECT )
-			if ( EV_SELECT )
-				set ( EV_FOUND ON )
-			endif ( EV_SELECT )
 		endif ( EV_SELECT )
 		
 		# FD_COPY macro
@@ -110,19 +105,15 @@ if ( NOT EV_FOUND )
 					message( STATUS "FD_COPY found" )
 				endif ( EV_SELECT_COPY )
 			endif ( NOT WIN32 )
-		else ( EV_SELECT )
-			if ( NOT WIN32 )
-				message ( FATAL_ERROR "No event system found!" )
-			endif ( NOT WIN32 )
 		endif ( EV_SELECT )
 	endif ( SELECT )
 endif ( NOT EV_FOUND )
 
-if ( NOT EV_FOUND )
-	if ( WIN32 )
-		check_include_file ( winsock2.h HAVE_WSA )
-		if ( HAVE_WSA )
-			message( STATUS "Windows Socket API found")
+if ( WIN32 )
+	check_include_file ( winsock2.h HAVE_WSA )
+	if ( HAVE_WSA )
+		message( STATUS "Windows Socket API found")
+		if ( NOT EV_FOUND )
 			if ( WSA )
 				set ( EV_WSA ON )
 				set ( EV_FOUND ON )
@@ -130,9 +121,9 @@ if ( NOT EV_FOUND )
 				set ( EV_SELECT ON )
 				set ( EV_FOUND ON )
 			endif ( WSA )
-		endif ( HAVE_WSA )
-	endif ( WIN32 )
-endif ( NOT EV_FOUND )
+		endif ( NOT EV_FOUND )
+	endif ( HAVE_WSA )
+endif ( WIN32 )
 
 if ( NOT HAVE_WSA )
 	message ( STATUS "Using POSIX Socket API" )
@@ -169,6 +160,11 @@ if ( GNUEXT )
 	check_include_file_cxx ( ext/hash_set HAVE_HASH_SET )
 	check_include_file_cxx ( ext/hash_map HAVE_HASH_MAP )
 endif ( GNUEXT )
+
+# config
+
+configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/server/config.h )
+add_definitions ( -DHAVE_SRVCONFIG )
 
 ### link
 

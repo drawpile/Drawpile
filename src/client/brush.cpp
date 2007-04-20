@@ -359,12 +359,6 @@ void Brush::draw(QImage &image, const Point& pos) const
 	for(int y=offy;y<h;++y) {
 		for(int x=offx;x<w;++x) {
 			const int a = *(src++);
-			#ifdef TESTING
-			if (a == 0) {
-				dest += 4;
-				continue;
-			}
-			#endif // TESTING
 			#ifdef IS_BIG_ENDIAN
 			++dest;
 			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;

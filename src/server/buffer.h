@@ -15,7 +15,7 @@
 #ifndef CircularBuffer_INCLUDED
 #define CircularBuffer_INCLUDED
 
-#include "../config.h"
+#include "config.h"
 
 #include <cstddef> // size_t?
 #include <cassert>

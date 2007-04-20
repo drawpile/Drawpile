@@ -51,7 +51,7 @@ Net::Net() throw(std::exception)
 	cout << "Net()" << endl;
 	#endif
 	
-	#if defined( HAVE_WSA )
+	#if defined(WIN32)
 	WSADATA info;
 	if (WSAStartup(MAKEWORD(2,0), &info))
 		throw std::exception();
@@ -73,7 +73,7 @@ Net::~Net() throw()
 	cout << "~Net()" << endl;
 	#endif
 	
-	#if defined( HAVE_WSA )
+	#if defined(WIN32)
 	WSACleanup();
 	#endif
 }
@@ -346,11 +346,11 @@ int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 	
 	if (r == SOCKET_ERROR)
 	{
-		#ifdef HAVE_WSA
+		#ifdef WIN32
 		s_error = WSAGetLastError();
-		#else
+		#else // POSIX
 		s_error = errno;
-		#endif // HAVE_WSA
+		#endif
 		
 		// programming errors
 		
@@ -458,9 +458,9 @@ int Socket::listen() throw()
 	
 	if (r == SOCKET_ERROR)
 	{
-		#ifdef HAVE_WSA
+		#ifdef WIN32
 		s_error = WSAGetLastError();
-		#else
+		#else // POSIX
 		s_error = errno;
 		#endif
 		
@@ -655,11 +655,11 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 	
 	if (r == SOCKET_ERROR)
 	{
-		#ifdef HAVE_WSA
+		#ifdef WIN32
 		s_error = WSAGetLastError();
-		#else
+		#else // POSIX
 		s_error = errno;
-		#endif // HAVE_WSA
+		#endif
 		
 		// programming errors
 		assert(s_error != ENOTSOCK);
@@ -731,7 +731,7 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	
 	// convert address to string
 	
-	#ifdef HAVE_WSA
+	#ifdef WIN32
 	DWORD len = INET6_ADDRSTRLEN;
 	
 	sockaddr sa;
@@ -760,7 +760,7 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	char straddr[INET_ADDRSTRLEN+1];
 	straddr[INET_ADDRSTRLEN] = '\0';
 	
-	#ifdef HAVE_WSA
+	#ifdef WIN32
 	DWORD len = INET_ADDRSTRLEN;
 	
 	sockaddr sa;
@@ -790,7 +790,7 @@ sockaddr_in6 Socket::StringToAddr(const std::string& address) throw()
 	sockaddr_in6 naddr;
 	naddr.sin6_family = AF_INET6;
 	
-	#ifdef HAVE_WSA
+	#ifdef WIN32
 	char straddr[128];
 	memcpy(straddr, address.c_str(), address.length());
 	
@@ -809,7 +809,7 @@ sockaddr_in Socket::StringToAddr(const std::string& address) throw()
 	sockaddr_in naddr;
 	naddr.sin_family = AF_INET;
 	
-	#ifdef HAVE_WSA
+	#ifdef WIN32
 	char straddr[128];
 	memcpy(straddr, address.c_str(), address.length());
 	
