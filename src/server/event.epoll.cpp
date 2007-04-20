@@ -71,6 +71,7 @@ Event::~Event() throw()
 	assert(evfd == -1);
 }
 
+// Errors: ENFILE, ENOMEM
 bool Event::init() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -78,32 +79,14 @@ bool Event::init() throw()
 	#endif
 	
 	evfd = epoll_create(max_events);
-	_error = errno;
+	
 	if (evfd == -1)
 	{
-		switch (_error)
-		{
-		case EINVAL:
-			#ifndef NDEBUG
-			cerr << "Size not positive." << endl;
-			#endif
-			assert(1);
-			break;
-		case ENFILE:
-			cerr << "System open FD limit reached." << endl;
-			return false;
-			break;
-		case ENOMEM:
-			cerr << "Out of memory" << endl;
-			throw std::bad_alloc();
-			break;
-		default:
-			#ifndef NDEBUG
-			cerr << "Event(epoll).init() : Unknown error(" << _error << ")" << endl;
-			#endif
-			assert(1);
-			break;
-		}
+		_error = errno;
+		
+		assert(_error != EINVAL); // max_events is not positive integer
+		
+		return false;
 	}
 	
 	return true;
@@ -126,31 +109,23 @@ int Event::wait() throw()
 	#endif
 	
 	nfds = epoll_wait(evfd, events, max_events, _timeout);
-	_error = errno;
 	
 	if (nfds == -1)
 	{
+		_error = errno;
+		
+		if (_error == EINTR)
+			return 0;
+		
 		assert(_error != EBADF);
 		assert(_error != EFAULT); // events not writable
 		assert(_error != EINVAL); // invalif evfd, or max_events <= 0
-		switch (_error)
-		{
-		case EINTR:
-			#ifndef NDEBUG
-			cerr << "Interrupted by signal/timeout." << endl;
-			#endif
-			nfds = 0;
-			break;
-		default:
-			cerr << "Event(epoll).wait() : Unknown error(" << _error << ")" << endl;
-			// TODO
-			break;
-		}
 	}
 	
 	return nfds;
 }
 
+// Errors: ENOMEM
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -164,24 +139,17 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	ev_info.events = ev;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
-	_error = errno;
+	
 	if (r == -1)
 	{
+		_error = errno;
+		
 		assert(_error != EBADF);
 		assert(_error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
 		assert(_error != EEXIST); // fd already in set
 		assert(_error != EPERM); // target fd not supported by epoll
 		
-		switch (_error)
-		{
-		case ENOMEM:
-			cerr << "Out of memory" << endl;
-			throw new std::bad_alloc;
-			break;
-		default:
-			cerr << "Event(epoll).add() : Unknown error(" << _error << ")" << endl;
-			break;
-		}
+		return false;
 	}
 	
 	return true;
@@ -200,28 +168,22 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	ev_info.events = ev;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
-	_error = errno;
+	
 	if (r == -1)
 	{
+		_error = errno;
+		
 		assert(_error != EBADF); // epoll fd is invalid
 		assert(_error != EINVAL); // evfd is invalid or fd is the same as evfd
 		assert(_error != ENOENT); // fd not in set
 		
-		switch (_error)
-		{
-		case ENOMEM:
-			cerr << "Out of memory" << endl;
-			throw new std::bad_alloc;
-			break;
-		default:
-			cerr << "Event(epoll).modify() : Unknown error (" << _error << ")" << endl;
-			break;
-		}
+		return false;
 	}
 	
-	return 0;
+	return true;
 }
 
+// Errors: ENOMEM
 int Event::remove(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -231,23 +193,16 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
-	_error = errno;
+	
 	if (r == -1)
 	{
+		_error = errno;
+		
 		assert(_error != EBADF); // evfd is invalid
 		assert(_error != EINVAL); // evfd is invalid, or evfd is the same as fd
 		assert(_error != ENOENT); // fd not in set
 		
-		switch (_error)
-		{
-		case ENOMEM:
-			cerr << "Out of memory" << endl;
-			throw new std::bad_alloc;
-			break;
-		default:
-			cerr << "Event(epoll).remove() : Unknown error(" << _error << ")" << endl;
-			break;
-		}
+		return false;
 	}
 	
 	return true;

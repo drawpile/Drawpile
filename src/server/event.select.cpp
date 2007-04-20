@@ -55,9 +55,6 @@ Event::Event() throw()
 	: nfds_r(0),
 	nfds_w(0),
 	nfds_e(0)
-	#if defined(EV_PSELECT)
-	//, _sigmask(0), _sigsaved(0)
-	#endif // EV_PSELECT
 	#endif // !WIN32
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -92,6 +89,7 @@ void Event::finish() throw()
 	#endif
 }
 
+// Errors: WSAENETDOWN
 int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -137,19 +135,21 @@ int Event::wait() throw()
 	#endif // EV_PSELECT
 		);
 	
-	#ifdef WIN32
-	_error = WSAGetLastError();
-	#else
-	_error = errno;
-	#endif
-	
-	#if defined(EV_PSELECT)
-	// restore mask
-	sigprocmask(SIG_SETMASK, &_sigsaved, NULL);
-	#endif // EV_PSELECT
-	
 	if (nfds == -1)
 	{
+		#ifdef WIN32
+		_error = WSAGetLastError();
+		#else
+		_error = errno;
+		#endif
+		
+		#if defined(EV_PSELECT)
+		sigprocmask(SIG_SETMASK, &_sigsaved, NULL); // restore mask
+		#endif
+		
+		if (_error == EINTR)
+			return nfds = 0;
+		
 		#ifdef WIN32
 		assert(_error != WSANOTINITIALISED);
 		#endif
@@ -158,29 +158,24 @@ int Event::wait() throw()
 		assert(_error != EINVAL);
 		assert(_error != EFAULT);
 		
-		switch (_error)
-		{
 		#ifdef WIN32
-		case WSAENETDOWN:
-			#ifndef NDEBUG
+		if (_error == WSAENETDOWN)
 			cerr << "The network subsystem has failed." << endl;
-			#endif
-			break;
 		#endif
-		case EINTR:
-			#ifndef NDEBUG
-			cerr << "Interrupted by signal." << endl;
-			#endif
-			nfds = 0;
-			break;
-		default:
-			cerr << "Event(select).wait() Unknown error: " << _error << endl;
-			break;
-		}
 	}
 	else if (nfds > 0)
 	{
 		fd_iter = fd_list.begin();
+		
+		#if defined(EV_PSELECT)
+		sigprocmask(SIG_SETMASK, &_sigsaved, NULL); // restore mask
+		#endif
+	}
+	else
+	{
+		#if defined(EV_PSELECT)
+		sigprocmask(SIG_SETMASK, &_sigsaved, NULL); // restore mask
+		#endif
 	}
 	
 	return nfds;

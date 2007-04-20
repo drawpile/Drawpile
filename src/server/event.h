@@ -286,6 +286,8 @@ public:
 	
 	//! Fetches triggered events for FD.
 	uint32_t getEvents(fd_t fd) const throw();
+	
+	int getError() const throw() { return _error; }
 };
 
 #endif // EVENT_H_INCLUDED

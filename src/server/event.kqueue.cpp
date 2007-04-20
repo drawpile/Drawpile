@@ -69,8 +69,11 @@ Event::~Event() throw()
 	
 	// Make sure the event fd was closed.
 	assert(evfd == -1);
+	
+	delete [] evtrigr;
 }
 
+// Errors: ENOMEM, EMFILE, ENFILE
 bool Event::init() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -95,12 +98,11 @@ void Event::finish() throw()
 	cout << "Event(kqueue).finish()" << endl;
 	#endif
 	
-	if (evfd != -1)
-		close(evfd);
-	
-	delete [] evtrigr;
+	close(evfd);
+	evfd = -1;
 }
 
+// Errors: EACCES, ENOMEM
 int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -113,6 +115,15 @@ int Event::wait() throw()
 	if (nfds == -1)
 	{
 		_error = errno;
+		
+		if (_error == EINTR)
+			return 0;
+		
+		assert(_error != EBADF); // FD is invalid
+		assert(_error != ENOENT); // specified event could not be found
+		assert(_error != EINVAL); // filter or time limit is invalid
+		assert(_error != EFAULT); // kevent struct is not writable
+		
 		cerr << "Error in event system: " << _error << endl;
 		return -1;
 	}

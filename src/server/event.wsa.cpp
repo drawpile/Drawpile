@@ -117,6 +117,7 @@ void Event::finish() throw()
 	#endif
 }
 
+// Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
 int Event::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -129,27 +130,13 @@ int Event::wait() throw()
 	if (nfds == WSA_WAIT_FAILED)
 	{
 		_error = WSAGetLastError();
-		switch (_error)
-		{
-		#ifndef NDEBUG
-		case WSA_INVALID_HANDLE:
-			assert(!(_error == WSA_INVALID_HANDLE));
-			break;
-		case WSANOTINITIALISED:
-			assert(!(_error == WSANOTINITIALISED));
-			break;
-		case WSA_INVALID_PARAMETER:
-			assert(!(_error == WSA_INVALID_PARAMETER));
-			break;
-		#endif
-		case WSAENETDOWN:
-		case WSAEINPROGRESS:
-		case WSA_NOT_ENOUGH_MEMORY:
-			break;
-		default:
-			cerr << "Event(wsa).wait() - unknown error: " << nfds << endl;
-			break;
-		}
+		
+		assert(_error != WSANOTINITIALISED);
+		assert(_error != WSA_INVALID_HANDLE);
+		assert(_error != WSA_INVALID_PARAMETER);
+		
+		if (_error == WSA_NOT_ENOUGH_MEMORY)
+			_error = ENOMEM;
 		
 		return -1;
 	}
@@ -161,14 +148,12 @@ int Event::wait() throw()
 		case WSA_WAIT_TIMEOUT:
 			return 0;
 		default:
-			// events ready
-			break;
+			return fd_to_ev.size();
 		}
 	}
-	
-	return fd_to_ev.size();
 }
 
+// Errors: WSAENETDOWN
 int Event::add(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -191,14 +176,10 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 			if (r == SOCKET_ERROR)
 			{
 				_error = WSAGetLastError();
+				
 				assert(_error != WSAENOTSOCK);
 				assert(_error != WSAEINVAL);
 				assert(_error != WSANOTINITIALISED);
-				
-				#ifndef NDEBUG
-				if (_error == WSAENETDOWN)
-					cerr << "- Network down." << endl;
-				#endif
 				
 				return false;
 			}
@@ -214,13 +195,12 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		}
 	}
 	
-	#ifndef NDEBUG
 	cerr << "Event system overloaded!" << endl;
-	#endif
 	
 	return false;
 }
 
+// Errors: WSAENETDOWN
 int Event::modify(fd_t fd, uint32_t ev) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -256,11 +236,6 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 		assert(_error != WSAENOTSOCK);
 		assert(_error != WSAEINVAL);
 		assert(_error != WSANOTINITIALISED);
-		
-		#ifndef NDEBUG
-		if (_error == WSAENETDOWN)
-			cerr << "- Network down." << endl;
-		#endif
 		
 		return false;
 	}
@@ -325,9 +300,9 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 			
 			if (r == SOCKET_ERROR)
 			{
-				int error = WSAGetLastError();
+				_error = WSAGetLastError();
 				
-				switch (error)
+				switch (_error)
 				{
 				case WSAECONNRESET: // reset by remote
 				case WSAECONNABORTED: // connection aborted
@@ -339,12 +314,10 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				case WSAENOBUFS: // out of network buffers
 				case WSAENETDOWN: // network sub-system failure
 				case WSAEINPROGRESS: // something's in progress
-					events = 0;
-					break;
+					goto loopend;
 				default:
 					cerr << "Event(wsa).getEvents() - unknown error: " << error << endl;
-					events = 0;
-					break;
+					goto loopend;
 				}
 			}
 			else
@@ -373,6 +346,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				return true;
 			}
 		}
+		loopend:
 	}
 	
 	#ifndef NDEBUG
@@ -399,27 +373,16 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	
 	if (r == SOCKET_ERROR)
 	{
-		int error = WSAGetLastError();
+		_error = WSAGetLastError();
 		
-		switch (error)
+		assert(_error != WSAEFAULT);
+		assert(_error != WSANOTINITIALISED);
+		assert(_error != WSAEINVAL);
+		assert(_error != WSAEFAULT);
+		assert(_error != WSAEAFNOSUPPORT);
+		
+		switch (_error)
 		{
-		#ifndef NDEBUG
-		case WSAEFAULT:
-			assert(!(error == WSAEFAULT));
-			break;
-		case WSANOTINITIALISED:
-			assert(!(error == WSANOTINITIALISED));
-			break;
-		case WSAEINVAL:
-			assert(!(error == WSAEINVAL));
-			break;
-		case WSAENOTSOCK:
-			assert(!(error == WSAEFAULT));
-			break;
-		case WSAEAFNOSUPPORT:
-			assert(!(error == WSAEAFNOSUPPORT));
-			break;
-		#endif
 		case WSAECONNRESET: // reset by remote
 		case WSAECONNABORTED: // connection aborted
 		case WSAETIMEDOUT: // connection timed-out
@@ -429,7 +392,6 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		case WSAENOBUFS: // out of network buffers
 		case WSAENETDOWN: // network sub-system failure
 		case WSAEINPROGRESS: // something's in progress
-			return 0;
 		default:
 			cerr << "Event(wsa).getEvents() - unknown error: " << error << endl;
 			break;
