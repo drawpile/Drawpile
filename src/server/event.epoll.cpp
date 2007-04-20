@@ -184,7 +184,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 }
 
 // Errors: ENOMEM
-int Event::remove(fd_t fd, uint32_t ev) throw()
+int Event::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).remove(FD: " << fd << ")" << endl;
@@ -220,7 +220,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 	return true;
 }
 
-uint32_t Event::getEvents(fd_t fd) const throw()
+uint32_t Event::getEvents(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).getEvents(FD: " << fd << ")" << endl;

@@ -41,20 +41,31 @@
 
 #if defined(EV_EPOLL)
 	#include <sys/epoll.h>
+	#define EV_HAS_HANGUP
+	#define EV_HAS_ERROR
+	#define EVENT_BY_INDEX
+	#define EVENT_HAS_ALL
 #elif defined(EV_KQUEUE)
 	#include <sys/types.h>
 	#include <sys/event.h>
 	#include <sys/time.h>
 #elif defined(EV_PSELECT)
 	#include <sys/select.h> // fd_set, FD* macros, etc.
+	#include <signal.h>
+	#define EV_USE_SIGMASK
+	#define EVENT_BY_FD
+	#define EV_HAS_ERROR
 #elif defined(EV_SELECT)
 	#ifdef WIN32
 		#include "sockets.h"
 	#else
 		#include <sys/select.h> // fd_set, FD* macros, etc.
 	#endif
+	#define EV_HAS_ERROR
 #elif defined(EV_WSA)
 	#include "sockets.h"
+	#define EVENT_BY_FD
+	#define EV_HAS_HANGUP
 #else
 	#error No event system defined
 #endif
@@ -65,30 +76,14 @@
 	#else
 		#include <set>
 	#endif
-	#define EVENT_BY_FD
-#elif defined(EV_EPOLL)
-	#define EV_HAVE_HANGUP
-	#define EVENT_BY_INDEX
-	#define EVENT_HAS_ALL
-#elif defined(EV_WSA)
-	#define EVENT_BY_FD
 #endif
 
 #ifndef WIN32
 typedef int fd_t;
 #endif
 
-#if defined( EV_PSELECT )
-	#include <signal.h>
-	#define EV_USE_SIGMASK
-#endif
-
 #ifndef INVALID_SOCKET
 	#define INVALID_SOCKET -1
-#endif
-
-#if !defined(EV_WSA) or !defined(EV_KQUEUE)
-	#define EV_HAS_ERROR
 #endif
 
 // The meaning of this changes a bit with the event systems.
@@ -144,11 +139,13 @@ protected:
 	#if defined(HAVE_HASH_MAP)
 	__gnu_cxx::hash_map<fd_t, uint32_t> fd_to_ev;
 	__gnu_cxx::hash_map<uint32_t, fd_t> ev_to_fd;
-	__gnu_cxx::hash_map<fd_t, uint32_t>::iterator ev_iter;
+	typedef __gnu_cxx::hash_map<fd_t, uint32_t>::iterator ev_iter;
+	typedef __gnu_cxx::hash_map<uint32_t, fd_t>::iterator r_ev_iter;
 	#else
 	std::map<fd_t, uint32_t> fd_to_ev;
 	std::map<uint32_t, fd_t> ev_to_fd;
-	std::map<fd_t, uint32_t>::iterator ev_iter;
+	typedef std::map<fd_t, uint32_t>::iterator ev_iter;
+	typedef std::map<uint32_t, fd_t>::iterator r_ev_iter;
 	#endif
 	
 	WSAEVENT w_ev[max_events];
@@ -168,11 +165,14 @@ protected:
 	timeval _timeout;
 	#endif
 	
-	int
-		// errno
-		_error,
-		// return value of EV wait call
-		nfds;
+	int _error; // errno;
+	
+	// return value of EV wait call
+	#ifdef EV_WSA
+	unsigned int nfds;
+	#else // everything else
+	int nfds;
+	#endif
 	
 public:
 	
@@ -264,11 +264,10 @@ public:
 	//! Removes file descriptor from event set.
 	/**
 	 * @param fd is the file descriptor to be removed from a event set.
-	 * @param ev is the event sets in which fd is to be found.
 	 *
 	 * @return true if the fd was removed, false if not (or was not part of the event set)
 	 */
-	int remove(fd_t fd, uint32_t ev) throw();
+	int remove(fd_t fd) throw();
 	
 	//! Modifies previously added fd for different events.
 	/**
@@ -285,7 +284,7 @@ public:
 	bool getEvent(fd_t &fd, uint32_t &events) throw();
 	
 	//! Fetches triggered events for FD.
-	uint32_t getEvents(fd_t fd) const throw();
+	uint32_t getEvents(fd_t fd) throw();
 	
 	int getError() const throw() { return _error; }
 };

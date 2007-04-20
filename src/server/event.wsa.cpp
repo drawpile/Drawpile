@@ -224,7 +224,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	
 	hack::events::prepare_events(ev);
 	
-	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
 	
 	const int r = WSAEventSelect(fd, w_ev[fi->second], ev);
@@ -243,7 +243,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	return 0;
 }
 
-int Event::remove(fd_t fd, uint32_t ev) throw()
+int Event::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(wsa).remove(fd: " << fd << ")" << endl;
@@ -251,9 +251,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	
 	assert( fd >= 0 );
 	
-	hack::events::prepare_events(ev);
-	
-	const std::map<fd_t, uint32_t>::iterator fi(fd_to_ev.find(fd));
+	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
 	
 	//WSAEventSelect(fd, w_ev[fi->second], 0);
@@ -283,8 +281,8 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	cout << "Getting events, offset: " << get_event << endl;
 	#endif
 	
-	std::map<uint32_t, fd_t>::iterator fd_iter;
-	for (; get_event <= last_event; ++get_event)
+	r_ev_iter fd_iter;
+	for (; get_event <= last_event;)
 	{
 		if (w_ev[get_event] != WSA_INVALID_EVENT)
 		{
@@ -316,7 +314,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				case WSAEINPROGRESS: // something's in progress
 					goto loopend;
 				default:
-					cerr << "Event(wsa).getEvents() - unknown error: " << error << endl;
+					cerr << "Event(wsa).getEvents() - unknown error: " << _error << endl;
 					goto loopend;
 				}
 			}
@@ -343,10 +341,14 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				
 				cout << "+ Triggered!" << endl;
 				
+				++get_event;
+				
 				return true;
 			}
 		}
+		
 		loopend:
+		++get_event;
 	}
 	
 	#ifndef NDEBUG
@@ -356,7 +358,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	return false;
 }
 
-uint32_t Event::getEvents(fd_t fd) const throw()
+uint32_t Event::getEvents(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(wsa).getEvents(fd: " << fd << ")" << endl;
@@ -364,7 +366,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	
 	assert(fd != 0);
 	
-	const std::map<fd_t, uint32_t>::const_iterator fev(fd_to_ev.find(fd));
+	const ev_iter fev(fd_to_ev.find(fd));
 	assert(fev != fd_to_ev.end());
 	
 	WSANETWORKEVENTS set;
@@ -393,7 +395,7 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		case WSAENETDOWN: // network sub-system failure
 		case WSAEINPROGRESS: // something's in progress
 		default:
-			cerr << "Event(wsa).getEvents() - unknown error: " << error << endl;
+			cerr << "Event(wsa).getEvents() - unknown error: " << _error << endl;
 			break;
 		}
 		

@@ -35,29 +35,27 @@
 
 #include <algorithm>
 #include <ctime>
-
-#include "../shared/SHA1.h"
-
-#include "sockets.h"
-#include "event.h"
-#include "user.h"
-#include "session.h"
-
-#include "../shared/protocol.h"
-
+#include <queue>
 #include <boost/shared_ptr.hpp>
-typedef boost::shared_ptr<protocol::Message> message_ref;
-
-#include <queue> // user and session ID queue
-
 #if defined(HAVE_HASH_MAP)
 	#include <ext/hash_map>
 #endif
-
-#include <map> // user and session maps
-#include <set> // utimer set
-
+#include <map> // tunnel
+#include <set> // utimer
 #include <stdexcept> // std::exception class
+
+#include "config.h"
+
+#include "../shared/SHA1.h"
+#include "../shared/protocol.h"
+
+#include "sockets.h"
+#include "user.h"
+#include "session.h"
+
+#include "event.h"
+
+typedef boost::shared_ptr<protocol::Message> message_ref;
 
 namespace srv_defaults
 {

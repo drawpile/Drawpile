@@ -2325,14 +2325,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	usr->state = uState::dead;
 	
 	// Remove from event system
-	ev.remove(usr->sock.fd(), ev.read|ev.write
-		#ifdef EV_HAS_ERROR
-		|ev.error
-		#endif
-		#ifdef EV_HAS_HANGUP
-		|ev.hangup
-		#endif
-	);
+	ev.remove(usr->sock.fd());
 	
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
@@ -2569,30 +2562,33 @@ int Server::run() throw()
 				if (fIsSet(events, ev.error))
 				{
 					uRemove(usr, protocol::user_event::BrokenPipe);
-					continue;
+					goto timercheck;
 				}
 				#endif // EV_HAS_ERROR
 				#ifdef EV_HAS_HANGUP
 				if (fIsSet(events, ev.hangup))
 				{
 					uRemove(usr, protocol::user_event::Disconnect);
-					continue;
+					goto timercheck;
 				}
 				#endif // EV_HAS_HANGUP
 				if (fIsSet(events, ev.read))
 				{
 					uRead(usr);
-					if (usr == 0) continue;
+					if (usr == 0)
+						goto timercheck;
 				}
 				if (fIsSet(events, ev.write))
 				{
 					uWrite(usr);
-					if (usr == 0) continue;
+					if (usr == 0)
+						goto timercheck;
 				}
 			}
 			break;
 		}
 		
+		timercheck:
 		// check timer
 		if (next_timer < current_time)
 		{

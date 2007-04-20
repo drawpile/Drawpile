@@ -163,7 +163,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-int Event::remove(fd_t fd, uint32_t ev) throw()
+int Event::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kqueue).remove(FD: " << fd << ")" << endl;
@@ -194,7 +194,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 	return true;
 }
 
-uint32_t Event::getEvents(fd_t fd) const throw()
+uint32_t Event::getEvents(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kqueue).getEvents(FD: " << fd << ")" << endl;

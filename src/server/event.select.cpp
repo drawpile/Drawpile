@@ -250,18 +250,36 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 		add(fd, ev);
 	
 	if (!fIsSet(ev, read))
-		remove(fd, read);
+	{
+		FD_CLR(fd, &fds_r);
+		#ifndef WIN32
+		read_set.erase(fd);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+		#endif // WIN32
+	}
 	
 	if (!fIsSet(ev, write))
-		remove(fd, write);
+	{
+		FD_CLR(fd, &fds_w);
+		#ifndef WIN32
+		write_set.erase(fd);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+		#endif // WIN32
+	}
 	
 	if (!fIsSet(ev, error))
-		remove(fd, error);
+	{
+		FD_CLR(fd, &fds_e);
+		#ifndef WIN32
+		error_set.erase(fd);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+		#endif // WIN32
+	}
 	
 	return 0;
 }
 
-int Event::remove(fd_t fd, uint32_t ev) throw()
+int Event::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(select).remove(fd: " << fd << ")" << endl;
@@ -277,59 +295,26 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	if (iter == fd_list.end())
 		return false;
 	
-	if (fIsSet(ev, read))
-	{
-		FD_CLR(fd, &fds_r);
-		#ifndef WIN32
-		read_set.erase(fd);
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
-		#endif // WIN32
-		
-		fClr(iter->second, read);
-	}
+	FD_CLR(fd, &fds_r);
+	#ifndef WIN32
+	read_set.erase(fd);
+	nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+	#endif // WIN32
 	
-	if (fIsSet(ev, write))
-	{
-		FD_CLR(fd, &fds_w);
-		#ifndef WIN32
-		write_set.erase(fd);
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
-		#endif // WIN32
-		
-		fClr(iter->second, write);
-	}
+	FD_CLR(fd, &fds_w);
+	#ifndef WIN32
+	write_set.erase(fd);
+	nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+	#endif // WIN32
 	
-	if (fIsSet(ev, error))
-	{
-		FD_CLR(fd, &fds_e);
-		#ifndef WIN32
-		error_set.erase(fd);
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
-		#endif // WIN32
-		
-		fClr(iter->second, error);
-	}
+	FD_CLR(fd, &fds_e);
+	#ifndef WIN32
+	error_set.erase(fd);
+	nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+	#endif // WIN32
 	
-	if (iter->second == 0)
-	{
-		fd_iter = iter;
-		fd_list.erase(iter);
-		fd_iter = fd_list.begin();
-		/*
-		if (fd_iter != fd_list.begin())
-		{
-			//--fd_iter; // make sure the iterator doesn't get invalidated
-			fd_list.erase(iter);
-			fd_iter = fd_list.begin();
-			//++fd_iter; // increment to the next
-		}
-		else
-		{
-			fd_list.erase(iter);
-			fd_iter = fd_list.end();
-		}
-		*/
-	}
+	fd_list.erase(iter);
+	fd_iter = fd_list.begin();
 	
 	return true;
 }
@@ -352,7 +337,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	return false;
 }
 
-uint32_t Event::getEvents(fd_t fd) const throw()
+uint32_t Event::getEvents(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(select).getEvents(fd: " << fd << ")" << endl;
