@@ -23,7 +23,7 @@ option ( UNITTEST "Compile unittests" OFF )
 
 option ( EPOLL "Enable epoll(4) support" ON )
 option ( PSELECT "Enable pselect(2) support" ON )
-option ( KQUEUE "Enable kqueue(2) support" OFF )
+option ( KQUEUE "Enable kqueue(2) support" ON )
 option ( KEVENT "Enable kevent(2) support" OFF )
 option ( WSA "Enable WSA event support" OFF ) # still broken
 
