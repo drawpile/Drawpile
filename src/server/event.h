@@ -42,7 +42,9 @@
 #if defined(EV_EPOLL)
 	#include <sys/epoll.h>
 #elif defined(EV_KQUEUE)
-	#error kqueue() not implemented.
+	#include <sys/types.h>
+	#include <sys/event.h>
+	#include <sys/time.h>
 #elif defined(EV_PSELECT)
 	#include <sys/select.h> // fd_set, FD* macros, etc.
 #else
@@ -85,13 +87,13 @@ typedef int fd_t;
 	#define INVALID_SOCKET -1
 #endif
 
-#ifndef EV_WSA
+#if !defined(EV_WSA) or !defined(EV_KQUEUE)
 	#define EV_HAS_ERROR
 #endif
 
 // The meaning of this changes a bit with the event systems.
 const uint32_t max_events =
-#if defined(EV_EPOLL)
+#if defined(EV_EPOLL) or defined(EV_KQUEUE)
 	10;
 #elif defined(EV_WSA)
 	WSA_MAXIMUM_WAIT_EVENTS;
@@ -103,8 +105,11 @@ const uint32_t max_events =
 class Event
 {
 protected:
-	#if defined(EV_EPOLL)
+	#if defined(EV_EPOLL) or defined(EV_KEVENT)
 	fd_t evfd;
+	#endif
+	
+	#if defined(EV_EPOLL)
 	epoll_event events[max_events]; // stack allocation
 	#endif // EV_EPOLL
 	
@@ -129,11 +134,11 @@ protected:
 	#endif // !WIN32
 	#endif // EV_[P]SELECT
 	
-	#if defined(EV_USE_SIGMASK)
+	#if defined(EV_USE_SIGMASK) // for pselect only
 	sigset_t _sigmask, _sigsaved;
 	#endif // EV_USE_SIGMASK
 	
-	#if defined(EV_WSA)
+	#if defined(EV_WSA) // Windows Socket API
 	uint32_t last_event;
 	
 	#if defined(HAVE_HASH_MAP)
@@ -149,7 +154,13 @@ protected:
 	WSAEVENT w_ev[max_events];
 	#endif
 	
-	#if defined(EV_PSELECT)
+	#if defined(EV_KQUEUE)
+	kevent chlist[max_events], *evtrigr;
+	size_t chlist_count, evtrigr_count, evtrigr_size;
+	#endif
+	
+	// timeout
+	#if defined(EV_PSELECT) or defined(EV_KQUEUE)
 	timespec _timeout;
 	#elif defined(EV_EPOLL) or defined(EV_WSA)
 	uint32_t _timeout;
@@ -157,7 +168,11 @@ protected:
 	timeval _timeout;
 	#endif
 	
-	int _error, nfds;
+	int
+		// errno
+		_error,
+		// return value of EV wait call
+		nfds;
 	
 public:
 	
@@ -166,11 +181,16 @@ public:
 		//! Identifier for 'read' event
 		read,
 		//! Identifier for 'write' event
-		write,
+		write
+		#ifdef EV_HAS_ERROR
 		//! Identifier for 'error' event
-		error,
+		,error
+		#endif
+		#ifdef EV_HAS_HANGUP
 		//! Identifier for 'hangup' event
-		hangup;
+		,hangup
+		#endif
+		;
 	
 	//! ctor
 	Event() throw();
@@ -218,12 +238,12 @@ public:
 			_timeout.tv_sec = 0;
 		}
 		
-		#if defined(EV_PSELECT)
+		#if defined(EV_PSELECT) or defined(EV_KQUEUE)
 		_timeout.tv_nsec = msecs * 1000000; // nanoseconds
 		#else
 		_timeout.tv_usec = msecs * 1000; // microseconds
-		#endif // EV_PSELECT
-		#endif // EV_EPOLL/WSA
+		#endif // EV_PSELECT/EV_KQUEUE
+		#endif
 	}
 	
 	//! Wait for events.
@@ -266,15 +286,6 @@ public:
 	
 	//! Fetches triggered events for FD.
 	uint32_t getEvents(fd_t fd) const throw();
-	
-	//! Tests if the file descriptor was triggered in event set.
-	/**
-	 * @param fd is the file descriptor to be tested in a set.
-	 * @param ev is the fd set in which fd is to be found.
-	 *
-	 * @return bool
-	 */
-	bool isset(fd_t fd, uint32_t ev) const throw();
 };
 
 #endif // EVENT_H_INCLUDED

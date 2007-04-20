@@ -277,17 +277,3 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 	
 	return 0;
 }
-
-bool Event::isset(fd_t fd, uint32_t ev) const throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).isset(FD: " << fd << ")" << endl;
-	#endif
-	
-	assert(fd != INVALID_SOCKET);
-	
-	if (fIsSet(getEvents(fd), ev))
-		return true;
-	
-	return false;
-}

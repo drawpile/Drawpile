@@ -48,8 +48,7 @@ using std::cerr;
 const uint32_t
 	Event::read = 0x01,
 	Event::write = 0x02,
-	Event::error = 0x04,
-	Event::hangup = 0x04;
+	Event::error = 0x04;
 
 Event::Event() throw()
 	#if !defined(WIN32)
@@ -305,7 +304,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 		fClr(iter->second, write);
 	}
 	
-	if (fIsSet(ev, error|hangup))
+	if (fIsSet(ev, error))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
@@ -376,25 +375,4 @@ uint32_t Event::getEvents(fd_t fd) const throw()
 		fSet(events, error);
 	
 	return events;
-}
-
-bool Event::isset(fd_t fd, uint32_t ev) const throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).isset(fd: " << fd << ")" << endl;
-	#endif
-	
-	assert(fd != INVALID_SOCKET);
-	switch (ev)
-	{
-	case read:
-		return (FD_ISSET(fd, &t_fds_r) != 0);
-	case write:
-		return (FD_ISSET(fd, &t_fds_w) != 0);
-	case error:
-		return (FD_ISSET(fd, &t_fds_e) != 0);
-	default:
-		assert(!"switch(ev) defaulted even when it should be impossible");
-		return false;
-	}
 }

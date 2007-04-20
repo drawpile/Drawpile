@@ -76,8 +76,6 @@ const uint32_t
 	Event::read = FD_READ,
 	//! identifier for 'write' event
 	Event::write = FD_WRITE,
-	//! error event
-	Event::error = 0, // WSA doesn't have it
 	//! hangup event
 	Event::hangup = FD_CLOSE;
 

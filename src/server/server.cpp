@@ -2325,7 +2325,14 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	usr->state = uState::dead;
 	
 	// Remove from event system
-	ev.remove(usr->sock.fd(), ev.read|ev.write|ev.error|ev.hangup);
+	ev.remove(usr->sock.fd(), ev.read|ev.write
+		#ifdef EV_HAS_ERROR
+		|ev.error
+		#endif
+		#ifdef EV_HAS_HANGUP
+		|ev.hangup
+		#endif
+	);
 	
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
