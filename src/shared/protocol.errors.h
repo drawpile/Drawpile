@@ -33,8 +33,7 @@
 #ifndef Protocol_Errors_INCLUDED
 #define Protocol_Errors_INCLUDED
 
-#include <stdint.h>
-#include <stdexcept>
+#include <boost/cstdint.hpp>
 
 namespace protocol
 {

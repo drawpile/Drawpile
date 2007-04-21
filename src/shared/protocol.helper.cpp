@@ -132,7 +132,7 @@ void msgName(const uint8_t type) throw()
 }
 #endif
 
-Message* getMessage(const uint8_t type) throw()
+Message* getMessage(const uint8_t type) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_PROTOCOL
 	#ifndef NDEBUG

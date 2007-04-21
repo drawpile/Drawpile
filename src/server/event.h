@@ -31,7 +31,7 @@
 
 #include "config.h"
 
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 #if defined(HAVE_HASH_MAP)
 	#include <ext/hash_map>
@@ -43,8 +43,6 @@
 	#include <sys/epoll.h>
 	#define EV_HAS_HANGUP
 	#define EV_HAS_ERROR
-	#define EVENT_BY_INDEX
-	#define EVENT_HAS_ALL
 #elif defined(EV_KQUEUE)
 	#include <sys/types.h>
 	#include <sys/event.h>
@@ -53,7 +51,6 @@
 	#include <sys/select.h> // fd_set, FD* macros, etc.
 	#include <signal.h>
 	#define EV_USE_SIGMASK
-	#define EVENT_BY_FD
 	#define EV_HAS_ERROR
 #elif defined(EV_SELECT)
 	#ifdef WIN32
@@ -64,7 +61,6 @@
 	#define EV_HAS_ERROR
 #elif defined(EV_WSA)
 	#include "sockets.h"
-	#define EVENT_BY_FD
 	#define EV_HAS_HANGUP
 #else
 	#error No event system defined

@@ -33,13 +33,9 @@
 #ifndef Protocol_INCLUDED
 #define Protocol_INCLUDED
 
-#include <cassert> // assert()
-#include <cstddef> // size_t
-#include <stdint.h> // [u]int#_t
-
 #include "templates.h"
 
-#include "memstack.h" // MemoryStack<>
+// #include "memstack.h" // MemoryStack<> ... unused
 
 #include "protocol.errors.h"
 #include "protocol.defaults.h"
@@ -48,12 +44,23 @@
 #include "protocol.tools.h"
 #include "datatypes.h"
 
+#include <cassert> // assert()
+#include <cstddef> // size_t
+#include <boost/cstdint.hpp>
+#include <boost/static_assert.hpp>
+
 //! DrawPile network protocol.
 /**
  * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol
  */
 namespace protocol
 {
+
+#ifndef NDEBUG
+BOOST_STATIC_ASSERT(sizeof(uint8_t) == 1);
+BOOST_STATIC_ASSERT(sizeof(uint16_t) == 2);
+BOOST_STATIC_ASSERT(sizeof(uint32_t) == 4);
+#endif
 
 //! Implemented protocol revision number.
 const uint16_t revision = 10;

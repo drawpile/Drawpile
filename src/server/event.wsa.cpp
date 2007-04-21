@@ -34,8 +34,7 @@
 #endif
 
 #include <iostream>
-
-#include <time.h>
+#include <ctime>
 #include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()

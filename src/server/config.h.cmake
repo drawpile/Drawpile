@@ -1,6 +1,5 @@
 #include "../config.h"
 
-#cmakedefine HAVE_BOOST
 #cmakedefine HAVE_ZLIB
 
 #cmakedefine DEBUG_BUFFER

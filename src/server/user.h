@@ -15,30 +15,31 @@
 #ifndef ServerUser_INCLUDED
 #define ServerUser_INCLUDED
 
-#ifdef DEBUG_USER
-	#ifndef NDEBUG
-		#include <iostream>
-	#endif // NDEBUG
-#endif // DEBUG_USER
-
 #include "../shared/templates.h" // f~()
-
-#include <stdint.h> // [u]int##_t
-#include <deque>
 
 #include "buffer.h"
 
-struct User;
-#include "session.h"
+struct Session; // defined elsewhere
+#ifndef ServerSession_INCLUDED
+	#include "session.h"
+#endif
 
-#include "../shared/memstack.h"
-
+//#include "../shared/memstack.h" // unused
 #include "../shared/protocol.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.flags.h"
 
+class Socket; // defined elsewhere
+
+#ifndef NDEBUG
+	#include <iostream>
+#endif
+
+#include <boost/cstdint.hpp>
 #include <boost/shared_ptr.hpp>
 typedef boost::shared_ptr<protocol::Message> message_ref;
+
+#include <deque>
 
 struct SessionData; // forward declaration
 
@@ -55,8 +56,6 @@ typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
 
 typedef std::deque<message_ref>::iterator usr_message_i;
 typedef std::deque<message_ref>::const_iterator usr_message_const_i;
-
-#include "sockets.h"
 
 // User session data
 struct SessionData

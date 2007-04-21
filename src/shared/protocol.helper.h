@@ -34,8 +34,8 @@
 #define PROTOCOL_HELPER_H_INCLUDED
 
 #include "protocol.h"
-#include <stdexcept>
-#include <stdint.h>
+
+#include <boost/cstdint.hpp>
 
 namespace protocol
 {
@@ -50,7 +50,7 @@ void msgName(const uint8_t type) throw();
  *
  * @param type is the message type to be generated (see protocol::type).
  */
-Message* getMessage(const uint8_t type) throw();
+Message* getMessage(const uint8_t type) throw(std::bad_alloc);
 
 } // namespace protocol
 

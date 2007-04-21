@@ -32,7 +32,7 @@
 #include "../config.h"
 
 #include <memory> // memcpy()
-#include <stdint.h> // [u]int#_t
+#include <boost/cstdint.hpp>
 #include <cassert>
 
 /* swapping endianess */
@@ -41,9 +41,10 @@
 template <class T> inline
 T& bswap(T& x) throw()
 {
-	#ifndef IS_BIG_ENDIAN
-	assert("Default template should never be used (on Little Endian systems)!");
+	#if !defined(IS_BIG_ENDIAN) and !defined(NDEBUG)
+	BOOST_STATIC_ASSERT(sizeof(T) == 1);
 	#endif
+	
 	return x;
 }
 

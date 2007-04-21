@@ -33,7 +33,7 @@
 #ifndef Server_Flags_Included
 #define Server_Flags_Included
 
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 //! Describes server parameters
 namespace server

@@ -36,7 +36,7 @@
 #include "../shared/protocol.types.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
-#include "../shared/protocol.h" // Message()
+//#include "../shared/protocol.h" // Message()
 
 #include "server.flags.h"
 
@@ -45,14 +45,13 @@
 #endif
 
 #include <limits>
-
-#include <ctime>
-#include <getopt.h> // for command-line opts
+#include <algorithm>
+//#include <ctime>
 #include <cstdlib>
 #include <iostream>
 
 #include <vector>
-#include <map>
+//#include <map>
 
 using std::cout;
 using std::endl;

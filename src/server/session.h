@@ -16,8 +16,6 @@
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
-#include <limits>
-
 //#include "../shared/protocol.types.h"
 #include "../shared/protocol.flags.h"
 #include "../shared/protocol.tools.h"
@@ -25,11 +23,14 @@
 
 #include "../shared/memstack.h"
 
-struct LayerData;
-struct Session;
-#include "user.h"
+struct User; // defined elsewhere
+#ifndef ServerUser_INCLUDED
+	#include "user.h"
+#endif
 
-#include <stdint.h>
+#include <limits>
+#include <boost/cstdint.hpp>
+
 #if defined(HAVE_SLIST)
 	#include <ext/slist>
 #else

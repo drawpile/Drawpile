@@ -35,7 +35,6 @@
 #endif
 
 #include <iostream>
-
 #include <cerrno> // errno
 #include <memory> // memcpy()
 #include <cassert> // assert()

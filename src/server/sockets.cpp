@@ -28,16 +28,12 @@
 
 #include "sockets.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-
+#include <iostream>
 #include <string>
-
-#include <fcntl.h>
 #include <cassert>
 
 #ifndef WIN32
+	#include <fcntl.h>
 	#include <sstream>
 #endif
 

@@ -81,8 +81,18 @@ include ( CheckVariableExists )
 #include ( CheckIncludeFile )
 include ( CheckIncludeFileCXX )
 
-# used by server & shared
-check_include_file_cxx ( stdint.h HAVE_STDINT_H )
+### Boost library
+
+find_package ( Boost 1.33 REQUIRED )
+
+if ( Boost_FOUND )
+	message ( STATUS "Boost C++ Libraries found" )
+	include_directories( ${Boost_INCLUDE_DIRS} )
+	link_directories( ${Boost_LIBRARY_DIRS} )
+	set ( HAVE_BOOST ON )
+else ( Boost_FOUND )
+	message ( FATAL_ERROR "Boost C++ Libraries missing" )
+endif ( Boost_FOUND )
 
 ### mode tests ###
 

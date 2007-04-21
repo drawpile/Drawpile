@@ -13,7 +13,7 @@
 #ifndef SHA1_INCLUDED
 #define SHA1_INCLUDED
 
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 class SHA1
 {

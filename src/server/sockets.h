@@ -35,7 +35,7 @@
 
 #include <iostream>
 #include <stdexcept>
-#include <stdint.h>
+#include <boost/cstdint.hpp>
 
 #ifdef IPV6_SUPPORT
 #define IPV6_SUPPORT_INCOMPLETE 1

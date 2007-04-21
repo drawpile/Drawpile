@@ -43,18 +43,6 @@ if ( DEFLATE )
 	endif ( ZLIB_FOUND )
 endif ( DEFLATE )
 
-### Boost library
-
-find_package ( Boost 1.33 REQUIRED )
-
-if ( Boost_FOUND )
-	message ( STATUS "Boost C++ Libraries found" )
-	include_directories( ${Boost_INCLUDE_DIRS} )
-	link_directories( ${Boost_LIBRARY_DIRS} )
-else ( Boost_FOUND )
-	message ( FATAL_ERROR "Boost C++ Libraries missing" )
-endif ( Boost_FOUND )
-
 ### Event mechanism
 
 #set ( EV_FOUND OFF )
