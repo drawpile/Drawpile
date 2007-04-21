@@ -72,26 +72,7 @@ const uint16_t revision = 10;
 struct Message
 {
 protected:
-	Message(const uint8_t _type, const size_t _header=0, const uint8_t _flags=message::None) throw()
-		: headerSize(_header),
-		isUser(fIsSet(_flags, protocol::message::isUser)),
-		isSession(fIsSet(_flags, protocol::message::isSession)),
-		isSelected(fIsSet(_flags, protocol::message::isSelected)),
-		isBundling(fIsSet(_flags, protocol::message::isBundling)),
-		type(_type),
-		next(0),
-		prev(0)
-	{
-		assert(
-			headerSize > 0 and
-			headerSize <= sizeof(type)+sizeof(user_id)+sizeof(session_id)
-		);
-		
-		#ifndef NDEBUG
-		assert(isSelected ? !isSession : true);
-		assert(isSession ? !isSelected : true);
-		#endif
-	}
+	Message(const uint8_t _type, const size_t _header=0, const uint8_t _flags=message::None) throw();
 	
 	// Write header (for serialize())
 	inline

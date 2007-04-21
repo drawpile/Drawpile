@@ -40,11 +40,6 @@
 #include <cassert> // assert()
 #include <memory> // memcpy()
 
-#if defined(HAVE_BOOST)
-#include <boost/static_assert.hpp>
-using namespace boost;
-#endif
-
 #include "protocol.errors.h"
 #include "templates.h"
 
@@ -53,6 +48,21 @@ namespace protocol {
 /*
  * struct Message
  */
+
+Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags) throw()
+	: headerSize(_header),
+	isUser(fIsSet(_flags, protocol::message::isUser)),
+	isSession(fIsSet(_flags, protocol::message::isSession)),
+	isSelected(fIsSet(_flags, protocol::message::isSelected)),
+	isBundling(fIsSet(_flags, protocol::message::isBundling)),
+	type(_type),
+	next(0),
+	prev(0)
+{
+	assert(_header > 0 and _header <= sizeof(type)+sizeof(user_id)+sizeof(session_id));
+	assert(isSelected ? !isSession : true);
+	assert(isSession ? !isSelected : true);
+}
 
 inline
 size_t Message::serializeHeader(char* ptr) const throw()
