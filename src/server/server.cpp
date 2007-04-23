@@ -650,7 +650,7 @@ void Server::uProcessData(User*& usr) throw()
 		}
 		#endif
 		
-		if (usr->state == uState::active)
+		if (usr->state == User::Active)
 			uHandleMsg(usr);
 		else
 			uHandleLogin(usr);
@@ -858,7 +858,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		<< ", type: " << static_cast<int>(usr->inMsg->type) << ")" << endl;
 	#endif
 	
-	assert(usr->state == uState::active);
+	assert(usr->state == User::Active);
 	
 	switch (usr->inMsg->type)
 	{
@@ -1701,7 +1701,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	
 	switch (usr->state)
 	{
-	case uState::login:
+	case User::Login:
 		if (usr->inMsg->type == protocol::type::UserInfo)
 		{
 			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
@@ -1765,7 +1765,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			msg->mode = usr->getAMode();
 			
-			usr->state = uState::active;
+			usr->state = User::Active;
 			usr->deadtime = 0;
 			usr->inMsg = 0;
 			
@@ -1778,7 +1778,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		else // wrong message type
 			uRemove(usr, protocol::user_event::Violation);
 		break;
-	case uState::login_auth:
+	case User::LoginAuth:
 		if (usr->inMsg->type == protocol::type::Password)
 		{
 			const protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
@@ -1794,7 +1794,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			{
 				uSendMsg(*usr, msgAck(msg->session_id, protocol::type::Password)); // ACK
 				uRegenSeed(*usr); // mangle seed
-				usr->state = uState::login; // set state
+				usr->state = User::Login; // set state
 				uSendMsg(*usr, msgHostInfo()); // send hostinfo
 			}
 			else  // mismatch
@@ -1803,7 +1803,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		else // not a password
 			uRemove(usr, protocol::user_event::Violation);
 		break;
-	case uState::init:
+	case User::Init:
 		if (usr->inMsg->type == protocol::type::Identifier)
 		{
 			const protocol::Identifier *ident = static_cast<protocol::Identifier*>(usr->inMsg);
@@ -1832,12 +1832,12 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			{
 				if (password == 0) // no password set
 				{
-					usr->state = uState::login;
+					usr->state = User::Login;
 					uSendMsg(*usr, msgHostInfo());
 				}
 				else
 				{
-					usr->state = uState::login_auth;
+					usr->state = User::LoginAuth;
 					uSendMsg(*usr, msgPWRequest(*usr, protocol::Global));
 				}
 				
@@ -1855,10 +1855,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				<< static_cast<int>(usr->id) << ", dropping connection." << endl;
 			uRemove(usr, protocol::user_event::Dropped);
 		}
-		break;
-	case uState::dead: // this should never happen
-		cerr << "I see dead people." << endl;
-		uRemove(usr, protocol::user_event::Dropped);
 		break;
 	default:
 		assert(!"user state was something strange");
@@ -2320,8 +2316,6 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	cout << "Server::uRemove(user: " << static_cast<int>(usr->id)
 		<< ", at address: " << usr->sock.address() << ")" << endl;
 	#endif
-	
-	usr->state = uState::dead;
 	
 	// Remove from event system
 	ev.remove(usr->sock.fd());

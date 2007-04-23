@@ -111,30 +111,6 @@ struct SessionData
 	protocol::ToolInfo *cachedToolInfo;
 };
 
-// User states
-namespace uState
-{
-
-const uint8_t 
-	// When user has just connected
-	init = 3,
-	
-	// User has been verified to be using correct protocol.
-	verified = 2,
-	
-	// Waiting for proper user info
-	login = 1,
-	
-	// Waiting for password
-	login_auth = 9,
-	
-	// Dead
-	dead = 70,
-	
-	// Normal operation
-	active = 0;
-}
-
 // User information
 struct User
 	//: MemoryStack<User>
@@ -144,7 +120,7 @@ struct User
 		session(0),
 		id(_id),
 		events(0),
-		state(uState::init),
+		state(Init),
 		layer(protocol::null_layer),
 		syncing(protocol::Global),
 		isAdmin(false),
@@ -282,9 +258,26 @@ struct User
 	// Event I/O registered events.
 	uint32_t events;
 	
+	// User state
+	enum State
+	{
+		// When user has just connected
+		Init,
+		
+		// User has been verified to be using correct protocol.
+		Verified,
+		
+		// Waiting for proper user info
+		Login,
+		
+		// Waiting for password
+		LoginAuth,
+		
+		// Normal operation
+		Active
+	} state;
+	
 	uint8_t
-		// User state
-		state,
 		// Active layer in session
 		layer,
 		// Session we're currently syncing.
