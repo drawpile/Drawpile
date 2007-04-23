@@ -29,13 +29,10 @@
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
-#include "config.h"
-
-#include "../shared/templates.h"
+#include "common.h"
 
 #include <iostream>
 #include <stdexcept>
-#include <boost/cstdint.hpp>
 
 #ifdef IPV6_SUPPORT
 #define IPV6_SUPPORT_INCOMPLETE 1

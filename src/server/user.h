@@ -15,7 +15,7 @@
 #ifndef ServerUser_INCLUDED
 #define ServerUser_INCLUDED
 
-#include "../shared/templates.h" // f~()
+#include "common.h"
 
 #include "buffer.h"
 
@@ -24,7 +24,6 @@ struct Session; // defined elsewhere
 	#include "session.h"
 #endif
 
-//#include "../shared/memstack.h" // unused
 #include "../shared/protocol.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.flags.h"
@@ -36,8 +35,6 @@ class Socket; // defined elsewhere
 #endif
 
 #include "message.h" // message_ref
-
-#include <boost/cstdint.hpp>
 
 #include <deque>
 

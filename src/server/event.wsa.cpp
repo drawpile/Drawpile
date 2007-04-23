@@ -26,7 +26,8 @@
 
 *******************************************************************************/
 
-#include "config.h"
+#include "common.h"
+
 #include "event.h"
 
 #ifndef EV_WSA
@@ -34,9 +35,6 @@
 #endif
 
 #include <iostream>
-#include <ctime>
-#include <cerrno> // errno
-#include <memory> // memcpy()
 #include <cassert> // assert()
 
 using std::cout;
@@ -89,7 +87,7 @@ Event::Event() throw()
 		<< "FD_MAX_EVENTS: " << FD_MAX_EVENTS << endl;
 	#endif
 	
-	for (unsigned int i=0; i != max_events; i++)
+	for (uint i=0; i != max_events; i++)
 		w_ev[i] = WSA_INVALID_EVENT;
 }
 

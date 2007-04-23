@@ -16,7 +16,8 @@
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
-//#include "../shared/protocol.types.h"
+#include "common.h"
+
 #include "../shared/protocol.flags.h"
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.defaults.h"
@@ -28,8 +29,7 @@ struct User; // defined elsewhere
 	#include "user.h"
 #endif
 
-#include <limits>
-#include <boost/cstdint.hpp>
+#include <limits> // std::numeric_limits<T>
 
 #if defined(HAVE_SLIST)
 	#include <ext/slist>

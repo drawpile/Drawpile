@@ -29,9 +29,7 @@
 #ifndef EVENT_H_INCLUDED
 #define EVENT_H_INCLUDED
 
-#include "config.h"
-
-#include <boost/cstdint.hpp>
+#include "common.h"
 
 #if defined(HAVE_HASH_MAP)
 	#include <ext/hash_map>
@@ -165,7 +163,7 @@ protected:
 	
 	// return value of EV wait call
 	#ifdef EV_WSA
-	unsigned int nfds;
+	uint nfds;
 	#else // everything else
 	int nfds;
 	#endif

@@ -33,7 +33,7 @@
 #ifndef Server_C_Included
 #define Server_C_Included
 
-#include "config.h"
+#include "common.h"
 
 #include "../shared/SHA1.h"
 #include "../shared/protocol.h"
@@ -46,9 +46,8 @@
 
 #include "message.h" // message_ref
 
-#include <ctime>
+#include <ctime> // time_t, time(0)
 #include <queue>
-#include <boost/cstdint.hpp>
 #if defined(HAVE_HASH_MAP)
 	#include <ext/hash_map>
 #endif
