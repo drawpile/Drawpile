@@ -31,25 +31,18 @@
 *******************************************************************************/
 
 #include "server.h"
+#include "common.h"
 
-#include "../shared/templates.h"
 #include "../shared/protocol.types.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
-//#include "../shared/protocol.h" // Message()
 
 #if defined(HAVE_ZLIB)
 	#include <zlib.h>
 #endif
 
-#include <limits>
-#include <algorithm>
-//#include <ctime>
-#include <cstdlib>
+#include <limits> // std::numeric_limits<T>
 #include <iostream>
-
-#include <vector>
-//#include <map>
 
 using std::cout;
 using std::endl;
@@ -348,7 +341,7 @@ void Server::uWrite(User*& usr) throw()
 			// TODO: Move to separate function
 			
 			char* temp;
-			unsigned long buffer_len = len + 12;
+			ulong buffer_len = len + 12;
 			// make the potential new buffer generous in its size
 			
 			bool inBuffer;
@@ -366,7 +359,7 @@ void Server::uWrite(User*& usr) throw()
 				inBuffer = true;
 			}
 			
-			const int r = compress2(reinterpret_cast<unsigned char*>(temp), &buffer_len, reinterpret_cast<unsigned char*>(usr->output.rpos), len, 5);
+			const int r = compress2(reinterpret_cast<uchar*>(temp), &buffer_len, reinterpret_cast<uchar*>(usr->output.rpos), len, 5);
 			
 			assert(r != Z_STREAM_ERROR);
 			
@@ -1061,7 +1054,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 	
 	bool inBuffer;
 	char *temp;
-	unsigned long tmplen = stream->uncompressed;
+	ulong tmplen = stream->uncompressed;
 	if (usr->input.canWrite() < stream->uncompressed)
 	{
 		temp = new char[stream->uncompressed];
@@ -1073,7 +1066,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		inBuffer = true;
 	}
 	
-	const int r = uncompress(reinterpret_cast<unsigned char*>(temp), &tmplen, reinterpret_cast<unsigned char*>(stream->data), stream->length);
+	const int r = uncompress(reinterpret_cast<uchar*>(temp), &tmplen, reinterpret_cast<uchar*>(stream->data), stream->length);
 	
 	switch (r)
 	{
@@ -2015,11 +2008,14 @@ void Server::SyncSession(Session* session) throw()
 	// Release clients from syncwait...
 	Propagate(*session, msgAck(session->id, protocol::type::SyncWait));
 	
-	std::vector<message_ref> msg_queue;
-	msg_queue.reserve(8);
+	#ifdef HAVE_SLIST
+	__gnu_cxx::slist<message_ref> msg_queue;
+	#else
+	std::list<message_ref> msg_queue;
+	#endif
 	
 	if (session->locked)
-		msg_queue.push_back(message_ref(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0)));
+		msg_queue.insert(msg_queue.end(), message_ref(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0)));
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
@@ -2032,14 +2028,14 @@ void Server::SyncSession(Session* session) throw()
 		usi->second->syncWait = false;
 		
 		// add join
-		msg_queue.push_back(msgUserEvent(*usr_ptr, session->id, protocol::user_event::Join));
+		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session->id, protocol::user_event::Join));
 		if (usr_ptr->session->id == session->id)
 		{
 			// add session select
 			ref.reset(new protocol::SessionSelect);
 			ref->user_id = usr_ptr->id;
 			ref->session_id = session->id;
-			msg_queue.push_back(ref);
+			msg_queue.insert(msg_queue.end(), ref);
 			
 			if (usr_ptr->layer != protocol::null_layer)
 			{
@@ -2047,21 +2043,25 @@ void Server::SyncSession(Session* session) throw()
 				ref.reset(new protocol::LayerSelect(usr_ptr->layer));
 				ref->user_id = usr_ptr->id;
 				ref->session_id = session->id;
-				msg_queue.push_back(ref);
+				msg_queue.insert(msg_queue.end(), ref);
 			}
 		}
 		
 		if (usi->second->cachedToolInfo != 0)
-			msg_queue.push_back(message_ref(new protocol::ToolInfo(*usi->second->cachedToolInfo)));
+			msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*usi->second->cachedToolInfo)));
 	}
 	
 	userlist_const_i n_user;
 	
 	// announce the new users
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
-		msg_queue.push_back(msgUserEvent(**n_user, session->id, protocol::user_event::Join));
+		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session->id, protocol::user_event::Join));
 	
-	std::vector<message_ref>::const_iterator m_iter;
+	#ifdef HAVE_SLIST
+	__gnu_cxx::slist<message_ref>::const_iterator m_iter;
+	#else
+	std::list<message_ref>::const_iterator m_iter;
+	#endif
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
 	{
 		// Send messages

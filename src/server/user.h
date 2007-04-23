@@ -35,9 +35,9 @@ class Socket; // defined elsewhere
 	#include <iostream>
 #endif
 
+#include "message.h" // message_ref
+
 #include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
-typedef boost::shared_ptr<protocol::Message> message_ref;
 
 #include <deque>
 

@@ -44,17 +44,16 @@
 
 #include "event.h"
 
+#include "message.h" // message_ref
+
 #include <ctime>
 #include <queue>
 #include <boost/cstdint.hpp>
-#include <boost/shared_ptr.hpp>
 #if defined(HAVE_HASH_MAP)
 	#include <ext/hash_map>
 #endif
 #include <map> // tunnel
 #include <set> // utimer
-
-typedef boost::shared_ptr<protocol::Message> message_ref;
 
 namespace srv_defaults
 {
