@@ -74,7 +74,13 @@ protected:
 	/* data */
 	
 	// Server state
-	uint8_t state;
+	enum State {
+		Init,
+		Active,
+		Exiting,
+		Dead,
+		Error
+	} state;
 	
 	// Event interface
 	Event ev;

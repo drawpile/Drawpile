@@ -39,7 +39,6 @@
 
 #include "../shared/protocol.h"
 
-#include "server.flags.h"
 #include "server.h"
 
 #include <string>

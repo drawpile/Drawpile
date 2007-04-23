@@ -38,8 +38,6 @@
 #include "../shared/protocol.helper.h"
 //#include "../shared/protocol.h" // Message()
 
-#include "server.flags.h"
-
 #if defined(HAVE_ZLIB)
 	#include <zlib.h>
 #endif
@@ -87,7 +85,7 @@ typedef std::set<User*>::iterator userset_i;
 typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
-	: state(server::state::None),
+	: state(Server::Dead),
 	password(0),
 	a_password(0),
 	pw_len(0),
@@ -1021,7 +1019,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		
 	case protocol::type::Shutdown:
 		if (usr->isAdmin)
-			state = server::state::Exiting;
+			state = Server::Exiting;
 		break;
 	case protocol::type::Authenticate:
 		if (a_password == 0) // no admin password set
@@ -2365,7 +2363,7 @@ void Server::uRemove(User*& usr, const uint8_t reason) throw()
 	
 	// Transient mode exit.
 	if (Transient and users.empty())
-		state = server::state::Exiting;
+		state = Server::Exiting;
 }
 
 inline
@@ -2383,7 +2381,7 @@ void Server::sRemove(Session*& session) throw()
 
 bool Server::init() throw(std::bad_alloc)
 {
-	assert(state == server::state::None);
+	assert(state == Server::Dead);
 	
 	srand(time(0) - 513); // FIXME
 	
@@ -2429,7 +2427,7 @@ bool Server::init() throw(std::bad_alloc)
 		// set event timeout
 		ev.timeout(30000);
 		
-		state = server::state::Init;
+		state = Server::Init;
 		
 		return true;
 	}
@@ -2511,8 +2509,8 @@ int Server::run() throw()
 	cout << "Server::run()" << endl;
 	#endif
 	
-	assert(state == server::state::Init);
-	state = server::state::Active;
+	assert(state == Server::Init);
+	state = Server::Active;
 	
 	User *usr;
 	
@@ -2536,7 +2534,7 @@ int Server::run() throw()
 			break; // Nothing triggered
 		case -1:
 			cerr << "- Error in event system." << endl;
-			state = server::state::Error;
+			state = Server::Error;
 			return -1;
 		default:
 			while (ev.getEvent(fd, events))
@@ -2591,7 +2589,7 @@ int Server::run() throw()
 				cullIdlers();
 		}
 	}
-	while (state == server::state::Active);
+	while (state == Server::Active);
 	
 	return 0;
 }
