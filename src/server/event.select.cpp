@@ -34,6 +34,7 @@
 	#error EV_[P]SELECT not defined
 #endif
 
+#include <algorithm> // max_element()
 #include <iostream>
 #include <cerrno> // errno
 #include <memory> // memcpy()
