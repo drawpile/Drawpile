@@ -17,11 +17,10 @@
 
 class SHA1
 {
-	typedef union
-	{
+	union {
 		uint8_t  c[64];
 		uint32_t l[16];
-	} Workspace;
+	} m_block;
 public:
 	// Constructor and Destructor
 	SHA1() throw();
@@ -78,10 +77,6 @@ private:
 	#ifndef NDEBUG
 	bool finalized;
 	#endif
-	
-	// Member variables
-	
-	Workspace m_block;
 };
 
 #ifdef SHA1_OSTREAM
