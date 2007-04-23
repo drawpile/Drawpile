@@ -57,9 +57,11 @@ namespace protocol
 {
 
 #ifndef NDEBUG
+/* // boost uses deprecated stuff (undeclared name)
 BOOST_STATIC_ASSERT(sizeof(uint8_t) == 1);
 BOOST_STATIC_ASSERT(sizeof(uint16_t) == 2);
 BOOST_STATIC_ASSERT(sizeof(uint32_t) == 4);
+*/
 #endif
 
 //! Implemented protocol revision number.

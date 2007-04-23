@@ -42,7 +42,9 @@ template <class T> inline
 T& bswap(T& x) throw()
 {
 	#if !defined(IS_BIG_ENDIAN) and !defined(NDEBUG)
-	BOOST_STATIC_ASSERT(sizeof(T) == 1);
+	/* // boost uses deprecated stuff (undeclared name)
+	BOOST_STATIC_ASSERT((sizeof(T) == 1));
+	*/
 	#endif
 	
 	return x;
