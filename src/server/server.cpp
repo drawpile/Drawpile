@@ -767,14 +767,14 @@ void Server::uHandlePassword(User*& usr) throw()
 	assert(usr->inMsg != 0);
 	
 	sessions_const_i si;
-	protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
-	if (msg->session_id == protocol::Global)
+	protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
+	if (msg.session_id == protocol::Global)
 	{
 		// Admin login
 		if (a_password == 0)
 		{
 			cerr << "User tries to pass password even though we've disallowed it." << endl;
-			uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+			uSendMsg(*usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 			return;
 		}
 		else
@@ -789,17 +789,17 @@ void Server::uHandlePassword(User*& usr) throw()
 			return;
 		}
 		
-		si = sessions.find(msg->session_id);
+		si = sessions.find(msg.session_id);
 		if (si == sessions.end())
 		{
 			// session doesn't exist
-			uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
+			uSendMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
 			return;
 		}
-		else if (usr->inSession(msg->session_id))
+		else if (usr->inSession(msg.session_id))
 		{
 			// already in session
-			uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidRequest));
+			uSendMsg(*usr, msgError(msg.session_id, protocol::error::InvalidRequest));
 			return;
 		}
 		else if (si->second->canJoin() == false)
@@ -817,14 +817,14 @@ void Server::uHandlePassword(User*& usr) throw()
 	hash.GetHash(reinterpret_cast<uint8_t*>(digest));
 	hash.Reset();
 	
-	if (memcmp(digest, msg->data, protocol::password_hash_size) != 0) // mismatch
-		uSendMsg(*usr, msgError(msg->session_id, protocol::error::PasswordFailure));
+	if (memcmp(digest, msg.data, protocol::password_hash_size) != 0) // mismatch
+		uSendMsg(*usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 	else
 	{
 		// ACK the password
-		uSendMsg(*usr, msgAck(msg->session_id, protocol::type::Password));
+		uSendMsg(*usr, msgAck(msg.session_id, protocol::type::Password));
 		
-		if (msg->session_id == protocol::Global)
+		if (msg.session_id == protocol::Global)
 			usr->isAdmin = true;
 		else
 		{
@@ -979,7 +979,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::type::LayerSelect:
 		{
-			protocol::LayerSelect *layer = static_cast<protocol::LayerSelect*>(usr->inMsg);
+			protocol::LayerSelect &layer = *static_cast<protocol::LayerSelect*>(usr->inMsg);
 			
 			if (layer->layer_id == usr->a_layer // trying to select current layer
 				or (usr->a_layer_lock != protocol::null_layer
@@ -1044,20 +1044,20 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 	cout << "Server::DeflateReprocess(user: " << static_cast<int>(usr->id) << ")" << endl;
 	#endif
 	
-	protocol::Deflate* stream = static_cast<protocol::Deflate*>(usr->inMsg);
+	protocol::Deflate &stream = *static_cast<protocol::Deflate*>(usr->inMsg);
 	usr->inMsg = 0;
 	
 	#if !defined(NDEBUG)
-	cout << "Compressed: " << stream->length
-		<< " bytes, uncompressed: " << stream->uncompressed << " bytes." << endl;
+	cout << "Compressed: " << stream.length
+		<< " bytes, uncompressed: " << stream.uncompressed << " bytes." << endl;
 	#endif
 	
 	bool inBuffer;
 	char *temp;
-	ulong tmplen = stream->uncompressed;
-	if (usr->input.canWrite() < stream->uncompressed)
+	ulong tmplen = stream.uncompressed;
+	if (usr->input.canWrite() < stream.uncompressed)
 	{
-		temp = new char[stream->uncompressed];
+		temp = new char[stream.uncompressed];
 		inBuffer = false;
 	}
 	else
@@ -1066,7 +1066,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		inBuffer = true;
 	}
 	
-	const int r = uncompress(reinterpret_cast<uchar*>(temp), &tmplen, reinterpret_cast<uchar*>(stream->data), stream->length);
+	const int r = uncompress(reinterpret_cast<uchar*>(temp), &tmplen, reinterpret_cast<uchar*>(stream.data), stream.length);
 	
 	switch (r)
 	{
@@ -1085,7 +1085,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 				tmpbuf << usr->input;
 			
 			// Set the uncompressed data stream as the input buffer.
-			usr->input.setBuffer(temp, stream->uncompressed);
+			usr->input.setBuffer(temp, stream.uncompressed);
 			
 			#ifndef NDEBUG
 			++bufferResets; // stats
@@ -1123,16 +1123,16 @@ void Server::uHandleAck(User*& usr) throw()
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	
-	const protocol::Acknowledgement *ack = static_cast<protocol::Acknowledgement*>(usr->inMsg);
+	const protocol::Acknowledgement &ack = *static_cast<protocol::Acknowledgement*>(usr->inMsg);
 	
-	switch (ack->event)
+	switch (ack.event)
 	{
 	case protocol::type::SyncWait:
 		{
 			// check active session first
-			const usr_session_const_i usi(usr->sessions.find(ack->session_id));
+			const usr_session_const_i usi(usr->sessions.find(ack.session_id));
 			if (usi == usr->sessions.end())
-				uSendMsg(*usr, msgError(ack->session_id, protocol::error::NotSubscribed));
+				uSendMsg(*usr, msgError(ack.session_id, protocol::error::NotSubscribed));
 			else if (usi->second->syncWait) // duplicate syncwait
 				uRemove(usr, protocol::user_event::Dropped);
 			else
@@ -1256,18 +1256,18 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		return;
 	}
 	
-	protocol::SessionEvent *event = static_cast<protocol::SessionEvent*>(usr->inMsg);
+	protocol::SessionEvent &event = *static_cast<protocol::SessionEvent*>(usr->inMsg);
 	
-	switch (event->action)
+	switch (event.action)
 	{
 	case protocol::session_event::Kick:
 		{
-			const session_usr_const_i sui(session->users.find(event->target));
+			const session_usr_const_i sui(session->users.find(event.target));
 			if (sui == session->users.end()) // user not found in session
 				uSendMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
 			else
 			{
-				Propagate(*session, message_ref(event));
+				Propagate(*session, message_ref(&event));
 				usr->inMsg = 0;
 				User *usr_ptr = sui->second;
 				uLeaveSession(*usr_ptr, session, protocol::user_event::Kicked);
@@ -1276,7 +1276,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		break;
 	case protocol::session_event::Lock:
 	case protocol::session_event::Unlock:
-		if (event->target == protocol::null_user)
+		if (event.target == protocol::null_user)
 		{
 			// Lock whole board
 			
@@ -1284,10 +1284,10 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			cout << "Changing lock state for session #"
 				<< static_cast<int>(session->id)
 				<< " to "
-				<< (event->action == protocol::session_event::Lock ? "enabled" : "disabled") << endl;
+				<< (event.action == protocol::session_event::Lock ? "enabled" : "disabled") << endl;
 			#endif
 			
-			session->locked = (event->action == protocol::session_event::Lock ? true : false);
+			session->locked = (event.action == protocol::session_event::Lock ? true : false);
 		}
 		else
 		{
@@ -1295,14 +1295,14 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			
 			#ifndef NDEBUG
 			cout << "Changing lock state for user #"
-				<< static_cast<int>(event->target)
+				<< static_cast<int>(event.target)
 				<< " to "
-				<< (event->action == protocol::session_event::Lock ? "enabled" : "disabled")
+				<< (event.action == protocol::session_event::Lock ? "enabled" : "disabled")
 				<< " in session #" << static_cast<int>(session->id) << endl;
 			#endif
 			
 			// Find user
-			const session_usr_const_i session_usr(session->users.find(event->target));
+			const session_usr_const_i session_usr(session->users.find(event.target));
 			if (session_usr == session->users.end())
 			{
 				uSendMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
@@ -1314,38 +1314,38 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			const usr_session_const_i usi(usr->sessions.find(session->id));
 			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(session->id, protocol::error::NotInSession));
-			else if (event->aux == protocol::null_layer)
+			else if (event.aux == protocol::null_layer)
 			{
 				// lock completely
-				usi->second->locked = (event->action == protocol::session_event::Lock);
+				usi->second->locked = (event.action == protocol::session_event::Lock);
 				
 				// Copy active session
-				if (usr->session->id == event->session_id)
+				if (usr->session->id == event.session_id)
 					usr->a_locked = usi->second->locked;
 			}
-			else if (event->action == protocol::session_event::Lock)
+			else if (event.action == protocol::session_event::Lock)
 			{
 				#ifndef NDEBUG
 				cout << "Lock ignored, limiting user to layer #"
-					<< static_cast<int>(event->aux) << endl;
+					<< static_cast<int>(event.aux) << endl;
 				#endif
 				
-				usi->second->layer_lock = event->aux;
+				usi->second->layer_lock = event.aux;
 				// copy to active session
 				if (session->id == usr->session->id)
-					usr->a_layer_lock = event->aux;
+					usr->a_layer_lock = event.aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
 				if (usi->second->layer != usi->second->layer_lock)
 					usi->second->layer = protocol::null_layer;
-				if (usr->session->id == event->session_id)
+				if (usr->session->id == event.session_id)
 					usr->layer = protocol::null_layer;
 			}
 			else // unlock
 			{
 				#ifndef NDEBUG
 				cout << "Lock ignored, releasing user from layer #"
-					<< static_cast<int>(event->aux) << endl;
+					<< static_cast<int>(event.aux) << endl;
 				#endif
 				
 				usi->second->layer_lock = protocol::null_layer;
@@ -1356,19 +1356,19 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 		}
 		
-		Propagate(*session, message_ref(event));
+		Propagate(*session, message_ref(&event));
 		usr->inMsg = 0;
 		
 		break;
 	case protocol::session_event::Delegate:
 		{
-			const session_usr_const_i sui(session->users.find(event->target));
+			const session_usr_const_i sui(session->users.find(event.target));
 			if (sui == session->users.end()) // User not found
 				uSendMsg(*usr, msgError(session->id, protocol::error::NotInSession));
 			else
 			{
 				session->owner = sui->second->id;
-				Propagate(*session, message_ref(event), (usr->c_acks ? usr : 0));
+				Propagate(*session, message_ref(&event), (usr->c_acks ? usr : 0));
 				usr->inMsg = 0;
 			}
 		}
@@ -1376,7 +1376,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	case protocol::session_event::Mute:
 	case protocol::session_event::Unmute:
 		{
-			users_i ui(users.find(event->target));
+			users_i ui(users.find(event.target));
 			if (ui == users.end())
 				uSendMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
 			else
@@ -1387,13 +1387,13 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				else
 				{
 					// Set mode
-					usi->second->muted = (event->action == protocol::session_event::Mute);
+					usi->second->muted = (event.action == protocol::session_event::Mute);
 					
 					// Copy to active session's mode, too.
-					if (usr->session->id == event->target)
+					if (usr->session->id == event.target)
 						usr->a_muted = usi->second->muted;
 					
-					Propagate(*session, message_ref(event), (usr->c_acks ? usr : 0));
+					Propagate(*session, message_ref(&event), (usr->c_acks ? usr : 0));
 					
 					usr->inMsg = 0;
 				}
@@ -1410,7 +1410,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		break;
 	default:
 		cerr << "Unknown session action: "
-			<< static_cast<int>(event->action) << ")" << endl;
+			<< static_cast<int>(event.action) << ")" << endl;
 		uRemove(usr, protocol::user_event::Violation);
 		return;
 	}
@@ -1436,9 +1436,9 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		<< static_cast<int>(usr->id) << ")" << endl;
 	#endif
 	
-	protocol::SessionInstruction *msg = static_cast<protocol::SessionInstruction*>(usr->inMsg);
+	protocol::SessionInstruction &msg = *static_cast<protocol::SessionInstruction*>(usr->inMsg);
 	
-	switch (msg->action)
+	switch (msg.action)
 	{
 	case protocol::session_command::Create:
 		if (!usr->isAdmin) { break; }
@@ -1448,59 +1448,59 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			
 			if (session_id == protocol::Global)
 			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::SessionLimit));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::SessionLimit));
 				break;
 			}
-			else if (msg->user_limit < 2)
+			else if (msg.user_limit < 2)
 			{
 				#ifndef NDEBUG
 				cerr << "Attempted to create single user session." << endl;
 				#endif
 				
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidData));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
 				break;
 			}
 			/*
-			else if (fIsSet(msg->user_mode, )) // admin flag
+			else if (fIsSet(msg.user_mode, )) // admin flag
 			{
 				// TODO
 				break;
 			}
 			*/
 			
-			if (msg->width < min_dimension or msg->height < min_dimension
-				or msg->width > protocol::max_dimension or msg->height > protocol::max_dimension)
+			if (msg.width < min_dimension or msg.height < min_dimension
+				or msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
 			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidSize));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::InvalidSize));
 				break;
 			}
 			
 			#ifndef NDEBUG
-			if (msg->title == 0)
+			if (msg.title == 0)
 				cout << "No title set for session." << endl;
 			#endif
 			
 			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
-				and !validateSessionTitle(msg->title, msg->title_len))
+				and !validateSessionTitle(msg.title, msg.title_len))
 			{
 				#ifndef NDEBUG
 				cerr << "Session title not unique." << endl;
 				#endif
 				
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::NotUnique));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
 			}
 			else
 			{
 				Session *session = new Session(
 					session_id, // identifier
-					msg->user_mode, // mode
-					msg->user_limit, // user limit
+					msg.user_mode, // mode
+					msg.user_limit, // user limit
 					usr->id, // owner
-					msg->width, // width
-					msg->height, // height
+					msg.width, // width
+					msg.height, // height
 					usr->level, // inherit user's feature level
-					msg->title_len,
-					msg->title
+					msg.title_len,
+					msg.title
 				);
 				
 				sessions[session->id] = session;
@@ -1513,18 +1513,18 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 					<< "  Owner: " << static_cast<int>(usr->id)
 					<< ", from: " << usr->sock.address() << endl;
 				
-				msg->title = 0; // prevent title from being deleted
+				msg.title = 0; // prevent title from being deleted
 				
-				uSendMsg(*usr, msgAck(msg->session_id, protocol::type::SessionInstruction));
+				uSendMsg(*usr, msgAck(msg.session_id, protocol::type::SessionInstruction));
 			}
 		}
 		return; // because session owner might've done this
 	case protocol::session_command::Destroy:
 		{
-			const sessions_const_i si(sessions.find(msg->session_id));
+			const sessions_const_i si(sessions.find(msg.session_id));
 			if (si == sessions.end())
 			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
 				return;
 			}
 			Session *session = si->second;
@@ -1555,10 +1555,10 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::session_command::Alter:
 		{
-			const sessions_const_i si(sessions.find(msg->session_id));
+			const sessions_const_i si(sessions.find(msg.session_id));
 			if (si == sessions.end())
 			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::UnknownSession));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
 				break;
 			}
 			Session *session = si->second;
@@ -1571,12 +1571,12 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			// user limit adjustment
-			session->limit = msg->user_limit;
+			session->limit = msg.user_limit;
 			
 			// default user mode adjustment
-			session->mode = msg->user_mode;
+			session->mode = msg.user_mode;
 			
-			if ((msg->width < session->width) or (msg->height < session->height))
+			if ((msg.width < session->width) or (msg.height < session->height))
 			{
 				cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << endl
@@ -1584,21 +1584,21 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				uRemove(usr, protocol::user_event::Violation);
 				break;
 			}
-			else if (msg->width > protocol::max_dimension or msg->height > protocol::max_dimension)
+			else if (msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
 			{
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::InvalidSize));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::InvalidSize));
 				break;
 			}
 			
-			session->width = msg->width;
-			session->height = msg->height;
+			session->width = msg.width;
+			session->height = msg.height;
 			
 			// new title
 			delete [] session->title;
-			if (msg->title_len != 0)
+			if (msg.title_len != 0)
 			{
-				session->title = msg->title;
-				session->title_len = msg->title_len;
+				session->title = msg.title;
+				session->title_len = msg.title_len;
 			}
 			else
 				session->title_len = 0;
@@ -1615,7 +1615,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		break;
 	default:
 		#ifndef NDEBUG
-		cerr << "Unrecognized action: " << static_cast<int>(msg->action) << endl;
+		cerr << "Unrecognized action: " << static_cast<int>(msg.action) << endl;
 		#endif
 		uRemove(usr, protocol::user_event::Dropped);
 		return;
@@ -1629,13 +1629,13 @@ void Server::uSetPassword(User*& usr) throw()
 	assert(usr->inMsg != 0);
 	assert(usr->inMsg->type == protocol::type::SetPassword);
 	
-	protocol::SetPassword *setpw = static_cast<protocol::SetPassword*>(usr->inMsg);
-	if (setpw->session_id == protocol::Global)
+	protocol::SetPassword &setpw = *static_cast<protocol::SetPassword*>(usr->inMsg);
+	if (setpw.session_id == protocol::Global)
 	{
 		if (usr->isAdmin)
 		{
-			setPassword(setpw->password, setpw->password_len);
-			setpw->password = 0;
+			setPassword(setpw.password, setpw.password_len);
+			setpw.password = 0;
 			
 			#ifndef NDEBUG
 			cout << "Server password changed." << endl;
@@ -1648,10 +1648,10 @@ void Server::uSetPassword(User*& usr) throw()
 	}
 	else
 	{
-		const sessions_const_i si(sessions.find(setpw->session_id));
+		const sessions_const_i si(sessions.find(setpw.session_id));
 		if (si == sessions.end())
 		{
-			uSendMsg(*usr, msgError(setpw->session_id, protocol::error::UnknownSession));
+			uSendMsg(*usr, msgError(setpw.session_id, protocol::error::UnknownSession));
 			return;
 		}
 		Session *session = si->second;
@@ -1665,17 +1665,17 @@ void Server::uSetPassword(User*& usr) throw()
 		
 		#ifndef NDEBUG
 		cout << "Password set for session #"
-			<< static_cast<int>(setpw->session_id) << endl;
+			<< static_cast<int>(setpw.session_id) << endl;
 		#endif
 		
 		if (session->password != 0)
 			delete [] session->password;
 		
-		session->password = setpw->password;
-		session->pw_len = setpw->password_len;
-		setpw->password = 0;
+		session->password = setpw.password;
+		session->pw_len = setpw.password_len;
+		setpw.password = 0;
 		
-		uSendMsg(*usr, msgAck(setpw->session_id, protocol::type::SetPassword));
+		uSendMsg(*usr, msgAck(setpw.session_id, protocol::type::SetPassword));
 	}
 }
 
@@ -1695,24 +1695,24 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	case User::Login:
 		if (usr->inMsg->type == protocol::type::UserInfo)
 		{
-			protocol::UserInfo *msg = static_cast<protocol::UserInfo*>(usr->inMsg);
+			protocol::UserInfo &msg = *static_cast<protocol::UserInfo*>(usr->inMsg);
 			
-			if (msg->length > name_len_limit)
+			if (msg.length > name_len_limit)
 			{
 				#ifndef NDEBUG
-				cerr << "Name too long: " << static_cast<int>(msg->length)
+				cerr << "Name too long: " << static_cast<int>(msg.length)
 					<< " > " << static_cast<int>(name_len_limit) << endl;
 				#endif
 				
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::TooLong));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::TooLong));
 				
 				//uRemove(usr, protocol::user_event::Dropped);
 				break;
 			}
 			
 			// assign user their own name
-			usr->name = msg->name;
-			usr->name_len = msg->length;
+			usr->name = msg.name;
+			usr->name_len = msg.length;
 			
 			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
 				and !validateUserName(usr))
@@ -1721,18 +1721,18 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				cerr << "User name not unique." << endl;
 				#endif
 				
-				uSendMsg(*usr, msgError(msg->session_id, protocol::error::NotUnique));
+				uSendMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
 				
 				//uRemove(usr, protocol::user_event::Dropped);
 				break;
 			}
 			
 			// assign message the user's id (for sending back)
-			msg->user_id = usr->id;
+			msg.user_id = usr->id;
 			
 			// null the message's name information, so they don't get deleted
-			msg->length = 0;
-			msg->name = 0;
+			msg.length = 0;
+			msg.name = 0;
 			
 			usr->setAMode(default_user_mode);
 			
@@ -1754,7 +1754,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 					usr->isAdmin = true;
 			}
 			
-			msg->mode = usr->getAMode();
+			msg.mode = usr->getAMode();
 			
 			usr->state = User::Active;
 			usr->deadtime = 0;
@@ -1764,7 +1764,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			utimer.erase(utimer.find(usr));
 			
 			// reply
-			uSendMsg(*usr, message_ref(msg));
+			uSendMsg(*usr, message_ref(&msg));
 		}
 		else // wrong message type
 			uRemove(usr, protocol::user_event::Violation);
@@ -1772,7 +1772,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	case User::LoginAuth:
 		if (usr->inMsg->type == protocol::type::Password)
 		{
-			const protocol::Password *msg = static_cast<protocol::Password*>(usr->inMsg);
+			const protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
 			
 			hash.Update(reinterpret_cast<uint8_t*>(password), pw_len);
 			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
@@ -1781,9 +1781,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
 			hash.Reset();
 			
-			if (memcmp(digest, msg->data, protocol::password_hash_size) == 0)
+			if (memcmp(digest, msg.data, protocol::password_hash_size) == 0)
 			{
-				uSendMsg(*usr, msgAck(msg->session_id, protocol::type::Password)); // ACK
+				uSendMsg(*usr, msgAck(msg.session_id, protocol::type::Password)); // ACK
 				uRegenSeed(*usr); // mangle seed
 				usr->state = User::Login; // set state
 				uSendMsg(*usr, msgHostInfo()); // send hostinfo
@@ -1797,9 +1797,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	case User::Init:
 		if (usr->inMsg->type == protocol::type::Identifier)
 		{
-			const protocol::Identifier *ident = static_cast<protocol::Identifier*>(usr->inMsg);
+			const protocol::Identifier &ident = *static_cast<protocol::Identifier*>(usr->inMsg);
 			
-			if (memcmp(ident->identifier, protocol::identifier_string, protocol::identifier_size) != 0)
+			if (memcmp(ident.identifier, protocol::identifier_string, protocol::identifier_size) != 0)
 			{
 				#ifndef NDEBUG
 				cerr << "Protocol string mismatch" << endl;
@@ -1807,12 +1807,12 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				
 				uRemove(usr, protocol::user_event::Violation);
 			}
-			else if (ident->revision != protocol::revision)
+			else if (ident.revision != protocol::revision)
 			{
 				#ifndef NDEBUG
 				cerr << "Protocol revision mismatch ---  "
 					<< "expected: " << protocol::revision
-					<< ", got: " << ident->revision << endl;
+					<< ", got: " << ident.revision << endl;
 				#endif
 				
 				// TODO: Implement some compatible way of announcing incompatibility?
@@ -1832,9 +1832,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 					uSendMsg(*usr, msgPWRequest(*usr, protocol::Global));
 				}
 				
-				usr->level = ident->level; // feature level used by client
-				usr->setCapabilities(ident->flags);
-				usr->setExtensions(ident->extensions);
+				usr->level = ident.level; // feature level used by client
+				usr->setCapabilities(ident.flags);
+				usr->setExtensions(ident.extensions);
 				usr->setAMode(default_user_mode);
 				//if (!usr->ext_chat)
 				//	usr->a_deaf = true;
@@ -1864,12 +1864,12 @@ void Server::uLayerEvent(User*& usr) throw()
 	cout << "Server::uLayerEvent(session: " << usr->inMsg->session_id << ")" << endl;
 	#endif
 	
-	protocol::LayerEvent *levent = static_cast<protocol::LayerEvent*>(usr->inMsg);
+	protocol::LayerEvent &levent = *static_cast<protocol::LayerEvent*>(usr->inMsg);
 	
-	sessions_i si(sessions.find(levent->session_id));
+	sessions_i si(sessions.find(levent.session_id));
 	if (si == sessions.end()) // session not found
 	{
-		uSendMsg(*usr, msgError(levent->session_id, protocol::error::UnknownSession));
+		uSendMsg(*usr, msgError(levent.session_id, protocol::error::UnknownSession));
 		return;
 	}
 	
@@ -1880,39 +1880,39 @@ void Server::uLayerEvent(User*& usr) throw()
 		return;
 	}
 	
-	switch (levent->action)
+	switch (levent.action)
 	{
 	case protocol::layer_event::Create:
 		{
 			// TODO: Figure out what to do with the layer ID
-			uint8_t lastLayer = levent->layer_id;
-			session->layers[lastLayer] = LayerData(lastLayer, levent->mode, levent->opacity);
+			uint8_t lastLayer = levent.layer_id;
+			session->layers[lastLayer] = LayerData(lastLayer, levent.mode, levent.opacity);
 		}
 		break;
 	case protocol::layer_event::Destroy:
-		session->layers.erase(levent->layer_id);
+		session->layers.erase(levent.layer_id);
 		// TODO: Cleanup
 		break;
 	case protocol::layer_event::Alter:
 		{
-			session_layer_i sli = session->layers.find(levent->layer_id);
+			session_layer_i sli = session->layers.find(levent.layer_id);
 			if (sli == session->layers.end())
 			{
 				uSendMsg(*usr, msgError(session->id, protocol::error::UnknownLayer));
 				return;
 			}
-			sli->second = LayerData(levent->layer_id, levent->mode, levent->opacity);
+			sli->second = LayerData(levent.layer_id, levent.mode, levent.opacity);
 		}
 		break;
 	default:
-		cerr << "Unknown layer event: " << levent->action << std::endl;
+		cerr << "Unknown layer event: " << levent.action << std::endl;
 		uRemove(usr, protocol::user_event::Violation);
 		return;
 	}
 	
-	levent->user_id = usr->id;
+	levent.user_id = usr->id;
 	
-	Propagate(*session, message_ref(levent), (usr->c_acks ? usr : 0));
+	Propagate(*session, message_ref(&levent), (usr->c_acks ? usr : 0));
 	usr->inMsg = 0;
 }
 
