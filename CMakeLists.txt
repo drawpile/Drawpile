@@ -5,6 +5,11 @@ project ( DrawPile CXX C )
 
 cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 
+### generic info
+
+set ( WEBSITE "http://drawpile.sourceforge.net/" )
+set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
+
 ### options ###
 
 # do these even work?
@@ -67,12 +72,6 @@ endif ( SHARED )
 
 ### config.h ###
 
-# check portability stuff
-
-include ( CheckVariableExists )
-#include ( CheckIncludeFile )
-include ( CheckIncludeFileCXX )
-
 ### Boost library
 
 find_package ( Boost 1.33 REQUIRED )
@@ -86,22 +85,17 @@ else ( Boost_FOUND )
 	message ( FATAL_ERROR "Boost C++ Libraries missing" )
 endif ( Boost_FOUND )
 
-### mode tests ###
+### endianess tests ###
 
-#! needs C in project ()
-include ( TestBigEndian )
+include ( TestBigEndian ) # needs C in project()
 test_big_endian ( IS_BIG_ENDIAN )
 
-# scan sub-directories
-
-add_subdirectory( src/ )
-
 ### Output config.h ###
-
-#export_library_dependencies( cmake.depend )
-
 configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
+
+# scan sub-directories
+add_subdirectory( src/ )
 
 ### subdirs ###
 
@@ -112,7 +106,6 @@ else ( DEBUG )
 endif ( DEBUG)
 
 ### Build type ###
-
 if ( DEBUG )
 	set ( CMAKE_BUILD_TYPE Debug )
 else ( DEBUG )
