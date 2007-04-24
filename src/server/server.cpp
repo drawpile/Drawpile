@@ -2514,29 +2514,20 @@ int Server::run() throw()
 	
 	User *usr;
 	
-	// event count
-	int ec;
-	
 	fd_t fd;
 	uint32_t events;
 	
 	// main loop
 	do
 	{
-		ec = ev.wait();
-		current_time = time(0);
-		switch (ec)
+		switch (ev.wait())
 		{
-		case 0:
-			#ifndef NDEBUG
-			cout << "+ Idling..." << endl;
-			#endif
-			break; // Nothing triggered
 		case -1:
-			cerr << "- Error in event system." << endl;
+			cerr << "- Error in event system: " << ev.getError() << endl;
 			state = Server::Error;
 			return -1;
 		default:
+			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
 				if (fd == lsock.fd())
@@ -2576,17 +2567,17 @@ int Server::run() throw()
 						goto timercheck;
 				}
 			}
+			
+			timercheck:
+			// check timer
+			if (next_timer < current_time)
+			{
+				if (utimer.empty())
+					next_timer = current_time + 1800;
+				else
+					cullIdlers();
+			}
 			break;
-		}
-		
-		timercheck:
-		// check timer
-		if (next_timer < current_time)
-		{
-			if (utimer.empty())
-				next_timer = current_time + 1800;
-			else
-				cullIdlers();
 		}
 	}
 	while (state == Server::Active);
