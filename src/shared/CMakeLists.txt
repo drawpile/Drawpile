@@ -26,12 +26,21 @@ if (WIN32)
 endif (WIN32)
 
 add_library (
-	${LIBNAME}
+	libdrawpile
 	${LIBTYPE}
 	${Shared_Sources}
 	${Shared_Headers}
 )
 
+set_target_properties (
+	libdrawpile
+	PROPERTIES
+	OUTPUT_NAME drawpile
+	VERSION 0.4.0
+	SOVERSION 0.4.0
+	PROJECT_LABEL drawpile-library
+)
+
 if ( SHARED )
-	install ( TARGETS ${LIBNAME} LIBRARY DESTINATION lib )
+	install ( TARGETS libdrawpile LIBRARY DESTINATION lib )
 endif ( SHARED )

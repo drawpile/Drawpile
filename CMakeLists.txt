@@ -5,14 +5,6 @@ project ( DrawPile CXX C )
 
 cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 
-### config options ###
-
-set ( LIBVERSION "0.3" )
-
-set ( LIBNAME "drawpile-${LIBVERSION}" )
-set ( CLIENTNAME drawpile )
-set ( SERVERNAME drawpile-srv )
-
 ### options ###
 
 # do these even work?

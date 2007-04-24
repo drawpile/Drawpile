@@ -68,7 +68,7 @@ set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
 if (NOT DEBUG)
 	add_definitions(-DQT_NO_DEBUG)
 	
-	strip_exe ( ${CLIENTNAME} )
+	strip_exe ( drawpile )
 endif ( NOT DEBUG )
 
 set ( EXETYPE "" )
@@ -80,14 +80,14 @@ if ( WIN32 )
 	endif ( NOT DEBUG )
 endif ( WIN32 )
 
-link_libraries( ${LIBNAME} ) # DP shared library
+link_libraries( libdrawpile ) # DP shared library
 
 if ( ACCEPT_MTHREADS )
 	set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads" )
 endif ( ACCEPT_MTHREADS )
 
 add_executable (
-	${CLIENTNAME}
+	drawpile
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${Client_Sources}
@@ -98,8 +98,15 @@ add_executable (
 )
 
 target_link_libraries(
-	${CLIENTNAME}
+	drawpile
 	${QT_LIBRARIES}
+)
+
+set_target_properties (
+	drawpile
+	PROPERTIES
+	VERSION 0.5.0
+	PROJECT_LABEL drawpile-client
 )
 
 install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )

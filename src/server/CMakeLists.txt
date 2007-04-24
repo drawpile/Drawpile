@@ -160,12 +160,19 @@ if ( WIN32 )
 	link_libraries ( ws2_32 )
 endif ( WIN32 )
 
-link_libraries( ${LIBNAME} ) # DP shared library
+link_libraries( libdrawpile ) # DP shared library
 
 if ( NOT DEBUG )
-	strip_exe ( ${SERVERNAME} )
+	strip_exe ( drawpile-srv )
 endif ( NOT DEBUG )
 
-add_executable ( ${SERVERNAME} MACOSX_BUNDLE ${Server_Sources} ${EV_SRC} ${Server_Headers} )
+add_executable ( drawpile-srv MACOSX_BUNDLE ${Server_Sources} ${EV_SRC} ${Server_Headers} )
+
+set_target_properties (
+	drawpile-srv
+	PROPERTIES
+	VERSION 0.5.0
+	PROJECT_LABEL drawpile-server
+)
 
 install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
