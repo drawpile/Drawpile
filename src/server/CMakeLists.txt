@@ -154,10 +154,28 @@ endif ( GNUEXT )
 configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/server/config.h )
 add_definitions ( -DHAVE_SRVCONFIG )
 
-### link
-
+set ( RES "" )
 if ( WIN32 )
+	### link
 	link_libraries ( ws2_32 )
+	
+	### generate resource file .o
+	set ( RES ${CMAKE_CURRENT_BINARY_DIR}/server.resource.o )
+	add_custom_command(
+		OUTPUT ${RES}
+		COMMAND windres ${CMAKE_CURRENT_SOURCE_DIR}/server.rc ${RES}
+	)
+	
+	get_directory_property (
+		CLEANF
+		ADDITIONAL_MAKE_CLEAN_FILES
+	)
+	
+	set_directory_properties (
+		PROPERTIES
+		ADDITIONAL_MAKE_CLEAN_FILES
+		"${CLEANF} server.resource.o"
+	)
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
@@ -166,7 +184,7 @@ if ( NOT DEBUG )
 	strip_exe ( drawpile-srv )
 endif ( NOT DEBUG )
 
-add_executable ( drawpile-srv MACOSX_BUNDLE ${Server_Sources} ${EV_SRC} ${Server_Headers} )
+add_executable ( drawpile-srv MACOSX_BUNDLE WIN32 ${Server_Sources} ${EV_SRC} ${Server_Headers} ${RES} )
 
 set_target_properties (
 	drawpile-srv
