@@ -1,5 +1,21 @@
 # client
 
+set ( FULLNAME "DrawPile Client" )
+set ( INTERNALNAME "drawpile" )
+set ( COPYRIGHT "Copyright (C) 2006,2007 Calle Laakkonen" )
+set ( DESCRIPTION "DrawPile client" )
+set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
+
+set ( VERSION_MAJOR 0 )
+set ( VERSION_MINOR 5 )
+set ( VERSION_BUG 0 )
+
+if ( WIN32 )
+	set ( ORIGFILENAME "${INTERNALNAME}.exe" )
+else ( WIN32 )
+	set ( ORIGFILENAME "${INTERNALNAME}" )
+endif ( WIN32 )
+
 # Qt stuff
 
 # enable Qt Network
@@ -81,10 +97,13 @@ if ( WIN32 )
 	endif ( NOT DEBUG )
 	
 	### generate resource file .o
+	set ( SourceRES ${CMAKE_CURRENT_SOURCE_DIR}/client.rc )
+	dump_resource ( ${SourceRES} )
+	
 	set ( RES ${CMAKE_CURRENT_BINARY_DIR}/client.resource.o )
 	add_custom_command(
 		OUTPUT ${RES}
-		COMMAND windres ${CMAKE_CURRENT_SOURCE_DIR}/client.rc ${RES}
+		COMMAND windres ${SourceRES} ${RES}
 	)
 	
 	get_directory_property (

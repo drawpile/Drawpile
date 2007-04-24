@@ -1,5 +1,21 @@
 # src/server/
 
+set ( FULLNAME "DrawPile Server " )
+set ( INTERNALNAME "drawpile-srv" )
+set ( COPYRIGHT "Copyright (C) 2006,2007 M.K.A." )
+set ( DESCRIPTION "DrawPile stand-alone UI-less server" )
+set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
+
+set ( VERSION_MAJOR 0 )
+set ( VERSION_MINOR 5 )
+set ( VERSION_BUG 0 )
+
+if ( WIN32 )
+	set ( ORIGFILENAME "${INTERNALNAME}.exe" )
+else ( WIN32 )
+	set ( ORIGFILENAME "${INTERNALNAME}" )
+endif ( WIN32 )
+
 set (
 	Server_Headers
 	server.h
@@ -156,14 +172,16 @@ add_definitions ( -DHAVE_SRVCONFIG )
 
 set ( RES "" )
 if ( WIN32 )
-	### link
 	link_libraries ( ws2_32 )
 	
 	### generate resource file .o
+	set ( SourceRES ${CMAKE_CURRENT_SOURCE_DIR}/server.rc )
+	dump_resource ( ${SourceRES} )
+	
 	set ( RES ${CMAKE_CURRENT_BINARY_DIR}/server.resource.o )
 	add_custom_command(
 		OUTPUT ${RES}
-		COMMAND windres ${CMAKE_CURRENT_SOURCE_DIR}/server.rc ${RES}
+		COMMAND windres ${SourceRES} ${RES}
 	)
 	
 	get_directory_property (
