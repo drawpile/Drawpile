@@ -140,6 +140,7 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	if (size < length)
 	{
 		size = roundToNext(length, 4096u);
+		assert(size >= length);
 		data = new char[size];
 	}
 	
