@@ -34,10 +34,12 @@
 	#error EV_[P]SELECT not defined
 #endif
 
-#include <algorithm> // max_element()
+#ifndef WIN32
+	#include <algorithm> // max_element()
+#endif
 #include <iostream>
 #include <cerrno> // errno
-#include <memory> // memcpy()
+//#include <memory> // memcpy()
 #include <cassert> // assert()
 
 using std::cout;
@@ -101,9 +103,12 @@ int Event::wait() throw()
 	FD_COPY(&fds_w, &t_fds_w),
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
-	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
-	memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
-	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
+	t_fds_r = fds_r;
+	t_fds_w = fds_w;
+	t_fds_e = fds_e;
+	//memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
+	//memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
+	//memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
 	#if defined(EV_PSELECT)

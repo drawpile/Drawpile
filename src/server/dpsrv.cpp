@@ -300,12 +300,7 @@ int main(int argc, char** argv)
 			rc = 9;
 			// do nothing
 		}
-		
-		#ifndef NDEBUG
-		// output stats
-		srv.stats();
-		#endif
-	} // server scope
+	} // end server scope
 	
 	std::cout << ": Quitting..." << std::endl;
 	

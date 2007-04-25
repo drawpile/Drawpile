@@ -147,28 +147,6 @@ protected:
 	
 	bool Transient, LocalhostAdmin, DaemonMode, blockDuplicateConnections;
 	
-	/* statistics */
-	
-	#ifndef NDEBUG
-	size_t
-		// Number of times pre-allocation was under-estimated
-		protocolReallocation,
-		// Largest number of messages linked
-		largestLinkList,
-		// number of times buffer.reposition() was called from server
-		bufferRepositions,
-		// number of times buffer.setBuffer() was called from server
-		bufferResets,
-		// number of times compressed data was discarded
-		discardedCompressions,
-		// smallest data set size with beneficial compression ratio
-		smallestCompression,
-		// bandwidth saved by deflate
-		deflateSaved,
-		// bandwidth saved by linking
-		linkingSaved;
-	#endif
-	
 	/* functions */
 	
 	// Frees user ID

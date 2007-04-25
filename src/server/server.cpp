@@ -61,6 +61,7 @@ typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
 #endif
 
+// the only iterator in which we need the ->first
 typedef std::multimap<User*, User*>::iterator tunnel_i;
 typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 
@@ -115,18 +116,6 @@ Server::Server() throw()
 	LocalhostAdmin(false),
 	DaemonMode(false),
 	blockDuplicateConnections(true)
-	// stats
-	#ifndef NDEBUG
-	,
-	protocolReallocation(0),
-	largestLinkList(0),
-	bufferRepositions(0),
-	bufferResets(0),
-	discardedCompressions(0),
-	smallestCompression(std::numeric_limits<size_t>::max()),
-	deflateSaved(0),
-	linkingSaved(0)
-	#endif
 {
 	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
 	{
@@ -144,11 +133,13 @@ const uint8_t Server::getUserID() throw()
 {
 	if (user_ids.empty())
 		return protocol::null_user;
-	
-	const uint8_t n = user_ids.front();
-	user_ids.pop();
-	
-	return n;
+	else
+	{
+		const uint8_t n = user_ids.front();
+		user_ids.pop();
+		
+		return n;
+	}
 }
 
 inline
@@ -156,19 +147,19 @@ const uint8_t Server::getSessionID() throw()
 {
 	if (session_ids.empty())
 		return protocol::Global;
-	
-	const uint8_t n = session_ids.front();
-	session_ids.pop();
-	
-	return n;
+	else
+	{
+		const uint8_t n = session_ids.front();
+		session_ids.pop();
+		
+		return n;
+	}
 }
 
 inline
 void Server::freeUserID(const uint8_t id) throw()
 {
 	assert(id != protocol::null_user);
-	
-	// unfortunately queue can't be iterated, so we can't test if the ID is valid
 	
 	user_ids.push(id);
 }
@@ -177,8 +168,6 @@ inline
 void Server::freeSessionID(const uint8_t id) throw()
 {
 	assert(id != protocol::Global);
-	
-	// unfortunately queue can't be iterated, so we can't test if the ID is valid
 	
 	session_ids.push(id);
 }
@@ -302,11 +291,6 @@ void Server::uWrite(User*& usr) throw()
 			(*iter)->next = boost::get_pointer(*l_msg);
 		}
 		
-		#ifndef NDEBUG
-		if (links > largestLinkList)
-			largestLinkList = links; // stats
-		#endif
-		
 		//msg->user_id = id;
 		size_t len=0, size=usr->output.canWrite();
 		
@@ -317,8 +301,6 @@ void Server::uWrite(User*& usr) throw()
 		if (buf != usr->output.wpos)
 		{
 			#ifndef NDEBUG
-			++protocolReallocation; // stats
-			
 			cout << __LINE__ << ": Output buffer was too small!" << endl
 				<< "Original size: " << usr->output.canWrite()
 				<< ", actually needed: " << size << endl
@@ -326,9 +308,6 @@ void Server::uWrite(User*& usr) throw()
 			#endif
 			
 			usr->output.setBuffer(buf, size);
-			#ifndef NDEBUG
-			++bufferResets; // stats
-			#endif
 		}
 		
 		usr->output.write(len);
@@ -373,17 +352,7 @@ void Server::uWrite(User*& usr) throw()
 				
 				// compressed size was equal or larger than original size
 				if (buffer_len >= len)
-				{
-					#ifndef NDEBUG
-					++discardedCompressions; // stats
-					#endif
 					goto cleanup;
-				}
-				
-				#ifndef NDEBUG
-				if (len < smallestCompression)
-					smallestCompression = len; // stats
-				#endif
 				
 				usr->output.read(len);
 				
@@ -395,9 +364,6 @@ void Server::uWrite(User*& usr) throw()
 				else
 				{
 					usr->output.setBuffer(temp, size);
-					#ifndef NDEBUG
-					++bufferResets; // stats
-					#endif
 					usr->output.write(buffer_len);
 				}
 				
@@ -418,10 +384,6 @@ void Server::uWrite(User*& usr) throw()
 					if (buf != usr->output.wpos)
 					{
 						#ifndef NDEBUG
-						++protocolReallocation; // stats
-						#endif
-						
-						#ifndef NDEBUG
 						if (!inBuffer)
 						{
 							cout << __LINE__ << ": Pre-allocated buffer was too small!" << endl
@@ -438,9 +400,6 @@ void Server::uWrite(User*& usr) throw()
 						}
 						#endif
 						usr->output.setBuffer(buf, size);
-						#ifndef NDEBUG
-						++bufferResets; // stats
-						#endif
 					}
 					
 					usr->output.write(len);
@@ -622,37 +581,37 @@ void Server::uProcessData(User*& usr) throw()
 			return; // need more data
 		else if (len > cread)
 		{
-			// so, we reposition the buffer
+			// Required length is greater than we can currently read,
+			// but not greater than we have in total.
+			// So, we reposition the buffer for maximal reading.
 			usr->input.reposition();
-			#ifndef NDEBUG
-			++bufferRepositions;
-			#endif
-			continue;
 		}
-		
-		usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
-		
-		#if 0 // isValid() can't be used before it is properly implemented!
-		if (!usr->inMsg->isValid())
-		{
-			cerr << "Message is invalid, dropping user." << endl;
-			uRemove(usr, protocol::user_event::Dropped);
-			return;
-		}
-		#endif
-		
-		if (usr->state == User::Active)
-			uHandleMsg(usr);
 		else
-			uHandleLogin(usr);
-		
-		if (usr != 0)
-		{ // user is still alive.
-			delete usr->inMsg;
-			usr->inMsg = 0;
+		{
+			usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
+			
+			#if 0 // isValid() can't be used before it is properly implemented!
+			if (!usr->inMsg->isValid())
+			{
+				cerr << "Message is invalid, dropping user." << endl;
+				uRemove(usr, protocol::user_event::Dropped);
+				return;
+			}
+			#endif
+			
+			if (usr->state == User::Active)
+				uHandleMsg(usr);
+			else
+				uHandleLogin(usr);
+			
+			if (usr != 0)
+			{ // user is still alive.
+				delete usr->inMsg;
+				usr->inMsg = 0;
+			}
+			else // quite dead
+				break;
 		}
-		else // quite dead
-			break;
 	}
 	
 	// rewind circular buffer
@@ -766,7 +725,7 @@ void Server::uHandlePassword(User*& usr) throw()
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
 	
-	sessions_const_i si;
+	Session *session;
 	protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
 	if (msg.session_id == protocol::Global)
 	{
@@ -789,11 +748,16 @@ void Server::uHandlePassword(User*& usr) throw()
 			return;
 		}
 		
-		si = sessions.find(msg.session_id);
+		sessions_const_i si(sessions.find(msg.session_id));
 		if (si == sessions.end())
 		{
 			// session doesn't exist
 			uSendMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
+			return;
+		}
+		else if (si->second->canJoin() == false)
+		{
+			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 			return;
 		}
 		else if (usr->inSession(msg.session_id))
@@ -802,13 +766,11 @@ void Server::uHandlePassword(User*& usr) throw()
 			uSendMsg(*usr, msgError(msg.session_id, protocol::error::InvalidRequest));
 			return;
 		}
-		else if (si->second->canJoin() == false)
-		{
-			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
-			return;
-		}
 		else
+		{
 			hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
+			session = si->second;
+		}
 	}
 	
 	hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
@@ -827,13 +789,10 @@ void Server::uHandlePassword(User*& usr) throw()
 		if (msg.session_id == protocol::Global)
 			usr->isAdmin = true;
 		else
-		{
-			// join session
-			Session* session = si->second;
 			uJoinSession(usr, session);
-		}
 	}
 	
+	// invalidate previous seed
 	uRegenSeed(*usr);
 }
 
@@ -1086,10 +1045,6 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 			
 			// Set the uncompressed data stream as the input buffer.
 			usr->input.setBuffer(temp, stream.uncompressed);
-			
-			#ifndef NDEBUG
-			++bufferResets; // stats
-			#endif
 			
 			// Process the data.
 			uProcessData(usr);
@@ -2584,16 +2539,3 @@ int Server::run() throw()
 	
 	return 0;
 }
-
-#ifndef NDEBUG
-void Server::stats() const throw()
-{
-	cout << "Statistics:" << endl << endl
-		<< "Under allocations:     " << protocolReallocation << endl
-		<< "Largest linked list:   " << largestLinkList << endl
-		<< "Buffer repositionings: " << bufferRepositions << endl
-		<< "Buffer resets:         " << bufferResets << endl
-		<< "Deflates discarded:    " << discardedCompressions << endl
-		<< "Smallest deflate set:  " << smallestCompression << endl;
-}
-#endif
