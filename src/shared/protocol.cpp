@@ -139,8 +139,8 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	// Allocate memory if necessary
 	if (size < length)
 	{
-		data = new char[length];
-		size = length;
+		size = roundToNext(length, 4096u);
+		data = new char[size];
 	}
 	
 	// 'iterator'
