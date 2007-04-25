@@ -155,6 +155,11 @@ bool inBoundsOf(const U& u) throw()
 /* integer ops */
 
 //! Round \b number to next \b boundary
+/**
+ * e.g.
+ * roundToNext(1200, 1000) = 2000
+ * roundToNext(28175, 300) = 27200
+ */
 template <typename T> inline
 T roundToNext(const T& number, const T& boundary) throw()
 {
@@ -168,6 +173,11 @@ double roundToNext<double>(const double& number, const double& boundary) throw()
 }
 
 //! Round \b number to previous \b boundary
+/**
+ * e.g.
+ * roundToPrev(1200, 1000) = 1000
+ * roundToPrev(28175, 300) = 27900
+ */
 template <typename T> inline
 T roundToPrev(const T& number, const T& boundary) throw()
 {
@@ -180,6 +190,10 @@ double roundToPrev<double>(const double& number, const double& boundary) throw()
 	return (::floor(number) / boundary) * boundary;
 }
 
+//! Round to closest non-decimal number
+/**
+ * \note does this work with negative numbers?
+ */
 template <typename T> inline
 T round(const T& num) throw()
 {
