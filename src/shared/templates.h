@@ -31,6 +31,7 @@
 
 #include "../config.h"
 
+#include <cmath>
 #include <memory> // memcpy()
 #include <boost/cstdint.hpp>
 #include <cassert>
@@ -149,6 +150,41 @@ template <typename T, typename U> inline
 bool inBoundsOf(const U& u) throw()
 {
 	return (static_cast<T>(u) == u);
+}
+
+/* integer ops */
+
+//! Round \b number to next \b boundary
+template <typename T> inline
+T roundToNext(const T& number, const T& boundary) throw()
+{
+	return (number / boundary + 1) * boundary;
+}
+
+template <> inline
+double roundToNext<double>(const double& number, const double& boundary) throw()
+{
+	return (::floor(number) / boundary + 1) * boundary;
+}
+
+//! Round \b number to previous \b boundary
+template <typename T> inline
+T roundToPrev(const T& number, const T& boundary) throw()
+{
+	return (number / boundary) * boundary;
+}
+
+template <> inline
+double roundToPrev<double>(const double& number, const double& boundary) throw()
+{
+	return (::floor(number) / boundary) * boundary;
+}
+
+template <typename T> inline
+T round(const T& num) throw()
+{
+	const T fl = ::floor(num);
+	return ((num - fl) < .5 ? fl : fl + 1);
 }
 
 #endif
