@@ -576,10 +576,13 @@ void Server::uProcessData(User*& usr) throw()
 		assert(usr->inMsg->type == static_cast<uint8_t>(usr->input.rpos[0]));
 		
 		size_t cread = usr->input.canRead();
-		size_t len = usr->inMsg->reqDataLen(usr->input.rpos, cread);
-		if (len > usr->input.left)
+		size_t reqlen = usr->inMsg->reqDataLen(usr->input.rpos, cread);
+		if (reqlen > usr->input.left)
+		{
+			assert(!(usr->inMsg->type != protocol::type::Raster and reqlen > 1024));
 			return; // need more data
-		else if (len > cread)
+		}
+		else if (reqlen > cread)
 		{
 			// Required length is greater than we can currently read,
 			// but not greater than we have in total.
@@ -588,7 +591,13 @@ void Server::uProcessData(User*& usr) throw()
 		}
 		else
 		{
+			#ifndef NDEBUG
+			const size_t readlen = usr->inMsg->unserialize(usr->input.rpos, cread);
+			assert(readlen == reqlen);
+			usr->input.read( readlen );
+			#else
 			usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
+			#endif
 			
 			#if 0 // isValid() can't be used before it is properly implemented!
 			if (!usr->inMsg->isValid())
