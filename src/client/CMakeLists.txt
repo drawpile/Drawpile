@@ -25,10 +25,6 @@ find_package ( Qt4 REQUIRED )
 
 include ( ${QT_USE_FILE} )
 
-#if ( PROCESS_WIDGETS )
-#	add_subdirectory ( widgets/ )
-#endif ( PROCESS_WIDGETS )
-
 # files
 
 set (
