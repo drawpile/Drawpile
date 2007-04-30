@@ -567,7 +567,7 @@ void Server::uProcessData(User*& usr) throw()
 				// unknown message type
 				cerr << "Unknown data from user #"
 					<< static_cast<int>(usr->id) << endl;
-				uRemove(usr, protocol::UserInfo::Violation);
+				uRemove(usr, protocol::UserInfo::Dropped);
 				return;
 			}
 		}
@@ -1097,7 +1097,7 @@ void Server::uHandleAck(User*& usr) throw()
 			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(ack.session_id, protocol::error::NotSubscribed));
 			else if (usi->second->syncWait) // duplicate syncwait
-				uRemove(usr, protocol::UserInfo::Dropped);
+				uRemove(usr, protocol::UserInfo::Violation);
 			else
 			{
 				usi->second->syncWait = true;
@@ -1374,7 +1374,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	default:
 		cerr << "Unknown session action: "
 			<< static_cast<int>(event.action) << ")" << endl;
-		uRemove(usr, protocol::UserInfo::Violation);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
 }
@@ -1730,7 +1730,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			uSendMsg(*usr, message_ref(&msg));
 		}
 		else // wrong message type
-			uRemove(usr, protocol::UserInfo::Violation);
+			uRemove(usr, protocol::UserInfo::Dropped);
 		break;
 	case User::LoginAuth:
 		if (usr->inMsg->type == protocol::Message::Password)
@@ -1768,7 +1768,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				cerr << "Protocol string mismatch" << endl;
 				#endif
 				
-				uRemove(usr, protocol::UserInfo::Violation);
+				uRemove(usr, protocol::UserInfo::Dropped);
 			}
 			else if (ident.revision != protocol::revision)
 			{
@@ -1869,7 +1869,7 @@ void Server::uLayerEvent(User*& usr) throw()
 		break;
 	default:
 		cerr << "Unknown layer event: " << levent.action << std::endl;
-		uRemove(usr, protocol::UserInfo::Violation);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
 	
