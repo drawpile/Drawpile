@@ -31,7 +31,6 @@
 #include "point.h"
 
 #include "../shared/protocol.h"
-#include "../shared/protocol.types.h"
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.flags.h"
 #include "../shared/SHA1.h"
@@ -186,7 +185,7 @@ void SessionState::setPassword(const QString& password)
 void SessionState::lock(bool l)
 {
 	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			(l ? protocol::session_event::Lock : protocol::session_event::Unlock),
+			(l ? protocol::SessionEvent::Lock : protocol::SessionEvent::Unlock),
 			protocol::null_user,
 			0 // aux (unused)
 			);
@@ -207,7 +206,7 @@ void SessionState::setUserLimit(int count)
 {
 	qDebug() << "Chaning user limit to" << count;
 	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
-			protocol::session_command::Alter,
+			protocol::SessionInstruction::Alter,
 			info_.width,
 			info_.height,
 			info_.mode, // Set user mode (unchanged)
@@ -277,7 +276,7 @@ void SessionState::sendStrokeEnd()
 void SessionState::sendAckSync()
 {
 	protocol::Acknowledgement *msg = new protocol::Acknowledgement(
-			protocol::type::SyncWait
+			protocol::Message::SyncWait
 			);
 	msg->session_id = info_.id;
 	host_->connection()->send(msg);
@@ -301,12 +300,12 @@ void SessionState::sendChat(const QString& message)
 void SessionState::handleAck(const protocol::Acknowledgement *msg)
 {
 	switch(msg->event) {
-		case protocol::type::SyncWait:
+		case protocol::Message::SyncWait:
 			emit syncDone();
-		case protocol::type::SessionSelect:
+		case protocol::Message::SessionSelect:
 			// Ignore session select ack
 			break;
-		case protocol::type::Raster:
+		case protocol::Message::Raster:
 			sendRasterChunk();
 			break;
 		default:
@@ -321,7 +320,7 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
 void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
 	switch(msg->event) {
-		case protocol::user_event::Join:
+		case protocol::UserInfo::Join:
 			if(users_.contains(msg->user_id)) {
 				qDebug() << "Got join event for user " << int(msg->user_id)
 					<< "who is already in session!";
@@ -331,12 +330,12 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 				emit userJoined(msg->user_id);
 			}
 			break;
-		case protocol::user_event::Leave:
-		case protocol::user_event::Disconnect:
-		case protocol::user_event::BrokenPipe:
-		case protocol::user_event::TimedOut:
-		case protocol::user_event::Dropped:
-		case protocol::user_event::Kicked:
+		case protocol::UserInfo::Leave:
+		case protocol::UserInfo::Disconnect:
+		case protocol::UserInfo::BrokenPipe:
+		case protocol::UserInfo::TimedOut:
+		case protocol::UserInfo::Dropped:
+		case protocol::UserInfo::Kicked:
 			if(users_.contains(msg->user_id)) {
 				emit userLeft(msg->user_id);
 				users_.remove(msg->user_id);
@@ -421,8 +420,7 @@ void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 	}
 
 	switch(msg->action) {
-		using namespace protocol::session_event;
-		case Lock:
+		case protocol::SessionEvent::Lock:
 			if(user) {
 				user->setLocked(true);
 				emit userLocked(msg->target, true);
@@ -431,7 +429,7 @@ void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 				emit sessionLocked(true);
 			}
 			break;
-		case Unlock:
+		case protocol::SessionEvent::Unlock:
 			if(user) {
 				user->setLocked(false);
 				emit userLocked(msg->target, false);
@@ -440,10 +438,10 @@ void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 				emit sessionLocked(false);
 			}
 			break;
-		case Kick:
+		case protocol::SessionEvent::Kick:
 			emit userKicked(msg->target);
 			break;
-		case Delegate:
+		case protocol::SessionEvent::Delegate:
 			info_.owner = msg->target;
 			emit ownerChanged();
 			break;
@@ -486,7 +484,7 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
 		drawbuffer_.enqueue(msg);
 		return true;
 	}
-	Q_ASSERT(msg->type == protocol::type::StrokeInfo);
+	Q_ASSERT(msg->type == protocol::Message::StrokeInfo);
 	emit strokeReceived(
 			msg->user_id,
 			drawingboard::Point(
@@ -534,10 +532,10 @@ void SessionState::flushDrawBuffer()
 	while(drawbuffer_.isEmpty() == false) {
 		protocol::Message *msg = drawbuffer_.dequeue();
 		switch(msg->type) {
-			case protocol::type::StrokeInfo:
+			case protocol::Message::StrokeInfo:
 				handleStrokeInfo(static_cast<protocol::StrokeInfo*>(msg));
 				break;
-			case protocol::type::StrokeEnd:
+			case protocol::Message::StrokeEnd:
 				handleStrokeEnd(static_cast<protocol::StrokeEnd*>(msg));
 				break;
 			default:

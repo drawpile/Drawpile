@@ -43,82 +43,82 @@ void msgName(const uint8_t type) throw()
 	std::cout << "type (" << static_cast<int>(type) << "): ";
 	switch (type)
 	{
-	case type::Identifier:
+	case Message::Identifier:
 		std::cout << "Identifier" << std::endl;
 		break;
-	case type::StrokeInfo:
+	case Message::StrokeInfo:
 		std::cout << "Stroke Info" << std::endl;
 		break;
-	case type::StrokeEnd:
+	case Message::StrokeEnd:
 		std::cout << "Stroke End" << std::endl;
 		break;
-	case type::ToolInfo:
+	case Message::ToolInfo:
 		std::cout << "Tool Info" << std::endl;
 		break;
-	case type::PasswordRequest:
+	case Message::PasswordRequest:
 		std::cout << "Password Request" << std::endl;
 		break;
-	case type::Password:
+	case Message::Password:
 		std::cout << "Password" << std::endl;
 		break;
-	case type::Synchronize:
+	case Message::Synchronize:
 		std::cout << "Synchronize" << std::endl;
 		break;
-	case type::Raster:
+	case Message::Raster:
 		std::cout << "Raster" << std::endl;
 		break;
-	case type::SyncWait:
+	case Message::SyncWait:
 		std::cout << "SyncWait" << std::endl;
 		break;
-	case type::Subscribe:
+	case Message::Subscribe:
 		std::cout << "Subscribe" << std::endl;
 		break;
-	case type::Unsubscribe:
+	case Message::Unsubscribe:
 		std::cout << "Unsubscribe" << std::endl;
 		break;
-	case type::SessionSelect:
+	case Message::SessionSelect:
 		std::cout << "Session Select" << std::endl;
 		break;
-	case type::SessionInstruction:
+	case Message::SessionInstruction:
 		std::cout << "SessionInstruction" << std::endl;
 		break;
-	case type::Shutdown:
+	case Message::Shutdown:
 		std::cout << "Shutdown" << std::endl;
 		break;
-	case type::SetPassword:
+	case Message::SetPassword:
 		std::cout << "Set Password" << std::endl;
 		break;
-	case type::Authenticate:
+	case Message::Authenticate:
 		std::cout << "Authenticate" << std::endl;
 		break;
-	case type::ListSessions:
+	case Message::ListSessions:
 		std::cout << "List Sessions" << std::endl;
 		break;
-	case type::Cancel:
+	case Message::Cancel:
 		std::cout << "Cancel" << std::endl;
 		break;
-	case type::UserInfo:
+	case Message::UserInfo:
 		std::cout << "User Info" << std::endl;
 		break;
-	case type::HostInfo:
+	case Message::HostInfo:
 		std::cout << "Host Info" << std::endl;
 		break;
-	case type::SessionInfo:
+	case Message::SessionInfo:
 		std::cout << "Session Info" << std::endl;
 		break;
-	case type::Acknowledgement:
+	case Message::Acknowledgement:
 		std::cout << "Acknowledgement" << std::endl;
 		break;
-	case type::Error:
+	case Message::Error:
 		std::cout << "Error" << std::endl;
 		break;
-	case type::Deflate:
+	case Message::Deflate:
 		std::cout << "Deflate" << std::endl;
 		break;
-	case type::Chat:
+	case Message::Chat:
 		std::cout << "Chat" << std::endl;
 		break;
-	case type::Palette:
+	case Message::Palette:
 		std::cout << "Palette" << std::endl;
 		break;
 	default:
@@ -143,63 +143,63 @@ Message* getMessage(const uint8_t type) throw(std::bad_alloc)
 	
 	switch (type)
 	{
-	case type::Identifier:
+	case Message::Identifier:
 		return new Identifier();
-	case type::StrokeInfo:
+	case Message::StrokeInfo:
 		return new StrokeInfo();
-	case type::StrokeEnd:
+	case Message::StrokeEnd:
 		return new StrokeEnd();
-	case type::ToolInfo:
+	case Message::ToolInfo:
 		return new ToolInfo();
-	case type::PasswordRequest:
+	case Message::PasswordRequest:
 		return new PasswordRequest();
-	case type::Password:
+	case Message::Password:
 		return new Password();
-	case type::Synchronize:
+	case Message::Synchronize:
 		return new Synchronize();
-	case type::Raster:
+	case Message::Raster:
 		return new Raster();
-	case type::SyncWait:
+	case Message::SyncWait:
 		return new SyncWait();
-	case type::Subscribe:
+	case Message::Subscribe:
 		return new Subscribe();
-	case type::Unsubscribe:
+	case Message::Unsubscribe:
 		return new Unsubscribe();
-	case type::SessionSelect:
+	case Message::SessionSelect:
 		return new SessionSelect();
-	case type::SessionInstruction:
+	case Message::SessionInstruction:
 		return new SessionInstruction();
-	case type::SetPassword:
+	case Message::SetPassword:
 		return new SetPassword();
-	case type::Shutdown:
+	case Message::Shutdown:
 		return new Shutdown();
-	case type::Authenticate:
+	case Message::Authenticate:
 		return new Authenticate();
-	case type::ListSessions:
+	case Message::ListSessions:
 		return new ListSessions();
-	case type::Cancel:
+	case Message::Cancel:
 		return new Cancel();
-	case type::UserInfo:
+	case Message::UserInfo:
 		return new UserInfo();
-	case type::HostInfo:
+	case Message::HostInfo:
 		return new HostInfo();
-	case type::SessionInfo:
+	case Message::SessionInfo:
 		return new SessionInfo();
-	case type::Acknowledgement:
+	case Message::Acknowledgement:
 		return new Acknowledgement();
-	case type::Error:
+	case Message::Error:
 		return new Error();
-	case type::SessionEvent:
+	case Message::SessionEvent:
 		return new SessionEvent();
-	case type::LayerEvent:
+	case Message::LayerEvent:
 		return new LayerEvent();
-	case type::LayerSelect:
+	case Message::LayerSelect:
 		return new LayerSelect();
-	case type::Deflate:
+	case Message::Deflate:
 		return new Deflate();
-	case type::Chat:
+	case Message::Chat:
 		return new Chat();
-	case type::Palette:
+	case Message::Palette:
 		return new Palette();
 	default:
 		std::cerr << "Unknown message type: " << static_cast<int>(type) << std::endl;

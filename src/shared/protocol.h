@@ -39,7 +39,6 @@
 
 #include "protocol.errors.h"
 #include "protocol.defaults.h"
-#include "protocol.types.h"
 #include "protocol.flags.h"
 #include "protocol.tools.h"
 #include "datatypes.h"
@@ -108,6 +107,81 @@ public:
 	virtual ~Message() throw()
 	{
 	}
+	
+	/* enum */
+	
+	//! Message types
+	enum msgtype {
+		//! for Identifier.
+		Identifier = 200,
+		
+		//! for StrokeInfo.
+		StrokeInfo = 1,
+		//! for StrokeEnd.
+		StrokeEnd = 2,
+		//! for ToolInfo.
+		ToolInfo = 3,
+		
+		//! for Password Request
+		PasswordRequest = 25,
+		//! for Password.
+		Password = 26,
+		
+		//! for Synchronize.
+		Synchronize = 10,
+		//! for Raster.
+		Raster = 11,
+		//! for SyncWait.
+		SyncWait = 12,
+		
+		//! for Subscribe.
+		Subscribe = 30,
+		//! for Unsubscribe.
+		Unsubscribe = 31,
+		//! for Session event
+		SessionEvent = 32,
+		//! for Session select.
+		SessionSelect = 37,
+		
+		//! for Layer event
+		LayerEvent = 42,
+		//! for Layer select
+		LayerSelect = 47,
+		
+		//! for Authenticate
+		Authenticate = 75,
+		//! for Session Instruction
+		SessionInstruction = 78,
+		//! for Set Password
+		SetPassword = 79,
+		
+		//! for ListSessions.
+		ListSessions = 72,
+		//! for Cancel.
+		Cancel = 73,
+		
+		//! for UserInfo.
+		UserInfo = 80,
+		//! for HostInfo.
+		HostInfo = 81,
+		//! for SessionInfo.
+		SessionInfo = 82,
+		
+		//! for Acknowledgement.
+		Acknowledgement = 20,
+		//! for Error.
+		Error = 21,
+		
+		//! for Deflate.
+		Deflate = 191,
+		//! for Chat.
+		Chat = 192,
+		//! for Palette.
+		Palette = 193,
+		
+		//! for Shutdown
+		Shutdown = 255
+	};
 	
 	//! Message type identifier (full list in protocol::type namespace).
 	const uint8_t type;
@@ -217,12 +291,12 @@ struct Identifier
 	: Message//, MemoryStack<Identifier>
 {
 	Identifier() throw()
-		: Message(type::Identifier, sizeof(type))
+		: Message(Message::Identifier, sizeof(type))
 	{ }
 	
 	//! Constructor with params for payload
 	Identifier(const uint16_t _revision, const uint16_t _level, const uint8_t _flags, const uint8_t _extensions) throw()
-		: Message(type::Identifier, sizeof(type)),
+		: Message(Message::Identifier, sizeof(type)),
 		revision(_revision),
 		level(_level),
 		flags(_flags),
@@ -270,7 +344,7 @@ struct StrokeInfo
 {
 	StrokeInfo() throw()
 		: Message(
-			type::StrokeInfo,
+			Message::StrokeInfo,
 			sizeof(type)+sizeof(user_id),
 			message::isUser|message::isBundling|message::isSelected
 		)
@@ -279,7 +353,7 @@ struct StrokeInfo
 	//! Constructor with params for payload
 	StrokeInfo(const uint16_t _x, const uint16_t _y, const uint8_t _pressure) throw()
 		: Message(
-			type::StrokeInfo,
+			Message::StrokeInfo,
 			sizeof(type)+sizeof(user_id),
 			message::isUser|message::isBundling|message::isSelected
 		),
@@ -317,7 +391,7 @@ struct StrokeEnd
 	: Message//, MemoryStack<StrokeEnd>
 {
 	StrokeEnd() throw()
-		: Message(type::StrokeEnd, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
+		: Message(Message::StrokeEnd, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	~StrokeEnd() throw() { }
@@ -344,12 +418,12 @@ struct ToolInfo
 	: Message//, MemoryStack<ToolInfo>
 {
 	ToolInfo() throw()
-		: Message(type::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
+		: Message(Message::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	//! Constructor with params for payload
 	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint32_t _lo_color, const uint32_t _hi_color, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing) throw()
-		: Message(type::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
+		: Message(Message::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		tool_id(_tool_id),
 		mode(_mode),
 		//lo_color(_lo_color),
@@ -415,7 +489,7 @@ struct Synchronize
 	: Message//, MemoryStack<Synchronize>
 {
 	Synchronize() throw()
-		: Message(type::Synchronize, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Synchronize, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Synchronize() throw() { }
@@ -449,13 +523,13 @@ struct Raster
 	: Message//, MemoryStack<Raster>
 {
 	Raster() throw()
-		: Message(type::Raster, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::Raster, sizeof(type)+sizeof(session_id), message::isSession),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Raster(const uint32_t _offset, const uint32_t _length, const uint32_t _size, char* _data) throw()
-		: Message(type::Raster, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::Raster, sizeof(type)+sizeof(session_id), message::isSession),
 		offset(_offset),
 		length(_length),
 		size(_size),
@@ -496,13 +570,13 @@ struct Raster
  * - Client MUST fullfil any other requests by the server in timely manner.
  * - The response MUST be sent AFTER sending any remainder of incomplete data.
  * 
- * Response: Acknowledgement with event set to protocol::type::SyncWait.
+ * Response: Acknowledgement with event set to protocol::Message::SyncWait.
  */
 struct SyncWait
 	: Message//, MemoryStack<SyncWait>
 {
 	SyncWait() throw()
-		: Message(type::SyncWait, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::SyncWait, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~SyncWait() throw() { }
@@ -526,7 +600,7 @@ struct PasswordRequest
 	: Message//, MemoryStack<PasswordRequest>
 {
 	PasswordRequest() throw()
-		: Message(type::PasswordRequest, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::PasswordRequest, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~PasswordRequest() throw() { }
@@ -552,7 +626,7 @@ struct Password
 	: Message//, MemoryStack<Password>
 {
 	Password() throw()
-		: Message(type::Password, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Password, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Password() throw() { }
@@ -574,13 +648,13 @@ struct Password
 /**
  * Client subscribes to the session.
  *
- * Response: Acknowledgement with event set to protocol::type::Subscribe.
+ * Response: Acknowledgement with event set to protocol::Message::Subscribe.
  */
 struct Subscribe
 	: Message//, MemoryStack<Subscribe>
 {
 	Subscribe() throw()
-		: Message(type::Subscribe, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Subscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Subscribe() throw() { }
@@ -598,13 +672,13 @@ struct Subscribe
 /**
  * Client unsubscribes from session.
  *
- * Response: Acknowledgement with event set to protocol::type::Unsubscribe.
+ * Response: Acknowledgement with event set to protocol::Message::Unsubscribe.
  */
 struct Unsubscribe
 	: Message//, MemoryStack<Unsubscribe>
 {
 	Unsubscribe() throw()
-		: Message(type::Unsubscribe, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Unsubscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Unsubscribe() throw() { }
@@ -622,12 +696,12 @@ struct SessionInstruction
 	: Message
 {
 	SessionInstruction() throw()
-		: Message(type::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
 		title(0)
 	{ }
 	
 	SessionInstruction(const uint8_t _action, const uint16_t _width, const uint16_t _height, const uint8_t _umode, const uint8_t _ulimit, const uint8_t _flags, const uint8_t _tlen, char* _title) throw()
-		: Message(type::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
 		action(_action),
 		width(_width),
 		height(_height),
@@ -638,8 +712,18 @@ struct SessionInstruction
 		title(_title)
 	{ }
 	
-	
 	~SessionInstruction() throw() { }
+	
+	/* enum */
+	
+	enum session_action {
+		//! Create session
+		Create = 0,
+		//! Alter session
+		Alter = 1,
+		//! Destroy session
+		Destroy = 2
+	};
 	
 	/* unique data */
 	
@@ -678,11 +762,11 @@ struct SetPassword
 	: Message
 {
 	SetPassword() throw()
-		: Message(type::SetPassword, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::SetPassword, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	SetPassword(const uint8_t _pwlen, char* _pw) throw()
-		: Message(type::SetPassword, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::SetPassword, sizeof(type)+sizeof(session_id), message::isSession),
 		password_len(_pwlen),
 		password(_pw)
 	{ }
@@ -710,7 +794,7 @@ struct Authenticate
 	: Message
 {
 	Authenticate() throw()
-		: Message(type::Authenticate, sizeof(type))
+		: Message(Message::Authenticate, sizeof(type))
 	{ }
 	
 	~Authenticate() throw() { }
@@ -729,7 +813,7 @@ struct Shutdown
 	: Message
 {
 	Shutdown() throw()
-		: Message(type::Authenticate, sizeof(type))
+		: Message(Message::Authenticate, sizeof(type))
 	{ }
 	
 	~Shutdown() throw() { }
@@ -748,13 +832,13 @@ struct Shutdown
  * Request to list the sessions on host.
  *
  * Response: sequential SessionInfo messages for all sessions,
- * followed by Acknowledgement with event set to protocol::type::ListSessions.
+ * followed by Acknowledgement with event set to protocol::Message::ListSessions.
  */
 struct ListSessions
 	: Message//, MemoryStack<ListSessions>
 {
 	ListSessions() throw()
-		: Message(type::ListSessions, sizeof(type))
+		: Message(Message::ListSessions, sizeof(type))
 	{ }
 	
 	~ListSessions() throw() { }
@@ -776,7 +860,7 @@ struct Cancel
 	: Message//, MemoryStack<Cancel>
 {
 	Cancel() throw()
-		: Message(type::Cancel, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Cancel, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	~Cancel() throw() { }
@@ -801,7 +885,7 @@ struct UserInfo
 {
 	UserInfo() throw()
 		: Message(
-			type::UserInfo,
+			Message::UserInfo,
 			sizeof(type)+sizeof(user_id)+sizeof(session_id),
 			message::isUser|message::isSession
 		),
@@ -811,7 +895,7 @@ struct UserInfo
 	//! Constructor with params for payload
 	UserInfo(const uint8_t _mode, const uint8_t _event, const uint8_t _length, char* _name) throw()
 		: Message(
-			type::UserInfo,
+			Message::UserInfo,
 			sizeof(type)+sizeof(user_id)+sizeof(session_id),
 			message::isUser|message::isSession
 		),
@@ -822,6 +906,38 @@ struct UserInfo
 	{ }
 	
 	~UserInfo() throw() { delete [] name; }
+	
+	/* enum */
+	
+	//! User events
+	enum uevent {
+		None,
+		
+		//! Logging in.
+		Login = 0,
+		
+		/** Session specific */
+		
+		//! Joined session.
+		Join = 1,
+		//! Left session.
+		Leave = 2,
+		
+		/** Verbose leave reasons */
+		
+		//! User disconnected. Indication of poorly behaving client.
+		Disconnect = 10,
+		//! Broken pipe / lost connection.
+		BrokenPipe = 11,
+		//! Timed out
+		TimedOut = 12,
+		//! Dropped by server.
+		Dropped = 13,
+		//! Kicked by admin.
+		Kicked = 14,
+		//! Client is behaving badly / protocol violation
+		Violation = 15
+	};
 	
 	/* unique data */
 	
@@ -855,12 +971,12 @@ struct HostInfo
 	: Message//, MemoryStack<HostInfo>
 {
 	HostInfo() throw()
-		: Message(type::HostInfo, sizeof(type))
+		: Message(Message::HostInfo, sizeof(type))
 	{ }
 	
 	//! Constructor with params for payload
 	HostInfo(const uint8_t _sessions, const uint8_t _sessionLimit, const uint8_t _users, const uint8_t _userLimit, const uint8_t _nameLenLimit, const uint8_t _maxSubscriptions, const uint8_t _requirements, const uint8_t _extensions) throw()
-		: Message(type::HostInfo, sizeof(type)),
+		: Message(Message::HostInfo, sizeof(type)),
 		sessions(_sessions),
 		sessionLimit(_sessionLimit),
 		users(_users),
@@ -907,13 +1023,13 @@ struct SessionInfo
 	: Message//, MemoryStack<SessionInfo>
 {
 	SessionInfo() throw()
-		: Message(type::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
 		title(0)
 	{ }
 	
 	//! Constructor with params for payload
 	SessionInfo(const uint16_t _width, const uint16_t _height, const uint8_t _owner, const uint8_t _users, const uint8_t _limit, const uint8_t _mode, const uint8_t _flags, const uint16_t _level, const uint8_t _length, char* _title) throw()
-		: Message(type::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
 		width(_width),
 		height(_height),
 		owner(_owner),
@@ -974,12 +1090,12 @@ struct Acknowledgement
 	: Message//, MemoryStack<Acknowledgement>
 {
 	Acknowledgement() throw()
-		: Message(type::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	Acknowledgement(const uint8_t _event) throw()
-		: Message(type::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession),
 		event(_event)
 	{ }
 	
@@ -1007,12 +1123,12 @@ struct Error
 	: Message//, MemoryStack<Error>
 {
 	Error() throw()
-		: Message(type::Error, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::Error, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	Error(const uint16_t _code) throw()
-		: Message(type::Error, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::Error, sizeof(type)+sizeof(session_id), message::isSession),
 		code(_code)
 	{ }
 	
@@ -1049,13 +1165,13 @@ struct Deflate
 	: Message//, MemoryStack<Deflate>
 {
 	Deflate() throw()
-		: Message(type::Deflate, sizeof(type)),
+		: Message(Message::Deflate, sizeof(type)),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Deflate(const uint16_t _uncompressed, const uint16_t _length, char* _data) throw()
-		: Message(type::Deflate, sizeof(type)),
+		: Message(Message::Deflate, sizeof(type)),
 		uncompressed(_uncompressed),
 		length(_length),
 		data(_data)
@@ -1092,13 +1208,13 @@ struct Chat
 	: Message//, MemoryStack<Chat>
 {
 	Chat() throw()
-		: Message(type::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
+		: Message(Message::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Chat(const uint8_t _length, char* _data) throw()
-		: Message(type::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
+		: Message(Message::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
 		length(_length),
 		data(_data)
 	{ }
@@ -1130,13 +1246,13 @@ struct Palette
 	: Message//, MemoryStack<Palette>
 {
 	Palette() throw()
-		: Message(type::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
+		: Message(Message::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
 	Palette(const uint8_t _offset, const uint8_t _count, char* _data) throw()
-		: Message(type::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
+		: Message(Message::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
 		offset(_offset),
 		count(_count),
 		data(_data)
@@ -1170,13 +1286,13 @@ struct Palette
  * Client tells which session any subsequent packages
  * (marked with the session modifier) are part of.
  *
- * Response: Error or Acknowledgement with event set to protocol::type::SessionSelect.
+ * Response: Error or Acknowledgement with event set to protocol::Message::SessionSelect.
  */
 struct SessionSelect
 	: Message//, MemoryStack<SessionSelect>
 {
 	SessionSelect() throw()
-		: Message(type::SessionSelect, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession)
+		: Message(Message::SessionSelect, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession)
 	{ }
 	
 	~SessionSelect() throw() { }
@@ -1195,18 +1311,47 @@ struct SessionEvent
 	: Message//, MemoryStack<Palette>
 {
 	SessionEvent() throw()
-		: Message(type::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	SessionEvent(const uint8_t _action, const uint8_t _target, const uint8_t _aux) throw()
-		: Message(type::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession),
 		action(_action),
 		target(_target),
 		aux(_aux)
 	{ }
 	
 	~SessionEvent() throw() { }
+	
+	/* enum */
+	
+	//! Session actions
+	enum session_action {
+		None,
+		
+		//! Pass ownership to another user
+		Delegate = 0,
+		
+		//! Muted
+		Mute = 1,
+		//! Unmuted
+		Unmute = 2,
+		
+		//! Lock user/layer
+		Lock = 3,
+		//! Unlock user/layer
+		Unlock = 4,
+		
+		//! Kick user from session
+		Kick = 5,
+		
+		//! Session will not auto-destruct
+		Persist = 8,
+		
+		//! Session will cache the image raster (implies persistence)
+		CacheRaster = 9
+	};
 	
 	/* unique data */
 	
@@ -1232,12 +1377,12 @@ struct LayerEvent
 	: Message//, MemoryStack<Palette>
 {
 	LayerEvent() throw()
-		: Message(type::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession)
+		: Message(Message::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
 	LayerEvent(const uint8_t _layer_id, const uint8_t _action, const uint8_t _mode, const uint8_t _opacity) throw()
-		: Message(type::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession),
+		: Message(Message::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession),
 		layer_id(_layer_id),
 		action(_action),
 		mode(_mode),
@@ -1245,6 +1390,20 @@ struct LayerEvent
 	{ }
 	
 	~LayerEvent() throw() { }
+	
+	/* enum */
+	
+	//! Actions
+	enum layerAction {
+		None,
+		
+		//! Create a layer
+		Create = 0,
+		//! Modify layer's properties
+		Alter = 1,
+		//! Destroy a layer
+		Destroy = 2
+	};
 	
 	/* unique data */
 	
@@ -1272,12 +1431,12 @@ struct LayerSelect
 	: Message//, MemoryStack<Palette>
 {
 	LayerSelect() throw()
-		: Message(type::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
+		: Message(Message::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	//! Constructor with params for payload
 	LayerSelect(const uint8_t _layer_id) throw()
-		: Message(type::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
+		: Message(Message::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		layer_id(_layer_id)
 	{ }
 	

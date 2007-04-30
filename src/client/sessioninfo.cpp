@@ -69,7 +69,7 @@ bool User::isOwner() const
 void User::lock(bool l)
 {
 	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			(l ? protocol::session_event::Lock : protocol::session_event::Unlock),
+			(l ? protocol::SessionEvent::Lock : protocol::SessionEvent::Unlock),
 			id_,
 			0 // aux (unused)
 			);
@@ -87,7 +87,7 @@ void User::lock(bool l)
 void User::kick()
 {
 	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			protocol::session_event::Kick,
+			protocol::SessionEvent::Kick,
 			id_,
 			0 // aux (unused)
 			);

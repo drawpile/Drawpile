@@ -33,7 +33,6 @@
 #include "server.h"
 #include "common.h"
 
-#include "../shared/protocol.types.h"
 #include "../shared/protocol.defaults.h"
 #include "../shared/protocol.helper.h"
 
@@ -315,7 +314,7 @@ void Server::uWrite(User*& usr) throw()
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
 			and usr->output.canRead() > 300
-			and (*f_msg)->type != protocol::type::Raster)
+			and (*f_msg)->type != protocol::Message::Raster)
 		{
 			// TODO: Move to separate function
 			
@@ -445,7 +444,7 @@ void Server::uWrite(User*& usr) throw()
 			cerr << "Error occured while sending to user #"
 				<< static_cast<int>(usr->id) << endl;
 			
-			uRemove(usr, protocol::user_event::BrokenPipe);
+			uRemove(usr, protocol::UserInfo::BrokenPipe);
 			break;
 		}
 		break;
@@ -531,13 +530,13 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 			cerr << "Unrecoverable error occured while reading from user #"
 				<< static_cast<int>(usr->id) << endl;
 			
-			uRemove(usr, protocol::user_event::BrokenPipe);
+			uRemove(usr, protocol::UserInfo::BrokenPipe);
 			break;
 		}
 		break;
 	case 0:
 		cerr << "User #" << static_cast<int>(usr->id) << " disconnected." << endl;
-		uRemove(usr, protocol::user_event::Disconnect);
+		uRemove(usr, protocol::UserInfo::Disconnect);
 		break;
 	default:
 		usr->input.write(rb);
@@ -568,7 +567,7 @@ void Server::uProcessData(User*& usr) throw()
 				// unknown message type
 				cerr << "Unknown data from user #"
 					<< static_cast<int>(usr->id) << endl;
-				uRemove(usr, protocol::user_event::Violation);
+				uRemove(usr, protocol::UserInfo::Violation);
 				return;
 			}
 		}
@@ -579,7 +578,7 @@ void Server::uProcessData(User*& usr) throw()
 		size_t reqlen = usr->inMsg->reqDataLen(usr->input.rpos, cread);
 		if (reqlen > usr->input.left)
 		{
-			assert(!(usr->inMsg->type != protocol::type::Raster and reqlen > 1024));
+			assert(!(usr->inMsg->type != protocol::Message::Raster and reqlen > 1024));
 			return; // need more data
 		}
 		else if (reqlen > cread)
@@ -602,8 +601,8 @@ void Server::uProcessData(User*& usr) throw()
 			#if 0 // isValid() can't be used before it is properly implemented!
 			if (!usr->inMsg->isValid())
 			{
-				cerr << "Message is invalid, dropping user." << endl;
-				uRemove(usr, protocol::user_event::Dropped);
+				cerr << "Invalid message received, dropping user." << endl;
+				uRemove(usr, protocol::UserInfo::Dropped);
 				return;
 			}
 			#endif
@@ -661,10 +660,10 @@ void Server::uHandleDrawing(User& usr) throw()
 	#ifndef NDEBUG
 	switch (usr.inMsg->type)
 	{
-	case protocol::type::StrokeInfo:
+	case protocol::Message::StrokeInfo:
 		++usr.strokes;
 		break;
-	case protocol::type::StrokeEnd:
+	case protocol::Message::StrokeEnd:
 		usr.strokes = 0;
 		break;
 	}
@@ -703,7 +702,7 @@ void Server::uHandleDrawing(User& usr) throw()
 	else
 	{
 		#ifdef LAYER_SUPPORT
-		if (usr.inMsg->type != protocol::type::ToolInfo
+		if (usr.inMsg->type != protocol::Message::ToolInfo
 			and usr.layer == protocol::null_layer)
 		{
 			#ifndef NDEBUG
@@ -793,7 +792,7 @@ void Server::uHandlePassword(User*& usr) throw()
 	else
 	{
 		// ACK the password
-		uSendMsg(*usr, msgAck(msg.session_id, protocol::type::Password));
+		uSendMsg(*usr, msgAck(msg.session_id, protocol::Message::Password));
 		
 		if (msg.session_id == protocol::Global)
 			usr->isAdmin = true;
@@ -821,16 +820,16 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	
 	switch (usr->inMsg->type)
 	{
-	case protocol::type::ToolInfo:
+	case protocol::Message::ToolInfo:
 		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
-	case protocol::type::StrokeInfo:
-	case protocol::type::StrokeEnd:
+	case protocol::Message::StrokeInfo:
+	case protocol::Message::StrokeEnd:
 		uHandleDrawing(*usr);
 		break;
-	case protocol::type::Acknowledgement:
+	case protocol::Message::Acknowledgement:
 		uHandleAck(usr);
 		break;
-	case protocol::type::SessionSelect:
+	case protocol::Message::SessionSelect:
 		if (usr->makeActive(usr->inMsg->session_id))
 		{
 			usr->inMsg->user_id = usr->id;
@@ -843,20 +842,20 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			usr->session = 0;
 		}
 		break;
-	case protocol::type::UserInfo:
+	case protocol::Message::UserInfo:
 		// TODO?
 		break;
-	case protocol::type::Raster:
+	case protocol::Message::Raster:
 		uTunnelRaster(*usr);
 		break;
 	#if defined(HAVE_ZLIB)
-	case protocol::type::Deflate:
+	case protocol::Message::Deflate:
 		DeflateReprocess(usr);
 		break;
 	#endif
-	case protocol::type::Chat:
+	case protocol::Message::Chat:
 		// TODO: Check session for deaf flag
-	case protocol::type::Palette:
+	case protocol::Message::Palette:
 		{
 			const usr_session_const_i usi(usr->sessions.find(usr->inMsg->session_id));
 			if (usi == usr->sessions.end())
@@ -870,19 +869,19 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			}
 		}
 		break;
-	case protocol::type::Unsubscribe:
+	case protocol::Message::Unsubscribe:
 		{
 			const usr_session_i usi(usr->sessions.find(usr->inMsg->session_id));
 			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
-				uSendMsg(*usr, msgAck(usr->inMsg->session_id, protocol::type::Unsubscribe));
+				uSendMsg(*usr, msgAck(usr->inMsg->session_id, protocol::Message::Unsubscribe));
 				uLeaveSession(*usr, usi->second->session);
 			}
 		}
 		break;
-	case protocol::type::Subscribe:
+	case protocol::Message::Subscribe:
 		if (usr->syncing == protocol::Global)
 		{
 			const sessions_const_i si(sessions.find(usr->inMsg->session_id));
@@ -905,7 +904,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uSendMsg(*usr, msgPWRequest(*usr, session->id));
 				else // join session
 				{
-					uSendMsg(*usr, msgAck(usr->inMsg->session_id, protocol::type::Subscribe));
+					uSendMsg(*usr, msgAck(usr->inMsg->session_id, protocol::Message::Subscribe));
 					uJoinSession(usr, session);
 				}
 			}
@@ -918,7 +917,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
 		}
 		break;
-	case protocol::type::ListSessions:
+	case protocol::Message::ListSessions:
 		if (sessions.size() != 0)
 		{
 			sessions_const_i si(sessions.begin());
@@ -926,9 +925,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uSendMsg(*usr, msgSessionInfo(*si->second));
 		}
 		
-		uSendMsg(*usr, msgAck(protocol::Global, protocol::type::ListSessions));
+		uSendMsg(*usr, msgAck(protocol::Global, protocol::Message::ListSessions));
 		break;
-	case protocol::type::SessionEvent:
+	case protocol::Message::SessionEvent:
 		{
 			const sessions_const_i si(sessions.find(usr->inMsg->session_id));
 			if (si == sessions.end())
@@ -942,10 +941,10 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	#ifdef LAYER_SUPPORT
-	case protocol::type::LayerEvent:
+	case protocol::Message::LayerEvent:
 		uLayerEvent(usr);
 		break;
-	case protocol::type::LayerSelect:
+	case protocol::Message::LayerSelect:
 		{
 			protocol::LayerSelect &layer = *static_cast<protocol::LayerSelect*>(usr->inMsg);
 			
@@ -973,29 +972,29 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	#endif
-	case protocol::type::SessionInstruction:
+	case protocol::Message::SessionInstruction:
 		uSessionInstruction(usr);
 		break;
-	case protocol::type::SetPassword:
+	case protocol::Message::SetPassword:
 		
-	case protocol::type::Shutdown:
+	case protocol::Message::Shutdown:
 		if (usr->isAdmin)
 			state = Server::Exiting;
 		break;
-	case protocol::type::Authenticate:
+	case protocol::Message::Authenticate:
 		if (a_password == 0) // no admin password set
 			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::Unauthorized));
 		else // request password
 			uSendMsg(*usr, msgPWRequest(*usr, protocol::Global));
 		break;
-	case protocol::type::Password:
+	case protocol::Message::Password:
 		uHandlePassword(usr);
 		break;
 	default:
 		cerr << "Unknown message: #" << static_cast<int>(usr->inMsg->type)
 			<< ", from user: #" << static_cast<int>(usr->id)
 			<< " (dropping)" << endl;
-		uRemove(usr, protocol::user_event::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		break;
 	}
 }
@@ -1072,7 +1071,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		// Input buffer corrupted
 		cerr << "Corrupted data from user #" << static_cast<int>(usr->id)
 			<< ", dropping." << endl;
-		uRemove(usr, protocol::user_event::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		if (!inBuffer)
 			delete [] temp;
 		break;
@@ -1091,14 +1090,14 @@ void Server::uHandleAck(User*& usr) throw()
 	
 	switch (ack.event)
 	{
-	case protocol::type::SyncWait:
+	case protocol::Message::SyncWait:
 		{
 			// check active session first
 			const usr_session_const_i usi(usr->sessions.find(ack.session_id));
 			if (usi == usr->sessions.end())
 				uSendMsg(*usr, msgError(ack.session_id, protocol::error::NotSubscribed));
 			else if (usi->second->syncWait) // duplicate syncwait
-				uRemove(usr, protocol::user_event::Dropped);
+				uRemove(usr, protocol::UserInfo::Dropped);
 			else
 			{
 				usi->second->syncWait = true;
@@ -1178,7 +1177,7 @@ void Server::uTunnelRaster(User& usr) throw()
 	else
 	{
 		// ACK raster
-		uSendMsg(usr, msgAck(usr.inMsg->session_id, protocol::type::Raster));
+		uSendMsg(usr, msgAck(usr.inMsg->session_id, protocol::Message::Raster));
 		
 		tunnel_i ti(ft.first);
 		// Forward raster data to users.
@@ -1207,7 +1206,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 {
 	assert(session != 0);
 	assert(usr != 0);
-	assert(usr->inMsg->type == protocol::type::SessionEvent);
+	assert(usr->inMsg->type == protocol::Message::SessionEvent);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "Server::uSessionEvent(session: "
@@ -1224,7 +1223,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	
 	switch (event.action)
 	{
-	case protocol::session_event::Kick:
+	case protocol::SessionEvent::Kick:
 		{
 			const session_usr_const_i sui(session->users.find(event.target));
 			if (sui == session->users.end()) // user not found in session
@@ -1234,12 +1233,12 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				Propagate(*session, message_ref(&event));
 				usr->inMsg = 0;
 				User *usr_ptr = sui->second;
-				uLeaveSession(*usr_ptr, session, protocol::user_event::Kicked);
+				uLeaveSession(*usr_ptr, session, protocol::UserInfo::Kicked);
 			}
 		}
 		break;
-	case protocol::session_event::Lock:
-	case protocol::session_event::Unlock:
+	case protocol::SessionEvent::Lock:
+	case protocol::SessionEvent::Unlock:
 		if (event.target == protocol::null_user)
 		{
 			// Lock whole board
@@ -1248,10 +1247,10 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			cout << "Changing lock state for session #"
 				<< static_cast<int>(session->id)
 				<< " to "
-				<< (event.action == protocol::session_event::Lock ? "enabled" : "disabled") << endl;
+				<< (event.action == protocol::SessionEvent::Lock ? "enabled" : "disabled") << endl;
 			#endif
 			
-			session->locked = (event.action == protocol::session_event::Lock ? true : false);
+			session->locked = (event.action == protocol::SessionEvent::Lock ? true : false);
 		}
 		else
 		{
@@ -1261,7 +1260,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			cout << "Changing lock state for user #"
 				<< static_cast<int>(event.target)
 				<< " to "
-				<< (event.action == protocol::session_event::Lock ? "enabled" : "disabled")
+				<< (event.action == protocol::SessionEvent::Lock ? "enabled" : "disabled")
 				<< " in session #" << static_cast<int>(session->id) << endl;
 			#endif
 			
@@ -1281,13 +1280,13 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			else if (event.aux == protocol::null_layer)
 			{
 				// lock completely
-				usi->second->locked = (event.action == protocol::session_event::Lock);
+				usi->second->locked = (event.action == protocol::SessionEvent::Lock);
 				
 				// Copy active session
 				if (usr->session->id == event.session_id)
 					usr->a_locked = usi->second->locked;
 			}
-			else if (event.action == protocol::session_event::Lock)
+			else if (event.action == protocol::SessionEvent::Lock)
 			{
 				#ifndef NDEBUG
 				cout << "Lock ignored, limiting user to layer #"
@@ -1324,7 +1323,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		usr->inMsg = 0;
 		
 		break;
-	case protocol::session_event::Delegate:
+	case protocol::SessionEvent::Delegate:
 		{
 			const session_usr_const_i sui(session->users.find(event.target));
 			if (sui == session->users.end()) // User not found
@@ -1337,8 +1336,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 		}
 		break;
-	case protocol::session_event::Mute:
-	case protocol::session_event::Unmute:
+	case protocol::SessionEvent::Mute:
+	case protocol::SessionEvent::Unmute:
 		{
 			users_i ui(users.find(event.target));
 			if (ui == users.end())
@@ -1351,7 +1350,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				else
 				{
 					// Set mode
-					usi->second->muted = (event.action == protocol::session_event::Mute);
+					usi->second->muted = (event.action == protocol::SessionEvent::Mute);
 					
 					// Copy to active session's mode, too.
 					if (usr->session->id == event.target)
@@ -1364,18 +1363,18 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			}
 		}
 		break;
-	case protocol::session_event::Persist:
+	case protocol::SessionEvent::Persist:
 		cerr << "Setting 'Persist' for session not supported." << endl;
 		// TODO
 		break;
-	case protocol::session_event::CacheRaster:
+	case protocol::SessionEvent::CacheRaster:
 		cerr << "Setting 'Cache Raster' for session not supported." << endl;
 		// TODO
 		break;
 	default:
 		cerr << "Unknown session action: "
 			<< static_cast<int>(event.action) << ")" << endl;
-		uRemove(usr, protocol::user_event::Violation);
+		uRemove(usr, protocol::UserInfo::Violation);
 		return;
 	}
 }
@@ -1393,7 +1392,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
-	assert(usr->inMsg->type == protocol::type::SessionInstruction);
+	assert(usr->inMsg->type == protocol::Message::SessionInstruction);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "Server::uSessionInstruction(user: "
@@ -1404,7 +1403,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 	
 	switch (msg.action)
 	{
-	case protocol::session_command::Create:
+	case protocol::SessionInstruction::Create:
 		if (!usr->isAdmin) { break; }
 		// limited scope for switch/case
 		{
@@ -1479,11 +1478,11 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				
 				msg.title = 0; // prevent title from being deleted
 				
-				uSendMsg(*usr, msgAck(msg.session_id, protocol::type::SessionInstruction));
+				uSendMsg(*usr, msgAck(msg.session_id, protocol::Message::SessionInstruction));
 			}
 		}
 		return; // because session owner might've done this
-	case protocol::session_command::Destroy:
+	case protocol::SessionInstruction::Destroy:
 		{
 			const sessions_const_i si(sessions.find(msg.session_id));
 			if (si == sessions.end())
@@ -1510,14 +1509,14 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			for (; sui != session->users.end(); ++sui)
 			{
 				usr_ptr = sui->second;
-				uLeaveSession(*usr_ptr, session, protocol::user_event::None);
+				uLeaveSession(*usr_ptr, session, protocol::UserInfo::None);
 			}
 			
 			// destruct
 			sRemove(session);
 		}
 		break;
-	case protocol::session_command::Alter:
+	case protocol::SessionInstruction::Alter:
 		{
 			const sessions_const_i si(sessions.find(msg.session_id));
 			if (si == sessions.end())
@@ -1545,7 +1544,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				cerr << "Protocol violation from user #"
 					<< static_cast<int>(usr->id) << endl
 					<< "Reason: Attempted to reduce session's canvas size." << endl;
-				uRemove(usr, protocol::user_event::Violation);
+				uRemove(usr, protocol::UserInfo::Violation);
 				break;
 			}
 			else if (msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
@@ -1581,7 +1580,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		#ifndef NDEBUG
 		cerr << "Unrecognized action: " << static_cast<int>(msg.action) << endl;
 		#endif
-		uRemove(usr, protocol::user_event::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
 }
@@ -1591,7 +1590,7 @@ void Server::uSetPassword(User*& usr) throw()
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
-	assert(usr->inMsg->type == protocol::type::SetPassword);
+	assert(usr->inMsg->type == protocol::Message::SetPassword);
 	
 	protocol::SetPassword &setpw = *static_cast<protocol::SetPassword*>(usr->inMsg);
 	if (setpw.session_id == protocol::Global)
@@ -1605,7 +1604,7 @@ void Server::uSetPassword(User*& usr) throw()
 			cout << "Server password changed." << endl;
 			#endif
 			
-			uSendMsg(*usr, msgAck(protocol::Global, protocol::type::SetPassword));
+			uSendMsg(*usr, msgAck(protocol::Global, protocol::Message::SetPassword));
 		}
 		else
 			uSendMsg(*usr, msgError(protocol::Global, protocol::error::Unauthorized));
@@ -1639,7 +1638,7 @@ void Server::uSetPassword(User*& usr) throw()
 		session->pw_len = setpw.password_len;
 		setpw.password = 0;
 		
-		uSendMsg(*usr, msgAck(setpw.session_id, protocol::type::SetPassword));
+		uSendMsg(*usr, msgAck(setpw.session_id, protocol::Message::SetPassword));
 	}
 }
 
@@ -1657,7 +1656,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	switch (usr->state)
 	{
 	case User::Login:
-		if (usr->inMsg->type == protocol::type::UserInfo)
+		if (usr->inMsg->type == protocol::Message::UserInfo)
 		{
 			protocol::UserInfo &msg = *static_cast<protocol::UserInfo*>(usr->inMsg);
 			
@@ -1670,7 +1669,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				
 				uSendMsg(*usr, msgError(msg.session_id, protocol::error::TooLong));
 				
-				//uRemove(usr, protocol::user_event::Dropped);
+				//uRemove(usr, protocol::UserInfo::Dropped);
 				break;
 			}
 			
@@ -1687,7 +1686,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				
 				uSendMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
 				
-				//uRemove(usr, protocol::user_event::Dropped);
+				//uRemove(usr, protocol::UserInfo::Dropped);
 				break;
 			}
 			
@@ -1731,10 +1730,10 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			uSendMsg(*usr, message_ref(&msg));
 		}
 		else // wrong message type
-			uRemove(usr, protocol::user_event::Violation);
+			uRemove(usr, protocol::UserInfo::Violation);
 		break;
 	case User::LoginAuth:
-		if (usr->inMsg->type == protocol::type::Password)
+		if (usr->inMsg->type == protocol::Message::Password)
 		{
 			const protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
 			
@@ -1747,19 +1746,19 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			if (memcmp(digest, msg.data, protocol::password_hash_size) == 0)
 			{
-				uSendMsg(*usr, msgAck(msg.session_id, protocol::type::Password)); // ACK
+				uSendMsg(*usr, msgAck(msg.session_id, protocol::Message::Password)); // ACK
 				uRegenSeed(*usr); // mangle seed
 				usr->state = User::Login; // set state
 				uSendMsg(*usr, msgHostInfo()); // send hostinfo
 			}
 			else  // mismatch
-				uRemove(usr, protocol::user_event::Dropped);
+				uRemove(usr, protocol::UserInfo::Dropped);
 		}
 		else // not a password
-			uRemove(usr, protocol::user_event::Violation);
+			uRemove(usr, protocol::UserInfo::Violation);
 		break;
 	case User::Init:
-		if (usr->inMsg->type == protocol::type::Identifier)
+		if (usr->inMsg->type == protocol::Message::Identifier)
 		{
 			const protocol::Identifier &ident = *static_cast<protocol::Identifier*>(usr->inMsg);
 			
@@ -1769,7 +1768,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				cerr << "Protocol string mismatch" << endl;
 				#endif
 				
-				uRemove(usr, protocol::user_event::Violation);
+				uRemove(usr, protocol::UserInfo::Violation);
 			}
 			else if (ident.revision != protocol::revision)
 			{
@@ -1781,7 +1780,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				
 				// TODO: Implement some compatible way of announcing incompatibility?
 				
-				uRemove(usr, protocol::user_event::Dropped);
+				uRemove(usr, protocol::UserInfo::Dropped);
 			}
 			else
 			{
@@ -1808,7 +1807,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			cerr << "Invalid data from user #"
 				<< static_cast<int>(usr->id) << ", dropping connection." << endl;
-			uRemove(usr, protocol::user_event::Dropped);
+			uRemove(usr, protocol::UserInfo::Dropped);
 		}
 		break;
 	default:
@@ -1822,7 +1821,7 @@ void Server::uLayerEvent(User*& usr) throw()
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
-	assert(usr->inMsg->type == protocol::type::LayerEvent);
+	assert(usr->inMsg->type == protocol::Message::LayerEvent);
 	
 	#ifndef NDEBUG
 	cout << "Server::uLayerEvent(session: " << usr->inMsg->session_id << ")" << endl;
@@ -1846,18 +1845,18 @@ void Server::uLayerEvent(User*& usr) throw()
 	
 	switch (levent.action)
 	{
-	case protocol::layer_event::Create:
+	case protocol::LayerEvent::Create:
 		{
 			// TODO: Figure out what to do with the layer ID
 			uint8_t lastLayer = levent.layer_id;
 			session->layers[lastLayer] = LayerData(lastLayer, levent.mode, levent.opacity);
 		}
 		break;
-	case protocol::layer_event::Destroy:
+	case protocol::LayerEvent::Destroy:
 		session->layers.erase(levent.layer_id);
 		// TODO: Cleanup
 		break;
-	case protocol::layer_event::Alter:
+	case protocol::LayerEvent::Alter:
 		{
 			session_layer_i sli = session->layers.find(levent.layer_id);
 			if (sli == session->layers.end())
@@ -1870,7 +1869,7 @@ void Server::uLayerEvent(User*& usr) throw()
 		break;
 	default:
 		cerr << "Unknown layer event: " << levent.action << std::endl;
-		uRemove(usr, protocol::user_event::Violation);
+		uRemove(usr, protocol::UserInfo::Violation);
 		return;
 	}
 	
@@ -1925,11 +1924,11 @@ void Server::uSendMsg(User& usr, message_ref msg) throw()
 	
 	switch (msg->type)
 	{
-	case protocol::type::Chat:
+	case protocol::Message::Chat:
 		if (!usr.ext_chat)
 			return;
 		break;
-	case protocol::type::Palette:
+	case protocol::Message::Palette:
 		if (!usr.ext_palette)
 			return;
 		break;
@@ -1970,7 +1969,7 @@ void Server::SyncSession(Session* session) throw()
 	uSendMsg(*src, ref);
 	
 	// Release clients from syncwait...
-	Propagate(*session, msgAck(session->id, protocol::type::SyncWait));
+	Propagate(*session, msgAck(session->id, protocol::Message::SyncWait));
 	
 	#ifdef HAVE_SLIST
 	__gnu_cxx::slist<message_ref> msg_queue;
@@ -1979,7 +1978,7 @@ void Server::SyncSession(Session* session) throw()
 	#endif
 	
 	if (session->locked)
-		msg_queue.insert(msg_queue.end(), message_ref(new protocol::SessionEvent(protocol::session_event::Lock, protocol::null_user, 0)));
+		msg_queue.insert(msg_queue.end(), message_ref(new protocol::SessionEvent(protocol::SessionEvent::Lock, protocol::null_user, 0)));
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
@@ -1992,7 +1991,7 @@ void Server::SyncSession(Session* session) throw()
 		usi->second->syncWait = false;
 		
 		// add join
-		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session->id, protocol::user_event::Join));
+		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session->id, protocol::UserInfo::Join));
 		if (usr_ptr->session->id == session->id)
 		{
 			// add session select
@@ -2019,7 +2018,7 @@ void Server::SyncSession(Session* session) throw()
 	
 	// announce the new users
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
-		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session->id, protocol::user_event::Join));
+		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session->id, protocol::UserInfo::Join));
 	
 	#ifdef HAVE_SLIST
 	__gnu_cxx::slist<message_ref>::const_iterator m_iter;
@@ -2071,7 +2070,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 	if (session->users.size() != 0)
 	{
 		// Tell session members there's a new user.
-		Propagate(*session, msgUserEvent(*usr, session->id, protocol::user_event::Join));
+		Propagate(*session, msgUserEvent(*usr, session->id, protocol::UserInfo::Join));
 		
 		// put user to wait sync list.
 		//session->waitingSync.push_back(usr);
@@ -2102,7 +2101,7 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 
 // Calls sRemove, uSendMsg, Propagate
 inline
-void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) throw()
+void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason) throw()
 {
 	assert(session != 0);
 	
@@ -2154,7 +2153,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) t
 		}
 		
 		// Tell session members the user left
-		if (reason != protocol::user_event::None)
+		if (reason != protocol::UserInfo::None)
 		{
 			Propagate(*session, msgUserEvent(usr, session_id, reason));
 			
@@ -2163,7 +2162,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const uint8_t reason) t
 				session->owner = protocol::null_user;
 				
 				// Announce owner disappearance.
-				message_ref sev_ref(new protocol::SessionEvent(protocol::session_event::Delegate, session->owner, 0));
+				message_ref sev_ref(new protocol::SessionEvent(protocol::SessionEvent::Delegate, session->owner, 0));
 				sev_ref->session_id = session_id;
 				Propagate(*session, sev_ref);
 			}
@@ -2270,7 +2269,7 @@ void Server::breakSync(User& usr) throw()
 }
 
 inline
-void Server::uRemove(User*& usr, const uint8_t reason) throw()
+void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw()
 {
 	assert(usr != 0);
 	
@@ -2456,7 +2455,7 @@ void Server::cullIdlers() throw()
 			usr = *tui;
 			--tui;
 			
-			uRemove(usr, protocol::user_event::TimedOut);
+			uRemove(usr, protocol::UserInfo::TimedOut);
 		}
 		else if ((*tui)->deadtime < next_timer)
 		{
@@ -2507,14 +2506,14 @@ int Server::run() throw()
 				#ifdef EV_HAS_ERROR
 				if (fIsSet(events, ev.error))
 				{
-					uRemove(usr, protocol::user_event::BrokenPipe);
+					uRemove(usr, protocol::UserInfo::BrokenPipe);
 					goto timercheck;
 				}
 				#endif // EV_HAS_ERROR
 				#ifdef EV_HAS_HANGUP
 				if (fIsSet(events, ev.hangup))
 				{
-					uRemove(usr, protocol::user_event::Disconnect);
+					uRemove(usr, protocol::UserInfo::Disconnect);
 					goto timercheck;
 				}
 				#endif // EV_HAS_HANGUP

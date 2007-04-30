@@ -30,7 +30,6 @@
 #include "version.h"
 
 #include "../shared/protocol.h"
-#include "../shared/protocol.types.h"
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.flags.h"
 #include "../shared/SHA1.h"
@@ -57,76 +56,76 @@ void HostState::receiveMessage()
 		protocol::Message *next = msg->next;
 		switch(msg->type) {
 			using namespace protocol;
-			case type::StrokeInfo:
+			case Message::StrokeInfo:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
 					if(mysessions_.value(usersessions_.value(msg->user_id))
 						->handleStrokeInfo(static_cast<StrokeInfo*>(msg)))
 						msg = 0;
 				break;
-			case type::StrokeEnd:
+			case Message::StrokeEnd:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
 					if(mysessions_.value(usersessions_.value(msg->user_id))
 						->handleStrokeEnd(static_cast<StrokeEnd*>(msg)))
 						msg = 0;
 				break;
-			case type::ToolInfo:
+			case Message::ToolInfo:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
 					if(mysessions_.value(usersessions_.value(msg->user_id))
 						->handleToolInfo(static_cast<ToolInfo*>(msg)))
 						msg = 0;
 				break;
-			case type::Chat:
+			case Message::Chat:
 				Q_ASSERT(usersessions_.contains(msg->user_id));
 				if(mysessions_.contains(usersessions_.value(msg->user_id)))
 					mysessions_.value(usersessions_.value(msg->user_id))
 						->handleChat(static_cast<Chat*>(msg));
 				break;
-			case type::UserInfo:
+			case Message::UserInfo:
 				handleUserInfo(static_cast<UserInfo*>(msg));
 				break;
-			case type::HostInfo:
+			case Message::HostInfo:
 				handleHostInfo(static_cast<HostInfo*>(msg));
 				break;
-			case type::SessionInfo:
+			case Message::SessionInfo:
 				handleSessionInfo(static_cast<SessionInfo*>(msg));
 				break;
-			case type::Acknowledgement:
+			case Message::Acknowledgement:
 				handleAck(static_cast<Acknowledgement*>(msg));
 				break;
-			case type::Error:
+			case Message::Error:
 				handleError(static_cast<Error*>(msg));
 				break;
-			case type::PasswordRequest:
+			case Message::PasswordRequest:
 				handleAuthentication(static_cast<PasswordRequest*>(msg));
 				break;
-			case type::SessionSelect:
+			case Message::SessionSelect:
 				handleSessionSelect(static_cast<SessionSelect*>(msg));
 				break;
-			case type::Raster:
+			case Message::Raster:
 				if(mysessions_.contains(msg->session_id))
 					mysessions_.value(msg->session_id)->handleRaster(
 							static_cast<Raster*>(msg));
 				else
 					qDebug() << "received raster data for unsubscribed session" << int(msg->session_id);
 				break;
-			case type::Synchronize:
+			case Message::Synchronize:
 				if(mysessions_.contains(msg->session_id))
 					mysessions_.value(msg->session_id)->handleSynchronize(
 							static_cast<Synchronize*>(msg));
 				else
 					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
 				break;
-			case type::SyncWait:
+			case Message::SyncWait:
 				if(mysessions_.contains(msg->session_id))
 					mysessions_.value(msg->session_id)->handleSyncWait(
 							static_cast<SyncWait*>(msg));
 				else
 					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
 				break;
-			case type::SessionEvent:
+			case Message::SessionEvent:
 				if(mysessions_.contains(msg->session_id))
 					mysessions_.value(msg->session_id)->handleSessionEvent(
 							static_cast<SessionEvent*>(msg));
@@ -203,7 +202,7 @@ void HostState::host(const QString& title,
 	const QByteArray tbytes = title.toUtf8();
 	
 	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
-			protocol::session_command::Create,
+			protocol::SessionInstruction::Create,
 			width,
 			height,
 			protocol::user_mode::None,
@@ -439,7 +438,7 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 	// Reply with user info
 	protocol::UserInfo *user = new protocol::UserInfo(
 			0, // mode (ignored)
-			protocol::user_event::Login,
+			protocol::UserInfo::Login,
 			name.length(),
 			new char[name.length()]
 			);
@@ -515,7 +514,7 @@ void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
 	passwordsession_ = msg->session_id;
 	// FIXME!
 	/*
-	if(lastinstruction_ == protocol::session_command::Authenticate) {
+	if(lastinstruction_ == protocol::SessionInstruction::Authenticate) {
 		sendPassword(sendadminpassword_);
 	} else {
 		emit needPassword();
@@ -531,8 +530,8 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
 	if(msg->session_id != protocol::Global) {
 		// Handle session acks
-		if(msg->event == protocol::type::Subscribe ||
-				msg->event == protocol::type::Password) {
+		if(msg->event == protocol::Message::Subscribe ||
+				msg->event == protocol::Message::Password) {
 			// Special case. When subscribing, session is not yet in the list.
 			// When a session is protected by a password, Password
 			// ack is used instead.
@@ -556,26 +555,26 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		return;
 	}
 	// Handle global acks
-	if(msg->event == protocol::type::SessionInstruction) {
-		if(lastinstruction_ == protocol::session_command::Create) {
+	if(msg->event == protocol::Message::SessionInstruction) {
+		if(lastinstruction_ == protocol::SessionInstruction::Create) {
 			// Automatically join the newest session created
 			disconnect(this, SIGNAL(sessionsListed()), this, 0);
 			connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
 			listSessions();
 			qDebug() << "session created, joining...";
-		} else if(lastinstruction_ == protocol::session_command::Alter) {
+		} else if(lastinstruction_ == protocol::SessionInstruction::Alter) {
 			qDebug() << "Warning: Ack for Instruction Alter not expected";
 		} else {
 			qFatal("BUG: unhandled lastinstruction_");
 		}
 		lastinstruction_ = -1;
-	} else if(msg->event == protocol::type::SetPassword) {
+	} else if(msg->event == protocol::Message::SetPassword) {
 		// Password accepted
 		qDebug() << "password set";
-	} else if(msg->event == protocol::type::ListSessions) {
+	} else if(msg->event == protocol::Message::ListSessions) {
 		// A full session list has been downloaded
 		emit sessionsListed();
-	} else if(msg->event == protocol::type::Password) {
+	} else if(msg->event == protocol::Message::Password) {
 		/* // FIXME
 		if(lastinstruction_ == protocol::admin::command::Authenticate) {
 			emit becameAdmin();

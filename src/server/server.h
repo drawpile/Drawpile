@@ -269,7 +269,7 @@ protected:
 	
 	// Needs session reference because it might get destroyed.
 	inline
-	void uLeaveSession(User& usr, Session*& session, const uint8_t reason=protocol::user_event::Leave) throw();
+	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave) throw();
 	
 	// Adds user
 	inline
@@ -277,7 +277,7 @@ protected:
 	
 	// Removes user and does cleaning..
 	inline
-	void uRemove(User*& usr, const uint8_t reason) throw();
+	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw();
 	
 	// Delete session and do some cleaning
 	inline

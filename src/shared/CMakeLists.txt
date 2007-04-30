@@ -7,7 +7,6 @@ set (
 	protocol.defaults.h
 	protocol.errors.h
 	protocol.flags.h
-	protocol.types.h
 	protocol.helper.h
 	memstack.h
 	protocol.tools.h

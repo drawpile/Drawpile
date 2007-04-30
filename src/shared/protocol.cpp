@@ -103,10 +103,8 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	assert(next == 0);
 	
 	#ifndef NDEBUG
-	if (data == 0)
-		assert(size == 0);
-	if (size == 0)
-		assert(data == 0);
+	if (data == 0 or size == 0)
+		assert(data == 0 and size == 0);
 	#endif
 	
 	// At least one message is serialized (the last)
@@ -301,11 +299,12 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exc
 	
 	size_t i = unserializeHeader(buf);
 	
-	uint8_t count;
-	memcpy_t(count, buf+i); i += sizeof(count);
+	uint8_t count = *(buf+i);
 	
 	if (count == 0)
 		throw std::exception(); // TODO: Need better exception
+	
+	i += sizeof(count);
 	
 	// make sure we aren't overflowing the buffer
 	assert(i + payloadLength() <= len);
