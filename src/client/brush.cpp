@@ -262,9 +262,10 @@ void Brush::updateCache() const
 	// Compute a lookup table
 	ushort lookup[rad*oversample];
 	const int grad = int((1 - hardness(cachepressure_)) * rad * oversample);
-	for(int i=0;i<grad;++i)
-		lookup[i] = int( 256 * i/qreal(grad) * o );
-	for(int i=grad;i<rad*oversample;++i)
+	int i=0;
+	for(; i < grad ; ++i)
+		lookup[i] = int(256 * i/qreal(grad) * o);
+	for(; i < rad*oversample; ++i)
 		lookup[i] = int(256 * o);
 
 	// Generate an alpha map for the brush.
@@ -281,13 +282,9 @@ void Brush::updateCache() const
 	for(qreal y=-rad+0.5;y<=0;++y) {
 		const qreal yy = y*y;
 		for(qreal x=-rad+0.5;x<=0;++x) {
-			const qreal dist = sqrt(x*x + yy);
-			const ushort a = (dist<rad ? lookup[rad*oversample-int(dist*oversample)] : 0);
-			
-			*(q1++) = a;
-			*(q2--) = a;
-			*(q3++) = a;
-			*(q4--) = a;
+			const int dist = int(sqrt(x*x + yy)+.5);
+			const ushort a = (dist<rad ? lookup[rad*oversample-dist*oversample] : 0);
+			*(q1++) = *(q2--) = *(q3++) = *(q4--) = a;
 		}
 		q1 += scanline2;
 		q2 += scanline15;
@@ -318,7 +315,7 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const uint offy = cy<0 ? -cy : 0;
 	uchar *dest = image.bits() + ((cy+offy)*image.width()+cx+offx)*4;
 	
-	// for avoiding
+	// for avoiding retyping same calculation over and over
 	#define CALCULATE_COLOR(color, target, alpha) \
 		alpha * (color - target) / 256
 	
