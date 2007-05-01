@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QUrl>
+#include <QMessageBox>
 
 #include "mainwindow.h"
 #include "localserver.h"
@@ -57,7 +58,7 @@ int main(int argc, char *argv[]) {
 	LocalServer *srv = LocalServer::getInstance();
 	app.connect(&app, SIGNAL(aboutToQuit()), srv, SLOT(shutdown()));
 
-	// Create and show the main window
+	// Create the main window
 	MainWindow *win = new MainWindow;
 
 	const QStringList args = app.arguments();
@@ -67,7 +68,7 @@ int main(int argc, char *argv[]) {
 		// or a filename.
 		if(arg.startsWith("drawpile://")) {
 			// Create a default board first, in case connection fails
-			win->initBoard(QSize(800,600), Qt::white);
+			win->initDefaultBoard();
 			// Join the session
 			QUrl url(arg, QUrl::TolerantMode);
 			if(url.userName().isEmpty()) {
@@ -79,13 +80,16 @@ int main(int argc, char *argv[]) {
 			win->joinSession(url);
 		} else {
 			if(win->initBoard(argv[1])==false) {
-				std::cerr << argv[1] << ": couldn't load image.\n";
-				return 1;
+				// If image couldn't be loaded, initialize to a default board
+				// and show error message.
+				win->initDefaultBoard();
+				QMessageBox::warning(win, app.tr("DrawPile"),
+						app.tr("Couldn't load image %1.").arg(argv[1]));
 			}
 		}
 	} else {
 		// Create a default board
-		win->initBoard(QSize(800,600), Qt::white);
+		win->initDefaultBoard();
 	}
 	win->show();
 

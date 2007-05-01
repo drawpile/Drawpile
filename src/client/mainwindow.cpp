@@ -257,6 +257,11 @@ void MainWindow::initBoard(const QSize& size, const QColor& color)
 	setTitle();
 }
 
+void MainWindow::initDefaultBoard()
+{
+	initBoard(QSize(800,600), Qt::white);
+}
+
 /**
  * @param image board image
  */

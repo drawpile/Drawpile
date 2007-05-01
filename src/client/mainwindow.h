@@ -74,6 +74,9 @@ class MainWindow : public QMainWindow {
 		//! Initialize a blank drawing board
 		void initBoard(const QSize& size, const QColor& color);
 
+		//! Initialize a default drawing board
+		void initDefaultBoard();
+
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
 
