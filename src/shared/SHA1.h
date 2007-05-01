@@ -14,9 +14,12 @@
 #define SHA1_INCLUDED
 
 #include <boost/cstdint.hpp>
+#include <string>
 
 class SHA1
 {
+	typedef unsigned char uchar;
+	
 	union {
 		uint8_t  c[64];
 		uint32_t l[16];
@@ -36,7 +39,7 @@ public:
 	void Reset() throw();
 	
 	// Update the hash value
-	void Update(const unsigned char *data, const uint32_t len) throw();
+	void Update(const uchar *data, const uint32_t len) throw();
 	
 	// Finalize hash and report
 	void Final() throw();
@@ -44,8 +47,9 @@ public:
 	// Report functions: as pre-formatted and raw data
 	// Requires you to provide pre-allocated string with length of at least 40 bytes
 	void HexDigest(char *szReport) const throw();
+	
 	// Requires a string of at least 20 bytes
-	void GetHash(unsigned char *puDest) const throw();
+	void GetHash(uchar *puDest) const throw();
 
 private:
 	inline
@@ -58,21 +62,21 @@ private:
 	uint32_t ROL32(const uint32_t v, const uint32_t n) const throw();
 	
 	inline
-	void _R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	inline
-	void _R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	void Transform(uint32_t *state, const unsigned char *buffer) throw();
+	void Transform(uint32_t *state, const uchar *buffer) throw();
 	
 	#ifndef NDEBUG
 	bool finalized;
