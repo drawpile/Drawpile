@@ -172,8 +172,8 @@ if ( WIN32 )
 	link_libraries ( ws2_32 )
 	
 	### generate resource file .o
-	set ( SourceRES ${CMAKE_CURRENT_SOURCE_DIR}/server.rc )
-	dump_resource ( ${SourceRES} )
+	set ( SourceRES ${CMAKE_CURRENT_BINARY_DIR}/server.rc )
+	generate_win32_resource ( ${SourceRES} )
 	
 	set ( RES ${CMAKE_CURRENT_BINARY_DIR}/server.resource.o )
 	add_custom_command(
@@ -189,7 +189,7 @@ if ( WIN32 )
 	set_directory_properties (
 		PROPERTIES
 		ADDITIONAL_MAKE_CLEAN_FILES
-		"${CLEANF} server.resource.o"
+		"${CLEANF} server.resource.o server.rc"
 	)
 endif ( WIN32 )
 

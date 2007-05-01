@@ -93,8 +93,8 @@ if ( WIN32 )
 	endif ( NOT DEBUG )
 	
 	### generate resource file .o
-	set ( SourceRES ${CMAKE_CURRENT_SOURCE_DIR}/client.rc )
-	dump_resource ( ${SourceRES} )
+	set ( SourceRES ${CMAKE_CURRENT_BINARY_DIR}/client.rc )
+	generate_win32_resource ( ${SourceRES} )
 	
 	set ( RES ${CMAKE_CURRENT_BINARY_DIR}/client.resource.o )
 	add_custom_command(
@@ -110,7 +110,7 @@ if ( WIN32 )
 	set_directory_properties (
 		PROPERTIES
 		ADDITIONAL_MAKE_CLEAN_FILES
-		"${CLEANF} client.resource.o"
+		"${CLEANF} client.resource.o client.rc"
 	)
 endif ( WIN32 )
 

@@ -14,7 +14,7 @@ macro ( strip_exe target )
 	endif ( STRIP_CMD )
 endmacro ( strip_exe target )
 
-macro ( dump_resource ResourceFile )
+macro ( generate_win32_resource ResourceFile )
 	if ( WIN32 )
 		file ( WRITE ${ResourceFile} "#include <winver.h>\n\n" )
 		file ( APPEND ${ResourceFile} "VS_VERSION_INFO VERSIONINFO\n" )
