@@ -92,26 +92,8 @@ if ( WIN32 )
 		set ( EXETYPE WIN32 )
 	endif ( NOT DEBUG )
 	
-	### generate resource file .o
-	set ( SourceRES ${CMAKE_CURRENT_BINARY_DIR}/client.rc )
-	generate_win32_resource ( ${SourceRES} )
-	
-	set ( RES ${CMAKE_CURRENT_BINARY_DIR}/client.resource.o )
-	add_custom_command(
-		OUTPUT ${RES}
-		COMMAND windres ${SourceRES} ${RES}
-	)
-	
-	get_directory_property (
-		CLEANF
-		ADDITIONAL_MAKE_CLEAN_FILES
-	)
-	
-	set_directory_properties (
-		PROPERTIES
-		ADDITIONAL_MAKE_CLEAN_FILES
-		"${CLEANF} client.resource.o client.rc"
-	)
+	### generate resource file .o = ${WIN32RES}
+	generate_win32_resource()
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
@@ -124,12 +106,12 @@ add_executable (
 	drawpile
 	${EXETYPE}
 	MACOSX_BUNDLE
-	${RES}
 	${Client_Sources}
 	${Client_Headers}
 	${Client_UI_Headers}
 	${Client_Resource_Sources}
 	${MOC_Sources}
+	${WIN32RES}
 )
 
 target_link_libraries(
