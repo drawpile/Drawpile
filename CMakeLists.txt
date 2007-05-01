@@ -72,6 +72,11 @@ endif ( SHARED )
 
 ### config.h ###
 
+### snprintf
+
+include (CheckFunctionExists)
+check_function_exists ( snprintf HAVE_SNPRINTF ) # C99 function
+
 ### Boost library
 
 find_package ( Boost 1.33 REQUIRED )
