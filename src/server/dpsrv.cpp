@@ -190,9 +190,25 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				cout << "Server will exit after all users have left." << endl;
 				break;
 			case 'b': // background
-				srv.setDaemonMode(true);
-				cerr << "Daemon mode not implemented." << endl;
+				#if defined(HAVE_FORK) or defined(HAVE_FORK1)
+				{
+					#ifdef HAVE_FORK
+					pid_t rc = fork();
+					#else // HAVE_FORK1
+					pid_t rc = fork1();
+					#endif
+					if (rc == -1)
+					{
+						cerr << "fork() failed" << endl;
+						exit(1);
+					}
+					else if (rc != 0)
+						exit(0); // kill parent process
+				}
+				#else
+				cerr << "Non-forking daemon mode not implemented." << endl;
 				exit(1);
+				#endif
 				break;
 			case 'd': // adjust minimum dimension.
 				{

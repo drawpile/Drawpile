@@ -59,6 +59,20 @@ if ( DEFLATE )
 	endif ( ZLIB_FOUND )
 endif ( DEFLATE )
 
+### fork()
+
+check_function_exists ( fork HAVE_FORK )
+check_function_exists ( fork1 HAVE_FORK1 )
+
+if ( HAVE_FORK1 )
+	set ( HAVE_FORK OFF )
+	link_libraries ( pthread )
+endif ( HAVE_FORK1 )
+
+if ( HAVE_FORK )
+	link_libraries ( pthread )
+endif ( HAVE_FORK )
+
 ### Event mechanism
 
 #set ( EV_FOUND OFF )

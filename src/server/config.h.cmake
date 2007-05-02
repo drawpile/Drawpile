@@ -2,6 +2,9 @@
 
 #cmakedefine HAVE_ZLIB
 
+#cmakedefine HAVE_FORK
+#cmakedefine HAVE_FORK1
+
 #cmakedefine DEBUG_BUFFER
 #cmakedefine DEBUG_EVENTS
 #cmakedefine DEBUG_SOCKETS
