@@ -16,23 +16,6 @@ else ( WIN32 )
 	set ( ORIGFILENAME "${INTERNALNAME}" )
 endif ( WIN32 )
 
-set (
-	Server_Headers
-	server.h
-	user.h
-	event.h
-	sockets.h
-	buffer.h
-	session.h
-)
-
-set (
-	Server_Sources
-	dpsrv.cpp
-	server.cpp
-	sockets.cpp
-)
-
 # include some stuff
 
 include ( CheckIncludeFile )
@@ -195,7 +178,15 @@ if ( NOT DEBUG )
 	strip_exe ( drawpile-srv )
 endif ( NOT DEBUG )
 
-add_executable ( drawpile-srv MACOSX_BUNDLE ${Server_Sources} ${EV_SRC} ${Server_Headers} ${WIN32RES} )
+add_executable (
+	drawpile-srv
+	MACOSX_BUNDLE
+	dpsrv.cpp
+	server.cpp
+	sockets.cpp
+	${EV_SRC}
+	${WIN32RES}
+)
 
 set_target_properties (
 	drawpile-srv
