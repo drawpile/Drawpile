@@ -1979,7 +1979,9 @@ void Server::SyncSession(Session* session) throw()
 			}
 		}
 		
-		if (usi->second->cachedToolInfo != 0)
+		if (usr_ptr->session == session)
+			msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*usr_ptr->cachedToolInfo)));
+		else
 			msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*usi->second->cachedToolInfo)));
 	}
 	
