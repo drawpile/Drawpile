@@ -544,10 +544,10 @@ void Server::uProcessData(User*& usr) throw()
 	
 	while (!usr->input.isEmpty())
 	{
-		if (usr->inMsg == 0)
+		if (!usr->inMsg)
 		{
 			usr->inMsg = protocol::getMessage(usr->input.rpos[0]);
-			if (usr->inMsg == 0)
+			if (!usr->inMsg)
 			{
 				// unknown message type
 				cerr << "Unknown data from user #"
@@ -653,7 +653,7 @@ void Server::uHandleDrawing(User& usr) throw()
 	#endif
 	
 	// no session selected
-	if (usr.session == 0)
+	if (!usr.session)
 	{
 		#ifndef NDEBUG
 		if (usr.strokes == 1)
@@ -720,7 +720,7 @@ void Server::uHandlePassword(User*& usr) throw()
 	if (msg.session_id == protocol::Global)
 	{
 		// Admin login
-		if (a_password == 0)
+		if (!a_password)
 		{
 			cerr << "User tries to pass password even though we've disallowed it." << endl;
 			uSendMsg(*usr, msgError(msg.session_id, protocol::error::PasswordFailure));
@@ -802,6 +802,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	switch (usr->inMsg->type)
 	{
 	case protocol::Message::ToolInfo:
+		usr->inMsg->user_id = usr->id;
 		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
 	case protocol::Message::StrokeInfo:
 	case protocol::Message::StrokeEnd:
@@ -963,7 +964,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			state = Server::Exiting;
 		break;
 	case protocol::Message::Authenticate:
-		if (a_password == 0) // no admin password set
+		if (!a_password) // no admin password set
 			uSendMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::Unauthorized));
 		else // request password
 			uSendMsg(*usr, msgPWRequest(*usr, protocol::Global));
@@ -1414,7 +1415,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			#ifndef NDEBUG
-			if (msg.title == 0)
+			if (!msg.title)
 				cout << "No title set for session." << endl;
 			#endif
 			
@@ -1757,7 +1758,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				if (password == 0) // no password set
+				if (!password) // no password set
 				{
 					usr->state = User::Login;
 					uSendMsg(*usr, msgHostInfo());
@@ -2404,6 +2405,7 @@ bool Server::validateSessionTitle(const char* name, const uint8_t len) const thr
 
 void Server::cullIdlers() throw()
 {
+	cout << "cull" << endl;
 	User *usr;
 	for (userset_i tui(utimer.begin()); tui != utimer.end(); ++tui)
 	{
@@ -2442,6 +2444,8 @@ int Server::run() throw()
 	fd_t fd;
 	uint32_t events;
 	
+	users_i ui;
+	
 	// main loop
 	do
 	{
@@ -2461,39 +2465,36 @@ int Server::run() throw()
 					continue;
 				}
 				
-				assert(users.find(fd) != users.end());
-				
-				usr = users.find(fd)->second;
+				ui = users.find(fd);
+				assert(ui != users.end());
+				usr = ui->second;
 				
 				#ifdef EV_HAS_ERROR
 				if (fIsSet(events, ev.error))
 				{
 					uRemove(usr, protocol::UserInfo::BrokenPipe);
-					goto timercheck;
+					break;
 				}
 				#endif // EV_HAS_ERROR
 				#ifdef EV_HAS_HANGUP
 				if (fIsSet(events, ev.hangup))
 				{
 					uRemove(usr, protocol::UserInfo::Disconnect);
-					goto timercheck;
+					break;
 				}
 				#endif // EV_HAS_HANGUP
 				if (fIsSet(events, ev.read))
 				{
 					uRead(usr);
-					if (usr == 0)
-						goto timercheck;
+					if (!usr) break;
 				}
 				if (fIsSet(events, ev.write))
 				{
 					uWrite(usr);
-					if (usr == 0)
-						goto timercheck;
+					if (!usr) break;
 				}
 			}
 			
-			timercheck:
 			// check timer
 			if (next_timer < current_time)
 			{
