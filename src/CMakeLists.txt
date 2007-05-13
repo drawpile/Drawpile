@@ -8,7 +8,3 @@ endif ( SERVER )
 if ( CLIENT )
 	add_subdirectory ( client/ )
 endif ( CLIENT )
-
-if ( UNITTEST )
-	add_subdirectory ( unittest/ )
-endif ( UNITTEST )

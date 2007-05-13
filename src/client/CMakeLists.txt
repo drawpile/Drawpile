@@ -1,6 +1,6 @@
 # client
 
-set ( FULLNAME "DrawPile Client" )
+set ( FULLNAME "DrawPile client" )
 set ( INTERNALNAME "drawpile" )
 set ( COPYRIGHT "Copyright (C) 2006,2007 Calle Laakkonen" )
 set ( DESCRIPTION "DrawPile client" )
@@ -106,7 +106,7 @@ if ( ACCEPT_MTHREADS )
 endif ( ACCEPT_MTHREADS )
 
 add_executable (
-	drawpile
+	${INTERNALNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${Sources}

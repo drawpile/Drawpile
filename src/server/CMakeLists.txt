@@ -1,9 +1,9 @@
 # src/server/
 
-set ( FULLNAME "DrawPile Server " )
+set ( FULLNAME "DrawPile server" )
 set ( INTERNALNAME "drawpile-srv" )
 set ( COPYRIGHT "Copyright (C) 2006,2007 M.K.A." )
-set ( DESCRIPTION "DrawPile stand-alone UI-less server" )
+set ( DESCRIPTION ${FULLNAME} )
 set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
 
 set ( VERSION_MAJOR 0 )
@@ -175,11 +175,11 @@ endif ( WIN32 )
 link_libraries( libdrawpile ) # DP shared library
 
 if ( NOT DEBUG )
-	strip_exe ( drawpile-srv )
+	strip_exe ( ${INTERNALNAME} )
 endif ( NOT DEBUG )
 
 add_executable (
-	drawpile-srv
+	${INTERNALNAME}
 	MACOSX_BUNDLE
 	dpsrv.cpp
 	server.cpp
@@ -189,7 +189,7 @@ add_executable (
 )
 
 set_target_properties (
-	drawpile-srv
+	${INTERNALNAME}
 	PROPERTIES
 	VERSION 0.5.0
 	PROJECT_LABEL drawpile-server
