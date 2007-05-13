@@ -217,7 +217,7 @@ void SessionState::setUserLimit(int count)
 			);
 	msg->session_id = info_.id;
 
-	host_->lastinstruction_ = msg->action; // FIXME
+	host_->lastsessioninstr_ = msg->action;
 	host_->connection()->send(msg);
 }
 

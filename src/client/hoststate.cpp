@@ -209,7 +209,7 @@ void HostState::host(const QString& title,
 			userlimit,
 			0, // flags (unused)
 			tbytes.length(),
-			0
+			(tbytes.length() ? new char[tbytes.length()] : 0)
 			);
 	
 	msg->session_id = protocol::Global;
@@ -220,11 +220,10 @@ void HostState::host(const QString& title,
 	
 	if (msg->title_len != 0)
 	{
-		msg->title = new char[tbytes.length()];
 		memcpy(msg->title, tbytes.constData(), tbytes.length());
 	}
 	
-	lastinstruction_ = msg->action; // FIXME
+	lastsessioninstr_ = msg->action;
 	setsessionpassword_ = password;
 	net_->send(msg);
 }
@@ -276,7 +275,9 @@ void HostState::becomeAdmin(const QString& password)
 {
 	protocol::Authenticate *msg = new protocol::Authenticate;
 	sendadminpassword_ = password;
-	//lastinstruction_ = msg->command; // FIXME
+	
+	lastinstruction_ = msg->type; // FIXME
+	
 	net_->send(msg);
 }
 
@@ -315,7 +316,8 @@ void HostState::setPassword(const QString& password, int session)
 	msg->session_id = session;
 	memcpy(msg->password,passwd.constData(),passwd.length());
 	
-	//lastinstruction_ = msg->command; // FIXME
+	lastinstruction_ = msg->type; // FIXME
+	
 	net_->send(msg);
 }
 
@@ -512,14 +514,11 @@ void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
 {
 	passwordseed_ = QByteArray(msg->seed, protocol::password_seed_size);
 	passwordsession_ = msg->session_id;
-	// FIXME!
-	/*
-	if(lastinstruction_ == protocol::SessionInstruction::Authenticate) {
+	if(msg->session_id == protocol::Global) {
 		sendPassword(sendadminpassword_);
 	} else {
 		emit needPassword();
 	}
-	*/
 }
 
 /**
@@ -556,18 +555,18 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 	}
 	// Handle global acks
 	if(msg->event == protocol::Message::SessionInstruction) {
-		if(lastinstruction_ == protocol::SessionInstruction::Create) {
+		if(lastsessioninstr_ == protocol::SessionInstruction::Create) {
 			// Automatically join the newest session created
 			disconnect(this, SIGNAL(sessionsListed()), this, 0);
 			connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
 			listSessions();
 			qDebug() << "session created, joining...";
-		} else if(lastinstruction_ == protocol::SessionInstruction::Alter) {
+		} else if(lastsessioninstr_ == protocol::SessionInstruction::Alter) {
 			qDebug() << "Warning: Ack for Instruction Alter not expected";
 		} else {
 			qFatal("BUG: unhandled lastinstruction_");
 		}
-		lastinstruction_ = -1;
+		lastsessioninstr_ = -1;
 	} else if(msg->event == protocol::Message::SetPassword) {
 		// Password accepted
 		qDebug() << "password set";
@@ -575,11 +574,9 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		// A full session list has been downloaded
 		emit sessionsListed();
 	} else if(msg->event == protocol::Message::Password) {
-		/* // FIXME
-		if(lastinstruction_ == protocol::admin::command::Authenticate) {
+		if(lastinstruction_ == protocol::Message::Authenticate) {
 			emit becameAdmin();
 		}
-		*/
 	} else {
 		qDebug() << "unhandled host ack" << int(msg->event);
 	}

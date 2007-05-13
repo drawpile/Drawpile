@@ -177,6 +177,8 @@ class HostState : public QObject {
 		SessionList sessions_;
 
 		int lastinstruction_;
+		//protocol::SessionEvent::session_action lastsessioninstr_;
+		int lastsessioninstr_;
 		QString setsessionpassword_;
 		QString sendadminpassword_;
 
