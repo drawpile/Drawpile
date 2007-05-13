@@ -296,8 +296,6 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 		#endif // WIN32
 	}
 	
-	fd_iter = fd_list.begin();
-	
 	return 0;
 }
 
@@ -361,7 +359,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 		++fd_iter;
 		events = getEvents(fd);
 		
-		if (events)
+		if (events != 0)
 			return true;
 	}
 	
