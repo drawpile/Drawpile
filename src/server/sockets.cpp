@@ -34,7 +34,11 @@
 
 #ifndef WIN32
 	#include <fcntl.h>
-	#include <sstream>
+	#ifdef HAVE_SNPRINTF
+		#include <cstdio>
+	#else
+		#include <sstream>
+	#endif
 #endif
 
 using std::cout;
@@ -743,9 +747,17 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	uint16_t _port = raddr.sin6_port;
 	bswap(_port);
 	
+	#ifdef HAVE_SNPRINTF
+	// [2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:12345
+	const uint buflen = 49; // [address]:port\0 (8*4+7+2+1+6+1)
+	char buf[stringlen];
+	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
+	return std::string(buf);
+	#else
 	std::ostringstream stream;
 	stream << "[" << straddr << "]:" << _port; // ?
 	return stream.str();
+	#endif // HAVE_SNPRINTF
 	#endif
 }
 #endif
@@ -772,9 +784,17 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	uint16_t _port = raddr.sin_port;
 	bswap(_port);
 	
+	#ifdef HAVE_SNPRINTF
+	// 123.123.122.124:12345
+	const uint buflen = 25; // address:port\0 (15+1+6+1)
+	char buf[stringlen];
+	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
+	return std::string(buf);
+	#else
 	std::ostringstream stream;
 	stream << straddr << ":" << _port;
 	return stream.str();
+	#endif // HAVE_SNPRINTF
 	#endif
 }
 
