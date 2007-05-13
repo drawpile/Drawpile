@@ -2405,7 +2405,6 @@ bool Server::validateSessionTitle(const char* name, const uint8_t len) const thr
 
 void Server::cullIdlers() throw()
 {
-	cout << "cull" << endl;
 	User *usr;
 	for (userset_i tui(utimer.begin()); tui != utimer.end(); ++tui)
 	{
@@ -2456,6 +2455,7 @@ int Server::run() throw()
 			state = Server::Error;
 			return -1;
 		case 0:
+			cout << "do nothing" << endl;
 			// do nothing
 			break;
 		default:
