@@ -2455,6 +2455,9 @@ int Server::run() throw()
 			cerr << "- Error in event system: " << ev.getError() << endl;
 			state = Server::Error;
 			return -1;
+		case 0:
+			// do nothing
+			break;
 		default:
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
