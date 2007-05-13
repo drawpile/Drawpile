@@ -113,7 +113,6 @@ Server::Server() throw()
 	default_user_mode(protocol::user_mode::None),
 	Transient(false),
 	LocalhostAdmin(false),
-	DaemonMode(false),
 	blockDuplicateConnections(true)
 {
 	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
@@ -127,7 +126,6 @@ Server::~Server() throw()
 {
 }
 
-inline
 const uint8_t Server::getUserID() throw()
 {
 	if (user_ids.empty())
@@ -141,7 +139,6 @@ const uint8_t Server::getUserID() throw()
 	}
 }
 
-inline
 const uint8_t Server::getSessionID() throw()
 {
 	if (session_ids.empty())
@@ -155,7 +152,6 @@ const uint8_t Server::getSessionID() throw()
 	}
 }
 
-inline
 void Server::freeUserID(const uint8_t id) throw()
 {
 	assert(id != protocol::null_user);
@@ -163,7 +159,6 @@ void Server::freeUserID(const uint8_t id) throw()
 	user_ids.push(id);
 }
 
-inline
 void Server::freeSessionID(const uint8_t id) throw()
 {
 	assert(id != protocol::Global);
@@ -171,7 +166,6 @@ void Server::freeSessionID(const uint8_t id) throw()
 	session_ids.push(id);
 }
 
-inline
 void Server::uRegenSeed(User& usr) const throw()
 {
 	usr.seed[0] = rand() % 256; // 0 - 255
@@ -180,7 +174,6 @@ void Server::uRegenSeed(User& usr) const throw()
 	usr.seed[3] = rand() % 256;
 }
 
-inline
 message_ref Server::msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc)
 {
 	protocol::PasswordRequest* pwreq = new protocol::PasswordRequest;
@@ -194,7 +187,6 @@ message_ref Server::msgPWRequest(User& usr, const uint8_t session) const throw(s
 	return message_ref(pwreq);
 }
 
-inline
 message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 {
 	return message_ref(
@@ -211,7 +203,6 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 	);
 }
 
-inline
 message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_alloc)
 {
 	protocol::SessionInfo *nfo = new protocol::SessionInfo(
@@ -234,7 +225,6 @@ message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_
 	return message_ref(nfo);
 }
 
-inline
 message_ref Server::msgError(const uint8_t session, const uint16_t code) const throw(std::bad_alloc)
 {
 	protocol::Error *err = new protocol::Error(code);
@@ -242,7 +232,6 @@ message_ref Server::msgError(const uint8_t session, const uint16_t code) const t
 	return message_ref(err);
 }
 
-inline
 message_ref Server::msgAck(const uint8_t session, const uint8_t type) const throw(std::bad_alloc)
 {
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement(type);
@@ -250,7 +239,6 @@ message_ref Server::msgAck(const uint8_t session, const uint8_t type) const thro
 	return message_ref(ack);
 }
 
-inline
 message_ref Server::msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc)
 {
 	message_ref sync_ref(new protocol::SyncWait);
@@ -259,7 +247,6 @@ message_ref Server::msgSyncWait(const uint8_t session_id) const throw(std::bad_a
 }
 
 // May delete User*
-inline
 void Server::uWrite(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -490,7 +477,6 @@ void Server::uWrite(User*& usr) throw()
 }
 
 // May delete User*
-inline
 void Server::uRead(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -546,7 +532,6 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 }
 
 // calls uHandleMsg() and uHandleLogin()
-inline
 void Server::uProcessData(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -612,8 +597,8 @@ void Server::uProcessData(User*& usr) throw()
 			else
 				uHandleLogin(usr);
 			
-			if (usr != 0)
-			{ // user is still alive.
+			if (usr) // still alive
+			{
 				delete usr->inMsg;
 				usr->inMsg = 0;
 			}
@@ -622,11 +607,10 @@ void Server::uProcessData(User*& usr) throw()
 		}
 	}
 	
-	// rewind circular buffer
-	usr->input.rewind();
+	if (usr) // rewind circular buffer
+		usr->input.rewind();
 }
 
-inline
 message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -652,7 +636,6 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 	return message_ref(uevent);
 }
 
-inline
 void Server::uHandleDrawing(User& usr) throw()
 {
 	assert(usr.inMsg != 0);
@@ -727,7 +710,6 @@ void Server::uHandleDrawing(User& usr) throw()
 }
 
 // calls uSendMsg, Propagate, uJoinSession
-inline
 void Server::uHandlePassword(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -805,7 +787,6 @@ void Server::uHandlePassword(User*& usr) throw()
 }
 
 // May delete User*
-inline
 void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1001,7 +982,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 
 // May delete User*
 #if defined(HAVE_ZLIB)
-inline
 void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1080,7 +1060,6 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 #endif
 
 // May delete User*
-inline
 void Server::uHandleAck(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -1124,7 +1103,6 @@ void Server::uHandleAck(User*& usr) throw()
 }
 
 // Calls uSendMsg()
-inline
 void Server::uTunnelRaster(User& usr) throw()
 {
 	assert(usr.inMsg != 0);
@@ -1201,7 +1179,6 @@ void Server::uTunnelRaster(User& usr) throw()
 
 // Calls Propagate, uSendMsg and uLeaveSession
 // May delete User*
-inline
 void Server::uSessionEvent(Session*& session, User*& usr) throw()
 {
 	assert(session != 0);
@@ -1379,7 +1356,6 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	}
 }
 
-inline
 bool Server::isOwner(const User& usr, const Session& session) const throw()
 {
 	return session.owner == usr.id;
@@ -1387,7 +1363,6 @@ bool Server::isOwner(const User& usr, const Session& session) const throw()
 
 // Calls uSendMsg, Propagate, sRemove, uLeaveSession
 // May delete User*
-inline
 void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1585,7 +1560,6 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-inline
 void Server::uSetPassword(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -1642,7 +1616,6 @@ void Server::uSetPassword(User*& usr) throw()
 	}
 }
 
-inline
 void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1816,7 +1789,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-inline
 void Server::uLayerEvent(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -1880,7 +1852,6 @@ void Server::uLayerEvent(User*& usr) throw()
 }
 
 // Calls uSendMsg
-inline
 void Server::Propagate(const Session& session, message_ref msg, User* source, const bool toAll) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -1913,7 +1884,6 @@ void Server::Propagate(const Session& session, message_ref msg, User* source, co
 			}
 }
 
-inline
 void Server::uSendMsg(User& usr, message_ref msg) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -1946,7 +1916,6 @@ void Server::uSendMsg(User& usr, message_ref msg) throw()
 	}
 }
 
-inline
 void Server::SyncSession(Session* session) throw()
 {
 	assert(session != 0);
@@ -2041,7 +2010,6 @@ void Server::SyncSession(Session* session) throw()
 	session->waitingSync.clear();
 }
 
-inline
 void Server::uJoinSession(User* usr, Session* session) throw()
 {
 	assert(usr != 0);
@@ -2100,7 +2068,6 @@ void Server::uJoinSession(User* usr, Session* session) throw()
 }
 
 // Calls sRemove, uSendMsg, Propagate
-inline
 void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason) throw()
 {
 	assert(session != 0);
@@ -2174,7 +2141,6 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 	usr.sessions.erase(session_id);
 }
 
-inline
 void Server::uAdd(Socket sock) throw(std::bad_alloc)
 {
 	if (sock.fd() == INVALID_SOCKET)
@@ -2244,7 +2210,6 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 }
 
 // Calls uSendMsg, uLeaveSession
-inline
 void Server::breakSync(User& usr) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2268,7 +2233,6 @@ void Server::breakSync(User& usr) throw()
 	}
 }
 
-inline
 void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw()
 {
 	assert(usr != 0);
@@ -2329,7 +2293,6 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 		state = Server::Exiting;
 }
 
-inline
 void Server::sRemove(Session*& session) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2398,7 +2361,6 @@ bool Server::init() throw(std::bad_alloc)
 	return false;
 }
 
-inline
 bool Server::validateUserName(User* usr) const throw()
 {
 	assert(usr != 0);
@@ -2418,7 +2380,6 @@ bool Server::validateUserName(User* usr) const throw()
 	return true;
 }
 
-inline
 bool Server::validateSessionTitle(const char* name, const uint8_t len) const throw()
 {
 	assert(name != 0);
@@ -2439,7 +2400,6 @@ bool Server::validateSessionTitle(const char* name, const uint8_t len) const thr
 	return true;
 }
 
-inline
 void Server::cullIdlers() throw()
 {
 	User *usr;

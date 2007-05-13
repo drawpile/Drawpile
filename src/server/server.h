@@ -145,24 +145,20 @@ protected:
 	uint8_t
 		default_user_mode;
 	
-	bool Transient, LocalhostAdmin, DaemonMode, blockDuplicateConnections;
+	bool Transient, LocalhostAdmin, blockDuplicateConnections;
 	
 	/* functions */
 	
 	// Frees user ID
-	inline
 	void freeUserID(const uint8_t id) throw();
 	
 	// Frees session ID
-	inline
 	void freeSessionID(const uint8_t id) throw();
 	
 	// Get free user ID
-	inline
 	const uint8_t getUserID() throw();
 	
 	// Get free session ID
-	inline
 	const uint8_t getSessionID() throw();
 	
 	/* *** Instances *** */
@@ -171,80 +167,59 @@ protected:
 	
 	/* *** Generate messages *** */
 	
-	inline
 	message_ref msgHostInfo() const throw(std::bad_alloc);
 	
-	inline
 	message_ref msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc);
 	
-	inline
 	message_ref msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc);
 	
-	inline
 	message_ref msgError(const uint8_t session, const uint16_t errorCode) const throw(std::bad_alloc);
 	
-	inline
 	message_ref msgAck(const uint8_t session, const uint8_t msgtype) const throw(std::bad_alloc);
 	
-	inline
 	message_ref msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc);
 	
-	inline
 	message_ref msgSessionInfo(const Session& session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
 	// Write to user socket
-	inline
 	void uWrite(User*& usr) throw();
 	
 	// Read from user socket
-	inline
 	void uRead(User*& usr) throw(std::bad_alloc);
 	
 	// Process all read data.
-	inline
 	void uProcessData(User*& usr) throw();
 	
 	// Process stroke info, stroke end and tool info
-	inline
 	void uHandleDrawing(User& usr) throw();
 	
-	inline
 	void uHandlePassword(User*& usr) throw();
 	
 	// Handle user message.
-	inline
 	void uHandleMsg(User*& usr) throw(std::bad_alloc);
 	
 	// Handle ACKs
-	inline
 	void uHandleAck(User*& usr) throw();
 	
 	// Forward raster to those expecting it.
-	inline
 	void uTunnelRaster(User& usr) throw();
 	
 	// Handle SessionEvent message
-	inline
 	void uSessionEvent(Session*& session, User*& usr) throw();
 	
 	// Handle instruction message
-	inline
 	void uSessionInstruction(User*& usr) throw(std::bad_alloc);
 	
-	inline
 	void uSetPassword(User*& usr) throw();
 	
 	// Handle user login.
-	inline
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
-	inline
 	void uLayerEvent(User*& usr) throw();
 	
 	// Send message to session
-	inline
 	void Propagate(const Session& session, message_ref msg, User* source=0, const bool toAll=false) throw();
 	
 	// Send message to user
@@ -252,58 +227,44 @@ protected:
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
-	inline
 	void uSendMsg(User& usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
-	inline
 	void SyncSession(Session* session) throw();
 	
 	// Break synchronization with user.
-	inline
 	void breakSync(User& usr) throw();
 	
 	//
-	inline
 	void uJoinSession(User* usr, Session* session) throw();
 	
 	// Needs session reference because it might get destroyed.
-	inline
 	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave) throw();
 	
 	// Adds user
-	inline
 	void uAdd(Socket sock) throw(std::bad_alloc);
 	
 	// Removes user and does cleaning..
-	inline
 	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw();
 	
 	// Delete session and do some cleaning
-	inline
 	void sRemove(Session*& session) throw();
 	
 	// check user name uniqueness
-	inline
 	bool validateUserName(User* usr) const throw();
 	
 	// check session title uniqueness
-	inline
 	bool validateSessionTitle(const char* name, const uint8_t len) const throw();
 	
 	// Reprocesses deflated data stream
-	inline
 	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
 	
 	// cull idle users
-	inline
 	void cullIdlers() throw();
 	
 	// regenerate password seed
-	inline
 	void uRegenSeed(User& usr) const throw();
 	
-	inline
 	bool isOwner(const User& usr, const Session& session) const throw();
 public:
 	//! ctor
@@ -320,11 +281,9 @@ public:
 	bool init() throw(std::bad_alloc);
 	
 	//! Set name length limit (default: 8)
-	inline
 	void setNameLengthLimit(const uint8_t limit) throw() { name_len_limit = limit; }
 	
 	//! Set server password
-	inline
 	void setPassword(char* pwstr, const uint8_t len) throw()
 	{
 		if (password != 0)
@@ -334,7 +293,6 @@ public:
 	}
 	
 	//! Set admin server password
-	inline
 	void setAdminPassword(char* pwstr, const uint8_t len) throw()
 	{
 		if (a_password != 0)
@@ -344,14 +302,12 @@ public:
 	}
 	
 	//! Set user limit
-	inline
 	void setUserLimit(const uint8_t ulimit) throw()
 	{
 		user_limit = ulimit;
 	}
 	
 	//! Set listening port range
-	inline
 	void setPorts(const uint16_t lo, const uint16_t hi) throw()
 	{
 		lo_port = lo;
@@ -359,36 +315,24 @@ public:
 	}
 	
 	//! Set operation mode
-	inline
 	void setTransient(const bool x) throw()
 	{
 		Transient = x;
 	}
 	
 	//!
-	inline
 	void setLocalhostAdmin(const bool x) throw()
 	{
 		LocalhostAdmin = x;
 	}
 	
-	//!
-	inline
-	void setDaemonMode(const bool x) throw()
-	{
-		DaemonMode = x;
-	}
-	
 	//! Set client requirements
-	inline
 	void setRequirement(const uint8_t req) throw() { fSet(requirements, req); }
 	
 	//! Set minimum board dimension (width or height)
-	inline
 	void setMinDimension(const uint16_t mindim) throw() { min_dimension = mindim; }
 	
 	//! Set UTF-16 support
-	inline
 	void setUTF16(const bool x)
 	{
 		if (x)
@@ -398,19 +342,15 @@ public:
 	}
 	
 	//! Set default user mode
-	inline
 	void setUserMode(const uint8_t x) { default_user_mode = x; }
 	
 	//! Set session limit on server
-	inline
 	void setSessionLimit(const uint8_t x) { session_limit = x; }
 	
 	//! Set per user subscription limit
-	inline
 	void setSubscriptionLimit(const uint8_t x) { max_subscriptions = x; }
 	
 	//! Allow/disallow duplicate connections from same address
-	inline
 	void blockDuplicateConnectsion(const bool x) { blockDuplicateConnections = x; }
 	
 	//! Enter main loop
