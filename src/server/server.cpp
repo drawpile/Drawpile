@@ -2455,7 +2455,6 @@ int Server::run() throw()
 			state = Server::Error;
 			return -1;
 		case 0:
-			cout << "do nothing" << endl;
 			// do nothing
 			break;
 		default:
