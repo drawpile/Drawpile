@@ -583,15 +583,6 @@ void Server::uProcessData(User*& usr) throw()
 			usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
 			#endif
 			
-			#if 0 // isValid() can't be used before it is properly implemented!
-			if (!usr->inMsg->isValid())
-			{
-				cerr << "Invalid message received, dropping user." << endl;
-				uRemove(usr, protocol::UserInfo::Dropped);
-				return;
-			}
-			#endif
-			
 			if (usr->state == User::Active)
 				uHandleMsg(usr);
 			else

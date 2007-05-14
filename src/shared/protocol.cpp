@@ -201,11 +201,6 @@ size_t Message::unserialize(const char* buf, const size_t len) throw(std::except
 	return unserializeHeader(buf);
 }
 
-bool Message::isValid() const throw()
-{
-	return true;
-}
-
 /*
  * struct Identifier
  */
@@ -259,14 +254,6 @@ size_t Identifier::reqDataLen(const char *buf, const size_t len) const throw()
 	assert(static_cast<uint8_t>(buf[0]) == type);
 	
 	return headerSize + payloadLength();
-}
-
-bool Identifier::isValid() const throw()
-{
-	// TODO
-	const bool r1 = true; // flags
-	const bool r2 = true; // extensions
-	return (r1 and r2 and memcmp(identifier, identifier_string, 8) == 0);
 }
 
 /*
@@ -438,14 +425,6 @@ size_t ToolInfo::payloadLength() const throw()
 		+ sizeof(lo_hardness) + sizeof(hi_hardness) + sizeof(spacing);
 }
 
-bool ToolInfo::isValid() const throw()
-{
-	// TODO
-	const bool r1 = true; // tool ID
-	const bool r2 = true; // composition mode
-	return (r1 and r2);
-}
-
 /*
  * struct Synchronize
  */
@@ -521,11 +500,6 @@ size_t Raster::serializePayload(char *buf) const throw()
 size_t Raster::payloadLength() const throw()
 {
 	return sizeof(offset) + sizeof(length) + sizeof(size) + length;
-}
-
-bool Raster::isValid() const throw()
-{
-	return (offset+length <= size);
 }
 
 /*
@@ -831,25 +805,6 @@ size_t UserInfo::payloadLength() const throw()
 	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
 }
 
-bool UserInfo::isValid() const throw()
-{
-	// TODO
-	const bool r1 = true; // mode
-	bool r2 = true;
-	switch (event)
-	{
-	case 3:
-	case 2:
-	case 1:
-		r2 = true;
-		break;
-	default:
-		r2 = false;
-		break;
-	}
-	return (r1 and r2);
-}
-
 /*
  * struct HostInfo
  */
@@ -903,14 +858,6 @@ size_t HostInfo::payloadLength() const throw()
 	return sizeof(sessions) + sizeof(sessionLimit) + sizeof(users)
 		+ sizeof(userLimit) + sizeof(nameLenLimit) + sizeof(maxSubscriptions)
 		+ sizeof(requirements) + sizeof(extensions);
-}
-
-bool HostInfo::isValid() const throw()
-{
-	// TODO
-	const bool r1 = true; // extensions
-	const bool r2 = true; // requirements
-	return (r1 and r2);
 }
 
 /*
@@ -996,14 +943,6 @@ size_t SessionInfo::payloadLength() const throw()
 		+ sizeof(level) + sizeof(length) + length;
 }
 
-bool SessionInfo::isValid() const throw()
-{
-	// TODO
-	const bool c1 = true; // mode
-	const bool c2 = true; // flags
-	return (width != 0 and height != 0 and c1 and c2);
-}
-
 /*
  * struct Acknowledgement
  */
@@ -1043,20 +982,6 @@ size_t Acknowledgement::payloadLength() const throw()
 	return sizeof(event);
 }
 
-bool Acknowledgement::isValid() const throw()
-{
-	// TODO
-	switch (event)
-	{
-	case 3:
-	case 2:
-	case 1:
-		return true;
-	default:
-		return false;
-	}
-}
-
 /*
  * struct Error
  */
@@ -1094,20 +1019,6 @@ size_t Error::serializePayload(char *buf) const throw()
 size_t Error::payloadLength() const throw()
 {
 	return sizeof(code);
-}
-
-bool Error::isValid() const throw()
-{
-	// TODO
-	switch (code)
-	{
-	case 3:
-	case 2:
-	case 1:
-		return true;
-	default:
-		return false;
-	}
 }
 
 /*
@@ -1180,11 +1091,6 @@ size_t Deflate::payloadLength() const throw()
 	return sizeof(uncompressed) + sizeof(length) + length;
 }
 
-bool Deflate::isValid() const throw()
-{
-	return (uncompressed != 0 and length != 0);
-}
-
 /*
  * struct Chat
  */
@@ -1245,11 +1151,6 @@ size_t Chat::serializePayload(char *buf) const throw()
 size_t Chat::payloadLength() const throw()
 {
 	return sizeof(length) + length;
-}
-
-bool Chat::isValid() const throw()
-{
-	return (length != 0);
 }
 
 /*
@@ -1315,11 +1216,6 @@ size_t Palette::payloadLength() const throw()
 	return sizeof(offset) + sizeof(count) + count * RGB_size;
 }
 
-bool Palette::isValid() const throw()
-{
-	return (count != 0);
-}
-
 /*
  * struct SessionSelect
  */
@@ -1369,12 +1265,6 @@ size_t SessionEvent::payloadLength() const throw()
 	return sizeof(action) + sizeof(target) + sizeof(aux);
 }
 
-bool SessionEvent::isValid() const throw()
-{
-	// TODO: action is the only thing we can test
-	return true;
-}
-
 /*
  * struct LayerEvent
  */
@@ -1418,12 +1308,6 @@ size_t LayerEvent::serializePayload(char *buf) const throw()
 size_t LayerEvent::payloadLength() const throw()
 {
 	return sizeof(layer_id) + sizeof(action) + sizeof(mode) + sizeof(opacity);
-}
-
-bool LayerEvent::isValid() const throw()
-{
-	// TODO: action is the only one we can test
-	return true;
 }
 
 /*
