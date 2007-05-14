@@ -39,7 +39,7 @@
 /* swapping endianess */
 
 //! Base template for byte swapping
-template <class T> inline
+template <typename T> inline
 T& bswap(T& x) throw()
 {
 	#if !defined(IS_BIG_ENDIAN) and !defined(NDEBUG)
@@ -84,7 +84,7 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 
 // copies src& bytes to dst*
 // automation of memcpy(dst*, &src, sizeof(src));
-template <class T> inline
+template <typename T> inline
 char* memcpy_t(char* dst, const T& src) throw()
 {
 	assert(dst != 0);
@@ -94,7 +94,7 @@ char* memcpy_t(char* dst, const T& src) throw()
 
 // copies sizeof(dst) bytes from src* to dst
 // automation of memcpy(&dst, src*, sizeof(dst));
-template <class T> inline
+template <typename T> inline
 T& memcpy_t(T& dst, const char* src) throw()
 {
 	assert(src != 0);
@@ -112,8 +112,8 @@ T& memcpy_t(T& dst, const char* src) throw()
  *
  * @return modified flag container.
  */
-template <class T> inline
-T& fSet(T& u, const T& x) throw()
+template <typename T, typename U> inline
+T& fSet(T& u, const U& x) throw()
 {
 	return u |= x;
 }
@@ -125,8 +125,8 @@ T& fSet(T& u, const T& x) throw()
  *
  * @return modified flag container.
  */
-template <class T> inline
-T& fClr(T& u, const T& x) throw()
+template <typename T, typename U> inline
+T& fClr(T& u, const U& x) throw()
 {
 	return u &= ~x;
 }
@@ -138,8 +138,8 @@ T& fClr(T& u, const T& x) throw()
  *
  * @return test result
  */
-template <class T> inline
-bool fIsSet(const T& u, const T& x) throw()
+template <typename T, typename U> inline
+bool fIsSet(const T& u, const U& x) throw()
 {
 	return (u & x) == x;
 }
