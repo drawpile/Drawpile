@@ -43,9 +43,9 @@ namespace protocol
 namespace client
 {
 
-const uint8_t
+enum client_capabilities {
 	//! No capabilities
-	None = 0,
+	None,
 	
 	//! Ack feedback
 	/**
@@ -57,29 +57,10 @@ const uint8_t
 	 * Without this, the messages get returned back to the client as if they were from
 	 * some other user. Like boomerang, except you gain nothing.
 	 */
-	AckFeedback = 0x01,
-	
-	//!
-	Reserved1 = 0x02,
-	
-	//!
-	Reserved2 = 0x04,
-	
-	//!
-	Reserved3 = 0x08,
-	
-	//!
-	Reserved4 = 0x10,
-	
-	//!
-	Reserved5 = 0x20,
-	
-	//!
-	Reserved6 = 0x40,
-	
-	//!
-	Reserved7 = 0x80;
-}
+	AckFeedback = 0x01
+};
+
+} // namespace client
 
 //! Message modifiers
 /**
@@ -88,9 +69,9 @@ const uint8_t
 namespace message
 {
 
-const uint8_t
+enum message_flags {
 	//! No message modifiers.
-	None = 0x00,
+	None,
 	
 	//! Has user identifier
 	isUser = 0x01,
@@ -102,20 +83,10 @@ const uint8_t
 	isBundling = 0x04,
 	
 	//! Is directed by SessionSelect message.
-	isSelected = 0x08,
-	
-	//!
-	Reserved1 = 0x10,
-	
-	//!
-	Reserved2 = 0x20,
-	
-	//!
-	Reserved3 = 0x40,
-	
-	//!
-	Reserved4 = 0x80;
-}
+	isSelected = 0x08
+};
+
+} // namespace message
 
 //! Protocol extension flags.
 /**
@@ -126,33 +97,19 @@ const uint8_t
 namespace extensions
 {
 
-const uint8_t
+enum protocol_extensions {
 	//! No supported extensions.
-	None = 0x00,
+	None,
 	
 	//! Chat extension
-	Chat = 0x01,
+	Chat = 0x01u,
 	
 	//! Shared palette extension
-	Palette = 0x02,
-	
-	//!
-	Reserved1 = 0x04,
+	Palette = 0x02u,
 	
 	//! Deflate extension
-	Deflate = 0x08,
-	
-	//!
-	Reserved2 = 0x10,
-	
-	//!
-	Reserved3 = 0x20,
-	
-	//!
-	Reserved4 = 0x40,
-	
-	//!
-	Reserved5 = 0x80;
+	Deflate = 0x08u,
+};
 
 } // namespace extensions
 
@@ -163,33 +120,19 @@ const uint8_t
 namespace requirements
 {
 
-const uint8_t
+enum server_requirements {
 	//! No special requirements.
-	None = 0x00,
+	None,
 	
 	//! Enforces unique user and session names.
-	EnforceUnique = 0x01,
-	
-	//!
-	Reserved1 = 0x02,
-	
-	//!
-	Reserved1_2 = 0x04,
+	EnforceUnique = 0x01u,
 	
 	//! Strings use UTF-16 format instead of default UTF-8.
-	WideStrings = 0x08,
+	WideStrings = 0x08u,
 	
 	//! Server does not allow global Chat messages.
-	NoGlobalChat = 0x10,
-	
-	//!
-	Reserved2 = 0x20,
-	
-	//!
-	Reserved3 = 0x40,
-	
-	//!
-	Reserved4 = 0x80;
+	NoGlobalChat = 0x10u
+};
 
 } // namespace operation
 
@@ -200,22 +143,23 @@ const uint8_t
 namespace user_mode
 {
 
-const uint8_t
+enum user_mode {
 	//! Null user mode.
-	None = 0,
+	None,
 	
 	//! User is identified as admin by the server
 	/** Only applied to user */
-	Administrator = 0x01,
+	Administrator = 0x01u,
 	
 	//! User is not able to draw.
-	Locked = 0x08,
+	Locked = 0x08u,
 	
 	//! User may not send Chat messages.
-	Mute = 0x10,
+	Mute = 0x10u,
 	
 	//! User can't see Chat messages.
-	Deaf = 0x20;
+	Deaf = 0x20u
+};
 
 } // namespace user
 
@@ -223,17 +167,18 @@ const uint8_t
 namespace session
 {
 
-const uint8_t
+enum session_flags {
 	//! No flags set
-	None = 0,
+	None,
 	
 	//! Session persists
-	Persist = 0x01,
+	Persist = 0x01u,
 	
 	//! Do not destroy session after all users have left
-	NoSelfDestruct = 0x08;
+	NoSelfDestruct = 0x08u
+};
 
-}
+} // namespace session
 
 } // namespace protocol
 
