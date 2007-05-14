@@ -357,31 +357,19 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	{
 		fd = fd_iter->first;
 		++fd_iter;
-		events = getEvents(fd);
+		
+		events = 0;
+		
+		if (FD_ISSET(fd, &t_fds_r) != 0)
+			fSet(events, read);
+		if (FD_ISSET(fd, &t_fds_w) != 0)
+			fSet(events, write);
+		if (FD_ISSET(fd, &t_fds_e) != 0)
+			fSet(events, error);
 		
 		if (events != 0)
 			return true;
 	}
 	
 	return false;
-}
-
-uint32_t Event::getEvents(fd_t fd) throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).getEvents(fd: " << fd << ")" << endl;
-	#endif
-	
-	assert(fd != INVALID_SOCKET);
-	
-	uint32_t events = 0;
-	
-	if (FD_ISSET(fd, &t_fds_r) != 0)
-		fSet(events, read);
-	if (FD_ISSET(fd, &t_fds_w) != 0)
-		fSet(events, write);
-	if (FD_ISSET(fd, &t_fds_e) != 0)
-		fSet(events, error);
-	
-	return events;
 }

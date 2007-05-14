@@ -266,30 +266,3 @@ bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 	
 	return true;
 }
-
-uint32_t Event::getEvents(fd_t fd) const throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).getEvents(FD: " << fd << ")" << endl;
-	#endif
-	
-	for (int n=0; n != nfds; ++n)
-		if (events[n].data.fd == fd)
-			return events[n].events;
-	
-	return 0;
-}
-
-bool Event::isset(fd_t fd, uint32_t ev) const throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).isset(FD: " << fd << ")" << endl;
-	#endif
-	
-	assert(fd != INVALID_SOCKET);
-	
-	if (fIsSet(getEvents(fd), ev))
-		return true;
-	
-	return false;
-}

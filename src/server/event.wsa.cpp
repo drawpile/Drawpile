@@ -311,7 +311,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				case WSAEINPROGRESS: // something's in progress
 					goto loopend;
 				default:
-					cerr << "Event(wsa).getEvents() - unknown error: " << _error << endl;
+					cerr << "Event(wsa).getEvent() - unknown error: " << _error << endl;
 					goto loopend;
 				}
 			}
@@ -353,54 +353,4 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	#endif
 	
 	return false;
-}
-
-uint32_t Event::getEvents(fd_t fd) throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(wsa).getEvents(fd: " << fd << ")" << endl;
-	#endif
-	
-	assert(fd != 0);
-	
-	const ev_iter fev(fd_to_ev.find(fd));
-	assert(fev != fd_to_ev.end());
-	
-	WSANETWORKEVENTS set;
-	
-	const int r = WSAEnumNetworkEvents(fd, w_ev[fev->second], &set);
-	
-	if (r == SOCKET_ERROR)
-	{
-		_error = WSAGetLastError();
-		
-		assert(_error != WSAEFAULT);
-		assert(_error != WSANOTINITIALISED);
-		assert(_error != WSAEINVAL);
-		assert(_error != WSAEFAULT);
-		assert(_error != WSAEAFNOSUPPORT);
-		
-		switch (_error)
-		{
-		case WSAECONNRESET: // reset by remote
-		case WSAECONNABORTED: // connection aborted
-		case WSAETIMEDOUT: // connection timed-out
-		case WSAENETUNREACH: // network unreachable
-		case WSAECONNREFUSED: // connection refused/rejected
-			return FD_WRITE|FD_CLOSE;
-		case WSAENOBUFS: // out of network buffers
-		case WSAENETDOWN: // network sub-system failure
-		case WSAEINPROGRESS: // something's in progress
-		default:
-			cerr << "Event(wsa).getEvents() - unknown error: " << _error << endl;
-			break;
-		}
-		
-		return 0;
-	}
-	
-	uint32_t evs = static_cast<uint32_t>(set.lNetworkEvents);
-	hack::events::prepare_events(evs);
-	
-	return evs;
 }

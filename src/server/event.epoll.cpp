@@ -218,16 +218,3 @@ bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
 	
 	return true;
 }
-
-uint32_t Event::getEvents(fd_t fd) throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).getEvents(FD: " << fd << ")" << endl;
-	#endif
-	
-	for (int n=0; n != nfds; ++n)
-		if (events[n].data.fd == fd)
-			return events[n].events;
-	
-	return 0;
-}

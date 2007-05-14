@@ -277,9 +277,6 @@ public:
 	//! Fetches next triggered event.
 	bool getEvent(fd_t &fd, uint32_t &events) throw();
 	
-	//! Fetches triggered events for FD.
-	uint32_t getEvents(fd_t fd) throw();
-	
 	int getError() const throw() { return _error; }
 };
 
