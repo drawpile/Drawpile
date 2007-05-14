@@ -16,8 +16,8 @@
 #define ServerUser_INCLUDED
 
 #include "common.h"
-
-#include "buffer.h"
+#include "buffer.h" // Buffer
+#include "message.h" // message_ref
 
 struct Session; // defined elsewhere
 #ifndef ServerSession_INCLUDED
@@ -33,8 +33,6 @@ class Socket; // defined elsewhere
 #ifndef NDEBUG
 	#include <iostream>
 #endif
-
-#include "message.h" // message_ref
 
 #include <deque>
 
@@ -250,7 +248,7 @@ struct User
 	Session *session;
 	
 	// User identifier
-	uint8_t id;
+	uint id;
 	
 	// Event I/O registered events.
 	uint32_t events;
@@ -274,7 +272,7 @@ struct User
 		Active
 	} state;
 	
-	uint8_t
+	uint
 		// Active layer in session
 		layer,
 		// Session we're currently syncing.
@@ -313,7 +311,7 @@ struct User
 		ext_palette = fIsSet(flags, protocol::extensions::Palette);
 	}
 	
-	uint8_t
+	uint
 		// active layer in current session
 		a_layer,
 		// locked to this layer in current session
@@ -353,7 +351,7 @@ struct User
 	protocol::Message *inMsg;
 	
 	// Feature level used by client
-	uint16_t level;
+	uint level;
 	
 	// for storing the password seed associated with this user.
 	char seed[4];
@@ -362,7 +360,7 @@ struct User
 	time_t deadtime;
 	
 	// Name length
-	uint8_t name_len;
+	uint name_len;
 	
 	// User name
 	char* name;

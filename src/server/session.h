@@ -47,7 +47,7 @@ struct LayerData
 	{
 	}
 	
-	LayerData(const uint8_t _id, const uint8_t _mode, const uint8_t _opacity=std::numeric_limits<uint8_t>::max(), const bool _locked=false) throw()
+	LayerData(const uint _id, const uint _mode, const uint _opacity=std::numeric_limits<uint8_t>::max(), const bool _locked=false) throw()
 		: id(_id),
 		mode(_mode),
 		opacity(_opacity),
@@ -60,7 +60,7 @@ struct LayerData
 		
 	}
 	
-	uint8_t
+	uint
 		// identifier
 		id,
 		// composition mode
@@ -90,7 +90,7 @@ typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 struct Session
 	//: MemoryStack<Session>
 {
-	Session(const uint8_t _id=protocol::Global) throw()
+	Session(const uint _id=protocol::Global) throw()
 		: id(_id),
 		title_len(0),
 		title(0),
@@ -111,8 +111,8 @@ struct Session
 		#endif
 	}
 	
-	Session(const uint8_t _id, uint8_t _mode, uint8_t _limit, uint8_t _owner,
-		uint16_t _width, uint16_t _height, uint16_t _level, uint8_t _title_len, char* _title) throw()
+	Session(const uint _id, uint _mode, uint _limit, uint _owner,
+		uint _width, uint _height, uint _level, uint _title_len, char* _title) throw()
 		: id(_id),
 		title_len(_title_len),
 		title(_title),
@@ -146,16 +146,16 @@ struct Session
 	}
 	
 	// Session identifier
-	uint8_t id;
+	uint id;
 	
 	// Title length
-	uint8_t title_len;
+	uint title_len;
 	
 	// Session title
 	char* title;
 	
 	// Password length
-	uint8_t pw_len;
+	uint pw_len;
 	
 	// Password string
 	char* password;
@@ -164,16 +164,16 @@ struct Session
 	uint8_t mode;
 	
 	// User limit
-	uint8_t limit;
+	uint limit;
 	
 	// Session owner
-	uint8_t owner;
+	uint owner;
 	
 	// Canvas size
-	uint16_t width, height;
+	uint width, height;
 	
 	// Feature level required
-	uint16_t level;
+	uint level;
 	
 	// Will the session be destructed when all users leave..?
 	bool SelfDestruct;
@@ -207,7 +207,7 @@ struct Session
 	#endif
 	
 	// Session sync in action.
-	uint32_t syncCounter;
+	uint syncCounter;
 	
 	// Session is locked, preventing any drawing to take place.
 	bool locked;
