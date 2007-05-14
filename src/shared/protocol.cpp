@@ -152,19 +152,21 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 		memcpy_t(dataptr++, count);
 		do
 		{
+			assert(ptr);
 			dataptr += ptr->serializePayload(dataptr);
 		}
-		while (ptr = ptr->next);
+		while ((ptr = ptr->next) != 0);
 	}
 	else
 	{
 		// Write whole packets
 		do
 		{
+			assert(ptr);
 			dataptr += serializeHeader(dataptr);
 			dataptr += ptr->serializePayload(dataptr);
 		}
-		while (ptr = ptr->next);
+		while ((ptr = ptr->next) != 0);
 	}
 	
 	return data;
@@ -634,7 +636,7 @@ size_t SessionInstruction::unserialize(const char* buf, const size_t len) throw(
 	
 	size_t i = unserializeHeader(buf);
 	
-	memcpy_t(action, buf); i += sizeof(action);
+	memcpy_t(action, buf+i); i += sizeof(action);
 	memcpy_t(width, buf+i); i += sizeof(width);
 	memcpy_t(height, buf+i); i += sizeof(height);
 	memcpy_t(user_mode, buf+i); i += sizeof(user_mode);
