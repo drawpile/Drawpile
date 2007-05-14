@@ -38,7 +38,7 @@
 namespace network {
 
 HostState::HostState(QObject *parent)
-	: QObject(parent), net_(0), newsession_(0), lastinstruction_(-1), loggedin_(false)
+	: QObject(parent), net_(0), newsession_(0), lastsessioninstr_(-1), loggedin_(false)
 {
 }
 
@@ -276,8 +276,6 @@ void HostState::becomeAdmin(const QString& password)
 	protocol::Authenticate *msg = new protocol::Authenticate;
 	sendadminpassword_ = password;
 	
-	lastinstruction_ = msg->type; // FIXME
-	
 	net_->send(msg);
 }
 
@@ -315,8 +313,6 @@ void HostState::setPassword(const QString& password, int session)
 	
 	msg->session_id = session;
 	memcpy(msg->password,passwd.constData(),passwd.length());
-	
-	lastinstruction_ = msg->type; // FIXME
 	
 	net_->send(msg);
 }
@@ -554,31 +550,38 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 		return;
 	}
 	// Handle global acks
-	if(msg->event == protocol::Message::SessionInstruction) {
-		if(lastsessioninstr_ == protocol::SessionInstruction::Create) {
-			// Automatically join the newest session created
-			disconnect(this, SIGNAL(sessionsListed()), this, 0);
-			connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
-			listSessions();
-			qDebug() << "session created, joining...";
-		} else if(lastsessioninstr_ == protocol::SessionInstruction::Alter) {
-			qDebug() << "Warning: Ack for Instruction Alter not expected";
-		} else {
-			qFatal("BUG: unhandled lastinstruction_");
-		}
-		lastsessioninstr_ = -1;
-	} else if(msg->event == protocol::Message::SetPassword) {
-		// Password accepted
-		qDebug() << "password set";
-	} else if(msg->event == protocol::Message::ListSessions) {
-		// A full session list has been downloaded
-		emit sessionsListed();
-	} else if(msg->event == protocol::Message::Password) {
-		if(lastinstruction_ == protocol::Message::Authenticate) {
-			emit becameAdmin();
-		}
-	} else {
-		qDebug() << "unhandled host ack" << int(msg->event);
+	switch (msg->event) {
+		case protocol::Message::SessionInstruction:
+			if(lastsessioninstr_ == protocol::SessionInstruction::Create) {
+				// Automatically join the newest session created
+				disconnect(this, SIGNAL(sessionsListed()), this, 0);
+				connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
+				listSessions();
+				qDebug() << "session created, joining...";
+			} else if(lastsessioninstr_ == protocol::SessionInstruction::Alter) {
+				// FIXME: User limit changed?
+				qDebug() << "Warning: Ack for Instruction Alter not expected";
+			} else {
+				qFatal("BUG: unhandled lastsessioninstr_");
+			}
+			lastsessioninstr_ = -1;
+			break;
+		case protocol::Message::SetPassword:
+			// Password accepted
+			qDebug() << "password set";
+			break;
+		case protocol::Message::ListSessions:
+			// A full session list has been downloaded
+			emit sessionsListed();
+			break;
+		case protocol::Message::Password:
+			if (msg->session_id == protocol::Global) {
+				emit becameAdmin();
+			}
+			break;
+		default:
+			qDebug() << "unhandled host ack" << int(msg->event);
+			break;
 	}
 }
 
