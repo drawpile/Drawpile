@@ -262,6 +262,7 @@ void Server::uWrite(User*& usr) throw()
 		
 		const usr_message_i f_msg(usr->queue.begin());
 		usr_message_i l_msg(f_msg+1), iter(f_msg);
+		// create linked list
 		size_t links=1;
 		for (; l_msg != usr->queue.end(); ++l_msg, ++iter, ++links)
 		{
@@ -272,7 +273,6 @@ void Server::uWrite(User*& usr) throw()
 			)
 				break; // type changed or reached maximum size of linked list
 			
-			// create linked list
 			(*l_msg)->prev = boost::get_pointer(*iter);
 			(*iter)->next = boost::get_pointer(*l_msg);
 		}
@@ -356,14 +356,13 @@ void Server::uWrite(User*& usr) throw()
 				{
 					const protocol::Deflate t_deflate(len, buffer_len, temp);
 					
-					#if 0 // what was this?
+					// make sure we can write the whole message in
 					if (usr->output.canWrite() < buffer_len + 9)
 						if (usr->output.free() >= buffer_len + 9)
 						{
-							reposition();
+							usr->output.reposition();
 							size = usr->output.canWrite();
 						}
-					#endif
 					
 					buf = t_deflate.serialize(len, usr->output.wpos, size);
 					
