@@ -40,9 +40,7 @@ struct Buffer
 	//! dtor
 	~Buffer() throw()
 	{
-		#ifndef CBUFFER_UNMANAGED
 		delete [] data;
-		#endif
 	}
 	
 	//! Moves buffer contents to another buffer struct
@@ -117,20 +115,24 @@ struct Buffer
 	 *
 	 * @param buf
 	 * @param buflen
+	 * @param fill
 	 */
-	void setBuffer(char* buf, const size_t buflen) throw()
+	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) throw()
 	{
 		assert(buf != 0);
 		assert(buflen > 1);
+		assert(fill <= buflen);
 		
-		#ifndef CBUFFER_UNMANAGED
 		delete [] data;
-		#endif
 		
 		data = rpos = wpos = buf;
 		
 		size = buflen;
-		left = 0;
+		
+		if (fill < buflen)
+			wpos += fill;
+		
+		left = fill;
 	}
 	
 	//! Repositions data for maximum contiguous _read_ length.
@@ -244,8 +246,7 @@ struct Buffer
 		
 		if (left == 0)
 			return 0;
-		
-		if (wpos > rpos)
+		else if (wpos > rpos)
 			return wpos - rpos;
 		else
 			return (data+size) - rpos;
@@ -271,11 +272,11 @@ struct Buffer
 		wpos += len; // increment wpos pointer
 		left += len; // increase number of bytes left to read
 		
+		assert(left <= size);
+		
 		// Set wpos to beginning of buffer if it reaches its end.
 		if (wpos == data+size)
 			wpos = data;
-		
-		assert(left <= size);
 	}
 	
 	//! How many bytes can be written.
@@ -287,16 +288,10 @@ struct Buffer
 		assert(data != 0);
 		assert(size > 1);
 		
-		// this should never return more than free() bytes
-		if (left == size) return 0;
-		
-		
-		if (wpos < rpos)
+		if (rpos > wpos)
 			return rpos - wpos;
 		else
 			return (data+size) - wpos;
-		
-		return 0;
 	}
 	
 	//! Returns the number of free bytes in buffer.
@@ -343,7 +338,7 @@ struct Buffer
 		*rpos;
 	
 	size_t
-		//! Number of bytes left to read (how many bytes filled).
+		//! Number of elements left to read (how many elements filled).
 		left,
 		//! Total size of the circular buffer (size of .data)
 		size;
