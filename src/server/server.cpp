@@ -293,10 +293,10 @@ void Server::uWrite(User*& usr) throw()
 				<< "... for user #" << static_cast<int>(usr->id) << endl;
 			#endif
 			
-			usr->output.setBuffer(buf, size);
+			usr->output.setBuffer(buf, size, len);
 		}
-		
-		usr->output.write(len);
+		else
+			usr->output.write(len);
 		
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
@@ -348,10 +348,7 @@ void Server::uWrite(User*& usr) throw()
 					size = usr->output.canWrite();
 				}
 				else
-				{
-					usr->output.setBuffer(temp, size);
-					usr->output.write(buffer_len);
-				}
+					usr->output.setBuffer(temp, size, buffer_len);
 				
 				{
 					const protocol::Deflate t_deflate(len, buffer_len, temp);
@@ -384,10 +381,10 @@ void Server::uWrite(User*& usr) throw()
 								<< "... for user #" << static_cast<int>(usr->id) << endl;
 						}
 						#endif
-						usr->output.setBuffer(buf, size);
+						usr->output.setBuffer(buf, size, len);
 					}
-					
-					usr->output.write(len);
+					else
+						usr->output.write(len);
 				}
 				break;
 			case Z_BUF_ERROR:
@@ -1004,6 +1001,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		inBuffer = true;
 	}
 	
+	// temp is target buffer, tmplen is the number of bytes placed in that bufer
 	const int r = uncompress(reinterpret_cast<uchar*>(temp), &tmplen, reinterpret_cast<uchar*>(stream.data), stream.length);
 	
 	switch (r)
@@ -1023,14 +1021,14 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 				tmpbuf << usr->input;
 			
 			// Set the uncompressed data stream as the input buffer.
-			usr->input.setBuffer(temp, stream.uncompressed);
+			usr->input.setBuffer(temp, stream.uncompressed, tmplen);
 			
 			// Process the data.
 			uProcessData(usr);
 			
-			// Since uProcessData might've deleted the user
-			if (usr != 0 and tmpbuf.left != 0)
-				usr->input << tmpbuf; // Restore input buffer
+			// uProcessData might've deleted the user, restore input buffer if not
+			if (usr != 0 and (tmpbuf.left != 0 or tmpbuf.size > usr->input.size))
+				usr->input << tmpbuf;
 		}
 		break;
 	case Z_MEM_ERROR:
