@@ -1882,8 +1882,6 @@ void Server::uSendMsg(User& usr, message_ref msg) throw()
 	{
 		fSet(usr.events, ev.write);
 		ev.modify(usr.sock.fd(), usr.events);
-		
-		cout << usr.queue.size() << endl;
 	}
 }
 
