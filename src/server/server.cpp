@@ -2217,7 +2217,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	
 	usr->sock.shutdown(SHUT_RDWR);
 	
-	// Remove from event system
+	// Remove socket from event system
 	ev.remove(usr->sock.fd());
 	
 	// Clear the fake tunnel of any possible instance of this user.
@@ -2260,11 +2260,14 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	// clear any idle timer associated with this user.
 	utimer.erase(usr);
 	
+	// limit transient mode's exit to valid users only
+	bool tryExit = (usr->state == User::Active);
+	
 	delete usr;
 	usr = 0;
 	
 	// Transient mode exit.
-	if (Transient and users.empty())
+	if (Transient and tryExit and users.empty())
 		state = Server::Exiting;
 }
 
