@@ -1882,6 +1882,8 @@ void Server::uSendMsg(User& usr, message_ref msg) throw()
 	{
 		fSet(usr.events, ev.write);
 		ev.modify(usr.sock.fd(), usr.events);
+		
+		cout << usr.queue.size() << endl;
 	}
 }
 
@@ -2212,6 +2214,8 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	cout << "Server::uRemove(user: " << static_cast<int>(usr->id)
 		<< ", at address: " << usr->sock.address() << ")" << endl;
 	#endif
+	
+	usr->sock.shutdown(SHUT_RDWR);
 	
 	// Remove from event system
 	ev.remove(usr->sock.fd());

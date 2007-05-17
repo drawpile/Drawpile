@@ -86,6 +86,10 @@
 	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
 	typedef SOCKET fd_t;
 	
+	#define SHUT_RD SD_RECEIVE
+	#define SHUT_WR SD_SEND
+	#define SHUT_RDWR SD_BOTH
+	
 	#define NEED_NET
 #else
 	#include <sys/types.h>
@@ -310,6 +314,15 @@ public:
 	 */
 	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) throw();
 	#endif // WITH_SENDFILE or HAVE_XPWSA
+	
+	//! Shutdown socket
+	/**
+	 * @param how SHUT_RD, SHUT_WR, SHUT_RDWR
+	 */
+	int shutdown(int how) throw()
+	{
+		return ::shutdown(sock, how);
+	}
 	
 	//! Get last error number
 	/**
