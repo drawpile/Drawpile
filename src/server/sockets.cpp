@@ -327,7 +327,7 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.bindTo([" << address << "], " << port << ")" << endl;
+	cout << "Socket.bindTo([" << address << "], " << _port << ")" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
