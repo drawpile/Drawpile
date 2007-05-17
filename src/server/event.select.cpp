@@ -47,7 +47,7 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const uint32_t
+const Event::ev_t
 	Event::read = 0x01,
 	Event::write = 0x02,
 	Event::error = 0x04;
@@ -186,7 +186,7 @@ int Event::wait() throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, uint32_t ev) throw()
+int Event::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(select).add(fd: " << fd << ")" << endl;
@@ -196,7 +196,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(ev, read))
+	if (fIsSet(events, read))
 	{
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -210,7 +210,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(ev, write))
+	if (fIsSet(events, write))
 	{
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -224,7 +224,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(ev, error))
+	if (fIsSet(events, error))
 	{
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -240,12 +240,12 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	}
 	
 	// maintain fd_list
-	fd_list[fd] = ev;
+	fd_list[fd] = events;
 	
 	return rc;
 }
 
-int Event::modify(fd_t fd, uint32_t ev) throw()
+int Event::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event::modify(fd: " << fd << ")" << endl;
@@ -254,10 +254,10 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	// act like a wrapper.
-	if (fIsSet(ev, read) or fIsSet(ev, write) or fIsSet(ev, error))
-		add(fd, ev);
+	if (fIsSet(events, read) or fIsSet(events, write) or fIsSet(events, error))
+		add(fd, events);
 	
-	if (!fIsSet(ev, read))
+	if (!fIsSet(events, read))
 	{
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
@@ -270,7 +270,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(ev, write))
+	if (!fIsSet(events, write))
 	{
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
@@ -283,7 +283,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(ev, error))
+	if (!fIsSet(events, error))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
@@ -308,9 +308,9 @@ int Event::remove(fd_t fd) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
+	__gnu_cxx::hash_map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	#else
-	std::map<fd_t,uint32_t>::iterator iter(fd_list.find(fd));
+	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	#endif
 	if (iter == fd_list.end())
 		return false;
@@ -351,7 +351,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
+bool Event::getEvent(fd_t &fd, ev_t &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{

@@ -43,7 +43,7 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const uint32_t
+const Event::ev_t
 	Event::read = EPOLLIN,
 	Event::write = EPOLLOUT,
 	Event::error = EPOLLERR,
@@ -125,7 +125,7 @@ int Event::wait() throw()
 }
 
 // Errors: ENOMEM
-int Event::add(fd_t fd, uint32_t ev) throw()
+int Event::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).add(FD: " << fd << ")" << endl;
@@ -135,7 +135,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
-	ev_info.events = ev;
+	ev_info.events = events;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
 	
@@ -154,7 +154,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-int Event::modify(fd_t fd, uint32_t ev) throw()
+int Event::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).modify(FD: " << fd << ")" << endl;
@@ -164,7 +164,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
-	ev_info.events = ev;
+	ev_info.events = events;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
 	
@@ -207,7 +207,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
+bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	if (nfds == -1)
 		return false;

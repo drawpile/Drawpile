@@ -43,7 +43,7 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const uint32_t
+const Event::ev_t
 	Event::read = EVFILT_READ,
 	Event::write = EVFILT_WRITE;
 
@@ -130,7 +130,7 @@ int Event::wait() throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, uint32_t ev) throw()
+int Event::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kqueue).add(FD: " << fd << ")" << endl;
@@ -141,12 +141,12 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	if (chlist_count == max_events)
 		return false;
 	
-	EV_SET(&chlist[chlist_count++], fd, ev, EV_ADD|EV_ENABLE, 0, 0, 0);
+	EV_SET(&chlist[chlist_count++], fd, events, EV_ADD|EV_ENABLE, 0, 0, 0);
 	
 	return true;
 }
 
-int Event::modify(fd_t fd, uint32_t ev) throw()
+int Event::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kqueue).modify(FD: " << fd << ")" << endl;
@@ -157,7 +157,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	if (chlist_count == max_events)
 		return false;
 	
-	EV_SET(&chlist[chlist_count++], fd, ev, EV_ADD|EV_ENABLE, 0, 0, 0);
+	EV_SET(&chlist[chlist_count++], fd, events, EV_ADD|EV_ENABLE, 0, 0, 0);
 	
 	return true;
 }
@@ -178,7 +178,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
+bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	if (nfds == evtrigr_size)
 		return false;

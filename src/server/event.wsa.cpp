@@ -41,39 +41,11 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-namespace hack
-{
-namespace events
-{
-
-// "Hack" for WSA
-inline
-uint32_t& prepare_events(uint32_t& evs) throw()
-{
-	if (fIsSet(evs, static_cast<uint32_t>(FD_ACCEPT))
-		or fIsSet(evs, static_cast<uint32_t>(FD_CONNECT))
-		or fIsSet(evs, static_cast<uint32_t>(FD_CLOSE)))
-		fSet(evs, Event::read);
-	
-	if (fIsSet(evs, Event::read));
-		fSet(evs, static_cast<uint32_t>(FD_ACCEPT|FD_CLOSE));
-	
-	if (fIsSet(evs, Event::read)
-		or fIsSet(evs, Event::write));
-		fSet(evs, static_cast<uint32_t>(FD_CLOSE|FD_CONNECT));
-	
-	return evs;
-}
-
-} // namespace events
-} // namespace hack
-
-const uint32_t
-	//! identifier for 'read' event
+const Event::ev_t
+	Event::connect = FD_CONNECT,
+	Event::accept = FD_ACCEPT,
 	Event::read = FD_READ,
-	//! identifier for 'write' event
 	Event::write = FD_WRITE,
-	//! hangup event
 	Event::hangup = FD_CLOSE;
 
 Event::Event() throw()
@@ -123,6 +95,7 @@ int Event::wait() throw()
 	
 	assert(fd_to_ev.size() != 0);
 	
+	/* params: event_count, event_array, wait_for_all, timeout, alertable */
 	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, false, _timeout, true);
 	if (nfds == WSA_WAIT_FAILED)
 	{
@@ -145,13 +118,13 @@ int Event::wait() throw()
 		case WSA_WAIT_TIMEOUT:
 			return 0;
 		default:
-			return fd_to_ev.size();
+			return 1;
 		}
 	}
 }
 
 // Errors: WSAENETDOWN
-int Event::add(fd_t fd, uint32_t ev) throw()
+int Event::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(wsa).add(fd: " << fd << ")" << endl;
@@ -159,16 +132,16 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	assert( fd >= 0 );
 	
-	hack::events::prepare_events(ev);
+	fSet(events, Event::hangup);
 	
-	for (uint32_t i=0; i != max_events; ++i)
+	for (uint i=0; i != max_events; ++i)
 	{
 		if (w_ev[i] == WSA_INVALID_EVENT)
 		{
 			w_ev[i] = WSACreateEvent();
 			if (!(w_ev[i])) return false;
 			
-			const int r = WSAEventSelect(fd, w_ev[i], ev);
+			const int r = WSAEventSelect(fd, w_ev[i], events);
 			
 			if (r == SOCKET_ERROR)
 			{
@@ -198,33 +171,48 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 }
 
 // Errors: WSAENETDOWN
-int Event::modify(fd_t fd, uint32_t ev) throw()
+int Event::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(wsa).modify(fd: " << fd << ")" << endl;
 	#endif
 	
 	#ifndef NDEBUG
-	cout << ": Setting events: " << ev << ", for FD: " << fd << endl;
+	cout << ": Setting events: " << events << ", for FD: " << fd << endl;
 	
-	if (fIsSet(ev, static_cast<uint32_t>(FD_READ)))
-		cout << "   #read:   " << FD_READ << endl;
-	if (fIsSet(ev, static_cast<uint32_t>(FD_WRITE)))
-		cout << "   #write:  " << FD_WRITE << endl;
-	if (fIsSet(ev, static_cast<uint32_t>(FD_ACCEPT)))
-		cout << "   #accept: " << FD_ACCEPT << endl;
-	if (fIsSet(ev, static_cast<uint32_t>(FD_CLOSE)))
-		cout << "   #close:  " << FD_CLOSE << endl;
+	cout << " # ";
+	bool next=false;
+	if (fIsSet(events, Event::read))
+	{
+		cout << "read"; next = true;
+	}
+	if (fIsSet(events, Event::write))
+	{
+		if (next) cout << ", ";
+		cout << "write"; next = true;
+	}
+	if (fIsSet(events, Event::accept))
+	{
+		if (next) cout << ", ";
+		cout << "accept"; next = true;
+	}
+	if (fIsSet(events, Event::hangup))
+	{
+		if (next) cout << ", ";
+		cout << "close";
+	}
+	cout << endl;
 	#endif
 	
 	assert( fd >= 0 );
 	
-	hack::events::prepare_events(ev);
+	fSet(events, Event::hangup);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
+	assert(fi->second < max_events);
 	
-	const int r = WSAEventSelect(fd, w_ev[fi->second], ev);
+	const int r = WSAEventSelect(fd, w_ev[fi->second], events);
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -251,7 +239,7 @@ int Event::remove(fd_t fd) throw()
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
 	
-	//WSAEventSelect(fd, w_ev[fi->second], 0);
+	assert(fi->second < max_events);
 	WSACloseEvent(w_ev[fi->second]);
 	
 	w_ev[fi->second] = WSA_INVALID_EVENT;
@@ -260,25 +248,23 @@ int Event::remove(fd_t fd) throw()
 	fd_to_ev.erase(fd);
 	
 	// find last event
-	for (; w_ev[last_event] != WSA_INVALID_EVENT; --last_event);
+	for (; w_ev[last_event] == WSA_INVALID_EVENT; --last_event)
+		if (last_event == 0) break;
 	
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
+bool Event::getEvent(fd_t &fd, ev_t &events) throw()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(wsa).getEvent()" << endl;
-	#endif
-	
-	uint32_t get_event = nfds - WSA_WAIT_EVENT_0;
+	uint get_event = nfds - WSA_WAIT_EVENT_0;
 	WSANETWORKEVENTS set;
 	
 	#ifndef NDEBUG
-	cout << "Getting events, offset: " << get_event << endl;
+	cout << "~ Getting events, start offset: " << get_event << endl;
 	#endif
 	
 	r_ev_iter fd_iter;
+	
 	for (; get_event <= last_event;)
 	{
 		if (w_ev[get_event] != WSA_INVALID_EVENT)
@@ -288,7 +274,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 			fd = fd_iter->second;
 			
 			#ifndef NDEBUG
-			cout << "Checking FD: " << fd << endl;
+			cout << "~ Checking FD: " << fd << endl;
 			#endif
 			
 			const int r = WSAEnumNetworkEvents(fd, w_ev[get_event], &set);
@@ -304,7 +290,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				case WSAETIMEDOUT: // connection timed-out
 				case WSAENETUNREACH: // network unreachable
 				case WSAECONNREFUSED: // connection refused/rejected
-					events = FD_WRITE|FD_CLOSE;
+					events = Event::hangup;
 					break;
 				case WSAENOBUFS: // out of network buffers
 				case WSAENETDOWN: // network sub-system failure
@@ -316,28 +302,38 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 				}
 			}
 			else
-				events = static_cast<uint32_t>(set.lNetworkEvents);
+				events = set.lNetworkEvents;
 			
 			if (events != 0)
 			{
 				#ifndef NDEBUG
-				cout << ": Events triggered: " << events << ", for FD: " << fd << endl;
+				cout << "+ Events triggered: " << events << ", for FD: " << fd << endl;
 				
-				if (fIsSet(events, static_cast<uint32_t>(FD_READ)))
-					cout << "   #read:   " << FD_READ << endl;
-				if (fIsSet(events, static_cast<uint32_t>(FD_WRITE)))
-					cout << "   #write:  " << FD_WRITE << endl;
-				if (fIsSet(events, static_cast<uint32_t>(FD_ACCEPT)))
-					cout << "   #accept: " << FD_ACCEPT << endl;
-				if (fIsSet(events, static_cast<uint32_t>(FD_CLOSE)))
-					cout << "   #close:  " << FD_CLOSE << endl;
+				cout << " # ";
+				bool next=false;
+				if (fIsSet(events, Event::read))
+				{
+					cout << "read"; next = true;
+				}
+				if (fIsSet(events, Event::write))
+				{
+					if (next) cout << ", ";
+					cout << "write"; next = true;
+				}
+				if (fIsSet(events, Event::accept))
+				{
+					if (next) cout << ", ";
+					cout << "accept"; next = true;
+				}
+				if (fIsSet(events, Event::hangup))
+				{
+					if (next) cout << ", ";
+					cout << "close";
+				}
+				cout << endl;
 				#endif
 				
 				++nfds;
-				hack::events::prepare_events(events);
-				
-				cout << "+ Triggered!" << endl;
-				
 				++get_event;
 				
 				return true;
@@ -349,7 +345,7 @@ bool Event::getEvent(fd_t &fd, uint32_t &events) throw()
 	}
 	
 	#ifndef NDEBUG
-	cerr << "No events triggered! " << endl;
+	cerr << "- No events triggered!" << endl;
 	#endif
 	
 	return false;

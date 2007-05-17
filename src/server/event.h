@@ -60,6 +60,8 @@
 #elif defined(EV_WSA)
 	#include "sockets.h"
 	#define EV_HAS_HANGUP
+	#define EV_HAS_ACCEPT
+	#define EV_HAS_CONNECT
 #else
 	#error No event system defined
 #endif
@@ -81,13 +83,13 @@ typedef int fd_t;
 #endif
 
 // The meaning of this changes a bit with the event systems.
-const uint32_t max_events =
+const uint max_events =
 #if defined(EV_EPOLL) or defined(EV_KQUEUE)
 	10;
 #elif defined(EV_WSA)
 	WSA_MAXIMUM_WAIT_EVENTS;
 #else
-	std::numeric_limits<uint32_t>::max();
+	std::numeric_limits<uint>::max();
 #endif
 
 //! Event I/O abstraction
@@ -106,11 +108,11 @@ protected:
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
 	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t, uint32_t> fd_list; // events set for FD
-	__gnu_cxx::hash_map<fd_t, uint32_t>::iterator fd_iter;
+	__gnu_cxx::hash_map<fd_t, uint> fd_list; // events set for FD
+	__gnu_cxx::hash_map<fd_t, uint>::iterator fd_iter;
 	#else
-	std::map<fd_t, uint32_t> fd_list; // events set for FD
-	std::map<fd_t, uint32_t>::iterator fd_iter;
+	std::map<fd_t, uint> fd_list; // events set for FD
+	std::map<fd_t, uint>::iterator fd_iter;
 	#endif
 	
 	#ifndef WIN32
@@ -128,18 +130,18 @@ protected:
 	#endif // EV_USE_SIGMASK
 	
 	#if defined(EV_WSA) // Windows Socket API
-	uint32_t last_event;
+	uint last_event;
 	
 	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t, uint32_t> fd_to_ev;
-	__gnu_cxx::hash_map<uint32_t, fd_t> ev_to_fd;
-	typedef __gnu_cxx::hash_map<fd_t, uint32_t>::iterator ev_iter;
-	typedef __gnu_cxx::hash_map<uint32_t, fd_t>::iterator r_ev_iter;
+	__gnu_cxx::hash_map<fd_t, uint> fd_to_ev;
+	__gnu_cxx::hash_map<uint, fd_t> ev_to_fd;
+	typedef __gnu_cxx::hash_map<fd_t, uint>::iterator ev_iter;
+	typedef __gnu_cxx::hash_map<uint, fd_t>::iterator r_ev_iter;
 	#else
-	std::map<fd_t, uint32_t> fd_to_ev;
-	std::map<uint32_t, fd_t> ev_to_fd;
-	typedef std::map<fd_t, uint32_t>::iterator ev_iter;
-	typedef std::map<uint32_t, fd_t>::iterator r_ev_iter;
+	std::map<fd_t, uint> fd_to_ev;
+	std::map<uint, fd_t> ev_to_fd;
+	typedef std::map<fd_t, uint>::iterator ev_iter;
+	typedef std::map<uint, fd_t>::iterator r_ev_iter;
 	#endif
 	
 	WSAEVENT w_ev[max_events];
@@ -154,7 +156,7 @@ protected:
 	#if defined(EV_PSELECT) or defined(EV_KQUEUE)
 	timespec _timeout;
 	#elif defined(EV_EPOLL) or defined(EV_WSA)
-	uint32_t _timeout;
+	uint _timeout;
 	#else
 	timeval _timeout;
 	#endif
@@ -170,8 +172,22 @@ protected:
 	
 public:
 	
+	#ifdef EV_WSA
+	typedef long ev_t;
+	#else
+	typedef int ev_t;
+	#endif
+	
 	// MinGW is buggy... think happy thoughts :D
-	static const uint32_t
+	static const ev_t
+		#ifdef EV_HAS_ACCEPT
+		//! Identifier for 'accept' event
+		accept,
+		#endif
+		#ifdef EV_HAS_CONNECT
+		connect,
+		#endif
+		
 		//! Identifier for 'read' event
 		read,
 		//! Identifier for 'write' event
@@ -213,7 +229,7 @@ public:
 	/**
 	 * @param msecs milliseconds to wait.
 	 */
-	void timeout(uint32_t msecs) throw()
+	void timeout(uint msecs) throw()
 	{
 		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 		std::cout << "Event(-).timeout(msecs: " << msecs << ")" << std::endl;
@@ -253,7 +269,7 @@ public:
 	 *
 	 * @return true if the fd was added, false if not
 	 */
-	int add(fd_t fd, uint32_t ev) throw();
+	int add(fd_t fd, ev_t events) throw();
 	
 	//! Removes file descriptor from event set.
 	/**
@@ -272,10 +288,10 @@ public:
 	 *
 	 * @return something undefined
 	 */
-	int modify(fd_t fd, uint32_t ev) throw();
+	int modify(fd_t fd, ev_t events) throw();
 	
 	//! Fetches next triggered event.
-	bool getEvent(fd_t &fd, uint32_t &events) throw();
+	bool getEvent(fd_t &fd, ev_t &events) throw();
 	
 	int getError() const throw() { return _error; }
 };

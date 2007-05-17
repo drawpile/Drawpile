@@ -285,16 +285,7 @@ void Server::uWrite(User*& usr) throw()
 		
 		// in case new buffer was allocated
 		if (buf != usr->output.wpos)
-		{
-			#ifndef NDEBUG
-			cout << __LINE__ << ": Output buffer was too small!" << endl
-				<< "Original size: " << usr->output.canWrite()
-				<< ", actually needed: " << size << endl
-				<< "... for user #" << static_cast<int>(usr->id) << endl;
-			#endif
-			
 			usr->output.setBuffer(buf, size, len);
-		}
 		else
 			usr->output.write(len);
 		
@@ -327,6 +318,7 @@ void Server::uWrite(User*& usr) throw()
 			const int r = compress2(reinterpret_cast<uchar*>(temp), &buffer_len, reinterpret_cast<uchar*>(usr->output.rpos), len, 5);
 			
 			assert(r != Z_STREAM_ERROR);
+			assert(r != Z_BUF_ERROR); // too small buffer
 			
 			switch (r)
 			{
@@ -354,12 +346,11 @@ void Server::uWrite(User*& usr) throw()
 					const protocol::Deflate t_deflate(len, buffer_len, temp);
 					
 					// make sure we can write the whole message in
-					if (usr->output.canWrite() < buffer_len + 9)
-						if (usr->output.free() >= buffer_len + 9)
-						{
-							usr->output.reposition();
-							size = usr->output.canWrite();
-						}
+					if (usr->output.canWrite() < (buffer_len + 9) <= usr->output.free())
+					{
+						usr->output.reposition();
+						size = usr->output.canWrite();
+					}
 					
 					buf = t_deflate.serialize(len, usr->output.wpos, size);
 					
@@ -368,14 +359,14 @@ void Server::uWrite(User*& usr) throw()
 						#ifndef NDEBUG
 						if (!inBuffer)
 						{
-							cout << __LINE__ << ": Pre-allocated buffer was too small!" << endl
+							cout << "[Deflate] Pre-allocated buffer was too small!" << endl
 								<< "Allocated: " << buffer_len*2+1024
 								<< ", actually needed: " << size << endl
 								<< "... for user #" << static_cast<int>(usr->id) << endl;
 						}
 						else
 						{
-							cout << __LINE__ << ": Output buffer was too small!" << endl
+							cout << "[Deflate] Output buffer was too small!" << endl
 								<< "Original size: " << usr->output.canWrite()
 								<< ", actually needed: " << size << endl
 								<< "... for user #" << static_cast<int>(usr->id) << endl;
@@ -387,13 +378,6 @@ void Server::uWrite(User*& usr) throw()
 						usr->output.write(len);
 				}
 				break;
-			case Z_BUF_ERROR:
-				#ifndef NDEBUG
-				cerr << "zlib: output buffer is too small." << endl
-					<< "source size: " << len << ", target size: " << buffer_len << endl;
-				#endif
-				assert(r != Z_BUF_ERROR);
-				// pass on to the next case-label
 			case Z_MEM_ERROR:
 				goto cleanup;
 			}
@@ -502,11 +486,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		switch (usr->sock.getError())
 		{
 		case EAGAIN:
-		case EINTR:
-			// retry later
-			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-			cerr << "# Operation would block / interrupted" << endl;
-			#endif
+		case EINTR: // retry later
 			break;
 		default:
 			cerr << "Unrecoverable error occured while reading from user #"
@@ -2339,7 +2319,11 @@ bool Server::init() throw(std::bad_alloc)
 		cout << "Listening on: " << lsock.address() << endl << endl;
 		
 		// add listening socket to event system
+		#ifdef EV_HAS_ACCEPT
+		ev.add(lsock.fd(), ev.accept);
+		#else
 		ev.add(lsock.fd(), ev.read);
+		#endif
 		
 		// set event timeout
 		ev.timeout(30000);
@@ -2373,12 +2357,7 @@ bool Server::validateUserName(User* usr) const throw()
 
 bool Server::validateSessionTitle(const char* name, const uint8_t len) const throw()
 {
-	assert(name != 0);
-	
-	#ifndef NDEBUG
-	if (name == 0)
-		assert(len == 0);
-	#endif
+	assert(name != 0 and len > 0);
 	
 	// Session title is never unique if it's an empty string.
 	if (len == 0)
@@ -2429,7 +2408,7 @@ int Server::run() throw()
 	User *usr;
 	
 	fd_t fd;
-	uint32_t events;
+	Event::ev_t events;
 	
 	users_i ui;
 	
@@ -2449,7 +2428,11 @@ int Server::run() throw()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
+				#ifdef EV_HAS_ACCEPT
+				if (fIsSet(events, ev.accept))
+				#else
 				if (fd == lsock.fd())
+				#endif
 				{
 					uAdd( lsock.accept() );
 					continue;
@@ -2462,26 +2445,28 @@ int Server::run() throw()
 				#ifdef EV_HAS_ERROR
 				if (fIsSet(events, ev.error))
 				{
+					cerr << "Broken pipe!" << endl;
 					uRemove(usr, protocol::UserInfo::BrokenPipe);
-					break;
+					continue;
 				}
 				#endif // EV_HAS_ERROR
 				#ifdef EV_HAS_HANGUP
 				if (fIsSet(events, ev.hangup))
 				{
+					cerr << "Disconnected" << endl;
 					uRemove(usr, protocol::UserInfo::Disconnect);
-					break;
+					continue;
 				}
 				#endif // EV_HAS_HANGUP
 				if (fIsSet(events, ev.read))
 				{
 					uRead(usr);
-					if (!usr) break;
+					if (!usr) continue;
 				}
 				if (fIsSet(events, ev.write))
 				{
 					uWrite(usr);
-					if (!usr) break;
+					if (!usr) continue;
 				}
 			}
 			

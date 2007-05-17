@@ -18,6 +18,7 @@
 #include "common.h"
 #include "buffer.h" // Buffer
 #include "message.h" // message_ref
+#include "event.h" // Event::ev_t
 
 struct Session; // defined elsewhere
 #ifndef ServerSession_INCLUDED
@@ -251,7 +252,7 @@ struct User
 	uint id;
 	
 	// Event I/O registered events.
-	uint32_t events;
+	Event::ev_t events;
 	
 	// User state
 	enum State

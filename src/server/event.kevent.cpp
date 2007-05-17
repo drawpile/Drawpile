@@ -43,7 +43,7 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const uint32_t
+const Event::ev_t
 	Event::read = KEVENT_SOCKET_RECV,
 	Event::write = KEVENT_SOCKET_SEND;
 	//Event::accept = KEVENT_SOCKET_ACCEPT;
@@ -153,7 +153,7 @@ int Event::wait() throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, uint32_t ev) throw()
+int Event::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kevent).add(FD: " << fd << ")" << endl;
@@ -163,7 +163,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
-	ev_info.events = ev;
+	ev_info.events = events;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
 	_error = errno;
@@ -189,7 +189,7 @@ int Event::add(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-int Event::modify(fd_t fd, uint32_t ev) throw()
+int Event::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kevent).modify(FD: " << fd << ")" << endl;
@@ -199,7 +199,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
-	ev_info.events = ev;
+	ev_info.events = events;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
 	_error = errno;
@@ -224,7 +224,7 @@ int Event::modify(fd_t fd, uint32_t ev) throw()
 	return 0;
 }
 
-int Event::remove(fd_t fd, uint32_t ev) throw()
+int Event::remove(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(kevent).remove(FD: " << fd << ")" << endl;
@@ -255,7 +255,7 @@ int Event::remove(fd_t fd, uint32_t ev) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, uint32_t &r_events) throw()
+bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	if (nfds == -1)
 		return false;
