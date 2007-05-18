@@ -227,7 +227,7 @@ protected:
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
-	void uSendMsg(User& usr, message_ref msg) throw();
+	void uQueueMsg(User& usr, message_ref msg) throw();
 	
 	// Begin synchronizing the session
 	void SyncSession(Session* session) throw();

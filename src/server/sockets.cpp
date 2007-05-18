@@ -48,7 +48,7 @@ using std::cerr;
 Net::Net() throw(std::exception)
 {
 	#ifndef NDEBUG
-	cout << "Net()" << endl;
+	cout << "[Network] Starting" << endl;
 	#endif
 	
 	#if defined(WIN32)
@@ -59,7 +59,7 @@ Net::Net() throw(std::exception)
 	if (LOBYTE(info.wVersion) != 2
 		or HIBYTE(info.wVersion) != 0)
 	{
-		cerr << "Invalid WSA version: "
+		cerr << "ERROR: Invalid WSA version: "
 			<< LOBYTE(info.wVersion) << "." << HIBYTE(info.wVersion) << endl;
 		WSACleanup( );
 		exit(1); 
@@ -70,7 +70,7 @@ Net::Net() throw(std::exception)
 Net::~Net() throw()
 {
 	#ifndef NDEBUG
-	cout << "~Net()" << endl;
+	cout << "[Network] Stopping" << endl;
 	#endif
 	
 	#if defined(WIN32)
@@ -121,19 +121,19 @@ fd_t Socket::create() throw()
 		case EINPROGRESS:
 			break;
 		case ENETDOWN:
-			cerr << "socket: network sub-system failure" << endl;
+			cerr << "[Socket] Network sub-system failure" << endl;
 			break;
 		#else // POSIX
 		// TODO
 		#endif
 		case EMFILE:
-			cerr << "socket: socket limit reached" << endl;
+			cerr << "[Socket] Socket limit reached" << endl;
 			break;
 		case ENOBUFS:
-			cerr << "socket: out of buffers" << endl;
+			cerr << "[Socket] out of buffers" << endl;
 			break;
 		default:
-			cerr << "Socket::create() - unknown error: " << s_error << endl;
+			cerr << "[Socket] Unknown error in create() - " << s_error << endl;
 			assert(s_error);
 			break;
 		}
@@ -217,28 +217,29 @@ Socket Socket::accept() throw()
 		case EAGAIN: // would block
 			break;
 		case EMFILE:
-			cerr << "socket: process FD limit reached" << endl;
+			cerr << "[Socket] Process FD limit reached" << endl;
 			break;
 		case ENOBUFS:
-			cerr << "socket: out of network buffers" << endl;
+			cerr << "[Socket] Out of network buffers" << endl;
 			break;
 		case ECONNABORTED:
-			cerr << "socket: incoming connection aborted" << endl;
+			cerr << "[Socket] Incoming connection aborted" << endl;
 			break;
 		case ENOMEM:
-			cerr << "socket: out of memory" << endl;
+			cerr << "[Socket] Out of memory" << endl;
 			break;
 		case EPERM:
-			cerr << "socket: firewall blocked incoming connection" << endl;
+			cerr << "[Socket] Firewall blocked incoming connection" << endl;
 			break;
 		#ifndef WIN32 // POSIX
 		case ENFILE:
-			cerr << "socket: system FD limit reached" << endl;
+			cerr << "[Socket] System FD limit reached" << endl;
 			break;
 		#endif
 		default:
-			cerr << "Socket.accept() - unknown error: " << s_error << endl;
-			exit(1);
+			cerr << "[Socket] Unknown error in accept() - " << s_error << endl;
+			assert(s_error);
+			break;
 		}
 		
 		return Socket();
@@ -248,7 +249,7 @@ Socket Socket::accept() throw()
 bool Socket::block(const bool x) throw()
 {
 	#ifndef NDEBUG
-	cout << "Socket.block(fd: " << sock << ", " << (x?"true":"false") << ")" << endl;
+	cout << "[Socket] Blocking for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif // NDEBUG
 	
 	assert(sock != INVALID_SOCKET);
@@ -265,7 +266,7 @@ bool Socket::block(const bool x) throw()
 bool Socket::reuse(const bool x) throw()
 {
 	#ifndef NDEBUG
-	cout << "Socket.reuse(fd: " << sock << ", " << (x?"true":"false") << ")" << endl;
+	cout << "[Socket] Reuse port of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -288,7 +289,7 @@ bool Socket::reuse(const bool x) throw()
 		assert(s_error != ENOPROTOOPT);
 		assert(s_error != EFAULT);
 		
-		cerr << "Socket.reuse() - unknown error: " << s_error << endl;
+		cerr << "[Socket] Unknown error in reuse() - " << s_error << endl;
 		exit(1);
 	}
 	
@@ -298,6 +299,10 @@ bool Socket::reuse(const bool x) throw()
 
 bool Socket::linger(const bool x, const uint16_t delay) throw()
 {
+	#ifndef NDEBUG
+	cout << "[Socket] Linger for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
+	#endif
+	
 	::linger lval;
 	lval.l_onoff = (x ? 1 : 0);
 	lval.l_linger = delay;
@@ -317,7 +322,7 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 		assert(s_error != ENOPROTOOPT);
 		assert(s_error != EFAULT);
 		
-		cerr << "Socket.linger() - unknown error: " << s_error << endl;
+		cerr << "[Socket] Unknown error in linger() - " << s_error << endl;
 		exit(1);
 	}
 	else
@@ -327,7 +332,7 @@ bool Socket::linger(const bool x, const uint16_t delay) throw()
 int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.bindTo([" << address << "], " << _port << ")" << endl;
+	cout << "[Socket] Binding to address " << address << ":" << _port << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -364,16 +369,16 @@ int Socket::bindTo(const std::string& address, const uint16_t _port) throw()
 		switch (s_error)
 		{
 		case EADDRINUSE:
-			cerr << "socket: address already in use" << endl;
+			cerr << "[Socket] Address already in use" << endl;
 			break;
 		case EADDRNOTAVAIL:
-			cerr << "socket: address not available" << endl;
+			cerr << "[Socket] Address not available" << endl;
 			break;
 		case ENOBUFS:
-			cerr << "socket: out of network buffers" << endl;
+			cerr << "[Socket] Out of network buffers" << endl;
 			break;
 		case EACCES:
-			cerr << "socket: can't bind to super-user sockets" << endl;
+			cerr << "[Socket] Can't bind to super-user sockets" << endl;
 			break;
 		}
 	}
@@ -393,7 +398,7 @@ int Socket::connect(const sockaddr_in6& rhost) throw()
 int Socket::connect(const sockaddr_in& rhost) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.connect()" << endl;
+	cout << "[Socket] Connecting to " << AddrToString(rhost) << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -430,7 +435,7 @@ int Socket::connect(const sockaddr_in& rhost) throw()
 		case EACCES:
 		#ifdef EPERM
 		case EPERM:
-			cerr << "socket: firewall denied connection" << endl;
+			cerr << "[Socket] Firewall denied connection" << endl;
 			break;
 		#endif
 		case ECONNREFUSED:
@@ -449,7 +454,7 @@ int Socket::connect(const sockaddr_in& rhost) throw()
 int Socket::listen() throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.listen()" << endl;
+	cout << "[Socket] Listening" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -469,7 +474,7 @@ int Socket::listen() throw()
 		assert(s_error != EOPNOTSUPP);
 		
 		#ifndef NDEBUG
-		cerr << "Socket.listen() - unknown error: " << s_error << endl;
+		cerr << "[Socket] Unknown error in listen() - " << s_error << endl;
 		#endif // NDEBUG
 		exit(1);
 	}
@@ -480,7 +485,7 @@ int Socket::listen() throw()
 int Socket::send(char* buffer, const size_t len) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.send(*buffer, " << len << ")" << endl;
+	cout << "[Socket] Sending " << len << " bytes" << endl;
 	#endif
 	
 	assert(buffer != 0);
@@ -538,7 +543,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 		#endif
 		default:
 			#ifndef NDEBUG
-			cerr << "Socket.send() - unknown error: " << s_error << endl;
+			cerr << "[Socket] Unknown error in send() - " << s_error << endl;
 			#endif // NDEBUG
 			assert(s_error);
 			break;
@@ -559,7 +564,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 int Socket::recv(char* buffer, const size_t len) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.recv(*buffer, " << len << ")" << endl;
+	cout << "[Socket] Receiving at most " << len << " bytes" << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -618,7 +623,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 		#endif
 		default:
 			#ifndef NDEBUG
-			cerr << "Socket.recv() - unknown error: " << s_error << endl;
+			cerr << "[Socket] Unknown error in recv() - " << s_error << endl;
 			#endif // NDEBUG
 			assert(s_error);
 			break;
@@ -640,7 +645,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "Socket.sendfile()" << endl;
+	cout << "[Socket] Sending file" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -679,8 +684,8 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 			break;
 		#endif
 		default:
-			cerr << "Socket.sendfile() - unknown error: " << s_error << endl;
-			exit(1);
+			cerr << "[Socket] Unknown error in sendfile() - " << s_error << endl;
+			assert(s_error);
 		}
 	}
 	

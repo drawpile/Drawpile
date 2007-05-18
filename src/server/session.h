@@ -90,27 +90,6 @@ typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 struct Session
 	//: MemoryStack<Session>
 {
-	Session(const uint _id=protocol::Global) throw()
-		: id(_id),
-		title_len(0),
-		title(0),
-		pw_len(0),
-		password(0),
-		mode(protocol::user_mode::None),
-		limit(10),
-		owner(protocol::null_user),
-		width(0),
-		height(0),
-		level(0),
-		SelfDestruct(true),
-		syncCounter(0),
-		locked(false)
-	{
-		#ifndef NDEBUG
-		std::cout << "Session::Session()" << std::endl;
-		#endif
-	}
-	
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
 		uint _width, uint _height, uint _level, uint _title_len, char* _title) throw()
 		: id(_id),
@@ -129,18 +108,15 @@ struct Session
 		locked(false)
 	{
 		#ifndef NDEBUG
-		std::cout << "Session #" << static_cast<int>(id) << " constructed" << std::endl;
+		std::cout << "Session::Session(ID: " << static_cast<int>(id) << ")" << std::endl;
 		#endif
 	}
 	
 	~Session() throw()
 	{
 		#ifndef NDEBUG
-		std::cout << "~Session #" << static_cast<int>(id) << " destructed" << std::endl;
+		std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
 		#endif
-		
-		waitingSync.clear();
-		users.clear();
 		
 		delete [] title;
 	}

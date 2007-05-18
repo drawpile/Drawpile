@@ -138,8 +138,7 @@ struct User
 		deadtime(0),
 		name_len(0),
 		name(0),
-		toolChanged(false),
-		cachedToolInfo(0)
+		session_data(0)
 		#ifndef NDEBUG
 		,
 		strokes(0)
@@ -162,22 +161,8 @@ struct User
 		//delete sock,
 		delete inMsg;
 		
-		if (toolChanged)
-			delete cachedToolInfo;
-		
 		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
-		{
-			if (session != usi->second->session)
-			{
-				delete usi->second->cachedToolInfo;
-				usi->second->cachedToolInfo = 0;
-			}
 			delete usi->second;
-		}
-		
-		sessions.clear();
-		
-		queue.clear();
 	}
 	
 	inline
@@ -187,32 +172,18 @@ struct User
 		if (usi != sessions.end())
 		{
 			if (session != 0)
-			{
-				const usr_session_i usio(sessions.find(session->id));
-				assert(usio != sessions.end());
-				
-				// these aren't copied to session otherwise
-				usio->second->layer = a_layer;
-				
-				if (usio->second->cachedToolInfo != cachedToolInfo)
-				{
-					// usio->second->cachedToolInfo;
-					usio->second->cachedToolInfo = cachedToolInfo;
-				}
-			}
+				session_data->layer = a_layer;
 			
-			// copy 
-			session = usi->second->session;
+			session_data = usi->second;
 			
-			a_layer = usi->second->layer;
-			a_layer_lock = usi->second->layer_lock;
+			session = session_data->session;
 			
-			a_locked = usi->second->locked;
-			a_deaf = usi->second->deaf;
-			a_muted = usi->second->muted;
+			a_layer = session_data->layer;
+			a_layer_lock = session_data->layer_lock;
 			
-			cachedToolInfo = usi->second->cachedToolInfo;
-			toolChanged = false;
+			a_locked = session_data->locked;
+			//a_deaf = session_data->deaf;
+			a_muted = session_data->muted;
 			
 			return true;
 		}
@@ -229,17 +200,15 @@ struct User
 	inline
 	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
 	{
-		assert(ti != cachedToolInfo); // attempted to re-cache same tool
+		assert(ti != session_data->cachedToolInfo); // attempted to re-cache same tool
 		assert(ti != 0);
 		
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "Caching Tool Info for user #" << static_cast<int>(id) << std::endl;
 		#endif
 		
-		delete cachedToolInfo;
-		cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor
-		
-		toolChanged = true;
+		delete session_data->cachedToolInfo;
+		session_data->cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor
 	}
 	
 	// Socket
@@ -368,8 +337,7 @@ struct User
 	
 	/* cached messages */
 	
-	bool toolChanged;
-	protocol::ToolInfo *cachedToolInfo;
+	SessionData* session_data;
 	
 	/* counters */
 	

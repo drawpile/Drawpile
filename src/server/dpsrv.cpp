@@ -91,11 +91,11 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					<< "   -J [num]      Set subscription limit" << endl
 					<< "   -M            Allow duplicate connections" << endl
 					;
-				exit(1);
+				exit(EXIT_SUCCESS);
 				break;
 			case 'a': // address to listen on
-				cerr << "Setting listening address not implemented." << endl;
-				exit(1);
+				cerr << "- Setting listening address not implemented." << endl;
+				exit(EXIT_FAILURE);
 				break;
 			case 'n': // name length limit
 				{
@@ -104,7 +104,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					const uint8_t len = std::min(tmp, static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					
 					srv.setNameLengthLimit(len);
-					cout << "Name length limit set to: " << static_cast<int>(len) << endl;
+					cout << "& Name length limit set to: " << static_cast<int>(len) << endl;
 				}
 				break;
 			case 'p': // port to listen on
@@ -116,12 +116,12 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					
 					if (lo_port <= 1023 or hi_port <= 1023)
 					{
-						cerr << "Super-user ports not allowed!" << endl;
-						exit(1);
+						cerr << "- Super-user ports not allowed!" << endl;
+						exit(EXIT_FAILURE);
 					}
 					srv.setPorts(lo_port, hi_port);
 					
-					cout << "Listening port range set to: " << lo_port;
+					cout << "& Listening port range set to: " << lo_port;
 					if (lo_port != hi_port)
 						cout << " - " << hi_port;
 					cout << endl;
@@ -129,19 +129,19 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				break;
 			case 'l': // localhost admin
 				srv.setLocalhostAdmin(true);
-				cout << "Localhost admin enabled." << endl;
+				cout << "& Localhost admin enabled." << endl;
 				break;
 			case 'u': // user limit
 				{
 					const size_t user_limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					if (user_limit < 2)
 					{
-						cerr << "Too low user limit." << endl;
-						exit(1);
+						cerr << "- Too low user limit." << endl;
+						exit(EXIT_FAILURE);
 					}
 					
 					srv.setUserLimit(user_limit);
-					cout << "User limit set to: " << user_limit << endl;
+					cout << "& User limit set to: " << user_limit << endl;
 				}
 				break;
 			case 'S': // admin password
@@ -149,19 +149,19 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					const size_t pw_len = strlen(optarg);
 					if (pw_len == 0)
 					{
-						cerr << "Zero length admin password?" << endl;
-						exit(1);
+						cerr << "- Zero length admin password?" << endl;
+						exit(EXIT_FAILURE);
 					}
 					else if (pw_len > std::numeric_limits<uint8_t>::max())
 					{
-						cerr << "Admin password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << endl;
-						exit(1);
+						cerr << "- Admin password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << endl;
+						exit(EXIT_FAILURE);
 					}
 					
 					char* password = new char[pw_len];
 					memcpy(password, optarg, pw_len);
 					srv.setAdminPassword(password, pw_len);
-					cout << "Admin password set." << endl;
+					cout << "& Admin password set." << endl;
 				}
 				break;
 			case 's': // password
@@ -169,25 +169,25 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					const size_t pw_len = strlen(optarg);
 					if (pw_len == 0)
 					{
-						cerr << "Zero length server password?" << endl;
-						exit(1);
+						cerr << "- Zero length server password?" << endl;
+						exit(EXIT_FAILURE);
 					}
 					else if (pw_len > std::numeric_limits<uint8_t>::max())
 					{
-						cerr << "Server password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << endl;
-						exit(1);
+						cerr << "- Server password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << endl;
+						exit(EXIT_FAILURE);
 					}
 					
 					char* password = new char[pw_len];
 					memcpy(password, optarg, pw_len);
 					srv.setPassword(password, pw_len);
-					cout << "Server password set." << endl;
+					cout << "& Server password set." << endl;
 				}
 				
 				break;
 			case 'T': // transient/temporary
 				srv.setTransient(true);
-				cout << "Server will exit after all users have left." << endl;
+				cout << "& Server will exit after all users have left." << endl;
 				break;
 			case 'b': // background
 				#if defined(HAVE_FORK) or defined(HAVE_FORK1)
@@ -199,15 +199,15 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					#endif
 					if (rc == -1)
 					{
-						cerr << "fork() failed" << endl;
-						exit(1);
+						cerr << "- fork() failed" << endl;
+						exit(EXIT_FAILURE);
 					}
 					else if (rc != 0)
 						exit(0); // kill parent process
 				}
 				#else
-				cerr << "Non-forking daemon mode not implemented." << endl;
-				exit(1);
+				cerr << "- Non-forking daemon mode not implemented." << endl;
+				exit(EXIT_FAILURE);
 				#endif
 				break;
 			case 'd': // adjust minimum dimension.
@@ -215,33 +215,33 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					const size_t mindim = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint16_t>::max()));
 					if (mindim < 400) // just a reasonably nice lower bound
 					{
-						cerr << "Min. dimension must be at least 400" << endl;
-						exit(1);
+						cerr << "- Min. dimension must be at least 400" << endl;
+						exit(EXIT_FAILURE);
 					}
 					
 					srv.setMinDimension(mindim);
-					cout << "Minimum board dimension set to: " << mindim << endl;
+					cout << "& Minimum board dimension set to: " << mindim << endl;
 				}
 				break;
 			case 'e': // name enforcing
 				srv.setRequirement(protocol::requirements::EnforceUnique);
-				cout << "Unique name enforcing enabled." << endl;
+				cout << "& Unique name enforcing enabled." << endl;
 				break;
 			case 'w': // utf-16 string (wide chars)
 				srv.setRequirement(protocol::requirements::WideStrings);
-				cout << "UTF-16 string mode enabled." << endl;
+				cout << "& UTF-16 string mode enabled." << endl;
 				break;
 			case 'L': // session limit
 				{
 					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					if (limit < 1)
 					{
-						cerr << "Limit must be greater than 0" << endl;
-						exit(1);
+						cerr << "- Limit must be greater than 0" << endl;
+						exit(EXIT_FAILURE);
 					}
 					
 					srv.setSessionLimit(limit);
-					cout << "Session limit set to: " << limit << endl;
+					cout << "& Session limit set to: " << limit << endl;
 				}
 				break;
 			case 'J': // subscription limit
@@ -249,23 +249,23 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
 					if (limit < 1)
 					{
-						cerr << "Limit must be greater than 0" << endl;
-						exit(1);
+						cerr << "- Limit must be greater than 0" << endl;
+						exit(EXIT_FAILURE);
 					}
 					
 					srv.setSubscriptionLimit(limit);
-					cout << "Subscription limit set to: " << limit << endl;
+					cout << "& Subscription limit set to: " << limit << endl;
 				}
 				break;
 			case 'M': // allow multiple connections from same address
 				srv.blockDuplicateConnectsion(false);
-				cout << "Multiple connections allowed from same source address." << endl;
+				cout << "& Multiple connections allowed from same source address." << endl;
 				break;
 			case 'V': // version
 				exit(0);
 			default:
 				cerr << "What?" << endl;
-				exit(1);
+				exit(EXIT_FAILURE);
 				break;
 		}
 	}
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
 		<< srv_info::websiteURL << endl
 		<< endl;
 	
-	int rc = 0;
+	int rc = EXIT_SUCCESS;
 	
 	// limited scope for server
 	{
@@ -304,21 +304,21 @@ int main(int argc, char** argv)
 		
 		if (!srv.init())
 		{
-			std::cerr << "Server initialization failed!" << std::endl;
-			return 1;
+			std::cerr << "- Server initialization failed!" << std::endl;
+			return EXIT_FAILURE;
 		}
 		
 		try {
 			rc = srv.run();
 		}
 		catch (...) {
-			std::cerr << "Unknown exception caught." << std::endl;
-			rc = 9;
+			std::cerr << "- Unknown exception caught." << std::endl;
+			rc = 2;
 			// do nothing
 		}
 	} // end server scope
 	
-	std::cout << ": Quitting..." << std::endl;
+	std::cout << "~ Quitting..." << std::endl;
 	
 	return rc;
 }
