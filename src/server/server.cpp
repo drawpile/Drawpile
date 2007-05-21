@@ -1879,6 +1879,10 @@ void Server::SyncSession(Session* session) throw()
 	// Release clients from syncwait...
 	Propagate(*session, msgAck(session->id, protocol::Message::SyncWait));
 	
+	// in case the users had been dropped
+	if (session->waitingSync.size() == 0)
+		return;
+	
 	#ifdef HAVE_SLIST
 	__gnu_cxx::slist<message_ref> msg_queue;
 	#else
@@ -2196,6 +2200,16 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 		}
 		else
 			++ti;
+	}
+	
+	if (usr->syncing != 0)
+	{
+		session_i si(sessions.find(usr->syncing));
+		if (si != sessions.end())
+		{
+			si->waitingSync.erase(usr);
+			
+		}
 	}
 	
 	// clean sessions
