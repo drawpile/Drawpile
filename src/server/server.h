@@ -220,7 +220,7 @@ protected:
 	void uLayerEvent(User*& usr) throw();
 	
 	// Send message to session
-	void Propagate(const Session& session, message_ref msg, User* source=0, const bool toAll=false) throw();
+	void Propagate(const Session& session, message_ref msg, User* source=0) throw();
 	
 	// Send message to user
 	/*

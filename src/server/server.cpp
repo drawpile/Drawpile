@@ -277,7 +277,6 @@ void Server::uWrite(User*& usr) throw()
 			(*iter)->next = boost::get_pointer(*l_msg);
 		}
 		
-		//msg->user_id = id;
 		size_t len=0, size=usr->output.canWrite();
 		
 		// serialize message/s
@@ -591,6 +590,7 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 		(usr.name_len == 0 ? 0 : new char[usr.name_len])
 	);
 	
+	
 	uevent->user_id = usr.id;
 	uevent->session_id = session_id;
 	
@@ -668,10 +668,7 @@ void Server::uHandleDrawing(User& usr) throw()
 		#endif
 		
 		// make sure the user id is correct
-		usr.inMsg->user_id = usr.id;
-		
 		Propagate(*usr.session, message_ref(usr.inMsg), (usr.c_acks ? &usr : 0));
-		
 		usr.inMsg = 0;
 	}
 }
@@ -768,10 +765,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	
 	assert(usr->state == User::Active);
 	
+	usr->inMsg->user_id = usr->id;
+	
 	switch (usr->inMsg->type)
 	{
 	case protocol::Message::ToolInfo:
-		usr->inMsg->user_id = usr->id;
 		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
 	case protocol::Message::StrokeInfo:
 	case protocol::Message::StrokeEnd:
@@ -783,7 +781,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::Message::SessionSelect:
 		if (usr->makeActive(usr->inMsg->session_id))
 		{
-			usr->inMsg->user_id = usr->id;
 			Propagate(*usr->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
 			usr->inMsg = 0;
 		}
@@ -814,7 +811,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			else
 			{
 				message_ref pmsg(usr->inMsg);
-				pmsg->user_id = usr->id;
 				Propagate(*usi->second->session, pmsg, (usr->c_acks ? usr : 0));
 				usr->inMsg = 0;
 			}
@@ -885,7 +881,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 			else
 			{
-				usr->inMsg->user_id = usr->id;
 				Session *session = si->second;
 				uSessionEvent(session, usr);
 			}
@@ -913,7 +908,6 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uQueueMsg(*usr, msgError(layer->session_id, protocol::error::LayerLocked));
 				else
 				{
-					layer->user_id = usr->id; // set user id
 					usr->a_layer = layer->layer_id; // set active layer
 					
 					// Tell other users about it
@@ -1125,7 +1119,6 @@ void Server::uTunnelRaster(User& usr) throw()
 		
 		tunnel_i ti(ft.first);
 		// Forward raster data to users.
-		User *usr_ptr;
 		
 		message_ref raster_ref(raster);
 		
@@ -1133,9 +1126,8 @@ void Server::uTunnelRaster(User& usr) throw()
 		
 		for (; ti != ft.second; ++ti)
 		{
-			usr_ptr = ti->second;
-			uQueueMsg(*usr_ptr, raster_ref);
-			if (last) usr_ptr->syncing = false;
+			uQueueMsg(*ti->second, raster_ref);
+			if (last) ti->second->syncing = false;
 		}
 		
 		// Break tunnel/s if that was the last raster piece.
@@ -1296,7 +1288,6 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 						usr->session_data->muted = usi->second->muted;
 					
 					Propagate(*session, message_ref(&event), (usr->c_acks ? usr : 0));
-					
 					usr->inMsg = 0;
 				}
 			}
@@ -1436,11 +1427,15 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			
 			// tell users session was lost
 			message_ref err = msgError(session->id, protocol::error::SessionLost);
-			Propagate(*session, err, 0, true);
+			Propagate(*session, err, 0);
+			for (userlist_const_i wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
+			{
+				uQueueMsg(**wui, err);
+			}
 			
 			// clean session users
 			session_usr_const_i sui(session->users.begin());
-			User* usr_ptr;
+			User *usr_ptr;
 			for (; sui != session->users.end(); ++sui)
 			{
 				usr_ptr = sui->second;
@@ -1622,9 +1617,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				break;
 			}
 			
-			// assign message the user's id (for sending back)
-			msg.user_id = usr->id;
-			
 			// null the message's name information, so they don't get deleted
 			msg.length = 0;
 			msg.name = 0;
@@ -1649,6 +1641,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 					usr->isAdmin = true;
 			}
 			
+			msg.user_id = usr->id;
 			msg.mode = usr->getAMode();
 			
 			usr->state = User::Active;
@@ -1803,14 +1796,12 @@ void Server::uLayerEvent(User*& usr) throw()
 		return;
 	}
 	
-	levent.user_id = usr->id;
-	
 	Propagate(*session, message_ref(&levent), (usr->c_acks ? usr : 0));
 	usr->inMsg = 0;
 }
 
 // Calls uQueueMsg
-void Server::Propagate(const Session& session, message_ref msg, User* source, const bool toAll) throw()
+void Server::Propagate(const Session& session, message_ref msg, User* source) throw()
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Propagating message to session #" << session.id
@@ -1831,15 +1822,6 @@ void Server::Propagate(const Session& session, message_ref msg, User* source, co
 			usr_ptr = ui->second;
 			uQueueMsg(*usr_ptr, msg);
 		}
-	
-	// send to users in waitingSync list, too
-	if (toAll)
-		for (userlist_const_i wui(session.waitingSync.begin()); wui != session.waitingSync.end(); ++wui)
-			if ((*wui) != source)
-			{
-				usr_ptr = *wui;
-				uQueueMsg(*usr_ptr, msg);
-			}
 }
 
 void Server::uQueueMsg(User& usr, message_ref msg) throw()
@@ -2056,17 +2038,15 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 	else
 	{
 		// Cancel raster sending for this user
-		User* usr_ptr;
 		tunnel_i t_iter(tunnel.begin());
 		while (t_iter != tunnel.end())
 		{
 			if (t_iter->second == &usr)
 			{
-				usr_ptr = t_iter->first;
 				message_ref cancel_ref(new protocol::Cancel);
 				// TODO: Figure out which session it is from
 				//cancel->session_id = session->id;
-				uQueueMsg(*usr_ptr, cancel_ref);
+				uQueueMsg(*t_iter->first, cancel_ref);
 				
 				tunnel.erase(t_iter);
 				// iterator was invalidated
