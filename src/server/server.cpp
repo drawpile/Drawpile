@@ -40,6 +40,9 @@
 	#include <zlib.h>
 #endif
 
+#ifdef LINUX
+	#include <cstdio>
+#endif
 #include <limits> // std::numeric_limits<T>
 #include <iostream>
 
@@ -2254,7 +2257,18 @@ bool Server::init() throw(std::bad_alloc)
 {
 	assert(state == Server::Dead);
 	
-	srand(time(0) - 513); // FIXME
+	#ifdef LINUX
+	FILE stream = fopen("/dev/urandom", "r");
+	int seed;
+	if (stream != 0)
+	{
+		fread(&seed, sizeof(seed), 1, stream);
+		fclose(stream);
+	}
+	srand(seed);
+	#else
+	srand(time(0) - 513); // FIXME: Need better seed value
+	#endif
 	
 	if (lsock.create() == INVALID_SOCKET)
 	{
