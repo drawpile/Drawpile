@@ -125,7 +125,7 @@ protected:
 	#endif // !WIN32
 	#endif // EV_[P]SELECT
 	
-	#if defined(EV_USE_SIGMASK) // for pselect only
+	#ifdef EV_USE_SIGMASK // for pselect only
 	sigset_t _sigmask, _sigsaved;
 	#endif // EV_USE_SIGMASK
 	
@@ -208,7 +208,7 @@ public:
 	//! dtor
 	~Event() throw();
 	
-	#if defined(EV_PSELECT)
+	#ifdef EV_USE_SIGMASK // for pselect only
 	//! Set signal mask.
 	/**
 	 * Only used by pselect() so far
