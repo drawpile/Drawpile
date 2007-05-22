@@ -50,7 +50,7 @@ const Event::ev_t
 	Event::hangup = EPOLLHUP;
 
 Event::Event() throw()
-	: evfd(0)
+	: evfd(0), nfds(-1)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event()" << endl;
