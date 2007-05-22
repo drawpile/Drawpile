@@ -2204,11 +2204,10 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	
 	if (usr->syncing != 0)
 	{
-		session_i si(sessions.find(usr->syncing));
+		sessions_i si(sessions.find(usr->syncing));
 		if (si != sessions.end())
 		{
-			si->waitingSync.erase(usr);
-			
+			//si->second->waitingSync.erase(0); // FIXME
 		}
 	}
 	
