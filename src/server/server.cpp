@@ -1184,7 +1184,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			
 			#ifndef NDEBUG
 			cout << "~ Session #" << session->id
-				<< (session->locked ? " locked" : " unlocked") << endl;
+				<< " lock: " << (session->locked ? "Enabled" : "Disabled") << endl;
 			#endif
 			
 		}
@@ -1193,9 +1193,9 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			// Lock single user
 			
 			#ifndef NDEBUG
-			cout << "~ User #" << static_cast<uint>(event.target)
-				<< (event.action == protocol::SessionEvent::Lock ? " locked" : " unlocked")
-				<< " in session #" << session->id << endl;
+			cout << "~ User #" << static_cast<uint>(event.target) << " lock: "
+				<< (event.action == protocol::SessionEvent::Lock ? "Enabled" : "Disabled")
+				<< ", in session #" << session->id << endl;
 			#endif
 			
 			// Find user
@@ -2360,24 +2360,31 @@ bool Server::validateSessionTitle(const char* name, const uint8_t len) const thr
 
 void Server::cullIdlers() throw()
 {
-	User *usr;
-	for (userset_i tui(utimer.begin()); tui != utimer.end(); ++tui)
+	if (next_timer > current_time)
+	{ /* do nothing */ }
+	else if (utimer.empty())
+		next_timer = current_time + 1800;
+	else
 	{
-		if ((*tui)->deadtime < current_time)
+		User *usr;
+		for (userset_i tui(utimer.begin()); tui != utimer.end(); ++tui)
 		{
-			#ifndef NDEBUG
-			cout << "- Dropping inactive user #" << (*tui)->id << endl;
-			#endif
-			
-			usr = *tui;
-			--tui;
-			
-			uRemove(usr, protocol::UserInfo::TimedOut);
-		}
-		else if ((*tui)->deadtime < next_timer)
-		{
-			// re-schedule next culling to come sooner
-			next_timer = (*tui)->deadtime;
+			if ((*tui)->deadtime < current_time)
+			{
+				#ifndef NDEBUG
+				cout << "- Dropping inactive user #" << (*tui)->id << endl;
+				#endif
+				
+				usr = *tui;
+				--tui;
+				
+				uRemove(usr, protocol::UserInfo::TimedOut);
+			}
+			else if ((*tui)->deadtime < next_timer)
+			{
+				// re-schedule next culling to come sooner
+				next_timer = (*tui)->deadtime;
+			}
 		}
 	}
 }
@@ -2409,14 +2416,18 @@ int Server::run() throw()
 			state = Server::Error;
 			return -1;
 		case 0:
-			// do nothing
+			// check timer
+			current_time = time(0);
+			cullIdlers();
 			break;
 		default:
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
+				assert(fd != 0);
 				if (fd == lsock.fd())
 				{
+					cullIdlers();
 					uAdd( lsock.accept() );
 					continue;
 				}
@@ -2451,15 +2462,6 @@ int Server::run() throw()
 					uWrite(usr);
 					if (!usr) continue;
 				}
-			}
-			
-			// check timer
-			if (next_timer < current_time)
-			{
-				if (utimer.empty())
-					next_timer = current_time + 1800;
-				else
-					cullIdlers();
 			}
 			break;
 		}
