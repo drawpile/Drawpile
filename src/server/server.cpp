@@ -1184,7 +1184,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			
 			#ifndef NDEBUG
 			cout << "~ Session #" << session->id
-				<< " lock: " << (session->locked ? "Enabled" : "Disabled") << endl;
+				<< (session->locked ? " locked" : " unlocked") << endl;
 			#endif
 			
 		}
@@ -1193,9 +1193,9 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			// Lock single user
 			
 			#ifndef NDEBUG
-			cout << "~ User #" << static_cast<uint>(event.target) << " lock: "
-				<< (event.action == protocol::SessionEvent::Lock ? "Enabled" : "Disabled")
-				<< ", in session #" << session->id << endl;
+			cout << "~ User #" << static_cast<uint>(event.target)
+				<< (event.action == protocol::SessionEvent::Lock ? " locked" : " unlocked")
+				<< " in session #" << session->id << endl;
 			#endif
 			
 			// Find user
@@ -2415,11 +2415,7 @@ int Server::run() throw()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
-				#ifdef EV_HAS_ACCEPT
-				if (fIsSet(events, ev.accept))
-				#else
 				if (fd == lsock.fd())
-				#endif
 				{
 					uAdd( lsock.accept() );
 					continue;
