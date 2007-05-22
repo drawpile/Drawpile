@@ -64,7 +64,10 @@ Event::~Event() throw()
 	#endif
 	
 	if (evfd != -1)
-		finish();
+	{
+		close(evfd);
+		evfd = -1;
+	}
 	
 	// Make sure the event fd was closed.
 	assert(evfd == -1);
@@ -89,16 +92,6 @@ bool Event::init() throw()
 	evtrigr = new kevent[evtrigr_size];
 	
 	return true;
-}
-
-void Event::finish() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue).finish()" << endl;
-	#endif
-	
-	close(evfd);
-	evfd = -1;
 }
 
 // Errors: EACCES, ENOMEM

@@ -79,13 +79,6 @@ bool Event::init() throw()
 	return true;
 }
 
-void Event::finish() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event::finish()" << endl;
-	#endif
-}
-
 // Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
 int Event::wait() throw()
 {

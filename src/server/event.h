@@ -206,9 +206,6 @@ public:
 	Event() throw();
 	
 	//! dtor
-	/**
-	 * finish() MUST be called before destructor!
-	 */
 	~Event() throw();
 	
 	#if defined(EV_PSELECT)
@@ -221,9 +218,6 @@ public:
 	
 	//! Initialize event system.
 	bool init() throw();
-	
-	//! Finish event system.
-	void finish() throw();
 	
 	//! Set timeout for wait()
 	/**

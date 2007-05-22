@@ -84,13 +84,6 @@ bool Event::init() throw()
 	return true;
 }
 
-void Event::finish() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).finish()" << endl;
-	#endif
-}
-
 // Errors: WSAENETDOWN
 int Event::wait() throw()
 {

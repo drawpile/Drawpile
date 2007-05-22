@@ -64,7 +64,10 @@ Event::~Event() throw()
 	#endif
 	
 	if (evfd != -1)
-		finish();
+	{
+		close(evfd);
+		evfd = -1;
+	}
 	
 	// Make sure the event fd was closed.
 	assert(evfd == -1);
@@ -91,18 +94,10 @@ bool Event::init() throw()
 	return true;
 }
 
-void Event::finish() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).finish()" << endl;
-	#endif
-	
-	close(evfd);
-	evfd = -1;
-}
-
 int Event::wait() throw()
 {
+	assert(evfd != 0);
+	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).wait()" << endl;
 	#endif
@@ -127,6 +122,8 @@ int Event::wait() throw()
 // Errors: ENOMEM
 int Event::add(fd_t fd, ev_t events) throw()
 {
+	assert(evfd != 0);
+	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).add(FD: " << fd << ")" << endl;
 	#endif
@@ -156,6 +153,8 @@ int Event::add(fd_t fd, ev_t events) throw()
 
 int Event::modify(fd_t fd, ev_t events) throw()
 {
+	assert(evfd != 0);
+	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).modify(FD: " << fd << ")" << endl;
 	#endif
@@ -185,6 +184,8 @@ int Event::modify(fd_t fd, ev_t events) throw()
 // Errors: ENOMEM
 int Event::remove(fd_t fd) throw()
 {
+	assert(evfd != 0);
+	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(epoll).remove(FD: " << fd << ")" << endl;
 	#endif
@@ -209,6 +210,8 @@ int Event::remove(fd_t fd) throw()
 
 bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
+	assert(evfd != 0);
+	
 	if (nfds == -1)
 		return false;
 	

@@ -63,7 +63,10 @@ Event::~Event() throw()
 	#endif
 	
 	if (evfd != -1)
-		finish();
+	{
+		close(evfd);
+		evfd = -1;
+	}
 	
 	// Make sure the event fd was closed.
 	assert(evfd == -1);
@@ -109,16 +112,6 @@ bool Event::init() throw()
 	}
 	
 	return true;
-}
-
-void Event::finish() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).finish()" << endl;
-	#endif
-	
-	close(evfd);
-	evfd = -1;
 }
 
 int Event::wait() throw()
