@@ -755,7 +755,7 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	#ifdef HAVE_SNPRINTF
 	// [2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:12345
 	const uint buflen = 49; // [address]:port\0 (8*4+7+2+1+6+1)
-	char buf[stringlen];
+	char buf[buflen];
 	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
 	return std::string(buf);
 	#else
@@ -792,7 +792,7 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	#ifdef HAVE_SNPRINTF
 	// 123.123.122.124:12345
 	const uint buflen = 25; // address:port\0 (15+1+6+1)
-	char buf[stringlen];
+	char buf[buflen];
 	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
 	return std::string(buf);
 	#else
