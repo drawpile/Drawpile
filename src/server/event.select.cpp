@@ -132,48 +132,42 @@ int Event::wait() throw()
 		, &_sigmask
 	#endif // EV_PSELECT
 		);
+	#ifndef WIN32
+	_error = errno;
+	#ifdef EV_PSELECT
+	sigprocmask(SIG_SETMASK, &_sigsaved, 0); // restore mask
+	#endif
+	#endif
 	
-	if (nfds == -1)
+	switch (nfds)
 	{
-		#ifdef WIN32
-		_error = WSAGetLastError();
-		#else
-		_error = errno;
-		#endif
-		
-		#if defined(EV_PSELECT)
-		sigprocmask(SIG_SETMASK, &_sigsaved, NULL); // restore mask
-		#endif
-		
-		if (_error == EINTR)
-			return nfds = 0;
-		
-		#ifdef WIN32
-		assert(_error != WSANOTINITIALISED);
-		#endif
-		assert(_error != EBADF);
-		assert(_error != ENOTSOCK);
-		assert(_error != EINVAL);
-		assert(_error != EFAULT);
-		
-		#ifdef WIN32
-		if (_error == WSAENETDOWN)
-			cerr << "The network subsystem has failed." << endl;
-		#endif
-	}
-	else if (nfds > 0)
-	{
-		fd_iter = fd_list.begin();
-		
-		#if defined(EV_PSELECT)
-		sigprocmask(SIG_SETMASK, &_sigsaved, NULL); // restore mask
-		#endif
-	}
-	else
-	{
-		#if defined(EV_PSELECT)
-		sigprocmask(SIG_SETMASK, &_sigsaved, NULL); // restore mask
-		#endif
+		case -1:
+			#ifdef WIN32
+			_error = WSAGetLastError();
+			#endif
+			
+			if (_error == EINTR)
+				return nfds = 0;
+			
+			#ifdef WIN32
+			assert(_error != WSANOTINITIALISED);
+			#endif
+			assert(_error != EBADF);
+			assert(_error != ENOTSOCK);
+			assert(_error != EINVAL);
+			assert(_error != EFAULT);
+			
+			#ifdef WIN32
+			if (_error == WSAENETDOWN)
+				cerr << "The network subsystem has failed." << endl;
+			#endif
+			break;
+		case 0:
+			// do nothing
+			break;
+		default:
+			fd_iter = fd_list.begin();
+			break;
 	}
 	
 	return nfds;
