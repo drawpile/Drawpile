@@ -191,13 +191,8 @@ int Event::add(fd_t fd, ev_t events) throw()
 	{
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
-		#ifdef HAVE_HASH_SET
-		read_set.insert(fd);
-		nfds_r = *std::max_element(read_set.begin(), read_set.end());
-		#else // std::set
 		read_set.insert(read_set.end(), fd);
 		nfds_r = *(read_set.end());
-		#endif
 		#endif // !Win32
 		rc = true;
 	}
@@ -205,13 +200,8 @@ int Event::add(fd_t fd, ev_t events) throw()
 	{
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
-		#ifdef HAVE_HASH_SET
-		write_set.insert(fd);
-		nfds_w = *std::max_element(write_set.begin(), write_set.end());
-		#else // std::set
 		write_set.insert(write_set.end(), fd);
 		nfds_w = *(--write_set.end());
-		#endif
 		#endif // !Win32
 		rc = true;
 	}
@@ -219,13 +209,8 @@ int Event::add(fd_t fd, ev_t events) throw()
 	{
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
-		#ifdef HAVE_HASH_SET
-		error_set.insert(fd);
-		nfds_e = *std::max_element(error_set.begin(), error_set.end());
-		#else // std::set
 		error_set.insert(error_set.end(), fd);
 		nfds_e = *(--error_set.end());
-		#endif
 		#endif // !Win32
 		rc = true;
 	}
@@ -253,11 +238,7 @@ int Event::modify(fd_t fd, ev_t events) throw()
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
 		read_set.erase(fd);
-		#ifdef HAVE_HASH_SET
-		nfds_r = (read_set.size() > 0 ? *std::max_element(read_set.begin(), read_set.end()) : 0 );
-		#else
 		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
-		#endif
 		#endif // WIN32
 	}
 	
@@ -266,11 +247,7 @@ int Event::modify(fd_t fd, ev_t events) throw()
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
 		write_set.erase(fd);
-		#ifdef HAVE_HASH_SET
-		nfds_w = (write_set.size() > 0 ? *std::max_element(write_set.begin(), write_set.end()) : 0 );
-		#else
 		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
-		#endif
 		#endif // WIN32
 	}
 	
@@ -279,11 +256,7 @@ int Event::modify(fd_t fd, ev_t events) throw()
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
 		error_set.erase(fd);
-		#ifdef HAVE_HASH_SET
-		nfds_e = (error_set.size() > 0 ? *std::max_element(error_set.begin(), error_set.end()) : 0 );
-		#else
 		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
-		#endif
 		#endif // WIN32
 	}
 	
@@ -298,42 +271,26 @@ int Event::remove(fd_t fd) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t,uint>::iterator iter(fd_list.find(fd));
-	#else
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
-	#endif
 	if (iter == fd_list.end())
 		return false;
 	
 	FD_CLR(fd, &fds_r);
 	#ifndef WIN32
 	read_set.erase(fd);
-	#ifdef HAVE_HASH_SET
-	nfds_r = (read_set.size() > 0 ? *std::max_element(read_set.begin(), read_set.end()) : 0 );
-	#else
 	nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
-	#endif
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
 	#ifndef WIN32
 	write_set.erase(fd);
-	#ifdef HAVE_HASH_SET
-	nfds_w = (write_set.size() > 0 ? *std::max_element(write_set.begin(), write_set.end()) : 0 );
-	#else
 	nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
-	#endif
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
 	#ifndef WIN32
 	error_set.erase(fd);
-	#ifdef HAVE_HASH_SET
-	nfds_e = (error_set.size() > 0 ? *std::max_element(error_set.begin(), error_set.end()) : 0 );
-	#else
 	nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
-	#endif
 	#endif // WIN32
 	
 	fd_list.erase(iter);

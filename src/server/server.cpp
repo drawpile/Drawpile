@@ -51,31 +51,18 @@ using std::endl;
 using std::cerr;
 
 // iterators
-#if defined(HAVE_HASH_MAP)
-typedef __gnu_cxx::hash_map<uint8_t, Session*>::iterator sessions_i;
-typedef __gnu_cxx::hash_map<uint8_t, Session*>::const_iterator sessions_const_i;
-typedef __gnu_cxx::hash_map<fd_t, User*>::iterator users_i;
-typedef __gnu_cxx::hash_map<fd_t, User*>::const_iterator users_const_i;
-#else
 typedef std::map<uint8_t, Session*>::iterator sessions_i;
 typedef std::map<uint8_t, Session*>::const_iterator sessions_const_i;
 typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
-#endif
 
 // the only iterator in which we need the ->first
 typedef std::multimap<User*, User*>::iterator tunnel_i;
 typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 
-#if defined(HAVE_SLIST)
-	#include <ext/slist>
-typedef __gnu_cxx::slist<User*>::iterator userlist_i;
-typedef __gnu_cxx::slist<User*>::const_iterator userlist_const_i;
-#else
-	#include <list>
+#include <list>
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
-#endif
 
 typedef std::set<User*>::iterator userset_i;
 typedef std::set<User*>::const_iterator userset_const_i;
@@ -1883,11 +1870,7 @@ void Server::SyncSession(Session* session) throw()
 	if (session->waitingSync.size() == 0)
 		return;
 	
-	#ifdef HAVE_SLIST
-	__gnu_cxx::slist<message_ref> msg_queue;
-	#else
 	std::list<message_ref> msg_queue;
-	#endif
 	
 	if (session->locked)
 		msg_queue.insert(msg_queue.end(), message_ref(new protocol::SessionEvent(protocol::SessionEvent::Lock, protocol::null_user, 0)));
@@ -1940,11 +1923,7 @@ void Server::SyncSession(Session* session) throw()
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
 		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session->id, protocol::UserInfo::Join));
 	
-	#ifdef HAVE_SLIST
-	__gnu_cxx::slist<message_ref>::const_iterator m_iter;
-	#else
 	std::list<message_ref>::const_iterator m_iter;
-	#endif
 	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
 	{
 		// Send messages

@@ -12,10 +12,6 @@
 
 #cmakedefine IPV6_SUPPORT
 
-#cmakedefine HAVE_SLIST
-#cmakedefine HAVE_HASH_SET
-#cmakedefine HAVE_HASH_MAP
-
 #cmakedefine EV_SELECT_COPY
 #cmakedefine EV_SELECT
 #cmakedefine EV_PSELECT

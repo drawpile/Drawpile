@@ -48,9 +48,6 @@
 
 #include <ctime> // time_t, time(0)
 #include <queue>
-#if defined(HAVE_HASH_MAP)
-	#include <ext/hash_map>
-#endif
 #include <map> // tunnel
 #include <set> // utimer
 
@@ -90,18 +87,10 @@ protected:
 		session_ids;
 	
 	// FD to user mapping
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t, User*> users;
-	#else
 	std::map<fd_t, User*> users;
-	#endif
 	
 	// Session ID to session mapping
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<uint8_t, Session*> sessions;
-	#else
 	std::map<uint8_t, Session*> sessions;
-	#endif
 	
 	// Fake tunnel between two users. Only used for passing raster, for now.
 	// source_fd -> target_fd

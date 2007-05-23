@@ -151,14 +151,6 @@ if ( EV_KEVENT )
 	set ( EV_SRC event.kevent.cpp )
 endif ( EV_KEVENT )
 
-### GNU Extensions
-
-if ( GNUEXT )
-	check_include_file_cxx ( ext/slist HAVE_SLIST )
-	check_include_file_cxx ( ext/hash_set HAVE_HASH_SET )
-	check_include_file_cxx ( ext/hash_map HAVE_HASH_MAP )
-endif ( GNUEXT )
-
 # config
 
 configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/server/config.h )

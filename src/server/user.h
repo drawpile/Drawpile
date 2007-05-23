@@ -40,15 +40,9 @@ class Socket; // defined elsewhere
 struct SessionData; // forward declaration
 
 /* iterators */
-#if defined(HAVE_HASH_MAP)
-#include <ext/hash_map>
-typedef __gnu_cxx::hash_map<uint8_t, SessionData*>::iterator usr_session_i;
-typedef __gnu_cxx::hash_map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
-#else
 #include <map>
 typedef std::map<uint8_t, SessionData*>::iterator usr_session_i;
 typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
-#endif
 
 typedef std::deque<message_ref>::iterator usr_message_i;
 typedef std::deque<message_ref>::const_iterator usr_message_const_i;
@@ -305,11 +299,7 @@ struct User
 	}
 	
 	// Subscribed sessions
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<uint8_t, SessionData*> sessions;
-	#else
 	std::map<uint8_t, SessionData*> sessions;
-	#endif
 	
 	// Output queue
 	std::deque<message_ref> queue;

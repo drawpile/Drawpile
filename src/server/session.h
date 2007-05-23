@@ -31,11 +31,7 @@ struct User; // defined elsewhere
 
 #include <limits> // std::numeric_limits<T>
 
-#if defined(HAVE_SLIST)
-	#include <ext/slist>
-#else
-	#include <list>
-#endif
+#include <list>
 
 struct LayerData
 {
@@ -72,19 +68,11 @@ struct LayerData
 };
 
 /* iterators */
-#if defined(HAVE_HASH_MAP)
-#include <ext/hash_map>
-typedef __gnu_cxx::hash_map<uint8_t, User*>::iterator session_usr_i;
-typedef __gnu_cxx::hash_map<uint8_t, User*>::const_iterator session_usr_const_i;
-typedef __gnu_cxx::hash_map<uint8_t, LayerData>::iterator session_layer_i;
-typedef __gnu_cxx::hash_map<uint8_t, LayerData>::const_iterator session_layer_const_i;
-#else
 #include <map>
 typedef std::map<uint8_t, User*>::iterator session_usr_i;
 typedef std::map<uint8_t, User*>::const_iterator session_usr_const_i;
 typedef std::map<uint8_t, LayerData>::iterator session_layer_i;
 typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
-#endif
 
 // Session information
 struct Session
@@ -160,27 +148,14 @@ struct Session
 	}
 	
 	// 
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<uint8_t, LayerData> layers;
-	//__gnu_cxx::hash_set<LayerData> layers;
-	#else
 	std::map<uint8_t, LayerData> layers;
 	//std::set<LayerData> layers;
-	#endif
 	
 	// Subscribed users
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<uint8_t, User*> users;
-	#else
 	std::map<uint8_t, User*> users;
-	#endif
 	
 	// Users waiting sync.
-	#if defined(HAVE_SLIST)
-	__gnu_cxx::slist<User*> waitingSync;
-	#else // 
 	std::list<User*> waitingSync;
-	#endif
 	
 	// Session sync in action.
 	uint syncCounter;

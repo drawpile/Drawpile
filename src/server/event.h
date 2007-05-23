@@ -31,11 +31,7 @@
 
 #include "common.h"
 
-#if defined(HAVE_HASH_MAP)
-	#include <ext/hash_map>
-#else
-	#include <map>
-#endif
+#include <map>
 
 #if defined(EV_EPOLL)
 	#include <sys/epoll.h>
@@ -67,11 +63,7 @@
 #endif
 
 #if defined(EV_SELECT) or defined(EV_PSELECT)
-	#if defined(HAVE_HASH_SET)
-		#include <ext/hash_set>
-	#else
-		#include <set>
-	#endif
+	#include <set>
 #endif
 
 #ifndef WIN32
@@ -107,20 +99,11 @@ protected:
 	#if defined(EV_PSELECT) or defined(EV_SELECT)
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t, uint> fd_list; // events set for FD
-	__gnu_cxx::hash_map<fd_t, uint>::iterator fd_iter;
-	#else
 	std::map<fd_t, uint> fd_list; // events set for FD
 	std::map<fd_t, uint>::iterator fd_iter;
-	#endif
 	
 	#ifndef WIN32
-	#if defined(HAVE_HASH_SET)
-	__gnu_cxx::hash_set<fd_t> read_set, write_set, error_set;
-	#else
 	std::set<fd_t> read_set, write_set, error_set;
-	#endif
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
 	#endif // EV_[P]SELECT
@@ -132,17 +115,10 @@ protected:
 	#if defined(EV_WSA) // Windows Socket API
 	uint last_event;
 	
-	#if defined(HAVE_HASH_MAP)
-	__gnu_cxx::hash_map<fd_t, uint> fd_to_ev;
-	__gnu_cxx::hash_map<uint, fd_t> ev_to_fd;
-	typedef __gnu_cxx::hash_map<fd_t, uint>::iterator ev_iter;
-	typedef __gnu_cxx::hash_map<uint, fd_t>::iterator r_ev_iter;
-	#else
 	std::map<fd_t, uint> fd_to_ev;
 	std::map<uint, fd_t> ev_to_fd;
 	typedef std::map<fd_t, uint>::iterator ev_iter;
 	typedef std::map<uint, fd_t>::iterator r_ev_iter;
-	#endif
 	
 	WSAEVENT w_ev[max_events];
 	#endif
