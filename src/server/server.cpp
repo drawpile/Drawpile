@@ -410,8 +410,6 @@ void Server::uWrite(User*& usr) throw()
 			// retry
 			break;
 		default:
-			cerr << "- Error occured while sending to user #" << usr->id << endl;
-			
 			uRemove(usr, protocol::UserInfo::BrokenPipe);
 			break;
 		}
@@ -490,15 +488,12 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		case EINTR: // retry later
 			break;
 		default:
-			cerr << "- Read error from user #" << usr->id << endl;
-			
 			uRemove(usr, protocol::UserInfo::BrokenPipe);
 			break;
 		}
 		break;
 	case 0:
 		// shouldn't happen if EV_HAS_HANGUP is defined
-		cerr << "- Connection closed by user #" << usr->id << endl;
 		uRemove(usr, protocol::UserInfo::Disconnect);
 		break;
 	default:
@@ -526,7 +521,7 @@ void Server::uProcessData(User*& usr) throw()
 			if (!usr->inMsg)
 			{
 				// unknown message type
-				cerr << "- Unknown data from user #" << usr->id << endl;
+				cerr << "- Invalid data from user #" << usr->id << endl;
 				uRemove(usr, protocol::UserInfo::Dropped);
 				return;
 			}
@@ -626,7 +621,9 @@ void Server::uHandleDrawing(User& usr) throw()
 			cerr << "? User #" << usr.id << " attempts to draw on null session." << endl;
 		if (usr.strokes > 1000)
 		{
-			cerr << "User persist on drawing on null session, dropping." << endl;
+			#ifndef NDEBUG
+			cerr << "- User persist on drawing on null session, dropping." << endl;
+			#endif
 			User* usr_ptr = &usr;
 			uRemove(usr_ptr, protocol::UserInfo::Dropped);
 		}
@@ -644,24 +641,24 @@ void Server::uHandleDrawing(User& usr) throw()
 			cerr << "- User #" << usr.id << " tries to draw, despite the lock." << endl;
 			
 			if (usr.session->locked)
-				cerr << "... Sesssion #" << usr.session->id << " is locked." << endl;
+				cerr << "  Clarification: Sesssion #" << usr.session->id << " is locked" << endl;
 			else
-				cerr << "... User is locked in session #" << usr.session->id << "." << endl;
+				cerr << "  Clarification: User is locked in session #" << usr.session->id << endl;
 		}
 		#endif
 	}
 	else
 	{
 		#ifdef LAYER_SUPPORT
-		if (usr.inMsg->type != protocol::Message::ToolInfo
+		if (usr.inMsg->type == protocol::Message::StrokeInfo
 			and usr.layer == protocol::null_layer)
 		{
 			#ifndef NDEBUG
 			if (usr.strokes == 1)
-				cerr << "User #" << usr.id << " is drawing on null layer!" << endl;
+				cerr << "- User #" << usr.id << " is drawing on null layer!" << endl;
 			if (usr.strokes > 1000)
 			{
-				cerr << "User persist on drawing on null layer, dropping." << endl;
+				cerr << "- User persists on drawing on null layer, dropping." << endl;
 				uRemove(&usr, protocol::UserInfo::Dropped);
 			}
 			#endif
@@ -939,8 +936,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uHandlePassword(usr);
 		break;
 	default:
-		cerr << "Unknown message: #" << static_cast<uint>(usr->inMsg->type)
-			<< ", from user: #" << usr->id << " (dropping)" << endl;
+		cerr << "- Invalid data from user: #" << usr->id << " (dropping)" << endl;
 		uRemove(usr, protocol::UserInfo::Dropped);
 		break;
 	}
@@ -1016,7 +1012,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 	case Z_BUF_ERROR:
 	case Z_DATA_ERROR:
 		// Input buffer corrupted
-		cerr << "- Corrupted data from user #" << usr->id << ", dropping." << endl;
+		cerr << "- Invalid data from user #" << usr->id << ", dropping." << endl;
 		uRemove(usr, protocol::UserInfo::Dropped);
 		if (!inBuffer)
 			delete [] temp;
@@ -1305,8 +1301,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		// TODO
 		break;
 	default:
-		cerr << "- Unknown session action: "
-			<< static_cast<uint>(event.action) <<  endl;
+		cerr << "- Invalid data from user #" << usr->id <<  endl;
 		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -1400,10 +1395,13 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				
 				cout << "+ Session #" << session->id << " created by user #" << usr->id
 					<< " [" << usr->sock.address() << "]" << endl
+					#ifdef NDEBUG
 					<< "  Size: " << session->width << "x" << session->height
 					<< ", Limit: " << static_cast<uint>(session->limit)
 					<< ", Mode: " << static_cast<uint>(session->mode)
-					<< ", Level: " << static_cast<uint>(session->level) << endl;
+					<< ", Level: " << static_cast<uint>(session->level) << endl
+					#endif
+					;
 				
 				msg.title = 0; // prevent title from being deleted
 				
@@ -1474,8 +1472,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			
 			if ((msg.width < session->width) or (msg.height < session->height))
 			{
-				cerr << "- Protocol violation from user #" << usr->id << endl
-					<< "  Reason: Attempted to reduce session's canvas size." << endl;
+				cerr << "- Invalid data from user #" << usr->id << endl;
 				uRemove(usr, protocol::UserInfo::Violation);
 				break;
 			}
@@ -1509,9 +1506,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	default:
-		#ifndef NDEBUG
-		cerr << "- Unrecognized action: " << static_cast<uint>(msg.action) << endl;
-		#endif
+		cerr << "- Invalid data from user #" << usr->id << endl;
 		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -1611,7 +1606,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				and !validateUserName(usr))
 			{
 				#ifndef NDEBUG
-				cerr << "- User name not unique." << endl;
+				cerr << "- Name not unique" << endl;
 				#endif
 				
 				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
@@ -1738,7 +1733,8 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	default:
-		assert(!"user state was something strange");
+		assert(0);
+		uRemove(usr, protocol::UserInfo::None);
 		break;
 	}
 }
@@ -1794,7 +1790,7 @@ void Server::uLayerEvent(User*& usr) throw()
 		}
 		break;
 	default:
-		cerr << "- Unknown layer event: " << static_cast<uint>(levent.action) << std::endl;
+		cerr << "- Invalid data from user #" << usr->id << std::endl;
 		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -2176,6 +2172,19 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	cout << "[Server] Removing user #" << usr->id << " [" << usr->sock.address() << "]" << endl;
 	#endif
 	
+	switch (reason)
+	{
+		case protocol::UserInfo::BrokenPipe:
+			cout << "- User #" << usr->id << "[" << usr->sock.address() << "] lost (broken pipe)" << endl;
+			break;
+		case protocol::UserInfo::Disconnect:
+			cout << "- User #" << usr->id << "[" << usr->sock.address() << "] disconnected" << endl;
+			break;
+		default:
+			// do nothing
+			break;
+	}
+	
 	usr->sock.shutdown(SHUT_RDWR);
 	
 	// Remove socket from event system
@@ -2243,9 +2252,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 
 void Server::sRemove(Session*& session) throw()
 {
-	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Removing session #" << session->id << endl;
-	#endif
+	cout << "- Session #" << session->id << " destoyed" << endl;
 	
 	freeSessionID(session->id);
 	sessions.erase(session->id);
@@ -2439,7 +2446,6 @@ int Server::run() throw()
 				#ifdef EV_HAS_ERROR
 				if (fIsSet(events, ev.error))
 				{
-					cerr << "- Broken pipe for user #" << usr->id << endl;
 					uRemove(usr, protocol::UserInfo::BrokenPipe);
 					continue;
 				}
@@ -2447,7 +2453,6 @@ int Server::run() throw()
 				#ifdef EV_HAS_HANGUP
 				if (fIsSet(events, ev.hangup))
 				{
-					cerr << "- Connection closed by user #" << usr->id << endl;
 					uRemove(usr, protocol::UserInfo::Disconnect);
 					continue;
 				}
