@@ -166,12 +166,7 @@ Socket Socket::accept() throw()
 	sockaddr_in sa;
 	#endif
 	
-	#ifdef WIN32
-	int addrlen
-	#else
-	socklen_t addrlen
-	#endif
-		= sizeof(sa);
+	socklen_t addrlen = sizeof(sa);
 	
 	#ifdef WIN32
 	fd_t n_fd = ::WSAAccept(sock, reinterpret_cast<sockaddr*>(&sa), &addrlen, 0, 0);

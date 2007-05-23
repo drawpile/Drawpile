@@ -35,13 +35,13 @@
 #include <stdexcept>
 
 #ifdef IPV6_SUPPORT
-#define IPV6_SUPPORT_INCOMPLETE 1
+	#define IPV6_SUPPORT_INCOMPLETE 1
 #endif
 
 #ifdef WIN32
 	#include <ws2tcpip.h>
 	#include <winsock2.h>
-	#if defined( HAVE_XPWSA )
+	#if defined( HAVE_MSWSOCK_H )
 		#include <mswsock.h>
 	#endif
 	
