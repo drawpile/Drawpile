@@ -62,6 +62,10 @@ Event::Event() throw()
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event(select)()" << endl;
 	#endif
+
+	#ifdef EV_PSELECT
+	sigemptyset(&_sigmask); // prepare sigmask
+	#endif
 }
 
 Event::~Event() throw()
