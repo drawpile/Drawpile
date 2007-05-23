@@ -366,16 +366,19 @@ public:
 	
 	#ifdef IPV6_SUPPORT
 	static std::string AddrToString(const sockaddr_in6& raddr) throw();
-	#endif
+	#else
 	static std::string AddrToString(const sockaddr_in& raddr) throw();
+	#endif
 	
 	#ifdef IPV6_SUPPORT
 	static sockaddr_in6 StringToAddr(std::string const& address) throw();
-	#endif
+	#else
 	static sockaddr_in StringToAddr(std::string const& address) throw();
+	#endif
 	
 	/* Operator overloads */
 	
+	#ifdef SOCKET_OPS
 	//! operator== overload (Socket*)
 	bool operator== (const Socket& tsock) const throw()
 	{
@@ -401,6 +404,7 @@ public:
 		sock = _fd;
 		return sock;
 	}
+	#endif
 };
 
 #endif // Sockets_INCLUDED

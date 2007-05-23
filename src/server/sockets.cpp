@@ -403,7 +403,7 @@ int Socket::connect(const sockaddr_in& rhost) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	r_addr = rhost;
+	memcpy(&r_addr, &rhost, sizeof(r_addr));
 	
 	#ifdef WIN32
 	const int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&r_addr), sizeof(r_addr), 0, 0, 0, 0);
@@ -736,7 +736,7 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	DWORD len = 48;
 	sockaddr sa;
 	memcpy(&sa, &raddr, sizeof(raddr));
-	WSAAddressToString(&raddr, sizeof(raddr), 0, buf, &len);
+	WSAAddressToString(&sa, sizeof(raddr), 0, buf, &len);
 	#else // POSIX
 	char straddr[42];
 	inet_ntop(AF_INET6, &raddr.sin6_addr, straddr, 42);
@@ -751,9 +751,7 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	#endif
 	return std::string(buf);
 }
-#endif
-
-//static
+#else
 std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 {
 	#ifdef WIN32
@@ -776,6 +774,7 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	#endif
 	return std::string(buf);
 }
+#endif
 
 
 #ifdef IPV6_SUPPORT
@@ -797,8 +796,7 @@ sockaddr_in6 Socket::StringToAddr(const std::string& address) throw()
 	
 	return naddr;
 }
-#endif
-
+#else
 sockaddr_in Socket::StringToAddr(const std::string& address) throw()
 {
 	sockaddr_in naddr;
@@ -816,3 +814,4 @@ sockaddr_in Socket::StringToAddr(const std::string& address) throw()
 	
 	return naddr;
 }
+#endif
