@@ -45,7 +45,7 @@ namespace client
 
 enum client_capabilities {
 	//! No capabilities
-	None,
+	None = 0u,
 	
 	//! Ack feedback
 	/**
@@ -71,7 +71,7 @@ namespace message
 
 enum message_flags {
 	//! No message modifiers.
-	None,
+	None = 0u,
 	
 	//! Has user identifier
 	isUser = 0x01,
@@ -99,7 +99,7 @@ namespace extensions
 
 enum protocol_extensions {
 	//! No supported extensions.
-	None,
+	None = 0u,
 	
 	//! Chat extension
 	Chat = 0x01u,
@@ -122,7 +122,7 @@ namespace requirements
 
 enum server_requirements {
 	//! No special requirements.
-	None,
+	None = 0u,
 	
 	//! Enforces unique user and session names.
 	EnforceUnique = 0x01u,
@@ -145,7 +145,7 @@ namespace user_mode
 
 enum user_mode {
 	//! Null user mode.
-	None,
+	None = 0u,
 	
 	//! User is identified as admin by the server
 	/** Only applied to user */
@@ -169,7 +169,7 @@ namespace session
 
 enum session_flags {
 	//! No flags set
-	None,
+	None = 0u,
 	
 	//! Session persists
 	Persist = 0x01u,
