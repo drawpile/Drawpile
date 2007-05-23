@@ -731,76 +731,50 @@ bool Socket::matchPort(const Socket& tsock) const throw()
 //static
 std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 {
-	char straddr[INET_ADDRSTRLEN+1];
-	straddr[INET_ADDRSTRLEN] = '\0';
-	
-	// convert address to string
-	
 	#ifdef WIN32
-	DWORD len = INET6_ADDRSTRLEN;
-	
+	char buf[48];
+	DWORD len = 48;
 	sockaddr sa;
 	memcpy(&sa, &raddr, sizeof(raddr));
-	WSAAddressToString(&sa, sizeof(raddr), 0, straddr, &len);
-	
-	return std::string(straddr);
-	
+	WSAAddressToString(&raddr, sizeof(raddr), 0, buf, &len);
 	#else // POSIX
-	
-	inet_ntop(AF_INET6, &raddr.sin6_addr, straddr, sizeof(straddr));
-	
+	char straddr[42];
+	inet_ntop(AF_INET6, &raddr.sin6_addr, straddr, 42);
 	uint16_t _port = raddr.sin6_port;
 	bswap(_port);
-	
+	char buf[48];
 	#ifdef HAVE_SNPRINTF
-	// [2001:0db8:85a3:08d3:1319:8a2e:0370:7344]:12345
-	const uint buflen = 49; // [address]:port\0 (8*4+7+2+1+6+1)
-	char buf[buflen];
-	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
-	return std::string(buf);
+	snprintf(buf, 48, "[%39s]:%5d", straddr, _port);
 	#else
-	std::string str("[");
-	str << straddr << "]:" << _port;
-	return str;
+	sprintf(buf, "[%39s]:%5d", straddr, _port);
 	#endif // HAVE_SNPRINTF
 	#endif
+	return std::string(buf);
 }
 #endif
 
 //static
 std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 {
-	char straddr[INET_ADDRSTRLEN+1];
-	straddr[INET_ADDRSTRLEN] = '\0';
-	
 	#ifdef WIN32
-	DWORD len = INET_ADDRSTRLEN;
-	
+	char buf[22];
+	DWORD len = 22;
 	sockaddr sa;
 	memcpy(&sa, &raddr, sizeof(raddr));
-	WSAAddressToString(&sa, sizeof(raddr), 0, straddr, &len);
-	
-	return std::string(straddr);
-	
+	WSAAddressToString(&sa, sizeof(raddr), 0, buf, &len);
 	#else // POSIX
-	
-	inet_ntop(AF_INET, &raddr.sin_addr, straddr, sizeof(straddr));
-	
+	char straddr[16];
+	inet_ntop(AF_INET, &raddr.sin_addr, straddr, 16);
 	uint16_t _port = raddr.sin_port;
 	bswap(_port);
-	
+	char buf[22];
 	#ifdef HAVE_SNPRINTF
-	// 123.123.122.124:12345
-	const uint buflen = 25; // address:port\0 (15+1+6+1)
-	char buf[buflen];
-	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
-	return std::string(buf);
+	snprintf(buf, 25, "%15s:%5d", straddr, _port);
 	#else
-	std::string str(straddr);
-	str << ":" << _port;
-	return str;
+	sprintf(buf, "%15s:%5d", straddr, _port);
 	#endif // HAVE_SNPRINTF
 	#endif
+	return std::string(buf);
 }
 
 
