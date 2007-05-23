@@ -1429,7 +1429,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			// tell users session was lost
 			message_ref err = msgError(session->id, protocol::error::SessionLost);
 			Propagate(*session, err, 0);
-			for (userlist_const_i wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
+			for (userlist_i wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
 			{
 				uQueueMsg(**wui, err);
 			}
@@ -1491,6 +1491,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			{
 				session->title = msg.title;
 				session->title_len = msg.title_len;
+				msg.title = 0;
 			}
 			else
 				session->title_len = 0;

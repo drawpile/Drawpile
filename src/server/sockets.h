@@ -109,6 +109,7 @@
 	#define EAGAIN EWOULDBLOCK
 #endif
 
+#ifdef NEED_NET
 //! Net automaton
 /**
  * Initializes WSA (ctor) and cleans up after it (dtor).
@@ -120,6 +121,7 @@ struct Net
 	Net() throw(std::exception);
 	~Net() throw();
 };
+#endif
 
 //! Socket abstraction
 class Socket
@@ -400,12 +402,5 @@ public:
 		return sock;
 	}
 };
-
-#ifdef SOCKET_OSTREAM
-std::ostream& operator<< (std::ostream& os, const Socket& sock)
-{
-	os << sock.address();
-}
-#endif
 
 #endif // Sockets_INCLUDED

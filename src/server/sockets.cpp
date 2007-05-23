@@ -36,8 +36,6 @@
 	#include <fcntl.h>
 	#ifdef HAVE_SNPRINTF
 		#include <cstdio>
-	#else
-		#include <sstream>
 	#endif
 #endif
 
@@ -45,6 +43,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
+#ifdef NEED_NET
 Net::Net() throw(std::exception)
 {
 	#ifndef NDEBUG
@@ -77,6 +76,7 @@ Net::~Net() throw()
 	WSACleanup();
 	#endif
 }
+#endif // NEED_NET
 
 /* *** Socket class *** */
 
@@ -759,9 +759,9 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
 	return std::string(buf);
 	#else
-	std::ostringstream stream;
-	stream << "[" << straddr << "]:" << _port; // ?
-	return stream.str();
+	std::string str("[");
+	str << straddr << "]:" << _port;
+	return str;
 	#endif // HAVE_SNPRINTF
 	#endif
 }
@@ -796,9 +796,9 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	snprintf(buf, buflen, "[%.s]:%d", straddr, _port);
 	return std::string(buf);
 	#else
-	std::ostringstream stream;
-	stream << straddr << ":" << _port;
-	return stream.str();
+	std::string str(straddr);
+	str << ":" << _port;
+	return str;
 	#endif // HAVE_SNPRINTF
 	#endif
 }
