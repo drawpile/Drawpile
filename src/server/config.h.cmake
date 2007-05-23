@@ -23,4 +23,3 @@
 #cmakedefine EV_KQUEUE
 #cmakedefine EV_KEVENT
 #cmakedefine EV_WSA
-#cmakedefine HAVE_SELECT_H
