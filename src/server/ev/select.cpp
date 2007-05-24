@@ -39,12 +39,6 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-/* Because MinGW is buggy, we have to do this fuglyness */
-const EvSelect::ev_t
-	Event::read = 0x01,
-	Event::write = 0x02,
-	Event::error = 0x04;
-
 EvSelect::EvSelect() throw()
 	#ifndef WIN32
 	: nfds_r(0),
@@ -167,7 +161,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, read))
+	if (fIsSet(events, EventTraits<EventWSA>::Read))
 	{
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -176,7 +170,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, write))
+	if (fIsSet(events, EventTraits<EventWSA>::Write))
 	{
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -185,7 +179,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, error))
+	if (fIsSet(events, EventTraits<EventWSA>::Error))
 	{
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -213,7 +207,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, read))
+	if (!fIsSet(events, EventTraits<EventWSA>::Read))
 	{
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
@@ -222,7 +216,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, write))
+	if (!fIsSet(events, EventTraits<EventWSA>::Write))
 	{
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
@@ -231,7 +225,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, error))
+	if (!fIsSet(events, EventTraits<EventWSA>::Error))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
@@ -289,11 +283,11 @@ bool EvSelect::getEvent(fd_t &fd, ev_t &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, read);
+			fSet(events, EventTraits<EventWSA>::Read);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, write);
+			fSet(events, EventTraits<EventWSA>::Write);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, error);
+			fSet(events, EventTraits<EventWSA>::Error);
 		
 		if (events != 0)
 			return true;

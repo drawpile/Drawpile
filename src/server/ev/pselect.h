@@ -57,8 +57,6 @@ private:
 	std::set<int> read_set, write_set, error_set;
 	int nfds_r, nfds_w, nfds_e;
 public:
-	static const int read, write, error;
-	
 	EventPselect() throw();
 	~EventPselect() throw();
 	
@@ -86,6 +84,16 @@ struct EventTraits<EventPselect>
 	static const bool hasAccept = false;
 	static const bool hasConnect = false;
 	static const bool usesSigmask = true;
+	
+	static const int
+		Read=1,
+		Write=2,
+		Error=4;
+	
+	static const int
+		Accept,
+		Connect,
+		Hangup;
 };
 
 #endif // EventPselect_INCLUDED

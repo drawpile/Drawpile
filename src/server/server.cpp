@@ -428,7 +428,7 @@ void Server::uWrite(User*& usr) throw()
 				cout << "~ Output queue empty, clearing event flag." << endl;
 				#endif
 				
-				fClr(usr->events, ev.write);
+				fClr(usr->events, EventTraits<EventSystem>::Write);
 				ev.modify(usr->sock.fd(), usr->events);
 			}
 			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -1837,9 +1837,9 @@ void Server::uQueueMsg(User& usr, message_ref msg) throw()
 	
 	usr.queue.push_back( msg );
 	
-	if (!fIsSet(usr.events, ev.write))
+	if (!fIsSet(usr.events, EventTraits<EventSystem>::Write))
 	{
-		fSet(usr.events, ev.write);
+		fSet(usr.events, EventTraits<EventSystem>::Write);
 		ev.modify(usr.sock.fd(), usr.events);
 	}
 }
@@ -2097,7 +2097,7 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	
 	User* usr = new User(id, sock);
 	
-	fSet(usr->events, ev.read);
+	fSet(usr->events, EventTraits<EventSystem>::Read);
 	ev.add(usr->sock.fd(), usr->events);
 	
 	const size_t ts = utimer.size();
@@ -2293,11 +2293,10 @@ bool Server::init() throw(std::bad_alloc)
 		cout << "+ Listening on port " << lsock.port() << endl << endl;
 		
 		// add listening socket to event system
-		#ifdef EV_HAS_ACCEPT
-		ev.add(lsock.fd(), ev.accept);
-		#else
-		ev.add(lsock.fd(), ev.read);
-		#endif
+		if (EventTraits<EventSystem>::hasAccept)
+			ev.add(lsock.fd(), EventTraits<EventSystem>::Accept);
+		else
+			ev.add(lsock.fd(),  EventTraits<EventSystem>::Read);
 		
 		// set event timeout
 		ev.timeout(30000);
@@ -2313,7 +2312,7 @@ bool Server::init() throw(std::bad_alloc)
 bool Server::validateUserName(User* usr) const throw()
 {
 	assert(usr != 0);
-	assert(fIsSet(requirements, protocol::requirements::EnforceUnique));
+	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
 	
 	if (usr->name_len == 0)
 		return false;
@@ -2422,26 +2421,24 @@ int Server::run() throw()
 				assert(ui != users.end());
 				usr = ui->second;
 				
-				#ifdef EV_HAS_ERROR
-				if (fIsSet(events, ev.error))
+				if (EventTraits<EventSystem>::hasError
+					and fIsSet(events, EventTraits<EventSystem>::Error))
 				{
 					uRemove(usr, protocol::UserInfo::BrokenPipe);
 					continue;
 				}
-				#endif // EV_HAS_ERROR
-				#ifdef EV_HAS_HANGUP
-				if (fIsSet(events, ev.hangup))
+				if (EventTraits<EventSystem>::hasHangup and 
+					fIsSet(events, EventTraits<EventSystem>::Hangup))
 				{
 					uRemove(usr, protocol::UserInfo::Disconnect);
 					continue;
 				}
-				#endif // EV_HAS_HANGUP
-				if (fIsSet(events, ev.read))
+				if (fIsSet(events, EventTraits<EventSystem>::Read))
 				{
 					uRead(usr);
 					if (!usr) continue;
 				}
-				if (fIsSet(events, ev.write))
+				if (fIsSet(events, EventTraits<EventSystem>::Write))
 				{
 					uWrite(usr);
 					if (!usr) continue;

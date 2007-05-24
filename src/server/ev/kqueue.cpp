@@ -38,11 +38,6 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-/* Because MinGW is buggy, we have to do this fuglyness */
-const EvKqueue::ev_t
-	EvKqueue::read = EVFILT_READ,
-	EvKqueue::write = EVFILT_WRITE;
-
 EvKqueue::EvKqueue() throw(std::bad_alloc)
 	: evfd(0),
 	chlist_count(0),

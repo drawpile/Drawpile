@@ -53,8 +53,6 @@ private:
 	typedef std::map<uint, fd_t>::iterator r_ev_iter;
 	WSAEVENT w_ev[max_events];
 public:
-	static const long accept, connect, read, write, hangup;
-	
 	EventWSA() throw();
 	~EventWSA() throw();
 	
@@ -76,6 +74,16 @@ struct EventTraits<EventWSA>
 	static const bool hasAccept = true;
 	static const bool hasConnect = true;
 	static const bool usesSigmask = false;
+	
+	static const long
+		Read=FD_READ,
+		Write=FD_WRITE,
+		Accept=FD_ACCEPT,
+		Connect=FD_CONNECT,
+		Hangup=FD_CLOSE;
+	
+	static const int
+		Error;
 };
 
 #endif // EventWSA_INCLUDED

@@ -32,11 +32,20 @@
 template <typename Evs>
 struct EventTraits
 {
-	static const bool hasHangup = false;
-	static const bool hasError = false;
-	static const bool hasAccept = false;
-	static const bool hasConnect = false;
-	static const bool usesSigmask = false;
+	static const bool
+		hasHangup = false,
+		hasError = false,
+		hasAccept = false,
+		hasConnect = false,
+		usesSigmask = false;
+	
+	static const int
+		Read,
+		Write,
+		Accept,
+		Connect,
+		Error,
+		Hangup;
 };
 
 #endif // EventTraits_INCLUDED

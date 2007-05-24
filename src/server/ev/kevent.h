@@ -46,8 +46,6 @@ private:
 	int nfds;
 	int evfd;
 public:
-	static const int read, write;
-	
 	EventKevent() throw();
 	~EventKevent() throw();
 	
@@ -66,9 +64,19 @@ struct EventTraits<EventKevent>
 	
 	static const bool hasHangup = false;
 	static const bool hasError = false;
-	static const bool hasAccept = false;
+	static const bool hasAccept = true;
 	static const bool hasConnect = false;
 	static const bool usesSigmask = false;
+	
+	static const ev_t
+		Read=KEVENT_SOCKET_RECV,
+		Write=KEVENT_SOCKET_SEND,
+		Accept=KEVENT_SOCKET_ACCEPT;
+	
+	static const int
+		Connect,
+		Error,
+		Hangup;
 };
 
 #endif // EventKevent_INCLUDED

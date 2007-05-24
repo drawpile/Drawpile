@@ -38,12 +38,6 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-/* Because MinGW is buggy, we have to do this fuglyness */
-const EvKevent::ev_t
-	EvKevent::read = KEVENT_SOCKET_RECV,
-	EvKevent::write = KEVENT_SOCKET_SEND;
-	//Event::accept = KEVENT_SOCKET_ACCEPT;
-
 EvKevent::EvKevent() throw()
 	: evfd(0)
 {

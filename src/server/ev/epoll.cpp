@@ -38,13 +38,6 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-/* Because MinGW is buggy, we have to do this fuglyness */
-const EvEpoll::ev_t
-	EvEpoll::read = EPOLLIN,
-	EvEpoll::write = EPOLLOUT,
-	EvEpoll::error = EPOLLERR,
-	EvEpoll::hangup = EPOLLHUP;
-
 EvEpoll::EvEpoll() throw(std::exception)
 	: evfd(0), nfds(-1)
 {

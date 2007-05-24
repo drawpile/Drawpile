@@ -49,8 +49,6 @@ private:
 	int evfd;
 	epoll_event events[max_events];
 public:
-	static const int read, write, error;
-	
 	EventEpoll() throw(std::exception);
 	~EventEpoll() throw();
 	
@@ -72,6 +70,16 @@ struct EventTraits<EventEpoll>
 	static const bool hasAccept = false;
 	static const bool hasConnect = false;
 	static const bool usesSigmask = false;
-};s
+	
+	static const int
+		Read=EPOLLIN,
+		Write=EPOLLOUT,
+		Error=EPOLLERR,
+		Hangup=EPOLLHUP;
+	
+	static const int
+		Accept,
+		Connect;
+};
 
 #endif // EventEpoll_INCLUDED

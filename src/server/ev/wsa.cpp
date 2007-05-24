@@ -37,13 +37,6 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-const EvWSA::ev_t
-	EvWSA::connect = FD_CONNECT,
-	EvWSA::accept = FD_ACCEPT,
-	EvWSA::read = FD_READ,
-	EvWSA::write = FD_WRITE,
-	EvWSA::hangup = FD_CLOSE;
-
 EvWSA::EvWSA() throw()
 	: last_event(0),
 	_error(0),
@@ -112,7 +105,7 @@ int EvWSA::add(fd_t fd, ev_t events) throw()
 	
 	assert( fd >= 0 );
 	
-	fSet(events, Event::hangup);
+	fSet(events, EventTraits<EventWSA>::Hangup);
 	
 	for (uint i=0; i != max_events; ++i)
 	{
@@ -164,21 +157,21 @@ int EvWSA::modify(fd_t fd, ev_t events) throw()
 	
 	cout << " # ";
 	bool next=false;
-	if (fIsSet(events, Event::read))
+	if (fIsSet(events, EventTraits<EventWSA>::Read))
 	{
 		cout << "read"; next = true;
 	}
-	if (fIsSet(events, Event::write))
+	if (fIsSet(events, EventTraits<EventWSA>::Write))
 	{
 		if (next) cout << ", ";
 		cout << "write"; next = true;
 	}
-	if (fIsSet(events, Event::accept))
+	if (fIsSet(events, EventTraits<EventWSA>::Accept))
 	{
 		if (next) cout << ", ";
 		cout << "accept"; next = true;
 	}
-	if (fIsSet(events, Event::hangup))
+	if (fIsSet(events, EventTraits<EventWSA>::Hangup))
 	{
 		if (next) cout << ", ";
 		cout << "close";
@@ -188,7 +181,7 @@ int EvWSA::modify(fd_t fd, ev_t events) throw()
 	
 	assert( fd >= 0 );
 	
-	fSet(events, Event::hangup);
+	fSet(events, EventTraits<EventWSA>::Hangup);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
@@ -272,7 +265,7 @@ bool EvWSA::getEvent(fd_t &fd, ev_t &events) throw()
 				case WSAETIMEDOUT: // connection timed-out
 				case WSAENETUNREACH: // network unreachable
 				case WSAECONNREFUSED: // connection refused/rejected
-					events = Event::hangup;
+					events = EventTraits<EventWSA>::Hangup;
 					break;
 				case WSAENOBUFS: // out of network buffers
 				case WSAENETDOWN: // network sub-system failure
@@ -293,21 +286,21 @@ bool EvWSA::getEvent(fd_t &fd, ev_t &events) throw()
 				
 				cout << " # ";
 				bool next=false;
-				if (fIsSet(events, Event::read))
+				if (fIsSet(events, EventTraits<EventWSA>::Read))
 				{
 					cout << "read"; next = true;
 				}
-				if (fIsSet(events, Event::write))
+				if (fIsSet(events, EventTraits<EventWSA>::Write))
 				{
 					if (next) cout << ", ";
 					cout << "write"; next = true;
 				}
-				if (fIsSet(events, Event::accept))
+				if (fIsSet(events, EventTraits<EventWSA>::Accept))
 				{
 					if (next) cout << ", ";
 					cout << "accept"; next = true;
 				}
-				if (fIsSet(events, Event::hangup))
+				if (fIsSet(events, EventTraits<EventWSA>::Hangup))
 				{
 					if (next) cout << ", ";
 					cout << "close";

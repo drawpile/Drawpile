@@ -39,12 +39,6 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-/* Because MinGW is buggy, we have to do this fuglyness */
-const EvPselect::ev_t
-	EvPselect::read = 0x01,
-	EvPselect::write = 0x02,
-	EvPselect::error = 0x04;
-
 EvPselect::EvPselect() throw()
 	#if !defined(WIN32)
 	: nfds_r(0),
@@ -137,21 +131,21 @@ int EvPselect::add(fd_t fd, ev_t events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, read))
+	if (fIsSet(events, EventTraits<EventWSA>::Read))
 	{
 		FD_SET(fd, &fds_r);
 		read_set.insert(read_set.end(), fd);
 		nfds_r = *(read_set.end());
 		rc = true;
 	}
-	if (fIsSet(events, write))
+	if (fIsSet(events, EventTraits<EventWSA>::Write))
 	{
 		FD_SET(fd, &fds_w);
 		write_set.insert(write_set.end(), fd);
 		nfds_w = *(--write_set.end());
 		rc = true;
 	}
-	if (fIsSet(events, error))
+	if (fIsSet(events, EventTraits<EventWSA>::Error))
 	{
 		FD_SET(fd, &fds_e);
 		error_set.insert(error_set.end(), fd);
@@ -174,24 +168,24 @@ int EvPselect::modify(fd_t fd, ev_t events) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	// act like a wrapper.
-	if (fIsSet(events, read) or fIsSet(events, write) or fIsSet(events, error))
+	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, read))
+	if (!fIsSet(events, EventTraits<EventWSA>::Read))
 	{
 		FD_CLR(fd, &fds_r);
 		read_set.erase(fd);
 		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
 	}
 	
-	if (!fIsSet(events, write))
+	if (!fIsSet(events, EventTraits<EventWSA>::Write))
 	{
 		FD_CLR(fd, &fds_w);
 		write_set.erase(fd);
 		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 	}
 	
-	if (!fIsSet(events, error))
+	if (!fIsSet(events, EventTraits<EventWSA>::Error))
 	{
 		FD_CLR(fd, &fds_e);
 		error_set.erase(fd);
@@ -241,11 +235,11 @@ bool EvPselect::getEvent(fd_t &fd, ev_t &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, read);
+			fSet(events, EventTraits<EventWSA>::Read);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, write);
+			fSet(events, EventTraits<EventWSA>::Write);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, error);
+			fSet(events, EventTraits<EventWSA>::Error);
 		
 		if (events != 0)
 			return true;

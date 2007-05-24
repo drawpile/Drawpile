@@ -51,8 +51,6 @@ private:
 	kevent chlist[max_events], *evtrigr;
 	size_t chlist_count, evtrigr_size;
 public:
-	static const int read, write;
-	
 	EventKqueue() throw();
 	~EventKqueue() throw();
 	
@@ -74,6 +72,16 @@ struct EventTraits<EventKqueue>
 	static const bool hasAccept = false;
 	static const bool hasConnect = false;
 	static const bool usesSigmask = false;
+	
+	static const int
+		Read=EVFILT_READ,
+		Write=EVFILT_WRITE;
+	
+	static const int
+		Accept,
+		Connect,
+		Error,
+		Hangup;
 };
 
 #endif // EventKqueue_INCLUDED

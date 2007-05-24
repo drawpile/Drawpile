@@ -62,8 +62,6 @@ private:
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
 public:
-	static const int read, write, error;
-
 	EventSelect() throw();
 	~EventSelect() throw();
 	
@@ -85,6 +83,16 @@ struct EventTraits<EventSelect>
 	static const bool hasAccept = false;
 	static const bool hasConnect = false;
 	static const bool usesSigmask = false;
+	
+	static const int
+		Read=1,
+		Write=2,
+		Error=4;
+	
+	static const int
+		Accept,
+		Connect,
+		Hangup;
 };
 
 #endif // EventSelect_INCLUDED
