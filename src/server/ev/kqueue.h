@@ -29,8 +29,8 @@
 #ifndef EventKqueue_INCLUDED
 #define EventKqueue_INCLUDED
 
-#include "../common.h"
 #include "interface.h"
+#include "traits.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -42,8 +42,8 @@
 #include <sys/event.h>
 #include <sys/time.h>
 
-class EvKqueue
-	: EvInterface<int>
+class EventKqueue
+	: EventInterface<int>
 {
 private:
 	timespec _timeout;
@@ -51,35 +51,12 @@ private:
 	kevent chlist[max_events], *evtrigr;
 	size_t chlist_count, evtrigr_size;
 public:
-	static const int
-		read,
-		write;
+	static const int read, write;
 	
-	EvKqueue() throw()
-	{
-	}
+	EventKqueue() throw();
+	~EventKqueue() throw();
 	
-	~EvKqueue() throw()
-	{
-	}
-	
-	void timeout(uint msecs) throw()
-	{
-		#ifndef NDEBUG
-		std::cout << "kqueue.timeout(msecs: " << msecs << ")" << std::endl;
-		#endif
-		
-		if (msecs > 1000)
-		{
-			_timeout.tv_sec = msecs/1000;
-			msecs -= _timeout.tv_sec*1000;
-		}
-		else
-			_timeout.tv_sec = 0;
-		
-		_timeout.tv_nsec = msecs * 1000000; // nanoseconds
-	}
-	
+	void timeout(uint msecs) throw();
 	int wait() throw();
 	int add(fd_t fd, int events) throw();
 	int remove(fd_t fd) throw();
@@ -87,27 +64,16 @@ public:
 	bool getEvent(fd_t &fd, int &events) throw();
 };
 
-#include "traits.h"
-
 template <>
-struct EvTraits<EvKqueue>
+struct EventTraits<EventKqueue>
 {
 	typedef int ev_t;
 	
-	static inline
-	bool hasHangup() { return false; }
-	
-	static inline
-	bool hasError() { return false; }
-	
-	static inline
-	bool hasAccept() { return false; }
-	
-	static inline
-	bool hasConnect() { return false; }
-	
-	static inline
-	bool usesSigmask() { return false; }
+	static const bool hasHangup = false;
+	static const bool hasError = false;
+	static const bool hasAccept = false;
+	static const bool hasConnect = false;
+	static const bool usesSigmask = false;
 };
 
 #endif // EventKqueue_INCLUDED

@@ -26,13 +26,13 @@
 
 *******************************************************************************/
 
-#include "config.h"
+#include "select.h"
 #include "../shared/templates.h"
-#include "event.h"
 
-#include <iostream>
+#ifndef NDEBUG
+	#include <iostream>
+#endif
 #include <cerrno> // errno
-//#include <memory> // memcpy()
 #include <cassert> // assert()
 
 using std::cout;
@@ -141,7 +141,7 @@ int EvSelect::wait() throw()
 			assert(_error != EINVAL);
 			assert(_error != EFAULT);
 			
-			#ifdef WIN32
+			#if defined(WIN32) and !defined(NDEBUG)
 			if (_error == WSAENETDOWN)
 				cerr << "The network subsystem has failed." << endl;
 			#endif
@@ -300,4 +300,21 @@ bool EvSelect::getEvent(fd_t &fd, ev_t &events) throw()
 	}
 	
 	return false;
+}
+
+void EvSelect::timeout(uint msecs) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "select.timeout(msecs: " << msecs << ")" << std::endl;
+	#endif
+	
+	if (msecs > 1000)
+	{
+		_timeout.tv_sec = msecs/1000;
+		msecs -= _timeout.tv_sec*1000;
+	}
+	else
+		_timeout.tv_sec = 0;
+	
+	_timeout.tv_usec = msecs * 1000; // microseconds
 }

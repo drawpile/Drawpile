@@ -29,8 +29,8 @@
 #ifndef EventWSA_INCLUDED
 #define EventWSA_INCLUDED
 
-#include "../common.h"
 #include "interface.h"
+#include "traits.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -40,8 +40,8 @@
 
 #include <winsock2.h>
 
-class EvWSA
-	: EvInterface<long>
+class EventWSA
+	: EventInterface<long>
 {
 private:
 	uint _timeout;
@@ -53,30 +53,12 @@ private:
 	typedef std::map<uint, fd_t>::iterator r_ev_iter;
 	WSAEVENT w_ev[max_events];
 public:
-	static const long
-		accept,
-		connect,
-		read,
-		write,
-		hangup;
+	static const long accept, connect, read, write, hangup;
 	
-	EvWSA() throw()
-	{
-	}
+	EventWSA() throw();
+	~EventWSA() throw();
 	
-	~EvWSA() throw()
-	{
-	}
-	
-	void timeout(uint msecs) throw()
-	{
-		#ifndef NDEBUG
-		std::cout << "WSA.timeout(msecs: " << msecs << ")" << std::endl;
-		#endif
-		
-		_timeout = msecs;
-	}
-	
+	void timeout(uint msecs) throw();
 	int wait() throw();
 	int add(fd_t fd, long events) throw();
 	int remove(fd_t fd) throw();
@@ -84,27 +66,16 @@ public:
 	bool getEvent(fd_t &fd, long &events) throw();
 };
 
-#include "traits.h"
-
 template <>
-struct EvTraits<EvWSA>
+struct EventTraits<EventWSA>
 {
 	typedef long ev_t;
 	
-	static inline
-	bool hasHangup() { return true; }
-	
-	static inline
-	bool hasError() { return false; }
-	
-	static inline
-	bool hasAccept() { return true; }
-	
-	static inline
-	bool hasConnect() { return true; }
-	
-	static inline
-	bool usesSigmask() { return false; }
+	static const bool hasHangup = true;
+	static const bool hasError = false;
+	static const bool hasAccept = true;
+	static const bool hasConnect = true;
+	static const bool usesSigmask = false;
 };
 
 #endif // EventWSA_INCLUDED

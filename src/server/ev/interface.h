@@ -29,6 +29,7 @@
 #ifndef EventInterface_INCLUDED
 #define EventInterface_INCLUDED
 
+#include "config.h"
 #include "../common.h"
 #include <ctime>
 
@@ -41,16 +42,16 @@ typedef int fd_t;
 
 //! Event I/O abstraction
 template <typename ev_t>
-class EvInterface
+class EventInterface
 {
 protected:
 	int _error; // errno;
 public:
 	//! ctor
-	EvInterface() throw();
+	EventInterface() throw();
 	
 	//! dtor
-	virtual ~EvInterface() throw() = 0;
+	virtual ~EventInterface() throw() = 0;
 	
 	//! Set timeout for wait()
 	/**

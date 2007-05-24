@@ -30,22 +30,13 @@
 #define EventTraits_INCLUDED
 
 template <typename Evs>
-struct EvTraits
+struct EventTraits
 {
-	static inline
-	bool hasHangup();
-	
-	static inline
-	bool hasError();
-	
-	static inline
-	bool hasAccept();
-	
-	static inline
-	bool hasConnect();
-	
-	static inline
-	bool usesSigmask();
+	static const bool hasHangup = false;
+	static const bool hasError = false;
+	static const bool hasAccept = false;
+	static const bool hasConnect = false;
+	static const bool usesSigmask = false;
 };
 
 #endif // EventTraits_INCLUDED

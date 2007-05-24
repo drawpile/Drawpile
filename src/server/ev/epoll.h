@@ -29,8 +29,8 @@
 #ifndef EventEpoll_INCLUDED
 #define EventEpoll_INCLUDED
 
-#include "../common.h"
 #include "interface.h"
+#include "traits.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -40,8 +40,8 @@
 #include <sys/epoll.h>
 
 template <int max_events>
-class EvEpoll
-	: EvInterface<int>
+class EventEpoll
+	: EventInterface<int>
 {
 private:
 	uint _timeout;
@@ -49,195 +49,29 @@ private:
 	int evfd;
 	epoll_event events[max_events];
 public:
-	static const int
-		read,
-		write,
-		error;
+	static const int read, write, error;
 	
-	EvEpoll() throw(std::exception)
-	{
-		evfd = epoll_create(max_events);
-		
-		if (evfd == -1)
-		{
-			_error = errno;
-			
-			// max_events is not positive integer
-			assert(_error != EINVAL);
-			
-			throw std::exception;
-		}
-	}
+	EventEpoll() throw(std::exception);
+	~EventEpoll() throw();
 	
-	~EvEpoll() throw()
-	{
-		if (evfd != -1)
-		{
-			close(evfd);
-			evfd = -1;
-		}
-		
-		// Make sure the event fd was closed.
-		assert(evfd == -1);
-	}
-	
-	void timeout(uint msecs) throw()
-	{
-		#ifndef NDEBUG
-		cout << "epoll.timeout(msecs: " << msecs << ")" << endl;
-		#endif
-		
-		_timeout = msecs;
-	}
-	
-	int wait() throw()
-	{
-		assert(evfd != 0);
-		
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		cout << "epoll.wait()" << endl;
-		#endif
-		
-		nfds = epoll_wait(evfd, events, max_events, _timeout);
-		
-		if (nfds == -1)
-		{
-			_error = errno;
-			
-			if (_error == EINTR)
-				return 0;
-			
-			assert(_error != EBADF);
-			assert(_error != EFAULT); // events not writable
-			assert(_error != EINVAL); // invalif evfd, or max_events <= 0
-		}
-		
-		return nfds;
-	}
-	
-	int add(fd_t fd, int events) throw()
-	{
-		assert(evfd != 0);
-		
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		cout << "epoll.add(FD: " << fd << ")" << endl;
-		#endif
-		
-		assert(fd != INVALID_SOCKET);
-		
-		epoll_event ev_info;
-		ev_info.data.fd = fd;
-		ev_info.events = events;
-		
-		const int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
-		
-		if (r == -1)
-		{
-			_error = errno;
-			
-			assert(_error != EBADF);
-			assert(_error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
-			assert(_error != EEXIST); // fd already in set
-			assert(_error != EPERM); // target fd not supported by epoll
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	int remove(fd_t fd) throw()
-	{
-		assert(evfd != 0);
-		
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		cout << "epoll.remove(FD: " << fd << ")" << endl;
-		#endif
-		
-		assert(fd != INVALID_SOCKET);
-		
-		const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
-		
-		if (r == -1)
-		{
-			_error = errno;
-			
-			assert(_error != EBADF); // evfd is invalid
-			assert(_error != EINVAL); // evfd is invalid, or evfd is the same as fd
-			assert(_error != ENOENT); // fd not in set
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	int modify(fd_t fd, int events) throw()
-	{
-		assert(evfd != 0);
-		
-		#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-		cout << "epoll.modify(FD: " << fd << ")" << endl;
-		#endif
-		
-		assert(fd != INVALID_SOCKET);
-		
-		epoll_event ev_info;
-		ev_info.data.fd = fd;
-		ev_info.events = events;
-		
-		const int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
-		
-		if (r == -1)
-		{
-			_error = errno;
-			
-			assert(_error != EBADF); // epoll fd is invalid
-			assert(_error != EINVAL); // evfd is invalid or fd is the same as evfd
-			assert(_error != ENOENT); // fd not in set
-			
-			return false;
-		}
-		
-		return true;
-	}
-	
-	bool getEvent(fd_t &fd, int &events) throw()
-	{
-		assert(evfd != 0);
-		
-		if (nfds == -1)
-			return false;
-		
-		fd = events[nfds].data.fd;
-		r_events = events[nfds].events;
-		--nfds;
-		
-		return true;
-	}
+	void timeout(uint msecs) throw();
+	int wait() throw();
+	int add(fd_t fd, int events) throw();
+	int remove(fd_t fd) throw();
+	int modify(fd_t fd, int events) throw();
+	bool getEvent(fd_t &fd, int &events) throw();
 };
 
-#include "traits.h"
-
 template <>
-struct EventTraits<EvEpoll>
+struct EventTraits<EventEpoll>
 {
 	typedef int ev_t;
 	
-	static inline
-	bool hasHangup() { return true; }
-	
-	static inline
-	bool hasError() { return true; }
-	
-	static inline
-	bool hasAccept() { return false; }
-	
-	static inline
-	bool hasConnect() { return false; }
-	
-	static inline
-	bool usesSigmask() { return false; }
-};
+	static const bool hasHangup = true;
+	static const bool hasError = true;
+	static const bool hasAccept = false;
+	static const bool hasConnect = false;
+	static const bool usesSigmask = false;
+};s
 
 #endif // EventEpoll_INCLUDED

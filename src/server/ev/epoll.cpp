@@ -26,15 +26,11 @@
 
 *******************************************************************************/
 
-#include "config.h"
-#include "../shared/templates.h"
-#include "event.h"
+#include "epoll.h"
 
-#ifndef EV_EPOLL
-	#error EV_EPOLL not defined
+#ifndef NDEBUG
+	#include <iostream>
 #endif
-
-#include <iostream>
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -43,21 +39,33 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const Event::ev_t
-	Event::read = EPOLLIN,
-	Event::write = EPOLLOUT,
-	Event::error = EPOLLERR,
-	Event::hangup = EPOLLHUP;
+const EvEpoll::ev_t
+	EvEpoll::read = EPOLLIN,
+	EvEpoll::write = EPOLLOUT,
+	EvEpoll::error = EPOLLERR,
+	EvEpoll::hangup = EPOLLHUP;
 
-Event::Event() throw()
+EvEpoll::EvEpoll() throw(std::exception)
 	: evfd(0), nfds(-1)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event()" << endl;
 	#endif
+	
+	evfd = epoll_create(max_events);
+	
+	if (evfd == -1)
+	{
+		_error = errno;
+		
+		// max_events is not positive integer
+		assert(_error != EINVAL);
+		
+		throw std::exception;
+	}
 }
 
-Event::~Event() throw()
+EvEpoll::~EvEpoll() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~Event()" << endl;
@@ -73,33 +81,12 @@ Event::~Event() throw()
 	assert(evfd == -1);
 }
 
-// Errors: ENFILE, ENOMEM
-bool Event::init() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).init()" << endl;
-	#endif
-	
-	evfd = epoll_create(max_events);
-	
-	if (evfd == -1)
-	{
-		_error = errno;
-		
-		assert(_error != EINVAL); // max_events is not positive integer
-		
-		return false;
-	}
-	
-	return true;
-}
-
-int Event::wait() throw()
+int EvEpoll::wait() throw()
 {
 	assert(evfd != 0);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).wait()" << endl;
+	cout << "epoll.wait()" << endl;
 	#endif
 	
 	nfds = epoll_wait(evfd, events, max_events, _timeout);
@@ -120,12 +107,12 @@ int Event::wait() throw()
 }
 
 // Errors: ENOMEM
-int Event::add(fd_t fd, ev_t events) throw()
+int EvEpoll::add(fd_t fd, ev_t events) throw()
 {
 	assert(evfd != 0);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).add(FD: " << fd << ")" << endl;
+	cout << "epoll.add(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -151,12 +138,12 @@ int Event::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int Event::modify(fd_t fd, ev_t events) throw()
+int EvEpoll::modify(fd_t fd, ev_t events) throw()
 {
 	assert(evfd != 0);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).modify(FD: " << fd << ")" << endl;
+	cout << "epoll.modify(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -182,12 +169,12 @@ int Event::modify(fd_t fd, ev_t events) throw()
 }
 
 // Errors: ENOMEM
-int Event::remove(fd_t fd) throw()
+int EvEpoll::remove(fd_t fd) throw()
 {
 	assert(evfd != 0);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(epoll).remove(FD: " << fd << ")" << endl;
+	cout << "epoll.remove(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -208,7 +195,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool EvEpoll::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	assert(evfd != 0);
 	
@@ -220,4 +207,13 @@ bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 	--nfds;
 	
 	return true;
+}
+
+void EvEpoll::timeout(uint msecs) throw()
+{
+	#ifndef NDEBUG
+	cout << "epoll.timeout(msecs: " << msecs << ")" << endl;
+	#endif
+	
+	_timeout = msecs;
 }

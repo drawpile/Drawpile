@@ -26,15 +26,11 @@
 
 *******************************************************************************/
 
-#include "config.h"
-#include "../shared/templates.h"
-#include "event.h"
+#include "kqueue.h"
 
-#ifndef EV_KQUEUE
-	#error EV_KQUEUE not defined
+#ifndef NDEBUG
+	#include <iostream>
 #endif
-
-#include <iostream>
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -43,24 +39,33 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const Event::ev_t
-	Event::read = EVFILT_READ,
-	Event::write = EVFILT_WRITE;
+const EvKqueue::ev_t
+	EvKqueue::read = EVFILT_READ,
+	EvKqueue::write = EVFILT_WRITE;
 
-Event::Event() throw()
+EvKqueue::EvKqueue() throw(std::bad_alloc)
 	: evfd(0),
 	chlist_count(0),
 	evtrigr_size(max_events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue)" << endl;
+	cout << "kqueue()" << endl;
 	#endif
+	
+	evfd = kqueue();
+	if (kq == -1)
+	{
+		_error = errno;
+		return false;
+	}
+	
+	evtrigr = new kevent[evtrigr_size];
 }
 
-Event::~Event() throw()
+EvKqueue::~EvKqueue() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~Event(kqueue)" << endl;
+	cout << "~kqueue()" << endl;
 	#endif
 	
 	if (evfd != -1)
@@ -75,30 +80,11 @@ Event::~Event() throw()
 	delete [] evtrigr;
 }
 
-// Errors: ENOMEM, EMFILE, ENFILE
-bool Event::init() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue).init()" << endl;
-	#endif
-	
-	evfd = kqueue();
-	if (kq == -1)
-	{
-		_error = errno;
-		return false;
-	}
-	
-	evtrigr = new kevent[evtrigr_size];
-	
-	return true;
-}
-
 // Errors: EACCES, ENOMEM
-int Event::wait() throw()
+int EvKqueue::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue).wait()" << endl;
+	cout << "kqueue.wait()" << endl;
 	#endif
 	
 	nfds = kevent(evfd, &chlist, chlist_count, evtrigr, evtrigr_size, _timeout);
@@ -116,17 +102,19 @@ int Event::wait() throw()
 		assert(_error != EINVAL); // filter or time limit is invalid
 		assert(_error != EFAULT); // kevent struct is not writable
 		
+		#ifndef NDEBUG
 		cerr << "Error in event system: " << _error << endl;
+		#endif
 		return -1;
 	}
 	
 	return nfds;
 }
 
-int Event::add(fd_t fd, ev_t events) throw()
+int EvKqueue::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue).add(FD: " << fd << ")" << endl;
+	cout << "kqueue.add(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -139,10 +127,10 @@ int Event::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int Event::modify(fd_t fd, ev_t events) throw()
+int EvKqueue::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue).modify(FD: " << fd << ")" << endl;
+	cout << "kqueue.modify(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -155,10 +143,10 @@ int Event::modify(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int Event::remove(fd_t fd) throw()
+int EvKqueue::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kqueue).remove(FD: " << fd << ")" << endl;
+	cout << "kqueue.remove(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -171,7 +159,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool EvKqueue::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	if (nfds == evtrigr_size)
 		return false;
@@ -184,4 +172,21 @@ bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 	++nfds;
 	
 	return true;
+}
+
+void EvKqueue::timeout(uint msecs) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "kqueue.timeout(msecs: " << msecs << ")" << std::endl;
+	#endif
+	
+	if (msecs > 1000)
+	{
+		_timeout.tv_sec = msecs/1000;
+		msecs -= _timeout.tv_sec*1000;
+	}
+	else
+		_timeout.tv_sec = 0;
+	
+	_timeout.tv_nsec = msecs * 1000000; // nanoseconds
 }

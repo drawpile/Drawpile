@@ -26,11 +26,12 @@
 
 *******************************************************************************/
 
-#include "config.h"
+#include "pselect.h"
 #include "../shared/templates.h"
-#include "event.h"
 
-#include <iostream>
+#ifndef NDEBUG
+	#include <iostream>
+#endif
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -39,12 +40,12 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const Event::ev_t
-	Event::read = 0x01,
-	Event::write = 0x02,
-	Event::error = 0x04;
+const EvPselect::ev_t
+	EvPselect::read = 0x01,
+	EvPselect::write = 0x02,
+	EvPselect::error = 0x04;
 
-Event::Event() throw()
+EvPselect::EvPselect() throw()
 	#if !defined(WIN32)
 	: nfds_r(0),
 	nfds_w(0),
@@ -52,39 +53,28 @@ Event::Event() throw()
 	#endif // !WIN32
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select)()" << endl;
-	#endif
-
-	#ifdef EV_PSELECT
-	sigemptyset(&_sigmask); // prepare sigmask
-	#endif
-}
-
-Event::~Event() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~Event(select)()" << endl;
-	#endif
-}
-
-bool Event::init() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).init()" << endl;
+	cout << "pselect()" << endl;
 	#endif
 	
 	FD_ZERO(&fds_r);
 	FD_ZERO(&fds_w);
 	FD_ZERO(&fds_e);
 	
-	return true;
+	sigemptyset(&_sigmask); // prepare sigmask
+}
+
+EvPselect::~EvPselect() throw()
+{
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	cout << "~pselect()" << endl;
+	#endif
 }
 
 // Errors: WSAENETDOWN
-int Event::wait() throw()
+int EvPselect::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).wait()" << endl;
+	cout << "pselect.wait()" << endl;
 	#endif
 	
 	#ifdef EV_SELECT_COPY
@@ -95,68 +85,36 @@ int Event::wait() throw()
 	t_fds_r = fds_r;
 	t_fds_w = fds_w;
 	t_fds_e = fds_e;
-	//memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
-	//memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
-	//memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
-	#if defined(EV_PSELECT)
 	// save sigmask
 	sigprocmask(SIG_SETMASK, &_sigmask, &_sigsaved);
-	#endif // EV_PSELECT
 	
-	#ifndef WIN32
 	const fd_t largest_nfds = std::max(std::max(nfds_w, nfds_r), nfds_e);
-	#endif
 	
 	nfds =
-	#if defined(EV_PSELECT)
 		pselect(
-	#else
-		select(
-	#endif // EV_PSELECT
-	#ifdef WIN32
-		0,
-	#else // !WIN32
 		(largest_nfds + 1),
-	#endif // WIN32
 		&t_fds_r,
 		&t_fds_w,
 		&t_fds_e,
-		&_timeout
-	#if defined(EV_PSELECT)
-		, &_sigmask
-	#endif // EV_PSELECT
+		&_timeout,
+		&_sigmask
 		);
-	#ifndef WIN32
 	_error = errno;
-	#ifdef EV_PSELECT
 	sigprocmask(SIG_SETMASK, &_sigsaved, 0); // restore mask
-	#endif
-	#endif
 	
 	switch (nfds)
 	{
 		case -1:
-			#ifdef WIN32
-			_error = WSAGetLastError();
-			#endif
-			
 			if (_error == EINTR)
 				return nfds = 0;
 			
-			#ifdef WIN32
-			assert(_error != WSANOTINITIALISED);
-			#endif
 			assert(_error != EBADF);
 			assert(_error != ENOTSOCK);
 			assert(_error != EINVAL);
 			assert(_error != EFAULT);
 			
-			#ifdef WIN32
-			if (_error == WSAENETDOWN)
-				cerr << "The network subsystem has failed." << endl;
-			#endif
 			break;
 		case 0:
 			// do nothing
@@ -169,10 +127,10 @@ int Event::wait() throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, ev_t events) throw()
+int EvPselect::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).add(fd: " << fd << ")" << endl;
+	cout << "pselect.add(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -182,28 +140,22 @@ int Event::add(fd_t fd, ev_t events) throw()
 	if (fIsSet(events, read))
 	{
 		FD_SET(fd, &fds_r);
-		#if !defined(WIN32) // win32 ignores the argument
 		read_set.insert(read_set.end(), fd);
 		nfds_r = *(read_set.end());
-		#endif // !Win32
 		rc = true;
 	}
 	if (fIsSet(events, write))
 	{
 		FD_SET(fd, &fds_w);
-		#if !defined(WIN32) // win32 ignores the argument
 		write_set.insert(write_set.end(), fd);
 		nfds_w = *(--write_set.end());
-		#endif // !Win32
 		rc = true;
 	}
 	if (fIsSet(events, error))
 	{
 		FD_SET(fd, &fds_e);
-		#if !defined(WIN32) // win32 ignores the argument
 		error_set.insert(error_set.end(), fd);
 		nfds_e = *(--error_set.end());
-		#endif // !Win32
 		rc = true;
 	}
 	
@@ -213,10 +165,10 @@ int Event::add(fd_t fd, ev_t events) throw()
 	return rc;
 }
 
-int Event::modify(fd_t fd, ev_t events) throw()
+int EvPselect::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event::modify(fd: " << fd << ")" << endl;
+	cout << "pselect.modify(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -228,37 +180,31 @@ int Event::modify(fd_t fd, ev_t events) throw()
 	if (!fIsSet(events, read))
 	{
 		FD_CLR(fd, &fds_r);
-		#ifndef WIN32
 		read_set.erase(fd);
 		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
-		#endif // WIN32
 	}
 	
 	if (!fIsSet(events, write))
 	{
 		FD_CLR(fd, &fds_w);
-		#ifndef WIN32
 		write_set.erase(fd);
 		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
-		#endif // WIN32
 	}
 	
 	if (!fIsSet(events, error))
 	{
 		FD_CLR(fd, &fds_e);
-		#ifndef WIN32
 		error_set.erase(fd);
 		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
-		#endif // WIN32
 	}
 	
 	return 0;
 }
 
-int Event::remove(fd_t fd) throw()
+int EvPselect::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).remove(fd: " << fd << ")" << endl;
+	cout << "pselect.remove(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -268,22 +214,16 @@ int Event::remove(fd_t fd) throw()
 		return false;
 	
 	FD_CLR(fd, &fds_r);
-	#ifndef WIN32
 	read_set.erase(fd);
 	nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
-	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
-	#ifndef WIN32
 	write_set.erase(fd);
 	nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
-	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
-	#ifndef WIN32
 	error_set.erase(fd);
 	nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
-	#endif // WIN32
 	
 	fd_list.erase(iter);
 	fd_iter = fd_list.begin();
@@ -291,7 +231,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, ev_t &events) throw()
+bool EvPselect::getEvent(fd_t &fd, ev_t &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{
@@ -312,4 +252,21 @@ bool Event::getEvent(fd_t &fd, ev_t &events) throw()
 	}
 	
 	return false;
+}
+
+void EvPselect::timeout(uint msecs) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "pselect.timeout(msecs: " << msecs << ")" << std::endl;
+	#endif
+	
+	if (msecs > 1000)
+	{
+		timeout.tv_sec = msecs/1000;
+		msecs -= _timeout.tv_sec*1000;
+	}
+	else
+		_timeout.tv_sec = 0;
+	
+	_timeout.tv_nsec = msecs * 1000000; // nanoseconds
 }

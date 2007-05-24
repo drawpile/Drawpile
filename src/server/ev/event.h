@@ -16,20 +16,25 @@
 
 *******************************************************************************/
 
+#ifndef Event_H_INCLUDED
+#define Event_H_INCLUDED
+
 #include "config.h"
 
 #if defined(EV_EPOLL)
 	#include "epoll.h"
-	typedef EvEpoll EventSystem;
+	typedef EventEpoll EventSystem;
 #elif defined(EV_KQUEUE)
 	#include "kqueue.h"
-	typedef EvKqueue EventSystem;
+	typedef EventKqueue EventSystem;
 #elif defined(EV_PSELECT)
 	#include "pselect.h"
-	typedef EvPselect EventSystem;
+	typedef EventPselect EventSystem;
 #elif defined(EV_SELECT)
 	#include "select.h"
-	typedef EvSelect EventSystem;
+	typedef EventSelect EventSystem;
 #else
 	#error No event mechanism defined!
 #endif
+
+#endif // Event_H_INCLUDED

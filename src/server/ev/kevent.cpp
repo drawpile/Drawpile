@@ -26,15 +26,11 @@
 
 *******************************************************************************/
 
-#include "config.h"
-#include "../shared/templates.h"
-#include "event.h"
+#include "kevent.h"
 
-#ifndef EV_KEVENT
-	#error EV_KEVENT not defined
+#ifndef NDEBUG
+	#include <iostream>
 #endif
-
-#include <iostream>
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -43,23 +39,56 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const Event::ev_t
-	Event::read = KEVENT_SOCKET_RECV,
-	Event::write = KEVENT_SOCKET_SEND;
+const EvKevent::ev_t
+	EvKevent::read = KEVENT_SOCKET_RECV,
+	EvKevent::write = KEVENT_SOCKET_SEND;
 	//Event::accept = KEVENT_SOCKET_ACCEPT;
 
-Event::Event() throw()
+EvKevent::EvKevent() throw()
 	: evfd(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent)" << endl;
+	cout << "kevent()" << endl;
 	#endif
+	
+	kevent_user_control ctl;
+	ctl.cmd = KEVENT_CTL_INIT;
+	evfd = kevent_ctl(0, &ctl);
+	
+	if (r == -1)
+	{
+		_error = errno;
+		
+		assert(_error != EINVAL); // Size not positive
+		
+		switch (_error)
+		{
+		case ENFILE:
+			#ifndef NDEBUG
+			cerr << "System open FD limit reached." << endl;
+			#endif
+			break;
+		case ENOMEM:
+			#ifndef NDEBUG
+			cerr << "Out of memory" << endl;
+			#endif
+			throw std::bad_alloc();
+			break;
+		default:
+			#ifndef NDEBUG
+			cerr << "kevent() : Unknown error(" << _error << ")" << endl;
+			#endif
+			assert(1);
+			break;
+		}
+		throw std::exception;
+	}
 }
 
-Event::~Event() throw()
+EvKevent::~EvKevent() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~Event(kevent)" << endl;
+	cout << "~kevent()" << endl;
 	#endif
 	
 	if (evfd != -1)
@@ -72,52 +101,10 @@ Event::~Event() throw()
 	assert(evfd == -1);
 }
 
-bool Event::init() throw()
+int EvKevent::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).init()" << endl;
-	#endif
-	
-	kevent_user_control ctl;
-	ctl.cmd = KEVENT_CTL_INIT;
-	evfd = kevent_ctl(0, &ctl);
-	
-	if (r == -1)
-	{
-		_error = errno;
-		
-		switch (_error)
-		{
-		case EINVAL:
-			#ifndef NDEBUG
-			cerr << "Size not positive." << endl;
-			#endif
-			assert(1);
-			break;
-		case ENFILE:
-			cerr << "System open FD limit reached." << endl;
-			return false;
-			break;
-		case ENOMEM:
-			cerr << "Out of memory" << endl;
-			throw std::bad_alloc();
-			break;
-		default:
-			#ifndef NDEBUG
-			cerr << "Event(kevent).init() : Unknown error(" << _error << ")" << endl;
-			#endif
-			assert(1);
-			break;
-		}
-	}
-	
-	return true;
-}
-
-int Event::wait() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).wait()" << endl;
+	cout << "kevent.wait()" << endl;
 	#endif
 	
 	nfds = epoll_wait(evfd, events, max_events, _timeout);
@@ -137,7 +124,9 @@ int Event::wait() throw()
 			nfds = 0;
 			break;
 		default:
-			cerr << "Event(kevent).wait() : Unknown error(" << _error << ")" << endl;
+			#ifndef NDEBUG
+			cerr << "kevent.wait() : Unknown error(" << _error << ")" << endl;
+			#endif
 			// TODO
 			break;
 		}
@@ -146,10 +135,10 @@ int Event::wait() throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, ev_t events) throw()
+int EvKevent::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).add(FD: " << fd << ")" << endl;
+	cout << "kevent.add(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -170,11 +159,15 @@ int Event::add(fd_t fd, ev_t events) throw()
 		switch (_error)
 		{
 		case ENOMEM:
+			#ifndef NDEBUG
 			cerr << "Out of memory" << endl;
+			#endif
 			throw new std::bad_alloc;
 			break;
 		default:
-			cerr << "Event(kevent).add() : Unknown error(" << _error << ")" << endl;
+			#ifndef NDEBUG
+			cerr << "kevent.add() : Unknown error(" << _error << ")" << endl;
+			#endif
 			break;
 		}
 	}
@@ -182,10 +175,10 @@ int Event::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int Event::modify(fd_t fd, ev_t events) throw()
+int EvKevent::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).modify(FD: " << fd << ")" << endl;
+	cout << "kevent.modify(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -205,11 +198,15 @@ int Event::modify(fd_t fd, ev_t events) throw()
 		switch (_error)
 		{
 		case ENOMEM:
+			#ifndef NDEBUG
 			cerr << "Out of memory" << endl;
+			#endif
 			throw new std::bad_alloc;
 			break;
 		default:
-			cerr << "Event(kevent).modify() : Unknown error (" << _error << ")" << endl;
+			#ifndef NDEBUG
+			cerr << "kevent.modify() : Unknown error (" << _error << ")" << endl;
+			#endif
 			break;
 		}
 	}
@@ -217,10 +214,10 @@ int Event::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int Event::remove(fd_t fd, ev_t events) throw()
+int EvKevent::remove(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(kevent).remove(FD: " << fd << ")" << endl;
+	cout << "kevent.remove(FD: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -236,11 +233,15 @@ int Event::remove(fd_t fd, ev_t events) throw()
 		switch (_error)
 		{
 		case ENOMEM:
+			#ifndef NDEBUG
 			cerr << "Out of memory" << endl;
+			#endif
 			throw new std::bad_alloc;
 			break;
 		default:
-			cerr << "Event(kevent).remove() : Unknown error(" << _error << ")" << endl;
+			#ifndef NDEBUG
+			cerr << "kevent.remove() : Unknown error(" << _error << ")" << endl;
+			#endif
 			break;
 		}
 	}
@@ -248,7 +249,7 @@ int Event::remove(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool EvKevent::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	if (nfds == -1)
 		return false;
@@ -258,4 +259,21 @@ bool Event::getEvent(fd_t &fd, ev_t &r_events) throw()
 	--nfds;
 	
 	return true;
+}
+
+void EvKevent::timeout(uint msecs) throw()
+{
+	#ifndef NDEBUG
+	std::cout << "kevent.timeout(msecs: " << msecs << ")" << std::endl;
+	#endif
+	
+	if (msecs > 1000)
+	{
+		_timeout.tv_sec = msecs/1000;
+		msecs -= _timeout.tv_sec*1000;
+	}
+	else
+		_timeout.tv_sec = 0;
+	
+	_timeout.tv_usec = msecs * 1000; // microseconds
 }

@@ -2388,7 +2388,7 @@ int Server::run() throw()
 	User *usr;
 	
 	fd_t fd;
-	EvTraits<EventSystem>::ev_t events;
+	EventTraits<EventSystem>::ev_t events;
 	
 	users_i ui;
 	
