@@ -2288,8 +2288,6 @@ bool Server::init() throw(std::bad_alloc)
 	resume:
 	if (lsock.listen() == SOCKET_ERROR)
 		cerr << "- Failed to open listening port." << endl;
-	else if (!ev.init())
-		cerr << "- Event system initialization failed." << endl;
 	else
 	{
 		cout << "+ Listening on port " << lsock.port() << endl << endl;
@@ -2390,7 +2388,7 @@ int Server::run() throw()
 	User *usr;
 	
 	fd_t fd;
-	Event::ev_t events;
+	EvTraits<EventSystem>::ev_t events;
 	
 	users_i ui;
 	

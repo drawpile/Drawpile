@@ -42,7 +42,7 @@
 #include "user.h"
 #include "session.h"
 
-#include "event.h"
+#include "ev/event.h"
 
 #include "message.h" // message_ref
 
@@ -77,8 +77,7 @@ protected:
 		Error
 	} state;
 	
-	// Event interface
-	Event ev;
+	EventSystem ev;
 	
 	std::queue<uint8_t>
 		// Free user IDs

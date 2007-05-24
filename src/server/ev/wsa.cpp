@@ -30,10 +30,6 @@
 
 #include "event.h"
 
-#ifndef EV_WSA
-	#error EV_WSA not defined
-#endif
-
 #include <iostream>
 #include <cassert> // assert()
 

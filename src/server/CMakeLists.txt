@@ -56,101 +56,6 @@ if ( HAVE_FORK )
 	link_libraries ( pthread )
 endif ( HAVE_FORK )
 
-### Event mechanism
-
-#set ( EV_FOUND OFF )
-
-if ( EPOLL )
-	check_include_file ( sys/epoll.h EV_EPOLL )
-	
-	if ( EV_EPOLL )
-		set ( EV_FOUND ON )
-	endif ( EV_EPOLL )
-endif ( EPOLL )
-
-if ( NOT EV_FOUND )
-	if ( KQUEUE )
-		include ( CheckCSourceCompiles )
-		check_c_source_compiles(
-			"#include <sys/event.h>\nint main() { return kqueue(); }"
-			EV_KQUEUE
-		)
-		if ( EV_KQUEUE )
-			set ( EV_FOUND ON )
-		endif ( EV_KQUEUE )
-	endif ( KQUEUE )
-endif ( NOT EV_FOUND )
-
-if ( NOT EV_FOUND )
-	if ( PSELECT )
-		check_function_exists ( pselect EV_PSELECT )
-		if ( EV_PSELECT )
-			set ( EV_FOUND ON )
-		endif ( EV_PSELECT )
-	endif ( PSELECT )
-endif ( NOT EV_FOUND )
-
-# fall back to select(2)
-if ( NOT EV_FOUND )
-	if ( SELECT )
-		check_include_file ( "sys/select.h" EV_SELECT )
-		if ( EV_SELECT )
-			set ( EV_FOUND ON )
-		endif ( EV_SELECT )
-		
-		# FD_COPY macro
-		if ( EV_SELECT )
-			if ( NOT WIN32 )
-				check_symbol_exists ( FD_COPY "sys/select.h;unistd.h" EV_SELECT_COPY )
-			endif ( NOT WIN32 )
-		endif ( EV_SELECT )
-	endif ( SELECT )
-endif ( NOT EV_FOUND )
-
-if ( WIN32 )
-	check_include_file ( winsock2.h HAVE_WSA )
-	if ( HAVE_WSA )
-		message( STATUS "Windows Socket API found" )
-		if ( NOT EV_FOUND )
-			if ( WSA )
-				set ( EV_WSA ON )
-				set ( EV_FOUND ON )
-			else ( WSA )
-				set ( EV_SELECT ON )
-				set ( EV_FOUND ON )
-			endif ( WSA )
-		endif ( NOT EV_FOUND )
-	endif ( HAVE_WSA )
-endif ( WIN32 )
-
-if ( NOT HAVE_WSA )
-	message ( STATUS "Using POSIX Socket API" )
-endif ( NOT HAVE_WSA )
-
-if ( NOT EV_FOUND )
-	status ( FATAL_ERROR "No event system found!" )
-endif ( NOT EV_FOUND )
-
-### Event mechanism sources.
-
-set ( EV_SRC event.select.cpp )
-
-if ( EV_WSA )
-	set ( EV_SRC event.wsa.cpp )
-endif ( EV_WSA )
-
-if ( EV_KQUEUE )
-	set ( EV_SRC event.kqueue.cpp )
-endif ( EV_KQUEUE )
-
-if ( EV_EPOLL )
-	set ( EV_SRC event.epoll.cpp )
-endif ( EV_EPOLL )
-
-if ( EV_KEVENT )
-	set ( EV_SRC event.kevent.cpp )
-endif ( EV_KEVENT )
-
 # config
 
 configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/server/config.h )
@@ -165,6 +70,9 @@ if ( WIN32 )
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
+link_libraries( libevent ) # this name might conflict
+
+add_subdirectory ( ev/ ) # events lib
 
 if ( NOT DEBUG )
 	strip_exe ( ${INTERNALNAME} )
@@ -176,7 +84,6 @@ add_executable (
 	dpsrv.cpp
 	server.cpp
 	sockets.cpp
-	${EV_SRC}
 	${WIN32RES}
 )
 

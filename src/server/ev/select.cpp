@@ -30,13 +30,6 @@
 #include "../shared/templates.h"
 #include "event.h"
 
-#if !defined(EV_SELECT) and !defined(EV_PSELECT)
-	#error EV_[P]SELECT not defined
-#endif
-
-#ifndef WIN32
-	#include <algorithm> // max_element()
-#endif
 #include <iostream>
 #include <cerrno> // errno
 //#include <memory> // memcpy()
@@ -47,52 +40,39 @@ using std::endl;
 using std::cerr;
 
 /* Because MinGW is buggy, we have to do this fuglyness */
-const Event::ev_t
+const EvSelect::ev_t
 	Event::read = 0x01,
 	Event::write = 0x02,
 	Event::error = 0x04;
 
-Event::Event() throw()
-	#if !defined(WIN32)
+EvSelect::EvSelect() throw()
+	#ifndef WIN32
 	: nfds_r(0),
 	nfds_w(0),
 	nfds_e(0)
-	#endif // !WIN32
+	#endif
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select)()" << endl;
-	#endif
-
-	#ifdef EV_PSELECT
-	sigemptyset(&_sigmask); // prepare sigmask
-	#endif
-}
-
-Event::~Event() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~Event(select)()" << endl;
-	#endif
-}
-
-bool Event::init() throw()
-{
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).init()" << endl;
+	cout << "select()" << endl;
 	#endif
 	
 	FD_ZERO(&fds_r);
 	FD_ZERO(&fds_w);
 	FD_ZERO(&fds_e);
-	
-	return true;
+}
+
+EvSelect::~EvSelect() throw()
+{
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	cout << "~select()" << endl;
+	#endif
 }
 
 // Errors: WSAENETDOWN
-int Event::wait() throw()
+int EvSelect::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).wait()" << endl;
+	cout << "select.wait()" << endl;
 	#endif
 	
 	#ifdef EV_SELECT_COPY
@@ -177,10 +157,10 @@ int Event::wait() throw()
 	return nfds;
 }
 
-int Event::add(fd_t fd, ev_t events) throw()
+int EvSelect::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).add(fd: " << fd << ")" << endl;
+	cout << "select.add(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -221,16 +201,16 @@ int Event::add(fd_t fd, ev_t events) throw()
 	return rc;
 }
 
-int Event::modify(fd_t fd, ev_t events) throw()
+int EvSelect::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event::modify(fd: " << fd << ")" << endl;
+	cout << "select.modify(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
 	
 	// act like a wrapper.
-	if (fIsSet(events, read) or fIsSet(events, write) or fIsSet(events, error))
+	if (events != 0)
 		add(fd, events);
 	
 	if (!fIsSet(events, read))
@@ -263,10 +243,10 @@ int Event::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int Event::remove(fd_t fd) throw()
+int EvSelect::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event(select).remove(fd: " << fd << ")" << endl;
+	cout << "select.remove(fd: " << fd << ")" << endl;
 	#endif
 	
 	assert(fd != INVALID_SOCKET);
@@ -299,7 +279,7 @@ int Event::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Event::getEvent(fd_t &fd, ev_t &events) throw()
+bool EvSelect::getEvent(fd_t &fd, ev_t &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{
