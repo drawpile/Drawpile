@@ -32,6 +32,7 @@
 template <typename Evs>
 struct EventTraits
 {
+	/*
 	static const bool
 		hasHangup = false,
 		hasError = false,
@@ -46,6 +47,7 @@ struct EventTraits
 		Connect,
 		Error,
 		Hangup;
+	*/
 };
 
 #endif // EventTraits_INCLUDED

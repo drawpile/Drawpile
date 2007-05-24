@@ -2397,7 +2397,7 @@ int Server::run() throw()
 		switch (ev.wait())
 		{
 		case -1:
-			cerr << "- Error in event system: " << ev.getError() << endl;
+			cerr << "- Error in event system: "/* << ev.getError()*/ << endl;
 			state = Server::Error;
 			return -1;
 		case 0:

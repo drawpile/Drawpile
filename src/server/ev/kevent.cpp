@@ -38,7 +38,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-EvKevent::EvKevent() throw()
+EventKevent::EventKevent() throw()
 	: evfd(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -79,7 +79,7 @@ EvKevent::EvKevent() throw()
 	}
 }
 
-EvKevent::~EvKevent() throw()
+EventKevent::~EventKevent() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~kevent()" << endl;
@@ -95,7 +95,7 @@ EvKevent::~EvKevent() throw()
 	assert(evfd == -1);
 }
 
-int EvKevent::wait() throw()
+int EventKevent::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.wait()" << endl;
@@ -129,7 +129,7 @@ int EvKevent::wait() throw()
 	return nfds;
 }
 
-int EvKevent::add(fd_t fd, ev_t events) throw()
+int EventKevent::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.add(FD: " << fd << ")" << endl;
@@ -169,7 +169,7 @@ int EvKevent::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int EvKevent::modify(fd_t fd, ev_t events) throw()
+int EventKevent::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.modify(FD: " << fd << ")" << endl;
@@ -208,7 +208,7 @@ int EvKevent::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int EvKevent::remove(fd_t fd, ev_t events) throw()
+int EventKevent::remove(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.remove(FD: " << fd << ")" << endl;
@@ -243,7 +243,7 @@ int EvKevent::remove(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-bool EvKevent::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool EventKevent::getEvent(fd_t &fd, int &r_events) throw()
 {
 	if (nfds == -1)
 		return false;
@@ -255,7 +255,7 @@ bool EvKevent::getEvent(fd_t &fd, ev_t &r_events) throw()
 	return true;
 }
 
-void EvKevent::timeout(uint msecs) throw()
+void EventKevent::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "kevent.timeout(msecs: " << msecs << ")" << std::endl;

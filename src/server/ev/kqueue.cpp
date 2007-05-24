@@ -38,7 +38,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-EvKqueue::EvKqueue() throw(std::bad_alloc)
+EventKqueue::EventKqueue() throw(std::bad_alloc)
 	: evfd(0),
 	chlist_count(0),
 	evtrigr_size(max_events)
@@ -57,7 +57,7 @@ EvKqueue::EvKqueue() throw(std::bad_alloc)
 	evtrigr = new kevent[evtrigr_size];
 }
 
-EvKqueue::~EvKqueue() throw()
+EventKqueue::~EventKqueue() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~kqueue()" << endl;
@@ -76,7 +76,7 @@ EvKqueue::~EvKqueue() throw()
 }
 
 // Errors: EACCES, ENOMEM
-int EvKqueue::wait() throw()
+int EventKqueue::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.wait()" << endl;
@@ -106,7 +106,7 @@ int EvKqueue::wait() throw()
 	return nfds;
 }
 
-int EvKqueue::add(fd_t fd, ev_t events) throw()
+int EventKqueue::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.add(FD: " << fd << ")" << endl;
@@ -122,7 +122,7 @@ int EvKqueue::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int EvKqueue::modify(fd_t fd, ev_t events) throw()
+int EventKqueue::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.modify(FD: " << fd << ")" << endl;
@@ -138,7 +138,7 @@ int EvKqueue::modify(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int EvKqueue::remove(fd_t fd) throw()
+int EventKqueue::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.remove(FD: " << fd << ")" << endl;
@@ -154,7 +154,7 @@ int EvKqueue::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EvKqueue::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool EventKqueue::getEvent(fd_t &fd, int &r_events) throw()
 {
 	if (nfds == evtrigr_size)
 		return false;
@@ -169,7 +169,7 @@ bool EvKqueue::getEvent(fd_t &fd, ev_t &r_events) throw()
 	return true;
 }
 
-void EvKqueue::timeout(uint msecs) throw()
+void EventKqueue::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "kqueue.timeout(msecs: " << msecs << ")" << std::endl;

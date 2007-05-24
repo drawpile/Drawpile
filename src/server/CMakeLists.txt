@@ -70,7 +70,7 @@ if ( WIN32 )
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
-link_libraries( libevent ) # this name might conflict
+link_libraries( events ) # this name might conflict
 
 add_subdirectory ( ev/ ) # events lib
 
@@ -86,6 +86,8 @@ add_executable (
 	sockets.cpp
 	${WIN32RES}
 )
+
+add_dependencies ( drawpile-srv eventslib libdrawpile )
 
 set_target_properties (
 	${INTERNALNAME}

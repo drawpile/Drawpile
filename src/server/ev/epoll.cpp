@@ -38,7 +38,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-EvEpoll::EvEpoll() throw(std::exception)
+EventEpoll::EventEpoll() throw(std::exception)
 	: evfd(0), nfds(-1)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -58,10 +58,10 @@ EvEpoll::EvEpoll() throw(std::exception)
 	}
 }
 
-EvEpoll::~EvEpoll() throw()
+EventEpoll::~EventEpoll() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~Event()" << endl;
+	cout << "~epoll()" << endl;
 	#endif
 	
 	if (evfd != -1)
@@ -74,7 +74,7 @@ EvEpoll::~EvEpoll() throw()
 	assert(evfd == -1);
 }
 
-int EvEpoll::wait() throw()
+int EventEpoll::wait() throw()
 {
 	assert(evfd != 0);
 	
@@ -100,7 +100,7 @@ int EvEpoll::wait() throw()
 }
 
 // Errors: ENOMEM
-int EvEpoll::add(fd_t fd, ev_t events) throw()
+int EventEpoll::add(fd_t fd, int events) throw()
 {
 	assert(evfd != 0);
 	
@@ -131,7 +131,7 @@ int EvEpoll::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int EvEpoll::modify(fd_t fd, ev_t events) throw()
+int EventEpoll::modify(fd_t fd, int events) throw()
 {
 	assert(evfd != 0);
 	
@@ -162,7 +162,7 @@ int EvEpoll::modify(fd_t fd, ev_t events) throw()
 }
 
 // Errors: ENOMEM
-int EvEpoll::remove(fd_t fd) throw()
+int EventEpoll::remove(fd_t fd) throw()
 {
 	assert(evfd != 0);
 	
@@ -188,7 +188,7 @@ int EvEpoll::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EvEpoll::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
 {
 	assert(evfd != 0);
 	
@@ -202,7 +202,7 @@ bool EvEpoll::getEvent(fd_t &fd, ev_t &r_events) throw()
 	return true;
 }
 
-void EvEpoll::timeout(uint msecs) throw()
+void EventEpoll::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	cout << "epoll.timeout(msecs: " << msecs << ")" << endl;

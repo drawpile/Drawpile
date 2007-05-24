@@ -27,7 +27,6 @@
 *******************************************************************************/
 
 #include "select.h"
-#include "../shared/templates.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -39,7 +38,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-EvSelect::EvSelect() throw()
+EventSelect::EventSelect() throw()
 	#ifndef WIN32
 	: nfds_r(0),
 	nfds_w(0),
@@ -55,7 +54,7 @@ EvSelect::EvSelect() throw()
 	FD_ZERO(&fds_e);
 }
 
-EvSelect::~EvSelect() throw()
+EventSelect::~EventSelect() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~select()" << endl;
@@ -63,7 +62,7 @@ EvSelect::~EvSelect() throw()
 }
 
 // Errors: WSAENETDOWN
-int EvSelect::wait() throw()
+int EventSelect::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.wait()" << endl;
@@ -151,7 +150,7 @@ int EvSelect::wait() throw()
 	return nfds;
 }
 
-int EvSelect::add(fd_t fd, ev_t events) throw()
+int EventSelect::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.add(fd: " << fd << ")" << endl;
@@ -161,7 +160,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, EventTraits<EventWSA>::Read))
+	if (fIsSet(events, EventTraits<EventSelect>::Read))
 	{
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -170,7 +169,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Write))
+	if (fIsSet(events, EventTraits<EventSelect>::Write))
 	{
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -179,7 +178,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Error))
+	if (fIsSet(events, EventTraits<EventSelect>::Error))
 	{
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -195,7 +194,7 @@ int EvSelect::add(fd_t fd, ev_t events) throw()
 	return rc;
 }
 
-int EvSelect::modify(fd_t fd, ev_t events) throw()
+int EventSelect::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.modify(fd: " << fd << ")" << endl;
@@ -207,7 +206,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, EventTraits<EventWSA>::Read))
+	if (!fIsSet(events, EventTraits<EventSelect>::Read))
 	{
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
@@ -216,7 +215,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, EventTraits<EventWSA>::Write))
+	if (!fIsSet(events, EventTraits<EventSelect>::Write))
 	{
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
@@ -225,7 +224,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, EventTraits<EventWSA>::Error))
+	if (!fIsSet(events, EventTraits<EventSelect>::Error))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
@@ -237,7 +236,7 @@ int EvSelect::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int EvSelect::remove(fd_t fd) throw()
+int EventSelect::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.remove(fd: " << fd << ")" << endl;
@@ -273,7 +272,7 @@ int EvSelect::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EvSelect::getEvent(fd_t &fd, ev_t &events) throw()
+bool EventSelect::getEvent(fd_t &fd, int &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{
@@ -283,11 +282,11 @@ bool EvSelect::getEvent(fd_t &fd, ev_t &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, EventTraits<EventWSA>::Read);
+			fSet(events, EventTraits<EventSelect>::Read);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, EventTraits<EventWSA>::Write);
+			fSet(events, EventTraits<EventSelect>::Write);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, EventTraits<EventWSA>::Error);
+			fSet(events, EventTraits<EventSelect>::Error);
 		
 		if (events != 0)
 			return true;
@@ -296,7 +295,7 @@ bool EvSelect::getEvent(fd_t &fd, ev_t &events) throw()
 	return false;
 }
 
-void EvSelect::timeout(uint msecs) throw()
+void EventSelect::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "select.timeout(msecs: " << msecs << ")" << std::endl;

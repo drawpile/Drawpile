@@ -40,7 +40,8 @@
 #endif
 
 #ifdef WIN32
-	#include <winsock2.h>
+	//#include <winsock2.h>
+	#include "../sockets.h"
 #else
 	#include <sys/select.h>
 #endif

@@ -37,7 +37,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-EvWSA::EvWSA() throw()
+EventWSA::EventWSA() throw()
 	: last_event(0),
 	_error(0),
 	nfds(0)
@@ -52,7 +52,7 @@ EvWSA::EvWSA() throw()
 		w_ev[i] = WSA_INVALID_EVENT;
 }
 
-EvWSA::~EvWSA() throw()
+EventWSA::~EventWSA() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~wsa()" << endl;
@@ -60,7 +60,7 @@ EvWSA::~EvWSA() throw()
 }
 
 // Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
-int EvWSA::wait() throw()
+int EventWSA::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.wait()" << endl;
@@ -97,7 +97,7 @@ int EvWSA::wait() throw()
 }
 
 // Errors: WSAENETDOWN
-int EvWSA::add(fd_t fd, ev_t events) throw()
+int EventWSA::add(fd_t fd, long events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.add(fd: " << fd << ")" << endl;
@@ -146,7 +146,7 @@ int EvWSA::add(fd_t fd, ev_t events) throw()
 }
 
 // Errors: WSAENETDOWN
-int EvWSA::modify(fd_t fd, ev_t events) throw()
+int EventWSA::modify(fd_t fd, long events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.modify(fd: " << fd << ")" << endl;
@@ -203,7 +203,7 @@ int EvWSA::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int EvWSA::remove(fd_t fd) throw()
+int EventWSA::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.remove(fd: " << fd << ")" << endl;
@@ -229,7 +229,7 @@ int EvWSA::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EvWSA::getEvent(fd_t &fd, ev_t &events) throw()
+bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 {
 	uint get_event = nfds - WSA_WAIT_EVENT_0;
 	WSANETWORKEVENTS set;
@@ -326,7 +326,7 @@ bool EvWSA::getEvent(fd_t &fd, ev_t &events) throw()
 	return false;
 }
 
-void EvWSA::timeout(uint msecs) throw()
+void EventWSA::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "WSA.timeout(msecs: " << msecs << ")" << std::endl;

@@ -27,7 +27,6 @@
 *******************************************************************************/
 
 #include "pselect.h"
-#include "../shared/templates.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -39,7 +38,7 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-EvPselect::EvPselect() throw()
+EventPselect::EventPselect() throw()
 	#if !defined(WIN32)
 	: nfds_r(0),
 	nfds_w(0),
@@ -57,7 +56,7 @@ EvPselect::EvPselect() throw()
 	sigemptyset(&_sigmask); // prepare sigmask
 }
 
-EvPselect::~EvPselect() throw()
+EventPselect::~EventPselect() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~pselect()" << endl;
@@ -65,7 +64,7 @@ EvPselect::~EvPselect() throw()
 }
 
 // Errors: WSAENETDOWN
-int EvPselect::wait() throw()
+int EventPselect::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.wait()" << endl;
@@ -121,7 +120,7 @@ int EvPselect::wait() throw()
 	return nfds;
 }
 
-int EvPselect::add(fd_t fd, ev_t events) throw()
+int EventPselect::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.add(fd: " << fd << ")" << endl;
@@ -131,21 +130,21 @@ int EvPselect::add(fd_t fd, ev_t events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, EventTraits<EventWSA>::Read))
+	if (fIsSet(events, EventTraits<EventPselect>::Read))
 	{
 		FD_SET(fd, &fds_r);
 		read_set.insert(read_set.end(), fd);
 		nfds_r = *(read_set.end());
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Write))
+	if (fIsSet(events, EventTraits<EventPselect>::Write))
 	{
 		FD_SET(fd, &fds_w);
 		write_set.insert(write_set.end(), fd);
 		nfds_w = *(--write_set.end());
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Error))
+	if (fIsSet(events, EventTraits<EventPselect>::Error))
 	{
 		FD_SET(fd, &fds_e);
 		error_set.insert(error_set.end(), fd);
@@ -159,7 +158,7 @@ int EvPselect::add(fd_t fd, ev_t events) throw()
 	return rc;
 }
 
-int EvPselect::modify(fd_t fd, ev_t events) throw()
+int EventPselect::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.modify(fd: " << fd << ")" << endl;
@@ -171,21 +170,21 @@ int EvPselect::modify(fd_t fd, ev_t events) throw()
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, EventTraits<EventWSA>::Read))
+	if (!fIsSet(events, EventTraits<EventPselect>::Read))
 	{
 		FD_CLR(fd, &fds_r);
 		read_set.erase(fd);
 		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
 	}
 	
-	if (!fIsSet(events, EventTraits<EventWSA>::Write))
+	if (!fIsSet(events, EventTraits<EventPselect>::Write))
 	{
 		FD_CLR(fd, &fds_w);
 		write_set.erase(fd);
 		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 	}
 	
-	if (!fIsSet(events, EventTraits<EventWSA>::Error))
+	if (!fIsSet(events, EventTraits<EventPselect>::Error))
 	{
 		FD_CLR(fd, &fds_e);
 		error_set.erase(fd);
@@ -195,7 +194,7 @@ int EvPselect::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int EvPselect::remove(fd_t fd) throw()
+int EventPselect::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.remove(fd: " << fd << ")" << endl;
@@ -225,7 +224,7 @@ int EvPselect::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EvPselect::getEvent(fd_t &fd, ev_t &events) throw()
+bool EventPselect::getEvent(fd_t &fd, int &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{
@@ -235,11 +234,11 @@ bool EvPselect::getEvent(fd_t &fd, ev_t &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, EventTraits<EventWSA>::Read);
+			fSet(events, EventTraits<EventPselect>::Read);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, EventTraits<EventWSA>::Write);
+			fSet(events, EventTraits<EventPselect>::Write);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, EventTraits<EventWSA>::Error);
+			fSet(events, EventTraits<EventPselect>::Error);
 		
 		if (events != 0)
 			return true;
@@ -248,7 +247,7 @@ bool EvPselect::getEvent(fd_t &fd, ev_t &events) throw()
 	return false;
 }
 
-void EvPselect::timeout(uint msecs) throw()
+void EventPselect::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "pselect.timeout(msecs: " << msecs << ")" << std::endl;

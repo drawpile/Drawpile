@@ -34,7 +34,7 @@
 #include <ctime>
 
 #ifdef WIN32
-//#include <winsock2.h>
+#include <winsock2.h>
 typedef SOCKET fd_t;
 #else
 typedef int fd_t;
