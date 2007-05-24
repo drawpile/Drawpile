@@ -22,7 +22,7 @@ option ( PSELECT "Enable pselect(2) support" OFF )
 option ( KQUEUE "Enable kqueue(2) support" OFF )
 option ( KEVENT "Enable kevent(2) support" OFF )
 option ( WSA "Enable WSA event support" OFF ) # still broken
-#option ( SELECT "Enable select(2) support" ON )
+option ( SELECT "Enable select(2) support" ON )
 
 option ( DEFLATE "Enable deflate compression" ON )
 
@@ -94,7 +94,7 @@ include ( TestBigEndian ) # needs C in project()
 test_big_endian ( IS_BIG_ENDIAN )
 
 ### Output config.h ###
-configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/config.h )
+configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
 
 # scan sub-directories

@@ -58,7 +58,7 @@ endif ( HAVE_FORK )
 
 # config
 
-configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/server/config.h )
+configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_SRVCONFIG )
 
 set ( WIN32RES "" )
