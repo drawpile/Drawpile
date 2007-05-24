@@ -49,7 +49,7 @@ SessionState::SessionState(HostState *parent, const Session& info)
 	users_[host_->localUser().id()] = User(
 			host_->localUser().name(),
 			host_->localUser().id(),
-			fIsSet(info.mode, protocol::user_mode::Locked),
+			fIsSet(info.mode, static_cast<quint8>(protocol::user_mode::Locked)),
 			this
 			);
 }
@@ -325,7 +325,7 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 				qDebug() << "Got join event for user " << int(msg->user_id)
 					<< "who is already in session!";
 			} else {
-				bool islocked = fIsSet(msg->mode, protocol::user_mode::Locked);
+				bool islocked = fIsSet(msg->mode, static_cast<quint8>(protocol::user_mode::Locked));
 				users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
 				emit userJoined(msg->user_id);
 			}

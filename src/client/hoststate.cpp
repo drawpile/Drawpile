@@ -214,9 +214,9 @@ void HostState::host(const QString& title,
 	
 	msg->session_id = protocol::Global;
 	if(allowdraw==false)
-		fSet(msg->user_mode, protocol::user_mode::Locked);
+		fSet(msg->user_mode, static_cast<quint8>(protocol::user_mode::Locked));
 	if(allowchat==false)
-		fSet(msg->user_mode, protocol::user_mode::Mute);
+		fSet(msg->user_mode, static_cast<quint8>(protocol::user_mode::Mute));
 	
 	if (msg->title_len != 0)
 	{
@@ -256,12 +256,12 @@ void HostState::sendPassword(const QString& password)
 	msg->session_id = passwordsession_;
 	const QByteArray pass = password.toUtf8();
 	SHA1 hash;
-	hash.Update(reinterpret_cast<const uint8_t*>(pass.constData()),
+	hash.Update(reinterpret_cast<const quint8*>(pass.constData()),
 			pass.length());
-	hash.Update(reinterpret_cast<const uint8_t*>(passwordseed_.constData()),
+	hash.Update(reinterpret_cast<const quint8*>(passwordseed_.constData()),
 			passwordseed_.length());
 	hash.Final();
-	hash.GetHash(reinterpret_cast<uint8_t*>(msg->data));
+	hash.GetHash(reinterpret_cast<quint8*>(msg->data));
 	net_->send(msg);
 }
 
@@ -374,6 +374,7 @@ void HostState::joinLatest()
 	SessionList::const_iterator i = sessions_.constEnd();
 	do {
 		--i;
+		qDebug() << i->owner << " vs " << localuser_.id(); 
 		if(i->owner == localuser_.id()) {
 			join(i->id);
 			found = true;

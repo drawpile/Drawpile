@@ -325,9 +325,9 @@ public:
 	void setUTF16(const bool x)
 	{
 		if (x)
-			fSet(requirements, protocol::requirements::WideStrings );
+			fSet(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings));
 		else
-			fClr(requirements, protocol::requirements::WideStrings );
+			fClr(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings));
 	}
 	
 	//! Set default user mode

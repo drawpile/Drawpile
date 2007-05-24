@@ -114,6 +114,7 @@ Server::Server() throw()
 
 Server::~Server() throw()
 {
+	// TODO: Memory cleanup
 }
 
 const uint8_t Server::getUserID() throw()
@@ -1355,7 +1356,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				cout << "- No title set for session." << endl;
 			#endif
 			
-			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
+			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
 				and !validateSessionTitle(msg.title, msg.title_len))
 			{
 				#ifndef NDEBUG
@@ -1590,7 +1591,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			usr->name = msg.name;
 			usr->name_len = msg.length;
 			
-			if (fIsSet(requirements, protocol::requirements::EnforceUnique)
+			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
 				and !validateUserName(usr))
 			{
 				#ifndef NDEBUG
@@ -2155,10 +2156,10 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	switch (reason)
 	{
 		case protocol::UserInfo::BrokenPipe:
-			cout << "- User #" << usr->id << "[" << usr->sock.address() << "] lost (broken pipe)" << endl;
+			cout << "- User #" << usr->id << " [" << usr->sock.address() << "] lost (broken pipe)" << endl;
 			break;
 		case protocol::UserInfo::Disconnect:
-			cout << "- User #" << usr->id << "[" << usr->sock.address() << "] disconnected" << endl;
+			cout << "- User #" << usr->id << " [" << usr->sock.address() << "] disconnected" << endl;
 			break;
 		default:
 			// do nothing

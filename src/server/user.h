@@ -54,9 +54,9 @@ struct SessionData
 		: session(s),
 		layer(protocol::null_layer),
 		layer_lock(protocol::null_layer),
-		locked(fIsSet(s->mode, protocol::user_mode::Locked)),
-		muted(fIsSet(s->mode, protocol::user_mode::Mute)),
-		deaf(fIsSet(s->mode, protocol::user_mode::Deaf)),
+		locked(fIsSet(s->mode, static_cast<uint8_t>(protocol::user_mode::Locked))),
+		muted(fIsSet(s->mode, static_cast<uint8_t>(protocol::user_mode::Mute))),
+		deaf(fIsSet(s->mode, static_cast<uint8_t>(protocol::user_mode::Deaf))),
 		syncWait(false),
 		cachedToolInfo(0)
 	{
@@ -89,9 +89,9 @@ struct SessionData
 	
 	void setMode(const uint8_t flags) throw()
 	{
-		locked = fIsSet(flags, protocol::user_mode::Locked);
-		muted = fIsSet(flags, protocol::user_mode::Mute);
-		deaf = fIsSet(flags, protocol::user_mode::Deaf);
+		locked = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Locked));
+		muted = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Mute));
+		deaf = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Deaf));
 	}
 	
 	bool syncWait;
@@ -255,7 +255,7 @@ struct User
 	
 	void setCapabilities(const uint8_t flags) throw()
 	{
-		c_acks = fIsSet(flags, protocol::client::AckFeedback);
+		c_acks = fIsSet(flags, static_cast<uint8_t>(protocol::client::AckFeedback));
 	}
 	
 	// extensions
@@ -270,9 +270,9 @@ struct User
 	
 	void setExtensions(const uint8_t flags) throw()
 	{
-		ext_deflate = fIsSet(flags, protocol::extensions::Deflate);
-		ext_chat = fIsSet(flags, protocol::extensions::Chat);
-		ext_palette = fIsSet(flags, protocol::extensions::Palette);
+		ext_deflate = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Deflate));
+		ext_chat = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Chat));
+		ext_palette = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Palette));
 	}
 	
 	uint
@@ -293,9 +293,9 @@ struct User
 	
 	void setAMode(const uint8_t flags) throw()
 	{
-		a_locked = fIsSet(flags, protocol::user_mode::Locked);
-		a_muted = fIsSet(flags, protocol::user_mode::Mute);
-		a_deaf = fIsSet(flags, protocol::user_mode::Deaf);
+		a_locked = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Locked));
+		a_muted = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Mute));
+		a_deaf = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Deaf));
 	}
 	
 	// Subscribed sessions

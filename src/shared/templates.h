@@ -112,8 +112,8 @@ T& memcpy_t(T& dst, const char* src) throw()
  *
  * @return modified flag container.
  */
-template <typename T, typename U> inline
-T& fSet(T& u, const U& x) throw()
+template <typename T> inline
+T& fSet(T& u, const T& x) throw()
 {
 	return u |= x;
 }
@@ -125,8 +125,8 @@ T& fSet(T& u, const U& x) throw()
  *
  * @return modified flag container.
  */
-template <typename T, typename U> inline
-T& fClr(T& u, const U& x) throw()
+template <typename T> inline
+T& fClr(T& u, const T& x) throw()
 {
 	return u &= ~x;
 }
@@ -138,8 +138,8 @@ T& fClr(T& u, const U& x) throw()
  *
  * @return test result
  */
-template <typename T, typename U> inline
-bool fIsSet(const T& u, const U& x) throw()
+template <typename T> inline
+bool fIsSet(const T& u, const T& x) throw()
 {
 	return (u & x) == x;
 }

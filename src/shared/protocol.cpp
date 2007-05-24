@@ -51,10 +51,10 @@ namespace protocol {
 
 Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags) throw()
 	: headerSize(_header),
-	isUser(fIsSet(_flags, protocol::message::isUser)),
-	isSession(fIsSet(_flags, protocol::message::isSession)),
-	isSelected(fIsSet(_flags, protocol::message::isSelected)),
-	isBundling(fIsSet(_flags, protocol::message::isBundling)),
+	isUser(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isUser))),
+	isSession(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isSession))),
+	isSelected(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isSelected))),
+	isBundling(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isBundling))),
 	type(_type),
 	next(0),
 	prev(0)
