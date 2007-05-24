@@ -71,12 +71,10 @@ endif ( SELECT )
 if ( NOT EV_FOUND )
 	message ( FATAL_ERROR "No event mechanism found!" )
 else ( NOT EV_FOUND)
-	message ( STATUS "Event system/s: ${EVS}" )
+	message ( STATUS "Event systems: ${EVS}" )
 endif ( NOT EV_FOUND )
 
 # config
-
-message ( STATUS ${CMAKE_CURRENT_SOURCE_DIR} )
 
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_EVCONFIG )
