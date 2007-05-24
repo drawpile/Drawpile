@@ -17,11 +17,12 @@ set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile server" ON )
 
-option ( EPOLL "Enable epoll(4) support" ON )
-option ( PSELECT "Enable pselect(2) support" ON )
-option ( KQUEUE "Enable kqueue(2) support" ON )
+option ( EPOLL "Enable epoll(4) support" OFF )
+option ( PSELECT "Enable pselect(2) support" OFF )
+option ( KQUEUE "Enable kqueue(2) support" OFF )
 option ( KEVENT "Enable kevent(2) support" OFF )
 option ( WSA "Enable WSA event support" OFF ) # still broken
+#option ( SELECT "Enable select(2) support" ON )
 
 option ( DEFLATE "Enable deflate compression" ON )
 
@@ -30,8 +31,6 @@ option ( OPTIMIZE "Apply several optimization flags" ON )
 option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
-
-option ( GNUEXT "Use GNU extensions" ON )
 
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
 
