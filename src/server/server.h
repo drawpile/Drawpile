@@ -183,7 +183,7 @@ protected:
 	// Process stroke info, stroke end and tool info
 	void uHandleDrawing(User& usr) throw();
 	
-	void uHandlePassword(User*& usr) throw();
+	void uHandlePassword(User& usr) throw();
 	
 	// Handle user message.
 	void uHandleMsg(User*& usr) throw(std::bad_alloc);
@@ -224,7 +224,7 @@ protected:
 	void breakSync(User& usr) throw();
 	
 	//
-	void uJoinSession(User* usr, Session* session) throw();
+	void uJoinSession(User& usr, Session& session) throw();
 	
 	// Needs session reference because it might get destroyed.
 	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave) throw();

@@ -657,18 +657,17 @@ void Server::uHandleDrawing(User& usr) throw()
 }
 
 // calls uQueueMsg, Propagate, uJoinSession
-void Server::uHandlePassword(User*& usr) throw()
+void Server::uHandlePassword(User& usr) throw()
 {
-	assert(usr != 0);
-	assert(usr->inMsg != 0);
+	assert(usr.inMsg != 0);
 	
 	Session *session;
-	protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
+	protocol::Password &msg = *static_cast<protocol::Password*>(usr.inMsg);
 	if (msg.session_id == protocol::Global)
 	{
 		// Admin login
 		if (!a_password)
-			uQueueMsg(*usr, msgError(msg.session_id, protocol::error::PasswordFailure));
+			uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 		else
 		{
 			hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
@@ -678,17 +677,17 @@ void Server::uHandlePassword(User*& usr) throw()
 	}
 	else
 	{
-		if (usr->syncing != protocol::Global) // already syncing
-			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
+		if (usr.syncing != protocol::Global) // already syncing
+			uQueueMsg(usr, msgError(usr.inMsg->session_id, protocol::error::SyncInProgress));
 		else
 		{
 			session = getSession(msg.session_id);
 			if (session == 0) // session doesn't exist
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
+				uQueueMsg(usr, msgError(msg.session_id, protocol::error::UnknownSession));
 			else if (session->canJoin() == false)
-				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
-			else if (usr->getConstSession(msg.session_id) != 0) // already in session
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidRequest));
+				uQueueMsg(usr, msgError(usr.inMsg->session_id, protocol::error::SessionFull));
+			else if (usr.getConstSession(msg.session_id) != 0) // already in session
+				uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidRequest));
 			else
 			{
 				hash.Update(reinterpret_cast<uint8_t*>(session->password), session->pw_len);
@@ -699,27 +698,27 @@ void Server::uHandlePassword(User*& usr) throw()
 	}
 	
 	dohashing:
-	hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
+	hash.Update(reinterpret_cast<uint8_t*>(usr.seed), 4);
 	hash.Final();
 	char digest[protocol::password_hash_size];
 	hash.GetHash(reinterpret_cast<uint8_t*>(digest));
 	hash.Reset();
 	
 	if (memcmp(digest, msg.data, protocol::password_hash_size) != 0) // mismatch
-		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::PasswordFailure));
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 	else
 	{
 		// ACK the password
-		uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::Password));
+		uQueueMsg(usr, msgAck(msg.session_id, protocol::Message::Password));
 		
 		if (msg.session_id == protocol::Global)
-			usr->isAdmin = true;
+			usr.isAdmin = true;
 		else
-			uJoinSession(usr, session);
+			uJoinSession(usr, *session);
 	}
 	
 	// invalidate previous seed
-	uRegenSeed(*usr);
+	uRegenSeed(usr);
 }
 
 // May delete User*
@@ -820,7 +819,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				else // join session
 				{
 					uQueueMsg(*usr, msgAck(usr->inMsg->session_id, protocol::Message::Subscribe));
-					uJoinSession(usr, session);
+					uJoinSession(*usr, *session);
 				}
 			}
 			else // already subscribed
@@ -898,7 +897,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			uQueueMsg(*usr, msgPWRequest(*usr, protocol::Global));
 		break;
 	case protocol::Message::Password:
-		uHandlePassword(usr);
+		uHandlePassword(*usr);
 		break;
 	default:
 		cerr << "- Invalid data from user: #" << usr->id << " (dropping)" << endl;
@@ -1130,8 +1129,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			{
 				Propagate(*session, message_ref(&event));
 				usr->inMsg = 0;
-				User *usr_ptr = sui->second;
-				uLeaveSession(*usr_ptr, session, protocol::UserInfo::Kicked);
+				User &usr_ref = *sui->second;
+				uLeaveSession(usr_ref, session, protocol::UserInfo::Kicked);
 			}
 		}
 		break;
@@ -1166,10 +1165,10 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				uQueueMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
 				break;
 			}
-			User *usr = session_usr->second;
+			User &usr_ref = *session_usr->second;
 			
 			// Find user's session instance (SessionData*)
-			SessionData *sdata = usr->getSession(session->id);
+			SessionData *sdata = usr_ref.getSession(session->id);
 			if (sdata == 0)
 				uQueueMsg(*usr, msgError(session->id, protocol::error::NotInSession));
 			else if (event.aux == protocol::null_layer)
@@ -1178,8 +1177,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				sdata->locked = (event.action == protocol::SessionEvent::Lock);
 				
 				// Copy active session
-				if (usr->session->id == event.session_id)
-					usr->a_locked = sdata->locked;
+				if (usr_ref.session->id == event.session_id)
+					usr_ref.a_locked = sdata->locked;
 			}
 			else if (event.action == protocol::SessionEvent::Lock)
 			{
@@ -1190,14 +1189,14 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				
 				sdata->layer_lock = event.aux;
 				// copy to active session
-				if (session->id == usr->session->id)
-					usr->a_layer_lock = event.aux;
+				if (session->id == usr_ref.session->id)
+					usr_ref.a_layer_lock = event.aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
 				if (sdata->layer != sdata->layer_lock)
 					sdata->layer = protocol::null_layer;
-				if (usr->session->id == event.session_id)
-					usr->layer = protocol::null_layer;
+				if (usr_ref.session->id == event.session_id)
+					usr_ref.layer = protocol::null_layer;
 			}
 			else // unlock
 			{
@@ -1209,8 +1208,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				sdata->layer_lock = protocol::null_layer;
 				
 				// copy to active session
-				if (session->id == usr->session->id)
-					usr->a_layer_lock = protocol::null_layer;
+				if (session->id == usr_ref.session->id)
+					usr_ref.a_layer_lock = protocol::null_layer;
 			}
 		}
 		
@@ -1914,59 +1913,56 @@ void Server::SyncSession(Session* session) throw()
 	session->waitingSync.clear();
 }
 
-void Server::uJoinSession(User* usr, Session* session) throw()
+void Server::uJoinSession(User& usr, Session& session) throw()
 {
-	assert(usr != 0);
-	assert(session != 0);
-	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Attaching user #" << usr->id << " to session #" << session->id << endl;
+	cout << "[Server] Attaching user #" << usr.id << " to session #" << session.id << endl;
 	#endif
 	
 	// Add session to users session list.
-	SessionData *sdata = new SessionData(session);
-	usr->sessions[session->id] = sdata;
-	assert(usr->sessions[session->id]->session != 0);
+	SessionData *sdata = new SessionData(&session);
+	usr.sessions[session.id] = sdata;
+	assert(usr.sessions[session.id]->session != 0);
 	
 	// Remove locked and mute, if the user is the session's owner.
-	if (isOwner(*usr, *session))
+	if (isOwner(usr, session))
 	{
 		sdata->locked = false;
 		sdata->muted = false;
 	}
 	// Remove mute if the user is server admin.
-	else if (usr->isAdmin)
+	else if (usr.isAdmin)
 		sdata->muted = false;
 	
-	if (session->users.size() != 0)
+	if (session.users.size() != 0)
 	{
 		// Tell session members there's a new user.
-		Propagate(*session, msgUserEvent(*usr, session->id, protocol::UserInfo::Join));
+		Propagate(session, msgUserEvent(usr, session.id, protocol::UserInfo::Join));
 		
 		// put user to wait sync list.
 		//session->waitingSync.push_back(usr);
-		session->waitingSync.insert(session->waitingSync.begin(), usr);
-		usr->syncing = session->id;
+		session.waitingSync.insert(session.waitingSync.begin(), &usr);
+		usr.syncing = session.id;
 		
 		// don't start new client sync if one is already in progress...
-		if (session->syncCounter == 0)
+		if (session.syncCounter == 0)
 		{
 			// Put session to syncing state
-			session->syncCounter = session->users.size();
+			session.syncCounter = session.users.size();
 			
 			// tell session users to enter syncwait state.
-			Propagate(*session, msgSyncWait(session->id));
+			Propagate(session, msgSyncWait(session.id));
 		}
 	}
 	else
 	{
 		// session is empty
-		session->users[usr->id] = usr;
+		session.users[usr.id] = &usr;
 		
 		message_ref raster_ref(new protocol::Raster(0, 0, 0, 0));
-		raster_ref->session_id = session->id;
+		raster_ref->session_id = session.id;
 		
-		uQueueMsg(*usr, raster_ref);
+		uQueueMsg(usr, raster_ref);
 	}
 }
 
@@ -2361,7 +2357,7 @@ int Server::run() throw()
 	fd_t fd;
 	event_type<EventSystem>::ev_t events;
 	
-	users_i ui;
+	users_const_i ui;
 	
 	// main loop
 	do
