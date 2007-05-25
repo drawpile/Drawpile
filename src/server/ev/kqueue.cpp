@@ -34,6 +34,11 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
+template <>
+const int event_read<EventKqueue>::value = EVFILT_READ;
+template <>
+const int event_write<EventKqueue>::value = EVFILT_WRITE;
+
 using std::cout;
 using std::endl;
 using std::cerr;

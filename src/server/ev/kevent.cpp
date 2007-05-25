@@ -34,6 +34,15 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
+template <>
+const bool event_has_accept<EventKevent>::value = true;
+template <>
+const int event_read<EventKevent>::value = KEVENT_SOCKET_RECV;
+template <>
+const int event_write<EventKevent>::value = KEVENT_SOCKET_SEND;
+template <>
+const int event_accept<EventKevent>::value = KEVENT_SOCKET_ACCEPT;
+
 using std::cout;
 using std::endl;
 using std::cerr;

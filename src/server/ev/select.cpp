@@ -34,6 +34,15 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
+template <>
+const bool event_has_error<EventSelect>::value = true;
+template <>
+const int event_read<EventSelect>::value = 1;
+template <>
+const int event_write<EventSelect>::value = 2;
+template <>
+const int event_error<EventSelect>::value = 4;
+
 using std::cout;
 using std::endl;
 using std::cerr;
@@ -160,7 +169,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, EventTraits<EventSelect>::Read))
+	if (fIsSet(events, event_read<EventSelect>::value))
 	{
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -169,7 +178,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventSelect>::Write))
+	if (fIsSet(events, event_write<EventSelect>::value))
 	{
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -178,7 +187,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventSelect>::Error))
+	if (fIsSet(events, event_error<EventSelect>::value))
 	{
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -206,7 +215,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, EventTraits<EventSelect>::Read))
+	if (!fIsSet(events, event_read<EventSelect>::value))
 	{
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
@@ -215,7 +224,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, EventTraits<EventSelect>::Write))
+	if (!fIsSet(events, event_write<EventSelect>::value))
 	{
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
@@ -224,7 +233,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, EventTraits<EventSelect>::Error))
+	if (!fIsSet(events, event_error<EventSelect>::value))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
@@ -282,11 +291,11 @@ bool EventSelect::getEvent(fd_t &fd, int &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, EventTraits<EventSelect>::Read);
+			fSet(events, event_read<EventSelect>::value);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, EventTraits<EventSelect>::Write);
+			fSet(events, event_write<EventSelect>::value);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, EventTraits<EventSelect>::Error);
+			fSet(events, event_error<EventSelect>::value);
 		
 		if (events != 0)
 			return true;

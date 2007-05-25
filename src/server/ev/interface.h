@@ -31,6 +31,9 @@
 
 #include "config.h"
 #include "../common.h"
+
+#include "traits.h"
+
 #include <ctime>
 
 #ifdef WIN32
@@ -41,17 +44,19 @@ typedef int fd_t;
 #endif
 
 //! Event I/O abstraction
-template <typename ev_t>
+template <typename Evs>
 class EventInterface
 {
 protected:
 	int _error; // errno;
 public:
+	typedef typename event_type<Evs>::ev_t ev_t;
+	
 	//! ctor
 	EventInterface() throw();
 	
 	//! dtor
-	virtual ~EventInterface() throw() = 0;
+	virtual ~EventInterface() throw();
 	
 	//! Set timeout for wait()
 	/**
@@ -94,7 +99,7 @@ public:
 	//! Fetches next triggered event.
 	virtual bool getEvent(fd_t &fd, ev_t &events) throw() = 0;
 	
-	int getError() const throw() { return _error; }
+	int getError() const throw();
 };
 
 #endif // EventInterface_INCLUDED

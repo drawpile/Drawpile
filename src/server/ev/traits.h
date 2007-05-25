@@ -29,25 +29,80 @@
 #ifndef EventTraits_INCLUDED
 #define EventTraits_INCLUDED
 
+/* traits */
+
 template <typename Evs>
-struct EventTraits
+struct event_type
 {
-	/*
-	static const bool
-		hasHangup = false,
-		hasError = false,
-		hasAccept = false,
-		hasConnect = false,
-		usesSigmask = false;
-	
-	static const int
-		Read,
-		Write,
-		Accept,
-		Connect,
-		Error,
-		Hangup;
-	*/
+	typedef int ev_t;
+};
+
+template <typename Evs>
+struct event_has_hangup
+{
+	static const bool value = false;
+};
+
+template <typename Evs>
+struct event_has_error
+{
+	static const bool value = false;
+};
+
+template <typename Evs>
+struct event_has_connect
+{
+	static const bool value = false;
+};
+
+template <typename Evs>
+struct event_has_accept
+{
+	static const bool value = false;
+};
+
+template <typename Evs>
+struct event_has_sigmask
+{
+	static const bool value = false;
+};
+
+/* events */
+
+template <typename Evs>
+struct event_read
+{
+	static const int value = 0;
+};
+
+template <typename Evs>
+struct event_write
+{
+	static const int value = 0;
+};
+
+template <typename Evs>
+struct event_error
+{
+	static const int value = 0;
+};
+
+template <typename Evs>
+struct event_hangup
+{
+	static const int value = 0;
+};
+
+template <typename Evs>
+struct event_accept
+{
+	static const int value = 0;
+};
+
+template <typename Evs>
+struct event_connect
+{
+	static const int value = 0;
 };
 
 #endif // EventTraits_INCLUDED

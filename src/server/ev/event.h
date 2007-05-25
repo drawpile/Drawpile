@@ -24,12 +24,18 @@
 #if defined(EV_EPOLL)
 	#include "epoll.h"
 	typedef EventEpoll EventSystem;
+#elif defined(EV_KEVENT)
+	#include "kevent.h"
+	typedef EventKevent EventSystem;
 #elif defined(EV_KQUEUE)
 	#include "kqueue.h"
 	typedef EventKqueue EventSystem;
 #elif defined(EV_PSELECT)
 	#include "pselect.h"
 	typedef EventPselect EventSystem;
+#elif defined(EV_WSA)
+	#include "wsa.h"
+	typedef EventWSA EventSystem;
 #elif defined(EV_SELECT)
 	#include "select.h"
 	typedef EventSelect EventSystem;

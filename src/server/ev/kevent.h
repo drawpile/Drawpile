@@ -39,7 +39,7 @@
 #endif
 
 class EventKevent
-	: EventInterface<int>
+	: EventInterface<EventKevent>
 {
 private:
 	timeval _timeout;
@@ -57,26 +57,11 @@ public:
 	bool getEvent(fd_t &fd, int &events) throw();
 };
 
-template <>
-struct EventTraits<EventKevent>
-{
-	typedef int ev_t;
-	
-	static const bool hasHangup = false;
-	static const bool hasError = false;
-	static const bool hasAccept = true;
-	static const bool hasConnect = false;
-	static const bool usesSigmask = false;
-	
-	static const ev_t
-		Read=KEVENT_SOCKET_RECV,
-		Write=KEVENT_SOCKET_SEND,
-		Accept=KEVENT_SOCKET_ACCEPT;
-	
-	static const int
-		Connect,
-		Error,
-		Hangup;
-};
+/* traits */
+
+template <> struct event_has_accept<EventKevent> { static const bool value; };
+template <> struct event_read<EventKevent> { static const int value; };
+template <> struct event_write<EventKevent> { static const int value; };
+template <> struct event_accept<EventKevent> { static const int value; };
 
 #endif // EventKevent_INCLUDED

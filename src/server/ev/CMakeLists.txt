@@ -86,6 +86,7 @@ endif ( NOT DEBUG )
 add_library (
 	${LIBNAME}
 	STATIC
+	interface.cpp
 	${EV_SRC}
 )
 

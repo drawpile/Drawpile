@@ -41,7 +41,7 @@
 
 template <int max_events>
 class EventEpoll
-	: EventInterface<int>
+	: EventInterface<EventEpoll>
 {
 private:
 	uint _timeout;
@@ -60,26 +60,13 @@ public:
 	bool getEvent(fd_t &fd, int &events) throw();
 };
 
-template <>
-struct EventTraits<EventEpoll>
-{
-	typedef int ev_t;
-	
-	static const bool hasHangup = true;
-	static const bool hasError = true;
-	static const bool hasAccept = false;
-	static const bool hasConnect = false;
-	static const bool usesSigmask = false;
-	
-	static const int
-		Read=EPOLLIN,
-		Write=EPOLLOUT,
-		Error=EPOLLERR,
-		Hangup=EPOLLHUP;
-	
-	static const int
-		Accept,
-		Connect;
-};
+/* traits */
+
+template <> struct event_has_hangup<EventEpoll> { static const bool value; };
+template <> struct event_has_error<EventEpoll> { static const bool value; };
+template <> struct event_read<EventEpoll> { static const int value; };
+template <> struct event_write<EventEpoll> { static const int value; };
+template <> struct event_error<EventEpoll> { static const int value; };
+template <> struct event_hangup<EventEpoll> { static const int value; };
 
 #endif // EventEpoll_INCLUDED

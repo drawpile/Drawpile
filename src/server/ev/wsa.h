@@ -41,7 +41,7 @@
 #include <winsock2.h>
 
 class EventWSA
-	: EventInterface<long>
+	: EventInterface<EventWSA>
 {
 private:
 	uint _timeout;
@@ -69,12 +69,6 @@ struct EventTraits<EventWSA>
 {
 	typedef long ev_t;
 	
-	static const bool hasHangup = true;
-	static const bool hasError = false;
-	static const bool hasAccept = true;
-	static const bool hasConnect = true;
-	static const bool usesSigmask = false;
-	
 	static const long
 		Read=FD_READ,
 		Write=FD_WRITE,
@@ -85,5 +79,17 @@ struct EventTraits<EventWSA>
 	static const int
 		Error;
 };
+
+/* traits */
+
+template <> struct event_type<EventWSA> { typedef long ev_t; };
+template <> struct event_has_hangup<EventWSA> { static const bool value; };
+template <> struct event_has_connect<EventWSA> { static const bool value; };
+template <> struct event_has_accept<EventWSA> { static const bool value; };
+template <> struct event_read<EventWSA> { static const long value; };
+template <> struct event_write<EventWSA> { static const long value; };
+template <> struct event_hangup<EventWSA> { static const long value; };
+template <> struct event_accept<EventWSA> { static const long value; };
+template <> struct event_connect<EventWSA> { static const long value; };
 
 #endif // EventWSA_INCLUDED

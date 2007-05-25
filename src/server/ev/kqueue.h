@@ -43,7 +43,7 @@
 #include <sys/time.h>
 
 class EventKqueue
-	: EventInterface<int>
+	: EventInterface<EventKqueue>
 {
 private:
 	timespec _timeout;
@@ -62,26 +62,9 @@ public:
 	bool getEvent(fd_t &fd, int &events) throw();
 };
 
-template <>
-struct EventTraits<EventKqueue>
-{
-	typedef int ev_t;
-	
-	static const bool hasHangup = false;
-	static const bool hasError = false;
-	static const bool hasAccept = false;
-	static const bool hasConnect = false;
-	static const bool usesSigmask = false;
-	
-	static const int
-		Read=EVFILT_READ,
-		Write=EVFILT_WRITE;
-	
-	static const int
-		Accept,
-		Connect,
-		Error,
-		Hangup;
-};
+/* traits */
+
+template <> struct event_read<EventKqueue> { static const int value; };
+template <> struct event_write<EventKqueue> { static const int value; };
 
 #endif // EventKqueue_INCLUDED

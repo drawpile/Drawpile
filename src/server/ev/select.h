@@ -50,7 +50,7 @@
 #include <set>
 
 class EventSelect
-	: EventInterface<int>
+	: EventInterface<EventSelect>
 {
 private:
 	timeval _timeout;
@@ -74,26 +74,11 @@ public:
 	bool getEvent(fd_t &fd, int &events) throw();
 };
 
-template <>
-struct EventTraits<EventSelect>
-{
-	typedef int ev_t;
-	
-	static const bool hasHangup = false;
-	static const bool hasError = true;
-	static const bool hasAccept = false;
-	static const bool hasConnect = false;
-	static const bool usesSigmask = false;
-	
-	static const int
-		Read=1,
-		Write=2,
-		Error=4;
-	
-	static const int
-		Accept,
-		Connect,
-		Hangup;
-};
+/* traits */
+
+template <> struct event_has_error<EventSelect> { static const bool value; };
+template <> struct event_read<EventSelect> { static const int value; };
+template <> struct event_write<EventSelect> { static const int value; };
+template <> struct event_error<EventSelect> { static const int value; };
 
 #endif // EventSelect_INCLUDED
