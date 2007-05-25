@@ -254,6 +254,10 @@ protected:
 	void uRegenSeed(User& usr) const throw();
 	
 	bool isOwner(const User& usr, const Session& session) const throw();
+	
+	Session* getSession(const uint8_t session_id) throw();
+	const Session* getConstSession(const uint8_t session_id) const throw();
+	
 public:
 	//! ctor
 	Server() throw();

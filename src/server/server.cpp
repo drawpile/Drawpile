@@ -452,9 +452,8 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	cout << "[Server] Reading data from user #" << usr->id << endl;
 	#endif
 	
-	if (usr->input.free() == 0)
+	if (usr->input.free() == 0) // buffer full
 	{
-		// buffer full
 		#ifndef NDEBUG
 		cerr << "~ Input buffer full, increasing size by 4 kiB." << endl;
 		#endif
@@ -462,10 +461,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		usr->input.resize(usr->input.size + 4096);
 	}
 	
-	const int rb = usr->sock.recv(
-		usr->input.wpos,
-		usr->input.canWrite()
-	);
+	const int rb = usr->sock.recv( usr->input.wpos, usr->input.canWrite() );
 	
 	switch (rb)
 	{
@@ -576,7 +572,6 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 		(usr.name_len == 0 ? 0 : new char[usr.name_len])
 	);
 	
-	
 	uevent->user_id = usr.id;
 	uevent->session_id = session_id;
 	
@@ -673,50 +668,37 @@ void Server::uHandlePassword(User*& usr) throw()
 	{
 		// Admin login
 		if (!a_password)
-		{
-			#ifndef NDEBUG
-			cerr << "- User tries to pass password even though we've disallowed it." << endl;
-			#endif
 			uQueueMsg(*usr, msgError(msg.session_id, protocol::error::PasswordFailure));
-			return;
-		}
 		else
+		{
 			hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
+			goto dohashing;
+		}
+		return;
 	}
 	else
 	{
-		if (usr->syncing != protocol::Global)
-		{
-			// already syncing some session, so we don't bother handling this request.
+		if (usr->syncing != protocol::Global) // already syncing
 			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SyncInProgress));
-			return;
-		}
-		
-		sessions_const_i si(sessions.find(msg.session_id));
-		if (si == sessions.end())
-		{
-			// session doesn't exist
-			uQueueMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
-			return;
-		}
-		else if (si->second->canJoin() == false)
-		{
-			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
-			return;
-		}
-		else if (usr->getConstSession(msg.session_id) != 0)
-		{
-			// already in session
-			uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidRequest));
-			return;
-		}
 		else
 		{
-			hash.Update(reinterpret_cast<uint8_t*>(si->second->password), si->second->pw_len);
-			session = si->second;
+			session = getSession(msg.session_id);
+			if (session == 0) // session doesn't exist
+				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
+			else if (session->canJoin() == false)
+				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
+			else if (usr->getConstSession(msg.session_id) != 0) // already in session
+				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidRequest));
+			else
+			{
+				hash.Update(reinterpret_cast<uint8_t*>(session->password), session->pw_len);
+				goto dohashing;
+			}
 		}
+		return;
 	}
 	
+	dohashing:
 	hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 	hash.Final();
 	char digest[protocol::password_hash_size];
@@ -819,14 +801,12 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	case protocol::Message::Subscribe:
 		if (usr->syncing == protocol::Global)
 		{
-			const sessions_const_i si(sessions.find(usr->inMsg->session_id));
-			if (si == sessions.end())
+			Session *session = getSession(usr->inMsg->session_id);
+			if (session == 0)
 			{
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 				break;
 			}
-			
-			Session *session = si->second;
 			
 			if (usr->getConstSession(usr->inMsg->session_id) == 0)
 			{
@@ -864,14 +844,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::Message::SessionEvent:
 		{
-			const sessions_const_i si(sessions.find(usr->inMsg->session_id));
-			if (si == sessions.end())
+			Session *session = getSession(usr->inMsg->session_id);
+			if (session == 0)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 			else
-			{
-				Session *session = si->second;
 				uSessionEvent(session, usr);
-			}
 		}
 		break;
 	#ifdef LAYER_SUPPORT
@@ -1399,13 +1376,12 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		return; // because session owner might've done this
 	case protocol::SessionInstruction::Destroy:
 		{
-			const sessions_const_i si(sessions.find(msg.session_id));
-			if (si == sessions.end())
+			Session *session = getSession(msg.session_id);
+			if (session == 0)
 			{
 				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
 				return;
 			}
-			Session *session = si->second;
 			
 			// Check session ownership
 			if (!usr->isAdmin and !isOwner(*usr, *session))
@@ -1437,13 +1413,12 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::SessionInstruction::Alter:
 		{
-			const sessions_const_i si(sessions.find(msg.session_id));
-			if (si == sessions.end())
+			Session *session = getSession(msg.session_id);
+			if (session == 0)
 			{
 				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::UnknownSession));
 				break;
 			}
-			Session *session = si->second;
 			
 			// Check session ownership
 			if (!usr->isAdmin and !isOwner(*usr, *session))
@@ -1526,13 +1501,12 @@ void Server::uSetPassword(User*& usr) throw()
 	}
 	else
 	{
-		const sessions_const_i si(sessions.find(setpw.session_id));
-		if (si == sessions.end())
+		Session *session = getSession(setpw.session_id);
+		if (session == 0)
 		{
 			uQueueMsg(*usr, msgError(setpw.session_id, protocol::error::UnknownSession));
 			return;
 		}
-		Session *session = si->second;
 		
 		// Check session ownership
 		if (!usr->isAdmin and !isOwner(*usr, *session))
@@ -1740,14 +1714,13 @@ void Server::uLayerEvent(User*& usr) throw()
 	
 	protocol::LayerEvent &levent = *static_cast<protocol::LayerEvent*>(usr->inMsg);
 	
-	sessions_i si(sessions.find(levent.session_id));
-	if (si == sessions.end()) // session not found
+	Session *session = getSession(levent.session_id);
+	if (session == 0) // not found
 	{
 		uQueueMsg(*usr, msgError(levent.session_id, protocol::error::UnknownSession));
 		return;
 	}
 	
-	Session *session = si->second;
 	if (!isOwner(*usr, *session) and !usr->isAdmin)
 	{
 		uQueueMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
@@ -2196,10 +2169,10 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	
 	if (usr->syncing != 0)
 	{
-		sessions_i si(sessions.find(usr->syncing));
-		if (si != sessions.end())
+		Session *session = getSession(usr->syncing);
+		if (session != 0)
 		{
-			//si->second->waitingSync.erase(0); // FIXME
+			//session->waitingSync.erase(0); // FIXME
 		}
 	}
 	
@@ -2449,4 +2422,16 @@ int Server::run() throw()
 	while (state == Server::Active);
 	
 	return 0;
+}
+
+Session* Server::getSession(const uint8_t session_id) throw()
+{
+	const sessions_const_i si(sessions.find(session_id));
+	return (si == sessions.end() ? 0 : si->second);
+}
+
+const Session* Server::getConstSession(const uint8_t session_id) const throw()
+{
+	const sessions_const_i si(sessions.find(session_id));
+	return (si == sessions.end() ? 0 : si->second);
 }
