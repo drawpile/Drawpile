@@ -217,7 +217,7 @@ int EventKevent::modify(fd_t fd, int events) throw()
 	return 0;
 }
 
-int EventKevent::remove(fd_t fd, int events) throw()
+int EventKevent::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.remove(FD: " << fd << ")" << endl;
