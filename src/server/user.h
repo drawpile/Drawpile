@@ -162,13 +162,13 @@ struct User
 	inline
 	bool makeActive(uint8_t session_id) throw()
 	{
-		const usr_session_const_i usi(sessions.find(session_id));
-		if (usi != sessions.end())
+		SessionData *sdata = getSession(session_id);
+		if (sdata != 0)
 		{
 			if (session != 0)
 				session_data->layer = a_layer;
 			
-			session_data = usi->second;
+			session_data = sdata;
 			
 			session = session_data->session;
 			
@@ -188,19 +188,13 @@ struct User
 	SessionData* getSession(uint8_t session_id) throw()
 	{
 		const usr_session_const_i usi(sessions.find(session_id));
-		if (usi == sessions.end())
-			return 0;
-		else
-			return usi->second;
+		return (usi == sessions.end() ? 0 : usi->second);
 	}
 	
 	const SessionData* getConstSession(uint8_t session_id) const throw()
 	{
 		const usr_session_const_i usi(sessions.find(session_id));
-		if (usi == sessions.end())
-			return 0;
-		else
-			return usi->second;
+		return (usi == sessions.end() ? 0 : usi->second);
 	}
 	
 	inline
