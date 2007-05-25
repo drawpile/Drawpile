@@ -185,10 +185,22 @@ struct User
 			return false;
 	}
 	
-	inline
-	bool inSession(uint8_t session_id) const throw()
+	SessionData* getSession(uint8_t session_id) throw()
 	{
-		return sessions.find(session_id) != sessions.end();
+		const usr_session_const_i usi(sessions.find(session_id));
+		if (usi == sessions.end())
+			return 0;
+		else
+			return usi->second;
+	}
+	
+	const SessionData* getConstSession(uint8_t session_id) const throw()
+	{
+		const usr_session_const_i usi(sessions.find(session_id));
+		if (usi == sessions.end())
+			return 0;
+		else
+			return usi->second;
 	}
 	
 	inline

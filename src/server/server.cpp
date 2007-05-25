@@ -566,11 +566,11 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 	cout << "[Server] Constructing user event for user #" << usr.id << endl;
 	#endif
 	
-	usr_session_const_i usi(usr.sessions.find(session_id));
-	assert(usi != usr.sessions.end());
+	const SessionData *sdata = usr.getConstSession(session_id);
+	assert(sdata != 0);
 	
 	protocol::UserInfo *uevent = new protocol::UserInfo(
-		usi->second->getMode(),
+		sdata->getMode(),
 		event,
 		usr.name_len,
 		(usr.name_len == 0 ? 0 : new char[usr.name_len])
@@ -704,7 +704,7 @@ void Server::uHandlePassword(User*& usr) throw()
 			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 			return;
 		}
-		else if (usr->inSession(msg.session_id))
+		else if (usr->getConstSession(msg.session_id) != 0)
 		{
 			// already in session
 			uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidRequest));
@@ -793,26 +793,26 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		// TODO: Check session for deaf flag
 	case protocol::Message::Palette:
 		{
-			const usr_session_const_i usi(usr->sessions.find(usr->inMsg->session_id));
-			if (usi == usr->sessions.end())
+			const SessionData *sdata = usr->getConstSession(usr->inMsg->session_id);
+			if (sdata == 0)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
 				message_ref pmsg(usr->inMsg);
-				Propagate(*usi->second->session, pmsg, (usr->c_acks ? usr : 0));
+				Propagate(*sdata->session, pmsg, (usr->c_acks ? usr : 0));
 				usr->inMsg = 0;
 			}
 		}
 		break;
 	case protocol::Message::Unsubscribe:
 		{
-			const usr_session_i usi(usr->sessions.find(usr->inMsg->session_id));
-			if (usi == usr->sessions.end())
+			SessionData *sdata = usr->getSession(usr->inMsg->session_id);
+			if (sdata == 0)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
 				uQueueMsg(*usr, msgAck(usr->inMsg->session_id, protocol::Message::Unsubscribe));
-				uLeaveSession(*usr, usi->second->session);
+				uLeaveSession(*usr, sdata->session);
 			}
 		}
 		break;
@@ -828,7 +828,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			
 			Session *session = si->second;
 			
-			if (!usr->inSession(usr->inMsg->session_id))
+			if (usr->getConstSession(usr->inMsg->session_id) == 0)
 			{
 				// Test userlimit
 				if (session->canJoin() == false)
@@ -1022,16 +1022,16 @@ void Server::uHandleAck(User*& usr) throw()
 	case protocol::Message::SyncWait:
 		{
 			// check active session first
-			const usr_session_const_i usi(usr->sessions.find(ack.session_id));
-			if (usi == usr->sessions.end())
+			SessionData *sdata = usr->getSession(ack.session_id);
+			if (sdata == 0)
 				uQueueMsg(*usr, msgError(ack.session_id, protocol::error::NotSubscribed));
-			else if (usi->second->syncWait) // duplicate syncwait
+			else if (sdata->syncWait) // duplicate syncwait
 				uRemove(usr, protocol::UserInfo::Violation);
 			else
 			{
-				usi->second->syncWait = true;
+				sdata->syncWait = true;
 				
-				Session *session = usi->second->session;
+				Session *session = sdata->session;
 				--session->syncCounter;
 				
 				#ifndef NDEBUG
@@ -1065,7 +1065,7 @@ void Server::uTunnelRaster(User& usr) throw()
 	
 	const bool last = (raster->offset + raster->length == raster->size);
 	
-	if (!usr.inSession(raster->session_id))
+	if (usr.getConstSession(raster->session_id) == 0)
 	{
 		cerr << "- Raster for unsubscribed session #"
 			<< static_cast<uint>(raster->session_id)
@@ -1192,17 +1192,17 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			User *usr = session_usr->second;
 			
 			// Find user's session instance (SessionData*)
-			const usr_session_const_i usi(usr->sessions.find(session->id));
-			if (usi == usr->sessions.end())
+			SessionData *sdata = usr->getSession(session->id);
+			if (sdata == 0)
 				uQueueMsg(*usr, msgError(session->id, protocol::error::NotInSession));
 			else if (event.aux == protocol::null_layer)
 			{
 				// lock completely
-				usi->second->locked = (event.action == protocol::SessionEvent::Lock);
+				sdata->locked = (event.action == protocol::SessionEvent::Lock);
 				
 				// Copy active session
 				if (usr->session->id == event.session_id)
-					usr->a_locked = usi->second->locked;
+					usr->a_locked = sdata->locked;
 			}
 			else if (event.action == protocol::SessionEvent::Lock)
 			{
@@ -1211,14 +1211,14 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					<< static_cast<uint>(event.aux) << endl;
 				#endif
 				
-				usi->second->layer_lock = event.aux;
+				sdata->layer_lock = event.aux;
 				// copy to active session
 				if (session->id == usr->session->id)
 					usr->a_layer_lock = event.aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
-				if (usi->second->layer != usi->second->layer_lock)
-					usi->second->layer = protocol::null_layer;
+				if (sdata->layer != sdata->layer_lock)
+					sdata->layer = protocol::null_layer;
 				if (usr->session->id == event.session_id)
 					usr->layer = protocol::null_layer;
 			}
@@ -1229,7 +1229,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 					<< static_cast<uint>(event.aux) << endl;
 				#endif
 				
-				usi->second->layer_lock = protocol::null_layer;
+				sdata->layer_lock = protocol::null_layer;
 				
 				// copy to active session
 				if (session->id == usr->session->id)
@@ -1262,17 +1262,17 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				uQueueMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
 			else
 			{
-				usr_session_const_i usi(ui->second->sessions.find(session->id));
-				if (usi == ui->second->sessions.end()) // user not in session
+				SessionData *sdata = ui->second->getSession(session->id);
+				if (sdata == 0) // user not in session
 					uQueueMsg(*usr, msgError(session->id, protocol::error::NotInSession));
 				else
 				{
 					// Set mode
-					usi->second->muted = (event.action == protocol::SessionEvent::Mute);
+					sdata->muted = (event.action == protocol::SessionEvent::Mute);
 					
 					// Copy to active session's mode, too.
 					if (usr->session->id == event.target)
-						usr->session_data->muted = usi->second->muted;
+						usr->session_data->muted = sdata->muted;
 					
 					Propagate(*session, message_ref(&event), (usr->c_acks ? usr : 0));
 					usr->inMsg = 0;
@@ -1882,9 +1882,9 @@ void Server::SyncSession(Session* session) throw()
 	{
 		// clear syncwait 
 		usr_ptr = old->second;
-		const usr_session_const_i usi(usr_ptr->sessions.find(session->id));
-		assert(usi != usr_ptr->sessions.end());
-		usi->second->syncWait = false;
+		SessionData *sdata = usr_ptr->getSession(session->id);
+		assert(sdata != 0);
+		sdata->syncWait = false;
 		
 		// add join
 		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session->id, protocol::UserInfo::Join));
@@ -1913,8 +1913,8 @@ void Server::SyncSession(Session* session) throw()
 		}
 		else
 		{
-			if (usi->second->cachedToolInfo)
-				msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*usi->second->cachedToolInfo)));
+			if (sdata->cachedToolInfo)
+				msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*sdata->cachedToolInfo)));
 		}
 	}
 	
@@ -2174,7 +2174,6 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
 	tunnel_i ti;
-	users_const_i usi;
 	while ((ti = tunnel.find(usr)) != tunnel.end())
 	{
 		breakSync(*(ti->second));
