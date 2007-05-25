@@ -29,16 +29,6 @@
 #include "interface.h"
 
 template <typename T>
-EventInterface<T>::EventInterface() throw()
-{
-}
-
-template <typename T>
-EventInterface<T>::~EventInterface() throw()
-{
-}
-
-template <typename T>
 int EventInterface<T>::getError() const throw()
 {
 	return _error;

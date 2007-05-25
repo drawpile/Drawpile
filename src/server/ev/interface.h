@@ -53,10 +53,10 @@ public:
 	typedef typename event_type<Evs>::ev_t ev_t;
 	
 	//! ctor
-	EventInterface() throw();
+	EventInterface() throw() { }
 	
 	//! dtor
-	virtual ~EventInterface() throw();
+	virtual ~EventInterface() throw() { }
 	
 	//! Set timeout for wait()
 	/**
