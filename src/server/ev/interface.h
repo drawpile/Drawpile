@@ -73,7 +73,7 @@ public:
 	//! Adds file descriptor to event polling.
 	/**
 	 * @param fd is the file descriptor to be added to event stack.
-	 * @param ev is the events in which fd is to be found.
+	 * @param events is the events in which fd is to be found.
 	 *
 	 * @return true if the fd was added, false if not
 	 */
@@ -90,7 +90,7 @@ public:
 	//! Modifies previously added fd for different events.
 	/**
 	 * @param fd is the file descriptor to be modified.
-	 * @param ev has the event flags.
+	 * @param events has the event flags.
 	 *
 	 * @return something undefined
 	 */
