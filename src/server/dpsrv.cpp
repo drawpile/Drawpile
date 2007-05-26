@@ -304,7 +304,9 @@ int main(int argc, char** argv)
 		
 		if (!srv.init())
 		{
-			std::cerr << "- Server initialization failed!" << std::endl;
+			#ifndef NDEBUG
+			std::cerr << "- Initialization failed!" << std::endl;
+			#endif
 			return EXIT_FAILURE;
 		}
 		
@@ -312,13 +314,16 @@ int main(int argc, char** argv)
 			rc = srv.run();
 		}
 		catch (...) {
-			std::cerr << "- Unknown exception caught." << std::endl;
+			#ifndef NDEBUG
+			std::cerr << "- Exception caught!" << std::endl;
+			#endif
 			rc = 2;
-			// do nothing
 		}
 	} // end server scope
 	
+	#ifndef NDEBUG
 	std::cout << "~ Quitting..." << std::endl;
+	#endif
 	
 	return rc;
 }
