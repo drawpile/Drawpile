@@ -200,8 +200,7 @@ int EventPselect::remove(fd_t fd) throw()
 	assert(fd != -1);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
-	if (iter == fd_list.end())
-		return false;
+	assert(iter != fd_list.end());
 	
 	FD_CLR(fd, &fds_r);
 	read_set.erase(fd);

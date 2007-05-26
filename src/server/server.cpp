@@ -2268,7 +2268,7 @@ bool Server::init() throw(std::bad_alloc)
 		if (event_has_accept<EventSystem>::value)
 			ev.add(lsock.fd(), event_accept<EventSystem>::value);
 		else
-			ev.add(lsock.fd(),  event_read<EventSystem>::value);
+			ev.add(lsock.fd(), event_read<EventSystem>::value);
 		
 		// set event timeout
 		ev.timeout(30000);
@@ -2381,6 +2381,10 @@ int Server::run() throw()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
+				#ifndef NDEBUG
+				cout << "FD: " << fd << " triggered." << endl;
+				#endif
+				
 				assert(fd != 0);
 				if (fd == lsock.fd())
 				{

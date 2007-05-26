@@ -167,8 +167,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 	}
 	
 	// maintain fd_list
-	std::map<fd_t, uint>::iterator iter(fd_list.find(fd));
-	iter->second = events;
+	fd_list[fd] = events;
 	
 	return rc;
 }
@@ -224,8 +223,7 @@ int EventSelect::remove(fd_t fd) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
-	if (iter == fd_list.end())
-		return false;
+	assert(iter != fd_list.end());
 	
 	FD_CLR(fd, &fds_r);
 	#ifndef WIN32
@@ -253,6 +251,8 @@ int EventSelect::remove(fd_t fd) throw()
 
 bool EventSelect::getEvent(fd_t &fd, int &events) throw()
 {
+	assert(fd_list.size() > 0);
+	
 	while (fd_iter != fd_list.end())
 	{
 		fd = (fd_iter++)->first;
