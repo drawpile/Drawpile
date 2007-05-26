@@ -2381,10 +2381,6 @@ int Server::run() throw()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
-				#ifndef NDEBUG
-				cout << "FD: " << fd << " triggered." << endl;
-				#endif
-				
 				assert(fd != 0);
 				if (fd == lsock.fd())
 				{
