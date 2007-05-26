@@ -32,13 +32,19 @@
 #include "interface.h"
 #include "traits.h"
 
+class EventWSA;
+template <> struct event_type<EventWSA> { typedef long ev_t; };
+
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
 	using std::endl;
 #endif
 
+#include <map>
 #include <winsock2.h>
+
+const uint max_events = 10;
 
 class EventWSA
 	: EventInterface<EventWSA>
@@ -64,25 +70,8 @@ public:
 	bool getEvent(fd_t &fd, long &events) throw();
 };
 
-template <>
-struct EventTraits<EventWSA>
-{
-	typedef long ev_t;
-	
-	static const long
-		Read=FD_READ,
-		Write=FD_WRITE,
-		Accept=FD_ACCEPT,
-		Connect=FD_CONNECT,
-		Hangup=FD_CLOSE;
-	
-	static const int
-		Error;
-};
-
 /* traits */
 
-template <> struct event_type<EventWSA> { typedef long ev_t; };
 template <> struct event_has_hangup<EventWSA> { static const bool value; };
 template <> struct event_has_connect<EventWSA> { static const bool value; };
 template <> struct event_has_accept<EventWSA> { static const bool value; };

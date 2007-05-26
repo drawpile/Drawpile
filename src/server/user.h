@@ -18,7 +18,7 @@
 #include "common.h"
 #include "buffer.h" // Buffer
 #include "message.h" // message_ref
-//#include "ev/interface.h"
+#include "ev/event.h"
 
 struct Session; // defined elsewhere
 #ifndef ServerSession_INCLUDED
@@ -221,6 +221,7 @@ struct User
 	uint id;
 	
 	// Event I/O registered events.
+	// EventSystem::ev_t // inaccessible for some reason
 	int events;
 	
 	// User state

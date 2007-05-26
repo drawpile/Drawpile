@@ -30,6 +30,9 @@
 
 #ifndef NDEBUG
 	#include <iostream>
+	using std::cout;
+	using std::endl;
+	using std::cerr;
 #endif
 #include <cassert> // assert()
 
@@ -50,14 +53,8 @@ const long event_accept<EventWSA>::value = FD_ACCEPT;
 template <>
 const long event_connect<EventWSA>::value = FD_CONNECT;
 
-using std::cout;
-using std::endl;
-using std::cerr;
-
 EventWSA::EventWSA() throw()
-	: last_event(0),
-	_error(0),
-	nfds(0)
+	: nfds(0), last_event(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa()" << endl
@@ -122,7 +119,7 @@ int EventWSA::add(fd_t fd, long events) throw()
 	
 	assert( fd >= 0 );
 	
-	fSet(events, EventTraits<EventWSA>::Hangup);
+	fSet(events, event_hangup<EventWSA>::value);
 	
 	for (uint i=0; i != max_events; ++i)
 	{
@@ -174,21 +171,21 @@ int EventWSA::modify(fd_t fd, long events) throw()
 	
 	cout << " # ";
 	bool next=false;
-	if (fIsSet(events, EventTraits<EventWSA>::Read))
+	if (fIsSet(events, event_read<EventWSA>::value))
 	{
 		cout << "read"; next = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Write))
+	if (fIsSet(events, event_write<EventWSA>::value))
 	{
 		if (next) cout << ", ";
 		cout << "write"; next = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Accept))
+	if (fIsSet(events, event_accept<EventWSA>::value))
 	{
 		if (next) cout << ", ";
 		cout << "accept"; next = true;
 	}
-	if (fIsSet(events, EventTraits<EventWSA>::Hangup))
+	if (fIsSet(events, event_hangup<EventWSA>::value))
 	{
 		if (next) cout << ", ";
 		cout << "close";
@@ -198,7 +195,7 @@ int EventWSA::modify(fd_t fd, long events) throw()
 	
 	assert( fd >= 0 );
 	
-	fSet(events, EventTraits<EventWSA>::Hangup);
+	fSet(events, event_hangup<EventWSA>::value);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
@@ -282,14 +279,16 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 				case WSAETIMEDOUT: // connection timed-out
 				case WSAENETUNREACH: // network unreachable
 				case WSAECONNREFUSED: // connection refused/rejected
-					events = EventTraits<EventWSA>::Hangup;
+					events = event_hangup<EventWSA>::value;
 					break;
 				case WSAENOBUFS: // out of network buffers
 				case WSAENETDOWN: // network sub-system failure
 				case WSAEINPROGRESS: // something's in progress
 					goto loopend;
 				default:
+					#ifndef NDEBUG
 					cerr << "Event(wsa).getEvent() - unknown error: " << _error << endl;
+					#endif
 					goto loopend;
 				}
 			}
@@ -303,21 +302,21 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 				
 				cout << " # ";
 				bool next=false;
-				if (fIsSet(events, EventTraits<EventWSA>::Read))
+				if (fIsSet(events, event_read<EventWSA>::value))
 				{
 					cout << "read"; next = true;
 				}
-				if (fIsSet(events, EventTraits<EventWSA>::Write))
+				if (fIsSet(events, event_write<EventWSA>::value))
 				{
 					if (next) cout << ", ";
 					cout << "write"; next = true;
 				}
-				if (fIsSet(events, EventTraits<EventWSA>::Accept))
+				if (fIsSet(events, event_accept<EventWSA>::value))
 				{
 					if (next) cout << ", ";
 					cout << "accept"; next = true;
 				}
-				if (fIsSet(events, EventTraits<EventWSA>::Hangup))
+				if (fIsSet(events, event_hangup<EventWSA>::value))
 				{
 					if (next) cout << ", ";
 					cout << "close";

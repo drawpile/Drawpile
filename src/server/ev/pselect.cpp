@@ -141,21 +141,21 @@ int EventPselect::add(fd_t fd, int events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, EventTraits<EventPselect>::Read))
+	if (fIsSet(events, event_read<EventPselect>::value))
 	{
 		FD_SET(fd, &fds_r);
 		read_set.insert(read_set.end(), fd);
 		nfds_r = *(read_set.end());
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventPselect>::Write))
+	if (fIsSet(events, event_write<EventPselect>::value))
 	{
 		FD_SET(fd, &fds_w);
 		write_set.insert(write_set.end(), fd);
 		nfds_w = *(--write_set.end());
 		rc = true;
 	}
-	if (fIsSet(events, EventTraits<EventPselect>::Error))
+	if (fIsSet(events, event_error<EventPselect>::value))
 	{
 		FD_SET(fd, &fds_e);
 		error_set.insert(error_set.end(), fd);
@@ -181,21 +181,21 @@ int EventPselect::modify(fd_t fd, int events) throw()
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, EventTraits<EventPselect>::Read))
+	if (!fIsSet(events, event_read<EventPselect>::value))
 	{
 		FD_CLR(fd, &fds_r);
 		read_set.erase(fd);
 		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
 	}
 	
-	if (!fIsSet(events, EventTraits<EventPselect>::Write))
+	if (!fIsSet(events, event_write<EventPselect>::value))
 	{
 		FD_CLR(fd, &fds_w);
 		write_set.erase(fd);
 		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 	}
 	
-	if (!fIsSet(events, EventTraits<EventPselect>::Error))
+	if (!fIsSet(events, event_error<EventPselect>::value))
 	{
 		FD_CLR(fd, &fds_e);
 		error_set.erase(fd);
@@ -245,11 +245,11 @@ bool EventPselect::getEvent(fd_t &fd, int &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, EventTraits<EventPselect>::Read);
+			fSet(events, event_read<EventPselect>::value);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, EventTraits<EventPselect>::Write);
+			fSet(events, event_write<EventPselect>::value);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, EventTraits<EventPselect>::Error);
+			fSet(events, event_error<EventPselect>::value);
 		
 		if (events != 0)
 			return true;
