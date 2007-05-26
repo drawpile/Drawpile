@@ -57,7 +57,7 @@ EventPselect::EventPselect() throw()
 	FD_ZERO(&fds_w);
 	FD_ZERO(&fds_e);
 	
-	sigemptyset(&_sigmask); // prepare sigmask
+	sigemptyset(&sigmask); // prepare sigmask
 }
 
 EventPselect::~EventPselect() throw()
@@ -85,14 +85,14 @@ int EventPselect::wait() throw()
 	#endif // HAVE_SELECT_COPY
 	
 	// save sigmask
-	sigprocmask(SIG_SETMASK, &_sigmask, &_sigsaved);
+	sigprocmask(SIG_SETMASK, &sigmask, &sigsaved);
 	
 	using std::max;
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
-	nfds = pselect((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &_sigmask);
+	nfds = pselect((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &sigmask);
 	error = errno;
-	sigprocmask(SIG_SETMASK, &_sigsaved, 0); // restore mask
+	sigprocmask(SIG_SETMASK, &sigsaved, 0); // restore mask
 	
 	switch (nfds)
 	{
@@ -123,7 +123,7 @@ int EventPselect::add(fd_t fd, int events) throw()
 	cout << "pselect.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != -1);
 	
 	bool rc=false;
 	
@@ -161,7 +161,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 	cout << "pselect.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != -1);
 	
 	// act like a wrapper.
 	if (events != 0)
@@ -197,7 +197,7 @@ int EventPselect::remove(fd_t fd) throw()
 	cout << "pselect.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != -1);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	if (iter == fd_list.end())
