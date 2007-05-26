@@ -134,7 +134,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 	cout << "select.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != -1);
 	
 	bool rc=false;
 	
@@ -179,7 +179,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 	cout << "select.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != -1);
 	
 	// act like a wrapper.
 	if (events != 0)
@@ -221,7 +221,7 @@ int EventSelect::remove(fd_t fd) throw()
 	cout << "select.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != -1);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	if (iter == fd_list.end())
