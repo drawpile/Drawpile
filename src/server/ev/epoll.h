@@ -39,7 +39,6 @@
 #endif
 #include <sys/epoll.h>
 
-template <int max_events=10>
 class EventEpoll
 	: EventInterface<EventEpoll>
 {
@@ -47,7 +46,7 @@ private:
 	uint _timeout;
 	int nfds;
 	int evfd;
-	epoll_event events[max_events];
+	epoll_event events[10];
 public:
 	EventEpoll() throw(std::exception);
 	~EventEpoll() throw();

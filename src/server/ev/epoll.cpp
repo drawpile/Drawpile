@@ -52,7 +52,7 @@ EventEpoll::EventEpoll() throw(std::exception)
 	cout << "Event()" << endl;
 	#endif
 	
-	evfd = epoll_create(max_events);
+	evfd = epoll_create(10);
 	
 	if (evfd == -1)
 	{
@@ -89,7 +89,7 @@ int EventEpoll::wait() throw()
 	cout << "epoll.wait()" << endl;
 	#endif
 	
-	nfds = epoll_wait(evfd, events, max_events, _timeout);
+	nfds = epoll_wait(evfd, events, 10, _timeout);
 	
 	if (nfds == -1)
 	{
