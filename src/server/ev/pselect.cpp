@@ -45,11 +45,9 @@ template <> const int event_error<EventPselect>::value = 4;
 template <> const std::string event_system<EventPselect>::value("pselect");
 
 EventPselect::EventPselect() throw()
-	#if !defined(WIN32)
 	: nfds_r(0),
 	nfds_w(0),
 	nfds_e(0)
-	#endif // !WIN32
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect()" << endl;
@@ -81,9 +79,9 @@ int EventPselect::wait() throw()
 	FD_COPY(&fds_w, &t_fds_w),
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
-	t_fds_r = fds_r;
-	t_fds_w = fds_w;
-	t_fds_e = fds_e;
+	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
+	memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
+	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
 	
 	// save sigmask

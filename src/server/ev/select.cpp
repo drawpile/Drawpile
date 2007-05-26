@@ -78,29 +78,17 @@ int EventSelect::wait() throw()
 	FD_COPY(&fds_w, &t_fds_w),
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
-	t_fds_r = fds_r;
-	t_fds_w = fds_w;
-	t_fds_e = fds_e;
-	//memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
-	//memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
-	//memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
+	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
+	memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
+	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
 	#endif // HAVE_SELECT_COPY
-	
-	#if defined(EV_PSELECT)
-	// save sigmask
-	sigprocmask(SIG_SETMASK, &_sigmask, &_sigsaved);
-	#endif // EV_PSELECT
 	
 	#ifndef WIN32
 	const fd_t largest_nfds = std::max(std::max(nfds_w, nfds_r), nfds_e);
 	#endif
 	
 	nfds =
-	#if defined(EV_PSELECT)
-		pselect(
-	#else
 		select(
-	#endif // EV_PSELECT
 	#ifdef WIN32
 		0,
 	#else // !WIN32
@@ -110,15 +98,9 @@ int EventSelect::wait() throw()
 		&t_fds_w,
 		&t_fds_e,
 		&_timeout
-	#if defined(EV_PSELECT)
-		, &_sigmask
-	#endif // EV_PSELECT
 		);
 	#ifndef WIN32
 	_error = errno;
-	#ifdef EV_PSELECT
-	sigprocmask(SIG_SETMASK, &_sigsaved, 0); // restore mask
-	#endif
 	#endif
 	
 	switch (nfds)
