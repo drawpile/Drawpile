@@ -252,7 +252,7 @@ void EventPselect::timeout(uint msecs) throw()
 	
 	if (msecs > 1000)
 	{
-		timeout.tv_sec = msecs/1000;
+		_timeout.tv_sec = msecs/1000;
 		msecs -= _timeout.tv_sec*1000;
 	}
 	else
