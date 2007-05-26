@@ -39,7 +39,7 @@
 #endif
 #include <sys/epoll.h>
 
-template <int max_events>
+template <int max_events=10>
 class EventEpoll
 	: EventInterface<EventEpoll>
 {
