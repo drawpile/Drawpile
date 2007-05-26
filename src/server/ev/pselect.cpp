@@ -75,29 +75,22 @@ int EventPselect::wait() throw()
 	#endif
 	
 	#ifdef EV_SELECT_COPY
-	FD_COPY(&fds_r, &t_fds_r),
-	FD_COPY(&fds_w, &t_fds_w),
+	FD_COPY(&fds_r, &t_fds_r);
+	FD_COPY(&fds_w, &t_fds_w);
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
-	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
-	memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
-	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
+	memcpy(&t_fds_r, &fds_r, sizeof(fds_r));
+	memcpy(&t_fds_w, &fds_w, sizeof(fds_w));
+	memcpy(&t_fds_e, &fds_e, sizeof(fds_e));
 	#endif // HAVE_SELECT_COPY
 	
 	// save sigmask
 	sigprocmask(SIG_SETMASK, &_sigmask, &_sigsaved);
 	
-	const fd_t largest_nfds = std::max(std::max(nfds_w, nfds_r), nfds_e);
+	using std::max;
+	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
-	nfds =
-		pselect(
-		(largest_nfds + 1),
-		&t_fds_r,
-		&t_fds_w,
-		&t_fds_e,
-		&_timeout,
-		&_sigmask
-		);
+	nfds = pselect((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &_sigmask);
 	_error = errno;
 	sigprocmask(SIG_SETMASK, &_sigsaved, 0); // restore mask
 	
@@ -265,5 +258,5 @@ void EventPselect::timeout(uint msecs) throw()
 	else
 		_timeout.tv_sec = 0;
 	
-	_timeout.tv_nsec = msecs * 1000000; // nanoseconds
+	_timeout.tv_nsec = msecs * 1000000;
 }

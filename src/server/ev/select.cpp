@@ -74,40 +74,31 @@ int EventSelect::wait() throw()
 	#endif
 	
 	#ifdef EV_SELECT_COPY
-	FD_COPY(&fds_r, &t_fds_r),
-	FD_COPY(&fds_w, &t_fds_w),
+	FD_COPY(&fds_r, &t_fds_r);
+	FD_COPY(&fds_w, &t_fds_w);
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
-	memcpy(&t_fds_r, &fds_r, sizeof(fd_set)),
-	memcpy(&t_fds_w, &fds_w, sizeof(fd_set)),
-	memcpy(&t_fds_e, &fds_e, sizeof(fd_set));
+	memcpy(&t_fds_r, &fds_r, sizeof(fds_r));
+	memcpy(&t_fds_w, &fds_w, sizeof(fds_w));
+	memcpy(&t_fds_e, &fds_e, sizeof(fds_e));
 	#endif // HAVE_SELECT_COPY
 	
-	#ifndef WIN32
-	const fd_t largest_nfds = std::max(std::max(nfds_w, nfds_r), nfds_e);
+	#ifdef WIN32
+	static const fd_t ubnfds = 0; // not used
+	#else
+	using std::max;
+	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	#endif
 	
-	nfds =
-		select(
-		#ifdef WIN32
-		0,
-		#else // !WIN32
-		(largest_nfds + 1),
-		#endif // WIN32
-		&t_fds_r,
-		&t_fds_w,
-		&t_fds_e,
-		&_timeout
-		);
-	#ifndef WIN32
-	_error = errno;
-	#endif
+	nfds = select((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
 	
 	switch (nfds)
 	{
 		case -1:
 			#ifdef WIN32
 			_error = WSAGetLastError();
+			#else
+			_error = errno;
 			#endif
 			
 			if (_error == EINTR)
@@ -176,7 +167,8 @@ int EventSelect::add(fd_t fd, int events) throw()
 	}
 	
 	// maintain fd_list
-	fd_list[fd] = events;
+	std::map<fd_t, uint>::iterator iter(fd_list.find(fd));
+	iter->second = events;
 	
 	return rc;
 }
@@ -263,8 +255,7 @@ bool EventSelect::getEvent(fd_t &fd, int &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{
-		fd = fd_iter->first;
-		++fd_iter;
+		fd = (fd_iter++)->first;
 		
 		events = 0;
 		
@@ -296,5 +287,5 @@ void EventSelect::timeout(uint msecs) throw()
 	else
 		_timeout.tv_sec = 0;
 	
-	_timeout.tv_usec = msecs * 1000; // microseconds
+	_timeout.tv_usec = msecs * 1000;
 }
