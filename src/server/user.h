@@ -222,7 +222,8 @@ struct User
 	
 	// Event I/O registered events.
 	// EventSystem::ev_t // inaccessible for some reason
-	int events;
+	event_type<EventSystem>::ev_t events;
+	//int events;
 	
 	// User state
 	enum State
