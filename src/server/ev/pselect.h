@@ -60,9 +60,6 @@ public:
 	EventPselect() throw();
 	~EventPselect() throw();
 	
-	//! Set signal mask.
-	void setMask(const sigset_t& mask) throw() { sigmask = mask; }
-	
 	void timeout(uint msecs) throw();
 	int wait() throw();
 	int add(fd_t fd, int events) throw();
@@ -74,7 +71,6 @@ public:
 /* traits */
 
 template <> struct event_has_error<EventPselect> { static const bool value; };
-template <> struct event_has_sigmask<EventPselect> { static const bool value; };
 template <> struct event_read<EventPselect> { static const int value; };
 template <> struct event_write<EventPselect> { static const int value; };
 template <> struct event_error<EventPselect> { static const int value; };

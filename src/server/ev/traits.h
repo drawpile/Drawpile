@@ -63,12 +63,6 @@ struct event_has_accept
 	static const bool value = false;
 };
 
-template <typename Evs>
-struct event_has_sigmask
-{
-	static const bool value = false;
-};
-
 /* events */
 
 template <typename Evs>

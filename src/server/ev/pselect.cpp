@@ -38,7 +38,6 @@
 #include <cassert> // assert()
 
 const bool event_has_error<EventPselect>::value = true;
-const bool event_has_sigmask<EventPselect>::value = true;
 const int event_read<EventPselect>::value = 1;
 const int event_write<EventPselect>::value = 2;
 const int event_error<EventPselect>::value = 4;
