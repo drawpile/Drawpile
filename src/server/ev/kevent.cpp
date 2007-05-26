@@ -56,11 +56,11 @@ EventKevent::EventKevent() throw()
 	
 	if (r == -1)
 	{
-		_error = errno;
+		error = errno;
 		
-		assert(_error != EINVAL); // Size not positive
+		assert(error != EINVAL); // Size not positive
 		
-		switch (_error)
+		switch (error)
 		{
 		case ENFILE:
 			#ifndef NDEBUG
@@ -75,7 +75,7 @@ EventKevent::EventKevent() throw()
 			break;
 		default:
 			#ifndef NDEBUG
-			cerr << "kevent() : Unknown error(" << _error << ")" << endl;
+			cerr << "kevent() : Unknown error(" << error << ")" << endl;
 			#endif
 			assert(1);
 			break;
@@ -107,14 +107,14 @@ int EventKevent::wait() throw()
 	#endif
 	
 	nfds = epoll_wait(evfd, events, max_events, _timeout);
-	_error = errno;
+	error = errno;
 	
 	if (nfds == -1)
 	{
-		assert(_error != EBADF);
-		assert(_error != EFAULT); // events not writable
-		assert(_error != EINVAL); // invalif evfd, or max_events <= 0
-		switch (_error)
+		assert(error != EBADF);
+		assert(error != EFAULT); // events not writable
+		assert(error != EINVAL); // invalif evfd, or max_events <= 0
+		switch (error)
 		{
 		case EINTR:
 			#ifndef NDEBUG
@@ -124,7 +124,7 @@ int EventKevent::wait() throw()
 			break;
 		default:
 			#ifndef NDEBUG
-			cerr << "kevent.wait() : Unknown error(" << _error << ")" << endl;
+			cerr << "kevent.wait() : Unknown error(" << error << ")" << endl;
 			#endif
 			// TODO
 			break;
@@ -147,15 +147,15 @@ int EventKevent::add(fd_t fd, int events) throw()
 	ev_info.events = events;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_ADD, fd, &ev_info);
-	_error = errno;
+	error = errno;
 	if (r == -1)
 	{
-		assert(_error != EBADF);
-		assert(_error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
-		assert(_error != EEXIST); // fd already in set
-		assert(_error != EPERM); // target fd not supported by epoll
+		assert(error != EBADF);
+		assert(error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
+		assert(error != EEXIST); // fd already in set
+		assert(error != EPERM); // target fd not supported by epoll
 		
-		switch (_error)
+		switch (error)
 		{
 		case ENOMEM:
 			#ifndef NDEBUG
@@ -165,7 +165,7 @@ int EventKevent::add(fd_t fd, int events) throw()
 			break;
 		default:
 			#ifndef NDEBUG
-			cerr << "kevent.add() : Unknown error(" << _error << ")" << endl;
+			cerr << "kevent.add() : Unknown error(" << error << ")" << endl;
 			#endif
 			break;
 		}
@@ -187,14 +187,14 @@ int EventKevent::modify(fd_t fd, int events) throw()
 	ev_info.events = events;
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_MOD, fd, &ev_info);
-	_error = errno;
+	error = errno;
 	if (r == -1)
 	{
-		assert(_error != EBADF); // epoll fd is invalid
-		assert(_error != EINVAL); // evfd is invalid or fd is the same as evfd
-		assert(_error != ENOENT); // fd not in set
+		assert(error != EBADF); // epoll fd is invalid
+		assert(error != EINVAL); // evfd is invalid or fd is the same as evfd
+		assert(error != ENOENT); // fd not in set
 		
-		switch (_error)
+		switch (error)
 		{
 		case ENOMEM:
 			#ifndef NDEBUG
@@ -204,7 +204,7 @@ int EventKevent::modify(fd_t fd, int events) throw()
 			break;
 		default:
 			#ifndef NDEBUG
-			cerr << "kevent.modify() : Unknown error (" << _error << ")" << endl;
+			cerr << "kevent.modify() : Unknown error (" << error << ")" << endl;
 			#endif
 			break;
 		}
@@ -222,14 +222,14 @@ int EventKevent::remove(fd_t fd) throw()
 	assert(fd != INVALID_SOCKET);
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
-	_error = errno;
+	error = errno;
 	if (r == -1)
 	{
-		assert(_error != EBADF); // evfd is invalid
-		assert(_error != EINVAL); // evfd is invalid, or evfd is the same as fd
-		assert(_error != ENOENT); // fd not in set
+		assert(error != EBADF); // evfd is invalid
+		assert(error != EINVAL); // evfd is invalid, or evfd is the same as fd
+		assert(error != ENOENT); // fd not in set
 		
-		switch (_error)
+		switch (error)
 		{
 		case ENOMEM:
 			#ifndef NDEBUG
@@ -239,7 +239,7 @@ int EventKevent::remove(fd_t fd) throw()
 			break;
 		default:
 			#ifndef NDEBUG
-			cerr << "kevent.remove() : Unknown error(" << _error << ")" << endl;
+			cerr << "kevent.remove() : Unknown error(" << error << ")" << endl;
 			#endif
 			break;
 		}

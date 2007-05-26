@@ -48,7 +48,7 @@ template <typename Evs>
 class EventInterface
 {
 protected:
-	int _error; // errno;
+	int error; // errno;
 public:
 	typedef typename event_type<Evs>::ev_t ev_t;
 	

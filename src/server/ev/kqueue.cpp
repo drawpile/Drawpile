@@ -53,7 +53,7 @@ EventKqueue::EventKqueue() throw(std::bad_alloc)
 	evfd = kqueue();
 	if (kq == -1)
 	{
-		_error = errno;
+		error = errno;
 		return false;
 	}
 	
@@ -90,18 +90,18 @@ int EventKqueue::wait() throw()
 	
 	if (nfds == -1)
 	{
-		_error = errno;
+		error = errno;
 		
-		if (_error == EINTR)
+		if (error == EINTR)
 			return 0;
 		
-		assert(_error != EBADF); // FD is invalid
-		assert(_error != ENOENT); // specified event could not be found
-		assert(_error != EINVAL); // filter or time limit is invalid
-		assert(_error != EFAULT); // kevent struct is not writable
+		assert(error != EBADF); // FD is invalid
+		assert(error != ENOENT); // specified event could not be found
+		assert(error != EINVAL); // filter or time limit is invalid
+		assert(error != EFAULT); // kevent struct is not writable
 		
 		#ifndef NDEBUG
-		cerr << "Error in event system: " << _error << endl;
+		cerr << "Error in event system: " << error << endl;
 		#endif
 		return -1;
 	}
@@ -162,7 +162,7 @@ bool EventKqueue::getEvent(fd_t &fd, int &r_events) throw()
 	if (nfds == evtrigr_size)
 		return false;
 	
-	assert(!(evtrigr[nfds].flags & EV_ERROR));
+	assert(!fIsSet(evtrigr[nfds].flags, EV_ERROR)); // FIXME
 	
 	fd = evtrigr[nfds].ident;
 	r_events = evtrigr[nfds].filter;

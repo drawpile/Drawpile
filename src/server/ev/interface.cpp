@@ -31,5 +31,5 @@
 template <typename T>
 int EventInterface<T>::getError() const throw()
 {
-	return _error;
+	return error;
 }

@@ -96,24 +96,24 @@ int EventSelect::wait() throw()
 	{
 		case -1:
 			#ifdef WIN32
-			_error = WSAGetLastError();
+			error = WSAGetLastError();
 			#else
-			_error = errno;
+			error = errno;
 			#endif
 			
-			if (_error == EINTR)
+			if (error == EINTR)
 				return nfds = 0;
 			
 			#ifdef WIN32
-			assert(_error != WSANOTINITIALISED);
+			assert(error != WSANOTINITIALISED);
 			#endif
-			assert(_error != EBADF);
-			assert(_error != ENOTSOCK);
-			assert(_error != EINVAL);
-			assert(_error != EFAULT);
+			assert(error != EBADF);
+			assert(error != ENOTSOCK);
+			assert(error != EINVAL);
+			assert(error != EFAULT);
 			
 			#if defined(WIN32) and !defined(NDEBUG)
-			if (_error == WSAENETDOWN)
+			if (error == WSAENETDOWN)
 				cerr << "The network subsystem has failed." << endl;
 			#endif
 			break;

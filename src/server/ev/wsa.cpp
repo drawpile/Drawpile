@@ -79,14 +79,14 @@ int EventWSA::wait() throw()
 	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, false, _timeout, true);
 	if (nfds == WSA_WAIT_FAILED)
 	{
-		_error = WSAGetLastError();
+		error = WSAGetLastError();
 		
-		assert(_error != WSANOTINITIALISED);
-		assert(_error != WSA_INVALID_HANDLE);
-		assert(_error != WSA_INVALID_PARAMETER);
+		assert(error != WSANOTINITIALISED);
+		assert(error != WSA_INVALID_HANDLE);
+		assert(error != WSA_INVALID_PARAMETER);
 		
-		if (_error == WSA_NOT_ENOUGH_MEMORY)
-			_error = ENOMEM;
+		if (error == WSA_NOT_ENOUGH_MEMORY)
+			error = ENOMEM;
 		
 		return -1;
 	}
@@ -125,11 +125,11 @@ int EventWSA::add(fd_t fd, long events) throw()
 			
 			if (r == SOCKET_ERROR)
 			{
-				_error = WSAGetLastError();
+				error = WSAGetLastError();
 				
-				assert(_error != WSAENOTSOCK);
-				assert(_error != WSAEINVAL);
-				assert(_error != WSANOTINITIALISED);
+				assert(error != WSAENOTSOCK);
+				assert(error != WSAEINVAL);
+				assert(error != WSANOTINITIALISED);
 				
 				return false;
 			}
@@ -198,11 +198,11 @@ int EventWSA::modify(fd_t fd, long events) throw()
 	
 	if (r == SOCKET_ERROR)
 	{
-		_error = WSAGetLastError();
+		error = WSAGetLastError();
 		
-		assert(_error != WSAENOTSOCK);
-		assert(_error != WSAEINVAL);
-		assert(_error != WSANOTINITIALISED);
+		assert(error != WSAENOTSOCK);
+		assert(error != WSAEINVAL);
+		assert(error != WSANOTINITIALISED);
 		
 		return false;
 	}
@@ -263,9 +263,9 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 			
 			if (r == SOCKET_ERROR)
 			{
-				_error = WSAGetLastError();
+				error = WSAGetLastError();
 				
-				switch (_error)
+				switch (error)
 				{
 				case WSAECONNRESET: // reset by remote
 				case WSAECONNABORTED: // connection aborted
@@ -280,7 +280,7 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 					goto loopend;
 				default:
 					#ifndef NDEBUG
-					cerr << "Event(wsa).getEvent() - unknown error: " << _error << endl;
+					cerr << "Event(wsa).getEvent() - unknown error: " << error << endl;
 					#endif
 					goto loopend;
 				}

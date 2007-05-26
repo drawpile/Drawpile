@@ -91,19 +91,19 @@ int EventPselect::wait() throw()
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
 	nfds = pselect((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &_sigmask);
-	_error = errno;
+	error = errno;
 	sigprocmask(SIG_SETMASK, &_sigsaved, 0); // restore mask
 	
 	switch (nfds)
 	{
 		case -1:
-			if (_error == EINTR)
+			if (error == EINTR)
 				return nfds = 0;
 			
-			assert(_error != EBADF);
-			assert(_error != ENOTSOCK);
-			assert(_error != EINVAL);
-			assert(_error != EFAULT);
+			assert(error != EBADF);
+			assert(error != ENOTSOCK);
+			assert(error != EINVAL);
+			assert(error != EFAULT);
 			
 			break;
 		case 0:

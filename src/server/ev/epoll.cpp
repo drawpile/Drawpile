@@ -46,7 +46,7 @@ template <> const int event_hangup<EventEpoll>::value = EPOLLHUP;
 template <> const std::string event_system<EventEpoll>::value("epoll");
 
 EventEpoll::EventEpoll() throw(std::exception)
-	: evfd(0), nfds(-1)
+	: evfd(-1), nfds(-1)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event()" << endl;
@@ -56,10 +56,10 @@ EventEpoll::EventEpoll() throw(std::exception)
 	
 	if (evfd == -1)
 	{
-		_error = errno;
+		error = errno;
 		
 		// max_events is not positive integer
-		assert(_error != EINVAL);
+		assert(error != EINVAL);
 		
 		throw std::exception;
 	}
@@ -83,7 +83,7 @@ EventEpoll::~EventEpoll() throw()
 
 int EventEpoll::wait() throw()
 {
-	assert(evfd != 0);
+	assert(evfd != -1);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.wait()" << endl;
@@ -93,14 +93,14 @@ int EventEpoll::wait() throw()
 	
 	if (nfds == -1)
 	{
-		_error = errno;
+		error = errno;
 		
-		if (_error == EINTR)
+		if (error == EINTR)
 			return 0;
 		
-		assert(_error != EBADF);
-		assert(_error != EFAULT); // events not writable
-		assert(_error != EINVAL); // invalif evfd, or max_events <= 0
+		assert(error != EBADF);
+		assert(error != EFAULT); // events not writable
+		assert(error != EINVAL); // invalif evfd, or max_events <= 0
 	}
 	
 	return nfds;
@@ -109,7 +109,7 @@ int EventEpoll::wait() throw()
 // Errors: ENOMEM
 int EventEpoll::add(fd_t fd, int events) throw()
 {
-	assert(evfd != 0);
+	assert(evfd != -1);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.add(FD: " << fd << ")" << endl;
@@ -125,12 +125,12 @@ int EventEpoll::add(fd_t fd, int events) throw()
 	
 	if (r == -1)
 	{
-		_error = errno;
+		error = errno;
 		
-		assert(_error != EBADF);
-		assert(_error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
-		assert(_error != EEXIST); // fd already in set
-		assert(_error != EPERM); // target fd not supported by epoll
+		assert(error != EBADF);
+		assert(error != EINVAL); // epoll fd is invalid, or fd is same as epoll fd
+		assert(error != EEXIST); // fd already in set
+		assert(error != EPERM); // target fd not supported by epoll
 		
 		return false;
 	}
@@ -140,7 +140,7 @@ int EventEpoll::add(fd_t fd, int events) throw()
 
 int EventEpoll::modify(fd_t fd, int events) throw()
 {
-	assert(evfd != 0);
+	assert(evfd != -1);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.modify(FD: " << fd << ")" << endl;
@@ -156,11 +156,11 @@ int EventEpoll::modify(fd_t fd, int events) throw()
 	
 	if (r == -1)
 	{
-		_error = errno;
+		error = errno;
 		
-		assert(_error != EBADF); // epoll fd is invalid
-		assert(_error != EINVAL); // evfd is invalid or fd is the same as evfd
-		assert(_error != ENOENT); // fd not in set
+		assert(error != EBADF); // epoll fd is invalid
+		assert(error != EINVAL); // evfd is invalid or fd is the same as evfd
+		assert(error != ENOENT); // fd not in set
 		
 		return false;
 	}
@@ -171,7 +171,7 @@ int EventEpoll::modify(fd_t fd, int events) throw()
 // Errors: ENOMEM
 int EventEpoll::remove(fd_t fd) throw()
 {
-	assert(evfd != 0);
+	assert(evfd != -1);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
@@ -183,11 +183,11 @@ int EventEpoll::remove(fd_t fd) throw()
 	
 	if (r == -1)
 	{
-		_error = errno;
+		error = errno;
 		
-		assert(_error != EBADF); // evfd is invalid
-		assert(_error != EINVAL); // evfd is invalid, or evfd is the same as fd
-		assert(_error != ENOENT); // fd not in set
+		assert(error != EBADF); // evfd is invalid
+		assert(error != EINVAL); // evfd is invalid, or evfd is the same as fd
+		assert(error != ENOENT); // fd not in set
 		
 		return false;
 	}
@@ -197,7 +197,7 @@ int EventEpoll::remove(fd_t fd) throw()
 
 bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
 {
-	assert(evfd != 0);
+	assert(evfd != -1);
 	
 	if (nfds == -1)
 		return false;
