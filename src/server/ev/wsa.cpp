@@ -36,15 +36,15 @@
 #endif
 #include <cassert> // assert()
 
-template <> const bool event_has_hangup<EventWSA>::value = true;
-template <> const bool event_has_connect<EventWSA>::value = true;
-template <> const bool event_has_accept<EventWSA>::value = true;
-template <> const long event_read<EventWSA>::value = FD_READ;
-template <> const long event_write<EventWSA>::value = FD_WRITE;
-template <> const long event_hangup<EventWSA>::value = FD_CLOSE;
-template <> const long event_accept<EventWSA>::value = FD_ACCEPT;
-template <> const long event_connect<EventWSA>::value = FD_CONNECT;
-template <> const std::string event_system<EventWSA>::value("wsa");
+const bool event_has_hangup<EventWSA>::value = true;
+const bool event_has_connect<EventWSA>::value = true;
+const bool event_has_accept<EventWSA>::value = true;
+const long event_read<EventWSA>::value = FD_READ;
+const long event_write<EventWSA>::value = FD_WRITE;
+const long event_hangup<EventWSA>::value = FD_CLOSE;
+const long event_accept<EventWSA>::value = FD_ACCEPT;
+const long event_connect<EventWSA>::value = FD_CONNECT;
+const std::string event_system<EventWSA>::value("wsa");
 
 EventWSA::EventWSA() throw()
 	: nfds(0), last_event(0)

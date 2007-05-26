@@ -37,11 +37,11 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-template <> const bool event_has_accept<EventKevent>::value = true;
-template <> const int event_read<EventKevent>::value = KEVENT_SOCKET_RECV;
-template <> const int event_write<EventKevent>::value = KEVENT_SOCKET_SEND;
-template <> const int event_accept<EventKevent>::value = KEVENT_SOCKET_ACCEPT;
-template <> const std::string event_system<EventKevent>::value("kevent");
+const bool event_has_accept<EventKevent>::value = true;
+const int event_read<EventKevent>::value = KEVENT_SOCKET_RECV;
+const int event_write<EventKevent>::value = KEVENT_SOCKET_SEND;
+const int event_accept<EventKevent>::value = KEVENT_SOCKET_ACCEPT;
+const std::string event_system<EventKevent>::value("kevent");
 
 EventKevent::EventKevent() throw()
 	: evfd(0)

@@ -37,13 +37,13 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-template <> const bool event_has_hangup<EventEpoll>::value = true;
-template <> const bool event_has_error<EventEpoll>::value = true;
-template <> const int event_read<EventEpoll>::value = EPOLLIN;
-template <> const int event_write<EventEpoll>::value = EPOLLOUT;
-template <> const int event_error<EventEpoll>::value = EPOLLERR;
-template <> const int event_hangup<EventEpoll>::value = EPOLLHUP;
-template <> const std::string event_system<EventEpoll>::value("epoll");
+const bool event_has_hangup<EventEpoll>::value = true;
+const bool event_has_error<EventEpoll>::value = true;
+const int event_read<EventEpoll>::value = EPOLLIN;
+const int event_write<EventEpoll>::value = EPOLLOUT;
+const int event_error<EventEpoll>::value = EPOLLERR;
+const int event_hangup<EventEpoll>::value = EPOLLHUP;
+const std::string event_system<EventEpoll>::value("epoll");
 
 EventEpoll::EventEpoll() throw(std::exception)
 	: evfd(-1), nfds(-1)
