@@ -89,11 +89,11 @@ int EventSelect::wait() throw()
 	
 	nfds =
 		select(
-	#ifdef WIN32
+		#ifdef WIN32
 		0,
-	#else // !WIN32
+		#else // !WIN32
 		(largest_nfds + 1),
-	#endif // WIN32
+		#endif // WIN32
 		&t_fds_r,
 		&t_fds_w,
 		&t_fds_e,

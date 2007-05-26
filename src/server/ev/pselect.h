@@ -61,9 +61,6 @@ public:
 	~EventPselect() throw();
 	
 	//! Set signal mask.
-	/**
-	 * Only used by pselect() so far
-	 */
 	void setMask(const sigset_t& mask) throw() { sigmask = mask; }
 	
 	void timeout(uint msecs) throw();
