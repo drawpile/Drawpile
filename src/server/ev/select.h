@@ -43,6 +43,7 @@
 	#include "../sockets.h"
 #else
 	#include <sys/select.h>
+	#define INVALID_SOCKET -1
 #endif
 
 #include <map>
