@@ -7,3 +7,5 @@
 #cmakedefine EV_KQUEUE
 #cmakedefine EV_KEVENT
 #cmakedefine EV_WSA
+
+#cmakedefine DEBUG_EVENTS
