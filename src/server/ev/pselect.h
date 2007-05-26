@@ -50,7 +50,7 @@ class EventPselect
 private:
 	timespec _timeout;
 	int nfds;
-	sigset_t sigmask, sigsaved;
+	sigset_t sigmask;
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	std::map<int, uint> fd_list; // events set for FD
 	std::map<int, uint>::iterator fd_iter;

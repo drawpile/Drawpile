@@ -84,15 +84,11 @@ int EventPselect::wait() throw()
 	memcpy(&t_fds_e, &fds_e, sizeof(fds_e));
 	#endif // HAVE_SELECT_COPY
 	
-	// save sigmask
-	sigprocmask(SIG_SETMASK, &sigmask, &sigsaved);
-	
 	using std::max;
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
 	nfds = pselect((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &sigmask);
 	error = errno;
-	sigprocmask(SIG_SETMASK, &sigsaved, 0); // restore mask
 	
 	switch (nfds)
 	{
