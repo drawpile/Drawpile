@@ -30,24 +30,19 @@
 
 #ifndef NDEBUG
 	#include <iostream>
+	using std::cout;
+	using std::endl;
+	using std::cerr;
 #endif
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-template <>
-const bool event_has_error<EventPselect>::value = true;
-template <>
-const bool event_has_sigmask<EventPselect>::value = true;
-template <>
-const int event_read<EventPselect>::value = 1;
-template <>
-const int event_write<EventPselect>::value = 2;
-template <>
-const int event_error<EventPselect>::value = 4;
-
-using std::cout;
-using std::endl;
-using std::cerr;
+template <> const bool event_has_error<EventPselect>::value = true;
+template <> const bool event_has_sigmask<EventPselect>::value = true;
+template <> const int event_read<EventPselect>::value = 1;
+template <> const int event_write<EventPselect>::value = 2;
+template <> const int event_error<EventPselect>::value = 4;
+template <> const std::string event_system<EventPselect>::value("pselect");
 
 EventPselect::EventPselect() throw()
 	#if !defined(WIN32)

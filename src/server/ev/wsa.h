@@ -80,5 +80,9 @@ template <> struct event_write<EventWSA> { static const long value; };
 template <> struct event_hangup<EventWSA> { static const long value; };
 template <> struct event_accept<EventWSA> { static const long value; };
 template <> struct event_connect<EventWSA> { static const long value; };
+template <> struct event_system<EventWSA> { static const std::string value; };
+
+// unused, but required because GCC is less than bright
+template <> struct event_error<EventWSA> { static const long value; };
 
 #endif // EventWSA_INCLUDED

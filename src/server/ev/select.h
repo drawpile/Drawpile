@@ -80,5 +80,6 @@ template <> struct event_has_error<EventSelect> { static const bool value; };
 template <> struct event_read<EventSelect> { static const int value; };
 template <> struct event_write<EventSelect> { static const int value; };
 template <> struct event_error<EventSelect> { static const int value; };
+template <> struct event_system<EventSelect> { static const std::string value; };
 
 #endif // EventSelect_INCLUDED

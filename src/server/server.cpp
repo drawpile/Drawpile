@@ -110,6 +110,10 @@ Server::Server() throw()
 		user_ids.push(i+1);
 		session_ids.push(i+1);
 	}
+	
+	#ifndef NDEBUG
+	cout << "? Event mechanism: " << event_system<EventSystem>::value << endl;
+	#endif
 }
 
 Server::~Server() throw()

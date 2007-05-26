@@ -81,5 +81,6 @@ template <> struct event_has_sigmask<EventPselect> { static const bool value; };
 template <> struct event_read<EventPselect> { static const int value; };
 template <> struct event_write<EventPselect> { static const int value; };
 template <> struct event_error<EventPselect> { static const int value; };
+template <> struct event_system<EventPselect> { static const std::string value; };
 
 #endif // EventPselect_INCLUDED

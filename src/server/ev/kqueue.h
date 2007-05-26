@@ -66,5 +66,6 @@ public:
 
 template <> struct event_read<EventKqueue> { static const int value; };
 template <> struct event_write<EventKqueue> { static const int value; };
+template <> struct event_system<EventKqueue> { static const std::string value; };
 
 #endif // EventKqueue_INCLUDED

@@ -68,5 +68,6 @@ template <> struct event_read<EventEpoll> { static const int value; };
 template <> struct event_write<EventEpoll> { static const int value; };
 template <> struct event_error<EventEpoll> { static const int value; };
 template <> struct event_hangup<EventEpoll> { static const int value; };
+template <> struct event_system<EventEpoll> { static const std::string value; };
 
 #endif // EventEpoll_INCLUDED

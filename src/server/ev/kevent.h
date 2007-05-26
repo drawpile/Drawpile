@@ -63,5 +63,6 @@ template <> struct event_has_accept<EventKevent> { static const bool value; };
 template <> struct event_read<EventKevent> { static const int value; };
 template <> struct event_write<EventKevent> { static const int value; };
 template <> struct event_accept<EventKevent> { static const int value; };
+template <> struct event_system<EventKevent> { static const std::string value; };
 
 #endif // EventKevent_INCLUDED

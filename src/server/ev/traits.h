@@ -29,6 +29,8 @@
 #ifndef EventTraits_INCLUDED
 #define EventTraits_INCLUDED
 
+#include <string>
+
 /* traits */
 
 template <typename Evs>
@@ -103,6 +105,12 @@ template <typename Evs>
 struct event_connect
 {
 	static const int value = 0;
+};
+
+template <typename Evs>
+struct event_system
+{
+	static const std::string value;
 };
 
 #endif // EventTraits_INCLUDED

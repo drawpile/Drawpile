@@ -30,22 +30,18 @@
 
 #ifndef NDEBUG
 	#include <iostream>
+	using std::cout;
+	using std::endl;
+	using std::cerr;
 #endif
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-template <>
-const bool event_has_error<EventSelect>::value = true;
-template <>
-const int event_read<EventSelect>::value = 1;
-template <>
-const int event_write<EventSelect>::value = 2;
-template <>
-const int event_error<EventSelect>::value = 4;
-
-using std::cout;
-using std::endl;
-using std::cerr;
+template <> const bool event_has_error<EventSelect>::value = true;
+template <> const int event_read<EventSelect>::value = 1;
+template <> const int event_write<EventSelect>::value = 2;
+template <> const int event_error<EventSelect>::value = 4;
+template <> const std::string event_system<EventSelect>::value("select");
 
 EventSelect::EventSelect() throw()
 	#ifndef WIN32
