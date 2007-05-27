@@ -68,20 +68,15 @@ typedef std::set<User*>::iterator userset_i;
 typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
-	: state(Server::Dead),
-	password(0),
-	a_password(0),
-	pw_len(0),
-	a_pw_len(0),
+	: state(Server::Dead), password(0), a_password(0),
+	pw_len(0), a_pw_len(0),
 	user_limit(0),
 	session_limit(srv_defaults::session_limit),
 	max_subscriptions(srv_defaults::max_subscriptions),
 	name_len_limit(srv_defaults::name_len_limit),
 	time_limit(srv_defaults::time_limit),
-	current_time(0),
-	next_timer(0),
-	hi_port(protocol::default_port),
-	lo_port(protocol::default_port),
+	current_time(0), next_timer(0),
+	hi_port(protocol::default_port), lo_port(protocol::default_port),
 	min_dimension(srv_defaults::min_dimension),
 	requirements(0),
 	extensions(
@@ -90,26 +85,21 @@ Server::Server() throw()
 		|protocol::extensions::Deflate
 		#endif // HAVE_ZLIB
 	),
-	enforceUnique(false),
-	wideStrings(false),
-	noGlobalChat(false),
-	#ifdef HAVE_ZLIB
-	extDeflate(true),
-	#else
-	extDeflate(false),
-	#endif
-	extPalette(true),
-	extChat(true),
+	enforceUnique(false), wideStrings(false), noGlobalChat(false),
+	extDeflate(
+		#ifdef HAVE_ZLIB
+		true
+		#else
+		false
+		#endif
+		),
+	extPalette(true), extChat(true),
 	default_user_mode(protocol::user_mode::None),
-	Transient(false),
-	LocalhostAdmin(false),
+	Transient(false), LocalhostAdmin(false),
 	blockDuplicateConnections(true)
 {
-	for (uint8_t i=0; i != std::numeric_limits<uint8_t>::max(); ++i)
-	{
-		user_ids.push(i+1);
-		session_ids.push(i+1);
-	}
+	memset(user_ids, true, sizeof(user_ids));
+	memset(session_ids, true, sizeof(session_ids));
 	
 	#ifndef NDEBUG
 	cout << "? Event mechanism: " << event_system<EventSystem>::value << endl;
@@ -123,40 +113,48 @@ Server::~Server() throw()
 
 const uint8_t Server::getUserID() throw()
 {
-	if (user_ids.empty())
-		return protocol::null_user;
-	else
+	static int index=0;
+	
+	for (int count=255; !user_ids[index]; --count)
 	{
-		const uint8_t n = user_ids.front();
-		user_ids.pop();
-		
-		return n;
+		if (count == 0) return protocol::null_user;
+		if (++index == 255) index = 0;
 	}
+	
+	const int ri = index+1;
+	user_ids[index++] = false;
+	if (index == 255) index = 0;
+	return ri;
 }
 
 const uint8_t Server::getSessionID() throw()
 {
-	if (session_ids.empty())
-		return protocol::Global;
-	else
+	static int index=0;
+	
+	for (int count=255; !session_ids[index]; ++index, --count)
 	{
-		const uint8_t n = session_ids.front();
-		session_ids.pop();
-		
-		return n;
+		if (count == 0) return protocol::null_user;
+		if (index == 255) index = -1;
 	}
+	
+	const int ri = index+1;
+	session_ids[index++] = false;
+	if (index == 255) index = 0;
+	return ri;
 }
 
 void Server::freeUserID(const uint8_t id) throw()
 {
 	assert(id != protocol::null_user);
-	user_ids.push(id);
+	assert(user_ids[id-1] == false);
+	user_ids[id-1] = true;
 }
 
 void Server::freeSessionID(const uint8_t id) throw()
 {
 	assert(id != protocol::Global);
-	session_ids.push(id);
+	assert(session_ids[id-1] == false);
+	session_ids[id-1] = true;
 }
 
 void Server::uRegenSeed(User& usr) const throw()

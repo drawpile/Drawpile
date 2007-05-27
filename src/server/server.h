@@ -79,11 +79,7 @@ protected:
 	
 	EventSystem ev;
 	
-	std::queue<uint8_t>
-		// Free user IDs
-		user_ids,
-		// Free session IDs
-		session_ids;
+	bool user_ids[254], session_ids[254];
 	
 	// FD to user mapping
 	std::map<fd_t, User*> users;
