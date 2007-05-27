@@ -16,8 +16,8 @@ set ( CPU pentium3 )
 # 0 - no optimization
 # 1 - minimal optimization
 # 2 - recommended optimization level
-# 3 - highest optimization level, may break.
-# s - optimize for small size (both executable and memory-wise)
+# 3 - highest optimization level, may break things.
+# s - same as 2, except this optimizes for size as well
 
 if ( DEBUG )
 	set ( OPTIMIZATION 2 ) # anything greater may cause problems with debugging
@@ -138,6 +138,16 @@ else ( UNSAFE_MATH )
 	set ( UNSAFE_MATH_OPT "" )
 endif ( UNSAFE_MATH )
 
+###   mregparm   ###
+
+if ( OPTIMIZEMORE )
+	set ( REGPARM "-mregparm=2" ) # netstatus.cpp doesn't like -mregparm=3
+	check_cxx_accepts_flag ( ${REGPARM} ACCEPT_REGPARM )
+	if ( NOT ACCEPT_REGPARM )
+		set ( REGPARM "" )
+	endif ( NOT ACCEPT_REGPARM )
+endif ( OPTIMIZEMORE )
+
 ###   TEST -Wall   ###
 
 check_cxx_accepts_flag ( ${WARNALL} ACCEPT_WALL )
@@ -147,6 +157,6 @@ endif ( NOT ACCEPT_WALL )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT}" )
+set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${REGPARM}" )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${FOMIT} -DNDEBUG" )
