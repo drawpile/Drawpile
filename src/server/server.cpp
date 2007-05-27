@@ -159,10 +159,18 @@ void Server::freeSessionID(const uint8_t id) throw()
 
 void Server::uRegenSeed(User& usr) const throw()
 {
+	#ifdef LINUX
+	FILE stream = fopen("/dev/urandom", "r");
+	assert(stream);
+	if (!stream) throw std::exception;
+	fread(usr.seed, 4, 1, stream);
+	fclose(stream);
+	#else
 	usr.seed[0] = rand() % 256; // 0 - 255
 	usr.seed[1] = rand() % 256;
 	usr.seed[2] = rand() % 256;
 	usr.seed[3] = rand() % 256;
+	#endif
 }
 
 message_ref Server::msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc)
@@ -2209,16 +2217,7 @@ bool Server::init() throw(std::bad_alloc)
 {
 	assert(state == Server::Dead);
 	
-	#ifdef LINUX
-	FILE stream = fopen("/dev/urandom", "r");
-	int seed;
-	if (stream != 0)
-	{
-		fread(&seed, sizeof(seed), 1, stream);
-		fclose(stream);
-	}
-	srand(seed);
-	#else
+	#ifndef LINUX
 	srand(time(0) - 513); // FIXME: Need better seed value
 	#endif
 	
