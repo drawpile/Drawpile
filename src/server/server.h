@@ -47,7 +47,6 @@
 #include "message.h" // message_ref
 
 #include <ctime> // time_t, time(0)
-#include <queue>
 #include <map> // tunnel
 #include <set> // utimer
 
