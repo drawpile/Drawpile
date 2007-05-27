@@ -138,16 +138,6 @@ else ( UNSAFE_MATH )
 	set ( UNSAFE_MATH_OPT "" )
 endif ( UNSAFE_MATH )
 
-###   mregparm   ###
-
-if ( OPTIMIZEMORE )
-	set ( REGPARM "-mregparm=2" ) # netstatus.cpp doesn't like -mregparm=3
-	check_cxx_accepts_flag ( ${REGPARM} ACCEPT_REGPARM )
-	if ( NOT ACCEPT_REGPARM )
-		set ( REGPARM "" )
-	endif ( NOT ACCEPT_REGPARM )
-endif ( OPTIMIZEMORE )
-
 ###   TEST -Wall   ###
 
 check_cxx_accepts_flag ( ${WARNALL} ACCEPT_WALL )
