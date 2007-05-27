@@ -588,18 +588,6 @@ void Server::uHandleDrawing(User& usr) throw()
 {
 	assert(usr.inMsg != 0);
 	
-	#ifndef NDEBUG
-	switch (usr.inMsg->type)
-	{
-	case protocol::Message::StrokeInfo:
-		++usr.strokes;
-		break;
-	case protocol::Message::StrokeEnd:
-		usr.strokes = 0;
-		break;
-	}
-	#endif
-	
 	// no session selected
 	if (!usr.session)
 	{
@@ -744,8 +732,17 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 	{
 	case protocol::Message::ToolInfo:
 		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
+		uHandleDrawing(*usr);
+		break;
 	case protocol::Message::StrokeInfo:
+		++usr->strokes;
+		if (usr.session_data->cachedToolInfo)
+			uHandleDrawing(*usr);
+		else
+			uRemove(usr, protocol::UserInfo::Violation);
+		break;
 	case protocol::Message::StrokeEnd:
+		usr->strokes = 0;
 		uHandleDrawing(*usr);
 		break;
 	case protocol::Message::Acknowledgement:

@@ -132,11 +132,8 @@ struct User
 		deadtime(0),
 		name_len(0),
 		name(0),
-		session_data(0)
-		#ifndef NDEBUG
-		,
+		session_data(0),
 		strokes(0)
-		#endif
 	{
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
 		std::cout << "User::User(" << static_cast<int>(_id)
@@ -339,9 +336,7 @@ struct User
 	
 	/* counters */
 	
-	#ifndef NDEBUG
 	u_long strokes;
-	#endif
 };
 
 #endif // ServerUser_INCLUDED
