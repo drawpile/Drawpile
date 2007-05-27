@@ -246,6 +246,8 @@ protected:
 	
 	// Reprocesses deflated data stream
 	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
+	// Deflate outgoing data
+	void Deflate(Buffer& buffer, size_t& len, size_t& size) throw(std::bad_alloc);
 	
 	// cull idle users
 	void cullIdlers() throw();

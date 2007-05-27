@@ -150,14 +150,12 @@ const uint8_t Server::getSessionID() throw()
 void Server::freeUserID(const uint8_t id) throw()
 {
 	assert(id != protocol::null_user);
-	
 	user_ids.push(id);
 }
 
 void Server::freeSessionID(const uint8_t id) throw()
 {
 	assert(id != protocol::Global);
-	
 	session_ids.push(id);
 }
 
@@ -172,13 +170,9 @@ void Server::uRegenSeed(User& usr) const throw()
 message_ref Server::msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc)
 {
 	protocol::PasswordRequest* pwreq = new protocol::PasswordRequest;
-	
 	pwreq->session_id = session;
-	
 	uRegenSeed(usr);
-	
 	memcpy(pwreq->seed, usr.seed, protocol::password_seed_size);
-	
 	return message_ref(pwreq);
 }
 
@@ -285,100 +279,10 @@ void Server::uWrite(User*& usr) throw()
 		
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
-			and usr->output.canRead() > 300
-			and (*f_msg)->type != protocol::Message::Raster)
+			and (*f_msg)->type != protocol::Message::Raster
+			and usr->output.canRead() > 300)
 		{
-			// TODO: Move to separate function
-			
-			char* temp;
-			ulong buffer_len = len + 12;
-			// make the potential new buffer generous in its size
-			
-			bool inBuffer;
-			
-			if (usr->output.canWrite() < buffer_len)
-			{ // can't write continuous stream of data in buffer
-				assert(usr->output.free() < buffer_len);
-				size = usr->output.size*2;
-				temp = new char[size];
-				inBuffer = false;
-			}
-			else
-			{
-				temp = usr->output.wpos;
-				inBuffer = true;
-			}
-			
-			const int r = compress2(reinterpret_cast<uchar*>(temp), &buffer_len, reinterpret_cast<uchar*>(usr->output.rpos), len, 5);
-			
-			assert(r != Z_STREAM_ERROR);
-			assert(r != Z_BUF_ERROR); // too small buffer
-			
-			switch (r)
-			{
-			default:
-			case Z_OK:
-				#ifndef NDEBUG
-				cout << "zlib: " << len << "B compressed down to " << buffer_len << "B" << endl;
-				#endif
-				
-				// compressed size was equal or larger than original size
-				if (buffer_len >= len)
-					goto cleanup;
-				
-				usr->output.read(len);
-				
-				if (inBuffer)
-				{
-					usr->output.write(buffer_len);
-					size = usr->output.canWrite();
-				}
-				else
-					usr->output.setBuffer(temp, size, buffer_len);
-				
-				{
-					const protocol::Deflate t_deflate(len, buffer_len, temp);
-					
-					// make sure we can write the whole message in
-					if (usr->output.canWrite() < (buffer_len + 9) <= usr->output.free())
-					{
-						usr->output.reposition();
-						size = usr->output.canWrite();
-					}
-					
-					buf = t_deflate.serialize(len, usr->output.wpos, size);
-					
-					if (buf != usr->output.wpos)
-					{
-						#ifndef NDEBUG
-						if (!inBuffer)
-						{
-							cout << "[Deflate] Pre-allocated buffer was too small!" << endl
-								<< "Allocated: " << buffer_len*2+1024
-								<< ", actually needed: " << size << endl
-								<< "... for user #" << usr->id << endl;
-						}
-						else
-						{
-							cout << "[Deflate] Output buffer was too small!" << endl
-								<< "Original size: " << usr->output.canWrite()
-								<< ", actually needed: " << size << endl
-								<< "... for user #" << usr->id << endl;
-						}
-						#endif
-						usr->output.setBuffer(buf, size, len);
-					}
-					else
-						usr->output.write(len);
-				}
-				break;
-			case Z_MEM_ERROR:
-				goto cleanup;
-			}
-			
-			cleanup:
-			if (!inBuffer)
-				delete [] temp;
+			Deflate(usr->output, len, size);
 		}
 		#endif // HAVE_ZLIB
 		
@@ -445,6 +349,99 @@ void Server::uWrite(User*& usr) throw()
 		}
 		break;
 	}
+}
+
+void Server::Deflate(Buffer& buffer, size_t& len, size_t& size) throw(std::bad_alloc)
+{
+	// len, size
+	
+	char* temp;
+	ulong buffer_len = len + 12;
+	// make the potential new buffer generous in its size
+	
+	bool inBuffer;
+	
+	if (buffer.canWrite() < buffer_len)
+	{ // can't write continuous stream of data in buffer
+		assert(buffer.free() < buffer_len);
+		size = buffer.size*2;
+		temp = new char[size];
+		inBuffer = false;
+	}
+	else
+	{
+		temp = buffer.wpos;
+		inBuffer = true;
+	}
+	
+	const int r = compress2(reinterpret_cast<uchar*>(temp), &buffer_len, reinterpret_cast<uchar*>(buffer.rpos), len, 5);
+	
+	assert(r != Z_STREAM_ERROR);
+	assert(r != Z_BUF_ERROR); // too small buffer
+	
+	switch (r)
+	{
+	default:
+	case Z_OK:
+		#ifndef NDEBUG
+		cout << "zlib: " << len << "B compressed down to " << buffer_len << "B" << endl;
+		#endif
+		
+		// compressed size was equal or larger than original size
+		if (buffer_len >= len)
+			goto cleanup;
+		
+		buffer.read(len);
+		
+		if (inBuffer)
+		{
+			buffer.write(buffer_len);
+			size = buffer.canWrite();
+		}
+		else
+			buffer.setBuffer(temp, size, buffer_len);
+		
+		{
+			const protocol::Deflate t_deflate(len, buffer_len, temp);
+			
+			// make sure we can write the whole message in
+			if (buffer.canWrite() < (buffer_len + 9) <= buffer.free())
+			{
+				buffer.reposition();
+				size = buffer.canWrite();
+			}
+			
+			char *buf = t_deflate.serialize(len, buffer.wpos, size);
+			
+			if (buf != buffer.wpos)
+			{
+				#ifndef NDEBUG
+				if (!inBuffer)
+				{
+					cout << "[Deflate] Pre-allocated buffer was too small!" << endl
+						<< "Allocated: " << buffer_len*2+1024
+						<< ", actually needed: " << size << endl;
+				}
+				else
+				{
+					cout << "[Deflate] Output buffer was too small!" << endl
+						<< "Original size: " << buffer.canWrite()
+						<< ", actually needed: " << size << endl;
+				}
+				#endif
+				buffer.setBuffer(buf, size, len);
+			}
+			else
+				buffer.write(len);
+		}
+		break;
+	case Z_MEM_ERROR:
+		goto cleanup;
+	}
+	
+	cleanup:
+	if (!inBuffer)
+		delete [] temp;
 }
 
 // May delete User*
@@ -736,7 +733,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	case protocol::Message::StrokeInfo:
 		++usr->strokes;
-		if (usr.session_data->cachedToolInfo)
+		if (usr->session_data->cachedToolInfo)
 			uHandleDrawing(*usr);
 		else
 			uRemove(usr, protocol::UserInfo::Violation);
