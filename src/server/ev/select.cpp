@@ -45,9 +45,9 @@ const std::string event_system<EventSelect>::value("select");
 
 EventSelect::EventSelect() throw()
 	#ifndef WIN32
-	: nfds_r(0),
-	nfds_w(0),
-	nfds_e(0)
+	: nfds_r(-1),
+	nfds_w(-1),
+	nfds_e(-1)
 	#endif
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -192,7 +192,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		read_set.erase(fd);
 		if (fd == nfds_r)
-			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
 		#endif // WIN32
 	}
 	
@@ -202,7 +202,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		write_set.erase(fd);
 		if (fd == nfds_w)
-			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
 		#endif // WIN32
 	}
 	
@@ -212,7 +212,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		error_set.erase(fd);
 		if (fd == nfds_e)
-			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : -1);
 		#endif // WIN32
 	}
 	
@@ -234,21 +234,21 @@ int EventSelect::remove(fd_t fd) throw()
 	#ifndef WIN32
 	read_set.erase(fd);
 	if (fd == nfds_r)
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
 	#ifndef WIN32
 	write_set.erase(fd);
 	if (fd == nfds_w)
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
 	#ifndef WIN32
 	error_set.erase(fd);
 	if (fd == nfds_e)
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : -1);
 	#endif // WIN32
 	
 	fd_list.erase(iter);

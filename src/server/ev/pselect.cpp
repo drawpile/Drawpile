@@ -44,9 +44,9 @@ const int event_error<EventPselect>::value = 4;
 const std::string event_system<EventPselect>::value("pselect");
 
 EventPselect::EventPselect() throw()
-	: nfds_r(0),
-	nfds_w(0),
-	nfds_e(0)
+	: nfds_r(-1),
+	nfds_w(-1),
+	nfds_e(-1)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect()" << endl;
@@ -86,7 +86,7 @@ int EventPselect::wait() throw()
 	using std::max;
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
-	nfds = pselect((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &sigmask);
+	nfds = pselect((ubnfds==0?-1:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &sigmask);
 	
 	switch (nfds)
 	{
@@ -169,7 +169,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 		FD_CLR(fd, &fds_r);
 		read_set.erase(fd);
 		if (fd == nfds_r)
-			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
 	}
 	
 	if (!fIsSet(events, event_write<EventPselect>::value))
@@ -177,7 +177,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 		FD_CLR(fd, &fds_w);
 		write_set.erase(fd);
 		if (fd == nfds_w)
-			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
 	}
 	
 	if (!fIsSet(events, event_error<EventPselect>::value))
@@ -185,7 +185,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 		FD_CLR(fd, &fds_e);
 		error_set.erase(fd);
 		if (fd == nfds_e)
-			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : -1);
 	}
 	
 	return 0;
@@ -205,18 +205,17 @@ int EventPselect::remove(fd_t fd) throw()
 	FD_CLR(fd, &fds_r);
 	read_set.erase(fd);
 	if (fd == nfds_r)
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
 	
 	FD_CLR(fd, &fds_w);
 	write_set.erase(fd);
-	nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 	if (fd == nfds_w)
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
 	
 	FD_CLR(fd, &fds_e);
 	error_set.erase(fd);
 	if (fd == nfds_e)
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : -1);
 	
 	fd_list.erase(iter);
 	fd_iter = fd_list.begin();
