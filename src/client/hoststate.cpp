@@ -30,6 +30,7 @@
 #include "version.h"
 
 #include "../shared/protocol.h"
+#include "../shared/protocol.errors.h"
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.flags.h"
 #include "../shared/SHA1.h"

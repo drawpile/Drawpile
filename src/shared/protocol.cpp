@@ -39,9 +39,15 @@
 #include <limits>
 #include <cassert> // assert()
 #include <memory> // memcpy()
+#include <cassert> // assert()
 
+#include "templates.h"
 #include "protocol.errors.h"
 #include "templates.h"
+
+#ifndef NDEBUG
+#include "protocol.tools.h"
+#endif
 
 namespace protocol {
 

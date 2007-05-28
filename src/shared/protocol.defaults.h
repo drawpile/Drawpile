@@ -33,6 +33,9 @@
 #ifndef Protocol_Defaults_INCLUDED
 #define Protocol_Defaults_INCLUDED
 
+#include <boost/cstdint.hpp>
+#include <cstddef> // size_t
+
 namespace protocol
 {
 

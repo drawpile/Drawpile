@@ -37,6 +37,7 @@
 
 #include "../shared/SHA1.h"
 #include "../shared/protocol.h"
+#include "../shared/protocol.errors.h"
 
 #include "sockets.h"
 #include "user.h"

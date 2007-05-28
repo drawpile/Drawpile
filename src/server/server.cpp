@@ -1297,7 +1297,13 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 	switch (msg.action)
 	{
 	case protocol::SessionInstruction::Create:
-		if (!usr->isAdmin) { break; }
+		if (!usr->isAdmin)
+		{
+			#ifndef NDEBUG
+			cerr << "- Non-admin tries to create session; user #" << usr->id << endl;
+			#endif
+			break;
+		}
 		// limited scope for switch/case
 		{
 			const uint8_t session_id = getSessionID();
@@ -1362,7 +1368,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				sessions[session->id] = session;
 				
 				cout << "+ Session #" << session->id << " created by user #" << usr->id
-					<< " [" << usr->sock.address() << "]" << endl
+					/*<< " [" << usr->sock.address() << "]"*/ << endl
 					#ifdef NDEBUG
 					<< "  Size: " << session->width << "x" << session->height
 					<< ", Limit: " << static_cast<uint>(session->limit)
@@ -2123,16 +2129,16 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	assert(usr != 0);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Removing user #" << usr->id << " [" << usr->sock.address() << "]" << endl;
+	cout << "[Server] Removing user #" << usr->id /*<< " [" << usr->sock.address() << "]"*/ << endl;
 	#endif
 	
 	switch (reason)
 	{
 		case protocol::UserInfo::BrokenPipe:
-			cout << "- User #" << usr->id << " [" << usr->sock.address() << "] lost (broken pipe)" << endl;
+			cout << "- User #" << usr->id /*<< " [" << usr->sock.address() << "]" <<*/ << " lost (broken pipe)" << endl;
 			break;
 		case protocol::UserInfo::Disconnect:
-			cout << "- User #" << usr->id << " [" << usr->sock.address() << "] disconnected" << endl;
+			cout << "- User #" << usr->id /*<< " [" << usr->sock.address() << "]" <<*/ << " disconnected" << endl;
 			break;
 		default:
 			// do nothing
