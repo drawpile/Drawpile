@@ -39,7 +39,7 @@
 /* swapping endianess */
 
 //! Base template for byte swapping
-template <typename T> inline
+template <typename T>
 T& bswap(T& x) throw()
 {
 	#if !defined(IS_BIG_ENDIAN) and !defined(NDEBUG)
@@ -84,7 +84,7 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 
 // copies src& bytes to dst*
 // automation of memcpy(dst*, &src, sizeof(src));
-template <typename T> inline
+template <typename T>
 char* memcpy_t(char* dst, const T& src) throw()
 {
 	assert(dst != 0);
@@ -94,7 +94,7 @@ char* memcpy_t(char* dst, const T& src) throw()
 
 // copies sizeof(dst) bytes from src* to dst
 // automation of memcpy(&dst, src*, sizeof(dst));
-template <typename T> inline
+template <typename T>
 T& memcpy_t(T& dst, const char* src) throw()
 {
 	assert(src != 0);
@@ -112,7 +112,7 @@ T& memcpy_t(T& dst, const char* src) throw()
  *
  * @return modified flag container.
  */
-template <typename T> inline
+template <typename T>
 T& fSet(T& u, const T& x) throw()
 {
 	return u |= x;
@@ -125,7 +125,7 @@ T& fSet(T& u, const T& x) throw()
  *
  * @return modified flag container.
  */
-template <typename T> inline
+template <typename T>
 T& fClr(T& u, const T& x) throw()
 {
 	return u &= ~x;
@@ -138,7 +138,7 @@ T& fClr(T& u, const T& x) throw()
  *
  * @return test result
  */
-template <typename T> inline
+template <typename T>
 bool fIsSet(const T& u, const T& x) throw()
 {
 	return (u & x) == x;
@@ -146,7 +146,7 @@ bool fIsSet(const T& u, const T& x) throw()
 
 /* type ops */
 
-template <typename T, typename U> inline
+template <typename T, typename U>
 bool inBoundsOf(const U& u) throw()
 {
 	return (static_cast<T>(u) == u);
@@ -160,7 +160,7 @@ bool inBoundsOf(const U& u) throw()
  * roundToNext(1200, 1000) = 2000
  * roundToNext(28175, 300) = 27200
  */
-template <typename T> inline
+template <typename T>
 T roundToNext(const T& number, const T& boundary) throw()
 {
 	return (number / boundary + 1) * boundary;
@@ -178,7 +178,7 @@ double roundToNext<double>(const double& number, const double& boundary) throw()
  * roundToPrev(1200, 1000) = 1000
  * roundToPrev(28175, 300) = 27900
  */
-template <typename T> inline
+template <typename T>
 T roundToPrev(const T& number, const T& boundary) throw()
 {
 	return (number / boundary) * boundary;
@@ -194,7 +194,7 @@ double roundToPrev<double>(const double& number, const double& boundary) throw()
 /**
  * \note does this work with negative numbers?
  */
-template <typename T> inline
+template <typename T>
 T round(const T& num) throw()
 {
 	const T fl = ::floor(num);
