@@ -126,7 +126,7 @@ int EventPselect::add(fd_t fd, int events) throw()
 	{
 		FD_SET(fd, &fds_r);
 		read_set.insert(read_set.end(), fd);
-		nfds_r = *(read_set.end());
+		nfds_r = *(--read_set.end());
 		rc = true;
 	}
 	if (fIsSet(events, event_write<EventPselect>::value))
