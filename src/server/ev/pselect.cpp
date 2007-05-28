@@ -86,7 +86,7 @@ int EventPselect::wait() throw()
 	using std::max;
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
-	nfds = pselect((ubnfds==0?-1:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &sigmask);
+	nfds = pselect((ubnfds==-1?-1:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout, &sigmask);
 	
 	switch (nfds)
 	{

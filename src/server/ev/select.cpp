@@ -90,7 +90,7 @@ int EventSelect::wait() throw()
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	#endif
 	
-	nfds = select((ubnfds==0?0:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
+	nfds = select((ubnfds==-1?-1:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
 	
 	switch (nfds)
 	{
