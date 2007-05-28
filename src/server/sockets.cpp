@@ -739,9 +739,9 @@ std::string Socket::AddrToString(const sockaddr_in6& raddr) throw()
 	bswap(_port);
 	char buf[48];
 	#ifdef HAVE_SNPRINTF
-	snprintf(buf, 48, "[%39s]:%5d", straddr, _port);
+	snprintf(buf, 48, "[%s]:%d", straddr, _port);
 	#else
-	sprintf(buf, "[%39s]:%5d", straddr, _port);
+	sprintf(buf, "[%s]:%d", straddr, _port);
 	#endif // HAVE_SNPRINTF
 	#endif
 	return std::string(buf);
@@ -762,9 +762,9 @@ std::string Socket::AddrToString(const sockaddr_in& raddr) throw()
 	bswap(_port);
 	char buf[22];
 	#ifdef HAVE_SNPRINTF
-	snprintf(buf, 25, "%15s:%5d", straddr, _port);
+	snprintf(buf, 25, "%s:%d", straddr, _port);
 	#else
-	sprintf(buf, "%15s:%5d", straddr, _port);
+	sprintf(buf, "%s:%d", straddr, _port);
 	#endif // HAVE_SNPRINTF
 	#endif
 	return std::string(buf);
