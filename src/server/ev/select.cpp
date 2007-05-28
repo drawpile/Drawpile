@@ -143,7 +143,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
 		read_set.insert(read_set.end(), fd);
-		nfds_r = *(read_set.end());
+		if (fd > nfds_r) nfds_r = fd;
 		#endif // !Win32
 		rc = true;
 	}
@@ -152,7 +152,7 @@ int EventSelect::add(fd_t fd, int events) throw()
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
 		write_set.insert(write_set.end(), fd);
-		nfds_w = *(--write_set.end());
+		if (fd > nfds_w) nfds_w = fd;
 		#endif // !Win32
 		rc = true;
 	}
@@ -161,10 +161,12 @@ int EventSelect::add(fd_t fd, int events) throw()
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
 		error_set.insert(error_set.end(), fd);
-		nfds_e = *(--error_set.end());
+		if (fd > nfds_e) nfds_e = fd;
 		#endif // !Win32
 		rc = true;
 	}
+	
+	assert(rc);
 	
 	// maintain fd_list
 	fd_list[fd] = events;
@@ -189,7 +191,8 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
 		read_set.erase(fd);
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+		if (fd == nfds_r)
+			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
 		#endif // WIN32
 	}
 	
@@ -198,7 +201,8 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
 		write_set.erase(fd);
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+		if (fd == nfds_w)
+			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 		#endif // WIN32
 	}
 	
@@ -207,7 +211,8 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
 		error_set.erase(fd);
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+		if (fd == nfds_e)
+			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
 		#endif // WIN32
 	}
 	
@@ -228,19 +233,22 @@ int EventSelect::remove(fd_t fd) throw()
 	FD_CLR(fd, &fds_r);
 	#ifndef WIN32
 	read_set.erase(fd);
-	nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
+	if (fd == nfds_r)
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : 0);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
 	#ifndef WIN32
 	write_set.erase(fd);
-	nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
+	if (fd == nfds_w)
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : 0);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
 	#ifndef WIN32
 	error_set.erase(fd);
-	nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
+	if (fd == nfds_e)
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : 0);
 	#endif // WIN32
 	
 	fd_list.erase(iter);
