@@ -45,9 +45,9 @@ const std::string event_system<EventSelect>::value("select");
 
 EventSelect::EventSelect() throw()
 	#ifndef WIN32
-	: nfds_r(-1),
-	nfds_w(-1),
-	nfds_e(-1)
+	: nfds_r(INVALID_SOCKET),
+	nfds_w(INVALID_SOCKET),
+	nfds_e(INVALID_SOCKET)
 	#endif
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -90,7 +90,7 @@ int EventSelect::wait() throw()
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	#endif
 	
-	nfds = select((ubnfds==-1?-1:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
+	nfds = select((ubnfds==INVALID_SOCKET?INVALID_SOCKET:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
 	
 	switch (nfds)
 	{
@@ -192,7 +192,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		read_set.erase(fd);
 		if (fd == nfds_r)
-			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
+			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : INVALID_SOCKET);
 		#endif // WIN32
 	}
 	
@@ -202,7 +202,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		write_set.erase(fd);
 		if (fd == nfds_w)
-			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
+			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : INVALID_SOCKET);
 		#endif // WIN32
 	}
 	
@@ -212,7 +212,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		error_set.erase(fd);
 		if (fd == nfds_e)
-			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : -1);
+			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : INVALID_SOCKET);
 		#endif // WIN32
 	}
 	
@@ -234,21 +234,21 @@ int EventSelect::remove(fd_t fd) throw()
 	#ifndef WIN32
 	read_set.erase(fd);
 	if (fd == nfds_r)
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : INVALID_SOCKET);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
 	#ifndef WIN32
 	write_set.erase(fd);
 	if (fd == nfds_w)
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : INVALID_SOCKET);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
 	#ifndef WIN32
 	error_set.erase(fd);
 	if (fd == nfds_e)
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : -1);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : INVALID_SOCKET);
 	#endif // WIN32
 	
 	fd_list.erase(iter);
