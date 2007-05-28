@@ -1,17 +1,10 @@
 # Optimize.cmake
 
-# [arch] - [instruction sets]
-
-# i386      - none
-# i686      - MMX
-# pentium2  - MMX, SSE
-# athlon    - MMX, 3DNow
-# athlon-xp - MMX, SSE, 3DNow!, Ext 3DNow!
-
-#set ( CPU pentium2 )
+# only used if -march=native doesn't work
+# i383, i686, pentium2, pentium3, athlon-xp, etc.
 set ( CPU pentium3 )
-#set ( CPU i686 )
-#set ( CPU athlon-xp )
+
+set ( GENERIC_CPU i686 )
 
 # 0 - no optimization
 # 1 - minimal optimization
@@ -27,11 +20,7 @@ endif ( DEBUG )
 
 ###   DO NOT TOUCH THE FOLLOWING   ###
 
-###   Set args   ###
-
-if ( NOT NOARCH )
-	set ( ARCH "-march=${CPU}" )
-endif ( NOT NOARCH )
+set ( ARCH "" )
 
 set ( FASTMATH "-ffast-math" )
 
@@ -57,6 +46,34 @@ set ( PIPE "-pipe " )
 
 include ( TestCXXAcceptsFlag )
 
+###   Architecture   ###
+
+if ( NOT NOARCH ) # optimized for specific arch
+	set ( ARCHNATIVE "-march=native" )
+	check_cxx_accepts_flag ( ${ARCHNATIVE} COMPILE_MARCH_NATIVE )
+	if ( COMPILE_MARCH_NATIVE )
+		set ( ARCH ${ARCHSPECIFIC} )
+	else ( COMPILE_MARCH_NATIVE )
+		set ( ARCHSPECIFIC "-march=${CPU}" )
+		check_cxx_accepts_flag ( ${ARCHSPECIFIC} COMPILE_MARCH_SPECIFIC )
+		if ( COMPILE_MARCH_SPECIFIC )
+			set ( ARCH ${ARCHSPECIFIC} )
+		endif ( COMPILE_MARCH_SPECIFIC )
+	endif ( COMPILE_MARCH_NATIVE )
+else ( NOT NOARCH ) # for generic archs
+	set ( ARCHGENERIC "-march=generic")
+	check_cxx_accepts_flag ( ${ARCHGENERIC} COMPILE_MARCH_GENERIC )
+	if ( COMPILE_MARCH_GENERIC )
+		set ( ARCH ${ARCHGENERIC} )
+	else ( COMPILE_MARCH_GENERIC )
+		set ( ARCHSPECIFIC "-march=${GENERIC_CPU}" )
+		check_cxx_accepts_flag ( ${ARCHSPECIFIC} COMPILE_MARCH_SPECIFIC )
+		if ( COMPILE_MARCH_SPECIFIC )
+			set ( ARCH ${ARCHSPECIFIC} )
+		endif ( COMPILE_MARCH_SPECIFIC )
+	endif ( COMPILE_MARCH_GENERIC )
+endif ( NOT NOARCH )
+
 ###   TEST -O#   ###
 
 check_cxx_accepts_flag ( ${OPT} ACCEPT_OPT )
@@ -64,14 +81,6 @@ check_cxx_accepts_flag ( ${OPT} ACCEPT_OPT )
 if ( NOT ACCEPT_OPT )
 	set ( OPT "" )
 endif ( NOT ACCEPT_OPT)
-
-###   TEST -march=CPUNAME   ###
-
-check_cxx_accepts_flag ( ${ARCH} COMPILE_MARCH )
-
-if ( NOT COMPILE_MARCH )
-	set ( ARCH "" )
-endif ( NOT COMPILE_MARCH )
 
 ###   TEST -ffast-math   ###
 
