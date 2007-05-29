@@ -2211,7 +2211,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 
 void Server::sRemove(Session*& session) throw()
 {
-	cout << "- Session #" << session->id << " destoyed" << endl;
+	cout << "- Session #" << session->id << " destroyed" << endl;
 	
 	freeSessionID(session->id);
 	sessions.erase(session->id);
