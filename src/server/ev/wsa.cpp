@@ -76,7 +76,7 @@ int EventWSA::wait() throw()
 	assert(fd_to_ev.size() != 0);
 	
 	/* params: event_count, event_array, wait_for_all, timeout, alertable */
-	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, false, _timeout, true);
+	nfds = WSAWaitForMultipleEvents(fd_to_ev.size(), w_ev, false, _timeout, false);
 	if (nfds == WSA_WAIT_FAILED)
 	{
 		error = WSAGetLastError();
@@ -98,6 +98,7 @@ int EventWSA::wait() throw()
 		case WSA_WAIT_TIMEOUT:
 			return 0;
 		default:
+			nfds -= WSA_WAIT_EVENT_0;
 			return 1;
 		}
 	}
@@ -110,7 +111,7 @@ int EventWSA::add(fd_t fd, long events) throw()
 	cout << "wsa.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	fSet(events, event_hangup<EventWSA>::value);
 	
@@ -134,9 +135,9 @@ int EventWSA::add(fd_t fd, long events) throw()
 				return false;
 			}
 			
-			// update ev_to_fd and fd_to_ev maps
+			// update fd_to_ev map and fdl array
 			fd_to_ev[fd] = i;
-			ev_to_fd[i] = fd;
+			fdl[i] = fd;
 			
 			if (i > last_event)
 				last_event = i;
@@ -159,42 +160,16 @@ int EventWSA::modify(fd_t fd, long events) throw()
 	cout << "wsa.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	#ifndef NDEBUG
-	cout << ": Setting events: " << events << ", for FD: " << fd << endl;
-	
-	cout << " # ";
-	bool next=false;
-	if (fIsSet(events, event_read<EventWSA>::value))
-	{
-		cout << "read"; next = true;
-	}
-	if (fIsSet(events, event_write<EventWSA>::value))
-	{
-		if (next) cout << ", ";
-		cout << "write"; next = true;
-	}
-	if (fIsSet(events, event_accept<EventWSA>::value))
-	{
-		if (next) cout << ", ";
-		cout << "accept"; next = true;
-	}
-	if (fIsSet(events, event_hangup<EventWSA>::value))
-	{
-		if (next) cout << ", ";
-		cout << "close";
-	}
-	cout << endl;
-	#endif
-	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	fSet(events, event_hangup<EventWSA>::value);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
 	assert(fi->second < max_events);
+	const uint i = fi->second;
 	
-	const int r = WSAEventSelect(fd, w_ev[fi->second], events);
+	const int r = WSAEventSelect(fd, w_ev[i], events);
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -216,7 +191,7 @@ int EventWSA::remove(fd_t fd) throw()
 	cout << "wsa.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert( fd >= 0 );
+	assert(fd != INVALID_SOCKET);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
@@ -226,8 +201,8 @@ int EventWSA::remove(fd_t fd) throw()
 	
 	w_ev[fi->second] = WSA_INVALID_EVENT;
 	
-	ev_to_fd.erase(fi->second);
-	fd_to_ev.erase(fd);
+	fdl[fi->second] = INVALID_SOCKET;
+	fd_to_ev.erase(fi);
 	
 	// find last event
 	for (; w_ev[last_event] == WSA_INVALID_EVENT; --last_event)
@@ -238,28 +213,17 @@ int EventWSA::remove(fd_t fd) throw()
 
 bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 {
-	uint get_event = nfds - WSA_WAIT_EVENT_0;
 	WSANETWORKEVENTS set;
 	
-	#ifndef NDEBUG
-	cout << "~ Getting events, start offset: " << get_event << endl;
-	#endif
-	
-	r_ev_iter fd_iter;
-	
-	for (; get_event <= last_event;)
+	events = 0;
+	for (; nfds <= last_event; ++nfds)
 	{
-		if (w_ev[get_event] != WSA_INVALID_EVENT)
+		if (w_ev[nfds] != WSA_INVALID_EVENT)
 		{
-			fd_iter = ev_to_fd.find(get_event);
-			assert(fd_iter != ev_to_fd.end());
-			fd = fd_iter->second;
+			fd = fdl[nfds];
+			assert(fd != INVALID_SOCKET);
 			
-			#ifndef NDEBUG
-			cout << "~ Checking FD: " << fd << endl;
-			#endif
-			
-			const int r = WSAEnumNetworkEvents(fd, w_ev[get_event], &set);
+			const int r = WSAEnumNetworkEvents(fd, w_ev[nfds], &set);
 			
 			if (r == SOCKET_ERROR)
 			{
@@ -277,12 +241,12 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 				case WSAENOBUFS: // out of network buffers
 				case WSAENETDOWN: // network sub-system failure
 				case WSAEINPROGRESS: // something's in progress
-					goto loopend;
+					break;
 				default:
 					#ifndef NDEBUG
 					cerr << "Event(wsa).getEvent() - unknown error: " << error << endl;
 					#endif
-					goto loopend;
+					break;
 				}
 			}
 			else
@@ -290,47 +254,17 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 			
 			if (events != 0)
 			{
-				#ifndef NDEBUG
-				cout << "+ Events triggered: " << events << ", for FD: " << fd << endl;
-				
-				cout << " # ";
-				bool next=false;
-				if (fIsSet(events, event_read<EventWSA>::value))
-				{
-					cout << "read"; next = true;
-				}
-				if (fIsSet(events, event_write<EventWSA>::value))
-				{
-					if (next) cout << ", ";
-					cout << "write"; next = true;
-				}
-				if (fIsSet(events, event_accept<EventWSA>::value))
-				{
-					if (next) cout << ", ";
-					cout << "accept"; next = true;
-				}
-				if (fIsSet(events, event_hangup<EventWSA>::value))
-				{
-					if (next) cout << ", ";
-					cout << "close";
-				}
-				cout << endl;
-				#endif
-				
 				++nfds;
-				++get_event;
-				
 				return true;
 			}
+			#ifndef NDEBUG
+			else
+			{
+				cout << "- No events triggered for FD: " << fd << endl;
+			}
+			#endif
 		}
-		
-		loopend:
-		++get_event;
 	}
-	
-	#ifndef NDEBUG
-	cerr << "- No events triggered!" << endl;
-	#endif
 	
 	return false;
 }

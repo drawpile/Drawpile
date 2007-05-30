@@ -54,10 +54,9 @@ private:
 	uint nfds;
 	uint last_event;
 	std::map<fd_t, uint> fd_to_ev;
-	std::map<uint, fd_t> ev_to_fd;
 	typedef std::map<fd_t, uint>::iterator ev_iter;
-	typedef std::map<uint, fd_t>::iterator r_ev_iter;
 	WSAEVENT w_ev[max_events];
+	SOCKET fdl[max_events];
 public:
 	EventWSA() throw();
 	~EventWSA() throw();
