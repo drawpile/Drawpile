@@ -37,6 +37,9 @@ class LocalServer : public QObject {
 		//! Get the address of the local server
 		static QString address();
 
+		//! Make sure server is running on the port set in settings
+		bool ensureRunning();
+
 		//! Make sure server is running on the given port
 		bool ensureRunning(int port);
 

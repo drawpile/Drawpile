@@ -91,6 +91,8 @@ class MainWindow : public QMainWindow {
 		bool save();
 		//! Save current document with a new name
 		bool saveas();
+		//! Show settings dialog
+		void showSettings();
 		//! Show host session dialog
 		void host();
 		//! Show join session dialog
@@ -259,6 +261,7 @@ class MainWindow : public QMainWindow {
 		QAction *zoomout_;
 		QAction *zoomorig_;
 		QAction *fullscreen_;
+		QAction *settings_;
 
 		QAction *toggleoutline_;
 		QAction *togglecrosshair_;

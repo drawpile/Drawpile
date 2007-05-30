@@ -32,8 +32,6 @@ using widgets::ImageSelector;
 
 #include "ui_hostdialog.h"
 
-#include "../shared/protocol.defaults.h"
-
 namespace dialogs {
 
 HostDialog::HostDialog(const QImage& original, QWidget *parent)
@@ -59,7 +57,6 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
 	// Set defaults
-	ui_->port->setValue(protocol::default_port);
 	QSettings cfg;
 	cfg.beginGroup("history");
 	ui_->username->setText(cfg.value("username").toString());
@@ -131,16 +128,6 @@ QString HostDialog::getRemoteAddress() const
 bool HostDialog::useRemoteAddress() const
 {
 	return ui_->useremote->isChecked();
-}
-
-int HostDialog::getPort() const
-{
-	return ui_->port->value();
-}
-
-bool HostDialog::isDefaultPort() const
-{
-	return ui_->port->value() == protocol::default_port;
 }
 
 QString HostDialog::getUserName() const

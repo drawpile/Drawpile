@@ -38,7 +38,7 @@ set (
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	recentfiles.h sessioninfo.h sessionlistmodel.h icons.h mandatoryfields.h
 	version.h palette.h localpalette.h palettewidget.h palettebox.h
-	colorbox.h
+	colorbox.h settingsdialog.h
 )
 
 set (
@@ -53,11 +53,13 @@ set (
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
+	settingsdialog.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
-	ui/chatbox.ui ui/sessiondialog.ui ui/palettebox.ui ui/colorbox.ui )
+	ui/chatbox.ui ui/sessiondialog.ui ui/palettebox.ui ui/colorbox.ui
+	ui/settings.ui )
 
 # .MOC
 

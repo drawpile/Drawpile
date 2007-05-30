@@ -22,9 +22,11 @@
 #include <QNetworkInterface>
 #include <QFileInfo>
 #include <QApplication>
+#include <QSettings>
 #include <QDir>
 
 #include "localserver.h"
+#include "../shared/protocol.defaults.h"
 
 LocalServer::LocalServer()
 	: port_(-1)
@@ -88,6 +90,20 @@ QString LocalServer::address()
 }
 
 /**
+ * If no port is specified in the configuration, the default port is used.
+ * @reval false if server could not be started
+ * @post if returned true, server is now running in the background
+ */
+bool LocalServer::ensureRunning()
+{
+	QSettings cfg;
+	int port = protocol::default_port;
+	if(cfg.contains("settings/server/port"))
+		port = cfg.value("settings/server/port").toInt();
+	return ensureRunning(port);
+}
+
+/**
  * Start the server if it is not already running on the specified port.
  * @param port server listening port
  * @retval false if server could not be started
@@ -98,10 +114,29 @@ bool LocalServer::ensureRunning(int port)
 	if(port_ != port)
 		shutdown();
 	if(server_.state()==QProcess::NotRunning) {
+		QSettings cfg;
+		cfg.beginGroup("settings");
+		cfg.beginGroup("server");
 		QStringList args;
 		args << "-p" << QString::number(port);
 		args << "-l"; // automatically make user from localhost admin
 		args << "-T"; // server will automatically shutdown when all clients have disconnected
+		// Maximum name length
+		if(cfg.contains("maxnamelength"))
+			args << "-n" << QString::number(cfg.value("maxnamelength").toInt());
+		// Maximum user count
+		if(cfg.contains("maxusers"))
+			args << "-u" << QString::number(cfg.value("maxusers").toInt());
+		// Server password
+		if(cfg.value("password","").toString().length()>0)
+			args << "-s" << cfg.value("password").toString();
+		// Require unique names
+		if(cfg.value("uniquenames",false).toBool())
+			args << "-e";
+		// Allow multiple connections from same IP
+		if(cfg.value("multiconnect",false).toBool())
+			args << "-M";
+
 		noerror_ = true;
 		qDebug() << "starting server on port" << port;
 		server_.start(binpath_, args);

@@ -58,6 +58,7 @@
 #include "hostdialog.h"
 #include "joindialog.h"
 #include "logindialog.h"
+#include "settingsdialog.h"
 
 /**
  * @param restoreposition if true, the window is placed at its previous position
@@ -664,6 +665,12 @@ bool MainWindow::saveas()
 	return false;
 }
 
+void MainWindow::showSettings()
+{
+	dialogs::SettingsDialog dlg(this);
+	dlg.exec();
+}
+
 void MainWindow::host()
 {
 	hostdlg_ = new dialogs::HostDialog(board_->image(), this);
@@ -728,10 +735,10 @@ void MainWindow::finishHost(int i)
 					QUrl::TolerantMode);
 			admin = hostdlg_->getAdminPassword();
 		} else {
+			QSettings cfg;
 			address.setHost(LocalServer::address());
-			// If we are not using the default port, add it to the address.
-			if(hostdlg_->isDefaultPort() == false)
-				address.setPort(hostdlg_->getPort());
+			if(cfg.contains("settings/server/port"))
+				address.setPort(cfg.value("settings/server/port").toInt());
 		}
 
 		if(address.isValid() == false || address.host().isEmpty()) {
@@ -747,7 +754,7 @@ void MainWindow::finishHost(int i)
 		// Start server if hosting locally
 		if(useremote==false) {
 			LocalServer *srv = LocalServer::getInstance();
-			if(srv->ensureRunning(hostdlg_->getPort())==false) {
+			if(srv->ensureRunning()==false) {
 				showErrorMessage(srv->errorString(),srv->serverOutput());
 				hostdlg_->deleteLater();
 				return;
@@ -1137,6 +1144,15 @@ void MainWindow::initActions()
 	recttool_->setCheckable(true);
 	recttool_->setShortcut(QKeySequence("R"));
 
+	drawingtools_ = new QActionGroup(this);
+	drawingtools_->setExclusive(true);
+	drawingtools_->addAction(brushtool_);
+	drawingtools_->addAction(erasertool_);
+	drawingtools_->addAction(pickertool_);
+	drawingtools_->addAction(linetool_);
+	drawingtools_->addAction(recttool_);
+	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+
 	// View actions
 	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom &in"), this);
 	zoomin_->setShortcut(QKeySequence::ZoomIn);
@@ -1153,15 +1169,6 @@ void MainWindow::initActions()
 	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
 	connect(fullscreen_, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
 
-	drawingtools_ = new QActionGroup(this);
-	drawingtools_->setExclusive(true);
-	drawingtools_->addAction(brushtool_);
-	drawingtools_->addAction(erasertool_);
-	drawingtools_->addAction(pickertool_);
-	drawingtools_->addAction(linetool_);
-	drawingtools_->addAction(recttool_);
-	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
-
 	// Tool cursor settings
 	toggleoutline_ = new QAction(tr("Show brush &outline"), this);
 	toggleoutline_->setStatusTip(tr("Display the brush outline around the cursor"));
@@ -1170,6 +1177,10 @@ void MainWindow::initActions()
 	togglecrosshair_ = new QAction(tr("Crosshair c&ursor"), this);
 	togglecrosshair_->setStatusTip(tr("Use a crosshair cursor"));
 	togglecrosshair_->setCheckable(true);
+
+	// Settings window action
+	settings_ = new QAction(tr("&Settings"), this);
+	connect(settings_, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Toolbar toggling actions
 	toolbartoggles_ = new QAction(tr("&Toolbars"), this);
@@ -1227,6 +1238,8 @@ void MainWindow::createMenus()
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
 	toolsmenu->addAction(togglecrosshair_);
+	toolsmenu->addSeparator();
+	toolsmenu->addAction(settings_);
 
 	//QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
 

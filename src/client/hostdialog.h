@@ -42,12 +42,6 @@ class HostDialog : public QDialog
 		//! Host on a remote server?
 		bool useRemoteAddress() const;
 
-		//! Get the port to use for local server
-		int getPort() const;
-
-		//! Check if selected port is the built in default port
-		bool isDefaultPort() const;
-
 		//! Get the username
 		QString getUserName() const;
 
