@@ -693,6 +693,7 @@ void MainWindow::join()
  */
 void MainWindow::leave()
 {
+	leavebox_->setWindowTitle(sessiontitle_.isEmpty()?tr("Untitled session"):sessiontitle_);
 	if(controller_->isUploading()) {
 		leavebox_->setIcon(QMessageBox::Warning);
 		leavebox_->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
@@ -1385,7 +1386,7 @@ void MainWindow::createDialogs()
 	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
 
 	leavebox_ = new QMessageBox(QMessageBox::Question,
-			tr("DrawPile"),
+			"",
 			tr("Really leave the session?"),
                 QMessageBox::NoButton,
                 this, Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet);
