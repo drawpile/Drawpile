@@ -63,6 +63,9 @@ class SessionState : public QObject {
 		//! Construct a session state object
 		SessionState(HostState *parent, const Session& info);
 
+		//! Handle session message
+		void handleMessage(protocol::Message *msg);
+
 		//! Get the host to which the session belongs
 		HostState *host() const { return host_; }
 
@@ -126,36 +129,6 @@ class SessionState : public QObject {
 		//! Send a chat message
 		void sendChat(const QString& message);
 
-		//! Handle session acks
-		void handleAck(const protocol::Acknowledgement *msg);
-
-		//! Handle session specific user info
-		void handleUserInfo(const protocol::UserInfo *msg);
-
-		//! Handle raster data
-		void handleRaster(const protocol::Raster *msg);
-
-		//! Handle sync request
-		void handleSynchronize(const protocol::Synchronize *msg);
-
-		//! Handle SyncWait command
-		void handleSyncWait(const protocol::SyncWait *msg);
-
-		//! Handle session event
-		void handleSessionEvent(const protocol::SessionEvent *msg);
-
-		//! Handle ToolInfo messages
-		bool handleToolInfo(protocol::ToolInfo *msg);
-		//
-		//! Handle StrokeInfo messages
-		bool handleStrokeInfo(protocol::StrokeInfo *msg);
-
-		//! Handle StrokeEnd messages
-		bool handleStrokeEnd(protocol::StrokeEnd *msg);
-
-		//! Handle chat messages
-		void handleChat(const protocol::Chat *msg);
-
 	signals:
 		//! Raster data has been received
 		/**
@@ -216,6 +189,36 @@ class SessionState : public QObject {
 		void sendRasterChunk();
 
 	private:
+		//! Handle session acks
+		void handleAck(const protocol::Acknowledgement *msg);
+
+		//! Handle session specific user info
+		void handleUserInfo(const protocol::UserInfo *msg);
+
+		//! Handle raster data
+		void handleRaster(const protocol::Raster *msg);
+
+		//! Handle sync request
+		void handleSynchronize(const protocol::Synchronize *msg);
+
+		//! Handle SyncWait command
+		void handleSyncWait(const protocol::SyncWait *msg);
+
+		//! Handle session event
+		void handleSessionEvent(const protocol::SessionEvent *msg);
+
+		//! Handle ToolInfo messages
+		bool handleToolInfo(protocol::ToolInfo *msg);
+		//
+		//! Handle StrokeInfo messages
+		bool handleStrokeInfo(protocol::StrokeInfo *msg);
+
+		//! Handle StrokeEnd messages
+		bool handleStrokeEnd(protocol::StrokeEnd *msg);
+
+		//! Handle chat messages
+		void handleChat(const protocol::Chat *msg);
+
 		void flushDrawBuffer();
 
 		HostState *host_;

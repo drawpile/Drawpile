@@ -85,6 +85,8 @@ protected:
 	// Header size
 	const size_t headerSize;
 	
+public:
+
 	const bool
 		//! User modifier
 		isUser,
@@ -95,7 +97,6 @@ protected:
 		//! Bundling modifier
 		isBundling;
 	
-public:
 	virtual ~Message() throw()
 	{
 	}

@@ -21,7 +21,6 @@
 #define HOSTSTATE_H
 
 #include <QObject>
-#include <QHash>
 
 #include "sessioninfo.h"
 
@@ -55,7 +54,7 @@ class HostState : public QObject {
 		const User& localUser() const { return localuser_; }
 
 		//! Get the session state
-		SessionState *session(int id) { return mysessions_.value(id); }
+		SessionState *session() { return session_; }
 
 		//! Set network connection object to use
 		void setConnection(Connection *net);
@@ -78,7 +77,7 @@ class HostState : public QObject {
 				bool allowdraw, bool allowchat);
 
 		//! Try joining automatically
-		void join(const QString& name = "");
+		void join(const QString& title = "");
 
 		//! Join a specific session
 		void join(int id);
@@ -150,9 +149,6 @@ class HostState : public QObject {
 		//! Handle a SessionInfo message
 		void handleSessionInfo(const protocol::SessionInfo *msg);
 
-		//! Handle a SessionSelect message
-		void handleSessionSelect(const protocol::SessionSelect *msg);
-
 		//! Handle authentication request
 		void handleAuthentication(const protocol::PasswordRequest *msg);
 
@@ -171,9 +167,7 @@ class HostState : public QObject {
 
 		User localuser_;
 
-		SessionState *newsession_;
-		QHash<int, SessionState*> mysessions_;
-		QHash<int,int> usersessions_;
+		SessionState *session_;
 		SessionList sessions_;
 
 		//protocol::SessionEvent::session_action lastsessioninstr_;

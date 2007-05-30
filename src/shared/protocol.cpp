@@ -61,7 +61,7 @@ Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags
 	isSession(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isSession))),
 	isSelected(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isSelected))),
 	isBundling(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isBundling))),
-	type(_type),
+	type(_type), user_id(0), session_id(0),
 	next(0),
 	prev(0)
 {

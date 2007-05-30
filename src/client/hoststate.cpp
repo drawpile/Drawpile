@@ -39,7 +39,7 @@
 namespace network {
 
 HostState::HostState(QObject *parent)
-	: QObject(parent), net_(0), newsession_(0), lastsessioninstr_(-1), loggedin_(false)
+	: QObject(parent), net_(0), session_(0), lastsessioninstr_(-1), loggedin_(false)
 {
 }
 
@@ -49,98 +49,77 @@ HostState::HostState(QObject *parent)
  */
 void HostState::receiveMessage()
 {
-	protocol::Message *msg;
+	using namespace protocol;
+	Message *msg;
 	// Get all available messages.
 	// The message may be a "bundled message", that is it came from the network
 	// with a single shared header and is now received as a linked list.
-	while((msg = net_->receive())) { while(msg) {
-		protocol::Message *next = msg->next;
-		switch(msg->type) {
-			using namespace protocol;
-			case Message::StrokeInfo:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					if(mysessions_.value(usersessions_.value(msg->user_id))
-						->handleStrokeInfo(static_cast<StrokeInfo*>(msg)))
-						msg = 0;
-				break;
-			case Message::StrokeEnd:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					if(mysessions_.value(usersessions_.value(msg->user_id))
-						->handleStrokeEnd(static_cast<StrokeEnd*>(msg)))
-						msg = 0;
-				break;
-			case Message::ToolInfo:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					if(mysessions_.value(usersessions_.value(msg->user_id))
-						->handleToolInfo(static_cast<ToolInfo*>(msg)))
-						msg = 0;
-				break;
-			case Message::Chat:
-				Q_ASSERT(usersessions_.contains(msg->user_id));
-				if(mysessions_.contains(usersessions_.value(msg->user_id)))
-					mysessions_.value(usersessions_.value(msg->user_id))
-						->handleChat(static_cast<Chat*>(msg));
-				break;
-			case Message::UserInfo:
-				handleUserInfo(static_cast<UserInfo*>(msg));
-				break;
-			case Message::HostInfo:
-				handleHostInfo(static_cast<HostInfo*>(msg));
-				break;
-			case Message::SessionInfo:
-				handleSessionInfo(static_cast<SessionInfo*>(msg));
-				break;
-			case Message::Acknowledgement:
-				handleAck(static_cast<Acknowledgement*>(msg));
-				break;
-			case Message::Error:
-				handleError(static_cast<Error*>(msg));
-				break;
-			case Message::PasswordRequest:
-				handleAuthentication(static_cast<PasswordRequest*>(msg));
-				break;
-			case Message::SessionSelect:
-				handleSessionSelect(static_cast<SessionSelect*>(msg));
-				break;
-			case Message::Raster:
-				if(mysessions_.contains(msg->session_id))
-					mysessions_.value(msg->session_id)->handleRaster(
-							static_cast<Raster*>(msg));
-				else
-					qDebug() << "received raster data for unsubscribed session" << int(msg->session_id);
-				break;
-			case Message::Synchronize:
-				if(mysessions_.contains(msg->session_id))
-					mysessions_.value(msg->session_id)->handleSynchronize(
-							static_cast<Synchronize*>(msg));
-				else
-					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
-				break;
-			case Message::SyncWait:
-				if(mysessions_.contains(msg->session_id))
-					mysessions_.value(msg->session_id)->handleSyncWait(
-							static_cast<SyncWait*>(msg));
-				else
-					qDebug() << "received synchronize or unsubscribed session " << int(msg->session_id);
-				break;
-			case Message::SessionEvent:
-				if(mysessions_.contains(msg->session_id))
-					mysessions_.value(msg->session_id)->handleSessionEvent(
-							static_cast<SessionEvent*>(msg));
-				else
-					qDebug() << "received event for unsubscribed session " << int(msg->session_id);
-				break;
+	// Host and session messages are not mixed in bundles.
+	while((msg = net_->receive())) {
 
-			default:
-				qDebug() << "unhandled message type " << int(msg->type);
-				break;
-		}
-		delete msg;
-		msg = next;
-	} }
+		if(msg->session_id != 0) {
+			// Messages with a session number go to the session,
+			// with a few exceptions.
+			
+			if(msg->type == Message::Acknowledgement
+					&& (static_cast<Acknowledgement*>(msg)->event == protocol::Message::Subscribe ||
+						static_cast<Acknowledgement*>(msg)->event == protocol::Message::Password)) {
+				// Special case, session subscription ack.
+				session_->select();
+				if(setsessionpassword_.isEmpty()==false) {
+					session_->setPassword(setsessionpassword_);
+					setsessionpassword_ = "";
+				}
+				emit joined(session_->info().id);
+			} else if(msg->type == Message::SessionInfo) {
+				// Special case, session info
+				handleSessionInfo(static_cast<SessionInfo*>(msg));
+				delete msg;
+			} else {
+				// Regular session messages.
+				if(session_ != 0) {
+					session_->handleMessage(msg);
+				} else {
+					qDebug() << "got session message" << int(msg->type) << "for unsubscribed session" << int(msg->session_id);
+					delete msg;
+				}
+			}
+		} else if(msg->isSelected) {
+			// Selected messages always go straight to the session
+			if(session_ != 0) {
+				session_->handleMessage(msg);
+			} else {
+					qDebug() << "got selected session message" << int(msg->type) << "even though no sessions are joined";
+					delete msg;
+			}
+		} else do {
+			// Handle host messages
+			Message *next = msg->next;
+			switch(msg->type) {
+				case Message::UserInfo:
+					handleUserInfo(static_cast<UserInfo*>(msg));
+					break;
+				case Message::HostInfo:
+					handleHostInfo(static_cast<HostInfo*>(msg));
+					break;
+				case Message::Acknowledgement:
+					handleAck(static_cast<Acknowledgement*>(msg));
+					break;
+				case Message::Error:
+					handleError(static_cast<Error*>(msg));
+					break;
+				case Message::PasswordRequest:
+					handleAuthentication(static_cast<PasswordRequest*>(msg));
+					break;
+
+				default:
+					qDebug() << "unhandled host message type" << int(msg->type);
+					break;
+			}
+			delete msg;
+			msg = next;
+		} while(msg);
+	}
 }
 
 /**
@@ -150,16 +129,13 @@ void HostState::setConnection(Connection *net)
 {
 	net_ = net;
 	if(net==0) {
-		if(newsession_)
-			delete newsession_;
-		newsession_ = 0;
-		usersessions_.clear();
 		loggedin_ = false;
-		foreach(SessionState *s, mysessions_) {
-			emit parted(s->info().id);
-			delete s;
+		sessions_.clear();
+		if(session_) {
+			emit parted(session_->info().id);
+			delete session_;
+			session_ = 0;
 		}
-		mysessions_.clear();
 	}
 }
 
@@ -232,6 +208,8 @@ void HostState::host(const QString& title,
 /**
  * If there is only one session, automatically join it. Otherwise ask
  * the user to pick one.
+ *
+ * A list of sessions is requested. When the list is received (sessionsListed signal is emitted), autoJoin is called.
  * @param title if not empty, automatically join the session with a matching title.
  */
 void HostState::join(const QString& title)
@@ -303,8 +281,6 @@ void HostState::setPassword(const QString& password)
  */
 void HostState::setPassword(const QString& password, int session)
 {
-	qDebug() << "sending password for session" << session;
-	
 	const QByteArray passwd = password.toUtf8();
 	
 	protocol::SetPassword *msg = new protocol::SetPassword(
@@ -341,14 +317,16 @@ void HostState::listSessions()
  * @param id session id to join
  * @pre user must be logged in
  * @pre session list must include the id of the session
+ * @pre user must not be joined to any other session
  */
 void HostState::join(int id)
 {
+	Q_ASSERT(session_ == 0);
 	bool found = false;
 	// Get session parameters from list
 	foreach(const Session &i, sessions_) {
 		if(i.id == id) {
-			newsession_ = new SessionState(this,i);
+			session_ = new SessionState(this,i);
 			found = true;
 			break;
 		}
@@ -357,7 +335,6 @@ void HostState::join(int id)
 	if(found==false)
 		return;
 	// Join the session
-	qDebug() << "joining session " << id;
 	protocol::Subscribe *msg = new protocol::Subscribe;
 	msg->session_id = id;
 	net_->send(msg);
@@ -366,28 +343,33 @@ void HostState::join(int id)
 /**
  * The session list is searched for the newest session that is owned
  * by the current user.
- * @pre session list has been refreshed
+ * @pre session list contains a session owned by this user
  */
 void HostState::joinLatest()
 {
 	Q_ASSERT(sessions_.count() > 0);
-	bool found = false;
 	SessionList::const_iterator i = sessions_.constEnd();
 	do {
 		--i;
 		qDebug() << i->owner << " vs " << localuser_.id(); 
 		if(i->owner == localuser_.id()) {
 			join(i->id);
-			found = true;
-			break;
+			return;
 		}
 	} while(i!=sessions_.constBegin());
-	Q_ASSERT(found);
+	Q_ASSERT(false);
 }
 
 /**
- * Automatically join a session if it is the only one in list
+ * Attempt to automatically join a session
+ *
+ * Emits noSessions if no session are available, sessionNotFound if no
+ * session matches the optionally preselected title is found and
+ * selectSession if there are more than one available session and user
+ * intervention is required.
+ *
  * @pre session list has been refreshed
+ * @post a session is either joined or a signal is emitted indicating the error condition or need for user intervention.
  */
 void HostState::autoJoin()
 {
@@ -431,7 +413,6 @@ void HostState::autoJoin()
 void HostState::handleHostInfo(const protocol::HostInfo *msg)
 {
 	// Handle host info
-	qDebug() << "host info";
 	
 	const QByteArray name = username_.toUtf8();
 	
@@ -450,23 +431,16 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 
 /**
  * User info message durin LOGIN state finishes the login sequence. In other
- * states it provides information about other users.
+ * states it provides information about other users, and is sent to the
+ * appropriate session.
  * @param msg UserInfo message
  */
 void HostState::handleUserInfo(const protocol::UserInfo *msg)
 {
-	qDebug() << "user info";
-	if(loggedin_) {
-		if(mysessions_.contains(msg->session_id)) {
-			mysessions_.value(msg->session_id)->handleUserInfo(msg);
-		} else {
-			qDebug() << "received user info message for unsubscribed session " << msg->session_id;
-		}
-	} else {
-		loggedin_ = true;
-		localuser_ = User(username_, msg->user_id, false, 0);
-		emit loggedin();
-	}
+	Q_ASSERT(loggedin_ == false);
+	loggedin_ = true;
+	localuser_ = User(username_, msg->user_id, false, 0);
+	emit loggedin();
 }
 
 /**
@@ -476,31 +450,21 @@ void HostState::handleUserInfo(const protocol::UserInfo *msg)
  */
 void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 {
-	qDebug() << "session info " << int(msg->session_id) << msg->title;
 	bool updated = false;
 	for(int i=0;i<sessions_.size();++i) {
 		if(sessions_.at(i).id == msg->session_id) {
 			sessions_.replace(i, Session(msg));
-			if(mysessions_.contains(sessions_.at(i).id))
-				mysessions_[sessions_.at(i).id]->update(sessions_.at(i));
+
+			// If the updated session info was the joined session,
+			// update the actual session too.
+			if(session_->info().id == sessions_.at(i).id)
+				session_->update(sessions_.at(i));
 			updated = true;
 			break;
 		}
 	}
 	if(updated==false)
 		sessions_.append(msg);
-}
-
-/**
- * Select active session. Note that some users session might point
- * to one that is were are not subscribed to. In that case, drawing
- * commands for that user should be discarded.
- * @param msg SessionSelect message
- */
-void HostState::handleSessionSelect(const protocol::SessionSelect *msg)
-{
-	usersessions_[msg->user_id] = msg->session_id;
-	qDebug() << "user" << int(msg->user_id) << "active session" << int(msg->session_id);
 }
 
 /**
@@ -525,32 +489,6 @@ void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
  */
 void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
-	if(msg->session_id != protocol::Global) {
-		// Handle session acks
-		if(msg->event == protocol::Message::Subscribe ||
-				msg->event == protocol::Message::Password) {
-			// Special case. When subscribing, session is not yet in the list.
-			// When a session is protected by a password, Password
-			// ack is used instead.
-			mysessions_.insert(newsession_->info().id, newsession_);
-			newsession_->select();
-			if(setsessionpassword_.isEmpty()==false) {
-				newsession_->setPassword(setsessionpassword_);
-				setsessionpassword_ = "";
-			}
-			emit joined(newsession_->info().id);
-			newsession_ = 0;
-		} else {
-			// Let the session handle the message
-			if(mysessions_.contains(msg->session_id)) {
-				mysessions_.value(msg->session_id)->handleAck(msg);
-			} else {
-				qDebug() << "received ack" << int(msg->event)
-					<< "for unsubscribed session" << int(msg->session_id);
-			}
-		}
-		return;
-	}
 	// Handle global acks
 	switch (msg->event) {
 		case protocol::Message::SessionInstruction:
@@ -559,7 +497,6 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 				disconnect(this, SIGNAL(sessionsListed()), this, 0);
 				connect(this, SIGNAL(sessionsListed()), this, SLOT(joinLatest()));
 				listSessions();
-				qDebug() << "session created, joining...";
 			} else if(lastsessioninstr_ == protocol::SessionInstruction::Alter) {
 				// FIXME: User limit changed?
 				qDebug() << "Warning: Ack for Instruction Alter not expected";
@@ -570,7 +507,6 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 			break;
 		case protocol::Message::SetPassword:
 			// Password accepted
-			qDebug() << "password set";
 			break;
 		case protocol::Message::ListSessions:
 			// A full session list has been downloaded

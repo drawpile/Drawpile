@@ -160,12 +160,15 @@ void SessionState::sendRasterChunk()
 /**
  * Send a SessionSelect message to indicate this session as the one
  * where drawing occurs.
+ *
+ * This doesn't really affect anything, as true multisessions are not
+ * supported, but the protocol requires this.
  */
 void SessionState::select()
 {
 	protocol::SessionSelect *msg = new protocol::SessionSelect;
 	msg->session_id = info_.id;
-	host_->usersessions_[host_->localuser_.id()] = info_.id;
+	// Set current user session here when supporting multisessions
 	host_->connection()->send(msg);
 }
 
@@ -295,6 +298,64 @@ void SessionState::sendChat(const QString& message)
 }
 
 /**
+ * Handle a message or a message bundle. Deletes msg after work
+ * is done.
+ * @param msg message to handle
+ * @pre msg != 0
+ * @pre for each msg in bundle, msg->session_id == info().id
+ */
+void SessionState::handleMessage(protocol::Message *msg)
+{
+	do {
+		using namespace protocol;
+		Message *next = msg->next;
+		switch(msg->type) {
+			case Message::StrokeInfo:
+				handleStrokeInfo(static_cast<StrokeInfo*>(msg));
+				msg = 0;
+				break;
+			case Message::StrokeEnd:
+				handleStrokeEnd(static_cast<StrokeEnd*>(msg));
+				msg = 0;
+				break;
+			case Message::ToolInfo:
+				handleToolInfo(static_cast<ToolInfo*>(msg));
+				msg = 0;
+				break;
+			case Message::Acknowledgement:
+				handleAck(static_cast<Acknowledgement*>(msg));
+				break;
+			case Message::Chat:
+				handleChat(static_cast<Chat*>(msg));
+				break;
+			case Message::Raster:
+				handleRaster(static_cast<Raster*>(msg));
+				break;
+			case Message::Synchronize:
+				handleSynchronize(static_cast<Synchronize*>(msg));
+				break;
+			case Message::SyncWait:
+				handleSyncWait(static_cast<SyncWait*>(msg));
+				break;
+			case Message::SessionEvent:
+				handleSessionEvent(static_cast<SessionEvent*>(msg));
+				break;
+			case Message::UserInfo:
+				handleUserInfo(static_cast<UserInfo*>(msg));
+				break;
+			case Message::SessionSelect:
+				// Ignore session select
+				break;
+
+			default:
+				qDebug() << "unhandled session message type" << int(msg->type);
+		}
+		delete msg;
+		msg = next;
+	} while(msg);
+}
+
+/**
  * @param msg Acknowledgement message
  */
 void SessionState::handleAck(const protocol::Acknowledgement *msg)
@@ -322,7 +383,7 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 	switch(msg->event) {
 		case protocol::UserInfo::Join:
 			if(users_.contains(msg->user_id)) {
-				qDebug() << "Got join event for user " << int(msg->user_id)
+				qDebug() << "Got join event for user" << int(msg->user_id)
 					<< "who is already in session!";
 			} else {
 				bool islocked = fIsSet(msg->mode, static_cast<quint8>(protocol::user_mode::Locked));
@@ -339,7 +400,6 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 			if(users_.contains(msg->user_id)) {
 				emit userLeft(msg->user_id);
 				users_.remove(msg->user_id);
-				host_->usersessions_.remove(msg->user_id);
 			} else {
 				qDebug() << "got logout message for user" << int(msg->user_id)
 				   << "who is not in session!";
