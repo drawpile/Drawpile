@@ -51,15 +51,18 @@ Net::Net() throw(std::exception)
 	#endif
 	
 	#if defined(WIN32)
+	const int maj=2, min=2;
+	
 	WSADATA info;
-	if (WSAStartup(MAKEWORD(2,0), &info))
+	if (WSAStartup(MAKEWORD(maj,min), &info))
 		throw std::exception();
 	
-	if (LOBYTE(info.wVersion) != 2
-		or HIBYTE(info.wVersion) != 0)
+	if (LOBYTE(info.wVersion) != maj
+		or HIBYTE(info.wVersion) != min)
 	{
 		cerr << "ERROR: Invalid WSA version: "
-			<< LOBYTE(info.wVersion) << "." << HIBYTE(info.wVersion) << endl;
+			<< static_cast<int>(LOBYTE(info.wVersion))
+			<< "." << static_cast<int>(HIBYTE(info.wVersion)) << endl;
 		WSACleanup( );
 		exit(1); 
 	}
