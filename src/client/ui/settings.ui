@@ -38,7 +38,7 @@
        <item>
         <widget class="QCheckBox" name="uniquenames" >
          <property name="text" >
-          <string>Require unique user names</string>
+          <string>Require unique names</string>
          </property>
         </widget>
        </item>

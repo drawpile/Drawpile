@@ -91,7 +91,7 @@ QString LocalServer::address()
 
 /**
  * If no port is specified in the configuration, the default port is used.
- * @reval false if server could not be started
+ * @retval false if server could not be started
  * @post if returned true, server is now running in the background
  */
 bool LocalServer::ensureRunning()

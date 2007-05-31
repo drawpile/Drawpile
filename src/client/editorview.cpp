@@ -279,7 +279,10 @@ bool EditorView::viewportEvent(QEvent *event)
 	return true;
 }
 
-//! Start dragging the view
+/**
+ * @param x initial x coordinate
+ * @param y initial y coordinate
+ */
 void EditorView::startDrag(int x,int y)
 {
 	viewport()->setCursor(Qt::ClosedHandCursor);
@@ -288,7 +291,10 @@ void EditorView::startDrag(int x,int y)
 	isdragging_ = true;
 }
 
-//! Drag the view
+/**
+ * @param x x coordinate
+ * @param y y coordinate
+ */
 void EditorView::moveDrag(int x, int y)
 {
 	const int dx = dragx_ - x;

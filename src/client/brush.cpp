@@ -44,6 +44,7 @@ static inline qreal interpolate(qreal a, qreal b, qreal alpha)
  * @param hardness brush hardness
  * @param opacity brush opacity
  * @param color brush color
+ * @param spacing brush spacing hint, as percentage of brush radius
  */
 Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int spacing)
 	: radius1_(radius), radius2_(radius),
@@ -166,7 +167,8 @@ void Brush::setSpacing(int spacing)
 }
 
 /**
- * Check if brush is sensitive to pressure.
+ * Sets sensitive_ if brush can change its shape or color according
+ * to the pressure. Insensitive brushes can be cached more easily.
  */
 void Brush::checkSensitivity()
 {
@@ -247,9 +249,7 @@ int Brush::spacing() const
 /**
  * A brush is basically an image filled with a single color and an alpha
  * channel that defines its shape.
- * @param pressure pen pressure
  * @return brush image
- * @pre 0 <= pressure <= 1
  */
 void Brush::updateCache() const
 {

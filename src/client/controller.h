@@ -177,45 +177,117 @@ class Controller : public QObject
 		void chat(const QString& nick, const QString& msg);
 
 	private slots:
+		//! Connection to a host was established
 		void netConnected();
+
+		//! Connection to a host was disconnected
 		void netDisconnected(const QString& message);
+
+		//! Initial login procedure was completed
 		void serverLoggedin();
+
+		//! Finalize login (join session)
 		void finishLogin();
+
+		//! A session was joined
 		void sessionJoined(int id);
+
+		//! A session was left
 		void sessionParted();
+
+		//! A new user joins
 		void addUser(int id);
+
+		//! A user left the session
 		void removeUser(int id);
+
+		//! Raster data was received
 		void rasterDownload(int p);
+
+		//! A raster upload request was received
 		void rasterUpload();
+
+		//! Received a polite synchronization request
 		void syncWait();
+
+		//! Synchronization was completed
 		void syncDone();
+
+		//! Session was locked ungracefully
 		void sessionLocked(bool lock);
+
+		//! A single user has been (un)locked
 		void userLocked(int id, bool lock);
+
+		//! Session owner was changed
 		void sessionOwnerChanged();
+
+		//! A user was kicked from the session
 		void sessionKicked(int id);
+
+		//! User limit of the session was changed
 		void sessionUserLimitChanged(int count);
 
 	private:
+		//! Enqueue board contents for upload
 		void sendRaster();
+
+		//! Lock the board for synchronizing a new user
 		void lockForSync();
 
+		//! The drawing board (model) associated with this controller
 		drawingboard::Board *board_;
+
+		//! A collection of tools for the local user to modify the board
 		tools::ToolCollection toolbox_;
+
+		//! The currently selected tool
 		tools::Tool *tool_;
 
+		//! Network connection to the host
 		network::Connection *net_;
+
+		//! The host
 		network::HostState *host_;
+
+		//! The session for this board
 		network::SessionState *session_;
 
+		//! Address of the remote host
+		/**
+		 * This address is not used internally, it is just shown to the
+		 * user once connection is established.
+		 */
 		QString address_;
+
+		//! User name to log in with
 		QString username_;
+
+		//! Path used when autojoining
 		QString autojoinpath_;
+		
+		//! Server administrator password to send
 		QString adminpasswd_;
+
+		//! Initial maximum user count for the session
 		int maxusers_;
 
+		//! Is the pen down
 		bool pendown_;
+
+		//! Is a sync pending
+		/**
+		 * When pen is released, sendRaster is called
+		 */
 		bool sync_;
+
+		//! Is a syncwait pending
+		/**
+		 * When pen is released, lockForSync is called
+		 */
 		bool syncwait_;
+
+		//! Is the session locked
 		bool lock_;
 };
 

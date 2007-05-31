@@ -191,6 +191,10 @@ void Controller::sendChat(const QString& message)
 	session_->sendChat(message);
 }
 
+/**
+ * The actual login part was completed. If an admin password was provided,
+ * offer it. Otherwise just finish the login.
+ */
 void Controller::serverLoggedin()
 {
 	if(adminpasswd_.isEmpty())
@@ -199,6 +203,11 @@ void Controller::serverLoggedin()
 		host_->becomeAdmin(adminpasswd_);
 }
 
+/**
+ * Login is finished and admin privileges were granted if requested.
+ * Emit a signal informing login is now done and autojoin a session
+ * if a title was provided.
+ */
 void Controller::finishLogin()
 {
 	emit loggedin();
@@ -207,7 +216,8 @@ void Controller::finishLogin()
 }
 
 /**
- * A session was joined
+ * Prepare the system for a networked session.
+ * @param id session id
  */
 void Controller::sessionJoined(int id)
 {
@@ -278,7 +288,7 @@ void Controller::sessionJoined(int id)
 }
 
 /**
- * A session was left
+ * Restore to local drawing mode.
  */
 void Controller::sessionParted()
 {
@@ -301,18 +311,26 @@ void Controller::sessionParted()
 	syncwait_ = false;
 }
 
+/**
+ * @param id user id
+ */
 void Controller::addUser(int id)
 {
 	emit userJoined(session_->user(id));
 }
 
+/**
+ * @param id user id
+ */
 void Controller::removeUser(int id)
 {
 	emit userParted(session_->user(id));
 }
 
 /**
- * Raster data download
+ * A piece of the board image was received. A signal is emitted with
+ * the percentage of total received data. Download is fully completed
+ * when rasterDownloadProgress(100) is emitted.
  * @param p download progress [0..100]
  */
 void Controller::rasterDownload(int p)
@@ -334,7 +352,8 @@ void Controller::rasterDownload(int p)
 }
 
 /**
- * Raster upload requested
+ * If the user is currently drawing something, politely wait until
+ * the pen is lifted. Otherwise start sending the board contents immediately.
  */
 void Controller::rasterUpload()
 {
@@ -345,7 +364,8 @@ void Controller::rasterUpload()
 }
 
 /**
- * Synchronization request.
+ * If user is currently drawing something, wait until the pen is lifted.
+ * Otherwise lock the board immediately.
  */
 void Controller::syncWait()
 {
@@ -356,7 +376,7 @@ void Controller::syncWait()
 }
 
 /**
- * Synchronization complete. Can start drawing again.
+ * Unlock the board.
  */
 void Controller::syncDone()
 {
@@ -365,7 +385,9 @@ void Controller::syncDone()
 }
 
 /**
- * Session was locked ungracefully
+ * The session is (un)locked, even if the user is in the middle of drawing.
+ * The session lock is not lifted however, if a user lock or the general
+ * session lock is still in place.
  * @param lock lock or unlock
  */
 void Controller::sessionLocked(bool lock)
@@ -387,8 +409,11 @@ void Controller::sessionLocked(bool lock)
 }
 
 /**
- * User has been locked or unlocked
+ * Usually just emits a userChanged signal. If the lock applies to the local
+ * user, the session might be locked or unlocked, depending on the status
+ * of the general session lock.
  * @param id user id
+ * @param lock lock status
  */
 void Controller::userLocked(int id, bool lock)
 {
@@ -425,7 +450,7 @@ void Controller::sessionOwnerChanged()
 }
 
 /**
- * User got kicked out
+ * The connection is cut if the user was the local user.
  * @param id id of the kicked user
  */
 void Controller::sessionKicked(int id)
@@ -436,7 +461,6 @@ void Controller::sessionKicked(int id)
 }
 
 /**
- * User limit of the session was changed
  * @param count max. number of users
  */
 void Controller::sessionUserLimitChanged(int count)
@@ -444,6 +468,10 @@ void Controller::sessionUserLimitChanged(int count)
 	emit joinsDisallowed(count<2);
 }
 
+/**
+ * Take a copy of the board contents (in PNG format) and give it to
+ * the session object for uploading.
+ */
 void Controller::sendRaster()
 {
 	Q_ASSERT(session_);
@@ -453,6 +481,11 @@ void Controller::sendRaster()
 	session_->sendRaster(raster);
 }
 
+/**
+ * The board is locked and the server is informed of the lock.
+ * The synchronization lock is usually quite short, it will be released
+ * as soon as one user has called sendRaster()
+ */
 void Controller::lockForSync()
 {
 	emit lockboard(tr("Synchronizing new user"));
@@ -500,12 +533,19 @@ void Controller::penUp()
 	}
 }
 
+/**
+ * Initiate login procedure and emit a signal informing that the connection
+ * was established.
+ */
 void Controller::netConnected()
 {
-	host_->login(username_);
 	emit connected(address_);
+	host_->login(username_);
 }
 
+/**
+ * Clean up and emit a signal informing that the connection was cut.
+ */
 void Controller::netDisconnected(const QString& message)
 {
 	net_->wait();

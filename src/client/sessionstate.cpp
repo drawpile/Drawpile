@@ -583,7 +583,8 @@ void SessionState::handleChat(const protocol::Chat *msg)
 }
 
 /**
- * Flush the drawing buffer and emit the commands.
+ * The drawing command queue is cleared and a signal is emitted for
+ * each command. Buffering is disabled for the rest of the session.
  * @post drawing buffer is disabled for the rest of the session
  */
 void SessionState::flushDrawBuffer()

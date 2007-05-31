@@ -93,10 +93,17 @@ class BoardEditor {
 		virtual void endStroke() = 0;
 
 	protected:
+		//! The local user
 		User *user_;
+
+		//! The board to access
 		Board *board_;
+
 	private:
+		//! Source of the brush to use (UI)
 		interface::BrushSource *brush_;
+
+		//! Source of the color to use (UI)
 		interface::ColorSource *color_;
 };
 
@@ -132,8 +139,16 @@ class RemoteBoardEditor : public BoardEditor {
 		void setTool(const Brush& brush);
 		void addStroke(const Point& point);
 		void endStroke();
+
 	private:
+		//! Remote session to which drawing commands are sent
 		network::SessionState *session_;
+
+		//! Last brush set
+		/**
+		 * The last brush is remembered to avoid sending redundant ToolInfo
+		 * messages if the last message hasn't finished its round-trip yet.
+		 */
 		Brush lastbrush_;
 };
 

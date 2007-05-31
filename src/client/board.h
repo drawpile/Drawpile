@@ -115,17 +115,34 @@ class Board : public QGraphicsScene
 		//! Commit preview strokes to the board
 		void commitPreviews();
 
+		//! The board contents
 		Layer *image_;
+
+		//! List of board users
 		QHash<int,User*> users_;
+
+		//! ID of the local user
 		int localuser_;
 
+		//! Preview strokes currently on screen
 		QQueue<Preview*> previews_;
+
+		//! Cache of reusable preview strokes
 		QQueue<Preview*> previewcache_;
+
+		//! Has a preview been started?
 		bool previewstarted_;
+
+		//! Coordinate of the last preview stroke
 		Point lastpreview_;
+
+		//! Preview stroke for use with tool previews (eg. line)
 		Preview *toolpreview_;
 
+		//! Brush source (UI)
 		interface::BrushSource *brushsrc_;
+
+		//! Color source (UI)
 		interface::ColorSource *colorsrc_;
 };
 

@@ -40,6 +40,7 @@ class EditorView : public QGraphicsView
 	public:
 		EditorView(QWidget *parent=0);
 
+		//! Set the board to use
 		void setBoard(drawingboard::Board *board);
 
 	signals:
@@ -83,16 +84,30 @@ class EditorView : public QGraphicsView
 		void dropEvent(QDropEvent *event);
 
 	private:
+		//! Start dragging the view
 		void startDrag(int x, int y);
+
+		//! Drag the view
 		void moveDrag(int x, int y);
+
+		//! Stop dragging the view
 		void stopDrag();
 
+		//! State of the pen
+		/**
+		 * - NOTDOWN pen is not down
+		 * - MOUSDOWN mouse is down
+		 * - TABLETDOWN tablet stylus is down
+		 */
 		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} pendown_;
 
+		//! Is the view being dragged
 		bool isdragging_;
 		int dragx_,dragy_;
 
+		//! Previous pointer location
 		QPoint prevpoint_;
+
 		int outlinesize_, dia_;
 		bool enableoutline_,showoutline_;
 		bool crosshair_;

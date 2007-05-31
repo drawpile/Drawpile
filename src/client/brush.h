@@ -86,8 +86,12 @@ class Brush
 
 		//! Inequality test
 		bool operator!=(const Brush& brush) const;
+
 	private:
+		//! Update the brush cache
 		void updateCache() const;
+
+		//! Check if the brush is sensitive to pressure
 		void checkSensitivity();
 
 		int radius1_, radius2_;

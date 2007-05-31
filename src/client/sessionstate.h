@@ -219,17 +219,36 @@ class SessionState : public QObject {
 		//! Handle chat messages
 		void handleChat(const protocol::Chat *msg);
 
+		//! Flush the drawing command buffer
 		void flushDrawBuffer();
 
+		//! The host this session belongs to
 		HostState *host_;
+
+		//! Information about this session
 		Session info_;
+
+		//! List of users in this session
 		QHash<int, User> users_;
-		QString password_;
+
+		//! Buffer to hold raster data for receiving or sending
 		QByteArray raster_;
+
+		//! Starting position of raster data chunk that will be sent next
 		uint rasteroffset_;
+
+		//! Is the session lock
 		bool lock_;
 
+		//! Buffer drawing commands, instead of emitting them right away
 		bool bufferdrawing_;
+
+		//! Drawing command buffer
+		/**
+		 * The buffer is used to accumulate drawing commands that arrive
+		 * while the initial board contents (raster data) has not yet
+		 * fully downloaded.
+		 */
 		QQueue<protocol::Message*> drawbuffer_;
 };
 

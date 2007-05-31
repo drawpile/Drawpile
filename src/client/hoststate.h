@@ -158,23 +158,56 @@ class HostState : public QObject {
 		//! Handle errors
 		void handleError(const protocol::Error *msg);
 
+		//! Connection to the server
 		Connection *net_;
 
+		//! User name to log in with
 		QString username_;
+
+		//! Seed for generating password hash (received from the server)
 		QByteArray passwordseed_;
+
+		//! Session ID of the session for which the password is sent
 		int passwordsession_;
+
+		//! Title of the session to autojoin
+		/**
+		 * If empty, the only available session is joined or if there are
+		 * many sessions, the user is asked.
+		 */
 		QString autojointitle_;
 
+		//! Info about the local user as received from server during login.
 		User localuser_;
 
+		//! The currently joined session
 		SessionState *session_;
+
+		//! List of sessions on the server
 		SessionList sessions_;
 
-		//protocol::SessionEvent::session_action lastsessioninstr_;
+		//! Last used session instruction
 		int lastsessioninstr_;
+
+		//! Session password to set
+		/**
+		 * If not empty, the session password is set right after joining
+		 * a session that we are hosting.
+		 */
 		QString setsessionpassword_;
+
+		//! Administrator password to send
+		/**
+		 * The administrator password to send in reply of authentication
+		 * request, that was raised by the Authenticate message sent by us.
+		 */
 		QString sendadminpassword_;
 
+		//! Is the user logged in
+		/**
+		 * This is set to true when the user has logged in to the server
+		 * and can start sending instructions and join commands and such.
+		 */
 		bool loggedin_;
 };
 

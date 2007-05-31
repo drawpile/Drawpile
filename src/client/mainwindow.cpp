@@ -61,7 +61,6 @@
 #include "settingsdialog.h"
 
 /**
- * @param restoreposition if true, the window is placed at its previous position
  * @param source if not null, clone settings from this window
  */
 MainWindow::MainWindow(const MainWindow *source)
@@ -340,8 +339,7 @@ void MainWindow::setTitle()
 }
 
 /**
- * Read settings
- * @param restorepos place window at its previous position
+ * Read and apply mainwindow related settings.
  */
 void MainWindow::readSettings()
 {
@@ -961,6 +959,7 @@ void MainWindow::showErrorMessage(ErrorType type)
 
 /**
  * @param message error message
+ * @param details error details
  */
 void MainWindow::showErrorMessage(const QString& message, const QString& details)
 {
