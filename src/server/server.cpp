@@ -74,7 +74,7 @@ Server::Server() throw()
 	session_limit(1),
 	max_subscriptions(1),
 	name_len_limit(12),
-	time_limit(180),
+	time_limit(srv_defaults::time_limit),
 	current_time(0), next_timer(0),
 	hi_port(protocol::default_port), lo_port(protocol::default_port),
 	min_dimension(400),

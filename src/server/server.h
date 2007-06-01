@@ -51,6 +51,12 @@
 #include <map> // tunnel
 #include <set> // utimer
 
+namespace srv_defaults {
+
+const uint time_limit = 180;
+
+}
+
 //! Server
 class Server
 {
