@@ -33,8 +33,10 @@ struct User; // defined elsewhere
 
 #include <list>
 
+//! Layer information
 struct LayerData
 {
+	//! ctor
 	LayerData() throw()
 		: id(protocol::null_layer),
 		mode(protocol::tool_mode::None),
@@ -43,6 +45,7 @@ struct LayerData
 	{
 	}
 	
+	//! ctor
 	LayerData(const uint _id, const uint _mode, const uint _opacity=std::numeric_limits<uint8_t>::max(), const bool _locked=false) throw()
 		: id(_id),
 		mode(_mode),
@@ -51,19 +54,21 @@ struct LayerData
 	{
 	}
 	
+	//! dtor
 	~LayerData() throw()
 	{
 		
 	}
 	
 	uint
-		// identifier
+		//! Layer identifier
 		id,
-		// composition mode
+		//! Composition mode
 		mode,
-		// transparency/opacity
+		//! Opacity
 		opacity;
 	
+	//! Layer lock state
 	bool locked;
 };
 
@@ -74,10 +79,11 @@ typedef std::map<uint8_t, User*>::const_iterator session_usr_const_i;
 typedef std::map<uint8_t, LayerData>::iterator session_layer_i;
 typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 
-// Session information
+//! Session information
 struct Session
 	//: MemoryStack<Session>
 {
+	//! ctor
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
 		uint _width, uint _height, uint _level, uint _title_len, char* _title) throw()
 		: id(_id),
@@ -91,15 +97,16 @@ struct Session
 		width(_width),
 		height(_height),
 		level(_level),
-		SelfDestruct(true),
 		syncCounter(0),
-		locked(false)
+		locked(false),
+		persist(false)
 	{
 		#ifndef NDEBUG
 		std::cout << "Session::Session(ID: " << static_cast<int>(id) << ")" << std::endl;
 		#endif
 	}
 	
+	//! dtor
 	~Session() throw()
 	{
 		#ifndef NDEBUG
@@ -109,63 +116,67 @@ struct Session
 		delete [] title;
 	}
 	
-	// Session identifier
+	//! Session identifier
 	uint id;
 	
-	// Title length
+	//! Title length
 	uint title_len;
 	
-	// Session title
+	//! Session title
 	char* title;
 	
-	// Password length
+	//! Password length
 	uint pw_len;
 	
-	// Password string
+	//! Password string
 	char* password;
 	
-	// Default user mode
+	//! Default user mode
 	uint8_t mode;
 	
-	// User limit
+	//! User limit
 	uint limit;
 	
-	// Session owner
+	//! Session owner
 	uint owner;
 	
-	// Canvas size
-	uint width, height;
+	uint
+		//! Canvas width
+		width,
+		//! Canvas height
+		height;
 	
-	// Feature level required
+	//! Feature level required
 	uint level;
 	
-	// Will the session be destructed when all users leave..?
-	bool SelfDestruct;
-	
+	//! Get session flags
 	uint8_t getFlags() const throw()
 	{
-		return (SelfDestruct?0:protocol::session::NoSelfDestruct);
+		return (persist?protocol::session::Persist:0);
 	}
 	
-	// 
+	//! 
 	std::map<uint8_t, LayerData> layers;
 	//std::set<LayerData> layers;
 	
-	// Subscribed users
+	//! Subscribed users
 	std::map<uint8_t, User*> users;
 	
-	// Users waiting sync.
+	//! Users waiting sync.
 	std::list<User*> waitingSync;
 	
-	// Session sync in action.
+	//! Session wait-sync counter
 	uint syncCounter;
 	
-	// Session is locked, preventing any drawing to take place.
+	//! Session lock state
 	bool locked;
+	
+	//! Session should persist
+	bool persist;
 	
 	/* *** Functions *** */
 	
-	// Session can be joined
+	//! Test if session can be joined
 	bool canJoin() const throw()
 	{
 		return ((users.size() + waitingSync.size()) < limit);

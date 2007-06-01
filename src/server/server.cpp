@@ -1263,8 +1263,8 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		}
 		break;
 	case protocol::SessionEvent::Persist:
-		cerr << "- Setting 'Persist' for session not supported." << endl;
-		// TODO
+		cout << "+ Session #" << session->id << " persists." << endl;
+		session->persist = (aux != 0);
 		break;
 	case protocol::SessionEvent::CacheRaster:
 		cerr << "- Setting 'Cache Raster' for session not supported." << endl;
@@ -1998,7 +1998,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 	// last user in session.. destruct it
 	if (session->users.empty())
 	{
-		if (session->SelfDestruct)
+		if (!session->persist)
 			sRemove(session);
 	}
 	else
