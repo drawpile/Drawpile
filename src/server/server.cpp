@@ -1266,10 +1266,6 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		cout << "+ Session #" << session->id << " persists." << endl;
 		session->persist = (aux != 0);
 		break;
-	case protocol::SessionEvent::CacheRaster:
-		cerr << "- Setting 'Cache Raster' for session not supported." << endl;
-		// TODO
-		break;
 	default:
 		cerr << "- Invalid data from user #" << usr->id <<  endl;
 		uRemove(usr, protocol::UserInfo::Dropped);

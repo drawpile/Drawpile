@@ -1319,10 +1319,7 @@ struct SessionEvent
 		Kick = 5,
 		
 		//! Session will not auto-destruct
-		Persist = 8,
-		
-		//! Session will cache the image raster (implies persistence)
-		CacheRaster = 9
+		Persist = 8
 	};
 	
 	/* unique data */

@@ -135,7 +135,10 @@ enum server_requirements {
 	WideStrings = 0x08u,
 	
 	//! Server does not allow global Chat messages.
-	NoGlobalChat = 0x10u
+	NoGlobalChat = 0x10u,
+	
+	//! There's no central server
+	Distributed = 0x40u
 };
 
 } // namespace operation
@@ -178,10 +181,7 @@ enum session_flags {
 	None,
 	
 	//! Session persists
-	Persist = 0x01u,
-	
-	//! Do not destroy session after all users have left
-	NoSelfDestruct = 0x08u
+	Persist = 0x01u
 };
 
 } // namespace session
