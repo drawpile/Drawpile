@@ -205,6 +205,9 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					}
 					else if (rc != 0)
 						exit(0); // kill parent process
+					
+					fclose(stdout);
+					fclose(stderr);
 				}
 				#else
 				cerr << "- Non-forking daemon mode not implemented." << endl;
@@ -280,6 +283,9 @@ int main(int argc, char** argv)
 	#ifndef NDEBUG
 	std::ios::sync_with_stdio(false);
 	#endif
+	
+	// We don't use user input for anything
+	fclose(stdin);
 	
 	// application name, version, etc. info
 	cout << srv_info::applicationName << " v" << srv_info::versionString
