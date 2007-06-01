@@ -47,6 +47,7 @@
 #include <iostream>
 #include <getopt.h> // for command-line opts
 
+// Server information
 namespace srv_info
 {
 

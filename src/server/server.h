@@ -51,24 +51,13 @@
 #include <map> // tunnel
 #include <set> // utimer
 
-namespace srv_defaults
-{
-
-const time_t time_limit(180);
-const uint8_t name_len_limit(8);
-const uint16_t min_dimension(400);
-const uint8_t max_subscriptions(1);
-const uint8_t session_limit(1);
-
-}
-
 //! Server
 class Server
 {
 protected:
 	/* data */
 	
-	// Server state
+	//! Server state
 	enum State {
 		Init,
 		Active,
@@ -77,183 +66,232 @@ protected:
 		Error
 	} state;
 	
+	//! Event mechanism
 	EventSystem ev;
 	
-	bool user_ids[254], session_ids[254];
+	bool
+		//! User identifiers
+		user_ids[254],
+		//! Session identifiers
+		session_ids[254];
 	
-	// FD to user mapping
+	//! FD to user mapping
 	std::map<fd_t, User*> users;
 	
-	// Session ID to session mapping
+	//! Session ID to session mapping
 	std::map<uint8_t, Session*> sessions;
 	
-	// Fake tunnel between two users. Only used for passing raster, for now.
-	// source_fd -> target_fd
+	//! Fake tunnel between two users. Only used for passing raster, for now.
+	/** source_fd -> target_fd */
 	std::multimap<User*, User*> tunnel;
 	
-	// for killing users idling in login
+	//! Users eligible for culling
 	std::set<User*> utimer;
 	
-	// listening socket
+	//! Listening socket
 	Socket lsock;
 	
-	char *password, *a_password;
-	size_t pw_len, a_pw_len,
+	char
+		//! Server password
+		*password,
+		//! Admin password
+		*a_password;
+	
+	size_t
+		//! Server password length
+		pw_len,
+		//! Admin password length
+		a_pw_len,
+		//! User limit
 		user_limit,
+		//! Session limit
 		session_limit,
+		//! User session subscription limit
 		max_subscriptions,
+		//! Name length limit
 		name_len_limit;
 	
 	time_t
+		//! Wait time before culling
 		time_limit,
+		//! Substitute for time()
 		current_time,
+		//! The next time we cull idlers
 		next_timer;
 	
 	uint16_t
+		//! Listening port, upper bound
 		hi_port,
+		//! Listening port, lower bound
 		lo_port,
+		//! Minimum canvas dimension
 		min_dimension;
 	
 	uint8_t
+		//! Server requirements
 		requirements,
+		//! Supported extensions
 		extensions;
 	
 	bool
+		//! Enforce unique user and session names
 		enforceUnique,
+		//! UTF-16 instead of UTF-8
 		wideStrings,
+		//! Disallow global chatting
 		noGlobalChat,
+		//! Deflate extension
 		extDeflate,
+		//! Palette extension
 		extPalette,
+		//! Chat extension
 		extChat;
 	
-	uint8_t
-		default_user_mode;
+	//! Default user mode
+	uint8_t default_user_mode;
 	
-	bool Transient, LocalhostAdmin, blockDuplicateConnections;
+	bool
+		//! Shutdown server once all users have left
+		Transient,
+		//! Auto-promote localhost connections to Admin status
+		LocalhostAdmin,
+		//! Block duplicate connections from same source IP
+		blockDuplicateConnections;
 	
 	/* functions */
 	
-	// Frees user ID
+	//! Frees user ID
 	void freeUserID(const uint8_t id) throw();
 	
-	// Frees session ID
+	//! Frees session ID
 	void freeSessionID(const uint8_t id) throw();
 	
-	// Get free user ID
+	//! Get free user ID
 	const uint8_t getUserID() throw();
 	
-	// Get free session ID
+	//! Get free session ID
 	const uint8_t getSessionID() throw();
-	
-	/* *** Instances *** */
-	
-	SHA1 hash;
 	
 	/* *** Generate messages *** */
 	
+	//! Generate host info message
 	message_ref msgHostInfo() const throw(std::bad_alloc);
 	
+	//! Generate password request message
 	message_ref msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc);
 	
+	//! Generate user event message
 	message_ref msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc);
 	
+	//! Generate error message
 	message_ref msgError(const uint8_t session, const uint16_t errorCode) const throw(std::bad_alloc);
 	
+	//! Generate ACK message
 	message_ref msgAck(const uint8_t session, const uint8_t msgtype) const throw(std::bad_alloc);
 	
+	//! Generate sync-wait message
 	message_ref msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc);
 	
+	//! Generate session info message
 	message_ref msgSessionInfo(const Session& session) const throw(std::bad_alloc);
 	
 	/* *** Something else *** */
 	
-	// Write to user socket
+	//! Write to user socket
 	void uWrite(User*& usr) throw();
 	
-	// Read from user socket
+	//! Read from user socket
 	void uRead(User*& usr) throw(std::bad_alloc);
 	
-	// Process all read data.
+	//! Process all read data.
 	void uProcessData(User*& usr) throw();
 	
-	// Process stroke info, stroke end and tool info
+	//! Process stroke info, stroke end and tool info
 	void uHandleDrawing(User& usr) throw();
 	
+	//! 
 	void uHandlePassword(User& usr) throw();
 	
-	// Handle user message.
+	//! Handle user message.
 	void uHandleMsg(User*& usr) throw(std::bad_alloc);
 	
-	// Handle ACKs
+	//! Handle ACKs
 	void uHandleAck(User*& usr) throw();
 	
-	// Forward raster to those expecting it.
+	//! Forward raster to those expecting it.
 	void uTunnelRaster(User& usr) throw();
 	
-	// Handle SessionEvent message
+	//! Handle SessionEvent message
 	void uSessionEvent(Session*& session, User*& usr) throw();
 	
-	// Handle instruction message
+	//! Handle instruction message
 	void uSessionInstruction(User*& usr) throw(std::bad_alloc);
 	
+	//! Set server or session password
 	void uSetPassword(User*& usr) throw();
 	
-	// Handle user login.
+	//! Handle user login.
 	void uHandleLogin(User*& usr) throw(std::bad_alloc);
 	
+	//! Handle layer event
 	void uLayerEvent(User*& usr) throw();
 	
-	// Send message to session
+	//! Send message to all users in session
 	void Propagate(const Session& session, message_ref msg, User* source=0) throw();
 	
-	// Send message to user
+	//! Queue message to user
 	/*
 	 * Appends the message to user's output buffer,
 	 * and manipulates event system.
 	 */
 	void uQueueMsg(User& usr, message_ref msg) throw();
 	
-	// Begin synchronizing the session
+	//! Begin synchronizing the session
 	void SyncSession(Session* session) throw();
 	
-	// Break synchronization with user.
+	//! Break synchronization with user.
 	void breakSync(User& usr) throw();
 	
-	//
+	//! Attach user to session and begin user synchronization if necessary
 	void uJoinSession(User& usr, Session& session) throw();
 	
-	// Needs session reference because it might get destroyed.
+	//! Needs session reference because it might get destroyed.
 	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave) throw();
 	
-	// Adds user
+	//! Adds user
 	void uAdd(Socket sock) throw(std::bad_alloc);
 	
-	// Removes user and does cleaning..
+	//! Removes user and does cleaning..
 	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw();
 	
-	// Delete session and do some cleaning
+	//! Delete session and do some cleaning
 	void sRemove(Session*& session) throw();
 	
-	// check user name uniqueness
+	//! Check user name uniqueness
 	bool validateUserName(User* usr) const throw();
 	
-	// check session title uniqueness
+	//! Check session title uniqueness
 	bool validateSessionTitle(const char* name, const uint8_t len) const throw();
 	
-	// Reprocesses deflated data stream
+	//! Reprocesses deflated data stream
 	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
-	// Deflate outgoing data
+	
+	//! Deflate outgoing data
 	void Deflate(Buffer& buffer, size_t& len, size_t& size) throw(std::bad_alloc);
 	
-	// cull idle users
+	//! Cull idle users
 	void cullIdlers() throw();
 	
-	// regenerate password seed
+	//! Regenerate password seed
 	void uRegenSeed(User& usr) const throw();
 	
+	//! Check if user is owner of session
 	bool isOwner(const User& usr, const Session& session) const throw();
 	
+	//! Get Session* pointer
 	Session* getSession(const uint8_t session_id) throw();
+	
+	//! Get const Session* pointer
 	const Session* getConstSession(const uint8_t session_id) const throw();
 	
 public:
@@ -292,10 +330,7 @@ public:
 	}
 	
 	//! Set user limit
-	void setUserLimit(const uint8_t ulimit) throw()
-	{
-		user_limit = ulimit;
-	}
+	void setUserLimit(const uint8_t ulimit) throw() { user_limit = ulimit; }
 	
 	//! Set listening port range
 	void setPorts(const uint16_t lo, const uint16_t hi) throw()
@@ -305,16 +340,10 @@ public:
 	}
 	
 	//! Set operation mode
-	void setTransient(const bool x) throw()
-	{
-		Transient = x;
-	}
+	void setTransient(const bool x) throw() { Transient = x; }
 	
 	//!
-	void setLocalhostAdmin(const bool x) throw()
-	{
-		LocalhostAdmin = x;
-	}
+	void setLocalhostAdmin(const bool x) throw() { LocalhostAdmin = x; }
 	
 	//! Set client requirements
 	void setRequirement(const uint8_t req) throw() { fSet(requirements, req); }
@@ -346,10 +375,6 @@ public:
 	//! Enter main loop
 	int run() throw();
 	
-	#ifndef NDEBUG
-	//! Show statistics
-	void stats() const throw();
-	#endif
 }; // class Server
 
 #endif // Server_C_Included

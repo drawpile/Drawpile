@@ -71,13 +71,13 @@ Server::Server() throw()
 	: state(Server::Dead), password(0), a_password(0),
 	pw_len(0), a_pw_len(0),
 	user_limit(0),
-	session_limit(srv_defaults::session_limit),
-	max_subscriptions(srv_defaults::max_subscriptions),
-	name_len_limit(srv_defaults::name_len_limit),
-	time_limit(srv_defaults::time_limit),
+	session_limit(1),
+	max_subscriptions(1),
+	name_len_limit(12),
+	time_limit(180),
 	current_time(0), next_timer(0),
 	hi_port(protocol::default_port), lo_port(protocol::default_port),
-	min_dimension(srv_defaults::min_dimension),
+	min_dimension(400),
 	requirements(0),
 	extensions(
 		protocol::extensions::Chat|protocol::extensions::Palette
@@ -656,6 +656,8 @@ void Server::uHandlePassword(User& usr) throw()
 {
 	assert(usr.inMsg != 0);
 	
+	SHA1 hash;
+	
 	Session *session;
 	protocol::Password &msg = *static_cast<protocol::Password*>(usr.inMsg);
 	if (msg.session_id == protocol::Global)
@@ -697,7 +699,6 @@ void Server::uHandlePassword(User& usr) throw()
 	hash.Final();
 	char digest[protocol::password_hash_size];
 	hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-	hash.Reset();
 	
 	if (memcmp(digest, msg.data, protocol::password_hash_size) != 0) // mismatch
 		uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
@@ -889,7 +890,8 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uSessionInstruction(usr);
 		break;
 	case protocol::Message::SetPassword:
-		
+		uSetPassword(usr);
+		break;
 	case protocol::Message::Shutdown:
 		if (usr->isAdmin)
 			state = Server::Exiting;
@@ -1632,12 +1634,13 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			const protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
 			
+			SHA1 hash;
+			
 			hash.Update(reinterpret_cast<uint8_t*>(password), pw_len);
 			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 			hash.Final();
 			char digest[protocol::password_hash_size];
 			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-			hash.Reset();
 			
 			if (memcmp(digest, msg.data, protocol::password_hash_size) == 0)
 			{
@@ -2300,6 +2303,7 @@ bool Server::validateUserName(User* usr) const throw()
 bool Server::validateSessionTitle(const char* name, const uint8_t len) const throw()
 {
 	assert(name != 0 and len > 0);
+	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
 	
 	// Session title is never unique if it's an empty string.
 	if (len == 0)
