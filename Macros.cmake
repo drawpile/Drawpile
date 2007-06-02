@@ -6,10 +6,14 @@ endif ( WIN32 )
 
 macro ( strip_exe target )
 	if ( STRIP_CMD )
+		if ( WIN32 )
+			set ( target_file ${target}.exe )
+		endif ( WIN32 )
+		
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
-			COMMAND ${STRIP_CMD} ${target}
+			COMMAND ${STRIP_CMD} "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
 		)
 	endif ( STRIP_CMD )
 endmacro ( strip_exe target )
@@ -19,7 +23,7 @@ macro ( generate_win32_resource )
 		set ( ResourceFile win32resource.rc )
 		set ( win32RC ${CMAKE_CURRENT_BINARY_DIR}/${ResourceFile} )
 		if ( EXISTS ${win32RC} )
-			
+			# do nothing
 		else ( EXISTS ${win32RC} )
 			file ( WRITE ${win32RC} "#include <winver.h>\n\n" )
 			file ( APPEND ${win32RC} "VS_VERSION_INFO VERSIONINFO\n" )

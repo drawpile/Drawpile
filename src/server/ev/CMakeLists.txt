@@ -87,10 +87,6 @@ endif ( NOT EV_FOUND )
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_EVCONFIG )
 
-if ( NOT DEBUG )
-	strip_exe ( ${LIBNAME} )
-endif ( NOT DEBUG )
-
 add_library (
 	${LIBNAME}
 	STATIC

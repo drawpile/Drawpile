@@ -70,7 +70,7 @@ if ( WIN32 )
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
-link_libraries( events ) # this name might conflict
+link_libraries( eventslib ) # EV lib
 
 add_subdirectory ( ev/ ) # events lib
 
@@ -97,3 +97,7 @@ set_target_properties (
 )
 
 install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
+
+if ( NOT DEBUG )
+	strip_exe ( ${INTERNALNAME} )
+endif ( NOT DEBUG )

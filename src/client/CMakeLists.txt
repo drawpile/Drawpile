@@ -131,3 +131,7 @@ set_target_properties (
 )
 
 install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
+
+if (NOT DEBUG)
+	strip_exe ( drawpile )
+endif (NOT DEBUG)
