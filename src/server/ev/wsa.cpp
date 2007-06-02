@@ -51,21 +51,12 @@ const SOCKET event_invalid_fd<EventWSA>::value = INVALID_SOCKET;
 EventWSA::EventWSA() throw()
 	: nfds(0), last_event(0)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "wsa()" << endl
-		<< "Max events: " << max_events << endl
-		<< "FD_MAX_EVENTS: " << FD_MAX_EVENTS << endl;
-	#endif
-	
 	for (uint i=0; i != max_events; i++)
 		w_ev[i] = WSA_INVALID_EVENT;
 }
 
 EventWSA::~EventWSA() throw()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~wsa()" << endl;
-	#endif
 }
 
 // Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
@@ -273,9 +264,5 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 
 void EventWSA::timeout(uint msecs) throw()
 {
-	#ifndef NDEBUG
-	std::cout << "WSA.timeout(msecs: " << msecs << ")" << std::endl;
-	#endif
-	
 	_timeout = msecs;
 }

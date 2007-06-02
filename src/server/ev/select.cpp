@@ -50,10 +50,6 @@ EventSelect::EventSelect() throw()
 	nfds_e(event_invalid_fd<EventSelect>::value)
 	#endif
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "select()" << endl;
-	#endif
-	
 	FD_ZERO(&fds_r);
 	FD_ZERO(&fds_w);
 	FD_ZERO(&fds_e);
@@ -61,9 +57,6 @@ EventSelect::EventSelect() throw()
 
 EventSelect::~EventSelect() throw()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~select()" << endl;
-	#endif
 }
 
 // Errors: WSAENETDOWN
@@ -283,10 +276,6 @@ bool EventSelect::getEvent(fd_t &fd, ev_t &events) throw()
 
 void EventSelect::timeout(uint msecs) throw()
 {
-	#ifndef NDEBUG
-	std::cout << "select.timeout(msecs: " << msecs << ")" << std::endl;
-	#endif
-	
 	if (msecs > 1000)
 	{
 		_timeout.tv_sec = msecs/1000;

@@ -48,10 +48,6 @@ EventPselect::EventPselect() throw()
 	nfds_w(-1),
 	nfds_e(-1)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "pselect()" << endl;
-	#endif
-	
 	FD_ZERO(&fds_r);
 	FD_ZERO(&fds_w);
 	FD_ZERO(&fds_e);
@@ -61,9 +57,6 @@ EventPselect::EventPselect() throw()
 
 EventPselect::~EventPselect() throw()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~pselect()" << endl;
-	#endif
 }
 
 // Errors: WSAENETDOWN
@@ -249,10 +242,6 @@ bool EventPselect::getEvent(fd_t &fd, int &events) throw()
 
 void EventPselect::timeout(uint msecs) throw()
 {
-	#ifndef NDEBUG
-	std::cout << "pselect.timeout(msecs: " << msecs << ")" << std::endl;
-	#endif
-	
 	if (msecs > 1000)
 	{
 		_timeout.tv_sec = msecs/1000;

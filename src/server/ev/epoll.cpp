@@ -48,10 +48,6 @@ const std::string event_system<EventEpoll>::value("epoll");
 EventEpoll::EventEpoll() throw(std::exception)
 	: nfds(-1), evfd(event_invalid_fd<EventEpoll>::value)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "Event()" << endl;
-	#endif
-	
 	evfd = epoll_create(10);
 	
 	if (evfd == event_invalid_fd<EventEpoll>::value)
@@ -67,10 +63,6 @@ EventEpoll::EventEpoll() throw(std::exception)
 
 EventEpoll::~EventEpoll() throw()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~epoll()" << endl;
-	#endif
-	
 	if (evfd != event_invalid_fd<EventEpoll>::value)
 	{
 		close(evfd);
@@ -138,7 +130,7 @@ int EventEpoll::add(fd_t fd, int events) throw()
 	return true;
 }
 
-int EventEpoll::modify(fd_t fd, int events) throw()
+int EventEpoll::modify(fd_t fd, ev_t events) throw()
 {
 	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
@@ -195,7 +187,7 @@ int EventEpoll::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
+bool EventEpoll::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
 	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
@@ -206,6 +198,10 @@ bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
 	r_events = events[nfds].events;
 	--nfds;
 	
+	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
+	cout << "epoll.getEvent(FD: " << fd << ", events: " << r_events << ")" << endl;
+	#endif
+	
 	assert(fd != event_invalid_fd<EventEpoll>::value); // shouldn't happen
 	
 	return true;
@@ -213,9 +209,5 @@ bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
 
 void EventEpoll::timeout(uint msecs) throw()
 {
-	#ifndef NDEBUG
-	cout << "epoll.timeout(msecs: " << msecs << ")" << endl;
-	#endif
-	
 	_timeout = msecs;
 }
