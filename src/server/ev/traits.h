@@ -40,6 +40,12 @@ struct event_type
 };
 
 template <typename Evs>
+struct event_fd_type
+{
+	typedef int fd_t;
+};
+
+template <typename Evs>
 struct event_has_hangup
 {
 	static const bool value = false;
@@ -110,7 +116,7 @@ struct event_system
 template <typename Evs>
 struct event_invalid_fd
 {
-	static const typename event_type<Evs>::ev_t value = -1;
+	static const typename event_fd_type<Evs>::fd_t value = -1;
 };
 
 #endif // EventTraits_INCLUDED

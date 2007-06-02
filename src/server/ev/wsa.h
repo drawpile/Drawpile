@@ -71,6 +71,8 @@ public:
 
 /* traits */
 
+template <> struct event_fd_type<EventWSA> { typedef SOCKET fd_t; };
+
 template <> struct event_has_hangup<EventWSA> { static const bool value; };
 template <> struct event_has_connect<EventWSA> { static const bool value; };
 template <> struct event_has_accept<EventWSA> { static const bool value; };
@@ -81,7 +83,7 @@ template <> struct event_accept<EventWSA> { static const long value; };
 template <> struct event_connect<EventWSA> { static const long value; };
 template <> struct event_system<EventWSA> { static const std::string value; };
 
-template <> struct event_invalid_fd<EventWSA> { static const event_type<Evs>::ev_t; };
+template <> struct event_invalid_fd<EventWSA> { static const event_fd_type<Evs>::ev_t; };
 
 // unused, but required because GCC is less than bright
 template <> struct event_error<EventWSA> { static const long value; };

@@ -36,13 +36,6 @@
 
 #include <ctime>
 
-#ifdef WIN32
-#include <winsock2.h>
-typedef SOCKET fd_t;
-#else
-typedef int fd_t;
-#endif
-
 //! Event I/O abstraction
 template <typename Evs>
 class EventInterface
@@ -50,6 +43,7 @@ class EventInterface
 protected:
 	int error; // errno;
 public:
+	typedef typename event_fd_type<Evs>::fd_t fd_t;
 	typedef typename event_type<Evs>::ev_t ev_t;
 	
 	//! ctor

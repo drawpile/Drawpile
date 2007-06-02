@@ -43,11 +43,15 @@
 	#include "../sockets.h"
 #else
 	#include <sys/select.h>
-	#define INVALID_SOCKET -1
 #endif
 
 #include <map>
 #include <set>
+
+#ifdef WIN32
+class EventSelect;
+template <> struct event_fd_type<EventSelect> { typedef SOCKET fd_t; };
+#endif
 
 class EventSelect
 	: EventInterface<EventSelect>
@@ -68,10 +72,10 @@ public:
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
-	int add(fd_t fd, int events) throw();
+	int add(fd_t fd, ev_t events) throw();
 	int remove(fd_t fd) throw();
-	int modify(fd_t fd, int events) throw();
-	bool getEvent(fd_t &fd, int &events) throw();
+	int modify(fd_t fd, ev_t events) throw();
+	bool getEvent(fd_t &fd, ev_t &events) throw();
 };
 
 /* traits */

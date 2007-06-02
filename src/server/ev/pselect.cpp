@@ -230,6 +230,7 @@ bool EventPselect::getEvent(fd_t &fd, int &events) throw()
 		fd = fd_iter->first;
 		++fd_iter;
 		
+		assert(fd != -1);
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)

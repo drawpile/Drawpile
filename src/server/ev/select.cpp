@@ -45,9 +45,9 @@ const std::string event_system<EventSelect>::value("select");
 
 EventSelect::EventSelect() throw()
 	#ifndef WIN32
-	: nfds_r(INVALID_SOCKET),
-	nfds_w(INVALID_SOCKET),
-	nfds_e(INVALID_SOCKET)
+	: nfds_r(event_invalid_fd<EventSelect>::value),
+	nfds_w(event_invalid_fd<EventSelect>::value),
+	nfds_e(event_invalid_fd<EventSelect>::value)
 	#endif
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -90,7 +90,7 @@ int EventSelect::wait() throw()
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	#endif
 	
-	nfds = select((ubnfds==INVALID_SOCKET?INVALID_SOCKET:ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
+	nfds = select((ubnfds == event_invalid_fd<EventSelect>::value ? event_invalid_fd<EventSelect>::value : ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
 	
 	switch (nfds)
 	{
@@ -128,13 +128,13 @@ int EventSelect::wait() throw()
 	return nfds;
 }
 
-int EventSelect::add(fd_t fd, int events) throw()
+int EventSelect::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != event_invalid_fd<EventSelect>::value);
 	
 	bool rc=false;
 	
@@ -174,13 +174,13 @@ int EventSelect::add(fd_t fd, int events) throw()
 	return rc;
 }
 
-int EventSelect::modify(fd_t fd, int events) throw()
+int EventSelect::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != event_invalid_fd<EventSelect>::value);
 	
 	// act like a wrapper.
 	if (events != 0)
@@ -192,7 +192,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		read_set.erase(fd);
 		if (fd == nfds_r)
-			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : INVALID_SOCKET);
+			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event_invalid_fd<EventSelect>::value);
 		#endif // WIN32
 	}
 	
@@ -202,7 +202,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		write_set.erase(fd);
 		if (fd == nfds_w)
-			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : INVALID_SOCKET);
+			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event_invalid_fd<EventSelect>::value);
 		#endif // WIN32
 	}
 	
@@ -212,7 +212,7 @@ int EventSelect::modify(fd_t fd, int events) throw()
 		#ifndef WIN32
 		error_set.erase(fd);
 		if (fd == nfds_e)
-			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : INVALID_SOCKET);
+			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event_invalid_fd<EventSelect>::value);
 		#endif // WIN32
 	}
 	
@@ -225,7 +225,7 @@ int EventSelect::remove(fd_t fd) throw()
 	cout << "select.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != event_invalid_fd<EventSelect>::value);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	assert(iter != fd_list.end());
@@ -234,21 +234,21 @@ int EventSelect::remove(fd_t fd) throw()
 	#ifndef WIN32
 	read_set.erase(fd);
 	if (fd == nfds_r)
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : INVALID_SOCKET);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event_invalid_fd<EventSelect>::value);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
 	#ifndef WIN32
 	write_set.erase(fd);
 	if (fd == nfds_w)
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : INVALID_SOCKET);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event_invalid_fd<EventSelect>::value);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
 	#ifndef WIN32
 	error_set.erase(fd);
 	if (fd == nfds_e)
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : INVALID_SOCKET);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event_invalid_fd<EventSelect>::value);
 	#endif // WIN32
 	
 	fd_list.erase(iter);
@@ -257,7 +257,7 @@ int EventSelect::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventSelect::getEvent(fd_t &fd, int &events) throw()
+bool EventSelect::getEvent(fd_t &fd, ev_t &events) throw()
 {
 	assert(fd_list.size() > 0);
 	

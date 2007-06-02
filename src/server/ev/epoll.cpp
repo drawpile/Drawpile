@@ -46,7 +46,7 @@ const int event_hangup<EventEpoll>::value = EPOLLHUP;
 const std::string event_system<EventEpoll>::value("epoll");
 
 EventEpoll::EventEpoll() throw(std::exception)
-	: evfd(-1), nfds(-1)
+	: evfd(event_invalid_fd<EventEpoll>::value), nfds(-1)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event()" << endl;
@@ -54,7 +54,7 @@ EventEpoll::EventEpoll() throw(std::exception)
 	
 	evfd = epoll_create(10);
 	
-	if (evfd == -1)
+	if (evfd == event_invalid_fd<EventEpoll>::value)
 	{
 		error = errno;
 		
@@ -71,19 +71,19 @@ EventEpoll::~EventEpoll() throw()
 	cout << "~epoll()" << endl;
 	#endif
 	
-	if (evfd != -1)
+	if (evfd != event_invalid_fd<EventEpoll>::value)
 	{
 		close(evfd);
 		evfd = -1;
 	}
 	
 	// Make sure the event fd was closed.
-	assert(evfd == -1);
+	assert(evfd == event_invalid_fd<EventEpoll>::value);
 }
 
 int EventEpoll::wait() throw()
 {
-	assert(evfd != -1);
+	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.wait()" << endl;
@@ -109,7 +109,7 @@ int EventEpoll::wait() throw()
 // Errors: ENOMEM
 int EventEpoll::add(fd_t fd, int events) throw()
 {
-	assert(evfd != -1);
+	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.add(FD: " << fd << ")" << endl;
@@ -140,7 +140,7 @@ int EventEpoll::add(fd_t fd, int events) throw()
 
 int EventEpoll::modify(fd_t fd, int events) throw()
 {
-	assert(evfd != -1);
+	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.modify(FD: " << fd << ")" << endl;
@@ -171,7 +171,7 @@ int EventEpoll::modify(fd_t fd, int events) throw()
 // Errors: ENOMEM
 int EventEpoll::remove(fd_t fd) throw()
 {
-	assert(evfd != -1);
+	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
@@ -197,7 +197,7 @@ int EventEpoll::remove(fd_t fd) throw()
 
 bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
 {
-	assert(evfd != -1);
+	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
 	if (nfds == -1)
 		return false;
@@ -205,6 +205,8 @@ bool EventEpoll::getEvent(fd_t &fd, int &r_events) throw()
 	fd = events[nfds].data.fd;
 	r_events = events[nfds].events;
 	--nfds;
+	
+	assert(fd != event_invalid_fd<EventEpoll>::value); // shouldn't happen
 	
 	return true;
 }
