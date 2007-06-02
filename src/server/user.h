@@ -47,39 +47,43 @@ typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
 typedef std::deque<message_ref>::iterator usr_message_i;
 typedef std::deque<message_ref>::const_iterator usr_message_const_i;
 
-// User session data
+//! User session data
 struct SessionData
 {
-	SessionData(Session *s) throw()
-		: session(s),
+	//! ctor
+	SessionData(Session &s) throw()
+		: session(&s),
 		layer(protocol::null_layer),
 		layer_lock(protocol::null_layer),
-		locked(fIsSet(s->mode, static_cast<uint8_t>(protocol::user_mode::Locked))),
-		muted(fIsSet(s->mode, static_cast<uint8_t>(protocol::user_mode::Mute))),
-		deaf(fIsSet(s->mode, static_cast<uint8_t>(protocol::user_mode::Deaf))),
+		locked(fIsSet(s.mode, static_cast<uint8_t>(protocol::user_mode::Locked))),
+		muted(fIsSet(s.mode, static_cast<uint8_t>(protocol::user_mode::Mute))),
+		deaf(fIsSet(s.mode, static_cast<uint8_t>(protocol::user_mode::Deaf))),
 		syncWait(false),
 		cachedToolInfo(0)
 	{
-		assert(session != 0);
 	}
 	
-	~SessionData() throw()
-	{
-		delete cachedToolInfo;
-	}
+	//! dtor
+	~SessionData() throw() { delete cachedToolInfo; }
 	
-	// Session reference
+	//! Session reference
 	Session *session;
 	
 	uint8_t
-		// Active layer
+		//! Active layer
 		layer,
-		// Layer to which the user is locked to
+		//! Layer to which the user is locked to
 		layer_lock;
 	
-	// user mode
-	bool locked, muted, deaf;
+	bool
+		//! Locked
+		locked,
+		//! Muted
+		muted,
+		//! Deaf
+		deaf;
 	
+	//! Get user mode
 	uint8_t getMode() const throw()
 	{
 		return (locked?(protocol::user_mode::Locked):0)
@@ -87,6 +91,7 @@ struct SessionData
 			+ (deaf?(protocol::user_mode::Deaf):0);
 	}
 	
+	//! Set user mode
 	void setMode(const uint8_t flags) throw()
 	{
 		locked = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Locked));
@@ -94,17 +99,20 @@ struct SessionData
 		deaf = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Deaf));
 	}
 	
+	//! User has sent ACK/Sync
 	bool syncWait;
 	
 	/* cached messages */
 	
+	//! Cached tool info message
 	protocol::ToolInfo *cachedToolInfo;
 };
 
-// User information
+//! User information
 struct User
 	//: MemoryStack<User>
 {
+	//! ctor
 	User(const uint8_t _id, const Socket& nsock) throw()
 		: sock(nsock),
 		session(0),
@@ -120,12 +128,6 @@ struct User
 		ext_deflate(false),
 		ext_chat(false),
 		ext_palette(false),
-		// active session
-		a_layer(protocol::null_layer),
-		a_layer_lock(protocol::null_layer),
-		a_locked(false),
-		a_muted(false),
-		a_deaf(false),
 		// other
 		inMsg(0),
 		level(0),
@@ -142,6 +144,7 @@ struct User
 		assert(_id != protocol::null_user);
 	}
 	
+	//! dtor
 	~User() throw()
 	{
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
@@ -156,45 +159,47 @@ struct User
 			delete usi->second;
 	}
 	
-	inline
+	//! Change active session
+	/**
+	 * @param session_id The session which to activate
+	 */
 	bool makeActive(uint8_t session_id) throw()
 	{
-		SessionData *sdata = getSession(session_id);
-		if (sdata != 0)
+		session_data = getSession(session_id);
+		if (session_data != 0)
 		{
-			if (session != 0)
-				session_data->layer = a_layer;
-			
-			session_data = sdata;
-			
 			session = session_data->session;
-			
-			a_layer = session_data->layer;
-			a_layer_lock = session_data->layer_lock;
-			
-			a_locked = session_data->locked;
-			//a_deaf = session_data->deaf;
-			a_muted = session_data->muted;
-			
 			return true;
 		}
 		else
 			return false;
 	}
 	
+	//! Fetch SessionData* pointer
+	/**
+	 * @param session_id Which session to fetch
+	 */
 	SessionData* getSession(uint8_t session_id) throw()
 	{
 		const usr_session_const_i usi(sessions.find(session_id));
 		return (usi == sessions.end() ? 0 : usi->second);
 	}
 	
+	//! Fetch const SessionData* pointer
+	/**
+	 * @param session_id Which session to fetch
+	 */
 	const SessionData* getConstSession(uint8_t session_id) const throw()
 	{
 		const usr_session_const_i usi(sessions.find(session_id));
 		return (usi == sessions.end() ? 0 : usi->second);
 	}
 	
-	inline
+	//! Cache tool info
+	/**
+	 * @param ti Tool info message to cache
+	 * @throw std::bad_alloc If it can't allocate local copy of the tool info
+	 */
 	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
 	{
 		assert(ti != session_data->cachedToolInfo); // attempted to re-cache same tool
@@ -208,64 +213,81 @@ struct User
 		session_data->cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor
 	}
 	
-	// Socket
+	//! Socket
 	Socket sock;
 	
-	// Currently active session
+	//! Currently active session
 	Session *session;
 	
-	// User identifier
+	//! User identifier
 	uint id;
 	
-	// Event I/O registered events.
+	//! Event I/O : registered events.
 	// EventSystem::ev_t // inaccessible for some reason
 	event_type<EventSystem>::ev_t events;
 	//int events;
 	
-	// User state
+	//! User state
 	enum State
 	{
-		// When user has just connected
+		//! When user has just connected
 		Init,
 		
-		// User has been verified to be using correct protocol.
+		//! User has been verified to be using correct protocol.
 		Verified,
 		
-		// Waiting for proper user info
+		//! Waiting for proper user info
 		Login,
 		
-		// Waiting for password
+		//! Waiting for password
 		LoginAuth,
 		
-		// Normal operation
+		//! Normal operation
 		Active
 	} state;
 	
 	uint
-		// Active layer in session
+		//! Active layer in session
 		layer,
-		// Session we're currently syncing.
+		//! Session we're currently syncing.
 		syncing;
 	
-	// is the user server admin?
+	//! Is the user server admin?
 	bool isAdmin;
 	
-	// client capabilites
+	//! Client can live with ACKs alone
 	bool c_acks;
 	
+	//! Get client capabilities
+	/**
+	 * @return Flags for use with the network protocol
+	 */
 	uint8_t getCapabilities() const throw()
 	{
 		return (c_acks?(protocol::client::AckFeedback):0);
 	}
 	
+	//! Set client capabilities
+	/**
+	 * @param flags as used in the network protocol
+	 */
 	void setCapabilities(const uint8_t flags) throw()
 	{
 		c_acks = fIsSet(flags, static_cast<uint8_t>(protocol::client::AckFeedback));
 	}
 	
-	// extensions
-	bool ext_deflate, ext_chat, ext_palette;
+	bool
+		//! Deflate extension
+		ext_deflate,
+		//! Chat extension
+		ext_chat,
+		//! Palette extension
+		ext_palette;
 	
+	//! Get extensions
+	/**
+	 * @return Flags as used in the network protocol
+	 */
 	uint8_t getExtensions() const throw()
 	{
 		return (ext_deflate?(protocol::extensions::Deflate):0)
@@ -273,6 +295,10 @@ struct User
 			+ (ext_palette?(protocol::extensions::Palette):0);
 	}
 	
+	//! Set extensions
+	/**
+	 * @param flags as used in the network protocol
+	 */
 	void setExtensions(const uint8_t flags) throw()
 	{
 		ext_deflate = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Deflate));
@@ -280,62 +306,40 @@ struct User
 		ext_palette = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Palette));
 	}
 	
-	uint
-		// active layer in current session
-		a_layer,
-		// locked to this layer in current session
-		a_layer_lock;
-	
-	// user mode
-	bool a_locked, a_muted, a_deaf;
-	
-	uint8_t getAMode() const throw()
-	{
-		return (a_locked?(protocol::user_mode::Locked):0)
-			+ (a_muted?(protocol::user_mode::Mute):0)
-			+ (a_deaf?(protocol::user_mode::Deaf):0);
-	}
-	
-	void setAMode(const uint8_t flags) throw()
-	{
-		a_locked = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Locked));
-		a_muted = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Mute));
-		a_deaf = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Deaf));
-	}
-	
-	// Subscribed sessions
+	//! Subscribed sessions
 	std::map<uint8_t, SessionData*> sessions;
 	
-	// Output queue
+	//! Output queue
 	std::deque<message_ref> queue;
 	
-	// Input/output buffer
-	Buffer input, output;
+	Buffer
+		//! Input buffer
+		input,
+		//! Output buffer
+		output;
 	
-	// Currently incoming message.
+	//! Currently incoming message.
 	protocol::Message *inMsg;
 	
-	// Feature level used by client
+	//! Feature level used by client
 	uint level;
 	
-	// for storing the password seed associated with this user.
+	//! Password seed associated with this user.
 	char seed[4];
 	
-	// Last touched.
+	//! Last touched.
 	time_t deadtime;
 	
-	// Name length
+	//! Name length
 	uint name_len;
 	
-	// User name
+	//! User name
 	char* name;
 	
-	/* cached messages */
-	
+	//! Active session data
 	SessionData* session_data;
 	
-	/* counters */
-	
+	//! Stroke counter
 	u_long strokes;
 };
 

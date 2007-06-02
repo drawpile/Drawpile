@@ -610,7 +610,7 @@ void Server::uHandleDrawing(User& usr) throw()
 	}
 	
 	// user or session is locked
-	if (usr.session->locked or usr.a_locked)
+	if (usr.session->locked or usr.session_data->locked)
 	{
 		// TODO: Warn user?
 		#ifndef NDEBUG
@@ -890,9 +890,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		{
 			protocol::LayerSelect &layer = *static_cast<protocol::LayerSelect*>(usr->inMsg);
 			
-			if (layer->layer_id == usr->a_layer // trying to select current layer
-				or (usr->a_layer_lock != protocol::null_layer
-				and usr->a_layer_lock != layer->layer_id)) // locked to another
+			if (layer->layer_id == usr->session_data->layer // trying to select current layer
+				or (usr->session_data->layer_lock != protocol::null_layer
+				and usr->session_data->layer_lock != layer->layer_id)) // locked to another
 				uQueueMsg(*usr, msgError(layer->session_id, protocol::error::InvalidLayer));
 			else
 			{
@@ -904,7 +904,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uQueueMsg(*usr, msgError(layer->session_id, protocol::error::LayerLocked));
 				else
 				{
-					usr->a_layer = layer->layer_id; // set active layer
+					usr->session_data->layer = layer->layer_id; // set active layer
 					
 					// Tell other users about it
 					Propagate(*usr->session, message_ref(layer), (usr->c_acks ? usr : 0));
@@ -1258,7 +1258,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				
 				// Copy active session
 				if (usr_ref.session->id == event.session_id)
-					usr_ref.a_locked = sdata->locked;
+					usr_ref.session_data->locked = sdata->locked;
 			}
 			else if (event.action == protocol::SessionEvent::Lock)
 			{
@@ -1270,7 +1270,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				sdata->layer_lock = event.aux;
 				// copy to active session
 				if (session->id == usr_ref.session->id)
-					usr_ref.a_layer_lock = event.aux;
+					usr_ref.session_data->layer_lock = event.aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
 				if (sdata->layer != sdata->layer_lock)
@@ -1289,7 +1289,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 				
 				// copy to active session
 				if (session->id == usr_ref.session->id)
-					usr_ref.a_layer_lock = protocol::null_layer;
+					usr_ref.session_data->layer_lock = protocol::null_layer;
 			}
 		}
 		
@@ -1668,7 +1668,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			msg.length = 0;
 			msg.name = 0;
 			
-			usr->setAMode(default_user_mode);
+			usr->session_data->setMode(default_user_mode);
 			
 			if (LocalhostAdmin)
 			{
@@ -1689,7 +1689,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			}
 			
 			msg.user_id = usr->id;
-			msg.mode = usr->getAMode();
+			msg.mode = usr->session_data->getMode();
 			
 			usr->state = User::Active;
 			usr->deadtime = 0;
@@ -1771,9 +1771,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				usr->level = ident.level; // feature level used by client
 				usr->setCapabilities(ident.flags);
 				usr->setExtensions(ident.extensions);
-				usr->setAMode(default_user_mode);
+				usr->session_data->setMode(default_user_mode);
 				//if (!usr->ext_chat)
-				//	usr->a_deaf = true;
+				//	usr->session_data->deaf = true;
 			}
 		}
 		else
@@ -2008,7 +2008,7 @@ void Server::uJoinSession(User& usr, Session& session) throw()
 	#endif
 	
 	// Add session to users session list.
-	SessionData *sdata = new SessionData(&session);
+	SessionData *sdata = new SessionData(session);
 	usr.sessions[session.id] = sdata;
 	assert(usr.sessions[session.id]->session != 0);
 	
