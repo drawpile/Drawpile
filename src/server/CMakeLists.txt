@@ -81,9 +81,10 @@ endif ( NOT DEBUG )
 add_executable (
 	${INTERNALNAME}
 	MACOSX_BUNDLE
+	buffer.cpp
+	sockets.cpp
 	dpsrv.cpp
 	server.cpp
-	sockets.cpp
 	${WIN32RES}
 )
 

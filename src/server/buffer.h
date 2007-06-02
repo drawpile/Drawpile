@@ -16,98 +16,34 @@
 #define CircularBuffer_INCLUDED
 
 #include "config.h"
+#include "container.h"
 
+#include <stdexcept>
 #include <cstddef> // size_t?
 #include <cassert>
 
-//#include "../shared/memstack.h"
-
 //! Circular buffer.
 struct Buffer
-	//: MemoryStack<Buffer>
 {
 	//! ctor with buffer assignment
-	Buffer(char* buf=0, const size_t len=0) throw()
-		: data(buf),
-		wpos(buf),
-		rpos(buf),
-		left(0),
-		size(len)
-	{
-		assert((!buf and len == 0) or (buf and len > 0));
-	}
+	Buffer(char* buf=0, const size_t len=0) throw();
 	
 	//! dtor
-	~Buffer() throw()
-	{
-		delete [] data;
-	}
+	~Buffer() throw();
 	
 	//! Moves buffer contents to another buffer struct
-	Buffer& operator<< (Buffer& buffer) throw()
-	{
-		delete [] data;
-		
-		data = buffer.data;
-		wpos = buffer.wpos;
-		rpos = buffer.rpos;
-		left = buffer.left;
-		size = buffer.size;
-		
-		buffer.data = 0;
-		
-		buffer.reset();
-		
-		return *this;
-	}
+	Buffer& operator<< (Buffer& buffer) throw();
 	
-	void reset() throw()
-	{
-		delete [] data;
-		data = wpos = rpos = 0;
-		left = size = 0;
-	}
+	void reset() throw();
 	
 	//! Resizes the buffer to new size.
 	/**
 	 * This is expensive since it calls reposition(), which may cause another alloc.
 	 */
-	void resize(size_t nsize, char* nbuf=0) throw(std::bad_alloc)
-	{
-		assert(nsize > 0);
-		assert(nsize >= left);
-		
-		// create new array if it doesn't exist.
-		if (nbuf == 0)
-			nbuf = new char[nsize];
-		
-		getBuffer(nbuf, nsize);
-		
-		const size_t off = left;
-		
-		// set the buffer as our current one.
-		setBuffer(nbuf, nsize);
-		
-		// move the offset to the real position.
-		write(off);
-	}
+	void resize(size_t nsize, char* nbuf=0) throw(std::bad_alloc);
 	
 	//! Copies the still readable portion of the data to the provided buffer
-	bool getBuffer(char*& buf, const size_t buflen) const throw()
-	{
-		assert(buflen >= left);
-		assert(buf != 0);
-		
-		if (buflen < left)
-			return false;
-		
-		const size_t chunk1 = canRead();
-		if (chunk1 < left)
-			memcpy(buf+chunk1, data, left - chunk1);
-		memcpy(buf, rpos, chunk1);
-		
-		return true;
-	}
+	bool getBuffer(char*& buf, const size_t buflen) const throw();
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
@@ -117,95 +53,12 @@ struct Buffer
 	 * @param buflen
 	 * @param fill
 	 */
-	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) throw()
-	{
-		assert(buf != 0);
-		assert(buflen > 1);
-		assert(fill <= buflen);
-		
-		delete [] data;
-		
-		data = rpos = wpos = buf;
-		
-		size = buflen;
-		
-		if (fill < buflen)
-			wpos += fill;
-		
-		left = fill;
-	}
+	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) throw();
 	
 	//! Repositions data for maximum contiguous _read_ length.
-	void reposition() throw(std::bad_alloc)
-	{
-		if (rpos == data) // already optimally positioned
-		{
-			// do nothing
-		}
-		else if (left == 0)
-		{
-			rewind();
-		}
-		else if (canRead() < left)
-		{ // we can't read all in one go
-			const size_t chunk1 = canRead(), chunk2 = left - canRead();
-			
-			if (left <= free())
-			{ // there's more free space than used
-				// move second chunk to free space between the chunks
-				wpos = data+chunk1;
-				memcpy(wpos, data, chunk2);
-				
-				// move first chunk to the beginning of the buffer
-				memcpy(data, rpos, chunk1);
-				
-				// adjust wpos to the end of second chunk
-				wpos += chunk2;
-			}
-			else
-			{
-				// create temporary
-				char* tmp = new char[chunk2];
-				
-				// move second chunk to temporary
-				memcpy(tmp, data, chunk2);
-				// move first chunk to the front of buffer
-				memcpy(data, rpos, chunk1);
-				
-				// move wpos to the end of first chunk
-				wpos = data+chunk1;
-				
-				// move second chunk to wpos
-				memcpy(wpos, tmp, chunk2);
-				
-				// cleanup
-				delete [] tmp;
-				
-				// move wpos to the end of allocated space
-				wpos += chunk2;
-			}
-			
-			// set rpos to the beginning of the buffer
-			rpos = data;
-		}
-		else
-		{ // we can read all the data in one go.
-			const size_t chunk1 = canRead();
-			// just move the data to the beginning.
-			memmove(data, rpos, chunk1);
-			
-			// set rpos to the beginning of the buffer
-			rpos = data;
-			
-			// adjust rpos and wpos
-			wpos = data+chunk1;
-		}
-	}
+	void reposition() throw(std::bad_alloc);
 	
-	const bool isEmpty() const throw()
-	{
-		return (left == 0);
-	}
+	const bool isEmpty() const throw();
 	
 	//! Did read of 'n' bytes.
 	/**
@@ -215,23 +68,7 @@ struct Buffer
 	 *
 	 * @param len
 	 */
-	void read(const size_t len) throw()
-	{
-		assert(data != 0);
-		assert(size > 1);
-		
-		assert(len > 0);
-		assert(len <= canRead());
-		
-		rpos += len;
-		assert(rpos <= data+size);
-		
-		left -= len;
-		assert(left >= 0);
-		
-		if (rpos == data+size)
-			rpos = data;
-	}
+	void read(const size_t len) throw();
 	
 	//! How many bytes can be read.
 	/** 
@@ -239,20 +76,7 @@ struct Buffer
 	 *
 	 * @return number of bytes you can read in one go.
 	 */
-	size_t canRead() const throw()
-	{
-		assert(data != 0);
-		assert(size > 1);
-		
-		if (left == 0)
-			return 0;
-		else if (wpos > rpos)
-			return wpos - rpos;
-		else
-			return (data+size) - rpos;
-		
-		return 0;
-	}
+	size_t canRead() const throw();
 	
 	//! Wrote 'n' bytes to buffer.
 	/**
@@ -261,44 +85,16 @@ struct Buffer
 	 *
 	 * @param len states the number of bytes you wrote to buffer.
 	 */
-	void write(const size_t len) throw()
-	{
-		assert(data != 0);
-		assert(size > 1);
-		
-		assert(len > 0);
-		assert(len <= canWrite());
-		
-		wpos += len; // increment wpos pointer
-		left += len; // increase number of bytes left to read
-		
-		assert(left <= size);
-		
-		// Set wpos to beginning of buffer if it reaches its end.
-		if (wpos == data+size)
-			wpos = data;
-	}
+	void write(const size_t len) throw();
 	
 	//! How many bytes can be written.
 	/**
 	 * @return number of bytes you can write in one go.
 	 */
-	size_t canWrite() const throw()
-	{
-		assert(data != 0);
-		assert(size > 1);
-		
-		if (rpos > wpos)
-			return rpos - wpos;
-		else
-			return (data+size) - wpos;
-	}
+	size_t canWrite() const throw();
 	
 	//! Returns the number of free bytes in buffer.
-	size_t free() const throw()
-	{
-		return size - left;
-	}
+	size_t free() const throw();
 	
 	//! Rewinds wpos and rpos to beginning of the buffer.
 	/**
@@ -307,13 +103,7 @@ struct Buffer
 	 * 
 	 * Effectively allows the next write to occupy largest possible space.
 	 */
-	void rewind() throw()
-	{
-		assert(data != 0);
-		assert(size > 0);
-		wpos = rpos = data;
-		left = 0;
-	}
+	void rewind() throw();
 	
 	char
 		//! Circular buffer data. DON'T TOUCH (unless you're scrapping the buffer)
