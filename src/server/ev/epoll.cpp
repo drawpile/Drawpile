@@ -95,7 +95,7 @@ int EventEpoll::wait() throw()
 		assert(error != EINVAL); // invalif evfd, or max_events <= 0
 	}
 	
-	return nfds;
+	return nfds--;
 }
 
 // Errors: ENOMEM
