@@ -16,7 +16,6 @@
 #define CircularBuffer_INCLUDED
 
 #include "config.h"
-#include "container.h"
 
 #include <stdexcept>
 #include <cstddef> // size_t?
