@@ -627,6 +627,20 @@ void Server::uHandleDrawing(User& usr) throw()
 	}
 	else
 	{
+		#ifdef PERSISTENT_SESSIONS
+		if (usr.session->persist and usr.session->raster_invalid == false)
+		{
+			#ifndef NDEBUG
+			cout << "? Session raster invalidated." << endl;
+			#endif
+			// invalidate raster
+			usr.session->raster_invalid = true;
+			usr.session->raster_cached = false;
+			delete usr.session->raster;
+			usr.session->raster = 0;
+		}
+		#endif // PERSISTENT_SESSIONS
+		
 		#ifdef LAYER_SUPPORT
 		if (usr.inMsg->type == protocol::Message::StrokeInfo
 			and usr.layer == protocol::null_layer)
@@ -797,8 +811,21 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
-				uQueueMsg(*usr, msgAck(usr->inMsg->session_id, protocol::Message::Unsubscribe));
-				uLeaveSession(*usr, sdata->session);
+				Session *session = sdata->session;
+				#ifdef PERSISTENT_SESSIONS
+				if (session->persist and !session->raster_cached and session->users.size() == 1)
+				{
+					uQueueMsg(*usr, msgError(session->id, protocol::error::RequestIgnored));
+					message_ref ref(new protocol::Synchronize);
+					ref->session_id = session->id;
+					uQueueMsg(*usr, ref);
+				}
+				else
+				#endif // PERSISTENT_SESSIONS
+				{
+					uQueueMsg(*usr, msgAck(usr->inMsg->session_id, protocol::Message::Unsubscribe));
+					uLeaveSession(*usr, session);
+				}
 			}
 		}
 		break;
@@ -1047,7 +1074,8 @@ void Server::uTunnelRaster(User& usr) throw()
 	
 	const bool last = (raster->offset + raster->length == raster->size);
 	
-	if (usr.getConstSession(raster->session_id) == 0)
+	SessionData *sdata = usr.getSession(raster->session_id);
+	if (sdata == 0)
 	{
 		cerr << "- Raster for unsubscribed session #"
 			<< static_cast<uint>(raster->session_id)
@@ -1067,18 +1095,64 @@ void Server::uTunnelRaster(User& usr) throw()
 	const std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
 	if (ft.first == ft.second)
 	{
-		cerr << "Un-tunneled raster from user #" << usr.id
-			<< ", for session #" << static_cast<uint>(raster->session_id)
-			<< endl;
-		
-		// We assume the raster was for user/s who disappeared
-		// before we could cancel the request.
-		
-		if (!last)
+		#ifdef PERSISTENT_SESSIONS
+		if (sdata->session->persist and !sdata->session->raster_cached)
 		{
-			message_ref cancel_ref(new protocol::Cancel);
-			cancel_ref->session_id = raster->session_id;
-			uQueueMsg(usr, cancel_ref);
+			#ifndef NDEBUG
+			cout << "? Caching raster." << endl;
+			#endif
+			
+			protocol::Raster *& sras = sdata->session->raster;
+			if (sras == 0)
+			{
+				sdata->session->raster_invalid = false;
+				sras = new protocol::Raster(0, raster->length, raster->size, 0);
+				if (sras->length < sras->size)
+				{
+					sras->data = new char[sras->size];
+					memcpy(sras->data, raster->data, raster->length);
+				}
+				else
+				{
+					sras->data = raster->data;
+					raster->data = 0;
+				}
+			}
+			else
+			{
+				assert(data->session->raster_invalid == false);
+				assert(raster->size == sras->size);
+				assert(raster->offset + raster->length <= sras->size);
+				
+				memcpy(sras->data+raster->offset, raster->data, raster->length);
+				sras->length += raster->length;
+			}
+			
+			if (sras->length == sras->size)
+			{
+				sdata->session->raster_cached = true;
+				
+				// Detach user from session now
+				uQueueMsg(usr, msgAck(sdata->session_id, protocol::Message::Unsubscribe));
+				uLeaveSession(usr, sdata->id);
+			}
+		}
+		else
+		#endif // PERSISTENT_SESSIONS
+		{
+			cerr << "Un-tunneled raster from user #" << usr.id
+				<< ", for session #" << static_cast<uint>(raster->session_id)
+				<< endl;
+			
+			// We assume the raster was for user/s who disappeared
+			// before we could cancel the request.
+			
+			if (!last)
+			{
+				message_ref cancel_ref(new protocol::Cancel);
+				cancel_ref->session_id = raster->session_id;
+				uQueueMsg(usr, cancel_ref);
+			}
 		}
 	}
 	else
@@ -1263,8 +1337,13 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		}
 		break;
 	case protocol::SessionEvent::Persist:
+		//#ifdef PERSISTENT_SESSIONS
 		cout << "+ Session #" << session->id << " persists." << endl;
-		session->persist = (aux != 0);
+		session->persist = (event.aux != 0);
+		// TODO: Send ACK
+		//#else
+		// TODO: Send RequestIgnored error
+		//#endif
 		break;
 	default:
 		cerr << "- Invalid data from user #" << usr->id <<  endl;

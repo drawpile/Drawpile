@@ -99,6 +99,11 @@ struct Session
 		level(_level),
 		syncCounter(0),
 		locked(false),
+		#ifdef PERSISTENT_SESSIONS
+		raster(0),
+		raster_cached(false),
+		raster_invalid(false),
+		#endif
 		persist(false)
 	{
 		#ifndef NDEBUG
@@ -155,7 +160,7 @@ struct Session
 		return (persist?protocol::session::Persist:0);
 	}
 	
-	//! 
+	//! Layer identifier to layer data map
 	std::map<uint8_t, LayerData> layers;
 	//std::set<LayerData> layers;
 	
@@ -170,6 +175,16 @@ struct Session
 	
 	//! Session lock state
 	bool locked;
+	
+	#ifdef PERSISTENT_SESSIONS
+	protocol::Raster *raster;
+	
+	//! Raster cached
+	bool raster_cached;
+	
+	//! Raster was invalidated
+	bool raster_invalid;
+	#endif
 	
 	//! Session should persist
 	bool persist;
