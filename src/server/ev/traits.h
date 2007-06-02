@@ -107,4 +107,10 @@ struct event_system
 	static const std::string value;
 };
 
+template <typename Evs>
+struct event_invalid_fd
+{
+	static const typename event_type<Evs>::ev_t value = -1;
+};
+
 #endif // EventTraits_INCLUDED

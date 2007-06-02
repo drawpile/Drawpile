@@ -81,6 +81,8 @@ template <> struct event_accept<EventWSA> { static const long value; };
 template <> struct event_connect<EventWSA> { static const long value; };
 template <> struct event_system<EventWSA> { static const std::string value; };
 
+template <> struct event_invalid_fd<EventWSA> { static const event_type<Evs>::ev_t; };
+
 // unused, but required because GCC is less than bright
 template <> struct event_error<EventWSA> { static const long value; };
 

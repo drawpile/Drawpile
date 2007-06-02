@@ -2452,7 +2452,7 @@ int Server::run() throw()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
-				assert(fd != 0);
+				assert(fd != event_invalid_fd<EventSystem>::value);
 				if (fd == lsock.fd())
 				{
 					cullIdlers();

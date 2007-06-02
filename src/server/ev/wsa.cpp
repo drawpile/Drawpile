@@ -46,6 +46,8 @@ const long event_accept<EventWSA>::value = FD_ACCEPT;
 const long event_connect<EventWSA>::value = FD_CONNECT;
 const std::string event_system<EventWSA>::value("wsa");
 
+const SOCKET event_invalid_fd<EventWSA>::value = INVALID_SOCKET;
+
 EventWSA::EventWSA() throw()
 	: nfds(0), last_event(0)
 {
