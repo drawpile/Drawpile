@@ -46,7 +46,7 @@ const int event_hangup<EventEpoll>::value = EPOLLHUP;
 const std::string event_system<EventEpoll>::value("epoll");
 
 EventEpoll::EventEpoll() throw(std::exception)
-	: evfd(event_invalid_fd<EventEpoll>::value), nfds(-1)
+	: nfds(-1), evfd(event_invalid_fd<EventEpoll>::value)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "Event()" << endl;
@@ -61,7 +61,7 @@ EventEpoll::EventEpoll() throw(std::exception)
 		// max_events is not positive integer
 		assert(error != EINVAL);
 		
-		throw std::exception;
+		throw std::exception();
 	}
 }
 
@@ -115,7 +115,7 @@ int EventEpoll::add(fd_t fd, int events) throw()
 	cout << "epoll.add(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != event_invalid_fd<EventEpoll>::value);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -146,7 +146,7 @@ int EventEpoll::modify(fd_t fd, int events) throw()
 	cout << "epoll.modify(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != event_invalid_fd<EventEpoll>::value);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -177,7 +177,7 @@ int EventEpoll::remove(fd_t fd) throw()
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != event_invalid_fd<EventEpoll>::value);
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	

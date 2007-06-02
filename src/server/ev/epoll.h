@@ -32,6 +32,8 @@
 #include "interface.h"
 #include "traits.h"
 
+#include <stdexcept>
+
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
