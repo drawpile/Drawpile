@@ -672,7 +672,7 @@ void Server::uHandlePassword(User& usr) throw()
 	
 	SHA1 hash;
 	
-	Session *session;
+	Session *session=0;
 	protocol::Password &msg = *static_cast<protocol::Password*>(usr.inMsg);
 	if (msg.session_id == protocol::Global)
 	{
@@ -1668,8 +1668,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			msg.length = 0;
 			msg.name = 0;
 			
-			usr->session_data->setMode(default_user_mode);
-			
 			if (LocalhostAdmin)
 			{
 				const std::string IPPort(usr->sock.address());
@@ -1689,7 +1687,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			}
 			
 			msg.user_id = usr->id;
-			msg.mode = usr->session_data->getMode();
+			msg.mode = 0;
 			
 			usr->state = User::Active;
 			usr->deadtime = 0;
@@ -1771,9 +1769,6 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 				usr->level = ident.level; // feature level used by client
 				usr->setCapabilities(ident.flags);
 				usr->setExtensions(ident.extensions);
-				usr->session_data->setMode(default_user_mode);
-				//if (!usr->ext_chat)
-				//	usr->session_data->deaf = true;
 			}
 		}
 		else
