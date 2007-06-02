@@ -252,46 +252,16 @@ void Server::uWrite(User*& usr) throw()
 	// if buffer is empty
 	if (usr->output.isEmpty())
 	{
-		assert(!usr->queue.empty());
-		
-		const usr_message_i f_msg(usr->queue.begin());
-		usr_message_i l_msg(f_msg+1), iter(f_msg);
-		// create linked list
-		size_t links=1;
-		for (; l_msg != usr->queue.end(); ++l_msg, ++iter, ++links)
-		{
-			if (links == std::numeric_limits<uint8_t>::max()
-				or ((*l_msg)->type != (*f_msg)->type)
-				or ((*l_msg)->user_id != (*f_msg)->user_id)
-				or ((*l_msg)->session_id != (*f_msg)->session_id)
-			)
-				break; // type changed or reached maximum size of linked list
-			
-			(*l_msg)->prev = boost::get_pointer(*iter);
-			(*iter)->next = boost::get_pointer(*l_msg);
-		}
-		
-		size_t len=0, size=usr->output.canWrite();
-		
-		// serialize message/s
-		char* buf = (*--l_msg)->serialize(len, usr->output.wpos, size);
-		
-		// in case new buffer was allocated
-		if (buf != usr->output.wpos)
-			usr->output.setBuffer(buf, size, len);
-		else
-			usr->output.write(len);
+		usr->flushQueue();
 		
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
-			and (*f_msg)->type != protocol::Message::Raster
+			and usr->output.rpos[0] != protocol::Message::Raster
 			and usr->output.canRead() > 300)
 		{
-			Deflate(usr->output, len, size);
+			Deflate(usr->output, usr->output.canRead());
 		}
 		#endif // HAVE_ZLIB
-		
-		usr->queue.erase(f_msg, ++l_msg);
 	}
 	
 	const int sb = usr->sock.send( usr->output.rpos, usr->output.canRead() );
@@ -356,9 +326,10 @@ void Server::uWrite(User*& usr) throw()
 	}
 }
 
-void Server::Deflate(Buffer& buffer, size_t& len, size_t& size) throw(std::bad_alloc)
+void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
 {
 	// len, size
+	size_t size=buffer.size;
 	
 	char* temp;
 	ulong buffer_len = len + 12;

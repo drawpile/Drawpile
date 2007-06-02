@@ -334,6 +334,42 @@ struct User
 	
 	//! Stroke counter
 	u_long strokes;
+	
+	//! 'Flushes' queue to output buffer
+	void flushQueue()
+	{
+		assert(!queue.empty());
+		
+		const usr_message_i f_msg(queue.begin());
+		usr_message_i l_msg(f_msg+1), iter(f_msg);
+		// create linked list
+		size_t links=1;
+		for (; l_msg != queue.end(); ++l_msg, ++iter, ++links)
+		{
+			if (links == std::numeric_limits<uint8_t>::max()
+				or ((*l_msg)->type != (*f_msg)->type)
+				or ((*l_msg)->user_id != (*f_msg)->user_id)
+				or ((*l_msg)->session_id != (*f_msg)->session_id)
+			)
+				break; // type changed or reached maximum size of linked list
+			
+			(*l_msg)->prev = boost::get_pointer(*iter);
+			(*iter)->next = boost::get_pointer(*l_msg);
+		}
+		
+		size_t len=0, size=output.canWrite();
+		
+		// serialize message/s
+		char* buf = (*--l_msg)->serialize(len, output.wpos, size);
+		
+		// in case new buffer was allocated
+		if (buf != output.wpos)
+			output.setBuffer(buf, size, len);
+		else
+			output.write(len);
+		
+		queue.erase(f_msg, ++l_msg);
+	}
 };
 
 #endif // ServerUser_INCLUDED

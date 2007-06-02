@@ -279,7 +279,7 @@ protected:
 	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
 	
 	//! Deflate outgoing data
-	void Deflate(Buffer& buffer, size_t& len, size_t& size) throw(std::bad_alloc);
+	void Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc);
 	
 	//! Cull idle users
 	void cullIdlers() throw();
