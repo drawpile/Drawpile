@@ -663,10 +663,16 @@ bool MainWindow::saveas()
 	return false;
 }
 
+/**
+ * The settings window will be window modal and automatically destruct
+ * when it is closed.
+ */
 void MainWindow::showSettings()
 {
-	dialogs::SettingsDialog dlg(this);
-	dlg.exec();
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	dlg->setWindowModality(Qt::WindowModal);
+	dlg->show();
 }
 
 void MainWindow::host()
