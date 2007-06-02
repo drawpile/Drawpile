@@ -59,4 +59,13 @@ immediately preceded it.
 \todo Not much else than copy&paste everything from the wiki:
 http://drawpile.sourceforge.net/wiki/index.php/Protocol_flow#Client_synchronization
 
+\section persistent Persistent session caching
+
+When session is made to persist (protocol::SessionEvent with action set to
+protocol::SessionEvent::Persist), it may request the last user leaving (by
+protocol::Unsubscribe) to provide the session raster data to cache. The client should
+send the raster data, but is not required to. The client is not detached from session
+before the raster is served, however, and will remain member of it until the raster is
+served or the client is disconnected.
+
 */
