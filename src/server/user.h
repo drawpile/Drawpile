@@ -132,8 +132,6 @@ struct User
 		inMsg(0),
 		level(0),
 		deadtime(0),
-		name_len(0),
-		name(0),
 		session_data(0),
 		strokes(0)
 	{
@@ -151,8 +149,6 @@ struct User
 		std::cout << "User::~User()" << std::endl;
 		#endif
 		
-		delete [] name,
-		//delete sock,
 		delete inMsg;
 		
 		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
@@ -330,11 +326,8 @@ struct User
 	//! Last touched.
 	time_t deadtime;
 	
-	//! Name length
-	uint name_len;
-	
 	//! User name
-	char* name;
+	Array<char> name;
 	
 	//! Active session data
 	SessionData* session_data;

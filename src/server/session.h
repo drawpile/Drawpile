@@ -22,7 +22,7 @@
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.defaults.h"
 
-#include "../shared/memstack.h"
+#include "array.h"
 
 struct User; // defined elsewhere
 #ifndef ServerUser_INCLUDED
@@ -81,16 +81,12 @@ typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 
 //! Session information
 struct Session
-	//: MemoryStack<Session>
 {
 	//! ctor
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
-		uint _width, uint _height, uint _level, uint _title_len, char* _title) throw()
+		uint _width, uint _height, uint _level, Array<char>& _title) throw()
 		: id(_id),
-		title_len(_title_len),
 		title(_title),
-		pw_len(0),
-		password(0),
 		mode(_mode),
 		limit(_limit),
 		owner(_owner),
@@ -117,24 +113,16 @@ struct Session
 		#ifndef NDEBUG
 		std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
 		#endif
-		
-		delete [] title;
 	}
 	
 	//! Session identifier
 	uint id;
 	
-	//! Title length
-	uint title_len;
-	
 	//! Session title
-	char* title;
-	
-	//! Password length
-	uint pw_len;
+	Array<char> title;
 	
 	//! Password string
-	char* password;
+	Array<char> password;
 	
 	//! Default user mode
 	uint8_t mode;

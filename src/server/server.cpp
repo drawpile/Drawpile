@@ -68,8 +68,7 @@ typedef std::set<User*>::iterator userset_i;
 typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
-	: state(Server::Dead), password(0), a_password(0),
-	pw_len(0), a_pw_len(0),
+	: state(Server::Dead),
 	user_limit(0),
 	session_limit(1),
 	max_subscriptions(1),
@@ -209,13 +208,13 @@ message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_
 		session.mode,
 		session.getFlags(),
 		session.level,
-		session.title_len,
-		new char[session.title_len]
+		session.title.size,
+		new char[session.title.size]
 	);
 	
 	nfo->session_id = session.id;
 	
-	memcpy(nfo->title, session.title, session.title_len);
+	memcpy(nfo->title, session.title.ptr, session.title.size);
 	
 	return message_ref(nfo);
 }
@@ -575,14 +574,14 @@ message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, cons
 	protocol::UserInfo *uevent = new protocol::UserInfo(
 		sdata->getMode(),
 		event,
-		usr.name_len,
-		(usr.name_len == 0 ? 0 : new char[usr.name_len])
+		usr.name.size,
+		(usr.name.size == 0 ? 0 : new char[usr.name.size])
 	);
 	
 	uevent->user_id = usr.id;
 	uevent->session_id = session_id;
 	
-	memcpy(uevent->name, usr.name, usr.name_len);
+	memcpy(uevent->name, usr.name.ptr, usr.name.size);
 	
 	return message_ref(uevent);
 }
@@ -677,11 +676,11 @@ void Server::uHandlePassword(User& usr) throw()
 	if (msg.session_id == protocol::Global)
 	{
 		// Admin login
-		if (!a_password)
+		if (admin_password.ptr == 0)
 			uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 		else
 		{
-			hash.Update(reinterpret_cast<uint8_t*>(a_password), a_pw_len);
+			hash.Update(reinterpret_cast<uint8_t*>(admin_password.ptr), admin_password.size);
 			goto dohashing;
 		}
 		return;
@@ -701,7 +700,7 @@ void Server::uHandlePassword(User& usr) throw()
 				uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidRequest));
 			else
 			{
-				hash.Update(reinterpret_cast<uint8_t*>(session->password), session->pw_len);
+				hash.Update(reinterpret_cast<uint8_t*>(session->password.ptr), session->password.size);
 				goto dohashing;
 			}
 		}
@@ -846,7 +845,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 					uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::SessionFull));
 				else if (session->level != usr->level)
 					uQueueMsg(*usr, msgError(protocol::Global, protocol::error::ImplementationMismatch));
-				else if (session->password != 0)
+				else if (session->password.ptr != 0)
 					uQueueMsg(*usr, msgPWRequest(*usr, session->id));
 				else // join session
 				{
@@ -924,7 +923,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			state = Server::Exiting;
 		break;
 	case protocol::Message::Authenticate:
-		if (!a_password) // no admin password set
+		if (admin_password.ptr == 0) // no admin password set
 			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::Unauthorized));
 		else // request password
 			uQueueMsg(*usr, msgPWRequest(*usr, protocol::Global));
@@ -1419,8 +1418,9 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				cout << "- No title set for session." << endl;
 			#endif
 			
+			Array<char> title(msg.title, msg.title_len);
 			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
-				and !validateSessionTitle(msg.title, msg.title_len))
+				and !validateSessionTitle(title))
 			{
 				#ifndef NDEBUG
 				cerr << "- Session title not unique." << endl;
@@ -1438,8 +1438,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 					msg.width, // width
 					msg.height, // height
 					usr->level, // inherit user's feature level
-					msg.title_len,
-					msg.title
+					title
 				);
 				
 				sessions[session->id] = session;
@@ -1458,6 +1457,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				
 				uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::SessionInstruction));
 			}
+			title.ptr = 0;
 		}
 		return; // because session owner might've done this
 	case protocol::SessionInstruction::Destroy:
@@ -1535,15 +1535,13 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			session->height = msg.height;
 			
 			// new title
-			delete [] session->title;
 			if (msg.title_len != 0)
 			{
-				session->title = msg.title;
-				session->title_len = msg.title_len;
+				session->title.set(msg.title, msg.title_len);
 				msg.title = 0;
 			}
 			else
-				session->title_len = 0;
+				session->title.set(0,0);
 			
 			#ifndef NDEBUG
 			cout << "+ Session #" << session->id << " altered by user #" << usr->id << endl
@@ -1606,11 +1604,7 @@ void Server::uSetPassword(User*& usr) throw()
 			<< static_cast<uint>(setpw.session_id) << endl;
 		#endif
 		
-		if (session->password != 0)
-			delete [] session->password;
-		
-		session->password = setpw.password;
-		session->pw_len = setpw.password_len;
+		session->password.set(setpw.password, setpw.password_len);
 		setpw.password = 0;
 		
 		uQueueMsg(*usr, msgAck(setpw.session_id, protocol::Message::SetPassword));
@@ -1648,8 +1642,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			}
 			
 			// assign user their own name
-			usr->name = msg.name;
-			usr->name_len = msg.length;
+			usr->name.set(msg.name, msg.length);
 			
 			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
 				and !validateUserName(usr))
@@ -1709,7 +1702,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			
 			SHA1 hash;
 			
-			hash.Update(reinterpret_cast<uint8_t*>(password), pw_len);
+			hash.Update(reinterpret_cast<uint8_t*>(password.ptr), password.size);
 			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
 			hash.Final();
 			char digest[protocol::password_hash_size];
@@ -1755,7 +1748,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 			}
 			else
 			{
-				if (!password) // no password set
+				if (password.ptr == 0) // no password set
 				{
 					usr->state = User::Login;
 					uQueueMsg(*usr, msgHostInfo());
@@ -2356,31 +2349,31 @@ bool Server::validateUserName(User* usr) const throw()
 	assert(usr != 0);
 	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
 	
-	if (usr->name_len == 0)
+	if (usr->name.size == 0)
 		return false;
 	
 	for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
 	{
 		if (ui->second != usr // skip self
-			and usr->name_len == ui->second->name_len // equal length
-			and (memcmp(usr->name, ui->second->name, usr->name_len) == 0))
+			and usr->name.size == ui->second->name.size // equal length
+			and (memcmp(usr->name.ptr, ui->second->name.ptr, usr->name.size) == 0))
 			return false;
 	}
 	
 	return true;
 }
 
-bool Server::validateSessionTitle(const char* name, const uint8_t len) const throw()
+bool Server::validateSessionTitle(const Array<char>& title) const throw()
 {
-	assert(name != 0 and len > 0);
+	assert(title.ptr != 0 and title.size > 0);
 	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
 	
 	// Session title is never unique if it's an empty string.
-	if (len == 0)
+	if (title.size == 0)
 		return false;
 	
 	for (sessions_const_i si(sessions.begin()); si != sessions.end(); ++si)
-		if (len == si->second->title_len and (memcmp(name, si->second->title, len) == 0))
+		if (title.size == si->second->title.size and (memcmp(title.ptr, si->second->title.ptr, title.size) == 0))
 			return false;
 	
 	return true;
@@ -2429,7 +2422,8 @@ int Server::run() throw()
 	
 	User *usr;
 	
-	fd_t fd;
+	
+	event_fd_type<EventSystem>::fd_t fd;
 	event_type<EventSystem>::ev_t events;
 	
 	users_const_i ui;

@@ -97,17 +97,13 @@ protected:
 	//! Listening socket
 	Socket lsock;
 	
-	char
+	Array<char>
 		//! Server password
-		*password,
+		password,
 		//! Admin password
-		*a_password;
+		admin_password;
 	
 	size_t
-		//! Server password length
-		pw_len,
-		//! Admin password length
-		a_pw_len,
 		//! User limit
 		user_limit,
 		//! Session limit
@@ -277,7 +273,7 @@ protected:
 	bool validateUserName(User* usr) const throw();
 	
 	//! Check session title uniqueness
-	bool validateSessionTitle(const char* name, const uint8_t len) const throw();
+	bool validateSessionTitle(const Array<char>& title) const throw();
 	
 	//! Reprocesses deflated data stream
 	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
@@ -320,19 +316,13 @@ public:
 	//! Set server password
 	void setPassword(char* pwstr, const uint8_t len) throw()
 	{
-		if (password != 0)
-			delete [] password;
-		password = pwstr;
-		pw_len = len;
+		password.set(pwstr, len);
 	}
 	
 	//! Set admin server password
 	void setAdminPassword(char* pwstr, const uint8_t len) throw()
 	{
-		if (a_password != 0)
-			delete [] a_password;
-		a_password = pwstr;
-		a_pw_len = len;
+		admin_password.set(pwstr, len);
 	}
 	
 	//! Set user limit
