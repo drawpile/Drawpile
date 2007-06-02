@@ -640,7 +640,8 @@ void Server::uHandlePassword(User& usr) throw()
 {
 	assert(usr.inMsg != 0);
 	
-	SHA1 hash;
+	char *str=0;
+	size_t len=0;
 	
 	Session *session=0;
 	protocol::Password &msg = *static_cast<protocol::Password*>(usr.inMsg);
@@ -651,7 +652,8 @@ void Server::uHandlePassword(User& usr) throw()
 			uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 		else
 		{
-			hash.Update(reinterpret_cast<uint8_t*>(admin_password.ptr), admin_password.size);
+			str = admin_password.ptr;
+			len = admin_password.size;
 			goto dohashing;
 		}
 		return;
@@ -671,7 +673,8 @@ void Server::uHandlePassword(User& usr) throw()
 				uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidRequest));
 			else
 			{
-				hash.Update(reinterpret_cast<uint8_t*>(session->password.ptr), session->password.size);
+				str = session->password.ptr;
+				len = session->password.size;
 				goto dohashing;
 			}
 		}
@@ -679,12 +682,7 @@ void Server::uHandlePassword(User& usr) throw()
 	}
 	
 	dohashing:
-	hash.Update(reinterpret_cast<uint8_t*>(usr.seed), 4);
-	hash.Final();
-	char digest[protocol::password_hash_size];
-	hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-	
-	if (memcmp(digest, msg.data, protocol::password_hash_size) != 0) // mismatch
+	if (!CheckPassword(msg.data, str, len, usr.seed)) // mismatch
 		uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 	else
 	{
@@ -1582,6 +1580,79 @@ void Server::uSetPassword(User*& usr) throw()
 	}
 }
 
+// Calls validateUserName, uQueueMsg
+void Server::uLoginInfo(User& usr) throw()
+{
+	protocol::UserInfo &msg = *static_cast<protocol::UserInfo*>(usr.inMsg);
+	
+	if (msg.length > name_len_limit)
+	{
+		#ifndef NDEBUG
+		cerr << "- Name too long: " << static_cast<uint>(msg.length)
+			<< " > " << static_cast<uint>(name_len_limit) << endl;
+		#endif
+		
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::TooLong));
+		return;
+	}
+	
+	// assign user their own name
+	usr.name.set(msg.name, msg.length);
+	
+	if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
+		and !validateUserName(&usr))
+	{
+		#ifndef NDEBUG
+		cerr << "- Name not unique" << endl;
+		#endif
+		
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::NotUnique));
+		return;
+	}
+	
+	// null the message's name information, so they don't get deleted
+	msg.length = 0;
+	msg.name = 0;
+	
+	if (LocalhostAdmin)
+	{
+		const std::string IPPort(usr.sock.address());
+		const std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
+		assert(ns != std::string::npos);
+		const std::string IP(IPPort.substr(0, ns));
+		
+		// Loopback address
+		if (IP == std::string(Network::Localhost))
+			usr.isAdmin = true;
+	}
+	
+	msg.user_id = usr.id;
+	msg.mode = 0;
+	
+	usr.state = User::Active;
+	usr.deadtime = 0;
+	usr.inMsg = 0;
+	
+	// remove fake timer
+	utimer.erase(utimer.find(&usr));
+	
+	// reply
+	uQueueMsg(usr, message_ref(&msg));
+}
+
+bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) throw()
+{
+	SHA1 hash;
+	
+	hash.Update(reinterpret_cast<const uchar*>(str), len);
+	hash.Update(reinterpret_cast<const uchar*>(seed), 4);
+	hash.Final();
+	char digest[protocol::password_hash_size];
+	hash.GetHash(reinterpret_cast<uchar*>(digest));
+	
+	return (memcmp(hashdigest, digest, protocol::password_hash_size) == 0);
+}
+
 void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 {
 	assert(usr != 0);
@@ -1596,73 +1667,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	{
 	case User::Login:
 		if (usr->inMsg->type == protocol::Message::UserInfo)
-		{
-			protocol::UserInfo &msg = *static_cast<protocol::UserInfo*>(usr->inMsg);
-			
-			if (msg.length > name_len_limit)
-			{
-				#ifndef NDEBUG
-				cerr << "- Name too long: " << static_cast<uint>(msg.length)
-					<< " > " << static_cast<uint>(name_len_limit) << endl;
-				#endif
-				
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::TooLong));
-				
-				//uRemove(usr, protocol::UserInfo::Dropped);
-				break;
-			}
-			
-			// assign user their own name
-			usr->name.set(msg.name, msg.length);
-			
-			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
-				and !validateUserName(usr))
-			{
-				#ifndef NDEBUG
-				cerr << "- Name not unique" << endl;
-				#endif
-				
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
-				
-				//uRemove(usr, protocol::UserInfo::Dropped);
-				break;
-			}
-			
-			// null the message's name information, so they don't get deleted
-			msg.length = 0;
-			msg.name = 0;
-			
-			if (LocalhostAdmin)
-			{
-				const std::string IPPort(usr->sock.address());
-				const std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
-				assert(ns != std::string::npos);
-				const std::string IP(IPPort.substr(0, ns));
-				
-				// Loopback address
-				if (IP == std::string(
-					#ifdef IPV6_SUPPORT
-					"::1"
-					#else
-					"127.0.0.1"
-					#endif // IPV6_SUPPORT
-				))
-					usr->isAdmin = true;
-			}
-			
-			msg.user_id = usr->id;
-			msg.mode = 0;
-			
-			usr->state = User::Active;
-			usr->deadtime = 0;
-			usr->inMsg = 0;
-			
-			// remove fake timer
-			utimer.erase(utimer.find(usr));
-			
-			// reply
-			uQueueMsg(*usr, message_ref(&msg));
-		}
+			uLoginInfo(*usr);
 		else // wrong message type
 			uRemove(usr, protocol::UserInfo::Dropped);
 		break;
@@ -1671,15 +1676,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			const protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
 			
-			SHA1 hash;
-			
-			hash.Update(reinterpret_cast<uint8_t*>(password.ptr), password.size);
-			hash.Update(reinterpret_cast<uint8_t*>(usr->seed), 4);
-			hash.Final();
-			char digest[protocol::password_hash_size];
-			hash.GetHash(reinterpret_cast<uint8_t*>(digest));
-			
-			if (memcmp(digest, msg.data, protocol::password_hash_size) == 0)
+			if (CheckPassword(msg.data, password.ptr, password.size, usr->seed))
 			{
 				uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::Password)); // ACK
 				uRegenSeed(*usr); // mangle seed

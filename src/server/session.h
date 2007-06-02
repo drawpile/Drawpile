@@ -165,6 +165,7 @@ struct Session
 	bool locked;
 	
 	#ifdef PERSISTENT_SESSIONS
+	//! Local raster copy
 	protocol::Raster *raster;
 	
 	//! Raster cached

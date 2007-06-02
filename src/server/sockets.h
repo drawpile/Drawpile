@@ -34,9 +34,24 @@
 #include <iostream>
 #include <stdexcept>
 
+//! Network
+namespace Network {
+
+//! Localhost address
 #ifdef IPV6_SUPPORT
-	#define IPV6_SUPPORT_INCOMPLETE 1
+#define IPV6_SUPPORT_INCOMPLETE 1
+const char Localhost[] = "::1";
+#else
+const char Localhost[] = "127.0.0.1";
 #endif
+
+//! Broadcast address / Any device
+const char Broadcast[] = "0.0.0.0";
+
+//! Super user port upper bound
+const uint SuperUser_Port = 1023;
+
+}
 
 #ifdef WIN32
 	#include <ws2tcpip.h>
