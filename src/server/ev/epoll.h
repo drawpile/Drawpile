@@ -55,10 +55,10 @@ public:
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
-	int add(fd_t fd, int events) throw();
+	int add(fd_t fd, ev_t events) throw();
 	int remove(fd_t fd) throw();
-	int modify(fd_t fd, int events) throw();
-	bool getEvent(fd_t &fd, int &events) throw();
+	int modify(fd_t fd, ev_t events) throw();
+	bool getEvent(fd_t &fd, ev_t &events) throw();
 };
 
 /* traits */

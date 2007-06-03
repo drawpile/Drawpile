@@ -99,7 +99,7 @@ int EventEpoll::wait() throw()
 }
 
 // Errors: ENOMEM
-int EventEpoll::add(fd_t fd, int events) throw()
+int EventEpoll::add(fd_t fd, ev_t events) throw()
 {
 	assert(evfd != event_invalid_fd<EventEpoll>::value);
 	
