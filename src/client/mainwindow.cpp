@@ -307,6 +307,8 @@ bool MainWindow::canReplace() const {
 }
 
 /**
+ * The file is added to the list of recent files and the menus on all open
+ * mainwindows are updated.
  * @param file filename to add
  */
 void MainWindow::addRecentFile(const QString& file)
@@ -546,7 +548,8 @@ void MainWindow::newDocument()
  */
 void MainWindow::openRecent(QAction *action)
 {
-	open(action->property("path").toString());
+	action->setProperty("deletelater",true);
+	open(action->property("filepath").toString());
 }
 
 /**

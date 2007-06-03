@@ -51,8 +51,7 @@ void RecentFiles::addFile(const QString& filename)
 void RecentFiles::setMaxFileCount(int max)
 {
 	QSettings cfg;
-	cfg.beginGroup("history");
-	cfg.setValue("maxrecentfiles",max);
+	cfg.setValue("history/maxrecentfiles",max);
 }
 
 /**
@@ -61,29 +60,45 @@ void RecentFiles::setMaxFileCount(int max)
 int RecentFiles::getMaxFileCount()
 {
 	QSettings cfg;
-	cfg.beginGroup("history");
-	int maxrecent = cfg.value("maxrecentfiles").toInt();
+	int maxrecent = cfg.value("history/maxrecentfiles").toInt();
 	if(maxrecent<=0)
-		maxrecent = 6;
+		maxrecent = DEFAULT_MAXFILES;
 	return maxrecent;
 }
 
 /**
- * The full path is stored in the property "path"
+ * The full path is stored in the property "filepath".
+ * If the list of recent files is empty, the menu is disabled. Actions in
+ * the menu marked with the attribute "deletelater" are deleted later in
+ * the event loop instead of immediately.
  * @param menu QMenu to fill
  */
 void RecentFiles::initMenu(QMenu *menu)
 {
 	QSettings cfg;
-	cfg.beginGroup("history");
 
-	const QStringList files = cfg.value("recentfiles").toStringList();
+	const QStringList files = cfg.value("history/recentfiles").toStringList();
 
-	menu->clear();
+	// Delete old actions, postponing the deletion of those marked with "deletelater".
+	// This is to prevent problems when initMenu is called from a slot
+	// signalled by the action from this menu.
+	const QList<QAction*> actions = menu->actions();
+	foreach(QAction *act, actions) {
+		menu->removeAction(act);
+		if(act->property("deletelater").isValid())
+			act->deleteLater();
+		else
+			delete act;
+	}
+
+	// Generate menu contents
+	menu->setEnabled(!files.isEmpty());
+	int index = 1;
 	foreach(QString filename, files) {
 		const QFileInfo file(filename);
-		QAction *a = menu->addAction(file.fileName());
-		a->setProperty("path",file.absoluteFilePath());
+		QAction *a = menu->addAction(QString(index<10?"&%1. %2":"%1. %2").arg(index).arg(file.fileName()));
+		a->setProperty("filepath",file.absoluteFilePath());
+		++index;
 	}
 }
 
