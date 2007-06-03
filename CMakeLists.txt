@@ -28,6 +28,7 @@ option ( DEFLATE "Enable deflate compression" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Apply several optimization flags" ON )
+option ( GENERIC "Optimize for generic CPU arch" OFF )
 option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )

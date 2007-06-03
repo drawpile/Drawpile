@@ -1,10 +1,11 @@
 # Optimize.cmake
 
-# only used if -march=native doesn't work
-# i383, i686, pentium2, pentium3, athlon-xp, etc.
+# http://gcc.gnu.org/onlinedocs/gcc/i386-and-x86_002d64-Options.html
 set ( CPU pentium3 )
 
-set ( GENERIC_CPU i686 )
+if ( GENERIC )
+	set ( CPU pentium3 ) # our target audience likely don't have older
+endif ( GENERIC )
 
 # 0 - no optimization
 # 1 - minimal optimization
@@ -20,7 +21,11 @@ endif ( DEBUG )
 
 ###   DO NOT TOUCH THE FOLLOWING   ###
 
-set ( ARCH "" )
+set ( ARCH "-march=${CPU} )
+set ( MTUNE "" )
+
+set ( MTUNE_NATIVE "-mtune=native" ) # GCC >=4.x
+set ( MTUNE_GENERIC "-mtune=generic") # GCC >=4.x
 
 set ( FASTMATH "-ffast-math" )
 
@@ -48,36 +53,26 @@ include ( TestCXXAcceptsFlag )
 
 ###   Architecture   ###
 
-if ( NOT NOARCH ) # optimized for specific arch
-	set ( ARCHNATIVE "-march=native" )
-	check_cxx_accepts_flag ( ${ARCHNATIVE} COMPILE_MARCH_NATIVE )
-	if ( COMPILE_MARCH_NATIVE )
-		set ( ARCH ${ARCHSPECIFIC} )
-	else ( COMPILE_MARCH_NATIVE )
-		set ( ARCHSPECIFIC "-march=${CPU}" )
-		check_cxx_accepts_flag ( ${ARCHSPECIFIC} COMPILE_MARCH_SPECIFIC )
-		if ( COMPILE_MARCH_SPECIFIC )
-			set ( ARCH ${ARCHSPECIFIC} )
-		endif ( COMPILE_MARCH_SPECIFIC )
-	endif ( COMPILE_MARCH_NATIVE )
-else ( NOT NOARCH ) # for generic archs
-	set ( ARCHGENERIC "-march=generic")
-	check_cxx_accepts_flag ( ${ARCHGENERIC} COMPILE_MARCH_GENERIC )
-	if ( COMPILE_MARCH_GENERIC )
-		set ( ARCH ${ARCHGENERIC} )
-	else ( COMPILE_MARCH_GENERIC )
-		set ( ARCHSPECIFIC "-march=${GENERIC_CPU}" )
-		check_cxx_accepts_flag ( ${ARCHSPECIFIC} COMPILE_MARCH_SPECIFIC )
-		if ( COMPILE_MARCH_SPECIFIC )
-			set ( ARCH ${ARCHSPECIFIC} )
-		endif ( COMPILE_MARCH_SPECIFIC )
-	endif ( COMPILE_MARCH_GENERIC )
-endif ( NOT NOARCH )
+check_cxx_accepts_flag ( ${ARCH} ACCEPT_MARCH )
+if ( NOT ACCEPT_MARCH )
+	set ( ARCH "" )
+endif ( NOT ACCEPT_MARCH )
+
+if ( GENERIC )
+	check_cxx_accepts_flag ( ${MTUNE_GENERIC} ACCEPT_MTUNE )
+	if ( ACCEPT_MTUNE )
+		set ( MTUNE ${MTUNE_GENERIC} )
+	endif ( ACCEPT_MTUNE )
+else ( GENERIC )
+	check_cxx_accepts_flag ( ${MTUNE_NATIVE} ACCEPT_MTUNE )
+	if ( ACCEPT_MTUNE )
+		set ( MTUNE ${MTUNE_NATIVE} )
+	endif ( ACCEPT_MTUNE )
+endif ( GENERIC )
 
 ###   TEST -O#   ###
 
 check_cxx_accepts_flag ( ${OPT} ACCEPT_OPT )
-
 if ( NOT ACCEPT_OPT )
 	set ( OPT "" )
 endif ( NOT ACCEPT_OPT)
@@ -85,7 +80,6 @@ endif ( NOT ACCEPT_OPT)
 ###   TEST -ffast-math   ###
 
 check_cxx_accepts_flag ( ${FASTMATH} FAST_MATH )
-
 if ( NOT FAST_MATH )
 	set ( FASTMATH "" )
 endif ( NOT FAST_MATH )
@@ -156,6 +150,6 @@ endif ( NOT ACCEPT_WALL )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${REGPARM}" )
+set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${REGPARM}" )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${FOMIT} -DNDEBUG" )
