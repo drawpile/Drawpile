@@ -37,16 +37,27 @@
 //! Network constants
 namespace Network {
 
-//! Localhost address
-#ifdef IPV6_SUPPORT
-#define IPV6_SUPPORT_INCOMPLETE 1
-const char Localhost[] = "::1";
-#else
-const char Localhost[] = "127.0.0.1";
-#endif
+//! IPv6 related constants
+namespace IPv6 {
 
-//! Broadcast address / Any device
-const char Broadcast[] = "0.0.0.0";
+//! Localhost address
+const char Localhost[] = "::1";
+
+//! Unspecified address
+const char Unspecified[] = "::";
+
+}
+
+//! IPv4 related constants
+namespace IPv4 {
+
+//! Localhost address
+const char Localhost[] = "127.0.0.1";
+
+//! Unspecified address
+const char Unspecified[] = "0.0.0.0";
+
+}
 
 //! Super user port upper bound
 const uint SuperUser_Port = 1023;

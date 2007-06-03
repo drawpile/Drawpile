@@ -1622,8 +1622,16 @@ void Server::uLoginInfo(User& usr) throw()
 		const std::string IP(IPPort.substr(0, ns));
 		
 		// Loopback address
-		if (IP == std::string(Network::Localhost))
+		if (IP == std::string(
+			#ifdef IPV6_SUPPORT
+			Network::IPv6::Localhost
+			#else
+			Network::IPv4::Localhost
+			#endif
+		))
+		{
 			usr.isAdmin = true;
+		}
 	}
 	
 	msg.user_id = usr.id;
