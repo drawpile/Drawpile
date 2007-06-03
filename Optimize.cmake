@@ -21,7 +21,7 @@ endif ( DEBUG )
 
 ###   DO NOT TOUCH THE FOLLOWING   ###
 
-set ( ARCH "-march=${CPU} )
+set ( ARCH "-march=${CPU}" )
 set ( MTUNE "" )
 
 set ( MTUNE_NATIVE "-mtune=native" ) # GCC >=4.x
@@ -31,9 +31,9 @@ set ( FASTMATH "-ffast-math" )
 
 set ( PROFILING_FLAGS "-pg" )
 set ( DEBUG_FLAGS "-g -Wall" )
-set ( OPT "-O${OPTIMIZATION}")
+set ( OPT "-O${OPTIMIZATION}" )
 
-set ( FOMIT "-fomit-frame-pointer")
+set ( FOMIT "-fomit-frame-pointer" )
 
 set ( WARNALL "-Wall" )
 
