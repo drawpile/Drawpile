@@ -110,7 +110,6 @@ struct SessionData
 
 //! User information
 struct User
-	//: MemoryStack<User>
 {
 	//! ctor
 	User(const uint8_t _id, const Socket& nsock) throw()

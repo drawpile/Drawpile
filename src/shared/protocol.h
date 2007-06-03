@@ -33,8 +33,6 @@
 #ifndef Protocol_INCLUDED
 #define Protocol_INCLUDED
 
-//#include "memstack.h" // MemoryStack<> ... unused
-
 #include "protocol.defaults.h"
 #include "protocol.flags.h"
 #include "datatypes.h"
@@ -272,7 +270,7 @@ public:
  * Response: HostInfo
  */
 struct Identifier
-	: Message//, MemoryStack<Identifier>
+	: Message
 {
 	Identifier() throw()
 		: Message(Message::Identifier, sizeof(type))
@@ -323,7 +321,7 @@ struct Identifier
  * Response: none
  */
 struct StrokeInfo
-	: Message//, MemoryStack<StrokeInfo>
+	: Message
 {
 	StrokeInfo() throw()
 		: Message(
@@ -371,7 +369,7 @@ struct StrokeInfo
  * Marks the end of a line defined by StrokeInfo messages.
  */
 struct StrokeEnd
-	: Message//, MemoryStack<StrokeEnd>
+	: Message
 {
 	StrokeEnd() throw()
 		: Message(Message::StrokeEnd, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
@@ -398,7 +396,7 @@ struct StrokeEnd
  * Response: none
  */
 struct ToolInfo
-	: Message//, MemoryStack<ToolInfo>
+	: Message
 {
 	ToolInfo() throw()
 		: Message(Message::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
@@ -468,7 +466,7 @@ struct ToolInfo
  * Response: Raster
  */
 struct Synchronize
-	: Message//, MemoryStack<Synchronize>
+	: Message
 {
 	Synchronize() throw()
 		: Message(Message::Synchronize, sizeof(type)+sizeof(session_id), message::isSession)
@@ -502,7 +500,7 @@ struct Synchronize
  * Response: none
  */
 struct Raster
-	: Message//, MemoryStack<Raster>
+	: Message
 {
 	Raster() throw()
 		: Message(Message::Raster, sizeof(type)+sizeof(session_id), message::isSession),
@@ -554,7 +552,7 @@ struct Raster
  * Response: Acknowledgement with event set to protocol::Message::SyncWait.
  */
 struct SyncWait
-	: Message//, MemoryStack<SyncWait>
+	: Message
 {
 	SyncWait() throw()
 		: Message(Message::SyncWait, sizeof(type)+sizeof(session_id), message::isSession)
@@ -578,7 +576,7 @@ struct SyncWait
  * Response: Password
  */
 struct PasswordRequest
-	: Message//, MemoryStack<PasswordRequest>
+	: Message
 {
 	PasswordRequest() throw()
 		: Message(Message::PasswordRequest, sizeof(type)+sizeof(session_id), message::isSession)
@@ -604,7 +602,7 @@ struct PasswordRequest
  * Response to Password request.
  */
 struct Password
-	: Message//, MemoryStack<Password>
+	: Message
 {
 	Password() throw()
 		: Message(Message::Password, sizeof(type)+sizeof(session_id), message::isSession)
@@ -632,7 +630,7 @@ struct Password
  * Response: Acknowledgement with event set to protocol::Message::Subscribe.
  */
 struct Subscribe
-	: Message//, MemoryStack<Subscribe>
+	: Message
 {
 	Subscribe() throw()
 		: Message(Message::Subscribe, sizeof(type)+sizeof(session_id), message::isSession)
@@ -656,7 +654,7 @@ struct Subscribe
  * Response: Acknowledgement with event set to protocol::Message::Unsubscribe.
  */
 struct Unsubscribe
-	: Message//, MemoryStack<Unsubscribe>
+	: Message
 {
 	Unsubscribe() throw()
 		: Message(Message::Unsubscribe, sizeof(type)+sizeof(session_id), message::isSession)
@@ -816,7 +814,7 @@ struct Shutdown
  * followed by Acknowledgement with event set to protocol::Message::ListSessions.
  */
 struct ListSessions
-	: Message//, MemoryStack<ListSessions>
+	: Message
 {
 	ListSessions() throw()
 		: Message(Message::ListSessions, sizeof(type))
@@ -838,7 +836,7 @@ struct ListSessions
  * Cancels the last request (such as Synchronize).
  */
 struct Cancel
-	: Message//, MemoryStack<Cancel>
+	: Message
 {
 	Cancel() throw()
 		: Message(Message::Cancel, sizeof(type)+sizeof(session_id), message::isSession)
@@ -862,7 +860,7 @@ struct Cancel
  * Response: none
  */
 struct UserInfo
-	: Message//, MemoryStack<UserInfo>
+	: Message
 {
 	UserInfo() throw()
 		: Message(
@@ -948,7 +946,7 @@ struct UserInfo
  * Response: none
  */
 struct HostInfo
-	: Message//, MemoryStack<HostInfo>
+	: Message
 {
 	HostInfo() throw()
 		: Message(Message::HostInfo, sizeof(type))
@@ -999,7 +997,7 @@ struct HostInfo
 
 //! Session Info message.
 struct SessionInfo
-	: Message//, MemoryStack<SessionInfo>
+	: Message
 {
 	SessionInfo() throw()
 		: Message(Message::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
@@ -1065,7 +1063,7 @@ struct SessionInfo
  * Acknowledges some action or event.
  */
 struct Acknowledgement
-	: Message//, MemoryStack<Acknowledgement>
+	: Message
 {
 	Acknowledgement() throw()
 		: Message(Message::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession)
@@ -1097,7 +1095,7 @@ struct Acknowledgement
  * Arbitrary error code message.
  */
 struct Error
-	: Message//, MemoryStack<Error>
+	: Message
 {
 	Error() throw()
 		: Message(Message::Error, sizeof(type)+sizeof(session_id), message::isSession)
@@ -1138,7 +1136,7 @@ struct Error
  * Response: none
  */
 struct Deflate
-	: Message//, MemoryStack<Deflate>
+	: Message
 {
 	Deflate() throw()
 		: Message(Message::Deflate, sizeof(type)),
@@ -1180,7 +1178,7 @@ struct Deflate
  * Client MUST NOT send chat messages with 0 length.
  */
 struct Chat
-	: Message//, MemoryStack<Chat>
+	: Message
 {
 	Chat() throw()
 		: Message(Message::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
@@ -1217,7 +1215,7 @@ struct Chat
  * Contains partial data of the shared palette
  */
 struct Palette
-	: Message//, MemoryStack<Palette>
+	: Message
 {
 	Palette() throw()
 		: Message(Message::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
@@ -1261,7 +1259,7 @@ struct Palette
  * Response: Error or Acknowledgement with event set to protocol::Message::SessionSelect.
  */
 struct SessionSelect
-	: Message//, MemoryStack<SessionSelect>
+	: Message
 {
 	SessionSelect() throw()
 		: Message(Message::SessionSelect, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession)
@@ -1280,7 +1278,7 @@ struct SessionSelect
 
 //! Session event/instruction
 struct SessionEvent
-	: Message//, MemoryStack<Palette>
+	: Message
 {
 	SessionEvent() throw()
 		: Message(Message::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession)
@@ -1342,7 +1340,7 @@ struct SessionEvent
 
 //! Session event/instruction
 struct LayerEvent
-	: Message//, MemoryStack<Palette>
+	: Message
 {
 	LayerEvent() throw()
 		: Message(Message::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession)
@@ -1395,7 +1393,7 @@ struct LayerEvent
 
 //! Layer selection
 struct LayerSelect
-	: Message//, MemoryStack<Palette>
+	: Message
 {
 	LayerSelect() throw()
 		: Message(Message::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
