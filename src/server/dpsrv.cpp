@@ -40,6 +40,7 @@
 #include "../shared/protocol.h"
 
 #include "server.h"
+#include "sockets.h"
 
 #include <string>
 #include <algorithm>
@@ -115,7 +116,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 					char* off = strchr(optarg, '-');
 					uint16_t hi_port = (off != 0 ? atoi(off+1) : lo_port);
 					
-					if (lo_port <= 1023 or hi_port <= 1023)
+					if (lo_port <= Network::SuperUser_Port or hi_port <= Network::SuperUser_Port)
 					{
 						cerr << "- Super-user ports not allowed!" << endl;
 						exit(EXIT_FAILURE);

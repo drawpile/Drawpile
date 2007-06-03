@@ -34,7 +34,7 @@
 #include <iostream>
 #include <stdexcept>
 
-//! Network
+//! Network constants
 namespace Network {
 
 //! Localhost address
