@@ -1,8 +1,29 @@
 # src/unittest/SHA1/
 
-#add_subdirectory ( "01/" )
+link_libraries ( libdrawpile )
 
-add_subdirectory ( "01_Hex/" )
-add_subdirectory ( "02_Hex/" )
-add_subdirectory ( "03_Hex/" )
-add_subdirectory ( "04_Hex/" )
+add_executable (
+	unittest_SHA1_01_Hex
+	SHA1_01_Hex.cpp
+)
+
+add_executable (
+	unittest_SHA1_02_Hex
+	SHA1_02_Hex.cpp
+)
+
+add_executable (
+	unittest_SHA1_03_Hex
+	SHA1_03_Hex.cpp
+)
+
+add_executable (
+	unittest_SHA1_04_Hex
+	SHA1_04_Hex.cpp
+)
+
+
+add_test ( "SHA1_01/Hex" ${EXECUTABLE_OUTPUT_PATH}/unittest_SHA1_01_Hex )
+add_test ( "SHA1_02/Hex" ${EXECUTABLE_OUTPUT_PATH}/unittest_SHA1_02_Hex )
+add_test ( "SHA1_03/Hex" ${EXECUTABLE_OUTPUT_PATH}/unittest_SHA1_03_Hex )
+add_test ( "SHA1_04/Hex" ${EXECUTABLE_OUTPUT_PATH}/unittest_SHA1_04_Hex )
