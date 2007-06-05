@@ -429,8 +429,10 @@ void MainWindow::writeSettings()
 	QSettings cfg;
 	cfg.beginGroup("window");
 
-	cfg.setValue("pos", pos());
-	cfg.setValue("size", size());
+	if(isMaximized() == false) {
+		cfg.setValue("pos", pos());
+		cfg.setValue("size", size());
+	}
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", splitter_->saveState());
 	cfg.setValue("lastpath", lastpath_);
