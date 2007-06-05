@@ -92,6 +92,13 @@ else ( Boost_FOUND )
 	message ( FATAL_ERROR "Boost C++ Libraries missing" )
 endif ( Boost_FOUND )
 
+### add src/ as base include directory ###
+
+include_directories (
+	AFTER
+	src/
+)
+
 ### endianess tests ###
 
 include ( TestBigEndian ) # needs C in project()
