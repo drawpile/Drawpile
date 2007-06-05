@@ -357,6 +357,10 @@ void MainWindow::readSettings()
 			move(pos);
 	}
 
+	bool maximize = cfg.value("maximized", false).toBool();
+	if(maximize)
+		setWindowState(Qt::WindowMaximized);
+
 	// Restore dock, toolbar and view states
 	if(cfg.contains("state")) {
 		restoreState(cfg.value("state").toByteArray());
@@ -433,6 +437,7 @@ void MainWindow::writeSettings()
 		cfg.setValue("pos", pos());
 		cfg.setValue("size", size());
 	}
+	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", splitter_->saveState());
 	cfg.setValue("lastpath", lastpath_);
