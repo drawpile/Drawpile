@@ -17,6 +17,8 @@ set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile server" ON )
 
+option ( UNITTEST "Compile unit tests" OFF )
+
 option ( EPOLL "Enable epoll(4) support" ON )
 option ( PSELECT "Enable pselect(2) support" ON )
 option ( KQUEUE "Enable kqueue(2) support" ON )
