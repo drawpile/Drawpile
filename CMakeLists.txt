@@ -99,6 +99,12 @@ include_directories (
 	src/
 )
 
+### testing ###
+
+if ( UNITTEST )
+	enable_testing ()
+endif ( UNITTEST )
+
 ### endianess tests ###
 
 include ( TestBigEndian ) # needs C in project()

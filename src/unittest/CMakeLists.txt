@@ -1,4 +1,3 @@
-# src/unittest(
+# src/unittest/
 
-enable_testing()
-
+add_subdirectory ( SHA1/ )
