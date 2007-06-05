@@ -23,9 +23,9 @@ int main()
 	if (ident->type != protocol::Message::Identifier)
 		return EXIT_FAILURE;
 	
-	char *buffer=new char[60];
-	size_t size=60, length=0;
-	ident->serialize(length, buffer, size);
+	char *buffer=0;
+	size_t size=0, length=0;
+	buffer = ident->serialize(length, buffer, size);
 	
 	protocol::Identifier *ident2 = new protocol::Identifier;
 	
