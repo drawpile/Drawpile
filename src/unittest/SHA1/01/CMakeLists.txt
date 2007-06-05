@@ -4,7 +4,7 @@ link_libraries ( libdrawpile )
 
 add_executable (
 	unittest_SHA1_01
-	01.cpp
+	SHA1_01.cpp
 )
 
-add_test ( "SHA1/01" unittest_SHA1_01 )
+add_test ( "SHA1_01" ${EXECUTABLE_OUTPUT_PATH}/unittest_SHA1_01 )
