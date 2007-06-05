@@ -1650,6 +1650,11 @@ void Server::uLoginInfo(User& usr) throw()
 
 bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) throw()
 {
+	assert(hashdigest != 0);
+	assert(str != 0);
+	assert(len > 0);
+	assert(seed != 0);
+	
 	SHA1 hash;
 	
 	hash.Update(reinterpret_cast<const uchar*>(str), len);
