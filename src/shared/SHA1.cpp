@@ -165,8 +165,10 @@ void SHA1::Transform(uint32_t *state, const uchar *buffer) throw()
 // Use this function to hash in binary data and strings
 void SHA1::Update(const uchar *data, const uint32_t len) throw()
 {
-	assert(len > 0);
+	assert(len >= 0);
 	assert(data != 0);
+	
+	if (len == 0) return;
 	
 	assert(not finalized);
 	
@@ -190,9 +192,7 @@ void SHA1::Update(const uchar *data, const uint32_t len) throw()
 		memcpy(&m_buffer[0], &data[i], len - i);
 	}
 	else
-	{
 		memcpy(&m_buffer[j], &data[0], len);
-	}
 }
 
 void SHA1::Final() throw()

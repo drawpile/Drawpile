@@ -14,8 +14,8 @@
 #define SHA1_INCLUDED
 
 #include <boost/cstdint.hpp>
-#include <string>
 
+//! SHA-1 hash algorithm
 class SHA1
 {
 	typedef unsigned char uchar;
@@ -25,30 +25,42 @@ class SHA1
 		uint32_t l[16];
 	} m_block;
 public:
-	// Constructor and Destructor
+	//! ctor
 	SHA1() throw();
+	//! dtor
 	~SHA1() throw();
 	
 	uint32_t m_state[5];
 	uint32_t m_count[2];
-	//uint32_t __reserved1[1];
 	uint8_t  m_buffer[64];
 	uint8_t  m_digest[20];
-	//uint32_t __reserved2[3];
 	
+	//! Reset hasher
 	void Reset() throw();
 	
-	// Update the hash value
+	//! Update the hash value
+	/**
+	 * @param data Input buffer for updating hash
+	 * @param len Length of buffer
+	 */
 	void Update(const uchar *data, const uint32_t len) throw();
 	
-	// Finalize hash and report
+	//! Finalize hash and report
+	/**
+	 * Must be called before either .HexDigest() or .GetHash()
+	 */
 	void Final() throw();
 	
-	// Report functions: as pre-formatted and raw data
-	// Requires you to provide pre-allocated string with length of at least 40 bytes
+	//! Get hex digest
+	/**
+	 * @param szReport Target buffer for hex digest, needs to be at least 40 bytes long
+	 */
 	void HexDigest(char *szReport) const throw();
 	
-	// Requires a string of at least 20 bytes
+	//! Get binary digest
+	/**
+	 * @param puDest Target buffer for binary digest, needs to be at least 20 bytes long
+	 */
 	void GetHash(uchar *puDest) const throw();
 
 private:
