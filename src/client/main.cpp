@@ -61,7 +61,7 @@ QSettings& DrawPileApp::getSettings()
 #ifdef Q_WS_WIN
 	// Use .ini files on windows
 	static QSettings cfg(QSettings::IniFormat, QSettings::UserScope,
-			app.organizationName(), app.applicationName());
+			organizationName(), applicationName());
 #else
 	// And native files on other platforms. (ie. .ini on UNIX, XML on Mac)
 	static QSettings cfg;
