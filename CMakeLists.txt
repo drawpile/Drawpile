@@ -67,9 +67,7 @@ set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
 
 if ( SHARED )
-	set ( LIBTYPE SHARED )
-else ( SHARED )
-	set ( LIBTYPE STATIC )
+	set (BUILD_SHARED_LIBS ON )
 endif ( SHARED )
 
 ### config.h ###

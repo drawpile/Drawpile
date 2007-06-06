@@ -100,7 +100,6 @@ endif ( RELEASE )
 
 add_library (
 	${LIBNAME}
-	STATIC
 	${EV_SOURCES}
 )
 

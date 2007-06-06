@@ -20,7 +20,6 @@ endif ( RELEASE )
 
 add_library (
 	${INTERNALNAME}
-	${LIBTYPE}
 	${SHR_SOURCES}
 )
 
