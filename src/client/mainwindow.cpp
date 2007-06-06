@@ -341,6 +341,22 @@ void MainWindow::setTitle()
 }
 
 /**
+ * Load customized shortcuts
+ */
+void MainWindow::loadShortcuts()
+{
+	QSettings cfg;
+	cfg.beginGroup("shortcuts");
+
+	QList<QAction*> actions = findChildren<QAction*>();
+	foreach(QAction *a, actions) {
+		if(!a->objectName().isEmpty() && cfg.contains(a->objectName())) {
+			a->setShortcut(cfg.value(a->objectName()).value<QKeySequence>());
+		}
+	}
+}
+
+/**
  * Read and apply mainwindow related settings.
  */
 void MainWindow::readSettings()
@@ -392,6 +408,11 @@ void MainWindow::readSettings()
 	const QColor bg = cfg.value("background", Qt::white).value<QColor>();
 	fgbgcolor_->setForeground(fg);
 	fgbgcolor_->setBackground(bg);
+
+	cfg.endGroup();
+
+	// Customize shortcuts
+	loadShortcuts();
 
 	// Remember recent files
 	RecentFiles::initMenu(recent_);
@@ -1092,23 +1113,42 @@ void MainWindow::homepage()
 	QDesktopServices::openUrl(QUrl("http://drawpile.sourceforge.net/"));
 }
 
+/**
+ * A utility function for creating an action. This is most useful for
+ * actions with customizeable shortcuts/other attributes.
+ * @param name (internal) name of the action. If null, no name is set. If no name is set, the shortcut cannot be customized.
+ * @param icon name of the icon file to use. If 0, no icon is set.
+ * @param text action text
+ * @param tip status bar tip
+ * @param shortcut default shortcut
+ */
+QAction *MainWindow::makeAction(const char *name, const char *icon, const QString& text, const QString& tip, const QKeySequence& shortcut)
+{
+	QAction *act;
+	QIcon qicon;
+	if(icon)
+		qicon = QIcon(QString(":icons/") + icon);
+	act = new QAction(qicon, text, this);
+	if(name)
+		act->setObjectName(name);
+	if(shortcut.isEmpty()==false) {
+		act->setShortcut(shortcut);
+		act->setProperty("defaultshortcut", shortcut);
+	}
+	if(tip.isEmpty()==false)
+		act->setStatusTip(tip);
+
+	return act;
+}
+
 void MainWindow::initActions()
 {
 	// File actions
-	new_ = new QAction(QIcon(":icons/document-new.png"),tr("&New"), this);
-	new_->setShortcut(QKeySequence::New);
-	new_->setStatusTip(tr("Start a new drawing"));
-	open_ = new QAction(QIcon(":icons/document-open.png"),tr("&Open..."), this);
-	open_->setShortcut(QKeySequence::Open);
-	open_->setStatusTip(tr("Open an existing drawing"));
-	save_ = new QAction(QIcon(":icons/document-save.png"),tr("&Save"), this);
-	save_->setShortcut(QKeySequence::Save);
-	save_->setStatusTip(tr("Save drawing to file"));
-	saveas_ = new QAction(QIcon(":icons/document-save-as.png"),tr("Save &As..."), this);
-	saveas_->setStatusTip(tr("Save drawing to file with a new name"));
-	quit_ = new QAction(QIcon(":icons/system-log-out.png"),tr("&Quit"), this);
-	quit_->setStatusTip(tr("Quit the program"));
-	quit_->setShortcut(QKeySequence("Ctrl+Q"));
+	new_ = makeAction("newdocument", "document-new.png", tr("&New"), tr("Start a new drawing"), QKeySequence::New);
+	open_ = makeAction("opendocument", "document-open.png", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
+	save_ = makeAction("savedocument", "document-save.png",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
+	saveas_ = makeAction("savedocumentas", "document-save-as.png", tr("Save &As..."), tr("Save drawing to a file with a new name"));
+	quit_ = makeAction("exitprogram", "system-log-out.png", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
 	quit_->setMenuRole(QAction::QuitRole);
 
 	connect(new_,SIGNAL(triggered()), this, SLOT(showNew()));
@@ -1118,17 +1158,12 @@ void MainWindow::initActions()
 	connect(quit_,SIGNAL(triggered()), this, SLOT(close()));
 
 	// Session actions
-	host_ = new QAction("&Host...", this);
-	host_->setStatusTip(tr("Share your drawingboard with others"));
-	join_ = new QAction("&Join...", this);
-	join_->setStatusTip(tr("Join another user's drawing session"));
-	logout_ = new QAction("&Leave", this);
-	logout_->setStatusTip(tr("Leave this drawing session"));
-	lockboard_ = new QAction("Lo&ck the board", this);
-	lockboard_->setStatusTip(tr("Prevent changes to the drawing board"));
+	host_ = makeAction("hostsession", 0, tr("&Host..."),tr("Share your drawingboard with others"));
+	join_ = makeAction("joinsession", 0, tr("&Join..."),tr("Join another user's drawing session"));
+	logout_ = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
+	lockboard_ = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"));
 	lockboard_->setCheckable(true);
-	disallowjoins_ = new QAction("&Deny joins", this);
-	disallowjoins_->setStatusTip(tr("Prevent new users from joining the session"));
+	disallowjoins_ = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
 	disallowjoins_->setCheckable(true);
 
 	logout_->setEnabled(false);
@@ -1144,21 +1179,20 @@ void MainWindow::initActions()
 	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
 
 	// Drawing tool actions
-	brushtool_ = new QAction(QIcon(":icons/draw-brush.png"),tr("&Brush"), this);
+	brushtool_ = makeAction("toolbrush", "draw-brush.png", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"));
 	brushtool_->setCheckable(true); brushtool_->setChecked(true);
-	brushtool_->setShortcut(QKeySequence("B"));
-	erasertool_ = new QAction(QIcon(":icons/draw-eraser.png"),tr("&Eraser"), this);
+
+	erasertool_ = makeAction("tooleraser", "draw-eraser.png", tr("&Eraser"), tr("Draw with the background color"), QKeySequence("E"));
 	erasertool_->setCheckable(true);
-	erasertool_->setShortcut(QKeySequence("E"));
-	pickertool_ = new QAction(QIcon(":icons/color-picker.png"),tr("&Color picker"), this);
+
+	pickertool_ = makeAction("toolpicker", "color-picker.png", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"));
 	pickertool_->setCheckable(true);
-	pickertool_->setShortcut(QKeySequence("I"));
-	linetool_ = new QAction(QIcon(":icons/todo-line.png"),tr("&Line"), this);
+
+	linetool_ = makeAction("toolline", "todo-line.png", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"));
 	linetool_->setCheckable(true);
-	linetool_->setShortcut(QKeySequence("U"));
-	recttool_ = new QAction(QIcon(":icons/draw-rectangle.png"),tr("&Rectangle"), this);
+
+	recttool_ = makeAction("toolrect", "draw-rectangle.png", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"));
 	recttool_->setCheckable(true);
-	recttool_->setShortcut(QKeySequence("R"));
 
 	drawingtools_ = new QActionGroup(this);
 	drawingtools_->setExclusive(true);
@@ -1170,15 +1204,12 @@ void MainWindow::initActions()
 	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// View actions
-	zoomin_ = new QAction(QIcon(":icons/zoom-in.png"),tr("Zoom &in"), this);
-	zoomin_->setShortcut(QKeySequence::ZoomIn);
-	zoomout_ = new QAction(QIcon(":icons/zoom-out.png"),tr("Zoom &out"), this);
-	zoomout_->setShortcut(QKeySequence::ZoomOut);
-	zoomorig_ = new QAction(QIcon(":icons/zoom-original.png"),tr("&Normal size"), this);
-	//zoomorig_->setShortcut(QKeySequence::ZoomOut);
-	fullscreen_ = new QAction(tr("&Full Screen"), this);
+	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
+	zoomout_ = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
+	zoomorig_ = makeAction("zoomone", "zoom-original.png",tr("&Normal size"));
+
+	fullscreen_ = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"));
 	fullscreen_->setCheckable(true);
-	fullscreen_->setShortcut(QKeySequence("F11"));
 
 	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
 	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
@@ -1186,16 +1217,14 @@ void MainWindow::initActions()
 	connect(fullscreen_, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
 
 	// Tool cursor settings
-	toggleoutline_ = new QAction(tr("Show brush &outline"), this);
-	toggleoutline_->setStatusTip(tr("Display the brush outline around the cursor"));
+	toggleoutline_ = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"));
 	toggleoutline_->setCheckable(true);
 
-	togglecrosshair_ = new QAction(tr("Crosshair c&ursor"), this);
-	togglecrosshair_->setStatusTip(tr("Use a crosshair cursor"));
+	togglecrosshair_ = makeAction("brushcursor", 0, tr("Crosshair c&ursor"), tr("Use a crosshair cursor"));
 	togglecrosshair_->setCheckable(true);
 
 	// Settings window action
-	settings_ = new QAction(tr("&Settings"), this);
+	settings_ = makeAction(0, 0, tr("&Settings"));
 	connect(settings_, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	// Toolbar toggling actions
@@ -1203,13 +1232,12 @@ void MainWindow::initActions()
 	docktoggles_ = new QAction(tr("&Docks"), this);
 
 	// Help actions
-	help_ = new QAction(tr("DrawPile &Help"), this);
-	help_->setShortcut(QKeySequence("F1"));
+	help_ = makeAction("dphelp", 0, tr("DrawPile &Help"), tr("Show online help"), QKeySequence("F1"));
 	help_->setEnabled(false);
 	connect(help_,SIGNAL(triggered()), this, SLOT(help()));
-	homepage_ = new QAction(tr("&DrawPile homepage"), this);
+	homepage_ = makeAction("dphomepage", 0, tr("&DrawPile homepage"), tr("Open DrawPile homepage with the default web browser"));
 	connect(homepage_,SIGNAL(triggered()), this, SLOT(homepage()));
-	about_ = new QAction(tr("&About DrawPile"), this);
+	about_ = makeAction("dpabout", 0, tr("&About DrawPile"), tr("Show information about DrawPile"));
 	about_->setMenuRole(QAction::AboutRole);
 	connect(about_,SIGNAL(triggered()), this, SLOT(about()));
 }

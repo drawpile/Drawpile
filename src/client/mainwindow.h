@@ -164,6 +164,12 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
+		//! Utility function for creating actions
+		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence());
+
+		//! Load customized shortcuts
+		void loadShortcuts();
+
 		//! Check if the current board can be replaced
 		bool canReplace() const;
 
