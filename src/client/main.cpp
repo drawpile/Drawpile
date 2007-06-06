@@ -58,14 +58,14 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 QSettings& DrawPileApp::getSettings()
 {
-#ifdef Q_WS_WIN
+#if 0 /*def Q_WS_WIN*/
+	// QColor serialization seems to be broken currently when using IniFormat on windows
 	// Use .ini files on windows
 	static QSettings cfg(QSettings::IniFormat, QSettings::UserScope,
 			organizationName(), applicationName());
-#else
+#endif
 	// And native files on other platforms. (ie. .ini on UNIX, XML on Mac)
 	static QSettings cfg;
-#endif
 
 	while(cfg.group().isEmpty()==false)
 		cfg.endGroup();
