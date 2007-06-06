@@ -52,6 +52,14 @@ int main(int argc, char *argv[]) {
 	app.setOrganizationDomain("drawpile.sourceforge.net");
 	app.setApplicationName("DrawPile");
 
+#ifdef Q_WS_WIN
+	{
+		// Initialze QSettings to use the .ini file format on Windows.
+		QSettings cfg(QSettings::UserScope, QSettings::IniFormat,
+				app.organizationName(), app.ApplicationName());
+	}
+
+#endif
 	initUsername();
 
 	// Create the local server handler
