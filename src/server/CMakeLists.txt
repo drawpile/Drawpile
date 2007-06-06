@@ -78,13 +78,23 @@ if ( NOT DEBUG )
 	strip_exe ( ${INTERNALNAME} )
 endif ( NOT DEBUG )
 
-add_executable (
-	${INTERNALNAME}
-	MACOSX_BUNDLE
+set (
+	SRV_SOURCES
 	buffer.cpp
 	sockets.cpp
 	dpsrv.cpp
 	server.cpp
+)
+
+if ( RELEASE )
+	generate_all_cpp ( "${SRV_SOURCES}" )
+	set ( SRV_SOURCES auto_all.cpp )
+endif ( RELEASE )
+
+add_executable (
+	${INTERNALNAME}
+	MACOSX_BUNDLE
+	${SRV_SOURCES}
 	${WIN32RES}
 )
 

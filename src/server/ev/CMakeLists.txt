@@ -87,11 +87,21 @@ endif ( NOT EV_FOUND )
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_EVCONFIG )
 
+set (
+	EV_SOURCES
+	interface.cpp
+	${EV_SRC}
+)
+
+if ( RELEASE )
+	generate_all_cpp ( "${EV_SOURCES}" )
+	set ( EV_SOURCES auto_all.cpp )
+endif ( RELEASE )
+
 add_library (
 	${LIBNAME}
 	STATIC
-	interface.cpp
-	${EV_SRC}
+	${EV_SOURCES}
 )
 
 set_target_properties (

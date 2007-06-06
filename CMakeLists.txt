@@ -35,6 +35,8 @@ option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
+option ( RELEASE "" OFF )
+
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
 option ( OPTIMIZEMORE "Apply some questionable optimizations" ON )
 

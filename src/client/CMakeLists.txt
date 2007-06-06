@@ -107,14 +107,24 @@ if ( ACCEPT_MTHREADS )
 	set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads" )
 endif ( ACCEPT_MTHREADS )
 
+set (
+	CLIENT_SOURCES
+	${Sources}
+)
+
+if ( RELEASE )
+	generate_all_cpp ( "${CLIENT_SOURCES}" )
+	set ( CLIENT_SOURCES auto_all.cpp )
+endif ( RELEASE )
+
 add_executable (
 	${INTERNALNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
-	${Sources}
 	${UI_Headers} # required here for ui_*.h generation
-	${Resource}
 	${MOC_Sources}
+	${CLIENT_SOURCES}
+	${Resource}
 	${WIN32RES}
 )
 
