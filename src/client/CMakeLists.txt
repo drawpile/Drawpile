@@ -1,7 +1,7 @@
 # client
 
 set ( FULLNAME "DrawPile client" )
-set ( INTERNALNAME "drawpile" )
+set ( INTERNALNAME ${PROJECT_NAME} )
 set ( COPYRIGHT "Copyright (C) 2006,2007 Calle Laakkonen" )
 set ( DESCRIPTION "DrawPile client" )
 set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )

@@ -1,7 +1,7 @@
 # src/server/
 
 set ( FULLNAME "DrawPile server" )
-set ( INTERNALNAME "drawpile-srv" )
+set ( INTERNALNAME "${PROJECT_NAME}-srv" )
 set ( COPYRIGHT "Copyright (C) 2006,2007 M.K.A." )
 set ( DESCRIPTION ${FULLNAME} )
 set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )

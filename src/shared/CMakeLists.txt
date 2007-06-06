@@ -1,5 +1,7 @@
 # src/shared/
 
+set ( INTERNALNAME "lib${PROJECT_NAME}" )
+
 if (WIN32)
 	link_libraries (ws2_32) # winsock2
 endif (WIN32)
@@ -17,13 +19,13 @@ if ( RELEASE )
 endif ( RELEASE )
 
 add_library (
-	libdrawpile
+	${INTERNALNAME}
 	${LIBTYPE}
 	${SHR_SOURCES}
 )
 
 set_target_properties (
-	libdrawpile
+	${INTERNALNAME}
 	PROPERTIES
 	OUTPUT_NAME drawpile
 	VERSION 0.4.0
@@ -32,5 +34,5 @@ set_target_properties (
 )
 
 if ( SHARED )
-	install ( TARGETS libdrawpile LIBRARY DESTINATION lib )
+	install ( TARGETS ${INTERNALNAME} LIBRARY DESTINATION lib )
 endif ( SHARED )
