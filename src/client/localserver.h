@@ -29,10 +29,8 @@
 class LocalServer : public QObject {
 	Q_OBJECT
 	public:
+		LocalServer();
 		~LocalServer();
-
-		//! Get the global LocalServer instance
-		static LocalServer *getInstance();
 
 		//! Get the address of the local server
 		static QString address();
@@ -63,8 +61,6 @@ class LocalServer : public QObject {
 		void serverFinished(int exitcode, QProcess::ExitStatus exitstatus);
 
 	private:
-		LocalServer();
-
 		QString binpath_;
 		QProcess server_;
 		int port_;

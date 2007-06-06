@@ -20,6 +20,7 @@
 
 #include <QSettings>
 
+#include "main.h"
 #include "settingsdialog.h"
 
 #include "ui_settings.h"
@@ -36,9 +37,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	connect(ui_->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
 
 	// Set defaults
-	QSettings cfg;
-	cfg.beginGroup("settings");
-	cfg.beginGroup("server");
+	QSettings& cfg = DrawPileApp::getSettings();
+	cfg.beginGroup("settings/server");
 	ui_->uniquenames->setChecked(cfg.value("uniquenames",false).toBool());
 	ui_->multiconnect->setChecked(cfg.value("multiconnect",true).toBool());
 	ui_->serverport->setValue(cfg.value("port",protocol::default_port).toInt());
@@ -55,9 +55,8 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::rememberSettings() const
 {
-	QSettings cfg;
-	cfg.beginGroup("settings");
-	cfg.beginGroup("server");
+	QSettings& cfg = DrawPileApp::getSettings();
+	cfg.beginGroup("settings/server");
 	cfg.setValue("uniquenames", ui_->uniquenames->isChecked());
 	cfg.setValue("multiconnect", ui_->multiconnect->isChecked());
 	if(ui_->serverport->value() == protocol::default_port)

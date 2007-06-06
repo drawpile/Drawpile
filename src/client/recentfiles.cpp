@@ -23,6 +23,7 @@
 #include <QSettings>
 #include <QMenu>
 
+#include "main.h"
 #include "recentfiles.h"
 
 /**
@@ -32,7 +33,7 @@ void RecentFiles::addFile(const QString& filename)
 {
 	const int maxrecent = getMaxFileCount();
 
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 
 	QStringList files = cfg.value("recentfiles").toStringList();
@@ -50,8 +51,7 @@ void RecentFiles::addFile(const QString& filename)
  */
 void RecentFiles::setMaxFileCount(int max)
 {
-	QSettings cfg;
-	cfg.setValue("history/maxrecentfiles",max);
+	DrawPileApp::getSettings().setValue("history/maxrecentfiles",max);
 }
 
 /**
@@ -59,8 +59,7 @@ void RecentFiles::setMaxFileCount(int max)
  */
 int RecentFiles::getMaxFileCount()
 {
-	QSettings cfg;
-	int maxrecent = cfg.value("history/maxrecentfiles").toInt();
+	int maxrecent = DrawPileApp::getSettings().value("history/maxrecentfiles").toInt();
 	if(maxrecent<=0)
 		maxrecent = DEFAULT_MAXFILES;
 	return maxrecent;
@@ -75,9 +74,7 @@ int RecentFiles::getMaxFileCount()
  */
 void RecentFiles::initMenu(QMenu *menu)
 {
-	QSettings cfg;
-
-	const QStringList files = cfg.value("history/recentfiles").toStringList();
+	const QStringList files = DrawPileApp::getSettings().value("history/recentfiles").toStringList();
 
 	// Delete old actions, postponing the deletion of those marked with "deletelater".
 	// This is to prevent problems when initMenu is called from a slot

@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QImageReader>
 
+#include "main.h"
 #include "hostdialog.h"
 #include "imageselector.h"
 #include "mandatoryfields.h"
@@ -57,7 +58,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
 	// Set defaults
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 	ui_->username->setText(cfg.value("username").toString());
 	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
@@ -72,7 +73,7 @@ HostDialog::~HostDialog()
 
 void HostDialog::rememberSettings() const
 {
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
 	QStringList hosts;

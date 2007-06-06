@@ -24,12 +24,19 @@
 #include <QUrl>
 #include <QMessageBox>
 
+#include "main.h"
 #include "mainwindow.h"
 #include "localserver.h"
 
-// Set default username
-static void initUsername() {
-	QSettings cfg;
+DrawPileApp::DrawPileApp(int &argc, char **argv)
+	: QApplication(argc, argv)
+{
+	setOrganizationName("DrawPile");
+	setOrganizationDomain("drawpile.sourceforge.net");
+	setApplicationName("DrawPile");
+
+	// Make sure a user name is set
+	QSettings& cfg = getSettings();
 	cfg.beginGroup("history");
 	if(cfg.contains("username") == false ||
 			cfg.value("username").toString().isEmpty())
@@ -42,29 +49,32 @@ static void initUsername() {
 
 		cfg.setValue("username", defaultname);
 	}
+
+	// Create the local server handler
+	server_ = new LocalServer();
+	connect(this, SIGNAL(aboutToQuit()), server_, SLOT(shutdown()));
+
+}
+
+QSettings& DrawPileApp::getSettings()
+{
+#ifdef Q_WS_WIN
+	// Use .ini files on windows
+	static QSettings cfg(QSettings::IniFormat, QSettings::UserScope,
+			app.organizationName(), app.applicationName());
+#else
+	// And native files on other platforms. (ie. .ini on UNIX, XML on Mac)
+	static QSettings cfg;
+#endif
+
+	while(cfg.group().isEmpty()==false)
+		cfg.endGroup();
+
+	return cfg;
 }
 
 int main(int argc, char *argv[]) {
-	QApplication app(argc,argv);
-
-	// These are used by QSettings
-	app.setOrganizationName("DrawPile");
-	app.setOrganizationDomain("drawpile.sourceforge.net");
-	app.setApplicationName("DrawPile");
-
-#ifdef Q_WS_WIN
-	{
-		// Initialze QSettings to use the .ini file format on Windows.
-		QSettings cfg(QSettings::IniFormat, QSettings::UserScope,
-				app.organizationName(), app.applicationName());
-	}
-
-#endif
-	initUsername();
-
-	// Create the local server handler
-	LocalServer *srv = LocalServer::getInstance();
-	app.connect(&app, SIGNAL(aboutToQuit()), srv, SLOT(shutdown()));
+	DrawPileApp app(argc,argv);
 
 	// Create the main window
 	MainWindow *win = new MainWindow;
@@ -81,9 +91,7 @@ int main(int argc, char *argv[]) {
 			QUrl url(arg, QUrl::TolerantMode);
 			if(url.userName().isEmpty()) {
 				// Set username if not specified
-				QSettings cfg;
-				cfg.beginGroup("history");
-				url.setUserName(cfg.value("username").toString());
+				url.setUserName(app.getSettings().value("history/username").toString());
 			}
 			win->joinSession(url);
 		} else {

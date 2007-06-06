@@ -25,6 +25,7 @@
 #include <QSettings>
 #include <QDir>
 
+#include "main.h"
 #include "localserver.h"
 #include "../shared/protocol.defaults.h"
 
@@ -45,15 +46,6 @@ LocalServer::LocalServer()
 LocalServer::~LocalServer()
 {
 	shutdown();
-}
-
-/**
- * @return the global LocalServer instance
- */
-LocalServer *LocalServer::getInstance()
-{
-	static LocalServer *server = new LocalServer;
-	return server;
 }
 
 static bool isLocal(const QHostAddress& a)
@@ -96,11 +88,10 @@ QString LocalServer::address()
  */
 bool LocalServer::ensureRunning()
 {
-	QSettings cfg;
-	int port = protocol::default_port;
-	if(cfg.contains("settings/server/port"))
-		port = cfg.value("settings/server/port").toInt();
-	return ensureRunning(port);
+	return ensureRunning(
+			DrawPileApp::getSettings().value("settings/server/port",
+				protocol::default_port).toInt()
+			);
 }
 
 /**
@@ -114,9 +105,8 @@ bool LocalServer::ensureRunning(int port)
 	if(port_ != port)
 		shutdown();
 	if(server_.state()==QProcess::NotRunning) {
-		QSettings cfg;
-		cfg.beginGroup("settings");
-		cfg.beginGroup("server");
+		QSettings& cfg = DrawPileApp::getSettings();
+		cfg.beginGroup("settings/server");
 		QStringList args;
 		args << "-p" << QString::number(port);
 		args << "-l"; // automatically make user from localhost admin

@@ -21,6 +21,7 @@
 #include <QPushButton>
 #include <QSettings>
 
+#include "main.h"
 #include "joindialog.h"
 #include "mandatoryfields.h"
 
@@ -39,7 +40,7 @@ JoinDialog::JoinDialog(QWidget *parent)
 	ui_->address->setProperty("mandatoryfield",true);
 
 	// Set defaults
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 	ui_->address->insertItems(0, cfg.value("recenthosts").toStringList());
 	ui_->username->setText(cfg.value("username").toString());
@@ -49,7 +50,7 @@ JoinDialog::JoinDialog(QWidget *parent)
 
 void JoinDialog::rememberSettings() const
 {
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
 	QStringList hosts;

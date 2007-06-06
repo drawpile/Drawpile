@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QSettings>
 
+#include "main.h"
 #include "palettebox.h"
 
 #include "palettewidget.h"
@@ -42,7 +43,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	ui_->setupUi(w);
 
 	// Load palettes
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("palettes");
 	QRegExp names("palette\\d+$");
 	QStringList palettes = cfg.childKeys().filter(names);
@@ -89,7 +90,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 
 PaletteBox::~PaletteBox()
 {
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.setValue("history/lastpalette", ui_->palettelist->currentIndex());
 	cfg.beginGroup("palettes");
 	cfg.remove("");

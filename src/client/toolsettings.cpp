@@ -18,6 +18,8 @@
 	Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QSettings>
+
+#include "main.h"
 #include "toolsettings.h"
 #include "brushpreview.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces
@@ -36,7 +38,7 @@ BrushSettings::~BrushSettings()
 {
 	if(ui_) {
 		// Remember settings
-		QSettings cfg;
+		QSettings& cfg = DrawPileApp::getSettings();
 		cfg.beginGroup("tools");
 		cfg.beginGroup(getName());
 		cfg.setValue("size", ui_->brushsize->value());
@@ -59,7 +61,7 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	setUiWidget(widget);
 
 	// Load previous settings
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("tools");
 	cfg.beginGroup(getName());
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
@@ -131,7 +133,7 @@ SimpleSettings::~SimpleSettings()
 {
 	if(ui_) {
 		// Remember settings
-		QSettings cfg;
+		QSettings& cfg = DrawPileApp::getSettings();
 		cfg.beginGroup("tools");
 		cfg.beginGroup(getName());
 		cfg.setValue("size", ui_->brushsize->value());
@@ -156,7 +158,7 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		ui_->preview->setPreviewShape(BrushPreview::Rectangle);
 
 	// Load previous settings
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("tools");
 	cfg.beginGroup(getName());
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());

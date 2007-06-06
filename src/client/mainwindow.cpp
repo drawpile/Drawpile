@@ -35,6 +35,7 @@
 #include <QImageWriter>
 #include <QSplitter>
 
+#include "main.h"
 #include "mainwindow.h"
 #include "netstatus.h"
 #include "editorview.h"
@@ -80,7 +81,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
-	connect(LocalServer::getInstance(), SIGNAL(serverCrashed()),
+	connect(DrawPileApp::getInstance()->getServer(), SIGNAL(serverCrashed()),
 			netstatus_, SLOT(serverCrashed()));
 
 	// Create lock status widget
@@ -345,7 +346,7 @@ void MainWindow::setTitle()
  */
 void MainWindow::loadShortcuts()
 {
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("shortcuts");
 
 	QList<QAction*> actions = findChildren<QAction*>();
@@ -361,7 +362,7 @@ void MainWindow::loadShortcuts()
  */
 void MainWindow::readSettings()
 {
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("window");
 
 	// Restore previously used window size and position
@@ -451,7 +452,7 @@ void MainWindow::cloneSettings(const MainWindow *source)
  */
 void MainWindow::writeSettings()
 {
-	QSettings cfg;
+	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("window");
 
 	if(isMaximized() == false) {
@@ -771,7 +772,7 @@ void MainWindow::finishHost(int i)
 					QUrl::TolerantMode);
 			admin = hostdlg_->getAdminPassword();
 		} else {
-			QSettings cfg;
+			QSettings& cfg = DrawPileApp::getSettings();
 			address.setHost(LocalServer::address());
 			if(cfg.contains("settings/server/port"))
 				address.setPort(cfg.value("settings/server/port").toInt());
@@ -789,7 +790,7 @@ void MainWindow::finishHost(int i)
 
 		// Start server if hosting locally
 		if(useremote==false) {
-			LocalServer *srv = LocalServer::getInstance();
+			LocalServer *srv = DrawPileApp::getInstance()->getServer();
 			if(srv->ensureRunning()==false) {
 				showErrorMessage(srv->errorString(),srv->serverOutput());
 				hostdlg_->deleteLater();
