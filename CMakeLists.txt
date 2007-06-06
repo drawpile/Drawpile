@@ -40,8 +40,6 @@ option ( OPTIMIZEMORE "Apply some questionable optimizations" ON )
 
 # Set build type
 
-set (CMAKE_BUILD_TYPE Release )
-
 if ( DEBUG )
 	set ( CMAKE_BUILD_TYPE Debug )
 else ( DEBUG )
@@ -124,12 +122,5 @@ if ( DEBUG )
 else ( DEBUG )
 	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 endif ( DEBUG)
-
-### Build type ###
-if ( DEBUG )
-	set ( CMAKE_BUILD_TYPE Debug )
-else ( DEBUG )
-	set ( CMAKE_BUILD_TYPE Release )
-endif ( DEBUG )
 
 message ( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )
