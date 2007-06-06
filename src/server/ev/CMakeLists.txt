@@ -111,3 +111,7 @@ set_target_properties (
 	SOVERSION 0.0.1
 	PROJECT_LABEL eventslibrary
 )
+
+if ( SHARED )
+	install ( TARGETS ${INTERNALNAME} LIBRARY DESTINATION lib ) # ?
+endif ( SHARED )
