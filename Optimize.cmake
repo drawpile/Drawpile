@@ -13,11 +13,7 @@ endif ( GENERIC )
 # 3 - highest optimization level, may break things.
 # s - same as 2, except this optimizes for size as well
 
-if ( DEBUG )
-	set ( OPTIMIZATION 2 ) # anything greater may cause problems with debugging
-else ( DEBUG )
-	set ( OPTIMIZATION 3 )
-endif ( DEBUG )
+set ( OPTIMIZATION 2 )
 
 ###   DO NOT TOUCH THE FOLLOWING   ###
 
