@@ -14,6 +14,7 @@
 
 #include "shared/SHA1.h"
 
+#include <iostream>
 #include <memory>
 
 int main()
@@ -30,5 +31,9 @@ int main()
 	
 	char res4[] = "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452";
 	
-	return (memcmp(hexdigest, res4, 40) == 0);
+	int rv = memcmp(hexdigest, res4, 40);
+	if (rv != 0)
+		std::cerr << "result  : " << hexdigest << std::endl << "expected: " << res4 << std::endl;
+	
+	return (rv == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

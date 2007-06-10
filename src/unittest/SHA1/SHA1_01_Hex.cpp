@@ -14,6 +14,7 @@
 
 #include "shared/SHA1.h"
 
+#include <iostream>
 #include <memory>
 
 int main()
@@ -22,7 +23,7 @@ int main()
 	
 	unsigned char src1[] = "abc";
 	
-	hash.Update(src1, 3);
+	hash.Update(src1, strlen(reinterpret_cast<char*>(src1)));
 	hash.Final();
 	
 	char hexdigest[40];
@@ -30,5 +31,9 @@ int main()
 	
 	char res1[] = "A9993E364706816ABA3E25717850C26C9CD0D89D";
 	
-	return (memcmp(hexdigest, res1, 40) == 0);
+	int rv = memcmp(hexdigest, res1, 40);
+	if (rv != 0)
+		std::cerr << "result  : " << hexdigest << std::endl << "expected: " << res1 << std::endl;
+	
+	return (rv == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
