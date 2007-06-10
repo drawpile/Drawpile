@@ -26,8 +26,9 @@ int main()
 	hash.Update(src4, strlen(reinterpret_cast<char*>(src4)));
 	hash.Final();
 	
-	char hexdigest[40];
+	char hexdigest[41];
 	hash.HexDigest(hexdigest);
+	hexdigest[40] = '\0';
 	
 	char res4[] = "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452";
 	
