@@ -277,10 +277,9 @@ bool Socket::reuse_port(const bool x) throw()
 	// Windows (for example) does not have it
 	return (x==true);
 	#else // POSIX
-	char val = (x ? 1 : 0);
-	//int val = (x ? 1 : 0);
+	int val = (x ? 1 : 0);
 	
-	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
+	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, (char*)&val, sizeof(int));
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -295,11 +294,6 @@ bool Socket::reuse_port(const bool x) throw()
 		cerr << "[Socket] Unknown error in reuse_port() - " << s_error << endl;
 		exit(1);
 	}
-	
-	#ifndef NDEBUG
-	if (x and val == 0)
-		cout << "[Socket] Port re-use failed" << endl;
-	#endif
 	
 	return (r == 0);
 	#endif
@@ -317,9 +311,9 @@ bool Socket::reuse_addr(const bool x) throw()
 	// If the system doesn't have it
 	return (x==true);
 	#else // POSIX
-	char val = (x ? 1 : 0);
+	int val = (x ? 1 : 0);
 	
-	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char*)&val, sizeof(int));
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -334,11 +328,6 @@ bool Socket::reuse_addr(const bool x) throw()
 		cerr << "[Socket] Unknown error in reuse_addr() - " << s_error << endl;
 		exit(1);
 	}
-	
-	#ifndef NDEBUG
-	if (x and val == 0)
-		cout << "[Socket] Address re-use failed" << endl;
-	#endif
 	
 	return (r == 0);
 	#endif
