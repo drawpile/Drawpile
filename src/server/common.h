@@ -20,6 +20,7 @@
 
 #include <boost/cstdint.hpp>
 
+typedef unsigned short ushort;
 typedef unsigned long ulong;
 typedef unsigned int uint;
 typedef unsigned char uchar;
