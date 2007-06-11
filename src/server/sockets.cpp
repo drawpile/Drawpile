@@ -718,7 +718,7 @@ bool Socket::matchPort(const Socket& tsock) const throw()
 
 /* string functions */
 
-std::string Socket::AddrToString(const r_sockaddr& raddr) throw()
+std::string Socket::AddrToString(const r_sockaddr& l_addr) throw()
 {
 	#ifdef IPV6_SUPPORT
 	const uint length = Network::IPv6::AddrLength + Network::PortLength + 4;
@@ -733,16 +733,16 @@ std::string Socket::AddrToString(const r_sockaddr& raddr) throw()
 	#ifdef WIN32
 	DWORD len = length;
 	sockaddr sa;
-	WSAAddressToString(&sa, sizeof(raddr), 0, buf, &len);
+	WSAAddressToString(&sa, sizeof(l_addr), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
-	//inet_ntop(raddr.sin_family, getAddress(addr), straddr, length);
+	//inet_ntop(raddr.sin_family, getAddress(l_addr), straddr, length);
 	#ifdef IPV6_SUPPRT
-	inet_ntop(raddr.sin_family, &addr.sin6_addr, straddr, length);
+	inet_ntop(l_addr.sin_family, &l_addr.sin6_addr, straddr, length);
 	#else
-	inet_ntop(raddr.sin_family, &addr.sin_addr, straddr, length);
+	inet_ntop(l_addr.sin_family, &l_addr.sin_addr, straddr, length);
 	#endif
-	ushort port = getPort(raddr);
+	ushort port = getPort(l_addr);
 	bswap(port);
 	
 	#ifdef HAVE_SNPRINTF
