@@ -83,8 +83,13 @@ Net::~Net() throw()
 
 /* *** Address Templates *** */
 
-template <> in_addr& getAddress<sockaddr_in,in_addr&>(sockaddr_in &addr) throw() { return addr.sin_addr; }
-template <> in6_addr& getAddress<sockaddr_in6,in6_addr&>(sockaddr_in6 &addr) throw() { return addr.sin6_addr; }
+/*
+template <> in_addr* getAddress<sockaddr_in,in_addr>(sockaddr_in &addr) throw() { return &addr.sin_addr; }
+template <> in6_addr* getAddress<sockaddr_in6,in6_addr>(sockaddr_in6 &addr) throw() { return &addr.sin6_addr; }
+
+template <> const in_addr* getAddress<sockaddr_in,in_addr>(const sockaddr_in &addr) throw() { return &addr.sin_addr; }
+template <> const in6_addr* getAddress<sockaddr_in6,in6_addr>(const sockaddr_in6 &addr) throw() { return &addr.sin6_addr; }
+*/
 
 template <> ushort& getPort<sockaddr_in>(sockaddr_in &addr) throw() { return addr.sin_port; }
 template <> ushort& getPort<sockaddr_in6>(sockaddr_in6 &addr) throw() { return addr.sin6_port; }
@@ -731,7 +736,12 @@ std::string Socket::AddrToString(const r_sockaddr& raddr) throw()
 	WSAAddressToString(&sa, sizeof(raddr), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
-	inet_ntop(raddr.sin_family, &getAddress(raddr), straddr, length);
+	//inet_ntop(raddr.sin_family, getAddress(addr), straddr, length);
+	#ifdef IPV6_SUPPRT
+	inet_ntop(raddr.sin_family, &addr.sin6_addr, straddr, length);
+	#else
+	inet_ntop(raddr.sin_family, &addr.sin_addr, straddr, length);
+	#endif
 	ushort port = getPort(raddr);
 	bswap(port);
 	
@@ -756,7 +766,12 @@ r_sockaddr Socket::StringToAddr(const std::string& address) throw()
 	int size = sizeof(naddr);
 	WSAStringToAddress(buf, naddr.sin_family, 0, reinterpret_cast<sockaddr*>(&naddr), &size);
 	#else // POSIX
-	inet_pton(naddr.sin_family, address.c_str(), &getAddress(naddr));
+	//inet_pton(naddr.sin_family, address.c_str(), getAddress(naddr));
+	#ifdef IPV6_SUPPORT
+	inet_pton(naddr.sin_family, address.c_str(), &naddr.sin6_addr);
+	#else
+	inet_pton(naddr.sin_family, address.c_str(), &naddr.sin_addr);
+	#endif
 	#endif
 	
 	return naddr;

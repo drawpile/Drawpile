@@ -187,15 +187,23 @@ typedef sockaddr_in r_sockaddr;
 
 // templates
 
-template <typename Address,typename ReturnType> ReturnType getAddress(Address&) throw();
+/*
+template <typename Address,typename ReturnType> ReturnType* getAddress(Address&) throw();
+template <typename Address,typename ReturnType> const ReturnType* getAddress(const Address&) throw();
+*/
 template <typename Address> ushort& getPort(Address&) throw();
 template <typename Address> ushort getPort(const Address&) throw();
 template <typename Address> void setFamily(Address&) throw();
 
 // specializations
 
-template <> in_addr& getAddress<sockaddr_in,in_addr&>(sockaddr_in &addr) throw();
-template <> in6_addr& getAddress<sockaddr_in6,in6_addr&>(sockaddr_in6 &addr) throw();
+/*
+template <> in_addr* getAddress<sockaddr_in,in_addr>(sockaddr_in &addr) throw();
+template <> in6_addr* getAddress<sockaddr_in6,in6_addr>(sockaddr_in6 &addr) throw();
+
+template <> const in_addr* getAddress<sockaddr_in,in_addr>(const sockaddr_in &addr) throw();
+template <> const in6_addr* getAddress<sockaddr_in6,in6_addr>(const sockaddr_in6 &addr) throw();
+*/
 
 template <> ushort& getPort<sockaddr_in>(sockaddr_in &addr) throw();
 template <> ushort& getPort<sockaddr_in6>(sockaddr_in6 &addr) throw();
