@@ -41,10 +41,22 @@ namespace Network {
 namespace IPv6 {
 
 //! Localhost address
+/**
+ * Equivalent of IPv4 \b 127.0.0.1
+ */
 const char Localhost[] = "::1";
 
 //! Unspecified address
+/**
+ * Equivalent of IPv4 \b 0.0.0.0
+ */
 const char Unspecified[] = "::";
+
+//! Maximum length of IPv6 address
+/**
+ * ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+ */
+const uint AddrLength = 39;
 
 }
 
@@ -57,10 +69,28 @@ const char Localhost[] = "127.0.0.1";
 //! Unspecified address
 const char Unspecified[] = "0.0.0.0";
 
+//! Maximum length of IPv4 address
+/**
+ * 123.456.789.012
+ */
+const uint AddrLength = 16;
+
 }
 
 //! Super user port upper bound
 const uint SuperUser_Port = 1023;
+
+//! Maximum length of either IPv4 or IPv6 address
+const uint AddrLength = IPv6::AddrLength;
+
+//! Maximum length of port number as string
+const uint PortLength = 5;
+
+//! Highest port number
+const uint PortUpperBound = 65535;
+
+//! Lowest port number
+const uint PortLowerBound = 0;
 
 }
 
@@ -149,6 +179,33 @@ struct Net
 };
 #endif
 
+#ifdef IPV6_SUPPORT
+typedef sockaddr_in6 r_sockaddr;
+#else
+typedef sockaddr_in r_sockaddr;
+#endif
+
+// templates
+
+template <typename Address,typename ReturnType> ReturnType getAddress(Address&) throw();
+template <typename Address> ushort& getPort(Address&) throw();
+template <typename Address> ushort getPort(const Address&) throw();
+template <typename Address> void setFamily(Address&) throw();
+
+// specializations
+
+template <> in_addr& getAddress<sockaddr_in,in_addr&>(sockaddr_in &addr) throw();
+template <> in6_addr& getAddress<sockaddr_in6,in6_addr&>(sockaddr_in6 &addr) throw();
+
+template <> ushort& getPort<sockaddr_in>(sockaddr_in &addr) throw();
+template <> ushort& getPort<sockaddr_in6>(sockaddr_in6 &addr) throw();
+
+template <> ushort getPort<sockaddr_in>(const sockaddr_in &addr) throw();
+template <> ushort getPort<sockaddr_in6>(const sockaddr_in6 &addr) throw();
+
+template <> void setFamily<sockaddr_in>(sockaddr_in&) throw();
+template <> void setFamily<sockaddr_in6>(sockaddr_in6&) throw();
+
 //! Socket abstraction
 class Socket
 {
@@ -157,11 +214,7 @@ protected:
 	fd_t sock;
 	
 	//! Address
-	#ifdef IPV6_SUPPORT
-	sockaddr_in6 addr, r_addr;
-	#else // IPv4
-	sockaddr_in addr, r_addr;
-	#endif
+	r_sockaddr addr, r_addr;
 	
 	//! Last error number (from errno or equivalent)
 	int s_error;
@@ -282,13 +335,13 @@ public:
 	 *
 	 * "Lingers on close if unsent data is present."
 	 */
-	bool linger(const bool x, const uint16_t delay) throw();
+	bool linger(const bool x, const ushort delay) throw();
 	
 	//! Bind socket to port and address
 	/**
 	 * @return 0 on success, SOCKET_ERROR otherwise.
 	 */
-	int bindTo(const std::string& address, const uint16_t port) throw();
+	int bindTo(const std::string& address, const ushort port) throw();
 	
 	//! Connect to remote address
 	#ifdef IPV6_SUPPORT
@@ -362,11 +415,7 @@ public:
 	/**
 	 * @return associated address structure.
 	 */
-	#ifdef IPV6_SUPPORT
-	sockaddr_in6& getAddr() throw()
-	#else // IPv4
-	sockaddr_in& getAddr() throw()
-	#endif
+	r_sockaddr& getAddr() throw()
 	{
 		return addr;
 	}
@@ -382,7 +431,7 @@ public:
 	/**
 	 * @return port number.
 	 */
-	uint16_t port() const throw();
+	ushort port() const throw();
 	
 	//! Check if the address matches
 	bool matchAddress(const Socket& tsock) const throw();
@@ -390,17 +439,9 @@ public:
 	//! Check if the port matches
 	bool matchPort(const Socket& tsock) const throw();
 	
-	#ifdef IPV6_SUPPORT
-	static std::string AddrToString(const sockaddr_in6& raddr) throw();
-	#else
-	static std::string AddrToString(const sockaddr_in& raddr) throw();
-	#endif
+	static std::string AddrToString(const r_sockaddr& raddr) throw();
 	
-	#ifdef IPV6_SUPPORT
-	static sockaddr_in6 StringToAddr(std::string const& address) throw();
-	#else
-	static sockaddr_in StringToAddr(std::string const& address) throw();
-	#endif
+	static r_sockaddr StringToAddr(std::string const& address) throw();
 	
 	/* Operator overloads */
 	
