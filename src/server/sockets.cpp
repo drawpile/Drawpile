@@ -277,7 +277,8 @@ bool Socket::reuse_port(const bool x) throw()
 	// Windows (for example) does not have it
 	return (x==true);
 	#else // POSIX
-	int val = (x ? 1 : 0);
+	char val = (x ? 1 : 0);
+	//int val = (x ? 1 : 0);
 	
 	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &val, sizeof(val));
 	

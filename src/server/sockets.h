@@ -331,7 +331,7 @@ public:
 	 */
 	bool block(const bool x) throw();
 	
-	//! Re-use socket address
+	//! Re-use socket port
 	/**
 	 * Sets SO_REUSEPORT for the socket.
 	 */
