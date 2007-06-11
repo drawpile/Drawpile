@@ -2281,6 +2281,7 @@ bool Server::init() throw(std::bad_alloc)
 	}
 	
 	lsock.block(false); // nonblocking
+	lsock.linger(false, 0);
 	lsock.reuse(true); // reuse address
 	
 	for (uint16_t bport=lo_port; bport != hi_port+1; ++bport)
