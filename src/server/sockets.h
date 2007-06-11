@@ -335,7 +335,13 @@ public:
 	/**
 	 * Sets SO_REUSEPORT for the socket.
 	 */
-	bool reuse(const bool x) throw();
+	bool reuse_port(const bool x) throw();
+	
+	//! Re-use socket address
+	/**
+	 * Sets SO_REUSEADDR for the socket.
+	 */
+	bool reuse_addr(const bool x) throw();
 	
 	//! Set/unset lingering
 	/**

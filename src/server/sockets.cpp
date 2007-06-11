@@ -265,7 +265,7 @@ bool Socket::block(const bool x) throw()
 	#endif
 }
 
-bool Socket::reuse(const bool x) throw()
+bool Socket::reuse_port(const bool x) throw()
 {
 	#ifndef NDEBUG
 	cout << "[Socket] Reuse port of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
@@ -291,9 +291,57 @@ bool Socket::reuse(const bool x) throw()
 		assert(s_error != ENOPROTOOPT);
 		assert(s_error != EFAULT);
 		
-		cerr << "[Socket] Unknown error in reuse() - " << s_error << endl;
+		cerr << "[Socket] Unknown error in reuse_port() - " << s_error << endl;
 		exit(1);
 	}
+	
+	#ifndef NDEBUG
+	if (x and val == 0)
+		cout << "[Socket] Port re-use failed" << endl;
+	#endif
+	
+	return (r == 0);
+	#endif
+}
+
+bool Socket::reuse_addr(const bool x) throw()
+{
+	#ifndef NDEBUG
+	cout << "[Socket] Reuse address of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
+	#endif
+	
+	assert(sock != INVALID_SOCKET);
+	
+	#ifndef SO_REUSEADDR
+	// If the system doesn't have it
+	return (x==true);
+	#else // POSIX
+	#ifdef WIN32
+	char val = (x ? 1 : 0);
+	#else
+	int val = (x ? 1 : 0);
+	#endif
+	
+	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
+	
+	if (r == SOCKET_ERROR)
+	{
+		s_error = errno;
+		
+		// programming errors
+		assert(s_error != EBADF);
+		assert(s_error != ENOTSOCK);
+		assert(s_error != ENOPROTOOPT);
+		assert(s_error != EFAULT);
+		
+		cerr << "[Socket] Unknown error in reuse_addr() - " << s_error << endl;
+		exit(1);
+	}
+	
+	#ifndef NDEBUG
+	if (x and val == 0)
+		cout << "[Socket] Address re-use failed" << endl;
+	#endif
 	
 	return (r == 0);
 	#endif
