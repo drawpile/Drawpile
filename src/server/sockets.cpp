@@ -343,7 +343,8 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 	
 	setFamily(addr);
 	
-	getPort(addr) = bswap(_port);
+	ushort &port = getPort(addr);
+	bswap(port = _port);
 	
 	const int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
 	
