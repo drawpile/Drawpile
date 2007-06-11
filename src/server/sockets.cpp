@@ -317,11 +317,7 @@ bool Socket::reuse_addr(const bool x) throw()
 	// If the system doesn't have it
 	return (x==true);
 	#else // POSIX
-	#ifdef WIN32
 	char val = (x ? 1 : 0);
-	#else
-	int val = (x ? 1 : 0);
-	#endif
 	
 	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
 	
