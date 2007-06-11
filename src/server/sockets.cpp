@@ -731,7 +731,7 @@ std::string Socket::AddrToString(const r_sockaddr& raddr) throw()
 	WSAAddressToString(&sa, sizeof(raddr), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
-	inet_ntop(raddr.sin_family, &getAddr(raddr), straddr, length);
+	inet_ntop(raddr.sin_family, &getAddress(raddr), straddr, length);
 	ushort port = getPort(raddr);
 	bswap(port);
 	
@@ -756,7 +756,7 @@ r_sockaddr Socket::StringToAddr(const std::string& address) throw()
 	int size = sizeof(naddr);
 	WSAStringToAddress(buf, naddr.sin_family, 0, reinterpret_cast<sockaddr*>(&naddr), &size);
 	#else // POSIX
-	inet_pton(naddr.sin_family, address.c_str(), &getAddr(naddr));
+	inet_pton(naddr.sin_family, address.c_str(), &getAddress(naddr));
 	#endif
 	
 	return naddr;
