@@ -23,7 +23,6 @@ SHA1::SHA1() throw()
 	: finalized(false)
 	#endif
 {
-	memset(m_block.l, 0, 16);
 	Reset();
 }
 
@@ -37,14 +36,16 @@ SHA1::~SHA1() throw()
 void SHA1::Reset() throw()
 {
 	// SHA1 initialization constants
+	memset(m_block.l, 0, sizeof(m_block.l));
+	memset(m_buffer, 0, sizeof(m_buffer));
+	
 	m_state[0] = 0x67452301;
 	m_state[1] = 0xEFCDAB89;
 	m_state[2] = 0x98BADCFE;
 	m_state[3] = 0x10325476;
 	m_state[4] = 0xC3D2E1F0;
 	
-	m_count[0] = 0;
-	m_count[1] = 0;
+	memset(m_count, 0, sizeof(m_count));
 	
 	#ifndef NDEBUG
 	finalized = false;
