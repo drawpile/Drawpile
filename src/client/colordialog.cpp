@@ -52,6 +52,8 @@ ColorDialog::ColorDialog(const QString& title, QWidget *parent)
 
 	connect(ui_->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
 			this, SLOT(reset()));
+	connect(ui_->buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()),
+			this, SLOT(apply()));
 
 	setWindowTitle(title);
 }
@@ -95,6 +97,18 @@ void ColorDialog::setColor(const QColor& color)
 QColor ColorDialog::color() const
 {
 	return QColor(ui_->red->value(), ui_->green->value(), ui_->blue->value());
+}
+
+/**
+ * Emit the selected color without closing the dialog
+ */
+void ColorDialog::apply()
+{
+	const QColor c = color();
+	QPalette palette;
+	palette.setColor(ui_->current->backgroundRole(), c);
+	ui_->old->setPalette(palette);
+	emit colorSelected(c);
 }
 
 /**

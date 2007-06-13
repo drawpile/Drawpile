@@ -507,7 +507,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
-			QMessageBox box(QMessageBox::Question, tr("DrawPile"),
+			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
 					tr("There are unsaved changes. Save them before exiting?"));
 			const QPushButton *savebtn = box.addButton(tr("Save changes"),
 					QMessageBox::AcceptRole);

@@ -45,6 +45,7 @@ class ColorDialog : public QDialog
 	
 	public slots:
 		void accept();
+		void apply();
 
 	signals:
 		//! This signal is emitted when Ok is pressed
