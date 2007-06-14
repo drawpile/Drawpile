@@ -484,10 +484,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	if(canReplace() == false) {
 		// First confirm disconnection
 		if(controller_->isConnected()) {
-			QMessageBox box(QMessageBox::Information, tr("DrawPile"),
+			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
 					controller_->isUploading()?
 					tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."):
-					tr("You are still connected to a drawing session."));
+					tr("You are still connected to a drawing session."),
+					QMessageBox::NoButton, this);
 
 			const QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
@@ -508,7 +509,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
 			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
-					tr("There are unsaved changes. Save them before exiting?"));
+					tr("There are unsaved changes. Save them before exiting?"),
+					QMessageBox::NoButton, this);
 			const QPushButton *savebtn = box.addButton(tr("Save changes"),
 					QMessageBox::AcceptRole);
 			box.addButton(tr("Exit without saving"),
