@@ -768,6 +768,7 @@ std::string Socket::AddrToString(const r_sockaddr& l_addr) throw()
 	#ifdef WIN32
 	DWORD len = length;
 	sockaddr sa;
+	memcpy(&sa, &l_addr, sizeof(l_addr));
 	WSAAddressToString(&sa, sizeof(l_addr), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
