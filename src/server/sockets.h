@@ -227,7 +227,7 @@ protected:
 	//! Last error number (from errno or equivalent)
 	int s_error;
 public:
-	//! ctor
+	//! Default constructor
 	Socket() throw()
 		: sock(INVALID_SOCKET),
 		s_error(0)
@@ -238,6 +238,11 @@ public:
 	}
 	
 	#ifdef IPV6_SUPPORT
+	//! ctor
+	/**
+	 * @param[in] nsock FD to associate with this Socket
+	 * @param[in] saddr IPv6 Address to associate with this Socket
+	 */
 	Socket(fd_t& nsock, const sockaddr_in6 saddr) throw()
 		: sock(nsock),
 		s_error(0)
@@ -250,6 +255,11 @@ public:
 	}
 	#endif
 	
+	//! ctor
+	/**
+	 * @param[in] nsock FD to associate with this Socket
+	 * @param[in] saddr IPv4 Address to associate with this Socket
+	 */
 	Socket(fd_t& nsock, const sockaddr_in saddr) throw()
 		: sock(nsock),
 		s_error(0)
@@ -262,6 +272,9 @@ public:
 	}
 	
 	//! ctor
+	/**
+	 * @param[in] nsock FD to associate with this Socket
+	 */
 	Socket(fd_t nsock) throw()
 		: sock(nsock),
 		s_error(0)
@@ -271,7 +284,6 @@ public:
 		#endif
 	}
 	
-	//! dtor
 	~Socket() throw()
 	{
 		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
@@ -300,7 +312,7 @@ public:
 	
 	//! Set file descriptor
 	/**
-	 * @param nsock is the new file descriptor.
+	 * @param[in] nsock is the new file descriptor.
 	 *
 	 * @return file descriptor associated with the class.
 	 */
@@ -318,28 +330,45 @@ public:
 	
 	//! Accept new connection.
 	/**
-	 * @return Socket* if new connection was accepted, NULL otherwise.
+	 * @return Socket* if new connection was accepted
+	 * @return NULL otherwise.
 	 */
 	Socket accept() throw();
 	
 	//! Set blocking
 	/**
-	 * @bug You can't enable blocking on non-Win32 systems.
+	 * @param[in] x enable/disable blocking
 	 *
 	 * @return 0 on success.
 	 * @return SOCKET_ERROR otherwise.
+	 *
+	 * @bug You can't re-enable blocking on non-Win32 systems.
 	 */
 	bool block(const bool x) throw();
 	
 	//! Re-use socket port
 	/**
-	 * Sets SO_REUSEPORT for the socket.
+	 * Sets SO_REUSEPORT for the socket. Allows multiple apps to bind to same port and address.
+	 * Primarily used for multi-casting.
+	 *
+	 * @param[in] x enable/disable port re-use
+	 *
+	 * @return true if action was completed without error
+	 *
+	 * @bug In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
 	 */
 	bool reuse_port(const bool x) throw();
 	
 	//! Re-use socket address
 	/**
-	 * Sets SO_REUSEADDR for the socket.
+	 * Sets SO_REUSEADDR for the socket. Allows socket port to be re-used as soon as it's
+	 * freed, avoiding the delay caused from waiting TIME_WAIT to expire.
+	 *
+	 * @param[in] x enable/disable address re-use
+	 *
+	 * @return true if action was completed without error
+	 * 
+	 * @note In Win32, this does nothing as TIME_WAIT is ignored completely there.
 	 */
 	bool reuse_addr(const bool x) throw();
 	
@@ -348,19 +377,35 @@ public:
 	 * Sets SO_LINGER for the socket.
 	 *
 	 * "Lingers on close if unsent data is present."
+	 *
+	 * @param[in] x enable/disable lingering
+	 * @param[in] delay linger time if enabled
+	 *
+	 * @return true if action was completed without error
 	 */
 	bool linger(const bool x, const ushort delay) throw();
 	
 	//! Bind socket to port and address
 	/**
-	 * @return 0 on success, SOCKET_ERROR otherwise.
+	 * @param[in] address address to bind to
+	 * @param[in] port port number to bind to
+	 *
+	 * @return 0 on success
+	 * @return SOCKET_ERROR otherwise.
 	 */
 	int bindTo(const std::string& address, const ushort port) throw();
 	
-	//! Connect to remote address
 	#ifdef IPV6_SUPPORT
+	//! Connect to remote address
+	/**
+	 * @param[in] rhost remote host to connect to
+	 */
 	int connect(const sockaddr_in6& rhost) throw();
 	#endif
+	//! Connect to remote address
+	/**
+	 * @param[in] rhost remote host to connect to
+	 */
 	int connect(const sockaddr_in& rhost) throw();
 	
 	//! Set listening
@@ -372,8 +417,8 @@ public:
 	
 	//! Send data.
 	/**
-	 * @param buffer contains data to be send.
-	 * @param buflen declares the number of bytes to be sent from buffer.
+	 * @param[in] buffer contains data to be send.
+	 * @param[in] buflen declares the number of bytes to be sent from buffer.
 	 *
 	 * @return number of bytes actually sent.
 	 * @return (SOCKET_ERROR - 1) if the operation would block.
@@ -383,8 +428,8 @@ public:
 	
 	//! Receive data
 	/**
-	 * @param buffer will be written to with max buflen bytes from network.
-	 * @param buflen declares the number of bytes to read from network.
+	 * @param[out] buffer will be written to with max buflen bytes from network.
+	 * @param[in] buflen declares the number of bytes to read from network.
 	 *
 	 * @return number of bytes read.
 	 * @return 0 if connection was closed on the other end.
@@ -400,19 +445,20 @@ public:
 	 * - Blocks and sends full data in one go.
 	 * - Offset is also ignored.
 	 *
-	 * @param fd FD of the file to be sent.
-	 * @param offset is the starting offset in the file for sending.
-	 * @param nbytes is the number of bytes to be sent.
-	 * @param sbytes is the sent bytes.
+	 * @param[in] fd FD of the file to be sent.
+	 * @param[in] offset is the starting offset in the file for sending.
+	 * @param[in] nbytes is the number of bytes to be sent.
+	 * @param[out] sbytes is the sent bytes.
 	 *
-	 * @return -1 on error, 0 otherwise.
+	 * @return -1 on error
+	 * @return 0 otherwise.
 	 */
 	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) throw();
 	#endif // WITH_SENDFILE or HAVE_XPWSA
 	
 	//! Shutdown socket
 	/**
-	 * @param how SHUT_RD, SHUT_WR, SHUT_RDWR
+	 * @param[in] how SHUT_RD, SHUT_WR, SHUT_RDWR
 	 */
 	int shutdown(int how) throw()
 	{
@@ -421,13 +467,13 @@ public:
 	
 	//! Get last error number
 	/**
-	 * @return last errno.
+	 * @return Last error number (errno).
 	 */
 	int getError() const throw() { return s_error; }
 	
 	//! Get address structure
 	/**
-	 * @return associated address structure.
+	 * @return Associated address structure.
 	 */
 	r_sockaddr& getAddr() throw()
 	{
@@ -437,24 +483,38 @@ public:
 	//! Get IP address
 	/**
 	 * @return IP address string.
-	 * 	e.g. ::1:30000 or 127.0.0.1:300000
+	 * (e.g. [::1]:30000 or 127.0.0.1:30000)
 	 */
 	std::string address() const throw();
 	
 	//! Get port
 	/**
-	 * @return port number.
+	 * @return Port number
 	 */
 	ushort port() const throw();
 	
 	//! Check if the address matches
+	/**
+	 * @param[in] tsock Socket to compare address with
+	 */
 	bool matchAddress(const Socket& tsock) const throw();
 	
 	//! Check if the port matches
+	/**
+	 * @param[in] tsock Socket to compare port with
+	 */
 	bool matchPort(const Socket& tsock) const throw();
 	
+	//! Convert address to string representation of it
+	/**
+	 * @param[in] raddr address to translate
+	 */
 	static std::string AddrToString(const r_sockaddr& raddr) throw();
 	
+	//! Convert string to address
+	/**
+	 * @param[in] address string to convert
+	 */
 	static r_sockaddr StringToAddr(std::string const& address) throw();
 	
 	/* Operator overloads */
