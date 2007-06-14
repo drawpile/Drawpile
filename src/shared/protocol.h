@@ -208,6 +208,8 @@ public:
 	 *
 	 * @note The returned pointer may differ from the one you provided. Make sure you check for
 	 * it and clean up as appropriate.
+	 *
+	 * @throw std::bad_alloc
 	 */
 	char* serialize(size_t &len, char* buffer, size_t &size) const throw(std::bad_alloc);
 	
@@ -261,6 +263,9 @@ public:
 	 *
 	 * @return Used buffer length. Should be the same as the value previously returned
 	 * by reqDataLen() call. Defaults to zero payload with possible user modifiers.
+	 * 
+	 * @throw std::exception
+	 * @throw std::bad_alloc
 	 */
 	virtual
 	size_t unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc);
