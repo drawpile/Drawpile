@@ -60,31 +60,38 @@ const uint16_t revision = 10;
 /**
  * Minimum requirements for derived structs is the definition of _type.
  *
- * \see \ref protocol
- * \see \ref msg_modifiers
- * \see protocol::type for full list of message types.
- *
- * \param _type message type.
- * \param _flags indicates message modifiers (see protocol::message namespace)
+ * @see \ref protocol
+ * @see \ref msg_modifiers
+ * @see protocol::type for full list of message types.
  */
 struct Message
 {
 protected:
+	//! Default private constructor
+	/**
+	 * @param[in] _type message type.
+	 * @param[in] _header header size
+	 * @param[in] _flags indicates message modifiers (see protocol::message namespace)
+	 */
 	Message(const uint8_t _type, const size_t _header=0, const uint8_t _flags=message::None) throw();
 	
-	// Write header (for serialize())
-	inline
+	//! Write header (for serialize())
+	/**
+	 * @param[out] ptr Pointer to char* to write to
+	 */
 	size_t serializeHeader(char* ptr) const throw();
 	
-	// Read header (for unserialize())
-	inline
+	//! Read header (for unserialize())
+	/**
+	 * @param[in] ptr Pointer to char* to read
+	 */
 	size_t unserializeHeader(const char* ptr) throw();
 	
-	// Header size
+	//! Header size
 	const size_t headerSize;
 	
 public:
-
+	
 	const bool
 		//! User modifier
 		isUser,
@@ -193,15 +200,14 @@ public:
 	/**
 	 * You \b must call this for the \b last message in the list.
 	 * 
-	 * @param buffer is optional pre-allocated buffer
-	 * @param len refers to size_t to which the length of returned buffer is stored.
-	 * @param size refers to the complete size of the returned buffer, not only how
-	 * much of it was filled with actual data. This should be set to the size of
-	 * the pre-allocated buffer if provided.
+	 * @param[in] buffer Optional pre-allocated buffer
+	 * @param[out] len Number of bytes stored in returned buffer
+	 * @param[in,out] size Size of the provided buffer. Rewritten if a new buffer is allocated.
 	 *
 	 * @return Buffer ready to be sent to network.
 	 *
-	 * @throw std::bad_alloc
+	 * @note The returned pointer may differ from the one you provided. Make sure you check for
+	 * it and clean up as appropriate.
 	 */
 	char* serialize(size_t &len, char* buffer, size_t &size) const throw(std::bad_alloc);
 	
@@ -214,11 +220,10 @@ public:
 	
 	//! Serialize the message payload.
 	/**
-	 * The buffer must have room for at least payloadLength() bytes.
+	 * @param[out] buf Serialized data will be placed in this buffer, must have space for
+	 * at least as many bytes as payloadLength() returned.
 	 *
-	 * @param buf serialized bytes will be stored here.
-	 *
-	 * @return number of bytes stored. Defaults to zero payload.
+	 * @return Number of bytes stored in buffer
 	 */
 	virtual
 	size_t serializePayload(char *buf) const throw();
@@ -230,10 +235,10 @@ public:
 	 * Meaning: the length returned may grow when the function is able to scan
 	 * the full extent of the message.
 	 *
-	 * @param buf points to data buffer waiting for serialization.
-	 * @param len declares the length of the data buffer.
+	 * @param[in] buf Buffer for unserializing.
+	 * @param[in] len Number of bytes in buffer.
 	 *
-	 * @return length of data needed to unserialize or completely scan the length.
+	 * @return Length of data needed to unserialize or completely scan the length.
 	 * Only unserialize() if you have at least this much data in the buffer at the
 	 * time of calling this function. Length includes message type and other
 	 * header data. Defaults to zero payload message with possible user modifier.
@@ -251,8 +256,8 @@ public:
 	 * tell you how much data the call to unserialize() actually processed or will
 	 * process of the provided data buffer.
 	 *
-	 * @param buf points to data buffer waiting for serialization.
-	 * @param len declares the length of the data buffer.
+	 * @param[in] buf points to data buffer waiting for serialization.
+	 * @param[in] len declares the length of the data buffer.
 	 *
 	 * @return Used buffer length. Should be the same as the value previously returned
 	 * by reqDataLen() call. Defaults to zero payload with possible user modifiers.
