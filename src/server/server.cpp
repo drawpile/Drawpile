@@ -2353,9 +2353,11 @@ bool Server::validateSessionTitle(const Array<char>& title) const throw()
 	assert(title.ptr != 0 and title.size > 0);
 	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
 	
+	#ifdef STRICT_UNIQUENESS
 	// Session title is never unique if it's an empty string.
 	if (title.size == 0)
 		return false;
+	#endif
 	
 	for (sessions_const_i si(sessions.begin()); si != sessions.end(); ++si)
 		if (title.size == si->second->title.size and (memcmp(title.ptr, si->second->title.ptr, title.size) == 0))
