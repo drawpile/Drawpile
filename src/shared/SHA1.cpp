@@ -53,14 +53,12 @@ void SHA1::Reset() throw()
 }
 
 // Rotate x bits to the left
-inline
 uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
 {
 	return (v << n) | (v >> (32 - n));
 }
 
 
-inline
 uint32_t SHA1::SHABLK0(const uint32_t i) throw()
 {
 	#ifdef IS_BIG_ENDIAN
@@ -72,7 +70,6 @@ uint32_t SHA1::SHABLK0(const uint32_t i) throw()
 	#endif
 }
 
-inline
 uint32_t SHA1::SHABLK1(const uint32_t i) throw()
 {
 	return (m_block.l[i&15]
@@ -86,35 +83,30 @@ uint32_t SHA1::SHABLK1(const uint32_t i) throw()
 	);
 }
 
-inline
 void SHA1::R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += ((w & (x ^ y)) ^ y) + SHABLK0(i) + 0x5A827999 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
-inline
 void SHA1::R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += ((w & (x ^ y)) ^ y) + SHABLK1(i) + 0x5A827999 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
-inline
 void SHA1::R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += (w ^ x ^ y) + SHABLK1(i) + 0x6ED9EBA1 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
-inline
 void SHA1::R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += (((w | x) & y) | (w & x)) + SHABLK1(i) + 0x8F1BBCDC + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
-inline
 void SHA1::R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
 	z += (w ^ x ^ y) + SHABLK1(i) + 0xCA62C1D6 + ROL32(v, 5);
@@ -242,6 +234,25 @@ void SHA1::HexDigest(char *szReport) const throw()
 	
 	// Hex magic by George Anescu
 	static const uchar saucHex[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+	
+	/*
+	#ifdef HAVE_SNPRINTF
+	snprintf(
+	#else
+	sprintf(
+	#endif
+		szReport,
+		#ifdef HAVE_SNPRINTF
+		40,
+		#endif
+		"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+		m_digest[0], m_digest[1], m_digest[2], m_digest[3],
+		m_digest[4], m_digest[5], m_digest[6], m_digest[7],
+		m_digest[8], m_digest[9], m_digest[10], m_digest[11],
+		m_digest[12], m_digest[13], m_digest[14], m_digest[15],
+		m_digest[16], m_digest[17], m_digest[18], m_digest[19]
+	);
+	*/
 	
 	for (int i=0; i != 20; ++i)
 	{

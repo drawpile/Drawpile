@@ -64,28 +64,20 @@ public:
 	void GetHash(uchar *puDest) const throw();
 
 private:
-	inline
 	uint32_t SHABLK0(const uint32_t i) throw();
 	
-	inline
 	uint32_t SHABLK1(const uint32_t i) throw();
 	
-	inline
 	uint32_t ROL32(const uint32_t v, const uint32_t n) const throw();
 	
-	inline
 	void R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	inline
 	void R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	inline
 	void R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	inline
 	void R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	inline
 	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
 	void Transform(uint32_t *state, const uchar *buffer) throw();

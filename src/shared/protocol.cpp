@@ -70,7 +70,6 @@ Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags
 	assert(isSession ? !isSelected : true);
 }
 
-inline
 size_t Message::serializeHeader(char* ptr) const throw()
 {
 	assert(ptr != 0);
@@ -86,7 +85,6 @@ size_t Message::serializeHeader(char* ptr) const throw()
 	return headerSize;
 }
 
-inline
 size_t Message::unserializeHeader(const char* ptr) throw()
 {
 	assert(ptr != 0);
