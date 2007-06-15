@@ -101,7 +101,7 @@ Server::Server() throw()
 	memset(session_ids, true, sizeof(session_ids));
 	
 	#ifndef NDEBUG
-	cout << "? Event mechanism: " << event_system<EventSystem>::value << endl;
+	cout << "? Event mechanism: " << event::system<EventSystem>::value << endl;
 	#endif
 }
 
@@ -311,7 +311,7 @@ void Server::uWrite(User*& usr) throw()
 				cout << "~ Output queue empty, clearing event flag." << endl;
 				#endif
 				
-				fClr(usr->events, event_write<EventSystem>::value);
+				fClr(usr->events, event::write<EventSystem>::value);
 				ev.modify(usr->sock.fd(), usr->events);
 			}
 			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -1866,9 +1866,9 @@ void Server::uQueueMsg(User& usr, message_ref msg) throw()
 	
 	usr.queue.push_back( msg );
 	
-	if (!fIsSet(usr.events, event_write<EventSystem>::value))
+	if (!fIsSet(usr.events, event::write<EventSystem>::value))
 	{
-		fSet(usr.events, event_write<EventSystem>::value);
+		fSet(usr.events, event::write<EventSystem>::value);
 		ev.modify(usr.sock.fd(), usr.events);
 	}
 }
@@ -2123,7 +2123,7 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	
 	User* usr = new User(id, sock);
 	
-	fSet(usr->events, event_read<EventSystem>::value);
+	fSet(usr->events, event::read<EventSystem>::value);
 	ev.add(usr->sock.fd(), usr->events);
 	
 	const size_t ts = utimer.size();
@@ -2313,10 +2313,10 @@ bool Server::init() throw(std::bad_alloc)
 		cout << "+ Listening on port " << lsock.port() << endl << endl;
 		
 		// add listening socket to event system
-		if (event_has_accept<EventSystem>::value)
-			ev.add(lsock.fd(), event_accept<EventSystem>::value);
+		if (event::has_accept<EventSystem>::value)
+			ev.add(lsock.fd(), event::accept<EventSystem>::value);
 		else
-			ev.add(lsock.fd(), event_read<EventSystem>::value);
+			ev.add(lsock.fd(), event::read<EventSystem>::value);
 		
 		// set event timeout
 		ev.timeout(30000);
@@ -2410,8 +2410,8 @@ int Server::run() throw()
 	User *usr;
 	
 	
-	event_fd_type<EventSystem>::fd_t fd;
-	event_type<EventSystem>::ev_t events;
+	event::fd_type<EventSystem>::fd_t fd;
+	event::ev_type<EventSystem>::ev_t events;
 	
 	users_const_i ui;
 	
@@ -2433,7 +2433,7 @@ int Server::run() throw()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
-				assert(fd != event_invalid_fd<EventSystem>::value);
+				assert(fd != event::invalid_fd<EventSystem>::value);
 				if (fd == lsock.fd())
 				{
 					cullIdlers();
@@ -2445,24 +2445,24 @@ int Server::run() throw()
 				assert(ui != users.end());
 				usr = ui->second;
 				
-				if (event_has_error<EventSystem>::value
-					and fIsSet(events, event_error<EventSystem>::value))
+				if (event::has_error<EventSystem>::value
+					and fIsSet(events, event::error<EventSystem>::value))
 				{
 					uRemove(usr, protocol::UserInfo::BrokenPipe);
 					continue;
 				}
-				if (event_has_hangup<EventSystem>::value and 
-					fIsSet(events, event_hangup<EventSystem>::value))
+				if (event::has_hangup<EventSystem>::value and 
+					fIsSet(events, event::hangup<EventSystem>::value))
 				{
 					uRemove(usr, protocol::UserInfo::Disconnect);
 					continue;
 				}
-				if (fIsSet(events, event_read<EventSystem>::value))
+				if (fIsSet(events, event::read<EventSystem>::value))
 				{
 					uRead(usr);
 					if (!usr) continue;
 				}
-				if (fIsSet(events, event_write<EventSystem>::value))
+				if (fIsSet(events, event::write<EventSystem>::value))
 				{
 					uWrite(usr);
 					if (!usr) continue;

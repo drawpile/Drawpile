@@ -229,7 +229,7 @@ struct User
 	
 	//! Event I/O : registered events.
 	// EventSystem::ev_t // inaccessible for some reason
-	event_type<EventSystem>::ev_t events;
+	event::ev_type<EventSystem>::ev_t events;
 	//int events;
 	
 	//! User state
