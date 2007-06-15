@@ -37,13 +37,15 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-const bool event_has_accept<EventKevent>::value = true;
-const int event_read<EventKevent>::value = KEVENT_SOCKET_RECV;
-const int event_write<EventKevent>::value = KEVENT_SOCKET_SEND;
-const int event_accept<EventKevent>::value = KEVENT_SOCKET_ACCEPT;
-const std::string event_system<EventKevent>::value("kevent");
+namespace event {
 
-EventKevent::EventKevent() throw()
+const bool has_accept<Kevent>::value = true;
+const int read<Kevent>::value = KEVENT_SOCKET_RECV;
+const int write<Kevent>::value = KEVENT_SOCKET_SEND;
+const int accept<Kevent>::value = KEVENT_SOCKET_ACCEPT;
+const std::string system<Kevent>::value("kevent");
+
+Kevent::Kevent() throw()
 	: evfd(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
@@ -84,7 +86,7 @@ EventKevent::EventKevent() throw()
 	}
 }
 
-EventKevent::~EventKevent() throw()
+Kevent::~Kevent() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~kevent()" << endl;
@@ -100,7 +102,7 @@ EventKevent::~EventKevent() throw()
 	assert(evfd == -1);
 }
 
-int EventKevent::wait() throw()
+int Kevent::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.wait()" << endl;
@@ -134,7 +136,7 @@ int EventKevent::wait() throw()
 	return nfds;
 }
 
-int EventKevent::add(fd_t fd, int events) throw()
+int Kevent::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.add(FD: " << fd << ")" << endl;
@@ -174,7 +176,7 @@ int EventKevent::add(fd_t fd, int events) throw()
 	return true;
 }
 
-int EventKevent::modify(fd_t fd, int events) throw()
+int Kevent::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.modify(FD: " << fd << ")" << endl;
@@ -213,7 +215,7 @@ int EventKevent::modify(fd_t fd, int events) throw()
 	return 0;
 }
 
-int EventKevent::remove(fd_t fd) throw()
+int Kevent::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kevent.remove(FD: " << fd << ")" << endl;
@@ -248,7 +250,7 @@ int EventKevent::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventKevent::getEvent(fd_t &fd, int &r_events) throw()
+bool Kevent::getEvent(fd_t &fd, int &r_events) throw()
 {
 	if (nfds == -1)
 		return false;
@@ -260,7 +262,7 @@ bool EventKevent::getEvent(fd_t &fd, int &r_events) throw()
 	return true;
 }
 
-void EventKevent::timeout(uint msecs) throw()
+void Kevent::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "kevent.timeout(msecs: " << msecs << ")" << std::endl;
@@ -276,3 +278,5 @@ void EventKevent::timeout(uint msecs) throw()
 	
 	_timeout.tv_usec = msecs * 1000; // microseconds
 }
+
+} // namespace:event

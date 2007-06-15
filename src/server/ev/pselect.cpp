@@ -37,13 +37,15 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-const bool event_has_error<EventPselect>::value = true;
-const int event_read<EventPselect>::value = 1;
-const int event_write<EventPselect>::value = 2;
-const int event_error<EventPselect>::value = 4;
-const std::string event_system<EventPselect>::value("pselect");
+namespace event {
 
-EventPselect::EventPselect() throw()
+const bool has_error<Pselect>::value = true;
+const int read<Pselect>::value = 1;
+const int write<Pselect>::value = 2;
+const int error<Pselect>::value = 4;
+const std::string system<Pselect>::value("pselect");
+
+Pselect::Pselect() throw()
 	: nfds_r(-1),
 	nfds_w(-1),
 	nfds_e(-1)
@@ -55,12 +57,12 @@ EventPselect::EventPselect() throw()
 	sigemptyset(&sigmask); // prepare sigmask
 }
 
-EventPselect::~EventPselect() throw()
+Pselect::~Pselect() throw()
 {
 }
 
 // Errors: WSAENETDOWN
-int EventPselect::wait() throw()
+int Pselect::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.wait()" << endl;
@@ -105,7 +107,7 @@ int EventPselect::wait() throw()
 	return nfds;
 }
 
-int EventPselect::add(fd_t fd, int events) throw()
+int Pselect::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.add(fd: " << fd << ")" << endl;
@@ -115,21 +117,21 @@ int EventPselect::add(fd_t fd, int events) throw()
 	
 	bool rc=false;
 	
-	if (fIsSet(events, event_read<EventPselect>::value))
+	if (fIsSet(events, read<Pselect>::value))
 	{
 		FD_SET(fd, &fds_r);
 		read_set.insert(read_set.end(), fd);
 		if (fd > nfds_r) nfds_r = fd;
 		rc = true;
 	}
-	if (fIsSet(events, event_write<EventPselect>::value))
+	if (fIsSet(events, write<Pselect>::value))
 	{
 		FD_SET(fd, &fds_w);
 		write_set.insert(write_set.end(), fd);
 		if (fd > nfds_w) nfds_w = fd;
 		rc = true;
 	}
-	if (fIsSet(events, event_error<EventPselect>::value))
+	if (fIsSet(events, error<Pselect>::value))
 	{
 		FD_SET(fd, &fds_e);
 		error_set.insert(error_set.end(), fd);
@@ -145,7 +147,7 @@ int EventPselect::add(fd_t fd, int events) throw()
 	return rc;
 }
 
-int EventPselect::modify(fd_t fd, int events) throw()
+int Pselect::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.modify(fd: " << fd << ")" << endl;
@@ -157,7 +159,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, event_read<EventPselect>::value))
+	if (!fIsSet(events, read<Pselect>::value))
 	{
 		FD_CLR(fd, &fds_r);
 		read_set.erase(fd);
@@ -165,7 +167,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
 	}
 	
-	if (!fIsSet(events, event_write<EventPselect>::value))
+	if (!fIsSet(events, write<Pselect>::value))
 	{
 		FD_CLR(fd, &fds_w);
 		write_set.erase(fd);
@@ -173,7 +175,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
 	}
 	
-	if (!fIsSet(events, event_error<EventPselect>::value))
+	if (!fIsSet(events, error<Pselect>::value))
 	{
 		FD_CLR(fd, &fds_e);
 		error_set.erase(fd);
@@ -184,7 +186,7 @@ int EventPselect::modify(fd_t fd, int events) throw()
 	return 0;
 }
 
-int EventPselect::remove(fd_t fd) throw()
+int Pselect::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.remove(fd: " << fd << ")" << endl;
@@ -216,7 +218,7 @@ int EventPselect::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventPselect::getEvent(fd_t &fd, int &events) throw()
+bool Pselect::getEvent(fd_t &fd, int &events) throw()
 {
 	while (fd_iter != fd_list.end())
 	{
@@ -227,11 +229,11 @@ bool EventPselect::getEvent(fd_t &fd, int &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, event_read<EventPselect>::value);
+			fSet(events, read<Pselect>::value);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, event_write<EventPselect>::value);
+			fSet(events, write<Pselect>::value);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, event_error<EventPselect>::value);
+			fSet(events, error<Pselect>::value);
 		
 		if (events != 0)
 			return true;
@@ -240,7 +242,7 @@ bool EventPselect::getEvent(fd_t &fd, int &events) throw()
 	return false;
 }
 
-void EventPselect::timeout(uint msecs) throw()
+void Pselect::timeout(uint msecs) throw()
 {
 	if (msecs > 1000)
 	{
@@ -252,3 +254,5 @@ void EventPselect::timeout(uint msecs) throw()
 	
 	_timeout.tv_nsec = msecs * 1000000;
 }
+
+} // namespace:event

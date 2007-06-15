@@ -34,20 +34,20 @@
 
 #ifndef NDEBUG
 	#include <iostream>
-	using std::cout;
-	using std::endl;
 #endif
 
-class EventKevent
-	: EventInterface<EventKevent>
+namespace event {
+
+class Kevent
+	: Interface<Kevent>
 {
 private:
 	timeval _timeout;
 	int nfds;
 	int evfd;
 public:
-	EventKevent() throw();
-	~EventKevent() throw();
+	Kevent() throw();
+	~Kevent() throw();
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
@@ -59,10 +59,12 @@ public:
 
 /* traits */
 
-template <> struct event_has_accept<EventKevent> { static const bool value; };
-template <> struct event_read<EventKevent> { static const int value; };
-template <> struct event_write<EventKevent> { static const int value; };
-template <> struct event_accept<EventKevent> { static const int value; };
-template <> struct event_system<EventKevent> { static const std::string value; };
+template <> struct has_accept<Kevent> { static const bool value; };
+template <> struct read<Kevent> { static const int value; };
+template <> struct write<Kevent> { static const int value; };
+template <> struct accept<Kevent> { static const int value; };
+template <> struct system<Kevent> { static const std::string value; };
+
+} // namespace:event
 
 #endif // EventKevent_INCLUDED

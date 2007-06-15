@@ -36,24 +36,27 @@
 
 #include <ctime>
 
+//! Event system
+namespace event {
+
 //! Event I/O abstraction
 template <typename Evs>
-class EventInterface
+class Interface
 {
 protected:
 	 //! Last error number (errno)
 	int error;
 public:
 	//! Type for FD
-	typedef typename event_fd_type<Evs>::fd_t fd_t;
+	typedef typename event::fd_type<Evs>::fd_t fd_t;
 	//! Type for events
-	typedef typename event_type<Evs>::ev_t ev_t;
+	typedef typename event::ev_type<Evs>::ev_t ev_t;
 	
 	//! Constructor
-	EventInterface() throw() { }
+	Interface() throw() { }
 	
 	//! Destructor
-	virtual ~EventInterface() throw() { }
+	virtual ~Interface() throw() { }
 	
 	//! Set timeout for wait()
 	/**
@@ -113,5 +116,7 @@ public:
 	 */
 	int getError() const throw();
 };
+
+} // namespace:event
 
 #endif // EventInterface_INCLUDED

@@ -33,38 +33,40 @@
 
 /* traits */
 
+namespace event {
+
 template <typename Evs>
-struct event_type
+struct ev_type
 {
 	typedef int ev_t;
 };
 
 template <typename Evs>
-struct event_fd_type
+struct fd_type
 {
 	typedef int fd_t;
 };
 
 template <typename Evs>
-struct event_has_hangup
+struct has_hangup
 {
 	static const bool value = false;
 };
 
 template <typename Evs>
-struct event_has_error
+struct has_error
 {
 	static const bool value = false;
 };
 
 template <typename Evs>
-struct event_has_connect
+struct has_connect
 {
 	static const bool value = false;
 };
 
 template <typename Evs>
-struct event_has_accept
+struct has_accept
 {
 	static const bool value = false;
 };
@@ -72,51 +74,53 @@ struct event_has_accept
 /* events */
 
 template <typename Evs>
-struct event_read
+struct read
 {
 	static const int value = 0;
 };
 
 template <typename Evs>
-struct event_write
+struct write
 {
 	static const int value = 0;
 };
 
 template <typename Evs>
-struct event_error
+struct error
 {
 	static const int value = 0;
 };
 
 template <typename Evs>
-struct event_hangup
+struct hangup
 {
 	static const int value = 0;
 };
 
 template <typename Evs>
-struct event_accept
+struct accept
 {
 	static const int value = 0;
 };
 
 template <typename Evs>
-struct event_connect
+struct connect
 {
 	static const int value = 0;
 };
 
 template <typename Evs>
-struct event_system
+struct system
 {
 	static const std::string value;
 };
 
 template <typename Evs>
-struct event_invalid_fd
+struct invalid_fd
 {
-	static const typename event_fd_type<Evs>::fd_t value = -1;
+	static const typename fd_type<Evs>::fd_t value = -1;
 };
+
+} // namespace:event
 
 #endif // EventTraits_INCLUDED

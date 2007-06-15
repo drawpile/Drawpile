@@ -37,17 +37,19 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-const bool event_has_error<EventSelect>::value = true;
-const int event_read<EventSelect>::value = 1;
-const int event_write<EventSelect>::value = 2;
-const int event_error<EventSelect>::value = 4;
-const std::string event_system<EventSelect>::value("select");
+namespace event {
 
-EventSelect::EventSelect() throw()
+const bool has_error<Select>::value = true;
+const int read<Select>::value = 1;
+const int write<Select>::value = 2;
+const int error<Select>::value = 4;
+const std::string system<Select>::value("select");
+
+Select::Select() throw()
 	#ifndef WIN32
-	: nfds_r(event_invalid_fd<EventSelect>::value),
-	nfds_w(event_invalid_fd<EventSelect>::value),
-	nfds_e(event_invalid_fd<EventSelect>::value)
+	: nfds_r(event::invalid_fd<Select>::value),
+	nfds_w(event::invalid_fd<Select>::value),
+	nfds_e(event::invalid_fd<Select>::value)
 	#endif
 {
 	FD_ZERO(&fds_r);
@@ -55,12 +57,12 @@ EventSelect::EventSelect() throw()
 	FD_ZERO(&fds_e);
 }
 
-EventSelect::~EventSelect() throw()
+Select::~Select() throw()
 {
 }
 
 // Errors: WSAENETDOWN
-int EventSelect::wait() throw()
+int Select::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.wait()" << endl;
@@ -83,7 +85,7 @@ int EventSelect::wait() throw()
 	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	#endif
 	
-	nfds = select((ubnfds == event_invalid_fd<EventSelect>::value ? event_invalid_fd<EventSelect>::value : ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
+	nfds = select((ubnfds == event::invalid_fd<Select>::value ? event::invalid_fd<Select>::value : ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
 	
 	switch (nfds)
 	{
@@ -121,17 +123,17 @@ int EventSelect::wait() throw()
 	return nfds;
 }
 
-int EventSelect::add(fd_t fd, ev_t events) throw()
+int Select::add(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventSelect>::value);
+	assert(fd != event::invalid_fd<Select>::value);
 	
 	bool rc=false;
 	
-	if (fIsSet(events, event_read<EventSelect>::value))
+	if (fIsSet(events, event::read<Select>::value))
 	{
 		FD_SET(fd, &fds_r);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -140,7 +142,7 @@ int EventSelect::add(fd_t fd, ev_t events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, event_write<EventSelect>::value))
+	if (fIsSet(events, event::write<Select>::value))
 	{
 		FD_SET(fd, &fds_w);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -149,7 +151,7 @@ int EventSelect::add(fd_t fd, ev_t events) throw()
 		#endif // !Win32
 		rc = true;
 	}
-	if (fIsSet(events, event_error<EventSelect>::value))
+	if (fIsSet(events, event::error<Select>::value))
 	{
 		FD_SET(fd, &fds_e);
 		#if !defined(WIN32) // win32 ignores the argument
@@ -167,58 +169,58 @@ int EventSelect::add(fd_t fd, ev_t events) throw()
 	return rc;
 }
 
-int EventSelect::modify(fd_t fd, ev_t events) throw()
+int Select::modify(fd_t fd, ev_t events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventSelect>::value);
+	assert(fd != event::invalid_fd<Select>::value);
 	
 	// act like a wrapper.
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, event_read<EventSelect>::value))
+	if (!fIsSet(events, event::read<Select>::value))
 	{
 		FD_CLR(fd, &fds_r);
 		#ifndef WIN32
 		read_set.erase(fd);
 		if (fd == nfds_r)
-			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event_invalid_fd<EventSelect>::value);
+			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event::invalid_fd<Select>::value);
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, event_write<EventSelect>::value))
+	if (!fIsSet(events, event::write<Select>::value))
 	{
 		FD_CLR(fd, &fds_w);
 		#ifndef WIN32
 		write_set.erase(fd);
 		if (fd == nfds_w)
-			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event_invalid_fd<EventSelect>::value);
+			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event::invalid_fd<Select>::value);
 		#endif // WIN32
 	}
 	
-	if (!fIsSet(events, event_error<EventSelect>::value))
+	if (!fIsSet(events, event::error<Select>::value))
 	{
 		FD_CLR(fd, &fds_e);
 		#ifndef WIN32
 		error_set.erase(fd);
 		if (fd == nfds_e)
-			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event_invalid_fd<EventSelect>::value);
+			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event::invalid_fd<Select>::value);
 		#endif // WIN32
 	}
 	
 	return 0;
 }
 
-int EventSelect::remove(fd_t fd) throw()
+int Select::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventSelect>::value);
+	assert(fd != event::invalid_fd<Select>::value);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	assert(iter != fd_list.end());
@@ -227,21 +229,21 @@ int EventSelect::remove(fd_t fd) throw()
 	#ifndef WIN32
 	read_set.erase(fd);
 	if (fd == nfds_r)
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event_invalid_fd<EventSelect>::value);
+		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event::invalid_fd<Select>::value);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_w);
 	#ifndef WIN32
 	write_set.erase(fd);
 	if (fd == nfds_w)
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event_invalid_fd<EventSelect>::value);
+		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event::invalid_fd<Select>::value);
 	#endif // WIN32
 	
 	FD_CLR(fd, &fds_e);
 	#ifndef WIN32
 	error_set.erase(fd);
 	if (fd == nfds_e)
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event_invalid_fd<EventSelect>::value);
+		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event::invalid_fd<Select>::value);
 	#endif // WIN32
 	
 	fd_list.erase(iter);
@@ -250,7 +252,7 @@ int EventSelect::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventSelect::getEvent(fd_t &fd, ev_t &events) throw()
+bool Select::getEvent(fd_t &fd, ev_t &events) throw()
 {
 	assert(fd_list.size() > 0);
 	
@@ -261,11 +263,11 @@ bool EventSelect::getEvent(fd_t &fd, ev_t &events) throw()
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, event_read<EventSelect>::value);
+			fSet(events, event::read<Select>::value);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, event_write<EventSelect>::value);
+			fSet(events, event::write<Select>::value);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, event_error<EventSelect>::value);
+			fSet(events, event::error<Select>::value);
 		
 		if (events != 0)
 			return true;
@@ -274,7 +276,7 @@ bool EventSelect::getEvent(fd_t &fd, ev_t &events) throw()
 	return false;
 }
 
-void EventSelect::timeout(uint msecs) throw()
+void Select::timeout(uint msecs) throw()
 {
 	if (msecs > 1000)
 	{
@@ -286,3 +288,5 @@ void EventSelect::timeout(uint msecs) throw()
 	
 	_timeout.tv_usec = msecs * 1000;
 }
+
+} // namespace::event

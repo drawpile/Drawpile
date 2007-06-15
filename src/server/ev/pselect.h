@@ -34,8 +34,6 @@
 
 #ifndef NDEBUG
 	#include <iostream>
-	using std::cout;
-	using std::endl;
 #endif
 
 #include <sys/select.h>
@@ -44,8 +42,10 @@
 #include <map>
 #include <set>
 
-class EventPselect
-	: EventInterface<EventPselect>
+namespace event {
+
+class Pselect
+	: Interface<Pselect>
 {
 private:
 	timespec _timeout;
@@ -57,8 +57,8 @@ private:
 	std::set<int> read_set, write_set, error_set;
 	int nfds_r, nfds_w, nfds_e;
 public:
-	EventPselect() throw();
-	~EventPselect() throw();
+	Pselect() throw();
+	~Pselect() throw();
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
@@ -70,10 +70,12 @@ public:
 
 /* traits */
 
-template <> struct event_has_error<EventPselect> { static const bool value; };
-template <> struct event_read<EventPselect> { static const int value; };
-template <> struct event_write<EventPselect> { static const int value; };
-template <> struct event_error<EventPselect> { static const int value; };
-template <> struct event_system<EventPselect> { static const std::string value; };
+template <> struct has_error<Pselect> { static const bool value; };
+template <> struct read<Pselect> { static const int value; };
+template <> struct write<Pselect> { static const int value; };
+template <> struct error<Pselect> { static const int value; };
+template <> struct system<Pselect> { static const std::string value; };
+
+} // namespace:event
 
 #endif // EventPselect_INCLUDED

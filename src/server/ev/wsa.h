@@ -32,22 +32,23 @@
 #include "interface.h"
 #include "traits.h"
 
-class EventWSA;
-template <> struct event_type<EventWSA> { typedef long ev_t; };
-
 #ifndef NDEBUG
 	#include <iostream>
-	using std::cout;
-	using std::endl;
 #endif
 
 #include <map>
 #include <winsock2.h>
 
+namespace event {
+
+class WSA;
+template <> struct ev_type<WSA> { typedef long ev_t; };
+template <> struct fd_type<WSA> { typedef SOCKET fd_t; };
+
 const uint max_events = 10;
 
-class EventWSA
-	: EventInterface<EventWSA>
+class WSA
+	: Interface<WSA>
 {
 private:
 	uint _timeout;
@@ -58,8 +59,8 @@ private:
 	WSAEVENT w_ev[max_events];
 	SOCKET fdl[max_events];
 public:
-	EventWSA() throw();
-	~EventWSA() throw();
+	WSA() throw();
+	~WSA() throw();
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
@@ -71,21 +72,21 @@ public:
 
 /* traits */
 
-template <> struct event_fd_type<EventWSA> { typedef SOCKET fd_t; };
+template <> struct has_hangup<WSA> { static const bool value; };
+template <> struct has_connect<WSA> { static const bool value; };
+template <> struct has_accept<WSA> { static const bool value; };
+template <> struct read<WSA> { static const long value; };
+template <> struct write<WSA> { static const long value; };
+template <> struct hangup<WSA> { static const long value; };
+template <> struct accept<WSA> { static const long value; };
+template <> struct connect<WSA> { static const long value; };
+template <> struct system<WSA> { static const std::string value; };
 
-template <> struct event_has_hangup<EventWSA> { static const bool value; };
-template <> struct event_has_connect<EventWSA> { static const bool value; };
-template <> struct event_has_accept<EventWSA> { static const bool value; };
-template <> struct event_read<EventWSA> { static const long value; };
-template <> struct event_write<EventWSA> { static const long value; };
-template <> struct event_hangup<EventWSA> { static const long value; };
-template <> struct event_accept<EventWSA> { static const long value; };
-template <> struct event_connect<EventWSA> { static const long value; };
-template <> struct event_system<EventWSA> { static const std::string value; };
-
-template <> struct event_invalid_fd<EventWSA> { static const event_fd_type<Evs>::ev_t; };
+template <> struct invalid_fd<WSA> { static const fd_type<WSA>::fd_t value; };
 
 // unused, but required because GCC is less than bright
-template <> struct event_error<EventWSA> { static const long value; };
+template <> struct error<WSA> { static const long value; };
+
+} // namespace:event
 
 #endif // EventWSA_INCLUDED

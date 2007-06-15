@@ -28,8 +28,12 @@
 
 #include "interface.h"
 
+namespace event {
+
 template <typename T>
-int EventInterface<T>::getError() const throw()
+int Interface<T>::getError() const throw()
 {
 	return error;
 }
+
+} // namespace:event

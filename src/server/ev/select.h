@@ -34,9 +34,6 @@
 
 #ifndef NDEBUG
 	#include <iostream>
-	using std::cout;
-	using std::endl;
-	using std::cerr;
 #endif
 
 #ifdef WIN32
@@ -48,13 +45,15 @@
 #include <map>
 #include <set>
 
+namespace event {
+
 #ifdef WIN32
-class EventSelect;
-template <> struct event_fd_type<EventSelect> { typedef SOCKET fd_t; };
+class Select;
+template <> struct fd_type<Select> { typedef SOCKET fd_t; };
 #endif
 
-class EventSelect
-	: EventInterface<EventSelect>
+class Select
+	: Interface<Select>
 {
 private:
 	timeval _timeout;
@@ -67,8 +66,8 @@ private:
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
 public:
-	EventSelect() throw();
-	~EventSelect() throw();
+	Select() throw();
+	~Select() throw();
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
@@ -80,10 +79,12 @@ public:
 
 /* traits */
 
-template <> struct event_has_error<EventSelect> { static const bool value; };
-template <> struct event_read<EventSelect> { static const int value; };
-template <> struct event_write<EventSelect> { static const int value; };
-template <> struct event_error<EventSelect> { static const int value; };
-template <> struct event_system<EventSelect> { static const std::string value; };
+template <> struct has_error<Select> { static const bool value; };
+template <> struct read<Select> { static const int value; };
+template <> struct write<Select> { static const int value; };
+template <> struct error<Select> { static const int value; };
+template <> struct system<Select> { static const std::string value; };
+
+} // namespace:event
 
 #endif // EventSelect_INCLUDED

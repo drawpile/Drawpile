@@ -34,16 +34,16 @@
 
 #ifndef NDEBUG
 	#include <iostream>
-	using std::cout;
-	using std::endl;
 #endif
 
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
 
-class EventKqueue
-	: EventInterface<EventKqueue>
+namespace event {
+
+class Kqueue
+	: Interface<Kqueue>
 {
 private:
 	timespec _timeout;
@@ -51,8 +51,8 @@ private:
 	kevent chlist[max_events], *evtrigr;
 	size_t chlist_count, evtrigr_size;
 public:
-	EventKqueue() throw();
-	~EventKqueue() throw();
+	Kqueue() throw();
+	~Kqueue() throw();
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
@@ -64,8 +64,10 @@ public:
 
 /* traits */
 
-template <> struct event_read<EventKqueue> { static const int value; };
-template <> struct event_write<EventKqueue> { static const int value; };
-template <> struct event_system<EventKqueue> { static const std::string value; };
+template <> struct read<Kqueue> { static const int value; };
+template <> struct write<Kqueue> { static const int value; };
+template <> struct system<Kqueue> { static const std::string value; };
+
+} // namespace:event
 
 #endif // EventKqueue_INCLUDED

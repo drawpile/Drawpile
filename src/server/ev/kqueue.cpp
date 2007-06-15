@@ -37,11 +37,13 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-const int event_read<EventKqueue>::value = EVFILT_READ;
-const int event_write<EventKqueue>::value = EVFILT_WRITE;
-const std::string event_system<EventKqueue>::value("kqueue");
+namespace event {
 
-EventKqueue::EventKqueue() throw(std::bad_alloc)
+const int read<Kqueue>::value = EVFILT_READ;
+const int write<Kqueue>::value = EVFILT_WRITE;
+const std::string system<Kqueue>::value("kqueue");
+
+Kqueue::Kqueue() throw(std::bad_alloc)
 	: evfd(0),
 	chlist_count(0),
 	evtrigr_size(max_events)
@@ -60,7 +62,7 @@ EventKqueue::EventKqueue() throw(std::bad_alloc)
 	evtrigr = new kevent[evtrigr_size];
 }
 
-EventKqueue::~EventKqueue() throw()
+Kqueue::~Kqueue() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~kqueue()" << endl;
@@ -79,7 +81,7 @@ EventKqueue::~EventKqueue() throw()
 }
 
 // Errors: EACCES, ENOMEM
-int EventKqueue::wait() throw()
+int Kqueue::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.wait()" << endl;
@@ -109,7 +111,7 @@ int EventKqueue::wait() throw()
 	return nfds;
 }
 
-int EventKqueue::add(fd_t fd, int events) throw()
+int Kqueue::add(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.add(FD: " << fd << ")" << endl;
@@ -125,7 +127,7 @@ int EventKqueue::add(fd_t fd, int events) throw()
 	return true;
 }
 
-int EventKqueue::modify(fd_t fd, int events) throw()
+int Kqueue::modify(fd_t fd, int events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.modify(FD: " << fd << ")" << endl;
@@ -141,7 +143,7 @@ int EventKqueue::modify(fd_t fd, int events) throw()
 	return true;
 }
 
-int EventKqueue::remove(fd_t fd) throw()
+int Kqueue::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.remove(FD: " << fd << ")" << endl;
@@ -157,7 +159,7 @@ int EventKqueue::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventKqueue::getEvent(fd_t &fd, int &r_events) throw()
+bool Kqueue::getEvent(fd_t &fd, int &r_events) throw()
 {
 	if (nfds == evtrigr_size)
 		return false;
@@ -172,7 +174,7 @@ bool EventKqueue::getEvent(fd_t &fd, int &r_events) throw()
 	return true;
 }
 
-void EventKqueue::timeout(uint msecs) throw()
+void Kqueue::timeout(uint msecs) throw()
 {
 	#ifndef NDEBUG
 	std::cout << "kqueue.timeout(msecs: " << msecs << ")" << std::endl;
@@ -188,3 +190,5 @@ void EventKqueue::timeout(uint msecs) throw()
 	
 	_timeout.tv_nsec = msecs * 1000000; // nanoseconds
 }
+
+} // namespace:event

@@ -36,31 +36,33 @@
 #endif
 #include <cassert> // assert()
 
-const bool event_has_hangup<EventWSA>::value = true;
-const bool event_has_connect<EventWSA>::value = true;
-const bool event_has_accept<EventWSA>::value = true;
-const long event_read<EventWSA>::value = FD_READ;
-const long event_write<EventWSA>::value = FD_WRITE;
-const long event_hangup<EventWSA>::value = FD_CLOSE;
-const long event_accept<EventWSA>::value = FD_ACCEPT;
-const long event_connect<EventWSA>::value = FD_CONNECT;
-const std::string event_system<EventWSA>::value("wsa");
+namespace event {
 
-const SOCKET event_invalid_fd<EventWSA>::value = INVALID_SOCKET;
+const bool has_hangup<WSA>::value = true;
+const bool has_connect<WSA>::value = true;
+const bool has_accept<WSA>::value = true;
+const long read<WSA>::value = FD_READ;
+const long write<WSA>::value = FD_WRITE;
+const long hangup<WSA>::value = FD_CLOSE;
+const long accept<WSA>::value = FD_ACCEPT;
+const long connect<WSA>::value = FD_CONNECT;
+const std::string system<WSA>::value("wsa");
 
-EventWSA::EventWSA() throw()
+const SOCKET invalid_fd<WSA>::value = INVALID_SOCKET;
+
+WSA::WSA() throw()
 	: nfds(0), last_event(0)
 {
 	for (uint i=0; i != max_events; i++)
 		w_ev[i] = WSA_INVALID_EVENT;
 }
 
-EventWSA::~EventWSA() throw()
+WSA::~WSA() throw()
 {
 }
 
 // Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
-int EventWSA::wait() throw()
+int WSA::wait() throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.wait()" << endl;
@@ -98,7 +100,7 @@ int EventWSA::wait() throw()
 }
 
 // Errors: WSAENETDOWN
-int EventWSA::add(fd_t fd, long events) throw()
+int WSA::add(fd_t fd, long events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.add(fd: " << fd << ")" << endl;
@@ -106,7 +108,7 @@ int EventWSA::add(fd_t fd, long events) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
-	fSet(events, event_hangup<EventWSA>::value);
+	fSet(events, hangup<WSA>::value);
 	
 	for (uint i=0; i != max_events; ++i)
 	{
@@ -147,7 +149,7 @@ int EventWSA::add(fd_t fd, long events) throw()
 }
 
 // Errors: WSAENETDOWN
-int EventWSA::modify(fd_t fd, long events) throw()
+int WSA::modify(fd_t fd, long events) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.modify(fd: " << fd << ")" << endl;
@@ -155,7 +157,7 @@ int EventWSA::modify(fd_t fd, long events) throw()
 	
 	assert(fd != INVALID_SOCKET);
 	
-	fSet(events, event_hangup<EventWSA>::value);
+	fSet(events, hangup<WSA>::value);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
@@ -178,7 +180,7 @@ int EventWSA::modify(fd_t fd, long events) throw()
 	return 0;
 }
 
-int EventWSA::remove(fd_t fd) throw()
+int WSA::remove(fd_t fd) throw()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.remove(fd: " << fd << ")" << endl;
@@ -204,7 +206,7 @@ int EventWSA::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventWSA::getEvent(fd_t &fd, long &events) throw()
+bool WSA::getEvent(fd_t &fd, long &events) throw()
 {
 	WSANETWORKEVENTS set;
 	
@@ -229,7 +231,7 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 				case WSAETIMEDOUT: // connection timed-out
 				case WSAENETUNREACH: // network unreachable
 				case WSAECONNREFUSED: // connection refused/rejected
-					events = event_hangup<EventWSA>::value;
+					events = hangup<WSA>::value;
 					break;
 				case WSAENOBUFS: // out of network buffers
 				case WSAENETDOWN: // network sub-system failure
@@ -262,7 +264,9 @@ bool EventWSA::getEvent(fd_t &fd, long &events) throw()
 	return false;
 }
 
-void EventWSA::timeout(uint msecs) throw()
+void WSA::timeout(uint msecs) throw()
 {
 	_timeout = msecs;
 }
+
+} // namespace:event

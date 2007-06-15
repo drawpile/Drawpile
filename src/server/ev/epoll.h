@@ -36,13 +36,13 @@
 
 #ifndef NDEBUG
 	#include <iostream>
-	using std::cout;
-	using std::endl;
 #endif
 #include <sys/epoll.h>
 
-class EventEpoll
-	: EventInterface<EventEpoll>
+namespace event {
+
+class Epoll
+	: Interface<Epoll>
 {
 private:
 	uint _timeout;
@@ -50,8 +50,8 @@ private:
 	int evfd;
 	epoll_event events[10];
 public:
-	EventEpoll() throw(std::exception);
-	~EventEpoll() throw();
+	Epoll() throw(std::exception);
+	~Epoll() throw();
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
@@ -63,12 +63,14 @@ public:
 
 /* traits */
 
-template <> struct event_has_hangup<EventEpoll> { static const bool value; };
-template <> struct event_has_error<EventEpoll> { static const bool value; };
-template <> struct event_read<EventEpoll> { static const int value; };
-template <> struct event_write<EventEpoll> { static const int value; };
-template <> struct event_error<EventEpoll> { static const int value; };
-template <> struct event_hangup<EventEpoll> { static const int value; };
-template <> struct event_system<EventEpoll> { static const std::string value; };
+template <> struct has_hangup<Epoll> { static const bool value; };
+template <> struct has_error<Epoll> { static const bool value; };
+template <> struct read<Epoll> { static const int value; };
+template <> struct write<Epoll> { static const int value; };
+template <> struct error<Epoll> { static const int value; };
+template <> struct hangup<Epoll> { static const int value; };
+template <> struct system<Epoll> { static const std::string value; };
+
+} // namespace:event
 
 #endif // EventEpoll_INCLUDED

@@ -37,20 +37,22 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-const bool event_has_hangup<EventEpoll>::value = true;
-const bool event_has_error<EventEpoll>::value = true;
-const int event_read<EventEpoll>::value = EPOLLIN;
-const int event_write<EventEpoll>::value = EPOLLOUT;
-const int event_error<EventEpoll>::value = EPOLLERR;
-const int event_hangup<EventEpoll>::value = EPOLLHUP;
-const std::string event_system<EventEpoll>::value("epoll");
+namespace event {
 
-EventEpoll::EventEpoll() throw(std::exception)
-	: nfds(-1), evfd(event_invalid_fd<EventEpoll>::value)
+const bool has_hangup<Epoll>::value = true;
+const bool has_error<Epoll>::value = true;
+const int read<Epoll>::value = EPOLLIN;
+const int write<Epoll>::value = EPOLLOUT;
+const int error<Epoll>::value = EPOLLERR;
+const int hangup<Epoll>::value = EPOLLHUP;
+const std::string system<Epoll>::value("epoll");
+
+Epoll::Epoll() throw(std::exception)
+	: nfds(-1), evfd(invalid_fd<Epoll>::value)
 {
 	evfd = epoll_create(10);
 	
-	if (evfd == event_invalid_fd<EventEpoll>::value)
+	if (evfd == invalid_fd<Epoll>::value)
 	{
 		error = errno;
 		
@@ -61,21 +63,21 @@ EventEpoll::EventEpoll() throw(std::exception)
 	}
 }
 
-EventEpoll::~EventEpoll() throw()
+Epoll::~Epoll() throw()
 {
-	if (evfd != event_invalid_fd<EventEpoll>::value)
+	if (evfd != invalid_fd<Epoll>::value)
 	{
 		close(evfd);
 		evfd = -1;
 	}
 	
 	// Make sure the event fd was closed.
-	assert(evfd == event_invalid_fd<EventEpoll>::value);
+	assert(evfd == invalid_fd<Epoll>::value);
 }
 
-int EventEpoll::wait() throw()
+int Epoll::wait() throw()
 {
-	assert(evfd != event_invalid_fd<EventEpoll>::value);
+	assert(evfd != invalid_fd<Epoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.wait()" << endl;
@@ -99,15 +101,15 @@ int EventEpoll::wait() throw()
 }
 
 // Errors: ENOMEM
-int EventEpoll::add(fd_t fd, ev_t events) throw()
+int Epoll::add(fd_t fd, ev_t events) throw()
 {
-	assert(evfd != event_invalid_fd<EventEpoll>::value);
+	assert(evfd != invalid_fd<Epoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.add(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventEpoll>::value);
+	assert(fd != invalid_fd<Epoll>::value);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -130,15 +132,15 @@ int EventEpoll::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int EventEpoll::modify(fd_t fd, ev_t events) throw()
+int Epoll::modify(fd_t fd, ev_t events) throw()
 {
-	assert(evfd != event_invalid_fd<EventEpoll>::value);
+	assert(evfd != invalid_fd<Epoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.modify(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventEpoll>::value);
+	assert(fd != invalid_fd<Epoll>::value);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -161,15 +163,15 @@ int EventEpoll::modify(fd_t fd, ev_t events) throw()
 }
 
 // Errors: ENOMEM
-int EventEpoll::remove(fd_t fd) throw()
+int Epoll::remove(fd_t fd) throw()
 {
-	assert(evfd != event_invalid_fd<EventEpoll>::value);
+	assert(evfd != invalid_fd<Epoll>::value);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventEpoll>::value);
+	assert(fd != invalid_fd<Epoll>::value);
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	
@@ -187,9 +189,9 @@ int EventEpoll::remove(fd_t fd) throw()
 	return true;
 }
 
-bool EventEpoll::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool Epoll::getEvent(fd_t &fd, ev_t &r_events) throw()
 {
-	assert(evfd != event_invalid_fd<EventEpoll>::value);
+	assert(evfd != invalid_fd<Epoll>::value);
 	
 	if (nfds == -1)
 		return false;
@@ -202,12 +204,14 @@ bool EventEpoll::getEvent(fd_t &fd, ev_t &r_events) throw()
 	cout << "epoll.getEvent(FD: " << fd << ", events: " << r_events << ")" << endl;
 	#endif
 	
-	assert(fd != event_invalid_fd<EventEpoll>::value); // shouldn't happen
+	assert(fd != invalid_fd<Epoll>::value); // shouldn't happen
 	
 	return true;
 }
 
-void EventEpoll::timeout(uint msecs) throw()
+void Epoll::timeout(uint msecs) throw()
 {
 	_timeout = msecs;
 }
+
+} // namespace:event
