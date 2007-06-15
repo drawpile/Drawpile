@@ -82,7 +82,17 @@ typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
 //! Session information
 struct Session
 {
-	//! ctor
+	//! Default constructor
+	/**
+	 * @param[in] _id Session identifier
+	 * @param[in] _mode Default user mode
+	 * @param[in] _limit User limit
+	 * @param[in] _owner Session owner ID
+	 * @param[in] _width Canvas' width
+	 * @param[in] _height Canvas' height
+	 * @param[in] _level Required feature level
+	 * @param[in] _title Session title
+	 */
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
 		uint _width, uint _height, uint _level, Array<char>& _title) throw()
 		: id(_id),
@@ -107,7 +117,7 @@ struct Session
 		#endif
 	}
 	
-	//! dtor
+	//! Destructor
 	~Session() throw()
 	{
 		#ifndef NDEBUG

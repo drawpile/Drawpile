@@ -23,12 +23,16 @@
 template <typename T>
 struct Array
 {
-	//! ctor
+	//! Constructor
 	Array() throw()
 		: ptr(0), size(0)
 	{
 	}
 	
+	//! Copy constructor
+	/**
+	 * @param[in] array Source array
+	 */
 	Array(const Array<T>& array) throw()
 		: size(array.size)
 	{
@@ -36,14 +40,21 @@ struct Array
 		ptr = array.ptr;
 	}
 	
-	//! ctor
+	//! Constructor
+	/**
+	 * @param[in] _data char* string to associate with this Array
+	 * @param[in] _size Size of _data
+	 */
 	Array(T* _data, const size_t _size) throw()
 		: ptr(_data), size(_size)
 	{
 		assert((_data == 0 and _size == 0) or (_data != 0 and _size > 0));
 	}
 	
-	//! dtor
+	//! Destructor
+	/**
+	 * @note Deletes contained char* string to avoid memory leak
+	 */
 	~Array() throw() { delete [] ptr; }
 	
 	void set(T* _data, const size_t _size) throw()

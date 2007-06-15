@@ -24,13 +24,20 @@
 //! Circular buffer.
 struct Buffer
 {
-	//! ctor with buffer assignment
+	//! Default constructor
+	/**
+	 * @param[in] buf char* string to associate with Buffer
+	 * @param[in] len size of buf
+	 */
 	Buffer(char* buf=0, const size_t len=0) throw();
 	
-	//! dtor
+	//! Destructor
 	~Buffer() throw();
 	
 	//! Moves buffer contents to another buffer struct
+	/**
+	 * @param[in,out] buffer Buffer to move contents from, source Buffer is emptied.
+	 */
 	Buffer& operator<< (Buffer& buffer) throw();
 	
 	void reset() throw();
@@ -38,25 +45,35 @@ struct Buffer
 	//! Resizes the buffer to new size.
 	/**
 	 * This is expensive since it calls reposition(), which may cause another alloc.
+	 *
+	 * @param[in] nsize New size in bytes
+	 * @param[in] nbuf (Optional) buffer to use, otherwise the new buffer is allocated internally.
 	 */
 	void resize(size_t nsize, char* nbuf=0) throw(std::bad_alloc);
 	
 	//! Copies the still readable portion of the data to the provided buffer
+	/**
+	 * @param[out] buf char* string to fill with current buffer contents
+	 * @param[in] buflen Size of buf
+	 */
 	bool getBuffer(char*& buf, const size_t buflen) const throw();
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
 	 * Simplifies assignment of new *char 
 	 *
-	 * @param buf
-	 * @param buflen
-	 * @param fill
+	 * @param[in] buf char* string to associate with buffer
+	 * @param[in] buflen Size of buf
+	 * @param[in] fill (Optional) Number of bytes filled
+	 *
+	 * @note Old buffer is deleted to avoid memory leak
 	 */
 	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) throw();
 	
 	//! Repositions data for maximum contiguous _read_ length.
 	void reposition() throw(std::bad_alloc);
 	
+	//! Returns true if buffer has no data
 	const bool isEmpty() const throw();
 	
 	//! Did read of 'n' bytes.
@@ -65,7 +82,7 @@ struct Buffer
 	 * Decrements .left and moves .*rpos by 'n' bytes, possibly resetting the
 	 * position back to the beginning of the buffer.
 	 *
-	 * @param len
+	 * @param[in] len Number of bytes to move the read pointer by
 	 */
 	void read(const size_t len) throw();
 	
@@ -82,7 +99,7 @@ struct Buffer
 	 * Increments .left and moves .*wpos by 'n' bytes. Possibly resets .*wpos back
 	 * to beginning of the circular buffer.
 	 *
-	 * @param len states the number of bytes you wrote to buffer.
+	 * @param[in] len Number of bytes you wrote to buffer, moves write position by this much.
 	 */
 	void write(const size_t len) throw();
 	
@@ -93,6 +110,9 @@ struct Buffer
 	size_t canWrite() const throw();
 	
 	//! Returns the number of free bytes in buffer.
+	/**
+	 * @return Number of bytes still unused
+	 */
 	size_t free() const throw();
 	
 	//! Rewinds wpos and rpos to beginning of the buffer.

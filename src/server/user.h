@@ -50,7 +50,10 @@ typedef std::deque<message_ref>::const_iterator usr_message_const_i;
 //! User session data
 struct SessionData
 {
-	//! ctor
+	//! Default constructor
+	/**
+	 * @param[in] s Session to associate with the user session data
+	 */
 	SessionData(Session &s) throw()
 		: session(&s),
 		layer(protocol::null_layer),
@@ -63,7 +66,7 @@ struct SessionData
 	{
 	}
 	
-	//! dtor
+	//! Destructor
 	~SessionData() throw() { delete cachedToolInfo; }
 	
 	//! Session reference
@@ -92,6 +95,9 @@ struct SessionData
 	}
 	
 	//! Set user mode
+	/**
+	 * @param[in] flags Flags to set
+	 */
 	void setMode(const uint8_t flags) throw()
 	{
 		locked = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Locked));
@@ -111,7 +117,11 @@ struct SessionData
 //! User information
 struct User
 {
-	//! ctor
+	//! Default constructor
+	/**
+	 * @param[in] _id User identifier
+	 * @param[in] nsock Socket to associate with User
+	 */
 	User(const uint8_t _id, const Socket& nsock) throw()
 		: sock(nsock),
 		session(0),
@@ -141,7 +151,7 @@ struct User
 		assert(_id != protocol::null_user);
 	}
 	
-	//! dtor
+	//! Destructor
 	~User() throw()
 	{
 		#if defined(DEBUG_USER) and !defined(NDEBUG)
@@ -156,7 +166,7 @@ struct User
 	
 	//! Change active session
 	/**
-	 * @param session_id The session which to activate
+	 * @param[in] session_id The session which to activate
 	 */
 	bool makeActive(uint8_t session_id) throw()
 	{
@@ -172,7 +182,7 @@ struct User
 	
 	//! Fetch SessionData* pointer
 	/**
-	 * @param session_id Which session to fetch
+	 * @param[in] session_id Which session to fetch
 	 */
 	SessionData* getSession(uint8_t session_id) throw()
 	{
@@ -182,7 +192,7 @@ struct User
 	
 	//! Fetch const SessionData* pointer
 	/**
-	 * @param session_id Which session to fetch
+	 * @param[in] session_id Which session to fetch
 	 */
 	const SessionData* getConstSession(uint8_t session_id) const throw()
 	{
@@ -192,7 +202,7 @@ struct User
 	
 	//! Cache tool info
 	/**
-	 * @param ti Tool info message to cache
+	 * @param[in] ti Tool info message to cache
 	 * @throw std::bad_alloc If it can't allocate local copy of the tool info
 	 */
 	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
@@ -264,7 +274,7 @@ struct User
 	
 	//! Set client capabilities
 	/**
-	 * @param flags as used in the network protocol
+	 * @param[in] flags as used in the network protocol
 	 */
 	void setCapabilities(const uint8_t flags) throw()
 	{
@@ -292,7 +302,7 @@ struct User
 	
 	//! Set extensions
 	/**
-	 * @param flags as used in the network protocol
+	 * @param[in] flags as used in the network protocol
 	 */
 	void setExtensions(const uint8_t flags) throw()
 	{
