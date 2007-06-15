@@ -41,58 +41,76 @@ template <typename Evs>
 class EventInterface
 {
 protected:
-	int error; // errno;
+	 //! Last error number (errno)
+	int error;
 public:
+	//! Type for FD
 	typedef typename event_fd_type<Evs>::fd_t fd_t;
+	//! Type for events
 	typedef typename event_type<Evs>::ev_t ev_t;
 	
-	//! ctor
+	//! Constructor
 	EventInterface() throw() { }
 	
-	//! dtor
+	//! Destructor
 	virtual ~EventInterface() throw() { }
 	
 	//! Set timeout for wait()
 	/**
-	 * @param msecs milliseconds to wait.
+	 * @param[in] msecs milliseconds to wait.
 	 */
 	virtual void timeout(uint msecs) throw() = 0;
 	
 	//! Wait for events.
 	/**
-	 * @return number of file descriptors triggered, -1 on error, and 0 otherwise.
+	 * @return number of file descriptors triggered
+	 * @return -1 on error
+	 * @return 0 otherwise
 	 */
 	virtual int wait() throw() = 0;
 	
 	//! Adds file descriptor to event polling.
 	/**
-	 * @param fd is the file descriptor to be added to event stack.
-	 * @param events is the events in which fd is to be found.
+	 * @param[in] fd is the file descriptor to be added to event stack.
+	 * @param[in] events is the events in which fd is to be found.
 	 *
-	 * @return true if the fd was added, false if not
+	 * @return \b true if the FD was added
+	 * @return \b false if not
 	 */
 	virtual int add(fd_t fd, ev_t events) throw() = 0;
 	
 	//! Removes file descriptor from event set.
 	/**
-	 * @param fd is the file descriptor to be removed from a event set.
+	 * @param[in] fd is the file descriptor to be removed from a event set.
 	 *
-	 * @return true if the fd was removed, false if not (or was not part of the event set)
+	 * @return \b true if the fd was removed
+	 * @return \b false if not (or was not part of the event set)
 	 */
 	virtual int remove(fd_t fd) throw() = 0;
 	
 	//! Modifies previously added fd for different events.
 	/**
-	 * @param fd is the file descriptor to be modified.
-	 * @param events has the event flags.
+	 * @param[in] fd is the file descriptor to be modified.
+	 * @param[in] events has the event flags.
 	 *
-	 * @return something undefined
+	 * @return ?
 	 */
 	virtual int modify(fd_t fd, ev_t events) throw() = 0;
 	
 	//! Fetches next triggered event.
+	/**
+	 * @param[out] fd triggered file descriptor
+	 * @param[out] events triggered events
+	 * 
+	 * @return \b true if FD was triggered; fd and events parameters were filled
+	 * @return \b false otherwise
+	 */
 	virtual bool getEvent(fd_t &fd, ev_t &events) throw() = 0;
 	
+	//! Get last error number (errno)
+	/**
+	 * @return last errno
+	 */
 	int getError() const throw();
 };
 
