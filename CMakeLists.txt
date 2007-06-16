@@ -16,6 +16,7 @@ set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile server" ON )
+option ( SERVERLIBONLY "Compile server library only" OFF )
 
 option ( UNITTEST "Compile unit tests" OFF )
 
@@ -58,8 +59,8 @@ include ( Macros.cmake )
 
 ###
 
-set ( MTHREADS "-mthreads" )
-check_cxx_accepts_flag ( ${MTHREADS} ACCEPT_MTHREADS )
+#set ( MTHREADS "-mthreads" )
+#check_cxx_accepts_flag ( ${MTHREADS} ACCEPT_MTHREADS )
 
 ### binary and library output ###
 

@@ -56,6 +56,18 @@ if ( HAVE_FORK )
 	link_libraries ( pthread )
 endif ( HAVE_FORK )
 
+# scatter-gather sockets
+
+check_function_exists ( sendmsg HAVE_SENDMSG )
+check_function_exists ( recvmsg HAVE_RECVMSG )
+
+set ( SC_SOCKETS OFF )
+if ( HAVE_SENDMSG )
+	if ( HAVE_RECVMSG )
+		set ( SC_SOCKETS ON )
+	endif ( HAVE_RECVMSG )
+endif ( HAVE_SENDMSG )
+
 # config
 
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
@@ -69,9 +81,6 @@ if ( WIN32 )
 	generate_win32_resource()
 endif ( WIN32 )
 
-link_libraries( libdrawpile ) # DP shared library
-link_libraries( eventslib ) # EV lib
-
 add_subdirectory ( ev/ ) # events lib
 
 if ( NOT DEBUG )
@@ -82,7 +91,7 @@ set (
 	SRV_SOURCES
 	buffer.cpp
 	sockets.cpp
-	dpsrv.cpp
+	#dpsrv.cpp
 	server.cpp
 )
 
@@ -91,24 +100,44 @@ if ( RELEASE )
 	set ( SRV_SOURCES auto_all.cpp )
 endif ( RELEASE )
 
-add_executable (
-	${INTERNALNAME}
-	MACOSX_BUNDLE
+add_library (
+	dpserverlib
 	${SRV_SOURCES}
-	${WIN32RES}
 )
-
-add_dependencies ( drawpile-srv eventslib libdrawpile )
 
 set_target_properties (
-	${INTERNALNAME}
+	dpserverlib
 	PROPERTIES
-	VERSION 0.5.0
-	PROJECT_LABEL drawpile-server
+	OUTPUT_NAME dpserver
+	VERSION 0.5
+	SOVERSION 0.5
+	PROJECT_LABEL dpserverlib
 )
 
-install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
-
-if ( NOT DEBUG )
-	strip_exe ( ${INTERNALNAME} )
-endif ( NOT DEBUG )
+if ( NOT SERVERLIBONLY )
+	add_executable (
+		${INTERNALNAME}
+		MACOSX_BUNDLE
+		dpsrv.cpp
+		${WIN32RES}
+	)
+	
+	add_dependencies ( drawpile-srv dpserverlib eventslib libdrawpile )
+	
+	set_target_properties (
+		${INTERNALNAME}
+		PROPERTIES
+		VERSION 0.5.0
+		PROJECT_LABEL drawpile-server
+	)
+	
+	target_link_libraries( ${INTERNALNAME} dpserverlib ) # DP shared library
+	target_link_libraries( ${INTERNALNAME} libdrawpile ) # DP shared library
+	target_link_libraries( ${INTERNALNAME} eventslib ) # EV lib
+	
+	install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
+	
+	if ( NOT DEBUG )
+		strip_exe ( ${INTERNALNAME} )
+	endif ( NOT DEBUG )
+endif ( NOT SERVERLIBONLY )
