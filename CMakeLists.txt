@@ -109,6 +109,9 @@ endif ( UNITTEST )
 include ( TestBigEndian ) # needs C in project()
 test_big_endian ( IS_BIG_ENDIAN )
 
+### Additional testing
+#add_subdirectory ( build/ )
+
 ### Output config.h ###
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
