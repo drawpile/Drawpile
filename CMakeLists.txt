@@ -52,10 +52,10 @@ endif ( DEBUG )
 ### Optimize ###
 
 if ( OPTIMIZE )
-	include ( Optimize.cmake )
+	include ( build/Optimize.cmake )
 endif ( OPTIMIZE )
 
-include ( Macros.cmake )
+include ( build/Macros.cmake )
 
 ###
 
