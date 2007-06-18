@@ -357,11 +357,31 @@ struct StrokeInfo
 	
 	/* unique data */
 	
-	uint16_t
-		//! Horizontal (X) coordinate.
-		x,
-		//! Vertical (Y) coordinate.
-		y;
+	//! Horizontal (X) coordinate.
+	union {
+		//! X base
+		uint16_t x;
+		
+		struct {
+			//! X sub-pixel
+			uint8_t x_sub:2;
+			//! X actual coordinate
+			uint16_t x_actual:14;
+		};
+	};
+	
+	//! Vertical (Y) coordinate.
+	union {
+		//! Y base
+		uint16_t y;
+		
+		struct {
+			//! Y sub-pixel
+			uint8_t y_sub:2;
+			//! Y actual coordinate
+			uint16_t y_actual:14;
+		};
+	};
 	
 	//! Applied pressure.
 	uint8_t pressure;
