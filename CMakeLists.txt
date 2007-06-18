@@ -52,10 +52,10 @@ endif ( DEBUG )
 ### Optimize ###
 
 if ( OPTIMIZE )
-	include ( build/Optimize.cmake )
+	include ( config/Optimize.cmake )
 endif ( OPTIMIZE )
 
-include ( build/Macros.cmake )
+include ( config/Macros.cmake )
 
 ###
 
@@ -110,7 +110,7 @@ include ( TestBigEndian ) # needs C in project()
 test_big_endian ( IS_BIG_ENDIAN )
 
 ### Additional testing
-#add_subdirectory ( build/ )
+#add_subdirectory ( config/ )
 
 ### Output config.h ###
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
