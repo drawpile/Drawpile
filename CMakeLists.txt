@@ -36,6 +36,8 @@ option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
+option ( ASM "Use hand-written assembly" ON )
+
 option ( RELEASE "" OFF )
 
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
@@ -111,6 +113,12 @@ test_big_endian ( IS_BIG_ENDIAN )
 
 ### Additional testing
 #add_subdirectory ( config/ )
+
+### Assembly
+if ( ASM )
+	message ( STATUS "Assembly enabled!" )
+	set ( USE_ASM ON ) # for config.h
+endif ( ASM )
 
 ### Output config.h ###
 configure_file ( config/config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
