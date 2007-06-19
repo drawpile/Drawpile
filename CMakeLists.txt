@@ -113,7 +113,7 @@ test_big_endian ( IS_BIG_ENDIAN )
 #add_subdirectory ( config/ )
 
 ### Output config.h ###
-configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
+configure_file ( config/config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
 
 # scan sub-directories

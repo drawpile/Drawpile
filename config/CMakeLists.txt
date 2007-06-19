@@ -1,4 +1,4 @@
-# cmake
+# config
 
 message ( STATUS ${CMAKE_CURRENT_BINARY_DIR} )
 
@@ -62,4 +62,4 @@ endif ( HAVE_SSE )
 
 message ( STATUS "Instruction sets found: ${INSTRSETS}" )
 
-configure_file ( ../config.h.cmake ${CMAKE_SOURCE_DIR}/src/config.h )
+configure_file ( config.h.cmake ${CMAKE_SOURCE_DIR}/src/config.h )
