@@ -13,6 +13,7 @@
 #ifndef SHA1_INCLUDED
 #define SHA1_INCLUDED
 
+#include "config.h"
 #include <boost/cstdint.hpp>
 
 //! SHA-1 hash algorithm

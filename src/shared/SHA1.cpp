@@ -52,10 +52,20 @@ void SHA1::Reset() throw()
 	#endif
 }
 
-// Rotate x bits to the left
+// Rotate \b v n bits to the left
 uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
 {
+	#ifdef USE_ASM
+	uint32_t x;
+	asm (
+		"rol %%cl, %0;"
+		: "=r"(x)
+		: "0"(v), "c"(n)
+	);
+	return x;
+	#else
 	return (v << n) | (v >> (32 - n));
+	#endif
 }
 
 
