@@ -36,7 +36,7 @@ option ( SHARED "Build shared library" OFF )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
-option ( ASM "Use hand-written assembly" ON )
+option ( ASM "Use hand-written assembly" OFF )
 
 option ( RELEASE "" OFF )
 
