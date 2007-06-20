@@ -33,8 +33,6 @@ public:
 	
 	uint32_t m_state[5];
 	uint32_t m_count[2];
-	uchar m_buffer[64];
-	uchar m_digest[20];
 	
 	//! Reset hasher
 	void Reset() throw();
@@ -65,8 +63,6 @@ public:
 	void GetHash(uchar *puDest) const throw();
 
 private:
-	uint32_t SHABLK0(const uint32_t i) throw();
-	
 	uint32_t SHABLK1(const uint32_t i) throw();
 	
 	uint32_t ROL32(const uint32_t v, const uint32_t n) const throw();
@@ -87,18 +83,5 @@ private:
 	bool finalized;
 	#endif
 };
-
-#ifdef SHA1_OSTREAM
-#include <ostream>
-
-//! ostream extension for sha1
-std::ostream& operator<< (std::ostream& os, const SHA1& hash)
-{
-	char digest[41];
-	digest[40] = '\0';
-	hash.HexDigest(digest);
-	return os << digest;
-}
-#endif // SHA1_OSTREAM
 
 #endif // SHA1_INCLUDEd

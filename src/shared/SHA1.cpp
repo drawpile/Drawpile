@@ -34,9 +34,6 @@ SHA1::~SHA1() throw()
 void SHA1::Reset() throw()
 {
 	// SHA1 initialization constants
-	memset(m_block.l, 0, sizeof(m_block.l));
-	memset(m_buffer, 0, sizeof(m_buffer));
-	
 	m_state[0] = 0x67452301;
 	m_state[1] = 0xEFCDAB89;
 	m_state[2] = 0x98BADCFE;
@@ -66,16 +63,6 @@ uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
 	#endif
 }
 
-
-uint32_t SHA1::SHABLK0(const uint32_t i) throw()
-{
-	#ifdef IS_BIG_ENDIAN
-	return m_block.l[i];
-	#else
-	return bswap(m_block.l[i]);
-	#endif
-}
-
 uint32_t SHA1::SHABLK1(const uint32_t i) throw()
 {
 	return (m_block.l[i&15] = ROL32((m_block.l[(i+13)&15] ^ m_block.l[(i+8)&15] ^ m_block.l[(i+2)&15] ^ m_block.l[i&15]), 1));
@@ -83,7 +70,7 @@ uint32_t SHA1::SHABLK1(const uint32_t i) throw()
 
 void SHA1::R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
-	z += ((w & (x ^ y)) ^ y) + SHABLK0(i) + 0x5A827999 + ROL32(v, 5);
+	z += ((w & (x ^ y)) ^ y) + m_block.l[i] + 0x5A827999 + ROL32(v, 5);
 	w = ROL32(w, 30);
 }
 
@@ -119,6 +106,11 @@ void SHA1::Transform(const uchar *buffer) throw()
 	uint32_t a = m_state[0], b = m_state[1], c = m_state[2], d = m_state[3], e = m_state[4];
 	
 	memcpy(m_block.c, buffer, sizeof(m_block.c));
+	
+	#ifndef IS_BIG_ENDIAN
+	for (int i=0; i != 16; ++i)
+		bswap(m_block.l[i]);
+	#endif
 	
 	// 4 rounds of 20 operations each. Loop unrolled.
 	R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
@@ -159,6 +151,8 @@ void SHA1::Update(const uchar *data, const uint32_t len) throw()
 	if (len == 0) return;
 	
 	assert(not finalized);
+	
+	static uchar m_buffer[64];
 	
 	const uint32_t j = (m_count[0] >> 3) & 63;
 	
@@ -201,8 +195,11 @@ void SHA1::Final() throw()
 	
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
-	for (i = 0; i != 20; ++i)
-		m_digest[i] = static_cast<uchar>((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
+	bswap(m_state[0]);
+	bswap(m_state[1]);
+	bswap(m_state[2]);
+	bswap(m_state[3]);
+	bswap(m_state[4]);
 	
 	// Wipe variables for security reasons
 	
@@ -220,29 +217,13 @@ void SHA1::HexDigest(char *szReport) const throw()
 	// Hex magic by George Anescu
 	static const uchar saucHex[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
-	/*
-	#ifdef HAVE_SNPRINTF
-	snprintf(
-	#else
-	sprintf(
-	#endif
-		szReport,
-		#ifdef HAVE_SNPRINTF
-		40,
-		#endif
-		"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-		m_digest[0], m_digest[1], m_digest[2], m_digest[3],
-		m_digest[4], m_digest[5], m_digest[6], m_digest[7],
-		m_digest[8], m_digest[9], m_digest[10], m_digest[11],
-		m_digest[12], m_digest[13], m_digest[14], m_digest[15],
-		m_digest[16], m_digest[17], m_digest[18], m_digest[19]
-	);
-	*/
+	uchar digest[20];
+	GetHash(digest);
 	
 	for (int i=0; i != 20; ++i)
 	{
-		*(szReport+(i*2)) = saucHex[m_digest[i] >> 4];
-		*(szReport+(i*2)+1) = saucHex[m_digest[i] & 0xF];
+		*(szReport+(i*2)) = saucHex[digest[i] >> 4];
+		*(szReport+(i*2)+1) = saucHex[digest[i] & 0xF];
 	}
 }
 
@@ -252,5 +233,5 @@ void SHA1::GetHash(uchar *puDest) const throw()
 	assert(finalized);
 	assert(puDest != 0);
 	
-	memcpy(puDest, m_digest, 20);
+	memcpy(puDest, m_state, 20);
 }
