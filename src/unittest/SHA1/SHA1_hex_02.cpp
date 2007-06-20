@@ -21,20 +21,19 @@ int main()
 {
 	SHA1 hash;
 	
-	unsigned char src3[] = "a";
+	unsigned char src[] = "a";
 	
-	hash.Update(src3, strlen(reinterpret_cast<char*>(src3)));
+	hash.Update(src, 1);
 	hash.Final();
 	
-	char hexdigest[41];
-	hash.HexDigest(hexdigest);
-	hexdigest[40] = '\0';
+	unsigned char digest[20];
+	hash.GetHash(digest);
 	
-	char res3[] = "34AA973CD4C4DAA4F61EEB2BDBAD27316534016F";
+	unsigned char res[] = {0x34,0xAA,0x97,0x3C,0xD4,0xC4,0xDA,0xA4,0xF6,0x1E,0xEB,0x2B,0xDB,0xAD,0x27,0x31,0x65,0x34,0x01,0x6F};
 	
-	int rv = memcmp(hexdigest, res3, 40);
+	int rv = memcmp(digest, res, 20);
 	if (rv != 0)
-		std::cerr << "result  : " << hexdigest << std::endl << "expected: " << res3 << std::endl;
+		std::cerr << "digest mismatch" << std::endl;
 	
 	return (rv == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
