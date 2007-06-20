@@ -81,7 +81,7 @@ private:
 	
 	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	void Transform(uint32_t *state, const uchar *buffer) throw();
+	void Transform(const uchar *buffer) throw();
 	
 	#ifndef NDEBUG
 	bool finalized;

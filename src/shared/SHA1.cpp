@@ -122,12 +122,14 @@ void SHA1::R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y,
 	w = ROL32(w, 30);
 }
 
-void SHA1::Transform(uint32_t *state, const uchar *buffer) throw()
+void SHA1::Transform(const uchar *buffer) throw()
 {
-	// Copy state[] to working vars
-	uint32_t a = state[0], b = state[1], c = state[2], d = state[3], e = state[4];
+	assert(buffer != 0);
 	
-	memcpy(m_block.c, buffer, 64);
+	// Copy state[] to working vars
+	uint32_t a = m_state[0], b = m_state[1], c = m_state[2], d = m_state[3], e = m_state[4];
+	
+	memcpy(m_block.c, buffer, sizeof(m_block.c));
 	
 	// 4 rounds of 20 operations each. Loop unrolled.
 	R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
@@ -152,11 +154,11 @@ void SHA1::Transform(uint32_t *state, const uchar *buffer) throw()
 	R4(e,a,b,c,d,76); R4(d,e,a,b,c,77); R4(c,d,e,a,b,78); R4(b,c,d,e,a,79);
 	
 	// Add the working vars back into state
-	state[0] += a;
-	state[1] += b;
-	state[2] += c;
-	state[3] += d;
-	state[4] += e;
+	m_state[0] += a;
+	m_state[1] += b;
+	m_state[2] += c;
+	m_state[3] += d;
+	m_state[4] += e;
 	
 	// Wipe variables
 	#ifdef SHA1_WIPE_VARIABLES
@@ -186,10 +188,10 @@ void SHA1::Update(const uchar *data, const uint32_t len) throw()
 	{
 		i = 64 - j;
 		memcpy(&m_buffer[j], data, i);
-		Transform(m_state, m_buffer);
+		Transform(m_buffer);
 		
 		for (; i + 63 < len; i += 64)
-			Transform(m_state, &data[i]);
+			Transform(&data[i]);
 		
 		memcpy(&m_buffer[0], &data[i], len - i);
 	}
@@ -227,7 +229,7 @@ void SHA1::Final() throw()
 	memset(m_state, 0, 20);
 	memset(m_count, 0, 8);
 	memset(finalcount, 0, 8);
-	Transform(m_state, m_buffer);
+	Transform(m_buffer);
 	#endif
 	
 	#ifndef NDEBUG
