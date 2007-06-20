@@ -594,6 +594,32 @@ int Socket::send(char* buffer, const size_t len) throw()
 	#endif
 }
 
+/*
+#ifdef HAVE_SENDMSG
+int Socket::sc_send(std::list<Array<char*,size_t>* > buffers) throw()
+{
+	//iterator iter = blah
+	assert(buffers.size() != 0);
+	
+	msghdr *msg = new msghdr;
+	msg->msg_iovlen = buffers.size();
+	msg->msg_iov = new iovec[msg->msg_iovlen];
+	for (int i=0; iter != buffers.end(); ++iter, ++i)
+	{
+		msg->msg_iov[i].iov_base = (*iter)->ptr;
+		msg->msg_iov[i].iov_len = (*iter)->length;
+	}
+}
+#endif
+
+#ifdef HAVE_RECVMSG
+int Socket::sc_recv(std::list<Array<char*,size_t> > buffers) throw()
+{
+	
+}
+#endif
+*/
+
 int Socket::recv(char* buffer, const size_t len) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)

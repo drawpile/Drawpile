@@ -23,8 +23,6 @@ Buffer::Buffer(char* buf, const size_t len) throw()
 {
 }
 
-Buffer::~Buffer() throw() { }
-
 Buffer& Buffer::operator<< (Buffer& buffer) throw()
 {
 	delete [] data;

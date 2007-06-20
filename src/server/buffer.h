@@ -31,9 +31,6 @@ struct Buffer
 	 */
 	Buffer(char* buf=0, const size_t len=0) throw();
 	
-	//! Destructor
-	~Buffer() throw();
-	
 	//! Moves buffer contents to another buffer struct
 	/**
 	 * @param[in,out] buffer Buffer to move contents from, source Buffer is emptied.

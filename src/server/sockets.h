@@ -224,6 +224,12 @@ protected:
 	//! Address
 	r_sockaddr addr, r_addr;
 	
+	/*
+	#ifdef SC_SOCKETS
+	std::list<msghdr*> msgs;
+	#endif
+	*/
+	
 	//! Last error number (from errno or equivalent)
 	int s_error;
 public:
@@ -417,8 +423,8 @@ public:
 	
 	//! Send data.
 	/**
-	 * @param[in] buffer contains data to be send.
-	 * @param[in] buflen declares the number of bytes to be sent from buffer.
+	 * @param[in] buffer Data to be send.
+	 * @param[in] buflen Number of bytes to send from buffer
 	 *
 	 * @return number of bytes actually sent.
 	 * @return (SOCKET_ERROR - 1) if the operation would block.
@@ -426,10 +432,17 @@ public:
 	 */
 	int send(char* buffer, const size_t buflen) throw();
 	
+	/*
+	#ifdef HAVE_SENDMSG
+	//! Scatter-Gather variant of send()
+	int sc_send(std::list<Array<char*,size_t>*> buffers) throw();
+	#endif
+	*/
+	
 	//! Receive data
 	/**
-	 * @param[out] buffer will be written to with max buflen bytes from network.
-	 * @param[in] buflen declares the number of bytes to read from network.
+	 * @param[out] buffer Target buffer
+	 * @param[in] buflen Number of bytes to read from network.
 	 *
 	 * @return number of bytes read.
 	 * @return 0 if connection was closed on the other end.
@@ -437,6 +450,13 @@ public:
 	 * @return SOCKET_ERROR otherwise.
 	 */
 	int recv(char* buffer, const size_t buflen) throw();
+	
+	/*
+	#ifdef HAVE_RECVMSG
+	//! Scatter-Gather variant of recv()
+	int sc_recv(std::list<Array<char*,size_t>*> buffers) throw();
+	#endif
+	*/
 	
 	#if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
 	//! Sendfile interface

@@ -54,12 +54,6 @@ struct LayerData
 	{
 	}
 	
-	//! dtor
-	~LayerData() throw()
-	{
-		
-	}
-	
 	uint
 		//! Layer identifier
 		id,
@@ -117,13 +111,13 @@ struct Session
 		#endif
 	}
 	
+	#ifndef NDEBUG
 	//! Destructor
 	~Session() throw()
 	{
-		#ifndef NDEBUG
 		std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
-		#endif
 	}
+	#endif
 	
 	//! Session identifier
 	uint id;

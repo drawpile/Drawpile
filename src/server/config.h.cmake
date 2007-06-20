@@ -9,4 +9,8 @@
 #cmakedefine DEBUG_SOCKETS
 #cmakedefine DEBUG_SERVER
 
+#cmakedefine HAVE_SENDMSG
+#cmakedefine HAVE_RECVMSG
+#cmakedefine SC_SOCKETS
+
 #cmakedefine IPV6_SUPPORT

@@ -505,8 +505,10 @@ public:
 	//! Constructor
 	Server() throw();
 	
+	#if 0
 	//! Destructor
 	~Server() throw();
+	#endif
 	
 	//! Initializes anything that need to be done so.
 	/**

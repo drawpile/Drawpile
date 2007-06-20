@@ -105,10 +105,12 @@ Server::Server() throw()
 	#endif
 }
 
+#if 0
 Server::~Server() throw()
 {
 	// TODO: Memory cleanup
 }
+#endif
 
 const uint8_t Server::getUserID() throw()
 {
