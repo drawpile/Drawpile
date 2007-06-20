@@ -295,8 +295,6 @@ struct Identifier
 		extensions(_extensions)
 	{ }
 	
-	~Identifier() throw() { }
-	
 	/* unique data */
 	
 	//! Protocol identifier (see protocol::identifierString).
@@ -353,8 +351,6 @@ struct StrokeInfo
 		pressure(_pressure)
 	{ }
 	
-	~StrokeInfo() throw() { }
-	
 	/* unique data */
 	
 	//! Horizontal (X) coordinate.
@@ -405,8 +401,6 @@ struct StrokeEnd
 		: Message(Message::StrokeEnd, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
-	~StrokeEnd() throw() { }
-	
 	/* unique data */
 	
 	// does not have any.
@@ -448,8 +442,6 @@ struct ToolInfo
 		lo_color.RGBA = _lo_color;
 		hi_color.RGBA = _hi_color;
 	}
-	
-	~ToolInfo() throw() { }
 	
 	/* unique data */
 	
@@ -501,8 +493,6 @@ struct Synchronize
 	Synchronize() throw()
 		: Message(Message::Synchronize, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
-	
-	~Synchronize() throw() { }
 	
 	/* unique data */
 	
@@ -588,8 +578,6 @@ struct SyncWait
 		: Message(Message::SyncWait, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
-	~SyncWait() throw() { }
-	
 	/* unique data */
 	
 	// nothing needed
@@ -611,8 +599,6 @@ struct PasswordRequest
 	PasswordRequest() throw()
 		: Message(Message::PasswordRequest, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
-	
-	~PasswordRequest() throw() { }
 	
 	/* unique data */
 	
@@ -637,8 +623,6 @@ struct Password
 	Password() throw()
 		: Message(Message::Password, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
-	
-	~Password() throw() { }
 	
 	/* unique data */
 	
@@ -666,8 +650,6 @@ struct Subscribe
 		: Message(Message::Subscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
-	~Subscribe() throw() { }
-	
 	/* unique data */
 	
 	// nothing needed
@@ -689,8 +671,6 @@ struct Unsubscribe
 	Unsubscribe() throw()
 		: Message(Message::Unsubscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
-	
-	~Unsubscribe() throw() { }
 	
 	/* unique data */
 	
@@ -720,8 +700,6 @@ struct SessionInstruction
 		title_len(_tlen),
 		title(_title)
 	{ }
-	
-	~SessionInstruction() throw() { }
 	
 	/* enum */
 	
@@ -780,8 +758,6 @@ struct SetPassword
 		password(_pw)
 	{ }
 	
-	~SetPassword() throw() { }
-	
 	/* unique data */
 	
 	//! Password length
@@ -806,8 +782,6 @@ struct Authenticate
 		: Message(Message::Authenticate, sizeof(type))
 	{ }
 	
-	~Authenticate() throw() { }
-	
 	/* unique data */
 	
 	// does not have any.
@@ -824,8 +798,6 @@ struct Shutdown
 	Shutdown() throw()
 		: Message(Message::Authenticate, sizeof(type))
 	{ }
-	
-	~Shutdown() throw() { }
 	
 	/* unique data */
 	
@@ -850,8 +822,6 @@ struct ListSessions
 		: Message(Message::ListSessions, sizeof(type))
 	{ }
 	
-	~ListSessions() throw() { }
-	
 	/* unique data */
 	
 	// does not have any.
@@ -871,8 +841,6 @@ struct Cancel
 	Cancel() throw()
 		: Message(Message::Cancel, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
-	
-	~Cancel() throw() { }
 	
 	/* unique data */
 	
@@ -995,8 +963,6 @@ struct HostInfo
 		extensions(_extensions)
 	{ }
 	
-	~HostInfo() throw() { }
-	
 	/* unique data */
 	
 	uint8_t
@@ -1105,8 +1071,6 @@ struct Acknowledgement
 		event(_event)
 	{ }
 	
-	~Acknowledgement() throw() { }
-	
 	/* unique data */
 	
 	//! Event identifier for which this is an acknowledgement for.
@@ -1136,8 +1100,6 @@ struct Error
 		: Message(Message::Error, sizeof(type)+sizeof(session_id), message::isSession),
 		code(_code)
 	{ }
-	
-	~Error() throw() { }
 	
 	/* unique data */
 	
@@ -1295,8 +1257,6 @@ struct SessionSelect
 		: Message(Message::SessionSelect, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession)
 	{ }
 	
-	~SessionSelect() throw() { }
-	
 	/* unique data */
 	
 	// nothing needed
@@ -1321,8 +1281,6 @@ struct SessionEvent
 		target(_target),
 		aux(_aux)
 	{ }
-	
-	~SessionEvent() throw() { }
 	
 	/* enum */
 	
@@ -1385,8 +1343,6 @@ struct LayerEvent
 		opacity(_opacity)
 	{ }
 	
-	~LayerEvent() throw() { }
-	
 	/* enum */
 	
 	//! Actions
@@ -1434,8 +1390,6 @@ struct LayerSelect
 		: Message(Message::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		layer_id(_layer_id)
 	{ }
-	
-	~LayerSelect() throw() { }
 	
 	/* unique data */
 	
