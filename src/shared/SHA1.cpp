@@ -40,7 +40,8 @@ void SHA1::Reset() throw()
 	m_state[3] = 0x10325476;
 	m_state[4] = 0xC3D2E1F0;
 	
-	memset(m_count, 0, sizeof(m_count));
+	m_count = 0;
+	m_size = 0;
 	
 	#ifndef NDEBUG
 	finalized = false;
@@ -148,50 +149,65 @@ void SHA1::Update(const uchar *data, const uint32_t len) throw()
 	assert(len >= 0);
 	assert(data != 0);
 	
-	if (len == 0) return;
-	
 	assert(not finalized);
 	
 	static uchar m_buffer[64];
 	
-	const uint32_t j = (m_count[0] >> 3) & 63;
+	const uint32_t left = m_size & 63;
+	const uint64_t available = left + len;
+	m_size += len;
 	
-	if ((m_count[0] += len << 3) < (len << 3))
-		++m_count[1];
+	m_count += (len << 3);
 	
-	m_count[1] += (len >> 29);
-	
-	uint32_t i;
-	if (j + len > 63)
+	if (available < 64ULL)
+		memcpy(&m_buffer[left], &data[0], len);
+	else
 	{
-		i = 64 - j;
-		memcpy(&m_buffer[j], data, i);
+		int64_t i = 64 - left;
+		memcpy(&m_buffer[left], data, i);
 		Transform(m_buffer);
 		
-		for (; i + 63 < len; i += 64)
+		int64_t last = len - (available & 63LL);
+		for (; i != last; i += 64)
 			Transform(&data[i]);
 		
 		memcpy(&m_buffer[0], &data[i], len - i);
 	}
-	else
-		memcpy(&m_buffer[j], &data[0], len);
 }
 
 void SHA1::Final() throw()
 {
 	assert(not finalized);
 	
-	uint32_t i;
-	uchar finalcount[8];
+	union {
+		uint64_t ll;
+		uint8_t c[8];
+	} swb = {m_size << 3};
 	
-	for(i = 0; i < 8; ++i)
-		finalcount[i] = (uchar)((m_count[((i >= 4) ? 0 : 1)]
-			>> ((3 - (i & 3)) * 8) ) & 255); // Endian independent
+	uchar finalcount[8]
+	#ifndef IS_BIG_ENDIAN
+		= {swb.c[7],swb.c[6],swb.c[5],swb.c[4],swb.c[3],swb.c[2],swb.c[1],swb.c[0]};
+	#else
+		;
+	memcpy(finalcount, &swb.ll, sizeof(m_size));
+	#endif
 	
-	Update((uchar *)"\200", 1);
+	Update((const uchar *)"\200", 1);
 	
-	while ((m_count[0] & 504) != 448)
-		Update((uchar *)"\0", 1);
+	/*
+	unsigned char zero[64] = {0};
+	
+	if (int(m_size & 63) > 56 - 1)
+	{
+		Update(zero, 64 - 1 - int(m_size & 63));
+		Update(zero, 64 - 8);
+	}
+	else
+		Update(zero, 64 - 1 - 8 - int(m_size & 63));
+	*/
+	
+	while ((m_count & 504) != 448)
+		Update((const uchar *)"\0", 1);
 	
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
@@ -200,8 +216,6 @@ void SHA1::Final() throw()
 	bswap(m_state[2]);
 	bswap(m_state[3]);
 	bswap(m_state[4]);
-	
-	// Wipe variables for security reasons
 	
 	#ifndef NDEBUG
 	finalized = true;

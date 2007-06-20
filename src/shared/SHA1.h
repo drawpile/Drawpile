@@ -32,7 +32,8 @@ public:
 	~SHA1() throw();
 	
 	uint32_t m_state[5];
-	uint32_t m_count[2];
+	uint32_t m_count;
+	uint64_t m_size;
 	
 	//! Reset hasher
 	void Reset() throw();
