@@ -28,8 +28,6 @@ class SHA1
 public:
 	//! ctor
 	SHA1() throw();
-	//! dtor
-	~SHA1() throw();
 	
 	uint32_t m_state[5];
 	uint32_t m_count;

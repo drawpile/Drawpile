@@ -20,15 +20,8 @@
 #include <memory.h> // memset(), memcpy()
 
 SHA1::SHA1() throw()
-	#ifndef NDEBUG
-	: finalized(false)
-	#endif
 {
 	Reset();
-}
-
-SHA1::~SHA1() throw()
-{
 }
 
 void SHA1::Reset() throw()
