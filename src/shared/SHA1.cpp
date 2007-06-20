@@ -13,6 +13,7 @@
 
 ******************************************************************************/
 
+#include "templates.h"
 #include "SHA1.h"
 
 #include <cassert>
@@ -74,9 +75,7 @@ uint32_t SHA1::SHABLK0(const uint32_t i) throw()
 	#ifdef IS_BIG_ENDIAN
 	return m_block.l[i];
 	#else
-	return (m_block.l[i] = 
-		(ROL32(m_block.l[i],24) & 0xFF00FF00) | (ROL32(m_block.l[i],8) & 0x00FF00FF)
-	);
+	return bswap(m_block.l[i]);
 	#endif
 }
 
