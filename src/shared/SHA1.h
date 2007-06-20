@@ -22,7 +22,7 @@ class SHA1
 	typedef unsigned char uchar;
 	
 	union {
-		uint8_t  c[64];
+		uchar c[64];
 		uint32_t l[16];
 	} m_block;
 public:
@@ -33,8 +33,8 @@ public:
 	
 	uint32_t m_state[5];
 	uint32_t m_count[2];
-	uint8_t  m_buffer[64];
-	uint8_t  m_digest[20];
+	uchar m_buffer[64];
+	uchar m_digest[20];
 	
 	//! Reset hasher
 	void Reset() throw();

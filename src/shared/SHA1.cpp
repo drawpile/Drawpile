@@ -29,9 +29,6 @@ SHA1::SHA1() throw()
 
 SHA1::~SHA1() throw()
 {
-	#ifdef SHA1_WIPE_VARIABLES
-	Reset();
-	#endif
 }
 
 void SHA1::Reset() throw()
@@ -81,15 +78,7 @@ uint32_t SHA1::SHABLK0(const uint32_t i) throw()
 
 uint32_t SHA1::SHABLK1(const uint32_t i) throw()
 {
-	return (m_block.l[i&15]
-		= ROL32(
-		(
-			m_block.l[(i+13)&15]
-			^ m_block.l[(i+8)&15]
-			^ m_block.l[(i+2)&15]
-			^ m_block.l[i&15]
-		), 1)
-	);
+	return (m_block.l[i&15] = ROL32((m_block.l[(i+13)&15] ^ m_block.l[(i+8)&15] ^ m_block.l[(i+2)&15] ^ m_block.l[i&15]), 1));
 }
 
 void SHA1::R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
@@ -159,11 +148,6 @@ void SHA1::Transform(const uchar *buffer) throw()
 	m_state[2] += c;
 	m_state[3] += d;
 	m_state[4] += e;
-	
-	// Wipe variables
-	#ifdef SHA1_WIPE_VARIABLES
-	a = b = c = d = e = 0;
-	#endif
 }
 
 // Use this function to hash in binary data and strings
@@ -204,10 +188,10 @@ void SHA1::Final() throw()
 	assert(not finalized);
 	
 	uint32_t i;
-	uint8_t finalcount[8];
+	uchar finalcount[8];
 	
 	for(i = 0; i < 8; ++i)
-		finalcount[i] = (uint8_t)((m_count[((i >= 4) ? 0 : 1)]
+		finalcount[i] = (uchar)((m_count[((i >= 4) ? 0 : 1)]
 			>> ((3 - (i & 3)) * 8) ) & 255); // Endian independent
 	
 	Update((uchar *)"\200", 1);
@@ -218,19 +202,9 @@ void SHA1::Final() throw()
 	Update(finalcount, 8); // Cause a SHA1Transform()
 	
 	for (i = 0; i != 20; ++i)
-	{
 		m_digest[i] = static_cast<uchar>((m_state[i >> 2] >> ((3 - (i & 3)) * 8) ) & 255);
-	}
 	
 	// Wipe variables for security reasons
-	#ifdef SHA1_WIPE_VARIABLES
-	i = 0;
-	memset(m_buffer, 0, 64);
-	memset(m_state, 0, 20);
-	memset(m_count, 0, 8);
-	memset(finalcount, 0, 8);
-	Transform(m_buffer);
-	#endif
 	
 	#ifndef NDEBUG
 	finalized = true;
