@@ -457,6 +457,7 @@ size_t Raster::unserialize(const char* buf, const size_t len) throw(std::bad_all
 	
 	if (length != 0)
 	{
+		assert(i+length == len);
 		data = new char[length];
 		memcpy(data, buf+i, length); i += length;
 	}
