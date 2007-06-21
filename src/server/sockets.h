@@ -179,40 +179,57 @@ struct Net
 };
 #endif
 
-#ifdef IPV6_SUPPORT
-typedef sockaddr_in6 r_sockaddr;
-#else
-typedef sockaddr_in r_sockaddr;
-#endif
+//! Address
+struct Address {
+	Address()
+		#ifdef IPV6_SUPPORT
+		: type(IPV6)
+		#else
+		: type(IPV4)
+		#endif
+	{
+		#ifdef IPV6_SUPPORT
+		IPv6.sin_family = AF_INET6;
+		#else
+		IPv4.sin_family = AF_INET;
+		#endif
+	}
+	
+	enum Family {
+		IPV4,
+		IPV6
+	} type;
+	
+	union {
+		//! base address
+		sockaddr addr;
+		//! IPv4 address
+		sockaddr_in IPv4;
+		#ifdef IPV6_SUPPORT
+		//! IPv6 address
+		sockaddr_in6 IPv6;
+		#endif
+	};
+	
+	socklen_t size() const throw();
+	
+	int family() const throw();
+	
+	ushort port() const throw();
+	
+	ushort& port() throw();
+	
+	//! Assign operator
+	Address& operator= (const Address& naddr) throw();
+	
+	//! Is-equal operator
+	/**
+	 * @bug Comparing IPv6 addresses likely doesn't work.
+	 */
+	bool operator== (const Address& naddr) const throw();
+};
 
-// templates
-
-/*
-template <typename Address,typename ReturnType> ReturnType* getAddress(Address&) throw();
-template <typename Address,typename ReturnType> const ReturnType* getAddress(const Address&) throw();
-*/
-template <typename Address> ushort& getPort(Address&) throw();
-template <typename Address> ushort getPort(const Address&) throw();
-template <typename Address> void setFamily(Address&) throw();
-
-// specializations
-
-/*
-template <> in_addr* getAddress<sockaddr_in,in_addr>(sockaddr_in &addr) throw();
-template <> in6_addr* getAddress<sockaddr_in6,in6_addr>(sockaddr_in6 &addr) throw();
-
-template <> const in_addr* getAddress<sockaddr_in,in_addr>(const sockaddr_in &addr) throw();
-template <> const in6_addr* getAddress<sockaddr_in6,in6_addr>(const sockaddr_in6 &addr) throw();
-*/
-
-template <> ushort& getPort<sockaddr_in>(sockaddr_in &addr) throw();
-template <> ushort& getPort<sockaddr_in6>(sockaddr_in6 &addr) throw();
-
-template <> ushort getPort<sockaddr_in>(const sockaddr_in &addr) throw();
-template <> ushort getPort<sockaddr_in6>(const sockaddr_in6 &addr) throw();
-
-template <> void setFamily<sockaddr_in>(sockaddr_in&) throw();
-template <> void setFamily<sockaddr_in6>(sockaddr_in6&) throw();
+void initAddress(Address& addr) throw();
 
 //! Socket abstraction
 class Socket
@@ -222,7 +239,7 @@ protected:
 	fd_t sock;
 	
 	//! Address
-	r_sockaddr addr, r_addr;
+	Address addr;
 	
 	/*
 	#ifdef SC_SOCKETS
@@ -243,13 +260,12 @@ public:
 		#endif
 	}
 	
-	#ifdef IPV6_SUPPORT
 	//! ctor
 	/**
 	 * @param[in] nsock FD to associate with this Socket
-	 * @param[in] saddr IPv6 Address to associate with this Socket
+	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(fd_t& nsock, const sockaddr_in6 saddr) throw()
+	Socket(fd_t& nsock, const Address saddr) throw()
 		: sock(nsock),
 		s_error(0)
 	{
@@ -257,24 +273,7 @@ public:
 		std::cout << "Socket(FD: "<<nsock<<", address: " << AddrToString(saddr) << ") constructed" << std::endl;
 		#endif
 		
-		memcpy(&addr, &saddr, sizeof(saddr));
-	}
-	#endif
-	
-	//! ctor
-	/**
-	 * @param[in] nsock FD to associate with this Socket
-	 * @param[in] saddr IPv4 Address to associate with this Socket
-	 */
-	Socket(fd_t& nsock, const sockaddr_in saddr) throw()
-		: sock(nsock),
-		s_error(0)
-	{
-		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket(FD: "<<nsock<<", address: " << AddrToString(saddr) << ") constructed" << std::endl;
-		#endif
-		
-		memcpy(&addr, &saddr, sizeof(saddr));
+		addr = saddr;
 	}
 	
 	//! ctor
@@ -336,8 +335,8 @@ public:
 	
 	//! Accept new connection.
 	/**
-	 * @return Socket* if new connection was accepted
-	 * @return NULL otherwise.
+	 * @return Socket if new connection was accepted
+	 * @note (Socket.getFD() == INVALID_SOCKET) if no new connection was accepted
 	 */
 	Socket accept() throw();
 	
@@ -345,10 +344,7 @@ public:
 	/**
 	 * @param[in] x enable/disable blocking
 	 *
-	 * @return 0 on success.
-	 * @return SOCKET_ERROR otherwise.
-	 *
-	 * @bug You can't re-enable blocking on non-Win32 systems.
+	 * @note You can't re-enable blocking on non-Win32 systems (API limitation?).
 	 */
 	bool block(const bool x) throw();
 	
@@ -359,9 +355,7 @@ public:
 	 *
 	 * @param[in] x enable/disable port re-use
 	 *
-	 * @return true if action was completed without error
-	 *
-	 * @bug In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
+	 * @note In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
 	 */
 	bool reuse_port(const bool x) throw();
 	
@@ -372,8 +366,6 @@ public:
 	 *
 	 * @param[in] x enable/disable address re-use
 	 *
-	 * @return true if action was completed without error
-	 * 
 	 * @note In Win32, this does nothing as TIME_WAIT is ignored completely there.
 	 */
 	bool reuse_addr(const bool x) throw();
@@ -386,8 +378,6 @@ public:
 	 *
 	 * @param[in] x enable/disable lingering
 	 * @param[in] delay linger time if enabled
-	 *
-	 * @return true if action was completed without error
 	 */
 	bool linger(const bool x, const ushort delay) throw();
 	
@@ -396,28 +386,21 @@ public:
 	 * @param[in] address address to bind to
 	 * @param[in] port port number to bind to
 	 *
-	 * @return 0 on success
-	 * @return SOCKET_ERROR otherwise.
+	 * @retval 0 on success
+	 * @retval SOCKET_ERROR on error
 	 */
 	int bindTo(const std::string& address, const ushort port) throw();
 	
-	#ifdef IPV6_SUPPORT
-	//! Connect to remote address
+	//! Connect to address
 	/**
-	 * @param[in] rhost remote host to connect to
+	 * @param[in] rhost host to connect to
 	 */
-	int connect(const sockaddr_in6& rhost) throw();
-	#endif
-	//! Connect to remote address
-	/**
-	 * @param[in] rhost remote host to connect to
-	 */
-	int connect(const sockaddr_in& rhost) throw();
+	int connect(const Address& rhost) throw();
 	
 	//! Set listening
 	/**
-	 * @return 0 on success.
-	 * @return SOCKET_ERROR otherwise.
+	 * @retval 0 on success
+	 * @retval SOCKET_ERROR on error
 	 */
 	int listen() throw();
 	
@@ -427,8 +410,7 @@ public:
 	 * @param[in] buflen Number of bytes to send from buffer
 	 *
 	 * @return number of bytes actually sent.
-	 * @return (SOCKET_ERROR - 1) if the operation would block.
-	 * @return SOCKET_ERROR otherwise.
+	 * @retval SOCKET_ERROR on error
 	 */
 	int send(char* buffer, const size_t buflen) throw();
 	
@@ -445,9 +427,8 @@ public:
 	 * @param[in] buflen Number of bytes to read from network.
 	 *
 	 * @return number of bytes read.
-	 * @return 0 if connection was closed on the other end.
-	 * @return (SOCKET_ERROR - 1) if the operation would block.
-	 * @return SOCKET_ERROR otherwise.
+	 * @retval 0 if connection was closed on the other end.
+	 * @retval SOCKET_ERROR on error.
 	 */
 	int recv(char* buffer, const size_t buflen) throw();
 	
@@ -470,8 +451,7 @@ public:
 	 * @param[in] nbytes is the number of bytes to be sent.
 	 * @param[out] sbytes is the sent bytes.
 	 *
-	 * @return -1 on error
-	 * @return 0 otherwise.
+	 * @retval -1 on error
 	 */
 	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) throw();
 	#endif // WITH_SENDFILE or HAVE_XPWSA
@@ -495,7 +475,7 @@ public:
 	/**
 	 * @return Associated address structure.
 	 */
-	r_sockaddr& getAddr() throw()
+	Address& getAddr() throw()
 	{
 		return addr;
 	}
@@ -509,61 +489,38 @@ public:
 	
 	//! Get port
 	/**
-	 * @return Port number
+	 * @return Local port number
 	 */
 	ushort port() const throw();
-	
-	//! Check if the address matches
-	/**
-	 * @param[in] tsock Socket to compare address with
-	 */
-	bool matchAddress(const Socket& tsock) const throw();
-	
-	//! Check if the port matches
-	/**
-	 * @param[in] tsock Socket to compare port with
-	 */
-	bool matchPort(const Socket& tsock) const throw();
 	
 	//! Convert address to string representation of it
 	/**
 	 * @param[in] raddr address to translate
 	 */
-	static std::string AddrToString(const r_sockaddr& raddr) throw();
+	static std::string AddrToString(const Address& raddr) throw();
 	
 	//! Convert string to address
 	/**
 	 * @param[in] address string to convert
 	 */
-	static r_sockaddr StringToAddr(std::string const& address) throw();
+	static Address StringToAddr(std::string const& address) throw();
 	
 	/* Operator overloads */
 	
 	#ifdef SOCKET_OPS
-	//! operator== overload (Socket*)
+	//! operator== overload (Socket&)
 	bool operator== (const Socket& tsock) const throw()
 	{
 		return (sock == tsock.sock);
 	}
 	
-	//! operator== overload (fd_t)
-	bool operator== (const fd_t& _fd) const throw()
-	{
-		return (sock == _fd);
-	}
-	
-	//! operator= overload (Socket*)
+	//! operator= overload (Socket&)
 	Socket& operator= (Socket& tsock) throw()
 	{
+		if (sock != INVALID_SOCKET)
+			close(sock);
 		sock = tsock.sock;
 		return *this;
-	}
-	
-	//! operator= overload (fd_t)
-	fd_t operator= (fd_t& _fd) throw()
-	{
-		sock = _fd;
-		return sock;
 	}
 	#endif
 };

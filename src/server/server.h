@@ -178,15 +178,13 @@ protected:
 	
 	//! Get free user ID
 	/**
-	 * @return 0 if all IDs have been exhausted
-	 * @return Valid ID otherwise
+	 * @retval 0 if all IDs have been exhausted
 	 */
 	const uint8_t getUserID() throw();
 	
 	//! Get free session ID
 	/**
-	 * @return 0 if all IDs have been exhausted
-	 * @return Valid ID otherwise
+	 * @retval 0 if all IDs have been exhausted
 	 */
 	const uint8_t getSessionID() throw();
 	
@@ -375,8 +373,8 @@ protected:
 	 * @param[in] len String length
 	 * @param[in] seed Password seed
 	 *
-	 * @return \b true if the digests match
-	 * @return \b false otherwise
+	 * @retval true if the digests match
+	 * @retval false otherwise
 	 */
 	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) throw();
 	
@@ -487,8 +485,7 @@ protected:
 	/**
 	 * @param[in] session_id Identifier for the session to find
 	 *
-	 * @return Pointer to Session if found
-	 * @return NULL otherwise
+	 * @retval NULL if no session is found
 	 */
 	Session* getSession(const uint8_t session_id) throw();
 	
@@ -496,8 +493,7 @@ protected:
 	/**
 	 * @param[in] session_id Identifier for the session to find
 	 *
-	 * @return Pointer to Session if found
-	 * @return \b NULL otherwise
+	 * @retval NULL if no session was found
 	 */
 	const Session* getConstSession(const uint8_t session_id) const throw();
 	
@@ -512,8 +508,8 @@ public:
 	
 	//! Initializes anything that need to be done so.
 	/**
-	 * @return \b false on error
-	 * @return \b true otherwise
+	 * @retval false on error
+	 * @retval true otherwise
 	 *
 	 * @throw std::bad_alloc
 	 */

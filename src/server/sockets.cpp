@@ -81,34 +81,83 @@ Net::~Net() throw()
 }
 #endif // NEED_NET
 
-/* *** Address Templates *** */
+/* *** Address class *** */
 
-/*
-template <> in_addr* getAddress<sockaddr_in,in_addr>(sockaddr_in &addr) throw() { return &addr.sin_addr; }
-template <> in6_addr* getAddress<sockaddr_in6,in6_addr>(sockaddr_in6 &addr) throw() { return &addr.sin6_addr; }
+socklen_t Address::size() const throw()
+{
+	#ifdef IPV6_SUPPORT
+	if (type == Address::IPV6)
+		return sizeof(IPv6);
+	else
+	#endif
+		return sizeof(IPv4);
+}
 
-template <> const in_addr* getAddress<sockaddr_in,in_addr>(const sockaddr_in &addr) throw() { return &addr.sin_addr; }
-template <> const in6_addr* getAddress<sockaddr_in6,in6_addr>(const sockaddr_in6 &addr) throw() { return &addr.sin6_addr; }
-*/
+int Address::family() const throw()
+{
+	#ifdef IPV6_SUPPORT
+	if (type == Address::IPV6)
+		return IPv6.sin6_family;
+	else
+	#endif
+		return IPv4.sin_family;
+}
 
-template <> ushort& getPort<sockaddr_in>(sockaddr_in &addr) throw() { return addr.sin_port; }
-template <> ushort& getPort<sockaddr_in6>(sockaddr_in6 &addr) throw() { return addr.sin6_port; }
+ushort Address::port() const throw()
+{
+	#ifdef IPV6_SUPPORT
+	if (type == Address::IPV6)
+		return IPv6.sin6_port;
+	else
+	#endif
+		return IPv4.sin_port;
+}
 
-template <> ushort getPort<sockaddr_in>(const sockaddr_in &addr) throw() { return addr.sin_port; }
-template <> ushort getPort<sockaddr_in6>(const sockaddr_in6 &addr) throw() { return addr.sin6_port; }
+ushort& Address::port() throw()
+{
+	#ifdef IPV6_SUPPORT
+	if (type == Address::IPV6)
+		return IPv6.sin6_port;
+	else
+	#endif
+		return IPv4.sin_port;
+}
 
-template <> void setFamily<sockaddr_in>(sockaddr_in &addr) throw() { addr.sin_family = AF_INET; }
-template <> void setFamily<sockaddr_in6>(sockaddr_in6 &addr) throw() { addr.sin6_family = AF_INET6; }
+Address& Address::operator= (const Address& naddr) throw()
+{
+	if (naddr.type == Address::IPV4)
+		memcpy(&IPv4, &naddr.IPv4, sizeof(naddr.IPv4));
+	#ifdef IPV6_SUPPORT
+	else
+		memcpy(&IPv6, &naddr.IPv6, sizeof(naddr.IPv6));
+	#endif
+	
+	type = naddr.type;
+	
+	return *this;
+}
+
+bool Address::operator== (const Address& naddr) const throw()
+{
+	if (naddr.type != type)
+		return false;
+	
+	#ifdef IPV6_SUPPORT
+	if (naddr.type == Address::IPV6)
+		return (IPv6.sin6_addr == naddr.IPv6.sin6_addr);
+	else
+	#endif
+		return (IPv4.sin_addr.s_addr == naddr.IPv4.sin_addr.s_addr);
+}
 
 /* *** Socket class *** */
 
 fd_t Socket::create() throw()
 {
-	setFamily(addr);
 	#ifdef WIN32
-	sock = WSASocket(addr.sin_family, SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
+	sock = WSASocket(addr.family(), SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	#else // POSIX
-	sock = socket(addr.sin_family, SOCK_STREAM, IPPROTO_TCP);
+	sock = socket(addr.family(), SOCK_STREAM, IPPROTO_TCP);
 	#endif
 	
 	if (sock == INVALID_SOCKET)
@@ -171,14 +220,14 @@ Socket Socket::accept() throw()
 	assert(sock != INVALID_SOCKET);
 	
 	// temporary address struct
-	r_sockaddr sa;
+	Address sa;
 	
-	socklen_t addrlen = sizeof(sa);
+	socklen_t addrlen = sa.size();
 	
 	#ifdef WIN32
-	fd_t n_fd = ::WSAAccept(sock, reinterpret_cast<sockaddr*>(&sa), &addrlen, 0, 0);
+	fd_t n_fd = ::WSAAccept(sock, &sa.addr, &addrlen, 0, 0);
 	#else // POSIX
-	fd_t n_fd = ::accept(sock, reinterpret_cast<sockaddr*>(&sa), &addrlen);
+	fd_t n_fd = ::accept(sock, &sa.addr, &addrlen);
 	#endif
 	
 	if (n_fd != INVALID_SOCKET)
@@ -373,14 +422,13 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	addr = Socket::StringToAddr(address);
+	Address t_addr = Socket::StringToAddr(address);
+	addr = t_addr;
 	
-	setFamily(addr);
-	
-	ushort &port = getPort(addr);
+	ushort &port = addr.port();
 	bswap(port = _port);
 	
-	const int r = bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr));
+	const int r = bind(sock, &addr.addr, addr.size());
 	
 	if (r == SOCKET_ERROR)
 	{
@@ -419,16 +467,7 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 	return r;
 }
 
-#ifdef IPV6_SUPPORT
-int Socket::connect(const sockaddr_in6& rhost) throw()
-{
-	// TODO
-	assert(1);
-	return 0;
-}
-#endif
-
-int Socket::connect(const sockaddr_in& rhost) throw()
+int Socket::connect(const Address& rhost) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Connecting to " << AddrToString(rhost) << endl;
@@ -436,12 +475,12 @@ int Socket::connect(const sockaddr_in& rhost) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	memcpy(&r_addr, &rhost, sizeof(r_addr));
+	addr = rhost;
 	
 	#ifdef WIN32
-	const int r = WSAConnect(sock, reinterpret_cast<sockaddr*>(&r_addr), sizeof(r_addr), 0, 0, 0, 0);
+	const int r = WSAConnect(sock, &addr.addr, addr.size(), 0, 0, 0, 0);
 	#else // POSIX
-	const int r = ::connect(sock, reinterpret_cast<sockaddr*>(&r_addr), sizeof(r_addr));
+	const int r = ::connect(sock, &addr.addr, addr.size());
 	#endif
 	
 	if (r == SOCKET_ERROR)
@@ -759,27 +798,13 @@ std::string Socket::address() const throw()
 
 ushort Socket::port() const throw()
 {
-	ushort port = getPort(addr);
+	ushort port = addr.port();
 	return bswap(port);
-}
-
-bool Socket::matchAddress(const Socket& tsock) const throw()
-{
-	#ifdef IPV6_SUPPORT
-	return (addr.sin6_addr == tsock.addr.sin6_addr); // FIXME
-	#else // IPv4
-	return (addr.sin_addr.s_addr == tsock.addr.sin_addr.s_addr);
-	#endif
-}
-
-bool Socket::matchPort(const Socket& tsock) const throw()
-{
-	return (port() == tsock.port());
 }
 
 /* string functions */
 
-std::string Socket::AddrToString(const r_sockaddr& l_addr) throw()
+std::string Socket::AddrToString(const Address& l_addr) throw()
 {
 	#ifdef IPV6_SUPPORT
 	const uint length = Network::IPv6::AddrLength + Network::PortLength + 4;
@@ -793,16 +818,15 @@ std::string Socket::AddrToString(const r_sockaddr& l_addr) throw()
 	
 	#ifdef WIN32
 	DWORD len = length;
-	sockaddr sa;
-	memcpy(&sa, &l_addr, sizeof(l_addr));
-	WSAAddressToString(&sa, sizeof(l_addr), 0, buf, &len);
+	Address sa = l_addr;
+	WSAAddressToString(&sa.addr, sa.size(), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
 	//inet_ntop(raddr.sin_family, getAddress(l_addr), straddr, length);
 	#ifdef IPV6_SUPPRT
-	inet_ntop(l_addr.sin_family, &l_addr.sin6_addr, straddr, length);
+	inet_ntop(l_addr.family(), &l_addr.IPv6.sin6_addr, straddr, length);
 	#else
-	inet_ntop(l_addr.sin_family, &l_addr.sin_addr, straddr, length);
+	inet_ntop(l_addr.family(), &l_addr.IPv4.sin_addr, straddr, length);
 	#endif
 	ushort port = getPort(l_addr);
 	bswap(port);
@@ -816,23 +840,21 @@ std::string Socket::AddrToString(const r_sockaddr& l_addr) throw()
 	return std::string(buf);
 }
 
-r_sockaddr Socket::StringToAddr(const std::string& address) throw()
+Address Socket::StringToAddr(const std::string& address) throw()
 {
-	r_sockaddr naddr;
-	setFamily(naddr);
+	Address naddr;
 	
 	#ifdef WIN32
 	// Win32 doesn't have inet_pton
 	char buf[Network::IPv6::AddrLength + Network::PortLength + 4];
 	memcpy(buf, address.c_str(), address.length());
-	int size = sizeof(naddr);
-	WSAStringToAddress(buf, naddr.sin_family, 0, reinterpret_cast<sockaddr*>(&naddr), &size);
+	int size = naddr.size();
+	WSAStringToAddress(buf, naddr.family(), 0, &naddr.addr, &size);
 	#else // POSIX
-	//inet_pton(naddr.sin_family, address.c_str(), getAddress(naddr));
 	#ifdef IPV6_SUPPORT
-	inet_pton(naddr.sin_family, address.c_str(), &naddr.sin6_addr);
+	inet_pton(naddr.family(), address.c_str(), &naddr.IPv6.sin6_addr);
 	#else
-	inet_pton(naddr.sin_family, address.c_str(), &naddr.sin_addr);
+	inet_pton(naddr.family(), address.c_str(), &naddr.IPv4.sin_addr);
 	#endif
 	#endif
 	

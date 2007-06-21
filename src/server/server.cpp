@@ -2018,10 +2018,10 @@ void Server::uJoinSession(User& usr, Session& session) throw()
 		// session is empty
 		session.users[usr.id] = &usr;
 		
-		message_ref raster_ref(new protocol::Raster(0, 0, 0, 0));
-		raster_ref->session_id = session.id;
+		protocol::Raster *raster = new protocol::Raster(0, 0, 0, 0);
+		raster->session_id = session.id;
 		
-		uQueueMsg(usr, raster_ref);
+		uQueueMsg(usr, message_ref(raster));
 	}
 }
 
@@ -2104,7 +2104,7 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	// Check duplicate connections (should be enabled with command-line switch instead)
 	if (blockDuplicateConnections)
 		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
-			if (sock.matchAddress(ui->second->sock))
+			if (sock.getAddr() == ui->second->sock.getAddr())
 			{
 				cerr << "- Duplicate connection from " << sock.address() << endl;
 				return;
