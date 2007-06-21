@@ -90,10 +90,9 @@ uint8_t& bswap<uint8_t>(uint8_t& x) throw()
 
 #endif // IS_BIG_ENDIAN
 
-/* memmory */
+/* memory */
 
-// copies src& bytes to dst*
-// automation of memcpy(dst*, &src, sizeof(src));
+//! Automation of memcpy(dst*, &src, sizeof(src));
 template <typename T>
 char* memcpy_t(char* dst, const T& src) throw()
 {
@@ -102,8 +101,7 @@ char* memcpy_t(char* dst, const T& src) throw()
 	return dst;
 }
 
-// copies sizeof(dst) bytes from src* to dst
-// automation of memcpy(&dst, src*, sizeof(dst));
+//! Automation of memcpy(&dst, src*, sizeof(dst));
 template <typename T>
 T& memcpy_t(T& dst, const char* src) throw()
 {
@@ -119,8 +117,6 @@ T& memcpy_t(T& dst, const char* src) throw()
 /**
  * @param u flag container.
  * @param x flag to be set.
- *
- * @return modified flag container.
  */
 template <typename T>
 T& fSet(T& u, const T& x) throw()
@@ -132,8 +128,6 @@ T& fSet(T& u, const T& x) throw()
 /**
  * @param u flag container.
  * @param x flag to be cleared.
- *
- * @return modified flag container.
  */
 template <typename T>
 T& fClr(T& u, const T& x) throw()
@@ -145,8 +139,6 @@ T& fClr(T& u, const T& x) throw()
 /**
  * @param u flag container.
  * @param x flag to be tested.
- *
- * @return test result
  */
 template <typename T>
 bool fIsSet(const T& u, const T& x) throw()
@@ -156,6 +148,7 @@ bool fIsSet(const T& u, const T& x) throw()
 
 /* type ops */
 
+//! Checks if var's value is in bounds of another type
 template <typename T, typename U>
 bool inBoundsOf(const U& u) throw()
 {
@@ -166,9 +159,14 @@ bool inBoundsOf(const U& u) throw()
 
 //! Round \b number to next \b boundary
 /**
- * e.g.
- * roundToNext(1200, 1000) = 2000
- * roundToNext(28175, 300) = 27200
+ * @param number number to round to next boundary
+ * @param boundary boundary to which to round the number
+ *
+ * @example "Rounding to next boundary"
+ * @code
+ * roundToNext(1200, 1000); // = 2000
+ * roundToNext(28175, 300); // = 27200
+ * @endcode
  */
 template <typename T>
 T roundToNext(const T& number, const T& boundary) throw()
@@ -176,6 +174,7 @@ T roundToNext(const T& number, const T& boundary) throw()
 	return (number / boundary + 1) * boundary;
 }
 
+//! Specialization of roundToNext() for 'double'
 template <> inline
 double roundToNext<double>(const double& number, const double& boundary) throw()
 {
@@ -184,9 +183,14 @@ double roundToNext<double>(const double& number, const double& boundary) throw()
 
 //! Round \b number to previous \b boundary
 /**
- * e.g.
- * roundToPrev(1200, 1000) = 1000
- * roundToPrev(28175, 300) = 27900
+ * @param number number to round to previous boundary
+ * @param boundary boundary to which to round the number
+ *
+ * @example "Rounding to previous boundary"
+ * @code
+ * roundToPrev(1200, 1000); // = 1000
+ * roundToPrev(28175, 300); // = 27900
+ * @endcode
  */
 template <typename T>
 T roundToPrev(const T& number, const T& boundary) throw()
@@ -194,6 +198,7 @@ T roundToPrev(const T& number, const T& boundary) throw()
 	return (number / boundary) * boundary;
 }
 
+//! Specialization of roundToPrev() for 'double'
 template <> inline
 double roundToPrev<double>(const double& number, const double& boundary) throw()
 {

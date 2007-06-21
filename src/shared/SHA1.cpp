@@ -216,10 +216,10 @@ void SHA1::Final() throw()
 }
 
 // Get the final hash as a pre-formatted (ASCII) string (40 bytes long)
-void SHA1::HexDigest(char *szReport) const throw()
+void SHA1::HexDigest(char *string) const throw()
 {
 	assert(finalized);
-	assert(szReport != 0);
+	assert(string != 0);
 	
 	// Hex magic by George Anescu
 	static const uchar saucHex[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
@@ -229,16 +229,16 @@ void SHA1::HexDigest(char *szReport) const throw()
 	
 	for (int i=0; i != 20; ++i)
 	{
-		*(szReport+(i*2)) = saucHex[digest[i] >> 4];
-		*(szReport+(i*2)+1) = saucHex[digest[i] & 0xF];
+		*(string+(i*2)) = saucHex[digest[i] >> 4];
+		*(string+(i*2)+1) = saucHex[digest[i] & 0xF];
 	}
 }
 
 // Get the raw message digest (20 bytes long)
-void SHA1::GetHash(uchar *puDest) const throw()
+void SHA1::GetHash(uchar *digest) const throw()
 {
 	assert(finalized);
-	assert(puDest != 0);
+	assert(digest != 0);
 	
-	memcpy(puDest, m_state, 20);
+	memcpy(digest, m_state, 20);
 }
