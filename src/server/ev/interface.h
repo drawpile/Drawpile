@@ -36,10 +36,13 @@
 
 #include <ctime>
 
-//! Event system
+//! Event I/O abstraction
+/**
+ * @see http://www.kegel.com/c10k.html The C10k problem
+ */
 namespace event {
 
-//! Event I/O abstraction
+//! Event interface
 template <typename Evs>
 class Interface
 {

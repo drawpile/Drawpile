@@ -57,10 +57,6 @@ Pselect::Pselect() throw()
 	sigemptyset(&sigmask); // prepare sigmask
 }
 
-Pselect::~Pselect() throw()
-{
-}
-
 // Errors: WSAENETDOWN
 int Pselect::wait() throw()
 {

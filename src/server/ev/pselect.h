@@ -44,6 +44,10 @@
 
 namespace event {
 
+//! pselect(2)
+/**
+ * 
+ */
 class Pselect
 	: Interface<Pselect>
 {
@@ -58,7 +62,7 @@ private:
 	int nfds_r, nfds_w, nfds_e;
 public:
 	Pselect() throw();
-	~Pselect() throw();
+	~Pselect() throw() { }
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();

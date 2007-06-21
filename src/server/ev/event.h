@@ -35,6 +35,7 @@
 	typedef event::Pselect EventSystem;
 #elif defined(EV_WSA)
 	#include "wsa.h"
+	#define EV_WSA
 	typedef event::WSA EventSystem;
 #elif defined(EV_SELECT)
 	#include "select.h"

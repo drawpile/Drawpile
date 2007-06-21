@@ -57,10 +57,6 @@ Select::Select() throw()
 	FD_ZERO(&fds_e);
 }
 
-Select::~Select() throw()
-{
-}
-
 // Errors: WSAENETDOWN
 int Select::wait() throw()
 {

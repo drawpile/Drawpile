@@ -42,6 +42,10 @@
 
 namespace event {
 
+//! kqueue
+/**
+ * 
+ */
 class Kqueue
 	: Interface<Kqueue>
 {

@@ -38,6 +38,12 @@
 
 namespace event {
 
+//! kevent
+/**
+ * @see http://lwn.net/Articles/172844/ The kevent interface
+ * @see http://lwn.net/Articles/213672/ Kevent take 26
+ * @see http://lwn.net/Articles/225714/ Kernel events without kevents
+ */
 class Kevent
 	: Interface<Kevent>
 {

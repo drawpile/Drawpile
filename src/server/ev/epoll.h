@@ -32,6 +32,8 @@
 #include "interface.h"
 #include "traits.h"
 
+#include "../io/descriptor.h"
+
 #include <stdexcept>
 
 #ifndef NDEBUG
@@ -41,10 +43,15 @@
 
 namespace event {
 
+//! epoll(4)
+/**
+ * 
+ */
 class Epoll
 	: Interface<Epoll>
 {
 private:
+	
 	uint _timeout;
 	int nfds;
 	int evfd;

@@ -57,10 +57,6 @@ WSA::WSA() throw()
 		w_ev[i] = WSA_INVALID_EVENT;
 }
 
-WSA::~WSA() throw()
-{
-}
-
 // Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
 int WSA::wait() throw()
 {

@@ -47,6 +47,10 @@ template <> struct fd_type<WSA> { typedef SOCKET fd_t; };
 
 const uint max_events = 10;
 
+//! WSA
+/**
+ * 
+ */
 class WSA
 	: Interface<WSA>
 {
@@ -60,7 +64,7 @@ private:
 	SOCKET fdl[max_events];
 public:
 	WSA() throw();
-	~WSA() throw();
+	~WSA() throw() { }
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();

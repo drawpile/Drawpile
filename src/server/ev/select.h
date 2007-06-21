@@ -52,6 +52,10 @@ class Select;
 template <> struct fd_type<Select> { typedef SOCKET fd_t; };
 #endif
 
+//! select(2)
+/**
+ * 
+ */
 class Select
 	: Interface<Select>
 {
@@ -67,7 +71,7 @@ private:
 	#endif // !WIN32
 public:
 	Select() throw();
-	~Select() throw();
+	~Select() throw() { }
 	
 	void timeout(uint msecs) throw();
 	int wait() throw();
