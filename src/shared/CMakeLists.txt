@@ -2,9 +2,9 @@
 
 set ( INTERNALNAME "lib${PROJECT_NAME}" )
 
-if (WIN32)
-	link_libraries (ws2_32) # winsock2
-endif (WIN32)
+#if (WIN32)
+#	link_libraries (ws2_32) # winsock2
+#endif (WIN32)
 
 set (
 	SHR_SOURCES
@@ -35,3 +35,13 @@ set_target_properties (
 if ( SHARED )
 	install ( TARGETS ${INTERNALNAME} LIBRARY DESTINATION lib )
 endif ( SHARED )
+
+if ( OPENSSL )
+	find_package ( OpenSSL )
+	if ( OPENSSL_FOUND )
+		set ( HAVE_OPENSSL ON )
+		message ( STATUS "OpenSSL libraries found!" )
+		target_link_libraries ( ${INTERNALNAME} ${OPENSSL_LIBRARIES} )
+	endif ( OPENSSL_FOUND )
+	configure_file ( config.h.cmake config.h )
+endif ( OPENSSL )

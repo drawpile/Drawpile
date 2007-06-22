@@ -26,6 +26,7 @@ SHA1::SHA1() throw()
 
 void SHA1::Reset() throw()
 {
+	#ifndef HAVE_OPENSSL
 	// SHA1 initialization constants
 	m_state[0] = 0x67452301;
 	m_state[1] = 0xEFCDAB89;
@@ -35,12 +36,19 @@ void SHA1::Reset() throw()
 	
 	m_count = 0;
 	m_size = 0;
+	#else // OpenSSL
+	if (SHA1_Init(&context) != 1)
+	{
+		//throw new std::exception;
+	}
+	#endif // HAVE_OPENSSL
 	
 	#ifndef NDEBUG
 	finalized = false;
 	#endif
 }
 
+#ifndef HAVE_OPENSSL
 // Rotate \b v n bits to the left
 uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
 {
@@ -135,15 +143,19 @@ void SHA1::Transform(const uchar *buffer) throw()
 	m_state[3] += d;
 	m_state[4] += e;
 }
+#endif // HAVE_OPENSSL
 
 // Use this function to hash in binary data and strings
-void SHA1::Update(const uchar *data, const uint32_t len) throw()
+void SHA1::Update(const uchar *data, const uint64_t len) throw()
 {
 	assert(len >= 0);
 	assert(data != 0);
 	
 	assert(not finalized);
 	
+	#ifdef HAVE_OPENSSL
+	SHA1_Update(&context, data, len);
+	#else
 	static uchar m_buffer[64];
 	
 	const uint32_t left = m_size & 63;
@@ -166,12 +178,16 @@ void SHA1::Update(const uchar *data, const uint32_t len) throw()
 		
 		memcpy(&m_buffer[0], &data[i], len - i);
 	}
+	#endif
 }
 
 void SHA1::Final() throw()
 {
 	assert(not finalized);
 	
+	#ifdef HAVE_OPENSSL
+	SHA1_Final(m_digest, &context);
+	#else
 	union {
 		uint64_t ll;
 		uint8_t c[8];
@@ -209,6 +225,7 @@ void SHA1::Final() throw()
 	bswap(m_state[2]);
 	bswap(m_state[3]);
 	bswap(m_state[4]);
+	#endif
 	
 	#ifndef NDEBUG
 	finalized = true;
@@ -222,15 +239,15 @@ void SHA1::HexDigest(char *string) const throw()
 	assert(string != 0);
 	
 	// Hex magic by George Anescu
-	static const uchar saucHex[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+	static const uchar Hex[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 	
 	uchar digest[20];
 	GetHash(digest);
 	
 	for (int i=0; i != 20; ++i)
 	{
-		*(string+(i*2)) = saucHex[digest[i] >> 4];
-		*(string+(i*2)+1) = saucHex[digest[i] & 0xF];
+		*(string+(i*2)) = Hex[digest[i] >> 4];
+		*(string+(i*2)+1) = Hex[digest[i] & 0xF];
 	}
 }
 
@@ -240,5 +257,5 @@ void SHA1::GetHash(uchar *digest) const throw()
 	assert(finalized);
 	assert(digest != 0);
 	
-	memcpy(digest, m_state, 20);
+	memcpy(digest, m_digest, sizeof(m_digest));
 }

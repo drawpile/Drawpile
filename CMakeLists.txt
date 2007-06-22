@@ -38,6 +38,8 @@ option ( PROFILE "Enable profiling (-pg)" OFF )
 
 option ( ASM "Use hand-written assembly" OFF )
 
+option ( OPENSSL "Use OpenSSL if present" ON )
+
 option ( RELEASE "" OFF )
 
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
@@ -116,7 +118,7 @@ test_big_endian ( IS_BIG_ENDIAN )
 
 ### Assembly
 if ( ASM )
-	message ( STATUS "Assembly enabled!" )
+	message ( STATUS "ASM enabled!" )
 	set ( USE_ASM ON ) # for config.h
 endif ( ASM )
 
