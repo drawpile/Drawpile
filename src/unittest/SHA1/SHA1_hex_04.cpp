@@ -21,7 +21,7 @@ int main()
 {
 	SHA1 hash;
 	
-	unsigned char src[] = "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq";
+	unsigned char src[] = "abc";
 	
 	hash.Update(src, strlen(reinterpret_cast<char*>(src)));
 	hash.Final();
@@ -30,7 +30,7 @@ int main()
 	hash.HexDigest(hexdigest);
 	hexdigest[40] = '\0';
 	
-	char res[] = "84983E441C3BD26EBAAE4AA1F95129E5E54670F1";
+	char res[] = "A9993E364706816ABA3E25717850C26C9CD0D89D";
 	
 	int rv = memcmp(hexdigest, res, 40);
 	if (rv != 0)

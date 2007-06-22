@@ -8,6 +8,11 @@ add_executable (
 )
 
 add_executable (
+	test_SHA1_bin_02
+	SHA1_bin_02.cpp
+)
+
+add_executable (
 	test_SHA1_hex_01
 	SHA1_hex_01.cpp
 )
@@ -23,8 +28,8 @@ add_executable (
 )
 
 add_executable (
-	test_SHA1_bin_02
-	SHA1_bin_02.cpp
+	test_SHA1_hex_04
+	SHA1_hex_04.cpp
 )
 
 add_executable (
@@ -40,3 +45,4 @@ add_test ( "SHA1/binary_02" ${EXECUTABLE_OUTPUT_PATH}/test_SHA1_bin_02 )
 add_test ( "SHA1/hex_01" ${EXECUTABLE_OUTPUT_PATH}/test_SHA1_hex_01 )
 add_test ( "SHA1/hex_02" ${EXECUTABLE_OUTPUT_PATH}/test_SHA1_hex_02 )
 add_test ( "SHA1/hex_03" ${EXECUTABLE_OUTPUT_PATH}/test_SHA1_hex_03 )
+add_test ( "SHA1/hex_04" ${EXECUTABLE_OUTPUT_PATH}/test_SHA1_hex_04 )
