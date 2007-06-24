@@ -100,11 +100,19 @@ if ( RELEASE )
 	set ( SRV_SOURCES auto_all.cpp )
 endif ( RELEASE )
 
+# Create library
 add_library (
 	dpserverlib
 	${SRV_SOURCES}
 )
 
+target_link_libraries(
+	dpserverlib
+	libdrawpile # DP shared library
+	eventslib # EV lib
+)
+
+# Console executable
 set_target_properties (
 	dpserverlib
 	PROPERTIES
@@ -131,11 +139,14 @@ if ( NOT SERVERLIBONLY )
 		PROJECT_LABEL drawpile-server
 	)
 	
-	target_link_libraries( ${INTERNALNAME} dpserverlib ) # DP shared library
-	target_link_libraries( ${INTERNALNAME} libdrawpile ) # DP shared library
-	target_link_libraries( ${INTERNALNAME} eventslib ) # EV lib
+	target_link_libraries(
+		${INTERNALNAME}
+		dpserverlib # DP shared library
+		libdrawpile # DP shared library
+		eventslib # EV lib
+	)
 	
-	install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
+	install ( TARGETS ${INTERNALNAME} RUNTIME DESTINATION bin )
 	
 	if ( NOT DEBUG )
 		strip_exe ( ${INTERNALNAME} )

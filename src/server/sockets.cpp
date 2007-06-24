@@ -46,10 +46,6 @@ using std::cerr;
 #ifdef NEED_NET
 Net::Net() throw(std::exception)
 {
-	#ifndef NDEBUG
-	cout << "[Network] Starting" << endl;
-	#endif
-	
 	#if defined(WIN32)
 	const int maj=2, min=2;
 	
@@ -71,10 +67,6 @@ Net::Net() throw(std::exception)
 
 Net::~Net() throw()
 {
-	#ifndef NDEBUG
-	cout << "[Network] Stopping" << endl;
-	#endif
-	
 	#if defined(WIN32)
 	WSACleanup();
 	#endif

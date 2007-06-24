@@ -351,7 +351,6 @@ void HostState::joinLatest()
 	SessionList::const_iterator i = sessions_.constEnd();
 	do {
 		--i;
-		qDebug() << i->owner << " vs " << localuser_.id(); 
 		if(i->owner == localuser_.id()) {
 			join(i->id);
 			return;

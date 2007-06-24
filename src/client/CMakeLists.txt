@@ -140,7 +140,7 @@ set_target_properties (
 	PROJECT_LABEL drawpile-client
 )
 
-install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
+install ( TARGETS ${INTERNALNAME} RUNTIME DESTINATION bin )
 
 if (NOT DEBUG)
 	strip_exe ( drawpile )
