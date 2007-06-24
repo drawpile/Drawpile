@@ -515,6 +515,8 @@ public:
 	 */
 	bool init() throw(std::bad_alloc);
 	
+	/** set behaviour **/
+	
 	//! Set name length limit (default: 8)
 	/**
 	 * @param[in] limit New limit
@@ -562,25 +564,25 @@ public:
 	/**
 	 * @param[in] _enable transient mode
 	 */
-	void setTransient(const bool _enable) throw() { Transient = _enable; }
+	void setTransient(const bool _enable=true) throw() { Transient = _enable; }
 	
 	//! Set auto-localhost admin promotion
 	/**
 	 * @param _enable auto-promotion
 	 */
-	void setLocalhostAdmin(const bool _enable) throw() { LocalhostAdmin = _enable; }
+	void setLocalhostAdmin(const bool _enable=true) throw() { LocalhostAdmin = _enable; }
 	
 	//! Set client requirements
 	/**
 	 * @param[in] req Client requirement flags
 	 */
-	void setRequirement(const uint8_t req) throw() { fSet(requirements, req); }
+	void setRequirement(const uint8_t req=0) throw() { fSet(requirements, req); }
 	
 	//! Set minimum board dimension (width or height)
 	/**
 	 * @param[in] mindim Minimum dimension in pixels
 	 */
-	void setMinDimension(const uint16_t mindim) throw() { min_dimension = mindim; }
+	void setMinDimension(const uint16_t mindim=400) throw() { min_dimension = mindim; }
 	
 	//! Set UTF-16 support
 	/**
@@ -616,7 +618,7 @@ public:
 	/**
 	 * @param[in] _allow duplicate connections
 	 */
-	void blockDuplicateConnectsion(const bool _allow) throw() { blockDuplicateConnections = _allow; }
+	void allowDuplicateConnections(const bool _allow=true) throw() { blockDuplicateConnections = !_allow; }
 	
 	/** Control functions **/
 	

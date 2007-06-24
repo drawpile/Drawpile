@@ -263,7 +263,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'M': // allow multiple connections from same address
-				srv.blockDuplicateConnectsion(false);
+				srv.allowDuplicateConnections(true);
 				cout << "& Multiple connections allowed from same source address." << endl;
 				break;
 			case 'V': // version
