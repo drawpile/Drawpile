@@ -134,6 +134,16 @@ else ( CLIENT )
 	endif ( TRAYSERVER )
 endif ( CLIENT )
 
+if ( QT4_FOUND )
+	#STRING(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" qt_majv "${QTVERSION}")
+	STRING(REGEX REPLACE "^[0-9]+\\.([0-9])+\\.[0-9]+" "\\1" qt_minv "${QTVERSION}")
+	#STRING(REGEX REPLACE "^[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1" qt_patv "${QTVERSION}")
+	set ( HAVE_QT43 ON )
+	if ( ${qt_minv} LESS 3 )
+		set ( HAVE_QT43 OFF )
+	endif ( ${qt_minv} LESS 3 )
+endif ( QT4_FOUND )
+
 #add_subdirectory ( config/ )
 
 ### Assembly

@@ -7,3 +7,5 @@
 
 #cmakedefine HAVE_MMX
 #cmakedefine HAVE_SSE
+
+#cmakedefine HAVE_QT43
