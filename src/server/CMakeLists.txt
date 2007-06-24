@@ -1,60 +1,63 @@
 # src/server/
 
-set ( FULLNAME "DrawPile server" )
-set ( INTERNALNAME "${PROJECT_NAME}-srv" )
-set ( COPYRIGHT "Copyright (C) 2006,2007 M.K.A." )
-set ( DESCRIPTION ${FULLNAME} )
-set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
-
-set ( VERSION_MAJOR 0 )
-set ( VERSION_MINOR 5 )
-set ( VERSION_BUG 0 )
-
-if ( WIN32 )
-	set ( ORIGFILENAME "${INTERNALNAME}.exe" )
-else ( WIN32 )
-	set ( ORIGFILENAME "${INTERNALNAME}" )
-endif ( WIN32 )
+if ( SERVER )
+	set ( FULLNAME "DrawPile server" )
+	set ( INTERNALNAME "${PROJECT_NAME}-srv" )
+	set ( COPYRIGHT "Copyright (C) 2006,2007 M.K.A." )
+	set ( DESCRIPTION ${FULLNAME} )
+	set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
+	
+	set ( VERSION_MAJOR 0 )
+	set ( VERSION_MINOR 5 )
+	set ( VERSION_BUG 0 )
+	
+	if ( WIN32 )
+		set ( ORIGFILENAME "${INTERNALNAME}.exe" )
+	else ( WIN32 )
+		set ( ORIGFILENAME "${INTERNALNAME}" )
+	endif ( WIN32 )
+endif ( SERVER )
 
 # include some stuff
 
 include ( CheckIncludeFile )
-include ( CheckIncludeFileCXX )
-include ( CheckSymbolExists )
 include ( CheckFunctionExists )
-include ( CheckVariableExists )
 
 ### For deflate extension
 
-if ( DEFLATE )
-	find_package ( ZLIB )
-	if ( ZLIB_FOUND )
-		set ( HAVE_ZLIB ON )
-		link_libraries ( ${ZLIB_LIBRARIES} )
-	else ( ZLIB_FOUND )
-		check_include_file ( zlib.h HAVE_ZLIB )
-		if ( HAVE_ZLIB )
-			link_libraries ( "z" )
-		else ( HAVE_ZLIB )
-			message ( STATUS "ZLIB disabled!" )
-			set ( DEFLATE OFF )
-		endif ( HAVE_ZLIB )
-	endif ( ZLIB_FOUND )
-endif ( DEFLATE )
+if ( SERVERLIB )
+	if ( DEFLATE )
+		find_package ( ZLIB )
+		if ( ZLIB_FOUND )
+			set ( HAVE_ZLIB ON )
+			link_libraries ( ${ZLIB_LIBRARIES} )
+		else ( ZLIB_FOUND )
+			check_include_file ( zlib.h HAVE_ZLIB )
+			if ( HAVE_ZLIB )
+				link_libraries ( "z" )
+			else ( HAVE_ZLIB )
+				message ( STATUS "ZLIB disabled!" )
+				set ( DEFLATE OFF )
+			endif ( HAVE_ZLIB )
+		endif ( ZLIB_FOUND )
+	endif ( DEFLATE )
+endif ( SERVERLIB )
 
 ### fork()
 
-check_function_exists ( fork HAVE_FORK )
-check_function_exists ( fork1 HAVE_FORK1 )
-
-if ( HAVE_FORK1 )
-	set ( HAVE_FORK OFF )
-	link_libraries ( pthread )
-endif ( HAVE_FORK1 )
-
-if ( HAVE_FORK )
-	link_libraries ( pthread )
-endif ( HAVE_FORK )
+if ( SERVER )
+	check_function_exists ( fork HAVE_FORK )
+	check_function_exists ( fork1 HAVE_FORK1 )
+	
+	if ( HAVE_FORK1 )
+		set ( HAVE_FORK OFF )
+		link_libraries ( pthread )
+	endif ( HAVE_FORK1 )
+	
+	if ( HAVE_FORK )
+		link_libraries ( pthread )
+	endif ( HAVE_FORK )
+endif ( SERVER )
 
 # scatter-gather sockets
 
@@ -77,52 +80,56 @@ set ( WIN32RES "" )
 if ( WIN32 )
 	link_libraries ( ws2_32 )
 	
-	### generate resource file .o = ${WIN32RES}
-	generate_win32_resource()
+	if ( SERVER )
+		### generate resource file .o = ${WIN32RES}
+		generate_win32_resource()
+	endif ( SERVER )
 endif ( WIN32 )
 
 add_subdirectory ( ev/ ) # events lib
 
-if ( NOT DEBUG )
-	strip_exe ( ${INTERNALNAME} )
-endif ( NOT DEBUG )
+if ( SERVERLIB )
+	set (
+		SRV_SOURCES
+		buffer.cpp
+		sockets.cpp
+		#dpsrv.cpp
+		server.cpp
+	)
+	
+	if ( RELEASE )
+		generate_all_cpp ( "${SRV_SOURCES}" )
+		set ( SRV_SOURCES auto_all.cpp )
+	endif ( RELEASE )
+	
+	# Create library
+	add_library (
+		dpserverlib
+		${SRV_SOURCES}
+	)
 
-set (
-	SRV_SOURCES
-	buffer.cpp
-	sockets.cpp
-	#dpsrv.cpp
-	server.cpp
-)
+	target_link_libraries(
+		dpserverlib
+		libdrawpile # DP shared library
+		eventslib # EV lib
+	)
+	
+	# Console executable
+	set_target_properties (
+		dpserverlib
+		PROPERTIES
+		OUTPUT_NAME dpserver
+		VERSION 0.5
+		SOVERSION 0.5
+		PROJECT_LABEL dpserverlib
+	)
+endif ( SERVERLIB )
 
-if ( RELEASE )
-	generate_all_cpp ( "${SRV_SOURCES}" )
-	set ( SRV_SOURCES auto_all.cpp )
-endif ( RELEASE )
-
-# Create library
-add_library (
-	dpserverlib
-	${SRV_SOURCES}
-)
-
-target_link_libraries(
-	dpserverlib
-	libdrawpile # DP shared library
-	eventslib # EV lib
-)
-
-# Console executable
-set_target_properties (
-	dpserverlib
-	PROPERTIES
-	OUTPUT_NAME dpserver
-	VERSION 0.5
-	SOVERSION 0.5
-	PROJECT_LABEL dpserverlib
-)
-
-if ( NOT SERVERLIBONLY )
+if ( SERVER )
+	if ( NOT DEBUG )
+		strip_exe ( ${INTERNALNAME} )
+	endif ( NOT DEBUG )
+	
 	add_executable (
 		${INTERNALNAME}
 		MACOSX_BUNDLE
@@ -151,4 +158,4 @@ if ( NOT SERVERLIBONLY )
 	if ( NOT DEBUG )
 		strip_exe ( ${INTERNALNAME} )
 	endif ( NOT DEBUG )
-endif ( NOT SERVERLIBONLY )
+endif ( SERVER )

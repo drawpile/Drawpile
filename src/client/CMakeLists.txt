@@ -19,9 +19,9 @@ endif ( WIN32 )
 # Qt stuff
 
 # enable Qt Network
-set ( QT_USE_QTNETWORK ON )
+#set ( QT_USE_QTNETWORK ON )
 
-find_package ( Qt4 REQUIRED )
+#find_package ( Qt4 REQUIRED )
 
 include ( ${QT_USE_FILE} )
 

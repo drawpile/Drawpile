@@ -15,8 +15,9 @@ set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 # do these even work?
 
 option ( CLIENT "Compile client" ON )
-option ( SERVER "Compile server" ON )
-option ( SERVERLIBONLY "Compile server library only" OFF )
+option ( SERVER "Compile UI-less server" ON )
+option ( TRAYSERVER "Compile tray server" ON )
+option ( SERVERLIB "Compile server library" ON )
 
 option ( UNITTEST "Compile unit tests" OFF )
 
@@ -44,6 +45,15 @@ option ( RELEASE "" OFF )
 
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
 option ( OPTIMIZEMORE "Apply some questionable optimizations" ON )
+
+# Enable dependencies
+
+if ( SERVER )
+	set ( SERVERLIB ON )
+endif ( SERVER )
+if ( TRAYSERVER )
+	set ( SERVERLIB ON )
+endif ( TRAYSERVER )
 
 # Set build type
 
@@ -114,6 +124,16 @@ include ( TestBigEndian ) # needs C in project()
 test_big_endian ( IS_BIG_ENDIAN )
 
 ### Additional testing
+
+if ( CLIENT )
+	set ( QT_USE_QTNETWORK ON )
+	find_package ( Qt4 REQUIRED )
+else ( CLIENT )
+	if ( TRAYSERVER )
+		find_package ( Qt4 REQUIRED )
+	endif ( TRAYSERVER )
+endif ( CLIENT )
+
 #add_subdirectory ( config/ )
 
 ### Assembly
