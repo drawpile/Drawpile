@@ -56,8 +56,52 @@ immediately preceded it.
 
 \section synchronization Client synchronization
 
-\todo Not much else than copy&paste everything from the wiki:
-http://drawpile.sourceforge.net/wiki/index.php/Protocol_flow#Client_synchronization
+\b N is new client, \b O is one of the already existing clients.
+
+Step 1) \b N joins session.
+ - ... assumes it is out of sync.
+ - ... blocks user as result.
+ - ... waits for raster.
+ - ... buffers any incoming stroke data. 
+
+Step 2) Server announces user has joined session.
+ - ... sends syncWait to all other clients.
+ - ... sends join events for all already existing users to \b N
+ - ... announces users who are active on this session. 
+
+Step 3) Clients receive SyncWait message.
+ - ... stop sending new stroke data.
+   - ... but only after they've finished any ongoing stroke. 
+ - ... reply with ACK/Sync
+ - ... commit data received/ACK'd from network. 
+
+Step 4) Server receives all ACK/Sync messages.
+ - ... sends one Sync request to \b O.
+ - ... sends ACK/Sync messages to all clients (except \b N).
+ - ... adds \b N to data propagation 
+
+Step 5) \b O receives Sync request.
+ - ... ensures raster is up-to-date.
+ - ... copies raster.
+ - ... starts sending it to server with raster messages. 
+
+Step 6) Clients receive ACK/Sync.
+ - ... re-send Tool Info
+ - ... and resume normal operation. 
+
+Step 7) Server forwards raster data from \b O to \b N.
+
+Step 8) \b N finishes retrieving raster.
+ - ... commits buffered data.
+ - ... unblocks user. 
+
+@note
+- In case there are no users in the session yet (and there's no local copy held of a persistent session's raster), server sends raster message with its payload completely zeroed.
+- If the new client disconnects in middle of synchronization, server MAY send cancel message to the client providing the raster and resume as normal.
+- If the client that's providing the raster disconnects, server goes back to sending syncwait to all clients and resumes synchronization. Alternatively, the server may have requested the raster from multiple clients to ensure at least one copy arrives within single syncronization event and send cancel to the one/s that provided it slower. Or - as it currently does - send error to waiting client/s and remove them from session, so they may rejoin and re-initiate client sync as normal.
+- If another client joins while the synchronization is still in progress...
+  - ... and we have not yet received all ACKs, the new client will join the list of waiting clients and join normal data propagation at the same moment the first one will.
+  - ... otherwise, new client sync is initiated. 
 
 \section persistent Persistent session caching
 
