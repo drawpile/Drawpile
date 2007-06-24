@@ -72,7 +72,9 @@ void TrayMenu::iconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void TrayMenu::showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon, uint delay)
 {
+	#ifdef HAVE_QT43
 	trayIcon->showMessage(title, message, icon, delay);
+	#endif
 }
 
 void TrayMenu::createActions()
