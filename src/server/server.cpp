@@ -108,7 +108,7 @@ Server::Server() throw()
 #if 0
 Server::~Server() throw()
 {
-	// TODO: Memory cleanup
+	reset();
 }
 #endif
 
@@ -2476,6 +2476,35 @@ int Server::run() throw()
 	while (state == Server::Active);
 	
 	return 0;
+}
+
+void Server::stop() throw()
+{
+	state = Server::Exiting;
+}
+
+void Server::reset() throw()
+{
+	lsock.close();
+	
+	User *usr;
+	for (users_i ui(users.begin()); ui != users.end(); ui=users.begin())
+	{
+		usr = ui->second;
+		uRemove(usr, protocol::UserInfo::None);
+	}
+	
+	Session *session;
+	for (sessions_i si(sessions.begin()); si != sessions.end(); si=sessions.begin())
+	{
+		session = si->second;
+		sRemove(session);
+	}
+	
+	tunnel.clear();
+	utimer.clear();
+	
+	state = Server::Dead;
 }
 
 Session* Server::getSession(const uint8_t session_id) throw()

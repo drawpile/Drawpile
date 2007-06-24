@@ -618,8 +618,16 @@ public:
 	 */
 	void blockDuplicateConnectsion(const bool _allow) throw() { blockDuplicateConnections = _allow; }
 	
+	/** Control functions **/
+	
 	//! Enter main loop
 	int run() throw();
+	
+	//! Set server state to 'Exiting'
+	void stop() throw();
+	
+	//! Clean-up users, sessions and anything else except config.
+	void reset() throw();
 	
 }; // class Server
 
