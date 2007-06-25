@@ -45,13 +45,29 @@ protected:
 	// behaviour changes depending on other options
 	QSpinBox *namelen_spinner;
 	
+	// command buttons
+	QPushButton *apply_butt;
+	QPushButton *save_butt;
+	QPushButton *reset_butt;
+	
+public slots:
+	//! Slot
+	void serverStarted();
+	void serverStopped();
+	
+public:
+	void serverRunning(bool _true);
+	
 private slots:
 	void wideStrChanged(int state);
+	void enableButtons(bool _enable=true);
+	
+	void applyAction();
+	void saveAction();
+	void resetAction();
 	
 public:
 	ConfigDialog();
-	
-	void serverState(bool _running);
 };
 
 #endif // ConfigDialog_INCLUDED

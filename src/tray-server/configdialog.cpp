@@ -43,6 +43,7 @@ ConfigDialog::ConfigDialog()
 	ulimit_spinner->setRange(1, 255);
 	ulimit_spinner->setValue(10);
 	ulimit_spinner->setToolTip(tr("Maximum number of users allowed on server."));
+	connect(ulimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	ulimit_box->addWidget(ulimit_spinner, 0);
 	limit_superbox->addLayout(ulimit_box);
@@ -55,6 +56,7 @@ ConfigDialog::ConfigDialog()
 	slimit_spinner->setRange(1, 255);
 	slimit_spinner->setValue(1);
 	slimit_spinner->setToolTip(tr("Maximum number of sessions allowed on server."));
+	connect(slimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	slimit_box->addWidget(slimit_spinner, 0);
 	limit_superbox->addLayout(slimit_box);
@@ -67,6 +69,7 @@ ConfigDialog::ConfigDialog()
 	mindim_spinner->setRange(400, protocol::max_dimension);
 	mindim_spinner->setValue(400);
 	mindim_spinner->setToolTip(tr("Minimum size of canvas (for both width and height) in any session."));
+	connect(mindim_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	mindim_box->addWidget(mindim_spinner, 0);
 	limit_superbox->addLayout(mindim_box);
@@ -81,6 +84,7 @@ ConfigDialog::ConfigDialog()
 	
 	/** @todo needs better description! */
 	namelen_spinner->setToolTip(tr("For UTF-16 the limit is halved because each character takes two bytes by default."));
+	connect(namelen_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	namelen_box->addWidget(namelen_spinner, 0);
 	limit_superbox->addLayout(namelen_box);
@@ -94,6 +98,7 @@ ConfigDialog::ConfigDialog()
 	sublimit_spinner->setValue(5);
 	sublimit_spinner->setToolTip(tr("How many sessions single user can be subscribed to.<br>"
 		"Has little or no impact on server load if multiple connections are allowed from same address."));
+	connect(sublimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	sublimit_box->addWidget(sublimit_spinner, 0);
 	limit_superbox->addLayout(sublimit_box);
@@ -111,6 +116,8 @@ ConfigDialog::ConfigDialog()
 	QCheckBox *can_draw = new QCheckBox;
 	can_draw->setChecked(true);
 	can_draw->setToolTip(tr("If unchecked, session owner or server admin must unlock the user before they can draw."));
+	connect(can_draw, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
+	
 	usermode_box->addWidget(can_draw, 0);
 	
 	usermode_box->addWidget(new QLabel(tr("Allow drawing")), 1);
@@ -118,6 +125,8 @@ ConfigDialog::ConfigDialog()
 	QCheckBox *can_chat = new QCheckBox;
 	can_chat->setChecked(true);
 	can_chat->setToolTip(tr("If unchecked, session owner or server admin must unmute the user before thay can chat."));
+	connect(can_chat, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
+	
 	usermode_box->addWidget(can_chat, 0);
 	usermode_box->addWidget(new QLabel(tr("Allow chat")), 1);
 	
@@ -132,6 +141,7 @@ ConfigDialog::ConfigDialog()
 	port_spinner->setValue(protocol::default_port);
 	port_spinner->setToolTip(tr("TCP port on which the server will try to listen when started."
 		REQUIRES_RESTART));
+	connect(port_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	port_box->addWidget(port_spinner, 0);
 	
@@ -144,6 +154,8 @@ ConfigDialog::ConfigDialog()
 	unique_names = new QCheckBox;
 	unique_names->setToolTip(tr("Require that all users and sessions have an unique name."
 		REQUIRES_RESTART));
+	connect(unique_names, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
+	
 	unique_box->addWidget(unique_names, 0);
 	req_superbox->addLayout(unique_box);
 	
@@ -153,6 +165,7 @@ ConfigDialog::ConfigDialog()
 	
 	QCheckBox *allow_duplicate = new QCheckBox;
 	allow_duplicate->setToolTip(tr("Allows multiple connections from same IP address."));
+	connect(allow_duplicate, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	dupe_box->addWidget(allow_duplicate, 0);
 	req_superbox->addLayout(dupe_box);
 	
@@ -163,6 +176,7 @@ ConfigDialog::ConfigDialog()
 	wide_strings->setToolTip(tr("Require clients communicate to with UTF-16 instead of UTF-8.<br>Useful only if the users mostly use non-ASCII (a-z) characters (e.g. Kanji, Cyrillics, etc.)." REQUIRES_RESTART));
 	
 	connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(wideStrChanged(int)));
+	connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
 	widestr_box->addWidget(wide_strings, 0);
 	req_superbox->addLayout(widestr_box);
@@ -177,6 +191,7 @@ ConfigDialog::ConfigDialog()
 	srvpass_edit->setMaxLength(255);
 	srvpass_edit->setEchoMode(QLineEdit::PasswordEchoOnEdit);
 	srvpass_edit->setToolTip(tr("Password for connecting to the server."));
+	connect(srvpass_edit, SIGNAL(textChanged(const QString&)), this, SLOT(enableButtons()));
 	srvpass_box->addWidget(srvpass_edit);
 	
 	// admin password
@@ -186,19 +201,23 @@ ConfigDialog::ConfigDialog()
 	admpass_edit->setMaxLength(255);
 	admpass_edit->setEchoMode(QLineEdit::PasswordEchoOnEdit);
 	admpass_edit->setToolTip(tr("Password for gaining administrator rights.<br>If not set, users can't become admin by any means."));
+	connect(admpass_edit, SIGNAL(textChanged(const QString&)), this, SLOT(enableButtons()));
 	admpass_box->addWidget(admpass_edit);
 	
 	// command box
 	QHBoxLayout *command_box = new QHBoxLayout;
 	
-	QPushButton *apply_butt = new QPushButton(tr("Apply"));
+	apply_butt = new QPushButton(tr("Apply"));
 	apply_butt->setEnabled(false);
+	connect(apply_butt, SIGNAL(clicked(bool)), this, SLOT(applyAction()));
 	
-	QPushButton *save_butt = new QPushButton(tr("Save"));
+	save_butt = new QPushButton(tr("Save"));
 	save_butt->setEnabled(false);
+	connect(save_butt, SIGNAL(clicked(bool)), this, SLOT(saveAction()));
 	
-	QPushButton *reset_butt = new QPushButton(tr("Reset"));
+	reset_butt = new QPushButton(tr("Reset"));
 	reset_butt->setEnabled(false);
+	connect(reset_butt, SIGNAL(clicked(bool)), this, SLOT(resetAction()));
 	
 	command_box->addWidget(apply_butt);
 	command_box->addWidget(save_butt);
@@ -227,11 +246,21 @@ ConfigDialog::ConfigDialog()
 	#undef REQUIRES_RESTART
 }
 
-void ConfigDialog::serverState(bool running)
+void ConfigDialog::serverStopped()
 {
-	wide_strings->setDisabled(running);
-	unique_names->setDisabled(running);
-	port_spinner->setReadOnly(running);
+	serverRunning(false);
+}
+
+void ConfigDialog::serverStarted()
+{
+	serverRunning(true);
+}
+
+void ConfigDialog::serverRunning(bool _running)
+{
+	wide_strings->setDisabled(_running);
+	unique_names->setDisabled(_running);
+	port_spinner->setReadOnly(_running);
 }
 
 void ConfigDialog::wideStrChanged(int state)
@@ -240,4 +269,29 @@ void ConfigDialog::wideStrChanged(int state)
 		namelen_spinner->setMaximum(255);
 	else
 		namelen_spinner->setMaximum(127);
+}
+
+void ConfigDialog::enableButtons(bool _enable)
+{
+	apply_butt->setEnabled(_enable);
+	save_butt->setEnabled(_enable);
+	reset_butt->setEnabled(_enable);
+}
+
+void ConfigDialog::applyAction()
+{
+	apply_butt->setDisabled(true);
+	// TODO
+}
+
+void ConfigDialog::saveAction()
+{
+	save_butt->setDisabled(true);
+	// TODO
+}
+
+void ConfigDialog::resetAction()
+{
+	enableButtons(false);
+	// TODO
 }
