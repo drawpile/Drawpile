@@ -49,7 +49,7 @@ namespace event {
  * 
  */
 class Pselect
-	: Interface<Pselect>
+	: public Interface<Pselect>
 {
 private:
 	timespec _timeout;

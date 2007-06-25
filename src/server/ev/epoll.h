@@ -48,7 +48,7 @@ namespace event {
  * 
  */
 class Epoll
-	: Interface<Epoll>
+	: public Interface<Epoll>
 {
 private:
 	

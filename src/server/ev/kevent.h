@@ -45,7 +45,7 @@ namespace event {
  * @see http://lwn.net/Articles/225714/ Kernel events without kevents
  */
 class Kevent
-	: Interface<Kevent>
+	: public Interface<Kevent>
 {
 private:
 	timeval _timeout;

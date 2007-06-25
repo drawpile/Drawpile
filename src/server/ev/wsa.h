@@ -52,7 +52,7 @@ const uint max_events = 10;
  * 
  */
 class WSA
-	: Interface<WSA>
+	: public Interface<WSA>
 {
 private:
 	uint _timeout;
