@@ -26,6 +26,8 @@
 class Server;
 class QCheckBox;
 class QSpinBox;
+class QLineEdit;
+class QMutex;
 
 //! Server configuration/settings dialog
 /**
@@ -44,18 +46,29 @@ protected:
 	//! Pointer to server instance
 	Server *srv;
 	
-	// following are disabled when server is running
+	QCheckBox *can_draw;
+	QCheckBox *can_chat;
+	
+	QCheckBox *allow_duplicate;
 	QCheckBox *wide_strings;
 	QCheckBox *unique_names;
-	QSpinBox *port_spinner;
 	
-	// behaviour changes depending on other options
+	QSpinBox *port_spinner;
 	QSpinBox *namelen_spinner;
+	QSpinBox *sublimit_spinner;
+	QSpinBox *mindim_spinner;
+	QSpinBox *slimit_spinner;
+	QSpinBox *ulimit_spinner;
+	
+	QLineEdit *admpass_edit;
+	QLineEdit *srvpass_edit;
 	
 	// command buttons
 	QPushButton *apply_butt;
 	QPushButton *save_butt;
 	QPushButton *reset_butt;
+	
+	QMutex *srvmutex;
 	
 public slots:
 	//! Slot

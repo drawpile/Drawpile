@@ -21,6 +21,8 @@
 #include "configdialog.h"
 #include "../shared/protocol.defaults.h"
 #include "../server/sockets.h"
+#include "../shared/templates.h"
+#include "../server/server.h"
 
 #include <QDebug>
 #include <QtGui>
@@ -41,9 +43,8 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *ulimit_box = new QHBoxLayout;
 	ulimit_box->addWidget(new QLabel(tr("User limit")), 1);
 	
-	QSpinBox *ulimit_spinner = new QSpinBox;
+	ulimit_spinner = new QSpinBox;
 	ulimit_spinner->setRange(1, 255);
-	ulimit_spinner->setValue(10);
 	ulimit_spinner->setToolTip(tr("Maximum number of users allowed on server."));
 	connect(ulimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
@@ -54,9 +55,8 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *slimit_box = new QHBoxLayout;
 	slimit_box->addWidget(new QLabel(tr("Session limit")), 1);
 	
-	QSpinBox *slimit_spinner = new QSpinBox;
+	slimit_spinner = new QSpinBox;
 	slimit_spinner->setRange(1, 255);
-	slimit_spinner->setValue(1);
 	slimit_spinner->setToolTip(tr("Maximum number of sessions allowed on server."));
 	connect(slimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
@@ -67,9 +67,8 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *mindim_box = new QHBoxLayout;
 	mindim_box->addWidget(new QLabel(tr("Min. allowed canvas size")), 1);
 	
-	QSpinBox *mindim_spinner = new QSpinBox;
+	mindim_spinner = new QSpinBox;
 	mindim_spinner->setRange(400, protocol::max_dimension);
-	mindim_spinner->setValue(400);
 	mindim_spinner->setToolTip(tr("Minimum size of canvas (for both width and height) in any session."));
 	connect(mindim_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
@@ -82,7 +81,6 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	namelen_spinner = new QSpinBox;
 	namelen_spinner->setRange(8, 255);
-	namelen_spinner->setValue(16);
 	
 	/** @todo needs better description! */
 	namelen_spinner->setToolTip(tr("For UTF-16 the limit is halved because each character takes two bytes by default."));
@@ -95,9 +93,8 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *sublimit_box = new QHBoxLayout;
 	sublimit_box->addWidget(new QLabel(tr("Subscription limit")), 1);
 	
-	QSpinBox *sublimit_spinner = new QSpinBox;
+	sublimit_spinner = new QSpinBox;
 	sublimit_spinner->setRange(1, 255);
-	sublimit_spinner->setValue(5);
 	sublimit_spinner->setToolTip(tr("How many sessions single user can be subscribed to.<br>"
 		"Has little or no impact on server load if multiple connections are allowed from same address."));
 	connect(sublimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
@@ -115,18 +112,20 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *usermode_box = new QHBoxLayout;
 	usermode_box->addSpacing(3);
 	
-	QCheckBox *can_draw = new QCheckBox;
-	can_draw->setChecked(true);
+	can_draw = new QCheckBox;
 	can_draw->setToolTip(tr("If unchecked, session owner or server admin must unlock the user before they can draw."));
+	can_draw->setDisabled(true);
+	can_draw->setChecked(true);
 	connect(can_draw, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
 	usermode_box->addWidget(can_draw, 0);
 	
 	usermode_box->addWidget(new QLabel(tr("Allow drawing")), 1);
 	
-	QCheckBox *can_chat = new QCheckBox;
-	can_chat->setChecked(true);
+	can_chat = new QCheckBox;
 	can_chat->setToolTip(tr("If unchecked, session owner or server admin must unmute the user before thay can chat."));
+	can_chat->setDisabled(true);
+	can_chat->setChecked(true);
 	connect(can_chat, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
 	usermode_box->addWidget(can_chat, 0);
@@ -140,7 +139,6 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	port_spinner = new QSpinBox;
 	port_spinner->setRange(Network::SuperUser_Port+1, Network::PortUpperBound);
-	port_spinner->setValue(protocol::default_port);
 	port_spinner->setToolTip(tr("TCP port on which the server will try to listen when started."
 		REQUIRES_RESTART));
 	connect(port_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
@@ -165,7 +163,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *dupe_box = new QHBoxLayout;
 	dupe_box->addWidget(new QLabel(tr("Allow duplicate connections")), 1);
 	
-	QCheckBox *allow_duplicate = new QCheckBox;
+	allow_duplicate = new QCheckBox;
 	allow_duplicate->setToolTip(tr("Allows multiple connections from same IP address."));
 	connect(allow_duplicate, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	dupe_box->addWidget(allow_duplicate, 0);
@@ -189,7 +187,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	// server password
 	QHBoxLayout *srvpass_box = new QHBoxLayout;
 	srvpass_box->addWidget(new QLabel(tr("Server password")), 1);
-	QLineEdit *srvpass_edit = new QLineEdit;
+	srvpass_edit = new QLineEdit;
 	srvpass_edit->setMaxLength(255);
 	srvpass_edit->setEchoMode(QLineEdit::PasswordEchoOnEdit);
 	srvpass_edit->setToolTip(tr("Password for connecting to the server."));
@@ -199,7 +197,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	// admin password
 	QHBoxLayout *admpass_box = new QHBoxLayout;
 	admpass_box->addWidget(new QLabel(tr("Administrator password")), 1);
-	QLineEdit *admpass_edit = new QLineEdit;
+	admpass_edit = new QLineEdit;
 	admpass_edit->setMaxLength(255);
 	admpass_edit->setEchoMode(QLineEdit::PasswordEchoOnEdit);
 	admpass_edit->setToolTip(tr("Password for gaining administrator rights.<br>If not set, users can't become admin by any means."));
@@ -210,15 +208,12 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *command_box = new QHBoxLayout;
 	
 	apply_butt = new QPushButton(tr("Apply"));
-	apply_butt->setEnabled(false);
 	connect(apply_butt, SIGNAL(clicked(bool)), this, SLOT(applyAction()));
 	
 	save_butt = new QPushButton(tr("Save"));
-	save_butt->setEnabled(false);
 	connect(save_butt, SIGNAL(clicked(bool)), this, SLOT(saveAction()));
 	
 	reset_butt = new QPushButton(tr("Reset"));
-	reset_butt->setEnabled(false);
 	connect(reset_butt, SIGNAL(clicked(bool)), this, SLOT(resetAction()));
 	
 	command_box->addWidget(apply_butt);
@@ -244,6 +239,10 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	root->addLayout(command_box);
 	
 	setLayout(root);
+	
+	// get settings from server
+	resetAction();
+	enableButtons(false);
 	
 	#undef REQUIRES_RESTART
 }
@@ -276,24 +275,75 @@ void ConfigDialog::wideStrChanged(int state)
 void ConfigDialog::enableButtons(bool _enable)
 {
 	apply_butt->setEnabled(_enable);
-	save_butt->setEnabled(_enable);
+	//save_butt->setEnabled(_enable);
 	reset_butt->setEnabled(_enable);
 }
 
 void ConfigDialog::applyAction()
 {
-	apply_butt->setDisabled(true);
-	// TODO
+	enableButtons(false);
+	
+	//can_draw->checkState() == Qt::Checked;
+	//can_chat->checkState() == Qt::Checked;
+	
+	//srvmutex->lock();
+	
+	srv->setDuplicateConnectionBlocking( (allow_duplicate->checkState() == Qt::Unchecked) );
+	srv->setUTF16Requirement( (wide_strings->checkState() == Qt::Checked) );
+	srv->setUniqueNameEnforcing( (unique_names->checkState() == Qt::Checked) );
+	srv->setPort(port_spinner->value());
+	srv->setNameLengthLimit(namelen_spinner->value());
+	srv->setSubscriptionLimit(sublimit_spinner->value());
+	srv->setMinDimension(mindim_spinner->value());
+	srv->setSessionLimit(slimit_spinner->value());
+	srv->setUserLimit(ulimit_spinner->value());
+	
+	//admpass_edit;
+	//srvpass_edit;
+	
+	//srvmutex->unlock();
 }
 
 void ConfigDialog::saveAction()
 {
 	save_butt->setDisabled(true);
-	// TODO
+	
+	/*
+	can_draw;
+	can_chat;
+	
+	allow_duplicate;
+	wide_strings;
+	unique_names;
+	
+	port_spinner;
+	namelen_spinner;
+	sublimit_spinner;
+	mindim_spinner;
+	slimit_spinner;
+	ulimit_spinner;
+	
+	admpass_edit;
+	srvpass_edit;
+	*/
 }
 
 void ConfigDialog::resetAction()
 {
 	enableButtons(false);
-	// TODO
+	
+	//srvmutex->lock();
+	
+	allow_duplicate->setChecked( !srv->getDuplicateConnectionBlocking() );
+	
+	wide_strings->setChecked( srv->getUTF16Requirement() );
+	unique_names->setChecked( srv->getUniqueNameEnforcing() );
+	port_spinner->setValue( srv->getPort() );
+	namelen_spinner->setValue( srv->getNameLengthLimit() );
+	sublimit_spinner->setValue( srv->getSubscriptionLimit() );
+	mindim_spinner->setValue( srv->getMinDimension() );
+	slimit_spinner->setValue( srv->getSessionLimit() );
+	ulimit_spinner->setValue( srv->getUserLimit() );
+	
+	//srvmutex->unlock();
 }
