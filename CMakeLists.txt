@@ -39,7 +39,7 @@ option ( PROFILE "Enable profiling (-pg)" OFF )
 
 option ( ASM "Use hand-written assembly" OFF )
 
-option ( OPENSSL "Use OpenSSL if present" ON )
+option ( OPENSSL "Use OpenSSL if present" OFF )
 
 option ( RELEASE "" OFF )
 
