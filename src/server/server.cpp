@@ -2348,7 +2348,7 @@ bool Server::init() throw(std::bad_alloc)
 			ev.add(lsock.fd(), event::read<EventSystem>::value);
 		
 		// set event timeout
-		ev.timeout(30000);
+		ev.timeout(5000);
 		
 		state = Server::Init;
 		
