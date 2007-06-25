@@ -25,7 +25,9 @@
 #include <QDebug>
 #include <QtGui>
 
-ConfigDialog::ConfigDialog()
+ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
+	: QDialog(parent),
+	srv(_srv)
 {
 	#define REQUIRES_RESTART "<br>This option can't be changed while the server is running."
 	setWindowTitle(tr("DrawPile Server Configuration"));

@@ -22,10 +22,6 @@
 #define ServerThread_INCLUDED
 
 #include <QThread>
-#include <QMutex>
-#include <QWaitCondition>
-
-#include "../server/server.h"
 
 class Server;
 
@@ -36,7 +32,7 @@ class ServerThread
 	Q_OBJECT
 	
 public:
-	ServerThread(Server *srv, QObject *parent=0);
+	ServerThread(Server *srv, QObject *parent);
 	~ServerThread();
 	
 public slots:
@@ -45,6 +41,7 @@ public slots:
 protected:
 	void run();
 	
+	//! Pointer to Server instance
 	Server *srv;
 };
 

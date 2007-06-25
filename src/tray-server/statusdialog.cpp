@@ -22,8 +22,9 @@
 
 #include <QtGui>
 
-StatusDialog::StatusDialog()
-	: unknown_value(tr("Unknown"))
+StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
+	: QDialog(parent),
+	srv(_srv)
 {
 	setWindowTitle(tr("DrawPile Server Status"));
 	
@@ -36,8 +37,8 @@ StatusDialog::StatusDialog()
 	QHBoxLayout *state_box = new QHBoxLayout;
 	state_box->addWidget(new QLabel(tr("State:")), 1);
 	state_text = new QLabel;
-	state_text->setText(unknown_value);
 	state_text->setAlignment(Qt::AlignCenter);
+	serverStopped();
 	state_box->addWidget(state_text, 0);
 	
 	status_group->setLayout(state_box);
@@ -75,4 +76,14 @@ StatusDialog::StatusDialog()
 	root->addWidget(user_group);
 	
 	setLayout(root);
+}
+
+void StatusDialog::serverStarted()
+{
+	state_text->setText(tr("Ready"));
+}
+
+void StatusDialog::serverStopped()
+{
+	state_text->setText(tr("Stopped"));
 }

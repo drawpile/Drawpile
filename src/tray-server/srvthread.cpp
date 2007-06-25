@@ -19,6 +19,7 @@
 ******************************************************************************/
 
 #include "srvthread.h"
+#include "../server/server.h"
 
 #include <QDebug>
 
@@ -26,13 +27,7 @@ ServerThread::ServerThread(Server *server, QObject *parent)
 	: QThread(parent),
 	srv(server)
 {
-	Q_ASSERT(server != 0);
-	
-	if (!srv->init())
-	{
-		qDebug() << "Server initialization failed!";
-		throw std::exception();
-	}
+	Q_ASSERT(srv != 0);
 }
 
 ServerThread::~ServerThread()
@@ -43,11 +38,15 @@ ServerThread::~ServerThread()
 
 void ServerThread::run()
 {
+	Q_ASSERT(srv != 0);
+	
+	srv->init();
 	srv->run();
 	srv->reset();
 }
 
 void ServerThread::stop()
 {
+	Q_ASSERT(srv != 0);
 	srv->stop();
 }

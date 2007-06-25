@@ -30,14 +30,14 @@
 TrayMenu::TrayMenu()
 	: srvthread(0),
 	title(tr("DrawPile Server")),
-	srv(new Server),
-	config(new ConfigDialog()),
-	status(new StatusDialog())
+	srv(new Server)
 {
 	trayIcon = new QSystemTrayIcon(this);
 	
+	config = new ConfigDialog(srv, this);
+	status = new StatusDialog(srv, this);
+	
 	srvthread = new ServerThread(srv, this);
-	//srvthread->terminate();
 	
 	createMenu();
 	
@@ -54,8 +54,11 @@ TrayMenu::TrayMenu()
 	
 	connect(srvthread, SIGNAL(started()), this, SLOT(serverStarted()));
 	connect(srvthread, SIGNAL(started()), config, SLOT(serverStarted()));
+	connect(srvthread, SIGNAL(started()), status, SLOT(serverStarted()));
+	
 	connect(srvthread, SIGNAL(finished()), this, SLOT(serverStopped()));
 	connect(srvthread, SIGNAL(finished()), config, SLOT(serverStopped()));
+	connect(srvthread, SIGNAL(finished()), status, SLOT(serverStopped()));
 	
 	showMessage(title, tr("Server ready for action!"), QSystemTrayIcon::Information);
 }
@@ -97,12 +100,13 @@ void TrayMenu::createMenu()
 	menu = new QMenu(this);
 	
 	startAction = new QAction(tr("Start"), this);
-	connect(startAction, SIGNAL(triggered()), this, SLOT(startSlot()));
+	connect(startAction, SIGNAL(triggered()), this, SLOT(start()));
 	connect(startAction, SIGNAL(triggered()), srvthread, SLOT(start()));
 	menu->addAction(startAction);
 	
 	stopAction = new QAction(tr("Stop"), this);
-	connect(stopAction, SIGNAL(triggered()), this, SLOT(stopSlot()));
+	connect(stopAction, SIGNAL(triggered()), srvthread, SLOT(stop()));
+	connect(stopAction, SIGNAL(triggered()), this, SLOT(stop()));
 	stopAction->setDisabled(true);
 	menu->addAction(stopAction);
 	
@@ -119,7 +123,8 @@ void TrayMenu::createMenu()
 	menu->addAction(separator);
 	
 	quitAction = new QAction(tr("Quit"), this);
-	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+	connect(quitAction, SIGNAL(triggered()), srvthread, SLOT(stop()));
+	connect(quitAction, SIGNAL(triggered()), this, SLOT(quitSlot()));
 	menu->addAction(quitAction);
 	
 	menu->setDefaultAction(statusAction);
@@ -127,33 +132,40 @@ void TrayMenu::createMenu()
 	trayIcon->setContextMenu(menu);
 }
 
-void TrayMenu::toggleStartStop(bool started)
+void TrayMenu::start()
 {
-	startAction->setDisabled(started);
-	stopAction->setDisabled(!started);
+	startAction->setDisabled(true);
+	
+	showMessage(title, tr("Starting server..."));
 }
 
-void TrayMenu::startSlot()
+void TrayMenu::stop()
 {
-	toggleStartStop(true);
+	stopAction->setDisabled(true);
+	
+	showMessage(title, tr("Stopping server..."));
 }
 
-void TrayMenu::stopSlot()
+void TrayMenu::quitSlot()
 {
-	showMessage(title, tr("Waiting for server to stop..."));
-	srv->stop();
+	delete menu;
+	if (srvthread->isRunning())
+		connect(srvthread, SIGNAL(finished()), qApp, SLOT(quit()));
+	else
+		qApp->quit();
 }
 
 void TrayMenu::serverStarted()
 {
+	stopAction->setEnabled(true);
 	setIcon(1);
+	
 	showMessage(title, tr("Server started!"));
 }
 
 void TrayMenu::serverStopped()
 {
-	toggleStartStop(false);
-	
+	startAction->setEnabled(true);
 	setIcon(0);
 	
 	showMessage(title, tr("Server stopped!"));
@@ -169,12 +181,6 @@ void TrayMenu::statusSlot()
 
 void TrayMenu::configSlot()
 {
-	/*
-	if (!config)
-		config = new ConfigDialog(this);
-	else
-		config->activateWindow();
-	*/
 	if (config->isHidden())
 		config->show();
 	else

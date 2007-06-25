@@ -23,6 +23,7 @@
 
 #include <QDialog>
 
+class Server;
 class QCheckBox;
 class QSpinBox;
 
@@ -36,7 +37,13 @@ class ConfigDialog
 {
 	Q_OBJECT
 	
+public:
+	ConfigDialog(Server *srv, QWidget *parent);
+	
 protected:
+	//! Pointer to server instance
+	Server *srv;
+	
 	// following are disabled when server is running
 	QCheckBox *wide_strings;
 	QCheckBox *unique_names;
@@ -65,9 +72,6 @@ private slots:
 	void applyAction();
 	void saveAction();
 	void resetAction();
-	
-public:
-	ConfigDialog();
 };
 
 #endif // ConfigDialog_INCLUDED

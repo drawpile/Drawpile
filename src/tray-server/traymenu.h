@@ -61,10 +61,10 @@ private slots:
 	void showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
 	
 	//! Menu 'start' action
-	void startSlot();
+	void start();
 	
 	//! Menu 'stop' action
-	void stopSlot();
+	void stop();
 	
 	//! Menu 'config' action
 	void configSlot();
@@ -72,12 +72,12 @@ private slots:
 	//! Menu 'status' action
 	void statusSlot();
 	
+	//! Menu 'quit' action
+	void quitSlot();
+	
 private:
 	//! Create tray context menu
 	void createMenu();
-	
-	//! Toggle start & stop menu items
-	void toggleStartStop(bool started);
 	
 	//! Server thread
 	ServerThread *srvthread;

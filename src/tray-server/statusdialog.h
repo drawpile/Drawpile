@@ -26,6 +26,7 @@
 
 class QLabel;
 class QGroupBox;
+class Server;
 
 //! Server status dialog
 class StatusDialog
@@ -33,17 +34,24 @@ class StatusDialog
 {
 	Q_OBJECT
 	
+public:
+	//! Constructor
+	StatusDialog(const Server *srv, QWidget *parent);
+	
+public slots:
+	//! Slot
+	void serverStarted();
+	//! Slot
+	void serverStopped();
+	
 protected:
+	//! Pointer to server instance
+	const Server *srv;
+	
 	// these might need to be updated occasionally
 	QLabel *state_text;
 	QGroupBox *session_group;
 	QGroupBox *user_group;
-	
-	// constant
-	const QString unknown_value;
-	
-public:
-	StatusDialog();
 };
 
 #endif // StatusDialog_INCLUDED
