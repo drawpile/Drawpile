@@ -31,8 +31,13 @@
 
 #include "common.h"
 
-#include <iostream>
+#ifndef NDEBUG
+	#include <iostream>
+#endif
+
 #include <stdexcept>
+
+#include "sockets.ext.h"
 
 //! Network constants
 namespace Network {
@@ -92,74 +97,11 @@ const uint PortUpperBound = 65535;
 //! Lowest port number
 const uint PortLowerBound = 0;
 
-}
+namespace error {
+	const int WouldBlock = EWOULDBLOCK;
+} // namespace:error
 
-#ifdef WIN32
-	#include <ws2tcpip.h>
-	#include <winsock2.h>
-	#if defined( HAVE_MSWSOCK_H )
-		#include <mswsock.h>
-	#endif
-	
-	#define EWOULDBLOCK WSAEWOULDBLOCK
-	
-	#define EINPROGRESS WSAEINPROGRESS
-	#define ENETDOWN WSAENETDOWN
-	//#define EMFILE WSAEMFILE
-	#define ENOBUFS WSAENOBUFS
-	//#define EINTR WSAEINTR
-	#define EWOULDBLOCK WSAEWOULDBLOCK
-	#define ECONNABORTED WSAECONNABORTED
-	#define EADDRNOTAVAIL WSAEADDRNOTAVAIL
-	#define EADDRINUSE WSAEADDRINUSE
-	//#define EACCES WSAEACCES
-	#define ECONNREFUSED WSAECONNREFUSED
-	#define ETIMEDOUT WSAETIMEDOUT
-	#define ENETUNREACH WSAENETUNREACH
-	#define ECONNRESET WSAECONNRESET
-	#define ESHUTDOWN WSAESHUTDOWN
-	#define EDISCON WSAEDISCON
-	#define ENETRESET WSAENETRESET
-	#define EAFNOSUPPORT WSAEAFNOSUPPORT
-	#define ENOTCONN WSAENOTCONN
-	#define EISCONN WSAEISCONN
-	#define EALREADY WSAEALREADY
-	
-	// winows only
-	//#define WSA_IO_PENDING
-	//#define WSA_OPERATION_ABORTED
-	
-	// programming errors
-	//#define EFAULT WSAEFAULT
-	//#define EBADF WSAEBADF
-	#define ENOTSOCK WSAENOTSOCK
-	#define ENOPROTOOPT WSAENOPROTOOPT
-	#define EPROTOTYPE WSAEPROTOTYPE
-	#define ESOCKTNOSUPPORT WSAESOCKTNOSUPPORT
-	#define EOPNOTSUPP WSAEOPNOTSUPP
-	#define EPROTONOSUPPORT WSAEPROTONOSUPPORT
-	
-	#define MSG_NOSIGNAL 0 // the flag isn't used in win32
-	typedef SOCKET fd_t;
-	
-	#define SHUT_RD SD_RECEIVE
-	#define SHUT_WR SD_SEND
-	#define SHUT_RDWR SD_BOTH
-	
-	#define NEED_NET
-#else
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <arpa/inet.h>
-	#include <netinet/in.h>
-	#include <unistd.h> // close()
-	#include <cerrno> // errno
-	
-	// not defined in non-win32 systems
-	#define INVALID_SOCKET -1
-	#define SOCKET_ERROR -1
-	typedef int fd_t;
-#endif
+}
 
 #ifndef EAGAIN
 	#define EAGAIN EWOULDBLOCK
@@ -215,6 +157,18 @@ struct Address {
 	 * @bug Comparing IPv6 addresses likely doesn't work.
 	 */
 	bool operator== (const Address& naddr) const throw();
+	
+	//! Convert address to string representation of it
+	/**
+	 * @param[in] raddr address to translate
+	 */
+	static std::string toString(const Address& raddr) throw();
+	
+	//! Convert string to address
+	/**
+	 * @param[in] address string to convert
+	 */
+	static Address fromString(std::string const& address) throw();
 };
 
 void initAddress(Address& addr) throw();
@@ -239,43 +193,17 @@ protected:
 	int s_error;
 public:
 	//! Default constructor
-	Socket() throw()
-		: sock(INVALID_SOCKET),
-		s_error(0)
-	{
-		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket::Socket()" << std::endl;
-		#endif
-	}
+	/**
+	 * @param[in] nsock FD to associate with this Socket
+	 */
+	Socket(const fd_t& nsock=INVALID_SOCKET) throw();
 	
-	//! ctor
+	//! More advanced constructor
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(fd_t& nsock, const Address saddr) throw()
-		: sock(nsock),
-		s_error(0)
-	{
-		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket(FD: "<<nsock<<", address: " << AddrToString(saddr) << ") constructed" << std::endl;
-		#endif
-		
-		addr = saddr;
-	}
-	
-	//! ctor
-	/**
-	 * @param[in] nsock FD to associate with this Socket
-	 */
-	Socket(fd_t nsock) throw()
-		: sock(nsock),
-		s_error(0)
-	{
-		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "Socket(FD: " << nsock << ") constructed" << std::endl;
-		#endif
-	}
+	Socket(const fd_t& nsock, const Address& saddr) throw();
 	
 	~Socket() throw()
 	{
@@ -393,6 +321,10 @@ public:
 	//! Connect to address
 	/**
 	 * @param[in] rhost host to connect to
+	 * @retval 0 on success
+	 * @retval SOCKET_ERROR on error
+	 *
+	 * @note getError() 
 	 */
 	int connect(const Address& rhost) throw();
 	
@@ -491,18 +423,6 @@ public:
 	 * @return Local port number
 	 */
 	ushort port() const throw();
-	
-	//! Convert address to string representation of it
-	/**
-	 * @param[in] raddr address to translate
-	 */
-	static std::string AddrToString(const Address& raddr) throw();
-	
-	//! Convert string to address
-	/**
-	 * @param[in] address string to convert
-	 */
-	static Address StringToAddr(std::string const& address) throw();
 	
 	/* Operator overloads */
 	
