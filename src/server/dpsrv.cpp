@@ -312,6 +312,8 @@ int main(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 		
+		std::cout << "+ Listening on port " << srv.getPort() << std::endl;
+		
 		try {
 			rc = srv.run();
 		}
