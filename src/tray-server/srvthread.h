@@ -39,17 +39,13 @@ public:
 	ServerThread(Server *srv, QObject *parent=0);
 	~ServerThread();
 	
+public slots:
+	void stop();
+	
 protected:
 	void run();
 	
 	Server *srv;
-	
-private:
-	QMutex mutex;
-	QWaitCondition condition;
-	
-	bool restart;
-	bool abort;
 };
 
 #endif // ServerThread_INCLUDED

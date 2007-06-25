@@ -23,9 +23,8 @@
 #include <QDebug>
 
 ServerThread::ServerThread(Server *server, QObject *parent)
-	: srv(server),
-	restart(false),
-	abort(false)
+	: QThread(parent),
+	srv(server)
 {
 	Q_ASSERT(server != 0);
 	
@@ -38,9 +37,7 @@ ServerThread::ServerThread(Server *server, QObject *parent)
 
 ServerThread::~ServerThread()
 {
-	mutex.lock();
-	srv->stop();
-	mutex.unlock();
+	stop();
 	wait();
 }
 
@@ -50,3 +47,7 @@ void ServerThread::run()
 	srv->reset();
 }
 
+void ServerThread::stop()
+{
+	srv->stop();
+}
