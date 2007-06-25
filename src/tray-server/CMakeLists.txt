@@ -51,10 +51,6 @@ if ( WIN32 )
 	generate_win32_resource()
 endif ( WIN32 )
 
-if ( ACCEPT_MTHREADS )
-	set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads" ) # ??
-endif ( ACCEPT_MTHREADS )
-
 add_executable (
 	${INTERNALNAME}
 	${EXETYPE}

@@ -103,10 +103,6 @@ endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
 
-if ( ACCEPT_MTHREADS )
-	set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mthreads" )
-endif ( ACCEPT_MTHREADS )
-
 set (
 	CLIENT_SOURCES
 	${Sources}
