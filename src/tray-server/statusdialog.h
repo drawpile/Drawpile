@@ -22,12 +22,25 @@
 #define StatusDialog_INCLUDED
 
 #include <QDialog>
+#include <QString>
+
+class QLabel;
+class QGroupBox;
 
 //! Server status dialog
 class StatusDialog
 	: public QDialog
 {
 	Q_OBJECT
+	
+protected:
+	// these might need to be updated occasionally
+	QLabel *state_text;
+	QGroupBox *session_group;
+	QGroupBox *user_group;
+	
+	// constant
+	const QString unknown_value;
 	
 public:
 	StatusDialog();

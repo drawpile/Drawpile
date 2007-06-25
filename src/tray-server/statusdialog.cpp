@@ -20,12 +20,59 @@
 
 #include "statusdialog.h"
 
+#include <QtGui>
+
 StatusDialog::StatusDialog()
+	: unknown_value(tr("Unknown"))
 {
 	setWindowTitle(tr("DrawPile Server Status"));
 	
 	//setAttribute(Qt::WA_DeleteOnClose);
 	
+	QGroupBox *status_group = new QGroupBox(tr("Status"));
+	status_group->setContentsMargins(3,12,3,0);
 	
+	// server state
+	QHBoxLayout *state_box = new QHBoxLayout;
+	state_box->addWidget(new QLabel(tr("State:")), 1);
+	state_text = new QLabel;
+	state_text->setText(unknown_value);
+	state_text->setAlignment(Qt::AlignCenter);
+	state_box->addWidget(state_text, 0);
 	
+	status_group->setLayout(state_box);
+	
+	// Sessions
+	session_group = new QGroupBox(tr("Sessions"));
+	session_group->setContentsMargins(3,12,3,0);
+	
+	QVBoxLayout *session_box = new QVBoxLayout;
+	
+	// * session list
+	
+	session_group->setLayout(session_box);
+	
+	// Users
+	QGroupBox *user_group = new QGroupBox(tr("Users"));
+	user_group->setContentsMargins(3,12,3,0);
+	
+	QVBoxLayout *user_box = new QVBoxLayout;
+	
+	// * user list
+	
+	user_group->setLayout(user_box);
+	
+	// root layout
+	
+	QVBoxLayout *root = new QVBoxLayout;
+	root->setContentsMargins(3,3,3,3);
+	root->addStretch(1);
+	root->addSpacing(3);
+	root->addStrut(120); // ?
+	
+	root->addWidget(status_group);
+	root->addWidget(session_group);
+	root->addWidget(user_group);
+	
+	setLayout(root);
 }
