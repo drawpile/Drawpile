@@ -69,7 +69,7 @@ typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
 	: state(Server::Dead),
-	user_limit(0),
+	user_limit(255),
 	session_limit(1),
 	max_subscriptions(1),
 	name_len_limit(12),
@@ -77,13 +77,6 @@ Server::Server() throw()
 	current_time(0), next_timer(0),
 	port(protocol::default_port),
 	min_dimension(400),
-	requirements(0),
-	extensions(
-		protocol::extensions::Chat|protocol::extensions::Palette
-		#ifdef HAVE_ZLIB
-		|protocol::extensions::Deflate
-		#endif // HAVE_ZLIB
-	),
 	enforceUnique(false), wideStrings(false), noGlobalChat(false),
 	extDeflate(
 		#ifdef HAVE_ZLIB
@@ -103,6 +96,8 @@ Server::Server() throw()
 	#ifndef NDEBUG
 	cout << "? Event mechanism: " << event::system<EventSystem>::value << endl;
 	#endif
+	
+	lsock.getAddr().port(protocol::default_port);
 }
 
 #if 0
@@ -193,8 +188,11 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 			user_limit,
 			name_len_limit,
 			max_subscriptions,
-			requirements,
-			extensions
+			getRequirements(),
+			protocol::extensions::Chat|protocol::extensions::Palette
+			#ifdef HAVE_ZLIB
+			|protocol::extensions::Deflate
+			#endif
 		)
 	);
 }
@@ -1403,8 +1401,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			Array<char> title(msg.title, msg.title_len);
-			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
-				and !validateSessionTitle(title))
+			if (enforceUnique and !validateSessionTitle(title))
 			{
 				#ifndef NDEBUG
 				cerr << "- Session title not unique." << endl;
@@ -1620,8 +1617,7 @@ void Server::uLoginInfo(User& usr) throw()
 	// assign user their own name
 	usr.name.set(msg.name, msg.length);
 	
-	if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
-		and !validateUserName(&usr))
+	if (enforceUnique and !validateUserName(&usr))
 	{
 		#ifndef NDEBUG
 		cerr << "- Name not unique" << endl;
@@ -2109,6 +2105,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 	usr.sessions.erase(session_id);
 }
 
+/** @todo Check user limit! */
 void Server::uAdd(Socket sock) throw(std::bad_alloc)
 {
 	if (sock.fd() == INVALID_SOCKET)
@@ -2353,7 +2350,7 @@ bool Server::init() throw(std::bad_alloc)
 bool Server::validateUserName(User* usr) const throw()
 {
 	assert(usr != 0);
-	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
+	assert(enforceUnique);
 	
 	if (usr->name.size == 0)
 		return false;
@@ -2372,7 +2369,7 @@ bool Server::validateUserName(User* usr) const throw()
 bool Server::validateSessionTitle(const Array<char>& title) const throw()
 {
 	assert(title.ptr != 0 and title.size > 0);
-	assert(fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique)));
+	assert(enforceUnique);
 	
 	#ifdef STRICT_UNIQUENESS
 	// Session title is never unique if it's an empty string.
@@ -2544,4 +2541,9 @@ const Session* Server::getConstSession(const uint8_t session_id) const throw()
 {
 	const sessions_const_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : si->second);
+}
+
+uint8_t Server::getRequirements() const throw()
+{
+	return 0;
 }

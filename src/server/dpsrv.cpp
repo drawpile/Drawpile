@@ -223,11 +223,11 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'e': // name enforcing
-				srv.addRequirement(protocol::requirements::EnforceUnique);
+				srv.setUniqueNameEnforcing();
 				cout << "& Unique name enforcing enabled." << endl;
 				break;
 			case 'w': // utf-16 string (wide chars)
-				srv.addRequirement(protocol::requirements::WideStrings);
+				srv.setUTF16Requirement();
 				cout << "& UTF-16 string mode enabled." << endl;
 				break;
 			case 'L': // session limit

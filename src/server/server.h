@@ -130,8 +130,6 @@ protected:
 		min_dimension;
 	
 	uint8_t
-		//! Server requirements
-		requirements,
 		//! Supported extensions
 		extensions;
 	
@@ -519,7 +517,7 @@ public:
 	/**
 	 * @param[in] limit New limit
 	 */
-	void setNameLengthLimit(const uint8_t limit) throw() { name_len_limit = limit; }
+	void setNameLengthLimit(const uint8_t limit=16) throw() { name_len_limit = limit; }
 	uint getNameLengthLimit() const throw() { return name_len_limit; }
 	
 	//! Set server password
@@ -527,7 +525,7 @@ public:
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setPassword(char* pwstr, const uint8_t len) throw()
+	void setPassword(char* pwstr=0, const uint8_t len=0) throw()
 	{
 		password.set(pwstr, len);
 	}
@@ -538,7 +536,7 @@ public:
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setAdminPassword(char* pwstr, const uint8_t len) throw()
+	void setAdminPassword(char* pwstr=0, const uint8_t len=0) throw()
 	{
 		admin_password.set(pwstr, len);
 	}
@@ -548,14 +546,14 @@ public:
 	/**
 	 * @param[in] ulimit New limit
 	 */
-	void setUserLimit(const uint8_t ulimit) throw() { user_limit = ulimit; }
+	void setUserLimit(const uint8_t ulimit=10) throw() { user_limit = ulimit; }
 	uint getUserLimit() const throw() { return user_limit; }
 	
 	//! Set listening port
 	/**
 	 * @param[in] _port port to bind to
 	 */
-	void setPort(const ushort _port) throw() { lsock.getAddr().port(_port); }
+	void setPort(const ushort _port=27750) throw() { lsock.getAddr().port(_port); }
 	ushort getPort() const throw() { return lsock.port(); }
 	
 	//! Set operation mode
@@ -570,18 +568,11 @@ public:
 	 */
 	void setLocalhostAdmin(const bool _enable=true) throw() { LocalhostAdmin = _enable; }
 	
-	//! Adds client requirements
-	/**
-	 * @param[in] req Client requirement flags to add
-	 */
-	void addRequirement(const uint8_t req=0) throw() { fSet(requirements, req); }
-	//! Sets client requirements
-	/**
-	 * @param[in] req Client requirement flags to set (overrides any previous flags)
-	 */
-	void setRequirements(const uint8_t req=0) throw() { requirements = req; }
 	//! Get client requirement flags
-	uint getRequirements() const throw() { return requirements; }
+	uint8_t getRequirements() const throw();
+	
+	void setUniqueNameEnforcing(bool _enabled=true) throw() { enforceUnique = _enabled; }
+	bool getUniqueNameEnforcing() const throw() { return enforceUnique; }
 	
 	//! Set minimum board dimension (width or height)
 	/**
@@ -590,38 +581,32 @@ public:
 	void setMinDimension(const uint16_t mindim=400) throw() { min_dimension = mindim; }
 	uint getMinDimension() const throw() { return min_dimension; }
 	
-	//! Set UTF-16 support
+	//! Set UTF-16 requirement
 	/**
-	 * @param[in] _wide character support
+	 * @param[in] _enabled Enable UTF-16 requirement
 	 */
-	void setUTF16(const bool _wide) throw()
-	{
-		if (_wide)
-			fSet(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings));
-		else
-			fClr(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings));
-	}
-	bool getUTF16() const throw() { return fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings)); }
+	void setUTF16Requirement(const bool _enabled=true) throw() { wideStrings = _enabled; }
+	bool getUTF16Requirement() const throw() { return wideStrings; }
 	
 	//! Set default user mode
 	/**
 	 * @param[in] _mode User mode flags
 	 */
-	void setUserMode(const uint8_t _mode) throw() { default_user_mode = _mode; }
+	void setUserMode(const uint8_t _mode=0) throw() { default_user_mode = _mode; }
 	uint getUserMode() const throw() { return default_user_mode; }
 	
 	//! Set session limit on server
 	/**
 	 * @param[in] _limit Session limit
 	 */
-	void setSessionLimit(const uint8_t _limit) throw() { session_limit = _limit; }
+	void setSessionLimit(const uint8_t _limit=1) throw() { session_limit = _limit; }
 	uint getSessionLimit() const throw() { return session_limit; }
 	
 	//! Set per user subscription limit
 	/**
 	 * @param[in] _slimit Subscrption limit
 	 */
-	void setSubscriptionLimit(const uint8_t _slimit) throw() { max_subscriptions = _slimit; }
+	void setSubscriptionLimit(const uint8_t _slimit=1) throw() { max_subscriptions = _slimit; }
 	uint getSubscriptionLimit() const throw() { return max_subscriptions; }
 	
 	//! Allow/disallow duplicate connections from same address
@@ -629,7 +614,7 @@ public:
 	 * @param[in] _allow duplicate connections
 	 * @todo Needs shorter name
 	 */
-	void setDuplicateConnectionBlocking(const bool _block) throw() { blockDuplicateConnections = _block; }
+	void setDuplicateConnectionBlocking(const bool _block=true) throw() { blockDuplicateConnections = _block; }
 	bool getDuplicateConnectionBlocking() const throw() { return blockDuplicateConnections; }
 	
 	/** Control functions **/
