@@ -106,7 +106,7 @@ ConfigDialog::ConfigDialog()
 	umode_group->setLayout(usermode_box);
 	
 	// listening port
-	QSpinBox *port_spinner = new QSpinBox;
+	port_spinner = new QSpinBox;
 	port_spinner->setRange(Network::SuperUser_Port+1, Network::PortUpperBound);
 	port_spinner->setValue(protocol::default_port);
 	
@@ -120,7 +120,7 @@ ConfigDialog::ConfigDialog()
 	// require unique names
 	QHBoxLayout *unique_box = new QHBoxLayout;
 	unique_box->addWidget(new QLabel(tr("Unique names")), 1);
-	QCheckBox *unique_names = new QCheckBox;
+	unique_names = new QCheckBox;
 	unique_box->addWidget(unique_names, 0);
 	req_superbox->addLayout(unique_box);
 	
@@ -134,7 +134,7 @@ ConfigDialog::ConfigDialog()
 	// Require the use of UTF-16 strings
 	QHBoxLayout *widestr_box = new QHBoxLayout;
 	widestr_box->addWidget(new QLabel(tr("UTF-16 strings")), 1);
-	QCheckBox *wide_strings = new QCheckBox;
+	wide_strings = new QCheckBox;
 	widestr_box->addWidget(wide_strings, 0);
 	req_superbox->addLayout(widestr_box);
 	
@@ -192,4 +192,11 @@ ConfigDialog::ConfigDialog()
 	root->addLayout(command_box);
 	
 	setLayout(root);
+}
+
+void ConfigDialog::serverState(bool running)
+{
+	wide_strings->setDisabled(running);
+	unique_names->setDisabled(running);
+	port_spinner->setReadOnly(running);
 }

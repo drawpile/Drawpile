@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 	#endif
 	
 	//QT_REQUIRE_VERSION(argc, argv, "4.3")
+	
 	Q_INIT_RESOURCE(systray);
 	
 	QApplication app(argc, argv);
@@ -43,7 +44,6 @@ int main(int argc, char **argv)
 	}
 	
 	TrayMenu menu;
-	//win.show();
 	
 	return app.exec();
 }

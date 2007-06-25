@@ -23,13 +23,27 @@
 
 #include <QDialog>
 
+class QCheckBox;
+class QSpinBox;
+
+//! Server configuration/settings dialog
+/**
+ * @todo Actual behaviour for all the GUI widgets.
+ */
 class ConfigDialog
 	: public QDialog
 {
 	Q_OBJECT
 	
+protected:
+	QCheckBox *wide_strings;
+	QCheckBox *unique_names;
+	QSpinBox *port_spinner;
+	
 public:
 	ConfigDialog();
+	
+	void serverState(bool _running);
 };
 
 #endif // ConfigDialog_INCLUDED

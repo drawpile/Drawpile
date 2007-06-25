@@ -29,6 +29,7 @@
 
 class Server;
 
+//! Server thread
 class ServerThread
 	: public QThread
 {

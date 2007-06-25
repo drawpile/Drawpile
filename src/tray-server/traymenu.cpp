@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QtGui>
 
+#include "version.h"
 #include "traymenu.h"
 
 #include "statusdialog.h"
@@ -32,15 +33,19 @@ TrayMenu::TrayMenu()
 	config(new ConfigDialog()),
 	status(new StatusDialog())
 {
-	createActions();
-	createTrayIcon();
+	trayIcon = new QSystemTrayIcon(this);
+	
+	createMenu();
 	
 	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 	
 	setIcon(0);
 	
-	trayIcon->setToolTip(title);
+	QString tooltip_str(title);
+	tooltip_str.append(" v").append(trayserver::version);
+	
+	trayIcon->setToolTip(tooltip_str);
 	trayIcon->show();
 	
 	showMessage(title, tr("Server ready for action!"), QSystemTrayIcon::Information);
@@ -48,14 +53,15 @@ TrayMenu::TrayMenu()
 
 void TrayMenu::setIcon(int index)
 {
-	assert(index == 0 or index == 1);
+	assert(index >= 0 or index <= 1);
 	
-	QIcon icon;
-	if (index == 1)
-		icon = QIcon(":/icons/online.png");
-	else
-		icon = QIcon(":/icons/offline.png");
-	trayIcon->setIcon(icon);
+	static const QIcon icon[] = {
+		QIcon(":/icons/offline.png"),
+		QIcon(":/icons/online.png")
+	};
+	
+	trayIcon->setIcon(icon[index]);
+	
 	//setWindowIcon(icon);
 }
 
@@ -77,42 +83,37 @@ void TrayMenu::showMessage(const QString& title, const QString& message, QSystem
 	#endif
 }
 
-void TrayMenu::createActions()
+void TrayMenu::createMenu()
 {
+	menu = new QMenu(this);
+	
 	startAction = new QAction(tr("&Start"), this);
 	connect(startAction, SIGNAL(triggered()), this, SLOT(startSlot()));
+	menu->addAction(startAction);
 	
 	stopAction = new QAction(tr("St&op"), this);
 	connect(stopAction, SIGNAL(triggered()), this, SLOT(stopSlot()));
 	stopAction->setDisabled(true);
+	menu->addAction(stopAction);
 	
 	configureAction = new QAction(tr("&Configure"), this);
 	connect(configureAction, SIGNAL(triggered()), this, SLOT(configSlot()));
+	menu->addAction(configureAction);
 	
 	statusAction = new QAction(tr("S&tatus"), this);
 	connect(statusAction, SIGNAL(triggered()), this, SLOT(statusSlot()));
+	menu->addAction(statusAction);
 	
-	separator = new QAction(this);
+	QAction *separator = new QAction(this);
 	separator->setSeparator(true);
+	menu->addAction(separator);
 	
 	quitAction = new QAction(tr("&Quit"), this);
 	connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-}
-
-void TrayMenu::createTrayIcon()
-{
-	menu = new QMenu(this);
-	
-	menu->addAction(startAction);
-	menu->addAction(stopAction);
-	menu->addAction(configureAction);
-	menu->addAction(statusAction);
-	menu->addAction(separator);
 	menu->addAction(quitAction);
 	
 	menu->setDefaultAction(statusAction);
 	
-	trayIcon = new QSystemTrayIcon(this);
 	trayIcon->setContextMenu(menu);
 }
 
@@ -126,6 +127,9 @@ void TrayMenu::startSlot()
 {
 	srvthread = new ServerThread(srv, this);
 	toggleStartStop(true);
+	
+	config->serverState(true);
+	
 	setIcon(1);
 	
 	// todo: use signal instead?
@@ -136,6 +140,9 @@ void TrayMenu::stopSlot()
 {
 	delete srvthread;
 	toggleStartStop(false);
+	
+	config->serverState(false);
+	
 	setIcon(0);
 	
 	// todo: use signal instead?

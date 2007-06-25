@@ -23,6 +23,7 @@
 
 #include <QDialog>
 
+//! Server status dialog
 class StatusDialog
 	: public QDialog
 {

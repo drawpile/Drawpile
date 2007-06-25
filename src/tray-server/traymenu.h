@@ -33,12 +33,14 @@ class ConfigDialog;
 class QAction;
 class QMenu;
 
+//! Tray Server's main class
 class TrayMenu
 	: public QWidget
 {
 	Q_OBJECT
 	
 public:
+	//! Constructor
 	TrayMenu();
 	
 public slots:
@@ -48,45 +50,54 @@ public slots:
 private slots:
 	//! Set tray icon
 	void setIcon(int index);
+	
 	//! Detect double-clicking of tray icon and toggle status window with it
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
+	
 	//! Show balloon message
 	void showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
 	
 	//! Menu 'start' action
 	void startSlot();
+	
 	//! Menu 'stop' action
 	void stopSlot();
+	
 	//! Menu 'config' action
 	void configSlot();
+	
 	//! Menu 'status' action
 	void statusSlot();
 	
 private:
+	//! Create tray context menu
+	void createMenu();
 	
-	void createActions();
-	
-	void createTrayIcon();
-	
-	
+	//! Toggle start & stop menu items
 	void toggleStartStop(bool started);
 	
+	//! Server thread
 	ServerThread *srvthread;
 	
+	//! App title
 	QString title;
 	
+	//! Pointer to server class
 	Server *srv;
 	
+	//! Config dialog
 	ConfigDialog *config;
+	//! Status dialog
 	StatusDialog *status;
 	
+	//! Action for quit menu item
 	QAction *quitAction;
-	QAction *separator;
 	QAction *startAction;
 	QAction *stopAction;
 	QAction *configureAction;
 	QAction *statusAction;
 	
+	//! Tray icon
 	QSystemTrayIcon *trayIcon;
 	QMenu *menu;
 };
