@@ -51,6 +51,14 @@ T& bswap(T& x) throw()
 	return x;
 }
 
+//! Const variant of bswap<> template
+template <typename T>
+T bswap_const(const T& x) throw()
+{
+	T u = x;
+	return bswap(u);
+}
+
 // no specializations for Big Endian systems
 #if !defined(IS_BIG_ENDIAN)
 
