@@ -47,6 +47,7 @@ public slots:
 	//void configClosed();
 	//void statusClosed();
 	
+	void serverStarted();
 	void serverStopped();
 	
 private slots:
