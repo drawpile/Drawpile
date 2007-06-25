@@ -820,7 +820,7 @@ std::string Socket::AddrToString(const Address& l_addr) throw()
 	#else
 	inet_ntop(l_addr.family(), &l_addr.IPv4.sin_addr, straddr, length);
 	#endif
-	ushort port = getPort(l_addr);
+	ushort port = l_addr.port();
 	bswap(port);
 	
 	#ifdef HAVE_SNPRINTF
