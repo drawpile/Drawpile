@@ -38,21 +38,15 @@ ServerThread::ServerThread(Server *server, QObject *parent)
 
 ServerThread::~ServerThread()
 {
-	qDebug() << "~ServerThread";
 	mutex.lock();
-	qDebug() << "Stopping server...";
 	srv->stop();
 	mutex.unlock();
-	qDebug() << "Waiting...";
 	wait();
-	
-	qDebug() << "Resetting server...";
-	srv->reset();
-	qDebug() << "Server ready for restart.";
 }
 
 void ServerThread::run()
 {
 	srv->run();
+	srv->reset();
 }
 
