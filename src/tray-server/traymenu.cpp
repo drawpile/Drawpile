@@ -28,7 +28,8 @@
 #include "configdialog.h"
 
 TrayMenu::TrayMenu()
-	: title(tr("DrawPile Server")),
+	: srvthread(0),
+	title(tr("DrawPile Server")),
 	srv(new Server),
 	config(new ConfigDialog()),
 	status(new StatusDialog())
@@ -125,28 +126,36 @@ void TrayMenu::toggleStartStop(bool started)
 
 void TrayMenu::startSlot()
 {
-	srvthread = new ServerThread(srv, this);
+	if (srvthread == 0)
+		srvthread = new ServerThread(srv, this);
+	
 	toggleStartStop(true);
 	
-	config->serverState(true);
+	connect(srvthread, SIGNAL(started()), config, SLOT(serverStarted()));
+	connect(srvthread, SIGNAL(finished()), config, SLOT(serverStopped()));
+	connect(srvthread, SIGNAL(finished()), this, SLOT(serverStopped()));
+	
+	if (!srvthread->isRunning())
+		srvthread->start();
 	
 	setIcon(1);
 	
-	// todo: use signal instead?
-	showMessage(title, "Server started!");
+	showMessage(title, tr("Server started!"));
 }
 
 void TrayMenu::stopSlot()
 {
-	delete srvthread;
+	showMessage(title, tr("Waiting for server to stop..."));
+	srv->stop();
+}
+
+void TrayMenu::serverStopped()
+{
 	toggleStartStop(false);
-	
-	config->serverState(false);
 	
 	setIcon(0);
 	
-	// todo: use signal instead?
-	showMessage(title, "Server stopped!");
+	showMessage(title, tr("Server stopped!"));
 }
 
 void TrayMenu::statusSlot()

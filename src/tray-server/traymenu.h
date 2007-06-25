@@ -47,6 +47,8 @@ public slots:
 	//void configClosed();
 	//void statusClosed();
 	
+	void serverStopped();
+	
 private slots:
 	//! Set tray icon
 	void setIcon(int index);
