@@ -75,7 +75,7 @@ Server::Server() throw()
 	name_len_limit(12),
 	time_limit(srv_defaults::time_limit),
 	current_time(0), next_timer(0),
-	hi_port(protocol::default_port), lo_port(protocol::default_port),
+	port(protocol::default_port),
 	min_dimension(400),
 	requirements(0),
 	extensions(
@@ -2320,24 +2320,17 @@ bool Server::init() throw(std::bad_alloc)
 	lsock.reuse_addr(true); // reuse address
 	#endif
 	
-	for (uint16_t bport=lo_port; bport != hi_port+1; ++bport)
-	{
+	if (lsock.bindTo(
 		#ifdef IPV6_SUPPORT
-		if (lsock.bindTo(Network::IPv6::Unspecified, bport) == SOCKET_ERROR)
+		Network::IPv6::Unspecified
 		#else
-		if (lsock.bindTo(Network::IPv4::Unspecified, bport) == SOCKET_ERROR)
+		Network::IPv4::Unspecified
 		#endif
-		{
-			const int bind_err = lsock.getError();
-			if (bind_err == EBADF or bind_err == EINVAL)
-				break;
-		}
-		else
-			goto resume;
+		, lsock.port()) == SOCKET_ERROR)
+	{
+		return false;
 	}
-	return false;
 	
-	resume:
 	if (lsock.listen() != SOCKET_ERROR)
 	{
 		// add listening socket to event system

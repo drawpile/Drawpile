@@ -111,22 +111,16 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				break;
 			case 'p': // port to listen on
 				{
-					const uint16_t lo_port = atoi(optarg);
+					const uint16_t port = atoi(optarg);
 					
-					char* off = strchr(optarg, '-');
-					uint16_t hi_port = (off != 0 ? atoi(off+1) : lo_port);
-					
-					if (lo_port <= Network::SuperUser_Port or hi_port <= Network::SuperUser_Port)
+					if (port <= Network::SuperUser_Port)
 					{
 						cerr << "- Super-user ports not allowed!" << endl;
 						exit(EXIT_FAILURE);
 					}
-					srv.setPorts(lo_port, hi_port);
+					srv.setPort(port);
 					
-					cout << "& Listening port range set to: " << lo_port;
-					if (lo_port != hi_port)
-						cout << " - " << hi_port;
-					cout << endl;
+					cout << "& Listening port set to: " << port << endl;
 				}
 				break;
 			case 'l': // localhost admin
@@ -229,11 +223,11 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'e': // name enforcing
-				srv.setRequirement(protocol::requirements::EnforceUnique);
+				srv.addRequirement(protocol::requirements::EnforceUnique);
 				cout << "& Unique name enforcing enabled." << endl;
 				break;
 			case 'w': // utf-16 string (wide chars)
-				srv.setRequirement(protocol::requirements::WideStrings);
+				srv.addRequirement(protocol::requirements::WideStrings);
 				cout << "& UTF-16 string mode enabled." << endl;
 				break;
 			case 'L': // session limit
@@ -263,7 +257,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				}
 				break;
 			case 'M': // allow multiple connections from same address
-				srv.allowDuplicateConnections(true);
+				srv.setDuplicateConnectionBlocking(false);
 				cout << "& Multiple connections allowed from same source address." << endl;
 				break;
 			case 'V': // version

@@ -124,10 +124,8 @@ protected:
 		next_timer;
 	
 	uint16_t
-		//! Listening port, upper bound
-		hi_port,
-		//! Listening port, lower bound
-		lo_port,
+		//! Listening port
+		port,
 		//! Minimum canvas dimension
 		min_dimension;
 	
@@ -522,6 +520,7 @@ public:
 	 * @param[in] limit New limit
 	 */
 	void setNameLengthLimit(const uint8_t limit) throw() { name_len_limit = limit; }
+	uint getNameLengthLimit() const throw() { return name_len_limit; }
 	
 	//! Set server password
 	/**
@@ -532,6 +531,7 @@ public:
 	{
 		password.set(pwstr, len);
 	}
+	bool haveServerPassword() const throw() { return (password.ptr!=0); }
 	
 	//! Set admin server password
 	/**
@@ -542,23 +542,21 @@ public:
 	{
 		admin_password.set(pwstr, len);
 	}
+	bool haveAdminPassword() const throw() { return (admin_password.ptr!=0); }
 	
 	//! Set user limit
 	/**
 	 * @param[in] ulimit New limit
 	 */
 	void setUserLimit(const uint8_t ulimit) throw() { user_limit = ulimit; }
+	uint getUserLimit() const throw() { return user_limit; }
 	
-	//! Set listening port range
+	//! Set listening port
 	/**
-	 * @param[in] lower bound of port range
-	 * @param[in] upper bound of port range
+	 * @param[in] _port port to bind to
 	 */
-	void setPorts(const uint16_t lower, const uint16_t upper) throw()
-	{
-		lo_port = lower;
-		hi_port = std::max(upper, lower);
-	}
+	void setPort(const ushort _port) throw() { lsock.getAddr().port(_port); }
+	ushort getPort() const throw() { return lsock.port(); }
 	
 	//! Set operation mode
 	/**
@@ -572,17 +570,25 @@ public:
 	 */
 	void setLocalhostAdmin(const bool _enable=true) throw() { LocalhostAdmin = _enable; }
 	
-	//! Set client requirements
+	//! Adds client requirements
 	/**
-	 * @param[in] req Client requirement flags
+	 * @param[in] req Client requirement flags to add
 	 */
-	void setRequirement(const uint8_t req=0) throw() { fSet(requirements, req); }
+	void addRequirement(const uint8_t req=0) throw() { fSet(requirements, req); }
+	//! Sets client requirements
+	/**
+	 * @param[in] req Client requirement flags to set (overrides any previous flags)
+	 */
+	void setRequirements(const uint8_t req=0) throw() { requirements = req; }
+	//! Get client requirement flags
+	uint getRequirements() const throw() { return requirements; }
 	
 	//! Set minimum board dimension (width or height)
 	/**
 	 * @param[in] mindim Minimum dimension in pixels
 	 */
 	void setMinDimension(const uint16_t mindim=400) throw() { min_dimension = mindim; }
+	uint getMinDimension() const throw() { return min_dimension; }
 	
 	//! Set UTF-16 support
 	/**
@@ -595,30 +601,36 @@ public:
 		else
 			fClr(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings));
 	}
+	bool getUTF16() const throw() { return fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::WideStrings)); }
 	
 	//! Set default user mode
 	/**
 	 * @param[in] _mode User mode flags
 	 */
 	void setUserMode(const uint8_t _mode) throw() { default_user_mode = _mode; }
+	uint getUserMode() const throw() { return default_user_mode; }
 	
 	//! Set session limit on server
 	/**
 	 * @param[in] _limit Session limit
 	 */
 	void setSessionLimit(const uint8_t _limit) throw() { session_limit = _limit; }
+	uint getSessionLimit() const throw() { return session_limit; }
 	
 	//! Set per user subscription limit
 	/**
 	 * @param[in] _slimit Subscrption limit
 	 */
 	void setSubscriptionLimit(const uint8_t _slimit) throw() { max_subscriptions = _slimit; }
+	uint getSubscriptionLimit() const throw() { return max_subscriptions; }
 	
 	//! Allow/disallow duplicate connections from same address
 	/**
 	 * @param[in] _allow duplicate connections
+	 * @todo Needs shorter name
 	 */
-	void allowDuplicateConnections(const bool _allow=true) throw() { blockDuplicateConnections = !_allow; }
+	void setDuplicateConnectionBlocking(const bool _block) throw() { blockDuplicateConnections = _block; }
+	bool getDuplicateConnectionBlocking() const throw() { return blockDuplicateConnections; }
 	
 	/** Control functions **/
 	
@@ -630,6 +642,8 @@ public:
 	
 	//! Clean-up users, sessions and anything else except config.
 	void reset() throw();
+	
+	/** Status and information retrieval **/
 	
 }; // class Server
 
