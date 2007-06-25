@@ -2295,6 +2295,10 @@ void Server::sRemove(Session*& session) throw()
 
 bool Server::init() throw(std::bad_alloc)
 {
+	#ifndef NDEBUG
+	cout << "[Server] Initializing" << endl;
+	#endif
+	
 	assert(state == Server::Dead);
 	
 	#ifndef LINUX
@@ -2429,8 +2433,8 @@ void Server::cullIdlers() throw()
 // main loop
 int Server::run() throw()
 {
-	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Entering main loop" << endl;
+	#if !defined(NDEBUG)
+	cout << "[Server] Running" << endl;
 	#endif
 	
 	assert(state == Server::Init);
@@ -2507,11 +2511,18 @@ int Server::run() throw()
 
 void Server::stop() throw()
 {
+	#ifndef NDEBUG
+	cout << "[Server] Stopping" << endl;
+	#endif
 	state = Server::Exiting;
 }
 
 void Server::reset() throw()
 {
+	#ifndef NDEBUG
+	cout << "[Server] Reset" << endl;
+	#endif
+	
 	ev.remove(lsock.fd());
 	lsock.close();
 	
