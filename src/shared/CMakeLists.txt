@@ -43,5 +43,6 @@ if ( OPENSSL )
 		message ( STATUS "OpenSSL libraries found!" )
 		target_link_libraries ( ${INTERNALNAME} ${OPENSSL_LIBRARIES} )
 	endif ( OPENSSL_FOUND )
-	configure_file ( config.h.cmake config.h )
 endif ( OPENSSL )
+
+configure_file ( config.h.cmake config.h )
