@@ -149,6 +149,9 @@ void TrayMenu::stop()
 void TrayMenu::quitSlot()
 {
 	delete menu;
+	delete config;
+	delete status;
+	
 	if (srvthread->isRunning())
 		connect(srvthread, SIGNAL(finished()), qApp, SLOT(quit()));
 	else
