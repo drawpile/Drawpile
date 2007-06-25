@@ -27,13 +27,3 @@
 *******************************************************************************/
 
 #include "interface.h"
-
-namespace event {
-
-template <typename T>
-int Interface<T>::getError() const throw()
-{
-	return error;
-}
-
-} // namespace:event

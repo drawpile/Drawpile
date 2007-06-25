@@ -117,7 +117,7 @@ public:
 	/**
 	 * @return last errno
 	 */
-	int getError() const throw();
+	int getError() const throw() { return error; }
 };
 
 } // namespace:event
