@@ -2321,9 +2321,9 @@ bool Server::init() throw(std::bad_alloc)
 	for (uint16_t bport=lo_port; bport != hi_port+1; ++bport)
 	{
 		#ifdef IPV6_SUPPORT
-		if (lsock.bindTo("::", bport) == SOCKET_ERROR)
+		if (lsock.bindTo(Network::IPv6::Unspecified, bport) == SOCKET_ERROR)
 		#else
-		if (lsock.bindTo("0.0.0.0", bport) == SOCKET_ERROR)
+		if (lsock.bindTo(Network::IPv4::Unspecified, bport) == SOCKET_ERROR)
 		#endif
 		{
 			const int bind_err = lsock.getError();
