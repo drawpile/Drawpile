@@ -117,7 +117,7 @@ ConfigDialog::ConfigDialog()
 	
 	QCheckBox *can_chat = new QCheckBox;
 	can_chat->setChecked(true);
-	can_chat->setToolTip(tr("If unchecked, session owner or server admin must unmute the user before thay can chat."))
+	can_chat->setToolTip(tr("If unchecked, session owner or server admin must unmute the user before thay can chat."));
 	usermode_box->addWidget(can_chat, 0);
 	usermode_box->addWidget(new QLabel(tr("Allow chat")), 1);
 	
