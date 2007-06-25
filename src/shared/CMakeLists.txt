@@ -37,7 +37,7 @@ if ( SHARED )
 endif ( SHARED )
 
 if ( OPENSSL )
-	find_package ( OpenSSL )
+	find_package ( OpenSSL QUIET )
 	if ( OPENSSL_FOUND )
 		set ( HAVE_OPENSSL ON )
 		message ( STATUS "OpenSSL libraries found!" )
