@@ -181,19 +181,7 @@ struct Net
 
 //! Address
 struct Address {
-	Address()
-		#ifdef IPV6_SUPPORT
-		: type(IPV6)
-		#else
-		: type(IPV4)
-		#endif
-	{
-		#ifdef IPV6_SUPPORT
-		IPv6.sin_family = AF_INET6;
-		#else
-		IPv4.sin_family = AF_INET;
-		#endif
-	}
+	Address();
 	
 	enum Family {
 		IPV4,

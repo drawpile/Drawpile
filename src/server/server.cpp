@@ -2202,9 +2202,9 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	cout << "[Server] Removing user #" << usr->id /*<< " [" << usr->sock.address() << "]"*/ << endl;
 	#endif
 	
+	#ifndef NDEBUG
 	switch (reason)
 	{
-		#ifndef NDEBUG
 		case protocol::UserInfo::BrokenPipe:
 			cout << "- User #" << usr->id /*<< " [" << usr->sock.address() << "]" <<*/ << " lost (broken pipe)" << endl;
 			break;
@@ -2214,8 +2214,8 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 		default:
 			// do nothing
 			break;
-		#endif
 	}
+	#endif
 	
 	usr->sock.shutdown(SHUT_RDWR);
 	

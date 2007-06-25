@@ -75,6 +75,20 @@ Net::~Net() throw()
 
 /* *** Address class *** */
 
+Address::Address()
+	#ifdef IPV6_SUPPORT
+	: type(IPV6)
+	#else
+	: type(IPV4)
+	#endif
+{
+	#ifdef IPV6_SUPPORT
+	IPv6.sin_family = AF_INET6;
+	#else
+	IPv4.sin_family = AF_INET;
+	#endif
+}
+
 socklen_t Address::size() const throw()
 {
 	#ifdef IPV6_SUPPORT
@@ -161,6 +175,10 @@ fd_t Socket::create() throw()
 		#endif
 		
 		// programming errors
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
+		
 		assert(s_error != EAFNOSUPPORT);
 		assert(s_error != EPROTONOSUPPORT);
 		assert(s_error != EPROTOTYPE);
@@ -232,6 +250,10 @@ Socket Socket::accept() throw()
 		s_error = WSAGetLastError();
 		#else // POSIX
 		s_error = errno;
+		#endif
+		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
@@ -326,6 +348,10 @@ bool Socket::reuse_port(const bool x) throw()
 	{
 		s_error = errno;
 		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
+		
 		// programming errors
 		assert(s_error != EBADF);
 		assert(s_error != ENOTSOCK);
@@ -359,6 +385,10 @@ bool Socket::reuse_addr(const bool x) throw()
 	if (r == SOCKET_ERROR)
 	{
 		s_error = errno;
+		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
 		
 		// programming errors
 		assert(s_error != EBADF);
@@ -394,6 +424,10 @@ bool Socket::linger(const bool x, const ushort delay) throw()
 		s_error = errno;
 		#endif
 		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
+		
 		assert(s_error != EBADF);
 		assert(s_error != ENOTSOCK);
 		assert(s_error != ENOPROTOOPT);
@@ -414,11 +448,14 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 	
 	assert(sock != INVALID_SOCKET);
 	
-	Address t_addr = Socket::StringToAddr(address);
-	addr = t_addr;
+	addr = Socket::StringToAddr(address);
 	
 	ushort &port = addr.port();
 	bswap(port = _port);
+	
+	#ifndef NDEBUG
+	assert(addr.family() == AF_INET or addr.family() == AF_INET6);
+	#endif
 	
 	const int r = bind(sock, &addr.addr, addr.size());
 	
@@ -430,8 +467,12 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 		s_error = errno;
 		#endif
 		
-		// programming errors
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
 		
+		// programming errors
+		cout << addr.family() << endl;
 		assert(s_error != EBADF);
 		assert(s_error != EINVAL);
 		assert(s_error != ENOTSOCK);
@@ -483,6 +524,10 @@ int Socket::connect(const Address& rhost) throw()
 		s_error = errno;
 		#endif
 		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
+		
 		// programming errors
 		assert(s_error != EBADF);
 		assert(s_error != EFAULT);
@@ -531,6 +576,10 @@ int Socket::listen() throw()
 		s_error = WSAGetLastError();
 		#else // POSIX
 		s_error = errno;
+		#endif
+		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
 		#endif
 		
 		assert(s_error != EBADF);
@@ -684,6 +733,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 		#ifdef WIN32
 		assert(s_error != WSANOTINITIALISED);
 		#endif
+		
 		assert(s_error != EBADF);
 		assert(s_error != EFAULT);
 		assert(s_error != EINVAL);
@@ -754,6 +804,10 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 		s_error = WSAGetLastError();
 		#else // POSIX
 		s_error = errno;
+		#endif
+		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
