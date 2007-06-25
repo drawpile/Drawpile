@@ -32,21 +32,25 @@ ServerThread::ServerThread(Server *server, QObject *parent)
 
 ServerThread::~ServerThread()
 {
-	stop();
-	wait();
+	if (isRunning())
+	{
+		stop();
+		wait();
+	}
 }
 
 void ServerThread::run()
 {
-	Q_ASSERT(srv != 0);
-	
-	srv->init();
-	srv->run();
-	srv->reset();
+	if (srv->init())
+	{
+		srv->run();
+		srv->reset();
+	}
+	else
+		exit();
 }
 
 void ServerThread::stop()
 {
-	Q_ASSERT(srv != 0);
 	srv->stop();
 }

@@ -21,14 +21,9 @@
 #include <QtGui>
 
 #include "traymenu.h"
-#include "../server/sockets.h"
 
 int main(int argc, char **argv)
 {
-	#ifdef NEED_NET
-	Net net;
-	#endif
-	
 	//QT_REQUIRE_VERSION(argc, argv, "4.3")
 	
 	Q_INIT_RESOURCE(systray);

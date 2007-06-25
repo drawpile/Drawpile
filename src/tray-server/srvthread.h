@@ -22,6 +22,7 @@
 #define ServerThread_INCLUDED
 
 #include <QThread>
+#include "../server/sockets.h"
 
 class Server;
 
@@ -40,6 +41,10 @@ public slots:
 	
 protected:
 	void run();
+	
+	#ifdef NEED_NET
+	Net net;
+	#endif
 	
 	//! Pointer to Server instance
 	Server *srv;
