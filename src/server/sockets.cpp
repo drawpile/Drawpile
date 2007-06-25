@@ -113,20 +113,20 @@ ushort Address::port() const throw()
 {
 	#ifdef IPV6_SUPPORT
 	if (type == Address::IPV6)
-		return IPv6.sin6_port;
+		return bswap_const(IPv6.sin6_port);
 	else
 	#endif
-		return IPv4.sin_port;
+		return bswap_const(IPv4.sin_port);
 }
 
-ushort& Address::port() throw()
+void Address::port(ushort _port) throw()
 {
 	#ifdef IPV6_SUPPORT
 	if (type == Address::IPV6)
-		return IPv6.sin6_port;
+		IPv6.sin6_port = bswap(_port);
 	else
 	#endif
-		return IPv4.sin_port;
+		IPv4.sin_port = bswap(_port);
 }
 
 Address& Address::operator= (const Address& naddr) throw()
@@ -160,6 +160,9 @@ bool Address::operator== (const Address& naddr) const throw()
 
 fd_t Socket::create() throw()
 {
+	if (sock != INVALID_SOCKET)
+		close();
+	
 	#ifdef WIN32
 	sock = WSASocket(addr.family(), SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	#else // POSIX
@@ -442,16 +445,22 @@ bool Socket::linger(const bool x, const ushort delay) throw()
 
 int Socket::bindTo(const std::string& address, const ushort _port) throw()
 {
-	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
+	#if !defined(NDEBUG)
 	cout << "[Socket] Binding to address " << address << ":" << _port << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
 	
-	addr = Socket::StringToAddr(address);
+	Address naddr = Socket::StringToAddr(address);
 	
-	ushort &port = addr.port();
-	bswap(port = _port);
+	naddr.port(_port);
+	
+	return bindTo(naddr);
+}
+
+int Socket::bindTo(const Address& naddr) throw()
+{
+	addr = naddr;
 	
 	#ifndef NDEBUG
 	assert(addr.family() == AF_INET or addr.family() == AF_INET6);
@@ -472,7 +481,6 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 		#endif
 		
 		// programming errors
-		cout << addr.family() << endl;
 		assert(s_error != EBADF);
 		assert(s_error != EINVAL);
 		assert(s_error != ENOTSOCK);
@@ -493,6 +501,9 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 			break;
 		case EACCES:
 			cerr << "[Socket] Can't bind to super-user sockets" << endl;
+			break;
+		default:
+			cerr << "[Socket] Unknown error in bindTo() - " << s_error << endl;
 			break;
 		}
 	}
@@ -844,8 +855,7 @@ std::string Socket::address() const throw()
 
 ushort Socket::port() const throw()
 {
-	ushort port = addr.port();
-	return bswap(port);
+	return addr.port();
 }
 
 /* string functions */
@@ -874,13 +884,11 @@ std::string Socket::AddrToString(const Address& l_addr) throw()
 	#else
 	inet_ntop(l_addr.family(), &l_addr.IPv4.sin_addr, straddr, length);
 	#endif
-	ushort port = l_addr.port();
-	bswap(port);
 	
 	#ifdef HAVE_SNPRINTF
-	snprintf(buf, length, format_string, straddr, port);
+	snprintf(buf, length, format_string, straddr, l_addr.port());
 	#else
-	sprintf(buf, format_string, straddr, port);
+	sprintf(buf, format_string, straddr, l_addr.port());
 	#endif // HAVE_SNPRINTF
 	#endif
 	return std::string(buf);

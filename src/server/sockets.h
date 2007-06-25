@@ -205,7 +205,7 @@ struct Address {
 	
 	ushort port() const throw();
 	
-	ushort& port() throw();
+	void port(ushort _port) throw();
 	
 	//! Assign operator
 	Address& operator= (const Address& naddr) throw();
@@ -371,13 +371,24 @@ public:
 	
 	//! Bind socket to port and address
 	/**
-	 * @param[in] address address to bind to
+	 * @param[in] address address string to bind to
 	 * @param[in] port port number to bind to
+	 *
+	 * @note This constructs Address from the string and port and passes it to bindTo(const Address&)
 	 *
 	 * @retval 0 on success
 	 * @retval SOCKET_ERROR on error
 	 */
 	int bindTo(const std::string& address, const ushort port) throw();
+	
+	//! Bind socket to port and address
+	/**
+	 * @param[in] address Address to bind to
+	 *
+	 * @retval 0 on success
+	 * @retval SOCKET_ERROR on error
+	 */
+	int bindTo(const Address& address) throw();
 	
 	//! Connect to address
 	/**
