@@ -2512,6 +2512,7 @@ void Server::stop() throw()
 
 void Server::reset() throw()
 {
+	ev.remove(lsock.fd());
 	lsock.close();
 	
 	User *usr;
