@@ -760,6 +760,11 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		break;
 	#endif
 	case protocol::Message::Chat:
+		if (wideStrings and ((static_cast<protocol::Chat*>(usr->inMsg)->length % 2) != 0))
+		{
+			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::InvalidData));
+			break;
+		}
 		// TODO: Check session for deaf flag
 	case protocol::Message::Palette:
 		{
@@ -1308,7 +1313,9 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		break;
 	case protocol::SessionEvent::Persist:
 		//#ifdef PERSISTENT_SESSIONS
+		#ifndef NDEBUG
 		cout << "+ Session #" << session->id << " persists." << endl;
+		#endif
 		session->persist = (event.aux != 0);
 		// TODO: Send ACK
 		//#else
@@ -1389,6 +1396,12 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				cout << "- No title set for session." << endl;
 			#endif
 			
+			if (wideStrings and ((msg.title_len % 2) != 0))
+			{
+				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
+				break;
+			}
+			
 			Array<char> title(msg.title, msg.title_len);
 			if (fIsSet(requirements, static_cast<uint8_t>(protocol::requirements::EnforceUnique))
 				and !validateSessionTitle(title))
@@ -1414,15 +1427,15 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				
 				sessions[session->id] = session;
 				
+				#ifndef NDEBUG
 				cout << "+ Session #" << session->id << " created by user #" << usr->id
 					/*<< " [" << usr->sock.address() << "]"*/ << endl
-					#ifdef NDEBUG
 					<< "  Size: " << session->width << "x" << session->height
 					<< ", Limit: " << static_cast<uint>(session->limit)
 					<< ", Mode: " << static_cast<uint>(session->mode)
 					<< ", Level: " << static_cast<uint>(session->level) << endl
-					#endif
 					;
+				#endif
 				
 				msg.title = 0; // prevent title from being deleted
 				
@@ -1595,6 +1608,12 @@ void Server::uLoginInfo(User& usr) throw()
 		#endif
 		
 		uQueueMsg(usr, msgError(msg.session_id, protocol::error::TooLong));
+		return;
+	}
+	
+	if (wideStrings and ((msg.length % 2) != 0))
+	{
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidData));
 		return;
 	}
 	
@@ -2121,7 +2140,9 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 		return;
 	}
 	
+	#ifndef NDEBUG
 	cout << "+ New user #" << id << " [" << sock.address() << "]" << endl;
+	#endif
 	
 	User* usr = new User(id, sock);
 	
@@ -2183,6 +2204,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	
 	switch (reason)
 	{
+		#ifndef NDEBUG
 		case protocol::UserInfo::BrokenPipe:
 			cout << "- User #" << usr->id /*<< " [" << usr->sock.address() << "]" <<*/ << " lost (broken pipe)" << endl;
 			break;
@@ -2192,6 +2214,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 		default:
 			// do nothing
 			break;
+		#endif
 	}
 	
 	usr->sock.shutdown(SHUT_RDWR);
@@ -2260,7 +2283,9 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 
 void Server::sRemove(Session*& session) throw()
 {
+	#ifndef NDEBUG
 	cout << "- Session #" << session->id << " destroyed" << endl;
+	#endif
 	
 	freeSessionID(session->id);
 	sessions.erase(session->id);
@@ -2312,7 +2337,9 @@ bool Server::init() throw(std::bad_alloc)
 		cerr << "- Failed to open listening port." << endl;
 	else
 	{
+		#ifndef NDEBUG
 		cout << "+ Listening on port " << lsock.port() << endl << endl;
+		#endif
 		
 		// add listening socket to event system
 		if (event::has_accept<EventSystem>::value)
