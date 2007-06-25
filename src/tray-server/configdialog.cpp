@@ -150,7 +150,9 @@ ConfigDialog::ConfigDialog()
 	// allow duplicate connections from same IP
 	QHBoxLayout *dupe_box = new QHBoxLayout;
 	dupe_box->addWidget(new QLabel(tr("Allow duplicate connections")), 1);
+	
 	QCheckBox *allow_duplicate = new QCheckBox;
+	allow_duplicate->setToolTip(tr("Allows multiple connections from same IP address."));
 	dupe_box->addWidget(allow_duplicate, 0);
 	req_superbox->addLayout(dupe_box);
 	
