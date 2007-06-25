@@ -29,6 +29,7 @@ class QSpinBox;
 //! Server configuration/settings dialog
 /**
  * @todo Actual behaviour for all the GUI widgets.
+ * @todo Connect wide_strings checkbox to namelen_spinner
  */
 class ConfigDialog
 	: public QDialog
@@ -36,9 +37,16 @@ class ConfigDialog
 	Q_OBJECT
 	
 protected:
+	// following are disabled when server is running
 	QCheckBox *wide_strings;
 	QCheckBox *unique_names;
 	QSpinBox *port_spinner;
+	
+	// behaviour changes depending on other options
+	QSpinBox *namelen_spinner;
+	
+private slots:
+	void wideStrChanged(int state);
 	
 public:
 	ConfigDialog();
