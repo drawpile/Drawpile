@@ -2307,7 +2307,9 @@ bool Server::init() throw(std::bad_alloc)
 	
 	if (lsock.create() == INVALID_SOCKET)
 	{
+		#ifndef NDEBUG
 		cerr << "- Failed to create a socket." << endl;
+		#endif
 		return false;
 	}
 	
@@ -2333,18 +2335,11 @@ bool Server::init() throw(std::bad_alloc)
 		else
 			goto resume;
 	}
-	cerr << "- Failed to bind to any port" << endl;
 	return false;
 	
 	resume:
-	if (lsock.listen() == SOCKET_ERROR)
-		cerr << "- Failed to open listening port." << endl;
-	else
+	if (lsock.listen() != SOCKET_ERROR)
 	{
-		#ifndef NDEBUG
-		cout << "+ Listening on port " << lsock.port() << endl << endl;
-		#endif
-		
 		// add listening socket to event system
 		if (event::has_accept<EventSystem>::value)
 			ev.add(lsock.fd(), event::accept<EventSystem>::value);
