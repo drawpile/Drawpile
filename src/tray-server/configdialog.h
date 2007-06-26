@@ -89,12 +89,12 @@ public:
 	
 private slots:
 	void wideStrChanged(int state);
-	void enableButtons(bool _enable=true);
+	void enableButtons();
 	
-	void applyAction();
+	void applySettings();
 	void loadSettings();
 	void saveSettings();
-	void resetAction();
+	void resetSettings();
 };
 
 #endif // ConfigDialog_INCLUDED

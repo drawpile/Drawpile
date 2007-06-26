@@ -49,7 +49,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	ulimit_spinner = new QSpinBox;
 	ulimit_spinner->setRange(1, 255);
 	ulimit_spinner->setToolTip(tr("Maximum number of users allowed on server."));
-	connect(ulimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
+	connect(ulimit_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
 	ulimit_box->addWidget(ulimit_spinner, 0);
 	limit_superbox->addLayout(ulimit_box);
@@ -61,7 +61,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	slimit_spinner = new QSpinBox;
 	slimit_spinner->setRange(1, 255);
 	slimit_spinner->setToolTip(tr("Maximum number of sessions allowed on server."));
-	connect(slimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
+	connect(slimit_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
 	slimit_box->addWidget(slimit_spinner, 0);
 	limit_superbox->addLayout(slimit_box);
@@ -73,7 +73,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	mindim_spinner = new QSpinBox;
 	mindim_spinner->setRange(400, protocol::max_dimension);
 	mindim_spinner->setToolTip(tr("Minimum size of canvas (for both width and height) in any session."));
-	connect(mindim_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
+	connect(mindim_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
 	mindim_box->addWidget(mindim_spinner, 0);
 	limit_superbox->addLayout(mindim_box);
@@ -87,7 +87,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	/** @todo needs better description! */
 	namelen_spinner->setToolTip(tr("For UTF-16 the limit is halved because each character takes two bytes by default."));
-	connect(namelen_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
+	connect(namelen_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
 	namelen_box->addWidget(namelen_spinner, 0);
 	limit_superbox->addLayout(namelen_box);
@@ -100,7 +100,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	sublimit_spinner->setRange(1, 255);
 	sublimit_spinner->setToolTip(tr("How many sessions single user can be subscribed to.<br>"
 		"Has little or no impact on server load if multiple connections are allowed from same address."));
-	connect(sublimit_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
+	connect(sublimit_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
 	sublimit_box->addWidget(sublimit_spinner, 0);
 	limit_superbox->addLayout(sublimit_box);
@@ -143,7 +143,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	port_spinner = new QSpinBox;
 	port_spinner->setRange(Network::SuperUser_Port+1, Network::PortUpperBound);
 	port_spinner->setToolTip(tr("TCP port on which the server will try to listen when started.").append(RequireRestart));
-	connect(port_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
+	connect(port_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
 	port_box->addWidget(port_spinner, 0);
 	
@@ -209,14 +209,16 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *command_box = new QHBoxLayout;
 	
 	apply_butt = new QPushButton(tr("Apply"));
-	connect(apply_butt, SIGNAL(clicked(bool)), this, SLOT(applyAction()));
+	apply_butt->setToolTip(tr("Commit settings to server."));
+	connect(apply_butt, SIGNAL(clicked(bool)), this, SLOT(applySettings()));
 	
 	save_butt = new QPushButton(tr("Save"));
-	save_butt->setDisabled(true);
+	save_butt->setToolTip(tr("Save settings in O/S specific storage. The settings will be automatically loaded in on any subsequent restarts of the server application."));
 	connect(save_butt, SIGNAL(clicked(bool)), this, SLOT(saveSettings()));
 	
 	reset_butt = new QPushButton(tr("Reset"));
-	connect(reset_butt, SIGNAL(clicked(bool)), this, SLOT(resetAction()));
+	reset_butt->setToolTip(tr("Restore currently active settigs to config dialog."));
+	connect(reset_butt, SIGNAL(clicked(bool)), this, SLOT(resetSettings()));
 	
 	command_box->addWidget(apply_butt);
 	command_box->addWidget(save_butt);
@@ -243,10 +245,15 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	setLayout(root);
 	
 	// get settings from server
-	resetAction();
-	enableButtons(false);
+	//resetSettings();
+	//enableButtons();
 	
 	loadSettings();
+	applySettings();
+	
+	apply_butt->setDisabled(true);
+	save_butt->setDisabled(true);
+	reset_butt->setDisabled(true);
 }
 
 void ConfigDialog::serverStopped()
@@ -274,16 +281,17 @@ void ConfigDialog::wideStrChanged(int state)
 		namelen_spinner->setMaximum(127);
 }
 
-void ConfigDialog::enableButtons(bool _enable)
+void ConfigDialog::enableButtons()
 {
-	apply_butt->setEnabled(_enable);
-	save_butt->setEnabled(_enable);
-	reset_butt->setEnabled(_enable);
+	apply_butt->setEnabled(true);
+	save_butt->setEnabled(true);
+	reset_butt->setEnabled(true);
 }
 
-void ConfigDialog::applyAction()
+void ConfigDialog::applySettings()
 {
-	enableButtons(false);
+	apply_butt->setDisabled(true);
+	reset_butt->setDisabled(true);
 	
 	//can_draw->checkState() == Qt::Checked;
 	//can_chat->checkState() == Qt::Checked;
@@ -304,6 +312,8 @@ void ConfigDialog::applyAction()
 	srv->setSessionLimit(slimit_spinner->value());
 	srv->setUserLimit(ulimit_spinner->value());
 	
+	const QString configError(tr("Configuration error!"));
+	
 	char *str;
 	uint len;
 	QString pass = admpass_edit->text();
@@ -317,7 +327,7 @@ void ConfigDialog::applyAction()
 		if (len <= namelength_limit)
 			srv->setAdminPassword(str, len);
 		else
-			emit message(tr("Configuration error!"), tr("Administrator password length exceeded allowed size!"), QSystemTrayIcon::Warning);
+			emit message(configError, tr("Administrator password length exceeded allowed size!"), QSystemTrayIcon::Warning);
 	}
 	else
 		srv->setAdminPassword(0,0);
@@ -334,7 +344,7 @@ void ConfigDialog::applyAction()
 		if (len <= namelength_limit)
 			srv->setPassword(str, len);
 		else
-			emit message(tr("Configuration error!"), tr("Server password length exceeded allowed size!"), QSystemTrayIcon::Warning);
+			emit message(configError, tr("Server password length exceeded allowed size!"), QSystemTrayIcon::Warning);
 	}
 	else
 		srv->setPassword(0,0);
@@ -419,9 +429,10 @@ void ConfigDialog::saveSettings()
 	*/
 }
 
-void ConfigDialog::resetAction()
+void ConfigDialog::resetSettings()
 {
-	enableButtons(false);
+	apply_butt->setDisabled(true);
+	reset_butt->setDisabled(true);
 	
 	//srvmutex->lock();
 	
