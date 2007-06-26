@@ -21,6 +21,7 @@ set (
 	srvthread.cpp
 	configdialog.cpp
 	statusdialog.cpp
+	network.cpp
 )
 
 Qt4_wrap_CPP (
@@ -29,6 +30,7 @@ Qt4_wrap_CPP (
 	srvthread.h
 	statusdialog.h
 	configdialog.h
+	network.h
 )
 
 Qt4_automoc ( ${SSOURCES} )

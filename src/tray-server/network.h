@@ -18,50 +18,23 @@
 
 ******************************************************************************/
 
-#ifndef StatusDialog_INCLUDED
-#define StatusDialog_INCLUDED
+#ifndef QtNetwork_INCLUDED
+#define QtNetwork_INCLUDED
 
-#include <QDialog>
-#include <QMutex>
+#include <QNetworkInterface>
 
-class QLineEdit;
-class QLabel;
-class QGroupBox;
-class Server;
+namespace Network {
 
-//! Server status dialog
-class StatusDialog
-	: public QDialog
-{
-	Q_OBJECT
-	
-public:
-	//! Constructor
-	StatusDialog(const Server *srv, QWidget *parent);
-	
-public slots:
-	//! Slot
-	void serverStarted();
-	//! Slot
-	void serverStopped();
-	
-private slots:
-	void update();
-	void updateUsers();
-	void updateSessions();
-	
-protected:
-	//! Pointer to server instance
-	const Server *srv;
-	
-	QLineEdit *hostname;
-	
-	// these might need to be updated occasionally
-	QLabel *state_text;
-	QGroupBox *session_group;
-	QGroupBox *user_group;
-	
-	QMutex mutex;
-};
+//! Qt specific network things
+namespace Qt {
 
-#endif // StatusDialog_INCLUDED
+//QSet<QHostAddress> getExternalAddresses() throw();
+
+//! Get external host address
+QHostAddress getExternalAddress() throw();
+
+} // Qt
+
+} // Network
+
+#endif // QtNetwork_INCLUDED
