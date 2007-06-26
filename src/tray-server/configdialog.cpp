@@ -73,6 +73,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	mindim_spinner = new QSpinBox;
 	mindim_spinner->setRange(400, protocol::max_dimension);
+	mindim_spinner->setSingleStep(20);
 	mindim_spinner->setToolTip(tr("Minimum size of canvas (for both width and height) in any session."));
 	connect(mindim_spinner, SIGNAL(editingFinished()), this, SLOT(enableButtons()));
 	
