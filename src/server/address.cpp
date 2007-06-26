@@ -114,7 +114,7 @@ bool Address::operator== (const Address& naddr) const throw()
 
 /* string functions */
 
-std::string Address::toString(const Address& addr) throw()
+std::string Address::toString(const Address& raddr) throw()
 {
 	#ifdef IPV6_SUPPORT
 	const uint length = Network::IPv6::AddrLength + Network::PortLength + 4;
@@ -128,21 +128,21 @@ std::string Address::toString(const Address& addr) throw()
 	
 	#ifdef WIN32
 	DWORD len = length;
-	Address sa = addr;
+	Address sa = raddr;
 	WSAAddressToString(&sa.addr, sa.size(), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
 	//inet_ntop(raddr.sin_family, getAddress(addr), straddr, length);
 	#ifdef IPV6_SUPPRT
-	inet_ntop(addr.family(), &addr.IPv6.sin6_addr, straddr, length);
+	inet_ntop(raddr.family(), &raddr.IPv6.sin6_addr, straddr, length);
 	#else
-	inet_ntop(addr.family(), &addr.IPv4.sin_addr, straddr, length);
+	inet_ntop(raddr.family(), &raddr.IPv4.sin_addr, straddr, length);
 	#endif
 	
 	#ifdef HAVE_SNPRINTF
-	snprintf(buf, length, format_string, straddr, addr.port());
+	snprintf(buf, length, format_string, straddr, raddr.port());
 	#else
-	sprintf(buf, format_string, straddr, addr.port());
+	sprintf(buf, format_string, straddr, raddr.port());
 	#endif // HAVE_SNPRINTF
 	#endif
 	return std::string(buf);

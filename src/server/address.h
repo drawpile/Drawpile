@@ -78,7 +78,7 @@ struct Address
 	/**
 	 * @param[in] raddr address to translate
 	 */
-	static std::string toString(const Address& raddr) throw();
+	std::string toString(const Address& raddr) throw();
 	
 	//! Convert string to address
 	/**
