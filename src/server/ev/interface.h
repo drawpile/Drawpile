@@ -30,11 +30,9 @@
 #define EventInterface_INCLUDED
 
 #include "config.h"
-#include "../common.h"
-
 #include "traits.h"
 
-#include <ctime>
+#include "../types.h"
 
 //! Event I/O abstraction
 /**

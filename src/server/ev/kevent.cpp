@@ -34,6 +34,7 @@
 	using std::endl;
 	using std::cerr;
 #endif
+
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -163,7 +164,7 @@ int Kevent::add(fd_t fd, int events) throw()
 			#ifndef NDEBUG
 			cerr << "Out of memory" << endl;
 			#endif
-			throw new std::bad_alloc;
+			throw std::bad_alloc;
 			break;
 		default:
 			#ifndef NDEBUG

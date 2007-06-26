@@ -32,18 +32,15 @@
 #include "interface.h"
 #include "traits.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
+#include <ctime> // timeval
 
+#include <map> // std::map
 #ifdef WIN32
-	#include "../sockets.h"
+	#include <winsock2.h> // SOCKET, fd_set, etc.
 #else
-	#include <sys/select.h>
+	#include <set> // std::set
+	#include <sys/select.h> // fd_set
 #endif
-
-#include <map>
-#include <set>
 
 namespace event {
 

@@ -28,6 +28,8 @@
 
 #include "select.h"
 
+#include "../../shared/templates.h"
+
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
@@ -36,6 +38,8 @@
 #endif
 #include <cerrno> // errno
 #include <cassert> // assert()
+
+#include "../socket.internal.h"
 
 namespace event {
 

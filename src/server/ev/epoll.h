@@ -32,14 +32,9 @@
 #include "interface.h"
 #include "traits.h"
 
-#include "../io/descriptor.h"
-
 #include <stdexcept>
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-#include <sys/epoll.h>
+#include <sys/epoll.h> // epoll_event
 
 namespace event {
 

@@ -31,13 +31,9 @@
 
 #include "interface.h"
 #include "traits.h"
+#include "../socket.types.h" // fd_t, WSAEVENT
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-
-#include <map>
-#include <winsock2.h>
+#include <map> // std::map
 
 namespace event {
 
@@ -85,7 +81,6 @@ template <> struct hangup<WSA> { static const long value; };
 template <> struct accept<WSA> { static const long value; };
 template <> struct connect<WSA> { static const long value; };
 template <> struct system<WSA> { static const std::string value; };
-
 template <> struct invalid_fd<WSA> { static const fd_type<WSA>::fd_t value; };
 
 // unused, but required because GCC is less than bright

@@ -32,15 +32,11 @@
 #include "interface.h"
 #include "traits.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
+#include <sys/select.h> // fd_set
+#include <signal.h> // sigset_t
 
-#include <sys/select.h>
-#include <signal.h>
-
-#include <map>
-#include <set>
+#include <map> // std::map
+#include <set> // std::set
 
 namespace event {
 
@@ -56,7 +52,7 @@ private:
 	int nfds;
 	sigset_t sigmask;
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
-	std::map<int, uint> fd_list; // events set for FD
+	std::map<int, uint> fd_list;
 	std::map<int, uint>::iterator fd_iter;
 	std::set<int> read_set, write_set, error_set;
 	int nfds_r, nfds_w, nfds_e;

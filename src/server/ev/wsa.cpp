@@ -28,12 +28,15 @@
 
 #include "wsa.h"
 
+#include "../../shared/templates.h" // fIsSet() and friends
+
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
 	using std::endl;
 	using std::cerr;
 #endif
+
 #include <cassert> // assert()
 
 namespace event {

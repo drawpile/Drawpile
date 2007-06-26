@@ -32,13 +32,10 @@
 #include "interface.h"
 #include "traits.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-
-#include <sys/types.h>
-#include <sys/event.h>
-#include <sys/time.h>
+#include <sys/types.h> // ?
+#include <sys/event.h> // ?
+#include <ctime> // timespec
+#include <cstddef> // size_t
 
 namespace event {
 
