@@ -29,7 +29,7 @@ int main(int argc, char **argv)
 	Q_INIT_RESOURCE(systray);
 	
 	QCoreApplication::setOrganizationName("DrawPile");
-	QCoreApplication::setApplicationName(QObject::tr("DrawPile Tray Server"));
+	QCoreApplication::setApplicationName("DrawPile Tray Server");
 	
 	QApplication app(argc, argv);
 	app.setQuitOnLastWindowClosed(false);
