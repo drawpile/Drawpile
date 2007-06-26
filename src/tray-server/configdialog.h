@@ -22,6 +22,7 @@
 #define ConfigDialog_INCLUDED
 
 #include <QDialog>
+#include <QSystemTrayIcon>
 
 class Server;
 class QCheckBox;
@@ -42,7 +43,12 @@ class ConfigDialog
 public:
 	ConfigDialog(Server *srv, QWidget *parent);
 	
+signals:
+	void message(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon=QSystemTrayIcon::Information);
+	
 protected:
+	void showMessage(const QString& message, QSystemTrayIcon::MessageIcon=QSystemTrayIcon::Information);
+	
 	//! Pointer to server instance
 	Server *srv;
 	

@@ -22,6 +22,7 @@ set (
 	configdialog.cpp
 	statusdialog.cpp
 	network.cpp
+	strings.cpp
 )
 
 Qt4_wrap_CPP (
@@ -30,10 +31,9 @@ Qt4_wrap_CPP (
 	srvthread.h
 	statusdialog.h
 	configdialog.h
-	network.h
 )
 
-Qt4_automoc ( ${SSOURCES} )
+Qt4_automoc ( ${MOC_Sources} )
 Qt4_add_resources ( QtResource systray.qrc )
 
 if ( NOT DEBUG )

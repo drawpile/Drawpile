@@ -35,6 +35,7 @@ TrayMenu::TrayMenu()
 	trayIcon = new QSystemTrayIcon(this);
 	
 	config = new ConfigDialog(srv, this);
+	connect(config, SIGNAL(message(const QString&, const QString&, QSystemTrayIcon::MessageIcon)), this, SLOT(showMessage(const QString&, const QString&, QSystemTrayIcon::MessageIcon)));
 	status = new StatusDialog(srv, this);
 	//connect(status, SIGNAL(message(const QString&, const QString&)), this, SLOT(showMessage(const QString&, const QString&)));
 	
