@@ -29,7 +29,6 @@
 
 TrayMenu::TrayMenu()
 	: srvthread(0),
-	title(tr("DrawPile Server")),
 	srv(new Server)
 {
 	trayIcon = new QSystemTrayIcon(this);
@@ -48,7 +47,7 @@ TrayMenu::TrayMenu()
 	
 	setIcon(0);
 	
-	QString tooltip_str(title);
+	QString tooltip_str(QCoreApplication::applicationName());
 	tooltip_str.append(" v").append(trayserver::version);
 	
 	trayIcon->setToolTip(tooltip_str);
@@ -62,7 +61,7 @@ TrayMenu::TrayMenu()
 	connect(srvthread, SIGNAL(finished()), config, SLOT(serverStopped()));
 	connect(srvthread, SIGNAL(finished()), status, SLOT(serverStopped()));
 	
-	showMessage(title, tr("Server ready for action!"), QSystemTrayIcon::Information);
+	showMessage(QCoreApplication::applicationName(), tr("Server ready for action!"), QSystemTrayIcon::Information);
 }
 
 void TrayMenu::setIcon(int index)
@@ -138,14 +137,14 @@ void TrayMenu::start()
 {
 	startAction->setDisabled(true);
 	
-	showMessage(title, tr("Starting server..."));
+	showMessage(QCoreApplication::applicationName(), tr("Starting server..."));
 }
 
 void TrayMenu::stop()
 {
 	stopAction->setDisabled(true);
 	
-	showMessage(title, tr("Stopping server..."));
+	showMessage(QCoreApplication::applicationName(), tr("Stopping server..."));
 }
 
 void TrayMenu::quitSlot()
@@ -165,7 +164,7 @@ void TrayMenu::serverStarted()
 	stopAction->setEnabled(true);
 	setIcon(1);
 	
-	showMessage(title, tr("Server started!"));
+	showMessage(QCoreApplication::applicationName(), tr("Server started!"));
 }
 
 void TrayMenu::serverStopped()
@@ -173,7 +172,7 @@ void TrayMenu::serverStopped()
 	startAction->setEnabled(true);
 	setIcon(0);
 	
-	showMessage(title, tr("Server stopped!"));
+	showMessage(QCoreApplication::applicationName(), tr("Server stopped!"));
 }
 
 void TrayMenu::statusSlot()

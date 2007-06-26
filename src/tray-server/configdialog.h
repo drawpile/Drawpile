@@ -23,6 +23,7 @@
 
 #include <QDialog>
 #include <QSystemTrayIcon>
+#include <QString>
 
 class Server;
 class QCheckBox;
@@ -67,7 +68,9 @@ protected:
 	QSpinBox *ulimit_spinner;
 	
 	QLineEdit *admpass_edit;
+	QString admpass_backup;
 	QLineEdit *srvpass_edit;
+	QString srvpass_backup;
 	
 	// command buttons
 	QPushButton *apply_butt;
@@ -89,7 +92,8 @@ private slots:
 	void enableButtons(bool _enable=true);
 	
 	void applyAction();
-	void saveAction();
+	void loadSettings();
+	void saveSettings();
 	void resetAction();
 };
 

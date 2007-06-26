@@ -82,9 +82,6 @@ private:
 	//! Server thread
 	ServerThread *srvthread;
 	
-	//! App title
-	QString title;
-	
 	//! Pointer to server class
 	Server *srv;
 	

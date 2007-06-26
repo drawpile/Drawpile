@@ -29,6 +29,7 @@ char* toUTF8(const QString& string, uint& bytes) throw()
 {
 	QByteArray array = string.toUtf8();
 	bytes = array.count();
+	if (bytes == 0) return 0;
 	char *str = new char[bytes];
 	memcpy(str, array.constData(), bytes);
 	return str;
@@ -36,9 +37,14 @@ char* toUTF8(const QString& string, uint& bytes) throw()
 
 char* toUTF16(const QString& string, uint& bytes) throw()
 {
-	//const ushort * array = string.utf16();
+	const ushort *array = string.utf16();
+	const ushort *ptr = array;
 	bytes = 0;
-	return 0;
+	for (; *ptr != 0; ++ptr, bytes+=2);
+	if (bytes == 0) return 0;
+	char *str = new char[bytes];
+	memcpy(str, array, bytes);
+	return str;
 }
 
 } // namespace:convert

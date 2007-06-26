@@ -28,12 +28,15 @@ int main(int argc, char **argv)
 	
 	Q_INIT_RESOURCE(systray);
 	
+	QCoreApplication::setOrganizationName("DrawPile");
+	QCoreApplication::setApplicationName(QObject::tr("DrawPile Tray Server"));
+	
 	QApplication app(argc, argv);
 	app.setQuitOnLastWindowClosed(false);
 	
 	if (!QSystemTrayIcon::isSystemTrayAvailable())
 	{
-		QMessageBox::critical(0, "DrawPile Tray Server",
+		QMessageBox::critical(0, QCoreApplication::applicationName(),
 			QObject::tr("No systray detected!"));
 		return 1;
 	}

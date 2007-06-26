@@ -26,6 +26,7 @@
 
 #include "strings.h"
 
+#include <QSettings>
 #include <QSystemTrayIcon>
 #include <QtGui>
 
@@ -34,7 +35,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	srv(_srv)
 {
 	#define REQUIRES_RESTART "<br>This option can't be changed while the server is running."
-	setWindowTitle(tr("DrawPile Server Configuration"));
+	setWindowTitle(QString(tr("%1 Configuration").arg(QCoreApplication::applicationName())));
 	
 	//setAttribute(Qt::WA_DeleteOnClose);
 	
@@ -175,11 +176,10 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *widestr_box = new QHBoxLayout;
 	widestr_box->addWidget(new QLabel(tr("UTF-16 strings")), 1);
 	wide_strings = new QCheckBox;
-	wide_strings->setDisabled(true);
 	wide_strings->setToolTip(tr("Require clients communicate to with UTF-16 instead of UTF-8.<br>Useful only if the users mostly use non-ASCII (a-z) characters (e.g. Kanji, Cyrillics, etc.)." REQUIRES_RESTART));
 	
-	//connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(wideStrChanged(int)));
-	//connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
+	connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(wideStrChanged(int)));
+	connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
 	widestr_box->addWidget(wide_strings, 0);
 	req_superbox->addLayout(widestr_box);
@@ -214,7 +214,8 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	connect(apply_butt, SIGNAL(clicked(bool)), this, SLOT(applyAction()));
 	
 	save_butt = new QPushButton(tr("Save"));
-	connect(save_butt, SIGNAL(clicked(bool)), this, SLOT(saveAction()));
+	save_butt->setDisabled(true);
+	connect(save_butt, SIGNAL(clicked(bool)), this, SLOT(saveSettings()));
 	
 	reset_butt = new QPushButton(tr("Reset"));
 	connect(reset_butt, SIGNAL(clicked(bool)), this, SLOT(resetAction()));
@@ -262,7 +263,7 @@ void ConfigDialog::serverStarted()
 
 void ConfigDialog::serverRunning(bool _running)
 {
-	//wide_strings->setDisabled(_running);
+	wide_strings->setDisabled(_running);
 	unique_names->setDisabled(_running);
 	port_spinner->setReadOnly(_running);
 }
@@ -292,13 +293,13 @@ void ConfigDialog::applyAction()
 	//srvmutex->lock();
 	
 	srv->setDuplicateConnectionBlocking( (allow_duplicate->checkState() == Qt::Unchecked) );
-	//bool req_widestrings = (wide_strings->checkState() == Qt::Checked);
-	//srv->setUTF16Requirement( req_widestrings );
+	bool req_widestrings = (wide_strings->checkState() == Qt::Checked);
+	srv->setUTF16Requirement( req_widestrings );
 	srv->setUniqueNameEnforcing( (unique_names->checkState() == Qt::Checked) );
 	srv->setPort(port_spinner->value());
 	uint namelength_limit = namelen_spinner->value();
-	//if (req_widestrings)
-	//	namelength_limit *= 2;
+	if (req_widestrings)
+		namelength_limit *= 2;
 	srv->setNameLengthLimit(namelength_limit);
 	srv->setSubscriptionLimit(sublimit_spinner->value());
 	srv->setMinDimension(mindim_spinner->value());
@@ -310,11 +311,9 @@ void ConfigDialog::applyAction()
 	QString pass = admpass_edit->text();
 	if (pass.length() != 0)
 	{
-		/*
 		if (req_widestrings)
-			;
+			str = convert::toUTF16(pass, len);
 		else
-		*/
 			str = convert::toUTF8(pass, len);
 		
 		if (len <= namelength_limit)
@@ -324,15 +323,14 @@ void ConfigDialog::applyAction()
 	}
 	else
 		srv->setAdminPassword(0,0);
+	admpass_backup = pass;
 	
 	pass = srvpass_edit->text();
 	if (pass.length() != 0)
 	{
-		/*
 		if (req_widestrings)
-			;
+			str = convert::toUTF16(pass, len);
 		else
-		*/
 			str = convert::toUTF8(pass, len);
 		
 		if (len <= namelength_limit)
@@ -342,20 +340,28 @@ void ConfigDialog::applyAction()
 	}
 	else
 		srv->setPassword(0,0);
+	srvpass_backup = pass;
 	
 	//srvmutex->unlock();
 }
 
-void ConfigDialog::saveAction()
+void ConfigDialog::loadSettings()
 {
-	save_butt->setDisabled(true);
+	// todo: use QSettings here
+}
+
+void ConfigDialog::saveSettings()
+{
+	//save_butt->setDisabled(true);
+	
+	// todo: use QSettings here
 	
 	/*
 	can_draw;
 	can_chat;
 	
 	allow_duplicate;
-	//wide_strings;
+	wide_strings;
 	unique_names;
 	
 	port_spinner;
@@ -378,7 +384,7 @@ void ConfigDialog::resetAction()
 	
 	allow_duplicate->setChecked( !srv->getDuplicateConnectionBlocking() );
 	
-	//wide_strings->setChecked( srv->getUTF16Requirement() );
+	wide_strings->setChecked( srv->getUTF16Requirement() );
 	unique_names->setChecked( srv->getUniqueNameEnforcing() );
 	port_spinner->setValue( srv->getPort() );
 	namelen_spinner->setValue( srv->getNameLengthLimit() );
@@ -386,6 +392,9 @@ void ConfigDialog::resetAction()
 	mindim_spinner->setValue( srv->getMinDimension() );
 	slimit_spinner->setValue( srv->getSessionLimit() );
 	ulimit_spinner->setValue( srv->getUserLimit() );
+	
+	admpass_edit->setText(admpass_backup);
+	srvpass_edit->setText(srvpass_backup);
 	
 	//srvmutex->unlock();
 }

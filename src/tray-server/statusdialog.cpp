@@ -30,7 +30,7 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	: QDialog(parent),
 	srv(_srv)
 {
-	setWindowTitle(tr("DrawPile Server Status"));
+	setWindowTitle(QString(tr("%1 Status").arg(QCoreApplication::applicationName())));
 	
 	//setAttribute(Qt::WA_DeleteOnClose);
 	
@@ -95,12 +95,6 @@ void StatusDialog::serverStarted()
 		.arg(srv->getPort());
 	//srvmutex->unlock();
 	hostname->setText(host);
-	
-	/*
-	host.push_front(tr("Listening at "));
-	
-	emit message(tr("DrawPile Server"), host);
-	*/
 }
 
 void StatusDialog::serverStopped()
