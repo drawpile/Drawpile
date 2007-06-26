@@ -89,7 +89,7 @@ typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
 	: state(Server::Dead),
-	user_limit(255),
+	user_limit(12),
 	session_limit(1),
 	max_subscriptions(1),
 	name_len_limit(12),
