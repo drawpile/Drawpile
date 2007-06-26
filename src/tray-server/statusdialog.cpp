@@ -45,7 +45,6 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	state_box->addWidget(new QLabel(tr("State:")), 1);
 	state_text = new QLabel;
 	state_text->setAlignment(Qt::AlignCenter);
-	serverStopped();
 	state_box->addWidget(state_text, 0);
 	status_superbox->addLayout(state_box);
 	
@@ -57,7 +56,7 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	host_box->addWidget(hostname);
 	status_superbox->addLayout(host_box);
 	
-	
+	serverStopped();
 	status_group->setLayout(status_superbox);
 	
 	// Sessions
@@ -109,6 +108,7 @@ void StatusDialog::serverStarted()
 void StatusDialog::serverStopped()
 {
 	state_text->setText(tr("Stopped"));
+	hostname->clear();
 }
 
 void StatusDialog::update()
