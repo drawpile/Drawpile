@@ -31,8 +31,6 @@
 #include "../shared/templates.h"
 #include "network.h"
 
-#include "utility.h" // memcmp_t
-
 Address::Address()
 	#ifdef IPV6_SUPPORT
 	: family(Network::Family::IPv6)
