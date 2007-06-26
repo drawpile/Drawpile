@@ -102,7 +102,7 @@ link_libraries( libdrawpile ) # DP shared library
 
 if ( RELEASE )
 	generate_all_cpp ( "${SOURCES}" )
-	set ( CLIENT_SOURCES auto_all.cpp )
+	set ( SOURCES auto_all.cpp )
 endif ( RELEASE )
 
 add_executable (
