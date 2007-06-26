@@ -43,15 +43,20 @@ class SHA1
 	#ifdef HAVE_OPENSSL
 	SHA_CTX context;
 	#else
+	
+	// workblock
 	union {
 		uchar c[64];
 		uint32_t l[16];
-	} m_block;
+	} workblock;
 	
-	uint32_t m_count;
+	uint32_t m_count; // pointless
+	
+	//! Number of bytes processed
 	uint64_t m_size;
 	#endif // HAVE_OPENSSL
 	
+	//! Intermediate digest
 	union {
 		uint32_t m_state[5];
 		uchar m_digest[20];
@@ -68,7 +73,7 @@ public:
 	 * @param data Input buffer for updating hash
 	 * @param len Length of buffer
 	 */
-	void Update(const uchar *data, const uint64_t len) throw();
+	void Update(const uchar *data, int64_t len) throw();
 	
 	//! Finalize hash
 	/**
@@ -90,7 +95,7 @@ public:
 
 private:
 	#ifndef HAVE_OPENSSL
-	uint32_t SHABLK1(const uint32_t i) throw();
+	uint32_t Chunk(const uint32_t i) throw();
 	
 	uint32_t ROL32(const uint32_t v, const uint32_t n) const throw();
 	
@@ -104,7 +109,7 @@ private:
 	
 	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	void Transform(const uchar *buffer) throw();
+	void Transform(const uchar buffer[64]) throw();
 	#endif // HAVE_OPENSSL
 	
 	#ifndef NDEBUG
