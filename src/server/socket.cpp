@@ -61,7 +61,7 @@ Socket::Socket(const fd_t& nsock, const Address& saddr) throw()
 	addr(saddr)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "Socket(FD: " << nsock << ", address: " << Address::toString(saddr) << ") constructed" << std::endl;
+	std::cout << "Socket(FD: " << nsock << ", address: " << saddr.toString() << ") constructed" << std::endl;
 	#endif
 }
 
@@ -455,7 +455,7 @@ int Socket::bindTo(const Address& naddr) throw()
 int Socket::connect(const Address& rhost) throw()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "[Socket] Connecting to " << Address::toString(rhost) << endl;
+	cout << "[Socket] Connecting to " << rhost.toString() << endl;
 	#endif
 	
 	assert(sock != INVALID_SOCKET);
@@ -789,7 +789,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 
 std::string Socket::address() const throw()
 {
-	return Address::toString(addr);
+	return addr.toString();
 }
 
 ushort Socket::port() const throw()
