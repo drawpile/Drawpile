@@ -182,7 +182,7 @@ void HostState::host(const QString& title,
 			protocol::SessionInstruction::Create,
 			width,
 			height,
-			protocol::user_mode::None,
+			protocol::user::None,
 			userlimit,
 			0, // flags (unused)
 			tbytes.length(),
@@ -191,9 +191,9 @@ void HostState::host(const QString& title,
 	
 	msg->session_id = protocol::Global;
 	if(allowdraw==false)
-		fSet(msg->user_mode, static_cast<quint8>(protocol::user_mode::Locked));
+		fSet(msg->user_mode, static_cast<quint8>(protocol::user::Locked));
 	if(allowchat==false)
-		fSet(msg->user_mode, static_cast<quint8>(protocol::user_mode::Mute));
+		fSet(msg->user_mode, static_cast<quint8>(protocol::user::Mute));
 	
 	if (msg->title_len != 0)
 	{
