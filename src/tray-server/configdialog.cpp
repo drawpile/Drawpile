@@ -23,6 +23,7 @@
 #include "../shared/protocol.defaults.h"
 #include "../server/network.h"
 #include "../server/server.h"
+#include "../shared/templates.h"
 
 #include "strings.h"
 
@@ -117,7 +118,6 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	can_draw = new QCheckBox;
 	can_draw->setToolTip(tr("If unchecked, session owner or server admin must unlock the user before they can draw."));
-	can_draw->setDisabled(true);
 	can_draw->setChecked(true);
 	connect(can_draw, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
@@ -127,7 +127,6 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	can_chat = new QCheckBox;
 	can_chat->setToolTip(tr("If unchecked, session owner or server admin must unmute the user before thay can chat."));
-	can_chat->setDisabled(true);
 	can_chat->setChecked(true);
 	connect(can_chat, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
@@ -293,15 +292,20 @@ void ConfigDialog::applySettings()
 	apply_butt->setDisabled(true);
 	reset_butt->setDisabled(true);
 	
-	//can_draw->checkState() == Qt::Checked;
-	//can_chat->checkState() == Qt::Checked;
+	quint8 user_mode = 0;
+	if (!can_draw->isChecked())
+		fSet(user_mode, quint8(protocol::user::Locked));
+	if (!can_chat->isChecked())
+		fSet(user_mode, quint8(protocol::user::Mute));
+	
+	srv->setUserMode(user_mode);
 	
 	//srvmutex->lock();
 	
-	srv->setDuplicateConnectionBlocking( (allow_duplicate->checkState() == Qt::Unchecked) );
-	bool req_widestrings = (wide_strings->checkState() == Qt::Checked);
+	srv->setDuplicateConnectionBlocking( !allow_duplicate->isChecked() );
+	bool req_widestrings = wide_strings->isChecked();
 	srv->setUTF16Requirement( req_widestrings );
-	srv->setUniqueNameEnforcing( (unique_names->checkState() == Qt::Checked) );
+	srv->setUniqueNameEnforcing( unique_names->isChecked() );
 	srv->setPort(port_spinner->value());
 	uint namelength_limit = namelen_spinner->value();
 	if (req_widestrings)
@@ -361,9 +365,11 @@ void ConfigDialog::loadSettings()
 	
 	port_spinner->setValue( cfg.value("Port", srv->getPort()).toInt() );
 	
+	quint8 user_mode = srv->getUserMode();
+	
 	cfg.beginGroup("Users");
-	//can_draw->setChecked( cfg.value("Can draw").toBool() );
-	//can_chat->setChecked( cfg.value("Can chat").toBool() );
+	can_draw->setChecked( cfg.value("Can draw", !fIsSet(user_mode, quint8(protocol::user::Locked))).toBool() );
+	can_chat->setChecked( cfg.value("Can chat", !fIsSet(user_mode, quint8(protocol::user::Mute))).toBool() );
 	allow_duplicate->setChecked( cfg.value("Allow duplicate connections", !srv->getDuplicateConnectionBlocking()).toBool() );
 	cfg.endGroup();
 	
@@ -372,7 +378,7 @@ void ConfigDialog::loadSettings()
 	unique_names->setChecked( cfg.value("Unique names", srv->getUniqueNameEnforcing()).toBool() );
 	cfg.endGroup();
 	
-	int div = (wide_strings->checkState() == Qt::Checked ? 2 : 1);
+	int div = (wide_strings->isChecked() ? 2 : 1);
 	
 	cfg.beginGroup("Limits");
 	namelen_spinner->setValue( cfg.value("Name length", srv->getNameLengthLimit() ).toInt() / div );
@@ -400,17 +406,17 @@ void ConfigDialog::saveSettings()
 	cfg.setValue("Port", port_spinner->value());
 	
 	cfg.beginGroup("Users");
-	//cfg.setValue("Can draw", can_draw->checkState());
-	//cfg.setValue("Can chat", can_chat->checkState());
-	cfg.setValue("Allow duplicate connections", allow_duplicate->checkState());
+	cfg.setValue("Can draw", can_draw->isChecked());
+	cfg.setValue("Can chat", can_chat->isChecked());
+	cfg.setValue("Allow duplicate connections", allow_duplicate->isChecked());
 	cfg.endGroup();
 	
 	cfg.beginGroup("Requirements");
-	cfg.setValue("UTF-16", wide_strings->checkState());
-	cfg.setValue("Unique names", unique_names->checkState());
+	cfg.setValue("UTF-16", wide_strings->isChecked());
+	cfg.setValue("Unique names", unique_names->isChecked());
 	cfg.endGroup();
 	
-	int mult = (wide_strings->checkState() == Qt::Checked ? 2 : 1);
+	int mult = (wide_strings->isChecked() ? 2 : 1);
 	
 	cfg.beginGroup("Limits");
 	cfg.setValue("Name length", namelen_spinner->value() * mult);
@@ -435,6 +441,10 @@ void ConfigDialog::resetSettings()
 	reset_butt->setDisabled(true);
 	
 	//srvmutex->lock();
+	
+	quint8 user_mode = srv->getUserMode();
+	can_draw->setChecked( !fIsSet(user_mode, quint8(protocol::user::Locked)) );
+	can_chat->setChecked( !fIsSet(user_mode, quint8(protocol::user::Mute)) );
 	
 	allow_duplicate->setChecked( !srv->getDuplicateConnectionBlocking() );
 	
