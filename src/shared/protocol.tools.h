@@ -40,6 +40,7 @@ namespace protocol
 namespace tool_type
 {
 
+//! Tool types
 enum type
 {
 	//! No tool defined.
@@ -55,6 +56,7 @@ enum type
 namespace tool_mode
 {
 
+//! Composition modes
 enum mode
 {
 	//! No mode set

@@ -610,10 +610,11 @@ public:
 	
 	//! Allow/disallow duplicate connections from same address
 	/**
-	 * @param[in] _allow duplicate connections
+	 * @param[in] _block duplicate connections
 	 * @todo Needs shorter name
 	 */
 	void setDuplicateConnectionBlocking(const bool _block=true) throw() { blockDuplicateConnections = _block; }
+	//! Get current duplicate connection blocking state
 	bool getDuplicateConnectionBlocking() const throw() { return blockDuplicateConnections; }
 	
 	/** Control functions **/
