@@ -1,6 +1,6 @@
 # tray server
 
-set ( FULLNAME "DrawPile tray server" )
+set ( FULLNAME "DrawPile Tray Server" )
 set ( INTERNALNAME "drawpile-tray-srv" )
 set ( COPYRIGHT "Copyright (C) 2007 M.K.A." )
 set ( DESCRIPTION ${FULLNAME} )
@@ -9,6 +9,12 @@ set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
 set ( VERSION_MAJOR 0 )
 set ( VERSION_MINOR 1 )
 set ( VERSION_BUG 0 )
+
+if ( WIN32 )
+	set ( ORIGFILENAME "${INTERNALNAME}.exe" )
+else ( WIN32 )
+	set ( ORIGFILENAME "${INTERNALNAME}" )
+endif ( WIN32 )
 
 # Qt stuff
 include ( ${QT_USE_FILE} )
@@ -52,6 +58,11 @@ if ( WIN32 )
 	### generate resource file .o = ${WIN32RES}
 	generate_win32_resource()
 endif ( WIN32 )
+
+if ( RELEASE )
+	generate_all_cpp ( "${SSOURCES}" )
+	set ( SSOURCES auto_all.cpp )
+endif ( RELEASE )
 
 add_executable (
 	${INTERNALNAME}
