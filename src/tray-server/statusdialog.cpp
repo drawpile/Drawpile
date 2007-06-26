@@ -41,13 +41,6 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	status_group->setContentsMargins(3,12,3,0);
 	
 	// server state
-	QHBoxLayout *state_box = new QHBoxLayout;
-	state_box->addWidget(new QLabel(tr("State:")), 1);
-	state_text = new QLabel;
-	state_text->setAlignment(Qt::AlignCenter);
-	state_box->addWidget(state_text, 0);
-	status_superbox->addLayout(state_box);
-	
 	QHBoxLayout *host_box = new QHBoxLayout;
 	host_box->addWidget(new QLabel(tr("Hostname")), 1);
 	hostname = new QLineEdit;
@@ -96,19 +89,23 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 
 void StatusDialog::serverStarted()
 {
-	state_text->setText(tr("Ready"));
 	//srvmutex->lock();
 	QString host = QString("%1:%2")
 		.arg(Network::Qt::getExternalAddress().toString())
 		.arg(srv->getPort());
 	//srvmutex->unlock();
 	hostname->setText(host);
+	
+	/*
+	host.push_front(tr("Listening at "));
+	
+	emit message(tr("DrawPile Server"), host);
+	*/
 }
 
 void StatusDialog::serverStopped()
 {
-	state_text->setText(tr("Stopped"));
-	hostname->clear();
+	hostname->setText(tr("n/a"));
 }
 
 void StatusDialog::update()

@@ -44,6 +44,10 @@ public slots:
 	void serverStarted();
 	//! Slot
 	void serverStopped();
+	/*
+signals:
+	void message(const QString& title, const QString& message);
+	*/
 	
 private slots:
 	void update();
@@ -57,7 +61,6 @@ protected:
 	QLineEdit *hostname;
 	
 	// these might need to be updated occasionally
-	QLabel *state_text;
 	QGroupBox *session_group;
 	QGroupBox *user_group;
 	

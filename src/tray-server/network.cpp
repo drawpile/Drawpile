@@ -50,7 +50,19 @@ QSet<QHostAddress> getExternalAddresses() throw()
 		
 		foreach (QNetworkAddressEntry entry, alist)
 		{
-			set.insert(entry.ip());
+			switch (entry.ip().protocol())
+			{
+			case QAbstractSocket::IPv4Protocol:
+				if (entry.netmask() == QHostAddress::Broadcast)
+					set.insert(entry.ip());
+				break;
+			case QAbstractSocket::IPv6Protocol:
+				if (entry.netmask().toString() == "FFFF:FFFF:FFFF:FFFF::")
+					set.insert(entry.ip());
+				break;
+			default:
+				;
+			}
 		}
 	}
 	

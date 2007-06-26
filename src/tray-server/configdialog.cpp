@@ -19,12 +19,11 @@
 ******************************************************************************/
 
 #include "configdialog.h"
+
 #include "../shared/protocol.defaults.h"
-#include "../server/sockets.h"
-#include "../shared/templates.h"
+#include "../server/network.h"
 #include "../server/server.h"
 
-#include <QDebug>
 #include <QtGui>
 
 ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)

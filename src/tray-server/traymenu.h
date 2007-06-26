@@ -50,15 +50,15 @@ public slots:
 	void serverStarted();
 	void serverStopped();
 	
+	//! Show balloon message
+	void showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
+	
 private slots:
 	//! Set tray icon
 	void setIcon(int index);
 	
 	//! Detect double-clicking of tray icon and toggle status window with it
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
-	
-	//! Show balloon message
-	void showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
 	
 	//! Menu 'start' action
 	void start();
