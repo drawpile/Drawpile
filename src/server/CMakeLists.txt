@@ -92,7 +92,13 @@ if ( SERVERLIB )
 	set (
 		SRV_SOURCES
 		buffer.cpp
-		sockets.cpp
+		session_data.cpp
+		layer_data.cpp
+		user.cpp
+		session.cpp
+		net.cpp
+		address.cpp
+		socket.cpp
 		#dpsrv.cpp
 		server.cpp
 	)

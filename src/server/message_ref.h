@@ -17,7 +17,11 @@
 
 #include <boost/shared_ptr.hpp>
 
-struct Message;
+namespace protocol
+{
+	struct Message;
+}
+
 typedef boost::shared_ptr<protocol::Message> message_ref;
 
 #endif // MessageRef_GUARD

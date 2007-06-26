@@ -16,62 +16,19 @@
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
-#include "common.h"
+#include "types.h"
+#include "array.h" // Array<>
 
-#include "../shared/protocol.flags.h"
-#include "../shared/protocol.tools.h"
-#include "../shared/protocol.defaults.h"
+#include <list> // std::list
+#include <map> // std::map
 
-#include "array.h"
-
-struct User; // defined elsewhere
-#ifndef ServerUser_INCLUDED
-	#include "user.h"
-#endif
-
-#include <limits> // std::numeric_limits<T>
-
-#include <list>
-
-//! Layer information
-struct LayerData
+namespace protocol
 {
-	//! ctor
-	LayerData() throw()
-		: id(protocol::null_layer),
-		mode(protocol::tool_mode::None),
-		opacity(0),
-		locked(false)
-	{
-	}
-	
-	//! ctor
-	LayerData(const uint _id, const uint _mode, const uint _opacity=std::numeric_limits<uint8_t>::max(), const bool _locked=false) throw()
-		: id(_id),
-		mode(_mode),
-		opacity(_opacity),
-		locked(_locked)
-	{
-	}
-	
-	uint
-		//! Layer identifier
-		id,
-		//! Composition mode
-		mode,
-		//! Opacity
-		opacity;
-	
-	//! Layer lock state
-	bool locked;
-};
+	struct Raster;
+}
 
-/* iterators */
-#include <map>
-typedef std::map<uint8_t, User*>::iterator session_usr_i;
-typedef std::map<uint8_t, User*>::const_iterator session_usr_const_i;
-typedef std::map<uint8_t, LayerData>::iterator session_layer_i;
-typedef std::map<uint8_t, LayerData>::const_iterator session_layer_const_i;
+struct LayerData;
+struct User;
 
 //! Session information
 struct Session
@@ -88,35 +45,11 @@ struct Session
 	 * @param[in] _title Session title
 	 */
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
-		uint _width, uint _height, uint _level, Array<char>& _title) throw()
-		: id(_id),
-		title(_title),
-		mode(_mode),
-		limit(_limit),
-		owner(_owner),
-		width(_width),
-		height(_height),
-		level(_level),
-		syncCounter(0),
-		locked(false),
-		#ifdef PERSISTENT_SESSIONS
-		raster(0),
-		raster_cached(false),
-		raster_invalid(false),
-		#endif
-		persist(false)
-	{
-		#ifndef NDEBUG
-		std::cout << "Session::Session(ID: " << static_cast<int>(id) << ")" << std::endl;
-		#endif
-	}
+		uint _width, uint _height, uint _level, Array<char>& _title) throw();
 	
 	#ifndef NDEBUG
 	//! Destructor
-	~Session() throw()
-	{
-		std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
-	}
+	~Session() throw();
 	#endif
 	
 	//! Session identifier
@@ -129,7 +62,7 @@ struct Session
 	Array<char> password;
 	
 	//! Default user mode
-	uint8_t mode;
+	octet mode;
 	
 	//! User limit
 	uint limit;
@@ -147,17 +80,13 @@ struct Session
 	uint level;
 	
 	//! Get session flags
-	uint8_t getFlags() const throw()
-	{
-		return (persist?protocol::session::Persist:0);
-	}
+	octet getFlags() const throw();
 	
 	//! Layer identifier to layer data map
-	std::map<uint8_t, LayerData> layers;
-	//std::set<LayerData> layers;
+	std::map<octet, LayerData> layers;
 	
 	//! Subscribed users
-	std::map<uint8_t, User*> users;
+	std::map<octet, User*> users;
 	
 	//! Users waiting sync.
 	std::list<User*> waitingSync;
@@ -185,10 +114,7 @@ struct Session
 	/* *** Functions *** */
 	
 	//! Test if session can be joined
-	bool canJoin() const throw()
-	{
-		return ((users.size() + waitingSync.size()) < limit);
-	}
+	bool canJoin() const throw();
 };
 
 #endif // ServerSession_INCLUDED

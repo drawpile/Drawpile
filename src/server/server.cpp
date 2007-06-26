@@ -31,36 +31,57 @@
 *******************************************************************************/
 
 #include "server.h"
-#include "common.h"
 
-#include "../shared/protocol.defaults.h"
-#include "../shared/protocol.helper.h"
+#include "../shared/SHA1.h"
+
+#include "../shared/protocol.errors.h" // protocol::error namespace
+#include "../shared/protocol.helper.h" // getMessage
+
+#include "network.h" // Network namespace
+#include "socket.internals.h"
+
+#include "user.h" // User class
+#include "layer_data.h" // LayerData class
+#include "session_data.h" // SessionData class
+#include "session.h" // Session class
+
+#include "../shared/templates.h"
 
 #if defined(HAVE_ZLIB)
 	#include <zlib.h>
 #endif
 
 #ifdef LINUX
-	#include <cstdio>
+	#include <cstdio> // ?
 #endif
-#include <limits> // std::numeric_limits<T>
-#include <iostream>
+
+#ifndef NDEBUG
+	#include <iostream>
+#endif
+
+#include <list> // std::list
 
 using std::cout;
 using std::endl;
 using std::cerr;
 
-// iterators
-typedef std::map<uint8_t, Session*>::iterator sessions_i;
-typedef std::map<uint8_t, Session*>::const_iterator sessions_const_i;
+/* ** Iterators ** */
+// for Session*
+typedef std::map<octet, User*>::iterator session_usr_i;
+typedef std::map<octet, User*>::const_iterator session_usr_const_i;
+typedef std::map<octet, LayerData>::iterator session_layer_i;
+typedef std::map<octet, LayerData>::const_iterator session_layer_const_i;
+
+// for Server*
+typedef std::map<octet, Session*>::iterator sessions_i;
+typedef std::map<octet, Session*>::const_iterator sessions_const_i;
 typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
 
-// the only iterator in which we need the ->first
+// for Tunnel
 typedef std::multimap<User*, User*>::iterator tunnel_i;
 typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 
-#include <list>
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
 
@@ -86,7 +107,7 @@ Server::Server() throw()
 		#endif
 		),
 	extPalette(true), extChat(true),
-	default_user_mode(protocol::user_mode::None),
+	default_user_mode(protocol::user::None),
 	Transient(false), LocalhostAdmin(false),
 	blockDuplicateConnections(true)
 {
@@ -107,7 +128,7 @@ Server::~Server() throw()
 }
 #endif
 
-const uint8_t Server::getUserID() throw()
+const octet Server::getUserID() throw()
 {
 	static int index=0;
 	
@@ -123,7 +144,7 @@ const uint8_t Server::getUserID() throw()
 	return ri;
 }
 
-const uint8_t Server::getSessionID() throw()
+const octet Server::getSessionID() throw()
 {
 	static int index=0;
 	
@@ -139,14 +160,14 @@ const uint8_t Server::getSessionID() throw()
 	return ri;
 }
 
-void Server::freeUserID(const uint8_t id) throw()
+void Server::freeUserID(const octet id) throw()
 {
 	assert(id != protocol::null_user);
 	assert(user_ids[id-1] == false);
 	user_ids[id-1] = true;
 }
 
-void Server::freeSessionID(const uint8_t id) throw()
+void Server::freeSessionID(const octet id) throw()
 {
 	assert(id != protocol::Global);
 	assert(session_ids[id-1] == false);
@@ -169,7 +190,7 @@ void Server::uRegenSeed(User& usr) const throw()
 	#endif
 }
 
-message_ref Server::msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc)
+message_ref Server::msgPWRequest(User& usr, const octet session) const throw(std::bad_alloc)
 {
 	protocol::PasswordRequest* pwreq = new protocol::PasswordRequest;
 	pwreq->session_id = session;
@@ -219,21 +240,21 @@ message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_
 	return message_ref(nfo);
 }
 
-message_ref Server::msgError(const uint8_t session, const uint16_t code) const throw(std::bad_alloc)
+message_ref Server::msgError(const octet session, const uint16_t code) const throw(std::bad_alloc)
 {
 	protocol::Error *err = new protocol::Error(code);
 	err->session_id = session;
 	return message_ref(err);
 }
 
-message_ref Server::msgAck(const uint8_t session, const uint8_t type) const throw(std::bad_alloc)
+message_ref Server::msgAck(const octet session, const octet type) const throw(std::bad_alloc)
 {
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement(type);
 	ack->session_id = session;
 	return message_ref(ack);
 }
 
-message_ref Server::msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc)
+message_ref Server::msgSyncWait(const octet session_id) const throw(std::bad_alloc)
 {
 	message_ref sync_ref(new protocol::SyncWait);
 	sync_ref->session_id = session_id;
@@ -275,7 +296,7 @@ void Server::uWrite(User*& usr) throw()
 		case WSA_IO_PENDING:
 		#endif
 		case EINTR:
-		case EAGAIN:
+		case EWOULDBLOCK:
 		case ENOBUFS:
 		case ENOMEM:
 			// retry
@@ -445,7 +466,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 	case SOCKET_ERROR:
 		switch (usr->sock.getError())
 		{
-		case EAGAIN:
+		case EWOULDBLOCK:
 		case EINTR: // retry later
 			break;
 		default:
@@ -488,7 +509,7 @@ void Server::uProcessData(User*& usr) throw()
 			}
 		}
 		
-		assert(usr->inMsg->type == static_cast<uint8_t>(usr->input.rpos[0]));
+		assert(usr->inMsg->type == static_cast<octet>(usr->input.rpos[0]));
 		
 		size_t cread = usr->input.canRead();
 		size_t reqlen = usr->inMsg->reqDataLen(usr->input.rpos, cread);
@@ -533,7 +554,7 @@ void Server::uProcessData(User*& usr) throw()
 		usr->input.rewind();
 }
 
-message_ref Server::msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc)
+message_ref Server::msgUserEvent(const User& usr, const octet session_id, const octet event) const throw(std::bad_alloc)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Constructing user event for user #" << usr.id << endl;
@@ -1358,7 +1379,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		// limited scope for switch/case
 		{
-			const uint8_t session_id = getSessionID();
+			const octet session_id = getSessionID();
 			
 			if (session_id == protocol::Global)
 			{
@@ -1805,7 +1826,7 @@ void Server::uLayerEvent(User*& usr) throw()
 	case protocol::LayerEvent::Create:
 		{
 			// TODO: Figure out what to do with the layer ID
-			uint8_t lastLayer = levent.layer_id;
+			octet lastLayer = levent.layer_id;
 			session->layers[lastLayer] = LayerData(lastLayer, levent.mode, levent.opacity);
 		}
 		break;
@@ -2051,7 +2072,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 	
 	session->users.erase(usr.id);
 	
-	const uint8_t session_id = session->id;
+	const octet session_id = session->id;
 	
 	if (usr.session == session)
 		usr.session = 0;
@@ -2531,19 +2552,19 @@ void Server::reset() throw()
 	state = Server::Dead;
 }
 
-Session* Server::getSession(const uint8_t session_id) throw()
+Session* Server::getSession(const octet session_id) throw()
 {
 	const sessions_const_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : si->second);
 }
 
-const Session* Server::getConstSession(const uint8_t session_id) const throw()
+const Session* Server::getConstSession(const octet session_id) const throw()
 {
 	const sessions_const_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : si->second);
 }
 
-uint8_t Server::getRequirements() const throw()
+octet Server::getRequirements() const throw()
 {
 	return 0;
 }

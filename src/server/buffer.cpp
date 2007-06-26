@@ -14,6 +14,8 @@
 
 #include "buffer.h"
 
+#include <cassert>
+
 Buffer::Buffer(char* buf, const size_t len) throw()
 	: data(buf),
 	wpos(buf),

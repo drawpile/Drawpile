@@ -12,17 +12,13 @@
 
 *******************************************************************************/
 
-#ifndef Common_GUARD
-#define Common_GUARD
-
-#include "config.h"
-#include "../shared/templates.h"
-
-#include <boost/cstdint.hpp>
+#ifndef Types_INCLUDED
+#define Types_INCLUDED
 
 typedef unsigned short ushort;
 typedef unsigned long ulong;
 typedef unsigned int uint;
+typedef unsigned char octet;
 typedef unsigned char uchar;
 
-#endif // Common_GUARD
+#endif // Types_INCLUDED

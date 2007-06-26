@@ -29,152 +29,13 @@
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
-#include "common.h"
+#include "config.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-
-#include <stdexcept>
-
-#include "sockets.ext.h"
-
-//! Network constants
-namespace Network {
-
-//! IPv6 related constants
-namespace IPv6 {
-
-//! Localhost address
-/**
- * Equivalent of IPv4 \b 127.0.0.1
- */
-const char Localhost[] = "::1";
-
-//! Unspecified address
-/**
- * Equivalent of IPv4 \b 0.0.0.0
- */
-const char Unspecified[] = "::";
-
-//! Maximum length of IPv6 address
-/**
- * ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
- */
-const uint AddrLength = 39;
-
-}
-
-//! IPv4 related constants
-namespace IPv4 {
-
-//! Localhost address
-const char Localhost[] = "127.0.0.1";
-
-//! Unspecified address
-const char Unspecified[] = "0.0.0.0";
-
-//! Maximum length of IPv4 address
-/**
- * 123.456.789.012
- */
-const uint AddrLength = 16;
-
-}
-
-//! Super user port upper bound
-const uint SuperUser_Port = 1023;
-
-//! Maximum length of either IPv4 or IPv6 address
-const uint AddrLength = IPv6::AddrLength;
-
-//! Maximum length of port number as string
-const uint PortLength = 5;
-
-//! Highest port number
-const uint PortUpperBound = 65535;
-
-//! Lowest port number
-const uint PortLowerBound = 0;
-
-namespace error {
-	const int WouldBlock = EWOULDBLOCK;
-} // namespace:error
-
-}
-
-#ifndef EAGAIN
-	#define EAGAIN EWOULDBLOCK
-#endif
-
-#ifdef NEED_NET
-//! Net automaton
-/**
- * Initializes WSA (ctor) and cleans up after it (dtor).
- *
- * Throws std::exception if it couldn't initialize WSA.
- */
-struct Net
-{
-	Net() throw(std::exception);
-	~Net() throw();
-};
-#endif
-
-//! Address
-struct Address {
-	Address();
-	
-	enum Family {
-		IPV4,
-		IPV6
-	} type;
-	
-	union {
-		//! base address
-		sockaddr addr;
-		//! IPv4 address
-		sockaddr_in IPv4;
-		#ifdef IPV6_SUPPORT
-		//! IPv6 address
-		sockaddr_in6 IPv6;
-		#endif
-	};
-	
-	socklen_t size() const throw();
-	
-	int family() const throw();
-	
-	ushort port() const throw();
-	
-	void port(ushort _port) throw();
-	
-	//! Assign operator
-	Address& operator= (const Address& naddr) throw();
-	
-	//! Is-equal operator
-	/**
-	 * @bug Comparing IPv6 addresses likely doesn't work.
-	 */
-	bool operator== (const Address& naddr) const throw();
-	
-	//! Convert address to string representation of it
-	/**
-	 * @param[in] raddr address to translate
-	 */
-	static std::string toString(const Address& raddr) throw();
-	
-	//! Convert string to address
-	/**
-	 * @param[in] address string to convert
-	 */
-	static Address fromString(std::string const& address) throw();
-};
-
-void initAddress(Address& addr) throw();
+#include "address.h"
+#include "socket.types.h" // fd_t
 
 //! Socket abstraction
-class Socket
+struct Socket
 {
 protected:
 	//! Assigned file descriptor
@@ -205,14 +66,7 @@ public:
 	 */
 	Socket(const fd_t& nsock, const Address& saddr) throw();
 	
-	~Socket() throw()
-	{
-		#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-		std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
-		#endif
-		
-		close();
-	}
+	~Socket() throw();
 	
 	//! Create new socket
 	fd_t create() throw();
@@ -224,12 +78,7 @@ public:
 	void close() throw();
 	
 	//! releases FD association from this
-	fd_t release() throw()
-	{
-		fd_t t_sock = sock;
-		sock = INVALID_SOCKET;
-		return t_sock;
-	}
+	fd_t release() throw();
 	
 	//! Set file descriptor
 	/**
@@ -237,17 +86,13 @@ public:
 	 *
 	 * @return file descriptor associated with the class.
 	 */
-	fd_t fd(fd_t nsock) throw()
-	{
-		if (sock != INVALID_SOCKET) close();
-		return sock = nsock;
-	}
+	fd_t fd(fd_t nsock) throw();
 	
 	//! Get file descriptor
 	/**
 	 * @return reference to file descriptor associated with the class.
 	 */
-	fd_t fd() const throw() { return sock; }
+	fd_t fd() const throw();
 	
 	//! Accept new connection.
 	/**
@@ -391,25 +236,19 @@ public:
 	/**
 	 * @param[in] how SHUT_RD, SHUT_WR, SHUT_RDWR
 	 */
-	int shutdown(int how) throw()
-	{
-		return ::shutdown(sock, how);
-	}
+	int shutdown(int how) throw();
 	
 	//! Get last error number
 	/**
 	 * @return Last error number (errno).
 	 */
-	int getError() const throw() { return s_error; }
+	int getError() const throw();
 	
 	//! Get address structure
 	/**
 	 * @return Associated address structure.
 	 */
-	Address& getAddr() throw()
-	{
-		return addr;
-	}
+	Address& getAddr() throw();
 	
 	//! Get IP address
 	/**
@@ -428,19 +267,10 @@ public:
 	
 	#ifdef SOCKET_OPS
 	//! operator== overload (Socket&)
-	bool operator== (const Socket& tsock) const throw()
-	{
-		return (sock == tsock.sock);
-	}
+	bool operator== (const Socket& tsock) const throw();
 	
 	//! operator= overload (Socket&)
-	Socket& operator= (Socket& tsock) throw()
-	{
-		if (sock != INVALID_SOCKET)
-			close(sock);
-		sock = tsock.sock;
-		return *this;
-	}
+	Socket& operator= (Socket& tsock) throw();
 	#endif
 };
 

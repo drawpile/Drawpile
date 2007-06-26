@@ -15,104 +15,26 @@
 #ifndef ServerUser_INCLUDED
 #define ServerUser_INCLUDED
 
-#include "common.h"
+#include "ev/event.h" // event::~
+
+#include "socket.h" // Socket class
+#include "message_ref.h" // message_ref
 #include "buffer.h" // Buffer
-#include "message.h" // message_ref
-#include "ev/event.h"
+#include "array.h" // Array<>
+#include "types.h" // octet, etc.
 
-struct Session; // defined elsewhere
-#ifndef ServerSession_INCLUDED
-	#include "session.h"
-#endif
+#include <deque> // std::deque
+#include <map> // std::map
 
-#include "../shared/protocol.h"
-#include "../shared/protocol.defaults.h"
-#include "../shared/protocol.flags.h"
+struct Socket;
+struct SessionData;
+struct Session;
 
-class Socket; // defined elsewhere
-
-#ifndef NDEBUG
-	#include <iostream>
-#endif
-
-#include <deque>
-
-struct SessionData; // forward declaration
-
-/* iterators */
-#include <map>
-typedef std::map<uint8_t, SessionData*>::iterator usr_session_i;
-typedef std::map<uint8_t, SessionData*>::const_iterator usr_session_const_i;
-
-typedef std::deque<message_ref>::iterator usr_message_i;
-typedef std::deque<message_ref>::const_iterator usr_message_const_i;
-
-//! User session data
-struct SessionData
+namespace protocol
 {
-	//! Default constructor
-	/**
-	 * @param[in] s Session to associate with the user session data
-	 */
-	SessionData(Session &s) throw()
-		: session(&s),
-		layer(protocol::null_layer),
-		layer_lock(protocol::null_layer),
-		locked(fIsSet(s.mode, static_cast<uint8_t>(protocol::user_mode::Locked))),
-		muted(fIsSet(s.mode, static_cast<uint8_t>(protocol::user_mode::Mute))),
-		deaf(fIsSet(s.mode, static_cast<uint8_t>(protocol::user_mode::Deaf))),
-		syncWait(false),
-		cachedToolInfo(0)
-	{
-	}
-	
-	//! Destructor
-	~SessionData() throw() { delete cachedToolInfo; }
-	
-	//! Session reference
-	Session *session;
-	
-	uint8_t
-		//! Active layer
-		layer,
-		//! Layer to which the user is locked to
-		layer_lock;
-	
-	bool
-		//! Locked
-		locked,
-		//! Muted
-		muted,
-		//! Deaf
-		deaf;
-	
-	//! Get user mode
-	uint8_t getMode() const throw()
-	{
-		return (locked?(protocol::user_mode::Locked):0)
-			+ (muted?(protocol::user_mode::Mute):0)
-			+ (deaf?(protocol::user_mode::Deaf):0);
-	}
-	
-	//! Set user mode
-	/**
-	 * @param[in] flags Flags to set
-	 */
-	void setMode(const uint8_t flags) throw()
-	{
-		locked = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Locked));
-		muted = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Mute));
-		deaf = fIsSet(flags, static_cast<uint8_t>(protocol::user_mode::Deaf));
-	}
-	
-	//! User has sent ACK/Sync
-	bool syncWait;
-	
-	/* cached messages */
-	
-	//! Cached tool info message
-	protocol::ToolInfo *cachedToolInfo;
-};
+	struct Message;
+	struct ToolInfo;
+}
 
 //! User information
 struct User
@@ -122,101 +44,35 @@ struct User
 	 * @param[in] _id User identifier
 	 * @param[in] nsock Socket to associate with User
 	 */
-	User(const uint8_t _id, const Socket& nsock) throw()
-		: sock(nsock),
-		session(0),
-		id(_id),
-		events(0),
-		state(Init),
-		layer(protocol::null_layer),
-		syncing(protocol::Global),
-		isAdmin(false),
-		// client caps
-		c_acks(false),
-		// extensions
-		ext_deflate(false),
-		ext_chat(false),
-		ext_palette(false),
-		// other
-		inMsg(0),
-		level(0),
-		deadtime(0),
-		session_data(0),
-		strokes(0)
-	{
-		#if defined(DEBUG_USER) and !defined(NDEBUG)
-		std::cout << "User::User(" << static_cast<int>(_id)
-			<< ", " << sock.fd() << ")" << std::endl;
-		#endif
-		assert(_id != protocol::null_user);
-	}
+	User(const octet _id, const Socket& nsock) throw();
 	
 	//! Destructor
-	~User() throw()
-	{
-		#if defined(DEBUG_USER) and !defined(NDEBUG)
-		std::cout << "User::~User()" << std::endl;
-		#endif
-		
-		delete inMsg;
-		
-		for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
-			delete usi->second;
-	}
+	~User() throw();
 	
 	//! Change active session
 	/**
 	 * @param[in] session_id The session which to activate
 	 */
-	bool makeActive(uint8_t session_id) throw()
-	{
-		session_data = getSession(session_id);
-		if (session_data != 0)
-		{
-			session = session_data->session;
-			return true;
-		}
-		else
-			return false;
-	}
+	bool makeActive(octet session_id) throw();
 	
 	//! Fetch SessionData* pointer
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	SessionData* getSession(uint8_t session_id) throw()
-	{
-		const usr_session_const_i usi(sessions.find(session_id));
-		return (usi == sessions.end() ? 0 : usi->second);
-	}
+	SessionData* getSession(octet session_id) throw();
 	
 	//! Fetch const SessionData* pointer
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	const SessionData* getConstSession(uint8_t session_id) const throw()
-	{
-		const usr_session_const_i usi(sessions.find(session_id));
-		return (usi == sessions.end() ? 0 : usi->second);
-	}
+	const SessionData* getConstSession(octet session_id) const throw();
 	
 	//! Cache tool info
 	/**
 	 * @param[in] ti Tool info message to cache
 	 * @throw std::bad_alloc If it can't allocate local copy of the tool info
 	 */
-	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
-	{
-		assert(ti != session_data->cachedToolInfo); // attempted to re-cache same tool
-		assert(ti != 0);
-		
-		#if defined(DEBUG_USER) and !defined(NDEBUG)
-		std::cout << "Caching Tool Info for user #" << static_cast<int>(id) << std::endl;
-		#endif
-		
-		delete session_data->cachedToolInfo;
-		session_data->cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor
-	}
+	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc);
 	
 	//! Socket
 	Socket sock;
@@ -267,19 +123,13 @@ struct User
 	/**
 	 * @return Flags for use with the network protocol
 	 */
-	uint8_t getCapabilities() const throw()
-	{
-		return (c_acks?(protocol::client::AckFeedback):0);
-	}
+	octet getCapabilities() const throw();
 	
 	//! Set client capabilities
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setCapabilities(const uint8_t flags) throw()
-	{
-		c_acks = fIsSet(flags, static_cast<uint8_t>(protocol::client::AckFeedback));
-	}
+	void setCapabilities(const octet flags) throw();
 	
 	bool
 		//! Deflate extension
@@ -293,26 +143,16 @@ struct User
 	/**
 	 * @return Flags as used in the network protocol
 	 */
-	uint8_t getExtensions() const throw()
-	{
-		return (ext_deflate?(protocol::extensions::Deflate):0)
-			+ (ext_chat?(protocol::extensions::Chat):0)
-			+ (ext_palette?(protocol::extensions::Palette):0);
-	}
+	octet getExtensions() const throw();
 	
 	//! Set extensions
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setExtensions(const uint8_t flags) throw()
-	{
-		ext_deflate = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Deflate));
-		ext_chat = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Chat));
-		ext_palette = fIsSet(flags, static_cast<uint8_t>(protocol::extensions::Palette));
-	}
+	void setExtensions(const octet flags) throw();
 	
 	//! Subscribed sessions
-	std::map<uint8_t, SessionData*> sessions;
+	std::map<octet, SessionData*> sessions;
 	
 	//! Output queue
 	std::deque<message_ref> queue;
@@ -345,40 +185,7 @@ struct User
 	u_long strokes;
 	
 	//! 'Flushes' queue to output buffer
-	void flushQueue()
-	{
-		assert(!queue.empty());
-		
-		const usr_message_i f_msg(queue.begin());
-		usr_message_i l_msg(f_msg+1), iter(f_msg);
-		// create linked list
-		size_t links=1;
-		for (; l_msg != queue.end(); ++l_msg, ++iter, ++links)
-		{
-			if (links == std::numeric_limits<uint8_t>::max()
-				or ((*l_msg)->type != (*f_msg)->type)
-				or ((*l_msg)->user_id != (*f_msg)->user_id)
-				or ((*l_msg)->session_id != (*f_msg)->session_id)
-			)
-				break; // type changed or reached maximum size of linked list
-			
-			(*l_msg)->prev = boost::get_pointer(*iter);
-			(*iter)->next = boost::get_pointer(*l_msg);
-		}
-		
-		size_t len=0, size=output.canWrite();
-		
-		// serialize message/s
-		char* buf = (*--l_msg)->serialize(len, output.wpos, size);
-		
-		// in case new buffer was allocated
-		if (buf != output.wpos)
-			output.setBuffer(buf, size, len);
-		else
-			output.write(len);
-		
-		queue.erase(f_msg, ++l_msg);
-	}
+	void flushQueue();
 };
 
 #endif // ServerUser_INCLUDED

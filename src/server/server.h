@@ -30,26 +30,25 @@
 
 *******************************************************************************/
 
-#ifndef Server_C_Included
-#define Server_C_Included
+#ifndef Server_Class_Included
+#define Server_Class_Included
 
-#include "common.h"
+struct User;
+struct Session;
+struct Buffer;
 
-#include "../shared/SHA1.h"
-#include "../shared/protocol.h"
-#include "../shared/protocol.errors.h"
+#include "ev/event.h" // EventSystem
+#include "socket.h" // Socket class
+#include "array.h" // Array<>
+#include "message_ref.h" // message_ref
 
-#include "sockets.h"
-#include "user.h"
-#include "session.h"
-
-#include "ev/event.h"
-
-#include "message.h" // message_ref
+#include "../shared/protocol.h" // protocol::UserInfo::reason
+#include "types.h"
+#include "socket.types.h" // fd_t
 
 #include <ctime> // time_t, time(0)
-#include <map> // tunnel
-#include <set> // utimer
+#include <map> // std::map
+#include <set> // std::set
 
 //! Server defaults
 namespace srv_defaults {
@@ -87,7 +86,7 @@ protected:
 	std::map<fd_t, User*> users;
 	
 	//! Session ID to session mapping
-	std::map<uint8_t, Session*> sessions;
+	std::map<octet, Session*> sessions;
 	
 	//! Fake tunnel between two users. Only used for passing raster, for now.
 	/** source_fd -> target_fd */
@@ -129,7 +128,7 @@ protected:
 		//! Minimum canvas dimension
 		min_dimension;
 	
-	uint8_t
+	octet
 		//! Supported extensions
 		extensions;
 	
@@ -148,7 +147,7 @@ protected:
 		extChat;
 	
 	//! Default user mode
-	uint8_t default_user_mode;
+	octet default_user_mode;
 	
 	bool
 		//! Shutdown server once all users have left
@@ -164,25 +163,25 @@ protected:
 	/**
 	 * @param[in] id User ID to free
 	 */
-	void freeUserID(const uint8_t id) throw();
+	void freeUserID(const octet id) throw();
 	
 	//! Frees session ID
 	/**
 	 * @param[in] id Session ID to free
 	 */
-	void freeSessionID(const uint8_t id) throw();
+	void freeSessionID(const octet id) throw();
 	
 	//! Get free user ID
 	/**
 	 * @retval 0 if all IDs have been exhausted
 	 */
-	const uint8_t getUserID() throw();
+	const octet getUserID() throw();
 	
 	//! Get free session ID
 	/**
 	 * @retval 0 if all IDs have been exhausted
 	 */
-	const uint8_t getSessionID() throw();
+	const octet getSessionID() throw();
 	
 	/* *** Generate messages *** */
 	
@@ -203,7 +202,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgPWRequest(User& usr, const uint8_t session) const throw(std::bad_alloc);
+	message_ref msgPWRequest(User& usr, const octet session) const throw(std::bad_alloc);
 	
 	//! Generate user event message
 	/**
@@ -215,7 +214,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgUserEvent(const User& usr, const uint8_t session_id, const uint8_t event) const throw(std::bad_alloc);
+	message_ref msgUserEvent(const User& usr, const octet session_id, const octet event) const throw(std::bad_alloc);
 	
 	//! Generate error message
 	/**
@@ -226,7 +225,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgError(const uint8_t session, const uint16_t errorCode) const throw(std::bad_alloc);
+	message_ref msgError(const octet session, const uint16_t errorCode) const throw(std::bad_alloc);
 	
 	//! Generate ACK message
 	/**
@@ -237,7 +236,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgAck(const uint8_t session, const uint8_t msgtype) const throw(std::bad_alloc);
+	message_ref msgAck(const octet session, const octet msgtype) const throw(std::bad_alloc);
 	
 	//! Generate sync-wait message
 	/**
@@ -247,7 +246,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgSyncWait(const uint8_t session_id) const throw(std::bad_alloc);
+	message_ref msgSyncWait(const octet session_id) const throw(std::bad_alloc);
 	
 	//! Generate session info message
 	/**
@@ -483,7 +482,7 @@ protected:
 	 *
 	 * @retval NULL if no session is found
 	 */
-	Session* getSession(const uint8_t session_id) throw();
+	Session* getSession(const octet session_id) throw();
 	
 	//! Get const Session* pointer
 	/**
@@ -491,7 +490,7 @@ protected:
 	 *
 	 * @retval NULL if no session was found
 	 */
-	const Session* getConstSession(const uint8_t session_id) const throw();
+	const Session* getConstSession(const octet session_id) const throw();
 	
 public:
 	//! Constructor
@@ -517,7 +516,7 @@ public:
 	/**
 	 * @param[in] limit New limit
 	 */
-	void setNameLengthLimit(const uint8_t limit=16) throw() { name_len_limit = limit; }
+	void setNameLengthLimit(const octet limit=16) throw() { name_len_limit = limit; }
 	uint getNameLengthLimit() const throw() { return name_len_limit; }
 	
 	//! Set server password
@@ -525,7 +524,7 @@ public:
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setPassword(char* pwstr=0, const uint8_t len=0) throw()
+	void setPassword(char* pwstr=0, const octet len=0) throw()
 	{
 		password.set(pwstr, len);
 	}
@@ -536,7 +535,7 @@ public:
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setAdminPassword(char* pwstr=0, const uint8_t len=0) throw()
+	void setAdminPassword(char* pwstr=0, const octet len=0) throw()
 	{
 		admin_password.set(pwstr, len);
 	}
@@ -546,7 +545,7 @@ public:
 	/**
 	 * @param[in] ulimit New limit
 	 */
-	void setUserLimit(const uint8_t ulimit=10) throw() { user_limit = ulimit; }
+	void setUserLimit(const octet ulimit=10) throw() { user_limit = ulimit; }
 	uint getUserLimit() const throw() { return user_limit; }
 	
 	//! Set listening port
@@ -569,7 +568,7 @@ public:
 	void setLocalhostAdmin(const bool _enable=true) throw() { LocalhostAdmin = _enable; }
 	
 	//! Get client requirement flags
-	uint8_t getRequirements() const throw();
+	octet getRequirements() const throw();
 	
 	void setUniqueNameEnforcing(bool _enabled=true) throw() { enforceUnique = _enabled; }
 	bool getUniqueNameEnforcing() const throw() { return enforceUnique; }
@@ -592,21 +591,21 @@ public:
 	/**
 	 * @param[in] _mode User mode flags
 	 */
-	void setUserMode(const uint8_t _mode=0) throw() { default_user_mode = _mode; }
+	void setUserMode(const octet _mode=0) throw() { default_user_mode = _mode; }
 	uint getUserMode() const throw() { return default_user_mode; }
 	
 	//! Set session limit on server
 	/**
 	 * @param[in] _limit Session limit
 	 */
-	void setSessionLimit(const uint8_t _limit=1) throw() { session_limit = _limit; }
+	void setSessionLimit(const octet _limit=1) throw() { session_limit = _limit; }
 	uint getSessionLimit() const throw() { return session_limit; }
 	
 	//! Set per user subscription limit
 	/**
 	 * @param[in] _slimit Subscrption limit
 	 */
-	void setSubscriptionLimit(const uint8_t _slimit=1) throw() { max_subscriptions = _slimit; }
+	void setSubscriptionLimit(const octet _slimit=1) throw() { max_subscriptions = _slimit; }
 	uint getSubscriptionLimit() const throw() { return max_subscriptions; }
 	
 	//! Allow/disallow duplicate connections from same address
@@ -632,4 +631,4 @@ public:
 	
 }; // class Server
 
-#endif // Server_C_Included
+#endif // Server_Class_Included

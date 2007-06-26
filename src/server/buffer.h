@@ -17,9 +17,8 @@
 
 #include "config.h"
 
-#include <stdexcept>
+#include <stdexcept> // std::bad_alloc
 #include <cstddef> // size_t?
-#include <cassert>
 
 //! Circular buffer.
 struct Buffer

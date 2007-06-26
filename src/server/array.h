@@ -15,11 +15,12 @@
 #ifndef Container_H_INCLUDED
 #define Container_H_INCLUDED
 
-#include <iostream>
-#include <cstddef>
-#include <cassert>
+#include <cstddef> // size_t
+#ifndef NDEBUG
+	#include <iostream>
+#endif
 
-//! Dynamic array container
+//! Dynamic type array container
 template <typename T>
 struct Array
 {

@@ -1,0 +1,35 @@
+/*******************************************************************************
+
+   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+   DEALINGS IN THE SOFTWARE.
+
+*******************************************************************************/
+
+
+#ifndef SocketPorting_INCLUDED
+#define SocketPorting_INCLUDED
+
+#include "config.h"
+
+#ifdef WIN32
+	#include <ws2tcpip.h>
+	#include <winsock2.h>
+	#if defined( HAVE_MSWSOCK_H )
+		#include <mswsock.h>
+	#endif
+#else
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <arpa/inet.h>
+	#include <netinet/in.h>
+	#include <unistd.h> // close()
+#endif
+
+#endif // SocketPorting_INCLUDED

@@ -26,10 +26,15 @@
 
 *******************************************************************************/
 
-#include "sockets.h"
+#include "socket.h"
 
-#include <iostream>
-#include <string>
+#include "socket.internals.h"
+#include "../shared/templates.h"
+
+#ifndef NDEBUG
+	#include <iostream>
+#endif
+#include <string> // std::string
 #include <cassert>
 
 #ifndef WIN32
@@ -43,177 +48,31 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-#ifdef NEED_NET
-Net::Net() throw(std::exception)
+Socket::Socket(const fd_t& nsock) throw()
+	: sock(nsock)
 {
-	#if defined(WIN32)
-	const int maj=2, min=2;
-	
-	WSADATA info;
-	if (WSAStartup(MAKEWORD(maj,min), &info))
-		throw std::exception();
-	
-	if (LOBYTE(info.wVersion) != maj
-		or HIBYTE(info.wVersion) != min)
-	{
-		cerr << "ERROR: Invalid WSA version: "
-			<< static_cast<int>(LOBYTE(info.wVersion))
-			<< "." << static_cast<int>(HIBYTE(info.wVersion)) << endl;
-		WSACleanup( );
-		exit(1); 
-	}
+	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
+	std::cout << "Socket::Socket()" << std::endl;
 	#endif
 }
 
-Net::~Net() throw()
+Socket::Socket(const fd_t& nsock, const Address& saddr) throw()
+	: sock(nsock),
+	addr(saddr)
 {
-	#if defined(WIN32)
-	WSACleanup();
-	#endif
-}
-#endif // NEED_NET
-
-/* *** Address class *** */
-
-Address::Address()
-	#ifdef IPV6_SUPPORT
-	: type(IPV6)
-	#else
-	: type(IPV4)
-	#endif
-{
-	#ifdef IPV6_SUPPORT
-	IPv6.sin_family = AF_INET6;
-	#else
-	IPv4.sin_family = AF_INET;
+	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
+	std::cout << "Socket(FD: " << nsock << ", address: " << Address::toString(saddr) << ") constructed" << std::endl;
 	#endif
 }
 
-socklen_t Address::size() const throw()
+Socket::~Socket() throw()
 {
-	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
-		return sizeof(IPv6);
-	else
-	#endif
-		return sizeof(IPv4);
-}
-
-int Address::family() const throw()
-{
-	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
-		return IPv6.sin6_family;
-	else
-	#endif
-		return IPv4.sin_family;
-}
-
-ushort Address::port() const throw()
-{
-	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
-		return bswap_const(IPv6.sin6_port);
-	else
-	#endif
-		return bswap_const(IPv4.sin_port);
-}
-
-void Address::port(ushort _port) throw()
-{
-	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
-		IPv6.sin6_port = bswap(_port);
-	else
-	#endif
-		IPv4.sin_port = bswap(_port);
-}
-
-Address& Address::operator= (const Address& naddr) throw()
-{
-	if (naddr.type == Address::IPV4)
-		memcpy(&IPv4, &naddr.IPv4, sizeof(naddr.IPv4));
-	#ifdef IPV6_SUPPORT
-	else
-		memcpy(&IPv6, &naddr.IPv6, sizeof(naddr.IPv6));
+	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
+	std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
 	#endif
 	
-	type = naddr.type;
-	
-	return *this;
+	close();
 }
-
-bool Address::operator== (const Address& naddr) const throw()
-{
-	if (naddr.type != type)
-		return false;
-	
-	#ifdef IPV6_SUPPORT
-	if (naddr.type == Address::IPV6)
-		return (IPv6.sin6_addr == naddr.IPv6.sin6_addr);
-	else
-	#endif
-		return (IPv4.sin_addr.s_addr == naddr.IPv4.sin_addr.s_addr);
-}
-
-/* string functions */
-
-std::string Address::toString(const Address& addr) throw()
-{
-	#ifdef IPV6_SUPPORT
-	const uint length = Network::IPv6::AddrLength + Network::PortLength + 4;
-	const char format_string[] = "[%s]:%d";
-	#else
-	const uint length = Network::IPv4::AddrLength + Network::PortLength + 2;
-	const char format_string[] = "%s:%d";
-	#endif
-	
-	char buf[length];
-	
-	#ifdef WIN32
-	DWORD len = length;
-	Address sa = addr;
-	WSAAddressToString(&sa.addr, sa.size(), 0, buf, &len);
-	#else // POSIX
-	char straddr[length];
-	//inet_ntop(raddr.sin_family, getAddress(addr), straddr, length);
-	#ifdef IPV6_SUPPRT
-	inet_ntop(addr.family(), &addr.IPv6.sin6_addr, straddr, length);
-	#else
-	inet_ntop(addr.family(), &addr.IPv4.sin_addr, straddr, length);
-	#endif
-	
-	#ifdef HAVE_SNPRINTF
-	snprintf(buf, length, format_string, straddr, addr.port());
-	#else
-	sprintf(buf, format_string, straddr, addr.port());
-	#endif // HAVE_SNPRINTF
-	#endif
-	return std::string(buf);
-}
-
-Address Address::fromString(const std::string& address) throw()
-{
-	Address addr;
-	
-	#ifdef WIN32
-	// Win32 doesn't have inet_pton
-	char buf[Network::IPv6::AddrLength + Network::PortLength + 4];
-	memcpy(buf, address.c_str(), address.length());
-	int size = addr.size();
-	WSAStringToAddress(buf, addr.family(), 0, &addr.addr, &size);
-	#else // POSIX
-	#ifdef IPV6_SUPPORT
-	inet_pton(addr.family(), address.c_str(), &addr.IPv6.sin6_addr);
-	#else
-	inet_pton(addr.family(), address.c_str(), &addr.IPv4.sin_addr);
-	#endif
-	#endif
-	
-	return addr;
-}
-
-/* *** Socket class *** */
 
 fd_t Socket::create() throw()
 {
@@ -274,21 +133,22 @@ fd_t Socket::create() throw()
 	return sock;
 }
 
-Socket::Socket(const fd_t& nsock) throw()
-	: sock(nsock)
+fd_t Socket::fd() const throw()
 {
-	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "Socket::Socket()" << std::endl;
-	#endif
+	return sock;
 }
 
-Socket::Socket(const fd_t& nsock, const Address& saddr) throw()
-	: sock(nsock),
-	addr(saddr)
+fd_t Socket::fd(fd_t nsock) throw()
 {
-	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "Socket(FD: " << nsock << ", address: " << Address::toString(saddr) << ") constructed" << std::endl;
-	#endif
+	if (sock != INVALID_SOCKET) close();
+	return sock = nsock;
+}
+
+fd_t Socket::release() throw()
+{
+	fd_t t_sock = sock;
+	sock = INVALID_SOCKET;
+	return t_sock;
 }
 
 void Socket::close() throw()
@@ -355,7 +215,7 @@ Socket Socket::accept() throw()
 		switch (s_error)
 		{
 		case EINTR: // interrupted
-		case EAGAIN: // would block
+		case EWOULDBLOCK: // would block
 			break;
 		case EMFILE:
 			cerr << "[Socket] Process FD limit reached" << endl;
@@ -727,7 +587,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 		
 		switch (s_error)
 		{
-		case EAGAIN:
+		case EWOULDBLOCK:
 		case EINTR:
 			break;
 		case EPIPE:
@@ -832,7 +692,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 		
 		switch (s_error)
 		{
-		case EAGAIN:
+		case EWOULDBLOCK:
 		case EINTR:
 			break;
 		case ENOBUFS: // Out of buffers
@@ -909,7 +769,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 		
 		switch (s_error)
 		{
-		case EAGAIN:
+		case EWOULDBLOCK:
 			// retry
 			break;
 		#ifndef WIN32 // POSIX
@@ -936,3 +796,33 @@ ushort Socket::port() const throw()
 {
 	return addr.port();
 }
+
+int Socket::shutdown(int how) throw()
+{
+	return ::shutdown(sock, how);
+}
+
+int Socket::getError() const throw()
+{
+	return s_error;
+}
+
+Address& Socket::getAddr() throw()
+{
+	return addr;
+}
+
+#ifdef SOCKET_OPS
+bool Socket::operator== (const Socket& tsock) const throw()
+{
+	return (sock == tsock.sock);
+}
+
+Socket& Socket::operator= (Socket& tsock) throw()
+{
+	if (sock != INVALID_SOCKET)
+		close(sock);
+	sock = tsock.sock;
+	return *this;
+}
+#endif

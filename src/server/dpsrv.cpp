@@ -37,26 +37,23 @@
 
 #include "config.h"
 
-#include "../shared/protocol.h"
-
-#include "server.h"
-#include "sockets.h"
-
-#include <string>
-#include <algorithm>
-#include <cstdlib>
+#include <algorithm> // std::min, std::max
 #include <iostream>
 #include <getopt.h> // for command-line opts
+
+#include "server.h" // Server class
+#include "net.h" // start/stopNetSubsystem
+#include "network.h" // Network namespace
+#include "types.h"
 
 // Server information
 namespace srv_info
 {
 
-const std::string
-	applicationName("DrawPile Server"),
-	versionString("0.4"),
-	copyrightNotice("Copyright (c) 2006,2007 M.K.A."),
-	websiteURL("http://drawpile.sourceforge.net/");
+const char applicationName[] = "DrawPile Server";
+const char versionString[] = "0.4";
+const char copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.";
+const char websiteURL[] = "http://drawpile.sourceforge.net/";
 
 }
 
@@ -103,7 +100,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				{
 					const int tmp = atoi(optarg);
 					
-					const uint8_t len = std::min(tmp, static_cast<int>(std::numeric_limits<uint8_t>::max()));
+					const octet len = std::min(tmp, static_cast<int>(std::numeric_limits<octet>::max()));
 					
 					srv.setNameLengthLimit(len);
 					cout << "& Name length limit set to: " << static_cast<int>(len) << endl;
@@ -129,7 +126,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				break;
 			case 'u': // user limit
 				{
-					const size_t user_limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
+					const size_t user_limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
 					if (user_limit < 2)
 					{
 						cerr << "- Too low user limit." << endl;
@@ -148,9 +145,9 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 						cerr << "- Zero length admin password?" << endl;
 						exit(EXIT_FAILURE);
 					}
-					else if (pw_len > std::numeric_limits<uint8_t>::max())
+					else if (pw_len > std::numeric_limits<octet>::max())
 					{
-						cerr << "- Admin password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << endl;
+						cerr << "- Admin password too long, max length: " << static_cast<int>(std::numeric_limits<octet>::max()) << endl;
 						exit(EXIT_FAILURE);
 					}
 					
@@ -168,9 +165,9 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 						cerr << "- Zero length server password?" << endl;
 						exit(EXIT_FAILURE);
 					}
-					else if (pw_len > std::numeric_limits<uint8_t>::max())
+					else if (pw_len > std::numeric_limits<octet>::max())
 					{
-						cerr << "- Server password too long, max length: " << static_cast<int>(std::numeric_limits<uint8_t>::max()) << endl;
+						cerr << "- Server password too long, max length: " << static_cast<int>(std::numeric_limits<octet>::max()) << endl;
 						exit(EXIT_FAILURE);
 					}
 					
@@ -232,7 +229,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				break;
 			case 'L': // session limit
 				{
-					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
+					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
 					if (limit < 1)
 					{
 						cerr << "- Limit must be greater than 0" << endl;
@@ -245,7 +242,7 @@ void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 				break;
 			case 'J': // subscription limit
 				{
-					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint8_t>::max()));
+					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
 					if (limit < 1)
 					{
 						cerr << "- Limit must be greater than 0" << endl;
@@ -300,9 +297,8 @@ int main(int argc, char** argv)
 		
 		getArgs(argc, argv, srv);
 		
-		#ifdef NEED_NET
-		const Net _net; // :)
-		#endif // NEED_NET
+		if (!startNetSubsystem())
+			return EXIT_FAILURE;
 		
 		if (!srv.init())
 		{
@@ -323,6 +319,8 @@ int main(int argc, char** argv)
 			#endif
 			rc = 2;
 		}
+		
+		stopNetSubsystem();
 	} // end server scope
 	
 	#ifndef NDEBUG
