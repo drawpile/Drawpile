@@ -125,8 +125,8 @@ test_big_endian ( IS_BIG_ENDIAN )
 
 ### Additional testing
 
+set ( QT_USE_QTNETWORK ON )
 if ( CLIENT )
-	set ( QT_USE_QTNETWORK ON )
 	find_package ( Qt4 REQUIRED )
 else ( CLIENT )
 	if ( TRAYSERVER )
