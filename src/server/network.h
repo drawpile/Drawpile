@@ -31,8 +31,20 @@
 
 #include "types.h"
 
+#include "socket.types.h" // AF_INET & AF_INET6
+
 //! Network constants
 namespace Network {
+
+namespace Family {
+
+enum type {
+	None,
+	IPv4 = AF_INET,
+	IPv6 = AF_INET6
+};
+
+} // namespace:Family
 
 //! IPv6 related constants
 namespace IPv6 {

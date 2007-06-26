@@ -80,9 +80,9 @@ fd_t Socket::create() throw()
 		close();
 	
 	#ifdef WIN32
-	sock = WSASocket(addr.family(), SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
+	sock = WSASocket(addr.family, SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
 	#else // POSIX
-	sock = socket(addr.family(), SOCK_STREAM, IPPROTO_TCP);
+	sock = socket(addr.family, SOCK_STREAM, IPPROTO_TCP);
 	#endif
 	
 	if (sock == INVALID_SOCKET)
@@ -400,7 +400,7 @@ int Socket::bindTo(const Address& naddr) throw()
 	addr = naddr;
 	
 	#ifndef NDEBUG
-	assert(addr.family() == AF_INET or addr.family() == AF_INET6);
+	assert(addr.family != Network::Family::None);
 	#endif
 	
 	const int r = bind(sock, &addr.addr, addr.size());

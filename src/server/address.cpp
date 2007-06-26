@@ -31,44 +31,36 @@
 #include "../shared/templates.h"
 #include "network.h"
 
+#include "utility.h" // memcmp_t
+
 Address::Address()
 	#ifdef IPV6_SUPPORT
-	: type(IPV6)
+	: family(Network::Family::IPv6)
 	#else
-	: type(IPV4)
+	: family(Network::Family::IPv4)
 	#endif
 {
 	#ifdef IPV6_SUPPORT
-	IPv6.sin_family = AF_INET6;
+	IPv6.sin6_family = family;
 	#else
-	IPv4.sin_family = AF_INET;
+	IPv4.sin_family = family;
 	#endif
 }
 
 socklen_t Address::size() const throw()
 {
 	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
+	if (family == Network::Family::IPv6)
 		return sizeof(IPv6);
 	else
 	#endif
 		return sizeof(IPv4);
 }
 
-int Address::family() const throw()
-{
-	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
-		return IPv6.sin6_family;
-	else
-	#endif
-		return IPv4.sin_family;
-}
-
 ushort Address::port() const throw()
 {
 	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
+	if (family == Network::Family::IPv6)
 		return bswap_const(IPv6.sin6_port);
 	else
 	#endif
@@ -78,35 +70,48 @@ ushort Address::port() const throw()
 void Address::port(ushort _port) throw()
 {
 	#ifdef IPV6_SUPPORT
-	if (type == Address::IPV6)
+	if (family == Network::Family::IPv6)
 		IPv6.sin6_port = bswap(_port);
 	else
 	#endif
 		IPv4.sin_port = bswap(_port);
 }
 
+void Address::setFamily(Network::Family::type _family) throw()
+{
+	family = _family;
+	
+	#ifdef IPV6_SUPPORT
+	if (family == Network::Family::IPv6)
+		IPv6.sin6_family = family;
+	else
+	#endif
+		IPv4.sin_family = family;
+}
+
 Address& Address::operator= (const Address& naddr) throw()
 {
-	if (naddr.type == Address::IPV4)
-		memcpy(&IPv4, &naddr.IPv4, sizeof(naddr.IPv4));
 	#ifdef IPV6_SUPPORT
+	if (naddr.family == Network::Family::IPv6)
+		memcpy(IPv6.sin6_addr.s6_addr, naddr.IPv6.sin6_addr.s6_addr, sizeof(IPv6.sin6_addr.s6_addr));
 	else
-		memcpy(&IPv6, &naddr.IPv6, sizeof(naddr.IPv6));
 	#endif
+		IPv4.sin_addr.s_addr = naddr.IPv4.sin_addr.s_addr;
 	
-	type = naddr.type;
+	family = naddr.family;
+	port(naddr.port());
 	
 	return *this;
 }
 
 bool Address::operator== (const Address& naddr) const throw()
 {
-	if (naddr.type != type)
+	if (naddr.family != family)
 		return false;
 	
 	#ifdef IPV6_SUPPORT
-	if (naddr.type == Address::IPV6)
-		return (IPv6.sin6_addr == naddr.IPv6.sin6_addr);
+	if (naddr.family == Network::Family::IPv6)
+		return (memcmp(IPv6.sin6_addr.s6_addr, naddr.IPv6.sin6_addr.s6_addr, sizeof(IPv6.sin6_addr.s6_addr)) == 0);
 	else
 	#endif
 		return (IPv4.sin_addr.s_addr == naddr.IPv4.sin_addr.s_addr);
@@ -134,9 +139,9 @@ std::string Address::toString() const throw()
 	char straddr[length];
 	//inet_ntop(raddr.sin_family, getAddress(addr), straddr, length);
 	#ifdef IPV6_SUPPRT
-	inet_ntop(family(), &IPv6.sin6_addr, straddr, length);
+	inet_ntop(family, &IPv6.sin6_addr, straddr, length);
 	#else
-	inet_ntop(family(), &IPv4.sin_addr, straddr, length);
+	inet_ntop(family, &IPv4.sin_addr, straddr, length);
 	#endif
 	
 	#ifdef HAVE_SNPRINTF
@@ -157,12 +162,12 @@ Address Address::fromString(const std::string& address) throw()
 	char buf[Network::IPv6::AddrLength + Network::PortLength + 4];
 	memcpy(buf, address.c_str(), address.length());
 	int size = addr.size();
-	WSAStringToAddress(buf, addr.family(), 0, &addr.addr, &size);
+	WSAStringToAddress(buf, addr.family, 0, &addr.addr, &size);
 	#else // POSIX
 	#ifdef IPV6_SUPPORT
-	inet_pton(addr.family(), address.c_str(), &addr.IPv6.sin6_addr);
+	inet_pton(addr.family, address.c_str(), &addr.IPv6.sin6_addr);
 	#else
-	inet_pton(addr.family(), address.c_str(), &addr.IPv4.sin_addr);
+	inet_pton(addr.family, address.c_str(), &addr.IPv4.sin_addr);
 	#endif
 	#endif
 	

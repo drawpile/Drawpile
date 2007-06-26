@@ -703,7 +703,7 @@ void Server::uHandlePassword(User& usr) throw()
 	}
 	
 	dohashing:
-	if (!CheckPassword(msg.data, str, len, usr.seed)) // mismatch
+	if (len == 0 or !CheckPassword(msg.data, str, len, usr.seed)) // mismatch
 		uQueueMsg(usr, msgError(msg.session_id, protocol::error::PasswordFailure));
 	else
 	{
@@ -1690,7 +1690,7 @@ bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t
 {
 	assert(hashdigest != 0);
 	assert(str != 0);
-	assert(len > 0);
+	assert(len >= 0);
 	assert(seed != 0);
 	
 	SHA1 hash;
@@ -1727,7 +1727,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		{
 			const protocol::Password &msg = *static_cast<protocol::Password*>(usr->inMsg);
 			
-			if (CheckPassword(msg.data, password.ptr, password.size, usr->seed))
+			if (password.size > 0 and CheckPassword(msg.data, password.ptr, password.size, usr->seed))
 			{
 				uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::Password)); // ACK
 				uRegenSeed(*usr); // mangle seed

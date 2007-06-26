@@ -33,6 +33,7 @@
 
 #include <string> // std::string
 
+#include "network.h"
 #include "socket.types.h"
 #include "types.h"
 
@@ -41,10 +42,7 @@ struct Address
 {
 	Address();
 	
-	enum Family {
-		IPV4,
-		IPV6
-	} type;
+	Network::Family::type family;
 	
 	union {
 		//! base address
@@ -59,19 +57,16 @@ struct Address
 	
 	socklen_t size() const throw();
 	
-	int family() const throw();
-	
 	ushort port() const throw();
 	
 	void port(ushort _port) throw();
+	
+	void setFamily(Network::Family::type _family) throw();
 	
 	//! Assign operator
 	Address& operator= (const Address& naddr) throw();
 	
 	//! Is-equal operator
-	/**
-	 * @bug Comparing IPv6 addresses likely doesn't work.
-	 */
 	bool operator== (const Address& naddr) const throw();
 	
 	//! Convert address to string representation of it
