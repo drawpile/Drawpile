@@ -17,32 +17,32 @@ else ( WIN32 )
 endif ( WIN32 )
 
 # Qt stuff
-
-# enable Qt Network
-#set ( QT_USE_QTNETWORK ON )
-
-#find_package ( Qt4 REQUIRED )
-
 include ( ${QT_USE_FILE} )
 
 # files
 
 set (
-	Headers
+	HEADERS
 	mainwindow.h netstatus.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
-	board.h controller.h layer.h brush.h user.h tools.h toolsettings.h
-	interfaces.h boardeditor.h gradientslider.h colorbutton.h
-	newdialog.h point.h imageselector.h hostdialog.h joindialog.h network.h
-	networkprivate.h hoststate.h sessionstate.h logindialog.h preview.h
+	board.h controller.h gradientslider.h colorbutton.h
+	newdialog.h imageselector.h hostdialog.h joindialog.h network.h
+	networkprivate.h hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
-	recentfiles.h sessioninfo.h sessionlistmodel.h icons.h mandatoryfields.h
-	version.h palette.h localpalette.h palettewidget.h palettebox.h
+	sessionlistmodel.h mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
 )
 
+# unused headers because they do not create moc_* files ()
 set (
-	Sources
+	UNUSED_HEADERS # no QOBJECT ?
+	version.h user.h interfaces.h preview.h boardeditor.h layer.h
+	point.h brush.h localpalette.h palette.h icons.h
+	tools.h toolsettings.h recentfiles.h sessioninfo.h
+)
+
+set (
+	SOURCES
 	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
@@ -53,17 +53,13 @@ set (
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp
+	settingsdialog.cpp 
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
 	ui/chatbox.ui ui/sessiondialog.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui )
-
-# .MOC
-
-Qt4_automoc ( ${Sources} )
 
 # .UI
 
@@ -72,13 +68,14 @@ set ( CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 Qt4_wrap_UI ( UI_Headers ${UIs} )
 set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
 
-# .qrc
+# Qt Resource
 
-Qt4_add_resources ( Resource ui/resources.qrc )
+Qt4_add_resources ( QtResource ui/resources.qrc )
 
-# ?
+# Qt4 MOC
 
-Qt4_wrap_CPP ( MOC_Sources ${Headers} )
+Qt4_wrap_CPP ( MOC_Sources ${HEADERS} )
+Qt4_automoc ( ${MOC_Sources} ) # ?
 
 # non-qt4 stuff
 
@@ -103,13 +100,8 @@ endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
 
-set (
-	CLIENT_SOURCES
-	${Sources}
-)
-
 if ( RELEASE )
-	generate_all_cpp ( "${CLIENT_SOURCES}" )
+	generate_all_cpp ( "${SOURCES}" )
 	set ( CLIENT_SOURCES auto_all.cpp )
 endif ( RELEASE )
 
@@ -119,8 +111,8 @@ add_executable (
 	MACOSX_BUNDLE
 	${UI_Headers} # required here for ui_*.h generation
 	${MOC_Sources}
-	${CLIENT_SOURCES}
-	${Resource}
+	${SOURCES}
+	${QtResource}
 	${WIN32RES}
 )
 
