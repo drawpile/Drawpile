@@ -2034,7 +2034,7 @@ void Server::uJoinSession(User& usr, Session& session) throw()
 	#endif
 	
 	// Add session to users session list.
-	SessionData *sdata = new SessionData(session);
+	SessionData *sdata = new SessionData(session, default_user_mode);
 	usr.sessions[session.id] = sdata;
 	assert(usr.sessions[session.id]->session != 0);
 	

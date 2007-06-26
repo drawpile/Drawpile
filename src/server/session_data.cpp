@@ -20,16 +20,14 @@
 #include "../shared/protocol.h" // protocol::ToolInfo
 #include "../shared/templates.h" // fIsSet() and friends
 
-SessionData::SessionData(Session &s) throw()
+SessionData::SessionData(Session &s, const octet super_mode) throw()
 	: session(&s),
 	layer(protocol::null_layer),
 	layer_lock(protocol::null_layer),
-	locked(fIsSet(s.mode, static_cast<octet>(protocol::user::Locked))),
-	muted(fIsSet(s.mode, static_cast<octet>(protocol::user::Mute))),
-	deaf(fIsSet(s.mode, static_cast<octet>(protocol::user::Deaf))),
 	syncWait(false),
 	cachedToolInfo(0)
 {
+	setMode(session->mode|super_mode);
 	// nothing
 }
 

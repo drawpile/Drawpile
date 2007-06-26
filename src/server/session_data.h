@@ -30,8 +30,9 @@ struct SessionData
 	//! Default constructor
 	/**
 	 * @param[in] s Session to associate with the user session data
+	 * @param[in] super_mode Any mode flags the server superimposes on all sessions.
 	 */
-	SessionData(Session &s) throw();
+	SessionData(Session &s, const octet super_mode) throw();
 	
 	//! Destructor
 	~SessionData() throw();
