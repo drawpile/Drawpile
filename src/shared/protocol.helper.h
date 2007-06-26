@@ -44,7 +44,7 @@ struct Message;
 /**
  * @param[in] type Message type to be generated (see protocol::type).
  */
-void msgName(const unsigned int type) throw();
+void msgName(const unsigned char type) throw();
 
 //! Get new message struct.
 /**
@@ -53,7 +53,7 @@ void msgName(const unsigned int type) throw();
  *
  * @param[in] type Message type to be generated (see protocol::type).
  */
-Message* getMessage(const unsigned int type) throw(std::bad_alloc);
+Message* getMessage(const unsigned char type) throw(std::bad_alloc);
 
 } // namespace protocol
 

@@ -41,7 +41,7 @@
 namespace protocol
 {
 
-void msgName(const unsigned int type) throw()
+void msgName(const unsigned char type) throw()
 {
 	#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
 	std::cout << "type (" << static_cast<int>(type) << "): ";
@@ -132,7 +132,7 @@ void msgName(const unsigned int type) throw()
 	#endif
 }
 
-Message* getMessage(const unsigned int type) throw(std::bad_alloc)
+Message* getMessage(const unsigned char type) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_PROTOCOL
 	#ifndef NDEBUG
@@ -202,7 +202,7 @@ Message* getMessage(const unsigned int type) throw(std::bad_alloc)
 	case Message::Palette:
 		return new Palette();
 	default:
-		std::cerr << "Unknown message type: " << static_cast<int>(type) << std::endl;
+		std::cerr << "Unknown message type: " << static_cast<unsigned int>(type) << std::endl;
 		return 0;
 	}
 }
