@@ -34,7 +34,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	: QDialog(parent),
 	srv(_srv)
 {
-	#define REQUIRES_RESTART "<br>This option can't be changed while the server is running."
+	QString RequireRestart(tr("<br>This option can't be changed while the server is running."));
 	setWindowTitle(QString(tr("%1 Configuration").arg(QCoreApplication::applicationName())));
 	
 	//setAttribute(Qt::WA_DeleteOnClose);
@@ -142,8 +142,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	port_spinner = new QSpinBox;
 	port_spinner->setRange(Network::SuperUser_Port+1, Network::PortUpperBound);
-	port_spinner->setToolTip(tr("TCP port on which the server will try to listen when started."
-		REQUIRES_RESTART));
+	port_spinner->setToolTip(tr("TCP port on which the server will try to listen when started.").append(RequireRestart));
 	connect(port_spinner, SIGNAL(valueChanged(int)), this, SLOT(enableButtons()));
 	
 	port_box->addWidget(port_spinner, 0);
@@ -155,8 +154,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *unique_box = new QHBoxLayout;
 	unique_box->addWidget(new QLabel(tr("Unique names")), 1);
 	unique_names = new QCheckBox;
-	unique_names->setToolTip(tr("Require that all users and sessions have an unique name."
-		REQUIRES_RESTART));
+	unique_names->setToolTip(tr("Require that all users and sessions have an unique name.").append(RequireRestart));
 	connect(unique_names, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
 	
 	unique_box->addWidget(unique_names, 0);
@@ -176,7 +174,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QHBoxLayout *widestr_box = new QHBoxLayout;
 	widestr_box->addWidget(new QLabel(tr("UTF-16 strings")), 1);
 	wide_strings = new QCheckBox;
-	wide_strings->setToolTip(tr("Require clients communicate to with UTF-16 instead of UTF-8.<br>Useful only if the users mostly use non-ASCII (a-z) characters (e.g. Kanji, Cyrillics, etc.)." REQUIRES_RESTART));
+	wide_strings->setToolTip(tr("Require clients communicate to with UTF-16 instead of UTF-8.<br>Useful only if the users mostly use non-ASCII (a-z) characters (e.g. Kanji, Cyrillics, etc.).").append(RequireRestart));
 	
 	connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(wideStrChanged(int)));
 	connect(wide_strings, SIGNAL(stateChanged(int)), this, SLOT(enableButtons()));
@@ -248,7 +246,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	resetAction();
 	enableButtons(false);
 	
-	#undef REQUIRES_RESTART
+	loadSettings();
 }
 
 void ConfigDialog::serverStopped()
@@ -279,7 +277,7 @@ void ConfigDialog::wideStrChanged(int state)
 void ConfigDialog::enableButtons(bool _enable)
 {
 	apply_butt->setEnabled(_enable);
-	//save_butt->setEnabled(_enable);
+	save_butt->setEnabled(_enable);
 	reset_butt->setEnabled(_enable);
 }
 
@@ -348,31 +346,76 @@ void ConfigDialog::applyAction()
 void ConfigDialog::loadSettings()
 {
 	// todo: use QSettings here
+	
+	QSettings cfg;
+	
+	port_spinner->setValue( cfg.value("Port", srv->getPort()).toInt() );
+	
+	cfg.beginGroup("Users");
+	//can_draw->setChecked( cfg.value("Can draw").toBool() );
+	//can_chat->setChecked( cfg.value("Can chat").toBool() );
+	allow_duplicate->setChecked( cfg.value("Allow duplicate connections", !srv->getDuplicateConnectionBlocking()).toBool() );
+	cfg.endGroup();
+	
+	cfg.beginGroup("Requirements");
+	wide_strings->setChecked( cfg.value("UTF-16", srv->getUTF16Requirement()).toBool() );
+	unique_names->setChecked( cfg.value("Unique names", srv->getUniqueNameEnforcing()).toBool() );
+	cfg.endGroup();
+	
+	int div = (wide_strings->checkState() == Qt::Checked ? 2 : 1);
+	
+	cfg.beginGroup("Limits");
+	namelen_spinner->setValue( cfg.value("Name length", srv->getNameLengthLimit() ).toInt() / div );
+	sublimit_spinner->setValue( cfg.value("Subscriptions", srv->getSubscriptionLimit()).toInt() );
+	ulimit_spinner->setValue( cfg.value("Users", srv->getUserLimit()).toInt() );
+	slimit_spinner->setValue( cfg.value("Sessions", srv->getSessionLimit()).toInt() );
+	mindim_spinner->setValue( cfg.value("Dimension", srv->getMinDimension()).toInt() );
+	cfg.endGroup();
+	
+	/*
+	// These perhaps shouldn't be stored
+	cfg.beginGroup("Secret");
+	admpass_edit->setText( cfg.value("Root") );
+	srvpass_edit->setText( cfg.value("Host") );
+	cfg.endGroup();
+	*/
 }
 
 void ConfigDialog::saveSettings()
 {
-	//save_butt->setDisabled(true);
+	save_butt->setDisabled(true);
 	
-	// todo: use QSettings here
+	QSettings cfg;
+	
+	cfg.setValue("Port", port_spinner->value());
+	
+	cfg.beginGroup("Users");
+	//cfg.setValue("Can draw", can_draw->checkState());
+	//cfg.setValue("Can chat", can_chat->checkState());
+	cfg.setValue("Allow duplicate connections", allow_duplicate->checkState());
+	cfg.endGroup();
+	
+	cfg.beginGroup("Requirements");
+	cfg.setValue("UTF-16", wide_strings->checkState());
+	cfg.setValue("Unique names", unique_names->checkState());
+	cfg.endGroup();
+	
+	int mult = (wide_strings->checkState() == Qt::Checked ? 2 : 1);
+	
+	cfg.beginGroup("Limits");
+	cfg.setValue("Name length", namelen_spinner->value() * mult);
+	cfg.setValue("Subscriptions", sublimit_spinner->value());
+	cfg.setValue("Users", ulimit_spinner->value());
+	cfg.setValue("Sessions", slimit_spinner->value());
+	cfg.setValue("Dimension", mindim_spinner->value());
+	cfg.endGroup();
 	
 	/*
-	can_draw;
-	can_chat;
-	
-	allow_duplicate;
-	wide_strings;
-	unique_names;
-	
-	port_spinner;
-	namelen_spinner;
-	sublimit_spinner;
-	mindim_spinner;
-	slimit_spinner;
-	ulimit_spinner;
-	
-	admpass_edit;
-	srvpass_edit;
+	// These perhaps shouldn't be stored
+	cfg.beginGroup("Secret");
+	cfg.setValue("Root", admpass_edit->text());
+	cfg.setValue("Host", srvpass_edit->text());
+	cfg.endGroup();
 	*/
 }
 
