@@ -202,7 +202,9 @@ Message* getMessage(const unsigned char type) throw(std::bad_alloc)
 	case Message::Palette:
 		return new Palette();
 	default:
+		#ifndef NDEBUG
 		std::cerr << "Unknown message type: " << static_cast<unsigned int>(type) << std::endl;
+		#endif
 		return 0;
 	}
 }

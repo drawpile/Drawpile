@@ -33,6 +33,9 @@
 
 #ifndef NDEBUG
 	#include <iostream>
+	using std::cout;
+	using std::endl;
+	using std::cerr;
 #endif
 #include <string> // std::string
 #include <cassert>
@@ -43,10 +46,6 @@
 		#include <cstdio>
 	#endif
 #endif
-
-using std::cout;
-using std::endl;
-using std::cerr;
 
 Socket::Socket(const fd_t& nsock) throw()
 	: sock(nsock)

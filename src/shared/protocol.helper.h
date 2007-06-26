@@ -42,6 +42,8 @@ struct Message;
 
 //! Outputs the name of the message type in terminal
 /**
+ * @note Does not do anything in release builds
+ *
  * @param[in] type Message type to be generated (see protocol::type).
  */
 void msgName(const unsigned char type) throw();
@@ -52,6 +54,9 @@ void msgName(const unsigned char type) throw();
  * Supplied as a helper function to simplify some tasks.
  *
  * @param[in] type Message type to be generated (see protocol::type).
+ *
+ * @return Appropriate message struct allocated with operator new and casted to base Message class.
+ * @retval 0 if \b type was not recognized
  */
 Message* getMessage(const unsigned char type) throw(std::bad_alloc);
 

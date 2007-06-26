@@ -57,13 +57,12 @@
 
 #ifndef NDEBUG
 	#include <iostream>
+	using std::cout;
+	using std::endl;
+	using std::cerr;
 #endif
 
 #include <list> // std::list
-
-using std::cout;
-using std::endl;
-using std::cerr;
 
 /* ** Iterators ** */
 // for Session*
@@ -503,7 +502,9 @@ void Server::uProcessData(User*& usr) throw()
 			if (!usr->inMsg)
 			{
 				// unknown message type
+				#ifndef NDEBUG
 				cerr << "- Invalid data from user #" << usr->id << endl;
+				#endif
 				uRemove(usr, protocol::UserInfo::Dropped);
 				return;
 			}
@@ -927,7 +928,9 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 		uHandlePassword(*usr);
 		break;
 	default:
+		#ifndef NDEBUG
 		cerr << "- Invalid data from user: #" << usr->id << " (dropping)" << endl;
+		#endif
 		uRemove(usr, protocol::UserInfo::Dropped);
 		break;
 	}
@@ -1003,7 +1006,9 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 	case Z_BUF_ERROR:
 	case Z_DATA_ERROR:
 		// Input buffer corrupted
+		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id << ", dropping." << endl;
+		#endif
 		uRemove(usr, protocol::UserInfo::Dropped);
 		if (!inBuffer)
 			delete [] temp;
@@ -1071,9 +1076,11 @@ void Server::uTunnelRaster(User& usr) throw()
 	SessionData *sdata = usr.getSession(raster->session_id);
 	if (sdata == 0)
 	{
+		#ifndef NDEBUG
 		cerr << "- Raster for unsubscribed session #"
 			<< static_cast<uint>(raster->session_id)
 			<< ", from user #" << usr.id << endl;
+		#endif
 		
 		if (!last)
 		{
@@ -1134,9 +1141,11 @@ void Server::uTunnelRaster(User& usr) throw()
 		else
 		#endif // PERSISTENT_SESSIONS
 		{
+			#ifndef NDEBUG
 			cerr << "Un-tunneled raster from user #" << usr.id
 				<< ", for session #" << static_cast<uint>(raster->session_id)
 				<< endl;
+			#endif
 			
 			// We assume the raster was for user/s who disappeared
 			// before we could cancel the request.
@@ -1342,7 +1351,9 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		//#endif
 		break;
 	default:
+		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id <<  endl;
+		#endif
 		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -1523,7 +1534,9 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			
 			if ((msg.width < session->width) or (msg.height < session->height))
 			{
+				#ifndef NDEBUG
 				cerr << "- Invalid data from user #" << usr->id << endl;
+				#endif
 				uRemove(usr, protocol::UserInfo::Violation);
 				break;
 			}
@@ -1556,7 +1569,9 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	default:
+		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id << endl;
+		#endif
 		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -1785,7 +1800,9 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 		}
 		else
 		{
+			#ifndef NDEBUG
 			cerr << "- Invalid data from user #" << usr->id << endl;
+			#endif
 			uRemove(usr, protocol::UserInfo::Dropped);
 		}
 		break;
@@ -1846,7 +1863,9 @@ void Server::uLayerEvent(User*& usr) throw()
 		}
 		break;
 	default:
+		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id << std::endl;
+		#endif
 		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -2143,7 +2162,9 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
 			if (sock.getAddr() == ui->second->sock.getAddr())
 			{
+				#ifndef NDEBUG
 				cerr << "- Duplicate connection from " << sock.address() << endl;
+				#endif
 				return;
 			}
 	
@@ -2460,7 +2481,9 @@ int Server::run() throw()
 		switch (ev.wait())
 		{
 		case -1:
+			#ifndef NDEBUG
 			cerr << "- Error in event system: " << ev.getError() << endl;
+			#endif
 			state = Server::Error;
 			return -1;
 		case 0:

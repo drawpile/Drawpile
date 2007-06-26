@@ -70,7 +70,3 @@ target_link_libraries ( ${INTERNALNAME} dpserverlib ) # Server class lib
 target_link_libraries ( ${INTERNALNAME} eventslib ) # Events lib, required by Server class
 
 install ( TARGETS ${INTERNALNAME} RUNTIME DESTINATION bin )
-
-if (NOT DEBUG)
-	strip_exe ( drawpile-tray-srv )
-endif (NOT DEBUG)
