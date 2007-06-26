@@ -40,11 +40,14 @@ namespace protocol
 namespace tool_type
 {
 
-const uint8_t
+enum type
+{
 	//! No tool defined.
 	None = 0,
+	
 	//! Default brush tool type.
-	Brush = 1;
+	Brush = 1
+};
 
 } // namespace tool_type
 
@@ -52,12 +55,14 @@ const uint8_t
 namespace tool_mode
 {
 
-const uint8_t
+enum mode
+{
 	//! No mode set
 	None = 0,
 	
 	//! Normal
-	Normal = 1;
+	Normal = 1
+};
 
 } // namespace tool_mode
 

@@ -32,14 +32,18 @@
 
 #include "protocol.helper.h"
 
-#include <iostream>
+#ifndef NDEBUG
+	#include <iostream>
+#endif
+
+#include "protocol.h"
 
 namespace protocol
 {
 
-#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
-void msgName(const uint8_t type) throw()
+void msgName(const unsigned int type) throw()
 {
+	#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
 	std::cout << "type (" << static_cast<int>(type) << "): ";
 	switch (type)
 	{
@@ -125,14 +129,10 @@ void msgName(const uint8_t type) throw()
 		std::cout << "{unknown}" << std::endl;
 		break;
 	}
+	#endif
 }
-#else
-void msgName(const uint8_t type) throw()
-{
-}
-#endif
 
-Message* getMessage(const uint8_t type) throw(std::bad_alloc)
+Message* getMessage(const unsigned int type) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_PROTOCOL
 	#ifndef NDEBUG

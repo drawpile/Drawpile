@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006 M.K.A. <wyrmchild@sourceforge.net>
+   Copyright (C) 2006,2007 M.K.A. <wyrmchild@users.sourceforge.net>
 
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),

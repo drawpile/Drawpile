@@ -44,7 +44,8 @@ namespace client
 {
 
 //! Client capabilities
-enum client_capabilities {
+enum capabilities
+{
 	//! No capabilities
 	None,
 	
@@ -71,7 +72,8 @@ namespace message
 {
 
 //! Message modifiers
-enum message_flags {
+enum flags
+{
 	//! No message modifiers.
 	None,
 	
@@ -100,7 +102,8 @@ namespace extensions
 {
 
 //! Protocol extensions
-enum protocol_extensions {
+enum extensions
+{
 	//! No supported extensions.
 	None,
 	
@@ -124,7 +127,8 @@ namespace requirements
 {
 
 //! Server requirements
-enum server_requirements {
+enum requirements
+{
 	//! No special requirements.
 	None,
 	
@@ -147,11 +151,12 @@ enum server_requirements {
 /**
  * Used in protocol::UserInfo and protocol::SessionInfo messages
  */
-namespace user_mode
+namespace user
 {
 
 //! User mode
-enum user_mode {
+enum mode
+{
 	//! Null user mode.
 	None,
 	
@@ -176,7 +181,8 @@ namespace session
 {
 
 //! Session flags
-enum session_flags {
+enum flags
+{
 	//! No flags set
 	None,
 	

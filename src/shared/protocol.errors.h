@@ -41,12 +41,14 @@ namespace protocol
 //! Errors
 /**
  * @see protocol::Error message
- * @see http://drawpile.sourceforge.net/wiki/index.php/Protocol#Error
  */
 namespace error
 {
 
-const uint16_t
+//! Error codes
+enum code
+{
+
 	//! No error code defined.
 	None = 0,
 	
@@ -142,7 +144,9 @@ const uint16_t
 	 * Server is unlikely to recover automatically.
 	 * Check free memory and some such.
 	 */
-	ServerFrelled = 99;
+	ServerFrelled = 99
+
+};
 
 } // namespace error
 

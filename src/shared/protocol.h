@@ -35,12 +35,13 @@
 
 #include "protocol.defaults.h"
 #include "protocol.flags.h"
-#include "datatypes.h"
 
 #include <stdexcept>
 #include <cstddef> // size_t
 #include <boost/cstdint.hpp>
-#include <boost/static_assert.hpp>
+#ifndef NDEBUG
+	#include <boost/static_assert.hpp>
+#endif
 
 //! DrawPile network protocol.
 /**
@@ -49,9 +50,11 @@
 namespace protocol
 {
 
+#ifndef NDEBUG
 BOOST_STATIC_ASSERT(sizeof(uint8_t) == 1);
 BOOST_STATIC_ASSERT(sizeof(uint16_t) == 2);
 BOOST_STATIC_ASSERT(sizeof(uint32_t) == 4);
+#endif
 
 //! Implemented protocol revision number.
 const uint16_t revision = 10;
@@ -451,7 +454,24 @@ struct ToolInfo
 	//! Composition mode (tool::mode)
 	uint8_t mode;
 	
-	RGBAColor
+	//! RGBA color container (POD)
+	union RGBAColor {
+		//! RGBA
+		uint32_t RGBA;
+		
+		//! anonymous struct
+		struct {
+			uint8_t
+				//! Red
+				red,
+				//! Green
+				green,
+				//! Blue
+				blue,
+				//! Alpha
+				alpha;
+		};
+	}
 		//! Low pressure color
 		lo_color,
 		//! High pressure color

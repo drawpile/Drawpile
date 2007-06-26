@@ -13,8 +13,9 @@
 
 ******************************************************************************/
 
-#include "templates.h"
 #include "SHA1.h"
+
+#include "templates.h"
 
 #include <cassert>
 #include <memory.h> // memset(), memcpy()
@@ -39,7 +40,7 @@ void SHA1::Reset() throw()
 	#else // OpenSSL
 	if (SHA1_Init(&context) != 1)
 	{
-		//throw new std::exception;
+		//throw std::exception;
 	}
 	#endif // HAVE_OPENSSL
 	
