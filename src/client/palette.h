@@ -20,7 +20,7 @@
 #ifndef PALETTE_H
 #define PALETTE_H
 
-#include <QColor>
+class QColor;
 
 /**
  * \brief Color palette interface

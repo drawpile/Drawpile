@@ -21,7 +21,6 @@
 #define CONTROLLER_H
 
 #include <QObject>
-#include <QUrl>
 
 #include "tools.h"
 #include "sessioninfo.h"
@@ -43,6 +42,7 @@ namespace network {
 	class SessionState;
 }
 
+class QUrl;
 class QImage;
 
 //! Controller for drawing and network operations

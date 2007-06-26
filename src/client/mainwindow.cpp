@@ -28,6 +28,7 @@
 #include <QDesktopServices>
 #include <QDesktopWidget>
 #include <QUrl>
+#include <QLabel>
 #include <QMessageBox>
 #include <QCloseEvent>
 #include <QPushButton>

@@ -19,6 +19,7 @@
 */
 
 #include <QtGlobal>
+#include <QImage>
 
 #include <cmath>
 #include "point.h"

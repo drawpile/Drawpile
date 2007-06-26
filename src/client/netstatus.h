@@ -20,7 +20,9 @@
 #ifndef NETSTATUS_H
 #define NETSTATUS_H
 
-#include <QLabel>
+#include <QWidget>
+
+class QLabel;
 
 namespace network {
 	class User;

@@ -19,6 +19,7 @@
 */
 #include <QDebug>
 #include <QBuffer>
+#include <QUrl>
 #include "controller.h"
 #include "board.h"
 #include "brush.h"

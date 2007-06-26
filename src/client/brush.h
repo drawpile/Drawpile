@@ -20,7 +20,7 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
-#include <QImage>
+class QImage;
 #include <QVector>
 #include <QColor>
 

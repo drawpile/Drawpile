@@ -20,8 +20,7 @@
 #ifndef BOARDEDITOR_H
 #define BOARDEDITOR_H
 
-#include <QColor>
-
+class QColor;
 class QPoint;
 
 #include "brush.h"

@@ -21,7 +21,8 @@
 #define LOCALPALETTE_H
 
 #include <QList>
-#include <QVariant>
+
+class QVariant;
 
 #include "palette.h"
 

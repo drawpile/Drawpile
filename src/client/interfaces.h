@@ -21,7 +21,7 @@
 #ifndef INTERFACES_H
 #define INTERFACES_H
 
-#include <QColor>
+class QColor;
 
 namespace drawingboard {
 	class Brush;

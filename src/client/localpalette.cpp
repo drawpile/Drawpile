@@ -18,6 +18,8 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QApplication>
+#include <QVariant>
+#include <QColor>
 #include "localpalette.h"
 
 LocalPalette::LocalPalette(const QString& name, const QList<QVariant>& list)

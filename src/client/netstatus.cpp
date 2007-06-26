@@ -19,6 +19,7 @@
 */
 
 #include <QAction>
+#include <QLabel>
 #include <QApplication>
 #include <QClipboard>
 #include <QHBoxLayout>
