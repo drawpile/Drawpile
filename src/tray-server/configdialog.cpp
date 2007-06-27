@@ -42,6 +42,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	QGroupBox *limit_group = new QGroupBox("Limits");
 	QVBoxLayout *limit_superbox = new QVBoxLayout;
+	limit_superbox->setContentsMargins(5,3,5,3);
 	
 	// user limit
 	QHBoxLayout *ulimit_box = new QHBoxLayout;
@@ -107,16 +108,14 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	sublimit_box->addWidget(sublimit_spinner, 0);
 	limit_superbox->addLayout(sublimit_box);
 	
-	limit_group->setContentsMargins(3,12,3,0);
 	limit_group->setLayout(limit_superbox);
 	
 	// initial user permissions
 	QGroupBox *umode_group = new QGroupBox(tr("Initial user permissions"));
-	umode_group->setContentsMargins(3,12,3,0);
 	
 	QHBoxLayout *usermode_box = new QHBoxLayout;
-	usermode_box->addSpacing(3);
-	
+	usermode_box->setContentsMargins(5,3,5,3);
+		
 	can_draw = new QCheckBox;
 	can_draw->setToolTip(tr("If unchecked, session owner or server admin must unlock the user before they can draw."));
 	can_draw->setChecked(true);
@@ -149,6 +148,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	QGroupBox *req_group = new QGroupBox(tr("Restrictions"));
 	QVBoxLayout *req_superbox = new QVBoxLayout;
+	req_superbox->setContentsMargins(5,3,5,3);
 	
 	// require unique names
 	QHBoxLayout *unique_box = new QHBoxLayout;
@@ -182,7 +182,6 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	widestr_box->addWidget(wide_strings, 0);
 	req_superbox->addLayout(widestr_box);
 	
-	req_group->setContentsMargins(3,12,3,0);
 	req_group->setLayout(req_superbox);
 	
 	// server password
@@ -226,10 +225,6 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	// root layout
 	QVBoxLayout *root = new QVBoxLayout;
-	root->setContentsMargins(3,3,3,3);
-	root->addStretch(1);
-	root->addSpacing(3);
-	root->addStrut(120); // ?
 	
 	root->addWidget(limit_group);
 	root->addWidget(umode_group);
@@ -242,12 +237,10 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	
 	root->addLayout(command_box);
 	
+	root->setContentsMargins(5,3,5,3);
 	setLayout(root);
 	
 	// get settings from server
-	//resetSettings();
-	//enableButtons();
-	
 	loadSettings();
 	applySettings();
 	

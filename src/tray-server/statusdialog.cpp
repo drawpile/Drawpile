@@ -37,8 +37,7 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	QGroupBox *status_group = new QGroupBox(tr("Status"));
 	
 	QVBoxLayout *status_superbox = new QVBoxLayout;
-	
-	status_group->setContentsMargins(3,12,3,0);
+	status_superbox->setContentsMargins(5,3,5,3);
 	
 	// server state
 	QHBoxLayout *host_box = new QHBoxLayout;
@@ -49,14 +48,15 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	host_box->addWidget(hostname);
 	status_superbox->addLayout(host_box);
 	
-	serverStopped();
+	serverStopped(); // updates hostname box
+	
 	status_group->setLayout(status_superbox);
 	
 	// Sessions
 	session_group = new QGroupBox(tr("Sessions"));
-	session_group->setContentsMargins(3,12,3,0);
 	
 	QVBoxLayout *session_box = new QVBoxLayout;
+	session_box->setContentsMargins(5,3,5,3);
 	
 	// * session list
 	
@@ -64,9 +64,9 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	
 	// Users
 	QGroupBox *user_group = new QGroupBox(tr("Users"));
-	user_group->setContentsMargins(3,12,3,0);
 	
 	QVBoxLayout *user_box = new QVBoxLayout;
+	user_box->setContentsMargins(5,3,5,3);
 	
 	// * user list
 	
@@ -75,16 +75,15 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	// root layout
 	
 	QVBoxLayout *root = new QVBoxLayout;
-	root->setContentsMargins(3,3,3,3);
-	root->addStretch(1);
-	root->addSpacing(3);
-	root->addStrut(120); // ?
+	root->setContentsMargins(5,3,5,3);
 	
 	root->addWidget(status_group);
 	root->addWidget(session_group);
 	root->addWidget(user_group);
 	
 	setLayout(root);
+	
+	setMinimumWidth(120);
 }
 
 void StatusDialog::serverStarted()
