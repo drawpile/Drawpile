@@ -74,13 +74,13 @@ size_t Message::serializeHeader(char* ptr) const throw()
 {
 	assert(ptr != 0);
 	
-	memcpy_t(ptr++, type);
+	(*ptr++) = type;
 	
 	if (isUser)
-		memcpy_t(ptr++, user_id); 
+		(*ptr++) = user_id;
 	
 	if (isSession)
-		memcpy_t(ptr++, session_id);
+		(*ptr++) = session_id;
 	
 	return headerSize;
 }
@@ -92,10 +92,10 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 	++ptr; // skip type
 	
 	if (isUser)
-		memcpy_t(user_id, ptr++);
+		user_id = (*ptr++);
 	
 	if (isSession)
-		memcpy_t(session_id, ptr++);
+		session_id = (*ptr++);
 	
 	return headerSize;
 }
@@ -153,7 +153,7 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	{
 		// Write bundled packets
 		dataptr += serializeHeader(dataptr);
-		memcpy_t(dataptr++, count);
+		(*dataptr++) = count;
 		do
 		{
 			assert(ptr);
@@ -215,10 +215,8 @@ size_t Identifier::serializePayload(char *buf) const throw()
 	
 	memcpy(buf, identifier, identifier_size); size_t i = identifier_size;
 	
-	uint16_t rev_t = revision, lvl_t = level;
-	
-	memcpy_t(buf+i, bswap(rev_t)); i += sizeof(revision);
-	memcpy_t(buf+i, bswap(lvl_t)); i += sizeof(level);
+	memcpy_t(buf+i, bswap_const(revision)); i += sizeof(revision);
+	memcpy_t(buf+i, bswap_const(level)); i += sizeof(level);
 	memcpy_t(buf+i, flags); i += sizeof(flags);
 	memcpy_t(buf+i, extensions); i += sizeof(extensions);
 	
@@ -268,12 +266,8 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	uint16_t tmp;
-	
-	tmp = x;
-	memcpy_t(buf, bswap(tmp));
-	tmp = y;
-	memcpy_t(buf+sizeof(x), bswap(tmp));
+	memcpy_t(buf, bswap_const(x));
+	memcpy_t(buf+sizeof(x), bswap_const(y));
 	memcpy_t(buf+sizeof(x)+sizeof(y), pressure);
 	
 	return payloadLength();
@@ -303,10 +297,9 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exc
 	assert(i + payloadLength() <= len);
 	
 	// extract data
-	memcpy_t(x, buf+i),
-	memcpy_t(y, buf+(i+=sizeof(x))),
-	memcpy_t(pressure, buf+(i+=sizeof(y)));
-	i += sizeof(pressure);
+	memcpy_t(x, buf+i); i += sizeof(x);
+	memcpy_t(y, buf+i); i += sizeof(y);
+	memcpy_t(pressure, buf+i); i += sizeof(pressure);
 	
 	// swap coords
 	bswap(x),
@@ -488,16 +481,12 @@ size_t Raster::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	uint32_t off_tmp = offset, len_tmp = length, size_tmp = size;
-	
-	memcpy_t(buf, bswap(off_tmp)); size_t i = sizeof(offset);
-	memcpy_t(buf+i, bswap(len_tmp)); i += sizeof(length);
-	memcpy_t(buf+i, bswap(size_tmp)); i += sizeof(size);
+	memcpy_t(buf, bswap_const(offset)); size_t i = sizeof(offset);
+	memcpy_t(buf+i, bswap_const(length)); i += sizeof(length);
+	memcpy_t(buf+i, bswap_const(size)); i += sizeof(size);
 	
 	if (length != 0)
-	{
 		memcpy(buf+i, data, length); i += length;
-	}
 	
 	return i;
 }
@@ -658,10 +647,8 @@ size_t SessionInstruction::serializePayload(char *buf) const throw()
 	
 	memcpy_t(buf, action); size_t i = sizeof(action);
 	
-	uint16_t tmp_w=width, tmp_h=height;
-	
-	memcpy_t(buf+i, bswap(tmp_w)); i += sizeof(width);
-	memcpy_t(buf+i, bswap(tmp_h)); i += sizeof(height);
+	memcpy_t(buf+i, bswap_const(width)); i += sizeof(width);
+	memcpy_t(buf+i, bswap_const(height)); i += sizeof(height);
 	memcpy_t(buf+i, user_mode); i += sizeof(user_mode);
 	memcpy_t(buf+i, user_limit); i += sizeof(user_limit);
 	memcpy_t(buf+i, flags); i += sizeof(flags);
@@ -1078,10 +1065,8 @@ size_t Deflate::serializePayload(char *buf) const throw()
 {
 	assert(buf != 0);
 	
-	uint16_t unc_t = uncompressed, len_t = length;
-	
-	memcpy_t(buf, bswap(unc_t)); size_t i = sizeof(uncompressed);
-	memcpy_t(buf+i, bswap(len_t)); i += sizeof(length);
+	memcpy_t(buf, bswap_const(uncompressed)); size_t i = sizeof(uncompressed);
+	memcpy_t(buf+i, bswap_const(length)); i += sizeof(length);
 	
 	if (length != 0)
 	{
