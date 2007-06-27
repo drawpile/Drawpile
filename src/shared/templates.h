@@ -32,7 +32,7 @@
 #include "../config.h"
 
 #include <cmath>
-#include <memory> // memcpy()
+//#include <memory> // memcpy()
 #include <boost/cstdint.hpp>
 #include <cassert>
 
@@ -105,7 +105,10 @@ template <typename T>
 char* memcpy_t(char* dst, const T& src) throw()
 {
 	assert(dst != 0);
-	memcpy(dst, &src, sizeof(T));
+	
+	*reinterpret_cast<T*>(dst) = src;
+	//memcpy(dst, &src, sizeof(T));
+	
 	return dst;
 }
 
@@ -115,7 +118,9 @@ T& memcpy_t(T& dst, const char* src) throw()
 {
 	assert(src != 0);
 	
-	memcpy(&dst, src, sizeof(T));
+	dst = *reinterpret_cast<const T*>(src);
+	//memcpy(&dst, src, sizeof(T));
+	
 	return dst;
 }
 
