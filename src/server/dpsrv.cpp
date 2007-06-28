@@ -39,7 +39,8 @@
 
 #include <algorithm> // std::min, std::max
 #include <iostream>
-#include <getopt.h> // for command-line opts
+#include <stdexcept>
+#include <getopt.h>
 
 #include "server.h" // Server class
 #include "net.h" // start/stopNetSubsystem
@@ -63,211 +64,232 @@ using std::cerr;
 
 void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
 {
-	int32_t opt = 0, count = 0;
-	
-	while ((opt = getopt( argc, argv, "a:p:hlbu:S:s:wed:Tn:L:J:VM")) != -1)
+	getarg:
+	switch (getopt(argc, argv, "a:p:hlbu:S:s:wed:Tn:L:J:VM"))
 	{
-		++count;
-		switch (opt)
+	case 'h': // help
+		cout << "Options:" << endl
+			<< endl
+			<< "   -a [address]  Listen on address" << endl
+			<< "   -p [port]     Listen on port (1024 - 65535)" << endl
+			<< "   -h            This output (a.k.a. Help)" << endl
+			<< "   -l            Localhost admin" << endl
+			<< "   -b            Daemon mode" << endl
+			<< "   -u [number]   Set user limit" << endl
+			<< "   -S [string]   Admin password" << endl
+			<< "   -s [string]   Server password" << endl
+			<< "   -w            UTF-16 strings" << endl
+			<< "   -e            Enable unique name enforcing" << endl
+			<< "   -d [size]     Minimum dimension for canvas" << endl
+			<< "   -n [size]     Name length limit" << endl
+			<< "   -T            Enable transient mode " << endl
+			<< "   -L [num]      Set session limit" << endl
+			<< "   -J [num]      Set subscription limit" << endl
+			<< "   -M            Allow duplicate connections" << endl
+			;
+		exit(EXIT_SUCCESS);
+		break;
+	case 'a': // address to listen on
+		cerr << "- Setting listening address not implemented." << endl;
+		exit(EXIT_FAILURE);
+		break;
+	case 'n': // name length limit
 		{
-			case 'h': // help
-				cout << "Options:" << endl
-					<< endl
-					<< "   -a [address]  Listen on address" << endl
-					<< "   -p [port]     Listen on port (1024 - 65535)" << endl
-					<< "   -h            This output (a.k.a. Help)" << endl
-					<< "   -l            Localhost admin" << endl
-					<< "   -b            Daemon mode" << endl
-					<< "   -u [number]   Set user limit" << endl
-					<< "   -S [string]   Admin password" << endl
-					<< "   -s [string]   Server password" << endl
-					<< "   -w            UTF-16 strings" << endl
-					<< "   -e            Enable unique name enforcing" << endl
-					<< "   -d [size]     Minimum dimension for canvas" << endl
-					<< "   -n [size]     Name length limit" << endl
-					<< "   -T            Enable transient mode " << endl
-					<< "   -L [num]      Set session limit" << endl
-					<< "   -J [num]      Set subscription limit" << endl
-					<< "   -M            Allow duplicate connections" << endl
-					;
-				exit(EXIT_SUCCESS);
-				break;
-			case 'a': // address to listen on
-				cerr << "- Setting listening address not implemented." << endl;
-				exit(EXIT_FAILURE);
-				break;
-			case 'n': // name length limit
-				{
-					const int tmp = atoi(optarg);
-					
-					const octet len = std::min(tmp, static_cast<int>(std::numeric_limits<octet>::max()));
-					
-					srv.setNameLengthLimit(len);
-					cout << "& Name length limit set to: " << static_cast<int>(len) << endl;
-				}
-				break;
-			case 'p': // port to listen on
-				{
-					const uint16_t port = atoi(optarg);
-					
-					if (port <= Network::SuperUser_Port)
-					{
-						cerr << "- Super-user ports not allowed!" << endl;
-						exit(EXIT_FAILURE);
-					}
-					srv.setPort(port);
-					
-					cout << "& Listening port set to: " << port << endl;
-				}
-				break;
-			case 'l': // localhost admin
-				srv.setLocalhostAdmin(true);
-				cout << "& Localhost admin enabled." << endl;
-				break;
-			case 'u': // user limit
-				{
-					const size_t user_limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
-					if (user_limit < 2)
-					{
-						cerr << "- Too low user limit." << endl;
-						exit(EXIT_FAILURE);
-					}
-					
-					srv.setUserLimit(user_limit);
-					cout << "& User limit set to: " << user_limit << endl;
-				}
-				break;
-			case 'S': // admin password
-				{
-					const size_t pw_len = strlen(optarg);
-					if (pw_len == 0)
-					{
-						cerr << "- Zero length admin password?" << endl;
-						exit(EXIT_FAILURE);
-					}
-					else if (pw_len > std::numeric_limits<octet>::max())
-					{
-						cerr << "- Admin password too long, max length: " << static_cast<int>(std::numeric_limits<octet>::max()) << endl;
-						exit(EXIT_FAILURE);
-					}
-					
-					char* password = new char[pw_len];
-					memcpy(password, optarg, pw_len);
-					srv.setAdminPassword(password, pw_len);
-					cout << "& Admin password set." << endl;
-				}
-				break;
-			case 's': // password
-				{
-					const size_t pw_len = strlen(optarg);
-					if (pw_len == 0)
-					{
-						cerr << "- Zero length server password?" << endl;
-						exit(EXIT_FAILURE);
-					}
-					else if (pw_len > std::numeric_limits<octet>::max())
-					{
-						cerr << "- Server password too long, max length: " << static_cast<int>(std::numeric_limits<octet>::max()) << endl;
-						exit(EXIT_FAILURE);
-					}
-					
-					char* password = new char[pw_len];
-					memcpy(password, optarg, pw_len);
-					srv.setPassword(password, pw_len);
-					cout << "& Server password set." << endl;
-				}
-				
-				break;
-			case 'T': // transient/temporary
-				srv.setTransient(true);
-				cout << "& Server will exit after all users have left." << endl;
-				break;
-			case 'b': // background
-				#if defined(HAVE_FORK) or defined(HAVE_FORK1)
-				{
-					#ifdef HAVE_FORK
-					pid_t rc = fork();
-					#else // HAVE_FORK1
-					pid_t rc = fork1();
-					#endif
-					if (rc == -1)
-					{
-						cerr << "- fork() failed" << endl;
-						exit(EXIT_FAILURE);
-					}
-					else if (rc != 0)
-						exit(0); // kill parent process
-					
-					fclose(stdout);
-					fclose(stderr);
-				}
-				#else
-				cerr << "- Non-forking daemon mode not implemented." << endl;
-				exit(EXIT_FAILURE);
-				#endif
-				break;
-			case 'd': // adjust minimum dimension.
-				{
-					const size_t mindim = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint16_t>::max()));
-					if (mindim < 400) // just a reasonably nice lower bound
-					{
-						cerr << "- Min. dimension must be at least 400" << endl;
-						exit(EXIT_FAILURE);
-					}
-					
-					srv.setMinDimension(mindim);
-					cout << "& Minimum board dimension set to: " << mindim << endl;
-				}
-				break;
-			case 'e': // name enforcing
-				srv.setUniqueNameEnforcing();
-				cout << "& Unique name enforcing enabled." << endl;
-				break;
-			case 'w': // utf-16 string (wide chars)
-				srv.setUTF16Requirement();
-				cout << "& UTF-16 string mode enabled." << endl;
-				break;
-			case 'L': // session limit
-				{
-					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
-					if (limit < 1)
-					{
-						cerr << "- Limit must be greater than 0" << endl;
-						exit(EXIT_FAILURE);
-					}
-					
-					srv.setSessionLimit(limit);
-					cout << "& Session limit set to: " << limit << endl;
-				}
-				break;
-			case 'J': // subscription limit
-				{
-					const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
-					if (limit < 1)
-					{
-						cerr << "- Limit must be greater than 0" << endl;
-						exit(EXIT_FAILURE);
-					}
-					
-					srv.setSubscriptionLimit(limit);
-					cout << "& Subscription limit set to: " << limit << endl;
-				}
-				break;
-			case 'M': // allow multiple connections from same address
-				srv.setDuplicateConnectionBlocking(false);
-				cout << "& Multiple connections allowed from same source address." << endl;
-				break;
-			case 'V': // version
-				exit(0);
-			default:
-				cerr << "What?" << endl;
-				exit(EXIT_FAILURE);
-				break;
+			const int tmp = atoi(optarg);
+			
+			const octet len = std::min(tmp, static_cast<int>(std::numeric_limits<octet>::max()));
+			
+			srv.setNameLengthLimit(len);
+			#ifndef NDEBUG
+			cout << "& Name length limit set to: " << static_cast<int>(len) << endl;
+			#endif
 		}
+		break;
+	case 'p': // port to listen on
+		{
+			const uint16_t port = atoi(optarg);
+			
+			if (port <= Network::SuperUser_Port)
+			{
+				cerr << "- Super-user ports not allowed!" << endl;
+				exit(EXIT_FAILURE);
+			}
+			srv.setPort(port);
+			
+			#ifndef NDEBUG
+			cout << "& Listening port set to: " << port << endl;
+			#endif
+		}
+		break;
+	case 'l': // localhost admin
+		srv.setLocalhostAdmin(true);
+		#ifndef NDEBUG
+		cout << "& Localhost admin enabled." << endl;
+		#endif
+		break;
+	case 'u': // user limit
+		{
+			const size_t user_limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
+			if (user_limit < 2)
+			{
+				cerr << "- Too low user limit." << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			srv.setUserLimit(user_limit);
+			#ifndef NDEBUG
+			cout << "& User limit set to: " << user_limit << endl;
+			#endif
+		}
+		break;
+	case 'S': // admin password
+		{
+			const size_t pw_len = strlen(optarg);
+			if (pw_len == 0)
+			{
+				cerr << "- Zero length admin password?" << endl;
+				exit(EXIT_FAILURE);
+			}
+			else if (pw_len > std::numeric_limits<octet>::max())
+			{
+				cerr << "- Admin password too long, max length: " << static_cast<int>(std::numeric_limits<octet>::max()) << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			char* password = new char[pw_len];
+			memcpy(password, optarg, pw_len);
+			srv.setAdminPassword(password, pw_len);
+			#ifndef NDEBUG
+			cout << "& Admin password set." << endl;
+			#endif
+		}
+		break;
+	case 's': // password
+		{
+			const size_t pw_len = strlen(optarg);
+			if (pw_len == 0)
+			{
+				cerr << "- Zero length server password?" << endl;
+				exit(EXIT_FAILURE);
+			}
+			else if (pw_len > std::numeric_limits<octet>::max())
+			{
+				cerr << "- Server password too long, max length: " << static_cast<int>(std::numeric_limits<octet>::max()) << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			char* password = new char[pw_len];
+			memcpy(password, optarg, pw_len);
+			srv.setPassword(password, pw_len);
+			#ifndef NDEBUG
+			cout << "& Server password set." << endl;
+			#endif
+		}
+		
+		break;
+	case 'T': // transient/temporary
+		srv.setTransient(true);
+		#ifndef NDEBUG
+		cout << "& Server will exit after all users have left." << endl;
+		#endif
+		break;
+	case 'b': // background
+		#if defined(HAVE_FORK) or defined(HAVE_FORK1)
+		{
+			#ifdef HAVE_FORK
+			pid_t rc = fork();
+			#else // HAVE_FORK1
+			pid_t rc = fork1();
+			#endif
+			if (rc == -1)
+			{
+				cerr << "- fork() failed" << endl;
+				exit(EXIT_FAILURE);
+			}
+			else if (rc != 0)
+				exit(0); // kill parent process
+			
+			fclose(stdout);
+			fclose(stderr);
+		}
+		#else
+		cerr << "- Non-forking daemon mode not implemented." << endl;
+		exit(EXIT_FAILURE);
+		#endif
+		break;
+	case 'd': // adjust minimum dimension.
+		{
+			const size_t mindim = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<uint16_t>::max()));
+			if (mindim < 400) // just a reasonably nice lower bound
+			{
+				cerr << "- Min. dimension must be at least 400" << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			srv.setMinDimension(mindim);
+			#ifndef NDEBUG
+			cout << "& Minimum board dimension set to: " << mindim << endl;
+			#endif
+		}
+		break;
+	case 'e': // name enforcing
+		srv.setUniqueNameEnforcing();
+		#ifndef NDEBUG
+		cout << "& Unique name enforcing enabled." << endl;
+		#endif
+		break;
+	case 'w': // utf-16 string (wide chars)
+		srv.setUTF16Requirement();
+		#ifndef NDEBUG
+		cout << "& UTF-16 string mode enabled." << endl;
+		#endif
+		break;
+	case 'L': // session limit
+		{
+			const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
+			if (limit < 1)
+			{
+				cerr << "- Limit must be greater than 0" << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			srv.setSessionLimit(limit);
+			#ifndef NDEBUG
+			cout << "& Session limit set to: " << limit << endl;
+			#endif
+		}
+		break;
+	case 'J': // subscription limit
+		{
+			const int limit = std::min(atoi(optarg), static_cast<int>(std::numeric_limits<octet>::max()));
+			if (limit < 1)
+			{
+				cerr << "- Limit must be greater than 0" << endl;
+				exit(EXIT_FAILURE);
+			}
+			
+			srv.setSubscriptionLimit(limit);
+			#ifndef NDEBUG
+			cout << "& Subscription limit set to: " << limit << endl;
+			#endif
+		}
+		break;
+	case 'M': // allow multiple connections from same address
+		srv.setDuplicateConnectionBlocking(false);
+		#ifndef NDEBUG
+		cout << "& Multiple connections allowed from same source address." << endl;
+		#endif
+		break;
+	case 'V': // version
+		exit(0);
+	case -1: // last arg
+		return; 
+	default:
+		cerr << "What?" << endl;
+		exit(EXIT_FAILURE);
+		break;
 	}
-	
-	if (count != 0)
-		cout << endl;
+	goto getarg;
 }
 
 int main(int argc, char** argv)
@@ -303,19 +325,19 @@ int main(int argc, char** argv)
 		if (!srv.init())
 		{
 			#ifndef NDEBUG
-			std::cerr << "- Initialization failed!" << std::endl;
+			cerr << "- Initialization failed!" << endl;
 			#endif
 			return EXIT_FAILURE;
 		}
 		
-		std::cout << "+ Listening on port " << srv.getPort() << std::endl;
+		cout << "+ Listening on port " << srv.getPort() << endl;
 		
 		try {
 			rc = srv.run();
 		}
 		catch (...) {
 			#ifndef NDEBUG
-			std::cerr << "- Exception caught!" << std::endl;
+			cerr << "- Exception caught!" << endl;
 			#endif
 			rc = 2;
 		}
@@ -324,7 +346,7 @@ int main(int argc, char** argv)
 	} // end server scope
 	
 	#ifndef NDEBUG
-	std::cout << "~ Quitting..." << std::endl;
+	cout << "~ Quitting..." << endl;
 	#endif
 	
 	return rc;
