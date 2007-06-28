@@ -23,6 +23,7 @@ include ( ${QT_USE_FILE} )
 
 set (
 	SSOURCES
+	main.cpp
 	traymenu.cpp
 	srvthread.cpp
 	configdialog.cpp
@@ -70,7 +71,6 @@ add_executable (
 	MACOSX_BUNDLE
 	${MOC_Sources}
 	${SSOURCES}
-	main.cpp
 	${QtResource}
 	${WIN32RES}
 )
