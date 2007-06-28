@@ -30,7 +30,7 @@
 
 *******************************************************************************/
 
-// win32 macro workaround
+// win32 macro workaround for <algorithm>
 #ifndef NOMINMAX
 	#define NOMINMAX
 #endif
@@ -46,17 +46,6 @@
 #include "net.h" // start/stopNetSubsystem
 #include "network.h" // Network namespace
 #include "types.h"
-
-// Server information
-namespace srv_info
-{
-
-const char applicationName[] = "DrawPile Server";
-const char versionString[] = "0.4";
-const char copyrightNotice[] = "Copyright (c) 2006,2007 M.K.A.";
-const char websiteURL[] = "http://drawpile.sourceforge.net/";
-
-}
 
 using std::cout;
 using std::endl;
@@ -302,32 +291,28 @@ int main(int argc, char** argv)
 	fclose(stdin);
 	
 	// application name, version, etc. info
-	cout << srv_info::applicationName << " v" << srv_info::versionString
-		#ifndef NDEBUG
-		<< " DEBUG"
-		#endif
-		<< endl
-		<< srv_info::copyrightNotice << endl
-		<< srv_info::websiteURL << endl
+	cout << "DrawPile Server v0.4" << endl
+		<< "Copyright (c) 2006,2007 M.K.A." << endl
+		<< "http://drawpile.sourceforge.net/" << endl
 		<< endl;
 	
-	int rc = EXIT_SUCCESS;
+	int rc = EXIT_FAILURE;
 	
 	// limited scope for server
 	{
+		if (!startNetSubsystem())
+			goto end;
+		
 		Server srv;
 		
 		getArgs(argc, argv, srv);
-		
-		if (!startNetSubsystem())
-			return EXIT_FAILURE;
 		
 		if (!srv.init())
 		{
 			#ifndef NDEBUG
 			cerr << "- Initialization failed!" << endl;
 			#endif
-			return EXIT_FAILURE;
+			goto end;
 		}
 		
 		cout << "+ Listening on port " << srv.getPort() << endl;
@@ -349,5 +334,6 @@ int main(int argc, char** argv)
 	cout << "~ Quitting..." << endl;
 	#endif
 	
+	end:
 	return rc;
 }
