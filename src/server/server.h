@@ -123,8 +123,6 @@ protected:
 		next_timer;
 	
 	uint16_t
-		//! Listening port
-		port,
 		//! Minimum canvas dimension
 		min_dimension;
 	

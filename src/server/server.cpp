@@ -95,7 +95,6 @@ Server::Server() throw()
 	name_len_limit(12),
 	time_limit(srv_defaults::time_limit),
 	current_time(0), next_timer(0),
-	port(protocol::default_port),
 	min_dimension(400),
 	enforceUnique(false), wideStrings(false), noGlobalChat(false),
 	extDeflate(
