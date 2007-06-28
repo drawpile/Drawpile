@@ -69,9 +69,9 @@ int Pselect::wait() throw()
 	FD_COPY(&fds_w, &t_fds_w);
 	FD_COPY(&fds_e, &t_fds_e);
 	#else
-	memcpy(&t_fds_r, &fds_r, sizeof(fds_r));
-	memcpy(&t_fds_w, &fds_w, sizeof(fds_w));
-	memcpy(&t_fds_e, &fds_e, sizeof(fds_e));
+	t_fds_r = fds_r;
+	t_fds_w = fds_w;
+	t_fds_e = fds_e;
 	#endif // HAVE_SELECT_COPY
 	
 	using std::max;

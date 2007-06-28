@@ -123,7 +123,7 @@ Server::Server() throw()
 #if 0
 Server::~Server() throw()
 {
-	reset();
+	//reset();
 }
 #endif
 
@@ -620,17 +620,7 @@ void Server::uHandleDrawing(User& usr) throw()
 	else
 	{
 		#ifdef PERSISTENT_SESSIONS
-		if (usr.session->persist and usr.session->raster_invalid == false)
-		{
-			#ifndef NDEBUG
-			cout << "? Session raster invalidated." << endl;
-			#endif
-			// invalidate raster
-			usr.session->raster_invalid = true;
-			usr.session->raster_cached = false;
-			delete usr.session->raster;
-			usr.session->raster = 0;
-		}
+		usr.session->invalidateRaster();
 		#endif // PERSISTENT_SESSIONS
 		
 		#ifdef LAYER_SUPPORT
@@ -808,7 +798,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				Session *session = sdata->session;
 				#ifdef PERSISTENT_SESSIONS
-				if (session->persist and !session->raster_cached and session->users.size() == 1)
+				if (session->persist and session->raster_invalid and session->users.size() == 1)
 				{
 					uQueueMsg(*usr, msgError(session->id, protocol::error::RequestIgnored));
 					message_ref ref(new protocol::Synchronize);
@@ -1082,31 +1072,42 @@ void Server::uTunnelRaster(User& usr) throw()
 			<< ", from user #" << usr.id << endl;
 		#endif
 		
-		if (!last)
-		{
-			message_ref cancel_ref(new protocol::Cancel);
-			cancel_ref->session_id = raster->session_id;
-			uQueueMsg(usr, cancel_ref);
-		}
-		
-		return;
+		goto lCancelRaster;
 	}
+	Session *session = sdata->session;
 	
-	// get users
+	if (session->users.size() > 1)
+		goto lTunnel;
+	
+	#ifdef PERSISTENT_SESSIONS
+	session->appendRaster(raster);
+	return;
+	#endif
+	
+	lCancelRaster:
+	if (!last) 
+	{
+		message_ref cancel_ref(new protocol::Cancel);
+		cancel_ref->session_id = raster->session_id;
+		uQueueMsg(usr, cancel_ref);
+	}
+	return;
+	
+	lTunnel: // get users
 	const std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
 	if (ft.first == ft.second)
 	{
 		#ifdef PERSISTENT_SESSIONS
-		if (sdata->session->persist and !sdata->session->raster_cached)
+		if (session->persist and !session->raster_cached)
 		{
 			#ifndef NDEBUG
 			cout << "? Caching raster." << endl;
 			#endif
 			
-			protocol::Raster *& sras = sdata->session->raster;
+			protocol::Raster *& sras = session->raster;
 			if (sras == 0)
 			{
-				sdata->session->raster_invalid = false;
+				session->raster_invalid = false;
 				sras = new protocol::Raster(0, raster->length, raster->size, 0);
 				if (sras->length < sras->size)
 				{
@@ -1131,7 +1132,7 @@ void Server::uTunnelRaster(User& usr) throw()
 			
 			if (sras->length == sras->size)
 			{
-				sdata->session->raster_cached = true;
+				session->raster_cached = true;
 				
 				// Detach user from session now
 				uQueueMsg(usr, msgAck(sdata->session_id, protocol::Message::Unsubscribe));
@@ -2589,5 +2590,6 @@ const Session* Server::getConstSession(const octet session_id) const throw()
 
 octet Server::getRequirements() const throw()
 {
-	return 0;
+	return (wideStrings ? protocol::requirements::WideStrings : 0)
+		| (enforceUnique ? protocol::requirements::EnforceUnique : 0);
 }

@@ -498,7 +498,7 @@ public:
 	
 	#if 0
 	//! Destructor
-	~Server() throw();
+	virtual ~Server() throw();
 	#endif
 	
 	//! Initializes anything that need to be done so.
@@ -567,7 +567,10 @@ public:
 	 */
 	void setLocalhostAdmin(const bool _enable=true) throw() { LocalhostAdmin = _enable; }
 	
-	//! Get client requirement flags
+	//! Get requirement flags
+	/**
+	 * @see protocol::requirements
+	 */
 	octet getRequirements() const throw();
 	
 	void setUniqueNameEnforcing(bool _enabled=true) throw() { enforceUnique = _enabled; }
@@ -630,6 +633,10 @@ public:
 	
 	/** Status and information retrieval **/
 	
+	#if 0
+private:
+	virtual void eventNotify() { }
+	#endif
 }; // class Server
 
 #endif // Server_Class_Included

@@ -14,3 +14,5 @@
 #cmakedefine SC_SOCKETS
 
 #cmakedefine IPV6_SUPPORT
+
+#cmakedefine PERSISTENT_SESSIONS

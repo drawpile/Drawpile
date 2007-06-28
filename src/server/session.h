@@ -115,6 +115,12 @@ struct Session
 	
 	//! Test if session can be joined
 	bool canJoin() const throw();
+	
+	//! Invalidate currently cached raster
+	void invalidateRaster() throw();
+	
+	//! Append raster message to current cached raster
+	bool appendRaster(protocol::Raster *raster) throw();
 };
 
 #endif // ServerSession_INCLUDED

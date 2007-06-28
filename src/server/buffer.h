@@ -52,7 +52,7 @@ struct Buffer
 	 * @param[out] buf char* string to fill with current buffer contents
 	 * @param[in] buflen Size of buf
 	 */
-	bool getBuffer(char*& buf, const size_t buflen) const throw();
+	bool getBuffer(char* buf, const size_t buflen) const throw();
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**

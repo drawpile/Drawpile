@@ -69,7 +69,7 @@ void Buffer::resize(size_t nsize, char* nbuf) throw(std::bad_alloc)
 	write(off);
 }
 
-bool Buffer::getBuffer(char*& buf, const size_t buflen) const throw()
+bool Buffer::getBuffer(char* buf, const size_t buflen) const throw()
 {
 	assert(buflen >= left);
 	assert(buf != 0);

@@ -37,7 +37,7 @@ Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
 	#ifdef PERSISTENT_SESSIONS
 	raster(0),
 	raster_cached(false),
-	raster_invalid(false),
+	raster_invalid(true),
 	#endif
 	persist(false)
 {
@@ -62,3 +62,53 @@ bool Session::canJoin() const throw()
 {
 	return ((users.size() + waitingSync.size()) < limit);
 }
+
+#ifdef PERSISTENT_SESSIONS
+void Session::invalidateRaster() throw()
+{
+	#ifndef NDEBUG
+	cout << "? Session raster invalidated." << endl;
+	#endif
+	
+	raster_invalid = true;
+	raster_cached = false;
+	delete raster;
+	raster = 0;
+}
+
+bool Session::appendRaster(protocol::Raster *nraster) throw()
+{
+	assert(nraster != 0);
+	
+	if (!raster or raster->size != nraster->size)
+	{
+		delete raster;
+		if (nraster->length == nraster->size)
+		{
+			raster = new protocol::Raster(0, 0, nsraster->size, nraster->data);
+			nraster->data = 0;
+			return true;
+		}
+		else
+			raster = new protocol::Raster(0, 0, nsraster->size, new char[nraster->size]);
+	}
+	
+	// nraster offset does not match current raster length
+	if (nraster->offset != raster->length)
+	{
+		cerr << "- Invalid raster offset!" << endl;
+		return false;
+	}
+	
+	if (raster->offset == 0)
+		++syncCounter;
+	
+	memcpy(raster->data+nraster->offset, nraster->data, nraster->length);
+	raster->length += nraster->length;
+	
+	if (raster->length == raster->size)
+		--syncCounter
+	
+	return true;
+}
+#endif

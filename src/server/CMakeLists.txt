@@ -71,6 +71,10 @@ if ( HAVE_SENDMSG )
 	endif ( HAVE_RECVMSG )
 endif ( HAVE_SENDMSG )
 
+if ( PERSISTENT )
+	set ( PERSISTENT_SESSIONS ON )
+endif ( PERSISTENT )
+
 # config
 
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
