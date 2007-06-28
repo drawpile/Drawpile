@@ -16,16 +16,20 @@
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
+#include "config.h"
+
 #include "types.h"
 #include "array.h" // Array<>
 
 #include <list> // std::list
 #include <map> // std::map
 
+#ifdef PERSISTENT_SESSIONS
 namespace protocol
 {
 	struct Raster;
 }
+#endif
 
 struct LayerData;
 struct User;
@@ -47,7 +51,7 @@ struct Session
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
 		uint _width, uint _height, uint _level, Array<char>& _title) throw();
 	
-	#ifndef NDEBUG
+	#ifdef PERSISTENT_SESSIONS
 	//! Destructor
 	~Session() throw();
 	#endif
@@ -104,10 +108,7 @@ struct Session
 	protocol::Raster *raster;
 	
 	//! Raster cached
-	bool raster_cached;
-	
-	//! Raster was invalidated
-	bool raster_invalid;
+	bool raster_valid;
 	#endif
 	
 	//! Session should persist
@@ -118,11 +119,13 @@ struct Session
 	//! Test if session can be joined
 	bool canJoin() const throw();
 	
+	#ifdef PERSISTENT_SESSIONS
 	//! Invalidate currently cached raster
 	void invalidateRaster() throw();
 	
 	//! Append raster message to current cached raster
 	bool appendRaster(protocol::Raster *raster) throw();
+	#endif
 };
 
 #endif // ServerSession_INCLUDED

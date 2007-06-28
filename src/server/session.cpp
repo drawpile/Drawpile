@@ -17,6 +17,9 @@
 
 #include "layer_data.h" // LayerData
 #include "../shared/protocol.flags.h" // protocol::session::~
+#ifdef PERSISTENT_SESSIONS
+	#include "../shared/protocol.h"
+#endif
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -36,8 +39,7 @@ Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
 	locked(false),
 	#ifdef PERSISTENT_SESSIONS
 	raster(0),
-	raster_cached(false),
-	raster_invalid(true),
+	raster_valid(false),
 	#endif
 	persist(false)
 {
@@ -46,10 +48,13 @@ Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
 	#endif
 }
 
-#ifndef NDEBUG
+#ifdef PERSISTENT_SESSIONS
 Session::~Session() throw()
 {
+	#ifndef NDEBUG
 	std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
+	#endif
+	delete raster;
 }
 #endif
 
@@ -70,10 +75,8 @@ void Session::invalidateRaster() throw()
 	cout << "? Session raster invalidated." << endl;
 	#endif
 	
-	raster_invalid = true;
-	raster_cached = false;
-	delete raster;
-	raster = 0;
+	raster_valid = false;
+	raster->length = 0;
 }
 
 bool Session::appendRaster(protocol::Raster *nraster) throw()
@@ -85,18 +88,20 @@ bool Session::appendRaster(protocol::Raster *nraster) throw()
 		delete raster;
 		if (nraster->length == nraster->size)
 		{
-			raster = new protocol::Raster(0, 0, nsraster->size, nraster->data);
+			raster = new protocol::Raster(0, 0, nraster->size, nraster->data);
 			nraster->data = 0;
 			return true;
 		}
 		else
-			raster = new protocol::Raster(0, 0, nsraster->size, new char[nraster->size]);
+			raster = new protocol::Raster(0, 0, nraster->size, new char[nraster->size]);
 	}
 	
 	// nraster offset does not match current raster length
 	if (nraster->offset != raster->length)
 	{
+		#ifndef NDEBUG
 		cerr << "- Invalid raster offset!" << endl;
+		#endif
 		return false;
 	}
 	
@@ -107,7 +112,10 @@ bool Session::appendRaster(protocol::Raster *nraster) throw()
 	raster->length += nraster->length;
 	
 	if (raster->length == raster->size)
-		--syncCounter
+	{
+		--syncCounter;
+		raster_valid = true;
+	}
 	
 	return true;
 }

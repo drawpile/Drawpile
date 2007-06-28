@@ -500,7 +500,6 @@ void Server::uProcessData(User*& usr) throw()
 			usr->inMsg = protocol::getMessage(usr->input.rpos[0]);
 			if (!usr->inMsg)
 			{
-				// unknown message type
 				#ifndef NDEBUG
 				cerr << "- Invalid data from user #" << usr->id << endl;
 				#endif
@@ -527,13 +526,7 @@ void Server::uProcessData(User*& usr) throw()
 		}
 		else
 		{
-			#ifndef NDEBUG
-			const size_t readlen = usr->inMsg->unserialize(usr->input.rpos, cread);
-			assert(readlen == reqlen);
-			usr->input.read( readlen );
-			#else
 			usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
-			#endif
 			
 			if (usr->state == User::Active)
 				uHandleMsg(usr);
@@ -546,12 +539,12 @@ void Server::uProcessData(User*& usr) throw()
 				usr->inMsg = 0;
 			}
 			else // quite dead
-				break;
+				return;
 		}
 	}
 	
-	if (usr) // rewind circular buffer
-		usr->input.rewind();
+	// rewind circular buffer
+	usr->input.rewind();
 }
 
 message_ref Server::msgUserEvent(const User& usr, const octet session_id, const octet event) const throw(std::bad_alloc)
@@ -597,12 +590,10 @@ void Server::uHandleDrawing(User& usr) throw()
 			uRemove(usr_ptr, protocol::UserInfo::Dropped);
 		}
 		#endif
-		return;
 	}
-	
-	// user or session is locked
-	if (usr.session->locked or usr.session_data->locked)
+	else if (usr.session->locked or usr.session_data->locked)
 	{
+		// user or session is locked
 		// TODO: Warn user?
 		#ifndef NDEBUG
 		if (usr.strokes == 1)
@@ -793,7 +784,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			{
 				Session *session = sdata->session;
 				#ifdef PERSISTENT_SESSIONS
-				if (session->persist and session->raster_invalid and session->users.size() == 1)
+				if (session->persist and !session->raster_valid and session->users.size() == 1)
 				{
 					uQueueMsg(*usr, msgError(session->id, protocol::error::RequestIgnored));
 					message_ref ref(new protocol::Synchronize);
@@ -1061,115 +1052,49 @@ void Server::uTunnelRaster(User& usr) throw()
 	SessionData *sdata = usr.getSession(raster->session_id);
 	if (sdata == 0)
 	{
+		// raster data for unsubscribed session
 		#ifndef NDEBUG
 		cerr << "- Raster for unsubscribed session #"
 			<< static_cast<uint>(raster->session_id)
-			<< ", from user #" << usr.id << endl;
+			<< " from user #" << usr.id << endl;
 		#endif
 		
-		goto lCancelRaster;
+		if (!last) 
+		{
+			message_ref cancel_ref(new protocol::Cancel);
+			cancel_ref->session_id = raster->session_id;
+			uQueueMsg(usr, cancel_ref);
+		}
+		return;
 	}
-	Session *session = sdata->session;
 	
-	if (session->users.size() > 1)
-		goto lTunnel;
+	// ACK raster
+	uQueueMsg(usr, msgAck(usr.inMsg->session_id, protocol::Message::Raster));
 	
-	#ifdef PERSISTENT_SESSIONS
-	session->appendRaster(raster);
-	return;
-	#endif
-	
-	lCancelRaster:
-	if (!last) 
-	{
-		message_ref cancel_ref(new protocol::Cancel);
-		cancel_ref->session_id = raster->session_id;
-		uQueueMsg(usr, cancel_ref);
-	}
-	return;
-	
-	lTunnel: // get users
-	const std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
+	std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
 	if (ft.first == ft.second)
-	{
+	{ // no target users
 		#ifdef PERSISTENT_SESSIONS
-		if (session->persist and !session->raster_cached)
+		sdata->session->appendRaster(raster);
+		
+		if (last)
 		{
-			#ifndef NDEBUG
-			cout << "? Caching raster." << endl;
-			#endif
-			
-			protocol::Raster *& sras = session->raster;
-			if (sras == 0)
-			{
-				session->raster_invalid = false;
-				sras = new protocol::Raster(0, raster->length, raster->size, 0);
-				if (sras->length < sras->size)
-				{
-					sras->data = new char[sras->size];
-					memcpy(sras->data, raster->data, raster->length);
-				}
-				else
-				{
-					sras->data = raster->data;
-					raster->data = 0;
-				}
-			}
-			else
-			{
-				assert(data->session->raster_invalid == false);
-				assert(raster->size == sras->size);
-				assert(raster->offset + raster->length <= sras->size);
-				
-				memcpy(sras->data+raster->offset, raster->data, raster->length);
-				sras->length += raster->length;
-			}
-			
-			if (sras->length == sras->size)
-			{
-				session->raster_cached = true;
-				
-				// Detach user from session now
-				uQueueMsg(usr, msgAck(sdata->session_id, protocol::Message::Unsubscribe));
-				uLeaveSession(usr, sdata->id);
-			}
+			// Detach user from session now
+			uQueueMsg(usr, msgAck(raster->session_id, protocol::Message::Unsubscribe));
+			uLeaveSession(usr, sdata->session);
 		}
-		else
-		#endif // PERSISTENT_SESSIONS
-		{
-			#ifndef NDEBUG
-			cerr << "Un-tunneled raster from user #" << usr.id
-				<< ", for session #" << static_cast<uint>(raster->session_id)
-				<< endl;
-			#endif
-			
-			// We assume the raster was for user/s who disappeared
-			// before we could cancel the request.
-			
-			if (!last)
-			{
-				message_ref cancel_ref(new protocol::Cancel);
-				cancel_ref->session_id = raster->session_id;
-				uQueueMsg(usr, cancel_ref);
-			}
-		}
+		#endif
 	}
 	else
 	{
-		// ACK raster
-		uQueueMsg(usr, msgAck(usr.inMsg->session_id, protocol::Message::Raster));
-		
-		tunnel_i ti(ft.first);
 		// Forward raster data to users.
-		
 		message_ref raster_ref(raster);
-		
 		usr.inMsg = 0; // Avoid premature deletion of raster data.
 		
-		for (; ti != ft.second; ++ti)
+		for (; ft.first != ft.second; ++ft.first)
 		{
-			uQueueMsg(*ti->second, raster_ref);
-			if (last) ti->second->syncing = false;
+			uQueueMsg(*ft.first->second, raster_ref);
+			if (last) ft.first->second->syncing = 0;
 		}
 		
 		// Break tunnel/s if that was the last raster piece.
