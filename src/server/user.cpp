@@ -78,7 +78,10 @@ bool User::makeActive(octet session_id) throw()
 		return true;
 	}
 	else
+	{
+		session = 0;
 		return false;
+	}
 }
 
 SessionData* User::getSession(octet session_id) throw()

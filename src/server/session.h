@@ -82,8 +82,10 @@ struct Session
 	//! Get session flags
 	octet getFlags() const throw();
 	
+	#ifdef LAYER_SUPPORT
 	//! Layer identifier to layer data map
 	std::map<octet, LayerData> layers;
+	#endif
 	
 	//! Subscribed users
 	std::map<octet, User*> users;

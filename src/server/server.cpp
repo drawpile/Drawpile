@@ -752,10 +752,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			usr->inMsg = 0;
 		}
 		else
-		{
 			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
-			usr->session = 0;
-		}
 		break;
 	case protocol::Message::UserInfo:
 		// TODO?
@@ -1813,6 +1810,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 	}
 }
 
+#ifdef LAYER_SUPPORT
 void Server::uLayerEvent(User*& usr) throw()
 {
 	assert(usr != 0);
@@ -1873,6 +1871,7 @@ void Server::uLayerEvent(User*& usr) throw()
 	Propagate(*session, message_ref(&levent), (usr->c_acks ? usr : 0));
 	usr->inMsg = 0;
 }
+#endif
 
 // Calls uQueueMsg
 void Server::Propagate(const Session& session, message_ref msg, User* source) throw()

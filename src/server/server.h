@@ -345,11 +345,13 @@ protected:
 	 */
 	void uLoginInfo(User& usr) throw();
 	
+	#ifdef LAYER_SUPPORT
 	//! Handle layer event
 	/**
 	 * @param[in,out] usr User whose layer event to handle
 	 */
 	void uLayerEvent(User*& usr) throw();
+	#endif
 	
 	//! Send message to all users in session
 	/**
