@@ -779,8 +779,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
-				message_ref pmsg(usr->inMsg);
-				Propagate(*sdata->session, pmsg, (usr->c_acks ? usr : 0));
+				Propagate(*sdata->session, message_ref(usr->inMsg), (usr->c_acks ? usr : 0));
 				usr->inMsg = 0;
 			}
 		}
@@ -1209,8 +1208,7 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 			{
 				Propagate(*session, message_ref(&event));
 				usr->inMsg = 0;
-				User &usr_ref = *sui->second;
-				uLeaveSession(usr_ref, session, protocol::UserInfo::Kicked);
+				uLeaveSession(*sui->second, session, protocol::UserInfo::Kicked);
 			}
 		}
 		break;
@@ -1487,16 +1485,18 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 			}
 			
 			// tell users session was lost
-			message_ref err = msgError(session->id, protocol::error::SessionLost);
+			message_ref err(msgError(session->id, protocol::error::SessionLost));
 			Propagate(*session, err, 0);
+			User *usr_ptr;
 			for (userlist_i wui(session->waitingSync.begin()); wui != session->waitingSync.end(); ++wui)
 			{
-				uQueueMsg(**wui, err);
+				usr_ptr = *wui;
+				uQueueMsg(*usr_ptr, err);
+				usr_ptr->syncing = protocol::Global;
 			}
 			
 			// clean session users
 			session_usr_const_i sui(session->users.begin());
-			User *usr_ptr;
 			for (; sui != session->users.end(); ++sui)
 			{
 				usr_ptr = sui->second;
