@@ -14,8 +14,8 @@ set (
 )
 
 if ( RELEASE )
-	generate_all_cpp ( "${SHR_SOURCES}" )
-	set ( SHR_SOURCES auto_all.cpp )
+	InSourceDir ( SHR_SOURCES ${SHR_SOURCES} )
+	generate_all_cpp ( SHR_SOURCES ${SHR_SOURCES} )
 endif ( RELEASE )
 
 add_library (

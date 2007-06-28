@@ -94,8 +94,8 @@ set (
 )
 
 if ( RELEASE )
-	generate_all_cpp ( "${EV_SOURCES}" )
-	set ( EV_SOURCES auto_all.cpp )
+	InSourceDir ( EV_SOURCES ${EV_SOURCES} )
+	generate_all_cpp ( EV_SOURCES ${EV_SOURCES} )
 endif ( RELEASE )
 
 add_library (

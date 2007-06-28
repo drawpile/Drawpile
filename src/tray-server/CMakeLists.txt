@@ -40,9 +40,10 @@ Qt4_wrap_CPP (
 	configdialog.h
 )
 
-Qt4_automoc ( ${MOC_Sources} )
+#Qt4_automoc ( ${MOC_Sources} )
 Qt4_add_resources ( QtResource systray.qrc )
 
+add_definitions(${QT_DEFINITIONS})
 if ( NOT DEBUG )
 	add_definitions( -DQT_NO_DEBUG )
 	add_definitions( -DNDEBUG )
@@ -55,24 +56,23 @@ if ( WIN32 )
 	if ( NOT DEBUG )
 		set ( EXETYPE WIN32 )
 	endif ( NOT DEBUG )
-	
-	### generate resource file .o = ${WIN32RES}
-	generate_win32_resource()
 endif ( WIN32 )
 
 if ( RELEASE )
-	generate_all_cpp ( "${SSOURCES}" )
-	set ( SSOURCES auto_all.cpp )
+	InSourceDir ( SSOURCES ${SSOURCES} )
+	generate_all_cpp ( SSOURCES ${SSOURCES} )
 endif ( RELEASE )
+
+generate_win32_resource( Win32Resource )
 
 add_executable (
 	${INTERNALNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
-	${MOC_Sources}
 	${SSOURCES}
+	${MOC_Sources}
+	${Win32Resource}
 	${QtResource}
-	${WIN32RES}
 )
 
 target_link_libraries ( ${INTERNALNAME} ${QT_LIBRARIES} )

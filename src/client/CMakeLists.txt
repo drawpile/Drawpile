@@ -53,7 +53,7 @@ set (
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp 
+	settingsdialog.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
@@ -74,10 +74,12 @@ Qt4_add_resources ( QtResource ui/resources.qrc )
 
 # Qt4 MOC
 
-Qt4_wrap_CPP ( MOC_Sources ${HEADERS} )
-Qt4_automoc ( ${MOC_Sources} ) # ?
+Qt4_wrap_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
+#Qt4_automoc ( ${MOC_Sources} ) # moc_*.cxx files ??
 
 # non-qt4 stuff
+
+add_definitions(${QT_DEFINITIONS})
 
 if (NOT DEBUG)
 	add_definitions(-DQT_NO_DEBUG)
@@ -86,7 +88,6 @@ if (NOT DEBUG)
 endif ( NOT DEBUG )
 
 set ( EXETYPE "" )
-
 set ( RES "" )
 if ( WIN32 )
 	link_libraries ( ws2_32 )
@@ -94,31 +95,29 @@ if ( WIN32 )
 		set ( EXETYPE WIN32 )
 	endif ( NOT DEBUG )
 	
-	### generate resource file .o = ${WIN32RES}
-	generate_win32_resource()
+	generate_win32_resource( Win32Resource )
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
 
 if ( RELEASE )
-	generate_all_cpp ( "${SOURCES}" )
-	set ( SOURCES auto_all.cpp )
+	InSourceDir ( SOURCES ${SOURCES} )
+	generate_all_cpp ( SOURCES ${SOURCES} )
+	#InBuildDir ( MOC_Sources ${MOC_Sources} )
+	#generate_all_cpp ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
+
+link_libraries ( ${QT_LIBRARIES} )
 
 add_executable (
 	${INTERNALNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
-	${UI_Headers} # required here for ui_*.h generation
-	${MOC_Sources}
 	${SOURCES}
 	${QtResource}
-	${WIN32RES}
-)
-
-target_link_libraries(
-	drawpile
-	${QT_LIBRARIES}
+	${Win32Resource}
+	${MOC_Sources}
+	${UI_Headers} # required here for ui_*.h generation
 )
 
 set_target_properties (

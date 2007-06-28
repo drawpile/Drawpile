@@ -80,14 +80,8 @@ endif ( PERSISTENT )
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_SRVCONFIG )
 
-set ( WIN32RES "" )
 if ( WIN32 )
 	link_libraries ( ws2_32 )
-	
-	if ( SERVER )
-		### generate resource file .o = ${WIN32RES}
-		generate_win32_resource()
-	endif ( SERVER )
 endif ( WIN32 )
 
 add_subdirectory ( ev/ ) # events lib
@@ -103,13 +97,12 @@ if ( SERVERLIB )
 		net.cpp
 		address.cpp
 		socket.cpp
-		#dpsrv.cpp
 		server.cpp
 	)
 	
 	if ( RELEASE )
-		generate_all_cpp ( "${SRV_SOURCES}" )
-		set ( SRV_SOURCES auto_all.cpp )
+		InSourceDir( SRV_SOURCES ${SRV_SOURCES} )
+		generate_all_cpp ( SRV_SOURCES ${SRV_SOURCES} )
 	endif ( RELEASE )
 	
 	# Create library
@@ -140,11 +133,13 @@ if ( SERVER )
 		strip_exe ( ${INTERNALNAME} )
 	endif ( NOT DEBUG )
 	
+	generate_win32_resource( Win32Resource )
+	
 	add_executable (
 		${INTERNALNAME}
 		MACOSX_BUNDLE
 		dpsrv.cpp
-		${WIN32RES}
+		${Win32Resource}
 	)
 	
 	add_dependencies ( drawpile-srv dpserverlib eventslib libdrawpile )

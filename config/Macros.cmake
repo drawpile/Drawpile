@@ -18,13 +18,10 @@ macro ( strip_exe target )
 	endif ( STRIP_CMD )
 endmacro ( strip_exe target )
 
-macro ( generate_win32_resource )
+macro ( generate_win32_resource resfile )
 	if ( WIN32 )
-		set ( ResourceFile win32resource.rc )
-		set ( win32RC ${CMAKE_CURRENT_BINARY_DIR}/${ResourceFile} )
-		if ( EXISTS ${win32RC} )
-			# do nothing
-		else ( EXISTS ${win32RC} )
+		set ( win32RC ${CMAKE_CURRENT_BINARY_DIR}/win32resource.rc )
+		if ( ${CMAKE_CURRENT_LIST_FILE} IS_NEWER_THAN ${win32RC} )
 			file ( WRITE ${win32RC} "#include <winver.h>\n\n" )
 			file ( APPEND ${win32RC} "VS_VERSION_INFO VERSIONINFO\n" )
 			file ( APPEND ${win32RC} "\tFILEVERSION ${VERSION_MAJOR},${VERSION_MINOR},${VERSION_BUG},0\n" )
@@ -52,21 +49,54 @@ macro ( generate_win32_resource )
 			file ( APPEND ${win32RC} "\tBLOCK \"VarFileInfo\"\n\tBEGIN\n" )
 			file ( APPEND ${win32RC} "\t\tVALUE \"Translation\", 0x409, 1252\n" )
 			file ( APPEND ${win32RC} "\tEND\nEND\n" )
-		endif ( EXISTS ${win32RC} )
+		endif ( ${CMAKE_CURRENT_LIST_FILE} IS_NEWER_THAN ${win32RC} )
 		
-		set ( WIN32RES ${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj )
+		set ( resfile ${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj )
 		
 		add_custom_command(
-			OUTPUT ${WIN32RES}
-			COMMAND windres ${win32RC} ${WIN32RES}
+			OUTPUT ${resfile}
+			COMMAND windres ${win32RC} ${resfile}
+			DEPENDS ${win32RC}
 		)
 	endif ( WIN32 )
 endmacro ( generate_win32_resource )
 
-macro ( generate_all_cpp SRC_FILES )
-	set ( ALLCPP auto_all.cpp )
-	file ( WRITE ${ALLCPP} "// Automatically generated\n\n" )
-	FOREACH ( var ${SRC_FILES} )
-		file ( APPEND ${ALLCPP} "#include \"${var}\"\n" )
-	ENDFOREACH ( var )
-endmacro ( generate_all_cpp files )
+set ( __GENALLDIR "" )
+set ( __GENALLNUM 1 )
+
+macro ( generate_all_cpp OUTFILE )
+	if ( __GENALLDIR STREQUAL CMAKE_CURRENT_BINARY_DIR )
+		MATH ( EXPR __GENALLNUM "${__GENALLNUM} + 1" )
+	else ( __GENALLDIR STREQUAL CMAKE_CURRENT_BINARY_DIR )
+		set ( __GENALLNUM 1 )
+	endif ( __GENALLDIR STREQUAL CMAKE_CURRENT_BINARY_DIR )
+	
+	set ( allcpp ${CMAKE_CURRENT_BINARY_DIR}/__auto_all${__GENALLNUM}.cpp )
+	set ( __GENALLDIR ${CMAKE_CURRENT_BINARY_DIR} )
+	
+	file ( WRITE ${allcpp} "// Automatically generated\n\n" )
+	foreach (it ${ARGN})
+		file ( APPEND "${allcpp}" "#include \"${it}\"\n" )
+		MACRO_ADD_FILE_DEPENDENCIES( ${${OUTFILE}} ${it} )
+	endforeach ( it )
+	
+	set ( ${OUTFILE} ${allcpp} )
+endmacro ( generate_all_cpp OUTFILE )
+
+macro ( InSourceDir nFiles )
+	set ( filelist )
+	foreach (it ${ARGN})
+		list( APPEND filelist ${CMAKE_CURRENT_SOURCE_DIR}/${it} )
+		MACRO_ADD_FILE_DEPENDENCIES( ${${nFiles}} ${CMAKE_CURRENT_SOURCE_DIR}/${it} )
+	endforeach ( it )
+	set ( ${nFiles} ${filelist} )
+endmacro ( InSourceDir nFiles )
+
+macro ( InBuildDir nFiles )
+	set ( filelist )
+	foreach (it ${ARGN})
+		list ( APPEND filelist ${CMAKE_CURRENT_BINARY_DIR}/${it} )
+		MACRO_ADD_FILE_DEPENDENCIES( ${${nFiles}} ${CMAKE_CURRENT_BINARY_DIR}/${it} )
+	endforeach ( it )
+	set ( ${nFiles} ${filelist} )
+endmacro ( InBuildDir files )
