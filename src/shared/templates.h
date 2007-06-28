@@ -26,8 +26,8 @@
 
 *******************************************************************************/
 
-#ifndef Shared_Templates_INCLUDED
-#define Shared_Templates_INCLUDED
+#ifndef _DPSharedTemplates_INCLUDED
+#define _DPSharedTemplates_INCLUDED
 
 #include "../config.h"
 
@@ -52,6 +52,10 @@ T& bswap(T& x) throw()
 }
 
 //! Const variant of bswap<> template
+/**
+ * Same as bswap<> except it doesn't modify the original value.
+ * Creates internal temporary for the purpose of byte swapping.
+ */
 template <typename T>
 T bswap_const(const T& x) throw()
 {
@@ -229,4 +233,4 @@ T round(const T& num) throw()
 	return ((num - fl) < .5 ? fl : fl + 1);
 }
 
-#endif
+#endif // _DPSharedTemplates_INCLUDED

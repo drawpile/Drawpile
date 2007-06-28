@@ -145,7 +145,7 @@ enum requirements
 	Distributed = 0x40u
 };
 
-} // namespace operation
+} // namespace requirements
 
 //! User mode flags.
 /**

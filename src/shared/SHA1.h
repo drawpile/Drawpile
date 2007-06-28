@@ -1,17 +1,15 @@
 /******************************************************************************
 
-   Modified by M.K.A. <wyrmchild@sourceforge.net> - 2006-12-12
+   by M.K.A. <wyrmchild@users.sourceforge.net>
+   based on code by Dominik Reichl <dominik.reichl@t-online.de>
+   http://www.dominik-reichl.de/
 
    100% free public domain implementation of the SHA-1 algorithm
-   by Dominik Reichl <dominik.reichl@t-online.de>
-   Web: http://www.dominik-reichl.de/
-
-   Version 1.6 - 2005-02-07
 
 ******************************************************************************/
 
-#ifndef SHA1_INCLUDED
-#define SHA1_INCLUDED
+#ifndef _SHA1_INCLUDED
+#define _SHA1_INCLUDED
 
 #include "config.h"
 
@@ -33,7 +31,7 @@
  * char digest[41] = {0};
  * hash.HexDigest(digest);
  *
- * printf("digest: %40x\n", digest);
+ * printf("digest: %40s\n", digest);
  * @endcode
  */
 class SHA1
@@ -83,7 +81,9 @@ public:
 	
 	//! Get hex digest
 	/**
-	 * @param string Target buffer for hex digest, needs to be at least 40 bytes long
+	 * @param[out] string Target buffer for hex digest, needs to be at least 40 bytes long.
+	 *  Will contain hex string depicting the binary digest, all characters run-in and alphabetic
+	 *  characters in upper-case.
 	 */
 	void HexDigest(char *string) const throw();
 	
@@ -117,4 +117,4 @@ private:
 	#endif
 };
 
-#endif // SHA1_INCLUDEd
+#endif // _SHA1_INCLUDED
