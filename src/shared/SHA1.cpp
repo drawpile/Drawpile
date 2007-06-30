@@ -1,15 +1,10 @@
 /******************************************************************************
 
-   Modified by M.K.A. <wyrmchild@users.sourceforge.net> - 2006-12-12
-   Removed rest of the macros in 2007-01-12
-   
-   ---
-   
-   100% free public domain implementation of the SHA-1 algorithm
-   by Dominik Reichl <dominik.reichl@t-online.de>
-   Web: http://www.dominik-reichl.de/
-   
-   Version 1.6 - 2005-02-07
+  by M.K.A. <wyrmchild@users.sourceforge.net>
+  based on code by Dominik Reichl <dominik.reichl@t-online.de>
+  http://www.dominik-reichl.de/
+  
+  100% free public domain implementation of the SHA-1 algorithm   
 
 ******************************************************************************/
 
@@ -188,36 +183,26 @@ void SHA1::Final() throw()
 {
 	assert(not finalized);
 	
-	// pad to even 512 bits (64 bytes) with 0, first bit after the actual message
-	// must be set to 1
-	static const uchar padding[64] = {0x80, 0};
-	
-	uint32_t left = m_size % 512;
-	
 	#ifdef HAVE_OPENSSL
 	SHA1_Final(m_digest, &context);
 	#else
-	
-	Update((const uchar *)"\200", 1);
-	
-	while ((m_count & 504) != 448)
-		Update((const uchar *)"\0", 1);
-	
-	// * last 64 bits (8 bytes) must represent the length of the original data.
 	union {
 		uint64_t ll;
 		uint8_t c[8];
-	} swb;
-	swb.ll = m_size;
+	} swb = {m_size << 3};
 	
 	#ifndef IS_BIG_ENDIAN
 	uchar finalcount[8] = {swb.c[7],swb.c[6],swb.c[5],swb.c[4],swb.c[3],swb.c[2],swb.c[1],swb.c[0]};
 	memcpy(&swb.ll, finalcount, sizeof(swb.ll));
 	#endif
 	
-	Update(swb.c, 8);
+	Update((const uchar *)"\200", 1);
 	
-	// do something?
+	while ((m_count & 504) != 448)
+		Update((const uchar *)"\0", 1);
+	
+	Update(swb.c, 8); // Cause a SHA1Transform()
+	
 	bswap(m_state[0]);
 	bswap(m_state[1]);
 	bswap(m_state[2]);
