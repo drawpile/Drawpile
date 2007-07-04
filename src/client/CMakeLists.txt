@@ -102,9 +102,9 @@ link_libraries( libdrawpile ) # DP shared library
 
 if ( RELEASE )
 	InSourceDir ( SOURCES ${SOURCES} )
-	generate_all_cpp ( SOURCES ${SOURCES} )
+	generate_final ( SOURCES ${SOURCES} )
 	#InBuildDir ( MOC_Sources ${MOC_Sources} )
-	#generate_all_cpp ( MOC_Sources ${MOC_Sources} )
+	#generate_final ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
 
 link_libraries ( ${QT_LIBRARIES} )

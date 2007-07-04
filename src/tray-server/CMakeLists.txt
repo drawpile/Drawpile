@@ -60,7 +60,7 @@ endif ( WIN32 )
 
 if ( RELEASE )
 	InSourceDir ( SSOURCES ${SSOURCES} )
-	generate_all_cpp ( SSOURCES ${SSOURCES} )
+	generate_final ( SSOURCES ${SSOURCES} )
 endif ( RELEASE )
 
 generate_win32_resource( Win32Resource )

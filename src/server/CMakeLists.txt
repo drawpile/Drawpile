@@ -102,7 +102,7 @@ if ( SERVERLIB )
 	
 	if ( RELEASE )
 		InSourceDir( SRV_SOURCES ${SRV_SOURCES} )
-		generate_all_cpp ( SRV_SOURCES ${SRV_SOURCES} )
+		generate_final ( SRV_SOURCES ${SRV_SOURCES} )
 	endif ( RELEASE )
 	
 	# Create library

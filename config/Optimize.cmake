@@ -137,6 +137,26 @@ else ( UNSAFE_MATH )
 	set ( UNSAFE_MATH_OPT "" )
 endif ( UNSAFE_MATH )
 
+###   TEST PIE and PIC   ###
+
+set ( NOPI_FLAGS "" )
+if ( NOPI )
+	set ( NOPIC "-fno-pic" )
+	set ( NOPIE "-fno-pie" )
+	
+	check_cxx_accepts_flag ( ${NOPIC} ACCEPT_NOPIC )
+	if ( NOT ACCEPT_NOPIC )
+		set ( NOPIC "" )
+	endif (NOT ACCEPT_NOPIC )
+	
+	check_cxx_accepts_flag ( ${NOPIE} ACCEPT_NOPIE )
+	if ( NOT ACCEPT_NOPIE )
+		set ( NOPIE "" )
+	endif (NOT ACCEPT_NOPIE )
+	
+	set ( NOPI_FLAGS "${NOPIC} ${NOPIE}" )
+endif ( NOPI )
+
 ###   TEST -Wall   ###
 
 check_cxx_accepts_flag ( ${WARNALL} ACCEPT_WALL )
@@ -146,6 +166,6 @@ endif ( NOT ACCEPT_WALL )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${REGPARM}" )
+set ( CMAKE_CXX_FLAGS "${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${OPT} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${REGPARM} ${NOPI_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} ${FOMIT} -DNDEBUG" )

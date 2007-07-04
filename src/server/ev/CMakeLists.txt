@@ -95,7 +95,7 @@ set (
 
 if ( RELEASE )
 	InSourceDir ( EV_SOURCES ${EV_SOURCES} )
-	generate_all_cpp ( EV_SOURCES ${EV_SOURCES} )
+	generate_final ( EV_SOURCES ${EV_SOURCES} )
 endif ( RELEASE )
 
 add_library (
@@ -107,8 +107,8 @@ set_target_properties (
 	${LIBNAME}
 	PROPERTIES
 	OUTPUT_NAME events
-	VERSION 0.0.1
-	SOVERSION 0.0.1
+	VERSION 0.1.0
+	SOVERSION 0.1.0
 	PROJECT_LABEL eventslibrary
 )
 

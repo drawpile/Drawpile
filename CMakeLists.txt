@@ -35,16 +35,31 @@ option ( OPTIMIZE "Apply several optimization flags" ON )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
 option ( SHARED "Build shared library" OFF )
 
+option ( UBINARY "Build universal binary (Mac-only)" ON )
+
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
 option ( ASM "Use hand-written assembly" OFF )
 
 option ( OPENSSL "Use OpenSSL if present" OFF )
 
+option ( PERSISTENT "Enable persistent session support" OFF )
+
 option ( RELEASE "" OFF )
+
+option ( NOPI "Disable position-independent code and executables" OFF )
 
 option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
 option ( OPTIMIZEMORE "Apply some questionable optimizations" ON )
+
+# detect Mac OS X
+
+IF ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
+	set ( MACOSX ON )
+	# lipo is used for generating universal binaries if gcc can't
+	find_file ( LIPO_CMD lipo )
+	set ( CMAKE_OSX_ARCHITECTURES "ppc;i386" )
+endif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
 
 # Enable dependencies
 
