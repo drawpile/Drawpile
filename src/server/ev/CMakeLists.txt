@@ -113,5 +113,5 @@ set_target_properties (
 )
 
 if ( SHARED )
-	install ( TARGETS ${INTERNALNAME} LIBRARY DESTINATION lib ) # ?
+	install ( TARGETS ${LIBNAME} LIBRARY DESTINATION lib ) # ?
 endif ( SHARED )
