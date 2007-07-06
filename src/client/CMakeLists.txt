@@ -1,20 +1,6 @@
 # client
 
-set ( FULLNAME "DrawPile client" )
-set ( INTERNALNAME ${PROJECT_NAME} )
-set ( COPYRIGHT "Copyright (C) 2006,2007 Calle Laakkonen" )
-set ( DESCRIPTION "DrawPile client" )
-set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
-
-set ( VERSION_MAJOR 0 )
-set ( VERSION_MINOR 5 )
-set ( VERSION_BUG 0 )
-
-if ( WIN32 )
-	set ( ORIGFILENAME "${INTERNALNAME}.exe" )
-else ( WIN32 )
-	set ( ORIGFILENAME "${INTERNALNAME}" )
-endif ( WIN32 )
+set ( CLIENTNAME ${PROJECT_NAME} )
 
 # Qt stuff
 include ( ${QT_USE_FILE} )
@@ -95,7 +81,15 @@ if ( WIN32 )
 		set ( EXETYPE WIN32 )
 	endif ( NOT DEBUG )
 	
-	generate_win32_resource( Win32Resource )
+	generate_win32_resource (
+		Win32Resource
+		"DrawPile client" # full name
+		${CLIENTNAME} # internal name
+		"DrawPile client" 
+		"http://drawpile.sourceforge.net/"
+		"2006,2007 Calle Laakkonen"
+		0 5 0
+	)
 endif ( WIN32 )
 
 link_libraries( libdrawpile ) # DP shared library
@@ -110,7 +104,7 @@ endif ( RELEASE )
 link_libraries ( ${QT_LIBRARIES} )
 
 add_executable (
-	${INTERNALNAME}
+	${CLIENTNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${SOURCES}
@@ -127,7 +121,7 @@ set_target_properties (
 	PROJECT_LABEL drawpile-client
 )
 
-install ( TARGETS ${INTERNALNAME} RUNTIME DESTINATION bin )
+install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
 
 if (NOT DEBUG)
 	strip_exe ( drawpile )

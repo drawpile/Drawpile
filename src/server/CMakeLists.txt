@@ -1,22 +1,6 @@
 # src/server/
 
-if ( SERVER )
-	set ( FULLNAME "DrawPile server" )
-	set ( INTERNALNAME "${PROJECT_NAME}-srv" )
-	set ( COPYRIGHT "Copyright (C) 2006,2007 M.K.A." )
-	set ( DESCRIPTION ${FULLNAME} )
-	set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
-	
-	set ( VERSION_MAJOR 0 )
-	set ( VERSION_MINOR 5 )
-	set ( VERSION_BUG 0 )
-	
-	if ( WIN32 )
-		set ( ORIGFILENAME "${INTERNALNAME}.exe" )
-	else ( WIN32 )
-		set ( ORIGFILENAME "${INTERNALNAME}" )
-	endif ( WIN32 )
-endif ( SERVER )
+set (SERVERNAME "${PROJECT_NAME}-srv" )
 
 # include some stuff
 
@@ -130,13 +114,21 @@ endif ( SERVERLIB )
 
 if ( SERVER )
 	if ( NOT DEBUG )
-		strip_exe ( ${INTERNALNAME} )
+		strip_exe ( ${SERVERNAME} )
 	endif ( NOT DEBUG )
 	
-	generate_win32_resource( Win32Resource )
+	generate_win32_resource (
+		Win32Resource
+		"DrawPile server" # full name
+		${SERVERNAME} # internal name
+		"DrawPile server"  # comment
+		"http://drawpile.sourceforge.net/" # description
+		"2006,2007 M.K.A." # copyright holder
+		0 5 0 # version
+	)
 	
 	add_executable (
-		${INTERNALNAME}
+		${SERVERNAME}
 		MACOSX_BUNDLE
 		dpsrv.cpp
 		${Win32Resource}
@@ -145,22 +137,22 @@ if ( SERVER )
 	add_dependencies ( drawpile-srv dpserverlib eventslib libdrawpile )
 	
 	set_target_properties (
-		${INTERNALNAME}
+		${SERVERNAME}
 		PROPERTIES
 		VERSION 0.5.0
 		PROJECT_LABEL drawpile-server
 	)
 	
 	target_link_libraries(
-		${INTERNALNAME}
+		${SERVERNAME}
 		dpserverlib # DP shared library
 		libdrawpile # DP shared library
 		eventslib # EV lib
 	)
 	
-	install ( TARGETS ${INTERNALNAME} RUNTIME DESTINATION bin )
+	install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
 	
 	if ( NOT DEBUG )
-		strip_exe ( ${INTERNALNAME} )
+		strip_exe ( ${SERVERNAME} )
 	endif ( NOT DEBUG )
 endif ( SERVER )

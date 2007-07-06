@@ -1,20 +1,6 @@
 # tray server
 
-set ( FULLNAME "DrawPile Tray Server" )
-set ( INTERNALNAME "drawpile-tray-srv" )
-set ( COPYRIGHT "Copyright (C) 2007 M.K.A." )
-set ( DESCRIPTION ${FULLNAME} )
-set ( FILE_COMMENT "http://drawpile.sourceforge.net/" )
-
-set ( VERSION_MAJOR 0 )
-set ( VERSION_MINOR 1 )
-set ( VERSION_BUG 0 )
-
-if ( WIN32 )
-	set ( ORIGFILENAME "${INTERNALNAME}.exe" )
-else ( WIN32 )
-	set ( ORIGFILENAME "${INTERNALNAME}" )
-endif ( WIN32 )
+set (TRAYSERVERNAME "drawpile-tray-srv" )
 
 # Qt stuff
 include ( ${QT_USE_FILE} )
@@ -63,10 +49,25 @@ if ( RELEASE )
 	generate_final ( SSOURCES ${SSOURCES} )
 endif ( RELEASE )
 
-generate_win32_resource( Win32Resource )
+generate_win32_resource (
+	Win32Resource
+	"DrawPile Tray Server" # full name
+	${TRAYSERVERNAME} # internal name
+	"DrawPile Tray Server"  # comment
+	"http://drawpile.sourceforge.net/" # description
+	"2007 M.K.A." # copyright holder
+	0 1 0 # version
+)
+
+link_libraries (
+	${QT_LIBRARIES}
+	libdrawpile # DP shared library
+	dpserverlib # Server class lib
+	eventslib # Events lib, required by Server class
+)
 
 add_executable (
-	${INTERNALNAME}
+	${TRAYSERVERNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${SSOURCES}
@@ -75,9 +76,4 @@ add_executable (
 	${QtResource}
 )
 
-target_link_libraries ( ${INTERNALNAME} ${QT_LIBRARIES} )
-target_link_libraries ( ${INTERNALNAME} libdrawpile ) # DP shared library
-target_link_libraries ( ${INTERNALNAME} dpserverlib ) # Server class lib
-target_link_libraries ( ${INTERNALNAME} eventslib ) # Events lib, required by Server class
-
-install ( TARGETS ${INTERNALNAME} RUNTIME DESTINATION bin )
+install ( TARGETS ${TRAYSERVERNAME} RUNTIME DESTINATION bin )
