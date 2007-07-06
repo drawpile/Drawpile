@@ -61,9 +61,11 @@ const char Localhost[] = "::1";
  */
 const char Unspecified[] = "::";
 
+//const char Broadcast[] = "FFFF:FFFF:FFFF:FFFF::"; // ?
+
 //! Maximum length of IPv6 address
 /**
- * ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+ * e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
  */
 const uint AddrLength = 39;
 
@@ -75,14 +77,38 @@ namespace IPv4 {
 //! Localhost address
 const char Localhost[] = "127.0.0.1";
 
+//! Unspecified address as uint
+const uint LocalhostAddress = 0x7f000001;
+
 //! Unspecified address
 const char Unspecified[] = "0.0.0.0";
+
+//! Unspecified address as uint
+const uint UnspecifiedAddress = 0x00000000;
 
 //! Maximum length of IPv4 address
 /**
  * 123.456.789.012
  */
 const uint AddrLength = 16;
+
+//! Broadcast address
+const char Broadcast[] = "255.255.255.255";
+
+//! Broadcast address as uint
+const uint BroadcastAddress = 0xffffffff;
+
+//! 8 bit host mask (255.0.0.0 = /8)
+const uint HostMask8 = 0xff000000;
+
+//! 16 bit host mask (255.255.0.0 = /16)
+const uint HostMask16 = 0xffff0000;
+
+//! 24 bit host mask (255.255.255.0 = /24)
+const uint HostMask24 = 0xffffff00;
+
+//! 32 bit host mask (255.255.255.255 = /32)
+const uint HostMask32 = 0xffffffff;
 
 } // namespace:IPv4
 
