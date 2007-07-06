@@ -56,6 +56,9 @@ namespace IPv6 {
 const char Localhost[] = "::1";
 
 //! Localhost address as uint[4]
+/**
+ * Uses 128 bit host mask
+ */
 const uint LocalhostAddress[4] = {0,0,0,1};
 
 //! Unspecified address
@@ -88,6 +91,66 @@ const char IPv4Compat[] = "::ffff:";
  */
 const uint IPv4CompatAddress[4] = {0,0,0xffffffff,0};
 
+//! 7 bit host mask
+/**
+ * Used for ULA addresses
+ */
+
+//! 8 bit host mask
+/**
+ * Used for multicast address
+ */
+const uint HostMask8[4] = {0xff000000, 0};
+
+//! 10 bit host mask
+/**
+ * Used for site-local addresses
+ */
+const uint HostMask10[4] = {0xffc00000, 0};
+
+//! 16 bit host mask
+/**
+ * Used for 6to4 addressing
+ */
+const uint HostMask16[4] = {0xffff0000, 0};
+
+//! 64 bit host mask
+/**
+ * Used for link-local addresses
+ */
+const uint HostMask64[4] = {0xffffffff,0xffffffff,0};
+
+//! 96 bit host mask
+/**
+ * Used for IPv4 compatibility addresses
+ */
+const uint HostMask96[4] = {0xffffffff,0xffffffff,0xffffffff,0};
+
+//! 128 bit host mask
+/**
+ * Used for loopback address and the unspecified address
+ */
+const uint HostMask128[4] = {0xffffffff};
+
+//! Multicast address prefix
+const uint MulticastAddress[4] = {0xffff0000, 0};
+
+//! ULA address (Unique Local Address)
+const uint ULAAddress[4] = {0xfc00000,0};
+
+//! Link local address prefix
+/**
+ * Uses 64 bit host mask
+ * Same as IPv4::AutoconfigAddress
+ */
+const uint LinkLocalAddress[4] = {0xfe800000,0};
+
+//! Site local address prefix
+/**
+ * Uses 10 bit host mask
+ */
+const uint SiteLocalAddress[4] = {0xfec00000,0};
+
 } // namespace:IPv6
 
 //! IPv4 related constants
@@ -107,7 +170,7 @@ const uint UnspecifiedAddress = 0;
 
 //! Maximum length of IPv4 address
 /**
- * 123.456.789.012
+ * e.g. 123.231.213.123
  */
 const uint AddrLength = 16;
 
@@ -116,6 +179,12 @@ const char Broadcast[] = "255.255.255.255";
 
 //! Broadcast address as uint
 const uint BroadcastAddress = 0xffffffff;
+
+//! Autoconfiguration address (169.254.0.0/16)
+/**
+ * Uses 16 bit host mask
+ */
+const uint AutoconfigAddress = 0xa9fe0000;
 
 //! 8 bit host mask (255.0.0.0 = /8)
 const uint HostMask8 = 0xff000000;
