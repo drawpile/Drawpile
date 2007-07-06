@@ -55,11 +55,17 @@ namespace IPv6 {
  */
 const char Localhost[] = "::1";
 
+//! Localhost address as uint[4]
+const uint LocalhostAddress[4] = {0,0,0,1};
+
 //! Unspecified address
 /**
  * Equivalent of IPv4 \b 0.0.0.0
  */
 const char Unspecified[] = "::";
+
+//! Unspecified address as uint[4]
+const uint UnspecifiedAddress[4] = {0};
 
 //const char Broadcast[] = "FFFF:FFFF:FFFF:FFFF::"; // ?
 
@@ -68,6 +74,19 @@ const char Unspecified[] = "::";
  * e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
  */
 const uint AddrLength = 39;
+
+//! IPv4 compatibility address
+/**
+ * e.g. IPv6 ::ffff:1.2.3.4 = IPv4 1.2.3.4
+ * more precisely, IPv6 ::ffff:0102:0304
+ */
+const char IPv4Compat[] = "::ffff:";
+
+//! IPv4 compatibility address as uint[4]
+/**
+ * @note Copy the IPv4 address to the last uint
+ */
+const uint IPv4CompatAddress[4] = {0,0,0xffffffff,0};
 
 } // namespace:IPv6
 
@@ -84,7 +103,7 @@ const uint LocalhostAddress = 0x7f000001;
 const char Unspecified[] = "0.0.0.0";
 
 //! Unspecified address as uint
-const uint UnspecifiedAddress = 0x00000000;
+const uint UnspecifiedAddress = 0;
 
 //! Maximum length of IPv4 address
 /**
