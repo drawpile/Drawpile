@@ -2,8 +2,18 @@
 
 \mainpage
 
+DrawPile is a collaborative drawing program, similar to OpenCanvas.
+
+The client uses Qt4 and will be available for (at least) Windows,
+Linux and MacOS. DP server is UI-less and will likely work in wider range of systems.
+There's also the Qt4 variant of server that shows itself as slightly more easily manageable
+tray entry with graphical configuration dialog.
+
 \section references References
 
-\subpage protocol
+- \subpage protocol
+
+\see http://drawpile.sourceforge.net/ DrawPile website
+\see http://sourceforge.net/projects/drawpile DrawPile SF.net project page
 
 */
