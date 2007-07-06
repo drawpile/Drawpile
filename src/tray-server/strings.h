@@ -23,11 +23,15 @@
 
 class QString;
 
+//! Qt String conversion
 namespace convert {
 
 typedef unsigned int uint;
 
+//! Converts QString to UTF-8 char* array
 char* toUTF8(const QString& string, uint& bytes) throw();
+
+//! Converts QString to UTF-16 char* array
 char* toUTF16(const QString& string, uint& bytes) throw();
 
 } // namespace:convert

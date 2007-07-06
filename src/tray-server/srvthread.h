@@ -32,7 +32,9 @@ class ServerThread
 	Q_OBJECT
 	
 public:
+	//! Constructor
 	ServerThread(Server *srv, QObject *parent);
+	//! Destructor
 	~ServerThread();
 	
 public slots:

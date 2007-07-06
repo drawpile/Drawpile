@@ -42,6 +42,7 @@ class ConfigDialog
 	Q_OBJECT
 	
 public:
+	//! Constructor
 	ConfigDialog(Server *srv, QWidget *parent);
 	
 signals:
