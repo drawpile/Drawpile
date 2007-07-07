@@ -68,7 +68,7 @@ void HostState::receiveMessage()
 				session_->select();
 				if(setsessionpassword_.isEmpty()==false) {
 					session_->setPassword(setsessionpassword_);
-					setsessionpassword_ = "";
+					setsessionpassword_.clear();
 				}
 				emit joined(session_->info().id);
 			} else if(msg->type == Message::SessionInfo) {

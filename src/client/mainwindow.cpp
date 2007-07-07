@@ -254,7 +254,7 @@ bool MainWindow::initBoard(const QString& filename)
 void MainWindow::initBoard(const QSize& size, const QColor& color)
 {
 	board_->initBoard(size,color);
-	filename_ = "";
+	filename_.clear();
 	setWindowModified(false);
 	setTitle();
 }
@@ -270,7 +270,7 @@ void MainWindow::initDefaultBoard()
 void MainWindow::initBoard(const QImage& image)
 {
 	board_->initBoard(image);
-	filename_ = "";
+	filename_.clear();
 	setWindowModified(false);
 	setTitle();
 }
@@ -732,15 +732,26 @@ void MainWindow::join()
  */
 void MainWindow::leave()
 {
-	leavebox_->setWindowTitle(sessiontitle_.isEmpty()?tr("Untitled session"):sessiontitle_);
+	QMessageBox *leavebox = new QMessageBox(
+		QMessageBox::Question,
+		sessiontitle_.isEmpty()?tr("Untitled session"):sessiontitle_,
+		tr("Really leave the session?"),
+		QMessageBox::NoButton,
+		this,
+		Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet
+	);
+	leavebox->setAttribute(Qt::WA_DeleteOnClose);
+	leavebox->addButton(tr("Leave"), QMessageBox::YesRole);
+	leavebox->setDefaultButton(
+			leavebox->addButton(tr("Stay"), QMessageBox::NoRole)
+			);
+	connect(leavebox, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
+	
 	if(controller_->isUploading()) {
-		leavebox_->setIcon(QMessageBox::Warning);
-		leavebox_->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
-	} else {
-		leavebox_->setIcon(QMessageBox::Question);
-		leavebox_->setInformativeText(QString());
+		leavebox->setIcon(QMessageBox::Warning);
+		leavebox->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
 	}
-	leavebox_->show();
+	leavebox->exec();
 }
 
 /**
@@ -1004,11 +1015,16 @@ void MainWindow::showErrorMessage(ErrorType type)
  */
 void MainWindow::showErrorMessage(const QString& message, const QString& details)
 {
-	msgbox_->setStandardButtons(QMessageBox::Ok);
-	msgbox_->setIcon(QMessageBox::Warning);
-	msgbox_->setText(message);
-	msgbox_->setDetailedText(details);
-	msgbox_->show();
+	QMessageBox msgbox(
+		QMessageBox::Warning,
+		QString("DrawPile"),
+		message, QMessageBox::Ok,
+		this,
+		Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint
+	);
+	msgbox.setWindowModality(Qt::WindowModal);
+	msgbox.setDetailedText(details);
+	msgbox.show();
 }
 
 /**
@@ -1426,23 +1442,6 @@ void MainWindow::createDialogs()
 {
 	newdlg_ = new dialogs::NewDialog(this);
 	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
-
-	msgbox_ = new QMessageBox(this);
-	msgbox_->setWindowTitle(tr("DrawPile"));
-	msgbox_->setWindowModality(Qt::WindowModal);
-	msgbox_->setWindowFlags(msgbox_->windowFlags() | Qt::Sheet);
-
-	leavebox_ = new QMessageBox(QMessageBox::Question,
-			"",
-			tr("Really leave the session?"),
-                QMessageBox::NoButton,
-                this, Qt::MSWindowsFixedSizeDialogHint|Qt::Sheet);
-
-	leavebox_->addButton(tr("Leave"), QMessageBox::YesRole);
-	leavebox_->setDefaultButton(
-			leavebox_->addButton(tr("Stay"), QMessageBox::NoRole)
-			);
-	connect(leavebox_, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
 
 	logindlg_ = new dialogs::LoginDialog(this);
 }

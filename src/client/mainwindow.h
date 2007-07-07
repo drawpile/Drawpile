@@ -231,8 +231,6 @@ class MainWindow : public QMainWindow {
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
 		dialogs::LoginDialog *logindlg_;
-		QMessageBox *msgbox_;
-		QMessageBox *leavebox_;
 
 		drawingboard::Board *board_;
 		Controller *controller_;
@@ -240,7 +238,7 @@ class MainWindow : public QMainWindow {
 		QString sessiontitle_;
 		QString filename_;
 		QString lastpath_;
-		QString openimagenext_;
+		//QString openimagenext_; // unused
 
 		QAction *new_;
 		QAction *open_;

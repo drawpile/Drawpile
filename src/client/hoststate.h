@@ -77,7 +77,7 @@ class HostState : public QObject {
 				bool allowdraw, bool allowchat);
 
 		//! Try joining automatically
-		void join(const QString& title = "");
+		void join(const QString& title = QString());
 
 		//! Join a specific session
 		void join(int id);
