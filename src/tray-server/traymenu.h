@@ -21,21 +21,18 @@
 #ifndef TrayMenu_INCLUDED
 #define TrayMenu_INCLUDED
 
-#include <QWidget>
 #include <QSystemTrayIcon>
 
-#include "../server/server.h"
-#include "srvthread.h"
-
+class ServerThread;
+class Server;
 class StatusDialog;
 class ConfigDialog;
 
 class QAction;
-class QMenu;
 
 //! Tray Server's main class
 class TrayMenu
-	: public QWidget
+	: public QSystemTrayIcon
 {
 	Q_OBJECT
 	
@@ -44,9 +41,6 @@ public:
 	TrayMenu();
 	
 public slots:
-	//void configClosed();
-	//void statusClosed();
-	
 	void serverStarted();
 	void serverStopped();
 	
@@ -54,11 +48,11 @@ public slots:
 	void statusClosed();
 	
 	//! Show balloon message
-	void showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
+	void showMsg(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
 	
 private slots:
 	//! Set tray icon
-	void setIcon(int index);
+	void setIconIndex(int index);
 	
 	//! Detect double-clicking of tray icon and toggle status window with it
 	void iconActivated(QSystemTrayIcon::ActivationReason reason);
@@ -76,7 +70,7 @@ private slots:
 	void statusOpen();
 	
 	//! Menu 'quit' action
-	void quitApp();
+	void quitAct();
 	
 private:
 	//! Create tray context menu
@@ -93,16 +87,10 @@ private:
 	//! Status dialog
 	StatusDialog *status;
 	
-	//! Action for quit menu item
-	QAction *quitAction;
+	//! Start server action
 	QAction *startAction;
+	//! Stop server action
 	QAction *stopAction;
-	QAction *configureAction;
-	QAction *statusAction;
-	
-	//! Tray icon
-	QSystemTrayIcon *trayIcon;
-	QMenu *menu;
 };
 
 #endif // TrayMenu_INCLUDED

@@ -27,41 +27,37 @@
 #include "statusdialog.h"
 #include "configdialog.h"
 
+#include "../server/server.h"
+#include "srvthread.h"
+
 TrayMenu::TrayMenu()
 	: srvthread(0),
 	srv(new Server),
 	config(0),
 	status(0)
 {
-	trayIcon = new QSystemTrayIcon(this);
-	
 	srvthread = new ServerThread(srv, this);
+	connect(srvthread, SIGNAL(started()), this, SLOT(serverStarted()));
+	connect(srvthread, SIGNAL(finished()), this, SLOT(serverStopped()));
 	
 	createMenu();
 	
-	connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
 		this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 	
-	setIcon(0);
+	setIconIndex(0);
 	
-	QString tooltip_str(QCoreApplication::applicationName());
-	tooltip_str.append(" v").append(trayserver::version);
+	setToolTip(
+		QString("%1 v%2")
+		.arg(QCoreApplication::applicationName())
+		.arg(trayserver::version)
+	);
 	
-	trayIcon->setToolTip(tooltip_str);
-	trayIcon->show();
-	
-	connect(srvthread, SIGNAL(started()), this, SLOT(serverStarted()));
-	connect(srvthread, SIGNAL(started()), config, SLOT(serverStarted()));
-	connect(srvthread, SIGNAL(started()), status, SLOT(serverStarted()));
-	
-	connect(srvthread, SIGNAL(finished()), this, SLOT(serverStopped()));
-	connect(srvthread, SIGNAL(finished()), config, SLOT(serverStopped()));
-	connect(srvthread, SIGNAL(finished()), status, SLOT(serverStopped()));
-	
-	showMessage(QCoreApplication::applicationName(), tr("Server ready for action!"), QSystemTrayIcon::Information);
+	show();
+	showMsg(QCoreApplication::applicationName(), tr("Server ready for action!"), QSystemTrayIcon::Information);
 }
 
-void TrayMenu::setIcon(int index)
+void TrayMenu::setIconIndex(int index)
 {
 	assert(index >= 0 or index <= 1);
 	
@@ -70,7 +66,7 @@ void TrayMenu::setIcon(int index)
 		QIcon(":/icons/online.png")
 	};
 	
-	trayIcon->setIcon(icon[index]);
+	setIcon(icon[index]);
 	
 	//setWindowIcon(icon);
 }
@@ -86,16 +82,16 @@ void TrayMenu::iconActivated(QSystemTrayIcon::ActivationReason reason)
 	}
 }
 
-void TrayMenu::showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon, uint delay)
+void TrayMenu::showMsg(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon, uint delay)
 {
 	#ifdef HAVE_QT43
-	trayIcon->showMessage(title, message, icon, delay);
+	showMessage(title, message, icon, delay);
 	#endif
 }
 
 void TrayMenu::createMenu()
 {
-	menu = new QMenu(this);
+	QMenu *menu = new QMenu;
 	
 	startAction = new QAction(tr("Start"), this);
 	connect(startAction, SIGNAL(triggered()), this, SLOT(start()));
@@ -108,11 +104,11 @@ void TrayMenu::createMenu()
 	stopAction->setDisabled(true);
 	menu->addAction(stopAction);
 	
-	configureAction = new QAction(tr("Configure"), this);
-	connect(configureAction, SIGNAL(triggered()), this, SLOT(configOpen()));
-	menu->addAction(configureAction);
+	QAction *configAction = new QAction(tr("Configure"), this);
+	connect(configAction, SIGNAL(triggered()), this, SLOT(configOpen()));
+	menu->addAction(configAction);
 	
-	statusAction = new QAction(tr("Status"), this);
+	QAction *statusAction = new QAction(tr("Status"), this);
 	connect(statusAction, SIGNAL(triggered()), this, SLOT(statusOpen()));
 	menu->addAction(statusAction);
 	
@@ -120,36 +116,32 @@ void TrayMenu::createMenu()
 	separator->setSeparator(true);
 	menu->addAction(separator);
 	
-	quitAction = new QAction(tr("Quit"), this);
+	QAction *quitAction = new QAction(tr("Quit"), this);
 	connect(quitAction, SIGNAL(triggered()), srvthread, SLOT(stop()));
-	connect(quitAction, SIGNAL(triggered()), this, SLOT(quitApp()));
+	connect(quitAction, SIGNAL(triggered()), this, SLOT(quitAct()));
 	menu->addAction(quitAction);
 	
 	menu->setDefaultAction(statusAction);
 	
-	trayIcon->setContextMenu(menu);
+	setContextMenu(menu);
 }
 
 void TrayMenu::start()
 {
 	startAction->setDisabled(true);
 	
-	showMessage(QCoreApplication::applicationName(), tr("Starting server..."));
+	showMsg(QCoreApplication::applicationName(), tr("Starting server..."));
 }
 
 void TrayMenu::stop()
 {
 	stopAction->setDisabled(true);
 	
-	showMessage(QCoreApplication::applicationName(), tr("Stopping server..."));
+	showMsg(QCoreApplication::applicationName(), tr("Stopping server..."));
 }
 
-void TrayMenu::quitApp()
+void TrayMenu::quitAct()
 {
-	delete menu;
-	delete config;
-	delete status;
-	
 	if (srvthread->isRunning())
 		connect(srvthread, SIGNAL(finished()), qApp, SLOT(quit()));
 	else
@@ -159,17 +151,17 @@ void TrayMenu::quitApp()
 void TrayMenu::serverStarted()
 {
 	stopAction->setEnabled(true);
-	setIcon(1);
+	setIconIndex(1);
 	
-	showMessage(QCoreApplication::applicationName(), tr("Server started!"));
+	showMsg(QCoreApplication::applicationName(), tr("Server started!"));
 }
 
 void TrayMenu::serverStopped()
 {
 	startAction->setEnabled(true);
-	setIcon(0);
+	setIconIndex(0);
 	
-	showMessage(QCoreApplication::applicationName(), tr("Server stopped!"));
+	showMsg(QCoreApplication::applicationName(), tr("Server stopped!"));
 }
 
 void TrayMenu::statusOpen()
@@ -177,8 +169,10 @@ void TrayMenu::statusOpen()
 	if (!status)
 	{
 		status = new StatusDialog(srv, 0);
-		//connect(status, SIGNAL(message(const QString&, const QString&)), this, SLOT(showMessage(const QString&, const QString&)));
+		//connect(status, SIGNAL(message(const QString&, const QString&)), this, SLOT(showMsg(const QString&, const QString&)));
 		connect(status, SIGNAL(destroyed(QObject*)), this, SLOT(statusClosed()));
+		connect(srvthread, SIGNAL(started()), status, SLOT(serverStarted()));
+		connect(srvthread, SIGNAL(finished()), status, SLOT(serverStopped()));
 	}
 	
 	if (status->isHidden())
@@ -197,8 +191,10 @@ void TrayMenu::configOpen()
 	if (!config)
 	{
 		config = new ConfigDialog(srv, 0);
-		connect(config, SIGNAL(message(const QString&, const QString&, QSystemTrayIcon::MessageIcon)), this, SLOT(showMessage(const QString&, const QString&, QSystemTrayIcon::MessageIcon)));
+		connect(config, SIGNAL(message(const QString&, const QString&, QSystemTrayIcon::MessageIcon)), this, SLOT(showMsg(const QString&, const QString&, QSystemTrayIcon::MessageIcon)));
 		connect(config, SIGNAL(destroyed(QObject*)), this, SLOT(configClosed()));
+		connect(srvthread, SIGNAL(started()), config, SLOT(serverStarted()));
+		connect(srvthread, SIGNAL(finished()), config, SLOT(serverStopped()));
 	}
 	
 	if (config->isHidden())
