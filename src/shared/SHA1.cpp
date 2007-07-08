@@ -145,7 +145,7 @@ void SHA1::Transform(const uchar buffer[64]) throw()
 #endif // HAVE_OPENSSL
 
 // Use this function to hash in binary data and strings
-void SHA1::Update(const uchar *data, const int64_t len) throw()
+void SHA1::Update(const uchar *data, const uint64_t len) throw()
 {
 	assert(len >= 0);
 	assert(data != 0);
@@ -160,7 +160,7 @@ void SHA1::Update(const uchar *data, const int64_t len) throw()
 	const uint64_t available = left + len;
 	m_size += len;
 	
-	m_count += (len << 3);
+	m_count += len * 8;
 	
 	if (available < 64ULL)
 		memcpy(workblock.c+left, data, len);
@@ -189,19 +189,31 @@ void SHA1::Final() throw()
 	union {
 		uint64_t ll;
 		uint8_t c[8];
-	} swb = {m_size << 3};
+	} swb = {m_size * 8}; // size in bits
 	
 	#ifndef IS_BIG_ENDIAN
 	uchar finalcount[8] = {swb.c[7],swb.c[6],swb.c[5],swb.c[4],swb.c[3],swb.c[2],swb.c[1],swb.c[0]};
 	memcpy(&swb.ll, finalcount, sizeof(swb.ll));
 	#endif
 	
-	Update((const uchar *)"\200", 1);
+	static const uchar padding[64] = {0x80,0};
 	
-	while ((m_count & 504) != 448)
-		Update((const uchar *)"\0", 1);
+	Update(padding, 1);
+	int left = 56 - (m_size % 64);
 	
-	Update(swb.c, 8); // Cause a SHA1Transform()
+	if (left > 0) // in one block
+		Update(padding+1, left); // pad to 56 bytes
+	else if (left == 0)
+		; // fits perfectly
+	else
+	{
+		Update(padding+1, left+8);
+		Update(padding+1, 56);
+	}
+	
+	Update(swb.c, 8);
+
+	assert(m_size % 64 == 0); // should be even 512 bits (64 bytes)
 	
 	bswap(m_state[0]);
 	bswap(m_state[1]);

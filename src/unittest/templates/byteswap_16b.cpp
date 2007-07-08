@@ -31,5 +31,5 @@ int main()
 	
 	bool r = ((u.a == 2) and (u.b == 1));
 	
-	return (r ? EXIT_SUCCESS : EXIT_FAILURE);
+	return (r ? 0 : 1);
 }

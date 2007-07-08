@@ -71,7 +71,7 @@ public:
 	 * @param data Input buffer for updating hash
 	 * @param len Length of buffer
 	 */
-	void Update(const uchar *data, int64_t len) throw();
+	void Update(const uchar *data, uint64_t len) throw();
 	
 	//! Finalize hash
 	/**

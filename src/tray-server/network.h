@@ -31,6 +31,9 @@ namespace Qt {
 //QSet<QHostAddress> getExternalAddresses() throw();
 
 //! Get external host address
+/**
+ * @return First or only QHostAddress that seems to be external
+ */
 QHostAddress getExternalAddress() throw();
 
 } // Qt

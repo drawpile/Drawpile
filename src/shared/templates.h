@@ -70,19 +70,9 @@ T bswap_const(const T& x) throw()
 template <> inline
 uint32_t& bswap<uint32_t>(uint32_t& x) throw()
 {
-	#ifdef USE_ASM
-	asm (
-		"bswap %0;"
-		: "=r"(x)
-		: "r"(x)
-		: "eax"
-	);
-	return x;
-	#else
 	// Code snippet (c) 2003 Juan Carlos Cobas
 	return x = ((x&0x000000FF)<<24) | ((x&0x0000FF00)<<8) |
 		((x&0x00FF0000)>>8) | ((x&0xFF000000)>>24);
-	#endif
 }
 
 //! uint16_t specialization of bswap()

@@ -33,5 +33,5 @@ int main()
 	
 	bool r = ((u.a == 4) and (u.b == 3) and (u.c == 2) and (u.d == 1));
 	
-	return (r ? EXIT_SUCCESS : EXIT_FAILURE);
+	return (r ? 0 : 1);
 }
