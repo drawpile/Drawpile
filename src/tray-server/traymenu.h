@@ -50,6 +50,9 @@ public slots:
 	void serverStarted();
 	void serverStopped();
 	
+	void configClosed();
+	void statusClosed();
+	
 	//! Show balloon message
 	void showMessage(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);
 	
@@ -67,13 +70,13 @@ private slots:
 	void stop();
 	
 	//! Menu 'config' action
-	void configSlot();
+	void configOpen();
 	
 	//! Menu 'status' action
-	void statusSlot();
+	void statusOpen();
 	
 	//! Menu 'quit' action
-	void quitSlot();
+	void quitApp();
 	
 private:
 	//! Create tray context menu

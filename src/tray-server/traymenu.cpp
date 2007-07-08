@@ -29,14 +29,11 @@
 
 TrayMenu::TrayMenu()
 	: srvthread(0),
-	srv(new Server)
+	srv(new Server),
+	config(0),
+	status(0)
 {
 	trayIcon = new QSystemTrayIcon(this);
-	
-	config = new ConfigDialog(srv, 0);
-	connect(config, SIGNAL(message(const QString&, const QString&, QSystemTrayIcon::MessageIcon)), this, SLOT(showMessage(const QString&, const QString&, QSystemTrayIcon::MessageIcon)));
-	status = new StatusDialog(srv, 0);
-	//connect(status, SIGNAL(message(const QString&, const QString&)), this, SLOT(showMessage(const QString&, const QString&)));
 	
 	srvthread = new ServerThread(srv, this);
 	
@@ -112,11 +109,11 @@ void TrayMenu::createMenu()
 	menu->addAction(stopAction);
 	
 	configureAction = new QAction(tr("Configure"), this);
-	connect(configureAction, SIGNAL(triggered()), this, SLOT(configSlot()));
+	connect(configureAction, SIGNAL(triggered()), this, SLOT(configOpen()));
 	menu->addAction(configureAction);
 	
 	statusAction = new QAction(tr("Status"), this);
-	connect(statusAction, SIGNAL(triggered()), this, SLOT(statusSlot()));
+	connect(statusAction, SIGNAL(triggered()), this, SLOT(statusOpen()));
 	menu->addAction(statusAction);
 	
 	QAction *separator = new QAction(this);
@@ -125,7 +122,7 @@ void TrayMenu::createMenu()
 	
 	quitAction = new QAction(tr("Quit"), this);
 	connect(quitAction, SIGNAL(triggered()), srvthread, SLOT(stop()));
-	connect(quitAction, SIGNAL(triggered()), this, SLOT(quitSlot()));
+	connect(quitAction, SIGNAL(triggered()), this, SLOT(quitApp()));
 	menu->addAction(quitAction);
 	
 	menu->setDefaultAction(statusAction);
@@ -147,7 +144,7 @@ void TrayMenu::stop()
 	showMessage(QCoreApplication::applicationName(), tr("Stopping server..."));
 }
 
-void TrayMenu::quitSlot()
+void TrayMenu::quitApp()
 {
 	delete menu;
 	delete config;
@@ -175,18 +172,42 @@ void TrayMenu::serverStopped()
 	showMessage(QCoreApplication::applicationName(), tr("Server stopped!"));
 }
 
-void TrayMenu::statusSlot()
+void TrayMenu::statusOpen()
 {
+	if (!status)
+	{
+		status = new StatusDialog(srv, 0);
+		//connect(status, SIGNAL(message(const QString&, const QString&)), this, SLOT(showMessage(const QString&, const QString&)));
+		connect(status, SIGNAL(destroyed(QObject*)), this, SLOT(statusClosed()));
+	}
+	
 	if (status->isHidden())
 		status->show();
 	else
 		status->activateWindow();
 }
 
-void TrayMenu::configSlot()
+void TrayMenu::statusClosed()
 {
+	status = 0;
+}
+
+void TrayMenu::configOpen()
+{
+	if (!config)
+	{
+		config = new ConfigDialog(srv, 0);
+		connect(config, SIGNAL(message(const QString&, const QString&, QSystemTrayIcon::MessageIcon)), this, SLOT(showMessage(const QString&, const QString&, QSystemTrayIcon::MessageIcon)));
+		connect(config, SIGNAL(destroyed(QObject*)), this, SLOT(configClosed()));
+	}
+	
 	if (config->isHidden())
 		config->show();
 	else
 		config->activateWindow();
+}
+
+void TrayMenu::configClosed()
+{
+	config = 0;
 }

@@ -32,7 +32,7 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 {
 	setWindowTitle(QString(tr("%1 Status").arg(QCoreApplication::applicationName())));
 	
-	//setAttribute(Qt::WA_DeleteOnClose);
+	setAttribute(Qt::WA_DeleteOnClose);
 	
 	QGroupBox *status_group = new QGroupBox(tr("Status"));
 	

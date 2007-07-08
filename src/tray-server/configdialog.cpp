@@ -38,7 +38,7 @@ ConfigDialog::ConfigDialog(Server *_srv, QWidget *parent)
 	QString RequireRestart(tr("<br>This option can't be changed while the server is running."));
 	setWindowTitle(QString(tr("%1 Configuration").arg(QCoreApplication::applicationName())));
 	
-	//setAttribute(Qt::WA_DeleteOnClose);
+	setAttribute(Qt::WA_DeleteOnClose);
 	
 	QGroupBox *limit_group = new QGroupBox("Limits");
 	QVBoxLayout *limit_superbox = new QVBoxLayout;
