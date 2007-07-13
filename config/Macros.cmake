@@ -55,7 +55,7 @@ macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMEN
 			file ( APPEND ${win32RC} "\tEND\nEND\n" )
 		endif ( ${CMAKE_CURRENT_LIST_FILE} IS_NEWER_THAN ${win32RC} )
 		
-		set ( resfile ${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj )
+		set ( ${resfile} ${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj )
 		
 		add_custom_command(
 			OUTPUT ${resfile}
