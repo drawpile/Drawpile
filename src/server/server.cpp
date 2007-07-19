@@ -271,14 +271,14 @@ void Server::uWrite(User*& usr) throw()
 	// if buffer is empty
 	if (usr->output.isEmpty())
 	{
-		usr->flushQueue();
+		stats.outMsgCount += usr->flushQueue();
 		
 		#if defined(HAVE_ZLIB)
 		if (usr->ext_deflate
 			and usr->output.rpos[0] != protocol::Message::Raster
 			and usr->output.canRead() > 300)
 		{
-			Deflate(usr->output, usr->output.canRead());
+			Deflate(usr->output);
 		}
 		#endif // HAVE_ZLIB
 	}
@@ -311,6 +311,8 @@ void Server::uWrite(User*& usr) throw()
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		cout << "? Sent " << sb << " bytes to user #" << usr->id << endl;
 		#endif
+		
+		stats.dataSent += sb;
 		
 		usr->output.read(sb);
 		
@@ -345,13 +347,14 @@ void Server::uWrite(User*& usr) throw()
 	}
 }
 
-void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
+void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 {
 	// len, size
 	size_t size=buffer.size;
 	
 	char* temp;
-	ulong buffer_len = len + 12;
+	size_t read_len = buffer.canRead();
+	size_t buffer_len = read_len + 12;
 	// make the potential new buffer generous in its size
 	
 	bool inBuffer;
@@ -369,7 +372,7 @@ void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
 		inBuffer = true;
 	}
 	
-	const int r = compress2(reinterpret_cast<uchar*>(temp), &buffer_len, reinterpret_cast<uchar*>(buffer.rpos), len, 5);
+	const int r = compress2(reinterpret_cast<uchar*>(temp), &buffer_len, reinterpret_cast<uchar*>(buffer.rpos), read_len, 5);
 	
 	assert(r != Z_STREAM_ERROR);
 	assert(r != Z_BUF_ERROR); // too small buffer
@@ -379,14 +382,14 @@ void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
 	default:
 	case Z_OK:
 		#ifndef NDEBUG
-		cout << "zlib: " << len << "B compressed down to " << buffer_len << "B" << endl;
+		cout << "zlib: " << read_len << "B compressed down to " << buffer_len << "B" << endl;
 		#endif
 		
 		// compressed size was equal or larger than original size
-		if (buffer_len >= len)
+		if (buffer_len >= read_len)
 			goto cleanup;
 		
-		buffer.read(len);
+		buffer.read(read_len);
 		
 		if (inBuffer)
 		{
@@ -397,7 +400,7 @@ void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
 			buffer.setBuffer(temp, size, buffer_len);
 		
 		{
-			const protocol::Deflate t_deflate(len, buffer_len, temp);
+			const protocol::Deflate t_deflate(read_len, buffer_len, temp);
 			
 			// make sure we can write the whole message in
 			if (buffer.canWrite() < (buffer_len + 9) <= buffer.free())
@@ -406,7 +409,7 @@ void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
 				size = buffer.canWrite();
 			}
 			
-			char *buf = t_deflate.serialize(len, buffer.wpos, size);
+			char *buf = t_deflate.serialize(read_len, buffer.wpos, size);
 			
 			if (buf != buffer.wpos)
 			{
@@ -424,10 +427,10 @@ void Server::Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc)
 						<< ", actually needed: " << size << endl;
 				}
 				#endif
-				buffer.setBuffer(buf, size, len);
+				buffer.setBuffer(buf, size, read_len);
 			}
 			else
-				buffer.write(len);
+				buffer.write(read_len);
 		}
 		break;
 	case Z_MEM_ERROR:
@@ -477,6 +480,7 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		uRemove(usr, protocol::UserInfo::Disconnect);
 		break;
 	default:
+		stats.dataRecv += rb;
 		usr->input.write(rb);
 		uProcessData(usr);
 		break;
@@ -506,6 +510,8 @@ void Server::uProcessData(User*& usr) throw()
 				uRemove(usr, protocol::UserInfo::Dropped);
 				return;
 			}
+			
+			stats.inMsgCount++;
 		}
 		
 		assert(usr->inMsg->type == static_cast<octet>(usr->input.rpos[0]));
@@ -1592,12 +1598,10 @@ void Server::uLoginInfo(User& usr) throw()
 	if (LocalhostAdmin)
 	{
 		const std::string IPPort(usr.sock.address());
-		const std::string::size_type ns(IPPort.find_last_of(":", IPPort.length()-1));
-		assert(ns != std::string::npos);
-		const std::string IP(IPPort.substr(0, ns));
+		assert(IPPort.find_last_of(":", IPPort.length()-1) != std::string::npos);
 		
 		// Loopback address
-		if (IP == std::string(
+		if (IPPort.substr(0, IPPort.find_last_of(":", IPPort.length()-1)) == std::string(
 			#ifdef IPV6_SUPPORT
 			Network::IPv6::Localhost
 			#else

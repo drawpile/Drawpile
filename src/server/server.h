@@ -45,6 +45,7 @@ struct Buffer;
 #include "../shared/protocol.h" // protocol::UserInfo::reason
 #include "types.h"
 #include "socket.types.h" // fd_t
+#include "statistics.h" // Statistics struct
 
 #include <ctime> // time_t, time(0)
 #include <map> // std::map
@@ -63,6 +64,8 @@ class Server
 {
 protected:
 	/* data */
+	
+	Statistics stats;
 	
 	//! Server state
 	enum State {
@@ -451,14 +454,13 @@ protected:
 	 */
 	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
 	
-	//! Deflate outgoing data
+	//! Deflate (compress) outgoing data
 	/**
 	 * @param[in,out] buffer 
-	 * @param[in] len
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void Deflate(Buffer& buffer, size_t len) throw(std::bad_alloc);
+	void Deflate(Buffer& buffer) throw(std::bad_alloc);
 	
 	//! Cull idle users
 	void cullIdlers() throw();

@@ -133,7 +133,7 @@ void User::setExtensions(const octet flags) throw()
 	ext_palette = fIsSet(flags, static_cast<octet>(protocol::extensions::Palette));
 }
 
-void User::flushQueue()
+uint User::flushQueue()
 {
 	assert(!queue.empty());
 	
@@ -166,4 +166,6 @@ void User::flushQueue()
 		output.write(len);
 	
 	queue.erase(f_msg, ++l_msg);
+	
+	return links;
 }

@@ -36,7 +36,7 @@ namespace protocol
 	struct ToolInfo;
 }
 
-//! User information
+//! User/Client information
 struct User
 {
 	//! Default constructor
@@ -185,7 +185,7 @@ struct User
 	u_long strokes;
 	
 	//! 'Flushes' queue to output buffer
-	void flushQueue();
+	uint flushQueue();
 };
 
 #endif // ServerUser_INCLUDED
