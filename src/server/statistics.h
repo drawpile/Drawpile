@@ -12,6 +12,9 @@
 
 *******************************************************************************/
 
+#ifndef ServerStatistics_INCLUDED
+#define ServerStatistics_INCLUDED
+
 #include "types.h"
 
 struct Statistics
@@ -30,3 +33,5 @@ struct Statistics
 		dataSent,
 		dataRecv;
 };
+
+#endif // ServerStatistics_INCLUDED
