@@ -352,7 +352,7 @@ void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 	// len, size
 	
 	size_t read_len = buffer.canRead();
-	size_t buffer_len = read_len + 12;
+	ulong buffer_len = read_len + 12;
 	// make the potential new buffer generous in its size
 	
 	bool inBuffer;
@@ -468,7 +468,8 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case 0:
-		// shouldn't happen if EV_HAS_HANGUP is defined
+		// shouldn't happen if event system has hangup event
+		assert(event::has_hangup<EventSystem>::value == false);
 		uRemove(usr, protocol::UserInfo::Disconnect);
 		break;
 	default:
