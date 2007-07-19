@@ -350,14 +350,14 @@ void Server::uWrite(User*& usr) throw()
 void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 {
 	// len, size
-	size_t size=buffer.size;
 	
-	char* temp;
 	size_t read_len = buffer.canRead();
 	size_t buffer_len = read_len + 12;
 	// make the potential new buffer generous in its size
 	
 	bool inBuffer;
+	size_t size;
+	char* temp;
 	
 	if (buffer.canWrite() < buffer_len)
 	{ // can't write continuous stream of data in buffer
@@ -368,6 +368,7 @@ void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 	}
 	else
 	{
+		size = buffer.size;
 		temp = buffer.wpos;
 		inBuffer = true;
 	}
@@ -377,17 +378,13 @@ void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 	assert(r != Z_STREAM_ERROR);
 	assert(r != Z_BUF_ERROR); // too small buffer
 	
-	switch (r)
+	// continue only if the compression was succesful and
+	// the compressed size is smaller than input
+	if (r == Z_OK and buffer_len < read_len)
 	{
-	default:
-	case Z_OK:
 		#ifndef NDEBUG
 		cout << "zlib: " << read_len << "B compressed down to " << buffer_len << "B" << endl;
 		#endif
-		
-		// compressed size was equal or larger than original size
-		if (buffer_len >= read_len)
-			goto cleanup;
 		
 		buffer.read(read_len);
 		
@@ -432,13 +429,8 @@ void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 			else
 				buffer.write(read_len);
 		}
-		break;
-	case Z_MEM_ERROR:
-		goto cleanup;
 	}
-	
-	cleanup:
-	if (!inBuffer)
+	else if (!inBuffer)
 		delete [] temp;
 }
 
