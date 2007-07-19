@@ -396,39 +396,37 @@ void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 		else
 			buffer.setBuffer(temp, size, buffer_len);
 		
+		const protocol::Deflate t_deflate(read_len, buffer_len, temp);
+		
+		// make sure we can write the whole message in
+		if (buffer.canWrite() < (buffer_len + 9) <= buffer.free())
 		{
-			const protocol::Deflate t_deflate(read_len, buffer_len, temp);
-			
-			// make sure we can write the whole message in
-			if (buffer.canWrite() < (buffer_len + 9) <= buffer.free())
+			buffer.reposition();
+			size = buffer.canWrite();
+		}
+		
+		char *buf = t_deflate.serialize(read_len, buffer.wpos, size);
+		
+		if (buf != buffer.wpos)
+		{
+			#ifndef NDEBUG
+			if (!inBuffer)
 			{
-				buffer.reposition();
-				size = buffer.canWrite();
-			}
-			
-			char *buf = t_deflate.serialize(read_len, buffer.wpos, size);
-			
-			if (buf != buffer.wpos)
-			{
-				#ifndef NDEBUG
-				if (!inBuffer)
-				{
-					cout << "[Deflate] Pre-allocated buffer was too small!" << endl
-						<< "Allocated: " << buffer_len*2+1024
-						<< ", actually needed: " << size << endl;
-				}
-				else
-				{
-					cout << "[Deflate] Output buffer was too small!" << endl
-						<< "Original size: " << buffer.canWrite()
-						<< ", actually needed: " << size << endl;
-				}
-				#endif
-				buffer.setBuffer(buf, size, read_len);
+				cout << "[Deflate] Pre-allocated buffer was too small!" << endl
+					<< "Allocated: " << buffer_len*2+1024
+					<< ", actually needed: " << size << endl;
 			}
 			else
-				buffer.write(read_len);
+			{
+				cout << "[Deflate] Output buffer was too small!" << endl
+					<< "Original size: " << buffer.canWrite()
+					<< ", actually needed: " << size << endl;
+			}
+			#endif
+			buffer.setBuffer(buf, size, read_len);
 		}
+		else
+			buffer.write(read_len);
 	}
 	else if (!inBuffer)
 		delete [] temp;
