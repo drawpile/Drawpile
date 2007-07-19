@@ -635,6 +635,8 @@ public:
 	
 	/** Status and information retrieval **/
 	
+	Statistics getStats() const throw();
+	
 	#if 0
 private:
 	virtual void eventNotify() { }

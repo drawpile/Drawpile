@@ -2511,3 +2511,8 @@ octet Server::getRequirements() const throw()
 	return (wideStrings ? protocol::requirements::WideStrings : 0)
 		| (enforceUnique ? protocol::requirements::EnforceUnique : 0);
 }
+
+Statistics Server::getStats() const throw()
+{
+	return stats;
+}
