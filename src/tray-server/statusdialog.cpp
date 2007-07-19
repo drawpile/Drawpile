@@ -22,6 +22,7 @@
 
 #include <QtGui>
 
+#include "../server/statistics.h"
 #include "../server/server.h"
 #include "network.h"
 #include "../shared/templates.h"
@@ -52,6 +53,25 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	
 	status_group->setLayout(status_superbox);
 	
+	// Statistics
+	QGroupBox *statistics_group = new QGroupBox(tr("Statistics"));
+	QVBoxLayout *statistics_superbox = new QVBoxLayout;
+	statistics_superbox->setContentsMargins(5,3,5,3);
+	
+	Statistics stats = srv->getStats(); // mutex lock?
+	
+	QHBoxLayout *sentdata_box = new QHBoxLayout;
+	sentdata_box->addWidget(new QLabel(tr("Sent data")), 1);
+	sentdata_box->addWidget(new QLabel(QString("%1").arg(stats.dataSent)));
+	statistics_superbox->addLayout(sentdata_box);
+	
+	QHBoxLayout *recvdata_box = new QHBoxLayout;
+	recvdata_box->addWidget(new QLabel(tr("Received data")), 1);
+	recvdata_box->addWidget(new QLabel(QString("%1").arg(stats.dataRecv)));
+	statistics_superbox->addLayout(recvdata_box);
+	
+	statistics_group->setLayout(statistics_superbox);
+	
 	// Sessions
 	session_group = new QGroupBox(tr("Sessions"));
 	
@@ -80,6 +100,7 @@ StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
 	root->addWidget(status_group);
 	root->addWidget(session_group);
 	root->addWidget(user_group);
+	root->addWidget(statistics_group);
 	
 	setLayout(root);
 	
