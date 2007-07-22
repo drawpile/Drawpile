@@ -17,6 +17,7 @@
 #ifdef HAVE_OPENSSL
 	#include <stdexcept>
 #endif
+#include <algorithm> // std::swap
 
 SHA1::SHA1() throw()
 {
@@ -33,6 +34,7 @@ void SHA1::Reset() throw()
 	m_state[3] = 0x10325476;
 	m_state[4] = 0xC3D2E1F0;
 	
+	m_left = 0;
 	m_size = 0;
 	#else // OpenSSL
 	if (SHA1_Init(&context) != 1)
@@ -40,15 +42,11 @@ void SHA1::Reset() throw()
 		throw std::exception;
 	}
 	#endif // HAVE_OPENSSL
-	
-	#ifndef NDEBUG
-	finalized = false;
-	#endif
 }
 
 #ifndef HAVE_OPENSSL
 // Rotate \b v n bits to the left
-uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
+uint32_t SHA1::LeftRotate(const uint32_t v, const uint32_t n) const throw()
 {
 	#ifdef USE_ASM
 	uint32_t x;
@@ -65,37 +63,37 @@ uint32_t SHA1::ROL32(const uint32_t v, const uint32_t n) const throw()
 
 uint32_t SHA1::Chunk(const uint32_t i) throw()
 {
-	return (workblock.l[i&0x0F] = ROL32((workblock.l[(i-3)&0x0F] ^ workblock.l[(i-8)&0x0F] ^ workblock.l[(i-14)&15] ^ workblock.l[i&0x0F]), 1));
+	return (workblock.l[i&0x0F] = LeftRotate((workblock.l[(i-3)&0x0F] ^ workblock.l[(i-8)&0x0F] ^ workblock.l[(i-14)&15] ^ workblock.l[i&0x0F]), 1));
 }
 
 void SHA1::R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
-	z += ((w & (x ^ y)) ^ y) + workblock.l[i] + 0x5A827999 + ROL32(v, 5);
-	w = ROL32(w, 30);
+	z += ((w & (x ^ y)) ^ y) + workblock.l[i] + 0x5A827999 + LeftRotate(v, 5);
+	w = LeftRotate(w, 30);
 }
 
 void SHA1::R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
-	z += ((w & (x ^ y)) ^ y) + Chunk(i) + 0x5A827999 + ROL32(v, 5);
-	w = ROL32(w, 30);
+	z += ((w & (x ^ y)) ^ y) + Chunk(i) + 0x5A827999 + LeftRotate(v, 5);
+	w = LeftRotate(w, 30);
 }
 
 void SHA1::R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
-	z += (w ^ x ^ y) + Chunk(i) + 0x6ED9EBA1 + ROL32(v, 5);
-	w = ROL32(w, 30);
+	z += (w ^ x ^ y) + Chunk(i) + 0x6ED9EBA1 + LeftRotate(v, 5);
+	w = LeftRotate(w, 30);
 }
 
 void SHA1::R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
-	z += (((w | x) & y) | (w & x)) + Chunk(i) + 0x8F1BBCDC + ROL32(v, 5);
-	w = ROL32(w, 30);
+	z += (((w | x) & y) | (w & x)) + Chunk(i) + 0x8F1BBCDC + LeftRotate(v, 5);
+	w = LeftRotate(w, 30);
 }
 
 void SHA1::R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
 {
-	z += (w ^ x ^ y) + Chunk(i) + 0xCA62C1D6 + ROL32(v, 5);
-	w = ROL32(w, 30);
+	z += (w ^ x ^ y) + Chunk(i) + 0xCA62C1D6 + LeftRotate(v, 5);
+	w = LeftRotate(w, 30);
 }
 
 void SHA1::Transform() throw()
@@ -104,6 +102,8 @@ void SHA1::Transform() throw()
 	for (int i=0; i != 16; ++i)
 		bswap(workblock.l[i]);
 	#endif
+	
+	m_left -= 64;
 	
 	uint32_t
 		a = m_state[0],
@@ -153,71 +153,78 @@ void SHA1::Update(const uchar *data, const uint64_t len) throw()
 	assert(len >= 0);
 	assert(data != 0);
 	
-	assert(not finalized);
-	
 	#ifdef HAVE_OPENSSL
 	SHA1_Update(&context, data, len);
 	#else
 	
-	const uint32_t left = m_size & 63;
-	const uint64_t available = left + len;
+	m_left += len;
+	
+	// data left in workblock from previous update
+	const uint32_t left = m_size % 64;
+	
+	// update total size
 	m_size += len;
 	
-	if (available < 64ULL)
+	if (m_left < 64ULL)
+	{
+		// less data than we can process
 		memcpy(workblock.c+left, data, len);
+	}
 	else
 	{
 		int64_t i = 64 - left;
 		memcpy(workblock.c+left, data, i);
 		Transform();
 		
-		int64_t last = len - (available & 63LL);
+		int64_t last = len - (m_left % 64);
 		for (; i != last; i += 64)
 		{
-			memcpy(workblock.c, data+i, sizeof(workblock.c));
+			memcpy(workblock.c, data+i, 64);
 			Transform();
 		}
 		
+		// save rest of the buffer for later processing
 		memcpy(workblock.c, data+i, len - i);
 	}
+	assert(m_left < 64);
 	#endif
 }
 
 void SHA1::Final() throw()
 {
-	assert(not finalized);
-	
 	#ifdef HAVE_OPENSSL
 	SHA1_Final(m_state, &context);
 	#else
+	
+	// test if the input data length is larger than what SHA-1 can handle
+	assert(m_size <= (std::numeric_limits<uint64_t>::max()/8));
+	
 	union {
 		uint64_t ll;
-		uint8_t c[8];
+		#ifndef IS_BIG_ENDIAN
+		uint32_t l[2]; // for byte swapping
+		#endif
 	} swb = {m_size * 8}; // size in bits
 	
 	#ifndef IS_BIG_ENDIAN
-	uchar finalcount[8] = {swb.c[7],swb.c[6],swb.c[5],swb.c[4],swb.c[3],swb.c[2],swb.c[1],swb.c[0]};
-	memcpy(&swb.ll, finalcount, sizeof(swb.ll));
+	std::swap(swb.l[0], swb.l[1]);
+	bswap(swb.l[0]);
+	bswap(swb.l[1]);
 	#endif
 	
 	static const uchar padding[64] = {0x80,0};
-	
 	Update(padding, 1);
-	int left = 56 - (m_size % 64);
 	
-	if (left > 0) // in one block
-		Update(padding+1, left); // pad to 56 bytes
-	else if (left == 0)
-		; // fits perfectly
-	else
-	{
-		Update(padding+1, left+8);
-		Update(padding+1, 56);
-	}
+	if (m_left < 56)
+		Update(padding+1, 56-m_left);
+	else if (m_left > 56)
+		Update(padding+1, 120-m_left);
 	
-	Update(swb.c, 8);
+	// append size
+	Update(reinterpret_cast<uchar*>(&swb.ll), 8);
 	
-	assert(m_size % 64 == 0); // should be even 512 bits (64 bytes)
+	// should be even 512 bits (64 bytes) now
+	assert(m_size % 64 == 0);
 	
 	bswap(m_state[0]);
 	bswap(m_state[1]);
@@ -225,16 +232,11 @@ void SHA1::Final() throw()
 	bswap(m_state[3]);
 	bswap(m_state[4]);
 	#endif
-	
-	#ifndef NDEBUG
-	finalized = true;
-	#endif
 }
 
 // Get the final hash as a pre-formatted (ASCII) string (40 bytes long)
 void SHA1::HexDigest(char *string) const throw()
 {
-	assert(finalized);
 	assert(string != 0);
 	
 	// Hex magic by George Anescu
@@ -253,8 +255,7 @@ void SHA1::HexDigest(char *string) const throw()
 // Get the raw message digest (20 bytes long)
 void SHA1::GetHash(uchar *digest) const throw()
 {
-	assert(finalized);
 	assert(digest != 0);
 	
-	memcpy(digest, m_state, sizeof(m_state));
+	memcpy(digest, m_state, 20);
 }

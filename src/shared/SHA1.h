@@ -55,6 +55,7 @@ class SHA1
 	
 	//! Number of bytes processed
 	uint64_t m_size;
+	uint32_t m_left;
 	#endif // HAVE_OPENSSL
 	
 	//! Intermediate hash state
@@ -95,7 +96,7 @@ private:
 	#ifndef HAVE_OPENSSL
 	uint32_t Chunk(const uint32_t i) throw();
 	
-	uint32_t ROL32(const uint32_t v, const uint32_t n) const throw();
+	uint32_t LeftRotate(const uint32_t v, const uint32_t n) const throw();
 	
 	void R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
@@ -109,10 +110,6 @@ private:
 	
 	void Transform() throw();
 	#endif // HAVE_OPENSSL
-	
-	#ifndef NDEBUG
-	bool finalized;
-	#endif
 };
 
 #endif // SHA1_INCLUDEd
