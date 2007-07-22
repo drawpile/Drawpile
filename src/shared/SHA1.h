@@ -48,8 +48,6 @@ class SHA1
 		uint32_t l[16];
 	} workblock;
 	
-	uint32_t m_count; // pointless
-	
 	//! Number of bytes processed
 	uint64_t m_size;
 	#endif // HAVE_OPENSSL

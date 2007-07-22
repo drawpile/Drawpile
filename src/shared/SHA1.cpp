@@ -14,6 +14,9 @@
 
 #include <cassert>
 #include <memory.h> // memset(), memcpy()
+#ifdef HAVE_OPENSSL
+	#include <stdexcept>
+#endif
 
 SHA1::SHA1() throw()
 {
@@ -30,12 +33,11 @@ void SHA1::Reset() throw()
 	m_state[3] = 0x10325476;
 	m_state[4] = 0xC3D2E1F0;
 	
-	m_count = 0;
 	m_size = 0;
 	#else // OpenSSL
 	if (SHA1_Init(&context) != 1)
 	{
-		//throw std::exception;
+		throw std::exception;
 	}
 	#endif // HAVE_OPENSSL
 	
@@ -160,8 +162,6 @@ void SHA1::Update(const uchar *data, const uint64_t len) throw()
 	const uint64_t available = left + len;
 	m_size += len;
 	
-	m_count += len * 8;
-	
 	if (available < 64ULL)
 		memcpy(workblock.c+left, data, len);
 	else
@@ -212,7 +212,7 @@ void SHA1::Final() throw()
 	}
 	
 	Update(swb.c, 8);
-
+	
 	assert(m_size % 64 == 0); // should be even 512 bits (64 bytes)
 	
 	bswap(m_state[0]);
