@@ -13,11 +13,16 @@
 
 #include "config.h"
 
+#include <boost/cstdint.hpp>
+
 #ifdef HAVE_OPENSSL
 	#include <openssl/sha.h>
 #endif
 
-#include <boost/cstdint.hpp>
+#ifdef HAVE_BOOST
+	#include <boost/static_assert.hpp>
+	BOOST_STATIC_ASSERT(sizeof(uint32_t) == 4);
+#endif
 
 //! SHA-1 hash algorithm
 /**
@@ -52,11 +57,8 @@ class SHA1
 	uint64_t m_size;
 	#endif // HAVE_OPENSSL
 	
-	//! Intermediate digest
-	union {
-		uint32_t m_state[5];
-		uchar m_digest[20];
-	};
+	//! Intermediate hash state
+	uint32_t m_state[5];
 public:
 	//! ctor
 	SHA1() throw();
@@ -105,7 +107,7 @@ private:
 	
 	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
 	
-	void Transform(const uchar buffer[64]) throw();
+	void Transform() throw();
 	#endif // HAVE_OPENSSL
 	
 	#ifndef NDEBUG

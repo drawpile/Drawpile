@@ -98,18 +98,19 @@ void SHA1::R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y,
 	w = ROL32(w, 30);
 }
 
-void SHA1::Transform(const uchar buffer[64]) throw()
+void SHA1::Transform() throw()
 {
-	assert(buffer != 0);
-	
-	uint32_t a = m_state[0], b = m_state[1], c = m_state[2], d = m_state[3], e = m_state[4];
-	
-	memcpy(workblock.c, buffer, sizeof(workblock.c));
-	
 	#ifndef IS_BIG_ENDIAN
 	for (int i=0; i != 16; ++i)
 		bswap(workblock.l[i]);
 	#endif
+	
+	uint32_t
+		a = m_state[0],
+		b = m_state[1],
+		c = m_state[2],
+		d = m_state[3],
+		e = m_state[4];
 	
 	// 4 rounds of 20 operations each. Loop unrolled.
 	R0(a,b,c,d,e, 0); R0(e,a,b,c,d, 1); R0(d,e,a,b,c, 2); R0(c,d,e,a,b, 3);
@@ -168,11 +169,14 @@ void SHA1::Update(const uchar *data, const uint64_t len) throw()
 	{
 		int64_t i = 64 - left;
 		memcpy(workblock.c+left, data, i);
-		Transform(workblock.c);
+		Transform();
 		
 		int64_t last = len - (available & 63LL);
 		for (; i != last; i += 64)
-			Transform(data+i);
+		{
+			memcpy(workblock.c, data+i, sizeof(workblock.c));
+			Transform();
+		}
 		
 		memcpy(workblock.c, data+i, len - i);
 	}
@@ -184,7 +188,7 @@ void SHA1::Final() throw()
 	assert(not finalized);
 	
 	#ifdef HAVE_OPENSSL
-	SHA1_Final(m_digest, &context);
+	SHA1_Final(m_state, &context);
 	#else
 	union {
 		uint64_t ll;
@@ -252,5 +256,5 @@ void SHA1::GetHash(uchar *digest) const throw()
 	assert(finalized);
 	assert(digest != 0);
 	
-	memcpy(digest, m_digest, sizeof(m_digest));
+	memcpy(digest, m_state, sizeof(m_state));
 }
