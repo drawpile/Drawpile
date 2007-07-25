@@ -326,14 +326,13 @@ void Brush::draw(QImage &image, const Point& pos) const
 				pos.x() < image.width() && pos.y() < image.height()) {
 			const int a = int(opacity(pos.pressure())* hardness(pos.pressure())*256);
 			#ifdef IS_BIG_ENDIAN
-			++dest;
-			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
+			dest[1] += CALCULATE_COLOR(red, dest[1], a); ++dest;
+			dest[2] += CALCULATE_COLOR(green, dest[2], a); ++dest;
+			dest[3] += CALCULATE_COLOR(blue, dest[3], a); ++dest;
 			#else
-			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(red, *dest, a);
+			dest[0] += CALCULATE_COLOR(blue, dest[0], a); ++dest;
+			dest[1] += CALCULATE_COLOR(green, dest[1], a); ++dest;
+			dest[2] += CALCULATE_COLOR(red, dest[2], a);
 			#endif
 		}
 		return;
@@ -353,24 +352,27 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const int w = (cx+dia)>image.width()?image.width()-cx:dia;
 	const int h = (cy+dia)>image.height()?image.height()-cy:dia;
 	
+	const int src_incr = offx + dia - w;
+	const int offset_incr = nextline + (dia - w) * 4;
+	
+	int offset=0;
 	// Composite brush on image
 	for(int y=offy;y<h;++y) {
 		for(int x=offx;x<w;++x) {
-			const int a = *(src++);
+			const int a = (*src++);
 			#ifdef IS_BIG_ENDIAN
-			++dest;
-			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
+			dest[offset+1] += CALCULATE_COLOR(red, dest[offset+1], a);
+			dest[offset+2] += CALCULATE_COLOR(green, dest[offset+2], a);
+			dest[offset+3] += CALCULATE_COLOR(blue, dest[offset+3], a);
 			#else
-			*dest += CALCULATE_COLOR(blue, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(green, *dest, a); ++dest;
-			*dest += CALCULATE_COLOR(red, *dest, a); ++dest;
-			++dest;
+			dest[offset] += CALCULATE_COLOR(blue, dest[offset], a);
+			dest[offset+1] += CALCULATE_COLOR(green, dest[offset+1], a);
+			dest[offset+2] += CALCULATE_COLOR(red, dest[offset+2], a);
 			#endif
+			offset += 4;
 		}
-		dest += nextline + (dia-w)*4;
-		src += offx + dia-w;
+		offset += offset_incr;
+		src += src_incr;
 	}
 	
 	#undef CALCULATE_COLOR // remove macro function
