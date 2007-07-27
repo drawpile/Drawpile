@@ -139,7 +139,7 @@ void EditorView::leaveEvent(QEvent *event)
 //! Handle mouse press events
 void EditorView::mousePressEvent(QMouseEvent *event)
 {
-	// TODO why do we sometimes get mouse events for tablet strokes?
+	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(pendown_ != NOTDOWN)
 		return;
 	if(event->button() == Qt::MidButton) {
@@ -163,7 +163,7 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 //! Handle mouse motion events
 void EditorView::mouseMoveEvent(QMouseEvent *event)
 {
-	// TODO why do we sometimes get mouse events for tablet strokes?
+	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(pendown_ == TABLETDOWN)
 		return;
 	if(pendown_ && event->buttons() == Qt::NoButton) {

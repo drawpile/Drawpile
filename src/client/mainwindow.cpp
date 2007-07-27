@@ -757,8 +757,7 @@ void MainWindow::leave()
 /**
  * Leave action confirmed, disconnected.
  * 
- * TODO, do this more gracefully by first sending out an unsubscribe
- * message.
+ * @todo do this more gracefully by first sending out an unsubscribe message.
  */
 void MainWindow::finishLeave(int i)
 {
@@ -813,7 +812,7 @@ void MainWindow::finishHost(int i)
 		}
 
 		// If another image was selected, replace current board with it
-		// TODO, what if there were unsaved changes?
+		/** @todo what if there were unsaved changes? */
 		if(hostdlg_->useOriginalImage() == false) {
 			initBoard(hostdlg_->getImage());
 		}
@@ -1066,7 +1065,7 @@ void MainWindow::fullscreen(bool enable)
 		oldpos = pos();
 		oldsize = size();
 		// Hide everything except the central widget
-		// TODO, hiding the menu bar disables shortcut keys
+		/** @todo hiding the menu bar disables shortcut keys */
 		statusBar()->hide();
 		const QObjectList c = children();
 		foreach(QObject *child, c) {

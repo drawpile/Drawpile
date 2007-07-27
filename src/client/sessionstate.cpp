@@ -62,7 +62,7 @@ void SessionState::update(const Session& info)
 	if(info_.maxusers != info.maxusers) {
 		emit userLimitChanged(info.maxusers);
 	}
-	// TODO check for other changes too
+	/** @todo check for other changes too */
 	info_ = info;
 }
 

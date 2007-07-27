@@ -345,7 +345,7 @@ void Controller::rasterDownload(int p)
 				session_->releaseRaster();
 			}
 		} else {
-			// TODO, downloaded invalid image
+			/** @todo downloaded invalid image */
 			Q_ASSERT(false);
 		}
 	}

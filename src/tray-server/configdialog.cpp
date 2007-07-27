@@ -353,8 +353,6 @@ void ConfigDialog::applySettings()
 
 void ConfigDialog::loadSettings()
 {
-	// todo: use QSettings here
-	
 	QSettings cfg;
 	
 	port_spinner->setValue( cfg.value("Port", srv->getPort()).toInt() );

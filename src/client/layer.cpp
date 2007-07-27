@@ -77,17 +77,19 @@ QImage Layer::image() const
  * @param point2 end coordinates
  * @param brush brush to draw with
  * @param distance total drawn line length
+ *
+ * @todo delta pressure(?)
  */
 void Layer::drawLine(const Point& point1, const Point& point2, const Brush& brush,int *distance)
 {
-#if 0 // TODO
+	#if 0
 	qreal pressure = point1.pressure();
 	qreal deltapressure;
 	if(qAbs(pressure2-pressure1) < 1.0/255.0)
 		deltapressure = 0;
 	else
 		deltapressure = (pressure2-pressure1) / hypot(point1.x()-point2.x(), point1.y()-point2.y());
-#endif
+	#endif
 
 	const int spacing = brush.spacing()*brush.radius(point1.pressure())/100;
 

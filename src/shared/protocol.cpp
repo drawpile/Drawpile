@@ -276,6 +276,7 @@ size_t StrokeInfo::payloadLength() const throw()
 	return sizeof(x) + sizeof(y) + sizeof(pressure);
 }
 
+/** @todo Better 0 count handling */
 size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc)
 {
 	assert(buf != 0 and len > 0);
@@ -287,7 +288,7 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exc
 	uint8_t count = buf[i];
 	
 	if (count == 0)
-		throw std::exception(); // TODO: Need better exception
+		throw std::exception();
 	
 	i += sizeof(count);
 	

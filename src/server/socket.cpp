@@ -112,8 +112,6 @@ fd_t Socket::create() throw()
 		case ENETDOWN:
 			cerr << "[Socket] Network sub-system failure" << endl;
 			break;
-		#else // POSIX
-		// TODO
 		#endif
 		case EMFILE:
 			cerr << "[Socket] Socket limit reached" << endl;

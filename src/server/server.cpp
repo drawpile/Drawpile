@@ -591,7 +591,7 @@ void Server::uHandleDrawing(User& usr) throw()
 	else if (usr.session->locked or usr.session_data->locked)
 	{
 		// user or session is locked
-		// TODO: Warn user?
+		/** @todo Warn user? */
 		#ifndef NDEBUG
 		if (usr.strokes == 1)
 		{
@@ -743,7 +743,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 		break;
 	case protocol::Message::UserInfo:
-		// TODO?
+		/** @todo handle user info(?) or remove it */
 		break;
 	case protocol::Message::Raster:
 		uTunnelRaster(*usr);
@@ -759,7 +759,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 			uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::InvalidData));
 			break;
 		}
-		// TODO: Check session for deaf flag
+		/** @todo Check session for deaf flag */
 	case protocol::Message::Palette:
 		{
 			const SessionData *sdata = usr->getConstSession(usr->inMsg->session_id);
@@ -973,9 +973,8 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 		}
 		break;
 	case Z_MEM_ERROR:
-		// TODO: Out of Memory
 		throw std::bad_alloc();
-		//break;
+		break;
 	case Z_BUF_ERROR:
 	case Z_DATA_ERROR:
 		// Input buffer corrupted
@@ -1257,14 +1256,12 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 		}
 		break;
 	case protocol::SessionEvent::Persist:
+		/** @todo Persistent session handling or at least send requestignored error */
 		//#ifdef PERSISTENT_SESSIONS
 		#ifndef NDEBUG
 		cout << "+ Session #" << session->id << " persists." << endl;
 		#endif
 		session->persist = (event.aux != 0);
-		// TODO: Send ACK
-		//#else
-		// TODO: Send RequestIgnored error
 		//#endif
 		break;
 	default:
@@ -1323,13 +1320,6 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
 				break;
 			}
-			/*
-			else if (fIsSet(msg.user_mode, )) // admin flag
-			{
-				// TODO
-				break;
-			}
-			*/
 			
 			if (msg.width < min_dimension or msg.height < min_dimension
 				or msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
@@ -1693,7 +1683,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 					<< " instead of " << ident.revision << endl;
 				#endif
 				
-				// TODO: Implement some compatible way of announcing incompatibility?
+				/** @todo Implement some compatible way of announcing incompatibility? */
 				
 				uRemove(usr, protocol::UserInfo::Dropped);
 			}
@@ -1760,14 +1750,14 @@ void Server::uLayerEvent(User*& usr) throw()
 	{
 	case protocol::LayerEvent::Create:
 		{
-			// TODO: Figure out what to do with the layer ID
+			/** @todo Figure out what to do with the layer ID */
 			octet lastLayer = levent.layer_id;
 			session->layers[lastLayer] = LayerData(lastLayer, levent.mode, levent.opacity);
 		}
 		break;
 	case protocol::LayerEvent::Destroy:
 		session->layers.erase(levent.layer_id);
-		// TODO: Cleanup
+		/** @todo properly clean-up after layer destruction */
 		break;
 	case protocol::LayerEvent::Alter:
 		{
@@ -1859,7 +1849,7 @@ void Server::SyncSession(Session* session) throw()
 	
 	assert(session->syncCounter == 0);
 	
-	// TODO: Need better source user selection.
+	/** @todo Need better source user selection. */
 	const session_usr_const_i sui(session->users.begin());
 	assert(sui != session->users.end());
 	User* src(sui->second);
@@ -2030,7 +2020,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 			if (t_iter->second == &usr)
 			{
 				message_ref cancel_ref(new protocol::Cancel);
-				// TODO: Figure out which session it is from
+				/** @todo Figure out which session the raster is from */
 				//cancel->session_id = session->id;
 				uQueueMsg(*t_iter->first, cancel_ref);
 				

@@ -51,7 +51,7 @@ LocalServer::~LocalServer()
 static bool isLocal(const QHostAddress& a)
 {
 	const QString addr = a.toString();
-	// TODO, better and support IPv6
+	/** @todo better and support IPv6 */
 	if(addr.startsWith("192.") || addr.startsWith("127.") || addr.startsWith("10."))
 		return true;
 	return false;
