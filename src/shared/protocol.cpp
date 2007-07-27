@@ -32,10 +32,6 @@
 
 #include "protocol.h"
 
-#ifndef NDEBUG
-#include <iostream>
-#endif // NDEBUG
-
 #include <limits>
 #include <cassert> // assert()
 #include <memory> // memcpy()
@@ -74,13 +70,15 @@ size_t Message::serializeHeader(char* ptr) const throw()
 {
 	assert(ptr != 0);
 	
-	(*ptr++) = type;
+	int i = 0;
+	
+	ptr[i++] = type;
 	
 	if (isUser)
-		(*ptr++) = user_id;
+		ptr[i++] = user_id;
 	
 	if (isSession)
-		(*ptr++) = session_id;
+		ptr[i] = session_id;
 	
 	return headerSize;
 }
@@ -89,13 +87,13 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 {
 	assert(ptr != 0);
 	
-	++ptr; // skip type
+	int i = 1;
 	
 	if (isUser)
-		user_id = (*ptr++);
+		user_id = ptr[i++];
 	
 	if (isSession)
-		session_id = (*ptr++);
+		session_id = ptr[i];
 	
 	return headerSize;
 }
@@ -147,17 +145,17 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	}
 	
 	// 'iterator'
-	char *dataptr = data;
+	int offset = 0;
 	
 	if (isBundling)
 	{
 		// Write bundled packets
-		dataptr += serializeHeader(dataptr);
-		(*dataptr++) = count;
+		offset += serializeHeader(data+offset);
+		data[offset] = count;
 		do
 		{
 			assert(ptr);
-			dataptr += ptr->serializePayload(dataptr);
+			offset += ptr->serializePayload(data+offset);
 		}
 		while ((ptr = ptr->next) != 0);
 	}
@@ -167,8 +165,8 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 		do
 		{
 			assert(ptr);
-			dataptr += serializeHeader(dataptr);
-			dataptr += ptr->serializePayload(dataptr);
+			offset += serializeHeader(data+offset);
+			offset += ptr->serializePayload(data+offset);
 		}
 		while ((ptr = ptr->next) != 0);
 	}
@@ -286,7 +284,7 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exc
 	
 	size_t i = unserializeHeader(buf);
 	
-	uint8_t count = *(buf+i);
+	uint8_t count = buf[i];
 	
 	if (count == 0)
 		throw std::exception(); // TODO: Need better exception
@@ -1161,7 +1159,8 @@ size_t Palette::unserialize(const char* buf, const size_t len) throw(std::bad_al
 	if (count != 0)
 	{
 		data = new char[count*RGB_size];
-		memcpy(data, buf+i, count*RGB_size); i += count*RGB_size;
+		const int csize = count * RGB_size;
+		memcpy(data, buf+i, csize); i += csize;
 	}
 	else
 		data = 0;
@@ -1203,7 +1202,7 @@ size_t Palette::serializePayload(char *buf) const throw()
 
 size_t Palette::payloadLength() const throw()
 {
-	return sizeof(offset) + sizeof(count) + count * RGB_size;
+	return sizeof(offset) + sizeof(count) + (count * RGB_size);
 }
 
 /*
