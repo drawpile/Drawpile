@@ -34,6 +34,9 @@
 
 #ifndef NDEBUG
 	#include <iostream>
+	using std::cout;
+	using std::cerr;
+	using std::endl;
 #endif
 
 #include "protocol.h"
@@ -44,89 +47,89 @@ namespace protocol
 void msgName(const unsigned char type) throw()
 {
 	#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
-	std::cout << "type (" << static_cast<int>(type) << "): ";
+	cout << "type (" << static_cast<int>(type) << "): ";
 	switch (type)
 	{
 	case Message::Identifier:
-		std::cout << "Identifier" << std::endl;
+		cout << "Identifier" << endl;
 		break;
 	case Message::StrokeInfo:
-		std::cout << "Stroke Info" << std::endl;
+		cout << "Stroke Info" << endl;
 		break;
 	case Message::StrokeEnd:
-		std::cout << "Stroke End" << std::endl;
+		cout << "Stroke End" << endl;
 		break;
 	case Message::ToolInfo:
-		std::cout << "Tool Info" << std::endl;
+		cout << "Tool Info" << endl;
 		break;
 	case Message::PasswordRequest:
-		std::cout << "Password Request" << std::endl;
+		cout << "Password Request" << endl;
 		break;
 	case Message::Password:
-		std::cout << "Password" << std::endl;
+		cout << "Password" << endl;
 		break;
 	case Message::Synchronize:
-		std::cout << "Synchronize" << std::endl;
+		cout << "Synchronize" << endl;
 		break;
 	case Message::Raster:
-		std::cout << "Raster" << std::endl;
+		cout << "Raster" << endl;
 		break;
 	case Message::SyncWait:
-		std::cout << "SyncWait" << std::endl;
+		cout << "SyncWait" << endl;
 		break;
 	case Message::Subscribe:
-		std::cout << "Subscribe" << std::endl;
+		cout << "Subscribe" << endl;
 		break;
 	case Message::Unsubscribe:
-		std::cout << "Unsubscribe" << std::endl;
+		cout << "Unsubscribe" << endl;
 		break;
 	case Message::SessionSelect:
-		std::cout << "Session Select" << std::endl;
+		cout << "Session Select" << endl;
 		break;
 	case Message::SessionInstruction:
-		std::cout << "SessionInstruction" << std::endl;
+		cout << "SessionInstruction" << endl;
 		break;
 	case Message::Shutdown:
-		std::cout << "Shutdown" << std::endl;
+		cout << "Shutdown" << endl;
 		break;
 	case Message::SetPassword:
-		std::cout << "Set Password" << std::endl;
+		cout << "Set Password" << endl;
 		break;
 	case Message::Authenticate:
-		std::cout << "Authenticate" << std::endl;
+		cout << "Authenticate" << endl;
 		break;
 	case Message::ListSessions:
-		std::cout << "List Sessions" << std::endl;
+		cout << "List Sessions" << endl;
 		break;
 	case Message::Cancel:
-		std::cout << "Cancel" << std::endl;
+		cout << "Cancel" << endl;
 		break;
 	case Message::UserInfo:
-		std::cout << "User Info" << std::endl;
+		cout << "User Info" << endl;
 		break;
 	case Message::HostInfo:
-		std::cout << "Host Info" << std::endl;
+		cout << "Host Info" << endl;
 		break;
 	case Message::SessionInfo:
-		std::cout << "Session Info" << std::endl;
+		cout << "Session Info" << endl;
 		break;
 	case Message::Acknowledgement:
-		std::cout << "Acknowledgement" << std::endl;
+		cout << "Acknowledgement" << endl;
 		break;
 	case Message::Error:
-		std::cout << "Error" << std::endl;
+		cout << "Error" << endl;
 		break;
 	case Message::Deflate:
-		std::cout << "Deflate" << std::endl;
+		cout << "Deflate" << endl;
 		break;
 	case Message::Chat:
-		std::cout << "Chat" << std::endl;
+		cout << "Chat" << endl;
 		break;
 	case Message::Palette:
-		std::cout << "Palette" << std::endl;
+		cout << "Palette" << endl;
 		break;
 	default:
-		std::cout << "{unknown}" << std::endl;
+		cout << "{unknown}" << endl;
 		break;
 	}
 	#endif
@@ -136,7 +139,7 @@ Message* getMessage(const unsigned char type) throw(std::bad_alloc)
 {
 	#ifdef DEBUG_PROTOCOL
 	#ifndef NDEBUG
-	std::cout << "protocol::getMessage - ";
+	cout << "protocol::getMessage - ";
 	msgName(type);
 	#endif
 	#endif
@@ -203,7 +206,7 @@ Message* getMessage(const unsigned char type) throw(std::bad_alloc)
 		return new Palette();
 	default:
 		#ifndef NDEBUG
-		std::cerr << "Unknown message type: " << static_cast<unsigned int>(type) << std::endl;
+		cerr << "Unknown message type: " << static_cast<unsigned int>(type) << endl;
 		#endif
 		return 0;
 	}
