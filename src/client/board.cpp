@@ -281,5 +281,13 @@ void Board::userEndStroke(int user)
 	users_.value(user)->endStroke();
 }
 
+/**
+ * @note returns false so any drops are redirected back to the graphics view
+ */
+bool Board::event(QEvent *event)
+{
+	return false;
+}
+
 }
 

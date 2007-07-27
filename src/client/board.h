@@ -111,7 +111,10 @@ class Board : public QGraphicsScene
 		//! User ends a stroke
 		void userEndStroke(int user);
 
+	protected:
+		bool event(QEvent *event);
 	private:
+		
 		//! Commit preview strokes to the board
 		void commitPreviews();
 

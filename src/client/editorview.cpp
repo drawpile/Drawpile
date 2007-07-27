@@ -319,24 +319,25 @@ void EditorView::stopDrag()
 /**
  * @brief accept image drops
  * @param event event info
+ *
+ * @todo Check file extensions
  */
 void EditorView::dragEnterEvent(QDragEnterEvent *event)
 {
-	// TODO, check file extensions
-	if(event->mimeData()->hasUrls()) {
-		// TODO, why doesn't this work?
+	if(event->mimeData()->hasUrls())
 		event->acceptProposedAction();
-	}
 }
 
 /**
  * @brief handle color and image drops
  * @param event event info
+ *
+ * @todo Reset the image modification state to unmodified
  */
 void EditorView::dropEvent(QDropEvent *event)
 {
 	emit imageDropped(event->mimeData()->urls().first().toLocalFile());
+	event->acceptProposedAction();
 }
 
 }
-
