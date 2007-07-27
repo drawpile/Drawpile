@@ -33,6 +33,8 @@ set ( FOMIT "-fomit-frame-pointer" )
 
 set ( WARNALL "-Wall" )
 
+set ( NORTTI "-fno-rtti" )
+
 # a bit questionable optimizations
 set ( U_MFPMATH "-mfpmath=sse,387" ) # does not break anything, only requires SSE to be present
 set ( U_MALIGN "-malign-double" ) # breaks binary compatibility?
@@ -156,6 +158,13 @@ if ( NOPI )
 	
 	set ( NOPI_FLAGS "${NOPIC} ${NOPIE}" )
 endif ( NOPI )
+
+###   TEST -fno-rtti   ###
+
+check_cxx_accepts_flag ( ${NORTTI} ACCEPT_NORTTI )
+if ( NOT ACCEPT_NORTTI )
+	set ( NORTTI "" )
+endif ( NOT ACCEPT_NORTTI )
 
 ###   TEST -Wall   ###
 
