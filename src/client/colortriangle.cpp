@@ -96,9 +96,8 @@ static inline qreal INTENSITY(const QColor& color) {
  * Draw widget contents on screen
  * @param event event info
  */
-void ColorTriangle::paintEvent(QPaintEvent *event)
+void ColorTriangle::paintEvent(QPaintEvent*)
 {
-	(void)event;
 	QPainter painter(this);
 	const QPoint offset(xoff_, yoff_);
 	painter.drawPixmap(offset, wheel_);
@@ -129,9 +128,8 @@ void ColorTriangle::paintEvent(QPaintEvent *event)
  * Update color wheel and triangle on widget resize
  * @param event event info
  */
-void ColorTriangle::resizeEvent(QResizeEvent *event)
+void ColorTriangle::resizeEvent(QResizeEvent*)
 {
-	(void)event;
 	updateColorTriangle();
 }
 
@@ -179,9 +177,8 @@ void ColorTriangle::mouseMoveEvent(QMouseEvent *event)
  * @brief Stop dragging
  * @param event event info
  */
-void ColorTriangle::mouseReleaseEvent(QMouseEvent *event)
+void ColorTriangle::mouseReleaseEvent(QMouseEvent*)
 {
-	(void)event;
 	mode_ = NODRAG;
 }
 
