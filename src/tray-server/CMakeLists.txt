@@ -66,6 +66,10 @@ link_libraries (
 	eventslib # Events lib, required by Server class
 )
 
+if ( NOT DEBUG )
+	strip_exe ( ${TRAYSERVERNAME} )
+endif ( NOT DEBUG )
+
 add_executable (
 	${TRAYSERVERNAME}
 	${EXETYPE}
