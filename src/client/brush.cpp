@@ -307,33 +307,20 @@ void Brush::draw(QImage &image, const Point& pos) const
 	const int cy = pos.y()-rad;
 
 	const QColor col = color(pos.pressure());
-	const int red = col.red();
-	const int green = col.green();
-	const int blue= col.blue();
+	//const int red = col.red();
+	//const int green = col.green();
+	//const int blue = col.blue();
 
 	// Make sure we are inside the image
 	const uint offx = cx<0 ? -cx : 0;
 	const uint offy = cy<0 ? -cy : 0;
 	uchar *dest = image.bits() + ((cy+offy)*image.width()+cx+offx)*4;
 	
-	// for avoiding retyping same calculation over and over
-	#define CALCULATE_COLOR(color, target, alpha) \
-		alpha * (color - target) / 256
-	
 	// Special case, single pixel brush
 	if(dia==0) {
-		if(offx==0 && offy==0 &&
-				pos.x() < image.width() && pos.y() < image.height()) {
+		if(offx==0 && offy==0 && pos.x() < image.width() && pos.y() < image.height()) {
 			const int a = int(opacity(pos.pressure())* hardness(pos.pressure())*256);
-			#ifdef IS_BIG_ENDIAN
-			dest[1] += CALCULATE_COLOR(red, dest[1], a); ++dest;
-			dest[2] += CALCULATE_COLOR(green, dest[2], a); ++dest;
-			dest[3] += CALCULATE_COLOR(blue, dest[3], a); ++dest;
-			#else
-			dest[0] += CALCULATE_COLOR(blue, dest[0], a); ++dest;
-			dest[1] += CALCULATE_COLOR(green, dest[1], a); ++dest;
-			dest[2] += CALCULATE_COLOR(red, dest[2], a);
-			#endif
+			drawPixel(dest, col, a);
 		}
 		return;
 	}
@@ -360,22 +347,35 @@ void Brush::draw(QImage &image, const Point& pos) const
 	for(int y=offy;y<h;++y) {
 		for(int x=offx;x<w;++x) {
 			const int a = (*src++);
-			#ifdef IS_BIG_ENDIAN
-			dest[offset+1] += CALCULATE_COLOR(red, dest[offset+1], a);
-			dest[offset+2] += CALCULATE_COLOR(green, dest[offset+2], a);
-			dest[offset+3] += CALCULATE_COLOR(blue, dest[offset+3], a);
-			#else
-			dest[offset] += CALCULATE_COLOR(blue, dest[offset], a);
-			dest[offset+1] += CALCULATE_COLOR(green, dest[offset+1], a);
-			dest[offset+2] += CALCULATE_COLOR(red, dest[offset+2], a);
-			#endif
+			drawPixel(dest+offset, col, a);
 			offset += 4;
 		}
 		offset += offset_incr;
 		src += src_incr;
 	}
+}
+
+void Brush::normalComposition(int color, uchar& target, int alpha) const
+{
+	target += (alpha * (color - target) / 256);
+}
+
+void Brush::drawPixel(uchar *dest, const QColor& color, int alpha) const
+{
+	// Scalars for accessing the dest buffer independently of the byte-order
+	#ifdef IS_BIG_ENDIAN
+	const int boi_red = 1;
+	const int boi_green = 2;
+	const int boi_blue = 3;
+	#else
+	const int boi_blue = 0;
+	const int boi_green = 1;
+	const int boi_red = 2;
+	#endif
 	
-	#undef CALCULATE_COLOR // remove macro function
+	normalComposition(color.red(), dest[boi_red], alpha);
+	normalComposition(color.green(), dest[boi_green], alpha);
+	normalComposition(color.blue(), dest[boi_blue], alpha);
 }
 
 /**

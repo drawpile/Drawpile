@@ -88,6 +88,12 @@ class Brush
 		bool operator!=(const Brush& brush) const;
 
 	private:
+		//! called by draw()
+		void drawPixel(uchar *dest, const QColor& color, int alpha) const;
+		
+		//! Normal composition, called by drawPixel()
+		void normalComposition(int color, uchar& target, int alpha) const;
+		
 		//! Update the brush cache
 		void updateCache() const;
 
