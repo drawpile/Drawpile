@@ -62,8 +62,6 @@
 	using std::cerr;
 #endif
 
-#include <list> // std::list
-
 /* ** Iterators ** */
 // for Session*
 typedef std::map<octet, User*>::iterator session_usr_i;
@@ -83,9 +81,6 @@ typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
-
-typedef std::set<User*>::iterator userset_i;
-typedef std::set<User*>::const_iterator userset_const_i;
 
 Server::Server() throw()
 	: state(Server::Dead),
@@ -1602,7 +1597,7 @@ void Server::uLoginInfo(User& usr) throw()
 	usr.inMsg = 0;
 	
 	// remove fake timer
-	utimer.erase(utimer.find(&usr));
+	utimer.remove(&usr);
 	
 	// reply
 	uQueueMsg(usr, message_ref(&msg));
@@ -2216,7 +2211,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 	freeUserID(usr->id);
 	
 	// clear any idle timer associated with this user.
-	utimer.erase(usr);
+	utimer.remove(usr);
 	
 	// limit transient mode's exit to valid users only
 	bool tryExit = (usr->state == User::Active);
@@ -2344,7 +2339,7 @@ void Server::cullIdlers() throw()
 	else
 	{
 		User *usr;
-		for (userset_i tui(utimer.begin()); tui != utimer.end(); ++tui)
+		for (userlist_i tui(utimer.begin()); tui != utimer.end(); ++tui)
 		{
 			if ((*tui)->deadtime < current_time)
 			{

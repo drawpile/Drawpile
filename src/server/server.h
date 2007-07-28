@@ -49,7 +49,7 @@ struct Buffer;
 
 #include <ctime> // time_t, time(0)
 #include <map> // std::map
-#include <set> // std::set
+#include <list> // std::list
 
 //! Server defaults
 namespace srv_defaults {
@@ -96,7 +96,7 @@ protected:
 	std::multimap<User*, User*> tunnel;
 	
 	//! Users eligible for culling
-	std::set<User*> utimer;
+	std::list<User*> utimer;
 	
 	//! Listening socket
 	Socket lsock;
