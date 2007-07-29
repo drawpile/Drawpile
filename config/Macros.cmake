@@ -7,13 +7,15 @@ endif ( WIN32 )
 macro ( strip_exe target )
 	if ( STRIP_CMD )
 		if ( WIN32 )
-			set ( target_file ${target}.exe )
+			set ( target_file "${target}.exe" )
+		else ( WIN32 )
+			set ( target_file "${target}" )
 		endif ( WIN32 )
 		
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
-			COMMAND ${STRIP_CMD} "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
+			COMMAND ${STRIP_CMD} -s "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
 		)
 	endif ( STRIP_CMD )
 endmacro ( strip_exe target )
