@@ -151,7 +151,7 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	{
 		// Write bundled packets
 		offset += serializeHeader(data+offset);
-		data[offset] = count;
+		data[offset++] = count;
 		do
 		{
 			assert(ptr);
