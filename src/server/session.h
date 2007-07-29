@@ -49,11 +49,11 @@ struct Session
 	 * @param[in] _title Session title
 	 */
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
-		uint _width, uint _height, uint _level, Array<char>& _title) throw();
+		uint _width, uint _height, uint _level, Array<char>& _title) __attribute__ ((nothrow));
 	
 	#ifdef PERSISTENT_SESSIONS
 	//! Destructor
-	~Session() throw();
+	~Session() __attribute__ ((nothrow));
 	#endif
 	
 	//! Session identifier
@@ -84,7 +84,7 @@ struct Session
 	uint level;
 	
 	//! Get session flags
-	octet getFlags() const throw();
+	octet getFlags() const __attribute__ ((nothrow,warn_unused_result));
 	
 	#ifdef LAYER_SUPPORT
 	//! Layer identifier to layer data map
@@ -117,14 +117,14 @@ struct Session
 	/* *** Functions *** */
 	
 	//! Test if session can be joined
-	bool canJoin() const throw();
+	bool canJoin() const __attribute__ ((nothrow,warn_unused_result));
 	
 	#ifdef PERSISTENT_SESSIONS
 	//! Invalidate currently cached raster
-	void invalidateRaster() throw();
+	void invalidateRaster() __attribute__ ((nothrow));
 	
 	//! Append raster message to current cached raster
-	bool appendRaster(protocol::Raster *raster) throw();
+	bool appendRaster(protocol::Raster *raster) __attribute__ ((nothrow));
 	#endif
 };
 

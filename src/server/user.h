@@ -44,35 +44,36 @@ struct User
 	 * @param[in] _id User identifier
 	 * @param[in] nsock Socket to associate with User
 	 */
-	User(const octet _id, const Socket& nsock) throw();
+	User(const octet _id, const Socket& nsock) __attribute__ ((nothrow));
 	
 	//! Destructor
-	~User() throw();
+	~User() __attribute__ ((nothrow));
 	
 	//! Change active session
 	/**
 	 * @param[in] session_id The session which to activate
 	 */
-	bool makeActive(octet session_id) throw();
+	bool makeActive(octet session_id) __attribute__ ((nothrow));
 	
 	//! Fetch SessionData* pointer
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	SessionData* getSession(octet session_id) throw();
+	SessionData* getSession(octet session_id) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Fetch const SessionData* pointer
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	const SessionData* getConstSession(octet session_id) const throw();
+	const SessionData* getConstSession(octet session_id) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Cache tool info
 	/**
 	 * @param[in] ti Tool info message to cache
+	 *
 	 * @throw std::bad_alloc If it can't allocate local copy of the tool info
 	 */
-	void cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc);
+	void cacheTool(protocol::ToolInfo* ti);
 	
 	//! Socket
 	Socket sock;
@@ -123,13 +124,13 @@ struct User
 	/**
 	 * @return Flags for use with the network protocol
 	 */
-	octet getCapabilities() const throw();
+	octet getCapabilities() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Set client capabilities
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setCapabilities(const octet flags) throw();
+	void setCapabilities(const octet flags) __attribute__ ((nothrow));
 	
 	bool
 		//! Deflate extension
@@ -143,13 +144,13 @@ struct User
 	/**
 	 * @return Flags as used in the network protocol
 	 */
-	octet getExtensions() const throw();
+	octet getExtensions() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Set extensions
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setExtensions(const octet flags) throw();
+	void setExtensions(const octet flags) __attribute__ ((nothrow));
 	
 	//! Subscribed sessions
 	std::map<octet, SessionData*> sessions;
@@ -173,7 +174,7 @@ struct User
 	char seed[4];
 	
 	//! Last touched.
-	time_t deadtime;
+	time_t touched;
 	
 	//! User name
 	Array<char> name;
@@ -185,6 +186,9 @@ struct User
 	u_long strokes;
 	
 	//! 'Flushes' queue to output buffer
+	/**
+	 * @throw std::bad_alloc thrown indirectly from Buffer
+	 */
 	uint flushQueue();
 };
 

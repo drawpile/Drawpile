@@ -24,7 +24,7 @@ bool startNetSubsystem()
 	const int maj=2, min=2;
 	
 	WSADATA info;
-	if (WSAStartup(MAKEWORD(maj,min), &info))
+	if (WSAStartup((16<<maj|min), &info))
 		return false;
 	if (LOBYTE(info.wVersion) != maj or HIBYTE(info.wVersion) != min)
 	{

@@ -16,7 +16,7 @@
 
 #include <cassert>
 
-Buffer::Buffer(char* buf, const size_t len) throw()
+Buffer::Buffer(char* buf, const size_t len)
 	: data(buf),
 	wpos(buf),
 	rpos(buf),
@@ -25,7 +25,7 @@ Buffer::Buffer(char* buf, const size_t len) throw()
 {
 }
 
-Buffer& Buffer::operator<< (Buffer& buffer) throw()
+Buffer& Buffer::operator<< (Buffer& buffer)
 {
 	delete [] data;
 	
@@ -42,14 +42,14 @@ Buffer& Buffer::operator<< (Buffer& buffer) throw()
 	return *this;
 }
 
-void Buffer::reset() throw()
+void Buffer::reset()
 {
 	delete [] data;
 	data = wpos = rpos = 0;
 	left = size = 0;
 }
 
-void Buffer::resize(size_t nsize, char* nbuf) throw(std::bad_alloc)
+void Buffer::resize(size_t nsize, char* nbuf)
 {
 	assert(nsize > 0);
 	assert(nsize >= left);
@@ -69,7 +69,7 @@ void Buffer::resize(size_t nsize, char* nbuf) throw(std::bad_alloc)
 	write(off);
 }
 
-bool Buffer::getBuffer(char* buf, const size_t buflen) const throw()
+bool Buffer::getBuffer(char* buf, const size_t buflen) const
 {
 	assert(buflen >= left);
 	assert(buf != 0);
@@ -85,7 +85,7 @@ bool Buffer::getBuffer(char* buf, const size_t buflen) const throw()
 	return true;
 }
 
-void Buffer::setBuffer(char* buf, const size_t buflen, const size_t fill) throw()
+void Buffer::setBuffer(char* buf, const size_t buflen, const size_t fill)
 {
 	assert(buf != 0);
 	assert(buflen > 1);
@@ -103,7 +103,7 @@ void Buffer::setBuffer(char* buf, const size_t buflen, const size_t fill) throw(
 	left = fill;
 }
 
-void Buffer::reposition() throw(std::bad_alloc)
+void Buffer::reposition()
 {
 	if (rpos == data) // already optimally positioned
 	{
@@ -169,12 +169,12 @@ void Buffer::reposition() throw(std::bad_alloc)
 	}
 }
 
-const bool Buffer::isEmpty() const throw()
+const bool Buffer::isEmpty() const
 {
 	return (left == 0);
 }
 
-void Buffer::read(const size_t len) throw()
+void Buffer::read(const size_t len)
 {
 	assert(data != 0);
 	assert(size > 1);
@@ -192,7 +192,7 @@ void Buffer::read(const size_t len) throw()
 		rpos = data;
 }
 
-size_t Buffer::canRead() const throw()
+size_t Buffer::canRead() const
 {
 	assert(data != 0);
 	assert(size > 1);
@@ -207,7 +207,7 @@ size_t Buffer::canRead() const throw()
 	return 0;
 }
 
-void Buffer::write(const size_t len) throw()
+void Buffer::write(const size_t len)
 {
 	assert(data != 0);
 	assert(size > 1);
@@ -225,7 +225,7 @@ void Buffer::write(const size_t len) throw()
 		wpos = data;
 }
 
-size_t Buffer::canWrite() const throw()
+size_t Buffer::canWrite() const
 {
 	assert(data != 0);
 	assert(size > 1);
@@ -236,12 +236,12 @@ size_t Buffer::canWrite() const throw()
 		return (data+size) - wpos;
 }
 
-size_t Buffer::free() const throw()
+size_t Buffer::free() const
 {
 	return size - left;
 }
 
-void Buffer::rewind() throw()
+void Buffer::rewind()
 {
 	assert(data != 0);
 	assert(size > 0);

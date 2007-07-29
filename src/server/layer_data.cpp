@@ -17,7 +17,7 @@
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.defaults.h"
 
-LayerData::LayerData() throw()
+LayerData::LayerData()
 	: id(protocol::null_layer),
 	mode(protocol::tool_mode::None),
 	opacity(0),
@@ -26,7 +26,7 @@ LayerData::LayerData() throw()
 	// nothing
 }
 
-LayerData::LayerData(const uint _id, const uint _mode, const uint _opacity, const bool _locked) throw()
+LayerData::LayerData(const uint _id, const uint _mode, const uint _opacity, const bool _locked)
 	: id(_id),
 	mode(_mode),
 	opacity(_opacity),

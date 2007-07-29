@@ -30,6 +30,8 @@
 
 *******************************************************************************/
 
+#include "dpsrv.h"
+
 // win32 macro workaround for <algorithm>
 #ifndef NOMINMAX
 	#define NOMINMAX
@@ -39,7 +41,6 @@
 
 #include <algorithm> // std::min, std::max
 #include <iostream>
-#include <stdexcept>
 #include <getopt.h>
 
 #include "server.h" // Server class
@@ -51,7 +52,8 @@ using std::cout;
 using std::endl;
 using std::cerr;
 
-void getArgs(int argc, char** argv, Server& srv) throw(std::bad_alloc)
+static
+void getArgs(int argc, char** argv, Server& srv)
 {
 	getarg:
 	switch (getopt(argc, argv, "a:p:hlbu:S:s:wed:Tn:L:J:VM"))
@@ -319,6 +321,10 @@ int main(int argc, char** argv)
 		
 		try {
 			rc = srv.run();
+		}
+		catch (std::bad_alloc) {
+			cerr << "- Out of Memory" << endl;
+			rc = 9;
 		}
 		catch (...) {
 			#ifndef NDEBUG

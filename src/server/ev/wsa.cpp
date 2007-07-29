@@ -53,15 +53,19 @@ const std::string system<WSA>::value("wsa");
 
 const SOCKET invalid_fd<WSA>::value = INVALID_SOCKET;
 
-WSA::WSA() throw()
+WSA::WSA()
 	: nfds(0), last_event(0)
 {
 	for (uint i=0; i != max_events; i++)
 		w_ev[i] = WSA_INVALID_EVENT;
 }
 
+WSA::~WSA()
+{
+}
+
 // Errors: ENOMEM, WSAENETDOWN, WSAEINPROGRESS
-int WSA::wait() throw()
+int WSA::wait()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.wait()" << endl;
@@ -99,7 +103,7 @@ int WSA::wait() throw()
 }
 
 // Errors: WSAENETDOWN
-int WSA::add(fd_t fd, long events) throw()
+int WSA::add(fd_t fd, long events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.add(fd: " << fd << ")" << endl;
@@ -148,7 +152,7 @@ int WSA::add(fd_t fd, long events) throw()
 }
 
 // Errors: WSAENETDOWN
-int WSA::modify(fd_t fd, long events) throw()
+int WSA::modify(fd_t fd, long events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.modify(fd: " << fd << ")" << endl;
@@ -179,7 +183,7 @@ int WSA::modify(fd_t fd, long events) throw()
 	return 0;
 }
 
-int WSA::remove(fd_t fd) throw()
+int WSA::remove(fd_t fd)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.remove(fd: " << fd << ")" << endl;
@@ -205,7 +209,7 @@ int WSA::remove(fd_t fd) throw()
 	return true;
 }
 
-bool WSA::getEvent(fd_t &fd, long &events) throw()
+bool WSA::getEvent(fd_t &fd, long &events)
 {
 	WSANETWORKEVENTS set;
 	
@@ -263,7 +267,7 @@ bool WSA::getEvent(fd_t &fd, long &events) throw()
 	return false;
 }
 
-void WSA::timeout(uint msecs) throw()
+void WSA::timeout(uint msecs)
 {
 	_timeout = msecs;
 }

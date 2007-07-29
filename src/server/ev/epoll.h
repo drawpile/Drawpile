@@ -52,15 +52,18 @@ private:
 	int evfd;
 	epoll_event events[10];
 public:
-	Epoll() throw(std::exception);
-	~Epoll() throw();
+	/**
+	 * @throw std::exception
+	 */
+	Epoll();
+	~Epoll() __attribute__ ((nothrow));
 	
-	void timeout(uint msecs) throw();
-	int wait() throw();
-	int add(fd_t fd, ev_t events) throw();
-	int remove(fd_t fd) throw();
-	int modify(fd_t fd, ev_t events) throw();
-	bool getEvent(fd_t &fd, ev_t &events) throw();
+	void timeout(uint msecs) __attribute__ ((nothrow));
+	int wait() __attribute__ ((nothrow));
+	int add(fd_t fd, ev_t events) __attribute__ ((nothrow));
+	int remove(fd_t fd) __attribute__ ((nothrow));
+	int modify(fd_t fd, ev_t events) __attribute__ ((nothrow));
+	bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow));
 };
 
 /* traits */

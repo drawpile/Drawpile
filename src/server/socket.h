@@ -57,28 +57,28 @@ public:
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 */
-	Socket(const fd_t& nsock=INVALID_SOCKET) throw();
+	Socket(const fd_t& nsock=INVALID_SOCKET) __attribute__ ((nothrow));
 	
 	//! More advanced constructor
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(const fd_t& nsock, const Address& saddr) throw();
+	Socket(const fd_t& nsock, const Address& saddr) __attribute__ ((nothrow));
 	
-	~Socket() throw();
+	~Socket() __attribute__ ((nothrow));
 	
 	//! Create new socket
-	fd_t create() throw();
+	fd_t create() __attribute__ ((nothrow));
 	
 	//! Close socket
 	/**
 	 * Closes the socket, and therefore, closes the connection associated with it.
 	 */
-	void close() throw();
+	void close() __attribute__ ((nothrow));
 	
 	//! releases FD association from this
-	fd_t release() throw();
+	fd_t release() __attribute__ ((nothrow));
 	
 	//! Set file descriptor
 	/**
@@ -86,20 +86,20 @@ public:
 	 *
 	 * @return file descriptor associated with the class.
 	 */
-	fd_t fd(fd_t nsock) throw();
+	fd_t fd(fd_t nsock) __attribute__ ((nothrow));
 	
 	//! Get file descriptor
 	/**
 	 * @return reference to file descriptor associated with the class.
 	 */
-	fd_t fd() const throw();
+	fd_t fd() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
 	 * @note (Socket.getFD() == INVALID_SOCKET) if no new connection was accepted
 	 */
-	Socket accept() throw();
+	Socket accept()  __attribute__ ((nothrow)) /*__attribute__ ((warn_unused_result))*/;
 	
 	//! Set blocking
 	/**
@@ -107,7 +107,7 @@ public:
 	 *
 	 * @note You can't re-enable blocking on non-Win32 systems (API limitation?).
 	 */
-	bool block(const bool x) throw();
+	bool block(const bool x) __attribute__ ((nothrow));
 	
 	//! Re-use socket port
 	/**
@@ -118,7 +118,7 @@ public:
 	 *
 	 * @note In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
 	 */
-	bool reuse_port(const bool x) throw();
+	bool reuse_port(const bool x) __attribute__ ((nothrow));
 	
 	//! Re-use socket address
 	/**
@@ -129,7 +129,7 @@ public:
 	 *
 	 * @note In Win32, this does nothing as TIME_WAIT is ignored completely there.
 	 */
-	bool reuse_addr(const bool x) throw();
+	bool reuse_addr(const bool x) __attribute__ ((nothrow));
 	
 	//! Set/unset lingering
 	/**
@@ -140,7 +140,7 @@ public:
 	 * @param[in] x enable/disable lingering
 	 * @param[in] delay linger time if enabled
 	 */
-	bool linger(const bool x, const ushort delay) throw();
+	bool linger(const bool x, const ushort delay) __attribute__ ((nothrow));
 	
 	//! Bind socket to port and address
 	/**
@@ -152,7 +152,7 @@ public:
 	 * @retval 0 on success
 	 * @retval SOCKET_ERROR on error
 	 */
-	int bindTo(const std::string& address, const ushort port) throw();
+	int bindTo(const std::string& address, const ushort port) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Bind socket to port and address
 	/**
@@ -161,7 +161,7 @@ public:
 	 * @retval 0 on success
 	 * @retval SOCKET_ERROR on error
 	 */
-	int bindTo(const Address& address) throw();
+	int bindTo(const Address& address) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Connect to address
 	/**
@@ -171,14 +171,14 @@ public:
 	 *
 	 * @note getError() 
 	 */
-	int connect(const Address& rhost) throw();
+	int connect(const Address& rhost) __attribute__ ((nothrow));
 	
 	//! Set listening
 	/**
 	 * @retval 0 on success
 	 * @retval SOCKET_ERROR on error
 	 */
-	int listen() throw();
+	int listen() __attribute__ ((nothrow));
 	
 	//! Send data.
 	/**
@@ -188,12 +188,12 @@ public:
 	 * @return number of bytes actually sent.
 	 * @retval SOCKET_ERROR on error
 	 */
-	int send(char* buffer, const size_t buflen) throw();
+	int send(char* buffer, const size_t buflen) __attribute__ ((nothrow,warn_unused_result));
 	
 	/*
 	#ifdef HAVE_SENDMSG
 	//! Scatter-Gather variant of send()
-	int sc_send(std::list<Array<char*,size_t>*> buffers) throw();
+	int sc_send(std::list<Array<char*,size_t>*> buffers);
 	#endif
 	*/
 	
@@ -206,12 +206,12 @@ public:
 	 * @retval 0 if connection was closed on the other end.
 	 * @retval SOCKET_ERROR on error.
 	 */
-	int recv(char* buffer, const size_t buflen) throw();
+	int recv(char* buffer, const size_t buflen) __attribute__ ((nothrow,warn_unused_result));
 	
 	/*
 	#ifdef HAVE_RECVMSG
 	//! Scatter-Gather variant of recv()
-	int sc_recv(std::list<Array<char*,size_t>*> buffers) throw();
+	int sc_recv(std::list<Array<char*,size_t>*> buffers);
 	#endif
 	*/
 	
@@ -229,48 +229,48 @@ public:
 	 *
 	 * @retval -1 on error
 	 */
-	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) throw();
+	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) __attribute__ ((nothrow));
 	#endif // WITH_SENDFILE or HAVE_XPWSA
 	
 	//! Shutdown socket
 	/**
 	 * @param[in] how SHUT_RD, SHUT_WR, SHUT_RDWR
 	 */
-	int shutdown(int how) throw();
+	int shutdown(int how) __attribute__ ((nothrow));
 	
 	//! Get last error number
 	/**
 	 * @return Last error number (errno).
 	 */
-	int getError() const throw();
+	int getError() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get address structure
 	/**
 	 * @return Associated address structure.
 	 */
-	Address& getAddr() throw();
+	Address& getAddr() __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get IP address
 	/**
 	 * @return IP address string.
 	 * (e.g. [::1]:30000 or 127.0.0.1:30000)
 	 */
-	std::string address() const throw();
+	std::string address() const __attribute__ ((nothrow));
 	
 	//! Get port
 	/**
 	 * @return Local port number
 	 */
-	ushort port() const throw();
+	ushort port() const __attribute__ ((nothrow,warn_unused_result));
 	
 	/* Operator overloads */
 	
 	#ifdef SOCKET_OPS
 	//! operator== overload (Socket&)
-	bool operator== (const Socket& tsock) const throw();
+	bool operator== (const Socket& tsock) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! operator= overload (Socket&)
-	Socket& operator= (Socket& tsock) throw();
+	Socket& operator= (Socket& tsock) __attribute__ ((nothrow));
 	#endif
 };
 

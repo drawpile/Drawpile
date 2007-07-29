@@ -52,15 +52,18 @@ private:
 	kevent chlist[max_events], *evtrigr;
 	size_t chlist_count, evtrigr_size;
 public:
-	Kqueue() throw();
-	~Kqueue() throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	Kqueue();
+	~Kqueue() __attribute__ ((nothrow));
 	
-	void timeout(uint msecs) throw();
-	int wait() throw();
-	int add(fd_t fd, int events) throw();
-	int remove(fd_t fd) throw();
-	int modify(fd_t fd, int events) throw();
-	bool getEvent(fd_t &fd, int &events) throw();
+	void timeout(uint msecs) __attribute__ ((nothrow));
+	int wait() __attribute__ ((nothrow));
+	int add(fd_t fd, int events) __attribute__ ((nothrow));
+	int remove(fd_t fd) __attribute__ ((nothrow));
+	int modify(fd_t fd, int events) __attribute__ ((nothrow));
+	bool getEvent(fd_t &fd, int &events) __attribute__ ((nothrow));
 };
 
 /* traits */

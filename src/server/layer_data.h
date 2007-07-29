@@ -21,10 +21,10 @@
 struct LayerData
 {
 	//! Constructor
-	LayerData() throw();
+	LayerData() __attribute__ ((nothrow));
 	
 	//! Constructor
-	LayerData(const uint _id, const uint _mode, const uint _opacity=255, const bool _locked=false) throw();
+	LayerData(const uint _id, const uint _mode, const uint _opacity=255, const bool _locked=false) __attribute__ ((nothrow));
 	
 	uint
 		//! Layer identifier

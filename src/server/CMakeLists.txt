@@ -74,6 +74,7 @@ if ( SERVERLIB )
 	set (
 		SRV_SOURCES
 		buffer.cpp
+		array.cpp
 		session_data.cpp
 		layer_data.cpp
 		user.cpp

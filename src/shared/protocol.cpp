@@ -51,7 +51,7 @@ namespace protocol {
  * struct Message
  */
 
-Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags) throw()
+Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags)
 	: headerSize(_header),
 	isUser(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isUser))),
 	isSession(fIsSet(_flags, static_cast<uint8_t>(protocol::message::isSession))),
@@ -66,7 +66,11 @@ Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags
 	assert(isSession ? !isSelected : true);
 }
 
-size_t Message::serializeHeader(char* ptr) const throw()
+Message::~Message()
+{
+}
+
+size_t Message::serializeHeader(char* ptr) const
 {
 	assert(ptr != 0);
 	
@@ -83,7 +87,7 @@ size_t Message::serializeHeader(char* ptr) const throw()
 	return headerSize;
 }
 
-size_t Message::unserializeHeader(const char* ptr) throw()
+size_t Message::unserializeHeader(const char* ptr)
 {
 	assert(ptr != 0);
 	
@@ -99,7 +103,7 @@ size_t Message::unserializeHeader(const char* ptr) throw()
 }
 
 // Base serialization
-char* Message::serialize(size_t &length, char* data, size_t &size) const throw(std::bad_alloc)
+char* Message::serialize(size_t &length, char* data, size_t &size) const
 {
 	// This _must_ be the last message in bundle.
 	assert(next == 0);
@@ -174,19 +178,19 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const throw(s
 	return data;
 }
 
-size_t Message::payloadLength() const throw()
+size_t Message::payloadLength() const
 {
 	return 0;
 }
 
-size_t Message::serializePayload(char *buf) const throw()
+size_t Message::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
 	return 0;
 }
 
-size_t Message::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Message::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -194,7 +198,7 @@ size_t Message::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize;
 }
 
-size_t Message::unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc)
+size_t Message::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -207,7 +211,7 @@ size_t Message::unserialize(const char* buf, const size_t len) throw(std::except
  * struct Identifier
  */
 
-size_t Identifier::serializePayload(char *buf) const throw()
+size_t Identifier::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -221,13 +225,13 @@ size_t Identifier::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t Identifier::payloadLength() const throw()
+size_t Identifier::payloadLength() const
 {
 	return identifier_size + sizeof(revision) + sizeof(level)
 		+ sizeof(flags) + sizeof(extensions);
 }
 
-size_t Identifier::unserialize(const char* buf, const size_t len) throw()
+size_t Identifier::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -248,7 +252,7 @@ size_t Identifier::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t Identifier::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Identifier::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -260,7 +264,7 @@ size_t Identifier::reqDataLen(const char *buf, const size_t len) const throw()
  * struct StrokeInfo
  */
 
-size_t StrokeInfo::serializePayload(char *buf) const throw()
+size_t StrokeInfo::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -271,13 +275,13 @@ size_t StrokeInfo::serializePayload(char *buf) const throw()
 	return payloadLength();
 }
 
-size_t StrokeInfo::payloadLength() const throw()
+size_t StrokeInfo::payloadLength() const
 {
 	return sizeof(x) + sizeof(y) + sizeof(pressure);
 }
 
 /** @todo Better 0 count handling */
-size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc)
+size_t StrokeInfo::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -340,7 +344,7 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len) throw(std::exc
 	return i;
 }
 
-size_t StrokeInfo::reqDataLen(const char *buf, const size_t len) const throw()
+size_t StrokeInfo::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -363,7 +367,7 @@ size_t StrokeInfo::reqDataLen(const char *buf, const size_t len) const throw()
  * struct ToolInfo
  */
 
-size_t ToolInfo::unserialize(const char* buf, const size_t len) throw()
+size_t ToolInfo::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -386,7 +390,7 @@ size_t ToolInfo::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t ToolInfo::reqDataLen(const char *buf, const size_t len) const throw()
+size_t ToolInfo::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -394,7 +398,7 @@ size_t ToolInfo::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + payloadLength();
 }
 
-size_t ToolInfo::serializePayload(char *buf) const throw()
+size_t ToolInfo::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	assert(tool_id != tool_type::None);
@@ -414,7 +418,7 @@ size_t ToolInfo::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t ToolInfo::payloadLength() const throw()
+size_t ToolInfo::payloadLength() const
 {
 	return sizeof(tool_id) + sizeof(mode) + sizeof(lo_color.RGBA)
 		+ sizeof(hi_color.RGBA) + sizeof(lo_size) + sizeof(hi_size)
@@ -431,7 +435,7 @@ size_t ToolInfo::payloadLength() const throw()
  * struct Raster
  */
 
-size_t Raster::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t Raster::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -459,7 +463,7 @@ size_t Raster::unserialize(const char* buf, const size_t len) throw(std::bad_all
 	return i;
 }
 
-size_t Raster::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Raster::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -476,7 +480,7 @@ size_t Raster::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t Raster::serializePayload(char *buf) const throw()
+size_t Raster::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -490,7 +494,7 @@ size_t Raster::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t Raster::payloadLength() const throw()
+size_t Raster::payloadLength() const
 {
 	return sizeof(offset) + sizeof(length) + sizeof(size) + length;
 }
@@ -505,7 +509,7 @@ size_t Raster::payloadLength() const throw()
  * struct PasswordRequest
  */
 
-size_t PasswordRequest::unserialize(const char* buf, const size_t len) throw()
+size_t PasswordRequest::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -518,7 +522,7 @@ size_t PasswordRequest::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t PasswordRequest::reqDataLen(const char *buf, const size_t len) const throw()
+size_t PasswordRequest::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -526,7 +530,7 @@ size_t PasswordRequest::reqDataLen(const char *buf, const size_t len) const thro
 	return headerSize + password_seed_size;
 }
 
-size_t PasswordRequest::serializePayload(char *buf) const throw()
+size_t PasswordRequest::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -535,7 +539,7 @@ size_t PasswordRequest::serializePayload(char *buf) const throw()
 	return password_seed_size;
 }
 
-size_t PasswordRequest::payloadLength() const throw()
+size_t PasswordRequest::payloadLength() const
 {
 	return password_seed_size;
 }
@@ -544,7 +548,7 @@ size_t PasswordRequest::payloadLength() const throw()
  * struct Password
  */
 
-size_t Password::unserialize(const char* buf, const size_t len) throw()
+size_t Password::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -557,7 +561,7 @@ size_t Password::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t Password::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Password::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -565,7 +569,7 @@ size_t Password::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + password_hash_size;
 }
 
-size_t Password::serializePayload(char *buf) const throw()
+size_t Password::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -574,7 +578,7 @@ size_t Password::serializePayload(char *buf) const throw()
 	return password_hash_size;
 }
 
-size_t Password::payloadLength() const throw()
+size_t Password::payloadLength() const
 {
 	return password_hash_size;
 }
@@ -595,7 +599,7 @@ size_t Password::payloadLength() const throw()
  * struct SessionInstruction
  */
 
-size_t SessionInstruction::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t SessionInstruction::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -622,7 +626,7 @@ size_t SessionInstruction::unserialize(const char* buf, const size_t len) throw(
 	return i;
 }
 
-size_t SessionInstruction::reqDataLen(const char *buf, const size_t len) const throw()
+size_t SessionInstruction::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -640,7 +644,7 @@ size_t SessionInstruction::reqDataLen(const char *buf, const size_t len) const t
 	}
 }
 
-size_t SessionInstruction::serializePayload(char *buf) const throw()
+size_t SessionInstruction::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -657,7 +661,7 @@ size_t SessionInstruction::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t SessionInstruction::payloadLength() const throw()
+size_t SessionInstruction::payloadLength() const
 {
 	return sizeof(action) + sizeof(width) + sizeof(height)
 		+ sizeof(user_mode) + sizeof(user_limit) + sizeof(flags) + sizeof(title_len)
@@ -668,7 +672,7 @@ size_t SessionInstruction::payloadLength() const throw()
  * struct SetPassword
  */
 
-size_t SetPassword::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t SetPassword::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -686,7 +690,7 @@ size_t SetPassword::unserialize(const char* buf, const size_t len) throw(std::ba
 	return i;
 }
 
-size_t SetPassword::reqDataLen(const char *buf, const size_t len) const throw()
+size_t SetPassword::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -702,7 +706,7 @@ size_t SetPassword::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t SetPassword::serializePayload(char *buf) const throw()
+size_t SetPassword::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -712,7 +716,7 @@ size_t SetPassword::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t SetPassword::payloadLength() const throw()
+size_t SetPassword::payloadLength() const
 {
 	return sizeof(password_len) + password_len;
 }
@@ -733,7 +737,7 @@ size_t SetPassword::payloadLength() const throw()
  * struct UserInfo
  */
 
-size_t UserInfo::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t UserInfo::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -757,7 +761,7 @@ size_t UserInfo::unserialize(const char* buf, const size_t len) throw(std::bad_a
 	return i;
 }
 
-size_t UserInfo::reqDataLen(const char *buf, const size_t len) const throw()
+size_t UserInfo::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -775,7 +779,7 @@ size_t UserInfo::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t UserInfo::serializePayload(char *buf) const throw()
+size_t UserInfo::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -791,7 +795,7 @@ size_t UserInfo::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t UserInfo::payloadLength() const throw()
+size_t UserInfo::payloadLength() const
 {
 	return sizeof(mode) + sizeof(event) + sizeof(length) + length;
 }
@@ -800,7 +804,7 @@ size_t UserInfo::payloadLength() const throw()
  * struct HostInfo
  */
 
-size_t HostInfo::unserialize(const char* buf, const size_t len) throw()
+size_t HostInfo::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -820,7 +824,7 @@ size_t HostInfo::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t HostInfo::reqDataLen(const char *buf, const size_t len) const throw()
+size_t HostInfo::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -828,7 +832,7 @@ size_t HostInfo::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + payloadLength();
 }
 
-size_t HostInfo::serializePayload(char *buf) const throw()
+size_t HostInfo::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 
@@ -844,7 +848,7 @@ size_t HostInfo::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t HostInfo::payloadLength() const throw()
+size_t HostInfo::payloadLength() const
 {
 	return sizeof(sessions) + sizeof(sessionLimit) + sizeof(users)
 		+ sizeof(userLimit) + sizeof(nameLenLimit) + sizeof(maxSubscriptions)
@@ -855,7 +859,7 @@ size_t HostInfo::payloadLength() const throw()
  * struct SessionInfo
  */
 
-size_t SessionInfo::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t SessionInfo::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -885,7 +889,7 @@ size_t SessionInfo::unserialize(const char* buf, const size_t len) throw(std::ba
 	return i;
 }
 
-size_t SessionInfo::reqDataLen(const char *buf, const size_t len) const throw()
+size_t SessionInfo::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -905,7 +909,7 @@ size_t SessionInfo::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t SessionInfo::serializePayload(char *buf) const throw()
+size_t SessionInfo::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -927,7 +931,7 @@ size_t SessionInfo::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t SessionInfo::payloadLength() const throw()
+size_t SessionInfo::payloadLength() const
 {
 	return sizeof(width) + sizeof(height) + sizeof(owner)
 		+ sizeof(users) + sizeof(limit) + sizeof(mode) + sizeof(flags)
@@ -938,7 +942,7 @@ size_t SessionInfo::payloadLength() const throw()
  * struct Acknowledgement
  */
 
-size_t Acknowledgement::unserialize(const char* buf, const size_t len) throw()
+size_t Acknowledgement::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -951,7 +955,7 @@ size_t Acknowledgement::unserialize(const char* buf, const size_t len) throw()
 	return i + sizeof(event);
 }
 
-size_t Acknowledgement::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Acknowledgement::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -959,7 +963,7 @@ size_t Acknowledgement::reqDataLen(const char *buf, const size_t len) const thro
 	return headerSize + payloadLength();
 }
 
-size_t Acknowledgement::serializePayload(char *buf) const throw()
+size_t Acknowledgement::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -968,7 +972,7 @@ size_t Acknowledgement::serializePayload(char *buf) const throw()
 	return payloadLength();
 }
 
-size_t Acknowledgement::payloadLength() const throw()
+size_t Acknowledgement::payloadLength() const
 {
 	return sizeof(event);
 }
@@ -977,7 +981,7 @@ size_t Acknowledgement::payloadLength() const throw()
  * struct Error
  */
 
-size_t Error::unserialize(const char* buf, const size_t len) throw()
+size_t Error::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -990,7 +994,7 @@ size_t Error::unserialize(const char* buf, const size_t len) throw()
 	return i;
 }
 
-size_t Error::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Error::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -998,7 +1002,7 @@ size_t Error::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + payloadLength();
 }
 
-size_t Error::serializePayload(char *buf) const throw()
+size_t Error::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -1007,7 +1011,7 @@ size_t Error::serializePayload(char *buf) const throw()
 	return payloadLength();
 }
 
-size_t Error::payloadLength() const throw()
+size_t Error::payloadLength() const
 {
 	return sizeof(code);
 }
@@ -1016,7 +1020,7 @@ size_t Error::payloadLength() const throw()
  * struct Deflate
  */
 
-size_t Deflate::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t Deflate::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1041,7 +1045,7 @@ size_t Deflate::unserialize(const char* buf, const size_t len) throw(std::bad_al
 	return i;
 }
 
-size_t Deflate::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Deflate::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1060,7 +1064,7 @@ size_t Deflate::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t Deflate::serializePayload(char *buf) const throw()
+size_t Deflate::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -1075,7 +1079,7 @@ size_t Deflate::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t Deflate::payloadLength() const throw()
+size_t Deflate::payloadLength() const
 {
 	return sizeof(uncompressed) + sizeof(length) + length;
 }
@@ -1084,7 +1088,7 @@ size_t Deflate::payloadLength() const throw()
  * struct Chat
  */
 
-size_t Chat::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t Chat::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1106,7 +1110,7 @@ size_t Chat::unserialize(const char* buf, const size_t len) throw(std::bad_alloc
 	return i;
 }
 
-size_t Chat::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Chat::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1122,7 +1126,7 @@ size_t Chat::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t Chat::serializePayload(char *buf) const throw()
+size_t Chat::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	assert(data != 0); // protocol violation
@@ -1137,7 +1141,7 @@ size_t Chat::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t Chat::payloadLength() const throw()
+size_t Chat::payloadLength() const
 {
 	return sizeof(length) + length;
 }
@@ -1146,7 +1150,7 @@ size_t Chat::payloadLength() const throw()
  * struct Palette
  */
 
-size_t Palette::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t Palette::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1169,7 +1173,7 @@ size_t Palette::unserialize(const char* buf, const size_t len) throw(std::bad_al
 	return i;
 }
 
-size_t Palette::reqDataLen(const char *buf, const size_t len) const throw()
+size_t Palette::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1185,7 +1189,7 @@ size_t Palette::reqDataLen(const char *buf, const size_t len) const throw()
 	}
 }
 
-size_t Palette::serializePayload(char *buf) const throw()
+size_t Palette::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	assert(count != 0); // protocol violation
@@ -1201,7 +1205,7 @@ size_t Palette::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t Palette::payloadLength() const throw()
+size_t Palette::payloadLength() const
 {
 	return sizeof(offset) + sizeof(count) + (count * RGB_size);
 }
@@ -1216,7 +1220,7 @@ size_t Palette::payloadLength() const throw()
  * struct SessionEvent
  */
 
-size_t SessionEvent::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t SessionEvent::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1231,7 +1235,7 @@ size_t SessionEvent::unserialize(const char* buf, const size_t len) throw(std::b
 	return i;
 }
 
-size_t SessionEvent::reqDataLen(const char *buf, const size_t len) const throw()
+size_t SessionEvent::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1239,7 +1243,7 @@ size_t SessionEvent::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + payloadLength();
 }
 
-size_t SessionEvent::serializePayload(char *buf) const throw()
+size_t SessionEvent::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -1250,7 +1254,7 @@ size_t SessionEvent::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t SessionEvent::payloadLength() const throw()
+size_t SessionEvent::payloadLength() const
 {
 	return sizeof(action) + sizeof(target) + sizeof(aux);
 }
@@ -1259,7 +1263,7 @@ size_t SessionEvent::payloadLength() const throw()
  * struct LayerEvent
  */
 
-size_t LayerEvent::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t LayerEvent::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1275,7 +1279,7 @@ size_t LayerEvent::unserialize(const char* buf, const size_t len) throw(std::bad
 	return i;
 }
 
-size_t LayerEvent::reqDataLen(const char *buf, const size_t len) const throw()
+size_t LayerEvent::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1283,7 +1287,7 @@ size_t LayerEvent::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + payloadLength();
 }
 
-size_t LayerEvent::serializePayload(char *buf) const throw()
+size_t LayerEvent::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -1295,7 +1299,7 @@ size_t LayerEvent::serializePayload(char *buf) const throw()
 	return i;
 }
 
-size_t LayerEvent::payloadLength() const throw()
+size_t LayerEvent::payloadLength() const
 {
 	return sizeof(layer_id) + sizeof(action) + sizeof(mode) + sizeof(opacity);
 }
@@ -1304,7 +1308,7 @@ size_t LayerEvent::payloadLength() const throw()
  * struct LayerSelect
  */
 
-size_t LayerSelect::unserialize(const char* buf, const size_t len) throw(std::bad_alloc)
+size_t LayerSelect::unserialize(const char* buf, const size_t len)
 {
 	assert(buf != 0 and len > 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1317,7 +1321,7 @@ size_t LayerSelect::unserialize(const char* buf, const size_t len) throw(std::ba
 	return i;
 }
 
-size_t LayerSelect::reqDataLen(const char *buf, const size_t len) const throw()
+size_t LayerSelect::reqDataLen(const char *buf, const size_t len) const
 {
 	assert(buf != 0 and len != 0);
 	assert(static_cast<uint8_t>(buf[0]) == type);
@@ -1325,7 +1329,7 @@ size_t LayerSelect::reqDataLen(const char *buf, const size_t len) const throw()
 	return headerSize + sizeof(layer_id);
 }
 
-size_t LayerSelect::serializePayload(char *buf) const throw()
+size_t LayerSelect::serializePayload(char *buf) const
 {
 	assert(buf != 0);
 	
@@ -1334,7 +1338,7 @@ size_t LayerSelect::serializePayload(char *buf) const throw()
 	return payloadLength();
 }
 
-size_t LayerSelect::payloadLength() const throw()
+size_t LayerSelect::payloadLength() const
 {
 	return sizeof(layer_id);
 }

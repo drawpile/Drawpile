@@ -76,24 +76,25 @@ protected:
 	 * @param[in] _header header size
 	 * @param[in] _flags indicates message modifiers (see protocol::message namespace)
 	 */
-	Message(const uint8_t _type, const size_t _header=0, const uint8_t _flags=message::None) throw();
+	Message(const uint8_t _type, const size_t _header=0, const uint8_t _flags=message::None) __attribute__ ((nothrow));
 	
 	//! Write header (for serialize())
 	/**
 	 * @param[out] ptr Pointer to char* to write to
 	 */
-	size_t serializeHeader(char* ptr) const throw();
+	size_t serializeHeader(char* ptr) const __attribute__ ((nothrow));
 	
 	//! Read header (for unserialize())
 	/**
 	 * @param[in] ptr Pointer to char* to read
 	 */
-	size_t unserializeHeader(const char* ptr) throw();
+	size_t unserializeHeader(const char* ptr) __attribute__ ((nothrow));
 	
 	//! Header size
 	const size_t headerSize;
 	
 public:
+	virtual ~Message() __attribute__ ((nothrow));
 	
 	const bool
 		//! User modifier
@@ -104,10 +105,6 @@ public:
 		isSelected,
 		//! Bundling modifier
 		isBundling;
-	
-	virtual ~Message() throw()
-	{
-	}
 	
 	/* enum */
 	
@@ -214,14 +211,14 @@ public:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	char* serialize(size_t &len, char* buffer, size_t &size) const throw(std::bad_alloc);
+	char* serialize(size_t &len, char* buffer, size_t &size) const __attribute__ ((warn_unused_result));
 	
 	//! Get the number of bytes required to serialize the message payload.
 	/**
 	 * @return payload length in bytes. Defaults to zero payload.
 	 */
 	virtual
-	size_t payloadLength() const throw();
+	size_t payloadLength() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Serialize the message payload.
 	/**
@@ -231,7 +228,7 @@ public:
 	 * @return Number of bytes stored in buffer
 	 */
 	virtual
-	size_t serializePayload(char *buf) const throw();
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Check if buf contains enough data to unserialize
 	/**
@@ -249,7 +246,7 @@ public:
 	 * header data. Defaults to zero payload message with possible user modifier.
 	 */
 	virtual
-	size_t reqDataLen(const char* buf, const size_t len) const throw();
+	size_t reqDataLen(const char* buf, const size_t len) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Unserializes char* buffer to associated message struct.
 	/**
@@ -271,7 +268,7 @@ public:
 	 * @throw std::bad_alloc
 	 */
 	virtual
-	size_t unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc);
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
 };
 
 //! Protocol identifier.
@@ -285,12 +282,12 @@ public:
 struct Identifier
 	: Message
 {
-	Identifier() throw()
+	Identifier() __attribute__ ((nothrow))
 		: Message(Message::Identifier, sizeof(type))
 	{ }
 	
 	//! Constructor with params for payload
-	Identifier(const uint16_t _revision, const uint16_t _level, const uint8_t _flags, const uint8_t _extensions) throw()
+	Identifier(const uint16_t _revision, const uint16_t _level, const uint8_t _flags, const uint8_t _extensions) __attribute__ ((nothrow))
 		: Message(Message::Identifier, sizeof(type)),
 		revision(_revision),
 		level(_level),
@@ -317,10 +314,10 @@ struct Identifier
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Stroke info message.
@@ -334,7 +331,7 @@ struct Identifier
 struct StrokeInfo
 	: Message
 {
-	StrokeInfo() throw()
+	StrokeInfo()
 		: Message(
 			Message::StrokeInfo,
 			sizeof(type)+sizeof(user_id),
@@ -343,7 +340,7 @@ struct StrokeInfo
 	{ }
 	
 	//! Constructor with params for payload
-	StrokeInfo(const uint16_t _x, const uint16_t _y, const uint8_t _pressure) throw()
+	StrokeInfo(const uint16_t _x, const uint16_t _y, const uint8_t _pressure)
 		: Message(
 			Message::StrokeInfo,
 			sizeof(type)+sizeof(user_id),
@@ -359,8 +356,17 @@ struct StrokeInfo
 	//! Horizontal (X) coordinate.
 	union {
 		//! X base
+		/**
+		 * Store the values to x by performing
+		 * <code>x = (sub<<14|actual)</code>
+		 *
+		 * Retrieve the values without using x_sub and x_actual by performing
+		 * <code>actual = x & 0x3FFF</code> and <code>sub = x & 0xA000</code>
+		 * 
+		 */
 		uint16_t x;
 		
+		//! Only suitable for Little-Endian machines
 		struct {
 			//! X sub-pixel
 			uint8_t x_sub:2;
@@ -387,10 +393,14 @@ struct StrokeInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::exception, std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 * @throw std::exception if count is 0
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Stroke End message
@@ -400,7 +410,7 @@ struct StrokeInfo
 struct StrokeEnd
 	: Message
 {
-	StrokeEnd() throw()
+	StrokeEnd()
 		: Message(Message::StrokeEnd, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
@@ -425,12 +435,12 @@ struct StrokeEnd
 struct ToolInfo
 	: Message
 {
-	ToolInfo() throw()
+	ToolInfo()
 		: Message(Message::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	//! Constructor with params for payload
-	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint32_t _lo_color, const uint32_t _hi_color, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing) throw()
+	ToolInfo(const uint8_t _tool_id, const uint8_t _mode, const uint32_t _lo_color, const uint32_t _hi_color, const uint8_t _lo_size, const uint8_t _hi_size, const uint8_t _lo_hardness, const uint8_t _hi_hardness, const uint8_t _spacing)
 		: Message(Message::ToolInfo, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		tool_id(_tool_id),
 		mode(_mode),
@@ -491,10 +501,10 @@ struct ToolInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Synchronization request message.
@@ -510,7 +520,7 @@ struct ToolInfo
 struct Synchronize
 	: Message
 {
-	Synchronize() throw()
+	Synchronize()
 		: Message(Message::Synchronize, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -542,13 +552,13 @@ struct Synchronize
 struct Raster
 	: Message
 {
-	Raster() throw()
+	Raster()
 		: Message(Message::Raster, sizeof(type)+sizeof(session_id), message::isSession),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
-	Raster(const uint32_t _offset, const uint32_t _length, const uint32_t _size, char* _data) throw()
+	Raster(const uint32_t _offset, const uint32_t _length, const uint32_t _size, char* _data)
 		: Message(Message::Raster, sizeof(type)+sizeof(session_id), message::isSession),
 		offset(_offset),
 		length(_length),
@@ -556,7 +566,7 @@ struct Raster
 		data(_data)
 	{ }
 	
-	~Raster() throw() { delete [] data; }
+	~Raster() { delete [] data; }
 	
 	/* unique data */
 	
@@ -573,10 +583,13 @@ struct Raster
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! SyncWait message.
@@ -594,7 +607,7 @@ struct Raster
 struct SyncWait
 	: Message
 {
-	SyncWait() throw()
+	SyncWait()
 		: Message(Message::SyncWait, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -616,7 +629,7 @@ struct SyncWait
 struct PasswordRequest
 	: Message
 {
-	PasswordRequest() throw()
+	PasswordRequest()
 		: Message(Message::PasswordRequest, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -627,10 +640,10 @@ struct PasswordRequest
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Password message.
@@ -640,7 +653,7 @@ struct PasswordRequest
 struct Password
 	: Message
 {
-	Password() throw()
+	Password()
 		: Message(Message::Password, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -651,10 +664,10 @@ struct Password
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Subscribe message.
@@ -666,7 +679,7 @@ struct Password
 struct Subscribe
 	: Message
 {
-	Subscribe() throw()
+	Subscribe()
 		: Message(Message::Subscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -688,7 +701,7 @@ struct Subscribe
 struct Unsubscribe
 	: Message
 {
-	Unsubscribe() throw()
+	Unsubscribe()
 		: Message(Message::Unsubscribe, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -704,12 +717,12 @@ struct Unsubscribe
 struct SessionInstruction
 	: Message
 {
-	SessionInstruction() throw()
+	SessionInstruction()
 		: Message(Message::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
 		title(0)
 	{ }
 	
-	SessionInstruction(const uint8_t _action, const uint16_t _width, const uint16_t _height, const uint8_t _umode, const uint8_t _ulimit, const uint8_t _flags, const uint8_t _tlen, char* _title) throw()
+	SessionInstruction(const uint8_t _action, const uint16_t _width, const uint16_t _height, const uint8_t _umode, const uint8_t _ulimit, const uint8_t _flags, const uint8_t _tlen, char* _title)
 		: Message(Message::SessionInstruction, sizeof(type)+sizeof(session_id), message::isSession),
 		action(_action),
 		width(_width),
@@ -758,21 +771,24 @@ struct SessionInstruction
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Set session or server password
 struct SetPassword
 	: Message
 {
-	SetPassword() throw()
+	SetPassword()
 		: Message(Message::SetPassword, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
-	SetPassword(const uint8_t _pwlen, char* _pw) throw()
+	SetPassword(const uint8_t _pwlen, char* _pw)
 		: Message(Message::SetPassword, sizeof(type)+sizeof(session_id), message::isSession),
 		password_len(_pwlen),
 		password(_pw)
@@ -788,17 +804,20 @@ struct SetPassword
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Request admin rights
 struct Authenticate
 	: Message
 {
-	Authenticate() throw()
+	Authenticate()
 		: Message(Message::Authenticate, sizeof(type))
 	{ }
 	
@@ -815,7 +834,7 @@ struct Authenticate
 struct Shutdown
 	: Message
 {
-	Shutdown() throw()
+	Shutdown()
 		: Message(Message::Authenticate, sizeof(type))
 	{ }
 	
@@ -838,7 +857,7 @@ struct Shutdown
 struct ListSessions
 	: Message
 {
-	ListSessions() throw()
+	ListSessions()
 		: Message(Message::ListSessions, sizeof(type))
 	{ }
 	
@@ -858,7 +877,7 @@ struct ListSessions
 struct Cancel
 	: Message
 {
-	Cancel() throw()
+	Cancel()
 		: Message(Message::Cancel, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
@@ -880,7 +899,7 @@ struct Cancel
 struct UserInfo
 	: Message
 {
-	UserInfo() throw()
+	UserInfo()
 		: Message(
 			Message::UserInfo,
 			sizeof(type)+sizeof(user_id)+sizeof(session_id),
@@ -890,7 +909,7 @@ struct UserInfo
 	{ }
 	
 	//! Constructor with params for payload
-	UserInfo(const uint8_t _mode, const uint8_t _event, const uint8_t _length, char* _name) throw()
+	UserInfo(const uint8_t _mode, const uint8_t _event, const uint8_t _length, char* _name)
 		: Message(
 			Message::UserInfo,
 			sizeof(type)+sizeof(user_id)+sizeof(session_id),
@@ -902,7 +921,7 @@ struct UserInfo
 		name(_name)
 	{ }
 	
-	~UserInfo() throw() { delete [] name; }
+	~UserInfo() { delete [] name; }
 	
 	/* enum */
 	
@@ -951,10 +970,13 @@ struct UserInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Host info message
@@ -966,12 +988,12 @@ struct UserInfo
 struct HostInfo
 	: Message
 {
-	HostInfo() throw()
+	HostInfo()
 		: Message(Message::HostInfo, sizeof(type))
 	{ }
 	
 	//! Constructor with params for payload
-	HostInfo(const uint8_t _sessions, const uint8_t _sessionLimit, const uint8_t _users, const uint8_t _userLimit, const uint8_t _nameLenLimit, const uint8_t _maxSubscriptions, const uint8_t _requirements, const uint8_t _extensions) throw()
+	HostInfo(const uint8_t _sessions, const uint8_t _sessionLimit, const uint8_t _users, const uint8_t _userLimit, const uint8_t _nameLenLimit, const uint8_t _maxSubscriptions, const uint8_t _requirements, const uint8_t _extensions)
 		: Message(Message::HostInfo, sizeof(type)),
 		sessions(_sessions),
 		sessionLimit(_sessionLimit),
@@ -987,11 +1009,11 @@ struct HostInfo
 	
 	uint8_t
 		//! Number of sessions on server.
-		sessions,
+		sessions, // remove?
 		//! Max number of sessions on server.
 		sessionLimit,
 		//! Connected users.
-		users,
+		users, // remove?
 		//! Max connected users
 		userLimit,
 		//! User/session name length limit.
@@ -1005,23 +1027,23 @@ struct HostInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Session Info message.
 struct SessionInfo
 	: Message
 {
-	SessionInfo() throw()
+	SessionInfo()
 		: Message(Message::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
 		title(0)
 	{ }
 	
 	//! Constructor with params for payload
-	SessionInfo(const uint16_t _width, const uint16_t _height, const uint8_t _owner, const uint8_t _users, const uint8_t _limit, const uint8_t _mode, const uint8_t _flags, const uint16_t _level, const uint8_t _length, char* _title) throw()
+	SessionInfo(const uint16_t _width, const uint16_t _height, const uint8_t _owner, const uint8_t _users, const uint8_t _limit, const uint8_t _mode, const uint8_t _flags, const uint16_t _level, const uint8_t _length, char* _title)
 		: Message(Message::SessionInfo, sizeof(type)+sizeof(session_id), message::isSession),
 		width(_width),
 		height(_height),
@@ -1035,7 +1057,7 @@ struct SessionInfo
 		title(_title)
 	{ }
 	
-	~SessionInfo() throw() { delete [] title; }
+	~SessionInfo() { delete [] title; }
 	
 	/* unique data */
 	
@@ -1068,10 +1090,13 @@ struct SessionInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Acknowledgement message.
@@ -1081,12 +1106,12 @@ struct SessionInfo
 struct Acknowledgement
 	: Message
 {
-	Acknowledgement() throw()
+	Acknowledgement()
 		: Message(Message::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
-	Acknowledgement(const uint8_t _event) throw()
+	Acknowledgement(const uint8_t _event)
 		: Message(Message::Acknowledgement, sizeof(type)+sizeof(session_id), message::isSession),
 		event(_event)
 	{ }
@@ -1098,10 +1123,10 @@ struct Acknowledgement
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Error message.
@@ -1111,12 +1136,12 @@ struct Acknowledgement
 struct Error
 	: Message
 {
-	Error() throw()
+	Error()
 		: Message(Message::Error, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
-	Error(const uint16_t _code) throw()
+	Error(const uint16_t _code)
 		: Message(Message::Error, sizeof(type)+sizeof(session_id), message::isSession),
 		code(_code)
 	{ }
@@ -1128,10 +1153,10 @@ struct Error
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw();
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Deflate Extension message.
@@ -1150,20 +1175,20 @@ struct Error
 struct Deflate
 	: Message
 {
-	Deflate() throw()
+	Deflate()
 		: Message(Message::Deflate, sizeof(type)),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
-	Deflate(const uint16_t _uncompressed, const uint16_t _length, char* _data) throw()
+	Deflate(const uint16_t _uncompressed, const uint16_t _length, char* _data)
 		: Message(Message::Deflate, sizeof(type)),
 		uncompressed(_uncompressed),
 		length(_length),
 		data(_data)
 	{ }
 	
-	~Deflate() throw() { delete [] data; }
+	~Deflate() { delete [] data; }
 	
 	/* unique data */
 	
@@ -1178,10 +1203,13 @@ struct Deflate
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Chat Extension message.
@@ -1192,19 +1220,19 @@ struct Deflate
 struct Chat
 	: Message
 {
-	Chat() throw()
+	Chat()
 		: Message(Message::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
-	Chat(const uint8_t _length, char* _data) throw()
+	Chat(const uint8_t _length, char* _data)
 		: Message(Message::Chat, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession),
 		length(_length),
 		data(_data)
 	{ }
 	
-	~Chat() throw() { delete [] data; }
+	~Chat() { delete [] data; }
 	
 	/* unique data */
 	
@@ -1216,10 +1244,13 @@ struct Chat
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Shared Palette message (proposed).
@@ -1229,20 +1260,20 @@ struct Chat
 struct Palette
 	: Message
 {
-	Palette() throw()
+	Palette()
 		: Message(Message::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
 		data(0)
 	{ }
 	
 	//! Constructor with params for payload
-	Palette(const uint8_t _offset, const uint8_t _count, char* _data) throw()
+	Palette(const uint8_t _offset, const uint8_t _count, char* _data)
 		: Message(Message::Palette, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isSession|message::isUser),
 		offset(_offset),
 		count(_count),
 		data(_data)
 	{ }
 	
-	~Palette() throw() { delete [] data; }
+	~Palette() { delete [] data; }
 	
 	/* unique data */
 	
@@ -1257,10 +1288,13 @@ struct Palette
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	/**
+	 * @throw std::bad_alloc
+	 */
+	size_t unserialize(const char* buf, const size_t len);
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Session selector
@@ -1273,7 +1307,7 @@ struct Palette
 struct SessionSelect
 	: Message
 {
-	SessionSelect() throw()
+	SessionSelect()
 		: Message(Message::SessionSelect, sizeof(type)+sizeof(user_id)+sizeof(session_id), message::isUser|message::isSession)
 	{ }
 	
@@ -1290,12 +1324,12 @@ struct SessionSelect
 struct SessionEvent
 	: Message
 {
-	SessionEvent() throw()
+	SessionEvent()
 		: Message(Message::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
-	SessionEvent(const uint8_t _action, const uint8_t _target, const uint8_t _aux) throw()
+	SessionEvent(const uint8_t _action, const uint8_t _target, const uint8_t _aux)
 		: Message(Message::SessionEvent, sizeof(type)+sizeof(session_id), message::isSession),
 		action(_action),
 		target(_target),
@@ -1340,22 +1374,22 @@ struct SessionEvent
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Session event/instruction
 struct LayerEvent
 	: Message
 {
-	LayerEvent() throw()
+	LayerEvent()
 		: Message(Message::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession)
 	{ }
 	
 	//! Constructor with params for payload
-	LayerEvent(const uint8_t _layer_id, const uint8_t _action, const uint8_t _mode, const uint8_t _opacity) throw()
+	LayerEvent(const uint8_t _layer_id, const uint8_t _action, const uint8_t _mode, const uint8_t _opacity)
 		: Message(Message::LayerEvent, sizeof(type)+sizeof(session_id), message::isSession),
 		layer_id(_layer_id),
 		action(_action),
@@ -1391,22 +1425,22 @@ struct LayerEvent
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 //! Layer selection
 struct LayerSelect
 	: Message
 {
-	LayerSelect() throw()
+	LayerSelect()
 		: Message(Message::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected)
 	{ }
 	
 	//! Constructor with params for payload
-	LayerSelect(const uint8_t _layer_id) throw()
+	LayerSelect(const uint8_t _layer_id)
 		: Message(Message::LayerSelect, sizeof(type)+sizeof(user_id), message::isUser|message::isSelected),
 		layer_id(_layer_id)
 	{ }
@@ -1418,10 +1452,10 @@ struct LayerSelect
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) throw(std::bad_alloc);
-	size_t reqDataLen(const char *buf, const size_t len) const throw();
-	size_t serializePayload(char *buf) const throw();
-	size_t payloadLength() const throw();
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
 } // namespace protocol

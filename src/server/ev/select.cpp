@@ -49,7 +49,7 @@ const int write<Select>::value = 2;
 const int error<Select>::value = 4;
 const std::string system<Select>::value("select");
 
-Select::Select() throw()
+Select::Select()
 	#ifndef WIN32
 	: nfds_r(event::invalid_fd<Select>::value),
 	nfds_w(event::invalid_fd<Select>::value),
@@ -61,8 +61,12 @@ Select::Select() throw()
 	FD_ZERO(&fds_e);
 }
 
+Select::~Select()
+{
+}
+
 // Errors: WSAENETDOWN
-int Select::wait() throw()
+int Select::wait()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.wait()" << endl;
@@ -123,7 +127,7 @@ int Select::wait() throw()
 	return nfds;
 }
 
-int Select::add(fd_t fd, ev_t events) throw()
+int Select::add(fd_t fd, ev_t events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.add(fd: " << fd << ")" << endl;
@@ -169,7 +173,7 @@ int Select::add(fd_t fd, ev_t events) throw()
 	return rc;
 }
 
-int Select::modify(fd_t fd, ev_t events) throw()
+int Select::modify(fd_t fd, ev_t events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.modify(fd: " << fd << ")" << endl;
@@ -214,7 +218,7 @@ int Select::modify(fd_t fd, ev_t events) throw()
 	return 0;
 }
 
-int Select::remove(fd_t fd) throw()
+int Select::remove(fd_t fd)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "select.remove(fd: " << fd << ")" << endl;
@@ -252,7 +256,7 @@ int Select::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Select::getEvent(fd_t &fd, ev_t &events) throw()
+bool Select::getEvent(fd_t &fd, ev_t &events)
 {
 	assert(fd_list.size() > 0);
 	
@@ -276,7 +280,7 @@ bool Select::getEvent(fd_t &fd, ev_t &events) throw()
 	return false;
 }
 
-void Select::timeout(uint msecs) throw()
+void Select::timeout(uint msecs)
 {
 	if (msecs > 1000)
 	{

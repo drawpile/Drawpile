@@ -28,7 +28,7 @@ typedef std::map<octet, SessionData*>::const_iterator usr_session_const_i;
 typedef std::deque<message_ref>::iterator usr_message_i;
 typedef std::deque<message_ref>::const_iterator usr_message_const_i;
 
-User::User(const octet _id, const Socket& nsock) throw()
+User::User(const octet _id, const Socket& nsock)
 	: sock(nsock),
 	session(0),
 	id(_id),
@@ -46,7 +46,7 @@ User::User(const octet _id, const Socket& nsock) throw()
 	// other
 	inMsg(0),
 	level(0),
-	deadtime(0),
+	touched(0),
 	session_data(0),
 	strokes(0)
 {
@@ -57,7 +57,7 @@ User::User(const octet _id, const Socket& nsock) throw()
 	assert(_id != protocol::null_user);
 }
 
-User::~User() throw()
+User::~User()
 {
 	#if defined(DEBUG_USER) and !defined(NDEBUG)
 	std::cout << "User::~User()" << std::endl;
@@ -69,7 +69,7 @@ User::~User() throw()
 		delete usi->second;
 }
 
-bool User::makeActive(octet session_id) throw()
+bool User::makeActive(octet session_id)
 {
 	session_data = getSession(session_id);
 	if (session_data != 0)
@@ -84,19 +84,19 @@ bool User::makeActive(octet session_id) throw()
 	}
 }
 
-SessionData* User::getSession(octet session_id) throw()
+SessionData* User::getSession(octet session_id)
 {
 	const usr_session_const_i usi(sessions.find(session_id));
 	return (usi == sessions.end() ? 0 : usi->second);
 }
 
-const SessionData* User::getConstSession(octet session_id) const throw()
+const SessionData* User::getConstSession(octet session_id) const
 {
 	const usr_session_const_i usi(sessions.find(session_id));
 	return (usi == sessions.end() ? 0 : usi->second);
 }
 
-void User::cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
+void User::cacheTool(protocol::ToolInfo* ti)
 {
 	assert(ti != session_data->cachedToolInfo); // attempted to re-cache same tool
 	assert(ti != 0);
@@ -109,24 +109,24 @@ void User::cacheTool(protocol::ToolInfo* ti) throw(std::bad_alloc)
 	session_data->cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor
 }
 
-octet User::getCapabilities() const throw()
+octet User::getCapabilities() const
 {
 	return (c_acks?(protocol::client::AckFeedback):0);
 }
 
-void User::setCapabilities(const octet flags) throw()
+void User::setCapabilities(const octet flags)
 {
 	c_acks = fIsSet(flags, static_cast<octet>(protocol::client::AckFeedback));
 }
 
-octet User::getExtensions() const throw()
+octet User::getExtensions() const
 {
 	return (ext_deflate?(protocol::extensions::Deflate):0)
 		+ (ext_chat?(protocol::extensions::Chat):0)
 		+ (ext_palette?(protocol::extensions::Palette):0);
 }
 
-void User::setExtensions(const octet flags) throw()
+void User::setExtensions(const octet flags)
 {
 	ext_deflate = fIsSet(flags, static_cast<octet>(protocol::extensions::Deflate));
 	ext_chat = fIsSet(flags, static_cast<octet>(protocol::extensions::Chat));

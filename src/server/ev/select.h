@@ -67,15 +67,15 @@ private:
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
 public:
-	Select() throw();
-	~Select() throw() { }
+	Select() __attribute__ ((nothrow));
+	~Select()  __attribute__ ((nothrow));
 	
-	void timeout(uint msecs) throw();
-	int wait() throw();
-	int add(fd_t fd, ev_t events) throw();
-	int remove(fd_t fd) throw();
-	int modify(fd_t fd, ev_t events) throw();
-	bool getEvent(fd_t &fd, ev_t &events) throw();
+	void timeout(uint msecs) __attribute__ ((nothrow));
+	int wait() __attribute__ ((nothrow));
+	int add(fd_t fd, ev_t events) __attribute__ ((nothrow));
+	int remove(fd_t fd) __attribute__ ((nothrow));
+	int modify(fd_t fd, ev_t events) __attribute__ ((nothrow));
+	bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow));
 };
 
 /* traits */

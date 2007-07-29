@@ -57,15 +57,15 @@ private:
 	std::set<int> read_set, write_set, error_set;
 	int nfds_r, nfds_w, nfds_e;
 public:
-	Pselect() throw();
-	~Pselect() throw() { }
+	Pselect() __attribute__ ((nothrow));
+	~Pselect() __attribute__ ((nothrow));
 	
-	void timeout(uint msecs) throw();
-	int wait() throw();
-	int add(fd_t fd, int events) throw();
-	int remove(fd_t fd) throw();
-	int modify(fd_t fd, int events) throw();
-	bool getEvent(fd_t &fd, int &events) throw();
+	void timeout(uint msecs) __attribute__ ((nothrow));
+	int wait() __attribute__ ((nothrow));
+	int add(fd_t fd, int events) __attribute__ ((nothrow));
+	int remove(fd_t fd) __attribute__ ((nothrow));
+	int modify(fd_t fd, int events) __attribute__ ((nothrow));
+	bool getEvent(fd_t &fd, int &events) __attribute__ ((nothrow));
 };
 
 /* traits */

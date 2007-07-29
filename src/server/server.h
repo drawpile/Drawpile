@@ -164,25 +164,25 @@ protected:
 	/**
 	 * @param[in] id User ID to free
 	 */
-	void freeUserID(const octet id) throw();
+	void freeUserID(const octet id) __attribute__ ((nothrow));
 	
 	//! Frees session ID
 	/**
 	 * @param[in] id Session ID to free
 	 */
-	void freeSessionID(const octet id) throw();
+	void freeSessionID(const octet id) __attribute__ ((nothrow));
 	
 	//! Get free user ID
 	/**
 	 * @retval 0 if all IDs have been exhausted
 	 */
-	const octet getUserID() throw();
+	const octet getUserID() __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get free session ID
 	/**
 	 * @retval 0 if all IDs have been exhausted
 	 */
-	const octet getSessionID() throw();
+	const octet getSessionID() __attribute__ ((nothrow,warn_unused_result));
 	
 	/* *** Generate messages *** */
 	
@@ -192,7 +192,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgHostInfo() const throw(std::bad_alloc);
+	message_ref msgHostInfo() const;
 	
 	//! Generate password request message
 	/**
@@ -203,7 +203,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgPWRequest(User& usr, const octet session) const throw(std::bad_alloc);
+	message_ref msgPWRequest(User& usr, const octet session) const;
 	
 	//! Generate user event message
 	/**
@@ -215,7 +215,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgUserEvent(const User& usr, const octet session_id, const octet event) const throw(std::bad_alloc);
+	message_ref msgUserEvent(const User& usr, const octet session_id, const octet event) const;
 	
 	//! Generate error message
 	/**
@@ -226,7 +226,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgError(const octet session, const uint16_t errorCode) const throw(std::bad_alloc);
+	message_ref msgError(const octet session, const uint16_t errorCode) const;
 	
 	//! Generate ACK message
 	/**
@@ -237,7 +237,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgAck(const octet session, const octet msgtype) const throw(std::bad_alloc);
+	message_ref msgAck(const octet session, const octet msgtype) const;
 	
 	//! Generate sync-wait message
 	/**
@@ -247,7 +247,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgSyncWait(const octet session_id) const throw(std::bad_alloc);
+	message_ref msgSyncWait(const octet session_id) const;
 	
 	//! Generate session info message
 	/**
@@ -257,7 +257,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgSessionInfo(const Session& session) const throw(std::bad_alloc);
+	message_ref msgSessionInfo(const Session& session) const;
 	
 	/* *** Something else *** */
 	
@@ -265,7 +265,7 @@ protected:
 	/**
 	 * @param[in,out] usr Target User to write data to
 	 */
-	void uWrite(User*& usr) throw();
+	void uWrite(User*& usr);
 	
 	//! Read from user socket
 	/**
@@ -273,25 +273,25 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uRead(User*& usr) throw(std::bad_alloc);
+	void uRead(User*& usr);
 	
 	//! Process all read data.
 	/**
 	 * @param[in,out] usr User whose input buffer to process
 	 */
-	void uProcessData(User*& usr) throw();
+	void uProcessData(User*& usr);
 	
 	//! Process stroke info, stroke end and tool info
 	/**
 	 * @param[in] usr User whose drawing commands to process
 	 */
-	void uHandleDrawing(User& usr) throw();
+	void uHandleDrawing(User& usr);
 	
 	//! Handle received password
 	/**
 	 * @param[in] usr User whose password to handle
 	 */
-	void uHandlePassword(User& usr) throw();
+	void uHandlePassword(User& usr) __attribute__ ((nothrow));
 	
 	//! Handle user message.
 	/**
@@ -299,26 +299,26 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uHandleMsg(User*& usr) throw(std::bad_alloc);
+	void uHandleMsg(User*& usr);
 	
 	//! Handle ACKs
 	/**
 	 * @param[in,out] usr User whose ACK message to handle
 	 */
-	void uHandleAck(User*& usr) throw();
+	void uHandleAck(User*& usr) __attribute__ ((nothrow));
 	
 	//! Forward raster to those expecting it.
 	/**
 	 * @param[in] usr Source User for raster
 	 */
-	void uTunnelRaster(User& usr) throw();
+	void uTunnelRaster(User& usr);
 	
 	//! Handle SessionEvent message
 	/**
 	 * @param[in,out] session Session for which to handle the event for
 	 * @param[in,out] usr User whose event is in question
 	 */
-	void uSessionEvent(Session*& session, User*& usr) throw();
+	void uSessionEvent(Session*& session, User*& usr) __attribute__ ((nothrow));
 	
 	//! Handle instruction message
 	/**
@@ -326,13 +326,13 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uSessionInstruction(User*& usr) throw(std::bad_alloc);
+	void uSessionInstruction(User*& usr);
 	
 	//! Set server or session password
 	/**
 	 * @param[in,out] usr User whose set password instruction to handle
 	 */
-	void uSetPassword(User*& usr) throw();
+	void uSetPassword(User*& usr) __attribute__ ((nothrow));
 	
 	//! Handle user login.
 	/**
@@ -340,20 +340,20 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uHandleLogin(User*& usr) throw(std::bad_alloc);
+	void uHandleLogin(User*& usr);
 	
 	//! Handle user info in login
 	/**
 	 * @param[in] usr User whose login user info to handle
 	 */
-	void uLoginInfo(User& usr) throw();
+	void uLoginInfo(User& usr) __attribute__ ((nothrow));
 	
 	#ifdef LAYER_SUPPORT
 	//! Handle layer event
 	/**
 	 * @param[in,out] usr User whose layer event to handle
 	 */
-	void uLayerEvent(User*& usr) throw();
+	void uLayerEvent(User*& usr) __attribute__ ((nothrow));
 	#endif
 	
 	//! Send message to all users in session
@@ -362,7 +362,7 @@ protected:
 	 * @param[in] msg Shared_ptr of the message to be propagated
 	 * @param[in] source (Optional) Source User to whom the message will NOT be sent to
 	 */
-	void Propagate(const Session& session, message_ref msg, User* source=0) throw();
+	void Propagate(const Session& session, message_ref msg, User* source=0) __attribute__ ((nothrow));
 	
 	//! Check password hash
 	/**
@@ -374,7 +374,7 @@ protected:
 	 * @retval true if the digests match
 	 * @retval false otherwise
 	 */
-	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) throw();
+	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Queue message to user
 	/**
@@ -384,67 +384,71 @@ protected:
 	 * @param[in] usr User to whom to queue the message to
 	 * @param[in] msg Shared_ptr to message to queue
 	 */
-	void uQueueMsg(User& usr, message_ref msg) throw();
+	void uQueueMsg(User& usr, message_ref msg) __attribute__ ((nothrow));
 	
 	//! Begin synchronizing the session
 	/**
 	 * @param[in] session Session to synchronize
+	 *
+	 * @throw std::bad_alloc
 	 */
-	void SyncSession(Session* session) throw();
+	void SyncSession(Session* session);
 	
 	//! Break synchronization with user.
 	/**
 	 * @param[in] usr Target User
 	 */
-	void breakSync(User& usr) throw();
+	void breakSync(User& usr) __attribute__ ((nothrow));
 	
 	//! Attach user to session and begin user synchronization if necessary
 	/**
 	 * @param[in] usr User who's joining the session
 	 * @param[in] session Target session
+	 *
+	 * @throw std::bad_alloc
 	 */
-	void uJoinSession(User& usr, Session& session) throw();
+	void uJoinSession(User& usr, Session& session);
 	
 	//! Needs session reference because it might get destroyed.
 	/**
 	 * @param[in] usr User who's leaving
 	 * @param[in,out] session Session to leave from
 	 * @param[in] reason (Optional) Reason for leaving session (protocol::UserInfo::uevent)
-	 */
-	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave) throw();
-	
-	//! Adds user
-	/**
-	 * @param[in] sock Socket for the new User
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uAdd(Socket sock) throw(std::bad_alloc);
+	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave);
+	
+	//! Adds user
+	/**
+	 * @throw std::bad_alloc
+	 */
+	void uAdd();
 	
 	//! Removes user and does cleaning..
 	/**
 	 * @param[in,out] usr User who's being removed
 	 * @param[in] reason Reason for removal (protocol::UserInfo::uevent)
 	 */
-	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw();
+	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow));
 	
 	//! Delete session and do some cleaning
 	/**
 	 * @param[in,out] session Session to delete
 	 */
-	void sRemove(Session*& session) throw();
+	void sRemove(Session*& session) __attribute__ ((nothrow));
 	
 	//! Check user name uniqueness
 	/**
 	 * @param[in] usr User whose name to check
 	 */
-	bool validateUserName(User* usr) const throw();
+	bool validateUserName(User* usr) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Check session title uniqueness
 	/**
 	 * @param[in] title Session title to check
 	 */
-	bool validateSessionTitle(const Array<char>& title) const throw();
+	bool validateSessionTitle(const Array<char>& title) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Reprocesses deflated data stream
 	/**
@@ -452,7 +456,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void DeflateReprocess(User*& usr) throw(std::bad_alloc);
+	void DeflateReprocess(User*& usr);
 	
 	//! Deflate (compress) outgoing data
 	/**
@@ -460,23 +464,23 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void Deflate(Buffer& buffer) throw(std::bad_alloc);
+	void Deflate(Buffer& buffer);
 	
 	//! Cull idle users
-	void cullIdlers() throw();
+	void cullIdlers();
 	
 	//! Regenerate password seed
 	/**
 	 * @param[in] usr User whose password seed to regen
 	 */
-	void uRegenSeed(User& usr) const throw();
+	void uRegenSeed(User& usr) const __attribute__ ((nothrow));
 	
 	//! Check if user is owner of session
 	/**
 	 * @param[in] usr User to test
 	 * @param[in] session Target Session
 	 */
-	bool isOwner(const User& usr, const Session& session) const throw();
+	bool isOwner(const User& usr, const Session& session) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get Session* pointer
 	/**
@@ -484,7 +488,7 @@ protected:
 	 *
 	 * @retval NULL if no session is found
 	 */
-	Session* getSession(const octet session_id) throw();
+	Session* getSession(const octet session_id) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get const Session* pointer
 	/**
@@ -492,15 +496,15 @@ protected:
 	 *
 	 * @retval NULL if no session was found
 	 */
-	const Session* getConstSession(const octet session_id) const throw();
+	const Session* getConstSession(const octet session_id) const __attribute__ ((nothrow,warn_unused_result));
 	
 public:
 	//! Constructor
-	Server() throw();
+	Server() __attribute__ ((nothrow));
 	
 	#if 0
 	//! Destructor
-	virtual ~Server() throw();
+	virtual ~Server() __attribute__ ((nothrow));
 	#endif
 	
 	//! Initializes anything that need to be done so.
@@ -510,7 +514,7 @@ public:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	bool init() throw(std::bad_alloc);
+	bool init() __attribute__ ((nothrow));
 	
 	/** set behaviour **/
 	
@@ -518,128 +522,122 @@ public:
 	/**
 	 * @param[in] limit New limit
 	 */
-	void setNameLengthLimit(const octet limit=16) throw() { name_len_limit = limit; }
-	uint getNameLengthLimit() const throw() { return name_len_limit; }
+	void setNameLengthLimit(const octet limit=16) __attribute__ ((nothrow));
+	uint getNameLengthLimit() const __attribute__ ((nothrow));
 	
 	//! Set server password
 	/**
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setPassword(char* pwstr=0, const octet len=0) throw()
-	{
-		password.set(pwstr, len);
-	}
-	bool haveServerPassword() const throw() { return (password.ptr!=0); }
+	void setPassword(char* pwstr=0, const octet len=0) __attribute__ ((nothrow));
+	bool haveServerPassword() const __attribute__ ((nothrow));
 	
 	//! Set admin server password
 	/**
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setAdminPassword(char* pwstr=0, const octet len=0) throw()
-	{
-		admin_password.set(pwstr, len);
-	}
-	bool haveAdminPassword() const throw() { return (admin_password.ptr!=0); }
+	void setAdminPassword(char* pwstr=0, const octet len=0) __attribute__ ((nothrow));
+	bool haveAdminPassword() const __attribute__ ((nothrow));
 	
 	//! Set user limit
 	/**
 	 * @param[in] ulimit New limit
 	 */
-	void setUserLimit(const octet ulimit=10) throw() { user_limit = ulimit; }
-	uint getUserLimit() const throw() { return user_limit; }
+	void setUserLimit(const octet ulimit=10) __attribute__ ((nothrow));
+	uint getUserLimit() const __attribute__ ((nothrow));
 	
 	//! Set listening port
 	/**
 	 * @param[in] _port port to bind to
 	 */
-	void setPort(const ushort _port=27750) throw() { lsock.getAddr().port(_port); }
-	ushort getPort() const throw() { return lsock.port(); }
+	void setPort(const ushort _port=27750) __attribute__ ((nothrow));
+	ushort getPort() const __attribute__ ((nothrow));
 	
 	//! Set operation mode
 	/**
 	 * @param[in] _enable transient mode
 	 */
-	void setTransient(const bool _enable=true) throw() { Transient = _enable; }
+	void setTransient(const bool _enable=true) __attribute__ ((nothrow));
 	
 	//! Set auto-localhost admin promotion
 	/**
 	 * @param _enable auto-promotion
 	 */
-	void setLocalhostAdmin(const bool _enable=true) throw() { LocalhostAdmin = _enable; }
+	void setLocalhostAdmin(const bool _enable=true) __attribute__ ((nothrow));
 	
 	//! Get requirement flags
 	/**
 	 * @see protocol::requirements
 	 */
-	octet getRequirements() const throw();
+	octet getRequirements() const __attribute__ ((nothrow));
 	
-	void setUniqueNameEnforcing(bool _enabled=true) throw() { enforceUnique = _enabled; }
-	bool getUniqueNameEnforcing() const throw() { return enforceUnique; }
+	void setUniqueNameEnforcing(bool _enabled=true) __attribute__ ((nothrow));
+	bool getUniqueNameEnforcing() const __attribute__ ((nothrow));
 	
 	//! Set minimum board dimension (width or height)
 	/**
 	 * @param[in] mindim Minimum dimension in pixels
 	 */
-	void setMinDimension(const uint16_t mindim=400) throw() { min_dimension = mindim; }
-	uint getMinDimension() const throw() { return min_dimension; }
+	void setMinDimension(const uint16_t mindim=400) __attribute__ ((nothrow));
+	uint getMinDimension() const __attribute__ ((nothrow));
 	
 	//! Set UTF-16 requirement
 	/**
 	 * @param[in] _enabled Enable UTF-16 requirement
 	 */
-	void setUTF16Requirement(const bool _enabled=true) throw() { wideStrings = _enabled; }
-	bool getUTF16Requirement() const throw() { return wideStrings; }
+	void setUTF16Requirement(const bool _enabled=true) __attribute__ ((nothrow));
+	bool getUTF16Requirement() const __attribute__ ((nothrow));
 	
 	//! Set default user mode
 	/**
 	 * @param[in] _mode User mode flags
 	 */
-	void setUserMode(const octet _mode=0) throw() { default_user_mode = _mode; }
-	uint getUserMode() const throw() { return default_user_mode; }
+	void setUserMode(const octet _mode=0) __attribute__ ((nothrow));
+	uint getUserMode() const __attribute__ ((nothrow));
 	
 	//! Set session limit on server
 	/**
 	 * @param[in] _limit Session limit
 	 */
-	void setSessionLimit(const octet _limit=1) throw() { session_limit = _limit; }
-	uint getSessionLimit() const throw() { return session_limit; }
+	void setSessionLimit(const octet _limit=1) __attribute__ ((nothrow));
+	uint getSessionLimit() const __attribute__ ((nothrow));
 	
 	//! Set per user subscription limit
 	/**
 	 * @param[in] _slimit Subscrption limit
 	 */
-	void setSubscriptionLimit(const octet _slimit=1) throw() { max_subscriptions = _slimit; }
-	uint getSubscriptionLimit() const throw() { return max_subscriptions; }
+	void setSubscriptionLimit(const octet _slimit=1) __attribute__ ((nothrow));
+	uint getSubscriptionLimit() const __attribute__ ((nothrow));
 	
 	//! Allow/disallow duplicate connections from same address
 	/**
 	 * @param[in] _block duplicate connections
 	 * @todo Needs shorter name
 	 */
-	void setDuplicateConnectionBlocking(const bool _block=true) throw() { blockDuplicateConnections = _block; }
+	void setDuplicateConnectionBlocking(const bool _block=true) __attribute__ ((nothrow));
 	//! Get current duplicate connection blocking state
-	bool getDuplicateConnectionBlocking() const throw() { return blockDuplicateConnections; }
+	bool getDuplicateConnectionBlocking() const __attribute__ ((nothrow));
 	
 	/** Control functions **/
 	
 	//! Enter main loop
-	int run() throw();
+	int run();
 	
 	//! Set server state to 'Exiting'
-	void stop() throw();
+	void stop() __attribute__ ((nothrow));
 	
 	//! Clean-up users, sessions and anything else except config.
-	void reset() throw();
+	void reset() __attribute__ ((nothrow));
 	
 	/** Status and information retrieval **/
 	
-	Statistics getStats() const throw();
+	Statistics getStats() const __attribute__ ((nothrow,warn_unused_result));
 	
 	#if 0
 private:
-	virtual void eventNotify() { }
+	virtual void eventNotify() const __attribute__ ((nothrow));
 	#endif
 }; // class Server
 

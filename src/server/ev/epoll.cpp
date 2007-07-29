@@ -48,7 +48,7 @@ const int error<Epoll>::value = EPOLLERR;
 const int hangup<Epoll>::value = EPOLLHUP;
 const std::string system<Epoll>::value("epoll");
 
-Epoll::Epoll() throw(std::exception)
+Epoll::Epoll()
 	: nfds(-1), evfd(invalid_fd<Epoll>::value)
 {
 	evfd = epoll_create(10);
@@ -64,7 +64,7 @@ Epoll::Epoll() throw(std::exception)
 	}
 }
 
-Epoll::~Epoll() throw()
+Epoll::~Epoll()
 {
 	if (evfd != invalid_fd<Epoll>::value)
 	{
@@ -76,7 +76,7 @@ Epoll::~Epoll() throw()
 	assert(evfd == invalid_fd<Epoll>::value);
 }
 
-int Epoll::wait() throw()
+int Epoll::wait()
 {
 	assert(evfd != invalid_fd<Epoll>::value);
 	
@@ -102,7 +102,7 @@ int Epoll::wait() throw()
 }
 
 // Errors: ENOMEM
-int Epoll::add(fd_t fd, ev_t events) throw()
+int Epoll::add(fd_t fd, ev_t events)
 {
 	assert(evfd != invalid_fd<Epoll>::value);
 	
@@ -133,7 +133,7 @@ int Epoll::add(fd_t fd, ev_t events) throw()
 	return true;
 }
 
-int Epoll::modify(fd_t fd, ev_t events) throw()
+int Epoll::modify(fd_t fd, ev_t events)
 {
 	assert(evfd != invalid_fd<Epoll>::value);
 	
@@ -164,7 +164,7 @@ int Epoll::modify(fd_t fd, ev_t events) throw()
 }
 
 // Errors: ENOMEM
-int Epoll::remove(fd_t fd) throw()
+int Epoll::remove(fd_t fd)
 {
 	assert(evfd != invalid_fd<Epoll>::value);
 	
@@ -190,7 +190,7 @@ int Epoll::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Epoll::getEvent(fd_t &fd, ev_t &r_events) throw()
+bool Epoll::getEvent(fd_t &fd, ev_t &r_events)
 {
 	assert(evfd != invalid_fd<Epoll>::value);
 	
@@ -210,7 +210,7 @@ bool Epoll::getEvent(fd_t &fd, ev_t &r_events) throw()
 	return true;
 }
 
-void Epoll::timeout(uint msecs) throw()
+void Epoll::timeout(uint msecs)
 {
 	_timeout = msecs;
 }

@@ -1,18 +1,18 @@
 #include "../config.h"
 
-#cmakedefine HAVE_ZLIB
+#cmakedefine HAVE_ZLIB 1
 
-#cmakedefine HAVE_FORK
-#cmakedefine HAVE_FORK1
+#cmakedefine HAVE_FORK 1
+#cmakedefine HAVE_FORK1 1
 
-#cmakedefine DEBUG_BUFFER
-#cmakedefine DEBUG_SOCKETS
-#cmakedefine DEBUG_SERVER
+#cmakedefine DEBUG_BUFFER 1
+#cmakedefine DEBUG_SOCKETS 1
+#cmakedefine DEBUG_SERVER 1
 
-#cmakedefine HAVE_SENDMSG
-#cmakedefine HAVE_RECVMSG
-#cmakedefine SC_SOCKETS
+#cmakedefine HAVE_SENDMSG 1
+#cmakedefine HAVE_RECVMSG 1
+#cmakedefine SC_SOCKETS 1
 
-#cmakedefine IPV6_SUPPORT
+#cmakedefine IPV6_SUPPORT 1
 
-#cmakedefine PERSISTENT_SESSIONS
+#cmakedefine PERSISTENT_SESSIONS 1

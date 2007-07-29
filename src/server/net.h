@@ -21,11 +21,12 @@
  *
  * @note On Windows O/S, this is thread-local.
  */
-bool startNetSubsystem();
+bool startNetSubsystem() __attribute__ ((nothrow));
+
 //! Stops any started network sub-system
 /**
  * Does nothing on most systems.
  */
-void stopNetSubsystem();
+void stopNetSubsystem() __attribute__ ((nothrow));
 
 #endif // Net_INCLUDED

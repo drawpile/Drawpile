@@ -27,7 +27,7 @@ namespace Network {
 namespace Qt {
 
 /*
-QSet<QHostAddress> getExternalAddresses() throw()
+QSet<QHostAddress> getExternalAddresses()
 {
 	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
 	const int requiredFlags = QNetworkInterface::IsUp
@@ -70,7 +70,7 @@ QSet<QHostAddress> getExternalAddresses() throw()
 }
 */
 
-QHostAddress getExternalAddress() throw()
+QHostAddress getExternalAddress()
 {
 	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
 	const int requiredFlags = QNetworkInterface::IsUp

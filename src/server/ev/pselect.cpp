@@ -45,7 +45,7 @@ const int write<Pselect>::value = 2;
 const int error<Pselect>::value = 4;
 const std::string system<Pselect>::value("pselect");
 
-Pselect::Pselect() throw()
+Pselect::Pselect()
 	: nfds_r(-1),
 	nfds_w(-1),
 	nfds_e(-1)
@@ -57,8 +57,12 @@ Pselect::Pselect() throw()
 	sigemptyset(&sigmask); // prepare sigmask
 }
 
+Pselect::~Pselect()
+{
+}
+
 // Errors: WSAENETDOWN
-int Pselect::wait() throw()
+int Pselect::wait()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.wait()" << endl;
@@ -103,7 +107,7 @@ int Pselect::wait() throw()
 	return nfds;
 }
 
-int Pselect::add(fd_t fd, int events) throw()
+int Pselect::add(fd_t fd, int events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.add(fd: " << fd << ")" << endl;
@@ -143,7 +147,7 @@ int Pselect::add(fd_t fd, int events) throw()
 	return rc;
 }
 
-int Pselect::modify(fd_t fd, int events) throw()
+int Pselect::modify(fd_t fd, int events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.modify(fd: " << fd << ")" << endl;
@@ -182,7 +186,7 @@ int Pselect::modify(fd_t fd, int events) throw()
 	return 0;
 }
 
-int Pselect::remove(fd_t fd) throw()
+int Pselect::remove(fd_t fd)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "pselect.remove(fd: " << fd << ")" << endl;
@@ -214,7 +218,7 @@ int Pselect::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Pselect::getEvent(fd_t &fd, int &events) throw()
+bool Pselect::getEvent(fd_t &fd, int &events)
 {
 	while (fd_iter != fd_list.end())
 	{
@@ -238,7 +242,7 @@ bool Pselect::getEvent(fd_t &fd, int &events) throw()
 	return false;
 }
 
-void Pselect::timeout(uint msecs) throw()
+void Pselect::timeout(uint msecs)
 {
 	if (msecs > 1000)
 	{

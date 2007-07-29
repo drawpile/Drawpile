@@ -26,7 +26,7 @@
 #endif
 
 Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
-	uint _width, uint _height, uint _level, Array<char>& _title) throw()
+	uint _width, uint _height, uint _level, Array<char>& _title)
 	: id(_id),
 	title(_title),
 	mode(_mode),
@@ -49,7 +49,7 @@ Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
 }
 
 #ifdef PERSISTENT_SESSIONS
-Session::~Session() throw()
+Session::~Session()
 {
 	#ifndef NDEBUG
 	std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
@@ -58,18 +58,18 @@ Session::~Session() throw()
 }
 #endif
 
-octet Session::getFlags() const throw()
+octet Session::getFlags() const
 {
 	return (persist ? protocol::session::Persist : 0);
 }
 
-bool Session::canJoin() const throw()
+bool Session::canJoin() const
 {
 	return ((users.size() + waitingSync.size()) < limit);
 }
 
 #ifdef PERSISTENT_SESSIONS
-void Session::invalidateRaster() throw()
+void Session::invalidateRaster()
 {
 	#ifndef NDEBUG
 	cout << "? Session raster invalidated." << endl;
@@ -79,7 +79,7 @@ void Session::invalidateRaster() throw()
 	raster->length = 0;
 }
 
-bool Session::appendRaster(protocol::Raster *nraster) throw()
+bool Session::appendRaster(protocol::Raster *nraster)
 {
 	assert(nraster != 0);
 	

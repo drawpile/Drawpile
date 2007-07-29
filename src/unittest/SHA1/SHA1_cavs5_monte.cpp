@@ -47,8 +47,11 @@ int main(int argc, char **argv)
 		{0x98,0x3e,0x97,0x4c,0xfb,0xc0,0x27,0x6c,0x1c,0x3a,0x76,0x0f,0x8b,0xcc,0x54,0xc1,0xcd,0x35,0x1f,0x61},
 	};
 	
-	if (c < 0 or c > int(sizeof(res)/20))
+	if (c < 0 or c > int(sizeof(res)/20)-1)
+	{
+		std::cerr << "CAVS 5.0 Monte hashes only up to " << int(sizeof(res)/20)-1 << " available for testing." << std::endl;
 		return EXIT_FAILURE;
+	}
 	
 	unsigned char src[] = {0xbf,0x26,0x2d,0x96,0x4e,0xfc,0x61,0x17,0xba,0x31,0x9b,0x20,0xb5,0x3d,0xbd,0x1f,0xc7,0x17,0x3a,0xcc};
 	
@@ -59,10 +62,27 @@ int main(int argc, char **argv)
 	unsigned char digest[20];
 	hash.GetHash(digest);
 	
-	
 	int rv = memcmp(digest, res[c], 20);
 	if (rv != 0)
-		std::cerr << "digest mismatch (count: "<<c<<")" << std::endl;
+	{
+		std::cerr << "digest mismatch :(" << std::endl;
+		std::cout << "string length: " << sizeof(src) << ", cycles: " << c << std::endl;
+		char hex[41] = {0};
+		hash.HexDigest(hex);
+		std::cout << "got:      " << hex << std::endl;
+		hex[40] = 0;
+		static const unsigned char Hex[16] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+		for (int i=0; i != 20; ++i)
+		{
+			hex[(i*2)] = Hex[res[c][i] >> 4];
+			hex[(i*2)+1] = Hex[res[c][i] & 0xF];
+		}
+		std::cout << "expected: " << hex << std::endl;
+	}
+	else
+	{
+		std::cout << "digest matches =D" << std::endl;
+	}
 	
 	return (rv == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }

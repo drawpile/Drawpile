@@ -47,7 +47,7 @@
 	#endif
 #endif
 
-Socket::Socket(const fd_t& nsock) throw()
+Socket::Socket(const fd_t& nsock)
 	: sock(nsock)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
@@ -55,7 +55,7 @@ Socket::Socket(const fd_t& nsock) throw()
 	#endif
 }
 
-Socket::Socket(const fd_t& nsock, const Address& saddr) throw()
+Socket::Socket(const fd_t& nsock, const Address& saddr)
 	: sock(nsock),
 	addr(saddr)
 {
@@ -64,7 +64,7 @@ Socket::Socket(const fd_t& nsock, const Address& saddr) throw()
 	#endif
 }
 
-Socket::~Socket() throw()
+Socket::~Socket()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
@@ -73,7 +73,7 @@ Socket::~Socket() throw()
 	close();
 }
 
-fd_t Socket::create() throw()
+fd_t Socket::create()
 {
 	if (sock != INVALID_SOCKET)
 		close();
@@ -130,25 +130,25 @@ fd_t Socket::create() throw()
 	return sock;
 }
 
-fd_t Socket::fd() const throw()
+fd_t Socket::fd() const
 {
 	return sock;
 }
 
-fd_t Socket::fd(fd_t nsock) throw()
+fd_t Socket::fd(fd_t nsock)
 {
 	if (sock != INVALID_SOCKET) close();
 	return sock = nsock;
 }
 
-fd_t Socket::release() throw()
+fd_t Socket::release()
 {
 	fd_t t_sock = sock;
 	sock = INVALID_SOCKET;
 	return t_sock;
 }
 
-void Socket::close() throw()
+void Socket::close()
 {
 	#if defined(HAVE_XPWSA)
 	::DisconnectEx(sock, 0, TF_REUSE_SOCKET, 0);
@@ -161,7 +161,7 @@ void Socket::close() throw()
 	sock = INVALID_SOCKET;
 }
 
-Socket Socket::accept() throw()
+Socket Socket::accept()
 {
 	assert(sock != INVALID_SOCKET);
 	
@@ -245,7 +245,7 @@ Socket Socket::accept() throw()
 	return Socket(n_fd, sa);
 }
 
-bool Socket::block(const bool x) throw()
+bool Socket::block(const bool x)
 {
 	#ifndef NDEBUG
 	cout << "[Socket] Blocking for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
@@ -262,7 +262,7 @@ bool Socket::block(const bool x) throw()
 	#endif
 }
 
-bool Socket::reuse_port(const bool x) throw()
+bool Socket::reuse_port(const bool x)
 {
 	#ifndef NDEBUG
 	cout << "[Socket] Reuse port of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
@@ -301,7 +301,7 @@ bool Socket::reuse_port(const bool x) throw()
 	#endif
 }
 
-bool Socket::reuse_addr(const bool x) throw()
+bool Socket::reuse_addr(const bool x)
 {
 	#ifndef NDEBUG
 	cout << "[Socket] Reuse address of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
@@ -340,7 +340,7 @@ bool Socket::reuse_addr(const bool x) throw()
 	#endif
 }
 
-bool Socket::linger(const bool x, const ushort delay) throw()
+bool Socket::linger(const bool x, const ushort delay)
 {
 	#ifndef NDEBUG
 	cout << "[Socket] Linger for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
@@ -377,7 +377,7 @@ bool Socket::linger(const bool x, const ushort delay) throw()
 	return (r == 0);
 }
 
-int Socket::bindTo(const std::string& address, const ushort _port) throw()
+int Socket::bindTo(const std::string& address, const ushort _port)
 {
 	#if !defined(NDEBUG)
 	cout << "[Socket] Binding to address " << address << ":" << _port << endl;
@@ -392,7 +392,7 @@ int Socket::bindTo(const std::string& address, const ushort _port) throw()
 	return bindTo(naddr);
 }
 
-int Socket::bindTo(const Address& naddr) throw()
+int Socket::bindTo(const Address& naddr)
 {
 	addr = naddr;
 	
@@ -449,7 +449,7 @@ int Socket::bindTo(const Address& naddr) throw()
 	return r;
 }
 
-int Socket::connect(const Address& rhost) throw()
+int Socket::connect(const Address& rhost)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Connecting to " << rhost.toString() << endl;
@@ -507,7 +507,7 @@ int Socket::connect(const Address& rhost) throw()
 	return r;
 }
 
-int Socket::listen() throw()
+int Socket::listen()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Listening" << endl;
@@ -536,13 +536,12 @@ int Socket::listen() throw()
 		#ifndef NDEBUG
 		cerr << "[Socket] Failed to open listening port. [error: " << s_error << "]" << endl;
 		#endif // NDEBUG
-		exit(1);
 	}
-	else
-		return r;
+	
+	return r;
 }
 
-int Socket::send(char* buffer, const size_t len) throw()
+int Socket::send(char* buffer, const size_t len)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Sending " << len << " bytes" << endl;
@@ -556,7 +555,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = len;
-	DWORD sb;
+	u_long sb;
 	const int r = ::WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
 	#else // POSIX
 	const int r = ::send(sock, buffer, len, MSG_NOSIGNAL);
@@ -623,7 +622,7 @@ int Socket::send(char* buffer, const size_t len) throw()
 
 /*
 #ifdef HAVE_SENDMSG
-int Socket::sc_send(std::list<Array<char*,size_t>* > buffers) throw()
+int Socket::sc_send(std::list<Array<char*,size_t>* > buffers)
 {
 	//iterator iter = blah
 	assert(buffers.size() != 0);
@@ -640,14 +639,14 @@ int Socket::sc_send(std::list<Array<char*,size_t>* > buffers) throw()
 #endif
 
 #ifdef HAVE_RECVMSG
-int Socket::sc_recv(std::list<Array<char*,size_t> > buffers) throw()
+int Socket::sc_recv(std::list<Array<char*,size_t> > buffers)
 {
 	
 }
 #endif
 */
 
-int Socket::recv(char* buffer, const size_t len) throw()
+int Socket::recv(char* buffer, const size_t len)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Receiving at most " << len << " bytes" << endl;
@@ -661,8 +660,8 @@ int Socket::recv(char* buffer, const size_t len) throw()
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = len;
-	DWORD flags=0;
-	DWORD rb;
+	u_long flags=0;
+	u_long rb;
 	const int r = ::WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
 	#else // POSIX
 	const int r = ::recv(sock, buffer, len, 0);
@@ -729,7 +728,7 @@ int Socket::recv(char* buffer, const size_t len) throw()
 }
 
 #if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
-int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw()
+int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Sending file" << endl;
@@ -784,38 +783,38 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes) throw(
 }
 #endif // WITH_SENDFILE
 
-std::string Socket::address() const throw()
+std::string Socket::address() const
 {
 	return addr.toString();
 }
 
-ushort Socket::port() const throw()
+ushort Socket::port() const
 {
 	return addr.port();
 }
 
-int Socket::shutdown(int how) throw()
+int Socket::shutdown(int how)
 {
 	return ::shutdown(sock, how);
 }
 
-int Socket::getError() const throw()
+int Socket::getError() const
 {
 	return s_error;
 }
 
-Address& Socket::getAddr() throw()
+Address& Socket::getAddr()
 {
 	return addr;
 }
 
 #ifdef SOCKET_OPS
-bool Socket::operator== (const Socket& tsock) const throw()
+bool Socket::operator== (const Socket& tsock) const
 {
 	return (sock == tsock.sock);
 }
 
-Socket& Socket::operator= (Socket& tsock) throw()
+Socket& Socket::operator= (Socket& tsock)
 {
 	if (sock != INVALID_SOCKET)
 		close(sock);

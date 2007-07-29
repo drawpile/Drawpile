@@ -24,7 +24,6 @@ option ( UNITTEST "Compile unit tests" OFF )
 option ( EPOLL "Enable epoll(4) support" ON )
 option ( PSELECT "Enable pselect(2) support" ON )
 option ( KQUEUE "Enable kqueue(2) support" ON )
-option ( KEVENT "Enable kevent(2) support" OFF )
 option ( WSA "Enable WSA event support" OFF ) # still broken
 option ( SELECT "Enable select(2) support" ON )
 
@@ -49,8 +48,7 @@ option ( RELEASE "" OFF )
 
 option ( NOPI "Disable position-independent code and executables" OFF )
 
-option ( UNSAFE_MATH "Enable unsafe math optimizations" OFF )
-option ( OPTIMIZEMORE "Apply some questionable optimizations" ON )
+option ( UNSAFEOPT "Enable unsafe math optimizations" OFF )
 
 # detect Mac OS X
 

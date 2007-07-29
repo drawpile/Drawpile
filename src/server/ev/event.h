@@ -24,9 +24,6 @@
 #if defined(EV_EPOLL)
 	#include "epoll.h"
 	typedef event::Epoll EventSystem;
-#elif defined(EV_KEVENT)
-	#include "kevent.h"
-	typedef event::Kevent EventSystem;
 #elif defined(EV_KQUEUE)
 	#include "kqueue.h"
 	typedef event::Kqueue EventSystem;

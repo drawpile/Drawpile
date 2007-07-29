@@ -44,7 +44,7 @@ const int read<Kqueue>::value = EVFILT_READ;
 const int write<Kqueue>::value = EVFILT_WRITE;
 const std::string system<Kqueue>::value("kqueue");
 
-Kqueue::Kqueue() throw(std::bad_alloc)
+Kqueue::Kqueue()
 	: evfd(0),
 	chlist_count(0),
 	evtrigr_size(max_events)
@@ -63,7 +63,7 @@ Kqueue::Kqueue() throw(std::bad_alloc)
 	evtrigr = new kevent[evtrigr_size];
 }
 
-Kqueue::~Kqueue() throw()
+Kqueue::~Kqueue()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "~kqueue()" << endl;
@@ -82,7 +82,7 @@ Kqueue::~Kqueue() throw()
 }
 
 // Errors: EACCES, ENOMEM
-int Kqueue::wait() throw()
+int Kqueue::wait()
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.wait()" << endl;
@@ -112,7 +112,7 @@ int Kqueue::wait() throw()
 	return nfds;
 }
 
-int Kqueue::add(fd_t fd, int events) throw()
+int Kqueue::add(fd_t fd, int events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.add(FD: " << fd << ")" << endl;
@@ -128,7 +128,7 @@ int Kqueue::add(fd_t fd, int events) throw()
 	return true;
 }
 
-int Kqueue::modify(fd_t fd, int events) throw()
+int Kqueue::modify(fd_t fd, int events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.modify(FD: " << fd << ")" << endl;
@@ -144,7 +144,7 @@ int Kqueue::modify(fd_t fd, int events) throw()
 	return true;
 }
 
-int Kqueue::remove(fd_t fd) throw()
+int Kqueue::remove(fd_t fd)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue.remove(FD: " << fd << ")" << endl;
@@ -160,7 +160,7 @@ int Kqueue::remove(fd_t fd) throw()
 	return true;
 }
 
-bool Kqueue::getEvent(fd_t &fd, int &r_events) throw()
+bool Kqueue::getEvent(fd_t &fd, int &r_events)
 {
 	if (nfds == evtrigr_size)
 		return false;
@@ -175,7 +175,7 @@ bool Kqueue::getEvent(fd_t &fd, int &r_events) throw()
 	return true;
 }
 
-void Kqueue::timeout(uint msecs) throw()
+void Kqueue::timeout(uint msecs)
 {
 	#ifndef NDEBUG
 	std::cout << "kqueue.timeout(msecs: " << msecs << ")" << std::endl;

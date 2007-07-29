@@ -54,16 +54,16 @@ public:
 	typedef typename event::ev_type<Evs>::ev_t ev_t;
 	
 	//! Constructor
-	Interface() throw() { }
+	Interface()  __attribute__ ((nothrow));
 	
 	//! Destructor
-	virtual ~Interface() throw() { }
+	virtual ~Interface()  __attribute__ ((nothrow));
 	
 	//! Set timeout for wait()
 	/**
 	 * @param[in] msecs milliseconds to wait.
 	 */
-	virtual void timeout(uint msecs) throw() = 0;
+	virtual void timeout(uint msecs) __attribute__ ((nothrow)) = 0;
 	
 	//! Wait for events.
 	/**
@@ -71,7 +71,7 @@ public:
 	 * @return -1 on error
 	 * @return 0 otherwise
 	 */
-	virtual int wait() throw() = 0;
+	virtual int wait() __attribute__ ((nothrow)) = 0;
 	
 	//! Adds file descriptor to event polling.
 	/**
@@ -81,7 +81,7 @@ public:
 	 * @return \b true if the FD was added
 	 * @return \b false if not
 	 */
-	virtual int add(fd_t fd, ev_t events) throw() = 0;
+	virtual int add(fd_t fd, ev_t events) = 0;
 	
 	//! Removes file descriptor from event set.
 	/**
@@ -90,7 +90,7 @@ public:
 	 * @return \b true if the fd was removed
 	 * @return \b false if not (or was not part of the event set)
 	 */
-	virtual int remove(fd_t fd) throw() = 0;
+	virtual int remove(fd_t fd) = 0;
 	
 	//! Modifies previously added fd for different events.
 	/**
@@ -99,7 +99,7 @@ public:
 	 *
 	 * @return ?
 	 */
-	virtual int modify(fd_t fd, ev_t events) throw() = 0;
+	virtual int modify(fd_t fd, ev_t events) = 0;
 	
 	//! Fetches next triggered event.
 	/**
@@ -109,13 +109,13 @@ public:
 	 * @return \b true if FD was triggered; fd and events parameters were filled
 	 * @return \b false otherwise
 	 */
-	virtual bool getEvent(fd_t &fd, ev_t &events) throw() = 0;
+	virtual bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow)) = 0;
 	
 	//! Get last error number (errno)
 	/**
 	 * @return last errno
 	 */
-	int getError() const throw() { return error; }
+	int getError() const __attribute__ ((nothrow));
 };
 
 } // namespace:event

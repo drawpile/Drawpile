@@ -41,6 +41,7 @@
  */
 class SHA1
 {
+private:
 	typedef unsigned char uchar;
 	
 	#ifdef HAVE_OPENSSL
@@ -62,53 +63,53 @@ class SHA1
 	uint32_t m_state[5];
 public:
 	//! ctor
-	SHA1() throw();
+	SHA1() __attribute__ ((nothrow));
 	
 	//! Reset hasher
-	void Reset() throw();
+	void Reset() __attribute__ ((nothrow));
 	
 	//! Update the hash value
 	/**
 	 * @param data Input buffer for updating hash
 	 * @param len Length of buffer
 	 */
-	void Update(const uchar *data, uint64_t len) throw();
+	void Update(const uchar *data, uint64_t len) __attribute__ ((nothrow));
 	
 	//! Finalize hash
 	/**
 	 * @note Must be called before either .HexDigest() or .GetHash()
 	 */
-	void Final() throw();
+	void Final() __attribute__ ((nothrow));
 	
 	//! Get hex digest
 	/**
 	 * @param string Target buffer for hex digest, needs to be at least 40 bytes long
 	 */
-	void HexDigest(char *string) const throw();
+	void HexDigest(char *string) const __attribute__ ((nothrow));
 	
 	//! Get binary digest
 	/**
 	 * @param digest Target buffer for binary digest, needs to be at least 20 bytes long
 	 */
-	void GetHash(uchar *digest) const throw();
+	void GetHash(uchar *digest) const __attribute__ ((nothrow));
 
 private:
 	#ifndef HAVE_OPENSSL
-	uint32_t Chunk(const uint32_t i) throw();
+	uint32_t Chunk(const uint32_t i) __attribute__ ((nothrow,warn_unused_result));
 	
-	uint32_t LeftRotate(const uint32_t v, const uint32_t n) const throw();
+	uint32_t LeftRotate(const uint32_t v, const uint32_t n) const  __attribute__ ((nothrow,warn_unused_result));
 	
-	void R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) __attribute__ ((nothrow));
 	
-	void R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) __attribute__ ((nothrow));
 	
-	void R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) __attribute__ ((nothrow));
 	
-	void R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) __attribute__ ((nothrow));
 	
-	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw();
+	void R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) __attribute__ ((nothrow));
 	
-	void Transform() throw();
+	void Transform() __attribute__ ((nothrow));
 	#endif // HAVE_OPENSSL
 };
 

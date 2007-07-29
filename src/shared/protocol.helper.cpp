@@ -44,7 +44,7 @@
 namespace protocol
 {
 
-void msgName(const unsigned char type) throw()
+void msgName(const unsigned char type)
 {
 	#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
 	cout << "type (" << static_cast<int>(type) << "): ";
@@ -135,7 +135,7 @@ void msgName(const unsigned char type) throw()
 	#endif
 }
 
-Message* getMessage(const unsigned char type) throw(std::bad_alloc)
+Message* getMessage(const unsigned char type)
 {
 	#ifdef DEBUG_PROTOCOL
 	#ifndef NDEBUG

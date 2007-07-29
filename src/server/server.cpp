@@ -82,7 +82,7 @@ typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
 
-Server::Server() throw()
+Server::Server()
 	: state(Server::Dead),
 	user_limit(12),
 	session_limit(1),
@@ -115,13 +115,13 @@ Server::Server() throw()
 }
 
 #if 0
-Server::~Server() throw()
+Server::~Server()
 {
 	//reset();
 }
 #endif
 
-const octet Server::getUserID() throw()
+const octet Server::getUserID()
 {
 	static int index=0;
 	
@@ -137,7 +137,7 @@ const octet Server::getUserID() throw()
 	return ri;
 }
 
-const octet Server::getSessionID() throw()
+const octet Server::getSessionID()
 {
 	static int index=0;
 	
@@ -153,21 +153,21 @@ const octet Server::getSessionID() throw()
 	return ri;
 }
 
-void Server::freeUserID(const octet id) throw()
+void Server::freeUserID(const octet id)
 {
 	assert(id != protocol::null_user);
 	assert(user_ids[id-1] == false);
 	user_ids[id-1] = true;
 }
 
-void Server::freeSessionID(const octet id) throw()
+void Server::freeSessionID(const octet id)
 {
 	assert(id != protocol::Global);
 	assert(session_ids[id-1] == false);
 	session_ids[id-1] = true;
 }
 
-void Server::uRegenSeed(User& usr) const throw()
+void Server::uRegenSeed(User& usr) const
 {
 	#ifdef LINUX
 	FILE stream = fopen("/dev/urandom", "r");
@@ -183,7 +183,7 @@ void Server::uRegenSeed(User& usr) const throw()
 	#endif
 }
 
-message_ref Server::msgPWRequest(User& usr, const octet session) const throw(std::bad_alloc)
+message_ref Server::msgPWRequest(User& usr, const octet session) const
 {
 	protocol::PasswordRequest* pwreq = new protocol::PasswordRequest;
 	pwreq->session_id = session;
@@ -192,7 +192,7 @@ message_ref Server::msgPWRequest(User& usr, const octet session) const throw(std
 	return message_ref(pwreq);
 }
 
-message_ref Server::msgHostInfo() const throw(std::bad_alloc)
+message_ref Server::msgHostInfo() const
 {
 	return message_ref(
 		new protocol::HostInfo(
@@ -211,7 +211,7 @@ message_ref Server::msgHostInfo() const throw(std::bad_alloc)
 	);
 }
 
-message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_alloc)
+message_ref Server::msgSessionInfo(const Session& session) const
 {
 	protocol::SessionInfo *nfo = new protocol::SessionInfo(
 		session.width,
@@ -233,21 +233,21 @@ message_ref Server::msgSessionInfo(const Session& session) const throw(std::bad_
 	return message_ref(nfo);
 }
 
-message_ref Server::msgError(const octet session, const uint16_t code) const throw(std::bad_alloc)
+message_ref Server::msgError(const octet session, const uint16_t code) const
 {
 	protocol::Error *err = new protocol::Error(code);
 	err->session_id = session;
 	return message_ref(err);
 }
 
-message_ref Server::msgAck(const octet session, const octet type) const throw(std::bad_alloc)
+message_ref Server::msgAck(const octet session, const octet type) const
 {
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement(type);
 	ack->session_id = session;
 	return message_ref(ack);
 }
 
-message_ref Server::msgSyncWait(const octet session_id) const throw(std::bad_alloc)
+message_ref Server::msgSyncWait(const octet session_id) const
 {
 	message_ref sync_ref(new protocol::SyncWait);
 	sync_ref->session_id = session_id;
@@ -255,7 +255,7 @@ message_ref Server::msgSyncWait(const octet session_id) const throw(std::bad_all
 }
 
 // May delete User*
-void Server::uWrite(User*& usr) throw()
+void Server::uWrite(User*& usr)
 {
 	assert(usr != 0);
 	
@@ -342,7 +342,7 @@ void Server::uWrite(User*& usr) throw()
 	}
 }
 
-void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
+void Server::Deflate(Buffer& buffer)
 {
 	// len, size
 	
@@ -428,7 +428,7 @@ void Server::Deflate(Buffer& buffer) throw(std::bad_alloc)
 }
 
 // May delete User*
-void Server::uRead(User*& usr) throw(std::bad_alloc)
+void Server::uRead(User*& usr)
 {
 	assert(usr != 0);
 	
@@ -474,7 +474,12 @@ void Server::uRead(User*& usr) throw(std::bad_alloc)
 }
 
 // calls uHandleMsg() and uHandleLogin()
-void Server::uProcessData(User*& usr) throw()
+/**
+ * @todo getMessage() should be expanded. In high traffic server it's likely one of the most
+ * obvious performance drains that we can actually control. Some sort of memory cache could
+ * work.
+ */
+void Server::uProcessData(User*& usr)
 {
 	assert(usr != 0);
 	
@@ -539,7 +544,7 @@ void Server::uProcessData(User*& usr) throw()
 	usr->input.rewind();
 }
 
-message_ref Server::msgUserEvent(const User& usr, const octet session_id, const octet event) const throw(std::bad_alloc)
+message_ref Server::msgUserEvent(const User& usr, const octet session_id, const octet event) const
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Constructing user event for user #" << usr.id << endl;
@@ -563,7 +568,7 @@ message_ref Server::msgUserEvent(const User& usr, const octet session_id, const 
 	return message_ref(uevent);
 }
 
-void Server::uHandleDrawing(User& usr) throw()
+void Server::uHandleDrawing(User& usr)
 {
 	assert(usr.inMsg != 0);
 	
@@ -630,7 +635,7 @@ void Server::uHandleDrawing(User& usr) throw()
 }
 
 // calls uQueueMsg, Propagate, uJoinSession
-void Server::uHandlePassword(User& usr) throw()
+void Server::uHandlePassword(User& usr)
 {
 	assert(usr.inMsg != 0);
 	
@@ -694,7 +699,7 @@ void Server::uHandlePassword(User& usr) throw()
 }
 
 // May delete User*
-void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
+void Server::uHandleMsg(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -906,7 +911,7 @@ void Server::uHandleMsg(User*& usr) throw(std::bad_alloc)
 
 // May delete User*
 #if defined(HAVE_ZLIB)
-void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
+void Server::DeflateReprocess(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -985,7 +990,7 @@ void Server::DeflateReprocess(User*& usr) throw(std::bad_alloc)
 #endif
 
 // May delete User*
-void Server::uHandleAck(User*& usr) throw()
+void Server::uHandleAck(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -1028,7 +1033,7 @@ void Server::uHandleAck(User*& usr) throw()
 }
 
 // Calls uQueueMsg()
-void Server::uTunnelRaster(User& usr) throw()
+void Server::uTunnelRaster(User& usr)
 {
 	assert(usr.inMsg != 0);
 	
@@ -1095,7 +1100,7 @@ void Server::uTunnelRaster(User& usr) throw()
 
 // Calls Propagate, uQueueMsg and uLeaveSession
 // May delete User*
-void Server::uSessionEvent(Session*& session, User*& usr) throw()
+void Server::uSessionEvent(Session*& session, User*& usr)
 {
 	assert(session != 0);
 	assert(usr != 0);
@@ -1268,14 +1273,14 @@ void Server::uSessionEvent(Session*& session, User*& usr) throw()
 	}
 }
 
-bool Server::isOwner(const User& usr, const Session& session) const throw()
+bool Server::isOwner(const User& usr, const Session& session) const
 {
 	return session.owner == usr.id;
 }
 
 // Calls uQueueMsg, Propagate, sRemove, uLeaveSession
 // May delete User*
-void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
+void Server::uSessionInstruction(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -1481,7 +1486,7 @@ void Server::uSessionInstruction(User*& usr) throw(std::bad_alloc)
 	}
 }
 
-void Server::uSetPassword(User*& usr) throw()
+void Server::uSetPassword(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -1533,7 +1538,7 @@ void Server::uSetPassword(User*& usr) throw()
 }
 
 // Calls validateUserName, uQueueMsg
-void Server::uLoginInfo(User& usr) throw()
+void Server::uLoginInfo(User& usr)
 {
 	protocol::UserInfo &msg = *static_cast<protocol::UserInfo*>(usr.inMsg);
 	
@@ -1593,7 +1598,7 @@ void Server::uLoginInfo(User& usr) throw()
 	msg.mode = 0;
 	
 	usr.state = User::Active;
-	usr.deadtime = 0;
+	usr.touched = 0;
 	usr.inMsg = 0;
 	
 	// remove fake timer
@@ -1603,7 +1608,7 @@ void Server::uLoginInfo(User& usr) throw()
 	uQueueMsg(usr, message_ref(&msg));
 }
 
-bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) throw()
+bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed)
 {
 	assert(hashdigest != 0);
 	assert(str != 0);
@@ -1621,7 +1626,7 @@ bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t
 	return (memcmp(hashdigest, digest, protocol::password_hash_size) == 0);
 }
 
-void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
+void Server::uHandleLogin(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -1716,7 +1721,7 @@ void Server::uHandleLogin(User*& usr) throw(std::bad_alloc)
 }
 
 #ifdef LAYER_SUPPORT
-void Server::uLayerEvent(User*& usr) throw()
+void Server::uLayerEvent(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -1779,7 +1784,7 @@ void Server::uLayerEvent(User*& usr) throw()
 #endif
 
 // Calls uQueueMsg
-void Server::Propagate(const Session& session, message_ref msg, User* source) throw()
+void Server::Propagate(const Session& session, message_ref msg, User* source)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Propagating message to session #" << session.id
@@ -1802,7 +1807,7 @@ void Server::Propagate(const Session& session, message_ref msg, User* source) th
 		}
 }
 
-void Server::uQueueMsg(User& usr, message_ref msg) throw()
+void Server::uQueueMsg(User& usr, message_ref msg)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Queuing message to user #" << usr.id
@@ -1834,7 +1839,7 @@ void Server::uQueueMsg(User& usr, message_ref msg) throw()
 	}
 }
 
-void Server::SyncSession(Session* session) throw()
+void Server::SyncSession(Session* session)
 {
 	assert(session != 0);
 	
@@ -1931,7 +1936,7 @@ void Server::SyncSession(Session* session) throw()
 	session->waitingSync.clear();
 }
 
-void Server::uJoinSession(User& usr, Session& session) throw()
+void Server::uJoinSession(User& usr, Session& session)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Attaching user #" << usr.id << " to session #" << session.id << endl;
@@ -1985,7 +1990,7 @@ void Server::uJoinSession(User& usr, Session& session) throw()
 }
 
 // Calls sRemove, uQueueMsg, Propagate
-void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason) throw()
+void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason)
 {
 	assert(session != 0);
 	
@@ -2050,8 +2055,9 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 }
 
 /** @todo Check user limit! */
-void Server::uAdd(Socket sock) throw(std::bad_alloc)
+void Server::uAdd()
 {
+	Socket sock = lsock.accept();
 	if (sock.fd() == INVALID_SOCKET)
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
@@ -2101,11 +2107,11 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 	else
 		time_limit = srv_defaults::time_limit; // 3 minutes
 	
-	usr->deadtime = current_time + time_limit;
+	usr->touched = current_time + time_limit;
 	
 	// re-schedule user culling
-	if (next_timer > usr->deadtime)
-		next_timer = usr->deadtime + 1;
+	if (next_timer > usr->touched)
+		next_timer = usr->touched + 1;
 	
 	// add user to timer
 	utimer.insert(utimer.end(), usr);
@@ -2122,7 +2128,7 @@ void Server::uAdd(Socket sock) throw(std::bad_alloc)
 }
 
 // Calls uQueueMsg, uLeaveSession
-void Server::breakSync(User& usr) throw()
+void Server::breakSync(User& usr)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Breaking session sync with user #" << usr.id << endl;
@@ -2137,7 +2143,7 @@ void Server::breakSync(User& usr) throw()
 	usr.syncing = protocol::Global;
 }
 
-void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw()
+void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 {
 	assert(usr != 0);
 	
@@ -2224,7 +2230,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason) throw(
 		state = Server::Exiting;
 }
 
-void Server::sRemove(Session*& session) throw()
+void Server::sRemove(Session*& session)
 {
 	#ifndef NDEBUG
 	cout << "- Session #" << session->id << " destroyed" << endl;
@@ -2236,7 +2242,7 @@ void Server::sRemove(Session*& session) throw()
 	session = 0;
 }
 
-bool Server::init() throw(std::bad_alloc)
+bool Server::init()
 {
 	#ifndef NDEBUG
 	cout << "[Server] Initializing" << endl;
@@ -2293,7 +2299,7 @@ bool Server::init() throw(std::bad_alloc)
 	return false;
 }
 
-bool Server::validateUserName(User* usr) const throw()
+bool Server::validateUserName(User* usr) const
 {
 	assert(usr != 0);
 	assert(enforceUnique);
@@ -2312,7 +2318,7 @@ bool Server::validateUserName(User* usr) const throw()
 	return true;
 }
 
-bool Server::validateSessionTitle(const Array<char>& title) const throw()
+bool Server::validateSessionTitle(const Array<char>& title) const
 {
 	assert(title.ptr != 0 and title.size > 0);
 	assert(enforceUnique);
@@ -2330,7 +2336,7 @@ bool Server::validateSessionTitle(const Array<char>& title) const throw()
 	return true;
 }
 
-void Server::cullIdlers() throw()
+void Server::cullIdlers()
 {
 	if (next_timer > current_time)
 	{ /* do nothing */ }
@@ -2341,7 +2347,7 @@ void Server::cullIdlers() throw()
 		User *usr;
 		for (userlist_i tui(utimer.begin()); tui != utimer.end(); ++tui)
 		{
-			if ((*tui)->deadtime < current_time)
+			if ((*tui)->touched < current_time)
 			{
 				#ifndef NDEBUG
 				cout << "- Dropping inactive user #" << (*tui)->id << endl;
@@ -2352,17 +2358,17 @@ void Server::cullIdlers() throw()
 				
 				uRemove(usr, protocol::UserInfo::TimedOut);
 			}
-			else if ((*tui)->deadtime < next_timer)
+			else if ((*tui)->touched < next_timer)
 			{
 				// re-schedule next culling to come sooner
-				next_timer = (*tui)->deadtime;
+				next_timer = (*tui)->touched;
 			}
 		}
 	}
 }
 
 // main loop
-int Server::run() throw()
+int Server::run()
 {
 	#if !defined(NDEBUG)
 	cout << "[Server] Running" << endl;
@@ -2403,7 +2409,7 @@ int Server::run() throw()
 				if (fd == lsock.fd())
 				{
 					cullIdlers();
-					uAdd( lsock.accept() );
+					uAdd();
 					continue;
 				}
 				
@@ -2442,7 +2448,7 @@ int Server::run() throw()
 	return 0;
 }
 
-void Server::stop() throw()
+void Server::stop()
 {
 	#ifndef NDEBUG
 	cout << "[Server] Stopping" << endl;
@@ -2450,7 +2456,7 @@ void Server::stop() throw()
 	state = Server::Exiting;
 }
 
-void Server::reset() throw()
+void Server::reset()
 {
 	#ifndef NDEBUG
 	cout << "[Server] Reset" << endl;
@@ -2479,25 +2485,157 @@ void Server::reset() throw()
 	state = Server::Dead;
 }
 
-Session* Server::getSession(const octet session_id) throw()
+Session* Server::getSession(const octet session_id)
 {
 	const sessions_const_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : si->second);
 }
 
-const Session* Server::getConstSession(const octet session_id) const throw()
+const Session* Server::getConstSession(const octet session_id) const
 {
 	const sessions_const_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : si->second);
 }
 
-octet Server::getRequirements() const throw()
+Statistics Server::getStats() const
+{
+	return stats;
+}
+
+/* attributes */
+
+void Server::setNameLengthLimit(const octet limit)
+{
+	name_len_limit = limit;
+}
+
+uint Server::getNameLengthLimit() const
+{
+	return name_len_limit;
+}
+
+void Server::setPassword(char* pwstr, const octet len)
+{
+	password.set(pwstr, len);
+}
+
+bool Server::haveServerPassword() const
+{
+	return (password.ptr!=0);
+}
+
+void Server::setAdminPassword(char* pwstr, const octet len)
+{
+	admin_password.set(pwstr, len);
+}
+
+bool Server::haveAdminPassword() const
+{
+	return (admin_password.ptr!=0);
+}
+
+void Server::setUserLimit(const octet ulimit)
+{
+	user_limit = ulimit;
+}
+
+uint Server::getUserLimit() const
+{
+	return user_limit;
+}
+
+void Server::setPort(const ushort _port)
+{
+	lsock.getAddr().port(_port);
+}
+
+ushort Server::getPort() const
+{
+	return lsock.port();
+}
+
+void Server::setTransient(const bool _enable)
+{
+	Transient = _enable;
+}
+
+void Server::setLocalhostAdmin(const bool _enable)
+{
+	LocalhostAdmin = _enable;
+}
+
+octet Server::getRequirements() const
 {
 	return (wideStrings ? protocol::requirements::WideStrings : 0)
 		| (enforceUnique ? protocol::requirements::EnforceUnique : 0);
 }
 
-Statistics Server::getStats() const throw()
+void Server::setUniqueNameEnforcing(bool _enabled)
 {
-	return stats;
+	enforceUnique = _enabled;
+}
+
+bool Server::getUniqueNameEnforcing() const
+{
+	return enforceUnique;
+}
+
+void Server::setMinDimension(const uint16_t mindim)
+{
+	min_dimension = mindim;
+}
+
+uint Server::getMinDimension() const
+{
+	return min_dimension;
+}
+
+void Server::setUTF16Requirement(const bool _enabled)
+{
+	wideStrings = _enabled;
+}
+
+bool Server::getUTF16Requirement() const
+{
+	return wideStrings;
+}
+
+void Server::setUserMode(const octet _mode)
+{
+	default_user_mode = _mode;
+}
+
+uint Server::getUserMode() const
+{
+	return default_user_mode;
+}
+
+void Server::setSessionLimit(const octet _limit)
+{
+	session_limit = _limit;
+}
+
+uint Server::getSessionLimit() const
+{
+	return session_limit;
+}
+
+void Server::setSubscriptionLimit(const octet _slimit)
+{
+	max_subscriptions = _slimit;
+}
+
+uint Server::getSubscriptionLimit() const
+{
+	return max_subscriptions;
+}
+
+void Server::setDuplicateConnectionBlocking(const bool _block)
+{
+	blockDuplicateConnections = _block;
+}
+
+bool Server::getDuplicateConnectionBlocking() const
+{
+	return blockDuplicateConnections;
 }

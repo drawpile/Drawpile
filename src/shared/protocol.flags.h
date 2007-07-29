@@ -102,7 +102,7 @@ namespace extensions
 {
 
 //! Protocol extensions
-enum extensions
+enum flags
 {
 	//! No supported extensions.
 	None,
@@ -127,7 +127,7 @@ namespace requirements
 {
 
 //! Server requirements
-enum requirements
+enum flags
 {
 	//! No special requirements.
 	None,

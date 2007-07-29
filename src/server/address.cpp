@@ -45,7 +45,7 @@ Address::Address()
 	#endif
 }
 
-socklen_t Address::size() const throw()
+socklen_t Address::size() const
 {
 	#ifdef IPV6_SUPPORT
 	if (family == Network::Family::IPv6)
@@ -55,7 +55,7 @@ socklen_t Address::size() const throw()
 		return sizeof(IPv4);
 }
 
-ushort Address::port() const throw()
+ushort Address::port() const
 {
 	#ifdef IPV6_SUPPORT
 	if (family == Network::Family::IPv6)
@@ -65,7 +65,7 @@ ushort Address::port() const throw()
 		return bswap_const(IPv4.sin_port);
 }
 
-void Address::port(ushort _port) throw()
+void Address::port(ushort _port)
 {
 	#ifdef IPV6_SUPPORT
 	if (family == Network::Family::IPv6)
@@ -75,7 +75,7 @@ void Address::port(ushort _port) throw()
 		IPv4.sin_port = bswap(_port);
 }
 
-void Address::setFamily(Network::Family::type _family) throw()
+void Address::setFamily(Network::Family::type _family)
 {
 	family = _family;
 	
@@ -87,7 +87,7 @@ void Address::setFamily(Network::Family::type _family) throw()
 		IPv4.sin_family = family;
 }
 
-Address& Address::operator= (const Address& naddr) throw()
+Address& Address::operator= (const Address& naddr)
 {
 	#ifdef IPV6_SUPPORT
 	if (naddr.family == Network::Family::IPv6)
@@ -102,7 +102,7 @@ Address& Address::operator= (const Address& naddr) throw()
 	return *this;
 }
 
-bool Address::operator== (const Address& naddr) const throw()
+bool Address::operator== (const Address& naddr) const
 {
 	if (naddr.family != family)
 		return false;
@@ -117,20 +117,24 @@ bool Address::operator== (const Address& naddr) const throw()
 
 /* string functions */
 
-std::string Address::toString() const throw()
+std::string Address::toString() const
 {
 	#ifdef IPV6_SUPPORT
 	const uint length = Network::IPv6::AddrLength + Network::PortLength + 4;
+	#ifndef WIN32
 	const char format_string[] = "[%s]:%d";
-	#else
+	#endif // WIN32
+	#else // IPv4
 	const uint length = Network::IPv4::AddrLength + Network::PortLength + 2;
+	#ifndef WIN32
 	const char format_string[] = "%s:%d";
+	#endif // WIN32
 	#endif
 	
 	char buf[length];
 	
 	#ifdef WIN32
-	DWORD len = length;
+	u_long len = length;
 	Address sa = *this;
 	WSAAddressToString(&sa.addr, sa.size(), 0, buf, &len);
 	#else // POSIX
@@ -151,7 +155,7 @@ std::string Address::toString() const throw()
 	return std::string(buf);
 }
 
-Address Address::fromString(const std::string& address) throw()
+Address Address::fromString(const std::string& address)
 {
 	Address addr;
 	

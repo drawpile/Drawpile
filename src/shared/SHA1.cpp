@@ -19,12 +19,12 @@
 #endif
 #include <algorithm> // std::swap
 
-SHA1::SHA1() throw()
+SHA1::SHA1()
 {
 	Reset();
 }
 
-void SHA1::Reset() throw()
+void SHA1::Reset()
 {
 	#ifndef HAVE_OPENSSL
 	// SHA1 initialization constants
@@ -46,7 +46,7 @@ void SHA1::Reset() throw()
 
 #ifndef HAVE_OPENSSL
 // Rotate \b v n bits to the left
-uint32_t SHA1::LeftRotate(const uint32_t v, const uint32_t n) const throw()
+uint32_t SHA1::LeftRotate(const uint32_t v, const uint32_t n) const
 {
 	#ifdef USE_ASM
 	uint32_t x;
@@ -61,42 +61,42 @@ uint32_t SHA1::LeftRotate(const uint32_t v, const uint32_t n) const throw()
 	#endif
 }
 
-uint32_t SHA1::Chunk(const uint32_t i) throw()
+uint32_t SHA1::Chunk(const uint32_t i)
 {
 	return (workblock.l[i&0x0F] = LeftRotate((workblock.l[(i-3)&0x0F] ^ workblock.l[(i-8)&0x0F] ^ workblock.l[(i-14)&15] ^ workblock.l[i&0x0F]), 1));
 }
 
-void SHA1::R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
+void SHA1::R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i)
 {
 	z += ((w & (x ^ y)) ^ y) + workblock.l[i] + 0x5A827999 + LeftRotate(v, 5);
 	w = LeftRotate(w, 30);
 }
 
-void SHA1::R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
+void SHA1::R1(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i)
 {
 	z += ((w & (x ^ y)) ^ y) + Chunk(i) + 0x5A827999 + LeftRotate(v, 5);
 	w = LeftRotate(w, 30);
 }
 
-void SHA1::R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
+void SHA1::R2(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i)
 {
 	z += (w ^ x ^ y) + Chunk(i) + 0x6ED9EBA1 + LeftRotate(v, 5);
 	w = LeftRotate(w, 30);
 }
 
-void SHA1::R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
+void SHA1::R3(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i)
 {
 	z += (((w | x) & y) | (w & x)) + Chunk(i) + 0x8F1BBCDC + LeftRotate(v, 5);
 	w = LeftRotate(w, 30);
 }
 
-void SHA1::R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) throw()
+void SHA1::R4(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i)
 {
 	z += (w ^ x ^ y) + Chunk(i) + 0xCA62C1D6 + LeftRotate(v, 5);
 	w = LeftRotate(w, 30);
 }
 
-void SHA1::Transform() throw()
+void SHA1::Transform()
 {
 	#ifndef IS_BIG_ENDIAN
 	for (int i=0; i != 16; ++i)
@@ -148,7 +148,7 @@ void SHA1::Transform() throw()
 #endif // HAVE_OPENSSL
 
 // Use this function to hash in binary data and strings
-void SHA1::Update(const uchar *data, const uint64_t len) throw()
+void SHA1::Update(const uchar *data, const uint64_t len)
 {
 	assert(len >= 0);
 	assert(data != 0);
@@ -190,7 +190,7 @@ void SHA1::Update(const uchar *data, const uint64_t len) throw()
 	#endif
 }
 
-void SHA1::Final() throw()
+void SHA1::Final()
 {
 	#ifdef HAVE_OPENSSL
 	SHA1_Final(m_state, &context);
@@ -235,7 +235,7 @@ void SHA1::Final() throw()
 }
 
 // Get the final hash as a pre-formatted (ASCII) string (40 bytes long)
-void SHA1::HexDigest(char *string) const throw()
+void SHA1::HexDigest(char *string) const
 {
 	assert(string != 0);
 	
@@ -253,7 +253,7 @@ void SHA1::HexDigest(char *string) const throw()
 }
 
 // Get the raw message digest (20 bytes long)
-void SHA1::GetHash(uchar *digest) const throw()
+void SHA1::GetHash(uchar *digest) const
 {
 	assert(digest != 0);
 	

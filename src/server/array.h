@@ -25,45 +25,28 @@ template <typename T>
 struct Array
 {
 	//! Constructor
-	Array() throw()
-		: ptr(0), size(0)
-	{
-	}
+	Array() __attribute__ ((nothrow));
 	
 	//! Copy constructor
 	/**
 	 * @param[in] array Source array
 	 */
-	Array(const Array<T>& array) throw()
-		: size(array.size)
-	{
-		delete [] ptr;
-		ptr = array.ptr;
-	}
+	Array(const Array<T>& array) __attribute__ ((nothrow));
 	
 	//! Constructor
 	/**
 	 * @param[in] _data char* string to associate with this Array
 	 * @param[in] _size Size of _data
 	 */
-	Array(T* _data, const size_t _size) throw()
-		: ptr(_data), size(_size)
-	{
-		assert((_data == 0 and _size == 0) or (_data != 0 and _size > 0));
-	}
+	Array(T* _data, const size_t _size) __attribute__ ((nothrow));
 	
 	//! Destructor
 	/**
 	 * @note Deletes contained char* string to avoid memory leak
 	 */
-	~Array() throw() { delete [] ptr; }
+	~Array() __attribute__ ((nothrow));
 	
-	void set(T* _data, const size_t _size) throw()
-	{
-		delete [] ptr;
-		ptr = _data;
-		size = _size;
-	}
+	void set(T* _data, const size_t _size) __attribute__ ((nothrow));
 	
 	//! Type of array
 	typedef T type;

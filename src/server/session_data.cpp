@@ -20,7 +20,7 @@
 #include "../shared/protocol.h" // protocol::ToolInfo
 #include "../shared/templates.h" // fIsSet() and friends
 
-SessionData::SessionData(Session &s, const octet super_mode) throw()
+SessionData::SessionData(Session &s, const octet super_mode)
 	: session(&s),
 	layer(protocol::null_layer),
 	layer_lock(protocol::null_layer),
@@ -31,19 +31,19 @@ SessionData::SessionData(Session &s, const octet super_mode) throw()
 	// nothing
 }
 
-SessionData::~SessionData() throw()
+SessionData::~SessionData()
 {
 	delete cachedToolInfo;
 }
 
-octet SessionData::getMode() const throw()
+octet SessionData::getMode() const
 {
 	return (locked ? protocol::user::Locked : 0)
 		+ (muted ? protocol::user::Mute : 0)
 		+ (deaf ? protocol::user::Deaf : 0);
 }
 
-void SessionData::setMode(const octet flags) throw()
+void SessionData::setMode(const octet flags)
 {
 	locked = fIsSet(flags, static_cast<octet>(protocol::user::Locked));
 	muted = fIsSet(flags, static_cast<octet>(protocol::user::Mute));

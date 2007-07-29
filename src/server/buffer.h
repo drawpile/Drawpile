@@ -28,15 +28,16 @@ struct Buffer
 	 * @param[in] buf char* string to associate with Buffer
 	 * @param[in] len size of buf
 	 */
-	Buffer(char* buf=0, const size_t len=0) throw();
+	Buffer(char* buf=0, const size_t len=0) __attribute__ ((nothrow));
 	
 	//! Moves buffer contents to another buffer struct
 	/**
 	 * @param[in,out] buffer Buffer to move contents from, source Buffer is emptied.
 	 */
-	Buffer& operator<< (Buffer& buffer) throw();
+	Buffer& operator<< (Buffer& buffer) __attribute__ ((nothrow));
 	
-	void reset() throw();
+	//! Empty the buffer
+	void reset() __attribute__ ((nothrow));
 	
 	//! Resizes the buffer to new size.
 	/**
@@ -44,15 +45,17 @@ struct Buffer
 	 *
 	 * @param[in] nsize New size in bytes
 	 * @param[in] nbuf (Optional) buffer to use, otherwise the new buffer is allocated internally.
+	 *
+	 * @throw std::bad_alloc
 	 */
-	void resize(size_t nsize, char* nbuf=0) throw(std::bad_alloc);
+	void resize(size_t nsize, char* nbuf=0);
 	
 	//! Copies the still readable portion of the data to the provided buffer
 	/**
 	 * @param[out] buf char* string to fill with current buffer contents
 	 * @param[in] buflen Size of buf
 	 */
-	bool getBuffer(char* buf, const size_t buflen) const throw();
+	bool getBuffer(char* buf, const size_t buflen) const __attribute__ ((nothrow));
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
@@ -64,13 +67,16 @@ struct Buffer
 	 *
 	 * @note Old buffer is deleted to avoid memory leak
 	 */
-	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) throw();
+	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) __attribute__ ((nothrow));
 	
 	//! Repositions data for maximum contiguous _read_ length.
-	void reposition() throw(std::bad_alloc);
+	/**
+	 * @throw std::bad_alloc
+	 */
+	void reposition();
 	
 	//! Returns true if buffer has no data
-	const bool isEmpty() const throw();
+	const bool isEmpty() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Did read of 'n' bytes.
 	/**
@@ -80,7 +86,7 @@ struct Buffer
 	 *
 	 * @param[in] len Number of bytes to move the read pointer by
 	 */
-	void read(const size_t len) throw();
+	void read(const size_t len) __attribute__ ((nothrow));
 	
 	//! How many bytes can be read.
 	/** 
@@ -88,7 +94,7 @@ struct Buffer
 	 *
 	 * @return number of bytes you can read in one go.
 	 */
-	size_t canRead() const throw();
+	size_t canRead() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Wrote 'n' bytes to buffer.
 	/**
@@ -97,19 +103,19 @@ struct Buffer
 	 *
 	 * @param[in] len Number of bytes you wrote to buffer, moves write position by this much.
 	 */
-	void write(const size_t len) throw();
+	void write(const size_t len) __attribute__ ((nothrow));
 	
 	//! How many bytes can be written.
 	/**
 	 * @return number of bytes you can write in one go.
 	 */
-	size_t canWrite() const throw();
+	size_t canWrite() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Returns the number of free bytes in buffer.
 	/**
 	 * @return Number of bytes still unused
 	 */
-	size_t free() const throw();
+	size_t free() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Rewinds wpos and rpos to beginning of the buffer.
 	/**
@@ -118,7 +124,7 @@ struct Buffer
 	 * 
 	 * Effectively allows the next write to occupy largest possible space.
 	 */
-	void rewind() throw();
+	void rewind() __attribute__ ((nothrow));
 	
 	char
 		//! Circular buffer data. DON'T TOUCH (unless you're scrapping the buffer)

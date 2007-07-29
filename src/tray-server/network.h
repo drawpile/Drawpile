@@ -28,13 +28,13 @@ namespace Network {
 //! Qt specific network things
 namespace Qt {
 
-//QSet<QHostAddress> getExternalAddresses() throw();
+//QSet<QHostAddress> getExternalAddresses();
 
 //! Get external host address
 /**
  * @return First or only QHostAddress that seems to be external
  */
-QHostAddress getExternalAddress() throw();
+QHostAddress getExternalAddress();
 
 } // Qt
 

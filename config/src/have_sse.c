@@ -15,12 +15,15 @@
 //! Test for SSE support
 int main()
 {
+	#ifdef __SSE__
+	return 1;
+	#else
 	int x;
 	
 	asm (
 		"movl $1, %%eax;" // eax=1: processor info and feature bits
 		"cpuid;"
-		"test $0x00a0_0000, %%edx;" // 25th bit
+		"test $0x00a00000, %%edx;" // 25th bit
 		"jz NoSupport;"
 		"movl $1, %%edx;"
 		"jmp Return;"
@@ -32,7 +35,6 @@ int main()
 		: "%eax"
 	);
 	
-	// x is 1 if found, 0 otherwise
-	
 	return x;
+	#endif
 }

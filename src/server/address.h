@@ -55,28 +55,28 @@ struct Address
 		#endif
 	};
 	
-	socklen_t size() const throw();
+	socklen_t size() const __attribute__ ((nothrow));
 	
-	ushort port() const throw();
+	ushort port() const __attribute__ ((nothrow));
 	
-	void port(ushort _port) throw();
+	void port(ushort _port) __attribute__ ((nothrow));
 	
-	void setFamily(Network::Family::type _family) throw();
+	void setFamily(Network::Family::type _family) __attribute__ ((nothrow));
 	
 	//! Assign operator
-	Address& operator= (const Address& naddr) throw();
+	Address& operator= (const Address& naddr) __attribute__ ((nothrow));
 	
 	//! Is-equal operator
-	bool operator== (const Address& naddr) const throw();
+	bool operator== (const Address& naddr) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Convert address to string representation of it
-	std::string toString() const throw();
+	std::string toString() const /*__attribute__ ((warn_unused_result))*/;
 	
 	//! Convert string to address
 	/**
 	 * @param[in] address string to convert
 	 */
-	static Address fromString(std::string const& address) throw();
+	static Address fromString(std::string const& address) __attribute__ ((nothrow,warn_unused_result));
 };
 
 #endif // NetworkAddress_INCLUDED

@@ -15,13 +15,15 @@
 //! Test for MMX support
 int main()
 {
+	#ifdef __MMX__
+	return 1;
+	#else
 	int x;
 	
 	asm (
 		"movl $1, %%eax;" // eax=1: processor info and feature bits
 		"cpuid;"
-		//"test $0x0080_0000, %%edx;" // 24th bit
-		"test $0x0040_0000, %%edx;" // 23th bit
+		"test $0x00400000, %%edx;" // 23th bit
 		"jz NoSupport;"
 		"movl $1, %%edx;"
 		"jmp Return;"
@@ -33,7 +35,6 @@ int main()
 		: "%eax"
 	);
 	
-	// x is 1 if found, 0 otherwise
-	
 	return x;
+	#endif
 }

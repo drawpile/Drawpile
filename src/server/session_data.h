@@ -32,10 +32,10 @@ struct SessionData
 	 * @param[in] s Session to associate with the user session data
 	 * @param[in] super_mode Any mode flags the server superimposes on all sessions.
 	 */
-	SessionData(Session &s, const octet super_mode) throw();
+	SessionData(Session &s, const octet super_mode) __attribute__ ((nothrow));
 	
 	//! Destructor
-	~SessionData() throw();
+	~SessionData() __attribute__ ((nothrow));
 	
 	//! Session reference
 	Session *session;
@@ -55,13 +55,13 @@ struct SessionData
 		deaf;
 	
 	//! Get user mode
-	octet getMode() const throw();
+	octet getMode() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Set user mode
 	/**
 	 * @param[in] flags Flags to set
 	 */
-	void setMode(const octet flags) throw();
+	void setMode(const octet flags) __attribute__ ((nothrow));
 	
 	//! User has sent ACK/Sync
 	bool syncWait;

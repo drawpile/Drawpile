@@ -25,7 +25,7 @@
 
 namespace convert {
 
-char* toUTF8(const QString& string, uint& bytes) throw()
+char* toUTF8(const QString& string, uint& bytes)
 {
 	QByteArray array = string.toUtf8();
 	bytes = array.count();
@@ -35,7 +35,7 @@ char* toUTF8(const QString& string, uint& bytes) throw()
 	return str;
 }
 
-char* toUTF16(const QString& string, uint& bytes) throw()
+char* toUTF16(const QString& string, uint& bytes)
 {
 	const ushort *array = string.utf16();
 	const ushort *ptr = array;
