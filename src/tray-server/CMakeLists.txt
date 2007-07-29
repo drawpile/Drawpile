@@ -1,6 +1,6 @@
 # tray server
 
-set (TRAYSERVERNAME "drawpile-tray-srv" )
+set ( TRAYSERVERNAME "${PROJECT_NAME}-tray-srv" )
 
 # Qt stuff
 include ( ${QT_USE_FILE} )
@@ -33,7 +33,6 @@ add_definitions(${QT_DEFINITIONS})
 if ( NOT DEBUG )
 	add_definitions( -DQT_NO_DEBUG )
 	add_definitions( -DNDEBUG )
-	strip_exe ( drawpile-tray-srv )
 endif ( NOT DEBUG )
 
 set ( EXETYPE "" )
@@ -66,10 +65,6 @@ link_libraries (
 	eventslib # Events lib, required by Server class
 )
 
-if ( NOT DEBUG )
-	strip_exe ( ${TRAYSERVERNAME} )
-endif ( NOT DEBUG )
-
 add_executable (
 	${TRAYSERVERNAME}
 	${EXETYPE}
@@ -81,3 +76,7 @@ add_executable (
 )
 
 install ( TARGETS ${TRAYSERVERNAME} RUNTIME DESTINATION bin )
+
+if ( NOT DEBUG )
+	strip_exe ( ${TRAYSERVERNAME} )
+endif ( NOT DEBUG )

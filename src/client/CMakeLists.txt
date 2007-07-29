@@ -69,8 +69,6 @@ add_definitions(${QT_DEFINITIONS})
 
 if (NOT DEBUG)
 	add_definitions(-DQT_NO_DEBUG)
-	
-	strip_exe ( drawpile )
 endif ( NOT DEBUG )
 
 set ( EXETYPE "" )
@@ -124,5 +122,5 @@ set_target_properties (
 install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
 
 if (NOT DEBUG)
-	strip_exe ( drawpile )
+	strip_exe ( ${CLIENTNAME} )
 endif (NOT DEBUG)

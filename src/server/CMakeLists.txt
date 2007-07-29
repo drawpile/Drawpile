@@ -114,10 +114,6 @@ if ( SERVERLIB )
 endif ( SERVERLIB )
 
 if ( SERVER )
-	if ( NOT DEBUG )
-		strip_exe ( ${SERVERNAME} )
-	endif ( NOT DEBUG )
-	
 	generate_win32_resource (
 		Win32Resource
 		"DrawPile server" # full name
