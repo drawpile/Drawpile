@@ -28,7 +28,7 @@ class QColor;
  */
 class Palette {
 	public:
-		virtual ~Palette() {};
+		virtual ~Palette() = 0;
 
 		//! Get the number of colors
 		/**

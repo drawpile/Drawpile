@@ -39,7 +39,7 @@ set (
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp
+	settingsdialog.cpp palette.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

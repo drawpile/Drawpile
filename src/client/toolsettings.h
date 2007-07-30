@@ -37,7 +37,7 @@ class ToolSettings {
 	public:
 		ToolSettings(QString name,QString title)
 			: name_(name), title_(title), widget_(0) {}
-		virtual ~ToolSettings() { }
+		virtual ~ToolSettings() = 0;
 
 		//! Create an UI widget
 		/**

@@ -57,7 +57,7 @@ public:
 	Interface()  __attribute__ ((nothrow));
 	
 	//! Destructor
-	virtual ~Interface()  __attribute__ ((nothrow));
+	virtual ~Interface()  __attribute__ ((nothrow)) = 0;
 	
 	//! Set timeout for wait()
 	/**

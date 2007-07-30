@@ -94,7 +94,7 @@ protected:
 	const size_t headerSize;
 	
 public:
-	virtual ~Message() __attribute__ ((nothrow));
+	virtual ~Message() __attribute__ ((nothrow)) = 0;
 	
 	const bool
 		//! User modifier

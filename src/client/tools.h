@@ -54,7 +54,7 @@ class Tool
 	public:
 		Tool(ToolCollection &owner, Type type, bool readonly)
 			: owner_(owner), type_(type), readonly_(readonly) {}
-		virtual ~Tool() {};
+		virtual ~Tool() = 0;
 
 		//! Get the type of this tool
 		Type type() const { return type_; }

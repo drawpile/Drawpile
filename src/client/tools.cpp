@@ -26,6 +26,8 @@
 
 namespace tools {
 
+Tool::~Tool() { /* abstract */ }
+
 /**
  * Construct one of each tool for the collection
  */

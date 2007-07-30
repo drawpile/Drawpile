@@ -66,9 +66,7 @@ Message::Message(const uint8_t _type, const size_t _header, const uint8_t _flags
 	assert(isSession ? !isSelected : true);
 }
 
-Message::~Message()
-{
-}
+Message::~Message() { /* abstract */ }
 
 size_t Message::serializeHeader(char* ptr) const
 {

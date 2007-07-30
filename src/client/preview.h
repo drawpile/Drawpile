@@ -40,7 +40,7 @@ class Brush;
  */
 class Preview {
 	public:
-		virtual ~Preview() {}
+		virtual ~Preview() = 0;
 
 		//! Do a preview
 		virtual void preview(const Point& from, const Point& to, const Brush& brush);

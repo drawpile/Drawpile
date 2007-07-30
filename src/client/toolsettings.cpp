@@ -28,6 +28,8 @@ using widgets::BrushPreview; // qt designer doesn't know about namespaces
 
 namespace tools {
 
+ToolSettings::~ToolSettings() { /* abstract */ }
+
 BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
 	: ToolSettings(name,title), swapcolors_(swapcolors)
 {

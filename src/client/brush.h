@@ -42,63 +42,63 @@ class Brush
 				const QColor& color=Qt::black, int spacing=25);
 
 		//! Set radius heavy brush
-		void setRadius(int radius);
+		void setRadius(int radius) __attribute__((nothrow));
 		//! Set radius for light brush
-		void setRadius2(int radius);
+		void setRadius2(int radius) __attribute__((nothrow));
 
 		//! Set hardness for heavy brush
-		void setHardness(qreal hardness);
+		void setHardness(qreal hardness) __attribute__((nothrow));
 		//! Set hardness for light brush
-		void setHardness2(qreal hardness);
+		void setHardness2(qreal hardness) __attribute__((nothrow));
 
 		//! Set opacity for heavy brush
-		void setOpacity(qreal opacity);
+		void setOpacity(qreal opacity) __attribute__((nothrow));
 		//! Set opacity for light brush
-		void setOpacity2(qreal opacity);
+		void setOpacity2(qreal opacity) __attribute__((nothrow));
 
 		//! Set color for heavy brush
-		void setColor(const QColor& color);
+		void setColor(const QColor& color) __attribute__((nothrow));
 		//! Set color for light brush
-		void setColor2(const QColor& color);
+		void setColor2(const QColor& color) __attribute__((nothrow));
 
 		//! Set spacing hint
-		void setSpacing(int spacing);
+		void setSpacing(int spacing) __attribute__((nothrow));
 
 		//! Get interpolated radius
-		int radius(qreal pressure) const;
+		int radius(qreal pressure) const __attribute__((nothrow));
 		//! Get interpolated hardness
-		qreal hardness(qreal pressure) const;
+		qreal hardness(qreal pressure) const __attribute__((nothrow));
 		//! Get interpolated opacity
-		qreal opacity(qreal pressure) const;
+		qreal opacity(qreal pressure) const __attribute__((nothrow));
 		//! Get interpolated color
-		QColor color(qreal pressure) const;
+		QColor color(qreal pressure) const __attribute__((nothrow));
 		//! Get spacing hint
-		int spacing() const;
+		int spacing() const __attribute__((nothrow));
 
 		//! Draw the brush on an image
 		void draw(QImage &image, const Point& pos) const;
 
 		//! Copy operator
-		Brush& operator=(const Brush& brush);
+		Brush& operator=(const Brush& brush) __attribute__((nothrow));
 
 		//! Equality test
-		bool operator==(const Brush& brush) const;
+		bool operator==(const Brush& brush) const __attribute__((nothrow));
 
 		//! Inequality test
-		bool operator!=(const Brush& brush) const;
+		bool operator!=(const Brush& brush) const __attribute__((nothrow));
 
 	private:
 		//! called by draw()
-		void drawPixel(uchar *dest, const QColor& color, int alpha) const;
+		void drawPixel(uchar *dest, const QColor& color, int alpha) const __attribute__((nothrow));
 		
 		//! Normal composition, called by drawPixel()
-		void normalComposition(int color, uchar& target, int alpha) const;
+		void normalComposition(int color, uchar& target, int alpha) const __attribute__((nothrow));
 		
 		//! Update the brush cache
 		void updateCache() const;
 
 		//! Check if the brush is sensitive to pressure
-		void checkSensitivity();
+		void checkSensitivity() __attribute__((nothrow));
 
 		int radius1_, radius2_;
 		qreal hardness1_, hardness2_;

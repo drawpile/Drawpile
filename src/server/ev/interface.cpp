@@ -40,4 +40,9 @@ int Interface<T>::getError() const
 	return error;
 }
 
+template <typename T>
+Interface<T>::~Interface()
+{
+}
+
 } // namespace:event

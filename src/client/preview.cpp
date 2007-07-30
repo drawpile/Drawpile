@@ -26,6 +26,8 @@
 
 namespace drawingboard {
 
+Preview::~Preview() { /* abstract */ }
+
 //! Construct a stroke preview object
 /**
  * @param parent parent layer

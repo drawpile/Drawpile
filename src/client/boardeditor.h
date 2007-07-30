@@ -56,7 +56,7 @@ class BoardEditor {
 		//! Construct a board editor
 		BoardEditor(Board *board, User *user, interface::BrushSource *brush,
 				interface::ColorSource *color);
-		virtual ~BoardEditor() {}
+		virtual ~BoardEditor() = 0;
 
 		//! Check if the brush is currently in use
 		virtual bool isCurrentBrush(const Brush& brush) const = 0;
