@@ -44,8 +44,8 @@ public slots:
 	void serverStarted();
 	void serverStopped();
 	
-	void configClosed() __attribute__ ((nothrow));
-	void statusClosed() __attribute__ ((nothrow));
+	void configClosed();
+	void statusClosed();
 	
 	//! Show balloon message
 	void showMsg(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon=QSystemTrayIcon::NoIcon, uint delay=5000);

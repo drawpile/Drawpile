@@ -38,7 +38,7 @@ public:
 	~ServerThread();
 	
 public slots:
-	void stop() __attribute__ ((nothrow));
+	void stop();
 	
 protected:
 	void run();
