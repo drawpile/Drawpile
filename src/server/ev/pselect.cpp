@@ -28,7 +28,7 @@
 
 #include "pselect.h"
 
-#include "../shared/templates.h"
+#include "../../shared/templates.h" // fIsSet()
 
 #ifndef NDEBUG
 	#include <iostream>
