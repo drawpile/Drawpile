@@ -26,7 +26,7 @@ template <typename T>
 struct Array
 {
 	//! Constructor
-	Array() __attribute__ ((nothrow)) __attribute__((nothrow));
+	Array() __attribute__ ((nothrow));
 	
 	//! Copy constructor
 	/**
@@ -60,6 +60,7 @@ struct Array
 
 template <typename T>
 Array<T>::Array()
+	: ptr(0)
 {
 }
 
