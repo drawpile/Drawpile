@@ -28,6 +28,8 @@
 
 #include "pselect.h"
 
+#include "../shared/templates.h"
+
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
