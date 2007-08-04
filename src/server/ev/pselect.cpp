@@ -119,21 +119,21 @@ int Pselect::add(fd_t fd, int events)
 	
 	bool rc=false;
 	
-	if (fIsSet(events, read<Pselect>::value))
+	if (fIsSet(events, event::read<Pselect>::value))
 	{
 		FD_SET(fd, &fds_r);
 		read_set.insert(read_set.end(), fd);
 		if (fd > nfds_r) nfds_r = fd;
 		rc = true;
 	}
-	if (fIsSet(events, write<Pselect>::value))
+	if (fIsSet(events, event::write<Pselect>::value))
 	{
 		FD_SET(fd, &fds_w);
 		write_set.insert(write_set.end(), fd);
 		if (fd > nfds_w) nfds_w = fd;
 		rc = true;
 	}
-	if (fIsSet(events, error<Pselect>::value))
+	if (fIsSet(events, event::error<Pselect>::value))
 	{
 		FD_SET(fd, &fds_e);
 		error_set.insert(error_set.end(), fd);
@@ -161,7 +161,7 @@ int Pselect::modify(fd_t fd, int events)
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, read<Pselect>::value))
+	if (!fIsSet(events, event::read<Pselect>::value))
 	{
 		FD_CLR(fd, &fds_r);
 		read_set.erase(fd);
@@ -169,7 +169,7 @@ int Pselect::modify(fd_t fd, int events)
 			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : -1);
 	}
 	
-	if (!fIsSet(events, write<Pselect>::value))
+	if (!fIsSet(events, event::write<Pselect>::value))
 	{
 		FD_CLR(fd, &fds_w);
 		write_set.erase(fd);
@@ -177,7 +177,7 @@ int Pselect::modify(fd_t fd, int events)
 			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : -1);
 	}
 	
-	if (!fIsSet(events, error<Pselect>::value))
+	if (!fIsSet(events, event::error<Pselect>::value))
 	{
 		FD_CLR(fd, &fds_e);
 		error_set.erase(fd);
@@ -231,11 +231,11 @@ bool Pselect::getEvent(fd_t &fd, int &events)
 		events = 0;
 		
 		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, read<Pselect>::value);
+			fSet(events, event::read<Pselect>::value);
 		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, write<Pselect>::value);
+			fSet(events, event::write<Pselect>::value);
 		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, error<Pselect>::value);
+			fSet(events, event::error<Pselect>::value);
 		
 		if (events != 0)
 			return true;
