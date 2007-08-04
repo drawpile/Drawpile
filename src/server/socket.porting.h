@@ -19,7 +19,7 @@
 #include "config.h"
 
 #ifdef WIN32
-	#include <ws2tcpip.h>
+	#include <ws2tcpip.h> // SOCKET, socklen_t
 	#include <winsock2.h>
 	#if defined( HAVE_MSWSOCK_H )
 		#include <mswsock.h>
@@ -28,7 +28,7 @@
 	#include <sys/types.h>
 	#include <sys/socket.h>
 	#include <arpa/inet.h>
-	#include <netinet/in.h>
+	#include <netinet/in.h> // sockaddr_in
 	#include <unistd.h> // close()
 #endif
 

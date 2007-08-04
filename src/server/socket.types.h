@@ -18,10 +18,8 @@
 #include "socket.porting.h"
 
 #ifdef WIN32
-#include <ws2tcpip.h> // SOCKET, socklen_t
 typedef SOCKET fd_t;
 #else // POSIX
-#include <sys/socket.h> // socklen_t
 typedef int fd_t;
 #endif
 

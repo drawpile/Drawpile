@@ -15,6 +15,9 @@
 #ifndef SocketInternals_INCLUDED
 #define SocketInternals_INCLUDED
 
+#include "config.h"
+#include "socket.porting.h"
+
 #ifdef WIN32
 	#define EWOULDBLOCK WSAEWOULDBLOCK
 	
@@ -59,12 +62,6 @@
 	#define SHUT_WR SD_SEND
 	#define SHUT_RDWR SD_BOTH
 #else
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <arpa/inet.h>
-	#include <netinet/in.h>
-	#include <unistd.h> // close()
-	
 	// not defined in non-win32 systems
 	#define INVALID_SOCKET -1
 	#define SOCKET_ERROR -1
