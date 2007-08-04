@@ -118,6 +118,15 @@ public:
 	int getError() const __attribute__ ((nothrow));
 };
 
+template <typename T> Interface<T>::Interface() { }
+template <typename T> Interface<T>::~Interface() { /* Abstract */ }
+
+template <typename T>
+int Interface<T>::getError() const
+{
+	return error;
+}
+
 } // namespace:event
 
 #endif // EventInterface_INCLUDED

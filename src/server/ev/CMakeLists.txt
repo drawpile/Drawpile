@@ -89,7 +89,6 @@ add_definitions ( -DHAVE_EVCONFIG )
 
 set (
 	EV_SOURCES
-	interface.cpp
 	${EV_SRC}
 )
 
