@@ -114,15 +114,17 @@ if ( SERVERLIB )
 endif ( SERVERLIB )
 
 if ( SERVER )
-	generate_win32_resource (
-		Win32Resource
-		"DrawPile server" # full name
-		${SERVERNAME} # internal name
-		"DrawPile server"  # comment
-		"http://drawpile.sourceforge.net/" # description
-		"2006,2007 M.K.A." # copyright holder
-		0 5 0 # version
-	)
+	if ( WIN32 )
+		generate_win32_resource (
+			Win32Resource
+			"DrawPile server" # full name
+			${SERVERNAME} # internal name
+			"DrawPile server"  # comment
+			"http://drawpile.sourceforge.net/" # description
+			"2006,2007 M.K.A." # copyright holder
+			0 5 0 # version
+		)
+	endif ( WIN32 )
 	
 	add_executable (
 		${SERVERNAME}

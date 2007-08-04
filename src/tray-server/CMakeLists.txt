@@ -48,15 +48,17 @@ if ( RELEASE )
 	generate_final ( SSOURCES ${SSOURCES} )
 endif ( RELEASE )
 
-generate_win32_resource (
-	Win32Resource
-	"DrawPile Tray Server" # full name
-	${TRAYSERVERNAME} # internal name
-	"DrawPile Tray Server"  # comment
-	"http://drawpile.sourceforge.net/" # description
-	"2007 M.K.A." # copyright holder
-	0 1 0 # version
-)
+if ( WIN32 )
+	generate_win32_resource (
+		Win32Resource
+		"DrawPile Tray Server" # full name
+		${TRAYSERVERNAME} # internal name
+		"DrawPile Tray Server"  # comment
+		"http://drawpile.sourceforge.net/" # description
+		"2007 M.K.A." # copyright holder
+		0 1 0 # version
+	)
+endif ( WIN32 )
 
 link_libraries (
 	${QT_LIBRARIES}
