@@ -20,7 +20,9 @@
 typedef SOCKET fd_t;
 #else // POSIX
 #include <sys/socket.h> // socklen_t
+#include <netinet/in.h> // sockaddr_in
 typedef int fd_t;
+#define INVALID_SOCKET -1
 #endif
 
 #endif // Sockets_Ext_INCLUDED
