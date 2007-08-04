@@ -32,7 +32,8 @@
 #include "config.h"
 
 #include "address.h"
-#include "socket.types.h" // fd_t, INVALID_SOCKET
+#include "socket.internal.h" // INVALID_SOCKET
+#include "socket.types.h" // fd_t
 
 //! Socket abstraction
 struct Socket
