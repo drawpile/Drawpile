@@ -19,6 +19,7 @@
 #ifndef NDEBUG
 	#include <iostream>
 #endif
+#include <cassert>
 
 //! Dynamic type array container
 template <typename T>
