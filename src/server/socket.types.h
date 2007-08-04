@@ -15,14 +15,14 @@
 #ifndef Sockets_Ext_INCLUDED
 #define Sockets_Ext_INCLUDED
 
+#include "socket.porting.h"
+
 #ifdef WIN32
 #include <ws2tcpip.h> // SOCKET, socklen_t
 typedef SOCKET fd_t;
 #else // POSIX
 #include <sys/socket.h> // socklen_t
-#include <netinet/in.h> // sockaddr_in
 typedef int fd_t;
-#define INVALID_SOCKET -1
 #endif
 
 #endif // Sockets_Ext_INCLUDED

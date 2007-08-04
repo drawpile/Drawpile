@@ -34,6 +34,7 @@
 #include <string> // std::string
 
 #include "network.h"
+#include "socket.porting.h" // sockaddr_in
 #include "socket.types.h"
 #include "types.h"
 
