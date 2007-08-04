@@ -45,6 +45,7 @@
 	#ifdef HAVE_SNPRINTF
 		#include <cstdio>
 	#endif
+	#include <errno>
 #endif
 
 Socket::Socket(const fd_t& nsock)
