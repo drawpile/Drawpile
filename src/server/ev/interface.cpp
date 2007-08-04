@@ -32,17 +32,12 @@ namespace event
 {
 
 template <typename T> Interface<T>::Interface() { }
-template <typename T> Interface<T>::~Interface() { }
+template <typename T> Interface<T>::~Interface() { /* Abstract */ }
 
 template <typename T>
 int Interface<T>::getError() const
 {
 	return error;
-}
-
-template <typename T>
-Interface<T>::~Interface()
-{
 }
 
 } // namespace:event
