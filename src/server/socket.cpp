@@ -29,6 +29,7 @@
 #include "socket.h"
 
 #include "socket.internals.h"
+#include "socket.porting.h"
 #include "../shared/templates.h"
 
 #ifndef NDEBUG
@@ -40,12 +41,12 @@
 #include <string> // std::string
 #include <cassert>
 
-#ifndef WIN32
+#ifndef WIN32 // POSIX
 	#include <fcntl.h>
 	#ifdef HAVE_SNPRINTF
 		#include <cstdio>
 	#endif
-	#include <errno>
+	#include <cerrno>
 #endif
 
 Socket::Socket(const fd_t& nsock)
