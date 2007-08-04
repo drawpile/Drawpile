@@ -32,6 +32,8 @@
 
 #include "server.h"
 
+#include "socket.internals.h"
+
 #include "../shared/SHA1.h"
 
 #include "../shared/protocol.errors.h" // protocol::error namespace
@@ -342,6 +344,9 @@ void Server::uWrite(User*& usr)
 	}
 }
 
+/**
+ * @todo doubling the buffer size every time we can't fit the data in it is atrocious
+ */
 void Server::Deflate(Buffer& buffer)
 {
 	// len, size
@@ -408,8 +413,8 @@ void Server::Deflate(Buffer& buffer)
 			if (!inBuffer)
 			{
 				cout << "[Deflate] Pre-allocated buffer was too small!" << endl
-					<< "Allocated: " << buffer_len*2+1024
-					<< ", actually needed: " << size << endl;
+					<< "Allocated: " << buffer.size
+					<< ", actually needed: " << (buffer.size-buffer.free()) + size << endl;
 			}
 			else
 			{
@@ -511,7 +516,16 @@ void Server::uProcessData(User*& usr)
 		size_t reqlen = usr->inMsg->reqDataLen(usr->input.rpos, cread);
 		if (reqlen > usr->input.left)
 		{
-			assert(!(usr->inMsg->type != protocol::Message::Raster and reqlen > 1024));
+			if (usr->inMsg->type != protocol::Message::Raster)
+			{
+				if (reqlen > 1024)
+				{
+					#ifndef NDEBUG
+					cerr << "- Invalid data size from user #" << usr->id << endl;
+					#endif
+					uRemove(usr, protocol::UserInfo::Dropped);
+				}
+			}
 			return; // need more data
 		}
 		else if (reqlen > cread)
@@ -2116,7 +2130,7 @@ void Server::uAdd()
 	// add user to timer
 	utimer.insert(utimer.end(), usr);
 	
-	const size_t nwbuffer = 4096*2;
+	const size_t nwbuffer = 4096*2 - 12;
 	
 	// these two don't count towards bufferResets because the buffers are empty at this point
 	usr->input.setBuffer(new char[nwbuffer], nwbuffer);
