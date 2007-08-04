@@ -1622,7 +1622,7 @@ void Server::uLoginInfo(User& usr)
 	uQueueMsg(usr, message_ref(&msg));
 }
 
-bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed)
+bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char seed[4])
 {
 	assert(hashdigest != 0);
 	assert(str != 0);

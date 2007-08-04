@@ -374,7 +374,7 @@ protected:
 	 * @retval true if the digests match
 	 * @retval false otherwise
 	 */
-	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char *seed) __attribute__ ((nothrow,warn_unused_result));
+	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char seed[4]) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Queue message to user
 	/**
