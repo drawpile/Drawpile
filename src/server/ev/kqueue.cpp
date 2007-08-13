@@ -118,7 +118,7 @@ int Kqueue::add(fd_t fd, int events)
 	cout << "kqueue.add(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != Socket::InvalidHandle);
 	
 	if (chlist_count == max_events)
 		return false;
@@ -134,7 +134,7 @@ int Kqueue::modify(fd_t fd, int events)
 	cout << "kqueue.modify(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != Socket::InvalidHandle);
 	
 	if (chlist_count == max_events)
 		return false;
@@ -150,7 +150,7 @@ int Kqueue::remove(fd_t fd)
 	cout << "kqueue.remove(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != Socket::InvalidHandle);
 	
 	if (chlist_count == max_events)
 		return false;

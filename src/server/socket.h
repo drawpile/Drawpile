@@ -32,12 +32,67 @@
 #include "config.h"
 
 #include "address.h"
-#include "socket.internals.h" // INVALID_SOCKET
+#include "socket.porting.h"
 #include "socket.types.h" // fd_t
 
 //! Socket abstraction
-struct Socket
+class Socket
 {
+public:
+	static const fd_t InvalidHandle;
+	
+	static const int InProgress;
+	static const int WouldBlock;
+	
+	static const int SubsystemDown;
+	static const int OutOfBuffers;
+	static const int Interrupted;
+	
+	static const int ConnectionRefused;
+	static const int ConnectionAborted;
+	static const int ConnectionTimedOut;
+	static const int ConnectionBroken;
+	static const int ConnectionReset;
+	static const int Unreachable;
+	static const int NotConnected;
+	static const int Connected;
+	static const int Already; // ?
+	
+	static const int Shutdown;
+	static const int Disconnected;
+	static const int NetworkReset;
+	
+	static const int Error;
+	
+	static const int AddressInUse;
+	static const int AddressNotAvailable;
+	
+	static const int FullShutdown;
+	static const int ShutdownWriting;
+	static const int ShutdownReading;
+private:
+	//! @internal
+	static const int FamilyNotSupported;
+	//! @internal
+	static const int Fault;
+	//! @internal
+	static const int BadHandle;
+	//! @internal
+	static const int NotSocket;
+	//! @internal
+	static const int ProtocolOption;
+	//! @internal
+	static const int ProtocolType;
+	//! @internal
+	//static const int _NotSupported;
+	//! @internal
+	static const int OperationNotSupported;
+	//! @internal
+	static const int ProtocolNotSupported;
+	//! @internal
+	static const int NoSignal;
+	
+	static const int SystemLimit;
 protected:
 	//! Assigned file descriptor
 	fd_t sock;
@@ -58,7 +113,7 @@ public:
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 */
-	Socket(const fd_t& nsock=INVALID_SOCKET) __attribute__ ((nothrow));
+	Socket(const fd_t& nsock = Socket::InvalidHandle) __attribute__ ((nothrow));
 	
 	//! More advanced constructor
 	/**
@@ -98,7 +153,7 @@ public:
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
-	 * @note (Socket.getFD() == INVALID_SOCKET) if no new connection was accepted
+	 * @note (Socket.getFD() == Socket::InvalidHandle) if no new connection was accepted
 	 */
 	Socket accept()  __attribute__ ((nothrow)) /*__attribute__ ((warn_unused_result))*/;
 	
@@ -151,7 +206,7 @@ public:
 	 * @note This constructs Address from the string and port and passes it to bindTo(const Address&)
 	 *
 	 * @retval 0 on success
-	 * @retval SOCKET_ERROR on error
+	 * @retval Error on error
 	 */
 	int bindTo(const std::string& address, const ushort port) __attribute__ ((nothrow,warn_unused_result));
 	
@@ -160,7 +215,7 @@ public:
 	 * @param[in] address Address to bind to
 	 *
 	 * @retval 0 on success
-	 * @retval SOCKET_ERROR on error
+	 * @retval Error on error
 	 */
 	int bindTo(const Address& address) __attribute__ ((nothrow,warn_unused_result));
 	
@@ -168,7 +223,7 @@ public:
 	/**
 	 * @param[in] rhost host to connect to
 	 * @retval 0 on success
-	 * @retval SOCKET_ERROR on error
+	 * @retval Error on error
 	 *
 	 * @note getError() 
 	 */
@@ -177,7 +232,7 @@ public:
 	//! Set listening
 	/**
 	 * @retval 0 on success
-	 * @retval SOCKET_ERROR on error
+	 * @retval Error on error
 	 */
 	int listen() __attribute__ ((nothrow));
 	
@@ -187,7 +242,7 @@ public:
 	 * @param[in] buflen Number of bytes to send from buffer
 	 *
 	 * @return number of bytes actually sent.
-	 * @retval SOCKET_ERROR on error
+	 * @retval Error on error
 	 */
 	int send(char* buffer, const size_t buflen) __attribute__ ((nothrow,warn_unused_result));
 	
@@ -205,7 +260,7 @@ public:
 	 *
 	 * @return number of bytes read.
 	 * @retval 0 if connection was closed on the other end.
-	 * @retval SOCKET_ERROR on error.
+	 * @retval Error on error.
 	 */
 	int recv(char* buffer, const size_t buflen) __attribute__ ((nothrow,warn_unused_result));
 	

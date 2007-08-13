@@ -215,12 +215,6 @@ const uint PortUpperBound = 65535;
 //! Lowest port number
 const uint PortLowerBound = 0;
 
-namespace error {
-
-//const int WouldBlock = EWOULDBLOCK;
-
-} // namespace:error
-
 } // namespace:Network
 
 #endif // Network_INCLUDED

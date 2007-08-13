@@ -32,15 +32,13 @@
 
 #include "server.h"
 
-#include "socket.internals.h"
+#include "socket.h"
+#include "network.h" // Network namespace
 
 #include "../shared/SHA1.h"
 
 #include "../shared/protocol.errors.h" // protocol::error namespace
 #include "../shared/protocol.helper.h" // getMessage
-
-#include "network.h" // Network namespace
-#include "socket.internals.h"
 
 #include "user.h" // User class
 #include "layer_data.h" // LayerData class
@@ -284,15 +282,15 @@ void Server::uWrite(User*& usr)
 	
 	switch (sb)
 	{
-	case SOCKET_ERROR:
+	case Socket::Error:
 		switch (usr->sock.getError())
 		{
 		#ifdef WIN32
 		case WSA_IO_PENDING:
 		#endif
-		case EINTR:
-		case EWOULDBLOCK:
-		case ENOBUFS:
+		case Socket::Interrupted:
+		case Socket::WouldBlock:
+		case Socket::OutOfBuffers:
 		case ENOMEM:
 			// retry
 			break;
@@ -454,11 +452,11 @@ void Server::uRead(User*& usr)
 	
 	switch (rb)
 	{
-	case SOCKET_ERROR:
+	case Socket::Error:
 		switch (usr->sock.getError())
 		{
-		case EWOULDBLOCK:
-		case EINTR: // retry later
+		case Socket::WouldBlock:
+		case Socket::Interrupted: // retry later
 			break;
 		default:
 			uRemove(usr, protocol::UserInfo::BrokenPipe);
@@ -2072,7 +2070,7 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 void Server::uAdd()
 {
 	Socket sock = lsock.accept();
-	if (sock.fd() == INVALID_SOCKET)
+	if (sock.fd() == Socket::InvalidHandle)
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		cout << "- Invalid socket, aborting user creation." << endl;
@@ -2180,7 +2178,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	}
 	#endif
 	
-	usr->sock.shutdown(SHUT_RDWR);
+	//usr->sock.shutdown(Socket::FullShutdown);
 	
 	// Remove socket from event system
 	ev.remove(usr->sock.fd());
@@ -2268,7 +2266,7 @@ bool Server::init()
 	srand(time(0) - 513); // FIXME: Need better seed value
 	#endif
 	
-	if (lsock.create() == INVALID_SOCKET)
+	if (lsock.create() == Socket::InvalidHandle)
 	{
 		#ifndef NDEBUG
 		cerr << "- Failed to create a socket." << endl;
@@ -2289,12 +2287,12 @@ bool Server::init()
 		#else
 		Network::IPv4::Unspecified
 		#endif
-		, lsock.port()) == SOCKET_ERROR)
+		, lsock.port()) == Socket::Error)
 	{
 		return false;
 	}
 	
-	if (lsock.listen() != SOCKET_ERROR)
+	if (lsock.listen() != Socket::Error)
 	{
 		// add listening socket to event system
 		if (event::has_accept<EventSystem>::value)

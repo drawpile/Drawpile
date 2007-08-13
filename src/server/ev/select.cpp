@@ -39,7 +39,7 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-#include "../socket.internals.h"
+#include "../socket.h"
 
 namespace event {
 

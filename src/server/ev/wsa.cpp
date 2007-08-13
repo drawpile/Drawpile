@@ -30,6 +30,8 @@
 
 #include "../../shared/templates.h" // fIsSet() and friends
 
+#include "../socket.h"
+
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
@@ -51,7 +53,7 @@ const long accept<WSA>::value = FD_ACCEPT;
 const long connect<WSA>::value = FD_CONNECT;
 const std::string system<WSA>::value("wsa");
 
-const SOCKET invalid_fd<WSA>::value = INVALID_SOCKET;
+const SOCKET invalid_fd<WSA>::value = Socket::InvalidHandle;
 
 WSA::WSA()
 	: nfds(0), last_event(0)
@@ -109,7 +111,7 @@ int WSA::add(fd_t fd, long events)
 	cout << "wsa.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != Socket::InvalidHandle);
 	
 	fSet(events, hangup<WSA>::value);
 	
@@ -122,7 +124,7 @@ int WSA::add(fd_t fd, long events)
 			
 			const int r = WSAEventSelect(fd, w_ev[i], events);
 			
-			if (r == SOCKET_ERROR)
+			if (r == Socket::Error)
 			{
 				error = WSAGetLastError();
 				
@@ -158,7 +160,7 @@ int WSA::modify(fd_t fd, long events)
 	cout << "wsa.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != Socket::InvalidHandle);
 	
 	fSet(events, hangup<WSA>::value);
 	
@@ -169,7 +171,7 @@ int WSA::modify(fd_t fd, long events)
 	
 	const int r = WSAEventSelect(fd, w_ev[i], events);
 	
-	if (r == SOCKET_ERROR)
+	if (r == Socket::Error)
 	{
 		error = WSAGetLastError();
 		
@@ -189,7 +191,7 @@ int WSA::remove(fd_t fd)
 	cout << "wsa.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != INVALID_SOCKET);
+	assert(fd != Socket::InvalidHandle);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
@@ -199,7 +201,7 @@ int WSA::remove(fd_t fd)
 	
 	w_ev[fi->second] = WSA_INVALID_EVENT;
 	
-	fdl[fi->second] = INVALID_SOCKET;
+	fdl[fi->second] = Socket::InvalidHandle;
 	fd_to_ev.erase(fi);
 	
 	// find last event
@@ -219,11 +221,11 @@ bool WSA::getEvent(fd_t &fd, long &events)
 		if (w_ev[nfds] != WSA_INVALID_EVENT)
 		{
 			fd = fdl[nfds];
-			assert(fd != INVALID_SOCKET);
+			assert(fd != Socket::InvalidHandle);
 			
 			const int r = WSAEnumNetworkEvents(fd, w_ev[nfds], &set);
 			
-			if (r == SOCKET_ERROR)
+			if (r == Socket::Error)
 			{
 				error = WSAGetLastError();
 				
