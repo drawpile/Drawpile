@@ -18,8 +18,9 @@
 #include "types.h"
 
 //! Layer information
-struct LayerData
+class LayerData
 {
+public:
 	//! Constructor
 	LayerData() __attribute__ ((nothrow));
 	

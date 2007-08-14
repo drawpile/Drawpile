@@ -31,12 +31,13 @@ namespace protocol
 }
 #endif
 
-struct LayerData;
-struct User;
+class LayerData;
+class User;
 
 //! Session information
-struct Session
+class Session
 {
+public:
 	//! Default constructor
 	/**
 	 * @param[in] _id Session identifier

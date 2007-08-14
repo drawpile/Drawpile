@@ -39,8 +39,9 @@
 #include "types.h"
 
 //! Address
-struct Address
+class Address
 {
+public:
 	Address();
 	
 	Network::Family::type family;

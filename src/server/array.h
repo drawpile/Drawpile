@@ -23,8 +23,9 @@
 
 //! Dynamic type array container
 template <typename T>
-struct Array
+class Array
 {
+public:
 	//! Constructor
 	Array() __attribute__ ((nothrow));
 	

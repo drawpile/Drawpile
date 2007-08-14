@@ -21,8 +21,9 @@
 #include <cstddef> // size_t?
 
 //! Circular buffer.
-struct Buffer
+class Buffer
 {
+public:
 	//! Default constructor
 	/**
 	 * @param[in] buf char* string to associate with Buffer

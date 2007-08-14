@@ -203,10 +203,7 @@ message_ref Server::msgHostInfo() const
 			name_len_limit,
 			max_subscriptions,
 			getRequirements(),
-			protocol::extensions::Chat|protocol::extensions::Palette
-			#ifdef HAVE_ZLIB
-			|protocol::extensions::Deflate
-			#endif
+			getExtensions()
 		)
 	);
 }
@@ -273,7 +270,7 @@ void Server::uWrite(User*& usr)
 			and usr->output.rpos[0] != protocol::Message::Raster
 			and usr->output.canRead() > 300)
 		{
-			Deflate(usr->output);
+			Compress(usr->output);
 		}
 		#endif // HAVE_ZLIB
 	}
@@ -342,10 +339,11 @@ void Server::uWrite(User*& usr)
 	}
 }
 
+#if defined(HAVE_ZLIB)
 /**
  * @todo doubling the buffer size every time we can't fit the data in it is atrocious
  */
-void Server::Deflate(Buffer& buffer)
+void Server::Compress(Buffer& buffer)
 {
 	// len, size
 	
@@ -429,6 +427,7 @@ void Server::Deflate(Buffer& buffer)
 	else if (!inBuffer)
 		delete [] temp;
 }
+#endif
 
 // May delete User*
 void Server::uRead(User*& usr)
@@ -760,11 +759,14 @@ void Server::uHandleMsg(User*& usr)
 	case protocol::Message::Raster:
 		uTunnelRaster(*usr);
 		break;
-	#if defined(HAVE_ZLIB)
 	case protocol::Message::Deflate:
-		DeflateReprocess(usr);
+		#if defined(HAVE_ZLIB)
+		if (extDeflate)
+			UncompressAndReprocess(usr);
+		else
+		#endif
+			uRemove(usr, protocol::UserInfo::Violation);
 		break;
-	#endif
 	case protocol::Message::Chat:
 		if (wideStrings and ((static_cast<protocol::Chat*>(usr->inMsg)->length % 2) != 0))
 		{
@@ -921,9 +923,9 @@ void Server::uHandleMsg(User*& usr)
 	}
 }
 
-// May delete User*
 #if defined(HAVE_ZLIB)
-void Server::DeflateReprocess(User*& usr)
+// May delete User*
+void Server::UncompressAndReprocess(User*& usr)
 {
 	assert(usr != 0);
 	assert(usr->inMsg != 0);
@@ -985,6 +987,8 @@ void Server::DeflateReprocess(User*& usr)
 		}
 		break;
 	case Z_MEM_ERROR:
+		if (!inBuffer)
+			delete temp;
 		throw std::bad_alloc();
 		break;
 	case Z_BUF_ERROR:
@@ -2580,6 +2584,15 @@ octet Server::getRequirements() const
 {
 	return (wideStrings ? protocol::requirements::WideStrings : 0)
 		| (enforceUnique ? protocol::requirements::EnforceUnique : 0);
+}
+
+octet Server::getExtensions() const
+{
+	octet extensions = 0;
+	if (extChat) extensions |= protocol::extensions::Chat;
+	if (extPalette) extensions |= protocol::extensions::Palette;
+	if (extDeflate) extensions |= protocol::extensions::Deflate;
+	return extensions;
 }
 
 void Server::setUniqueNameEnforcing(bool _enabled)

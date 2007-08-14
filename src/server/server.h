@@ -33,9 +33,9 @@
 #ifndef Server_Class_Included
 #define Server_Class_Included
 
-struct User;
-struct Session;
-struct Buffer;
+class User;
+class Session;
+class Buffer;
 
 #include "ev/event.h" // EventSystem
 #include "socket.h" // Socket class
@@ -450,13 +450,14 @@ protected:
 	 */
 	bool validateSessionTitle(const Array<char>& title) const __attribute__ ((nothrow,warn_unused_result));
 	
+	#if defined(HAVE_ZLIB)
 	//! Reprocesses deflated data stream
 	/**
 	 * @param[in,out] usr User whose input to reprocess
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void DeflateReprocess(User*& usr);
+	void UncompressAndReprocess(User*& usr);
 	
 	//! Deflate (compress) outgoing data
 	/**
@@ -464,7 +465,8 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void Deflate(Buffer& buffer);
+	void Compress(Buffer& buffer);
+	#endif
 	
 	//! Cull idle users
 	void cullIdlers();
@@ -514,7 +516,7 @@ public:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	bool init() __attribute__ ((nothrow));
+	bool init();
 	
 	/** set behaviour **/
 	
@@ -573,7 +575,15 @@ public:
 	 */
 	octet getRequirements() const __attribute__ ((nothrow));
 	
+	//! Get active extensions
+	/**
+	 * @see protocol::extensions
+	 */
+	octet getExtensions() const __attribute__ ((nothrow));
+	
+	//! Set unique name enforcing
 	void setUniqueNameEnforcing(bool _enabled=true) __attribute__ ((nothrow));
+	//! Get unique name enforcing
 	bool getUniqueNameEnforcing() const __attribute__ ((nothrow));
 	
 	//! Set minimum board dimension (width or height)

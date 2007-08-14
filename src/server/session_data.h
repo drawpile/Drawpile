@@ -22,11 +22,12 @@ namespace protocol
 	struct ToolInfo;
 }
 
-struct Session;
+class Session;
 
 //! User session data
-struct SessionData
+class SessionData
 {
+public:
 	//! Default constructor
 	/**
 	 * @param[in] s Session to associate with the user session data

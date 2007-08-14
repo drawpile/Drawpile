@@ -24,6 +24,8 @@ if ( SERVERLIB )
 				set ( DEFLATE OFF )
 			endif ( HAVE_ZLIB )
 		endif ( ZLIB_FOUND )
+	else ( DEFLATE )
+		set ( HAVE_ZLIB OFF )
 	endif ( DEFLATE )
 endif ( SERVERLIB )
 

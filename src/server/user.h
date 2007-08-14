@@ -26,9 +26,9 @@
 #include <deque> // std::deque
 #include <map> // std::map
 
-struct Socket;
-struct SessionData;
-struct Session;
+class Socket;
+class SessionData;
+class Session;
 
 namespace protocol
 {
@@ -37,8 +37,9 @@ namespace protocol
 }
 
 //! User/Client information
-struct User
+class User
 {
+public:
 	//! Default constructor
 	/**
 	 * @param[in] _id User identifier
