@@ -345,9 +345,8 @@ void Server::uWrite(User*& usr)
  */
 void Server::Compress(Buffer& buffer)
 {
-	// len, size
-	
 	size_t read_len = buffer.canRead();
+	const size_t olength = read_len;
 	ulong buffer_len = read_len + 12;
 	// make the potential new buffer generous in its size
 	
@@ -356,7 +355,7 @@ void Server::Compress(Buffer& buffer)
 	char* temp;
 	
 	if (buffer.canWrite() < buffer_len)
-	{ // can't write continuous stream of data in buffer
+	{ // might not be able to write continuous stream of data in buffer
 		assert(buffer.free() < buffer_len);
 		size = buffer.size*2;
 		temp = new char[size];
@@ -423,9 +422,17 @@ void Server::Compress(Buffer& buffer)
 		}
 		else
 			buffer.write(read_len);
+		
+		stats.compressedAway += (olength - read_len);
 	}
-	else if (!inBuffer)
-		delete [] temp;
+	else
+	{
+		if (!inBuffer)
+			delete [] temp;
+		
+		if (buffer_len >= read_len)
+			stats.compressionWasted += read_len;
+	}
 }
 #endif
 
@@ -727,17 +734,20 @@ void Server::uHandleMsg(User*& usr)
 	switch (usr->inMsg->type)
 	{
 	case protocol::Message::ToolInfo:
+		stats.toolInfo++;
 		usr->cacheTool(static_cast<protocol::ToolInfo*>(usr->inMsg));
 		uHandleDrawing(*usr);
 		break;
 	case protocol::Message::StrokeInfo:
-		++usr->strokes;
+		stats.strokeInfo++;
+		usr->strokes++;
 		if (usr->session_data->cachedToolInfo)
 			uHandleDrawing(*usr);
 		else
 			uRemove(usr, protocol::UserInfo::Violation);
 		break;
 	case protocol::Message::StrokeEnd:
+		stats.strokeEnd++;
 		usr->strokes = 0;
 		uHandleDrawing(*usr);
 		break;
@@ -869,6 +879,7 @@ void Server::uHandleMsg(User*& usr)
 		uLayerEvent(usr);
 		break;
 	case protocol::Message::LayerSelect:
+		stats.layerSelect++;
 		{
 			protocol::LayerSelect &layer = *static_cast<protocol::LayerSelect*>(usr->inMsg);
 			
@@ -2083,6 +2094,8 @@ void Server::uAdd()
 		return;
 	}
 	
+	stats.connections++;
+	
 	// Check duplicate connections (should be enabled with command-line switch instead)
 	if (blockDuplicateConnections)
 		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
@@ -2162,6 +2175,8 @@ void Server::breakSync(User& usr)
 void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 {
 	assert(usr != 0);
+	
+	stats.disconnects++;
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Removing user #" << usr->id /*<< " [" << usr->sock.address() << "]"*/ << endl;
