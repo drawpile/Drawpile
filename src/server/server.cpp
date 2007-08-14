@@ -70,8 +70,8 @@ typedef std::map<octet, LayerData>::iterator session_layer_i;
 typedef std::map<octet, LayerData>::const_iterator session_layer_const_i;
 
 // for Server*
-typedef std::map<octet, Session*>::iterator sessions_i;
-typedef std::map<octet, Session*>::const_iterator sessions_const_i;
+typedef std::map<octet, Session>::iterator sessions_i;
+typedef std::map<octet, Session>::const_iterator sessions_const_i;
 typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
 
@@ -803,13 +803,13 @@ void Server::uHandleMsg(User*& usr)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::NotSubscribed));
 			else
 			{
-				Session *session = sdata->session;
+				Session &session = *sdata->session;
 				#ifdef PERSISTENT_SESSIONS
-				if (session->persist and !session->raster_valid and session->users.size() == 1)
+				if (session.persist and !session.raster_valid and session.users.size() == 1)
 				{
-					uQueueMsg(*usr, msgError(session->id, protocol::error::RequestIgnored));
+					uQueueMsg(*usr, msgError(session.id, protocol::error::RequestIgnored));
 					message_ref ref(new protocol::Synchronize);
-					ref->session_id = session->id;
+					ref->session_id = session.id;
 					uQueueMsg(*usr, ref);
 				}
 				else
@@ -860,7 +860,7 @@ void Server::uHandleMsg(User*& usr)
 		{
 			sessions_const_i si(sessions.begin());
 			for (; si != sessions.end(); ++si)
-				uQueueMsg(*usr, msgSessionInfo(*si->second));
+				uQueueMsg(*usr, msgSessionInfo(si->second));
 		}
 		
 		uQueueMsg(*usr, msgAck(protocol::Global, protocol::Message::ListSessions));
@@ -871,7 +871,7 @@ void Server::uHandleMsg(User*& usr)
 			if (session == 0)
 				uQueueMsg(*usr, msgError(usr->inMsg->session_id, protocol::error::UnknownSession));
 			else
-				uSessionEvent(session, usr);
+				uSessionEvent(*session, usr);
 		}
 		break;
 	#ifdef LAYER_SUPPORT
@@ -1046,7 +1046,7 @@ void Server::uHandleAck(User*& usr)
 				#endif
 				
 				if (session->syncCounter == 0)
-					SyncSession(session);
+					SyncSession(*session);
 			}
 		}
 		break;
@@ -1127,19 +1127,18 @@ void Server::uTunnelRaster(User& usr)
 
 // Calls Propagate, uQueueMsg and uLeaveSession
 // May delete User*
-void Server::uSessionEvent(Session*& session, User*& usr)
+void Server::uSessionEvent(Session& session, User*& usr)
 {
-	assert(session != 0);
 	assert(usr != 0);
 	assert(usr->inMsg->type == protocol::Message::SessionEvent);
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Handling event for session #" << session->id << endl;
+	cout << "[Server] Handling event for session #" << session.id << endl;
 	#endif
 	
-	if (!usr->isAdmin and !isOwner(*usr, *session))
+	if (!usr->isAdmin and !isOwner(*usr, session))
 	{
-		uQueueMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
+		uQueueMsg(*usr, msgError(session.id, protocol::error::Unauthorized));
 		return;
 	}
 	
@@ -1149,12 +1148,12 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 	{
 	case protocol::SessionEvent::Kick:
 		{
-			const session_usr_const_i sui(session->users.find(event.target));
-			if (sui == session->users.end()) // user not found in session
-				uQueueMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
+			const session_usr_const_i sui(session.users.find(event.target));
+			if (sui == session.users.end()) // user not found in session
+				uQueueMsg(*usr, msgError(session.id, protocol::error::UnknownUser));
 			else
 			{
-				Propagate(*session, message_ref(&event));
+				Propagate(session, message_ref(&event));
 				usr->inMsg = 0;
 				uLeaveSession(*sui->second, session, protocol::UserInfo::Kicked);
 			}
@@ -1166,11 +1165,11 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 		{
 			// Lock whole board
 			
-			session->locked = (event.action == protocol::SessionEvent::Lock ? true : false);
+			session.locked = (event.action == protocol::SessionEvent::Lock ? true : false);
 			
 			#ifndef NDEBUG
-			cout << "~ Session #" << session->id
-				<< " lock: " << (session->locked ? "Enabled" : "Disabled") << endl;
+			cout << "~ Session #" << session.id
+				<< " lock: " << (session.locked ? "Enabled" : "Disabled") << endl;
 			#endif
 			
 		}
@@ -1181,22 +1180,22 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 			#ifndef NDEBUG
 			cout << "~ User #" << static_cast<uint>(event.target) << " lock: "
 				<< (event.action == protocol::SessionEvent::Lock ? "Enabled" : "Disabled")
-				<< ", in session #" << session->id << endl;
+				<< ", in session #" << session.id << endl;
 			#endif
 			
 			// Find user
-			const session_usr_const_i session_usr(session->users.find(event.target));
-			if (session_usr == session->users.end())
+			const session_usr_const_i session_usr(session.users.find(event.target));
+			if (session_usr == session.users.end())
 			{
-				uQueueMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
+				uQueueMsg(*usr, msgError(session.id, protocol::error::UnknownUser));
 				break;
 			}
 			User &usr_ref = *session_usr->second;
 			
 			// Find user's session instance (SessionData*)
-			SessionData *sdata = usr_ref.getSession(session->id);
+			SessionData *sdata = usr_ref.getSession(session.id);
 			if (sdata == 0)
-				uQueueMsg(*usr, msgError(session->id, protocol::error::NotInSession));
+				uQueueMsg(*usr, msgError(session.id, protocol::error::NotInSession));
 			else if (event.aux == protocol::null_layer)
 			{
 				// lock completely
@@ -1215,7 +1214,7 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 				
 				sdata->layer_lock = event.aux;
 				// copy to active session
-				if (session->id == usr_ref.session->id)
+				if (session.id == usr_ref.session->id)
 					usr_ref.session_data->layer_lock = event.aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
@@ -1234,24 +1233,24 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 				sdata->layer_lock = protocol::null_layer;
 				
 				// copy to active session
-				if (session->id == usr_ref.session->id)
+				if (session.id == usr_ref.session->id)
 					usr_ref.session_data->layer_lock = protocol::null_layer;
 			}
 		}
 		
-		Propagate(*session, message_ref(&event));
+		Propagate(session, message_ref(&event));
 		usr->inMsg = 0;
 		
 		break;
 	case protocol::SessionEvent::Delegate:
 		{
-			const session_usr_const_i sui(session->users.find(event.target));
-			if (sui == session->users.end()) // User not found
-				uQueueMsg(*usr, msgError(session->id, protocol::error::NotInSession));
+			const session_usr_const_i sui(session.users.find(event.target));
+			if (sui == session.users.end()) // User not found
+				uQueueMsg(*usr, msgError(session.id, protocol::error::NotInSession));
 			else
 			{
-				session->owner = sui->second->id;
-				Propagate(*session, message_ref(&event), (usr->c_acks ? usr : 0));
+				session.owner = sui->second->id;
+				Propagate(session, message_ref(&event), (usr->c_acks ? usr : 0));
 				usr->inMsg = 0;
 			}
 		}
@@ -1261,12 +1260,12 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 		{
 			users_i ui(users.find(event.target));
 			if (ui == users.end())
-				uQueueMsg(*usr, msgError(session->id, protocol::error::UnknownUser));
+				uQueueMsg(*usr, msgError(session.id, protocol::error::UnknownUser));
 			else
 			{
-				SessionData *sdata = ui->second->getSession(session->id);
+				SessionData *sdata = ui->second->getSession(session.id);
 				if (sdata == 0) // user not in session
-					uQueueMsg(*usr, msgError(session->id, protocol::error::NotInSession));
+					uQueueMsg(*usr, msgError(session.id, protocol::error::NotInSession));
 				else
 				{
 					// Set mode
@@ -1276,7 +1275,7 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 					if (usr->session->id == event.target)
 						usr->session_data->muted = sdata->muted;
 					
-					Propagate(*session, message_ref(&event), (usr->c_acks ? usr : 0));
+					Propagate(session, message_ref(&event), (usr->c_acks ? usr : 0));
 					usr->inMsg = 0;
 				}
 			}
@@ -1286,9 +1285,9 @@ void Server::uSessionEvent(Session*& session, User*& usr)
 		/** @todo Persistent session handling or at least send requestignored error */
 		//#ifdef PERSISTENT_SESSIONS
 		#ifndef NDEBUG
-		cout << "+ Session #" << session->id << " persists." << endl;
+		cout << "+ Session #" << session.id << " persists." << endl;
 		#endif
-		session->persist = (event.aux != 0);
+		session.persist = (event.aux != 0);
 		//#endif
 		break;
 	default:
@@ -1377,20 +1376,21 @@ void Server::uSessionInstruction(User*& usr)
 			}
 			else
 			{
-				Session *session = new Session(
-					session_id, // identifier
-					msg.user_mode, // mode
-					msg.user_limit, // user limit
-					usr->id, // owner
-					msg.width, // width
-					msg.height, // height
-					usr->level, // inherit user's feature level
-					title
+				sessions.insert(
+					std::make_pair(
+						session_id,
+						Session(
+							session_id,
+							msg.user_mode, msg.user_limit, usr->id,
+							msg.width, msg.height, usr->level,
+							title
+						)
+					)
 				);
 				
-				sessions[session->id] = session;
-				
 				#ifndef NDEBUG
+				
+				const Session *session = getConstSession(session.id);
 				cout << "+ Session #" << session->id << " created by user #" << usr->id
 					/*<< " [" << usr->sock.address() << "]"*/ << endl
 					<< "  Size: " << session->width << "x" << session->height
@@ -1439,11 +1439,11 @@ void Server::uSessionInstruction(User*& usr)
 			for (; sui != session->users.end(); ++sui)
 			{
 				usr_ptr = sui->second;
-				uLeaveSession(*usr_ptr, session, protocol::UserInfo::None);
+				uLeaveSession(*usr_ptr, *session, protocol::UserInfo::None);
 			}
 			
 			// destruct
-			sRemove(session);
+			sRemove(*session);
 		}
 		break;
 	case protocol::SessionInstruction::Alter:
@@ -1866,56 +1866,54 @@ void Server::uQueueMsg(User& usr, message_ref msg)
 	}
 }
 
-void Server::SyncSession(Session* session)
+void Server::SyncSession(Session& session)
 {
-	assert(session != 0);
-	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Syncing clients for session #" << session->id << endl;
+	cout << "[Server] Syncing clients for session #" << session.id << endl;
 	#endif
 	
-	assert(session->syncCounter == 0);
+	assert(session.syncCounter == 0);
 	
 	/** @todo Need better source user selection. */
-	const session_usr_const_i sui(session->users.begin());
-	assert(sui != session->users.end());
+	const session_usr_const_i sui(session.users.begin());
+	assert(sui != session.users.end());
 	User* src(sui->second);
 	
 	// request raster
 	message_ref ref(new protocol::Synchronize);
-	ref->session_id = session->id;
+	ref->session_id = session.id;
 	uQueueMsg(*src, ref);
 	
 	// Release clients from syncwait...
-	Propagate(*session, msgAck(session->id, protocol::Message::SyncWait));
+	Propagate(session, msgAck(session.id, protocol::Message::SyncWait));
 	
 	// in case the users had been dropped
-	if (session->waitingSync.size() == 0)
+	if (session.waitingSync.size() == 0)
 		return;
 	
 	std::list<message_ref> msg_queue;
 	
-	if (session->locked)
+	if (session.locked)
 		msg_queue.insert(msg_queue.end(), message_ref(new protocol::SessionEvent(protocol::SessionEvent::Lock, protocol::null_user, 0)));
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
-	for (session_usr_const_i old(session->users.begin()); old != session->users.end(); ++old)
+	for (session_usr_const_i old(session.users.begin()); old != session.users.end(); ++old)
 	{
 		// clear syncwait 
 		usr_ptr = old->second;
-		SessionData *sdata = usr_ptr->getSession(session->id);
+		SessionData *sdata = usr_ptr->getSession(session.id);
 		assert(sdata != 0);
 		sdata->syncWait = false;
 		
 		// add join
-		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session->id, protocol::UserInfo::Join));
-		if (usr_ptr->session->id == session->id)
+		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session.id, protocol::UserInfo::Join));
+		if (usr_ptr->session->id == session.id)
 		{
 			// add session select
 			ref.reset(new protocol::SessionSelect);
 			ref->user_id = usr_ptr->id;
-			ref->session_id = session->id;
+			ref->session_id = session.id;
 			msg_queue.insert(msg_queue.end(), ref);
 			
 			if (usr_ptr->layer != protocol::null_layer)
@@ -1923,12 +1921,12 @@ void Server::SyncSession(Session* session)
 				// add layer select
 				ref.reset(new protocol::LayerSelect(usr_ptr->layer));
 				ref->user_id = usr_ptr->id;
-				ref->session_id = session->id;
+				ref->session_id = session.id;
 				msg_queue.insert(msg_queue.end(), ref);
 			}
 		}
 		
-		if (usr_ptr->session == session)
+		if (usr_ptr->session == &session)
 		{
 			if (usr_ptr->session_data->cachedToolInfo)
 				msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*usr_ptr->session_data->cachedToolInfo)));
@@ -1943,11 +1941,11 @@ void Server::SyncSession(Session* session)
 	userlist_const_i n_user;
 	
 	// announce the new users
-	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
-		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session->id, protocol::UserInfo::Join));
+	for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
+		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session.id, protocol::UserInfo::Join));
 	
 	std::list<message_ref>::const_iterator m_iter;
-	for (n_user = session->waitingSync.begin(); n_user != session->waitingSync.end(); ++n_user)
+	for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
 	{
 		// Send messages
 		for (m_iter=msg_queue.begin(); m_iter != msg_queue.end(); ++m_iter)
@@ -1957,10 +1955,10 @@ void Server::SyncSession(Session* session)
 		tunnel.insert( std::make_pair(src, *n_user) );
 		
 		// add user to normal data propagation.
-		session->users[(*n_user)->id] = *n_user;
+		session.users[(*n_user)->id] = *n_user;
 	}
 	
-	session->waitingSync.clear();
+	session.waitingSync.clear();
 }
 
 void Server::uJoinSession(User& usr, Session& session)
@@ -1970,9 +1968,9 @@ void Server::uJoinSession(User& usr, Session& session)
 	#endif
 	
 	// Add session to users session list.
-	SessionData *sdata = new SessionData(session, default_user_mode);
-	usr.sessions[session.id] = sdata;
-	assert(usr.sessions[session.id]->session != 0);
+	usr.sessions.insert(std::make_pair(session.id, SessionData(session, default_user_mode)));
+	SessionData *sdata = usr.getSession(session.id);
+	assert(sdata != 0);
 	
 	// Remove locked and mute, if the user is the session's owner.
 	if (isOwner(usr, session))
@@ -2017,7 +2015,7 @@ void Server::uJoinSession(User& usr, Session& session)
 }
 
 // Calls sRemove, uQueueMsg, Propagate
-void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason)
+void Server::uLeaveSession(User& usr, Session& session, const protocol::UserInfo::uevent reason)
 {
 	assert(session != 0);
 	
@@ -2025,17 +2023,17 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 	cout << "[Server] Detaching user #" << usr.id << " from session #" << session->id << endl;
 	#endif
 	
-	session->users.erase(usr.id);
+	session.users.erase(usr.id);
 	
-	const octet session_id = session->id;
+	const octet session_id = session.id;
 	
-	if (usr.session == session)
+	if (usr.session == &session)
 		usr.session = 0;
 	
 	// last user in session.. destruct it
-	if (session->users.empty())
+	if (session.users.empty())
 	{
-		if (!session->persist)
+		if (!session.persist)
 			sRemove(session);
 	}
 	else
@@ -2062,22 +2060,21 @@ void Server::uLeaveSession(User& usr, Session*& session, const protocol::UserInf
 		// Tell session members the user left
 		if (reason != protocol::UserInfo::None)
 		{
-			Propagate(*session, msgUserEvent(usr, session_id, reason));
+			Propagate(session, msgUserEvent(usr, session_id, reason));
 			
-			if (isOwner(usr, *session))
+			if (isOwner(usr, session))
 			{
-				session->owner = protocol::null_user;
+				session.owner = protocol::null_user;
 				
 				// Announce owner disappearance.
-				message_ref sev_ref(new protocol::SessionEvent(protocol::SessionEvent::Delegate, session->owner, 0));
+				message_ref sev_ref(new protocol::SessionEvent(protocol::SessionEvent::Delegate, session.owner, 0));
 				sev_ref->session_id = session_id;
-				Propagate(*session, sev_ref);
+				Propagate(session, sev_ref);
 			}
 		}
 	}
 	
 	// remove user session instance
-	delete usr.sessions.find(session_id)->second;
 	usr.sessions.erase(session_id);
 }
 
@@ -2235,12 +2232,8 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	}
 	
 	// clean sessions
-	Session *session;
-	while (usr->sessions.size() != 0)
-	{
-		session = usr->sessions.begin()->second->session;
-		uLeaveSession(*usr, session, reason);
-	}
+	while (!usr->sessions.empty())
+		uLeaveSession(*usr, *usr->sessions.begin()->second.session, reason);
 	
 	// remove from fd -> User* map
 	users.erase(usr->sock.fd());
@@ -2261,16 +2254,14 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 		state = Server::Exiting;
 }
 
-void Server::sRemove(Session*& session)
+void Server::sRemove(Session& session)
 {
 	#ifndef NDEBUG
-	cout << "- Session #" << session->id << " destroyed" << endl;
+	cout << "- Session #" << session.id << " destroyed" << endl;
 	#endif
 	
-	freeSessionID(session->id);
-	sessions.erase(session->id);
-	delete session;
-	session = 0;
+	freeSessionID(session.id);
+	sessions.erase(session.id);
 }
 
 bool Server::init()
@@ -2361,7 +2352,7 @@ bool Server::validateSessionTitle(const Array<char>& title) const
 	#endif
 	
 	for (sessions_const_i si(sessions.begin()); si != sessions.end(); ++si)
-		if (title.size == si->second->title.size and (memcmp(title.ptr, si->second->title.ptr, title.size) == 0))
+		if (title.size == si->second.title.size and (memcmp(title.ptr, si->second.title.ptr, title.size) == 0))
 			return false;
 	
 	return true;
@@ -2503,12 +2494,7 @@ void Server::reset()
 		uRemove(usr, protocol::UserInfo::None);
 	}
 	
-	Session *session;
-	for (sessions_i si(sessions.begin()); si != sessions.end(); si=sessions.begin())
-	{
-		session = si->second;
-		sRemove(session);
-	}
+	sessions.clear();
 	
 	tunnel.clear();
 	utimer.clear();
@@ -2518,14 +2504,14 @@ void Server::reset()
 
 Session* Server::getSession(const octet session_id)
 {
-	const sessions_const_i si(sessions.find(session_id));
-	return (si == sessions.end() ? 0 : si->second);
+	sessions_i si(sessions.find(session_id));
+	return (si == sessions.end() ? 0 : &si->second);
 }
 
 const Session* Server::getConstSession(const octet session_id) const
 {
 	const sessions_const_i si(sessions.find(session_id));
-	return (si == sessions.end() ? 0 : si->second);
+	return (si == sessions.end() ? 0 : &si->second);
 }
 
 Statistics Server::getStats() const

@@ -22,8 +22,8 @@
 
 #include "../shared/templates.h"
 
-typedef std::map<octet, SessionData*>::iterator usr_session_i;
-typedef std::map<octet, SessionData*>::const_iterator usr_session_const_i;
+typedef std::map<octet, SessionData>::iterator usr_session_i;
+typedef std::map<octet, SessionData>::const_iterator usr_session_const_i;
 
 typedef std::deque<message_ref>::iterator usr_message_i;
 typedef std::deque<message_ref>::const_iterator usr_message_const_i;
@@ -65,8 +65,7 @@ User::~User()
 	
 	delete inMsg;
 	
-	for (usr_session_i usi(sessions.begin()); usi != sessions.end(); ++usi)
-		delete usi->second;
+	sessions.clear();
 }
 
 bool User::makeActive(octet session_id)
@@ -86,14 +85,14 @@ bool User::makeActive(octet session_id)
 
 SessionData* User::getSession(octet session_id)
 {
-	const usr_session_const_i usi(sessions.find(session_id));
-	return (usi == sessions.end() ? 0 : usi->second);
+	const usr_session_i usi(sessions.find(session_id));
+	return (usi == sessions.end() ? 0 : &usi->second);
 }
 
 const SessionData* User::getConstSession(octet session_id) const
 {
 	const usr_session_const_i usi(sessions.find(session_id));
-	return (usi == sessions.end() ? 0 : usi->second);
+	return (usi == sessions.end() ? 0 : &usi->second);
 }
 
 void User::cacheTool(protocol::ToolInfo* ti)

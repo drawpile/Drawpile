@@ -154,7 +154,7 @@ public:
 	void setExtensions(const octet flags) __attribute__ ((nothrow));
 	
 	//! Subscribed sessions
-	std::map<octet, SessionData*> sessions;
+	std::map<octet, SessionData> sessions;
 	
 	//! Output queue
 	std::deque<message_ref> queue;

@@ -34,13 +34,13 @@
 #define Server_Class_Included
 
 class User;
-class Session;
 class Buffer;
 
 #include "ev/event.h" // EventSystem
 #include "socket.h" // Socket class
 #include "array.h" // Array<>
 #include "message_ref.h" // message_ref
+#include "session.h"
 
 #include "../shared/protocol.h" // protocol::UserInfo::reason
 #include "types.h"
@@ -89,7 +89,7 @@ protected:
 	std::map<fd_t, User*> users;
 	
 	//! Session ID to session mapping
-	std::map<octet, Session*> sessions;
+	std::map<octet, Session> sessions;
 	
 	//! Fake tunnel between two users. Only used for passing raster, for now.
 	/** source_fd -> target_fd */
@@ -318,7 +318,7 @@ protected:
 	 * @param[in,out] session Session for which to handle the event for
 	 * @param[in,out] usr User whose event is in question
 	 */
-	void uSessionEvent(Session*& session, User*& usr) __attribute__ ((nothrow));
+	void uSessionEvent(Session& session, User*& usr) __attribute__ ((nothrow));
 	
 	//! Handle instruction message
 	/**
@@ -392,7 +392,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void SyncSession(Session* session);
+	void SyncSession(Session& session);
 	
 	//! Break synchronization with user.
 	/**
@@ -417,7 +417,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uLeaveSession(User& usr, Session*& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave);
+	void uLeaveSession(User& usr, Session& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave);
 	
 	//! Adds user
 	/**
@@ -436,7 +436,7 @@ protected:
 	/**
 	 * @param[in,out] session Session to delete
 	 */
-	void sRemove(Session*& session) __attribute__ ((nothrow));
+	void sRemove(Session& session) __attribute__ ((nothrow));
 	
 	//! Check user name uniqueness
 	/**
