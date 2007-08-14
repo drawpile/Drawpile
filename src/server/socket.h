@@ -305,6 +305,7 @@ public:
 	 * @return Associated address structure.
 	 */
 	Address& getAddr() __attribute__ ((nothrow,warn_unused_result));
+	const Address& getConstAddr() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get IP address
 	/**

@@ -883,6 +883,11 @@ Address& Socket::getAddr()
 	return addr;
 }
 
+const Address& Socket::getConstAddr() const
+{
+	return addr;
+}
+
 #ifdef SOCKET_OPS
 bool Socket::operator== (const Socket& tsock) const
 {
