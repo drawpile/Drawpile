@@ -16,9 +16,6 @@
 #define Container_H_INCLUDED
 
 #include <cstddef> // size_t
-#ifndef NDEBUG
-	#include <iostream>
-#endif
 #include <cassert>
 
 //! Dynamic type array container
@@ -46,9 +43,9 @@ public:
 	/**
 	 * @note Deletes contained char* string to avoid memory leak
 	 */
-	~Array() __attribute__((nothrow));
+	virtual ~Array() __attribute__((nothrow));
 	
-	void set(T* _data, const size_t _size) __attribute__((nothrow));
+	virtual void set(T* _data, const size_t _size) __attribute__((nothrow));
 	
 	//! Type of array
 	typedef T type;

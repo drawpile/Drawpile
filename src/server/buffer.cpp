@@ -14,28 +14,32 @@
 
 #include "buffer.h"
 
+#include <memory>
 #include <cassert>
 
 Buffer::Buffer(char* buf, const size_t len)
-	: data(buf),
+	: Array<char>(buf, len),
 	wpos(buf),
 	rpos(buf),
-	left(0),
-	size(len)
+	left(0)
+{
+}
+
+Buffer::~Buffer()
 {
 }
 
 Buffer& Buffer::operator<< (Buffer& buffer)
 {
-	delete [] data;
+	delete [] ptr;
 	
-	data = buffer.data;
+	ptr = buffer.ptr;
 	wpos = buffer.wpos;
 	rpos = buffer.rpos;
 	left = buffer.left;
 	size = buffer.size;
 	
-	buffer.data = 0;
+	buffer.ptr = 0;
 	
 	buffer.reset();
 	
@@ -44,8 +48,8 @@ Buffer& Buffer::operator<< (Buffer& buffer)
 
 void Buffer::reset()
 {
-	delete [] data;
-	data = wpos = rpos = 0;
+	delete [] ptr;
+	ptr = wpos = rpos = 0;
 	left = size = 0;
 }
 
@@ -58,18 +62,18 @@ void Buffer::resize(size_t nsize, char* nbuf)
 	if (nbuf == 0)
 		nbuf = new char[nsize];
 	
-	getBuffer(nbuf, nsize);
+	copy(nbuf, nsize);
 	
 	const size_t off = left;
 	
 	// set the buffer as our current one.
-	setBuffer(nbuf, nsize);
+	set(nbuf, nsize);
 	
 	// move the offset to the real position.
 	write(off);
 }
 
-bool Buffer::getBuffer(char* buf, const size_t buflen) const
+bool Buffer::copy(char* buf, const size_t buflen) const
 {
 	assert(buflen >= left);
 	assert(buf != 0);
@@ -79,23 +83,21 @@ bool Buffer::getBuffer(char* buf, const size_t buflen) const
 	
 	const size_t chunk1 = canRead();
 	if (chunk1 < left)
-		memcpy(buf+chunk1, data, left - chunk1);
+		memcpy(buf+chunk1, ptr, left - chunk1);
 	memcpy(buf, rpos, chunk1);
 	
 	return true;
 }
 
-void Buffer::setBuffer(char* buf, const size_t buflen, const size_t fill)
+void Buffer::set(char* buf, const size_t buflen, const size_t fill)
 {
 	assert(buf != 0);
 	assert(buflen > 1);
 	assert(fill <= buflen);
 	
-	delete [] data;
+	Array<char>::set(buf, buflen);
 	
-	data = rpos = wpos = buf;
-	
-	size = buflen;
+	ptr = rpos = wpos = buf;
 	
 	if (fill < buflen)
 		wpos += fill;
@@ -105,7 +107,7 @@ void Buffer::setBuffer(char* buf, const size_t buflen, const size_t fill)
 
 void Buffer::reposition()
 {
-	if (rpos == data) // already optimally positioned
+	if (rpos == ptr) // already optimally positioned
 	{
 		// do nothing
 	}
@@ -120,11 +122,11 @@ void Buffer::reposition()
 		if (left <= free())
 		{ // there's more free space than used
 			// move second chunk to free space between the chunks
-			wpos = data+chunk1;
-			memcpy(wpos, data, chunk2);
+			wpos = ptr+chunk1;
+			memcpy(wpos, ptr, chunk2);
 			
 			// move first chunk to the beginning of the buffer
-			memcpy(data, rpos, chunk1);
+			memcpy(ptr, rpos, chunk1);
 			
 			// adjust wpos to the end of second chunk
 			wpos += chunk2;
@@ -135,12 +137,12 @@ void Buffer::reposition()
 			char* tmp = new char[chunk2];
 			
 			// move second chunk to temporary
-			memcpy(tmp, data, chunk2);
+			memcpy(tmp, ptr, chunk2);
 			// move first chunk to the front of buffer
-			memcpy(data, rpos, chunk1);
+			memcpy(ptr, rpos, chunk1);
 			
 			// move wpos to the end of first chunk
-			wpos = data+chunk1;
+			wpos = ptr+chunk1;
 			
 			// move second chunk to wpos
 			memcpy(wpos, tmp, chunk2);
@@ -153,19 +155,19 @@ void Buffer::reposition()
 		}
 		
 		// set rpos to the beginning of the buffer
-		rpos = data;
+		rpos = ptr;
 	}
 	else
 	{ // we can read all the data in one go.
 		const size_t chunk1 = canRead();
 		// just move the data to the beginning.
-		memmove(data, rpos, chunk1);
+		memmove(ptr, rpos, chunk1);
 		
 		// set rpos to the beginning of the buffer
-		rpos = data;
+		rpos = ptr;
 		
 		// adjust rpos and wpos
-		wpos = data+chunk1;
+		wpos = ptr+chunk1;
 	}
 }
 
@@ -176,25 +178,25 @@ const bool Buffer::isEmpty() const
 
 void Buffer::read(const size_t len)
 {
-	assert(data != 0);
+	assert(ptr != 0);
 	assert(size > 1);
 	
 	assert(len > 0);
 	assert(len <= canRead());
 	
 	rpos += len;
-	assert(rpos <= data+size);
+	assert(rpos <= ptr+size);
 	
 	left -= len;
 	assert(left >= 0);
 	
-	if (rpos == data+size)
-		rpos = data;
+	if (rpos == ptr+size)
+		rpos = ptr;
 }
 
 size_t Buffer::canRead() const
 {
-	assert(data != 0);
+	assert(ptr != 0);
 	assert(size > 1);
 	
 	if (left == 0)
@@ -202,38 +204,36 @@ size_t Buffer::canRead() const
 	else if (wpos > rpos)
 		return wpos - rpos;
 	else
-		return (data+size) - rpos;
+		return (ptr+size) - rpos;
 	
 	return 0;
 }
 
 void Buffer::write(const size_t len)
 {
-	assert(data != 0);
+	assert(ptr != 0);
 	assert(size > 1);
 	
 	assert(len > 0);
-	assert(len <= canWrite());
+	assert(len+left <= size);
 	
 	wpos += len; // increment wpos pointer
 	left += len; // increase number of bytes left to read
 	
-	assert(left <= size);
-	
 	// Set wpos to beginning of buffer if it reaches its end.
-	if (wpos == data+size)
-		wpos = data;
+	if (wpos == ptr+size)
+		wpos = ptr;
 }
 
 size_t Buffer::canWrite() const
 {
-	assert(data != 0);
+	assert(ptr != 0);
 	assert(size > 1);
 	
 	if (rpos > wpos)
 		return rpos - wpos;
 	else
-		return (data+size) - wpos;
+		return (ptr+size) - wpos;
 }
 
 size_t Buffer::free() const
@@ -243,8 +243,9 @@ size_t Buffer::free() const
 
 void Buffer::rewind()
 {
-	assert(data != 0);
+	assert(ptr != 0);
 	assert(size > 0);
-	wpos = rpos = data;
+	
+	wpos = rpos = ptr;
 	left = 0;
 }

@@ -390,7 +390,7 @@ void Server::Compress(Buffer& buffer)
 			size = buffer.canWrite();
 		}
 		else
-			buffer.setBuffer(temp, size, buffer_len);
+			buffer.set(temp, size, buffer_len);
 		
 		const protocol::Deflate t_deflate(read_len, buffer_len, temp);
 		
@@ -419,7 +419,7 @@ void Server::Compress(Buffer& buffer)
 					<< ", actually needed: " << size << endl;
 			}
 			#endif
-			buffer.setBuffer(buf, size, read_len);
+			buffer.set(buf, size, read_len);
 		}
 		else
 			buffer.write(read_len);
@@ -976,7 +976,7 @@ void Server::UncompressAndReprocess(User*& usr)
 				tmpbuf << usr->input;
 			
 			// Set the uncompressed data stream as the input buffer.
-			usr->input.setBuffer(temp, stream.uncompressed, tmplen);
+			usr->input.set(temp, stream.uncompressed, tmplen);
 			
 			// Process the data.
 			uProcessData(usr);
@@ -2135,8 +2135,8 @@ void Server::uAdd()
 	const size_t nwbuffer = 4096*2 - 12;
 	
 	// these two don't count towards bufferResets because the buffers are empty at this point
-	usr->input.setBuffer(new char[nwbuffer], nwbuffer);
-	usr->output.setBuffer(new char[nwbuffer], nwbuffer);
+	usr->input.set(new char[nwbuffer], nwbuffer);
+	usr->output.set(new char[nwbuffer], nwbuffer);
 	
 	users[sock.fd()] = usr;
 	

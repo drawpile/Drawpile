@@ -161,7 +161,7 @@ uint User::flushQueue()
 	
 	// in case new buffer was allocated
 	if (buf != output.wpos)
-		output.setBuffer(buf, size, len);
+		output.set(buf, size, len);
 	else
 		output.write(len);
 	

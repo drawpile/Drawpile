@@ -16,12 +16,13 @@
 #define CircularBuffer_INCLUDED
 
 #include "config.h"
+#include "array.h"
 
-#include <stdexcept> // std::bad_alloc
 #include <cstddef> // size_t?
 
 //! Circular buffer.
 class Buffer
+	: public Array<char>
 {
 public:
 	//! Default constructor
@@ -30,6 +31,8 @@ public:
 	 * @param[in] len size of buf
 	 */
 	Buffer(char* buf=0, const size_t len=0) __attribute__ ((nothrow));
+	
+	~Buffer() __attribute__ ((nothrow));
 	
 	//! Moves buffer contents to another buffer struct
 	/**
@@ -56,7 +59,7 @@ public:
 	 * @param[out] buf char* string to fill with current buffer contents
 	 * @param[in] buflen Size of buf
 	 */
-	bool getBuffer(char* buf, const size_t buflen) const __attribute__ ((nothrow));
+	bool copy(char* buf, const size_t buflen) const __attribute__ ((nothrow));
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
@@ -66,9 +69,9 @@ public:
 	 * @param[in] buflen Size of buf
 	 * @param[in] fill (Optional) Number of bytes filled
 	 *
-	 * @note Old buffer is deleted to avoid memory leak
+	 * @note Old buffer is automatically deleted to avoid memory leak
 	 */
-	void setBuffer(char* buf, const size_t buflen, const size_t fill=0) __attribute__ ((nothrow));
+	void set(char* buf, const size_t buflen, const size_t fill=0) __attribute__ ((nothrow));
 	
 	//! Repositions data for maximum contiguous _read_ length.
 	/**
@@ -128,8 +131,6 @@ public:
 	void rewind() __attribute__ ((nothrow));
 	
 	char
-		//! Circular buffer data. DON'T TOUCH (unless you're scrapping the buffer)
-		*data,
 		//! Writing position.
 		/**
 		 * Write directly to this.
@@ -149,11 +150,8 @@ public:
 		 */
 		*rpos;
 	
-	size_t
-		//! Number of elements left to read (how many elements filled).
-		left,
-		//! Total size of the circular buffer (size of .data)
-		size;
+	//! Number of elements left to read (how many elements filled).
+	size_t left;
 };
 
 #endif // CircularBuffer_INCLUDED
