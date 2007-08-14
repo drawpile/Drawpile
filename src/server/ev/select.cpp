@@ -40,6 +40,9 @@
 #include <cassert> // assert()
 
 #include "../socket.h"
+#ifdef WIN32
+	#include <winsock2.h>
+#endif
 
 namespace event {
 
@@ -105,11 +108,16 @@ int Select::wait()
 			
 			#ifdef WIN32
 			assert(error != WSANOTINITIALISED);
-			#endif
+			assert(error != WSAEBADF);
+			assert(error != WSAENOTSOCK);
+			assert(error != WSAEINVAL);
+			assert(error != WSAEFAULT);
+			#else
 			assert(error != EBADF);
 			assert(error != ENOTSOCK);
 			assert(error != EINVAL);
 			assert(error != EFAULT);
+			#endif
 			
 			#if defined(WIN32) and !defined(NDEBUG)
 			if (error == WSAENETDOWN)

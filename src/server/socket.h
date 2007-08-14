@@ -106,6 +106,8 @@ protected:
 	#endif
 	*/
 	
+	uint *ref_count;
+	
 	//! Last error number (from errno or equivalent)
 	int s_error;
 public:
@@ -113,7 +115,7 @@ public:
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 */
-	Socket(const fd_t& nsock = Socket::InvalidHandle) __attribute__ ((nothrow));
+	Socket(const fd_t& nsock=Socket::InvalidHandle) __attribute__ ((nothrow));
 	
 	//! More advanced constructor
 	/**
@@ -121,6 +123,9 @@ public:
 	 * @param[in] saddr Address to associate with this Socket
 	 */
 	Socket(const fd_t& nsock, const Address& saddr) __attribute__ ((nothrow));
+	
+	//! Copy ctor
+	Socket(const Socket& socket) __attribute__ ((nothrow));
 	
 	~Socket() __attribute__ ((nothrow));
 	

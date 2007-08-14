@@ -126,29 +126,49 @@ const int ShutdownReading = SHUT_RD;
 */
 
 Socket::Socket(const fd_t& nsock)
-	: sock(nsock)
+	: sock(nsock),
+	ref_count(new uint(1))
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "Socket::Socket()" << std::endl;
+	std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
 	#endif
 }
 
 Socket::Socket(const fd_t& nsock, const Address& saddr)
 	: sock(nsock),
-	addr(saddr)
+	addr(saddr),
+	ref_count(new uint(1))
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket(FD: " << nsock << ", address: " << saddr.toString() << ") constructed" << std::endl;
 	#endif
 }
 
+Socket::Socket(const Socket& socket)
+	: sock(socket.sock),
+	addr(socket.addr),
+	ref_count(socket.ref_count)
+{
+	(*ref_count)++;
+	
+	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
+	std::cout << "Socket(FD: " << sock << ", address: " << addr.toString() << ") copied [" << (*ref_count) << "]" << std::endl;
+	#endif
+}
+
 Socket::~Socket()
 {
+	(*ref_count)--;
+	
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
+	std::cout << "~Socket(FD: " << sock << ") destructed [left: " << (*ref_count) << "]" << std::endl;
 	#endif
 	
-	close();
+	if ((*ref_count) == 0)
+	{
+		delete ref_count;
+		close();
+	}
 }
 
 fd_t Socket::create()
@@ -178,7 +198,7 @@ fd_t Socket::create()
 		assert(s_error != FamilyNotSupported);
 		assert(s_error != ProtocolNotSupported);
 		assert(s_error != ProtocolType);
-		assert(s_error != ESOCKTNOSUPPORT);
+		//assert(s_error != ESOCKTNOSUPPORT); // ?
 		assert(s_error != EINVAL);
 		
 		#ifndef NDEBUG
@@ -221,6 +241,10 @@ fd_t Socket::fd(fd_t nsock)
 
 fd_t Socket::release()
 {
+	#if !defined(NDEBUG) and defined(DEBUG_SOCKETS)
+	cout << "Socket::release() : " << sock << endl;
+	#endif
+	
 	fd_t t_sock = sock;
 	sock = Socket::InvalidHandle;
 	return t_sock;
@@ -364,7 +388,7 @@ bool Socket::reuse_port(const bool x)
 		// programming errors
 		assert(s_error != BadHandle);
 		assert(s_error != NotSocket);
-		assert(s_error != ENOPROTOOPT);
+		assert(s_error != ProtocolOption);
 		assert(s_error != Fault);
 		
 		#ifndef NDEBUG
@@ -403,7 +427,7 @@ bool Socket::reuse_addr(const bool x)
 		// programming errors
 		assert(s_error != BadHandle);
 		assert(s_error != NotSocket);
-		assert(s_error != ENOPROTOOPT);
+		assert(s_error != ProtocolOption);
 		assert(s_error != Fault);
 		
 		#ifndef NDEBUG
@@ -441,7 +465,7 @@ bool Socket::linger(const bool x, const ushort delay)
 		
 		assert(s_error != BadHandle);
 		assert(s_error != NotSocket);
-		assert(s_error != ENOPROTOOPT);
+		assert(s_error != ProtocolOption);
 		assert(s_error != Fault);
 		
 		#ifndef NDEBUG
@@ -559,7 +583,7 @@ int Socket::connect(const Address& rhost)
 		assert(s_error != Connected);
 		assert(s_error != AddressInUse);
 		assert(s_error != FamilyNotSupported);
-		assert(s_error != EALREADY);
+		assert(s_error != Already);
 		
 		switch (s_error)
 		{

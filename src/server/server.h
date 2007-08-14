@@ -41,6 +41,7 @@ class Buffer;
 #include "array.h" // Array<>
 #include "message_ref.h" // message_ref
 #include "session.h"
+#include "user.h"
 
 #include "../shared/protocol.h" // protocol::UserInfo::reason
 #include "types.h"
@@ -86,7 +87,7 @@ protected:
 		session_ids[254];
 	
 	//! FD to user mapping
-	std::map<fd_t, User*> users;
+	std::map<fd_t, User> users;
 	
 	//! Session ID to session mapping
 	std::map<octet, Session> sessions;
@@ -285,7 +286,7 @@ protected:
 	/**
 	 * @param[in] usr User whose drawing commands to process
 	 */
-	void uHandleDrawing(User& usr);
+	void uHandleDrawing(User*& usr);
 	
 	//! Handle received password
 	/**
@@ -430,7 +431,7 @@ protected:
 	 * @param[in,out] usr User who's being removed
 	 * @param[in] reason Reason for removal (protocol::UserInfo::uevent)
 	 */
-	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow));
+	void uRemove(User& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow));
 	
 	//! Delete session and do some cleaning
 	/**
@@ -442,7 +443,7 @@ protected:
 	/**
 	 * @param[in] usr User whose name to check
 	 */
-	bool validateUserName(User* usr) const __attribute__ ((nothrow,warn_unused_result));
+	bool validateUserName(User& usr) const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Check session title uniqueness
 	/**
@@ -487,18 +488,23 @@ protected:
 	//! Get Session* pointer
 	/**
 	 * @param[in] session_id Identifier for the session to find
-	 *
-	 * @retval NULL if no session is found
 	 */
 	Session* getSession(const octet session_id) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get const Session* pointer
 	/**
 	 * @param[in] session_id Identifier for the session to find
-	 *
-	 * @retval NULL if no session was found
 	 */
 	const Session* getConstSession(const octet session_id) const __attribute__ ((nothrow,warn_unused_result));
+	
+	//! Get User* pointer
+	User* getUser(const fd_t user_handle) __attribute__ ((nothrow,warn_unused_result));
+	
+	//! Get const User* pointer
+	const User* getConstUser(const fd_t user_handle) const __attribute__ ((nothrow,warn_unused_result));
+	
+	//! Get user by identifier
+	User* getUserByID(const octet user_id) __attribute__ ((nothrow,warn_unused_result));
 	
 public:
 	//! Constructor
