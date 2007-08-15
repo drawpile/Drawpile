@@ -38,7 +38,6 @@
 #include "../shared/SHA1.h"
 
 #include "../shared/protocol.errors.h" // protocol::error namespace
-#include "../shared/protocol.helper.h" // getMessage
 
 #include "user.h" // User class
 #include "layer_data.h" // LayerData class
@@ -72,8 +71,8 @@ typedef std::map<octet, LayerData>::const_iterator session_layer_const_i;
 // for Server*
 typedef std::map<octet, Session>::iterator sessions_i;
 typedef std::map<octet, Session>::const_iterator sessions_const_i;
-typedef std::map<fd_t, User>::iterator users_i;
-typedef std::map<fd_t, User>::const_iterator users_const_i;
+typedef std::map<fd_t, User*>::iterator users_i;
+typedef std::map<fd_t, User*>::const_iterator users_const_i;
 
 // for Tunnel
 typedef std::multimap<User*, User*>::iterator tunnel_i;
@@ -293,8 +292,7 @@ void Server::uWrite(User*& usr)
 			// retry
 			break;
 		default:
-			uRemove(*usr, protocol::UserInfo::BrokenPipe);
-			usr = 0;
+			uRemove(usr, protocol::UserInfo::BrokenPipe);
 			break;
 		}
 		break;
@@ -467,16 +465,14 @@ void Server::uRead(User*& usr)
 		case Socket::Interrupted: // retry later
 			break;
 		default:
-			uRemove(*usr, protocol::UserInfo::BrokenPipe);
-			usr = 0;
+			uRemove(usr, protocol::UserInfo::BrokenPipe);
 			break;
 		}
 		break;
 	case 0:
 		// shouldn't happen if event system has hangup event
 		assert(event::has_hangup<EventSystem>::value == false);
-		uRemove(*usr, protocol::UserInfo::Disconnect);
-		usr = 0;
+		uRemove(usr, protocol::UserInfo::Disconnect);
 		break;
 	default:
 		stats.dataRecv += rb;
@@ -487,11 +483,6 @@ void Server::uRead(User*& usr)
 }
 
 // calls uHandleMsg() and uHandleLogin()
-/**
- * @todo getMessage() should be expanded. In high traffic server it's likely one of the most
- * obvious performance drains that we can actually control. Some sort of memory cache could
- * work.
- */
 void Server::uProcessData(User*& usr)
 {
 	assert(usr != 0);
@@ -501,71 +492,26 @@ void Server::uProcessData(User*& usr)
 		<< usr->input.left << " bytes" << endl;
 	#endif
 	
-	while (!usr->input.isEmpty())
+	while (usr and !usr->input.isEmpty())
 	{
-		if (!usr->inMsg)
+		if (usr->getMessage())
 		{
-			usr->inMsg = protocol::getMessage(usr->input.rpos[0]);
-			if (!usr->inMsg)
-			{
-				#ifndef NDEBUG
-				cerr << "- Invalid data from user #" << usr->id << endl;
-				#endif
-				uRemove(*usr, protocol::UserInfo::Dropped);
-				usr = 0;
-				return;
-			}
-			
 			stats.inMsgCount++;
-		}
-		
-		assert(usr->inMsg->type == static_cast<octet>(usr->input.rpos[0]));
-		
-		size_t cread = usr->input.canRead();
-		size_t reqlen = usr->inMsg->reqDataLen(usr->input.rpos, cread);
-		if (reqlen > usr->input.left)
-		{
-			if (usr->inMsg->type != protocol::Message::Raster)
-			{
-				if (reqlen > 1024)
-				{
-					#ifndef NDEBUG
-					cerr << "- Invalid data size from user #" << usr->id << endl;
-					#endif
-					uRemove(*usr, protocol::UserInfo::Dropped);
-					usr = 0;
-				}
-			}
-			return; // need more data
-		}
-		else if (reqlen > cread)
-		{
-			// Required length is greater than we can currently read,
-			// but not greater than we have in total.
-			// So, we reposition the buffer for maximal reading.
-			usr->input.reposition();
-		}
-		else
-		{
-			usr->input.read( usr->inMsg->unserialize(usr->input.rpos, cread) );
 			
 			if (usr->state == User::Active)
 				uHandleMsg(usr);
 			else
 				uHandleLogin(usr);
-			
-			if (usr) // still alive
-			{
-				delete usr->inMsg;
-				usr->inMsg = 0;
-			}
-			else // quite dead
-				return;
+		}
+		else
+		{
+			if (!usr->inMsg)
+				uRemove(usr, protocol::UserInfo::Dropped);
 		}
 	}
 	
-	// rewind circular buffer
-	usr->input.rewind();
+	if (usr)
+		usr->input.rewind();
 }
 
 message_ref Server::msgUserEvent(const User& usr, const octet session_id, const octet event) const
@@ -608,8 +554,7 @@ void Server::uHandleDrawing(User*& usr)
 			#ifndef NDEBUG
 			cerr << "- User persist on drawing on null session, dropping." << endl;
 			#endif
-			uRemove(*usr, protocol::UserInfo::Dropped);
-			usr = 0;
+			uRemove(usr, protocol::UserInfo::Dropped);
 		}
 		#endif
 	}
@@ -645,8 +590,7 @@ void Server::uHandleDrawing(User*& usr)
 			if (usr->strokes > 1000)
 			{
 				cerr << "- User persists on drawing on null layer, dropping." << endl;
-				uRemove(*usr, protocol::UserInfo::Dropped);
-				usr = 0;
+				uRemove(usr, protocol::UserInfo::Dropped);
 			}
 			#endif
 			
@@ -752,7 +696,7 @@ void Server::uHandleMsg(User*& usr)
 		if (usr->session_data->cachedToolInfo)
 			uHandleDrawing(usr);
 		else
-			uRemove(*usr, protocol::UserInfo::Violation);
+			uRemove(usr, protocol::UserInfo::Violation);
 		break;
 	case protocol::Message::StrokeEnd:
 		stats.strokeEnd++;
@@ -783,7 +727,7 @@ void Server::uHandleMsg(User*& usr)
 			UncompressAndReprocess(usr);
 		else
 		#endif
-			uRemove(*usr, protocol::UserInfo::Violation);
+			uRemove(usr, protocol::UserInfo::Violation);
 		break;
 	case protocol::Message::Chat:
 		if (wideStrings and ((static_cast<protocol::Chat*>(usr->inMsg)->length % 2) != 0))
@@ -937,8 +881,14 @@ void Server::uHandleMsg(User*& usr)
 		#ifndef NDEBUG
 		cerr << "- Invalid data from user: #" << usr->id << " (dropping)" << endl;
 		#endif
-		uRemove(*usr, protocol::UserInfo::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		break;
+	}
+	
+	if (usr)
+	{
+		delete usr->inMsg;
+		usr->inMsg = 0;
 	}
 }
 
@@ -1016,7 +966,7 @@ void Server::UncompressAndReprocess(User*& usr)
 		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id << ", dropping." << endl;
 		#endif
-		uRemove(*usr, protocol::UserInfo::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		if (!inBuffer)
 			delete [] temp;
 		break;
@@ -1041,7 +991,7 @@ void Server::uHandleAck(User*& usr)
 			if (sdata == 0)
 				uQueueMsg(*usr, msgError(ack.session_id, protocol::error::NotSubscribed));
 			else if (sdata->syncWait) // duplicate syncwait
-				uRemove(*usr, protocol::UserInfo::Violation);
+				uRemove(usr, protocol::UserInfo::Violation);
 			else
 			{
 				sdata->syncWait = true;
@@ -1302,7 +1252,7 @@ void Server::uSessionEvent(Session& session, User*& usr)
 		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id <<  endl;
 		#endif
-		uRemove(*usr, protocol::UserInfo::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
 }
@@ -1477,7 +1427,7 @@ void Server::uSessionInstruction(User*& usr)
 				#ifndef NDEBUG
 				cerr << "- Invalid data from user #" << usr->id << endl;
 				#endif
-				uRemove(*usr, protocol::UserInfo::Violation);
+				uRemove(usr, protocol::UserInfo::Violation);
 				break;
 			}
 			else if (msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
@@ -1512,7 +1462,7 @@ void Server::uSessionInstruction(User*& usr)
 		#ifndef NDEBUG
 		cerr << "- Invalid data from user #" << usr->id << endl;
 		#endif
-		uRemove(*usr, protocol::UserInfo::Dropped);
+		uRemove(usr, protocol::UserInfo::Dropped);
 		return;
 	}
 }
@@ -1673,7 +1623,7 @@ void Server::uHandleLogin(User*& usr)
 		if (usr->inMsg->type == protocol::Message::UserInfo)
 			uLoginInfo(*usr);
 		else // wrong message type
-			uRemove(*usr, protocol::UserInfo::Dropped);
+			uRemove(usr, protocol::UserInfo::Dropped);
 		break;
 	case User::LoginAuth:
 		if (usr->inMsg->type == protocol::Message::Password)
@@ -1688,10 +1638,10 @@ void Server::uHandleLogin(User*& usr)
 				uQueueMsg(*usr, msgHostInfo()); // send hostinfo
 			}
 			else  // mismatch
-				uRemove(*usr, protocol::UserInfo::Dropped);
+				uRemove(usr, protocol::UserInfo::Dropped);
 		}
 		else // not a password
-			uRemove(*usr, protocol::UserInfo::Violation);
+			uRemove(usr, protocol::UserInfo::Violation);
 		break;
 	case User::Init:
 		if (usr->inMsg->type == protocol::Message::Identifier)
@@ -1704,7 +1654,7 @@ void Server::uHandleLogin(User*& usr)
 				cerr << "- Protocol string mismatch" << endl;
 				#endif
 				
-				uRemove(*usr, protocol::UserInfo::Dropped);
+				uRemove(usr, protocol::UserInfo::Dropped);
 			}
 			else if (ident.revision != protocol::revision)
 			{
@@ -1716,7 +1666,7 @@ void Server::uHandleLogin(User*& usr)
 				
 				/** @todo Implement some compatible way of announcing incompatibility? */
 				
-				uRemove(*usr, protocol::UserInfo::Dropped);
+				uRemove(usr, protocol::UserInfo::Dropped);
 			}
 			else
 			{
@@ -1741,13 +1691,19 @@ void Server::uHandleLogin(User*& usr)
 			#ifndef NDEBUG
 			cerr << "- Invalid data from user #" << usr->id << endl;
 			#endif
-			uRemove(*usr, protocol::UserInfo::Dropped);
+			uRemove(usr, protocol::UserInfo::Dropped);
 		}
 		break;
 	default:
 		assert(0);
-		uRemove(*usr, protocol::UserInfo::None);
+		uRemove(usr, protocol::UserInfo::None);
 		break;
+	}
+	
+	if (usr)
+	{
+		delete usr->inMsg;
+		usr->inMsg = 0;
 	}
 }
 
@@ -2099,7 +2055,7 @@ void Server::uAdd()
 	// Check duplicate connections (should be enabled with command-line switch instead)
 	if (blockDuplicateConnections)
 		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
-			if (sock.getAddr() == ui->second.sock.getConstAddr())
+			if (sock.getAddr() == ui->second->sock.getConstAddr())
 			{
 				#ifndef NDEBUG
 				cerr << "- Duplicate connection from " << sock.address() << endl;
@@ -2122,10 +2078,8 @@ void Server::uAdd()
 	cout << "+ New user #" << id << " [" << sock.address() << "]" << endl;
 	#endif
 	
-	users.insert(std::make_pair(sock.fd(), User(id, sock)));
-	
-	User* usr = getUser(sock.fd());
-	assert(usr != 0);
+	User *usr = new User(id, sock);
+	users.insert(std::make_pair(sock.fd(), usr));
 	
 	sock.release(); // invalidate local copy so it won't be closed prematurely
 	
@@ -2177,7 +2131,7 @@ void Server::breakSync(User& usr)
 	usr.syncing = protocol::Global;
 }
 
-void Server::uRemove(User& usr, const protocol::UserInfo::uevent reason)
+void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 {
 	stats.disconnects++;
 	
@@ -2203,12 +2157,12 @@ void Server::uRemove(User& usr, const protocol::UserInfo::uevent reason)
 	//usr.sock.shutdown(Socket::FullShutdown);
 	
 	// Remove socket from event system
-	ev.remove(usr.sock.fd());
+	ev.remove(usr->sock.fd());
 	
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
 	tunnel_i ti;
-	while ((ti = tunnel.find(&usr)) != tunnel.end())
+	while ((ti = tunnel.find(usr)) != tunnel.end())
 	{
 		breakSync(*(ti->second));
 		tunnel.erase(ti);
@@ -2218,7 +2172,7 @@ void Server::uRemove(User& usr, const protocol::UserInfo::uevent reason)
 	ti = tunnel.begin();
 	while (ti != tunnel.end())
 	{
-		if (ti->second == &usr)
+		if (ti->second == usr)
 		{
 			tunnel.erase(ti);
 			//iterator was invalidated?
@@ -2228,9 +2182,9 @@ void Server::uRemove(User& usr, const protocol::UserInfo::uevent reason)
 			++ti;
 	}
 	
-	if (usr.syncing != 0)
+	if (usr->syncing != 0)
 	{
-		Session *session = getSession(usr.syncing);
+		Session *session = getSession(usr->syncing);
 		if (session != 0)
 		{
 			//session->waitingSync.erase(0); // FIXME
@@ -2238,23 +2192,23 @@ void Server::uRemove(User& usr, const protocol::UserInfo::uevent reason)
 	}
 	
 	// clean sessions
-	while (!usr.sessions.empty())
-		uLeaveSession(usr, *usr.sessions.begin()->second.session, reason);
+	while (!usr->sessions.empty())
+		uLeaveSession(*usr, *usr->sessions.begin()->second.session, reason);
 	
-	freeUserID(usr.id);
+	freeUserID(usr->id);
 	
 	// clear any idle timer associated with this user.
-	utimer.remove(&usr);
-	
-	// limit transient mode's exit to valid users only
-	bool tryExit = (usr.state == User::Active);
+	utimer.remove(usr);
 	
 	// remove from fd -> User* map
-	users.erase(usr.sock.fd());
+	users.erase(usr->sock.fd());
 	
 	// Transient mode exit.
-	if (Transient and tryExit and users.empty())
+	if (Transient and (usr->state == User::Active) and users.empty())
 		state = Server::Exiting;
+	
+	delete usr;
+	usr = 0;
 }
 
 void Server::sRemove(Session& session)
@@ -2333,9 +2287,9 @@ bool Server::validateUserName(User& usr) const
 	
 	for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
 	{
-		if (ui->second.id != usr.id // skip self
-			and usr.name.size == ui->second.name.size // equal length
-			and (memcmp(usr.name.ptr, ui->second.name.ptr, usr.name.size) == 0))
+		if (ui->second->id != usr.id // skip self
+			and usr.name.size == ui->second->name.size // equal length
+			and (memcmp(usr.name.ptr, ui->second->name.ptr, usr.name.size) == 0))
 			return false;
 	}
 	
@@ -2380,7 +2334,7 @@ void Server::cullIdlers()
 				usr = *tui;
 				--tui;
 				
-				uRemove(*usr, protocol::UserInfo::TimedOut);
+				uRemove(usr, protocol::UserInfo::TimedOut);
 			}
 			else if ((*tui)->touched < next_timer)
 			{
@@ -2441,13 +2395,13 @@ int Server::run()
 				if (event::has_error<EventSystem>::value
 					and fIsSet(events, event::error<EventSystem>::value))
 				{
-					uRemove(*usr, protocol::UserInfo::BrokenPipe);
+					uRemove(usr, protocol::UserInfo::BrokenPipe);
 					continue;
 				}
 				if (event::has_hangup<EventSystem>::value and 
 					fIsSet(events, event::hangup<EventSystem>::value))
 				{
-					uRemove(*usr, protocol::UserInfo::Disconnect);
+					uRemove(usr, protocol::UserInfo::Disconnect);
 					continue;
 				}
 				if (fIsSet(events, event::read<EventSystem>::value))
@@ -2512,21 +2466,21 @@ const Session* Server::getConstSession(const octet session_id) const
 User* Server::getUser(const fd_t user_handle)
 {
 	users_i ui(users.find(user_handle));
-	return (ui == users.end() ? 0 : &ui->second);
+	return (ui == users.end() ? 0 : ui->second);
 }
 
 const User* Server::getConstUser(const fd_t user_handle) const
 {
 	const users_const_i ui(users.find(user_handle));
-	return (ui == users.end() ? 0 : &ui->second);
+	return (ui == users.end() ? 0 : ui->second);
 }
 
 User* Server::getUserByID(const octet user_id)
 {
 	users_i ui(users.begin());
 	for (; ui != users.end(); ++ui)
-		if (ui->second.id == user_id)
-			return &ui->second;
+		if (ui->second->id == user_id)
+			return ui->second;
 	return 0;
 }
 

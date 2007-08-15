@@ -87,7 +87,7 @@ protected:
 		session_ids[254];
 	
 	//! FD to user mapping
-	std::map<fd_t, User> users;
+	std::map<fd_t, User*> users;
 	
 	//! Session ID to session mapping
 	std::map<octet, Session> sessions;
@@ -426,12 +426,12 @@ protected:
 	 */
 	void uAdd();
 	
-	//! Removes user and does cleaning..
+	//! Deletes user
 	/**
 	 * @param[in,out] usr User who's being removed
 	 * @param[in] reason Reason for removal (protocol::UserInfo::uevent)
 	 */
-	void uRemove(User& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow));
+	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow));
 	
 	//! Delete session and do some cleaning
 	/**

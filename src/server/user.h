@@ -186,6 +186,15 @@ public:
 	//! Stroke counter
 	u_long strokes;
 	
+	//! Gets next message in input buffer
+	/**
+	 * @retval true operation completed
+	 * @retval false if inMsg != 0 we need more data.. invalid data otherwise
+	 *
+	 * @throw std::bad_alloc thrown indirectly from protocol::getMessage()
+	 */
+	bool getMessage();
+	
 	//! 'Flushes' queue to output buffer
 	/**
 	 * @throw std::bad_alloc thrown indirectly from Buffer

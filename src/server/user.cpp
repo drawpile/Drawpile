@@ -22,6 +22,8 @@
 
 #include "../shared/templates.h"
 
+#include "../shared/protocol.helper.h" // protocol::getMessage
+
 typedef std::map<octet, SessionData>::iterator usr_session_i;
 typedef std::map<octet, SessionData>::const_iterator usr_session_const_i;
 
@@ -167,4 +169,40 @@ uint User::flushQueue()
 	queue.erase(f_msg, ++l_msg);
 	
 	return links;
+}
+
+bool User::getMessage()
+{
+	if (!inMsg)
+	{
+		inMsg = protocol::getMessage(input.rpos[0]);
+		if (!inMsg)
+			return false; // invalid type, drop user
+	}
+	
+	getreqlen:
+	size_t cread = input.canRead();
+	size_t reqlen = inMsg->reqDataLen(input.rpos, cread);
+	if (reqlen > input.left)
+	{
+		if (reqlen > std::numeric_limits<ushort>::max())
+		{
+			// invalid data
+			delete inMsg;
+			inMsg = 0;
+		}
+		return false; // need more data
+	}
+	else if (reqlen > cread)
+	{
+		// Required length is greater than we can currently read,
+		// but not greater than we have in total.
+		// So, we reposition the buffer for maximal reading.
+		input.reposition();
+		goto getreqlen;
+	}
+	else
+		input.read( inMsg->unserialize(input.rpos, cread) );
+	
+	return true;
 }
