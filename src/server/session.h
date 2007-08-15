@@ -117,6 +117,9 @@ public:
 	
 	/* *** Functions *** */
 	
+	//! Get user
+	User* getUser(const octet user_id) __attribute__ ((nothrow,warn_unused_result));
+	
 	//! Test if session can be joined
 	bool canJoin() const __attribute__ ((nothrow,warn_unused_result));
 	

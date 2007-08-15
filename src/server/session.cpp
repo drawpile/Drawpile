@@ -68,6 +68,12 @@ bool Session::canJoin() const
 	return ((users.size() + waitingSync.size()) < limit);
 }
 
+User* Session::getUser(const octet user_id)
+{
+	std::map<octet,User*>::iterator ui(users.find(user_id));
+	return (ui == users.end() ? 0 : ui->second);
+}
+
 #ifdef PERSISTENT_SESSIONS
 void Session::invalidateRaster()
 {

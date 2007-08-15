@@ -1156,14 +1156,14 @@ void Server::uSessionEvent(Session& session, User*& usr)
 	{
 	case protocol::SessionEvent::Kick:
 		{
-			const session_usr_const_i sui(session.users.find(event.target));
-			if (sui == session.users.end()) // user not found in session
+			User *target = session.getUser(event.target);
+			if (target == 0) // user not found in session
 				uQueueMsg(*usr, msgError(session.id, protocol::error::UnknownUser));
 			else
 			{
 				Propagate(session, message_ref(&event));
 				usr->inMsg = 0;
-				uLeaveSession(*sui->second, session, protocol::UserInfo::Kicked);
+				uLeaveSession(*target, session, protocol::UserInfo::Kicked);
 			}
 		}
 		break;
@@ -1192,16 +1192,15 @@ void Server::uSessionEvent(Session& session, User*& usr)
 			#endif
 			
 			// Find user
-			const session_usr_const_i session_usr(session.users.find(event.target));
-			if (session_usr == session.users.end())
+			User *usr_ptr = session.getUser(event.target);
+			if (usr_ptr == 0)
 			{
 				uQueueMsg(*usr, msgError(session.id, protocol::error::UnknownUser));
 				break;
 			}
-			User &usr_ref = *session_usr->second;
 			
 			// Find user's session instance (SessionData*)
-			SessionData *sdata = usr_ref.getSession(session.id);
+			SessionData *sdata = usr_ptr->getSession(session.id);
 			if (sdata == 0)
 				uQueueMsg(*usr, msgError(session.id, protocol::error::NotInSession));
 			else if (event.aux == protocol::null_layer)
@@ -1210,8 +1209,8 @@ void Server::uSessionEvent(Session& session, User*& usr)
 				sdata->locked = (event.action == protocol::SessionEvent::Lock);
 				
 				// Copy active session
-				if (usr_ref.session->id == event.session_id)
-					usr_ref.session_data->locked = sdata->locked;
+				if (usr_ptr->session->id == event.session_id)
+					usr_ptr->session_data->locked = sdata->locked;
 			}
 			else if (event.action == protocol::SessionEvent::Lock)
 			{
@@ -1222,14 +1221,14 @@ void Server::uSessionEvent(Session& session, User*& usr)
 				
 				sdata->layer_lock = event.aux;
 				// copy to active session
-				if (session.id == usr_ref.session->id)
-					usr_ref.session_data->layer_lock = event.aux;
+				if (session.id == usr_ptr->session->id)
+					usr_ptr->session_data->layer_lock = event.aux;
 				
 				// Null-ize the active layer if the target layer is not the active one.
 				if (sdata->layer != sdata->layer_lock)
 					sdata->layer = protocol::null_layer;
-				if (usr_ref.session->id == event.session_id)
-					usr_ref.layer = protocol::null_layer;
+				if (usr_ptr->session->id == event.session_id)
+					usr_ptr->layer = protocol::null_layer;
 			}
 			else // unlock
 			{
@@ -1241,8 +1240,8 @@ void Server::uSessionEvent(Session& session, User*& usr)
 				sdata->layer_lock = protocol::null_layer;
 				
 				// copy to active session
-				if (session.id == usr_ref.session->id)
-					usr_ref.session_data->layer_lock = protocol::null_layer;
+				if (session.id == usr_ptr->session->id)
+					usr_ptr->session_data->layer_lock = protocol::null_layer;
 			}
 		}
 		
@@ -1252,12 +1251,12 @@ void Server::uSessionEvent(Session& session, User*& usr)
 		break;
 	case protocol::SessionEvent::Delegate:
 		{
-			const session_usr_const_i sui(session.users.find(event.target));
-			if (sui == session.users.end()) // User not found
+			User *target = session.getUser(event.target);
+			if (target == 0) // User not found
 				uQueueMsg(*usr, msgError(session.id, protocol::error::NotInSession));
 			else
 			{
-				session.owner = sui->second->id;
+				session.owner = target->id;
 				Propagate(session, message_ref(&event), (usr->c_acks ? usr : 0));
 				usr->inMsg = 0;
 			}
@@ -1444,12 +1443,8 @@ void Server::uSessionInstruction(User*& usr)
 			}
 			
 			// clean session users
-			session_usr_const_i sui(session->users.begin());
-			for (; sui != session->users.end(); ++sui)
-			{
-				usr_ptr = sui->second;
-				uLeaveSession(*usr_ptr, *session, protocol::UserInfo::None);
-			}
+			while (!session->users.empty())
+				uLeaveSession(*session->users.begin()->second, *session, protocol::UserInfo::None);
 			
 			// destruct
 			sRemove(*session);
@@ -1884,7 +1879,7 @@ void Server::SyncSession(Session& session)
 	assert(session.syncCounter == 0);
 	
 	/** @todo Need better source user selection. */
-	const session_usr_const_i sui(session.users.begin());
+	session_usr_const_i sui(session.users.begin());
 	assert(sui != session.users.end());
 	User* src(sui->second);
 	
@@ -1907,10 +1902,10 @@ void Server::SyncSession(Session& session)
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
-	for (session_usr_const_i old(session.users.begin()); old != session.users.end(); ++old)
+	for (sui = session.users.begin(); sui != session.users.end(); ++sui)
 	{
 		// clear syncwait 
-		usr_ptr = old->second;
+		usr_ptr = sui->second;
 		SessionData *sdata = usr_ptr->getSession(session.id);
 		assert(sdata != 0);
 		sdata->syncWait = false;
