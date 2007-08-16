@@ -2162,10 +2162,6 @@ void Server::uAdd()
 	// these two don't count towards bufferResets because the buffers are empty at this point
 	usr->input.set(new char[nwbuffer], nwbuffer);
 	usr->output.set(new char[nwbuffer], nwbuffer);
-	
-	#ifndef NDEBUG
-	cout << -1 << endl;
-	#endif
 }
 
 // Calls uQueueMsg, uLeaveSession
@@ -2195,15 +2191,15 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	#ifndef NDEBUG
 	switch (reason)
 	{
-		case protocol::UserInfo::BrokenPipe:
-			cout << "- User #" << usr.id /*<< " [" << usr.sock.address() << "]" <<*/ << " lost (broken pipe)" << endl;
-			break;
-		case protocol::UserInfo::Disconnect:
-			cout << "- User #" << usr.id /*<< " [" << usr.sock.address() << "]" <<*/ << " disconnected" << endl;
-			break;
-		default:
-			// do nothing
-			break;
+	case protocol::UserInfo::BrokenPipe:
+		cout << "- User #" << usr->id /*<< " [" << usr.sock.address() << "]" <<*/ << " lost (broken pipe)" << endl;
+		break;
+	case protocol::UserInfo::Disconnect:
+		cout << "- User #" << usr->id /*<< " [" << usr.sock.address() << "]" <<*/ << " disconnected" << endl;
+		break;
+	default:
+		// do nothing
+		break;
 	}
 	#endif
 	
