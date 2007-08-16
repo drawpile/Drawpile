@@ -759,7 +759,10 @@ void Server::uHandleMsg(User*& usr)
 				#ifdef PERSISTENT_SESSIONS
 				if (session.persist and !session.raster_valid and session.users.size() == 1)
 				{
-					uQueueMsg(*usr, msgError(session.id, protocol::error::RequestIgnored));
+					// Make sure nothing will get in our way
+					sdata->session->syncCounter = 1;
+					
+					// Request raster
 					message_ref ref(new protocol::Synchronize);
 					ref->session_id = session.id;
 					uQueueMsg(*usr, ref);
@@ -1052,22 +1055,29 @@ void Server::uTunnelRaster(User& usr)
 	// ACK raster
 	uQueueMsg(usr, msgAck(usr.inMsg->session_id, protocol::Message::Raster));
 	
-	std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
-	if (ft.first == ft.second)
+	#ifdef PERSISTENT_SESSIONS
+	if (sdata->session->syncCounter == 1)
 	{ // no target users
-		#ifdef PERSISTENT_SESSIONS
 		sdata->session->appendRaster(raster);
 		
 		if (last)
 		{
 			// Detach user from session now
 			uQueueMsg(usr, msgAck(raster->session_id, protocol::Message::Unsubscribe));
-			uLeaveSession(usr, sdata->session);
+			Session *session = sdata->session;
+			session->syncCounter = 0;
+			uLeaveSession(usr, *session);
+			
+			// Initiate session sync if other users have appeared, now.
+			if (!session->waitingSync.empty())
+				SyncSession(*session);
 		}
-		#endif
 	}
 	else
+	#endif
 	{
+		std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
+		
 		// Forward raster data to users.
 		message_ref raster_ref(raster);
 		usr.inMsg = 0; // Avoid premature deletion of raster data.
@@ -1240,13 +1250,13 @@ void Server::uSessionEvent(Session& session, User*& usr)
 		}
 		break;
 	case protocol::SessionEvent::Persist:
-		/** @todo Persistent session handling or at least send requestignored error */
-		//#ifdef PERSISTENT_SESSIONS
 		#ifndef NDEBUG
-		cout << "+ Session #" << session.id << " persists." << endl;
+		if (event.aux != 0)
+			cout << "+ Session #" << session.id << " persists." << endl;
+		else
+			cout << "- Session #" << session.id << " no longer persists." << endl;
 		#endif
 		session.persist = (event.aux != 0);
-		//#endif
 		break;
 	default:
 		#ifndef NDEBUG
@@ -1829,27 +1839,39 @@ void Server::uQueueMsg(User& usr, message_ref msg)
 void Server::SyncSession(Session& session)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Syncing clients for session #" << session.id << endl;
+	cout << "[Server] Syncing new clients for session #" << session.id << endl;
 	#endif
 	
 	assert(session.syncCounter == 0);
 	
-	/** @todo Need better source user selection. */
-	session_usr_const_i sui(session.users.begin());
-	assert(sui != session.users.end());
-	User* src(sui->second);
-	
-	// request raster
-	message_ref ref(new protocol::Synchronize);
-	ref->session_id = session.id;
-	uQueueMsg(*src, ref);
-	
-	// Release clients from syncwait...
-	Propagate(session, msgAck(session.id, protocol::Message::SyncWait));
-	
 	// in case the users had been dropped
 	if (session.waitingSync.size() == 0)
 		return;
+	
+	message_ref ref;
+	User* src;
+	session_usr_const_i sui;
+	#ifdef PERSISTENT_SESSIONS
+	if (session.users.size() == 0)
+	{
+		src = 0;
+	}
+	else
+	#endif
+	{
+		/** @todo Need better source user selection. */
+		sui = session.users.begin();
+		assert(sui != session.users.end());
+		src = sui->second;
+		
+		// request raster
+		ref.reset(new protocol::Synchronize);
+		ref->session_id = session.id;
+		uQueueMsg(*src, ref);
+		
+		// Release clients from syncwait...
+		Propagate(session, msgAck(session.id, protocol::Message::SyncWait));
+	}
 	
 	std::list<message_ref> msg_queue;
 	
@@ -1904,20 +1926,51 @@ void Server::SyncSession(Session& session)
 	for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
 		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session.id, protocol::UserInfo::Join));
 	
-	std::list<message_ref>::const_iterator m_iter;
-	for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
+	if (src)
 	{
-		// Send messages
-		for (m_iter=msg_queue.begin(); m_iter != msg_queue.end(); ++m_iter)
-			uQueueMsg(**n_user, *m_iter);
-		
-		// Create fake tunnel so the user can receive raster data
-		tunnel.insert( std::pair<User*,User*>(src, *n_user) );
-		
-		// add user to normal data propagation.
-		session.users[(*n_user)->id] = *n_user;
+		// create tunnels
+		std::list<message_ref>::const_iterator m_iter;
+		for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
+		{
+			// Send messages
+			for (m_iter=msg_queue.begin(); m_iter != msg_queue.end(); ++m_iter)
+				uQueueMsg(**n_user, *m_iter);
+			
+			// Create fake tunnel so the user can receive raster data
+			tunnel.insert( std::pair<User*,User*>(src, *n_user) );
+			
+			// add user to normal data propagation.
+			session.users[(*n_user)->id] = *n_user;
+		}
 	}
+	#ifdef PERSISTENT_SESSIONS
+	else
+	{
+		std::list<message_ref> rasterChunks;
+		const uint chunkSize = 2048;
+		uint left = session.raster->size, csize;
+		protocol::Raster *tmp;
+		for (uint off=0; off < session.raster->size; off += chunkSize)
+		{
+			csize = (left < chunkSize ? left : chunkSize);
+			tmp = new protocol::Raster(
+				off,
+				csize,
+				session.raster->size,
+				new char[csize]
+			);
+			memcpy(tmp->data, session.raster->data+off, csize);
+			rasterChunks.push_back(message_ref(tmp));
+		}
+		
+		std::list<message_ref>::iterator ri;
+		for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
+			for (ri=rasterChunks.begin(); ri != rasterChunks.end(); ++ri)
+				uQueueMsg(**n_user, *ri);
+	}
+	#endif
 	
+	// clear the temporary list
 	session.waitingSync.clear();
 }
 
