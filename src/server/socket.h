@@ -138,9 +138,6 @@ public:
 	 */
 	void close() __attribute__ ((nothrow));
 	
-	//! releases FD association from this
-	fd_t release() __attribute__ ((nothrow));
-	
 	//! Set file descriptor
 	/**
 	 * @param[in] nsock is the new file descriptor.

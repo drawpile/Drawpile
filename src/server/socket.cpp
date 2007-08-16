@@ -239,17 +239,6 @@ fd_t Socket::fd(fd_t nsock)
 	return sock = nsock;
 }
 
-fd_t Socket::release()
-{
-	#if !defined(NDEBUG) and defined(DEBUG_SOCKETS)
-	cout << "Socket::release() : " << sock << endl;
-	#endif
-	
-	fd_t t_sock = sock;
-	sock = Socket::InvalidHandle;
-	return t_sock;
-}
-
 void Socket::close()
 {
 	#if defined(HAVE_XPWSA)

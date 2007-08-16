@@ -2134,8 +2134,6 @@ void Server::uAdd()
 	User *usr = new User(id, sock);
 	users.insert(std::make_pair(sock.fd(), usr));
 	
-	sock.release(); // invalidate local copy so it won't be closed prematurely
-	
 	fSet(usr->events, event::read<EventSystem>::value);
 	ev.add(usr->sock.fd(), usr->events);
 	
