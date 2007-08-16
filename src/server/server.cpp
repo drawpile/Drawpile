@@ -2185,10 +2185,8 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	if (usr->syncing != 0)
 	{
 		Session *session = getSession(usr->syncing);
-		if (session != 0)
-		{
-			//session->waitingSync.erase(0); // FIXME
-		}
+		if (session)
+			session->waitingSync.remove(usr);
 	}
 	
 	// clean sessions
