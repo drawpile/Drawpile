@@ -30,7 +30,9 @@
 
 #include "socket.porting.h"
 #include "../shared/templates.h"
+#include "errors.h"
 
+#include <iostream>
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
@@ -52,10 +54,8 @@
 const fd_t Socket::InvalidHandle = INVALID_SOCKET; // 0 ?
 const int Socket::NoSignal = 0;
 const int Socket::InProgress = WSAEINPROGRESS;
-const int Socket::WouldBlock = WSAEWOULDBLOCK;
 const int Socket::SubsystemDown = WSAENETDOWN;
 const int Socket::OutOfBuffers = WSAENOBUFS;
-const int Socket::Interrupted = WSAEINTR;
 const int Socket::ConnectionRefused = WSAECONNREFUSED;
 const int Socket::ConnectionAborted = WSAECONNABORTED;
 const int Socket::ConnectionTimedOut = WSAETIMEDOUT;
@@ -78,7 +78,6 @@ const int Socket::ProtocolType = WSAEPROTOTYPE;
 //const int Socket::_NotSupported = WSAE??;
 const int Socket::OperationNotSupported = WSAEOPNOTSUPP;
 const int Socket::ProtocolNotSupported = WSAEPROTONOSUPPORT;
-const int Socket::SystemLimit = WSAEMFILE;
 #else // POSIX
 #ifndef EWOULDBLOCK
 	#define EWOULDBLOCK EAGAIN
@@ -89,7 +88,6 @@ const int Socket::InProgress = EINPROGRESS;
 const int Socket::WouldBlock = EWOULDBLOCK;
 const int Socket::SubsystemDown = ENETDOWN;
 const int Socket::OutOfBuffers = ENOBUFS;
-const int Socket::Interrupted = EINTR;
 const int Socket::ConnectionRefused = ECONNREFUSED;
 const int Socket::ConnectionAborted = ECONNABORTED;
 const int Socket::ConnectionTimedOut = ETIMEDOUT;
@@ -115,8 +113,6 @@ const int Socket::ProtocolNotSupported = EPROTONOSUPPORT;
 const int Socket::SystemLimit = EMFILE;
 #endif
 
-const int Socket::Fault = EFAULT;
-const int Socket::BadHandle = EBADF;
 const int Socket::ConnectionBroken = EPIPE;
 
 /*
@@ -126,8 +122,8 @@ const int ShutdownReading = SHUT_RD;
 */
 
 Socket::Socket(const fd_t& nsock)
-	: sock(nsock),
-	ref_count(new uint(1))
+	: //ReferenceCounted(),
+	sock(nsock)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
@@ -135,9 +131,9 @@ Socket::Socket(const fd_t& nsock)
 }
 
 Socket::Socket(const fd_t& nsock, const Address& saddr)
-	: sock(nsock),
-	addr(saddr),
-	ref_count(new uint(1))
+	: //ReferenceCounted(),
+	sock(nsock),
+	addr(saddr)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket(FD: " << nsock << ", address: " << saddr.toString() << ") constructed" << std::endl;
@@ -145,12 +141,10 @@ Socket::Socket(const fd_t& nsock, const Address& saddr)
 }
 
 Socket::Socket(const Socket& socket)
-	: sock(socket.sock),
-	addr(socket.addr),
-	ref_count(socket.ref_count)
+	: ReferenceCounted(socket),
+	sock(socket.sock),
+	addr(socket.addr)
 {
-	(*ref_count)++;
-	
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket(FD: " << sock << ", address: " << addr.toString() << ") copied [" << (*ref_count) << "]" << std::endl;
 	#endif
@@ -158,17 +152,12 @@ Socket::Socket(const Socket& socket)
 
 Socket::~Socket()
 {
-	(*ref_count)--;
-	
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "~Socket(FD: " << sock << ") destructed [left: " << (*ref_count) << "]" << std::endl;
+	std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
 	#endif
 	
-	if ((*ref_count) == 0)
-	{
-		delete ref_count;
+	if (unique())
 		close();
-	}
 }
 
 fd_t Socket::create()
@@ -211,7 +200,7 @@ fd_t Socket::create()
 			cerr << "[Socket] Network sub-system failure" << endl;
 			break;
 		#endif
-		case SystemLimit:
+		case DescriptorLimit:
 			cerr << "[Socket] Socket limit reached" << endl;
 			break;
 		case OutOfBuffers:
@@ -280,7 +269,7 @@ Socket Socket::accept()
 		#endif
 		
 		// programming errors
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != EINVAL);
 		assert(s_error != Fault);
 		assert(s_error != NotSocket);
@@ -302,7 +291,7 @@ Socket Socket::accept()
 		case Interrupted: // interrupted
 		case WouldBlock: // would block
 			break;
-		case SystemLimit:
+		case DescriptorLimit:
 			cerr << "[Socket] Process FD limit reached" << endl;
 			break;
 		case OutOfBuffers:
@@ -311,14 +300,14 @@ Socket Socket::accept()
 		case ConnectionAborted:
 			cerr << "[Socket] Incoming connection aborted" << endl;
 			break;
-		case ENOMEM:
+		case OutOfMemory:
 			cerr << "[Socket] Out of memory" << endl;
 			break;
-		case EPERM:
+		case InsufficientPermissions:
 			cerr << "[Socket] Firewall blocked incoming connection" << endl;
 			break;
 		#ifndef WIN32 // POSIX
-		case ENFILE:
+		case SystemDescriptorLimit:
 			cerr << "[Socket] System FD limit reached" << endl;
 			break;
 		#endif
@@ -375,7 +364,7 @@ bool Socket::reuse_port(const bool x)
 		#endif
 		
 		// programming errors
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != NotSocket);
 		assert(s_error != ProtocolOption);
 		assert(s_error != Fault);
@@ -414,7 +403,7 @@ bool Socket::reuse_addr(const bool x)
 		#endif
 		
 		// programming errors
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != NotSocket);
 		assert(s_error != ProtocolOption);
 		assert(s_error != Fault);
@@ -452,7 +441,7 @@ bool Socket::linger(const bool x, const ushort delay)
 		assert(s_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != NotSocket);
 		assert(s_error != ProtocolOption);
 		assert(s_error != Fault);
@@ -503,7 +492,7 @@ int Socket::bindTo(const Address& naddr)
 		#endif
 		
 		// programming errors
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != EINVAL);
 		assert(s_error != NotSocket);
 		assert(s_error != OperationNotSupported);
@@ -566,7 +555,7 @@ int Socket::connect(const Address& rhost)
 		#endif
 		
 		// programming errors
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != Fault);
 		assert(s_error != NotSocket);
 		assert(s_error != Connected);
@@ -617,7 +606,7 @@ int Socket::listen()
 		assert(s_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != NotSocket);
 		assert(s_error != OperationNotSupported);
 		
@@ -660,7 +649,7 @@ int Socket::send(char* buffer, const size_t len)
 		// programming errors
 		assert(s_error != Fault);
 		assert(s_error != EINVAL);
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != NotConnected);
 		assert(s_error != NotSocket);
 		#ifdef WIN32
@@ -677,7 +666,7 @@ int Socket::send(char* buffer, const size_t len)
 		case ConnectionBroken:
 		case ConnectionReset:
 			break;
-		case ENOMEM:
+		case OutOfMemory:
 		case OutOfBuffers:
 			break;
 		#ifdef WIN32
@@ -768,7 +757,7 @@ int Socket::recv(char* buffer, const size_t len)
 		assert(s_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != Fault);
 		assert(s_error != EINVAL);
 		assert(s_error != NotConnected);
@@ -783,7 +772,7 @@ int Socket::recv(char* buffer, const size_t len)
 		case ConnectionReset:
 		case ConnectionRefused:
 			break;
-		case ENOMEM:
+		case OutOfMemory:
 			break;
 		#ifdef WIN32
 		case Disconnected:
@@ -846,7 +835,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes)
 		
 		// programming errors
 		assert(s_error != NotSocket);
-		assert(s_error != BadHandle);
+		assert(s_error != BadDescriptor);
 		assert(s_error != EINVAL);
 		assert(s_error != Fault);
 		assert(s_error != NotConnected);

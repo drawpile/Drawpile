@@ -138,27 +138,30 @@ uint User::flushQueue()
 {
 	assert(!queue.empty());
 	
+	
 	const usr_message_i f_msg(queue.begin());
-	usr_message_i l_msg(f_msg+1), iter(f_msg);
+	usr_message_i iter(f_msg+1), last(f_msg);
 	// create linked list
 	size_t links=1;
-	for (; l_msg != queue.end(); ++l_msg, ++iter, ++links)
+	for (; iter != queue.end(); ++iter, ++links)
 	{
 		if (links == std::numeric_limits<octet>::max()
-			or ((*l_msg)->type != (*f_msg)->type)
-			or ((*l_msg)->user_id != (*f_msg)->user_id)
-			or ((*l_msg)->session_id != (*f_msg)->session_id)
+			or ((*iter)->type != (*last)->type)
+			or ((*iter)->user_id != (*last)->user_id)
+			or ((*iter)->session_id != (*last)->session_id)
 		)
 			break; // type changed or reached maximum size of linked list
 		
-		(*l_msg)->prev = boost::get_pointer(*iter);
-		(*iter)->next = boost::get_pointer(*l_msg);
+		//(*iter)->next = 0;
+		(*iter)->prev = &(**last);
+		(*last)->next = &(**iter);
+		last = iter;
 	}
 	
 	size_t len=0, size=output.canWrite();
 	
 	// serialize message/s
-	char* buf = (*--l_msg)->serialize(len, output.wpos, size);
+	char* buf = (*last)->serialize(len, output.wpos, size);
 	
 	// in case new buffer was allocated
 	if (buf != output.wpos)
@@ -166,7 +169,14 @@ uint User::flushQueue()
 	else
 		output.write(len);
 	
-	queue.erase(f_msg, ++l_msg);
+	/**
+	 * @bug Without the special case for link count of 1,
+	 * the SharedPtr class breaks and causes segmentation error for some obscure reason.
+	 */
+	if (links == 1)
+		queue.pop_front();
+	else
+		queue.erase(f_msg, iter);
 	
 	return links;
 }

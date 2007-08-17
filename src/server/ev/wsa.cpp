@@ -30,7 +30,8 @@
 
 #include "../../shared/templates.h" // fIsSet() and friends
 
-#include "../socket.h"
+#include "../errors.h"
+#include "../socket.porting.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -86,7 +87,7 @@ int WSA::wait()
 		assert(error != WSA_INVALID_PARAMETER);
 		
 		if (error == WSA_NOT_ENOUGH_MEMORY)
-			error = ENOMEM;
+			error = OutOfMemory;
 		
 		return -1;
 	}

@@ -32,6 +32,7 @@
 
 #include "server.h"
 
+#include "errors.h"
 #include "socket.h"
 #include "network.h" // Network namespace
 
@@ -247,7 +248,7 @@ message_ref Server::msgAck(const octet session, const octet type) const
 message_ref Server::msgSyncWait(const octet session_id) const
 {
 	message_ref sync_ref(new protocol::SyncWait);
-	sync_ref->session_id = session_id;
+	(*sync_ref).session_id = session_id;
 	return sync_ref;
 }
 
@@ -285,10 +286,10 @@ void Server::uWrite(User*& usr)
 		#ifdef WIN32
 		case WSA_IO_PENDING:
 		#endif
-		case Socket::Interrupted:
-		case Socket::WouldBlock:
+		case Interrupted:
+		case WouldBlock:
 		case Socket::OutOfBuffers:
-		case ENOMEM:
+		case OutOfMemory:
 			// retry
 			break;
 		default:
@@ -461,8 +462,8 @@ void Server::uRead(User*& usr)
 	case Socket::Error:
 		switch (usr->sock.getError())
 		{
-		case Socket::WouldBlock:
-		case Socket::Interrupted: // retry later
+		case WouldBlock:
+		case Interrupted: // retry later
 			break;
 		default:
 			uRemove(usr, protocol::UserInfo::BrokenPipe);
@@ -1046,7 +1047,7 @@ void Server::uTunnelRaster(User& usr)
 		if (!last) 
 		{
 			message_ref cancel_ref(new protocol::Cancel);
-			cancel_ref->session_id = raster->session_id;
+			(*cancel_ref).session_id = raster->session_id;
 			uQueueMsg(usr, cancel_ref);
 		}
 		return;
@@ -1793,7 +1794,7 @@ void Server::Propagate(const Session& session, message_ref msg, User* source)
 	
 	// Send ACK for the message we're about to share..
 	if (source != 0)
-		uQueueMsg(*source, msgAck(session.id, msg->type));
+		uQueueMsg(*source, msgAck(session.id, (*msg).type));
 	
 	User *usr_ptr;
 	for (session_usr_const_i ui(session.users.begin()); ui != session.users.end(); ++ui)
@@ -1812,7 +1813,7 @@ void Server::uQueueMsg(User& usr, message_ref msg)
 	protocol::msgName(msg->type);
 	#endif
 	
-	switch (msg->type)
+	switch ((*msg).type)
 	{
 	case protocol::Message::Chat:
 		if (!usr.ext_chat)
@@ -1848,7 +1849,6 @@ void Server::SyncSession(Session& session)
 	if (session.waitingSync.size() == 0)
 		return;
 	
-	message_ref ref;
 	User* src;
 	session_usr_const_i sui;
 	#ifdef PERSISTENT_SESSIONS
@@ -1865,8 +1865,8 @@ void Server::SyncSession(Session& session)
 		src = sui->second;
 		
 		// request raster
-		ref.reset(new protocol::Synchronize);
-		ref->session_id = session.id;
+		message_ref ref(new protocol::Synchronize);
+		(*ref).session_id = session.id;
 		uQueueMsg(*src, ref);
 		
 		// Release clients from syncwait...
@@ -1893,18 +1893,18 @@ void Server::SyncSession(Session& session)
 		if (usr_ptr->session->id == session.id)
 		{
 			// add session select
-			ref.reset(new protocol::SessionSelect);
-			ref->user_id = usr_ptr->id;
-			ref->session_id = session.id;
+			message_ref ref(new protocol::SessionSelect);
+			(*ref).user_id = usr_ptr->id;
+			(*ref).session_id = session.id;
 			msg_queue.insert(msg_queue.end(), ref);
 			
 			if (usr_ptr->layer != protocol::null_layer)
 			{
 				// add layer select
-				ref.reset(new protocol::LayerSelect(usr_ptr->layer));
-				ref->user_id = usr_ptr->id;
-				ref->session_id = session.id;
-				msg_queue.insert(msg_queue.end(), ref);
+				message_ref ref2(new protocol::LayerSelect(usr_ptr->layer));
+				(*ref2).user_id = usr_ptr->id;
+				(*ref2).session_id = session.id;
+				msg_queue.insert(msg_queue.end(), ref2);
 			}
 		}
 		
@@ -2079,7 +2079,7 @@ void Server::uLeaveSession(User& usr, Session& session, const protocol::UserInfo
 				
 				// Announce owner disappearance.
 				message_ref sev_ref(new protocol::SessionEvent(protocol::SessionEvent::Delegate, session.owner, 0));
-				sev_ref->session_id = session_id;
+				(*sev_ref).session_id = session_id;
 				Propagate(session, sev_ref);
 			}
 		}
@@ -2183,7 +2183,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	stats.disconnects++;
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Removing user #" << usr.id /*<< " [" << usr.sock.address() << "]"*/ << endl;
+	cout << "[Server] Removing user #" << usr->id /*<< " [" << usr.sock.address() << "]"*/ << endl;
 	#endif
 	
 	#ifndef NDEBUG

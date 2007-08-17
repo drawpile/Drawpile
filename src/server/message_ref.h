@@ -15,13 +15,13 @@
 #ifndef MessageRef_GUARD
 #define MessageRef_GUARD
 
-#include <boost/shared_ptr.hpp>
+#include "shared_ptr.h"
 
 namespace protocol
 {
 	struct Message;
 }
 
-typedef boost::shared_ptr<protocol::Message> message_ref;
+typedef SharedPtr<protocol::Message> message_ref;
 
 #endif // MessageRef_GUARD

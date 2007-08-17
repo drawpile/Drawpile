@@ -35,18 +35,19 @@
 #include "socket.porting.h"
 #include "socket.types.h" // fd_t
 
+#include "ref_counted.h"
+
 //! Socket abstraction
 class Socket
+	: public ReferenceCounted
 {
 public:
 	static const fd_t InvalidHandle;
 	
 	static const int InProgress;
-	static const int WouldBlock;
 	
 	static const int SubsystemDown;
 	static const int OutOfBuffers;
-	static const int Interrupted;
 	
 	static const int ConnectionRefused;
 	static const int ConnectionAborted;
@@ -74,10 +75,6 @@ private:
 	//! @internal
 	static const int FamilyNotSupported;
 	//! @internal
-	static const int Fault;
-	//! @internal
-	static const int BadHandle;
-	//! @internal
 	static const int NotSocket;
 	//! @internal
 	static const int ProtocolOption;
@@ -91,8 +88,6 @@ private:
 	static const int ProtocolNotSupported;
 	//! @internal
 	static const int NoSignal;
-	
-	static const int SystemLimit;
 protected:
 	//! Assigned file descriptor
 	fd_t sock;
@@ -105,8 +100,6 @@ protected:
 	std::list<msghdr*> msgs;
 	#endif
 	*/
-	
-	uint *ref_count;
 	
 	//! Last error number (from errno or equivalent)
 	int s_error;
