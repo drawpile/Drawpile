@@ -35,6 +35,9 @@ class DrawPileApp : public QApplication {
 		//! Get application settings
 		static QSettings& getSettings();
 
+		//! Get the path to the configuration directory
+		static QString getConfDir();
+
 		//! Get the local server handler
 		LocalServer *getServer() { return server_; }
 

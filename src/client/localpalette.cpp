@@ -20,14 +20,77 @@
 #include <QApplication>
 #include <QVariant>
 #include <QColor>
+#include <QFile>
+#include <QFileInfo>
+#include <QTextStream>
+#include <QStringList>
+
 #include "localpalette.h"
 
-LocalPalette::LocalPalette(const QString& name, const QList<QVariant>& list)
-	: name_(name)
+LocalPalette::LocalPalette(const QString& name, const QString& filename)
+	: name_(name), filename_(filename), modified_(false)
 {
-	foreach(QVariant v, list)
-		colors_.append(v.value<QColor>());
+	if(filename_.isEmpty())
+		filename_ = QString("%1.gpl").arg(name);
 }
+
+/**
+ * Load a palette from a GIMP palette file.
+ * @param filename palette file name
+ */
+LocalPalette *LocalPalette::fromFile(const QFileInfo& file)
+{
+	QFile palfile(file.absoluteFilePath());
+	if (!palfile.open(QIODevice::ReadOnly | QIODevice::Text))
+		return false;
+
+	QTextStream in(&palfile);
+	if(in.readLine() != "GIMP Palette")
+		return 0;
+	QString line = in.readLine();
+	if(line.startsWith("Name:")) {
+		LocalPalette *pal = new LocalPalette(line.mid(5).trimmed(),file.fileName());
+
+		int index = 0;
+		QRegExp whitespace("\\s+");
+		while (!in.atEnd()) {
+			line = in.readLine();
+			if(line.isEmpty() || line[0] == '#')
+				continue;
+			QStringList tokens = line.split(whitespace);
+			if(tokens.count() != 4) // ignore unknown lines
+				continue;
+			pal->insertColor(index++, QColor(
+					tokens[0].toInt(),
+					tokens[1].toInt(),
+					tokens[2].toInt()
+					)
+				);
+		}
+		pal->modified_ = false;
+		return pal;
+	}
+	return 0;
+}
+
+/**
+ * @param filename palette file name
+ */
+bool LocalPalette::save(const QString& filename)
+{
+	QFile data(filename);
+	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
+		QTextStream out(&data);
+		out << "GIMP Palette\nName: " << name_ << "\n#\n";
+		foreach(QColor color, colors_) {
+			out << color.red() << ' ' << color.green() << ' ' << color.blue() << "\tUntitled\n";
+		}
+		modified_ = false;
+		return true;
+	}
+	return false;
+}
+
 
 /**
  * Generates a palette with some predefined colors.
@@ -57,24 +120,18 @@ QColor LocalPalette::color(int index) const
 void LocalPalette::setColor(int index, const QColor& color)
 {
 	colors_[index] = color;
+	modified_ = true;
 }
 
 void LocalPalette::insertColor(int index, const QColor& color)
 {
 	colors_.insert(index, color);
+	modified_ = true;
 }
 
 void LocalPalette::removeColor(int index)
 {
 	colors_.removeAt(index);
+	modified_ = true;
 }
-
-QList<QVariant> LocalPalette::toVariantList() const
-{
-	QList<QVariant> list;
-	foreach(QColor col, colors_)
-		list.append(QVariant(col));
-	return list;
-}
-
 

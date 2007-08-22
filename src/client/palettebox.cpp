@@ -22,6 +22,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QSettings>
+#include <QDir>
 
 #include "main.h"
 #include "palettebox.h"
@@ -34,6 +35,11 @@ using widgets::PaletteWidget;
 
 namespace widgets {
 
+/**
+ * Create a palette box dock widget.
+ * @param title dock widget title
+ * @param parent parent widget
+ */
 PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	: QDockWidget(title, parent)
 {
@@ -43,35 +49,38 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	ui_->setupUi(w);
 
 	// Load palettes
-	QSettings& cfg = DrawPileApp::getSettings();
-	cfg.beginGroup("palettes");
-	QRegExp names("palette\\d+$");
-	QStringList palettes = cfg.childKeys().filter(names);
-	foreach(QString pal, palettes) {
-		LocalPalette *p = new LocalPalette(
-				cfg.value(pal).toString(),
-				cfg.value(pal + "data").toList()
-				);
-		palettes_.append(p);
-		ui_->palettelist->addItem(p->name());
+	QDir confdir(DrawPileApp::getConfDir());
+	QFileInfoList pfiles = confdir.entryInfoList(
+			QStringList("*.gpl"),
+			QDir::Files|QDir::Readable
+			);
+
+	int okpalettes=0;
+	foreach(QFileInfo pfile, pfiles) {
+		LocalPalette *pal = LocalPalette::fromFile(pfile);
+		if(pal) {
+			++okpalettes;
+			palettes_.append(pal);
+			ui_->palettelist->addItem(pal->name());
+		}
 	}
-	cfg.endGroup();
-	
-	// Create a default palette if there were none
-	if(palettes.count() == 0) {
+
+	// Create a default palette if none were loaded
+	if(okpalettes==0) {
 		LocalPalette * p = LocalPalette::makeDefaultPalette();
 		palettes_.append(p);
 		ui_->palettelist->addItem(p->name());
 		ui_->palette->setPalette(p);
 	} else {
 		// If there were palettes, remember which one was used the last time
-		int last = cfg.value("history/lastpalette", 0).toInt();
+		int last = DrawPileApp::getSettings().value("history/lastpalette", 0).toInt();
 		if(last<0 || last>= palettes_.count())
 			last = 0;
 		ui_->palettelist->setCurrentIndex(last);
 		ui_->palette->setPalette(palettes_.at(last));
 	}
 
+	// Connect buttons and combobox
 	connect(ui_->palette, SIGNAL(colorSelected(QColor)),
 			this, SIGNAL(colorSelected(QColor)));
 
@@ -88,21 +97,21 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 			this, SLOT(nameChanged(QString)));
 }
 
+/**
+ * Remember last selected palette and save those
+ * palettes that have been modified.
+ */
 PaletteBox::~PaletteBox()
 {
-	QSettings& cfg = DrawPileApp::getSettings();
-	cfg.setValue("history/lastpalette", ui_->palettelist->currentIndex());
-	cfg.beginGroup("palettes");
-	cfg.remove("");
-	int index = 0;
+	DrawPileApp::getSettings().setValue("history/lastpalette",
+			ui_->palettelist->currentIndex());
+	QString confdir = DrawPileApp::getConfDir();
 	while(palettes_.isEmpty()==false) {
 		LocalPalette *pal = palettes_.takeFirst();
-		cfg.setValue(QString("palette%1").arg(index), pal->name());
-		cfg.setValue(QString("palette%1data").arg(index), pal->toVariantList());
-		++index;
+		if(pal->isModified())
+			pal->save(QFileInfo(confdir,pal->filename()).absoluteFilePath());
 		delete pal;
 	}
-
 	delete ui_;
 }
 

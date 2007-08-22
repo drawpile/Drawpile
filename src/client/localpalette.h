@@ -23,15 +23,17 @@
 #include <QList>
 
 class QVariant;
+class QFileInfo;
 
 #include "palette.h"
 
 class LocalPalette : public Palette {
 	public:
 		//! Construct a blank palette
-		LocalPalette(const QString& name) : name_(name) {}
-		//! Construct a palette from a list of QVariants that contain QColors
-		LocalPalette(const QString& name, const QList<QVariant>& list);
+		LocalPalette(const QString& name, const QString& filename="");
+
+		//! Load a palette from a file
+		static LocalPalette *fromFile(const QFileInfo& file);
 
 		//! Generate a default palette
 		static LocalPalette *makeDefaultPalette();
@@ -42,18 +44,26 @@ class LocalPalette : public Palette {
 		//! Get the name of the palette
 		const QString& name() const { return name_; }
 
+		//! Get the filename of the palette
+		const QString& filename() const { return filename_; }
+
+		//! Has the palette been modified since it was last saved/loaded?
+		bool isModified() const { return modified_; }
+
+		//! Save palette to file
+		bool save(const QString& filename);
+
 		int count() const;
 		QColor color(int index) const;
 		void setColor(int index, const QColor& color);
 		void insertColor(int index, const QColor& color);
 		void removeColor(int index);
 
-		//! Get the palette contents as a list of QVariants
-		QList<QVariant> toVariantList() const;
-
 	private:
 		QList<QColor> colors_;
 		QString name_;
+		QString filename_;
+		bool modified_;
 };
 
 #endif

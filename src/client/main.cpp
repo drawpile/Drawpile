@@ -72,6 +72,20 @@ QSettings& DrawPileApp::getSettings()
 	return cfg;
 }
 
+/**
+ * Get the location of configuration files.
+ * @return path to configuration directory
+ */
+QString DrawPileApp::getConfDir()
+{
+	// TODO Location on MacOS
+#ifdef WIN32
+	return QString("%1\\DrawPile\\").arg(getenv("APPDATA"));
+#else
+	return QString("%1/.config/DrawPile/").arg(getenv("HOME"));
+#endif
+}
+
 int main(int argc, char *argv[]) {
 	DrawPileApp app(argc,argv);
 

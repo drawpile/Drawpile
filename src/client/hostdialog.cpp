@@ -61,6 +61,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 	ui_->username->setText(cfg.value("username").toString());
+	ui_->sessiontitle->setText(cfg.value("sessiontitle").toString());
 	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
 
 	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
@@ -76,6 +77,7 @@ void HostDialog::rememberSettings() const
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
+	cfg.setValue("sessiontitle", getTitle());
 	QStringList hosts;
 	// Move current address to the top of the list
 	const QString current = ui_->remotehost->currentText();
