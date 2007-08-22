@@ -406,10 +406,8 @@ void MainWindow::readSettings()
 	view_->setCrosshair(togglecrosshair_->isChecked());
 
 	// Remember foreground and background colors
-	const QColor fg = cfg.value("foreground", Qt::black).value<QColor>();
-	const QColor bg = cfg.value("background", Qt::white).value<QColor>();
-	fgbgcolor_->setForeground(fg);
-	fgbgcolor_->setBackground(bg);
+	fgbgcolor_->setForeground(QColor(cfg.value("foreground", "black").toString()));
+	fgbgcolor_->setBackground(QColor(cfg.value("background", "white").toString()));
 
 	cfg.endGroup();
 
@@ -471,8 +469,8 @@ void MainWindow::writeSettings()
 	cfg.setValue("tool", tool);
 	cfg.setValue("outline", toggleoutline_->isChecked());
 	cfg.setValue("crosshair", togglecrosshair_->isChecked());
-	cfg.setValue("foreground",fgbgcolor_->foreground());
-	cfg.setValue("background",fgbgcolor_->background());
+	cfg.setValue("foreground",fgbgcolor_->foreground().name());
+	cfg.setValue("background",fgbgcolor_->background().name());
 }
 
 /**
