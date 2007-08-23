@@ -10,9 +10,11 @@ cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
 set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 
-### options ###
+###
 
-# do these even work?
+include ( config/SVN.cmake )
+
+### options ###
 
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile UI-less server" ON )
