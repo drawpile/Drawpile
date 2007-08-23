@@ -71,6 +71,7 @@ class PaletteWidget : public QWidget {
 		void removeColor();
 		void editCurrentColor();
 		void setCurrentColor(const QColor& color);
+		void dialogDone();
 
 	private:
 		int columns() const;
@@ -89,6 +90,7 @@ class PaletteWidget : public QWidget {
 		QRubberBand *outline_;
 		QMenu *contextmenu_;
 		dialogs::ColorDialog *colordlg_;
+		int dialogsel_;
 };
 
 }

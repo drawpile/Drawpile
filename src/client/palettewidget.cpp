@@ -35,7 +35,7 @@ namespace widgets {
 
 PaletteWidget::PaletteWidget(QWidget *parent)
 	: QWidget(parent), palette_(0), swatchsize_(13,8), spacing_(1), scroll_(0),
-	selection_(-1)
+	selection_(-1), dialogsel_(-2)
 {
 	setAcceptDrops(true);
 	setFocusPolicy(Qt::StrongFocus);
@@ -53,11 +53,13 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	scrollbar_ = new QScrollBar(this);
 	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 
-	colordlg_ = new dialogs::ColorDialog(tr("Select color"), this);
-	colordlg_->setWindowModality(Qt::WindowModal);
+	colordlg_ = new dialogs::ColorDialog(tr("Set palette color"), this);
 
 	connect(colordlg_, SIGNAL(colorSelected(QColor)),
 			this, SLOT(setCurrentColor(QColor)));
+
+	connect(colordlg_, SIGNAL(finished(int)),
+			this, SLOT(dialogDone()));
 }
 
 void PaletteWidget::setPalette(Palette *palette)
@@ -109,12 +111,16 @@ void PaletteWidget::scroll(int pos)
 	update();
 }
 
+/**
+ * Pop up a dialog to add a new color
+ */
 void PaletteWidget::addColor()
 {
-	if(selection_ == -1)
-		selection_ = palette_->count();
-	palette_->insertColor(selection_, Qt::black);
-	editCurrentColor();
+	if(dialogsel_<-1) {
+		dialogsel_ = -1;
+		colordlg_->setColor(Qt::black);
+		colordlg_->show();
+	}
 }
 
 void PaletteWidget::removeColor()
@@ -127,18 +133,50 @@ void PaletteWidget::removeColor()
 	update();
 }
 
+/**
+ * Pop up a dialog to edit the currently selected color
+ */
 void PaletteWidget::editCurrentColor()
 {
-	colordlg_->setColor(palette_->color(selection_));
-	colordlg_->show();
+	if(dialogsel_<-1) {
+		dialogsel_ = selection_;
+		colordlg_->setColor(palette_->color(selection_));
+		colordlg_->show();
+	}
 }
 
+/**
+ * Current color was set in the selection dialog.
+ * If selection was the special value -1, add a new color.
+ * @pre dialogsel >= -1 (a valid selection value)
+ */
 void PaletteWidget::setCurrentColor(const QColor& color)
 {
-	palette_->setColor(selection_, color);
+	Q_ASSERT(dialogsel_>-2);
+	if(dialogsel_==-1) {
+		if(selection_ == -1)
+			selection_ = palette_->count();
+		palette_->insertColor(selection_, color);
+	} else {
+		palette_->setColor(selection_, color);
+	}
 	update();
 }
 
+/**
+ * Dialog was finished, mark dialog selection as unselected
+ * so the dialog can be opened again.
+ */
+void PaletteWidget::dialogDone()
+{
+	dialogsel_ = -2;
+}
+
+/**
+ * Handle special events.
+ * Currently only tooltip event is handled here. Display a tooltip
+ * that describes the color under the pointer.
+ */
 bool PaletteWidget::event(QEvent *event)
 {
 	if(event->type() == QEvent::ToolTip) {
@@ -220,7 +258,7 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
-	if(selection_ != -1)
+	if(selection_ > -1)
 		editCurrentColor();
 	else
 		addColor();
