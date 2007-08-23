@@ -47,6 +47,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	ui_->setupUi(w);
+	ui_->palettelist->setCompleter(0);
 
 	// Load palettes
 	QDir confdir(DrawPileApp::getConfDir());
@@ -123,26 +124,65 @@ void PaletteBox::paletteChanged(int index)
 		ui_->palette->setPalette(palettes_.at(index));
 }
 
+/**
+ * The user has changed the name of a palette. Update the palette
+ * and rename the file if it has one.
+ */
 void PaletteBox::nameChanged(const QString& name)
 {
 	if(name.isEmpty()==false) {
-		palettes_.at(ui_->palettelist->currentIndex())->setName(name);
-		ui_->palettelist->setItemText(ui_->palettelist->currentIndex(), name);
+		LocalPalette *pal = palettes_.at(ui_->palettelist->currentIndex());
+		// Check for name clashes
+		// Rename only if name is unique
+		if(isUniquePaletteName(name, pal)) {
+			QString paldir = DrawPileApp::getConfDir();
+			QFile oldfile(QFileInfo(paldir,pal->filename()).absoluteFilePath());
+			pal->setName(name);
+			if(oldfile.exists())
+				oldfile.rename(QFileInfo(paldir,pal->filename()).absoluteFilePath());
+			ui_->palettelist->setItemText(ui_->palettelist->currentIndex(), name);
+		}
 	}
+}
+
+/**
+ * Check if a palette name is unique.
+ * @param name name to check
+ * @param exclude a palette to exclude from the check
+ */
+bool PaletteBox::isUniquePaletteName(const QString& name, const LocalPalette *exclude) const
+{
+	foreach(LocalPalette *p, palettes_) {
+		if(p != exclude && p->name().compare(name,Qt::CaseInsensitive)==0)
+			return false;
+	}
+	return true;
 }
 
 void PaletteBox::addPalette()
 {
-	QString name = QInputDialog::getText(this, tr("Add new palette"),
-			QString("Name of the palette"));
-	if(name.isEmpty()==false) {
-		LocalPalette *pal = new LocalPalette(name);
-		palettes_.append(pal);
-		ui_->palettelist->addItem(name);
-		ui_->palettelist->setCurrentIndex(ui_->palettelist->count()-1);
-		ui_->palettelist->setEnabled(true);
-		ui_->delpalette->setEnabled(true);
-	}
+
+	QString name;
+	do {
+		name = QInputDialog::getText(this, tr("Add new palette"),
+				QString("Name of the palette"));
+		if(name.isEmpty())
+			return;
+		if(isUniquePaletteName(name,0)==false) {
+			QMessageBox::information(this,tr("Name already in use"),
+					tr("The palette name must be unique"));
+		} else {
+			break;
+		}
+	} while(1);
+
+	// TODO check that name is unique
+	LocalPalette *pal = new LocalPalette(name);
+	palettes_.append(pal);
+	ui_->palettelist->addItem(name);
+	ui_->palettelist->setCurrentIndex(ui_->palettelist->count()-1);
+	ui_->palettelist->setEnabled(true);
+	ui_->delpalette->setEnabled(true);
 }
 
 void PaletteBox::deletePalette()
@@ -154,7 +194,11 @@ void PaletteBox::deletePalette()
 			tr("Delete palette \"%1\"?").arg(palettes_.at(index)->name()),
 			QMessageBox::Yes|QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-		delete palettes_.takeAt(index);
+		LocalPalette *pal = palettes_.takeAt(index);
+		QFile fpal(QFileInfo(DrawPileApp::getConfDir(), pal->filename()).absoluteFilePath());
+		if(fpal.exists())
+			fpal.remove();
+		delete pal;
 		ui_->palettelist->removeItem(index);
 		if(ui_->palettelist->count()==0) {
 			ui_->palettelist->setEnabled(false);

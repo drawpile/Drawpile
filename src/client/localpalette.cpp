@@ -107,6 +107,17 @@ LocalPalette *LocalPalette::makeDefaultPalette()
 	return pal;
 }
 
+/**
+ * Change the palette name.
+ * The filename is set as the name + extension ".gpl"
+ * @param name new palette name
+ */
+void LocalPalette::setName(const QString& name)
+{
+	name_ = name;
+	filename_ = QString("%1.gpl").arg(name);
+}
+
 int LocalPalette::count() const
 {
 	return colors_.count();

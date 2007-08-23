@@ -39,7 +39,7 @@ class LocalPalette : public Palette {
 		static LocalPalette *makeDefaultPalette();
 
 		//! Set the name of the palette
-		void setName(const QString& name) { name_ = name; }
+		void setName(const QString& name);
 
 		//! Get the name of the palette
 		const QString& name() const { return name_; }
