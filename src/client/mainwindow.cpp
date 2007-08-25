@@ -1372,8 +1372,8 @@ void MainWindow::createDocks()
 	createColorBoxes(toggles);
 	createPalette(toggles);
 	createUserList(toggles);
-	//tabifyDockWidget(rgb_, palette_);
 	tabifyDockWidget(hsv_, rgb_);
+	tabifyDockWidget(hsv_, palette_);
 	docktoggles_->setMenu(toggles);
 }
 
