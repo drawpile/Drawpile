@@ -83,7 +83,7 @@ const int Socket::ProtocolNotSupported = WSAEPROTONOSUPPORT;
 	#define EWOULDBLOCK EAGAIN
 #endif
 const fd_t Socket::InvalidHandle = -1;
-const int Socket::NoSignal = MSG_NOSIGNAL
+const int Socket::NoSignal = MSG_NOSIGNAL;
 const int Socket::InProgress = EINPROGRESS;
 const int Socket::WouldBlock = EWOULDBLOCK;
 const int Socket::SubsystemDown = ENETDOWN;
@@ -97,7 +97,7 @@ const int Socket::NotConnected = ENOTCONN;
 const int Socket::Connected = EISCONN;
 const int Socket::Already = EALREADY; // ?
 const int Socket::Shutdown = ESHUTDOWN;
-const int Socket::Disconnected = EDISCON;
+//const int Socket::Disconnected = EDISCON; // not present on non-windows systems?
 const int Socket::NetworkReset = ENETRESET;
 const int Socket::Error = -1;
 const int Socket::AddressInUse = EADDRINUSE;
@@ -110,7 +110,6 @@ const int Socket::ProtocolType = EPROTOTYPE;
 //const int Socket::_NotSupported = E??;
 const int Socket::OperationNotSupported = EOPNOTSUPP;
 const int Socket::ProtocolNotSupported = EPROTONOSUPPORT;
-const int Socket::SystemLimit = EMFILE;
 #endif
 
 const int Socket::ConnectionBroken = EPIPE;
