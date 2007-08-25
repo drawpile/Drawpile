@@ -17,23 +17,23 @@
 
 #include <cstddef>
 
-static const int OutOfMemory = ENOMEM;
-static const int Fault = EFAULT;
-static const int BadDescriptor = EBADF;
-static const int SystemDescriptorLimit = ENFILE;
-static const int InsufficientPermissions = EPERM;
+const int OutOfMemory = ENOMEM;
+const int Fault = EFAULT;
+const int BadDescriptor = EBADF;
+const int SystemDescriptorLimit = ENFILE;
+const int InsufficientPermissions = EPERM;
 
 #ifdef WIN32
-static const int Interrupted = WSAEINTR;
-static const int WouldBlock = WSAEWOULDBLOCK;
-static const int DescriptorLimit = WSAEMFILE;
+const int Interrupted = WSAEINTR;
+const int WouldBlock = WSAEWOULDBLOCK;
+const int DescriptorLimit = WSAEMFILE;
 #else
-static const int DescriptorLimit = EMFILE;
-static const int Interrupted = EINTR;
+const int DescriptorLimit = EMFILE;
+const int Interrupted = EINTR;
 	#ifndef EWOULDBLOCK
-static const int WouldBlock = EWOULDBLOCK;
+const int WouldBlock = EWOULDBLOCK;
 	#else // some systems don't define EWOULDBLOCK
-static const int WouldBlock = EAGAIN;
+const int WouldBlock = EAGAIN;
 	#endif
 #endif
 
