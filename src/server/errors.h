@@ -10,12 +10,12 @@ static const int SystemDescriptorLimit = ENFILE;
 static const int InsufficientPermissions = EPERM;
 
 #ifdef WIN32
-static const int Interrupted = EINTR;
+static const int Interrupted = WSAEINTR;
 static const int WouldBlock = WSAEWOULDBLOCK;
 static const int DescriptorLimit = WSAEMFILE;
 #else
 static const int DescriptorLimit = EMFILE;
-static const int Interrupted = WSAEINTR;
+static const int Interrupted = EINTR;
 	#ifndef EWOULDBLOCK
 static const int WouldBlock = EWOULDBLOCK;
 	#else // some systems don't define EWOULDBLOCK
