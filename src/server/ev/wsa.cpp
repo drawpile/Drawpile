@@ -31,7 +31,7 @@
 #include "../../shared/templates.h" // fIsSet() and friends
 
 #include "../errors.h"
-#include "../socket.porting.h"
+#include "../socket.errors.h"
 
 #ifndef NDEBUG
 	#include <iostream>
@@ -47,14 +47,16 @@ namespace event {
 const bool has_hangup<WSA>::value = true;
 const bool has_connect<WSA>::value = true;
 const bool has_accept<WSA>::value = true;
-const long read<WSA>::value = FD_READ;
-const long write<WSA>::value = FD_WRITE;
-const long hangup<WSA>::value = FD_CLOSE;
-const long accept<WSA>::value = FD_ACCEPT;
-const long connect<WSA>::value = FD_CONNECT;
+const ev_type<WSA>::ev_t read<WSA>::value = FD_READ;
+const ev_type<WSA>::ev_t write<WSA>::value = FD_WRITE;
+const ev_type<WSA>::ev_t hangup<WSA>::value = FD_CLOSE;
+const ev_type<WSA>::ev_t accept<WSA>::value = FD_ACCEPT;
+const ev_type<WSA>::ev_t connect<WSA>::value = FD_CONNECT;
 const std::string system<WSA>::value("wsa");
 
-const SOCKET invalid_fd<WSA>::value = Socket::InvalidHandle;
+const SOCKET invalid_fd<WSA>::value = socket_error::InvalidHandle;
+
+using namespace error;
 
 WSA::WSA()
 	: nfds(0), last_event(0)
@@ -106,13 +108,13 @@ int WSA::wait()
 }
 
 // Errors: WSAENETDOWN
-int WSA::add(fd_t fd, long events)
+int WSA::add(fd_t fd, ev_t events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.add(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != Socket::InvalidHandle);
+	assert(fd != socket_error::InvalidHandle);
 	
 	fSet(events, hangup<WSA>::value);
 	
@@ -125,7 +127,7 @@ int WSA::add(fd_t fd, long events)
 			
 			const int r = WSAEventSelect(fd, w_ev[i], events);
 			
-			if (r == Socket::Error)
+			if (r == socket_error::Error)
 			{
 				error = WSAGetLastError();
 				
@@ -155,13 +157,13 @@ int WSA::add(fd_t fd, long events)
 }
 
 // Errors: WSAENETDOWN
-int WSA::modify(fd_t fd, long events)
+int WSA::modify(fd_t fd, ev_t events)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "wsa.modify(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != Socket::InvalidHandle);
+	assert(fd != socket_error::InvalidHandle);
 	
 	fSet(events, hangup<WSA>::value);
 	
@@ -172,7 +174,7 @@ int WSA::modify(fd_t fd, long events)
 	
 	const int r = WSAEventSelect(fd, w_ev[i], events);
 	
-	if (r == Socket::Error)
+	if (r == socket_error::Error)
 	{
 		error = WSAGetLastError();
 		
@@ -192,7 +194,7 @@ int WSA::remove(fd_t fd)
 	cout << "wsa.remove(fd: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != Socket::InvalidHandle);
+	assert(fd != socket_error::InvalidHandle);
 	
 	const ev_iter fi(fd_to_ev.find(fd));
 	assert(fi != fd_to_ev.end());
@@ -202,7 +204,7 @@ int WSA::remove(fd_t fd)
 	
 	w_ev[fi->second] = WSA_INVALID_EVENT;
 	
-	fdl[fi->second] = Socket::InvalidHandle;
+	fdl[fi->second] = socket_error::InvalidHandle;
 	fd_to_ev.erase(fi);
 	
 	// find last event
@@ -212,7 +214,7 @@ int WSA::remove(fd_t fd)
 	return true;
 }
 
-bool WSA::getEvent(fd_t &fd, long &events)
+bool WSA::getEvent(fd_t &fd, ev_t &events)
 {
 	WSANETWORKEVENTS set;
 	
@@ -222,11 +224,11 @@ bool WSA::getEvent(fd_t &fd, long &events)
 		if (w_ev[nfds] != WSA_INVALID_EVENT)
 		{
 			fd = fdl[nfds];
-			assert(fd != Socket::InvalidHandle);
+			assert(fd != socket_error::InvalidHandle);
 			
 			const int r = WSAEnumNetworkEvents(fd, w_ev[nfds], &set);
 			
-			if (r == Socket::Error)
+			if (r == socket_error::Error)
 			{
 				error = WSAGetLastError();
 				

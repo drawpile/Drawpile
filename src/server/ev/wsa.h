@@ -75,16 +75,16 @@ public:
 template <> struct has_hangup<WSA> { static const bool value; };
 template <> struct has_connect<WSA> { static const bool value; };
 template <> struct has_accept<WSA> { static const bool value; };
-template <> struct read<WSA> { static const long value; };
-template <> struct write<WSA> { static const long value; };
-template <> struct hangup<WSA> { static const long value; };
-template <> struct accept<WSA> { static const long value; };
-template <> struct connect<WSA> { static const long value; };
+template <> struct read<WSA> { static const ev_type<WSA>::ev_t value; };
+template <> struct write<WSA> { static const ev_type<WSA>::ev_t value; };
+template <> struct hangup<WSA> { static const ev_type<WSA>::ev_t value; };
+template <> struct accept<WSA> { static const ev_type<WSA>::ev_t value; };
+template <> struct connect<WSA> { static const ev_type<WSA>::ev_t value; };
 template <> struct system<WSA> { static const std::string value; };
 template <> struct invalid_fd<WSA> { static const fd_type<WSA>::fd_t value; };
 
 // unused, but required because GCC is less than bright
-template <> struct error<WSA> { static const long value; };
+template <> struct error<WSA> { static const ev_type<WSA>::ev_t value; };
 
 } // namespace:event
 
