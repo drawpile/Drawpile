@@ -9,10 +9,6 @@
 #cmakedefine DEBUG_SOCKETS 1
 #cmakedefine DEBUG_SERVER 1
 
-#cmakedefine HAVE_SENDMSG 1
-#cmakedefine HAVE_RECVMSG 1
-#cmakedefine SC_SOCKETS 1
-
 #cmakedefine IPV6_SUPPORT 1
 
 #cmakedefine PERSISTENT_SESSIONS 1

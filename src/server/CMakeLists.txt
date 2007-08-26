@@ -46,17 +46,7 @@ if ( SERVER )
 	endif ( HAVE_FORK )
 endif ( SERVER )
 
-# scatter-gather sockets
-
-check_function_exists ( sendmsg HAVE_SENDMSG )
-check_function_exists ( recvmsg HAVE_RECVMSG )
-
-set ( SC_SOCKETS OFF )
-if ( HAVE_SENDMSG )
-	if ( HAVE_RECVMSG )
-		set ( SC_SOCKETS ON )
-	endif ( HAVE_RECVMSG )
-endif ( HAVE_SENDMSG )
+# persistent sessions
 
 set ( PERSISTENT_SESSIONS OFF )
 if ( PERSISTENT )

@@ -25,28 +25,29 @@ option ( UNITTEST "Compile unit tests" OFF )
 
 option ( EPOLL "Enable epoll(4) support (Linux 2.6)" ON )
 option ( KQUEUE "Enable kqueue(2) support (BSD/Mac[?])" ON )
-option ( WSA "Enable WSA event support (Windows 95 and later)" OFF ) # still broken
 option ( WSAPOLL "Enable WSAPoll event support (Vista/Server2003 and later)" ON )
 option ( SELECT "Enable select(2) support (default)" ON )
 
-option ( DEFLATE "Enable deflate compression" ON )
+option ( DEFLATE "Enable deflate compression (requires zlib)" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Apply several optimization flags" ON )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
 option ( SHARED "Build shared library" OFF )
 
-option ( UBINARY "Build universal binary (Mac-only)" ON )
+#option ( UBINARY "Build universal binary (Mac-only)" ON ) # not implemented
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
 option ( ASM "Use hand-written assembly" OFF )
 
+# Our own SHA-1 implementation is broken, so using OpenSSL will effectively create
+# incompatibility with servers/clients that use it.
 option ( OPENSSL "Use OpenSSL if present" OFF )
 
 option ( PERSISTENT "Enable persistent session support" OFF )
 
-option ( RELEASE "" OFF )
+option ( RELEASE "Compile as much as possible in one go to generate more optimized binaries." OFF )
 
 option ( NOPI "Disable position-independent code and executables" OFF )
 

@@ -634,32 +634,6 @@ int Socket::send(char* buffer, const size_t len)
 	#endif
 }
 
-/*
-#ifdef HAVE_SENDMSG
-int Socket::sc_send(std::list<Array<char*,size_t>* > buffers)
-{
-	//iterator iter = blah
-	assert(buffers.size() != 0);
-	
-	msghdr *msg = new msghdr;
-	msg->msg_iovlen = buffers.size();
-	msg->msg_iov = new iovec[msg->msg_iovlen];
-	for (int i=0; iter != buffers.end(); ++iter, ++i)
-	{
-		msg->msg_iov[i].iov_base = (*iter)->ptr;
-		msg->msg_iov[i].iov_len = (*iter)->length;
-	}
-}
-#endif
-
-#ifdef HAVE_RECVMSG
-int Socket::sc_recv(std::list<Array<char*,size_t> > buffers)
-{
-	
-}
-#endif
-*/
-
 int Socket::recv(char* buffer, const size_t len)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
@@ -740,62 +714,6 @@ int Socket::recv(char* buffer, const size_t len)
 	return r;
 	#endif
 }
-
-#if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
-int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes)
-{
-	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	cout << "[Socket] Sending file" << endl;
-	#endif
-	
-	assert(fd != InvalidHandle);
-	assert(offset >= 0);
-	
-	// call the real sendfile()
-	#ifdef HAVE_XPWSA
-	const int r = TransmitFile(sock, fd, nbytes, 0, 0, 0, TF_WRITE_BEHIND);
-	#else // non-windows
-	const int r = ::sendfile(fd, sock, offset, nbytes, 0, sbytes, 0);
-	#endif
-	
-	if (r == Error)
-	{
-		#ifdef WIN32
-		s_error = WSAGetLastError();
-		#else // POSIX
-		s_error = errno;
-		#endif
-		
-		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
-		#endif
-		
-		// programming errors
-		assert(s_error != NotSocket);
-		assert(s_error != BadDescriptor);
-		assert(s_error != EINVAL);
-		assert(s_error != Fault);
-		assert(s_error != NotConnected);
-		
-		switch (s_error)
-		{
-		case WouldBlock:
-			// retry
-			break;
-		#ifndef WIN32 // POSIX
-		case ConnectionBroken:
-		case EIO: // should be handled by the caller
-			break;
-		#endif
-		default:
-			cerr << "[Socket] Unknown error in sendfile() - " << s_error << endl;
-			assert(s_error);
-		}
-	}
-	
-	return 0;
-}
-#endif // WITH_SENDFILE
 
 std::string Socket::address() const
 {

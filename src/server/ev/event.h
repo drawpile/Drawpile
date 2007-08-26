@@ -27,13 +27,9 @@
 #elif defined(EV_KQUEUE)
 	#include "kqueue.h"
 	typedef event::Kqueue EventSystem;
-#elif defined(EV_PSELECT)
-	#include "pselect.h"
-	typedef event::Pselect EventSystem;
-#elif defined(EV_WSA)
-	#include "wsa.h"
-	#define EV_WSA
-	typedef event::WSA EventSystem;
+#elif defined(EV_WSAPOLL)
+	#include "wsapoll.h"
+	typedef event::WSAPoll EventSystem;
 #elif defined(EV_SELECT)
 	#include "select.h"
 	typedef event::Select EventSystem;
