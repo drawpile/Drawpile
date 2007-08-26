@@ -26,56 +26,69 @@
 
 *******************************************************************************/
 
-#ifndef EventPselect_INCLUDED
-#define EventPselect_INCLUDED
+#ifndef EventWSA_INCLUDED
+#define EventWSA_INCLUDED
 
 #include "interface.h"
 #include "traits.h"
+#include "../socket.types.h" // fd_t, WSAEVENT
+#include <winsock2.h>
 
-#include <sys/select.h> // fd_set
-#include <signal.h> // sigset_t
-
-#include <map> // std::map
-#include <set> // std::set
+#include <map>
 
 namespace event {
 
-//! pselect(2)
+class WSAPoll;
+template <> struct ev_type<WSAPoll> { typedef short ev_t; };
+template <> struct fd_type<WSAPoll> { typedef SOCKET fd_t; };
+
+const uint max_events = std::numeric_limits<ulong>::max();
+
+//! WSA Poll
 /**
- * 
+ * @note Works only on Vista and Windows Server 2003 and later.
+ * @bug The used function is also called WSAPoll, so saying using namespace event will break things.
  */
-class Pselect
-	: public Interface<Pselect>
+class WSAPoll
+	: public Interface<WSAPoll>
 {
 private:
-	timespec _timeout;
+	int m_timeout;
 	int nfds;
-	sigset_t sigmask;
-	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
-	std::map<int, uint> fd_list;
-	std::map<int, uint>::iterator fd_iter;
-	std::set<int> read_set, write_set, error_set;
-	int nfds_r, nfds_w, nfds_e;
+	int t_event;
+	int limit;
+	
+	WSAPOLLFD *descriptors;
+	
+	std::map<fd_t,int> fd_to_index;
+	typedef std::map<fd_t,int>::iterator index_i;
 public:
-	Pselect() __attribute__ ((nothrow));
-	~Pselect() __attribute__ ((nothrow));
+	WSAPoll() __attribute__ ((nothrow));
+	~WSAPoll()  __attribute__ ((nothrow));
 	
 	void timeout(uint msecs) __attribute__ ((nothrow));
 	int wait() __attribute__ ((nothrow));
-	int add(fd_t fd, int events) __attribute__ ((nothrow));
+	int add(fd_t fd, ev_t events) __attribute__ ((nothrow));
 	int remove(fd_t fd) __attribute__ ((nothrow));
-	int modify(fd_t fd, int events) __attribute__ ((nothrow));
-	bool getEvent(fd_t &fd, int &events) __attribute__ ((nothrow));
+	int modify(fd_t fd, ev_t events) __attribute__ ((nothrow));
+	bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow));
 };
 
 /* traits */
 
-template <> struct has_error<Pselect> { static const bool value; };
-template <> struct read<Pselect> { static const int value; };
-template <> struct write<Pselect> { static const int value; };
-template <> struct error<Pselect> { static const int value; };
-template <> struct system<Pselect> { static const std::string value; };
+template <> struct read<WSAPoll> { static const ev_type<WSAPoll>::ev_t value; };
+template <> struct write<WSAPoll> { static const ev_type<WSAPoll>::ev_t value; };
+template <> struct system<WSAPoll> { static const std::string value; };
+template <> struct invalid_fd<WSAPoll> { static const fd_type<WSAPoll>::fd_t value; };
+
+// unused, but required because GCC is less than bright
+template <> struct error<WSAPoll> { static const long value; };
+/*
+template <> struct hangup<WSAPoll> { static const long value; };
+template <> struct accept<WSAPoll> { static const long value; };
+template <> struct connect<WSAPoll> { static const long value; };
+*/
 
 } // namespace:event
 
-#endif // EventPselect_INCLUDED
+#endif // EventWSA_INCLUDED

@@ -23,11 +23,11 @@ option ( SERVERLIB "Compile server library" ON )
 
 option ( UNITTEST "Compile unit tests" OFF )
 
-option ( EPOLL "Enable epoll(4) support" ON )
-option ( PSELECT "Enable pselect(2) support" ON )
-option ( KQUEUE "Enable kqueue(2) support" ON )
-option ( WSA "Enable WSA event support" OFF ) # still broken
-option ( SELECT "Enable select(2) support" ON )
+option ( EPOLL "Enable epoll(4) support (Linux 2.6)" ON )
+option ( KQUEUE "Enable kqueue(2) support (BSD/Mac[?])" ON )
+option ( WSA "Enable WSA event support (Windows 95 and later)" OFF ) # still broken
+option ( WSAPOLL "Enable WSAPoll event support (Vista/Server2003 and later)" ON )
+option ( SELECT "Enable select(2) support (default)" ON )
 
 option ( DEFLATE "Enable deflate compression" ON )
 
