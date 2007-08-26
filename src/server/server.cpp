@@ -34,6 +34,7 @@
 
 #include "errors.h"
 #include "socket.h"
+#include "socket.errors.h"
 #include "network.h" // Network namespace
 
 #include "../shared/SHA1.h"
@@ -82,9 +83,11 @@ typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
 
+using namespace error;
+
 Server::Server()
 	: state(Server::Dead),
-	lsock(Socket::InvalidHandle),
+	lsock(),
 	user_limit(12),
 	session_limit(1),
 	max_subscriptions(1),
@@ -280,7 +283,7 @@ void Server::uWrite(User*& usr)
 	
 	switch (sb)
 	{
-	case Socket::Error:
+	case socket_error::Error:
 		switch (usr->sock.getError())
 		{
 		#ifdef WIN32
@@ -288,7 +291,7 @@ void Server::uWrite(User*& usr)
 		#endif
 		case Interrupted:
 		case WouldBlock:
-		case Socket::OutOfBuffers:
+		case socket_error::OutOfBuffers:
 		case OutOfMemory:
 			// retry
 			break;
@@ -459,7 +462,7 @@ void Server::uRead(User*& usr)
 	
 	switch (rb)
 	{
-	case Socket::Error:
+	case socket_error::Error:
 		switch (usr->sock.getError())
 		{
 		case WouldBlock:
@@ -2094,7 +2097,7 @@ void Server::uAdd()
 {
 	Socket sock = lsock.accept();
 	
-	if (sock.fd() == Socket::InvalidHandle)
+	if (sock.fd() == socket_error::InvalidHandle)
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		cout << "- Invalid socket, aborting user creation." << endl;
@@ -2201,7 +2204,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	}
 	#endif
 	
-	//usr.sock.shutdown(Socket::FullShutdown);
+	//usr.sock.shutdown(socket_error::FullShutdown);
 	
 	// Remove socket from event system
 	ev.remove(usr->sock.fd());
@@ -2278,7 +2281,7 @@ bool Server::init()
 	srand(time(0) - 513); // FIXME: Need better seed value
 	#endif
 	
-	if (lsock.create() == Socket::InvalidHandle)
+	if (lsock.create() == socket_error::InvalidHandle)
 	{
 		#ifndef NDEBUG
 		cerr << "- Failed to create a socket." << endl;
@@ -2299,12 +2302,12 @@ bool Server::init()
 		#else
 		Network::IPv4::Unspecified
 		#endif
-		, lsock.port()) == Socket::Error)
+		, lsock.port()) == socket_error::Error)
 	{
 		return false;
 	}
 	
-	if (lsock.listen() != Socket::Error)
+	if (lsock.listen() != socket_error::Error)
 	{
 		// add listening socket to event system
 		if (event::has_accept<EventSystem>::value)

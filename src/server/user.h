@@ -197,7 +197,8 @@ public:
 	
 	//! 'Flushes' queue to output buffer
 	/**
-	 * @throw std::bad_alloc thrown indirectly from Buffer
+	 * @note May scrap current output buffer so don't call unless the buffer is empty.
+	 * @throw std::bad_alloc thrown indirectly from Buffer or serialize()
 	 */
 	uint flushQueue();
 };

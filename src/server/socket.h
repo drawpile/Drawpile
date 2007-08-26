@@ -33,6 +33,7 @@
 
 #include "address.h"
 #include "socket.porting.h"
+#include "socket.errors.h"
 #include "socket.types.h" // fd_t
 
 #include "ref_counted.h"
@@ -42,35 +43,11 @@ class Socket
 	: public ReferenceCounted
 {
 public:
-	static const fd_t InvalidHandle;
-	
-	static const int InProgress;
-	
-	static const int SubsystemDown;
-	static const int OutOfBuffers;
-	
-	static const int ConnectionRefused;
-	static const int ConnectionAborted;
-	static const int ConnectionTimedOut;
-	static const int ConnectionBroken;
-	static const int ConnectionReset;
-	static const int Unreachable;
-	static const int NotConnected;
-	static const int Connected;
-	static const int Already; // ?
-	
-	static const int Shutdown;
-	static const int Disconnected;
-	static const int NetworkReset;
-	
-	static const int Error;
-	
-	static const int AddressInUse;
-	static const int AddressNotAvailable;
-	
+	/*
 	static const int FullShutdown;
 	static const int ShutdownWriting;
 	static const int ShutdownReading;
+	*/
 private:
 	//! @internal
 	static const int FamilyNotSupported;
@@ -108,7 +85,7 @@ public:
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 */
-	Socket(const fd_t& nsock=Socket::InvalidHandle) __attribute__ ((nothrow));
+	Socket(const fd_t& nsock=socket_error::InvalidHandle) __attribute__ ((nothrow));
 	
 	//! More advanced constructor
 	/**
@@ -148,7 +125,7 @@ public:
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
-	 * @note (Socket.getFD() == Socket::InvalidHandle) if no new connection was accepted
+	 * @note (Socket.getFD() == socket_error::InvalidHandle) if no new connection was accepted
 	 */
 	Socket accept()  __attribute__ ((nothrow)) /*__attribute__ ((warn_unused_result))*/;
 	

@@ -1,6 +1,7 @@
 # src/server/
 
-set (SERVERNAME "${PROJECT_NAME}-srv" )
+set ( SERVERNAME "${PROJECT_NAME}-srv" )
+set ( SERVERLIB "dpserverlib" )
 
 # include some stuff
 
@@ -96,24 +97,24 @@ if ( SERVERLIB )
 	
 	# Create library
 	add_library (
-		dpserverlib
+		${SERVERLIB}
 		${SRV_SOURCES}
 	)
 
 	target_link_libraries(
-		dpserverlib
+		${SERVERLIB}
 		libdrawpile # DP shared library
 		eventslib # EV lib
 	)
 	
 	# Console executable
 	set_target_properties (
-		dpserverlib
+		${SERVERLIB}
 		PROPERTIES
 		OUTPUT_NAME dpserver
 		VERSION 0.5
 		SOVERSION 0.5
-		PROJECT_LABEL dpserverlib
+		PROJECT_LABEL ${SERVERLIB}
 	)
 endif ( SERVERLIB )
 
@@ -137,7 +138,7 @@ if ( SERVER )
 		${Win32Resource}
 	)
 	
-	add_dependencies ( drawpile-srv dpserverlib eventslib libdrawpile )
+	add_dependencies ( ${SERVERNAME} ${SERVERLIB} eventslib libdrawpile )
 	
 	set_target_properties (
 		${SERVERNAME}
@@ -148,8 +149,7 @@ if ( SERVER )
 	
 	target_link_libraries(
 		${SERVERNAME}
-		dpserverlib # DP shared library
-		libdrawpile # DP shared library
+		${SERVERLIB} # DP shared library
 		eventslib # EV lib
 	)
 	

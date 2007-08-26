@@ -138,7 +138,6 @@ uint User::flushQueue()
 {
 	assert(!queue.empty());
 	
-	
 	const usr_message_i f_msg(queue.begin());
 	usr_message_i iter(f_msg+1), last(f_msg);
 	// create linked list

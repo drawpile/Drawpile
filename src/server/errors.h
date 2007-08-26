@@ -17,6 +17,9 @@
 
 #include <cstddef>
 
+namespace error
+{
+
 const int OutOfMemory = ENOMEM;
 const int Fault = EFAULT;
 const int BadDescriptor = EBADF;
@@ -36,5 +39,7 @@ const int WouldBlock = EWOULDBLOCK;
 const int WouldBlock = EAGAIN;
 	#endif
 #endif
+
+} // namespace:error
 
 #endif // SystemErrors_INCLUDED

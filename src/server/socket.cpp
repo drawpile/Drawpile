@@ -28,7 +28,6 @@
 
 #include "socket.h"
 
-#include "socket.porting.h"
 #include "../shared/templates.h"
 #include "errors.h"
 
@@ -50,71 +49,14 @@
 	#include <cerrno>
 #endif
 
-#ifdef WIN32
-const fd_t Socket::InvalidHandle = INVALID_SOCKET; // 0 ?
-const int Socket::NoSignal = 0;
-const int Socket::InProgress = WSAEINPROGRESS;
-const int Socket::SubsystemDown = WSAENETDOWN;
-const int Socket::OutOfBuffers = WSAENOBUFS;
-const int Socket::ConnectionRefused = WSAECONNREFUSED;
-const int Socket::ConnectionAborted = WSAECONNABORTED;
-const int Socket::ConnectionTimedOut = WSAETIMEDOUT;
-const int Socket::ConnectionReset = WSAECONNRESET;
-const int Socket::Unreachable = WSAENETUNREACH;
-const int Socket::NotConnected = WSAENOTCONN;
-const int Socket::Connected = WSAEISCONN;
-const int Socket::Already = WSAEALREADY; // ?
-const int Socket::Shutdown = WSAESHUTDOWN;
-const int Socket::Disconnected = WSAEDISCON;
-const int Socket::NetworkReset = WSAENETRESET;
-const int Socket::Error = SOCKET_ERROR;
-const int Socket::AddressInUse = WSAEADDRINUSE;
-const int Socket::AddressNotAvailable = WSAEADDRNOTAVAIL;
-
-const int Socket::FamilyNotSupported = WSAEAFNOSUPPORT;
-const int Socket::NotSocket = WSAENOTSOCK;
-const int Socket::ProtocolOption = WSAENOPROTOOPT;
-const int Socket::ProtocolType = WSAEPROTOTYPE;
-//const int Socket::_NotSupported = WSAE??;
-const int Socket::OperationNotSupported = WSAEOPNOTSUPP;
-const int Socket::ProtocolNotSupported = WSAEPROTONOSUPPORT;
-#else // POSIX
-const fd_t Socket::InvalidHandle = -1;
-const int Socket::NoSignal = MSG_NOSIGNAL;
-const int Socket::InProgress = EINPROGRESS;
-const int Socket::SubsystemDown = ENETDOWN;
-const int Socket::OutOfBuffers = ENOBUFS;
-const int Socket::ConnectionRefused = ECONNREFUSED;
-const int Socket::ConnectionAborted = ECONNABORTED;
-const int Socket::ConnectionTimedOut = ETIMEDOUT;
-const int Socket::ConnectionReset = ECONNRESET;
-const int Socket::Unreachable = ENETUNREACH;
-const int Socket::NotConnected = ENOTCONN;
-const int Socket::Connected = EISCONN;
-const int Socket::Already = EALREADY; // ?
-const int Socket::Shutdown = ESHUTDOWN;
-//const int Socket::Disconnected = EDISCON; // not present on non-windows systems?
-const int Socket::NetworkReset = ENETRESET;
-const int Socket::Error = -1;
-const int Socket::AddressInUse = EADDRINUSE;
-const int Socket::AddressNotAvailable = EADDRNOTAVAIL;
-
-const int Socket::FamilyNotSupported = EAFNOSUPPORT;
-const int Socket::NotSocket = ENOTSOCK;
-const int Socket::ProtocolOption = ENOPROTOOPT;
-const int Socket::ProtocolType = EPROTOTYPE;
-//const int Socket::_NotSupported = E??;
-const int Socket::OperationNotSupported = EOPNOTSUPP;
-const int Socket::ProtocolNotSupported = EPROTONOSUPPORT;
-#endif
-
-const int Socket::ConnectionBroken = EPIPE;
-
 /*
 const int FullShutdown = SHUT_RDWR;
 const int ShutdownWriting = SHUT_WR;
 const int ShutdownReading = SHUT_RD;
 */
+
+using namespace socket_error;
+using namespace error;
 
 Socket::Socket(const fd_t& nsock)
 	: //ReferenceCounted(),
@@ -157,7 +99,7 @@ Socket::~Socket()
 
 fd_t Socket::create()
 {
-	if (sock != Socket::InvalidHandle)
+	if (sock != InvalidHandle)
 		close();
 	
 	#ifdef WIN32
@@ -166,7 +108,7 @@ fd_t Socket::create()
 	sock = socket(addr.family, SOCK_STREAM, IPPROTO_TCP);
 	#endif
 	
-	if (sock == Socket::InvalidHandle)
+	if (sock == InvalidHandle)
 	{
 		#ifdef WIN32
 		s_error = WSAGetLastError();
@@ -219,7 +161,7 @@ fd_t Socket::fd() const
 
 fd_t Socket::fd(fd_t nsock)
 {
-	if (sock != Socket::InvalidHandle) close();
+	if (sock != InvalidHandle) close();
 	return sock = nsock;
 }
 
@@ -233,12 +175,12 @@ void Socket::close()
 	::close(sock);
 	#endif
 	
-	sock = Socket::InvalidHandle;
+	sock = InvalidHandle;
 }
 
 Socket Socket::accept()
 {
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	// temporary address struct
 	Address sa;
@@ -251,7 +193,7 @@ Socket Socket::accept()
 	fd_t n_fd = ::accept(sock, &sa.addr, &addrlen);
 	#endif
 	
-	if (n_fd == Socket::InvalidHandle)
+	if (n_fd == InvalidHandle)
 	{
 		#ifdef WIN32
 		s_error = WSAGetLastError();
@@ -323,7 +265,7 @@ bool Socket::block(const bool x)
 	cout << "[Socket] Blocking for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif // NDEBUG
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	#ifdef WIN32
 	uint32_t arg = (x ? 1 : 0);
@@ -340,7 +282,7 @@ bool Socket::reuse_port(const bool x)
 	cout << "[Socket] Reuse port of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	#ifndef SO_REUSEPORT
 	// Windows (for example) does not have it
@@ -379,7 +321,7 @@ bool Socket::reuse_addr(const bool x)
 	cout << "[Socket] Reuse address of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	#ifndef SO_REUSEADDR
 	// If the system doesn't have it
@@ -455,7 +397,7 @@ int Socket::bindTo(const std::string& address, const ushort _port)
 	cout << "[Socket] Binding to address " << address << ":" << _port << endl;
 	#endif
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	Address naddr = Address::fromString(address);
 	
@@ -527,7 +469,7 @@ int Socket::connect(const Address& rhost)
 	cout << "[Socket] Connecting to " << rhost.toString() << endl;
 	#endif
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	addr = rhost;
 	
@@ -585,7 +527,7 @@ int Socket::listen()
 	cout << "[Socket] Listening" << endl;
 	#endif
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	const int r = ::listen(sock, 4);
 	
@@ -621,7 +563,7 @@ int Socket::send(char* buffer, const size_t len)
 	
 	assert(buffer != 0);
 	assert(len > 0);
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	
 	#ifdef WIN32
 	WSABUF wbuf;
@@ -630,7 +572,7 @@ int Socket::send(char* buffer, const size_t len)
 	u_long sb;
 	const int r = ::WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
 	#else // POSIX
-	const int r = ::send(sock, buffer, len, Socket::NoSignal);
+	const int r = ::send(sock, buffer, len, NoSignal);
 	#endif
 	
 	if (r == Error)
@@ -724,7 +666,7 @@ int Socket::recv(char* buffer, const size_t len)
 	cout << "[Socket] Receiving at most " << len << " bytes" << endl;
 	#endif
 	
-	assert(sock != Socket::InvalidHandle);
+	assert(sock != InvalidHandle);
 	assert(buffer != 0);
 	assert(len > 0);
 	
@@ -806,7 +748,7 @@ int Socket::sendfile(fd_t fd, off_t offset, size_t nbytes, off_t *sbytes)
 	cout << "[Socket] Sending file" << endl;
 	#endif
 	
-	assert(fd != Socket::InvalidHandle);
+	assert(fd != InvalidHandle);
 	assert(offset >= 0);
 	
 	// call the real sendfile()
@@ -893,7 +835,7 @@ bool Socket::operator== (const Socket& tsock) const
 
 Socket& Socket::operator= (Socket& tsock)
 {
-	if (sock != Socket::InvalidHandle)
+	if (sock != InvalidHandle)
 		close(sock);
 	sock = tsock.sock;
 	return *this;
