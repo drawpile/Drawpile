@@ -79,13 +79,9 @@ const int Socket::ProtocolType = WSAEPROTOTYPE;
 const int Socket::OperationNotSupported = WSAEOPNOTSUPP;
 const int Socket::ProtocolNotSupported = WSAEPROTONOSUPPORT;
 #else // POSIX
-#ifndef EWOULDBLOCK
-	#define EWOULDBLOCK EAGAIN
-#endif
 const fd_t Socket::InvalidHandle = -1;
 const int Socket::NoSignal = MSG_NOSIGNAL;
 const int Socket::InProgress = EINPROGRESS;
-const int Socket::WouldBlock = EWOULDBLOCK;
 const int Socket::SubsystemDown = ENETDOWN;
 const int Socket::OutOfBuffers = ENOBUFS;
 const int Socket::ConnectionRefused = ECONNREFUSED;
