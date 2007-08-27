@@ -18,16 +18,37 @@
 	#include <winsock2.h>
 #endif
 
+#ifndef NDEBUG
+	#include <cassert>
+	#include <iostream>
+#endif
+
 bool startNetSubsystem()
 {
 	#ifdef WIN32
-	const int maj=2, min=2;
-	
 	WSADATA info;
-	if (WSAStartup((16<<maj|min), &info))
-		return false;
-	if (LOBYTE(info.wVersion) != maj or HIBYTE(info.wVersion) != min)
+	const int r = WSAStartup(0x0202, &info);
+	if (r != 0)
 	{
+		#ifndef NDEBUG
+		assert(r != WSAEFAULT);
+		if (r == WSAVERNOTSUPPORTED)
+			std::cerr << "Windows sockets version not supported." << std::endl;
+		else if (r == WSASYSNOTREADY)
+			std::cerr << "O/S network subsystem not ready, yet." << std::endl;
+		else
+			std::cerr << "Unknown error in starting WSA." << std::endl;
+		#endif
+		return false;
+	}
+	
+	// We only care the major version is correct (= 2.x)
+	if ((info.wVersion >> 8) != 2)
+	{
+		#ifndef NDEBUG
+		std::cerr << "WSA returned invalid version." << std::endl;
+		#endif
+		
 		stopNetSubsystem();
 		return false;
 	}

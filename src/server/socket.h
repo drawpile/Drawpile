@@ -48,23 +48,6 @@ public:
 	static const int ShutdownWriting;
 	static const int ShutdownReading;
 	*/
-private:
-	//! @internal
-	static const int FamilyNotSupported;
-	//! @internal
-	static const int NotSocket;
-	//! @internal
-	static const int ProtocolOption;
-	//! @internal
-	static const int ProtocolType;
-	//! @internal
-	//static const int _NotSupported;
-	//! @internal
-	static const int OperationNotSupported;
-	//! @internal
-	static const int ProtocolNotSupported;
-	//! @internal
-	static const int NoSignal;
 protected:
 	//! Assigned file descriptor
 	fd_t sock;
