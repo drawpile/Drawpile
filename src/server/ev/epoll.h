@@ -47,7 +47,7 @@ class Epoll
 {
 private:
 	
-	uint _timeout;
+	uint m_timeout;
 	int nfds;
 	int evfd;
 	epoll_event events[10];

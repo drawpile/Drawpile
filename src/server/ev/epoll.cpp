@@ -28,13 +28,6 @@
 
 #include "epoll.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-	using std::cout;
-	using std::endl;
-	using std::cerr;
-#endif
-
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -53,38 +46,26 @@ Epoll::Epoll()
 {
 	evfd = epoll_create(10);
 	
-	if (evfd == invalid_fd<Epoll>::value)
+	if (evfd == -1)
 	{
 		error = errno;
 		
 		// max_events is not positive integer
 		assert(error != EINVAL);
-		
-		throw std::exception();
 	}
 }
 
 Epoll::~Epoll()
 {
-	if (evfd != invalid_fd<Epoll>::value)
-	{
+	if (evfd != -1)
 		close(evfd);
-		evfd = -1;
-	}
-	
-	// Make sure the event fd was closed.
-	assert(evfd == invalid_fd<Epoll>::value);
 }
 
 int Epoll::wait()
 {
-	assert(evfd != invalid_fd<Epoll>::value);
+	assert(evfd != -1);
 	
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "epoll.wait()" << endl;
-	#endif
-	
-	nfds = epoll_wait(evfd, events, 10, _timeout);
+	nfds = epoll_wait(evfd, events, 10, m_timeout);
 	
 	if (nfds == -1)
 	{
@@ -104,11 +85,7 @@ int Epoll::wait()
 // Errors: ENOMEM
 int Epoll::add(fd_t fd, ev_t events)
 {
-	assert(evfd != invalid_fd<Epoll>::value);
-	
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "epoll.add(FD: " << fd << ")" << endl;
-	#endif
+	assert(evfd != -1);
 	
 	assert(fd != invalid_fd<Epoll>::value);
 	
@@ -135,11 +112,7 @@ int Epoll::add(fd_t fd, ev_t events)
 
 int Epoll::modify(fd_t fd, ev_t events)
 {
-	assert(evfd != invalid_fd<Epoll>::value);
-	
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "epoll.modify(FD: " << fd << ")" << endl;
-	#endif
+	assert(evfd != -1);
 	
 	assert(fd != invalid_fd<Epoll>::value);
 	
@@ -166,7 +139,7 @@ int Epoll::modify(fd_t fd, ev_t events)
 // Errors: ENOMEM
 int Epoll::remove(fd_t fd)
 {
-	assert(evfd != invalid_fd<Epoll>::value);
+	assert(evfd != -1);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
@@ -192,18 +165,14 @@ int Epoll::remove(fd_t fd)
 
 bool Epoll::getEvent(fd_t &fd, ev_t &r_events)
 {
-	assert(evfd != invalid_fd<Epoll>::value);
+	assert(evfd != -1);
 	
-	if (nfds == -1)
+	if (nfds < 0)
 		return false;
 	
 	fd = events[nfds].data.fd;
 	r_events = events[nfds].events;
-	--nfds;
-	
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "epoll.getEvent(FD: " << fd << ", events: " << r_events << ")" << endl;
-	#endif
+	nfds--;
 	
 	assert(fd != invalid_fd<Epoll>::value); // shouldn't happen
 	
@@ -212,7 +181,7 @@ bool Epoll::getEvent(fd_t &fd, ev_t &r_events)
 
 void Epoll::timeout(uint msecs)
 {
-	_timeout = msecs;
+	m_timeout = msecs;
 }
 
 } // namespace:event
