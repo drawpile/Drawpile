@@ -45,22 +45,23 @@ const int write<Kqueue>::value = EVFILT_WRITE;
 const std::string system<Kqueue>::value("kqueue");
 
 Kqueue::Kqueue()
-	: evfd(0),
-	chlist_count(0),
-	evtrigr_size(max_events)
+	: evfd(-1),
+	chlist_size(8),
+	chlist_c(0),
+	evtrigr_size(8),
+	evtrigr_c(0)
 {
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "kqueue()" << endl;
 	#endif
 	
-	evfd = kqueue();
-	if (kq == -1)
-	{
+	if ((evfd = kqueue()) == -1)
 		error = errno;
-		return false;
+	else
+	{
+		evtrigr = new kevent[evtrigr_size];
+		chlist = new kevent[chlist_size];
 	}
-	
-	evtrigr = new kevent[evtrigr_size];
 }
 
 Kqueue::~Kqueue()
@@ -70,16 +71,23 @@ Kqueue::~Kqueue()
 	#endif
 	
 	if (evfd != -1)
-	{
 		close(evfd);
-		evfd = -1;
-	}
-	
-	// Make sure the event fd was closed.
-	assert(evfd == -1);
 	
 	delete [] evtrigr;
+	delete [] chlist;
 }
+
+void Kqueue::resizeChlist(int new_size)
+{
+	assert(new_size > chlist_size);
+	
+	kevent *nchl = new kevent[new_size];
+	memcpy(nchl, chlist, sizeof(kevent)*chlist_c);
+	delete [] chlist;
+	chlist = nchl;
+	chlist_size = new_size;
+}
+
 
 // Errors: EACCES, ENOMEM
 int Kqueue::wait()
@@ -88,8 +96,8 @@ int Kqueue::wait()
 	cout << "kqueue.wait()" << endl;
 	#endif
 	
-	nfds = kevent(evfd, &chlist, chlist_count, evtrigr, evtrigr_size, _timeout);
-	chlist_count = 0;
+	nfds = kevent(evfd, chlist, chlist_c, evtrigr, evtrigr_c, &m_timeout);
+	chlist_c = 0;
 	
 	if (nfds == -1)
 	{
@@ -106,6 +114,7 @@ int Kqueue::wait()
 		#ifndef NDEBUG
 		cerr << "Error in event system: " << error << endl;
 		#endif
+		
 		return -1;
 	}
 	
@@ -120,10 +129,10 @@ int Kqueue::add(fd_t fd, int events)
 	
 	assert(fd != -1);
 	
-	if (chlist_count == max_events)
-		return false;
+	if (chlist_c == chlist_size)
+		resizeChlist(chlist_size*2);
 	
-	EV_SET(&chlist[chlist_count++], fd, events, EV_ADD|EV_ENABLE, 0, 0, 0);
+	EV_SET(&chlist[chlist_c++], fd, events, EV_ADD|EV_ENABLE, 0, 0, 0);
 	
 	return true;
 }
@@ -136,10 +145,10 @@ int Kqueue::modify(fd_t fd, int events)
 	
 	assert(fd != -1);
 	
-	if (chlist_count == max_events)
-		return false;
+	if (chlist_c == chlist_size)
+		resizeChlist(chlist_size*2);
 	
-	EV_SET(&chlist[chlist_count++], fd, events, EV_ADD|EV_ENABLE, 0, 0, 0);
+	EV_SET(&chlist[chlist_c++], fd, events, EV_ADD|EV_ENABLE, 0, 0, 0);
 	
 	return true;
 }
@@ -152,25 +161,48 @@ int Kqueue::remove(fd_t fd)
 	
 	assert(fd != -1);
 	
-	if (chlist_count == max_events)
-		return false;
+	if (chlist_c == chlist_size)
+		resizeChlist(chlist_size*2);
 	
-	EV_SET(&chlist[chlist_count++], fd, 0, EV_DELETE|EV_DISABLE, 0, 0, 0);
+	EV_SET(&chlist[chlist_c++], fd, 0, EV_DELETE|EV_DISABLE, 0, 0, 0);
 	
 	return true;
 }
 
 bool Kqueue::getEvent(fd_t &fd, int &r_events)
 {
-	if (nfds == evtrigr_size)
+	getevent:
+	nfds--;
+	
+	if (nfds < 0)
 		return false;
 	
-	assert(!fIsSet(evtrigr[nfds].flags, EV_ERROR)); // FIXME
+	if (fIsSet(evtrigr[nfds].flags, EV_ERROR))
+	{
+		// an error occured while processing specific kevent
+		const int l_err = evtrigr[nfds].data;
+		
+		#ifndef NDEBUG
+		cout << "kqueue / chlist (FD: " << evtrigr[nfds].ident << ") error code: " << l_err << std::endl;
+		#endif
+		
+		// coding errors
+		assert(l_err != ENOENT);
+		assert(l_err != EINVAL);
+		assert(l_err != EBADF);
+		assert(l_err != EFAULT);
+		assert(l_err != EACCESS);
+		
+		// out of memory
+		if (l_err == ENOMEM)
+			throw std::bad_alloc;
+		
+		// try next
+		goto getevent;
+	}
 	
 	fd = evtrigr[nfds].ident;
 	r_events = evtrigr[nfds].filter;
-	
-	++nfds;
 	
 	return true;
 }
@@ -183,13 +215,13 @@ void Kqueue::timeout(uint msecs)
 	
 	if (msecs > 1000)
 	{
-		_timeout.tv_sec = msecs/1000;
-		msecs -= _timeout.tv_sec*1000;
+		m_timeout.tv_sec = msecs/1000;
+		msecs -= m_timeout.tv_sec*1000;
 	}
 	else
-		_timeout.tv_sec = 0;
+		m_timeout.tv_sec = 0;
 	
-	_timeout.tv_nsec = msecs * 1000000; // nanoseconds
+	m_timeout.tv_nsec = msecs * 1000000; // nanoseconds
 }
 
 } // namespace:event

@@ -47,10 +47,14 @@ class Kqueue
 	: public Interface<Kqueue>
 {
 private:
-	timespec _timeout;
+	timespec m_timeout;
 	int nfds;
-	kevent chlist[max_events], *evtrigr;
-	size_t chlist_count, evtrigr_size;
+	int evfd;
+	
+	kevent *chlist, *evtrigr;
+	size_t chlist_size, chlist_c, evtrigr_size, evtrigr_c;
+	
+	void resizeChlist(int new_size);
 public:
 	/**
 	 * @throw std::bad_alloc
@@ -60,10 +64,10 @@ public:
 	
 	void timeout(uint msecs) __attribute__ ((nothrow));
 	int wait() __attribute__ ((nothrow));
-	int add(fd_t fd, int events) __attribute__ ((nothrow));
+	int add(fd_t fd, int events);
 	int remove(fd_t fd) __attribute__ ((nothrow));
 	int modify(fd_t fd, int events) __attribute__ ((nothrow));
-	bool getEvent(fd_t &fd, int &events) __attribute__ ((nothrow));
+	bool getEvent(fd_t &fd, int &events);
 };
 
 /* traits */
