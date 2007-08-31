@@ -30,19 +30,10 @@
 
 #include "../../shared/templates.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-	using std::cout;
-	using std::endl;
-	using std::cerr;
-#endif
 #include <cerrno> // errno
 #include <cassert> // assert()
 
 #include "../socket.h"
-#ifdef WIN32
-	#include <winsock2.h>
-#endif
 
 namespace event {
 
@@ -68,13 +59,36 @@ Select::~Select()
 {
 }
 
+void Select::addToSet(fd_set &fdset, fd_t fd
+	#ifndef WIN32
+	, std::set<fd_t>& l_set, fd_t &largest
+	#endif
+)
+{
+	FD_SET(fd, &fdset);
+	#ifndef WIN32
+	l_set.insert(l_set.end(), fd);
+	if (fd > largest) largest = fd;
+	#endif
+}
+
+void Select::removeFromSet(fd_set &fdset, fd_t fd
+	#ifndef WIN32
+	, std::set<fd_t>& l_set, fd_t &largest
+	#endif
+)
+{
+	FD_CLR(fd, &fdset);
+	#ifndef WIN32
+	l_set.erase(fd);
+	if (fd == largest)
+		largest = (l_set.size() > 0 ? *(l_set.rend()) : event::invalid_fd<Select>::value);
+	#endif
+}
+
 // Errors: WSAENETDOWN
 int Select::wait()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "select.wait()" << endl;
-	#endif
-	
 	#ifdef EV_SELECT_COPY
 	FD_COPY(&fds_r, &t_fds_r);
 	FD_COPY(&fds_w, &t_fds_w);
@@ -89,10 +103,16 @@ int Select::wait()
 	static const fd_t ubnfds = 0; // not used
 	#else
 	using std::max;
-	const fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
+	
+	fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
+	
+	if (ubnfds == event::invalid_fd<Select>::value)
+		ubnfds = event::invalid_fd<Select>::value;
+	else
+		ubnfds++;
 	#endif
 	
-	nfds = select((ubnfds == event::invalid_fd<Select>::value ? event::invalid_fd<Select>::value : ubnfds+1), &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
+	nfds = select(ubnfds, &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
 	
 	switch (nfds)
 	{
@@ -119,9 +139,10 @@ int Select::wait()
 			assert(error != EFAULT);
 			#endif
 			
-			#if defined(WIN32) and !defined(NDEBUG)
+			#if defined(WIN32)
+			/** @todo Do we need to do anything here? */
 			if (error == WSAENETDOWN)
-				cerr << "The network subsystem has failed." << endl;
+				return 0;
 			#endif
 			break;
 		case 0:
@@ -137,56 +158,52 @@ int Select::wait()
 
 int Select::add(fd_t fd, ev_t events)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "select.add(fd: " << fd << ")" << endl;
-	#endif
-	
 	assert(fd != event::invalid_fd<Select>::value);
 	
 	bool rc=false;
 	
 	if (fIsSet(events, event::read<Select>::value))
 	{
-		FD_SET(fd, &fds_r);
-		#if !defined(WIN32) // win32 ignores the argument
-		read_set.insert(read_set.end(), fd);
-		if (fd > nfds_r) nfds_r = fd;
-		#endif // !Win32
+		addToSet(fds_r, fd
+			#ifndef WIN32
+			, read_set, nfds_r
+			#endif
+		);
 		rc = true;
 	}
+	
 	if (fIsSet(events, event::write<Select>::value))
 	{
-		FD_SET(fd, &fds_w);
-		#if !defined(WIN32) // win32 ignores the argument
-		write_set.insert(write_set.end(), fd);
-		if (fd > nfds_w) nfds_w = fd;
-		#endif // !Win32
+		addToSet(fds_w, fd
+			#ifndef WIN32
+			, write_set, nfds_w
+			#endif
+		);
 		rc = true;
 	}
+	
 	if (fIsSet(events, event::error<Select>::value))
 	{
-		FD_SET(fd, &fds_e);
-		#if !defined(WIN32) // win32 ignores the argument
-		error_set.insert(error_set.end(), fd);
-		if (fd > nfds_e) nfds_e = fd;
-		#endif // !Win32
+		addToSet(fds_e, fd
+			#ifndef WIN32
+			, error_set, nfds_e
+			#endif
+		);
 		rc = true;
 	}
 	
 	assert(rc);
 	
 	// maintain fd_list
-	fd_list[fd] = events;
+	fd_list_iter i = fd_list.find(fd);
+	assert(i != fd_list.end());
+	i->second = events;
 	
 	return rc;
 }
 
 int Select::modify(fd_t fd, ev_t events)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "select.modify(fd: " << fd << ")" << endl;
-	#endif
-	
 	assert(fd != event::invalid_fd<Select>::value);
 	
 	// act like a wrapper.
@@ -194,69 +211,51 @@ int Select::modify(fd_t fd, ev_t events)
 		add(fd, events);
 	
 	if (!fIsSet(events, event::read<Select>::value))
-	{
-		FD_CLR(fd, &fds_r);
-		#ifndef WIN32
-		read_set.erase(fd);
-		if (fd == nfds_r)
-			nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event::invalid_fd<Select>::value);
-		#endif // WIN32
-	}
+		removeFromSet(fds_r, fd
+			#ifndef WIN32
+			, read_set, nfds_r
+			#endif
+		);
 	
 	if (!fIsSet(events, event::write<Select>::value))
-	{
-		FD_CLR(fd, &fds_w);
-		#ifndef WIN32
-		write_set.erase(fd);
-		if (fd == nfds_w)
-			nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event::invalid_fd<Select>::value);
-		#endif // WIN32
-	}
+		removeFromSet(fds_w, fd
+			#ifndef WIN32
+			, write_set, nfds_w
+			#endif
+		);
 	
 	if (!fIsSet(events, event::error<Select>::value))
-	{
-		FD_CLR(fd, &fds_e);
-		#ifndef WIN32
-		error_set.erase(fd);
-		if (fd == nfds_e)
-			nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event::invalid_fd<Select>::value);
-		#endif // WIN32
-	}
+		removeFromSet(fds_e, fd
+			#ifndef WIN32
+			, error_set,  nfds_e
+			#endif
+		);
 	
 	return 0;
 }
 
 int Select::remove(fd_t fd)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "select.remove(fd: " << fd << ")" << endl;
-	#endif
-	
 	assert(fd != event::invalid_fd<Select>::value);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	assert(iter != fd_list.end());
 	
-	FD_CLR(fd, &fds_r);
-	#ifndef WIN32
-	read_set.erase(fd);
-	if (fd == nfds_r)
-		nfds_r = (read_set.size() > 0 ? *(--read_set.end()) : event::invalid_fd<Select>::value);
-	#endif // WIN32
-	
-	FD_CLR(fd, &fds_w);
-	#ifndef WIN32
-	write_set.erase(fd);
-	if (fd == nfds_w)
-		nfds_w = (write_set.size() > 0 ? *(--write_set.end()) : event::invalid_fd<Select>::value);
-	#endif // WIN32
-	
-	FD_CLR(fd, &fds_e);
-	#ifndef WIN32
-	error_set.erase(fd);
-	if (fd == nfds_e)
-		nfds_e = (error_set.size() > 0 ? *(--error_set.end()) : event::invalid_fd<Select>::value);
-	#endif // WIN32
+	removeFromSet(fds_r, fd
+		#ifndef WIN32
+		, read_set, nfds_r
+		#endif
+	);
+	removeFromSet(fds_w, fd
+		#ifndef WIN32
+		, write_set, nfds_w
+		#endif
+	);
+	removeFromSet(fds_e, fd
+		#ifndef WIN32
+		, error_set, nfds_e
+		#endif
+	);
 	
 	fd_list.erase(iter);
 	fd_iter = fd_list.begin();

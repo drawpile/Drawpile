@@ -58,14 +58,30 @@ class Select
 {
 private:
 	timeval _timeout;
+	
 	int nfds;
+	
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
+	
 	std::map<fd_t, uint> fd_list; // events set for FD
-	std::map<fd_t, uint>::iterator fd_iter;
+	typedef std::map<fd_t, uint>::iterator fd_list_iter;
+	fd_list_iter fd_iter;
+	
 	#ifndef WIN32
 	std::set<fd_t> read_set, write_set, error_set;
 	fd_t nfds_r, nfds_w, nfds_e;
 	#endif // !WIN32
+	
+	void addToSet(fd_set &fset, fd_t fd
+		#ifndef WIN32
+		, std::set<fd_t>& l_set, fd_t &largest
+		#endif
+	);
+	void removeFromSet(fd_set &fset, fd_t fd
+		#ifndef WIN32
+		, std::set<fd_t>& l_set, fd_t &largest
+		#endif
+	);
 public:
 	Select() __attribute__ ((nothrow));
 	~Select()  __attribute__ ((nothrow));
