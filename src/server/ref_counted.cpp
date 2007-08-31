@@ -28,6 +28,8 @@
 
 #include "ref_counted.h"
 
+#include <cassert>
+
 ReferenceCounted::ReferenceCounted()
 	: rc_ref_count(new ulong(1))
 {
