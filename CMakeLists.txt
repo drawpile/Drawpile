@@ -31,7 +31,8 @@ option ( SELECT "Enable select(2) support (default)" ON )
 option ( DEFLATE "Enable deflate compression (requires zlib)" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
-option ( OPTIMIZE "Apply several optimization flags" ON )
+option ( OPTIMIZE "Apply several generic optimization flags" ON )
+option ( USEENV "Use CXXFLAGS as set in environemnt" ON )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
 option ( SHARED "Build shared library" OFF )
 
@@ -48,10 +49,6 @@ option ( OPENSSL "Use OpenSSL if present" OFF )
 option ( PERSISTENT "Enable persistent session support" OFF )
 
 option ( RELEASE "Compile as much as possible in one go to generate more optimized binaries." OFF )
-
-option ( NOPI "Disable position-independent code and executables" OFF )
-
-option ( UNSAFEOPT "Enable unsafe math optimizations" OFF )
 
 # detect Mac OS X
 
@@ -83,6 +80,8 @@ endif ( DEBUG )
 
 if ( OPTIMIZE )
 	include ( config/Optimize.cmake )
+else ( OPTIMIZE )
+	message ( STATUS "System CXX flags: $ENV{CXXFLAGS}" )
 endif ( OPTIMIZE )
 
 include ( config/Macros.cmake )

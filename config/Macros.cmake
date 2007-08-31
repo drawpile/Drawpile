@@ -18,7 +18,7 @@ macro ( strip_exe target )
 			COMMAND ${STRIP_CMD} -s "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
 		)
 	endif ( STRIP_CMD )
-endmacro ( strip_exe target )
+endmacro ( strip_exe )
 
 macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMENT COPYRIGHT VERSION_MAJOR VERSION_MINOR VERSION_BUG )
 	if ( WIN32 )
@@ -57,11 +57,11 @@ macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMEN
 			file ( APPEND ${win32RC} "\tEND\nEND\n" )
 		endif ( ${CMAKE_CURRENT_LIST_FILE} IS_NEWER_THAN ${win32RC} )
 		
-		set ( ${resfile} ${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj )
+		set ( ${resfile} "${CMAKE_CURRENT_BINARY_DIR}/win32resource.obj" )
 		
 		add_custom_command(
-			OUTPUT ${resfile}
-			COMMAND windres ${win32RC} ${resfile}
+			OUTPUT ${${resfile}}
+			COMMAND windres ${win32RC} ${${resfile}}
 			DEPENDS ${win32RC}
 		)
 	endif ( WIN32 )
@@ -88,7 +88,7 @@ macro ( generate_final OUTFILE )
 	endforeach ( it )
 	
 	set ( ${OUTFILE} ${finalfile} )
-endmacro ( generate_final OUTFILE )
+endmacro ( generate_final )
 
 macro ( InSourceDir nFiles )
 	set ( filelist )
@@ -97,7 +97,7 @@ macro ( InSourceDir nFiles )
 		MACRO_ADD_FILE_DEPENDENCIES( ${${nFiles}} ${CMAKE_CURRENT_SOURCE_DIR}/${it} )
 	endforeach ( it )
 	set ( ${nFiles} ${filelist} )
-endmacro ( InSourceDir nFiles )
+endmacro ( InSourceDir )
 
 macro ( InBuildDir nFiles )
 	set ( filelist )
@@ -106,4 +106,13 @@ macro ( InBuildDir nFiles )
 		MACRO_ADD_FILE_DEPENDENCIES( ${${nFiles}} ${CMAKE_CURRENT_BINARY_DIR}/${it} )
 	endforeach ( it )
 	set ( ${nFiles} ${filelist} )
-endmacro ( InBuildDir files )
+endmacro ( InBuildDir )
+
+include ( TestCXXAcceptsFlag )
+
+macro ( TestCompilerFlag FLAG ACCEPTED )
+	check_cxx_accepts_flag ( ${${FLAG}} ${ACCEPTED} )
+	if ( NOT ${ACCEPTED} )
+		set ( ${FLAG} "" )
+	endif ( NOT ${ACCEPTED} )
+endmacro ( TestCompilerFlag )
