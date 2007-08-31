@@ -77,7 +77,6 @@ if ( SERVERLIB )
 		socket.cpp
 		server.cpp
 		ref_counted.cpp
-		shared_ptr.cpp
 	)
 	
 	if ( RELEASE )

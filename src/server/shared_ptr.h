@@ -58,4 +58,45 @@ public:
 	T* operator-> () __attribute__ ((nothrow));
 };
 
+template <typename T>
+SharedPtr<T>::SharedPtr()
+{
+	/* should never be called */ 
+}
+
+template <typename T>
+SharedPtr<T>::SharedPtr(T *ptr)
+	: ReferenceCounted(),
+	m_sptr(ptr)
+{
+	/* nothing */
+}
+
+template <typename T>
+SharedPtr<T>::SharedPtr(const SharedPtr<T> &shr_ptr)
+	: ReferenceCounted(shr_ptr),
+	m_sptr(shr_ptr.m_sptr)
+{
+	/* nothing */
+}
+
+template <typename T>
+SharedPtr<T>::~SharedPtr()
+{
+	if (unique())
+		delete m_sptr;
+}
+
+template <typename T>
+T& SharedPtr<T>::operator* ()
+{
+	return (*m_sptr);
+}
+
+template <typename T>
+T* SharedPtr<T>::operator-> ()
+{
+	return m_sptr;
+}
+
 #endif // SharedPointer_INCLUDED
