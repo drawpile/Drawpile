@@ -5,7 +5,4 @@
 
 #cmakedefine USE_ASM 1
 
-#cmakedefine HAVE_MMX 1
-#cmakedefine HAVE_SSE 1
-
 #cmakedefine HAVE_QT43 1
