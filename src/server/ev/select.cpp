@@ -195,9 +195,7 @@ int Select::add(fd_t fd, ev_t events)
 	assert(rc);
 	
 	// maintain fd_list
-	fd_list_iter i = fd_list.find(fd);
-	assert(i != fd_list.end());
-	i->second = events;
+	fd_list.insert(std::pair<fd_t,ev_t>(fd,events));
 	
 	return rc;
 }
