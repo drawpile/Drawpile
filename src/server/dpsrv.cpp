@@ -44,7 +44,6 @@
 #include <getopt.h>
 
 #include "server.h" // Server class
-#include "net.h" // start/stopNetSubsystem
 #include "network.h" // Network namespace
 #include "types.h"
 
@@ -302,8 +301,16 @@ int main(int argc, char** argv)
 	
 	// limited scope for server
 	{
-		if (!startNetSubsystem())
+		#ifndef NDEBUG
+		cout << "+ Initializing WSA" << endl;
+		#endif
+		
+		if (!Network::start())
 			goto end;
+		
+		#ifndef NDEBUG
+		cout << "+ Initializing server" << endl;
+		#endif
 		
 		Server srv;
 		
@@ -333,13 +340,13 @@ int main(int argc, char** argv)
 			rc = 2;
 		}
 		
-		stopNetSubsystem();
+		Network::stop();
 	} // end server scope
 	
+	end:
 	#ifndef NDEBUG
 	cout << "~ Quitting..." << endl;
 	#endif
 	
-	end:
 	return rc;
 }

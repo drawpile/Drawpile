@@ -58,57 +58,57 @@ const int ShutdownReading = SHUT_RD;
 using namespace socket_error;
 using namespace error;
 
-Socket::Socket(const fd_t& nsock)
-	: //ReferenceCounted(),
-	sock(nsock)
+Socket::Socket(const fd_t nsock)
+	: Descriptor<fd_t>(nsock)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	std::cout << "Socket::Socket(" << nsock << ")" << std::endl;
 	#endif
+	
+	if (m_handle != InvalidHandle)
+		block(false);
 }
 
-Socket::Socket(const fd_t& nsock, const Address& saddr)
-	: //ReferenceCounted(),
-	sock(nsock),
-	addr(saddr)
+Socket::Socket(const fd_t nsock, const Address& saddr)
+	: Descriptor<fd_t>(nsock),
+	m_addr(saddr)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "Socket(FD: " << nsock << ", address: " << saddr.toString() << ") constructed" << std::endl;
+	std::cout << "Socket(FD: " << nsock << ", address: " << m_addr.toString() << ") constructed" << std::endl;
 	#endif
+	
+	if (m_handle != InvalidHandle)
+		block(false);
 }
 
 Socket::Socket(const Socket& socket)
-	: ReferenceCounted(socket),
-	sock(socket.sock),
-	addr(socket.addr)
+	: Descriptor<fd_t>(socket),
+	m_addr(socket.m_addr)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "Socket(FD: " << sock << ", address: " << addr.toString() << ") copied [" << (*ref_count) << "]" << std::endl;
+	std::cout << "Socket(FD: " << m_handle << ", address: " << m_addr.toString() << ") copied [" << (*rc_ref_count) << "]" << std::endl;
 	#endif
 }
 
 Socket::~Socket()
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
-	std::cout << "~Socket(FD: " << sock << ") destructed" << std::endl;
+	std::cout << "~Socket(FD: " << m_handle << ") destructed" << std::endl;
 	#endif
-	
-	if (unique())
-		close();
 }
 
 fd_t Socket::create()
 {
-	if (sock != InvalidHandle)
+	if (m_handle != InvalidHandle)
 		close();
 	
 	#ifdef WIN32
-	sock = WSASocket(addr.family, SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
+	m_handle = WSASocket(m_addr.family, SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
 	#else // POSIX
-	sock = socket(addr.family, SOCK_STREAM, IPPROTO_TCP);
+	m_handle = socket(m_addr.family, SOCK_STREAM, IPPROTO_TCP);
 	#endif
 	
-	if (sock == InvalidHandle)
+	if (m_handle == InvalidHandle)
 	{
 		#ifdef WIN32
 		s_error = WSAGetLastError();
@@ -150,47 +150,25 @@ fd_t Socket::create()
 		}
 		#endif
 	}
+	else
+		block(false);
 	
-	return sock;
-}
-
-fd_t Socket::fd() const
-{
-	return sock;
-}
-
-fd_t Socket::fd(fd_t nsock)
-{
-	if (sock != InvalidHandle) close();
-	return sock = nsock;
-}
-
-void Socket::close()
-{
-	#if defined(HAVE_XPWSA)
-	::DisconnectEx(sock, 0, TF_REUSE_SOCKET, 0);
-	#elif defined(WIN32)
-	::closesocket(sock);
-	#else // POSIX
-	::close(sock);
-	#endif
-	
-	sock = InvalidHandle;
+	return m_handle;
 }
 
 Socket Socket::accept()
 {
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
 	// temporary address struct
 	Address sa;
 	
 	socklen_t addrlen = sa.size();
 	
-	#ifdef WIN32
-	fd_t n_fd = ::WSAAccept(sock, &sa.addr, &addrlen, 0, 0);
+	#if WIN32
+	fd_t n_fd = ::WSAAccept(m_handle, &sa.addr, &addrlen, 0, 0);
 	#else // POSIX
-	fd_t n_fd = ::accept(sock, &sa.addr, &addrlen);
+	fd_t n_fd = ::accept(m_handle, &sa.addr, &addrlen);
 	#endif
 	
 	if (n_fd == InvalidHandle)
@@ -259,30 +237,30 @@ Socket Socket::accept()
 	return Socket(n_fd, sa);
 }
 
-bool Socket::block(const bool x)
+bool Socket::block(bool x)
 {
 	#ifndef NDEBUG
-	cout << "[Socket] Blocking for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
+	cout << "[Socket] Blocking for socket #" << m_handle << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif // NDEBUG
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
 	#ifdef WIN32
 	uint32_t arg = (x ? 1 : 0);
-	return (WSAIoctl(sock, FIONBIO, &arg, sizeof(arg), 0, 0, 0, 0, 0) == 0);
+	return (WSAIoctl(m_handle, FIONBIO, &arg, sizeof(arg), 0, 0, 0, 0, 0) == 0);
 	#else // POSIX
 	assert(x == false);
-	return fcntl(sock, F_SETFL, O_NONBLOCK) == Error ? false : true;
+	return fcntl(m_handle, F_SETFL, O_NONBLOCK) == Error ? false : true;
 	#endif
 }
 
-bool Socket::reuse_port(const bool x)
+bool Socket::reuse_port(bool x)
 {
 	#ifndef NDEBUG
-	cout << "[Socket] Reuse port of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
+	cout << "[Socket] Reuse port of socket #" << m_handle << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
 	#ifndef SO_REUSEPORT
 	// Windows (for example) does not have it
@@ -290,7 +268,7 @@ bool Socket::reuse_port(const bool x)
 	#else // POSIX
 	int val = (x ? 1 : 0);
 	
-	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, (char*)&val, sizeof(int));
+	const int r = setsockopt(m_handle, SOL_SOCKET, SO_REUSEPORT, (char*)&val, sizeof(int));
 	
 	if (r == Error)
 	{
@@ -315,13 +293,13 @@ bool Socket::reuse_port(const bool x)
 	#endif
 }
 
-bool Socket::reuse_addr(const bool x)
+bool Socket::reuse_addr(bool x)
 {
 	#ifndef NDEBUG
-	cout << "[Socket] Reuse address of socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
+	cout << "[Socket] Reuse address of socket #" << m_handle << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
 	#ifndef SO_REUSEADDR
 	// If the system doesn't have it
@@ -329,7 +307,7 @@ bool Socket::reuse_addr(const bool x)
 	#else // POSIX
 	int val = (x ? 1 : 0);
 	
-	const int r = setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char*)&val, sizeof(int));
+	const int r = setsockopt(m_handle, SOL_SOCKET, SO_REUSEADDR, (char*)&val, sizeof(int));
 	
 	if (r == Error)
 	{
@@ -354,17 +332,48 @@ bool Socket::reuse_addr(const bool x)
 	#endif
 }
 
-bool Socket::linger(const bool x, const ushort delay)
+bool Socket::inline_oob(bool x)
+{
+	#ifdef WIN32
+	int val = (x ? 1 : 0);
+	const int r = setsockopt(m_handle, SOL_SOCKET, SO_OOBINLINE, (char*)&val, sizeof(int));
+	
+	if (r == Error)
+	{
+		s_error = errno;
+		
+		#ifdef WIN32
+		assert(s_error != WSANOTINITIALISED);
+		#endif
+		
+		// programming errors
+		assert(s_error != BadDescriptor);
+		assert(s_error != NotSocket);
+		assert(s_error != ProtocolOption);
+		assert(s_error != Fault);
+		
+		#ifndef NDEBUG
+		cerr << "[Socket] Unknown error in inline_oob() - " << s_error << endl;
+		#endif
+	}
+	
+	return (r == 0);
+	#else
+	return false;
+	#endif
+}
+
+bool Socket::linger(bool x, ushort delay)
 {
 	#ifndef NDEBUG
-	cout << "[Socket] Linger for socket #" << sock << ": " << (x?"Enabled":"Disabled") << endl;
+	cout << "[Socket] Linger for socket #" << m_handle << ": " << (x?"Enabled":"Disabled") << endl;
 	#endif
 	
 	::linger lval;
 	lval.l_onoff = (x ? 1 : 0);
 	lval.l_linger = delay;
 	
-	const int r = setsockopt(sock, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&lval), sizeof(lval));
+	const int r = setsockopt(m_handle, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&lval), sizeof(lval));
 	
 	if (r == Error)
 	{
@@ -391,13 +400,13 @@ bool Socket::linger(const bool x, const ushort delay)
 	return (r == 0);
 }
 
-int Socket::bindTo(const std::string& address, const ushort _port)
+int Socket::bindTo(const std::string& address, ushort _port)
 {
 	#if !defined(NDEBUG)
 	cout << "[Socket] Binding to address " << address << ":" << _port << endl;
 	#endif
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
 	Address naddr = Address::fromString(address);
 	
@@ -408,13 +417,13 @@ int Socket::bindTo(const std::string& address, const ushort _port)
 
 int Socket::bindTo(const Address& naddr)
 {
-	addr = naddr;
+	m_addr = naddr;
 	
 	#ifndef NDEBUG
-	assert(addr.family != Network::Family::None);
+	assert(m_addr.family != Network::Family::None);
 	#endif
 	
-	const int r = bind(sock, &addr.addr, addr.size());
+	const int r = bind(m_handle, &m_addr.addr, m_addr.size());
 	
 	if (r == Error)
 	{
@@ -469,14 +478,14 @@ int Socket::connect(const Address& rhost)
 	cout << "[Socket] Connecting to " << rhost.toString() << endl;
 	#endif
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
-	addr = rhost;
+	m_addr = rhost;
 	
 	#ifdef WIN32
-	const int r = WSAConnect(sock, &addr.addr, addr.size(), 0, 0, 0, 0);
+	const int r = WSAConnect(m_handle, &m_addr.addr, m_addr.size(), 0, 0, 0, 0);
 	#else // POSIX
-	const int r = ::connect(sock, &addr.addr, addr.size());
+	const int r = ::connect(m_handle, &m_addr.addr, m_addr.size());
 	#endif
 	
 	if (r == Error)
@@ -527,9 +536,9 @@ int Socket::listen()
 	cout << "[Socket] Listening" << endl;
 	#endif
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
-	const int r = ::listen(sock, 4);
+	const int r = ::listen(m_handle, 4);
 	
 	if (r == Error)
 	{
@@ -555,7 +564,7 @@ int Socket::listen()
 	return r;
 }
 
-int Socket::send(char* buffer, const size_t len)
+int Socket::write(char* buffer, size_t len)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Sending " << len << " bytes" << endl;
@@ -563,16 +572,16 @@ int Socket::send(char* buffer, const size_t len)
 	
 	assert(buffer != 0);
 	assert(len > 0);
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	
 	#ifdef WIN32
 	WSABUF wbuf;
 	wbuf.buf = buffer;
 	wbuf.len = len;
 	u_long sb;
-	const int r = ::WSASend(sock, &wbuf, 1, &sb, 0, 0, 0);
+	const int r = ::WSASend(m_handle, &wbuf, 1, &sb, 0, 0, 0);
 	#else // POSIX
-	const int r = ::send(sock, buffer, len, NoSignal);
+	const int r = ::send(m_handle, buffer, len, NoSignal);
 	#endif
 	
 	if (r == Error)
@@ -634,13 +643,13 @@ int Socket::send(char* buffer, const size_t len)
 	#endif
 }
 
-int Socket::recv(char* buffer, const size_t len)
+int Socket::read(char* buffer, size_t len)
 {
 	#if defined(DEBUG_SOCKETS) and !defined(NDEBUG)
 	cout << "[Socket] Receiving at most " << len << " bytes" << endl;
 	#endif
 	
-	assert(sock != InvalidHandle);
+	assert(m_handle != InvalidHandle);
 	assert(buffer != 0);
 	assert(len > 0);
 	
@@ -650,9 +659,9 @@ int Socket::recv(char* buffer, const size_t len)
 	wbuf.len = len;
 	u_long flags=0;
 	u_long rb;
-	const int r = ::WSARecv(sock, &wbuf, 1, &rb, &flags, 0, 0);
+	const int r = ::WSARecv(m_handle, &wbuf, 1, &rb, &flags, 0, 0);
 	#else // POSIX
-	const int r = ::recv(sock, buffer, len, 0);
+	const int r = ::recv(m_handle, buffer, len, 0);
 	#endif
 	
 	if (r == Error)
@@ -717,45 +726,35 @@ int Socket::recv(char* buffer, const size_t len)
 
 std::string Socket::address() const
 {
-	return addr.toString();
+	return m_addr.toString();
 }
 
 ushort Socket::port() const
 {
-	return addr.port();
+	return m_addr.port();
 }
 
 int Socket::shutdown(int how)
 {
-	return ::shutdown(sock, how);
-}
-
-int Socket::getError() const
-{
-	return s_error;
+	return ::shutdown(m_handle, how);
 }
 
 Address& Socket::getAddr()
 {
-	return addr;
+	return m_addr;
 }
 
 const Address& Socket::getConstAddr() const
 {
-	return addr;
+	return m_addr;
 }
 
 #ifdef SOCKET_OPS
-bool Socket::operator== (const Socket& tsock) const
-{
-	return (sock == tsock.sock);
-}
-
 Socket& Socket::operator= (Socket& tsock)
 {
-	if (sock != InvalidHandle)
-		close(sock);
-	sock = tsock.sock;
+	close();
+	m_handle = tsock.m_handle;
+	/** @todo copy addr as well */
 	return *this;
 }
 #endif

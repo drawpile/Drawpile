@@ -12,7 +12,7 @@
 
 *******************************************************************************/
 
-#include "net.h"
+#include "network.h"
 
 #ifdef WIN32
 	#include <winsock2.h>
@@ -23,7 +23,9 @@
 	#include <iostream>
 #endif
 
-bool startNetSubsystem()
+namespace Network {
+
+bool start()
 {
 	#ifdef WIN32
 	WSADATA info;
@@ -49,7 +51,7 @@ bool startNetSubsystem()
 		std::cerr << "WSA returned invalid version." << std::endl;
 		#endif
 		
-		stopNetSubsystem();
+		stop();
 		return false;
 	}
 	#endif
@@ -57,9 +59,11 @@ bool startNetSubsystem()
 	return true;
 }
 
-void stopNetSubsystem()
+void stop()
 {
 	#ifdef WIN32
 	WSACleanup();
 	#endif
+}
+
 }

@@ -72,7 +72,7 @@ if ( SERVERLIB )
 		layer_data.cpp
 		user.cpp
 		session.cpp
-		net.cpp
+		network.cpp
 		address.cpp
 		socket.cpp
 		server.cpp

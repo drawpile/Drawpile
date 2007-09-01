@@ -21,7 +21,7 @@
 #include "srvthread.h"
 
 //#include "../server/server.h"
-#include "../server/net.h" // start/stopNetSubsystem
+#include "../server/network.h" // start/stopNetSubsystem
 
 #include "../server/server.h"
 
@@ -33,7 +33,7 @@ ServerThread::ServerThread(Server *server, QObject *parent)
 	srv(server)
 {
 	Q_ASSERT(srv != 0);
-	if (!startNetSubsystem())
+	if (!Network::start())
 		throw std::exception();
 }
 
@@ -44,7 +44,7 @@ ServerThread::~ServerThread()
 		stop();
 		wait();
 	}
-	stopNetSubsystem();
+	Network::stop();
 }
 
 void ServerThread::run()

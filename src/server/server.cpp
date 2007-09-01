@@ -40,6 +40,7 @@
 #include "../shared/SHA1.h"
 
 #include "../shared/protocol.errors.h" // protocol::error namespace
+#include "../shared/protocol.helper.h" // protocol::msgName()
 
 #include "user.h" // User class
 #include "layer_data.h" // LayerData class
@@ -279,7 +280,7 @@ void Server::uWrite(User*& usr)
 		#endif // HAVE_ZLIB
 	}
 	
-	const int sb = usr->sock.send( usr->output.rpos, usr->output.canRead() );
+	const int sb = usr->sock.write( usr->output.rpos, usr->output.canRead() );
 	
 	switch (sb)
 	{
@@ -329,7 +330,7 @@ void Server::uWrite(User*& usr)
 				#endif
 				
 				fClr(usr->events, event::write<EventSystem>::value);
-				ev.modify(usr->sock.fd(), usr->events);
+				ev.modify(usr->sock.handle(), usr->events);
 			}
 			#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 			else
@@ -458,7 +459,7 @@ void Server::uRead(User*& usr)
 		usr->input.resize(usr->input.size + 4096);
 	}
 	
-	const int rb = usr->sock.recv( usr->input.wpos, usr->input.canWrite() );
+	const int rb = usr->sock.read( usr->input.wpos, usr->input.canWrite() );
 	
 	switch (rb)
 	{
@@ -1836,7 +1837,7 @@ void Server::uQueueMsg(User& usr, message_ref msg)
 	if (!fIsSet(usr.events, event::write<EventSystem>::value))
 	{
 		fSet(usr.events, event::write<EventSystem>::value);
-		ev.modify(usr.sock.fd(), usr.events);
+		ev.modify(usr.sock.handle(), usr.events);
 	}
 }
 
@@ -2097,7 +2098,7 @@ void Server::uAdd()
 {
 	Socket sock = lsock.accept();
 	
-	if (sock.fd() == socket_error::InvalidHandle)
+	if (sock.handle() == socket_error::InvalidHandle)
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		cout << "- Invalid socket, aborting user creation." << endl;
@@ -2135,10 +2136,10 @@ void Server::uAdd()
 	#endif
 	
 	User *usr = new User(id, sock);
-	users.insert(std::make_pair(sock.fd(), usr));
+	users.insert(std::make_pair(sock.handle(), usr));
 	
 	fSet(usr->events, event::read<EventSystem>::value);
-	ev.add(usr->sock.fd(), usr->events);
+	ev.add(usr->sock.handle(), usr->events);
 	
 	const size_t ts = utimer.size();
 	
@@ -2207,7 +2208,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	//usr.sock.shutdown(socket_error::FullShutdown);
 	
 	// Remove socket from event system
-	ev.remove(usr->sock.fd());
+	ev.remove(usr->sock.handle());
 	
 	// Clear the fake tunnel of any possible instance of this user.
 	// We're the source...
@@ -2249,7 +2250,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	utimer.remove(usr);
 	
 	// remove from fd -> User* map
-	users.erase(usr->sock.fd());
+	users.erase(usr->sock.handle());
 	
 	// Transient mode exit.
 	if (Transient and (usr->state == User::Active) and users.empty())
@@ -2289,9 +2290,6 @@ bool Server::init()
 		return false;
 	}
 	
-	lsock.block(false); // nonblocking
-	//lsock.linger(false, 0);
-	//lsock.reuse_port(true); // reuse port
 	#ifndef WIN32
 	lsock.reuse_addr(true); // reuse address
 	#endif
@@ -2311,9 +2309,9 @@ bool Server::init()
 	{
 		// add listening socket to event system
 		if (event::has_accept<EventSystem>::value)
-			ev.add(lsock.fd(), event::accept<EventSystem>::value);
+			ev.add(lsock.handle(), event::accept<EventSystem>::value);
 		else
-			ev.add(lsock.fd(), event::read<EventSystem>::value);
+			ev.add(lsock.handle(), event::read<EventSystem>::value);
 		
 		// set event timeout
 		ev.timeout(5000);
@@ -2430,7 +2428,7 @@ int Server::run()
 			while (ev.getEvent(fd, events))
 			{
 				assert(fd != event::invalid_fd<EventSystem>::value);
-				if (fd == lsock.fd())
+				if (fd == lsock.handle())
 				{
 					cullIdlers();
 					uAdd();
@@ -2485,7 +2483,7 @@ void Server::reset()
 	cout << "[Server] Reset" << endl;
 	#endif
 	
-	ev.remove(lsock.fd());
+	ev.remove(lsock.handle());
 	lsock.close();
 	
 	while (!users.empty())

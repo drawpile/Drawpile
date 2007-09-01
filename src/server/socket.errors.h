@@ -1,6 +1,7 @@
 #ifndef SocketErrors_INCLUDED
 #define SocketErrors_INCLUDED
 
+#include "socket.types.h"
 #include "socket.porting.h"
 
 //! Socket errors

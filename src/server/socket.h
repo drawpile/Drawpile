@@ -36,11 +36,11 @@
 #include "socket.errors.h"
 #include "socket.types.h" // fd_t
 
-#include "ref_counted.h"
+#include "descriptor.h"
 
 //! Socket abstraction
 class Socket
-	: public ReferenceCounted
+	: public Descriptor<fd_t>
 {
 public:
 	/*
@@ -49,17 +49,8 @@ public:
 	static const int ShutdownReading;
 	*/
 protected:
-	//! Assigned file descriptor
-	fd_t sock;
-	
-	//! Address
-	Address addr;
-	
-	/*
-	#ifdef SC_SOCKETS
-	std::list<msghdr*> msgs;
-	#endif
-	*/
+	//! Address (local for listening, remote for outgoing)
+	Address m_addr;
 	
 	//! Last error number (from errno or equivalent)
 	int s_error;
@@ -68,14 +59,14 @@ public:
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 */
-	Socket(const fd_t& nsock=socket_error::InvalidHandle) __attribute__ ((nothrow));
+	Socket(const fd_t nsock=socket_error::InvalidHandle) __attribute__ ((nothrow));
 	
 	//! More advanced constructor
 	/**
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(const fd_t& nsock, const Address& saddr) __attribute__ ((nothrow));
+	Socket(const fd_t nsock, const Address& saddr) __attribute__ ((nothrow));
 	
 	//! Copy ctor
 	Socket(const Socket& socket) __attribute__ ((nothrow));
@@ -85,40 +76,12 @@ public:
 	//! Create new socket
 	fd_t create() __attribute__ ((nothrow));
 	
-	//! Close socket
-	/**
-	 * Closes the socket, and therefore, closes the connection associated with it.
-	 */
-	void close() __attribute__ ((nothrow));
-	
-	//! Set file descriptor
-	/**
-	 * @param[in] nsock is the new file descriptor.
-	 *
-	 * @return file descriptor associated with the class.
-	 */
-	fd_t fd(fd_t nsock) __attribute__ ((nothrow));
-	
-	//! Get file descriptor
-	/**
-	 * @return reference to file descriptor associated with the class.
-	 */
-	fd_t fd() const __attribute__ ((nothrow,warn_unused_result));
-	
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
 	 * @note (Socket.getFD() == socket_error::InvalidHandle) if no new connection was accepted
 	 */
 	Socket accept()  __attribute__ ((nothrow)) /*__attribute__ ((warn_unused_result))*/;
-	
-	//! Set blocking
-	/**
-	 * @param[in] x enable/disable blocking
-	 *
-	 * @note You can't re-enable blocking on non-Win32 systems (API limitation?).
-	 */
-	bool block(const bool x) __attribute__ ((nothrow));
 	
 	//! Re-use socket port
 	/**
@@ -129,7 +92,7 @@ public:
 	 *
 	 * @note In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
 	 */
-	bool reuse_port(const bool x) __attribute__ ((nothrow));
+	bool reuse_port(bool x) __attribute__ ((nothrow));
 	
 	//! Re-use socket address
 	/**
@@ -140,7 +103,10 @@ public:
 	 *
 	 * @note In Win32, this does nothing as TIME_WAIT is ignored completely there.
 	 */
-	bool reuse_addr(const bool x) __attribute__ ((nothrow));
+	bool reuse_addr(bool x) __attribute__ ((nothrow));
+	
+	//! Receive OOB data like any other
+	bool inline_oob(bool x) __attribute__ ((nothrow));
 	
 	//! Set/unset lingering
 	/**
@@ -151,7 +117,7 @@ public:
 	 * @param[in] x enable/disable lingering
 	 * @param[in] delay linger time if enabled
 	 */
-	bool linger(const bool x, const ushort delay) __attribute__ ((nothrow));
+	bool linger(bool x, ushort delay) __attribute__ ((nothrow));
 	
 	//! Bind socket to port and address
 	/**
@@ -163,7 +129,7 @@ public:
 	 * @retval 0 on success
 	 * @retval Error on error
 	 */
-	int bindTo(const std::string& address, const ushort port) __attribute__ ((nothrow,warn_unused_result));
+	int bindTo(const std::string& address, ushort port) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Bind socket to port and address
 	/**
@@ -180,7 +146,7 @@ public:
 	 * @retval 0 on success
 	 * @retval Error on error
 	 *
-	 * @note getError() 
+	 * @note getError() (... ?)
 	 */
 	int connect(const Address& rhost) __attribute__ ((nothrow));
 	
@@ -199,61 +165,24 @@ public:
 	 * @return number of bytes actually sent.
 	 * @retval Error on error
 	 */
-	int send(char* buffer, const size_t buflen) __attribute__ ((nothrow,warn_unused_result));
-	
-	/*
-	#ifdef HAVE_SENDMSG
-	//! Scatter-Gather variant of send()
-	int sc_send(std::list<Array<char*,size_t>*> buffers);
-	#endif
-	*/
+	int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Receive data
 	/**
-	 * @param[out] buffer Target buffer
-	 * @param[in] buflen Number of bytes to read from network.
+	 * @param[out] buf Target buffer
+	 * @param[in] len Number of bytes to read from network.
 	 *
 	 * @return number of bytes read.
 	 * @retval 0 if connection was closed on the other end.
 	 * @retval Error on error.
 	 */
-	int recv(char* buffer, const size_t buflen) __attribute__ ((nothrow,warn_unused_result));
-	
-	/*
-	#ifdef HAVE_RECVMSG
-	//! Scatter-Gather variant of recv()
-	int sc_recv(std::list<Array<char*,size_t>*> buffers);
-	#endif
-	*/
-	
-	#if defined(WITH_SENDFILE) or defined(HAVE_XPWSA)
-	//! Sendfile interface
-	/**
-	 * Note for Windows!
-	 * - Blocks and sends full data in one go.
-	 * - Offset is also ignored.
-	 *
-	 * @param[in] fd FD of the file to be sent.
-	 * @param[in] offset is the starting offset in the file for sending.
-	 * @param[in] nbytes is the number of bytes to be sent.
-	 * @param[out] sbytes is the sent bytes.
-	 *
-	 * @retval -1 on error
-	 */
-	int sendfile(fd_t fd, off_t offset, size_t nbytes, off_t& sbytes) __attribute__ ((nothrow));
-	#endif // WITH_SENDFILE or HAVE_XPWSA
+	int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Shutdown socket
 	/**
 	 * @param[in] how SHUT_RD, SHUT_WR, SHUT_RDWR
 	 */
 	int shutdown(int how) __attribute__ ((nothrow));
-	
-	//! Get last error number
-	/**
-	 * @return Last error number (errno).
-	 */
-	int getError() const __attribute__ ((nothrow,warn_unused_result));
 	
 	//! Get address structure
 	/**
@@ -278,12 +207,17 @@ public:
 	/* Operator overloads */
 	
 	#ifdef SOCKET_OPS
-	//! operator== overload (Socket&)
-	bool operator== (const Socket& tsock) const __attribute__ ((nothrow,warn_unused_result));
-	
 	//! operator= overload (Socket&)
 	Socket& operator= (Socket& tsock) __attribute__ ((nothrow));
 	#endif
+private:
+	//! Set blocking
+	/**
+	 * @param[in] x enable/disable blocking
+	 *
+	 * @note You can't re-enable blocking on non-Win32 systems (API limitation?).
+	 */
+	bool block(bool x) __attribute__ ((nothrow));
 };
 
 #endif // Sockets_INCLUDED

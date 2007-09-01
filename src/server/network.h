@@ -36,6 +36,20 @@
 //! Network constants
 namespace Network {
 
+//! Starts network sub-system on systems where such is necessary
+/**
+ * Does nothing on most systems.
+ *
+ * @note On Windows O/S, this is thread-local.
+ */
+bool start() __attribute__ ((nothrow));
+
+//! Stops any started network sub-system
+/**
+ * Does nothing on most systems.
+ */
+void stop() __attribute__ ((nothrow));
+
 namespace Family {
 
 enum type {

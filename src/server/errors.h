@@ -15,11 +15,15 @@
 #ifndef SystemErrors_INCLUDED
 #define SystemErrors_INCLUDED
 
-#include <cstddef>
+#include <cerrno> // ENOMEM, etc.
+#ifdef WIN32
+	#include <winsock2.h>
+#endif
 
 namespace error
 {
 
+const int InvalidDescriptor = -1;
 const int OutOfMemory = ENOMEM;
 const int Fault = EFAULT;
 const int BadDescriptor = EBADF;
