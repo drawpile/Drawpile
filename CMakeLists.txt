@@ -50,11 +50,6 @@ option ( PERSISTENT "Enable persistent session support" OFF )
 
 option ( RELEASE "Compile as much as possible in one go to generate more optimized binaries." OFF )
 
-# Add ENV[INCLUDE] to search path
-if ( $ENV{INCLUDE} )
-	list ( APPEND CMAKE_INCLUDE_PATH $ENV{INCLUDE} )
-endif ( $ENV{INCLUDE} )
-
 # detect Mac OS X
 
 IF ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
