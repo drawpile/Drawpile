@@ -204,12 +204,6 @@ public:
 	 */
 	ushort port() const __attribute__ ((nothrow,warn_unused_result));
 	
-	/* Operator overloads */
-	
-	#ifdef SOCKET_OPS
-	//! operator= overload (Socket&)
-	Socket& operator= (Socket& tsock) __attribute__ ((nothrow));
-	#endif
 private:
 	//! Set blocking
 	/**

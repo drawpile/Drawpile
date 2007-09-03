@@ -86,7 +86,8 @@ public:
 	int getError();
 	
 	#ifdef DESCRIPTOR_OPS
-	Descriptor<T>& operator== (const Descriptor<T>& desc) __attribute__ ((nothrow));
+	bool operator== (const Descriptor<T>& desc) __attribute__ ((nothrow));
+	Descriptor<T>& operator= (const Descriptor<T>& desc) __attribute__ ((nothrow));
 	#endif
 };
 
@@ -229,6 +230,15 @@ template <typename T>
 bool Descriptor<T>::operator== (const Descriptor<T>& desc) const
 {
 	return (m_handle == desc.m_handle);
+}
+
+template <typename T>
+Descriptor<T>& Descriptor<T>::operator= (Descriptor<T>& desc)
+{
+	close();
+	m_handle = desc.m_handle;
+	/** @todo copy addr as well */
+	return *this;
 }
 #endif
 

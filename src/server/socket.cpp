@@ -524,13 +524,3 @@ const Address& Socket::getConstAddr() const
 {
 	return m_addr;
 }
-
-#ifdef SOCKET_OPS
-Socket& Socket::operator= (Socket& tsock)
-{
-	close();
-	m_handle = tsock.m_handle;
-	/** @todo copy addr as well */
-	return *this;
-}
-#endif
