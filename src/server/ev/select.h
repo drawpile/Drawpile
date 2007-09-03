@@ -59,8 +59,6 @@ class Select
 private:
 	timeval _timeout;
 	
-	int nfds;
-	
 	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
 	
 	std::map<fd_t, uint> fd_list; // events set for FD

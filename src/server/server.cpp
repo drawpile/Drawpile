@@ -2403,9 +2403,8 @@ int Server::run()
 	
 	User *usr;
 	
-	
-	event::fd_type<EventSystem>::fd_t fd;
-	event::ev_type<EventSystem>::ev_t events;
+	EventSystem::fd_t fd;
+	EventSystem::ev_t events;
 	
 	// main loop
 	do
@@ -2427,7 +2426,7 @@ int Server::run()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
-				assert(fd != event::invalid_fd<EventSystem>::value);
+				assert(fd != socket_error::InvalidHandle);
 				if (fd == lsock.handle())
 				{
 					cullIdlers();

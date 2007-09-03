@@ -54,7 +54,6 @@ class WSAPoll
 {
 private:
 	int m_timeout;
-	int nfds;
 	int t_event;
 	int limit;
 	

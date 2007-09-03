@@ -48,7 +48,6 @@ class Kqueue
 {
 private:
 	timespec m_timeout;
-	int nfds;
 	int evfd;
 	
 	kevent *chlist, *evtrigr;

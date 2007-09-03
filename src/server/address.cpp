@@ -31,6 +31,10 @@
 #include "../shared/templates.h"
 #include "network.h"
 
+#ifdef HAVE_SNPRINTF
+	#include <cstdio>
+#endif
+
 Address::Address()
 	#ifdef IPV6_SUPPORT
 	: family(Network::Family::IPv6)

@@ -39,6 +39,7 @@
 #else
 	#include <fcntl.h> // ::fcntl()
 #endif
+#include <cerrno> // errno
 #include <cassert> // assert()
 
 //! Generic file descriptor class

@@ -42,11 +42,11 @@ const int hangup<Epoll>::value = EPOLLHUP;
 const std::string system<Epoll>::value("epoll");
 
 Epoll::Epoll()
-	: nfds(-1), evfd(invalid_fd<Epoll>::value)
+	: evfd(socket_error::InvalidHandle)
 {
 	evfd = epoll_create(10);
 	
-	if (evfd == -1)
+	if (evfd == socket_error::InvalidHandle)
 	{
 		error = errno;
 		
@@ -57,13 +57,12 @@ Epoll::Epoll()
 
 Epoll::~Epoll()
 {
-	if (evfd != -1)
-		close(evfd);
+	close(evfd);
 }
 
 int Epoll::wait()
 {
-	assert(evfd != -1);
+	assert(evfd != socket_error::InvalidHandle);
 	
 	nfds = epoll_wait(evfd, events, 10, m_timeout);
 	
@@ -85,9 +84,9 @@ int Epoll::wait()
 // Errors: ENOMEM
 int Epoll::add(fd_t fd, ev_t events)
 {
-	assert(evfd != -1);
+	assert(evfd != socket_error::InvalidHandle);
 	
-	assert(fd != invalid_fd<Epoll>::value);
+	assert(fd != socket_error::InvalidHandle);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -112,9 +111,9 @@ int Epoll::add(fd_t fd, ev_t events)
 
 int Epoll::modify(fd_t fd, ev_t events)
 {
-	assert(evfd != -1);
+	assert(evfd != socket_error::InvalidHandle);
 	
-	assert(fd != invalid_fd<Epoll>::value);
+	assert(fd != socket_error::InvalidHandle);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -139,13 +138,13 @@ int Epoll::modify(fd_t fd, ev_t events)
 // Errors: ENOMEM
 int Epoll::remove(fd_t fd)
 {
-	assert(evfd != -1);
+	assert(evfd != socket_error::InvalidHandle);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != invalid_fd<Epoll>::value);
+	assert(fd != socket_error::InvalidHandle);
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	
@@ -163,18 +162,18 @@ int Epoll::remove(fd_t fd)
 	return true;
 }
 
-bool Epoll::getEvent(fd_t &fd, ev_t &r_events)
+bool Epoll::getEvent(fd_t &r_fd, ev_t &r_events)
 {
-	assert(evfd != -1);
+	assert(evfd != socket_error::InvalidHandle);
 	
 	if (nfds < 0)
 		return false;
 	
-	fd = events[nfds].data.fd;
+	r_fd = events[nfds].data.fd;
 	r_events = events[nfds].events;
 	nfds--;
 	
-	assert(fd != invalid_fd<Epoll>::value); // shouldn't happen
+	assert(fd != socket_error::InvalidHandle); // shouldn't happen
 	
 	return true;
 }

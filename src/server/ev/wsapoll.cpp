@@ -53,7 +53,7 @@ using namespace socket_error;
 const SOCKET invalid_fd<WSA>::value = InvalidHandle;
 
 WSAPoll::WSAPoll()
-	: nfds(0), t_event(0), limit(8)
+	: t_event(0), limit(8)
 {
 	descriptors = new WSAPOLLFD[limit];
 	// make sure the new pollfds are invalid

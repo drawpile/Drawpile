@@ -28,13 +28,6 @@
 
 #include "kqueue.h"
 
-#ifndef NDEBUG
-	#include <iostream>
-	using std::cout;
-	using std::endl;
-	using std::cerr;
-#endif
-
 #include <cerrno> // errno
 #include <cassert> // assert()
 
@@ -51,10 +44,6 @@ Kqueue::Kqueue()
 	evtrigr_size(8),
 	evtrigr_c(0)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "kqueue()" << endl;
-	#endif
-	
 	if ((evfd = kqueue()) == -1)
 		error = errno;
 	else
@@ -66,10 +55,6 @@ Kqueue::Kqueue()
 
 Kqueue::~Kqueue()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "~kqueue()" << endl;
-	#endif
-	
 	if (evfd != -1)
 		close(evfd);
 	
@@ -92,9 +77,7 @@ void Kqueue::resizeChlist(int new_size)
 // Errors: EACCES, ENOMEM
 int Kqueue::wait()
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "kqueue.wait()" << endl;
-	#endif
+	assert(evfd != -1);
 	
 	nfds = kevent(evfd, chlist, chlist_c, evtrigr, evtrigr_c, &m_timeout);
 	chlist_c = 0;
@@ -111,10 +94,6 @@ int Kqueue::wait()
 		assert(error != EINVAL); // filter or time limit is invalid
 		assert(error != EFAULT); // kevent struct is not writable
 		
-		#ifndef NDEBUG
-		cerr << "Error in event system: " << error << endl;
-		#endif
-		
 		return -1;
 	}
 	
@@ -123,10 +102,6 @@ int Kqueue::wait()
 
 int Kqueue::add(fd_t fd, int events)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "kqueue.add(FD: " << fd << ")" << endl;
-	#endif
-	
 	assert(fd != -1);
 	
 	if (chlist_c == chlist_size)
@@ -139,10 +114,6 @@ int Kqueue::add(fd_t fd, int events)
 
 int Kqueue::modify(fd_t fd, int events)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "kqueue.modify(FD: " << fd << ")" << endl;
-	#endif
-	
 	assert(fd != -1);
 	
 	if (chlist_c == chlist_size)
@@ -155,10 +126,6 @@ int Kqueue::modify(fd_t fd, int events)
 
 int Kqueue::remove(fd_t fd)
 {
-	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
-	cout << "kqueue.remove(FD: " << fd << ")" << endl;
-	#endif
-	
 	assert(fd != -1);
 	
 	if (chlist_c == chlist_size)
@@ -171,6 +138,8 @@ int Kqueue::remove(fd_t fd)
 
 bool Kqueue::getEvent(fd_t &fd, int &r_events)
 {
+	assert(nfds >= 0);
+	
 	getevent:
 	nfds--;
 	
@@ -181,10 +150,6 @@ bool Kqueue::getEvent(fd_t &fd, int &r_events)
 	{
 		// an error occured while processing specific kevent
 		const int l_err = evtrigr[nfds].data;
-		
-		#ifndef NDEBUG
-		cout << "kqueue / chlist (FD: " << evtrigr[nfds].ident << ") error code: " << l_err << std::endl;
-		#endif
 		
 		// coding errors
 		assert(l_err != ENOENT);
@@ -209,10 +174,6 @@ bool Kqueue::getEvent(fd_t &fd, int &r_events)
 
 void Kqueue::timeout(uint msecs)
 {
-	#ifndef NDEBUG
-	std::cout << "kqueue.timeout(msecs: " << msecs << ")" << std::endl;
-	#endif
-	
 	if (msecs > 1000)
 	{
 		m_timeout.tv_sec = msecs/1000;

@@ -35,36 +35,42 @@
 
 namespace event {
 
+//! Event type
 template <typename Evs>
 struct ev_type
 {
 	typedef int ev_t;
 };
 
+//! Handle type
 template <typename Evs>
 struct fd_type
 {
 	typedef int fd_t;
 };
 
+//! Event handler has \b event::hangup event type
 template <typename Evs>
 struct has_hangup
 {
 	static const bool value = false;
 };
 
+//! Event handler has \b event::error event type
 template <typename Evs>
 struct has_error
 {
 	static const bool value = false;
 };
 
+//! Event handler has \b event::connect event type
 template <typename Evs>
 struct has_connect
 {
 	static const bool value = false;
 };
 
+//! Event handler has \b event::accept event type
 template <typename Evs>
 struct has_accept
 {
@@ -73,42 +79,49 @@ struct has_accept
 
 /* events */
 
+//! Value of Read event
 template <typename Evs>
 struct read
 {
-	static const int value = 0;
+	static const typename ev_type<Evs>::ev_t value;
 };
 
+//! Value of Write event
 template <typename Evs>
 struct write
 {
-	static const int value = 0;
+	static const typename ev_type<Evs>::ev_t value;
 };
 
+//! Value of Error event
 template <typename Evs>
 struct error
 {
-	static const int value = 0;
+	static const typename ev_type<Evs>::ev_t value;
 };
 
+//! Value of Hangup event
 template <typename Evs>
 struct hangup
 {
-	static const int value = 0;
+	static const typename ev_type<Evs>::ev_t value;
 };
 
+//! Value of Accept event
 template <typename Evs>
 struct accept
 {
-	static const int value = 0;
+	static const typename ev_type<Evs>::ev_t value;
 };
 
+//! Value of Connect event
 template <typename Evs>
 struct connect
 {
-	static const int value = 0;
+	static const typename ev_type<Evs>::ev_t value;
 };
 
+//! Event handler name
 template <typename Evs>
 struct system
 {

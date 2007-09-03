@@ -46,9 +46,7 @@ class Epoll
 	: public Interface<Epoll>
 {
 private:
-	
 	uint m_timeout;
-	int nfds;
 	int evfd;
 	epoll_event events[10];
 public:

@@ -30,7 +30,9 @@
 
 #include "../../shared/templates.h"
 
-#include <cerrno> // errno
+#ifndef WIN32
+	#include <cerrno> // errno
+#endif
 #include <cassert> // assert()
 
 #include "../socket.h"
@@ -45,9 +47,9 @@ const std::string system<Select>::value("select");
 
 Select::Select()
 	#ifndef WIN32
-	: nfds_r(event::invalid_fd<Select>::value),
-	nfds_w(event::invalid_fd<Select>::value),
-	nfds_e(event::invalid_fd<Select>::value)
+	: nfds_r(socket_error::InvalidHandle),
+	nfds_w(socket_error::InvalidHandle),
+	nfds_e(socket_error::InvalidHandle)
 	#endif
 {
 	FD_ZERO(&fds_r);
@@ -82,7 +84,7 @@ void Select::removeFromSet(fd_set &fdset, fd_t fd
 	#ifndef WIN32
 	l_set.erase(fd);
 	if (fd == largest)
-		largest = (l_set.size() > 0 ? *(l_set.rend()) : event::invalid_fd<Select>::value);
+		largest = (l_set.size() > 0 ? *(l_set.rend()) : socket_error::InvalidHandle);
 	#endif
 }
 
@@ -106,9 +108,7 @@ int Select::wait()
 	
 	fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
-	if (ubnfds == event::invalid_fd<Select>::value)
-		ubnfds = event::invalid_fd<Select>::value;
-	else
+	if (ubnfds != socket_error::InvalidHandle)
 		ubnfds++;
 	#endif
 	
@@ -158,7 +158,7 @@ int Select::wait()
 
 int Select::add(fd_t fd, ev_t events)
 {
-	assert(fd != event::invalid_fd<Select>::value);
+	assert(fd != socket_error::InvalidHandle);
 	
 	bool rc=false;
 	
@@ -202,7 +202,7 @@ int Select::add(fd_t fd, ev_t events)
 
 int Select::modify(fd_t fd, ev_t events)
 {
-	assert(fd != event::invalid_fd<Select>::value);
+	assert(fd != socket_error::InvalidHandle);
 	
 	// act like a wrapper.
 	if (events != 0)
@@ -234,7 +234,7 @@ int Select::modify(fd_t fd, ev_t events)
 
 int Select::remove(fd_t fd)
 {
-	assert(fd != event::invalid_fd<Select>::value);
+	assert(fd != socket_error::InvalidHandle);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	assert(iter != fd_list.end());

@@ -43,17 +43,11 @@ Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
 	#endif
 	persist(false)
 {
-	#ifndef NDEBUG
-	std::cout << "Session::Session(ID: " << static_cast<int>(id) << ")" << std::endl;
-	#endif
 }
 
 #ifdef PERSISTENT_SESSIONS
 Session::~Session()
 {
-	#ifndef NDEBUG
-	std::cout << "Session::~Session(ID: " << static_cast<int>(id) << ")" << std::endl;
-	#endif
 	delete raster;
 }
 #endif
@@ -77,10 +71,6 @@ User* Session::getUser(const octet user_id)
 #ifdef PERSISTENT_SESSIONS
 void Session::invalidateRaster()
 {
-	#ifndef NDEBUG
-	cout << "? Session raster invalidated." << endl;
-	#endif
-	
 	raster_valid = false;
 	raster->length = 0;
 }

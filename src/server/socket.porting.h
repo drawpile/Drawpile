@@ -30,7 +30,7 @@
 	#include <arpa/inet.h>
 	#include <netinet/in.h> // sockaddr_in
 	#include <unistd.h> // close()
-	#include <cerrno>
+	#include <cerrno> // errno
 #endif
 
 #endif // SocketPorting_INCLUDED

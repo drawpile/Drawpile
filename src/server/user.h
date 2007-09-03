@@ -87,7 +87,7 @@ public:
 	
 	//! Event I/O : registered events.
 	// EventSystem::ev_t // inaccessible for some reason
-	event::ev_type<EventSystem>::ev_t events;
+	EventSystem::ev_t events;
 	//int events;
 	
 	//! User state

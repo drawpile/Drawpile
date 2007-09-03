@@ -45,6 +45,8 @@ template <typename Evs>
 class Interface
 {
 protected:
+	int nfds;
+	
 	 //! Last error number (errno)
 	int error;
 public:
@@ -118,7 +120,10 @@ public:
 	int getError() const __attribute__ ((nothrow));
 };
 
-template <typename T> Interface<T>::Interface() { }
+template <typename T> Interface<T>::Interface()
+	: nfds(-1)
+{ }
+
 template <typename T> Interface<T>::~Interface() { /* Abstract */ }
 
 template <typename T>
