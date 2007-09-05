@@ -74,7 +74,7 @@ public:
 	 *
 	 * @throw std::bad_alloc If it can't allocate local copy of the tool info
 	 */
-	void cacheTool(protocol::ToolInfo* ti);
+	void cacheTool(protocol::ToolInfo* ti) __attribute__ ((nonnull(1)));
 	
 	//! Socket
 	Socket sock;

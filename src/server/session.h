@@ -128,7 +128,7 @@ public:
 	void invalidateRaster() __attribute__ ((nothrow));
 	
 	//! Append raster message to current cached raster
-	bool appendRaster(protocol::Raster *raster) __attribute__ ((nothrow));
+	bool appendRaster(protocol::Raster *raster) __attribute__ ((nothrow,nonnull(1)));
 	#endif
 };
 

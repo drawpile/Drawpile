@@ -23,9 +23,6 @@ template <typename T>
 class Array
 {
 public:
-	//! Constructor
-	Array() __attribute__ ((nothrow));
-	
 	//! Copy constructor
 	/**
 	 * @param[in] array Source array
@@ -37,7 +34,7 @@ public:
 	 * @param[in] _data char* string to associate with this Array
 	 * @param[in] _size Size of _data
 	 */
-	Array(T* _data, const size_t _size) __attribute__((nothrow));
+	Array(T* _data=0, const size_t _size=0) __attribute__((nothrow));
 	
 	//! Destructor
 	/**
@@ -55,12 +52,6 @@ public:
 	//! Number of elements in data
 	size_t size;
 };
-
-template <typename T>
-Array<T>::Array()
-	: ptr(0)
-{
-}
 
 template <typename T>
 Array<T>::Array(const Array<T>& array)

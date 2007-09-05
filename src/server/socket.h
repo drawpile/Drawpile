@@ -165,7 +165,7 @@ public:
 	 * @return number of bytes actually sent.
 	 * @retval Error on error
 	 */
-	int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result));
+	int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
 	
 	//! Receive data
 	/**
@@ -176,7 +176,7 @@ public:
 	 * @retval 0 if connection was closed on the other end.
 	 * @retval Error on error.
 	 */
-	int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result));
+	int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
 	
 	//! Shutdown socket
 	/**

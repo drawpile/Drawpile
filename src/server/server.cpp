@@ -53,8 +53,8 @@
 	#include <zlib.h>
 #endif
 
-#ifdef LINUX
-	#include <cstdio> // ?
+#ifdef HAVE_URANDOM
+	#include <cstdio>
 #endif
 
 #ifndef NDEBUG
@@ -174,8 +174,8 @@ void Server::freeSessionID(const octet id)
 
 void Server::uRegenSeed(User& usr) const
 {
-	#ifdef LINUX
-	FILE stream = fopen("/dev/urandom", "r");
+	#ifdef HAVE_URANDOM
+	FILE* stream = fopen("/dev/urandom", "r");
 	assert(stream);
 	if (!stream) throw std::exception;
 	fread(usr.seed, 4, 1, stream);

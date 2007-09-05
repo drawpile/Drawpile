@@ -280,13 +280,13 @@ protected:
 	/**
 	 * @param[in,out] usr User whose input buffer to process
 	 */
-	void uProcessData(User*& usr);
+	void uProcessData(User*& usr) __attribute__ ((nonnull(1)));
 	
 	//! Process stroke info, stroke end and tool info
 	/**
 	 * @param[in] usr User whose drawing commands to process
 	 */
-	void uHandleDrawing(User*& usr);
+	void uHandleDrawing(User*& usr) __attribute__ ((nonnull(1)));
 	
 	//! Handle received password
 	/**
@@ -300,13 +300,13 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uHandleMsg(User*& usr);
+	void uHandleMsg(User*& usr) __attribute__ ((nonnull(1)));
 	
 	//! Handle ACKs
 	/**
 	 * @param[in,out] usr User whose ACK message to handle
 	 */
-	void uHandleAck(User*& usr) __attribute__ ((nothrow));
+	void uHandleAck(User*& usr) __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Forward raster to those expecting it.
 	/**
@@ -319,7 +319,7 @@ protected:
 	 * @param[in,out] session Session for which to handle the event for
 	 * @param[in,out] usr User whose event is in question
 	 */
-	void uSessionEvent(Session& session, User*& usr) __attribute__ ((nothrow));
+	void uSessionEvent(Session& session, User*& usr) __attribute__ ((nothrow/*,nonnull(2)*/));
 	
 	//! Handle instruction message
 	/**
@@ -327,13 +327,13 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uSessionInstruction(User*& usr);
+	void uSessionInstruction(User*& usr) __attribute__ ((nonnull(1)));
 	
 	//! Set server or session password
 	/**
 	 * @param[in,out] usr User whose set password instruction to handle
 	 */
-	void uSetPassword(User*& usr) __attribute__ ((nothrow));
+	void uSetPassword(User*& usr) __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Handle user login.
 	/**
@@ -341,7 +341,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uHandleLogin(User*& usr);
+	void uHandleLogin(User*& usr) __attribute__ ((nonnull(1)));
 	
 	//! Handle user info in login
 	/**
@@ -354,7 +354,7 @@ protected:
 	/**
 	 * @param[in,out] usr User whose layer event to handle
 	 */
-	void uLayerEvent(User*& usr) __attribute__ ((nothrow));
+	void uLayerEvent(User*& usr) __attribute__ ((nothrow,nonnull(1)));
 	#endif
 	
 	//! Send message to all users in session
@@ -375,7 +375,7 @@ protected:
 	 * @retval true if the digests match
 	 * @retval false otherwise
 	 */
-	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char seed[4]) __attribute__ ((nothrow,warn_unused_result));
+	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char seed[4]) __attribute__ ((nothrow,warn_unused_result,nonnull(1,2)));
 	
 	//! Queue message to user
 	/**
@@ -431,7 +431,7 @@ protected:
 	 * @param[in,out] usr User who's being removed
 	 * @param[in] reason Reason for removal (protocol::UserInfo::uevent)
 	 */
-	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow));
+	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Delete session and do some cleaning
 	/**
@@ -458,7 +458,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void UncompressAndReprocess(User*& usr);
+	void UncompressAndReprocess(User*& usr) __attribute__ ((nonnull(1)));
 	
 	//! Deflate (compress) outgoing data
 	/**

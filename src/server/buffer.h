@@ -59,7 +59,7 @@ public:
 	 * @param[out] buf char* string to fill with current buffer contents
 	 * @param[in] buflen Size of buf
 	 */
-	bool copy(char* buf, const size_t buflen) const __attribute__ ((nothrow));
+	bool copy(char* buf, const size_t buflen) const __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
@@ -71,7 +71,7 @@ public:
 	 *
 	 * @note Old buffer is automatically deleted to avoid memory leak
 	 */
-	void set(char* buf, const size_t buflen, const size_t fill=0) __attribute__ ((nothrow));
+	void set(char* buf, const size_t buflen, const size_t fill=0) __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Repositions data for maximum contiguous _read_ length.
 	/**

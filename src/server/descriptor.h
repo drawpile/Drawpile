@@ -76,9 +76,9 @@ public:
 	virtual void close() __attribute__ ((nothrow));
 	
 	//! Write to descriptor
-	virtual int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result));
+	virtual int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
 	//! Read from descriptor
-	virtual int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result));
+	virtual int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
 	
 	virtual bool block(bool x) __attribute__ ((nothrow));
 	

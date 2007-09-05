@@ -10,6 +10,15 @@ include ( CheckFunctionExists )
 
 ### For deflate extension
 
+if ( USE_URANDOM )
+	find_file (
+		HAVE_URANDOM
+		urandom
+		PATHS /dev
+		NO_DEFAULT_PATH
+	)
+endif ( USE_URANDOM )
+
 if ( SERVERLIB )
 	if ( DEFLATE )
 		find_package ( ZLIB )
