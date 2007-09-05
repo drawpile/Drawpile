@@ -48,17 +48,7 @@ void SHA1::Reset()
 // Rotate \b v n bits to the left
 uint32_t SHA1::LeftRotate(const uint32_t v, const uint32_t n) const
 {
-	#ifdef USE_ASM
-	uint32_t x;
-	asm (
-		"rol %%cl, %0;"
-		: "=r"(x)
-		: "0"(v), "c"(n)
-	);
-	return x;
-	#else
 	return (v << n) | (v >> (32 - n));
-	#endif
 }
 
 uint32_t SHA1::Chunk(const uint32_t i)

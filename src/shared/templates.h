@@ -38,22 +38,22 @@
 
 /* forward declarations */
 
-template <typename T> T& bswap(T& x) __attribute__ ((nothrow));
-template <typename T> T bswap_const(const T& x) __attribute__ ((nothrow));
-template <> inline uint32_t& bswap<uint32_t>(uint32_t& x) __attribute__ ((nothrow));
-template <> inline uint16_t& bswap<uint16_t>(uint16_t& x) __attribute__ ((nothrow));
-template <> inline uint8_t& bswap<uint8_t>(uint8_t& x) __attribute__ ((nothrow));
-template <typename T> char* memcpy_t(char* dst, const T& src) __attribute__ ((nothrow));
-template <typename T> T& memcpy_t(T& dst, const char* src) __attribute__ ((nothrow));
-template <typename T> T& fSet(T& u, const T& x) __attribute__ ((nothrow));
-template <typename T> T& fClr(T& u, const T& x) __attribute__ ((nothrow));
-template <typename T> bool fIsSet(const T& u, const T& x) __attribute__ ((nothrow));
-template <typename T, typename U> bool inBoundsOf(const U& u) __attribute__ ((nothrow));
-template <typename T> T roundToNext(const T& number, const T& boundary) __attribute__ ((nothrow));
-template <> inline double roundToNext<double>(const double& number, const double& boundary) __attribute__ ((nothrow));
-template <typename T> T roundToPrev(const T& number, const T& boundary) __attribute__ ((nothrow));
-template <> inline double roundToPrev<double>(const double& number, const double& boundary) __attribute__ ((nothrow));
-template <typename T> T round(const T& num) __attribute__ ((nothrow));
+template <typename T> T& bswap(T& x) __attribute__ ((nothrow/*,pure*/));
+template <typename T> T bswap_const(const T& x) __attribute__ ((nothrow,pure));
+template <> inline uint32_t& bswap<uint32_t>(uint32_t& x) __attribute__ ((nothrow,/*pure*/));
+template <> inline uint16_t& bswap<uint16_t>(uint16_t& x) __attribute__ ((nothrow/*,pure*/));
+template <> inline uint8_t& bswap<uint8_t>(uint8_t& x) __attribute__ ((nothrow/*,pure*/));
+template <typename T> char* memcpy_t(char* dst, const T& src) __attribute__ ((nothrow,nonnull(1)));
+template <typename T> T& memcpy_t(T& dst, const char* src) __attribute__ ((nothrow,nonnull(2)));
+template <typename T> T& fSet(T& u, const T x) __attribute__ ((nothrow/*,pure*/));
+template <typename T> T& fClr(T& u, const T x) __attribute__ ((nothrow/*,pure*/));
+template <typename T> bool fIsSet(const T u, const T x) __attribute__ ((nothrow,pure));
+template <typename T, typename U> bool inBoundsOf(const U& u) __attribute__ ((nothrow,pure));
+template <typename T> T roundToNext(const T& number, const T& boundary) __attribute__ ((nothrow,pure));
+template <> inline double roundToNext<double>(const double& number, const double& boundary) __attribute__ ((nothrow,pure));
+template <typename T> T roundToPrev(const T& number, const T& boundary) __attribute__ ((nothrow,pure));
+template <> inline double roundToPrev<double>(const double& number, const double& boundary) __attribute__ ((nothrow,pure));
+template <typename T> T round(const T& num) __attribute__ ((nothrow,pure));
 
 /* swapping endianess */
 
@@ -145,7 +145,7 @@ T& memcpy_t(T& dst, const char* src)
  * @param x flag to be set.
  */
 template <typename T>
-T& fSet(T& u, const T& x)
+T& fSet(T& u, const T x)
 {
 	return u |= x;
 }
@@ -156,7 +156,7 @@ T& fSet(T& u, const T& x)
  * @param x flag to be cleared.
  */
 template <typename T>
-T& fClr(T& u, const T& x)
+T& fClr(T& u, const T x)
 {
 	return u &= ~x;
 }
@@ -167,7 +167,7 @@ T& fClr(T& u, const T& x)
  * @param x flag to be tested.
  */
 template <typename T>
-bool fIsSet(const T& u, const T& x)
+bool fIsSet(const T u, const T x)
 {
 	return (u & x) == x;
 }

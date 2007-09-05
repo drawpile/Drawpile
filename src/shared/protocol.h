@@ -82,13 +82,13 @@ protected:
 	/**
 	 * @param[out] ptr Pointer to char* to write to
 	 */
-	size_t serializeHeader(char* ptr) const __attribute__ ((nothrow));
+	size_t serializeHeader(char* ptr) const __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Read header (for unserialize())
 	/**
 	 * @param[in] ptr Pointer to char* to read
 	 */
-	size_t unserializeHeader(const char* ptr) __attribute__ ((nothrow));
+	size_t unserializeHeader(const char* ptr) __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Header size
 	const size_t headerSize;
@@ -228,7 +228,7 @@ public:
 	 * @return Number of bytes stored in buffer
 	 */
 	virtual
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow,warn_unused_result));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
 	
 	//! Check if buf contains enough data to unserialize
 	/**
@@ -258,7 +258,7 @@ public:
 	 * tell you how much data the call to unserialize() actually processed or will
 	 * process of the provided data buffer.
 	 *
-	 * @param[in] buf points to data buffer waiting for serialization.
+	 * @param[in] buf points to data buffer waiting for unserialization.
 	 * @param[in] len declares the length of the data buffer.
 	 *
 	 * @return Used buffer length. Should be the same as the value previously returned
@@ -268,7 +268,7 @@ public:
 	 * @throw std::bad_alloc
 	 */
 	virtual
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
 };
 
 //! Protocol identifier.
@@ -314,9 +314,9 @@ struct Identifier
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -397,9 +397,9 @@ struct StrokeInfo
 	 * @throw std::bad_alloc
 	 * @throw std::exception if count is 0
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -501,9 +501,9 @@ struct ToolInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -586,9 +586,9 @@ struct Raster
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -664,9 +664,9 @@ struct Password
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -774,9 +774,9 @@ struct SessionInstruction
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -807,9 +807,9 @@ struct SetPassword
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -973,9 +973,9 @@ struct UserInfo
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1027,9 +1027,9 @@ struct HostInfo
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1093,9 +1093,9 @@ struct SessionInfo
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1123,9 +1123,9 @@ struct Acknowledgement
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1153,9 +1153,9 @@ struct Error
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1206,9 +1206,9 @@ struct Deflate
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1247,9 +1247,9 @@ struct Chat
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1291,9 +1291,9 @@ struct Palette
 	/**
 	 * @throw std::bad_alloc
 	 */
-	size_t unserialize(const char* buf, const size_t len);
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1374,9 +1374,9 @@ struct SessionEvent
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1425,9 +1425,9 @@ struct LayerEvent
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 
@@ -1452,9 +1452,9 @@ struct LayerSelect
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow));
-	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow));
-	size_t serializePayload(char *buf) const __attribute__ ((nothrow));
+	size_t unserialize(const char* buf, const size_t len) __attribute__ ((nothrow,nonnull(1)));
+	size_t reqDataLen(const char *buf, const size_t len) const __attribute__ ((nothrow,nonnull(1)));
+	size_t serializePayload(char *buf) const __attribute__ ((nothrow,nonnull(1)));
 	size_t payloadLength() const __attribute__ ((nothrow));
 };
 

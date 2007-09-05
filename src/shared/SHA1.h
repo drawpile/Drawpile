@@ -38,6 +38,9 @@
  *
  * printf("digest: %40x\n", digest);
  * @endcode
+ *
+ * @bug Does not pass several unittests, so we have to assume the code is wrong
+ * (that's what you get from not making your own code :\).
  */
 class SHA1
 {
@@ -73,7 +76,7 @@ public:
 	 * @param data Input buffer for updating hash
 	 * @param len Length of buffer
 	 */
-	void Update(const uchar *data, uint64_t len) __attribute__ ((nothrow));
+	void Update(const uchar *data, uint64_t len) __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Finalize hash
 	/**
@@ -85,19 +88,19 @@ public:
 	/**
 	 * @param string Target buffer for hex digest, needs to be at least 40 bytes long
 	 */
-	void HexDigest(char *string) const __attribute__ ((nothrow));
+	void HexDigest(char *string) const __attribute__ ((nothrow,nonnull(1)));
 	
 	//! Get binary digest
 	/**
 	 * @param digest Target buffer for binary digest, needs to be at least 20 bytes long
 	 */
-	void GetHash(uchar *digest) const __attribute__ ((nothrow));
+	void GetHash(uchar *digest) const __attribute__ ((nothrow,nonnull(1)));
 
 private:
 	#ifndef HAVE_OPENSSL
 	uint32_t Chunk(const uint32_t i) __attribute__ ((nothrow,warn_unused_result));
 	
-	uint32_t LeftRotate(const uint32_t v, const uint32_t n) const  __attribute__ ((nothrow,warn_unused_result));
+	uint32_t LeftRotate(const uint32_t v, const uint32_t n) const  __attribute__ ((nothrow,warn_unused_result,pure));
 	
 	void R0(const uint32_t v, uint32_t &w, const uint32_t x, const uint32_t y, uint32_t &z, const uint32_t i) __attribute__ ((nothrow));
 	
