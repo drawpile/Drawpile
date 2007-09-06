@@ -4,7 +4,7 @@
 set ( CPU pentium2 )
 
 if ( GENERIC )
-	set ( CPU pentium2 ) # our target audience likely don't have older
+	set ( CPU pentium3 ) # our target audience likely don't have older
 endif ( GENERIC )
 
 ###   DO NOT TOUCH THE FOLLOWING   ###
@@ -15,14 +15,16 @@ if ( GENERIC )
 	set ( MTUNE "-mtune=generic") # GCC >=4.x
 else ( GENERIC )
 	set ( MTUNE "-mtune=native" ) # GCC >=4.x
+	set ( ARCH "-march=native" ) # GCC >=4.x
 endif ( GENERIC )
 
 set ( FASTMATH "-ffast-math" )
 
-set ( DEBUG_FLAGS "-g -Wall" )
+set ( DEBUG_FLAGS "-g" )
 set ( OPT "-O2" )
 
 set ( WARNALL "-Wall" )
+set ( WEFFCPP "-Weffc++" ) # unused
 
 set ( NORTTI "-fno-rtti" )
 
@@ -41,6 +43,7 @@ TestCompilerFlag ( PIPE PIPEAC )
 TestCompilerFlag ( FASTMATH FASTMATHAC )
 TestCompilerFlag ( NORTTI NORTTIAC )
 TestCompilerFlag ( WARNALL WARNALLAC )
+#TestCompilerFlag ( WEFFCPP WEFFCPPC )
 TestCompilerFlag ( OPT OPTAC )
 
 ### Test profiling arcs if enabled ###
@@ -68,8 +71,10 @@ endif ( UNSAFEOPT )
 ###   Set flags   ###
 
 set ( CMAKE_CXX_FLAGS "${OPT} ${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${NORTTI}" )
-if ( USEENV )
-	set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} $ENV{CXXFLAGS}" )
-endif ( USEENV )
+if ( NOT GENERIC )
+	if ( USEENV )
+		set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} $ENV{CXXFLAGS}" )
+	endif ( USEENV )
+endif ( NOT GENERIC )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG" )
