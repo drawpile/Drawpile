@@ -44,7 +44,7 @@ protected:
 	SharedPtr() __attribute__ ((nothrow));
 public:
 	//! Assign ctor
-	SharedPtr(T *ptr) __attribute__ ((nothrow,nonnull(1)));
+	SharedPtr(T *ptr) __attribute__ ((nothrow/*,nonnull(1)*/));
 	
 	//! Copy ctor
 	SharedPtr(const SharedPtr<T> &shr_ptr) __attribute__ ((nothrow));
