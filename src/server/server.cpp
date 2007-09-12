@@ -116,7 +116,7 @@ Server::Server()
 	cout << "? Event mechanism: " << event::system<EventSystem>::value << endl;
 	#endif
 	
-	lsock.getAddr().port(protocol::default_port);
+	lsock.addr().port(protocol::default_port);
 }
 
 #if 0
@@ -1364,8 +1364,7 @@ void Server::uSessionInstruction(User*& usr)
 				#ifndef NDEBUG
 				
 				const Session *session = getConstSession(session_id);
-				cout << "+ Session #" << session->id << " created by user #" << usr->id
-					/*<< " [" << usr->sock.address() << "]"*/ << endl
+				cout << "+ Session #" << session->id << " created by user #" << usr->id << endl
 					<< "  Size: " << session->width << "x" << session->height
 					<< ", Limit: " << static_cast<uint>(session->limit)
 					<< ", Mode: " << static_cast<uint>(session->mode)
@@ -1574,7 +1573,7 @@ void Server::uLoginInfo(User& usr)
 	
 	if (LocalhostAdmin)
 	{
-		const std::string IPPort(usr.sock.address());
+		const std::string IPPort(usr.sock.addr().toString());
 		assert(IPPort.find_last_of(":", IPPort.length()-1) != std::string::npos);
 		
 		// Loopback address
@@ -2112,10 +2111,10 @@ void Server::uAdd()
 	// Check duplicate connections (should be enabled with command-line switch instead)
 	if (blockDuplicateConnections)
 		for (users_const_i ui(users.begin()); ui != users.end(); ++ui)
-			if (sock.getAddr() == ui->second->sock.getConstAddr())
+			if (sock.addr() == ui->second->sock.addr())
 			{
 				#ifndef NDEBUG
-				cerr << "- Duplicate connection from " << sock.address() << endl;
+				cerr << "- Duplicate connection from " << sock.addr().toString() << endl;
 				#endif
 				return;
 			}
@@ -2125,14 +2124,14 @@ void Server::uAdd()
 	if (id == protocol::null_user)
 	{
 		#ifndef NDEBUG
-		cerr << "- Server full, dropping connection from " << sock.address() << endl;
+		cerr << "- Server full, dropping connection from " << sock.addr().toString() << endl;
 		#endif
 		
 		return;
 	}
 	
 	#ifndef NDEBUG
-	cout << "+ New user #" << id << " [" << sock.address() << "]" << endl;
+	cout << "+ New user #" << id << " [" << sock.addr().toString() << "]" << endl;
 	#endif
 	
 	User *usr = new User(id, sock);
@@ -2187,17 +2186,17 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 	stats.disconnects++;
 	
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
-	cout << "[Server] Removing user #" << usr->id /*<< " [" << usr.sock.address() << "]"*/ << endl;
+	cout << "[Server] Removing user #" << usr->id << endl;
 	#endif
 	
 	#ifndef NDEBUG
 	switch (reason)
 	{
 	case protocol::UserInfo::BrokenPipe:
-		cout << "- User #" << usr->id /*<< " [" << usr.sock.address() << "]" <<*/ << " lost (broken pipe)" << endl;
+		cout << "- User #" << usr->id << " lost (broken pipe)" << endl;
 		break;
 	case protocol::UserInfo::Disconnect:
-		cout << "- User #" << usr->id /*<< " [" << usr.sock.address() << "]" <<*/ << " disconnected" << endl;
+		cout << "- User #" << usr->id << " disconnected" << endl;
 		break;
 	default:
 		// do nothing
@@ -2294,13 +2293,7 @@ bool Server::init()
 	lsock.reuse_addr(true); // reuse address
 	#endif
 	
-	if (lsock.bindTo(
-		#ifdef IPV6_SUPPORT
-		Network::IPv6::Unspecified
-		#else
-		Network::IPv4::Unspecified
-		#endif
-		, lsock.port()) == socket_error::Error)
+	if (lsock.bindTo(Address(std::string(), lsock.addr().port())) == socket_error::Error)
 	{
 		return false;
 	}
@@ -2578,12 +2571,12 @@ uint Server::getUserLimit() const
 
 void Server::setPort(const ushort _port)
 {
-	lsock.getAddr().port(_port);
+	lsock.addr().port(_port);
 }
 
 ushort Server::getPort() const
 {
-	return lsock.port();
+	return lsock.addr().port();
 }
 
 void Server::setTransient(const bool _enable)

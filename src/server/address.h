@@ -42,19 +42,13 @@
 class Address
 {
 public:
-	Address();
-	
-	Network::Family::type family;
+	Address(const std::string& address=std::string(), ushort port=0);
 	
 	union {
 		//! base address
-		sockaddr addr;
-		//! IPv4 address
-		sockaddr_in IPv4;
-		#ifdef IPV6_SUPPORT
-		//! IPv6 address
-		sockaddr_in6 IPv6;
-		#endif
+		sockaddr raw_addr;
+		//! Either IPv4 or IPv6 address
+		Network::sockaddr_in_t ipv_addr;
 	};
 	
 	socklen_t size() const __attribute__ ((nothrow));
@@ -63,7 +57,8 @@ public:
 	
 	void port(ushort _port) __attribute__ ((nothrow));
 	
-	void setFamily(Network::Family::type _family) __attribute__ ((nothrow));
+	int family() const __attribute__ ((nothrow));
+	void family(int _family) __attribute__ ((nothrow));
 	
 	//! Assign operator
 	Address& operator= (const Address& naddr) __attribute__ ((nothrow));
@@ -74,11 +69,18 @@ public:
 	//! Convert address to string representation of it
 	std::string toString() const /*__attribute__ ((warn_unused_result))*/;
 	
+private:
+	//! Return pointer to sin_addr or sin6_addr
+	Network::in_addr_t& in_addr() __attribute__ ((nothrow));
+	
+	//! Return const pointer to sin_addr or sin6_addr
+	const Network::in_addr_t& in_addr() const __attribute__ ((nothrow));
+	
 	//! Convert string to address
 	/**
 	 * @param[in] address string to convert
 	 */
-	static Address fromString(std::string const& address) __attribute__ ((nothrow,warn_unused_result));
+	void fromString(std::string const& address) __attribute__ ((nothrow));
 };
 
 #endif // NetworkAddress_INCLUDED

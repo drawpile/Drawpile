@@ -31,7 +31,6 @@
 #include "../shared/templates.h"
 #include "errors.h"
 
-#include <string> // std::string
 #include <cassert>
 
 #ifndef WIN32
@@ -72,9 +71,9 @@ fd_t Socket::create()
 		close();
 	
 	#ifdef WIN32
-	m_handle = WSASocket(m_addr.family, SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
+	m_handle = WSASocket(m_addr.family(), SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
 	#else
-	m_handle = socket(m_addr.family, SOCK_STREAM, IPPROTO_TCP);
+	m_handle = socket(m_addr.family(), SOCK_STREAM, IPPROTO_TCP);
 	#endif
 	
 	if (m_handle == InvalidHandle)
@@ -112,9 +111,9 @@ Socket Socket::accept()
 	socklen_t addrlen = sa.size();
 	
 	#if WIN32
-	fd_t n_fd = ::WSAAccept(m_handle, &sa.addr, &addrlen, 0, 0);
+	fd_t n_fd = ::WSAAccept(m_handle, &sa.raw_addr, &addrlen, 0, 0);
 	#else
-	fd_t n_fd = ::accept(m_handle, &sa.addr, &addrlen);
+	fd_t n_fd = ::accept(m_handle, &sa.raw_addr, &addrlen);
 	#endif
 	
 	if (n_fd == InvalidHandle)
@@ -293,17 +292,6 @@ bool Socket::linger(bool x, ushort delay)
 	return (r == 0);
 }
 
-int Socket::bindTo(const std::string& address, ushort _port)
-{
-	assert(m_handle != InvalidHandle);
-	
-	Address naddr = Address::fromString(address);
-	
-	naddr.port(_port);
-	
-	return bindTo(naddr);
-}
-
 int Socket::bindTo(const Address& naddr)
 {
 	m_addr = naddr;
@@ -312,7 +300,7 @@ int Socket::bindTo(const Address& naddr)
 	assert(m_addr.family != Network::Family::None);
 	#endif
 	
-	const int r = bind(m_handle, &m_addr.addr, m_addr.size());
+	const int r = bind(m_handle, &m_addr.raw_addr, m_addr.size());
 	
 	if (r == Error)
 	{
@@ -345,9 +333,9 @@ int Socket::connect(const Address& rhost)
 	m_addr = rhost;
 	
 	#ifdef WIN32
-	const int r = WSAConnect(m_handle, &m_addr.addr, m_addr.size(), 0, 0, 0, 0);
+	const int r = WSAConnect(m_handle, &m_addr.raw_addr, m_addr.size(), 0, 0, 0, 0);
 	#else
-	const int r = ::connect(m_handle, &m_addr.addr, m_addr.size());
+	const int r = ::connect(m_handle, &m_addr.raw_addr, m_addr.size());
 	#endif
 	
 	if (r == Error)
@@ -493,27 +481,17 @@ int Socket::read(char* buffer, size_t len)
 		#endif
 }
 
-std::string Socket::address() const
-{
-	return m_addr.toString();
-}
-
-ushort Socket::port() const
-{
-	return m_addr.port();
-}
-
 int Socket::shutdown(int how)
 {
 	return ::shutdown(m_handle, how);
 }
 
-Address& Socket::getAddr()
+Address& Socket::addr()
 {
 	return m_addr;
 }
 
-const Address& Socket::getConstAddr() const
+const Address& Socket::addr() const
 {
 	return m_addr;
 }

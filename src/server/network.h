@@ -31,6 +31,7 @@
 
 #include "types.h"
 
+#include "socket.porting.h" // sockaddr_in/sockaddr_in6
 #include "socket.types.h" // AF_INET & AF_INET6
 
 //! Network constants
@@ -52,7 +53,7 @@ void stop() __attribute__ ((nothrow));
 
 namespace Family {
 
-enum type {
+enum family_t {
 	None,
 	IPv4 = AF_INET,
 	IPv6 = AF_INET6
@@ -62,6 +63,10 @@ enum type {
 
 //! IPv6 related constants
 namespace IPv6 {
+
+typedef sockaddr_in6 sockaddr_in_t;
+typedef in6_addr in_addr_t;
+const Network::Family::family_t family = Network::Family::IPv6;
 
 //! Localhost address
 /**
@@ -91,6 +96,9 @@ const uint UnspecifiedAddress[4] = {0};
  * e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
  */
 const uint AddrLength = 39;
+
+//! Address padding
+const uint AddrPadding = 4;
 
 //! IPv4 compatibility address
 /**
@@ -170,6 +178,10 @@ const uint SiteLocalAddress[4] = {0xfec00000,0};
 //! IPv4 related constants
 namespace IPv4 {
 
+typedef sockaddr_in sockaddr_in_t;
+typedef in_addr in_addr_t;
+const Network::Family::family_t family = Network::Family::IPv4;
+
 //! Localhost address
 const char Localhost[] = "127.0.0.1";
 
@@ -187,6 +199,9 @@ const uint UnspecifiedAddress = 0;
  * e.g. 123.231.213.123
  */
 const uint AddrLength = 16;
+
+//! Address padding
+const uint AddrPadding = 2;
 
 //! Broadcast address
 const char Broadcast[] = "255.255.255.255";
@@ -214,11 +229,33 @@ const uint HostMask32 = 0xffffffff;
 
 } // namespace:IPv4
 
-//! Super user port upper bound
-const uint SuperUser_Port = 1023;
+#ifdef IPV6_SUPPORT
+using Network::IPv6::Unspecified;
+using Network::IPv6::UnspecifiedAddress;
+using Network::IPv6::Localhost;
+using Network::IPv6::LocalhostAddress;
+using Network::IPv6::AddrLength;
+using Network::IPv6::AddrPadding;
+using Network::IPv6::sockaddr_in_t;
+using Network::IPv6::family;
+using Network::IPv6::in_addr_t;
+#else // IPv4
+using Network::IPv4::Unspecified;
+using Network::IPv4::UnspecifiedAddress;
+using Network::IPv4::Localhost;
+using Network::IPv4::LocalhostAddress;
+using Network::IPv4::AddrLength;
+using Network::IPv4::AddrPadding;
+using Network::IPv4::sockaddr_in_t;
+using Network::IPv4::family;
+using Network::IPv4::in_addr_t;
+#endif
 
-//! Maximum length of either IPv4 or IPv6 address
-const uint AddrLength = IPv6::AddrLength;
+//! Super user port upper bound
+/**
+ * port <= SuperUser_Port == SU only
+ */
+const uint SuperUser_Port = 1023;
 
 //! Maximum length of port number as string
 const uint PortLength = 5;

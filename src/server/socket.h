@@ -115,18 +115,6 @@ public:
 	
 	//! Bind socket to port and address
 	/**
-	 * @param[in] address address string to bind to
-	 * @param[in] port port number to bind to
-	 *
-	 * @note This constructs Address from the string and port and passes it to bindTo(const Address&)
-	 *
-	 * @retval 0 on success
-	 * @retval Error on error
-	 */
-	int bindTo(const std::string& address, ushort port) __attribute__ ((nothrow,warn_unused_result));
-	
-	//! Bind socket to port and address
-	/**
 	 * @param[in] address Address to bind to
 	 *
 	 * @retval 0 on success
@@ -182,21 +170,8 @@ public:
 	/**
 	 * @return Associated address structure.
 	 */
-	Address& getAddr() __attribute__ ((nothrow,warn_unused_result));
-	const Address& getConstAddr() const __attribute__ ((nothrow,warn_unused_result));
-	
-	//! Get IP address
-	/**
-	 * @return IP address string.
-	 * (e.g. [::1]:30000 or 127.0.0.1:30000)
-	 */
-	std::string address() const __attribute__ ((nothrow));
-	
-	//! Get port
-	/**
-	 * @return Local port number
-	 */
-	ushort port() const __attribute__ ((nothrow,warn_unused_result));
+	Address& addr() __attribute__ ((nothrow,warn_unused_result));
+	const Address& addr() const __attribute__ ((nothrow,warn_unused_result));
 	
 private:
 	//! Set blocking
