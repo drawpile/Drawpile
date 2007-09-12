@@ -48,13 +48,6 @@ const int ShutdownReading = SHUT_RD;
 using namespace socket_error;
 using namespace error;
 
-Socket::Socket(const fd_t nsock)
-	: Descriptor<fd_t>(nsock)
-{
-	if (m_handle != InvalidHandle)
-		block(false);
-}
-
 Socket::Socket(const fd_t nsock, const Address& saddr)
 	: Descriptor<fd_t>(nsock),
 	m_addr(saddr)
@@ -166,7 +159,7 @@ bool Socket::block(bool x)
 	return (WSAIoctl(m_handle, FIONBIO, &arg, sizeof(arg), 0, 0, 0, 0, 0) == 0);
 	#else
 	assert(x == false);
-	return fcntl(m_handle, F_SETFL, O_NONBLOCK) == Error ? false : true;
+	return (fcntl(m_handle, F_SETFL, O_NONBLOCK) != Error);
 	#endif
 }
 

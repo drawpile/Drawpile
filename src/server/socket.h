@@ -58,15 +58,9 @@ public:
 	//! Default constructor
 	/**
 	 * @param[in] nsock FD to associate with this Socket
-	 */
-	Socket(const fd_t nsock=socket_error::InvalidHandle) __attribute__ ((nothrow));
-	
-	//! More advanced constructor
-	/**
-	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(const fd_t nsock, const Address& saddr) __attribute__ ((nothrow));
+	Socket(const fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address()) __attribute__ ((nothrow));
 	
 	//! Copy ctor
 	Socket(const Socket& socket) __attribute__ ((nothrow));
