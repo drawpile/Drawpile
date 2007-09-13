@@ -59,13 +59,13 @@ public:
 	 * @throw std::bad_alloc
 	 */
 	Kqueue();
-	~Kqueue() __attribute__ ((nothrow));
+	~Kqueue() NOTHROW;
 	
-	void timeout(uint msecs) __attribute__ ((nothrow));
-	int wait() __attribute__ ((nothrow));
+	void timeout(uint msecs) NOTHROW;
+	int wait() NOTHROW;
 	int add(fd_t fd, int events);
-	int remove(fd_t fd) __attribute__ ((nothrow));
-	int modify(fd_t fd, int events) __attribute__ ((nothrow));
+	int remove(fd_t fd) NOTHROW;
+	int modify(fd_t fd, int events) NOTHROW;
 	bool getEvent(fd_t &fd, int &events);
 };
 

@@ -62,15 +62,15 @@ private:
 	std::map<fd_t,int> fd_to_index;
 	typedef std::map<fd_t,int>::iterator index_i;
 public:
-	WSAPoll() __attribute__ ((nothrow));
-	~WSAPoll()  __attribute__ ((nothrow));
+	WSAPoll() NOTHROW;
+	~WSAPoll() NOTHROW;
 	
-	void timeout(uint msecs) __attribute__ ((nothrow));
-	int wait() __attribute__ ((nothrow));
-	int add(fd_t fd, ev_t events) __attribute__ ((nothrow));
-	int remove(fd_t fd) __attribute__ ((nothrow));
-	int modify(fd_t fd, ev_t events) __attribute__ ((nothrow));
-	bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow));
+	void timeout(uint msecs) NOTHROW;
+	int wait() NOTHROW;
+	int add(fd_t fd, ev_t events) NOTHROW;
+	int remove(fd_t fd) NOTHROW;
+	int modify(fd_t fd, ev_t events) NOTHROW;
+	bool getEvent(fd_t &fd, ev_t &events) NOTHROW;
 };
 
 /* traits */

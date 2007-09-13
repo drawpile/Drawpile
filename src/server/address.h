@@ -51,36 +51,36 @@ public:
 		Network::sockaddr_in_t ipv_addr;
 	};
 	
-	socklen_t size() const __attribute__ ((nothrow));
+	socklen_t size() const NOTHROW;
 	
-	ushort port() const __attribute__ ((nothrow));
+	ushort port() const NOTHROW;
 	
-	void port(ushort _port) __attribute__ ((nothrow));
+	void port(ushort _port) NOTHROW;
 	
-	int family() const __attribute__ ((nothrow));
-	void family(int _family) __attribute__ ((nothrow));
+	int family() const NOTHROW;
+	void family(int _family) NOTHROW;
 	
 	//! Assign operator
-	Address& operator= (const Address& naddr) __attribute__ ((nothrow));
+	Address& operator= (const Address& naddr) NOTHROW;
 	
 	//! Is-equal operator
-	bool operator== (const Address& naddr) const __attribute__ ((nothrow,warn_unused_result));
+	bool operator== (const Address& naddr) const NOTHROW;
 	
 	//! Convert address to string representation of it
-	std::string toString() const /*__attribute__ ((warn_unused_result))*/;
+	std::string toString() const;
 	
 private:
 	//! Return pointer to sin_addr or sin6_addr
-	Network::in_addr_t& in_addr() __attribute__ ((nothrow));
+	Network::in_addr_t& in_addr() NOTHROW;
 	
 	//! Return const pointer to sin_addr or sin6_addr
-	const Network::in_addr_t& in_addr() const __attribute__ ((nothrow));
+	const Network::in_addr_t& in_addr() const NOTHROW;
 	
 	//! Convert string to address
 	/**
 	 * @param[in] address string to convert
 	 */
-	void fromString(std::string const& address) __attribute__ ((nothrow));
+	void fromString(std::string const& address) NOTHROW;
 };
 
 #endif // NetworkAddress_INCLUDED

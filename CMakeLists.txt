@@ -19,7 +19,7 @@ include ( config/SVN.cmake )
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile UI-less server" ON )
 option ( TRAYSERVER "Compile tray server" ON )
-option ( SERVERLIB "Compile server library" ON )
+option ( SERVERLIB "Compile server library; required by both server implementations" ON )
 
 option ( UNITTEST "Compile unit tests" OFF )
 
@@ -34,7 +34,9 @@ option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Apply several generic optimization flags" ON )
 option ( USEENV "Use CXXFLAGS as set in environemnt" ON )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
-option ( SHARED "Build shared library" OFF )
+option ( SHARED "Build shared libraries." OFF ) # likely broken in some manner or another
+
+option ( USE_URANDOM "Use /dev/urandom instead of rand()" ON )
 
 #option ( UBINARY "Build universal binary (Mac-only)" ON ) # not implemented
 

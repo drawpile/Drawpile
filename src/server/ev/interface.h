@@ -56,16 +56,16 @@ public:
 	typedef typename event::ev_type<Evs>::ev_t ev_t;
 	
 	//! Constructor
-	Interface()  __attribute__ ((nothrow));
+	Interface() NOTHROW;
 	
 	//! Destructor
-	virtual ~Interface()  __attribute__ ((nothrow)) = 0;
+	virtual ~Interface() NOTHROW = 0;
 	
 	//! Set timeout for wait()
 	/**
 	 * @param[in] msecs milliseconds to wait.
 	 */
-	virtual void timeout(uint msecs) __attribute__ ((nothrow)) = 0;
+	virtual void timeout(uint msecs) NOTHROW = 0;
 	
 	//! Wait for events.
 	/**
@@ -73,7 +73,7 @@ public:
 	 * @return -1 on error
 	 * @return 0 otherwise
 	 */
-	virtual int wait() __attribute__ ((nothrow)) = 0;
+	virtual int wait() NOTHROW = 0;
 	
 	//! Adds file descriptor to event polling.
 	/**
@@ -111,13 +111,13 @@ public:
 	 * @return \b true if FD was triggered; fd and events parameters were filled
 	 * @return \b false otherwise
 	 */
-	virtual bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow)) = 0;
+	virtual bool getEvent(fd_t &fd, ev_t &events) NOTHROW = 0;
 	
 	//! Get last error number (errno)
 	/**
 	 * @return last errno
 	 */
-	int getError() const __attribute__ ((nothrow));
+	int getError() const NOTHROW;
 };
 
 template <typename T> Interface<T>::Interface()

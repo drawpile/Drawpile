@@ -81,15 +81,15 @@ private:
 		#endif
 	);
 public:
-	Select() __attribute__ ((nothrow));
-	~Select()  __attribute__ ((nothrow));
+	Select() NOTHROW;
+	~Select() NOTHROW;
 	
-	void timeout(uint msecs) __attribute__ ((nothrow));
-	int wait() __attribute__ ((nothrow));
-	int add(fd_t fd, ev_t events) __attribute__ ((nothrow));
-	int remove(fd_t fd) __attribute__ ((nothrow));
-	int modify(fd_t fd, ev_t events) __attribute__ ((nothrow));
-	bool getEvent(fd_t &fd, ev_t &events) __attribute__ ((nothrow));
+	void timeout(uint msecs) NOTHROW;
+	int wait() NOTHROW;
+	int add(fd_t fd, ev_t events) NOTHROW;
+	int remove(fd_t fd) NOTHROW;
+	int modify(fd_t fd, ev_t events) NOTHROW;
+	bool getEvent(fd_t &fd, ev_t &events) NOTHROW;
 };
 
 /* traits */

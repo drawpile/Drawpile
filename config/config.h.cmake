@@ -6,3 +6,7 @@
 #cmakedefine USE_ASM 1
 
 #cmakedefine HAVE_QT43 1
+
+#define NOTHROW __attribute__ (( __nothrow__ ))
+#define NONNULL(x) __attribute__ (( __nonnull__(x) ))
+#define ATTRPURE __attribute__ (( __pure__ ))

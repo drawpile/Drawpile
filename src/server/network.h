@@ -43,13 +43,13 @@ namespace Network {
  *
  * @note On Windows O/S, this is thread-local.
  */
-bool start() __attribute__ ((nothrow));
+bool start() NOTHROW;
 
 //! Stops any started network sub-system
 /**
  * Does nothing on most systems.
  */
-void stop() __attribute__ ((nothrow));
+void stop() NOTHROW;
 
 namespace Family {
 

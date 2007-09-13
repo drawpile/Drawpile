@@ -50,11 +50,11 @@ public:
 	 * @param[in] _title Session title
 	 */
 	Session(const uint _id, uint _mode, uint _limit, uint _owner,
-		uint _width, uint _height, uint _level, Array<char>& _title) __attribute__ ((nothrow));
+		uint _width, uint _height, uint _level, Array<char>& _title) NOTHROW;
 	
 	#ifdef PERSISTENT_SESSIONS
 	//! Destructor
-	~Session() __attribute__ ((nothrow));
+	~Session() NOTHROW;
 	#endif
 	
 	//! Session identifier
@@ -85,7 +85,7 @@ public:
 	uint level;
 	
 	//! Get session flags
-	octet getFlags() const __attribute__ ((nothrow,warn_unused_result));
+	octet getFlags() const NOTHROW;
 	
 	#ifdef LAYER_SUPPORT
 	//! Layer identifier to layer data map
@@ -118,17 +118,17 @@ public:
 	/* *** Functions *** */
 	
 	//! Get user
-	User* getUser(const octet user_id) __attribute__ ((nothrow,warn_unused_result));
+	User* getUser(const octet user_id) NOTHROW;
 	
 	//! Test if session can be joined
-	bool canJoin() const __attribute__ ((nothrow,warn_unused_result));
+	bool canJoin() const NOTHROW;
 	
 	#ifdef PERSISTENT_SESSIONS
 	//! Invalidate currently cached raster
-	void invalidateRaster() __attribute__ ((nothrow));
+	void invalidateRaster() NOTHROW;
 	
 	//! Append raster message to current cached raster
-	bool appendRaster(protocol::Raster *raster) __attribute__ ((nothrow,nonnull(1)));
+	bool appendRaster(protocol::Raster *raster) NOTHROW NONNULL(1);
 	#endif
 };
 

@@ -69,25 +69,25 @@ public:
 	virtual ~Descriptor();
 	
 	//! Get handle
-	T handle() const __attribute__ ((nothrow));
+	T handle() const NOTHROW;
 	//! Set handle
-	void setHandle(T handle) __attribute__ ((nothrow));
+	void setHandle(T handle) NOTHROW;
 	//! Close handle
-	virtual void close() __attribute__ ((nothrow));
+	virtual void close() NOTHROW;
 	
 	//! Write to descriptor
-	virtual int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
+	virtual int write(char* buf, size_t len) NOTHROW NONNULL(1);
 	//! Read from descriptor
-	virtual int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
+	virtual int read(char* buf, size_t len) NOTHROW NONNULL(1);
 	
-	virtual bool block(bool x) __attribute__ ((nothrow));
+	virtual bool block(bool x) NOTHROW;
 	
 	//! Return last error number
 	int getError();
 	
 	#ifdef DESCRIPTOR_OPS
-	bool operator== (const Descriptor<T>& desc) __attribute__ ((nothrow));
-	Descriptor<T>& operator= (const Descriptor<T>& desc) __attribute__ ((nothrow));
+	bool operator== (const Descriptor<T>& desc) NOTHROW;
+	Descriptor<T>& operator= (const Descriptor<T>& desc) NOTHROW;
 	#endif
 };
 

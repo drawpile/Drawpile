@@ -42,15 +42,15 @@ protected:
 	ReferenceCounted();
 	
 	//! Copy ctor
-	ReferenceCounted(const ReferenceCounted &refcounted) __attribute__ ((nothrow));
+	ReferenceCounted(const ReferenceCounted &refcounted) NOTHROW;
 	
 	//! Dtor
-	virtual ~ReferenceCounted() __attribute__ ((nothrow));
+	virtual ~ReferenceCounted() NOTHROW;
 public:
 	//! Return reference count
-	ulong count() const __attribute__ ((nothrow));
+	ulong count() const NOTHROW;
 	//! Return true if unique (reference count is 1)
-	bool unique() const __attribute__ ((nothrow));
+	bool unique() const NOTHROW;
 };
 
 #endif // RefCounted_INCLUDED

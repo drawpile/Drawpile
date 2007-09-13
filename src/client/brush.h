@@ -20,6 +20,8 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
+#include "../config.h"
+
 class QImage;
 #include <QVector>
 #include <QColor>
@@ -42,63 +44,63 @@ class Brush
 				const QColor& color=Qt::black, int spacing=25);
 
 		//! Set radius heavy brush
-		void setRadius(int radius) __attribute__((nothrow));
+		void setRadius(int radius) NOTHROW;
 		//! Set radius for light brush
-		void setRadius2(int radius) __attribute__((nothrow));
+		void setRadius2(int radius) NOTHROW;
 
 		//! Set hardness for heavy brush
-		void setHardness(qreal hardness) __attribute__((nothrow));
+		void setHardness(qreal hardness) NOTHROW;
 		//! Set hardness for light brush
-		void setHardness2(qreal hardness) __attribute__((nothrow));
+		void setHardness2(qreal hardness) NOTHROW;
 
 		//! Set opacity for heavy brush
-		void setOpacity(qreal opacity) __attribute__((nothrow));
+		void setOpacity(qreal opacity) NOTHROW;
 		//! Set opacity for light brush
-		void setOpacity2(qreal opacity) __attribute__((nothrow));
+		void setOpacity2(qreal opacity) NOTHROW;
 
 		//! Set color for heavy brush
-		void setColor(const QColor& color) __attribute__((nothrow));
+		void setColor(const QColor& color) NOTHROW;
 		//! Set color for light brush
-		void setColor2(const QColor& color) __attribute__((nothrow));
+		void setColor2(const QColor& color) NOTHROW;
 
 		//! Set spacing hint
-		void setSpacing(int spacing) __attribute__((nothrow));
+		void setSpacing(int spacing) NOTHROW;
 
 		//! Get interpolated radius
-		int radius(qreal pressure) const __attribute__((nothrow));
+		int radius(qreal pressure) const NOTHROW;
 		//! Get interpolated hardness
-		qreal hardness(qreal pressure) const __attribute__((nothrow));
+		qreal hardness(qreal pressure) const NOTHROW;
 		//! Get interpolated opacity
-		qreal opacity(qreal pressure) const __attribute__((nothrow));
+		qreal opacity(qreal pressure) const NOTHROW;
 		//! Get interpolated color
-		QColor color(qreal pressure) const __attribute__((nothrow));
+		QColor color(qreal pressure) const NOTHROW;
 		//! Get spacing hint
-		int spacing() const __attribute__((nothrow));
+		int spacing() const NOTHROW;
 
 		//! Draw the brush on an image
 		void draw(QImage &image, const Point& pos) const;
 
 		//! Copy operator
-		Brush& operator=(const Brush& brush) __attribute__((nothrow));
+		Brush& operator=(const Brush& brush) NOTHROW;
 
 		//! Equality test
-		bool operator==(const Brush& brush) const __attribute__((nothrow));
+		bool operator==(const Brush& brush) const NOTHROW;
 
 		//! Inequality test
-		bool operator!=(const Brush& brush) const __attribute__((nothrow));
+		bool operator!=(const Brush& brush) const NOTHROW;
 
 	private:
 		//! called by draw()
-		void drawPixel(uchar *dest, const QColor& color, int alpha) const __attribute__((nothrow));
+		void drawPixel(uchar *dest, const QColor& color, int alpha) const NOTHROW;
 		
 		//! Normal composition, called by drawPixel()
-		void normalComposition(int color, uchar& target, int alpha) const __attribute__((nothrow));
+		void normalComposition(int color, uchar& target, int alpha) const NOTHROW;
 		
 		//! Update the brush cache
 		void updateCache() const;
 
 		//! Check if the brush is sensitive to pressure
-		void checkSensitivity() __attribute__((nothrow));
+		void checkSensitivity() NOTHROW;
 
 		int radius1_, radius2_;
 		qreal hardness1_, hardness2_;

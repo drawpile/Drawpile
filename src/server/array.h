@@ -27,22 +27,22 @@ public:
 	/**
 	 * @param[in] array Source array
 	 */
-	Array(const Array<T>& array) __attribute__((nothrow));
+	Array(const Array<T>& array) NOTHROW;
 	
 	//! Constructor
 	/**
 	 * @param[in] _data char* string to associate with this Array
 	 * @param[in] _size Size of _data
 	 */
-	Array(T* _data=0, const size_t _size=0) __attribute__((nothrow));
+	Array(T* _data=0, const size_t _size=0) NOTHROW;
 	
 	//! Destructor
 	/**
 	 * @note Deletes contained char* string to avoid memory leak
 	 */
-	virtual ~Array() __attribute__((nothrow));
+	virtual ~Array() NOTHROW;
 	
-	virtual void set(T* _data, const size_t _size) __attribute__((nothrow));
+	virtual void set(T* _data, const size_t _size) NOTHROW;
 	
 	//! Type of array
 	typedef T type;

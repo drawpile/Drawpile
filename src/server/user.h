@@ -45,28 +45,28 @@ public:
 	 * @param[in] _id User identifier
 	 * @param[in] nsock Socket to associate with User
 	 */
-	User(const octet _id, const Socket& nsock) __attribute__ ((nothrow));
+	User(const octet _id, const Socket& nsock) NOTHROW;
 	
 	//! Destructor
-	~User() __attribute__ ((nothrow));
+	~User() NOTHROW;
 	
 	//! Change active session
 	/**
 	 * @param[in] session_id The session which to activate
 	 */
-	bool makeActive(octet session_id) __attribute__ ((nothrow));
+	bool makeActive(octet session_id) NOTHROW;
 	
 	//! Fetch SessionData* pointer
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	SessionData* getSession(octet session_id) __attribute__ ((nothrow,warn_unused_result));
+	SessionData* getSession(octet session_id) NOTHROW;
 	
 	//! Fetch const SessionData* pointer
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	const SessionData* getConstSession(octet session_id) const __attribute__ ((nothrow,warn_unused_result));
+	const SessionData* getConstSession(octet session_id) const NOTHROW;
 	
 	//! Cache tool info
 	/**
@@ -74,7 +74,7 @@ public:
 	 *
 	 * @throw std::bad_alloc If it can't allocate local copy of the tool info
 	 */
-	void cacheTool(protocol::ToolInfo* ti) __attribute__ ((nonnull(1)));
+	void cacheTool(protocol::ToolInfo* ti) NONNULL(1);
 	
 	//! Socket
 	Socket sock;
@@ -125,13 +125,13 @@ public:
 	/**
 	 * @return Flags for use with the network protocol
 	 */
-	octet getCapabilities() const __attribute__ ((nothrow,warn_unused_result));
+	octet getCapabilities() const NOTHROW;
 	
 	//! Set client capabilities
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setCapabilities(const octet flags) __attribute__ ((nothrow));
+	void setCapabilities(const octet flags) NOTHROW;
 	
 	bool
 		//! Deflate extension
@@ -145,13 +145,13 @@ public:
 	/**
 	 * @return Flags as used in the network protocol
 	 */
-	octet getExtensions() const __attribute__ ((nothrow,warn_unused_result));
+	octet getExtensions() const NOTHROW;
 	
 	//! Set extensions
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setExtensions(const octet flags) __attribute__ ((nothrow));
+	void setExtensions(const octet flags) NOTHROW;
 	
 	//! Subscribed sessions
 	std::map<octet, SessionData> sessions;

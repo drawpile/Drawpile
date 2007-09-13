@@ -46,7 +46,7 @@ struct Message;
  *
  * @param[in] type Message type to be generated (see protocol::type).
  */
-void msgName(const unsigned char type) __attribute__ ((nothrow));
+void msgName(const unsigned char type) NOTHROW ATTRPURE;
 
 //! Get new message struct.
 /**
@@ -60,7 +60,7 @@ void msgName(const unsigned char type) __attribute__ ((nothrow));
  *
  * @throw std::bad_alloc
  */
-Message* getMessage(const unsigned char type) __attribute__ ((warn_unused_result));
+Message* getMessage(const unsigned char type) ATTRPURE;
 
 } // namespace protocol
 

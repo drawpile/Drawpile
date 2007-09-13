@@ -297,7 +297,7 @@ int Socket::bindTo(const Address& naddr)
 	m_addr = naddr;
 	
 	#ifndef NDEBUG
-	assert(m_addr.family != Network::Family::None);
+	assert(m_addr.family() != Network::Family::None);
 	#endif
 	
 	const int r = bind(m_handle, &m_addr.raw_addr, m_addr.size());

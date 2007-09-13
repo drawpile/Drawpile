@@ -60,22 +60,22 @@ public:
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(const fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address()) __attribute__ ((nothrow));
+	Socket(const fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address()) NOTHROW;
 	
 	//! Copy ctor
-	Socket(const Socket& socket) __attribute__ ((nothrow));
+	Socket(const Socket& socket) NOTHROW;
 	
-	~Socket() __attribute__ ((nothrow));
+	~Socket() NOTHROW;
 	
 	//! Create new socket
-	fd_t create() __attribute__ ((nothrow));
+	fd_t create() NOTHROW;
 	
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
 	 * @note (Socket.getFD() == socket_error::InvalidHandle) if no new connection was accepted
 	 */
-	Socket accept()  __attribute__ ((nothrow)) /*__attribute__ ((warn_unused_result))*/;
+	Socket accept() NOTHROW;
 	
 	//! Re-use socket port
 	/**
@@ -86,7 +86,7 @@ public:
 	 *
 	 * @note In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
 	 */
-	bool reuse_port(bool x) __attribute__ ((nothrow));
+	bool reuse_port(bool x) NOTHROW;
 	
 	//! Re-use socket address
 	/**
@@ -97,10 +97,10 @@ public:
 	 *
 	 * @note In Win32, this does nothing as TIME_WAIT is ignored completely there.
 	 */
-	bool reuse_addr(bool x) __attribute__ ((nothrow));
+	bool reuse_addr(bool x) NOTHROW;
 	
 	//! Receive OOB data like any other
-	bool inline_oob(bool x) __attribute__ ((nothrow));
+	bool inline_oob(bool x) NOTHROW;
 	
 	//! Set/unset lingering
 	/**
@@ -111,7 +111,7 @@ public:
 	 * @param[in] x enable/disable lingering
 	 * @param[in] delay linger time if enabled
 	 */
-	bool linger(bool x, ushort delay) __attribute__ ((nothrow));
+	bool linger(bool x, ushort delay) NOTHROW;
 	
 	//! Bind socket to port and address
 	/**
@@ -120,7 +120,7 @@ public:
 	 * @retval 0 on success
 	 * @retval Error on error
 	 */
-	int bindTo(const Address& address) __attribute__ ((nothrow,warn_unused_result));
+	int bindTo(const Address& address) NOTHROW;
 	
 	//! Connect to address
 	/**
@@ -130,14 +130,14 @@ public:
 	 *
 	 * @note getError() (... ?)
 	 */
-	int connect(const Address& rhost) __attribute__ ((nothrow));
+	int connect(const Address& rhost) NOTHROW;
 	
 	//! Set listening
 	/**
 	 * @retval 0 on success
 	 * @retval Error on error
 	 */
-	int listen() __attribute__ ((nothrow));
+	int listen() NOTHROW;
 	
 	//! Send data.
 	/**
@@ -147,7 +147,7 @@ public:
 	 * @return number of bytes actually sent.
 	 * @retval Error on error
 	 */
-	int write(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
+	int write(char* buf, size_t len) NOTHROW NONNULL(1);
 	
 	//! Receive data
 	/**
@@ -158,20 +158,20 @@ public:
 	 * @retval 0 if connection was closed on the other end.
 	 * @retval Error on error.
 	 */
-	int read(char* buf, size_t len) __attribute__ ((nothrow,warn_unused_result,nonnull(1)));
+	int read(char* buf, size_t len) NOTHROW NONNULL(1);
 	
 	//! Shutdown socket
 	/**
 	 * @param[in] how SHUT_RD, SHUT_WR, SHUT_RDWR
 	 */
-	int shutdown(int how) __attribute__ ((nothrow));
+	int shutdown(int how) NOTHROW;
 	
 	//! Get address structure
 	/**
 	 * @return Associated address structure.
 	 */
-	Address& addr() __attribute__ ((nothrow,warn_unused_result));
-	const Address& addr() const __attribute__ ((nothrow,warn_unused_result));
+	Address& addr() NOTHROW;
+	const Address& addr() const NOTHROW;
 	
 private:
 	//! Set blocking
@@ -180,7 +180,7 @@ private:
 	 *
 	 * @note You can't re-enable blocking on non-Win32 systems (API limitation?).
 	 */
-	bool block(bool x) __attribute__ ((nothrow));
+	bool block(bool x) NOTHROW;
 };
 
 #endif // Sockets_INCLUDED

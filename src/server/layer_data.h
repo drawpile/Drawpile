@@ -22,10 +22,10 @@ class LayerData
 {
 public:
 	//! Constructor
-	LayerData() __attribute__ ((nothrow));
+	LayerData() NOTHROW;
 	
 	//! Constructor
-	LayerData(const uint _id, const uint _mode, const uint _opacity=255, const bool _locked=false) __attribute__ ((nothrow));
+	LayerData(const uint _id, const uint _mode, const uint _opacity=255, const bool _locked=false) NOTHROW;
 	
 	uint
 		//! Layer identifier

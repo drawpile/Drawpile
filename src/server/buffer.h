@@ -30,18 +30,18 @@ public:
 	 * @param[in] buf char* string to associate with Buffer
 	 * @param[in] len size of buf
 	 */
-	Buffer(char* buf=0, const size_t len=0) __attribute__ ((nothrow));
+	Buffer(char* buf=0, const size_t len=0) NOTHROW;
 	
-	~Buffer() __attribute__ ((nothrow));
+	~Buffer() NOTHROW;
 	
 	//! Moves buffer contents to another buffer struct
 	/**
 	 * @param[in,out] buffer Buffer to move contents from, source Buffer is emptied.
 	 */
-	Buffer& operator<< (Buffer& buffer) __attribute__ ((nothrow));
+	Buffer& operator<< (Buffer& buffer) NOTHROW;
 	
 	//! Empty the buffer
-	void reset() __attribute__ ((nothrow));
+	void reset() NOTHROW;
 	
 	//! Resizes the buffer to new size.
 	/**
@@ -59,7 +59,7 @@ public:
 	 * @param[out] buf char* string to fill with current buffer contents
 	 * @param[in] buflen Size of buf
 	 */
-	bool copy(char* buf, const size_t buflen) const __attribute__ ((nothrow,nonnull(1)));
+	bool copy(char* buf, const size_t buflen) const NOTHROW NONNULL(1);
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
@@ -71,7 +71,7 @@ public:
 	 *
 	 * @note Old buffer is automatically deleted to avoid memory leak
 	 */
-	void set(char* buf, const size_t buflen, const size_t fill=0) __attribute__ ((nothrow,nonnull(1)));
+	void set(char* buf, const size_t buflen, const size_t fill=0) NOTHROW NONNULL(1);
 	
 	//! Repositions data for maximum contiguous _read_ length.
 	/**
@@ -80,7 +80,7 @@ public:
 	void reposition();
 	
 	//! Returns true if buffer has no data
-	const bool isEmpty() const __attribute__ ((nothrow,warn_unused_result));
+	const bool isEmpty() const NOTHROW;
 	
 	//! Did read of 'n' bytes.
 	/**
@@ -90,7 +90,7 @@ public:
 	 *
 	 * @param[in] len Number of bytes to move the read pointer by
 	 */
-	void read(const size_t len) __attribute__ ((nothrow));
+	void read(const size_t len) NOTHROW;
 	
 	//! How many bytes can be read.
 	/** 
@@ -98,7 +98,7 @@ public:
 	 *
 	 * @return number of bytes you can read in one go.
 	 */
-	size_t canRead() const __attribute__ ((nothrow,warn_unused_result));
+	size_t canRead() const NOTHROW;
 	
 	//! Wrote 'n' bytes to buffer.
 	/**
@@ -107,19 +107,19 @@ public:
 	 *
 	 * @param[in] len Number of bytes you wrote to buffer, moves write position by this much.
 	 */
-	void write(const size_t len) __attribute__ ((nothrow));
+	void write(const size_t len) NOTHROW;
 	
 	//! How many bytes can be written.
 	/**
 	 * @return number of bytes you can write in one go.
 	 */
-	size_t canWrite() const __attribute__ ((nothrow,warn_unused_result));
+	size_t canWrite() const NOTHROW;
 	
 	//! Returns the number of free bytes in buffer.
 	/**
 	 * @return Number of bytes still unused
 	 */
-	size_t free() const __attribute__ ((nothrow,warn_unused_result));
+	size_t free() const NOTHROW;
 	
 	//! Rewinds wpos and rpos to beginning of the buffer.
 	/**
@@ -128,7 +128,7 @@ public:
 	 * 
 	 * Effectively allows the next write to occupy largest possible space.
 	 */
-	void rewind() __attribute__ ((nothrow));
+	void rewind() NOTHROW;
 	
 	char
 		//! Writing position.

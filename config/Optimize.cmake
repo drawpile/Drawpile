@@ -1,13 +1,14 @@
 # Optimize.cmake
 
 # http://gcc.gnu.org/onlinedocs/gcc/i386-and-x86_002d64-Options.html
-set ( CPU pentium2 )
+set ( CPU pentium3 )
+set ( OPT "-O2" )
+
+###   DO NOT TOUCH THE FOLLOWING   ###
 
 if ( GENERIC )
 	set ( CPU pentium3 ) # our target audience likely don't have older
 endif ( GENERIC )
-
-###   DO NOT TOUCH THE FOLLOWING   ###
 
 set ( ARCH "-march=${CPU}" )
 
@@ -21,12 +22,11 @@ endif ( GENERIC )
 set ( FASTMATH "-ffast-math" )
 
 set ( DEBUG_FLAGS "-g" )
-set ( OPT "-O2" )
 
 set ( WARNALL "-Wall" )
 set ( WEFFCPP "-Weffc++" ) # unused
 
-set ( NORTTI "-fno-rtti" )
+set ( NORTTI "-fno-rtti" ) # RTTI not needed
 
 # a bit questionable optimizations
 set ( UNSAFE_MATH_OPT "-funsafe-math-optimizations" )

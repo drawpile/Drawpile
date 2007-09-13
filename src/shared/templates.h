@@ -38,22 +38,22 @@
 
 /* forward declarations */
 
-template <typename T> T& bswap(T& x) __attribute__ ((nothrow/*,pure*/));
-template <typename T> T bswap_const(const T& x) __attribute__ ((nothrow,pure));
-template <> inline uint32_t& bswap<uint32_t>(uint32_t& x) __attribute__ ((nothrow,/*pure*/));
-template <> inline uint16_t& bswap<uint16_t>(uint16_t& x) __attribute__ ((nothrow/*,pure*/));
-template <> inline uint8_t& bswap<uint8_t>(uint8_t& x) __attribute__ ((nothrow/*,pure*/));
-template <typename T> char* memcpy_t(char* dst, const T& src) __attribute__ ((nothrow,nonnull(1)));
-template <typename T> T& memcpy_t(T& dst, const char* src) __attribute__ ((nothrow,nonnull(2)));
-template <typename T> T& fSet(T& u, const T x) __attribute__ ((nothrow/*,pure*/));
-template <typename T> T& fClr(T& u, const T x) __attribute__ ((nothrow/*,pure*/));
-template <typename T> bool fIsSet(const T u, const T x) __attribute__ ((nothrow,pure));
-template <typename T, typename U> bool inBoundsOf(const U& u) __attribute__ ((nothrow,pure));
-template <typename T> T roundToNext(const T& number, const T& boundary) __attribute__ ((nothrow,pure));
-template <> inline double roundToNext<double>(const double& number, const double& boundary) __attribute__ ((nothrow,pure));
-template <typename T> T roundToPrev(const T& number, const T& boundary) __attribute__ ((nothrow,pure));
-template <> inline double roundToPrev<double>(const double& number, const double& boundary) __attribute__ ((nothrow,pure));
-template <typename T> T round(const T& num) __attribute__ ((nothrow,pure));
+template <typename T> T& bswap(T& x) NOTHROW ATTRPURE;
+template <typename T> T bswap_const(const T& x) NOTHROW ATTRPURE;
+template <> inline uint32_t& bswap<uint32_t>(uint32_t& x) NOTHROW /*ATTRPURE*/;
+template <> inline uint16_t& bswap<uint16_t>(uint16_t& x) NOTHROW /*ATTRPURE*/;
+template <> inline uint8_t& bswap<uint8_t>(uint8_t& x) NOTHROW /*ATTRPURE*/;
+template <typename T> char* memcpy_t(char* dst, const T& src) NOTHROW NONNULL(1);
+template <typename T> T& memcpy_t(T& dst, const char* src) NOTHROW NONNULL(2);
+template <typename T> T& fSet(T& u, const T x) NOTHROW /*ATTRPURE*/;
+template <typename T> T& fClr(T& u, const T x) NOTHROW /*ATTRPURE*/;
+template <typename T> bool fIsSet(const T u, const T x) NOTHROW ATTRPURE;
+template <typename T, typename U> bool inBoundsOf(const U& u) NOTHROW ATTRPURE;
+template <typename T> T roundToNext(const T& number, const T& boundary) NOTHROW ATTRPURE;
+template <> inline double roundToNext<double>(const double& number, const double& boundary) NOTHROW ATTRPURE;
+template <typename T> T roundToPrev(const T& number, const T& boundary) NOTHROW ATTRPURE;
+template <> inline double roundToPrev<double>(const double& number, const double& boundary) NOTHROW ATTRPURE;
+template <typename T> T round(const T& num) NOTHROW ATTRPURE;
 
 /* swapping endianess */
 

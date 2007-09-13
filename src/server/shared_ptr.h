@@ -41,21 +41,21 @@ private:
 	T *m_sptr;
 protected:
 	//! Default ctor, not usable
-	SharedPtr() __attribute__ ((nothrow));
+	SharedPtr() NOTHROW;
 public:
 	//! Assign ctor
-	SharedPtr(T *ptr) __attribute__ ((nothrow/*,nonnull(1)*/));
+	SharedPtr(T *ptr) NOTHROW /*NONNULL(1)*/;
 	
 	//! Copy ctor
-	SharedPtr(const SharedPtr<T> &shr_ptr) __attribute__ ((nothrow));
+	SharedPtr(const SharedPtr<T> &shr_ptr) NOTHROW;
 	
 	//! Dtor
-	~SharedPtr() __attribute__ ((nothrow));
+	~SharedPtr() NOTHROW;
 	
 	//! Get reference of the shared pointer's object
-	T& operator* () __attribute__ ((nothrow));
+	T& operator* () NOTHROW;
 	//! Access functions and members of the class directly
-	T* operator-> () __attribute__ ((nothrow));
+	T* operator-> () NOTHROW;
 };
 
 template <typename T>
