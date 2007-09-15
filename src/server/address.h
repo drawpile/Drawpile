@@ -47,7 +47,7 @@ protected:
 		//! base address
 		sockaddr raw;
 		//! Either IPv4 or IPv6 address
-		/** @see Network */
+		/** Precisely: either sockaddr_in or sockaddr_in6 */
 		Network::sockaddr_in_t ipv;
 	} addr;
 public:

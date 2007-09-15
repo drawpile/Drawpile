@@ -2278,6 +2278,9 @@ bool Server::init()
 		#ifndef NDEBUG
 		cerr << "- Failed to create a socket." << endl;
 		#endif
+		
+		error = lsock.getError();
+		
 		return false;
 	}
 	
@@ -2664,4 +2667,9 @@ void Server::setDuplicateConnectionBlocking(const bool _block)
 bool Server::getDuplicateConnectionBlocking() const
 {
 	return blockDuplicateConnections;
+}
+
+int Server::getError()
+{
+	return error;
 }

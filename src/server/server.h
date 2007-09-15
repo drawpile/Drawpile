@@ -64,8 +64,12 @@ const uint time_limit = 180;
 class Server
 {
 protected:
+	//! Last error
+	int error;
+	
 	/* data */
 	
+	//! Statistics
 	Statistics stats;
 	
 	//! Server state
@@ -635,6 +639,9 @@ public:
 	void setDuplicateConnectionBlocking(const bool _block=true) NOTHROW;
 	//! Get current duplicate connection blocking state
 	bool getDuplicateConnectionBlocking() const NOTHROW;
+	
+	//! Get last error
+	int getError() NOTHROW;
 	
 	/** Control functions **/
 	

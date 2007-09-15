@@ -119,6 +119,9 @@ const uint UnspecifiedAddress[4] = {0};
  */
 const uint AddrLength = 8*4 + 7 + 2;
 
+//! Raw address length in octets
+const uint RawLength = 16;
+
 //! IPv4 compatibility address
 /**
  * e.g. IPv6 ::ffff:1.2.3.4 = IPv4 1.2.3.4
@@ -222,6 +225,9 @@ const uint UnspecifiedAddress = 0;
  */
 const uint AddrLength = 16;
 
+//! Raw address length in octets
+const uint RawLength = 4;
+
 //! Broadcast address
 const char Broadcast[] = "255.255.255.255";
 
@@ -253,6 +259,7 @@ using IPVNAMESPACE::UnspecifiedAddress;
 using IPVNAMESPACE::Localhost;
 using IPVNAMESPACE::LocalhostAddress;
 using IPVNAMESPACE::AddrLength;
+using IPVNAMESPACE::RawLength;
 using IPVNAMESPACE::sockaddr_in_t;
 using IPVNAMESPACE::family;
 using IPVNAMESPACE::in_addr_t;

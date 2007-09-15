@@ -9,8 +9,8 @@ namespace socket_error
 {
 
 #ifdef WIN32
-#ifndef NDEBUG
 const int FamilyNotSupported = WSAEAFNOSUPPORT;
+#ifndef NDEBUG
 const int NotSocket = WSAENOTSOCK;
 const int ProtocolOption = WSAENOPROTOOPT;
 const int ProtocolType = WSAEPROTOTYPE;
@@ -39,8 +39,8 @@ const int Error = SOCKET_ERROR;
 const int AddressInUse = WSAEADDRINUSE;
 const int AddressNotAvailable = WSAEADDRNOTAVAIL;
 #else // POSIX
-#ifndef NDEBUG
 const int FamilyNotSupported = EAFNOSUPPORT;
+#ifndef NDEBUG
 const int NotSocket = ENOTSOCK;
 //const int _NotSupported = E??;
 const int OperationNotSupported = EOPNOTSUPP;

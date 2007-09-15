@@ -321,6 +321,16 @@ int main(int argc, char** argv)
 			#ifndef NDEBUG
 			cerr << "- Initialization failed!" << endl;
 			#endif
+			
+			if (srv.getError() == socket_error::FamilyNotSupported)
+			{
+				#ifdef USE_IPV6
+				cerr << "IPv6 not supported on this machine." << endl;
+				#else
+				cerr << "IPv4 not supported on this machine." << endl;
+				#endif
+			}
+			
 			goto end;
 		}
 		
