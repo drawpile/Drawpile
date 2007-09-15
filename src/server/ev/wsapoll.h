@@ -50,7 +50,7 @@ const uint max_events = std::numeric_limits<ulong>::max();
  * @bug The used function is also called WSAPoll, so saying using namespace event will break things.
  */
 class WSAPoll
-	: public Interface<WSAPoll>
+	: public Interface<SOCKET, short>
 {
 private:
 	int m_timeout;

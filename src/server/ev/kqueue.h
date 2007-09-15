@@ -44,7 +44,7 @@ namespace event {
  * 
  */
 class Kqueue
-	: public Interface<Kqueue>
+	: public Interface
 {
 private:
 	timespec m_timeout;

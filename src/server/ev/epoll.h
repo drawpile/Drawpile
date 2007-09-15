@@ -43,7 +43,7 @@ namespace event {
  * 
  */
 class Epoll
-	: public Interface<Epoll>
+	: public Interface
 {
 private:
 	uint m_timeout;

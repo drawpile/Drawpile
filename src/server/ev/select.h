@@ -54,7 +54,7 @@ template <> struct fd_type<Select> { typedef SOCKET fd_t; };
  * 
  */
 class Select
-	: public Interface<Select>
+	: public Interface<fd_type<Select>::fd_t>
 {
 private:
 	timeval _timeout;

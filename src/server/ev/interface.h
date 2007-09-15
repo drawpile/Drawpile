@@ -41,7 +41,7 @@
 namespace event {
 
 //! Event interface
-template <typename Evs>
+template <typename tFD=int, typename tEv=int>
 class Interface
 {
 protected:
@@ -51,9 +51,9 @@ protected:
 	int error;
 public:
 	//! Type for FD
-	typedef typename event::fd_type<Evs>::fd_t fd_t;
+	typedef tFD fd_t;
 	//! Type for events
-	typedef typename event::ev_type<Evs>::ev_t ev_t;
+	typedef tEv ev_t;
 	
 	//! Constructor
 	Interface() NOTHROW;
@@ -120,14 +120,14 @@ public:
 	int getError() const NOTHROW;
 };
 
-template <typename T> Interface<T>::Interface()
+template <typename tFD, typename tEv> Interface<tFD,tEv>::Interface()
 	: nfds(-1)
 { }
 
-template <typename T> Interface<T>::~Interface() { /* Abstract */ }
+template <typename tFD, typename tEv> Interface<tFD,tEv>::~Interface() { /* Abstract */ }
 
-template <typename T>
-int Interface<T>::getError() const
+template <typename tFD, typename tEv>
+int Interface<tFD,tEv>::getError() const
 {
 	return error;
 }
