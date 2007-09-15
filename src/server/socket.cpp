@@ -79,21 +79,21 @@ fd_t Socket::create()
 	if (m_handle == InvalidHandle)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		// programming errors
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != FamilyNotSupported);
-		assert(s_error != ProtocolNotSupported);
-		assert(s_error != ProtocolType);
-		//assert(s_error != ESOCKTNOSUPPORT); // ?
-		assert(s_error != EINVAL);
+		assert(m_error != FamilyNotSupported);
+		assert(m_error != ProtocolNotSupported);
+		assert(m_error != ProtocolType);
+		//assert(m_error != ESOCKTNOSUPPORT); // ?
+		assert(m_error != EINVAL);
 	}
 	else
 		block(false);
@@ -119,30 +119,30 @@ Socket Socket::accept()
 	if (n_fd == InvalidHandle)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
-		assert(s_error != BadDescriptor);
-		assert(s_error != EINVAL);
-		assert(s_error != Fault);
-		assert(s_error != NotSocket);
-		assert(s_error != OperationNotSupported);
+		assert(m_error != BadDescriptor);
+		assert(m_error != EINVAL);
+		assert(m_error != Fault);
+		assert(m_error != NotSocket);
+		assert(m_error != OperationNotSupported);
 		
 		#ifdef EPROTO
-		assert(s_error != EPROTO);
+		assert(m_error != EPROTO);
 		#endif
 		
 		#ifdef LINUX
 		// no idea what these are
-		assert(s_error != ConnectionTimedOut); // Timed out
-		assert(s_error != ERESTARTSYS); // ?
+		assert(m_error != ConnectionTimedOut); // Timed out
+		assert(m_error != ERESTARTSYS); // ?
 		#endif
 	}
 	
@@ -177,20 +177,20 @@ bool Socket::reuse_port(bool x)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
-		assert(s_error != BadDescriptor);
-		assert(s_error != NotSocket);
-		assert(s_error != ProtocolOption);
-		assert(s_error != Fault);
+		assert(m_error != BadDescriptor);
+		assert(m_error != NotSocket);
+		assert(m_error != ProtocolOption);
+		assert(m_error != Fault);
 	}
 	
 	return (r == 0);
@@ -212,20 +212,20 @@ bool Socket::reuse_addr(bool x)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
-		assert(s_error != BadDescriptor);
-		assert(s_error != NotSocket);
-		assert(s_error != ProtocolOption);
-		assert(s_error != Fault);
+		assert(m_error != BadDescriptor);
+		assert(m_error != NotSocket);
+		assert(m_error != ProtocolOption);
+		assert(m_error != Fault);
 	}
 	
 	return (r == 0);
@@ -241,20 +241,20 @@ bool Socket::inline_oob(bool x)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
-		assert(s_error != BadDescriptor);
-		assert(s_error != NotSocket);
-		assert(s_error != ProtocolOption);
-		assert(s_error != Fault);
+		assert(m_error != BadDescriptor);
+		assert(m_error != NotSocket);
+		assert(m_error != ProtocolOption);
+		assert(m_error != Fault);
 	}
 	
 	return (r == 0);
@@ -274,19 +274,19 @@ bool Socket::linger(bool x, ushort delay)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != BadDescriptor);
-		assert(s_error != NotSocket);
-		assert(s_error != ProtocolOption);
-		assert(s_error != Fault);
+		assert(m_error != BadDescriptor);
+		assert(m_error != NotSocket);
+		assert(m_error != ProtocolOption);
+		assert(m_error != Fault);
 	}
 	
 	return (r == 0);
@@ -305,22 +305,22 @@ int Socket::bindTo(const Address& naddr)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
-		assert(s_error != BadDescriptor);
-		assert(s_error != EINVAL);
-		assert(s_error != NotSocket);
-		assert(s_error != OperationNotSupported);
-		assert(s_error != FamilyNotSupported);
-		assert(s_error != Connected);
+		assert(m_error != BadDescriptor);
+		assert(m_error != EINVAL);
+		assert(m_error != NotSocket);
+		assert(m_error != OperationNotSupported);
+		assert(m_error != FamilyNotSupported);
+		assert(m_error != Connected);
 	}
 	
 	return r;
@@ -341,23 +341,23 @@ int Socket::connect(const Address& rhost)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
 		// programming errors
-		assert(s_error != BadDescriptor);
-		assert(s_error != Fault);
-		assert(s_error != NotSocket);
-		assert(s_error != Connected);
-		assert(s_error != AddressInUse);
-		assert(s_error != FamilyNotSupported);
-		assert(s_error != Already);
+		assert(m_error != BadDescriptor);
+		assert(m_error != Fault);
+		assert(m_error != NotSocket);
+		assert(m_error != Connected);
+		assert(m_error != AddressInUse);
+		assert(m_error != FamilyNotSupported);
+		assert(m_error != Already);
 	}
 	
 	return r;
@@ -372,18 +372,18 @@ int Socket::listen()
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = WSAGetLastError();
+		m_error = WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != BadDescriptor);
-		assert(s_error != NotSocket);
-		assert(s_error != OperationNotSupported);
+		assert(m_error != BadDescriptor);
+		assert(m_error != NotSocket);
+		assert(m_error != OperationNotSupported);
 	}
 	
 	return r;
@@ -408,21 +408,21 @@ int Socket::write(char* buffer, size_t len)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = ::WSAGetLastError();
+		m_error = ::WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		// programming errors
-		assert(s_error != Fault);
-		assert(s_error != EINVAL);
-		assert(s_error != BadDescriptor);
-		assert(s_error != NotConnected);
-		assert(s_error != NotSocket);
+		assert(m_error != Fault);
+		assert(m_error != EINVAL);
+		assert(m_error != BadDescriptor);
+		assert(m_error != NotConnected);
+		assert(m_error != NotSocket);
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#else
-		assert(s_error != OperationNotSupported);
+		assert(m_error != OperationNotSupported);
 		#endif
 		
 		return Error;
@@ -455,21 +455,21 @@ int Socket::read(char* buffer, size_t len)
 	if (r == Error)
 	{
 		#ifdef WIN32
-		s_error = ::WSAGetLastError();
+		m_error = ::WSAGetLastError();
 		#else
-		s_error = errno;
+		m_error = errno;
 		#endif
 		
 		// programming errors
 		#ifdef WIN32
-		assert(s_error != WSANOTINITIALISED);
+		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(s_error != BadDescriptor);
-		assert(s_error != Fault);
-		assert(s_error != EINVAL);
-		assert(s_error != NotConnected);
-		assert(s_error != NotSocket);
+		assert(m_error != BadDescriptor);
+		assert(m_error != Fault);
+		assert(m_error != EINVAL);
+		assert(m_error != NotConnected);
+		assert(m_error != NotSocket);
 		
 		return Error;
 	}

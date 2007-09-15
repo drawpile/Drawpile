@@ -51,9 +51,6 @@ public:
 protected:
 	//! Address (local for listening, remote for outgoing)
 	Address m_addr;
-	
-	//! Last error number (from errno or equivalent)
-	int s_error;
 public:
 	//! Default constructor
 	/**
