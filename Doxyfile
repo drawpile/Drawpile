@@ -26,7 +26,7 @@ BUILTIN_STL_SUPPORT    = NO
 DISTRIBUTE_GROUP_DOC   = NO
 SUBGROUPING            = YES
 
-EXAMPLE_PATH           = ./doc/doxygen/examples
+EXAMPLE_PATH           = ./doc/dox/examples
 
 #---------------------------------------------------------------------------
 # Build related configuration options

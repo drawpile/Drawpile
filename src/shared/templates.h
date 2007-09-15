@@ -188,7 +188,6 @@ bool inBoundsOf(const U& u)
  * @param number number to round to next boundary
  * @param boundary boundary to which to round the number
  *
- * @example "Rounding to next boundary"
  * @code
  * roundToNext(1200, 1000); // = 2000
  * roundToNext(28175, 300); // = 27200
@@ -212,7 +211,6 @@ double roundToNext<double>(const double& number, const double& boundary)
  * @param number number to round to previous boundary
  * @param boundary boundary to which to round the number
  *
- * @example "Rounding to previous boundary"
  * @code
  * roundToPrev(1200, 1000); // = 1000
  * roundToPrev(28175, 300); // = 27900

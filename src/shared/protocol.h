@@ -255,7 +255,7 @@ public:
 	 * @param[in] len declares the length of the data buffer.
 	 *
 	 * @return Used buffer length. 
-	 * @return 0 on error
+	 * @retval 0 on error
 	 *
 	 * @post Return value is the same as returned by reqDataLen()
 	 * 
@@ -390,7 +390,7 @@ struct StrokeInfo
 	
 	/**
 	 * @throw std::bad_alloc
-	 * @return 0 if count is 0 = invalid data
+	 * @retval 0 if count is 0 = invalid data
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);

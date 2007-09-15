@@ -21,7 +21,7 @@
 
 //! SHA-1 hash algorithm
 /**
- * @example "SHA-1 hashing"
+ * For example:
  * @code
  * SHA1 hash;
  *
