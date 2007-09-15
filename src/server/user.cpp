@@ -211,7 +211,17 @@ bool User::getMessage()
 		goto getreqlen;
 	}
 	else
-		input.read( inMsg->unserialize(input.rpos, cread) );
+	{
+		size_t rv = inMsg->unserialize(input.rpos, cread);
+		if (rv != 0)
+			input.read( rv );
+		else
+		{
+			delete inMsg;
+			inMsg = 0;
+			return false;
+		}
+	}
 	
 	return true;
 }

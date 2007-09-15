@@ -183,8 +183,6 @@ size_t Message::payloadLength() const
 
 size_t Message::serializePayload(char *buf) const
 {
-	assert(buf != 0);
-	
 	return 0;
 }
 
@@ -290,7 +288,7 @@ size_t StrokeInfo::unserialize(const char* buf, const size_t len)
 	uint8_t count = buf[i];
 	
 	if (count == 0)
-		throw std::exception();
+		return 0;
 	
 	i += sizeof(count);
 	

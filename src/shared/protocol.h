@@ -234,37 +234,30 @@ public:
 	
 	//! Check if buf contains enough data to unserialize
 	/**
-	 * The value is not guaranteed to be constant.
-	 *
-	 * Meaning: the length returned may grow when the function is able to scan
-	 * the full extent of the message.
-	 *
 	 * @param[in] buf Buffer for unserializing.
 	 * @param[in] len Number of bytes in buffer.
 	 *
 	 * @return Length of data needed to unserialize or completely scan the length.
-	 * Only unserialize() if you have at least this much data in the buffer at the
-	 * time of calling this function. Length includes message type and other
-	 * header data. Defaults to zero payload message with possible user modifier.
+	 * @note At worst case, three calls to reqDataLen() are necessary to ascertain the full
+	 * size.
 	 */
 	virtual
-	size_t reqDataLen(const char* buf, const size_t len) const NOTHROW;
+	size_t reqDataLen(const char* buf, const size_t len) const NOTHROW NONNULL(1);
 	
 	//! Unserializes char* buffer to associated message struct.
 	/**
 	 * The base message struct will be the first of linked list if the message is of
 	 * bundling sort. Otherwise, there's no linked list created.
-	 * 
-	 * Before calling unserialize(), you MUST ensure the buffer has enough data
-	 * by calling reqDataLen(). Also, reqDataLen() is the only thing that can
-	 * tell you how much data the call to unserialize() actually processed or will
-	 * process of the provided data buffer.
+	 *
+	 * @pre Buffer must have at least as much actual data as returned by redDataLen()
 	 *
 	 * @param[in] buf points to data buffer waiting for unserialization.
 	 * @param[in] len declares the length of the data buffer.
 	 *
-	 * @return Used buffer length. Should be the same as the value previously returned
-	 * by reqDataLen() call. Defaults to zero payload with possible user modifiers.
+	 * @return Used buffer length. 
+	 * @return 0 on error
+	 *
+	 * @post Return value is the same as returned by reqDataLen()
 	 * 
 	 * @throw std::exception
 	 * @throw std::bad_alloc
@@ -397,7 +390,7 @@ struct StrokeInfo
 	
 	/**
 	 * @throw std::bad_alloc
-	 * @throw std::exception if count is 0
+	 * @return 0 if count is 0 = invalid data
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
@@ -471,7 +464,7 @@ struct ToolInfo
 		//! RGBA
 		uint32_t RGBA;
 		
-		//! anonymous struct
+		//! Color values
 		struct {
 			uint8_t
 				//! Red
@@ -642,9 +635,9 @@ struct PasswordRequest
 	
 	/* functions */
 	
-	size_t unserialize(const char* buf, const size_t len) NOTHROW;
-	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW;
-	size_t serializePayload(char *buf) const NOTHROW;
+	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
+	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
 
