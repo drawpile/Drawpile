@@ -64,6 +64,14 @@ endif ( PERSISTENT )
 
 # config
 
+if ( IPV6 )
+	#set ( NOIPV4 ON )
+	set ( USE_IPV6 ON )
+else ( IPV6 )
+	#set ( NOIPV4 OFF )
+	set ( USE_IPV6 OFF )
+endif ( IPV6 )
+
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_SRVCONFIG )
 

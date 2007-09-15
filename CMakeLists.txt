@@ -30,6 +30,8 @@ option ( SELECT "Enable select(2) support (default)" ON )
 
 option ( DEFLATE "Enable deflate compression (requires zlib)" ON )
 
+option ( IPV6 "Enable IPv6 support [broken]" OFF )
+
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Apply several generic optimization flags" ON )
 option ( USEENV "Use CXXFLAGS as set in environemnt" ON )
