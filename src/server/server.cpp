@@ -1577,16 +1577,8 @@ void Server::uLoginInfo(User& usr)
 		assert(IPPort.find_last_of(":", IPPort.length()-1) != std::string::npos);
 		
 		// Loopback address
-		if (IPPort.substr(0, IPPort.find_last_of(":", IPPort.length()-1)) == std::string(
-			#ifdef IPV6_SUPPORT
-			Network::IPv6::Localhost
-			#else
-			Network::IPv4::Localhost
-			#endif
-		))
-		{
+		if (IPPort.substr(0, IPPort.find_last_of(":", IPPort.length()-1)) == std::string(Network::Localhost))
 			usr.isAdmin = true;
-		}
 	}
 	
 	msg.user_id = usr.id;

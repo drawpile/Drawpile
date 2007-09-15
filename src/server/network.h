@@ -34,6 +34,20 @@
 #include "socket.porting.h" // sockaddr_in/sockaddr_in6
 #include "socket.types.h" // AF_INET & AF_INET6
 
+#ifdef USE_IPV6
+#define IPVNAMESPACE Network::IPv6
+#define SIN_ADDR sin6_addr
+#define SIN_PORT sin6_port
+#define S_ADDR s6_addr
+#define SIN_FAMILY sin6_family
+#else
+#define IPVNAMESPACE Network::IPv4
+#define SIN_ADDR sin_addr
+#define SIN_PORT sin_port
+#define S_ADDR s_addr
+#define SIN_FAMILY sin_family
+#endif
+
 //! Network constants
 namespace Network {
 
@@ -51,11 +65,15 @@ bool start() NOTHROW;
  */
 void stop() NOTHROW;
 
+//! Address families
 namespace Family {
 
+//! Family type
 enum family_t {
 	None,
+	//! version 4
 	IPv4 = AF_INET,
+	//! version 6
 	IPv6 = AF_INET6
 };
 
@@ -64,8 +82,11 @@ enum family_t {
 //! IPv6 related constants
 namespace IPv6 {
 
+//! Address type
 typedef sockaddr_in6 sockaddr_in_t;
+//! IP address
 typedef in6_addr in_addr_t;
+//! Associated family
 const Network::Family::family_t family = Network::Family::IPv6;
 
 //! Localhost address
@@ -93,12 +114,10 @@ const uint UnspecifiedAddress[4] = {0};
 
 //! Maximum length of IPv6 address
 /**
- * e.g. ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+ * e.g. [ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]
+ * = 8*4 (actual address) + 7 (for delimiters) + 2 (for square brackets)
  */
-const uint AddrLength = 39;
-
-//! Address padding
-const uint AddrPadding = 4;
+const uint AddrLength = 8*4 + 7 + 2;
 
 //! IPv4 compatibility address
 /**
@@ -178,8 +197,11 @@ const uint SiteLocalAddress[4] = {0xfec00000,0};
 //! IPv4 related constants
 namespace IPv4 {
 
+//! Address type
 typedef sockaddr_in sockaddr_in_t;
+//! IP address
 typedef in_addr in_addr_t;
+//! Associated family type
 const Network::Family::family_t family = Network::Family::IPv4;
 
 //! Localhost address
@@ -199,9 +221,6 @@ const uint UnspecifiedAddress = 0;
  * e.g. 123.231.213.123
  */
 const uint AddrLength = 16;
-
-//! Address padding
-const uint AddrPadding = 2;
 
 //! Broadcast address
 const char Broadcast[] = "255.255.255.255";
@@ -229,27 +248,14 @@ const uint HostMask32 = 0xffffffff;
 
 } // namespace:IPv4
 
-#ifdef IPV6_SUPPORT
-using Network::IPv6::Unspecified;
-using Network::IPv6::UnspecifiedAddress;
-using Network::IPv6::Localhost;
-using Network::IPv6::LocalhostAddress;
-using Network::IPv6::AddrLength;
-using Network::IPv6::AddrPadding;
-using Network::IPv6::sockaddr_in_t;
-using Network::IPv6::family;
-using Network::IPv6::in_addr_t;
-#else // IPv4
-using Network::IPv4::Unspecified;
-using Network::IPv4::UnspecifiedAddress;
-using Network::IPv4::Localhost;
-using Network::IPv4::LocalhostAddress;
-using Network::IPv4::AddrLength;
-using Network::IPv4::AddrPadding;
-using Network::IPv4::sockaddr_in_t;
-using Network::IPv4::family;
-using Network::IPv4::in_addr_t;
-#endif
+using IPVNAMESPACE::Unspecified;
+using IPVNAMESPACE::UnspecifiedAddress;
+using IPVNAMESPACE::Localhost;
+using IPVNAMESPACE::LocalhostAddress;
+using IPVNAMESPACE::AddrLength;
+using IPVNAMESPACE::sockaddr_in_t;
+using IPVNAMESPACE::family;
+using IPVNAMESPACE::in_addr_t;
 
 //! Super user port upper bound
 /**

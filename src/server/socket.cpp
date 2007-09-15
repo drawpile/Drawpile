@@ -111,9 +111,9 @@ Socket Socket::accept()
 	socklen_t addrlen = sa.size();
 	
 	#if WIN32
-	fd_t n_fd = ::WSAAccept(m_handle, &sa.raw_addr, &addrlen, 0, 0);
+	fd_t n_fd = ::WSAAccept(m_handle, &sa.raw(), &addrlen, 0, 0);
 	#else
-	fd_t n_fd = ::accept(m_handle, &sa.raw_addr, &addrlen);
+	fd_t n_fd = ::accept(m_handle, &sa.raw(), &addrlen);
 	#endif
 	
 	if (n_fd == InvalidHandle)
@@ -300,7 +300,7 @@ int Socket::bindTo(const Address& naddr)
 	assert(m_addr.family() != Network::Family::None);
 	#endif
 	
-	const int r = bind(m_handle, &m_addr.raw_addr, m_addr.size());
+	const int r = bind(m_handle, &m_addr.raw(), m_addr.size());
 	
 	if (r == Error)
 	{
@@ -333,9 +333,9 @@ int Socket::connect(const Address& rhost)
 	m_addr = rhost;
 	
 	#ifdef WIN32
-	const int r = WSAConnect(m_handle, &m_addr.raw_addr, m_addr.size(), 0, 0, 0, 0);
+	const int r = WSAConnect(m_handle, &m_addr.raw(), m_addr.size(), 0, 0, 0, 0);
 	#else
-	const int r = ::connect(m_handle, &m_addr.raw_addr, m_addr.size());
+	const int r = ::connect(m_handle, &m_addr.raw(), m_addr.size());
 	#endif
 	
 	if (r == Error)

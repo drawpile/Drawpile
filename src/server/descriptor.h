@@ -44,9 +44,7 @@
 
 //! Generic file descriptor class
 /**
- * @bug Implementations of this class need to check for unique() in dtor to end the life
- * of the handle properly. Currently there's no callback for last destruction provided by
- * ReferenceCounted class.
+ * @bug See ReferenceCounted class' bugs.
  */
 template <typename T>
 class Descriptor
@@ -60,13 +58,13 @@ protected:
 	int m_error;
 public:
 	//! Default ctor
-	Descriptor();
+	Descriptor() NOTHROW;
 	//! ctor
-	Descriptor(T handle);
+	Descriptor(T handle) NOTHROW;
 	//! copy ctor
-	Descriptor(const Descriptor<T>& handle);
+	Descriptor(const Descriptor<T>& handle) NOTHROW;
 	//! abstract dtor
-	virtual ~Descriptor();
+	virtual ~Descriptor() NOTHROW;
 	
 	//! Get handle
 	T handle() const NOTHROW;

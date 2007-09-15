@@ -38,26 +38,41 @@
 #include "socket.types.h"
 #include "types.h"
 
-//! Address
+//! Internet IP Address
 class Address
 {
+protected:
+	//! Internal address representation
+	union addr {
+		//! base address
+		sockaddr raw;
+		//! Either IPv4 or IPv6 address
+		/** @see Network */
+		Network::sockaddr_in_t ipv;
+	} addr;
 public:
+	//! ctor
+	/**
+	 * @param[in] address String representation of IP address
+	 * @param[in] port Port number
+	 */
 	Address(const std::string& address=std::string(), ushort port=0);
 	
-	union {
-		//! base address
-		sockaddr raw_addr;
-		//! Either IPv4 or IPv6 address
-		Network::sockaddr_in_t ipv_addr;
-	};
-	
+	//! Returns size of the raw address
 	socklen_t size() const NOTHROW;
 	
+	//! Get current port number
 	ushort port() const NOTHROW;
 	
+	//! Set port number
 	void port(ushort _port) NOTHROW;
 	
+	//! Get raw address
+	sockaddr& raw() NOTHROW;
+	
+	//! Get address family
 	int family() const NOTHROW;
+	//! Set address family
 	void family(int _family) NOTHROW;
 	
 	//! Assign operator

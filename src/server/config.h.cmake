@@ -11,6 +11,6 @@
 
 #cmakedefine HAVE_URANDOM 1
 
-#cmakedefine IPV6_SUPPORT 1
+#cmakedefine USE_IPV6 1
 
 #cmakedefine PERSISTENT_SESSIONS 1

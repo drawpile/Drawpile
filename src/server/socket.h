@@ -141,8 +141,8 @@ public:
 	
 	//! Send data.
 	/**
-	 * @param[in] buffer Data to be send.
-	 * @param[in] buflen Number of bytes to send from buffer
+	 * @param[in] buf Data to be send.
+	 * @param[in] len Number of bytes to send from buffer
 	 *
 	 * @return number of bytes actually sent.
 	 * @retval Error on error

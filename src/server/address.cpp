@@ -41,7 +41,7 @@ Address::Address(const std::string& address, ushort _port)
 	
 	if (address.empty())
 	{
-		#ifdef IPV6_SUPPORT
+		#ifdef USE_IPV6
 		memcpy(in_addr().s6_addr, Network::UnspecifiedAddress, sizeof(Network::UnspecifiedAddress));
 		#else
 		memcpy(&in_addr().s_addr, &Network::UnspecifiedAddress, sizeof(Network::UnspecifiedAddress));
@@ -55,43 +55,27 @@ Address::Address(const std::string& address, ushort _port)
 
 socklen_t Address::size() const
 {
-	return sizeof(ipv_addr);
+	return sizeof(addr.ipv);
 }
 
 ushort Address::port() const
 {
-	#ifdef IPV6_SUPPORT
-	return bswap_const(ipv_addr.sin6_port);
-	#else
-	return bswap_const(ipv_addr.sin_port);
-	#endif
+	return bswap_const(addr.ipv.SIN_PORT);
 }
 
 void Address::port(ushort _port)
 {
-	#ifdef IPV6_SUPPORT
-	ipv_addr.sin6_port = bswap(_port);
-	#else
-	ipv_addr.sin_port = bswap(_port);
-	#endif
+	addr.ipv.SIN_PORT = bswap(_port);
 }
 
 int Address::family() const
 {
-	#ifdef IPV6_SUPPORT
-	return ipv_addr.sin6_family;
-	#else
-	return ipv_addr.sin_family;
-	#endif
+	return addr.ipv.SIN_FAMILY;
 }
 
 void Address::family(int _family)
 {
-	#ifdef IPV6_SUPPORT
-	ipv_addr.sin6_family = _family;
-	#else
-	ipv_addr.sin_family = _family;
-	#endif
+	addr.ipv.SIN_FAMILY = _family;
 }
 
 Address& Address::operator= (const Address& naddr)
@@ -113,54 +97,47 @@ bool Address::operator== (const Address& naddr) const
 	return (memcmp(&in_addr(), &naddr.in_addr(), size()) == 0);
 }
 
-/* string functions */
-
 std::string Address::toString() const
 {
-	const uint length = Network::AddrLength + Network::PortLength + Network::AddrPadding;
-	#ifndef WIN32
-	#ifdef IPV6_SUPPORT
-	const char format_string[] = "[%s]:%d";
-	#else // IPv4
-	const char format_string[] = "%s:%d";
-	#endif
-	#endif
-	
+	const uint length = Network::AddrLength + Network::PortLength + 2;
 	char buf[length];
 	
 	#ifdef WIN32
 	u_long len = length;
 	Address sa = *this;
-	WSAAddressToString(&sa.raw_addr, sa.size(), 0, buf, &len);
+	WSAAddressToString(&sa.addr.raw, sa.size(), 0, buf, &len);
 	#else // POSIX
 	char straddr[length];
 	inet_ntop(family(), &in_addr(), straddr, length);
+	
+	#ifdef USE_IPV6
+	const char format_string[] = "[%s]:%d";
+	#else // IPv4
+	const char format_string[] = "%s:%d";
+	#endif
 	
 	#ifdef HAVE_SNPRINTF
 	snprintf(buf, length, format_string, straddr, port());
 	#else
 	sprintf(buf, format_string, straddr, port());
-	#endif // HAVE_SNPRINTF
+	#endif
 	#endif
 	return std::string(buf);
 }
 
 Network::in_addr_t& Address::in_addr()
 {
-	#ifdef IPV6_SUPPORT
-	return ipv_addr.sin6_addr;
-	#else
-	return ipv_addr.sin_addr;
-	#endif
+	return addr.ipv.SIN_ADDR;
 }
 
 const Network::in_addr_t& Address::in_addr() const
 {
-	#ifdef IPV6_SUPPORT
-	return ipv_addr.sin6_addr;
-	#else
-	return ipv_addr.sin_addr;
-	#endif
+	return addr.ipv.SIN_ADDR;
+}
+
+sockaddr& Address::raw()
+{
+	return addr.raw;
 }
 
 void Address::fromString(const std::string& address)
@@ -170,7 +147,7 @@ void Address::fromString(const std::string& address)
 	char buf[Network::AddrLength + Network::PortLength + 4];
 	memcpy(buf, address.c_str(), address.length());
 	int _size = size();
-	WSAStringToAddress(buf, family(), 0, &raw_addr, &_size);
+	WSAStringToAddress(buf, family(), 0, &addr.raw, &_size);
 	#else // POSIX
 	inet_pton(family(), address.c_str(), in_addr());
 	#endif
