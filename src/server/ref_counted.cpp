@@ -57,5 +57,5 @@ ulong ReferenceCounted::count() const
 
 bool ReferenceCounted::unique() const
 {
-	return ((*rc_ref_count) == 1);
+	return ((*rc_ref_count) == 1UL);
 }

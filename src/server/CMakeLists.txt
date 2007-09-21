@@ -72,6 +72,11 @@ else ( IPV6 )
 	set ( USE_IPV6 OFF )
 endif ( IPV6 )
 
+set ( LAYER_SUPPORT OFF )
+if ( LAYERS )
+	set ( LAYER_SUPPORT ON )
+endif ( LAYERS )
+
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_SRVCONFIG )
 

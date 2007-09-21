@@ -839,31 +839,7 @@ void Server::uHandleMsg(User*& usr)
 		uLayerEvent(usr);
 		break;
 	case protocol::Message::LayerSelect:
-		stats.layerSelect++;
-		{
-			protocol::LayerSelect &layer = *static_cast<protocol::LayerSelect*>(usr->inMsg);
-			
-			if (layer->layer_id == usr->session_data->layer // trying to select current layer
-				or (usr->session_data->layer_lock != protocol::null_layer
-				and usr->session_data->layer_lock != layer->layer_id)) // locked to another
-				uQueueMsg(*usr, msgError(layer->session_id, protocol::error::InvalidLayer));
-			else
-			{
-				// find layer
-				const session_layer_const_i li(usr->session->layers.find(layer->layer_id));
-				if (li == usr->session->layers.end()) // target layer doesn't exist
-					uQueueMsg(*usr, msgError(layer->session_id, protocol::error::UnknownLayer));
-				else if (li->second.locked) // target layer is locked
-					uQueueMsg(*usr, msgError(layer->session_id, protocol::error::LayerLocked));
-				else
-				{
-					usr->session_data->layer = layer->layer_id; // set active layer
-					
-					// Tell other users about it
-					Propagate(*usr->session, message_ref(layer), (usr->c_acks ? usr : 0));
-				}
-			}
-		}
+		uSelectLayer(*usr);
 		break;
 	#endif
 	case protocol::Message::SessionInstruction:
@@ -1277,6 +1253,83 @@ bool Server::isOwner(const User& usr, const Session& session) const
 	return session.owner == usr.id;
 }
 
+void Server::createSession(User *usr, protocol::SessionInstruction &msg)
+{
+	const octet session_id = getSessionID();
+	
+	if (session_id == protocol::Global)
+	{
+		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::SessionLimit));
+		return;
+	}
+	else if (msg.user_limit < 2)
+	{
+		#ifndef NDEBUG
+		cerr << "- Attempted to create single user session." << endl;
+		#endif
+		
+		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
+		return;
+	}
+	
+	if (msg.width < min_dimension or msg.height < min_dimension
+		or msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
+	{
+		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidSize));
+		return;
+	}
+	
+	#ifndef NDEBUG
+	if (!msg.title)
+		cout << "- No title set for session." << endl;
+	#endif
+	
+	if (wideStrings and ((msg.title_len % 2) != 0))
+	{
+		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
+		return;
+	}
+	
+	Array<char> title(msg.title, msg.title_len);
+	if (enforceUnique and !validateSessionTitle(title))
+	{
+		#ifndef NDEBUG
+		cerr << "- Session title not unique." << endl;
+		#endif
+		
+		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
+	}
+	else
+	{
+		sessions.insert(
+			std::pair<octet,Session>(
+				session_id,
+				Session(
+					session_id,
+					msg.user_mode, msg.user_limit, usr->id,
+					msg.width, msg.height, usr->level,
+					title
+				)
+			)
+		);
+		
+		#ifndef NDEBUG
+		const Session *session = getConstSession(session_id);
+		cout << "+ Session #" << session->id << " created by user #" << usr->id << endl
+			<< "  Size: " << session->width << "x" << session->height
+			<< ", Limit: " << static_cast<uint>(session->limit)
+			<< ", Mode: " << static_cast<uint>(session->mode)
+			<< ", Level: " << static_cast<uint>(session->level) << endl
+			;
+		#endif
+		
+		msg.title = 0; // prevent title from being deleted
+		
+		uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::SessionInstruction));
+	}
+	title.ptr = 0;
+}
+
 // Calls uQueueMsg, Propagate, sRemove, uLeaveSession
 // May delete User*
 void Server::uSessionInstruction(User*& usr)
@@ -1301,83 +1354,8 @@ void Server::uSessionInstruction(User*& usr)
 			#endif
 			break;
 		}
-		// limited scope for switch/case
-		{
-			const octet session_id = getSessionID();
-			
-			if (session_id == protocol::Global)
-			{
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::SessionLimit));
-				break;
-			}
-			else if (msg.user_limit < 2)
-			{
-				#ifndef NDEBUG
-				cerr << "- Attempted to create single user session." << endl;
-				#endif
-				
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
-				break;
-			}
-			
-			if (msg.width < min_dimension or msg.height < min_dimension
-				or msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
-			{
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidSize));
-				break;
-			}
-			
-			#ifndef NDEBUG
-			if (!msg.title)
-				cout << "- No title set for session." << endl;
-			#endif
-			
-			if (wideStrings and ((msg.title_len % 2) != 0))
-			{
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
-				break;
-			}
-			
-			Array<char> title(msg.title, msg.title_len);
-			if (enforceUnique and !validateSessionTitle(title))
-			{
-				#ifndef NDEBUG
-				cerr << "- Session title not unique." << endl;
-				#endif
-				
-				uQueueMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
-			}
-			else
-			{
-				sessions.insert(
-					std::pair<octet,Session>(
-						session_id,
-						Session(
-							session_id,
-							msg.user_mode, msg.user_limit, usr->id,
-							msg.width, msg.height, usr->level,
-							title
-						)
-					)
-				);
-				
-				#ifndef NDEBUG
-				
-				const Session *session = getConstSession(session_id);
-				cout << "+ Session #" << session->id << " created by user #" << usr->id << endl
-					<< "  Size: " << session->width << "x" << session->height
-					<< ", Limit: " << static_cast<uint>(session->limit)
-					<< ", Mode: " << static_cast<uint>(session->mode)
-					<< ", Level: " << static_cast<uint>(session->level) << endl
-					;
-				#endif
-				
-				msg.title = 0; // prevent title from being deleted
-				
-				uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::SessionInstruction));
-			}
-			title.ptr = 0;
-		}
+		
+		createSession(usr, msg);
 		return; // because session owner might've done this
 	case protocol::SessionInstruction::Destroy:
 		{
@@ -1774,7 +1752,34 @@ void Server::uLayerEvent(User*& usr)
 	Propagate(*session, message_ref(&levent), (usr->c_acks ? usr : 0));
 	usr->inMsg = 0;
 }
-#endif
+
+void Server::uSelectLayer(User& usr)
+{
+	protocol::LayerSelect &layer = *static_cast<protocol::LayerSelect*>(usr.inMsg);
+	
+	if (layer.layer_id == usr.session_data->layer // trying to select current layer
+		or (usr.session_data->layer_lock != protocol::null_layer
+		and usr.session_data->layer_lock != layer.layer_id)) // locked to another
+		uQueueMsg(usr, msgError(layer.session_id, protocol::error::InvalidLayer));
+	else
+	{
+		// find layer
+		const session_layer_const_i li(usr.session->layers.find(layer.layer_id));
+		if (li == usr.session->layers.end()) // target layer doesn't exist
+			uQueueMsg(usr, msgError(layer.session_id, protocol::error::UnknownLayer));
+		else if (li->second.locked) // target layer is locked
+			uQueueMsg(usr, msgError(layer.session_id, protocol::error::LayerLocked));
+		else
+		{
+			usr.session_data->layer = layer.layer_id; // set active layer
+			
+			// Tell other users about it
+			Propagate(*usr.session, message_ref(&layer), (usr.c_acks ? &usr : 0));
+			usr.inMsg = 0;
+		}
+	}
+}
+#endif // LAYER_SUPPORT
 
 // Calls uQueueMsg
 void Server::Propagate(const Session& session, message_ref msg, User* source)
@@ -1791,13 +1796,9 @@ void Server::Propagate(const Session& session, message_ref msg, User* source)
 	if (source != 0)
 		uQueueMsg(*source, msgAck(session.id, (*msg).type));
 	
-	User *usr_ptr;
 	for (session_usr_const_i ui(session.users.begin()); ui != session.users.end(); ++ui)
 		if (ui->second != source)
-		{
-			usr_ptr = ui->second;
-			uQueueMsg(*usr_ptr, msg);
-		}
+			uQueueMsg(*ui->second, msg);
 }
 
 void Server::uQueueMsg(User& usr, message_ref msg)
@@ -1871,7 +1872,7 @@ void Server::SyncSession(Session& session)
 	std::list<message_ref> msg_queue;
 	
 	if (session.locked)
-		msg_queue.insert(msg_queue.end(), message_ref(new protocol::SessionEvent(protocol::SessionEvent::Lock, protocol::null_user, 0)));
+		msg_queue.push_back(message_ref(new protocol::SessionEvent(protocol::SessionEvent::Lock, protocol::null_user, 0)));
 	
 	// build msg_queue of the old users
 	User *usr_ptr;
@@ -1884,14 +1885,14 @@ void Server::SyncSession(Session& session)
 		sdata->syncWait = false;
 		
 		// add join
-		msg_queue.insert(msg_queue.end(), msgUserEvent(*usr_ptr, session.id, protocol::UserInfo::Join));
+		msg_queue.push_back(msgUserEvent(*usr_ptr, session.id, protocol::UserInfo::Join));
 		if (usr_ptr->session->id == session.id)
 		{
 			// add session select
 			message_ref ref(new protocol::SessionSelect);
 			(*ref).user_id = usr_ptr->id;
 			(*ref).session_id = session.id;
-			msg_queue.insert(msg_queue.end(), ref);
+			msg_queue.push_back(ref);
 			
 			if (usr_ptr->layer != protocol::null_layer)
 			{
@@ -1899,27 +1900,25 @@ void Server::SyncSession(Session& session)
 				message_ref ref2(new protocol::LayerSelect(usr_ptr->layer));
 				(*ref2).user_id = usr_ptr->id;
 				(*ref2).session_id = session.id;
-				msg_queue.insert(msg_queue.end(), ref2);
+				msg_queue.push_back(ref2);
 			}
 		}
 		
+		protocol::ToolInfo *ti;
 		if (usr_ptr->session == &session)
-		{
-			if (usr_ptr->session_data->cachedToolInfo)
-				msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*usr_ptr->session_data->cachedToolInfo)));
-		}
+			ti = usr_ptr->session_data->cachedToolInfo;
 		else
-		{
-			if (sdata->cachedToolInfo)
-				msg_queue.insert(msg_queue.end(), message_ref(new protocol::ToolInfo(*sdata->cachedToolInfo)));
-		}
+			ti = sdata->cachedToolInfo;
+		
+		if (ti)
+			msg_queue.push_back(message_ref(new protocol::ToolInfo(*ti)));
 	}
 	
 	userlist_const_i n_user;
 	
 	// announce the new users
 	for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
-		msg_queue.insert(msg_queue.end(), msgUserEvent(**n_user, session.id, protocol::UserInfo::Join));
+		msg_queue.push_back(msgUserEvent(**n_user, session.id, protocol::UserInfo::Join));
 	
 	if (src)
 	{
@@ -1948,12 +1947,7 @@ void Server::SyncSession(Session& session)
 		for (uint off=0; off < session.raster->size; off += chunkSize)
 		{
 			csize = (left < chunkSize ? left : chunkSize);
-			tmp = new protocol::Raster(
-				off,
-				csize,
-				session.raster->size,
-				new char[csize]
-			);
+			tmp = new protocol::Raster(off, csize, session.raster->size, new char[csize]);
 			memcpy(tmp->data, session.raster->data+off, csize);
 			rasterChunks.push_back(message_ref(tmp));
 		}

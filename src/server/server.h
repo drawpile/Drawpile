@@ -361,6 +361,9 @@ protected:
 	void uLayerEvent(User*& usr) NOTHROW NONNULL(1);
 	#endif
 	
+	//! Handle layer select message
+	void uSelectLayer(User& usr) NOTHROW;
+	
 	//! Send message to all users in session
 	/**
 	 * @param[in] session Target session for propagation
@@ -662,6 +665,8 @@ public:
 private:
 	virtual void eventNotify() const NOTHROW;
 	#endif
+	
+	void createSession(User *usr, protocol::SessionInstruction &msg) NOTHROW;
 }; // class Server
 
 #endif // Server_Class_Included

@@ -14,3 +14,5 @@
 #cmakedefine USE_IPV6 1
 
 #cmakedefine PERSISTENT_SESSIONS 1
+
+#cmakedefine LAYER_SUPPORT 1

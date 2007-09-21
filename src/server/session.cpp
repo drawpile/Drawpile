@@ -72,7 +72,8 @@ User* Session::getUser(const octet user_id)
 void Session::invalidateRaster()
 {
 	raster_valid = false;
-	raster->length = 0;
+	if (raster)
+		raster->length = 0;
 }
 
 bool Session::appendRaster(protocol::Raster *nraster)
@@ -96,7 +97,7 @@ bool Session::appendRaster(protocol::Raster *nraster)
 	if (nraster->offset != raster->length)
 	{
 		#ifndef NDEBUG
-		cerr << "- Invalid raster offset!" << endl;
+		std::cerr << "- Invalid raster offset!" << std::endl;
 		#endif
 		return false;
 	}
