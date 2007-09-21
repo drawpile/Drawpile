@@ -37,10 +37,9 @@
 
 Address::Address(const std::string& address, ushort _port)
 {
-	family(Network::family);
-	
 	if (address.empty())
 	{
+		family(Network::family);
 		#ifdef USE_IPV6
 		memcpy(in_addr().s6_addr, Network::UnspecifiedAddress, sizeof(Network::UnspecifiedAddress));
 		#else
@@ -51,6 +50,8 @@ Address::Address(const std::string& address, ushort _port)
 		fromString(address);
 	
 	port(_port);
+	
+	scope(Network::Scope::Default);
 }
 
 socklen_t Address::size() const
@@ -147,8 +148,36 @@ void Address::fromString(const std::string& address)
 	char buf[Network::AddrLength + Network::PortLength + 4];
 	memcpy(buf, address.c_str(), address.length());
 	int _size = size();
-	WSAStringToAddress(buf, family(), 0, &addr.raw, &_size);
+	int fam =family();
+	WSAStringToAddress(buf, fam, 0, &addr.raw, &_size);
+	// clears the family part for some reason
+	family(fam);
 	#else // POSIX
 	inet_pton(family(), address.c_str(), in_addr());
 	#endif
 }
+
+ulong Address::scope() const
+{
+	#ifdef USE_IPV6
+	return addr.ipv.sin6_scope_id;
+	#else
+	return 0;
+	#endif
+}
+
+void Address::scope(ulong _scope)
+{
+	#ifdef USE_IPV6
+	addr.ipv.sin6_scope_id = _scope;
+	#else
+	// no scopes for IPv4
+	#endif
+}
+
+#ifndef NEBUG
+std::ostream& operator<< (std::ostream& os, const Address& addr)
+{
+	return os << addr.toString();
+}
+#endif

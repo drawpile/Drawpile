@@ -59,6 +59,7 @@ endif ( SERVER )
 
 set ( PERSISTENT_SESSIONS OFF )
 if ( PERSISTENT )
+	message ( STATUS "Persistent sessions enabled" )
 	set ( PERSISTENT_SESSIONS ON )
 endif ( PERSISTENT )
 
@@ -66,6 +67,7 @@ endif ( PERSISTENT )
 
 if ( IPV6 )
 	#set ( NOIPV4 ON )
+	message ( STATUS "IPv6 enabled" )
 	set ( USE_IPV6 ON )
 else ( IPV6 )
 	#set ( NOIPV4 OFF )
@@ -74,6 +76,7 @@ endif ( IPV6 )
 
 set ( LAYER_SUPPORT OFF )
 if ( LAYERS )
+	message ( STATUS "Experimental layer code enabled." )
 	set ( LAYER_SUPPORT ON )
 endif ( LAYERS )
 

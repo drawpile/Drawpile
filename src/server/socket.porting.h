@@ -21,9 +21,6 @@
 #ifdef WIN32
 	#include <ws2tcpip.h> // SOCKET, socklen_t
 	#include <winsock2.h>
-	#if defined( HAVE_MSWSOCK_H )
-		#include <mswsock.h>
-	#endif
 #else
 	#include <sys/types.h>
 	#include <sys/socket.h>

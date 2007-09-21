@@ -64,6 +64,12 @@ public:
 	//! Get current port number
 	ushort port() const NOTHROW;
 	
+	//! Get address scope
+	ulong scope() const NOTHROW;
+	
+	//! Set address scope
+	void scope(ulong _scope) NOTHROW;
+	
 	//! Set port number
 	void port(ushort _port) NOTHROW;
 	
@@ -97,5 +103,10 @@ private:
 	 */
 	void fromString(std::string const& address) NOTHROW;
 };
+
+#ifndef NDEBUG
+//! Extension to ostream for Address
+std::ostream& operator<< (std::ostream& os, const Address& addr) NOTHROW;
+#endif
 
 #endif // NetworkAddress_INCLUDED

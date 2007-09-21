@@ -2117,7 +2117,7 @@ void Server::uAdd()
 	}
 	
 	#ifndef NDEBUG
-	cout << "+ New user #" << id << " [" << sock.addr().toString() << "]" << endl;
+	cout << "+ New user #" << id << " from " << sock.addr().toString() << endl;
 	#endif
 	
 	User *usr = new User(id, sock);
@@ -2284,6 +2284,10 @@ bool Server::init()
 	
 	if (lsock.bindTo(Address(std::string(), lsock.addr().port())) == socket_error::Error)
 	{
+		#ifndef NDEBUG
+		cout << "- Failed to bind to " << lsock.addr() << endl;
+		#endif
+		error = lsock.getError();
 		return false;
 	}
 	

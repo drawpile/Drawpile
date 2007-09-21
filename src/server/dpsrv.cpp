@@ -340,7 +340,7 @@ int main(int argc, char** argv)
 			rc = srv.run();
 		}
 		catch (std::bad_alloc) {
-			cerr << "- Out of Memory" << endl;
+			cerr << "- Out of Memory!" << endl;
 			rc = 9;
 		}
 		catch (...) {

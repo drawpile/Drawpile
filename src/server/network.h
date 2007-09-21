@@ -29,6 +29,7 @@
 #ifndef Network_INCLUDED
 #define Network_INCLUDED
 
+#include "config.h"
 #include "types.h"
 
 #include "socket.porting.h" // sockaddr_in/sockaddr_in6
@@ -79,6 +80,15 @@ enum family_t {
 
 } // namespace:Family
 
+//! Network scopes suitable for passing to Address.scope() function
+namespace Scope {
+
+//! Default scope
+static const ulong Default = 0;
+
+} // namespace:Scope
+
+#ifdef USE_IPV6
 //! IPv6 related constants
 namespace IPv6 {
 
@@ -93,7 +103,7 @@ const Network::Family::family_t family = Network::Family::IPv6;
 /**
  * Equivalent of IPv4 \b 127.0.0.1
  */
-const char Localhost[] = "::1";
+const char Localhost[] = "[::1]";
 
 //! Localhost address as uint[4]
 /**
@@ -104,8 +114,10 @@ const uint LocalhostAddress[4] = {0,0,0,1};
 //! Unspecified address
 /**
  * Equivalent of IPv4 \b 0.0.0.0
+ *
+ * ::/128
  */
-const char Unspecified[] = "::";
+const char Unspecified[] = "[::]";
 
 //! Unspecified address as uint[4]
 const uint UnspecifiedAddress[4] = {0};
@@ -196,6 +208,7 @@ const uint LinkLocalAddress[4] = {0xfe800000,0};
 const uint SiteLocalAddress[4] = {0xfec00000,0};
 
 } // namespace:IPv6
+#endif
 
 //! IPv4 related constants
 namespace IPv4 {
