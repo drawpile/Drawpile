@@ -7,7 +7,10 @@ set ( OPT "-O2" )
 ###   DO NOT TOUCH THE FOLLOWING   ###
 
 if ( GENERIC )
+	message ( STATUS "Generic build" )
 	set ( CPU pentium3 ) # our target audience likely don't have older
+else ( GENERIC )
+	message ( STATUS "Optimized build" )
 endif ( GENERIC )
 
 set ( ARCH "-march=${CPU}" )
@@ -19,6 +22,8 @@ else ( GENERIC )
 	set ( ARCH "-march=native" ) # GCC >=4.x
 endif ( GENERIC )
 
+set ( MTHREADS "-mthreads" )
+
 set ( FASTMATH "-ffast-math" )
 
 set ( DEBUG_FLAGS "-g" )
@@ -27,9 +32,6 @@ set ( WARNALL "-Wall" )
 set ( WEFFCPP "-Weffc++" ) # unused
 
 set ( NORTTI "-fno-rtti" ) # RTTI not needed
-
-# a bit questionable optimizations
-set ( UNSAFE_MATH_OPT "-funsafe-math-optimizations" )
 
 # only speeds up compilation
 set ( PIPE "-pipe" )
@@ -45,6 +47,7 @@ TestCompilerFlag ( NORTTI NORTTIAC )
 TestCompilerFlag ( WARNALL WARNALLAC )
 #TestCompilerFlag ( WEFFCPP WEFFCPPC )
 TestCompilerFlag ( OPT OPTAC )
+TestCompilerFlag ( MTHREADS MTHREADSAC )
 
 ### Test profiling arcs if enabled ###
 if ( PROFILE )
@@ -59,16 +62,9 @@ else ( PROFILE )
 	set ( PROFILING_FLAGS "" )
 endif ( PROFILE )
 
-###   TEST unsafe math optimizations   ###
-if ( UNSAFEOPT )
-	TestCompilerFlag ( UNSAFE_MATH_OPT UNSAFE_MATH_OPTAC )
-else ( UNSAFEOPT )
-	set ( UNSAFE_MATH_OPT "" )
-endif ( UNSAFEOPT )
-
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS "${OPT} ${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${FASTMATH} ${PROFILING_FLAGS} ${UNSAFE_MATH_OPT} ${NORTTI}" )
+set ( CMAKE_CXX_FLAGS "${OPT} ${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${FASTMATH} ${PROFILING_FLAGS} ${NORTTI} ${MTHREADS}" )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG" )
 if ( NOT GENERIC )
