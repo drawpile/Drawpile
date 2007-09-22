@@ -65,14 +65,14 @@ endif ( PERSISTENT )
 
 # config
 
-if ( IPV6 )
-	#set ( NOIPV4 ON )
-	message ( STATUS "IPv6 enabled" )
-	set ( USE_IPV6 ON )
-else ( IPV6 )
-	#set ( NOIPV4 OFF )
-	set ( USE_IPV6 OFF )
-endif ( IPV6 )
+if ( IPV4 AND IPV6 )
+	#message ( FATAL_ERROR "Dual IP stack not supported!" )
+	set ( IPV4 OFF )
+endif ( IPV4 AND IPV6 )
+
+if ( NOT IPV4 AND NOT IPV6 )
+	message ( FATAL_ERROR "Both IP stacks disabled!" )
+endif ( NOT IPV4 AND NOT IPV6 )
 
 set ( LAYER_SUPPORT OFF )
 if ( LAYERS )

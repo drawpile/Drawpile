@@ -40,7 +40,7 @@ Address::Address(const std::string& address, ushort _port)
 	if (address.empty())
 	{
 		family(Network::family);
-		#ifdef USE_IPV6
+		#ifdef IPV6
 		memcpy(in_addr().s6_addr, Network::UnspecifiedAddress, sizeof(Network::UnspecifiedAddress));
 		#else
 		memcpy(&in_addr().s_addr, &Network::UnspecifiedAddress, sizeof(Network::UnspecifiedAddress));
@@ -111,7 +111,7 @@ std::string Address::toString() const
 	char straddr[length];
 	inet_ntop(family(), &in_addr(), straddr, length);
 	
-	#ifdef USE_IPV6
+	#ifdef IPV6
 	const char format_string[] = "[%s]:%d";
 	#else // IPv4
 	const char format_string[] = "%s:%d";
@@ -159,7 +159,7 @@ void Address::fromString(const std::string& address)
 
 ulong Address::scope() const
 {
-	#ifdef USE_IPV6
+	#ifdef IPV6
 	return addr.ipv.sin6_scope_id;
 	#else
 	return 0;
@@ -168,7 +168,7 @@ ulong Address::scope() const
 
 void Address::scope(ulong _scope)
 {
-	#ifdef USE_IPV6
+	#ifdef IPV6
 	addr.ipv.sin6_scope_id = _scope;
 	#else
 	// no scopes for IPv4

@@ -39,6 +39,10 @@
 #include "types.h"
 
 //! Internet IP Address
+/**
+ * @bug There's no fallback to IPv4 if IPv6 is unsupported on current system.
+ * This may however be of no consequence as IPv6 gains popularity.
+ */
 class Address
 {
 protected:

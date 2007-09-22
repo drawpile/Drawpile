@@ -35,7 +35,7 @@
 #include "socket.porting.h" // sockaddr_in/sockaddr_in6
 #include "socket.types.h" // AF_INET & AF_INET6
 
-#ifdef USE_IPV6
+#ifdef IPV6
 #define IPVNAMESPACE Network::IPv6
 #define SIN_ADDR sin6_addr
 #define SIN_PORT sin6_port
@@ -88,7 +88,7 @@ static const ulong Default = 0;
 
 } // namespace:Scope
 
-#ifdef USE_IPV6
+#ifdef IPV6
 //! IPv6 related constants
 namespace IPv6 {
 
@@ -210,6 +210,7 @@ const uint SiteLocalAddress[4] = {0xfec00000,0};
 } // namespace:IPv6
 #endif
 
+#ifdef IPV4
 //! IPv4 related constants
 namespace IPv4 {
 
@@ -266,6 +267,7 @@ const uint HostMask24 = 0xffffff00;
 const uint HostMask32 = 0xffffffff;
 
 } // namespace:IPv4
+#endif
 
 using IPVNAMESPACE::Unspecified;
 using IPVNAMESPACE::UnspecifiedAddress;
