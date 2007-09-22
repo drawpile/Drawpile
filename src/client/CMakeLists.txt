@@ -1,7 +1,5 @@
 # client
 
-set ( CLIENTNAME ${PROJECT_NAME} )
-
 # Qt stuff
 include ( ${QT_USE_FILE} )
 
@@ -90,8 +88,6 @@ if ( WIN32 )
 	)
 endif ( WIN32 )
 
-link_libraries( libdrawpile ) # DP shared library
-
 if ( RELEASE )
 	InSourceDir ( SOURCES ${SOURCES} )
 	generate_final ( SOURCES ${SOURCES} )
@@ -99,7 +95,10 @@ if ( RELEASE )
 	#generate_final ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
 
-link_libraries ( ${QT_LIBRARIES} )
+link_libraries(
+	${DPSHAREDLIB} # DP shared library
+	${QT_LIBRARIES}
+)
 
 add_executable (
 	${CLIENTNAME}
@@ -119,7 +118,11 @@ set_target_properties (
 	PROJECT_LABEL drawpile-client
 )
 
-install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
+if ( WIN32 )
+	install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION . )
+else ( WIN32 )
+	install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
+endif ( WIN32 )
 
 if (NOT DEBUG)
 	strip_exe ( ${CLIENTNAME} )

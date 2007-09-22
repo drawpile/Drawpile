@@ -1,9 +1,6 @@
-# src/server/
-
-set ( LIBNAME "eventslib" )
+# src/server/ev/
 
 # include some stuff
-
 include ( CheckIncludeFile )
 include ( CheckIncludeFileCXX )
 include ( CheckSymbolExists )
@@ -15,6 +12,7 @@ include ( CheckVariableExists )
 set ( EV_SRC "" )
 set ( EVS "" )
 
+set ( EV_EPOLL OFF )
 if ( EPOLL )
 	check_include_file ( sys/epoll.h EV_EPOLL )
 	if ( EV_EPOLL )
@@ -22,10 +20,9 @@ if ( EPOLL )
 		set ( EV_SRC ${EV_SRC} epoll.cpp )
 		set ( EV_FOUND ON )
 	endif ( EV_EPOLL )
-else ( EPOLL )
-	set ( EV_EPOLL OFF )
 endif ( EPOLL )
 
+set ( EV_KQUEUE OFF )
 if ( KQUEUE )
 	include ( CheckCSourceCompiles )
 	check_c_source_compiles( "#include <sys/event.h>\nint main() { return kqueue(); }" EV_KQUEUE )
@@ -34,10 +31,9 @@ if ( KQUEUE )
 		set ( EV_SRC ${EV_SRC} kqueue.cpp )
 		set ( EV_FOUND ON )
 	endif ( EV_KQUEUE )
-else ( KQUEUE )
-	set ( EV_KQUEUE OFF )
 endif ( KQUEUE )
 
+set ( EV_WSAPOLL OFF )
 if ( WSAPOLL )
 	include ( CheckCSourceCompiles )
 	# Ws2_32.lib
@@ -47,12 +43,11 @@ if ( WSAPOLL )
 		set ( EV_SRC ${EV_SRC} wsapoll.cpp )
 		set ( EV_FOUND ON )
 	endif ( EV_WSAPOLL )
-else ( WSAPOLL )
-	set ( EV_WSAPOLL OFF )
 endif ( WSAPOLL )
 
 # fall back to select(2)
-if ( SELECT )
+set ( EV_SELECT OFF )
+if ( NOT EV_FOUND AND SELECT )
 	if ( WIN32 )
 		check_include_file ( "winsock2.h" HAVE_WINSOCK2 )
 	else ( WIN32 )
@@ -72,9 +67,7 @@ if ( SELECT )
 		set ( EV_SRC ${EV_SRC} select.cpp )
 		set ( EV_FOUND ON )
 	endif ( HAVE_WINSOCK2 )
-else ( SELECT )
-	set ( EV_SELECT OFF )
-endif ( SELECT )
+endif ( NOT EV_FOUND AND SELECT )
 
 if ( NOT EV_FOUND )
 	message ( FATAL_ERROR "No event mechanism found!" )
@@ -98,19 +91,16 @@ if ( RELEASE )
 endif ( RELEASE )
 
 add_library (
-	${LIBNAME}
+	${EVENTSLIB}
+	STATIC
 	${EV_SOURCES}
 )
 
 set_target_properties (
-	${LIBNAME}
+	${EVENTSLIB}
 	PROPERTIES
 	OUTPUT_NAME events
 	VERSION 0.1.0
 	SOVERSION 0.1.0
 	PROJECT_LABEL eventslibrary
 )
-
-if ( SHARED )
-	install ( TARGETS ${LIBNAME} LIBRARY DESTINATION lib ) # ?
-endif ( SHARED )

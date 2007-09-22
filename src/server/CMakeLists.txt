@@ -1,10 +1,6 @@
 # src/server/
 
-set ( SERVERNAME "${PROJECT_NAME}-srv" )
-set ( SERVERLIB "dpserverlib" )
-
 # include some stuff
-
 include ( CheckIncludeFile )
 include ( CheckFunctionExists )
 
@@ -19,40 +15,36 @@ if ( USE_URANDOM )
 	)
 endif ( USE_URANDOM )
 
-if ( SERVERLIB )
-	if ( DEFLATE )
-		find_package ( ZLIB )
-		if ( ZLIB_FOUND )
-			set ( HAVE_ZLIB ON )
-			link_libraries ( ${ZLIB_LIBRARIES} )
-		else ( ZLIB_FOUND )
-			check_include_file ( zlib.h HAVE_ZLIB )
-			if ( HAVE_ZLIB )
-				link_libraries ( "z" )
-			else ( HAVE_ZLIB )
-				message ( STATUS "ZLIB disabled!" )
-				set ( DEFLATE OFF )
-			endif ( HAVE_ZLIB )
-		endif ( ZLIB_FOUND )
-	else ( DEFLATE )
-		set ( HAVE_ZLIB OFF )
-	endif ( DEFLATE )
-endif ( SERVERLIB )
+#set ( HAVE_ZLIB OFF )
+if ( SERVERLIB AND DEFLATE )
+	find_package ( ZLIB )
+	if ( ZLIB_FOUND )
+		set ( HAVE_ZLIB ON )
+		link_libraries ( ${ZLIB_LIBRARIES} )
+	else ( ZLIB_FOUND )
+		check_include_file ( zlib.h HAVE_ZLIB )
+		if ( HAVE_ZLIB )
+			message ( STATUS "CMake didn't find Zlib but zlib.h exists; trying libz." )
+			link_libraries ( "z" ) # we shouldn't need this
+		else ( HAVE_ZLIB )
+			message ( STATUS "ZLib disabled!" )
+			set ( DEFLATE OFF )
+		endif ( HAVE_ZLIB )
+	endif ( ZLIB_FOUND )
+endif ( SERVERLIB AND DEFLATE )
 
 ### fork()
 
 if ( SERVER )
-	check_function_exists ( fork HAVE_FORK )
 	check_function_exists ( fork1 HAVE_FORK1 )
 	
-	if ( HAVE_FORK1 )
-		set ( HAVE_FORK OFF )
-		link_libraries ( pthread )
-	endif ( HAVE_FORK1 )
+	if ( NOT HAVE_FORK1 )
+		check_function_exists ( fork HAVE_FORK )
+	endif ( NOT HAVE_FORK1 )
 	
-	if ( HAVE_FORK )
+	if ( HAVE_FORK OR HAVE_FORK1 )
 		link_libraries ( pthread )
-	endif ( HAVE_FORK )
+	endif ( HAVE_FORK OR HAVE_FORK1 )
 endif ( SERVER )
 
 # persistent sessions
@@ -63,17 +55,33 @@ if ( PERSISTENT )
 	set ( PERSISTENT_SESSIONS ON )
 endif ( PERSISTENT )
 
-# config
-
+# IP stack config
+set ( IPV_DUAL_STACK OFF )
 if ( IPV4 AND IPV6 )
-	#message ( FATAL_ERROR "Dual IP stack not supported!" )
-	set ( IPV4 OFF )
+	check_include_file ( mstcpip.h HAVE_MSTCPIP )
+	#if ( WIN32 )
+		#if ( HAVE_MSTCPIP )
+			#message ( STATUS "Dual IP stack enabled!" )
+			#set ( IPV_DUAL_STACK ON )
+		#endif ( HAVE_MSTCPIP )
+	#endif ( WIN32 )
+	if ( NOT IPV_DUAL_STACK )
+		message ( FATAL_ERROR "Dual IP stack not supported on current system!" )
+	endif ( NOT IPV_DUAL_STACK )
+	message ( "IPv4/IPv6 dual-stack enabled" )
+else ( IPV4 AND IPV6 )
+	if ( IPV4 )
+		message ( STATUS "IPv4 stack enabled" )
+	else ( IPV4 )
+		message ( STATUS "IPv6 stack enabled" )
+	endif ( IPV4 )
 endif ( IPV4 AND IPV6 )
 
 if ( NOT IPV4 AND NOT IPV6 )
-	message ( FATAL_ERROR "Both IP stacks disabled!" )
+	message ( FATAL_ERROR "Both IPv4/IPv6 stacks disabled!" )
 endif ( NOT IPV4 AND NOT IPV6 )
 
+# Layers
 set ( LAYER_SUPPORT OFF )
 if ( LAYERS )
 	message ( STATUS "Experimental layer code enabled." )
@@ -111,24 +119,33 @@ if ( SERVERLIB )
 	
 	# Create library
 	add_library (
-		${SERVERLIB}
+		${SRVLIB}
 		${SRV_SOURCES}
 	)
-
+	
+	if ( SHARED )
+		strip_lib ( ${SRVLIB} )
+		if ( WIN32 )
+			install ( TARGETS ${SRVLIB} RUNTIME DESTINATION . ) 
+		else ( WIN32 )
+			install ( TARGETS ${SRVLIB} LIBRARY DESTINATION lib ) # ?
+		endif ( WIN32 )
+	endif ( SHARED )
+	
 	target_link_libraries(
-		${SERVERLIB}
-		libdrawpile # DP shared library
-		eventslib # EV lib
+		${SRVLIB}
+		${DPSHAREDLIB} # DP shared library
+		${EVENTSLIB} # EV lib
 	)
 	
 	# Console executable
 	set_target_properties (
-		${SERVERLIB}
+		${SRVLIB}
 		PROPERTIES
-		OUTPUT_NAME dpserver
+		OUTPUT_NAME ${SRVNAME}
 		VERSION 0.5
 		SOVERSION 0.5
-		PROJECT_LABEL ${SERVERLIB}
+		PROJECT_LABEL ${SRVLIB}
 	)
 endif ( SERVERLIB )
 
@@ -137,7 +154,7 @@ if ( SERVER )
 		generate_win32_resource (
 			Win32Resource
 			"DrawPile server" # full name
-			${SERVERNAME} # internal name
+			${SRVNAME} # internal name
 			"DrawPile server"  # comment
 			"http://drawpile.sourceforge.net/" # description
 			"2006,2007 M.K.A." # copyright holder
@@ -146,30 +163,35 @@ if ( SERVER )
 	endif ( WIN32 )
 	
 	add_executable (
-		${SERVERNAME}
+		${SRVNAME}
 		MACOSX_BUNDLE
 		dpsrv.cpp
 		${Win32Resource}
 	)
 	
-	add_dependencies ( ${SERVERNAME} ${SERVERLIB} eventslib libdrawpile )
+	add_dependencies ( ${SRVNAME} ${SRVLIB} eventslib libdrawpile )
 	
 	set_target_properties (
-		${SERVERNAME}
+		${SRVNAME}
 		PROPERTIES
 		VERSION 0.5.0
 		PROJECT_LABEL drawpile-server
 	)
 	
 	target_link_libraries(
-		${SERVERNAME}
-		${SERVERLIB} # DP shared library
-		eventslib # EV lib
+		${SRVNAME}
+		${DPSHAREDLIB}
+		${SRVLIB} # DP shared library
+		${EVENTSLIB} # EV lib
 	)
 	
-	install ( TARGETS ${SERVERNAME} RUNTIME DESTINATION bin )
+	if ( WIN32 )
+		install ( TARGETS ${SRVNAME} RUNTIME DESTINATION . )
+	else ( WIN32 )
+		install ( TARGETS ${SRVNAME} RUNTIME DESTINATION bin )
+	endif ( WIN32 )
 	
 	if ( NOT DEBUG )
-		strip_exe ( ${SERVERNAME} )
+		strip_exe ( ${SRVNAME} )
 	endif ( NOT DEBUG )
 endif ( SERVER )

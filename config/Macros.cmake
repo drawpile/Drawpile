@@ -20,6 +20,22 @@ macro ( strip_exe target )
 	endif ( STRIP_CMD )
 endmacro ( strip_exe )
 
+macro ( strip_lib target )
+	if ( STRIP_CMD )
+		if ( WIN32 )
+			set ( target_file "${target}.dll" )
+		else ( WIN32 )
+			set ( target_file "lib${target}" )
+		endif ( WIN32 )
+		
+		add_custom_command(
+			TARGET ${target}
+			POST_BUILD
+			COMMAND ${STRIP_CMD} -s "${LIBRARY_OUTPUT_PATH}/${target_file}"
+		)
+	endif ( STRIP_CMD )
+endmacro ( strip_lib )
+
 macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMENT COPYRIGHT VERSION_MAJOR VERSION_MINOR VERSION_BUG )
 	if ( WIN32 )
 		set ( win32RC ${CMAKE_CURRENT_BINARY_DIR}/win32resource.rc )

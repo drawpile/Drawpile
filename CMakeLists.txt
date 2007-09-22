@@ -12,6 +12,7 @@ set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 
 ###
 
+include ( config/Names.cmake )
 include ( config/SVN.cmake )
 
 ### options ###
@@ -25,8 +26,8 @@ option ( UNITTEST "Compile unit tests" OFF )
 
 option ( EPOLL "Enable epoll(4) support (Linux 2.6)" ON )
 option ( KQUEUE "Enable kqueue(2) support (BSD/Mac[?])" ON )
-option ( WSAPOLL "Enable WSAPoll event support (Vista/Server2003 and later)" ON )
-option ( SELECT "Enable select(2) support (default)" ON )
+option ( WSAPOLL "Enable WSAPoll event support (Vista/Server2003)" ON )
+option ( SELECT "Enable select(2) support (any; fallback option)" ON )
 
 option ( DEFLATE "Enable deflate compression (requires zlib)" ON )
 
@@ -55,104 +56,82 @@ option ( PERSISTENT "Enable persistent session support" OFF )
 
 option ( RELEASE "Compile as much as possible in one go to generate more optimized binaries." OFF )
 
-# detect Mac OS X
-
-IF ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-	set ( MACOSX ON )
-	# lipo is used for generating universal binaries if gcc can't
-	find_file ( LIPO_CMD lipo )
-	set ( CMAKE_OSX_ARCHITECTURES "ppc;i386" )
-endif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-
-# Enable dependencies
-
-if ( SERVER )
-	set ( SERVERLIB ON )
-endif ( SERVER )
-if ( TRAYSERVER )
-	set ( SERVERLIB ON )
-endif ( TRAYSERVER )
-
 # Set build type
-
 if ( DEBUG )
 	set ( CMAKE_BUILD_TYPE Debug )
 else ( DEBUG )
 	set ( CMAKE_BUILD_TYPE Release )
 endif ( DEBUG )
 
-### Optimize ###
+message ( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )
 
+# detect Mac OS X
+
+IF ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
+	set ( MACOSX ON )
+endif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
+
+# Enable dependencies
+if ( SERVER OR TRAYSERVER )
+	set ( SERVERLIB ON )
+endif ( SERVER OR TRAYSERVER )
+
+### Optimize ###
 if ( OPTIMIZE )
 	include ( config/Optimize.cmake )
 else ( OPTIMIZE )
 	message ( STATUS "System CXX flags: $ENV{CXXFLAGS}" )
 endif ( OPTIMIZE )
 
+# Include some nice macros
 include ( config/Macros.cmake )
 
-###
-
-#set ( MTHREADS "-mthreads" )
-#check_cxx_accepts_flag ( ${MTHREADS} ACCEPT_MTHREADS )
-
 ### binary and library output ###
-
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
 
 if ( SHARED )
-	set (BUILD_SHARED_LIBS ON )
+	set ( BUILD_SHARED_LIBS ON )
 endif ( SHARED )
 
 ### config.h ###
 
 ### snprintf
-
 include (CheckFunctionExists)
 check_function_exists ( snprintf HAVE_SNPRINTF ) # C99 function
 
 ### Boost library
-
 find_package ( Boost 1.33 REQUIRED )
 
 if ( Boost_FOUND )
-	message ( STATUS "Boost C++ Libraries found" )
+	message ( STATUS "Found Boost C++ Libraries" )
 	include_directories( ${Boost_INCLUDE_DIRS} )
 	link_directories( ${Boost_LIBRARY_DIRS} )
 	set ( HAVE_BOOST ON )
 else ( Boost_FOUND )
-	message ( FATAL_ERROR "Boost C++ Libraries missing" )
+	message ( FATAL_ERROR "Boost C++ Libraries missing!" )
 endif ( Boost_FOUND )
 
 ### add src/ as base include directory ###
-
 include_directories (
 	AFTER
 	src/
 )
 
 ### testing ###
-
 if ( UNITTEST )
 	enable_testing ()
 endif ( UNITTEST )
 
 ### endianess tests ###
-
 include ( TestBigEndian ) # needs C in project()
 test_big_endian ( IS_BIG_ENDIAN )
 
 ### Additional testing
-
 set ( QT_USE_QTNETWORK ON )
-if ( CLIENT )
+if ( CLIENT OR TRAYSERVER )
 	find_package ( Qt4 REQUIRED )
-else ( CLIENT )
-	if ( TRAYSERVER )
-		find_package ( Qt4 REQUIRED )
-	endif ( TRAYSERVER )
-endif ( CLIENT )
+endif ( CLIENT OR TRAYSERVER )
 
 if ( QT4_FOUND )
 	#STRING(REGEX REPLACE "^([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" qt_majv "${QTVERSION}")
@@ -167,6 +146,7 @@ endif ( QT4_FOUND )
 #add_subdirectory ( config/ )
 
 ### Assembly
+set ( USE_ASM OFF )
 if ( ASM )
 	message ( STATUS "ASM enabled!" )
 	set ( USE_ASM ON ) # for config.h
@@ -186,5 +166,3 @@ if ( DEBUG )
 else ( DEBUG )
 	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 endif ( DEBUG)
-
-message ( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )

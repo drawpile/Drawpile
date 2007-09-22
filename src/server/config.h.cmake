@@ -13,6 +13,7 @@
 
 #cmakedefine IPV6 1
 #cmakedefine IPV4 1
+#cmakedefine IPV_DUAL_STACK 1
 
 #cmakedefine PERSISTENT_SESSIONS 1
 

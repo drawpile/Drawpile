@@ -7,10 +7,10 @@ set ( OPT "-O2" )
 ###   DO NOT TOUCH THE FOLLOWING   ###
 
 if ( GENERIC )
-	message ( STATUS "Generic build" )
+	message ( STATUS "Optimization: Generic" )
 	set ( CPU pentium3 ) # our target audience likely don't have older
 else ( GENERIC )
-	message ( STATUS "Optimized build" )
+	message ( STATUS "Optimization: Native" )
 endif ( GENERIC )
 
 set ( ARCH "-march=${CPU}" )
@@ -28,23 +28,21 @@ set ( FASTMATH "-ffast-math" )
 
 set ( DEBUG_FLAGS "-g" )
 
-set ( WARNALL "-Wall" )
+set ( WARN "-Wall" )
 set ( WEFFCPP "-Weffc++" ) # unused
 
 set ( NORTTI "-fno-rtti" ) # RTTI not needed
 
-# only speeds up compilation
-set ( PIPE "-pipe" )
+set ( PIPE "-pipe" ) # only speeds up compilation
 
-###   Architecture   ###
 include ( config/Macros.cmake )
 
+TestCompilerFlag ( WARN WARNAC )
 TestCompilerFlag ( ARCH ARCHAC )
 TestCompilerFlag ( MTUNE MTUNEAC )
 TestCompilerFlag ( PIPE PIPEAC )
 TestCompilerFlag ( FASTMATH FASTMATHAC )
 TestCompilerFlag ( NORTTI NORTTIAC )
-TestCompilerFlag ( WARNALL WARNALLAC )
 #TestCompilerFlag ( WEFFCPP WEFFCPPC )
 TestCompilerFlag ( OPT OPTAC )
 TestCompilerFlag ( MTHREADS MTHREADSAC )
@@ -64,11 +62,9 @@ endif ( PROFILE )
 
 ###   Set flags   ###
 
-set ( CMAKE_CXX_FLAGS "${OPT} ${WARNALL} ${PIPE} ${ARCH} ${MTUNE} ${FASTMATH} ${PROFILING_FLAGS} ${NORTTI} ${MTHREADS}" )
+set ( CMAKE_CXX_FLAGS "${OPT} ${WARN} ${PIPE} ${ARCH} ${MTUNE} ${FASTMATH} ${PROFILING_FLAGS} ${NORTTI} ${MTHREADS}" )
 set ( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} ${DEBUG_FLAGS}" )
 set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -DNDEBUG" )
-if ( NOT GENERIC )
-	if ( USEENV )
-		set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} $ENV{CXXFLAGS}" )
-	endif ( USEENV )
-endif ( NOT GENERIC )
+if ( NOT GENERIC AND USEENV )
+	set ( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} $ENV{CXXFLAGS}" )
+endif ( NOT GENERIC AND USEENV )

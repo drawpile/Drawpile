@@ -1,11 +1,5 @@
 # src/shared/
 
-set ( INTERNALNAME "lib${PROJECT_NAME}" )
-
-#if (WIN32)
-#	link_libraries (ws2_32) # winsock2
-#endif (WIN32)
-
 set (
 	SHR_SOURCES
 	protocol.cpp
@@ -19,12 +13,12 @@ if ( RELEASE )
 endif ( RELEASE )
 
 add_library (
-	${INTERNALNAME}
+	${DPSHAREDLIB}
 	${SHR_SOURCES}
 )
 
 set_target_properties (
-	${INTERNALNAME}
+	${DPSHAREDLIB}
 	PROPERTIES
 	OUTPUT_NAME drawpile
 	VERSION 0.4.0
@@ -33,7 +27,12 @@ set_target_properties (
 )
 
 if ( SHARED )
-	install ( TARGETS ${INTERNALNAME} LIBRARY DESTINATION lib )
+	strip_lib ( ${DPSHAREDLIB} )
+	if ( WIN32 )
+		install ( TARGETS ${DPSHAREDLIB} RUNTIME DESTINATION . )
+	else ( WIN32 )
+		install ( TARGETS ${DPSHAREDLIB} LIBRARY DESTINATION lib )
+	endif ( WIN32 )
 endif ( SHARED )
 
 if ( OPENSSL )
@@ -41,7 +40,7 @@ if ( OPENSSL )
 	if ( OPENSSL_FOUND )
 		set ( HAVE_OPENSSL ON )
 		message ( STATUS "OpenSSL libraries found!" )
-		target_link_libraries ( ${INTERNALNAME} ${OPENSSL_LIBRARIES} )
+		target_link_libraries ( ${DPSHAREDLIB} ${OPENSSL_LIBRARIES} )
 	endif ( OPENSSL_FOUND )
 endif ( OPENSSL )
 

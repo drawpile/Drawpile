@@ -1,7 +1,5 @@
 # tray server
 
-set ( TRAYSERVERNAME "${PROJECT_NAME}-tray-srv" )
-
 # Qt stuff
 include ( ${QT_USE_FILE} )
 
@@ -62,9 +60,9 @@ endif ( WIN32 )
 
 link_libraries (
 	${QT_LIBRARIES}
-	libdrawpile # DP shared library
-	dpserverlib # Server class lib
-	eventslib # Events lib, required by Server class
+	${DPSHAREDLIB} # DP shared library
+	${SRVLIB} # Server class lib
+	${EVENTSLIB} # Events lib, required by Server class
 )
 
 add_executable (
@@ -77,7 +75,11 @@ add_executable (
 	${QtResource}
 )
 
-install ( TARGETS ${TRAYSERVERNAME} RUNTIME DESTINATION bin )
+if ( WIN32 )
+	install ( TARGETS ${TRAYSERVERNAME} RUNTIME DESTINATION . )
+else ( WIN32 )
+	install ( TARGETS ${TRAYSERVERNAME} RUNTIME DESTINATION bin )
+endif ( WIN32 )
 
 if ( NOT DEBUG )
 	strip_exe ( ${TRAYSERVERNAME} )
