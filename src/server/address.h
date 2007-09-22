@@ -58,9 +58,24 @@ public:
 	//! ctor
 	/**
 	 * @param[in] address String representation of IP address
+	 */
+	Address(const std::string& address) NOTHROW;
+	
+	#ifdef IPV6
+	//! IPv6 ctor
+	/**
+	 * @param[in] address IPv6 address
 	 * @param[in] port Port number
 	 */
-	Address(const std::string& address=std::string(), ushort port=0);
+	Address(const uint address[4]=0, ushort port=0) NOTHROW;
+	#else
+	//! IPv4 ctor
+	/**
+	 * @param[in] address IPv4 address
+	 * @param[in] port Port number
+	 */
+	Address(const uint address=0, ushort port=0) NOTHROW;
+	#endif
 	
 	//! Returns size of the raw address
 	socklen_t size() const NOTHROW;

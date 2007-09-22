@@ -33,8 +33,7 @@
 #ifndef Server_Class_Included
 #define Server_Class_Included
 
-class User;
-class Buffer;
+#include "fwd.decl.h"
 
 #include "ev/event.h" // EventSystem
 #include "socket.h" // Socket class

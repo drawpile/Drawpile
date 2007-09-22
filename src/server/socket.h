@@ -57,7 +57,7 @@ public:
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(const fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address()) NOTHROW;
+	Socket(const fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
 	
 	//! Copy ctor
 	Socket(const Socket& socket) NOTHROW;
@@ -178,6 +178,9 @@ private:
 	 * @note You can't re-enable blocking on non-Win32 systems (API limitation?).
 	 */
 	bool block(bool x) NOTHROW;
+	
+	//! Set up socket options
+	void setup() NOTHROW;
 };
 
 #endif // Sockets_INCLUDED

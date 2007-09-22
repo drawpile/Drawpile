@@ -26,15 +26,9 @@
 #include <deque> // std::deque
 #include <map> // std::map
 
-class Socket;
-class SessionData;
-class Session;
-
-namespace protocol
-{
-	struct Message;
-	struct ToolInfo;
-}
+// forward decl
+#include "fwd.decl.h"
+#include "shared/protocol.fwd.h"
 
 //! User/Client information
 class User

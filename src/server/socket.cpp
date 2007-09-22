@@ -36,6 +36,10 @@
 #ifndef WIN32
 	#include <fcntl.h>
 	#include <cerrno>
+#else
+	#ifdef IPV_DUAL_STACK
+		#include <mstcpip.h>
+	#endif
 #endif
 
 /*
@@ -51,8 +55,7 @@ Socket::Socket(const fd_t nsock, const Address& saddr)
 	: Descriptor<fd_t>(nsock),
 	m_addr(saddr)
 {
-	if (m_handle != InvalidHandle)
-		block(false);
+	setup();
 }
 
 Socket::Socket(const Socket& socket)
@@ -63,6 +66,27 @@ Socket::Socket(const Socket& socket)
 
 Socket::~Socket()
 {
+}
+
+void Socket::setup()
+{
+	if (m_handle != InvalidHandle)
+	{
+		block(false);
+		#if defined(WIN32) and defined(IPV_DUAL_STACK)
+		int val = 0;
+		const int r = setsockopt(m_handle, SOL_SOCKET, IPV6_V6ONLY, (char*)&val, sizeof(int));
+		#ifndef NDEBUG
+		if (r == Error)
+		{
+			m_error = WSAGetLastError();
+			
+			assert(m_error != WSAEINVAL);
+			assert(m_error != Fault);
+		}
+		#endif
+		#endif
+	}
 }
 
 fd_t Socket::create()
@@ -96,7 +120,7 @@ fd_t Socket::create()
 		assert(m_error != EINVAL);
 	}
 	else
-		block(false);
+		setup();
 	
 	return m_handle;
 }

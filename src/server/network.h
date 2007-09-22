@@ -143,7 +143,7 @@ const char IPv4Compat[] = "::ffff:";
 
 //! IPv4 compatibility address as uint[4]
 /**
- * @note Copy the IPv4 address to the last uint
+ * @note Copy the IPv4 address to the last uint (index: 3)
  */
 const uint IPv4CompatAddress[4] = {0,0,0xffffffff,0};
 

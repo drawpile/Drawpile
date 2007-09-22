@@ -19,9 +19,7 @@
 #ifndef DrawpileServer_INCLUDED
 #define DrawpileServer_INCLUDED
 
-#include <stdexcept> // std::bad_alloc
-
-class Server;
+#include "fwd.decl.h"
 
 /**
  * @throw std::bad_alloc

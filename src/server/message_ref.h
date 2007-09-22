@@ -16,11 +16,7 @@
 #define MessageRef_GUARD
 
 #include "shared_ptr.h"
-
-namespace protocol
-{
-	struct Message;
-}
+#include "../shared/protocol.fwd.h"
 
 typedef SharedPtr<protocol::Message> message_ref;
 

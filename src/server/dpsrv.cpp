@@ -331,24 +331,14 @@ int main(int argc, char** argv)
 				#endif
 			}
 			
+			
+			
 			goto end;
 		}
 		
 		cout << "+ Listening on port " << srv.getPort() << endl;
 		
-		try {
-			rc = srv.run();
-		}
-		catch (std::bad_alloc) {
-			cerr << "- Out of Memory!" << endl;
-			rc = 9;
-		}
-		catch (...) {
-			#ifndef NDEBUG
-			cerr << "- Exception caught!" << endl;
-			#endif
-			rc = 2;
-		}
+		rc = srv.run();
 		
 		Network::stop();
 	} // end server scope

@@ -2282,7 +2282,7 @@ bool Server::init()
 	lsock.reuse_addr(true); // reuse address
 	#endif
 	
-	if (lsock.bindTo(Address(std::string(), lsock.addr().port())) == socket_error::Error)
+	if (lsock.bindTo(Address(Network::UnspecifiedAddress, lsock.addr().port())) == socket_error::Error)
 	{
 		#ifndef NDEBUG
 		cout << "- Failed to bind to " << lsock.addr() << endl;

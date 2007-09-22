@@ -16,13 +16,9 @@
 #define User_SessionData_INCLUDED
 
 #include "types.h"
+#include "shared/protocol.fwd.h"
 
-namespace protocol
-{
-	struct ToolInfo;
-}
-
-class Session;
+#include "fwd.decl.h"
 
 //! User session data
 class SessionData

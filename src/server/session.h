@@ -25,14 +25,10 @@
 #include <map> // std::map
 
 #ifdef PERSISTENT_SESSIONS
-namespace protocol
-{
-	struct Raster;
-}
+#include "../protocol.fwd.h"
 #endif
 
-class LayerData;
-class User;
+#include "fwd.decl.h"
 
 //! Session information
 class Session

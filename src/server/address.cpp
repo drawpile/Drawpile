@@ -35,7 +35,7 @@
 	#include <cstdio> // snprintf/sprintf
 #endif
 
-Address::Address(const std::string& address, ushort _port)
+Address::Address(const std::string& address)
 {
 	if (address.empty())
 	{
@@ -49,10 +49,34 @@ Address::Address(const std::string& address, ushort _port)
 	else
 		fromString(address);
 	
-	port(_port);
-	
 	scope(Network::Scope::Default);
 }
+
+#ifdef IPV6
+Address::Address(const uint address[4], ushort _port)
+{
+	family(Network::IPv6::family);
+	
+	memcpy(in_addr().s6_addr, address, sizeof(address));
+	
+	port(_port);
+}
+#else // IPv4
+Address::Address(const uint address, ushort _port)
+{
+	#ifdef IPV6
+	// dual-stack, for later
+	family(Network::IPv6::family);
+	memcpy(in_addr().s6_addr, Network::IPv6::IPv4CompatAddress, sizeof(Network::IPv6::IPv4CompatAddress));
+	in_addr().s6_addr[3] = address;
+	#else
+	family(Network::IPv4::family);
+	in_addr().s_addr = address;
+	#endif
+	
+	port(_port);
+}
+#endif
 
 socklen_t Address::size() const
 {
