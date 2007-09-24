@@ -46,7 +46,7 @@ namespace protocol
 
 void msgName(const unsigned char type)
 {
-	#if !defined(NDEBUG) and defined(DEBUG_PROTOCOL)
+	#ifndef NDEBUG
 	cout << "type (" << static_cast<int>(type) << "): ";
 	switch (type)
 	{
@@ -132,6 +132,7 @@ void msgName(const unsigned char type)
 		cout << "{unknown}" << endl;
 		break;
 	}
+	
 	#endif
 }
 
@@ -206,7 +207,7 @@ Message* getMessage(const unsigned char type)
 		return new Palette();
 	default:
 		#ifndef NDEBUG
-		cerr << "Unknown message type: " << static_cast<unsigned int>(type) << endl;
+		cerr << "protocol::getMessage() - unknown type: " << static_cast<unsigned int>(type) << endl;
 		#endif
 		return 0;
 	}
