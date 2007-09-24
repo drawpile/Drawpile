@@ -22,14 +22,13 @@
 #include <QDebug>
 
 #include "network.h"
-#include "networkprivate.h"
 
 #include "../shared/protocol.h"
 #include "../shared/protocol.helper.h"
 
 namespace network {
 
-NetworkPrivate::NetworkPrivate(QObject *parent) :
+Connection::Connection(QObject *parent) :
 	QObject(parent), tmpbuffer(0), sentlen(0), sendlen(0), newmsg(0)
 {
 	// Indirect socket handling for thread safety
@@ -40,16 +39,20 @@ NetworkPrivate::NetworkPrivate(QObject *parent) :
 
 	// Socket signals
 	connect(&socket, SIGNAL(readyRead()), this, SLOT(dataAvailable()));
+	connect(&socket, SIGNAL(connected()), this, SLOT(hostConnected()));
 	connect(&socket, SIGNAL(disconnected()), this, SLOT(hostDisconnected()));
 	connect(&socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(networkError()));
-	connect(this, SIGNAL(sending()), this, SLOT(sendPending()));
-	connect(this, SIGNAL(disconnecting()), this, SLOT(disconnectHost()));
 }
 
-NetworkPrivate::~NetworkPrivate()
+Connection::~Connection()
 {
 	delete [] tmpbuffer;
 	delete newmsg;
+}
+
+void Connection::disconnectHost()
+{
+	socket.disconnectFromHost();
 }
 
 /**
@@ -58,16 +61,16 @@ NetworkPrivate::~NetworkPrivate()
  * @param port port
  * @return true on success
  */
-bool NetworkPrivate::connectToHost(const QString& host, quint16 port)
+void Connection::connectToHost(const QString& host, quint16 port)
 {
+	//host_ = host;
 	socket.connectToHost(host, port);
-	return socket.waitForConnected();
 }
 
 /**
  * Calls internal disconnect function indirectly for thread safety.
  */
-void NetworkPrivate::disconnectFromHost()
+void Connection::disconnectFromHost()
 {
 	emit disconnecting();
 }
@@ -77,7 +80,7 @@ void NetworkPrivate::disconnectFromHost()
  * as each message is of the same type. This function is thread safe.
  * @param msg message(s) to send
  */
-void NetworkPrivate::send(protocol::Message *msg)
+void Connection::send(protocol::Message *msg)
 {
 	Q_ASSERT(msg);
 	sendmutex.lock();
@@ -107,7 +110,7 @@ void NetworkPrivate::send(protocol::Message *msg)
  * In case of a bundled message, a linked list is returned.
  * @return received message (may be a linked list). 0 if no messages in queue.
  */
-protocol::Message *NetworkPrivate::receive()
+protocol::Message *Connection::receive()
 {
 	recvmutex.lock();
 	protocol::Message *msg;
@@ -122,8 +125,9 @@ protocol::Message *NetworkPrivate::receive()
 /**
  * Send all pending messages
  */
-void NetworkPrivate::sendPending()
+void Connection::sendPending()
 {
+	bool isempty;
 	do {
 		if(sendlen==0)
 			serializeMessage();
@@ -148,18 +152,16 @@ void NetworkPrivate::sendPending()
 			}
 		}
 		sendmutex.lock();
-		bool isempty = sendqueue.isEmpty();
+		isempty = sendqueue.isEmpty();
 		sendmutex.unlock();
-		if(isempty)
-			break;
-	} while(1);
+	} while(!isempty);
 }
 
 /**
  * Take a message out of the queue and serialize it. If queue is empty,
  * sendbuffer and sendlen are set to zero.
  */
-void NetworkPrivate::serializeMessage()
+void Connection::serializeMessage()
 {
 	Q_ASSERT(sendlen==0);
 	sendmutex.lock();
@@ -183,7 +185,7 @@ void NetworkPrivate::serializeMessage()
 /**
  * Read data and unserialize available messages
  */
-void NetworkPrivate::dataAvailable()
+void Connection::dataAvailable()
 {
 	do {
 		// Read available data
@@ -232,92 +234,34 @@ void NetworkPrivate::dataAvailable()
 /**
  * Private slot to handle disconnections
  */
-void NetworkPrivate::hostDisconnected()
+void Connection::hostDisconnected()
 {
-	emit disconnected(tr("Disconnected"));
+	emit disconnected();
+}
+
+void Connection::hostConnected()
+{
+	emit connected();
 }
 
 /**
  * Private slot to handle network errors
  */
-void NetworkPrivate::networkError()
+void Connection::networkError()
 {
+	qDebug() << "networkError:" << socket.errorString();
 	emit error(socket.errorString());
 }
 
-Connection::Connection(QObject *parent)
-	: QThread(parent), p_(0)
+void Connection::waitDisconnect()
 {
-
+	if (socket.state() != QAbstractSocket::UnconnectedState)
+		socket.waitForDisconnected(-1);
 }
 
-Connection::~Connection()
+void Connection::socketError()
 {
-	delete p_;
-}
-
-/**
- * Start the networking thread and connect to a host
- */
-void Connection::connectHost(const QString& host, quint16 port)
-{
-	Q_ASSERT(isRunning() == false);
-
-	host_ = host;
-	port_ = port;
-	start();
-}
-
-/**
- * Calls NetworkPrivate::disconnectHost
- */
-void Connection::disconnectHost()
-{
-	Q_ASSERT(isRunning());
-	p_->disconnectFromHost();
-}
-
-/**
- * Calls NetworkPrivate::send
- */
-void Connection::send(protocol::Message *msg)
-{
-	Q_ASSERT(isRunning() && p_);
-	p_->send(msg);
-}
-
-/**
- * Calls NetworkPrivate::receive
- */
-protocol::Message *Connection::receive()
-{
-	Q_ASSERT(p_);
-	return p_->receive();
-}
-
-//! Thread entry point
-void Connection::run()
-{
-	qDebug() << "network thread starting";
-
-	delete p_;
-	p_ = new NetworkPrivate;
-
-	// Relay signals
-	connect(p_, SIGNAL(disconnected(QString)), this, SLOT(quit()));
-	connect(p_, SIGNAL(disconnected(QString)), this, SIGNAL(disconnected(QString)));
-	connect(p_, SIGNAL(received()), this, SIGNAL(received()));
-	connect(p_, SIGNAL(error(QString)), this, SIGNAL(error(QString)));
-
-	// Connect to host and enter event loop if succesfull
-	if(p_->connectToHost(host_, port_)) {
-		emit connected();
-		exec();
-	} else {
-		emit disconnected(tr("Couldn't connect."));
-	}
-
-	qDebug() << "network thread finished";
+	emit error(errorString());
 }
 
 }

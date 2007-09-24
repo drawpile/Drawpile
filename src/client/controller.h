@@ -80,7 +80,7 @@ class Controller : public QObject
 		void joinSession();
 
 		//! Check if connection is still established
-		bool isConnected() const { return net_ != 0; }
+		bool isConnected() const;
 
 		//! Check if raster upload is in progress
 		bool isUploading() const;
@@ -181,7 +181,7 @@ class Controller : public QObject
 		void netConnected();
 
 		//! Connection to a host was disconnected
-		void netDisconnected(const QString& message);
+		void netDisconnected();
 
 		//! Initial login procedure was completed
 		void serverLoggedin();

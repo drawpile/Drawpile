@@ -20,7 +20,9 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include <QThread>
+#include <QMutex>
+#include <QQueue>
+#include <QTcpSocket>
 
 namespace protocol {
 	class Message;
@@ -31,41 +33,45 @@ namespace protocol {
  */
 namespace network {
 
-class NetworkPrivate;
-
 //! Network connection handling thread
 /**
- * The network thread object handles the reception and transmission of
- * messages defined in the protocol.
+ * Handles the reception and transmission of messages defined in the protocol.
  *
  * Messages can be sent using the \a send function.
  * The signal \a received is emitted when new messages have become available
  * and can be read with \a receive.
  */
-class Connection : public QThread {
+class Connection : public QObject {
 	Q_OBJECT
 	public:
 		Connection(QObject *parent=0);
+
 		~Connection();
 
-		//! Connect to host
-		void connectHost(const QString& host, quint16 port);
+		//! Connect to a host
+		void connectToHost(const QString& host, quint16 port);
 
-		//! Disconnect from host
-		void disconnectHost();
+		//! Disconnect
+		void disconnectFromHost();
 
 		//! Send a message
 		void send(protocol::Message *msg);
 
+		bool isConnected() const { return (socket.state() != QAbstractSocket::UnconnectedState); }
+
 		//! Receive a message
 		protocol::Message *receive();
-
+		
+		//! Get network error string
+		QString errorString() const { return socket.errorString(); }
+		
+		void waitDisconnect();
 	signals:
+		//! Connection cut
+		void disconnected();
+		
 		//! Connection established
 		void connected();
-
-		//! Connection cut
-		void disconnected(const QString& message);
 
 		//! One or more message available in receive buffer
 		void received();
@@ -73,13 +79,53 @@ class Connection : public QThread {
 		//! An error occured
 		void error(const QString& message);
 
-	protected:
-		void run();
+		//! Connection is about to disconnect
+		void disconnecting();
+		//! Start sending queued messages
+		void sending();
+
+	private slots:
+		void socketError();
+		
+		//! Data has become available
+		void dataAvailable();
+
+		//! Send all pending messages from in queue
+		void sendPending();
+
+		//! Connection has been disconnected
+		void hostDisconnected();
+		//! Connection established
+		void hostConnected();
+
+		//! Network error has occured
+		void networkError();
+
+		//! Disconnect for real
+		void disconnectHost();
 
 	private:
-		QString host_;
-		quint16 port_;
-		NetworkPrivate *p_;
+		QTcpSocket socket;
+		
+		//const QString& host_;
+		
+		typedef QQueue<protocol::Message*> MessageQueue;
+		
+		// Sending
+		QMutex sendmutex;
+		MessageQueue sendqueue;
+		char sendbuffer[1024];
+		char *tmpbuffer; // tmpbuffer is used when sendbuffer is too short
+		size_t sentlen, sendlen;
+
+		// Receiving
+		QMutex recvmutex;
+		MessageQueue recvqueue;
+		QByteArray recvbuffer;
+		protocol::Message *newmsg;
+
+		//! Serialize first message in send queue
+		void serializeMessage();
 };
 
 }

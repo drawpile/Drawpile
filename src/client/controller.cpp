@@ -36,6 +36,7 @@ Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
 	host_ = new network::HostState(this);
+	net_ = new network::Connection(this);
 	connect(host_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
 	connect(host_, SIGNAL(becameAdmin()), this, SLOT(finishLogin()));
 	connect(host_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
@@ -52,10 +53,20 @@ Controller::Controller(QObject *parent)
 	connect(host_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	// Disconnect on error
 	connect(host_, SIGNAL(error(QString)), this, SLOT(disconnectHost()));
+	
+	connect(net_, SIGNAL(disconnected()), this, SLOT(netDisconnected()));
+	connect(net_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
+	connect(net_, SIGNAL(connected()), this, SLOT(netConnected()));
+	connect(net_, SIGNAL(received()), host_, SLOT(receiveMessage()));
 }
 
 Controller::~Controller()
 {
+}
+
+bool Controller::isConnected() const
+{
+	return net_->isConnected();
 }
 
 void Controller::setModel(drawingboard::Board *board)
@@ -81,7 +92,7 @@ void Controller::setModel(drawingboard::Board *board)
  */
 void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 {
-	Q_ASSERT(net_ == 0);
+	Q_ASSERT(net_ != 0);
 	Q_ASSERT(url.userName().isEmpty()==false);
 
 	username_ = url.userName();
@@ -92,13 +103,6 @@ void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 			QUrl::RemoveUserInfo|QUrl::RemovePath|QUrl::RemoveQuery|
 			QUrl::RemoveFragment|QUrl::StripTrailingSlash
 			).mid(2);
-
-	// Create network thread object
-	net_ = new network::Connection(this);
-	connect(net_,SIGNAL(connected()), this, SLOT(netConnected()));
-	connect(net_,SIGNAL(disconnected(QString)), this, SLOT(netDisconnected(QString)));
-	connect(net_,SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
-	connect(net_,SIGNAL(received()), host_, SLOT(receiveMessage()));
 
 	// Autojoin if path is present
 	autojoinpath_ = url.path();
@@ -113,7 +117,7 @@ void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 		qDebug() << "actually connecting to localhost instead of" << host;
 		host = "127.0.0.1"; // server only allows admin users from localhost
 	}
-	net_->connectHost(host, url.port(protocol::default_port));
+	net_->connectToHost(host, url.port(protocol::default_port));
 
 	sync_ = false;
 	syncwait_ = false;
@@ -171,7 +175,7 @@ void Controller::joinSession(int id)
 void Controller::disconnectHost()
 {
 	Q_ASSERT(net_);
-	net_->disconnectHost();
+	net_->disconnectFromHost();
 }
 
 void Controller::lockBoard(bool lock)
@@ -547,13 +551,11 @@ void Controller::netConnected()
 /**
  * Clean up and emit a signal informing that the connection was cut.
  */
-void Controller::netDisconnected(const QString& message)
+void Controller::netDisconnected()
 {
-	net_->wait();
-	delete net_;
-	net_ = 0;
 	host_->setConnection(0);
 	session_ = 0;
-	emit disconnected(message);
+	emit disconnected(tr("Disconnected"));
 }
+
 

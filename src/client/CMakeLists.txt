@@ -11,7 +11,7 @@ set (
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h gradientslider.h colorbutton.h
 	newdialog.h imageselector.h hostdialog.h joindialog.h network.h
-	networkprivate.h hoststate.h sessionstate.h logindialog.h
+	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	sessionlistmodel.h mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
