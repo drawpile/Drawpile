@@ -1352,6 +1352,7 @@ void Server::uSessionInstruction(User*& usr)
 			#ifndef NDEBUG
 			cerr << "- Non-admin tries to create session; user #" << usr->id << endl;
 			#endif
+			uQueueMsg(*usr, msgError(msg.session_id, protocol::error::Unauthorized));
 			break;
 		}
 		
@@ -2185,6 +2186,7 @@ void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
 		cout << "- User #" << usr->id << " disconnected" << endl;
 		break;
 	default:
+		cout << "- User #" << usr->id << " dropped" << endl;
 		// do nothing
 		break;
 	}
