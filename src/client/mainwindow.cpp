@@ -424,8 +424,12 @@ void MainWindow::readSettings()
 void MainWindow::cloneSettings(const MainWindow *source)
 {
 	// Clone size, but let the window manager position this window
-	resize(source->size());
-
+	resize(source->normalGeometry().size());
+	//source->size() fails miserably if window is maximized
+	
+	// Clone window state?
+	//setWindowState(source->windowState());
+	
 	// Copy dock and view states
 	restoreState(source->saveState());
 	splitter_->restoreState(source->splitter_->saveState());
