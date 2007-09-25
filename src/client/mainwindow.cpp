@@ -37,6 +37,8 @@
 #include <QSplitter>
 #include <QFileInfo>
 #include <QFile>
+#include <QTemporaryFile>
+#include <QTimer>
 
 #include "main.h"
 #include "mainwindow.h"
@@ -226,11 +228,18 @@ MainWindow::MainWindow(const MainWindow *source)
 		QFileInfo(DrawPileApp::getConfDir(), "crash.guard").absoluteFilePath()
 		);
 	
-	if (crashGuard_->exists())
+	if (source == 0 and crashGuard_->exists())
 		crashRecovery();
 	
 	if (!crashGuard_->open(QIODevice::WriteOnly|QIODevice::Unbuffered))
 		qWarning() << "crash guard creation failed!";
+	
+	autosaveTimer_ = new QTimer();
+	connect(autosaveTimer_, SIGNAL(timeout()), this, SLOT(autosave()));
+	// todo: need better location
+	autosaveTmp_ = new QTemporaryFile(QFileInfo(DrawPileApp::getConfDir(), "drawpile_wip.XXXXXX.png").absoluteFilePath());
+	autosaveTmp_->setAutoRemove(false);
+	autosaveTimeout_ = 1; // minutes
 }
 
 MainWindow::~MainWindow()
@@ -240,6 +249,10 @@ MainWindow::~MainWindow()
 		QDialog *child = qobject_cast<QDialog*>(obj);
 		delete child;
 	}
+	
+	autosaveTmp_->setAutoRemove(true);
+	delete autosaveTmp_;
+	delete autosaveTimer_;
 	
 	crashGuard_->remove();
 	delete crashGuard_;
@@ -556,6 +569,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::boardChanged()
 {
 	setWindowModified(true);
+	startAutosaver();
 }
 
 /**
@@ -611,10 +625,12 @@ void MainWindow::open(const QString& file)
 			showErrorMessage(ERR_OPEN);
 		else
 			addRecentFile(file);
+		qDebug() << "nuuu!";
 	} else {
 		MainWindow *win = new MainWindow(this);
 		if(win->initBoard(file)==false) {
 			showErrorMessage(ERR_OPEN);
+			qDebug() << "serious fail!";
 			delete win;
 		} else {
 			addRecentFile(file);
@@ -663,6 +679,7 @@ bool MainWindow::save()
 			return false;
 		} else {
 			setWindowModified(false);
+			stopAutosaver();
 			addRecentFile(filename_);
 			return true;
 		}
@@ -706,6 +723,7 @@ bool MainWindow::saveas()
 		} else {
 			filename_ = file;
 			setWindowModified(false);
+			stopAutosaver();
 			setTitle();
 			return true;
 		}
@@ -1002,6 +1020,7 @@ void MainWindow::setSessionTitle(const QString& title)
  */
 void MainWindow::exit()
 {
+	stopAutosaver();
 	if(windowState().testFlag(Qt::WindowFullScreen))
 		fullscreen(false);
 	writeSettings();
@@ -1460,7 +1479,53 @@ void MainWindow::createDialogs()
 	logindlg_ = new dialogs::LoginDialog(this);
 }
 
+/**
+ * @bug Doesn't open the files for some reason; likely because of initDefaultBoard
+ * @todo Ask user if he/she wants to load the images.
+ */
 void MainWindow::crashRecovery()
 {
 	qDebug() << "crash detected";
+	
+	QDir savedir(DrawPileApp::getConfDir());
+	QFileInfoList autosaves = savedir.entryInfoList(
+		QStringList("*.png"),
+		QDir::Files|QDir::Readable
+		);
+	
+	foreach(QFileInfo asav, autosaves)
+	{
+		open(asav.absoluteFilePath());
+	}
+}
+
+void MainWindow::startAutosaver()
+{
+	if (!autosaveTimer_->isActive())
+		autosaveTimer_->start(autosaveTimeout_ * 60000); // minutes
+}
+
+void MainWindow::stopAutosaver()
+{
+	if (autosaveTimer_->isActive())
+		autosaveTimer_->stop();
+}
+
+void MainWindow::autosave()
+{
+	// don't trigger auto-save again unless board is changed
+	stopAutosaver();
+	
+	if (!autosaveTmp_->isOpen())
+		autosaveTmp_->open();
+	
+	// save
+	if (board_->image().save(autosaveTmp_))
+	{
+		// maybe? maybe not?
+		//setWindowModified(false); //?
+		//addRecentFile(autosaveTmp_->fileName()); // ?
+	}
+	else
+		qWarning() << "auto-save to" << autosaveTmp_->fileName() << "failed!";
 }

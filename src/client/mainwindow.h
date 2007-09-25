@@ -30,6 +30,8 @@ class QUrl;
 class QLabel;
 class QSplitter;
 class QFile;
+class QTemporaryFile;
+class QTimer;
 
 namespace widgets {
 	class NetStatus;
@@ -156,6 +158,8 @@ class MainWindow : public QMainWindow {
 		//! Inform user about raster upload progress
 		void rasterUp(int p);
 
+		//! Perform autosave
+		void autosave();
 	signals:
 		//! This signal is emitted when the current tool is changed
 		void toolChanged(tools::Type);
@@ -165,6 +169,11 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
+		//! Start autosaver timer
+		void startAutosaver();
+		//! Stop autosaver timer
+		void stopAutosaver();
+
 		//! Tasks to recover from crash.
 		void crashRecovery();
 
@@ -219,6 +228,9 @@ class MainWindow : public QMainWindow {
 		void createDialogs();
 
 		QFile *crashGuard_;
+		QTemporaryFile *autosaveTmp_;
+		QTimer *autosaveTimer_;
+		int autosaveTimeout_;
 
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
