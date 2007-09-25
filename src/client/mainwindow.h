@@ -29,6 +29,7 @@ class QMessageBox;
 class QUrl;
 class QLabel;
 class QSplitter;
+class QFile;
 
 namespace widgets {
 	class NetStatus;
@@ -164,6 +165,9 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
+		//! Tasks to recover from crash.
+		void crashRecovery();
+
 		//! Utility function for creating actions
 		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence());
 
@@ -213,6 +217,8 @@ class MainWindow : public QMainWindow {
 		void createColorBoxes(QMenu *menu);
 		//! Create dialogs
 		void createDialogs();
+
+		QFile *crashGuard_;
 
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;

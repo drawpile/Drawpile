@@ -35,6 +35,8 @@
 #include <QImageReader>
 #include <QImageWriter>
 #include <QSplitter>
+#include <QFileInfo>
+#include <QFile>
 
 #include "main.h"
 #include "mainwindow.h"
@@ -220,6 +222,15 @@ MainWindow::MainWindow(const MainWindow *source)
 	else
 		readSettings();
 
+	crashGuard_ = new QFile(
+		QFileInfo(DrawPileApp::getConfDir(), "crash.guard").absoluteFilePath()
+		);
+	
+	if (crashGuard_->exists())
+		crashRecovery();
+	
+	if (!crashGuard_->open(QIODevice::WriteOnly|QIODevice::Unbuffered))
+		qWarning() << "crash guard creation failed!";
 }
 
 MainWindow::~MainWindow()
@@ -229,6 +240,9 @@ MainWindow::~MainWindow()
 		QDialog *child = qobject_cast<QDialog*>(obj);
 		delete child;
 	}
+	
+	crashGuard_->remove();
+	delete crashGuard_;
 }
 
 /**
@@ -1446,3 +1460,7 @@ void MainWindow::createDialogs()
 	logindlg_ = new dialogs::LoginDialog(this);
 }
 
+void MainWindow::crashRecovery()
+{
+	qDebug() << "crash detected";
+}
