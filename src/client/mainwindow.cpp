@@ -457,11 +457,10 @@ void MainWindow::writeSettings()
 {
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("window");
-
-	if(isMaximized() == false) {
-		cfg.setValue("pos", pos());
-		cfg.setValue("size", size());
-	}
+	
+	cfg.setValue("pos", normalGeometry().topLeft());
+	cfg.setValue("size", normalGeometry().size());
+	
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", splitter_->saveState());
