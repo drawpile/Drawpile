@@ -239,7 +239,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	// todo: need better location
 	autosaveTmp_ = new QTemporaryFile(QFileInfo(DrawPileApp::getConfDir(), "drawpile_wip.XXXXXX.png").absoluteFilePath());
 	autosaveTmp_->setAutoRemove(false);
-	autosaveTimeout_ = 1; // minutes
+	autosaveTimeout_ = 15; // minutes
+	statusDefaultTimeout_ = 15; // seconds
 }
 
 MainWindow::~MainWindow()
@@ -1157,8 +1158,10 @@ void MainWindow::about()
 			);
 }
 
+/** @todo anything and everything */
 void MainWindow::help()
 {
+	
 }
 
 void MainWindow::homepage()
@@ -1519,13 +1522,20 @@ void MainWindow::autosave()
 	if (!autosaveTmp_->isOpen())
 		autosaveTmp_->open();
 	
+	QStatusBar *bar = statusBar();
+	bar->showMessage(tr("Auto-saving..."), statusDefaultTimeout_ * 1000);
 	// save
 	if (board_->image().save(autosaveTmp_))
 	{
 		// maybe? maybe not?
 		//setWindowModified(false); //?
 		//addRecentFile(autosaveTmp_->fileName()); // ?
+		bar->showMessage(tr("Auto-save done!"), 5000);
 	}
 	else
+	{
 		qWarning() << "auto-save to" << autosaveTmp_->fileName() << "failed!";
+		bar->showMessage(tr("Auto-save failed!"), statusDefaultTimeout_ * 1000);
+	}
+	
 }

@@ -232,6 +232,8 @@ class MainWindow : public QMainWindow {
 		QTimer *autosaveTimer_;
 		int autosaveTimeout_;
 
+		int statusDefaultTimeout_;
+
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
