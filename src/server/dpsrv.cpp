@@ -76,6 +76,7 @@ void getArgs(int argc, char** argv, Server& srv)
 			<< "   -L [num]      Set session limit" << endl
 			<< "   -J [num]      Set subscription limit" << endl
 			<< "   -M            Allow duplicate connections" << endl
+			<< "   -z            Enable deflate compression" << endl
 			;
 		exit(EXIT_SUCCESS);
 		break;
@@ -94,6 +95,16 @@ void getArgs(int argc, char** argv, Server& srv)
 			cout << "& Name length limit set to: " << static_cast<int>(len) << endl;
 			#endif
 		}
+		break;
+	case 'z':
+		#ifndef NDEBUG
+		#ifdef HAVE_ZLIB
+		cout << "& Enabled Deflate compression" << endl;
+		#else
+		cout << "- Deflate was not configured in" << endl;
+		#endif
+		#endif
+		srv.setDeflate(true);
 		break;
 	case 'p': // port to listen on
 		{
