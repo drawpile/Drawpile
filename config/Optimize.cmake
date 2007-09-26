@@ -8,16 +8,10 @@ set ( OPT "-O2" )
 
 if ( GENERIC )
 	message ( STATUS "Optimization: Generic" )
-	set ( CPU pentium3 ) # our target audience likely don't have older
-else ( GENERIC )
-	message ( STATUS "Optimization: Native" )
-endif ( GENERIC )
-
-set ( ARCH "-march=${CPU}" )
-
-if ( GENERIC )
+	set ( ARCH "-march=${CPU}" )
 	set ( MTUNE "-mtune=generic") # GCC >=4.x
 else ( GENERIC )
+	message ( STATUS "Optimization: Native" )
 	set ( MTUNE "-mtune=native" ) # GCC >=4.x
 	set ( ARCH "-march=native" ) # GCC >=4.x
 endif ( GENERIC )

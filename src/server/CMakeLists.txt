@@ -15,7 +15,7 @@ if ( USE_URANDOM )
 	)
 endif ( USE_URANDOM )
 
-#set ( HAVE_ZLIB OFF )
+set ( HAVE_ZLIB OFF )
 if ( SERVERLIB AND DEFLATE )
 	find_package ( ZLIB )
 	if ( ZLIB_FOUND )
@@ -164,12 +164,9 @@ if ( SERVER )
 	
 	add_executable (
 		${SRVNAME}
-		MACOSX_BUNDLE
 		dpsrv.cpp
 		${Win32Resource}
 	)
-	
-	add_dependencies ( ${SRVNAME} ${SRVLIB} eventslib libdrawpile )
 	
 	set_target_properties (
 		${SRVNAME}
