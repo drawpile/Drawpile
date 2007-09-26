@@ -15,7 +15,7 @@ if ( USE_URANDOM )
 	)
 endif ( USE_URANDOM )
 
-#set ( HAVE_ZLIB OFF )
+set ( HAVE_ZLIB OFF )
 if ( SERVERLIB AND DEFLATE )
 	find_package ( ZLIB )
 	if ( ZLIB_FOUND )
