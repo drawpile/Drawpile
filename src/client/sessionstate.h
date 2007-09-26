@@ -63,6 +63,9 @@ class SessionState : public QObject {
 		//! Construct a session state object
 		SessionState(HostState *parent, const Session& info);
 
+		//! Enable/disable UTF-16 strings
+		void setUtf16(bool x);
+		
 		//! Handle session message
 		void handleMessage(protocol::Message *msg);
 
@@ -242,6 +245,9 @@ class SessionState : public QObject {
 
 		//! Buffer drawing commands, instead of emitting them right away
 		bool bufferdrawing_;
+		
+		//! UTf-16 strings
+		bool Utf16_;
 
 		//! Drawing command buffer
 		/**

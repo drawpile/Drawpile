@@ -25,6 +25,7 @@
 
 namespace network {
 
+/** @todo Utf16 support */
 Session::Session(const protocol::SessionInfo *info)
 	: id(info->session_id),
 	owner(info->owner),

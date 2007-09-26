@@ -43,7 +43,7 @@ namespace network {
  * @param info session information
  */
 SessionState::SessionState(HostState *parent, const Session& info)
-	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true)
+	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true),Utf16_(false)
 {
 	Q_ASSERT(parent);
 	users_[host_->localUser().id()] = User(
@@ -287,13 +287,27 @@ void SessionState::sendAckSync()
 
 void SessionState::sendChat(const QString& message)
 {
-	QByteArray arr = message.toUtf8();
-	protocol::Chat *msg = new protocol::Chat(
-			arr.length(),
-			new char[arr.length()]
-			);
+	uint length=0;
+	char *ptr=0;
+	if (Utf16_)
+	{
+		qDebug() << "convert to Utf16";
+		const ushort *ptr16 = message.utf16();
+		for (; ptr16[length++] != 0;);
+		ptr = new char[length*2];
+		memcpy(ptr, ptr16, length*2);
+		qDebug() << "conversion done";
+	}
+	else
+	{
+		QByteArray arr = message.toUtf8();
+		length = arr.length();
+		ptr = new char[length];
+		memcpy(ptr, arr.constData(), length);
+	}
+	
+	protocol::Chat *msg = new protocol::Chat(length, ptr);
 	msg->session_id = info_.id;
-	memcpy(msg->data,arr.constData(),arr.length());
 	host_->connection()->send(msg);
 }
 
@@ -387,6 +401,7 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 					<< "who is already in session!";
 			} else {
 				bool islocked = fIsSet(msg->mode, static_cast<quint8>(protocol::user::Locked));
+				/** @todo Utf-16 support */
 				users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
 				emit userJoined(msg->user_id);
 			}
@@ -578,7 +593,13 @@ void SessionState::handleChat(const protocol::Chat *msg)
 	const User *u = 0;
 	if(users_.contains(msg->user_id))
 		u = &user(msg->user_id);
-	QString str = QString::fromUtf8(msg->data, msg->length);
+	
+	QString str;
+	if (Utf16_)
+		str = QString::fromUtf16(reinterpret_cast<ushort*>(msg->data), msg->length/2);
+	else
+		str = QString::fromUtf8(msg->data, msg->length);
+	
 	emit chatMessage(u?u->name():"<unknown>", str);
 }
 
@@ -607,6 +628,10 @@ void SessionState::flushDrawBuffer()
 	}
 }
 
+void SessionState::setUtf16(bool x)
+{
+	Utf16_ = x;
+}
 
 }
 

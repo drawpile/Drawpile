@@ -203,6 +203,9 @@ class HostState : public QObject {
 		 */
 		QString sendadminpassword_;
 
+		//! UTF-16 strings required by server
+		bool Utf16_;
+
 		//! Is the user logged in
 		/**
 		 * This is set to true when the user has logged in to the server

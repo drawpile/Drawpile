@@ -197,6 +197,7 @@ void HostState::host(const QString& title,
 	
 	if (msg->title_len != 0)
 	{
+		/** @todo Utf16 support */
 		memcpy(msg->title, tbytes.constData(), tbytes.length());
 	}
 	
@@ -228,6 +229,7 @@ void HostState::join(const QString& title)
  * value is sent.
  * @param password password to send
  * @pre needPassword signal has been emitted
+ * @todo Utf16 support
  */
 void HostState::sendPassword(const QString& password)
 {
@@ -288,6 +290,8 @@ void HostState::setPassword(const QString& password, int session)
 			new char[passwd.length()]
 			);
 	
+	/** @todo Utf16 support */
+	
 	msg->session_id = session;
 	memcpy(msg->password,passwd.constData(),passwd.length());
 	
@@ -327,6 +331,7 @@ void HostState::join(int id)
 	foreach(const Session &i, sessions_) {
 		if(i.id == id) {
 			session_ = new SessionState(this,i);
+			session_->setUtf16(Utf16_);
 			found = true;
 			break;
 		}
@@ -408,10 +413,20 @@ void HostState::autoJoin()
  *
  * User info will be sent in reply
  * @param msg HostInfo message
+ *
+ * @todo Check for chat extension and disable sending of chat messages if it's not present.
+ * @todo Check for any other extensions and work accordingly.
  */
 void HostState::handleHostInfo(const protocol::HostInfo *msg)
 {
 	// Handle host info
+	Utf16_ = fIsSet(msg->requirements, (uchar)protocol::requirements::WideStrings);
+	if (Utf16_) // temporary until Utf16 support is in
+	{
+		net_->disconnectFromHost();
+		emit error(tr("UTF-16 support required"));
+		return;
+	}
 	
 	const QByteArray name = username_.toUtf8();
 	
@@ -423,7 +438,8 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 			new char[name.length()]
 			);
 	
-	memcpy(user->name,name.constData(), name.length());
+	/** @todo Utf16 support */
+	memcpy(user->name, name.constData(), name.length());
 	
 	net_->send(user);
 }
@@ -544,7 +560,7 @@ void HostState::handleError(const protocol::Error *msg)
 		case InvalidRequest: errmsg = tr("Invalid request."); break;
 		case Unauthorized: errmsg = tr("Unauthorized action."); break;
 		case ImplementationMismatch: errmsg = tr("Client version mismatch."); break;
-		default: errmsg = tr("Error code %1").arg(int(msg->code));
+		default: errmsg = tr("Error code %1").arg(uint(msg->code));
 	}
 	qDebug() << "error" << errmsg << "for session" << msg->session_id;
 	emit error(errmsg);
