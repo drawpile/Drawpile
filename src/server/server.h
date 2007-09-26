@@ -168,13 +168,13 @@ protected:
 	/**
 	 * @param[in] id User ID to free
 	 */
-	void freeUserID(const octet id) NOTHROW;
+	void freeUserID(octet id) NOTHROW;
 	
 	//! Frees session ID
 	/**
 	 * @param[in] id Session ID to free
 	 */
-	void freeSessionID(const octet id) NOTHROW;
+	void freeSessionID(octet id) NOTHROW;
 	
 	//! Get free user ID
 	/**
@@ -207,7 +207,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgPWRequest(User& usr, const octet session) const;
+	message_ref msgPWRequest(User& usr, octet session) const;
 	
 	//! Generate user event message
 	/**
@@ -219,7 +219,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgUserEvent(const User& usr, const octet session_id, const octet event) const;
+	message_ref msgUserEvent(const User& usr, octet session_id, octet event) const;
 	
 	//! Generate error message
 	/**
@@ -230,7 +230,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgError(const octet session, const uint16_t errorCode) const;
+	message_ref msgError(octet session, uint16_t errorCode) const;
 	
 	//! Generate ACK message
 	/**
@@ -241,7 +241,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgAck(const octet session, const octet msgtype) const;
+	message_ref msgAck(octet session, octet msgtype) const;
 	
 	//! Generate sync-wait message
 	/**
@@ -251,7 +251,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	message_ref msgSyncWait(const octet session_id) const;
+	message_ref msgSyncWait(octet session_id) const;
 	
 	//! Generate session info message
 	/**
@@ -381,7 +381,7 @@ protected:
 	 * @retval true if the digests match
 	 * @retval false otherwise
 	 */
-	bool CheckPassword(const char *hashdigest, const char *str, const size_t len, const char seed[4]) NOTHROW NONNULL(1) NONNULL(2);
+	bool CheckPassword(const char *hashdigest, const char *str, size_t len, const char seed[4]) NOTHROW NONNULL(1) NONNULL(2);
 	
 	//! Queue message to user
 	/**
@@ -424,7 +424,7 @@ protected:
 	 *
 	 * @throw std::bad_alloc
 	 */
-	void uLeaveSession(User& usr, Session& session, const protocol::UserInfo::uevent reason=protocol::UserInfo::Leave);
+	void uLeaveSession(User& usr, Session& session, protocol::UserInfo::uevent reason=protocol::UserInfo::Leave);
 	
 	//! Adds user
 	/**
@@ -437,7 +437,7 @@ protected:
 	 * @param[in,out] usr User who's being removed
 	 * @param[in] reason Reason for removal (protocol::UserInfo::uevent)
 	 */
-	void uRemove(User*& usr, const protocol::UserInfo::uevent reason) NOTHROW NONNULL(1);
+	void uRemove(User*& usr, protocol::UserInfo::uevent reason) NOTHROW NONNULL(1);
 	
 	//! Delete session and do some cleaning
 	/**
@@ -495,22 +495,22 @@ protected:
 	/**
 	 * @param[in] session_id Identifier for the session to find
 	 */
-	Session* getSession(const octet session_id) NOTHROW;
+	Session* getSession(octet session_id) NOTHROW;
 	
 	//! Get const Session* pointer
 	/**
 	 * @param[in] session_id Identifier for the session to find
 	 */
-	const Session* getConstSession(const octet session_id) const NOTHROW;
+	const Session* getConstSession(octet session_id) const NOTHROW;
 	
 	//! Get User* pointer
-	User* getUser(const fd_t user_handle) NOTHROW;
+	User* getUser(fd_t user_handle) NOTHROW;
 	
 	//! Get const User* pointer
-	const User* getConstUser(const fd_t user_handle) const NOTHROW;
+	const User* getConstUser(fd_t user_handle) const NOTHROW;
 	
 	//! Get user by identifier
-	User* getUserByID(const octet user_id) NOTHROW;
+	User* getUserByID(octet user_id) NOTHROW;
 	
 public:
 	//! Constructor
@@ -536,7 +536,7 @@ public:
 	/**
 	 * @param[in] limit New limit
 	 */
-	void setNameLengthLimit(const octet limit=16) NOTHROW;
+	void setNameLengthLimit(octet limit=16) NOTHROW;
 	uint getNameLengthLimit() const NOTHROW;
 	
 	//! Set server password
@@ -544,7 +544,7 @@ public:
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setPassword(char* pwstr=0, const octet len=0) NOTHROW;
+	void setPassword(char* pwstr=0, octet len=0) NOTHROW;
 	bool haveServerPassword() const NOTHROW;
 	
 	//! Set admin server password
@@ -552,34 +552,34 @@ public:
 	 * @param[in] pwstr char* string to use for password
 	 * @param[in] len pwstr length in bytes
 	 */
-	void setAdminPassword(char* pwstr=0, const octet len=0) NOTHROW;
+	void setAdminPassword(char* pwstr=0, octet len=0) NOTHROW;
 	bool haveAdminPassword() const NOTHROW;
 	
 	//! Set user limit
 	/**
 	 * @param[in] ulimit New limit
 	 */
-	void setUserLimit(const octet ulimit=10) NOTHROW;
+	void setUserLimit(octet ulimit=10) NOTHROW;
 	uint getUserLimit() const NOTHROW;
 	
 	//! Set listening port
 	/**
 	 * @param[in] _port port to bind to
 	 */
-	void setPort(const ushort _port=27750) NOTHROW;
+	void setPort(ushort _port=27750) NOTHROW;
 	ushort getPort() const NOTHROW;
 	
 	//! Set operation mode
 	/**
 	 * @param[in] _enable transient mode
 	 */
-	void setTransient(const bool _enable=true) NOTHROW;
+	void setTransient(bool _enable=true) NOTHROW;
 	
 	//! Set auto-localhost admin promotion
 	/**
 	 * @param _enable auto-promotion
 	 */
-	void setLocalhostAdmin(const bool _enable=true) NOTHROW;
+	void setLocalhostAdmin(bool _enable=true) NOTHROW;
 	
 	//! Get requirement flags
 	/**
@@ -602,35 +602,35 @@ public:
 	/**
 	 * @param[in] mindim Minimum dimension in pixels
 	 */
-	void setMinDimension(const uint16_t mindim=400) NOTHROW;
+	void setMinDimension(uint16_t mindim=400) NOTHROW;
 	uint getMinDimension() const NOTHROW;
 	
 	//! Set UTF-16 requirement
 	/**
 	 * @param[in] _enabled Enable UTF-16 requirement
 	 */
-	void setUTF16Requirement(const bool _enabled=true) NOTHROW;
+	void setUTF16Requirement(bool _enabled=true) NOTHROW;
 	bool getUTF16Requirement() const NOTHROW;
 	
 	//! Set default user mode
 	/**
 	 * @param[in] _mode User mode flags
 	 */
-	void setUserMode(const octet _mode=0) NOTHROW;
+	void setUserMode(octet _mode=0) NOTHROW;
 	uint getUserMode() const NOTHROW;
 	
 	//! Set session limit on server
 	/**
 	 * @param[in] _limit Session limit
 	 */
-	void setSessionLimit(const octet _limit=1) NOTHROW;
+	void setSessionLimit(octet _limit=1) NOTHROW;
 	uint getSessionLimit() const NOTHROW;
 	
 	//! Set per user subscription limit
 	/**
 	 * @param[in] _slimit Subscrption limit
 	 */
-	void setSubscriptionLimit(const octet _slimit=1) NOTHROW;
+	void setSubscriptionLimit(octet _slimit=1) NOTHROW;
 	uint getSubscriptionLimit() const NOTHROW;
 	
 	//! Allow/disallow duplicate connections from same address
@@ -638,9 +638,17 @@ public:
 	 * @param[in] _block duplicate connections
 	 * @todo Needs shorter name
 	 */
-	void setDuplicateConnectionBlocking(const bool _block=true) NOTHROW;
+	void setDuplicateConnectionBlocking(bool _block=true) NOTHROW;
 	//! Get current duplicate connection blocking state
 	bool getDuplicateConnectionBlocking() const NOTHROW;
+	
+	//! Enable/disable deflate compression
+	/**
+	 * @note This changes deflate support only if it was compiled in.
+	 */
+	void setDeflate(bool x) NOTHROW;
+	//! Get current deflate compression setting
+	bool getDeflate() const NOTHROW;
 	
 	//! Get last error
 	int getError() NOTHROW;

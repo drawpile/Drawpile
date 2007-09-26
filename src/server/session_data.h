@@ -29,7 +29,7 @@ public:
 	 * @param[in] s Session to associate with the user session data
 	 * @param[in] super_mode Any mode flags the server superimposes on all sessions.
 	 */
-	SessionData(Session &s, const octet super_mode) NOTHROW;
+	SessionData(Session &s, octet super_mode) NOTHROW;
 	
 	//! Destructor
 	~SessionData() NOTHROW;
@@ -58,7 +58,7 @@ public:
 	/**
 	 * @param[in] flags Flags to set
 	 */
-	void setMode(const octet flags) NOTHROW;
+	void setMode(octet flags) NOTHROW;
 	
 	//! User has sent ACK/Sync
 	bool syncWait;

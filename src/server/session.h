@@ -45,7 +45,7 @@ public:
 	 * @param[in] _level Required feature level
 	 * @param[in] _title Session title
 	 */
-	Session(const uint _id, uint _mode, uint _limit, uint _owner,
+	Session(uint _id, uint _mode, uint _limit, uint _owner,
 		uint _width, uint _height, uint _level, Array<char>& _title) NOTHROW;
 	
 	#ifdef PERSISTENT_SESSIONS
@@ -114,7 +114,7 @@ public:
 	/* *** Functions *** */
 	
 	//! Get user
-	User* getUser(const octet user_id) NOTHROW;
+	User* getUser(octet user_id) NOTHROW;
 	
 	//! Test if session can be joined
 	bool canJoin() const NOTHROW;

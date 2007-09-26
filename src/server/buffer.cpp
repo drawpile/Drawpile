@@ -17,7 +17,7 @@
 #include <memory>
 #include <cassert>
 
-Buffer::Buffer(char* buf, const size_t len)
+Buffer::Buffer(char* buf, size_t len)
 	: Array<char>(buf, len),
 	wpos(buf),
 	rpos(buf),
@@ -73,7 +73,7 @@ void Buffer::resize(size_t nsize, char* nbuf)
 	write(off);
 }
 
-bool Buffer::copy(char* buf, const size_t buflen) const
+bool Buffer::copy(char* buf, size_t buflen) const
 {
 	assert(buflen >= left);
 	assert(buf != 0);
@@ -89,7 +89,7 @@ bool Buffer::copy(char* buf, const size_t buflen) const
 	return true;
 }
 
-void Buffer::set(char* buf, const size_t buflen, const size_t fill)
+void Buffer::set(char* buf, size_t buflen, size_t fill)
 {
 	assert(buf != 0);
 	assert(buflen > 1);
@@ -176,7 +176,7 @@ const bool Buffer::isEmpty() const
 	return (left == 0);
 }
 
-void Buffer::read(const size_t len)
+void Buffer::read(size_t len)
 {
 	assert(ptr != 0);
 	assert(size > 1);
@@ -209,7 +209,7 @@ size_t Buffer::canRead() const
 	return 0;
 }
 
-void Buffer::write(const size_t len)
+void Buffer::write(size_t len)
 {
 	assert(ptr != 0);
 	assert(size > 1);

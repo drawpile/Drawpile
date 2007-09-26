@@ -25,7 +25,7 @@
 	#include <iostream>
 #endif
 
-Session::Session(const uint _id, uint _mode, uint _limit, uint _owner,
+Session::Session(uint _id, uint _mode, uint _limit, uint _owner,
 	uint _width, uint _height, uint _level, Array<char>& _title)
 	: id(_id),
 	title(_title),
@@ -62,7 +62,7 @@ bool Session::canJoin() const
 	return ((users.size() + waitingSync.size()) < limit);
 }
 
-User* Session::getUser(const octet user_id)
+User* Session::getUser(octet user_id)
 {
 	std::map<octet,User*>::iterator ui(users.find(user_id));
 	return (ui == users.end() ? 0 : ui->second);

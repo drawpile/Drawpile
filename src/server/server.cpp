@@ -97,14 +97,7 @@ Server::Server()
 	current_time(0), next_timer(0),
 	min_dimension(400),
 	enforceUnique(false), wideStrings(false), noGlobalChat(false),
-	extDeflate(
-		#ifdef HAVE_ZLIB
-		true
-		#else
-		false
-		#endif
-		),
-	extPalette(true), extChat(true),
+	extDeflate(false), extPalette(true), extChat(true),
 	default_user_mode(protocol::user::None),
 	Transient(false), LocalhostAdmin(false),
 	blockDuplicateConnections(true)
@@ -158,14 +151,14 @@ const octet Server::getSessionID()
 	return ri;
 }
 
-void Server::freeUserID(const octet id)
+void Server::freeUserID(octet id)
 {
 	assert(id != protocol::null_user);
 	assert(user_ids[id-1] == false);
 	user_ids[id-1] = true;
 }
 
-void Server::freeSessionID(const octet id)
+void Server::freeSessionID(octet id)
 {
 	assert(id != protocol::Global);
 	assert(session_ids[id-1] == false);
@@ -188,7 +181,7 @@ void Server::uRegenSeed(User& usr) const
 	#endif
 }
 
-message_ref Server::msgPWRequest(User& usr, const octet session) const
+message_ref Server::msgPWRequest(User& usr, octet session) const
 {
 	protocol::PasswordRequest* pwreq = new protocol::PasswordRequest;
 	pwreq->session_id = session;
@@ -235,21 +228,21 @@ message_ref Server::msgSessionInfo(const Session& session) const
 	return message_ref(nfo);
 }
 
-message_ref Server::msgError(const octet session, const uint16_t code) const
+message_ref Server::msgError(octet session, uint16_t code) const
 {
 	protocol::Error *err = new protocol::Error(code);
 	err->session_id = session;
 	return message_ref(err);
 }
 
-message_ref Server::msgAck(const octet session, const octet type) const
+message_ref Server::msgAck(octet session, octet type) const
 {
 	protocol::Acknowledgement *ack = new protocol::Acknowledgement(type);
 	ack->session_id = session;
 	return message_ref(ack);
 }
 
-message_ref Server::msgSyncWait(const octet session_id) const
+message_ref Server::msgSyncWait(octet session_id) const
 {
 	message_ref sync_ref(new protocol::SyncWait);
 	(*sync_ref).session_id = session_id;
@@ -519,7 +512,7 @@ void Server::uProcessData(User*& usr)
 		usr->input.rewind();
 }
 
-message_ref Server::msgUserEvent(const User& usr, const octet session_id, const octet event) const
+message_ref Server::msgUserEvent(const User& usr, octet session_id, octet event) const
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Constructing user event for user #" << usr.id << endl;
@@ -1574,7 +1567,7 @@ void Server::uLoginInfo(User& usr)
 	uQueueMsg(usr, message_ref(&msg));
 }
 
-bool Server::CheckPassword(const char *hashdigest, const char *str, const size_t len, const char seed[4])
+bool Server::CheckPassword(const char *hashdigest, const char *str, size_t len, const char seed[4])
 {
 	assert(hashdigest != 0);
 	assert(str != 0);
@@ -2018,7 +2011,7 @@ void Server::uJoinSession(User& usr, Session& session)
 }
 
 // Calls sRemove, uQueueMsg, Propagate
-void Server::uLeaveSession(User& usr, Session& session, const protocol::UserInfo::uevent reason)
+void Server::uLeaveSession(User& usr, Session& session, protocol::UserInfo::uevent reason)
 {
 	#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 	cout << "[Server] Detaching user #" << usr.id << " from session #" << session.id << endl;
@@ -2168,7 +2161,7 @@ void Server::breakSync(User& usr)
 	usr.syncing = protocol::Global;
 }
 
-void Server::uRemove(User*& usr, const protocol::UserInfo::uevent reason)
+void Server::uRemove(User*& usr, protocol::UserInfo::uevent reason)
 {
 	stats.disconnects++;
 	
@@ -2484,13 +2477,13 @@ void Server::reset()
 	state = Server::Dead;
 }
 
-Session* Server::getSession(const octet session_id)
+Session* Server::getSession(octet session_id)
 {
 	sessions_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : &si->second);
 }
 
-const Session* Server::getConstSession(const octet session_id) const
+const Session* Server::getConstSession(octet session_id) const
 {
 	const sessions_const_i si(sessions.find(session_id));
 	return (si == sessions.end() ? 0 : &si->second);
@@ -2502,13 +2495,13 @@ User* Server::getUser(const fd_t user_handle)
 	return (ui == users.end() ? 0 : ui->second);
 }
 
-const User* Server::getConstUser(const fd_t user_handle) const
+const User* Server::getConstUser(fd_t user_handle) const
 {
 	const users_const_i ui(users.find(user_handle));
 	return (ui == users.end() ? 0 : ui->second);
 }
 
-User* Server::getUserByID(const octet user_id)
+User* Server::getUserByID(octet user_id)
 {
 	users_i ui(users.begin());
 	for (; ui != users.end(); ++ui)
@@ -2524,7 +2517,7 @@ Statistics Server::getStats() const
 
 /* attributes */
 
-void Server::setNameLengthLimit(const octet limit)
+void Server::setNameLengthLimit(octet limit)
 {
 	name_len_limit = limit;
 }
@@ -2534,7 +2527,7 @@ uint Server::getNameLengthLimit() const
 	return name_len_limit;
 }
 
-void Server::setPassword(char* pwstr, const octet len)
+void Server::setPassword(char* pwstr, octet len)
 {
 	password.set(pwstr, len);
 }
@@ -2544,7 +2537,7 @@ bool Server::haveServerPassword() const
 	return (password.ptr!=0);
 }
 
-void Server::setAdminPassword(char* pwstr, const octet len)
+void Server::setAdminPassword(char* pwstr, octet len)
 {
 	admin_password.set(pwstr, len);
 }
@@ -2554,7 +2547,7 @@ bool Server::haveAdminPassword() const
 	return (admin_password.ptr!=0);
 }
 
-void Server::setUserLimit(const octet ulimit)
+void Server::setUserLimit(octet ulimit)
 {
 	user_limit = ulimit;
 }
@@ -2564,7 +2557,7 @@ uint Server::getUserLimit() const
 	return user_limit;
 }
 
-void Server::setPort(const ushort _port)
+void Server::setPort(ushort _port)
 {
 	lsock.addr().port(_port);
 }
@@ -2574,12 +2567,12 @@ ushort Server::getPort() const
 	return lsock.addr().port();
 }
 
-void Server::setTransient(const bool _enable)
+void Server::setTransient(bool _enable)
 {
 	Transient = _enable;
 }
 
-void Server::setLocalhostAdmin(const bool _enable)
+void Server::setLocalhostAdmin(bool _enable)
 {
 	LocalhostAdmin = _enable;
 }
@@ -2609,7 +2602,7 @@ bool Server::getUniqueNameEnforcing() const
 	return enforceUnique;
 }
 
-void Server::setMinDimension(const uint16_t mindim)
+void Server::setMinDimension(uint16_t mindim)
 {
 	min_dimension = mindim;
 }
@@ -2619,7 +2612,7 @@ uint Server::getMinDimension() const
 	return min_dimension;
 }
 
-void Server::setUTF16Requirement(const bool _enabled)
+void Server::setUTF16Requirement(bool _enabled)
 {
 	wideStrings = _enabled;
 }
@@ -2629,7 +2622,7 @@ bool Server::getUTF16Requirement() const
 	return wideStrings;
 }
 
-void Server::setUserMode(const octet _mode)
+void Server::setUserMode(octet _mode)
 {
 	default_user_mode = _mode;
 }
@@ -2639,7 +2632,7 @@ uint Server::getUserMode() const
 	return default_user_mode;
 }
 
-void Server::setSessionLimit(const octet _limit)
+void Server::setSessionLimit(octet _limit)
 {
 	session_limit = _limit;
 }
@@ -2649,7 +2642,7 @@ uint Server::getSessionLimit() const
 	return session_limit;
 }
 
-void Server::setSubscriptionLimit(const octet _slimit)
+void Server::setSubscriptionLimit(octet _slimit)
 {
 	max_subscriptions = _slimit;
 }
@@ -2659,7 +2652,7 @@ uint Server::getSubscriptionLimit() const
 	return max_subscriptions;
 }
 
-void Server::setDuplicateConnectionBlocking(const bool _block)
+void Server::setDuplicateConnectionBlocking(bool _block)
 {
 	blockDuplicateConnections = _block;
 }
@@ -2672,4 +2665,16 @@ bool Server::getDuplicateConnectionBlocking() const
 int Server::getError()
 {
 	return error;
+}
+
+void Server::setDeflate(bool x)
+{
+	#ifdef HAVE_ZLIB
+	extDeflate = x;
+	#endif
+}
+
+bool Server::getDeflate() const
+{
+	return extDeflate;
 }

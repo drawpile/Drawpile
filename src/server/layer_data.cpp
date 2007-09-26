@@ -26,7 +26,7 @@ LayerData::LayerData()
 	// nothing
 }
 
-LayerData::LayerData(const uint _id, const uint _mode, const uint _opacity, const bool _locked)
+LayerData::LayerData(uint _id, uint _mode, uint _opacity, bool _locked)
 	: id(_id),
 	mode(_mode),
 	opacity(_opacity),

@@ -51,7 +51,7 @@ const int ShutdownReading = SHUT_RD;
 using namespace socket_error;
 using namespace error;
 
-Socket::Socket(const fd_t nsock, const Address& saddr)
+Socket::Socket(fd_t nsock, const Address& saddr)
 	: Descriptor<fd_t>(nsock),
 	m_addr(saddr)
 {

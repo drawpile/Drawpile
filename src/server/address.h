@@ -74,7 +74,7 @@ public:
 	 * @param[in] address IPv4 address
 	 * @param[in] port Port number
 	 */
-	Address(const uint address=0, ushort port=0) NOTHROW;
+	Address(uint address=0, ushort port=0) NOTHROW;
 	#endif
 	
 	//! Returns size of the raw address

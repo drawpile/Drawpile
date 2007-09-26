@@ -20,7 +20,7 @@
 #include "../shared/protocol.h" // protocol::ToolInfo
 #include "../shared/templates.h" // fIsSet() and friends
 
-SessionData::SessionData(Session &s, const octet super_mode)
+SessionData::SessionData(Session &s, octet super_mode)
 	: session(&s),
 	layer(protocol::null_layer),
 	layer_lock(protocol::null_layer),
@@ -43,7 +43,7 @@ octet SessionData::getMode() const
 		+ (deaf ? protocol::user::Deaf : 0);
 }
 
-void SessionData::setMode(const octet flags)
+void SessionData::setMode(octet flags)
 {
 	locked = fIsSet(flags, static_cast<octet>(protocol::user::Locked));
 	muted = fIsSet(flags, static_cast<octet>(protocol::user::Mute));

@@ -57,7 +57,7 @@ public:
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(const fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
+	Socket(fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
 	
 	//! Copy ctor
 	Socket(const Socket& socket) NOTHROW;

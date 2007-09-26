@@ -25,7 +25,7 @@ public:
 	LayerData() NOTHROW;
 	
 	//! Constructor
-	LayerData(const uint _id, const uint _mode, const uint _opacity=255, const bool _locked=false) NOTHROW;
+	LayerData(uint _id, uint _mode, uint _opacity=255, bool _locked=false) NOTHROW;
 	
 	uint
 		//! Layer identifier

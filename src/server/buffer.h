@@ -30,7 +30,7 @@ public:
 	 * @param[in] buf char* string to associate with Buffer
 	 * @param[in] len size of buf
 	 */
-	Buffer(char* buf=0, const size_t len=0) NOTHROW;
+	Buffer(char* buf=0, size_t len=0) NOTHROW;
 	
 	~Buffer() NOTHROW;
 	
@@ -59,7 +59,7 @@ public:
 	 * @param[out] buf char* string to fill with current buffer contents
 	 * @param[in] buflen Size of buf
 	 */
-	bool copy(char* buf, const size_t buflen) const NOTHROW NONNULL(1);
+	bool copy(char* buf, size_t buflen) const NOTHROW NONNULL(1);
 	
 	//! Assign allocated buffer 'buf' of size 'buflen'.
 	/**
@@ -71,7 +71,7 @@ public:
 	 *
 	 * @note Old buffer is automatically deleted to avoid memory leak
 	 */
-	void set(char* buf, const size_t buflen, const size_t fill=0) NOTHROW NONNULL(1);
+	void set(char* buf, size_t buflen, size_t fill=0) NOTHROW NONNULL(1);
 	
 	//! Repositions data for maximum contiguous _read_ length.
 	/**
@@ -90,7 +90,7 @@ public:
 	 *
 	 * @param[in] len Number of bytes to move the read pointer by
 	 */
-	void read(const size_t len) NOTHROW;
+	void read(size_t len) NOTHROW;
 	
 	//! How many bytes can be read.
 	/** 
@@ -107,7 +107,7 @@ public:
 	 *
 	 * @param[in] len Number of bytes you wrote to buffer, moves write position by this much.
 	 */
-	void write(const size_t len) NOTHROW;
+	void write(size_t len) NOTHROW;
 	
 	//! How many bytes can be written.
 	/**

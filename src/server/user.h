@@ -39,7 +39,7 @@ public:
 	 * @param[in] _id User identifier
 	 * @param[in] nsock Socket to associate with User
 	 */
-	User(const octet _id, const Socket& nsock) NOTHROW;
+	User(octet _id, const Socket& nsock) NOTHROW;
 	
 	//! Destructor
 	~User() NOTHROW;
@@ -125,7 +125,7 @@ public:
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setCapabilities(const octet flags) NOTHROW;
+	void setCapabilities(octet flags) NOTHROW;
 	
 	bool
 		//! Deflate extension
@@ -145,7 +145,7 @@ public:
 	/**
 	 * @param[in] flags as used in the network protocol
 	 */
-	void setExtensions(const octet flags) NOTHROW;
+	void setExtensions(octet flags) NOTHROW;
 	
 	//! Subscribed sessions
 	std::map<octet, SessionData> sessions;

@@ -34,7 +34,7 @@ public:
 	 * @param[in] _data char* string to associate with this Array
 	 * @param[in] _size Size of _data
 	 */
-	Array(T* _data=0, const size_t _size=0) NOTHROW;
+	Array(T* _data=0, size_t _size=0) NOTHROW;
 	
 	//! Destructor
 	/**
@@ -42,7 +42,7 @@ public:
 	 */
 	virtual ~Array() NOTHROW;
 	
-	virtual void set(T* _data, const size_t _size) NOTHROW;
+	virtual void set(T* _data, size_t _size) NOTHROW;
 	
 	//! Type of array
 	typedef T type;
@@ -60,7 +60,7 @@ Array<T>::Array(const Array<T>& array)
 }
 
 template <typename T>
-Array<T>::Array(T* _data, const size_t _size)
+Array<T>::Array(T* _data, size_t _size)
 	: ptr(_data), size(_size)
 {
 	assert((_data == 0 and _size == 0) or (_data != 0 and _size > 0));
@@ -73,7 +73,7 @@ Array<T>::~Array()
 }
 
 template <typename T>
-void Array<T>::set(T* _data, const size_t _size)
+void Array<T>::set(T* _data, size_t _size)
 {
 	delete [] ptr;
 	ptr = _data;

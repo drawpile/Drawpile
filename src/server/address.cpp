@@ -62,7 +62,7 @@ Address::Address(const uint address[4], ushort _port)
 	port(_port);
 }
 #else // IPv4
-Address::Address(const uint address, ushort _port)
+Address::Address(uint address, ushort _port)
 {
 	#ifdef IPV6
 	// dual-stack, for later

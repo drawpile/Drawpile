@@ -30,7 +30,7 @@ typedef std::map<octet, SessionData>::const_iterator usr_session_const_i;
 typedef std::deque<message_ref>::iterator usr_message_i;
 typedef std::deque<message_ref>::const_iterator usr_message_const_i;
 
-User::User(const octet _id, const Socket& nsock)
+User::User(octet _id, const Socket& nsock)
 	: sock(nsock),
 	session(0),
 	id(_id),
@@ -115,7 +115,7 @@ octet User::getCapabilities() const
 	return (c_acks?(protocol::client::AckFeedback):0);
 }
 
-void User::setCapabilities(const octet flags)
+void User::setCapabilities(octet flags)
 {
 	c_acks = fIsSet(flags, static_cast<octet>(protocol::client::AckFeedback));
 }
@@ -127,7 +127,7 @@ octet User::getExtensions() const
 		+ (ext_palette?(protocol::extensions::Palette):0);
 }
 
-void User::setExtensions(const octet flags)
+void User::setExtensions(octet flags)
 {
 	ext_deflate = fIsSet(flags, static_cast<octet>(protocol::extensions::Deflate));
 	ext_chat = fIsSet(flags, static_cast<octet>(protocol::extensions::Chat));
