@@ -501,11 +501,8 @@ void Server::uProcessData(User*& usr)
 			else
 				uHandleLogin(usr);
 		}
-		else
-		{
-			if (!usr->inMsg)
-				uRemove(usr, protocol::UserInfo::Dropped);
-		}
+		else if (!usr->inMsg) // invalid data?
+			uRemove(usr, protocol::UserInfo::Dropped);
 	}
 	
 	if (usr)
@@ -2077,7 +2074,7 @@ void Server::uAdd()
 {
 	Socket sock = lsock.accept();
 	
-	if (sock.handle() == socket_error::InvalidHandle)
+	if (!sock.isValid())
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		cout << "- Invalid socket, aborting user creation." << endl;
@@ -2262,7 +2259,7 @@ bool Server::init()
 	srand(time(0) - 513); // FIXME: Need better seed value
 	#endif
 	
-	if (lsock.create() == socket_error::InvalidHandle)
+	if (!lsock.isValid())
 	{
 		#ifndef NDEBUG
 		cerr << "- Failed to create a socket." << endl;
@@ -2273,11 +2270,9 @@ bool Server::init()
 		return false;
 	}
 	
-	#ifndef WIN32
-	lsock.reuse_addr(true); // reuse address
-	#endif
-	
-	if (lsock.bindTo(Address(Network::UnspecifiedAddress, lsock.addr().port())) == socket_error::Error)
+	if (lsock.bindTo(Address(Network::UnspecifiedAddress, lsock.addr().port())))
+		;
+	else
 	{
 		#ifndef NDEBUG
 		cout << "- Failed to bind to " << lsock.addr() << endl;
@@ -2286,7 +2281,7 @@ bool Server::init()
 		return false;
 	}
 	
-	if (lsock.listen() != socket_error::Error)
+	if (lsock.listen())
 	{
 		// add listening socket to event system
 		if (event::has_accept<EventSystem>::value)
@@ -2301,8 +2296,8 @@ bool Server::init()
 		
 		return true;
 	}
-	
-	return false;
+	else
+		return false;
 }
 
 bool Server::validateUserName(User& usr) const

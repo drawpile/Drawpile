@@ -55,6 +55,8 @@ Socket::Socket(fd_t nsock, const Address& saddr)
 	: Descriptor<fd_t>(nsock),
 	m_addr(saddr)
 {
+	if (!isValid())
+		create();
 	setup();
 }
 
@@ -62,10 +64,14 @@ Socket::Socket(const Socket& socket)
 	: Descriptor<fd_t>(socket),
 	m_addr(socket.m_addr)
 {
+	if (!isValid())
+		create();
+	setup();
 }
 
 Socket::~Socket()
 {
+	// closed in ~Descriptor<T>
 }
 
 void Socket::setup()
@@ -86,21 +92,22 @@ void Socket::setup()
 		}
 		#endif
 		#endif
+		
+		#ifndef WIN32
+		reuse_addr(true);
+		#endif
 	}
 }
 
 fd_t Socket::create()
 {
-	if (m_handle != InvalidHandle)
-		close();
-	
 	#ifdef WIN32
 	m_handle = WSASocket(m_addr.family(), SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
 	#else
 	m_handle = socket(m_addr.family(), SOCK_STREAM, IPPROTO_TCP);
 	#endif
 	
-	if (m_handle == InvalidHandle)
+	if (!isValid())
 	{
 		#ifdef WIN32
 		m_error = WSAGetLastError();
@@ -119,15 +126,13 @@ fd_t Socket::create()
 		//assert(m_error != ESOCKTNOSUPPORT); // ?
 		assert(m_error != EINVAL);
 	}
-	else
-		setup();
 	
 	return m_handle;
 }
 
 Socket Socket::accept()
 {
-	assert(m_handle != InvalidHandle);
+	assert(isValid());
 	
 	// temporary address struct
 	Address sa;
@@ -186,41 +191,6 @@ bool Socket::block(bool x)
 	#endif
 }
 
-bool Socket::reuse_port(bool x)
-{
-	assert(m_handle != InvalidHandle);
-	
-	#ifndef SO_REUSEPORT
-	// Windows (for example) does not have it
-	return (x==true);
-	#else
-	int val = (x ? 1 : 0);
-	
-	const int r = setsockopt(m_handle, SOL_SOCKET, SO_REUSEPORT, (char*)&val, sizeof(int));
-	
-	if (r == Error)
-	{
-		#ifdef WIN32
-		m_error = WSAGetLastError();
-		#else
-		m_error = errno;
-		#endif
-		
-		#ifdef WIN32
-		assert(m_error != WSANOTINITIALISED);
-		#endif
-		
-		// programming errors
-		assert(m_error != BadDescriptor);
-		assert(m_error != NotSocket);
-		assert(m_error != ProtocolOption);
-		assert(m_error != Fault);
-	}
-	
-	return (r == 0);
-	#endif
-}
-
 bool Socket::reuse_addr(bool x)
 {
 	assert(m_handle != InvalidHandle);
@@ -256,67 +226,7 @@ bool Socket::reuse_addr(bool x)
 	#endif
 }
 
-bool Socket::inline_oob(bool x)
-{
-	#ifdef WIN32
-	int val = (x ? 1 : 0);
-	const int r = setsockopt(m_handle, SOL_SOCKET, SO_OOBINLINE, (char*)&val, sizeof(int));
-	
-	if (r == Error)
-	{
-		#ifdef WIN32
-		m_error = WSAGetLastError();
-		#else
-		m_error = errno;
-		#endif
-		
-		#ifdef WIN32
-		assert(m_error != WSANOTINITIALISED);
-		#endif
-		
-		// programming errors
-		assert(m_error != BadDescriptor);
-		assert(m_error != NotSocket);
-		assert(m_error != ProtocolOption);
-		assert(m_error != Fault);
-	}
-	
-	return (r == 0);
-	#else
-	return false;
-	#endif
-}
-
-bool Socket::linger(bool x, ushort delay)
-{
-	::linger lval;
-	lval.l_onoff = (x ? 1 : 0);
-	lval.l_linger = delay;
-	
-	const int r = setsockopt(m_handle, SOL_SOCKET, SO_LINGER, reinterpret_cast<char*>(&lval), sizeof(lval));
-	
-	if (r == Error)
-	{
-		#ifdef WIN32
-		m_error = WSAGetLastError();
-		#else
-		m_error = errno;
-		#endif
-		
-		#ifdef WIN32
-		assert(m_error != WSANOTINITIALISED);
-		#endif
-		
-		assert(m_error != BadDescriptor);
-		assert(m_error != NotSocket);
-		assert(m_error != ProtocolOption);
-		assert(m_error != Fault);
-	}
-	
-	return (r == 0);
-}
-
-int Socket::bindTo(const Address& naddr)
+bool Socket::bindTo(const Address& naddr)
 {
 	m_addr = naddr;
 	
@@ -345,49 +255,14 @@ int Socket::bindTo(const Address& naddr)
 		assert(m_error != OperationNotSupported);
 		assert(m_error != FamilyNotSupported);
 		assert(m_error != Connected);
+		
+		return false;
 	}
-	
-	return r;
+	else
+		return true;
 }
 
-int Socket::connect(const Address& rhost)
-{
-	assert(m_handle != InvalidHandle);
-	
-	m_addr = rhost;
-	
-	#ifdef WIN32
-	const int r = WSAConnect(m_handle, &m_addr.raw(), m_addr.size(), 0, 0, 0, 0);
-	#else
-	const int r = ::connect(m_handle, &m_addr.raw(), m_addr.size());
-	#endif
-	
-	if (r == Error)
-	{
-		#ifdef WIN32
-		m_error = WSAGetLastError();
-		#else
-		m_error = errno;
-		#endif
-		
-		#ifdef WIN32
-		assert(m_error != WSANOTINITIALISED);
-		#endif
-		
-		// programming errors
-		assert(m_error != BadDescriptor);
-		assert(m_error != Fault);
-		assert(m_error != NotSocket);
-		assert(m_error != Connected);
-		assert(m_error != AddressInUse);
-		assert(m_error != FamilyNotSupported);
-		assert(m_error != Already);
-	}
-	
-	return r;
-}
-
-int Socket::listen()
+bool Socket::listen()
 {
 	assert(m_handle != InvalidHandle);
 	
@@ -408,9 +283,11 @@ int Socket::listen()
 		assert(m_error != BadDescriptor);
 		assert(m_error != NotSocket);
 		assert(m_error != OperationNotSupported);
+		
+		return false;
 	}
-	
-	return r;
+	else
+		return true;
 }
 
 int Socket::write(char* buffer, size_t len)
@@ -518,4 +395,9 @@ Address& Socket::addr()
 const Address& Socket::addr() const
 {
 	return m_addr;
+}
+
+bool Socket::isValid() const
+{
+	return (m_handle != InvalidHandle);
 }

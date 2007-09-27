@@ -14,11 +14,9 @@
 
 #include "user.h"
 
-#include "session_data.h" // SessionData*
-
 #include "../shared/protocol.flags.h"
-#include "../shared/protocol.defaults.h"
-#include "../shared/protocol.h"
+#include "../shared/protocol.defaults.h" // null_user/Global
+#include "../shared/protocol.h" // class ToolInfo
 
 #include "../shared/templates.h"
 
@@ -52,19 +50,11 @@ User::User(octet _id, const Socket& nsock)
 	session_data(0),
 	strokes(0)
 {
-	#if defined(DEBUG_USER) and !defined(NDEBUG)
-	std::cout << "User::User(" << static_cast<int>(_id)
-		<< ", " << sock.fd() << ")" << std::endl;
-	#endif
 	assert(_id != protocol::null_user);
 }
 
 User::~User()
 {
-	#if defined(DEBUG_USER) and !defined(NDEBUG)
-	std::cout << "User::~User()" << std::endl;
-	#endif
-	
 	delete inMsg;
 	
 	sessions.clear();
@@ -101,10 +91,6 @@ void User::cacheTool(protocol::ToolInfo* ti)
 {
 	assert(ti != session_data->cachedToolInfo); // attempted to re-cache same tool
 	assert(ti != 0);
-	
-	#if defined(DEBUG_USER) and !defined(NDEBUG)
-	std::cout << "Caching Tool Info for user #" << static_cast<int>(id) << std::endl;
-	#endif
 	
 	delete session_data->cachedToolInfo;
 	session_data->cachedToolInfo = new protocol::ToolInfo(*ti); // use copy-ctor

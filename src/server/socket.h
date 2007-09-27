@@ -51,6 +51,7 @@ public:
 protected:
 	//! Address (local for listening, remote for outgoing)
 	Address m_addr;
+	
 public:
 	//! Default constructor
 	/**
@@ -64,9 +65,6 @@ public:
 	
 	~Socket() NOTHROW;
 	
-	//! Create new socket
-	fd_t create() NOTHROW;
-	
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
@@ -74,67 +72,23 @@ public:
 	 */
 	Socket accept() NOTHROW;
 	
-	//! Re-use socket port
-	/**
-	 * Sets SO_REUSEPORT for the socket. Allows multiple apps to bind to same port and address.
-	 * Primarily used for multi-casting.
-	 *
-	 * @param[in] x enable/disable port re-use
-	 *
-	 * @note In Win32, this causes behaviour similar to reuse_addr() does in all other systems.
-	 */
-	bool reuse_port(bool x) NOTHROW;
-	
-	//! Re-use socket address
-	/**
-	 * Sets SO_REUSEADDR for the socket. Allows socket port to be re-used as soon as it's
-	 * freed, avoiding the delay caused from waiting TIME_WAIT to expire.
-	 *
-	 * @param[in] x enable/disable address re-use
-	 *
-	 * @note In Win32, this does nothing as TIME_WAIT is ignored completely there.
-	 */
-	bool reuse_addr(bool x) NOTHROW;
-	
-	//! Receive OOB data like any other
-	bool inline_oob(bool x) NOTHROW;
-	
-	//! Set/unset lingering
-	/**
-	 * Sets SO_LINGER for the socket.
-	 *
-	 * "Lingers on close if unsent data is present."
-	 *
-	 * @param[in] x enable/disable lingering
-	 * @param[in] delay linger time if enabled
-	 */
-	bool linger(bool x, ushort delay) NOTHROW;
-	
 	//! Bind socket to port and address
 	/**
 	 * @param[in] address Address to bind to
 	 *
-	 * @retval 0 on success
-	 * @retval Error on error
+	 * @retval true on success
+	 * @retval false on error
 	 */
-	int bindTo(const Address& address) NOTHROW;
-	
-	//! Connect to address
-	/**
-	 * @param[in] rhost host to connect to
-	 * @retval 0 on success
-	 * @retval Error on error
-	 *
-	 * @note getError() (... ?)
-	 */
-	int connect(const Address& rhost) NOTHROW;
+	bool bindTo(const Address& address) NOTHROW;
 	
 	//! Set listening
 	/**
-	 * @retval 0 on success
-	 * @retval Error on error
+	 * @retval true on success
+	 * @retval false on error
 	 */
-	int listen() NOTHROW;
+	bool listen() NOTHROW;
+	
+	bool isValid() const NOTHROW;
 	
 	//! Send data.
 	/**
@@ -164,13 +118,26 @@ public:
 	int shutdown(int how) NOTHROW;
 	
 	//! Get address structure
-	/**
-	 * @return Associated address structure.
-	 */
 	Address& addr() NOTHROW;
+	
+	//! Get const address structure
 	const Address& addr() const NOTHROW;
 	
-private:
+protected:
+	//! Re-use socket address
+	/**
+	 * Sets SO_REUSEADDR for the socket. Allows socket port to be re-used as soon as it's
+	 * freed, avoiding the delay caused from waiting TIME_WAIT to expire.
+	 *
+	 * @param[in] x enable/disable address re-use
+	 *
+	 * @note Called automatically in constructor on non-Windows systems.
+	 */
+	bool reuse_addr(bool x) NOTHROW;
+	
+	//! Create new socket
+	fd_t create() NOTHROW;
+	
 	//! Set blocking
 	/**
 	 * @param[in] x enable/disable blocking

@@ -33,6 +33,9 @@
 #elif defined(EV_SELECT)
 	#include "select.h"
 	typedef event::Select EventSystem;
+#elif defined(EV_QT)
+	#include "qt.h"
+	typedef event::Qt EventSystem;
 #else
 	#error No event mechanism defined!
 #endif

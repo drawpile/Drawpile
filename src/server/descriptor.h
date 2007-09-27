@@ -58,12 +58,10 @@ protected:
 	int m_error;
 public:
 	//! Default ctor
-	Descriptor() NOTHROW;
-	//! ctor
-	Descriptor(T handle) NOTHROW;
+	Descriptor(T handle=-1) NOTHROW;
 	//! copy ctor
 	Descriptor(const Descriptor<T>& handle) NOTHROW;
-	//! abstract dtor
+	//! dtor
 	virtual ~Descriptor() NOTHROW;
 	
 	//! Get handle
@@ -78,23 +76,20 @@ public:
 	//! Read from descriptor
 	virtual int read(char* buf, size_t len) NOTHROW NONNULL(1);
 	
-	virtual bool block(bool x) NOTHROW;
+	//! Tests if the descriptor handle is valid
+	virtual bool isValid() const NOTHROW;
 	
 	//! Return last error number
-	int getError();
+	int getError() NOTHROW;
 	
 	#ifdef DESCRIPTOR_OPS
 	bool operator== (const Descriptor<T>& desc) NOTHROW;
 	Descriptor<T>& operator= (const Descriptor<T>& desc) NOTHROW;
 	#endif
+	
+protected:
+	virtual bool block(bool x) NOTHROW;
 };
-
-template <typename T>
-Descriptor<T>::Descriptor()
-	: ReferenceCounted(),
-	m_handle(error::InvalidDescriptor)
-{
-}
 
 template <typename T>
 Descriptor<T>::Descriptor(T handle)
@@ -145,20 +140,6 @@ void Descriptor<T>::close()
 	m_handle = error::InvalidDescriptor;
 	#endif
 }
-
-#ifdef WIN32
-/*
-template <>
-void Descriptor<SOCKET>::close()
-{
-	std::cout << "SOCKET close()" << std::endl;
-	::closesocket(m_handle);
-	
-	m_handle = socket_error::InvalidHandle;
-}
-*/
-#endif
-
 
 template <typename T>
 int Descriptor<T>::write(char* buf, size_t len)
@@ -221,6 +202,12 @@ template <typename T>
 int Descriptor<T>::getError()
 {
 	return m_error;
+}
+
+template <typename T>
+bool Descriptor<T>::isValid() const
+{
+	return (m_handle != -1);
 }
 
 #ifdef DESCRIPTOR_OPS
