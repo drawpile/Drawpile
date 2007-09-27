@@ -130,6 +130,9 @@ public:
 	//! Get const address structure
 	const Address& addr() const NOTHROW;
 	
+	//! Create new socket
+	fd_t create() NOTHROW;
+	
 protected:
 	//! Re-use socket address
 	/**
@@ -141,9 +144,6 @@ protected:
 	 * @note Called automatically in constructor on non-Windows systems.
 	 */
 	bool reuse_addr(bool x) NOTHROW;
-	
-	//! Create new socket
-	fd_t create() NOTHROW;
 	
 	//! Set blocking
 	/**

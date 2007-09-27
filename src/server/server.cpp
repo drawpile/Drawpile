@@ -104,7 +104,7 @@ Server::Server()
 {
 	memset(user_ids, true, sizeof(user_ids));
 	memset(session_ids, true, sizeof(session_ids));
-	
+	memset(&stats, 0, sizeof(Statistics));
 	#ifndef NDEBUG
 	cout << "? Event mechanism: " << event::system<EventSystem>::value << endl;
 	#endif
@@ -2258,6 +2258,9 @@ bool Server::init()
 	#ifndef LINUX
 	srand(time(0) - 513); // FIXME: Need better seed value
 	#endif
+	
+	if (!lsock.isValid())
+		lsock.create();
 	
 	if (!lsock.isValid())
 	{
