@@ -21,6 +21,7 @@
 #include <QtGui>
 
 #include "traymenu.h"
+#include "../server/network.h" // Network::start/Network::stop
 
 int main(int argc, char **argv)
 {
@@ -41,8 +42,14 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	
-	TrayMenu menu;
+	if (!Network::start())
+		return 1;
 	
-	return app.exec();
+	TrayMenu menu;
+	const int r = app.exec();
+	
+	Network::stop();
+	
+	return r;
 }
 
