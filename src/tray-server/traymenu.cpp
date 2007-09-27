@@ -74,12 +74,7 @@ void TrayMenu::setIconIndex(int index)
 void TrayMenu::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
 	if (reason == QSystemTrayIcon::DoubleClick)
-	{
-		if (status->isHidden())
-			status->show();
-		else
-			status->hide();
-	}
+		statusOpen();
 }
 
 void TrayMenu::showMsg(const QString& title, const QString& message, QSystemTrayIcon::MessageIcon icon, uint delay)
