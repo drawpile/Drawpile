@@ -42,12 +42,6 @@
 	#endif
 #endif
 
-/*
-const int FullShutdown = SHUT_RDWR;
-const int ShutdownWriting = SHUT_WR;
-const int ShutdownReading = SHUT_RD;
-*/
-
 using namespace socket_error;
 using namespace error;
 
@@ -382,9 +376,9 @@ int Socket::read(char* buffer, size_t len)
 		#endif
 }
 
-int Socket::shutdown(int how)
+bool Socket::shutdown(ShutdownStyle how)
 {
-	return ::shutdown(m_handle, how);
+	return (::shutdown(m_handle, how) == 0);
 }
 
 Address& Socket::addr()

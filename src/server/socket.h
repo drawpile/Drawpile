@@ -43,11 +43,18 @@ class Socket
 	: public Descriptor<fd_t>
 {
 public:
-	/*
-	static const int FullShutdown;
-	static const int ShutdownWriting;
-	static const int ShutdownReading;
-	*/
+	//! Possible values to shutdown()
+	enum ShutdownStyle {
+		#ifdef WIN32
+		FullShutdown=SD_BOTH,
+		ShutdownWriting=SD_SEND,
+		ShutdownReading=SD_RECEIVE
+		#else
+		FullShutdown=SHUT_RDWR,
+		ShutdownWriting=SHUT_WR,
+		ShutdownReading=SHUT_RD
+		#endif
+	};
 protected:
 	//! Address (local for listening, remote for outgoing)
 	Address m_addr;
@@ -113,9 +120,9 @@ public:
 	
 	//! Shutdown socket
 	/**
-	 * @param[in] how SHUT_RD, SHUT_WR, SHUT_RDWR
+	 * @param[in] how FullShutdown
 	 */
-	int shutdown(int how) NOTHROW;
+	bool shutdown(ShutdownStyle how) NOTHROW;
 	
 	//! Get address structure
 	Address& addr() NOTHROW;

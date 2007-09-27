@@ -2182,7 +2182,7 @@ void Server::uRemove(User*& usr, protocol::UserInfo::uevent reason)
 	}
 	#endif
 	
-	//usr.sock.shutdown(socket_error::FullShutdown);
+	usr->sock.shutdown(Socket::FullShutdown);
 	
 	// Remove socket from event system
 	ev.remove(usr->sock.handle());
