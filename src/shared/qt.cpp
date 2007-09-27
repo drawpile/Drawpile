@@ -18,57 +18,17 @@
 
 ******************************************************************************/
 
-#include "network.h"
+#include "qt.h"
+
+#include <QDebug>
+#include <QHostAddress>
+#include <QNetworkInterface>
+#include <QByteArray>
+#include <QString>
+
 #include "../shared/templates.h"
 
 namespace Network {
-
-//! Qt specific network things
-namespace Qt {
-
-/*
-QSet<QHostAddress> getExternalAddresses()
-{
-	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
-	const int requiredFlags = QNetworkInterface::IsUp
-		|QNetworkInterface::IsRunning
-		|QNetworkInterface::CanBroadcast;
-	
-	QSet<QHostAddress> set;
-	
-	QList<QNetworkAddressEntry> alist;
-	foreach (QNetworkInterface iface, list)
-	{
-		int flags = iface.flags();
-		
-		if (!(fIsSet(flags, requiredFlags) and
-			!fIsSet(flags, int(QNetworkInterface::IsLoopBack)) and
-			!fIsSet(flags, int(QNetworkInterface::IsPointToPoint))))
-			continue;
-		
-		alist = iface.addressEntries();
-		
-		foreach (QNetworkAddressEntry entry, alist)
-		{
-			switch (entry.ip().protocol())
-			{
-			case QAbstractSocket::IPv4Protocol:
-				if (entry.netmask() == QHostAddress::Broadcast)
-					set.insert(entry.ip());
-				break;
-			case QAbstractSocket::IPv6Protocol:
-				if (entry.netmask().toString() == "FFFF:FFFF:FFFF:FFFF::")
-					set.insert(entry.ip());
-				break;
-			default:
-				;
-			}
-		}
-	}
-	
-	return set;
-}
-*/
 
 QHostAddress getExternalAddress()
 {
@@ -114,6 +74,30 @@ QHostAddress getExternalAddress()
 		return QHostAddress();
 }
 
-} // Qt
+} // namespace:Network
 
-} // Network
+namespace convert {
+
+char* toUTF8(const QString& string, uint& bytes)
+{
+	QByteArray array = string.toUtf8();
+	bytes = array.count();
+	if (bytes == 0) return 0;
+	char *str = new char[bytes];
+	memcpy(str, array.constData(), bytes);
+	return str;
+}
+
+char* toUTF16(const QString& string, uint& bytes)
+{
+	const ushort *array = string.utf16();
+	const ushort *ptr = array;
+	bytes = 0;
+	for (; *ptr != 0; ++ptr, bytes+=2);
+	if (bytes == 0) return 0;
+	char *str = new char[bytes];
+	memcpy(str, array, bytes);
+	return str;
+}
+
+} // namespace:convert

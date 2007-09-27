@@ -12,8 +12,7 @@ set (
 	srvthread.cpp
 	configdialog.cpp
 	statusdialog.cpp
-	network.cpp
-	strings.cpp
+	../shared/qt.cpp
 )
 
 Qt4_wrap_CPP (

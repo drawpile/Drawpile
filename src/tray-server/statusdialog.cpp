@@ -21,10 +21,11 @@
 #include "statusdialog.h"
 
 #include <QtGui>
+#include <QHostAddress>
 
 #include "../server/statistics.h"
 #include "../server/server.h"
-#include "network.h"
+#include "../shared/qt.h"
 #include "../shared/templates.h"
 
 StatusDialog::StatusDialog(const Server *_srv, QWidget *parent)
@@ -111,7 +112,7 @@ void StatusDialog::serverStarted()
 {
 	//srvmutex->lock();
 	QString host = QString("%1:%2")
-		.arg(Network::Qt::getExternalAddress().toString())
+		.arg(Network::getExternalAddress().toString())
 		.arg(srv->getPort());
 	//srvmutex->unlock();
 	hostname->setText(host);

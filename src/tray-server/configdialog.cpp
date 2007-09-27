@@ -25,7 +25,7 @@
 #include "../server/server.h"
 #include "../shared/templates.h"
 
-#include "strings.h"
+#include "../shared/qt.h"
 
 #include <QSettings>
 #include <QSystemTrayIcon>

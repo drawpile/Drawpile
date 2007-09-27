@@ -18,33 +18,34 @@
 
 ******************************************************************************/
 
-#include "strings.h"
+#ifndef QtShared_INCLUDED
+#define QtShared_INCLUDED
 
-#include <QByteArray>
-#include <QString>
+class QHostAddress;
 
+namespace Network {
+
+//! Get external host address
+/**
+ * @return First or only QHostAddress that seems to be external
+ */
+QHostAddress getExternalAddress();
+
+} // Network
+
+class QString;
+
+//! Qt String conversion
 namespace convert {
 
-char* toUTF8(const QString& string, uint& bytes)
-{
-	QByteArray array = string.toUtf8();
-	bytes = array.count();
-	if (bytes == 0) return 0;
-	char *str = new char[bytes];
-	memcpy(str, array.constData(), bytes);
-	return str;
-}
+typedef unsigned int uint;
 
-char* toUTF16(const QString& string, uint& bytes)
-{
-	const ushort *array = string.utf16();
-	const ushort *ptr = array;
-	bytes = 0;
-	for (; *ptr != 0; ++ptr, bytes+=2);
-	if (bytes == 0) return 0;
-	char *str = new char[bytes];
-	memcpy(str, array, bytes);
-	return str;
-}
+//! Converts QString to UTF-8 char* array
+char* toUTF8(const QString& string, uint& bytes);
+
+//! Converts QString to UTF-16 char* array
+char* toUTF16(const QString& string, uint& bytes);
 
 } // namespace:convert
+
+#endif // QtShared_INCLUDED
