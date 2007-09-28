@@ -1576,6 +1576,7 @@ bool Server::CheckPassword(const char *hashdigest, const char *str, size_t len, 
 	hash.Update(reinterpret_cast<const uchar*>(str), len);
 	hash.Update(reinterpret_cast<const uchar*>(seed), 4);
 	hash.Final();
+	
 	char digest[protocol::password_hash_size];
 	hash.GetHash(reinterpret_cast<uchar*>(digest));
 	
@@ -2525,9 +2526,17 @@ uint Server::getNameLengthLimit() const
 	return name_len_limit;
 }
 
+/**
+ * @bug Can't convert ASCII to UTF16
+ */
 void Server::setPassword(char* pwstr, octet len)
 {
-	password.set(pwstr, len);
+	/*
+	if (wideStrings)
+		;// TODO
+	else
+	*/
+		password.set(pwstr, len);
 }
 
 bool Server::haveServerPassword() const
