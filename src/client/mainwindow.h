@@ -228,7 +228,7 @@ class MainWindow : public QMainWindow {
 		//! Create dialogs
 		void createDialogs();
 		//! Create navigator dock
-		void createNavigator();
+		void createNavigator(QMenu *menu);
 
 		Navigator *navigator_;
 

@@ -1415,16 +1415,18 @@ void MainWindow::createDocks()
 	createColorBoxes(toggles);
 	createPalette(toggles);
 	createUserList(toggles);
+	createNavigator(toggles);
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
 	docktoggles_->setMenu(toggles);
 }
 
-void MainWindow::createNavigator()
+void MainWindow::createNavigator(QMenu *toggles)
 {
 	navigator_ = new Navigator(this, board_);
 	navigator_->setObjectName("navigatordock");
 	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	toggles->addAction(navigator_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, navigator_);
 }
 
