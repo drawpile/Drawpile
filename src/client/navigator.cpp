@@ -19,9 +19,13 @@
 #include "navigator.h"
 
 #include <QGraphicsScene>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QSize>
 #include <QDebug>
 
+/** @todo change viewportUpdateMode to manual updating after every pen-up */
 NavigatorView::NavigatorView(QGraphicsScene *scene, QWidget *parent)
 	: QGraphicsView(scene, parent), dragging_(false)
 {
@@ -54,28 +58,17 @@ void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 void NavigatorView::setFocus(const QPoint& pt)
 {
 	qDebug() << "set Focus to" << pt;
+	//emit focusMoved(QRect(foofoo));
 }
 
-/** @todo change viewportUpdateMode to manual updating after every pen-up */
 Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
-	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), delayed_(false)
+	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), layout_(0), delayed_(false)
 {
-	view_ = new NavigatorView(scene, this);
-	
-	view_->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-	view_->setAlignment(Qt::AlignCenter);
-	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	
-	//delayedUpdate(false);
-	
-	// renderhint should be user controllable,
-	// users likely want the smoothed variant most of the time
-	//view_->setRenderHint(QPainter::Antialiasing); // nearest neighbour (default)
-	//view_->setRenderHint(QPainter::SmoothPixmapTransform); // bilinear
-	//view_->setRenderHint(QPainter::HighQualityAntialiasing); // anisotropic?
-	
-	setWidget(view_);
+	layout_ = new NavigatorLayout(this, scene);
+	view_ = layout_->navigatorView();
+	setWidget(layout_);
+	if (scene)
+		rescale();
 }
 
 Navigator::~Navigator()
@@ -87,8 +80,8 @@ void Navigator::setScene(QGraphicsScene *scene)
 {
 	scene_ = scene;
 	disconnect(this, SLOT(sceneResized()));
-	view_->setScene(scene);
 	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), this, SLOT(sceneResized()));
+	view_->setScene(scene);
 	rescale();
 }
 
@@ -137,4 +130,65 @@ void Navigator::resizeEvent(QResizeEvent *event)
 void Navigator::sceneResized()
 {
 	rescale();
+}
+
+NavigatorLayout::NavigatorLayout(QWidget *parent, QGraphicsScene *scene)
+	: QWidget(parent), view_(0)
+{
+	view_ = new NavigatorView(scene, this);
+	
+	view_->setInteractive(false);
+	
+	view_->setResizeAnchor(QGraphicsView::AnchorViewCenter);
+	view_->setAlignment(Qt::AlignCenter);
+	
+	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	
+	view_->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing
+		|QGraphicsView::DontSavePainterState);
+	
+	//delayedUpdate(false);
+	
+	// renderhint should be user controllable,
+	// users likely want the smoothed variant most of the time
+	//view_->setRenderHint(QPainter::Antialiasing); // nearest neighbour (default)
+	//view_->setRenderHint(QPainter::SmoothPixmapTransform); // bilinear
+	//view_->setRenderHint(QPainter::HighQualityAntialiasing); // anisotropic?
+	
+	QVBoxLayout *vbox = new QVBoxLayout(this);
+	vbox->setContentsMargins(0,0,0,0);
+	QHBoxLayout *hbox = new QHBoxLayout();
+	
+	/** @todo Replace +/- with icons */
+	QPushButton *zoomOutButton = new QPushButton("Zoom out", this);
+	QPushButton *zoomInButton = new QPushButton("Zoom in", this);
+	/** @todo The button actions need to actually do something, disabled until then */
+	zoomOutButton->setDisabled(true);
+	zoomInButton->setDisabled(true);
+	connect(zoomInButton, SIGNAL(released()), this, SLOT(zoomInButtonAction()));
+	connect(zoomOutButton, SIGNAL(released()), this, SLOT(zoomOutButtonAction()));
+	
+	hbox->addWidget(zoomOutButton);
+	hbox->addWidget(zoomInButton);
+	
+	vbox->addWidget(view_);
+	vbox->addLayout(hbox);
+	
+	setLayout(vbox);
+}
+
+NavigatorView* NavigatorLayout::navigatorView()
+{
+	return view_;
+}
+
+void NavigatorLayout::zoomInButtonAction()
+{
+	emit zoomIn();
+}
+
+void NavigatorLayout::zoomOutButtonAction()
+{
+	emit zoomOut();
 }

@@ -47,12 +47,36 @@ protected:
 	bool dragging_;
 };
 
+//! 
+class NavigatorLayout
+	: public QWidget
+{
+	Q_OBJECT
+public:
+	NavigatorLayout(QWidget *parent, QGraphicsScene *scene);
+	
+	NavigatorView* navigatorView();
+	
+signals:
+	//! Zoom in
+	void zoomIn();
+	//! Zoom out
+	void zoomOut();
+	
+protected slots:
+	void zoomInButtonAction();
+	void zoomOutButtonAction();
+	
+protected:
+	NavigatorView *view_;
+};
+
 //! Navigator dock widget
 class Navigator
 	: public QDockWidget
 {
 	Q_OBJECT
-private:
+protected:
 	//! Viewport
 	NavigatorView *view_;
 	QGraphicsScene *scene_;
@@ -64,6 +88,7 @@ public:
 signals:
 	//! Signaled when user moves the rectangle to some other spot
 	void focusMoved(const QRect& focus);
+	
 public slots:
 	//! Enable/disable delayed update
 	void delayedUpdate(bool enable);
@@ -77,9 +102,12 @@ public slots:
 	void rescale();
 	//! Should be called when scene is resized
 	void sceneResized();
+	
 protected:
 	//! React to widget resizing
 	void resizeEvent(QResizeEvent *event);
+	
+	NavigatorLayout *layout_;
 	
 	bool delayed_;
 };
