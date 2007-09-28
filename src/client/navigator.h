@@ -20,29 +20,68 @@
 #define Navigator_H
 
 #include <QDockWidget>
+#include <QGraphicsView>
 
 class QGraphicsScene;
-class QGraphicsView;
 
+//! Navigator graphics view
+class NavigatorView
+	: public QGraphicsView
+{
+	Q_OBJECT
+public:
+	NavigatorView(QGraphicsScene *scene, QWidget *parent);
+	~NavigatorView();
+	
+public slots:
+	void setFocus(const QPoint& pt);
+	
+protected:
+	QGraphicsRectItem *rect_;
+	
+	// mouse dragging
+	void mouseMoveEvent(QMouseEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	
+	bool dragging_;
+};
+
+//! Navigator dock widget
 class Navigator
 	: public QDockWidget
 {
 	Q_OBJECT
 private:
+	//! Viewport
+	NavigatorView *view_;
 	QGraphicsScene *scene_;
-	QGraphicsView *view_;
 public:
+	//! Ctor
 	Navigator(QWidget *parent, QGraphicsScene *scene);
+	//! Dtor
 	~Navigator();
 signals:
+	//! Signaled when user moves the rectangle to some other spot
 	void focusMoved(const QRect& focus);
 public slots:
+	//! Enable/disable delayed update
+	void delayedUpdate(bool enable);
+	//! Update 
+	void update();
+	//! Set associated graphics scene
 	void setScene(QGraphicsScene *scene);
+	//! Set view rectangle to different spot
 	void setFocus(const QRect& focus);
+	//! Re-scale the viewport
 	void rescale();
+	//! Should be called when scene is resized
 	void sceneResized();
-private:
+protected:
+	//! React to widget resizing
 	void resizeEvent(QResizeEvent *event);
+	
+	bool delayed_;
 };
 
 #endif // Navigator_H

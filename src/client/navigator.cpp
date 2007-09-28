@@ -19,18 +19,62 @@
 #include "navigator.h"
 
 #include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QSize>
 #include <QDebug>
 
-Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
-	: QDockWidget(tr("Navigator"), parent), scene_(scene), view_(0)
+NavigatorView::NavigatorView(QGraphicsScene *scene, QWidget *parent)
+	: QGraphicsView(scene, parent), dragging_(false)
 {
-	view_ = new QGraphicsView(scene, this);
+	rect_ = new QGraphicsRectItem();
+	viewport()->setMouseTracking(true);
+}
+
+NavigatorView::~NavigatorView()
+{
+	delete rect_;
+}
+
+void NavigatorView::mousePressEvent(QMouseEvent *event)
+{
+	setFocus(mapToScene(event->pos()).toPoint());
+	dragging_ = true;
+}
+
+void NavigatorView::mouseMoveEvent(QMouseEvent *event)
+{
+	if (dragging_)
+		setFocus(mapToScene(event->pos()).toPoint());
+}
+
+void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
+{
+	dragging_ = false;
+}
+
+void NavigatorView::setFocus(const QPoint& pt)
+{
+	qDebug() << "set Focus to" << pt;
+}
+
+/** @todo change viewportUpdateMode to manual updating after every pen-up */
+Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
+	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), delayed_(false)
+{
+	view_ = new NavigatorView(scene, this);
+	
 	view_->setResizeAnchor(QGraphicsView::AnchorViewCenter);
 	view_->setAlignment(Qt::AlignCenter);
 	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	
+	//delayedUpdate(false);
+	
+	// renderhint should be user controllable,
+	// users likely want the smoothed variant most of the time
+	//view_->setRenderHint(QPainter::Antialiasing); // nearest neighbour (default)
+	//view_->setRenderHint(QPainter::SmoothPixmapTransform); // bilinear
+	//view_->setRenderHint(QPainter::HighQualityAntialiasing); // anisotropic?
+	
 	setWidget(view_);
 }
 
@@ -42,25 +86,47 @@ Navigator::~Navigator()
 void Navigator::setScene(QGraphicsScene *scene)
 {
 	scene_ = scene;
-	connect(scene_, SIGNAL(sceneRectChanged(const QRectF&)), this, SLOT(sceneResized()));
-	view_->setScene(scene_);
+	disconnect(this, SLOT(sceneResized()));
+	view_->setScene(scene);
+	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), this, SLOT(sceneResized()));
 	rescale();
 }
 
 void Navigator::rescale()
 {
 	view_->resetTransform();
+	
 	QRectF ss = scene_->sceneRect();
 	// we shouldn't need to use view_
 	qreal x = qreal(view_->width()) / ss.width();
 	qreal y = qreal(view_->height()-5) / ss.height();
 	qreal min = (x < y ? x : y);
+	
 	view_->scale(min, min);
+}
+
+void Navigator::delayedUpdate(bool enable)
+{
+	if (enable)
+	{
+		//connect(emitter_, SIGNAL(penUp()), this, SLOT(update()));
+		view_->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
+	}
+	else
+	{
+		disconnect(this, SLOT(update()));
+		view_->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+	}
+}
+
+void Navigator::update()
+{
+	qDebug() << "update";
 }
 
 void Navigator::setFocus(const QRect& focus)
 {
-	
+	//view_->setFocus(*);
 }
 
 void Navigator::resizeEvent(QResizeEvent *event)
