@@ -18,8 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
-#include <QHostInfo>
-#include <QNetworkInterface>
+#include <QHostAddress>
 #include <QFileInfo>
 #include <QApplication>
 #include <QSettings>
@@ -28,6 +27,7 @@
 #include "main.h"
 #include "localserver.h"
 #include "../shared/protocol.defaults.h"
+#include "../shared/qt.h"
 
 LocalServer::LocalServer()
 	: port_(-1)
@@ -48,15 +48,6 @@ LocalServer::~LocalServer()
 	shutdown();
 }
 
-static bool isLocal(const QHostAddress& a)
-{
-	const QString addr = a.toString();
-	/** @todo better and support IPv6 */
-	if(addr.startsWith("192.") || addr.startsWith("127.") || addr.startsWith("10."))
-		return true;
-	return false;
-}
-
 /**
  * Attempt to discover the address most likely reachable from the
  * outside.
@@ -64,21 +55,7 @@ static bool isLocal(const QHostAddress& a)
  */
 QString LocalServer::address()
 {
-	QString localname = QHostInfo::localHostName();
-	if(localname.contains(".")==false) {
-		// Name is not a fully qualified hostname.
-		// Try to get the address most likely available from the outside.
-		QList<QHostAddress> addresses = QNetworkInterface::allAddresses();
-		localname = "localhost";
-		foreach(QHostAddress a, addresses) {
-			if(a != QHostAddress::LocalHost && a != QHostAddress::LocalHostIPv6 && a.protocol() == QAbstractSocket::IPv4Protocol) {
-				localname = a.toString();
-				if(isLocal(a)==false)
-					break;
-			}
-		}
-	}
-	return localname;
+	return Network::getExternalAddress().toString();
 }
 
 /**
