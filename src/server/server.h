@@ -51,14 +51,6 @@
 #include <map> // std::map
 #include <list> // std::list
 
-//! Server defaults
-namespace srv_defaults {
-
-//! Time limit before culling user
-const uint time_limit = 180;
-
-}
-
 //! Server
 class Server
 {
@@ -381,7 +373,7 @@ protected:
 	 * @retval true if the digests match
 	 * @retval false otherwise
 	 */
-	bool CheckPassword(const char *hashdigest, const char *str, size_t len, const char seed[4]) NOTHROW NONNULL(1) NONNULL(2);
+	bool CheckPassword(const char *hashdigest, const char *str, size_t len, uint seed) NOTHROW NONNULL(1) NONNULL(2);
 	
 	//! Queue message to user
 	/**
@@ -437,13 +429,13 @@ protected:
 	 * @param[in,out] usr User who's being removed
 	 * @param[in] reason Reason for removal (protocol::UserInfo::uevent)
 	 */
-	void uRemove(User*& usr, protocol::UserInfo::uevent reason) NOTHROW NONNULL(1);
+	void removeUser(User*& usr, protocol::UserInfo::uevent reason) NOTHROW NONNULL(1);
 	
 	//! Delete session and do some cleaning
 	/**
 	 * @param[in,out] session Session to delete
 	 */
-	void sRemove(Session& session) NOTHROW;
+	void removeSession(Session& session) NOTHROW;
 	
 	//! Check user name uniqueness
 	/**
@@ -501,13 +493,13 @@ protected:
 	/**
 	 * @param[in] session_id Identifier for the session to find
 	 */
-	const Session* getConstSession(octet session_id) const NOTHROW;
+	const Session* getSession(octet session_id) const NOTHROW;
 	
 	//! Get User* pointer
 	User* getUser(fd_t user_handle) NOTHROW;
 	
 	//! Get const User* pointer
-	const User* getConstUser(fd_t user_handle) const NOTHROW;
+	const User* getUser(fd_t user_handle) const NOTHROW;
 	
 	//! Get user by identifier
 	User* getUserByID(octet user_id) NOTHROW;
@@ -545,7 +537,6 @@ public:
 	 * @param[in] len pwstr length in bytes
 	 */
 	void setPassword(char* pwstr=0, octet len=0) NOTHROW;
-	bool haveServerPassword() const NOTHROW;
 	
 	//! Set admin server password
 	/**
@@ -553,7 +544,6 @@ public:
 	 * @param[in] len pwstr length in bytes
 	 */
 	void setAdminPassword(char* pwstr=0, octet len=0) NOTHROW;
-	bool haveAdminPassword() const NOTHROW;
 	
 	//! Set user limit
 	/**
@@ -668,8 +658,8 @@ public:
 	
 	Statistics getStats() const NOTHROW;
 	
-	#if 0
 private:
+	#if 0
 	virtual void eventNotify() const NOTHROW;
 	#endif
 	

@@ -15,7 +15,10 @@
 
 #include "session.h"
 
-#include "layer_data.h" // LayerData
+#ifdef LAYER_DATA
+	#include "layer_data.h" // LayerData
+#endif
+
 #include "../shared/protocol.flags.h" // protocol::session::~
 #ifdef PERSISTENT_SESSIONS
 	#include "../shared/protocol.h"
@@ -115,5 +118,16 @@ bool Session::appendRaster(protocol::Raster *nraster)
 	}
 	
 	return true;
+}
+#endif
+
+#ifdef LAYER_SUPPORT
+LayerData* Session::getLayer(octet layer_id)
+{
+	session_layer_i sli = layers.find(layer_id);
+	if (sli != session->layers.end())
+		return &sli->second;
+	else
+		return 0;
 }
 #endif

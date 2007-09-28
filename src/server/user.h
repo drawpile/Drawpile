@@ -60,7 +60,7 @@ public:
 	/**
 	 * @param[in] session_id Which session to fetch
 	 */
-	const SessionData* getConstSession(octet session_id) const NOTHROW;
+	const SessionData* getSession(octet session_id) const NOTHROW;
 	
 	//! Cache tool info
 	/**
@@ -88,19 +88,16 @@ public:
 	enum State
 	{
 		//! When user has just connected
-		Init,
-		
-		//! User has been verified to be using correct protocol.
-		Verified,
+		Init=3,
 		
 		//! Waiting for proper user info
-		Login,
+		Login=1,
 		
 		//! Waiting for password
-		LoginAuth,
+		LoginAuth=2,
 		
 		//! Normal operation
-		Active
+		Active=0
 	} state;
 	
 	uint
@@ -166,7 +163,7 @@ public:
 	uint level;
 	
 	//! Password seed associated with this user.
-	char seed[4];
+	uint seed;
 	
 	//! Last touched.
 	time_t touched;

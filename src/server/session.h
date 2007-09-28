@@ -84,6 +84,8 @@ public:
 	octet getFlags() const NOTHROW;
 	
 	#ifdef LAYER_SUPPORT
+	LayerData* getLayer(octet layer_id) NOTHROW;
+	
 	//! Layer identifier to layer data map
 	std::map<octet, LayerData> layers;
 	#endif

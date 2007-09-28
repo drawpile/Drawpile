@@ -81,7 +81,7 @@ SessionData* User::getSession(octet session_id)
 	return (usi == sessions.end() ? 0 : &usi->second);
 }
 
-const SessionData* User::getConstSession(octet session_id) const
+const SessionData* User::getSession(octet session_id) const
 {
 	const usr_session_const_i usi(sessions.find(session_id));
 	return (usi == sessions.end() ? 0 : &usi->second);

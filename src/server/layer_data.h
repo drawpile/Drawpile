@@ -16,16 +16,16 @@
 #define LayerData_INCLUDED
 
 #include "types.h"
+#include "../shared/protocol.tools.h" // tool_mode::*
+#include "../shared/protocol.defaults.h" // null_layer
 
 //! Layer information
 class LayerData
 {
 public:
 	//! Constructor
-	LayerData() NOTHROW;
-	
-	//! Constructor
-	LayerData(uint _id, uint _mode, uint _opacity=255, bool _locked=false) NOTHROW;
+	LayerData(uint _id=protocol::null_layer, uint _mode=protocol::tool_mode::None,
+		uint _opacity=255, bool _locked=false) NOTHROW;
 	
 	uint
 		//! Layer identifier
@@ -38,5 +38,14 @@ public:
 	//! Layer lock state
 	bool locked;
 };
+
+LayerData::LayerData(uint _id, uint _mode, uint _opacity, bool _locked)
+	: id(_id),
+	mode(_mode),
+	opacity(_opacity),
+	locked(_locked)
+{
+	// nothing
+}
 
 #endif // LayerData_INCLUDED

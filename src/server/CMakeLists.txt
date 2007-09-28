@@ -95,7 +95,6 @@ if ( SERVERLIB )
 		SRV_SOURCES
 		buffer.cpp
 		session_data.cpp
-		layer_data.cpp
 		user.cpp
 		session.cpp
 		network.cpp
