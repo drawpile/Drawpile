@@ -40,6 +40,8 @@ namespace convert {
 
 typedef unsigned int uint;
 
+QString fromUTF(const char *string, uint length, bool Utf16=false);
+
 //! Convenience function
 char* toUTF(const QString& string, uint& bytes, bool Utf16=false);
 

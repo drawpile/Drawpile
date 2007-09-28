@@ -77,6 +77,14 @@ QHostAddress getExternalAddress()
 
 namespace convert {
 
+QString fromUTF(const char *string, uint length, bool Utf16)
+{
+	if (Utf16)
+		return QString::fromUtf16(reinterpret_cast<const unsigned short*>(string), length/2);
+	else
+		return QString::fromUtf8(string, length);
+}
+
 char* toUTF(const QString& string, uint& bytes, bool Utf16)
 {
 	if (Utf16)
