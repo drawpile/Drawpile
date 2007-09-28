@@ -40,6 +40,9 @@ namespace convert {
 
 typedef unsigned int uint;
 
+//! Convenience function
+char* toUTF(const QString& string, uint& bytes, bool Utf16=false);
+
 //! Converts QString to UTF-8 char* array
 char* toUTF8(const QString& string, uint& bytes);
 

@@ -20,7 +20,6 @@
 
 #include "qt.h"
 
-#include <QDebug>
 #include <QHostAddress>
 #include <QNetworkInterface>
 #include <QByteArray>
@@ -78,6 +77,14 @@ QHostAddress getExternalAddress()
 
 namespace convert {
 
+char* toUTF(const QString& string, uint& bytes, bool Utf16)
+{
+	if (Utf16)
+		return toUTF16(string, bytes);
+	else
+		return toUTF8(string, bytes);
+}
+
 char* toUTF8(const QString& string, uint& bytes)
 {
 	QByteArray array = string.toUtf8();
@@ -90,13 +97,14 @@ char* toUTF8(const QString& string, uint& bytes)
 
 char* toUTF16(const QString& string, uint& bytes)
 {
-	const ushort *array = string.utf16();
-	const ushort *ptr = array;
+	const ushort *utf16 = string.utf16();
+	Q_ASSERT(utf16 != 0);
 	bytes = 0;
-	for (; *ptr != 0; ++ptr, bytes+=2);
+	for (; utf16[bytes] != 0; bytes++);
 	if (bytes == 0) return 0;
+	bytes *= 2;
 	char *str = new char[bytes];
-	memcpy(str, array, bytes);
+	memcpy(str, utf16, bytes);
 	return str;
 }
 
