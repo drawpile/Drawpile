@@ -59,6 +59,7 @@ namespace network {
 }
 
 class Controller;
+class Navigator;
 
 //! The application main window
 class MainWindow : public QMainWindow {
@@ -226,6 +227,10 @@ class MainWindow : public QMainWindow {
 		void createColorBoxes(QMenu *menu);
 		//! Create dialogs
 		void createDialogs();
+		//! Create navigator dock
+		void createNavigator();
+
+		Navigator *navigator_;
 
 		QFile *crashGuard_;
 		QTemporaryFile *autosaveTmp_;

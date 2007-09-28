@@ -15,6 +15,7 @@ set (
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	sessionlistmodel.h mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
+	navigator.h
 )
 
 # unused headers because they do not create moc_* files ()
@@ -37,7 +38,7 @@ set (
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp palette.cpp
+	settingsdialog.cpp palette.cpp navigator.cpp
 	../shared/qt.cpp
 )
 

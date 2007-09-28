@@ -66,6 +66,8 @@
 #include "logindialog.h"
 #include "settingsdialog.h"
 
+#include "navigator.h"
+
 /**
  * @param source if not null, clone settings from this window
  */
@@ -127,6 +129,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	view_->setBoard(board_);
+	
+	navigator_->setScene(board_);
 
 	// Create controller
 	controller_ = new Controller(this);
@@ -1414,6 +1418,14 @@ void MainWindow::createDocks()
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
 	docktoggles_->setMenu(toggles);
+}
+
+void MainWindow::createNavigator()
+{
+	navigator_ = new Navigator(this, board_);
+	navigator_->setObjectName("navigatordock");
+	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, navigator_);
 }
 
 void MainWindow::createToolSettings(QMenu *toggles)
