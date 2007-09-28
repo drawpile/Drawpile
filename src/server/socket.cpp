@@ -320,6 +320,18 @@ int Socket::write(char* buffer, size_t len)
 		assert(m_error != OperationNotSupported);
 		#endif
 		
+		switch (r)
+		{
+		case Interrupted:
+		case WouldBlock:
+		case socket_error::OutOfBuffers:
+		case OutOfMemory:
+			break;
+		default:
+			close();
+			break;
+		}
+		
 		return Error;
 	}
 	else
@@ -365,6 +377,11 @@ int Socket::read(char* buffer, size_t len)
 		assert(m_error != EINVAL);
 		assert(m_error != NotConnected);
 		assert(m_error != NotSocket);
+		
+		if (m_error == WouldBlock or m_error == Interrupted)
+			;
+		else
+			close();
 		
 		return Error;
 	}
