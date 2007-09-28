@@ -30,6 +30,7 @@
 #include "brush.h"
 #include "point.h"
 
+#include "../shared/qt.h"
 #include "../shared/protocol.h"
 #include "../shared/protocol.tools.h"
 #include "../shared/protocol.flags.h"
@@ -287,24 +288,10 @@ void SessionState::sendAckSync()
 
 void SessionState::sendChat(const QString& message)
 {
-	uint length=0;
-	char *ptr=0;
-	if (Utf16_)
-	{
-		qDebug() << "convert to Utf16";
-		const ushort *ptr16 = message.utf16();
-		for (; ptr16[length++] != 0;);
-		ptr = new char[length*2];
-		memcpy(ptr, ptr16, length*2);
-		qDebug() << "conversion done";
-	}
-	else
-	{
-		QByteArray arr = message.toUtf8();
-		length = arr.length();
-		ptr = new char[length];
-		memcpy(ptr, arr.constData(), length);
-	}
+	Q_ASSERT(message.length() != 0);
+	
+	int length;
+	char *ptr = convert::toUTF(message, length, Utf16_);
 	
 	protocol::Chat *msg = new protocol::Chat(length, ptr);
 	msg->session_id = info_.id;
@@ -401,8 +388,8 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 					<< "who is already in session!";
 			} else {
 				bool islocked = fIsSet(msg->mode, static_cast<quint8>(protocol::user::Locked));
-				/** @todo Utf-16 support */
-				users_[msg->user_id] = User(msg->name, msg->user_id, islocked, this);
+				users_[msg->user_id] = User(convert::fromUTF(msg->name, msg->length, Utf16_),
+						msg->user_id, islocked, this);
 				emit userJoined(msg->user_id);
 			}
 			break;
@@ -594,13 +581,8 @@ void SessionState::handleChat(const protocol::Chat *msg)
 	if(users_.contains(msg->user_id))
 		u = &user(msg->user_id);
 	
-	QString str;
-	if (Utf16_)
-		str = QString::fromUtf16(reinterpret_cast<ushort*>(msg->data), msg->length/2);
-	else
-		str = QString::fromUtf8(msg->data, msg->length);
-	
-	emit chatMessage(u?u->name():"<unknown>", str);
+	emit chatMessage(u?u->name():"<unknown>",
+			convert::fromUTF(msg->data, msg->length, Utf16_));
 }
 
 /**

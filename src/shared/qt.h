@@ -38,18 +38,16 @@ class QString;
 //! Qt String conversion
 namespace convert {
 
-typedef unsigned int uint;
-
-QString fromUTF(const char *string, uint length, bool Utf16=false);
+QString fromUTF(const char *string, int length, bool Utf16=false);
 
 //! Convenience function
-char* toUTF(const QString& string, uint& bytes, bool Utf16=false);
+char* toUTF(const QString& string, int& bytes, bool Utf16=false);
 
 //! Converts QString to UTF-8 char* array
-char* toUTF8(const QString& string, uint& bytes);
+char* toUTF8(const QString& string, int& bytes);
 
 //! Converts QString to UTF-16 char* array
-char* toUTF16(const QString& string, uint& bytes);
+char* toUTF16(const QString& string, int& bytes);
 
 } // namespace:convert
 

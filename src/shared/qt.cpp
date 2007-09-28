@@ -77,7 +77,7 @@ QHostAddress getExternalAddress()
 
 namespace convert {
 
-QString fromUTF(const char *string, uint length, bool Utf16)
+QString fromUTF(const char *string, int length, bool Utf16)
 {
 	if (Utf16)
 		return QString::fromUtf16(reinterpret_cast<const unsigned short*>(string), length/2);
@@ -85,7 +85,7 @@ QString fromUTF(const char *string, uint length, bool Utf16)
 		return QString::fromUtf8(string, length);
 }
 
-char* toUTF(const QString& string, uint& bytes, bool Utf16)
+char* toUTF(const QString& string, int& bytes, bool Utf16)
 {
 	if (Utf16)
 		return toUTF16(string, bytes);
@@ -93,7 +93,7 @@ char* toUTF(const QString& string, uint& bytes, bool Utf16)
 		return toUTF8(string, bytes);
 }
 
-char* toUTF8(const QString& string, uint& bytes)
+char* toUTF8(const QString& string, int& bytes)
 {
 	QByteArray array = string.toUtf8();
 	bytes = array.count();
@@ -103,7 +103,7 @@ char* toUTF8(const QString& string, uint& bytes)
 	return str;
 }
 
-char* toUTF16(const QString& string, uint& bytes)
+char* toUTF16(const QString& string, int& bytes)
 {
 	const ushort *utf16 = string.utf16();
 	Q_ASSERT(utf16 != 0);

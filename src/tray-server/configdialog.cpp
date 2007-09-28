@@ -313,14 +313,11 @@ void ConfigDialog::applySettings()
 	const QString configError(tr("Configuration error!"));
 	
 	char *str;
-	uint len;
+	int len;
 	QString pass = admpass_edit->text();
 	if (pass.length() != 0)
 	{
-		if (req_widestrings)
-			str = convert::toUTF16(pass, len);
-		else
-			str = convert::toUTF8(pass, len);
+		str = convert::toUTF(pass, len, req_widestrings);
 		
 		if (len <= namelength_limit)
 			srv->setAdminPassword(str, len);

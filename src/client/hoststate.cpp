@@ -29,6 +29,7 @@
 #include "sessionstate.h"
 #include "version.h"
 
+#include "../shared/qt.h"
 #include "../shared/protocol.h"
 #include "../shared/protocol.errors.h"
 #include "../shared/protocol.tools.h"
@@ -176,7 +177,8 @@ void HostState::host(const QString& title,
 		const QString& password, quint16 width, quint16 height, int userlimit,
 		bool allowdraw, bool allowchat)
 {
-	const QByteArray tbytes = title.toUtf8();
+	int length;
+	char *ptr = convert::toUTF(title, length, Utf16_);
 	
 	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
 			protocol::SessionInstruction::Create,
@@ -185,8 +187,8 @@ void HostState::host(const QString& title,
 			protocol::user::None,
 			userlimit,
 			0, // flags (unused)
-			tbytes.length(),
-			(tbytes.length() ? new char[tbytes.length()] : 0)
+			length,
+			ptr
 			);
 	
 	msg->session_id = protocol::Global;
@@ -194,12 +196,6 @@ void HostState::host(const QString& title,
 		fSet(msg->user_mode, static_cast<quint8>(protocol::user::Locked));
 	if(allowchat==false)
 		fSet(msg->user_mode, static_cast<quint8>(protocol::user::Mute));
-	
-	if (msg->title_len != 0)
-	{
-		/** @todo Utf16 support */
-		memcpy(msg->title, tbytes.constData(), tbytes.length());
-	}
 	
 	lastsessioninstr_ = msg->action;
 	setsessionpassword_ = password;
@@ -229,19 +225,25 @@ void HostState::join(const QString& title)
  * value is sent.
  * @param password password to send
  * @pre needPassword signal has been emitted
- * @todo Utf16 support
  */
 void HostState::sendPassword(const QString& password)
 {
+	Q_ASSERT(password.length() != 0);
+	
 	protocol::Password *msg = new protocol::Password;
 	msg->session_id = passwordsession_;
-	const QByteArray pass = password.toUtf8();
+	
+	int length;
+	char *ptr = convert::toUTF(password, length, Utf16_);
+	
 	SHA1 hash;
-	hash.Update(reinterpret_cast<const quint8*>(pass.constData()),
-			pass.length());
+	hash.Update(reinterpret_cast<const quint8*>(ptr), length);
 	hash.Update(reinterpret_cast<const quint8*>(passwordseed_.constData()),
 			passwordseed_.length());
 	hash.Final();
+	
+	delete [] ptr;
+	
 	hash.GetHash(reinterpret_cast<quint8*>(msg->data));
 	net_->send(msg);
 }
@@ -283,17 +285,12 @@ void HostState::setPassword(const QString& password)
  */
 void HostState::setPassword(const QString& password, int session)
 {
-	const QByteArray passwd = password.toUtf8();
+	int length;
+	char *ptr = convert::toUTF(password, length, Utf16_);
 	
-	protocol::SetPassword *msg = new protocol::SetPassword(
-			passwd.length(),
-			new char[passwd.length()]
-			);
-	
-	/** @todo Utf16 support */
+	protocol::SetPassword *msg = new protocol::SetPassword(length, ptr);
 	
 	msg->session_id = session;
-	memcpy(msg->password,passwd.constData(),passwd.length());
 	
 	net_->send(msg);
 }
@@ -421,25 +418,17 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 {
 	// Handle host info
 	Utf16_ = fIsSet(msg->requirements, (uchar)protocol::requirements::WideStrings);
-	if (Utf16_) // temporary until Utf16 support is in
-	{
-		net_->disconnectFromHost();
-		emit error(tr("UTF-16 support required"));
-		return;
-	}
 	
-	const QByteArray name = username_.toUtf8();
+	int length;
+	char *ptr = convert::toUTF(username_, length, Utf16_);
 	
 	// Reply with user info
 	protocol::UserInfo *user = new protocol::UserInfo(
 			0, // mode (ignored)
 			protocol::UserInfo::Login,
-			name.length(),
-			new char[name.length()]
+			length,
+			ptr
 			);
-	
-	/** @todo Utf16 support */
-	memcpy(user->name, name.constData(), name.length());
 	
 	net_->send(user);
 }
