@@ -23,6 +23,13 @@
 #include <QUrl>
 #include <QMessageBox>
 
+#ifdef CRASHGUARD
+	#include <QFile>
+	#include <QFileInfo>
+	#include <QDebug>
+	#include <QDir>
+#endif
+
 #include "main.h"
 #include "mainwindow.h"
 #include "localserver.h"
@@ -91,7 +98,29 @@ int main(int argc, char *argv[]) {
 
 	// Create the main window
 	MainWindow *win = new MainWindow;
-
+	
+	#ifdef CRASHGUARD
+	QFile crashGuard(QFileInfo(DrawPileApp::getConfDir(), "crash.guard").absoluteFilePath());
+	
+	if (crashGuard.exists())
+	{
+		// crash recovery
+		QFileInfoList autosaves = QDir(DrawPileApp::getConfDir()).entryInfoList(
+			QStringList("*.png"),
+			QDir::Files|QDir::Readable
+			);
+		
+		/** @todo query user which of these should be opened, if any. */
+		foreach(QFileInfo asav, autosaves)
+		{
+			win->open(asav.absoluteFilePath());
+		}
+	}
+	
+	if (!crashGuard.open(QIODevice::WriteOnly|QIODevice::Unbuffered))
+		qWarning() << "crash guard creation failed!";
+	#endif // CRASHGUARD
+	
 	const QStringList args = app.arguments();
 	if(args.count()>1) {
 		const QString arg = args.at(1);
@@ -122,6 +151,12 @@ int main(int argc, char *argv[]) {
 	}
 	win->show();
 
-	return app.exec();
+	int rv = app.exec();
+	
+	#ifdef CRASHGUARD
+	crashGuard.remove();
+	#endif
+	
+	return rv;
 }
 

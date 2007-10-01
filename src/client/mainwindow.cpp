@@ -35,8 +35,6 @@
 #include <QImageReader>
 #include <QImageWriter>
 #include <QSplitter>
-#include <QFileInfo>
-#include <QFile>
 #include <QTemporaryFile>
 #include <QTimer>
 
@@ -228,16 +226,6 @@ MainWindow::MainWindow(const MainWindow *source)
 	else
 		readSettings();
 
-	crashGuard_ = new QFile(
-		QFileInfo(DrawPileApp::getConfDir(), "crash.guard").absoluteFilePath()
-		);
-	
-	if (source == 0 and crashGuard_->exists())
-		crashRecovery();
-	
-	if (!crashGuard_->open(QIODevice::WriteOnly|QIODevice::Unbuffered))
-		qWarning() << "crash guard creation failed!";
-	
 	autosaveTimer_ = new QTimer();
 	connect(autosaveTimer_, SIGNAL(timeout()), this, SLOT(autosave()));
 	// todo: need better location
@@ -258,9 +246,6 @@ MainWindow::~MainWindow()
 	autosaveTmp_->setAutoRemove(true);
 	delete autosaveTmp_;
 	delete autosaveTimer_;
-	
-	crashGuard_->remove();
-	delete crashGuard_;
 }
 
 /**
@@ -1494,26 +1479,6 @@ void MainWindow::createDialogs()
 	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
 
 	logindlg_ = new dialogs::LoginDialog(this);
-}
-
-/**
- * @bug Doesn't open the files for some reason; likely because of initDefaultBoard
- * @todo Ask user if he/she wants to load the images.
- */
-void MainWindow::crashRecovery()
-{
-	qDebug() << "crash detected";
-	
-	QDir savedir(DrawPileApp::getConfDir());
-	QFileInfoList autosaves = savedir.entryInfoList(
-		QStringList("*.png"),
-		QDir::Files|QDir::Readable
-		);
-	
-	foreach(QFileInfo asav, autosaves)
-	{
-		open(asav.absoluteFilePath());
-	}
 }
 
 void MainWindow::startAutosaver()

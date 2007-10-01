@@ -29,7 +29,6 @@ class QMessageBox;
 class QUrl;
 class QLabel;
 class QSplitter;
-class QFile;
 class QTemporaryFile;
 class QTimer;
 
@@ -175,9 +174,6 @@ class MainWindow : public QMainWindow {
 		//! Stop autosaver timer
 		void stopAutosaver();
 
-		//! Tasks to recover from crash.
-		void crashRecovery();
-
 		//! Utility function for creating actions
 		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence());
 
@@ -232,7 +228,6 @@ class MainWindow : public QMainWindow {
 
 		Navigator *navigator_;
 
-		QFile *crashGuard_;
 		QTemporaryFile *autosaveTmp_;
 		QTimer *autosaveTimer_;
 		int autosaveTimeout_;
