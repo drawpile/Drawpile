@@ -127,8 +127,6 @@ int main(int argc, char *argv[]) {
 		// Parameter given, we assume it to be either an URL to a session
 		// or a filename.
 		if(arg.startsWith("drawpile://")) {
-			// Create a default board first, in case connection fails
-			win->initDefaultBoard();
 			// Join the session
 			QUrl url(arg, QUrl::TolerantMode);
 			if(url.userName().isEmpty()) {
@@ -140,16 +138,11 @@ int main(int argc, char *argv[]) {
 			if(win->initBoard(argv[1])==false) {
 				// If image couldn't be loaded, initialize to a default board
 				// and show error message.
-				win->initDefaultBoard();
 				QMessageBox::warning(win, app.tr("DrawPile"),
 						app.tr("Couldn't load image %1.").arg(argv[1]));
 			}
 		}
-	} else {
-		// Create a default board
-		win->initDefaultBoard();
 	}
-	win->show();
 
 	int rv = app.exec();
 	

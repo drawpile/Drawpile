@@ -62,13 +62,13 @@ void NavigatorView::setFocus(const QPoint& pt)
 }
 
 Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
-	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), layout_(0), delayed_(false)
+	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(0), layout_(0), delayed_(false)
 {
 	layout_ = new NavigatorLayout(this, scene);
 	view_ = layout_->navigatorView();
 	setWidget(layout_);
 	if (scene)
-		rescale();
+		setScene(scene);
 }
 
 Navigator::~Navigator()

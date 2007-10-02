@@ -129,6 +129,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	view_->setBoard(board_);
 	
 	navigator_->setScene(board_);
+	
 
 	// Create controller
 	controller_ = new Controller(this);
@@ -233,6 +234,9 @@ MainWindow::MainWindow(const MainWindow *source)
 	autosaveTmp_->setAutoRemove(false);
 	autosaveTimeout_ = 15; // minutes
 	statusDefaultTimeout_ = 15; // seconds
+	
+	// Show self
+	show();
 }
 
 MainWindow::~MainWindow()
@@ -568,8 +572,16 @@ void MainWindow::boardChanged()
 void MainWindow::showNew()
 {
 	const QSize size = board_->sceneRect().size().toSize();
-	newdlg_->setNewWidth(size.width());
-	newdlg_->setNewHeight(size.height());
+	if (board_->hasImage())
+	{
+		newdlg_->setNewWidth(size.width());
+		newdlg_->setNewHeight(size.height());
+	}
+	else
+	{
+		newdlg_->setNewWidth(800);
+		newdlg_->setNewHeight(600);
+	}
 	newdlg_->setNewBackground(fgbgcolor_->background());
 	newdlg_->show();
 }
@@ -586,7 +598,6 @@ void MainWindow::newDocument()
 		win = this;
 	} else {
 		win = new MainWindow(this);
-		win->show();
 	}
 
 	win->initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
@@ -615,16 +626,13 @@ void MainWindow::open(const QString& file)
 			showErrorMessage(ERR_OPEN);
 		else
 			addRecentFile(file);
-		qDebug() << "nuuu!";
 	} else {
 		MainWindow *win = new MainWindow(this);
 		if(win->initBoard(file)==false) {
 			showErrorMessage(ERR_OPEN);
-			qDebug() << "serious fail!";
 			delete win;
 		} else {
 			addRecentFile(file);
-			win->show();
 		}
 	}
 }
@@ -892,7 +900,6 @@ void MainWindow::finishJoin(int i) {
 			win = this;
 		} else {
 			win = new MainWindow(this);
-			win->show();
 		}
 		win->joinSession(address);
 	}
@@ -1047,7 +1054,7 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 	);
 	msgbox.setWindowModality(Qt::WindowModal);
 	msgbox.setDetailedText(details);
-	msgbox.show();
+	msgbox.exec();
 }
 
 /**
