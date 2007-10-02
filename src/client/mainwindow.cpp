@@ -782,7 +782,7 @@ void MainWindow::leave()
 		leavebox->setIcon(QMessageBox::Warning);
 		leavebox->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
 	}
-	leavebox->exec();
+	leavebox->show();
 }
 
 /**
@@ -1045,16 +1045,17 @@ void MainWindow::showErrorMessage(ErrorType type)
  */
 void MainWindow::showErrorMessage(const QString& message, const QString& details)
 {
-	QMessageBox msgbox(
+	QMessageBox *msgbox = new QMessageBox(
 		QMessageBox::Warning,
 		QString("DrawPile"),
 		message, QMessageBox::Ok,
 		this,
 		Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint
 	);
-	msgbox.setWindowModality(Qt::WindowModal);
-	msgbox.setDetailedText(details);
-	msgbox.exec();
+	msgbox->setAttribute(Qt::WA_DeleteOnClose);
+	msgbox->setWindowModality(Qt::WindowModal);
+	msgbox->setDetailedText(details);
+	msgbox->show();
 }
 
 /**
