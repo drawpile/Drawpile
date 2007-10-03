@@ -104,8 +104,9 @@ void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 		const QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
 					QSizeF(dia_, dia_));
 		if(rect.intersects(outline)) {
-			painter->setClipRect(0,0, board_->width(), board_->height());
-			painter->setRenderHint(QPainter::Antialiasing, true);
+			//painter->setClipRect(0,0,board_->width(),board_->height()); // default
+			//painter->setClipRect(outline.adjusted(-7, -7, 7, 7)); // smaller clipping
+			//painter->setRenderHint(QPainter::Antialiasing, true); // default
 			QPen pen(background_);
 			painter->setPen(pen);
 			painter->drawEllipse(outline);
