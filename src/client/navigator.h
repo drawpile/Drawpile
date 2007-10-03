@@ -63,10 +63,6 @@ signals:
 	//! Zoom out
 	void zoomOut();
 	
-protected slots:
-	void zoomInButtonAction();
-	void zoomOutButtonAction();
-	
 protected:
 	NavigatorView *view_;
 };
@@ -89,6 +85,11 @@ signals:
 	//! Signaled when user moves the rectangle to some other spot
 	void focusMoved(const QRect& focus);
 	
+	//! Proxy signal for NavigatorLayout.zoomIn()
+	void zoomIn();
+	//! Proxy signal for NavigatorLayout.zoomOut()
+	void zoomOut();
+	
 public slots:
 	//! Enable/disable delayed update
 	void delayedUpdate(bool enable);
@@ -102,6 +103,11 @@ public slots:
 	void rescale();
 	//! Should be called when scene is resized
 	void sceneResized();
+	
+	//! Proxy slot for NavigatorLayout.zoomIn()
+	void catchZoomIn();
+	//! Proxy slot for NavigatorLayout.zoomIn()
+	void catchZoomOut();
 	
 protected:
 	//! React to widget resizing

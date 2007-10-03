@@ -1421,6 +1421,9 @@ void MainWindow::createNavigator(QMenu *toggles)
 	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	toggles->addAction(navigator_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, navigator_);
+	
+	connect(navigator_, SIGNAL(zoomIn()), this, SLOT(zoomin()));
+	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 }
 
 void MainWindow::createToolSettings(QMenu *toggles)

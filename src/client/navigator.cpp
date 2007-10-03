@@ -132,6 +132,17 @@ void Navigator::sceneResized()
 	rescale();
 }
 
+void Navigator::catchZoomIn()
+{
+	emit zoomIn();
+}
+
+void Navigator::catchZoomOut()
+{
+	emit zoomOut();
+}
+
+
 NavigatorLayout::NavigatorLayout(QWidget *parent, QGraphicsScene *scene)
 	: QWidget(parent), view_(0)
 {
@@ -160,14 +171,14 @@ NavigatorLayout::NavigatorLayout(QWidget *parent, QGraphicsScene *scene)
 	vbox->setContentsMargins(0,0,0,0);
 	QHBoxLayout *hbox = new QHBoxLayout();
 	
-	/** @todo Replace +/- with icons */
+	/** @todo Replace with icons */
 	QPushButton *zoomOutButton = new QPushButton("Zoom out", this);
 	QPushButton *zoomInButton = new QPushButton("Zoom in", this);
-	/** @todo The button actions need to actually do something, disabled until then */
-	zoomOutButton->setDisabled(true);
-	zoomInButton->setDisabled(true);
-	connect(zoomInButton, SIGNAL(released()), this, SLOT(zoomInButtonAction()));
-	connect(zoomOutButton, SIGNAL(released()), this, SLOT(zoomOutButtonAction()));
+	//zoomOutButton->setDisabled(true);
+	//zoomInButton->setDisabled(true);
+	// not very nice, but works
+	connect(zoomInButton, SIGNAL(released()), static_cast<Navigator*>(parent), SLOT(catchZoomIn()));
+	connect(zoomOutButton, SIGNAL(released()), static_cast<Navigator*>(parent), SLOT(catchZoomOut()));
 	
 	hbox->addWidget(zoomOutButton);
 	hbox->addWidget(zoomInButton);
@@ -181,14 +192,4 @@ NavigatorLayout::NavigatorLayout(QWidget *parent, QGraphicsScene *scene)
 NavigatorView* NavigatorLayout::navigatorView()
 {
 	return view_;
-}
-
-void NavigatorLayout::zoomInButtonAction()
-{
-	emit zoomIn();
-}
-
-void NavigatorLayout::zoomOutButtonAction()
-{
-	emit zoomOut();
 }
