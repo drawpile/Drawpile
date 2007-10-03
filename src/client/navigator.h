@@ -19,10 +19,8 @@
 #ifndef Navigator_H
 #define Navigator_H
 
-#include <QDockWidget>
-#include <QGraphicsView>
-
-class QGraphicsScene;
+#include <QDockWidget> // inherited by Navigator
+#include <QGraphicsView> // inherited by NavigatorView
 
 //! Navigator graphics view
 class NavigatorView
@@ -47,24 +45,13 @@ protected:
 	bool dragging_;
 };
 
-//! 
+//! Minimal layout for Navigator dock
 class NavigatorLayout
 	: public QWidget
 {
 	Q_OBJECT
 public:
-	NavigatorLayout(QWidget *parent, QGraphicsScene *scene);
-	
-	NavigatorView* navigatorView();
-	
-signals:
-	//! Zoom in
-	void zoomIn();
-	//! Zoom out
-	void zoomOut();
-	
-protected:
-	NavigatorView *view_;
+	NavigatorLayout(QWidget *parent, NavigatorView *view);
 };
 
 //! Navigator dock widget
@@ -104,9 +91,15 @@ public slots:
 	//! Should be called when scene is resized
 	void sceneResized();
 	
-	//! Proxy slot for NavigatorLayout.zoomIn()
+	//! Set Navigator render hints
+	/**
+	 * @see http://doc.trolltech.com/4.3/qpainter.html#RenderHint-enum
+	 */
+	void setRenderHint(QPainter::RenderHint hints);
+	
+	//! 
 	void catchZoomIn();
-	//! Proxy slot for NavigatorLayout.zoomIn()
+	//! 
 	void catchZoomOut();
 	
 protected:
