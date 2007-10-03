@@ -19,8 +19,11 @@
 #ifndef Navigator_H
 #define Navigator_H
 
+#include "../config.h"
+
 #include <QDockWidget> // inherited by Navigator
 #include <QGraphicsView> // inherited by NavigatorView
+#include <QRectF>
 
 //! Navigator graphics view
 class NavigatorView
@@ -28,23 +31,33 @@ class NavigatorView
 {
 	Q_OBJECT
 public:
+	//! ctor
 	NavigatorView(QGraphicsScene *scene, QWidget *parent);
-	~NavigatorView();
 	
 signals:
+	//! Signal rectangle movement
 	void focusMoved(int x, int y);
 	
 public slots:
-	void setFocus(const QPoint& pt);
+	//! Set rectangle to point
+	void moveFocus(const QPoint& pt);
+	//! Set rectangle
+	void setFocus(const QRectF& rect);
 	
 protected:
-	QGraphicsRectItem *rect_;
+	//! Draw rectangle
+	void drawForeground(QPainter *painter, const QRectF& rect);
 	
-	// mouse dragging
+	//! Drag rectangle if button is pressed
 	void mouseMoveEvent(QMouseEvent *event);
+	//! Move rectangle and enable dragging
 	void mousePressEvent(QMouseEvent *event);
+	//! Disable dragging
 	void mouseReleaseEvent(QMouseEvent *event);
 	
+	QRectF rect_;
+	
+	//! Is dragging?
 	bool dragging_;
 };
 
@@ -91,7 +104,7 @@ public slots:
 	//! Set associated graphics scene
 	void setScene(QGraphicsScene *scene);
 	//! Set view rectangle to different spot
-	void setFocus(const QRect& focus);
+	void setFocus(const QRectF& focus);
 	//! Re-scale the viewport
 	void rescale();
 	//! Should be called when scene is resized

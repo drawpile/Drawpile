@@ -101,7 +101,6 @@ MainWindow::MainWindow(const MainWindow *source)
 
 	// Create view
 	view_ = new widgets::EditorView(this);
-	view_->setAcceptDrops(true);
 
 	splitter_->addWidget(view_);
 	splitter_->setCollapsible(0, false);
@@ -130,6 +129,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	navigator_->setScene(board_);
 	// connect navigator to editor view
 	connect(navigator_, SIGNAL(focusMoved(int,int)), view_, SLOT(scrollTo(int,int)));
+	connect(view_, SIGNAL(viewMovedTo(const QRectF&)), navigator_, SLOT(setFocus(const QRectF&)));
 
 	// Create controller
 	controller_ = new Controller(this);
@@ -1064,6 +1064,7 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 void MainWindow::zoomin()
 {
 	view_->scale(2.0,2.0);
+	view_->sceneChanged();
 }
 
 /**
@@ -1072,6 +1073,7 @@ void MainWindow::zoomin()
 void MainWindow::zoomout()
 {
 	view_->scale(0.5,0.5);
+	view_->sceneChanged();
 }
 
 /**
@@ -1080,6 +1082,7 @@ void MainWindow::zoomout()
 void MainWindow::zoomone()
 {
 	view_->resetMatrix();
+	view_->sceneChanged();
 }
 
 /**

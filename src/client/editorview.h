@@ -58,6 +58,9 @@ class EditorView : public QGraphicsView
 		//! An image has been dropped on the widget
 		void imageDropped(const QString& filename);
 
+		//! Signals scene rectangle changes
+		void viewMovedTo(const QRectF& rect);
+
 	public slots:
 		//! Set the radius of the brush preview outline
 		void setOutlineRadius(int radius);
@@ -73,6 +76,9 @@ class EditorView : public QGraphicsView
 		
 		//! Scroll view to location
 		void scrollTo(int x, int y);
+		
+		//! Proxy for announcing scene changes
+		void sceneChanged();
 		
 	protected:
 		void enterEvent(QEvent *event);

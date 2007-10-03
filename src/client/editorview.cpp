@@ -34,12 +34,15 @@ EditorView::EditorView(QWidget *parent)
 	prevpoint_(0,0),outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 	viewport()->setAcceptDrops(true);
+	setAcceptDrops(true);
 }
 
 void EditorView::setBoard(drawingboard::Board *board)
 {
 	board_ = board;
 	setScene(board);
+	// notify of scene change
+	sceneChanged();
 }
 
 /**
@@ -121,7 +124,9 @@ void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 void EditorView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
-	showoutline_ = true;
+	if(enableoutline_) {
+		showoutline_ = true;
+	}
 }
 
 void EditorView::leaveEvent(QEvent *event)
@@ -280,6 +285,12 @@ bool EditorView::viewportEvent(QEvent *event)
 	return true;
 }
 
+void EditorView::sceneChanged()
+{
+	// Signal visible view rectangle change
+	emit viewMovedTo(mapToScene(rect()).boundingRect());
+}
+
 /**
  * @param x initial x coordinate
  * @param y initial y coordinate
@@ -295,6 +306,8 @@ void EditorView::startDrag(int x,int y)
 void EditorView::scrollTo(int x, int y)
 {
 	centerOn(x,y);
+	// notify of scene change
+	sceneChanged();
 }
 
 /**
@@ -313,6 +326,9 @@ void EditorView::moveDrag(int x, int y)
 	ver->setSliderPosition(ver->sliderPosition()+dy);
 	QScrollBar *hor = horizontalScrollBar();
 	hor->setSliderPosition(hor->sliderPosition()+dx);
+
+	// notify of scene change
+	sceneChanged();
 }
 
 //! Stop dragging
