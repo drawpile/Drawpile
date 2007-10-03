@@ -31,6 +31,9 @@ public:
 	NavigatorView(QGraphicsScene *scene, QWidget *parent);
 	~NavigatorView();
 	
+signals:
+	void focusMoved(int x, int y);
+	
 public slots:
 	void setFocus(const QPoint& pt);
 	
@@ -70,7 +73,10 @@ public:
 	~Navigator();
 signals:
 	//! Signaled when user moves the rectangle to some other spot
-	void focusMoved(const QRect& focus);
+	//void focusMoved(const QRect& focus);
+	
+	//! Signal for editorview
+	void focusMoved(int x, int y);
 	
 	//! Proxy signal for NavigatorLayout.zoomIn()
 	void zoomIn();
@@ -97,6 +103,8 @@ public slots:
 	 */
 	void setRenderHint(QPainter::RenderHint hints);
 	
+	//! Proxy for NavigatorView
+	void catchFocusMove(int x, int y);
 	//! 
 	void catchZoomIn();
 	//! 

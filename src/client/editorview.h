@@ -70,7 +70,10 @@ class EditorView : public QGraphicsView
 
 		//! Enable or disable crosshair cursor
 		void setCrosshair(bool enable);
-
+		
+		//! Scroll view to location
+		void scrollView(int x, int y);
+		
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
@@ -87,11 +90,11 @@ class EditorView : public QGraphicsView
 		//! Start dragging the view
 		void startDrag(int x, int y);
 
-		//! Drag the view
-		void moveDrag(int x, int y);
-
 		//! Stop dragging the view
 		void stopDrag();
+
+		//! Drag the view
+		void moveDrag(int x, int y);
 
 		//! State of the pen
 		/**

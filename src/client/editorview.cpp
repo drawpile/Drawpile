@@ -291,6 +291,12 @@ void EditorView::startDrag(int x,int y)
 	isdragging_ = true;
 }
 
+void EditorView::scrollView(int x, int y)
+{
+	verticalScrollBar()->setSliderPosition(y);
+	horizontalScrollBar()->setSliderPosition(x);
+}
+
 /**
  * @param x x coordinate
  * @param y y coordinate

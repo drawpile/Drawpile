@@ -57,8 +57,9 @@ void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 
 void NavigatorView::setFocus(const QPoint& pt)
 {
-	qDebug() << "set Focus to" << pt;
-	//emit focusMoved(QRect(foofoo));
+	/** @todo center coordinates; currently upper left corner */
+	
+	emit focusMoved(pt.x(), pt.y());
 }
 
 Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
@@ -77,6 +78,8 @@ Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
 	view_->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing
 		|QGraphicsView::DontSavePainterState);
 	
+	connect(view_, SIGNAL(focusMoved(int,int)), this, SLOT(catchFocusMove(int,int)));
+	
 	//delayedUpdate(false);
 	
 	if (scene_)
@@ -90,6 +93,11 @@ Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
 Navigator::~Navigator()
 {
 	//delete view_; // ?
+}
+
+void Navigator::catchFocusMove(int x, int y)
+{
+	emit focusMoved(x,y);
 }
 
 void Navigator::setRenderHint(QPainter::RenderHint hints)

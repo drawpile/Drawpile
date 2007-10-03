@@ -117,7 +117,6 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(view_, SIGNAL(imageDropped(QString)),
 			this, SLOT(open(QString)));
 
-
 	// Create the chatbox
 	chatbox_ = new widgets::ChatBox(this);
 	splitter_->addWidget(chatbox_);
@@ -129,7 +128,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	view_->setBoard(board_);
 	
 	navigator_->setScene(board_);
-	
+	// connect navigator to editor view
+	connect(navigator_, SIGNAL(focusMoved(int,int)), view_, SLOT(scrollView(int,int)));
 
 	// Create controller
 	controller_ = new Controller(this);
