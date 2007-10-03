@@ -57,8 +57,6 @@ void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 
 void NavigatorView::setFocus(const QPoint& pt)
 {
-	/** @todo center coordinates; currently upper left corner */
-	
 	emit focusMoved(pt.x(), pt.y());
 }
 

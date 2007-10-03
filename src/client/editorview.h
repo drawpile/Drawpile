@@ -72,7 +72,7 @@ class EditorView : public QGraphicsView
 		void setCrosshair(bool enable);
 		
 		//! Scroll view to location
-		void scrollView(int x, int y);
+		void scrollTo(int x, int y);
 		
 	protected:
 		void enterEvent(QEvent *event);

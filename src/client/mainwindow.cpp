@@ -129,7 +129,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	
 	navigator_->setScene(board_);
 	// connect navigator to editor view
-	connect(navigator_, SIGNAL(focusMoved(int,int)), view_, SLOT(scrollView(int,int)));
+	connect(navigator_, SIGNAL(focusMoved(int,int)), view_, SLOT(scrollTo(int,int)));
 
 	// Create controller
 	controller_ = new Controller(this);

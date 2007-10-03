@@ -291,10 +291,9 @@ void EditorView::startDrag(int x,int y)
 	isdragging_ = true;
 }
 
-void EditorView::scrollView(int x, int y)
+void EditorView::scrollTo(int x, int y)
 {
-	verticalScrollBar()->setSliderPosition(y);
-	horizontalScrollBar()->setSliderPosition(x);
+	centerOn(x,y);
 }
 
 /**
