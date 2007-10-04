@@ -59,6 +59,8 @@ protected:
 	//! Address (local for listening, remote for outgoing)
 	Address m_addr;
 	
+	//! For cheating
+	bool m_connected;
 public:
 	//! Default constructor
 	/**
@@ -132,6 +134,9 @@ public:
 	
 	//! Create new socket
 	fd_t create() NOTHROW;
+	
+	//! Return true if socket is connected
+	bool isConnected() const NOTHROW;
 	
 protected:
 	//! Re-use socket address

@@ -277,7 +277,7 @@ void Server::uWrite(User*& usr)
 	switch (sb)
 	{
 	case socket_error::Error:
-		if (!usr->sock.isValid())
+		if (!usr->sock.isConnected())
 			removeUser(usr, protocol::UserInfo::BrokenPipe);
 		break;
 	case 0:
@@ -394,7 +394,7 @@ void Server::uRead(User*& usr)
 	switch (rb)
 	{
 	case socket_error::Error:
-		if (!usr->sock.isValid())
+		if (!usr->sock.isConnected())
 			removeUser(usr, protocol::UserInfo::BrokenPipe);
 		break;
 	case 0:
@@ -1957,7 +1957,7 @@ void Server::uAdd()
 {
 	Socket sock = lsock.accept();
 	
-	if (!sock.isValid())
+	if (!sock.isConnected())
 	{
 		#if defined(DEBUG_SERVER) and !defined(NDEBUG)
 		cout << "- Invalid socket, aborting user creation." << endl;

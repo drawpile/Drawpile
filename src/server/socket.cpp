@@ -47,7 +47,8 @@ using namespace error;
 
 Socket::Socket(fd_t nsock, const Address& saddr)
 	: Descriptor<fd_t>(nsock),
-	m_addr(saddr)
+	m_addr(saddr),
+	m_connected(true)
 {
 	if (!isValid())
 		create();
@@ -56,7 +57,8 @@ Socket::Socket(fd_t nsock, const Address& saddr)
 
 Socket::Socket(const Socket& socket)
 	: Descriptor<fd_t>(socket),
-	m_addr(socket.m_addr)
+	m_addr(socket.m_addr),
+	m_connected(true)
 {
 	if (!isValid())
 		create();
@@ -120,6 +122,8 @@ fd_t Socket::create()
 		//assert(m_error != ESOCKTNOSUPPORT); // ?
 		assert(m_error != EINVAL);
 	}
+	
+	m_connected=false;
 	
 	return m_handle;
 }
@@ -328,7 +332,7 @@ int Socket::write(char* buffer, size_t len)
 		case OutOfMemory:
 			break;
 		default:
-			close();
+			m_connected=false;
 			break;
 		}
 		
@@ -381,7 +385,7 @@ int Socket::read(char* buffer, size_t len)
 		if (m_error == WouldBlock or m_error == Interrupted)
 			;
 		else
-			close();
+			m_connected=false;
 		
 		return Error;
 	}
@@ -411,4 +415,9 @@ const Address& Socket::addr() const
 bool Socket::isValid() const
 {
 	return (m_handle != InvalidHandle);
+}
+
+bool Socket::isConnected() const
+{
+	return (isValid() and m_connected);
 }
