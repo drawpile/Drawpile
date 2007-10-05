@@ -25,6 +25,8 @@
 #include <QGraphicsView> // inherited by NavigatorView
 #include <QRectF>
 
+class QPushButton;
+
 //! Navigator graphics view
 class NavigatorView
 	: public QGraphicsView
@@ -41,8 +43,12 @@ signals:
 public slots:
 	//! Set rectangle to point
 	void moveFocus(const QPoint& pt);
+	
 	//! Set rectangle
 	void setFocus(const QRectF& rect);
+	
+	//! Re-scale the viewport
+	void rescale();
 	
 protected:
 	//! Draw rectangle
@@ -68,6 +74,12 @@ class NavigatorLayout
 	Q_OBJECT
 public:
 	NavigatorLayout(QWidget *parent, NavigatorView *view);
+	
+	QPushButton* getZoomIn();
+	QPushButton* getZoomOut();
+protected:
+	QPushButton *m_zoomInButton;
+	QPushButton *m_zoomOutButton;
 };
 
 //! Navigator dock widget
@@ -84,52 +96,19 @@ public:
 	Navigator(QWidget *parent, QGraphicsScene *scene);
 	//! Dtor
 	~Navigator();
-signals:
-	//! Signaled when user moves the rectangle to some other spot
-	//void focusMoved(const QRect& focus);
 	
-	//! Signal for editorview
-	void focusMoved(int x, int y);
-	
-	//! Proxy signal for NavigatorLayout.zoomIn()
-	void zoomIn();
-	//! Proxy signal for NavigatorLayout.zoomOut()
-	void zoomOut();
-	
+	NavigatorView* getView();
+	NavigatorLayout* getLayout();
+
 public slots:
-	//! Enable/disable delayed update
-	void delayedUpdate(bool enable);
-	//! Update 
-	void update();
 	//! Set associated graphics scene
 	void setScene(QGraphicsScene *scene);
-	//! Set view rectangle to different spot
-	void setFocus(const QRectF& focus);
-	//! Re-scale the viewport
-	void rescale();
-	//! Should be called when scene is resized
-	void sceneResized();
-	
-	//! Set Navigator render hints
-	/**
-	 * @see http://doc.trolltech.com/4.3/qpainter.html#RenderHint-enum
-	 */
-	void setRenderHint(QPainter::RenderHint hints);
-	
-	//! Proxy for NavigatorView
-	void catchFocusMove(int x, int y);
-	//! 
-	void catchZoomIn();
-	//! 
-	void catchZoomOut();
 	
 protected:
 	//! React to widget resizing
 	void resizeEvent(QResizeEvent *event);
 	
 	NavigatorLayout *layout_;
-	
-	bool delayed_;
 };
 
 #endif // Navigator_H

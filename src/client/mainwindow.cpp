@@ -127,9 +127,16 @@ MainWindow::MainWindow(const MainWindow *source)
 	view_->setBoard(board_);
 	
 	navigator_->setScene(board_);
-	// connect navigator to editor view
-	connect(navigator_, SIGNAL(focusMoved(int,int)), view_, SLOT(scrollTo(int,int)));
-	connect(view_, SIGNAL(viewMovedTo(const QRectF&)), navigator_, SLOT(setFocus(const QRectF&)));
+	// Navigator <-> View
+	connect(navigator_->getView(), SIGNAL(focusMoved(int,int)),
+			view_, SLOT(scrollTo(int,int)));
+	connect(view_, SIGNAL(viewMovedTo(const QRectF&)), navigator_->getView(),
+			SLOT(setFocus(const QRectF&)));
+	// Navigator <-> Zoom In/Out
+	connect(navigator_->getLayout()->getZoomIn(), SIGNAL(released()),
+			this, SLOT(zoomin()));
+	connect(navigator_->getLayout()->getZoomOut(), SIGNAL(released()),
+			this, SLOT(zoomout()));
 
 	// Create controller
 	controller_ = new Controller(this);
@@ -1424,9 +1431,6 @@ void MainWindow::createNavigator(QMenu *toggles)
 	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	toggles->addAction(navigator_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, navigator_);
-	
-	connect(navigator_, SIGNAL(zoomIn()), this, SLOT(zoomin()));
-	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 }
 
 void MainWindow::createToolSettings(QMenu *toggles)

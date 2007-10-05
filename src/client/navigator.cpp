@@ -66,6 +66,19 @@ void NavigatorView::setFocus(const QRectF& rect)
 	updateScene(up);
 }
 
+void NavigatorView::rescale()
+{
+	resetTransform();
+	
+	QRectF ss = scene()->sceneRect();
+	// we shouldn't need to use view_
+	qreal x = qreal(width()) / ss.width();
+	qreal y = qreal(height()-5) / ss.height();
+	qreal min = (x < y ? x : y);
+	
+	scale(min, min);
+}
+
 /**
  * @todo the color should be user defined
  * @todo rectangle line style should be user defined as well
@@ -79,7 +92,7 @@ void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
 }
 
 Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
-	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), layout_(0), delayed_(false)
+	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), layout_(0)
 {
 	view_ = new NavigatorView(scene, this);
 	
@@ -94,11 +107,6 @@ Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
 	view_->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing
 		|QGraphicsView::DontSavePainterState);
 	
-	connect(view_, SIGNAL(focusMoved(int,int)), this, SLOT(catchFocusMove(int,int)));
-	
-	//delayedUpdate(false);
-	view_->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-	
 	if (scene_)
 		setScene(scene_);
 	
@@ -112,84 +120,32 @@ Navigator::~Navigator()
 	//delete view_; // ?
 }
 
-void Navigator::catchFocusMove(int x, int y)
+NavigatorView* Navigator::getView()
 {
-	emit focusMoved(x,y);
+	return view_;
 }
 
-void Navigator::setRenderHint(QPainter::RenderHint hints)
+NavigatorLayout* Navigator::getLayout()
 {
-	view_->setRenderHint(hints);
+	return layout_;
 }
 
 void Navigator::setScene(QGraphicsScene *scene)
 {
 	scene_ = scene;
-	disconnect(this, SLOT(sceneResized()));
-	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), this, SLOT(sceneResized()));
+	//disconnect(view_, SLOT(rescale()));
+	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), view_, SLOT(rescale()));
 	view_->setScene(scene);
-	rescale();
-}
-
-void Navigator::rescale()
-{
-	view_->resetTransform();
-	
-	QRectF ss = scene_->sceneRect();
-	// we shouldn't need to use view_
-	qreal x = qreal(view_->width()) / ss.width();
-	qreal y = qreal(view_->height()-5) / ss.height();
-	qreal min = (x < y ? x : y);
-	
-	view_->scale(min, min);
-}
-
-void Navigator::delayedUpdate(bool enable)
-{
-	if (enable)
-	{
-		//connect(emitter_, SIGNAL(penUp()), this, SLOT(update()));
-		//view_->setViewportUpdateMode(QGraphicsView::NoViewportUpdate);
-	}
-	else
-	{
-		disconnect(this, SLOT(update()));
-		//view_->setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
-	}
-}
-
-void Navigator::update()
-{
-	qDebug() << "update [TODO]";
-}
-
-void Navigator::setFocus(const QRectF& rect)
-{
-	view_->setFocus(rect);
+	view_->rescale();
 }
 
 void Navigator::resizeEvent(QResizeEvent *event)
 {
-	rescale();
-}
-
-void Navigator::sceneResized()
-{
-	rescale();
-}
-
-void Navigator::catchZoomIn()
-{
-	emit zoomIn();
-}
-
-void Navigator::catchZoomOut()
-{
-	emit zoomOut();
+	view_->rescale();
 }
 
 NavigatorLayout::NavigatorLayout(QWidget *parent, NavigatorView *view)
-	: QWidget(parent)
+	: QWidget(parent), m_zoomInButton(0), m_zoomOutButton(0)
 {
 	QVBoxLayout *vbox = new QVBoxLayout(this);
 	vbox->setContentsMargins(0,0,0,0);
@@ -197,18 +153,24 @@ NavigatorLayout::NavigatorLayout(QWidget *parent, NavigatorView *view)
 	
 	// add slider between the two buttons for somewhat nicer adjusting
 	/** @todo Replace with icons */
-	QPushButton *zoomOutButton = new QPushButton(tr("Zoom out"), this);
-	QPushButton *zoomInButton = new QPushButton(tr("Zoom in"), this);
+	m_zoomOutButton = new QPushButton(tr("Zoom out"), this);
+	m_zoomInButton = new QPushButton(tr("Zoom in"), this);
 	
-	// not very nice, but works
-	connect(zoomInButton, SIGNAL(released()), static_cast<Navigator*>(parent), SLOT(catchZoomIn()));
-	connect(zoomOutButton, SIGNAL(released()), static_cast<Navigator*>(parent), SLOT(catchZoomOut()));
-	
-	hbox->addWidget(zoomOutButton);
-	hbox->addWidget(zoomInButton);
+	hbox->addWidget(m_zoomOutButton);
+	hbox->addWidget(m_zoomInButton);
 	
 	vbox->addWidget(view);
 	vbox->addLayout(hbox);
 	
 	setLayout(vbox);
+}
+
+QPushButton* NavigatorLayout::getZoomIn()
+{
+	return m_zoomInButton;
+}
+
+QPushButton* NavigatorLayout::getZoomOut()
+{
+	return m_zoomOutButton;
 }
