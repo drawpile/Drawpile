@@ -428,7 +428,6 @@ void Server::uProcessData(User*& usr)
 		}
 		else if (!usr->inMsg) // invalid data?
 		{
-			cerr << __LINE__ << endl;
 			removeUser(usr, protocol::UserInfo::Dropped);
 		}
 	}
@@ -1132,7 +1131,6 @@ void Server::uSessionEvent(Session& session, User*& usr)
 		session.persist = (event.aux != 0);
 		break;
 	default:
-		cerr << __LINE__ << endl;
 		removeUser(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -1342,7 +1340,6 @@ void Server::uSessionInstruction(User*& usr)
 		}
 		break;
 	default:
-		cerr << __LINE__ << endl;
 		removeUser(usr, protocol::UserInfo::Dropped);
 		return;
 	}
@@ -1497,10 +1494,7 @@ void Server::uHandleLogin(User*& usr)
 		if (usr->inMsg->type == protocol::Message::UserInfo)
 			uLoginInfo(*usr);
 		else // wrong message type
-		{
-			cerr << __LINE__ << endl;
 			removeUser(usr, protocol::UserInfo::Dropped);
-		}
 		break;
 	case User::LoginAuth:
 		if (usr->inMsg->type == protocol::Message::Password)
@@ -1515,10 +1509,7 @@ void Server::uHandleLogin(User*& usr)
 				uQueueMsg(*usr, msgHostInfo()); // send hostinfo
 			}
 			else  // mismatch
-			{
-				cerr << __LINE__ << endl;
 				removeUser(usr, protocol::UserInfo::Dropped);
-			}
 		}
 		else // not a password
 			removeUser(usr, protocol::UserInfo::Violation);
@@ -1529,10 +1520,7 @@ void Server::uHandleLogin(User*& usr)
 			const protocol::Identifier &ident = *static_cast<protocol::Identifier*>(usr->inMsg);
 			
 			if (memcmp(ident.identifier, protocol::identifier_string, protocol::identifier_size) != 0)
-			{
-				cerr << __LINE__ << endl;
 				removeUser(usr, protocol::UserInfo::Dropped);
-			}
 			else if (ident.revision != protocol::revision)
 			{
 				#ifndef NDEBUG
@@ -1628,7 +1616,6 @@ void Server::uLayerEvent(User*& usr)
 			}
 			break;
 		default:
-			cerr << __LINE__ << endl;
 			removeUser(usr, protocol::UserInfo::Dropped);
 			return;
 		}
