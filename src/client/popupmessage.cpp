@@ -30,7 +30,7 @@
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(parent, Qt::Popup)
+	: QWidget(parent, Qt::Dialog)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	message_ = new QLabel(this);
