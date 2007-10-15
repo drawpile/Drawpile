@@ -31,17 +31,20 @@
 
 #include "config.h"
 
+#include "ref_counted.h"
+
 #include "address.h"
 #include "socket.porting.h"
 #include "socket.errors.h"
 #include "socket.types.h" // fd_t
 
-#include "descriptor.h"
-
 //! Socket abstraction
 class Socket
-	: public Descriptor<fd_t>
+	: public ReferenceCounted
 {
+protected:
+	fd_t m_handle;
+	int m_error;
 public:
 	//! Possible values to shutdown()
 	enum ShutdownStyle {
@@ -81,6 +84,13 @@ public:
 	 */
 	Socket accept() NOTHROW;
 	
+	//! Get handle
+	fd_t handle() const NOTHROW;
+	//! Set handle
+	void setHandle(fd_t handle) NOTHROW;
+	//! Close handle
+	void close() NOTHROW;
+	
 	//! Bind socket to port and address
 	/**
 	 * @param[in] address Address to bind to
@@ -98,6 +108,9 @@ public:
 	bool listen() NOTHROW;
 	
 	bool isValid() const NOTHROW;
+	
+	//! Return last error number
+	int getError() NOTHROW;
 	
 	//! Send data.
 	/**

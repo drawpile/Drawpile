@@ -45,8 +45,9 @@
 using namespace socket_error;
 using namespace error;
 
-Socket::Socket(fd_t nsock, const Address& saddr)
-	: Descriptor<fd_t>(nsock),
+Socket::Socket(fd_t socket, const Address& saddr)
+	: ReferenceCounted(),
+	m_handle(socket),
 	m_addr(saddr),
 	m_connected(true)
 {
@@ -56,7 +57,8 @@ Socket::Socket(fd_t nsock, const Address& saddr)
 }
 
 Socket::Socket(const Socket& socket)
-	: Descriptor<fd_t>(socket),
+	: ReferenceCounted(socket),
+	m_handle(socket.m_handle),
 	m_addr(socket.m_addr),
 	m_connected(true)
 {
@@ -67,7 +69,8 @@ Socket::Socket(const Socket& socket)
 
 Socket::~Socket()
 {
-	// closed in ~Descriptor<T>
+	if (unique())
+		close();
 }
 
 void Socket::setup()
@@ -420,4 +423,32 @@ bool Socket::isValid() const
 bool Socket::isConnected() const
 {
 	return (isValid() and m_connected);
+}
+
+fd_t Socket::handle() const
+{
+	return m_handle;
+}
+
+void Socket::setHandle(fd_t handle)
+{
+	if (m_handle != InvalidHandle)
+		close();
+	m_handle = handle;
+}
+
+void Socket::close()
+{
+	#ifdef WIN32
+	::closesocket(m_handle);
+	m_handle = socket_error::InvalidHandle;
+	#else
+	::close(m_handle);
+	m_handle = error::InvalidDescriptor;
+	#endif
+}
+
+int Socket::getError()
+{
+	return m_error;
 }
