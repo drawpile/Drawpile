@@ -70,7 +70,7 @@
  * @param source if not null, clone settings from this window
  */
 MainWindow::MainWindow(const MainWindow *source)
-	: QMainWindow()
+	: QMainWindow(), board_(0)
 {
 	setTitle();
 
@@ -1427,7 +1427,6 @@ void MainWindow::createDocks()
 void MainWindow::createNavigator(QMenu *toggles)
 {
 	navigator_ = new Navigator(this, board_);
-	navigator_->setObjectName("navigatordock");
 	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	toggles->addAction(navigator_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, navigator_);

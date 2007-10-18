@@ -30,6 +30,17 @@ NavigatorView::NavigatorView(QGraphicsScene *scene, QWidget *parent)
 	: QGraphicsView(scene, parent), dragging_(false)
 {
 	viewport()->setMouseTracking(true);
+	
+	setInteractive(false); //?
+	
+	setResizeAnchor(QGraphicsView::AnchorViewCenter);
+	setAlignment(Qt::AlignCenter);
+	
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	
+	setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing
+		|QGraphicsView::DontSavePainterState);
 }
 
 void NavigatorView::mousePressEvent(QMouseEvent *event)
@@ -94,18 +105,9 @@ void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
 Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
 	: QDockWidget(tr("Navigator"), parent), view_(0), scene_(scene), layout_(0)
 {
+	setObjectName("navigatordock");
+	
 	view_ = new NavigatorView(scene, this);
-	
-	view_->setInteractive(false); //?
-	
-	view_->setResizeAnchor(QGraphicsView::AnchorViewCenter);
-	view_->setAlignment(Qt::AlignCenter);
-	
-	view_->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	view_->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-	
-	view_->setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing
-		|QGraphicsView::DontSavePainterState);
 	
 	if (scene_)
 		setScene(scene_);
@@ -133,10 +135,17 @@ NavigatorLayout* Navigator::getLayout()
 void Navigator::setScene(QGraphicsScene *scene)
 {
 	scene_ = scene;
-	//disconnect(view_, SLOT(rescale()));
-	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), view_, SLOT(rescale()));
-	view_->setScene(scene);
-	view_->rescale();
+	if (scene)
+	{
+		connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), view_, SLOT(rescale()));
+		view_->setScene(scene);
+		view_->rescale();
+	}
+	else
+	{
+		disconnect(view_, SLOT(rescale()));
+		view_->setScene(scene);
+	}
 }
 
 void Navigator::resizeEvent(QResizeEvent *event)
