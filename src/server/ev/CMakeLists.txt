@@ -78,7 +78,6 @@ set (
 )
 
 if ( RELEASE )
-	InSourceDir ( EV_SOURCES ${EV_SOURCES} )
 	generate_final ( EV_SOURCES ${EV_SOURCES} )
 endif ( RELEASE )
 

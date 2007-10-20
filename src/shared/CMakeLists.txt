@@ -8,7 +8,6 @@ set (
 )
 
 if ( RELEASE )
-	InSourceDir ( SHR_SOURCES ${SHR_SOURCES} )
 	generate_final ( SHR_SOURCES ${SHR_SOURCES} )
 endif ( RELEASE )
 

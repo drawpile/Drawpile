@@ -91,9 +91,7 @@ if ( WIN32 )
 endif ( WIN32 )
 
 if ( RELEASE )
-	InSourceDir ( SOURCES ${SOURCES} )
 	generate_final ( SOURCES ${SOURCES} )
-	#InBuildDir ( MOC_Sources ${MOC_Sources} )
 	#generate_final ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
 

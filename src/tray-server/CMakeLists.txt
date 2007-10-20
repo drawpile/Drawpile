@@ -41,7 +41,6 @@ if ( WIN32 )
 endif ( WIN32 )
 
 if ( RELEASE )
-	InSourceDir ( SSOURCES ${SSOURCES} )
 	generate_final ( SSOURCES ${SSOURCES} )
 endif ( RELEASE )
 
