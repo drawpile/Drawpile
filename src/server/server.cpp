@@ -778,10 +778,7 @@ void Server::uHandleMsg(User*& usr)
 	}
 	
 	if (usr)
-	{
-		delete usr->inMsg;
-		usr->inMsg = 0;
-	}
+		usr->freeMsg();
 }
 
 #if defined(HAVE_ZLIB)
@@ -1557,10 +1554,7 @@ void Server::uHandleLogin(User*& usr)
 	}
 	
 	if (usr)
-	{
-		delete usr->inMsg;
-		usr->inMsg = 0;
-	}
+		usr->freeMsg();
 }
 
 #ifdef LAYER_SUPPORT
@@ -1664,7 +1658,10 @@ void Server::Propagate(const Session& session, message_ref msg, User* source)
 	
 	// Send ACK for the message we're about to share..
 	if (source != 0)
+	{
 		uQueueMsg(*source, msgAck(session.id, (*msg).type));
+		//usr->inMsg = 0;
+	}
 	
 	for (session_usr_const_i ui(session.users.begin()); ui != session.users.end(); ++ui)
 		if (ui->second != source)
@@ -1746,7 +1743,7 @@ void Server::SyncSession(Session& session)
 		assert(sdata != 0);
 		sdata->syncWait = false;
 		
-		// add join
+		// add join for old users
 		msg_queue.push_back(msgUserEvent(*usr_ptr, session.id, protocol::UserInfo::Join));
 		if (usr_ptr->session->id == session.id)
 		{
@@ -1796,7 +1793,7 @@ void Server::SyncSession(Session& session)
 			tunnel.insert( std::pair<User*,User*>(src, *n_user) );
 			
 			// add user to normal data propagation.
-			session.users[(*n_user)->id] = *n_user;
+			session.users.insert(std::pair<octet,User*>((*n_user)->id, *n_user));
 		}
 	}
 	#ifdef PERSISTENT_SESSIONS

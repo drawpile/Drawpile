@@ -37,8 +37,8 @@ option ( IPV4 "Enable IPv4 support" ON )
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( OPTIMIZE "Apply several generic optimization flags" ON )
 option ( USEENV "Use CXXFLAGS as set in environemnt" ON )
-option ( GENERIC "Optimize for generic CPU arch" OFF )
-option ( SHARED "Build shared libraries." OFF ) # likely broken in some manner or another
+option ( GENERIC "Optimize for generic CPU arch; disables USEENV" OFF )
+option ( SHARED "Build shared libraries." OFF ) # works in win32, other systems untested
 
 option ( USE_URANDOM "Use /dev/urandom instead of rand()" ON )
 
@@ -46,7 +46,7 @@ option ( USE_URANDOM "Use /dev/urandom instead of rand()" ON )
 
 option ( PROFILE "Enable profiling (-pg)" OFF )
 
-option ( ASM "Use hand-written assembly" OFF )
+option ( ASM "Use hand-written assembly" OFF ) # unused?
 
 # Our own SHA-1 implementation is broken, so using OpenSSL will effectively create
 # incompatibility with servers/clients that use it.
@@ -54,7 +54,7 @@ option ( OPENSSL "Use OpenSSL if present" OFF )
 
 option ( PERSISTENT "Enable persistent session support" OFF )
 
-option ( RELEASE "Compile as much as possible in one go to generate more optimized binaries." OFF )
+option ( RELEASE "Enable final all-in-one compilation." OFF )
 
 # Set build type
 if ( DEBUG )

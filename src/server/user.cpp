@@ -55,7 +55,7 @@ User::User(octet _id, const Socket& nsock)
 
 User::~User()
 {
-	delete inMsg;
+	freeMsg();
 	
 	sessions.clear();
 }
@@ -170,8 +170,7 @@ bool User::getMessage()
 {
 	if (!inMsg)
 	{
-		inMsg = protocol::getMessage(input.rpos[0]);
-		if (!inMsg)
+		if (!(inMsg = protocol::getMessage(input.rpos[0])))
 			return false; // invalid type, drop user
 	}
 	
@@ -180,12 +179,9 @@ bool User::getMessage()
 	size_t reqlen = inMsg->reqDataLen(input.rpos, cread);
 	if (reqlen > input.left)
 	{
+		// invalid data if longer than this
 		if (reqlen > std::numeric_limits<ushort>::max())
-		{
-			// invalid data
-			delete inMsg;
-			inMsg = 0;
-		}
+			freeMsg();
 		return false; // need more data
 	}
 	else if (reqlen > cread)
@@ -194,7 +190,7 @@ bool User::getMessage()
 		// but not greater than we have in total.
 		// So, we reposition the buffer for maximal reading.
 		input.reposition();
-		goto getreqlen;
+		goto getreqlen; // retry
 	}
 	else
 	{
@@ -203,11 +199,16 @@ bool User::getMessage()
 			input.read( rv );
 		else
 		{
-			delete inMsg;
-			inMsg = 0;
+			freeMsg();
 			return false;
 		}
 	}
 	
 	return true;
+}
+
+void User::freeMsg()
+{
+	delete inMsg;
+	inMsg = 0;
 }

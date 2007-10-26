@@ -192,6 +192,9 @@ public:
 	 * @throw std::bad_alloc thrown indirectly from Buffer or serialize()
 	 */
 	uint flushQueue();
+	
+	//! Delete and null inMsg
+	void freeMsg() NOTHROW;
 };
 
 #endif // ServerUser_INCLUDED
