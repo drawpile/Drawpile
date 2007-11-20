@@ -141,7 +141,7 @@ char* Message::serialize(size_t &length, char* data, size_t &size) const
 	// Allocate memory if necessary
 	if (size < length)
 	{
-		size = roundToNext(length, 4096u);
+		size = roundToNext(length, static_cast<size_t>(4096ul));
 		assert(size >= length);
 		data = new char[size];
 	}
