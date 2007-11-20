@@ -33,6 +33,7 @@
 #ifndef PROTOCOL_HELPER_H_INCLUDED
 #define PROTOCOL_HELPER_H_INCLUDED
 
+#include "config.h"
 #include <stdexcept> // std::bad_alloc
 
 namespace protocol
