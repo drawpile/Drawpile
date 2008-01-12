@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../config.h"
 
 #cmakedefine EV_SELECT_COPY

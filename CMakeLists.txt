@@ -12,8 +12,8 @@ set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 
 ###
 
-include ( config/Names.cmake )
-include ( config/SVN.cmake )
+include ( "config/Names.cmake" )
+include ( "config/SVN.cmake" )
 
 ### options ###
 
@@ -25,8 +25,6 @@ option ( SERVERLIB "Compile server library; required by both server implementati
 option ( UNITTEST "Compile unit tests" OFF )
 
 option ( EPOLL "Enable epoll(4) support (Linux 2.6)" ON )
-option ( KQUEUE "Enable kqueue(2) support (BSD/Mac[?])" ON )
-option ( WSAPOLL "Enable WSAPoll event support (Vista/Server2003)" ON )
 option ( SELECT "Enable select(2) support (any; fallback option)" ON )
 
 option ( DEFLATE "Enable deflate compression (requires zlib)" ON )
@@ -78,13 +76,13 @@ endif ( SERVER OR TRAYSERVER )
 
 ### Optimize ###
 if ( OPTIMIZE )
-	include ( config/Optimize.cmake )
+	include ( "config/Optimize.cmake" )
 else ( OPTIMIZE )
 	message ( STATUS "System CXX flags: $ENV{CXXFLAGS}" )
 endif ( OPTIMIZE )
 
 # Include some nice macros
-include ( config/Macros.cmake )
+include ( "config/Macros.cmake" )
 
 ### binary and library output ###
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )

@@ -16,6 +16,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef Event_H_INCLUDED
 #define Event_H_INCLUDED
 
@@ -24,18 +26,9 @@
 #if defined(EV_EPOLL)
 	#include "epoll.h"
 	typedef event::Epoll EventSystem;
-#elif defined(EV_KQUEUE)
-	#include "kqueue.h"
-	typedef event::Kqueue EventSystem;
-#elif defined(EV_WSAPOLL)
-	#include "wsapoll.h"
-	typedef event::WSAPoll EventSystem;
 #elif defined(EV_SELECT)
 	#include "select.h"
 	typedef event::Select EventSystem;
-#elif defined(EV_QT)
-	#include "qt.h"
-	typedef event::Qt EventSystem;
 #else
 	#error No event mechanism defined!
 #endif

@@ -26,6 +26,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef SharedPointer_INCLUDED
 #define SharedPointer_INCLUDED
 

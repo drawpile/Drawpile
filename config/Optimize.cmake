@@ -1,7 +1,7 @@
 # Optimize.cmake
 
 # http://gcc.gnu.org/onlinedocs/gcc/i386-and-x86_002d64-Options.html
-set ( CPU pentium3 )
+set ( CPU "pentium3" )
 set ( OPT "-O2" )
 
 ###   DO NOT TOUCH THE FOLLOWING   ###
@@ -17,16 +17,11 @@ else ( GENERIC )
 endif ( GENERIC )
 
 set ( MTHREADS "-mthreads" )
-
 set ( FASTMATH "-ffast-math" )
-
 set ( DEBUG_FLAGS "-g" )
-
 set ( WARN "-Wall" )
 set ( WEFFCPP "-Weffc++" ) # unused
-
 set ( NORTTI "-fno-rtti" ) # RTTI not needed
-
 set ( PIPE "-pipe" ) # only speeds up compilation
 
 include ( config/Macros.cmake )

@@ -26,15 +26,20 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef RefCounted_INCLUDED
 #define RefCounted_INCLUDED
 
+#include "config.h"
 #include "types.h"
 
 //! Reference Counted base class
 /**
  * @bug Classes implementations ReferenceCounted need to check for unique() in dtor to
  * perform final cleaning as this class does NOT call any inheritable destruction function.
+ *
+ * @note Not thread-safe
  */
 class ReferenceCounted
 {

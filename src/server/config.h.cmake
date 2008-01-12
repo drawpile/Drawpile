@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../config.h"
 
 #cmakedefine HAVE_ZLIB 1
