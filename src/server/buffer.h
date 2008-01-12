@@ -12,6 +12,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef CircularBuffer_INCLUDED
 #define CircularBuffer_INCLUDED
 

@@ -12,6 +12,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef Container_H_INCLUDED
 #define Container_H_INCLUDED
 

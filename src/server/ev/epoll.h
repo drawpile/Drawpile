@@ -26,6 +26,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef EventEpoll_INCLUDED
 #define EventEpoll_INCLUDED
 

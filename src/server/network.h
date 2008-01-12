@@ -26,14 +26,17 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef Network_INCLUDED
 #define Network_INCLUDED
 
 #include "config.h"
 #include "types.h"
 
-#include "socket.porting.h" // sockaddr_in/sockaddr_in6
-#include "socket.types.h" // AF_INET & AF_INET6
+#include "socket.types.h"
+
+#include <limits>
 
 #ifdef IPV6
 #define IPVNAMESPACE Network::IPv6
@@ -289,10 +292,10 @@ const uint SuperUser_Port = 1023;
 const uint PortLength = 5;
 
 //! Highest port number
-const uint PortUpperBound = 65535;
+const ushort PortUpperBound = std::numeric_limits<ushort>::max();
 
 //! Lowest port number
-const uint PortLowerBound = 0;
+const ushort PortLowerBound = 0;
 
 } // namespace:Network
 

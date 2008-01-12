@@ -14,10 +14,6 @@
 
 #include "network.h"
 
-#ifdef WIN32
-	#include <winsock2.h>
-#endif
-
 #ifndef NDEBUG
 	#include <cassert>
 	#include <iostream>

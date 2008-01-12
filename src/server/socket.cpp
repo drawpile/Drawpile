@@ -42,7 +42,6 @@
 	#endif
 #endif
 
-using namespace socket_error;
 using namespace error;
 
 Socket::Socket(fd_t socket, const Address& saddr)
@@ -119,9 +118,9 @@ fd_t Socket::create()
 		assert(m_error != WSANOTINITIALISED);
 		#endif
 		
-		assert(m_error != FamilyNotSupported);
-		assert(m_error != ProtocolNotSupported);
-		assert(m_error != ProtocolType);
+		assert(m_error != debug::FamilyNotSupported);
+		assert(m_error != debug::ProtocolNotSupported);
+		assert(m_error != debug::ProtocolType);
 		//assert(m_error != ESOCKTNOSUPPORT); // ?
 		assert(m_error != EINVAL);
 	}
@@ -162,8 +161,8 @@ Socket Socket::accept()
 		assert(m_error != BadDescriptor);
 		assert(m_error != EINVAL);
 		assert(m_error != Fault);
-		assert(m_error != NotSocket);
-		assert(m_error != OperationNotSupported);
+		assert(m_error != debug::NotSocket);
+		assert(m_error != debug::OperationNotSupported);
 		
 		#ifdef EPROTO
 		assert(m_error != EPROTO);
@@ -218,8 +217,8 @@ bool Socket::reuse_addr(bool x)
 		
 		// programming errors
 		assert(m_error != BadDescriptor);
-		assert(m_error != NotSocket);
-		assert(m_error != ProtocolOption);
+		assert(m_error != debug::NotSocket);
+		assert(m_error != debug::ProtocolOption);
 		assert(m_error != Fault);
 	}
 	
@@ -252,10 +251,10 @@ bool Socket::bindTo(const Address& naddr)
 		// programming errors
 		assert(m_error != BadDescriptor);
 		assert(m_error != EINVAL);
-		assert(m_error != NotSocket);
-		assert(m_error != OperationNotSupported);
-		assert(m_error != FamilyNotSupported);
-		assert(m_error != Connected);
+		assert(m_error != debug::NotSocket);
+		assert(m_error != debug::OperationNotSupported);
+		assert(m_error != debug::FamilyNotSupported);
+		assert(m_error != debug::Connected);
 		
 		return false;
 	}
@@ -282,8 +281,8 @@ bool Socket::listen()
 		#endif
 		
 		assert(m_error != BadDescriptor);
-		assert(m_error != NotSocket);
-		assert(m_error != OperationNotSupported);
+		assert(m_error != debug::NotSocket);
+		assert(m_error != debug::OperationNotSupported);
 		
 		return false;
 	}
@@ -304,7 +303,7 @@ int Socket::write(char* buffer, size_t len)
 	u_long sb;
 	const int r = ::WSASend(m_handle, &wbuf, 1, &sb, 0, 0, 0);
 	#else
-	const int r = ::send(m_handle, buffer, len, NoSignal);
+	const int r = ::send(m_handle, buffer, len, MSG_NOSIGNAL);
 	#endif
 	
 	if (r == Error)
@@ -319,8 +318,8 @@ int Socket::write(char* buffer, size_t len)
 		assert(m_error != Fault);
 		assert(m_error != EINVAL);
 		assert(m_error != BadDescriptor);
-		assert(m_error != NotConnected);
-		assert(m_error != NotSocket);
+		assert(m_error != debug::NotConnected);
+		assert(m_error != debug::NotSocket);
 		#ifdef WIN32
 		assert(m_error != WSANOTINITIALISED);
 		#else
@@ -331,7 +330,7 @@ int Socket::write(char* buffer, size_t len)
 		{
 		case Interrupted:
 		case WouldBlock:
-		case socket_error::OutOfBuffers:
+		case OutOfBuffers:
 		case OutOfMemory:
 			break;
 		default:
@@ -382,8 +381,8 @@ int Socket::read(char* buffer, size_t len)
 		assert(m_error != BadDescriptor);
 		assert(m_error != Fault);
 		assert(m_error != EINVAL);
-		assert(m_error != NotConnected);
-		assert(m_error != NotSocket);
+		assert(m_error != debug::NotConnected);
+		assert(m_error != debug::NotSocket);
 		
 		if (m_error == WouldBlock or m_error == Interrupted)
 			;
@@ -441,7 +440,7 @@ void Socket::close()
 {
 	#ifdef WIN32
 	::closesocket(m_handle);
-	m_handle = socket_error::InvalidHandle;
+	m_handle = InvalidHandle;
 	#else
 	::close(m_handle);
 	m_handle = error::InvalidDescriptor;

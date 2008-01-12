@@ -22,6 +22,8 @@
 
 #include "../shared/protocol.helper.h" // protocol::getMessage
 
+#include "session_data.h"
+
 typedef std::map<octet, SessionData>::iterator usr_session_i;
 typedef std::map<octet, SessionData>::const_iterator usr_session_const_i;
 
@@ -46,9 +48,10 @@ User::User(octet _id, const Socket& nsock)
 	// other
 	inMsg(0),
 	level(0),
-	touched(0),
+	deadtime(0),
 	session_data(0),
-	strokes(0)
+	strokes(0),
+	source(0)
 {
 	assert(_id != protocol::null_user);
 }

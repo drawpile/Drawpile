@@ -12,13 +12,16 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef User_SessionData_INCLUDED
 #define User_SessionData_INCLUDED
 
+#include "config.h"
 #include "types.h"
 #include "shared/protocol.fwd.h"
 
-#include "fwd.decl.h"
+#include "common.h"
 
 //! User session data
 class SessionData

@@ -12,6 +12,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef LayerData_INCLUDED
 #define LayerData_INCLUDED
 

@@ -42,11 +42,11 @@ const int hangup<Epoll>::value = EPOLLHUP;
 const std::string system<Epoll>::value("epoll");
 
 Epoll::Epoll()
-	: evfd(socket_error::InvalidHandle)
+	: evfd(-1)
 {
 	evfd = epoll_create(10);
 	
-	if (evfd == socket_error::InvalidHandle)
+	if (evfd == -1)
 	{
 		error = errno;
 		
@@ -62,7 +62,7 @@ Epoll::~Epoll()
 
 int Epoll::wait()
 {
-	assert(evfd != socket_error::InvalidHandle);
+	assert(evfd != -1);
 	
 	nfds = epoll_wait(evfd, events, 10, m_timeout);
 	
@@ -84,9 +84,9 @@ int Epoll::wait()
 // Errors: ENOMEM
 int Epoll::add(fd_t fd, ev_t events)
 {
-	assert(evfd != socket_error::InvalidHandle);
+	assert(evfd != -1);
 	
-	assert(fd != socket_error::InvalidHandle);
+	assert(fd != -1);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -111,9 +111,9 @@ int Epoll::add(fd_t fd, ev_t events)
 
 int Epoll::modify(fd_t fd, ev_t events)
 {
-	assert(evfd != socket_error::InvalidHandle);
+	assert(evfd != -1);
 	
-	assert(fd != socket_error::InvalidHandle);
+	assert(fd != -1);
 	
 	epoll_event ev_info;
 	ev_info.data.fd = fd;
@@ -138,13 +138,13 @@ int Epoll::modify(fd_t fd, ev_t events)
 // Errors: ENOMEM
 int Epoll::remove(fd_t fd)
 {
-	assert(evfd != socket_error::InvalidHandle);
+	assert(evfd != -1);
 	
 	#if defined(DEBUG_EVENTS) and !defined(NDEBUG)
 	cout << "epoll.remove(FD: " << fd << ")" << endl;
 	#endif
 	
-	assert(fd != socket_error::InvalidHandle);
+	assert(fd != -1);
 	
 	const int r = epoll_ctl(evfd, EPOLL_CTL_DEL, fd, 0);
 	
@@ -164,7 +164,7 @@ int Epoll::remove(fd_t fd)
 
 bool Epoll::getEvent(fd_t &r_fd, ev_t &r_events)
 {
-	assert(evfd != socket_error::InvalidHandle);
+	assert(evfd != -1);
 	
 	if (nfds < 0)
 		return false;
@@ -173,7 +173,7 @@ bool Epoll::getEvent(fd_t &r_fd, ev_t &r_events)
 	r_events = events[nfds].events;
 	nfds--;
 	
-	assert(fd != socket_error::InvalidHandle); // shouldn't happen
+	assert(fd != -1); // shouldn't happen
 	
 	return true;
 }

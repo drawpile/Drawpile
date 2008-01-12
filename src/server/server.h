@@ -30,15 +30,17 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef Server_Class_Included
 #define Server_Class_Included
 
-#include "fwd.decl.h"
+#include "config.h"
 
+#include "common.h" // message_ref
 #include "ev/event.h" // EventSystem
 #include "socket.h" // Socket class
 #include "array.h" // Array<>
-#include "message_ref.h" // message_ref
 #include "session.h"
 #include "user.h"
 
@@ -54,10 +56,18 @@
 //! Server
 class Server
 {
+public:
+	enum {
+	xNoError = 0,
+	xLastUserLeft,
+	xBindError,
+	xSocketError,
+	xUnsupportedIPv,
+	xEventError,
+	xListenFailed,
+	xGenericError
+	};
 protected:
-	//! Last error
-	int error;
-	
 	/* data */
 	
 	//! Statistics
@@ -86,13 +96,6 @@ protected:
 	
 	//! Session ID to session mapping
 	std::map<octet, Session> sessions;
-	
-	//! Fake tunnel between two users. Only used for passing raster, for now.
-	/** source_fd -> target_fd */
-	std::multimap<User*, User*> tunnel;
-	
-	//! Users eligible for culling
-	std::list<User*> utimer;
 	
 	//! Listening socket
 	Socket lsock;
@@ -153,6 +156,9 @@ protected:
 		LocalhostAdmin,
 		//! Block duplicate connections from same source IP
 		blockDuplicateConnections;
+	
+	//! Users eligible for culling
+	uint usersInLogin;
 	
 	/* functions */
 	
@@ -476,13 +482,6 @@ protected:
 	 */
 	void uRegenSeed(User& usr) const NOTHROW;
 	
-	//! Check if user is owner of session
-	/**
-	 * @param[in] usr User to test
-	 * @param[in] session Target Session
-	 */
-	bool isOwner(const User& usr, const Session& session) const NOTHROW;
-	
 	//! Get Session* pointer
 	/**
 	 * @param[in] session_id Identifier for the session to find
@@ -504,6 +503,8 @@ protected:
 	//! Get user by identifier
 	User* getUserByID(octet user_id) NOTHROW;
 	
+	//! Create session
+	void createSession(User &usr, protocol::SessionInstruction &msg) NOTHROW;
 public:
 	//! Constructor
 	Server() NOTHROW;
@@ -515,12 +516,11 @@ public:
 	
 	//! Initializes anything that need to be done so.
 	/**
-	 * @retval false on error
-	 * @retval true otherwise
+	 * @retval 0 on success
 	 *
 	 * @throw std::bad_alloc
 	 */
-	bool init();
+	int init();
 	
 	/** set behaviour **/
 	
@@ -640,9 +640,6 @@ public:
 	//! Get current deflate compression setting
 	bool getDeflate() const NOTHROW;
 	
-	//! Get last error
-	int getError() NOTHROW;
-	
 	/** Control functions **/
 	
 	//! Enter main loop
@@ -654,16 +651,8 @@ public:
 	//! Clean-up users, sessions and anything else except config.
 	void reset() NOTHROW;
 	
-	/** Status and information retrieval **/
-	
+	//! Get statistics
 	Statistics getStats() const NOTHROW;
-	
-private:
-	#if 0
-	virtual void eventNotify() const NOTHROW;
-	#endif
-	
-	void createSession(User *usr, protocol::SessionInstruction &msg) NOTHROW;
 }; // class Server
 
 #endif // Server_Class_Included

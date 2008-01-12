@@ -32,11 +32,6 @@
 
 #include "dpsrv.h"
 
-// win32 macro workaround for <algorithm>
-#ifndef NOMINMAX
-	#define NOMINMAX
-#endif
-
 #include "config.h"
 
 #include <algorithm> // std::min, std::max
@@ -310,15 +305,15 @@ int main(int argc, char** argv)
 	
 	int rc = EXIT_FAILURE;
 	
+	#ifndef NDEBUG
+	cout << "+ Initializing WSA" << endl;
+	#endif
+	
+	if (!Network::start())
+		goto end;
+	
 	// limited scope for server
 	{
-		#ifndef NDEBUG
-		cout << "+ Initializing WSA" << endl;
-		#endif
-		
-		if (!Network::start())
-			goto end;
-		
 		#ifndef NDEBUG
 		cout << "+ Initializing server" << endl;
 		#endif
@@ -327,34 +322,50 @@ int main(int argc, char** argv)
 		
 		getArgs(argc, argv, srv);
 		
-		if (!srv.init())
+		if ((rc = srv.init()) != 0)
 		{
 			#ifndef NDEBUG
 			cerr << "- Initialization failed!" << endl;
 			#endif
-			
-			if (srv.getError() == socket_error::FamilyNotSupported)
-			{
-				#ifdef IPV6
-				cerr << "IPv6 not supported on this machine." << endl;
-				#else
-				cerr << "IPv4 not supported on this machine." << endl;
-				#endif
-			}
-			
-			
-			
 			goto end;
 		}
 		
 		cout << "+ Listening on port " << srv.getPort() << endl;
 		
 		rc = srv.run();
-		
-		Network::stop();
 	} // end server scope
 	
 	end:
+	Network::stop();
+	
+	switch (rc)
+	{
+	case Server::xNoError:
+		break;
+	case Server::xUnsupportedIPv:
+		#ifdef IPV6
+		cerr << "- IPv6 not supported on this machine." << endl;
+		#else
+		cerr << "- IPv4 not supported on this machine." << endl;
+		#endif
+		break;
+	case Server::xLastUserLeft:
+		cout << "! Last user left." << endl;
+		break;
+	case Server::xBindError:
+		cout << "- Port binding failed." << endl;
+		break;
+	case Server::xSocketError:
+		cerr << "- Socket creation failed." << endl;
+		break;
+	case Server::xEventError:
+		cerr << "- Event system error." << endl;
+		break;
+	default:
+		cerr << "- Unknown error occured." << endl;
+		break;
+	}
+	
 	#ifndef NDEBUG
 	cout << "~ Quitting..." << endl;
 	#endif

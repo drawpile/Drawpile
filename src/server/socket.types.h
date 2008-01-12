@@ -1,26 +1,22 @@
-/*******************************************************************************
+#pragma once
 
-   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+#ifndef SocketTypes_GUARD
+#define SocketTypes_GUARD
 
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-   DEALINGS IN THE SOFTWARE.
-
-*******************************************************************************/
-
-#ifndef Sockets_Ext_INCLUDED
-#define Sockets_Ext_INCLUDED
-
-#include "socket.porting.h"
+#include "config.h"
 
 #ifdef WIN32
-typedef SOCKET fd_t;
+	#include <ws2tcpip.h> // SOCKET, socklen_t
+	#include <winsock2.h>
+typedef SOCKET fd_t; // uint
 #else // POSIX
+	#include <sys/types.h>
+	#include <sys/socket.h>
+	#include <arpa/inet.h>
+	#include <netinet/in.h> // sockaddr_in
+	#include <unistd.h> // close()
+	#include <cerrno> // errno
 typedef int fd_t;
 #endif
 
-#endif // Sockets_Ext_INCLUDED
+#endif // SocketTypes_GUARD

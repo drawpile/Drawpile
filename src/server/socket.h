@@ -26,6 +26,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef Sockets_INCLUDED
 #define Sockets_INCLUDED
 
@@ -34,9 +36,45 @@
 #include "ref_counted.h"
 
 #include "address.h"
-#include "socket.porting.h"
-#include "socket.errors.h"
 #include "socket.types.h" // fd_t
+
+#ifndef MSG_NOSIGNAL
+	#define MSG_NOSIGNAL 0
+#endif
+
+#ifndef NDEBUG
+namespace debug {
+#ifdef WIN32
+const int FamilyNotSupported = WSAEAFNOSUPPORT;
+const int NotSocket = WSAENOTSOCK;
+const int ProtocolOption = WSAENOPROTOOPT;
+const int ProtocolType = WSAEPROTOTYPE;
+const int OperationNotSupported = WSAEOPNOTSUPP;
+const int ProtocolNotSupported = WSAEPROTONOSUPPORT;
+const int NotConnected = WSAENOTCONN;
+const int Connected = WSAEISCONN;
+#else
+const int FamilyNotSupported = EAFNOSUPPORT;
+const int NotSocket = ENOTSOCK;
+const int OperationNotSupported = EOPNOTSUPP;
+const int ProtocolNotSupported = EPROTONOSUPPORT;
+const int ProtocolOption = ENOPROTOOPT;
+const int ProtocolType = EPROTOTYPE;
+const int NotConnected = ENOTCONN;
+const int Connected = EISCONN;
+#endif
+}
+#endif
+
+#ifdef WIN32
+const int NetSubsystemDown = WSAENETDOWN;
+const int OutOfBuffers = WSAENOBUFS;
+const int ConnectionTimedOut = WSAETIMEDOUT;
+#else // POSIX
+const int NetSubsystemDown = ENETDOWN;
+const int OutOfBuffers = ENOBUFS;
+const int ConnectionTimedOut = ETIMEDOUT;
+#endif
 
 //! Socket abstraction
 class Socket
@@ -46,6 +84,14 @@ protected:
 	fd_t m_handle;
 	int m_error;
 public:
+	#ifdef WIN32
+	static const int Error = SOCKET_ERROR;
+	static const fd_t InvalidHandle = INVALID_SOCKET; // 0 ?
+	#else
+	static const int Error = -1;
+	static const fd_t InvalidHandle = -1;
+	#endif
+	
 	//! Possible values to shutdown()
 	enum ShutdownStyle {
 		#ifdef WIN32
@@ -70,7 +116,7 @@ public:
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(fd_t nsock=socket_error::InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
+	Socket(fd_t nsock=InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
 	
 	//! Copy ctor
 	Socket(const Socket& socket) NOTHROW;
@@ -80,7 +126,7 @@ public:
 	//! Accept new connection.
 	/**
 	 * @return Socket if new connection was accepted
-	 * @note (Socket.getFD() == socket_error::InvalidHandle) if no new connection was accepted
+	 * @note (Socket.getFD() == InvalidHandle) if no new connection was accepted
 	 */
 	Socket accept() NOTHROW;
 	

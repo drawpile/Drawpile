@@ -12,13 +12,14 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef SystemErrors_INCLUDED
 #define SystemErrors_INCLUDED
 
+#include "config.h"
+
 #include <cerrno> // ENOMEM, etc.
-#ifdef WIN32
-	#include <winsock2.h>
-#endif
 
 namespace error
 {

@@ -47,9 +47,9 @@ const std::string system<Select>::value("select");
 
 Select::Select()
 	#ifndef WIN32
-	: nfds_r(socket_error::InvalidHandle),
-	nfds_w(socket_error::InvalidHandle),
-	nfds_e(socket_error::InvalidHandle)
+	: nfds_r(Socket::InvalidHandle),
+	nfds_w(Socket::InvalidHandle),
+	nfds_e(Socket::InvalidHandle)
 	#endif
 {
 	FD_ZERO(&fds_r);
@@ -84,11 +84,11 @@ void Select::removeFromSet(fd_set &fdset, fd_t fd
 	#ifndef WIN32
 	l_set.erase(fd);
 	if (fd == largest)
-		largest = (l_set.size() > 0 ? *(l_set.rend()) : socket_error::InvalidHandle);
+		largest = (l_set.size() > 0 ? *(l_set.rend()) : Socket::InvalidHandle);
 	#endif
 }
 
-// Errors: WSAENETDOWN
+// Errors: NetSubsystemDown
 int Select::wait()
 {
 	#ifdef EV_SELECT_COPY
@@ -108,7 +108,7 @@ int Select::wait()
 	
 	fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
 	
-	if (ubnfds != socket_error::InvalidHandle)
+	if (ubnfds != Socket::InvalidHandle)
 		ubnfds++;
 	#endif
 	
@@ -141,7 +141,7 @@ int Select::wait()
 			
 			#if defined(WIN32)
 			/** @todo Do we need to do anything here? */
-			if (error == WSAENETDOWN)
+			if (error == NetSubsystemDown)
 				return 0;
 			#endif
 			break;
@@ -158,7 +158,7 @@ int Select::wait()
 
 int Select::add(fd_t fd, ev_t events)
 {
-	assert(fd != socket_error::InvalidHandle);
+	assert(fd != Socket::InvalidHandle);
 	
 	bool rc=false;
 	
@@ -202,7 +202,7 @@ int Select::add(fd_t fd, ev_t events)
 
 int Select::modify(fd_t fd, ev_t events)
 {
-	assert(fd != socket_error::InvalidHandle);
+	assert(fd != Socket::InvalidHandle);
 	
 	// act like a wrapper.
 	if (events != 0)
@@ -234,7 +234,7 @@ int Select::modify(fd_t fd, ev_t events)
 
 int Select::remove(fd_t fd)
 {
-	assert(fd != socket_error::InvalidHandle);
+	assert(fd != Socket::InvalidHandle);
 	
 	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
 	assert(iter != fd_list.end());

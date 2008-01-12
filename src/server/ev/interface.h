@@ -26,6 +26,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef EventInterface_INCLUDED
 #define EventInterface_INCLUDED
 

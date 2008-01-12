@@ -16,10 +16,13 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef DrawpileServer_INCLUDED
 #define DrawpileServer_INCLUDED
 
-#include "fwd.decl.h"
+#include "config.h"
+#include "common.h"
 
 /**
  * @throw std::bad_alloc

@@ -32,9 +32,10 @@
 
 #include "server.h"
 
+#include <boost/random/mersenne_twister.hpp>
+
 #include "errors.h"
 #include "socket.h"
-#include "socket.errors.h"
 #include "network.h" // Network namespace
 
 #include "../shared/SHA1.h"
@@ -56,10 +57,6 @@
 	#include <zlib.h>
 #endif
 
-#ifdef HAVE_URANDOM
-	#include <cstdio>
-#endif
-
 #ifndef NDEBUG
 	#include <iostream>
 	using std::cout;
@@ -77,10 +74,6 @@ typedef std::map<octet, Session>::iterator sessions_i;
 typedef std::map<octet, Session>::const_iterator sessions_const_i;
 typedef std::map<fd_t, User*>::iterator users_i;
 typedef std::map<fd_t, User*>::const_iterator users_const_i;
-
-// for Tunnel
-typedef std::multimap<User*, User*>::iterator tunnel_i;
-typedef std::multimap<User*, User*>::const_iterator tunnel_const_i;
 
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
@@ -101,7 +94,8 @@ Server::Server()
 	extDeflate(false), extPalette(true), extChat(true),
 	default_user_mode(protocol::user::None),
 	Transient(false), LocalhostAdmin(false),
-	blockDuplicateConnections(true)
+	blockDuplicateConnections(true),
+	usersInLogin(0)
 {
 	memset(user_ids, true, sizeof(user_ids));
 	memset(session_ids, true, sizeof(session_ids));
@@ -168,16 +162,8 @@ void Server::freeSessionID(octet id)
 
 void Server::uRegenSeed(User& usr) const
 {
-	#ifdef HAVE_URANDOM
-	FILE* stream = fopen("/dev/urandom", "r");
-	assert(stream);
-	if (!stream) throw std::exception;
-	fread(usr.seed, 4, 1, stream);
-	fclose(stream);
-	#else
-	for (int i=0; i < 4; i++)
-		reinterpret_cast<uchar*>(&usr.seed)[i] = rand() % 256; // 0 - 255
-	#endif
+	static boost::mt19937 mersenne_twister;
+	usr.seed = mersenne_twister();
 }
 
 message_ref Server::msgPWRequest(User& usr, octet session) const
@@ -276,7 +262,7 @@ void Server::uWrite(User*& usr)
 	
 	switch (sb)
 	{
-	case socket_error::Error:
+	case Socket::Error:
 		if (!usr->sock.isConnected())
 			removeUser(usr, protocol::UserInfo::BrokenPipe);
 		break;
@@ -393,7 +379,7 @@ void Server::uRead(User*& usr)
 	
 	switch (rb)
 	{
-	case socket_error::Error:
+	case Socket::Error:
 		if (!usr->sock.isConnected())
 			removeUser(usr, protocol::UserInfo::BrokenPipe);
 		break;
@@ -945,20 +931,22 @@ void Server::uTunnelRaster(User& usr)
 	else
 	#endif
 	{
-		std::pair<tunnel_i,tunnel_i> ft(tunnel.equal_range(&usr));
-		
 		// Forward raster data to users.
 		message_ref raster_ref(raster);
 		usr.inMsg = 0; // Avoid premature deletion of raster data.
 		
-		for (; ft.first != ft.second; ++ft.first)
+		userlist_i uli=usr.targets.begin();
+		for (; uli != usr.targets.end(); ++uli)
 		{
-			uQueueMsg(*ft.first->second, raster_ref);
-			if (last) ft.first->second->syncing = 0;
+			uQueueMsg(**uli, raster_ref);
+			if (last) {
+				(*uli)->syncing = 0;
+				(*uli)->source = 0;
+			}
 		}
 		
-		// Break tunnel/s if that was the last raster piece.
-		if (last) tunnel.erase(&usr);
+		// Clear raster targets if that was the last raster piece.
+		if (last) usr.targets.clear();
 	}
 }
 
@@ -973,7 +961,7 @@ void Server::uSessionEvent(Session& session, User*& usr)
 	cout << "~ Handling event for session #" << session.id << endl;
 	#endif
 	
-	if (!usr->isAdmin and !isOwner(*usr, session))
+	if (!usr->isAdmin and usr->id != session.owner)
 	{
 		uQueueMsg(*usr, msgError(session.id, protocol::error::Unauthorized));
 		return;
@@ -1133,18 +1121,13 @@ void Server::uSessionEvent(Session& session, User*& usr)
 	}
 }
 
-bool Server::isOwner(const User& usr, const Session& session) const
-{
-	return session.owner == usr.id;
-}
-
-void Server::createSession(User *usr, protocol::SessionInstruction &msg)
+void Server::createSession(User &usr, protocol::SessionInstruction &msg)
 {
 	const octet session_id = getSessionID();
 	
 	if (session_id == protocol::Global)
 	{
-		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::SessionLimit));
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::SessionLimit));
 		return;
 	}
 	else if (msg.user_limit < 2)
@@ -1153,14 +1136,14 @@ void Server::createSession(User *usr, protocol::SessionInstruction &msg)
 		cerr << "- Attempted to create single user session." << endl;
 		#endif
 		
-		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidData));
 		return;
 	}
 	
 	if (msg.width < min_dimension or msg.height < min_dimension
 		or msg.width > protocol::max_dimension or msg.height > protocol::max_dimension)
 	{
-		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidSize));
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidSize));
 		return;
 	}
 	
@@ -1171,7 +1154,7 @@ void Server::createSession(User *usr, protocol::SessionInstruction &msg)
 	
 	if (wideStrings and ((msg.title_len % 2) != 0))
 	{
-		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::InvalidData));
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::InvalidData));
 		return;
 	}
 	
@@ -1182,7 +1165,7 @@ void Server::createSession(User *usr, protocol::SessionInstruction &msg)
 		cerr << "- Session title not unique." << endl;
 		#endif
 		
-		uQueueMsg(*usr, msgError(msg.session_id, protocol::error::NotUnique));
+		uQueueMsg(usr, msgError(msg.session_id, protocol::error::NotUnique));
 	}
 	else
 	{
@@ -1191,8 +1174,8 @@ void Server::createSession(User *usr, protocol::SessionInstruction &msg)
 				session_id,
 				Session(
 					session_id,
-					msg.user_mode, msg.user_limit, usr->id,
-					msg.width, msg.height, usr->level,
+					msg.user_mode, msg.user_limit, usr.id,
+					msg.width, msg.height, usr.level,
 					title
 				)
 			)
@@ -1200,7 +1183,7 @@ void Server::createSession(User *usr, protocol::SessionInstruction &msg)
 		
 		#ifndef NDEBUG
 		const Session *session = getSession(session_id);
-		cout << "+ Session #" << session->id << " created by user #" << usr->id << endl
+		cout << "+ Session #" << session->id << " created by user #" << usr.id << endl
 			<< "  Size: " << session->width << "x" << session->height
 			<< ", Limit: " << static_cast<uint>(session->limit)
 			<< ", Mode: " << static_cast<uint>(session->mode)
@@ -1210,7 +1193,7 @@ void Server::createSession(User *usr, protocol::SessionInstruction &msg)
 		
 		msg.title = 0; // prevent title from being deleted
 		
-		uQueueMsg(*usr, msgAck(msg.session_id, protocol::Message::SessionInstruction));
+		uQueueMsg(usr, msgAck(msg.session_id, protocol::Message::SessionInstruction));
 	}
 	title.ptr = 0;
 }
@@ -1241,7 +1224,7 @@ void Server::uSessionInstruction(User*& usr)
 			break;
 		}
 		
-		createSession(usr, msg);
+		createSession(*usr, msg);
 		return; // because session owner might've done this
 	case protocol::SessionInstruction::Destroy:
 		{
@@ -1253,7 +1236,7 @@ void Server::uSessionInstruction(User*& usr)
 			}
 			
 			// Check session ownership
-			if (!usr->isAdmin and !isOwner(*usr, *session))
+			if (!usr->isAdmin and usr->id != session->owner)
 			{
 				uQueueMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
 				break;
@@ -1288,7 +1271,7 @@ void Server::uSessionInstruction(User*& usr)
 			}
 			
 			// Check session ownership
-			if (!usr->isAdmin and !isOwner(*usr, *session))
+			if (!usr->isAdmin and usr->id != session->owner)
 			{
 				uQueueMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
 				break;
@@ -1375,7 +1358,7 @@ void Server::uSetPassword(User*& usr)
 		}
 		
 		// Check session ownership
-		if (!usr->isAdmin and !isOwner(*usr, *session))
+		if (!usr->isAdmin and usr->id != session->owner)
 		{
 			uQueueMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
 			return;
@@ -1446,11 +1429,11 @@ void Server::uLoginInfo(User& usr)
 	msg.mode = 0;
 	
 	usr.state = User::Active;
-	usr.touched = 0;
 	usr.inMsg = 0;
 	
 	// remove fake timer
-	utimer.remove(&usr);
+	usr.deadtime = std::numeric_limits<time_t>::max();
+	usersInLogin--;
 	
 	// reply
 	uQueueMsg(usr, message_ref(&msg));
@@ -1576,7 +1559,7 @@ void Server::uLayerEvent(User*& usr)
 		uQueueMsg(*usr, msgError(lev.session_id, protocol::error::UnknownSession));
 		return;
 	}
-	else if (!isOwner(*usr, *session) and !usr->isAdmin)
+	else if (usr->id != session->owner and !usr->isAdmin)
 	{
 		uQueueMsg(*usr, msgError(session->id, protocol::error::Unauthorized));
 		return;
@@ -1773,7 +1756,7 @@ void Server::SyncSession(Session& session)
 			msg_queue.push_back(message_ref(new protocol::ToolInfo(*ti)));
 	}
 	
-	userlist_const_i n_user;
+	userlist_i n_user;
 	
 	// announce the new users
 	for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
@@ -1781,7 +1764,7 @@ void Server::SyncSession(Session& session)
 	
 	if (src)
 	{
-		// create tunnels
+		// Create raster source<->target relations
 		std::list<message_ref>::const_iterator m_iter;
 		for (n_user = session.waitingSync.begin(); n_user != session.waitingSync.end(); ++n_user)
 		{
@@ -1789,8 +1772,9 @@ void Server::SyncSession(Session& session)
 			for (m_iter=msg_queue.begin(); m_iter != msg_queue.end(); ++m_iter)
 				uQueueMsg(**n_user, *m_iter);
 			
-			// Create fake tunnel so the user can receive raster data
-			tunnel.insert( std::pair<User*,User*>(src, *n_user) );
+			// create relations
+			src->targets.push_back(*n_user);
+			(*n_user)->source = src;
 			
 			// add user to normal data propagation.
 			session.users.insert(std::pair<octet,User*>((*n_user)->id, *n_user));
@@ -1836,7 +1820,7 @@ void Server::uJoinSession(User& usr, Session& session)
 	sdata->setMode(default_user_mode);
 	
 	// Remove locked and mute, if the user is the session's owner.
-	if (isOwner(usr, session))
+	if (usr.id == session.owner)
 	{
 		sdata->locked = false;
 		sdata->muted = false;
@@ -1893,26 +1877,19 @@ void Server::uLeaveSession(User& usr, Session& session, protocol::UserInfo::ueve
 	{
 		if (!session.persist)
 			removeSession(session);
+		else
+			session.owner = protocol::null_user;
 	}
 	else
 	{
-		// Cancel raster sending for this user
-		tunnel_i t_iter(tunnel.begin());
-		while (t_iter != tunnel.end())
+		if (usr.syncing)
 		{
-			if (t_iter->second == &usr)
-			{
-				message_ref cancel_ref(new protocol::Cancel);
-				/** @todo Figure out which session the raster is from */
-				//cancel->session_id = session->id;
-				uQueueMsg(*t_iter->first, cancel_ref);
-				
-				tunnel.erase(t_iter);
-				// iterator was invalidated
-				t_iter = tunnel.begin();
-			}
-			else
-				++t_iter;
+			// Cancel raster sending to this user
+			usr.source->targets.remove(&usr);
+			message_ref cancel_ref(new protocol::Cancel);
+			cancel_ref->session_id = usr.syncing;
+			uQueueMsg(*usr.source, cancel_ref);
+			usr.source = 0;
 		}
 		
 		// Tell session members the user left
@@ -1920,7 +1897,7 @@ void Server::uLeaveSession(User& usr, Session& session, protocol::UserInfo::ueve
 		{
 			Propagate(session, msgUserEvent(usr, session_id, reason));
 			
-			if (isOwner(usr, session))
+			if (usr.id == session.owner)
 			{
 				session.owner = protocol::null_user;
 				
@@ -1984,23 +1961,19 @@ void Server::uAdd()
 	fSet(usr->events, event::read<EventSystem>::value);
 	ev.add(usr->sock.handle(), usr->events);
 	
-	const size_t ts = utimer.size();
-	
-	if (ts > 20)
+	if (usersInLogin > 20)
 		time_limit = 30; // half-a-minute
-	else if (ts > 10)
+	else if (usersInLogin > 10)
 		time_limit = 60; // 1 minute
 	else
 		time_limit = 180; // 3 minutes
 	
-	usr->touched = current_time + time_limit;
+	usr->deadtime = current_time + time_limit;
+	usersInLogin++;
 	
 	// re-schedule user culling
-	if (next_timer > usr->touched)
-		next_timer = usr->touched + 1;
-	
-	// add user to timer
-	utimer.insert(utimer.end(), usr);
+	if (next_timer > usr->deadtime)
+		next_timer = usr->deadtime + 1;
 	
 	const size_t nwbuffer = 4096*2 - 12;
 	
@@ -2052,28 +2025,10 @@ void Server::removeUser(User*& usr, protocol::UserInfo::uevent reason)
 	// Remove socket from event system
 	ev.remove(usr->sock.handle());
 	
-	// Clear the fake tunnel of any possible instance of this user.
-	// We're the source...
-	tunnel_i ti;
-	while ((ti = tunnel.find(usr)) != tunnel.end())
-	{
-		breakSync(*(ti->second));
-		tunnel.erase(ti);
-	}
-	
-	// break tunnels with the user in the receiving end
-	ti = tunnel.begin();
-	while (ti != tunnel.end())
-	{
-		if (ti->second == usr)
-		{
-			tunnel.erase(ti);
-			//iterator was invalidated
-			ti = tunnel.begin();
-		}
-		else
-			++ti;
-	}
+	// Clear raster targets/sources
+	for (userlist_i uli=usr->targets.begin(); uli != usr->targets.end(); ++uli)
+		breakSync(**uli);
+	usr->targets.clear();
 	
 	if (usr->syncing != 0)
 	{
@@ -2089,7 +2044,8 @@ void Server::removeUser(User*& usr, protocol::UserInfo::uevent reason)
 	freeUserID(usr->id);
 	
 	// clear any idle timer associated with this user.
-	utimer.remove(usr);
+	usr->deadtime = 0;
+	if (usr->state != User::Active) usersInLogin--;
 	
 	// remove from fd -> User* map
 	users.erase(usr->sock.handle());
@@ -2112,7 +2068,7 @@ void Server::removeSession(Session& session)
 	sessions.erase(session.id);
 }
 
-bool Server::init()
+int Server::init()
 {
 	#ifndef NDEBUG
 	cout << "~ Initializing" << endl;
@@ -2120,34 +2076,14 @@ bool Server::init()
 	
 	assert(state == Server::Dead);
 	
-	#ifndef LINUX
-	srand(time(0) - 513); // FIXME: Need better seed value
-	#endif
-	
 	if (!lsock.isValid())
 		lsock.create();
 	
 	if (!lsock.isValid())
-	{
-		#ifndef NDEBUG
-		cerr << "- Failed to create a socket." << endl;
-		#endif
-		
-		error = lsock.getError();
-		
-		return false;
-	}
+		return xSocketError;
 	
-	if (lsock.bindTo(Address(Network::UnspecifiedAddress, lsock.addr().port())))
-		;
-	else
-	{
-		#ifndef NDEBUG
-		cout << "- Failed to bind to " << lsock.addr() << endl;
-		#endif
-		error = lsock.getError();
-		return false;
-	}
+	if (!lsock.bindTo(Address(Network::UnspecifiedAddress, lsock.addr().port())))
+		return xBindError;
 	
 	if (lsock.listen())
 	{
@@ -2162,10 +2098,10 @@ bool Server::init()
 		
 		state = Server::Init;
 		
-		return true;
+		return xNoError;
 	}
 	else
-		return false;
+		return xGenericError;
 }
 
 bool Server::validateUserName(User& usr) const
@@ -2208,22 +2144,22 @@ void Server::cullIdlers()
 {
 	if (next_timer > current_time)
 		; // do nothing
-	else if (utimer.empty())
+	else if (usersInLogin == 0)
 		next_timer = current_time + 1800;
 	else
 	{
 		User *usr;
-		for (userlist_i tui(utimer.begin()); tui != utimer.end(); ++tui)
+		for (users_i tui(users.begin()); tui != users.end(); ++tui)
 		{
-			if ((*tui)->touched < current_time)
+			usr = tui->second;
+			if (usr->deadtime < current_time)
 			{
-				usr = *tui;
-				tui = --utimer.erase(tui);
+				usersInLogin--;
 				
 				removeUser(usr, protocol::UserInfo::TimedOut);
 			}
-			else if ((*tui)->touched < next_timer)
-				next_timer = (*tui)->touched; // re-schedule
+			else if (usr->deadtime < next_timer)
+				next_timer = usr->deadtime; // re-schedule
 		}
 	}
 }
@@ -2253,7 +2189,7 @@ int Server::run()
 			cerr << "- Error in event system: " << ev.getError() << endl;
 			#endif
 			state = Server::Error;
-			return -1;
+			return xEventError;
 		case 0:
 			// check timer
 			current_time = time(0);
@@ -2263,7 +2199,7 @@ int Server::run()
 			current_time = time(0);
 			while (ev.getEvent(fd, events))
 			{
-				assert(fd != socket_error::InvalidHandle);
+				assert(fd != Socket::InvalidHandle);
 				if (fd == lsock.handle())
 				{
 					cullIdlers();
@@ -2302,7 +2238,7 @@ int Server::run()
 	}
 	while (state == Server::Active);
 	
-	return 0;
+	return (users.empty() ? xLastUserLeft : xNoError);
 }
 
 void Server::stop()
@@ -2327,8 +2263,7 @@ void Server::reset()
 	
 	sessions.clear();
 	
-	tunnel.clear();
-	utimer.clear();
+	usersInLogin = 0;
 	
 	state = Server::Dead;
 }
@@ -2423,7 +2358,6 @@ void Server::setSubscriptionLimit(octet _slimit) { max_subscriptions = _slimit; 
 uint Server::getSubscriptionLimit() const { return max_subscriptions; }
 void Server::setDuplicateConnectionBlocking(bool _block) { blockDuplicateConnections = _block; }
 bool Server::getDuplicateConnectionBlocking() const { return blockDuplicateConnections; }
-int Server::getError() { return error; }
 
 void Server::setDeflate(bool x)
 {

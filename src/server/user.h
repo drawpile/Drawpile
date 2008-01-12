@@ -12,22 +12,23 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef ServerUser_INCLUDED
 #define ServerUser_INCLUDED
 
 #include "ev/event.h" // event::~
 
+#include "common.h"
 #include "socket.h" // Socket class
-#include "message_ref.h" // message_ref
 #include "buffer.h" // Buffer
 #include "array.h" // Array<>
 #include "types.h" // octet, etc.
 
 #include <deque> // std::deque
 #include <map> // std::map
+#include <list> // std::list
 
-// forward decl
-#include "fwd.decl.h"
 #include "shared/protocol.fwd.h"
 
 //! User/Client information
@@ -163,10 +164,10 @@ public:
 	uint level;
 	
 	//! Password seed associated with this user.
-	uint seed;
+	uint32_t seed;
 	
-	//! Last touched.
-	time_t touched;
+	//! User dead time.
+	time_t deadtime;
 	
 	//! User name
 	Array<char> name;
@@ -195,6 +196,11 @@ public:
 	
 	//! Delete and null inMsg
 	void freeMsg() NOTHROW;
+	
+	//! Raster targets
+	std::list<User*> targets;
+	//! Raster source
+	User *source;
 };
 
 #endif // ServerUser_INCLUDED

@@ -26,6 +26,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef NetworkAddress_INCLUDED
 #define NetworkAddress_INCLUDED
 
@@ -34,7 +36,6 @@
 #include <string> // std::string
 
 #include "network.h"
-#include "socket.porting.h" // sockaddr_in
 #include "socket.types.h"
 #include "types.h"
 

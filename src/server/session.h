@@ -13,6 +13,8 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef ServerSession_INCLUDED
 #define ServerSession_INCLUDED
 
@@ -28,7 +30,7 @@
 #include "../protocol.fwd.h"
 #endif
 
-#include "fwd.decl.h"
+#include "common.h"
 
 //! Session information
 class Session

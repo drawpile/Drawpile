@@ -26,9 +26,12 @@
 
 *******************************************************************************/
 
+#pragma once
+
 #ifndef EventSelect_INCLUDED
 #define EventSelect_INCLUDED
 
+#include "config.h"
 #include "interface.h"
 #include "traits.h"
 
