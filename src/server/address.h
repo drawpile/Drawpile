@@ -36,7 +36,6 @@
 #include <string> // std::string
 
 #include "network.h"
-#include "socket.types.h"
 #include "types.h"
 
 //! Internet IP Address

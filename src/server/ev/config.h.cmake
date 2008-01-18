@@ -7,7 +7,8 @@
 #cmakedefine EV_PSELECT
 #cmakedefine EV_EPOLL
 #cmakedefine EV_KQUEUE
-#cmakedefine EV_KEVENT
-#cmakedefine EV_WSA
+#cmakedefine EV_WSAWAIT
+#cmakedefine EV_AIO
+#cmakedefine EV_OPERLAP
 
 #cmakedefine DEBUG_EVENTS

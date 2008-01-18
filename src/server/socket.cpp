@@ -27,6 +27,8 @@
 *******************************************************************************/
 
 #include "socket.h"
+#include "config.h"
+#include "types.h"
 
 #include "../shared/templates.h"
 #include "errors.h"
@@ -36,15 +38,11 @@
 #ifndef WIN32
 	#include <fcntl.h>
 	#include <cerrno>
-#else
-	#ifdef IPV_DUAL_STACK
-		#include <mstcpip.h>
-	#endif
 #endif
 
 using namespace error;
 
-Socket::Socket(fd_t socket, const Address& saddr)
+Socket::Socket(SOCKET socket, const Address& saddr)
 	: ReferenceCounted(),
 	m_handle(socket),
 	m_addr(saddr),
@@ -97,10 +95,10 @@ void Socket::setup()
 	}
 }
 
-fd_t Socket::create()
+SOCKET Socket::create()
 {
 	#ifdef WIN32
-	m_handle = WSASocket(m_addr.family(), SOCK_STREAM, 0, 0, 0, 0 /* WSA_FLAG_OVERLAPPED */);
+	m_handle = WSASocket(m_addr.family(), SOCK_STREAM, 0, 0, 0, WSA_FLAG_OVERLAPPED);
 	#else
 	m_handle = socket(m_addr.family(), SOCK_STREAM, IPPROTO_TCP);
 	#endif
@@ -124,6 +122,8 @@ fd_t Socket::create()
 		//assert(m_error != ESOCKTNOSUPPORT); // ?
 		assert(m_error != EINVAL);
 	}
+	else
+		setup();
 	
 	m_connected=false;
 	
@@ -140,9 +140,9 @@ Socket Socket::accept()
 	socklen_t addrlen = sa.size();
 	
 	#if WIN32
-	fd_t n_fd = ::WSAAccept(m_handle, &sa.raw(), &addrlen, 0, 0);
+	SOCKET n_fd = ::WSAAccept(m_handle, &sa.raw(), &addrlen, 0, 0);
 	#else
-	fd_t n_fd = ::accept(m_handle, &sa.raw(), &addrlen);
+	SOCKET n_fd = ::accept(m_handle, &sa.raw(), &addrlen);
 	#endif
 	
 	if (n_fd == InvalidHandle)
@@ -424,12 +424,12 @@ bool Socket::isConnected() const
 	return (isValid() and m_connected);
 }
 
-fd_t Socket::handle() const
+SOCKET Socket::handle() const
 {
 	return m_handle;
 }
 
-void Socket::setHandle(fd_t handle)
+void Socket::setHandle(SOCKET handle)
 {
 	if (m_handle != InvalidHandle)
 		close();

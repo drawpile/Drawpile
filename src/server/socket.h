@@ -34,9 +34,8 @@
 #include "config.h"
 
 #include "ref_counted.h"
-
 #include "address.h"
-#include "socket.types.h" // fd_t
+#include "types.h"
 
 #ifndef MSG_NOSIGNAL
 	#define MSG_NOSIGNAL 0
@@ -81,15 +80,15 @@ class Socket
 	: public ReferenceCounted
 {
 protected:
-	fd_t m_handle;
+	SOCKET m_handle;
 	int m_error;
 public:
 	#ifdef WIN32
 	static const int Error = SOCKET_ERROR;
-	static const fd_t InvalidHandle = INVALID_SOCKET; // 0 ?
+	static const SOCKET InvalidHandle = INVALID_SOCKET; // 0 ?
 	#else
 	static const int Error = -1;
-	static const fd_t InvalidHandle = -1;
+	static const SOCKET InvalidHandle = -1;
 	#endif
 	
 	//! Possible values to shutdown()
@@ -116,7 +115,7 @@ public:
 	 * @param[in] nsock FD to associate with this Socket
 	 * @param[in] saddr Address to associate with this Socket
 	 */
-	Socket(fd_t nsock=InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
+	Socket(SOCKET nsock=InvalidHandle, const Address& saddr=Address(Network::UnspecifiedAddress,0)) NOTHROW;
 	
 	//! Copy ctor
 	Socket(const Socket& socket) NOTHROW;
@@ -131,9 +130,9 @@ public:
 	Socket accept() NOTHROW;
 	
 	//! Get handle
-	fd_t handle() const NOTHROW;
+	SOCKET handle() const NOTHROW;
 	//! Set handle
-	void setHandle(fd_t handle) NOTHROW;
+	void setHandle(SOCKET handle) NOTHROW;
 	//! Close handle
 	void close() NOTHROW;
 	
@@ -192,7 +191,7 @@ public:
 	const Address& addr() const NOTHROW;
 	
 	//! Create new socket
-	fd_t create() NOTHROW;
+	SOCKET create() NOTHROW;
 	
 	//! Return true if socket is connected
 	bool isConnected() const NOTHROW;

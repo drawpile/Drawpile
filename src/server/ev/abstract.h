@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+   Copyright (C) 2007, 2008 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -28,40 +28,33 @@
 
 #pragma once
 
-#ifndef EventInterface_INCLUDED
-#define EventInterface_INCLUDED
+#ifndef EventAbstract_H
+#define EventAbstract_H
 
 #include "config.h"
-#include "traits.h"
-
 #include "../types.h"
 
 //! Event I/O abstraction
 /**
  * @see http://www.kegel.com/c10k.html The C10k problem
  */
-namespace event {
-
-//! Event interface
-template <typename tFD=int, typename tEv=int>
-class Interface
+//! Abstract event system interface
+template <typename T=int>
+class AbstractEventInterface
 {
 protected:
-	int nfds;
-	
 	 //! Last error number (errno)
 	int error;
-public:
-	//! Type for FD
-	typedef tFD fd_t;
-	//! Type for events
-	typedef tEv ev_t;
 	
 	//! Constructor
-	Interface() NOTHROW;
+	AbstractEventInterface() NOTHROW;
 	
 	//! Destructor
-	virtual ~Interface() NOTHROW = 0;
+	virtual ~AbstractEventInterface() NOTHROW = 0;
+public:
+	//! Type for events
+	typedef T event_t;
+	
 	
 	//! Set timeout for wait()
 	/**
@@ -85,7 +78,7 @@ public:
 	 * @return \b true if the FD was added
 	 * @return \b false if not
 	 */
-	virtual int add(fd_t fd, ev_t events) = 0;
+	virtual int add(SOCKET fd, event_t events) = 0;
 	
 	//! Removes file descriptor from event set.
 	/**
@@ -94,7 +87,7 @@ public:
 	 * @return \b true if the fd was removed
 	 * @return \b false if not (or was not part of the event set)
 	 */
-	virtual int remove(fd_t fd) = 0;
+	virtual int remove(SOCKET fd) = 0;
 	
 	//! Modifies previously added fd for different events.
 	/**
@@ -103,7 +96,7 @@ public:
 	 *
 	 * @return ?
 	 */
-	virtual int modify(fd_t fd, ev_t events) = 0;
+	virtual int modify(SOCKET fd, event_t events) = 0;
 	
 	//! Fetches next triggered event.
 	/**
@@ -113,7 +106,7 @@ public:
 	 * @return \b true if FD was triggered; fd and events parameters were filled
 	 * @return \b false otherwise
 	 */
-	virtual bool getEvent(fd_t &fd, ev_t &events) NOTHROW = 0;
+	virtual bool getEvent(SOCKET &fd, event_t &events) NOTHROW = 0;
 	
 	//! Get last error number (errno)
 	/**
@@ -122,18 +115,16 @@ public:
 	int getError() const NOTHROW;
 };
 
-template <typename tFD, typename tEv> Interface<tFD,tEv>::Interface()
-	: nfds(-1)
+template <typename T> AbstractEventInterface<T>::AbstractEventInterface()
+	: error(0)
 { }
 
-template <typename tFD, typename tEv> Interface<tFD,tEv>::~Interface() { /* Abstract */ }
+template <typename T> AbstractEventInterface<T>::~AbstractEventInterface() { /* Abstract */ }
 
-template <typename tFD, typename tEv>
-int Interface<tFD,tEv>::getError() const
+template <typename T>
+int AbstractEventInterface<T>::getError() const
 {
 	return error;
 }
 
-} // namespace:event
-
-#endif // EventInterface_INCLUDED
+#endif // EventAbstract_H

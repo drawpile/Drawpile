@@ -34,8 +34,6 @@
 #include "config.h"
 #include "types.h"
 
-#include "socket.types.h"
-
 #include <limits>
 
 #ifdef IPV6

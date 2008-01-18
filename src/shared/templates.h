@@ -29,7 +29,7 @@
 #ifndef _DPSharedTemplates_INCLUDED
 #define _DPSharedTemplates_INCLUDED
 
-#include "../config.h"
+#include "config.h"
 
 #include <cmath>
 //#include <memory> // memcpy()
@@ -79,7 +79,11 @@ template <typename T>
 T bswap_const(const T& x)
 {
 	T u = x;
+	#if defined(IS_BIG_ENDIAN)
+	return u;
+	#else
 	return bswap(u);
+	#endif
 }
 
 // no specializations for Big Endian systems

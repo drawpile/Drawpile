@@ -3,6 +3,8 @@
 #ifndef ServerCommons_GUARD
 #define ServerCommons_GUARD
 
+#include "config.h"
+
 #include "shared_ptr.h"
 #include "../shared/protocol.fwd.h"
 

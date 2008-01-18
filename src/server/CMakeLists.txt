@@ -6,25 +6,16 @@ include ( CheckFunctionExists )
 
 ### For deflate extension
 
-if ( USE_URANDOM )
-	find_file (
-		HAVE_URANDOM
-		urandom
-		PATHS /dev
-		NO_DEFAULT_PATH
-	)
-endif ( USE_URANDOM )
-
-set ( HAVE_ZLIB OFF )
+set ( HAVE_ZLIB false )
 if ( SERVERLIB AND DEFLATE )
 	find_package ( ZLIB )
 	if ( ZLIB_FOUND )
-		set ( HAVE_ZLIB ON )
+		set ( HAVE_ZLIB true )
 		link_libraries ( ${ZLIB_LIBRARIES} )
-	else ( ZLIB_FOUND )
+	else ( )
 		message ( STATUS "ZLib not found!" )
-	endif ( ZLIB_FOUND )
-endif ( SERVERLIB AND DEFLATE )
+	endif ( )
+endif ( )
 
 ### fork()
 
@@ -33,60 +24,61 @@ if ( SERVER )
 	
 	if ( NOT HAVE_FORK1 )
 		check_function_exists ( fork HAVE_FORK )
-	endif ( NOT HAVE_FORK1 )
+	endif ( )
 	
 	if ( HAVE_FORK OR HAVE_FORK1 )
 		link_libraries ( pthread )
-	endif ( HAVE_FORK OR HAVE_FORK1 )
-endif ( SERVER )
+	endif ( )
+endif ( )
 
 # persistent sessions
 
-set ( PERSISTENT_SESSIONS OFF )
+set ( PERSISTENT_SESSIONS false )
 if ( PERSISTENT )
 	message ( STATUS "Persistent sessions enabled" )
-	set ( PERSISTENT_SESSIONS ON )
-endif ( PERSISTENT )
+	set ( PERSISTENT_SESSIONS true )
+endif ( )
 
 # IP stack config
-set ( IPV_DUAL_STACK OFF )
+set ( IPV_DUAL_STACK false )
 if ( IPV4 AND IPV6 )
 	check_include_file ( mstcpip.h HAVE_MSTCPIP )
-	#if ( WIN32 )
-		#if ( HAVE_MSTCPIP )
-			#message ( STATUS "Dual IP stack enabled!" )
-			#set ( IPV_DUAL_STACK ON )
-		#endif ( HAVE_MSTCPIP )
-	#endif ( WIN32 )
+	if ( WIN32 )
+		if ( HAVE_MSTCPIP )
+			message ( STATUS "Dual IP stack enabled!" )
+			set ( IPV_DUAL_STACK true )
+		endif ( )
+	endif ( )
 	if ( NOT IPV_DUAL_STACK )
 		message ( FATAL_ERROR "Dual IP stack not supported on current system!" )
-	endif ( NOT IPV_DUAL_STACK )
-	message ( "IPv4/IPv6 dual-stack enabled" )
+	else ( )
+		message ( STATUS "IPv4/IPv6 dual-stack enabled" )
+	endif ( )
 else ( IPV4 AND IPV6 )
 	if ( IPV4 )
 		message ( STATUS "IPv4 stack enabled" )
-	else ( IPV4 )
+	else ( )
 		message ( STATUS "IPv6 stack enabled" )
-	endif ( IPV4 )
-endif ( IPV4 AND IPV6 )
+	endif ( )
+endif ( )
 
 if ( NOT IPV4 AND NOT IPV6 )
 	message ( FATAL_ERROR "Both IPv4/IPv6 stacks disabled!" )
-endif ( NOT IPV4 AND NOT IPV6 )
+endif ( )
 
 # Layers
-set ( LAYER_SUPPORT OFF )
+set ( LAYER_SUPPORT false )
 if ( LAYERS )
 	message ( STATUS "Experimental layer code enabled." )
-	set ( LAYER_SUPPORT ON )
-endif ( LAYERS )
+	set ( LAYER_SUPPORT true )
+endif ( )
 
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
 add_definitions ( -DHAVE_SRVCONFIG )
 
 if ( WIN32 )
 	link_libraries ( ws2_32 )
-endif ( WIN32 )
+endif ( )
 
 add_subdirectory ( ev/ ) # events lib
 
@@ -106,7 +98,7 @@ if ( SERVERLIB )
 	
 	if ( RELEASE )
 		generate_final ( SRV_SOURCES ${SRV_SOURCES} )
-	endif ( RELEASE )
+	endif ( )
 	
 	# Create library
 	add_library (
@@ -118,16 +110,12 @@ if ( SERVERLIB )
 		strip_lib ( ${SRVLIB} )
 		if ( WIN32 )
 			install ( TARGETS ${SRVLIB} RUNTIME DESTINATION . ) 
-		else ( WIN32 )
+		else ( )
 			install ( TARGETS ${SRVLIB} LIBRARY DESTINATION lib ) # ?
-		endif ( WIN32 )
-	endif ( SHARED )
+		endif ( )
+	endif ( )
 	
-	target_link_libraries(
-		${SRVLIB}
-		${DPSHAREDLIB} # DP shared library
-		${EVENTSLIB} # EV lib
-	)
+	target_link_libraries(${SRVLIB} ${DPSHAREDLIB} ${EVENTSLIB} )
 	
 	# Console executable
 	set_target_properties (
@@ -138,7 +126,7 @@ if ( SERVERLIB )
 		SOVERSION 0.5
 		PROJECT_LABEL ${SRVLIB}
 	)
-endif ( SERVERLIB )
+endif ( )
 
 if ( SERVER )
 	if ( WIN32 )
@@ -151,13 +139,15 @@ if ( SERVER )
 			"2006,2007 M.K.A." # copyright holder
 			0 5 0 # version
 		)
-	endif ( WIN32 )
+	endif ( )
 	
 	add_executable (
 		${SRVNAME}
 		dpsrv.cpp
 		${Win32Resource}
 	)
+	
+	target_link_libraries( ${SRVNAME} ${DPSHAREDLIB} ${EVENTSLIB} ${SRVLIB} )
 	
 	set_target_properties (
 		${SRVNAME}
@@ -166,20 +156,13 @@ if ( SERVER )
 		PROJECT_LABEL drawpile-server
 	)
 	
-	target_link_libraries(
-		${SRVNAME}
-		${DPSHAREDLIB}
-		${SRVLIB} # DP shared library
-		${EVENTSLIB} # EV lib
-	)
-	
 	if ( WIN32 )
 		install ( TARGETS ${SRVNAME} RUNTIME DESTINATION . )
-	else ( WIN32 )
+	else ( )
 		install ( TARGETS ${SRVNAME} RUNTIME DESTINATION bin )
-	endif ( WIN32 )
+	endif ( )
 	
 	if ( NOT DEBUG )
 		strip_exe ( ${SRVNAME} )
-	endif ( NOT DEBUG )
-endif ( SERVER )
+	endif ( )
+endif ( )

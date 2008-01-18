@@ -1,40 +1,40 @@
 if ( WIN32 )
 	find_file ( STRIP_CMD strip.exe )
-else ( WIN32 )
+else ( )
 	find_file ( STRIP_CMD strip )
-endif ( WIN32 )
+endif ( )
 
 macro ( strip_exe target )
 	if ( STRIP_CMD )
 		if ( WIN32 )
 			set ( target_file "${target}.exe" )
-		else ( WIN32 )
+		else ( )
 			set ( target_file "${target}" )
-		endif ( WIN32 )
+		endif ( )
 		
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
 			COMMAND ${STRIP_CMD} -s "${EXECUTABLE_OUTPUT_PATH}/${target_file}"
 		)
-	endif ( STRIP_CMD )
-endmacro ( strip_exe )
+	endif ( )
+endmacro ( )
 
 macro ( strip_lib target )
 	if ( STRIP_CMD )
 		if ( WIN32 )
 			set ( target_file "${target}.dll" )
-		else ( WIN32 )
+		else ( )
 			set ( target_file "lib${target}" )
-		endif ( WIN32 )
+		endif ( )
 		
 		add_custom_command(
 			TARGET ${target}
 			POST_BUILD
 			COMMAND ${STRIP_CMD} -s "${LIBRARY_OUTPUT_PATH}/${target_file}"
 		)
-	endif ( STRIP_CMD )
-endmacro ( strip_lib )
+	endif ( )
+endmacro ( )
 
 macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMENT COPYRIGHT VERSION_MAJOR VERSION_MINOR VERSION_BUG )
 	if ( WIN32 )
@@ -49,9 +49,9 @@ macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMEN
 			file ( APPEND ${win32RC} "\tFILEOS VOS_NT\n" )
 			if ( IsSharedLib )
 				file ( APPEND ${win32RC} "\tFILETYPE VFT_DLL\n" )
-			else ( IsSharedLib )
+			else ( )
 				file ( APPEND ${win32RC} "\tFILETYPE VFT_APP\n" )
-			endif ( IsSharedLib )
+			endif ( )
 			file ( APPEND ${win32RC} "\tFILESUBTYPE 0\n" )
 			file ( APPEND ${win32RC} "BEGIN\n\tBLOCK \"StringFileInfo\"\n\tBEGIN\n" )
 			file ( APPEND ${win32RC} "\t\tBLOCK \"040904E4\"\n\t\tBEGIN\n" )
@@ -80,8 +80,8 @@ macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMEN
 			COMMAND windres ${win32RC} ${${resfile}}
 			DEPENDS ${win32RC}
 		)
-	endif ( WIN32 )
-endmacro ( generate_win32_resource )
+	endif ( )
+endmacro ( )
 
 macro ( generate_final OUTFILE )
 	set ( finalfile ${CMAKE_CURRENT_BINARY_DIR}/_final.cpp )
@@ -89,16 +89,14 @@ macro ( generate_final OUTFILE )
 	foreach (it ${ARGN})
 		file ( APPEND "${finalfile}" "#include \"${CMAKE_CURRENT_SOURCE_DIR}/${it}\"\n" )
 		MACRO_ADD_FILE_DEPENDENCIES( ${${OUTFILE}} ${it} )
-	endforeach ( it )
+	endforeach ( )
 	
 	set ( ${OUTFILE} ${finalfile} )
-endmacro ( generate_final )
+endmacro ( )
 
-include ( TestCXXAcceptsFlag )
-
-macro ( TestCompilerFlag FLAG ACCEPTED )
-	check_cxx_accepts_flag ( ${${FLAG}} ${ACCEPTED} )
-	if ( NOT ${ACCEPTED} )
-		set ( ${FLAG} "" )
-	endif ( NOT ${ACCEPTED} )
-endmacro ( TestCompilerFlag )
+macro ( TestCompilerFlag FLAG FLAGLIST )
+	check_cxx_accepts_flag ( ${${FLAG}} ACCEPTS_${FLAG}_FLAG )
+	if ( ACCEPTS_${FLAG}_FLAG )
+		list ( APPEND ${FLAGLIST} ${${FLAG}} )
+	endif ( )
+endmacro ( )

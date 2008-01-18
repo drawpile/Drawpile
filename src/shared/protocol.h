@@ -215,6 +215,7 @@ public:
 	 */
 	char* serialize(size_t &len, char* buffer, size_t &size) const;
 	
+protected:
 	//! Get the number of bytes required to serialize the message payload.
 	/**
 	 * @return payload length in bytes. Defaults to zero payload.
@@ -232,6 +233,7 @@ public:
 	virtual
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	
+public:
 	//! Check if buf contains enough data to unserialize
 	/**
 	 * @param[in] buf Buffer for unserializing.
@@ -311,6 +313,7 @@ struct Identifier
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -394,6 +397,7 @@ struct StrokeInfo
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -498,6 +502,7 @@ struct ToolInfo
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -583,6 +588,7 @@ struct Raster
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -637,6 +643,7 @@ struct PasswordRequest
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -661,6 +668,7 @@ struct Password
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -771,6 +779,7 @@ struct SessionInstruction
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -804,6 +813,7 @@ struct SetPassword
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -970,6 +980,7 @@ struct UserInfo
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1024,6 +1035,7 @@ struct HostInfo
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1090,6 +1102,7 @@ struct SessionInfo
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1120,6 +1133,7 @@ struct Acknowledgement
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1150,6 +1164,7 @@ struct Error
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1203,6 +1218,7 @@ struct Deflate
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1244,6 +1260,7 @@ struct Chat
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1288,6 +1305,7 @@ struct Palette
 	 */
 	size_t unserialize(const char* buf, const size_t len) NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1371,6 +1389,7 @@ struct SessionEvent
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1422,6 +1441,7 @@ struct LayerEvent
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };
@@ -1449,6 +1469,7 @@ struct LayerSelect
 	
 	size_t unserialize(const char* buf, const size_t len) NOTHROW NONNULL(1);
 	size_t reqDataLen(const char *buf, const size_t len) const NOTHROW NONNULL(1);
+protected:
 	size_t serializePayload(char *buf) const NOTHROW NONNULL(1);
 	size_t payloadLength() const NOTHROW;
 };

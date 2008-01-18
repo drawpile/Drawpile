@@ -81,9 +81,7 @@ public:
 	uint id;
 	
 	//! Event I/O : registered events.
-	// EventSystem::ev_t // inaccessible for some reason
-	EventSystem::ev_t events;
-	//int events;
+	Event::event_t events;
 	
 	//! User state
 	enum State

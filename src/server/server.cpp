@@ -31,9 +31,11 @@
 *******************************************************************************/
 
 #include "server.h"
+#include "config.h"
 
 #include <boost/random/mersenne_twister.hpp>
 
+#include "types.h"
 #include "errors.h"
 #include "socket.h"
 #include "network.h" // Network namespace
@@ -72,8 +74,8 @@ typedef std::map<octet, User*>::const_iterator session_usr_const_i;
 // for Server*
 typedef std::map<octet, Session>::iterator sessions_i;
 typedef std::map<octet, Session>::const_iterator sessions_const_i;
-typedef std::map<fd_t, User*>::iterator users_i;
-typedef std::map<fd_t, User*>::const_iterator users_const_i;
+typedef std::map<SOCKET, User*>::iterator users_i;
+typedef std::map<SOCKET, User*>::const_iterator users_const_i;
 
 typedef std::list<User*>::iterator userlist_i;
 typedef std::list<User*>::const_iterator userlist_const_i;
@@ -101,7 +103,7 @@ Server::Server()
 	memset(session_ids, true, sizeof(session_ids));
 	memset(&stats, 0, sizeof(Statistics));
 	#ifndef NDEBUG
-	cout << "? Event mechanism: " << event::system<EventSystem>::value << endl;
+	cout << "? Event mechanism: " << EV_NAME << endl;
 	#endif
 	
 	lsock.addr().port(protocol::default_port);
@@ -280,7 +282,7 @@ void Server::uWrite(User*& usr)
 			
 			// remove fd from write list if no buffers left.
 			if (usr->queue.empty())
-				ev.modify(usr->sock.handle(), fClr(usr->events, event::write<EventSystem>::value));
+				ev.modify(usr->sock.handle(), usr->events &= ~Event::Write);
 		}
 		break;
 	}
@@ -385,7 +387,6 @@ void Server::uRead(User*& usr)
 		break;
 	case 0:
 		// shouldn't happen if event system has hangup event
-		assert(event::has_hangup<EventSystem>::value == false);
 		removeUser(usr, protocol::UserInfo::Disconnect);
 		break;
 	default:
@@ -1670,9 +1671,9 @@ void Server::uQueueMsg(User& usr, message_ref msg)
 	
 	usr.queue.push_back( msg );
 	
-	if (!fIsSet(usr.events, event::write<EventSystem>::value))
+	if (!(usr.events & Event::Write))
 	{
-		fSet(usr.events, event::write<EventSystem>::value);
+		usr.events |= Event::Write;
 		ev.modify(usr.sock.handle(), usr.events);
 	}
 }
@@ -1958,7 +1959,7 @@ void Server::uAdd()
 	User *usr = new User(id, sock);
 	users.insert(std::make_pair(sock.handle(), usr));
 	
-	fSet(usr->events, event::read<EventSystem>::value);
+	usr->events |= Event::Read;
 	ev.add(usr->sock.handle(), usr->events);
 	
 	if (usersInLogin > 20)
@@ -2088,10 +2089,11 @@ int Server::init()
 	if (lsock.listen())
 	{
 		// add listening socket to event system
-		if (event::has_accept<EventSystem>::value)
-			ev.add(lsock.handle(), event::accept<EventSystem>::value);
-		else
-			ev.add(lsock.handle(), event::read<EventSystem>::value);
+		#ifdef EV_HAS_ACCEPT
+		ev.add(lsock.handle(), Event::Accept);
+		#else
+		ev.add(lsock.handle(), Event::Read);
+		#endif
 		
 		// set event timeout
 		ev.timeout(5000);
@@ -2176,8 +2178,8 @@ int Server::run()
 	
 	User *usr;
 	
-	EventSystem::fd_t fd;
-	EventSystem::ev_t events;
+	SOCKET fd;
+	Event::event_t events;
 	
 	// main loop
 	do
@@ -2200,8 +2202,7 @@ int Server::run()
 			while (ev.getEvent(fd, events))
 			{
 				assert(fd != Socket::InvalidHandle);
-				if (fd == lsock.handle())
-				{
+				if (fd == lsock.handle()) {
 					cullIdlers();
 					uAdd();
 					continue;
@@ -2210,24 +2211,27 @@ int Server::run()
 				usr = getUser(fd);
 				assert(usr != 0);
 				
-				if (event::has_error<EventSystem>::value
-					and fIsSet(events, event::error<EventSystem>::value))
-				{
+				#ifdef EV_HAS_ERROR
+				if (events & Event::Error) {
 					removeUser(usr, protocol::UserInfo::BrokenPipe);
 					continue;
 				}
-				if (event::has_hangup<EventSystem>::value and 
-					fIsSet(events, event::hangup<EventSystem>::value))
-				{
+				#endif
+				
+				#ifdef EV_HAS_HANGUP
+				if (events & Event::Hangup) {
 					removeUser(usr, protocol::UserInfo::Disconnect);
 					continue;
 				}
-				if (fIsSet(events, event::read<EventSystem>::value))
+				#endif
+				
+				if (events & Event::Read)
 				{
 					uRead(usr);
 					if (!usr) continue;
 				}
-				if (fIsSet(events, event::write<EventSystem>::value))
+				
+				if (events & Event::Write)
 				{
 					uWrite(usr);
 					if (!usr) continue;
@@ -2280,13 +2284,13 @@ const Session* Server::getSession(octet session_id) const
 	return (si == sessions.end() ? 0 : &si->second);
 }
 
-User* Server::getUser(const fd_t user_handle)
+User* Server::getUser(const SOCKET user_handle)
 {
 	users_i ui(users.find(user_handle));
 	return (ui == users.end() ? 0 : ui->second);
 }
 
-const User* Server::getUser(fd_t user_handle) const
+const User* Server::getUser(SOCKET user_handle) const
 {
 	const users_const_i ui(users.find(user_handle));
 	return (ui == users.end() ? 0 : ui->second);

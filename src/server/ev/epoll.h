@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+   Copyright (C) 2007, 2008 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -28,54 +28,48 @@
 
 #pragma once
 
-#ifndef EventEpoll_INCLUDED
-#define EventEpoll_INCLUDED
+#ifndef EventEpoll_H
+#define EventEpoll_H
 
-#include "interface.h"
-#include "traits.h"
-
-#include <stdexcept>
+#include "config.h"
+#include "abstract.h"
 
 #include <sys/epoll.h> // epoll_event
 
-namespace event {
+#define EV_HAS_HANGUP true
+#define EV_HAS_ERROR true
+#define EV_NAME L"epoll"
 
 //! epoll(4)
 /**
- * 
+ * @see man 4 epoll
  */
-class Epoll
+class Event
 	: public Interface
 {
-private:
-	uint m_timeout;
+public:
+	enum {
+		Read=EPOLLIN,
+		Write=EPOLLOUT,
+		Error=EPOLLERR,
+		Hangup=EPOLLHUP
+	};
+	
+protected:
 	int evfd;
 	epoll_event events[10];
+	int nfds;
+	uint m_timeout;
 public:
-	/**
-	 * @throw std::exception
-	 */
-	Epoll() NOTHROW;
-	~Epoll() NOTHROW;
+	Event() NOTHROW;
+	~Event() NOTHROW;
 	
 	void timeout(uint msecs) NOTHROW;
 	int wait() NOTHROW;
-	int add(fd_t fd, ev_t events) NOTHROW;
-	int remove(fd_t fd) NOTHROW;
-	int modify(fd_t fd, ev_t events) NOTHROW;
-	bool getEvent(fd_t &fd, ev_t &events) NOTHROW;
+	int add(SOCKET fd, event_t events) NOTHROW;
+	int remove(SOCKET fd) NOTHROW;
+	int modify(SOCKET fd, event_t events) NOTHROW;
+	bool getEvent(SOCKET &fd, event_t &events) NOTHROW;
 };
 
-/* traits */
-
-template <> struct has_hangup<Epoll> { static const bool value; };
-template <> struct has_error<Epoll> { static const bool value; };
-template <> struct read<Epoll> { static const int value; };
-template <> struct write<Epoll> { static const int value; };
-template <> struct error<Epoll> { static const int value; };
-template <> struct hangup<Epoll> { static const int value; };
-template <> struct system<Epoll> { static const std::string value; };
-
-} // namespace:event
-
-#endif // EventEpoll_INCLUDED
+#endif // EventEpoll_H

@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+   Copyright (C) 2006, 2007, 2008 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -31,18 +31,9 @@
 #include <cerrno> // errno
 #include <cassert> // assert()
 
-namespace event {
-
-const bool has_hangup<Epoll>::value = true;
-const bool has_error<Epoll>::value = true;
-const int read<Epoll>::value = EPOLLIN;
-const int write<Epoll>::value = EPOLLOUT;
-const int error<Epoll>::value = EPOLLERR;
-const int hangup<Epoll>::value = EPOLLHUP;
-const std::string system<Epoll>::value("epoll");
-
-Epoll::Epoll()
-	: evfd(-1)
+Event::Event()
+	: evfd(-1),
+	nfds(-1)
 {
 	evfd = epoll_create(10);
 	
@@ -55,12 +46,12 @@ Epoll::Epoll()
 	}
 }
 
-Epoll::~Epoll()
+Event::~Event()
 {
 	close(evfd);
 }
 
-int Epoll::wait()
+int Event::wait()
 {
 	assert(evfd != -1);
 	
@@ -82,7 +73,7 @@ int Epoll::wait()
 }
 
 // Errors: ENOMEM
-int Epoll::add(fd_t fd, ev_t events)
+int Event::add(SOCKET fd, event_t events)
 {
 	assert(evfd != -1);
 	
@@ -109,7 +100,7 @@ int Epoll::add(fd_t fd, ev_t events)
 	return true;
 }
 
-int Epoll::modify(fd_t fd, ev_t events)
+int Event::modify(SOCKET fd, event_t events)
 {
 	assert(evfd != -1);
 	
@@ -136,7 +127,7 @@ int Epoll::modify(fd_t fd, ev_t events)
 }
 
 // Errors: ENOMEM
-int Epoll::remove(fd_t fd)
+int Event::remove(SOCKET fd)
 {
 	assert(evfd != -1);
 	
@@ -162,7 +153,7 @@ int Epoll::remove(fd_t fd)
 	return true;
 }
 
-bool Epoll::getEvent(fd_t &r_fd, ev_t &r_events)
+bool Event::getEvent(SOCKET &r_fd, event_t &r_events)
 {
 	assert(evfd != -1);
 	
@@ -178,9 +169,7 @@ bool Epoll::getEvent(fd_t &r_fd, ev_t &r_events)
 	return true;
 }
 
-void Epoll::timeout(uint msecs)
+void Event::timeout(uint msecs)
 {
 	m_timeout = msecs;
 }
-
-} // namespace:event

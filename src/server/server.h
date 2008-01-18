@@ -46,7 +46,6 @@
 
 #include "../shared/protocol.h" // protocol::UserInfo::reason
 #include "types.h"
-#include "socket.types.h" // fd_t
 #include "statistics.h" // Statistics struct
 
 #include <ctime> // time_t, time(0)
@@ -83,7 +82,7 @@ protected:
 	} state;
 	
 	//! Event mechanism
-	EventSystem ev;
+	Event ev;
 	
 	bool
 		//! User identifiers
@@ -92,7 +91,7 @@ protected:
 		session_ids[254];
 	
 	//! FD to user mapping
-	std::map<fd_t, User*> users;
+	std::map<SOCKET, User*> users;
 	
 	//! Session ID to session mapping
 	std::map<octet, Session> sessions;
@@ -495,10 +494,10 @@ protected:
 	const Session* getSession(octet session_id) const NOTHROW;
 	
 	//! Get User* pointer
-	User* getUser(fd_t user_handle) NOTHROW;
+	User* getUser(SOCKET user_handle) NOTHROW;
 	
 	//! Get const User* pointer
-	const User* getUser(fd_t user_handle) const NOTHROW;
+	const User* getUser(SOCKET user_handle) const NOTHROW;
 	
 	//! Get user by identifier
 	User* getUserByID(octet user_id) NOTHROW;

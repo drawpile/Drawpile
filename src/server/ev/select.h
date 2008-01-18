@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+   Copyright (C) 2007, 2008 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -28,12 +28,12 @@
 
 #pragma once
 
-#ifndef EventSelect_INCLUDED
-#define EventSelect_INCLUDED
+#ifndef EventSelect_H
+#define EventSelect_H
 
 #include "config.h"
-#include "interface.h"
-#include "traits.h"
+#include "abstract.h"
+#include "../types.h"
 
 #include <ctime> // timeval
 
@@ -45,64 +45,57 @@
 	#include <sys/select.h> // fd_set
 #endif
 
-namespace event {
-
-#ifdef WIN32
-class Select;
-template <> struct fd_type<Select> { typedef SOCKET fd_t; };
-#endif
+#define EV_NAME L"select"
 
 //! select(2)
 /**
- * 
+ * @see man 2 select
+ * @see http://msdn2.microsoft.com/en-us/library/ms740141.aspx
  */
-class Select
-	: public Interface<fd_type<Select>::fd_t>
+class Event
+	: public AbstractEventInterface<uint>
 {
-private:
+public:
+	enum {
+		Read = 1,
+		Write = 2
+	};
+protected:
+	int triggered;
+	
 	timeval _timeout;
 	
-	fd_set fds_r, fds_w, fds_e, t_fds_r, t_fds_w, t_fds_e;
+	fd_set readSet, writeSet, t_readSet, t_writeSet;
 	
-	std::map<fd_t, uint> fd_list; // events set for FD
-	typedef std::map<fd_t, uint>::iterator fd_list_iter;
+	std::map<SOCKET, uint> fd_list; // events set for FD
+	typedef std::map<SOCKET, uint>::iterator fd_list_iter;
 	fd_list_iter fd_iter;
 	
 	#ifndef WIN32
-	std::set<fd_t> read_set, write_set, error_set;
-	fd_t nfds_r, nfds_w, nfds_e;
+	std::set<SOCKET> readList, writeList;
+	SOCKET highestReadFD, highestWriteFD;
 	#endif // !WIN32
 	
-	void addToSet(fd_set &fset, fd_t fd
+	void addToSet(fd_set &fset, SOCKET fd
 		#ifndef WIN32
-		, std::set<fd_t>& l_set, fd_t &largest
+		, std::set<SOCKET>& l_set, SOCKET &largest
 		#endif
 	);
-	void removeFromSet(fd_set &fset, fd_t fd
+	void removeFromSet(fd_set &fset, SOCKET fd
 		#ifndef WIN32
-		, std::set<fd_t>& l_set, fd_t &largest
+		, std::set<SOCKET>& l_set, SOCKET &largest
 		#endif
 	);
 public:
-	Select() NOTHROW;
-	~Select() NOTHROW;
+	Event() NOTHROW;
+	~Event() NOTHROW;
 	
 	void timeout(uint msecs) NOTHROW;
 	int wait() NOTHROW;
-	int add(fd_t fd, ev_t events) NOTHROW;
-	int remove(fd_t fd) NOTHROW;
-	int modify(fd_t fd, ev_t events) NOTHROW;
-	bool getEvent(fd_t &fd, ev_t &events) NOTHROW;
+	int add(SOCKET fd, event_t events) NOTHROW;
+	int remove(SOCKET fd) NOTHROW;
+	int modify(SOCKET fd, event_t events) NOTHROW;
+	bool getEvent(SOCKET &fd, event_t &events) NOTHROW;
 };
 
-/* traits */
-
-template <> struct has_error<Select> { static const bool value; };
-template <> struct read<Select> { static const int value; };
-template <> struct write<Select> { static const int value; };
-template <> struct error<Select> { static const int value; };
-template <> struct system<Select> { static const std::string value; };
-
-} // namespace:event
-
-#endif // EventSelect_INCLUDED
+#endif // EventSelect_H

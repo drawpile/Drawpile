@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2006, 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+   Copyright (C) 2006, 2007, 2008 M.K.A. <wyrmchild@users.sourceforge.net>
    
    Permission is hereby granted, free of charge, to any person obtaining a
    copy of this software and associated documentation files (the "Software"),
@@ -37,33 +37,24 @@
 
 #include "../socket.h"
 
-namespace event {
-
-const bool has_error<Select>::value = true;
-const int read<Select>::value = 1;
-const int write<Select>::value = 2;
-const int error<Select>::value = 4;
-const std::string system<Select>::value("select");
-
-Select::Select()
+Event::Event()
+	: triggered(-1)
 	#ifndef WIN32
-	: nfds_r(Socket::InvalidHandle),
-	nfds_w(Socket::InvalidHandle),
-	nfds_e(Socket::InvalidHandle)
+	, highestReadFD(Socket::InvalidHandle)
+	, highestWriteFD(Socket::InvalidHandle)
 	#endif
 {
-	FD_ZERO(&fds_r);
-	FD_ZERO(&fds_w);
-	FD_ZERO(&fds_e);
+	FD_ZERO(&readSet);
+	FD_ZERO(&writeSet);
 }
 
-Select::~Select()
+Event::~Event()
 {
 }
 
-void Select::addToSet(fd_set &fdset, fd_t fd
+void Event::addToSet(fd_set &fdset, SOCKET fd
 	#ifndef WIN32
-	, std::set<fd_t>& l_set, fd_t &largest
+	, std::set<SOCKET>& l_set, SOCKET &largest
 	#endif
 )
 {
@@ -74,9 +65,9 @@ void Select::addToSet(fd_set &fdset, fd_t fd
 	#endif
 }
 
-void Select::removeFromSet(fd_set &fdset, fd_t fd
+void Event::removeFromSet(fd_set &fdset, SOCKET fd
 	#ifndef WIN32
-	, std::set<fd_t>& l_set, fd_t &largest
+	, std::set<SOCKET>& l_set, SOCKET &largest
 	#endif
 )
 {
@@ -89,32 +80,27 @@ void Select::removeFromSet(fd_set &fdset, fd_t fd
 }
 
 // Errors: NetSubsystemDown
-int Select::wait()
+int Event::wait()
 {
 	#ifdef EV_SELECT_COPY
-	FD_COPY(&fds_r, &t_fds_r);
-	FD_COPY(&fds_w, &t_fds_w);
-	FD_COPY(&fds_e, &t_fds_e);
+	FD_COPY(&readSet, &t_readSet);
+	FD_COPY(&writeSet, &t_writeSet);
 	#else
-	t_fds_r = fds_r;
-	t_fds_w = fds_w;
-	t_fds_e = fds_e;
+	t_readSet = readSet;
+	t_writeSet = writeSet;
 	#endif // HAVE_SELECT_COPY
 	
 	#ifdef WIN32
-	static const fd_t ubnfds = 0; // not used
+	SOCKET highestFD = 0; // not used
 	#else
-	using std::max;
-	
-	fd_t ubnfds = max(max(nfds_w,nfds_r), nfds_e);
-	
-	if (ubnfds != Socket::InvalidHandle)
-		ubnfds++;
+	SOCKET highestFD = std::max(highestWriteFD, highestReadFD);
+	if (highestFD != Socket::InvalidHandle)
+		highestFD++; // highest_fd + 1 expected
 	#endif
 	
-	nfds = select(ubnfds, &t_fds_r, &t_fds_w, &t_fds_e, &_timeout);
+	triggered = select(highestFD, &t_readSet, &t_writeSet, 0, &_timeout);
 	
-	switch (nfds)
+	switch (triggered)
 	{
 		case -1:
 			#ifdef WIN32
@@ -124,7 +110,7 @@ int Select::wait()
 			#endif
 			
 			if (error == EINTR)
-				return nfds = 0;
+				return triggered = 0;
 			
 			#ifdef WIN32
 			assert(error != WSANOTINITIALISED);
@@ -153,40 +139,30 @@ int Select::wait()
 			break;
 	}
 	
-	return nfds;
+	return triggered;
 }
 
-int Select::add(fd_t fd, ev_t events)
+int Event::add(SOCKET fd, event_t events)
 {
 	assert(fd != Socket::InvalidHandle);
 	
 	bool rc=false;
 	
-	if (fIsSet(events, event::read<Select>::value))
+	if (events & Read)
 	{
-		addToSet(fds_r, fd
+		addToSet(readSet, fd
 			#ifndef WIN32
-			, read_set, nfds_r
+			, readList, highestReadFD
 			#endif
 		);
 		rc = true;
 	}
 	
-	if (fIsSet(events, event::write<Select>::value))
+	if (events & Write)
 	{
-		addToSet(fds_w, fd
+		addToSet(writeSet, fd
 			#ifndef WIN32
-			, write_set, nfds_w
-			#endif
-		);
-		rc = true;
-	}
-	
-	if (fIsSet(events, event::error<Select>::value))
-	{
-		addToSet(fds_e, fd
-			#ifndef WIN32
-			, error_set, nfds_e
+			, writeSet, highestWriteFD
 			#endif
 		);
 		rc = true;
@@ -195,12 +171,12 @@ int Select::add(fd_t fd, ev_t events)
 	assert(rc);
 	
 	// maintain fd_list
-	fd_list.insert(std::pair<fd_t,ev_t>(fd,events));
+	fd_list.insert(std::pair<SOCKET,event_t>(fd,events));
 	
 	return rc;
 }
 
-int Select::modify(fd_t fd, ev_t events)
+int Event::modify(SOCKET fd, event_t events)
 {
 	assert(fd != Socket::InvalidHandle);
 	
@@ -208,50 +184,38 @@ int Select::modify(fd_t fd, ev_t events)
 	if (events != 0)
 		add(fd, events);
 	
-	if (!fIsSet(events, event::read<Select>::value))
-		removeFromSet(fds_r, fd
+	if (events & Read)
+		removeFromSet(readSet, fd
 			#ifndef WIN32
-			, read_set, nfds_r
+			, readList, highestReadFD
 			#endif
 		);
 	
-	if (!fIsSet(events, event::write<Select>::value))
-		removeFromSet(fds_w, fd
+	if (!(events & Write))
+		removeFromSet(writeSet, fd
 			#ifndef WIN32
-			, write_set, nfds_w
-			#endif
-		);
-	
-	if (!fIsSet(events, event::error<Select>::value))
-		removeFromSet(fds_e, fd
-			#ifndef WIN32
-			, error_set,  nfds_e
+			, writeList, highestWriteFD
 			#endif
 		);
 	
 	return 0;
 }
 
-int Select::remove(fd_t fd)
+int Event::remove(SOCKET fd)
 {
 	assert(fd != Socket::InvalidHandle);
 	
-	std::map<fd_t,uint>::iterator iter(fd_list.find(fd));
+	std::map<SOCKET,uint>::iterator iter(fd_list.find(fd));
 	assert(iter != fd_list.end());
 	
-	removeFromSet(fds_r, fd
+	removeFromSet(readSet, fd
 		#ifndef WIN32
-		, read_set, nfds_r
+		, readList, highestReadFD
 		#endif
 	);
-	removeFromSet(fds_w, fd
+	removeFromSet(writeSet, fd
 		#ifndef WIN32
-		, write_set, nfds_w
-		#endif
-	);
-	removeFromSet(fds_e, fd
-		#ifndef WIN32
-		, error_set, nfds_e
+		, writeList, highestWriteFD
 		#endif
 	);
 	
@@ -261,7 +225,7 @@ int Select::remove(fd_t fd)
 	return true;
 }
 
-bool Select::getEvent(fd_t &fd, ev_t &events)
+bool Event::getEvent(SOCKET &fd, event_t &events)
 {
 	assert(fd_list.size() > 0);
 	
@@ -271,12 +235,10 @@ bool Select::getEvent(fd_t &fd, ev_t &events)
 		
 		events = 0;
 		
-		if (FD_ISSET(fd, &t_fds_r) != 0)
-			fSet(events, event::read<Select>::value);
-		if (FD_ISSET(fd, &t_fds_w) != 0)
-			fSet(events, event::write<Select>::value);
-		if (FD_ISSET(fd, &t_fds_e) != 0)
-			fSet(events, event::error<Select>::value);
+		if (FD_ISSET(fd, &t_readSet) != 0)
+			events |= Read;
+		if (FD_ISSET(fd, &t_writeSet) != 0)
+			events |= Write;
 		
 		if (events != 0)
 			return true;
@@ -285,7 +247,7 @@ bool Select::getEvent(fd_t &fd, ev_t &events)
 	return false;
 }
 
-void Select::timeout(uint msecs)
+void Event::timeout(uint msecs)
 {
 	if (msecs > 1000)
 	{
@@ -297,5 +259,3 @@ void Select::timeout(uint msecs)
 	
 	_timeout.tv_usec = msecs * 1000;
 }
-
-} // namespace::event

@@ -1,6 +1,6 @@
 /*******************************************************************************
 
-   Copyright (C) 2007 M.K.A. <wyrmchild@users.sourceforge.net>
+   Copyright (C) 2007, 2008 M.K.A. <wyrmchild@users.sourceforge.net>
    
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -10,27 +10,21 @@
    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
    DEALINGS IN THE SOFTWARE.
 
-   ---
-   
-   Defines the most effecient event mechanism available as EventSystem.
-
 *******************************************************************************/
 
 #pragma once
 
-#ifndef Event_H_INCLUDED
-#define Event_H_INCLUDED
+#ifndef Event_H
+#define Event_H
 
 #include "config.h"
 
 #if defined(EV_EPOLL)
 	#include "epoll.h"
-	typedef event::Epoll EventSystem;
 #elif defined(EV_SELECT)
 	#include "select.h"
-	typedef event::Select EventSystem;
 #else
 	#error No event mechanism defined!
 #endif
 
-#endif // Event_H_INCLUDED
+#endif // Event_H

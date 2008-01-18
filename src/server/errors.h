@@ -45,6 +45,7 @@ const int WouldBlock = EAGAIN;
 	#endif
 #endif
 
-} // namespace:error
+}
+// namespace:error
 
 #endif // SystemErrors_INCLUDED
