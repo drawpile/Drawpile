@@ -9,12 +9,9 @@ set (
 
 if ( RELEASE )
 	generate_final ( SHR_SOURCES ${SHR_SOURCES} )
-endif ( RELEASE )
+endif ( )
 
-add_library (
-	${DPSHAREDLIB}
-	${SHR_SOURCES}
-)
+add_library ( ${DPSHAREDLIB} ${SHR_SOURCES} )
 
 set_target_properties (
 	${DPSHAREDLIB}
@@ -29,18 +26,19 @@ if ( SHARED )
 	strip_lib ( ${DPSHAREDLIB} )
 	if ( WIN32 )
 		install ( TARGETS ${DPSHAREDLIB} RUNTIME DESTINATION . )
-	else ( WIN32 )
+	else ( )
 		install ( TARGETS ${DPSHAREDLIB} LIBRARY DESTINATION lib )
-	endif ( WIN32 )
-endif ( SHARED )
+	endif ( )
+endif ( )
 
+set ( HAVE_OPENSSL false )
 if ( OPENSSL )
 	find_package ( OpenSSL QUIET )
 	if ( OPENSSL_FOUND )
-		set ( HAVE_OPENSSL ON )
+		set ( HAVE_OPENSSL true )
 		message ( STATUS "OpenSSL libraries found!" )
 		target_link_libraries ( ${DPSHAREDLIB} ${OPENSSL_LIBRARIES} )
-	endif ( OPENSSL_FOUND )
-endif ( OPENSSL )
+	endif ( )
+endif ( )
 
 configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
