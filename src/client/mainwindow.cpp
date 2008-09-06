@@ -186,8 +186,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			this, SLOT(unlock()));
 	connect(controller_, SIGNAL(joinsDisallowed(bool)),
 			disallowjoins_, SLOT(setChecked(bool)));
-	connect(controller_, SIGNAL(joined(network::SessionState*)),
-			this, SLOT(joined(network::SessionState*)));
+	//connect(controller_, SIGNAL(joined(network::SessionState*)),
+			//this, SLOT(joined(network::SessionState*)));
 	connect(controller_, SIGNAL(becameOwner()),
 			this, SLOT(becameOwner()));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),
@@ -200,8 +200,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_,
 			SLOT(loggedin()));
-	connect(controller_, SIGNAL(joined(network::SessionState*)),
-			logindlg_, SLOT(joined()));
+	//connect(controller_, SIGNAL(joined(network::SessionState*)),
+			//logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)),
 			logindlg_, SLOT(raster(int)));
 	connect(controller_, SIGNAL(noSessions()),
@@ -210,8 +210,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			logindlg_, SLOT(sessionNotFound()));
 	connect(controller_, SIGNAL(netError(QString)),
 			logindlg_, SLOT(error(QString)));
-	connect(controller_, SIGNAL(selectSession(network::SessionList)),
-			logindlg_, SLOT(selectSession(network::SessionList)));
+	//connect(controller_, SIGNAL(selectSession(network::SessionList)),
+			//logindlg_, SLOT(selectSession(network::SessionList)));
 	connect(controller_, SIGNAL(needPassword()),
 			logindlg_, SLOT(getPassword()));
 	connect(logindlg_, SIGNAL(session(int)),
@@ -945,6 +945,7 @@ void MainWindow::disconnected()
 /**
  * @param session the session that was joined
  */
+#if 0
 void MainWindow::joined(network::SessionState *session)
 {
 	setSessionTitle(session->info().title);
@@ -954,6 +955,7 @@ void MainWindow::joined(network::SessionState *session)
 	adminTools_->setEnabled(isowner);
 	chatbox_->joined(session->info().title, session->host()->localUser().name());
 }
+#endif
 
 void MainWindow::becameOwner()
 {

@@ -53,6 +53,7 @@ namespace network {
 class HostState;
 class Session;
 
+#if 0
 //! Network session state machine
 /**
  * This class handles the state of a single session.
@@ -258,6 +259,7 @@ class SessionState : public QObject {
 		QQueue<protocol::Message*> drawbuffer_;
 };
 
+#endif
 }
 
 #endif

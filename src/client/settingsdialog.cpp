@@ -24,7 +24,7 @@
 #include "settingsdialog.h"
 
 #include "ui_settings.h"
-#include "../shared/protocol.defaults.h"
+//#include "../shared/protocol.defaults.h"
 
 namespace dialogs {
 
@@ -41,7 +41,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	cfg.beginGroup("settings/server");
 	ui_->uniquenames->setChecked(cfg.value("uniquenames",false).toBool());
 	ui_->multiconnect->setChecked(cfg.value("multiconnect",true).toBool());
-	ui_->serverport->setValue(cfg.value("port",protocol::default_port).toInt());
+	//ui_->serverport->setValue(cfg.value("port",protocol::default_port).toInt());
 	ui_->maxusers->setValue(cfg.value("maxusers",15).toInt());
 	ui_->maxsessions->setValue(cfg.value("maxsessions",5).toInt());
 	ui_->maxnamelength->setValue(cfg.value("maxnamelength",16).toInt());
@@ -59,10 +59,12 @@ void SettingsDialog::rememberSettings() const
 	cfg.beginGroup("settings/server");
 	cfg.setValue("uniquenames", ui_->uniquenames->isChecked());
 	cfg.setValue("multiconnect", ui_->multiconnect->isChecked());
+#if 0
 	if(ui_->serverport->value() == protocol::default_port)
 		cfg.remove("port");
 	else
 		cfg.setValue("port", ui_->serverport->value());
+#endif
 	cfg.setValue("maxusers", ui_->maxusers->value());
 	cfg.setValue("maxnamelength", ui_->maxnamelength->value());
 	cfg.setValue("password", ui_->serverpassword->text());

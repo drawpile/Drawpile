@@ -26,6 +26,7 @@
 #include "sessionstate.h"
 #include "icons.h"
 
+#if 0
 Q_DECLARE_METATYPE(network::User)
 
 UserListModel::UserListModel(QObject *parent)
@@ -176,4 +177,5 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 	}
 	return QItemDelegate::editorEvent(event, model, option, index);
 }
+#endif
 

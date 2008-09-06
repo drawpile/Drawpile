@@ -39,6 +39,7 @@ namespace network {
 class Connection;
 class SessionState;
 
+#if 0
 //! Network state machine
 /**
  * This class handles the state of a host connection.
@@ -120,8 +121,10 @@ class HostState : public QObject {
 		//! The session we tried to join didn't exist
 		void sessionNotFound();
 
+#if 0
 		//! A session should be selected from the list and joined
 		void selectSession(const network::SessionList& sessions);
+#endif
 
 		//! Session list was refreshed
 		void sessionsListed();
@@ -214,6 +217,7 @@ class HostState : public QObject {
 		bool loggedin_;
 };
 
+#endif
 }
 
 #endif

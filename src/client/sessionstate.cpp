@@ -30,6 +30,7 @@
 #include "brush.h"
 #include "point.h"
 
+#if 0
 #include "../shared/qt.h"
 #include "../shared/protocol.h"
 #include "../shared/protocol.tools.h"
@@ -37,8 +38,10 @@
 #include "../shared/SHA1.h"
 #include "../shared/templates.h" // for bswap
 
-namespace network {
+#endif
 
+namespace network {
+#if 0
 /**
  * @param parent parent HostState
  * @param info session information
@@ -137,6 +140,7 @@ void SessionState::sendRaster(const QByteArray& raster)
 
 void SessionState::sendRasterChunk()
 {
+#if 0
 	uint chunklen = 1024*4;
 	if(rasteroffset_ + chunklen > unsigned(raster_.length()))
 		chunklen = raster_.length() - rasteroffset_;
@@ -156,6 +160,7 @@ void SessionState::sendRasterChunk()
 	rasteroffset_ += chunklen;
 	host_->connection()->send(msg);
 	emit rasterSent(100*rasteroffset_/raster_.length());
+#endif
 }
 
 /**
@@ -167,10 +172,12 @@ void SessionState::sendRasterChunk()
  */
 void SessionState::select()
 {
+#if 0
 	protocol::SessionSelect *msg = new protocol::SessionSelect;
 	msg->session_id = info_.id;
 	// Set current user session here when supporting multisessions
 	host_->connection()->send(msg);
+#endif
 }
 
 /**
@@ -188,6 +195,7 @@ void SessionState::setPassword(const QString& password)
  */
 void SessionState::lock(bool l)
 {
+#if 0
 	protocol::SessionEvent *msg = new protocol::SessionEvent(
 			(l ? protocol::SessionEvent::Lock : protocol::SessionEvent::Unlock),
 			protocol::null_user,
@@ -197,6 +205,7 @@ void SessionState::lock(bool l)
 	msg->session_id = info_.id;
 	
 	host_->connection()->send(msg);
+#endif
 }
 
 /**
@@ -208,6 +217,7 @@ void SessionState::lock(bool l)
  */
 void SessionState::setUserLimit(int count)
 {
+#if 0
 	qDebug() << "Chaning user limit to" << count;
 	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
 			protocol::SessionInstruction::Alter,
@@ -223,6 +233,7 @@ void SessionState::setUserLimit(int count)
 
 	host_->lastsessioninstr_ = msg->action;
 	host_->connection()->send(msg);
+#endif
 }
 
 /**
@@ -230,6 +241,7 @@ void SessionState::setUserLimit(int count)
  */
 void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 {
+#if 0
 	const QColor hi = brush.color(1);
 	const QColor lo = brush.color(0);
 	protocol::ToolInfo *msg = new protocol::ToolInfo(
@@ -254,6 +266,7 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
 	msg->hi_color.blue = hi.blue();
 	msg->hi_color.alpha = qRound(brush.opacity(1) * 255);
 	host_->connection()->send(msg);
+#endif
 }
 
 /**
@@ -261,6 +274,7 @@ void SessionState::sendToolInfo(const drawingboard::Brush& brush)
  */
 void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 {
+#if 0
 	protocol::StrokeInfo *msg = new protocol::StrokeInfo(
 			point.x(),
 			point.y(),
@@ -268,26 +282,32 @@ void SessionState::sendStrokeInfo(const drawingboard::Point& point)
 			);
 	msg->session_id = info_.id;
 	host_->connection()->send(msg);
+#endif
 }
 
 void SessionState::sendStrokeEnd()
 {
+#if 0
 	protocol::StrokeEnd *msg = new protocol::StrokeEnd;
 	msg->session_id = info_.id;;
 	host_->connection()->send(msg);
+#endif
 }
 
 void SessionState::sendAckSync()
 {
+#if 0
 	protocol::Acknowledgement *msg = new protocol::Acknowledgement(
 			protocol::Message::SyncWait
 			);
 	msg->session_id = info_.id;
 	host_->connection()->send(msg);
+#endif
 }
 
 void SessionState::sendChat(const QString& message)
 {
+#if 0
 	Q_ASSERT(message.length() != 0);
 	
 	int length;
@@ -296,6 +316,7 @@ void SessionState::sendChat(const QString& message)
 	protocol::Chat *msg = new protocol::Chat(length, ptr);
 	msg->session_id = info_.id;
 	host_->connection()->send(msg);
+#endif
 }
 
 /**
@@ -307,6 +328,7 @@ void SessionState::sendChat(const QString& message)
  */
 void SessionState::handleMessage(protocol::Message *msg)
 {
+#if 0
 	do {
 		using namespace protocol;
 		Message *next = msg->next;
@@ -354,6 +376,7 @@ void SessionState::handleMessage(protocol::Message *msg)
 		delete msg;
 		msg = next;
 	} while(msg);
+#endif
 }
 
 /**
@@ -361,6 +384,7 @@ void SessionState::handleMessage(protocol::Message *msg)
  */
 void SessionState::handleAck(const protocol::Acknowledgement *msg)
 {
+#if 0
 	switch(msg->event) {
 		case protocol::Message::SyncWait:
 			emit syncDone();
@@ -374,6 +398,7 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
 			qDebug() << "unhandled session ack" << int(msg->event);
 			break;
 	}
+#endif
 }
 
 /**
@@ -381,6 +406,7 @@ void SessionState::handleAck(const protocol::Acknowledgement *msg)
  */
 void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 {
+#if 0
 	switch(msg->event) {
 		case protocol::UserInfo::Join:
 			if(users_.contains(msg->user_id)) {
@@ -411,6 +437,7 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
 			qDebug() << "unhandled user event " << int(msg->event);
 			break;
 	}
+#endif
 }
 
 /**
@@ -421,6 +448,7 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
  */
 void SessionState::handleRaster(const protocol::Raster *msg)
 {
+#if 0
 	if(msg->size==0) {
 		// Special case, zero size raster
 		emit rasterReceived(100);
@@ -440,6 +468,7 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 			flushDrawBuffer();
 		}
 	}
+#endif
 }
 
 /**
@@ -615,5 +644,6 @@ void SessionState::setUtf16(bool x)
 	Utf16_ = x;
 }
 
+#endif
 }
 

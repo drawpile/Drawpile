@@ -21,10 +21,13 @@
 #include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
+#if 0
 #include "../shared/protocol.h"
+#endif
 
 namespace network {
 
+#if 0
 /** @todo Utf16 support */
 Session::Session(const protocol::SessionInfo *info)
 	: id(info->session_id),
@@ -98,5 +101,6 @@ void User::kick()
 	owner_->host()->connection()->send(msg);
 }
 
+#endif
 }
 

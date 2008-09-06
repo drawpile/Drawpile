@@ -76,7 +76,7 @@ class LoginDialog : public QDialog
 		void sessionNotFound();
 
 		//! Select a session from the provided list
-		void selectSession(const network::SessionList& list);
+		//void selectSession(const network::SessionList& list);
 
 		//! An error occured (cannot proceed, user should press cancel)
 		void error(const QString& message);

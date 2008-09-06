@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -135,16 +135,16 @@ class Controller : public QObject
 		void parted();
 
 		//! A user joined the session
-		void userJoined(const network::User& user);
+		//void userJoined(const network::User& user);
 
 		//! A user left the session
-		void userParted(const network::User& user);
+		//void userParted(const network::User& user);
 
 		//! A user got kicked out
-		void userKicked(const network::User& user);
+		//void userKicked(const network::User& user);
 
 		//! User status has changed
-		void userChanged(const network::User& user);
+		//void userChanged(const network::User& user);
 
 		//! The local user became session owner
 		void becameOwner();
@@ -155,8 +155,10 @@ class Controller : public QObject
 		//! The requested session didn't exist
 		void sessionNotFound();
 
+#if 0
 		//! A session should be selected from the list and joined
 		void selectSession(const network::SessionList& list);
+#endif
 
 		//! A password is required
 		void needPassword();

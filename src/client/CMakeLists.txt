@@ -13,7 +13,7 @@ set (
 	newdialog.h imageselector.h hostdialog.h joindialog.h network.h
 	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
-	sessionlistmodel.h mandatoryfields.h palettewidget.h palettebox.h
+	mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
 	navigator.h
 )
@@ -36,10 +36,9 @@ set (
 	hostdialog.cpp joindialog.cpp network.cpp hoststate.cpp sessionstate.cpp
 	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
-	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
+	sessioninfo.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp
-	../shared/qt.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
@@ -51,7 +50,7 @@ set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 
 set ( TEMP ${CMAKE_CURRENT_BINARY_DIR} ) # backup binary dir
 set ( CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
-Qt4_wrap_UI ( UI_Headers ${UIs} )
+QT4_WRAP_UI ( UI_Headers ${UIs} )
 set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
 
 # Qt Resource
@@ -96,7 +95,7 @@ if ( RELEASE )
 endif ( RELEASE )
 
 link_libraries(
-	${DPSHAREDLIB} # DP shared library
+	#${DPSHAREDLIB} # DP shared library
 	${QT_LIBRARIES}
 )
 
@@ -114,7 +113,7 @@ add_executable (
 set_target_properties (
 	drawpile
 	PROPERTIES
-	VERSION 0.5.0
+	VERSION 0.6.0
 	PROJECT_LABEL drawpile-client
 )
 

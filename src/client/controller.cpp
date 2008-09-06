@@ -30,11 +30,10 @@
 #include "sessionstate.h"
 #include "localserver.h"
 
-#include "../shared/protocol.defaults.h"
-
 Controller::Controller(QObject *parent)
 	: QObject(parent), board_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
+#if 0
 	host_ = new network::HostState(this);
 	net_ = new network::Connection(this);
 	connect(host_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
@@ -47,7 +46,7 @@ Controller::Controller(QObject *parent)
 	connect(host_, SIGNAL(sessionNotFound()), this, SLOT(disconnectHost()));
 	connect(host_, SIGNAL(sessionNotFound()), this, SIGNAL(sessionNotFound()));
 
-	connect(host_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
+	//connect(host_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
 	connect(host_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
 
 	connect(host_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
@@ -58,6 +57,7 @@ Controller::Controller(QObject *parent)
 	connect(net_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	connect(net_, SIGNAL(connected()), this, SLOT(netConnected()));
 	connect(net_, SIGNAL(received()), host_, SLOT(receiveMessage()));
+#endif
 }
 
 Controller::~Controller()
@@ -66,7 +66,8 @@ Controller::~Controller()
 
 bool Controller::isConnected() const
 {
-	return net_->isConnected();
+	//return net_->isConnected();
+	return false;
 }
 
 void Controller::setModel(drawingboard::Board *board)
@@ -92,6 +93,7 @@ void Controller::setModel(drawingboard::Board *board)
  */
 void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 {
+#if 0
 	Q_ASSERT(net_ != 0);
 	Q_ASSERT(url.userName().isEmpty()==false);
 
@@ -121,12 +123,15 @@ void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 
 	sync_ = false;
 	syncwait_ = false;
+#endif
 }
 
 bool Controller::isUploading() const
 {
+#if 0
 	if(session_)
 		return session_->isUploading();
+#endif
 	return false;
 }
 
@@ -143,9 +148,11 @@ bool Controller::isUploading() const
 void Controller::hostSession(const QString& title, const QString& password,
 		const QImage& image, int userlimit, bool allowdraw, bool allowchat)
 {
+#if 0
 	Q_ASSERT(host_);
 	host_->host(title, password, image.width(), image.height(),
 			userlimit, allowdraw, allowchat);
+#endif
 }
 
 /**
@@ -154,8 +161,10 @@ void Controller::hostSession(const QString& title, const QString& password,
  */
 void Controller::joinSession()
 {
+#if 0
 	Q_ASSERT(host_);
 	host_->join();
+#endif
 }
 
 /**
@@ -164,36 +173,36 @@ void Controller::joinSession()
  */
 void Controller::sendPassword(const QString& password)
 {
-	host_->sendPassword(password);
+	//host_->sendPassword(password);
 }
 
 void Controller::joinSession(int id)
 {
-	host_->join(id);
+	//host_->join(id);
 }
 
 void Controller::disconnectHost()
 {
-	Q_ASSERT(net_);
-	net_->disconnectFromHost();
+	//Q_ASSERT(net_);
+	//net_->disconnectFromHost();
 }
 
 void Controller::lockBoard(bool lock)
 {
-	Q_ASSERT(session_);
-	session_->lock(lock);
+	//Q_ASSERT(session_);
+	//session_->lock(lock);
 }
 
 void Controller::disallowJoins(bool disallow)
 {
-	Q_ASSERT(session_);
-	session_->setUserLimit(disallow?1:maxusers_);
+	//Q_ASSERT(session_);
+	//session_->setUserLimit(disallow?1:maxusers_);
 }
 
 void Controller::sendChat(const QString& message)
 {
-	Q_ASSERT(session_);
-	session_->sendChat(message);
+	//Q_ASSERT(session_);
+	//session_->sendChat(message);
 }
 
 /**
@@ -202,10 +211,12 @@ void Controller::sendChat(const QString& message)
  */
 void Controller::serverLoggedin()
 {
+#if 0
 	if(adminpasswd_.isEmpty())
 		finishLogin();
 	else
 		host_->becomeAdmin(adminpasswd_);
+#endif
 }
 
 /**
@@ -215,9 +226,11 @@ void Controller::serverLoggedin()
  */
 void Controller::finishLogin()
 {
+#if 0
 	emit loggedin();
 	if(autojoinpath_.length()>1)
 		host_->join(autojoinpath_.mid(1));
+#endif
 }
 
 /**
@@ -226,6 +239,7 @@ void Controller::finishLogin()
  */
 void Controller::sessionJoined(int id)
 {
+#if 0
 	const int userid = host_->localUser().id();
 	session_ = host_->session();
 
@@ -290,6 +304,7 @@ void Controller::sessionJoined(int id)
 	// Set lock
 	if(session_->user(userid).locked())
 		userLocked(userid, true);
+#endif
 }
 
 /**
@@ -297,6 +312,7 @@ void Controller::sessionJoined(int id)
  */
 void Controller::sessionParted()
 {
+#if 0
 	// Remove remote users
 	board_->clearUsers();
 	board_->addUser(0);
@@ -314,6 +330,7 @@ void Controller::sessionParted()
 	}
 	sync_ = false;
 	syncwait_ = false;
+#endif
 }
 
 /**
@@ -321,7 +338,7 @@ void Controller::sessionParted()
  */
 void Controller::addUser(int id)
 {
-	emit userJoined(session_->user(id));
+	//emit userJoined(session_->user(id));
 }
 
 /**
@@ -329,7 +346,7 @@ void Controller::addUser(int id)
  */
 void Controller::removeUser(int id)
 {
-	emit userParted(session_->user(id));
+	//emit userParted(session_->user(id));
 }
 
 /**
@@ -340,6 +357,7 @@ void Controller::removeUser(int id)
  */
 void Controller::rasterDownload(int p)
 {
+#if 0
 	if(p>=100) {
 		QImage img;
 		if(session_->sessionImage(img)) {
@@ -354,6 +372,7 @@ void Controller::rasterDownload(int p)
 		}
 	}
 	emit rasterDownloadProgress(p);
+#endif
 }
 
 /**
@@ -362,10 +381,12 @@ void Controller::rasterDownload(int p)
  */
 void Controller::rasterUpload()
 {
+#if 0
 	if(pendown_)
 		sync_ = true;
 	else
 		sendRaster();
+#endif
 }
 
 /**
@@ -397,6 +418,7 @@ void Controller::syncDone()
  */
 void Controller::sessionLocked(bool lock)
 {
+#if 0
 	if(lock) {
 		emit lockboard(tr("Locked by session owner"));
 		if(pendown_ && tool_->readonly()==false) {
@@ -411,6 +433,7 @@ void Controller::sessionLocked(bool lock)
 			lock_ = false;
 		}
 	}
+#endif
 }
 
 /**
@@ -422,6 +445,7 @@ void Controller::sessionLocked(bool lock)
  */
 void Controller::userLocked(int id, bool lock)
 {
+#if 0
 	const network::User &user = session_->user(id);
 
 	// Session owner cannot be locked (except when entire board is locked)
@@ -442,6 +466,7 @@ void Controller::userLocked(int id, bool lock)
 		if(user.isLocal() && session_->isLocked()==false)
 			sessionLocked(false);
 	}
+#endif
 }
 
 /**
@@ -449,9 +474,11 @@ void Controller::userLocked(int id, bool lock)
  */
 void Controller::sessionOwnerChanged()
 {
+#if 0
 	qDebug() << "owner changed to " << session_->info().owner;
 	if(session_->info().owner == host_->localUser().id())
 		emit becameOwner();
+#endif
 }
 
 /**
@@ -460,9 +487,11 @@ void Controller::sessionOwnerChanged()
  */
 void Controller::sessionKicked(int id)
 {
+#if 0
 	emit userKicked(session_->user(id));
 	if(session_->user(id).isLocal())
 		disconnectHost();
+#endif
 }
 
 /**
@@ -479,11 +508,13 @@ void Controller::sessionUserLimitChanged(int count)
  */
 void Controller::sendRaster()
 {
+#if 0
 	Q_ASSERT(session_);
 	QByteArray raster;
 	QBuffer buffer(&raster);
 	board_->image().save(&buffer, "PNG");
 	session_->sendRaster(raster);
+#endif
 }
 
 /**
@@ -493,9 +524,11 @@ void Controller::sendRaster()
  */
 void Controller::lockForSync()
 {
+#if 0
 	emit lockboard(tr("Synchronizing new user"));
 	lock_ = true;
 	session_->sendAckSync();
+#endif
 }
 
 void Controller::setTool(tools::Type tool)
@@ -544,8 +577,10 @@ void Controller::penUp()
  */
 void Controller::netConnected()
 {
+#if 0
 	emit connected(address_);
 	host_->login(username_);
+#endif
 }
 
 /**
@@ -553,9 +588,11 @@ void Controller::netConnected()
  */
 void Controller::netDisconnected()
 {
+#if 0
 	host_->setConnection(0);
 	session_ = 0;
 	emit disconnected(tr("Disconnected"));
+#endif
 }
 
 

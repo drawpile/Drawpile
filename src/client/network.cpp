@@ -23,8 +23,10 @@
 
 #include "network.h"
 
+#if 0
 #include "../shared/protocol.h"
 #include "../shared/protocol.helper.h"
+#endif
 
 namespace network {
 
@@ -46,8 +48,8 @@ Connection::Connection(QObject *parent) :
 
 Connection::~Connection()
 {
-	delete [] tmpbuffer;
-	delete newmsg;
+	//delete [] tmpbuffer;
+	//delete newmsg;
 }
 
 void Connection::disconnectHost()
@@ -75,6 +77,7 @@ void Connection::disconnectFromHost()
 	emit disconnecting();
 }
 
+#if 0
 /**
  * Add a message to send queue. The message may contain a linked list, as long
  * as each message is of the same type. This function is thread safe.
@@ -104,6 +107,7 @@ void Connection::send(protocol::Message *msg)
 	if(wasEmpty)
 		emit sending();
 }
+#endif
 
 /**
  * Get the oldest message from the receive queue.
@@ -112,6 +116,7 @@ void Connection::send(protocol::Message *msg)
  */
 protocol::Message *Connection::receive()
 {
+#if 0
 	recvmutex.lock();
 	protocol::Message *msg;
 	if(recvqueue.isEmpty())
@@ -120,6 +125,8 @@ protocol::Message *Connection::receive()
 		msg = recvqueue.dequeue();
 	recvmutex.unlock();
 	return msg;
+#endif
+	return 0;
 }
 
 /**
@@ -127,6 +134,7 @@ protocol::Message *Connection::receive()
  */
 void Connection::sendPending()
 {
+#if 0
 	bool isempty;
 	do {
 		if(sendlen==0)
@@ -155,6 +163,7 @@ void Connection::sendPending()
 		isempty = sendqueue.isEmpty();
 		sendmutex.unlock();
 	} while(!isempty);
+#endif
 }
 
 /**
@@ -163,6 +172,7 @@ void Connection::sendPending()
  */
 void Connection::serializeMessage()
 {
+#if 0
 	Q_ASSERT(sendlen==0);
 	sendmutex.lock();
 	if(sendqueue.isEmpty()) {
@@ -180,6 +190,7 @@ void Connection::serializeMessage()
 		delete msg;
 	}
 	sentlen = 0;
+#endif
 }
 
 /**
@@ -187,6 +198,7 @@ void Connection::serializeMessage()
  */
 void Connection::dataAvailable()
 {
+#if 0
 	do {
 		// Read available data
 		QByteArray buf = socket.readAll();
@@ -229,6 +241,7 @@ void Connection::dataAvailable()
 		// Remove unserialized bytes from receive buffer
 		recvbuffer.remove(0,reqlen);
 	} while(recvbuffer.length()>0);
+#endif
 }
 
 /**

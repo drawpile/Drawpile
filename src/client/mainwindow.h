@@ -146,7 +146,7 @@ class MainWindow : public QMainWindow {
 		//! Connection cut
 		void disconnected();
 		//! Joined a session
-		void joined(network::SessionState *session);
+		//void joined(network::SessionState *session);
 		//! Disallow changes to the board
 		void lock(const QString& reason);
 		//! Allow changes to the board

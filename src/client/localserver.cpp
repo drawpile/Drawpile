@@ -26,8 +26,6 @@
 
 #include "main.h"
 #include "localserver.h"
-#include "../shared/protocol.defaults.h"
-#include "../shared/qt.h"
 
 LocalServer::LocalServer()
 	: port_(-1)
@@ -55,7 +53,8 @@ LocalServer::~LocalServer()
  */
 QString LocalServer::address()
 {
-	return Network::getExternalAddress().toString();
+	return "127.0.0.1";
+	//return Network::getExternalAddress().toString();
 }
 
 /**
@@ -65,10 +64,13 @@ QString LocalServer::address()
  */
 bool LocalServer::ensureRunning()
 {
+#if 0
 	return ensureRunning(
 			DrawPileApp::getSettings().value("settings/server/port",
 				protocol::default_port).toInt()
 			);
+#endif
+	return false;
 }
 
 /**

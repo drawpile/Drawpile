@@ -178,7 +178,7 @@ bool RemoteBoardEditor::isCurrentBrush(const Brush& brush) const
 void RemoteBoardEditor::setTool(const Brush& brush)
 {
 	lastbrush_ = brush;
-	session_->sendToolInfo(brush);
+	//session_->sendToolInfo(brush);
 }
 
 /**
@@ -186,13 +186,13 @@ void RemoteBoardEditor::setTool(const Brush& brush)
  */
 void RemoteBoardEditor::addStroke(const Point& point)
 {
-	session_->sendStrokeInfo(point);
+	//session_->sendStrokeInfo(point);
 	board_->addPreview(point);
 }
 
 void RemoteBoardEditor::endStroke()
 {
-	session_->sendStrokeEnd();
+	//session_->sendStrokeEnd();
 	board_->endPreview();
 }
 

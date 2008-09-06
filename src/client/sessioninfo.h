@@ -31,6 +31,7 @@ namespace network {
 
 class SessionState;
 
+#if 0
 //! Information about a session
 struct Session {
 	Session(const protocol::SessionInfo *info);
@@ -83,6 +84,8 @@ class User {
 		bool locked_;
 		SessionState *owner_;
 };
+
+#endif
 
 }
 

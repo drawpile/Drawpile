@@ -23,7 +23,6 @@
 
 #include "ui_logindialog.h"
 #include "ui_sessiondialog.h"
-#include "sessionlistmodel.h"
 
 namespace dialogs {
 
@@ -107,6 +106,7 @@ void LoginDialog::error(const QString& message)
 /**
  * @param list list of sessions
  */
+#if 0
 void LoginDialog::selectSession(const network::SessionList& list)
 {
 	QDialog sessiondialog(this);
@@ -121,6 +121,7 @@ void LoginDialog::selectSession(const network::SessionList& list)
 		emit session(list.at(sessionselect.sessionlist->currentIndex().row()).id);
 	}
 }
+#endif
 
 /**
  * If the dialog is still visible when this is shown, it means

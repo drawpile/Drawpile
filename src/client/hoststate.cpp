@@ -29,6 +29,7 @@
 #include "sessionstate.h"
 #include "version.h"
 
+#if 0
 #include "../shared/qt.h"
 #include "../shared/protocol.h"
 #include "../shared/protocol.errors.h"
@@ -36,9 +37,11 @@
 #include "../shared/protocol.flags.h"
 #include "../shared/SHA1.h"
 #include "../shared/templates.h" // for bswap
+#endif
 
 namespace network {
 
+#if 0
 HostState::HostState(QObject *parent)
 	: QObject(parent), net_(0), session_(0), lastsessioninstr_(-1), loggedin_(false)
 {
@@ -50,6 +53,7 @@ HostState::HostState(QObject *parent)
  */
 void HostState::receiveMessage()
 {
+#if 0
 	using namespace protocol;
 	Message *msg;
 	// Get all available messages.
@@ -121,6 +125,7 @@ void HostState::receiveMessage()
 			msg = next;
 		} while(msg);
 	}
+#endif
 }
 
 /**
@@ -128,6 +133,7 @@ void HostState::receiveMessage()
  */
 void HostState::setConnection(Connection *net)
 {
+#if 0
 	net_ = net;
 	if(net==0) {
 		loggedin_ = false;
@@ -138,6 +144,7 @@ void HostState::setConnection(Connection *net)
 			session_ = 0;
 		}
 	}
+#endif
 }
 
 /**
@@ -147,6 +154,7 @@ void HostState::setConnection(Connection *net)
  */
 void HostState::login(const QString& username)
 {
+#if 0
 	Q_ASSERT(net_);
 	username_ = username;
 	protocol::Identifier *msg = new protocol::Identifier(
@@ -158,6 +166,7 @@ void HostState::login(const QString& username)
 	memcpy(msg->identifier, protocol::identifier_string,
 			protocol::identifier_size);
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -177,6 +186,7 @@ void HostState::host(const QString& title,
 		const QString& password, quint16 width, quint16 height, int userlimit,
 		bool allowdraw, bool allowchat)
 {
+#if 0
 	int length;
 	char *ptr = convert::toUTF(title, length, Utf16_);
 	
@@ -200,6 +210,7 @@ void HostState::host(const QString& title,
 	lastsessioninstr_ = msg->action;
 	setsessionpassword_ = password;
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -211,10 +222,12 @@ void HostState::host(const QString& title,
  */
 void HostState::join(const QString& title)
 {
+#if 0
 	autojointitle_ = title;
 	disconnect(this, SIGNAL(sessionsListed()), this, 0);
 	connect(this, SIGNAL(sessionsListed()), this, SLOT(autoJoin()));
 	listSessions();
+#endif
 }
 
 /**
@@ -228,6 +241,7 @@ void HostState::join(const QString& title)
  */
 void HostState::sendPassword(const QString& password)
 {
+#if 0
 	Q_ASSERT(password.length() != 0);
 	
 	protocol::Password *msg = new protocol::Password;
@@ -246,6 +260,7 @@ void HostState::sendPassword(const QString& password)
 	
 	hash.GetHash(reinterpret_cast<quint8*>(msg->data));
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -256,10 +271,12 @@ void HostState::sendPassword(const QString& password)
  */
 void HostState::becomeAdmin(const QString& password)
 {
+#if 0
 	protocol::Authenticate *msg = new protocol::Authenticate;
 	sendadminpassword_ = password;
 	
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -285,6 +302,7 @@ void HostState::setPassword(const QString& password)
  */
 void HostState::setPassword(const QString& password, int session)
 {
+#if 0
 	int length;
 	char *ptr = convert::toUTF(password, length, Utf16_);
 	
@@ -293,6 +311,7 @@ void HostState::setPassword(const QString& password, int session)
 	msg->session_id = session;
 	
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -305,12 +324,14 @@ void HostState::setPassword(const QString& password, int session)
  */
 void HostState::listSessions()
 {
+#if 0
 	// First clear out the old session list
 	sessions_.clear();
 
 	// Then request a new one
 	protocol::ListSessions *msg = new protocol::ListSessions;
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -322,6 +343,7 @@ void HostState::listSessions()
  */
 void HostState::join(int id)
 {
+#if 0
 	Q_ASSERT(session_ == 0);
 	bool found = false;
 	// Get session parameters from list
@@ -340,6 +362,7 @@ void HostState::join(int id)
 	protocol::Subscribe *msg = new protocol::Subscribe;
 	msg->session_id = id;
 	net_->send(msg);
+#endif
 }
 
 /**
@@ -349,6 +372,7 @@ void HostState::join(int id)
  */
 void HostState::joinLatest()
 {
+#if 0
 	Q_ASSERT(sessions_.count() > 0);
 	SessionList::const_iterator i = sessions_.constEnd();
 	do {
@@ -359,6 +383,7 @@ void HostState::joinLatest()
 		}
 	} while(i!=sessions_.constBegin());
 	Q_ASSERT(false);
+#endif
 }
 
 /**
@@ -374,6 +399,7 @@ void HostState::joinLatest()
  */
 void HostState::autoJoin()
 {
+#if 0
 	if(sessions_.count()==0) {
 		emit noSessions();
 	} else {
@@ -401,6 +427,7 @@ void HostState::autoJoin()
 			}
 		}
 	}
+#endif
 }
 
 /**
@@ -416,6 +443,7 @@ void HostState::autoJoin()
  */
 void HostState::handleHostInfo(const protocol::HostInfo *msg)
 {
+#if 0
 	// Handle host info
 	Utf16_ = fIsSet(msg->requirements, (uchar)protocol::requirements::WideStrings);
 	
@@ -431,6 +459,7 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
 			);
 	
 	net_->send(user);
+#endif
 }
 
 /**
@@ -441,10 +470,12 @@ void HostState::handleHostInfo(const protocol::HostInfo *msg)
  */
 void HostState::handleUserInfo(const protocol::UserInfo *msg)
 {
+#if 0
 	Q_ASSERT(loggedin_ == false);
 	loggedin_ = true;
 	localuser_ = User(username_, msg->user_id, false, 0);
 	emit loggedin();
+#endif
 }
 
 /**
@@ -454,6 +485,7 @@ void HostState::handleUserInfo(const protocol::UserInfo *msg)
  */
 void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 {
+#if 0
 	bool updated = false;
 	for(int i=0;i<sessions_.size();++i) {
 		if(sessions_.at(i).id == msg->session_id) {
@@ -469,6 +501,7 @@ void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
 	}
 	if(updated==false)
 		sessions_.append(msg);
+#endif
 }
 
 /**
@@ -478,6 +511,7 @@ void HostState::handleSessionInfo(const protocol::SessionInfo *msg)
  */
 void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
 {
+#if 0
 	passwordseed_ = QByteArray(msg->seed, protocol::password_seed_size);
 	passwordsession_ = msg->session_id;
 	if(msg->session_id == protocol::Global) {
@@ -485,6 +519,7 @@ void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
 	} else {
 		emit needPassword();
 	}
+#endif
 }
 
 /**
@@ -493,6 +528,7 @@ void HostState::handleAuthentication(const protocol::PasswordRequest *msg)
  */
 void HostState::handleAck(const protocol::Acknowledgement *msg)
 {
+#if 0
 	// Handle global acks
 	switch (msg->event) {
 		case protocol::Message::SessionInstruction:
@@ -525,6 +561,7 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
 			qDebug() << "unhandled host ack" << int(msg->event);
 			break;
 	}
+#endif
 }
 
 /**
@@ -532,6 +569,7 @@ void HostState::handleAck(const protocol::Acknowledgement *msg)
  */
 void HostState::handleError(const protocol::Error *msg)
 {
+#if 0
 	QString errmsg;
 	switch(msg->code) {
 		using namespace protocol::error;
@@ -553,7 +591,9 @@ void HostState::handleError(const protocol::Error *msg)
 	}
 	qDebug() << "error" << errmsg << "for session" << msg->session_id;
 	emit error(errmsg);
+#endif
 }
+#endif
 
 }
 
