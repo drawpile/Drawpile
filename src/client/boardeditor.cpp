@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -178,7 +178,7 @@ bool RemoteBoardEditor::isCurrentBrush(const Brush& brush) const
 void RemoteBoardEditor::setTool(const Brush& brush)
 {
 	lastbrush_ = brush;
-	//session_->sendToolInfo(brush);
+	session_->sendToolSelect(brush);
 }
 
 /**
@@ -186,13 +186,13 @@ void RemoteBoardEditor::setTool(const Brush& brush)
  */
 void RemoteBoardEditor::addStroke(const Point& point)
 {
-	//session_->sendStrokeInfo(point);
+	session_->sendStrokePoint(point);
 	board_->addPreview(point);
 }
 
 void RemoteBoardEditor::endStroke()
 {
-	//session_->sendStrokeEnd();
+	session_->sendStrokeEnd();
 	board_->endPreview();
 }
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 
 #include <QDebug>
 #include <QImage>
-#include <memory>
 
 #include "../config.h"
 
@@ -30,32 +29,51 @@
 #include "brush.h"
 #include "point.h"
 
-#if 0
-#include "../shared/qt.h"
-#include "../shared/protocol.h"
-#include "../shared/protocol.tools.h"
-#include "../shared/protocol.flags.h"
-#include "../shared/SHA1.h"
-#include "../shared/templates.h" // for bswap
-
-#endif
+#include "../shared/net/messagequeue.h"
+#include "../shared/net/message.h"
+#include "../shared/net/stroke.h"
+#include "../shared/net/toolselect.h"
 
 namespace network {
-#if 0
+
+/**
+ * A utility function to put an RGB value + opacity in 32 bits.
+ */
+quint32 encodeColor(const QColor& color, qreal opacity) {
+	return (color.red() << 24) |
+		(color.green() << 16) |
+		(color.blue() << 8) |
+		qRound(opacity*255);
+}
+
+/**
+ * A utility to get an RGB value + opacity from 32 bits
+ */
+QColor decodeColor(quint32 color, qreal &opacity) {
+	opacity = (color & 0x000000ff)/255.0;
+	return QColor(
+			(color >> 24),
+			(color >> 16) & 0x000000ff,
+			(color >> 8) & 0x000000ff
+			);
+}
+
 /**
  * @param parent parent HostState
  * @param info session information
  */
 SessionState::SessionState(HostState *parent, const Session& info)
-	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true),Utf16_(false)
+	: QObject(parent), host_(parent), info_(info), rasteroffset_(0),lock_(false),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
+#if 0
 	users_[host_->localUser().id()] = User(
 			host_->localUser().name(),
 			host_->localUser().id(),
 			fIsSet(info.mode, static_cast<quint8>(protocol::user::Locked)),
 			this
 			);
+#endif
 }
 
 /**
@@ -63,9 +81,11 @@ SessionState::SessionState(HostState *parent, const Session& info)
  */
 void SessionState::update(const Session& info)
 {
+#if 0
 	if(info_.maxusers != info.maxusers) {
 		emit userLimitChanged(info.maxusers);
 	}
+#endif
 	/** @todo check for other changes too */
 	info_ = info;
 }
@@ -164,32 +184,6 @@ void SessionState::sendRasterChunk()
 }
 
 /**
- * Send a SessionSelect message to indicate this session as the one
- * where drawing occurs.
- *
- * This doesn't really affect anything, as true multisessions are not
- * supported, but the protocol requires this.
- */
-void SessionState::select()
-{
-#if 0
-	protocol::SessionSelect *msg = new protocol::SessionSelect;
-	msg->session_id = info_.id;
-	// Set current user session here when supporting multisessions
-	host_->connection()->send(msg);
-#endif
-}
-
-/**
- * Set the session password.
- * @param password password to set
- */
-void SessionState::setPassword(const QString& password)
-{
-	host_->setPassword(password, info_.id);
-}
-
-/**
  * @param l lock status
  * @pre user is session owner
  */
@@ -239,59 +233,41 @@ void SessionState::setUserLimit(int count)
 /**
  * @param brush brush info to send
  */
-void SessionState::sendToolInfo(const drawingboard::Brush& brush)
+void SessionState::sendToolSelect(const drawingboard::Brush& brush)
 {
-#if 0
-	const QColor hi = brush.color(1);
-	const QColor lo = brush.color(0);
-	protocol::ToolInfo *msg = new protocol::ToolInfo(
-			protocol::tool_type::Brush,
-			protocol::tool_mode::Normal,
-			0, // lo color
-			0, // hi color
-			brush.radius(0),
+	host_->mq_->send( protocol::ToolSelect(
+			host_->localuser_,
+			1,
+			1,
+			encodeColor(brush.color(1), brush.opacity(1)),
+			encodeColor(brush.color(0), brush.opacity(0)),
 			brush.radius(1),
-			qRound(brush.hardness(0)*255),
+			brush.radius(0),
 			qRound(brush.hardness(1)*255),
+			qRound(brush.hardness(0)*255),
 			brush.spacing()
-			);
+			)
+		);
 
-	msg->session_id = info_.id;
-	msg->lo_color.red = lo.red();
-	msg->lo_color.green = lo.green();
-	msg->lo_color.blue = lo.blue();
-	msg->lo_color.alpha = qRound(brush.opacity(0) * 255);
-	msg->hi_color.red = hi.red();
-	msg->hi_color.green = hi.green();
-	msg->hi_color.blue = hi.blue();
-	msg->hi_color.alpha = qRound(brush.opacity(1) * 255);
-	host_->connection()->send(msg);
-#endif
 }
 
 /**
  * @param point stroke coordinates to send
  */
-void SessionState::sendStrokeInfo(const drawingboard::Point& point)
+void SessionState::sendStrokePoint(const drawingboard::Point& point)
 {
-#if 0
-	protocol::StrokeInfo *msg = new protocol::StrokeInfo(
-			point.x(),
-			point.y(),
-			qRound(point.pressure()*255)
+	host_->mq_->send(protocol::StrokePoint(
+				host_->localuser_,
+				point.x(),
+				point.y(),
+				qRound(point.pressure()*255)
+				)
 			);
-	msg->session_id = info_.id;
-	host_->connection()->send(msg);
-#endif
 }
 
 void SessionState::sendStrokeEnd()
 {
-#if 0
-	protocol::StrokeEnd *msg = new protocol::StrokeEnd;
-	msg->session_id = info_.id;;
-	host_->connection()->send(msg);
-#endif
+	host_->mq_->send(protocol::StrokeEnd( host_->localuser_ ) );
 }
 
 void SessionState::sendAckSync()
@@ -307,27 +283,32 @@ void SessionState::sendAckSync()
 
 void SessionState::sendChat(const QString& message)
 {
-#if 0
-	Q_ASSERT(message.length() != 0);
-	
-	int length;
-	char *ptr = convert::toUTF(message, length, Utf16_);
-	
-	protocol::Chat *msg = new protocol::Chat(length, ptr);
-	msg->session_id = info_.id;
-	host_->connection()->send(msg);
-#endif
+	QStringList msg;
+	msg << "SAY" << message;
+	host_->mq_->send(protocol::Message(msg));
 }
 
 /**
- * Handle a message or a message bundle. Deletes msg after work
- * is done.
- * @param msg message to handle
- * @pre msg != 0
- * @pre for each msg in bundle, msg->session_id == info().id
+ * @param tokens message tokens
  */
-void SessionState::handleMessage(protocol::Message *msg)
+bool SessionState::handleMessage(const QStringList& tokens)
 {
+	if(tokens[0].compare("SAY")==0) {
+		qDebug() << tokens;
+	} else if(tokens[0].compare("USER")==0) {
+		User user(this, tokens);
+		users_[user.id()] = user;
+		qDebug() << "User" << user.id() << user.name() << "locked:" << user.locked();
+		// The session joining is complete when we get our own user ID
+		// for the first time.
+		if(host_->localuser_<0 && user.name().compare(host_->username_)==0)
+			host_->sessionJoinDone(user.id());
+	} else if(tokens[0].compare("BOARD")==0) {
+		qDebug() << "board change";
+	} else
+		return false;
+	return true;
+
 #if 0
 	do {
 		using namespace protocol;
@@ -379,67 +360,7 @@ void SessionState::handleMessage(protocol::Message *msg)
 #endif
 }
 
-/**
- * @param msg Acknowledgement message
- */
-void SessionState::handleAck(const protocol::Acknowledgement *msg)
-{
 #if 0
-	switch(msg->event) {
-		case protocol::Message::SyncWait:
-			emit syncDone();
-		case protocol::Message::SessionSelect:
-			// Ignore session select ack
-			break;
-		case protocol::Message::Raster:
-			sendRasterChunk();
-			break;
-		default:
-			qDebug() << "unhandled session ack" << int(msg->event);
-			break;
-	}
-#endif
-}
-
-/**
- * @param msg UserInfo message
- */
-void SessionState::handleUserInfo(const protocol::UserInfo *msg)
-{
-#if 0
-	switch(msg->event) {
-		case protocol::UserInfo::Join:
-			if(users_.contains(msg->user_id)) {
-				qDebug() << "Got join event for user" << int(msg->user_id)
-					<< "who is already in session!";
-			} else {
-				bool islocked = fIsSet(msg->mode, static_cast<quint8>(protocol::user::Locked));
-				users_[msg->user_id] = User(convert::fromUTF(msg->name, msg->length, Utf16_),
-						msg->user_id, islocked, this);
-				emit userJoined(msg->user_id);
-			}
-			break;
-		case protocol::UserInfo::Leave:
-		case protocol::UserInfo::Disconnect:
-		case protocol::UserInfo::BrokenPipe:
-		case protocol::UserInfo::TimedOut:
-		case protocol::UserInfo::Dropped:
-		case protocol::UserInfo::Kicked:
-			if(users_.contains(msg->user_id)) {
-				emit userLeft(msg->user_id);
-				users_.remove(msg->user_id);
-			} else {
-				qDebug() << "got logout message for user" << int(msg->user_id)
-				   << "who is not in session!";
-			}
-			break;
-		default:
-			qDebug() << "unhandled user event " << int(msg->event);
-			break;
-	}
-#endif
-}
-
 /**
  * Receive raster data. When joining an empty session, a raster message
  * with all fields zeroed is received.
@@ -448,7 +369,6 @@ void SessionState::handleUserInfo(const protocol::UserInfo *msg)
  */
 void SessionState::handleRaster(const protocol::Raster *msg)
 {
-#if 0
 	if(msg->size==0) {
 		// Special case, zero size raster
 		emit rasterReceived(100);
@@ -468,9 +388,10 @@ void SessionState::handleRaster(const protocol::Raster *msg)
 			flushDrawBuffer();
 		}
 	}
-#endif
 }
+#endif
 
+#if 0
 /**
  * A synchronize request causes the client to start transmitting a copy of
  * the drawingboard as soon as the user stops drawing.
@@ -480,7 +401,9 @@ void SessionState::handleSynchronize(const protocol::Synchronize *msg)
 {
 	emit syncRequest();
 }
+#endif
 
+#if 0
 /**
  * Client will enter SyncWait state. The board will be locked as soon as
  * the current stroke is finished. The client will respond with Ack/SyncWait
@@ -491,7 +414,9 @@ void SessionState::handleSyncWait(const protocol::SyncWait *msg)
 {
 	emit syncWait();
 }
+#endif
 
+#if 0
 /**
  * Received session events contain information about other users in the
  * session.
@@ -540,28 +465,33 @@ void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
 			qDebug() << "unhandled session event action" << int(msg->action);
 	}
 }
+#endif
 
 /**
  * @param msg ToolInfo message
  * @retval true message was buffered, don't delete
  */
-bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
+bool SessionState::handleToolSelect(protocol::ToolSelect *ts)
 {
 	if(bufferdrawing_) {
-		drawbuffer_.enqueue(msg);
+		drawbuffer_.enqueue(ts);
 		return true;
 	}
+	qreal o1;
+	QColor c1 = decodeColor(ts->c1(), o1);
+	qreal o0;
+	QColor c0 = decodeColor(ts->c0(), o0);
 	drawingboard::Brush brush(
-			msg->hi_size,
-			msg->hi_hardness/255.0,
-			msg->hi_color.alpha/255.0,
-			QColor(msg->hi_color.red, msg->hi_color.green, msg->hi_color.blue),
-			msg->spacing);
-	brush.setRadius2(msg->lo_size);
-	brush.setColor2(QColor(msg->lo_color.red, msg->lo_color.green, msg->lo_color.blue));
-	brush.setHardness2(msg->lo_hardness/255.0);
-	brush.setOpacity2(msg->lo_color.alpha/255.0);
-	emit toolReceived(msg->user_id, brush);
+			ts->s1(),
+			ts->h1()/255.0,
+			o1,
+			c1,
+			ts->spacing());
+	brush.setRadius2(ts->s0());
+	brush.setColor2(c0);
+	brush.setHardness2(ts->h0()/255.0);
+	brush.setOpacity2(o0);
+	emit toolReceived(ts->user(), brush);
 	return false;
 }
 
@@ -569,19 +499,18 @@ bool SessionState::handleToolInfo(protocol::ToolInfo *msg)
  * @param msg StrokeInfo message
  * @retval true message was buffered, don't delete
  */
-bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
+bool SessionState::handleStroke(protocol::StrokePoint *s)
 {
 	if(bufferdrawing_) {
-		drawbuffer_.enqueue(msg);
+		drawbuffer_.enqueue(s);
 		return true;
 	}
-	Q_ASSERT(msg->type == protocol::Message::StrokeInfo);
 	emit strokeReceived(
-			msg->user_id,
+			s->user(),
 			drawingboard::Point(
-				(qint16)(msg->x),
-				(qint16)(msg->y),
-				msg->pressure/255.0
+				(qint16)(s->point(0).x),
+				(qint16)(s->point(0).y),
+				s->point(0).z/255.0
 				)
 			);
 	return false;
@@ -591,16 +520,17 @@ bool SessionState::handleStrokeInfo(protocol::StrokeInfo *msg)
  * @param msg StrokeEnd message
  * @retval true message was buffered, don't delete
  */
-bool SessionState::handleStrokeEnd(protocol::StrokeEnd *msg)
+bool SessionState::handleStrokeEnd(protocol::StrokeEnd *se)
 {
 	if(bufferdrawing_) {
-		drawbuffer_.enqueue(msg);
+		drawbuffer_.enqueue(se);
 		return true;
 	}
-	emit strokeEndReceived(msg->user_id);
+	emit strokeEndReceived(se->user());
 	return false;
 }
 
+#if 0
 /**
  * @param msg chat message
  */
@@ -613,6 +543,7 @@ void SessionState::handleChat(const protocol::Chat *msg)
 	emit chatMessage(u?u->name():"<unknown>",
 			convert::fromUTF(msg->data, msg->length, Utf16_));
 }
+#endif
 
 /**
  * The drawing command queue is cleared and a signal is emitted for
@@ -623,27 +554,23 @@ void SessionState::flushDrawBuffer()
 {
 	bufferdrawing_ = false;
 	while(drawbuffer_.isEmpty() == false) {
-		protocol::Message *msg = drawbuffer_.dequeue();
-		switch(msg->type) {
-			case protocol::Message::StrokeInfo:
-				handleStrokeInfo(static_cast<protocol::StrokeInfo*>(msg));
+		protocol::Packet *pk = drawbuffer_.dequeue();
+		switch(pk->type()) {
+			case protocol::STROKE:
+				handleStroke(static_cast<protocol::StrokePoint*>(pk));
 				break;
-			case protocol::Message::StrokeEnd:
-				handleStrokeEnd(static_cast<protocol::StrokeEnd*>(msg));
+			case protocol::STROKE_END:
+				handleStrokeEnd(static_cast<protocol::StrokeEnd*>(pk));
+				break;
+			case protocol::TOOL_SELECT:
+				handleToolSelect(static_cast<protocol::ToolSelect*>(pk));
 				break;
 			default:
-				handleToolInfo(static_cast<protocol::ToolInfo*>(msg));
-				break;
+				qFatal("unhandled packet got into the drawing buffer!");
 		}
-		delete msg;
+		delete pk;
 	}
 }
 
-void SessionState::setUtf16(bool x)
-{
-	Utf16_ = x;
-}
-
-#endif
 }
 

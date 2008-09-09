@@ -108,17 +108,17 @@ void NetStatus::copyAddress()
 
 void NetStatus::join(const network::User& user)
 {
-	//message(tr("<b>%1</b> has joined").arg(user.name()));
+	message(tr("<b>%1</b> has joined").arg(user.name()));
 }
 
 void NetStatus::leave(const network::User& user)
 {
-	//message(tr("<b>%1</b> has left").arg(user.name()));
+	message(tr("<b>%1</b> has left").arg(user.name()));
 }
 
 void NetStatus::kicked(const network::User& user)
 {
-	//message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
+	message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
 }
 
 void NetStatus::lock(const QString& reason)

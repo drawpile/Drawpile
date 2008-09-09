@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,28 +31,26 @@ namespace network {
 
 class SessionState;
 
-#if 0
 //! Information about a session
 struct Session {
-	Session(const protocol::SessionInfo *info);
+	//! Get session info from a board message
+	Session(const QStringList& info);
+	Session(int o);
+	QStringList tokens() const;
 
-	int id;
 	int owner;
 	QString title;
 	quint16 width;
 	quint16 height;
-	quint8 mode;
 	int maxusers;
-	int protocollevel;
 };
-
-typedef QList<Session> SessionList;
 
 //! Session participant
 class User {
 	public:
 		User();
 		User(const QString& name, int id, bool locked, SessionState *owner);
+		User(SessionState *owner, const QStringList& tokens);
 
 		//! Get the name of the user
 		const QString& name() const { return name_; }
@@ -84,8 +82,6 @@ class User {
 		bool locked_;
 		SessionState *owner_;
 };
-
-#endif
 
 }
 

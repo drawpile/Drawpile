@@ -2,7 +2,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -200,22 +200,12 @@ MainWindow::MainWindow(const MainWindow *source)
 			logindlg_, SLOT(disconnected(QString)));
 	connect(controller_, SIGNAL(loggedin()), logindlg_,
 			SLOT(loggedin()));
-	//connect(controller_, SIGNAL(joined(network::SessionState*)),
-			//logindlg_, SLOT(joined()));
 	connect(controller_, SIGNAL(rasterDownloadProgress(int)),
 			logindlg_, SLOT(raster(int)));
-	connect(controller_, SIGNAL(noSessions()),
-			logindlg_, SLOT(noSessions()));
-	connect(controller_, SIGNAL(sessionNotFound()),
-			logindlg_, SLOT(sessionNotFound()));
 	connect(controller_, SIGNAL(netError(QString)),
 			logindlg_, SLOT(error(QString)));
-	//connect(controller_, SIGNAL(selectSession(network::SessionList)),
-			//logindlg_, SLOT(selectSession(network::SessionList)));
 	connect(controller_, SIGNAL(needPassword()),
 			logindlg_, SLOT(getPassword()));
-	connect(logindlg_, SIGNAL(session(int)),
-			controller_, SLOT(joinSession(int)));
 	connect(logindlg_, SIGNAL(password(QString)),
 			controller_, SLOT(sendPassword(QString)));
 
@@ -311,16 +301,18 @@ void MainWindow::initBoard(const QImage& image)
  */
 void MainWindow::joinSession(const QUrl& url)
 {
+#if 0
 	disconnect(controller_, SIGNAL(loggedin()), this, 0);
 
 	// If no path was specified, automatically join the only available
 	// session or ask the user if there are more than one.
 	if(url.path().length()<=1)
 		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinJoin()));
-	controller_->connectHost(url);
+#endif
+	controller_->joinSession(url);
 
 	// Set login dialog to correct state
-	logindlg_->connecting(url.host());
+	logindlg_->connecting(url.host(), false);
 	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 }
 
@@ -857,11 +849,13 @@ void MainWindow::finishHost(int i)
 
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
-		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
-		controller_->connectHost(address, admin);
+		//connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
+		controller_->hostSession(address, hostdlg_->getTitle(),
+				hostdlg_->getImage());
+		hostdlg_->deleteLater();
 
 		// Set login dialog to correct state
-		logindlg_->connecting(address.host());
+		logindlg_->connecting(address.host(), true);
 		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 	} else {
 		hostdlg_->deleteLater();
@@ -873,11 +867,13 @@ void MainWindow::finishHost(int i)
  */
 void MainWindow::loggedinHost()
 {
+#if 0
 	controller_->hostSession(hostdlg_->getTitle(), hostdlg_->getPassword(),
 			hostdlg_->getImage(), hostdlg_->getUserLimit(),
 			hostdlg_->getAllowDrawing(), hostdlg_->getAllowChat());
 	// Host dialog is no longer needed
 	hostdlg_->deleteLater();
+#endif
 }
 
 /**
@@ -918,7 +914,7 @@ void MainWindow::finishJoin(int i) {
  */
 void MainWindow::loggedinJoin()
 {
-	controller_->joinSession();
+	//controller_->joinSession();
 }
 
 /**

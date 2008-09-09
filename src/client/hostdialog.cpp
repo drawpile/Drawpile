@@ -81,7 +81,9 @@ void HostDialog::rememberSettings() const
 	QStringList hosts;
 	// Move current address to the top of the list
 	const QString current = ui_->remotehost->currentText();
-	ui_->remotehost->removeItem(ui_->remotehost->findText(current));
+	int curind = ui_->remotehost->findText(current);
+	if(curind!=-1)
+		ui_->remotehost->removeItem(curind);
 	hosts << current;
 	for(int i=0;i<ui_->remotehost->count();++i)
 			hosts << ui_->remotehost->itemText(i);

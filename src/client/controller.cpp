@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QBuffer>
 #include <QUrl>
+
 #include "controller.h"
 #include "board.h"
 #include "brush.h"
@@ -30,34 +31,22 @@
 #include "sessionstate.h"
 #include "localserver.h"
 
+#include "../shared/net/constants.h" // DEFAULT_PORT
+
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), net_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
+	: QObject(parent), board_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
-#if 0
 	host_ = new network::HostState(this);
-	net_ = new network::Connection(this);
-	connect(host_, SIGNAL(loggedin()), this, SLOT(serverLoggedin()));
-	connect(host_, SIGNAL(becameAdmin()), this, SLOT(finishLogin()));
-	connect(host_, SIGNAL(joined(int)), this, SLOT(sessionJoined(int)));
-	connect(host_, SIGNAL(parted(int)), this, SLOT(sessionParted()));
+	connect(host_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
+	connect(host_, SIGNAL(joined()), this, SLOT(sessionJoined()));
 
-	connect(host_, SIGNAL(noSessions()), this, SLOT(disconnectHost()));
-	connect(host_, SIGNAL(noSessions()), this, SIGNAL(noSessions()));
-	connect(host_, SIGNAL(sessionNotFound()), this, SLOT(disconnectHost()));
-	connect(host_, SIGNAL(sessionNotFound()), this, SIGNAL(sessionNotFound()));
-
-	//connect(host_, SIGNAL(selectSession(network::SessionList)), this, SIGNAL(selectSession(network::SessionList)));
 	connect(host_, SIGNAL(needPassword()), this, SIGNAL(needPassword()));
 
 	connect(host_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
-	// Disconnect on error
-	connect(host_, SIGNAL(error(QString)), this, SLOT(disconnectHost()));
 	
-	connect(net_, SIGNAL(disconnected()), this, SLOT(netDisconnected()));
-	connect(net_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
-	connect(net_, SIGNAL(connected()), this, SLOT(netConnected()));
-	connect(net_, SIGNAL(received()), host_, SLOT(receiveMessage()));
-#endif
+	connect(host_, SIGNAL(disconnected()), this, SLOT(netDisconnected()));
+	connect(host_, SIGNAL(disconnected()), this, SLOT(sessionParted()));
+	connect(host_, SIGNAL(connected()), this, SLOT(netConnected()));
 }
 
 Controller::~Controller()
@@ -66,8 +55,7 @@ Controller::~Controller()
 
 bool Controller::isConnected() const
 {
-	//return net_->isConnected();
-	return false;
+	return host_->isConnected();
 }
 
 void Controller::setModel(drawingboard::Board *board)
@@ -91,10 +79,9 @@ void Controller::setModel(drawingboard::Board *board)
  * @param url host url. Should contain an username. May contain a path
  * @param adminpasswd administrator password (needed only in some cases)
  */
-void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
+void Controller::connectHost(const QUrl& url)
 {
-#if 0
-	Q_ASSERT(net_ != 0);
+	Q_ASSERT(host_ != 0);
 	Q_ASSERT(url.userName().isEmpty()==false);
 
 	username_ = url.userName();
@@ -106,24 +93,11 @@ void Controller::connectHost(const QUrl& url,const QString& adminpasswd)
 			QUrl::RemoveFragment|QUrl::StripTrailingSlash
 			).mid(2);
 
-	// Autojoin if path is present
-	autojoinpath_ = url.path();
-
-	// Become admin if password is set
-	adminpasswd_ = adminpasswd;
-
 	// Connect to host
-	host_->setConnection(net_);
-	QString host = url.host();
-	if(host.compare(LocalServer::address())==0) {
-		qDebug() << "actually connecting to localhost instead of" << host;
-		host = "127.0.0.1"; // server only allows admin users from localhost
-	}
-	net_->connectToHost(host, url.port(protocol::default_port));
+	host_->connectToHost(url.host(), url.port(protocol::DEFAULT_PORT));
 
 	sync_ = false;
 	syncwait_ = false;
-#endif
 }
 
 bool Controller::isUploading() const
@@ -136,35 +110,24 @@ bool Controller::isUploading() const
 }
 
 /**
- * A new session is created and joined.
- * @param title session title
- * @param password session password. If empty, no password is set
- * @param image initial board image
- * @param userlimit max. number of users
- * @param allowdraw allow drawing by default
- * @param allowchat allow chatting by default
- * @pre host connection must be established and user logged in.
+ * Simply join an existing session upon login. If server has no
+ * session, an error message is displayed.
  */
-void Controller::hostSession(const QString& title, const QString& password,
-		const QImage& image, int userlimit, bool allowdraw, bool allowchat)
-{
-#if 0
-	Q_ASSERT(host_);
-	host_->host(title, password, image.width(), image.height(),
-			userlimit, allowdraw, allowchat);
-#endif
+void Controller::joinSession(const QUrl& url) {
+	host_->setNoHost();
+	connectHost(url);
 }
 
 /**
- * If there is only one session, it is joined automatically. Otherwise a
- * list of sessions is presented to the user to choose from.
+ * A new session is created and joined.
+ * @param title session title
+ * @param image initial board image
  */
-void Controller::joinSession()
+void Controller::hostSession(const QUrl& url, const QString& title,
+		const QImage& image)
 {
-#if 0
-	Q_ASSERT(host_);
-	host_->join();
-#endif
+	host_->setHost(title, image.width(), image.height());
+	connectHost(url);
 }
 
 /**
@@ -176,15 +139,10 @@ void Controller::sendPassword(const QString& password)
 	//host_->sendPassword(password);
 }
 
-void Controller::joinSession(int id)
-{
-	//host_->join(id);
-}
-
 void Controller::disconnectHost()
 {
-	//Q_ASSERT(net_);
-	//net_->disconnectFromHost();
+	Q_ASSERT(host_);
+	host_->disconnectFromHost();
 }
 
 void Controller::lockBoard(bool lock)
@@ -206,41 +164,13 @@ void Controller::sendChat(const QString& message)
 }
 
 /**
- * The actual login part was completed. If an admin password was provided,
- * offer it. Otherwise just finish the login.
- */
-void Controller::serverLoggedin()
-{
-#if 0
-	if(adminpasswd_.isEmpty())
-		finishLogin();
-	else
-		host_->becomeAdmin(adminpasswd_);
-#endif
-}
-
-/**
- * Login is finished and admin privileges were granted if requested.
- * Emit a signal informing login is now done and autojoin a session
- * if a title was provided.
- */
-void Controller::finishLogin()
-{
-#if 0
-	emit loggedin();
-	if(autojoinpath_.length()>1)
-		host_->join(autojoinpath_.mid(1));
-#endif
-}
-
-/**
  * Prepare the system for a networked session.
  * @param id session id
  */
-void Controller::sessionJoined(int id)
+void Controller::sessionJoined()
 {
-#if 0
-	const int userid = host_->localUser().id();
+	qDebug() << "Joined session";
+	const int userid = host_->localUser();
 	session_ = host_->session();
 
 	// Remember maximum user count
@@ -304,7 +234,6 @@ void Controller::sessionJoined(int id)
 	// Set lock
 	if(session_->user(userid).locked())
 		userLocked(userid, true);
-#endif
 }
 
 /**
@@ -312,7 +241,6 @@ void Controller::sessionJoined(int id)
  */
 void Controller::sessionParted()
 {
-#if 0
 	// Remove remote users
 	board_->clearUsers();
 	board_->addUser(0);
@@ -330,7 +258,6 @@ void Controller::sessionParted()
 	}
 	sync_ = false;
 	syncwait_ = false;
-#endif
 }
 
 /**
@@ -577,10 +504,8 @@ void Controller::penUp()
  */
 void Controller::netConnected()
 {
-#if 0
 	emit connected(address_);
 	host_->login(username_);
-#endif
 }
 
 /**
@@ -588,11 +513,8 @@ void Controller::netConnected()
  */
 void Controller::netDisconnected()
 {
-#if 0
-	host_->setConnection(0);
 	session_ = 0;
 	emit disconnected(tr("Disconnected"));
-#endif
 }
 
 

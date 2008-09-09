@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -53,10 +53,15 @@ void LoginDialog::setTitleMessage(const QString& message)
  * Show the dialog and display the connecting message.
  * The address is displayed
  * @param address remote host address
+ * @param host if true, expecting to host a session
  */
-void LoginDialog::connecting(const QString& address)
+void LoginDialog::connecting(const QString& address, bool host)
 {
-	setTitleMessage(tr("Joining a drawing session"));
+	host_ = host;
+	if(host)
+		setTitleMessage(tr("Hosting a drawing session"));
+	else
+		setTitleMessage(tr("Joining a drawing session"));
 	ui_->statustext->setText(tr("Connecting to %1...").arg(address));
 	ui_->progress->setValue(0);
 	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
@@ -77,24 +82,13 @@ void LoginDialog::connected()
  */
 void LoginDialog::loggedin()
 {
-	ui_->statustext->setText(tr("Logged in"));
-	ui_->progress->setValue(2);
-}
-
-/**
- * Disconnected, display no sessions message.
- */
-void LoginDialog::noSessions()
-{
-	error(tr("No sessions were available on the host."));
-}
-
-/**
- * Disconnected, display session not found message.
- */
-void LoginDialog::sessionNotFound()
-{
-	error(tr("Selected session was not found on the host."));
+	if(host_) {
+		// When hosting, we don't need to download any raster data
+		hide();
+	} else {
+		ui_->statustext->setText(tr("Logged in"));
+		ui_->progress->setValue(2);
+	}
 }
 
 void LoginDialog::error(const QString& message)
@@ -141,6 +135,7 @@ void LoginDialog::disconnected(const QString& message)
 	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
+#if 0
 /**
  * A session was joined. Board contents is now being downloaded.
  */
@@ -148,6 +143,7 @@ void LoginDialog::joined()
 {
 	ui_->statustext->setText(tr("Downloading board contents..."));
 }
+#endif
 
 /**
  * Raster data download progresses. When progress hits 100, the download

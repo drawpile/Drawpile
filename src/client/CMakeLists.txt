@@ -10,7 +10,7 @@ set (
 	mainwindow.h netstatus.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h gradientslider.h colorbutton.h
-	newdialog.h imageselector.h hostdialog.h joindialog.h network.h
+	newdialog.h imageselector.h hostdialog.h joindialog.h
 	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	mandatoryfields.h palettewidget.h palettebox.h
@@ -33,7 +33,7 @@ set (
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp network.cpp hoststate.cpp sessionstate.cpp
+	hostdialog.cpp joindialog.cpp hoststate.cpp sessionstate.cpp
 	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp icons.cpp mandatoryfields.cpp
@@ -95,7 +95,7 @@ if ( RELEASE )
 endif ( RELEASE )
 
 link_libraries(
-	#${DPSHAREDLIB} # DP shared library
+	${DPSHAREDLIB}
 	${QT_LIBRARIES}
 )
 

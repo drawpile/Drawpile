@@ -2,7 +2,7 @@
 
 if ( DEBUG )
 	message ( STATUS "Optimization: None; Debug" )
-	set ( CMAKE_CXX_FLAGS_DEBUG "-g -Wall -O0 -pipe -march=i686 -fno-rtti" )
+	set ( CMAKE_CXX_FLAGS_DEBUG "-g -Wall -O0 -pipe" )
 else ( )
 	if ( GENERIC )
 		message ( STATUS "Optimization: Generic" )

@@ -1,4 +1,4 @@
-project ( drawpile CXX )
+project ( drawpile CXX C )
 
 # CMake version requirement. CMake might whine on older version, but will
 # work unless compatibility is broken.

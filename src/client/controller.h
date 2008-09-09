@@ -68,16 +68,11 @@ class Controller : public QObject
 		//! Set drawing board to use
 		void setModel(drawingboard::Board *board);
 
-		//! Connect to host
-		void connectHost(const QUrl& url, const QString& adminpasswd=QString());
+		//! Connect to host and join a session
+		void joinSession(const QUrl& url);
 
-		//! Start hosting a session
-		void hostSession(const QString& title, const QString& password,
-				const QImage& image, int userlimit, bool allowdraw,
-				bool allowchat);
-
-		//! Join a session
-		void joinSession();
+		//! Connect to host and start a new session
+		void hostSession(const QUrl& url, const QString& title, const QImage& image);
 
 		//! Check if connection is still established
 		bool isConnected() const;
@@ -86,9 +81,6 @@ class Controller : public QObject
 		bool isUploading() const;
 
 	public slots:
-		//! Join a specific session
-		void joinSession(int id);
-
 		//! Send a password
 		void sendPassword(const QString& password);
 
@@ -185,14 +177,8 @@ class Controller : public QObject
 		//! Connection to a host was disconnected
 		void netDisconnected();
 
-		//! Initial login procedure was completed
-		void serverLoggedin();
-
-		//! Finalize login (join session)
-		void finishLogin();
-
 		//! A session was joined
-		void sessionJoined(int id);
+		void sessionJoined();
 
 		//! A session was left
 		void sessionParted();
@@ -231,6 +217,9 @@ class Controller : public QObject
 		void sessionUserLimitChanged(int count);
 
 	private:
+		//! Connect to a host
+		void connectHost(const QUrl& url);
+
 		//! Enqueue board contents for upload
 		void sendRaster();
 
@@ -245,9 +234,6 @@ class Controller : public QObject
 
 		//! The currently selected tool
 		tools::Tool *tool_;
-
-		//! Network connection to the host
-		network::Connection *net_;
 
 		//! The host
 		network::HostState *host_;
