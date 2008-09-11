@@ -1,3 +1,25 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2008 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <QObject>
+
 #ifndef DP_SRV_BOARD_H
 #define DP_SRV_BOARD_H
 
@@ -6,24 +28,31 @@ namespace server {
 /**
  * Information about the drawing board.
  */
-class Board {
+class Board : public QObject {
+	Q_OBJECT
 	public:
-		Board(int owner);
+		Board(QObject *parent=0);
 
-		/**
-		 * Has the board been created yet?
-		 */
+		~Board() { }
+
+		//! Has the board been created yet?
 		bool exists() const { return _exists; }
 
-		/**
-		 * Set board options
-		 */
-		void set(const QString& title, int w, int h);
+		//! Mark the board as inexistent
+		void clear();
 
+		//! Set board options
+		void set(int owner, const QString& title, int w, int h);
+
+		//! Set board options from a message
+		bool set(int owner, const QStringList& tokens);
+
+		//! Set the size limit in bytes on drawing command buffer.
 		/**
-		 * Set board options from a message
+		 * When this limit is exceeded, the buffer is cleared and the next
+		 * login will trigger a board sync.
 		 */
-		bool set(const QStringList& tokens);
+		void setBufferLimit(int limit) { bufferLimit_ = limit; }
 
 		/**
 		 * Width of the board in pixels
@@ -40,10 +69,45 @@ class Board {
 		 */
 		const QString& title() const { return _title; }
 
+		//! Clear buffered raster data and drawing commands
+		void clearBuffer();
+
+		//! Set the length of the expected buffer
+		void setExpectedBufferLength(int len);
+
+		//! Add a new chunk of raster data
+		void addRaster(const QByteArray& chunk);
+
+		//! Add a preserialized drawing command
+		void addDrawingCommand(const QByteArray& packet);
+
+		//! Get the expected length of the raster buffer
+		int rasterBufferLength() const { return rasterlen_; }
+
+		//! Get the raster buffer (may be unfinished)
+		const QByteArray& rasterBuffer() const { return raster_; }
+
+		//! Get the buffered drawing commands
+		const QByteArray& drawingBuffer() const { return drawing_; }
+
+		//! Is the buffer valid?
+		/**
+		 * The buffer is valid only when there is raster data, or
+		 * at least a promise of raster data.
+		 */
+		bool validBuffer() const { return valid_; }
+
 		/**
 		 * Get a board info message representing this board.
 		 */
 		QString toMessage() const;
+	signals:
+		//! More raster data has become available
+		void rasterAvailable();
+
+	protected:
+		void connectNotify(const char *signal);
+		void disconnectNotify(const char *signal);
 
 	private:
 		bool _exists;
@@ -51,6 +115,13 @@ class Board {
 		int _width;
 		int _height;
 		int _owner;
+
+		QByteArray raster_;
+		QByteArray drawing_;
+		int rasterlen_;
+		bool valid_;
+		int clientsWaitingForBuffer_;
+		int bufferLimit_;
 };
 
 }

@@ -22,7 +22,6 @@
 #include "logindialog.h"
 
 #include "ui_logindialog.h"
-#include "ui_sessiondialog.h"
 
 namespace dialogs {
 
@@ -31,7 +30,7 @@ LoginDialog::LoginDialog(QWidget *parent)
 {
 	ui_ = new Ui_LoginDialog;
 	ui_->setupUi(this);
-	ui_->progress->setMaximum(107);
+	ui_->progress->setMaximum(103);
 }
 
 LoginDialog::~LoginDialog()
@@ -86,7 +85,7 @@ void LoginDialog::loggedin()
 		// When hosting, we don't need to download any raster data
 		hide();
 	} else {
-		ui_->statustext->setText(tr("Logged in"));
+		ui_->statustext->setText(tr("Downloading board contents..."));
 		ui_->progress->setValue(2);
 	}
 }
@@ -96,26 +95,6 @@ void LoginDialog::error(const QString& message)
 	ui_->statustext->setText(message);
 	appenddisconnect_ = true;
 }
-
-/**
- * @param list list of sessions
- */
-#if 0
-void LoginDialog::selectSession(const network::SessionList& list)
-{
-	QDialog sessiondialog(this);
-	Ui_SessionSelectDialog sessionselect;
-	sessionselect.setupUi(&sessiondialog);
-	sessionselect.sessionlist->setModel(new SessionListModel(list));
-	sessionselect.sessionlist->selectRow(0);
-	if(sessiondialog.exec() == QDialog::Rejected) {
-		reject();
-	} else {
-		ui_->statustext->setText(tr("Joining session..."));
-		emit session(list.at(sessionselect.sessionlist->currentIndex().row()).id);
-	}
-}
-#endif
 
 /**
  * If the dialog is still visible when this is shown, it means
@@ -135,16 +114,6 @@ void LoginDialog::disconnected(const QString& message)
 	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Close);
 }
 
-#if 0
-/**
- * A session was joined. Board contents is now being downloaded.
- */
-void LoginDialog::joined()
-{
-	ui_->statustext->setText(tr("Downloading board contents..."));
-}
-#endif
-
 /**
  * Raster data download progresses. When progress hits 100, the download
  * sequence is complete and the dialog is hidden.
@@ -152,14 +121,13 @@ void LoginDialog::joined()
  */
 void LoginDialog::raster(int p)
 {
-	ui_->progress->setValue(7+p);
+	ui_->progress->setValue(3+p);
 	if(p>=100)
 		hide();
 }
 
 /**
  * Request a password.
- * @todo session or host password?
  */
 void LoginDialog::getPassword()
 {

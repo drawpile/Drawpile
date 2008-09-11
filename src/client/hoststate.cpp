@@ -20,21 +20,19 @@
 
 #include <QDebug>
 #include <QImage>
-#include <memory>
 
 #include "../config.h"
 
-#include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "sessioninfo.h"
-#include "version.h"
 
 #include "../shared/net/messagequeue.h"
 #include "../shared/net/message.h"
 #include "../shared/net/login.h"
 #include "../shared/net/stroke.h"
 #include "../shared/net/toolselect.h"
+#include "../shared/net/binary.h"
 
 using protocol::Message;
 
@@ -72,8 +70,13 @@ void HostState::connectToHost(const QString& host, quint16 port) {
 }
 
 void HostState::disconnectFromHost() {
-	socket_.disconnectFromHost();
-	mq_->flush();
+	if(socket_.state()==QAbstractSocket::UnconnectedState ||
+			socket_.state()==QAbstractSocket::ClosingState) {
+		qWarning("Tried to disconnect even though socket is not yet connected!");
+	} else {
+		socket_.disconnectFromHost();
+		mq_->flush();
+	}
 }
 
 /**
@@ -98,19 +101,27 @@ void HostState::receiveMessage()
 					if(session_->handleStrokeEnd(static_cast<StrokeEnd*>(msg)))
 						msg = 0;
 				else
-					emit error("Received stroke end before joining a session");
+					emit error(tr("Received stroke end before joining a session"));
 				break;
 			case TOOL_SELECT:
 				if(session_)
 					if(session_->handleToolSelect(static_cast<ToolSelect*>(msg)))
 						msg = 0;
 				else
-					emit error("Received tool select before joining a session");
+					emit error(tr("Received tool select before joining a session"));
 				break;
 			case MESSAGE:
 				handleMessage((Message*)msg);
 				break;
-			default: emit error("unhandled message type");
+			case BINARY_CHUNK:
+				if(session_) {
+					if(!session_->handleBinaryChunk(static_cast<BinaryChunk*>(msg)))
+							emit error(tr("Received unexpected binary data"));
+				} else {
+					emit error(tr("Received binary chunk before joining a session"));
+				}
+				break;
+			case LOGIN_ID: qWarning("Received login ID. We're not a server!"); break;
 		}
 		delete msg;
 	}

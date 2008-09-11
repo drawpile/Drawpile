@@ -26,7 +26,6 @@
 #include "brush.h"
 #include "tools.h"
 #include "boardeditor.h"
-#include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "localserver.h"
@@ -45,7 +44,6 @@ Controller::Controller(QObject *parent)
 	connect(host_, SIGNAL(error(QString)), this, SIGNAL(netError(QString)));
 	
 	connect(host_, SIGNAL(disconnected()), this, SLOT(netDisconnected()));
-	connect(host_, SIGNAL(disconnected()), this, SLOT(sessionParted()));
 	connect(host_, SIGNAL(connected()), this, SLOT(netConnected()));
 }
 
@@ -136,7 +134,7 @@ void Controller::hostSession(const QUrl& url, const QString& title,
  */
 void Controller::sendPassword(const QString& password)
 {
-	//host_->sendPassword(password);
+	host_->sendPassword(password);
 }
 
 void Controller::disconnectHost()
@@ -147,20 +145,20 @@ void Controller::disconnectHost()
 
 void Controller::lockBoard(bool lock)
 {
-	//Q_ASSERT(session_);
-	//session_->lock(lock);
+	Q_ASSERT(session_);
+	session_->lock(lock);
 }
 
 void Controller::disallowJoins(bool disallow)
 {
-	//Q_ASSERT(session_);
-	//session_->setUserLimit(disallow?1:maxusers_);
+	Q_ASSERT(session_);
+	session_->setUserLimit(disallow?1:maxusers_);
 }
 
 void Controller::sendChat(const QString& message)
 {
-	//Q_ASSERT(session_);
-	//session_->sendChat(message);
+	Q_ASSERT(session_);
+	session_->sendChat(message);
 }
 
 /**
@@ -220,10 +218,6 @@ void Controller::sessionJoined()
 			this, SIGNAL(changed()));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_,
 			SLOT(userEndStroke(int)));
-	connect(session_, SIGNAL(userJoined(int)), board_,
-			SLOT(addUser(int)));
-	connect(session_, SIGNAL(userLeft(int)), board_,
-			SLOT(removeUser(int)));
 
 	// Get a remote board editor
 	delete toolbox_.editor();
@@ -239,7 +233,7 @@ void Controller::sessionJoined()
 /**
  * Restore to local drawing mode.
  */
-void Controller::sessionParted()
+void Controller::netDisconnected()
 {
 	// Remove remote users
 	board_->clearUsers();
@@ -258,6 +252,8 @@ void Controller::sessionParted()
 	}
 	sync_ = false;
 	syncwait_ = false;
+
+	emit disconnected(tr("Disconnected"));
 }
 
 /**
@@ -265,7 +261,11 @@ void Controller::sessionParted()
  */
 void Controller::addUser(int id)
 {
-	//emit userJoined(session_->user(id));
+	board_->addUser(id);
+	// Ghosted users don't go anywhere but the board.
+	network::User user = session_->user(id);
+	if(user.name().at(0)!='!')
+		emit userJoined(user);
 }
 
 /**
@@ -273,7 +273,9 @@ void Controller::addUser(int id)
  */
 void Controller::removeUser(int id)
 {
-	//emit userParted(session_->user(id));
+	// Users are never removed from the board.
+	// This is to make syncing simpler.
+	emit userParted(session_->user(id));
 }
 
 /**
@@ -284,7 +286,6 @@ void Controller::removeUser(int id)
  */
 void Controller::rasterDownload(int p)
 {
-#if 0
 	if(p>=100) {
 		QImage img;
 		if(session_->sessionImage(img)) {
@@ -299,7 +300,6 @@ void Controller::rasterDownload(int p)
 		}
 	}
 	emit rasterDownloadProgress(p);
-#endif
 }
 
 /**
@@ -308,12 +308,10 @@ void Controller::rasterDownload(int p)
  */
 void Controller::rasterUpload()
 {
-#if 0
 	if(pendown_)
 		sync_ = true;
 	else
 		sendRaster();
-#endif
 }
 
 /**
@@ -409,16 +407,11 @@ void Controller::sessionOwnerChanged()
 }
 
 /**
- * The connection is cut if the user was the local user.
  * @param id id of the kicked user
  */
 void Controller::sessionKicked(int id)
 {
-#if 0
 	emit userKicked(session_->user(id));
-	if(session_->user(id).isLocal())
-		disconnectHost();
-#endif
 }
 
 /**
@@ -435,13 +428,11 @@ void Controller::sessionUserLimitChanged(int count)
  */
 void Controller::sendRaster()
 {
-#if 0
 	Q_ASSERT(session_);
 	QByteArray raster;
 	QBuffer buffer(&raster);
 	board_->image().save(&buffer, "PNG");
 	session_->sendRaster(raster);
-#endif
 }
 
 /**
@@ -451,11 +442,9 @@ void Controller::sendRaster()
  */
 void Controller::lockForSync()
 {
-#if 0
 	emit lockboard(tr("Synchronizing new user"));
 	lock_ = true;
 	session_->sendAckSync();
-#endif
 }
 
 void Controller::setTool(tools::Type tool)
@@ -507,14 +496,4 @@ void Controller::netConnected()
 	emit connected(address_);
 	host_->login(username_);
 }
-
-/**
- * Clean up and emit a signal informing that the connection was cut.
- */
-void Controller::netDisconnected()
-{
-	session_ = 0;
-	emit disconnected(tr("Disconnected"));
-}
-
 

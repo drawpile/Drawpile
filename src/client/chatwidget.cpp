@@ -42,9 +42,11 @@ void ChatBox::clear()
 	ui_->chatbox->clear();
 }
 
-void ChatBox::joined(const QString& title, const QString& mynick)
+/**
+ * Add join message and enable the chat box.
+ */
+void ChatBox::joined(const QString& title)
 {
-	mynick_ = mynick;
 	ui_->sendbutton->setEnabled(true);
 	systemMessage(title.isEmpty()?tr("Joined session"):tr("Joined session. Title is <em>%1</em>").arg(title));
 }
@@ -60,9 +62,6 @@ void ChatBox::sendMessage()
 	const QString msg = ui_->chatline->text().trimmed();
 	if(msg.isEmpty())
 		return;
-#if 0 /* this is needed if server doesn't echo chat messages */
-	receiveMessage(mynick_, msg);
-#endif
 	emit message(msg);
 	ui_->chatline->clear();
 }

@@ -186,8 +186,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			this, SLOT(unlock()));
 	connect(controller_, SIGNAL(joinsDisallowed(bool)),
 			disallowjoins_, SLOT(setChecked(bool)));
-	//connect(controller_, SIGNAL(joined(network::SessionState*)),
-			//this, SLOT(joined(network::SessionState*)));
+	connect(controller_, SIGNAL(joined(network::SessionState*)),
+			this, SLOT(joined(network::SessionState*)));
 	connect(controller_, SIGNAL(becameOwner()),
 			this, SLOT(becameOwner()));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),
@@ -301,14 +301,6 @@ void MainWindow::initBoard(const QImage& image)
  */
 void MainWindow::joinSession(const QUrl& url)
 {
-#if 0
-	disconnect(controller_, SIGNAL(loggedin()), this, 0);
-
-	// If no path was specified, automatically join the only available
-	// session or ask the user if there are more than one.
-	if(url.path().length()<=1)
-		connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinJoin()));
-#endif
 	controller_->joinSession(url);
 
 	// Set login dialog to correct state
@@ -849,7 +841,6 @@ void MainWindow::finishHost(int i)
 
 		// Connect
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
-		//connect(controller_, SIGNAL(loggedin()), this, SLOT(loggedinHost()));
 		controller_->hostSession(address, hostdlg_->getTitle(),
 				hostdlg_->getImage());
 		hostdlg_->deleteLater();
@@ -860,20 +851,6 @@ void MainWindow::finishHost(int i)
 	} else {
 		hostdlg_->deleteLater();
 	}
-}
-
-/**
- * User has logged in, now create a session
- */
-void MainWindow::loggedinHost()
-{
-#if 0
-	controller_->hostSession(hostdlg_->getTitle(), hostdlg_->getPassword(),
-			hostdlg_->getImage(), hostdlg_->getUserLimit(),
-			hostdlg_->getAllowDrawing(), hostdlg_->getAllowChat());
-	// Host dialog is no longer needed
-	hostdlg_->deleteLater();
-#endif
 }
 
 /**
@@ -910,14 +887,6 @@ void MainWindow::finishJoin(int i) {
 }
 
 /**
- * User has logged in, now join a session
- */
-void MainWindow::loggedinJoin()
-{
-	//controller_->joinSession();
-}
-
-/**
  * Connection established, so disable and enable some UI elements
  */
 void MainWindow::connected()
@@ -941,17 +910,15 @@ void MainWindow::disconnected()
 /**
  * @param session the session that was joined
  */
-#if 0
 void MainWindow::joined(network::SessionState *session)
 {
 	setSessionTitle(session->info().title);
-	const bool isowner = session->info().id == session->host()->localUser().id();
+	const bool isowner = session->info().owner == session->host()->localUser();
 	userlist_->setSession(session);
 	userlist_->setAdminMode(isowner);
 	adminTools_->setEnabled(isowner);
-	chatbox_->joined(session->info().title, session->host()->localUser().name());
+	chatbox_->joined(session->info().title);
 }
-#endif
 
 void MainWindow::becameOwner()
 {

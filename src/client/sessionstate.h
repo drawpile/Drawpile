@@ -40,6 +40,7 @@ namespace protocol {
 	class ToolSelect;
 	class StrokePoint;
 	class StrokeEnd;
+	class BinaryChunk;
 }
 
 namespace network {
@@ -94,9 +95,6 @@ class SessionState : public QObject {
 		//! Send raster data
 		void sendRaster(const QByteArray& raster);
 
-		//! Select this session as active
-		void select();
-
 		//! Set password for this session
 		void setPassword(const QString& password);
 
@@ -120,18 +118,6 @@ class SessionState : public QObject {
 
 		//! Send a chat message
 		void sendChat(const QString& message);
-
-		//! Handle a session message
-		bool handleMessage(const QStringList& tokens);
-
-		//! Handle a tool select
-		bool handleToolSelect(protocol::ToolSelect *ts);
-
-		//! Handle a stroke
-		bool handleStroke(protocol::StrokePoint *s);
-
-		//! Handle stroke end
-		bool handleStrokeEnd(protocol::StrokeEnd *se);
 
 	signals:
 		//! Raster data has been received
@@ -193,37 +179,29 @@ class SessionState : public QObject {
 		void sendRasterChunk();
 
 	private:
-#if 0
-		//! Handle session acks
-		void handleAck(const protocol::Acknowledgement *msg);
+		//! Handle a session message
+		bool handleMessage(const QStringList& tokens);
 
-		//! Handle session specific user info
-		void handleUserInfo(const protocol::UserInfo *msg);
+		//! Handle a tool select
+		bool handleToolSelect(protocol::ToolSelect *ts);
 
-		//! Handle raster data
-		void handleRaster(const protocol::Raster *msg);
+		//! Handle a stroke
+		bool handleStroke(protocol::StrokePoint *s);
 
-		//! Handle sync request
-		void handleSynchronize(const protocol::Synchronize *msg);
+		//! Handle stroke end
+		bool handleStrokeEnd(protocol::StrokeEnd *se);
 
-		//! Handle SyncWait command
-		void handleSyncWait(const protocol::SyncWait *msg);
+		//! Handle a binary chunk (raster data)
+		bool handleBinaryChunk(protocol::BinaryChunk *bc);
 
-		//! Handle session event
-		void handleSessionEvent(const protocol::SessionEvent *msg);
+		//! Handle a chat message
+		void handleChat(const QStringList& tokens);
 
-		//! Handle ToolInfo messages
-		bool handleToolInfo(protocol::ToolInfo *msg);
-		//
-		//! Handle StrokeInfo messages
-		bool handleStrokeInfo(protocol::StrokeInfo *msg);
+		//! Change user info
+		void updateUser(const QStringList& tokens);
 
-		//! Handle StrokeEnd messages
-		bool handleStrokeEnd(protocol::StrokeEnd *msg);
-
-		//! Handle chat messages
-		void handleChat(const protocol::Chat *msg);
-#endif
+		//! A user left the session
+		void partUser(const QStringList& tokens);
 
 		//! Flush the drawing command buffer
 		void flushDrawBuffer();
@@ -240,8 +218,11 @@ class SessionState : public QObject {
 		//! Buffer to hold raster data for receiving or sending
 		QByteArray raster_;
 
+		//! How many bytes to expect
+		int expectRaster_;
+
 		//! Starting position of raster data chunk that will be sent next
-		uint rasteroffset_;
+		int rasteroffset_;
 
 		//! Is the session lock
 		bool lock_;

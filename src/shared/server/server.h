@@ -1,3 +1,23 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2008 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
 #ifndef DP_SERVER_H
 #define DP_SERVER_H
 
@@ -29,56 +49,30 @@ class Server : public QObject {
 
 		Server(QObject *parent=0);
 
-		/**
-		 * \brief Start the server.
-		 * @param port listening port
-		 * @param address listening address
-		 */
+		//! Start the server.
 		void start(quint16 port, const QHostAddress& address = QHostAddress::Any);
-		/**
-		 * \brief Stop the server. All clients are disconnected.
-		 */
+		 //! Stop the server. All clients are disconnected.
 		void stop();
 
-		/**
-		 * \brief Check if a user with the specified ID exists.
-		 * @return true if user is connected.
-		 */
+		 //! Check if a user with the specified ID exists.
 		bool hasClient(int id) { return _clients.contains(id); }
 
-		/**
-		 * \brief Check if the user with the specified name is logged in.
-		 * @return true if named user is logged in
-		 */
+		 //! Check if the user with the specified name is logged in.
 		bool hasClient(const QString& name);
 
-		/**
-		 * \brief Return the number of clients
-		 */
+		 //! Return the number of clients
 		int clients() const { return _clients.size(); }
 
-		/**
-		 * \brief Synchronize users so new people can join.
-		 */
+		 //! Synchronize users so new people can join.
 		void syncUsers();
 
-		/**
-		 * Get a new client up to speed by informing it about all other
-		 * clients.
-		 */
+		 //! Get a new client up to speed
 		void briefClient(int id);
 
-		/**
-		 * \brief Redistribute data to users.
-		 * @param sync distribute syncing users
-		 * @param active distribute to active users
-		 * @return number of users to whom data was sent
-		 */
+		 //! Send a packet to all users
 		int redistribute(bool sync, bool active, const QByteArray& data);
 
-		/**
-		 * \brief Get the drawing board used
-		 */
+		 //! Get the drawing board used
 		Board& board() { return _board; }
 		const Board& board() const { return _board; }
 
@@ -87,16 +81,20 @@ class Server : public QObject {
 		void newClient();
 		// A client was removed
 		void killClient(int id);
-		// A client's lock state changed
-		void updateLock(int id, bool state);
+		// A client's sync state changed
+		void userSync(int id, bool state);
 
 	private:
 		// Request raster data from some user
 		void requestRaster();
 
+		// Delete all clients
+		void clearClients();
+
 		//TODO disable copy constructors
 		QTcpServer *_server;
 		QHash<int,Client*> _clients;
+		int _liveclients;
 		int _lastclient;
 
 		State _state;

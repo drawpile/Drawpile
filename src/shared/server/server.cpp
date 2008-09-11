@@ -1,3 +1,23 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2008 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
 #include <QTcpServer>
 #include <QTcpSocket>
 
@@ -8,30 +28,36 @@
 namespace server {
 
 Server::Server(QObject *parent) : QObject(parent), _server(0), _lastclient(1),
-	_state(NORMAL), _board(1) {
+	_state(NORMAL) {
 		
 }
 
+/**
+ * Start listening on the specified address.
+ */
 void Server::start(quint16 port, const QHostAddress& address) {
 	Q_ASSERT(_server==0);
 	_server = new QTcpServer(this);
 	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
 	_server->listen(address, port);
+	_liveclients = 0;
+	_lastclient = 1;
 }
 
+/**
+ * Disconnect all clients and stop listening.
+ */
 void Server::stop() {
-	foreach(Client *c, _clients) {
-		delete c;
-	}
-	_clients.clear();
-
+	clearClients();
 	_server->close();
 	delete _server;
 	_server = 0;
 }
 
 /**
- * Accept a connection from a new client.
+ * Accept a connection from a new client. If the server is already full,
+ * the new client is disconnected. The client is given the first
+ * available ID.
  */
 void Server::newClient() {
 	QTcpSocket *socket = _server->nextPendingConnection();
@@ -51,18 +77,46 @@ void Server::newClient() {
 	// Add the client
 	Client *c = new Client(_lastclient, this, socket);
 	connect(c, SIGNAL(disconnected(int)), this, SLOT(killClient(int)));
-	connect(c, SIGNAL(lock(int, bool)), this, SLOT(updateLock(int, bool)));
+	connect(c, SIGNAL(syncReady(int, bool)), this, SLOT(userSync(int, bool)));
 	_clients.insert(_lastclient, c);
+	++_liveclients;
 }
 
+/**
+ * The client is removed and cleaned up. If this was the last client,
+ * the board is destroyed as well.
+ *
+ * In the future, perhaps add an option for retaining the board? Would
+ * require either one user to contribute a snapshot or keeping a log of
+ * the latest snapshot and all drawing commands after it.
+ */
 void Server::killClient(int id) {
-	qDebug() << "Client " << id << " disconnected";
-	delete _clients.take(id);
+	qDebug() << "Client " << id << " disconnected.";
+	Client *client = _clients.value(id);
+	--_liveclients;
 	// If the last client leaves, the board state is lost
-	if(_clients.size()==0)
-		_board = Board(1);
+	if(_liveclients==0) {
+		_board.clear();
+		clearClients();
+	} else {
+		if(client->state()>=Client::SYNC) {
+			QStringList msg;
+			msg << "PART" << QString::number(id);
+			redistribute(true, true, protocol::Message(msg).serialize());
+		}
+		// Users who have participated in the drawing are kept around
+		// to simplify syncing.
+		if(client->hasSentStroke())
+			client->makeGhost();
+		else
+			delete _clients.take(id);
+	}
 }
 
+/**
+ * The client list is searched and true is returned if there
+ * is a client with a matching username.
+ */
 bool Server::hasClient(const QString& name) {
 	foreach(Client *c, _clients) {
 		if(c->name().compare(name)==0)
@@ -82,28 +136,29 @@ bool Server::hasClient(const QString& name) {
  */
 void Server::syncUsers() {
 	if(_state==NORMAL) {
-		// First step. Gracefully lock all users
+		qDebug() << "Synchronizing users";
+		// First step. Prepare users for synchronization
 		foreach(Client *c, _clients) {
 			c->syncLock();
 		}
 		_state = SYNC;
 
 		// Check if everyone is locked already
-		updateLock(-1, true);
+		userSync(-1, true);
 	}
 }
 
 /**
- * Handle changes in a user's lock state.
- * This is used to determine when all users are ready for syncing.
+ * When in sync mode and the last unlocked user locks themself,
+ * a copy of the raster data is requested.
  */
-void Server::updateLock(int id, bool state) {
+void Server::userSync(int id, bool state) {
 	if(_state == SYNC && _state==true) {
-		int locked=0;
+		int ready=0;
 		foreach(Client *c, _clients) {
-			if(c->isLocked()) ++locked;
+			if(c->isSyncReady()) ++ready;
 		}
-		if(locked == _clients.size())
+		if(ready == _clients.size())
 			requestRaster();
 	}
 }
@@ -129,15 +184,25 @@ void Server::requestRaster() {
 				c->kick("Internal server error");
 		}
 	} else {
+		qDebug() << "Requesting raster data from" << _clients.value(id)->name();
 		_clients.value(id)->requestRaster();
+		_board.clearBuffer();
+		foreach(Client *c, _clients) {
+			c->syncUnlock();
+		}
 	}
 	_state = NORMAL;
 }
 
+/**
+ * The raw (preserialized) data is sent to all users.
+ * @param sync send to users who are still syncing
+ * @param active send to active users
+ */
 int Server::redistribute(bool sync, bool active, const QByteArray& data) {
 	int count=0;
 	foreach(Client *c, _clients) {
-		if((c->state()==Client::SYNC && sync) || (c->state()==Client::ACTIVE && active)) {
+		if(!c->isGhost() && ((c->state()==Client::SYNC && sync) || (c->state()==Client::ACTIVE && active))) {
 			c->send(data);
 			++count;
 		}
@@ -145,15 +210,31 @@ int Server::redistribute(bool sync, bool active, const QByteArray& data) {
 	return count;
 }
 
+/**
+ * For each user (except the user being briefed), send the
+ * user info and the last received tool select message (if any).
+ * @param id user to brief
+ */
 void Server::briefClient(int id) {
 	Client *nc = _clients.value(id);
 	Q_ASSERT(nc);
 	foreach(Client *c, _clients) {
 		if(c->state()>Client::LOGIN && c->id()!=id) {
-			c->send(protocol::Message(c->toMessage()).serialize());
-			// TODO send last received toolinfo
+			nc->send(protocol::Message(c->toMessage()).serialize());
+			if(c->lastTool().size()>0)
+				nc->send(c->lastTool());
 		}
 	}
+}
+
+/**
+ * Delete all clients, even the ghosted ones.
+ */
+void Server::clearClients() {
+	foreach(Client *c, _clients) {
+		delete c;
+	}
+	_clients.clear();
 }
 
 }

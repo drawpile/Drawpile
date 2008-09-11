@@ -137,16 +137,12 @@ class MainWindow : public QMainWindow {
 		void finishJoin(int i);
 		//! Leave session
 		void finishLeave(int i);
-		//! Logged in, host session
-		void loggedinHost();
-		//! Logged in, join session
-		void loggedinJoin();
 		//! Connection established
 		void connected();
 		//! Connection cut
 		void disconnected();
 		//! Joined a session
-		//void joined(network::SessionState *session);
+		void joined(network::SessionState *session);
 		//! Disallow changes to the board
 		void lock(const QString& reason);
 		//! Allow changes to the board

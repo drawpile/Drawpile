@@ -20,13 +20,13 @@ set (
 
 set (
 	SRV_QHEADERS
-	server/server.h server/client.h
+	server/server.h server/client.h server/board.h
 	)
 
-set (
-	SRV_HEADERS
-	server/board.h
-	)
+#set (
+	#SRV_HEADERS
+	#server/board.h
+	#)
 
 set (
 	SRV_SOURCES

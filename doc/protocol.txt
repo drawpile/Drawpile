@@ -1,0 +1,47 @@
+Notes about the simplified DrawPile protocol rev. 1
+
+Messages (sent by the server):
+	WHORU
+	Sent during initial login sequence. Reply with IAM.
+
+	USER <id> <name> <locked:1/0>
+	Information about a user.
+
+	PART <id>
+	A user left the session.
+
+	KICK <reason>
+	User is disconnected right after this.
+
+	GIVERASTER
+	Request to send a copy of board contents.
+
+	CANCELRASTER
+	No need for the data anymore, stop sending.
+
+	SLOCK
+	Sync lock. Lock as soon as any ongoing stroke has finished.
+
+	SUNLOCK
+	Lift sync lock.
+
+	UNLOCK
+	Unlock the board.
+
+	BOARD <owner> <title> <width> <height>
+	Information about the drawing board
+
+	NOBOARD
+	No board exists yet.
+
+Messages sent by the client:
+	IAM <name>
+	State your username for login
+
+	SYNCREADY
+	Ready for syncing
+
+Messages sent both by the client and the server:
+	RASTER <length in bytes>
+	Will be sending board contents next, expect this many bytes.
+

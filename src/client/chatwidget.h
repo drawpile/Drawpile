@@ -37,15 +37,15 @@ class ChatBox: public QWidget
 		ChatBox(QWidget *parent=0);
 		~ChatBox();
 
+		//! Joined a session
+		void joined(const QString& title);
+
 	public slots:
 		//! Display a received message
 		void receiveMessage(const QString& nick, const QString &message);
 
 		//! Display a system message
 		void systemMessage(const QString& message);
-
-		//! A session was joined
-		void joined(const QString& title, const QString& mynick);
 
 		//! A session was left
 		void parted();

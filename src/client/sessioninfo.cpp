@@ -20,7 +20,6 @@
 #include <QStringList>
 
 #include "sessioninfo.h"
-#include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
 #if 0

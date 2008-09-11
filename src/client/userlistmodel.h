@@ -24,7 +24,6 @@
 #include <QItemDelegate>
 #include <QList>
 
-#if 0
 namespace network {
 	class SessionState;
 }
@@ -71,8 +70,6 @@ class UserListDelegate : public QItemDelegate {
 	private:
 		bool enableadmin_;
 };
-
-#endif
 
 #endif
 

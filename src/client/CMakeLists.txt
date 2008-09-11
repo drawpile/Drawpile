@@ -43,7 +43,7 @@ set (
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
-	ui/chatbox.ui ui/sessiondialog.ui ui/palettebox.ui ui/colorbox.ui
+	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui )
 
 # .UI
@@ -84,7 +84,7 @@ if ( WIN32 )
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
 		"http://drawpile.sourceforge.net/"
-		"2006,2007 Calle Laakkonen"
+		"2006-2008 Calle Laakkonen"
 		0 5 0
 	)
 endif ( WIN32 )
@@ -113,7 +113,7 @@ add_executable (
 set_target_properties (
 	drawpile
 	PROPERTIES
-	VERSION 0.6.0
+	VERSION 0.5.0
 	PROJECT_LABEL drawpile-client
 )
 
