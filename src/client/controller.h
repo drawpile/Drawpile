@@ -144,12 +144,6 @@ class Controller : public QObject
 		//! Board info has changed
 		void boardChanged();
 
-		//! There were no sessions to join
-		void noSessions();
-
-		//! The requested session didn't exist
-		void sessionNotFound();
-
 		//! A password is required
 		void needPassword();
 

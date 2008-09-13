@@ -37,7 +37,10 @@ namespace server {
  * Make up a random string of letters and numbers
  */
 QString randomSalt() {
-	return "RND"; // TODO
+	QString salt;
+	for(int i=0;i<4;++i)
+		salt += QChar(48 + qrand()%42);
+	return salt;
 }
 
 /**
@@ -192,7 +195,9 @@ void Client::handleLogin(const protocol::LoginId *pkt) {
 			} else {
 				_state = AUTHENTICATION;
 				_salt = randomSalt();
-				_socket->send(Message("PASSWORD? " + _salt));
+				QStringList msg;
+				msg << "PASSWORD?" << _salt;
+				_socket->send(Message(msg));
 			}
 		} else {
 			// Not a drawpile client.

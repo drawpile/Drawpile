@@ -358,57 +358,6 @@ bool SessionState::handleBinaryChunk(protocol::BinaryChunk *bc)
 	return false;
 }
 
-#if 0
-/**
- * Received session events contain information about other users in the
- * session.
- * @param msg SessionEvent message
- */
-void SessionState::handleSessionEvent(const protocol::SessionEvent *msg)
-{
-	User *user = 0;
-	if(msg->target != protocol::null_user) {
-		if(users_.contains(msg->target)) {
-			user = &this->user(msg->target);
-		} else {
-			qDebug() << "received SessionEvent for user" << int(msg->target)
-				<< "who is not part of the session";
-			return;
-		}
-	}
-
-	switch(msg->action) {
-		case protocol::SessionEvent::Lock:
-			if(user) {
-				user->setLocked(true);
-				emit userLocked(msg->target, true);
-			} else {
-				lock_ = true;
-				emit sessionLocked(true);
-			}
-			break;
-		case protocol::SessionEvent::Unlock:
-			if(user) {
-				user->setLocked(false);
-				emit userLocked(msg->target, false);
-			} else {
-				lock_ = false;
-				emit sessionLocked(false);
-			}
-			break;
-		case protocol::SessionEvent::Kick:
-			emit userKicked(msg->target);
-			break;
-		case protocol::SessionEvent::Delegate:
-			info_.owner = msg->target;
-			emit ownerChanged();
-			break;
-		default:
-			qDebug() << "unhandled session event action" << int(msg->action);
-	}
-}
-#endif
-
 /**
  * @param msg ToolInfo message
  * @retval true message was buffered, don't delete
@@ -448,14 +397,16 @@ bool SessionState::handleStroke(protocol::StrokePoint *s)
 		drawbuffer_.enqueue(s);
 		return true;
 	}
-	emit strokeReceived(
-			s->user(),
-			drawingboard::Point(
-				(qint16)(s->point(0).x),
-				(qint16)(s->point(0).y),
-				s->point(0).z/255.0
-				)
-			);
+	for(int p=0;p<s->points();++p) {
+		emit strokeReceived(
+				s->user(),
+				drawingboard::Point(
+					(qint16)(s->point(p).x),
+					(qint16)(s->point(p).y),
+					s->point(p).z/255.0
+					)
+				);
+	}
 	return false;
 }
 
