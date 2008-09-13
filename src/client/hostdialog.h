@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,17 +51,11 @@ class HostDialog : public QDialog
 		//! Get session password
 		QString getPassword() const;
 
-		//! Get server admin password
-		QString getAdminPassword() const;
-
 		//! Get max. user count
 		int getUserLimit() const;
 
 		//! Should users be allowed to draw by default
 		bool getAllowDrawing() const;
-
-		//! Should users be allowed to chat by default
-		bool getAllowChat() const;
 
 		//! Get session image
 		QImage getImage() const;

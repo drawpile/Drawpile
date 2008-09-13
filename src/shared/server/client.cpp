@@ -27,21 +27,30 @@
 #include "../net/login.h"
 #include "../net/message.h"
 #include "../net/binary.h"
+#include "../net/utils.h"
 
 using protocol::Message;
 
 namespace server {
 
 /**
+ * Make up a random string of letters and numbers
+ */
+QString randomSalt() {
+	return "RND"; // TODO
+}
+
+/**
  * Construct a client
  * @param id client id
  * @param server parent server
  * @param socket client socket
+ * @param locked does the client start out as locked?
  */
-Client::Client(int id, Server *server, QTcpSocket *socket)
-	: QObject(server), _id(id), _server(server), _socket(new protocol::MessageQueue(socket, this)), _state(CONNECT), _lock(true), _syncready(false), _giveraster(false)
+Client::Client(int id, Server *server, QTcpSocket *socket, bool locked)
+	: QObject(server), _id(id), _server(server), _socket(new protocol::MessageQueue(socket, this)), _state(CONNECT), _lock(locked), _syncready(false), _giveraster(false), _address(socket->peerAddress())
 {
-	qDebug() << "New client connected from " << socket->peerAddress();
+	_server->printDebug("New client connected from " + socket->peerAddress().toString());
 	connect(_socket, SIGNAL(messageAvailable()), this, SLOT(newData()));
 	connect(_socket, SIGNAL(badData()), this, SLOT(bail()));
 	connect(socket, SIGNAL(disconnected()), this, SLOT(closeSocket()));
@@ -68,7 +77,6 @@ void Client::newData() {
 			case protocol::BINARY_CHUNK:
 				handleBinary(static_cast<protocol::BinaryChunk*>(pkt));
 				break;
-			default: qDebug() << "unhandled!"; break; // TODO
 		}
 		delete pkt;
 	}
@@ -80,7 +88,7 @@ void Client::newData() {
  * @param message reason why the user was kicked
  */
 void Client::kick(const QString& message) {
-	qDebug() << "Kicking user" << _id << "reason:" << message;
+	_server->printDebug("Kicking user " + _name + ". Reason: " + message);
 	QStringList msg;
 	msg << "KICK" << message;
 	_socket->send(Message(Message::quote(msg)));
@@ -88,7 +96,7 @@ void Client::kick(const QString& message) {
 }
 
 void Client::bail(const char* message) {
-	qWarning() << "Disconnecting client" << _id << "due to protocol violation:" << message;
+	_server->printError("Disconnecting client " + QString::number(_id) + " due to protocol violation: " + message);
 	_socket->close();
 }
 
@@ -109,8 +117,8 @@ void Client::closeSocket() {
 	emit disconnected(_id);
 }
 
-void Client::send(const QByteArray& data) {
-	_socket->send(data);
+void Client::sendRaw(const QByteArray& data) {
+	_socket->sendRaw(data);
 }
 
 /**
@@ -134,6 +142,18 @@ void Client::syncUnlock() {
 		_socket->send(Message("SUNLOCK"));
 		_syncready = false;
 	}
+}
+
+/**
+ * This lock is set by the board owner and takes effect immediately.
+ * If the user is currently drawing, there is a possibility that the strokes
+ * sent before the LOCK command reaches the client go missing. This could
+ * be averted with a lock buffer, but chances are, that if the admin
+ * decided to cut someone off mid-drawing, we don't want them to continue.
+ */
+void Client::lock(bool status) {
+	_lock = status;
+	_server->redistribute(true, true, Message(toMessage()).serialize());
 }
 
 /**
@@ -165,9 +185,15 @@ void Client::handleLogin(const protocol::LoginId *pkt) {
 		bail("login not applicable to this state");
 	} else {
 		if(pkt->isCompatible()) {
-			// TODO authentication
-			_state = LOGIN;
-			_socket->send(Message("WHORU"));
+			// TODO check client compat.
+			if(_server->password().isEmpty()) {
+				_state = LOGIN;
+				_socket->send(Message("WHORU"));
+			} else {
+				_state = AUTHENTICATION;
+				_salt = randomSalt();
+				_socket->send(Message("PASSWORD? " + _salt));
+			}
 		} else {
 			// Not a drawpile client.
 			bail("not a DP client of proper version");
@@ -175,12 +201,35 @@ void Client::handleLogin(const protocol::LoginId *pkt) {
 	}
 }
 
+void Client::handlePassword(const QStringList& tokens) {
+	if(protocol::utils::hashPassword(_server->password(), _salt) == tokens.at(1)) {
+		_state = LOGIN;
+		_socket->send(Message("WHORU"));
+	} else {
+		kick("Incorrect password");
+	}
+}
+
+/**
+ * Lock the board or a single user. Admin only.
+ * @param token user ID or "BOARD"
+ * @param lock whether to lock or unlock
+ */
+void Client::handleLock(const QString& token, bool lock) {
+	if(_server->board().owner() != _id) {
+		kick("not owner");
+	} else if(token == "BOARD") {
+		_server->board().setLock(lock);
+		_server->redistribute(true, true, Message(_server->board().toMessage()).serialize());
+	} else
+		_server->lockClient(_id, token.toInt(), lock);
+}
+
 /**
  * Handle command messages and replies sent by the client
  */
 void Client::handleMessage(const Message *msg) {
 	QStringList tokens = msg->tokens();
-	qDebug() << name() << "MSG:" << msg->message();
 	if(tokens.isEmpty()) {
 		bail("no message");
 		return;
@@ -188,46 +237,67 @@ void Client::handleMessage(const Message *msg) {
 
 	switch(_state) {
 		case ACTIVE:
-			if(tokens[0].compare("SAY")==0) {
+			if(tokens[0] == "SAY") {
 				handleChat(tokens);
-			} else if(tokens[0].compare("BOARD")==0) {
-				if(_server->board().set(_id, tokens)==false)
-					kick("Invalid board change command");
+			} else if(tokens[0] == "BOARD") {
+				if(_server->board().owner()>0 && _server->board().owner()!=_id) {
+					kick("not admin");
+				} else {
+					if(_server->board().set(_id, tokens)==false)
+						kick("Invalid board change command");
+					else
+						_server->redistribute(false, true, Message(_server->board().toMessage()).serialize());
+				}
+			} else if(tokens[0] == "PASSWORD") {
+				if(_server->board().owner()!=_id)
+					kick("not admin");
 				else
-					_server->redistribute(false, true, Message(_server->board().toMessage()).serialize());
-			} else if(tokens[0].compare("SYNCREADY")==0) {
-				qDebug() << _name << "is ready for sync.";
+					_server->setPassword(tokens.at(1));
+			} else if(tokens[0] == "SYNCREADY") {
+				_server->printDebug(_name + " is ready for sync.");
 				_syncready = true;
 				emit syncReady(_id, true);
-			} else if(tokens[0].compare("RASTER")==0) {
+			} else if(tokens[0] == "RASTER") {
 				expectRaster(tokens);
+			} else if(tokens[0] == "LOCK") {
+				handleLock(tokens.at(1), true);
+			} else if(tokens[0] == "UNLOCK") {
+				handleLock(tokens.at(1), false);
+			} else if(tokens[0] == "KICK") {
+				_server->kickClient(_id, tokens.at(1).toInt());
+			} else if(tokens[0] == "USERLIMIT") {
+				if(_server->board().owner() != _id) {
+					kick("not owner");
+				} else {
+					_server->board().setMaxUsers(tokens.at(1).toInt());
+					_server->redistribute(true, true, Message(_server->board().toMessage()).serialize());
+				}
 			} else {
-				qDebug() << "Unexpected message" << tokens[0];
 				bail("unexpected message");
 			}
 			break;
 		case SYNC:
-			if(tokens[0].compare("SYNCREADY")==0) {
-				qDebug() << _name << "is ready for first sync.";
+			if(tokens[0] == "SYNCREADY") {
+				_server->printDebug(_name + " is ready for first sync.");
 				_syncready = true;
 				emit syncReady(_id, true);
 			} else {
-				qDebug() << "Unexpected message for SYNC" << tokens[0];
 				bail("unexpected message");
 			}
 			break;
 		case LOGIN:
-				if(tokens[0].compare("IAM")==0) {
+				if(tokens[0] == "IAM") {
 						if(tokens.size()!=2)
 							bail("bad login message");
 						else {
 							QString name = tokens[1];
-							if(_server->hasClient(name))
+							if(name.length() > _server->maxNameLength())
+								kick("Name too long");
+							else if(_server->hasClient(name))
 								kick("Name already taken");
 							else {
 								_name = name;
 								_state = SYNC;
-								qDebug() << "New user" << _name;
 								// Tell the user about the board
 								_socket->send(Message(_server->board().toMessage()));
 								// Tell everyone about the new user
@@ -236,12 +306,7 @@ void Client::handleMessage(const Message *msg) {
 								_server->briefClient(_id);
 								// Synchronize
 								if(_server->board().exists()) {
-									if(_server->board().validBuffer()) {
-										sendBuffer();
-									} else {
-										connect(&_server->board(), SIGNAL(rasterAvailable()), this, SLOT(sendBufferChunk()));
-										_server->syncUsers();
-									}
+									sendBuffer();
 								} else {
 									_state = ACTIVE;
 								}
@@ -252,7 +317,12 @@ void Client::handleMessage(const Message *msg) {
 					}
 				  break;
 		case AUTHENTICATION:
-		case CONNECT: bail("todo"); break;
+				  if(tokens[0] == "PASSWORD")
+					  handlePassword(tokens);
+				  else
+					  kick("Bad message for AUTHENTICATION state");
+				  break;
+		case CONNECT: break;
 	}
 }
 
@@ -267,7 +337,7 @@ void Client::expectRaster(const QStringList& tokens) {
 		if(tokens.size()!=2) {
 			bail("invalid RASTER message");
 		} else {
-			qDebug() << "User" << _id << "promised" << tokens[1] << "bytes of raster data.";
+			_server->printDebug("User " + _name + " promised " + tokens[1] + "bytes of raster data.");
 			_server->board().setExpectedBufferLength(tokens[1].toInt());
 		}
 	}
@@ -293,9 +363,8 @@ void Client::handleChat(const QStringList& tokens) {
  * as they promised.
  */
 void Client::handleBinary(const protocol::BinaryChunk *bin) {
-	qDebug() << "Got" << bin->data().size() << "bytes of binary data. Still" << (_server->board().rasterBufferLength()-_server->board().rasterBuffer().size()-bin->data().size()) << "bytes to go.";
 	if(_server->board().rasterBufferLength()==0) {
-		bail("not authorized to send raster data");
+		kick("not authorized to send raster data");
 		return;
 	}
 	bool more = true;
@@ -306,7 +375,6 @@ void Client::handleBinary(const protocol::BinaryChunk *bin) {
 		return;
 	} else if(total ==_server->board().rasterBufferLength()) {
 		_giveraster = false;
-		qDebug() << "Got final raster piece.";
 		more = false;
 	}
 
@@ -318,13 +386,17 @@ void Client::handleBinary(const protocol::BinaryChunk *bin) {
 /**
  * Drawing commands are simply redistributed to all clients (including
  * the originator).
- * In the future, we could keep a cache of drawing commands sent since
- * the creation of the board or the last sync so new users could be added
- * without disturbing the others.
+ * Commands from a locked user are dropped. This is not a fatal error condition,
+ * since commands might have already been in the pipeline before the
+ * lock message reached the user.
  * @return true when we're hanging on to the packet
  */
 void Client::handleDrawing(const protocol::Packet *pkt) {
 	// TODO check correct sender id
+	if(_lock || _server->board().locked()) {
+		_server->printError("Got a drawing command from locked user " + QString::number(_id));
+		return;
+	}
 	QByteArray msg = pkt->serialize();
 	_server->redistribute(true, true, msg);
 	_server->board().addDrawingCommand(msg);
@@ -339,20 +411,27 @@ void Client::handleDrawing(const protocol::Packet *pkt) {
  * clients.
  */
 void Client::sendBuffer() {
-	qDebug() << _name << ": Sending valid buffer." << _server->board().drawingBuffer().size() << "bytes of drawing commands.";
-	// First swamp the user with old drawing commands.
-	// This is done before anyone else sends newer commands
-	_socket->send(_server->board().drawingBuffer());
-
-	Q_ASSERT(_server->board().rasterBufferLength()>0);
-	// Now get the ball rolling by sending the user their first chunk
-	// of raster data. Unlike the uploading user who cares about
-	// the latency of the drawing commands, the receiving user just
-	// wants to get started as soon as possible. Therefore, we sent
-	// the raster data in as big chunks as possible.
 	_rasteroffset = 0;
-	sendBufferChunk();
-	if(_server->board().rasterBuffer().size() < _server->board().rasterBufferLength())
+	if(_server->board().validBuffer()) {
+		// First swamp the user with old drawing commands.
+		// This is done before anyone else sends newer commands
+		_socket->sendRaw(_server->board().drawingBuffer());
+
+		// Now get the ball rolling by sending the user their first chunk
+		// of raster data. Unlike the uploading user who cares about
+		// the latency of the drawing commands, the receiving user just
+		// wants to get started as soon as possible. Therefore, we sent
+		// the raster data in as big chunks as possible.
+		sendBufferChunk();
+	} else {
+		// If board buffer is not valid, a sync is needed.
+		_server->syncUsers();
+	}
+
+	// If we don't have the whole buffer yet, send more chunks as soon
+	// as we get them.
+	if(_server->board().validBuffer()==false ||
+			_server->board().rasterBuffer().size() < _server->board().rasterBufferLength())
 		connect(&_server->board(), SIGNAL(rasterAvailable()),
 				this, SLOT(sendBufferChunk()));
 }
@@ -377,19 +456,25 @@ void Client::sendBufferChunk() {
 		int chunklen = raster.size() - _rasteroffset;
 		if(chunklen > 0xffff-3)
 			chunklen = 0xffff-3;
-		qDebug() << "Sending user" << _id << chunklen << "bytes of raster data.";
 		_socket->send(protocol::BinaryChunk(raster.mid(_rasteroffset, chunklen)));
 		_rasteroffset += chunklen;
 	} while(_rasteroffset < raster.size());
+	// Once the raster buffer is completely sent, the user goes to ACTIVE
+	// state.
+	if(_rasteroffset == _server->board().rasterBufferLength())
+		_state = ACTIVE;
 }
 
 /**
  * The info messages are used to inform other clients about this
- * user.
+ * user. The info message contains the following information:
+ * - user ID
+ * - user name
+ * - lock status (sync lock not included)
  */
 QString Client::toMessage() const {
 	QStringList tkns;
-	tkns << "USER" << QString::number(_id) << _name << (isLocked()?"1":"0");
+	tkns << "USER" << QString::number(_id) << _name << (_lock?"1":"0");
 	return Message::quote(tkns);
 }
 

@@ -72,13 +72,16 @@ class Controller : public QObject
 		void joinSession(const QUrl& url);
 
 		//! Connect to host and start a new session
-		void hostSession(const QUrl& url, const QString& title, const QImage& image);
+		void hostSession(const QUrl& url, const QString& password, const QString& title, const QImage& image, int maxusers, bool allowDraw);
 
 		//! Check if connection is still established
 		bool isConnected() const;
 
 		//! Check if raster upload is in progress
 		bool isUploading() const;
+
+		//! Get the session
+		network::SessionState *session() const { return session_; }
 
 	public slots:
 		//! Send a password
@@ -121,7 +124,7 @@ class Controller : public QObject
 		void disconnected(const QString& message);
 
 		//! Session was joined
-		void joined(network::SessionState *session);
+		void joined();
 
 		//! Session was left
 		void parted();
@@ -138,8 +141,8 @@ class Controller : public QObject
 		//! User status has changed
 		void userChanged(const network::User& user);
 
-		//! The local user became session owner
-		void becameOwner();
+		//! Board info has changed
+		void boardChanged();
 
 		//! There were no sessions to join
 		void noSessions();
@@ -155,9 +158,6 @@ class Controller : public QObject
 
 		//! Unlock the board UI
 		void unlockboard();
-
-		//! Allow/disallow new joins
-		void joinsDisallowed(bool allow);
 
 		//! A network error occured
 		void netError(const QString& message);
@@ -199,14 +199,8 @@ class Controller : public QObject
 		//! A single user has been (un)locked
 		void userLocked(int id, bool lock);
 
-		//! Session owner was changed
-		void sessionOwnerChanged();
-
 		//! A user was kicked from the session
 		void sessionKicked(int id);
-
-		//! User limit of the session was changed
-		void sessionUserLimitChanged(int count);
 
 	private:
 		//! Connect to a host

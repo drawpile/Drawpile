@@ -26,36 +26,51 @@
 namespace server {
 
 Board::Board(QObject *parent) : QObject(parent), _exists(false),
-	_title(""), _width(0), _height(0),_owner(0),rasterlen_(0), valid_(false),
+	_title(""), _width(0), _height(0),_owner(0),_maxusers(9999), _deflock(false), rasterlen_(0), valid_(false),
 	clientsWaitingForBuffer_(0), bufferLimit_(1024 * 500)
 {
 }
 
-void Board::set(int owner, const QString& title, int w, int h)
+void Board::set(int owner, const QString& title, int w, int h, bool lock)
 {
 	_owner = owner;
 	_exists = true;
 	_title = title;
 	_width = w;
 	_height = h;
+	_lock = lock;
 }
 
+/**
+ * Set board options from tokens. Must be in the same format as
+ * produced by toMessage()
+ */
 bool Board::set(int owner, const QStringList& tokens)
 {
 	Q_ASSERT(tokens[0].compare("BOARD")==0);
-	if(tokens.size()!=5)
+	if(tokens.size()!=8)
 		return false;
 	bool ok;
-	int w, h;
+	bool lock,deflock;
+	int w, h,mu;
 	w = tokens[3].toInt(&ok);
 	if(!ok) return false;
 	h = tokens[4].toInt(&ok);
+	if(!ok) return false;
+	lock = tokens[5].toInt(&ok);
+	if(!ok) return false;
+	mu = tokens[6].toInt(&ok);
+	if(!ok) return false;
+	deflock = tokens[7].toInt(&ok);
 	if(!ok) return false;
 	_exists = true;
 	_title = tokens[2];
 	_width = w;
 	_height = h;
 	_owner = owner;
+	_lock = lock;
+	_maxusers = mu;
+	_deflock = deflock;
 	valid_ = false;
 	return true;
 }
@@ -65,6 +80,10 @@ bool Board::set(int owner, const QStringList& tokens)
  */
 void Board::clear() {
 	_exists = false;
+	// These values affect new users
+	_owner = -1;
+	_maxusers = 9999;
+	_deflock = false;
 }
 
 /**
@@ -120,12 +139,20 @@ void Board::addDrawingCommand(const QByteArray& packet)
 	}
 }
 
+/**
+ * Generate a Message describing this board.
+ * If board does not exist, returns NOBOARD.
+ * Board description format is:
+ * BOARD <owner> <title> <width> <height> <lock:1/0>
+ */
 QString Board::toMessage() const
 {
 	QStringList tkns;
 	if(_exists) 
 		tkns << "BOARD" << QString::number(_owner) << _title <<
-			QString::number(_width) << QString::number(_height);
+			QString::number(_width) << QString::number(_height) <<
+			(_lock?"1":"0") << QString::number(_maxusers) <<
+			(_deflock?"1":"0");
 	else
 		tkns << "NOBOARD";
 	return protocol::Message::quote(tkns);

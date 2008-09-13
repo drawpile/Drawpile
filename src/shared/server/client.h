@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include <QByteArray>
+#include <QHostAddress>
 
 class QTcpSocket;
 
@@ -57,7 +58,10 @@ class Client : public QObject {
 			ACTIVE
 		};
 		 //! Construct a new client. Clients start out in CONNECT state.
-		Client(int id, Server *parent, QTcpSocket *socket);
+		Client(int id, Server *parent, QTcpSocket *socket, bool locked);
+
+		//! Get the client's address
+		const QHostAddress& address() const { return _address; }
 
 		 //! Kick the user out.
 		void kick(const QString& message);
@@ -77,6 +81,9 @@ class Client : public QObject {
 		//! Is the user locked? Drawing commands sent by a locked user are dropped.
 		bool isLocked() const { return _lock | _syncready; }
 
+		//! Lock or unlock this client
+		void lock(bool status);
+
 		//! Has the user sent a drawing command
 		bool hasSentStroke() const { return _sentStroke; }
 
@@ -90,7 +97,7 @@ class Client : public QObject {
 		void makeGhost();
 
 		//! Send arbitrary data to this user.
-		void send(const QByteArray& data);
+		void sendRaw(const QByteArray& data);
 
 		//! Lock the user for synchronization.
 		void syncLock();
@@ -126,6 +133,8 @@ class Client : public QObject {
 	private:
 		void expectRaster(const QStringList& tokens);
 		void handleChat(const QStringList& tokens);
+		void handlePassword(const QStringList& tokens);
+		void handleLock(const QString& token, bool lock);
 
 		void handleLogin(const protocol::LoginId *pkt);
 		void handleMessage(const protocol::Message *msg);
@@ -148,6 +157,9 @@ class Client : public QObject {
 		bool _giveraster;
 		int _rasteroffset;
 		QByteArray _lastTool;
+
+		QString _salt;
+		QHostAddress _address;
 };
 
 }

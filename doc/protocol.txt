@@ -4,6 +4,9 @@ Messages (sent by the server):
 	WHORU
 	Sent during initial login sequence. Reply with IAM.
 
+	PASSWORD? <salt>
+	Request password
+
 	USER <id> <name> <locked:1/0>
 	Information about a user.
 
@@ -25,12 +28,6 @@ Messages (sent by the server):
 	SUNLOCK
 	Lift sync lock.
 
-	UNLOCK
-	Unlock the board.
-
-	BOARD <owner> <title> <width> <height>
-	Information about the drawing board
-
 	NOBOARD
 	No board exists yet.
 
@@ -38,10 +35,32 @@ Messages sent by the client:
 	IAM <name>
 	State your username for login
 
+	PASSWORD <hash>
+	Login with hash of password+salt
+
+	PASSWORD <password>
+	(After login) Set session password
+
 	SYNCREADY
 	Ready for syncing
+
+	KICK <user id>
+	Kick this user (only for board owner)
+
+	LOCK <user id>|BOARD
+	Lock this user or the entire board (only for board owner)
+
+	UNLOCK <user id>|BOARD
+	Unlock this user or the entire board (only for board owner)
+
+	USERLIMIT <count>
+	Set the session user limit. Affects only new users.
 
 Messages sent both by the client and the server:
 	RASTER <length in bytes>
 	Will be sending board contents next, expect this many bytes.
+
+	BOARD <owner> <title> <width> <height> <lock:1/0> <maxusers> <deflock>
+	Information about the drawing board. Sent by the server to
+	inform users, and by the session owner (or admin) to change the options.
 

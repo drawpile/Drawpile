@@ -1,3 +1,4 @@
+#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -92,6 +93,7 @@ void LoginDialog::loggedin()
 
 void LoginDialog::error(const QString& message)
 {
+	qDebug() << "LoginDialog::error(" << message << ")";
 	ui_->statustext->setText(message);
 	appenddisconnect_ = true;
 }

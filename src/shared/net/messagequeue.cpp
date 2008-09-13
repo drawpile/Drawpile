@@ -40,14 +40,16 @@ Packet *MessageQueue::getPending() {
 }
 
 void MessageQueue::send(const Packet& packet) {
-	send(packet.serialize());
+	sendRaw(packet.serialize());
 }
 
-void MessageQueue::send(const QByteArray& data) {
-	bool wasEmpty = _sendbuffer.isEmpty();
-	_sendbuffer.append(data);
-	if(wasEmpty)
-		writeData(0);
+void MessageQueue::sendRaw(const QByteArray& data) {
+	if(!_closeWhenReady) {
+		bool wasEmpty = _sendbuffer.isEmpty();
+		_sendbuffer.append(data);
+		if(wasEmpty)
+			writeData(0);
+	}
 }
 
 void MessageQueue::readData() {
@@ -94,8 +96,14 @@ void MessageQueue::writeData(qint64 prev) {
 
 void MessageQueue::close() {
 	_socket->close();
+	_closeWhenReady = false;
 }
 
+/**
+ * The socket is closed as soon as all pending data has been written.
+ * No further data is accepted for transmission after closeWhenReady()
+ * has been called.
+ */
 void MessageQueue::closeWhenReady() {
 	if(_sendbuffer.isEmpty())
 		_socket->close();

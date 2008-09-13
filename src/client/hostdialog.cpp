@@ -42,7 +42,6 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	ui_->username->setProperty("mandatoryfield", true);
 
 	if(original.isNull()) {
 		ui_->imageSelector->setWidth(800);
@@ -145,11 +144,6 @@ QString HostDialog::getTitle() const
 	return ui_->sessiontitle->text();
 }
 
-QString HostDialog::getAdminPassword() const
-{
-	return ui_->adminpassword->text();
-}
-
 int HostDialog::getUserLimit() const
 {
 	return ui_->userlimit->value();
@@ -182,11 +176,6 @@ void HostDialog::newSelected()
 bool HostDialog::getAllowDrawing() const
 {
 	return ui_->allowdrawing->isChecked();
-}
-
-bool HostDialog::getAllowChat() const
-{
-	return ui_->allowchat->isChecked();
 }
 
 }

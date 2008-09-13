@@ -28,20 +28,30 @@
 namespace server {
 
 Server::Server(QObject *parent) : QObject(parent), _server(0), _lastclient(1),
-	_state(NORMAL) {
-		
+	_uniqueIps(false), _maxnamelen(16), _debug(0), _state(NORMAL) {
+	_errors = new QTextStream(stderr);
+}
+
+Server::~Server() {
+	delete _errors;
+	delete _debug;
 }
 
 /**
  * Start listening on the specified address.
  */
-void Server::start(quint16 port, const QHostAddress& address) {
+bool Server::start(quint16 port, const QHostAddress& address) {
 	Q_ASSERT(_server==0);
 	_server = new QTcpServer(this);
 	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
-	_server->listen(address, port);
+	if(_server->listen(address, port)==false) {
+		printError(_server->errorString());
+		delete _server;
+		return false;
+	}
 	_liveclients = 0;
 	_lastclient = 1;
+	return true;
 }
 
 /**
@@ -62,11 +72,20 @@ void Server::stop() {
 void Server::newClient() {
 	QTcpSocket *socket = _server->nextPendingConnection();
 	// Check if we still have room in the server
-	if(_clients.count() > MAXCLIENTS) {
+	if(_clients.count() > MAXCLIENTS || _liveclients+1 >= _board.maxUsers()) {
 		// Server is full
 		socket->close();
 		delete socket;
 		return;
+	}
+	if(_uniqueIps) {
+		foreach(Client *c, _clients) {
+			if(c->address() == socket->peerAddress()) {
+				socket->close();
+				delete socket;
+				return;
+			}
+		}
 	}
 	// Find an available ID for the client
 	while(_clients.contains(_lastclient)) {
@@ -74,8 +93,7 @@ void Server::newClient() {
 			_lastclient=1;
 	}
 
-	// Add the client
-	Client *c = new Client(_lastclient, this, socket);
+	Client *c = new Client(_lastclient, this, socket, _board.defaultLock());
 	connect(c, SIGNAL(disconnected(int)), this, SLOT(killClient(int)));
 	connect(c, SIGNAL(syncReady(int, bool)), this, SLOT(userSync(int, bool)));
 	_clients.insert(_lastclient, c);
@@ -91,13 +109,14 @@ void Server::newClient() {
  * the latest snapshot and all drawing commands after it.
  */
 void Server::killClient(int id) {
-	qDebug() << "Client " << id << " disconnected.";
+	printDebug("Client " + QString::number(id) + " disconnected.");
 	Client *client = _clients.value(id);
 	--_liveclients;
 	// If the last client leaves, the board state is lost
 	if(_liveclients==0) {
 		_board.clear();
 		clearClients();
+		emit lastClientLeft();
 	} else {
 		if(client->state()>=Client::SYNC) {
 			QStringList msg;
@@ -136,7 +155,7 @@ bool Server::hasClient(const QString& name) {
  */
 void Server::syncUsers() {
 	if(_state==NORMAL) {
-		qDebug() << "Synchronizing users";
+		printDebug("Synchronizing users.");
 		// First step. Prepare users for synchronization
 		foreach(Client *c, _clients) {
 			c->syncLock();
@@ -178,13 +197,13 @@ void Server::requestRaster() {
 		}
 	}
 	if(id==-1) {
-		qWarning("Couldn't find a user to get raster data from!");
+		printError("Couldn't find a user to get raster data from!");
 		foreach(Client *c, _clients) {
 			if(c->state()!=Client::ACTIVE)
 				c->kick("Internal server error");
 		}
 	} else {
-		qDebug() << "Requesting raster data from" << _clients.value(id)->name();
+		printDebug("Requesting raster data from " + _clients.value(id)->name());
 		_clients.value(id)->requestRaster();
 		_board.clearBuffer();
 		foreach(Client *c, _clients) {
@@ -203,7 +222,7 @@ int Server::redistribute(bool sync, bool active, const QByteArray& data) {
 	int count=0;
 	foreach(Client *c, _clients) {
 		if(!c->isGhost() && ((c->state()==Client::SYNC && sync) || (c->state()==Client::ACTIVE && active))) {
-			c->send(data);
+			c->sendRaw(data);
 			++count;
 		}
 	}
@@ -220,11 +239,36 @@ void Server::briefClient(int id) {
 	Q_ASSERT(nc);
 	foreach(Client *c, _clients) {
 		if(c->state()>Client::LOGIN && c->id()!=id) {
-			nc->send(protocol::Message(c->toMessage()).serialize());
+			nc->sendRaw(protocol::Message(c->toMessage()).serialize());
 			if(c->lastTool().size()>0)
-				nc->send(c->lastTool());
+				nc->sendRaw(c->lastTool());
 		}
 	}
+}
+
+/**
+ * @param locker id of the user who issued the lock command
+ * @param id id of the user to (un)lock
+ * @parma status desired lock status
+ */
+void Server::lockClient(int locker, int id, bool status) {
+	if(_board.owner() != locker)
+		kickClient(_board.owner(), locker, "not admin");
+	if(hasClient(id))
+		_clients[id]->lock(status);
+}
+
+/**
+ * @param kicker id of the user who issued the kick command
+ * @param id id of the user to kick
+ */
+void Server::kickClient(int kicker, int id, const QString& reason) {
+	if(_board.owner() != kicker) {
+		if(hasClient(kicker))
+			_clients[kicker]->kick("not admin");
+	}
+	if(hasClient(id))
+		_clients[id]->kick(reason);
 }
 
 /**
@@ -235,6 +279,30 @@ void Server::clearClients() {
 		delete c;
 	}
 	_clients.clear();
+}
+
+void Server::setErrorStream(QTextStream *stream) {
+	delete _errors;
+	_errors = stream;
+}
+
+void Server::setDebugStream(QTextStream *stream) {
+	delete _debug;
+	_debug = stream;
+}
+
+void Server::printError(const QString& message) {
+	if(_errors) {
+		*_errors << message << '\n';
+		_errors->flush();
+	}
+}
+
+void Server::printDebug(const QString& message) {
+	if(_debug) {
+		*_debug << message << '\n';
+		_debug->flush();
+	}
 }
 
 }

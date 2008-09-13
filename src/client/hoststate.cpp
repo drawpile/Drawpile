@@ -33,13 +33,14 @@
 #include "../shared/net/stroke.h"
 #include "../shared/net/toolselect.h"
 #include "../shared/net/binary.h"
+#include "../shared/net/utils.h"
 
 using protocol::Message;
 
 namespace network {
 
 HostState::HostState(QObject *parent)
-	: QObject(parent), localuser_(-1), session_(0), host_(-1)
+	: QObject(parent), localuser_(-1), session_(0), host_(-1,"",0, 0, 0, false)
 {
 	// Relay socket signals
 	connect(&socket_, SIGNAL(connected()), this, SIGNAL(connected()));
@@ -53,15 +54,13 @@ HostState::HostState(QObject *parent)
 	connect(mq_, SIGNAL(badData()), this, SLOT(gotBadData()));
 }
 
-void HostState::setHost(const QString& title, quint16 width, quint16 height) {
-	host_ = Session(0);
-	host_.title = title;
-	host_.width = width;
-	host_.height = height;
+void HostState::setHost(const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw) {
+	host_ = Session(0, title, width, height, maxusers, !allowDraw);
+	hostpassword_ = password;
 }
 
 void HostState::setNoHost() {
-	host_ = Session(-1);
+	host_ = Session(-1,"",0,0,0, false);
 }
 
 void HostState::connectToHost(const QString& host, quint16 port) {
@@ -90,25 +89,28 @@ void HostState::receiveMessage()
 	while((msg = mq_->getPending())) {
 		switch(msg->type()) {
 			case STROKE:
-				if(session_)
+				if(session_) {
 					if(session_->handleStroke(static_cast<StrokePoint*>(msg)))
 						msg = 0;
-				else
+				} else {
 					emit error("Received stroke before joining a session");
+				}
 				break;
 			case STROKE_END:
-				if(session_)
+				if(session_) {
 					if(session_->handleStrokeEnd(static_cast<StrokeEnd*>(msg)))
 						msg = 0;
-				else
+				} else {
 					emit error(tr("Received stroke end before joining a session"));
+				}
 				break;
 			case TOOL_SELECT:
-				if(session_)
+				if(session_) {
 					if(session_->handleToolSelect(static_cast<ToolSelect*>(msg)))
 						msg = 0;
-				else
+				} else {
 					emit error(tr("Received tool select before joining a session"));
+				}
 				break;
 			case MESSAGE:
 				handleMessage((Message*)msg);
@@ -128,9 +130,9 @@ void HostState::receiveMessage()
 }
 
 void HostState::disconnectCleanup() {
+	emit disconnected();
 	delete session_;
 	session_ = 0;
-	emit disconnected();
 }
 
 void HostState::gotBadData() {
@@ -139,9 +141,10 @@ void HostState::gotBadData() {
 }
 
 void HostState::networkError() {
-	qDebug() << "A network error occurred:" << socket_.errorString();
-	emit error(socket_.errorString());
-	disconnectFromHost();
+	if(socket_.error() != QAbstractSocket::RemoteHostClosedError) {
+		emit error(socket_.errorString());
+		disconnectFromHost();
+	}
 }
 
 /**
@@ -157,23 +160,6 @@ void HostState::login(const QString& username)
 }
 
 /**
- * Change board settings.
- *
- * @param title session title
- * @param width board width
- * @param height board height
- * @pre user is logged in and is admin
- */
-void HostState::changeBoard(const QString& title, quint16 width, quint16 height)
-{
-	Session ses(localuser_);
-	ses.title = title;
-	ses.width = width;
-	ses.height = height;
-	mq_->send(Message(ses.tokens()));
-}
-
-/**
  * A password must be sent in response to an Authentication message.
  * The \a needPassword signal is used to notify when a password is required.
  * 
@@ -184,26 +170,13 @@ void HostState::changeBoard(const QString& title, quint16 width, quint16 height)
  */
 void HostState::sendPassword(const QString& password)
 {
-#if 0
 	Q_ASSERT(password.length() != 0);
 	
-	protocol::Password *msg = new protocol::Password;
-	msg->session_id = passwordsession_;
-	
-	int length;
-	char *ptr = convert::toUTF(password, length, Utf16_);
-	
-	SHA1 hash;
-	hash.Update(reinterpret_cast<const quint8*>(ptr), length);
-	hash.Update(reinterpret_cast<const quint8*>(passwordseed_.constData()),
-			passwordseed_.length());
-	hash.Final();
-	
-	delete [] ptr;
-	
-	hash.GetHash(reinterpret_cast<quint8*>(msg->data));
-	net_->send(msg);
-#endif
+	mq_->send(Message("PASSWORD " + protocol::utils::hashPassword(password, salt_)));
+}
+
+void HostState::sendPacket(const protocol::Packet& packet) {
+	mq_->send(packet);
 }
 
 /**
@@ -228,24 +201,28 @@ void HostState::handleMessage(const Message *msg)
 		}
 	} else {
 		// Login messages
-		if(tkns[0].compare("WHORU")==0) {
+		if(tkns[0] == "WHORU") {
 			QStringList user;
 			user << "IAM" << username_;
 			mq_->send(Message(user));
-		} else if(tkns[0].compare("NOBOARD")==0) {
-			session_ = new SessionState(this, Session(0));
-			if(host_.owner==-1)
+		} else if(tkns[0] == "PASSWORD?") {
+			salt_ = tkns.at(1);
+			emit needPassword();
+		} else if(tkns[0] == "NOBOARD") {
+			session_ = new SessionState(this, Session(0, "", 0, 0, 0, false));
+			if(host_.owner()==-1)
 				emit error(tr("No session"));
 			else {
 				// Since there is no board, we don't expect any raster
 				// data.
 				mq_->send(Message(host_.tokens()));
+				session_->setPassword(hostpassword_);
 				session_->flushDrawBuffer();
 				emit loggedin();
 			}
-		} else if(tkns[0].compare("BOARD")==0) {
+		} else if(tkns[0] == "BOARD") {
 			session_ = new SessionState(this, Session(tkns));
-			if(host_.owner!=-1)
+			if(host_.owner()!=-1)
 				emit error(tr("Session already exists"));
 			else
 				emit loggedin();

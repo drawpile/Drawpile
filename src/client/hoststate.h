@@ -27,6 +27,7 @@
 namespace protocol {
 	class MessageQueue;
 	class Message;
+	class Packet;
 };
 
 namespace network {
@@ -62,14 +63,14 @@ class HostState : public QObject {
 		//! Send a password
 		void sendPassword(const QString& password);
 
+		//! Send an arbitrary packet
+		void sendPacket(const protocol::Packet& packet);
+
 		//! Set options for hosting a session
-		void setHost(const QString& title, quint16 width, quint16 height);
+		void setHost(const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw);
 
 		//! Don't host a session
 		void setNoHost();
-
-		//! Set session parameters
-		void changeBoard(const QString& title, quint16 width, quint16 height);
 
 	public slots:
 		//! Disconnect from a host
@@ -125,14 +126,15 @@ class HostState : public QObject {
 		//! Message wrapper for the connection
 		protocol::MessageQueue *mq_;
 
-		//! Seed for generating password hash (received from the server)
-		QByteArray passwordseed_;
+		//! Salt for generating password hash (received from the server)
+		QString salt_;
 
 		//! The active session
 		SessionState *session_;
 
 		//! Options for hosting a session
 		Session host_;
+		QString hostpassword_;
 };
 
 }

@@ -32,17 +32,29 @@ namespace network {
 class SessionState;
 
 //! Information about a session
-struct Session {
-	//! Get session info from a board message
-	Session(const QStringList& info);
-	Session(int o);
-	QStringList tokens() const;
+class Session {
+	public:
+		//! Get session info from a board message
+		Session(const QStringList& info);
+		Session(int o, const QString& title, int width, int height, int maxusers, bool deflock);
+		QStringList tokens() const;
 
-	int owner;
-	QString title;
-	quint16 width;
-	quint16 height;
-	int maxusers;
+		int owner() const { return owner_; }
+		const QString& title() const { return title_; }
+		int width() const { return width_; }
+		int height() const { return height_; }
+		int maxUsers() const { return maxusers_; }
+		bool lock() const { return lock_; }
+		bool defLock() const { return deflock_; }
+
+	private:
+		int owner_;
+		QString title_;
+		quint16 width_;
+		quint16 height_;
+		int maxusers_;
+		bool lock_;
+		bool deflock_;
 };
 
 //! Session participant

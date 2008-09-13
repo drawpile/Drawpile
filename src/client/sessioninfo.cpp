@@ -22,30 +22,33 @@
 #include "sessioninfo.h"
 #include "hoststate.h"
 #include "sessionstate.h"
-#if 0
-#include "../shared/protocol.h"
-#endif
+#include "../shared/net/message.h"
 
 namespace network {
 
 Session::Session(const QStringList& tokens)
 {
-	Q_ASSERT(tokens.size()==5);
+	Q_ASSERT(tokens.size()==8);
 	Q_ASSERT(tokens.at(0).compare("BOARD")==0);
-	owner = tokens.at(1).toInt();
-	title = tokens.at(2);
-	width = tokens.at(3).toInt();
-	height = tokens.at(4).toInt();
-	maxusers = 255;
+	owner_ = tokens.at(1).toInt();
+	title_ = tokens.at(2);
+	width_ = tokens.at(3).toInt();
+	height_ = tokens.at(4).toInt();
+	lock_ = tokens.at(5).toInt();
+	maxusers_ = tokens.at(6).toInt();
+	deflock_ = tokens.at(7).toInt();
 }
 
-Session::Session(int o) :
-	owner(o), title(""), width(0), height(0), maxusers(0) { }
+Session::Session(int o, const QString& title, int width, int height, int maxusers, bool deflock) :
+	owner_(o), title_(title), width_(width), height_(height),
+	maxusers_(maxusers), lock_(false), deflock_(deflock) { }
 
 QStringList Session::tokens() const {
 	QStringList tk;
-	tk << "BOARD" << QString::number(owner) << title <<
-		QString::number(width) << QString::number(height);
+	tk << "BOARD" << QString::number(owner_) << title_ <<
+		QString::number(width_) << QString::number(height_) <<
+		(lock_?"1":"0") << QString::number(maxusers_) <<
+		(deflock_?"1":"0");
 	return tk;
 }
 
@@ -80,7 +83,7 @@ bool User::isLocal() const
 
 bool User::isOwner() const
 {
-	return owner_->info().owner == id_;
+	return owner_->info().owner() == id_;
 }
 
 /**
@@ -90,18 +93,9 @@ bool User::isOwner() const
  */
 void User::lock(bool l)
 {
-#if 0
-	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			(l ? protocol::SessionEvent::Lock : protocol::SessionEvent::Unlock),
-			id_,
-			0 // aux (unused)
-			);
-	
-	msg->session_id = owner_->info().id;
-	
-	owner_->host()->connection()->send(msg);
-
-#endif
+	QStringList msg;
+	msg << (l?"LOCK":"UNLOCK") << QString::number(id_);
+	owner_->host()->sendPacket(protocol::Message(msg));
 }
 
 /**
@@ -110,17 +104,9 @@ void User::lock(bool l)
  */
 void User::kick()
 {
-#if 0
-	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			protocol::SessionEvent::Kick,
-			id_,
-			0 // aux (unused)
-			);
-	
-	msg->session_id = owner_->info().id;
-	
-	owner_->host()->connection()->send(msg);
-#endif
+	QStringList msg;
+	msg << "KICK" << QString::number(id_);
+	owner_->host()->sendPacket(protocol::Message(msg));
 }
 
 }

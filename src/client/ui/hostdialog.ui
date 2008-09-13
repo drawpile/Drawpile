@@ -9,18 +9,27 @@
     <x>0</x>
     <y>0</y>
     <width>371</width>
-    <height>384</height>
+    <height>394</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Host a session</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
+   </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
    </property>
    <item>
     <widget class="QTabWidget" name="tabWidget" >
@@ -32,12 +41,6 @@
        <string>Session</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QLabel" name="label_7" >
          <property name="font" >
@@ -56,10 +59,22 @@
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
+         <property name="leftMargin" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
           <number>6</number>
          </property>
          <item row="0" column="1" >
@@ -75,9 +90,7 @@
          <item row="2" column="2" >
           <widget class="QLineEdit" name="sessionpassword" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -107,15 +120,16 @@
          <item row="1" column="2" >
           <widget class="QLineEdit" name="username" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
            <property name="toolTip" >
             <string>Your username</string>
+           </property>
+           <property name="mandatoryfield" stdset="0" >
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -178,24 +192,12 @@
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="2" column="2" >
-          <widget class="QToolButton" name="selectPicture" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
+         <item row="0" column="1" >
+          <widget class="QRadioButton" name="existingpicture" >
+           <property name="text" >
+            <string>Current</string>
            </property>
-           <property name="toolTip" >
-            <string>Select an image file</string>
-           </property>
-           <property name="icon" >
-            <iconset>:icons/document-open.png</iconset>
-           </property>
-           <property name="autoRaise" >
+           <property name="checked" >
             <bool>true</bool>
            </property>
           </widget>
@@ -203,9 +205,7 @@
          <item rowspan="3" row="0" column="3" >
           <widget class="ImageSelector" name="imageSelector" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>5</vsizetype>
+            <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -218,13 +218,6 @@
            </property>
            <property name="frameShape" >
             <enum>QFrame::StyledPanel</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="QRadioButton" name="solidcolor" >
-           <property name="text" >
-            <string>Solid color</string>
            </property>
           </widget>
          </item>
@@ -244,17 +237,37 @@
            </property>
           </spacer>
          </item>
-         <item row="0" column="1" >
-          <widget class="QRadioButton" name="existingpicture" >
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="otherpicture" >
            <property name="text" >
-            <string>Current</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
+            <string>From file</string>
            </property>
           </widget>
          </item>
          <item row="1" column="2" >
+          <widget class="QToolButton" name="selectPicture" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip" >
+            <string>Select an image file</string>
+           </property>
+           <property name="icon" >
+            <iconset>:icons/document-open.png</iconset>
+           </property>
+           <property name="autoRaise" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QRadioButton" name="solidcolor" >
+           <property name="text" >
+            <string>Solid color</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" >
           <widget class="QToolButton" name="selectColor" >
            <property name="focusPolicy" >
             <enum>Qt::NoFocus</enum>
@@ -270,21 +283,26 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="QRadioButton" name="otherpicture" >
-           <property name="text" >
-            <string>From file</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
+         <property name="leftMargin" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <property name="horizontalSpacing" >
+          <number>6</number>
+         </property>
+         <property name="verticalSpacing" >
           <number>6</number>
          </property>
          <item row="0" column="3" >
@@ -306,18 +324,16 @@
             <bool>false</bool>
            </property>
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="maximum" >
-            <number>65535</number>
-           </property>
            <property name="minimum" >
             <number>1</number>
+           </property>
+           <property name="maximum" >
+            <number>65535</number>
            </property>
            <property name="value" >
             <number>600</number>
@@ -372,18 +388,16 @@
             <bool>false</bool>
            </property>
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>0</vsizetype>
+            <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="maximum" >
-            <number>65535</number>
-           </property>
            <property name="minimum" >
             <number>1</number>
+           </property>
+           <property name="maximum" >
+            <number>65535</number>
            </property>
            <property name="value" >
             <number>800</number>
@@ -412,12 +426,6 @@
        <string>Advanced</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QLabel" name="label_8" >
          <property name="font" >
@@ -433,35 +441,6 @@
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="1" column="1" >
-          <widget class="QRadioButton" name="useremote" >
-           <property name="text" >
-            <string>Host on a remote server:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2" >
-          <widget class="QComboBox" name="remotehost" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="editable" >
-            <bool>true</bool>
-           </property>
-           <property name="maxCount" >
-            <number>10</number>
-           </property>
-           <property name="insertPolicy" >
-            <enum>QComboBox::InsertAtTop</enum>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1" >
           <widget class="QRadioButton" name="uselocal" >
            <property name="minimumSize" >
@@ -494,29 +473,26 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="2" >
-          <widget class="QLineEdit" name="adminpassword" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="toolTip" >
-            <string>Administrator password for the remote server</string>
-           </property>
-           <property name="echoMode" >
-            <enum>QLineEdit::Password</enum>
+         <item row="1" column="1" >
+          <widget class="QRadioButton" name="useremote" >
+           <property name="text" >
+            <string>Host on a remote server:</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="1" >
-          <widget class="QLabel" name="label_9" >
+         <item row="1" column="2" >
+          <widget class="QComboBox" name="remotehost" >
            <property name="enabled" >
             <bool>false</bool>
            </property>
-           <property name="text" >
-            <string>Administrator &amp;password:</string>
+           <property name="editable" >
+            <bool>true</bool>
            </property>
-           <property name="buddy" >
-            <cstring>adminpassword</cstring>
+           <property name="maxCount" >
+            <number>10</number>
+           </property>
+           <property name="insertPolicy" >
+            <enum>QComboBox::InsertAtTop</enum>
            </property>
           </widget>
          </item>
@@ -537,67 +513,6 @@
        </item>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="1" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>24</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="2" column="1" >
-          <widget class="QCheckBox" name="allowchat" >
-           <property name="text" >
-            <string>Allow chat</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" >
-          <widget class="QSpinBox" name="userlimit" >
-           <property name="minimumSize" >
-            <size>
-             <width>60</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximum" >
-            <number>255</number>
-           </property>
-           <property name="minimum" >
-            <number>2</number>
-           </property>
-           <property name="value" >
-            <number>20</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="QCheckBox" name="allowdrawing" >
-           <property name="text" >
-            <string>Allow drawing</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="1" >
           <widget class="QLabel" name="label_11" >
            <property name="minimumSize" >
@@ -614,6 +529,25 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="2" >
+          <widget class="QSpinBox" name="userlimit" >
+           <property name="minimumSize" >
+            <size>
+             <width>60</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="minimum" >
+            <number>2</number>
+           </property>
+           <property name="maximum" >
+            <number>255</number>
+           </property>
+           <property name="value" >
+            <number>20</number>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="3" >
           <spacer>
            <property name="orientation" >
@@ -626,6 +560,32 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QCheckBox" name="allowdrawing" >
+           <property name="text" >
+            <string>Allow drawing</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -663,6 +623,7 @@
    <class>ImageSelector</class>
    <extends>QFrame</extends>
    <header>imageselector.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -677,10 +638,8 @@
   <tabstop>pictureheight</tabstop>
   <tabstop>uselocal</tabstop>
   <tabstop>useremote</tabstop>
-  <tabstop>adminpassword</tabstop>
   <tabstop>userlimit</tabstop>
   <tabstop>allowdrawing</tabstop>
-  <tabstop>allowchat</tabstop>
   <tabstop>buttons</tabstop>
  </tabstops>
  <resources/>
@@ -714,38 +673,6 @@
     <hint type="destinationlabel" >
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useremote</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>label_9</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>91</x>
-     <y>103</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>101</x>
-     <y>128</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>useremote</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>adminpassword</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>67</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>276</x>
-     <y>133</y>
     </hint>
    </hints>
   </connection>

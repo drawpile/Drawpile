@@ -42,10 +42,16 @@ class Board : public QObject {
 		void clear();
 
 		//! Set board options
-		void set(int owner, const QString& title, int w, int h);
+		void set(int owner, const QString& title, int w, int h, bool lock);
 
 		//! Set board options from a message
 		bool set(int owner, const QStringList& tokens);
+
+		//! Lock/unlock the board
+		void setLock(bool lock) { _lock = lock; }
+
+		//! Is the board locked?
+		bool locked() const { return _lock; }
 
 		//! Set the size limit in bytes on drawing command buffer.
 		/**
@@ -54,19 +60,25 @@ class Board : public QObject {
 		 */
 		void setBufferLimit(int limit) { bufferLimit_ = limit; }
 
-		/**
-		 * Width of the board in pixels
-		 */
+		//! Get the ID of the board owner
+		int owner() const { return _owner; }
+
+		//! Width of the board in pixels
 		int width() const { return _width; }
 
-		/**
-		 * Height of the board in pixels
-		 */
+		//! Height of the board in pixels
 		int height() const { return _height; }
 
-		/**
-		 * The title of the board
-		 */
+		//! Set the maximum number of users for this board
+		void setMaxUsers(int maxusers) { _maxusers = maxusers; }
+
+		//! Get the maximum number of users for this board
+		int maxUsers() const { return _maxusers; }
+
+		//! Lock new users by default?
+		bool defaultLock() const { return _deflock; }
+
+		//! The title of the board
 		const QString& title() const { return _title; }
 
 		//! Clear buffered raster data and drawing commands
@@ -115,6 +127,9 @@ class Board : public QObject {
 		int _width;
 		int _height;
 		int _owner;
+		bool _lock;
+		int _maxusers;
+		bool _deflock;
 
 		QByteArray raster_;
 		QByteArray drawing_;

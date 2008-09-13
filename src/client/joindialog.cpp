@@ -36,8 +36,6 @@ JoinDialog::JoinDialog(QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	ui_->username->setProperty("mandatoryfield",true);
-	ui_->address->setProperty("mandatoryfield",true);
 
 	// Set defaults
 	QSettings& cfg = DrawPileApp::getSettings();

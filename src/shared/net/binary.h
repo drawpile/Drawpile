@@ -37,7 +37,7 @@ class BinaryChunk : public Packet {
 		 * Construct a message containing a chunk of binary data.
 		 * Maximum length of the chunk is 2^16 - 3 bytes.
 		 */
-		BinaryChunk(QByteArray data) : Packet(BINARY_CHUNK), _data(data) { }
+		explicit BinaryChunk(QByteArray data) : Packet(BINARY_CHUNK), _data(data) { }
 
 		/**
 		 * Deserialize a binary data chunk

@@ -33,7 +33,7 @@
 #include "../shared/net/constants.h" // DEFAULT_PORT
 
 Controller::Controller(QObject *parent)
-	: QObject(parent), board_(0), session_(0), pendown_(false), sync_(false), syncwait_(false), lock_(false)
+	: QObject(parent), board_(0), session_(0), maxusers_(16), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
 	host_ = new network::HostState(this);
 	connect(host_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
@@ -100,10 +100,8 @@ void Controller::connectHost(const QUrl& url)
 
 bool Controller::isUploading() const
 {
-#if 0
 	if(session_)
 		return session_->isUploading();
-#endif
 	return false;
 }
 
@@ -121,10 +119,11 @@ void Controller::joinSession(const QUrl& url) {
  * @param title session title
  * @param image initial board image
  */
-void Controller::hostSession(const QUrl& url, const QString& title,
-		const QImage& image)
+void Controller::hostSession(const QUrl& url, const QString& password,
+		const QString& title, const QImage& image, int maxusers, bool allowDraw)
 {
-	host_->setHost(title, image.width(), image.height());
+	maxusers_ = maxusers; // remember this for deny joins
+	host_->setHost(password, title, image.width(), image.height(), maxusers, allowDraw);
 	connectHost(url);
 }
 
@@ -171,9 +170,6 @@ void Controller::sessionJoined()
 	const int userid = host_->localUser();
 	session_ = host_->session();
 
-	// Remember maximum user count
-	maxusers_ = session_->info().maxusers;
-
 	// Update user list
 	board_->clearUsers();
 	const QList<int> users = session_->users();
@@ -200,14 +196,12 @@ void Controller::sessionJoined()
 			this, SLOT(sessionLocked(bool)));
 	connect(session_, SIGNAL(userLocked(int, bool)),
 			this, SLOT(userLocked(int,bool)));
-	connect(session_, SIGNAL(ownerChanged()),
-			this, SLOT(sessionOwnerChanged()));
 	connect(session_, SIGNAL(userKicked(int)),
 			this, SLOT(sessionKicked(int)));
 	connect(session_, SIGNAL(chatMessage(QString, QString)),
 			this, SIGNAL(chat(QString,QString)));
-	connect(session_, SIGNAL(userLimitChanged(int)),
-			this, SLOT(sessionUserLimitChanged(int)));
+	connect(session_, SIGNAL(boardChanged()),
+			this, SIGNAL(boardChanged()));
 
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)),
@@ -223,7 +217,7 @@ void Controller::sessionJoined()
 	delete toolbox_.editor();
 	toolbox_.setEditor( board_->getEditor(session_) );
 
-	emit joined(session_);
+	emit joined();
 
 	// Set lock
 	if(session_->user(userid).locked())
@@ -327,12 +321,15 @@ void Controller::syncWait()
 }
 
 /**
- * Unlock the board.
+ * Unlock the board after sync, but only if there is no user or session lock.
  */
 void Controller::syncDone()
 {
-	emit unlockboard();
-	lock_ = false;
+	if(session_->user(host_->localUser()).locked()==false &&
+			session_->info().lock()==false) {
+		emit unlockboard();
+		lock_ = false;
+	}
 }
 
 /**
@@ -343,22 +340,19 @@ void Controller::syncDone()
  */
 void Controller::sessionLocked(bool lock)
 {
-#if 0
 	if(lock) {
 		emit lockboard(tr("Locked by session owner"));
-		if(pendown_ && tool_->readonly()==false) {
+		if(pendown_ && tool_->readonly()==false)
 			penUp();
-		}
 		lock_ = true;
 	} else {
-		const network::User &localuser = session_->user(host_->localUser().id());
+		const network::User &localuser = session_->user(host_->localUser());
 		// Unlock if local user is not locked and general session lock was lifted
-		if(localuser.locked()==false && session_->isLocked()==false) {
+		if(localuser.locked()==false && session_->info().lock()==false) {
 			emit unlockboard();
 			lock_ = false;
 		}
 	}
-#endif
 }
 
 /**
@@ -370,16 +364,10 @@ void Controller::sessionLocked(bool lock)
  */
 void Controller::userLocked(int id, bool lock)
 {
-#if 0
 	const network::User &user = session_->user(id);
 
-	// Session owner cannot be locked (except when entire board is locked)
-	if(user.isOwner() && user.isLocal())
-		return;
-
 	qDebug() << "user locked" << id << lock;
-	if(!user.isLocal())
-		emit userChanged(user);
+	emit userChanged(user);
 
 	if(lock) {
 		// Lock UI if local user was locked
@@ -388,22 +376,9 @@ void Controller::userLocked(int id, bool lock)
 	} else {
 		// Unlock UI if local user was unlocked and general session lock
 		// is not in place.
-		if(user.isLocal() && session_->isLocked()==false)
+		if(user.isLocal() && session_->info().lock()==false)
 			sessionLocked(false);
 	}
-#endif
-}
-
-/**
- * Handle session ownership change
- */
-void Controller::sessionOwnerChanged()
-{
-#if 0
-	qDebug() << "owner changed to " << session_->info().owner;
-	if(session_->info().owner == host_->localUser().id())
-		emit becameOwner();
-#endif
 }
 
 /**
@@ -412,14 +387,6 @@ void Controller::sessionOwnerChanged()
 void Controller::sessionKicked(int id)
 {
 	emit userKicked(session_->user(id));
-}
-
-/**
- * @param count max. number of users
- */
-void Controller::sessionUserLimitChanged(int count)
-{
-	emit joinsDisallowed(count<2);
 }
 
 /**
@@ -442,8 +409,10 @@ void Controller::sendRaster()
  */
 void Controller::lockForSync()
 {
-	emit lockboard(tr("Synchronizing new user"));
-	lock_ = true;
+	if(lock_==false) {
+		emit lockboard(tr("Synchronizing new user"));
+		lock_ = true;
+	}
 	session_->sendAckSync();
 }
 

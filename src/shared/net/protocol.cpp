@@ -34,8 +34,8 @@ unsigned int Packet::sniffLength(const QByteArray& data) {
 	QBuffer buf(const_cast<QByteArray*>(&data));
 	buf.open(QBuffer::ReadOnly);
 
-	char type = Utils::read8(buf);
-	quint16 len = Utils::read16(buf);
+	char type = utils::read8(buf);
+	quint16 len = utils::read16(buf);
 
 	// Do some sanity checks
 	switch(type) {
@@ -74,8 +74,8 @@ Packet *Packet::deserialize(const QByteArray& data) {
 	QBuffer buf(const_cast<QByteArray*>(&data));
 	buf.open(QBuffer::ReadOnly);
 
-	char type = Utils::read8(buf);
-	quint16 len = Utils::read16(buf);
+	char type = utils::read8(buf);
+	quint16 len = utils::read16(buf);
 
 	// Deserialize correct message type
 	switch(type) {
@@ -94,7 +94,7 @@ QByteArray Packet::serialize() const {
 	buf.open(QBuffer::WriteOnly);
 
 	buf.putChar(_type);
-	Utils::write16(buf, payloadLength());
+	utils::write16(buf, payloadLength());
 	serializeBody(buf);
 
 	return buf.buffer();

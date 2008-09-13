@@ -86,9 +86,6 @@ class SessionState : public QObject {
 		//! Check if raster upload is in progress
 		bool isUploading() const;
 
-		//! Check if general session lock is in place
-		bool isLocked() const { return lock_; }
-
 		//! Release raster data
 		void releaseRaster();
 
@@ -144,11 +141,8 @@ class SessionState : public QObject {
 		//! Session has been (un)locked
 		void sessionLocked(bool lock);
 
-		//! User limit has changed
-		void userLimitChanged(int limit);
-
 		//! Session owner changed
-		void ownerChanged();
+		void boardChanged();
 
 		//! A user got kicked from the session
 		void userKicked(int id);
@@ -223,9 +217,6 @@ class SessionState : public QObject {
 
 		//! Starting position of raster data chunk that will be sent next
 		int rasteroffset_;
-
-		//! Is the session lock
-		bool lock_;
 
 		//! Buffer drawing commands, instead of emitting them right away
 		bool bufferdrawing_;

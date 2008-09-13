@@ -48,7 +48,7 @@ class Message : public Packet {
 		 * Construct a text message
 		 * @param message message text.
 		 */
-		Message(const QString& message) :
+		explicit Message(const QString& message) :
 			Packet(MESSAGE), _message(message) { }
 
 		/**
@@ -56,7 +56,7 @@ class Message : public Packet {
 		 * a list of tokens.
 		 * @param tokens list of message tokens
 		 */
-		Message(const QStringList& tokens) :
+		explicit Message(const QStringList& tokens) :
 			Packet(MESSAGE), _message(quote(tokens)) { }
 
 		/**

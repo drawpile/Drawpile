@@ -1,4 +1,3 @@
-#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -19,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QDebug>
 #include <QApplication>
 #include <QMenuBar>
 #include <QToolBar>
@@ -86,8 +86,6 @@ MainWindow::MainWindow(const MainWindow *source)
 	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
-	connect(DrawPileApp::getInstance()->getServer(), SIGNAL(serverCrashed()),
-			netstatus_, SLOT(serverCrashed()));
 
 	// Create lock status widget
 	lockstatus_ = new QLabel(this);
@@ -184,12 +182,10 @@ MainWindow::MainWindow(const MainWindow *source)
 			this, SLOT(lock(QString)));
 	connect(controller_, SIGNAL(unlockboard()),
 			this, SLOT(unlock()));
-	connect(controller_, SIGNAL(joinsDisallowed(bool)),
-			disallowjoins_, SLOT(setChecked(bool)));
-	connect(controller_, SIGNAL(joined(network::SessionState*)),
-			this, SLOT(joined(network::SessionState*)));
-	connect(controller_, SIGNAL(becameOwner()),
-			this, SLOT(becameOwner()));
+	connect(controller_, SIGNAL(joined()),
+			this, SLOT(joined()));
+	connect(controller_, SIGNAL(boardChanged()),
+			this, SLOT(boardInfoChanged()));
 	connect(controller_, SIGNAL(rasterUploadProgress(int)),
 			this, SLOT(rasterUp(int)));
 
@@ -294,9 +290,6 @@ void MainWindow::initBoard(const QImage& image)
 }
 
 /**
- * If a session (path) was present in the url, use it. Otherwise connect
- * normally. (automatically join if there is only one session, otherwise
- * display a list for the user)
  * @param url URL
  */
 void MainWindow::joinSession(const QUrl& url)
@@ -513,7 +506,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			if(box.clickedButton() == exitbtn) {
 				// Delay exiting until actually disconnected
 				connect(controller_, SIGNAL(disconnected(QString)),
-						this, SLOT(close()));
+						this, SLOT(close()), Qt::QueuedConnection);
 				controller_->disconnectHost();
 			}
 			event->ignore();
@@ -540,6 +533,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			// Cancel exit
 			if(box.clickedButton() == cancelbtn || cancel) {
+				disconnect(controller_, SIGNAL(disconnected(QString)),
+						this, SLOT(close()));
 				event->ignore();
 				return;
 			}
@@ -797,7 +792,6 @@ void MainWindow::finishHost(int i)
 	if(i==QDialog::Accepted) {
 		const bool useremote = hostdlg_->useRemoteAddress();
 		QUrl address;
-		QString admin;
 
 		if(useremote) {
 			QString scheme;
@@ -805,7 +799,6 @@ void MainWindow::finishHost(int i)
 				scheme = "drawpile://";
 			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
 					QUrl::TolerantMode);
-			admin = hostdlg_->getAdminPassword();
 		} else {
 			QSettings& cfg = DrawPileApp::getSettings();
 			address.setHost(LocalServer::address());
@@ -825,12 +818,15 @@ void MainWindow::finishHost(int i)
 
 		// Start server if hosting locally
 		if(useremote==false) {
+#if 0
 			LocalServer *srv = DrawPileApp::getInstance()->getServer();
 			if(srv->ensureRunning()==false) {
 				showErrorMessage(srv->errorString(),srv->serverOutput());
 				hostdlg_->deleteLater();
 				return;
 			}
+#endif
+			LocalServer::startServer();
 		}
 
 		// If another image was selected, replace current board with it
@@ -839,18 +835,18 @@ void MainWindow::finishHost(int i)
 			initBoard(hostdlg_->getImage());
 		}
 
-		// Connect
+		// Connect to host
 		disconnect(controller_, SIGNAL(loggedin()), this, 0);
-		controller_->hostSession(address, hostdlg_->getTitle(),
-				hostdlg_->getImage());
-		hostdlg_->deleteLater();
+		controller_->hostSession(address, hostdlg_->getPassword(),
+				hostdlg_->getTitle(), hostdlg_->getImage(),
+				hostdlg_->getUserLimit(), hostdlg_->getAllowDrawing());
 
 		// Set login dialog to correct state
 		logindlg_->connecting(address.host(), true);
 		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
-	} else {
-		hostdlg_->deleteLater();
 	}
+	// TODO can delete now?
+	hostdlg_->deleteLater();
 }
 
 /**
@@ -900,30 +896,39 @@ void MainWindow::connected()
  */
 void MainWindow::disconnected()
 {
+	userlist_->setSession(0);
 	host_->setEnabled(true);
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
 	setSessionTitle(QString());
-	userlist_->setSession(0);
 }
 
 /**
  * @param session the session that was joined
  */
-void MainWindow::joined(network::SessionState *session)
+void MainWindow::joined()
 {
-	setSessionTitle(session->info().title);
-	const bool isowner = session->info().owner == session->host()->localUser();
-	userlist_->setSession(session);
-	userlist_->setAdminMode(isowner);
-	adminTools_->setEnabled(isowner);
-	chatbox_->joined(session->info().title);
+	userlist_->setSession(controller_->session());
+	chatbox_->joined();
 }
 
-void MainWindow::becameOwner()
+/**
+ * Board info has changed.
+ * Things that can change:
+ * - board size (not handled ATM)
+ * - title
+ * - owner
+ * - board lock (handled elsewhere)
+ */
+void MainWindow::boardInfoChanged()
 {
-	adminTools_->setEnabled(true);
-	userlist_->setAdminMode(true);
+	const network::SessionState *session = controller_->session();
+	const network::Session& info = session->info();
+	setSessionTitle(info.title());
+	const bool isowner = info.owner() == session->host()->localUser();
+	userlist_->setAdminMode(isowner);
+	adminTools_->setEnabled(isowner);
+	disallowjoins_->setChecked(info.maxUsers() <= session->userCount());
 }
 
 /**
@@ -945,15 +950,6 @@ void MainWindow::unlock()
 	lockboard_->setChecked(false);
 	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
 	lockstatus_->setToolTip(tr("Board is not locked"));
-}
-
-/**
- * Updates the allow join action checked status.
- * @param allow if true, new users may join
- */
-void MainWindow::allowJoins(bool allow)
-{
-	disallowjoins_->setChecked(!allow);
 }
 
 void MainWindow::rasterUp(int p)

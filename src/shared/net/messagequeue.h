@@ -57,7 +57,7 @@ class MessageQueue : public QObject {
 		/**
 		 * Enqueue raw data for sending.
 		 */
-		void send(const QByteArray& data);
+		void sendRaw(const QByteArray& data);
 
 		/**
 		 * Close the IO device

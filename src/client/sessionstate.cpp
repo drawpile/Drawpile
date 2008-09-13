@@ -63,7 +63,7 @@ QColor decodeColor(quint32 color, qreal &opacity) {
  * @param info session information
  */
 SessionState::SessionState(HostState *parent, const Session& info)
-	: QObject(parent), host_(parent), info_(info), expectRaster_(0), rasteroffset_(0),lock_(false),bufferdrawing_(true)
+	: QObject(parent), host_(parent), info_(info), expectRaster_(0), rasteroffset_(0),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
 	qDebug() << "Created session";
@@ -74,13 +74,12 @@ SessionState::SessionState(HostState *parent, const Session& info)
  */
 void SessionState::update(const Session& info)
 {
-#if 0
-	if(info_.maxusers != info.maxusers) {
-		emit userLimitChanged(info.maxusers);
-	}
-#endif
-	/** @todo check for other changes too */
+	Session old = info_;
 	info_ = info;
+	// Locking warrants its own signal
+	if(old.lock() != info.lock())
+		emit sessionLocked(info.lock());
+	emit boardChanged();
 }
 
 /**
@@ -150,7 +149,7 @@ void SessionState::sendRaster(const QByteArray& raster)
 	rasteroffset_ = 0;
 	QStringList rastermsg;
 	rastermsg << "RASTER" << QString::number(raster.length());
-	host_->mq_->send(protocol::Message(rastermsg));
+	host_->sendPacket(protocol::Message(rastermsg));
 	sendRasterChunk();
 }
 
@@ -164,7 +163,7 @@ void SessionState::sendRasterChunk()
 	int chunklen = 1024*4; // chunk length is a tradeoff between efficiency and responsiveness.
 	if(rasteroffset_ + chunklen > raster_.length())
 		chunklen = raster_.length() - rasteroffset_;
-	host_->mq_->send(protocol::BinaryChunk(
+	host_->sendPacket(protocol::BinaryChunk(
 				raster_.mid(rasteroffset_, chunklen)
 			));
 	rasteroffset_ += chunklen;
@@ -175,51 +174,32 @@ void SessionState::sendRasterChunk()
 	}
 }
 
+void SessionState::setPassword(const QString& password) {
+	QStringList msg;
+	msg << "PASSWORD" << password;
+	host_->sendPacket(protocol::Message(msg));
+}
+
 /**
+ * A session lock applies to the entire session, not individual users.
  * @param l lock status
  * @pre user is session owner
  */
 void SessionState::lock(bool l)
 {
-#if 0
-	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			(l ? protocol::SessionEvent::Lock : protocol::SessionEvent::Unlock),
-			protocol::null_user,
-			0 // aux (unused)
-			);
-	
-	msg->session_id = info_.id;
-	
-	host_->connection()->send(msg);
-#endif
+	host_->sendPacket(protocol::Message(l?"LOCK BOARD":"UNLOCK BOARD"));
 }
 
 /**
  * Changes the user limit for the session. This doesn't affect current users,
- * setting the limit lower than the number of users currently logged in will
- * just prevent new users from joining.
- * 
+ * only those who are trying to join the session.
  * @param count number of users allowed
  */
 void SessionState::setUserLimit(int count)
 {
-#if 0
-	qDebug() << "Chaning user limit to" << count;
-	protocol::SessionInstruction *msg = new protocol::SessionInstruction(
-			protocol::SessionInstruction::Alter,
-			info_.width,
-			info_.height,
-			info_.mode, // Set user mode (unchanged)
-			count, // Set user limit
-			0, // flags (unused)
-			0, // title length (FIXME, empties the session title)
-			0 // title (FIXME)
-			);
-	msg->session_id = info_.id;
-
-	host_->lastsessioninstr_ = msg->action;
-	host_->connection()->send(msg);
-#endif
+	QStringList msg;
+	msg << "USERLIMIT" << QString::number(count);
+	host_->sendPacket(protocol::Message(msg));
 }
 
 /**
@@ -227,7 +207,7 @@ void SessionState::setUserLimit(int count)
  */
 void SessionState::sendToolSelect(const drawingboard::Brush& brush)
 {
-	host_->mq_->send( protocol::ToolSelect(
+	host_->sendPacket( protocol::ToolSelect(
 			host_->localuser_,
 			1,
 			1,
@@ -248,7 +228,7 @@ void SessionState::sendToolSelect(const drawingboard::Brush& brush)
  */
 void SessionState::sendStrokePoint(const drawingboard::Point& point)
 {
-	host_->mq_->send(protocol::StrokePoint(
+	host_->sendPacket(protocol::StrokePoint(
 				host_->localuser_,
 				point.x(),
 				point.y(),
@@ -259,7 +239,7 @@ void SessionState::sendStrokePoint(const drawingboard::Point& point)
 
 void SessionState::sendStrokeEnd()
 {
-	host_->mq_->send(protocol::StrokeEnd( host_->localuser_ ) );
+	host_->sendPacket(protocol::StrokeEnd( host_->localuser_ ) );
 }
 
 /**
@@ -268,14 +248,14 @@ void SessionState::sendStrokeEnd()
  */
 void SessionState::sendAckSync()
 {
-	host_->mq_->send(protocol::Message("SYNCREADY"));
+	host_->sendPacket(protocol::Message("SYNCREADY"));
 }
 
 void SessionState::sendChat(const QString& message)
 {
 	QStringList msg;
 	msg << "SAY" << message;
-	host_->mq_->send(protocol::Message(msg));
+	host_->sendPacket(protocol::Message(msg));
 }
 
 /**
@@ -283,26 +263,31 @@ void SessionState::sendChat(const QString& message)
  */
 bool SessionState::handleMessage(const QStringList& tokens)
 {
-	if(tokens[0].compare("SAY")==0) {
-
-	} else if(tokens[0].compare("USER")==0) {
+	if(tokens[0] == "SAY") {
+		int userid = tokens.at(1).toInt();
+		if(hasUser(userid))
+			emit chatMessage(user(userid).name(), tokens.at(2));
+		else
+			qWarning() << "Got chat message from unknown user:" << tokens.at(2);
+	} else if(tokens[0] == "USER") {
 		updateUser(tokens);
-	} else if(tokens[0].compare("PART")==0) {
+	} else if(tokens[0] == "PART") {
 		partUser(tokens);
-	} else if(tokens[0].compare("SLOCK")==0) {
+	} else if(tokens[0] == "SLOCK") {
 		emit syncWait();
-	} else if(tokens[0].compare("SUNLOCK")==0) {
+	} else if(tokens[0] == "SUNLOCK") {
 		emit syncDone();
-	} else if(tokens[0].compare("BOARD")==0) {
-		qDebug() << "board change";
-	} else if(tokens[0].compare("RASTER")==0) {
+	} else if(tokens[0] == "BOARD") {
+		update(Session(tokens));
+	} else if(tokens[0] == "RASTER") {
 		releaseRaster();
 		expectRaster_ = tokens.at(1).toInt();
+		qDebug() << "RASTER" << tokens.at(1) << "int=" << expectRaster_;
 		if(expectRaster_ == 0)
 			emit rasterReceived(100);
-	} else if(tokens[0].compare("GIVERASTER")==0) {
+	} else if(tokens[0] == "GIVERASTER") {
 		emit syncRequest();
-	} else if(tokens[0].compare("MORE")==0) {
+	} else if(tokens[0] == "MORE") {
 		if(isUploading())
 			sendRasterChunk();
 		else
@@ -319,18 +304,22 @@ void SessionState::updateUser(const QStringList& tokens) {
 		// Existing user changed
 		newuser = false;
 		User olduser = users_.value(user.id());
-		if(olduser.locked() != user.locked()) {
+		users_[user.id()] = user;
+		if(olduser.locked() != user.locked())
 			emit userLocked(user.id(), user.locked());
-		}
+	} else {
+		users_[user.id()] = user;
 	}
-	users_[user.id()] = user;
 	// The session joining is complete when we get our own user ID
 	// for the first time.
-	if(host_->localuser_<0 && user.name().compare(host_->username_)==0)
+	if(host_->localuser_<0 && user.name() == host_->username_)
 		host_->sessionJoinDone(user.id());
 
-	if(newuser)
+	if(newuser) {
 		emit userJoined(user.id());
+		if(user.locked())
+			emit userLocked(user.id(), true);
+	}
 }
 
 /**
@@ -354,6 +343,7 @@ void SessionState::partUser(const QStringList& tokens) {
  */
 bool SessionState::handleBinaryChunk(protocol::BinaryChunk *bc)
 {
+	qDebug() << "Got" << bc->data().length() << "bytes of binary data. Expecting" << expectRaster_;
 	if(expectRaster_>0) {
 		raster_.append(bc->data());
 		if(raster_.size()<expectRaster_) {

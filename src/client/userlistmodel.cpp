@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,15 +37,14 @@ void UserListModel::setSession(network::SessionState *session)
 {
 	session_ = session;
 	if(session_) {
-		beginInsertRows(QModelIndex(),0,session_->userCount()-1);
+		beginInsertRows(QModelIndex(),0,session_->userCount());
 		users_ = session_->users();
+		endInsertRows();
 		connect(session_, SIGNAL(userJoined(int)), this, SLOT(addUser(int)));
 		connect(session_, SIGNAL(userLeft(int)), this, SLOT(removeUser(int)));
 		connect(session_, SIGNAL(userLocked(int,bool)), this, SLOT(updateUsers()));
-		connect(session_, SIGNAL(ownerChanged()), this, SLOT(updateUsers()));
-		endInsertRows();
 	} else {
-		beginRemoveRows(QModelIndex(), 0, users_.size()-1);
+		beginRemoveRows(QModelIndex(), 0, users_.size());
 		users_.clear();
 		endRemoveRows();
 	}
@@ -69,6 +68,8 @@ int UserListModel::rowCount(const QModelIndex& parent) const
 
 void UserListModel::addUser(int id)
 {
+	if(users_.contains(id))
+		return;
 	int pos=0;
 	while(pos < users_.count()) {
 		if(users_.at(pos) > id)
@@ -117,20 +118,18 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	opt.features = v2 ? v2->features : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
 
 	const network::User user = index.data().value<network::User>();
-	//qDebug() << user.name;
 
 	// Background
 	drawBackground(painter, opt, index);
 
-	// Lock button/indicator. This is shown even when not in admin mode, except for the session owner
-	if(user.isOwner()==false)
-		painter->drawPixmap(
-				opt.rect.topLeft(),
-				icon::lock().pixmap(
-					16,
-					QIcon::Normal,
-					user.locked()?QIcon::On:QIcon::Off)
-				);
+	// Lock button/indicator. This is shown even when not in admin mode.
+	painter->drawPixmap(
+			opt.rect.topLeft(),
+			icon::lock().pixmap(
+				16,
+				QIcon::Normal,
+				user.locked()?QIcon::On:QIcon::Off)
+			);
 
 	// Name
 	QRect textrect = opt.rect;
@@ -162,13 +161,13 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 		const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
 
 		network::User user = index.data().value<network::User>();
-		if(user.isOwner()==false) {
-			if(me->x() <= btnwidth) {
-				// User pressed lock button
-				user.lock( !user.locked() );
-				return true;
-			} else if(me->x() >= option.rect.width()-btnwidth) {
-				// User pressed kick button
+		if(me->x() <= btnwidth) {
+			// User pressed lock button
+			user.lock( !user.locked() );
+			return true;
+		} else if(me->x() >= option.rect.width()-btnwidth) {
+			if(user.isOwner()==false) {
+				// User pressed kick button (won't kick session owner though)
 				user.kick();
 				return true;
 			}

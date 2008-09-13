@@ -18,41 +18,23 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-
-#include <QIODevice>
-
-#include "toolselect.h"
+#include <QCryptographicHash>
+#include <QString>
 #include "utils.h"
 
 namespace protocol {
+namespace utils {
 
-ToolSelect *ToolSelect::deserialize(QIODevice& data, int len) {
-	Q_ASSERT(len == 16);
-	int user = utils::read8(data);
-	int tool = utils::read8(data);
-	int mode = utils::read8(data);
-	quint32 c1 = utils::read32(data);
-	quint32 c0 = utils::read32(data);
-	int s1 = utils::read8(data);
-	int s0 = utils::read8(data);
-	int h1 = utils::read8(data);
-	int h0 = utils::read8(data);
-	int space = utils::read8(data);
-	return new ToolSelect(user, tool, mode, c1, c0, s1, s0, h1, h0, space);
+/**
+ * @return hex string of SHA-1 hash of password+salt
+ */
+QString hashPassword(const QString& password, const QString& salt) {
+	QCryptographicHash hash(QCryptographicHash::Sha1);
+    hash.addData(password.toUtf8());
+    hash.addData(salt.toUtf8());
+	return QString(hash.result().toHex());
 }
 
-void ToolSelect::serializeBody(QIODevice& data) const {
-	data.putChar(_user);
-	data.putChar(_tool);
-	data.putChar(_mode);
-	utils::write32(data, _c1);
-	utils::write32(data, _c0);
-	data.putChar(_s1);
-	data.putChar(_s0);
-	data.putChar(_h1);
-	data.putChar(_h0);
-	data.putChar(_space);
 }
-
 }
 

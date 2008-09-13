@@ -45,15 +45,15 @@ LoginId::LoginId(int ver) : Packet(LOGIN_ID), _rev(REVISION), _ver(ver) {
 LoginId *LoginId::deserialize(QIODevice& data, int len) {
 	char magic[4];
 	data.read(magic, 4);
-	int rev = Utils::read16(data);
-	int ver = Utils::read16(data);
+	int rev = utils::read16(data);
+	int ver = utils::read16(data);
 	return new LoginId(magic, rev, ver);
 }
 
 void LoginId::serializeBody(QIODevice& data) const {
 	data.write(_magic, 4);
-	Utils::write16(data, _rev);
-	Utils::write16(data, _ver);
+	utils::write16(data, _rev);
+	utils::write16(data, _ver);
 }
 
 bool LoginId::isCompatible() const {
