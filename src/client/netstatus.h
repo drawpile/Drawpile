@@ -60,8 +60,6 @@ class NetStatus : public QWidget
 		void lock(const QString& reason);
 		//! Board was unlocked
 		void unlock();
-		//! Show a server crash message
-		void serverCrashed();
 
 	signals:
 		//! A status message

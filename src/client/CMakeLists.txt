@@ -10,10 +10,10 @@ set (
 	mainwindow.h netstatus.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h gradientslider.h colorbutton.h
-	newdialog.h imageselector.h hostdialog.h joindialog.h network.h
+	newdialog.h imageselector.h hostdialog.h joindialog.h
 	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
-	sessionlistmodel.h mandatoryfields.h palettewidget.h palettebox.h
+	mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
 	navigator.h
 )
@@ -33,25 +33,24 @@ set (
 	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp network.cpp hoststate.cpp sessionstate.cpp
+	hostdialog.cpp joindialog.cpp hoststate.cpp sessionstate.cpp
 	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
-	sessioninfo.cpp sessionlistmodel.cpp icons.cpp mandatoryfields.cpp
+	sessioninfo.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp
-	../shared/qt.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
-	ui/chatbox.ui ui/sessiondialog.ui ui/palettebox.ui ui/colorbox.ui
+	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui )
 
 # .UI
 
 set ( TEMP ${CMAKE_CURRENT_BINARY_DIR} ) # backup binary dir
 set ( CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
-Qt4_wrap_UI ( UI_Headers ${UIs} )
+QT4_WRAP_UI ( UI_Headers ${UIs} )
 set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
 
 # Qt Resource
@@ -85,7 +84,7 @@ if ( WIN32 )
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
 		"http://drawpile.sourceforge.net/"
-		"2006,2007 Calle Laakkonen"
+		"2006-2008 Calle Laakkonen"
 		0 5 0
 	)
 endif ( WIN32 )
@@ -96,7 +95,7 @@ if ( RELEASE )
 endif ( RELEASE )
 
 link_libraries(
-	${DPSHAREDLIB} # DP shared library
+	${DPSHAREDLIB}
 	${QT_LIBRARIES}
 )
 

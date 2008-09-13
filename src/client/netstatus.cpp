@@ -131,11 +131,6 @@ void NetStatus::unlock()
 	message(tr("Board unlocked"));
 }
 
-void NetStatus::serverCrashed()
-{
-	message(tr("<b>Server crashed!</b>"));
-}
-
 void NetStatus::message(const QString& msg)
 {
 	popup_->setMessage(msg);

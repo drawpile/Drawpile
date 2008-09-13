@@ -18,6 +18,7 @@
 
 #include "navigator.h"
 
+#include <QMouseEvent>
 #include <QGraphicsScene>
 #include <QPushButton>
 #include <QVBoxLayout>

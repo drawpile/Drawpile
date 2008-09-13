@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,25 +17,39 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QStringList>
+
 #include "sessioninfo.h"
-#include "network.h"
 #include "hoststate.h"
 #include "sessionstate.h"
-#include "../shared/protocol.h"
+#include "../shared/net/message.h"
 
 namespace network {
 
-/** @todo Utf16 support */
-Session::Session(const protocol::SessionInfo *info)
-	: id(info->session_id),
-	owner(info->owner),
-	title(QString::fromUtf8(info->title)),
-	width(info->width),
-	height(info->height),
-	mode(info->mode),
-	maxusers(info->limit),
-	protocollevel(info->level)
+Session::Session(const QStringList& tokens)
 {
+	Q_ASSERT(tokens.size()==8);
+	Q_ASSERT(tokens.at(0).compare("BOARD")==0);
+	owner_ = tokens.at(1).toInt();
+	title_ = tokens.at(2);
+	width_ = tokens.at(3).toInt();
+	height_ = tokens.at(4).toInt();
+	lock_ = tokens.at(5).toInt();
+	maxusers_ = tokens.at(6).toInt();
+	deflock_ = tokens.at(7).toInt();
+}
+
+Session::Session(int o, const QString& title, int width, int height, int maxusers, bool deflock) :
+	owner_(o), title_(title), width_(width), height_(height),
+	maxusers_(maxusers), lock_(false), deflock_(deflock) { }
+
+QStringList Session::tokens() const {
+	QStringList tk;
+	tk << "BOARD" << QString::number(owner_) << title_ <<
+		QString::number(width_) << QString::number(height_) <<
+		(lock_?"1":"0") << QString::number(maxusers_) <<
+		(deflock_?"1":"0");
+	return tk;
 }
 
 User::User()
@@ -47,6 +61,16 @@ User::User(const QString& name, int id, bool locked, SessionState *owner)
 {
 }
 
+User::User(SessionState *owner, const QStringList& tokens)
+	: owner_(owner)
+{
+	Q_ASSERT(tokens.size()==4);
+	Q_ASSERT(tokens.at(0).compare("USER")==0);
+	id_ = tokens.at(1).toInt();
+	name_ = tokens.at(2);
+	locked_ = tokens.at(3).toInt();
+}
+
 void User::setLocked(bool lock)
 {
 	locked_ = lock;
@@ -54,12 +78,12 @@ void User::setLocked(bool lock)
 
 bool User::isLocal() const
 {
-	return owner_->host()->localUser().id() == id_;
+	return owner_->host()->localUser() == id_;
 }
 
 bool User::isOwner() const
 {
-	return owner_->info().owner == id_;
+	return owner_->info().owner() == id_;
 }
 
 /**
@@ -69,16 +93,9 @@ bool User::isOwner() const
  */
 void User::lock(bool l)
 {
-	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			(l ? protocol::SessionEvent::Lock : protocol::SessionEvent::Unlock),
-			id_,
-			0 // aux (unused)
-			);
-	
-	msg->session_id = owner_->info().id;
-	
-	owner_->host()->connection()->send(msg);
-
+	QStringList msg;
+	msg << (l?"LOCK":"UNLOCK") << QString::number(id_);
+	owner_->host()->sendPacket(protocol::Message(msg));
 }
 
 /**
@@ -87,15 +104,9 @@ void User::lock(bool l)
  */
 void User::kick()
 {
-	protocol::SessionEvent *msg = new protocol::SessionEvent(
-			protocol::SessionEvent::Kick,
-			id_,
-			0 // aux (unused)
-			);
-	
-	msg->session_id = owner_->info().id;
-	
-	owner_->host()->connection()->send(msg);
+	QStringList msg;
+	msg << "KICK" << QString::number(id_);
+	owner_->host()->sendPacket(protocol::Message(msg));
 }
 
 }

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -98,9 +98,6 @@ class Board : public QGraphicsScene
 	public slots:
 		//! Add a new user to the board
 		void addUser(int id);
-
-		//! Remove a user from the board
-		void removeUser(int id);
 
 		//! User switches tools
 		void userSetTool(int user, const drawingboard::Brush& brush);

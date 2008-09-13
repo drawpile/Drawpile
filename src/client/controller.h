@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -68,16 +68,11 @@ class Controller : public QObject
 		//! Set drawing board to use
 		void setModel(drawingboard::Board *board);
 
-		//! Connect to host
-		void connectHost(const QUrl& url, const QString& adminpasswd=QString());
+		//! Connect to host and join a session
+		void joinSession(const QUrl& url);
 
-		//! Start hosting a session
-		void hostSession(const QString& title, const QString& password,
-				const QImage& image, int userlimit, bool allowdraw,
-				bool allowchat);
-
-		//! Join a session
-		void joinSession();
+		//! Connect to host and start a new session
+		void hostSession(const QUrl& url, const QString& password, const QString& title, const QImage& image, int maxusers, bool allowDraw);
 
 		//! Check if connection is still established
 		bool isConnected() const;
@@ -85,10 +80,10 @@ class Controller : public QObject
 		//! Check if raster upload is in progress
 		bool isUploading() const;
 
-	public slots:
-		//! Join a specific session
-		void joinSession(int id);
+		//! Get the session
+		network::SessionState *session() const { return session_; }
 
+	public slots:
 		//! Send a password
 		void sendPassword(const QString& password);
 
@@ -129,7 +124,7 @@ class Controller : public QObject
 		void disconnected(const QString& message);
 
 		//! Session was joined
-		void joined(network::SessionState *session);
+		void joined();
 
 		//! Session was left
 		void parted();
@@ -146,17 +141,8 @@ class Controller : public QObject
 		//! User status has changed
 		void userChanged(const network::User& user);
 
-		//! The local user became session owner
-		void becameOwner();
-
-		//! There were no sessions to join
-		void noSessions();
-
-		//! The requested session didn't exist
-		void sessionNotFound();
-
-		//! A session should be selected from the list and joined
-		void selectSession(const network::SessionList& list);
+		//! Board info has changed
+		void boardChanged();
 
 		//! A password is required
 		void needPassword();
@@ -166,9 +152,6 @@ class Controller : public QObject
 
 		//! Unlock the board UI
 		void unlockboard();
-
-		//! Allow/disallow new joins
-		void joinsDisallowed(bool allow);
 
 		//! A network error occured
 		void netError(const QString& message);
@@ -183,17 +166,8 @@ class Controller : public QObject
 		//! Connection to a host was disconnected
 		void netDisconnected();
 
-		//! Initial login procedure was completed
-		void serverLoggedin();
-
-		//! Finalize login (join session)
-		void finishLogin();
-
 		//! A session was joined
-		void sessionJoined(int id);
-
-		//! A session was left
-		void sessionParted();
+		void sessionJoined();
 
 		//! A new user joins
 		void addUser(int id);
@@ -219,16 +193,13 @@ class Controller : public QObject
 		//! A single user has been (un)locked
 		void userLocked(int id, bool lock);
 
-		//! Session owner was changed
-		void sessionOwnerChanged();
-
 		//! A user was kicked from the session
 		void sessionKicked(int id);
 
-		//! User limit of the session was changed
-		void sessionUserLimitChanged(int count);
-
 	private:
+		//! Connect to a host
+		void connectHost(const QUrl& url);
+
 		//! Enqueue board contents for upload
 		void sendRaster();
 
@@ -243,9 +214,6 @@ class Controller : public QObject
 
 		//! The currently selected tool
 		tools::Tool *tool_;
-
-		//! Network connection to the host
-		network::Connection *net_;
 
 		//! The host
 		network::HostState *host_;

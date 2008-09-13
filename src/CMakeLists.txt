@@ -5,14 +5,7 @@ if ( CLIENT )
 	add_subdirectory ( client/ )
 endif ( CLIENT )
 
-if ( SERVERLIB )
+if ( SERVER )
 	add_subdirectory ( server/ )
-endif ( SERVERLIB )
+endif ( SERVER )
 
-if ( TRAYSERVER )
-	add_subdirectory ( tray-server/ )
-endif ( TRAYSERVER )
-
-if ( UNITTEST )
-	add_subdirectory ( unittest/ )
-endif ( UNITTEST )

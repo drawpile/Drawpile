@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,23 +20,18 @@
 #ifndef HOSTSTATE_H
 #define HOSTSTATE_H
 
-#include <QObject>
+#include <QTcpSocket>
 
 #include "sessioninfo.h"
 
 namespace protocol {
-	class HostInfo;
-	class UserInfo;
-	class SessionInfo;
-	class SessionSelect;
-	class PasswordRequest;
-	class Error;
-	class Acknowledgement;
+	class MessageQueue;
+	class Message;
+	class Packet;
 };
 
 namespace network {
 
-class Connection;
 class SessionState;
 
 //! Network state machine
@@ -50,17 +45,17 @@ class HostState : public QObject {
 		//! Construct a HostState object
 		HostState(QObject *parent);
 
-		//! Get local user info
-		const User& localUser() const { return localuser_; }
+		//! Get the ID of the local user
+		const int localUser() const { return localuser_; }
+
+		//! Connect to a host
+		void connectToHost(const QString& host, quint16 port);
+
+		//! Is a connection open?
+		bool isConnected() { return socket_.state() != QAbstractSocket::UnconnectedState; }
 
 		//! Get the session state
 		SessionState *session() { return session_; }
-
-		//! Set network connection object to use
-		void setConnection(Connection *net);
-
-		//! Get the used network connection object
-		Connection *connection() { return net_; }
 
 		//! Initiate login sequence
 		void login(const QString& username);
@@ -68,26 +63,18 @@ class HostState : public QObject {
 		//! Send a password
 		void sendPassword(const QString& password);
 
-		//! Try to elevate to admin status
-		void becomeAdmin(const QString& password);
+		//! Send an arbitrary packet
+		void sendPacket(const protocol::Packet& packet);
 
-		//! Host a session
-		void host(const QString& title, const QString& password,
-				quint16 width, quint16 height, int userlimit,
-				bool allowdraw, bool allowchat);
+		//! Set options for hosting a session
+		void setHost(const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw);
 
-		//! Try joining automatically
-		void join(const QString& title = QString());
-
-		//! Join a specific session
-		void join(int id);
-
-		//! Set server password
-		void setPassword(const QString& password);
+		//! Don't host a session
+		void setNoHost();
 
 	public slots:
-		//! Get a message from the network handler object
-		void receiveMessage();
+		//! Disconnect from a host
+		void disconnectFromHost();
 
 	signals:
 		//! A password must be requested from the user
@@ -96,122 +83,58 @@ class HostState : public QObject {
 		//! Login sequence completed succesfully
 		void loggedin();
 
-		//! Admin password accepted
-		void becameAdmin();
-
-		//! Session joined succesfully
-		/**
-		 * @param id session id
-		 */
-		void joined(int id);
-
-		//! Session left
-		/**
-		 * @param id session id
-		 */
-		void parted(int id);
+		//! The user is now a part of the session
+		void joined();
 
 		//! An error message was received from the host
 		void error(const QString& message);
 
-		//! Host has no sessions, cannot join
-		void noSessions();
+		//! Connection to host was established
+		void connected();
 
-		//! The session we tried to join didn't exist
-		void sessionNotFound();
-
-		//! A session should be selected from the list and joined
-		void selectSession(const network::SessionList& sessions);
-
-		//! Session list was refreshed
-		void sessionsListed();
+		//! Connection was cut
+		void disconnected();
 
 	private slots:
-		//! Join the latest session that the local user owns.
-		void joinLatest();
+		//! Do cleanups on disconnect
+		void disconnectCleanup();
 
-		//! Automatically join the only session available
-		void autoJoin();
+		//! Get a message from the network handler object
+		void receiveMessage();
+
+		//! Bad data was received
+		void gotBadData();
+
+		//! A network error occurred.
+		void networkError();
 
 	private:
-		//! Set server or session password
-		void setPassword(const QString& password, int session);
+		void handleMessage(const protocol::Message *msg);
 
-		//! Refresh the list of sessions
-		void listSessions();
+		//! Set the 
+		void sessionJoinDone(int localid);
 
-		//! Handle a HostInfo message
-		void handleHostInfo(const protocol::HostInfo *msg);
+		//! The local user id
+		int localuser_;
 
-		//! Handle a UserInfo message
-		void handleUserInfo(const protocol::UserInfo *msg);
-
-		//! Handle a SessionInfo message
-		void handleSessionInfo(const protocol::SessionInfo *msg);
-
-		//! Handle authentication request
-		void handleAuthentication(const protocol::PasswordRequest *msg);
-
-		//! Handle Acknowledgements
-		void handleAck(const protocol::Acknowledgement *msg);
-
-		//! Handle errors
-		void handleError(const protocol::Error *msg);
-
-		//! Connection to the server
-		Connection *net_;
-
-		//! User name to log in with
+		//! Name of the local user
 		QString username_;
 
-		//! Seed for generating password hash (received from the server)
-		QByteArray passwordseed_;
+		//! Connection to the server
+		QTcpSocket socket_;
 
-		//! Session ID of the session for which the password is sent
-		int passwordsession_;
+		//! Message wrapper for the connection
+		protocol::MessageQueue *mq_;
 
-		//! Title of the session to autojoin
-		/**
-		 * If empty, the only available session is joined or if there are
-		 * many sessions, the user is asked.
-		 */
-		QString autojointitle_;
+		//! Salt for generating password hash (received from the server)
+		QString salt_;
 
-		//! Info about the local user as received from server during login.
-		User localuser_;
-
-		//! The currently joined session
+		//! The active session
 		SessionState *session_;
 
-		//! List of sessions on the server
-		SessionList sessions_;
-
-		//! Last used session instruction
-		int lastsessioninstr_;
-
-		//! Session password to set
-		/**
-		 * If not empty, the session password is set right after joining
-		 * a session that we are hosting.
-		 */
-		QString setsessionpassword_;
-
-		//! Administrator password to send
-		/**
-		 * The administrator password to send in reply of authentication
-		 * request, that was raised by the Authenticate message sent by us.
-		 */
-		QString sendadminpassword_;
-
-		//! UTF-16 strings required by server
-		bool Utf16_;
-
-		//! Is the user logged in
-		/**
-		 * This is set to true when the user has logged in to the server
-		 * and can start sending instructions and join commands and such.
-		 */
-		bool loggedin_;
+		//! Options for hosting a session
+		Session host_;
+		QString hostpassword_;
 };
 
 }

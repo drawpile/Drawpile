@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,8 @@ namespace network {
 }
 
 /**
- * A list model to represent session users
+ * A list model to represent session users.
+ * The list is kept sorted in the order of user IDs
  */
 class UserListModel : public QAbstractListModel {
 	Q_OBJECT

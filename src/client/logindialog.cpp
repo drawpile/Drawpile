@@ -1,7 +1,8 @@
+#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,8 +23,6 @@
 #include "logindialog.h"
 
 #include "ui_logindialog.h"
-#include "ui_sessiondialog.h"
-#include "sessionlistmodel.h"
 
 namespace dialogs {
 
@@ -32,7 +31,7 @@ LoginDialog::LoginDialog(QWidget *parent)
 {
 	ui_ = new Ui_LoginDialog;
 	ui_->setupUi(this);
-	ui_->progress->setMaximum(107);
+	ui_->progress->setMaximum(103);
 }
 
 LoginDialog::~LoginDialog()
@@ -54,10 +53,15 @@ void LoginDialog::setTitleMessage(const QString& message)
  * Show the dialog and display the connecting message.
  * The address is displayed
  * @param address remote host address
+ * @param host if true, expecting to host a session
  */
-void LoginDialog::connecting(const QString& address)
+void LoginDialog::connecting(const QString& address, bool host)
 {
-	setTitleMessage(tr("Joining a drawing session"));
+	host_ = host;
+	if(host)
+		setTitleMessage(tr("Hosting a drawing session"));
+	else
+		setTitleMessage(tr("Joining a drawing session"));
 	ui_->statustext->setText(tr("Connecting to %1...").arg(address));
 	ui_->progress->setValue(0);
 	ui_->buttonBox->setStandardButtons(QDialogButtonBox::Cancel);
@@ -78,48 +82,20 @@ void LoginDialog::connected()
  */
 void LoginDialog::loggedin()
 {
-	ui_->statustext->setText(tr("Logged in"));
-	ui_->progress->setValue(2);
-}
-
-/**
- * Disconnected, display no sessions message.
- */
-void LoginDialog::noSessions()
-{
-	error(tr("No sessions were available on the host."));
-}
-
-/**
- * Disconnected, display session not found message.
- */
-void LoginDialog::sessionNotFound()
-{
-	error(tr("Selected session was not found on the host."));
+	if(host_) {
+		// When hosting, we don't need to download any raster data
+		hide();
+	} else {
+		ui_->statustext->setText(tr("Downloading board contents..."));
+		ui_->progress->setValue(2);
+	}
 }
 
 void LoginDialog::error(const QString& message)
 {
+	qDebug() << "LoginDialog::error(" << message << ")";
 	ui_->statustext->setText(message);
 	appenddisconnect_ = true;
-}
-
-/**
- * @param list list of sessions
- */
-void LoginDialog::selectSession(const network::SessionList& list)
-{
-	QDialog sessiondialog(this);
-	Ui_SessionSelectDialog sessionselect;
-	sessionselect.setupUi(&sessiondialog);
-	sessionselect.sessionlist->setModel(new SessionListModel(list));
-	sessionselect.sessionlist->selectRow(0);
-	if(sessiondialog.exec() == QDialog::Rejected) {
-		reject();
-	} else {
-		ui_->statustext->setText(tr("Joining session..."));
-		emit session(list.at(sessionselect.sessionlist->currentIndex().row()).id);
-	}
 }
 
 /**
@@ -141,28 +117,19 @@ void LoginDialog::disconnected(const QString& message)
 }
 
 /**
- * A session was joined. Board contents is now being downloaded.
- */
-void LoginDialog::joined()
-{
-	ui_->statustext->setText(tr("Downloading board contents..."));
-}
-
-/**
  * Raster data download progresses. When progress hits 100, the download
  * sequence is complete and the dialog is hidden.
  * @param p progress percentage.
  */
 void LoginDialog::raster(int p)
 {
-	ui_->progress->setValue(7+p);
+	ui_->progress->setValue(3+p);
 	if(p>=100)
 		hide();
 }
 
 /**
  * Request a password.
- * @todo session or host password?
  */
 void LoginDialog::getPassword()
 {

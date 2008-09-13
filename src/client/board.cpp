@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QDebug>
+
 #include "board.h"
 #include "layer.h"
 #include "user.h"
@@ -95,6 +97,12 @@ void Board::clearUsers()
  */
 void Board::addUser(int id)
 {
+	if(users_.contains(id)) {
+		// This is not necessarily an error condition. The server will not
+		// ghost users that haven't drawn anything.
+		qDebug() << "Reusing board user" << id;
+		delete users_.take(id);
+	}
 	User *user = new User(id);
 	user->setLayer(image_);
 	users_[id] = user;
@@ -109,18 +117,6 @@ void Board::setLocalUser(int id)
 {
 	Q_ASSERT(users_.contains(id));
 	localuser_ = id;
-}
-
-/**
- * @param id user id
- * @pre id must have been added with addUser
- */
-void Board::removeUser(int id)
-{
-	Q_ASSERT(users_.contains(id));
-	if(id == localuser_)
-		commitPreviews();
-	delete users_.take(id);
 }
 
 /**
@@ -188,10 +184,10 @@ void Board::addPreview(const Point& point)
 	User *user = users_.value(localuser_);
 
 	Preview *pre;
-	if(previewcache_.isEmpty())
+	//if(previewcache_.isEmpty())
 		pre = new StrokePreview(user->layer(), this);
-	else
-		pre = previewcache_.dequeue();
+	//else
+		//pre = previewcache_.dequeue();
 	if(previewstarted_) {
 		pre->preview(lastpreview_, point, brushsrc_->getBrush());
 	} else {
@@ -238,8 +234,9 @@ void Board::flushPreviews()
 {
 	while(previews_.isEmpty()==false) {
 		Preview *p = previews_.dequeue();
-		p->hidePreview();
-		previewcache_.enqueue(p);
+		//p->hidePreview();
+		//previewcache_.enqueue(p);
+		delete p;
 	}
 }
 
@@ -265,9 +262,11 @@ void Board::userStroke(int user, const Point& point)
 	users_.value(user)->addStroke(point);
 
 	if(user == localuser_ && previews_.isEmpty() == false) {
+		Q_ASSERT(!previews_.isEmpty());
 		Preview *pre = previews_.dequeue();
-		pre->hidePreview();
-		previewcache_.enqueue(pre);
+		delete pre;
+		//pre->hidePreview();
+		//previewcache_.enqueue(pre);
 	}
 }
 

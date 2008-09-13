@@ -36,8 +36,6 @@ JoinDialog::JoinDialog(QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	ui_->username->setProperty("mandatoryfield",true);
-	ui_->address->setProperty("mandatoryfield",true);
 
 	// Set defaults
 	QSettings& cfg = DrawPileApp::getSettings();
@@ -56,7 +54,9 @@ void JoinDialog::rememberSettings() const
 	QStringList hosts;
 	// Move current item to the top of the list
 	const QString current = ui_->address->currentText();
-	ui_->address->removeItem(ui_->address->findText(current));
+	int curindex = ui_->address->findText(current);
+	if(curindex>=0)
+		ui_->address->removeItem(curindex);
 	hosts << current;
 	for(int i=0;i<ui_->address->count();++i)
 		hosts << ui_->address->itemText(i);

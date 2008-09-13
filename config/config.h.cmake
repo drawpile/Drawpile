@@ -1,7 +1,5 @@
 #pragma once
 
-#cmakedefine IS_BIG_ENDIAN 1
-
 // unicode
 //#define UNICODE 1
 //#define _UNICODE 1
@@ -14,9 +12,6 @@
 #else
 	#define _XOPEN_SOURCE 600
 #endif
-
-#cmakedefine HAVE_BOOST 1
-#cmakedefine HAVE_SNPRINTF 1
 
 #cmakedefine USE_ASM 1
 

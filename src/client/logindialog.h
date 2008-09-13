@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,13 +31,11 @@ namespace dialogs {
 //! Login progress dialog
 /**
  * This dialog displays the progress of login/host/join sequence.
- * The sequence is made up of 7 parts:
+ * The sequence is made up of 5 parts:
  * - Establishing a connection to remote host
  * - Logging in
- * - Requesting server password from user (if required)
- * - Creating the session (if hosting)
- * - Selecting a session (if not hosting and there are more than one sessions)
- * - Joining the selected session
+ * - Server asks for password if needed
+ * - Join session
  * - Downloading raster data
  */
 class LoginDialog : public QDialog
@@ -49,16 +47,13 @@ class LoginDialog : public QDialog
 
 	public slots:
 		//! Show dialog and display connecting status
-		void connecting(const QString& address);
+		void connecting(const QString& address, bool host);
 
 		//! Connection established, show login
 		void connected();
 
 		//! Login complete
 		void loggedin();
-
-		//! Joined a session
-		void joined();
 
 		//! Raster data received
 		void raster(int p);
@@ -69,15 +64,6 @@ class LoginDialog : public QDialog
 		//! Disconnected before login sequence was finished
 		void disconnected(const QString& message);
 
-		//! No sessions were available
-		void noSessions();
-
-		//! Selected session didn't exist
-		void sessionNotFound();
-
-		//! Select a session from the provided list
-		void selectSession(const network::SessionList& list);
-
 		//! An error occured (cannot proceed, user should press cancel)
 		void error(const QString& message);
 
@@ -85,15 +71,13 @@ class LoginDialog : public QDialog
 		//! User has entered a password
 		void password(const QString& password);
 
-		//! User has selected a session
-		void session(int id);
-
 	private:
 		//! Set a title message
 		void setTitleMessage(const QString& message);
 
 		Ui_LoginDialog *ui_;
 		bool appenddisconnect_;
+		bool host_;
 };
 
 }

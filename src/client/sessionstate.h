@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,24 +28,19 @@
 #include "sessioninfo.h"
 
 class QImage;
-
-namespace protocol {
-	class Message;
-	class UserInfo;
-	class Acknowledgement;
-	class Raster;
-	class ToolInfo;
-	class StrokeInfo;
-	class StrokeEnd;
-	class Synchronize;
-	class SyncWait;
-	class SessionEvent;
-	class Chat;
-};
+class QStringList;
 
 namespace drawingboard {
 	class Brush;
 	class Point;
+}
+
+namespace protocol {
+	class Packet;
+	class ToolSelect;
+	class StrokePoint;
+	class StrokeEnd;
+	class BinaryChunk;
 }
 
 namespace network {
@@ -58,16 +53,11 @@ class Session;
  * This class handles the state of a single session.
  */
 class SessionState : public QObject {
+	friend class HostState;
 	Q_OBJECT
 	public:
 		//! Construct a session state object
 		SessionState(HostState *parent, const Session& info);
-
-		//! Enable/disable UTF-16 strings
-		void setUtf16(bool x);
-		
-		//! Handle session message
-		void handleMessage(protocol::Message *msg);
 
 		//! Get the host to which the session belongs
 		HostState *host() const { return host_; }
@@ -96,17 +86,11 @@ class SessionState : public QObject {
 		//! Check if raster upload is in progress
 		bool isUploading() const;
 
-		//! Check if general session lock is in place
-		bool isLocked() const { return lock_; }
-
 		//! Release raster data
 		void releaseRaster();
 
 		//! Send raster data
 		void sendRaster(const QByteArray& raster);
-
-		//! Select this session as active
-		void select();
 
 		//! Set password for this session
 		void setPassword(const QString& password);
@@ -117,11 +101,11 @@ class SessionState : public QObject {
 		//! Admin command. Set session user limit
 		void setUserLimit(int count);
 
-		//! Send a tool info message
-		void sendToolInfo(const drawingboard::Brush& brush);
+		//! Send a tool select message
+		void sendToolSelect(const drawingboard::Brush& brush);
 
 		//! Send a stroke info message
-		void sendStrokeInfo(const drawingboard::Point& point);
+		void sendStrokePoint(const drawingboard::Point& point);
 
 		//! Send a stroke end message
 		void sendStrokeEnd();
@@ -157,11 +141,8 @@ class SessionState : public QObject {
 		//! Session has been (un)locked
 		void sessionLocked(bool lock);
 
-		//! User limit has changed
-		void userLimitChanged(int limit);
-
 		//! Session owner changed
-		void ownerChanged();
+		void boardChanged();
 
 		//! A user got kicked from the session
 		void userKicked(int id);
@@ -192,35 +173,29 @@ class SessionState : public QObject {
 		void sendRasterChunk();
 
 	private:
-		//! Handle session acks
-		void handleAck(const protocol::Acknowledgement *msg);
+		//! Handle a session message
+		bool handleMessage(const QStringList& tokens);
 
-		//! Handle session specific user info
-		void handleUserInfo(const protocol::UserInfo *msg);
+		//! Handle a tool select
+		bool handleToolSelect(protocol::ToolSelect *ts);
 
-		//! Handle raster data
-		void handleRaster(const protocol::Raster *msg);
+		//! Handle a stroke
+		bool handleStroke(protocol::StrokePoint *s);
 
-		//! Handle sync request
-		void handleSynchronize(const protocol::Synchronize *msg);
+		//! Handle stroke end
+		bool handleStrokeEnd(protocol::StrokeEnd *se);
 
-		//! Handle SyncWait command
-		void handleSyncWait(const protocol::SyncWait *msg);
+		//! Handle a binary chunk (raster data)
+		bool handleBinaryChunk(protocol::BinaryChunk *bc);
 
-		//! Handle session event
-		void handleSessionEvent(const protocol::SessionEvent *msg);
+		//! Handle a chat message
+		void handleChat(const QStringList& tokens);
 
-		//! Handle ToolInfo messages
-		bool handleToolInfo(protocol::ToolInfo *msg);
-		//
-		//! Handle StrokeInfo messages
-		bool handleStrokeInfo(protocol::StrokeInfo *msg);
+		//! Change user info
+		void updateUser(const QStringList& tokens);
 
-		//! Handle StrokeEnd messages
-		bool handleStrokeEnd(protocol::StrokeEnd *msg);
-
-		//! Handle chat messages
-		void handleChat(const protocol::Chat *msg);
+		//! A user left the session
+		void partUser(const QStringList& tokens);
 
 		//! Flush the drawing command buffer
 		void flushDrawBuffer();
@@ -237,25 +212,22 @@ class SessionState : public QObject {
 		//! Buffer to hold raster data for receiving or sending
 		QByteArray raster_;
 
-		//! Starting position of raster data chunk that will be sent next
-		uint rasteroffset_;
+		//! How many bytes to expect
+		int expectRaster_;
 
-		//! Is the session lock
-		bool lock_;
+		//! Starting position of raster data chunk that will be sent next
+		int rasteroffset_;
 
 		//! Buffer drawing commands, instead of emitting them right away
 		bool bufferdrawing_;
 		
-		//! UTf-16 strings
-		bool Utf16_;
-
 		//! Drawing command buffer
 		/**
 		 * The buffer is used to accumulate drawing commands that arrive
 		 * while the initial board contents (raster data) has not yet
 		 * fully downloaded.
 		 */
-		QQueue<protocol::Message*> drawbuffer_;
+		QQueue<protocol::Packet*> drawbuffer_;
 };
 
 }

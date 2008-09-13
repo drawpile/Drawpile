@@ -1,3 +1,8 @@
+2008-??-?? Version 0.5.0
+ * Total rewrite of server and network code. Dropped support for multiple
+ session per server and simplified the protocol.
+ * Server is now contained in a shared library and is embedded by the client.
+
 2007-04-10 Version 0.4.0
  * Support multiple windows
  * Implemented line and rectangle tools

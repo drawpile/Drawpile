@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,34 +18,37 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
-#include <QHostAddress>
-#include <QFileInfo>
-#include <QApplication>
+#include <QNetworkInterface>
 #include <QSettings>
 #include <QDir>
 
 #include "main.h"
 #include "localserver.h"
-#include "../shared/protocol.defaults.h"
-#include "../shared/qt.h"
+#include "../shared/net/constants.h"
+#include "../shared/server/server.h"
 
-LocalServer::LocalServer()
-	: port_(-1)
+LocalServer *LocalServer::instance_;
+
+LocalServer::LocalServer() : QThread()
 {
-	server_.setProcessChannelMode(QProcess::MergedChannels);
-	connect(&server_, SIGNAL(finished(int, QProcess::ExitStatus)),
-			this, SLOT(serverFinished(int, QProcess::ExitStatus)));
-
-	// Locate the server executable
-	QFileInfo i;
-	i.setFile(QApplication::applicationDirPath(), "drawpile-srv");
-	binpath_ = i.absoluteFilePath();
-	available_ = i.isExecutable();
 }
 
-LocalServer::~LocalServer()
-{
-	shutdown();
+bool isGlobal(const QHostAddress& address) {
+	// This could be a bit more comprehensive
+	if(address.protocol() == QAbstractSocket::IPv6Protocol) {
+		if(address.scopeId()=="Global")
+			return true;
+		return false;
+	} else {
+		quint32 a = address.toIPv4Address();
+		return !((a >> 24) == 10 ||
+			(a >> 16) == 0xC0A8);
+	}
+}
+
+bool isLoopback(const QHostAddress& address) {
+	return address == QHostAddress::LocalHost ||
+		address == QHostAddress::LocalHostIPv6;
 }
 
 /**
@@ -55,7 +58,42 @@ LocalServer::~LocalServer()
  */
 QString LocalServer::address()
 {
-	return Network::getExternalAddress().toString();
+	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
+	QList<QHostAddress> alist;
+        
+	// Gather a list of acceptable addresses
+	foreach (QNetworkInterface iface, list) {
+		if(!(iface.flags() & QNetworkInterface::IsUp) ||
+				!(iface.flags() & QNetworkInterface::IsRunning))
+			continue;
+
+		QList<QNetworkAddressEntry> addresses = iface.addressEntries();
+
+		foreach (QNetworkAddressEntry entry, addresses) {
+			// Do an insertion sort on addresses. Sort
+			// global addresses first, then local, then loopback.
+			QHostAddress ip = entry.ip();
+			bool glob = isGlobal(ip);
+			bool loop = isLoopback(ip);
+			int i=0;
+			for(;i<alist.size();++i) {
+				if(glob) {
+					if(isGlobal(alist[i])==false)
+						break;
+				} else {
+					if(!loop) {
+						if(isLoopback(alist[i]))
+							break;
+					}
+				}
+			}
+			alist.insert(i, ip);
+        }
+	}
+
+	if (alist.count() >= 1)
+		return alist.at(0).toString();
+	return "127.0.0.1";
 }
 
 /**
@@ -63,114 +101,44 @@ QString LocalServer::address()
  * @retval false if server could not be started
  * @post if returned true, server is now running in the background
  */
-bool LocalServer::ensureRunning()
+bool LocalServer::startServer()
 {
-	return ensureRunning(
-			DrawPileApp::getSettings().value("settings/server/port",
-				protocol::default_port).toInt()
-			);
-}
-
-/**
- * Start the server if it is not already running on the specified port.
- * @param port server listening port
- * @retval false if server could not be started
- * @post if returned true, server is now running in the background
- */
-bool LocalServer::ensureRunning(int port)
-{
-	if(port_ != port)
-		shutdown();
-	if(server_.state()==QProcess::NotRunning) {
-		QSettings& cfg = DrawPileApp::getSettings();
-		cfg.beginGroup("settings/server");
-		QStringList args;
-		args << "-p" << QString::number(port);
-		args << "-l"; // automatically make user from localhost admin
-		args << "-T"; // server will automatically shutdown when all clients have disconnected
-		// Maximum name length
-		if(cfg.contains("maxnamelength"))
-			args << "-n" << QString::number(cfg.value("maxnamelength").toInt());
-		// Maximum user count
-		if(cfg.contains("maxusers"))
-			args << "-u" << QString::number(cfg.value("maxusers").toInt());
-		// Server password
-		if(cfg.value("password","").toString().length()>0)
-			args << "-s" << cfg.value("password").toString();
-		// Require unique names
-		if(cfg.value("uniquenames",false).toBool())
-			args << "-e";
-		// Allow multiple connections from same IP
-		if(cfg.value("multiconnect",false).toBool())
-			args << "-M";
-
-		noerror_ = true;
-		qDebug() << "starting server on port" << port;
-		server_.start(binpath_, args);
-		if(server_.waitForStarted()==false) {
-			qDebug() << "Failed to start server!";
-			noerror_ = false;
-			return false;
-		}
-		if(server_.waitForFinished(100)==true) {
-			qDebug() << "Server exited just after starting!";
-			return false;
-		}
-		qDebug() << "Started server, PID" << server_.pid();
-		port_ = port;
-	}
+	if(instance_==0)
+		instance_ = new LocalServer();
+	if(instance_->isRunning())
+		return true;
+	instance_->start();
 	return true;
 }
 
-/**
- * Get whatever the server has printed to its stdout and stderr.
- * @return server output
- */
-QString LocalServer::serverOutput()
+void LocalServer::stopServer()
 {
-	return server_.readAll();
-}
-
-/**
- * @return error explanation
- */
-QString LocalServer::errorString() const
-{
-	if(noerror_)
-		return tr("Server exited with errors");
-	switch(server_.error()) {
-		case QProcess::FailedToStart:
-			return tr("Couldn't start the server. Make sure it has been installed properly");
-		case QProcess::Crashed:
-			return tr("Server crashed on startup");
-		case QProcess::Timedout:
-			return tr("Server is taking too long to start");
-		default: break;
-	}
-	return tr("Unexpected server error");
-}
-
-/**
- * Terminate the server
- * @post server is shut down
- */
-void LocalServer::shutdown()
-{
-	if(server_.state() != QProcess::NotRunning) {
-		server_.terminate();
-		if(server_.waitForFinished() == false)
-			server_.kill();
-		server_.waitForFinished();
+	if(instance_ && instance_->isRunning()) {
+		instance_->quit();
 	}
 }
 
-/**
- */
-void LocalServer::serverFinished(int exitcode, QProcess::ExitStatus exitstatus)
-{
-	if(exitstatus == QProcess::CrashExit) {
-		qDebug() << "Server crashed" << serverOutput();
-		emit serverCrashed();
+void LocalServer::run() {
+	server_ = new server::Server();
+	int port;
+	{
+	QSettings& cfg = DrawPileApp::getSettings();
+	cfg.beginGroup("settings/server");
+	port = cfg.value("port", protocol::DEFAULT_PORT).toInt();
+	server_->setUniqueIps(!cfg.value("multiconnect",true).toBool());
+	server_->setMaxNameLength(cfg.value("maxnamelength",16).toInt());
 	}
+	connect(server_, SIGNAL(lastClientLeft()), this, SLOT(quit()));
+	if(server_->start(port)==false) {
+		qWarning() << "Couldn't start server.";
+		return;
+	}
+	qDebug() << "server started on port" << port;
+
+	exec();
+
+	server_->stop();
+	delete server_;
+	qDebug() << "server stopped";
 }
 

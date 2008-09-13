@@ -1,44 +1,43 @@
-# src/shared/
+set (QT_DONT_USE_QTGUI true)
+include ( ${QT_USE_FILE} )
 
 set (
-	SHR_SOURCES
-	protocol.cpp
-	protocol.helper.cpp
-	SHA1.cpp
-)
+	NET_HEADERS
+	net/binary.h net/login.h net/message.h net/protocol.h net/constants.h
+	net/stroke.h net/toolselect.h net/utils.h
+	)
 
-if ( RELEASE )
-	generate_final ( SHR_SOURCES ${SHR_SOURCES} )
-endif ( )
+set (
+	NET_QHEADERS
+	net/messagequeue.h
+	)
 
-add_library ( ${DPSHAREDLIB} ${SHR_SOURCES} )
+set (
+	NET_SOURCES
+	net/login.cpp net/message.cpp net/protocol.cpp net/stroke.cpp
+	net/toolselect.cpp net/messagequeue.cpp net/utils.cpp
+	)
 
-set_target_properties (
-	${DPSHAREDLIB}
-	PROPERTIES
-	OUTPUT_NAME drawpile
-	VERSION 0.4.0
-	SOVERSION 0.4.0
-	PROJECT_LABEL drawpile-library
-)
+set (
+	SRV_QHEADERS
+	server/server.h server/client.h server/board.h
+	)
 
-if ( SHARED )
-	strip_lib ( ${DPSHAREDLIB} )
-	if ( WIN32 )
-		install ( TARGETS ${DPSHAREDLIB} RUNTIME DESTINATION . )
-	else ( )
-		install ( TARGETS ${DPSHAREDLIB} LIBRARY DESTINATION lib )
-	endif ( )
-endif ( )
+#set (
+	#SRV_HEADERS
+	#server/board.h
+	#)
 
-set ( HAVE_OPENSSL false )
-if ( OPENSSL )
-	find_package ( OpenSSL QUIET )
-	if ( OPENSSL_FOUND )
-		set ( HAVE_OPENSSL true )
-		message ( STATUS "OpenSSL libraries found!" )
-		target_link_libraries ( ${DPSHAREDLIB} ${OPENSSL_LIBRARIES} )
-	endif ( )
-endif ( )
+set (
+	SRV_SOURCES
+	server/server.cpp server/client.cpp server/board.cpp
+	)
 
-configure_file ( config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/config.h )
+ QT4_WRAP_CPP (MOC_Sources ${NET_QHEADERS} ${SRV_QHEADERS} )
+
+if (NOT DEBUG)
+	add_definitions(-DQT_NO_DEBUG)
+endif ( NOT DEBUG)
+
+add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${SRV_SOURCES} ${MOC_Sources} )
+

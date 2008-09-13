@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -42,11 +42,13 @@ void ChatBox::clear()
 	ui_->chatbox->clear();
 }
 
-void ChatBox::joined(const QString& title, const QString& mynick)
+/**
+ * Add join message and enable the chat box.
+ */
+void ChatBox::joined()
 {
-	mynick_ = mynick;
 	ui_->sendbutton->setEnabled(true);
-	systemMessage(title.isEmpty()?tr("Joined session"):tr("Joined session. Title is <em>%1</em>").arg(title));
+	systemMessage(tr("Joined session"));
 }
 
 void ChatBox::parted()
@@ -60,9 +62,6 @@ void ChatBox::sendMessage()
 	const QString msg = ui_->chatline->text().trimmed();
 	if(msg.isEmpty())
 		return;
-#if 0 /* this is needed if server doesn't echo chat messages */
-	receiveMessage(mynick_, msg);
-#endif
 	emit message(msg);
 	ui_->chatline->clear();
 }

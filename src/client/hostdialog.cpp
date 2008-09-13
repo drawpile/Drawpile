@@ -42,7 +42,6 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
-	ui_->username->setProperty("mandatoryfield", true);
 
 	if(original.isNull()) {
 		ui_->imageSelector->setWidth(800);
@@ -81,7 +80,9 @@ void HostDialog::rememberSettings() const
 	QStringList hosts;
 	// Move current address to the top of the list
 	const QString current = ui_->remotehost->currentText();
-	ui_->remotehost->removeItem(ui_->remotehost->findText(current));
+	int curind = ui_->remotehost->findText(current);
+	if(curind!=-1)
+		ui_->remotehost->removeItem(curind);
 	hosts << current;
 	for(int i=0;i<ui_->remotehost->count();++i)
 			hosts << ui_->remotehost->itemText(i);
@@ -143,11 +144,6 @@ QString HostDialog::getTitle() const
 	return ui_->sessiontitle->text();
 }
 
-QString HostDialog::getAdminPassword() const
-{
-	return ui_->adminpassword->text();
-}
-
 int HostDialog::getUserLimit() const
 {
 	return ui_->userlimit->value();
@@ -180,11 +176,6 @@ void HostDialog::newSelected()
 bool HostDialog::getAllowDrawing() const
 {
 	return ui_->allowdrawing->isChecked();
-}
-
-bool HostDialog::getAllowChat() const
-{
-	return ui_->allowchat->isChecked();
 }
 
 }

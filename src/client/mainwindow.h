@@ -137,24 +137,18 @@ class MainWindow : public QMainWindow {
 		void finishJoin(int i);
 		//! Leave session
 		void finishLeave(int i);
-		//! Logged in, host session
-		void loggedinHost();
-		//! Logged in, join session
-		void loggedinJoin();
 		//! Connection established
 		void connected();
 		//! Connection cut
 		void disconnected();
 		//! Joined a session
-		void joined(network::SessionState *session);
+		void joined();
 		//! Disallow changes to the board
 		void lock(const QString& reason);
 		//! Allow changes to the board
 		void unlock();
-		//! New joins have been allowed/disallowed
-		void allowJoins(bool allow);
-		//! The user became session owner
-		void becameOwner();
+		//! Board settings changed
+		void boardInfoChanged();
 		//! Inform user about raster upload progress
 		void rasterUp(int p);
 
@@ -258,7 +252,6 @@ class MainWindow : public QMainWindow {
 		QString sessiontitle_;
 		QString filename_;
 		QString lastpath_;
-		//QString openimagenext_; // unused
 
 		QAction *new_;
 		QAction *open_;
