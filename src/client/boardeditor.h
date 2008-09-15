@@ -23,7 +23,7 @@
 class QColor;
 class QPoint;
 
-#include "brush.h"
+#include "core/brush.h"
 #include "tools.h"
 
 namespace network {
@@ -35,11 +35,14 @@ namespace interface {
 	class ColorSource;
 }
 
+namespace dpcore {
+	class Point;
+}
+
 namespace drawingboard {
 
 class Board;
 class User;
-class Point;
 
 //! A delegate for accessing the board contents
 /**
@@ -59,10 +62,10 @@ class BoardEditor {
 		virtual ~BoardEditor() = 0;
 
 		//! Check if the brush is currently in use
-		virtual bool isCurrentBrush(const Brush& brush) const = 0;
+		virtual bool isCurrentBrush(const dpcore::Brush& brush) const = 0;
 
 		//! Get the brush from the local UI
-		Brush localBrush() const;
+		dpcore::Brush localBrush() const;
 
 		//! Set foreground color associated with the current board
 		void setLocalForeground(const QColor& color);
@@ -74,19 +77,19 @@ class BoardEditor {
 		QColor colorAt(const QPoint& point);
 
 		//! Start a preview
-		void startPreview(tools::Type tool, const Point& point, const Brush& brush);
+		void startPreview(tools::Type tool, const dpcore::Point& point, const dpcore::Brush& brush);
 
 		//! Continue the preview
-		void continuePreview(const Point& point);
+		void continuePreview(const dpcore::Point& point);
 
 		//! Remove the preview
 		void endPreview();
 
 		//! Set the tool used for drawing
-		virtual void setTool(const Brush& brush) = 0;
+		virtual void setTool(const dpcore::Brush& brush) = 0;
 
 		//! Add a new point to a stroke.
-		virtual void addStroke(const Point& point) = 0;
+		virtual void addStroke(const dpcore::Point& point) = 0;
 
 		//! End current stroke. Next addStroke will begin a new one.
 		virtual void endStroke() = 0;
@@ -117,9 +120,9 @@ class LocalBoardEditor : public BoardEditor {
 				interface::BrushSource *brush, interface::ColorSource *color)
 			: BoardEditor(board,user, brush, color) {}
 
-		bool isCurrentBrush(const Brush& brush) const;
-		void setTool(const Brush& brush);
-		void addStroke(const Point& point);
+		bool isCurrentBrush(const dpcore::Brush& brush) const;
+		void setTool(const dpcore::Brush& brush);
+		void addStroke(const dpcore::Point& point);
 		void endStroke();
 };
 
@@ -134,9 +137,9 @@ class RemoteBoardEditor : public BoardEditor {
 				network::SessionState *session, interface::BrushSource *brush,
 				interface::ColorSource *color);
 
-		bool isCurrentBrush(const Brush& brush) const;
-		void setTool(const Brush& brush);
-		void addStroke(const Point& point);
+		bool isCurrentBrush(const dpcore::Brush& brush) const;
+		void setTool(const dpcore::Brush& brush);
+		void addStroke(const dpcore::Point& point);
 		void endStroke();
 
 	private:
@@ -148,7 +151,7 @@ class RemoteBoardEditor : public BoardEditor {
 		 * The last brush is remembered to avoid sending redundant ToolInfo
 		 * messages if the last message hasn't finished its round-trip yet.
 		 */
-		Brush lastbrush_;
+		dpcore::Brush lastbrush_;
 };
 
 }

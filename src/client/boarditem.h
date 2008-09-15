@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,16 +17,18 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef LAYER_H
-#define LAYER_H
+#ifndef BOARDITEM_H
+#define BOARDITEM_H
 
 #include <QGraphicsItem>
 
+namespace dpcore {
+	class Layer;
+	class Brush;
+	class Point;
+}
 
 namespace drawingboard {
-
-class Brush;
-class Point;
 
 //! A drawing layer item item for QGraphicsScene
 /**
@@ -34,27 +36,27 @@ class Point;
  * Methods are provided for drawing lines and points with a Brush object.
  *
  */
-class Layer : public QGraphicsItem
+class BoardItem : public QGraphicsItem
 {
 	public:
 		//! Construct an empty layer
-		Layer(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+		BoardItem(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 
 		//! Construct a layer from a QImage
-		Layer(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+		BoardItem(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 
 		//! Set layer contents
 		void setImage(const QImage& image);
 
-		//! Get layer contents
-		QImage image() const;
+		//! Get the image
+		dpcore::Layer *image() const { return image_; }
 
 		//! Draw a line between two points with interpolated pressure values
-		void drawLine(const Point& point1, const Point& point2,
-				const Brush& brush, int *distance=0);
+		void drawLine(const dpcore::Point& point1, const dpcore::Point& point2,
+				const dpcore::Brush& brush, int *distance=0);
 
 		//! Draw a single point
-		void drawPoint(const Point& point, const Brush& brush);
+		void drawPoint(const dpcore::Point& point, const dpcore::Brush& brush);
 
 		/** reimplematation */
 		QRectF boundingRect() const;
@@ -65,7 +67,7 @@ class Layer : public QGraphicsItem
 
 	private:
 
-		QImage image_;
+		dpcore::Layer *image_;
 
 		int plastx_, plasty_;
 };

@@ -20,11 +20,12 @@
 #include <QDebug>
 
 #include "board.h"
-#include "layer.h"
+#include "boarditem.h"
 #include "user.h"
 #include "boardeditor.h"
 #include "preview.h"
 #include "interfaces.h"
+#include "core/layer.h"
 
 namespace drawingboard {
 
@@ -50,15 +51,7 @@ void Board::initBoard(const QSize& size, const QColor& background)
 	QImage image(size, QImage::Format_RGB32);
 	image.fill(background.rgb());
 
-	setSceneRect(0,0,size.width(), size.height());
-	delete image_;
-	image_ = new Layer(image,0,this);
-	foreach(User *u, users_)
-		u->setLayer(image_);
-	QList<QRectF> regions;
-	regions.append(sceneRect());
-	emit changed(regions);
-	previewstarted_ = false;
+	initBoard(image);
 }
 
 /**
@@ -69,7 +62,7 @@ void Board::initBoard(QImage image)
 {
 	setSceneRect(0,0,image.width(), image.height());
 	delete image_;
-	image_ = new Layer(image.convertToFormat(QImage::Format_RGB32), 0, this);
+	image_ = new BoardItem(image.convertToFormat(QImage::Format_RGB32), 0, this);
 	foreach(User *u, users_)
 		u->setLayer(image_);
 	QList<QRectF> regions;
@@ -125,7 +118,7 @@ void Board::setLocalUser(int id)
 QImage Board::image() const
 {
 	if(image_)
-		return image_->image();
+		return image_->image()->toImage();
 	else
 		return QImage();
 }
@@ -178,7 +171,7 @@ BoardEditor *Board::getEditor(network::SessionState *session)
  * through the server.
  * @param point stroke point
  */
-void Board::addPreview(const Point& point)
+void Board::addPreview(const dpcore::Point& point)
 {
 	Q_ASSERT(localuser_ != -1);
 	User *user = users_.value(localuser_);
@@ -211,7 +204,7 @@ void Board::endPreview()
  */
 void Board::commitPreviews()
 {
-	Point lastpoint(-1,-1,0);
+	dpcore::Point lastpoint(-1,-1,0);
 	while(previews_.isEmpty()==false) {
 		Preview *p = previews_.dequeue();
 		if(p->from() != lastpoint)
@@ -245,7 +238,7 @@ void Board::flushPreviews()
  * @param brush brush to use
  * @pre user must exist
  */
-void Board::userSetTool(int user, const Brush& brush)
+void Board::userSetTool(int user, const dpcore::Brush& brush)
 {
 	Q_ASSERT(users_.contains(user));
 	users_.value(user)->setBrush(brush);
@@ -256,7 +249,7 @@ void Board::userSetTool(int user, const Brush& brush)
  * @param point coordinates
  * @pre user must exist
  */
-void Board::userStroke(int user, const Point& point)
+void Board::userStroke(int user, const dpcore::Point& point)
 {
 	Q_ASSERT(users_.contains(user));
 	users_.value(user)->addStroke(point);

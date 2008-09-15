@@ -21,16 +21,17 @@ set (
 # unused headers because they do not create moc_* files ()
 set (
 	UNUSED_HEADERS # no QOBJECT ?
-	version.h user.h interfaces.h preview.h boardeditor.h layer.h
-	point.h brush.h localpalette.h palette.h icons.h
+	version.h user.h interfaces.h preview.h boardeditor.h boarditem.h
+	localpalette.h palette.h icons.h
 	tools.h toolsettings.h recentfiles.h sessioninfo.h
+	core/tile.h core/layer.h core/brush.h core/point.h core/rasterop.h
 )
 
 set (
 	SOURCES
 	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
-	colortriangle.cpp board.cpp controller.cpp layer.cpp brush.cpp user.cpp
+	colortriangle.cpp board.cpp controller.cpp boarditem.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
 	hostdialog.cpp joindialog.cpp hoststate.cpp sessionstate.cpp
@@ -39,6 +40,7 @@ set (
 	sessioninfo.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp
+	core/tile.cpp core/layer.cpp core/brush.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

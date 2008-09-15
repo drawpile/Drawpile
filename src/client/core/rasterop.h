@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,39 +17,20 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef PPOINT_H
-#define PPOINT_H
+#ifndef RASTEROP_H
+#define RASTEROP_H
 
-#include <QPoint>
+namespace dpcore {
 
-namespace drawingboard {
-
-//! An extended point class that includes pressure information.
-class Point : public QPoint {
-	public:
-		Point() : QPoint(), p_(1) {}
-		Point(int x, int y, qreal p)
-			: QPoint(x,y), p_(p)
-		{
-			Q_ASSERT(p>=0 && p<=1);
-		}
-
-		Point(const QPoint& point, qreal p)
-			: QPoint(point), p_(p)
-		{
-			Q_ASSERT(p>=0 && p<=1);
-		}
-
-		qreal pressure() const { return p_; }
-		qreal &rpressure() { return p_; }
-		void setPressure(qreal p) { p_ = p; }
-	private:
-		qreal p_;
-};
-
-static inline const Point operator-(const Point& p1,const QPoint& p2)
-{
-	return Point(p1.x()-p2.x(), p1.y()-p2.y(), p1.pressure());
+//! Regular alpha blender
+/**
+ * base = base * (1-opacity) + blend * opacity
+ */
+inline void blend_normal(uchar *base, const uchar *blend, int opacity) {
+	base[0] = (base[0] * (255-opacity) / 255 + blend[0] * opacity / 255);
+	base[1] = (base[1] * (255-opacity) / 255 + blend[1] * opacity / 255);
+	base[2] = (base[2] * (255-opacity) / 255 + blend[2] * opacity / 255);
+	//base[3] = (base[3] * (255-opacity) / 255 + blend[3] * opacity / 255);
 }
 
 }

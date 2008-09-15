@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,13 +20,11 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
-#include "../config.h"
-
 class QImage;
 #include <QVector>
 #include <QColor>
 
-namespace drawingboard {
+namespace dpcore {
 
 class Point;
 
@@ -44,63 +42,59 @@ class Brush
 				const QColor& color=Qt::black, int spacing=25);
 
 		//! Set radius heavy brush
-		void setRadius(int radius) NOTHROW;
+		void setRadius(int radius);
 		//! Set radius for light brush
-		void setRadius2(int radius) NOTHROW;
+		void setRadius2(int radius);
 
 		//! Set hardness for heavy brush
-		void setHardness(qreal hardness) NOTHROW;
+		void setHardness(qreal hardness);
 		//! Set hardness for light brush
-		void setHardness2(qreal hardness) NOTHROW;
+		void setHardness2(qreal hardness);
 
 		//! Set opacity for heavy brush
-		void setOpacity(qreal opacity) NOTHROW;
+		void setOpacity(qreal opacity);
 		//! Set opacity for light brush
-		void setOpacity2(qreal opacity) NOTHROW;
+		void setOpacity2(qreal opacity);
 
 		//! Set color for heavy brush
-		void setColor(const QColor& color) NOTHROW;
+		void setColor(const QColor& color);
 		//! Set color for light brush
-		void setColor2(const QColor& color) NOTHROW;
+		void setColor2(const QColor& color);
 
 		//! Set spacing hint
-		void setSpacing(int spacing) NOTHROW;
+		void setSpacing(int spacing);
 
 		//! Get interpolated radius
-		int radius(qreal pressure) const NOTHROW;
+		int radius(qreal pressure) const;
+		//! Get the diameter of the rendered brush
+		int diameter(qreal pressure) const;
 		//! Get interpolated hardness
-		qreal hardness(qreal pressure) const NOTHROW;
+		qreal hardness(qreal pressure) const;
 		//! Get interpolated opacity
-		qreal opacity(qreal pressure) const NOTHROW;
+		qreal opacity(qreal pressure) const;
 		//! Get interpolated color
-		QColor color(qreal pressure) const NOTHROW;
+		QColor color(qreal pressure) const;
 		//! Get spacing hint
-		int spacing() const NOTHROW;
+		int spacing() const;
 
-		//! Draw the brush on an image
-		void draw(QImage &image, const Point& pos) const;
+		//! Render the brush
+		uchar *render(qreal pressure) const;
 
 		//! Copy operator
-		Brush& operator=(const Brush& brush) NOTHROW;
+		Brush& operator=(const Brush& brush);
 
 		//! Equality test
-		bool operator==(const Brush& brush) const NOTHROW;
+		bool operator==(const Brush& brush) const;
 
 		//! Inequality test
-		bool operator!=(const Brush& brush) const NOTHROW;
+		bool operator!=(const Brush& brush) const;
 
 	private:
-		//! called by draw()
-		void drawPixel(uchar *dest, const QColor& color, int alpha) const NOTHROW;
-		
-		//! Normal composition, called by drawPixel()
-		void normalComposition(int color, uchar& target, int alpha) const NOTHROW;
-		
 		//! Update the brush cache
 		void updateCache() const;
 
 		//! Check if the brush is sensitive to pressure
-		void checkSensitivity() NOTHROW;
+		void checkSensitivity();
 
 		int radius1_, radius2_;
 		qreal hardness1_, hardness2_;

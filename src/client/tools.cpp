@@ -20,7 +20,7 @@
 
 #include "controller.h"
 #include "tools.h"
-#include "brush.h"
+#include "core/brush.h"
 #include "board.h"
 #include "boardeditor.h"
 
@@ -73,9 +73,9 @@ Tool *ToolCollection::get(Type type)
 	return tools_.value(type);
 }
 
-void BrushBase::begin(const drawingboard::Point& point)
+void BrushBase::begin(const dpcore::Point& point)
 {
-	drawingboard::Brush brush = editor()->localBrush();
+	dpcore::Brush brush = editor()->localBrush();
 
 	if(editor()->isCurrentBrush(brush) == false)
 		editor()->setTool(brush);
@@ -83,7 +83,7 @@ void BrushBase::begin(const drawingboard::Point& point)
 	editor()->addStroke(point);
 }
 
-void BrushBase::motion(const drawingboard::Point& point)
+void BrushBase::motion(const dpcore::Point& point)
 {
 	editor()->addStroke(point);
 }
@@ -93,14 +93,14 @@ void BrushBase::end()
 	editor()->endStroke();
 }
 
-void ColorPicker::begin(const drawingboard::Point& point)
+void ColorPicker::begin(const dpcore::Point& point)
 {
 	QColor col = editor()->colorAt(point);
 	if(col.isValid())
 		editor()->setLocalForeground(col);
 }
 
-void ColorPicker::motion(const drawingboard::Point& point)
+void ColorPicker::motion(const dpcore::Point& point)
 {
 	QColor col = editor()->colorAt(point);
 	if(col.isValid())
@@ -111,14 +111,14 @@ void ColorPicker::end()
 {
 }
 
-void ComplexBase::begin(const drawingboard::Point& point)
+void ComplexBase::begin(const dpcore::Point& point)
 {
 	editor()->startPreview(type(), point, editor()->localBrush());
 	start_ = point;
 	end_ = point;
 }
 
-void ComplexBase::motion(const drawingboard::Point& point)
+void ComplexBase::motion(const dpcore::Point& point)
 {
 	editor()->continuePreview(point);
 	end_ = point;
@@ -127,7 +127,7 @@ void ComplexBase::motion(const drawingboard::Point& point)
 void ComplexBase::end()
 {
 	editor()->endPreview();
-	drawingboard::Brush brush = editor()->localBrush();
+	dpcore::Brush brush = editor()->localBrush();
 	if(editor()->isCurrentBrush(brush) == false)
 		editor()->setTool(brush);
 	commit();
@@ -142,7 +142,7 @@ void Line::commit()
 
 void Rectangle::commit()
 {
-	using drawingboard::Point;
+	using dpcore::Point;
 	editor()->addStroke(start_);
 	editor()->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
 	editor()->addStroke(end_);

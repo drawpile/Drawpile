@@ -23,7 +23,7 @@
 
 #include "controller.h"
 #include "board.h"
-#include "brush.h"
+#include "core/brush.h"
 #include "tools.h"
 #include "boardeditor.h"
 #include "hoststate.h"
@@ -204,11 +204,11 @@ void Controller::sessionJoined()
 			this, SIGNAL(boardChanged()));
 
 	// Make session -> board connections
-	connect(session_, SIGNAL(toolReceived(int,drawingboard::Brush)),
-			board_, SLOT(userSetTool(int,drawingboard::Brush)));
-	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)),
-			board_, SLOT(userStroke(int,drawingboard::Point)));
-	connect(session_, SIGNAL(strokeReceived(int,drawingboard::Point)),
+	connect(session_, SIGNAL(toolReceived(int,dpcore::Brush)),
+			board_, SLOT(userSetTool(int,dpcore::Brush)));
+	connect(session_, SIGNAL(strokeReceived(int,dpcore::Point)),
+			board_, SLOT(userStroke(int,dpcore::Point)));
+	connect(session_, SIGNAL(strokeReceived(int,dpcore::Point)),
 			this, SIGNAL(changed()));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_,
 			SLOT(userEndStroke(int)));
@@ -421,7 +421,7 @@ void Controller::setTool(tools::Type tool)
 	tool_ = toolbox_.get(tool);
 }
 
-void Controller::penDown(const drawingboard::Point& point)
+void Controller::penDown(const dpcore::Point& point)
 {
 	if(lock_ == false || (lock_ && tool_->readonly())) {
 		tool_->begin(point);
@@ -433,7 +433,7 @@ void Controller::penDown(const drawingboard::Point& point)
 	}
 }
 
-void Controller::penMove(const drawingboard::Point& point)
+void Controller::penMove(const dpcore::Point& point)
 {
 	if(lock_ == false || lock_ && tool_->readonly()) {
 		tool_->motion(point);

@@ -22,9 +22,12 @@
 
 #include <QGraphicsView>
 
+namespace dpcore {
+	class Point;
+}
+
 namespace drawingboard {
 	class Board;
-	class Point;
 }
 
 namespace widgets {
@@ -48,9 +51,9 @@ class EditorView : public QGraphicsView
 		/**
 		 * @param point coordinates
 		 */
-		void penDown(const drawingboard::Point& point);
+		void penDown(const dpcore::Point& point);
 		//! This signal is emitted when the pen or mouse pointer is moved while drawing
-		void penMove(const drawingboard::Point& point);
+		void penMove(const dpcore::Point& point);
 
 		//! This signal is emitted when the pen is lifted or the mouse button released.
 		void penUp();

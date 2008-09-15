@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 #include <cmath>
 #include "point.h"
 #include "brush.h"
-#include "../config.h"
+//#include "../../config.h"
 
-namespace drawingboard {
+namespace dpcore {
 
 /**
  * \brief Linear interpolation
@@ -192,6 +192,18 @@ int Brush::radius(qreal pressure) const
 }
 
 /**
+ * Get the diameter of the brush for certain pressure.
+ * @param pressure pen pressure
+ * @return diameter
+ * @post 0 < RESULT
+ */
+int Brush::diameter(qreal pressure) const
+{
+	int rad = radius(pressure);
+	return rad==0?1:rad*2;
+}
+
+/**
  * Get the brush hardness for certain pressure.
  * @param pressure pen pressure
  * @return hardness
@@ -247,6 +259,42 @@ int Brush::spacing() const
 	return spacing_;
 }
 
+/**
+ * Returns the value of each pixel of the brush. It is up to you to blend
+ * the color in.
+ * @param pressure brush pressue [0..1]
+ * @return diameter^2 pixel values
+ */
+uchar *Brush::render(qreal pressure) const {
+	const int dia = diameter(pressure);
+	const qreal o = opacity(pressure);
+	const qreal rad = dia/2.0;
+
+	// TODO cache
+	// Compute a lookup table
+	static const int OVERSAMPLE=2;
+	uchar lookup[int(rad+0.5)*OVERSAMPLE];
+	const int grad = int((1 - hardness(pressure)) * rad * OVERSAMPLE);
+	int i=0;
+	for(; i < grad ; ++i)
+		lookup[i] = int(255 * i/qreal(grad) * o);
+	for(; i < rad*OVERSAMPLE; ++i)
+		lookup[i] = int(255 * o);
+
+	// Render the brush
+	uchar *values = new uchar[dia*dia];
+	uchar *ptr = values;
+	for(qreal y=-rad;y<rad;++y) {
+		const qreal yy = y*y;
+		for(qreal x=-rad;x<rad;++x) {
+			const qreal dist = int(sqrt(x*x + yy));
+			*(ptr++) = (dist<rad?lookup[int(rad*OVERSAMPLE-dist*OVERSAMPLE)]:0);
+		}
+	}
+	return values;
+}
+
+#if 0
 /**
  * A brush is basically an image filled with a single color and an alpha
  * channel that defines its shape.
@@ -377,6 +425,7 @@ void Brush::drawPixel(uchar *dest, const QColor& color, int alpha) const
 	normalComposition(color.green(), dest[boi_green], alpha);
 	normalComposition(color.blue(), dest[boi_blue], alpha);
 }
+#endif
 
 /**
  * This copy operator tries to preserve the brush cache.

@@ -113,7 +113,7 @@ void ToolSettings::setBackground(const QColor& color)
  * Get a brush with settings from the currently visible widget
  * @return brush
  */
-const drawingboard::Brush& ToolSettings::getBrush() const
+const dpcore::Brush& ToolSettings::getBrush() const
 {
 	return currenttool_->getBrush();
 }

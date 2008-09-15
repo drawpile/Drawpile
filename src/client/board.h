@@ -24,7 +24,7 @@
 #include <QHash>
 #include <QQueue>
 
-#include "point.h"
+#include "core/point.h"
 
 namespace network {
 	class SessionState;
@@ -35,12 +35,15 @@ namespace interface {
 	class ColorSource;
 }
 
+namespace dpcore {
+	class Brush;
+}
+
 //! Drawing board related classes
 namespace drawingboard {
 
-class Layer;
+class BoardItem;
 class User;
-class Brush;
 class BoardEditor;
 class Preview;
 
@@ -87,7 +90,7 @@ class Board : public QGraphicsScene
 		BoardEditor *getEditor(network::SessionState *session=0);
 
 		//! Add a preview stroke
-		void addPreview(const Point& point);
+		void addPreview(const dpcore::Point& point);
 
 		//! End a preview stroke
 		void endPreview();
@@ -100,10 +103,10 @@ class Board : public QGraphicsScene
 		void addUser(int id);
 
 		//! User switches tools
-		void userSetTool(int user, const drawingboard::Brush& brush);
+		void userSetTool(int user, const dpcore::Brush& brush);
 
 		//! User stroke information
-		void userStroke(int user, const drawingboard::Point& point);
+		void userStroke(int user, const dpcore::Point& point);
 
 		//! User ends a stroke
 		void userEndStroke(int user);
@@ -116,7 +119,7 @@ class Board : public QGraphicsScene
 		void commitPreviews();
 
 		//! The board contents
-		Layer *image_;
+		BoardItem *image_;
 
 		//! List of board users
 		QHash<int,User*> users_;
@@ -134,7 +137,7 @@ class Board : public QGraphicsScene
 		bool previewstarted_;
 
 		//! Coordinate of the last preview stroke
-		Point lastpreview_;
+		dpcore::Point lastpreview_;
 
 		//! Preview stroke for use with tool previews (eg. line)
 		Preview *toolpreview_;

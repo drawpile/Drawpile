@@ -1,0 +1,115 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2006-2008 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+
+#include <QPainter>
+#include <QGraphicsItem>
+#include <QStyleOptionGraphicsItem>
+#include <cmath>
+
+#include "boarditem.h"
+#include "core/point.h"
+#include "core/brush.h"
+#include "core/layer.h"
+
+namespace drawingboard {
+
+/**
+ * @param parent use another QGraphicsItem as a parent
+ * @param scene the picture to which this layer belongs to
+ */
+BoardItem::BoardItem(QGraphicsItem *parent, QGraphicsScene *scene)
+	: QGraphicsItem(parent,scene)
+{
+}
+
+/**
+ * @param image image to use
+ * @param parent use another QGraphicsItem as a parent
+ * @param scene the picture to which this layer belongs to
+ */
+BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent, QGraphicsScene *scene)
+	: QGraphicsItem(parent,scene), image_(0)
+{
+	setImage(image);
+}
+
+/**
+ * @param image image to use
+ */
+void BoardItem::setImage(const QImage& image)
+{
+	Q_ASSERT(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
+	image_ = new dpcore::Layer(image);
+}
+
+/**
+ * The brush pixmap is drawn at each point between point1 and point2.
+ * Pressure values are interpolated between the points.
+ * First pixel is not drawn. This is done on purpose, as drawLine is usually
+ * used to draw multiple joined lines.
+ *
+ * If distance is not null, it is used to add spacing between dabs.
+ * @param point1 start coordinates
+ * @param point2 end coordinates
+ * @param brush brush to draw with
+ * @param distance total drawn line length
+ *
+ * @todo delta pressure(?)
+ */
+void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,int *distance)
+{
+	image_->drawLine(brush, point1, point2, distance);
+	// Update screen
+	const int left = qMin(point1.x(), point2.x());
+	const int right = qMax(point1.x(), point2.x());
+	const int top = qMin(point1.y(), point2.y());
+	const int bottom = qMax(point1.y(), point2.y());
+	int rad = brush.radius(point1.pressure());
+	if(rad==0) rad=1;
+	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
+}
+
+/**
+ * @param point coordinates
+ * @param brush brush to use
+ */
+void BoardItem::drawPoint(const dpcore::Point& point, const dpcore::Brush& brush)
+{
+	int r = brush.radius(point.pressure());
+	if(r==0) r=1;
+	image_->dab(brush, point);
+	update(point.x()-r,point.y()-r,r*2,r*2);
+}
+
+QRectF BoardItem::boundingRect() const
+{
+	return QRectF(0,0, image_->width(), image_->height());
+}
+
+void BoardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+	 QWidget *)
+{
+	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
+	exposed &= QRectF(0,0,image_->width(),image_->height());
+	image_->paint(exposed, painter);
+}
+
+}
+

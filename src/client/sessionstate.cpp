@@ -25,8 +25,8 @@
 
 #include "hoststate.h"
 #include "sessionstate.h"
-#include "brush.h"
-#include "point.h"
+#include "core/brush.h"
+#include "core/point.h"
 
 #include "../shared/net/messagequeue.h"
 #include "../shared/net/message.h"
@@ -205,7 +205,7 @@ void SessionState::setUserLimit(int count)
 /**
  * @param brush brush info to send
  */
-void SessionState::sendToolSelect(const drawingboard::Brush& brush)
+void SessionState::sendToolSelect(const dpcore::Brush& brush)
 {
 	host_->sendPacket( protocol::ToolSelect(
 			host_->localuser_,
@@ -226,7 +226,7 @@ void SessionState::sendToolSelect(const drawingboard::Brush& brush)
 /**
  * @param point stroke coordinates to send
  */
-void SessionState::sendStrokePoint(const drawingboard::Point& point)
+void SessionState::sendStrokePoint(const dpcore::Point& point)
 {
 	host_->sendPacket(protocol::StrokePoint(
 				host_->localuser_,
@@ -372,7 +372,7 @@ bool SessionState::handleToolSelect(protocol::ToolSelect *ts)
 	QColor c1 = decodeColor(ts->c1(), o1);
 	qreal o0;
 	QColor c0 = decodeColor(ts->c0(), o0);
-	drawingboard::Brush brush(
+	dpcore::Brush brush(
 			ts->s1(),
 			ts->h1()/255.0,
 			o1,
@@ -400,7 +400,7 @@ bool SessionState::handleStroke(protocol::StrokePoint *s)
 	for(int p=0;p<s->points();++p) {
 		emit strokeReceived(
 				s->user(),
-				drawingboard::Point(
+				dpcore::Point(
 					(qint16)(s->point(p).x),
 					(qint16)(s->point(p).y),
 					s->point(p).z/255.0

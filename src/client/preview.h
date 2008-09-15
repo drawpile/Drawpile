@@ -22,12 +22,10 @@
 
 #include <QGraphicsLineItem>
 
-#include "brush.h"
-#include "point.h"
+#include "core/brush.h"
+#include "core/point.h"
 
 namespace drawingboard {
-
-class Brush;
 
 //! Drawing feedback
 /**
@@ -43,28 +41,28 @@ class Preview {
 		virtual ~Preview() = 0;
 
 		//! Do a preview
-		virtual void preview(const Point& from, const Point& to, const Brush& brush);
+		virtual void preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush);
 
 		//! Move the end point of the preview
-		virtual void moveTo(const Point& to);
+		virtual void moveTo(const dpcore::Point& to);
 
 		//! Hide the preview object
 		virtual void hidePreview() = 0;
 
 		//! Get the used brush
-		const Brush& brush() const { return brush_; }
+		const dpcore::Brush& brush() const { return brush_; }
 		//! Get the beginning point of the preview
-		const Point& from() const { return from_; }
+		const dpcore::Point& from() const { return from_; }
 		//! Get the end point of the preview
-		const Point& to() const { return to_; }
+		const dpcore::Point& to() const { return to_; }
 
 	protected:
 		//! Initialize appearance
 		virtual void initAppearance(const QPen& pen) = 0;
 
 	private:
-		Brush brush_;
-		Point from_, to_;
+		dpcore::Brush brush_;
+		dpcore::Point from_, to_;
 };
 
 //! Stroke feedback
@@ -76,8 +74,8 @@ class StrokePreview : public Preview, public QGraphicsLineItem {
 	public:
 		StrokePreview(QGraphicsItem *parent, QGraphicsScene *scene);
 
-		void preview(const Point& from, const Point& to, const Brush& brush);
-		void moveTo(const Point& to);
+		void preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush);
+		void moveTo(const dpcore::Point& to);
 		void hidePreview() { hide(); }
 
 	protected:
@@ -92,8 +90,8 @@ class RectanglePreview : public Preview, public QGraphicsRectItem {
 	public:
 		RectanglePreview(QGraphicsItem *parent, QGraphicsScene *scene);
 
-		void preview(const Point& from, const Point& to, const Brush& brush);
-		void moveTo(const Point& to);
+		void preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush);
+		void moveTo(const dpcore::Point& to);
 		void hidePreview() { hide(); }
 
 	protected:

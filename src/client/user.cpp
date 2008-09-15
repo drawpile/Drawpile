@@ -19,7 +19,7 @@
 */
 
 #include "user.h"
-#include "layer.h"
+#include "boarditem.h"
 
 namespace drawingboard {
 
@@ -33,7 +33,7 @@ User::User(int id)
  * previous coordinates to \a point.
  * @param point stroke coordinates
  */
-void User::addStroke(const Point& point)
+void User::addStroke(const dpcore::Point& point)
 {
 	if(layer_) {
 		if(strokestarted_) {

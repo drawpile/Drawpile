@@ -22,7 +22,7 @@
 
 #include <QHash>
 
-#include "point.h"
+#include "core/point.h"
 
 namespace drawingboard {
 	class BoardEditor;
@@ -63,10 +63,10 @@ class Tool
 		bool readonly() const { return readonly_; }
 
 		//! Begin drawing
-		virtual void begin(const drawingboard::Point& point) = 0;
+		virtual void begin(const dpcore::Point& point) = 0;
 
 		//! Draw stroke
-		virtual void motion(const drawingboard::Point& point) = 0;
+		virtual void motion(const dpcore::Point& point) = 0;
 
 		//! End drawing
 		virtual void end() = 0;
@@ -90,8 +90,8 @@ class BrushBase : public Tool
 	public:
 		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type, false) {}
 
-		void begin(const drawingboard::Point& point);
-		void motion(const drawingboard::Point& point);
+		void begin(const dpcore::Point& point);
+		void motion(const dpcore::Point& point);
 		void end();
 };
 
@@ -115,8 +115,8 @@ class ColorPicker : public Tool {
 	public:
 		ColorPicker(ToolCollection &owner) : Tool(owner, PICKER, true) {}
 
-		void begin(const drawingboard::Point& point);
-		void motion(const drawingboard::Point& point);
+		void begin(const dpcore::Point& point);
+		void motion(const dpcore::Point& point);
 		void end();
 };
 
@@ -129,15 +129,15 @@ class ComplexBase : public Tool {
 	public:
 		ComplexBase(ToolCollection &owner, Type type) : Tool(owner, type, false) {}
 
-		void begin(const drawingboard::Point& point);
-		void motion(const drawingboard::Point& point);
+		void begin(const dpcore::Point& point);
+		void motion(const dpcore::Point& point);
 		void end();
 
 	protected:
 		virtual void commit() = 0;
 
-		drawingboard::Point start_;
-		drawingboard::Point end_;
+		dpcore::Point start_;
+		dpcore::Point end_;
 };
 
 //! Line tool

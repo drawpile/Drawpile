@@ -31,6 +31,10 @@ namespace drawingboard {
 	class Point;
 }
 
+namespace dpcore {
+	class Point;
+}
+
 namespace interface {
 	class BrushSource;
 	class ColorSource;
@@ -99,8 +103,8 @@ class Controller : public QObject
 		//! Send chat message
 		void sendChat(const QString& msg);
 
-		void penDown(const drawingboard::Point& point);
-		void penMove(const drawingboard::Point& point);
+		void penDown(const dpcore::Point& point);
+		void penMove(const dpcore::Point& point);
 		void penUp();
 		void setTool(tools::Type tool);
 

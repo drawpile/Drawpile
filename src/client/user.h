@@ -20,12 +20,12 @@
 #ifndef USER_H
 #define USER_H
 
-#include "point.h"
-#include "brush.h"
+#include "core/point.h"
+#include "core/brush.h"
 
 namespace drawingboard {
 
-class Layer;
+class BoardItem;
 
 //! A drawingboard user
 /**
@@ -41,29 +41,29 @@ class User
 		int id() const { return id_; }
 
 		//! Set the layer on which to draw
-		void setLayer(Layer *layer) { layer_ = layer; }
+		void setLayer(BoardItem *layer) { layer_ = layer; }
 
 		//! Get the used layer
-		Layer *layer() const { return layer_; }
+		BoardItem *layer() const { return layer_; }
 
 		//! Set brush to use
-		void setBrush(const Brush& brush) { brush_ = brush; }
+		void setBrush(const dpcore::Brush& brush) { brush_ = brush; }
 
 		//! Get the brush
-		const Brush& brush() const { return brush_; }
+		const dpcore::Brush& brush() const { return brush_; }
 
 		//! Stroke info
-		void addStroke(const Point& point);
+		void addStroke(const dpcore::Point& point);
 
 		//! End stroke
 		void endStroke();
 
 	private:
 		int id_;
-		Brush brush_;
+		dpcore::Brush brush_;
 
-		Layer *layer_;
-		Point lastpoint_;
+		BoardItem *layer_;
+		dpcore::Point lastpoint_;
 		bool strokestarted_;
 		int strokelen_;
 };

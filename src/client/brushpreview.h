@@ -22,7 +22,7 @@
 
 #include <QFrame>
 
-#include "brush.h"
+#include "core/brush.h"
 
 #ifndef DESIGNER_PLUGIN
 //! Custom widgets
@@ -52,14 +52,14 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return shape_; }
 
 		//! Get the displayed brush
-		const drawingboard::Brush& brush() const { return brush_; }
+		const dpcore::Brush& brush() const { return brush_; }
 
 	public slots:
 		//! Set the brush to preview
 		/**
 		 * @param brush brush to set
 		 */
-		void setBrush(const drawingboard::Brush& brush);
+		void setBrush(const dpcore::Brush& brush);
 
 		//! Set preview brush size
 		void setSize(int size);
@@ -100,7 +100,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void updatePreview();
 		void updateBackground();
 
-		drawingboard::Brush brush_;
+		dpcore::Brush brush_;
 		QImage preview_;
 		QPixmap bg_;
 		bool sizepressure_;

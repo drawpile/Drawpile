@@ -144,10 +144,10 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(this, SIGNAL(toolChanged(tools::Type)),
 			controller_, SLOT(setTool(tools::Type)));
 
-	connect(view_,SIGNAL(penDown(drawingboard::Point)),
-			controller_,SLOT(penDown(drawingboard::Point)));
-	connect(view_,SIGNAL(penMove(drawingboard::Point)),
-			controller_,SLOT(penMove(drawingboard::Point)));
+	connect(view_,SIGNAL(penDown(dpcore::Point)),
+			controller_,SLOT(penDown(dpcore::Point)));
+	connect(view_,SIGNAL(penMove(dpcore::Point)),
+			controller_,SLOT(penMove(dpcore::Point)));
 	connect(view_,SIGNAL(penUp()),
 			controller_,SLOT(penUp()));
 

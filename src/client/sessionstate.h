@@ -30,7 +30,7 @@
 class QImage;
 class QStringList;
 
-namespace drawingboard {
+namespace dpcore {
 	class Brush;
 	class Point;
 }
@@ -102,10 +102,10 @@ class SessionState : public QObject {
 		void setUserLimit(int count);
 
 		//! Send a tool select message
-		void sendToolSelect(const drawingboard::Brush& brush);
+		void sendToolSelect(const dpcore::Brush& brush);
 
 		//! Send a stroke info message
-		void sendStrokePoint(const drawingboard::Point& point);
+		void sendStrokePoint(const dpcore::Point& point);
 
 		//! Send a stroke end message
 		void sendStrokeEnd();
@@ -157,10 +157,10 @@ class SessionState : public QObject {
 		void syncDone();
 
 		//! Results of a ToolInfo message
-		void toolReceived(int user, const drawingboard::Brush& brush);
+		void toolReceived(int user, const dpcore::Brush& brush);
 
 		//! Results of a StrokeInfo message
-		void strokeReceived(int user, const drawingboard::Point& point);
+		void strokeReceived(int user, const dpcore::Point& point);
 
 		//! Results of a StrokeEnd message
 		void strokeEndReceived(int user);

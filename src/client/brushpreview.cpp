@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include <QEvent>
 #include <cmath>
 
-#include "point.h"
+#include "core/point.h"
 #include "brushpreview.h"
 
 #ifndef DESIGNER_PLUGIN
@@ -105,6 +105,8 @@ void BrushPreview::updatePreview()
 		painter.fillRect(QRect(0,0,preview_.width(),preview_.height()),
 				bg_);
 	}
+	// TODO
+#if 0
 
 	const int strokew = width() - width()/4;
 	const int strokeh = height() / 4;
@@ -121,7 +123,7 @@ void BrushPreview::updatePreview()
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(sin(phase) * strokeh);
 			if(distance >= spacing) {
-				brush_.draw(preview_,drawingboard::Point(offx+x,offy+y,pressure));
+				brush_.draw(preview_,dpcore::Point(offx+x,offy+y,pressure));
 				distance=0;
 			} else { 
 				distance += qRound(hypot(lastx-x,lasty-y));
@@ -133,26 +135,27 @@ void BrushPreview::updatePreview()
 		if(spacing==0)
 			spacing = 1;
 		for(int x=0;x<strokew;x+=spacing) {
-			brush_.draw(preview_,drawingboard::Point(offx+x,offy,1));
+			brush_.draw(preview_,dpcore::Point(offx+x,offy,1));
 		}
 	} else {
 		if(spacing==0)
 			spacing = 1;
 		for(int x=0;x<strokew;x+=spacing) {
-			brush_.draw(preview_,drawingboard::Point(offx+x,offy-strokeh,1));
-			brush_.draw(preview_,drawingboard::Point(offx+x,offy+strokeh,1));
+			brush_.draw(preview_,dpcore::Point(offx+x,offy-strokeh,1));
+			brush_.draw(preview_,dpcore::Point(offx+x,offy+strokeh,1));
 		}
 		for(int y=-strokeh;y<strokeh;y+=spacing) {
-			brush_.draw(preview_,drawingboard::Point(offx,offy+y,1));
-			brush_.draw(preview_,drawingboard::Point(offx+strokew,offy+y,1));
+			brush_.draw(preview_,dpcore::Point(offx,offy+y,1));
+			brush_.draw(preview_,dpcore::Point(offx+strokew,offy+y,1));
 		}
 	}
+#endif
 }
 
 /**
  * @param brush brush to set
  */
-void BrushPreview::setBrush(const drawingboard::Brush& brush)
+void BrushPreview::setBrush(const dpcore::Brush& brush)
 {
 	brush_ = brush;
 	updatePreview();

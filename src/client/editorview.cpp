@@ -25,7 +25,7 @@
 
 #include "editorview.h"
 #include "board.h"
-#include "point.h"
+#include "core/point.h"
 
 namespace widgets {
 
@@ -161,7 +161,7 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	} else if(event->button() == Qt::LeftButton && isdragging_==false) {
 		pendown_ = MOUSEDOWN;
 		emit penDown(
-				drawingboard::Point(mapToScene(event->pos()).toPoint(), 1.0)
+				dpcore::Point(mapToScene(event->pos()).toPoint(), 1.0)
 				);
 	}
 }
@@ -184,7 +184,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		const QPoint point = mapToScene(event->pos()).toPoint();
 		if(point != prevpoint_) {
 			if(pendown_)
-				emit penMove(drawingboard::Point(point, 1.0));
+				emit penMove(dpcore::Point(point, 1.0));
 			else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
 				rect.append(QRectF(prevpoint_.x() - outlinesize_,
@@ -238,7 +238,7 @@ bool EditorView::viewportEvent(QEvent *event)
 					pendown_ = NOTDOWN;
 					emit penUp();
 				} else {
-					emit penMove( drawingboard::Point(point, tabev->pressure()) );
+					emit penMove( dpcore::Point(point, tabev->pressure()) );
 					if(enableoutline_ && showoutline_) {
 						// Update previous location. This is needed if brush
 						// diameter has changed.
@@ -266,7 +266,7 @@ bool EditorView::viewportEvent(QEvent *event)
 			const QPoint point = mapToScene(tabev->pos()).toPoint();
 
 			pendown_ = TABLETDOWN;
-			emit penDown( drawingboard::Point(point, tabev->pressure()) );
+			emit penDown( dpcore::Point(point, tabev->pressure()) );
 			prevpoint_ = point;
 		}
 	} else if(event->type() == QEvent::TabletRelease) {

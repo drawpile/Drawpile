@@ -20,8 +20,8 @@
 
 #include <QtGlobal>
 #include <QPen>
-#include "point.h"
-#include "brush.h"
+#include "core/point.h"
+#include "core/brush.h"
 #include "preview.h"
 
 namespace drawingboard {
@@ -43,7 +43,7 @@ StrokePreview::StrokePreview(QGraphicsItem *parent, QGraphicsScene *scene)
  * @param to point at which the line ends
  * @param brush brush to draw the line with
  */
-void Preview::preview(const Point& from, const Point& to, const Brush& brush)
+void Preview::preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush)
 {
 	brush_ = brush;
 	from_ = from;
@@ -69,7 +69,7 @@ void Preview::preview(const Point& from, const Point& to, const Brush& brush)
 /**
  * @param to new endpoint
  */
-void Preview::moveTo(const Point& to)
+void Preview::moveTo(const dpcore::Point& to)
 {
 	to_ = to;
 }
@@ -79,7 +79,7 @@ void StrokePreview::initAppearance(const QPen& pen)
 	setPen(pen);
 }
 
-void StrokePreview::preview(const Point& from, const Point& to, const Brush& brush)
+void StrokePreview::preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush)
 {
 	Preview::preview(from, to, brush);
 
@@ -87,7 +87,7 @@ void StrokePreview::preview(const Point& from, const Point& to, const Brush& bru
 	show();
 }
 
-void StrokePreview::moveTo(const Point& to)
+void StrokePreview::moveTo(const dpcore::Point& to)
 {
 	Preview::moveTo(to);
 	setLine(from().x(), from().y(), to.x(), to.y());
@@ -103,7 +103,7 @@ void RectanglePreview::initAppearance(const QPen& pen)
 	setPen(pen);
 }
 
-void RectanglePreview::preview(const Point& from, const Point& to, const Brush& brush)
+void RectanglePreview::preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush)
 {
 	Preview::preview(from, to, brush);
 
@@ -127,7 +127,7 @@ void RectanglePreview::preview(const Point& from, const Point& to, const Brush& 
 	show();
 }
 
-void RectanglePreview::moveTo(const Point& to)
+void RectanglePreview::moveTo(const dpcore::Point& to)
 {
 	Preview::moveTo(to);
 	qreal x,w;

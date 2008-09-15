@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,45 +17,40 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#ifndef PPOINT_H
+#define PPOINT_H
 
-#ifndef INTERFACES_H
-#define INTERFACES_H
-
-class QColor;
+#include <QPoint>
 
 namespace dpcore {
-	class Brush;
+
+//! An extended point class that includes pressure information.
+class Point : public QPoint {
+	public:
+		Point() : QPoint(), p_(1) {}
+		Point(int x, int y, qreal p)
+			: QPoint(x,y), p_(p)
+		{
+			Q_ASSERT(p>=0 && p<=1);
+		}
+
+		Point(const QPoint& point, qreal p)
+			: QPoint(point), p_(p)
+		{
+			Q_ASSERT(p>=0 && p<=1);
+		}
+
+		qreal pressure() const { return p_; }
+		qreal &rpressure() { return p_; }
+		void setPressure(qreal p) { p_ = p; }
+	private:
+		qreal p_;
+};
+
+static inline const Point operator-(const Point& p1,const QPoint& p2)
+{
+	return Point(p1.x()-p2.x(), p1.y()-p2.y(), p1.pressure());
 }
-
-//! Interface classes
-//
-namespace interface {
-
-//! Interface for brush sources
-class BrushSource {
-	public:
-		virtual ~BrushSource() {}
-		virtual const dpcore::Brush& getBrush() const = 0;
-};
-
-//! Interface for color sources
-class ColorSource {
-	public:
-		virtual ~ColorSource() {}
-
-		//! Get the foreground color
-		virtual QColor foreground() const = 0;
-
-		//! Get the background color
-		virtual QColor background() const = 0;
-
-		//! Set foreground color
-        virtual void setForeground(const QColor &c) = 0;
-
-        //! Set background color
-        virtual void setBackground(const QColor &c) = 0;
-
-};
 
 }
 
