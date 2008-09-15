@@ -73,6 +73,7 @@ void Server::newClient() {
 	QTcpSocket *socket = _server->nextPendingConnection();
 	// Check if we still have room in the server
 	if(_clients.count() > MAXCLIENTS || _liveclients+1 >= _board.maxUsers()) {
+		printDebug("New client connected, but we are already full.");
 		// Server is full
 		socket->close();
 		delete socket;
@@ -81,6 +82,7 @@ void Server::newClient() {
 	if(_uniqueIps) {
 		foreach(Client *c, _clients) {
 			if(c->address() == socket->peerAddress()) {
+				printDebug("New client connected, but there is already a connection from " + socket->peerAddress().toString());
 				socket->close();
 				delete socket;
 				return;

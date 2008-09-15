@@ -27,7 +27,7 @@
 namespace protocol {
 
 MessageQueue::MessageQueue(QIODevice *socket, QObject *parent)
-	: QObject(parent), _socket(socket), _expecting(0)
+	: QObject(parent), _socket(socket), _expecting(0), _closeWhenReady(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(writeData(qint64)));

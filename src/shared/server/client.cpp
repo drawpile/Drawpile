@@ -53,7 +53,7 @@ QString randomSalt() {
 Client::Client(int id, Server *server, QTcpSocket *socket, bool locked)
 	: QObject(server), _id(id), _server(server), _socket(new protocol::MessageQueue(socket, this)), _state(CONNECT), _lock(locked), _syncready(false), _giveraster(false), _address(socket->peerAddress())
 {
-	_server->printDebug("New client connected from " + socket->peerAddress().toString());
+	_server->printDebug("New client connected from " + socket->peerAddress().toString() + " and was given ID " + QString::number(id));
 	connect(_socket, SIGNAL(messageAvailable()), this, SLOT(newData()));
 	connect(_socket, SIGNAL(badData()), this, SLOT(bail()));
 	connect(socket, SIGNAL(disconnected()), this, SLOT(closeSocket()));
