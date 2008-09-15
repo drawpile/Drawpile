@@ -45,7 +45,7 @@ Tile::Tile(const QImage& image, int x, int y)
 	for(int yy=0;yy<h;++yy) {
 		memcpy(data, pixels, w);
 		pixels += image.bytesPerLine();
-		data += w;
+		data += SIZE*4;
 	}
 }
 

@@ -17,7 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QDebug>
+#include <QPainter>
 #include <QImage>
 
 #include "layer.h"
@@ -57,6 +57,8 @@ void Layer::paint(const QRectF& rect, QPainter *painter) {
 	const int right = Tile::roundTo(qMin(int(rect.right()), width_));
 	const int bottom = Tile::roundTo(qMin(int(rect.bottom()), height_));
 
+	painter->save();
+	painter->setClipRect(rect);
 	for(int y=top;y<bottom;y+=Tile::SIZE) {
 		const int yindex = (y/Tile::SIZE);
 		for(int x=left;x<right;x+=Tile::SIZE) {
@@ -65,6 +67,7 @@ void Layer::paint(const QRectF& rect, QPainter *painter) {
 					QPoint(xindex*Tile::SIZE, yindex*Tile::SIZE));
 		}
 	}
+	painter->restore();
 }
 
 /**
@@ -95,8 +98,8 @@ void Layer::dab(const Brush& brush, const Point& point)
 	const int dia = brush.diameter(point.pressure());
 	const int top = point.y() - brush.radius(point.pressure());
 	const int left = point.x() - brush.radius(point.pressure());
-	const int bottom = top + dia;
-	const int right = left + dia;
+	const int bottom = qMin(top + dia, height_);
+	const int right = qMin(left + dia, width_);
 	if(left+dia<=0 || top+dia<=0 || left>=width_ || top>=height_)
 		return;
 
@@ -105,14 +108,16 @@ void Layer::dab(const Brush& brush, const Point& point)
 	QColor color = brush.color(point.pressure());
 
 	// A single dab can (and often does) span multiple tiles.
-	int y = top;
-	int yb = 0; // y in relation to brush origin
+	int y = top<0?0:top;
+	int yb = top<0?-top:0; // y in relation to brush origin
+	const int x0 = left<0?0:left;
+	const int xb0 = left<0?-left:0;
 	while(y<bottom) {
 		const int yindex = y / Tile::SIZE;
 		const int yt = y - yindex * Tile::SIZE;
 		const int hb = yt+dia-yb < Tile::SIZE ? dia-yb : Tile::SIZE-yt;
-		int x = left;
-		int xb = 0; // x in relation to brush origin
+		int x = x0;
+		int xb = xb0; // x in relation to brush origin
 		while(x<right) {
 			const int xindex = x / Tile::SIZE;
 			const int xt = x - xindex * Tile::SIZE;
