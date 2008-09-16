@@ -45,6 +45,8 @@ class Layer {
 		//! Construct an empty layer
 		Layer(const QColor& color, int width, int height);
 
+		~Layer();
+
 		//! Get the layer width in pixels
 		int width() const { return width_; }
 

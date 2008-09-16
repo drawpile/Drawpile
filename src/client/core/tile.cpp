@@ -49,6 +49,10 @@ Tile::Tile(const QImage& image, int x, int y)
 	}
 }
 
+Tile::~Tile() {
+	delete [] data_;
+}
+
 void Tile::copyToImage(QImage& image) const {
 	int w = 4*(image.width()-x_*SIZE<SIZE?image.width()-x_*SIZE:SIZE);
 	int h = image.height()-y_*SIZE<SIZE?image.height()-y_*SIZE:SIZE;

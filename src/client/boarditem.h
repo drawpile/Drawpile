@@ -45,6 +45,8 @@ class BoardItem : public QGraphicsItem
 		//! Construct a layer from a QImage
 		BoardItem(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
 
+		~BoardItem();
+
 		//! Set layer contents
 		void setImage(const QImage& image);
 

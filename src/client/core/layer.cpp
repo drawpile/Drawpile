@@ -43,6 +43,12 @@ Layer::Layer(const QColor& color, int width, int height) {
 	height_ = height;
 }
 
+Layer::~Layer() {
+	for(int i=0;i<xtiles_*ytiles_;++i)
+		delete tiles_[i];
+	delete [] tiles_;
+}
+
 QImage Layer::toImage() const {
 	QImage image(width_, height_, QImage::Format_RGB32);
 	for(int i=0;i<xtiles_*ytiles_;++i)
@@ -104,7 +110,7 @@ void Layer::dab(const Brush& brush, const Point& point)
 		return;
 
 	// Render the brush
-	uchar *values = brush.render(point.pressure());
+	const uchar *values = brush.render(point.pressure());
 	QColor color = brush.color(point.pressure());
 
 	// A single dab can (and often does) span multiple tiles.

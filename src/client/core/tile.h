@@ -48,6 +48,8 @@ class Tile {
 		//! Construct a tile from an image
 		Tile(const QImage& image, int x, int y);
 
+		~Tile();
+
 		//! Get tile X index
 		int x() const { return x_; }
 

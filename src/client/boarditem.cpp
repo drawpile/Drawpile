@@ -35,7 +35,7 @@ namespace drawingboard {
  * @param scene the picture to which this layer belongs to
  */
 BoardItem::BoardItem(QGraphicsItem *parent, QGraphicsScene *scene)
-	: QGraphicsItem(parent,scene)
+	: QGraphicsItem(parent,scene), image_(0)
 {
 }
 
@@ -48,6 +48,10 @@ BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent, QGraphicsScene 
 	: QGraphicsItem(parent,scene), image_(0)
 {
 	setImage(image);
+}
+
+BoardItem::~BoardItem() {
+	delete image_;
 }
 
 /**

@@ -20,13 +20,39 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
-class QImage;
-#include <QVector>
+#include <QSharedDataPointer>
 #include <QColor>
 
 namespace dpcore {
 
 class Point;
+
+//! Brush cache
+class BrushCache : public QSharedData
+{
+	public:
+		//! Number of pressure levels supported.
+		/**
+		 * The limiting factor is the number of bits in the protocol.
+		 * Adjust accordingly here. This setting affects brush caching.
+		 */
+		static const int PRESSURE_LEVELS = 256;
+
+		BrushCache() : data_(0), len_(0), pressure_(0) { }
+		BrushCache(uchar *data, int len, qreal pressure);
+		BrushCache(const BrushCache& other);
+		~BrushCache();
+
+		bool isFresh(qreal pressure, bool sensitive) const;
+		const uchar *data() const { return data_; }
+		void invalidate() { pressure_ = -1; }
+		uchar *newCache(int len, qreal pressure);
+
+	private:
+		uchar *data_;
+		int len_;
+		int pressure_;
+};
 
 //! A brush for drawing onto a layer
 /**
@@ -78,10 +104,7 @@ class Brush
 		int spacing() const;
 
 		//! Render the brush
-		uchar *render(qreal pressure) const;
-
-		//! Copy operator
-		Brush& operator=(const Brush& brush);
+		const uchar *render(qreal pressure) const;
 
 		//! Equality test
 		bool operator==(const Brush& brush) const;
@@ -103,8 +126,7 @@ class Brush
 		int spacing_;
 		bool sensitive_;
 
-		mutable QVector<ushort> cache_;
-		mutable qreal cachepressure_;
+		mutable QSharedDataPointer<BrushCache> cache_;
 };
 
 }
