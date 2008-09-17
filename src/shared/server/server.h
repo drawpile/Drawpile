@@ -102,6 +102,12 @@ class Server : public QObject {
 		Board& board() { return _board; }
 		const Board& board() const { return _board; }
 
+		//! Get the accepted client version
+		int clientVersion() const { return _clientVer; }
+
+		//! Set the accepted client version
+		void setClientVersion(int ver) { _clientVer = ver; }
+
 		//! Print a message to the error stream
 		void printError(const QString& message);
 
@@ -145,6 +151,8 @@ class Server : public QObject {
 
 		State _state;
 		Board _board;
+
+		int _clientVer;
 };
 
 }

@@ -188,7 +188,12 @@ void Client::handleLogin(const protocol::LoginId *pkt) {
 		bail("login not applicable to this state");
 	} else {
 		if(pkt->isCompatible()) {
-			// TODO check client compat.
+			if(_server->clientVersion()<0)
+				_server->setClientVersion(pkt->softwareVersion());
+			else if(pkt->softwareVersion() != _server->clientVersion()) {
+				kick("Client version mismatch");
+				return;
+			}
 			if(_server->password().isEmpty()) {
 				_state = LOGIN;
 				_socket->send(Message("WHORU"));

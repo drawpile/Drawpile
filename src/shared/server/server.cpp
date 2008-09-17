@@ -28,7 +28,9 @@
 namespace server {
 
 Server::Server(QObject *parent) : QObject(parent), _server(0), _lastclient(1),
-	_uniqueIps(false), _maxnamelen(16), _debug(0), _state(NORMAL) {
+	_uniqueIps(false), _maxnamelen(16), _debug(0), _state(NORMAL),
+	_clientVer(-1)
+{
 	_errors = new QTextStream(stderr);
 }
 
@@ -117,6 +119,7 @@ void Server::killClient(int id) {
 	// If the last client leaves, the board state is lost
 	if(_liveclients==0) {
 		_board.clear();
+		_clientVer = -1;
 		clearClients();
 		emit lastClientLeft();
 	} else {
