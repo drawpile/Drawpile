@@ -38,9 +38,16 @@ Layer::Layer(const QImage& image) {
 			tiles_[y*xtiles_+x] = new Tile(image, x, y);
 }
 
-Layer::Layer(const QColor& color, int width, int height) {
-	width_ = width;
-	height_ = height;
+Layer::Layer(const QColor& color, const QSize& size) {
+	width_ = size.width();
+	height_ = size.height();
+	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);
+	ytiles_ = height_ / Tile::SIZE + ((height_ % Tile::SIZE)>0);
+	tiles_ = new Tile*[xtiles_ * ytiles_];
+	for(int y=0;y<ytiles_;++y)
+		for(int x=0;x<xtiles_;++x)
+			tiles_[y*xtiles_+x] = new Tile(color, x, y);
+
 }
 
 Layer::~Layer() {
@@ -110,7 +117,9 @@ void Layer::dab(const Brush& brush, const Point& point)
 		return;
 
 	// Render the brush
-	const uchar *values = brush.render(point.pressure());
+	RenderedBrush rb = brush.render(point.pressure());
+	const int realdia = rb.diameter();
+	const uchar *values = rb.data();
 	QColor color = brush.color(point.pressure());
 
 	// A single dab can (and often does) span multiple tiles.
@@ -121,20 +130,20 @@ void Layer::dab(const Brush& brush, const Point& point)
 	while(y<bottom) {
 		const int yindex = y / Tile::SIZE;
 		const int yt = y - yindex * Tile::SIZE;
-		const int hb = yt+dia-yb < Tile::SIZE ? dia-yb : Tile::SIZE-yt;
+		const int hb = yt+realdia-yb < Tile::SIZE ? realdia-yb : Tile::SIZE-yt;
 		int x = x0;
 		int xb = xb0; // x in relation to brush origin
 		while(x<right) {
 			const int xindex = x / Tile::SIZE;
 			const int xt = x - xindex * Tile::SIZE;
-			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
+			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
 
 			tiles_[xtiles_ * yindex + xindex]->composite(
-					values + yb * dia + xb,
+					values + yb * realdia + xb,
 					color,
 					xt, yt,
 					wb, hb,
-					dia-wb
+					realdia-wb
 					);
 
 			x = (xindex+1) * Tile::SIZE;
@@ -226,6 +235,12 @@ void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int
 			}
 		}
 	}
+}
+
+void Layer::fillChecker(const QColor& dark, const QColor& light)
+{
+	for(int i=0;i<xtiles_*ytiles_;++i)
+		tiles_[i]->fillChecker(dark, light);
 }
 
 }

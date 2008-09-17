@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include "core/point.h"
+#include "core/layer.h"
 #include "brushpreview.h"
 
 #ifndef DESIGNER_PLUGIN
@@ -30,13 +31,12 @@ namespace widgets {
 #endif
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
-	: QFrame(parent,f), bg_(32,32), sizepressure_(false),
+	: QFrame(parent,f), preview_(0), bg_(32,32), sizepressure_(false),
 	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
 	shape_(Stroke)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
 	setMinimumSize(32,32);
-	updateBackground();
 }
 
 void BrushPreview::setPreviewShape(PreviewShape shape)
@@ -73,7 +73,6 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 
 void BrushPreview::changeEvent(QEvent *event)
 {
-	updateBackground();
 	updatePreview();
 	update();
 }
@@ -81,75 +80,67 @@ void BrushPreview::changeEvent(QEvent *event)
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	painter.drawImage(event->rect(), preview_, event->rect());
-}
-
-void BrushPreview::updateBackground()
-{
-	QPainter painter(&bg_);
-	bg_.fill(palette().light().color());
-	QRectF rect(0,0,bg_.width()/2, bg_.height()/2);
-	painter.fillRect(rect,palette().mid());
-	rect.moveTo(rect.width(),rect.height());
-	painter.fillRect(rect,palette().mid());
+	preview_->paint(event->rect(), &painter);
 }
 
 void BrushPreview::updatePreview()
 {
-	if(preview_.size() != contentsRect().size())
-		preview_ = QImage(contentsRect().size(), QImage::Format_RGB32);
-
-	// Paint background
-	{
-		QPainter painter(&preview_);
-		painter.fillRect(QRect(0,0,preview_.width(),preview_.height()),
-				bg_);
+	if(preview_==0) {
+		preview_ = new dpcore::Layer(QColor(0,0,0), contentsRect().size());
+	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
+		// TODO resize more nicely
+		delete preview_;
+		preview_ = new dpcore::Layer(QColor(0,0,0), contentsRect().size());
 	}
-	// TODO
-#if 0
 
-	const int strokew = width() - width()/4;
-	const int strokeh = height() / 4;
-	const int offx = width()/8;
-	const int offy = height()/2;
-	int spacing = brush_.spacing() * brush_.radius(1) / 100;
+	preview_->fillChecker(palette().light().color(), palette().mid().color());
+
+	const int strokew = preview_->width() - preview_->width()/4;
+	const int strokeh = preview_->height() / 4;
+	const int offx = preview_->width()/8;
+	const int offy = preview_->height()/2;
+	int distance = 0;
 	if(shape_ == Stroke) {
 		int lastx=0,lasty=0;
-		int distance = 0;
+		qreal lastp = 0;
 		const qreal dphase = (2*M_PI)/qreal(strokew);
 		qreal phase = 0;
 		for(int x=0;x<strokew;++x, phase += dphase) {
+
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(sin(phase) * strokeh);
-			if(distance >= spacing) {
-				brush_.draw(preview_,dpcore::Point(offx+x,offy+y,pressure));
-				distance=0;
-			} else { 
-				distance += qRound(hypot(lastx-x,lasty-y));
-			}
+			preview_->drawLine(brush_,
+					dpcore::Point(offx+lastx,offy+lasty, lastp),
+					dpcore::Point(offx+x, offy+y, pressure), &distance);
 			lastx = x;
 			lasty = y;
+			lastp = pressure;
 		}
 	} else if(shape_ == Line) {
-		if(spacing==0)
-			spacing = 1;
-		for(int x=0;x<strokew;x+=spacing) {
-			brush_.draw(preview_,dpcore::Point(offx+x,offy,1));
-		}
+		preview_->drawLine(brush_,
+				dpcore::Point(offx, offy, 1),
+				dpcore::Point(offx+strokew, offy, 1),
+				&distance
+				);
 	} else {
-		if(spacing==0)
-			spacing = 1;
-		for(int x=0;x<strokew;x+=spacing) {
-			brush_.draw(preview_,dpcore::Point(offx+x,offy-strokeh,1));
-			brush_.draw(preview_,dpcore::Point(offx+x,offy+strokeh,1));
-		}
-		for(int y=-strokeh;y<strokeh;y+=spacing) {
-			brush_.draw(preview_,dpcore::Point(offx,offy+y,1));
-			brush_.draw(preview_,dpcore::Point(offx+strokew,offy+y,1));
-		}
+		preview_->drawLine(brush_,
+				dpcore::Point(offx, offy-strokeh, 1),
+				dpcore::Point(offx+strokew, offy-strokeh, 1),
+				&distance);
+		preview_->drawLine(brush_,
+				dpcore::Point(offx+strokew, offy-strokeh, 1),
+				dpcore::Point(offx+strokew, offy+strokeh, 1),
+				&distance);
+		preview_->drawLine(brush_,
+				dpcore::Point(offx+strokew, offy+strokeh, 1),
+				dpcore::Point(offx, offy+strokeh, 1),
+				&distance);
+		preview_->drawLine(brush_,
+				dpcore::Point(offx, offy+strokeh, 1),
+				dpcore::Point(offx, offy-strokeh, 1),
+				&distance);
 	}
-#endif
 }
 
 /**

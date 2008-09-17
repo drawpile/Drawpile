@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@
 #include <QFrame>
 
 #include "core/brush.h"
+
+namespace dpcore {
+	class Layer;
+}
 
 #ifndef DESIGNER_PLUGIN
 //! Custom widgets
@@ -101,7 +105,8 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void updateBackground();
 
 		dpcore::Brush brush_;
-		QImage preview_;
+		//QImage preview_;
+		dpcore::Layer *preview_;
 		QPixmap bg_;
 		bool sizepressure_;
 		bool opacitypressure_;

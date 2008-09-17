@@ -68,6 +68,9 @@ class Tile {
 		//! Paint this tile
 		void paint(QPainter *painter, const QPoint& target) const;
 
+		//! Fill this tile with a checker pattern
+		void fillChecker(const QColor& dark, const QColor& light);
+
 	private:
 		int x_, y_;
 		quint32 *data_;

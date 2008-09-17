@@ -28,7 +28,12 @@
 namespace dpcore {
 
 Tile::Tile(const QColor& color, int x, int y)
+	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
 {
+	quint32 *ptr = data_;
+	quint32 col = color.rgba();
+	for(int i=0;i<SIZE*SIZE;++i)
+		*(ptr++) = col;
 }
 
 /**
@@ -51,6 +56,22 @@ Tile::Tile(const QImage& image, int x, int y)
 
 Tile::~Tile() {
 	delete [] data_;
+}
+
+void Tile::fillChecker(const QColor& dark, const QColor& light) {
+	const int HALF = SIZE/2;
+	quint32 d = dark.rgba();
+	quint32 l = light.rgba();
+	quint32 *q1 = data_, *q2 = data_+HALF, *q3 = data_ + SIZE*HALF, *q4 = data_ + SIZE*(HALF)+HALF;
+	for(int y=0;y<HALF;++y) {
+		for(int x=0;x<HALF;++x) {
+			*(q1++) = d;
+			*(q2++) = l;
+			*(q3++) = l;
+			*(q4++) = d;
+		}
+		q1 += HALF; q2 += HALF; q3 += HALF; q4 += HALF;
+	}
 }
 
 void Tile::copyToImage(QImage& image) const {

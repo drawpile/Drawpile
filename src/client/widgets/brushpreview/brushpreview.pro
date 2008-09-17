@@ -6,5 +6,5 @@ INSTALLS += target
 
 # Input
 RESOURCES = resources.qrc
-HEADERS += ../../brushpreview.h ../../brush.h plugin.h
-SOURCES += ../../brushpreview.cpp ../../brush.cpp plugin.cpp
+HEADERS += ../../brushpreview.h plugin.h
+SOURCES += ../../brushpreview.cpp ../../core/brush.cpp ../../core/layer.cpp ../../core/tile.cpp plugin.cpp

@@ -27,8 +27,23 @@ namespace dpcore {
 
 class Point;
 
-//! Brush cache
-class BrushCache : public QSharedData
+struct RenderedBrushData : public QSharedData
+{
+	RenderedBrushData() : data(0), dia(0), pressure(-1) { }
+	RenderedBrushData(const RenderedBrushData& other);
+	~RenderedBrushData() { delete [] data; }
+
+	uchar *data;
+	int dia;
+	int pressure;
+};
+
+//! A rendered brush
+/**
+ * This is an implicitly shared class that holds the alpha map of the
+ * brush shape.
+ */
+class RenderedBrush
 {
 	public:
 		//! Number of pressure levels supported.
@@ -38,20 +53,26 @@ class BrushCache : public QSharedData
 		 */
 		static const int PRESSURE_LEVELS = 256;
 
-		BrushCache() : data_(0), len_(0), pressure_(0) { }
-		BrushCache(uchar *data, int len, qreal pressure);
-		BrushCache(const BrushCache& other);
-		~BrushCache();
+		//! Create an empty brush
+		RenderedBrush() : d(0) { }
 
+		//! Create a new rendered brush
+		RenderedBrush(int dia, qreal pressure);
+
+		//! Is this brush still valid
 		bool isFresh(qreal pressure, bool sensitive) const;
-		const uchar *data() const { return data_; }
-		void invalidate() { pressure_ = -1; }
-		uchar *newCache(int len, qreal pressure);
+
+		//! Get write access to raw data
+		uchar *data() { return d->data; }
+
+		//! Get read only access to raw data
+		const uchar *data() const { return d->data; }
+
+		//! Get the diameter of the rendered brush.
+		int diameter() const { return d->dia; }
 
 	private:
-		uchar *data_;
-		int len_;
-		int pressure_;
+		QSharedDataPointer<RenderedBrushData> d;
 };
 
 //! A brush for drawing onto a layer
@@ -104,7 +125,7 @@ class Brush
 		int spacing() const;
 
 		//! Render the brush
-		const uchar *render(qreal pressure) const;
+		RenderedBrush render(qreal pressure) const;
 
 		//! Equality test
 		bool operator==(const Brush& brush) const;
@@ -113,9 +134,6 @@ class Brush
 		bool operator!=(const Brush& brush) const;
 
 	private:
-		//! Update the brush cache
-		void updateCache() const;
-
 		//! Check if the brush is sensitive to pressure
 		void checkSensitivity();
 
@@ -126,7 +144,7 @@ class Brush
 		int spacing_;
 		bool sensitive_;
 
-		mutable QSharedDataPointer<BrushCache> cache_;
+		mutable RenderedBrush cache_;
 };
 
 }

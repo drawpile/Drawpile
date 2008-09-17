@@ -43,7 +43,7 @@ class Layer {
 		Layer(const QImage& image);
 
 		//! Construct an empty layer
-		Layer(const QColor& color, int width, int height);
+		Layer(const QColor& color, const QSize& size);
 
 		~Layer();
 
@@ -56,6 +56,9 @@ class Layer {
 		//! Get the layer as an image
 		QImage toImage() const;
 
+		//! Resize this layer
+		//void resize(const QSize& newsize);
+
 		//! Paint an area of this layer
 		void paint(const QRectF& rect, QPainter *painter); 
 
@@ -67,6 +70,9 @@ class Layer {
 
 		//! Draw a line using the brush
 		void drawLine(const Brush& brush, const Point& from, const Point& to, int *distance);
+
+		//! Fill the layer with a checker pattern
+		void fillChecker(const QColor& dark, const QColor& light);
 
 	private:
 		int width_;

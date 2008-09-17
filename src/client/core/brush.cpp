@@ -52,7 +52,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color), spacing_(spacing),
-	sensitive_(false), cache_(new BrushCache())
+	sensitive_(false)
 {
 	Q_ASSERT(radius>=0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
@@ -70,7 +70,7 @@ void Brush::setRadius(int radius)
 	Q_ASSERT(radius>=0);
 	radius1_ = radius;
 	checkSensitivity();
-	cache_->invalidate();
+	cache_ = RenderedBrush();
 }
 
 /**
@@ -83,7 +83,7 @@ void Brush::setHardness(qreal hardness)
 	Q_ASSERT(hardness>=0 && hardness<=1);
 	hardness1_ = hardness;
 	checkSensitivity();
-	cache_->invalidate();
+	cache_ = RenderedBrush();
 }
 
 /**
@@ -96,7 +96,7 @@ void Brush::setOpacity(qreal opacity)
 	Q_ASSERT(opacity>=0 && opacity<=1);
 	opacity1_ = opacity;
 	checkSensitivity();
-	cache_->invalidate();
+	cache_ = RenderedBrush();
 }
 
 /**
@@ -119,7 +119,7 @@ void Brush::setRadius2(int radius)
 	Q_ASSERT(radius>=0);
 	radius2_  = radius;
 	checkSensitivity();
-	cache_->invalidate();
+	cache_ = RenderedBrush();
 }
 
 /**
@@ -132,7 +132,7 @@ void Brush::setHardness2(qreal hardness)
 	Q_ASSERT(hardness>=0 && hardness<=1);
 	hardness2_ = hardness;
 	checkSensitivity();
-	cache_->invalidate();
+	cache_ = RenderedBrush();
 }
 
 /**
@@ -145,7 +145,7 @@ void Brush::setOpacity2(qreal opacity)
 	Q_ASSERT(opacity>=0 && opacity<=1);
 	opacity2_ = opacity;
 	checkSensitivity();
-	cache_->invalidate();
+	cache_ = RenderedBrush();
 }
 
 /**
@@ -267,39 +267,42 @@ int Brush::spacing() const
  * @param pressure brush pressue [0..1]
  * @return diameter^2 pixel values
  */
-const uchar *Brush::render(qreal pressure) const {
+RenderedBrush Brush::render(qreal pressure) const {
 	const int dia = diameter(pressure);
 	const qreal o = opacity(pressure);
 
-	// Return cache if we have one
-	if(cache_.constData()!=0 && cache_->isFresh(pressure, sensitive_))
-		return cache_->data();
+	if(!cache_.isFresh(pressure, sensitive_)) {
+		// Re-render cache if not up to date
+		const qreal rad = dia/2.0;
 
-	const qreal rad = dia/2.0;
+		// Compute a lookup table
+		static const int OVERSAMPLE=2;
+		uchar lookup[int(rad+0.5)*OVERSAMPLE];
+		const int grad = int((1 - hardness(pressure)) * rad * OVERSAMPLE);
+		int i=0;
+		for(; i < grad ; ++i)
+			lookup[i] = int(255 * i/qreal(grad) * o);
+		for(; i < rad*OVERSAMPLE; ++i)
+			lookup[i] = int(255 * o);
 
-	// Compute a lookup table
-	static const int OVERSAMPLE=2;
-	uchar lookup[int(rad+0.5)*OVERSAMPLE];
-	const int grad = int((1 - hardness(pressure)) * rad * OVERSAMPLE);
-	int i=0;
-	for(; i < grad ; ++i)
-		lookup[i] = int(255 * i/qreal(grad) * o);
-	for(; i < rad*OVERSAMPLE; ++i)
-		lookup[i] = int(255 * o);
-
-	// Render the brush
-	uchar *values = cache_->newCache(dia*dia, pressure);
-	uchar *ptr = values;
-	for(qreal y=-rad;y<rad;++y) {
-		const qreal yy = y*y;
-		for(qreal x=-rad;x<rad;++x) {
-			const qreal dist = int(sqrt(x*x + yy));
-			*(ptr++) = (dist<rad?lookup[int(rad*OVERSAMPLE-dist*OVERSAMPLE)]:0);
+		// Render the brush
+		cache_ = RenderedBrush(dia, pressure);
+		uchar *ptr = cache_.data();
+		for(qreal y=-rad;y<rad;++y) {
+			const qreal yy = y*y;
+			for(qreal x=-rad;x<rad;++x) {
+				const qreal dist = int(sqrt(x*x + yy));
+				*(ptr++) = (dist<rad?lookup[int(rad*OVERSAMPLE-dist*OVERSAMPLE)]:0);
+			}
 		}
 	}
-	return values;
+
+	return cache_;
 }
 
+/**
+ * Any cached data is ignored in the equality test.
+ */
 bool Brush::operator==(const Brush& brush) const
 {
 	return radius1_ == brush.radius1_ && radius2_ == brush.radius2_ &&
@@ -317,40 +320,44 @@ bool Brush::operator!=(const Brush& brush) const
 	return !(*this == brush);
 }
 
-BrushCache::BrushCache(uchar *data, int len, qreal pressure)
-	: data_(data), len_(len), pressure_(int(PRESSURE_LEVELS*pressure)) { }
-
-BrushCache::BrushCache(const BrushCache& other)
-	: QSharedData(other), len_(other.len_), pressure_(other.pressure_)
+/**
+ * Copy the data from an existing brush. A brush data is guaranteed
+ * to contain a pixel buffer.
+ */
+RenderedBrushData::RenderedBrushData(const RenderedBrushData& other)
+	: dia(other.dia), pressure(other.pressure)
 {
-	if(len_<=0)
-		data_ = 0;
-	else {
-		data_ = new uchar[len_];
-		memcpy(data_, other.data_, len_);
-	}
+	data = new uchar[dia*dia];
+	memcpy(data, other.data, dia*dia);
 }
 
-BrushCache::~BrushCache()
+/**
+ * The newly created brush is uninitialized, so remember to actually fill
+ * it with something!
+ * The pressure value is used only for isFresh.
+ * @param dia diameter of the new brush
+ * @param pressure the pressure value at which the brush was rendered
+ */
+RenderedBrush::RenderedBrush(int dia, qreal pressure)
+	: d(new RenderedBrushData)
 {
-	delete [] data_;
+	Q_ASSERT(dia>0);
+	d->data = new uchar[dia*dia];
+	d->dia = dia;
+	d->pressure = int(pressure*PRESSURE_LEVELS);
 }
 
-bool BrushCache::isFresh(qreal pressure, bool sensitive) const {
+/**
+ * This is used when determining if a cached brush is still usable.
+ * A brush is considred fresh if:
+ * 1. it contains data
+ * 2. it's pressure value is the same as @parma pressure iff sensitive is true.
+ */
+bool RenderedBrush::isFresh(qreal pressure, bool sensitive) const {
 	if(sensitive)
-		return len_>0 && int(pressure*PRESSURE_LEVELS)==pressure_;
+		return d.constData() && int(pressure*PRESSURE_LEVELS)==d->pressure;
 	else
-		return len_>0;
-}
-
-uchar *BrushCache::newCache(int len, qreal pressure) {
-	if(len > len_) {
-		pressure_ = int(pressure * PRESSURE_LEVELS);
-		len_ = len;
-		delete data_;
-		data_ = new uchar[len];
-	}
-	return data_;
+		return d.constData() && d->pressure>=0;
 }
 
 }
