@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2007 M.K.A.
+   Copyright (C) 2008 Calle Laakkonen, 2007 M.K.A.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,13 +19,13 @@
 #ifndef Navigator_H
 #define Navigator_H
 
-#include "../config.h"
-
 #include <QDockWidget> // inherited by Navigator
 #include <QGraphicsView> // inherited by NavigatorView
 #include <QRectF>
 
-class QPushButton;
+class Ui_NaviBox;
+
+namespace widgets {
 
 //! Navigator graphics view
 class NavigatorView
@@ -33,17 +33,13 @@ class NavigatorView
 {
 	Q_OBJECT
 public:
-	//! ctor
-	NavigatorView(QGraphicsScene *scene, QWidget *parent);
+	NavigatorView(QWidget *parent);
 	
 signals:
 	//! Signal rectangle movement
-	void focusMoved(int x, int y);
+	void focusMoved(const QPoint& to);
 	
 public slots:
-	//! Set rectangle to point
-	void moveFocus(const QPoint& pt);
-	
 	//! Set rectangle
 	void setFocus(const QRectF& rect);
 	
@@ -61,25 +57,11 @@ protected:
 	//! Disable dragging
 	void mouseReleaseEvent(QMouseEvent *event);
 	
-	QRectF rect_;
+private:
+	QRectF focusRect_;
 	
 	//! Is dragging?
 	bool dragging_;
-};
-
-//! Minimal layout for Navigator dock
-class NavigatorLayout
-	: public QWidget
-{
-	Q_OBJECT
-public:
-	NavigatorLayout(QWidget *parent, NavigatorView *view);
-	
-	QPushButton* getZoomIn();
-	QPushButton* getZoomOut();
-protected:
-	QPushButton *m_zoomInButton;
-	QPushButton *m_zoomOutButton;
 };
 
 //! Navigator dock widget
@@ -87,28 +69,33 @@ class Navigator
 	: public QDockWidget
 {
 	Q_OBJECT
-protected:
-	//! Viewport
-	NavigatorView *view_;
-	QGraphicsScene *scene_;
 public:
-	//! Ctor
 	Navigator(QWidget *parent, QGraphicsScene *scene);
-	//! Dtor
 	~Navigator();
 	
-	NavigatorView* getView();
-	NavigatorLayout* getLayout();
-
-public slots:
 	//! Set associated graphics scene
 	void setScene(QGraphicsScene *scene);
+
+public slots:
+	//! Move the view focus rectangle
+	void setViewFocus(const QRectF& rect);
+
+signals:
+	//! A zoom in button was pressed
+	void zoomIn();
+	//! A zoom out button was pressed
+	void zoomOut();
+	//! The view focus rectangle was moved
+	void focusMoved(const QPoint& to);
 	
 protected:
 	//! React to widget resizing
 	void resizeEvent(QResizeEvent *event);
 	
-	NavigatorLayout *layout_;
+private:
+	Ui_NaviBox *ui_;
 };
+
+}
 
 #endif // Navigator_H

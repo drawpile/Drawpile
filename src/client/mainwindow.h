@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ namespace widgets {
 	class ChatBox;
 	class PaletteBox;
 	class ColorBox;
+	class Navigator;
 }
 namespace dialogs {
 	class ColorDialog;
@@ -58,7 +59,6 @@ namespace network {
 }
 
 class Controller;
-class Navigator;
 
 //! The application main window
 class MainWindow : public QMainWindow {
@@ -220,8 +220,6 @@ class MainWindow : public QMainWindow {
 		//! Create navigator dock
 		void createNavigator(QMenu *menu);
 
-		Navigator *navigator_;
-
 		QTemporaryFile *autosaveTmp_;
 		QTimer *autosaveTimer_;
 		int autosaveTimeout_;
@@ -238,6 +236,7 @@ class MainWindow : public QMainWindow {
 		widgets::EditorView *view_;
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
+		widgets::Navigator *navigator_;
 		QLabel *lockstatus_;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;

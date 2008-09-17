@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -303,9 +303,9 @@ void EditorView::startDrag(int x,int y)
 	isdragging_ = true;
 }
 
-void EditorView::scrollTo(int x, int y)
+void EditorView::scrollTo(const QPoint& point)
 {
-	centerOn(x,y);
+	centerOn(point);
 	// notify of scene change
 	sceneChanged();
 }

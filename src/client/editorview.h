@@ -78,7 +78,7 @@ class EditorView : public QGraphicsView
 		void setCrosshair(bool enable);
 		
 		//! Scroll view to location
-		void scrollTo(int x, int y);
+		void scrollTo(const QPoint& point);
 		
 		//! Proxy for announcing scene changes
 		void sceneChanged();
