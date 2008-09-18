@@ -22,15 +22,30 @@
 
 namespace dpcore {
 
+// This is borrowed from Pigment of koffice libs:
+/// Blending of two scale values as described by the alpha scale value
+/// A scale value is interpreted as 255 equaling 1.0 (such as seen in rgb8 triplets)
+/// Basically we do: a*alpha + b*(1-alpha)
+inline uint UINT8_BLEND(uint a, uint b, uint alpha)
+{
+    // However the formula is refactored to (a-b)*alpha + b  since that saves a multiplication
+    // Signed arithmetic is needed since a-b might be negative
+    // +b above becomes + (b<<8) - b  because we multiply it with 255 to fit the first part
+    //  That way we can do a normal rounding
+    uint c = uint(((int(a) - int(b)) * int(alpha)) + (b<<8) - b) + 0x80u;
+
+    return ((c >> 8) + c) >> 8;
+}
+
 //! Regular alpha blender
 /**
  * base = base * (1-opacity) + blend * opacity
  */
 inline void blend_normal(uchar *base, const uchar *blend, int opacity) {
-	base[0] = (base[0] * (255-opacity) / 255 + blend[0] * opacity / 255);
-	base[1] = (base[1] * (255-opacity) / 255 + blend[1] * opacity / 255);
-	base[2] = (base[2] * (255-opacity) / 255 + blend[2] * opacity / 255);
-	//base[3] = (base[3] * (255-opacity) / 255 + blend[3] * opacity / 255);
+	base[0] = UINT8_BLEND(blend[0], base[0], opacity);
+	base[1] = UINT8_BLEND(blend[1], base[1], opacity);
+	base[2] = UINT8_BLEND(blend[2], base[2], opacity);
+	// TODO: blend alpha too once we need it
 }
 
 }
