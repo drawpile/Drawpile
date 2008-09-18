@@ -93,9 +93,9 @@ void BoardEditor::startPreview(tools::Type tool, const dpcore::Point& point, con
 	Q_ASSERT(board_->toolpreview_ == 0);
 	Q_ASSERT(tool == tools::LINE || tool == tools::RECTANGLE);
 	if(tool == tools::LINE)
-		board_->toolpreview_ = new StrokePreview(user_->layer(), board_);
+		board_->toolpreview_ = new StrokePreview(user_->layer());
 	else
-		board_->toolpreview_ = new RectanglePreview(user_->layer(), board_);
+		board_->toolpreview_ = new RectanglePreview(user_->layer());
 	board_->toolpreview_->preview(point,point, brush);
 }
 

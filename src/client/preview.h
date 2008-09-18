@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ namespace drawingboard {
  */
 class Preview {
 	public:
-		virtual ~Preview() = 0;
+		virtual ~Preview() { };
 
 		//! Do a preview
 		virtual void preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush);
@@ -72,7 +72,7 @@ class Preview {
  */
 class StrokePreview : public Preview, public QGraphicsLineItem {
 	public:
-		StrokePreview(QGraphicsItem *parent, QGraphicsScene *scene);
+		StrokePreview(QGraphicsItem *parent);
 
 		void preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush);
 		void moveTo(const dpcore::Point& to);
@@ -88,7 +88,7 @@ class StrokePreview : public Preview, public QGraphicsLineItem {
  */
 class RectanglePreview : public Preview, public QGraphicsRectItem {
 	public:
-		RectanglePreview(QGraphicsItem *parent, QGraphicsScene *scene);
+		RectanglePreview(QGraphicsItem *parent);
 
 		void preview(const dpcore::Point& from, const dpcore::Point& to, const dpcore::Brush& brush);
 		void moveTo(const dpcore::Point& to);

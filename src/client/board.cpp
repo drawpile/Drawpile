@@ -94,7 +94,16 @@ void Board::addUser(int id)
 {
 	if(users_.contains(id)) {
 		// This is not necessarily an error condition. The server will not
-		// ghost users that haven't drawn anything.
+		// ghost users that haven't drawn anything. In those cases, it is
+		// safe to delete the user as it's not being used anywhere.
+
+		// Depending on the server, we might get info about ourselves twice.
+		// First to tell us about ourselves (the user ID), and a second
+		// time when joining a session. We have already given out a pointer
+		// to the local user, so don't delete it.
+		if(id==localuser_)
+			return;
+
 		qDebug() << "Reusing board user" << id;
 		delete users_.take(id);
 	}
@@ -161,6 +170,7 @@ BoardEditor *Board::getEditor(network::SessionState *session)
 {
 	Q_ASSERT(localuser_ != -1);
 	User *user = users_.value(localuser_);
+	Q_ASSERT(user);
 	if(session)
 		return new RemoteBoardEditor(this, user, session, brushsrc_, colorsrc_);
 	else
@@ -179,10 +189,10 @@ void Board::addPreview(const dpcore::Point& point)
 	User *user = users_.value(localuser_);
 
 	Preview *pre;
-	//if(previewcache_.isEmpty())
-		pre = new StrokePreview(user->layer(), this);
-	//else
-		//pre = previewcache_.dequeue();
+	if(previewcache_.isEmpty()) {
+		pre = new StrokePreview(user->layer());
+	} else
+		pre = previewcache_.dequeue();
 	if(previewstarted_) {
 		pre->preview(lastpreview_, point, brushsrc_->getBrush());
 	} else {
@@ -219,7 +229,6 @@ void Board::commitPreviews()
 
 	while(previewcache_.isEmpty()==false)
 		delete previewcache_.dequeue();
-	previewcache_.clear();
 }
 
 /**
@@ -229,9 +238,8 @@ void Board::flushPreviews()
 {
 	while(previews_.isEmpty()==false) {
 		Preview *p = previews_.dequeue();
-		//p->hidePreview();
-		//previewcache_.enqueue(p);
-		delete p;
+		p->hidePreview();
+		previewcache_.enqueue(p);
 	}
 }
 
@@ -258,9 +266,8 @@ void Board::userStroke(int user, const dpcore::Point& point)
 	if(user == localuser_ && previews_.isEmpty() == false) {
 		Q_ASSERT(!previews_.isEmpty());
 		Preview *pre = previews_.dequeue();
-		delete pre;
-		//pre->hidePreview();
-		//previewcache_.enqueue(pre);
+		pre->hidePreview();
+		previewcache_.enqueue(pre);
 	}
 }
 

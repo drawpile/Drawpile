@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 */
 
 #include <QtGlobal>
+#include <QGraphicsScene>
 #include <QPen>
 #include "core/point.h"
 #include "core/brush.h"
@@ -26,15 +27,13 @@
 
 namespace drawingboard {
 
-Preview::~Preview() { /* abstract */ }
-
 //! Construct a stroke preview object
 /**
  * @param parent parent layer
  * @param scene board to which this object belongs to
  */
-StrokePreview::StrokePreview(QGraphicsItem *parent, QGraphicsScene *scene)
-	: QGraphicsLineItem(parent, scene)
+StrokePreview::StrokePreview(QGraphicsItem *parent)
+	: QGraphicsLineItem(parent)
 {
 }
 
@@ -93,8 +92,8 @@ void StrokePreview::moveTo(const dpcore::Point& to)
 	setLine(from().x(), from().y(), to.x(), to.y());
 }
 
-RectanglePreview::RectanglePreview(QGraphicsItem *parent, QGraphicsScene *scene)
-	: QGraphicsRectItem(parent, scene)
+RectanglePreview::RectanglePreview(QGraphicsItem *parent)
+	: QGraphicsRectItem(parent)
 {
 }
 
