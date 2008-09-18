@@ -40,10 +40,10 @@ class BoardItem : public QGraphicsItem
 {
 	public:
 		//! Construct an empty layer
-		BoardItem(QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+		BoardItem(QGraphicsItem *parent=0);
 
 		//! Construct a layer from a QImage
-		BoardItem(const QImage& image, QGraphicsItem *parent=0, QGraphicsScene *scene=0);
+		BoardItem(const QImage& image, QGraphicsItem *parent=0);
 
 		~BoardItem();
 
@@ -63,6 +63,7 @@ class BoardItem : public QGraphicsItem
 		/** reimplematation */
 		QRectF boundingRect() const;
 
+	protected:
 		/** reimplementation */
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 			 QWidget *);

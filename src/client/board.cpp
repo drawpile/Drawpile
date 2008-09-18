@@ -37,6 +37,7 @@ Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSou
 
 Board::~Board()
 {
+	delete image_;
 	clearUsers();
 }
 
@@ -62,7 +63,8 @@ void Board::initBoard(QImage image)
 {
 	setSceneRect(0,0,image.width(), image.height());
 	delete image_;
-	image_ = new BoardItem(image.convertToFormat(QImage::Format_RGB32), 0, this);
+	image_ = new BoardItem(image.convertToFormat(QImage::Format_RGB32));
+	addItem(image_);
 	foreach(User *u, users_)
 		u->setLayer(image_);
 	QList<QRectF> regions;
@@ -253,7 +255,6 @@ void Board::userStroke(int user, const dpcore::Point& point)
 {
 	Q_ASSERT(users_.contains(user));
 	users_.value(user)->addStroke(point);
-
 	if(user == localuser_ && previews_.isEmpty() == false) {
 		Q_ASSERT(!previews_.isEmpty());
 		Preview *pre = previews_.dequeue();
@@ -271,14 +272,6 @@ void Board::userEndStroke(int user)
 {
 	Q_ASSERT(users_.contains(user));
 	users_.value(user)->endStroke();
-}
-
-/**
- * @note returns false so any drops are redirected back to the graphics view
- */
-bool Board::event(QEvent *event)
-{
-	return false;
 }
 
 }

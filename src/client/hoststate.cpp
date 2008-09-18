@@ -49,7 +49,7 @@ HostState::HostState(QObject *parent)
 
 	// Create a message queue to wrap the socket.
 	// All data is sent and received through this.
-	mq_ = new protocol::MessageQueue(&socket_);
+	mq_ = new protocol::MessageQueue(&socket_, &socket_);
 	connect(mq_, SIGNAL(messageAvailable()), this, SLOT(receiveMessage()));
 	connect(mq_, SIGNAL(badData()), this, SLOT(gotBadData()));
 }

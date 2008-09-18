@@ -279,7 +279,7 @@ bool EditorView::viewportEvent(QEvent *event)
 			emit penUp();
 		}
 	} else {
-		return QAbstractScrollArea::viewportEvent(event);
+		return QGraphicsView::viewportEvent(event);
 	}
 	
 	return true;

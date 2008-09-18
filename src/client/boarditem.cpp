@@ -19,7 +19,7 @@
 */
 
 #include <QPainter>
-#include <QGraphicsItem>
+#include <QGraphicsScene>
 #include <QStyleOptionGraphicsItem>
 #include <cmath>
 
@@ -34,8 +34,8 @@ namespace drawingboard {
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-BoardItem::BoardItem(QGraphicsItem *parent, QGraphicsScene *scene)
-	: QGraphicsItem(parent,scene), image_(0)
+BoardItem::BoardItem(QGraphicsItem *parent)
+	: QGraphicsItem(parent), image_(0)
 {
 }
 
@@ -44,8 +44,8 @@ BoardItem::BoardItem(QGraphicsItem *parent, QGraphicsScene *scene)
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent, QGraphicsScene *scene)
-	: QGraphicsItem(parent,scene), image_(0)
+BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent)
+	: QGraphicsItem(parent), image_(0)
 {
 	setImage(image);
 }
@@ -60,6 +60,8 @@ BoardItem::~BoardItem() {
 void BoardItem::setImage(const QImage& image)
 {
 	Q_ASSERT(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
+	prepareGeometryChange();
+	delete image_;
 	image_ = new dpcore::Layer(image);
 }
 
@@ -81,13 +83,9 @@ void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point
 {
 	image_->drawLine(brush, point1, point2, distance);
 	// Update screen
-	const int left = qMin(point1.x(), point2.x());
-	const int right = qMax(point1.x(), point2.x());
-	const int top = qMin(point1.y(), point2.y());
-	const int bottom = qMax(point1.y(), point2.y());
 	int rad = brush.radius(point1.pressure());
 	if(rad==0) rad=1;
-	update(left-rad,top-rad,right-left+rad*2,bottom-top+rad*2);
+	update(QRect(point1, point2).normalized().adjusted(-rad,-rad,rad,rad));
 }
 
 /**

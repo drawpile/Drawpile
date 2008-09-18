@@ -39,6 +39,10 @@ BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	setMinimumSize(32,32);
 }
 
+BrushPreview::~BrushPreview() {
+	delete preview_;
+}
+
 void BrushPreview::setPreviewShape(PreviewShape shape)
 {
 	shape_ = shape;
