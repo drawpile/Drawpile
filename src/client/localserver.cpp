@@ -46,9 +46,11 @@ bool isGlobal(const QHostAddress& address) {
 	}
 }
 
-bool isLoopback(const QHostAddress& address) {
-	return address == QHostAddress::LocalHost ||
-		address == QHostAddress::LocalHostIPv6;
+bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
+{
+	if(a1 == QHostAddress::LocalHost || a1 == QHostAddress::LocalHostIPv6)
+		return false;
+	return !isGlobal(a1);
 }
 
 /**
@@ -70,29 +72,14 @@ QString LocalServer::address()
 		QList<QNetworkAddressEntry> addresses = iface.addressEntries();
 
 		foreach (QNetworkAddressEntry entry, addresses) {
-			// Do an insertion sort on addresses. Sort
-			// global addresses first, then local, then loopback.
-			QHostAddress ip = entry.ip();
-			bool glob = isGlobal(ip);
-			bool loop = isLoopback(ip);
-			int i=0;
-			for(;i<alist.size();++i) {
-				if(glob) {
-					if(isGlobal(alist[i])==false)
-						break;
-				} else {
-					if(!loop) {
-						if(isLoopback(alist[i]))
-							break;
-					}
-				}
-			}
-			alist.insert(i, ip);
+			alist.append(entry.ip());
         }
 	}
 
-	if (alist.count() >= 1)
+	if (alist.count() > 0) {
+		qSort(alist.begin(), alist.end(), addressSort);
 		return alist.at(0).toString();
+	}
 	return "127.0.0.1";
 }
 
