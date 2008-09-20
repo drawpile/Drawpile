@@ -243,28 +243,22 @@ bool EditorView::viewportEvent(QEvent *event)
 		const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
 		if(!prevpoint_.intSame(point)) {
-			if(pendown_) {
+			if(isdragging_)
+				moveDrag(tabev->x(), tabev->y());
+			else if(pendown_) {
 				if(point.pressure()==0) {
 					// Missed a release event
-					if(isdragging_) {
-						stopDrag();
-					} else {
-						pendown_ = NOTDOWN;
-						emit penUp();
-					}
+					pendown_ = NOTDOWN;
+					emit penUp();
 				} else {
-					if(isdragging_) {
-						moveDrag(tabev->x(), tabev->y());
-					} else {
-						emit penMove(point);
-						if(enableoutline_ && showoutline_) {
-							// Update previous location. This is needed
-							// if brush diameter has changed.
-							QList<QRectF> rect;
-							rect.append(QRectF(prevpoint_.x() - outlinesize_,
-										prevpoint_.y() - outlinesize_, dia_, dia_));
-							updateScene(rect);
-						}
+					emit penMove(point);
+					if(enableoutline_ && showoutline_) {
+						// Update previous location. This is needed
+						// if brush diameter has changed.
+						QList<QRectF> rect;
+						rect.append(QRectF(prevpoint_.x() - outlinesize_,
+									prevpoint_.y() - outlinesize_, dia_, dia_));
+						updateScene(rect);
 					}
 				}
 			} else if(enableoutline_ && showoutline_) {
@@ -296,7 +290,9 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus lifted
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		if(pendown_ == TABLETDOWN) {
+		if(isdragging_) {
+			stopDrag();
+		} else if(pendown_ == TABLETDOWN) {
 			prevpoint_ = dpcore::Point(mapToScene(tabev->pos()), 0);
 			pendown_ = NOTDOWN;
 			emit penUp();
