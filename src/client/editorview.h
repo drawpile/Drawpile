@@ -22,9 +22,7 @@
 
 #include <QGraphicsView>
 
-namespace dpcore {
-	class Point;
-}
+#include "core/point.h"
 
 namespace drawingboard {
 	class Board;
@@ -48,9 +46,6 @@ class EditorView : public QGraphicsView
 
 	signals:
 		//! This signal is emitted when a mouse button is pressed or the pen touches the tablet
-		/**
-		 * @param point coordinates
-		 */
 		void penDown(const dpcore::Point& point);
 		//! This signal is emitted when the pen or mouse pointer is moved while drawing
 		void penMove(const dpcore::Point& point);
@@ -118,7 +113,7 @@ class EditorView : public QGraphicsView
 		int dragx_,dragy_;
 
 		//! Previous pointer location
-		QPoint prevpoint_;
+		dpcore::Point prevpoint_;
 
 		int outlinesize_, dia_;
 		bool enableoutline_,showoutline_;

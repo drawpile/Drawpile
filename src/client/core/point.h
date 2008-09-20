@@ -28,21 +28,42 @@ namespace dpcore {
 class Point : public QPoint {
 	public:
 		Point() : QPoint(), p_(1) {}
+
+		//! Construct a point with integer coordinates
 		Point(int x, int y, qreal p)
 			: QPoint(x,y), p_(p)
 		{
 			Q_ASSERT(p>=0 && p<=1);
 		}
 
+		//! Construct a point with subpixel accuracy
+		Point(const QPointF& point, qreal p)
+			: QPoint(int(point.x()), int(point.y())), p_(p)
+		{
+			Q_ASSERT(p>=0 && p<=1);
+		}
+
+		//! Construct a point from a QPoint + pressure value
 		Point(const QPoint& point, qreal p)
 			: QPoint(point), p_(p)
 		{
 			Q_ASSERT(p>=0 && p<=1);
 		}
 
+		//! Get the pressure value for this point
 		qreal pressure() const { return p_; }
+
+		//! Get a reference to the pressure value of this point
 		qreal &rpressure() { return p_; }
+
+		//! Set this point's pressure value
 		void setPressure(qreal p) { p_ = p; }
+
+		//! Compare two points just by their integer coordinates
+		bool intSame(const Point& point) {
+			return x() == point.x() && y()==point.y();
+		}
+
 	private:
 		qreal p_;
 };

@@ -19,12 +19,10 @@
 */
 
 #include <QtGlobal>
-#include <QImage>
 
 #include <cmath>
 #include "point.h"
 #include "brush.h"
-//#include "../../config.h"
 
 namespace dpcore {
 
@@ -35,7 +33,8 @@ namespace dpcore {
  */
 inline qreal interpolate(qreal a, qreal b, qreal alpha)
 {
-	return a*alpha + b*(1-alpha);
+	//return a*alpha + b*(1-alpha);
+	return (a-b) * alpha + b;
 }
 
 /**
@@ -200,7 +199,7 @@ int Brush::radius(qreal pressure) const
 int Brush::diameter(qreal pressure) const
 {
 	int rad = radius(pressure);
-	return rad==0?1:rad*2;
+	return rad*2 + 1;
 }
 
 /**
@@ -271,28 +270,28 @@ RenderedBrush Brush::render(qreal pressure) const {
 	const int dia = diameter(pressure);
 	const qreal o = opacity(pressure);
 
+	// Re-render the cache if not up to date
 	if(!cache_.isFresh(pressure, sensitive_)) {
-		// Re-render cache if not up to date
+		const qreal R = qreal(radius(pressure));
 		const qreal rad = dia/2.0;
+		const qreal rr = rad*rad;
 
 		// Compute a lookup table
-		static const int OVERSAMPLE=2;
-		uchar lookup[int(rad+0.5)*OVERSAMPLE];
-		const int grad = int((1 - hardness(pressure)) * rad * OVERSAMPLE);
+		uchar lookup[int(ceil(rr))];
+		const int grad = int((1 - hardness(pressure)) * ceil(rr));
 		int i=0;
 		for(; i < grad ; ++i)
 			lookup[i] = int(255 * i/qreal(grad) * o);
-		for(; i < rad*OVERSAMPLE; ++i)
-			lookup[i] = int(255 * o);
+		memset(lookup+i, int(255*o), ceil(rr)-i);
 
 		// Render the brush
 		cache_ = RenderedBrush(dia, pressure);
 		uchar *ptr = cache_.data();
-		for(qreal y=-rad;y<rad;++y) {
-			const qreal yy = y*y;
-			for(qreal x=-rad;x<rad;++x) {
-				const qreal dist = int(sqrt(x*x + yy));
-				*(ptr++) = (dist<rad?lookup[int(rad*OVERSAMPLE-dist*OVERSAMPLE)]:0);
+		for(int y=0;y<dia;++y) {
+			const qreal yy = (R-y)*(R-y);
+			for(int x=0;x<dia;++x) {
+				const qreal dist = (R-x)*(R-x) + yy;
+				*(ptr++) = (dist<rr?lookup[int(rr-dist)]:0);
 			}
 		}
 	}

@@ -31,7 +31,7 @@ namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false),
-	prevpoint_(0,0),outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true), crosshair_(false)
+	outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -161,7 +161,7 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	} else if(event->button() == Qt::LeftButton && isdragging_==false) {
 		pendown_ = MOUSEDOWN;
 		emit penDown(
-				dpcore::Point(mapToScene(event->pos()).toPoint(), 1.0)
+				dpcore::Point(mapToScene(event->pos()), 1.0)
 				);
 	}
 }
@@ -181,10 +181,10 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
 	} else {;
-		const QPoint point = mapToScene(event->pos()).toPoint();
-		if(point != prevpoint_) {
+		const dpcore::Point point(mapToScene(event->pos()), 1.0);
+		if(!prevpoint_.intSame(point)) {
 			if(pendown_)
-				emit penMove(dpcore::Point(point, 1.0));
+				emit penMove(point);
 			else if(enableoutline_ && showoutline_) {
 				QList<QRectF> rect;
 				rect.append(QRectF(prevpoint_.x() - outlinesize_,
@@ -203,7 +203,7 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(pendown_ == TABLETDOWN)
 		return;
-	prevpoint_ = mapToScene(event->pos()).toPoint();
+	prevpoint_ = dpcore::Point(mapToScene(event->pos()), 0.0);
 	if(event->button() == Qt::MidButton && isdragging_) {
 		stopDrag();
 		showoutline_ = true;
@@ -229,16 +229,16 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		const QPoint point = mapToScene(tabev->pos()).toPoint();
+		const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
-		if(point != prevpoint_) {
+		if(!prevpoint_.intSame(point)) {
 			if(pendown_) {
-				if(tabev->pressure()==0) {
+				if(point.pressure()==0) {
 					// Missed a release event
 					pendown_ = NOTDOWN;
 					emit penUp();
 				} else {
-					emit penMove( dpcore::Point(point, tabev->pressure()) );
+					emit penMove(point);
 					if(enableoutline_ && showoutline_) {
 						// Update previous location. This is needed if brush
 						// diameter has changed.
@@ -263,10 +263,10 @@ bool EditorView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 		if(pendown_ == NOTDOWN) {
-			const QPoint point = mapToScene(tabev->pos()).toPoint();
+			const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
 			pendown_ = TABLETDOWN;
-			emit penDown( dpcore::Point(point, tabev->pressure()) );
+			emit penDown(point);
 			prevpoint_ = point;
 		}
 	} else if(event->type() == QEvent::TabletRelease) {
@@ -274,7 +274,7 @@ bool EditorView::viewportEvent(QEvent *event)
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
 		if(pendown_ == TABLETDOWN) {
-			prevpoint_ = mapToScene(tabev->pos()).toPoint();
+			prevpoint_ = dpcore::Point(mapToScene(tabev->pos()), 0);
 			pendown_ = NOTDOWN;
 			emit penUp();
 		}

@@ -84,8 +84,7 @@ void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point
 	image_->drawLine(brush, point1, point2, distance);
 	// Update screen
 	int rad = brush.radius(point1.pressure());
-	if(rad==0) rad=1;
-	update(QRect(point1, point2).normalized().adjusted(-rad,-rad,rad,rad));
+	update(QRect(point1, point2).normalized().adjusted(-rad,-rad,rad+1,rad+1));
 }
 
 /**
@@ -95,9 +94,8 @@ void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point
 void BoardItem::drawPoint(const dpcore::Point& point, const dpcore::Brush& brush)
 {
 	int r = brush.radius(point.pressure());
-	if(r==0) r=1;
 	image_->dab(brush, point);
-	update(point.x()-r,point.y()-r,r*2,r*2);
+	update(point.x()-r,point.y()-r,r*2+1,r*2+1);
 }
 
 QRectF BoardItem::boundingRect() const
