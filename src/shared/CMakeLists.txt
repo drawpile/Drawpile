@@ -4,7 +4,7 @@ include ( ${QT_USE_FILE} )
 set (
 	NET_HEADERS
 	net/binary.h net/login.h net/message.h net/protocol.h net/constants.h
-	net/stroke.h net/toolselect.h net/utils.h
+	net/stroke.h net/toolselect.h net/utils.h net/annotation.h
 	)
 
 set (

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ class QStackedWidget;
 
 namespace tools {
 	class ToolSettings;
+	class AnnotationEditor;
 }
 
 namespace widgets {
@@ -47,6 +48,9 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 
 		//! Get a brush with the current settings
 		const dpcore::Brush& getBrush() const;
+
+		//! Get the annotation settings page
+		tools::AnnotationSettings *getAnnotationSettings();
 
 	signals:
 		//! This signal is emitted when the current tool changes its size
@@ -74,6 +78,7 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 		tools::ToolSettings *pickersettings_;
 		tools::ToolSettings *linesettings_;
 		tools::ToolSettings *rectsettings_;
+		tools::ToolSettings *textsettings_;
 
 		tools::ToolSettings *currenttool_;
 		QStackedWidget *widgets_;

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@
 
 namespace drawingboard {
 	class BoardEditor;
+	class AnnotationItem;
 }
 
 //! Tools
@@ -40,7 +41,9 @@ namespace drawingboard {
  */
 namespace tools {
 
-enum Type {BRUSH, ERASER, PICKER, LINE, RECTANGLE};
+class AnnotationSettings;
+
+enum Type {BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
 
 class ToolCollection;
 
@@ -73,6 +76,7 @@ class Tool
 
 	protected:
 		inline drawingboard::BoardEditor *editor();
+		inline AnnotationSettings *aeditor();
 
 	private:
 		ToolCollection &owner_;
@@ -159,6 +163,26 @@ class Rectangle : public ComplexBase {
 		void commit();
 };
 
+//! Annotation tool
+/**
+ * This is a remote tool, but it only affects annotations that are
+ * separate from the pixel data.
+ */
+class Annotation : public Tool {
+	public:
+		Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION, true), sel_(0) { }
+
+		void begin(const dpcore::Point& point);
+		void motion(const dpcore::Point& point);
+		void end();
+
+	private:
+		drawingboard::AnnotationItem *sel_;
+		int handle_;
+		QPoint start_, end_;
+};
+
+
 /**
  * A collection for tools, specific to a single controller.
  */
@@ -170,19 +194,27 @@ class ToolCollection {
 		//! Get editor
 		drawingboard::BoardEditor *editor() const { return editor_; }
 
+		//! Get the annotation settings editor
+		AnnotationSettings *aeditor() const { return as_; }
+
 		//! Set board editor to use
 		void setEditor(drawingboard::BoardEditor *editor);
+
+		//! Set the annotation settings to use
+		void setAnnotationSettings(AnnotationSettings *as);
 
 		//! Get an instance of a specific tool
 		Tool *get(Type type);
 
 	private:
 		drawingboard::BoardEditor *editor_;
+		AnnotationSettings *as_;
 		QHash<Type, Tool*> tools_;
 
 };
 
 drawingboard::BoardEditor *Tool::editor() { return owner_.editor(); }
+AnnotationSettings *Tool::aeditor() { return owner_.aeditor(); }
 
 }
 

@@ -29,12 +29,15 @@
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "localserver.h"
+#include "toolsettings.h"
 
 #include "../shared/net/constants.h" // DEFAULT_PORT
 
-Controller::Controller(QObject *parent)
+Controller::Controller(tools::AnnotationSettings *as, QObject *parent)
 	: QObject(parent), board_(0), session_(0), maxusers_(16), pendown_(false), sync_(false), syncwait_(false), lock_(false)
 {
+	toolbox_.setAnnotationSettings(as);
+
 	host_ = new network::HostState(this);
 	connect(host_, SIGNAL(loggedin()), this, SIGNAL(loggedin()));
 	connect(host_, SIGNAL(joined()), this, SLOT(sessionJoined()));
@@ -62,6 +65,11 @@ void Controller::setModel(drawingboard::Board *board)
 	board_->addUser(0);
 	board_->setLocalUser(0);
 	toolbox_.setEditor( board->getEditor() );
+	toolbox_.aeditor()->setBoardEditor( toolbox_.editor() );
+	connect(board, SIGNAL(newLocalAnnotation(drawingboard::AnnotationItem*)),
+			toolbox_.aeditor(), SLOT(setSelection(drawingboard::AnnotationItem*)));
+	connect(board, SIGNAL(annotationDeleted(drawingboard::AnnotationItem*)),
+			toolbox_.aeditor(), SLOT(unselect(drawingboard::AnnotationItem*)));
 }
 
 /**
@@ -216,6 +224,7 @@ void Controller::sessionJoined()
 	// Get a remote board editor
 	delete toolbox_.editor();
 	toolbox_.setEditor( board_->getEditor(session_) );
+	toolbox_.aeditor()->setBoardEditor( toolbox_.editor() );
 
 	emit joined();
 
@@ -237,6 +246,7 @@ void Controller::netDisconnected()
 	// Get a local board editor
 	delete toolbox_.editor();
 	toolbox_.setEditor( board_->getEditor() );
+	toolbox_.aeditor()->setBoardEditor( toolbox_.editor() );
 
 	session_ = 0;
 	emit parted();

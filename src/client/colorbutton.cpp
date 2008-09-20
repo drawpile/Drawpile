@@ -54,7 +54,8 @@ void ColorButton::paintEvent(QPaintEvent *)
 
 	painter.drawControl(QStyle::CE_PushButtonBevel,option);
 	const int adj = qMin(width(),height()) / 5;
-	painter.fillRect(QRect(contentsRect().adjusted(adj,adj,-adj,-adj)), color_);
+	QRect rect = contentsRect().adjusted(adj, adj, -adj, -adj);
+	painter.fillRect(rect, color_);
 }
 
 /**
@@ -76,10 +77,11 @@ void ColorButton::mouseReleaseEvent(QMouseEvent *)
 	isdown_ = false;
 	update();
 #ifndef DESIGNER_PLUGIN
-	const QColor col = QColorDialog::getColor(color_, this);
-	if(col.isValid() && col != color_) {
-		setColor(col);
-		emit colorChanged(col);
+	bool ok;
+	const QRgb col = QColorDialog::getRgba(color_.rgba(), &ok, this);
+	if(ok && col != color_.rgba()) {
+		setColor(QColor::fromRgba(col));
+		emit colorChanged(color_);
 	}
 #endif
 }

@@ -2,6 +2,10 @@
  * Total rewrite of server and network code. Dropped support for multiple
  session per server and simplified the protocol.
  * Server is now contained in a shared library and is embedded by the client.
+ * Tile based drawing engine
+ * Fixes to brush rendering
+ * Viewport dragging with spacebar (works with tablets too)
+ * Added annotation tool
 
 2007-04-10 Version 0.4.0
  * Support multiple windows

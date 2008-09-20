@@ -135,7 +135,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 
 	// Create controller
-	controller_ = new Controller(this);
+	controller_ = new Controller(toolsettings_->getAnnotationSettings(), this);
 	controller_->setModel(board_);
 	connect(controller_, SIGNAL(changed()),
 			this, SLOT(boardChanged()));
@@ -1051,6 +1051,14 @@ void MainWindow::zoomone()
 	view_->sceneChanged();
 }
 
+void MainWindow::toggleAnnotations(bool hidden)
+{
+	annotationtool_->setEnabled(!hidden);
+	board_->showAnnotations(!hidden);
+	if(hidden && annotationtool_->isChecked())
+		selectTool(brushtool_);
+}
+
 /**
  * Toggle fullscreen mode for editor view
  */
@@ -1092,19 +1100,20 @@ void MainWindow::fullscreen(bool enable)
 void MainWindow::selectTool(QAction *tool)
 {
 	tools::Type type;
-	if(tool == brushtool_) {
+	if(tool == brushtool_) 
 		type = tools::BRUSH;
-	} else if(tool == erasertool_) {
+	 else if(tool == erasertool_) 
 		type = tools::ERASER;
-	} else if(tool == pickertool_) {
+	 else if(tool == pickertool_) 
 		type = tools::PICKER;
-	} else if(tool == linetool_) {
+	 else if(tool == linetool_) 
 		type = tools::LINE;
-	} else if(tool == recttool_) {
+	 else if(tool == recttool_) 
 		type = tools::RECTANGLE;
-	} else {
+	 else if(tool == annotationtool_)
+		type = tools::ANNOTATION;
+	 else
 		return;
-	}
 	emit toolChanged(type);
 }
 
@@ -1117,9 +1126,7 @@ void MainWindow::about()
 			"modify it under the terms of the GNU General Public License as " 
 			"published by the Free Software Foundation, either version 2, or "
 			"(at your opinion) any later version.</p>"
-			"<p>Programming: Calle Laakkonen<br>"
-			"Graphic design: wuf<br>"
-			"Server: M.K.A<br>"
+			"<p>Programming: Calle Laakkonen, M.K.A<br>"
 			"Icons are from the Tango Desktop Project</p>").arg(version::string)
 			);
 }
@@ -1216,6 +1223,9 @@ void MainWindow::initActions()
 	recttool_ = makeAction("toolrect", "draw-rectangle.png", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"));
 	recttool_->setCheckable(true);
 
+	annotationtool_ = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"));
+	annotationtool_->setCheckable(true);
+
 	drawingtools_ = new QActionGroup(this);
 	drawingtools_->setExclusive(true);
 	drawingtools_->addAction(brushtool_);
@@ -1223,6 +1233,7 @@ void MainWindow::initActions()
 	drawingtools_->addAction(pickertool_);
 	drawingtools_->addAction(linetool_);
 	drawingtools_->addAction(recttool_);
+	drawingtools_->addAction(annotationtool_);
 	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// View actions
@@ -1233,10 +1244,14 @@ void MainWindow::initActions()
 	fullscreen_ = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"));
 	fullscreen_->setCheckable(true);
 
+	hideannotations_ = makeAction("toggleannotations", 0, tr("Hide &annotations"), QString());
+	hideannotations_->setCheckable(true);
+
 	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
 	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
 	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
 	connect(fullscreen_, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
+	connect(hideannotations_, SIGNAL(triggered(bool)), this, SLOT(toggleAnnotations(bool)));
 
 	// Tool cursor settings
 	toggleoutline_ = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"));
@@ -1286,6 +1301,7 @@ void MainWindow::createMenus()
 	viewmenu->addAction(zoomout_);
 	viewmenu->addAction(zoomorig_);
 	viewmenu->addAction(fullscreen_);
+	viewmenu->addAction(hideannotations_);
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
 	sessionmenu->addAction(host_);
@@ -1301,6 +1317,7 @@ void MainWindow::createMenus()
 	toolsmenu->addAction(pickertool_);
 	toolsmenu->addAction(linetool_);
 	toolsmenu->addAction(recttool_);
+	toolsmenu->addAction(annotationtool_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
 	toolsmenu->addAction(togglecrosshair_);
@@ -1339,6 +1356,7 @@ void MainWindow::createToolbars()
 	drawtools->addAction(pickertool_);
 	drawtools->addAction(linetool_);
 	drawtools->addAction(recttool_);
+	drawtools->addAction(annotationtool_);
 	drawtools->addSeparator();
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);

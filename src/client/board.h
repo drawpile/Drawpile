@@ -30,6 +30,10 @@ namespace network {
 	class SessionState;
 }
 
+namespace protocol {
+	class Annotation;
+}
+
 namespace interface {
 	class BrushSource;
 	class ColorSource;
@@ -43,6 +47,7 @@ namespace dpcore {
 namespace drawingboard {
 
 class BoardItem;
+class AnnotationItem;
 class User;
 class BoardEditor;
 class Preview;
@@ -98,6 +103,9 @@ class Board : public QGraphicsScene
 		//! Scrap preview strokes
 		void flushPreviews();
 
+		//! Show/hide annotations
+		void showAnnotations(bool show);
+
 	public slots:
 		//! Add a new user to the board
 		void addUser(int id);
@@ -110,6 +118,19 @@ class Board : public QGraphicsScene
 
 		//! User ends a stroke
 		void userEndStroke(int user);
+
+		//! Add or change an annotation
+		void annotate(int user, const protocol::Annotation *annotation);
+
+		//! Remove an annotation
+		void unannotate(int id);
+
+	signals:
+		//! The local user just created a new annotation
+		void newLocalAnnotation(drawingboard::AnnotationItem *item);
+
+		//! An annotation is about to be deleted
+		void annotationDeleted(drawingboard::AnnotationItem *item);
 
 	private:
 		

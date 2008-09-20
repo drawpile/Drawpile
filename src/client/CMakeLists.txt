@@ -14,8 +14,8 @@ set (
 	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	mandatoryfields.h palettewidget.h palettebox.h
-	colorbox.h settingsdialog.h
-	navigator.h
+	colorbox.h settingsdialog.h annotationitem.h
+	navigator.h toolsettings.h 
 )
 
 # unused headers because they do not create moc_* files ()
@@ -23,7 +23,7 @@ set (
 	UNUSED_HEADERS # no QOBJECT ?
 	version.h user.h interfaces.h preview.h boardeditor.h boarditem.h
 	localpalette.h palette.h icons.h
-	tools.h toolsettings.h recentfiles.h sessioninfo.h
+	tools.h recentfiles.h sessioninfo.h
 	core/tile.h core/layer.h core/brush.h core/point.h core/rasterop.h
 )
 
@@ -39,14 +39,14 @@ set (
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp palette.cpp navigator.cpp
+	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
 	core/tile.cpp core/layer.cpp core/brush.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
 	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
-	ui/settings.ui ui/navibox.ui )
+	ui/settings.ui ui/navibox.ui ui/textsettings.ui )
 
 # .UI
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,15 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QDebug>
 #include "controller.h"
 #include "tools.h"
+#include "toolsettings.h"
 #include "core/brush.h"
 #include "board.h"
 #include "boardeditor.h"
+#include "annotationitem.h"
+#include "../shared/net/annotation.h"
 
 namespace tools {
 
@@ -39,6 +43,7 @@ ToolCollection::ToolCollection()
 	tools_[PICKER] = new ColorPicker(*this);
 	tools_[LINE] = new Line(*this);
 	tools_[RECTANGLE] = new Rectangle(*this);
+	tools_[ANNOTATION] = new Annotation(*this);
 }
 
 /**
@@ -58,6 +63,12 @@ void ToolCollection::setEditor(drawingboard::BoardEditor *editor)
 {
 	Q_ASSERT(editor);
 	editor_ = editor;
+}
+
+void ToolCollection::setAnnotationSettings(AnnotationSettings *as)
+{
+	Q_ASSERT(as);
+	as_ = as;
 }
 
 /**
@@ -149,6 +160,65 @@ void Rectangle::commit()
 	editor()->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
 	editor()->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
 	editor()->endStroke();
+}
+
+void Annotation::begin(const dpcore::Point& point)
+{
+	drawingboard::AnnotationItem *item = editor()->annotationAt(point);
+	if(item) {
+		sel_ = item;
+		handle_ = sel_->handleAt(point - sel_->pos());
+		aeditor()->setSelection(item);
+	} else {
+		editor()->startPreview(ANNOTATION, point, editor()->localBrush());
+		end_ = point;
+	}
+	start_ = point;
+}
+
+void Annotation::motion(const dpcore::Point& point)
+{
+	if(sel_) {
+		QPoint d = point - start_;
+		switch(handle_) {
+			case drawingboard::AnnotationItem::TRANSLATE:
+				sel_->moveBy(d.x(), d.y());
+				break;
+			case drawingboard::AnnotationItem::RS_TOPLEFT:
+				sel_->growTopLeft(d.x(), d.y());
+				break;
+			case drawingboard::AnnotationItem::RS_BOTTOMRIGHT:
+				sel_->growBottomRight(d.x(), d.y());
+				break;
+		}
+		start_ = point;
+	} else {
+		editor()->continuePreview(point);
+		end_ = point;
+	}
+}
+
+void Annotation::end()
+{
+	if(sel_) {
+		// This is superfluous when in local mode, but needed
+		// when in a networked session.
+		protocol::Annotation a;
+		sel_->getOptions(a);
+		editor()->annotate(a);
+		sel_ = 0;
+	} else {
+		editor()->endPreview();
+		QRectF rect(QRectF(start_, end_));
+		rect = rect.normalized();
+		if(rect.width()>0 && rect.height()>0) {
+			protocol::Annotation a;
+			a.rect = rect.toRect();
+			a.textcolor = editor()->localBrush().color(1.0).name();
+			a.backgroundcolor = editor()->localBrush().color(0.0).name();
+			editor()->annotate(a);
+		}
+	}
 }
 
 }

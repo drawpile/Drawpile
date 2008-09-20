@@ -9,6 +9,7 @@
 	<file>icons/color-picker.png</file>
 	<file>icons/todo-line.png</file>
 	<file>icons/draw-rectangle.png</file>
+	<file>icons/draw-text.png</file>
 	<file>icons/zoom-in.png</file>
 	<file>icons/zoom-out.png</file>
 	<file>icons/zoom-original.png</file>
@@ -22,5 +23,11 @@
 	<file>icons/kick.png</file>
 	<file>icons/list-add.png</file>
 	<file>icons/list-remove.png</file>
+	<file>icons/format-justify-left.png</file>
+	<file>icons/format-justify-right.png</file>
+	<file>icons/format-justify-fill.png</file>
+	<file>icons/format-justify-center.png</file>
+	<file>icons/format-text-bold.png</file>
+	<file>icons/format-text-italic.png</file>
 </qresource>
 </RCC>

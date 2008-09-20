@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 
 class QColor;
 class QPoint;
+class QRectF;
 
 #include "core/brush.h"
 #include "tools.h"
@@ -39,10 +40,15 @@ namespace dpcore {
 	class Point;
 }
 
+namespace protocol {
+	class Annotation;
+}
+
 namespace drawingboard {
 
 class Board;
 class User;
+class AnnotationItem;
 
 //! A delegate for accessing the board contents
 /**
@@ -59,7 +65,7 @@ class BoardEditor {
 		//! Construct a board editor
 		BoardEditor(Board *board, User *user, interface::BrushSource *brush,
 				interface::ColorSource *color);
-		virtual ~BoardEditor() = 0;
+		virtual ~BoardEditor();
 
 		//! Check if the brush is currently in use
 		virtual bool isCurrentBrush(const dpcore::Brush& brush) const = 0;
@@ -75,6 +81,9 @@ class BoardEditor {
 
 		//! Get color from the board at the specified coordinates
 		QColor colorAt(const QPoint& point);
+
+		//! Get the annotation at the specified coordinates
+		AnnotationItem *annotationAt(const QPoint& point);
 
 		//! Start a preview
 		void startPreview(tools::Type tool, const dpcore::Point& point, const dpcore::Brush& brush);
@@ -93,6 +102,12 @@ class BoardEditor {
 
 		//! End current stroke. Next addStroke will begin a new one.
 		virtual void endStroke() = 0;
+
+		//! Create a new or change an existing annotation.
+		virtual void annotate(const protocol::Annotation& a) = 0;
+
+		//! Remove an annotation
+		virtual void removeAnnotation(int id) = 0;
 
 	protected:
 		//! The local user
@@ -124,6 +139,8 @@ class LocalBoardEditor : public BoardEditor {
 		void setTool(const dpcore::Brush& brush);
 		void addStroke(const dpcore::Point& point);
 		void endStroke();
+		void annotate(const protocol::Annotation& a);
+		void removeAnnotation(int id);
 };
 
 //! Board editor that modifies the board through the network
@@ -141,6 +158,8 @@ class RemoteBoardEditor : public BoardEditor {
 		void setTool(const dpcore::Brush& brush);
 		void addStroke(const dpcore::Point& point);
 		void endStroke();
+		void annotate(const protocol::Annotation& a);
+		void removeAnnotation(int id);
 
 	private:
 		//! Remote session to which drawing commands are sent

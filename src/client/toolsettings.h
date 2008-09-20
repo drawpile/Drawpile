@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,12 @@
 
 class Ui_BrushSettings;
 class Ui_SimpleSettings;
+class Ui_TextSettings;
+
+namespace drawingboard {
+	class BoardEditor;
+	class AnnotationItem;
+}
 
 namespace tools {
 
@@ -37,7 +43,7 @@ class ToolSettings {
 	public:
 		ToolSettings(QString name,QString title)
 			: name_(name), title_(title), widget_(0) {}
-		virtual ~ToolSettings() = 0;
+		virtual ~ToolSettings() { }
 
 		//! Create an UI widget
 		/**
@@ -138,6 +144,42 @@ class SimpleSettings : public ToolSettings {
 		Type type_;
 };
 
+//! Settings for the annotation tool
+class AnnotationSettings : public QObject, public ToolSettings {
+	Q_OBJECT
+	public:
+		AnnotationSettings(QString name, QString title);
+		~AnnotationSettings();
+
+		QWidget *createUi(QWidget *parent);
+
+		void setForeground(const QColor& color);
+		void setBackground(const QColor& color);
+		const dpcore::Brush& getBrush() const;
+
+		int getSize() const { return 0; }
+
+		//! Set the board editor to change selected annotations
+		void setBoardEditor(drawingboard::BoardEditor *editor) { editor_ = editor; }
+	public slots:
+		//! Set the currently selected annotation item
+		void setSelection(drawingboard::AnnotationItem *item);
+		//! Unselect this item if currently selected
+		void unselect(drawingboard::AnnotationItem *item);
+
+	private slots:
+		void applyChanges();
+		void removeAnnotation();
+
+	private:
+		dpcore::Brush brush_;
+		Ui_TextSettings *ui_;
+		QWidget *uiwidget_;
+		drawingboard::AnnotationItem *sel_;
+		drawingboard::BoardEditor *editor_;
+		bool noupdate_;
+};
+
 //! No settings
 /**
  * This is a dummy settings class for settingless tools, like the color picker
@@ -145,6 +187,7 @@ class SimpleSettings : public ToolSettings {
 class NoSettings : public ToolSettings {
 	public:
 		NoSettings(const QString& name, const QString& title);
+		~NoSettings();
 
 		QWidget *createUi(QWidget *parent);
 
@@ -153,6 +196,9 @@ class NoSettings : public ToolSettings {
 		const dpcore::Brush& getBrush() const;
 
 		int getSize() const { return 0; }
+
+	private:
+		Ui_TextSettings *ui_;
 };
 
 }

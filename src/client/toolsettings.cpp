@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006 Calle Laakkonen
+	Copyright (C) 2006-2008 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -22,13 +22,18 @@
 #include "main.h"
 #include "toolsettings.h"
 #include "brushpreview.h"
+#include "colorbutton.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces
+using widgets::ColorButton;
 #include "ui_brushsettings.h"
 #include "ui_simplesettings.h"
+#include "ui_textsettings.h"
+
+#include "boardeditor.h"
+#include "annotationitem.h"
+#include "../shared/net/annotation.h"
 
 namespace tools {
-
-ToolSettings::~ToolSettings() { /* abstract */ }
 
 BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
 	: ToolSettings(name,title), swapcolors_(swapcolors)
@@ -209,6 +214,11 @@ NoSettings::NoSettings(const QString& name, const QString& title)
 {
 }
 
+NoSettings::~NoSettings()
+{
+	delete ui_;
+}
+
 QWidget *NoSettings::createUi(QWidget *parent)
 {
 	QLabel *ui = new QLabel(QApplication::tr("This tool has no settings"),
@@ -230,6 +240,125 @@ const dpcore::Brush& NoSettings::getBrush() const
 	// return a default brush
 	static dpcore::Brush dummy(0);
 	return dummy;
+}
+
+AnnotationSettings::AnnotationSettings(QString name, QString title)
+	: QObject(), ToolSettings(name, title), brush_(0), sel_(0), noupdate_(false)
+{
+	ui_ = new Ui_TextSettings;
+}
+
+AnnotationSettings::~AnnotationSettings()
+{
+	delete ui_;
+}
+
+QWidget *AnnotationSettings::createUi(QWidget *parent)
+{
+	uiwidget_ = new QWidget(parent);
+	ui_->setupUi(uiwidget_);
+	setUiWidget(uiwidget_);
+	uiwidget_->setEnabled(false);
+
+	connect(ui_->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
+	connect(ui_->left, SIGNAL(clicked()), this, SLOT(applyChanges()));
+	connect(ui_->center, SIGNAL(clicked()), this, SLOT(applyChanges()));
+	connect(ui_->fill, SIGNAL(clicked()), this, SLOT(applyChanges()));
+	connect(ui_->right, SIGNAL(clicked()), this, SLOT(applyChanges()));
+	connect(ui_->bold, SIGNAL(clicked()), this, SLOT(applyChanges()));
+	connect(ui_->italic, SIGNAL(clicked()), this, SLOT(applyChanges()));
+	connect(ui_->font, SIGNAL(currentFontChanged(const QFont&)),
+			this, SLOT(applyChanges()));
+	connect(ui_->size, SIGNAL(valueChanged(int)), this, SLOT(applyChanges()));
+	connect(ui_->btnText, SIGNAL(colorChanged(const QColor&)),
+			this, SLOT(applyChanges()));
+	connect(ui_->btnBackground, SIGNAL(colorChanged(const QColor&)),
+			this, SLOT(applyChanges()));
+	connect(ui_->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
+	return uiwidget_;
+}
+
+void AnnotationSettings::setForeground(const QColor& color)
+{
+	brush_.setColor(color);
+}
+
+void AnnotationSettings::setBackground(const QColor& color)
+{
+	brush_.setColor2(color);
+}
+
+const dpcore::Brush& AnnotationSettings::getBrush() const
+{
+	return brush_;
+}
+
+void AnnotationSettings::unselect(drawingboard::AnnotationItem *item)
+{
+	if(sel_ == item)
+		setSelection(0);
+}
+
+void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
+{
+	noupdate_ = true;
+	if(sel_)
+		sel_->setHighlight(false);
+	sel_ = item;
+	uiwidget_->setEnabled(sel_!=0);
+	if(item) {
+		sel_->setHighlight(true);
+		ui_->content->setText(item->text());
+		ui_->btnText->setColor(item->textColor());
+		ui_->btnBackground->setColor(item->backgroundColor());
+		switch(item->justify()) {
+			using protocol::Annotation;
+			case Annotation::LEFT: ui_->left->setChecked(true); break;
+			case Annotation::RIGHT: ui_->right->setChecked(true); break;
+			case Annotation::CENTER: ui_->center->setChecked(true); break;
+			case Annotation::FILL: ui_->fill->setChecked(true); break;
+		}
+		ui_->bold->setChecked(item->bold());
+		ui_->italic->setChecked(item->italic());
+		ui_->font->setCurrentFont(item->font());
+		ui_->size->setValue(item->fontSize());
+	}
+	noupdate_ = false;
+}
+
+void AnnotationSettings::applyChanges()
+{
+	if(noupdate_)
+		return;
+	Q_ASSERT(sel_);
+	protocol::Annotation a;
+	a.id = sel_->id();
+	a.rect = QRect(sel_->pos().toPoint(), sel_->size().toSize());
+	a.text = ui_->content->toPlainText();
+	a.textcolor = ui_->btnText->color().name();
+	a.textalpha = ui_->btnText->color().alpha();
+	a.backgroundcolor = ui_->btnBackground->color().name();
+	a.bgalpha = ui_->btnBackground->color().alpha();
+	if(ui_->left->isChecked())
+		a.justify = protocol::Annotation::LEFT;
+	else if(ui_->right->isChecked())
+		a.justify = protocol::Annotation::RIGHT;
+	else if(ui_->center->isChecked())
+		a.justify = protocol::Annotation::CENTER;
+	else if(ui_->fill->isChecked())
+		a.justify = protocol::Annotation::FILL;
+	a.bold = ui_->bold->isChecked();
+	a.italic = ui_->italic->isChecked();
+	a.font = ui_->font->currentFont().family();
+	a.size = ui_->size->value();
+
+	editor_->annotate(a);
+}
+
+void AnnotationSettings::removeAnnotation()
+{
+	Q_ASSERT(sel_);
+	editor_->removeAnnotation(sel_->id());
 }
 
 }

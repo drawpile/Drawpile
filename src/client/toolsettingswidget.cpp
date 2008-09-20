@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006 Calle Laakkonen
+	Copyright (C) 2006-2008 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -53,6 +53,9 @@ ToolSettings::ToolSettings(QWidget *parent)
 	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle);
 	widgets_->addWidget(rectsettings_->createUi(this));
 
+	// Create settings widget for annotations
+	textsettings_ = new tools::AnnotationSettings("annotation", tr("Annotation"));
+	widgets_->addWidget(textsettings_->createUi(this));
 
 }
 
@@ -63,6 +66,7 @@ ToolSettings::~ToolSettings()
 	delete pickersettings_,
 	delete linesettings_,
 	delete rectsettings_;
+	delete textsettings_;
 }
 
 /**
@@ -76,7 +80,10 @@ void ToolSettings::setTool(tools::Type tool) {
 		case tools::PICKER: currenttool_ = pickersettings_; break;
 		case tools::LINE: currenttool_ = linesettings_; break;
 		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
+		case tools::ANNOTATION: currenttool_ = textsettings_; break;
 	}
+	if(tool != tools::ANNOTATION)
+		static_cast<tools::AnnotationSettings*>(textsettings_)->setSelection(0); // lose the highlight border if any
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());
 	currenttool_->setForeground(fgcolor_);
@@ -116,6 +123,11 @@ void ToolSettings::setBackground(const QColor& color)
 const dpcore::Brush& ToolSettings::getBrush() const
 {
 	return currenttool_->getBrush();
+}
+
+tools::AnnotationSettings *ToolSettings::getAnnotationSettings()
+{
+	return static_cast<tools::AnnotationSettings*>(textsettings_);
 }
 
 }

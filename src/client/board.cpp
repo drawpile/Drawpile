@@ -21,11 +21,13 @@
 
 #include "board.h"
 #include "boarditem.h"
+#include "annotationitem.h"
 #include "user.h"
 #include "boardeditor.h"
 #include "preview.h"
 #include "interfaces.h"
 #include "core/layer.h"
+#include "../shared/net/annotation.h"
 
 namespace drawingboard {
 
@@ -85,6 +87,15 @@ void Board::clearUsers()
 	}
 	users_.clear();
 	localuser_ = -1;
+}
+
+void Board::showAnnotations(bool show)
+{
+	if(!image_) return;
+	foreach(QGraphicsItem *item, image_->children()) {
+		if(item->type() == AnnotationItem::Type)
+			item->setVisible(show);
+	}
 }
 
 /**
@@ -280,6 +291,55 @@ void Board::userEndStroke(int user)
 	Q_ASSERT(users_.contains(user));
 	users_.value(user)->endStroke();
 }
+
+/**
+ */
+void Board::annotate(int user, const protocol::Annotation *annotation)
+{
+	if(!image_) return;
+	AnnotationItem *item=0;
+	bool newitem = true;
+	// Find existing annotation
+	foreach(QGraphicsItem *i, image_->children()) {
+		if(i->type() == AnnotationItem::Type) {
+			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
+			if(ai->id() == annotation->id) {
+				item = ai;
+				newitem = false;
+				break;
+			}
+		}
+
+	}
+
+	if(item==0)
+		item = new AnnotationItem(annotation->id, image_);
+	item->setOptions(annotation);
+	if(newitem && user == localuser_)
+		emit newLocalAnnotation(item);
+}
+
+void Board::unannotate(int id)
+{
+	if(!image_) return;
+	AnnotationItem *item=0;
+	foreach(QGraphicsItem *i, image_->children()) {
+		if(i->type() == AnnotationItem::Type) {
+			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
+			if(ai->id() == id) {
+				item = ai;
+				break;
+			}
+		}
+	}
+	if(item) {
+		emit annotationDeleted(item);
+		delete item;
+	} else {
+		qWarning() << "Can't delete annotation" << id << "because it doesn't exist!";
+	}
+}
+
 
 }
 

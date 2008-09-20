@@ -151,6 +151,8 @@ class MainWindow : public QMainWindow {
 		void boardInfoChanged();
 		//! Inform user about raster upload progress
 		void rasterUp(int p);
+		//! Toggle annotations
+		void toggleAnnotations(bool hidden);
 
 		//! Perform autosave
 		void autosave();
@@ -273,6 +275,7 @@ class MainWindow : public QMainWindow {
 		QAction *pickertool_;
 		QAction *linetool_;
 		QAction *recttool_;
+		QAction *annotationtool_;
 		QAction *zoomin_;
 		QAction *zoomout_;
 		QAction *zoomorig_;
@@ -281,6 +284,7 @@ class MainWindow : public QMainWindow {
 
 		QAction *toggleoutline_;
 		QAction *togglecrosshair_;
+		QAction *hideannotations_;
 
 		QAction *toolbartoggles_;
 		QAction *docktoggles_;

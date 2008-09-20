@@ -1,0 +1,292 @@
+<ui version="4.0" >
+ <class>TextSettings</class>
+ <widget class="QWidget" name="TextSettings" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>233</width>
+    <height>308</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Annotation settings</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QTextEdit" name="content" />
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QToolButton" name="left" >
+       <property name="font" >
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Left justify</string>
+       </property>
+       <property name="text" >
+        <string>I</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-justify-left.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="checked" >
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="fill" >
+       <property name="font" >
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Fill</string>
+       </property>
+       <property name="text" >
+        <string>I</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-justify-fill.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="center" >
+       <property name="font" >
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Center</string>
+       </property>
+       <property name="text" >
+        <string>I</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-justify-center.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="right" >
+       <property name="font" >
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Right justify</string>
+       </property>
+       <property name="text" >
+        <string>I</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-justify-right.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="bold" >
+       <property name="font" >
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Bold</string>
+       </property>
+       <property name="text" >
+        <string>B</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-text-bold.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="italic" >
+       <property name="font" >
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Italic</string>
+       </property>
+       <property name="text" >
+        <string>I</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-text-italic.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFontComboBox" name="font" />
+   </item>
+   <item>
+    <layout class="QGridLayout" >
+     <property name="verticalSpacing" >
+      <number>0</number>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>Text</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Background</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>Size</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="ColorButton" name="btnText" >
+       <property name="minimumSize" >
+        <size>
+         <width>0</width>
+         <height>24</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="ColorButton" name="btnBackground" >
+       <property name="color" >
+        <color>
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2" >
+      <widget class="QSpinBox" name="size" >
+       <property name="minimum" >
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QPushButton" name="btnBake" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="toolTip" >
+        <string>Bake the text onto the image</string>
+       </property>
+       <property name="text" >
+        <string>Bake</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemove" >
+       <property name="toolTip" >
+        <string>Delete this annotation</string>
+       </property>
+       <property name="text" >
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ColorButton</class>
+   <extends>QWidget</extends>
+   <header>colorbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc" />
+ </resources>
+ <connections/>
+</ui>

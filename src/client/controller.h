@@ -46,6 +46,10 @@ namespace network {
 	class SessionState;
 }
 
+namespace tools {
+	class AnnotationSettings;
+}
+
 class QUrl;
 class QImage;
 
@@ -66,7 +70,7 @@ class Controller : public QObject
 	friend class tools::BrushBase;
 	friend class tools::ColorPicker;
 	public:
-		Controller(QObject *parent=0);
+		Controller(tools::AnnotationSettings *as, QObject *parent=0);
 		~Controller();
 
 		//! Set drawing board to use
