@@ -30,7 +30,7 @@
 namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false),
+	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false), spacedown_(false),
 	outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true), crosshair_(false)
 {
 	viewport()->setAcceptDrops(true);
@@ -148,16 +148,8 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(pendown_ != NOTDOWN)
 		return;
-	if(event->button() == Qt::MidButton) {
+	if(event->button() == Qt::MidButton || spacedown_) {
 		startDrag(event->x(), event->y());
-		if(enableoutline_) {
-			showoutline_ = false;
-			QList<QRectF> rect;
-			rect.append(QRectF(prevpoint_.x() - outlinesize_,
-						prevpoint_.y() - outlinesize_,
-						dia_, dia_));
-			updateScene(rect);
-		}
 	} else if(event->button() == Qt::LeftButton && isdragging_==false) {
 		pendown_ = MOUSEDOWN;
 		emit penDown(
@@ -204,9 +196,8 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 	if(pendown_ == TABLETDOWN)
 		return;
 	prevpoint_ = dpcore::Point(mapToScene(event->pos()), 0.0);
-	if(event->button() == Qt::MidButton && isdragging_) {
+	if(isdragging_) {
 		stopDrag();
-		showoutline_ = true;
 	} else if(event->button() == Qt::LeftButton && pendown_ == MOUSEDOWN) {
 		pendown_ = NOTDOWN;
 		emit penUp();
@@ -218,6 +209,26 @@ void EditorView::mouseDoubleClickEvent(QMouseEvent*)
 	// Ignore doubleclicks
 }
 
+void EditorView::keyPressEvent(QKeyEvent *event) {
+	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+		event->accept();
+		spacedown_ = true;
+		viewport()->setCursor(Qt::OpenHandCursor);
+	} else {
+		QGraphicsView::keyPressEvent(event);
+	}
+}
+
+void EditorView::keyReleaseEvent(QKeyEvent *event) {
+	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+		event->accept();
+		spacedown_ = false;
+		if(!isdragging_)
+			viewport()->setCursor(crosshair_?Qt::CrossCursor:Qt::ArrowCursor);
+	} else {
+		QGraphicsView::keyReleaseEvent(event);
+	}
+}
 //! Handle viewport events
 /**
  * Tablet events are handled here
@@ -235,17 +246,25 @@ bool EditorView::viewportEvent(QEvent *event)
 			if(pendown_) {
 				if(point.pressure()==0) {
 					// Missed a release event
-					pendown_ = NOTDOWN;
-					emit penUp();
+					if(isdragging_) {
+						stopDrag();
+					} else {
+						pendown_ = NOTDOWN;
+						emit penUp();
+					}
 				} else {
-					emit penMove(point);
-					if(enableoutline_ && showoutline_) {
-						// Update previous location. This is needed if brush
-						// diameter has changed.
-						QList<QRectF> rect;
-						rect.append(QRectF(prevpoint_.x() - outlinesize_,
-									prevpoint_.y() - outlinesize_, dia_, dia_));
-						updateScene(rect);
+					if(isdragging_) {
+						moveDrag(tabev->x(), tabev->y());
+					} else {
+						emit penMove(point);
+						if(enableoutline_ && showoutline_) {
+							// Update previous location. This is needed
+							// if brush diameter has changed.
+							QList<QRectF> rect;
+							rect.append(QRectF(prevpoint_.x() - outlinesize_,
+										prevpoint_.y() - outlinesize_, dia_, dia_));
+							updateScene(rect);
+						}
 					}
 				}
 			} else if(enableoutline_ && showoutline_) {
@@ -262,12 +281,16 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		if(pendown_ == NOTDOWN) {
-			const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
+		if(spacedown_) {
+			startDrag(tabev->x(), tabev->y());
+		} else {
+			if(pendown_ == NOTDOWN) {
+				const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
-			pendown_ = TABLETDOWN;
-			emit penDown(point);
-			prevpoint_ = point;
+				pendown_ = TABLETDOWN;
+				emit penDown(point);
+				prevpoint_ = point;
+			}
 		}
 	} else if(event->type() == QEvent::TabletRelease) {
 		// Stylus lifted
@@ -301,6 +324,14 @@ void EditorView::startDrag(int x,int y)
 	dragx_ = x;
 	dragy_ = y;
 	isdragging_ = true;
+	if(enableoutline_) {
+		showoutline_ = false;
+		QList<QRectF> rect;
+		rect.append(QRectF(prevpoint_.x() - outlinesize_,
+					prevpoint_.y() - outlinesize_,
+					dia_, dia_));
+		updateScene(rect);
+	}
 }
 
 void EditorView::scrollTo(const QPoint& point)
@@ -334,8 +365,12 @@ void EditorView::moveDrag(int x, int y)
 //! Stop dragging
 void EditorView::stopDrag()
 {
-	setCrosshair(crosshair_);
+	if(spacedown_)
+		viewport()->setCursor(Qt::OpenHandCursor);
+	else
+		setCrosshair(crosshair_);
 	isdragging_ = false;
+	showoutline_ = true;
 }
 
 /**

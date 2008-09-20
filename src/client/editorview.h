@@ -85,6 +85,8 @@ class EditorView : public QGraphicsView
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 		void mouseDoubleClickEvent(QMouseEvent*);
+		void keyPressEvent(QKeyEvent *event);
+		void keyReleaseEvent(QKeyEvent *event);
 		bool viewportEvent(QEvent *event);
 		void drawForeground(QPainter *painter, const QRectF& rect);
 		void dragEnterEvent(QDragEnterEvent *event);
@@ -110,6 +112,7 @@ class EditorView : public QGraphicsView
 
 		//! Is the view being dragged
 		bool isdragging_;
+		bool spacedown_;
 		int dragx_,dragy_;
 
 		//! Previous pointer location
