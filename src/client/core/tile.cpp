@@ -38,7 +38,7 @@ Tile::Tile(const QColor& color, int x, int y)
 
 /**
  * Copy all pixel data from (x*SIZE, y*SIZE, (x+1)*SIZE, (y+1)*SIZE).
- * Pixels outside the source image are left uninitialized.
+ * Pixels outside the source image are set to zero
  */
 Tile::Tile(const QImage& image, int x, int y)
 	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
@@ -49,9 +49,11 @@ Tile::Tile(const QImage& image, int x, int y)
 	const int h = (image.height() - y*SIZE)<SIZE?image.height()-y*SIZE:SIZE;
 	for(int yy=0;yy<h;++yy) {
 		memcpy(data, pixels, w);
+		memset(data+w, 0, SIZE*4-w);
 		pixels += image.bytesPerLine();
 		data += SIZE*4;
 	}
+	memset(data, 0, (SIZE-h)*SIZE*4);
 }
 
 Tile::~Tile() {
@@ -131,6 +133,17 @@ void Tile::composite(const uchar *values, const QColor& color, int x, int y, int
 		}
 		src += skip;
 		ptr += SIZE-w;
+	}
+	cache_ = QPixmap();
+}
+
+void Tile::merge(const Tile *tile)
+{
+	quint32 *d1 = data_;
+	const quint32 *d2 = tile->data_;
+	for(int i=0;i<SIZE*SIZE;++i,++d1,++d2) {
+		blend_normal(reinterpret_cast<uchar*>(d1),
+				reinterpret_cast<const uchar*>(d2), *d2>>24);
 	}
 	cache_ = QPixmap();
 }

@@ -32,6 +32,7 @@ using widgets::ColorButton;
 #include "boardeditor.h"
 #include "annotationitem.h"
 #include "../shared/net/annotation.h"
+#include "core/layer.h"
 
 namespace tools {
 
@@ -216,7 +217,6 @@ NoSettings::NoSettings(const QString& name, const QString& title)
 
 NoSettings::~NoSettings()
 {
-	delete ui_;
 }
 
 QWidget *NoSettings::createUi(QWidget *parent)
@@ -275,6 +275,7 @@ QWidget *AnnotationSettings::createUi(QWidget *parent)
 	connect(ui_->btnBackground, SIGNAL(colorChanged(const QColor&)),
 			this, SLOT(applyChanges()));
 	connect(ui_->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
+	connect(ui_->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
 	return uiwidget_;
 }
 
@@ -359,6 +360,29 @@ void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(sel_);
 	editor_->removeAnnotation(sel_->id());
+}
+
+void AnnotationSettings::bake()
+{
+	Q_ASSERT(sel_);
+	int x, y;
+	dpcore::Layer *layer = sel_->toLayer(&x, &y);
+	editor_->mergeLayer(x, y, layer);
+	delete layer;
+	removeAnnotation();
+	emit baked();
+}
+
+/**
+ * Currently we can't bake annotations when in a network session,
+ * because we have no way of knowing if every user has the same
+ * fonts and the same font rendering engines.
+ * When we can upload arbitrary raster data as drawing commands,
+ * this can be removed.
+ */
+void AnnotationSettings::enableBaking(bool enable)
+{
+	ui_->btnBake->setEnabled(enable);
 }
 
 }

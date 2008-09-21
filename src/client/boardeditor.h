@@ -38,6 +38,7 @@ namespace interface {
 
 namespace dpcore {
 	class Point;
+	class Layer;
 }
 
 namespace protocol {
@@ -93,6 +94,9 @@ class BoardEditor {
 
 		//! Remove the preview
 		void endPreview();
+
+		//! Merge a layer
+		void mergeLayer(int x, int y, const dpcore::Layer *layer);
 
 		//! Set the tool used for drawing
 		virtual void setTool(const dpcore::Brush& brush) = 0;

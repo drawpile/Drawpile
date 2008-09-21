@@ -152,6 +152,15 @@ bool Board::hasImage() const {
 	return image_!=0;
 }
 
+bool Board::hasAnnotations() const
+{
+	if(image_)
+		foreach(QGraphicsItem *i, image_->children())
+			if(i->type() == AnnotationItem::Type)
+				return true;
+	return false;
+}
+
 /**
  * @return board width
  */

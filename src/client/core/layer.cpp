@@ -237,6 +237,22 @@ void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int
 	}
 }
 
+/**
+ * @param tile x index offset
+ * @param tile y index offset
+ */
+void Layer::merge(int x, int y, const Layer *layer)
+{
+	int myx = x;
+	int myy = y;
+	for(int i=0;i<layer->ytiles_&&myy<ytiles_;++i,myy++) {
+		for(int j=0;j<layer->xtiles_;++j&&myx<xtiles_,myx++) {
+			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j]);
+		}
+		myx = x;
+	}
+}
+
 void Layer::fillChecker(const QColor& dark, const QColor& light)
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)

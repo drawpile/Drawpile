@@ -21,6 +21,8 @@
 #include <QPainter>
 #include "annotationitem.h"
 #include "../shared/net/annotation.h"
+#include "core/layer.h"
+#include "core/tile.h"
 
 namespace drawingboard {
 
@@ -128,13 +130,23 @@ QRectF AnnotationItem::boundingRect() const {
 	return QRectF(0, 0, size_.width(), size_.height());
 }
 
-void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
+/**
+ * Render the annotation using a painter.
+ * @param painter painter to render with
+ * @param rect rectangle to which the annotation is rendered
+ */
+void AnnotationItem::render(QPainter *painter, const QRectF& rect) const
 {
-	QRectF rect (QPointF(), size_);
 	painter->fillRect(rect, bgcol_);
 	painter->setPen(textcol_);
 	painter->setFont(font_);
 	painter->drawText(rect, flags_, text_);
+}
+
+void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
+{
+	QRectF rect (QPointF(), size_);
+	render(painter, rect);
 
 	// Draw a border. If background and text color are the same, draw
 	// the border in negative.
@@ -167,6 +179,28 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	}
 }
 
+/**
+ * The annotation will be rendered on the new layer with an offset
+ * so it can be merged simply by compositing whole tiles.
+ * @param x this will be set to the tile x index
+ * @param y this will be set to the tile y index
+ */
+dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
+{
+	using namespace dpcore;
+	int xi = int(pos().x()/Tile::SIZE);
+	int yi = int(pos().y()/Tile::SIZE);
+	QPoint offset(pos().x() - xi*Tile::SIZE, pos().y() - yi*Tile::SIZE);
+	QImage img(offset.x() + size_.width(), offset.y() + size_.height(), QImage::Format_ARGB32);
+	img.fill(0);
+	QPainter painter(&img);
+	render(&painter, QRectF(offset, size_));
+	if(x)
+		*x = xi;
+	if(y)
+		*y = yi;
+	return new Layer(img);
+}
 
 }
 

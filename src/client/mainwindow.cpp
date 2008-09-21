@@ -63,6 +63,7 @@
 #include "joindialog.h"
 #include "logindialog.h"
 #include "settingsdialog.h"
+#include "toolsettings.h" // enableBaking()
 
 #include "navigator.h"
 
@@ -308,7 +309,8 @@ void MainWindow::joinSession(const QUrl& url)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return isWindowModified()==false && controller_->isConnected()==false;
+	return !(isWindowModified() || board_->hasAnnotations() ||
+		controller_->isConnected());
 }
 
 /**
@@ -511,6 +513,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			return;
 		}
 
+		// Confirm unbaked annotations
+		if(board_->hasAnnotations()) {
+			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
+					tr("Note. All unbaked annotations will be lost."),
+					QMessageBox::Ok|QMessageBox::Cancel);
+			if(box.exec() != QMessageBox::Ok) {
+				event->ignore();
+				return;
+			}
+		}
+
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
 			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
@@ -670,16 +683,22 @@ bool MainWindow::save()
 
 /**
  * A standard file dialog is used to get the name of the file to save.
- * If no suffix is entered, ".png" is used.
+ * If no suffix is the suffix from the current filter is used.
  */
 bool MainWindow::saveas()
 {
 	QString selfilter;
 	QString filter;
+#if 0
 	// Get a list of supported formats
 	foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
 		filter += QString(format).toUpper() + " (*." + format + ");;";
 	}
+#endif
+	// We build the filter manually, because these are pretty much the only
+	// reasonable formats (who would want to save a 1600x1200 image
+	// as an XPM?). Perhaps we should check GIF support was compiled in?
+	filter = "PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp);;";
 	filter += tr("All files (*)");
 
 	// Get the file name
@@ -697,6 +716,17 @@ bool MainWindow::saveas()
 		lastpath_ = info.absolutePath();
 		if(defaultsuffix.isEmpty()==false && info.suffix().compare(defaultsuffix)!=0)
 			file += "." + defaultsuffix;
+
+		// Inform the user that annotations are not saved. Until we have
+		// our own image format, we just show this every time.
+		if(board_->hasAnnotations()) {
+			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
+					tr("Note. Annotations will not be saved."),
+					QMessageBox::Ok|QMessageBox::Cancel);
+			if(box.exec() != QMessageBox::Ok) {
+				return false;
+			}
+		}
 
 		// Save the image
 		if(board_->image().save(file) == false) {
@@ -887,6 +917,7 @@ void MainWindow::connected()
 {
 	host_->setEnabled(false);
 	logout_->setEnabled(true);
+	toolsettings_->getAnnotationSettings()->enableBaking(false);
 }
 
 /**
@@ -899,6 +930,7 @@ void MainWindow::disconnected()
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
 	setSessionTitle(QString());
+	toolsettings_->getAnnotationSettings()->enableBaking(true);
 }
 
 /**
@@ -1419,6 +1451,8 @@ void MainWindow::createToolSettings(QMenu *toggles)
 	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
 	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), toolsettings_, SLOT(setForeground(const QColor&)));
 	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), toolsettings_, SLOT(setBackground(const QColor&)));
+	connect(toolsettings_->getAnnotationSettings(), SIGNAL(baked()),
+			this, SLOT(boardChanged()));
 }
 
 void MainWindow::createUserList(QMenu *toggles)

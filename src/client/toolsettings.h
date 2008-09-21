@@ -161,6 +161,10 @@ class AnnotationSettings : public QObject, public ToolSettings {
 
 		//! Set the board editor to change selected annotations
 		void setBoardEditor(drawingboard::BoardEditor *editor) { editor_ = editor; }
+
+		//! Enable or disabled baking
+		void enableBaking(bool enable);
+
 	public slots:
 		//! Set the currently selected annotation item
 		void setSelection(drawingboard::AnnotationItem *item);
@@ -170,6 +174,10 @@ class AnnotationSettings : public QObject, public ToolSettings {
 	private slots:
 		void applyChanges();
 		void removeAnnotation();
+		void bake();
+
+	signals:
+		void baked();
 
 	private:
 		dpcore::Brush brush_;

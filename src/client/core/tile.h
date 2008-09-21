@@ -62,10 +62,13 @@ class Tile {
 		//! Composite values multiplied by color onto this tile
 		void composite(const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
 
+		//! Composite another tile with this tile
+		void merge(const Tile *tile);
+
+		//! Paint this tile
 		//! Copy the contents of this tile onto the appropriate spot on an image
 		void copyToImage(QImage& image) const;
 
-		//! Paint this tile
 		void paint(QPainter *painter, const QPoint& target) const;
 
 		//! Fill this tile with a checker pattern

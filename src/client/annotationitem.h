@@ -26,6 +26,10 @@ namespace protocol {
 	class Annotation;
 }
 
+namespace dpcore {
+	class Layer;
+}
+
 namespace drawingboard {
 
 //! A text box that can be overlaid on the picture.
@@ -91,10 +95,15 @@ class AnnotationItem : public QGraphicsItem {
 		//! reimplementation
 		int type() const { return Type; }
 
+		//! Render this annotation onto a layer
+		dpcore::Layer *toLayer(int *x, int *y);
+
 	protected:
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 	private:
+		void render(QPainter *painter, const QRectF& rect) const;
+
 		int id_;
 		QSizeF size_;
 		QString text_;

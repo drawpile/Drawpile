@@ -71,6 +71,9 @@ class Layer {
 		//! Draw a line using the brush
 		void drawLine(const Brush& brush, const Point& from, const Point& to, int *distance);
 
+		//! Merge a layer
+		void merge(int x, int y, const Layer *layer);
+
 		//! Fill the layer with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
 

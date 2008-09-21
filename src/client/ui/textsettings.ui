@@ -253,9 +253,6 @@
     <layout class="QHBoxLayout" >
      <item>
       <widget class="QPushButton" name="btnBake" >
-       <property name="enabled" >
-        <bool>false</bool>
-       </property>
        <property name="toolTip" >
         <string>Bake the text onto the image</string>
        </property>

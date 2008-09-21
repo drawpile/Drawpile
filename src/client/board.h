@@ -85,6 +85,9 @@ class Board : public QGraphicsScene
 		//! Is there an image on the drawing board
 		bool hasImage() const;
 
+		//! Check if there are any annotations
+		bool hasAnnotations() const;
+
 		//! Delete all users
 		void clearUsers();
 

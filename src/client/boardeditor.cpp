@@ -129,6 +129,17 @@ void BoardEditor::endPreview()
 }
 
 /**
+ * This is currently only used by the annotation tool.
+ * @param x tile x index
+ * @param y tile y index
+ * @param layer layer to merge
+ */
+void BoardEditor::mergeLayer(int x, int y, const dpcore::Layer *layer)
+{
+	board_->image_->image()->merge(x, y, layer);
+}
+
+/**
  * @param brush to compare
  * @retval true if brush matches what the user is currently using
  */
