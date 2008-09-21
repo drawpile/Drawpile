@@ -237,6 +237,7 @@ int Server::redistribute(bool sync, bool active, const QByteArray& data) {
 /**
  * For each user (except the user being briefed), send the
  * user info and the last received tool select message (if any).
+ * Also send all board annotations
  * @param id user to brief
  */
 void Server::briefClient(int id) {

@@ -210,7 +210,7 @@ void Controller::sessionJoined()
 			this, SIGNAL(chat(QString,QString)));
 	connect(session_, SIGNAL(boardChanged()),
 			this, SIGNAL(boardChanged()));
-
+			
 	// Make session -> board connections
 	connect(session_, SIGNAL(toolReceived(int,dpcore::Brush)),
 			board_, SLOT(userSetTool(int,dpcore::Brush)));
@@ -220,6 +220,10 @@ void Controller::sessionJoined()
 			this, SIGNAL(changed()));
 	connect(session_, SIGNAL(strokeEndReceived(int)), board_,
 			SLOT(userEndStroke(int)));
+	connect(session_, SIGNAL(annotation(const protocol::Annotation&)),
+			board_, SLOT(annotate(const protocol::Annotation&)));
+	connect(session_, SIGNAL(rmAnnotation(int)),
+			board_, SLOT(unannotate(int)));
 
 	// Get a remote board editor
 	delete toolbox_.editor();

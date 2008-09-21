@@ -15,7 +15,7 @@ set (
 set (
 	NET_SOURCES
 	net/login.cpp net/message.cpp net/protocol.cpp net/stroke.cpp
-	net/toolselect.cpp net/messagequeue.cpp net/utils.cpp
+	net/toolselect.cpp net/messagequeue.cpp net/utils.cpp net/annotation.cpp
 	)
 
 set (

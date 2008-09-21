@@ -140,6 +140,7 @@ class Client : public QObject {
 		void handleMessage(const protocol::Message *msg);
 		void handleBinary(const protocol::BinaryChunk *bin);
 		void handleDrawing(const protocol::Packet *bin);
+		void handleAnnotation(const QStringList& tokens);
 
 		void loginLocalUser(const QStringList& tokens);
 		void sendBuffer();

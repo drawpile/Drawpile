@@ -33,6 +33,7 @@
 #include "../shared/net/stroke.h"
 #include "../shared/net/toolselect.h"
 #include "../shared/net/binary.h"
+#include "../shared/net/annotation.h"
 
 namespace network {
 
@@ -66,7 +67,6 @@ SessionState::SessionState(HostState *parent, const Session& info)
 	: QObject(parent), host_(parent), info_(info), expectRaster_(0), rasteroffset_(0),bufferdrawing_(true)
 {
 	Q_ASSERT(parent);
-	qDebug() << "Created session";
 }
 
 /**
@@ -251,6 +251,18 @@ void SessionState::sendAckSync()
 	host_->sendPacket(protocol::Message("SYNCREADY"));
 }
 
+void SessionState::sendAnnotation(const protocol::Annotation& a)
+{
+	host_->sendPacket(protocol::Message(a.tokens()));
+}
+
+void SessionState::sendRmAnnotation(int id)
+{
+	QStringList msg;
+	msg << "RMANNOTATION" << QString::number(id);
+	host_->sendPacket(protocol::Message(msg));
+}
+
 void SessionState::sendChat(const QString& message)
 {
 	QStringList msg;
@@ -282,7 +294,6 @@ bool SessionState::handleMessage(const QStringList& tokens)
 	} else if(tokens[0] == "RASTER") {
 		releaseRaster();
 		expectRaster_ = tokens.at(1).toInt();
-		qDebug() << "RASTER" << tokens.at(1) << "int=" << expectRaster_;
 		if(expectRaster_ == 0)
 			emit rasterReceived(100);
 	} else if(tokens[0] == "GIVERASTER") {
@@ -292,6 +303,14 @@ bool SessionState::handleMessage(const QStringList& tokens)
 			sendRasterChunk();
 		else
 			qWarning() << "Got request for more raster data, but we're not uploading anything!";
+	} else if(tokens[0] == "ANNOTATE") {
+		protocol::Annotation a(tokens);
+		if(!a.isValid())
+			qWarning() << "Received an invalid annotation";
+		else
+			emit annotation(a);
+	} else if(tokens[0] == "RMANNOTATION") {
+		emit rmAnnotation(tokens.at(1).toInt());
 	} else
 		return false;
 	return true;
@@ -343,7 +362,6 @@ void SessionState::partUser(const QStringList& tokens) {
  */
 bool SessionState::handleBinaryChunk(protocol::BinaryChunk *bc)
 {
-	qDebug() << "Got" << bc->data().length() << "bytes of binary data. Expecting" << expectRaster_;
 	if(expectRaster_>0) {
 		raster_.append(bc->data());
 		if(raster_.size()<expectRaster_) {
@@ -393,7 +411,6 @@ bool SessionState::handleToolSelect(protocol::ToolSelect *ts)
 bool SessionState::handleStroke(protocol::StrokePoint *s)
 {
 	if(bufferdrawing_) {
-		qDebug() << "buffered stroke";
 		drawbuffer_.enqueue(s);
 		return true;
 	}

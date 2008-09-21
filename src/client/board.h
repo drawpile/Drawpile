@@ -123,7 +123,7 @@ class Board : public QGraphicsScene
 		void userEndStroke(int user);
 
 		//! Add or change an annotation
-		void annotate(int user, const protocol::Annotation *annotation);
+		void annotate(const protocol::Annotation& annotation);
 
 		//! Remove an annotation
 		void unannotate(int id);

@@ -169,15 +169,14 @@ void LocalBoardEditor::endStroke()
 	user_->endStroke();
 }
 
-void LocalBoardEditor::annotate(const protocol::Annotation& a)
+void LocalBoardEditor::annotate(protocol::Annotation a)
 {
+	a.user = user_->id();
 	if(a.id==0) {
 		static int ids=0;
-		protocol::Annotation newa = a;
-		newa.id = ++ids;
-		board_->annotate(user_->id(), &newa);
-	} else
-		board_->annotate(user_->id(), &a);
+		a.id = ++ids;
+	}
+	board_->annotate(a);
 }
 
 void LocalBoardEditor::removeAnnotation(int id)
@@ -236,14 +235,15 @@ void RemoteBoardEditor::endStroke()
 	board_->endPreview();
 }
 
-void RemoteBoardEditor::annotate(const protocol::Annotation& a)
+void RemoteBoardEditor::annotate(protocol::Annotation a)
 {
-	qDebug() << "remote: added annotation" << a.rect;
+	a.user = user_->id();
+	session_->sendAnnotation(a);
 }
 
 void RemoteBoardEditor::removeAnnotation(int id)
 {
-	qDebug() << "remote: removeAnnotation" << id;
+	session_->sendRmAnnotation(id);
 }
 
 }

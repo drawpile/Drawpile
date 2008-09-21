@@ -57,7 +57,7 @@ class AnnotationItem : public QGraphicsItem {
 		void setHighlight(bool h);
 
 		//! Set options from an annotation message
-		void setOptions(const protocol::Annotation *a);
+		void setOptions(const protocol::Annotation& a);
 
 		//! Get options for an annotation message
 		void getOptions(protocol::Annotation& a);

@@ -140,6 +140,39 @@ void Board::addDrawingCommand(const QByteArray& packet)
 }
 
 /**
+ * If the annotation is new (id==0), a new id is given.
+ * @return true if annotation was added succesfully or false id for nonexistent annotation was given.
+ */
+bool Board::addAnnotation(protocol::Annotation& a)
+{
+	static int id=0;
+	if(a.id==0) {
+		// If a new annotation, give it an unique ID
+		a.id = ++id;
+		annotations_.append(a);
+		return true;
+	} else {
+		// Not a new annotation, should exist.
+		for(int i=0;i<annotations_.size();++i)
+			if(annotations_.at(i).id==a.id) {
+				annotations_[i] = a;
+				return true;
+			}
+	}
+	return false;
+}
+
+bool Board::rmAnnotation(int id)
+{
+	for(int i=0;i<annotations_.size();++i)
+		if(annotations_.at(i).id==id) {
+			annotations_.removeAt(i);
+			return true;
+		}
+	return false;
+}
+
+/**
  * Generate a Message describing this board.
  * If board does not exist, returns NOBOARD.
  * Board description format is:

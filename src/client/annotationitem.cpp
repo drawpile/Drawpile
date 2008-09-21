@@ -80,33 +80,33 @@ int AnnotationItem::justify() const {
 	return Annotation::LEFT;
 }
 
-void AnnotationItem::setOptions(const protocol::Annotation *a)
+void AnnotationItem::setOptions(const protocol::Annotation& a)
 {
-	QPointF newpos(a->rect.left(), a->rect.top());
-	QSizeF newsize(a->rect.width(), a->rect.height());
+	QPointF newpos(a.rect.left(), a.rect.top());
+	QSizeF newsize(a.rect.width(), a.rect.height());
 	if(pos() != newpos)
 		setPos(newpos);
 	if(size_ != newsize) {
 		prepareGeometryChange();
 		size_ = newsize;
 	}
-	text_ = a->text;
-	textcol_ = QColor(a->textcolor);
-	textcol_.setAlpha(a->textalpha);
-	bgcol_ = QColor(a->backgroundcolor);
-	bgcol_.setAlpha(a->bgalpha);
+	text_ = a.text;
+	textcol_ = QColor(a.textcolor);
+	textcol_.setAlpha(a.textalpha);
+	bgcol_ = QColor(a.backgroundcolor);
+	bgcol_.setAlpha(a.bgalpha);
 	flags_ = Qt::TextWordWrap;
-	switch(a->justify) {
+	switch(a.justify) {
 		using protocol::Annotation;
 		case Annotation::LEFT: flags_ |= Qt::AlignLeft; break;
 		case Annotation::RIGHT: flags_ |= Qt::AlignRight; break;
 		case Annotation::CENTER: flags_ |= Qt::AlignHCenter; break;
 		case Annotation::FILL: flags_ |= Qt::AlignJustify; break;
 	}
-	font_.setBold(a->bold);
-	font_.setItalic(a->italic);
-	font_.setFamily(a->font);
-	font_.setPixelSize(a->size);
+	font_.setBold(a.bold);
+	font_.setItalic(a.italic);
+	font_.setFamily(a.font);
+	font_.setPixelSize(a.size);
 	update();
 }
 

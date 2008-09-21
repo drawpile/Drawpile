@@ -23,6 +23,8 @@
 #ifndef DP_SRV_BOARD_H
 #define DP_SRV_BOARD_H
 
+#include "../net/annotation.h"
+
 namespace server {
 
 /**
@@ -93,6 +95,15 @@ class Board : public QObject {
 		//! Add a preserialized drawing command
 		void addDrawingCommand(const QByteArray& packet);
 
+		//! Add (or change) an annotation
+		bool addAnnotation(protocol::Annotation& a);
+
+		//! Remove an annotation
+		bool rmAnnotation(int id);
+
+		//! Get the list of annotations
+		const QList<protocol::Annotation>& annotations() const { return annotations_; }
+
 		//! Get the expected length of the raster buffer
 		int rasterBufferLength() const { return rasterlen_; }
 
@@ -137,6 +148,8 @@ class Board : public QObject {
 		bool valid_;
 		int clientsWaitingForBuffer_;
 		int bufferLimit_;
+
+		QList<protocol::Annotation> annotations_;
 };
 
 }

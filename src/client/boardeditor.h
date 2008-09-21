@@ -108,7 +108,7 @@ class BoardEditor {
 		virtual void endStroke() = 0;
 
 		//! Create a new or change an existing annotation.
-		virtual void annotate(const protocol::Annotation& a) = 0;
+		virtual void annotate(protocol::Annotation a) = 0;
 
 		//! Remove an annotation
 		virtual void removeAnnotation(int id) = 0;
@@ -143,7 +143,7 @@ class LocalBoardEditor : public BoardEditor {
 		void setTool(const dpcore::Brush& brush);
 		void addStroke(const dpcore::Point& point);
 		void endStroke();
-		void annotate(const protocol::Annotation& a);
+		void annotate(protocol::Annotation a);
 		void removeAnnotation(int id);
 };
 
@@ -162,7 +162,7 @@ class RemoteBoardEditor : public BoardEditor {
 		void setTool(const dpcore::Brush& brush);
 		void addStroke(const dpcore::Point& point);
 		void endStroke();
-		void annotate(const protocol::Annotation& a);
+		void annotate(protocol::Annotation a);
 		void removeAnnotation(int id);
 
 	private:

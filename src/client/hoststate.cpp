@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QDebug>
 #include <QImage>
 
 #include "../config.h"
@@ -184,7 +183,6 @@ void HostState::sendPacket(const protocol::Packet& packet) {
  */
 void HostState::handleMessage(const Message *msg)
 {
-	qDebug() << msg->message();
 	QStringList tkns = msg->tokens();
 	if(tkns.isEmpty()) {
 		emit error(tr("Server sent an invalid message."));

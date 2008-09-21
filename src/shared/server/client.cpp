@@ -247,7 +247,9 @@ void Client::handleMessage(const Message *msg) {
 
 	switch(_state) {
 		case ACTIVE:
-			if(tokens[0] == "SAY") {
+			if(tokens[0] == "ANNOTATE" || tokens[0]=="RMANNOTATION") {
+				handleAnnotation(tokens);
+			} else if(tokens[0] == "SAY") {
 				handleChat(tokens);
 			} else if(tokens[0] == "BOARD") {
 				if(_server->board().owner()>0 && _server->board().owner()!=_id) {
@@ -416,6 +418,27 @@ void Client::handleDrawing(const protocol::Packet *pkt) {
 }
 
 /**
+ * Clients can add, change or delete annotations. All annotations are
+ * kept in the board state, so new users can be informed.
+ */
+void Client::handleAnnotation(const QStringList& tokens)
+{
+	if(tokens[0]=="RMANNOTATION") {
+		if(_server->board().rmAnnotation(tokens.at(1).toInt())) {
+			_server->redistribute(false, true, Message(tokens).serialize());
+		} else {
+			_server->printDebug("User " + QString::number(_id) + " tried to delete nonexistent annotation " + tokens.at(1));
+		}
+	} else {
+		protocol::Annotation a(tokens);
+		if(_server->board().addAnnotation(a))
+			_server->redistribute(false, true, Message(a.tokens()).serialize());
+		else
+			_server->printDebug("Received change to an annotation that doesn't exist.");
+	}
+}
+
+/**
  * Start sending the user buffered data.
  * This is after the user has been brought up to speed on logged in
  * clients.
@@ -471,8 +494,13 @@ void Client::sendBufferChunk() {
 	} while(_rasteroffset < raster.size());
 	// Once the raster buffer is completely sent, the user goes to ACTIVE
 	// state.
-	if(_rasteroffset == _server->board().rasterBufferLength())
+	if(_rasteroffset == _server->board().rasterBufferLength()) {
 		_state = ACTIVE;
+		// Now that the user has a valid drawing board, send all
+		// annotations.
+		foreach(const protocol::Annotation& a, _server->board().annotations())
+			_socket->send(protocol::Message(a.tokens()));
+	}
 }
 
 /**

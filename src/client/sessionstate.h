@@ -41,6 +41,7 @@ namespace protocol {
 	class StrokePoint;
 	class StrokeEnd;
 	class BinaryChunk;
+	class Annotation;
 }
 
 namespace network {
@@ -116,6 +117,12 @@ class SessionState : public QObject {
 		//! Send a chat message
 		void sendChat(const QString& message);
 
+		//! Send an annotation message
+		void sendAnnotation(const protocol::Annotation& a);
+
+		//! Send an annotation removal message
+		void sendRmAnnotation(int id);
+
 	signals:
 		//! Raster data has been received
 		/**
@@ -164,6 +171,12 @@ class SessionState : public QObject {
 
 		//! Results of a StrokeEnd message
 		void strokeEndReceived(int user);
+
+		//! An annotation was received
+		void annotation(const protocol::Annotation& a);
+
+		//! An annotation was deleted
+		void rmAnnotation(int id);
 
 		//! A chat message
 		void chatMessage(const QString& nick, const QString& msg);

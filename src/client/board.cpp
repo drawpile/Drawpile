@@ -303,7 +303,7 @@ void Board::userEndStroke(int user)
 
 /**
  */
-void Board::annotate(int user, const protocol::Annotation *annotation)
+void Board::annotate(const protocol::Annotation& annotation)
 {
 	if(!image_) return;
 	AnnotationItem *item=0;
@@ -312,19 +312,18 @@ void Board::annotate(int user, const protocol::Annotation *annotation)
 	foreach(QGraphicsItem *i, image_->children()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
-			if(ai->id() == annotation->id) {
+			if(ai->id() == annotation.id) {
 				item = ai;
 				newitem = false;
 				break;
 			}
 		}
-
 	}
 
 	if(item==0)
-		item = new AnnotationItem(annotation->id, image_);
+		item = new AnnotationItem(annotation.id, image_);
 	item->setOptions(annotation);
-	if(newitem && user == localuser_)
+	if(newitem && annotation.user == localuser_)
 		emit newLocalAnnotation(item);
 }
 

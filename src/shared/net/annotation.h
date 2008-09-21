@@ -21,6 +21,9 @@
 #ifndef DP_PROTO_ANNOTATION_H
 #define DP_PROTO_ANNOTATION_H
 
+#include <QStringList>
+#include <QRect>
+
 namespace protocol {
 
 //! An annotation message
@@ -30,11 +33,22 @@ namespace protocol {
 class Annotation {
 	public:
 		enum {LEFT, RIGHT, CENTER, FILL};
+		//! Construct a default blank annotation
 		Annotation() : id(0), textcolor("#000"), textalpha(255),
 		backgroundcolor("#fff"), bgalpha(0),
-		justify(LEFT), bold(false), italic(false), size(20) { }
+		justify(LEFT), bold(false), italic(false), size(20), valid_(true) {  }
+
+		//! Construct an annotation from a message
+		explicit Annotation(const QStringList& tokens);
+
+		//! Get a message from this annotation
+		QStringList tokens() const;
+
+		//! Is this annotation valid?
+		bool isValid() const { return valid_; }
 
 		int id;
+		int user;
 		QRect rect;
 		QString text;
 		QString textcolor;
@@ -46,6 +60,9 @@ class Annotation {
 		bool italic;
 		QString font;
 		int size;
+
+	private:
+		bool valid_;
 };
 
 }
