@@ -19,6 +19,7 @@
 */
 #include <QPainter>
 #include <QImage>
+#include <cmath>
 
 #include "layer.h"
 #include "tile.h"
@@ -162,20 +163,14 @@ void Layer::dab(const Brush& brush, const Point& point)
  * @param distance distance from previous dab.
  */
 void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int *distance) {
-	#if 0
-	qreal pressure = point1.pressure();
-	qreal deltapressure;
-	if(qAbs(pressure2-pressure1) < 1.0/255.0)
-		deltapressure = 0;
-	else
-		deltapressure = (pressure2-pressure1) / hypot(point1.x()-to.x(), point1.y()-to.y());
-	#endif
+	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
 	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
 
 	Point point = from;
 	int &x0 = point.rx();
 	int &y0 = point.ry();
+	qreal &p = point.rpressure();
 	int x1 = to.x();
 	int y1 = to.y();
 	int dy = y1 - y0;
@@ -215,6 +210,7 @@ void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int
 			} else {
 				dab(brush, point);
 			}
+			p += dp;
 		}
 	} else {
 		int fraction = dx - (dy >> 1);
@@ -233,6 +229,7 @@ void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int
 			} else {
 				dab(brush, point);
 			}
+			p += dp;
 		}
 	}
 }
