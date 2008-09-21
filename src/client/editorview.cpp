@@ -22,6 +22,8 @@
 #include <QTabletEvent>
 #include <QScrollBar>
 #include <QUrl>
+#include <QBitmap>
+#include <QPainter>
 
 #include "editorview.h"
 #include "board.h"
@@ -31,10 +33,23 @@ namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false), spacedown_(false),
-	outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true), crosshair_(false)
+	outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
+
+	// Draw the crosshair cursor
+	QBitmap bm(32,32);
+	bm.clear();
+	QPainter bmp(&bm);
+	bmp.setPen(Qt::color1);
+	bmp.drawLine(16,0,16,32);
+	bmp.drawLine(0,16,32,16);
+	QBitmap mask = bm;
+	bmp.setPen(Qt::color0);
+	bmp.drawPoint(16,16);
+	cursor_ = QCursor(bm, mask);
+	viewport()->setCursor(cursor_);
 }
 
 void EditorView::setBoard(drawingboard::Board *board)
@@ -90,15 +105,6 @@ void EditorView::setOutlineRadius(int radius)
 					updatesize*2, updatesize*2));
 		updateScene(rect);
 	}
-}
-
-void EditorView::setCrosshair(bool enable)
-{
-	crosshair_ = enable;
-	if(enable)
-		viewport()->setCursor(Qt::CrossCursor);
-	else
-		viewport()->setCursor(Qt::ArrowCursor);
 }
 
 void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
@@ -224,7 +230,7 @@ void EditorView::keyReleaseEvent(QKeyEvent *event) {
 		event->accept();
 		spacedown_ = false;
 		if(!isdragging_)
-			viewport()->setCursor(crosshair_?Qt::CrossCursor:Qt::ArrowCursor);
+			viewport()->setCursor(cursor_);
 	} else {
 		QGraphicsView::keyReleaseEvent(event);
 	}
@@ -364,7 +370,7 @@ void EditorView::stopDrag()
 	if(spacedown_)
 		viewport()->setCursor(Qt::OpenHandCursor);
 	else
-		setCrosshair(crosshair_);
+		viewport()->setCursor(cursor_);
 	isdragging_ = false;
 	showoutline_ = true;
 }

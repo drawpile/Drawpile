@@ -283,7 +283,6 @@ class MainWindow : public QMainWindow {
 		QAction *settings_;
 
 		QAction *toggleoutline_;
-		QAction *togglecrosshair_;
 		QAction *hideannotations_;
 
 		QAction *toolbartoggles_;

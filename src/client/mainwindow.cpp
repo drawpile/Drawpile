@@ -108,8 +108,6 @@ MainWindow::MainWindow(const MainWindow *source)
 			view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)),
 			view_, SLOT(setOutline(bool)));
-	connect(togglecrosshair_, SIGNAL(triggered(bool)),
-			view_, SLOT(setCrosshair(bool)));
 	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)),
 			view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
 	connect(view_, SIGNAL(imageDropped(QString)),
@@ -407,8 +405,6 @@ void MainWindow::readSettings()
 	// Remember cursor settings
 	toggleoutline_->setChecked(cfg.value("outline",true).toBool());
 	view_->setOutline(toggleoutline_->isChecked());
-	togglecrosshair_->setChecked(cfg.value("crosshair",true).toBool());
-	view_->setCrosshair(togglecrosshair_->isChecked());
 
 	// Remember foreground and background colors
 	fgbgcolor_->setForeground(QColor(cfg.value("foreground", "black").toString()));
@@ -476,7 +472,6 @@ void MainWindow::writeSettings()
 	const int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
 	cfg.setValue("tool", tool);
 	cfg.setValue("outline", toggleoutline_->isChecked());
-	cfg.setValue("crosshair", togglecrosshair_->isChecked());
 	cfg.setValue("foreground",fgbgcolor_->foreground().name());
 	cfg.setValue("background",fgbgcolor_->background().name());
 }
@@ -1283,9 +1278,6 @@ void MainWindow::initActions()
 	toggleoutline_ = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"));
 	toggleoutline_->setCheckable(true);
 
-	togglecrosshair_ = makeAction("brushcursor", 0, tr("Crosshair c&ursor"), tr("Use a crosshair cursor"));
-	togglecrosshair_->setCheckable(true);
-
 	// Settings window action
 	settings_ = makeAction(0, 0, tr("&Settings"));
 	connect(settings_, SIGNAL(triggered()), this, SLOT(showSettings()));
@@ -1346,7 +1338,6 @@ void MainWindow::createMenus()
 	toolsmenu->addAction(annotationtool_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
-	toolsmenu->addAction(togglecrosshair_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(settings_);
 
