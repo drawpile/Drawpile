@@ -12,13 +12,13 @@ namespace version {
  *
  * The revision level is usually reset to 0 after protocol compatability
  * is broken. Other implementations of DrawPile should use a different
- * level (e.g. starting from 256) unless they are fully compatible with
+ * level (e.g. starting from 128) unless they are fully compatible with
  * the official client.
  */
 static const int level = 0; 
 
 //! Version string
-static const char string[] = "0.4.0";
+static const char string[] = "0.5.0";
 
 }
 

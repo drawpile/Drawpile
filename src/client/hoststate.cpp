@@ -25,6 +25,7 @@
 #include "hoststate.h"
 #include "sessionstate.h"
 #include "sessioninfo.h"
+#include "version.h"
 
 #include "../shared/net/messagequeue.h"
 #include "../shared/net/message.h"
@@ -155,7 +156,7 @@ void HostState::login(const QString& username)
 {
 	Q_ASSERT(isConnected());
 	username_ = username;
-	mq_->send(protocol::LoginId(1));
+	mq_->send(protocol::LoginId(version::level));
 }
 
 /**

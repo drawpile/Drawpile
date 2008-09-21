@@ -829,7 +829,7 @@ void MainWindow::finishHost(int i)
 					QUrl::TolerantMode);
 		} else {
 			QSettings& cfg = DrawPileApp::getSettings();
-			address.setHost(LocalServer::address());
+			address.setHost("127.0.0.1");
 			if(cfg.contains("settings/server/port"))
 				address.setPort(cfg.value("settings/server/port").toInt());
 		}
@@ -846,14 +846,6 @@ void MainWindow::finishHost(int i)
 
 		// Start server if hosting locally
 		if(useremote==false) {
-#if 0
-			LocalServer *srv = DrawPileApp::getInstance()->getServer();
-			if(srv->ensureRunning()==false) {
-				showErrorMessage(srv->errorString(),srv->serverOutput());
-				hostdlg_->deleteLater();
-				return;
-			}
-#endif
 			LocalServer::startServer();
 		}
 

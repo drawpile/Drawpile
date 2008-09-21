@@ -94,10 +94,14 @@ void Controller::connectHost(const QUrl& url)
 
 	// This is purely cosmetic. This address is displayed to the user when
 	// connection is established. Show only the host and port if specified.
-	address_ = url.toString(QUrl::RemoveScheme|QUrl::RemovePassword|
-			QUrl::RemoveUserInfo|QUrl::RemovePath|QUrl::RemoveQuery|
-			QUrl::RemoveFragment|QUrl::StripTrailingSlash
-			).mid(2);
+	// When connecting to localhost, try to guess the most likely address
+	// visible to the outside net.
+	if(url.host()=="127.0.0.1")
+		address_ = LocalServer::address();
+	else
+		address_ = url.host();
+	if(url.port()>0)
+		address_ += ":" + QString::number(url.port());
 
 	// Connect to host
 	host_->connectToHost(url.host(), url.port(protocol::DEFAULT_PORT));

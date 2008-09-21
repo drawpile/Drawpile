@@ -6,6 +6,7 @@
  * Fixes to brush rendering
  * Viewport dragging with spacebar (works with tablets too)
  * Added annotation tool
+ * Many small bugfixes/improvements.
 
 2007-04-10 Version 0.4.0
  * Support multiple windows
