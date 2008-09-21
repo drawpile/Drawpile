@@ -83,6 +83,10 @@ class MainWindow : public QMainWindow {
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
 
+		//! Connect to a server and host a session.
+		void hostSession(const QUrl& url, const QString& password,
+				const QString& title, int userlimit, bool allowdrawing);
+
 	public slots:
 		//! Check if document is changed and show New dialog
 		void showNew();

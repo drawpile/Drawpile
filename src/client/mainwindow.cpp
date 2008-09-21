@@ -844,24 +844,32 @@ void MainWindow::finishHost(int i)
 			LocalServer::startServer();
 		}
 
-		// If another image was selected, replace current board with it
-		/** @todo what if there were unsaved changes? */
+		// If another image was selected, open a new window (unless this window
+		// is replaceable)
+		MainWindow *w = this;
 		if(hostdlg_->useOriginalImage() == false) {
-			initBoard(hostdlg_->getImage());
+			if(!canReplace())
+				w = new MainWindow(this);
+			w->initBoard(hostdlg_->getImage());
 		}
-
-		// Connect to host
-		disconnect(controller_, SIGNAL(loggedin()), this, 0);
-		controller_->hostSession(address, hostdlg_->getPassword(),
-				hostdlg_->getTitle(), hostdlg_->getImage(),
+		w->hostSession(address, hostdlg_->getPassword(), hostdlg_->getTitle(),
 				hostdlg_->getUserLimit(), hostdlg_->getAllowDrawing());
 
-		// Set login dialog to correct state
-		logindlg_->connecting(address.host(), true);
-		connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 	}
-	// TODO can delete now?
 	hostdlg_->deleteLater();
+}
+
+void MainWindow::hostSession(const QUrl& url, const QString& password,
+		const QString& title, int userlimit, bool allowdrawing)
+{
+	// Connect to host
+	disconnect(controller_, SIGNAL(loggedin()), this, 0);
+	controller_->hostSession(url, password,
+			title, board_->image(), userlimit, allowdrawing);
+
+	// Set login dialog to correct state
+	logindlg_->connecting(url.host(), true);
+	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 }
 
 /**
