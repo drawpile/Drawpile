@@ -69,6 +69,18 @@ void AnnotationItem::setHighlight(bool hl)
 		update();
 }
 
+/**
+ * Normally a border is drawn only when an annotation lacks content
+ * or when it is highlighted.
+ */
+void AnnotationItem::forceBorder(bool force)
+{
+	bool old = forceborder_;
+	forceborder_ = force;
+	if(force != old)
+		update();
+}
+
 int AnnotationItem::justify() const {
 	using protocol::Annotation;
 	if((flags_ & Qt::AlignRight))
@@ -151,11 +163,12 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	// Draw a border. If background and text color are the same, draw
 	// the border in negative.
 	QColor border = textcol_;
-	bool drawb = highlight_ || text_.isEmpty();
-	if(textcol_ == bgcol_) {
+	bool drawb = highlight_ || forceborder_ || text_.isEmpty();
+	if(textcol_.rgb() == bgcol_.rgb()) {
 		border = QColor(255-textcol_.red(), 255-textcol_.green(), 255-textcol_.blue());
 		drawb = true;
 	}
+	border.setAlpha(255);
 
 	QPen bpen(highlight_?Qt::DashLine:Qt::DotLine);
 	if(drawb) {

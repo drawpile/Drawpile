@@ -211,13 +211,15 @@ void Annotation::end()
 		editor()->endPreview();
 		QRectF rect(QRectF(start_, end_));
 		rect = rect.normalized();
-		if(rect.width()>0 && rect.height()>0) {
-			protocol::Annotation a;
-			a.rect = rect.toRect();
-			a.textcolor = editor()->localBrush().color(1.0).name();
-			a.backgroundcolor = editor()->localBrush().color(0.0).name();
-			editor()->annotate(a);
-		}
+		if(rect.width()<15)
+			rect.setWidth(15);
+		if(rect.height()<15)
+			rect.setHeight(15);
+		protocol::Annotation a;
+		a.rect = rect.toRect();
+		a.textcolor = editor()->localBrush().color(1.0).name();
+		a.backgroundcolor = editor()->localBrush().color(0.0).name();
+		editor()->annotate(a);
 	}
 }
 

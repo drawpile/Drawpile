@@ -61,30 +61,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="fill" >
-       <property name="font" >
-        <font>
-         <italic>true</italic>
-        </font>
-       </property>
-       <property name="toolTip" >
-        <string>Fill</string>
-       </property>
-       <property name="text" >
-        <string>I</string>
-       </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-justify-fill.png</iconset>
-       </property>
-       <property name="checkable" >
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QToolButton" name="center" >
        <property name="font" >
         <font>
@@ -99,6 +75,30 @@
        </property>
        <property name="icon" >
         <iconset resource="resources.qrc" >:/icons/format-justify-center.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+       <property name="autoExclusive" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="fill" >
+       <property name="font" >
+        <font>
+         <italic>true</italic>
+        </font>
+       </property>
+       <property name="toolTip" >
+        <string>Fill</string>
+       </property>
+       <property name="text" >
+        <string>I</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/format-justify-fill.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>

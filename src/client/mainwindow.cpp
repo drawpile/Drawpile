@@ -1134,18 +1134,20 @@ void MainWindow::selectTool(QAction *tool)
 	tools::Type type;
 	if(tool == brushtool_) 
 		type = tools::BRUSH;
-	 else if(tool == erasertool_) 
+	else if(tool == erasertool_) 
 		type = tools::ERASER;
-	 else if(tool == pickertool_) 
+	else if(tool == pickertool_) 
 		type = tools::PICKER;
-	 else if(tool == linetool_) 
+	else if(tool == linetool_) 
 		type = tools::LINE;
-	 else if(tool == recttool_) 
+	else if(tool == recttool_) 
 		type = tools::RECTANGLE;
-	 else if(tool == annotationtool_)
+	else if(tool == annotationtool_)
 		type = tools::ANNOTATION;
-	 else
+	else
 		return;
+	// When using the annotation tool, highlight all text boxes
+	board_->highlightAnnotations(type==tools::ANNOTATION);
 	emit toolChanged(type);
 }
 

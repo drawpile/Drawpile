@@ -32,7 +32,7 @@
 namespace drawingboard {
 
 Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
-	: QGraphicsScene(parent), image_(0),localuser_(-1), toolpreview_(0), brushsrc_(brush), colorsrc_(color)
+	: QGraphicsScene(parent), image_(0),localuser_(-1), toolpreview_(0), brushsrc_(brush), colorsrc_(color), hla_(false)
 {
 	setItemIndexMethod(NoIndex);
 }
@@ -91,11 +91,19 @@ void Board::clearUsers()
 
 void Board::showAnnotations(bool show)
 {
-	if(!image_) return;
-	foreach(QGraphicsItem *item, image_->children()) {
-		if(item->type() == AnnotationItem::Type)
-			item->setVisible(show);
-	}
+	if(image_)
+		foreach(QGraphicsItem *item, image_->children())
+			if(item->type() == AnnotationItem::Type)
+				item->setVisible(show);
+}
+
+void Board::highlightAnnotations(bool hl)
+{
+	hla_ = hl;
+	if(image_)
+		foreach(QGraphicsItem *item, image_->children())
+			if(item->type() == AnnotationItem::Type)
+				static_cast<AnnotationItem*>(item)->forceBorder(hl);
 }
 
 /**
@@ -320,8 +328,10 @@ void Board::annotate(const protocol::Annotation& annotation)
 		}
 	}
 
-	if(item==0)
+	if(item==0) {
 		item = new AnnotationItem(annotation.id, image_);
+		item->forceBorder(hla_);
+	}
 	item->setOptions(annotation);
 	if(newitem && annotation.user == localuser_)
 		emit newLocalAnnotation(item);

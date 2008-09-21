@@ -110,6 +110,9 @@ class Board : public QGraphicsScene
 		void showAnnotations(bool show);
 
 	public slots:
+		//! Highlight all annotations
+		void highlightAnnotations(bool hl);
+
 		//! Add a new user to the board
 		void addUser(int id);
 
@@ -169,6 +172,8 @@ class Board : public QGraphicsScene
 
 		//! Color source (UI)
 		interface::ColorSource *colorsrc_;
+
+		bool hla_;
 };
 
 }

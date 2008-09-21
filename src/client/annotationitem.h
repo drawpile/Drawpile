@@ -56,6 +56,9 @@ class AnnotationItem : public QGraphicsItem {
 		//! Highlight this item
 		void setHighlight(bool h);
 
+		//! Force the display of a border
+		void forceBorder(bool force);
+
 		//! Set options from an annotation message
 		void setOptions(const protocol::Annotation& a);
 
@@ -110,7 +113,7 @@ class AnnotationItem : public QGraphicsItem {
 		QColor textcol_, bgcol_;
 		QFont font_;
 		int flags_;
-		bool highlight_;
+		bool highlight_, forceborder_;
 };
 
 }
