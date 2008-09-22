@@ -88,6 +88,12 @@ class Board : public QGraphicsScene
 		//! Check if there are any annotations
 		bool hasAnnotations() const;
 
+		//! Get all annotations as message strings
+		QStringList getAnnotations(bool zeroid) const;
+
+		//! Remove all annotations
+		void clearAnnotations();
+
 		//! Delete all users
 		void clearUsers();
 

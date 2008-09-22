@@ -171,7 +171,6 @@ void LocalBoardEditor::endStroke()
 
 void LocalBoardEditor::annotate(protocol::Annotation a)
 {
-	a.user = user_->id();
 	if(a.id==0) {
 		static int ids=0;
 		a.id = ++ids;
@@ -237,7 +236,6 @@ void RemoteBoardEditor::endStroke()
 
 void RemoteBoardEditor::annotate(protocol::Annotation a)
 {
-	a.user = user_->id();
 	session_->sendAnnotation(a);
 }
 

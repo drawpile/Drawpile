@@ -21,6 +21,7 @@
 #define HOSTSTATE_H
 
 #include <QTcpSocket>
+#include <QStringList>
 
 #include "sessioninfo.h"
 
@@ -67,7 +68,7 @@ class HostState : public QObject {
 		void sendPacket(const protocol::Packet& packet);
 
 		//! Set options for hosting a session
-		void setHost(const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw);
+		void setHost(const QStringList& annotations, const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw);
 
 		//! Don't host a session
 		void setNoHost();
@@ -134,6 +135,7 @@ class HostState : public QObject {
 
 		//! Options for hosting a session
 		Session host_;
+		QStringList hostann_;
 		QString hostpassword_;
 };
 

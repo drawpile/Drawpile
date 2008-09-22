@@ -54,7 +54,8 @@ HostState::HostState(QObject *parent)
 	connect(mq_, SIGNAL(badData()), this, SLOT(gotBadData()));
 }
 
-void HostState::setHost(const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw) {
+void HostState::setHost(const QStringList& annotations, const QString& password, const QString& title, quint16 width, quint16 height, int maxusers, bool allowDraw) {
+	hostann_ = annotations;
 	host_ = Session(0, title, width, height, maxusers, !allowDraw);
 	hostpassword_ = password;
 }
@@ -216,6 +217,9 @@ void HostState::handleMessage(const Message *msg)
 				// data.
 				mq_->send(Message(host_.tokens()));
 				session_->setPassword(hostpassword_);
+				foreach(QString annotation, hostann_)
+					mq_->send(Message(annotation));
+				hostann_.clear();
 				session_->flushDrawBuffer();
 				emit loggedin();
 			}

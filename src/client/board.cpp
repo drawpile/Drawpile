@@ -28,6 +28,7 @@
 #include "interfaces.h"
 #include "core/layer.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/message.h"
 
 namespace drawingboard {
 
@@ -87,6 +88,35 @@ void Board::clearUsers()
 	}
 	users_.clear();
 	localuser_ = -1;
+}
+
+/**
+ * @param zeroid if true, set the ID of each annotation to zero
+ * @return list of ANNOTATE messages
+ */
+QStringList Board::getAnnotations(bool zeroid) const
+{
+	QStringList messages;
+	if(image_)
+		foreach(QGraphicsItem *item, image_->children())
+			if(item->type() == AnnotationItem::Type) {
+				protocol::Annotation a;
+				static_cast<AnnotationItem*>(item)->getOptions(a);
+				if(zeroid)
+					a.id = 0;
+				messages << protocol::Message::quote(a.tokens());
+			}
+	return messages;
+}
+
+void Board::clearAnnotations()
+{
+	if(image_)
+		foreach(QGraphicsItem *item, image_->children())
+			if(item->type() == AnnotationItem::Type) {
+				emit annotationDeleted(static_cast<AnnotationItem*>(item));
+				delete item;
+			}
 }
 
 void Board::showAnnotations(bool show)

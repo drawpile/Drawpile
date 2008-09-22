@@ -431,6 +431,7 @@ void Client::handleAnnotation(const QStringList& tokens)
 		}
 	} else {
 		protocol::Annotation a(tokens);
+		a.user = _id;
 		if(_server->board().addAnnotation(a))
 			_server->redistribute(false, true, Message(a.tokens()).serialize());
 		else

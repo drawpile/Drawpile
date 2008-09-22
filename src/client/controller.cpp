@@ -135,7 +135,9 @@ void Controller::hostSession(const QUrl& url, const QString& password,
 		const QString& title, const QImage& image, int maxusers, bool allowDraw)
 {
 	maxusers_ = maxusers; // remember this for deny joins
-	host_->setHost(password, title, image.width(), image.height(), maxusers, allowDraw);
+	host_->setHost(board_->getAnnotations(true),
+			password, title, image.width(),
+			image.height(), maxusers, allowDraw);
 	connectHost(url);
 }
 
@@ -181,6 +183,10 @@ void Controller::sessionJoined()
 	qDebug() << "Joined session";
 	const int userid = host_->localUser();
 	session_ = host_->session();
+
+	// Delete old annotations. If we are hosting this session, the server
+	// should send them right back at us.
+	board_->clearAnnotations();
 
 	// Update user list
 	board_->clearUsers();
