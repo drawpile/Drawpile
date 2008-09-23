@@ -99,6 +99,9 @@ class EditorView : public QGraphicsView
 		//! Drag the view
 		void moveDrag(int x, int y);
 
+		//! Redraw the scene around the outline cursor if necesasry
+		void updateOutline(const dpcore::Point& point);
+
 		//! State of the pen
 		/**
 		 * - NOTDOWN pen is not down

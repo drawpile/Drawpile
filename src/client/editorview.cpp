@@ -183,14 +183,8 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		if(!prevpoint_.intSame(point)) {
 			if(pendown_)
 				emit penMove(point);
-			else if(enableoutline_ && showoutline_) {
-				QList<QRectF> rect;
-				rect.append(QRectF(prevpoint_.x() - outlinesize_,
-							prevpoint_.y() - outlinesize_, dia_, dia_));
-				rect.append(QRectF(point.x() - outlinesize_,
-							point.y() - outlinesize_, dia_, dia_));
-				updateScene(rect);
-			}
+			else
+				updateOutline(point);
 			prevpoint_ = point;
 		}
 	}
@@ -251,29 +245,17 @@ bool EditorView::viewportEvent(QEvent *event)
 		if(!prevpoint_.intSame(point)) {
 			if(isdragging_)
 				moveDrag(tabev->x(), tabev->y());
-			else if(pendown_) {
-				if(point.pressure()==0) {
-					// Missed a release event
-					pendown_ = NOTDOWN;
-					emit penUp();
-				} else {
-					emit penMove(point);
-					if(enableoutline_ && showoutline_) {
-						// Update previous location. This is needed
-						// if brush diameter has changed.
-						QList<QRectF> rect;
-						rect.append(QRectF(prevpoint_.x() - outlinesize_,
-									prevpoint_.y() - outlinesize_, dia_, dia_));
-						updateScene(rect);
+			else {
+				if(pendown_) {
+					if(point.pressure()==0) {
+						// Missed a release event
+						pendown_ = NOTDOWN;
+						emit penUp();
+					} else {
+						emit penMove(point);
 					}
 				}
-			} else if(enableoutline_ && showoutline_) {
-				QList<QRectF> rect;
-				rect.append(QRectF(prevpoint_.x() - outlinesize_,
-							prevpoint_.y() - outlinesize_, dia_, dia_));
-				rect.append(QRectF(point.x() - outlinesize_,
-							point.y() - outlinesize_, dia_, dia_));
-				updateScene(rect);
+				updateOutline(point);
 			}
 			prevpoint_ = point;
 		}
@@ -289,6 +271,7 @@ bool EditorView::viewportEvent(QEvent *event)
 
 				pendown_ = TABLETDOWN;
 				emit penDown(point);
+				updateOutline(point);
 				prevpoint_ = point;
 			}
 		}
@@ -299,7 +282,9 @@ bool EditorView::viewportEvent(QEvent *event)
 		if(isdragging_) {
 			stopDrag();
 		} else if(pendown_ == TABLETDOWN) {
-			prevpoint_ = dpcore::Point(mapToScene(tabev->pos()), 0);
+			dpcore::Point point(mapToScene(tabev->pos()), 0);
+			updateOutline(point);
+			prevpoint_ = point;
 			pendown_ = NOTDOWN;
 			emit penUp();
 		}
@@ -308,6 +293,17 @@ bool EditorView::viewportEvent(QEvent *event)
 	}
 	
 	return true;
+}
+
+void EditorView::updateOutline(const dpcore::Point& point) {
+	if(enableoutline_ && showoutline_) {
+		QList<QRectF> rect;
+		rect.append(QRectF(prevpoint_.x() - outlinesize_,
+					prevpoint_.y() - outlinesize_, dia_, dia_));
+		rect.append(QRectF(point.x() - outlinesize_,
+					point.y() - outlinesize_, dia_, dia_));
+		updateScene(rect);
+	}
 }
 
 void EditorView::sceneChanged()
