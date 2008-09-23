@@ -7,7 +7,7 @@ include ( ${QT_USE_FILE} )
 
 set (
 	HEADERS
-	mainwindow.h netstatus.h dualcolorbutton.h editorview.h
+	main.h mainwindow.h netstatus.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
 	board.h controller.h gradientslider.h colorbutton.h
 	newdialog.h imageselector.h hostdialog.h joindialog.h

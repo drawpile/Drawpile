@@ -26,6 +26,7 @@ class LocalServer;
 class QSettings;
 
 class DrawPileApp : public QApplication {
+	Q_OBJECT
 	public:
 		DrawPileApp(int & argc, char ** argv );
 
@@ -37,6 +38,9 @@ class DrawPileApp : public QApplication {
 
 		//! Get the path to the configuration directory
 		static QString getConfDir();
+
+	protected:
+		bool event(QEvent *e);
 };
 
 #endif

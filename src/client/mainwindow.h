@@ -87,6 +87,9 @@ class MainWindow : public QMainWindow {
 		void hostSession(const QUrl& url, const QString& password,
 				const QString& title, int userlimit, bool allowdrawing);
 
+		//! React to eraser tip proximity
+		void eraserNear(bool near);
+
 	public slots:
 		//! Check if document is changed and show New dialog
 		void showNew();
@@ -280,6 +283,9 @@ class MainWindow : public QMainWindow {
 		QAction *linetool_;
 		QAction *recttool_;
 		QAction *annotationtool_;
+
+		QAction *lasttool_; // the last used tool
+
 		QAction *zoomin_;
 		QAction *zoomout_;
 		QAction *zoomorig_;

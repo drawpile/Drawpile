@@ -1082,8 +1082,14 @@ void MainWindow::toggleAnnotations(bool hidden)
 {
 	annotationtool_->setEnabled(!hidden);
 	board_->showAnnotations(!hidden);
-	if(hidden && annotationtool_->isChecked())
-		selectTool(brushtool_);
+	if(hidden) {
+		if(annotationtool_->isChecked())
+			brushtool_->trigger();
+		// lasttool_ might be erasertool_ when tablet is brought near
+		if(lasttool_ == annotationtool_)
+			lasttool_ = brushtool_;
+	}
+
 }
 
 /**
@@ -1141,9 +1147,27 @@ void MainWindow::selectTool(QAction *tool)
 		type = tools::ANNOTATION;
 	else
 		return;
+	lasttool_ = tool;
 	// When using the annotation tool, highlight all text boxes
 	board_->highlightAnnotations(type==tools::ANNOTATION);
 	emit toolChanged(type);
+}
+
+/**
+ * When the eraser is near, switch to eraser tool. When not, switch to
+ * whatever tool we were using before
+ * @param near
+ */
+void MainWindow::eraserNear(bool near)
+{
+	qDebug() << "eraserNear" << near;
+	if(near) {
+		QAction *lt = lasttool_; // Save lasttool_
+		erasertool_->trigger();
+		lasttool_ = lt;
+	} else {
+		lasttool_->trigger();
+	}
 }
 
 void MainWindow::about()
@@ -1254,6 +1278,9 @@ void MainWindow::initActions()
 
 	annotationtool_ = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"));
 	annotationtool_->setCheckable(true);
+
+	// A default
+	lasttool_ = brushtool_;
 
 	drawingtools_ = new QActionGroup(this);
 	drawingtools_->setExclusive(true);

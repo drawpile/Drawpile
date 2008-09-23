@@ -22,6 +22,7 @@
 #include <QSettings>
 #include <QUrl>
 #include <QMessageBox>
+#include <QTabletEvent>
 
 #ifdef CRASHGUARD
 	#include <QFile>
@@ -85,6 +86,34 @@ QString DrawPileApp::getConfDir()
 #else
 	return QString("%1/.config/DrawPile/").arg(getenv("HOME"));
 #endif
+}
+
+/**
+ * Handle tablet proximity events. When the eraser is brought near
+ * the tablet surface, switch to eraser tool on all windows.
+ * When the tip leaves the surface, switch back to whatever tool
+ * we were using before.
+ */
+bool DrawPileApp::event(QEvent *e) {
+	if(e->type() == QEvent::TabletEnterProximity) {
+		QTabletEvent *te = static_cast<QTabletEvent*>(e);
+		if(te->pointerType()==QTabletEvent::Eraser) {
+			foreach(QWidget *widget, topLevelWidgets()) {
+				MainWindow *mw = qobject_cast<MainWindow*>(widget);
+				if(mw)
+					mw->eraserNear(true);
+			}
+			return true;
+		}
+	} else if(e->type() == QEvent::TabletLeaveProximity) {
+		foreach(QWidget *widget, topLevelWidgets()) {
+			MainWindow *mw = qobject_cast<MainWindow*>(widget);
+			if(mw)
+				mw->eraserNear(false);
+		}
+		return true;
+	}
+	return QApplication::event(e);
 }
 
 int main(int argc, char *argv[]) {
