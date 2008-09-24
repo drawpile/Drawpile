@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -56,10 +56,10 @@ void GradientSlider::paintEvent(QPaintEvent *)
 	QRect gradrect;
 	if(orientation() == Qt::Horizontal) {
 		endpoint = QPointF(width(),0);
-		gradrect = contentsRect().adjusted(0,height()/4+1,-1,-height()/4 - 2);
+		gradrect = contentsRect().adjusted(0,height()/8+1,-1,-height()/8 - 2);
 	} else {
 		endpoint = QPointF(0,height());
-		gradrect = contentsRect().adjusted(width()/4-1,0,-width()/4 - 2,-1);
+		gradrect = contentsRect().adjusted(width()/8-1,0,-width()/8 - 2,-1);
 	}
 
 	QLinearGradient grad(QPointF(0,0),endpoint);
@@ -85,21 +85,32 @@ void GradientSlider::paintEvent(QPaintEvent *)
 	const int pos = qRound((value() - minimum()) / qreal(maximum()-minimum()) *
 		(((orientation()==Qt::Horizontal)?width():height())));
 
-	QPoint points[3];
+	QPoint points[3+3];
 
 	if(orientation() == Qt::Horizontal) {
 		const int w = height()/4;
-		points[0] = QPoint(pos-w,0);
-		points[1] = QPoint(pos+w,0);
-		points[2] = QPoint(pos,w);
+		points[0] = QPoint(pos-w,gradrect.y()+1);
+		points[1] = QPoint(pos+w,gradrect.y()+1);
+		points[2] = QPoint(pos,gradrect.y()+w+1);
+
+		points[3] = QPoint(pos-w,gradrect.bottom());
+		points[4] = QPoint(pos+w,gradrect.bottom());
+		points[5] = QPoint(pos,gradrect.bottom()-w);
 	} else {
 		const int h = width()/4;
-		points[0] = QPoint(0, pos-h);
-		points[1] = QPoint(0, pos+h);
-		points[2] = QPoint(h, pos);
+		points[0] = QPoint(gradrect.x()+1, pos-h);
+		points[1] = QPoint(gradrect.x()+1, pos+h);
+		points[2] = QPoint(gradrect.x()+h+1, pos);
+
+		points[3] = QPoint(gradrect.right(), pos-h);
+		points[4] = QPoint(gradrect.right(), pos+h);
+		points[5] = QPoint(gradrect.right()-h, pos);
 	}
-	painter.setPen(palette().color(QPalette::Dark));
-	painter.drawPolygon(points,3);
+	painter.setPen(Qt::NoPen);
+	painter.setBrush(Qt::black);
+	painter.drawConvexPolygon(points,3);
+	painter.setBrush(Qt::white);
+	painter.drawConvexPolygon(points+3,3);
 
 	// Focus rectangle
 	if(hasFocus()) {
