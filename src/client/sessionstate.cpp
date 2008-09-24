@@ -237,6 +237,19 @@ void SessionState::sendStrokePoint(const dpcore::Point& point)
 			);
 }
 
+/**
+ * Sends a list of stroke points in a single message.
+ */
+void SessionState::sendAtomicStroke(const QList<dpcore::Point>& points)
+{
+	protocol::StrokePoint sp(host_->localuser_, points[0].x(), points[0].y(),
+			qRound(points[0].pressure()*255));
+	for(int i=1;i<points.size();++i) {
+		sp.addPoint(points[i].x(), points[i].y(), qRound(points[i].pressure()*255));
+	}
+	host_->sendPacket(sp);
+}
+
 void SessionState::sendStrokeEnd()
 {
 	host_->sendPacket(protocol::StrokeEnd( host_->localuser_ ) );

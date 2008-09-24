@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class ColorDialog : public QDialog
 {
 	Q_OBJECT
 	public:
-		ColorDialog(const QString& title,QWidget *parent=0);
+		ColorDialog(const QString& title, bool showapply=true, bool showalpha=false, QWidget *parent=0);
 		~ColorDialog();
 
 		//! Set the color
@@ -64,6 +64,7 @@ class ColorDialog : public QDialog
 		Ui_ColorDialog *ui_;
 		bool updating_;
 		int validhue_;
+		bool showalpha_;
 };
 
 }

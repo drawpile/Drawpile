@@ -13,16 +13,7 @@
    <string>Annotation settings</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
    <item>
@@ -47,7 +38,8 @@
         <string>I</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-justify-left.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/format-justify-left.png</normaloff>:/icons/format-justify-left.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -74,7 +66,8 @@
         <string>I</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-justify-center.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/format-justify-center.png</normaloff>:/icons/format-justify-center.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -98,7 +91,8 @@
         <string>I</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-justify-fill.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/format-justify-fill.png</normaloff>:/icons/format-justify-fill.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -122,7 +116,8 @@
         <string>I</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-justify-right.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/format-justify-right.png</normaloff>:/icons/format-justify-right.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -137,7 +132,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>40</width>
          <height>20</height>
@@ -160,7 +155,8 @@
         <string>B</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-text-bold.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/format-text-bold.png</normaloff>:/icons/format-text-bold.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -181,7 +177,8 @@
         <string>I</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/format-text-italic.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/format-text-italic.png</normaloff>:/icons/format-text-italic.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -227,6 +224,9 @@
          <height>24</height>
         </size>
        </property>
+       <property name="setAlpha" stdset="0" >
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item row="1" column="1" >
@@ -237,6 +237,9 @@
          <green>0</green>
          <blue>0</blue>
         </color>
+       </property>
+       <property name="setAlpha" stdset="0" >
+        <bool>true</bool>
        </property>
       </widget>
      </item>

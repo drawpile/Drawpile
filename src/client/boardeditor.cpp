@@ -143,7 +143,7 @@ void BoardEditor::mergeLayer(int x, int y, const dpcore::Layer *layer)
  * @param brush to compare
  * @retval true if brush matches what the user is currently using
  */
-bool LocalBoardEditor::isCurrentBrush(const dpcore::Brush& brush) const
+bool BoardEditor::isCurrentBrush(const dpcore::Brush& brush) const
 {
 	return user_->brush() == brush;
 }
@@ -171,6 +171,7 @@ void LocalBoardEditor::endStroke()
 
 void LocalBoardEditor::annotate(protocol::Annotation a)
 {
+	a.user = user_->id();
 	if(a.id==0) {
 		static int ids=0;
 		a.id = ++ids;
@@ -194,7 +195,8 @@ RemoteBoardEditor::RemoteBoardEditor(Board *board, User *user,
 		network::SessionState *session,
 		interface::BrushSource *brush,
 		interface::ColorSource *color)
-	: BoardEditor(board, user, brush, color), session_(session), lastbrush_(0,0,0)
+	: BoardEditor(board, user, brush, color), session_(session),
+	lastbrush_(0,0,0), atomic_(false)
 {
 	Q_ASSERT(session);
 }
@@ -220,16 +222,35 @@ void RemoteBoardEditor::setTool(const dpcore::Brush& brush)
 }
 
 /**
+ * In atomic mode, all strokes until strokeEnd are sent in a single long
+ * message. This is slightly more efficient and ensures no brush strokes
+ * from other users can be interleaved with the components of this stroke.
+ */
+void RemoteBoardEditor::startAtomic()
+{
+	atomic_ = true;
+}
+
+/**
  * @param point stroke coordinates
  */
 void RemoteBoardEditor::addStroke(const dpcore::Point& point)
 {
-	session_->sendStrokePoint(point);
+	if(atomic_)
+		atomics_.append(point);
+	else
+		session_->sendStrokePoint(point);
 	board_->addPreview(point);
 }
 
 void RemoteBoardEditor::endStroke()
 {
+	if(atomic_) {
+		Q_ASSERT(atomics_.isEmpty()==false);
+		session_->sendAtomicStroke(atomics_);
+		atomics_.clear();
+		atomic_ = false;
+	}
 	session_->sendStrokeEnd();
 	board_->endPreview();
 }

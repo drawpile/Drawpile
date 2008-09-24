@@ -133,6 +133,9 @@ void EditorView::enterEvent(QEvent *event)
 	if(enableoutline_) {
 		showoutline_ = true;
 	}
+	// Give focus to this widget on mouseover. This is so that
+	// using spacebar for dragging works rightaway.
+	setFocus(Qt::MouseFocusReason);
 }
 
 void EditorView::leaveEvent(QEvent *event)

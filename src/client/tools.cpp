@@ -146,6 +146,7 @@ void ComplexBase::end()
 
 void Line::commit()
 {
+	editor()->startAtomic();
 	editor()->addStroke(start_);
 	editor()->addStroke(end_);
 	editor()->endStroke();
@@ -154,6 +155,7 @@ void Line::commit()
 void Rectangle::commit()
 {
 	using dpcore::Point;
+	editor()->startAtomic();
 	editor()->addStroke(start_);
 	editor()->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
 	editor()->addStroke(end_);
@@ -162,6 +164,10 @@ void Rectangle::commit()
 	editor()->endStroke();
 }
 
+/**
+ * The annotation tool has fairly complex needs. Clicking on an existing
+ * annotation selects it, otherwise a new annotation is started.
+ */
 void Annotation::begin(const dpcore::Point& point)
 {
 	drawingboard::AnnotationItem *item = editor()->annotationAt(point);
@@ -176,6 +182,10 @@ void Annotation::begin(const dpcore::Point& point)
 	start_ = point;
 }
 
+/**
+ * If we have a selected annotation, move or resize it. Otherwise extend
+ * the preview rectangle for the new annotation.
+ */
 void Annotation::motion(const dpcore::Point& point)
 {
 	if(sel_) {
@@ -198,6 +208,15 @@ void Annotation::motion(const dpcore::Point& point)
 	}
 }
 
+/**
+ * If we have a selection, reannotate it. This is does nothing in local mode,
+ * but is needed in a network session to inform the server of the new size/
+ * position. (Room for optimization, don't reannotate if geometry didn't change)
+ * If no existing annotation was selected, create a new one based on the
+ * starting and ending coordinates. The new annotation is given some minimum
+ * size to make sure something appears when the user just clicks and doesn't
+ * move the mouse/stylus.
+ */
 void Annotation::end()
 {
 	if(sel_) {

@@ -108,6 +108,9 @@ class SessionState : public QObject {
 		//! Send a stroke info message
 		void sendStrokePoint(const dpcore::Point& point);
 
+		//! Send a bundled stroke info message
+		void sendAtomicStroke(const QList<dpcore::Point>& points);
+
 		//! Send a stroke end message
 		void sendStrokeEnd();
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,17 +19,17 @@
 */
 #include <QStylePainter>
 #include <QStyleOptionButton>
-#include <QColorDialog>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include "colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
+#include "colordialog.h"
 namespace widgets {
 #endif
 
 ColorButton::ColorButton(QWidget *parent,const QColor& color)
-	: QWidget(parent), color_(color), isdown_(false)
+	: QWidget(parent), color_(color), isdown_(false), setAlpha_(false)
 {
 	setAcceptDrops(true);
 }
@@ -38,6 +38,11 @@ void ColorButton::setColor(const QColor& color)
 {
 	color_ = color;
 	update();
+}
+
+void ColorButton::setAlpha(bool use)
+{
+	setAlpha_ = use;
 }
 
 /**
@@ -77,11 +82,13 @@ void ColorButton::mouseReleaseEvent(QMouseEvent *)
 	isdown_ = false;
 	update();
 #ifndef DESIGNER_PLUGIN
-	bool ok;
-	const QRgb col = QColorDialog::getRgba(color_.rgba(), &ok, this);
-	if(ok && col != color_.rgba()) {
-		setColor(QColor::fromRgba(col));
-		emit colorChanged(color_);
+	dialogs::ColorDialog dlg(tr("Select a color"), false, setAlpha_);
+	dlg.setColor(color_);
+	if(dlg.exec() == QDialog::Accepted) {
+		if(dlg.color() != color_) {
+			setColor(dlg.color());
+			emit colorChanged(color_);
+		}
 	}
 #endif
 }

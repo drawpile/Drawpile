@@ -1160,7 +1160,6 @@ void MainWindow::selectTool(QAction *tool)
  */
 void MainWindow::eraserNear(bool near)
 {
-	qDebug() << "eraserNear" << near;
 	if(near) {
 		QAction *lt = lasttool_; // Save lasttool_
 		erasertool_->trigger();
@@ -1425,11 +1424,11 @@ void MainWindow::createToolbars()
 			this, SLOT(setBackgroundColor()));
 
 	// Create color changer dialogs
-	fgdialog_ = new dialogs::ColorDialog(tr("Foreground color"), this);
+	fgdialog_ = new dialogs::ColorDialog(tr("Foreground color"), true, false, this);
 	connect(fgdialog_, SIGNAL(colorSelected(QColor)),
 			fgbgcolor_, SLOT(setForeground(QColor)));
 
-	bgdialog_ = new dialogs::ColorDialog(tr("Background color"), this);
+	bgdialog_ = new dialogs::ColorDialog(tr("Background color"), true, false, this);
 	connect(bgdialog_, SIGNAL(colorSelected(QColor)),
 			fgbgcolor_, SLOT(setBackground(QColor)));
 

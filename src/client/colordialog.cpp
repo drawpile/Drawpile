@@ -30,14 +30,24 @@ using widgets::GradientSlider;
 
 namespace dialogs {
 
-ColorDialog::ColorDialog(const QString& title, QWidget *parent)
-	: QDialog(parent, Qt::Tool), updating_(false), validhue_(0)
+ColorDialog::ColorDialog(const QString& title, bool showapply, bool showalpha, QWidget *parent)
+	: QDialog(parent/*, Qt::Tool*/), updating_(false), validhue_(0), showalpha_(showalpha)
 {
 	ui_ = new Ui_ColorDialog;
 	ui_->setupUi(this);
 
 	ui_->current->setAutoFillBackground(true);
 	ui_->old->setAutoFillBackground(true);
+
+	if(showapply==false)
+		ui_->buttonBox->removeButton(ui_->buttonBox->button(QDialogButtonBox::Apply));
+	else
+		connect(ui_->buttonBox->button(QDialogButtonBox::Apply),
+				SIGNAL(clicked()), this, SLOT(apply()));
+
+	ui_->alphalbl->setVisible(showalpha_);
+	ui_->alpha->setVisible(showalpha_);
+	ui_->alphaBox->setVisible(showalpha_);
 
 	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
 	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
@@ -52,8 +62,6 @@ ColorDialog::ColorDialog(const QString& title, QWidget *parent)
 
 	connect(ui_->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
 			this, SLOT(reset()));
-	connect(ui_->buttonBox->button(QDialogButtonBox::Apply), SIGNAL(clicked()),
-			this, SLOT(apply()));
 
 	setWindowTitle(title);
 }
@@ -80,6 +88,7 @@ void ColorDialog::setColor(const QColor& color)
 	ui_->hue->setValue(h);
 	ui_->saturation->setValue(s);
 	ui_->value->setValue(v);
+	ui_->alpha->setValue(color.alpha());
 	ui_->colorTriangle->setColor(color);
 	if(h!=-1)
 		validhue_ = h;
@@ -96,7 +105,10 @@ void ColorDialog::setColor(const QColor& color)
  */
 QColor ColorDialog::color() const
 {
-	return QColor(ui_->red->value(), ui_->green->value(), ui_->blue->value());
+	QColor c(ui_->red->value(), ui_->green->value(), ui_->blue->value());
+	if(showalpha_)
+		c.setAlpha(ui_->alpha->value());
+	return c;
 }
 
 /**
@@ -231,6 +243,10 @@ void ColorDialog::updateBars()
 	ui_->value->setColor1(QColor::fromHsvF(h,s,0));
 	ui_->value->setColor2(QColor::fromHsvF(h,s,1));
 
+	if(showalpha_) {
+		ui_->alpha->setColor1(QColor(r,g,b,0));
+		ui_->alpha->setColor2(QColor(r,g,b,255));
+	}
 }
 
 void ColorDialog::updateCurrent(const QColor& color)

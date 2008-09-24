@@ -69,7 +69,7 @@ class BoardEditor {
 		virtual ~BoardEditor();
 
 		//! Check if the brush is currently in use
-		virtual bool isCurrentBrush(const dpcore::Brush& brush) const = 0;
+		virtual bool isCurrentBrush(const dpcore::Brush& brush) const;
 
 		//! Get the brush from the local UI
 		dpcore::Brush localBrush() const;
@@ -101,6 +101,9 @@ class BoardEditor {
 		//! Set the tool used for drawing
 		virtual void setTool(const dpcore::Brush& brush) = 0;
 
+		//! Make strokes until endStroke atomic
+		virtual void startAtomic() = 0;
+
 		//! Add a new point to a stroke.
 		virtual void addStroke(const dpcore::Point& point) = 0;
 
@@ -108,6 +111,11 @@ class BoardEditor {
 		virtual void endStroke() = 0;
 
 		//! Create a new or change an existing annotation.
+		/**
+		 * If the id field of the annotation is set to 0, a new annotation
+		 * is created. Otherwise, an existing one is changed, assuming
+		 * an annotation by that ID exists.
+		 */
 		virtual void annotate(protocol::Annotation a) = 0;
 
 		//! Remove an annotation
@@ -139,8 +147,9 @@ class LocalBoardEditor : public BoardEditor {
 				interface::BrushSource *brush, interface::ColorSource *color)
 			: BoardEditor(board,user, brush, color) {}
 
-		bool isCurrentBrush(const dpcore::Brush& brush) const;
 		void setTool(const dpcore::Brush& brush);
+		// Atomic strokes are meaningles in local mode
+		void startAtomic() { }
 		void addStroke(const dpcore::Point& point);
 		void endStroke();
 		void annotate(protocol::Annotation a);
@@ -160,6 +169,7 @@ class RemoteBoardEditor : public BoardEditor {
 
 		bool isCurrentBrush(const dpcore::Brush& brush) const;
 		void setTool(const dpcore::Brush& brush);
+		void startAtomic();
 		void addStroke(const dpcore::Point& point);
 		void endStroke();
 		void annotate(protocol::Annotation a);
@@ -175,6 +185,9 @@ class RemoteBoardEditor : public BoardEditor {
 		 * messages if the last message hasn't finished its round-trip yet.
 		 */
 		dpcore::Brush lastbrush_;
+
+		bool atomic_;
+		QList<dpcore::Point> atomics_;
 };
 
 }

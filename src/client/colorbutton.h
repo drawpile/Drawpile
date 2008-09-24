@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,16 +30,26 @@ namespace widgets {
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
+//! A button for selecting a color
 class PLUGIN_EXPORT ColorButton : public QWidget {
 	Q_OBJECT
 	Q_PROPERTY(QColor color READ color WRITE setColor)
+	Q_PROPERTY(bool setAlpha READ alpha WRITE setAlpha)
 	public:
 		ColorButton(QWidget *parent=0,const QColor& color = Qt::black);
 		~ColorButton() {}
 
+		//! Get the selected color
 		QColor color() const { return color_; }
 
+		//! Allow setting of alpha value
+		void setAlpha(bool use);
+
+		//! Set alpha value?
+		bool alpha() const { return setAlpha_; }
+
 	public slots:
+		//! Set color selection
 		void setColor(const QColor& color);
 
 	signals:
@@ -55,6 +65,7 @@ class PLUGIN_EXPORT ColorButton : public QWidget {
 	private:
 		QColor color_;
 		bool isdown_;
+		bool setAlpha_;
 };
 
 #ifndef DESIGNER_PLUGIN
