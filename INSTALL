@@ -1,7 +1,16 @@
-DrawPile is still in a very early stage of development, so automatic
-installation is not yet supported.
-To compile DrawPile, Qt 4.2 is required.
-DrawPile now uses cmake to generate its makefiles.
-Run "cmake ." in the root project directory and then "make" to compile.
-The client and server executables will be placed in bin/
+To compile DrawPile, Qt 4.2 or newer is required.
 
+Installation steps.
+1. mkdir build (in the project root directory)
+2. cd build
+2. cmake ..
+3. make
+The executables are generated in bin/ directory. You can run them from there,
+or copy them to, for example, /usr/local/bin. Remember to copy libdrawpilenet.so
+from lib/ directory to the appropriate library path (e.g. /usr/local/lib) as well.
+
+Running make install is not supported at the moment.
+
+If you don't need the standalone server, you can pass the option -DSERVER=off
+to cmake. If you want to develop DrawPile, you can enable the debugging features
+with -DDEBUG=on

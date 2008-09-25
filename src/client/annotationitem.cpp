@@ -203,8 +203,10 @@ dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 	using namespace dpcore;
 	int xi = int(pos().x()/Tile::SIZE);
 	int yi = int(pos().y()/Tile::SIZE);
-	QPoint offset(pos().x() - xi*Tile::SIZE, pos().y() - yi*Tile::SIZE);
-	QImage img(offset.x() + size_.width(), offset.y() + size_.height(), QImage::Format_ARGB32);
+	QPoint offset(int(pos().x() - xi*Tile::SIZE),
+			int(pos().y() - yi*Tile::SIZE));
+	QImage img(offset.x() + int(size_.width()),
+			int(offset.y() + size_.height()), QImage::Format_ARGB32);
 	img.fill(0);
 	QPainter painter(&img);
 	render(&painter, QRectF(offset, size_));

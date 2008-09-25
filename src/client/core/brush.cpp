@@ -282,7 +282,7 @@ RenderedBrush Brush::render(qreal pressure) const {
 		int i=0;
 		for(; i < grad ; ++i)
 			lookup[i] = int(255 * i/qreal(grad) * o);
-		memset(lookup+i, int(255*o), ceil(rr)-i);
+		memset(lookup+i, int(255*o), int(ceil(rr)-i));
 
 		// Render the brush
 		cache_ = RenderedBrush(dia, pressure);

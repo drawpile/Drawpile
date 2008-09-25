@@ -23,6 +23,7 @@
 #include <QUrl>
 #include <QMessageBox>
 #include <QTabletEvent>
+#include <QIcon>
 
 #ifdef CRASHGUARD
 	#include <QFile>
@@ -55,6 +56,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 		cfg.setValue("username", defaultname);
 	}
+	setWindowIcon(QIcon(":icons/drawpile.png"));
 }
 
 QSettings& DrawPileApp::getSettings()

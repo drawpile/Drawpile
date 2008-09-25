@@ -14,7 +14,7 @@ set (
 	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	mandatoryfields.h palettewidget.h palettebox.h
-	colorbox.h settingsdialog.h annotationitem.h
+	colorbox.h settingsdialog.h
 	navigator.h toolsettings.h 
 )
 
@@ -23,7 +23,7 @@ set (
 	UNUSED_HEADERS # no QOBJECT ?
 	version.h user.h interfaces.h preview.h boardeditor.h boarditem.h
 	localpalette.h palette.h icons.h
-	tools.h recentfiles.h sessioninfo.h
+	tools.h recentfiles.h sessioninfo.h annotationitem.h
 	core/tile.h core/layer.h core/brush.h core/point.h core/rasterop.h
 )
 
