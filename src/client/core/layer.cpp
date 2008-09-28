@@ -1,3 +1,4 @@
+#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -109,7 +110,7 @@ QColor Layer::colorAt(int x, int y)
  */
 void Layer::dab(const Brush& brush, const Point& point)
 {
-	const int dia = brush.diameter(point.pressure());
+	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
 	const int top = point.y() - brush.radius(point.pressure());
 	const int left = point.x() - brush.radius(point.pressure());
 	const int bottom = qMin(top + dia, height_);
@@ -118,7 +119,7 @@ void Layer::dab(const Brush& brush, const Point& point)
 		return;
 
 	// Render the brush
-	RenderedBrush rb = brush.render(point.pressure());
+	RenderedBrush rb = brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure());
 	const int realdia = rb.diameter();
 	const uchar *values = rb.data();
 	QColor color = brush.color(point.pressure());
@@ -156,13 +157,41 @@ void Layer::dab(const Brush& brush, const Point& point)
 }
 
 /**
- * The last point is not drawn, so successive lines can be drawn blotches.
+ * This function is optimized for drawing with subpixel precision.
  * @param brush brush to draw the line with
  * @param from starting point
  * @param to ending point
  * @param distance distance from previous dab.
  */
-void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int *distance) {
+void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, int *distance)
+{
+	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
+	qreal x0 = from.x() + from.xFrac();
+	qreal y0 = from.y() + from.yFrac();
+	qreal p = from.pressure();
+	qreal x1 = to.x() + to.xFrac();
+	qreal y1 = to.y() + to.yFrac();
+	const qreal dist = hypot(x1-x0,y1-y0);
+	const qreal dx = (x1-x0)/dist;
+	const qreal dy = (y1-y0)/dist;
+	const qreal dp = (to.pressure()-from.pressure())/dist;
+	for(qreal i=0;i<dist;++i) {
+		if(++*distance > spacing) {
+			dab(brush, Point(QPointF(x0,y0),p));
+			*distance = 0;
+		}
+		x0 += dx;
+		y0 += dy;
+		p += dp;
+	}
+}
+
+/**
+ * This line drawing function is optimized for drawing with no subpixel
+ * precision.
+ * The last point is not drawn, so successive lines can be drawn blotches.
+ */
+void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to, int *distance) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
 	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;

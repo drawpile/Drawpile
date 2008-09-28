@@ -183,7 +183,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		moveDrag(event->x(), event->y());
 	} else {;
 		const dpcore::Point point(mapToScene(event->pos()), 1.0);
-		if(!prevpoint_.intSame(point)) {
+		if(!prevpoint_.roughlySame(point)) {
 			if(pendown_)
 				emit penMove(point);
 			else
@@ -245,7 +245,7 @@ bool EditorView::viewportEvent(QEvent *event)
 		tabev->accept();
 		const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
-		if(!prevpoint_.intSame(point)) {
+		if(!prevpoint_.roughlySame(point)) {
 			if(isdragging_)
 				moveDrag(tabev->x(), tabev->y());
 			else {

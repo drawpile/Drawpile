@@ -267,13 +267,13 @@ int Brush::spacing() const
  * @return diameter^2 pixel values
  */
 RenderedBrush Brush::render(qreal pressure) const {
-	const int dia = diameter(pressure);
+	const int dia = diameter(pressure)+1;
 	const qreal o = opacity(pressure);
 
 	// Re-render the cache if not up to date
 	if(!cache_.isFresh(pressure, sensitive_)) {
 		const qreal R = qreal(radius(pressure));
-		const qreal rad = dia/2.0;
+		const qreal rad = (dia-1)/2.0;
 		const qreal rr = rad*rad;
 
 		// Compute a lookup table
@@ -297,6 +297,41 @@ RenderedBrush Brush::render(qreal pressure) const {
 	}
 
 	return cache_;
+}
+
+/**
+ * A convolution operation is performed on the brush mask, shifting it
+ * south-east by x and y amount.
+ *
+ * @param x x offset [0..1]
+ * @param y y offset [0..1]
+ * @param pressure brush pressure
+ * @return resampled brush mask
+ */
+RenderedBrush Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
+{
+	Q_ASSERT(x>= 0 && x<= 1);
+	Q_ASSERT(y>= 0 && y<= 1);
+	const RenderedBrush rb = render(pressure);
+	if(x==0 && y==0)
+		return rb;
+	const int dia = rb.diameter();
+	RenderedBrush b(dia, pressure);
+
+	qreal kernel[] = {x*y, (1.0-x)*y, x*(1.0-y), (1.0-x)*(1.0-y)};
+	Q_ASSERT(fabs(kernel[0]+kernel[1]+kernel[2]+kernel[3]-1.0)<0.001);
+	const uchar *src = rb.data();
+	uchar *ptr = b.data();
+	for(int y=-1;y<dia-1;++y) {
+		const int Y = y*dia;
+		for(int x=-1;x<dia-1;++x) {
+			Q_ASSERT(Y+dia+x+1<dia*dia);
+			*(ptr++) =
+				(Y<0?0:(x<0?0:src[Y+x]*kernel[0]) + src[Y+x+1]*kernel[1]) +
+				(x<0?0:src[Y+dia+x]*kernel[2]) + src[Y+dia+x+1]*kernel[3];
+		}
+	}
+	return b;
 }
 
 /**

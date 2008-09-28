@@ -127,6 +127,9 @@ class Brush
 		//! Render the brush
 		RenderedBrush render(qreal pressure) const;
 
+		//! Render the brush with an offset
+		RenderedBrush render_subsampled(qreal x, qreal y, qreal pressure) const;
+
 		//! Equality test
 		bool operator==(const Brush& brush) const;
 

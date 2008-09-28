@@ -114,7 +114,7 @@ void BrushPreview::updatePreview()
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(sin(phase) * strokeh);
-			preview_->drawLine(brush_,
+			preview_->drawSoftLine(brush_,
 					dpcore::Point(offx+lastx,offy+lasty, lastp),
 					dpcore::Point(offx+x, offy+y, pressure), &distance);
 			lastx = x;
@@ -122,25 +122,25 @@ void BrushPreview::updatePreview()
 			lastp = pressure;
 		}
 	} else if(shape_ == Line) {
-		preview_->drawLine(brush_,
+		preview_->drawSoftLine(brush_,
 				dpcore::Point(offx, offy, 1),
 				dpcore::Point(offx+strokew, offy, 1),
 				&distance
 				);
 	} else {
-		preview_->drawLine(brush_,
+		preview_->drawSoftLine(brush_,
 				dpcore::Point(offx, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				&distance);
-		preview_->drawLine(brush_,
+		preview_->drawSoftLine(brush_,
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				&distance);
-		preview_->drawLine(brush_,
+		preview_->drawSoftLine(brush_,
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				dpcore::Point(offx, offy+strokeh, 1),
 				&distance);
-		preview_->drawLine(brush_,
+		preview_->drawSoftLine(brush_,
 				dpcore::Point(offx, offy+strokeh, 1),
 				dpcore::Point(offx, offy-strokeh, 1),
 				&distance);
