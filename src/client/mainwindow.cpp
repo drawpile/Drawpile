@@ -1133,7 +1133,9 @@ void MainWindow::fullscreen(bool enable)
 void MainWindow::selectTool(QAction *tool)
 {
 	tools::Type type;
-	if(tool == brushtool_) 
+	if(tool == pentool_) 
+		type = tools::PEN;
+	else if(tool == brushtool_) 
 		type = tools::BRUSH;
 	else if(tool == erasertool_) 
 		type = tools::ERASER;
@@ -1260,6 +1262,9 @@ void MainWindow::initActions()
 	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
 
 	// Drawing tool actions
+	pentool_ = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("B"));
+	pentool_->setCheckable(true);
+
 	brushtool_ = makeAction("toolbrush", "draw-brush.png", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"));
 	brushtool_->setCheckable(true); brushtool_->setChecked(true);
 
@@ -1283,6 +1288,7 @@ void MainWindow::initActions()
 
 	drawingtools_ = new QActionGroup(this);
 	drawingtools_->setExclusive(true);
+	drawingtools_->addAction(pentool_);
 	drawingtools_->addAction(brushtool_);
 	drawingtools_->addAction(erasertool_);
 	drawingtools_->addAction(pickertool_);
@@ -1364,6 +1370,7 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(disallowjoins_);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
+	toolsmenu->addAction(pentool_);
 	toolsmenu->addAction(brushtool_);
 	toolsmenu->addAction(erasertool_);
 	toolsmenu->addAction(pickertool_);
@@ -1402,6 +1409,7 @@ void MainWindow::createToolbars()
 	drawtools->setObjectName("drawtoolsbar");
 	togglemenu->addAction(drawtools->toggleViewAction());
 
+	drawtools->addAction(pentool_);
 	drawtools->addAction(brushtool_);
 	drawtools->addAction(erasertool_);
 	drawtools->addAction(pickertool_);

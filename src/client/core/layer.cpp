@@ -119,7 +119,7 @@ void Layer::dab(const Brush& brush, const Point& point)
 		return;
 
 	// Render the brush
-	RenderedBrush rb = brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure());
+	RenderedBrush rb = brush.subpixel()?brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure()):brush.render(point.pressure());
 	const int realdia = rb.diameter();
 	const uchar *values = rb.data();
 	QColor color = brush.color(point.pressure());
@@ -154,6 +154,18 @@ void Layer::dab(const Brush& brush, const Point& point)
 		y = (yindex+1) * Tile::SIZE;
 		yb = yb + hb;
 	}
+}
+
+/**
+ * Draw a line using either drawSoftLine or drawHardLine, depending on
+ * the subpixel hint of the brush.
+ */
+void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, int *distance)
+{
+	if(brush.subpixel())
+		drawSoftLine(brush, from, to, distance);
+	else
+		drawHardLine(brush, from, to, distance);
 }
 
 /**

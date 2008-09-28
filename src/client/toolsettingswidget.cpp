@@ -33,6 +33,10 @@ ToolSettings::ToolSettings(QWidget *parent)
 	setWidget(widgets_);
 
 	// Create settings widget for brush
+	pensettings_ = new tools::PenSettings("pen", tr("Pen"));
+	widgets_->addWidget(pensettings_->createUi(this));
+
+	// Create settings widget for brush
 	brushsettings_ = new tools::BrushSettings("brush", tr("Brush"));
 	widgets_->addWidget(brushsettings_->createUi(this));
 	currenttool_ = brushsettings_;
@@ -46,11 +50,11 @@ ToolSettings::ToolSettings(QWidget *parent)
 	widgets_->addWidget(pickersettings_->createUi(this));
 
 	// Create settings widget for line
-	linesettings_ = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line);
+	linesettings_ = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line, true);
 	widgets_->addWidget(linesettings_->createUi(this));
 
 	// Create settings widget for line
-	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle);
+	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
 	widgets_->addWidget(rectsettings_->createUi(this));
 
 	// Create settings widget for annotations
@@ -61,6 +65,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 ToolSettings::~ToolSettings()
 {
+	delete pensettings_,
 	delete brushsettings_,
 	delete erasersettings_,
 	delete pickersettings_,
@@ -75,6 +80,7 @@ ToolSettings::~ToolSettings()
  */
 void ToolSettings::setTool(tools::Type tool) {
 	switch(tool) {
+		case tools::PEN: currenttool_ = pensettings_; break;
 		case tools::BRUSH: currenttool_ = brushsettings_; break;
 		case tools::ERASER: currenttool_ = erasersettings_; break;
 		case tools::PICKER: currenttool_ = pickersettings_; break;

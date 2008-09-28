@@ -96,6 +96,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Enable/disable color pressure sensitivity
 		void setColorPressure(bool enable);
 
+		//! Enable/disable subpixel precision
+		void setSubPixel(bool enable);
+
 	protected:
 		void paintEvent(QPaintEvent *event);
 		void resizeEvent(QResizeEvent *);

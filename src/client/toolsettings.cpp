@@ -25,6 +25,7 @@
 #include "colorbutton.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces
 using widgets::ColorButton;
+#include "ui_pensettings.h"
 #include "ui_brushsettings.h"
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
@@ -36,6 +37,94 @@ using widgets::ColorButton;
 
 namespace tools {
 
+QSettings& ToolSettings::getSettings()
+{
+	QSettings& cfg = DrawPileApp::getSettings();
+	cfg.beginGroup("tools");
+	cfg.beginGroup(name_);
+	return cfg;
+}
+
+PenSettings::PenSettings(QString name, QString title)
+	: ToolSettings(name, title)
+{
+	ui_ = new Ui_PenSettings();
+}
+
+PenSettings::~PenSettings()
+{
+	if(ui_) {
+		// Remember settings
+		QSettings& cfg = getSettings();
+		cfg.setValue("size", ui_->brushsize->value());
+		cfg.setValue("opacity", ui_->brushopacity->value());
+		cfg.setValue("spacing", ui_->brushspacing->value());
+		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
+		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
+		cfg.setValue("pressurecolor", ui_->pressurecolor->isChecked());
+		delete ui_;
+	}
+}
+
+QWidget *PenSettings::createUi(QWidget *parent)
+{
+	QWidget *widget = new QWidget(parent);
+	ui_->setupUi(widget);
+	widget->hide();
+	setUiWidget(widget);
+
+	// Load previous settings
+	QSettings& cfg = getSettings();
+	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
+	ui_->brushsizebox->setValue(ui_->brushsize->value());
+	ui_->preview->setSize(ui_->brushsize->value());
+
+	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
+	ui_->preview->setOpacity(ui_->brushopacity->value());
+
+	ui_->preview->setHardness(100);
+
+	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
+	ui_->preview->setSpacing(ui_->brushspacing->value());
+
+	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
+
+	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	ui_->preview->setOpacityPressure(ui_->pressureopacity->isChecked());
+
+	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
+
+	ui_->preview->setSubPixel(false);
+
+	// Connect size change signal
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	return widget;
+}
+
+void PenSettings::setForeground(const QColor& color)
+{
+	ui_->preview->setColor1(color);
+}
+
+void PenSettings::setBackground(const QColor& color)
+{
+	ui_->preview->setColor2(color);
+}
+
+const dpcore::Brush& PenSettings::getBrush() const
+{
+	return ui_->preview->brush();
+}
+
+int PenSettings::getSize() const
+{
+	return ui_->brushsize->value();
+}
+
 BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
 	: ToolSettings(name,title), swapcolors_(swapcolors)
 {
@@ -46,9 +135,7 @@ BrushSettings::~BrushSettings()
 {
 	if(ui_) {
 		// Remember settings
-		QSettings& cfg = DrawPileApp::getSettings();
-		cfg.beginGroup("tools");
-		cfg.beginGroup(getName());
+		QSettings& cfg = getSettings();
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
@@ -69,9 +156,7 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	setUiWidget(widget);
 
 	// Load previous settings
-	QSettings& cfg = DrawPileApp::getSettings();
-	cfg.beginGroup("tools");
-	cfg.beginGroup(getName());
+	QSettings& cfg = getSettings();
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
@@ -131,8 +216,8 @@ int BrushSettings::getSize() const
 	return ui_->brushsize->value();
 }
 
-SimpleSettings::SimpleSettings(QString name, QString title, Type type)
-	: ToolSettings(name,title), type_(type)
+SimpleSettings::SimpleSettings(QString name, QString title, Type type, bool sp)
+	: ToolSettings(name,title), type_(type), subpixel_(sp)
 {
 	ui_ = new Ui_SimpleSettings();
 }
@@ -141,9 +226,7 @@ SimpleSettings::~SimpleSettings()
 {
 	if(ui_) {
 		// Remember settings
-		QSettings& cfg = DrawPileApp::getSettings();
-		cfg.beginGroup("tools");
-		cfg.beginGroup(getName());
+		QSettings& cfg = getSettings();
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
@@ -164,11 +247,10 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		ui_->preview->setPreviewShape(BrushPreview::Line);
 	else if(type_==Rectangle)
 		ui_->preview->setPreviewShape(BrushPreview::Rectangle);
+	ui_->preview->setSubPixel(subpixel_);
 
 	// Load previous settings
-	QSettings& cfg = DrawPileApp::getSettings();
-	cfg.beginGroup("tools");
-	cfg.beginGroup(getName());
+	QSettings& cfg = getSettings();
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());

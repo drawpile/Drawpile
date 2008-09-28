@@ -277,6 +277,7 @@ class MainWindow : public QMainWindow {
 		QAction *disallowjoins_;
 
 		QActionGroup *drawingtools_;
+		QAction *pentool_;
 		QAction *brushtool_;
 		QAction *erasertool_;
 		QAction *pickertool_;

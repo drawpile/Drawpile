@@ -111,6 +111,9 @@ class Brush
 		//! Set spacing hint
 		void setSpacing(int spacing);
 
+		//! Set subpixel hint
+		void setSubPixel(bool sp);
+
 		//! Get interpolated radius
 		int radius(qreal pressure) const;
 		//! Get the diameter of the rendered brush
@@ -123,6 +126,8 @@ class Brush
 		QColor color(qreal pressure) const;
 		//! Get spacing hint
 		int spacing() const;
+		//! Should subpixel rendering be used?
+		bool subpixel() const { return subpixel_; }
 
 		//! Render the brush
 		RenderedBrush render(qreal pressure) const;
@@ -146,6 +151,7 @@ class Brush
 		QColor color1_, color2_;
 		int spacing_;
 		bool sensitive_;
+		bool subpixel_;
 
 		mutable RenderedBrush cache_;
 };

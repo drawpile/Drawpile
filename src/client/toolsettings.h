@@ -22,9 +22,11 @@
 
 #include "core/brush.h"
 
+class Ui_PenSettings;
 class Ui_BrushSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
+class QSettings;
 
 namespace drawingboard {
 	class BoardEditor;
@@ -33,7 +35,7 @@ namespace drawingboard {
 
 namespace tools {
 
-//! Base class for tool settings
+//! Abstract base class for tool settings
 /**
  * The tool settings class provides a user interface widget that is
  * displayed in a dock window and a uniform way of getting a brush
@@ -92,10 +94,35 @@ class ToolSettings {
 	protected:
 		void setUiWidget(QWidget *widget) { widget_ = widget; }
 
+		//! Get a settings object prepared for this tool
+		QSettings &getSettings();
+
 	private:
 		QString name_;
 		QString title_;
 		QWidget *widget_;
+};
+
+//! Pen settings
+/**
+ * This is much like BrushSettings, except the pen always has 100% hardness
+ * and no antialiasing.
+ */
+class PenSettings : public ToolSettings {
+	public:
+		PenSettings(QString name, QString title);
+		~PenSettings();
+
+		QWidget *createUi(QWidget *parent);
+
+		void setForeground(const QColor& color);
+		void setBackground(const QColor& color);
+		const dpcore::Brush& getBrush() const;
+
+		int getSize() const;
+
+	private:
+		Ui_PenSettings *ui_;
 };
 
 //! Basic brush settings
@@ -128,7 +155,7 @@ class SimpleSettings : public ToolSettings {
 	public:
 		enum Type {Line, Rectangle};
 
-		SimpleSettings(QString name, QString title, Type type);
+		SimpleSettings(QString name, QString title, Type type, bool sp);
 		~SimpleSettings();
 
 		QWidget *createUi(QWidget *parent);
@@ -142,6 +169,7 @@ class SimpleSettings : public ToolSettings {
 	private:
 		Ui_SimpleSettings *ui_;
 		Type type_;
+		bool subpixel_;
 };
 
 //! Settings for the annotation tool

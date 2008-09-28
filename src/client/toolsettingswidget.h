@@ -73,6 +73,7 @@ class ToolSettings: public QDockWidget, public interface::BrushSource
 		ToolSettings(const ToolSettings& ts);
 		ToolSettings& operator=(const ToolSettings& ts);
 
+		tools::ToolSettings *pensettings_;
 		tools::ToolSettings *brushsettings_;
 		tools::ToolSettings *erasersettings_;
 		tools::ToolSettings *pickersettings_;

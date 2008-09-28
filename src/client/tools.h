@@ -43,7 +43,7 @@ namespace tools {
 
 class AnnotationSettings;
 
-enum Type {BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
+enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
 
 class ToolCollection;
 
@@ -97,6 +97,12 @@ class BrushBase : public Tool
 		void begin(const dpcore::Point& point);
 		void motion(const dpcore::Point& point);
 		void end();
+};
+
+//! Pen
+class Pen : public BrushBase {
+	public:
+		Pen(ToolCollection &owner) : BrushBase(owner, PEN) {}
 };
 
 //! Regular brush

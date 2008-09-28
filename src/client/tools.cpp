@@ -38,6 +38,7 @@ Tool::~Tool() { /* abstract */ }
 ToolCollection::ToolCollection()
 	: editor_(0)
 {
+	tools_[PEN] = new Pen(*this);
 	tools_[BRUSH] = new Brush(*this);
 	tools_[ERASER] = new Eraser(*this);
 	tools_[PICKER] = new ColorPicker(*this);

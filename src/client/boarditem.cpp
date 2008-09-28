@@ -81,7 +81,7 @@ void BoardItem::setImage(const QImage& image)
  */
 void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,int *distance)
 {
-	image_->drawSoftLine(brush, point1, point2, distance);
+	image_->drawLine(brush, point1, point2, distance);
 	// Update screen
 	int rad = brush.radius(point1.pressure());
 	update(QRect(point1, point2).normalized().adjusted(-rad-2,-rad-2,rad+2,rad+2));

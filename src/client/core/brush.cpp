@@ -51,7 +51,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color), spacing_(spacing),
-	sensitive_(false)
+	sensitive_(false), subpixel_(true)
 {
 	Q_ASSERT(radius>=0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
@@ -164,6 +164,15 @@ void Brush::setSpacing(int spacing)
 {
 	Q_ASSERT(spacing >= 0 && spacing <= 100);
 	spacing_ = spacing;
+}
+
+/**
+ * Some tools don't need subpixel rendering. Set this to false
+ * to inform the drawing code that only integer precision is needed.
+ */
+void Brush::setSubPixel(bool sp)
+{
+	subpixel_ = sp;
 }
 
 /**
