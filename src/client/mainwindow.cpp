@@ -526,7 +526,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 					QMessageBox::NoButton, this);
 			const QPushButton *savebtn = box.addButton(tr("Save changes"),
 					QMessageBox::AcceptRole);
-			box.addButton(tr("Exit without saving"),
+			box.addButton(tr("Discard changes"),
 					QMessageBox::DestructiveRole);
 			const QPushButton *cancelbtn = box.addButton(tr("Cancel"),
 					QMessageBox::RejectRole);
@@ -1262,7 +1262,7 @@ void MainWindow::initActions()
 	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
 
 	// Drawing tool actions
-	pentool_ = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("B"));
+	pentool_ = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"));
 	pentool_->setCheckable(true);
 
 	brushtool_ = makeAction("toolbrush", "draw-brush.png", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"));
@@ -1300,7 +1300,7 @@ void MainWindow::initActions()
 	// View actions
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
 	zoomout_ = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
-	zoomorig_ = makeAction("zoomone", "zoom-original.png",tr("&Normal size"));
+	zoomorig_ = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
 
 	fullscreen_ = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"));
 	fullscreen_->setCheckable(true);
