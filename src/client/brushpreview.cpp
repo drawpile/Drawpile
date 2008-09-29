@@ -103,7 +103,7 @@ void BrushPreview::updatePreview()
 	const int strokeh = preview_->height() / 4;
 	const int offx = preview_->width()/8;
 	const int offy = preview_->height()/2;
-	int distance = 0;
+	qreal distance = 0;
 	if(shape_ == Stroke) {
 		int lastx=0,lasty=0;
 		qreal lastp = 0;

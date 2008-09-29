@@ -79,7 +79,7 @@ void BoardItem::setImage(const QImage& image)
  *
  * @todo delta pressure(?)
  */
-void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,int *distance)
+void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,qreal *distance)
 {
 	image_->drawLine(brush, point1, point2, distance);
 	// Update screen

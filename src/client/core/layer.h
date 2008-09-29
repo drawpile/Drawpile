@@ -69,13 +69,13 @@ class Layer {
 		void dab(const Brush& brush, const Point& point);
 
 		//! Draw a line using either drawHardLine or drawSoftLine
-		void drawLine(const Brush& brush, const Point& from, const Point& to, int *distance);
+		void drawLine(const Brush& brush, const Point& from, const Point& to, qreal *distance);
 
 		//! Draw a line using the brush
-		void drawHardLine(const Brush& brush, const Point& from, const Point& to, int *distance);
+		void drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal *distance);
 
 		//! Draw a line using the brush.
-		void drawSoftLine(const Brush& brush, const Point& from, const Point& to, int *distance);
+		void drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal *distance);
 
 		//! Merge a layer
 		void merge(int x, int y, const Layer *layer);

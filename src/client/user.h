@@ -65,7 +65,7 @@ class User
 		BoardItem *layer_;
 		dpcore::Point lastpoint_;
 		bool strokestarted_;
-		int strokelen_;
+		qreal strokelen_;
 };
 
 }
