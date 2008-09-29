@@ -75,14 +75,14 @@ class Point : public QPoint {
 		qreal yFrac() const { return yfrac_; }
 
 		//! Compare two points just by their integer coordinates
-		bool intSame(const Point& point) {
+		bool intSame(const Point& point) const {
 			return x() == point.x() && y()==point.y();
 		}
 
 		//! Compare two points at subpixel resolution
-		bool roughlySame(const Point& point) {
-			return intSame(point) && fabs(xfrac_-point.xfrac_)<1/4.0 &&
-				fabs(yfrac_-point.yfrac_)<1/4.0;
+		bool roughlySame(const Point& point) const {
+			return intSame(point) && fabs(xfrac_-point.xfrac_)<(1/4.0) &&
+				fabs(yfrac_-point.yfrac_)<(1/4.0);
 		}
 
 	private:

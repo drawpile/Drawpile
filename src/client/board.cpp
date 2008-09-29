@@ -276,11 +276,12 @@ void Board::commitPreviews()
 {
 	dpcore::Point lastpoint(-1,-1,0);
 	while(previews_.isEmpty()==false) {
+		qreal distance;
 		Preview *p = previews_.dequeue();
 		if(p->from() != lastpoint)
 			image_->drawPoint(p->from(), p->brush());
 		else
-			image_->drawLine(p->from(), p->to(), p->brush());
+			image_->drawLine(p->from(), p->to(), p->brush(), distance);
 		lastpoint = p->to();
 		delete p;
 	}

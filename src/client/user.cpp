@@ -42,7 +42,7 @@ void User::addStroke(const dpcore::Point& point)
 					lastpoint_,
 					point,
 					brush_,
-					&strokelen_
+					strokelen_
 					);
 		} else {
 			// First point

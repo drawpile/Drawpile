@@ -55,7 +55,7 @@ class BoardItem : public QGraphicsItem
 
 		//! Draw a line between two points with interpolated pressure values
 		void drawLine(const dpcore::Point& point1, const dpcore::Point& point2,
-				const dpcore::Brush& brush, qreal *distance=0);
+				const dpcore::Brush& brush, qreal &distance);
 
 		//! Draw a single point
 		void drawPoint(const dpcore::Point& point, const dpcore::Brush& brush);

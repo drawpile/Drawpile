@@ -160,7 +160,7 @@ void Layer::dab(const Brush& brush, const Point& point)
  * Draw a line using either drawSoftLine or drawHardLine, depending on
  * the subpixel hint of the brush.
  */
-void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, qreal *distance)
+void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, qreal &distance)
 {
 	if(brush.subpixel())
 		drawSoftLine(brush, from, to, distance);
@@ -175,7 +175,7 @@ void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, qre
  * @param to ending point
  * @param distance distance from previous dab.
  */
-void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal *distance)
+void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance)
 {
 	const qreal spacing = brush.spacing()*brush.radius(from.pressure())/100.0;
 	qreal x0 = from.x() + from.xFrac();
@@ -189,10 +189,10 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
 	const qreal dp = (to.pressure()-from.pressure())/dist;
 	const qreal dd = hypot(dx, dy);
 	for(qreal i=0;i<dist;i+=dd) {
-		*distance += dd;
-		if(*distance > spacing) {
+		distance += dd;
+		if(distance > spacing) {
 			dab(brush, Point(QPointF(x0,y0),p));
-			*distance = 0;
+			distance = 0;
 		}
 		x0 += dx;
 		y0 += dy;
@@ -205,7 +205,7 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
  * precision.
  * The last point is not drawn, so successive lines can be drawn blotches.
  */
-void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal *distance) {
+void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal &distance) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
 	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
@@ -245,13 +245,9 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 			}
 			x0 += stepx;
 			fraction += dy;
-			if(distance) {
-				if(++*distance > spacing) {
-					dab(brush, point);
-					*distance = 0;
-				}
-			} else {
+			if(++distance > spacing) {
 				dab(brush, point);
+				distance = 0;
 			}
 			p += dp;
 		}
@@ -264,13 +260,9 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 			}
 			y0 += stepy;
 			fraction += dx;
-			if(distance) {
-				if(++*distance > spacing) {
-					dab(brush, point);
-					*distance = 0;
-				}
-			} else {
+			if(++distance > spacing) {
 				dab(brush, point);
+				distance = 0;
 			}
 			p += dp;
 		}

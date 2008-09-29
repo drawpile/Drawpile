@@ -116,7 +116,7 @@ void BrushPreview::updatePreview()
 			const int y = qRound(sin(phase) * strokeh);
 			preview_->drawLine(brush_,
 					dpcore::Point(offx+lastx,offy+lasty, lastp),
-					dpcore::Point(offx+x, offy+y, pressure), &distance);
+					dpcore::Point(offx+x, offy+y, pressure), distance);
 			lastx = x;
 			lasty = y;
 			lastp = pressure;
@@ -125,25 +125,25 @@ void BrushPreview::updatePreview()
 		preview_->drawLine(brush_,
 				dpcore::Point(offx, offy, 1),
 				dpcore::Point(offx+strokew, offy, 1),
-				&distance
+				distance
 				);
 	} else {
 		preview_->drawLine(brush_,
 				dpcore::Point(offx, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
-				&distance);
+				distance);
 		preview_->drawLine(brush_,
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
-				&distance);
+				distance);
 		preview_->drawLine(brush_,
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				dpcore::Point(offx, offy+strokeh, 1),
-				&distance);
+				distance);
 		preview_->drawLine(brush_,
 				dpcore::Point(offx, offy+strokeh, 1),
 				dpcore::Point(offx, offy-strokeh, 1),
-				&distance);
+				distance);
 	}
 }
 
