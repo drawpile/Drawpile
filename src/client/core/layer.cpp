@@ -1,4 +1,3 @@
-#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -187,10 +186,12 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
 	const qreal dx = (x1-x0)/dist;
 	const qreal dy = (y1-y0)/dist;
 	const qreal dp = (to.pressure()-from.pressure())/dist;
-	const qreal dd = hypot(dx, dy);
-	for(qreal i=0;i<dist;i+=dd) {
-		distance += dd;
-		if(distance > spacing) {
+	// Skip the first dab.
+	x0 += dx;
+	y0 += dy;
+	p += dp;
+	for(qreal i=0;i<dist-0.5;++i) {
+		if(++distance > spacing) {
 			dab(brush, Point(QPointF(x0,y0),p));
 			distance = 0;
 		}
