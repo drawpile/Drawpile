@@ -87,7 +87,7 @@ if ( WIN32 )
 		"DrawPile client" 
 		"http://drawpile.sourceforge.net/"
 		"2006-2008 Calle Laakkonen"
-		0 5 0
+		0 6 0
 	)
 endif ( WIN32 )
 

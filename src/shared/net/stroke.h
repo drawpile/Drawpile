@@ -33,8 +33,9 @@ namespace protocol {
  */
 struct XYZ {
 	XYZ() { }
-	XYZ(int X, int Y, int Z) : x(X), y(Y), z(Z) { }
+	XYZ(int X, int Y, qreal Xf, qreal Yf, int Z) : x(X), y(Y), z(Z), xf(Xf), yf(Yf) { }
 	int x, y, z;
+	qreal xf, yf;
 };
 
 /**
@@ -50,11 +51,14 @@ class StrokePoint : public Packet {
 		 * @param user user ID. A client must set this to their ID when sending a message.
 		 * @param x stroke X coordinate
 		 * @param y stroke Y coordinate
+		 * @param xfrac stroke X coordinate fraction
+		 * @param yfrac stroke Y coordinate fraction
 		 * @param z stroke pressure
 		 */
-		StrokePoint(int user, unsigned int x, unsigned int y, unsigned int z)
+		StrokePoint(int user, unsigned int x, unsigned int y, qreal xfrac,
+				qreal yfrac, unsigned int z)
 			: Packet(STROKE), _user(user) {
-				_points.append(XYZ(x, y, z));
+				_points.append(XYZ(x, y, xfrac, yfrac, z));
 			}
 
 		/**
@@ -72,10 +76,12 @@ class StrokePoint : public Packet {
 		 * most programs will run out of buffer space much earlier)
 		 * @param x stroke X coordinate
 		 * @param y stroke Y coordinate
+		 * @param xfrac stroke X coordinate fraction
+		 * @param yfrac stroke Y coordinate fraction
 		 * @param z stroke pressure
 		 */
-		void addPoint(int x, int y, int z) {
-			_points.append(XYZ(x, y, z));
+		void addPoint(int x, int y, qreal xfrac, qreal yfrac, int z) {
+			_points.append(XYZ(x, y, xfrac, yfrac, z));
 		}
 
 		/**

@@ -15,10 +15,10 @@ namespace version {
  * level (e.g. starting from 128) unless they are fully compatible with
  * the official client.
  */
-static const int level = 0; 
+static const int level = 1; 
 
 //! Version string
-static const char string[] = "0.5.0";
+static const char string[] = "0.6.0";
 
 }
 

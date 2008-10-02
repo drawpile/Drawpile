@@ -31,14 +31,18 @@ StrokePoint *StrokePoint::deserialize(QIODevice& data, int len) {
 	quint16 x = utils::read16(data);
 	quint16 y = utils::read16(data);
 	quint8 z = utils::read8(data);
-	StrokePoint *sp = new StrokePoint(user, x, y ,z);
+	qreal xf = (x & 3) / 4.0;
+	qreal yf = (y & 3) / 4.0;
+	StrokePoint *sp = new StrokePoint(user, x>>2, y>>2, xf, yf ,z);
 
 	// A strokepoint packet may contain multiple points
 	for(int i=6;i<len;i+=5) {
 		quint16 x = utils::read16(data);
 		quint16 y = utils::read16(data);
 		quint8 z = utils::read8(data);
-		sp->addPoint(x, y, z);
+		qreal xf = (x & 3) / 4.0;
+		qreal yf = (y & 3) / 4.0;
+		sp->addPoint(x>>2, y>>2, xf, yf, z);
 	}
 
 	return sp;
@@ -47,8 +51,12 @@ StrokePoint *StrokePoint::deserialize(QIODevice& data, int len) {
 void StrokePoint::serializeBody(QIODevice& data) const {
 	data.putChar(_user);
 	for(int i=0;i<_points.size();++i) {
-		utils::write16(data, _points[i].x);
-		utils::write16(data, _points[i].y);
+		quint16 x = _points[i].x << 2;
+		quint16 xf = quint16(_points[i].xf * 4.0) & 3;
+		quint16 y = _points[i].y << 2;
+		quint16 yf = quint16(_points[i].yf * 4.0) & 3;
+		utils::write16(data, x | xf);
+		utils::write16(data, y | yf);
 		data.putChar(_points[i].z);
 	}
 }

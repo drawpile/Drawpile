@@ -18,10 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QDebug>
 #include <QImage>
-
-#include "../config.h"
 
 #include "hoststate.h"
 #include "sessionstate.h"
@@ -232,6 +229,8 @@ void SessionState::sendStrokePoint(const dpcore::Point& point)
 				host_->localuser_,
 				point.x(),
 				point.y(),
+				point.xFrac(),
+				point.yFrac(),
 				qRound(point.pressure()*255)
 				)
 			);
@@ -242,10 +241,18 @@ void SessionState::sendStrokePoint(const dpcore::Point& point)
  */
 void SessionState::sendAtomicStroke(const QList<dpcore::Point>& points)
 {
-	protocol::StrokePoint sp(host_->localuser_, points[0].x(), points[0].y(),
+	protocol::StrokePoint sp(host_->localuser_,
+			points[0].x(),
+			points[0].y(),
+			points[0].xFrac(),
+			points[0].yFrac(),
 			qRound(points[0].pressure()*255));
 	for(int i=1;i<points.size();++i) {
-		sp.addPoint(points[i].x(), points[i].y(), qRound(points[i].pressure()*255));
+		sp.addPoint(points[i].x(),
+				points[i].y(),
+				points[i].xFrac(),
+				points[i].yFrac(),
+				qRound(points[i].pressure()*255));
 	}
 	host_->sendPacket(sp);
 }
@@ -430,9 +437,9 @@ bool SessionState::handleStroke(protocol::StrokePoint *s)
 	for(int p=0;p<s->points();++p) {
 		emit strokeReceived(
 				s->user(),
-				dpcore::Point(
-					(qint16)(s->point(p).x),
-					(qint16)(s->point(p).y),
+				dpcore::Point(QPointF(
+					(qint16)(s->point(p).x) + s->point(p).xf,
+					(qint16)(s->point(p).y) + s->point(p).yf),
 					s->point(p).z/255.0
 					)
 				);
