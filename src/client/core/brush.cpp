@@ -312,8 +312,8 @@ RenderedBrush Brush::render(qreal pressure) const {
  * A convolution operation is performed on the brush mask, shifting it
  * south-east by x and y amount.
  *
- * @param x x offset [0..1]
- * @param y y offset [0..1]
+ * @param x horizontal offset [0..1]
+ * @param y vertical offset [0..1]
  * @param pressure brush pressure
  * @return resampled brush mask
  */
@@ -331,6 +331,8 @@ RenderedBrush Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
 	Q_ASSERT(fabs(kernel[0]+kernel[1]+kernel[2]+kernel[3]-1.0)<0.001);
 	const uchar *src = rb.data();
 	uchar *ptr = b.data();
+
+#if 0
 	for(int y=-1;y<dia-1;++y) {
 		const int Y = y*dia;
 		for(int x=-1;x<dia-1;++x) {
@@ -340,6 +342,19 @@ RenderedBrush Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
 				(x<0?0:src[Y+dia+x]*kernel[2]) + src[Y+dia+x+1]*kernel[3];
 		}
 	}
+#else
+	// Unrolled version of the above
+	*(ptr++) = uchar(src[0] * kernel[3]);
+	for(int x=0;x<dia-1;++x)
+		*(ptr++) = uchar(src[x]*kernel[2] + src[x+1]*kernel[3]);
+	for(int y=0;y<dia-1;++y) {
+		const int Y = y*dia;
+		*(ptr++) = uchar(src[Y]*kernel[1] + src[Y+dia]*kernel[3]);
+		for(int x=0;x<dia-1;++x)
+			*(ptr++) = uchar(src[Y+x]*kernel[0] + src[Y+x+1]*kernel[1] +
+				src[Y+dia+x]*kernel[2] + src[Y+dia+x+1]*kernel[3]);
+	}
+#endif
 	return b;
 }
 
