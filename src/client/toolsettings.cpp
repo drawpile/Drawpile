@@ -34,6 +34,7 @@ using widgets::ColorButton;
 #include "annotationitem.h"
 #include "../shared/net/annotation.h"
 #include "core/layer.h"
+#include "core/rasterop.h"
 
 namespace tools {
 
@@ -136,6 +137,7 @@ BrushSettings::~BrushSettings()
 	if(ui_) {
 		// Remember settings
 		QSettings& cfg = getSettings();
+		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
@@ -155,8 +157,16 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	widget->hide();
 	setUiWidget(widget);
 
+	// Populate blend mode combobox
+	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	}
+
 	// Load previous settings
 	QSettings& cfg = getSettings();
+
+	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());

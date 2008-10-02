@@ -118,33 +118,18 @@ void Tile::paint(QPainter *painter, const QPoint& target) const {
  * @param h values in tile (must be < SIZE)
  * @param skip values to skip to reach the next line
  */
-void Tile::composite(const uchar *values, const QColor& color, int x, int y, int w, int h, int skip)
+void Tile::composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int skip)
 {
 	Q_ASSERT(x>=0 && x<SIZE && y>=0 && y<SIZE);
 	Q_ASSERT((x+w)<=SIZE && (y+h)<=SIZE);
-	quint32 *ptr = data_ + y * SIZE + x;
-	const uchar *src = values;
-	quint32 blend = color.rgba();
-	for(int yy=0;yy<h;++yy) {
-		for(int xx=0;xx<w;++xx) {
-			blend_normal(reinterpret_cast<uchar*>(ptr), reinterpret_cast<uchar*>(&blend), *src);
-			++src;
-			++ptr;
-		}
-		src += skip;
-		ptr += SIZE-w;
-	}
+	compositeMask(mode, data_ + y * SIZE + x,
+			color.rgba(), values, w, h, skip, SIZE-w);
 	cache_ = QPixmap();
 }
 
 void Tile::merge(const Tile *tile)
 {
-	quint32 *d1 = data_;
-	const quint32 *d2 = tile->data_;
-	for(int i=0;i<SIZE*SIZE;++i,++d1,++d2) {
-		blend_normal(reinterpret_cast<uchar*>(d1),
-				reinterpret_cast<const uchar*>(d2), *d2>>24);
-	}
+	compositePixels(0, data_, tile->data_, SIZE*SIZE);
 	cache_ = QPixmap();
 }
 

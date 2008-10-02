@@ -99,6 +99,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Enable/disable subpixel precision
 		void setSubPixel(bool enable);
 
+		//! Select a blending mode
+		void setBlendingMode(int mode);
+
 	protected:
 		void paintEvent(QPaintEvent *event);
 		void resizeEvent(QResizeEvent *);

@@ -259,6 +259,13 @@ void BrushPreview::setSubPixel(bool enable)
 	update();
 }
 
+void BrushPreview::setBlendingMode(int mode)
+{
+	brush_.setBlendingMode(mode);
+	updatePreview();
+	update();
+}
+
 #ifndef DESIGNER_PLUGIN
 }
 #endif

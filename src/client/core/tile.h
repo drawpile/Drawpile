@@ -60,7 +60,7 @@ class Tile {
 		quint32 pixel(int x, int y) const;
 
 		//! Composite values multiplied by color onto this tile
-		void composite(const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
+		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
 
 		//! Composite another tile with this tile
 		void merge(const Tile *tile);

@@ -40,7 +40,7 @@ set (
 	sessioninfo.cpp icons.cpp mandatoryfields.cpp
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
-	core/tile.cpp core/layer.cpp core/brush.cpp
+	core/tile.cpp core/layer.cpp core/brush.cpp core/rasterop.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

@@ -51,7 +51,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
 	color1_(color), color2_(color), spacing_(spacing),
-	sensitive_(false), subpixel_(true)
+	sensitive_(false), subpixel_(true), blend_(0)
 {
 	Q_ASSERT(radius>=0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
@@ -173,6 +173,17 @@ void Brush::setSpacing(int spacing)
 void Brush::setSubPixel(bool sp)
 {
 	subpixel_ = sp;
+}
+
+/**
+ * The brush mask can be composed in other ways that the plain old
+ * alpha blend as well.
+ * Modes are defined in rasterop.h. Unrecognized modes default to
+ * alpha blend.
+ */
+void Brush::setBlendingMode(int mode)
+{
+	blend_ = mode;
 }
 
 /**
@@ -370,7 +381,9 @@ bool Brush::operator==(const Brush& brush) const
 			qAbs(opacity2_ - brush.opacity2_) <= 1.0/256.0 &&
 			color1_ == brush.color1_ &&
 			color2_ == brush.color2_ &&
-			spacing_ == brush.spacing_;
+			spacing_ == brush.spacing_ &&
+			subpixel_ == brush.subpixel_ &&
+			blend_ == brush.blend_;
 }
 
 bool Brush::operator!=(const Brush& brush) const

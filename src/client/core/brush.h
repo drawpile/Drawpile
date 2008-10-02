@@ -114,6 +114,9 @@ class Brush
 		//! Set subpixel hint
 		void setSubPixel(bool sp);
 
+		//! Set blending mode hint
+		void setBlendingMode(int mode);
+
 		//! Get interpolated radius
 		int radius(qreal pressure) const;
 		//! Get the diameter of the rendered brush
@@ -128,6 +131,8 @@ class Brush
 		int spacing() const;
 		//! Should subpixel rendering be used?
 		bool subpixel() const { return subpixel_; }
+		//! Get the suggested blending mode
+		int blendingMode() const { return blend_; }
 
 		//! Render the brush
 		RenderedBrush render(qreal pressure) const;
@@ -152,6 +157,7 @@ class Brush
 		int spacing_;
 		bool sensitive_;
 		bool subpixel_;
+		int blend_;
 
 		mutable RenderedBrush cache_;
 };

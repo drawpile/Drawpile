@@ -140,6 +140,7 @@ void Layer::dab(const Brush& brush, const Point& point)
 			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
 
 			tiles_[xtiles_ * yindex + xindex]->composite(
+					brush.blendingMode(),
 					values + yb * realdia + xb,
 					color,
 					xt, yt,
@@ -192,7 +193,7 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
 	p += dp;
 	for(qreal i=0;i<dist-0.5;++i) {
 		if(++distance > spacing) {
-			dab(brush, Point(QPointF(x0,y0),p));
+			dab(brush, Point(QPointF(x0,y0),qBound(0.0,p,1.0)));
 			distance = 0;
 		}
 		x0 += dx;

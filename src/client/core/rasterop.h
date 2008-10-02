@@ -20,33 +20,35 @@
 #ifndef RASTEROP_H
 #define RASTEROP_H
 
+#include <Qt>
+
 namespace dpcore {
 
-// This is borrowed from Pigment of koffice libs:
-/// Blending of two scale values as described by the alpha scale value
-/// A scale value is interpreted as 255 equaling 1.0 (such as seen in rgb8 triplets)
-/// Basically we do: a*alpha + b*(1-alpha)
-inline uint UINT8_BLEND(uint a, uint b, uint alpha)
-{
-    // However the formula is refactored to (a-b)*alpha + b  since that saves a multiplication
-    // Signed arithmetic is needed since a-b might be negative
-    // +b above becomes + (b<<8) - b  because we multiply it with 255 to fit the first part
-    //  That way we can do a normal rounding
-    uint c = uint(((int(a) - int(b)) * int(alpha)) + (b<<8) - b) + 0x80u;
+static const int BLEND_MODES=2;
+// Names of each blending mode
+extern const char *BLEND_MODE[BLEND_MODES];
 
-    return ((c >> 8) + c) >> 8;
-}
-
-//! Regular alpha blender
 /**
- * base = base * (1-opacity) + blend * opacity
+ * Composite a color using a mask onto an image.
+ * @param mode composition mode
+ * @param base pixels onto which the color is composited
+ * @param color ARGB color value
+ * @param mask alpha mask
+ * @param w width of composition rectangle
+ * @param h height of composition rectangle
+ * @param maskskip number of bytes to skip to get to the next line in the mask
+ * @param baseskip number of (bytes) to skip to get to the next line in the base
  */
-inline void blend_normal(uchar *base, const uchar *blend, int opacity) {
-	base[0] = UINT8_BLEND(blend[0], base[0], opacity);
-	base[1] = UINT8_BLEND(blend[1], base[1], opacity);
-	base[2] = UINT8_BLEND(blend[2], base[2], opacity);
-	// TODO: blend alpha too once we need it
-}
+void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip);
+
+/**
+ * Composite two equally big image tiles.
+ * @param mode composition mode
+ * @param base pixels onto which over is composited
+ * @parma over the pixels on top of base
+ * @param len number of pixels to blend
+ */
+void compositePixels(int mode, quint32 *base, quint32 *over, int len);
 
 }
 
