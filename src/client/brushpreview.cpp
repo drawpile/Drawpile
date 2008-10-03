@@ -266,6 +266,23 @@ void BrushPreview::setBlendingMode(int mode)
 	update();
 }
 
+void BrushPreview::setHardEdge(bool hard)
+{
+	if(hard) {
+		oldhardness1_ = brush_.hardness(0);
+		oldhardness2_ = brush_.hardness(1);
+		brush_.setHardness(1);
+		brush_.setHardness2(1);
+		brush_.setSubPixel(false);
+	} else {
+		brush_.setHardness(oldhardness1_);
+		brush_.setHardness2(oldhardness2_);
+		brush_.setSubPixel(true);
+	}
+	updatePreview();
+	update();
+}
+
 #ifndef DESIGNER_PLUGIN
 }
 #endif

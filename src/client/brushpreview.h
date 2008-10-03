@@ -102,6 +102,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Select a blending mode
 		void setBlendingMode(int mode);
 
+		//! Set/unset hard edge mode (100% hardness + no subpixels)
+		void setHardEdge(bool hard);
+
 	protected:
 		void paintEvent(QPaintEvent *event);
 		void resizeEvent(QResizeEvent *);
@@ -121,6 +124,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		bool colorpressure_;
 		QColor color1_, color2_;
 		PreviewShape shape_;
+		qreal oldhardness1_, oldhardness2_;
 };
 
 #ifndef DESIGNER_PLUGIN

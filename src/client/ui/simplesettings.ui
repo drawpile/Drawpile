@@ -6,17 +6,26 @@
     <x>0</x>
     <y>0</y>
     <width>162</width>
-    <height>268</height>
+    <height>288</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" >
    <property name="spacing" >
     <number>0</number>
    </property>
-   <property name="margin" >
+   <property name="leftMargin" >
+    <number>3</number>
+   </property>
+   <property name="topMargin" >
+    <number>3</number>
+   </property>
+   <property name="rightMargin" >
+    <number>3</number>
+   </property>
+   <property name="bottomMargin" >
     <number>3</number>
    </property>
    <item>
@@ -56,7 +65,16 @@
      <property name="spacing" >
       <number>3</number>
      </property>
-     <property name="margin" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
@@ -96,7 +114,16 @@
      <property name="spacing" >
       <number>3</number>
      </property>
-     <property name="margin" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
@@ -142,7 +169,16 @@
      <property name="spacing" >
       <number>3</number>
      </property>
-     <property name="margin" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
@@ -188,7 +224,16 @@
      <property name="spacing" >
       <number>3</number>
      </property>
-     <property name="margin" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
@@ -237,7 +282,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" >
       <size>
        <width>5</width>
        <height>5</height>
@@ -272,8 +317,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>118</y>
+     <x>104</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -292,8 +337,8 @@
      <y>120</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>31</x>
-     <y>106</y>
+     <x>35</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
@@ -304,8 +349,8 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>153</y>
+     <x>104</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
@@ -324,8 +369,8 @@
      <y>155</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>44</x>
-     <y>151</y>
+     <x>48</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>
@@ -336,12 +381,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>188</y>
+     <x>104</x>
+     <y>213</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
-     <y>190</y>
+     <y>217</y>
     </hint>
    </hints>
   </connection>
@@ -353,11 +398,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>157</x>
-     <y>190</y>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>24</x>
-     <y>188</y>
+     <x>28</x>
+     <y>213</y>
     </hint>
    </hints>
   </connection>
@@ -384,8 +429,8 @@
    <slot>setHardness(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>188</y>
+     <x>104</x>
+     <y>213</y>
     </hint>
     <hint type="destinationlabel" >
      <x>158</x>
@@ -400,8 +445,8 @@
    <slot>setOpacity(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>153</y>
+     <x>104</x>
+     <y>170</y>
     </hint>
     <hint type="destinationlabel" >
      <x>158</x>
@@ -416,12 +461,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>108</x>
-     <y>223</y>
+     <x>104</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel" >
      <x>157</x>
-     <y>225</y>
+     <y>260</y>
     </hint>
    </hints>
   </connection>
@@ -433,11 +478,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>157</x>
-     <y>225</y>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>80</x>
-     <y>223</y>
+     <x>84</x>
+     <y>256</y>
     </hint>
    </hints>
   </connection>
@@ -448,8 +493,8 @@
    <slot>setSpacing(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>40</x>
-     <y>223</y>
+     <x>44</x>
+     <y>256</y>
     </hint>
     <hint type="destinationlabel" >
      <x>61</x>
@@ -464,12 +509,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>27</x>
-     <y>236</y>
+     <x>30</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>13</x>
-     <y>176</y>
+     <x>17</x>
+     <y>213</y>
     </hint>
    </hints>
   </connection>
@@ -480,12 +525,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>33</x>
-     <y>235</y>
+     <x>36</x>
+     <y>284</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>135</x>
-     <y>178</y>
+     <x>157</x>
+     <y>217</y>
     </hint>
    </hints>
   </connection>
@@ -502,6 +547,22 @@
     <hint type="destinationlabel" >
      <x>14</x>
      <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hardedge</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setHardEdge(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>101</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>129</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>

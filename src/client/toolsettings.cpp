@@ -153,6 +153,7 @@ EraserSettings::~EraserSettings()
 		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
 		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
 		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
+		cfg.setValue("hardedge", ui_->hardedge->isChecked());
 		delete ui_;
 	}
 }
@@ -191,6 +192,8 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 
 	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
 	ui_->preview->setHardnessPressure(ui_->pressurehardness->isChecked());
+
+	ui_->hardedge->setChecked(cfg.value("hardedge", false).toBool());
 
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -327,6 +330,7 @@ SimpleSettings::~SimpleSettings()
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
 		cfg.setValue("spacing", ui_->brushspacing->value());
+		cfg.setValue("hardedge", ui_->hardedge->isChecked());
 		delete ui_;
 	}
 }
@@ -369,6 +373,8 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
 	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
 	ui_->preview->setSpacing(ui_->brushspacing->value());
+
+	ui_->hardedge->setChecked(cfg.value("hardedge", false).toBool());
 
 	if(!subpixel_) {
 		// If subpixel accuracy wasn't enabled, don't offer a chance to
