@@ -27,6 +27,7 @@ using widgets::BrushPreview; // qt designer doesn't know about namespaces
 using widgets::ColorButton;
 #include "ui_pensettings.h"
 #include "ui_brushsettings.h"
+#include "ui_erasersettings.h"
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
 
@@ -57,6 +58,7 @@ PenSettings::~PenSettings()
 	if(ui_) {
 		// Remember settings
 		QSettings& cfg = getSettings();
+		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("spacing", ui_->brushspacing->value());
@@ -74,8 +76,15 @@ QWidget *PenSettings::createUi(QWidget *parent)
 	widget->hide();
 	setUiWidget(widget);
 
+	// Populate blend mode combobox
+	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	}
+
 	// Load previous settings
 	QSettings& cfg = getSettings();
+	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
@@ -126,8 +135,90 @@ int PenSettings::getSize() const
 	return ui_->brushsize->value();
 }
 
-BrushSettings::BrushSettings(QString name, QString title, bool swapcolors)
-	: ToolSettings(name,title), swapcolors_(swapcolors)
+EraserSettings::EraserSettings(QString name, QString title)
+	: ToolSettings(name,title)
+{
+	ui_ = new Ui_EraserSettings();
+}
+
+EraserSettings::~EraserSettings()
+{
+	if(ui_) {
+		// Remember settings
+		QSettings& cfg = getSettings();
+		cfg.setValue("size", ui_->brushsize->value());
+		cfg.setValue("opacity", ui_->brushopacity->value());
+		cfg.setValue("hardness", ui_->brushhardness->value());
+		cfg.setValue("spacing", ui_->brushspacing->value());
+		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
+		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
+		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
+		delete ui_;
+	}
+}
+
+QWidget *EraserSettings::createUi(QWidget *parent)
+{
+	QWidget *widget = new QWidget(parent);
+	ui_->setupUi(widget);
+	widget->hide();
+	setUiWidget(widget);
+
+	// Load previous settings
+	QSettings& cfg = getSettings();
+
+	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
+	ui_->brushsizebox->setValue(ui_->brushsize->value());
+	ui_->preview->setSize(ui_->brushsize->value());
+
+	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
+	ui_->preview->setOpacity(ui_->brushopacity->value());
+
+	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
+	ui_->preview->setHardness(ui_->brushhardness->value());
+
+	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
+	ui_->preview->setSpacing(ui_->brushspacing->value());
+
+	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
+
+	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	ui_->preview->setOpacityPressure(ui_->pressureopacity->isChecked());
+
+	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	ui_->preview->setHardnessPressure(ui_->pressurehardness->isChecked());
+
+	// Connect size change signal
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	return widget;
+}
+
+void EraserSettings::setForeground(const QColor& color)
+{
+	ui_->preview->setColor2(color);
+}
+
+void EraserSettings::setBackground(const QColor& color)
+{
+	ui_->preview->setColor1(color);
+}
+
+const dpcore::Brush& EraserSettings::getBrush() const
+{
+	return ui_->preview->brush();
+}
+
+int EraserSettings::getSize() const
+{
+	return ui_->brushsize->value();
+}
+
+BrushSettings::BrushSettings(QString name, QString title)
+	: ToolSettings(name,title)
 {
 	ui_ = new Ui_BrushSettings();
 }
@@ -202,18 +293,12 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	if(swapcolors_)
-		ui_->preview->setColor2(color);
-	else
-		ui_->preview->setColor1(color);
+	ui_->preview->setColor1(color);
 }
 
 void BrushSettings::setBackground(const QColor& color)
 {
-	if(swapcolors_)
-		ui_->preview->setColor1(color);
-	else
-		ui_->preview->setColor2(color);
+	ui_->preview->setColor2(color);
 }
 
 const dpcore::Brush& BrushSettings::getBrush() const
@@ -237,6 +322,7 @@ SimpleSettings::~SimpleSettings()
 	if(ui_) {
 		// Remember settings
 		QSettings& cfg = getSettings();
+		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
@@ -252,6 +338,11 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	widget->hide();
 	setUiWidget(widget);
 
+	// Populate blend mode combobox
+	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	}
+
 	// Set proper preview shape
 	if(type_==Line)
 		ui_->preview->setPreviewShape(BrushPreview::Line);
@@ -261,6 +352,8 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 
 	// Load previous settings
 	QSettings& cfg = getSettings();
+	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
@@ -277,6 +370,11 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
 	ui_->preview->setSpacing(ui_->brushspacing->value());
 
+	if(!subpixel_) {
+		// If subpixel accuracy wasn't enabled, don't offer a chance to
+		// enable it.
+		ui_->hardedge->hide();
+	}
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;

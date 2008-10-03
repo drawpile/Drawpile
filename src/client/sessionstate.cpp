@@ -207,7 +207,7 @@ void SessionState::sendToolSelect(const dpcore::Brush& brush)
 	host_->sendPacket( protocol::ToolSelect(
 			host_->localuser_,
 			1,
-			1,
+			brush.blendingMode(),
 			encodeColor(brush.color(1), brush.opacity(1)),
 			encodeColor(brush.color(0), brush.opacity(0)),
 			brush.radius(1),
@@ -420,6 +420,7 @@ bool SessionState::handleToolSelect(protocol::ToolSelect *ts)
 	brush.setColor2(c0);
 	brush.setHardness2(ts->h0()/255.0);
 	brush.setOpacity2(o0);
+	brush.setBlendingMode(ts->mode());
 	emit toolReceived(ts->user(), brush);
 	return false;
 }

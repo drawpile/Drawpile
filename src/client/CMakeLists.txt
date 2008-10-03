@@ -46,7 +46,8 @@ set (
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
 	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
-	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui )
+	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui
+	ui/erasersettings.ui )
 
 # .UI
 

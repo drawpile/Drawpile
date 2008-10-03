@@ -42,7 +42,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 	currenttool_ = brushsettings_;
 
 	// Create settings widget for eraser
-	erasersettings_ = new tools::BrushSettings("eraser", tr("Eraser"),true);
+	erasersettings_ = new tools::EraserSettings("eraser", tr("Eraser"));
 	widgets_->addWidget(erasersettings_->createUi(this));
 
 	// Create a settings widget for color picker

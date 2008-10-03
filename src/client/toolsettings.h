@@ -24,6 +24,7 @@
 
 class Ui_PenSettings;
 class Ui_BrushSettings;
+class Ui_EraserSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
 class QSettings;
@@ -125,6 +126,29 @@ class PenSettings : public ToolSettings {
 		Ui_PenSettings *ui_;
 };
 
+//! Eraser settings
+/**
+ * This is a settings class for brushes that erase. Currently an eraser
+ * works just like a regular brush, except it paints with the background
+ * color. The eraser will work differently when layers are implemented.
+ */
+class EraserSettings : public ToolSettings {
+	public:
+		EraserSettings(QString name, QString title);
+		~EraserSettings();
+
+		QWidget *createUi(QWidget *parent);
+
+		void setForeground(const QColor& color);
+		void setBackground(const QColor& color);
+		const dpcore::Brush& getBrush() const;
+
+		int getSize() const;
+
+	private:
+		Ui_EraserSettings *ui_;
+};
+
 //! Basic brush settings
 /**
  * This is a settings class for brush based drawing tools, like the
@@ -132,7 +156,7 @@ class PenSettings : public ToolSettings {
  */
 class BrushSettings : public ToolSettings {
 	public:
-		BrushSettings(QString name, QString title, bool swapcolors=false);
+		BrushSettings(QString name, QString title);
 		~BrushSettings();
 
 		QWidget *createUi(QWidget *parent);
@@ -145,7 +169,6 @@ class BrushSettings : public ToolSettings {
 
 	private:
 		Ui_BrushSettings *ui_;
-		bool swapcolors_;
 };
 
 //! Settings for tools without pressure sensitivity
