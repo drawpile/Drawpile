@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>179</width>
-    <height>345</height>
+    <width>196</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -49,6 +49,55 @@
       </size>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>3</number>
+     </property>
+     <property name="topMargin" >
+      <number>3</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>130</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="hardedge" >
+       <property name="text" >
+        <string>HE</string>
+       </property>
+       <property name="icon" >
+        <iconset resource="resources.qrc" >:/icons/hardedge.png</iconset>
+       </property>
+       <property name="checkable" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>15</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="label" >
@@ -268,13 +317,6 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="hardedge" >
-     <property name="text" >
-      <string>Hard edge</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QLabel" name="label_5" >
      <property name="text" >
       <string>Pressure sensitivity</string>
@@ -331,8 +373,8 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>5</width>
-       <height>5</height>
+       <width>173</width>
+       <height>16</height>
       </size>
      </property>
     </spacer>
@@ -344,6 +386,7 @@
    <class>BrushPreview</class>
    <extends>QFrame</extends>
    <header>brushpreview.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -357,7 +400,9 @@
   <tabstop>brushopacity</tabstop>
   <tabstop>brushhardness</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc" />
+ </resources>
  <connections>
   <connection>
    <sender>brushsize</sender>
@@ -366,12 +411,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>121</x>
-     <y>104</y>
+     <x>125</x>
+     <y>133</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>174</x>
-     <y>108</y>
+     <x>187</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -382,12 +427,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>174</x>
-     <y>108</y>
+     <x>187</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>35</x>
-     <y>104</y>
+     <x>39</x>
+     <y>133</y>
     </hint>
    </hints>
   </connection>
@@ -398,12 +443,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>119</x>
-     <y>147</y>
+     <x>123</x>
+     <y>176</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>174</x>
-     <y>151</y>
+     <x>187</x>
+     <y>180</y>
     </hint>
    </hints>
   </connection>
@@ -414,12 +459,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>174</x>
-     <y>151</y>
+     <x>187</x>
+     <y>180</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>52</x>
-     <y>147</y>
+     <x>56</x>
+     <y>176</y>
     </hint>
    </hints>
   </connection>
@@ -430,12 +475,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>118</x>
-     <y>188</y>
+     <x>122</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>167</x>
-     <y>190</y>
+     <x>187</x>
+     <y>223</y>
     </hint>
    </hints>
   </connection>
@@ -446,12 +491,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>167</x>
-     <y>190</y>
+     <x>187</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>24</x>
-     <y>188</y>
+     <x>28</x>
+     <y>219</y>
     </hint>
    </hints>
   </connection>
@@ -462,8 +507,8 @@
    <slot>setSize(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>78</x>
-     <y>104</y>
+     <x>82</x>
+     <y>133</y>
     </hint>
     <hint type="destinationlabel" >
      <x>80</x>
@@ -478,8 +523,8 @@
    <slot>setHardness(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>118</x>
-     <y>188</y>
+     <x>122</x>
+     <y>219</y>
     </hint>
     <hint type="destinationlabel" >
      <x>168</x>
@@ -494,8 +539,8 @@
    <slot>setOpacity(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>121</x>
-     <y>147</y>
+     <x>125</x>
+     <y>176</y>
     </hint>
     <hint type="destinationlabel" >
      <x>168</x>
@@ -558,12 +603,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>118</x>
-     <y>223</y>
+     <x>122</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>167</x>
-     <y>225</y>
+     <x>187</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -574,12 +619,12 @@
    <slot>setValue(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>167</x>
-     <y>225</y>
+     <x>187</x>
+     <y>266</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>83</x>
-     <y>223</y>
+     <x>87</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
@@ -590,8 +635,8 @@
    <slot>setSpacing(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>17</x>
-     <y>223</y>
+     <x>21</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel" >
      <x>106</x>
@@ -602,16 +647,32 @@
   <connection>
    <sender>hardedge</sender>
    <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setHardEdge(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>151</x>
+     <y>81</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>145</x>
+     <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>hardedge</sender>
+   <signal>toggled(bool)</signal>
    <receiver>brushhardness</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>14</x>
-     <y>239</y>
+     <x>159</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>14</x>
-     <y>181</y>
+     <x>15</x>
+     <y>211</y>
     </hint>
    </hints>
   </connection>
@@ -622,28 +683,12 @@
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>40</x>
-     <y>261</y>
+     <x>160</x>
+     <y>73</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>158</x>
-     <y>177</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>hardedge</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>preview</receiver>
-   <slot>setHardEdge(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>80</x>
-     <y>243</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>22</x>
-     <y>20</y>
+     <x>157</x>
+     <y>209</y>
     </hint>
    </hints>
   </connection>

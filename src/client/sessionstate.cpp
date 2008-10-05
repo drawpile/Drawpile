@@ -34,6 +34,11 @@
 
 namespace network {
 
+/// Brush type modifiers
+enum BrushType {
+	SUBPIXEL = 1
+};
+
 /**
  * A utility function to put an RGB value + opacity in 32 bits.
  */
@@ -206,7 +211,7 @@ void SessionState::sendToolSelect(const dpcore::Brush& brush)
 {
 	host_->sendPacket( protocol::ToolSelect(
 			host_->localuser_,
-			1,
+			brush.subpixel()?SUBPIXEL:0,
 			brush.blendingMode(),
 			encodeColor(brush.color(1), brush.opacity(1)),
 			encodeColor(brush.color(0), brush.opacity(0)),
@@ -421,6 +426,7 @@ bool SessionState::handleToolSelect(protocol::ToolSelect *ts)
 	brush.setHardness2(ts->h0()/255.0);
 	brush.setOpacity2(o0);
 	brush.setBlendingMode(ts->mode());
+	brush.setSubPixel(ts->tool() & SUBPIXEL);
 	emit toolReceived(ts->user(), brush);
 	return false;
 }

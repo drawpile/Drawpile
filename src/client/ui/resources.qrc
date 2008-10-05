@@ -1,6 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
 	<file>icons/drawpile.png</file>
+	<file>icons/hardedge.png</file>
 	<file>icons/document-new.png</file>
 	<file>icons/document-open.png</file>
 	<file>icons/document-save.png</file>
