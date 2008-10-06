@@ -65,151 +65,115 @@ inline uint UINT8_DIVIDE(uint a, uint b)
 }
 
 //! Regular alpha blender
-/**
- * base = base * (1-opacity) + blend * opacity
- */
-inline void blend_normal(uchar *base, const uchar *blend, uint opacity) {
-	base[0] = UINT8_BLEND(blend[0], base[0], opacity);
-	base[1] = UINT8_BLEND(blend[1], base[1], opacity);
-	base[2] = UINT8_BLEND(blend[2], base[2], opacity);
-	// TODO: blend alpha too once we need it
+inline uint blend_normal(uchar base, uchar blend) {
+	return blend;
 }
 
 //! Multiply color values
-inline void blend_multiply(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMin(255u, UINT8_MULT(base[0], blend[0]));
-	const uint g = qMin(255u, UINT8_MULT(base[1], blend[1]));
-	const uint b = qMin(255u, UINT8_MULT(base[2], blend[2]));
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_multiply(uchar base, uchar blend) {
+	return qMin(255u, UINT8_MULT(base, blend));
 }
 
 //! Divide color values
-inline void blend_divide(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMin(255u, (base[0]*256u + blend[0]/2) / (1+blend[0]));
-	const uint g = qMin(255u, (base[1]*256u + blend[1]/2) / (1+blend[1]));
-	const uint b = qMin(255u, (base[2]*256u + blend[2]/2) / (1+blend[2]));
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_divide(uchar base, uchar blend) {
+	return qMin(255u, (base*256u + blend/2) / (1+blend));
 }
 
 //! Darken color
-inline void blend_darken(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMin(base[0], blend[0]);
-	const uint g = qMin(base[1], blend[1]);
-	const uint b = qMin(base[2], blend[2]);
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_darken(uchar base, uchar blend) {
+	return qMin(base, blend);
 }
 
 //! Lighten color
-inline void blend_lighten(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMax(base[0], blend[0]);
-	const uint g = qMax(base[1], blend[1]);
-	const uint b = qMax(base[2], blend[2]);
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_lighten(uchar base, uchar blend) {
+	return qMax(base, blend);
 }
 
 //! Color dodge
-inline void blend_dodge(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMin(255u, base[0] * 256u / (254u - blend[0]));
-	const uint g = qMin(255u, base[1] * 256u / (254u - blend[1]));
-	const uint b = qMin(255u, base[2] * 256u / (254u - blend[2]));
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_dodge(uchar base, uchar blend) {
+	return qMin(255u, base * 256u / (256u - blend));
 }
 
 //! Color burn
-inline void blend_burn(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qBound(0, (255 - ((255-base[0])*256 / (blend[0]+1))), 255);
-	const uint g = qBound(0, (255 - ((255-base[1])*256 / (blend[1]+1))), 255);
-	const uint b = qBound(0, (255 - ((255-base[2])*256 / (blend[2]+1))), 255);
-
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_burn(uchar base, uchar blend) {
+	return qBound(0, (255 - ((255-base)*256 / (blend+1))), 255);
 }
 
 //! Add colors
-inline void blend_add(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMin(base[0]+blend[0], 255);
-	const uint g = qMin(base[1]+blend[1], 255);
-	const uint b = qMin(base[2]+blend[2], 255);
-
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+inline uint blend_add(uchar base, uchar blend) {
+	return qMin(base+blend, 255);
 }
 
 //! Subtract colors
-inline void blend_subtract(uchar *base, const uchar *blend, uint opacity) {
-	const uint r = qMax(base[0]-blend[0], 0);
-	const uint g = qMax(base[1]-blend[1], 0);
-	const uint b = qMax(base[2]-blend[2], 0);
+inline uint blend_subtract(uchar base, uchar blend) {
+	return qMax(base-blend, 0);
+}
 
-	base[0] = UINT8_BLEND(r, base[0], opacity);
-	base[1] = UINT8_BLEND(g, base[1], opacity);
-	base[2] = UINT8_BLEND(b, base[2], opacity);
+typedef uint(*BlendOp)(uchar,uchar);
+template<BlendOp BO>
+void doComposite(quint32 *base, quint32 color, const uchar *mask,
+		int w, int h, int maskskip, int baseskip)
+{
+	const uchar *src = reinterpret_cast<const uchar*>(&color);
+	uchar *dest = reinterpret_cast<uchar*>(base);
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x) {
+			*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
+			*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
+			*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
+			++dest;
+			++mask;
+		}
+		dest += baseskip*4;
+		mask += maskskip;
+	}
 }
 
 void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
-	for(int y=0;y<h;++y) {
-		for(int x=0;x<w;++x) {
-			// Move the switch out of the loop
-			// Note! Make sure the these are in the correct order!
-			switch(mode) {
-				case 1:
-				blend_multiply(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+		// Note! Make sure the these are in the correct order!
+		switch(mode) {
+			case 1:
+				doComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 2:
-				blend_divide(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 2:
+				doComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 3:
-				blend_dodge(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 3:
+				doComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 4:
-				blend_burn(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 4:
+				doComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 5:
-				blend_darken(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 5:
+				doComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 6:
-				blend_lighten(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 6:
+				doComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 7:
-				blend_add(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 7:
+				doComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-				case 8:
-				blend_subtract(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+			case 8:
+				doComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-
 			default:
-				blend_normal(reinterpret_cast<uchar*>(base), reinterpret_cast<uchar*>(&color), *mask);
+				doComposite<blend_normal>(base, color, mask, w, h, maskskip, baseskip);
 				break;
-			}
-			++base;
-			++mask;
 		}
-		base += baseskip;
-		mask += maskskip;
-	}
 }
 
-void compositePixels(int mode, quint32 *base, quint32 *over, int len)
+void compositePixels(int mode, quint32 *base, const quint32 *over, int len)
 {
+	uchar *dest = reinterpret_cast<uchar*>(base);
+	const uchar *src = reinterpret_cast<const uchar*>(over);
 	while(len--) {
-		blend_normal(reinterpret_cast<uchar*>(base),
-					reinterpret_cast<const uchar*>(over), *over>>24);
-		++base;
-		++over;
+		dest[0] = UINT8_BLEND(dest[0], src[0], src[3]);
+		dest[1] = UINT8_BLEND(dest[1], src[1], src[3]);
+		dest[2] = UINT8_BLEND(dest[2], src[2], src[3]);
+		base+=4;
+		over+=4;
 	}
 
 }

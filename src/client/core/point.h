@@ -48,8 +48,8 @@ class Point : public QPoint {
 		{
 			Q_ASSERT(p>=0 && p<=1);
 			double tmp;
-			xfrac_ = modf(point.x(), &tmp);
-			yfrac_ = modf(point.y(), &tmp);
+			xfrac_ = fabs(modf(point.x(), &tmp));
+			yfrac_ = fabs(modf(point.y(), &tmp));
 		}
 
 		//! Construct a point from a QPoint + pressure value
