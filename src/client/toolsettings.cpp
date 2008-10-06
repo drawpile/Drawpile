@@ -23,8 +23,10 @@
 #include "toolsettings.h"
 #include "brushpreview.h"
 #include "colorbutton.h"
+#include "brushslider.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces
 using widgets::ColorButton;
+using widgets::BrushSlider;
 #include "ui_pensettings.h"
 #include "ui_brushsettings.h"
 #include "ui_erasersettings.h"
@@ -86,17 +88,14 @@ QWidget *PenSettings::createUi(QWidget *parent)
 	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
 
 	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
 	ui_->preview->setOpacity(ui_->brushopacity->value());
 
 	ui_->preview->setHardness(100);
 
 	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
 	ui_->preview->setSpacing(ui_->brushspacing->value());
 
 	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
@@ -169,19 +168,15 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 	QSettings& cfg = getSettings();
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
 
 	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
 	ui_->preview->setOpacity(ui_->brushopacity->value());
 
 	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
-	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
 	ui_->preview->setHardness(ui_->brushhardness->value());
 
 	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
 	ui_->preview->setSpacing(ui_->brushspacing->value());
 
 	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
@@ -262,19 +257,15 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
 
 	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
 	ui_->preview->setOpacity(ui_->brushopacity->value());
 
 	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
-	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
 	ui_->preview->setHardness(ui_->brushhardness->value());
 
 	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
 	ui_->preview->setSpacing(ui_->brushspacing->value());
 
 	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
@@ -359,19 +350,15 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->brushsizebox->setValue(ui_->brushsize->value());
 	ui_->preview->setSize(ui_->brushsize->value());
 
 	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->brushopacitybox->setValue(ui_->brushopacity->value());
 	ui_->preview->setOpacity(ui_->brushopacity->value());
 
 	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
-	ui_->brushhardnessbox->setValue(ui_->brushhardness->value());
 	ui_->preview->setHardness(ui_->brushhardness->value());
 
 	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->brushspacingbox->setValue(ui_->brushspacing->value());
 	ui_->preview->setSpacing(ui_->brushspacing->value());
 
 	ui_->hardedge->setChecked(cfg.value("hardedge", false).toBool());

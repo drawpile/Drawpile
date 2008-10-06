@@ -15,7 +15,7 @@ set (
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
-	navigator.h toolsettings.h 
+	navigator.h toolsettings.h brushslider.h
 )
 
 # unused headers because they do not create moc_* files ()
@@ -41,6 +41,7 @@ set (
 	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
 	core/tile.cpp core/layer.cpp core/brush.cpp core/rasterop.cpp
+	brushslider.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

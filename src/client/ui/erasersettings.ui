@@ -5,27 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>196</width>
-    <height>360</height>
+    <width>192</width>
+    <height>311</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>0</number>
-   </property>
-   <property name="leftMargin" >
-    <number>3</number>
-   </property>
-   <property name="topMargin" >
-    <number>3</number>
-   </property>
-   <property name="rightMargin" >
-    <number>3</number>
-   </property>
-   <property name="bottomMargin" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <property name="margin" >
     <number>3</number>
    </property>
    <item>
@@ -56,14 +44,14 @@
       <number>3</number>
      </property>
      <property name="topMargin" >
-      <number>3</number>
+      <number>0</number>
      </property>
      <item>
       <spacer>
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>130</width>
          <height>20</height>
@@ -77,7 +65,8 @@
         <string>HE</string>
        </property>
        <property name="icon" >
-        <iconset resource="resources.qrc" >:/icons/hardedge.png</iconset>
+        <iconset resource="resources.qrc" >
+         <normaloff>:/icons/hardedge.png</normaloff>:/icons/hardedge.png</iconset>
        </property>
        <property name="checkable" >
         <bool>true</bool>
@@ -89,7 +78,7 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>15</width>
          <height>20</height>
@@ -100,221 +89,86 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label" >
-     <property name="text" >
+    <widget class="BrushSlider" name="brushsize" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>18</height>
+      </size>
+     </property>
+     <property name="toolTip" >
       <string>Radius</string>
      </property>
+     <property name="maximum" >
+      <number>64</number>
+     </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
+    <widget class="BrushSlider" name="brushopacity" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>18</height>
+      </size>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QSlider" name="brushsize" >
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>64</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="brushsizebox" >
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>64</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
+     <property name="toolTip" >
       <string>Opacity</string>
      </property>
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="style" >
+      <enum>BrushSlider::Opacity</enum>
+     </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
+    <widget class="BrushSlider" name="brushhardness" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>18</height>
+      </size>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QSlider" name="brushopacity" >
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>100</number>
-       </property>
-       <property name="value" >
-        <number>100</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="brushopacitybox" >
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>100</number>
-       </property>
-       <property name="value" >
-        <number>100</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_3" >
-     <property name="text" >
+     <property name="toolTip" >
       <string>Hardness</string>
      </property>
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="style" >
+      <enum>BrushSlider::Hardness</enum>
+     </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
+    <widget class="BrushSlider" name="brushspacing" >
+     <property name="minimumSize" >
+      <size>
+       <width>0</width>
+       <height>18</height>
+      </size>
      </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QSlider" name="brushhardness" >
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>100</number>
-       </property>
-       <property name="value" >
-        <number>50</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="brushhardnessbox" >
-       <property name="minimum" >
-        <number>0</number>
-       </property>
-       <property name="maximum" >
-        <number>100</number>
-       </property>
-       <property name="value" >
-        <number>50</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QLabel" name="label_4" >
-     <property name="text" >
+     <property name="toolTip" >
       <string>Spacing</string>
      </property>
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>100</number>
+     </property>
+     <property name="style" >
+      <enum>BrushSlider::Spacing</enum>
+     </property>
     </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QSlider" name="brushspacing" >
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>50</number>
-       </property>
-       <property name="value" >
-        <number>15</number>
-       </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QSpinBox" name="brushspacingbox" >
-       <property name="suffix" >
-        <string>%</string>
-       </property>
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>50</number>
-       </property>
-       <property name="value" >
-        <number>15</number>
-       </property>
-      </widget>
-     </item>
-    </layout>
    </item>
    <item>
     <widget class="QLabel" name="label_5" >
@@ -325,22 +179,10 @@
    </item>
    <item>
     <layout class="QGridLayout" >
-     <property name="leftMargin" >
+     <property name="margin" >
       <number>0</number>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <property name="horizontalSpacing" >
-      <number>3</number>
-     </property>
-     <property name="verticalSpacing" >
+     <property name="spacing" >
       <number>3</number>
      </property>
      <item row="0" column="0" >
@@ -371,7 +213,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>173</width>
        <height>16</height>
@@ -388,166 +230,21 @@
    <header>brushpreview.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>BrushSlider</class>
+   <extends>QWidget</extends>
+   <header>brushslider.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>brushsizebox</tabstop>
-  <tabstop>brushopacitybox</tabstop>
-  <tabstop>brushhardnessbox</tabstop>
   <tabstop>pressuresize</tabstop>
   <tabstop>pressureopacity</tabstop>
   <tabstop>pressurehardness</tabstop>
-  <tabstop>brushsize</tabstop>
-  <tabstop>brushopacity</tabstop>
-  <tabstop>brushhardness</tabstop>
  </tabstops>
  <resources>
   <include location="resources.qrc" />
  </resources>
  <connections>
-  <connection>
-   <sender>brushsize</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushsizebox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>125</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>187</x>
-     <y>137</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushsizebox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushsize</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>187</x>
-     <y>137</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>39</x>
-     <y>133</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushopacity</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushopacitybox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>123</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>187</x>
-     <y>180</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushopacitybox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushopacity</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>187</x>
-     <y>180</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>56</x>
-     <y>176</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushhardness</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushhardnessbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>122</x>
-     <y>219</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>187</x>
-     <y>223</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushhardnessbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushhardness</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>187</x>
-     <y>223</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>28</x>
-     <y>219</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushsize</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setSize(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>82</x>
-     <y>133</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>80</x>
-     <y>40</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushhardness</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setHardness(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>122</x>
-     <y>219</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>168</x>
-     <y>38</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushopacity</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setOpacity(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>125</x>
-     <y>176</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>168</x>
-     <y>53</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>pressuresize</sender>
    <signal>toggled(bool)</signal>
@@ -555,8 +252,8 @@
    <slot>setSizePressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>55</x>
-     <y>303</y>
+     <x>59</x>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel" >
      <x>60</x>
@@ -571,8 +268,8 @@
    <slot>setOpacityPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>174</x>
-     <y>303</y>
+     <x>187</x>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel" >
      <x>167</x>
@@ -587,60 +284,12 @@
    <slot>setHardnessPressure(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>50</x>
-     <y>329</y>
+     <x>54</x>
+     <y>270</y>
     </hint>
     <hint type="destinationlabel" >
      <x>43</x>
      <y>26</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushspacing</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushspacingbox</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>122</x>
-     <y>262</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>187</x>
-     <y>266</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushspacingbox</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>brushspacing</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>187</x>
-     <y>266</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>87</x>
-     <y>262</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>brushspacing</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>preview</receiver>
-   <slot>setSpacing(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>21</x>
-     <y>262</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>106</x>
-     <y>28</y>
     </hint>
    </hints>
   </connection>
@@ -661,34 +310,82 @@
    </hints>
   </connection>
   <connection>
-   <sender>hardedge</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>brushhardness</receiver>
-   <slot>setDisabled(bool)</slot>
+   <sender>brushsize</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setSize(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>159</x>
-     <y>85</y>
+     <x>83</x>
+     <y>117</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>15</x>
-     <y>211</y>
+     <x>81</x>
+     <y>29</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushopacity</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setOpacity(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>114</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>115</x>
+     <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushhardness</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setHardness(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>126</x>
+     <y>170</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>91</x>
+     <y>43</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>brushspacing</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>preview</receiver>
+   <slot>setSpacing(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>127</x>
+     <y>197</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>127</x>
+     <y>29</y>
     </hint>
    </hints>
   </connection>
   <connection>
    <sender>hardedge</sender>
    <signal>toggled(bool)</signal>
-   <receiver>brushhardnessbox</receiver>
+   <receiver>brushhardness</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>160</x>
-     <y>73</y>
+     <x>157</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>209</y>
+     <x>73</x>
+     <y>169</y>
     </hint>
    </hints>
   </connection>
