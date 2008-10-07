@@ -169,11 +169,11 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len)
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	const uchar *src = reinterpret_cast<const uchar*>(over);
 	while(len--) {
-		dest[0] = UINT8_BLEND(dest[0], src[0], src[3]);
-		dest[1] = UINT8_BLEND(dest[1], src[1], src[3]);
-		dest[2] = UINT8_BLEND(dest[2], src[2], src[3]);
-		base+=4;
-		over+=4;
+		*dest = UINT8_BLEND(src[0], *dest, src[3]); ++dest;
+		*dest = UINT8_BLEND(src[1], *dest, src[3]); ++dest;
+		*dest = UINT8_BLEND(src[2], *dest, src[3]); ++dest;
+		++dest;
+		src+=4;
 	}
 
 }

@@ -252,9 +252,7 @@ bool MainWindow::initBoard(const QString& filename)
 	if(image.load(filename)==false)
 		return false;
 	board_->initBoard(image);
-	setWindowModified(false);
-	filename_ = filename;
-	setTitle();
+	postInitBoard(filename);
 	return true;
 }
 
@@ -265,9 +263,7 @@ bool MainWindow::initBoard(const QString& filename)
 void MainWindow::initBoard(const QSize& size, const QColor& color)
 {
 	board_->initBoard(size,color);
-	filename_.clear();
-	setWindowModified(false);
-	setTitle();
+	postInitBoard("");
 }
 
 void MainWindow::initDefaultBoard()
@@ -281,9 +277,19 @@ void MainWindow::initDefaultBoard()
 void MainWindow::initBoard(const QImage& image)
 {
 	board_->initBoard(image);
-	filename_.clear();
+	postInitBoard("");
+}
+
+/**
+ * Perform common tasks after board has been initialized
+ */
+void MainWindow::postInitBoard(const QString& filename)
+{
+	filename_ = filename;
 	setWindowModified(false);
 	setTitle();
+	save_->setEnabled(true);
+	saveas_->setEnabled(true);
 }
 
 /**
@@ -524,9 +530,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
 					tr("There are unsaved changes. Save them before exiting?"),
 					QMessageBox::NoButton, this);
-			const QPushButton *savebtn = box.addButton(tr("Save changes"),
+			const QPushButton *savebtn = box.addButton(tr("Save"),
 					QMessageBox::AcceptRole);
-			box.addButton(tr("Discard changes"),
+			box.addButton(tr("Discard"),
 					QMessageBox::DestructiveRole);
 			const QPushButton *cancelbtn = box.addButton(tr("Cancel"),
 					QMessageBox::RejectRole);
@@ -1233,6 +1239,10 @@ void MainWindow::initActions()
 	saveas_ = makeAction("savedocumentas", "document-save-as.png", tr("Save &As..."), tr("Save drawing to a file with a new name"));
 	quit_ = makeAction("exitprogram", "system-log-out.png", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
 	quit_->setMenuRole(QAction::QuitRole);
+
+	// The saving actions are initially disabled, as we have no image
+	save_->setEnabled(false);
+	saveas_->setEnabled(false);
 
 	connect(new_,SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open_,SIGNAL(triggered()), this, SLOT(open()));

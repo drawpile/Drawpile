@@ -367,7 +367,9 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		// If subpixel accuracy wasn't enabled, don't offer a chance to
 		// enable it.
 		ui_->hardedge->hide();
+		ui_->brushopts->addSpacing(ui_->hardedge->width());
 	}
+
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;

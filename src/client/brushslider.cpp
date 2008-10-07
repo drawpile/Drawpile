@@ -105,7 +105,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 			if(value>=1) {
 				painter.setBrush(palette().buttonText());
 			} else {
-				QRadialGradient gradient(x+dia/2.0+0.5, y+dia/2.0+0.5, dia/2.0);
+				QRadialGradient gradient(x+dia/2.0, y+dia/2.0, dia/2.0);
 				gradient.setColorAt(0, palette().color(QPalette::ButtonText));
 				gradient.setColorAt(value,
 						palette().color(QPalette::ButtonText));

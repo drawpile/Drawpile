@@ -14,7 +14,7 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>0</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="QTextEdit" name="content" />

@@ -40,12 +40,6 @@
    </item>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>3</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
      <item>
       <spacer>
        <property name="orientation" >
@@ -61,6 +55,15 @@
      </item>
      <item>
       <widget class="QToolButton" name="hardedge" >
+       <property name="maximumSize" >
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="toolTip" >
+        <string>Hard edge</string>
+       </property>
        <property name="text" >
         <string>HE</string>
        </property>
@@ -71,20 +74,10 @@
        <property name="checkable" >
         <bool>true</bool>
        </property>
+       <property name="autoRaise" >
+        <bool>true</bool>
+       </property>
       </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>15</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
@@ -163,7 +156,7 @@
       <number>1</number>
      </property>
      <property name="maximum" >
-      <number>100</number>
+      <number>50</number>
      </property>
      <property name="style" >
       <enum>BrushSlider::Spacing</enum>

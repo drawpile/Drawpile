@@ -172,6 +172,8 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
+		//! Finish board initialisation
+		void postInitBoard(const QString& filename);
 		//! Start autosaver timer
 		void startAutosaver();
 		//! Stop autosaver timer
