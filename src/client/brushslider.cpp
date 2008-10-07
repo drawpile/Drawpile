@@ -35,6 +35,7 @@ BrushSlider::BrushSlider(QWidget *parent)
 void BrushSlider::paintEvent(QPaintEvent*)
 {
 	QPainter painter(this);
+	painter.setRenderHint(QPainter::Antialiasing);
 	QPainterPath path;
 
 	qreal dia = height() - 1;
@@ -65,12 +66,12 @@ void BrushSlider::paintEvent(QPaintEvent*)
 	fnt.setPixelSize(qRound(dia*0.7));
 	painter.setFont(fnt);
 	
-	if(pos < 0.5) {
-		painter.drawText(QRectF(slider+dia+5, 0, w, dia),
+	if(pos > 0.5) {
+		painter.drawText(QRectF(dia+dia/2, 1, w, dia),
 				Qt::AlignLeft|Qt::AlignVCenter,
 				QString::number(value()) + suffix_);
 	} else {
-		painter.drawText(QRectF(0, 0, slider-5, dia),
+		painter.drawText(QRectF(0, 1, w-dia-dia/2, dia),
 				Qt::AlignRight|Qt::AlignVCenter,
 				QString::number(value()) + suffix_);
 	}
@@ -84,12 +85,13 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 	switch(style_) {
 		case Size: {
 			painter.setBrush(palette().base());
+			painter.setPen(QPen(palette().color(QPalette::Mid)));
 			painter.drawEllipse(rect);
 			const qreal adj = (dia - dia*value)/2.0;
 			const QRectF r2 = rect.adjusted(adj,adj,-adj,-adj);
 			painter.setBrush(palette().buttonText());
 			painter.drawEllipse(r2);
-				   } break;
+				   } return;
 		case Opacity: {
 			const QColor col1(palette().color(QPalette::Base));
 			const QColor col2(palette().color(QPalette::ButtonText));
@@ -97,23 +99,20 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 				col1.red() + qRound((col2.red()-col1.red()) * value),
 				col1.green() + qRound((col2.green()-col1.green()) * value),
 				col1.blue() + qRound((col2.blue()-col1.blue()) * value)));
-			painter.drawEllipse(rect);
 					  } break;
 		case Hardness:
 			if(value>=1) {
 				painter.setBrush(palette().buttonText());
 			} else {
-				QRadialGradient gradient(x+dia/2, y+dia/2, dia/2);
+				QRadialGradient gradient(x+dia/2.0+0.5, y+dia/2.0+0.5, dia/2.0);
 				gradient.setColorAt(0, palette().color(QPalette::ButtonText));
 				gradient.setColorAt(value,
 						palette().color(QPalette::ButtonText));
 				gradient.setColorAt(1, palette().color(QPalette::Base));
 				painter.setBrush(QBrush(gradient));
 			}
-			painter.drawEllipse(rect);
 			break;
 		case Spacing: {
-			painter.setRenderHint(QPainter::Antialiasing);
 			painter.setPen(QPen(palette().color(QPalette::Mid)));
 			qreal adj = dia/4.0;
 			qreal off = adj/1.0;
@@ -122,11 +121,9 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 
 			painter.drawEllipse(rect.adjusted(
 						adj+off*value, adj, -adj+off*value, -adj));
-			painter.setRenderHint(QPainter::Antialiasing, false);
 					  } return; // this is a special case
 
 	}
-	painter.setBrush(QBrush());
 	painter.setPen(QPen(palette().color(QPalette::Mid)));
 	painter.drawEllipse(rect);
 }
