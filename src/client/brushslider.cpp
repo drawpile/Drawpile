@@ -32,14 +32,15 @@ BrushSlider::BrushSlider(QWidget *parent)
 {
 }
 
-void BrushSlider::paintEvent(QPaintEvent*)
+void BrushSlider::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
+	painter.setClipRegion(event->region());
 	painter.setRenderHint(QPainter::Antialiasing);
 	QPainterPath path;
 
-	qreal dia = height() - 1;
-	qreal w = width() - 1;
+	qreal dia = contentsRect().height() - 1;
+	qreal w = contentsRect().width() - 1;
 
 	path.moveTo(dia+dia/2.0, 0);
 	path.cubicTo(QPointF(dia, 0), QPointF(dia, dia),
@@ -55,11 +56,11 @@ void BrushSlider::paintEvent(QPaintEvent*)
 	painter.drawPath(path);
 
 	// Draw the brush circles
-	drawCircle(painter, dia, 0, 0, 0.0);
-	drawCircle(painter, dia, w-dia, 0, 1.0);
+	drawCircle(painter, dia, 0.5, 0.5, 0.0);
+	drawCircle(painter, dia, w-dia, 0.5, 1.0);
 	qreal pos = (sliderPosition() - minimum()) / qreal(maximum()-minimum());
 	qreal slider = dia+(w-dia*3)*pos;
-	drawCircle(painter, dia, slider, 0, pos);
+	drawCircle(painter, dia, slider, 0.5, pos);
 
 	// Draw the value text
 	QFont fnt = font();
@@ -130,17 +131,17 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 
 void BrushSlider::mousePressEvent(QMouseEvent *event)
 {
-	qreal dia = height() - 1;
+	qreal dia = contentsRect().height() - 1;
 	if(event->x() < dia) {
 		if(value() > minimum())
 			setValue(value()-1);
 		click_ = BUTTON;
-	} else if(event->x()>width()-dia) {
+	} else if(event->x()>contentsRect().width()-dia) {
 		if(value() < maximum())
 			setValue(value()+1);
 		click_ = BUTTON;
 	} else {
-		int handlex = qRound(dia + (value()-minimum()) / qreal(maximum()-minimum()) * (width() - dia*3));
+		int handlex = qRound(dia + (value()-minimum()) / qreal(maximum()-minimum()) * (contentsRect().width() - dia*3));
 		if(event->x() >= handlex && event->x()<=handlex+dia) {
 			click_ = HANDLE;
 		} else {
@@ -166,8 +167,8 @@ void BrushSlider::mouseMoveEvent(QMouseEvent *event)
 void BrushSlider::setPosition(int x, int y)
 {
 	Q_UNUSED(y); // TODO vertical mode
-	qreal dia = height() - 1;
-	qreal val = qBound(0.0, (x - dia*1.5) / (width() - dia*3.0), 1.0);
+	qreal dia = contentsRect().height() - 1;
+	qreal val = qBound(0.0, (x - dia*1.5) / (contentsRect().width() - dia*3.0), 1.0);
 	setValue(qRound(minimum() + val * (maximum()-minimum())));
 }
 
