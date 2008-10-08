@@ -32,8 +32,9 @@
 namespace widgets {
 
 EditorView::EditorView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(false), spacedown_(false),
-	outlinesize_(10), dia_(20), enableoutline_(true), showoutline_(true)
+	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(NOTRANSFORM),
+	dragbtndown_(NOTRANSFORM), outlinesize_(10), dia_(20),
+	enableoutline_(true), showoutline_(true)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -157,9 +158,9 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(pendown_ != NOTDOWN)
 		return;
-	if(event->button() == Qt::MidButton || spacedown_) {
-		startDrag(event->x(), event->y());
-	} else if(event->button() == Qt::LeftButton && isdragging_==false) {
+	if(event->button() == Qt::MidButton || dragbtndown_) {
+		startDrag(event->x(), event->y(), dragbtndown_!=ROTATE?TRANSLATE:ROTATE);
+	} else if(event->button() == Qt::LeftButton && isdragging_==NOTRANSFORM) {
 		pendown_ = MOUSEDOWN;
 		emit penDown(
 				dpcore::Point(mapToScene(event->pos()), 1.0)
@@ -215,7 +216,11 @@ void EditorView::mouseDoubleClickEvent(QMouseEvent*)
 void EditorView::keyPressEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
-		spacedown_ = true;
+		if(event->modifiers() & Qt::ControlModifier) {
+			dragbtndown_ = ROTATE;
+		} else {
+			dragbtndown_ = TRANSLATE;
+		}
 		viewport()->setCursor(Qt::OpenHandCursor);
 	} else {
 		QGraphicsView::keyPressEvent(event);
@@ -225,8 +230,8 @@ void EditorView::keyPressEvent(QKeyEvent *event) {
 void EditorView::keyReleaseEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
-		spacedown_ = false;
-		if(!isdragging_)
+		dragbtndown_ = NOTRANSFORM;
+		if(isdragging_==NOTRANSFORM)
 			viewport()->setCursor(cursor_);
 	} else {
 		QGraphicsView::keyReleaseEvent(event);
@@ -266,8 +271,8 @@ bool EditorView::viewportEvent(QEvent *event)
 		// Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		if(spacedown_) {
-			startDrag(tabev->x(), tabev->y());
+		if(dragbtndown_) {
+			startDrag(tabev->x(), tabev->y(), dragbtndown_);
 		} else {
 			if(pendown_ == NOTDOWN) {
 				const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
@@ -319,12 +324,12 @@ void EditorView::sceneChanged()
  * @param x initial x coordinate
  * @param y initial y coordinate
  */
-void EditorView::startDrag(int x,int y)
+void EditorView::startDrag(int x,int y, ViewTransform mode)
 {
 	viewport()->setCursor(Qt::ClosedHandCursor);
 	dragx_ = x;
 	dragy_ = y;
-	isdragging_ = true;
+	isdragging_ = mode;
 	if(enableoutline_) {
 		showoutline_ = false;
 		QList<QRectF> rect;
@@ -351,13 +356,19 @@ void EditorView::moveDrag(int x, int y)
 	const int dx = dragx_ - x;
 	const int dy = dragy_ - y;
 
+	if(isdragging_==ROTATE) {
+		qreal preva = atan2( width()/2 - dragx_, height()/2 - dragy_ );
+		qreal a = atan2( width()/2 - x, height()/2 - y );
+		rotate((preva-a) * (180.0 / M_PI));
+	} else {
+		QScrollBar *ver = verticalScrollBar();
+		ver->setSliderPosition(ver->sliderPosition()+dy);
+		QScrollBar *hor = horizontalScrollBar();
+		hor->setSliderPosition(hor->sliderPosition()+dx);
+	}
+
 	dragx_ = x;
 	dragy_ = y;
-
-	QScrollBar *ver = verticalScrollBar();
-	ver->setSliderPosition(ver->sliderPosition()+dy);
-	QScrollBar *hor = horizontalScrollBar();
-	hor->setSliderPosition(hor->sliderPosition()+dx);
 
 	// notify of scene change
 	sceneChanged();
@@ -366,11 +377,11 @@ void EditorView::moveDrag(int x, int y)
 //! Stop dragging
 void EditorView::stopDrag()
 {
-	if(spacedown_)
+	if(dragbtndown_ != NOTRANSFORM)
 		viewport()->setCursor(Qt::OpenHandCursor);
 	else
 		viewport()->setCursor(cursor_);
-	isdragging_ = false;
+	isdragging_ = NOTRANSFORM;
 	showoutline_ = true;
 }
 

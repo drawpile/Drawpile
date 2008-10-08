@@ -90,8 +90,11 @@ class EditorView : public QGraphicsView
 		void dropEvent(QDropEvent *event);
 
 	private:
+		//! View transformation mode (for dragging)
+		enum ViewTransform {NOTRANSFORM, TRANSLATE, ROTATE};
+
 		//! Start dragging the view
-		void startDrag(int x, int y);
+		void startDrag(int x, int y, ViewTransform mode);
 
 		//! Stop dragging the view
 		void stopDrag();
@@ -111,8 +114,8 @@ class EditorView : public QGraphicsView
 		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} pendown_;
 
 		//! Is the view being dragged
-		bool isdragging_;
-		bool spacedown_;
+		ViewTransform isdragging_;
+		ViewTransform dragbtndown_;
 		int dragx_,dragy_;
 
 		//! Previous pointer location
