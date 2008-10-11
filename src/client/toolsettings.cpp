@@ -367,7 +367,9 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		// If subpixel accuracy wasn't enabled, don't offer a chance to
 		// enable it.
 		ui_->hardedge->hide();
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 4,0)) // Not supported by QT<4.4?
 		ui_->brushopts->addSpacing(ui_->hardedge->width());
+#endif
 	}
 
 	// Connect size change signal

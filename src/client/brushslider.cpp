@@ -52,7 +52,7 @@ void BrushSlider::paintEvent(QPaintEvent *event)
 
 	// Draw the background
 	painter.fillPath(path, palette().base());
-	painter.setPen(QPen(palette().color(QPalette::Mid)));
+	painter.setPen(QPen(palette().color(QPalette::Dark)));
 	painter.drawPath(path);
 
 	// Draw the brush circles
@@ -67,6 +67,7 @@ void BrushSlider::paintEvent(QPaintEvent *event)
 	fnt.setPixelSize(qRound(dia*0.7));
 	painter.setFont(fnt);
 	
+	painter.setPen(QPen(palette().color(QPalette::ButtonText)));
 	if(pos > 0.5) {
 		painter.drawText(QRectF(dia+dia/2, 1, w, dia),
 				Qt::AlignLeft|Qt::AlignVCenter,
@@ -86,7 +87,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 	switch(style_) {
 		case Size: {
 			painter.setBrush(palette().base());
-			painter.setPen(QPen(palette().color(QPalette::Mid)));
+			painter.setPen(QPen(palette().color(QPalette::ButtonText)));
 			painter.drawEllipse(rect);
 			const qreal adj = (dia - dia*value)/2.0;
 			const QRectF r2 = rect.adjusted(adj,adj,-adj,-adj);
@@ -114,7 +115,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 			}
 			break;
 		case Spacing: {
-			painter.setPen(QPen(palette().color(QPalette::Mid)));
+			painter.setPen(QPen(palette().color(QPalette::ButtonText)));
 			qreal adj = dia/4.0;
 			qreal off = adj/1.0;
 			painter.drawEllipse(rect.adjusted(
@@ -125,7 +126,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 					  } return; // this is a special case
 
 	}
-	painter.setPen(QPen(palette().color(QPalette::Mid)));
+	painter.setPen(QPen(palette().color(QPalette::ButtonText)));
 	painter.drawEllipse(rect);
 }
 
