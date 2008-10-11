@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>433</width>
-    <height>213</height>
+    <width>403</width>
+    <height>302</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -64,19 +64,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
          <item row="1" column="0" >
           <widget class="QLabel" name="label_3" >
            <property name="text" >
@@ -97,6 +84,19 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
        </item>
        <item>
@@ -106,11 +106,43 @@
          </property>
          <property name="sizeHint" >
           <size>
-           <width>393</width>
+           <width>16</width>
            <height>16</height>
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Shortcuts</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QTableWidget" name="shortcuts" >
+         <property name="cornerButtonEnabled" >
+          <bool>false</bool>
+         </property>
+         <property name="columnCount" >
+          <number>3</number>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Action</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Shortcut</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Default</string>
+          </property>
+         </column>
+        </widget>
        </item>
       </layout>
      </widget>

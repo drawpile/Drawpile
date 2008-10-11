@@ -163,6 +163,10 @@ class MainWindow : public QMainWindow {
 
 		//! Perform autosave
 		void autosave();
+
+		//! Update keyboard shortcuts for all main windows
+		void updateShortcuts();
+
 	signals:
 		//! This signal is emitted when the current tool is changed
 		void toolChanged(tools::Type);
@@ -304,6 +308,9 @@ class MainWindow : public QMainWindow {
 		QAction *help_;
 		QAction *homepage_;
 		QAction *about_;
+
+		// List of customizeable actions
+		QList<QAction*> customacts_;
 };
 
 #endif

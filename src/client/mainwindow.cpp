@@ -357,12 +357,31 @@ void MainWindow::setTitle()
 void MainWindow::loadShortcuts()
 {
 	QSettings& cfg = DrawPileApp::getSettings();
-	cfg.beginGroup("shortcuts");
+	cfg.beginGroup("settings/shortcuts");
 
 	QList<QAction*> actions = findChildren<QAction*>();
 	foreach(QAction *a, actions) {
 		if(!a->objectName().isEmpty() && cfg.contains(a->objectName())) {
 			a->setShortcut(cfg.value(a->objectName()).value<QKeySequence>());
+		}
+	}
+}
+
+/**
+ * Reload shortcuts after they have been changed, for all open main windows
+ */
+void MainWindow::updateShortcuts()
+{
+	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+		MainWindow *win = qobject_cast<MainWindow*>(widget);
+		if(win) {
+			// First reset to defaults
+			foreach(QAction *a, win->customacts_)
+				a->setShortcut(
+						a->property("defaultshortcut").value<QKeySequence>()
+						);
+			// Then reload customized
+			win->loadShortcuts();
 		}
 	}
 }
@@ -750,7 +769,8 @@ bool MainWindow::saveas()
  */
 void MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(this);
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(customacts_, this);
+	connect(dlg, SIGNAL(shortcutsChanged()), this, SLOT(updateShortcuts()));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->show();
@@ -1203,8 +1223,9 @@ void MainWindow::homepage()
 }
 
 /**
- * A utility function for creating an action. This is most useful for
- * actions with customizeable shortcuts/other attributes.
+ * A utility function for creating an editable action. All created actions
+ * are added to a list that is used in the settings dialog to edit
+ * the shortcuts.
  * @param name (internal) name of the action. If null, no name is set. If no name is set, the shortcut cannot be customized.
  * @param icon name of the icon file to use. If 0, no icon is set.
  * @param text action text
@@ -1227,6 +1248,8 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 	if(tip.isEmpty()==false)
 		act->setStatusTip(tip);
 
+	if(name!=0 && name[0]!='\0')
+		customacts_.append(act);
 	return act;
 }
 
@@ -1583,3 +1606,4 @@ void MainWindow::autosave()
 	}
 	
 }
+

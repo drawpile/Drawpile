@@ -3,6 +3,8 @@
  * Added pen tool (draw without antialiasing)
  * Added blending modes
  * New brush slider style
+ * View rotation
+ * Changeable shortcuts
 
 2008-09-26 Version 0.5.0
  * Total rewrite of server and network code. Dropped support for multiple

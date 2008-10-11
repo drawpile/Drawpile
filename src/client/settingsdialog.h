@@ -30,14 +30,22 @@ class SettingsDialog : public QDialog
 {
 	Q_OBJECT
 	public:
-		SettingsDialog(QWidget *parent=0);
+		SettingsDialog(const QList<QAction*>& actions, QWidget *parent=0);
 		~SettingsDialog();
+
+	signals:
+		//! Shortcuts have changed, reload them from the settings
+		void shortcutsChanged() const;
 
 	public slots:
 		void rememberSettings() const;
 
+	private slots:
+		void validateShortcut(int row, int col);
+
 	private:
 		Ui_SettingsDialog *ui_;
+		QList<QAction*> acts_;
 };
 
 }
