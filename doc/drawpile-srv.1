@@ -1,0 +1,62 @@
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+.\"
+.
+.TH DRAWPILE-SRV 1 "2008" "drawpile-srv" "DrawPile standalone serverr"
+.
+.SH NAME
+drawpile-srv \- DrawPile server
+.
+.SH SYNOPSIS
+.
+.B drawpile-srv
+[\fIOPTIONS\fR]
+.
+.SH DESCRIPTION
+A standalone server for DrawPile.
+.
+.SH OPTIONS
+.
+.TP
+.BR --port , \ -p\  port
+listen on the specified port instead of the default.
+.TP
+.BR --listen , \ -l\  address 
+bind to the specified address. If no listening address is specified,
+drawpile-srv will listen on all addresses.
+.TP
+.BR --password , \ -p\  password
+set the server password.
+.TP
+.BR --maxnamelen , \ -n\  length
+set the maximum allowed length of usernames.
+.TP
+.BR --unique-ip , \ -i
+disallow multiple connections from the same IP address.
+.BR --verbose , \ -v
+prints extra debugging messages.
+
+.
+.SH AUTHOR
+.
+Written by Calle Laakkonen <callaa@users.sourceforge.net>.
+.br
+Visit the official homepage: http://drawpile.sourceforge.net/
+.
+.SH COPYRIGHT
+.
+Copyright \(co 2008 Calle Laakkonen <callaa@users.sourceforge.net>
+.br
+This is Free Software; this software is licensed under the GPL version 2, as published by the Free Software Foundation.
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

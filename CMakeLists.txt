@@ -68,6 +68,7 @@ add_definitions ( -DHAVE_CONFIG_H )
 
 # scan sub-directories
 add_subdirectory( src/ )
+add_subdirectory( doc/ )
 
 ### subdirs ###
 
