@@ -20,6 +20,7 @@
 
 #include <QSettings>
 #include <QMessageBox>
+#include <QHeaderView>
 
 #include "main.h"
 #include "settingsdialog.h"
@@ -52,6 +53,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	ui_->maxnamelength->setValue(cfg.value("maxnamelength",16).toInt());
 
 	// Generate an editable list of shortcuts
+	ui_->shortcuts->verticalHeader()->setVisible(false);
 	ui_->shortcuts->setRowCount(acts_.size());
 	for(int i=0;i<acts_.size();++i) {
 		QTableWidgetItem *label = new QTableWidgetItem(acts_[i]->text().remove('&'));
@@ -69,6 +71,9 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 		ui_->shortcuts->setItem(i, 1, accel);
 		ui_->shortcuts->setItem(i, 2, def);
 	}
+	ui_->shortcuts->horizontalHeader()->setResizeMode(0,QHeaderView::Stretch);
+	ui_->shortcuts->horizontalHeader()->setResizeMode(1,QHeaderView::ResizeToContents);
+	ui_->shortcuts->horizontalHeader()->setResizeMode(2,QHeaderView::ResizeToContents);
 	connect(ui_->shortcuts, SIGNAL(cellChanged(int, int)),
 			this, SLOT(validateShortcut(int, int)));
 }
