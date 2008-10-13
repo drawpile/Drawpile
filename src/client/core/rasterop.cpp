@@ -26,12 +26,12 @@ const char *BLEND_MODE[BLEND_MODES] = {
 	QT_TR_NOOP("Normal"),
 	QT_TR_NOOP("Multiply"),
 	QT_TR_NOOP("Divide"),
-	QT_TR_NOOP("Dodge"),
 	QT_TR_NOOP("Burn"),
+	QT_TR_NOOP("Dodge"),
 	QT_TR_NOOP("Darken"),
 	QT_TR_NOOP("Lighten"),
-	QT_TR_NOOP("Add"),
 	QT_TR_NOOP("Subtract"),
+	QT_TR_NOOP("Add"),
 };
 
 // This is borrowed from Pigment of koffice libs:
@@ -141,10 +141,10 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 				doComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 3:
-				doComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 4:
-				doComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 5:
 				doComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip);
@@ -153,10 +153,10 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 				doComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 7:
-				doComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 8:
-				doComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			default:
 				doComposite<blend_normal>(base, color, mask, w, h, maskskip, baseskip);
