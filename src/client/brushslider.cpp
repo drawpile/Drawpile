@@ -67,7 +67,7 @@ void BrushSlider::paintEvent(QPaintEvent *event)
 	fnt.setPixelSize(qRound(dia*0.7));
 	painter.setFont(fnt);
 	
-	painter.setPen(QPen(palette().color(QPalette::ButtonText)));
+	painter.setPen(QPen(palette().color(QPalette::WindowText)));
 	if(pos > 0.5) {
 		painter.drawText(QRectF(dia+dia/2, 1, w, dia),
 				Qt::AlignLeft|Qt::AlignVCenter,
@@ -87,7 +87,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 	switch(style_) {
 		case Size: {
 			painter.setBrush(palette().base());
-			painter.setPen(QPen(palette().color(QPalette::ButtonText)));
+			painter.setPen(QPen(palette().color(QPalette::WindowText)));
 			painter.drawEllipse(rect);
 			const qreal adj = (dia - dia*value)/2.0;
 			const QRectF r2 = rect.adjusted(adj,adj,-adj,-adj);
@@ -96,7 +96,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 				   } return;
 		case Opacity: {
 			const QColor col1(palette().color(QPalette::Base));
-			const QColor col2(palette().color(QPalette::ButtonText));
+			const QColor col2(palette().color(QPalette::WindowText));
 			painter.setBrush(QColor(
 				col1.red() + qRound((col2.red()-col1.red()) * value),
 				col1.green() + qRound((col2.green()-col1.green()) * value),
@@ -107,15 +107,15 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 				painter.setBrush(palette().buttonText());
 			} else {
 				QRadialGradient gradient(x+dia/2.0, y+dia/2.0, dia/2.0);
-				gradient.setColorAt(0, palette().color(QPalette::ButtonText));
+				gradient.setColorAt(0, palette().color(QPalette::WindowText));
 				gradient.setColorAt(value,
-						palette().color(QPalette::ButtonText));
+						palette().color(QPalette::WindowText));
 				gradient.setColorAt(1, palette().color(QPalette::Base));
 				painter.setBrush(QBrush(gradient));
 			}
 			break;
 		case Spacing: {
-			painter.setPen(QPen(palette().color(QPalette::ButtonText)));
+			painter.setPen(QPen(palette().color(QPalette::WindowText)));
 			qreal adj = dia/4.0;
 			qreal off = adj/1.0;
 			painter.drawEllipse(rect.adjusted(
@@ -126,7 +126,7 @@ void BrushSlider::drawCircle(QPainter& painter, qreal dia, qreal x,
 					  } return; // this is a special case
 
 	}
-	painter.setPen(QPen(palette().color(QPalette::ButtonText)));
+	painter.setPen(QPen(palette().color(QPalette::WindowText)));
 	painter.drawEllipse(rect);
 }
 
