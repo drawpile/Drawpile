@@ -2,7 +2,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QVBoxLayout>
+#include <QSpacerItem>
 #include <QPainter>
 #include <QLabel>
 #include <QBitmap>
@@ -30,13 +31,14 @@
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(parent, Qt::Dialog)
+	: QWidget(parent, Qt::ToolTip), arrowoffset_(0)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	message_ = new QLabel(this);
 	message_->setAlignment(Qt::AlignCenter);
 	message_->setTextFormat(Qt::RichText);
 	layout->addWidget(message_);
+	layout->addSpacerItem(new QSpacerItem(30, 30, QSizePolicy::MinimumExpanding));
 	resize(200,60);
 	timer_.setSingleShot(true);
 	timer_.setInterval(2500);
@@ -55,24 +57,31 @@ void PopupMessage::setMessage(const QString& message)
 }
 
 /**
- * The message will popup with the lower left corner aligned at the
- * specified point, with corrections so it will fit entirely on screen.
+ * The message will popup at a position where it fits completely on the screen.
+ * The position of the arrow is adjusted so it points at the given point.
  * @param point popup coordinates
  */
 void PopupMessage::popupAt(const QPoint& point)
 {
-	QRect rect(point - QPoint(0,height()), size());
+	QRect rect(point - QPoint(width() - width()/6,height()), size());
 	const QRect screen = qApp->desktop()->availableGeometry(parentWidget());
 
-	if(rect.x() + rect.width() > screen.x() + screen.width())
+	// Make sure the popup fits horizontally
+	if(rect.x() + rect.width() > screen.x() + screen.width()) {
 		rect.moveRight(screen.x() + screen.width() - 1);
-	else if(rect.x() < screen.x())
+	} else if(rect.x() < screen.x()) {
 		rect.moveLeft(screen.x());
+	}
+	arrowoffset_ = point.x() - rect.x();
+
+	// Make sure the popup fits vertically
 	if(rect.y() + rect.height() > screen.y() + screen.height())
 		rect.moveBottom(screen.y() + screen.height() - 1);
 	else if(rect.y() < screen.y())
 		rect.moveTop(screen.y());
 
+	// Redraw the background and show on screen
+	redrawBubble();
 	move(rect.topLeft());
 	show();
 	timer_.start();
@@ -81,21 +90,39 @@ void PopupMessage::popupAt(const QPoint& point)
 void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	const QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	const int xrnd = qRound(20 * height()/qreal(width()));
 	painter.setBrush(palette().light());
-	painter.drawRoundRect(rect,xrnd,20);
+	painter.drawPath(bubble);
 }
 
-void PopupMessage::resizeEvent(QResizeEvent *)
+void PopupMessage::redrawBubble()
 {
+	// Redraw the background bubble
+	const qreal w = contentsRect().width();
+	const qreal h = contentsRect().height();
+	const qreal x = w/6.0;
+	const qreal h1 = h - h/4.0;
+	const qreal aw = (h-h1) / 2.0;
+	qreal arrowsafe = arrowoffset_;
+	if(arrowsafe < x)
+		arrowsafe = x;
+	else if(arrowsafe+aw > w-x)
+		arrowsafe = w-x-aw;
+
+	bubble = QPainterPath(QPointF(x, 0));
+	bubble.cubicTo(QPointF(0, 0), QPointF(0, h1), QPointF(x, h1));
+	bubble.lineTo(QPointF(arrowsafe, h1));
+	bubble.lineTo(QPointF(arrowoffset_, h));
+	bubble.lineTo(QPointF(arrowsafe+aw, h1));
+	bubble.lineTo(QPointF(w-x, h1));
+	bubble.cubicTo(QPointF(w, h1), QPointF(w, 0), QPointF(w-x, 0));
+	bubble.closeSubpath();
+
+	// Set the widget transparency mask
 	QBitmap mask(width(), height());
 	mask.fill(Qt::color0);
 	QPainter painter(&mask);
 	painter.setBrush(Qt::color1);
-	const QRect rect = contentsRect().adjusted(0,0,-1,-1);
-	const int xrnd = qRound(20 * height()/qreal(width()));
-	painter.drawRoundRect(rect,xrnd,20);
+	painter.drawPath(bubble);
 	setMask(mask);
 }
 

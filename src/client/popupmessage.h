@@ -2,7 +2,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,10 +45,14 @@ class PopupMessage : public QWidget
 		void popupAt(const QPoint& point);
 
 	protected:
-		void resizeEvent(QResizeEvent *);
+		//void resizeEvent(QResizeEvent *);
 		void paintEvent(QPaintEvent *);
 
 	private:
+		void redrawBubble();
+
+		qreal arrowoffset_;
+		QPainterPath bubble;
 		QLabel *message_;
 		QTimer timer_;
 };

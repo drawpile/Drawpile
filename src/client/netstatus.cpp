@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -76,8 +76,7 @@ void NetStatus::connectHost(const QString& address)
 	label_->setText(tr("Host: %1").arg(address_));
 	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::On));
 	copyaction_->setEnabled(true);
-	popup_->setMessage(tr("Connected to %1").arg(address_));
-	popup_->popupAt(mapToGlobal(rect().topLeft()));
+	message(tr("Connected to %1").arg(address_));
 }
 
 /**
@@ -90,8 +89,7 @@ void NetStatus::disconnectHost()
 	label_->setText(tr("not connected"));
 	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
 	copyaction_->setEnabled(false);
-	popup_->setMessage(tr("Disconnected"));
-	popup_->popupAt(mapToGlobal(rect().topLeft()));
+	message(tr("Disconnected"));
 }
 
 /**
@@ -134,7 +132,8 @@ void NetStatus::unlock()
 void NetStatus::message(const QString& msg)
 {
 	popup_->setMessage(msg);
-	popup_->popupAt(mapToGlobal(rect().topLeft()));
+	popup_->popupAt(mapToGlobal(icon_->pos() +
+				QPoint(icon_->width()/2, icon_->height()/2)));
 	emit statusMessage(msg);
 }
 
