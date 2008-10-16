@@ -83,6 +83,8 @@ void BoardEditor::setLocalBackground(const QColor& color)
  */
 QColor BoardEditor::colorAt(const QPoint& point)
 {
+	if(board_->image_ == 0)
+		return QColor();
 	return board_->image_->image()->colorAt(point.x(), point.y());
 }
 
