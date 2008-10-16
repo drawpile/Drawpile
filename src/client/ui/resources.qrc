@@ -16,6 +16,7 @@
 	<file>icons/zoom-in.png</file>
 	<file>icons/zoom-out.png</file>
 	<file>icons/zoom-original.png</file>
+	<file>icons/view-refresh.png</file>
 	<file>icons/system-log-out.png</file>
 	<file>icons/network-offline.png</file>
 	<file>icons/network-transmit-receive.png</file>
@@ -32,5 +33,6 @@
 	<file>icons/format-justify-center.png</file>
 	<file>icons/format-text-bold.png</file>
 	<file>icons/format-text-italic.png</file>
+	<file>icons/angle.png</file>
 </qresource>
 </RCC>

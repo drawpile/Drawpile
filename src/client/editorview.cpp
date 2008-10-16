@@ -34,7 +34,7 @@ namespace widgets {
 EditorView::EditorView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(NOTRANSFORM),
 	dragbtndown_(NOTRANSFORM), outlinesize_(10), dia_(20),
-	enableoutline_(true), showoutline_(true)
+	enableoutline_(true), showoutline_(true), zoom_(100), rotate_(0)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -59,6 +59,33 @@ void EditorView::setBoard(drawingboard::Board *board)
 	setScene(board);
 	// notify of scene change
 	sceneChanged();
+}
+
+/**
+ * You should use this function instead of calling scale() directly
+ * to keep track of the zoom factor.
+ * @param zoom new zoom factor
+ */
+void EditorView::setZoom(int zoom)
+{
+	Q_ASSERT(zoom>0);
+	zoom_ = zoom;
+	QMatrix nm(1,0,0,1, matrix().dx(), matrix().dy());
+	nm.scale(zoom_/100.0, zoom_/100.0);
+	nm.rotate(rotate_);
+	setMatrix(nm);
+	emit viewTransformed(zoom_, rotate_);
+}
+
+/**
+ * You should use this function instead calling rotate() directly
+ * to keep track of the rotation angle.
+ * @param angle new rotation angle
+ */
+void EditorView::setRotation(qreal angle)
+{
+	rotate_ = angle;
+	setZoom(zoom_);
 }
 
 /**
@@ -359,7 +386,7 @@ void EditorView::moveDrag(int x, int y)
 	if(isdragging_==ROTATE) {
 		qreal preva = atan2( width()/2 - dragx_, height()/2 - dragy_ );
 		qreal a = atan2( width()/2 - x, height()/2 - y );
-		rotate((preva-a) * (180.0 / M_PI));
+		setRotation(rotation() + (preva-a) * (180.0 / M_PI));
 	} else {
 		QScrollBar *ver = verticalScrollBar();
 		ver->setSliderPosition(ver->sliderPosition()+dy);

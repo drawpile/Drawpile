@@ -40,6 +40,7 @@
 
 #include "main.h"
 #include "mainwindow.h"
+#include "viewstatus.h"
 #include "netstatus.h"
 #include "editorview.h"
 #include "board.h"
@@ -84,6 +85,10 @@ MainWindow::MainWindow(const MainWindow *source)
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
+	// Create the view status widget
+	viewstatus_ = new widgets::ViewStatus(this);
+	statusbar->addPermanentWidget(viewstatus_);
+
 	// Create net status widget
 	netstatus_ = new widgets::NetStatus(this);
 	statusbar->addPermanentWidget(netstatus_);
@@ -112,6 +117,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
 	connect(view_, SIGNAL(imageDropped(QString)),
 			this, SLOT(open(QString)));
+	connect(view_, SIGNAL(viewTransformed(int, qreal)),
+			viewstatus_, SLOT(setTransformation(int, qreal)));
 
 	// Create the chatbox
 	chatbox_ = new widgets::ChatBox(this);
@@ -1078,30 +1085,42 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 }
 
 /**
- * View translation matrix is scaled
+ * Increase zoom factor
  */
 void MainWindow::zoomin()
 {
-	view_->scale(2.0,2.0);
-	view_->sceneChanged();
+	int nz = view_->zoom() * 2;
+	if(nz>25) {
+		// When zoom% is over 25, make sure we increase in nice evenly
+		// dividing increments.
+		if(nz % 25) nz = nz / 25 * 25;
+	}
+
+	view_->setZoom(nz);
 }
 
 /**
- * View translation matrix is scaled
+ * Decrease zoom factor
  */
 void MainWindow::zoomout()
 {
-	view_->scale(0.5,0.5);
-	view_->sceneChanged();
+	view_->setZoom(view_->zoom() / 2);
 }
 
 /**
- * View translation matrix is reset
+ * Set zoom factor to 100%
  */
 void MainWindow::zoomone()
 {
-	view_->resetMatrix();
-	view_->sceneChanged();
+	view_->setZoom(100);
+}
+
+/**
+ * Set rotation angle to 0
+ */
+void MainWindow::rotatezero()
+{
+	view_->setRotation(0.0);
 }
 
 void MainWindow::toggleAnnotations(bool hidden)
@@ -1334,6 +1353,7 @@ void MainWindow::initActions()
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
 	zoomout_ = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
 	zoomorig_ = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
+	rotateorig_ = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
 
 	fullscreen_ = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"));
 	fullscreen_->setCheckable(true);
@@ -1344,6 +1364,7 @@ void MainWindow::initActions()
 	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
 	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
 	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
+	connect(rotateorig_, SIGNAL(triggered()), this, SLOT(rotatezero()));
 	connect(fullscreen_, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
 	connect(hideannotations_, SIGNAL(triggered(bool)), this, SLOT(toggleAnnotations(bool)));
 
@@ -1391,6 +1412,7 @@ void MainWindow::createMenus()
 	viewmenu->addAction(zoomin_);
 	viewmenu->addAction(zoomout_);
 	viewmenu->addAction(zoomorig_);
+	viewmenu->addAction(rotateorig_);
 	viewmenu->addAction(fullscreen_);
 	viewmenu->addAction(hideannotations_);
 
@@ -1453,6 +1475,7 @@ void MainWindow::createToolbars()
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);
 	drawtools->addAction(zoomorig_);
+	drawtools->addAction(rotateorig_);
 	drawtools->addSeparator();
 
 	// Create color button

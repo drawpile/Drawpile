@@ -33,6 +33,7 @@ class QTemporaryFile;
 class QTimer;
 
 namespace widgets {
+	class ViewStatus;
 	class NetStatus;
 	class EditorView;
 	class DualColorButton;
@@ -115,6 +116,8 @@ class MainWindow : public QMainWindow {
 		void zoomout();
 		//! Reset to 1:1 zoom
 		void zoomone();
+		//! Reset rotation
+		void rotatezero();
 		//! Toggle fullscreen mode
 		void fullscreen(bool enable);
 		//! Change current tool
@@ -247,6 +250,7 @@ class MainWindow : public QMainWindow {
 		widgets::ChatBox *chatbox_;
 
 		widgets::DualColorButton *fgbgcolor_;
+		widgets::ViewStatus *viewstatus_;
 		widgets::NetStatus *netstatus_;
 		widgets::EditorView *view_;
 		widgets::PaletteBox *palette_;
@@ -296,6 +300,7 @@ class MainWindow : public QMainWindow {
 		QAction *zoomin_;
 		QAction *zoomout_;
 		QAction *zoomorig_;
+		QAction *rotateorig_;
 		QAction *fullscreen_;
 		QAction *settings_;
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,6 +44,18 @@ class EditorView : public QGraphicsView
 		//! Set the board to use
 		void setBoard(drawingboard::Board *board);
 
+		//! Get the current zoom factor
+		int zoom() const { return zoom_; }
+
+		//! Set the zoom factor
+		void setZoom(int zoom);
+
+		//! Get the current rotation angle in degrees
+		qreal rotation() const { return rotate_; }
+
+		//! Set the rotation angle in degrees
+		void setRotation(qreal angle);
+
 	signals:
 		//! This signal is emitted when a mouse button is pressed or the pen touches the tablet
 		void penDown(const dpcore::Point& point);
@@ -58,6 +70,9 @@ class EditorView : public QGraphicsView
 
 		//! Signals scene rectangle changes
 		void viewMovedTo(const QRectF& rect);
+
+		//! The view has been transformed
+		void viewTransformed(int zoom, qreal angle);
 
 	public slots:
 		//! Set the radius of the brush preview outline
@@ -125,6 +140,11 @@ class EditorView : public QGraphicsView
 		bool enableoutline_,showoutline_;
 		QColor foreground_, background_;
 		QCursor cursor_;
+
+		//! View zoom in percents
+		int zoom_;
+		//! View rotation in degrees
+		qreal rotate_;
 
 		drawingboard::Board *board_;
 };
