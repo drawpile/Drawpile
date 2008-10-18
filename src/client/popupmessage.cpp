@@ -38,7 +38,12 @@ PopupMessage::PopupMessage(QWidget *parent)
 	message_->setAlignment(Qt::AlignCenter);
 	message_->setTextFormat(Qt::RichText);
 	layout->addWidget(message_);
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 4,0)) // Not supported by QT<4.4?
+	// We should really do the drawing ourselves for best results.
 	layout->addSpacerItem(new QSpacerItem(30, 30, QSizePolicy::MinimumExpanding));
+#else
+	layout->addSpacing(30);
+#endif
 	resize(200,60);
 	timer_.setSingleShot(true);
 	timer_.setInterval(2500);
