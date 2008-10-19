@@ -544,7 +544,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		if(board_->hasAnnotations()) {
 			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
 					tr("Note. All unbaked annotations will be lost."),
-					QMessageBox::Ok|QMessageBox::Cancel);
+					QMessageBox::Ok|QMessageBox::Cancel, this);
 			if(box.exec() != QMessageBox::Ok) {
 				event->ignore();
 				return;
