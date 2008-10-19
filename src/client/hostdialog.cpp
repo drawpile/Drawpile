@@ -172,7 +172,10 @@ void HostDialog::newSelected()
 {
 	selectPicture();
 	if(ui_->imageSelector->image().isNull()) {
-		ui_->existingpicture->setChecked(true);
+		if(ui_->existingpicture->isEnabled())
+			ui_->existingpicture->setChecked(true);
+		else
+			ui_->solidcolor->setChecked(true);
 		ui_->imageSelector->chooseOriginal();
 	}
 }
