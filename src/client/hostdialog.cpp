@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 */
 
 #include <QPushButton>
-#include <QColorDialog>
 #include <QFileDialog>
 #include <QImageReader>
 
@@ -27,6 +26,7 @@
 #include "hostdialog.h"
 #include "imageselector.h"
 #include "mandatoryfields.h"
+#include "colordialog.h"
 using widgets::ImageSelector;
 
 #include <QSettings>
@@ -93,10 +93,14 @@ void HostDialog::rememberSettings() const
 void HostDialog::selectColor()
 {
 	const QColor oldcolor = ui_->imageSelector->color();
-	const QColor col = QColorDialog::getColor(oldcolor, this);
-	if(col.isValid() && col != oldcolor) {
-		ui_->imageSelector->setColor(col);
-		ui_->solidcolor->click();
+	dialogs::ColorDialog dlg(tr("Select a color"), false);
+	dlg.setColor(oldcolor);
+	if(dlg.exec() == QDialog::Accepted) {
+		QColor col = dlg.color();
+		if(col.isValid() && col != oldcolor) {
+			ui_->imageSelector->setColor(col);
+			ui_->solidcolor->click();
+		}
 	}
 }
 
