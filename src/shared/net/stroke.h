@@ -45,6 +45,9 @@ struct XYZ {
  */
 class StrokePoint : public Packet {
 	public:
+		/// The coordinate bias
+		static const int BIAS = 128;
+
 		/**
 		 * Construct a stroke point message. More points can bee added
 		 * with addPoint()
