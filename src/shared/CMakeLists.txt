@@ -45,5 +45,9 @@ link_libraries (
 
 add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${SRV_SOURCES} ${MOC_Sources} )
 
-install ( TARGETS ${DPSHAREDLIB} LIBRARY DESTINATION lib )
+if (WIN32)
+	install ( TARGETS ${DPSHAREDLIB} DESTINATION . )
+else (WIN32)
+	install ( TARGETS ${DPSHAREDLIB} DESTINATION lib )
+endif (WIN32)
 

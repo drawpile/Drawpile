@@ -18,8 +18,8 @@ link_libraries( ${DPSHAREDLIB} ${QT_LIBRARIES} )
 add_executable( ${SRVNAME} ${SOURCES} )
 
 if ( WIN32 )
-        install ( TARGETS ${SRVNAME} RUNTIME DESTINATION . )
+	install ( TARGETS ${SRVNAME} DESTINATION . )
 else ( WIN32 )
-        install ( TARGETS ${SRVNAME} RUNTIME DESTINATION bin )
+	install ( TARGETS ${SRVNAME} DESTINATION bin )
 endif ( WIN32 )
 

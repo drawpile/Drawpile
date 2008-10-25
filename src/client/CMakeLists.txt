@@ -122,9 +122,9 @@ set_target_properties (
 )
 
 if ( WIN32 )
-	install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION . )
+	install ( TARGETS ${CLIENTNAME} DESTINATION . )
 else ( WIN32 )
-	install ( TARGETS ${CLIENTNAME} RUNTIME DESTINATION bin )
+	install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 endif ( WIN32 )
 
 if (NOT DEBUG)
