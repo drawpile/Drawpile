@@ -39,6 +39,10 @@ if (NOT DEBUG)
 	add_definitions(-DQT_NO_DEBUG)
 endif ( NOT DEBUG)
 
+link_libraries (
+	${QT_LIBRARIES}
+	)
+
 add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${SRV_SOURCES} ${MOC_Sources} )
 
 install ( TARGETS ${DPSHAREDLIB} LIBRARY DESTINATION lib )
