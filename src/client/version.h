@@ -18,7 +18,7 @@ namespace version {
 static const int level = 1; 
 
 //! Version string
-static const char string[] = "0.6.0";
+static const char string[] = "0.7.0";
 
 }
 

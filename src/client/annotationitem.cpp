@@ -206,7 +206,7 @@ dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 	QPoint offset(int(pos().x() - xi*Tile::SIZE),
 			int(pos().y() - yi*Tile::SIZE));
 	QImage img(offset.x() + int(size_.width()),
-			int(offset.y() + size_.height()), QImage::Format_ARGB32);
+			int(offset.y() + size_.height()), QImage::Format_ARGB32_Premultiplied);
 	img.fill(0);
 	QPainter painter(&img);
 	render(&painter, QRectF(offset, size_));
@@ -214,7 +214,7 @@ dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 		*x = xi;
 	if(y)
 		*y = yi;
-	return new Layer(img);
+	return new Layer(0, -1, "", img);
 }
 
 }

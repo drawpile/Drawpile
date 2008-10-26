@@ -14,8 +14,8 @@ for passing the packets, and the packet format is described below.
 
 \section msg_structure Message structure
 
-All packets are prefixed with an 8 bit packet identifier and 16 bit
-packet payload length value.
+All packets are prefixed with 16 bit packet length value and an 8 bit packet
+identifier. The length is the length of the payload + 1 for the type field.
 
 At minimum, the packet consists only of the packet type and nothing else.
 The rest depends on the packet itself.

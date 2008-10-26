@@ -107,6 +107,14 @@ class Controller : public QObject
 		//! Send chat message
 		void sendChat(const QString& msg);
 
+		//! Select a layer
+		void selectLayer(int id);
+
+		//! Add a new blank layer
+		void newLayer(const QString& name);
+		//! Delete or merge a layer
+		void deleteLayer(int id, bool mergedown);
+
 		void penDown(const dpcore::Point& point);
 		void penMove(const dpcore::Point& point);
 		void penUp();

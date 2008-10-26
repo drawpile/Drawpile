@@ -41,6 +41,11 @@ namespace interface {
 
 namespace dpcore {
 	class Brush;
+	class LayerStack;
+}
+
+namespace widgets {
+	class LayerList;
 }
 
 //! Drawing board related classes
@@ -73,11 +78,17 @@ class Board : public QGraphicsScene
 		//! Initialize the board using an existing image as base
 		void initBoard(QImage image);
 
+		//! Set the layer list widget to update when local user's layer changes
+		void setLayerList(widgets::LayerList *llist);
+
 		//! Get board width
 		int width() const;
 
 		//! Get board height
 		int height() const;
+
+		//! Get the layers
+		dpcore::LayerStack *layers();
 
 		//! Get board contents as an image
 		QImage image() const;
@@ -137,6 +148,12 @@ class Board : public QGraphicsScene
 		//! Remove an annotation
 		void unannotate(int id);
 
+		//! Create a new layer
+		void addLayer(const QString& name);
+
+		//! Delete a layer
+		void deleteLayer(int id);
+
 	signals:
 		//! The local user just created a new annotation
 		void newLocalAnnotation(drawingboard::AnnotationItem *item);
@@ -180,6 +197,8 @@ class Board : public QGraphicsScene
 		interface::ColorSource *colorsrc_;
 
 		bool hla_;
+
+		widgets::LayerList *layerwidget_;
 };
 
 }

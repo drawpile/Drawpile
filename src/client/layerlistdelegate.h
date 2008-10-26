@@ -16,31 +16,34 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
 */
+#ifndef LAYERLISTMODEL_H
+#define LAYERLISTMODEL_H
 
-#ifndef DP_PROTO_CONSTANTS_H
-#define DP_PROTO_CONSTANTS_H
+#include <QAbstractListModel>
+#include <QItemDelegate>
 
-namespace protocol {
-
-/**
- * The magic number to identify the protocol
- */
-static const char MAGIC[] = {'D', 'r', 'P', 'l'};
-
-/**
- * The protocol revision. Servers should drop connections from
- * clients with a different protocol revision.
- */
-static const int REVISION = 2;
-
-/**
- * The default port to use.
- */
-static const unsigned short DEFAULT_PORT = 27750;
-
+namespace dpcore {
+	class Layer;
 }
+
+class LayerListDelegate : public QItemDelegate {
+	Q_OBJECT
+	public:
+		LayerListDelegate(QObject *parent=0);
+		~LayerListDelegate();
+
+		void paint(QPainter *painter, const QStyleOptionViewItem &option,
+				const QModelIndex &index) const;
+		//QSize sizeHint(const QStyleOptionViewItem & option,
+				//const QModelIndex & index ) const;
+		bool editorEvent(QEvent *event, QAbstractItemModel *model,
+				const QStyleOptionViewItem &option, const QModelIndex &index);
+
+	signals:
+		void newLayer();
+		void deleteLayer(const dpcore::Layer *layer);
+};
 
 #endif
 

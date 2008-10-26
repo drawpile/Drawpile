@@ -69,7 +69,7 @@ void Brush::setRadius(int radius)
 	Q_ASSERT(radius>=0);
 	radius1_ = radius;
 	checkSensitivity();
-	cache_ = RenderedBrush();
+	cache_ = BrushMask();
 }
 
 /**
@@ -82,7 +82,7 @@ void Brush::setHardness(qreal hardness)
 	Q_ASSERT(hardness>=0 && hardness<=1);
 	hardness1_ = hardness;
 	checkSensitivity();
-	cache_ = RenderedBrush();
+	cache_ = BrushMask();
 }
 
 /**
@@ -95,7 +95,7 @@ void Brush::setOpacity(qreal opacity)
 	Q_ASSERT(opacity>=0 && opacity<=1);
 	opacity1_ = opacity;
 	checkSensitivity();
-	cache_ = RenderedBrush();
+	cache_ = BrushMask();
 }
 
 /**
@@ -118,7 +118,7 @@ void Brush::setRadius2(int radius)
 	Q_ASSERT(radius>=0);
 	radius2_  = radius;
 	checkSensitivity();
-	cache_ = RenderedBrush();
+	cache_ = BrushMask();
 }
 
 /**
@@ -131,7 +131,7 @@ void Brush::setHardness2(qreal hardness)
 	Q_ASSERT(hardness>=0 && hardness<=1);
 	hardness2_ = hardness;
 	checkSensitivity();
-	cache_ = RenderedBrush();
+	cache_ = BrushMask();
 }
 
 /**
@@ -144,7 +144,7 @@ void Brush::setOpacity2(qreal opacity)
 	Q_ASSERT(opacity>=0 && opacity<=1);
 	opacity2_ = opacity;
 	checkSensitivity();
-	cache_ = RenderedBrush();
+	cache_ = BrushMask();
 }
 
 /**
@@ -286,7 +286,7 @@ int Brush::spacing() const
  * @param pressure brush pressue [0..1]
  * @return diameter^2 pixel values
  */
-RenderedBrush Brush::render(qreal pressure) const {
+BrushMask Brush::render(qreal pressure) const {
 	const int dia = diameter(pressure)+1;
 	const qreal o = opacity(pressure);
 
@@ -305,7 +305,7 @@ RenderedBrush Brush::render(qreal pressure) const {
 		memset(lookup+i, int(255*o), int(ceil(rr)-i));
 
 		// Render the brush
-		cache_ = RenderedBrush(dia, pressure);
+		cache_ = BrushMask(dia, pressure);
 		uchar *ptr = cache_.data();
 		for(int y=0;y<dia;++y) {
 			const qreal yy = (R-y)*(R-y);
@@ -328,15 +328,15 @@ RenderedBrush Brush::render(qreal pressure) const {
  * @param pressure brush pressure
  * @return resampled brush mask
  */
-RenderedBrush Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
+BrushMask Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
 {
 	Q_ASSERT(x>= 0 && x<= 1);
 	Q_ASSERT(y>= 0 && y<= 1);
-	const RenderedBrush rb = render(pressure);
+	const BrushMask rb = render(pressure);
 	if(x==0 && y==0)
 		return rb;
 	const int dia = rb.diameter();
-	RenderedBrush b(dia, pressure);
+	BrushMask b(dia, pressure);
 
 	qreal kernel[] = {x*y, (1.0-x)*y, x*(1.0-y), (1.0-x)*(1.0-y)};
 	Q_ASSERT(fabs(kernel[0]+kernel[1]+kernel[2]+kernel[3]-1.0)<0.001);
@@ -395,7 +395,7 @@ bool Brush::operator!=(const Brush& brush) const
  * Copy the data from an existing brush. A brush data is guaranteed
  * to contain a pixel buffer.
  */
-RenderedBrushData::RenderedBrushData(const RenderedBrushData& other)
+BrushMaskData::BrushMaskData(const BrushMaskData& other)
 	: dia(other.dia), pressure(other.pressure)
 {
 	data = new uchar[dia*dia];
@@ -409,8 +409,8 @@ RenderedBrushData::RenderedBrushData(const RenderedBrushData& other)
  * @param dia diameter of the new brush
  * @param pressure the pressure value at which the brush was rendered
  */
-RenderedBrush::RenderedBrush(int dia, qreal pressure)
-	: d(new RenderedBrushData)
+BrushMask::BrushMask(int dia, qreal pressure)
+	: d(new BrushMaskData)
 {
 	Q_ASSERT(dia>0);
 	d->data = new uchar[dia*dia];
@@ -424,7 +424,7 @@ RenderedBrush::RenderedBrush(int dia, qreal pressure)
  * 1. it contains data
  * 2. it's pressure value is the same as @parma pressure iff sensitive is true.
  */
-bool RenderedBrush::isFresh(qreal pressure, bool sensitive) const {
+bool BrushMask::isFresh(qreal pressure, bool sensitive) const {
 	if(sensitive)
 		return d.constData() && int(pressure*PRESSURE_LEVELS)==d->pressure;
 	else

@@ -226,6 +226,18 @@ void SessionState::sendToolSelect(const dpcore::Brush& brush)
 }
 
 /**
+ * @param layer ID of the layer to select
+ */
+void SessionState::sendLayerSelect(int layer)
+{
+	host_->sendPacket( protocol::LayerSelect(
+				host_->localuser_,
+				layer
+				)
+			);
+}
+
+/**
  * @param point stroke coordinates to send
  */
 void SessionState::sendStrokePoint(const dpcore::Point& point)
@@ -428,6 +440,16 @@ bool SessionState::handleToolSelect(protocol::ToolSelect *ts)
 	brush.setBlendingMode(ts->mode());
 	brush.setSubPixel(ts->tool() & SUBPIXEL);
 	emit toolReceived(ts->user(), brush);
+	return false;
+}
+
+bool SessionState::handleLayerSelect(protocol::LayerSelect *ts)
+{
+	if(bufferdrawing_) {
+		drawbuffer_.enqueue(ts);
+		return true;
+	}
+	emit layerSelectReceived(ts->user(), ts->layer());
 	return false;
 }
 

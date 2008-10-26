@@ -24,6 +24,7 @@
 #include "server.h"
 #include "client.h"
 #include "../net/message.h"
+#include "../net/toolselect.h"
 
 namespace server {
 
@@ -248,6 +249,8 @@ void Server::briefClient(int id) {
 			nc->sendRaw(protocol::Message(c->toMessage()).serialize());
 			if(c->lastTool().size()>0)
 				nc->sendRaw(c->lastTool());
+			if(c->lastLayer() >= 0)
+				nc->sendRaw(protocol::LayerSelect(c->id(), c->lastLayer()).serialize());
 		}
 	}
 }

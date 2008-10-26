@@ -20,16 +20,19 @@
 #ifndef LAYER_H
 #define LAYER_H
 
+#include <QColor>
+
 class QImage;
-class QColor;
 class QPainter;
 class QRectF;
+class QSize;
 
 namespace dpcore {
 
 class Brush;
 class Point;
 class Tile;
+class LayerStack;
 
 //! A drawing layer/tile manager
 /**
@@ -40,10 +43,13 @@ class Tile;
 class Layer {
 	public:
 		//! Construct a layer from an image
-		Layer(const QImage& image);
+		Layer(LayerStack *owner, int id, const QString& name, const QImage& image);
 
-		//! Construct an empty layer
-		Layer(const QColor& color, const QSize& size);
+		//! Construct a blank layer
+		Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size);
+
+		//! Construct a blank layer
+		Layer(LayerStack *owner, int id, const QString& name, const QSize& size);
 
 		~Layer();
 
@@ -53,17 +59,20 @@ class Layer {
 		//! Get the layer height in pixels
 		int height() const { return height_; }
 
+		//! Get the layer ID
+		int id() const { return id_; }
+
+		//! Get the layer name
+		const QString& name() const { return name_; }
+
 		//! Get the layer as an image
 		QImage toImage() const;
 
 		//! Resize this layer
 		//void resize(const QSize& newsize);
 
-		//! Paint an area of this layer
-		void paint(const QRectF& rect, QPainter *painter); 
-
 		//! Get the color at the specified coordinate
-		QColor colorAt(int x, int y);
+		QColor colorAt(int x, int y) const;
 
 		//! Dab the layer with a brush
 		void dab(const Brush& brush, const Point& point);
@@ -83,11 +92,22 @@ class Layer {
 		//! Fill the layer with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
 
+		//! Get a tile
+		const Tile *tile(int x, int y) const { return tiles_[y*xtiles_+x]; }
+
+		//! Get a tile
+		const Tile *tile(int index) const { return tiles_[index]; }
+
 	private:
+		LayerStack *owner_;
+		void init(LayerStack *owner, int id, const QString& name, const QSize& size);
+
 		int width_;
 		int height_;
 		int xtiles_;
 		int ytiles_;
+		int id_;
+		QString name_;
 		Tile **tiles_;
 };
 

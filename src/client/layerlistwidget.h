@@ -16,29 +16,54 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
 */
+#ifndef LAYERLISTWIDGET_H
+#define LAYERLISTWIDGET_H
 
-#ifndef DP_PROTO_CONSTANTS_H
-#define DP_PROTO_CONSTANTS_H
+#include <QDockWidget>
 
-namespace protocol {
+class LayerListModel;
+class QListView;
 
-/**
- * The magic number to identify the protocol
- */
-static const char MAGIC[] = {'D', 'r', 'P', 'l'};
+namespace drawingboard {
+	class Board;
+}
 
-/**
- * The protocol revision. Servers should drop connections from
- * clients with a different protocol revision.
- */
-static const int REVISION = 2;
+namespace dpcore {
+	class Layer;
+}
 
-/**
- * The default port to use.
- */
-static const unsigned short DEFAULT_PORT = 27750;
+class Ui_LayerBox;
+class QItemSelection;
+
+namespace widgets {
+
+class LayerList : public QDockWidget
+{
+	Q_OBJECT
+	public:
+		LayerList(QWidget *parent=0);
+		~LayerList();
+
+		void setBoard(drawingboard::Board *board);
+	
+	public slots:
+		void selectLayer(int id);
+
+	signals:
+		void newLayer(const QString& name);
+		void deleteLayer(int id, bool mergedown);
+		void selected(int id);
+
+	private slots:
+		void newLayer();
+		void deleteLayer(const dpcore::Layer* layer);
+		void selected(const QItemSelection& selection, const QItemSelection& prev);
+
+	private:
+		Ui_LayerBox *ui_;
+		LayerListModel *model_;
+};
 
 }
 

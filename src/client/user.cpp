@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,12 +20,27 @@
 
 #include "user.h"
 #include "boarditem.h"
+#include "layerlistwidget.h"
 
 namespace drawingboard {
 
-User::User(int id)
-	: id_(id), layer_(0), strokestarted_(false)
+User::User(BoardItem *board, int id)
+	: id_(id), board_(board), layerlist_(0), layer_(0), strokestarted_(false)
 {
+}
+
+void User::setLayerList(widgets::LayerList *ll)
+{
+	layerlist_ = ll;
+	// Synchronize widget with current layer selection
+	layerlist_->selectLayer(layer_);
+}
+
+void User::setLayerId(int id)
+{
+	layer_ = id;
+	if(layerlist_)
+		layerlist_->selectLayer(id);
 }
 
 /**
@@ -35,10 +50,11 @@ User::User(int id)
  */
 void User::addStroke(const dpcore::Point& point)
 {
-	if(layer_) {
+	if(board_) {
 		if(strokestarted_) {
 			// Continuing stroke
-			layer_->drawLine(
+			board_->drawLine(
+					layer_,
 					lastpoint_,
 					point,
 					brush_,
@@ -46,7 +62,7 @@ void User::addStroke(const dpcore::Point& point)
 					);
 		} else {
 			// First point
-			layer_->drawPoint(point, brush_);
+			board_->drawPoint(layer_, point, brush_);
 			strokestarted_ = true;
 			strokelen_ = 0;
 		}

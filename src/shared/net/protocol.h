@@ -35,7 +35,8 @@ enum PacketType {
 	BINARY_CHUNK,
 	TOOL_SELECT,
 	STROKE,
-	STROKE_END
+	STROKE_END,
+	LAYER_SELECT
 };
 
 /**

@@ -23,6 +23,10 @@
 #include "core/point.h"
 #include "core/brush.h"
 
+namespace widgets {
+	class LayerList;
+}
+
 namespace drawingboard {
 
 class BoardItem;
@@ -35,16 +39,25 @@ class BoardItem;
 class User
 {
 	public:
-		User(int id);
+		User(BoardItem *board, int id);
 
 		//! Get the user's ID number
 		int id() const { return id_; }
 
-		//! Set the layer on which to draw
-		void setLayer(BoardItem *layer) { layer_ = layer; }
+		//! Set the drawing board
+		void setBoard(BoardItem *board) { board_ = board; }
 
-		//! Get the used layer
-		BoardItem *layer() const { return layer_; }
+		//! Set the layer list widget to update (for local user)
+		void setLayerList(widgets::LayerList *ll);
+
+		//! Set the layer on which to draw
+		void setLayerId(int layer);
+
+		//! Get the used drawing board
+		BoardItem *board() const { return board_; }
+
+		//! Get the used layer ID
+		int layer() const { return layer_; }
 
 		//! Set brush to use
 		void setBrush(const dpcore::Brush& brush) { brush_ = brush; }
@@ -62,7 +75,9 @@ class User
 		int id_;
 		dpcore::Brush brush_;
 
-		BoardItem *layer_;
+		BoardItem *board_;
+		widgets::LayerList *layerlist_;
+		int layer_;
 		dpcore::Point lastpoint_;
 		bool strokestarted_;
 		qreal strokelen_;

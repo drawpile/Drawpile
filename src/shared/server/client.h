@@ -111,6 +111,9 @@ class Client : public QObject {
 		//! Get the last tool select message received from this user
 		const QByteArray& lastTool() const { return _lastTool; }
 
+		//! Get the last layer select received from this user
+		int lastLayer() const { return _lastLayer; }
+
 		//! Get an info message about this user.
 		QString toMessage() const;
 
@@ -158,6 +161,7 @@ class Client : public QObject {
 		bool _giveraster;
 		int _rasteroffset;
 		QByteArray _lastTool;
+		int _lastLayer;
 
 		QString _salt;
 		QHostAddress _address;

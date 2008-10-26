@@ -26,6 +26,7 @@
 #include "../net/messagequeue.h"
 #include "../net/login.h"
 #include "../net/message.h"
+#include "../net/toolselect.h"
 #include "../net/binary.h"
 #include "../net/utils.h"
 
@@ -51,7 +52,7 @@ QString randomSalt() {
  * @param locked does the client start out as locked?
  */
 Client::Client(int id, Server *server, QTcpSocket *socket, bool locked)
-	: QObject(server), _id(id), _server(server), _socket(new protocol::MessageQueue(socket, this)), _state(CONNECT), _lock(locked), _syncready(false), _giveraster(false), _address(socket->peerAddress())
+	: QObject(server), _id(id), _server(server), _socket(new protocol::MessageQueue(socket, this)), _state(CONNECT), _lock(locked), _syncready(false), _giveraster(false), _lastLayer(-1), _address(socket->peerAddress())
 {
 	_server->printDebug("New client connected from " + socket->peerAddress().toString() + " and was given ID " + QString::number(id));
 	connect(_socket, SIGNAL(messageAvailable()), this, SLOT(newData()));
@@ -69,6 +70,7 @@ void Client::newData() {
 			case protocol::STROKE:
 			case protocol::STROKE_END:
 			case protocol::TOOL_SELECT:
+			case protocol::LAYER_SELECT:
 				handleDrawing(pkt);
 				break;
 			case protocol::LOGIN_ID:
@@ -414,6 +416,8 @@ void Client::handleDrawing(const protocol::Packet *pkt) {
 	_server->board().addDrawingCommand(msg);
 	if(pkt->type()==protocol::TOOL_SELECT)
 		_lastTool = msg;
+	else if(pkt->type()==protocol::LAYER_SELECT)
+		_lastLayer = static_cast<const protocol::LayerSelect*>(pkt)->layer();
 	_sentStroke = true;
 }
 

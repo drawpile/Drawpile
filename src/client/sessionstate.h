@@ -38,6 +38,7 @@ namespace dpcore {
 namespace protocol {
 	class Packet;
 	class ToolSelect;
+	class LayerSelect;
 	class StrokePoint;
 	class StrokeEnd;
 	class BinaryChunk;
@@ -105,6 +106,9 @@ class SessionState : public QObject {
 		//! Send a tool select message
 		void sendToolSelect(const dpcore::Brush& brush);
 
+		//! Send a layer select message
+		void sendLayerSelect(int layerId);
+
 		//! Send a stroke info message
 		void sendStrokePoint(const dpcore::Point& point);
 
@@ -169,6 +173,9 @@ class SessionState : public QObject {
 		//! Results of a ToolInfo message
 		void toolReceived(int user, const dpcore::Brush& brush);
 
+		//! A layer selection
+		void layerSelectReceived(int user, int id);
+
 		//! Results of a StrokeInfo message
 		void strokeReceived(int user, const dpcore::Point& point);
 
@@ -194,6 +201,9 @@ class SessionState : public QObject {
 
 		//! Handle a tool select
 		bool handleToolSelect(protocol::ToolSelect *ts);
+
+		//! Handle layer select
+		bool handleLayerSelect(protocol::LayerSelect *ls);
 
 		//! Handle a stroke
 		bool handleStroke(protocol::StrokePoint *s);

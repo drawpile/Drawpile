@@ -36,6 +36,12 @@ Tile::Tile(const QColor& color, int x, int y)
 		*(ptr++) = col;
 }
 
+Tile::Tile(int x, int y)
+	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
+{
+	memset(data_, 0, SIZE*SIZE*sizeof(quint32));
+}
+
 /**
  * Copy all pixel data from (x*SIZE, y*SIZE, (x+1)*SIZE, (y+1)*SIZE).
  * Pixels outside the source image are set to zero
@@ -98,18 +104,6 @@ quint32 Tile::pixel(int x,int y) const {
 }
 
 /**
- * @param painter painter to paint the tile with
- * @param target where to paint the tile
- */
-void Tile::paint(QPainter *painter, const QPoint& target) const {
-	if(cache_.isNull()) {
-		cache_ = QPixmap::fromImage(QImage(reinterpret_cast<uchar*>(data_),
-					SIZE, SIZE, QImage::Format_RGB32));
-	}
-	painter->drawPixmap(target, cache_);
-}
-
-/**
  * @param values array of alpha values
  * @param color composite color
  * @param x offset in the tile
@@ -124,13 +118,11 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
 	Q_ASSERT((x+w)<=SIZE && (y+h)<=SIZE);
 	compositeMask(mode, data_ + y * SIZE + x,
 			color.rgba(), values, w, h, skip, SIZE-w);
-	cache_ = QPixmap();
 }
 
 void Tile::merge(const Tile *tile)
 {
 	compositePixels(0, data_, tile->data_, SIZE*SIZE);
-	cache_ = QPixmap();
 }
 
 }

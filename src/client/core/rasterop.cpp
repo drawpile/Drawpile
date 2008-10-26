@@ -121,7 +121,7 @@ void doComposite(quint32 *base, quint32 color, const uchar *mask,
 			*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
 			*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
 			*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
-			++dest;
+			*dest = *dest + UINT8_MULT(255-*dest, *mask); ++dest;
 			++mask;
 		}
 		dest += baseskip*4;
@@ -169,10 +169,10 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len)
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	const uchar *src = reinterpret_cast<const uchar*>(over);
 	while(len--) {
-		*dest = UINT8_BLEND(src[0], *dest, src[3]); ++dest;
-		*dest = UINT8_BLEND(src[1], *dest, src[3]); ++dest;
-		*dest = UINT8_BLEND(src[2], *dest, src[3]); ++dest;
-		++dest;
+		*dest = src[0] + UINT8_MULT(255-src[3], *dest); ++dest;
+		*dest = src[1] + UINT8_MULT(255-src[3], *dest); ++dest;
+		*dest = src[2] + UINT8_MULT(255-src[3], *dest); ++dest;
+		*dest = *dest + UINT8_MULT(255-*dest, src[3]); ++dest;
 		src+=4;
 	}
 

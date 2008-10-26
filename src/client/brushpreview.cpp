@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include "core/point.h"
+#include "core/layerstack.h"
 #include "core/layer.h"
 #include "brushpreview.h"
 
@@ -90,14 +91,17 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 void BrushPreview::updatePreview()
 {
 	if(preview_==0) {
-		preview_ = new dpcore::Layer(QColor(0,0,0), contentsRect().size());
+		preview_ = new dpcore::LayerStack();
+		preview_->addLayer("", QColor(0,0,0), contentsRect().size());
 	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
 		// TODO resize more nicely
 		delete preview_;
-		preview_ = new dpcore::Layer(QColor(0,0,0), contentsRect().size());
+		preview_ = new dpcore::LayerStack();
+		preview_->addLayer("", QColor(0,0,0), contentsRect().size());
 	}
+	dpcore::Layer *layer = preview_->getLayerByIndex(0);
 
-	preview_->fillChecker(palette().light().color(), palette().mid().color());
+	layer->fillChecker(palette().light().color(), palette().mid().color());
 
 	const int strokew = preview_->width() - preview_->width()/4;
 	const int strokeh = preview_->height() / 4;
@@ -114,7 +118,7 @@ void BrushPreview::updatePreview()
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(sin(phase) * strokeh);
-			preview_->drawLine(brush_,
+			layer->drawLine(brush_,
 					dpcore::Point(offx+lastx,offy+lasty, lastp),
 					dpcore::Point(offx+x, offy+y, pressure), distance);
 			lastx = x;
@@ -122,25 +126,25 @@ void BrushPreview::updatePreview()
 			lastp = pressure;
 		}
 	} else if(shape_ == Line) {
-		preview_->drawLine(brush_,
+		layer->drawLine(brush_,
 				dpcore::Point(offx, offy, 1),
 				dpcore::Point(offx+strokew, offy, 1),
 				distance
 				);
 	} else {
-		preview_->drawLine(brush_,
+		layer->drawLine(brush_,
 				dpcore::Point(offx, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				distance);
-		preview_->drawLine(brush_,
+		layer->drawLine(brush_,
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				distance);
-		preview_->drawLine(brush_,
+		layer->drawLine(brush_,
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				dpcore::Point(offx, offy+strokeh, 1),
 				distance);
-		preview_->drawLine(brush_,
+		layer->drawLine(brush_,
 				dpcore::Point(offx, offy+strokeh, 1),
 				dpcore::Point(offx, offy-strokeh, 1),
 				distance);

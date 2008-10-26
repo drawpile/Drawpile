@@ -54,5 +54,17 @@ void ToolSelect::serializeBody(QIODevice& data) const {
 	data.putChar(_space);
 }
 
+LayerSelect *LayerSelect::deserialize(QIODevice& data, int len) {
+	Q_ASSERT(len == 2);
+	int user = utils::read8(data);
+	int layer = utils::read8(data);
+	return new LayerSelect(user, layer);
+}
+
+void LayerSelect::serializeBody(QIODevice& data) const {
+	data.putChar(_user);
+	data.putChar(_layer);
+}
+
 }
 

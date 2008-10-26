@@ -26,6 +26,7 @@
 #include "boarditem.h"
 #include "core/point.h"
 #include "core/brush.h"
+#include "core/layerstack.h"
 #include "core/layer.h"
 
 namespace drawingboard {
@@ -62,7 +63,10 @@ void BoardItem::setImage(const QImage& image)
 	Q_ASSERT(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
 	prepareGeometryChange();
 	delete image_;
-	image_ = new dpcore::Layer(image);
+	image_ = new dpcore::LayerStack();
+	image_->addLayer(dpcore::LayerStack::tr("Background"), image);
+	// TODO testing...
+	image_->addLayer("Testing...", image.size());
 }
 
 /**
@@ -71,7 +75,7 @@ void BoardItem::setImage(const QImage& image)
  * First pixel is not drawn. This is done on purpose, as drawLine is usually
  * used to draw multiple joined lines.
  *
- * If distance is not null, it is used to add spacing between dabs.
+ * @param layer ID of the layer on which to draw
  * @param point1 start coordinates
  * @param point2 end coordinates
  * @param brush brush to draw with
@@ -79,22 +83,23 @@ void BoardItem::setImage(const QImage& image)
  *
  * @todo delta pressure(?)
  */
-void BoardItem::drawLine(const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,qreal &distance)
+void BoardItem::drawLine(int layer, const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,qreal &distance)
 {
-	image_->drawLine(brush, point1, point2, distance);
+	image_->getLayer(layer)->drawLine(brush, point1, point2, distance);
 	// Update screen
 	int rad = brush.radius(point1.pressure());
 	update(QRect(point1, point2).normalized().adjusted(-rad-2,-rad-2,rad+2,rad+2));
 }
 
 /**
+ * @param layer ID of the layer on which to draw
  * @param point coordinates
  * @param brush brush to use
  */
-void BoardItem::drawPoint(const dpcore::Point& point, const dpcore::Brush& brush)
+void BoardItem::drawPoint(int layer, const dpcore::Point& point, const dpcore::Brush& brush)
 {
 	int r = brush.radius(point.pressure());
-	image_->dab(brush, point);
+	image_->getLayer(layer)->dab(brush, point);
 	update(point.x()-r-2,point.y()-r-2,r*2+4,r*2+4);
 }
 

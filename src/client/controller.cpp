@@ -70,6 +70,8 @@ void Controller::setModel(drawingboard::Board *board)
 			toolbox_.aeditor(), SLOT(setSelection(drawingboard::AnnotationItem*)));
 	connect(board, SIGNAL(annotationDeleted(drawingboard::AnnotationItem*)),
 			toolbox_.aeditor(), SLOT(unselect(drawingboard::AnnotationItem*)));
+	// TODO testing...
+	//toolbox_.editor()->setLayer(1);
 }
 
 /**
@@ -443,6 +445,21 @@ void Controller::lockForSync()
 void Controller::setTool(tools::Type tool)
 {
 	tool_ = toolbox_.get(tool);
+}
+
+void Controller::selectLayer(int id)
+{
+	toolbox_.editor()->setLayer(id);
+}
+
+void Controller::newLayer(const QString& name)
+{
+	toolbox_.editor()->createLayer(name);
+}
+
+void Controller::deleteLayer(int id, bool mergedown)
+{
+	toolbox_.editor()->deleteLayer(id);
 }
 
 void Controller::penDown(const dpcore::Point& point)

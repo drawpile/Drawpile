@@ -25,7 +25,7 @@
 #include "core/brush.h"
 
 namespace dpcore {
-	class Layer;
+	class LayerStack;
 }
 
 #ifndef DESIGNER_PLUGIN
@@ -116,7 +116,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 
 		dpcore::Brush brush_;
 		//QImage preview_;
-		dpcore::Layer *preview_;
+		dpcore::LayerStack *preview_;
 		QPixmap bg_;
 		bool sizepressure_;
 		bool opacitypressure_;

@@ -24,17 +24,17 @@
 
 namespace dpcore {
 	class Layer;
+	class LayerStack;
 	class Brush;
 	class Point;
 }
 
 namespace drawingboard {
 
-//! A drawing layer item item for QGraphicsScene
+//! A drawing board item item for QGraphicsScene
 /**
- * The layer item provides a modifiable image item for QGraphicsScene.
+ * The board item provides an interface to a LayerStack for QGraphicsScene.
  * Methods are provided for drawing lines and points with a Brush object.
- *
  */
 class BoardItem : public QGraphicsItem
 {
@@ -51,14 +51,16 @@ class BoardItem : public QGraphicsItem
 		void setImage(const QImage& image);
 
 		//! Get the image
-		dpcore::Layer *image() const { return image_; }
+		dpcore::LayerStack *image() const { return image_; }
 
 		//! Draw a line between two points with interpolated pressure values
-		void drawLine(const dpcore::Point& point1, const dpcore::Point& point2,
-				const dpcore::Brush& brush, qreal &distance);
+		void drawLine(int layer,const dpcore::Point& point1,
+				const dpcore::Point& point2, const dpcore::Brush& brush,
+				qreal &distance);
 
 		//! Draw a single point
-		void drawPoint(const dpcore::Point& point, const dpcore::Brush& brush);
+		void drawPoint(int layer, const dpcore::Point& point,
+				const dpcore::Brush& brush);
 
 		/** reimplematation */
 		QRectF boundingRect() const;
@@ -70,8 +72,7 @@ class BoardItem : public QGraphicsItem
 
 	private:
 
-		dpcore::Layer *image_;
-
+		dpcore::LayerStack *image_;
 		int plastx_, plasty_;
 };
 

@@ -39,6 +39,7 @@ namespace widgets {
 	class DualColorButton;
 	class ToolSettings;
 	class UserList;
+	class LayerList;
 	class ChatBox;
 	class PaletteBox;
 	class ColorBox;
@@ -229,6 +230,8 @@ class MainWindow : public QMainWindow {
 		void createToolSettings(QMenu *menu);
 		//! Create user list dock
 		void createUserList(QMenu *menu);
+		//! Create layer list dock
+		void createLayerList(QMenu *menu);
 		//! Create palette dock
 		void createPalette(QMenu *menu);
 		//! Create color docks
@@ -247,6 +250,7 @@ class MainWindow : public QMainWindow {
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
+		widgets::LayerList *layerlist_;
 		widgets::ChatBox *chatbox_;
 
 		widgets::DualColorButton *fgbgcolor_;

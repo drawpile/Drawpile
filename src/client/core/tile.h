@@ -36,6 +36,7 @@ namespace dpcore {
 class Tile {
 	public:
 		static const int SIZE = 64;
+		static const int BYTES = SIZE * SIZE * sizeof(quint32);
 
 		//! Round i upwards to SIZE boundary
 		static int roundTo(int i) {
@@ -47,6 +48,9 @@ class Tile {
 
 		//! Construct a tile from an image
 		Tile(const QImage& image, int x, int y);
+
+		//! Construct an empty tile
+		Tile(int x, int y);
 
 		~Tile();
 
@@ -65,19 +69,18 @@ class Tile {
 		//! Composite another tile with this tile
 		void merge(const Tile *tile);
 
-		//! Paint this tile
 		//! Copy the contents of this tile onto the appropriate spot on an image
 		void copyToImage(QImage& image) const;
-
-		void paint(QPainter *painter, const QPoint& target) const;
 
 		//! Fill this tile with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
 
+		//! Get read access to the raw pixel data
+		const quint32 *data() const { return data_; }
+
 	private:
 		int x_, y_;
 		quint32 *data_;
-		mutable QPixmap cache_;
 };
 
 }

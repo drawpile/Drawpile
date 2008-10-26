@@ -17,10 +17,12 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QDebug>
 #include <QPainter>
 #include <QImage>
 #include <cmath>
 
+#include "layerstack.h"
 #include "layer.h"
 #include "tile.h"
 #include "brush.h"
@@ -28,27 +30,57 @@
 
 namespace dpcore {
 
-Layer::Layer(const QImage& image) {
-	width_ = image.width();
-	height_ = image.height();
-	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);
-	ytiles_ = height_ / Tile::SIZE + ((height_ % Tile::SIZE)>0);
-	tiles_ = new Tile*[xtiles_ * ytiles_];
-	for(int y=0;y<ytiles_;++y)
-		for(int x=0;x<xtiles_;++x)
-			tiles_[y*xtiles_+x] = new Tile(image, x, y);
-}
-
-Layer::Layer(const QColor& color, const QSize& size) {
+void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& size)
+{
+	owner_ = owner;
+	id_ = id;
+	name_ = name;
 	width_ = size.width();
 	height_ = size.height();
 	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);
 	ytiles_ = height_ / Tile::SIZE + ((height_ % Tile::SIZE)>0);
 	tiles_ = new Tile*[xtiles_ * ytiles_];
+}
+
+/**
+ * Construct a layer whose content is loaded from the provided image.
+ * @param owner the stack to which this layer belongs to
+ * @param id layer ID
+ * @param image image on which the layer is based
+ */
+Layer::Layer(LayerStack *owner, int id, const QString& name, const QImage& image) {
+	init(owner, id, name, image.size());
+	for(int y=0;y<ytiles_;++y)
+		for(int x=0;x<xtiles_;++x)
+			tiles_[y*xtiles_+x] = new Tile(image, x, y);
+}
+
+/**
+ * Construct a layer initialized to a solid color
+ * @param owner the stack to which this layer belongs to
+ * @param id layer ID
+ * @param color layer color
+ * @parma size layer size
+ */
+Layer::Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size) {
+	init(owner, id, name, size);
 	for(int y=0;y<ytiles_;++y)
 		for(int x=0;x<xtiles_;++x)
 			tiles_[y*xtiles_+x] = new Tile(color, x, y);
+}
 
+/**
+ * Construct an empty (transparent) layer.
+ * Memory for the layer tiles will be allocated on demand.
+ * @param owner the stack to which this layer belongs to
+ * @param id layer ID
+ * @param size layer size
+ */
+Layer::Layer(LayerStack *owner, int id, const QString& name, const QSize& size)
+{
+	init(owner, id, name, size);
+	for(int i=0;i<xtiles_*ytiles_;++i)
+		tiles_[i] = 0;
 }
 
 Layer::~Layer() {
@@ -58,30 +90,12 @@ Layer::~Layer() {
 }
 
 QImage Layer::toImage() const {
-	QImage image(width_, height_, QImage::Format_RGB32);
-	for(int i=0;i<xtiles_*ytiles_;++i)
-		tiles_[i]->copyToImage(image);
-
-	return image;
-}
-
-void Layer::paint(const QRectF& rect, QPainter *painter) {
-	const int top = qMax(int(rect.top()), 0);
-	const int left = qMax(int(rect.left()), 0);
-	const int right = Tile::roundTo(qMin(int(rect.right()), width_));
-	const int bottom = Tile::roundTo(qMin(int(rect.bottom()), height_));
-
-	painter->save();
-	painter->setClipRect(rect);
-	for(int y=top;y<bottom;y+=Tile::SIZE) {
-		const int yindex = (y/Tile::SIZE);
-		for(int x=left;x<right;x+=Tile::SIZE) {
-			const int xindex = x/Tile::SIZE;
-			tiles_[xtiles_*yindex + xindex]->paint(painter,
-					QPoint(xindex*Tile::SIZE, yindex*Tile::SIZE));
-		}
+	QImage image(width_, height_, QImage::Format_ARGB32_Premultiplied);
+	for(int i=0;i<xtiles_*ytiles_;++i) {
+		if(tiles_[i])
+			tiles_[i]->copyToImage(image);
 	}
-	painter->restore();
+	return image;
 }
 
 /**
@@ -89,7 +103,7 @@ void Layer::paint(const QRectF& rect, QPainter *painter) {
  * @param y
  * @return invalid color if x or y is outside image boundaries
  */
-QColor Layer::colorAt(int x, int y)
+QColor Layer::colorAt(int x, int y) const
 {
 	if(x<0 || y<0 || x>=width_ || y>=height_)
 		return QColor();
@@ -118,9 +132,9 @@ void Layer::dab(const Brush& brush, const Point& point)
 		return;
 
 	// Render the brush
-	RenderedBrush rb = brush.subpixel()?brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure()):brush.render(point.pressure());
-	const int realdia = rb.diameter();
-	const uchar *values = rb.data();
+	BrushMask bm = brush.subpixel()?brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure()):brush.render(point.pressure());
+	const int realdia = bm.diameter();
+	const uchar *values = bm.data();
 	QColor color = brush.color(point.pressure());
 
 	// A single dab can (and often does) span multiple tiles.
@@ -138,8 +152,10 @@ void Layer::dab(const Brush& brush, const Point& point)
 			const int xindex = x / Tile::SIZE;
 			const int xt = x - xindex * Tile::SIZE;
 			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
-
-			tiles_[xtiles_ * yindex + xindex]->composite(
+			const int i = xtiles_ * yindex + xindex;
+			if(tiles_[i]==0)
+				tiles_[i] = new Tile(xindex, yindex);
+			tiles_[i]->composite(
 					brush.blendingMode(),
 					values + yb * realdia + xb,
 					color,
@@ -147,6 +163,9 @@ void Layer::dab(const Brush& brush, const Point& point)
 					wb, hb,
 					realdia-wb
 					);
+
+			if(owner_)
+				owner_->markDirty(xindex, yindex);
 
 			x = (xindex+1) * Tile::SIZE;
 			xb = xb + wb;
@@ -281,7 +300,12 @@ void Layer::merge(int x, int y, const Layer *layer)
 	int myy = y;
 	for(int i=0;i<layer->ytiles_&&myy<ytiles_;++i,myy++) {
 		for(int j=0;j<layer->xtiles_;++j&&myx<xtiles_,myx++) {
+			const int index = xtiles_*myy + myx;
+			if(tiles_[index]==0)
+				tiles_[index] = new Tile(myx, myy);
 			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j]);
+			if(owner_)
+				owner_->markDirty(myx, myy);
 		}
 		myx = x;
 	}

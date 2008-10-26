@@ -26,14 +26,14 @@
 #include "boardeditor.h"
 #include "preview.h"
 #include "interfaces.h"
-#include "core/layer.h"
+#include "core/layerstack.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/message.h"
 
 namespace drawingboard {
 
 Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
-	: QGraphicsScene(parent), image_(0),localuser_(-1), toolpreview_(0), brushsrc_(brush), colorsrc_(color), hla_(false)
+	: QGraphicsScene(parent), image_(0),localuser_(-1), toolpreview_(0), brushsrc_(brush), colorsrc_(color), hla_(false), layerwidget_(0)
 {
 	setItemIndexMethod(NoIndex);
 }
@@ -69,7 +69,7 @@ void Board::initBoard(QImage image)
 	image_ = new BoardItem(image.convertToFormat(QImage::Format_RGB32));
 	addItem(image_);
 	foreach(User *u, users_)
-		u->setLayer(image_);
+		u->setBoard(image_);
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
@@ -156,8 +156,7 @@ void Board::addUser(int id)
 		qDebug() << "Reusing board user" << id;
 		delete users_.take(id);
 	}
-	User *user = new User(id);
-	user->setLayer(image_);
+	User *user = new User(image_, id);
 	users_[id] = user;
 }
 
@@ -170,6 +169,20 @@ void Board::setLocalUser(int id)
 {
 	Q_ASSERT(users_.contains(id));
 	localuser_ = id;
+	// Set the layer list if we know it already
+	if(layerwidget_)
+		users_[localuser_]->setLayerList(layerwidget_);
+}
+
+/**
+ * @param llist layer list widget
+ */
+void Board::setLayerList(widgets::LayerList *llist)
+{
+	layerwidget_ = llist;
+	// Update local user if it exists
+	if(localuser_ != -1)
+		users_[localuser_]->setLayerList(layerwidget_);
 }
 
 /**
@@ -178,7 +191,7 @@ void Board::setLocalUser(int id)
 QImage Board::image() const
 {
 	if(image_)
-		return image_->image()->toImage();
+		return image_->image()->toFlatImage();
 	else
 		return QImage();
 }
@@ -220,6 +233,16 @@ int Board::height() const {
 }
 
 /**
+ * @return layer stack
+ */
+dpcore::LayerStack *Board::layers()
+{
+	if(image_)
+		return image_->image();
+	return 0;
+}
+
+/**
  * Returns a BoardEditor for modifying the drawing board either
  * directly or over the network.
  * @param session which network session the editor works over. If 0, a local editor is returned
@@ -248,7 +271,7 @@ void Board::addPreview(const dpcore::Point& point)
 
 	Preview *pre;
 	if(previewcache_.isEmpty()) {
-		pre = new StrokePreview(user->layer());
+		pre = new StrokePreview(user->board());
 	} else
 		pre = previewcache_.dequeue();
 	if(previewstarted_) {
@@ -278,10 +301,10 @@ void Board::commitPreviews()
 	while(previews_.isEmpty()==false) {
 		qreal distance;
 		Preview *p = previews_.dequeue();
-		if(p->from() != lastpoint)
-			image_->drawPoint(p->from(), p->brush());
-		else
-			image_->drawLine(p->from(), p->to(), p->brush(), distance);
+		if(p->from() != lastpoint) // TODO
+			image_->drawPoint(0, p->from(), p->brush());
+		else // TODO
+			image_->drawLine(0, p->from(), p->to(), p->brush(), distance);
 		lastpoint = p->to();
 		delete p;
 	}
@@ -389,6 +412,37 @@ void Board::unannotate(int id)
 	}
 }
 
+void Board::addLayer(const QString& name)
+{
+	layers()->addLayer(name, layers()->size());
+}
+
+/**
+ * The layer is removed and all users active layers are changed to point
+ * to something else.
+ * @param layer id
+ */
+void Board::deleteLayer(int id)
+{
+	const int index = layers()->id2index(id);
+	if(index<0) {
+		qWarning() << "Tried to delete nonexistent layer";
+	}
+
+	// Fix user layers
+	foreach(User *u, users_) {
+		if(u->layer() == index) {
+			if(index==0)
+				u->setLayerId(1);
+			else
+				u->setLayerId(index-1);
+		}
+	}
+
+	// Delete the layer
+	layers()->deleteLayer(id);
+	update();
+}
 
 }
 

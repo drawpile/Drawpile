@@ -95,11 +95,20 @@ class BoardEditor {
 		//! Remove the preview
 		void endPreview();
 
-		//! Merge a layer
+		//! Create an empty layer
+		virtual void createLayer(const QString& name) = 0;
+
+		//! Delete a layer
+		virtual void deleteLayer(int id) = 0;
+
+		//! Merge a layer with the currently selected layer
 		void mergeLayer(int x, int y, const dpcore::Layer *layer);
 
 		//! Set the tool used for drawing
 		virtual void setTool(const dpcore::Brush& brush) = 0;
+
+		//! Select the layer to draw on
+		virtual void setLayer(int id) = 0;
 
 		//! Make strokes until endStroke atomic
 		virtual void startAtomic() = 0;
@@ -148,6 +157,9 @@ class LocalBoardEditor : public BoardEditor {
 			: BoardEditor(board,user, brush, color) {}
 
 		void setTool(const dpcore::Brush& brush);
+		void setLayer(int id);
+		void createLayer(const QString& name);
+		void deleteLayer(int id);
 		// Atomic strokes are meaningles in local mode
 		void startAtomic() { }
 		void addStroke(const dpcore::Point& point);
@@ -169,6 +181,9 @@ class RemoteBoardEditor : public BoardEditor {
 
 		bool isCurrentBrush(const dpcore::Brush& brush) const;
 		void setTool(const dpcore::Brush& brush);
+		void createLayer(const QString& name);
+		void deleteLayer(int id);
+		void setLayer(int id);
 		void startAtomic();
 		void addStroke(const dpcore::Point& point);
 		void endStroke();

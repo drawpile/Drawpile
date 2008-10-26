@@ -121,6 +121,50 @@ class ToolSelect : public Packet {
 		const int _s1, _s0, _h1, _h0, _space;
 };
 
+/**
+ * A layer select message selects which layer the tool operates on. The
+ * message is sent when a user selects a layer, or just before a StrokePoint
+ * message, like ToolSelect.
+ * If no layer select message has been sent, the bottom-most layer is assumed.
+ */
+class LayerSelect : public Packet {
+	public:
+		
+		/**
+		 * Construct a layer select message
+		 * @param user user who selects a layer
+		 * @param layer ID of the layer
+		 */
+		LayerSelect(int user, int layer) :
+			Packet(LAYER_SELECT), _user(user), _layer(layer) { }
+
+		/**
+		 * Deserialize a tool select message
+		 */
+		static LayerSelect *deserialize(QIODevice& data, int len);
+
+		/**
+		 * Get the length of the tool select payload
+		 */
+		unsigned int payloadLength() const { return 1; }
+
+		/**
+		 * Get the ID of the user whose tool to change.
+		 */
+		int user() const { return _user; }
+
+		/**
+		 * Get the ID of the layer
+		 */
+		int layer() const { return _layer; }
+
+	protected:
+		void serializeBody(QIODevice& data) const;
+
+	private:
+		int _user, _layer;
+};
+
 }
 
 #endif

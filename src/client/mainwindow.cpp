@@ -47,6 +47,7 @@
 #include "controller.h"
 #include "toolsettingswidget.h"
 #include "userlistwidget.h"
+#include "layerlistwidget.h"
 #include "chatwidget.h"
 #include "dualcolorbutton.h"
 #include "localserver.h"
@@ -129,8 +130,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	board_->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	view_->setBoard(board_);
-	
 	navigator_->setScene(board_);
+
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
 			view_, SLOT(scrollTo(const QPoint&)));
@@ -219,6 +220,14 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(netstatus_, SIGNAL(statusMessage(QString)),
 			chatbox_, SLOT(systemMessage(QString)));
 
+	// Layer box -> controller
+	connect(layerlist_, SIGNAL(newLayer(const QString&)),
+			controller_, SLOT(newLayer(const QString&)));
+	connect(layerlist_, SIGNAL(deleteLayer(int, bool)),
+			controller_, SLOT(deleteLayer(int, bool)));
+	connect(layerlist_, SIGNAL(selected(int)),
+			controller_, SLOT(selectLayer(int)));
+
 	if(source)
 		cloneSettings(source);
 	else
@@ -297,6 +306,8 @@ void MainWindow::postInitBoard(const QString& filename)
 	setTitle();
 	save_->setEnabled(true);
 	saveas_->setEnabled(true);
+	layerlist_->setBoard(board_);
+	board_->setLayerList(layerlist_);
 }
 
 /**
@@ -1353,7 +1364,7 @@ void MainWindow::initActions()
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
 	zoomout_ = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
 	zoomorig_ = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
-	rotateorig_ = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), QString(), QKeySequence(Qt::CTRL + Qt::Key_R));
+	rotateorig_ = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
 
 	fullscreen_ = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"));
 	fullscreen_->setCheckable(true);
@@ -1510,9 +1521,11 @@ void MainWindow::createDocks()
 	createColorBoxes(toggles);
 	createPalette(toggles);
 	createUserList(toggles);
+	createLayerList(toggles);
 	createNavigator(toggles);
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
+	tabifyDockWidget(userlist_, layerlist_);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1545,6 +1558,15 @@ void MainWindow::createUserList(QMenu *toggles)
 	userlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	toggles->addAction(userlist_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, userlist_);
+}
+
+void MainWindow::createLayerList(QMenu *toggles)
+{
+	layerlist_ = new widgets::LayerList(this);
+	layerlist_->setObjectName("layerlistdock");
+	layerlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	toggles->addAction(layerlist_->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, layerlist_);
 }
 
 void MainWindow::createPalette(QMenu *toggles)

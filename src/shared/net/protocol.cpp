@@ -34,10 +34,13 @@ unsigned int Packet::sniffLength(const QByteArray& data) {
 	QBuffer buf(const_cast<QByteArray*>(&data));
 	buf.open(QBuffer::ReadOnly);
 
-	char type = utils::read8(buf);
+	// Read the packet length (incl. the type field)
 	quint16 len = utils::read16(buf);
+	if(len<1)
+		return 0;
+	--len;
+	char type = utils::read8(buf);
 
-	// Do some sanity checks
 	switch(type) {
 		case STROKE:
 			if((len-1)%5)
@@ -52,7 +55,7 @@ unsigned int Packet::sniffLength(const QByteArray& data) {
 				return 0;
 			break;
 		case MESSAGE:
-			if(len>2048) // Any longer than this is suspicious
+			if(len>2048) // Any longer than this is suspicious (arbitrary)
 				return 0;
 			break;
 		case BINARY_CHUNK:
@@ -66,7 +69,8 @@ unsigned int Packet::sniffLength(const QByteArray& data) {
 			// Unknown packet type
 			return 0;
 	}
-	// If the message passed the sanity checks, return the length + 3 header len
+	// If the message passed the sanity checks, return the full lenght of the
+	// packet (length and type fields included)
 	return len+3;
 }
 
@@ -74,8 +78,8 @@ Packet *Packet::deserialize(const QByteArray& data) {
 	QBuffer buf(const_cast<QByteArray*>(&data));
 	buf.open(QBuffer::ReadOnly);
 
+	quint16 len = utils::read16(buf) - 1;
 	char type = utils::read8(buf);
-	quint16 len = utils::read16(buf);
 
 	// Deserialize correct message type
 	switch(type) {
@@ -93,8 +97,8 @@ QByteArray Packet::serialize() const {
 	QBuffer buf;
 	buf.open(QBuffer::WriteOnly);
 
+	utils::write16(buf, payloadLength() + 1);
 	buf.putChar(_type);
-	utils::write16(buf, payloadLength());
 	serializeBody(buf);
 
 	return buf.buffer();

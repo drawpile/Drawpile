@@ -30,6 +30,7 @@
 #include "preview.h"
 #include "annotationitem.h"
 #include "core/layer.h"
+#include "core/layerstack.h"
 #include "../shared/net/annotation.h"
 
 namespace drawingboard {
@@ -111,9 +112,9 @@ void BoardEditor::startPreview(tools::Type tool, const dpcore::Point& point, con
 	Q_ASSERT(board_->toolpreview_ == 0);
 	Q_ASSERT(tool == tools::LINE || tool == tools::RECTANGLE || tool == tools::ANNOTATION);
 	if(tool == tools::LINE)
-		board_->toolpreview_ = new StrokePreview(user_->layer());
+		board_->toolpreview_ = new StrokePreview(user_->board());
 	else
-		board_->toolpreview_ = new RectanglePreview(user_->layer());
+		board_->toolpreview_ = new RectanglePreview(user_->board());
 	board_->toolpreview_->preview(point,point, brush);
 }
 
@@ -138,7 +139,7 @@ void BoardEditor::endPreview()
  */
 void BoardEditor::mergeLayer(int x, int y, const dpcore::Layer *layer)
 {
-	board_->image_->image()->merge(x, y, layer);
+	board_->image_->image()->getLayer(user_->layer())->merge(x, y, layer);
 }
 
 /**
@@ -156,6 +157,31 @@ bool BoardEditor::isCurrentBrush(const dpcore::Brush& brush) const
 void LocalBoardEditor::setTool(const dpcore::Brush& brush)
 {
 	user_->setBrush(brush);
+}
+
+/**
+ * @param id layer id
+ */
+void LocalBoardEditor::setLayer(int id)
+{
+	user_->setLayerId(id);
+}
+
+/**
+ * A new empty layer is created on top of the layer stack
+ * @param name layer name
+ */
+void LocalBoardEditor::createLayer(const QString& name)
+{
+	board_->addLayer(name);
+}
+
+/**
+ * @param id layer ID
+ */
+void LocalBoardEditor::deleteLayer(int id)
+{
+	board_->deleteLayer(id);
 }
 
 /**
@@ -221,6 +247,28 @@ void RemoteBoardEditor::setTool(const dpcore::Brush& brush)
 {
 	lastbrush_ = brush;
 	session_->sendToolSelect(brush);
+}
+
+/**
+ * @param id layer id
+ */
+void RemoteBoardEditor::setLayer(int id)
+{
+	session_->sendLayerSelect(id);
+}
+
+void RemoteBoardEditor::createLayer(const QString& name)
+{
+	// TODO
+}
+
+/**
+ * Layer deletion is not supported while in a network session.
+ * @param id layer ID
+ */
+void RemoteBoardEditor::deleteLayer(int id)
+{
+	qWarning() << "BUG: Tried to delete layer ID" << id << "while in a network session!";
 }
 
 /**

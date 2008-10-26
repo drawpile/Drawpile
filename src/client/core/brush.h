@@ -27,23 +27,23 @@ namespace dpcore {
 
 class Point;
 
-struct RenderedBrushData : public QSharedData
+struct BrushMaskData : public QSharedData
 {
-	RenderedBrushData() : data(0), dia(0), pressure(-1) { }
-	RenderedBrushData(const RenderedBrushData& other);
-	~RenderedBrushData() { delete [] data; }
+	BrushMaskData() : data(0), dia(0), pressure(-1) { }
+	BrushMaskData(const BrushMaskData& other);
+	~BrushMaskData() { delete [] data; }
 
 	uchar *data;
 	int dia;
 	int pressure;
 };
 
-//! A rendered brush
+//! A brush mask
 /**
  * This is an implicitly shared class that holds the alpha map of the
  * brush shape.
  */
-class RenderedBrush
+class BrushMask
 {
 	public:
 		//! Number of pressure levels supported.
@@ -54,10 +54,10 @@ class RenderedBrush
 		static const int PRESSURE_LEVELS = 256;
 
 		//! Create an empty brush
-		RenderedBrush() : d(0) { }
+		BrushMask() : d(0) { }
 
 		//! Create a new rendered brush
-		RenderedBrush(int dia, qreal pressure);
+		BrushMask(int dia, qreal pressure);
 
 		//! Is this brush still valid
 		bool isFresh(qreal pressure, bool sensitive) const;
@@ -72,7 +72,7 @@ class RenderedBrush
 		int diameter() const { return d->dia; }
 
 	private:
-		QSharedDataPointer<RenderedBrushData> d;
+		QSharedDataPointer<BrushMaskData> d;
 };
 
 //! A brush for drawing onto a layer
@@ -135,10 +135,10 @@ class Brush
 		int blendingMode() const { return blend_; }
 
 		//! Render the brush
-		RenderedBrush render(qreal pressure) const;
+		BrushMask render(qreal pressure) const;
 
 		//! Render the brush with an offset
-		RenderedBrush render_subsampled(qreal x, qreal y, qreal pressure) const;
+		BrushMask render_subsampled(qreal x, qreal y, qreal pressure) const;
 
 		//! Equality test
 		bool operator==(const Brush& brush) const;
@@ -159,7 +159,7 @@ class Brush
 		bool subpixel_;
 		int blend_;
 
-		mutable RenderedBrush cache_;
+		mutable BrushMask cache_;
 };
 
 }
