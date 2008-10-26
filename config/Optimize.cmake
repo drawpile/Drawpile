@@ -2,11 +2,11 @@
 
 if ( DEBUG )
 	message ( STATUS "Optimization: None; Debug" )
-	set ( CMAKE_CXX_FLAGS_DEBUG "-g -Wall -O0 -pipe" )
+	set ( CMAKE_CXX_FLAGS_DEBUG "-march=pentium2 -g -Wall -O0 -pipe" )
 else ( )
 	if ( GENERIC )
 		message ( STATUS "Optimization: Generic" )
-		set ( CMAKE_CXX_FLAGS_RELEASE "-O2 -pipe -fno-rtti -Wall -DNDEBUG" )
+		set ( CMAKE_CXX_FLAGS_RELEASE "-march=pentium2 -O2 -pipe -fno-rtti -Wall -DNDEBUG" )
 	else ( )
 		message ( STATUS "Optimization: Native" )
 		if ( NOT "$ENV{CXXFLAGS}" STREQUAL "" )
