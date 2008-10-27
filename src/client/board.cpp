@@ -27,6 +27,7 @@
 #include "preview.h"
 #include "interfaces.h"
 #include "core/layerstack.h"
+#include "core/layer.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/message.h"
 
@@ -418,7 +419,8 @@ void Board::addLayer(const QString& name)
 }
 
 /**
- * The layer is removed and all users active layers are changed to point
+ * The layer is removed while making sure all users still have a valid
+ * layer selection.
  * to something else.
  * @param layer id
  */
@@ -426,21 +428,22 @@ void Board::deleteLayer(int id)
 {
 	const int index = layers()->id2index(id);
 	if(index<0) {
-		qWarning() << "Tried to delete nonexistent layer";
+		// Should never happen
+		qWarning() << "Tried to delete nonexistent layer" << id;
+		return;
 	}
 
-	// Fix user layers
+	layers()->deleteLayer(id);
+
 	foreach(User *u, users_) {
-		if(u->layer() == index) {
-			if(index==0)
-				u->setLayerId(1);
+		if(u->layer() == id) {
+			if(layers()->layers()-index>0)
+				u->setLayerId(layers()->getLayerByIndex(index)->id());
 			else
-				u->setLayerId(index-1);
+				u->setLayerId(layers()->getLayerByIndex(0)->id());
 		}
 	}
 
-	// Delete the layer
-	layers()->deleteLayer(id);
 	update();
 }
 

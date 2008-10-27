@@ -63,6 +63,7 @@ class LayerList : public QDockWidget
 	private:
 		Ui_LayerBox *ui_;
 		LayerListModel *model_;
+		bool locksel_;
 };
 
 }

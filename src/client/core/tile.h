@@ -78,6 +78,8 @@ class Tile {
 		//! Get read access to the raw pixel data
 		const quint32 *data() const { return data_; }
 
+		//! Fill a tile sized memory buffer with a checker pattenr
+		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
 	private:
 		int x_, y_;
 		quint32 *data_;

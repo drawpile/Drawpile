@@ -66,11 +66,12 @@ Tile::~Tile() {
 	delete [] data_;
 }
 
-void Tile::fillChecker(const QColor& dark, const QColor& light) {
+void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
+{
 	const int HALF = SIZE/2;
 	quint32 d = dark.rgba();
 	quint32 l = light.rgba();
-	quint32 *q1 = data_, *q2 = data_+HALF, *q3 = data_ + SIZE*HALF, *q4 = data_ + SIZE*(HALF)+HALF;
+	quint32 *q1 = data, *q2 = data+HALF, *q3 = data + SIZE*HALF, *q4 = data + SIZE*(HALF)+HALF;
 	for(int y=0;y<HALF;++y) {
 		for(int x=0;x<HALF;++x) {
 			*(q1++) = d;
@@ -80,6 +81,11 @@ void Tile::fillChecker(const QColor& dark, const QColor& light) {
 		}
 		q1 += HALF; q2 += HALF; q3 += HALF; q4 += HALF;
 	}
+}
+
+void Tile::fillChecker(const QColor& dark, const QColor& light)
+{
+	fillChecker(data_, dark, light);
 }
 
 void Tile::copyToImage(QImage& image) const {

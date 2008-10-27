@@ -60,14 +60,16 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		textrect.setWidth(textrect.width() - delwidth);
 		drawDisplay(painter, opt, textrect, name);
 
-		// Draw delete button (except when in a network session)
+		// Draw delete button (except when in a network session, and when this is the last layer)
 		// TODO correct icon
-		painter->drawPixmap(opt.rect.topRight()-QPoint(delwidth,0),
-				icon::kick().pixmap(16));
+		const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
+		if(layers->layers()>1) {
+			painter->drawPixmap(opt.rect.topRight()-QPoint(delwidth,0),
+					icon::kick().pixmap(16));
+		}
 	}
 }
 
-#if 0
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
         QSize size = QItemDelegate::sizeHint(option, index);
@@ -76,7 +78,6 @@ QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMo
                 size.setHeight(iconsize.height());
         return size;
 }
-#endif
 
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -87,9 +88,13 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		if(index.row()==0) {
 			emit newLayer();
 		} else {
+			const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-			if(me->x() >= option.rect.width() - btnwidth)
-				emit deleteLayer(layer);
+			// Delete button (but only when this is not the last layer and we are not in a network session)
+			if(me->x() >= option.rect.width() - btnwidth) {
+				if(layers->layers()>1)
+					emit deleteLayer(layer);
+			}
 		}
 	}
 	return QItemDelegate::editorEvent(event, model, option, index);

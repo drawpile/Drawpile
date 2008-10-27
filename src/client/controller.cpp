@@ -102,7 +102,7 @@ void Controller::connectHost(const QUrl& url)
 		address_ = LocalServer::address();
 	else
 		address_ = url.host();
-	if(url.port()>0)
+	if(url.port()>0) // TODO wrap IPV6 address in []
 		address_ += ":" + QString::number(url.port());
 
 	// Connect to host

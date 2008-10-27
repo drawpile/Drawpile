@@ -17,7 +17,6 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QDebug>
 #include <QItemSelection>
 #include <QListView>
 #include <QInputDialog>
@@ -34,7 +33,7 @@
 namespace widgets {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent)
+	: QDockWidget(tr("Layers"), parent), locksel_(false)
 {
 	ui_ = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -60,6 +59,11 @@ void LayerList::setBoard(drawingboard::Board *board)
 	connect(ui_->layers->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
 }
 
+/**
+ * This is called to synchronize the UI with changes that have happened
+ * due to things like layer deletion and network events.
+ * @param id layer ID
+ */
 void LayerList::selectLayer(int id)
 {
 	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(ui_->layers->model());
@@ -72,13 +76,22 @@ void LayerList::selectLayer(int id)
 
 void LayerList::selected(const QItemSelection& selection, const QItemSelection& prev)
 {
-	if(selection.indexes().isEmpty()) {
-		// A layer must always be selected
-		ui_->layers->selectionModel()->select(prev.indexes().first(),
-				QItemSelectionModel::Select);
-	} else {
-		dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(ui_->layers->model());
-		emit selected(layers->layers() - selection.indexes().first().row());
+	if(!locksel_) {
+		locksel_ = true;
+		if(selection.indexes().isEmpty()) {
+			dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(ui_->layers->model());
+			// A layer must always be selected
+			if(prev.indexes().isEmpty())
+				ui_->layers->selectionModel()->select(layers->index(layers->layers(),0),
+					QItemSelectionModel::Select);
+			else
+				ui_->layers->selectionModel()->select(prev.indexes().first(),
+						QItemSelectionModel::Select);
+		} else {
+			const dpcore::Layer *layer = selection.indexes().first().data().value<dpcore::Layer*>();
+			emit selected(layer->id());
+		}
+		locksel_ = false;
 	}
 }
 
@@ -98,9 +111,9 @@ void LayerList::newLayer()
 void LayerList::deleteLayer(const dpcore::Layer *layer)
 {
 	QMessageBox box(QMessageBox::Question, tr("Delete layer"),
-			tr("Really delete %1?").arg(layer->id()),
+			tr("Really delete \"%1\"?").arg(layer->name()),
 			QMessageBox::NoButton, this);
-	box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below it instead of deleting."));
+	box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
 	box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
 	QPushButton *merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
 	QPushButton *cancel = box.addButton(tr("Cancel"), QMessageBox::RejectRole);

@@ -188,11 +188,11 @@ QImage LayerStack::toFlatImage() const
 // Flatten a single tile
 void LayerStack::flattenTile(quint32 *data, int xindex, int yindex)
 {
-	// Start out with the lowermost visible layer
-	memcpy(data, layers_.at(0)->tile(xindex, yindex)->data(), Tile::BYTES);
+	// Start out with a checkerboard pattern to denote transparency
+	Tile::fillChecker(data, QColor(128,128,128), Qt::white);
 
-	// Composite remaining layers
-	for(int i=1;i<layers();++i) {
+	// Composite visible layers
+	for(int i=0;i<layers();++i) {
 		const Tile *tile = layers_.at(i)->tile(xindex, yindex);
 		if(tile) {
 			compositePixels(0, data, tile->data(), Tile::SIZE*Tile::SIZE);
