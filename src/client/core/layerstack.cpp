@@ -211,6 +211,11 @@ void LayerStack::updateCache(int xindex, int yindex)
 				QImage::Format_RGB32)
 			);
 
+	// This is needed for Windows, since QPixmap shares the memory.
+	// On other systems, QPixmap data is stored elsewhere (i.e. in
+	// display server memory)
+	cache_[yindex*xtiles_+xindex].detach();
+
 }
 
 void LayerStack::markDirty(int tilex, int tiley)
