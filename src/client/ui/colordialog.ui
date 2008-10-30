@@ -24,7 +24,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="ColorTriangle" native="1" name="colorTriangle" >
+        <widget class="ColorTriangle" name="colorTriangle" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
            <horstretch>0</horstretch>
@@ -220,7 +220,7 @@
         <widget class="GradientSlider" name="hue" >
          <property name="sizePolicy" >
           <sizepolicy vsizetype="Ignored" hsizetype="Expanding" >
-           <horstretch>0</horstretch>
+           <horstretch>2</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
@@ -379,7 +379,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1" colspan="2" >
+       <item row="8" column="1" colspan="2" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -402,6 +402,23 @@
          </property>
         </widget>
        </item>
+       <item row="7" column="0" >
+        <widget class="QLabel" name="label_7" >
+         <property name="text" >
+          <string>Hex:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" >
+        <widget class="QLineEdit" name="txtHex" >
+         <property name="inputMask" >
+          <string>\#HHHHHH; </string>
+         </property>
+         <property name="text" >
+          <string>#000000</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -420,14 +437,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GradientSlider</class>
-   <extends>QWidget</extends>
-   <header>gradientslider.h</header>
-  </customwidget>
-  <customwidget>
    <class>ColorTriangle</class>
    <extends>QWidget</extends>
    <header>colortriangle.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GradientSlider</class>
+   <extends>QWidget</extends>
+   <header>gradientslider.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

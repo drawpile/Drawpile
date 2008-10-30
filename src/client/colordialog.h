@@ -56,6 +56,7 @@ class ColorDialog : public QDialog
 		void updateRgb();
 		void updateHsv();
 		void updateTriangle(const QColor& color);
+		void updateHex();
 
 	private:
 		void updateBars();

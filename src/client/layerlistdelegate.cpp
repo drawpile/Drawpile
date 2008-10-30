@@ -74,8 +74,10 @@ QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMo
 {
         QSize size = QItemDelegate::sizeHint(option, index);
         const QSize iconsize = icon::lock().actualSize(QSize(16,16));
-        if(size.height() < iconsize.height())
-                size.setHeight(iconsize.height());
+		QFontMetrics fm(option.font);
+		int minheight = qMax(fm.height() * 2, iconsize.height()) + 2;
+        if(size.height() < minheight)
+                size.setHeight(minheight);
         return size;
 }
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2008 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -63,6 +63,9 @@ ColorDialog::ColorDialog(const QString& title, bool showapply, bool showalpha, Q
 	connect(ui_->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
 			this, SLOT(reset()));
 
+	connect(ui_->txtHex, SIGNAL(textChanged(const QString&)),
+			this, SLOT(updateHex()));
+
 	setWindowTitle(title);
 }
 
@@ -90,6 +93,7 @@ void ColorDialog::setColor(const QColor& color)
 	ui_->value->setValue(v);
 	ui_->alpha->setValue(color.alpha());
 	ui_->colorTriangle->setColor(color);
+	ui_->txtHex->setText(color.name());
 	if(h!=-1)
 		validhue_ = h;
 	updateBars();
@@ -208,6 +212,40 @@ void ColorDialog::updateTriangle(const QColor& color)
 		ui_->value->setValue(v);
 		updateCurrent(color);
 
+		updating_ = false;
+	}
+}
+
+/**
+ * Hexadecimal color input box has changed, update
+ * sliders and triangle.
+ */
+void ColorDialog::updateHex()
+{
+	if(!updating_) {
+		updating_ = true;
+		QColor color(ui_->txtHex->text());
+		if(color.isValid()) {
+			// Update RGB sliders
+			ui_->red->setValue(color.red());
+			ui_->green->setValue(color.green());
+			ui_->blue->setValue(color.blue());
+
+			// Update HSV sliders
+			int h,s,v;
+			color.getHsv(&h,&s,&v);
+			if(h==-1)
+				h = validhue_;
+			ui_->hue->setValue(h);
+			ui_->saturation->setValue(s);
+			ui_->value->setValue(v);
+
+
+			// Update everything else
+			updateBars();
+			ui_->colorTriangle->setColor(color);
+			updateCurrent(color);
+		}
 		updating_ = false;
 	}
 }

@@ -40,6 +40,10 @@ ColorTriangle::ColorTriangle(QWidget *parent,const QColor& color)
 	updateColorTriangle();
 }
 
+int ColorTriangle::heightForWidth(int w) const {
+	return w;
+}
+
 void ColorTriangle::updateColorTriangle()
 {
 	diameter_ = qMin(width(), height());
