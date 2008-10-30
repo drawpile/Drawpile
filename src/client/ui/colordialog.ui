@@ -16,7 +16,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout" name="triangleLayout" >
        <property name="spacing" >
         <number>6</number>
        </property>
@@ -30,6 +30,12 @@
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>175</width>
+           <height>175</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -202,7 +208,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QGridLayout" name="gridLayout" >
+      <layout class="QGridLayout" name="sliderLayout" >
        <property name="horizontalSpacing" >
         <number>0</number>
        </property>
