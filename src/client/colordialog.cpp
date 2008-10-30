@@ -164,6 +164,7 @@ void ColorDialog::updateRgb()
 		ui_->colorTriangle->setColor(col);
 		updateBars();
 
+		ui_->txtHex->setText(col.name());
 		updateCurrent(col);
 		updating_ = false;
 	}
@@ -188,6 +189,7 @@ void ColorDialog::updateHsv()
 		ui_->colorTriangle->setColor(col);
 		updateBars();
 		updateCurrent(col);
+		ui_->txtHex->setText(col.name());
 		updating_ = false;
 	}
 }
@@ -211,6 +213,7 @@ void ColorDialog::updateTriangle(const QColor& color)
 		ui_->saturation->setValue(s);
 		ui_->value->setValue(v);
 		updateCurrent(color);
+		ui_->txtHex->setText(color.name());
 
 		updating_ = false;
 	}
