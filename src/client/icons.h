@@ -30,6 +30,12 @@ const QIcon& lock();
 //! Get a kick icon
 const QIcon& kick();
 
+//! Get a remove icon
+const QIcon& remove();
+
+//! Get an add icon
+const QIcon& add();
+
 //! Get a network status icon
 const QIcon& network();
 

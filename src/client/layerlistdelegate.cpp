@@ -49,23 +49,28 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	if(index.row()==0) {
 		// Draw add new layer button
 		opt.font.setStyle(QFont::StyleItalic);
-		opt.displayAlignment = Qt::AlignHCenter;
+		opt.displayAlignment = Qt::AlignHCenter | Qt::AlignVCenter;
+
+		const QPixmap addicon = icon::add().pixmap(16);
+		painter->drawPixmap(opt.rect.topLeft()+QPoint(0,opt.rect.height()/2-addicon.height()/2),
+				addicon);
 		drawDisplay(painter, opt, textrect, "New layer...");
 	} else {
 		const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
 		QString name = QString("%1 %2 %3%").arg(layer->name()).arg("Normal").arg(100);
 
-		const int delwidth = icon::kick().actualSize(QSize(16,16)).width();
+		const QSize delsize = icon::remove().actualSize(QSize(16,16));
+
 		// Draw layer name
-		textrect.setWidth(textrect.width() - delwidth);
+		textrect.setWidth(textrect.width() - delsize.width());
 		drawDisplay(painter, opt, textrect, name);
 
 		// Draw delete button (except when in a network session, and when this is the last layer)
 		// TODO correct icon
 		const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 		if(layers->layers()>1) {
-			painter->drawPixmap(opt.rect.topRight()-QPoint(delwidth,0),
-					icon::kick().pixmap(16));
+			painter->drawPixmap(opt.rect.topRight()-QPoint(delsize.width(),-opt.rect.height()/2+delsize.height()/2),
+					icon::remove().pixmap(16));
 		}
 	}
 }

@@ -22,6 +22,9 @@
 
 #include "icons.h"
 
+// TODO replace this with something sensible.
+// Perhaps look into http://labs.trolltech.com/blogs/2009/02/13/freedesktop-icons-in-qt/
+
 namespace icon {
 
 const QIcon& lock()
@@ -39,6 +42,24 @@ const QIcon& kick()
 	static QIcon icon;
 	if(icon.isNull()) {
 		icon.addFile(":icons/kick.png", QSize(), QIcon::Normal, QIcon::On);
+	}
+	return icon;
+}
+
+const QIcon& remove()
+{
+	static QIcon icon;
+	if(icon.isNull()) {
+		icon.addFile(":icons/list-remove.png", QSize(), QIcon::Normal, QIcon::On);
+	}
+	return icon;
+}
+
+const QIcon& add()
+{
+	static QIcon icon;
+	if(icon.isNull()) {
+		icon.addFile(":icons/list-add.png", QSize(), QIcon::Normal, QIcon::On);
 	}
 	return icon;
 }
