@@ -40,6 +40,7 @@ void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& si
 	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);
 	ytiles_ = height_ / Tile::SIZE + ((height_ % Tile::SIZE)>0);
 	tiles_ = new Tile*[xtiles_ * ytiles_];
+	opacity_ = 255;
 }
 
 /**
@@ -117,6 +118,17 @@ QColor Layer::colorAt(int x, int y) const
 }
 
 /**
+ * @param opacity
+ */
+void Layer::setOpacity(int opacity)
+{
+	Q_ASSERT(opacity>=0 && opacity<256);
+	opacity_ = opacity;
+	// TODO optimization: mark only nonempty tiles
+	owner_->markDirty();
+}
+
+/**
  * Apply a single dab of the brush to the layer
  * @param brush brush to use
  * @parma point where to dab. May be outside the image.
@@ -164,7 +176,7 @@ void Layer::dab(const Brush& brush, const Point& point)
 					realdia-wb
 					);
 
-			if(owner_)
+			if(owner_ && visible())
 				owner_->markDirty(xindex, yindex);
 
 			x = (xindex+1) * Tile::SIZE;
@@ -303,8 +315,8 @@ void Layer::merge(int x, int y, const Layer *layer)
 			const int index = xtiles_*myy + myx;
 			if(tiles_[index]==0)
 				tiles_[index] = new Tile(myx, myy);
-			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j]);
-			if(owner_)
+			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j], opacity_);
+			if(owner_ && visible())
 				owner_->markDirty(myx, myy);
 		}
 		myx = x;

@@ -65,8 +65,6 @@ void BoardItem::setImage(const QImage& image)
 	delete image_;
 	image_ = new dpcore::LayerStack();
 	image_->addLayer(dpcore::LayerStack::tr("Background"), image);
-	// TODO testing...
-	image_->addLayer("Testing...", image.size());
 }
 
 /**

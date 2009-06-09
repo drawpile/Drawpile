@@ -85,6 +85,9 @@ class LayerStack : public QAbstractListModel {
 		//! Mark a tile whose content has changed
 		void markDirty(int tilex, int tiley);
 
+		//! Mark all tiles as dirty
+		void markDirty();
+
 		// List model functions
 		int rowCount(const QModelIndex& parent) const;
 		QVariant data(const QModelIndex& index, int role) const;

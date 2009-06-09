@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -121,7 +121,13 @@ void doComposite(quint32 *base, quint32 color, const uchar *mask,
 			*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
 			*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
 			*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
-			*dest = *dest + UINT8_MULT(255-*dest, *mask); ++dest;
+			// Blend alpha channel
+			// Note. This is still not quite the right way to do it, but
+			// it will have to do for now so I can move on with
+			// the code...
+			*dest = UINT8_BLEND(BO(*dest, src[3]), *dest, *mask); ++dest;
+			// The old way that works correctly only with blend_normal
+			//*dest = *dest + UINT8_MULT(255-*dest, *mask); ++dest;
 			++mask;
 		}
 		dest += baseskip*4;
@@ -164,16 +170,16 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 		}
 }
 
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len)
+void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	const uchar *src = reinterpret_cast<const uchar*>(over);
 	while(len--) {
-		*dest = src[0] + UINT8_MULT(255-src[3], *dest); ++dest;
-		*dest = src[1] + UINT8_MULT(255-src[3], *dest); ++dest;
-		*dest = src[2] + UINT8_MULT(255-src[3], *dest); ++dest;
-		*dest = *dest + UINT8_MULT(255-*dest, src[3]); ++dest;
-		src+=4;
+		const uchar a = UINT8_MULT(src[3], opacity);
+		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
+		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
+		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
+		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
 	}
 
 }

@@ -110,6 +110,9 @@ class BoardEditor {
 		//! Select the layer to draw on
 		virtual void setLayer(int id) = 0;
 
+		//! Change the opacity of a layer
+		virtual void changeLayerOpacity(int id, int opacity) = 0;
+
 		//! Make strokes until endStroke atomic
 		virtual void startAtomic() = 0;
 
@@ -160,6 +163,7 @@ class LocalBoardEditor : public BoardEditor {
 		void setLayer(int id);
 		void createLayer(const QString& name);
 		void deleteLayer(int id);
+		void changeLayerOpacity(int id, int opacity);
 		// Atomic strokes are meaningles in local mode
 		void startAtomic() { }
 		void addStroke(const dpcore::Point& point);
@@ -183,6 +187,7 @@ class RemoteBoardEditor : public BoardEditor {
 		void setTool(const dpcore::Brush& brush);
 		void createLayer(const QString& name);
 		void deleteLayer(int id);
+		void changeLayerOpacity(int id, int opacity);
 		void setLayer(int id);
 		void startAtomic();
 		void addStroke(const dpcore::Point& point);

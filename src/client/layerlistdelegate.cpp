@@ -57,7 +57,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		drawDisplay(painter, opt, textrect, "New layer...");
 	} else {
 		const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-		QString name = QString("%1 %2 %3%").arg(layer->name()).arg("Normal").arg(100);
+		QString name = QString("%1 %2 %3%").arg(layer->name()).arg("Normal").arg(qRound(layer->opacity()/255.0));
 
 		const QSize delsize = icon::remove().actualSize(QSize(16,16));
 

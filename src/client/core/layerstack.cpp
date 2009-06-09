@@ -192,10 +192,13 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex)
 	Tile::fillChecker(data, QColor(128,128,128), Qt::white);
 
 	// Composite visible layers
-	for(int i=0;i<layers();++i) {
-		const Tile *tile = layers_.at(i)->tile(xindex, yindex);
-		if(tile) {
-			compositePixels(0, data, tile->data(), Tile::SIZE*Tile::SIZE);
+	foreach(const Layer *l, layers_) {
+		if(l->visible()) {
+			const Tile *tile = l->tile(xindex, yindex);
+			if(tile) {
+				compositePixels(0, data, tile->data(),
+						Tile::SIZE*Tile::SIZE, l->opacity());
+			}
 		}
 	}
 }
@@ -221,6 +224,12 @@ void LayerStack::updateCache(int xindex, int yindex)
 void LayerStack::markDirty(int tilex, int tiley)
 {
 	cache_[tiley*xtiles_ + tilex] = QPixmap();
+}
+
+void LayerStack::markDirty()
+{
+	for(int i=0;i<xtiles_*ytiles_;++i)
+		cache_[i] = QPixmap();
 }
 
 // Model related functions

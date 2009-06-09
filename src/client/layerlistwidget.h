@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,14 +51,20 @@ class LayerList : public QDockWidget
 		void selectLayer(int id);
 
 	signals:
+		//! User wants to create a new layer
 		void newLayer(const QString& name);
+		//! User wants to delete a layer
 		void deleteLayer(int id, bool mergedown);
+		//! User wants to select a new layer
 		void selected(int id);
+		//! User wants to change the opacity of the currently selected layer
+		void opacityChange(int id, int opacity);
 
 	private slots:
 		void newLayer();
 		void deleteLayer(const dpcore::Layer* layer);
 		void selected(const QItemSelection& selection, const QItemSelection& prev);
+		void opacityChanged(int opacity);
 
 	private:
 		Ui_LayerBox *ui_;

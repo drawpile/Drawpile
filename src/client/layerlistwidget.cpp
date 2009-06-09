@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -47,6 +47,8 @@ LayerList::LayerList(QWidget *parent)
 	connect(del, SIGNAL(newLayer()), this, SLOT(newLayer()));
 	connect(del, SIGNAL(deleteLayer(const dpcore::Layer*)), this,
 			SLOT(deleteLayer(const dpcore::Layer*)));
+	connect(ui_->opacity, SIGNAL(valueChanged(int)), this,
+			SLOT(opacityChanged(int)));
 }
 
 LayerList::~LayerList()
@@ -74,6 +76,9 @@ void LayerList::selectLayer(int id)
 				QItemSelectionModel::Select);
 }
 
+/**
+ * A layer was selected
+ */
 void LayerList::selected(const QItemSelection& selection, const QItemSelection& prev)
 {
 	if(!locksel_) {
@@ -90,11 +95,21 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
 		} else {
 			const dpcore::Layer *layer = selection.indexes().first().data().value<dpcore::Layer*>();
 			emit selected(layer->id());
+
+			// Update the UI controls
+			ui_->opacity->setValue(layer->opacity());
 		}
 		locksel_ = false;
 	}
 }
 
+void LayerList::opacityChanged(int opacity)
+{
+	if(!locksel_) {
+		const dpcore::Layer *layer = ui_->layers->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
+		emit opacityChange(layer->id(), opacity);
+	}
+}
 
 void LayerList::newLayer()
 {

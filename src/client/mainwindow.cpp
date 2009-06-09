@@ -227,6 +227,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			controller_, SLOT(deleteLayer(int, bool)));
 	connect(layerlist_, SIGNAL(selected(int)),
 			controller_, SLOT(selectLayer(int)));
+	connect(layerlist_, SIGNAL(opacityChange(int,int)),
+			controller_, SLOT(setLayerOpacity(int,int)));
 
 	if(source)
 		cloneSettings(source);

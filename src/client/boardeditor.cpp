@@ -185,6 +185,16 @@ void LocalBoardEditor::deleteLayer(int id)
 }
 
 /**
+ * @param id layer ID
+ * @param opacity new layer opacity
+ */
+void LocalBoardEditor::changeLayerOpacity(int id, int opacity)
+{
+	board_->layers()->getLayer(id)->setOpacity(opacity);
+	board_->update();
+}
+
+/**
  * @param point point to add
  */
 void LocalBoardEditor::addStroke(const dpcore::Point& point)
@@ -259,7 +269,7 @@ void RemoteBoardEditor::setLayer(int id)
 
 void RemoteBoardEditor::createLayer(const QString& name)
 {
-	// TODO
+	qWarning() << "TODO: layer creation";
 }
 
 /**
@@ -269,6 +279,15 @@ void RemoteBoardEditor::createLayer(const QString& name)
 void RemoteBoardEditor::deleteLayer(int id)
 {
 	qWarning() << "BUG: Tried to delete layer ID" << id << "while in a network session!";
+}
+
+/**
+ * @param id layer ID
+ * @param opacity new layer opacity
+ */
+void RemoteBoardEditor::changeLayerOpacity(int id, int opacity)
+{
+	qWarning() << "TODO: layer opacity changing";
 }
 
 /**

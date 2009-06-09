@@ -114,6 +114,8 @@ class Controller : public QObject
 		void newLayer(const QString& name);
 		//! Delete or merge a layer
 		void deleteLayer(int id, bool mergedown);
+		//! Change (selected) layer opacity
+		void setLayerOpacity(int id, int opacity);
 
 		void penDown(const dpcore::Point& point);
 		void penMove(const dpcore::Point& point);

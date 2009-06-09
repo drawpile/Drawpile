@@ -45,7 +45,7 @@ class Layer {
 		//! Construct a layer from an image
 		Layer(LayerStack *owner, int id, const QString& name, const QImage& image);
 
-		//! Construct a blank layer
+		//! Construct a layer filled with solid color
 		Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size);
 
 		//! Construct a blank layer
@@ -74,6 +74,12 @@ class Layer {
 		//! Get the color at the specified coordinate
 		QColor colorAt(int x, int y) const;
 
+		//! Get layer opacity
+		int opacity() const { return opacity_; }
+
+		//! Set layer opacity
+		void setOpacity(int opacity);
+
 		//! Dab the layer with a brush
 		void dab(const Brush& brush, const Point& point);
 
@@ -98,6 +104,14 @@ class Layer {
 		//! Get a tile
 		const Tile *tile(int index) const { return tiles_[index]; }
 
+		//! Is this layer visible?
+		/**
+		 * A layer is visible when its opacity is greater than zero AND
+		 * it is not explicitly hidden.
+		 * @return true if layer is visible
+		 */
+		bool visible() const { return opacity_ > 0; }
+
 	private:
 		LayerStack *owner_;
 		void init(LayerStack *owner, int id, const QString& name, const QSize& size);
@@ -109,6 +123,7 @@ class Layer {
 		int id_;
 		QString name_;
 		Tile **tiles_;
+		uchar opacity_;
 };
 
 }

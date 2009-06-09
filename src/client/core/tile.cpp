@@ -126,9 +126,9 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
 			color.rgba(), values, w, h, skip, SIZE-w);
 }
 
-void Tile::merge(const Tile *tile)
+void Tile::merge(const Tile *tile, uchar opacity)
 {
-	compositePixels(0, data_, tile->data_, SIZE*SIZE);
+	compositePixels(0, data_, tile->data_, SIZE*SIZE, opacity);
 }
 
 }

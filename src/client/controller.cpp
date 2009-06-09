@@ -30,6 +30,7 @@
 #include "sessionstate.h"
 #include "localserver.h"
 #include "toolsettings.h"
+#include "user.h"
 
 #include "../shared/net/constants.h" // DEFAULT_PORT
 
@@ -462,6 +463,11 @@ void Controller::deleteLayer(int id, bool mergedown)
 	toolbox_.editor()->deleteLayer(id);
 }
 
+void Controller::setLayerOpacity(int id, int opacity)
+{
+	toolbox_.editor()->changeLayerOpacity(id, opacity);
+}
+
 void Controller::penDown(const dpcore::Point& point)
 {
 	if(lock_ == false || (lock_ && tool_->readonly())) {
@@ -476,14 +482,14 @@ void Controller::penDown(const dpcore::Point& point)
 
 void Controller::penMove(const dpcore::Point& point)
 {
-	if(lock_ == false || lock_ && tool_->readonly()) {
+	if(lock_ == false || tool_->readonly()) {
 		tool_->motion(point);
 	}
 }
 
 void Controller::penUp()
 {
-	if(lock_ == false || lock_ && tool_->readonly()) {
+	if(lock_ == false || tool_->readonly()) {
 		tool_->end();
 		if(sync_) {
 			sync_ = false;

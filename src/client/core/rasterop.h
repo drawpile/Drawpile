@@ -47,8 +47,9 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, in
  * @param base pixels onto which over is composited
  * @parma over the pixels on top of base
  * @param len number of pixels to blend
+ * @param opacity blend opacity (0..255)
  */
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len);
+void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity);
 
 }
 
