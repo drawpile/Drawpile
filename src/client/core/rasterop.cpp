@@ -118,16 +118,19 @@ void doComposite(quint32 *base, quint32 color, const uchar *mask,
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
 		for(int x=0;x<w;++x) {
-			*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
-			*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
-			*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
-			// Blend alpha channel
-			// Note. This is still not quite the right way to do it, but
-			// it will have to do for now so I can move on with
-			// the code...
-			*dest = UINT8_BLEND(BO(*dest, src[3]), *dest, *mask); ++dest;
-			// The old way that works correctly only with blend_normal
-			//*dest = *dest + UINT8_MULT(255-*dest, *mask); ++dest;
+			if(dest[3]==0) {
+				if(*mask>0) {
+					*dest = BO(*dest, src[0]); ++dest;
+					*dest = BO(*dest, src[1]); ++dest;
+					*dest = BO(*dest, src[2]); ++dest;
+				} else
+					dest += 3;
+			} else {
+				*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
+				*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
+				*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
+			}
+			*dest = *mask + UINT8_MULT(255-*mask, *dest); ++dest;
 			++mask;
 		}
 		dest += baseskip*4;
@@ -175,11 +178,12 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len, ucha
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	const uchar *src = reinterpret_cast<const uchar*>(over);
 	while(len--) {
-		const uchar a = UINT8_MULT(src[3], opacity);
-		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
-		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
-		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
-		*dest = UINT8_BLEND(*src++, *dest, a); ++dest;
+		const uchar a2 = UINT8_MULT(255-src[3], dest[3]);
+		*dest = UINT8_MULT(src[3], src[0]) + UINT8_MULT(a2, *dest); ++dest;
+		*dest = UINT8_MULT(src[3], src[1]) + UINT8_MULT(a2, *dest); ++dest;
+		*dest = UINT8_MULT(src[3], src[2]) + UINT8_MULT(a2, *dest); ++dest;
+		*dest = src[3] + a2; ++dest;
+		src+=4;
 	}
 
 }
