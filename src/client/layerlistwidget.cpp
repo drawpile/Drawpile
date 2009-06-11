@@ -47,6 +47,8 @@ LayerList::LayerList(QWidget *parent)
 	connect(del, SIGNAL(newLayer()), this, SLOT(newLayer()));
 	connect(del, SIGNAL(deleteLayer(const dpcore::Layer*)), this,
 			SLOT(deleteLayer(const dpcore::Layer*)));
+	connect(del, SIGNAL(layerToggleHidden(int)), this,
+			SIGNAL(layerToggleHidden(int)));
 	connect(ui_->opacity, SIGNAL(valueChanged(int)), this,
 			SLOT(opacityChanged(int)));
 }

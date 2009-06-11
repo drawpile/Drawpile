@@ -43,6 +43,7 @@ class LayerListDelegate : public QItemDelegate {
 	signals:
 		void newLayer();
 		void deleteLayer(const dpcore::Layer *layer);
+		void layerToggleHidden(int);
 };
 
 #endif

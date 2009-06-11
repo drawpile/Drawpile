@@ -1,7 +1,8 @@
+#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -115,6 +116,26 @@ bool LayerStack::deleteLayer(int id)
 	return false;
 }
 
+/**
+ * @param id id of the layer that will be merged
+ */
+void LayerStack::mergeLayerDown(int id) {
+	const Layer *top;
+	Layer *btm=0;
+	for(int i=0;i<layers_.size();++i) {
+		if(layers_[i]->id() == id) {
+			top = layers_[i];
+			if(i>0)
+				btm = layers_[i-1];
+			break;
+		}
+	}
+	if(btm==0)
+		qWarning() << "SLOPPY: Tried to merge bottom-most layer";
+	else
+		btm->merge(0,0, top);
+}
+
 Layer *LayerStack::getLayerByIndex(int index)
 {
 	return layers_.at(index);
@@ -181,8 +202,14 @@ QColor LayerStack::colorAt(int x, int y) const
 
 QImage LayerStack::toFlatImage() const
 {
-	// TODO
-	return layers_.at(0)->toImage();
+	Layer *scratch = Layer::scratchCopy(layers_[0]);
+
+	for(int i=1;i<layers_.size();++i)
+		scratch->merge(0,0, layers_[i]);
+
+	QImage img = scratch->toImage();
+	delete scratch;
+	return img;
 }
 
 // Flatten a single tile
@@ -196,7 +223,7 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex)
 		if(l->visible()) {
 			const Tile *tile = l->tile(xindex, yindex);
 			if(tile) {
-				compositePixels(0, data, tile->data(),
+				compositePixels(1, data, tile->data(),
 						Tile::SIZE*Tile::SIZE, l->opacity());
 			}
 		}
@@ -230,6 +257,30 @@ void LayerStack::markDirty()
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		cache_[i] = QPixmap();
+}
+
+/**
+ * This is called from the layers belonging to this stack when
+ * changing.
+ * Specifically, it is called when:
+ * <ul>
+ * <li>Layer opacity is changed</li>
+ * <li>...TODO</li>
+ * </ul>
+ * @param layer the layer which changed
+ */
+void LayerStack::layerChanged(const Layer* layer)
+{
+	int index=0;
+	for(int i=0;index<layers_.size();++i) {
+		if(layers_[i] == layer) {
+			index = layers_.size() - i;
+			break;
+		}
+	}
+	Q_ASSERT(index > 0);
+	const QModelIndex qmi = createIndex(index, 0);
+	emit dataChanged(qmi, qmi);
 }
 
 // Model related functions

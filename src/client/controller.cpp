@@ -24,6 +24,8 @@
 #include "controller.h"
 #include "board.h"
 #include "core/brush.h"
+#include "core/layer.h"
+#include "core/layerstack.h"
 #include "tools.h"
 #include "boardeditor.h"
 #include "hoststate.h"
@@ -460,13 +462,22 @@ void Controller::newLayer(const QString& name)
 
 void Controller::deleteLayer(int id, bool mergedown)
 {
-	toolbox_.editor()->deleteLayer(id);
+	toolbox_.editor()->deleteLayer(id, mergedown);
 }
 
 void Controller::setLayerOpacity(int id, int opacity)
 {
 	toolbox_.editor()->changeLayerOpacity(id, opacity);
 }
+
+void Controller::toggleLayerHidden(int id)
+{
+	// Layer visibility toggling is a local opeartion
+	dpcore::Layer *l = board_->layers()->getLayer(id);
+	l->setHidden(!l->hidden());
+	board_->update();
+}
+
 
 void Controller::penDown(const dpcore::Point& point)
 {

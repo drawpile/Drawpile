@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& si
 	ytiles_ = height_ / Tile::SIZE + ((height_ % Tile::SIZE)>0);
 	tiles_ = new Tile*[xtiles_ * ytiles_];
 	opacity_ = 255;
+	hidden_ = false;
 }
 
 /**
@@ -84,6 +85,20 @@ Layer::Layer(LayerStack *owner, int id, const QString& name, const QSize& size)
 		tiles_[i] = 0;
 }
 
+/**
+ * @param src
+ * @return new layer with identical content as src
+ */
+Layer *Layer::scratchCopy(const Layer *src)
+{
+	Q_ASSERT(src!=0);
+	Layer *scratch = new Layer(0, -1, "scratch", QSize(src->width(), src->height()));
+	scratch->opacity_ = src->opacity_;
+	for(int i=0;i<src->xtiles_*src->ytiles_;++i)
+		scratch->tiles_[i] = new Tile(src->tiles_[i]);
+	return scratch;
+}
+
 Layer::~Layer() {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		delete tiles_[i];
@@ -125,7 +140,24 @@ void Layer::setOpacity(int opacity)
 	Q_ASSERT(opacity>=0 && opacity<256);
 	opacity_ = opacity;
 	// TODO optimization: mark only nonempty tiles
-	owner_->markDirty();
+	if(owner_) {
+		owner_->markDirty();
+		owner_->layerChanged(this);
+	}
+}
+
+/**
+ * @param hide new status
+ */
+void Layer::setHidden(bool hide)
+{
+	hidden_ = hide;
+	// TODO same optimization as above
+	if(owner_) {
+		if(opacity_>0)
+			owner_->markDirty();
+		owner_->layerChanged(this);
+	}
 }
 
 /**
@@ -305,6 +337,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 /**
  * @param tile x index offset
  * @param tile y index offset
+ * @parma layer the layer that will be merged to this
  */
 void Layer::merge(int x, int y, const Layer *layer)
 {
@@ -315,7 +348,7 @@ void Layer::merge(int x, int y, const Layer *layer)
 			const int index = xtiles_*myy + myx;
 			if(tiles_[index]==0)
 				tiles_[index] = new Tile(myx, myy);
-			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j], opacity_);
+			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j], layer->opacity_);
 			if(owner_ && visible())
 				owner_->markDirty(myx, myy);
 		}
@@ -327,6 +360,12 @@ void Layer::fillChecker(const QColor& dark, const QColor& light)
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		tiles_[i]->fillChecker(dark, light);
+}
+
+void Layer::fillColor(const QColor& color)
+{
+	for(int i=0;i<xtiles_*ytiles_;++i)
+		tiles_[i]->fillColor(color);
 }
 
 }

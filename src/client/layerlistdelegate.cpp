@@ -49,17 +49,23 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	if(index.row()==0) {
 		// Draw add new layer button
 		opt.font.setStyle(QFont::StyleItalic);
-		opt.displayAlignment = Qt::AlignHCenter | Qt::AlignVCenter;
+		opt.displayAlignment = Qt::AlignVCenter;
 
 		const QPixmap addicon = icon::add().pixmap(16);
 		painter->drawPixmap(opt.rect.topLeft()+QPoint(0,opt.rect.height()/2-addicon.height()/2),
 				addicon);
-		drawDisplay(painter, opt, textrect, "New layer...");
+		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), "New layer...");
 	} else {
 		const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-		QString name = QString("%1 %2 %3%").arg(layer->name()).arg("Normal").arg(qRound(layer->opacity()/255.0));
+		QString name = QString("%1 %2%").arg(layer->name()).arg(layer->opacity()*100/255);
 
 		const QSize delsize = icon::remove().actualSize(QSize(16,16));
+		const QSize hidesize = icon::layervisible().actualSize(QSize(16,16));
+
+		// Draw layer hide button
+		if(layer->hidden()==false)
+			painter->drawPixmap(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-hidesize.height()/2), icon::layervisible().pixmap(16));
+		textrect.setLeft(hidesize.width());
 
 		// Draw layer name
 		textrect.setWidth(textrect.width() - delsize.width());
@@ -98,7 +104,9 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 			const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
 			// Delete button (but only when this is not the last layer and we are not in a network session)
-			if(me->x() >= option.rect.width() - btnwidth) {
+			if(me->x() < btnwidth) {
+				emit layerToggleHidden(layer->id());
+			} else if(me->x() >= option.rect.width() - btnwidth) {
 				if(layers->layers()>1)
 					emit deleteLayer(layer);
 			}

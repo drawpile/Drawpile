@@ -1,0 +1,40 @@
+Notes on the origins of the icons.
+
+The following icosn are from Tango:
+ * document-new.png
+ * document-open.png
+ * document-save.png
+ * document-save-as.png
+ * list-add.png
+ * list-remove.png
+ * network-offline.png
+ * network-transmit-receive.png
+ * system-log-out.png
+ * view-refresh.png
+ * zoom-in.png
+ * zoom-original.png
+ * zoom-out.png
+
+The following came from Tango ArtLibreSet
+ * color-picker.png
+ * draw-brush.png
+ * draw-eraser.png
+ * draw-freehand.png
+ * draw-rectangle.png
+ * draw-text.png
+ * format-justify-center.png
+ * format-justify-fill.png
+ * format-justify-left.png
+ * format-justify-right.png
+ * format-text-bold.png
+ * format-text-italic.png
+
+The ArtLibreSet is distributed under the GPL.
+
+The following were copied from The GIMP
+ * lock.png
+ * unlock.png
+ * layer-visible.png (stock-eye-20.png)
+
+The rest are original.
+

@@ -152,7 +152,7 @@ class Board : public QGraphicsScene
 		void addLayer(const QString& name);
 
 		//! Delete a layer
-		void deleteLayer(int id);
+		void deleteLayer(int id, bool mergedown);
 
 	signals:
 		//! The local user just created a new annotation

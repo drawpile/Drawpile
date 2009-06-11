@@ -23,6 +23,7 @@
 namespace dpcore {
 
 const char *BLEND_MODE[BLEND_MODES] = {
+	QT_TR_NOOP("Erase"), // This is a special mode
 	QT_TR_NOOP("Normal"),
 	QT_TR_NOOP("Multiply"),
 	QT_TR_NOOP("Divide"),
@@ -109,11 +110,13 @@ inline uint blend_subtract(uchar base, uchar blend) {
 	return qMax(base-blend, 0);
 }
 
+// A generic pixel composition function
 typedef uint(*BlendOp)(uchar,uchar);
 template<BlendOp BO>
 void doComposite(quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
+	baseskip *= 4;
 	const uchar *src = reinterpret_cast<const uchar*>(&color);
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
@@ -133,7 +136,24 @@ void doComposite(quint32 *base, quint32 color, const uchar *mask,
 			*dest = *mask + UINT8_MULT(255-*mask, *dest); ++dest;
 			++mask;
 		}
-		dest += baseskip*4;
+		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
+// Specialized pixel composition: erase alpha channel
+void doErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, int baseskip)
+{
+	baseskip *= 4;
+	uchar *dest = reinterpret_cast<uchar*>(base) + 3;
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x) {
+			*dest = qMax(0, *dest - *mask);
+
+			dest += 4;
+			++mask;
+		}
+		dest += baseskip;
 		mask += maskskip;
 	}
 }
@@ -143,28 +163,31 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 {
 		// Note! Make sure the these are in the correct order!
 		switch(mode) {
-			case 1:
-				doComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip);
+			case 0:
+				doErase(base, mask, w, h, maskskip, baseskip);
 				break;
 			case 2:
-				doComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 3:
-				doComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 4:
-				doComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 5:
-				doComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 6:
-				doComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 7:
-				doComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip);
+				doComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			case 8:
+				doComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip);
+				break;
+			case 9:
 				doComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			default:
@@ -175,14 +198,17 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 
 void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
 {
+	Q_ASSERT_X(mode==1, "compositePixels", "TODO: Layer composition modes are not yet supported.");
+
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	const uchar *src = reinterpret_cast<const uchar*>(over);
 	while(len--) {
-		const uchar a2 = UINT8_MULT(255-src[3], dest[3]);
-		*dest = UINT8_MULT(src[3], src[0]) + UINT8_MULT(a2, *dest); ++dest;
-		*dest = UINT8_MULT(src[3], src[1]) + UINT8_MULT(a2, *dest); ++dest;
-		*dest = UINT8_MULT(src[3], src[2]) + UINT8_MULT(a2, *dest); ++dest;
-		*dest = src[3] + a2; ++dest;
+		const uchar a = UINT8_MULT(src[3], opacity);
+		const uchar a2 = UINT8_MULT(255-a, dest[3]);
+		*dest = UINT8_MULT(a, src[0]) + UINT8_MULT(a2, *dest); ++dest;
+		*dest = UINT8_MULT(a, src[1]) + UINT8_MULT(a2, *dest); ++dest;
+		*dest = UINT8_MULT(a, src[2]) + UINT8_MULT(a2, *dest); ++dest;
+		*dest = a + a2; ++dest;
 		src+=4;
 	}
 

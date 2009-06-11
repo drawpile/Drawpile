@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -80,6 +80,18 @@ class Layer {
 		//! Set layer opacity
 		void setOpacity(int opacity);
 
+		//! Is this layer hidden?
+		/**
+		 * Hiding a layer is slightly different than setting its opacity
+		 * to zero, although the end result is the same. The hidden status
+		 * is purely local: setting it will not hide the layer for other
+		 * users.
+		 */
+		bool hidden() const { return hidden_; }
+
+		//! Hide this layer
+		void setHidden(bool hide);
+
 		//! Dab the layer with a brush
 		void dab(const Brush& brush, const Point& point);
 
@@ -98,6 +110,9 @@ class Layer {
 		//! Fill the layer with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
 
+		//! Fill the layer with solid color
+		void fillColor(const QColor& color);
+
 		//! Get a tile
 		const Tile *tile(int x, int y) const { return tiles_[y*xtiles_+x]; }
 
@@ -110,7 +125,10 @@ class Layer {
 		 * it is not explicitly hidden.
 		 * @return true if layer is visible
 		 */
-		bool visible() const { return opacity_ > 0; }
+		bool visible() const { return opacity_ > 0 && !hidden_; }
+
+		//! Return a (temporary use) copy of the given layer
+		static Layer *scratchCopy(const Layer *src);
 
 	private:
 		LayerStack *owner_;
@@ -124,6 +142,7 @@ class Layer {
 		QString name_;
 		Tile **tiles_;
 		uchar opacity_;
+		bool hidden_;
 };
 
 }

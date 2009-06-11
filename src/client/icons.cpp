@@ -55,6 +55,15 @@ const QIcon& remove()
 	return icon;
 }
 
+const QIcon& layervisible()
+{
+	static QIcon icon;
+	if(icon.isNull()) {
+		icon.addFile(":icons/layer-visible.png", QSize(), QIcon::Normal, QIcon::On);
+	}
+	return icon;
+}
+
 const QIcon& add()
 {
 	static QIcon icon;

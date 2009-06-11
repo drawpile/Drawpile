@@ -24,7 +24,7 @@
 
 namespace dpcore {
 
-static const int BLEND_MODES=9;
+static const int BLEND_MODES=10;
 // Names of each blending mode
 extern const char *BLEND_MODE[BLEND_MODES];
 

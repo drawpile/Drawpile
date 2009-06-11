@@ -29,9 +29,9 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QComboBox" name="blendmode">
-       <property name="toolTip">
-        <string>Layer blending mode</string>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Opacity:</string>
        </property>
       </widget>
      </item>

@@ -179,9 +179,9 @@ void LocalBoardEditor::createLayer(const QString& name)
 /**
  * @param id layer ID
  */
-void LocalBoardEditor::deleteLayer(int id)
+void LocalBoardEditor::deleteLayer(int id, bool mergedown)
 {
-	board_->deleteLayer(id);
+	board_->deleteLayer(id, mergedown);
 }
 
 /**
@@ -276,7 +276,7 @@ void RemoteBoardEditor::createLayer(const QString& name)
  * Layer deletion is not supported while in a network session.
  * @param id layer ID
  */
-void RemoteBoardEditor::deleteLayer(int id)
+void RemoteBoardEditor::deleteLayer(int id, bool mergedown)
 {
 	qWarning() << "BUG: Tried to delete layer ID" << id << "while in a network session!";
 }

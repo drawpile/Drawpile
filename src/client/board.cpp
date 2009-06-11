@@ -424,7 +424,7 @@ void Board::addLayer(const QString& name)
  * to something else.
  * @param layer id
  */
-void Board::deleteLayer(int id)
+void Board::deleteLayer(int id, bool mergedown)
 {
 	const int index = layers()->id2index(id);
 	if(index<0) {
@@ -432,6 +432,9 @@ void Board::deleteLayer(int id)
 		qWarning() << "Tried to delete nonexistent layer" << id;
 		return;
 	}
+
+	if(mergedown)
+		layers()->mergeLayerDown(id);
 
 	layers()->deleteLayer(id);
 

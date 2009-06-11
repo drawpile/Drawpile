@@ -59,6 +59,8 @@ class LayerList : public QDockWidget
 		void selected(int id);
 		//! User wants to change the opacity of the currently selected layer
 		void opacityChange(int id, int opacity);
+		//! User wants to toggle the visibility of a layer
+		void layerToggleHidden(int id);
 
 	private slots:
 		void newLayer();

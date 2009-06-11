@@ -229,6 +229,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			controller_, SLOT(selectLayer(int)));
 	connect(layerlist_, SIGNAL(opacityChange(int,int)),
 			controller_, SLOT(setLayerOpacity(int,int)));
+	connect(layerlist_, SIGNAL(layerToggleHidden(int)),
+			controller_, SLOT(toggleLayerHidden(int)));
 
 	if(source)
 		cloneSettings(source);

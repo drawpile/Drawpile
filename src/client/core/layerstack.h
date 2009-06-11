@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,6 +52,9 @@ class LayerStack : public QAbstractListModel {
 		//! Delete a layer
 		bool deleteLayer(int id);
 
+		//! Merge the layer to the one below it
+		void mergeLayerDown(int id);
+
 		//! Get the number of layers in the stack
 		int layers() const { return layers_.count(); }
 
@@ -87,6 +90,9 @@ class LayerStack : public QAbstractListModel {
 
 		//! Mark all tiles as dirty
 		void markDirty();
+
+		//! Inform the stack that a layer's properties have been changed
+		void layerChanged(const Layer* layer);
 
 		// List model functions
 		int rowCount(const QModelIndex& parent) const;

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -49,6 +49,9 @@ class Tile {
 		//! Construct a tile from an image
 		Tile(const QImage& image, int x, int y);
 
+		//! Construct a copy of the given tile
+		Tile(const Tile *src);
+
 		//! Construct an empty tile
 		Tile(int x, int y);
 
@@ -74,6 +77,9 @@ class Tile {
 
 		//! Fill this tile with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
+
+		//! Fill this tile with a solid color
+		void fillColor(const QColor& color);
 
 		//! Get read access to the raw pixel data
 		const quint32 *data() const { return data_; }

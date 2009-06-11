@@ -128,9 +128,9 @@ class PenSettings : public ToolSettings {
 
 //! Eraser settings
 /**
- * This is a settings class for brushes that erase. Currently an eraser
- * works just like a regular brush, except it paints with the background
- * color. The eraser will work differently when layers are implemented.
+ * This is a settings class for brushes that erase.
+ * Erasers don't actually use the colors assigned to them, but will
+ * always simple erase the alpha channel.
  */
 class EraserSettings : public ToolSettings {
 	public:

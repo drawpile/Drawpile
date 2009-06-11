@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006-2008 Calle Laakkonen
+	Copyright (C) 2006-2009 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -79,7 +79,8 @@ QWidget *PenSettings::createUi(QWidget *parent)
 	setUiWidget(widget);
 
 	// Populate blend mode combobox
-	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+	// Blend mode 0 is reserved for the eraser
+	for(int b=1;b<dpcore::BLEND_MODES;++b) {
 		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
@@ -197,12 +198,16 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 
 void EraserSettings::setForeground(const QColor& color)
 {
-	ui_->preview->setColor2(color);
+	// Erasers don't use colors anymore
+	//ui_->preview->setColor1(color);
 }
 
 void EraserSettings::setBackground(const QColor& color)
 {
-	ui_->preview->setColor1(color);
+	// Erasers don't use colors anymore
+	// But we use the background color to fill
+	// the preview backdrop.
+	ui_->preview->setColor2(color);
 }
 
 const dpcore::Brush& EraserSettings::getBrush() const
@@ -247,7 +252,7 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	setUiWidget(widget);
 
 	// Populate blend mode combobox
-	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+	for(int b=1;b<dpcore::BLEND_MODES;++b) {
 		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
@@ -334,7 +339,7 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	setUiWidget(widget);
 
 	// Populate blend mode combobox
-	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+	for(int b=1;b<dpcore::BLEND_MODES;++b) {
 		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 

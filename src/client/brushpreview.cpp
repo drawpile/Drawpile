@@ -64,11 +64,10 @@ void BrushPreview::setColor1(const QColor& color)
 void BrushPreview::setColor2(const QColor& color)
 {
 	color2_ = color;
-	if(colorpressure_) {
+	if(colorpressure_)
 		brush_.setColor2(color);
-		updatePreview();
-		update();
-	}
+	updatePreview();
+	update();
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)
@@ -101,7 +100,8 @@ void BrushPreview::updatePreview()
 	}
 	dpcore::Layer *layer = preview_->getLayerByIndex(0);
 
-	layer->fillChecker(palette().light().color(), palette().mid().color());
+	//layer->fillChecker(palette().light().color(), palette().mid().color());
+	layer->fillColor(color2_);
 
 	const int strokew = preview_->width() - preview_->width()/4;
 	const int strokeh = preview_->height() / 4;
@@ -265,7 +265,8 @@ void BrushPreview::setSubPixel(bool enable)
 
 void BrushPreview::setBlendingMode(int mode)
 {
-	brush_.setBlendingMode(mode);
+	// Eraser mode (0) is not visible, so add 1
+	brush_.setBlendingMode(mode + 1);
 	updatePreview();
 	update();
 }

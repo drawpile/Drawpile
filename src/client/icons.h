@@ -33,6 +33,9 @@ const QIcon& kick();
 //! Get a remove icon
 const QIcon& remove();
 
+//! Get a layer visible icon
+const QIcon& layervisible();
+
 //! Get an add icon
 const QIcon& add();
 

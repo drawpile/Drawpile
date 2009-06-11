@@ -34,5 +34,6 @@
 	<file>icons/format-text-bold.png</file>
 	<file>icons/format-text-italic.png</file>
 	<file>icons/angle.png</file>
+	<file>icons/layer-visible.png</file>
 </qresource>
 </RCC>

@@ -99,7 +99,7 @@ class BoardEditor {
 		virtual void createLayer(const QString& name) = 0;
 
 		//! Delete a layer
-		virtual void deleteLayer(int id) = 0;
+		virtual void deleteLayer(int id, bool mergedown) = 0;
 
 		//! Merge a layer with the currently selected layer
 		void mergeLayer(int x, int y, const dpcore::Layer *layer);
@@ -162,7 +162,7 @@ class LocalBoardEditor : public BoardEditor {
 		void setTool(const dpcore::Brush& brush);
 		void setLayer(int id);
 		void createLayer(const QString& name);
-		void deleteLayer(int id);
+		void deleteLayer(int id, bool mergedown);
 		void changeLayerOpacity(int id, int opacity);
 		// Atomic strokes are meaningles in local mode
 		void startAtomic() { }
@@ -186,7 +186,7 @@ class RemoteBoardEditor : public BoardEditor {
 		bool isCurrentBrush(const dpcore::Brush& brush) const;
 		void setTool(const dpcore::Brush& brush);
 		void createLayer(const QString& name);
-		void deleteLayer(int id);
+		void deleteLayer(int id, bool mergedown);
 		void changeLayerOpacity(int id, int opacity);
 		void setLayer(int id);
 		void startAtomic();

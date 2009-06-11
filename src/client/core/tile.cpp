@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -40,6 +40,12 @@ Tile::Tile(int x, int y)
 	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
 {
 	memset(data_, 0, SIZE*SIZE*sizeof(quint32));
+}
+
+Tile::Tile(const Tile *src)
+	: x_(src->x_), y_(src->y_), data_(new quint32[SIZE*SIZE])
+{
+	memcpy(data_, src->data_, BYTES);
 }
 
 /**
@@ -88,6 +94,14 @@ void Tile::fillChecker(const QColor& dark, const QColor& light)
 	fillChecker(data_, dark, light);
 }
 
+void Tile::fillColor(const QColor& color)
+{
+	const quint32 c = color.rgba();
+	quint32 *ptr = data_;
+	for(int i=0;i<SIZE*SIZE;++i)
+		*(ptr++) = c;
+}
+
 void Tile::copyToImage(QImage& image) const {
 	int w = 4*(image.width()-x_*SIZE<SIZE?image.width()-x_*SIZE:SIZE);
 	int h = image.height()-y_*SIZE<SIZE?image.height()-y_*SIZE:SIZE;
@@ -126,9 +140,14 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
 			color.rgba(), values, w, h, skip, SIZE-w);
 }
 
+/**
+ * @param tile the tile which will be composited over this tile
+ * @param opacity opacity modifier of tile
+ */
 void Tile::merge(const Tile *tile, uchar opacity)
 {
-	compositePixels(0, data_, tile->data_, SIZE*SIZE, opacity);
+	if(tile!=0)
+		compositePixels(1, data_, tile->data_, SIZE*SIZE, opacity);
 }
 
 }
