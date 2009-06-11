@@ -88,12 +88,14 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
 		if(selection.indexes().isEmpty()) {
 			dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(ui_->layers->model());
 			// A layer must always be selected
-			if(prev.indexes().isEmpty())
-				ui_->layers->selectionModel()->select(layers->index(layers->layers(),0),
-					QItemSelectionModel::Select);
-			else
+			if(prev.indexes().isEmpty()) {
+				if(!ui_->layers->selectionModel()->hasSelection())
+					ui_->layers->selectionModel()->select(layers->index(layers->layers(),0),
+						QItemSelectionModel::Select);
+			} else {
 				ui_->layers->selectionModel()->select(prev.indexes().first(),
 						QItemSelectionModel::Select);
+			}
 		} else {
 			const dpcore::Layer *layer = selection.indexes().first().data().value<dpcore::Layer*>();
 			emit selected(layer->id());

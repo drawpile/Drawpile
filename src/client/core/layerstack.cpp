@@ -38,6 +38,7 @@ LayerStack::~LayerStack()
 {
 	foreach(Layer *l, layers_)
 		delete l;
+	delete [] cache_;
 }
 
 void LayerStack::init(const QSize& size)
