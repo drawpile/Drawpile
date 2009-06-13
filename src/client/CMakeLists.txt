@@ -8,7 +8,7 @@ include ( ${QT_USE_FILE} )
 set (
 	HEADERS
 	main.h mainwindow.h netstatus.h dualcolorbutton.h editorview.h
-	toolsettingswidget.h colordialog.h brushpreview.h colortriangle.h
+	toolsettingswidget.h colordialog.h brushpreview.h qtcolortriangle.h
 	board.h controller.h gradientslider.h colorbutton.h
 	newdialog.h imageselector.h hostdialog.h joindialog.h
 	hoststate.h sessionstate.h logindialog.h
@@ -33,7 +33,7 @@ set (
 	SOURCES
 	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
-	colortriangle.cpp board.cpp controller.cpp boarditem.cpp user.cpp
+	qtcolortriangle.cpp board.cpp controller.cpp boarditem.cpp user.cpp
 	tools.cpp toolsettings.cpp boardeditor.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
 	hostdialog.cpp joindialog.cpp hoststate.cpp sessionstate.cpp

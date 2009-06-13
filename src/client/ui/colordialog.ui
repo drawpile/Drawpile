@@ -1,82 +1,89 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ColorDialog</class>
- <widget class="QDialog" name="ColorDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="ColorDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>430</width>
-    <height>254</height>
+    <width>491</width>
+    <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QVBoxLayout" name="triangleLayout" >
-       <property name="spacing" >
+      <layout class="QVBoxLayout" name="triangleLayout">
+       <property name="spacing">
         <number>6</number>
        </property>
-       <property name="margin" >
+       <property name="margin">
         <number>0</number>
        </property>
        <item>
-        <widget class="ColorTriangle" name="colorTriangle" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
+        <widget class="QtColorTriangle" name="colorTriangle">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>1</horstretch>
+           <verstretch>1</verstretch>
           </sizepolicy>
-         </property>
-         <property name="minimumSize" >
-          <size>
-           <width>175</width>
-           <height>175</height>
-          </size>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QFrame" name="frame" >
-         <property name="minimumSize" >
+        <widget class="QFrame" name="frame">
+         <property name="minimumSize">
           <size>
            <width>120</width>
            <height>16</height>
           </size>
          </property>
-         <property name="frameShape" >
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
-         <property name="frameShadow" >
+         <property name="frameShadow">
           <enum>QFrame::Plain</enum>
          </property>
-         <layout class="QHBoxLayout" >
-          <property name="spacing" >
+         <layout class="QHBoxLayout">
+          <property name="spacing">
            <number>0</number>
           </property>
-          <property name="margin" >
+          <property name="margin">
            <number>0</number>
           </property>
           <item>
-           <widget class="QFrame" name="old" >
-            <property name="palette" >
+           <widget class="QFrame" name="old">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="palette">
              <palette>
               <active>
-               <colorrole role="Base" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="Window" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>0</green>
                   <blue>0</blue>
@@ -85,18 +92,18 @@
                </colorrole>
               </active>
               <inactive>
-               <colorrole role="Base" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="Window" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>0</green>
                   <blue>0</blue>
@@ -105,18 +112,18 @@
                </colorrole>
               </inactive>
               <disabled>
-               <colorrole role="Base" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>0</green>
                   <blue>0</blue>
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="Window" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>0</green>
                   <blue>0</blue>
@@ -126,28 +133,34 @@
               </disabled>
              </palette>
             </property>
-            <property name="frameShape" >
+            <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QFrame" name="current" >
-            <property name="palette" >
+           <widget class="QFrame" name="current">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16</height>
+             </size>
+            </property>
+            <property name="palette">
              <palette>
               <active>
-               <colorrole role="Base" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="Window" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>0</red>
                   <green>0</green>
                   <blue>255</blue>
@@ -156,18 +169,18 @@
                </colorrole>
               </active>
               <inactive>
-               <colorrole role="Base" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>255</red>
                   <green>255</green>
                   <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="Window" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>0</red>
                   <green>0</green>
                   <blue>255</blue>
@@ -176,18 +189,18 @@
                </colorrole>
               </inactive>
               <disabled>
-               <colorrole role="Base" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Base">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>0</red>
                   <green>0</green>
                   <blue>255</blue>
                  </color>
                 </brush>
                </colorrole>
-               <colorrole role="Window" >
-                <brush brushstyle="SolidPattern" >
-                 <color alpha="255" >
+               <colorrole role="Window">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
                   <red>0</red>
                   <green>0</green>
                   <blue>255</blue>
@@ -197,7 +210,7 @@
               </disabled>
              </palette>
             </property>
-            <property name="frameShape" >
+            <property name="frameShape">
              <enum>QFrame::NoFrame</enum>
             </property>
            </widget>
@@ -208,189 +221,168 @@
       </layout>
      </item>
      <item>
-      <layout class="QGridLayout" name="sliderLayout" >
-       <property name="horizontalSpacing" >
+      <layout class="QGridLayout" name="sliderLayout">
+       <property name="horizontalSpacing">
         <number>0</number>
        </property>
-       <property name="verticalSpacing" >
+       <property name="verticalSpacing">
         <number>2</number>
        </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="label" >
-         <property name="text" >
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
           <string>Hue:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" colspan="2" >
-        <widget class="GradientSlider" name="hue" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Ignored" hsizetype="Expanding" >
+       <item row="0" column="1" colspan="2">
+        <widget class="GradientSlider" name="hue" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
            <horstretch>2</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="maximum" >
+         <property name="maximum" stdset="0">
           <number>359</number>
          </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="mode" >
-          <enum>GradientSlider::Hsv</enum>
-         </property>
-         <property name="colorValue" >
+         <property name="colorValue" stdset="0">
           <double>1.000000000000000</double>
          </property>
         </widget>
        </item>
-       <item row="0" column="3" >
-        <widget class="QSpinBox" name="spinBox" >
-         <property name="maximum" >
+       <item row="0" column="3">
+        <widget class="QSpinBox" name="spinBox">
+         <property name="maximum">
           <number>359</number>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="label_2" >
-         <property name="text" >
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
           <string>Sat.:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="2" >
-        <widget class="GradientSlider" name="saturation" >
-         <property name="maximum" >
-          <number>255</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="3" >
-        <widget class="QSpinBox" name="spinBox_2" >
-         <property name="maximum" >
+       <item row="1" column="1" colspan="2">
+        <widget class="GradientSlider" name="saturation" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="label_3" >
-         <property name="text" >
+       <item row="1" column="3">
+        <widget class="QSpinBox" name="spinBox_2">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
           <string>Value:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1" colspan="2" >
-        <widget class="GradientSlider" name="value" >
-         <property name="maximum" >
-          <number>255</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="3" >
-        <widget class="QSpinBox" name="spinBox_3" >
-         <property name="maximum" >
+       <item row="2" column="1" colspan="2">
+        <widget class="GradientSlider" name="value" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="label_4" >
-         <property name="text" >
+       <item row="2" column="3">
+        <widget class="QSpinBox" name="spinBox_3">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
           <string>Red:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1" colspan="2" >
-        <widget class="GradientSlider" name="red" >
-         <property name="maximum" >
-          <number>255</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="3" >
-        <widget class="QSpinBox" name="spinBox_4" >
-         <property name="maximum" >
+       <item row="3" column="1" colspan="2">
+        <widget class="GradientSlider" name="red" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="4" column="0" >
-        <widget class="QLabel" name="label_5" >
-         <property name="text" >
+       <item row="3" column="3">
+        <widget class="QSpinBox" name="spinBox_4">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
           <string>Green:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1" colspan="2" >
-        <widget class="GradientSlider" name="green" >
-         <property name="maximum" >
-          <number>255</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="3" >
-        <widget class="QSpinBox" name="spinBox_5" >
-         <property name="maximum" >
+       <item row="4" column="1" colspan="2">
+        <widget class="GradientSlider" name="green" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="5" column="0" >
-        <widget class="QLabel" name="label_6" >
-         <property name="text" >
+       <item row="4" column="3">
+        <widget class="QSpinBox" name="spinBox_5">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
           <string>Blue:</string>
          </property>
         </widget>
        </item>
-       <item row="5" column="1" colspan="2" >
-        <widget class="GradientSlider" name="blue" >
-         <property name="maximum" >
-          <number>255</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="3" >
-        <widget class="QSpinBox" name="spinBox_6" >
-         <property name="maximum" >
+       <item row="5" column="1" colspan="2">
+        <widget class="GradientSlider" name="blue" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="6" column="0" >
-        <widget class="QLabel" name="alphalbl" >
-         <property name="text" >
+       <item row="5" column="3">
+        <widget class="QSpinBox" name="spinBox_6">
+         <property name="maximum">
+          <number>255</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="alphalbl">
+         <property name="text">
           <string>Alpha:</string>
          </property>
         </widget>
        </item>
-       <item row="6" column="3" >
-        <widget class="QSpinBox" name="alphaBox" >
-         <property name="maximum" >
+       <item row="6" column="3">
+        <widget class="QSpinBox" name="alphaBox">
+         <property name="maximum">
           <number>255</number>
          </property>
         </widget>
        </item>
-       <item row="8" column="1" colspan="2" >
+       <item row="8" column="1" colspan="2">
         <spacer>
-         <property name="orientation" >
+         <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" stdset="0" >
+         <property name="sizeHint" stdset="0">
           <size>
            <width>108</width>
            <height>17</height>
@@ -398,29 +390,26 @@
          </property>
         </spacer>
        </item>
-       <item row="6" column="1" colspan="2" >
-        <widget class="GradientSlider" name="alpha" >
-         <property name="maximum" >
+       <item row="6" column="1" colspan="2">
+        <widget class="GradientSlider" name="alpha" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
-         </property>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
-       <item row="7" column="0" >
-        <widget class="QLabel" name="label_7" >
-         <property name="text" >
+       <item row="7" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="text">
           <string>Hex:</string>
          </property>
         </widget>
        </item>
-       <item row="7" column="1" >
-        <widget class="QLineEdit" name="txtHex" >
-         <property name="inputMask" >
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="txtHex">
+         <property name="inputMask">
           <string>\#HHHHHH; </string>
          </property>
-         <property name="text" >
+         <property name="text">
           <string>#000000</string>
          </property>
         </widget>
@@ -430,11 +419,11 @@
     </layout>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons" >
+     <property name="standardButtons">
       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
      </property>
     </widget>
@@ -443,9 +432,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ColorTriangle</class>
+   <class>QtColorTriangle</class>
    <extends>QWidget</extends>
-   <header>colortriangle.h</header>
+   <header>qtcolortriangle.h</header>
   </customwidget>
   <customwidget>
    <class>GradientSlider</class>
@@ -461,11 +450,11 @@
    <receiver>ColorDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>266</x>
-     <y>244</y>
+    <hint type="sourcelabel">
+     <x>275</x>
+     <y>290</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -477,11 +466,11 @@
    <receiver>ColorDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>334</x>
-     <y>244</y>
+    <hint type="sourcelabel">
+     <x>343</x>
+     <y>290</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>
@@ -493,11 +482,11 @@
    <receiver>spinBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>366</x>
-     <y>29</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>38</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>418</x>
      <y>29</y>
     </hint>
@@ -509,11 +498,11 @@
    <receiver>hue</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>418</x>
      <y>29</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>343</x>
      <y>24</y>
     </hint>
@@ -525,13 +514,13 @@
    <receiver>saturation</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>418</x>
      <y>54</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>366</x>
-     <y>54</y>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>68</y>
     </hint>
    </hints>
   </connection>
@@ -541,11 +530,11 @@
    <receiver>spinBox_2</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>366</x>
-     <y>54</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>68</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>418</x>
      <y>54</y>
     </hint>
@@ -557,13 +546,13 @@
    <receiver>value</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>418</x>
      <y>79</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>366</x>
-     <y>79</y>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -573,11 +562,11 @@
    <receiver>spinBox_3</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>366</x>
-     <y>79</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>98</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>418</x>
      <y>79</y>
     </hint>
@@ -589,13 +578,13 @@
    <receiver>red</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>418</x>
      <y>104</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>366</x>
-     <y>104</y>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>128</y>
     </hint>
    </hints>
   </connection>
@@ -605,11 +594,11 @@
    <receiver>spinBox_4</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>366</x>
-     <y>104</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>128</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>418</x>
      <y>104</y>
     </hint>
@@ -621,13 +610,13 @@
    <receiver>green</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>418</x>
-     <y>129</y>
+     <y>158</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>366</x>
-     <y>129</y>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -637,13 +626,13 @@
    <receiver>spinBox_5</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>366</x>
-     <y>129</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>158</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>418</x>
-     <y>129</y>
+     <y>158</y>
     </hint>
    </hints>
   </connection>
@@ -653,13 +642,13 @@
    <receiver>blue</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>418</x>
-     <y>154</y>
+     <y>188</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>366</x>
-     <y>154</y>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>188</y>
     </hint>
    </hints>
   </connection>
@@ -669,13 +658,13 @@
    <receiver>spinBox_6</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>366</x>
-     <y>154</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>188</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>418</x>
-     <y>154</y>
+     <y>188</y>
     </hint>
    </hints>
   </connection>
@@ -685,13 +674,13 @@
    <receiver>alphaBox</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>319</x>
-     <y>164</y>
+    <hint type="sourcelabel">
+     <x>363</x>
+     <y>218</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>397</x>
-     <y>165</y>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>
@@ -701,13 +690,13 @@
    <receiver>alpha</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>389</x>
-     <y>175</y>
+    <hint type="sourcelabel">
+     <x>418</x>
+     <y>218</y>
     </hint>
-    <hint type="destinationlabel" >
-     <x>280</x>
-     <y>173</y>
+    <hint type="destinationlabel">
+     <x>363</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>
