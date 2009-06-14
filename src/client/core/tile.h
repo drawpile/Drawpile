@@ -47,7 +47,7 @@ class Tile {
 		Tile(const QColor& color, int x, int y);
 
 		//! Construct a tile from an image
-		Tile(const QImage& image, int x, int y);
+		Tile(const QImage& image, int x, int y, int xoff=0, int yoff=0);
 
 		//! Construct a copy of the given tile
 		Tile(const Tile *src);
@@ -84,8 +84,12 @@ class Tile {
 		//! Get read access to the raw pixel data
 		const quint32 *data() const { return data_; }
 
+		//! Check if this tile is completely transparent
+		bool isBlank() const;
+
 		//! Fill a tile sized memory buffer with a checker pattenr
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
+
 	private:
 		int x_, y_;
 		quint32 *data_;

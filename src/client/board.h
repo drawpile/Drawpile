@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -73,10 +73,13 @@ class Board : public QGraphicsScene
 		~Board();
 
 		//! Initialize to a solid color
-		void initBoard(const QSize& size, const QColor& background);
+		bool initBoard(const QSize& size, const QColor& background);
 
 		//! Initialize the board using an existing image as base
-		void initBoard(QImage image);
+		bool initBoard(QImage image);
+
+		//! Initialize the board from a file
+		bool initBoard(const QString& file);
 
 		//! Set the layer list widget to update when local user's layer changes
 		void setLayerList(widgets::LayerList *llist);
@@ -92,6 +95,9 @@ class Board : public QGraphicsScene
 
 		//! Get board contents as an image
 		QImage image() const;
+
+		//! Save the board
+		bool save(const QString& filename) const;
 
 		//! Is there an image on the drawing board
 		bool hasImage() const;

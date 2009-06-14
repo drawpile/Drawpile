@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,6 +44,9 @@ class BoardItem : public QGraphicsItem
 
 		//! Construct a layer from a QImage
 		BoardItem(const QImage& image, QGraphicsItem *parent=0);
+
+		//! Construct using a prepared layer stack
+		BoardItem(dpcore::LayerStack *layers, QGraphicsItem *parent=0);
 
 		~BoardItem();
 

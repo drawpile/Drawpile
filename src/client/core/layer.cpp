@@ -46,15 +46,28 @@ void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& si
 
 /**
  * Construct a layer whose content is loaded from the provided image.
+ * If x,y,w and h parameters are given, a layer of different size than the
+ * image can be created.
  * @param owner the stack to which this layer belongs to
  * @param id layer ID
  * @param image image on which the layer is based
+ * @param offset image offset
+ * @param size image size (if not set, size is computed from image size and offset)
  */
-Layer::Layer(LayerStack *owner, int id, const QString& name, const QImage& image) {
-	init(owner, id, name, image.size());
-	for(int y=0;y<ytiles_;++y)
-		for(int x=0;x<xtiles_;++x)
-			tiles_[y*xtiles_+x] = new Tile(image, x, y);
+Layer::Layer(LayerStack *owner, int id, const QString& name, const QImage& image, const QPoint& offset, const QSize& size) {
+	init(owner, id, name, size.isNull() ? QSize(offset.x()+image.width(), offset.y()+image.height()) : size);
+	for(int y=0;y<ytiles_;++y) {
+		const int yt = y*xtiles_;
+		for(int x=0;x<xtiles_;++x) {
+			const int x0 = x * Tile::SIZE, y0 = y * Tile::SIZE;
+			const int x1 = x0 + Tile::SIZE, y1 = y0 + Tile::SIZE;
+			if( x1 < offset.x() || x0 > offset.x()+image.width() ||
+					y1 < offset.y() || y0 > offset.y()+image.height())
+				tiles_[yt+x] = 0;
+			else
+				tiles_[yt+x] = new Tile(image, x, y, offset.x(), offset.y());
+		}
+	}
 }
 
 /**
@@ -106,7 +119,8 @@ Layer::~Layer() {
 }
 
 QImage Layer::toImage() const {
-	QImage image(width_, height_, QImage::Format_ARGB32_Premultiplied);
+	QImage image(width_, height_, QImage::Format_ARGB32);
+	image.fill(0);
 	for(int i=0;i<xtiles_*ytiles_;++i) {
 		if(tiles_[i])
 			tiles_[i]->copyToImage(image);
@@ -366,6 +380,19 @@ void Layer::fillColor(const QColor& color)
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		tiles_[i]->fillColor(color);
+}
+
+/**
+ * Free all tiles that are completely transparent
+ */
+void Layer::optimize()
+{
+	for(int i=0;i<xtiles_*ytiles_;++i) {
+		if(tiles_[i] && tiles_[i]->isBlank()) {
+			delete tiles_[i];
+			tiles_[i] = 0;
+		}
+	}
 }
 
 }

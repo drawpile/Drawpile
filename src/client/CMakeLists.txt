@@ -27,6 +27,7 @@ set (
 	tools.h recentfiles.h sessioninfo.h annotationitem.h
 	core/tile.h core/layer.h core/brush.h core/point.h
 	core/rasterop.h
+	ora/zipfile.h ora/orawriter.h ora/orareader.h
 )
 
 set (
@@ -45,6 +46,7 @@ set (
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
 	core/rasterop.cpp brushslider.cpp viewstatus.cpp layerlistdelegate.cpp
 	layerlistwidget.cpp
+	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
@@ -104,6 +106,7 @@ endif ( RELEASE )
 link_libraries(
 	${DPSHAREDLIB}
 	${QT_LIBRARIES}
+	${LIBZIP_LIBRARY}
 )
 
 add_executable (

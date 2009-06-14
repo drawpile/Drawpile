@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 	QPoint offset(int(pos().x() - xi*Tile::SIZE),
 			int(pos().y() - yi*Tile::SIZE));
 	QImage img(offset.x() + int(size_.width()),
-			int(offset.y() + size_.height()), QImage::Format_ARGB32_Premultiplied);
+			int(offset.y() + size_.height()), QImage::Format_ARGB32);
 	img.fill(0);
 	QPainter painter(&img);
 	render(&painter, QRectF(offset, size_));

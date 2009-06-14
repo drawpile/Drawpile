@@ -51,6 +51,16 @@ BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent)
 	setImage(image);
 }
 
+/**
+ * @param layers the layer stack for this board item
+ */
+BoardItem::BoardItem(dpcore::LayerStack *layers, QGraphicsItem *parent)
+	: QGraphicsItem(parent)
+{
+	prepareGeometryChange();
+	image_ = layers;
+}
+
 BoardItem::~BoardItem() {
 	delete image_;
 }

@@ -40,14 +40,17 @@ class LayerStack : public QAbstractListModel {
 		LayerStack(QObject *parent=0);
 		~LayerStack();
 
+		//! Initialize the image
+		void init(const QSize& size);
+
 		//! Add a new image as a layer to the top of the stack
-		Layer *addLayer(const QString& name, const QImage& image);
+		Layer *addLayer(const QString& name, const QImage& image, const QPoint& offset=QPoint());
 
 		//! Add a new layer of solid color to the top of the stack
-		Layer *addLayer(const QString& name, const QColor& color, const QSize& size);
+		Layer *addLayer(const QString& name, const QColor& color, const QSize& size=QSize());
 
 		//! Add a new empty layre to the top of the stack
-		Layer *addLayer(const QString& name, const QSize& size);
+		Layer *addLayer(const QString& name, const QSize& size=QSize());
 
 		//! Delete a layer
 		bool deleteLayer(int id);
@@ -60,6 +63,9 @@ class LayerStack : public QAbstractListModel {
 
 		//! Get a layer by its index
 		Layer *getLayerByIndex(int index);
+
+		//! Get a read only layer by its index
+		const Layer *getLayerByIndex(int index) const;
 
 		//! Get a layer by its ID
 		Layer *getLayer(int id);
@@ -100,7 +106,6 @@ class LayerStack : public QAbstractListModel {
 		Qt::ItemFlags flags(const QModelIndex& index) const;
 
 	private:
-		void init(const QSize& size);
 		void flattenTile(quint32 *data, int xindex, int yindex);
 		void updateCache(int xindex, int yindex);
 

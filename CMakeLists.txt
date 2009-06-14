@@ -5,6 +5,7 @@ project ( drawpile CXX C )
 
 cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
 set ( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
+set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/config )
 
 ### generic info
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
@@ -57,8 +58,13 @@ set ( BUILD_SHARED_LIBS ON )
 include_directories ( AFTER src/ )
 
 set ( QT_USE_QTNETWORK true )
+SET ( QT_USE_QTXML true )
 
 find_package ( Qt4 REQUIRED )
+
+if ( CLIENT )
+	find_package ( LibZip REQUIRED )
+endif ( )
 
 #add_subdirectory ( config/ )
 

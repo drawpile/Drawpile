@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -268,10 +268,8 @@ MainWindow::~MainWindow()
  */
 bool MainWindow::initBoard(const QString& filename)
 {
-	QImage image;
-	if(image.load(filename)==false)
+	if(board_->initBoard(filename)==false)
 		return false;
-	board_->initBoard(image);
 	postInitBoard(filename);
 	return true;
 }
@@ -683,7 +681,7 @@ void MainWindow::open(const QString& file)
 void MainWindow::open()
 {
 	// Get a list of supported formats
-	QString formats;
+	QString formats = "*.ora ";
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
@@ -711,7 +709,7 @@ bool MainWindow::save()
 	if(filename_.isEmpty()) {
 		return saveas();
 	} else {
-		if(board_->image().save(filename_) == false) {
+		if(board_->save(filename_) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
 		} else {
@@ -740,7 +738,7 @@ bool MainWindow::saveas()
 	// We build the filter manually, because these are pretty much the only
 	// reasonable formats (who would want to save a 1600x1200 image
 	// as an XPM?). Perhaps we should check GIF support was compiled in?
-	filter = "PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp);;";
+	filter = "OpenRaster (*.ora);;PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp);;";
 	filter += tr("All files (*)");
 
 	// Get the file name
@@ -771,7 +769,7 @@ bool MainWindow::saveas()
 		}
 
 		// Save the image
-		if(board_->image().save(file) == false) {
+		if(board_->save(file) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
 		} else {

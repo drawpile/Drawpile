@@ -1,4 +1,3 @@
-#include <QDebug>
 /*
    DrawPile - a collaborative drawing program.
 
@@ -19,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QDebug>
 #include <QPixmap>
 #include <QPainter>
 
@@ -41,8 +41,14 @@ LayerStack::~LayerStack()
 	delete [] cache_;
 }
 
+/**
+ * If not already initialized, this is called automatically when the
+ * first layer is added.
+ * @param size the size of the layers (each layer must be this big)
+ */
 void LayerStack::init(const QSize& size)
 {
+	Q_ASSERT(!size.isNull());
 	width_ = size.width();
 	height_ = size.height();
 	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);
@@ -50,42 +56,48 @@ void LayerStack::init(const QSize& size)
 	cache_ = new QPixmap[xtiles_*ytiles_];
 }
 
-Layer *LayerStack::addLayer(const QString& name, const QImage& image)
+Layer *LayerStack::addLayer(const QString& name, const QImage& image, const QPoint& offset)
 {
-	if(width_ != -1) {
-		// TODO, check that image dimensions match
-	} else {
+	if(width_ < 0)
 		init(image.size());
-	}
-	Layer *nl = new Layer(this, lastid_++, name, image);
+	
+	qDebug() << "Adding layer " << image.size() << "with offset" << offset << "(image size" << width_ << height_ << ")";
+
+	Layer *nl = new Layer(this, lastid_++, name, image, offset, QSize(width_, height_));
+	nl->optimize();
 	beginInsertRows(QModelIndex(),1,1);
 	layers_.append(nl);
 	endInsertRows();
 	return nl;
 }
 
+/**
+ * @param name name of the new layer
+ * @param color fill color
+ * @param size layer size (may be omitted if stack is already initialized)
+ */
 Layer *LayerStack::addLayer(const QString& name, const QColor& color, const QSize& size)
 {
-	if(width_ != -1) {
-		// TODO, check that image dimensions match
-	} else {
+	if(width_ < 0)
 		init(size);
-	}
-	Layer *nl = new Layer(this, lastid_++, name, color, size);
+
+	Layer *nl = new Layer(this, lastid_++, name, color, QSize(width_, height_));
 	beginInsertRows(QModelIndex(),1,1);
 	layers_.append(nl);
 	endInsertRows();
 	return nl;
 }
 
+/**
+ * @param name name of the new layer
+ * @param size layer size (may be omitted if stack is already initialized)
+ */
 Layer *LayerStack::addLayer(const QString& name, const QSize& size)
 {
-	if(width_ != -1) {
-		// TODO, check that image dimensions match
-	} else {
+	if(width_ < 0)
 		init(size);
-	}
-	Layer *nl = new Layer(this, lastid_++, name, size);
+
+	Layer *nl = new Layer(this, lastid_++, name, QSize(width_, height_));
 	beginInsertRows(QModelIndex(),1,1);
 	layers_.append(nl);
 	endInsertRows();
@@ -138,6 +150,11 @@ void LayerStack::mergeLayerDown(int id) {
 }
 
 Layer *LayerStack::getLayerByIndex(int index)
+{
+	return layers_.at(index);
+}
+
+const Layer *LayerStack::getLayerByIndex(int index) const
 {
 	return layers_.at(index);
 }

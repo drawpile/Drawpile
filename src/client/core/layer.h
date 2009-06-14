@@ -43,7 +43,7 @@ class LayerStack;
 class Layer {
 	public:
 		//! Construct a layer from an image
-		Layer(LayerStack *owner, int id, const QString& name, const QImage& image);
+		Layer(LayerStack *owner, int id, const QString& name, const QImage& image, const QPoint& offset=QPoint(), const QSize& size=QSize());
 
 		//! Construct a layer filled with solid color
 		Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size);
@@ -112,6 +112,9 @@ class Layer {
 
 		//! Fill the layer with solid color
 		void fillColor(const QColor& color);
+
+		//! Optimize layer memory usage
+		void optimize();
 
 		//! Get a tile
 		const Tile *tile(int x, int y) const { return tiles_[y*xtiles_+x]; }

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 #include "interfaces.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "ora/orawriter.h"
+#include "ora/orareader.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/message.h"
 
@@ -50,20 +52,20 @@ Board::~Board()
  * @param size size of the drawing board
  * @param background background color
  */
-void Board::initBoard(const QSize& size, const QColor& background)
+bool Board::initBoard(const QSize& size, const QColor& background)
 {
 
 	QImage image(size, QImage::Format_RGB32);
 	image.fill(background.rgb());
 
-	initBoard(image);
+	return initBoard(image);
 }
 
 /**
  * An existing image is used as a base.
  * @param image image to use
  */
-void Board::initBoard(QImage image)
+bool Board::initBoard(QImage image)
 {
 	setSceneRect(0,0,image.width(), image.height());
 	delete image_;
@@ -75,6 +77,34 @@ void Board::initBoard(QImage image)
 	regions.append(sceneRect());
 	emit changed(regions);
 	previewstarted_ = false;
+	return true;
+}
+
+bool Board::initBoard(const QString& file)
+{
+	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
+		openraster::Reader reader = openraster::Reader(file);
+		dpcore::LayerStack *layers = reader.open();
+		if(layers==0)
+			return false;
+
+		setSceneRect(0,0,layers->width(), layers->height());
+		delete image_;
+		image_ = new BoardItem(layers);
+		addItem(image_);
+		foreach(User *u, users_)
+			u->setBoard(image_);
+		QList<QRectF> regions;
+		regions.append(sceneRect());
+		emit changed(regions);
+		previewstarted_ = false;
+	} else {
+		QImage image;
+        if(image.load(file)==false)
+			return false;
+		return initBoard(image);
+	}
+	return true;
 }
 
 /**
@@ -195,6 +225,23 @@ QImage Board::image() const
 		return image_->image()->toFlatImage();
 	else
 		return QImage();
+}
+
+/**
+ * The file format is determined from the name of the file
+ * @param file file path
+ * @return true on succcess
+ */
+bool Board::save(const QString& file) const
+{
+	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
+		// Special case: Save as OpenRaster with all the layers intact.
+		openraster::Writer writer(image_->image());
+		return writer.save(file);
+	} else {
+		// Regular image formats: flatten the image first.
+		return image().save(file);
+	}
 }
 
 /**

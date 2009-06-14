@@ -49,23 +49,29 @@ Tile::Tile(const Tile *src)
 }
 
 /**
- * Copy all pixel data from (x*SIZE, y*SIZE, (x+1)*SIZE, (y+1)*SIZE).
+ * Copy all pixel data from (x*SIZE-xoff, y*SIZE-yoff, (x+1)*SIZE-xoff, (y+1)*SIZE-yoff).
  * Pixels outside the source image are set to zero
  */
-Tile::Tile(const QImage& image, int x, int y)
+Tile::Tile(const QImage& image, int x, int y, int xoff, int yoff)
 	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
 {
-	const uchar *pixels = image.scanLine(y*SIZE) + x*SIZE*4;
-	uchar *data = reinterpret_cast<uchar*>(data_);
-	const int w = 4*((image.width() - x*SIZE)<SIZE?image.width()-x*SIZE:SIZE);
-	const int h = (image.height() - y*SIZE)<SIZE?image.height()-y*SIZE:SIZE;
-	for(int yy=0;yy<h;++yy) {
-		memcpy(data, pixels, w);
-		memset(data+w, 0, SIZE*4-w);
-		pixels += image.bytesPerLine();
-		data += SIZE*4;
+	// Work area inside the tile
+	const int top = yoff < y*SIZE ? 0 : yoff - y*SIZE;
+	const int left = xoff < x*SIZE ? 0 : xoff - x*SIZE;
+	const int bottom = (yoff + image.height() - y*SIZE) > SIZE ? SIZE : (yoff + image.height() - y*SIZE);
+	const int right = (xoff + image.width() - x*SIZE) > SIZE ? SIZE : (xoff + image.width() - x*SIZE);
+
+	// If we are not writing the whole tile, initialize memory first
+	if(top || left || bottom<SIZE || right<SIZE) 
+		memset(data_, 0, BYTES);
+
+	// Copy pixels from source area
+	uchar *dest = reinterpret_cast<uchar*>(data_) + (SIZE * 4 * top) + (SIZE * 4 * left);
+	for(int yy=top;yy<bottom;++yy) {
+		const uchar *pixels = image.scanLine(y*SIZE + yy - yoff) + (x*SIZE+left-xoff)*4;
+		memcpy(dest, pixels, (right-left)*4);
+		dest += SIZE*4;
 	}
-	memset(data, 0, (SIZE-h)*SIZE*4);
 }
 
 Tile::~Tile() {
@@ -148,6 +154,22 @@ void Tile::merge(const Tile *tile, uchar opacity)
 {
 	if(tile!=0)
 		compositePixels(1, data_, tile->data_, SIZE*SIZE, opacity);
+}
+
+/**
+ * @return true if every pixel of this tile has an alpha value of zero
+ */
+bool Tile::isBlank() const
+{
+	const uchar *data = reinterpret_cast<const uchar*>(data_);
+	const uchar *ptr = data + BYTES - 1;
+	while(ptr>data) {
+		if(*ptr != 0)
+			return false;
+		ptr -= 3;
+	}
+	Q_ASSERT(data==ptr);
+	return true;
 }
 
 }
