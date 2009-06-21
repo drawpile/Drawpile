@@ -310,6 +310,7 @@ class MainWindow : public QMainWindow {
 
 		QAction *toggleoutline_;
 		QAction *hideannotations_;
+		QAction *swapcolors_;
 
 		QAction *toolbartoggles_;
 		QAction *docktoggles_;

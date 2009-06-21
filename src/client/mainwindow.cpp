@@ -1389,6 +1389,8 @@ void MainWindow::initActions()
 	toggleoutline_ = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"));
 	toggleoutline_->setCheckable(true);
 
+	swapcolors_ = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
+
 	// Settings window action
 	settings_ = makeAction(0, 0, tr("&Settings"));
 	connect(settings_, SIGNAL(triggered()), this, SLOT(showSettings()));
@@ -1451,6 +1453,7 @@ void MainWindow::createMenus()
 	toolsmenu->addAction(annotationtool_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
+	toolsmenu->addAction(swapcolors_);
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(settings_);
 
@@ -1497,6 +1500,9 @@ void MainWindow::createToolbars()
 
 	// Create color button
 	fgbgcolor_ = new widgets::DualColorButton(drawtools);
+
+	connect(swapcolors_, SIGNAL(triggered()),
+			fgbgcolor_, SLOT(swapColors()));
 
 	connect(fgbgcolor_,SIGNAL(foregroundClicked()),
 			this, SLOT(setForegroundColor()));
