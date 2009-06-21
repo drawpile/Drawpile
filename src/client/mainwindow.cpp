@@ -67,6 +67,8 @@
 #include "settingsdialog.h"
 #include "toolsettings.h" // enableBaking()
 
+#include "core/layerstack.h"
+
 #include "navigator.h"
 
 /**
@@ -557,17 +559,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			return;
 		}
 
-		// Confirm unbaked annotations
-		if(board_->hasAnnotations()) {
-			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
-					tr("Note. All unbaked annotations will be lost."),
-					QMessageBox::Ok|QMessageBox::Cancel, this);
-			if(box.exec() != QMessageBox::Ok) {
-				event->ignore();
-				return;
-			}
-		}
-
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
 			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
@@ -706,6 +697,37 @@ void MainWindow::open()
 }
 
 /**
+ * Allows the user three choices:
+ * <ul>
+ * <li>Cancel</li>
+ * <li>Go ahead and flatten the image, then save<li>
+ * <li>Save in OpenRaster format instead</li>
+ * </ul>
+ * If user chooces to save in OpenRaster, the suffix of file parameter is
+ * altered.
+ * @param file file name (may be altered)
+ * @return true if file should be saved
+ */
+bool MainWindow::confirmFlatten(QString& file) const
+{
+	QMessageBox box(QMessageBox::Information, tr("Save image"),
+			tr("The selected format does not support layers or annotations."),
+			QMessageBox::Cancel);
+	box.addButton(tr("Flatten"), QMessageBox::AcceptRole);
+	QPushButton *saveora = box.addButton(tr("Save as OpenRaster"), QMessageBox::ActionRole);
+
+	// Don't save at all
+	if(box.exec() == QMessageBox::Cancel)
+		return false;
+	
+	// Save
+	if(box.clickedButton() == saveora) {
+		file = file.left(file.lastIndexOf('.')) + ".ora";
+	}
+	return true;
+}
+
+/**
  * If no file name has been selected, \a saveas is called.
  */
 bool MainWindow::save()
@@ -713,6 +735,10 @@ bool MainWindow::save()
 	if(filename_.isEmpty()) {
 		return saveas();
 	} else {
+		if(QFileInfo(filename_).suffix() != "ora" && board_->needSaveOra()) {
+			if(confirmFlatten(filename_)==false)
+				return false;
+		}
 		if(board_->save(filename_) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
@@ -749,27 +775,20 @@ bool MainWindow::saveas()
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save image"), lastpath_, filter, &selfilter);
 	if(file.isEmpty()==false) {
-		// Get the default suffix to use
-		QRegExp extexp("\\(\\*\\.(.*)\\)");
-		QString defaultsuffix;
-		if(extexp.indexIn(selfilter)!=-1)
-			defaultsuffix = extexp.cap(1);
-
-		// Add suffix if missing
+		// If no file suffix is given, use a default one
 		const QFileInfo info(file);
-		lastpath_ = info.absolutePath();
-		if(defaultsuffix.isEmpty()==false && info.suffix().compare(defaultsuffix)!=0)
-			file += "." + defaultsuffix;
-
-		// Inform the user that annotations are not saved. Until we have
-		// our own image format, we just show this every time.
-		if(board_->hasAnnotations()) {
-			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
-					tr("Note. Annotations will not be saved."),
-					QMessageBox::Ok|QMessageBox::Cancel);
-			if(box.exec() != QMessageBox::Ok) {
+		if(info.suffix().isEmpty()) {
+			// Pick the default suffix based on the features used
+			if(board_->needSaveOra())
+				file += ".ora";
+			else
+				file += ".png";
+		} else if(board_->needSaveOra() && info.suffix() != "ora") {
+			// If the user has already chosen a format and it lacks
+			// the necessary features, confirm this is what they
+			// really want to do.
+			if(confirmFlatten(file)==false)
 				return false;
-			}
 		}
 
 		// Save the image

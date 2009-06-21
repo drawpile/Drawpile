@@ -99,6 +99,9 @@ class Board : public QGraphicsScene
 		//! Save the board
 		bool save(const QString& filename) const;
 
+		//! Check if we are using features that require saving in OpenRaster format to preserve
+		bool needSaveOra() const;
+
 		//! Is there an image on the drawing board
 		bool hasImage() const;
 

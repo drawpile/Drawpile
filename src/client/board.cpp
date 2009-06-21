@@ -245,6 +245,20 @@ bool Board::save(const QString& file) const
 }
 
 /**
+ * An image cannot be saved as a regular PNG without loss of information
+ * if
+ * <ul>
+ * <li>It has more than one layer</li>
+ * <li>It has annotations</li>
+ * </ul>
+ */
+bool Board::needSaveOra() const
+{
+	return image_->image()->layers() > 1 ||
+		hasAnnotations();
+}
+
+/**
  * @retval true if the board contains an image
  */
 bool Board::hasImage() const {

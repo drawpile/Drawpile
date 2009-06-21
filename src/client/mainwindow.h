@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -186,6 +186,9 @@ class MainWindow : public QMainWindow {
 		void startAutosaver();
 		//! Stop autosaver timer
 		void stopAutosaver();
+
+		//! Confirm saving of image in a format that doesn't support all required features
+		bool confirmFlatten(QString& file) const;
 
 		//! Utility function for creating actions
 		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence());
