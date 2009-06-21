@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -186,6 +186,16 @@ void LocalBoardEditor::deleteLayer(int id, bool mergedown)
 
 /**
  * @param id layer ID
+ * @param toId ID of layer under which the layer is moved to
+ */
+void LocalBoardEditor::moveLayer(int id, int toId)
+{
+	board_->layers()->moveLayer(id, toId);
+	board_->update();
+}
+
+/**
+ * @param id layer ID
  * @param opacity new layer opacity
  */
 void LocalBoardEditor::changeLayerOpacity(int id, int opacity)
@@ -279,6 +289,15 @@ void RemoteBoardEditor::createLayer(const QString& name)
 void RemoteBoardEditor::deleteLayer(int id, bool mergedown)
 {
 	qWarning() << "BUG: Tried to delete layer ID" << id << "while in a network session!";
+}
+
+/**
+ * @param id layer ID
+ * @param toId ID of layer under which the layer is moved to
+ */
+void RemoteBoardEditor::moveLayer(int id, int toId)
+{
+	qWarning() << "TODO: layer reordering";
 }
 
 /**

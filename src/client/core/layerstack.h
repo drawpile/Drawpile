@@ -49,7 +49,7 @@ class LayerStack : public QAbstractListModel {
 		//! Add a new layer of solid color to the top of the stack
 		Layer *addLayer(const QString& name, const QColor& color, const QSize& size=QSize());
 
-		//! Add a new empty layre to the top of the stack
+		//! Add a new empty layer to the top of the stack
 		Layer *addLayer(const QString& name, const QSize& size=QSize());
 
 		//! Delete a layer
@@ -57,6 +57,9 @@ class LayerStack : public QAbstractListModel {
 
 		//! Merge the layer to the one below it
 		void mergeLayerDown(int id);
+
+		//! Move a layer
+		void moveLayer(int src, int dest);
 
 		//! Get the number of layers in the stack
 		int layers() const { return layers_.count(); }
@@ -69,6 +72,9 @@ class LayerStack : public QAbstractListModel {
 
 		//! Get a layer by its ID
 		Layer *getLayer(int id);
+
+		//! Is the given layer the bottommost layer in this stack?
+		bool isBottommost(const Layer *layer) const;
 
 		//! Get the index of the specified layer
 		int id2index(int id) const;
@@ -104,6 +110,27 @@ class LayerStack : public QAbstractListModel {
 		int rowCount(const QModelIndex& parent) const;
 		QVariant data(const QModelIndex& index, int role) const;
 		Qt::ItemFlags flags(const QModelIndex& index) const;
+		Qt::DropActions supportedDropActions() const;
+
+		// Drag&Drop
+		QStringList mimeTypes() const;
+		QMimeData *mimeData(const QModelIndexList& indexes) const;
+		bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+
+	signals:
+		//! Layer move requested (via DnD)
+		/**
+		 * @param src ID of layer to be moved
+		 * @param dest ID of layer below which the source layer should be moved to. -1 means top of the stack.
+		 */
+		void layerMoveRequest(int src, int dest);
+
+		//! A layer was moved
+		/**
+		 * This is used to inform views that a layer was just moved, so
+		 * they can update their selection view to reflect it.
+		 */
+		void layerMoved(const QModelIndex& from, const QModelIndex& to);
 
 	private:
 		void flattenTile(quint32 *data, int xindex, int yindex);

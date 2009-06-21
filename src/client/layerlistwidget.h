@@ -24,6 +24,7 @@
 
 class LayerListModel;
 class QListView;
+class QModelIndex;
 
 namespace drawingboard {
 	class Board;
@@ -61,11 +62,16 @@ class LayerList : public QDockWidget
 		void opacityChange(int id, int opacity);
 		//! User wants to toggle the visibility of a layer
 		void layerToggleHidden(int id);
+		//! User wants to move a layer
+		void layerMove(int src, int dest);
+		//! User wants to rename a layer
+		void renameLayer(int id, const QString& name);
 
 	private slots:
 		void newLayer();
 		void deleteLayer(const dpcore::Layer* layer);
 		void selected(const QItemSelection& selection, const QItemSelection& prev);
+		void moved(const QModelIndex& from, const QModelIndex& to);
 		void opacityChanged(int opacity);
 
 	private:

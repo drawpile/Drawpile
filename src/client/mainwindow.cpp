@@ -225,6 +225,10 @@ MainWindow::MainWindow(const MainWindow *source)
 			controller_, SLOT(newLayer(const QString&)));
 	connect(layerlist_, SIGNAL(deleteLayer(int, bool)),
 			controller_, SLOT(deleteLayer(int, bool)));
+	connect(layerlist_, SIGNAL(layerMove(int, int)),
+			controller_, SLOT(moveLayer(int, int)));
+	connect(layerlist_, SIGNAL(renameLayer(int, const QString&)),
+			controller_, SLOT(renameLayer(int, const QString&)));
 	connect(layerlist_, SIGNAL(selected(int)),
 			controller_, SLOT(selectLayer(int)));
 	connect(layerlist_, SIGNAL(opacityChange(int,int)),

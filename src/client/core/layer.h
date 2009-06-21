@@ -65,6 +65,9 @@ class Layer {
 		//! Get the layer name
 		const QString& name() const { return name_; }
 
+		//! Set the layer name
+		void setName(const QString& name);
+
 		//! Get the layer as an image
 		QImage toImage() const;
 

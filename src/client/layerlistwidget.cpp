@@ -40,17 +40,25 @@ LayerList::LayerList(QWidget *parent)
 	setWidget(w);
 	ui_->setupUi(w);
 
-	//model_ = new LayerListModel(this);
-	//ui_->layers->setModel(model_);
+	ui_->layers->setDragEnabled(true);
+	ui_->layers->viewport()->setAcceptDrops(true);
+
 	LayerListDelegate *del = new LayerListDelegate(this);
 	ui_->layers->setItemDelegate(del);
+
+	// Connect signals from controls buttons
+	// These signals may be processed and are re-emitted.
 	connect(del, SIGNAL(newLayer()), this, SLOT(newLayer()));
 	connect(del, SIGNAL(deleteLayer(const dpcore::Layer*)), this,
 			SLOT(deleteLayer(const dpcore::Layer*)));
 	connect(del, SIGNAL(layerToggleHidden(int)), this,
 			SIGNAL(layerToggleHidden(int)));
+	connect(del, SIGNAL(renameLayer(int, const QString&)), this,
+			SIGNAL(renameLayer(int, const QString&)));
 	connect(ui_->opacity, SIGNAL(valueChanged(int)), this,
 			SLOT(opacityChanged(int)));
+	connect(ui_->layers->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+			this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
 }
 
 LayerList::~LayerList()
@@ -59,8 +67,15 @@ LayerList::~LayerList()
 
 void LayerList::setBoard(drawingboard::Board *board)
 {
-	ui_->layers->setModel(board->layers());
-	connect(ui_->layers->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
+	dpcore::LayerStack *stack = board->layers();
+	ui_->layers->setModel(stack);
+
+	// Connect signals from layer stack to refresh
+	// UI state after indirectly caused changes
+	connect(stack, SIGNAL(layerMoveRequest(int,int)),
+			this, SIGNAL(layerMove(int, int)));
+	connect(stack, SIGNAL(layerMoved(const QModelIndex&,const QModelIndex&)),
+			this, SLOT(moved(const QModelIndex&,const QModelIndex&)));
 }
 
 /**
@@ -79,7 +94,7 @@ void LayerList::selectLayer(int id)
 }
 
 /**
- * A layer was selected
+ * A layer was selected via UI
  */
 void LayerList::selected(const QItemSelection& selection, const QItemSelection& prev)
 {
@@ -90,11 +105,15 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
 			// A layer must always be selected
 			if(prev.indexes().isEmpty()) {
 				if(!ui_->layers->selectionModel()->hasSelection())
-					ui_->layers->selectionModel()->select(layers->index(layers->layers(),0),
-						QItemSelectionModel::Select);
+					ui_->layers->selectionModel()->select(
+							layers->index(layers->layers(),0),
+							QItemSelectionModel::Select
+							);
 			} else {
-				ui_->layers->selectionModel()->select(prev.indexes().first(),
-						QItemSelectionModel::Select);
+				ui_->layers->selectionModel()->select(
+						prev.indexes().first(),
+						QItemSelectionModel::Select
+						);
 			}
 		} else {
 			const dpcore::Layer *layer = selection.indexes().first().data().value<dpcore::Layer*>();
@@ -107,6 +126,24 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
 	}
 }
 
+/**
+ * Check if it was the currently selected layer that was just moved.
+ * If so, update the selection to reflect the new position.
+ */
+void LayerList::moved(const QModelIndex& from, const QModelIndex& to)
+{
+	QModelIndex sel = ui_->layers->selectionModel()->selection().indexes().first();
+	if(from == sel) {
+		locksel_ = true;
+		ui_->layers->selectionModel()->clear();
+		ui_->layers->selectionModel()->select(to, QItemSelectionModel::Select);
+		locksel_ = false;
+	}
+}
+
+/**
+ * Opacity was changed via UI
+ */
 void LayerList::opacityChanged(int opacity)
 {
 	if(!locksel_) {
@@ -115,6 +152,9 @@ void LayerList::opacityChanged(int opacity)
 	}
 }
 
+/**
+ * New layer button was pressed
+ */
 void LayerList::newLayer()
 {
 	bool ok;
@@ -127,17 +167,30 @@ void LayerList::newLayer()
 	}
 }
 
+/**
+ * Delete layer button was pressed
+ */
 void LayerList::deleteLayer(const dpcore::Layer *layer)
 {
 	QMessageBox box(QMessageBox::Question, tr("Delete layer"),
 			tr("Really delete \"%1\"?").arg(layer->name()),
 			QMessageBox::NoButton, this);
-	box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
+
 	box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
-	QPushButton *merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
+
+	// Offer the choice to merge down only if there is a layer
+	// below this one.
+	QPushButton *merge = 0;
+	if(static_cast<dpcore::LayerStack*>(ui_->layers->model())->isBottommost(layer)==false) {
+		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
+		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
+	}
+
 	QPushButton *cancel = box.addButton(tr("Cancel"), QMessageBox::RejectRole);
+
 	box.setDefaultButton(cancel);
 	box.exec();
+
 	QAbstractButton *choice = box.clickedButton();
 	if(choice != cancel)
 		emit deleteLayer(layer->id(), choice==merge);

@@ -118,6 +118,12 @@ Layer::~Layer() {
 	delete [] tiles_;
 }
 
+void Layer::setName(const QString& name)
+{
+	name_ = name;
+	owner_->layerChanged(this);
+}
+
 QImage Layer::toImage() const {
 	QImage image(width_, height_, QImage::Format_ARGB32);
 	image.fill(0);

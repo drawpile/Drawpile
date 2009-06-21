@@ -21,9 +21,11 @@
 #include <QDebug>
 #include <QPixmap>
 #include <QPainter>
+#include <QMimeData>
 
 #include "layer.h"
 #include "layerstack.h"
+#include "layermimedata.h"
 #include "tile.h"
 #include "rasterop.h"
 
@@ -130,6 +132,32 @@ bool LayerStack::deleteLayer(int id)
 }
 
 /**
+ * @param src ID of the layer to move
+ * @param dest ID of the layer under which src will be moved. -1 is a virtual layer above the topmost one
+ */
+void LayerStack::moveLayer(int src, int dest)
+{
+	int from = id2index(src);
+	int to = dest >= 0 ? id2index(dest) : 0;
+	layers_.move(from, to);
+	if(layers_.at(from)->visible())
+		markDirty();
+
+	QModelIndex old = index(layers() - from, 0);
+	QModelIndex newi = index(layers() - to, 0);
+
+	// Signal views of the change
+	if(from < to)
+		qSwap(from, to);
+	emit dataChanged(
+			index(layers() - from, 0),
+			index(layers() - to, 0)
+			);
+
+	emit layerMoved(old, newi);
+}
+
+/**
  * @param id id of the layer that will be merged
  */
 void LayerStack::mergeLayerDown(int id) {
@@ -168,6 +196,11 @@ Layer *LayerStack::getLayer(int id)
 		if(l->id() == id)
 			return l;
 	return 0;
+}
+
+bool LayerStack::isBottommost(const Layer *layer) const
+{
+	return layers_.first() == layer;
 }
 
 /**
@@ -220,6 +253,7 @@ QColor LayerStack::colorAt(int x, int y) const
 
 QImage LayerStack::toFlatImage() const
 {
+	// FIXME: this won't work if layer 0 is hidden or has opacity < 100%
 	Layer *scratch = Layer::scratchCopy(layers_[0]);
 
 	for(int i=1;i<layers_.size();++i)
@@ -283,20 +317,14 @@ void LayerStack::markDirty()
  * Specifically, it is called when:
  * <ul>
  * <li>Layer opacity is changed</li>
- * <li>...TODO</li>
+ * <li>Layer name is changed</li>
  * </ul>
  * @param layer the layer which changed
  */
 void LayerStack::layerChanged(const Layer* layer)
 {
-	int index=0;
-	for(int i=0;index<layers_.size();++i) {
-		if(layers_[i] == layer) {
-			index = layers_.size() - i;
-			break;
-		}
-	}
-	Q_ASSERT(index > 0);
+	int index=layers_.indexOf(const_cast<Layer*>(layer));
+	Q_ASSERT(index >= 0);
 	const QModelIndex qmi = createIndex(index, 0);
 	emit dataChanged(qmi, qmi);
 }
@@ -305,23 +333,65 @@ void LayerStack::layerChanged(const Layer* layer)
 QVariant LayerStack::data(const QModelIndex& index, int role) const
 {
 	// Always display one extra layer (for adding new layers)
-	if(index.row() >= 0 && index.row() <= layers() && role == Qt::DisplayRole) {
-		if(index.row()==0)
-			return "New";
+	if(index.row() >= 0 && index.row() <= layers()) {
 		// Display the layers in reverse order (topmost layer first)
 		int row = layers() - index.row();
-		return QVariant::fromValue(layers_.at(row));
+		if(role == Qt::DisplayRole) {
+			if(index.row()==0)
+				return "New";
+			return QVariant::fromValue(layers_.at(row));
+		} else if(role == Qt::EditRole) {
+			return layers_.at(row)->name();
+		}
 	}
 	return QVariant();
-
 }
 
 Qt::ItemFlags LayerStack::flags(const QModelIndex& index) const
 {
-	if(index.row()==0)
-		return Qt::ItemIsEnabled | Qt::ItemIsDropEnabled;
+	const Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsDropEnabled;
+	if(index.row()==0) // Row 0 is the "add new layer" special item
+		return flags;
 	else
-		return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+		return flags | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+}
+
+Qt::DropActions LayerStack::supportedDropActions() const
+{
+	// Support (internal) moving
+	return Qt::MoveAction;
+}
+
+QStringList LayerStack::mimeTypes() const {
+	return QStringList() << "image/png";
+}
+
+QMimeData *LayerStack::mimeData(const QModelIndexList& indexes) const
+{
+	return new LayerMimeData(layers_.at(layers() - indexes[0].row()));
+}
+
+bool LayerStack::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
+{
+	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
+	if(ldata) {
+		int from = ldata->layer()->id();
+		int to;
+		if(parent.row() <= 0)
+			to = layers_.last()->id();
+		else
+			to = layers_.at(layers() - parent.row())->id();
+		if(from<0) {
+			qDebug() << "TODO: Cross-image layer DnD";
+		} else {
+			emit layerMoveRequest(from, to);
+
+			return true;
+		}
+	} else {
+		qDebug() << "TODO: Insert layer from external source";
+	}
+	return false;
 }
 
 int LayerStack::rowCount(const QModelIndex& parent) const

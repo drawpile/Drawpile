@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QLineEdit>
+
 #include "layerlistdelegate.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -95,8 +96,8 @@ QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMo
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		const QStyleOptionViewItem &option, const QModelIndex &index)
 {
-	const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
 	if(event->type() == QEvent::MouseButtonRelease) {
+		const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 		if(index.row()==0) {
 			emit newLayer();
@@ -113,5 +114,24 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		}
 	}
 	return QItemDelegate::editorEvent(event, model, option, index);
+}
+
+void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+{
+	QSize size = sizeHint(option, index);
+	const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
+
+	editor->setGeometry(QRect(
+				btnwidth, index.row() * size.height()+1,
+				size.width() - 2 * size.width(), size.height()-2
+				));
+}
+
+void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const
+{
+	emit renameLayer(
+			index.data().value<dpcore::Layer*>()->id(),
+			static_cast<QLineEdit*>(editor)->text()
+			);
 }
 

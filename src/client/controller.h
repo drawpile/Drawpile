@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -118,6 +118,10 @@ class Controller : public QObject
 		void setLayerOpacity(int id, int opacity);
 		//! Toggle layer visibility
 		void toggleLayerHidden(int);
+		//! Move layer
+		void moveLayer(int src, int dest);
+		//! Rename a layer
+		void renameLayer(int id, const QString& name);
 
 		void penDown(const dpcore::Point& point);
 		void penMove(const dpcore::Point& point);

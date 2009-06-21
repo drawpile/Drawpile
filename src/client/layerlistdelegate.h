@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,6 +27,10 @@ namespace dpcore {
 	class Layer;
 }
 
+/**
+ * A custom item delegate for displaying layer names
+ * and editing layer settings.
+ */
 class LayerListDelegate : public QItemDelegate {
 	Q_OBJECT
 	public:
@@ -40,10 +44,14 @@ class LayerListDelegate : public QItemDelegate {
 		bool editorEvent(QEvent *event, QAbstractItemModel *model,
 				const QStyleOptionViewItem &option, const QModelIndex &index);
 
+		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+		void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
+
 	signals:
 		void newLayer();
 		void deleteLayer(const dpcore::Layer *layer);
 		void layerToggleHidden(int);
+		void renameLayer(int id, const QString& name) const;
 };
 
 #endif

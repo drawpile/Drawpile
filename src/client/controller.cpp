@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2009 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -73,8 +73,6 @@ void Controller::setModel(drawingboard::Board *board)
 			toolbox_.aeditor(), SLOT(setSelection(drawingboard::AnnotationItem*)));
 	connect(board, SIGNAL(annotationDeleted(drawingboard::AnnotationItem*)),
 			toolbox_.aeditor(), SLOT(unselect(drawingboard::AnnotationItem*)));
-	// TODO testing...
-	//toolbox_.editor()->setLayer(1);
 }
 
 /**
@@ -478,6 +476,15 @@ void Controller::toggleLayerHidden(int id)
 	board_->update();
 }
 
+void Controller::moveLayer(int src, int dest)
+{
+	toolbox_.editor()->moveLayer(src, dest);
+}
+
+void Controller::renameLayer(int id, const QString& name)
+{
+	board_->layers()->getLayer(id)->setName(name);
+}
 
 void Controller::penDown(const dpcore::Point& point)
 {

@@ -16,7 +16,7 @@ set (
 	mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h
 	navigator.h toolsettings.h brushslider.h viewstatus.h layerlistdelegate.h
-	layerlistwidget.h core/layerstack.h 
+	layerlistwidget.h core/layerstack.h core/layermimedata.h
 )
 
 # unused headers because they do not create moc_* files ()
@@ -46,6 +46,7 @@ set (
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
 	core/rasterop.cpp brushslider.cpp viewstatus.cpp layerlistdelegate.cpp
 	layerlistwidget.cpp
+	core/layermimedata.cpp
 	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
 )
 
