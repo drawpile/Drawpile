@@ -57,8 +57,6 @@ LayerList::LayerList(QWidget *parent)
 			SIGNAL(renameLayer(int, const QString&)));
 	connect(ui_->opacity, SIGNAL(valueChanged(int)), this,
 			SLOT(opacityChanged(int)));
-	connect(ui_->layers->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-			this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
 }
 
 LayerList::~LayerList()
@@ -76,6 +74,10 @@ void LayerList::setBoard(drawingboard::Board *board)
 			this, SIGNAL(layerMove(int, int)));
 	connect(stack, SIGNAL(layerMoved(const QModelIndex&,const QModelIndex&)),
 			this, SLOT(moved(const QModelIndex&,const QModelIndex&)));
+
+	// Connect signal from newly created selection model
+	connect(ui_->layers->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+			this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
 }
 
 /**
