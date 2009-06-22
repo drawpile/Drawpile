@@ -37,8 +37,8 @@ void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& si
 	name_ = name;
 	width_ = size.width();
 	height_ = size.height();
-	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);
-	ytiles_ = height_ / Tile::SIZE + ((height_ % Tile::SIZE)>0);
+	xtiles_ = (width_ + Tile::SIZE-1) / Tile::SIZE;
+	ytiles_ = (height_ + Tile::SIZE-1) / Tile::SIZE;
 	tiles_ = new Tile*[xtiles_ * ytiles_];
 	opacity_ = 255;
 	hidden_ = false;
@@ -55,7 +55,7 @@ void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& si
  * @param size image size (if not set, size is computed from image size and offset)
  */
 Layer::Layer(LayerStack *owner, int id, const QString& name, const QImage& image, const QPoint& offset, const QSize& size) {
-	init(owner, id, name, size.isNull() ? QSize(offset.x()+image.width(), offset.y()+image.height()) : size);
+	init(owner, id, name, size.isEmpty() ? QSize(offset.x()+image.width(), offset.y()+image.height()) : size);
 	for(int y=0;y<ytiles_;++y) {
 		const int yt = y*xtiles_;
 		for(int x=0;x<xtiles_;++x) {

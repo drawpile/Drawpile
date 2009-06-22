@@ -27,7 +27,7 @@
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent), id_(id), flags_(Qt::TextWordWrap), highlight_(false)
+	: QGraphicsItem(parent), id_(id), flags_(Qt::TextWordWrap), highlight_(false), forceborder_(false)
 {
 }
 
