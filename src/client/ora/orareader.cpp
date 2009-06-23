@@ -17,6 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QApplication>
 #include <QImageReader>
 #include <QDomDocument>
 #include <QDebug>
@@ -29,7 +30,10 @@
 
 namespace openraster {
 
+static const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
+
 Reader::Reader(const QString& filename)
+	: error_("No error"), warnings_(NO_WARNINGS)
 {
 	ora = new Zipfile(filename, Zipfile::READ);
 }
@@ -39,11 +43,16 @@ Reader::~Reader()
 	delete ora;
 }
 
-dpcore::LayerStack *Reader::open() const
+/**
+ * If the load fails, you can get the (translateable) error message using \a error().
+ * @return true on success
+ */
+bool Reader::load()
 {
 	if(ora->open()==false) {
-		qWarning() << ora->errorMessage();
-		return 0;
+		error_ = QApplication::tr("Error loading file: %1")
+			.arg(QApplication::tr(ora->errorMessage()));
+		return false;
 	}
 
 	// Make sure this is an OpenRaster file
@@ -51,17 +60,17 @@ dpcore::LayerStack *Reader::open() const
 	QString mimetype = mimeio->readLine();
 	delete mimeio;
 	if(mimetype != "image/openraster") {
-		ora->close();
-		return 0;
+		error_ = QApplication::tr("File is not an OpenRaster file");
+		return false;
 	}
 
 	// Read the stack
 	QDomDocument doc;
 	QIODevice *stackio = ora->getFile("stack.xml");
-	doc.setContent(stackio);
+	doc.setContent(stackio, true);
 	delete stackio;
 
-	dpcore::LayerStack *layers = new dpcore::LayerStack();
+	stack_ = new dpcore::LayerStack();
 
 	const QDomElement stackroot = doc.documentElement().firstChildElement("stack");
 
@@ -70,27 +79,27 @@ dpcore::LayerStack *Reader::open() const
 	QRect bounds = computeBounds(stackroot, QPoint());
 	if(bounds.isNull()) {
 		ora->close();
-		return 0;
+		return false;
 	}
-	layers->init(bounds.size());
+	stack_->init(bounds.size());
 
 	qDebug() << "image bounds" << bounds;
 
 	// Load the layer images
-	if(loadLayers(layers, stackroot, QPoint()) == false) {
+	if(loadLayers(stack_, stackroot, QPoint()) == false) {
 		ora->close();
 		return false;
 	}
 
 	ora->close();
-	return layers;
+	return true;
 }
 
 /**
  * Calculate the final size of the layer stack
  * @param stack layer stack root element
  */
-QRect Reader::computeBounds(const QDomElement& stack, QPoint offset) const
+QRect Reader::computeBounds(const QDomElement& stack, QPoint offset)
 {
 	// Add stack coordinates to offset. Stack child element coordinates
 	// are relative to parent.
@@ -102,7 +111,9 @@ QRect Reader::computeBounds(const QDomElement& stack, QPoint offset) const
 	QDomNodeList nodes = stack.childNodes();
 	for(int n=nodes.count()-1;n>=0;--n) {
 		QDomElement e = nodes.at(n).toElement();
-		if(e.isNull()==false && e.tagName()=="layer") {
+		if(e.isNull())
+			continue;
+		if(e.tagName()=="layer") {
 			// Get layer position (absolute)
 			QPoint coords = QPoint(
 					e.attribute("x", "0").toInt(),
@@ -119,7 +130,7 @@ QRect Reader::computeBounds(const QDomElement& stack, QPoint offset) const
 				const QString src = e.attribute("src");
 				QIODevice *imgsrc = ora->getFile(src);
 				if(imgsrc==0) {
-					qWarning() << "Couldn't get layer" << src;
+					error_ = QApplication::tr("Couldn't get layer %1").arg(src);
 					return QRect();
 				}
 
@@ -127,23 +138,21 @@ QRect Reader::computeBounds(const QDomElement& stack, QPoint offset) const
 				size = image.size();
 				delete imgsrc;
 				if(size.isNull()) {
-					qWarning() << "Couldn't get layer size" << src;
+					error_ = QApplication::tr("Couldn't get layer %1 size").arg(src);
 					return QRect();
 				}
 			}
 			// Now we know the absolute dimensions of the layer.
 			area |= QRect(coords, size);
-		} else if(e.isNull()==false && e.tagName()=="stack") {
+		} else if(e.tagName()=="stack") {
 			// Nested stack.
 			area |= computeBounds(e, offset);
-		} else if(e.isNull()==false) {
-			qWarning() << "unrecognized element (stack)" << e.tagName();
 		}
 	}
 	return area;
 }
 
-bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QPoint offset) const
+bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QPoint offset)
 {
 	offset += QPoint(
 			stack.attribute("x", "0").toInt(),
@@ -154,19 +163,22 @@ bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QP
 	// Iterate backwards to get the layers in the right order (addLayer always adds to the top of the stack)
 	for(int n=nodes.count()-1;n>=0;--n) {
 		QDomElement e = nodes.at(n).toElement();
-		if(e.isNull()==false && e.tagName()=="layer") {
+		if(e.isNull())
+			continue;
+
+		if(e.tagName()=="layer") {
 			// Get the layer content file
 			const QString src = e.attribute("src");
 			QIODevice *imgsrc = ora->getFile(src);
 			if(imgsrc==0) {
-				qWarning() << "Couldn't get layer" << src;
+				error_ = QApplication::tr("Couldn't get layer %1").arg(src);
 				return false;
 			}
 
 			// Load content image from the file
 			QImage content;
 			if(content.load(imgsrc, src.mid(src.lastIndexOf('.')+1).toUtf8().constData())==false) {
-				qWarning() << "Couldn't load layer" << src;
+				error_ = QApplication::tr("Couldn't load layer %1").arg(src);
 				return false;
 			}
 
@@ -180,11 +192,36 @@ bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QP
 						)
 					);
 			layer->setOpacity(qRound(255 * e.attribute("opacity", "1.0").toDouble()));
-		} else if(e.isNull()==false && e.tagName()=="stack") {
+		} else if(e.tagName()=="stack") {
+			// Nested stacks are not fully supported
+			warnings_ |= ORA_NESTED;
 			return loadLayers(layers, e, offset);
+		} else if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="annotations") {
+			loadAnnotations(e);
+		} else if(e.namespaceURI()==DP_NAMESPACE) {
+			qWarning() << "Unhandled drawpile extension in stack:" << e.tagName();
+			warnings_ |= ORA_EXTENDED;
+		} else if(e.prefix()=="") {
+			qWarning() << "Unhandled stack element:" << e.tagName();
+			warnings_ |= ORA_EXTENDED;
 		}
 	}
 	return true;
+}
+
+void Reader::loadAnnotations(const QDomElement& annotations)
+{
+	QDomNodeList nodes = annotations.childNodes();
+	for(int n=0;n<nodes.count();++n) {
+		QDomElement e = nodes.at(n).toElement();
+		if(e.isNull())
+			continue;
+		if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="a")
+			annotations_ << e.text();
+		else
+			qWarning() << "unhandled annotations (DP ext.) element:" << e.tagName();
+
+	}
 }
 
 }

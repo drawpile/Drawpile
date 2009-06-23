@@ -19,6 +19,8 @@
 */
 #include <QDebug>
 
+#include <QMessageBox>
+
 #include "board.h"
 #include "boarditem.h"
 #include "annotationitem.h"
@@ -82,23 +84,46 @@ bool Board::initBoard(QImage image)
 
 bool Board::initBoard(const QString& file)
 {
+	using openraster::Reader;
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
-		openraster::Reader reader = openraster::Reader(file);
-		dpcore::LayerStack *layers = reader.open();
-		if(layers==0)
+		Reader reader = openraster::Reader(file);
+		if(reader.load()==false)
 			return false;
 
+		if(reader.warnings() != Reader::NO_WARNINGS) {
+			QString text = tr("DrawPile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.");
+			if((reader.warnings() & Reader::ORA_EXTENDED))
+				text += "\n" + tr("- Application specific extensions are used");
+			if((reader.warnings() & Reader::ORA_NESTED))
+				text += "\n" + tr("- Nested layers are not fully supported.");
+			QMessageBox::warning(0, tr("Partially supported OpenRaster"), text);
+		}
+
+		// Image loaded, clear out the board
+		dpcore::LayerStack *layers = reader.layers();
 		setSceneRect(0,0,layers->width(), layers->height());
 		delete image_;
 		image_ = new BoardItem(layers);
 		addItem(image_);
 		foreach(User *u, users_)
 			u->setBoard(image_);
+
+		// Add annotations (if present)
+		foreach(QString a, reader.annotations()) {
+			AnnotationItem *item = new AnnotationItem(AnnotationItem::nextId(), image_);
+			item->forceBorder(hla_);
+			// Parse the annotation message
+			protocol::Message msg(a);
+			item->setOptions(protocol::Annotation(msg.tokens()));
+		}
+
+		// Refresh UI
 		QList<QRectF> regions;
 		regions.append(sceneRect());
 		emit changed(regions);
 		previewstarted_ = false;
 	} else {
+		// Not an OpenRaster file, no need for complex loading
 		QImage image;
         if(image.load(file)==false)
 			return false;
@@ -237,6 +262,7 @@ bool Board::save(const QString& file) const
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
 		openraster::Writer writer(image_->image());
+		writer.setAnnotations(getAnnotations(true));
 		return writer.save(file);
 	} else {
 		// Regular image formats: flatten the image first.

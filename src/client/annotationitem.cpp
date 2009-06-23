@@ -26,6 +26,19 @@
 
 namespace drawingboard {
 
+/**
+ * Return a new unique ID for an annotation. Note! These are used only
+ * when in local mode! In network mode the server assigns all IDs,
+ * including new ones for the annotations that existed when the
+ * session was created.
+ * @return ID number
+ */
+int AnnotationItem::nextId()
+{
+	static int ids=0;
+	return ++ids;
+}
+
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
 	: QGraphicsItem(parent), id_(id), flags_(Qt::TextWordWrap), highlight_(false), forceborder_(false)
 {

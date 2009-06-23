@@ -220,10 +220,8 @@ void LocalBoardEditor::endStroke()
 void LocalBoardEditor::annotate(protocol::Annotation a)
 {
 	a.user = user_->id();
-	if(a.id==0) {
-		static int ids=0;
-		a.id = ++ids;
-	}
+	if(a.id==0)
+		a.id = AnnotationItem::nextId();
 	board_->annotate(a);
 }
 

@@ -101,6 +101,9 @@ class AnnotationItem : public QGraphicsItem {
 		//! Render this annotation onto a layer
 		dpcore::Layer *toLayer(int *x, int *y);
 
+		//! Get a new ID for an annotation
+		static int nextId();
+
 	protected:
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 

@@ -32,19 +32,51 @@ class QPoint;
 
 namespace openraster {
 
+/**
+ * An OpenRaster reader.
+ */
 class Reader {
 	public:
+		enum Warning {
+			//! No warnings (i.e. DrawPile supports all features of the file)
+			NO_WARNINGS = 0,
+			//! The OpenRaster file uses unsupported app. specific extensions
+			ORA_EXTENDED = 0x01,
+			//! Nested layers are used
+			ORA_NESTED = 0x02,
+		};
+		Q_DECLARE_FLAGS(Warnings, Warning)
+
 		Reader(const QString& file);
 		~Reader();
 
-		dpcore::LayerStack *open() const;
+		//! Load the image
+		bool load();
 
+		//! Get loaded annotations
+		const QStringList& annotations() const { return annotations_; }
+
+		//! Get the loaded layers
+		dpcore::LayerStack *layers() const { return stack_; }
+
+		//! Get the error message
+		const QString& error() const { return error_; }
+
+		//! Get the warning flags
+		const Warnings warnings() const { return warnings_; }
 	private:
-		QRect computeBounds(const QDomElement& stack, QPoint offset) const;
-		bool loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QPoint offset) const;
+		QRect computeBounds(const QDomElement& stack, QPoint offset);
+		bool loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QPoint offset);
+		void loadAnnotations(const QDomElement& annotations);
 
 		Zipfile *ora;
+		QStringList annotations_;
+		dpcore::LayerStack *stack_;
+		QString error_;
+		Warnings warnings_;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Reader::Warnings)
 
 }
 

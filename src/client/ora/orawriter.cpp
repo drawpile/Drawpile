@@ -19,6 +19,7 @@
 */
 #include <QDomDocument>
 #include <QBuffer>
+#include <QDebug>
 
 #include <ctime>
 
@@ -63,6 +64,11 @@ bool Writer::save(const QString& filename) const
 	return zf.close();
 }
 
+void Writer::setAnnotations(const QStringList& annotations)
+{
+	annotations_ = annotations;
+}
+
 bool Writer::writeStackXml(Zipfile &zf) const
 {
 	QDomDocument doc;
@@ -73,6 +79,23 @@ bool Writer::writeStackXml(Zipfile &zf) const
 
 	QDomElement stack = doc.createElement("stack");
 	root.appendChild(stack);
+
+	// Add annotations
+	// This will be replaced with proper text element support
+	// once standardized.
+	if(annotations_.isEmpty()==false) {
+		QDomElement annotations = doc.createElementNS("http://drawpile.sourceforge.net/", "annotations");
+		annotations.setPrefix("drawpile");
+		foreach(QString a, annotations_) {
+			QDomElement an = doc.createElementNS("http://drawpile.sourceforge.net/","a");
+			an.setPrefix("drawpile");
+			an.appendChild(doc.createTextNode(a));
+			annotations.appendChild(an);
+		}
+		stack.appendChild(annotations);
+	}
+
+	// Add layers
 	for(int i=layers_->layers()-1;i>=0;--i) {
 		const dpcore::Layer *l = layers_->getLayerByIndex(i);
 		QDomElement layer = doc.createElement("layer");
@@ -85,6 +108,7 @@ bool Writer::writeStackXml(Zipfile &zf) const
 
 	QBuffer *buf = new QBuffer();
 	buf->setData(doc.toByteArray());
+	qDebug() << "STACK: " << doc.toByteArray();
 	return zf.addFile("stack.xml", buf, buf->size(), time(0));
 }
 

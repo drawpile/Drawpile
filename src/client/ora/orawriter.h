@@ -20,6 +20,8 @@
 #ifndef ORAWRITER_H
 #define ORAWRITER_H
 
+#include <QStringList>
+
 namespace dpcore {
 	class LayerStack;
 }
@@ -33,6 +35,9 @@ class Writer {
 	public:
 		Writer(const dpcore::LayerStack *layers);
 
+		//! Set the annotations to save
+		void setAnnotations(const QStringList& annotations);
+
 		//! Save the layers as an OpenRaster image
 		bool save(const QString& filename) const;
 
@@ -42,6 +47,7 @@ class Writer {
 		bool writeThumbnail(Zipfile &zf) const;
 
 		const dpcore::LayerStack *layers_;
+		QStringList annotations_;
 };
 
 }
