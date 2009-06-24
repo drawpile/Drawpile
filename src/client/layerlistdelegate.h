@@ -52,6 +52,10 @@ class LayerListDelegate : public QItemDelegate {
 		void deleteLayer(const dpcore::Layer *layer);
 		void layerToggleHidden(int);
 		void renameLayer(int id, const QString& name) const;
+		void changeOpacity(int id, int opacity);
+	
+	private:
+		void drawMeter(const QRectF& rect, QPainter *painter, const QColor& background, const QColor& foreground, float value) const;
 };
 
 #endif

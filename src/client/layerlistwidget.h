@@ -75,7 +75,7 @@ class LayerList : public QDockWidget
 		void opacityChanged(int opacity);
 
 	private:
-		Ui_LayerBox *ui_;
+		QListView *list_;
 		LayerListModel *model_;
 		bool locksel_;
 };

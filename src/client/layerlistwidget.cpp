@@ -26,7 +26,6 @@
 #include "layerlistwidget.h"
 #include "layerlistdelegate.h"
 #include "board.h"
-#include "ui_layerbox.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
@@ -35,16 +34,14 @@ namespace widgets {
 LayerList::LayerList(QWidget *parent)
 	: QDockWidget(tr("Layers"), parent), locksel_(false)
 {
-	ui_ = new Ui_LayerBox;
-	QWidget *w = new QWidget(this);
-	setWidget(w);
-	ui_->setupUi(w);
+	list_ = new QListView(this);
+	setWidget(list_);
 
-	ui_->layers->setDragEnabled(true);
-	ui_->layers->viewport()->setAcceptDrops(true);
+	list_->setDragEnabled(true);
+	list_->viewport()->setAcceptDrops(true);
 
 	LayerListDelegate *del = new LayerListDelegate(this);
-	ui_->layers->setItemDelegate(del);
+	list_->setItemDelegate(del);
 
 	// Connect signals from controls buttons
 	// These signals may be processed and are re-emitted.
@@ -55,8 +52,8 @@ LayerList::LayerList(QWidget *parent)
 			SIGNAL(layerToggleHidden(int)));
 	connect(del, SIGNAL(renameLayer(int, const QString&)), this,
 			SIGNAL(renameLayer(int, const QString&)));
-	connect(ui_->opacity, SIGNAL(valueChanged(int)), this,
-			SLOT(opacityChanged(int)));
+	connect(del, SIGNAL(changeOpacity(int, int)), this,
+			SIGNAL(opacityChange(int,int)));
 }
 
 LayerList::~LayerList()
@@ -66,7 +63,7 @@ LayerList::~LayerList()
 void LayerList::setBoard(drawingboard::Board *board)
 {
 	dpcore::LayerStack *stack = board->layers();
-	ui_->layers->setModel(stack);
+	list_->setModel(stack);
 
 	// Connect signals from layer stack to refresh
 	// UI state after indirectly caused changes
@@ -76,7 +73,7 @@ void LayerList::setBoard(drawingboard::Board *board)
 			this, SLOT(moved(const QModelIndex&,const QModelIndex&)));
 
 	// Connect signal from newly created selection model
-	connect(ui_->layers->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+	connect(list_->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
 			this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
 }
 
@@ -87,11 +84,11 @@ void LayerList::setBoard(drawingboard::Board *board)
  */
 void LayerList::selectLayer(int id)
 {
-	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(ui_->layers->model());
+	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(list_->model());
 	int row = layers->layers() - layers->id2index(id);
-	QModelIndexList sel = ui_->layers->selectionModel()->selectedIndexes();
+	QModelIndexList sel = list_->selectionModel()->selectedIndexes();
 	if(sel.isEmpty() || sel.first().row() != row)
-		ui_->layers->selectionModel()->select(layers->index(row,0),
+		list_->selectionModel()->select(layers->index(row,0),
 				QItemSelectionModel::Select);
 }
 
@@ -103,16 +100,16 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
 	if(!locksel_) {
 		locksel_ = true;
 		if(selection.indexes().isEmpty()) {
-			dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(ui_->layers->model());
+			dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(list_->model());
 			// A layer must always be selected
 			if(prev.indexes().isEmpty()) {
-				if(!ui_->layers->selectionModel()->hasSelection())
-					ui_->layers->selectionModel()->select(
+				if(!list_->selectionModel()->hasSelection())
+					list_->selectionModel()->select(
 							layers->index(layers->layers(),0),
 							QItemSelectionModel::Select
 							);
 			} else {
-				ui_->layers->selectionModel()->select(
+				list_->selectionModel()->select(
 						prev.indexes().first(),
 						QItemSelectionModel::Select
 						);
@@ -120,9 +117,6 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
 		} else {
 			const dpcore::Layer *layer = selection.indexes().first().data().value<dpcore::Layer*>();
 			emit selected(layer->id());
-
-			// Update the UI controls
-			ui_->opacity->setValue(layer->opacity());
 		}
 		locksel_ = false;
 	}
@@ -134,11 +128,11 @@ void LayerList::selected(const QItemSelection& selection, const QItemSelection& 
  */
 void LayerList::moved(const QModelIndex& from, const QModelIndex& to)
 {
-	QModelIndex sel = ui_->layers->selectionModel()->selection().indexes().first();
+	QModelIndex sel = list_->selectionModel()->selection().indexes().first();
 	if(from == sel) {
 		locksel_ = true;
-		ui_->layers->selectionModel()->clear();
-		ui_->layers->selectionModel()->select(to, QItemSelectionModel::Select);
+		list_->selectionModel()->clear();
+		list_->selectionModel()->select(to, QItemSelectionModel::Select);
 		locksel_ = false;
 	}
 }
@@ -149,7 +143,7 @@ void LayerList::moved(const QModelIndex& from, const QModelIndex& to)
 void LayerList::opacityChanged(int opacity)
 {
 	if(!locksel_) {
-		const dpcore::Layer *layer = ui_->layers->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
+		const dpcore::Layer *layer = list_->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
 		emit opacityChange(layer->id(), opacity);
 	}
 }
@@ -183,7 +177,7 @@ void LayerList::deleteLayer(const dpcore::Layer *layer)
 	// Offer the choice to merge down only if there is a layer
 	// below this one.
 	QPushButton *merge = 0;
-	if(static_cast<dpcore::LayerStack*>(ui_->layers->model())->isBottommost(layer)==false) {
+	if(static_cast<dpcore::LayerStack*>(list_->model())->isBottommost(layer)==false) {
 		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
 		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
 	}

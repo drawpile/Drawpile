@@ -14,7 +14,7 @@ set (
 	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	mandatoryfields.h palettewidget.h palettebox.h
-	colorbox.h settingsdialog.h
+	colorbox.h settingsdialog.h layerwidget.h
 	navigator.h toolsettings.h brushslider.h viewstatus.h layerlistdelegate.h
 	layerlistwidget.h core/layerstack.h core/layermimedata.h
 )
@@ -45,7 +45,7 @@ set (
 	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
 	core/rasterop.cpp brushslider.cpp viewstatus.cpp layerlistdelegate.cpp
-	layerlistwidget.cpp
+	layerlistwidget.cpp layerwidget.cpp
 	core/layermimedata.cpp
 	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
 )
@@ -54,7 +54,7 @@ set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
 	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui
-	ui/erasersettings.ui ui/layerbox.ui )
+	ui/erasersettings.ui )
 
 # .UI
 

@@ -325,7 +325,7 @@ void LayerStack::layerChanged(const Layer* layer)
 {
 	int index=layers_.indexOf(const_cast<Layer*>(layer));
 	Q_ASSERT(index >= 0);
-	const QModelIndex qmi = createIndex(index, 0);
+	const QModelIndex qmi = createIndex(layers()-index, 0);
 	emit dataChanged(qmi, qmi);
 }
 
