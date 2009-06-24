@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QLineEdit>
@@ -115,16 +116,23 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
 			// Delete button (but only when this is not the last layer and we are not in a network session)
 			if(me->x() < btnwidth) {
+				// Show/hide button
 				emit layerToggleHidden(layer->id());
 			} else if(me->x() < btnwidth*2) {
+				// Opacity button
 				widgets::LayerEditor *lw = new widgets::LayerEditor(layer);
 				lw->move(me->globalPos());
 				lw->connect(lw, SIGNAL(opacityChanged(int,int)), this, SIGNAL(changeOpacity(int,int)));
 				lw->show();
 
 			} else if(me->x() >= option.rect.width() - btnwidth) {
+				// Delete button
 				if(layers->layers()>1)
 					emit deleteLayer(layer);
+			} else {
+				// No button was pressed, this leaves the main body.
+				// Trigger a selection.
+				emit select(index);
 			}
 		}
 	}

@@ -30,6 +30,9 @@ namespace dpcore {
 /**
  * A custom item delegate for displaying layer names
  * and editing layer settings.
+ * User actions cause signals to be emitted, which are routed to Controller,
+ * which either acts upon them or sends them to the server. In any case,
+ * we don't modify anything directly here at all.
  */
 class LayerListDelegate : public QItemDelegate {
 	Q_OBJECT
@@ -48,11 +51,18 @@ class LayerListDelegate : public QItemDelegate {
 		void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
 
 	signals:
+		//! Create new layer button was pressed
 		void newLayer();
+		//! User request the given layer to be deleted
 		void deleteLayer(const dpcore::Layer *layer);
+		//! User wants to toggle the visibility of the given layer
 		void layerToggleHidden(int);
+		//! User wants to rename the layer
 		void renameLayer(int id, const QString& name) const;
+		//! User wants to change the layer's opacity
 		void changeOpacity(int id, int opacity);
+		//! User wants to select the layer
+		void select(const QModelIndex& index);
 	
 	private:
 		void drawMeter(const QRectF& rect, QPainter *painter, const QColor& background, const QColor& foreground, float value) const;

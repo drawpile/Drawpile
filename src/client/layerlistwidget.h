@@ -70,14 +70,13 @@ class LayerList : public QDockWidget
 	private slots:
 		void newLayer();
 		void deleteLayer(const dpcore::Layer* layer);
-		void selected(const QItemSelection& selection, const QItemSelection& prev);
+		void selected(const QModelIndex& index);
 		void moved(const QModelIndex& from, const QModelIndex& to);
 		void opacityChanged(int opacity);
 
 	private:
 		QListView *list_;
 		LayerListModel *model_;
-		bool locksel_;
 };
 
 }

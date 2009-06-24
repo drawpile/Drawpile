@@ -32,13 +32,15 @@
 namespace widgets {
 
 LayerList::LayerList(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), locksel_(false)
+	: QDockWidget(tr("Layers"), parent)
 {
 	list_ = new QListView(this);
 	setWidget(list_);
 
 	list_->setDragEnabled(true);
 	list_->viewport()->setAcceptDrops(true);
+	// Disallow automatic selections. We handle them ourselves in the delegate.
+	list_->setSelectionMode(QAbstractItemView::NoSelection);
 
 	LayerListDelegate *del = new LayerListDelegate(this);
 	list_->setItemDelegate(del);
@@ -54,6 +56,8 @@ LayerList::LayerList(QWidget *parent)
 			SIGNAL(renameLayer(int, const QString&)));
 	connect(del, SIGNAL(changeOpacity(int, int)), this,
 			SIGNAL(opacityChange(int,int)));
+	connect(del, SIGNAL(select(const QModelIndex&)),
+			this, SLOT(selected(const QModelIndex&)));
 }
 
 LayerList::~LayerList()
@@ -71,10 +75,6 @@ void LayerList::setBoard(drawingboard::Board *board)
 			this, SIGNAL(layerMove(int, int)));
 	connect(stack, SIGNAL(layerMoved(const QModelIndex&,const QModelIndex&)),
 			this, SLOT(moved(const QModelIndex&,const QModelIndex&)));
-
-	// Connect signal from newly created selection model
-	connect(list_->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-			this, SLOT(selected(const QItemSelection&, const QItemSelection&)));
 }
 
 /**
@@ -93,59 +93,38 @@ void LayerList::selectLayer(int id)
 }
 
 /**
- * A layer was selected via UI
+ * A layer was selected via delegate. Update the UI and emit a signal
+ * to inform the Controller of the new selection.
  */
-void LayerList::selected(const QItemSelection& selection, const QItemSelection& prev)
+void LayerList::selected(const QModelIndex& index)
 {
-	if(!locksel_) {
-		locksel_ = true;
-		if(selection.indexes().isEmpty()) {
-			dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(list_->model());
-			// A layer must always be selected
-			if(prev.indexes().isEmpty()) {
-				if(!list_->selectionModel()->hasSelection())
-					list_->selectionModel()->select(
-							layers->index(layers->layers(),0),
-							QItemSelectionModel::Select
-							);
-			} else {
-				list_->selectionModel()->select(
-						prev.indexes().first(),
-						QItemSelectionModel::Select
-						);
-			}
-		} else {
-			const dpcore::Layer *layer = selection.indexes().first().data().value<dpcore::Layer*>();
-			emit selected(layer->id());
-		}
-		locksel_ = false;
-	}
+	const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
+	list_->selectionModel()->clear();
+	list_->selectionModel()->select(index, QItemSelectionModel::Select);
+	emit selected(layer->id());
 }
 
 /**
  * Check if it was the currently selected layer that was just moved.
- * If so, update the selection to reflect the new position.
+ * If so, update the selection to reflect the new position. The real selection
+ * has not changed, so only the UI needs to be updated.
  */
 void LayerList::moved(const QModelIndex& from, const QModelIndex& to)
 {
 	QModelIndex sel = list_->selectionModel()->selection().indexes().first();
 	if(from == sel) {
-		locksel_ = true;
 		list_->selectionModel()->clear();
 		list_->selectionModel()->select(to, QItemSelectionModel::Select);
-		locksel_ = false;
 	}
 }
 
 /**
- * Opacity was changed via UI
+ * Opacity was changed via UI. Emit a signal to inform the Controller.
  */
 void LayerList::opacityChanged(int opacity)
 {
-	if(!locksel_) {
-		const dpcore::Layer *layer = list_->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
-		emit opacityChange(layer->id(), opacity);
-	}
+	const dpcore::Layer *layer = list_->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
+	emit opacityChange(layer->id(), opacity);
 }
 
 /**
