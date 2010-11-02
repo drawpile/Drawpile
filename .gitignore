@@ -1,0 +1,8 @@
+# Generated files
+/src/client/ui_*.h
+config.h
+
+# Build directories
+/bin/
+/build/
+/lib/
