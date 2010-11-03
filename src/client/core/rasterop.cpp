@@ -65,11 +65,6 @@ inline uint UINT8_DIVIDE(uint a, uint b)
     return c;
 }
 
-//! Regular alpha blender
-inline uint blend_normal(uchar base, uchar blend) {
-	return blend;
-}
-
 //! Multiply color values
 inline uint blend_multiply(uchar base, uchar blend) {
 	return qMin(255u, UINT8_MULT(base, blend));
@@ -110,7 +105,50 @@ inline uint blend_subtract(uchar base, uchar blend) {
 	return qMax(base-blend, 0);
 }
 
-// A generic pixel composition function
+// Normal alpha blend
+void doAlphablend(quint32 *base, quint32 color, const uchar *mask,
+		int w, int h, int maskskip, int baseskip)
+{
+	baseskip *= 4;
+	const uchar *src = reinterpret_cast<const uchar*>(&color);
+	uchar *dest = reinterpret_cast<uchar*>(base);
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x,++mask) {
+			// Special case: mask pixel is completely transparent
+			if(*mask==0) {
+				dest += 4;
+			}
+			// Special case: mask pixel is completely opaque
+			else if(*mask==255) {
+				*dest = src[0]; ++dest;
+				*dest = src[1]; ++dest;
+				*dest = src[2]; ++dest;
+				*dest = 255; ++dest;
+			}
+			// The usual case: blending required
+			else {
+				if(dest[3]==0) {
+					// Special case: target is completely transparent, we can overwrite it.
+					*dest = src[0]; ++dest;
+					*dest = src[1]; ++dest;
+					*dest = src[2]; ++dest;
+					*dest = *mask; ++dest;
+				} else {
+					// Normal case: blend colors and alpha
+					*dest = UINT8_BLEND(src[0], *dest, *mask); ++dest;
+					*dest = UINT8_BLEND(src[1], *dest, *mask); ++dest;
+					*dest = UINT8_BLEND(src[2], *dest, *mask); ++dest;
+					*dest = *mask + UINT8_MULT(255-*mask, *dest); ++dest;
+				}
+			}
+		}
+		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
+// A generic composition function for special blending modes
+// This doesn't touch the alpha channel.
 typedef uint(*BlendOp)(uchar,uchar);
 template<BlendOp BO>
 void doComposite(quint32 *base, quint32 color, const uchar *mask,
@@ -120,21 +158,30 @@ void doComposite(quint32 *base, quint32 color, const uchar *mask,
 	const uchar *src = reinterpret_cast<const uchar*>(&color);
 	uchar *dest = reinterpret_cast<uchar*>(base);
 	for(int y=0;y<h;++y) {
-		for(int x=0;x<w;++x) {
-			if(dest[3]==0) {
-				if(*mask>0) {
-					*dest = BO(*dest, src[0]); ++dest;
-					*dest = BO(*dest, src[1]); ++dest;
-					*dest = BO(*dest, src[2]); ++dest;
-				} else
-					dest += 3;
-			} else {
-				*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
-				*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
-				*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
+		for(int x=0;x<w;++x,++mask) {
+			// Special case: mask pixel is completely transparent
+			if(*mask==0) {
+				dest += 4;
 			}
-			*dest = *mask + UINT8_MULT(255-*mask, *dest); ++dest;
-			++mask;
+			// Special case: mask pixel is completely opaque
+			else if(*mask==255) {
+				*dest = BO(*dest, src[0]); ++dest;
+				*dest = BO(*dest, src[1]); ++dest;
+				*dest = BO(*dest, src[2]); ++dest;
+				++dest;
+			}
+			// The usual case: blending required
+			else {
+				if(dest[3]>0) {
+					*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, *mask); ++dest;
+					*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, *mask); ++dest;
+					*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, *mask); ++dest;
+					++dest;
+				} else {
+					// No need to do anything if destination pixel is fully transparent
+					dest += 4;
+				}
+			}
 		}
 		dest += baseskip;
 		mask += maskskip;
@@ -191,7 +238,7 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 				doComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip);
 				break;
 			default:
-				doComposite<blend_normal>(base, color, mask, w, h, maskskip, baseskip);
+				doAlphablend(base, color, mask, w, h, maskskip, baseskip);
 				break;
 		}
 }
