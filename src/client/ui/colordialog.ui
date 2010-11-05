@@ -246,6 +246,9 @@
          <property name="maximum" stdset="0">
           <number>359</number>
          </property>
+         <property name="mode">
+          <enum>GradientSlider::Hsv</enum>
+         </property>
          <property name="colorValue" stdset="0">
           <double>1.000000000000000</double>
          </property>

@@ -1,8 +1,12 @@
 # Generated files
 /src/client/ui_*.h
 config.h
+Makefile
+Makefile.*
 
 # Build directories
 /bin/
 /build/
 /lib/
+
+*.so
