@@ -10,3 +10,5 @@ Makefile.*
 /lib/
 
 *.so
+
+*.swp

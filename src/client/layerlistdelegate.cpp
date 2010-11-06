@@ -120,9 +120,10 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				emit layerToggleHidden(layer->id());
 			} else if(me->x() < btnwidth*2) {
 				// Opacity button
-				widgets::LayerEditor *lw = new widgets::LayerEditor(layer);
-				lw->move(me->globalPos());
+				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(layer);
+				lw->move(me->globalPos() - QPoint(15, 15));
 				lw->connect(lw, SIGNAL(opacityChanged(int,int)), this, SIGNAL(changeOpacity(int,int)));
+				lw->connect(lw, SIGNAL(toggleHidden(int)), this, SIGNAL(layerToggleHidden(int)));
 				lw->show();
 
 			} else if(me->x() >= option.rect.width() - btnwidth) {

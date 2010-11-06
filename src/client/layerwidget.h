@@ -23,6 +23,7 @@
 #include <QFrame>
 
 class QSlider;
+class QCheckBox;
 
 namespace dpcore {
 	class Layer;
@@ -30,24 +31,31 @@ namespace dpcore {
 
 namespace widgets {
 
-class LayerEditor : public QFrame
+/**
+ * A widget for adjusting the visual attributes of a layer.
+ * This pops up when the user clicks on the layer details icon.
+ */
+class LayerStyleEditor : public QFrame
 {
 	Q_OBJECT
 	public:
-		LayerEditor(const dpcore::Layer *layer, QWidget *parent=0);
-		~LayerEditor();
+		LayerStyleEditor(const dpcore::Layer *layer, QWidget *parent=0);
+		~LayerStyleEditor();
 
 	signals:
 		void opacityChanged(int id, int newopacity);
+		void toggleHidden(int id);
 
 	protected:
 		void changeEvent(QEvent*);
 
 	private slots:
 		void updateOpacity(int o);
+		void toggleHide();
 
 	private:
 		QSlider *opacity_;
+		QCheckBox *hide_;
 		int id_;
 };
 

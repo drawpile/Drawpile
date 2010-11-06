@@ -20,38 +20,52 @@
 
 #include <QDebug>
 #include <QSlider>
+#include <QCheckBox>
 #include <QEvent>
-#include <QVBoxLayout>
+#include <QLabel>
+#include <QGridLayout>
 
 #include "layerwidget.h"
 #include "core/layer.h"
 
 namespace widgets {
 
-LayerEditor::LayerEditor(const dpcore::Layer *layer, QWidget *parent)
+LayerStyleEditor::LayerStyleEditor(const dpcore::Layer *layer, QWidget *parent)
 	: QFrame(parent, Qt::FramelessWindowHint), id_(layer->id())
 {
 	setAttribute(Qt::WA_DeleteOnClose);
 	setFrameStyle(Panel);
 	setFrameShadow(Raised);
 
-	QVBoxLayout *layout = new QVBoxLayout();
-	opacity_ = new QSlider(Qt::Vertical, this);
+	QGridLayout *layout = new QGridLayout();
+
+	hide_ = new QCheckBox(this);
+	hide_->setChecked(layer->hidden());
+	hide_->setText(tr("Hide"));
+	layout->addWidget(hide_, 0, 0);
+
+	QLabel *lbl = new QLabel(this);
+	lbl->setText(tr("Opacity") + ":");
+	layout->addWidget(lbl, 1, 0);
+
+	opacity_ = new QSlider(Qt::Horizontal, this);
 	opacity_->setRange(0, 255);
 	opacity_->setValue(layer->opacity());
-	layout->addWidget(opacity_);
+	layout->addWidget(opacity_, 1, 1);
 
 	setLayout(layout);
 
 	connect(opacity_, SIGNAL(valueChanged(int)),
 			this, SLOT(updateOpacity(int)));
+	connect(hide_, SIGNAL(toggled(bool)),
+			this, SLOT(toggleHide()));
 }
 
-LayerEditor::~LayerEditor()
+LayerStyleEditor::~LayerStyleEditor()
 {
 }
 
-void LayerEditor::changeEvent(QEvent *e)
+void LayerStyleEditor::changeEvent(QEvent *e)
 {
 	if(e->type() == QEvent::ActivationChange && !isActiveWindow()) {
 		// Close the editor when focus is lost
@@ -61,9 +75,14 @@ void LayerEditor::changeEvent(QEvent *e)
 		QWidget::changeEvent(e);
 }
 
-void LayerEditor::updateOpacity(int o)
+void LayerStyleEditor::updateOpacity(int o)
 {
 	emit opacityChanged(id_, o);
+}
+
+void LayerStyleEditor::toggleHide()
+{
+	emit toggleHidden(id_);
 }
 
 }
