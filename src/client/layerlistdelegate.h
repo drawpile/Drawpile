@@ -65,7 +65,7 @@ class LayerListDelegate : public QItemDelegate {
 		void select(const QModelIndex& index);
 	
 	private:
-		void drawMeter(const QRectF& rect, QPainter *painter, const QColor& background, const QColor& foreground, float value) const;
+		void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
 };
 
 #endif

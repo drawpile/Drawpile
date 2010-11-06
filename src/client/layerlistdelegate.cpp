@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,32 +54,20 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		opt.font.setStyle(QFont::StyleItalic);
 		opt.displayAlignment = Qt::AlignVCenter;
 
-		const QPixmap addicon = icon::add().pixmap(16);
+		const QPixmap addicon = icon::add().pixmap(24);
 		painter->drawPixmap(opt.rect.topLeft()+QPoint(0,opt.rect.height()/2-addicon.height()/2),
 				addicon);
-		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), "New layer...");
+		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), tr("New layer..."));
 	} else {
 		const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
 
 		const QSize delsize = icon::remove().actualSize(QSize(16,16));
-		const QSize hidesize = icon::layervisible().actualSize(QSize(16,16));
 
-		// Draw layer hide button
-		QRect btnrect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-hidesize.height()/2), hidesize);
-
-		if(layer->hidden()==false)
-			painter->drawPixmap(btnrect.topLeft(), icon::layervisible().pixmap(16));
-
-		// Draw opacity meter
-		btnrect.translate(btnrect.width(), 0);
-		drawMeter(btnrect, painter,
-				option.palette.color(QPalette::Button),
-				option.palette.color(QPalette::Dark),
-				layer->opacity() / 255.0
-				);
+		QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
+		drawStyleGlyph(stylerect, painter, option.palette, layer->opacity() / 255.0, layer->hidden());
 
 		// Draw layer name
-		textrect.setLeft(btnrect.right());
+		textrect.setLeft(stylerect.right());
 		textrect.setWidth(textrect.width() - delsize.width());
 		drawDisplay(painter, opt, textrect, layer->name());
 
@@ -107,27 +95,23 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		const QStyleOptionViewItem &option, const QModelIndex &index)
 {
 	if(event->type() == QEvent::MouseButtonRelease) {
-		const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 		if(index.row()==0) {
 			emit newLayer();
 		} else {
-			const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-			// Delete button (but only when this is not the last layer and we are not in a network session)
-			if(me->x() < btnwidth) {
-				// Show/hide button
-				emit layerToggleHidden(layer->id());
-			} else if(me->x() < btnwidth*2) {
-				// Opacity button
+
+			if(me->x() < 24) {
+				// Layer style button
 				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(layer);
 				lw->move(me->globalPos() - QPoint(15, 15));
 				lw->connect(lw, SIGNAL(opacityChanged(int,int)), this, SIGNAL(changeOpacity(int,int)));
 				lw->connect(lw, SIGNAL(toggleHidden(int)), this, SIGNAL(layerToggleHidden(int)));
 				lw->show();
 
-			} else if(me->x() >= option.rect.width() - btnwidth) {
+			} else if(me->x() >= option.rect.width() - 24) {
 				// Delete button
+				const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 				if(layers->layers()>1)
 					emit deleteLayer(layer);
 			} else {
@@ -161,26 +145,40 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
 			);
 }
 
-/**
- * Draw a meter glyph (used for displaying layer opacity)
- */
-void LayerListDelegate::drawMeter(const QRectF& rect, QPainter *painter, const QColor& background, const QColor& foreground, float value) const
+void LayerListDelegate::drawStyleGlyph(const QRectF& rect, QPainter *painter,const QPalette& palette, float value, bool hidden) const
 {
 	painter->save();
 
-	// Start at topright corner
-	const qreal w = rect.height() * 0.6;
-	const qreal gap = (rect.width() - w) / 2.0;
-	QPainterPath path(QPointF(rect.right() - gap , rect.y()));
-	path.lineTo(rect.left() + gap, rect.top());
-	path.lineTo(rect.right() - rect.width()/2, rect.bottom());
-	path.lineTo(rect.right() - gap, rect.y());
+	QRectF gr = rect.adjusted(2,2,-2,-2);
+	painter->setRenderHint(QPainter::Antialiasing);
 
-	painter->setClipPath(path);
-	painter->fillRect(rect, QBrush(background));
-	painter->fillRect(rect.adjusted(0, rect.height() - rect.height() * value, 0, 0), QBrush(foreground));
+	// Draw the background
+	painter->setPen(palette.color(QPalette::Dark));
+	QLinearGradient grad(gr.topLeft(), gr.bottomLeft());
+	grad.setColorAt(0, palette.color(QPalette::Light));
+	grad.setColorAt(1, palette.color(QPalette::Mid));
+	painter->setBrush(grad);
+
+	painter->drawEllipse(gr);
+
+	// Fill glyph to indicate opacity
+	painter->setClipRect(QRectF(gr.topLeft(), QSize(gr.width() * value, gr.height())));
+	grad.setColorAt(0, palette.color(QPalette::Dark));
+	grad.setColorAt(1, palette.color(QPalette::Shadow));
+	painter->setBrush(grad);
+
+	painter->drawEllipse(gr.adjusted(1,1,-1,-1));
+	painter->setClipping(false);
+
+	if(hidden) {
+		// Indicate if layer is hidden
+		grad.setColorAt(0, QColor(255,0,0));
+		grad.setColorAt(1, QColor(155,0,0));
+		painter->setPen(QPen(grad, 3, Qt::SolidLine, Qt::RoundCap));
+		painter->drawLine(gr.topLeft(), gr.bottomRight());
+		painter->drawLine(gr.topRight(), gr.bottomLeft());
+	}
+
 	painter->restore();
-
 }
-
 
