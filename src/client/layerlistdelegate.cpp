@@ -40,13 +40,22 @@ LayerListDelegate::~LayerListDelegate()
 
 void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	QStyleOptionViewItemV2 opt = setOptions(index, option);
+	// This is copied from QItemDelegate::paint
+	QStyleOptionViewItemV4 opt = setOptions(index, option);
 	const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>(&option);
 	opt.features = v2 ? v2->features : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
+	const QStyleOptionViewItemV3 *v3 = qstyleoption_cast<const QStyleOptionViewItemV3 *>(&option);
+    opt.locale = v3 ? v3->locale : QLocale();
+    opt.widget = v3 ? v3->widget : 0;
 
 	// Background
-	drawBackground(painter, opt, index);
-	
+	// Note. We have to do this manually, instead of just calling drawBackground(),
+	// because in certain styles (like plastic) the highlight will be drawn in
+	// drawDisplay instead of here. That would be ugly.
+	if (opt.state & QStyle::State_Selected) {
+		painter->fillRect(opt.rect, opt.palette.brush(QPalette::Normal, QPalette::Highlight));
+	}
+
 	QRect textrect = opt.rect;
 
 	if(index.row()==0) {
@@ -100,8 +109,9 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 			emit newLayer();
 		} else {
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
+			const int btnsize = 24;
 
-			if(me->x() < 24) {
+			if(me->x() < btnsize) {
 				// Layer style button
 				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(layer);
 				lw->move(me->globalPos() - QPoint(15, 15));
@@ -109,7 +119,7 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				lw->connect(lw, SIGNAL(toggleHidden(int)), this, SIGNAL(layerToggleHidden(int)));
 				lw->show();
 
-			} else if(me->x() >= option.rect.width() - 24) {
+			} else if(me->x() >= option.rect.width() - btnsize) {
 				// Delete button
 				const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 				if(layers->layers()>1)
@@ -126,15 +136,10 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 
 void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
-	QSize size = sizeHint(option, index);
-	const int btnwidth = icon::lock().actualSize(QSize(16,16)).width();
+	const int btnwidth = 24;
 
-	editor->setGeometry(QRect(
-				btnwidth*2,
-				index.row() * size.height()+1,
-				size.width() - 2 * size.width(),
-				size.height()-2
-				));
+	static_cast<QLineEdit*>(editor)->setFrame(true);
+	editor->setGeometry(option.rect.adjusted(btnwidth, 0, -btnwidth, 0));
 }
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const
