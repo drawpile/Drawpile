@@ -62,10 +62,6 @@ SET ( QT_USE_QTXML true )
 
 find_package ( Qt4 REQUIRED )
 
-if ( CLIENT )
-	find_package ( LibZip REQUIRED )
-endif ( )
-
 #add_subdirectory ( config/ )
 
 ### Output config.h ###

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2009-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,8 +20,11 @@
 #include <QDebug>
 #include <QIODevice>
 #include <QFile>
+#include <QDateTime>
+#include <QApplication>
 
-#include <zip.h>
+#include "zip.h"
+#include "unzip.h"
 
 #include "zipfile.h"
 
@@ -30,20 +33,27 @@
  */
 class ZipIO : public QIODevice {
 	public:
-		ZipIO(zip_file *f, struct zip_stat stat) : file(f) {
-			bytes = stat.size;
-			open(ReadOnly);
+		ZipIO(unzFile f) : file(f) {
+			unz_file_info info;
+			error = unzGetCurrentFileInfo(file, &info, 0, 0, 0, 0, 0, 0);
+			if(error != UNZ_OK)
+				return;
+
+			bytes = info.uncompressed_size;
+			error = unzOpenCurrentFile(file);
+			if(error == UNZ_OK)
+				open(ReadOnly);
 		}
 
 		~ZipIO() {
 			if(file!=0)
-				zip_fclose(file);
+				unzCloseCurrentFile(file);
 		}
 
 		void close()
 		{
 			QIODevice::close();
-			zip_fclose(file);
+			unzCloseCurrentFile(file);
 			file = 0;
 		}
 
@@ -51,13 +61,18 @@ class ZipIO : public QIODevice {
 
 		qint64 bytesAvailable() const
 		{
-			return bytes + QIODevice::bytesAvailable();
+			return bytes;
+		}
+
+		/** Get the unzip error code */
+		int getUnzError() {
+			return error;
 		}
 
 	protected:
 		qint64 readData(char *data, qint64 maxSize)
 		{
-			qint64 read = zip_fread(file, data, maxSize);
+			int read = unzReadCurrentFile(file, data, maxSize);
 			if(read>0)
 				bytes -= read;
 			return read;
@@ -70,13 +85,14 @@ class ZipIO : public QIODevice {
 			return -1;
 		}
 	private:
-		zip_file *file;
+		unzFile file;
+		int error;
 		quint64 bytes;
 };
 
 struct ZipfileImpl {
 	ZipfileImpl(const QString &p, Zipfile::Mode m)
-		: mode(m), path(p), zipfile(0), error(0) { }
+		: mode(m), path(p), error(0) { }
 
 	//! The mode in which the file is opened
 	Zipfile::Mode mode;
@@ -84,9 +100,13 @@ struct ZipfileImpl {
 	//! Path to the file
 	QString path;
 
-	//! libzip structure
-	zip *zipfile;
-	//! Latest error code from libzip
+	//! The zip file
+	union {
+		unzFile open; // When mode==READ
+		zipFile save; // When mode!=READ
+	} zip;
+
+	//! Latest error code from minizip
 	int error;
 };
 
@@ -97,8 +117,8 @@ Zipfile::Zipfile(const QString& path, Zipfile::Mode mode)
 
 Zipfile::~Zipfile()
 {
-	if(priv->zipfile!=0)
-		zip_close(priv->zipfile);
+	if(priv->zip.open!=0)
+		unzClose(priv->zip.open);
 	delete priv;
 }
 
@@ -108,23 +128,19 @@ Zipfile::~Zipfile()
  */
 bool Zipfile::open()
 {
-	int flags = 0;
-	switch(priv->mode) {
-		case READ: break;
-		case WRITE: flags = ZIP_CREATE;
-		case OVERWRITE: flags = ZIP_CREATE | ZIP_EXCL;
-	}
-	priv->zipfile = zip_open(priv->path.toLocal8Bit().constData(), flags, &priv->error);
+	if(priv->mode==READ) {
+		priv->zip.open = unzOpen(priv->path.toLocal8Bit().constData());
+		return priv->zip.open != 0;
+	} else {
+		if(priv->mode==WRITE) {
+			// Check that the file doesn't exist already
+			if(QFile::exists(priv->path))
+				return false;
+		}
 
-	// In overwrite mode we must delete the old file if it exists
-	if(priv->mode == OVERWRITE && priv->zipfile==0 && priv->error==ZIP_ER_EXISTS) {
-		if(QFile::remove(priv->path))
-			return open();
-		priv->error = ZIP_ER_OPEN;
-		return false;
+		priv->zip.save = zipOpen(priv->path.toLocal8Bit().constData(), APPEND_STATUS_CREATE);
+		return priv->zip.save != 0;
 	}
-
-	return priv->zipfile != 0;
 }
 
 /**
@@ -133,76 +149,29 @@ bool Zipfile::open()
  */
 bool Zipfile::close()
 {
-	Q_ASSERT(priv->zipfile);
-	bool ok = zip_close(priv->zipfile) == 0;
-	if(ok)
-		priv->zipfile = 0;
+	bool ok;
+	if(priv->mode==READ) {
+		Q_ASSERT(priv->zip.open);
+		ok = unzClose(priv->zip.open) == 0;
+		if(ok)
+			priv->zip.open = 0;
+	} else {
+		Q_ASSERT(priv->zip.save);
+		ok = zipClose(priv->zip.save, 0) == 0;
+		if(ok)
+			priv->zip.save = 0;
+	}
 	return ok;
 }
 
 /**
  * @return error message
  */
-const char *Zipfile::errorMessage() const {
+QString Zipfile::errorMessage() const {
 	switch(priv->error) {
-		case 0: return QT_TR_NOOP("No error"); break;
-		case ZIP_ER_EXISTS: return QT_TR_NOOP("File already exists"); break;
-		case ZIP_ER_INCONS: return QT_TR_NOOP("ZIP file inconsistent"); break;
-		case ZIP_ER_INVAL: return QT_TR_NOOP("File path missing"); break;
-		case ZIP_ER_MEMORY: return QT_TR_NOOP("Cannot allocate memory"); break;
-		case ZIP_ER_NOENT: return QT_TR_NOOP("No such file"); break;
-		case ZIP_ER_NOZIP: return QT_TR_NOOP("Not a ZIP file"); break;
-		case ZIP_ER_OPEN: return QT_TR_NOOP("File cannot be opened"); break;
-		case ZIP_ER_READ: return QT_TR_NOOP("A read error occurred"); break;
-		case ZIP_ER_SEEK: return QT_TR_NOOP("Cannot seek in file"); break;
-		case ZIP_ER_COMPNOTSUPP: return QT_TR_NOOP("Unsupported compression method"); break;
-		case ZIP_ER_CHANGED: return QT_TR_NOOP("Data has changed"); break;
-		case ZIP_ER_ZLIB: return QT_TR_NOOP("Couldn't initialize zlib"); break;
-		default: return QT_TR_NOOP("Unknown error");
+		case 0: return QApplication::tr("No error"); break;
+		default: return QApplication::tr("Unknown error (%1)").arg(priv->error);
 	}
-}
-
-struct iodev_context {
-	QIODevice *io;
-	unsigned int size;
-	time_t mtime;
-	int method;
-};
-
-/**
- * Source adapter for an IODevice
- */
-ssize_t iodev_source(void *state, void *data, size_t len, zip_source_cmd cmd)
-{
-	iodev_context *ctx = static_cast<iodev_context*>(state);
-	switch(cmd) {
-		case ZIP_SOURCE_OPEN:
-			if(ctx->io->isOpen())
-				return ctx->io->reset() ? 0 : -1;
-			return ctx->io->open(QIODevice::ReadOnly) ? 0 : -1;
-		case ZIP_SOURCE_READ:
-			return ctx->io->read(static_cast<char*>(data), len);
-		case ZIP_SOURCE_CLOSE:
-			ctx->io->close();
-			break;
-		case ZIP_SOURCE_STAT: {
-			struct zip_stat *stat = static_cast<struct zip_stat*>(data);
-			zip_stat_init(stat);
-			stat->size = ctx->size;
-			stat->mtime = ctx->mtime;
-			if(ctx->method != ZIP_CM_DEFAULT)
-				stat->comp_method = ctx->method;
-			return sizeof(struct zip_stat);
-		  }
-		case ZIP_SOURCE_ERROR:
-			// TODO
-			return 2 * sizeof(int);
-		case ZIP_SOURCE_FREE:
-			delete ctx->io;
-			delete ctx;
-			break;
-	}
-	return 0;
 }
 
 /**
@@ -211,52 +180,84 @@ ssize_t iodev_source(void *state, void *data, size_t len, zip_source_cmd cmd)
  * @param source the source of bytes to be added
  * @return false on error
  */
-bool Zipfile::addFile(const QString& name, QIODevice *source, unsigned int length, time_t modified, Zipfile::Method method)
+bool Zipfile::addFile(const QString& name, QIODevice *source, Zipfile::Method method)
 {
-	Q_ASSERT(priv->zipfile);
-
-	iodev_context *ctx = new iodev_context;
-	ctx->io = source;
-	ctx->size = length;
-	ctx->mtime = modified;
-	switch(method) {
-		case DEFAULT: ctx->method = ZIP_CM_DEFAULT; break;
-		case STORE: ctx->method = ZIP_CM_STORE; break;
-		case DEFLATE: ctx->method = ZIP_CM_DEFLATE; break;
-	}
-	zip_source *src = zip_source_function(priv->zipfile, iodev_source, ctx);
-	if(src==0) {
-		delete ctx;
+	if(priv->mode == READ) {
+		qCritical("Cannt add files to ZIP opened in read mode!");
 		return false;
 	}
+	Q_ASSERT(priv->zip.save);
 
-	bool ok = zip_add(priv->zipfile, name.toUtf8().constData(), src) > -1;
-	if(!ok)
-		zip_source_free(src);
-	return ok;
+	// Set up file metadata
+	zip_fileinfo info;
+	QDateTime datetime = QDateTime::currentDateTime();
+	QDate date = datetime.date();
+	QTime time = datetime.time();
+	info.tmz_date.tm_year = date.year();
+	info.tmz_date.tm_mon = date.month() - 1;
+	info.tmz_date.tm_mday = date.day();
+	info.tmz_date.tm_hour = time.hour();
+	info.tmz_date.tm_min = time.minute();
+	info.tmz_date.tm_sec = time.second();
+	info.dosDate = 0;
+	info.internal_fa = 0;
+	info.external_fa = 0;
+
+	// Open file for writing
+	int compmethod = 0;
+	switch(method) {
+		case DEFLATE:
+		case DEFAULT: compmethod = Z_DEFLATED; break;
+		case STORE: compmethod = 0; break;
+	}
+
+	priv->error = zipOpenNewFileInZip(priv->zip.save, name.toUtf8().constData(),
+			&info, 0, 0, 0, 0, 0, compmethod, Z_BEST_SPEED);
+	if(priv->error != ZIP_OK)
+		return false;
+
+	// Write file contents
+	if(source->isOpen())
+		source->reset();
+	else
+		source->open(QIODevice::ReadOnly);
+	char buffer[1024];
+	int len;
+	while((len=source->read(buffer, sizeof buffer))>0) {
+		priv->error = zipWriteInFileInZip(priv->zip.save, buffer, len);
+		if(priv->error != ZIP_OK) {
+			return false;
+		}
+	}
+
+	// Done. Close file
+	priv->error = zipCloseFileInZip(priv->zip.save);
+	return priv->error == ZIP_OK;
 }
 
 QIODevice *Zipfile::getFile(const QString& name)
 {
-	Q_ASSERT(priv->zipfile);
-	int index = zip_name_locate(priv->zipfile, name.toUtf8().constData(), 0);
-	if(index<0)
+	if(priv->mode==Zipfile::READ) {
+		Q_ASSERT(priv->zip.open);
+		// Find the named file
+		if( (priv->error = unzLocateFile(priv->zip.open, name.toUtf8().constData(), 1)) != UNZ_OK) {
+			return 0;
+		}
+
+		// Create an IO device for reading it.
+		// Note that we can't call getFile again until this
+		// device has been closed.
+		ZipIO *zip = new ZipIO(priv->zip.open);
+		if(zip->getUnzError() != UNZ_OK) {
+			priv->error = zip->getUnzError();
+			delete zip;
+			return 0;
+		}
+		return zip;
+	} else {
+		// Implement this if we ever need it
+		qCritical() << "Getting files from write mode ZIPs not implemented!";
 		return 0;
-	return getFile(index);
-}
-
-QIODevice *Zipfile::getFile(int index)
-{
-	Q_ASSERT(priv->zipfile);
-	struct zip_stat stat;
-
-	if(zip_stat_index(priv->zipfile, index, 0, &stat)==-1)
-		return 0;
-
-	zip_file *file = zip_fopen_index(priv->zipfile, index, 0);
-	if(file==0)
-		return 0;
-
-	return new ZipIO(file, stat);
+	}
 }
 

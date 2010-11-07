@@ -21,8 +21,6 @@
 #include <QBuffer>
 #include <QDebug>
 
-#include <ctime>
-
 #include "zipfile.h"
 #include "orawriter.h"
 #include "../core/layerstack.h"
@@ -39,7 +37,7 @@ bool putTextInZip(Zipfile &zip, const QString& filename, const QString& text)
 {
 	QBuffer *buf = new QBuffer();
    	buf->setData(text.toUtf8());
-	return zip.addFile(filename, buf, buf->size(), time(0), Zipfile::STORE);
+	return zip.addFile(filename, buf, Zipfile::STORE);
 }
 
 bool Writer::save(const QString& filename) const
@@ -109,7 +107,7 @@ bool Writer::writeStackXml(Zipfile &zf) const
 	QBuffer *buf = new QBuffer();
 	buf->setData(doc.toByteArray());
 	qDebug() << "STACK: " << doc.toByteArray();
-	return zf.addFile("stack.xml", buf, buf->size(), time(0));
+	return zf.addFile("stack.xml", buf);
 }
 
 bool Writer::writeLayer(Zipfile &zf, int index) const
@@ -120,7 +118,7 @@ bool Writer::writeLayer(Zipfile &zf, int index) const
 	// TODO autocrop layer to play nice with programs like mypaint?
 	l->toImage().save(image, "PNG");
 	// Save the image without compression, as trying to squeeze a few more bytes out of a PNG is pointless.
-	return zf.addFile(QString("data/layer") + QString::number(index) + ".png", image, image->size(), time(0), Zipfile::STORE);
+	return zf.addFile(QString("data/layer") + QString::number(index) + ".png", image, Zipfile::STORE);
 }
 
 bool Writer::writeThumbnail(Zipfile &zf) const
@@ -131,7 +129,7 @@ bool Writer::writeThumbnail(Zipfile &zf) const
 	QBuffer *thumb = new QBuffer();
 	thumb->open(QIODevice::ReadWrite);
 	img.save(thumb, "PNG");
-	return zf.addFile(QString("Thumbnails/thumbnail.png"), thumb, thumb->size(), time(0), Zipfile::STORE);
+	return zf.addFile(QString("Thumbnails/thumbnail.png"), thumb, Zipfile::STORE);
 }
 
 }

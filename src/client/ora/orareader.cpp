@@ -51,14 +51,15 @@ bool Reader::load()
 {
 	if(ora->open()==false) {
 		error_ = QApplication::tr("Error loading file: %1")
-			.arg(QApplication::tr(ora->errorMessage()));
+			.arg(ora->errorMessage());
 		return false;
 	}
 
 	// Make sure this is an OpenRaster file
-	QIODevice *mimeio = ora->getFile(0);
+	QIODevice *mimeio = ora->getFile("mimetype");
 	QString mimetype = mimeio->readLine();
 	delete mimeio;
+	qDebug() << "read mimetype:" << mimetype;
 	if(mimetype != "image/openraster") {
 		error_ = QApplication::tr("File is not an OpenRaster file");
 		return false;

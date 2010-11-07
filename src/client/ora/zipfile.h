@@ -44,16 +44,18 @@ class Zipfile {
 		bool close();
 
 		//! Get the latest error message
-		const char *errorMessage() const;
+		QString errorMessage() const;
 
 		//! Add a file to the zip archive from the given IO source
-		bool addFile(const QString& name, QIODevice *source, unsigned int length, time_t modified, Method method=DEFAULT);
+		bool addFile(const QString& name, QIODevice *source, Method method=DEFAULT);
 
-		//! Get the named file from the arcive
+		/**
+		 * @brief et the named file from the archive
+		 * Note. You must close the returned IO device before
+		 * calling this function again!
+		 * @param name the file name inside the zip
+		 */
 		QIODevice *getFile(const QString& name);
-
-		//! Get the file at the given index from the arcive
-		QIODevice *getFile(int index);
 
 	private:
 		ZipfileImpl *priv;

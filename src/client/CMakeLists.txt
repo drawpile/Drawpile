@@ -28,6 +28,7 @@ set (
 	core/tile.h core/layer.h core/brush.h core/point.h
 	core/rasterop.h
 	ora/zipfile.h ora/orawriter.h ora/orareader.h
+	ora/zip.h ora/unzip.h ora/ioapi.h
 )
 
 set (
@@ -48,6 +49,7 @@ set (
 	layerlistwidget.cpp layerwidget.cpp
 	core/layermimedata.cpp
 	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
+	ora/zip.c ora/unzip.c ora/ioapi.c
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
