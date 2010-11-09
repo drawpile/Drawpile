@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2009-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,11 +52,15 @@ bool Writer::save(const QString& filename) const
 	// "image/openraster" (must be uncompressed)
 	putTextInZip(zf, "mimetype", "image/openraster");
 
+	// The stack XML contains the image structure
+	// definition.
 	writeStackXml(zf);
 
+	// Each layer is written as an individual PNG image
 	for(int i=layers_->layers()-1;i>=0;--i)
 		writeLayer(zf, i);
 
+	// A ready to use thumbnail for file managers etc.
 	writeThumbnail(zf);
 
 	return zf.close();
@@ -72,6 +76,7 @@ bool Writer::writeStackXml(Zipfile &zf) const
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
 	doc.appendChild(root);
+	// Width and height are required attributes
 	root.setAttribute("w", layers_->width());
 	root.setAttribute("h", layers_->height());
 
@@ -100,25 +105,26 @@ bool Writer::writeStackXml(Zipfile &zf) const
 		layer.setAttribute("src", QString("data/layer") + QString::number(i) + ".png");
 		layer.setAttribute("name", l->name());
 		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
+		// TODO this is not yet standardized
+		layer.setAttribute("visibility", l->hidden() ? "hidden" : "visible");
 
 		stack.appendChild(layer);
 	}
 
 	QBuffer *buf = new QBuffer();
 	buf->setData(doc.toByteArray());
-	qDebug() << "STACK: " << doc.toByteArray();
 	return zf.addFile("stack.xml", buf);
 }
 
 bool Writer::writeLayer(Zipfile &zf, int index) const
 {
 	const dpcore::Layer *l = layers_->getLayerByIndex(index);
-	QBuffer *image = new QBuffer();
-	image->open(QIODevice::ReadWrite);
+	QBuffer image;
+	image.open(QIODevice::ReadWrite);
 	// TODO autocrop layer to play nice with programs like mypaint?
-	l->toImage().save(image, "PNG");
+	l->toImage().save(&image, "PNG");
 	// Save the image without compression, as trying to squeeze a few more bytes out of a PNG is pointless.
-	return zf.addFile(QString("data/layer") + QString::number(index) + ".png", image, Zipfile::STORE);
+	return zf.addFile(QString("data/layer") + QString::number(index) + ".png", &image, Zipfile::STORE);
 }
 
 bool Writer::writeThumbnail(Zipfile &zf) const
@@ -126,10 +132,11 @@ bool Writer::writeThumbnail(Zipfile &zf) const
 	QImage img = layers_->toFlatImage();
 	if(img.width() > 256 || img.height() > 256)
 		img = img.scaled(QSize(256, 256), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-	QBuffer *thumb = new QBuffer();
-	thumb->open(QIODevice::ReadWrite);
-	img.save(thumb, "PNG");
-	return zf.addFile(QString("Thumbnails/thumbnail.png"), thumb, Zipfile::STORE);
+	// TODO upscale if smaller
+	QBuffer thumb;
+	thumb.open(QIODevice::ReadWrite);
+	img.save(&thumb, "PNG");
+	return zf.addFile(QString("Thumbnails/thumbnail.png"), &thumb, Zipfile::STORE);
 }
 
 }
