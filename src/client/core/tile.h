@@ -35,10 +35,16 @@ namespace dpcore {
  */
 class Tile {
 	public:
+		//! The tile width/height
 		static const int SIZE = 64;
+
+		//! The length of the tile data in bytes
 		static const int BYTES = SIZE * SIZE * sizeof(quint32);
 
-		//! Round i upwards to SIZE boundary
+		/** @brief Round i upwards to SIZE boundary
+		 * @param i coordinate
+		 * @return i rounded up to nearest multiple of SIZE
+		 */
 		static int roundTo(int i) {
 			return (i + SIZE-1)/SIZE*SIZE;
 		}
@@ -92,7 +98,7 @@ class Tile {
 
 	private:
 		int x_, y_;
-		quint32 *data_;
+		quint32 data_[SIZE*SIZE];
 };
 
 }

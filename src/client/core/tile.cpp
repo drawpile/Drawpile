@@ -28,7 +28,7 @@
 namespace dpcore {
 
 Tile::Tile(const QColor& color, int x, int y)
-	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
+	: x_(x), y_(y)
 {
 	quint32 *ptr = data_;
 	quint32 col = color.rgba();
@@ -37,13 +37,13 @@ Tile::Tile(const QColor& color, int x, int y)
 }
 
 Tile::Tile(int x, int y)
-	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
+	: x_(x), y_(y)
 {
-	memset(data_, 0, SIZE*SIZE*sizeof(quint32));
+	memset(data_, 0, BYTES);
 }
 
 Tile::Tile(const Tile *src)
-	: x_(src->x_), y_(src->y_), data_(new quint32[SIZE*SIZE])
+	: x_(src->x_), y_(src->y_)
 {
 	memcpy(data_, src->data_, BYTES);
 }
@@ -51,31 +51,39 @@ Tile::Tile(const Tile *src)
 /**
  * Copy all pixel data from (x*SIZE-xoff, y*SIZE-yoff, (x+1)*SIZE-xoff, (y+1)*SIZE-yoff).
  * Pixels outside the source image are set to zero
+ * @param image source image
+ * @param xi tile X index
+ * @param yi tile Y index
+ * @param xoff source image offset
+ * @param yoff source image offset
  */
-Tile::Tile(const QImage& image, int x, int y, int xoff, int yoff)
-	: x_(x), y_(y), data_(new quint32[SIZE*SIZE])
+Tile::Tile(const QImage& image, int xi, int yi, int xoff, int yoff)
+	: x_(xi), y_(yi)
 {
+	// Tile top-left coordinates relative to layer origin
+	const int x = xi * SIZE;
+	const int y = yi * SIZE;
+
 	// Work area inside the tile
-	const int top = yoff < y*SIZE ? 0 : yoff - y*SIZE;
-	const int left = xoff < x*SIZE ? 0 : xoff - x*SIZE;
-	const int bottom = (yoff + image.height() - y*SIZE) > SIZE ? SIZE : (yoff + image.height() - y*SIZE);
-	const int right = (xoff + image.width() - x*SIZE) > SIZE ? SIZE : (xoff + image.width() - x*SIZE);
+	const int top = yoff < y ? 0 : yoff - y;
+	const int left = xoff < x ? 0 : xoff - x;
+	const int bottom = (yoff + image.height() - y) > SIZE ? SIZE : (yoff + image.height() - y);
+	const int right = (xoff + image.width() - x) > SIZE ? SIZE : (xoff + image.width() - x);
 
 	// If we are not writing the whole tile, initialize memory first
 	if(top || left || bottom<SIZE || right<SIZE) 
 		memset(data_, 0, BYTES);
 
 	// Copy pixels from source area
-	uchar *dest = reinterpret_cast<uchar*>(data_) + (SIZE * 4 * top) + (SIZE * 4 * left);
+	uchar *dest = reinterpret_cast<uchar*>(data_) + (SIZE * 4 * top) + (4 * left);
 	for(int yy=top;yy<bottom;++yy) {
-		const uchar *pixels = image.scanLine(y*SIZE + yy - yoff) + (x*SIZE+left-xoff)*4;
+		const uchar *pixels = image.scanLine(y + yy - yoff) + (x+left-xoff)*4;
 		memcpy(dest, pixels, (right-left)*4);
 		dest += SIZE*4;
 	}
 }
 
 Tile::~Tile() {
-	delete [] data_;
 }
 
 void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
@@ -166,9 +174,9 @@ bool Tile::isBlank() const
 	while(ptr>data) {
 		if(*ptr != 0)
 			return false;
-		ptr -= 3;
+		ptr -= 4;
 	}
-	Q_ASSERT(data==ptr);
+	Q_ASSERT((data-1)==ptr);
 	return true;
 }
 
