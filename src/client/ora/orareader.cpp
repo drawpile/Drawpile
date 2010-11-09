@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2009-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@ namespace openraster {
 static const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
 
 Reader::Reader(const QString& filename)
-	: error_("No error"), warnings_(NO_WARNINGS)
+	: error_(QT_TR_NOOP("No error")), warnings_(NO_WARNINGS)
 {
-	ora = new Zipfile(filename, Zipfile::READ);
+	ora_ = new Zipfile(filename, Zipfile::READ);
 }
 
 Reader::~Reader()
 {
-	delete ora;
+	delete ora_;
 }
 
 /**
@@ -49,14 +49,14 @@ Reader::~Reader()
  */
 bool Reader::load()
 {
-	if(ora->open()==false) {
+	if(ora_->open()==false) {
 		error_ = QApplication::tr("Error loading file: %1")
-			.arg(ora->errorMessage());
+			.arg(ora_->errorMessage());
 		return false;
 	}
 
 	// Make sure this is an OpenRaster file
-	QIODevice *mimeio = ora->getFile("mimetype");
+	QIODevice *mimeio = ora_->getFile("mimetype");
 	QString mimetype = mimeio->readLine();
 	delete mimeio;
 	qDebug() << "read mimetype:" << mimetype;
@@ -67,7 +67,7 @@ bool Reader::load()
 
 	// Read the stack
 	QDomDocument doc;
-	QIODevice *stackio = ora->getFile("stack.xml");
+	QIODevice *stackio = ora_->getFile("stack.xml");
 	doc.setContent(stackio, true);
 	delete stackio;
 
@@ -75,86 +75,59 @@ bool Reader::load()
 
 	const QDomElement stackroot = doc.documentElement().firstChildElement("stack");
 
-	// Calculate the final image bounds. In DrawPile, all layers
-	// are the same size, so we need to know this in advance.
-	QRect bounds = computeBounds(stackroot, QPoint());
-	if(bounds.isNull()) {
-		ora->close();
+	// Get the size of the image
+	// These attributes are required by ORA standard.
+	QSize imagesize(
+			doc.documentElement().attribute("w").toInt(),
+			doc.documentElement().attribute("h").toInt()
+			);
+	if(imagesize.isEmpty()) {
+		error_ = QApplication::tr("Image has zero size!");
+		ora_->close();
 		return false;
 	}
-	stack_->init(bounds.size());
 
-	qDebug() << "image bounds" << bounds;
+	// Initialize the layer stack now that we know the size
+	stack_->init(imagesize);
 
 	// Load the layer images
-	if(loadLayers(stack_, stackroot, QPoint()) == false) {
-		ora->close();
+	if(loadLayers(stackroot, QPoint()) == false) {
+		ora_->close();
 		return false;
 	}
 
-	ora->close();
+	ora_->close();
 	return true;
 }
 
 /**
- * Calculate the final size of the layer stack
- * @param stack layer stack root element
+ * Check that the node map doesn't contain any unknown elements
+ * @param attrs node map to check
+ * @param names list of known names
+ * @return false if node map contains unknown elements
  */
-QRect Reader::computeBounds(const QDomElement& stack, QPoint offset)
-{
-	// Add stack coordinates to offset. Stack child element coordinates
-	// are relative to parent.
-	offset += QPoint(
-			stack.attribute("x", "0").toInt(),
-			stack.attribute("y", "0").toInt()
-			);
-	QRect area;
-	QDomNodeList nodes = stack.childNodes();
-	for(int n=nodes.count()-1;n>=0;--n) {
-		QDomElement e = nodes.at(n).toElement();
-		if(e.isNull())
-			continue;
-		if(e.tagName()=="layer") {
-			// Get layer position (absolute)
-			QPoint coords = QPoint(
-					e.attribute("x", "0").toInt(),
-					e.attribute("y", "0").toInt()
-					) - offset;
-			// See if a size has been defined for the layer
-			QSize size(
-					e.attribute("w", "0").toInt(),
-					e.attribute("h", "0").toInt()
-					);
-			if(size.isEmpty()) {
-				// If size is not defined, get it from
-				// the layer source file
-				const QString src = e.attribute("src");
-				QIODevice *imgsrc = ora->getFile(src);
-				if(imgsrc==0) {
-					error_ = QApplication::tr("Couldn't get layer %1").arg(src);
-					return QRect();
-				}
-
-				QImageReader image(imgsrc, src.mid(src.lastIndexOf('.')+1).toUtf8());
-				size = image.size();
-				delete imgsrc;
-				if(size.isNull()) {
-					error_ = QApplication::tr("Couldn't get layer %1 size").arg(src);
-					return QRect();
-				}
-			}
-			// Now we know the absolute dimensions of the layer.
-			area |= QRect(coords, size);
-		} else if(e.tagName()=="stack") {
-			// Nested stack.
-			area |= computeBounds(e, offset);
+bool isKnown(const QDomNamedNodeMap& attrs, const char **names) {
+	bool ok=true;
+	for(unsigned int i=0;i<attrs.length();++i) {
+		QDomNode n = attrs.item(i);
+		const char **name = names;
+		bool found=false;
+		while(!found && *name!=0) {
+			found = n.nodeName() == *name;
+			++name;
+		}
+		if(!found) {
+			qWarning() << "Unknown attribute" << n.nodeName();
+			ok=false;
 		}
 	}
-	return area;
+	return ok;
 }
 
-bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QPoint offset)
+bool Reader::loadLayers(const QDomElement& stack, QPoint offset)
 {
+	// TODO are layer coordinates relative to stack coordinates?
+	// The spec, as of this writing, is not clear on this.
 	offset += QPoint(
 			stack.attribute("x", "0").toInt(),
 			stack.attribute("y", "0").toInt()
@@ -168,9 +141,16 @@ bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QP
 			continue;
 
 		if(e.tagName()=="layer") {
+			// Check for unknown attributes
+			const char *layerattrs[] = {
+					"x", "y", "name", "src", "opacity", "visibility", 0
+			};
+			if(!isKnown(e.attributes(), layerattrs))
+				warnings_ |= ORA_EXTENDED;
+
 			// Get the layer content file
 			const QString src = e.attribute("src");
-			QIODevice *imgsrc = ora->getFile(src);
+			QIODevice *imgsrc = ora_->getFile(src);
 			if(imgsrc==0) {
 				error_ = QApplication::tr("Couldn't get layer %1").arg(src);
 				return false;
@@ -178,14 +158,14 @@ bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QP
 
 			// Load content image from the file
 			QImage content;
-			if(content.load(imgsrc, src.mid(src.lastIndexOf('.')+1).toUtf8().constData())==false) {
+			if(content.load(imgsrc, "png")==false) {
 				error_ = QApplication::tr("Couldn't load layer %1").arg(src);
 				return false;
 			}
 
 			// Create layer
-			dpcore::Layer *layer = layers->addLayer(
-					e.attribute("name"),
+			dpcore::Layer *layer = stack_->addLayer(
+					e.attribute("name", QApplication::tr("Unnamed layer")),
 					content,
 					offset + QPoint(
 						e.attribute("x", "0").toInt(),
@@ -193,10 +173,12 @@ bool Reader::loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QP
 						)
 					);
 			layer->setOpacity(qRound(255 * e.attribute("opacity", "1.0").toDouble()));
+			// TODO this isn't in the spec yet, but (at least) myPaint uses it.
+			layer->setHidden(e.attribute("visibility", "visible") != "visible");
 		} else if(e.tagName()=="stack") {
 			// Nested stacks are not fully supported
 			warnings_ |= ORA_NESTED;
-			return loadLayers(layers, e, offset);
+			return loadLayers(e, offset);
 		} else if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="annotations") {
 			loadAnnotations(e);
 		} else if(e.namespaceURI()==DP_NAMESPACE) {

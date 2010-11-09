@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2009-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -65,11 +65,10 @@ class Reader {
 		//! Get the warning flags
 		const Warnings warnings() const { return warnings_; }
 	private:
-		QRect computeBounds(const QDomElement& stack, QPoint offset);
-		bool loadLayers(dpcore::LayerStack *layers, const QDomElement& stack, QPoint offset);
+		bool loadLayers(const QDomElement& stack, QPoint offset);
 		void loadAnnotations(const QDomElement& annotations);
 
-		Zipfile *ora;
+		Zipfile *ora_;
 		QStringList annotations_;
 		dpcore::LayerStack *stack_;
 		QString error_;

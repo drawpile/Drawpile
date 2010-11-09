@@ -50,7 +50,7 @@ LayerStack::~LayerStack()
  */
 void LayerStack::init(const QSize& size)
 {
-	Q_ASSERT(!size.isNull());
+	Q_ASSERT(!size.isEmpty());
 	width_ = size.width();
 	height_ = size.height();
 	xtiles_ = width_ / Tile::SIZE + ((width_ % Tile::SIZE)>0);

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2009 Calle Laakkonen
+   Copyright (C) 2006-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -87,15 +87,17 @@ bool Board::initBoard(const QString& file)
 	using openraster::Reader;
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		Reader reader = openraster::Reader(file);
-		if(reader.load()==false)
+		if(reader.load()==false) {
+			qWarning() << "Unable to open" << file << "reason:" << reader.error();
 			return false;
+		}
 
 		if(reader.warnings() != Reader::NO_WARNINGS) {
-			QString text = tr("DrawPile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.");
+			QString text = tr("DrawPile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
 			if((reader.warnings() & Reader::ORA_EXTENDED))
-				text += "\n" + tr("- Application specific extensions are used");
+				text += "\n- " + tr("Application specific extensions are used");
 			if((reader.warnings() & Reader::ORA_NESTED))
-				text += "\n" + tr("- Nested layers are not fully supported.");
+				text += "\n- " + tr("Nested layers are not fully supported.");
 			QMessageBox::warning(0, tr("Partially supported OpenRaster"), text);
 		}
 
