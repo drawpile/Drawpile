@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,10 +30,11 @@ namespace widgets {
 #endif
 
 DualColorButton::DualColorButton(QWidget *parent)
-	: QWidget(parent), foreground_(Qt::black), background_(Qt::white)
+	: QWidget(parent), foreground_(Qt::black), background_(Qt::white), hilite_(0)
 {
 	setMinimumSize(32,32);
 	setAcceptDrops(true);
+	setMouseTracking(true);
 }
 
 DualColorButton::DualColorButton(const QColor& fgColor, const QColor& bgColor, QWidget *parent)
@@ -78,78 +79,86 @@ void DualColorButton::swapColors()
 	update();
 }
 
-QRect DualColorButton::foregroundRect() const
+QRectF DualColorButton::foregroundRect() const
 {
 	// foreground rectangle fills the upper left two thirds of the widget
-	return QRect(0,0, qRound(width()/3.0*2), qRound(height()/3.0*2));
+	return QRectF(0,0.5, width()/3.0*2, height()/3.0*2);
 }
 
-QRect DualColorButton::backgroundRect() const
+QRectF DualColorButton::backgroundRect() const
 {
-	// Background rectangle filles the lower right two thirds of the widget.
+	// Background rectangle fills the lower right two thirds of the widget.
 	// It is partially obscured by the foreground rectangle
-	const int x = qRound(width() / 3.0);
-	const int y = qRound(height() / 3.0);
-	return QRect(x-1,y-1, x*2-1, y*2-1);
+	const float x = width() / 3.0;
+	const float y = height() / 3.0;
+	return QRectF(x-1,y-1, x*2-1, y*2-1);
 }
 
-QRect DualColorButton::resetBlackRect() const
+QRectF DualColorButton::resetBlackRect() const
 {
-	const int x = qRound(width()/9.0);
-	const int y = qRound(height()/9.0*7);
-	const int w = qRound(width() / 9.0);
-	const int h = qRound(height() / 9.0);
-	return QRect(x-w/3,y-h/3,w,h);
+	const int w = width() / (3.0 * (3.0 / 2.0)) - 2;
+	const int h = height() / (3.0 * (3.0 / 2.0)) - 2;
+	const int x = 1;
+	const int y = 1 + height() * (2.0 / 3.0);
+	return QRectF(x, y, w, h);
 }
 
-QRect DualColorButton::resetWhiteRect() const
+QRectF DualColorButton::resetWhiteRect() const
 {
-	QRect r = resetBlackRect();
-	r.translate(r.width()/2, r.height()/2);
+	QRectF r = resetBlackRect();
+	r.translate(r.width()/2.0, r.height()/2.0);
 	return r;
 }
 
 void DualColorButton::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
-	painter.setPen(QPen(Qt::black));
+
+	QPen normal = palette().color(QPalette::Mid);
+	QPen hilite = palette().color(QPalette::Light);
+
+	painter.setRenderHint(QPainter::Antialiasing);
 
 	// Draw background box
-	const QRect bgbox = backgroundRect();
-	painter.fillRect(bgbox, background_);
-	painter.drawRect(bgbox);
+	const QRectF bgbox = backgroundRect();
+	painter.setPen(hilite_==2 ? hilite : normal);
+	painter.setBrush(background_);
+	painter.drawRoundedRect(bgbox, 3, 3);
 
 	// Draw foreground box
-	const QRect fgbox = foregroundRect();
-	painter.fillRect(fgbox, foreground_);
-	painter.drawRect(fgbox);
+	const QRectF fgbox = foregroundRect();
+	painter.setPen(hilite_==1 ? hilite : normal);
+	painter.setBrush(foreground_);
+	painter.drawRoundedRect(fgbox, 3, 3);
 
 	// Draw reset boxes
-	const QRect rwhite = resetWhiteRect();
-	painter.fillRect(rwhite, Qt::white);
-	painter.drawRect(rwhite);
-	painter.fillRect(resetBlackRect(), Qt::black);
+	painter.setPen(hilite_==4 ? hilite : normal);
+	painter.setBrush(Qt::white);
+	painter.drawRect(resetWhiteRect());
+	painter.setBrush(Qt::black);
+	painter.drawRect(resetBlackRect());
 
 	// Draw swap arrow
-	static const QPoint arrows[12] = {
-		QPoint(3,1),
-		QPoint(1,3),
-		QPoint(3,5),
-		QPoint(3,4),
-		QPoint(6,4),
-		QPoint(6,7),
-		QPoint(5,7),
-		QPoint(7,9),
-		QPoint(9,7),
-		QPoint(8,7),
-		QPoint(8,2),
-		QPoint(3,2)
+	static const QPointF arrows[] = {
+		QPointF(0, 2),
+		QPointF(2, 4),
+		QPointF(2, 3),
+		QPointF(4, 3),
+		QPointF(4, 5),
+		QPointF(3, 5),
+		QPointF(5, 7),
+		QPointF(7, 5),
+		QPointF(6, 5),
+		QPointF(6, 1),
+		QPointF(2, 1),
+		QPointF(2, 0)
 	};
-
-	painter.scale(width()/10.0/3.0, height()/10.0/3.0);
-	painter.translate(20,0);
-	painter.setBrush(palette().light());
-	painter.drawConvexPolygon(arrows,12);
+	const qreal scale = (1.0 / 8.0) * width() / 3.0;
+	painter.translate(fgbox.width() + 0.5, 0);
+	painter.scale(scale, scale);
+	painter.setPen(hilite_==3 ? hilite : normal);
+	painter.setBrush(palette().dark());
+	painter.drawConvexPolygon(arrows, 12);
 
 }
 
@@ -181,25 +190,47 @@ void DualColorButton::mouseMoveEvent(QMouseEvent *event)
 		drag->setMimeData(mimedata);
 		drag->start(Qt::CopyAction);
 	}
+	// Higlight clickable areas
+	QRectF fgr = foregroundRect();
+	QRectF bgr = backgroundRect();
+	if(fgr.contains(event->pos()))
+		hilite_ = 1;
+	else if(bgr.contains(event->pos()))
+		hilite_ = 2;
+	else if(event->pos().x() > fgr.right() && event->pos().y() < bgr.top())
+		hilite_ = 3;
+	else if(event->pos().x() < bgr.left() && event->pos().y() > fgr.bottom())
+		hilite_ = 4;
+	else
+		hilite_ = 0;
+	update();
+}
+
+void DualColorButton::leaveEvent(QEvent *event)
+{
+	QWidget::leaveEvent(event);
+	hilite_ = 0;
+	update();
 }
 
 void DualColorButton::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(event->button() != Qt::LeftButton)
 		return;
-	const QRect swaprect(qRound(width()*2.0/3.0),0,width()/3,height()/3);
-	if(resetBlackRect().contains(event->pos()) || resetWhiteRect().contains(event->pos())) {
+	QRectF fgr = foregroundRect();
+	QRectF bgr = backgroundRect();
+	if(fgr.contains(event->pos()))
+		emit foregroundClicked();
+	else if(bgr.contains(event->pos()))
+		emit backgroundClicked();
+	else if(event->pos().x() > fgr.right() && event->pos().y() < bgr.top())
+		swapColors();
+	else if(event->pos().x() < bgr.left() && event->pos().y() > fgr.bottom()) {
 		foreground_ = Qt::black;
 		background_ = Qt::white;
 		emit foregroundChanged(foreground_);
 		emit backgroundChanged(background_);
 		update();
-	} else if(foregroundRect().contains(event->pos())) {
-		emit foregroundClicked();
-	} else if(backgroundRect().contains(event->pos())) {
-		emit backgroundClicked();
-	} else if(swaprect.contains(event->pos())) {
-		swapColors();
 	}
 }
 

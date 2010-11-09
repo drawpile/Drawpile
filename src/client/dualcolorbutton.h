@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006, 2010 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -77,6 +77,7 @@ class PLUGIN_EXPORT DualColorButton : public QWidget, public interface::ColorSou
 	protected:
 		void mousePressEvent(QMouseEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
+		void leaveEvent(QEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 		void paintEvent(QPaintEvent *event);
 		void dragEnterEvent(QDragEnterEvent *event);
@@ -86,13 +87,14 @@ class PLUGIN_EXPORT DualColorButton : public QWidget, public interface::ColorSou
 		QColor foreground_;
 		QColor background_;
 
-		QRect foregroundRect() const;
-		QRect backgroundRect() const;
-		QRect resetBlackRect() const;
-		QRect resetWhiteRect() const;
+		QRectF foregroundRect() const;
+		QRectF backgroundRect() const;
+		QRectF resetBlackRect() const;
+		QRectF resetWhiteRect() const;
 
 		QPoint dragStart_;
 		enum {NODRAG,FOREGROUND,BACKGROUND} dragSource_;
+		int hilite_;
 };
 
 #ifndef DESIGNER_PLUGIN
