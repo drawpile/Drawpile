@@ -87,9 +87,11 @@ void LayerList::selectLayer(int id)
 	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(list_->model());
 	int row = layers->layers() - layers->id2index(id);
 	QModelIndexList sel = list_->selectionModel()->selectedIndexes();
-	if(sel.isEmpty() || sel.first().row() != row)
+	if(sel.isEmpty() || sel.first().row() != row) {
+		list_->selectionModel()->clear();
 		list_->selectionModel()->select(layers->index(row,0),
 				QItemSelectionModel::Select);
+	}
 }
 
 /**

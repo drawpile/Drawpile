@@ -174,6 +174,7 @@ void LocalBoardEditor::setLayer(int id)
 void LocalBoardEditor::createLayer(const QString& name)
 {
 	board_->addLayer(name);
+	setLayer(board_->layers()->getLayerByIndex(board_->layers()->layers()-1)->id());
 }
 
 /**
@@ -278,6 +279,9 @@ void RemoteBoardEditor::setLayer(int id)
 void RemoteBoardEditor::createLayer(const QString& name)
 {
 	qWarning() << "TODO: layer creation";
+	// Note. We don't select the newly created layer here
+	// since it won't actually be created until the command
+	// has returned from the server.
 }
 
 /**
