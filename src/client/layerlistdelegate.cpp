@@ -103,13 +103,13 @@ QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMo
 bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+	const int btnsize = 24;
 	if(event->type() == QEvent::MouseButtonRelease) {
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 		if(index.row()==0) {
 			emit newLayer();
 		} else {
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-			const int btnsize = 24;
 
 			if(me->x() < btnsize) {
 				// Layer style button
@@ -124,13 +124,18 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 				if(layers->layers()>1)
 					emit deleteLayer(layer);
-			} else {
-				// No button was pressed, this leaves the main body.
-				// Trigger a selection.
-				emit select(index);
 			}
 		}
+	} else if(event->type() == QEvent::MouseButtonPress) {
+		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
+		// Select layer on mousedown because it feels more responsive
+		// and if start dragging some other layer than what is currently
+		// selected, we drag the right one. (i.e. the one under the pointer)
+		if(index.row()>0 && me->x() > btnsize && me->x() < option.rect.width() - btnsize) {
+			emit select(index);
+		}
 	}
+
 	return QItemDelegate::editorEvent(event, model, option, index);
 }
 
