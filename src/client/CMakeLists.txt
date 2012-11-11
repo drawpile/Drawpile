@@ -109,7 +109,7 @@ endif ( RELEASE )
 link_libraries(
 	${DPSHAREDLIB}
 	${QT_LIBRARIES}
-	${LIBZIP_LIBRARY}
+	${ZLIB_LIBRARIES}
 )
 
 add_executable (
@@ -137,5 +137,9 @@ else ( WIN32 )
 endif ( WIN32 )
 
 if (NOT DEBUG)
-	strip_exe ( ${CLIENTNAME} )
+	if (APPLE)
+		strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
+	else ()
+		strip_exe ( ${CLIENTNAME} )
+	endif()
 endif (NOT DEBUG)

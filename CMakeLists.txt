@@ -62,6 +62,12 @@ SET ( QT_USE_QTXML true )
 
 find_package ( Qt4 REQUIRED )
 
+# Required for the internal MiniZip fork
+if ( APPLE )
+	add_definitions ( -DUSE_FILE32API )
+endif ( APPLE )
+find_package ( ZLIB REQUIRED )
+
 #add_subdirectory ( config/ )
 
 ### Output config.h ###
