@@ -17,6 +17,8 @@
 
 #cmakedefine HAVE_QT43 1
 
+#cmakedefine DRAWPILE_VERSION "${DRAWPILE_VERSION}"
+
 #ifdef _MSC_VER
 	#define NOTHROW
 	#define NONNULL(x)

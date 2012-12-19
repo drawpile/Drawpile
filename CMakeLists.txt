@@ -10,6 +10,7 @@ set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/config 
 ### generic info
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
 set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
+set ( DRAWPILE_VERSION "0.7.0" )
 
 ###
 include ( "config/Names.cmake" )

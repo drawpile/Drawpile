@@ -132,7 +132,7 @@ add_executable (
 set_target_properties (
 	drawpile
 	PROPERTIES
-	VERSION 0.5.0
+        VERSION ${DRAWPILE_VERSION}
 	PROJECT_LABEL drawpile-client
 )
 
