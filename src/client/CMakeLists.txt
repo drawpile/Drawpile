@@ -3,6 +3,12 @@
 # Qt stuff
 include ( ${QT_USE_FILE} )
 
+# Workaround the mess in ioapi.h. Mac OS X and BSDs don't need the "64" suffix for open()
+# and friends.
+if (APPLE)
+    add_definitions(-DUSE_FILE32API) # Misleading macro name from ioapi.h
+endif()
+
 # files
 
 set (
@@ -109,7 +115,7 @@ endif ( RELEASE )
 link_libraries(
 	${DPSHAREDLIB}
 	${QT_LIBRARIES}
-	${LIBZIP_LIBRARY}
+	${ZLIB_LIBRARIES}
 )
 
 add_executable (
@@ -137,5 +143,9 @@ else ( WIN32 )
 endif ( WIN32 )
 
 if (NOT DEBUG)
-	strip_exe ( ${CLIENTNAME} )
+        # Broken on mac because it attempts to strip bin/drawpile (which doesn't exist
+        # and so generates an error) instead of bin/drawpile.app/Contents/MacOS/drawpile.
+        # Also, stripping should be done with cpack.
+
+        #strip_exe ( ${CLIENTNAME} )
 endif (NOT DEBUG)

@@ -61,6 +61,7 @@ set ( QT_USE_QTNETWORK true )
 SET ( QT_USE_QTXML true )
 
 find_package ( Qt4 REQUIRED )
+find_package ( ZLib REQUIRED )
 
 #add_subdirectory ( config/ )
 
