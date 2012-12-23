@@ -82,12 +82,6 @@ Qt4_wrap_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
 
 # non-qt4 stuff
 
-add_definitions(${QT_DEFINITIONS})
-
-if (NOT DEBUG)
-	add_definitions(-DQT_NO_DEBUG)
-endif ( NOT DEBUG )
-
 set ( EXETYPE "" )
 set ( RES "" )
 if ( WIN32 )

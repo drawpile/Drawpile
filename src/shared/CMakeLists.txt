@@ -35,9 +35,6 @@ set (
 
  QT4_WRAP_CPP (MOC_Sources ${NET_QHEADERS} ${SRV_QHEADERS} )
 
-if (NOT DEBUG)
-	add_definitions(-DQT_NO_DEBUG)
-endif ( NOT DEBUG)
 
 link_libraries (
 	${QT_LIBRARIES}
