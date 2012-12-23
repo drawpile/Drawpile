@@ -65,10 +65,11 @@ set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 
 # .UI
 
-set ( TEMP ${CMAKE_CURRENT_BINARY_DIR} ) # backup binary dir
-set ( CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 QT4_WRAP_UI ( UI_Headers ${UIs} )
-set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
+# Tell the compiler where to find the generated headers
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+# The generated headers refer to headers in the source directory
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Qt Resource
 

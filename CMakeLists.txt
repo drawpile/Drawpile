@@ -38,14 +38,8 @@ include ( "config/Optimize.cmake" )
 include ( "config/Macros.cmake" )
 
 ### binary and library output ###
-set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
-set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
-
-
-### config.h ###
-
-### add src/ as base include directory ###
-include_directories ( AFTER src/ )
+set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
+set ( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
 
 set ( QT_USE_QTNETWORK true )
 SET ( QT_USE_QTXML true )
@@ -54,8 +48,10 @@ find_package ( Qt4 REQUIRED )
 find_package ( ZLib REQUIRED )
 
 ### Output config.h ###
-configure_file ( config/config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
+configure_file ( config/config.h.cmake ${CMAKE_BINARY_DIR}/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
+# Tell the compiler where to find config.h
+include_directories ( ${CMAKE_BINARY_DIR} )
 
 # scan sub-directories
 add_subdirectory( src )
