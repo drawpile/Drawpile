@@ -101,9 +101,9 @@ if ( WIN32 )
 		"DrawPile client" # full name
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
-		"http://drawpile.sourceforge.net/"
+                ${WEBSITE}
 		"2006-2008 Calle Laakkonen"
-		0 6 0
+                ${DRAWPILE_VERSION}
 	)
 endif ( WIN32 )
 
