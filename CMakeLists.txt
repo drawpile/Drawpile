@@ -1,11 +1,7 @@
 project ( drawpile CXX C )
 
-# CMake version requirement. CMake might whine on older version, but will
-# work unless compatibility is broken.
-
-cmake_minimum_required( VERSION 2.4 FATAL_ERROR )
-set ( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
-set ( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/config )
+cmake_minimum_required( VERSION 2.8 )
+set ( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/config )
 
 ### generic info
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
@@ -21,9 +17,10 @@ option ( SERVER "Compile UI-less server" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
-option ( SHARED "Build shared libraries." OFF ) # works in win32, other systems untested
 
 option ( RELEASE "Enable final all-in-one compilation." OFF )
+
+option ( BUILD_SHARED_LIBS "Build shared libraries." ON)
 
 # Set build type
 if ( DEBUG )
@@ -44,7 +41,6 @@ include ( "config/Macros.cmake" )
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
 
-set ( BUILD_SHARED_LIBS ON )
 
 ### config.h ###
 
@@ -65,11 +61,9 @@ add_definitions ( -DHAVE_CONFIG_H )
 add_subdirectory( src )
 add_subdirectory( doc )
 
-### subdirs ###
-
-if ( DEBUG )
+if ( CMAKE_BUILD_TYPE STREQUAL Debug )
 	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_DEBUG}")
-else ( )
+elseif ( CMAKE_BUILD_TYPE STREQUAL Release )
 	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 endif ( )
 
