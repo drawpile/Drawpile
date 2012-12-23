@@ -14,7 +14,6 @@ set ( DRAWPILE_VERSION "0.7.0" )
 
 ###
 include ( "config/Names.cmake" )
-include ( "config/SVN.cmake" )
 
 ### options ###
 option ( CLIENT "Compile client" ON )
