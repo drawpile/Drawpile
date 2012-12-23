@@ -34,12 +34,6 @@ endif ( )
 
 message ( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )
 
-# detect Mac OS X (this is WRONG!)
-set ( MACOS false)
-if ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-	set ( MACOS true )
-endif ( ${CMAKE_SYSTEM_NAME} MATCHES "Darwin" )
-
 ### Optimize ###
 include ( "config/Optimize.cmake" )
 
@@ -59,19 +53,17 @@ include_directories ( AFTER src/ )
 
 set ( QT_USE_QTNETWORK true )
 SET ( QT_USE_QTXML true )
-
 find_package ( Qt4 REQUIRED )
-find_package ( ZLib REQUIRED )
 
-#add_subdirectory ( config/ )
+find_package ( ZLib REQUIRED )
 
 ### Output config.h ###
 configure_file ( config/config.h.cmake ${CMAKE_CURRENT_SOURCE_DIR}/src/config.h )
 add_definitions ( -DHAVE_CONFIG_H )
 
 # scan sub-directories
-add_subdirectory( src/ )
-add_subdirectory( doc/ )
+add_subdirectory( src )
+add_subdirectory( doc )
 
 ### subdirs ###
 
@@ -80,3 +72,4 @@ if ( DEBUG )
 else ( )
 	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_RELEASE}")
 endif ( )
+

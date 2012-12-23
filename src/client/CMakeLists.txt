@@ -1,6 +1,5 @@
-# client
+# src/client/CMakeLists.txt
 
-# Qt stuff
 include ( ${QT_USE_FILE} )
 
 # Workaround the mess in ioapi.h. Mac OS X and BSDs don't need the "64" suffix for open()
@@ -73,19 +72,17 @@ set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
 
 # Qt Resource
 
-Qt4_add_resources ( QtResource ui/resources.qrc )
+QT4_ADD_RESOURCES ( QtResource ui/resources.qrc )
 
 # Qt4 MOC
 
-Qt4_wrap_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
-#Qt4_automoc ( ${MOC_Sources} ) # moc_*.cxx files ??
+Qt4_WRAP_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
 
 # non-qt4 stuff
 
 set ( EXETYPE "" )
 set ( RES "" )
 if ( WIN32 )
-	link_libraries ( ws2_32 )
 	if ( NOT DEBUG )
 		set ( EXETYPE WIN32 )
 	endif ( NOT DEBUG )
@@ -106,14 +103,8 @@ if ( RELEASE )
 	#generate_final ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
 
-link_libraries(
-	${DPSHAREDLIB}
-	${QT_LIBRARIES}
-	${ZLIB_LIBRARIES}
-)
-
 add_executable (
-	${CLIENTNAME}
+        drawpile
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${SOURCES}
@@ -122,6 +113,11 @@ add_executable (
 	${MOC_Sources}
 	${UI_Headers} # required here for ui_*.h generation
 )
+
+target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES} ${QT_LIBRARIES})
+if ( WIN32 )
+        target_link_libraries (drawpile ws2_32 )
+endif ()
 
 set_target_properties (
 	drawpile
