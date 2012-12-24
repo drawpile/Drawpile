@@ -1,10 +1,11 @@
 # src/client/CMakeLists.txt
 
+find_package(Qt4 REQUIRED QtCore QtNetwork QtXml QtGui)
 include ( ${QT_USE_FILE} )
 
 # Workaround the mess in ioapi.h. Mac OS X and BSDs don't need the "64" suffix for open()
 # and friends.
-if (APPLE)
+if (APPLE OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     add_definitions(-DUSE_FILE32API) # Misleading macro name from ioapi.h
 endif()
 

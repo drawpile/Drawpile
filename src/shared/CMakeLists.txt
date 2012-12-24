@@ -1,6 +1,6 @@
 # src/shared/CMakeLists.txt
 
-set (QT_DONT_USE_QTGUI true)
+find_package(Qt4 REQUIRED QtCore QtNetwork)
 include ( ${QT_USE_FILE} )
 
 set (

@@ -41,11 +41,7 @@ include ( "config/Macros.cmake" )
 set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
 
-set ( QT_USE_QTNETWORK true )
-SET ( QT_USE_QTXML true )
-find_package ( Qt4 REQUIRED )
-
-find_package ( ZLib REQUIRED )
+find_package ( ZLIB REQUIRED )
 
 ### Output config.h ###
 configure_file ( config/config.h.cmake ${CMAKE_BINARY_DIR}/config.h )
