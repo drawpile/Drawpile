@@ -1,11 +1,12 @@
-# src/
-add_subdirectory ( shared/ )
+# src/CMakeLists.txt
+
+add_subdirectory ( shared )
 
 if ( CLIENT )
-	add_subdirectory ( client/ )
-endif ( CLIENT )
+        add_subdirectory ( client )
+endif ()
 
 if ( SERVER )
-	add_subdirectory ( server/ )
-endif ( SERVER )
+        add_subdirectory ( server )
+endif ()
 

@@ -1,4 +1,6 @@
-set (QT_DONT_USE_QTGUI true)
+# src/shared/CMakeLists.txt
+
+find_package(Qt4 REQUIRED QtCore QtNetwork)
 include ( ${QT_USE_FILE} )
 
 set (
@@ -23,27 +25,15 @@ set (
 	server/server.h server/client.h server/board.h
 	)
 
-#set (
-	#SRV_HEADERS
-	#server/board.h
-	#)
-
 set (
 	SRV_SOURCES
 	server/server.cpp server/client.cpp server/board.cpp
 	)
 
- QT4_WRAP_CPP (MOC_Sources ${NET_QHEADERS} ${SRV_QHEADERS} )
-
-if (NOT DEBUG)
-	add_definitions(-DQT_NO_DEBUG)
-endif ( NOT DEBUG)
-
-link_libraries (
-	${QT_LIBRARIES}
-	)
+QT4_WRAP_CPP (MOC_Sources ${NET_QHEADERS} ${SRV_QHEADERS} )
 
 add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${SRV_SOURCES} ${MOC_Sources} )
+target_link_libraries ( ${DPSHAREDLIB} ${QT_LIBRARIES} )
 
 if (WIN32)
 	install ( TARGETS ${DPSHAREDLIB} DESTINATION . )

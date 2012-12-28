@@ -20,7 +20,7 @@
 
 #include <QImage>
 
-#include "../config.h"
+#include "config.h"
 
 #include "hoststate.h"
 #include "sessionstate.h"
