@@ -36,7 +36,23 @@ macro ( strip_lib target )
 	endif ( )
 endmacro ( )
 
-macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMENT COPYRIGHT VERSION_MAJOR VERSION_MINOR VERSION_BUG )
+# "0.7.0" -> 0 7 0
+function(split_version version major minor bug)
+    # Transform the string in a list
+    string(REPLACE "." ";" version_list ${version})
+    # Extract the elements
+    list(GET version_list 0 ma)
+    list(GET version_list 1 mi)
+    list(GET version_list 2 bu)
+    # Assign the function parameters
+    set(${major} ${ma} PARENT_SCOPE)
+    set(${minor} ${mi} PARENT_SCOPE)
+    set(${bug}   ${bu} PARENT_SCOPE)
+endfunction()
+
+macro ( generate_win32_resource resfile FULLNAME INTERNALNAME DESCRIPTION COMMENT COPYRIGHT VERSION )
+        split_version(${VERSION} VERSION_MAJOR VERSION_MINOR VERSION_BUG)
+        message("+++ ${VERSION_MAJOR} ${VERSION_MINOR} ${VERSION_BUG}")
 	if ( WIN32 )
 		set ( win32RC ${CMAKE_CURRENT_BINARY_DIR}/win32resource.rc )
 		if ( ${CMAKE_CURRENT_LIST_FILE} IS_NEWER_THAN ${win32RC} )
