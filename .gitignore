@@ -12,3 +12,7 @@ Makefile.*
 *.so
 
 *.swp
+
+# OSX files
+.DS_Store
+

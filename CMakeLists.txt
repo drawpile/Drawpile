@@ -47,8 +47,8 @@ include ( "config/Optimize.cmake" )
 include ( "config/Macros.cmake" )
 
 ### binary and library output ###
-set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin )
-set ( LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib )
+set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
+set ( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
 
 set ( BUILD_SHARED_LIBS ON )
 
@@ -67,6 +67,10 @@ if ( APPLE )
 	add_definitions ( -DUSE_FILE32API )
 endif ( APPLE )
 find_package ( ZLIB REQUIRED )
+
+if ( APPLE AND RELEASE )
+	SET(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/release)
+endif ()
 
 #add_subdirectory ( config/ )
 

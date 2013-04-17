@@ -112,10 +112,28 @@ link_libraries(
 	${ZLIB_LIBRARIES}
 )
 
+IF ( APPLE )
+			SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
+			# set how it shows up in the Info.plist file
+                        SET(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
+                        # set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
+                        SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.numediart.${CLIENTNAME}")
+                        SET(MACOSX_BUNDLE_INFO_STRING "${CLIENTNAME}")
+                        SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${CLIENTNAME}")
+                        SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${CLIENTNAME}")
+                        SET(MACOSX_BUNDLE_BUNDLE_VERSION "0.5.0")
+                        SET(MACOSX_BUNDLE_COPYRIGHT "Copyright DrawPile team")
+  			# set where in the bundle to put the icns file
+  			SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+  			# include the icns file in the target
+  			SET(${SOURCES} ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/${MACOSX_BUNDLE_ICON_FILE})
+ENDIF()
+
 add_executable (
 	${CLIENTNAME}
 	${EXETYPE}
 	MACOSX_BUNDLE
+	${MACOSX_BUNDLE_INFO_PLIST}
 	${SOURCES}
 	${QtResource}
 	${Win32Resource}
@@ -138,7 +156,28 @@ endif ( WIN32 )
 
 if (NOT DEBUG)
 	if (APPLE)
-		strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
+		#strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
+	
+MESSAGE("QT_PLUGINS_DIR ${QT_PLUGINS_DIR}")
+		# Install needed Qt plugins by copying directories from the qt installation
+		INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/PlugIns COMPONENT ${CLIENTNAME})
+		file(GLOB_RECURSE QTPLUGINS ${QT_PLUGINS_DIR}/imageformats/*.dylib)
+		STRING(REGEX REPLACE "${QT_PLUGINS_DIR}" "${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/PlugIns" QTPLUGINS "${QTPLUGINS}")
+
+		# install a qt.conf file
+		INSTALL(CODE "
+ 	   		file(WRITE \"\${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/Resources/qt.conf\" \"[Paths]\nPlugins = plugins\")
+ 	   		" COMPONENT ${CLIENTNAME})
+		FIND_FILE(QT_MENU_NIB qt_menu.nib PATHS /opt/local PATH_SUFFIXES Library/Frameworks/QtGui.framework/Resources lib/Resources)
+		IF(${QT_MENU_NIB} EQUAL QT_MENU_NIB-NOTFOUND)
+			MESSAGE(FATAL_ERROR "Couldn't find qt_menu.nib")
+		ENDIF()
+		INSTALL(DIRECTORY "${QT_MENU_NIB}" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
+		INSTALL(CODE "
+    			include(BundleUtilities)
+    			fixup_bundle(\"${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app\" \"${QTPLUGINS}\" \"\")
+    			" COMPONENT ${CLIENTNAME}
+		)
 	else ()
 		strip_exe ( ${CLIENTNAME} )
 	endif()
