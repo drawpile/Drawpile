@@ -1,13 +1,37 @@
 To compile DrawPile, Qt 4.2 or newer is required.
 
-Installation steps.
-1. mkdir build (in the project root directory)
-2. cd build
-2. cmake ..
-3. make
-The executables are generated in bin/ directory. You can run them from there,
-or run "make install" to copy the files to the appropriate system directories.
+Build
+-----
 
-If you don't need the standalone server, you can pass the option -DSERVER=off
-to cmake. If you want to develop DrawPile, you can enable the debugging features
-with -DDEBUG=on
+# Create build directory:
+
+$ mkdir path/to/build    # inside our outside the source tree
+$ cd path/to/build
+
+# Configure: one of the following:
+
+$ cmake path/to/src      # command-line
+$ ccmake path/to/src     # text-based UI
+$ cmake-gui path/to/src  # GUI
+
+# Build:
+
+$ make
+
+The executables are generated in the build/bin directory. You can run them from there,
+or install them (see below).
+
+Options
+-------
+
+The configuration step supports some options:
+
+SERVER=off   Don't build the stand-alone server.
+DEBUG=on     Enable debugging features
+
+If using cmake, you can pass them on the command-line with -D (example: cmake -DSERVER=off). If using ccmake or cmake-gui, you can set them in the UI.
+
+Install
+-------
+
+make install

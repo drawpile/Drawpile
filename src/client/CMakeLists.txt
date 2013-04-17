@@ -1,7 +1,13 @@
-# client
+# src/client/CMakeLists.txt
 
-# Qt stuff
+find_package(Qt4 REQUIRED QtCore QtNetwork QtXml QtGui)
 include ( ${QT_USE_FILE} )
+
+# Workaround the mess in ioapi.h. Mac OS X and BSDs don't need the "64" suffix for open()
+# and friends.
+if (APPLE OR CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+    add_definitions(-DUSE_FILE32API) # Misleading macro name from ioapi.h
+endif()
 
 # files
 
@@ -60,32 +66,25 @@ set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 
 # .UI
 
-set ( TEMP ${CMAKE_CURRENT_BINARY_DIR} ) # backup binary dir
-set ( CMAKE_CURRENT_BINARY_DIR ${CMAKE_CURRENT_SOURCE_DIR} )
 QT4_WRAP_UI ( UI_Headers ${UIs} )
-set ( CMAKE_CURRENT_BINARY_DIR ${TEMP} ) # restore binary dir
+# Tell the compiler where to find the generated headers
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+# The generated headers refer to headers in the source directory
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Qt Resource
 
-Qt4_add_resources ( QtResource ui/resources.qrc )
+QT4_ADD_RESOURCES ( QtResource ui/resources.qrc )
 
 # Qt4 MOC
 
-Qt4_wrap_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
-#Qt4_automoc ( ${MOC_Sources} ) # moc_*.cxx files ??
+Qt4_WRAP_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
 
 # non-qt4 stuff
-
-add_definitions(${QT_DEFINITIONS})
-
-if (NOT DEBUG)
-	add_definitions(-DQT_NO_DEBUG)
-endif ( NOT DEBUG )
 
 set ( EXETYPE "" )
 set ( RES "" )
 if ( WIN32 )
-	link_libraries ( ws2_32 )
 	if ( NOT DEBUG )
 		set ( EXETYPE WIN32 )
 	endif ( NOT DEBUG )
@@ -95,9 +94,9 @@ if ( WIN32 )
 		"DrawPile client" # full name
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
-		"http://drawpile.sourceforge.net/"
+                ${WEBSITE}
 		"2006-2008 Calle Laakkonen"
-		0 6 0
+                ${DRAWPILE_VERSION}
 	)
 endif ( WIN32 )
 
@@ -113,24 +112,24 @@ link_libraries(
 )
 
 IF ( APPLE )
-			SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
-			# set how it shows up in the Info.plist file
-                        SET(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
-                        # set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
-                        SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.numediart.${CLIENTNAME}")
-                        SET(MACOSX_BUNDLE_INFO_STRING "${CLIENTNAME}")
-                        SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${CLIENTNAME}")
-                        SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${CLIENTNAME}")
-                        SET(MACOSX_BUNDLE_BUNDLE_VERSION "0.5.0")
-                        SET(MACOSX_BUNDLE_COPYRIGHT "Copyright DrawPile team")
-  			# set where in the bundle to put the icns file
-  			SET_SOURCE_FILES_PROPERTIES(${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/${MACOSX_BUNDLE_ICON_FILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-  			# include the icns file in the target
-  			SET(${SOURCES} ${SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/${MACOSX_BUNDLE_ICON_FILE})
+        SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
+        # set how it shows up in the Info.plist file
+        SET(MACOSX_BUNDLE_ICON_FILE "drawpile.icns")
+        # set the bundle identifier (REQUIRED, or some strange GUI bugs may appear)
+        SET(MACOSX_BUNDLE_GUI_IDENTIFIER "org.numediart.${CLIENTNAME}")
+        SET(MACOSX_BUNDLE_INFO_STRING "${CLIENTNAME}")
+        SET(MACOSX_BUNDLE_LONG_VERSION_STRING "${CLIENTNAME}")
+        SET(MACOSX_BUNDLE_SHORT_VERSION_STRING "${CLIENTNAME}")
+        SET(MACOSX_BUNDLE_BUNDLE_VERSION "${DRAWPILE_VERSION}")
+        SET(MACOSX_BUNDLE_COPYRIGHT "Copyright DrawPile team")
+        # set where in the bundle to put the icns file
+        SET_SOURCE_FILES_PROPERTIES("${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/drawpile.icns" PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        # include the icns file in the target
+        SET(${SOURCES} ${SOURCES} "${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/drawpile.icns")
 ENDIF()
 
 add_executable (
-	${CLIENTNAME}
+        drawpile
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${MACOSX_BUNDLE_INFO_PLIST}
@@ -141,10 +140,15 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
+target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES} ${QT_LIBRARIES})
+if ( WIN32 )
+        target_link_libraries (drawpile ws2_32 )
+endif ()
+
 set_target_properties (
 	drawpile
 	PROPERTIES
-	VERSION 0.5.0
+        VERSION ${DRAWPILE_VERSION}
 	PROJECT_LABEL drawpile-client
 )
 
@@ -157,8 +161,9 @@ endif ( WIN32 )
 if (NOT DEBUG)
 	if (APPLE)
 		#strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
-	
-MESSAGE("QT_PLUGINS_DIR ${QT_PLUGINS_DIR}")
+		# Install the icon
+		INSTALL(FILES "${CMAKE_CURRENT_SOURCE_DIR}/ui/icons/drawpile.icns" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/Resources COMPONENT ${CLIENTNAME})
+
 		# Install needed Qt plugins by copying directories from the qt installation
 		INSTALL(DIRECTORY "${QT_PLUGINS_DIR}/imageformats" DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/${CLIENTNAME}.app/Contents/PlugIns COMPONENT ${CLIENTNAME})
 		file(GLOB_RECURSE QTPLUGINS ${QT_PLUGINS_DIR}/imageformats/*.dylib)

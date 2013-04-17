@@ -1,6 +1,8 @@
 #ifndef VERSION_H
 #define VERSION_H
 
+#include "config.h"
+
 namespace version {
 
 //! Protocol level
@@ -18,7 +20,7 @@ namespace version {
 static const int level = 1; 
 
 //! Version string
-static const char string[] = "0.7.0";
+static const char string[] = DRAWPILE_VERSION;
 
 }
 
