@@ -34,6 +34,9 @@
 
 #include "main.h"
 #include "mainwindow.h"
+#include "easylogging++.h"
+
+_INITIALIZE_EASYLOGGINGPP
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -121,6 +124,17 @@ bool DrawPileApp::event(QEvent *e) {
 int main(int argc, char *argv[]) {
 	DrawPileApp app(argc,argv);
 
+        _START_EASYLOGGINGPP(argc, argv);
+        std::string logConfFile = std::string();
+#if defined(_WIN32) || defined(_WIN64)
+        logConfFile = std::string("src\\client\\log-win.conf");
+#elif (defined(__linux) || defined(__linux__) || defined(__APPLE__))
+        logConfFile = std::string("src/client/log-nix.conf");
+#endif // defined(_WIN32) || defined(_WIN64)
+        easyloggingpp::Configurations logConf(logConfFile);
+        easyloggingpp::Loggers::reconfigureAllLoggers(logConf);
+
+        LTRACE << "Starting DrawPile...";
 	// Create the main window
 	MainWindow *win = new MainWindow;
 	
@@ -174,6 +188,7 @@ int main(int argc, char *argv[]) {
 	#ifdef CRASHGUARD
 	crashGuard.remove();
 	#endif
+        LTRACE << "DrawPile closing...";
 	
 	return rv;
 }
