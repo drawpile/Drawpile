@@ -26,6 +26,8 @@
 #include <QHelpEvent>
 #include <QToolTip>
 #include <QMenu>
+#include <QDrag>
+#include <QMimeData>
 
 #include "colordialog.h"
 #include "palettewidget.h"

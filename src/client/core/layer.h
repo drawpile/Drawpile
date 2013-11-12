@@ -153,5 +153,7 @@ class Layer {
 
 }
 
+Q_DECLARE_METATYPE(dpcore::Layer*);
+
 #endif
 

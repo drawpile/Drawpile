@@ -71,9 +71,9 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 		ui_->shortcuts->setItem(i, 1, accel);
 		ui_->shortcuts->setItem(i, 2, def);
 	}
-	ui_->shortcuts->horizontalHeader()->setResizeMode(0,QHeaderView::Stretch);
-	ui_->shortcuts->horizontalHeader()->setResizeMode(1,QHeaderView::ResizeToContents);
-	ui_->shortcuts->horizontalHeader()->setResizeMode(2,QHeaderView::ResizeToContents);
+	ui_->shortcuts->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+	ui_->shortcuts->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
+	ui_->shortcuts->horizontalHeader()->setSectionResizeMode(2,QHeaderView::ResizeToContents);
 	connect(ui_->shortcuts, SIGNAL(cellChanged(int, int)),
 			this, SLOT(validateShortcut(int, int)));
 }

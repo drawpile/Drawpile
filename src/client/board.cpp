@@ -156,7 +156,7 @@ QStringList Board::getAnnotations(bool zeroid) const
 {
 	QStringList messages;
 	if(image_)
-		foreach(QGraphicsItem *item, image_->children())
+		foreach(QGraphicsItem *item, image_->childItems())
 			if(item->type() == AnnotationItem::Type) {
 				protocol::Annotation a;
 				static_cast<AnnotationItem*>(item)->getOptions(a);
@@ -170,7 +170,7 @@ QStringList Board::getAnnotations(bool zeroid) const
 void Board::clearAnnotations()
 {
 	if(image_)
-		foreach(QGraphicsItem *item, image_->children())
+		foreach(QGraphicsItem *item, image_->childItems())
 			if(item->type() == AnnotationItem::Type) {
 				emit annotationDeleted(static_cast<AnnotationItem*>(item));
 				delete item;
@@ -180,7 +180,7 @@ void Board::clearAnnotations()
 void Board::showAnnotations(bool show)
 {
 	if(image_)
-		foreach(QGraphicsItem *item, image_->children())
+		foreach(QGraphicsItem *item, image_->childItems())
 			if(item->type() == AnnotationItem::Type)
 				item->setVisible(show);
 }
@@ -189,7 +189,7 @@ void Board::highlightAnnotations(bool hl)
 {
 	hla_ = hl;
 	if(image_)
-		foreach(QGraphicsItem *item, image_->children())
+		foreach(QGraphicsItem *item, image_->childItems())
 			if(item->type() == AnnotationItem::Type)
 				static_cast<AnnotationItem*>(item)->forceBorder(hl);
 }
@@ -296,7 +296,7 @@ bool Board::hasImage() const {
 bool Board::hasAnnotations() const
 {
 	if(image_)
-		foreach(QGraphicsItem *i, image_->children())
+		foreach(QGraphicsItem *i, image_->childItems())
 			if(i->type() == AnnotationItem::Type)
 				return true;
 	return false;
@@ -461,7 +461,7 @@ void Board::annotate(const protocol::Annotation& annotation)
 	AnnotationItem *item=0;
 	bool newitem = true;
 	// Find existing annotation
-	foreach(QGraphicsItem *i, image_->children()) {
+	foreach(QGraphicsItem *i, image_->childItems()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
 			if(ai->id() == annotation.id) {
@@ -485,7 +485,7 @@ void Board::unannotate(int id)
 {
 	if(!image_) return;
 	AnnotationItem *item=0;
-	foreach(QGraphicsItem *i, image_->children()) {
+	foreach(QGraphicsItem *i, image_->childItems()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
 			if(ai->id() == id) {

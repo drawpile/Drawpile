@@ -1,7 +1,11 @@
 # src/client/CMakeLists.txt
 
-find_package(Qt4 REQUIRED QtCore QtNetwork QtXml QtGui)
-include ( ${QT_USE_FILE} )
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 
 # Workaround the mess in ioapi.h. Mac OS X and BSDs don't need the "64" suffix for open()
 # and friends.
@@ -64,23 +68,10 @@ set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui
 	ui/erasersettings.ui )
 
-# .UI
+qt5_wrap_ui( UI_Headers ${UIs} )
+qt5_add_resources( QtResource ui/resources.qrc )
 
-QT4_WRAP_UI ( UI_Headers ${UIs} )
-# Tell the compiler where to find the generated headers
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-# The generated headers refer to headers in the source directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-# Qt Resource
-
-QT4_ADD_RESOURCES ( QtResource ui/resources.qrc )
-
-# Qt4 MOC
-
-Qt4_WRAP_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
-
-# non-qt4 stuff
+# non-qt stuff
 
 set ( EXETYPE "" )
 set ( RES "" )
@@ -95,7 +86,7 @@ if ( WIN32 )
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
                 ${WEBSITE}
-		"2006-2008 Calle Laakkonen"
+		"2006-2013 Calle Laakkonen"
                 ${DRAWPILE_VERSION}
 	)
 endif ( WIN32 )
@@ -129,18 +120,20 @@ IF ( APPLE )
 ENDIF()
 
 add_executable (
-        drawpile
+	drawpile
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${MACOSX_BUNDLE_INFO_PLIST}
 	${SOURCES}
 	${QtResource}
 	${Win32Resource}
-	${MOC_Sources}
+	#${MOC_Sources}
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES} ${QT_LIBRARIES})
+qt5_use_modules(drawpile Widgets Network Xml)
+
+target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES})
 if ( WIN32 )
         target_link_libraries (drawpile ws2_32 )
 endif ()
@@ -187,3 +180,4 @@ if (NOT DEBUG)
 		strip_exe ( ${CLIENTNAME} )
 	endif()
 endif (NOT DEBUG)
+

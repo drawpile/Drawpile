@@ -22,6 +22,7 @@
 #include <QPainter>
 #include <QList>
 #include <QUrl>
+#include <QMimeData>
 
 #include "imageselector.h"
 

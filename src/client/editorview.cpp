@@ -24,6 +24,7 @@
 #include <QUrl>
 #include <QBitmap>
 #include <QPainter>
+#include <QMimeData>
 
 #include "editorview.h"
 #include "board.h"

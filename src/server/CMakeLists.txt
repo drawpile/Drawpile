@@ -1,7 +1,8 @@
 # src/server/CMakeLists.txt
 
-find_package( Qt4 REQUIRED QtCore QtNetwork )
-include ( ${QT_USE_FILE} )
+find_package( Qt5Network )
+include_directories( ${Qt5Network_INCLUDES} )
+add_definitions(${Qt5Network_DEFINITIONS})
 
 set (
 	SOURCES
@@ -9,7 +10,7 @@ set (
 	)
 
 add_executable( ${SRVNAME} ${SOURCES} )
-target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} ${QT_LIBRARIES} )
+target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} ${Qt5Network_LIBRARIES} )
 
 if ( WIN32 )
 	install ( TARGETS ${SRVNAME} DESTINATION . )

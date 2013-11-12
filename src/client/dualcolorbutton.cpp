@@ -22,6 +22,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QDrag>
+#include <QMimeData>
 
 #include "dualcolorbutton.h"
 

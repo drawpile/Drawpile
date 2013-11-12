@@ -21,6 +21,8 @@
 #include <QStyleOptionButton>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QMimeData>
+
 #include "colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
