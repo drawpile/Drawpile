@@ -25,7 +25,6 @@
 class Ui_PaletteBox;
 
 class Palette;
-class LocalPalette;
 
 namespace widgets {
 
@@ -45,10 +44,10 @@ class PaletteBox : public QDockWidget {
 		void deletePalette();
 
 	private:
-		bool isUniquePaletteName(const QString& name, const LocalPalette *exclude) const;
+		bool isUniquePaletteName(const QString& name, const Palette *exclude) const;
 
 		Ui_PaletteBox *ui_;
-		QList<LocalPalette*> palettes_;
+		QList<Palette*> palettes_;
 };
 
 }

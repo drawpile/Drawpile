@@ -33,7 +33,7 @@ set (
 set (
 	UNUSED_HEADERS # no QOBJECT ?
 	version.h user.h interfaces.h preview.h boardeditor.h boarditem.h
-	localpalette.h palette.h icons.h
+	palette.h icons.h
 	tools.h recentfiles.h sessioninfo.h annotationitem.h
 	core/tile.h core/layer.h core/brush.h core/point.h
 	core/rasterop.h
@@ -52,7 +52,7 @@ set (
 	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
 	sessioninfo.cpp icons.cpp mandatoryfields.cpp
-	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
+	palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
 	core/rasterop.cpp brushslider.cpp viewstatus.cpp layerlistdelegate.cpp

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,59 +17,62 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef PALETTE_H
-#define PALETTE_H
+#ifndef LOCALPALETTE_H
+#define LOCALPALETTE_H
 
-class QColor;
+#include <QList>
 
-/**
- * \brief Color palette interface
- * This class provides an interface for reading and writing color palettes.
- */
+class QVariant;
+class QFileInfo;
+
+#include "palette.h"
+
 class Palette {
 	public:
-		virtual ~Palette() = 0;
+		//! Construct a blank palette
+		Palette(const QString& name, const QString& filename="");
+
+		//! Load a palette from a file
+		static Palette *fromFile(const QFileInfo& file);
+
+		//! Generate a default palette
+		static Palette *makeDefaultPalette();
+
+		//! Set the name of the palette
+		void setName(const QString& name);
+
+		//! Get the name of the palette
+		const QString& name() const { return name_; }
+
+		//! Get the filename of the palette
+		const QString& filename() const { return filename_; }
+
+		//! Has the palette been modified since it was last saved/loaded?
+		bool isModified() const { return modified_; }
+
+		//! Save palette to file
+		bool save(const QString& filename);
 
 		//! Get the number of colors
-		/**
-		 * @return number of colors in the palette
-		 */
-		virtual int count() const = 0;
-
+		int count() const;
+		
 		//! Get the color at index
-		/**
-		 * @param index color index
-		 * @return color at specified index
-		 * @pre 0 <= index < count()
-		 */
-		virtual QColor color(int index) const = 0;
-
-		//! Set a color
-		/**
-		 * @param index color index
-		 * @param color color
-		 * @pre 0 <= index < count()
-		 */
-		virtual void setColor(int index, const QColor& color) = 0;
-
+		QColor color(int index) const;
+		
+		//! Set a color at the specified index
+		void setColor(int index, const QColor& color);
+		
 		//! Insert a new color
-		/**
-		 * Size of the palette is increased by one. The new color is
-		 * inserted before the index. If index == count(), the color is
-		 * added to the end of the palette.
-		 * @param index color index
-		 * @param color color
-		 * @pre 0 <= index <= count()
-		 */
-		virtual void insertColor(int index, const QColor& color) = 0;
+		void insertColor(int index, const QColor& color);
 
 		//! Remove a color
-		/**
-		 * Size of the palette is decreased by one.
-		 * @param index color index
-		 * @pre 0 <= index < count()
-		 */
-		virtual void removeColor(int index) = 0;
+		void removeColor(int index);
+
+	private:
+		QList<QColor> colors_;
+		QString name_;
+		QString filename_;
+		bool modified_;
 };
 
 #endif
