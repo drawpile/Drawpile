@@ -24,8 +24,8 @@
 
 #include "main.h"
 #include "hostdialog.h"
-#include "imageselector.h"
-#include "mandatoryfields.h"
+#include "../widgets/imageselector.h"
+#include "../utils/mandatoryfields.h"
 #include "colordialog.h"
 using widgets::ImageSelector;
 

@@ -26,7 +26,7 @@
 #include "layerlistdelegate.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "layerwidget.h"
+#include "widgets/layerwidget.h"
 #include "icons.h"
 
 LayerListDelegate::LayerListDelegate(QObject *parent)

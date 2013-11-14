@@ -17,48 +17,79 @@ endif()
 
 set (
 	HEADERS
-	main.h mainwindow.h netstatus.h dualcolorbutton.h editorview.h
-	toolsettingswidget.h colordialog.h brushpreview.h qtcolortriangle.h
-	board.h gradientslider.h colorbutton.h
-	newdialog.h imageselector.h hostdialog.h joindialog.h
-	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
-	mandatoryfields.h palettewidget.h palettebox.h
-	colorbox.h settingsdialog.h layerwidget.h
-	navigator.h toolsettings.h brushslider.h viewstatus.h layerlistdelegate.h
-	layerlistwidget.h core/layerstack.h core/layermimedata.h
-)
-
-# unused headers because they do not create moc_* files ()
-set (
-	UNUSED_HEADERS # no QOBJECT ?
-	version.h user.h interfaces.h preview.h boarditem.h
-	palette.h icons.h
-	tools.h recentfiles.h annotationitem.h
-	core/tile.h core/layer.h core/brush.h core/point.h
-	core/rasterop.h
-	ora/zipfile.h ora/orawriter.h ora/orareader.h
-	ora/zip.h ora/unzip.h ora/ioapi.h
+	main.h mainwindow.h editorview.h
+	brushpreview.h 
+	board.h
+	localserver.h userlistmodel.h 
+	toolsettings.h layerlistdelegate.h
+	core/layerstack.h core/layermimedata.h
+	utils/mandatoryfields.h 
+	dialogs/colordialog.h 
+	dialogs/newdialog.h
+	dialogs/hostdialog.h
+	dialogs/joindialog.h
+	dialogs/settingsdialog.h
+	widgets/viewstatus.h
+	widgets/userlistwidget.h 
+	widgets/palettewidget.h
+	widgets/popupmessage.h
+	widgets/netstatus.h 
+	widgets/qtcolortriangle.h
+	widgets/dualcolorbutton.h 
+	widgets/chatwidget.h
+	widgets/brushslider.h 
+	widgets/colorbutton.h
+	widgets/gradientslider.h
+	widgets/imageselector.h 
+	widgets/layerlistwidget.h 
+	widgets/layerwidget.h
+	docks/toolsettingswidget.h 
+	docks/palettebox.h
+	docks/navigator.h 
+	docks/colorbox.h 
 )
 
 set (
 	SOURCES
-	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
-	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
-	qtcolortriangle.cpp board.cpp boarditem.cpp user.cpp
+	main.cpp mainwindow.cpp 
+	editorview.cpp brushpreview.cpp
+	board.cpp boarditem.cpp user.cpp
 	tools.cpp toolsettings.cpp
-	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp
-	preview.cpp localserver.cpp popupmessage.cpp
-	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
-	icons.cpp mandatoryfields.cpp
-	palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
+	preview.cpp localserver.cpp
+	userlistmodel.cpp
+	icons.cpp 
+	annotationitem.cpp
+	utils/palette.cpp
+	utils/mandatoryfields.cpp
+	utils/recentfiles.cpp
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
-	core/rasterop.cpp brushslider.cpp viewstatus.cpp layerlistdelegate.cpp
-	layerlistwidget.cpp layerwidget.cpp
+	core/rasterop.cpp layerlistdelegate.cpp
 	core/layermimedata.cpp
 	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
 	ora/zip.c ora/unzip.c ora/ioapi.c
+	dialogs/colordialog.cpp 
+	dialogs/newdialog.cpp 
+	dialogs/hostdialog.cpp
+	dialogs/joindialog.cpp
+	dialogs/settingsdialog.cpp
+	widgets/viewstatus.cpp
+	widgets/userlistwidget.cpp 
+	widgets/palettewidget.cpp 
+	widgets/popupmessage.cpp
+	widgets/netstatus.cpp 
+	widgets/qtcolortriangle.cpp 
+	widgets/dualcolorbutton.cpp
+	widgets/chatwidget.cpp 
+	widgets/brushslider.cpp 
+	widgets/colorbutton.cpp 
+	widgets/gradientslider.cpp 
+	widgets/imageselector.cpp
+	widgets/layerlistwidget.cpp
+	widgets/layerwidget.cpp
+	docks/toolsettingswidget.cpp 
+	docks/palettebox.cpp 
+	docks/navigator.cpp 
+	docks/colorbox.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

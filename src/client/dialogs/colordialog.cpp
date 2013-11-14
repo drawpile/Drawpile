@@ -21,8 +21,8 @@
 #include <QPushButton>
 
 #include "colordialog.h"
-#include "qtcolortriangle.h"
-#include "gradientslider.h"
+#include "widgets/qtcolortriangle.h"
+#include "widgets/gradientslider.h"
 using widgets::GradientSlider;
 
 #include "ui_colordialog.h"

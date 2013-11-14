@@ -622,7 +622,7 @@
   <customwidget>
    <class>ImageSelector</class>
    <extends>QFrame</extends>
-   <header>imageselector.h</header>
+   <header>widgets/imageselector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

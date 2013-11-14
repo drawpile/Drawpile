@@ -437,12 +437,12 @@
   <customwidget>
    <class>QtColorTriangle</class>
    <extends>QWidget</extends>
-   <header>qtcolortriangle.h</header>
+   <header>widgets/qtcolortriangle.h</header>
   </customwidget>
   <customwidget>
    <class>GradientSlider</class>
    <extends>QWidget</extends>
-   <header>gradientslider.h</header>
+   <header>widgets/gradientslider.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

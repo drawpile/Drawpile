@@ -29,9 +29,9 @@
 #include <QDrag>
 #include <QMimeData>
 
-#include "colordialog.h"
+#include "dialogs/colordialog.h"
 #include "palettewidget.h"
-#include "palette.h"
+#include "utils/palette.h"
 
 namespace widgets {
 

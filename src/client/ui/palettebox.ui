@@ -80,7 +80,7 @@
   <customwidget>
    <class>PaletteWidget</class>
    <extends>QWidget</extends>
-   <header>palettewidget.h</header>
+   <header>widgets/palettewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

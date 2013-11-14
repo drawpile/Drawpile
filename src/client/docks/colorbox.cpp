@@ -20,8 +20,8 @@
 
 #include "colorbox.h"
 
-#include "colorbutton.h"
-#include "gradientslider.h"
+#include "widgets/colorbutton.h"
+#include "widgets/gradientslider.h"
 using widgets::ColorButton;
 using widgets::GradientSlider;
 #include "ui_colorbox.h"

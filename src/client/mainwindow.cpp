@@ -40,34 +40,38 @@
 
 #include "main.h"
 #include "mainwindow.h"
-#include "viewstatus.h"
-#include "netstatus.h"
 #include "editorview.h"
 #include "board.h"
-#include "toolsettingswidget.h"
-#include "userlistwidget.h"
-#include "layerlistwidget.h"
-#include "chatwidget.h"
-#include "dualcolorbutton.h"
 #include "localserver.h"
-#include "recentfiles.h"
-#include "palettebox.h"
-#include "colorbox.h"
 #include "icons.h"
 #include "version.h"
 
+#include "utils/recentfiles.h"
+
+#include "widgets/viewstatus.h"
+#include "widgets/userlistwidget.h"
+#include "widgets/netstatus.h"
+#include "widgets/dualcolorbutton.h"
+#include "widgets/chatwidget.h"
+#include "widgets/layerlistwidget.h"
+
+#include "docks/toolsettingswidget.h"
+#include "docks/palettebox.h"
+#include "docks/navigator.h"
+#include "docks/colorbox.h"
+
 #include "net/client.h"
 
-#include "colordialog.h"
-#include "newdialog.h"
-#include "hostdialog.h"
-#include "joindialog.h"
-#include "settingsdialog.h"
+#include "dialogs/colordialog.h"
+#include "dialogs/newdialog.h"
+#include "dialogs/hostdialog.h"
+#include "dialogs/joindialog.h"
+#include "dialogs/settingsdialog.h"
+
 #include "toolsettings.h" // enableBaking()
 
 #include "core/layerstack.h"
 
-#include "navigator.h"
 
 /**
  * @param source if not null, clone settings from this window

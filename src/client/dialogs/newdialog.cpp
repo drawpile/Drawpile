@@ -19,7 +19,7 @@
 */
 #include <QPushButton>
 #include "newdialog.h"
-#include "colorbutton.h"
+#include "widgets/colorbutton.h"
 using widgets::ColorButton;
 
 #include "ui_newdialog.h"

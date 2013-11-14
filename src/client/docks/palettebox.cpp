@@ -27,11 +27,11 @@
 #include "main.h"
 #include "palettebox.h"
 
-#include "palettewidget.h"
+#include "widgets/palettewidget.h"
 using widgets::PaletteWidget;
 #include "ui_palettebox.h"
 
-#include "palette.h"
+#include "utils/palette.h"
 
 namespace widgets {
 

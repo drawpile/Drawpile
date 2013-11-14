@@ -20,7 +20,7 @@
 
 #include "user.h"
 #include "boarditem.h"
-#include "layerlistwidget.h"
+#include "widgets/layerlistwidget.h"
 
 namespace drawingboard {
 

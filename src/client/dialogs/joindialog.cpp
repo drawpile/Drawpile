@@ -23,7 +23,7 @@
 
 #include "main.h"
 #include "joindialog.h"
-#include "mandatoryfields.h"
+#include "../utils/mandatoryfields.h"
 
 #include "ui_joindialog.h"
 

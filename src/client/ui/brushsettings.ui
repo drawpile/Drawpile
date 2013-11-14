@@ -226,7 +226,7 @@
   <customwidget>
    <class>BrushSlider</class>
    <extends>QWidget</extends>
-   <header>brushslider.h</header>
+   <header>widgets/brushslider.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

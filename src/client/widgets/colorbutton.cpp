@@ -26,7 +26,7 @@
 #include "colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
-#include "colordialog.h"
+#include "dialogs/colordialog.h"
 namespace widgets {
 #endif
 
