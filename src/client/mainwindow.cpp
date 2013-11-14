@@ -44,7 +44,6 @@
 #include "netstatus.h"
 #include "editorview.h"
 #include "board.h"
-#include "controller.h"
 #include "toolsettingswidget.h"
 #include "userlistwidget.h"
 #include "layerlistwidget.h"
@@ -52,18 +51,17 @@
 #include "dualcolorbutton.h"
 #include "localserver.h"
 #include "recentfiles.h"
-#include "hoststate.h"
-#include "sessionstate.h"
 #include "palettebox.h"
 #include "colorbox.h"
 #include "icons.h"
 #include "version.h"
 
+#include "net/client.h"
+
 #include "colordialog.h"
 #include "newdialog.h"
 #include "hostdialog.h"
 #include "joindialog.h"
-#include "logindialog.h"
 #include "settingsdialog.h"
 #include "toolsettings.h" // enableBaking()
 
@@ -143,7 +141,9 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(navigator_, SIGNAL(zoomIn()), this, SLOT(zoomin()));
 	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 
-	// Create controller
+	// Create the network client
+	_client = new net::Client();
+#if 0
 	controller_ = new Controller(toolsettings_->getAnnotationSettings(), this);
 	controller_->setModel(board_);
 	connect(controller_, SIGNAL(changed()),
@@ -237,12 +237,13 @@ MainWindow::MainWindow(const MainWindow *source)
 			controller_, SLOT(setLayerOpacity(int,int)));
 	connect(layerlist_, SIGNAL(layerToggleHidden(int)),
 			controller_, SLOT(toggleLayerHidden(int)));
-
+#endif
 	if(source)
 		cloneSettings(source);
 	else
 		readSettings();
 
+#if 0
 	autosaveTimer_ = new QTimer();
 	connect(autosaveTimer_, SIGNAL(timeout()), this, SLOT(autosave()));
 	// todo: need better location
@@ -250,6 +251,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	autosaveTmp_->setAutoRemove(false);
 	autosaveTimeout_ = 15; // minutes
 	statusDefaultTimeout_ = 15; // seconds
+#endif
 	
 	// Show self
 	show();
@@ -263,9 +265,11 @@ MainWindow::~MainWindow()
 		delete child;
 	}
 	
+#if 0
 	autosaveTmp_->setAutoRemove(true);
 	delete autosaveTmp_;
 	delete autosaveTimer_;
+#endif
 }
 
 /**
@@ -323,11 +327,13 @@ void MainWindow::postInitBoard(const QString& filename)
  */
 void MainWindow::joinSession(const QUrl& url)
 {
+#if 0
 	controller_->joinSession(url);
 
 	// Set login dialog to correct state
 	logindlg_->connecting(url.host(), false);
 	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
+#endif
 }
 
 /**
@@ -339,8 +345,12 @@ void MainWindow::joinSession(const QUrl& url)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
+#if 0
 	return !(isWindowModified() || board_->hasAnnotations() ||
 		controller_->isConnected());
+#else
+	return false;
+#endif
 }
 
 /**
@@ -451,7 +461,9 @@ void MainWindow::readSettings()
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
 	toolsettings_->setTool(tools::Type(tool));
+#if 0
 	controller_->setTool(tools::Type(tool));
+#endif
 
 	// Remember cursor settings
 	toggleoutline_->setChecked(cfg.value("outline",true).toBool());
@@ -494,7 +506,9 @@ void MainWindow::cloneSettings(const MainWindow *source)
 			);
 	drawingtools_->actions()[tool]->trigger();
 	toolsettings_->setTool(tools::Type(tool));
+#if 0
 	controller_->setTool(tools::Type(tool));
+#endif
 
 	// Copy foreground and background colors
 	fgbgcolor_->setForeground(source->fgbgcolor_->foreground());
@@ -536,6 +550,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
 	if(canReplace() == false) {
 		// First confirm disconnection
+#if 0
 		if(controller_->isConnected()) {
 			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
 					controller_->isUploading()?
@@ -558,7 +573,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 			event->ignore();
 			return;
 		}
-
+#endif
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
 			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
@@ -579,8 +594,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			// Cancel exit
 			if(box.clickedButton() == cancelbtn || cancel) {
+#if 0
 				disconnect(controller_, SIGNAL(disconnected(QString)),
 						this, SLOT(close()));
+#endif
 				event->ignore();
 				return;
 			}
@@ -856,10 +873,12 @@ void MainWindow::leave()
 			);
 	connect(leavebox, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
 	
+#if 0
 	if(controller_->isUploading()) {
 		leavebox->setIcon(QMessageBox::Warning);
 		leavebox->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
 	}
+#endif
 	leavebox->show();
 }
 
@@ -870,8 +889,10 @@ void MainWindow::leave()
  */
 void MainWindow::finishLeave(int i)
 {
+#if 0
 	if(i == 0)
 		controller_->disconnectHost();
+#endif
 }
 
 /**
@@ -931,6 +952,7 @@ void MainWindow::finishHost(int i)
 void MainWindow::hostSession(const QUrl& url, const QString& password,
 		const QString& title, int userlimit, bool allowdrawing)
 {
+#if 0
 	// Connect to host
 	disconnect(controller_, SIGNAL(loggedin()), this, 0);
 	controller_->hostSession(url, password,
@@ -939,6 +961,7 @@ void MainWindow::hostSession(const QUrl& url, const QString& password,
 	// Set login dialog to correct state
 	logindlg_->connecting(url.host(), true);
 	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
+#endif
 }
 
 /**
@@ -1002,7 +1025,9 @@ void MainWindow::disconnected()
  */
 void MainWindow::joined()
 {
+#if 0
 	userlist_->setSession(controller_->session());
+#endif
 	chatbox_->joined();
 }
 
@@ -1016,6 +1041,7 @@ void MainWindow::joined()
  */
 void MainWindow::boardInfoChanged()
 {
+#if 0
 	const network::SessionState *session = controller_->session();
 	const network::Session& info = session->info();
 	setSessionTitle(info.title());
@@ -1023,6 +1049,7 @@ void MainWindow::boardInfoChanged()
 	userlist_->setAdminMode(isowner);
 	adminTools_->setEnabled(isowner);
 	disallowjoins_->setChecked(info.maxUsers() <= session->userCount());
+#endif
 }
 
 /**
@@ -1641,8 +1668,6 @@ void MainWindow::createDialogs()
 {
 	newdlg_ = new dialogs::NewDialog(this);
 	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
-
-	logindlg_ = new dialogs::LoginDialog(this);
 }
 
 void MainWindow::startAutosaver()

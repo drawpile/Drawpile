@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 	// Create the main window
 	MainWindow *win = new MainWindow;
 	
-	#ifdef CRASHGUARD
+#if 0
 	QFile crashGuard(QFileInfo(DrawPileApp::getConfDir(), "crash.guard").absoluteFilePath());
 	
 	if (crashGuard.exists())
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
 	
 	if (!crashGuard.open(QIODevice::WriteOnly|QIODevice::Unbuffered))
 		qWarning() << "crash guard creation failed!";
-	#endif // CRASHGUARD
+#endif // CRASHGUARD
 	
 	const QStringList args = app.arguments();
 	if(args.count()>1) {
@@ -171,9 +171,9 @@ int main(int argc, char *argv[]) {
 
 	int rv = app.exec();
 	
-	#ifdef CRASHGUARD
+#if 0
 	crashGuard.remove();
-	#endif
+#endif
 	
 	return rv;
 }

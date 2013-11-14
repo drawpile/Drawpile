@@ -43,6 +43,11 @@ set ( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
 
 find_package ( ZLIB REQUIRED )
 
+# Enable C++11
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+# GCC <4.7 may need this instead:
+#list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
+
 ### Output config.h ###
 configure_file ( config/config.h.cmake ${CMAKE_BINARY_DIR}/config.h )
 add_definitions ( -DHAVE_CONFIG_H )

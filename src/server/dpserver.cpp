@@ -22,6 +22,7 @@ void printHelp() {
 }
 
 int main(int argc, char *argv[]) {
+#if 0
 	QCoreApplication app(argc, argv);
 
 	int port = protocol::DEFAULT_PORT;
@@ -87,5 +88,7 @@ int main(int argc, char *argv[]) {
 		server->setDebugStream(new QTextStream(stdout));
 	server->start(port, address);
 	return app.exec();
+#endif
+return 0;
 }
 

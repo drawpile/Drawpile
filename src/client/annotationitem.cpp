@@ -20,7 +20,6 @@
 
 #include <QPainter>
 #include "annotationitem.h"
-#include "../shared/net/annotation.h"
 #include "core/layer.h"
 #include "core/tile.h"
 
@@ -95,6 +94,7 @@ void AnnotationItem::forceBorder(bool force)
 }
 
 int AnnotationItem::justify() const {
+#if 0
 	using protocol::Annotation;
 	if((flags_ & Qt::AlignRight))
 		return Annotation::RIGHT;
@@ -103,10 +103,14 @@ int AnnotationItem::justify() const {
 	if((flags_ & Qt::AlignJustify))
 		return Annotation::FILL;
 	return Annotation::LEFT;
+#else
+	return 0;
+#endif
 }
 
 void AnnotationItem::setOptions(const protocol::Annotation& a)
 {
+#if 0
 	QPointF newpos(a.rect.left(), a.rect.top());
 	QSizeF newsize(a.rect.width(), a.rect.height());
 	if(pos() != newpos)
@@ -133,10 +137,12 @@ void AnnotationItem::setOptions(const protocol::Annotation& a)
 	font_.setFamily(a.font);
 	font_.setPixelSize(a.size);
 	update();
+#endif
 }
 
 void AnnotationItem::getOptions(protocol::Annotation& a)
 {
+#if 0
 	a.id = id_;
 	a.rect = QRect(pos().toPoint(), size_.toSize());
 	a.text = text();
@@ -149,6 +155,7 @@ void AnnotationItem::getOptions(protocol::Annotation& a)
 	a.italic = italic();
 	a.font = font();
 	a.size = fontSize();
+#endif
 }
 
 QRectF AnnotationItem::boundingRect() const {

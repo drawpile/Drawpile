@@ -50,17 +50,14 @@ namespace dialogs {
 	class NewDialog;
 	class HostDialog;
 	class JoinDialog;
-	class LoginDialog;
 }
 namespace drawingboard {
 	class Board;
 }
 
-namespace network {
-	class SessionState;
+namespace net {
+	class Client;
 }
-
-class Controller;
 
 //! The application main window
 class MainWindow : public QMainWindow {
@@ -269,10 +266,9 @@ class MainWindow : public QMainWindow {
 		dialogs::NewDialog *newdlg_;
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
-		dialogs::LoginDialog *logindlg_;
 
 		drawingboard::Board *board_;
-		Controller *controller_;
+		net::Client *_client;
 
 		QString sessiontitle_;
 		QString filename_;

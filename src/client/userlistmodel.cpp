@@ -23,10 +23,9 @@
 #include <QMouseEvent>
 
 #include "userlistmodel.h"
-#include "sessionstate.h"
 #include "icons.h"
 
-Q_DECLARE_METATYPE(network::User)
+//Q_DECLARE_METATYPE(network::User)
 
 UserListModel::UserListModel(QObject *parent)
 	: QAbstractListModel(parent), session_(0)
@@ -35,6 +34,7 @@ UserListModel::UserListModel(QObject *parent)
 
 void UserListModel::setSession(network::SessionState *session)
 {
+#if 0
 	session_ = session;
 	if(session_) {
 		beginInsertRows(QModelIndex(),0,session_->userCount());
@@ -48,26 +48,34 @@ void UserListModel::setSession(network::SessionState *session)
 		users_.clear();
 		endRemoveRows();
 	}
+#endif
 }
 
 QVariant UserListModel::data(const QModelIndex& index, int role) const
 {
+#if 0
 	if(index.row() < 0 || index.row() >= users_.size())
 		return QVariant();
 	if(role == Qt::DisplayRole && session_)
 		return QVariant::fromValue(session_->user(users_.at(index.row())));
+#endif
 	return QVariant();
 }
 
 int UserListModel::rowCount(const QModelIndex& parent) const
 {
+#if 0
 	if(parent.isValid())
 		return 0;
 	return users_.count();
+#else
+	return 0;
+#endif
 }
 
 void UserListModel::addUser(int id)
 {
+#if 0
 	if(users_.contains(id))
 		return;
 	int pos=0;
@@ -79,14 +87,17 @@ void UserListModel::addUser(int id)
 	beginInsertRows(QModelIndex(),pos,pos);
 	users_.insert(pos,id);
 	endInsertRows();
+#endif
 }
 
 void UserListModel::removeUser(int id)
 {
+#if 0
 	const int pos = users_.indexOf(id);
 	beginRemoveRows(QModelIndex(),pos,pos);
 	users_.removeAt(pos);
 	endRemoveRows();
+#endif
 }
 
 void UserListModel::updateUsers()
@@ -113,6 +124,7 @@ void UserListDelegate::setAdminMode(bool enable)
 
 void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+#if 0
 	QStyleOptionViewItemV2 opt = setOptions(index, option);
 	const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>(&option);
 	opt.features = v2 ? v2->features : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
@@ -142,6 +154,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	// Kick button (only in admin mode and for nonadmin users)
 	if(enableadmin_ && user.isOwner()==false)
 		painter->drawPixmap(opt.rect.topRight()-QPoint(kickwidth,0),icon::kick().pixmap(16));
+#endif
 }
 
 QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
@@ -155,6 +168,7 @@ QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMod
 
 bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+#if 0
 	if(enableadmin_ && event->type() == QEvent::MouseButtonPress) {
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 
@@ -173,6 +187,7 @@ bool UserListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, con
 			}
 		}
 	}
+#endif
 	return QItemDelegate::editorEvent(event, model, option, index);
 }
 

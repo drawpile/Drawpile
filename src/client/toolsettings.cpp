@@ -33,9 +33,7 @@ using widgets::BrushSlider;
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
 
-#include "boardeditor.h"
 #include "annotationitem.h"
-#include "../shared/net/annotation.h"
 #include "core/layer.h"
 #include "core/rasterop.h"
 
@@ -500,6 +498,7 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 	sel_ = item;
 	uiwidget_->setEnabled(sel_!=0);
 	if(item) {
+#if 0
 		sel_->setHighlight(true);
 		ui_->content->setText(item->text());
 		ui_->btnText->setColor(item->textColor());
@@ -515,6 +514,7 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 		ui_->italic->setChecked(item->italic());
 		ui_->font->setCurrentFont(item->font());
 		ui_->size->setValue(item->fontSize());
+#endif
 	}
 	noupdate_ = false;
 }
@@ -524,6 +524,7 @@ void AnnotationSettings::applyChanges()
 	if(noupdate_)
 		return;
 	Q_ASSERT(sel_);
+#if 0
 	protocol::Annotation a;
 	a.id = sel_->id();
 	a.rect = QRect(sel_->pos().toPoint(), sel_->size().toSize());
@@ -546,23 +547,28 @@ void AnnotationSettings::applyChanges()
 	a.size = ui_->size->value();
 
 	editor_->annotate(a);
+#endif
 }
 
 void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(sel_);
+#if 0
 	editor_->removeAnnotation(sel_->id());
+#endif
 }
 
 void AnnotationSettings::bake()
 {
 	Q_ASSERT(sel_);
+#if 0
 	int x, y;
 	dpcore::Layer *layer = sel_->toLayer(&x, &y);
 	editor_->mergeLayer(x, y, layer);
 	delete layer;
 	removeAnnotation();
 	emit baked();
+#endif
 }
 
 /**

@@ -30,10 +30,6 @@ namespace network {
 	class SessionState;
 }
 
-namespace protocol {
-	class Annotation;
-}
-
 namespace interface {
 	class BrushSource;
 	class ColorSource;
@@ -54,7 +50,6 @@ namespace drawingboard {
 class BoardItem;
 class AnnotationItem;
 class User;
-class BoardEditor;
 class Preview;
 
 //! The drawing board
@@ -66,7 +61,6 @@ class Preview;
 class Board : public QGraphicsScene
 {
 	Q_OBJECT
-	friend class BoardEditor;
 
 	public:
 		Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color);
@@ -109,6 +103,7 @@ class Board : public QGraphicsScene
 		bool hasAnnotations() const;
 
 		//! Get all annotations as message strings
+		// TODO
 		QStringList getAnnotations(bool zeroid) const;
 
 		//! Remove all annotations
@@ -119,9 +114,6 @@ class Board : public QGraphicsScene
 
 		//! Set local user
 		void setLocalUser(int id);
-
-		//! Get a board editor
-		BoardEditor *getEditor(network::SessionState *session=0);
 
 		//! Add a preview stroke
 		void addPreview(const dpcore::Point& point);
@@ -152,10 +144,12 @@ class Board : public QGraphicsScene
 		void userEndStroke(int user);
 
 		//! Add or change an annotation
+#if 0
 		void annotate(const protocol::Annotation& annotation);
 
 		//! Remove an annotation
 		void unannotate(int id);
+#endif
 
 		//! Create a new layer
 		void addLayer(const QString& name);

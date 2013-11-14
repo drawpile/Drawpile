@@ -10,7 +10,7 @@
 	//#define _WIN32_WINNT 0x0501
 	#define _WIN32_IE 0x0700 // MSIE 7.0
 #else
-	#define _XOPEN_SOURCE 600
+	//#define _XOPEN_SOURCE 600
 #endif
 
 #cmakedefine USE_ASM 1

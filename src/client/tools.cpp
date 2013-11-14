@@ -19,14 +19,11 @@
 */
 
 #include <QDebug>
-#include "controller.h"
 #include "tools.h"
 #include "toolsettings.h"
 #include "core/brush.h"
 #include "board.h"
-#include "boardeditor.h"
 #include "annotationitem.h"
-#include "../shared/net/annotation.h"
 
 namespace tools {
 
@@ -56,6 +53,7 @@ ToolCollection::~ToolCollection()
 		delete t;
 }
 
+#if 0
 /**
  * Set the board editor for this collection
  * @param editor BoardEditor to use
@@ -65,6 +63,7 @@ void ToolCollection::setEditor(drawingboard::BoardEditor *editor)
 	Q_ASSERT(editor);
 	editor_ = editor;
 }
+#endif
 
 void ToolCollection::setAnnotationSettings(AnnotationSettings *as)
 {
@@ -87,36 +86,46 @@ Tool *ToolCollection::get(Type type)
 
 void BrushBase::begin(const dpcore::Point& point)
 {
+#if 0
 	dpcore::Brush brush = editor()->localBrush();
 
 	if(editor()->isCurrentBrush(brush) == false)
 		editor()->setTool(brush);
 
 	editor()->addStroke(point);
+#endif
 }
 
 void BrushBase::motion(const dpcore::Point& point)
 {
+#if 0
 	editor()->addStroke(point);
+#endif
 }
 
 void BrushBase::end()
 {
+#if 0
 	editor()->endStroke();
+#endif
 }
 
 void ColorPicker::begin(const dpcore::Point& point)
 {
+#if 0
 	QColor col = editor()->colorAt(point);
 	if(col.isValid())
 		editor()->setLocalForeground(col);
+#endif
 }
 
 void ColorPicker::motion(const dpcore::Point& point)
 {
+#if 0
 	QColor col = editor()->colorAt(point);
 	if(col.isValid())
 		editor()->setLocalForeground(col);
+#endif
 }
 
 void ColorPicker::end()
@@ -125,36 +134,45 @@ void ColorPicker::end()
 
 void ComplexBase::begin(const dpcore::Point& point)
 {
+#if 0
 	editor()->startPreview(type(), point, editor()->localBrush());
 	start_ = point;
 	end_ = point;
+#endif
 }
 
 void ComplexBase::motion(const dpcore::Point& point)
 {
+#if 0
 	editor()->continuePreview(point);
 	end_ = point;
+#endif
 }
 
 void ComplexBase::end()
 {
+#if 0
 	editor()->endPreview();
 	dpcore::Brush brush = editor()->localBrush();
 	if(editor()->isCurrentBrush(brush) == false)
 		editor()->setTool(brush);
 	commit();
+#endif
 }
 
 void Line::commit()
 {
+#if 0
 	editor()->startAtomic();
 	editor()->addStroke(start_);
 	editor()->addStroke(end_);
 	editor()->endStroke();
+#endif
 }
 
 void Rectangle::commit()
 {
+#if 0
 	using dpcore::Point;
 	editor()->startAtomic();
 	editor()->addStroke(start_);
@@ -163,6 +181,7 @@ void Rectangle::commit()
 	editor()->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
 	editor()->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
 	editor()->endStroke();
+#endif
 }
 
 /**
@@ -171,6 +190,7 @@ void Rectangle::commit()
  */
 void Annotation::begin(const dpcore::Point& point)
 {
+#if 0
 	drawingboard::AnnotationItem *item = editor()->annotationAt(point);
 	if(item) {
 		sel_ = item;
@@ -181,6 +201,7 @@ void Annotation::begin(const dpcore::Point& point)
 		end_ = point;
 	}
 	start_ = point;
+#endif
 }
 
 /**
@@ -189,6 +210,7 @@ void Annotation::begin(const dpcore::Point& point)
  */
 void Annotation::motion(const dpcore::Point& point)
 {
+#if 0
 	if(sel_) {
 		QPoint d = point - start_;
 		switch(handle_) {
@@ -207,6 +229,7 @@ void Annotation::motion(const dpcore::Point& point)
 		editor()->continuePreview(point);
 		end_ = point;
 	}
+#endif
 }
 
 /**
@@ -220,9 +243,11 @@ void Annotation::motion(const dpcore::Point& point)
  */
 void Annotation::end()
 {
+#if 0
 	if(sel_) {
 		// This is superfluous when in local mode, but needed
 		// when in a networked session.
+		// TODO
 		protocol::Annotation a;
 		sel_->getOptions(a);
 		editor()->annotate(a);
@@ -241,6 +266,7 @@ void Annotation::end()
 		a.backgroundcolor = editor()->localBrush().color(0.0).name();
 		editor()->annotate(a);
 	}
+#endif
 }
 
 }

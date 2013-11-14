@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@
 #include <QHash>
 
 class QTcpServer;
-
-#include "board.h"
 
 namespace server {
 
@@ -59,60 +57,6 @@ class Server : public QObject {
 
 		//! Start the server.
 		bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
-		//! Set the server password
-		void setPassword(const QString& password) { _password = password; }
-
-		//! Require each client to have an unique IP address
-		void setUniqueIps(bool uniq) { _uniqueIps = uniq; }
-
-		//! Set the maximum username length
-		void setMaxNameLength(int len) { _maxnamelen = len; }
-
-		//! Get the maximum username length
-		int maxNameLength() const { return _maxnamelen; }
-
-		//! Get the server password
-		const QString& password() const { return _password; }
-
-		 //! Check if a user with the specified ID exists.
-		bool hasClient(int id) { return _clients.contains(id); }
-
-		 //! Check if the user with the specified name is logged in.
-		bool hasClient(const QString& name);
-
-		 //! Return the number of clients
-		int clients() const { return _clients.size(); }
-
-		 //! Synchronize users so new people can join.
-		void syncUsers();
-
-		 //! Get a new client up to speed
-		void briefClient(int id);
-
-		//! Lock a client
-		void lockClient(int locker, int id, bool status);
-
-		//! Kick a client
-		void kickClient(int kicker, int id, const QString& reason="kicked by session owner");
-
-		 //! Send a packet to all users
-		int redistribute(bool sync, bool active, const QByteArray& data);
-
-		 //! Get the drawing board used
-		Board& board() { return _board; }
-		const Board& board() const { return _board; }
-
-		//! Get the accepted client version
-		int clientVersion() const { return _clientVer; }
-
-		//! Set the accepted client version
-		void setClientVersion(int ver) { _clientVer = ver; }
-
-		//! Print a message to the error stream
-		void printError(const QString& message);
-
-		//! Print a debug message
-		void printDebug(const QString& message);
 
 	public slots:
 		 //! Stop the server. All clients are disconnected.
@@ -122,37 +66,7 @@ class Server : public QObject {
 		//! This signal is emitted when the server becomes empty
 		void lastClientLeft();
 
-	private slots:
-		// A new client was added
-		void newClient();
-		// A client was removed
-		void killClient(int id);
-		// A client's sync state changed
-		void userSync(int id, bool state);
-
 	private:
-		// Request raster data from some user
-		void requestRaster();
-
-		// Delete all clients
-		void clearClients();
-
-		QTcpServer *_server;
-		QHash<int,Client*> _clients;
-		int _liveclients;
-		int _lastclient;
-
-		bool _uniqueIps;
-		int _maxnamelen;
-		QString _password;
-
-		QTextStream *_errors;
-		QTextStream *_debug;
-
-		State _state;
-		Board _board;
-
-		int _clientVer;
 };
 
 }

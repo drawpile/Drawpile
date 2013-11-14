@@ -24,7 +24,6 @@
 #include <QClipboard>
 #include <QHBoxLayout>
 
-#include "sessioninfo.h"
 #include "netstatus.h"
 #include "popupmessage.h"
 #include "icons.h"
@@ -106,17 +105,23 @@ void NetStatus::copyAddress()
 
 void NetStatus::join(const network::User& user)
 {
+#if 0
 	message(tr("<b>%1</b> has joined").arg(user.name()));
+#endif
 }
 
 void NetStatus::leave(const network::User& user)
 {
+#if 0
 	message(tr("<b>%1</b> has left").arg(user.name()));
+#endif
 }
 
 void NetStatus::kicked(const network::User& user)
 {
+#if 0
 	message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
+#endif
 }
 
 void NetStatus::lock(const QString& reason)

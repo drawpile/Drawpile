@@ -25,7 +25,6 @@
 #include "boarditem.h"
 #include "annotationitem.h"
 #include "user.h"
-#include "boardeditor.h"
 #include "preview.h"
 #include "interfaces.h"
 #include "core/layerstack.h"
@@ -111,6 +110,7 @@ bool Board::initBoard(const QString& file)
 			u->setBoard(image_);
 
 		// Add annotations (if present)
+#if 0
 		foreach(QString a, reader.annotations()) {
 			AnnotationItem *item = new AnnotationItem(AnnotationItem::nextId(), image_);
 			item->forceBorder(hla_);
@@ -118,6 +118,7 @@ bool Board::initBoard(const QString& file)
 			protocol::Message msg(a);
 			item->setOptions(protocol::Annotation(msg.tokens()));
 		}
+#endif
 
 		// Refresh UI
 		QList<QRectF> regions;
@@ -155,6 +156,7 @@ void Board::clearUsers()
 QStringList Board::getAnnotations(bool zeroid) const
 {
 	QStringList messages;
+#if 0
 	if(image_)
 		foreach(QGraphicsItem *item, image_->childItems())
 			if(item->type() == AnnotationItem::Type) {
@@ -164,6 +166,7 @@ QStringList Board::getAnnotations(bool zeroid) const
 					a.id = 0;
 				messages << protocol::Message::quote(a.tokens());
 			}
+#endif
 	return messages;
 }
 
@@ -332,6 +335,7 @@ dpcore::LayerStack *Board::layers()
 	return 0;
 }
 
+#if 0
 /**
  * Returns a BoardEditor for modifying the drawing board either
  * directly or over the network.
@@ -347,6 +351,7 @@ BoardEditor *Board::getEditor(network::SessionState *session)
 	else
 		return new LocalBoardEditor(this, user, brushsrc_, colorsrc_);
 }
+#endif
 
 /**
  * Preview strokes are used to give immediate feedback to the user,
@@ -453,8 +458,7 @@ void Board::userEndStroke(int user)
 	users_.value(user)->endStroke();
 }
 
-/**
- */
+#if 0
 void Board::annotate(const protocol::Annotation& annotation)
 {
 	if(!image_) return;
@@ -501,6 +505,7 @@ void Board::unannotate(int id)
 		qWarning() << "Can't delete annotation" << id << "because it doesn't exist!";
 	}
 }
+#endif
 
 void Board::addLayer(const QString& name)
 {

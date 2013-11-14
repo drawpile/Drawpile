@@ -106,6 +106,7 @@ void LocalServer::stopServer()
 }
 
 void LocalServer::run() {
+#if 0
 	server_ = new server::Server();
 	int port;
 	{
@@ -127,5 +128,6 @@ void LocalServer::run() {
 	server_->stop();
 	delete server_;
 	qDebug() << "server stopped";
+#endif
 }
 

@@ -6,29 +6,34 @@ include_directories( ${Qt5Network_INCLUDES} )
 
 set (
 	NET_HEADERS
-	net/binary.h net/login.h net/message.h net/protocol.h net/constants.h
-	net/stroke.h net/toolselect.h net/utils.h net/annotation.h
+	net/constants.h
+	net/message.h
+	net/annotation.h
+	net/layer.h
+	net/pen.h
 	)
 
-set (
-	NET_QHEADERS
-	net/messagequeue.h
-	)
+#set (
+	#NET_QHEADERS
+	#net/messagequeue.h
+	#)
 
 set (
 	NET_SOURCES
-	net/login.cpp net/message.cpp net/protocol.cpp net/stroke.cpp
-	net/toolselect.cpp net/messagequeue.cpp net/utils.cpp net/annotation.cpp
+	net/message.cpp
+	net/annotation.cpp
+	net/layer.cpp
+	net/pen.cpp
 	)
 
 set (
 	SRV_QHEADERS
-	server/server.h server/client.h server/board.h
+	server/server.h
 	)
 
 set (
 	SRV_SOURCES
-	server/server.cpp server/client.cpp server/board.cpp
+	server/server.cpp
 	)
 
 add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${SRV_SOURCES} )

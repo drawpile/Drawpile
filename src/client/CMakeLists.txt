@@ -19,9 +19,8 @@ set (
 	HEADERS
 	main.h mainwindow.h netstatus.h dualcolorbutton.h editorview.h
 	toolsettingswidget.h colordialog.h brushpreview.h qtcolortriangle.h
-	board.h controller.h gradientslider.h colorbutton.h
+	board.h gradientslider.h colorbutton.h
 	newdialog.h imageselector.h hostdialog.h joindialog.h
-	hoststate.h sessionstate.h logindialog.h
 	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
 	mandatoryfields.h palettewidget.h palettebox.h
 	colorbox.h settingsdialog.h layerwidget.h
@@ -32,9 +31,9 @@ set (
 # unused headers because they do not create moc_* files ()
 set (
 	UNUSED_HEADERS # no QOBJECT ?
-	version.h user.h interfaces.h preview.h boardeditor.h boarditem.h
+	version.h user.h interfaces.h preview.h boarditem.h
 	palette.h icons.h
-	tools.h recentfiles.h sessioninfo.h annotationitem.h
+	tools.h recentfiles.h annotationitem.h
 	core/tile.h core/layer.h core/brush.h core/point.h
 	core/rasterop.h
 	ora/zipfile.h ora/orawriter.h ora/orareader.h
@@ -45,13 +44,13 @@ set (
 	SOURCES
 	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
 	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
-	qtcolortriangle.cpp board.cpp controller.cpp boarditem.cpp user.cpp
-	tools.cpp toolsettings.cpp boardeditor.cpp
+	qtcolortriangle.cpp board.cpp boarditem.cpp user.cpp
+	tools.cpp toolsettings.cpp
 	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp hoststate.cpp sessionstate.cpp
-	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
+	hostdialog.cpp joindialog.cpp
+	preview.cpp localserver.cpp popupmessage.cpp
 	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
-	sessioninfo.cpp icons.cpp mandatoryfields.cpp
+	icons.cpp mandatoryfields.cpp
 	palettewidget.cpp palettebox.cpp colorbox.cpp
 	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
@@ -63,7 +62,7 @@ set (
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
-	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
+	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui
 	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui
 	ui/erasersettings.ui )
