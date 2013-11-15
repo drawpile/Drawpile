@@ -97,7 +97,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void setColorPressure(bool enable);
 
 		//! Enable/disable subpixel precision
-		void setSubPixel(bool enable);
+		void setSubpixel(bool enable);
 
 		//! Select a blending mode
 		void setBlendingMode(int mode);

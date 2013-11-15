@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 #include "layerlistwidget.h"
 #include "layerlistdelegate.h"
-#include "board.h"
+#include "canvasscene.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
@@ -64,7 +64,7 @@ LayerList::~LayerList()
 {
 }
 
-void LayerList::setBoard(drawingboard::Board *board)
+void LayerList::setBoard(drawingboard::CanvasScene *board)
 {
 	dpcore::LayerStack *stack = board->layers();
 	list_->setModel(stack);

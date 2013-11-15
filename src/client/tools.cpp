@@ -22,26 +22,28 @@
 #include "tools.h"
 #include "toolsettings.h"
 #include "core/brush.h"
-#include "board.h"
+#include "canvasscene.h"
 #include "annotationitem.h"
 
-namespace tools {
+#include "net/client.h"
+#include "docks/toolsettingswidget.h"
+#include "statetracker.h"
 
-Tool::~Tool() { /* abstract */ }
+namespace tools {
 
 /**
  * Construct one of each tool for the collection
  */
 ToolCollection::ToolCollection()
-	: editor_(0)
+	: _client(0), _toolsettings(0)
 {
-	tools_[PEN] = new Pen(*this);
-	tools_[BRUSH] = new Brush(*this);
-	tools_[ERASER] = new Eraser(*this);
-	tools_[PICKER] = new ColorPicker(*this);
-	tools_[LINE] = new Line(*this);
-	tools_[RECTANGLE] = new Rectangle(*this);
-	tools_[ANNOTATION] = new Annotation(*this);
+	_tools[PEN] = new Pen(*this);
+	_tools[BRUSH] = new Brush(*this);
+	_tools[ERASER] = new Eraser(*this);
+	_tools[PICKER] = new ColorPicker(*this);
+	_tools[LINE] = new Line(*this);
+	_tools[RECTANGLE] = new Rectangle(*this);
+	_tools[ANNOTATION] = new Annotation(*this);
 }
 
 /**
@@ -49,26 +51,25 @@ ToolCollection::ToolCollection()
  */
 ToolCollection::~ToolCollection()
 {
-	foreach(Tool *t, tools_)
+	foreach(Tool *t, _tools)
 		delete t;
 }
 
-#if 0
-/**
- * Set the board editor for this collection
- * @param editor BoardEditor to use
- */
-void ToolCollection::setEditor(drawingboard::BoardEditor *editor)
+void ToolCollection::setClient(net::Client *client)
 {
-	Q_ASSERT(editor);
-	editor_ = editor;
+	Q_ASSERT(client);
+	_client = client;
 }
-#endif
 
-void ToolCollection::setAnnotationSettings(AnnotationSettings *as)
+void ToolCollection::setToolSettings(widgets::ToolSettings *s)
 {
-	Q_ASSERT(as);
-	as_ = as;
+	Q_ASSERT(s);
+	_toolsettings = s;
+}
+
+void ToolCollection::selectLayer(int layer_id)
+{
+	_layer = layer_id;
 }
 
 /**
@@ -80,34 +81,29 @@ void ToolCollection::setAnnotationSettings(AnnotationSettings *as)
  */
 Tool *ToolCollection::get(Type type)
 {
-	Q_ASSERT(tools_.contains(type));
-	return tools_.value(type);
+	Q_ASSERT(_tools.contains(type));
+	return _tools.value(type);
 }
 
 void BrushBase::begin(const dpcore::Point& point)
 {
-#if 0
-	dpcore::Brush brush = editor()->localBrush();
-
-	if(editor()->isCurrentBrush(brush) == false)
-		editor()->setTool(brush);
-
-	editor()->addStroke(point);
-#endif
+	ToolContext tctx = {
+		layer(),
+		settings().getBrush()
+	};
+	
+	client().sendToolChange(tctx);
+	client().sendStroke(point);
 }
 
 void BrushBase::motion(const dpcore::Point& point)
 {
-#if 0
-	editor()->addStroke(point);
-#endif
+	client().sendStroke(point);
 }
 
 void BrushBase::end()
 {
-#if 0
-	editor()->endStroke();
-#endif
+	client().sendPenup();
 }
 
 void ColorPicker::begin(const dpcore::Point& point)

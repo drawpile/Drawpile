@@ -26,13 +26,14 @@
 #include <QPainter>
 #include <QMimeData>
 
-#include "editorview.h"
-#include "board.h"
+#include "canvasview.h"
+#include "canvasscene.h"
+
 #include "core/point.h"
 
 namespace widgets {
 
-EditorView::EditorView(QWidget *parent)
+CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(NOTRANSFORM),
 	dragbtndown_(NOTRANSFORM), outlinesize_(10), dia_(20),
 	enableoutline_(true), showoutline_(true), zoom_(100), rotate_(0)
@@ -54,12 +55,22 @@ EditorView::EditorView(QWidget *parent)
 	viewport()->setCursor(cursor_);
 }
 
-void EditorView::setBoard(drawingboard::Board *board)
+void CanvasView::setBoard(drawingboard::CanvasScene *scene)
 {
-	board_ = board;
-	setScene(board);
+	_scene = scene;
+	setScene(scene);
 	// notify of scene change
 	sceneChanged();
+}
+
+void CanvasView::setClient(net::Client *client)
+{
+	_toolbox.setClient(client);
+}
+
+void CanvasView::setToolSettings(widgets::ToolSettings *settings)
+{
+	_toolbox.setToolSettings(settings);
 }
 
 /**
@@ -67,7 +78,7 @@ void EditorView::setBoard(drawingboard::Board *board)
  * to keep track of the zoom factor.
  * @param zoom new zoom factor
  */
-void EditorView::setZoom(int zoom)
+void CanvasView::setZoom(int zoom)
 {
 	Q_ASSERT(zoom>0);
 	zoom_ = zoom;
@@ -83,16 +94,26 @@ void EditorView::setZoom(int zoom)
  * to keep track of the rotation angle.
  * @param angle new rotation angle
  */
-void EditorView::setRotation(qreal angle)
+void CanvasView::setRotation(qreal angle)
 {
 	rotate_ = angle;
 	setZoom(zoom_);
 }
 
+void CanvasView::selectTool(tools::Type tool)
+{
+	_current_tool = _toolbox.get(tool);
+}
+
+void CanvasView::selectLayer(int layer_id)
+{
+	_toolbox.selectLayer(layer_id);
+}
+
 /**
  * @param enable if true, brush outline is shown
  */
-void EditorView::setOutline(bool enable)
+void CanvasView::setOutline(bool enable)
 {
 	enableoutline_ = enable;
 	viewport()->setMouseTracking(enable);
@@ -104,7 +125,7 @@ void EditorView::setOutline(bool enable)
  * @param fg foreground color for outline
  * @param bg background color for outline
  */
-void EditorView::setOutlineColors(const QColor& fg, const QColor& bg)
+void CanvasView::setOutlineColors(const QColor& fg, const QColor& bg)
 {
 	foreground_ = fg;
 	background_ = bg;
@@ -120,7 +141,7 @@ void EditorView::setOutlineColors(const QColor& fg, const QColor& bg)
 /**
  * @param radius circle radius
  */
-void EditorView::setOutlineRadius(int radius)
+void CanvasView::setOutlineRadius(int radius)
 {
 	int updatesize = outlinesize_;
 	outlinesize_ = radius;
@@ -136,13 +157,13 @@ void EditorView::setOutlineRadius(int radius)
 	}
 }
 
-void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
+void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
 	if(enableoutline_ && showoutline_ && outlinesize_>1) {
 		const QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
 					QSizeF(dia_, dia_));
 		if(rect.intersects(outline)) {
-			//painter->setClipRect(0,0,board_->width(),board_->height()); // default
+			//painter->setClipRect(0,0,_scene->width(),_scene->height()); // default
 			//painter->setClipRect(outline.adjusted(-7, -7, 7, 7)); // smaller clipping
 			//painter->setRenderHint(QPainter::Antialiasing, true); // default
 			QPen pen(background_);
@@ -156,7 +177,7 @@ void EditorView::drawForeground(QPainter *painter, const QRectF& rect)
 	}
 }
 
-void EditorView::enterEvent(QEvent *event)
+void CanvasView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
 	if(enableoutline_) {
@@ -167,7 +188,7 @@ void EditorView::enterEvent(QEvent *event)
 	setFocus(Qt::MouseFocusReason);
 }
 
-void EditorView::leaveEvent(QEvent *event)
+void CanvasView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
 	if(enableoutline_) {
@@ -181,7 +202,7 @@ void EditorView::leaveEvent(QEvent *event)
 }
 
 //! Handle mouse press events
-void EditorView::mousePressEvent(QMouseEvent *event)
+void CanvasView::mousePressEvent(QMouseEvent *event)
 {
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(pendown_ != NOTDOWN)
@@ -190,14 +211,13 @@ void EditorView::mousePressEvent(QMouseEvent *event)
 		startDrag(event->x(), event->y(), dragbtndown_!=ROTATE?TRANSLATE:ROTATE);
 	} else if(event->button() == Qt::LeftButton && isdragging_==NOTRANSFORM) {
 		pendown_ = MOUSEDOWN;
-		emit penDown(
-				dpcore::Point(mapToScene(event->pos()), 1.0)
-				);
+		
+		onPenDown(dpcore::Point(mapToScene(event->pos()), 1.0));
 	}
 }
 
 //! Handle mouse motion events
-void EditorView::mouseMoveEvent(QMouseEvent *event)
+void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
 	if(pendown_ == TABLETDOWN)
@@ -214,7 +234,7 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 		const dpcore::Point point(mapToScene(event->pos()), 1.0);
 		if(!prevpoint_.intSame(point)) {
 			if(pendown_)
-				emit penMove(point);
+				onPenMove(point);
 			else
 				updateOutline(point);
 			prevpoint_ = point;
@@ -222,8 +242,33 @@ void EditorView::mouseMoveEvent(QMouseEvent *event)
 	}
 }
 
+void CanvasView::onPenDown(const dpcore::Point &p)
+{
+	if(_scene->hasImage()) {
+		_current_tool->begin(p);
+#if 0
+		if(tool_->readonly()==false) {
+			if(board_->hasImage())
+				emit changed();
+		}	
+#endif
+	}
+}
+
+void CanvasView::onPenMove(const dpcore::Point &p)
+{
+	if(_scene->hasImage())
+		_current_tool->motion(p);
+}
+
+void CanvasView::onPenUp()
+{
+	if(_scene->hasImage())
+		_current_tool->end();
+}
+
 //! Handle mouse release events
-void EditorView::mouseReleaseEvent(QMouseEvent *event)
+void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(pendown_ == TABLETDOWN)
 		return;
@@ -232,16 +277,16 @@ void EditorView::mouseReleaseEvent(QMouseEvent *event)
 		stopDrag();
 	} else if(event->button() == Qt::LeftButton && pendown_ == MOUSEDOWN) {
 		pendown_ = NOTDOWN;
-		emit penUp();
+		onPenUp();
 	}
 }
 
-void EditorView::mouseDoubleClickEvent(QMouseEvent*)
+void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
 {
 	// Ignore doubleclicks
 }
 
-void EditorView::keyPressEvent(QKeyEvent *event) {
+void CanvasView::keyPressEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
 		if(event->modifiers() & Qt::ControlModifier) {
@@ -255,7 +300,7 @@ void EditorView::keyPressEvent(QKeyEvent *event) {
 	}
 }
 
-void EditorView::keyReleaseEvent(QKeyEvent *event) {
+void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
 		dragbtndown_ = NOTRANSFORM;
@@ -270,7 +315,7 @@ void EditorView::keyReleaseEvent(QKeyEvent *event) {
  * Tablet events are handled here
  * @param event event info
  */
-bool EditorView::viewportEvent(QEvent *event)
+bool CanvasView::viewportEvent(QEvent *event)
 {
 	if(event->type() == QEvent::TabletMove) {
 		// Stylus moved
@@ -286,9 +331,9 @@ bool EditorView::viewportEvent(QEvent *event)
 					if(point.pressure()==0) {
 						// Missed a release event
 						pendown_ = NOTDOWN;
-						emit penUp();
+						onPenUp();
 					} else {
-						emit penMove(point);
+						onPenMove(point);
 					}
 				}
 				updateOutline(point);
@@ -306,7 +351,7 @@ bool EditorView::viewportEvent(QEvent *event)
 				const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
 				pendown_ = TABLETDOWN;
-				emit penDown(point);
+				onPenDown(point);
 				updateOutline(point);
 				prevpoint_ = point;
 			}
@@ -322,7 +367,7 @@ bool EditorView::viewportEvent(QEvent *event)
 			updateOutline(point);
 			prevpoint_ = point;
 			pendown_ = NOTDOWN;
-			emit penUp();
+			onPenUp();
 		}
 	} else {
 		return QGraphicsView::viewportEvent(event);
@@ -331,7 +376,7 @@ bool EditorView::viewportEvent(QEvent *event)
 	return true;
 }
 
-void EditorView::updateOutline(const dpcore::Point& point) {
+void CanvasView::updateOutline(const dpcore::Point& point) {
 	if(enableoutline_ && showoutline_) {
 		QList<QRectF> rect;
 		rect.append(QRectF(prevpoint_.x() - outlinesize_,
@@ -342,7 +387,7 @@ void EditorView::updateOutline(const dpcore::Point& point) {
 	}
 }
 
-void EditorView::sceneChanged()
+void CanvasView::sceneChanged()
 {
 	// Signal visible view rectangle change
 	emit viewMovedTo(mapToScene(rect()).boundingRect());
@@ -352,7 +397,7 @@ void EditorView::sceneChanged()
  * @param x initial x coordinate
  * @param y initial y coordinate
  */
-void EditorView::startDrag(int x,int y, ViewTransform mode)
+void CanvasView::startDrag(int x,int y, ViewTransform mode)
 {
 	viewport()->setCursor(Qt::ClosedHandCursor);
 	dragx_ = x;
@@ -368,7 +413,7 @@ void EditorView::startDrag(int x,int y, ViewTransform mode)
 	}
 }
 
-void EditorView::scrollTo(const QPoint& point)
+void CanvasView::scrollTo(const QPoint& point)
 {
 	centerOn(point);
 	// notify of scene change
@@ -379,7 +424,7 @@ void EditorView::scrollTo(const QPoint& point)
  * @param x x coordinate
  * @param y y coordinate
  */
-void EditorView::moveDrag(int x, int y)
+void CanvasView::moveDrag(int x, int y)
 {
 	const int dx = dragx_ - x;
 	const int dy = dragy_ - y;
@@ -403,7 +448,7 @@ void EditorView::moveDrag(int x, int y)
 }
 
 //! Stop dragging
-void EditorView::stopDrag()
+void CanvasView::stopDrag()
 {
 	if(dragbtndown_ != NOTRANSFORM)
 		viewport()->setCursor(Qt::OpenHandCursor);
@@ -419,7 +464,7 @@ void EditorView::stopDrag()
  *
  * @todo Check file extensions
  */
-void EditorView::dragEnterEvent(QDragEnterEvent *event)
+void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 {
 	if(event->mimeData()->hasUrls())
 		event->acceptProposedAction();
@@ -431,7 +476,7 @@ void EditorView::dragEnterEvent(QDragEnterEvent *event)
  *
  * @todo Reset the image modification state to unmodified
  */
-void EditorView::dropEvent(QDropEvent *event)
+void CanvasView::dropEvent(QDropEvent *event)
 {
 	emit imageDropped(event->mimeData()->urls().first().toLocalFile());
 	event->acceptProposedAction();

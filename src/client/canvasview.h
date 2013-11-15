@@ -23,27 +23,42 @@
 #include <QGraphicsView>
 
 #include "core/point.h"
+#include "statetracker.h"
+#include "tools.h"
 
 namespace drawingboard {
-	class Board;
+	class CanvasScene;
+}
+
+namespace net {
+	class Client;
 }
 
 namespace widgets {
+
+class ToolSettings;
+
 //! Editor view
 /**
  * The editor view is a customized QGraphicsView that displays
  * the drawing board and handes user input.
  * It also provides other features, such as brush outline preview.
  */
-class EditorView : public QGraphicsView
+class CanvasView : public QGraphicsView
 {
 	Q_OBJECT
 	public:
-		EditorView(QWidget *parent=0);
+		CanvasView(QWidget *parent=0);
 
 		//! Set the board to use
-		void setBoard(drawingboard::Board *board);
+		void setBoard(drawingboard::CanvasScene *scene);
 
+		//! Set the network client
+		void setClient(net::Client *client);
+
+		//! Set the tool settings panel
+		void setToolSettings(widgets::ToolSettings *settings);
+		
 		//! Get the current zoom factor
 		int zoom() const { return zoom_; }
 
@@ -55,16 +70,8 @@ class EditorView : public QGraphicsView
 
 		//! Set the rotation angle in degrees
 		void setRotation(qreal angle);
-
+		
 	signals:
-		//! This signal is emitted when a mouse button is pressed or the pen touches the tablet
-		void penDown(const dpcore::Point& point);
-		//! This signal is emitted when the pen or mouse pointer is moved while drawing
-		void penMove(const dpcore::Point& point);
-
-		//! This signal is emitted when the pen is lifted or the mouse button released.
-		void penUp();
-
 		//! An image has been dropped on the widget
 		void imageDropped(const QString& filename);
 
@@ -75,6 +82,12 @@ class EditorView : public QGraphicsView
 		void viewTransformed(int zoom, qreal angle);
 
 	public slots:
+		//! Select the active tool
+		void selectTool(tools::Type tool);
+		
+		//! Select the currently active layer
+		void selectLayer(int layer_id);
+		
 		//! Set the radius of the brush preview outline
 		void setOutlineRadius(int radius);
 
@@ -120,6 +133,10 @@ class EditorView : public QGraphicsView
 		//! Redraw the scene around the outline cursor if necesasry
 		void updateOutline(const dpcore::Point& point);
 
+		void onPenDown(const dpcore::Point &p);
+		void onPenMove(const dpcore::Point &p);
+		void onPenUp();
+		
 		//! State of the pen
 		/**
 		 * - NOTDOWN pen is not down
@@ -146,7 +163,10 @@ class EditorView : public QGraphicsView
 		//! View rotation in degrees
 		qreal rotate_;
 
-		drawingboard::Board *board_;
+		drawingboard::CanvasScene *_scene;
+		
+		tools::ToolCollection _toolbox;
+		tools::Tool *_current_tool;
 };
 
 }

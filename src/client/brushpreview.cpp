@@ -256,9 +256,9 @@ void BrushPreview::setColorPressure(bool enable)
 	update();
 }
 
-void BrushPreview::setSubPixel(bool enable)
+void BrushPreview::setSubpixel(bool enable)
 {
-	brush_.setSubPixel(enable);
+	brush_.setSubpixel(enable);
 	updatePreview();
 	update();
 }
@@ -278,11 +278,11 @@ void BrushPreview::setHardEdge(bool hard)
 		oldhardness2_ = brush_.hardness(1);
 		brush_.setHardness(1);
 		brush_.setHardness2(1);
-		brush_.setSubPixel(false);
+		brush_.setSubpixel(false);
 	} else {
 		brush_.setHardness(oldhardness1_);
 		brush_.setHardness2(oldhardness2_);
-		brush_.setSubPixel(true);
+		brush_.setSubpixel(true);
 	}
 	updatePreview();
 	update();

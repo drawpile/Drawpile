@@ -29,6 +29,7 @@ class QStackedWidget;
 
 namespace tools {
 	class ToolSettings;
+	class AnnotationSettings;
 	class AnnotationEditor;
 }
 

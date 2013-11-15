@@ -21,31 +21,32 @@
 
 #include <QMessageBox>
 
-#include "board.h"
-#include "boarditem.h"
+#include "canvasscene.h"
+#include "canvasitem.h"
+#include "statetracker.h"
+
 #include "annotationitem.h"
-#include "user.h"
 #include "preview.h"
 #include "interfaces.h"
+
 #include "core/layerstack.h"
 #include "core/layer.h"
+
 #include "ora/orawriter.h"
 #include "ora/orareader.h"
-#include "../shared/net/annotation.h"
-#include "../shared/net/message.h"
 
 namespace drawingboard {
 
-Board::Board(QObject *parent, interface::BrushSource *brush, interface::ColorSource *color)
-	: QGraphicsScene(parent), image_(0),localuser_(-1), toolpreview_(0), brushsrc_(brush), colorsrc_(color), hla_(false), layerwidget_(0)
+CanvasScene::CanvasScene(QObject *parent, interface::BrushSource *brush)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), toolpreview_(0), brushsrc_(brush), hla_(false)
 {
 	setItemIndexMethod(NoIndex);
 }
 
-Board::~Board()
+CanvasScene::~CanvasScene()
 {
-	delete image_;
-	clearUsers();
+	delete _image;
+	delete _statetracker;
 }
 
 /**
@@ -53,7 +54,7 @@ Board::~Board()
  * @param size size of the drawing board
  * @param background background color
  */
-bool Board::initBoard(const QSize& size, const QColor& background)
+bool CanvasScene::initBoard(const QSize& size, const QColor& background)
 {
 
 	QImage image(size, QImage::Format_RGB32);
@@ -66,14 +67,15 @@ bool Board::initBoard(const QSize& size, const QColor& background)
  * An existing image is used as a base.
  * @param image image to use
  */
-bool Board::initBoard(QImage image)
+bool CanvasScene::initBoard(QImage image)
 {
 	setSceneRect(0,0,image.width(), image.height());
-	delete image_;
-	image_ = new BoardItem(image.convertToFormat(QImage::Format_RGB32));
-	addItem(image_);
-	foreach(User *u, users_)
-		u->setBoard(image_);
+	delete _image;
+	delete _statetracker;
+	_image = new CanvasItem(image.convertToFormat(QImage::Format_RGB32));
+	_statetracker = new StateTracker(_image);
+	addItem(_image);
+	
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
@@ -81,7 +83,7 @@ bool Board::initBoard(QImage image)
 	return true;
 }
 
-bool Board::initBoard(const QString& file)
+bool CanvasScene::initBoard(const QString& file)
 {
 	using openraster::Reader;
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
@@ -103,16 +105,16 @@ bool Board::initBoard(const QString& file)
 		// Image loaded, clear out the board
 		dpcore::LayerStack *layers = reader.layers();
 		setSceneRect(0,0,layers->width(), layers->height());
-		delete image_;
-		image_ = new BoardItem(layers);
-		addItem(image_);
-		foreach(User *u, users_)
-			u->setBoard(image_);
+		delete _image;
+		delete _statetracker;
+		_image = new CanvasItem(layers);
+		_statetracker = new StateTracker(_image);
+		addItem(_image);
 
 		// Add annotations (if present)
 #if 0
 		foreach(QString a, reader.annotations()) {
-			AnnotationItem *item = new AnnotationItem(AnnotationItem::nextId(), image_);
+			AnnotationItem *item = new AnnotationItem(AnnotationItem::nextId(), _image);
 			item->forceBorder(hla_);
 			// Parse the annotation message
 			protocol::Message msg(a);
@@ -136,29 +138,15 @@ bool Board::initBoard(const QString& file)
 }
 
 /**
- * A single (local) user is needed to modify the drawing board, be sure
- * to create one after deleting everyone.
- */
-void Board::clearUsers()
-{
-	commitPreviews();
-	foreach(User *u, users_) {
-		delete u;
-	}
-	users_.clear();
-	localuser_ = -1;
-}
-
-/**
  * @param zeroid if true, set the ID of each annotation to zero
  * @return list of ANNOTATE messages
  */
-QStringList Board::getAnnotations(bool zeroid) const
+QStringList CanvasScene::getAnnotations(bool zeroid) const
 {
 	QStringList messages;
 #if 0
-	if(image_)
-		foreach(QGraphicsItem *item, image_->childItems())
+	if(_image)
+		foreach(QGraphicsItem *item, _image->childItems())
 			if(item->type() == AnnotationItem::Type) {
 				protocol::Annotation a;
 				static_cast<AnnotationItem*>(item)->getOptions(a);
@@ -170,89 +158,40 @@ QStringList Board::getAnnotations(bool zeroid) const
 	return messages;
 }
 
-void Board::clearAnnotations()
+void CanvasScene::clearAnnotations()
 {
-	if(image_)
-		foreach(QGraphicsItem *item, image_->childItems())
+	if(_image)
+		foreach(QGraphicsItem *item, _image->childItems())
 			if(item->type() == AnnotationItem::Type) {
 				emit annotationDeleted(static_cast<AnnotationItem*>(item));
 				delete item;
 			}
 }
 
-void Board::showAnnotations(bool show)
+void CanvasScene::showAnnotations(bool show)
 {
-	if(image_)
-		foreach(QGraphicsItem *item, image_->childItems())
+	if(_image)
+		foreach(QGraphicsItem *item, _image->childItems())
 			if(item->type() == AnnotationItem::Type)
 				item->setVisible(show);
 }
 
-void Board::highlightAnnotations(bool hl)
+void CanvasScene::highlightAnnotations(bool hl)
 {
 	hla_ = hl;
-	if(image_)
-		foreach(QGraphicsItem *item, image_->childItems())
+	if(_image)
+		foreach(QGraphicsItem *item, _image->childItems())
 			if(item->type() == AnnotationItem::Type)
 				static_cast<AnnotationItem*>(item)->forceBorder(hl);
 }
 
 /**
- * @param id user id
- */
-void Board::addUser(int id)
-{
-	if(users_.contains(id)) {
-		// This is not necessarily an error condition. The server will not
-		// ghost users that haven't drawn anything. In those cases, it is
-		// safe to delete the user as it's not being used anywhere.
-
-		// Depending on the server, we might get info about ourselves twice.
-		// First to tell us about ourselves (the user ID), and a second
-		// time when joining a session. We have already given out a pointer
-		// to the local user, so don't delete it.
-		if(id==localuser_)
-			return;
-
-		qDebug() << "Reusing board user" << id;
-		delete users_.take(id);
-	}
-	User *user = new User(image_, id);
-	users_[id] = user;
-}
-
-/**
- * Designates one user as the local user
- * @param id user id
- * @pre id must have been added with addUser
- */
-void Board::setLocalUser(int id)
-{
-	Q_ASSERT(users_.contains(id));
-	localuser_ = id;
-	// Set the layer list if we know it already
-	if(layerwidget_)
-		users_[localuser_]->setLayerList(layerwidget_);
-}
-
-/**
- * @param llist layer list widget
- */
-void Board::setLayerList(widgets::LayerList *llist)
-{
-	layerwidget_ = llist;
-	// Update local user if it exists
-	if(localuser_ != -1)
-		users_[localuser_]->setLayerList(layerwidget_);
-}
-
-/**
  * @return board contents
  */
-QImage Board::image() const
+QImage CanvasScene::image() const
 {
-	if(image_)
-		return image_->image()->toFlatImage();
+	if(_image)
+		return _image->image()->toFlatImage();
 	else
 		return QImage();
 }
@@ -262,11 +201,11 @@ QImage Board::image() const
  * @param file file path
  * @return true on succcess
  */
-bool Board::save(const QString& file) const
+bool CanvasScene::save(const QString& file) const
 {
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		openraster::Writer writer(image_->image());
+		openraster::Writer writer(_image->image());
 		writer.setAnnotations(getAnnotations(true));
 		return writer.save(file);
 	} else {
@@ -283,23 +222,23 @@ bool Board::save(const QString& file) const
  * <li>It has annotations</li>
  * </ul>
  */
-bool Board::needSaveOra() const
+bool CanvasScene::needSaveOra() const
 {
-	return image_->image()->layers() > 1 ||
+	return _image->image()->layers() > 1 ||
 		hasAnnotations();
 }
 
 /**
  * @retval true if the board contains an image
  */
-bool Board::hasImage() const {
-	return image_!=0;
+bool CanvasScene::hasImage() const {
+	return _image!=0;
 }
 
-bool Board::hasAnnotations() const
+bool CanvasScene::hasAnnotations() const
 {
-	if(image_)
-		foreach(QGraphicsItem *i, image_->childItems())
+	if(_image)
+		foreach(QGraphicsItem *i, _image->childItems())
 			if(i->type() == AnnotationItem::Type)
 				return true;
 	return false;
@@ -308,9 +247,9 @@ bool Board::hasAnnotations() const
 /**
  * @return board width
  */
-int Board::width() const {
-	if(image_)
-		return int(image_->boundingRect().width());
+int CanvasScene::width() const {
+	if(_image)
+		return int(_image->boundingRect().width());
 	else
 		return -1;
 }
@@ -318,9 +257,9 @@ int Board::width() const {
 /**
  * @return board height
  */
-int Board::height() const {
-	if(image_)
-		return int(image_->boundingRect().height());
+int CanvasScene::height() const {
+	if(_image)
+		return int(_image->boundingRect().height());
 	else
 		return -1;
 }
@@ -328,30 +267,12 @@ int Board::height() const {
 /**
  * @return layer stack
  */
-dpcore::LayerStack *Board::layers()
+dpcore::LayerStack *CanvasScene::layers()
 {
-	if(image_)
-		return image_->image();
+	if(_image)
+		return _image->image();
 	return 0;
 }
-
-#if 0
-/**
- * Returns a BoardEditor for modifying the drawing board either
- * directly or over the network.
- * @param session which network session the editor works over. If 0, a local editor is returned
- */
-BoardEditor *Board::getEditor(network::SessionState *session)
-{
-	Q_ASSERT(localuser_ != -1);
-	User *user = users_.value(localuser_);
-	Q_ASSERT(user);
-	if(session)
-		return new RemoteBoardEditor(this, user, session, brushsrc_, colorsrc_);
-	else
-		return new LocalBoardEditor(this, user, brushsrc_, colorsrc_);
-}
-#endif
 
 /**
  * Preview strokes are used to give immediate feedback to the user,
@@ -359,8 +280,9 @@ BoardEditor *Board::getEditor(network::SessionState *session)
  * through the server.
  * @param point stroke point
  */
-void Board::addPreview(const dpcore::Point& point)
+void CanvasScene::addPreview(const dpcore::Point& point)
 {
+#if 0
 	Q_ASSERT(localuser_ != -1);
 	User *user = users_.value(localuser_);
 
@@ -377,11 +299,12 @@ void Board::addPreview(const dpcore::Point& point)
 	}
 	lastpreview_ = point;
 	previews_.enqueue(pre);
+#endif
 }
 
 /**
  */
-void Board::endPreview()
+void CanvasScene::endPreview()
 {
 	previewstarted_ = false;
 }
@@ -390,16 +313,16 @@ void Board::endPreview()
  * This is called when leaving a session. All pending preview strokes
  * are immediately drawn on the board.
  */
-void Board::commitPreviews()
+void CanvasScene::commitPreviews()
 {
 	dpcore::Point lastpoint(-1,-1,0);
 	while(previews_.isEmpty()==false) {
 		qreal distance;
 		Preview *p = previews_.dequeue();
 		if(p->from() != lastpoint) // TODO
-			image_->drawPoint(0, p->from(), p->brush());
+			_image->drawPoint(0, p->from(), p->brush());
 		else // TODO
-			image_->drawLine(0, p->from(), p->to(), p->brush(), distance);
+			_image->drawLine(0, p->from(), p->to(), p->brush(), distance);
 		lastpoint = p->to();
 		delete p;
 	}
@@ -411,7 +334,7 @@ void Board::commitPreviews()
 /**
  * Remove all preview strokes from the board
  */
-void Board::flushPreviews()
+void CanvasScene::flushPreviews()
 {
 	while(previews_.isEmpty()==false) {
 		Preview *p = previews_.dequeue();
@@ -420,52 +343,20 @@ void Board::flushPreviews()
 	}
 }
 
-/**
- * @param user user id
- * @param brush brush to use
- * @pre user must exist
- */
-void Board::userSetTool(int user, const dpcore::Brush& brush)
+void CanvasScene::handleDrawingCommand(protocol::Message *cmd)
 {
-	Q_ASSERT(users_.contains(user));
-	users_.value(user)->setBrush(brush);
-}
-
-/**
- * @param user user id
- * @param point coordinates
- * @pre user must exist
- */
-void Board::userStroke(int user, const dpcore::Point& point)
-{
-	Q_ASSERT(users_.contains(user));
-	users_.value(user)->addStroke(point);
-	if(user == localuser_ && previews_.isEmpty() == false) {
-		Q_ASSERT(!previews_.isEmpty());
-		Preview *pre = previews_.dequeue();
-		pre->hidePreview();
-		previewcache_.enqueue(pre);
-	}
-}
-
-/**
- * @param user user id
- * @pre user must exist
- */
-void Board::userEndStroke(int user)
-{
-	Q_ASSERT(users_.contains(user));
-	users_.value(user)->endStroke();
+	Q_ASSERT(_statetracker);
+	_statetracker->receiveCommand(cmd);
 }
 
 #if 0
-void Board::annotate(const protocol::Annotation& annotation)
+void CanvasScene::annotate(const protocol::Annotation& annotation)
 {
-	if(!image_) return;
+	if(!_image) return;
 	AnnotationItem *item=0;
 	bool newitem = true;
 	// Find existing annotation
-	foreach(QGraphicsItem *i, image_->childItems()) {
+	foreach(QGraphicsItem *i, _image->childItems()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
 			if(ai->id() == annotation.id) {
@@ -477,7 +368,7 @@ void Board::annotate(const protocol::Annotation& annotation)
 	}
 
 	if(item==0) {
-		item = new AnnotationItem(annotation.id, image_);
+		item = new AnnotationItem(annotation.id, _image);
 		item->forceBorder(hla_);
 	}
 	item->setOptions(annotation);
@@ -485,11 +376,11 @@ void Board::annotate(const protocol::Annotation& annotation)
 		emit newLocalAnnotation(item);
 }
 
-void Board::unannotate(int id)
+void CanvasScene::unannotate(int id)
 {
-	if(!image_) return;
+	if(!_image) return;
 	AnnotationItem *item=0;
-	foreach(QGraphicsItem *i, image_->childItems()) {
+	foreach(QGraphicsItem *i, _image->childItems()) {
 		if(i->type() == AnnotationItem::Type) {
 			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
 			if(ai->id() == id) {
@@ -505,9 +396,8 @@ void Board::unannotate(int id)
 		qWarning() << "Can't delete annotation" << id << "because it doesn't exist!";
 	}
 }
-#endif
 
-void Board::addLayer(const QString& name)
+void CanvasScene::addLayer(const QString& name)
 {
 	layers()->addLayer(name, layers()->size());
 }
@@ -518,7 +408,7 @@ void Board::addLayer(const QString& name)
  * to something else.
  * @param layer id
  */
-void Board::deleteLayer(int id, bool mergedown)
+void CanvasScene::deleteLayer(int id, bool mergedown)
 {
 	const int index = layers()->id2index(id);
 	if(index<0) {
@@ -543,6 +433,8 @@ void Board::deleteLayer(int id, bool mergedown)
 
 	update();
 }
+
+#endif
 
 }
 

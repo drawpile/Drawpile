@@ -16,49 +16,20 @@ endif()
 # files
 
 set (
-	HEADERS
-	main.h mainwindow.h editorview.h
-	brushpreview.h 
-	board.h
-	localserver.h userlistmodel.h 
-	toolsettings.h layerlistdelegate.h
-	core/layerstack.h core/layermimedata.h
-	utils/mandatoryfields.h 
-	dialogs/colordialog.h 
-	dialogs/newdialog.h
-	dialogs/hostdialog.h
-	dialogs/joindialog.h
-	dialogs/settingsdialog.h
-	widgets/viewstatus.h
-	widgets/userlistwidget.h 
-	widgets/palettewidget.h
-	widgets/popupmessage.h
-	widgets/netstatus.h 
-	widgets/qtcolortriangle.h
-	widgets/dualcolorbutton.h 
-	widgets/chatwidget.h
-	widgets/brushslider.h 
-	widgets/colorbutton.h
-	widgets/gradientslider.h
-	widgets/imageselector.h 
-	widgets/layerlistwidget.h 
-	widgets/layerwidget.h
-	docks/toolsettingswidget.h 
-	docks/palettebox.h
-	docks/navigator.h 
-	docks/colorbox.h 
-)
-
-set (
 	SOURCES
 	main.cpp mainwindow.cpp 
-	editorview.cpp brushpreview.cpp
-	board.cpp boarditem.cpp user.cpp
+	canvasscene.cpp
+	canvasview.cpp
+	canvasitem.cpp
+	statetracker.cpp
+	brushpreview.cpp
 	tools.cpp toolsettings.cpp
 	preview.cpp localserver.cpp
 	userlistmodel.cpp
 	icons.cpp 
 	annotationitem.cpp
+	net/client.cpp
+	net/loopbackserver.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp

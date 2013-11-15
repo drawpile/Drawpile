@@ -18,12 +18,14 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <cmath>
+
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QStyleOptionGraphicsItem>
-#include <cmath>
 
-#include "boarditem.h"
+#include "canvasitem.h"
+
 #include "core/point.h"
 #include "core/brush.h"
 #include "core/layerstack.h"
@@ -35,7 +37,7 @@ namespace drawingboard {
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-BoardItem::BoardItem(QGraphicsItem *parent)
+CanvasItem::CanvasItem(QGraphicsItem *parent)
 	: QGraphicsItem(parent), image_(0)
 {
 }
@@ -45,7 +47,7 @@ BoardItem::BoardItem(QGraphicsItem *parent)
  * @param parent use another QGraphicsItem as a parent
  * @param scene the picture to which this layer belongs to
  */
-BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent)
+CanvasItem::CanvasItem(const QImage& image, QGraphicsItem *parent)
 	: QGraphicsItem(parent), image_(0)
 {
 	setImage(image);
@@ -54,21 +56,21 @@ BoardItem::BoardItem(const QImage& image, QGraphicsItem *parent)
 /**
  * @param layers the layer stack for this board item
  */
-BoardItem::BoardItem(dpcore::LayerStack *layers, QGraphicsItem *parent)
+CanvasItem::CanvasItem(dpcore::LayerStack *layers, QGraphicsItem *parent)
 	: QGraphicsItem(parent)
 {
 	prepareGeometryChange();
 	image_ = layers;
 }
 
-BoardItem::~BoardItem() {
+CanvasItem::~CanvasItem() {
 	delete image_;
 }
 
 /**
  * @param image image to use
  */
-void BoardItem::setImage(const QImage& image)
+void CanvasItem::setImage(const QImage& image)
 {
 	Q_ASSERT(image.format() == QImage::Format_RGB32 || image.format() == QImage::Format_ARGB32);
 	prepareGeometryChange();
@@ -91,7 +93,7 @@ void BoardItem::setImage(const QImage& image)
  *
  * @todo delta pressure(?)
  */
-void BoardItem::drawLine(int layer, const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,qreal &distance)
+void CanvasItem::drawLine(int layer, const dpcore::Point& point1, const dpcore::Point& point2, const dpcore::Brush& brush,qreal &distance)
 {
 	image_->getLayer(layer)->drawLine(brush, point1, point2, distance);
 	// Update screen
@@ -104,19 +106,19 @@ void BoardItem::drawLine(int layer, const dpcore::Point& point1, const dpcore::P
  * @param point coordinates
  * @param brush brush to use
  */
-void BoardItem::drawPoint(int layer, const dpcore::Point& point, const dpcore::Brush& brush)
+void CanvasItem::drawPoint(int layer, const dpcore::Point& point, const dpcore::Brush& brush)
 {
 	int r = brush.radius(point.pressure());
 	image_->getLayer(layer)->dab(brush, point);
 	update(point.x()-r-2,point.y()-r-2,r*2+4,r*2+4);
 }
 
-QRectF BoardItem::boundingRect() const
+QRectF CanvasItem::boundingRect() const
 {
 	return QRectF(0,0, image_->width(), image_->height());
 }
 
-void BoardItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
 	 QWidget *)
 {
 	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);

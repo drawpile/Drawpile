@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,8 +20,10 @@
 #ifndef PPOINT_H
 #define PPOINT_H
 
-#include <QPoint>
 #include <cmath>
+
+#include <QPoint>
+#include <QVector>
 
 namespace dpcore {
 
@@ -94,6 +96,8 @@ static inline const Point operator-(const Point& p1,const QPoint& p2)
 {
 	return Point(p1.x()-p2.x(), p1.y()-p2.y(), p1.pressure());
 }
+
+typedef QVector<Point> PointVector;
 
 }
 

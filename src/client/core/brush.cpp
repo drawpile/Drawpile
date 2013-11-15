@@ -170,7 +170,7 @@ void Brush::setSpacing(int spacing)
  * Some tools don't need subpixel rendering. Set this to false
  * to inform the drawing code that only integer precision is needed.
  */
-void Brush::setSubPixel(bool sp)
+void Brush::setSubpixel(bool sp)
 {
 	subpixel_ = sp;
 }

@@ -25,23 +25,24 @@
 #include "core/point.h"
 
 namespace drawingboard {
-	class BoardEditor;
 	class AnnotationItem;
+}
+
+namespace widgets {
+	class ToolSettings;
+}
+
+namespace net {
+	class Client;
 }
 
 //! Tools
 /**
  * Tools translate commands from the local user into messages that
  * can be sent over the network or directly modify the drawingboard
- * if in offline mode. Some tools do not modify the drawing board
- * and always access the it directly.
- *
- * The BoardEditor class is used to abstract away the difference between
- * local and remote drawing boards.
+ * if in offline mode. Read-only tools access the canvas directly.
  */
 namespace tools {
-
-class AnnotationSettings;
 
 enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
 
@@ -56,14 +57,15 @@ class Tool
 {
 	public:
 		Tool(ToolCollection &owner, Type type, bool readonly)
-			: owner_(owner), type_(type), readonly_(readonly) {}
-		virtual ~Tool() = 0;
+			: _owner(owner), _type(type), _readonly(readonly)
+			{}
+		virtual ~Tool() = default;
 
 		//! Get the type of this tool
-		Type type() const { return type_; }
+		Type type() const { return _type; }
 
 		//! Is this a read only tool (ie. color picker)
-		bool readonly() const { return readonly_; }
+		bool readonly() const { return _readonly; }
 
 		//! Begin drawing
 		virtual void begin(const dpcore::Point& point) = 0;
@@ -75,13 +77,14 @@ class Tool
 		virtual void end() = 0;
 
 	protected:
-		inline drawingboard::BoardEditor *editor();
-		inline AnnotationSettings *aeditor();
+		inline widgets::ToolSettings &settings();
+		inline net::Client &client();
+		inline int layer();
 
 	private:
-		ToolCollection &owner_;
-		const Type type_;
-		const bool readonly_;
+		ToolCollection &_owner;
+		const Type _type;
+		const bool _readonly;
 
 };
 
@@ -193,34 +196,34 @@ class Annotation : public Tool {
  * A collection for tools, specific to a single controller.
  */
 class ToolCollection {
+	friend class Tool;
 	public:
 		ToolCollection();
 		~ToolCollection();
 
-		//! Get editor
-		drawingboard::BoardEditor *editor() const { return editor_; }
+		//! Set network client to use
+		void setClient(net::Client *client);
 
-		//! Get the annotation settings editor
-		AnnotationSettings *aeditor() const { return as_; }
+		//! Set the tool settings widget from which current settings are fetched
+		void setToolSettings(widgets::ToolSettings *as);
 
-		//! Set board editor to use
-		void setEditor(drawingboard::BoardEditor *editor);
-
-		//! Set the annotation settings to use
-		void setAnnotationSettings(AnnotationSettings *as);
+		//! Set the currently active layer
+		void selectLayer(int layer_id);
 
 		//! Get an instance of a specific tool
 		Tool *get(Type type);
 
 	private:
-		drawingboard::BoardEditor *editor_;
-		AnnotationSettings *as_;
-		QHash<Type, Tool*> tools_;
+		net::Client *_client;
+		widgets::ToolSettings *_toolsettings;
+		QHash<Type, Tool*> _tools;
+		int _layer;
 
 };
 
-drawingboard::BoardEditor *Tool::editor() { return owner_.editor(); }
-AnnotationSettings *Tool::aeditor() { return owner_.aeditor(); }
+net::Client &Tool::client() { return *_owner._client; }
+widgets::ToolSettings &Tool::settings() { return *_owner._toolsettings; }
+int Tool::layer() { return _owner._layer; }
 
 }
 

@@ -106,7 +106,7 @@ QWidget *PenSettings::createUi(QWidget *parent)
 	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
 	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
 
-	ui_->preview->setSubPixel(false);
+	ui_->preview->setSubpixel(false);
 
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -346,7 +346,7 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		ui_->preview->setPreviewShape(BrushPreview::Line);
 	else if(type_==Rectangle)
 		ui_->preview->setPreviewShape(BrushPreview::Rectangle);
-	ui_->preview->setSubPixel(subpixel_);
+	ui_->preview->setSubpixel(subpixel_);
 
 	// Load previous settings
 	QSettings& cfg = getSettings();

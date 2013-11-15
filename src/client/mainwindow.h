@@ -35,7 +35,7 @@ class QTimer;
 namespace widgets {
 	class ViewStatus;
 	class NetStatus;
-	class EditorView;
+	class CanvasView;
 	class DualColorButton;
 	class ToolSettings;
 	class UserList;
@@ -52,7 +52,7 @@ namespace dialogs {
 	class JoinDialog;
 }
 namespace drawingboard {
-	class Board;
+	class CanvasScene;
 }
 
 namespace net {
@@ -122,8 +122,6 @@ class MainWindow : public QMainWindow {
 		void selectTool(QAction *tool);
 		//! Display about dialog
 		void about();
-		//! Display online help
-		void help();
 		//! Go to drawpile homepage
 		void homepage();
 	private slots:
@@ -162,9 +160,6 @@ class MainWindow : public QMainWindow {
 		//! Toggle annotations
 		void toggleAnnotations(bool hidden);
 
-		//! Perform autosave
-		void autosave();
-
 		//! Update keyboard shortcuts for all main windows
 		void updateShortcuts();
 
@@ -179,10 +174,6 @@ class MainWindow : public QMainWindow {
 	private:
 		//! Finish board initialisation
 		void postInitBoard(const QString& filename);
-		//! Start autosaver timer
-		void startAutosaver();
-		//! Stop autosaver timer
-		void stopAutosaver();
 
 		//! Confirm saving of image in a format that doesn't support all required features
 		bool confirmFlatten(QString& file) const;
@@ -241,12 +232,6 @@ class MainWindow : public QMainWindow {
 		//! Create navigator dock
 		void createNavigator(QMenu *menu);
 
-		QTemporaryFile *autosaveTmp_;
-		QTimer *autosaveTimer_;
-		int autosaveTimeout_;
-
-		int statusDefaultTimeout_;
-
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
@@ -256,7 +241,7 @@ class MainWindow : public QMainWindow {
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::ViewStatus *viewstatus_;
 		widgets::NetStatus *netstatus_;
-		widgets::EditorView *view_;
+		widgets::CanvasView *_view;
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
 		widgets::Navigator *navigator_;
@@ -267,7 +252,7 @@ class MainWindow : public QMainWindow {
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
 
-		drawingboard::Board *board_;
+		drawingboard::CanvasScene *_board;
 		net::Client *_client;
 
 		QString sessiontitle_;
@@ -286,7 +271,7 @@ class MainWindow : public QMainWindow {
 		QAction *logout_;
 
 		QActionGroup *adminTools_;
-		QAction *lockboard_;
+		QAction *lock_board;
 		QAction *disallowjoins_;
 
 		QActionGroup *drawingtools_;
@@ -314,7 +299,6 @@ class MainWindow : public QMainWindow {
 		QAction *toolbartoggles_;
 		QAction *docktoggles_;
 
-		QAction *help_;
 		QAction *homepage_;
 		QAction *about_;
 

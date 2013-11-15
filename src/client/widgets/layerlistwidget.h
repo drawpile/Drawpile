@@ -27,7 +27,7 @@ class QListView;
 class QModelIndex;
 
 namespace drawingboard {
-	class Board;
+	class CanvasScene;
 }
 
 namespace dpcore {
@@ -46,7 +46,7 @@ class LayerList : public QDockWidget
 		LayerList(QWidget *parent=0);
 		~LayerList();
 
-		void setBoard(drawingboard::Board *board);
+		void setBoard(drawingboard::CanvasScene *board);
 	
 	public slots:
 		void selectLayer(int id);

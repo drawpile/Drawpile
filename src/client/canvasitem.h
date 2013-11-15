@@ -36,19 +36,19 @@ namespace drawingboard {
  * The board item provides an interface to a LayerStack for QGraphicsScene.
  * Methods are provided for drawing lines and points with a Brush object.
  */
-class BoardItem : public QGraphicsItem
+class CanvasItem : public QGraphicsItem
 {
 	public:
 		//! Construct an empty layer
-		BoardItem(QGraphicsItem *parent=0);
+		CanvasItem(QGraphicsItem *parent=0);
 
 		//! Construct a layer from a QImage
-		BoardItem(const QImage& image, QGraphicsItem *parent=0);
+		CanvasItem(const QImage& image, QGraphicsItem *parent=0);
 
 		//! Construct using a prepared layer stack
-		BoardItem(dpcore::LayerStack *layers, QGraphicsItem *parent=0);
+		CanvasItem(dpcore::LayerStack *layers, QGraphicsItem *parent=0);
 
-		~BoardItem();
+		~CanvasItem();
 
 		//! Set layer contents
 		void setImage(const QImage& image);
