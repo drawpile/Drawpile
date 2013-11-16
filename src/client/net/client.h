@@ -33,7 +33,9 @@ namespace protocol {
 	class Message;
 }
 
-class ToolContext;
+namespace drawingboard {
+	class ToolContext;
+}
 
 namespace net {
 	
@@ -49,11 +51,17 @@ public:
 	Client(QObject *parent=0);
 	~Client();
 
+	// Layer changing
+	void sendCanvasResize(const QSize &newsize);
+	void sendNewLayer(const QColor &fill, const QString &title);
+
 	// Drawing
-	void sendToolChange(const ToolContext &ctx);
+	void sendToolChange(const drawingboard::ToolContext &ctx);
 	void sendStroke(const dpcore::Point &point);
 	void sendStroke(const dpcore::PointVector &points);
 	void sendPenup();
+	
+	void sendImage(int layer, int x, int y, const QImage &image, bool blend);
 	
 signals:
 	void drawingCommandReceived(protocol::Message *msg);

@@ -25,25 +25,30 @@
 
 #include "layerlistwidget.h"
 #include "layerlistdelegate.h"
+#include "layerlistitem.h"
+
 #include "canvasscene.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
 namespace widgets {
 
-LayerList::LayerList(QWidget *parent)
+LayerListWidget::LayerListWidget(QWidget *parent)
 	: QDockWidget(tr("Layers"), parent)
 {
-	list_ = new QListView(this);
-	setWidget(list_);
+	_list = new QListView(this);
+	setWidget(_list);
 
-	list_->setDragEnabled(true);
-	list_->viewport()->setAcceptDrops(true);
+	_list->setDragEnabled(true);
+	_list->viewport()->setAcceptDrops(true);
 	// Disallow automatic selections. We handle them ourselves in the delegate.
-	list_->setSelectionMode(QAbstractItemView::NoSelection);
+	_list->setSelectionMode(QAbstractItemView::NoSelection);
 
 	LayerListDelegate *del = new LayerListDelegate(this);
-	list_->setItemDelegate(del);
+	_list->setItemDelegate(del);
+	
+	_model = new LayerListModel(this);
+	_list->setModel(_model);
 
 	// Connect signals from controls buttons
 	// These signals may be processed and are re-emitted.
@@ -60,49 +65,35 @@ LayerList::LayerList(QWidget *parent)
 			this, SLOT(selected(const QModelIndex&)));
 }
 
-LayerList::~LayerList()
-{
-}
-
-void LayerList::setBoard(drawingboard::CanvasScene *board)
-{
-	dpcore::LayerStack *stack = board->layers();
-	list_->setModel(stack);
-
-	// Connect signals from layer stack to refresh
-	// UI state after indirectly caused changes
-	connect(stack, SIGNAL(layerMoveRequest(int,int)),
-			this, SIGNAL(layerMove(int, int)));
-	connect(stack, SIGNAL(layerMoved(const QModelIndex&,const QModelIndex&)),
-			this, SLOT(moved(const QModelIndex&,const QModelIndex&)));
-}
-
 /**
  * This is called to synchronize the UI with changes that have happened
  * due to things like layer deletion and network events.
  * @param id layer ID
  */
-void LayerList::selectLayer(int id)
+void LayerListWidget::setSelection(int id)
 {
-	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(list_->model());
+#if 0
+	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(_list->model());
 	int row = layers->layers() - layers->id2index(id);
-	QModelIndexList sel = list_->selectionModel()->selectedIndexes();
+	QModelIndexList sel = _list->selectionModel()->selectedIndexes();
 	if(sel.isEmpty() || sel.first().row() != row) {
-		list_->selectionModel()->clear();
-		list_->selectionModel()->select(layers->index(row,0),
+		_list->selectionModel()->clear();
+		_list->selectionModel()->select(layers->index(row,0),
 				QItemSelectionModel::Select);
 	}
+#endif
 }
 
+#if 0
 /**
  * A layer was selected via delegate. Update the UI and emit a signal
  * to inform the Controller of the new selection.
  */
-void LayerList::selected(const QModelIndex& index)
+void LayerListWidget::selected(const QModelIndex& index)
 {
 	const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-	list_->selectionModel()->clear();
-	list_->selectionModel()->select(index, QItemSelectionModel::Select);
+	_list->selectionModel()->clear();
+	_list->selectionModel()->select(index, QItemSelectionModel::Select);
 	emit selected(layer->id());
 }
 
@@ -111,28 +102,28 @@ void LayerList::selected(const QModelIndex& index)
  * If so, update the selection to reflect the new position. The real selection
  * has not changed, so only the UI needs to be updated.
  */
-void LayerList::moved(const QModelIndex& from, const QModelIndex& to)
+void LayerListWidget::moved(const QModelIndex& from, const QModelIndex& to)
 {
-	QModelIndex sel = list_->selectionModel()->selection().indexes().first();
+	QModelIndex sel = _list->selectionModel()->selection().indexes().first();
 	if(from == sel) {
-		list_->selectionModel()->clear();
-		list_->selectionModel()->select(to, QItemSelectionModel::Select);
+		_list->selectionModel()->clear();
+		_list->selectionModel()->select(to, QItemSelectionModel::Select);
 	}
 }
 
 /**
  * Opacity was changed via UI. Emit a signal to inform the Controller.
  */
-void LayerList::opacityChanged(int opacity)
+void LayerListWidget::opacityChanged(int opacity)
 {
-	const dpcore::Layer *layer = list_->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
+	const dpcore::Layer *layer = _list->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
 	emit opacityChange(layer->id(), opacity);
 }
 
 /**
  * New layer button was pressed
  */
-void LayerList::newLayer()
+void LayerListWidget::newLayer()
 {
 	bool ok;
 	QString name = QInputDialog::getText(this, tr("Add a new layer"),
@@ -147,7 +138,7 @@ void LayerList::newLayer()
 /**
  * Delete layer button was pressed
  */
-void LayerList::deleteLayer(const dpcore::Layer *layer)
+void LayerListWidget::deleteLayer(const dpcore::Layer *layer)
 {
 	QMessageBox box(QMessageBox::Question, tr("Delete layer"),
 			tr("Really delete \"%1\"?").arg(layer->name()),
@@ -158,7 +149,7 @@ void LayerList::deleteLayer(const dpcore::Layer *layer)
 	// Offer the choice to merge down only if there is a layer
 	// below this one.
 	QPushButton *merge = 0;
-	if(static_cast<dpcore::LayerStack*>(list_->model())->isBottommost(layer)==false) {
+	if(static_cast<dpcore::LayerStack*>(_list->model())->isBottommost(layer)==false) {
 		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
 		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
 	}
@@ -172,6 +163,7 @@ void LayerList::deleteLayer(const dpcore::Layer *layer)
 	if(choice != cancel)
 		emit deleteLayer(layer->id(), choice==merge);
 }
+#endif
 
 }
 

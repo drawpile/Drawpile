@@ -20,12 +20,17 @@
 */
 #include <QDebug>
 
-#include "canvasitem.h"
 #include "statetracker.h"
 
+#include "core/layerstack.h"
+#include "core/layer.h"
 #include "../shared/net/pen.h"
+#include "../shared/net/layer.h"
+#include "../shared/net/image.h"
 
-StateTracker::StateTracker(drawingboard::CanvasItem *image, QObject *parent)
+namespace drawingboard {
+
+StateTracker::StateTracker(dpcore::LayerStack *image, QObject *parent)
 	: QObject(parent), _image(image)
 {
 }
@@ -34,6 +39,21 @@ void StateTracker::receiveCommand(protocol::Message *msg)
 {
 	switch(msg->type()) {
 		using namespace protocol;
+		case MSG_CANVAS_RESIZE:
+			handleCanvasResize(*static_cast<CanvasResize*>(msg));
+			break;
+		case MSG_LAYER_CREATE:
+			handleLayerCreate(*static_cast<LayerCreate*>(msg));
+			break;
+		case MSG_LAYER_ATTR:
+			handleLayerAttributes(*static_cast<LayerAttributes*>(msg));
+			break;
+		case MSG_LAYER_ORDER:
+			handleLayerOrder(*static_cast<LayerOrder*>(msg));
+			break;
+		case MSG_LAYER_DELETE:
+			handleLayerDelete(*static_cast<LayerDelete*>(msg));
+			break;
 		case MSG_TOOLCHANGE:
 			handleToolChange(*static_cast<ToolChange*>(msg));
 			break;
@@ -43,12 +63,39 @@ void StateTracker::receiveCommand(protocol::Message *msg)
 		case MSG_PEN_UP:
 			handlePenUp(*static_cast<PenUp*>(msg));
 			break;
+		case MSG_PUTIMAGE:
+			handlePutImage(*static_cast<PutImage*>(msg));
+			break;
 		default:
 			qDebug() << "Unhandled command" << msg->type();
 	}
 	
 	// TODO
 	delete msg;
+}
+
+void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)
+{
+	// TODO support actual resizing
+	_image->init(QSize(cmd.width(), cmd.height()));
+}
+
+void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
+{
+	_image->addLayer(cmd.id(), cmd.title(), cmd.fill());
+}
+
+void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
+{
+}
+
+void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
+{
+}
+
+void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
+{
+	_image->deleteLayer(cmd.id());
 }
 
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
@@ -76,12 +123,14 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	foreach(const protocol::PenPoint pp, cmd.points()) {
 		p = dpcore::Point(pp.x, pp.y, pp.p/255.0);
 		
+		dpcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
+		
 		if(ctx.pendown) {
-			_image->drawLine(ctx.tool.layer_id, ctx.lastpoint, p, ctx.tool.brush, ctx.distance_accumulator);
+			layer->drawLine(ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
 		} else {
 			ctx.pendown = true;
 			ctx.distance_accumulator = 0;
-			_image->drawPoint(ctx.tool.layer_id, p, ctx.tool.brush);
+			layer->dab(ctx.tool.brush, p);
 		}
 		ctx.lastpoint = p;
 	}
@@ -91,4 +140,14 @@ void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
 	ctx.pendown = false;
+}
+
+void StateTracker::handlePutImage(const protocol::PutImage &cmd)
+{
+	QByteArray data = qUncompress(cmd.image());
+	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
+	dpcore::Layer *layer = _image->getLayer(cmd.layer());
+	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
+}
+
 }

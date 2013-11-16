@@ -89,7 +89,7 @@ void ToolSettings::setTool(tools::Type tool) {
 		case tools::ANNOTATION: currenttool_ = textsettings_; break;
 	}
 	if(tool != tools::ANNOTATION)
-		static_cast<tools::AnnotationSettings*>(textsettings_)->setSelection(0); // lose the highlight border if any
+		getAnnotationSettings()->setSelection(0); // lose the highlight border if any
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());
 	currenttool_->setForeground(fgcolor_);
@@ -106,20 +106,24 @@ void ToolSettings::setForeground(const QColor& color)
 {
 	fgcolor_ = color;
 	currenttool_->setForeground(color);
+#if 0 /* we have a true eraser now? */
 	if(currenttool_ == erasersettings_) // eraser is a special case
 		emit colorsChanged(bgcolor_, fgcolor_);
 	else
-		emit colorsChanged(fgcolor_, bgcolor_);
+#endif
+	emit colorsChanged(fgcolor_, bgcolor_);
 }
 
 void ToolSettings::setBackground(const QColor& color)
 {
 	bgcolor_ = color;
 	currenttool_->setBackground(color);
+#if 0
 	if(currenttool_ == erasersettings_) // eraser is a special case
 		emit colorsChanged(bgcolor_, fgcolor_);
 	else
-		emit colorsChanged(fgcolor_, bgcolor_);
+#endif
+	emit colorsChanged(fgcolor_, bgcolor_);
 }
 
 /**

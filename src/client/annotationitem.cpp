@@ -220,6 +220,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
  */
 dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 {
+#if 0
 	using namespace dpcore;
 	int xi = int(pos().x()/Tile::SIZE);
 	int yi = int(pos().y()/Tile::SIZE);
@@ -235,6 +236,8 @@ dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 	if(y)
 		*y = yi;
 	return new Layer(0, -1, "", img);
+#endif
+	return 0;
 }
 
 }

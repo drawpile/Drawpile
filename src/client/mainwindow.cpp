@@ -43,7 +43,7 @@
 #include "localserver.h"
 #include "icons.h"
 #include "version.h"
-
+#include "loader.h"
 
 #include "canvasview.h"
 #include "canvasscene.h"
@@ -77,7 +77,7 @@
  * @param source if not null, clone settings from this window
  */
 MainWindow::MainWindow(const MainWindow *source)
-	: QMainWindow(), _board(0)
+	: QMainWindow(), _canvas(0)
 {
 	setTitle();
 
@@ -135,11 +135,11 @@ MainWindow::MainWindow(const MainWindow *source)
 	splitter_->addWidget(chatbox_);
 
 	// Create board
-	_board = new drawingboard::CanvasScene(this, toolsettings_);
-	_board->setBackgroundBrush(
+	_canvas = new drawingboard::CanvasScene(this, layerlist_);
+	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
-	_view->setBoard(_board);
-	navigator_->setScene(_board);
+	_view->setBoard(_canvas);
+	navigator_->setScene(_canvas);
 
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
@@ -155,7 +155,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	_view->setClient(_client);
 	
 	// Client command receive signals
-	connect(_client, SIGNAL(drawingCommandReceived(protocol::Message*)), _board, SLOT(handleDrawingCommand(protocol::Message*)));
+	connect(_client, SIGNAL(drawingCommandReceived(protocol::Message*)), _canvas, SLOT(handleDrawingCommand(protocol::Message*)));
 
 #if 0
 	controller_ = new Controller(toolsettings_->getAnnotationSettings(), this);
@@ -271,53 +271,38 @@ MainWindow::~MainWindow()
 }
 
 /**
- * @param filename file to open
+ * If the document in this window cannot be rep
  * @return true on success
  */
-bool MainWindow::initBoard(const QString& filename)
+bool MainWindow::loadDocument(const SessionLoader &loader)
 {
-	if(_board->initBoard(filename)==false)
+	
+	MainWindow *win = canReplace() ? this : new MainWindow(this);
+	
+	win->_canvas->initCanvas();
+	bool ok = loader.sendInitCommands(win->_client);
+	
+	if(!ok) {
+		if(win != this)
+			delete win;
+		showErrorMessage(ERR_OPEN);
 		return false;
-	postInitBoard(filename);
+	}
+	
+	// TODO filename
+	win->filename_ = ""; //filename;
+	win->setWindowModified(false);
+	win->setTitle();
+	win->save_->setEnabled(true);
+	win->saveas_->setEnabled(true);
 	return true;
 }
 
-/**
- * @param size board size
- * @param color background color
- */
-void MainWindow::initBoard(const QSize& size, const QColor& color)
+void MainWindow::initDefaultCanvas()
 {
-	_board->initBoard(size,color);
-	postInitBoard("");
+	loadDocument(BlankCanvasLoader(QSize(800, 600), Qt::white));
 }
 
-void MainWindow::initDefaultBoard()
-{
-	initBoard(QSize(800,600), Qt::white);
-}
-
-/**
- * @param image board image
- */
-void MainWindow::initBoard(const QImage& image)
-{
-	_board->initBoard(image);
-	postInitBoard("");
-}
-
-/**
- * Perform common tasks after board has been initialized
- */
-void MainWindow::postInitBoard(const QString& filename)
-{
-	filename_ = filename;
-	setWindowModified(false);
-	setTitle();
-	save_->setEnabled(true);
-	saveas_->setEnabled(true);
-	layerlist_->setBoard(_board);
-}
 
 /**
  * @param url URL
@@ -343,7 +328,7 @@ void MainWindow::joinSession(const QUrl& url)
  */
 bool MainWindow::canReplace() const {
 #if 0 // TODO
-	return !(isWindowModified() || _board->hasAnnotations() ||
+	return !(isWindowModified() || _canvas->hasAnnotations() ||
 		controller_->isConnected());
 #else
 	return true;
@@ -611,8 +596,8 @@ void MainWindow::boardChanged()
  */
 void MainWindow::showNew()
 {
-	const QSize size = _board->sceneRect().size().toSize();
-	if (_board->hasImage())
+	const QSize size = _canvas->sceneRect().size().toSize();
+	if (_canvas->hasImage())
 	{
 		newdlg_->setNewWidth(size.width());
 		newdlg_->setNewHeight(size.height());
@@ -633,16 +618,13 @@ void MainWindow::showNew()
  */
 void MainWindow::newDocument()
 {
-	MainWindow *win;
-	if(canReplace()) {
-		win = this;
-	} else {
-		win = new MainWindow(this);
-	}
-
-	win->initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
-			newdlg_->newBackground());
+	loadDocument(BlankCanvasLoader(
+		QSize(newdlg_->newWidth(), newdlg_->newHeight()),
+		newdlg_->newBackground()
+	));
+#if 0
 	win->fgbgcolor_->setBackground(newdlg_->newBackground());
+#endif
 }
 
 /**
@@ -661,19 +643,8 @@ void MainWindow::openRecent(QAction *action)
  */
 void MainWindow::open(const QString& file)
 {
-	if(canReplace()) {
-		if(initBoard(file)==false)
-			showErrorMessage(ERR_OPEN);
-		else
-			addRecentFile(file);
-	} else {
-		MainWindow *win = new MainWindow(this);
-		if(win->initBoard(file)==false) {
-			showErrorMessage(ERR_OPEN);
-			delete win;
-		} else {
-			addRecentFile(file);
-		}
+	if(loadDocument(ImageCanvasLoader(file))) {
+		addRecentFile(file);
 	}
 }
 
@@ -743,11 +714,11 @@ bool MainWindow::save()
 	if(filename_.isEmpty()) {
 		return saveas();
 	} else {
-		if(QFileInfo(filename_).suffix() != "ora" && _board->needSaveOra()) {
+		if(QFileInfo(filename_).suffix() != "ora" && _canvas->needSaveOra()) {
 			if(confirmFlatten(filename_)==false)
 				return false;
 		}
-		if(_board->save(filename_) == false) {
+		if(_canvas->save(filename_) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
 		} else {
@@ -786,11 +757,11 @@ bool MainWindow::saveas()
 		const QFileInfo info(file);
 		if(info.suffix().isEmpty()) {
 			// Pick the default suffix based on the features used
-			if(_board->needSaveOra())
+			if(_canvas->needSaveOra())
 				file += ".ora";
 			else
 				file += ".png";
-		} else if(_board->needSaveOra() && info.suffix() != "ora") {
+		} else if(_canvas->needSaveOra() && info.suffix() != "ora") {
 			// If the user has already chosen a format and it lacks
 			// the necessary features, confirm this is what they
 			// really want to do.
@@ -799,7 +770,7 @@ bool MainWindow::saveas()
 		}
 
 		// Save the image
-		if(_board->save(file) == false) {
+		if(_canvas->save(file) == false) {
 			showErrorMessage(ERR_SAVE);
 			return false;
 		} else {
@@ -827,7 +798,8 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	hostdlg_ = new dialogs::HostDialog(_board->image(), this);
+	// TODO
+	hostdlg_ = new dialogs::HostDialog(_canvas->image(), this);
 	connect(hostdlg_, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
 	hostdlg_->show();
 }
@@ -925,6 +897,7 @@ void MainWindow::finishHost(int i)
 
 		// If another image was selected, open a new window (unless this window
 		// is replaceable)
+#if 0 // TODO
 		MainWindow *w = this;
 		if(hostdlg_->useOriginalImage() == false) {
 			if(!canReplace())
@@ -933,6 +906,7 @@ void MainWindow::finishHost(int i)
 		}
 		w->hostSession(address, hostdlg_->getPassword(), hostdlg_->getTitle(),
 				hostdlg_->getUserLimit(), hostdlg_->getAllowDrawing());
+#endif
 
 	}
 	hostdlg_->deleteLater();
@@ -1175,7 +1149,7 @@ void MainWindow::rotatezero()
 void MainWindow::toggleAnnotations(bool hidden)
 {
 	annotationtool_->setEnabled(!hidden);
-	_board->showAnnotations(!hidden);
+	_canvas->showAnnotations(!hidden);
 	if(hidden) {
 		if(annotationtool_->isChecked())
 			brushtool_->trigger();
@@ -1245,7 +1219,7 @@ void MainWindow::selectTool(QAction *tool)
 		return;
 	lasttool_ = tool;
 	// When using the annotation tool, highlight all text boxes
-	_board->highlightAnnotations(type==tools::ANNOTATION);
+	_canvas->highlightAnnotations(type==tools::ANNOTATION);
 	emit toolChanged(type);
 }
 
@@ -1565,7 +1539,7 @@ void MainWindow::createDocks()
 
 void MainWindow::createNavigator(QMenu *toggles)
 {
-	navigator_ = new widgets::Navigator(this, _board);
+	navigator_ = new widgets::Navigator(this, _canvas);
 	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	toggles->addAction(navigator_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, navigator_);
@@ -1594,7 +1568,7 @@ void MainWindow::createUserList(QMenu *toggles)
 
 void MainWindow::createLayerList(QMenu *toggles)
 {
-	layerlist_ = new widgets::LayerList(this);
+	layerlist_ = new widgets::LayerListWidget(this);
 	layerlist_->setObjectName("layerlistdock");
 	layerlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	toggles->addAction(layerlist_->toggleViewAction());

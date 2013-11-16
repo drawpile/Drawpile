@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@
 #include <QColor>
 
 class QImage;
-class QPainter;
-class QRectF;
 class QSize;
 
 namespace dpcore {
@@ -34,22 +32,17 @@ class Point;
 class Tile;
 class LayerStack;
 
-//! A drawing layer/tile manager
 /**
+ * @brief A drawing layer/tile manage
+ * 
  * A layer is made up of multiple tiles.
- * Although images of arbitrary size can be created, the real image size is
- * always a multiple of Tile::SIZE. This is just simplyfo some algorithms.
+ * Although images of arbitrary size can be created, the true layer size is
+ * always a multiple of Tile::SIZE.
  */
 class Layer {
 	public:
-		//! Construct a layer from an image
-		Layer(LayerStack *owner, int id, const QString& name, const QImage& image, const QPoint& offset=QPoint(), const QSize& size=QSize());
-
 		//! Construct a layer filled with solid color
 		Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size);
-
-		//! Construct a blank layer
-		Layer(LayerStack *owner, int id, const QString& name, const QSize& size);
 
 		~Layer();
 
@@ -95,6 +88,9 @@ class Layer {
 		//! Hide this layer
 		void setHidden(bool hide);
 
+		//! Draw an image onto the layer
+		void putImage(int x, int y, QImage image, bool blend);
+
 		//! Dab the layer with a brush
 		void dab(const Brush& brush, const Point& point);
 
@@ -120,13 +116,17 @@ class Layer {
 		void optimize();
 
 		//! Get a tile
-		const Tile *tile(int x, int y) const { return tiles_[y*xtiles_+x]; }
+		const Tile *tile(int x, int y) const {
+			Q_ASSERT(x>=0 && x<xtiles_);
+			Q_ASSERT(y>=0 && y<ytiles_);
+			return tiles_[y*xtiles_+x];
+		}
 
 		//! Get a tile
-		const Tile *tile(int index) const { return tiles_[index]; }
+		const Tile *tile(int index) const { Q_ASSERT(index>=0 && index<xtiles_*ytiles_); return tiles_[index]; }
 
-		//! Is this layer visible?
 		/**
+		 * @brief Is this layer visible
 		 * A layer is visible when its opacity is greater than zero AND
 		 * it is not explicitly hidden.
 		 * @return true if layer is visible
@@ -134,26 +134,26 @@ class Layer {
 		bool visible() const { return opacity_ > 0 && !hidden_; }
 
 		//! Return a (temporary use) copy of the given layer
+		// TODO needed?
 		static Layer *scratchCopy(const Layer *src);
 
 	private:
+		QImage padImageToTileBoundary(int leftpad, int toppad, const QImage &original, bool alpha) const;
+		
 		LayerStack *owner_;
-		void init(LayerStack *owner, int id, const QString& name, const QSize& size);
-
+		int id_;
+		QString name_;
+	
 		int width_;
 		int height_;
 		int xtiles_;
 		int ytiles_;
-		int id_;
-		QString name_;
 		Tile **tiles_;
 		uchar opacity_;
 		bool hidden_;
 };
 
 }
-
-Q_DECLARE_METATYPE(dpcore::Layer*);
 
 #endif
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,34 +17,36 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QStringList>
-#include <QBuffer>
+
 #include <QImage>
+#include "loader.h"
+#include "net/client.h"
 
-#include "layermimedata.h"
-#include "layer.h"
-
-namespace dpcore {
-
-LayerMimeData::LayerMimeData(Layer *layer)
-	: QMimeData(), layer_(layer)
+namespace {
+bool loadSingleLayerImage(net::Client *client, const QString &filename)
 {
+	QImage image;
+	if(image.load(filename)==false)
+		return false;
+	image = image.convertToFormat(QImage::Format_ARGB32);
+	
+	client->sendCanvasResize(image.size());
+	client->sendNewLayer(Qt::transparent, "Background");
+	client->sendImage(0, 0, 0, image, false);
+	return true;
 }
 
-QStringList LayerMimeData::formats() const
+}
+
+bool BlankCanvasLoader::sendInitCommands(net::Client *client) const
 {
-	return QStringList() << "image/png";
+	client->sendCanvasResize(_size);
+	client->sendNewLayer(_color, "Background");
+	return true;
 }
 
-QVariant LayerMimeData::retrieveData(const QString& mimeType, QVariant::Type type) const
+bool ImageCanvasLoader::sendInitCommands(net::Client *client) const
 {
-	if(type!=QVariant::ByteArray || mimeType != "image/png")
-		return QVariant();
-	QByteArray img;
-	QBuffer buf(&img);
-	layer_->toImage().save(&buf, "PNG");
-	return img;
+	// TODO ORA loading
+	return loadSingleLayerImage(client, _filename);
 }
-
-}
-

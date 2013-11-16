@@ -125,6 +125,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		QColor color1_, color2_;
 		PreviewShape shape_;
 		qreal oldhardness1_, oldhardness2_;
+		bool _needupdate;
 };
 
 #ifndef DESIGNER_PLUGIN

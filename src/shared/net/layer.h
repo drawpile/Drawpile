@@ -29,7 +29,27 @@
 
 namespace protocol {
 
-typedef uint8_t LayerId;
+/**
+ * \brief Canvas resize command
+ * 
+ * This affects the size of all existing and future layers.
+ */
+class CanvasResize : public Message {
+public:
+	CanvasResize(uint16_t width, uint16_t height)
+		: Message(MSG_CANVAS_RESIZE), _width(width), _height(height)
+		{}
+
+	uint16_t width() const { return _width; }
+	uint16_t height() const { return _height; }
+		
+protected:
+	int payloadLength() const;
+
+private:
+	uint16_t _width;
+	uint16_t _height;
+};
 
 /**
  * \brief Layer creation command.
@@ -37,19 +57,21 @@ typedef uint8_t LayerId;
  */
 class LayerCreate : public Message {
 public:
-	LayerCreate(LayerId id, uint32_t fill)
-		: Message(MSG_LAYER_CREATE), _id(id), _fill(fill)
+	LayerCreate(uint8_t id, uint32_t fill, const QString &title)
+		: Message(MSG_LAYER_CREATE), _id(id), _fill(fill), _title(title.toUtf8())
 		{}
 
-	LayerId id() const { return _id; }
+	uint8_t id() const { return _id; }
 	uint32_t fill() const { return _fill; }
+	const QByteArray &title() const { return _title; }
 
 protected:
 	int payloadLength() const;
 
 private:
-	const LayerId _id;
-	const uint32_t _fill;
+	uint8_t _id;
+	uint32_t _fill;
+	QByteArray _title;
 };
 
 /**
@@ -57,12 +79,12 @@ private:
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(LayerId id, uint8_t opacity, uint8_t blend, const QString &title)
+	LayerAttributes(uint8_t id, uint8_t opacity, uint8_t blend, const QString &title)
 		: Message(MSG_LAYER_CREATE), _id(id),
 		_opacity(opacity), _blend(blend), _title(title.toUtf8())
 		{}
 
-	LayerId id() const { return _id; }
+	uint8_t id() const { return _id; }
 	uint8_t opacity() const { return _opacity; }
 	uint8_t blend() const { return _blend; }
 	QString title() const { return QString::fromUtf8(_title); }
@@ -71,31 +93,29 @@ protected:
 	int payloadLength() const;
 
 private:
-	const LayerId _id;
-	const uint8_t _opacity;
-	const uint8_t _blend;
-	const QByteArray _title;
+	uint8_t _id;
+	uint8_t _opacity;
+	uint8_t _blend;
+	QByteArray _title;
 };
-
-typedef QVector<LayerId> LayerOrderVector;
 
 /**
  * \brief Layer order change command
  */
 class LayerOrder : public Message {
 public:
-	LayerOrder(const LayerOrderVector &order)
+	LayerOrder(const QList<uint8_t> &order)
 		: Message(MSG_LAYER_ORDER),
 		_order(order)
 		{}
 	
-	const LayerOrderVector &order() const { return _order; }
+	const QList<uint8_t> &order() const { return _order; }
 	
 protected:
 	int payloadLength() const;
 
 private:
-	LayerOrderVector _order;
+	QList<uint8_t> _order;
 };
 
 /**
@@ -103,18 +123,18 @@ private:
  */
 class LayerDelete : public Message {
 public:
-	LayerDelete(LayerId id)
+	LayerDelete(uint8_t id)
 		: Message(MSG_LAYER_DELETE),
 		_id(id)
 		{}
 	
-	LayerId id() const { return _id; }
+	uint8_t id() const { return _id; }
 	
 protected:
 	int payloadLength() const;
 
 private:
-	const LayerId _id;
+	uint8_t _id;
 };
 
 }

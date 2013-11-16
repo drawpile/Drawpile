@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,22 +23,15 @@
 #include <QAbstractListModel>
 #include <QItemDelegate>
 
-namespace dpcore {
-	class Layer;
-}
+namespace widgets {
 
 /**
- * A custom item delegate for displaying layer names
- * and editing layer settings.
- * User actions cause signals to be emitted, which are routed to Controller,
- * which either acts upon them or sends them to the server. In any case,
- * we don't modify anything directly here at all.
+ * \brief A custom item delegate for displaying layer names and editing layer settings.
  */
 class LayerListDelegate : public QItemDelegate {
 	Q_OBJECT
 	public:
 		LayerListDelegate(QObject *parent=0);
-		~LayerListDelegate();
 
 		void paint(QPainter *painter, const QStyleOptionViewItem &option,
 				const QModelIndex &index) const;
@@ -54,7 +47,7 @@ class LayerListDelegate : public QItemDelegate {
 		//! Create new layer button was pressed
 		void newLayer();
 		//! User request the given layer to be deleted
-		void deleteLayer(const dpcore::Layer *layer);
+		void deleteLayer(int);
 		//! User wants to toggle the visibility of the given layer
 		void layerToggleHidden(int);
 		//! User wants to rename the layer
@@ -68,5 +61,6 @@ class LayerListDelegate : public QItemDelegate {
 		void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
 };
 
-#endif
+}
 
+#endif

@@ -17,6 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
@@ -47,7 +48,7 @@ BrushPreview::~BrushPreview() {
 void BrushPreview::setPreviewShape(PreviewShape shape)
 {
 	shape_ = shape;
-	updatePreview();
+	_needupdate = true;
 	update();
 }
 
@@ -57,7 +58,7 @@ void BrushPreview::setColor1(const QColor& color)
 	brush_.setColor(color);
 	if(colorpressure_==false)
 		brush_.setColor2(color);
-	updatePreview();
+	_needupdate = true;
 	update();
 }
 
@@ -66,24 +67,26 @@ void BrushPreview::setColor2(const QColor& color)
 	color2_ = color;
 	if(colorpressure_)
 		brush_.setColor2(color);
-	updatePreview();
+	_needupdate = true;
 	update();
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)
 { 
-	updatePreview();
+	_needupdate = true;
 }
 
 void BrushPreview::changeEvent(QEvent *event)
 {
-	updatePreview();
+	_needupdate = true;
 	update();
 }
 
 void BrushPreview::paintEvent(QPaintEvent *event)
 {
 	QPainter painter(this);
+	if(_needupdate)
+		updatePreview();
 	preview_->paint(event->rect(), &painter);
 }
 
@@ -91,12 +94,14 @@ void BrushPreview::updatePreview()
 {
 	if(preview_==0) {
 		preview_ = new dpcore::LayerStack();
-		preview_->addLayer("", QColor(0,0,0), contentsRect().size());
+		preview_->init(contentsRect().size());
+		preview_->addLayer(0, "", QColor(0,0,0));
 	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
 		// TODO resize more nicely
 		delete preview_;
 		preview_ = new dpcore::LayerStack();
-		preview_->addLayer("", QColor(0,0,0), contentsRect().size());
+		preview_->init(contentsRect().size());
+		preview_->addLayer(0, "", QColor(0,0,0));
 	}
 	dpcore::Layer *layer = preview_->getLayerByIndex(0);
 
@@ -149,6 +154,7 @@ void BrushPreview::updatePreview()
 				dpcore::Point(offx, offy-strokeh, 1),
 				distance);
 	}
+	_needupdate=false;
 }
 
 /**

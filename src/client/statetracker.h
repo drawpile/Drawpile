@@ -29,14 +29,22 @@
 
 namespace protocol {
 	class Message;
+	class CanvasResize;
+	class LayerCreate;
+	class LayerAttributes;
+	class LayerOrder;
+	class LayerDelete;
 	class ToolChange;
 	class PenMove;
 	class PenUp;
+	class PutImage;
+}
+
+namespace dpcore {
+	class LayerStack;
 }
 
 namespace drawingboard {
-	class CanvasItem;
-}
 
 struct ToolContext {
 	int layer_id;
@@ -55,18 +63,31 @@ struct DrawingContext {
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(drawingboard::CanvasItem *image, QObject *parent=0);
+	StateTracker(dpcore::LayerStack *_image, QObject *parent=0);
 	
 	void receiveCommand(protocol::Message *msg);
 	
 private:
+	// Layer related commands
+	void handleCanvasResize(const protocol::CanvasResize &cmd);
+	void handleLayerCreate(const protocol::LayerCreate &cmd);
+	void handleLayerAttributes(const protocol::LayerAttributes &cmd);
+	void handleLayerOrder(const protocol::LayerOrder &cmd);
+	void handleLayerDelete(const protocol::LayerDelete &cmd);
+	
+	// Drawing related commands
 	void handleToolChange(const protocol::ToolChange &cmd);
 	void handlePenMove(const protocol::PenMove &cmd);
 	void handlePenUp(const protocol::PenUp &cmd);
+	void handlePutImage(const protocol::PutImage &cmd);
+	
+	// Annotation related commands
 	
 	QHash<int, DrawingContext> _contexts;
 	
-	drawingboard::CanvasItem *_image;
+	dpcore::LayerStack *_image;
 };
+
+}
 
 #endif

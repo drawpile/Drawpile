@@ -24,17 +24,16 @@
 #include <QLineEdit>
 
 #include "layerlistdelegate.h"
-#include "core/layerstack.h"
-#include "core/layer.h"
-#include "widgets/layerwidget.h"
+#include "layerlistwidget.h"
+#include "layerlistitem.h"
+#include "layerwidget.h"
+
 #include "icons.h"
+
+namespace widgets {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent)
-{
-}
-
-LayerListDelegate::~LayerListDelegate()
 {
 }
 
@@ -68,28 +67,29 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 				addicon);
 		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), tr("New layer..."));
 	} else {
-		const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
+		LayerListItem layer = index.data().value<LayerListItem>();
 
 		const QSize delsize = icon::remove().actualSize(QSize(16,16));
 
 		QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
-		drawStyleGlyph(stylerect, painter, option.palette, layer->opacity() / 255.0, layer->hidden());
+		drawStyleGlyph(stylerect, painter, option.palette, layer.opacity, layer.hidden);
 
 		// Draw layer name
 		textrect.setLeft(stylerect.right());
 		textrect.setWidth(textrect.width() - delsize.width());
-		drawDisplay(painter, opt, textrect, layer->name());
+		drawDisplay(painter, opt, textrect, layer.title);
 
 		// Draw delete button (except when in a network session, and when this is the last layer)
+#if 0
 		const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
 		if(layers->layers()>1) {
 			painter->drawPixmap(opt.rect.topRight()-QPoint(delsize.width(), -opt.rect.height()/2+delsize.height()/2), icon::remove().pixmap(16));
 		}
-
+#endif
 	}
 }
 
-QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
+QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
         QSize size = QItemDelegate::sizeHint(option, index);
         const QSize iconsize = icon::lock().actualSize(QSize(16,16));
@@ -109,6 +109,7 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		if(index.row()==0) {
 			emit newLayer();
 		} else {
+#if 0
 			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
 
 			if(me->x() < btnsize) {
@@ -125,6 +126,7 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				if(layers->layers()>1)
 					emit deleteLayer(layer);
 			}
+#endif
 		}
 	} else if(event->type() == QEvent::MouseButtonPress) {
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
@@ -149,10 +151,12 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const
 {
+#if 0
 	emit renameLayer(
 			index.data().value<dpcore::Layer*>()->id(),
 			static_cast<QLineEdit*>(editor)->text()
 			);
+#endif
 }
 
 void LayerListDelegate::drawStyleGlyph(const QRectF& rect, QPainter *painter,const QPalette& palette, float value, bool hidden) const
@@ -192,3 +196,4 @@ void LayerListDelegate::drawStyleGlyph(const QRectF& rect, QPainter *painter,con
 	painter->restore();
 }
 
+}

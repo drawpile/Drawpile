@@ -23,7 +23,6 @@
 #include <QDockWidget>
 
 #include "tools.h"
-#include "interfaces.h"
 
 class QStackedWidget;
 
@@ -33,13 +32,17 @@ namespace tools {
 	class AnnotationEditor;
 }
 
+namespace dpcore {
+	class Brush;
+}
+
 namespace widgets {
 
 //! Tool settings window
 /**
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettings: public QDockWidget, public interface::BrushSource
+class ToolSettings: public QDockWidget
 {
 	Q_OBJECT
 	public:

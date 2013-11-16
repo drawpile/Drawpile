@@ -108,7 +108,7 @@ bool Reader::load()
  */
 bool isKnown(const QDomNamedNodeMap& attrs, const char **names) {
 	bool ok=true;
-	for(unsigned int i=0;i<attrs.length();++i) {
+	for(int i=0;i<attrs.length();++i) {
 		QDomNode n = attrs.item(i);
 		const char **name = names;
 		bool found=false;
@@ -164,7 +164,9 @@ bool Reader::loadLayers(const QDomElement& stack, QPoint offset)
 			}
 
 			// Create layer
+#if 0
 			dpcore::Layer *layer = stack_->addLayer(
+					0, // TODO proper ID
 					e.attribute("name", QApplication::tr("Unnamed layer")),
 					content,
 					offset + QPoint(
@@ -175,6 +177,7 @@ bool Reader::loadLayers(const QDomElement& stack, QPoint offset)
 			layer->setOpacity(qRound(255 * e.attribute("opacity", "1.0").toDouble()));
 			// TODO this isn't in the spec yet, but (at least) myPaint uses it.
 			layer->setHidden(e.attribute("visibility", "visible") != "visible");
+#endif
 		} else if(e.tagName()=="stack") {
 			// Nested stacks are not fully supported
 			warnings_ |= ORA_NESTED;

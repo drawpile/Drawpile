@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,46 +30,6 @@
 
 namespace dpcore {
 
-void Layer::init(LayerStack *owner, int id, const QString& name, const QSize& size)
-{
-	owner_ = owner;
-	id_ = id;
-	name_ = name;
-	width_ = size.width();
-	height_ = size.height();
-	xtiles_ = (width_ + Tile::SIZE-1) / Tile::SIZE;
-	ytiles_ = (height_ + Tile::SIZE-1) / Tile::SIZE;
-	tiles_ = new Tile*[xtiles_ * ytiles_];
-	opacity_ = 255;
-	hidden_ = false;
-}
-
-/**
- * Construct a layer whose content is loaded from the provided image.
- * If x,y,w and h parameters are given, a layer of different size than the
- * image can be created.
- * @param owner the stack to which this layer belongs to
- * @param id layer ID
- * @param image image on which the layer is based
- * @param offset image offset
- * @param size image size (if not set, size is computed from image size and offset)
- */
-Layer::Layer(LayerStack *owner, int id, const QString& name, const QImage& image, const QPoint& offset, const QSize& size) {
-	init(owner, id, name, size.isEmpty() ? QSize(offset.x()+image.width(), offset.y()+image.height()) : size);
-	for(int y=0;y<ytiles_;++y) {
-		const int yt = y*xtiles_;
-		for(int x=0;x<xtiles_;++x) {
-			const int x0 = x * Tile::SIZE, y0 = y * Tile::SIZE;
-			const int x1 = x0 + Tile::SIZE, y1 = y0 + Tile::SIZE;
-			if( x1 < offset.x() || x0 > offset.x()+image.width() ||
-					y1 < offset.y() || y0 > offset.y()+image.height())
-				tiles_[yt+x] = 0;
-			else
-				tiles_[yt+x] = new Tile(image, x, y, offset.x(), offset.y());
-		}
-	}
-}
-
 /**
  * Construct a layer initialized to a solid color
  * @param owner the stack to which this layer belongs to
@@ -77,25 +37,24 @@ Layer::Layer(LayerStack *owner, int id, const QString& name, const QImage& image
  * @param color layer color
  * @parma size layer size
  */
-Layer::Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size) {
-	init(owner, id, name, size);
-	for(int y=0;y<ytiles_;++y)
-		for(int x=0;x<xtiles_;++x)
-			tiles_[y*xtiles_+x] = new Tile(color, x, y);
-}
-
-/**
- * Construct an empty (transparent) layer.
- * Memory for the layer tiles will be allocated on demand.
- * @param owner the stack to which this layer belongs to
- * @param id layer ID
- * @param size layer size
- */
-Layer::Layer(LayerStack *owner, int id, const QString& name, const QSize& size)
+Layer::Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size)
+	: owner_(owner), id_(id), name_(name), width_(size.width()), height_(size.height()),
+	opacity_(255), hidden_(false)
 {
-	init(owner, id, name, size);
-	for(int i=0;i<xtiles_*ytiles_;++i)
-		tiles_[i] = 0;
+	xtiles_ = (width_+Tile::SIZE-1) / Tile::SIZE;
+	ytiles_ = (height_+Tile::SIZE-1) / Tile::SIZE;
+	tiles_ = new Tile*[xtiles_ * ytiles_];
+	
+	if(color.alpha() == 0) {
+		// Blank layer
+		for(int i=0;i<xtiles_*ytiles_;++i)
+			tiles_[i] = 0;
+	} else {
+		// Solid fill
+		for(int y=0;y<ytiles_;++y)
+			for(int x=0;x<xtiles_;++x)
+				tiles_[y*xtiles_+x] = new Tile(color, x, y);
+	}
 }
 
 /**
@@ -105,7 +64,7 @@ Layer::Layer(LayerStack *owner, int id, const QString& name, const QSize& size)
 Layer *Layer::scratchCopy(const Layer *src)
 {
 	Q_ASSERT(src!=0);
-	Layer *scratch = new Layer(0, -1, "scratch", QSize(src->width(), src->height()));
+	Layer *scratch = new Layer(0, -1, "scratch", Qt::transparent, QSize(src->width(), src->height()));
 	scratch->opacity_ = src->opacity_;
 	for(int i=0;i<src->xtiles_*src->ytiles_;++i)
 		scratch->tiles_[i] = new Tile(src->tiles_[i]);
@@ -121,12 +80,11 @@ Layer::~Layer() {
 void Layer::setName(const QString& name)
 {
 	name_ = name;
-	owner_->layerChanged(this);
 }
 
 QImage Layer::toImage() const {
 	QImage image(width_, height_, QImage::Format_ARGB32);
-	image.fill(0);
+	//image.fill(0);
 	for(int i=0;i<xtiles_*ytiles_;++i) {
 		if(tiles_[i])
 			tiles_[i]->copyToImage(image);
@@ -145,11 +103,11 @@ QColor Layer::colorAt(int x, int y) const
 		return QColor();
 	const int yindex = y/Tile::SIZE;
 	const int xindex = x/Tile::SIZE;
-	return QColor::fromRgb(
-			tiles_[yindex*xtiles_ + xindex]->pixel(
-				x-xindex*Tile::SIZE,
-				y-yindex*Tile::SIZE
-				));
+	const Tile *t = tile(xindex, yindex);
+	if(!t)
+		return Qt::transparent;
+	
+	return QColor::fromRgb(t->pixel(x-xindex*Tile::SIZE, y-yindex*Tile::SIZE));
 }
 
 /**
@@ -160,10 +118,8 @@ void Layer::setOpacity(int opacity)
 	Q_ASSERT(opacity>=0 && opacity<256);
 	opacity_ = opacity;
 	// TODO optimization: mark only nonempty tiles
-	if(owner_) {
+	if(owner_ && !hidden_)
 		owner_->markDirty();
-		owner_->layerChanged(this);
-	}
 }
 
 /**
@@ -173,11 +129,80 @@ void Layer::setHidden(bool hide)
 {
 	hidden_ = hide;
 	// TODO same optimization as above
-	if(owner_) {
-		if(opacity_>0)
-			owner_->markDirty();
-		owner_->layerChanged(this);
+	if(owner_ && opacity_>0)
+		owner_->markDirty();
+}
+
+/**
+ * Return a copy of the image with the borders padded to align with tile boundaries.
+ * The padding pixels are taken from the layer content, so the image can be used
+ * to replace the existing tiles.
+ * @param xpos target image position
+ * @param ypos target image position
+ * @param original the image to pad
+ * @param alpha alpha blend image
+ */
+QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, bool alpha) const
+{
+	const int x0 = Tile::roundDown(xpos);
+	const int x1 = Tile::roundUp(xpos+original.width());
+	const int y0 = Tile::roundDown(ypos);
+	const int y1 = Tile::roundUp(ypos+original.height());
+
+	const int w = x1 - x0;
+	const int h = y1 - y0;
+	
+	QImage image(w, h, QImage::Format_ARGB32);
+	
+	// Copy background from existing tiles
+	for(int y=0;y<h;y+=Tile::SIZE) {
+		int yt = y / Tile::SIZE;
+		for(int x=0;x<w;x+=Tile::SIZE) {
+			tile(x / Tile::SIZE, yt)->copyToImage(image, x, y);
+		}
 	}
+	
+	// Paint new image
+	QPainter painter(&image);
+	if(!alpha)
+		painter.setCompositionMode(QPainter::CompositionMode_Source);
+	painter.drawImage(xpos-x0, ypos-y0, original);
+	
+	return image;
+}
+
+/**
+ * @param x x coordinate
+ * @param y y coordinate
+ * @param image the image to draw
+ * @param blend use alpha blending
+ */
+void Layer::putImage(int x, int y, QImage image, bool blend)
+{
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+	
+	if(x % Tile::SIZE || y % Tile::SIZE || image.width() % Tile::SIZE || image.height() % Tile::SIZE || blend) {
+		int xoff = x - Tile::roundDown(x);
+		int yoff = y - Tile::roundDown(y);
+		image = padImageToTileBoundary(xoff, yoff, image, blend);
+	}
+	
+	int tx0 = x / Tile::SIZE;
+	int tx1 = tx0 + (image.width()-1) / Tile::SIZE;
+	int ty0 = y / Tile::SIZE;
+	int ty1 = ty0 + (image.height()-1) / Tile::SIZE;
+	
+	for(;ty0<=ty1;++ty0) {
+		for(int tx=tx0;tx<=tx1;++tx) {
+			int i = ty0*xtiles_ + tx;
+			Q_ASSERT(i>=0 && i < xtiles_*ytiles_);
+			delete tiles_[i];
+			tiles_[i] = new Tile(image, tx, ty0, x, y);
+		}
+	}
+	
+	if(owner_ && visible())
+		owner_->markDirty(QRect(x, y, image.width(), image.height()));
 }
 
 /**
@@ -228,15 +253,15 @@ void Layer::dab(const Brush& brush, const Point& point)
 					realdia-wb
 					);
 
-			if(owner_ && visible())
-				owner_->markDirty(xindex, yindex);
-
 			x = (xindex+1) * Tile::SIZE;
 			xb = xb + wb;
 		}
 		y = (yindex+1) * Tile::SIZE;
 		yb = yb + hb;
 	}
+	if(owner_ && visible())
+		owner_->markDirty(QRect(left, top, right-left, bottom-top));
+
 }
 
 /**
@@ -357,7 +382,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 /**
  * @param tile x index offset
  * @param tile y index offset
- * @parma layer the layer that will be merged to this
+ * @param layer the layer that will be merged to this
  */
 void Layer::merge(int x, int y, const Layer *layer)
 {
@@ -369,11 +394,11 @@ void Layer::merge(int x, int y, const Layer *layer)
 			if(tiles_[index]==0)
 				tiles_[index] = new Tile(myx, myy);
 			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j], layer->opacity_);
-			if(owner_ && visible())
-				owner_->markDirty(myx, myy);
 		}
 		myx = x;
 	}
+	if(owner_ && visible())
+		owner_->markDirty();
 }
 
 void Layer::fillChecker(const QColor& dark, const QColor& light)

@@ -28,14 +28,14 @@ set (
 	userlistmodel.cpp
 	icons.cpp 
 	annotationitem.cpp
+	loader.cpp
 	net/client.cpp
 	net/loopbackserver.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
-	core/rasterop.cpp layerlistdelegate.cpp
-	core/layermimedata.cpp
+	core/rasterop.cpp
 	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
 	ora/zip.c ora/unzip.c ora/ioapi.c
 	dialogs/colordialog.cpp 
@@ -56,6 +56,8 @@ set (
 	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
 	widgets/layerlistwidget.cpp
+	widgets/layerlistdelegate.cpp
+	widgets/layerlistitem.cpp
 	widgets/layerwidget.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 

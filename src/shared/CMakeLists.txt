@@ -5,30 +5,12 @@ find_package(Qt5Network)
 include_directories( ${Qt5Network_INCLUDES} )
 
 set (
-	NET_HEADERS
-	net/constants.h
-	net/message.h
-	net/annotation.h
-	net/layer.h
-	net/pen.h
-	)
-
-#set (
-	#NET_QHEADERS
-	#net/messagequeue.h
-	#)
-
-set (
 	NET_SOURCES
 	net/message.cpp
 	net/annotation.cpp
 	net/layer.cpp
 	net/pen.cpp
-	)
-
-set (
-	SRV_QHEADERS
-	server/server.h
+	net/image.cpp
 	)
 
 set (

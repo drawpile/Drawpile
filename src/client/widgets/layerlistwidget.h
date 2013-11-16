@@ -22,61 +22,37 @@
 
 #include <QDockWidget>
 
-class LayerListModel;
 class QListView;
-class QModelIndex;
 
-namespace drawingboard {
-	class CanvasScene;
+namespace protocol {
+	class Message;
 }
-
-namespace dpcore {
-	class Layer;
-}
-
-class Ui_LayerBox;
-class QItemSelection;
 
 namespace widgets {
 
-class LayerList : public QDockWidget
+class LayerListModel;
+
+class LayerListWidget : public QDockWidget
 {
 	Q_OBJECT
 	public:
-		LayerList(QWidget *parent=0);
-		~LayerList();
+		LayerListWidget(QWidget *parent=0);
 
-		void setBoard(drawingboard::CanvasScene *board);
-	
+		LayerListModel *layerList() { return _model; }
+
 	public slots:
-		void selectLayer(int id);
-
+		void setSelection(int id);
+		
 	signals:
-		//! User wants to create a new layer
-		void newLayer(const QString& name);
-		//! User wants to delete a layer
-		void deleteLayer(int id, bool mergedown);
-		//! User wants to select a new layer
-		void selected(int id);
-		//! User wants to change the opacity of the currently selected layer
-		void opacityChange(int id, int opacity);
-		//! User wants to toggle the visibility of a layer
-		void layerToggleHidden(int id);
-		//! User wants to move a layer
-		void layerMove(int src, int dest);
-		//! User wants to rename a layer
-		void renameLayer(int id, const QString& name);
+		//! Layer altering command emitted in response to user input
+		void layerCommand(protocol::Message *cmd);
 
-	private slots:
-		void newLayer();
-		void deleteLayer(const dpcore::Layer* layer);
-		void selected(const QModelIndex& index);
-		void moved(const QModelIndex& from, const QModelIndex& to);
-		void opacityChanged(int opacity);
-
+		//! User wants to toggle the visibility of a layer (local)
+		void layerHide(int id, bool hidden);
+		
 	private:
-		QListView *list_;
-		LayerListModel *model_;
+		QListView *_list;
+		LayerListModel *_model;
 };
 
 }

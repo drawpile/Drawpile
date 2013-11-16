@@ -26,13 +26,7 @@
 
 #include "core/point.h"
 
-namespace interface {
-	class BrushSource;
-	class ColorSource;
-}
-
 namespace dpcore {
-	class Brush;
 	class LayerStack;
 }
 
@@ -40,11 +34,14 @@ namespace protocol {
 	class Message;
 }
 
-class StateTracker;
+namespace widgets {
+	class LayerListWidget;
+}
 
 //! Drawing board related classes
 namespace drawingboard {
 
+class StateTracker;
 class CanvasItem;
 class AnnotationItem;
 class Preview;
@@ -60,17 +57,11 @@ class CanvasScene : public QGraphicsScene
 	Q_OBJECT
 
 	public:
-		CanvasScene(QObject *parent, interface::BrushSource *brush);
+		CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget);
 		~CanvasScene();
 
-		//! Initialize to a solid color
-		bool initBoard(const QSize& size, const QColor& background);
-
-		//! Initialize the board using an existing image as base
-		bool initBoard(QImage image);
-
-		//! Initialize the board from a file
-		bool initBoard(const QString& file);
+		//! Clear and initialize the canvas
+		void initCanvas();
 
 		//! Get board width
 		int width() const;
@@ -154,10 +145,10 @@ class CanvasScene : public QGraphicsScene
 		//! Preview stroke for use with tool previews (eg. line)
 		Preview *toolpreview_;
 
-		//! Brush source (UI)
-		interface::BrushSource *brushsrc_;
-
 		bool hla_;
+		
+		//! The layer list widget to update on layer changes
+		widgets::LayerListWidget *_layerlistwidget;
 };
 
 }

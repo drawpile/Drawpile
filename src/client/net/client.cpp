@@ -19,6 +19,7 @@
 
 */
 #include <QDebug>
+#include <QImage>
 
 #include "client.h"
 #include "loopbackserver.h"
@@ -27,6 +28,8 @@
 #include "core/point.h"
 
 #include "../shared/net/pen.h"
+#include "../shared/net/layer.h"
+#include "../shared/net/image.h"
 
 namespace net {
 
@@ -48,7 +51,24 @@ Client::~Client()
 {
 }
 
-void Client::sendToolChange(const ToolContext &ctx)
+void Client::sendCanvasResize(const QSize &newsize)
+{
+	_server->sendMessage(new protocol::CanvasResize(
+		newsize.width(),
+		newsize.height()
+	));
+}
+
+void Client::sendNewLayer(const QColor &fill, const QString &title)
+{
+	_server->sendMessage(new protocol::LayerCreate(
+		0,
+		fill.rgba(),
+		title
+	));
+}
+
+void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 {
 	// TODO check if needs resending
 	_server->sendMessage(new protocol::ToolChange(
@@ -93,6 +113,57 @@ void Client::sendStroke(const dpcore::PointVector &points)
 void Client::sendPenup()
 {
 	_server->sendMessage(new protocol::PenUp(_my_id));
+}
+
+/**
+ * This one is a bit tricky, since the whole image might not fit inside
+ * a single message. In that case, multiple PUTIMAGE commands will be sent.
+ * 
+ * @param layer layer onto which the image should be drawn
+ * @param x image x coordinate
+ * @param y imagee y coordinate
+ * @param image image data
+ */
+void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
+{
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+
+	// Compress pixel data and see if it fits in a single message
+	QByteArray data(reinterpret_cast<const char*>(image.bits()), image.byteCount());
+	QByteArray compressed = qCompress(data);
+	
+	if(compressed.length() > protocol::PutImage::MAX_LEN) {
+		// Too big! Recursively divide the image and try sending those
+		compressed = QByteArray(); // release data
+		QImage i1, i2;
+		int px, py;
+		if(image.width() > image.height()) {
+			px = image.width() / 2;
+			py = 0;
+			i1 = image.copy(0, 0, px, image.height());
+			i2 = image.copy(px, 0, image.width()-px, image.height());
+		} else {
+			px = 0;
+			py = image.height() / 2;
+			i1 = image.copy(0, 0, image.width(), py);
+			i2 = image.copy(0, py, image.width(), image.height()-py);
+		}
+		sendImage(layer, x, y, i1, blend);
+		sendImage(layer, x+px, y+py, i2, blend);
+	
+	} else {
+		// It fits! Send data!
+		_server->sendMessage(new protocol::PutImage(
+			layer,
+			blend ? protocol::PutImage::MODE_BLEND : 0,
+			x,
+			y,
+			image.width(),
+			image.height(),
+			compressed
+		));
+	}
+	
 }
 
 void Client::handleMessage(protocol::Message *msg)

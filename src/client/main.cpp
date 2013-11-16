@@ -25,15 +25,9 @@
 #include <QTabletEvent>
 #include <QIcon>
 
-#ifdef CRASHGUARD
-	#include <QFile>
-	#include <QFileInfo>
-	#include <QDebug>
-	#include <QDir>
-#endif
-
 #include "main.h"
 #include "mainwindow.h"
+#include "loader.h"
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -160,7 +154,7 @@ int main(int argc, char *argv[]) {
 			}
 			win->joinSession(url);
 		} else {
-			if(win->initBoard(argv[1])==false) {
+			if(win->loadDocument(ImageCanvasLoader(argv[1]))==false) {
 				// If image couldn't be loaded, initialize to a default board
 				// and show error message.
 				QMessageBox::warning(win, app.tr("DrawPile"),

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,14 +25,13 @@
 
 #include "layer.h"
 #include "layerstack.h"
-#include "layermimedata.h"
 #include "tile.h"
 #include "rasterop.h"
 
 namespace dpcore {
 
-LayerStack::LayerStack(QObject *parent) :
-	QAbstractListModel(parent), width_(-1), height_(-1), lastid_(0)
+LayerStack::LayerStack(QObject *parent)
+	: QObject(parent), width_(-1), height_(-1)
 {
 }
 
@@ -58,51 +57,34 @@ void LayerStack::init(const QSize& size)
 	cache_ = new QPixmap[xtiles_*ytiles_];
 }
 
-Layer *LayerStack::addLayer(const QString& name, const QImage& image, const QPoint& offset)
+#if 0
+Layer *LayerStack::addLayer(int id, const QString& name, const QImage& image, const QPoint& offset)
 {
 	if(width_ < 0)
 		init(image.size());
 	
 	qDebug() << "Adding layer " << image.size() << "with offset" << offset << "(image size" << width_ << height_ << ")";
 
-	Layer *nl = new Layer(this, lastid_++, name, image, offset, QSize(width_, height_));
+	Layer *nl = new Layer(this, id, name, image, offset, QSize(width_, height_));
 	nl->optimize();
-	beginInsertRows(QModelIndex(),1,1);
 	layers_.append(nl);
-	endInsertRows();
 	return nl;
 }
+#endif
 
 /**
+ * @param id layer ID
  * @param name name of the new layer
  * @param color fill color
- * @param size layer size (may be omitted if stack is already initialized)
  */
-Layer *LayerStack::addLayer(const QString& name, const QColor& color, const QSize& size)
+Layer *LayerStack::addLayer(int id, const QString& name, const QColor& color)
 {
-	if(width_ < 0)
-		init(size);
+	Q_ASSERT(width_>0 && height_>0);
 
-	Layer *nl = new Layer(this, lastid_++, name, color, QSize(width_, height_));
-	beginInsertRows(QModelIndex(),1,1);
+	Layer *nl = new Layer(this, id, name, color, QSize(width_, height_));
 	layers_.append(nl);
-	endInsertRows();
-	return nl;
-}
-
-/**
- * @param name name of the new layer
- * @param size layer size (may be omitted if stack is already initialized)
- */
-Layer *LayerStack::addLayer(const QString& name, const QSize& size)
-{
-	if(width_ < 0)
-		init(size);
-
-	Layer *nl = new Layer(this, lastid_++, name, QSize(width_, height_));
-	beginInsertRows(QModelIndex(),1,1);
-	layers_.append(nl);
-	endInsertRows();
+	if(color.alpha() > 0)
+		markDirty();
 	return nl;
 }
 
@@ -114,17 +96,9 @@ bool LayerStack::deleteLayer(int id)
 {
 	for(int i=0;i<layers_.size();++i) {
 		if(layers_.at(i)->id() == id) {
-			// Invalidate cache
-			Layer *l = layers_.at(i);
-			for(int j=0;j<xtiles_*ytiles_;++j) {
-				if(l->tile(j))
-					cache_[j] = QPixmap();
-			}
-			// Remove the layer
-			int row = layers() - i;
-			beginRemoveRows(QModelIndex(), row, row);
-			layers_.removeAt(i);
-			endRemoveRows();
+			delete layers_.takeAt(i);
+			markDirty();
+			// TODO room for optimization: mark only nontransparent tiles as dirty
 			return true;
 		}
 	}
@@ -132,29 +106,26 @@ bool LayerStack::deleteLayer(int id)
 }
 
 /**
- * @param src ID of the layer to move
- * @param dest ID of the layer under which src will be moved. -1 is a virtual layer above the topmost one
+ * @param neworder list of layer IDs in the new order
  */
-void LayerStack::moveLayer(int src, int dest)
+void LayerStack::reorderLayers(const QList<int> &neworder)
 {
-	int from = id2index(src);
-	int to = dest >= 0 ? id2index(dest) : 0;
-	layers_.move(from, to);
-	if(layers_.at(from)->visible())
-		markDirty();
-
-	QModelIndex old = index(layers() - from, 0);
-	QModelIndex newi = index(layers() - to, 0);
-
-	// Signal views of the change
-	if(from < to)
-		qSwap(from, to);
-	emit dataChanged(
-			index(layers() - from, 0),
-			index(layers() - to, 0)
-			);
-
-	emit layerMoved(old, newi);
+	Q_ASSERT(neworder.size() == layers_.size());
+	QList<Layer*> newstack;
+	newstack.reserve(layers_.size());
+	foreach(int id, neworder) {
+		Layer *l = 0;
+		for(int i=0;i<layers_.size();++i) {
+			if(layers_.at(i)->id() == id) {
+				l=layers_.takeAt(i);
+				break;
+			}
+		}
+		Q_ASSERT(l);
+		newstack.append(l);
+	}
+	layers_ = newstack;
+	markDirty();
 }
 
 /**
@@ -172,7 +143,7 @@ void LayerStack::mergeLayerDown(int id) {
 		}
 	}
 	if(btm==0)
-		qWarning() << "SLOPPY: Tried to merge bottom-most layer";
+		qWarning() << "Tried to merge bottom-most layer";
 	else
 		btm->merge(0,0, top);
 }
@@ -198,16 +169,11 @@ Layer *LayerStack::getLayer(int id)
 	return 0;
 }
 
-bool LayerStack::isBottommost(const Layer *layer) const
-{
-	return layers_.first() == layer;
-}
-
 /**
  * @param id layer id
  * @return layer index. Returns a negative index if layer is not found
  */
-int LayerStack::id2index(int id) const
+int LayerStack::indexOf(int id) const
 {
 	for(int i=0;i<layers_.size();++i)
 		if(layers_.at(i)->id() == id)
@@ -225,9 +191,10 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
 	const int top = qMax(int(rect.top()), 0);
 	const int left = qMax(int(rect.left()), 0);
-	const int right = Tile::roundTo(qMin(int(rect.right()), width_));
-	const int bottom = Tile::roundTo(qMin(int(rect.bottom()), height_));
+	const int right = Tile::roundUp(qMin(int(rect.right()), width_));
+	const int bottom = Tile::roundUp(qMin(int(rect.bottom()), height_));
 
+	// TODO use a single big pixmap as a cache instead?
 	painter->save();
 	painter->setClipRect(rect);
 	for(int y=top;y<bottom;y+=Tile::SIZE) {
@@ -248,12 +215,16 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 QColor LayerStack::colorAt(int x, int y) const
 {
 	// TODO merge
+	if(layers_.isEmpty())
+		return QColor();
+
 	return layers_.at(0)->colorAt(x, y);
 }
 
 QImage LayerStack::toFlatImage() const
 {
 	// FIXME: this won't work if layer 0 is hidden or has opacity < 100%
+	// TODO use a new empty lauyer instead?
 	Layer *scratch = Layer::scratchCopy(layers_[0]);
 
 	for(int i=1;i<layers_.size();++i)
@@ -300,105 +271,26 @@ void LayerStack::updateCache(int xindex, int yindex)
 
 }
 
-void LayerStack::markDirty(int tilex, int tiley)
+void LayerStack::markDirty(const QRect &area)
 {
-	cache_[tiley*xtiles_ + tilex] = QPixmap();
+	int tx0 = area.left() / Tile::SIZE;
+	int tx1 = area.right() / Tile::SIZE;
+	int ty0 = area.top() / Tile::SIZE;
+	int ty1 = area.bottom() / Tile::SIZE;
+	
+	for(;ty0<=ty1;++ty0) {
+		for(int tx=tx0;tx<=tx1;++tx) {
+			cache_[ty0*xtiles_ + tx] = QPixmap();
+		}
+	}
+	emit areaChanged(area);
 }
 
 void LayerStack::markDirty()
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		cache_[i] = QPixmap();
-}
-
-/**
- * This is called from the layers belonging to this stack when
- * changing.
- * Specifically, it is called when:
- * <ul>
- * <li>Layer opacity is changed</li>
- * <li>Layer name is changed</li>
- * </ul>
- * @param layer the layer which changed
- */
-void LayerStack::layerChanged(const Layer* layer)
-{
-	int index=layers_.indexOf(const_cast<Layer*>(layer));
-	Q_ASSERT(index >= 0);
-	const QModelIndex qmi = createIndex(layers()-index, 0);
-	emit dataChanged(qmi, qmi);
-}
-
-// Model related functions
-QVariant LayerStack::data(const QModelIndex& index, int role) const
-{
-	// Always display one extra layer (for adding new layers)
-	if(index.row() >= 0 && index.row() <= layers()) {
-		// Display the layers in reverse order (topmost layer first)
-		int row = layers() - index.row();
-		if(role == Qt::DisplayRole) {
-			if(index.row()==0)
-				return "New";
-			return QVariant::fromValue(layers_.at(row));
-		} else if(role == Qt::EditRole) {
-			return layers_.at(row)->name();
-		}
-	}
-	return QVariant();
-}
-
-Qt::ItemFlags LayerStack::flags(const QModelIndex& index) const
-{
-	const Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsDropEnabled;
-	if(index.row()==0) // Row 0 is the "add new layer" special item
-		return flags;
-	else
-		return flags | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
-}
-
-Qt::DropActions LayerStack::supportedDropActions() const
-{
-	// Support (internal) moving
-	return Qt::MoveAction;
-}
-
-QStringList LayerStack::mimeTypes() const {
-	return QStringList() << "image/png";
-}
-
-QMimeData *LayerStack::mimeData(const QModelIndexList& indexes) const
-{
-	return new LayerMimeData(layers_.at(layers() - indexes[0].row()));
-}
-
-bool LayerStack::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
-{
-	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
-	if(ldata) {
-		int from = ldata->layer()->id();
-		int to;
-		if(parent.row() <= 0)
-			to = layers_.last()->id();
-		else
-			to = layers_.at(layers() - parent.row())->id();
-		if(from<0) {
-			qDebug() << "TODO: Cross-image layer DnD";
-		} else {
-			emit layerMoveRequest(from, to);
-
-			return true;
-		}
-	} else {
-		qDebug() << "TODO: Insert layer from external source";
-	}
-	return false;
-}
-
-int LayerStack::rowCount(const QModelIndex& parent) const
-{
-	if(parent.isValid())
-		return 0;
-	return layers() + 1;
+	emit areaChanged(QRect(0, 0, width_, height_));
 }
 
 }

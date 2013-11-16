@@ -39,7 +39,7 @@ namespace widgets {
 	class DualColorButton;
 	class ToolSettings;
 	class UserList;
-	class LayerList;
+	class LayerListWidget;
 	class ChatBox;
 	class PaletteBox;
 	class ColorBox;
@@ -59,6 +59,8 @@ namespace net {
 	class Client;
 }
 
+class SessionLoader;
+
 //! The application main window
 class MainWindow : public QMainWindow {
 	Q_OBJECT
@@ -67,17 +69,10 @@ class MainWindow : public QMainWindow {
 		MainWindow(const MainWindow *source=0);
 		~MainWindow();
 
-		//! Initialize the drawing board from an existing image
-		void initBoard(const QImage& image);
-
-		//! Initialize the drawing board from a file
-		bool initBoard(const QString& filename);
-
-		//! Initialize a blank drawing board
-		void initBoard(const QSize& size, const QColor& color);
+		bool loadDocument(const SessionLoader &loader);
 
 		//! Initialize a default drawing board
-		void initDefaultBoard();
+		void initDefaultCanvas();
 
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
@@ -172,9 +167,6 @@ class MainWindow : public QMainWindow {
 		void closeEvent(QCloseEvent *event);
 
 	private:
-		//! Finish board initialisation
-		void postInitBoard(const QString& filename);
-
 		//! Confirm saving of image in a format that doesn't support all required features
 		bool confirmFlatten(QString& file) const;
 
@@ -235,7 +227,7 @@ class MainWindow : public QMainWindow {
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
-		widgets::LayerList *layerlist_;
+		widgets::LayerListWidget *layerlist_;
 		widgets::ChatBox *chatbox_;
 
 		widgets::DualColorButton *fgbgcolor_;
@@ -252,7 +244,7 @@ class MainWindow : public QMainWindow {
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
 
-		drawingboard::CanvasScene *_board;
+		drawingboard::CanvasScene *_canvas;
 		net::Client *_client;
 
 		QString sessiontitle_;

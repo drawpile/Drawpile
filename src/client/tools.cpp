@@ -87,7 +87,7 @@ Tool *ToolCollection::get(Type type)
 
 void BrushBase::begin(const dpcore::Point& point)
 {
-	ToolContext tctx = {
+	drawingboard::ToolContext tctx = {
 		layer(),
 		settings().getBrush()
 	};

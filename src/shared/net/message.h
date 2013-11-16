@@ -30,6 +30,7 @@ enum MessageType {
 	// Login stream
 	MSG_LOGIN,
 	// Command stream
+	MSG_CANVAS_RESIZE,
 	MSG_LAYER_CREATE,
 	MSG_LAYER_ATTR,
 	MSG_LAYER_ORDER,
@@ -70,7 +71,7 @@ public:
 	 * The canvas can be reconstructed exactly using only command messages.
 	 * @return true if this is a drawing command
 	 */
-	bool isCommand() const { return _type >= MSG_LAYER_CREATE && _type <= MSG_UNDO; }
+	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_UNDO; }
 
 	/**
 	 * \brief Get the message

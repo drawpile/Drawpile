@@ -23,24 +23,29 @@
 
 namespace protocol {
 
+int CanvasResize::payloadLength() const
+{
+	return 4;
+}
+
 int LayerCreate::payloadLength() const
 {
-	return sizeof(LayerId) + 3;
+	return 4;
 }
 
 int LayerAttributes::payloadLength() const
 {
-	return sizeof(LayerId) + 2 + _title.length();
+	return 3 + _title.length();
 }
 
 int LayerOrder::payloadLength() const
 {
-	return _order.size() * sizeof(LayerId);
+	return _order.size();
 }
 
 int LayerDelete::payloadLength() const
 {
-	return sizeof(LayerId);
+	return 1;
 }
 
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2009 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef BOARDITEM_H
-#define BOARDITEM_H
+#ifndef DP_CANVASITEM_H
+#define DP_CANVASITEM_H
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 
 namespace dpcore {
 	class Layer;
@@ -36,47 +36,28 @@ namespace drawingboard {
  * The board item provides an interface to a LayerStack for QGraphicsScene.
  * Methods are provided for drawing lines and points with a Brush object.
  */
-class CanvasItem : public QGraphicsItem
+class CanvasItem : public QGraphicsObject
 {
+	Q_OBJECT
 	public:
-		//! Construct an empty layer
+		//! Construct an empty board
 		CanvasItem(QGraphicsItem *parent=0);
 
-		//! Construct a layer from a QImage
-		CanvasItem(const QImage& image, QGraphicsItem *parent=0);
-
-		//! Construct using a prepared layer stack
-		CanvasItem(dpcore::LayerStack *layers, QGraphicsItem *parent=0);
-
-		~CanvasItem();
-
-		//! Set layer contents
-		void setImage(const QImage& image);
-
 		//! Get the image
-		dpcore::LayerStack *image() const { return image_; }
-
-		//! Draw a line between two points with interpolated pressure values
-		void drawLine(int layer,const dpcore::Point& point1,
-				const dpcore::Point& point2, const dpcore::Brush& brush,
-				qreal &distance);
-
-		//! Draw a single point
-		void drawPoint(int layer, const dpcore::Point& point,
-				const dpcore::Brush& brush);
+		dpcore::LayerStack *image() const { return _image; }
 
 		/** reimplematation */
 		QRectF boundingRect() const;
 
+	public slots:
+		void refreshImage(const QRect &area);
+
 	protected:
 		/** reimplementation */
-		void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-			 QWidget *);
+		void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
 
 	private:
-
-		dpcore::LayerStack *image_;
-		int plastx_, plasty_;
+		dpcore::LayerStack *_image;
 };
 
 }

@@ -27,7 +27,8 @@
 
 #include "annotationitem.h"
 #include "preview.h"
-#include "interfaces.h"
+
+#include "widgets/layerlistwidget.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -37,8 +38,9 @@
 
 namespace drawingboard {
 
-CanvasScene::CanvasScene(QObject *parent, interface::BrushSource *brush)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), toolpreview_(0), brushsrc_(brush), hla_(false)
+CanvasScene::CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), toolpreview_(0), hla_(false),
+	_layerlistwidget(layerlistwidget)
 {
 	setItemIndexMethod(NoIndex);
 }
@@ -49,6 +51,26 @@ CanvasScene::~CanvasScene()
 	delete _statetracker;
 }
 
+/**
+ * This prepares the canvas for new drawing commands.
+ */
+void CanvasScene::initCanvas()
+{
+	delete _image;
+	delete _statetracker;
+	_image = new CanvasItem();
+	_statetracker = new StateTracker(_image->image());
+	
+	addItem(_image);
+	clearAnnotations();
+	
+	QList<QRectF> regions;
+	regions.append(sceneRect());
+	emit changed(regions);
+	previewstarted_ = false;
+}
+
+#if 0
 /**
  * A new image is created with the given size and initialized to a solid color
  * @param size size of the drawing board
@@ -136,6 +158,7 @@ bool CanvasScene::initBoard(const QString& file)
 	}
 	return true;
 }
+#endif
 
 /**
  * @param zeroid if true, set the ID of each annotation to zero
@@ -315,6 +338,7 @@ void CanvasScene::endPreview()
  */
 void CanvasScene::commitPreviews()
 {
+#if 0
 	dpcore::Point lastpoint(-1,-1,0);
 	while(previews_.isEmpty()==false) {
 		qreal distance;
@@ -326,7 +350,7 @@ void CanvasScene::commitPreviews()
 		lastpoint = p->to();
 		delete p;
 	}
-
+#endif
 	while(previewcache_.isEmpty()==false)
 		delete previewcache_.dequeue();
 }
@@ -410,7 +434,7 @@ void CanvasScene::addLayer(const QString& name)
  */
 void CanvasScene::deleteLayer(int id, bool mergedown)
 {
-	const int index = layers()->id2index(id);
+	const int index = layers()->indexOf(id);
 	if(index<0) {
 		// Should never happen
 		qWarning() << "Tried to delete nonexistent layer" << id;
