@@ -28,6 +28,15 @@ namespace net {
 	class Client;
 }
 
+/**
+ * \brief Base class for session initializers.
+ * 
+ * Note. The initializers make two assumptions: they are running in
+ * loopback mode and that the session has not already been initialized.
+ * 
+ * These assumptions allow the initializers to pick the initial layer/annotation
+ * IDs.
+ */
 class SessionLoader {
 public:
 	virtual ~SessionLoader() = default;

@@ -50,10 +50,10 @@ class LayerStack : public QObject {
 		void mergeLayerDown(int id);
 
 		//! Re-order the layer stack
-		void reorderLayers(const QList<int> &neworder);
+		void reorderLayers(const QList<uint8_t> &neworder);
 
 		//! Get the number of layers in the stack
-		int layers() const { return layers_.count(); }
+		int layers() const { return _layers.count(); }
 
 		//! Get a layer by its index
 		Layer *getLayerByIndex(int index);
@@ -68,13 +68,13 @@ class LayerStack : public QObject {
 		int indexOf(int id) const;
 
 		//! Get the width of the layer stack
-		int width() const { return width_; }
+		int width() const { return _width; }
 
 		//! Get the height of the layer stack
-		int height() const { return height_; }
+		int height() const { return _height; }
 
 		//! Get the width and height of the layer stack
-		QSize size() const { return QSize(width_, height_); }
+		QSize size() const { return QSize(_width, _height); }
 
 		//! Paint an area of this layer stack
 		void paint(const QRectF& rect, QPainter *painter);
@@ -91,6 +91,10 @@ class LayerStack : public QObject {
 		//! Mark all tiles as dirty
 		void markDirty();
 
+	public slots:
+		//! Set or clear the "hidden" flag of a layer
+		void setLayerHidden(int layerid, bool hide);
+
 	signals:
 		//! Emitted when the visible layers are edited
 		void areaChanged(const QRect &area);
@@ -99,10 +103,10 @@ class LayerStack : public QObject {
 		void flattenTile(quint32 *data, int xindex, int yindex);
 		void updateCache(int xindex, int yindex);
 
-		int width_, height_;
-		int xtiles_, ytiles_;
-		QList<Layer*> layers_;
-		QPixmap *cache_;
+		int _width, _height;
+		int _xtiles, _ytiles;
+		QList<Layer*> _layers;
+		QPixmap *_cache;
 };
 
 }

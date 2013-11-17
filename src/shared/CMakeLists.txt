@@ -14,11 +14,16 @@ set (
 	)
 
 set (
+	UTIL_SOURCES
+	util/idlist.cpp
+	)
+
+set (
 	SRV_SOURCES
 	server/server.cpp
 	)
 
-add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${SRV_SOURCES} )
+add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )
 target_link_libraries ( ${DPSHAREDLIB} ${Qt5Network_LIBRARIES} )
 
 if (WIN32)

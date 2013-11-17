@@ -45,7 +45,7 @@ int LayerOrder::payloadLength() const
 
 int LayerDelete::payloadLength() const
 {
-	return 1;
+	return 2;
 }
 
 

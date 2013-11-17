@@ -47,13 +47,13 @@ class LayerListDelegate : public QItemDelegate {
 		//! Create new layer button was pressed
 		void newLayer();
 		//! User request the given layer to be deleted
-		void deleteLayer(int);
+		void deleteLayer(const QModelIndex&);
 		//! User wants to toggle the visibility of the given layer
-		void layerToggleHidden(int);
+		void layerSetHidden(int, bool);
 		//! User wants to rename the layer
-		void renameLayer(int id, const QString& name) const;
+		void renameLayer(const QModelIndex& index, const QString& name) const;
 		//! User wants to change the layer's opacity
-		void changeOpacity(int id, int opacity);
+		void changeOpacity(const QModelIndex&, int opacity);
 		//! User wants to select the layer
 		void select(const QModelIndex& index);
 	

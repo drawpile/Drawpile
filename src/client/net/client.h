@@ -51,9 +51,15 @@ public:
 	Client(QObject *parent=0);
 	~Client();
 
+	//! Reinitialize after clearing out the old board
+	void init();
+
 	// Layer changing
 	void sendCanvasResize(const QSize &newsize);
-	void sendNewLayer(const QColor &fill, const QString &title);
+	void sendNewLayer(int id, const QColor &fill, const QString &title);
+	void sendLayerAttribs(int id, float opacity, const QString &title);
+	void sendLayerReorder(const QList<uint8_t> &ids);
+	void sendDeleteLayer(int id, bool merge);
 
 	// Drawing
 	void sendToolChange(const drawingboard::ToolContext &ctx);

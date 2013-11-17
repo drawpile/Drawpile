@@ -37,8 +37,8 @@ namespace dpcore {
  * @param color layer color
  * @parma size layer size
  */
-Layer::Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size)
-	: owner_(owner), id_(id), name_(name), width_(size.width()), height_(size.height()),
+Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
+	: owner_(owner), id_(id), _title(title), width_(size.width()), height_(size.height()),
 	opacity_(255), hidden_(false)
 {
 	xtiles_ = (width_+Tile::SIZE-1) / Tile::SIZE;
@@ -77,9 +77,9 @@ Layer::~Layer() {
 	delete [] tiles_;
 }
 
-void Layer::setName(const QString& name)
+void Layer::setTitle(const QString& title)
 {
-	name_ = name;
+	_title = title;
 }
 
 QImage Layer::toImage() const {
@@ -156,9 +156,10 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
 	
 	// Copy background from existing tiles
 	for(int y=0;y<h;y+=Tile::SIZE) {
-		int yt = y / Tile::SIZE;
+		//int yt = (y0 + y) / Tile::SIZE;
 		for(int x=0;x<w;x+=Tile::SIZE) {
-			tile(x / Tile::SIZE, yt)->copyToImage(image, x, y);
+			tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE)->copyToImage(image, x, y);
+			//tile(x / Tile::SIZE, yt)->copyToImage(image, x, y);
 		}
 	}
 	
@@ -167,6 +168,14 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
 	if(!alpha)
 		painter.setCompositionMode(QPainter::CompositionMode_Source);
 	painter.drawImage(xpos-x0, ypos-y0, original);
+	
+#if 0 /* debugging aid */
+	painter.setPen(Qt::red);
+	painter.drawLine(0, 0, w-1, 0);
+	painter.drawLine(0, 0, 0, h-1);
+	painter.drawLine(w-1, 0, w-1, h-1);
+	painter.drawLine(0, h-1, w-1, h-1);
+#endif
 	
 	return image;
 }
@@ -181,23 +190,26 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
 	
-	if(x % Tile::SIZE || y % Tile::SIZE || image.width() % Tile::SIZE || image.height() % Tile::SIZE || blend) {
-		int xoff = x - Tile::roundDown(x);
-		int yoff = y - Tile::roundDown(y);
-		image = padImageToTileBoundary(xoff, yoff, image, blend);
+	const int x0 = Tile::roundDown(x);
+	const int y0 = Tile::roundDown(y);
+	const int xoff = x - x0;
+	const int yoff = y - y0;
+	
+	if(xoff || yoff || image.width() % Tile::SIZE || image.height() % Tile::SIZE || blend) {
+		image = padImageToTileBoundary(x, y, image, blend);
 	}
 	
-	int tx0 = x / Tile::SIZE;
-	int tx1 = tx0 + (image.width()-1) / Tile::SIZE;
+	const int tx0 = x / Tile::SIZE;
+	const int tx1 = tx0 + (image.width()-1) / Tile::SIZE;
 	int ty0 = y / Tile::SIZE;
-	int ty1 = ty0 + (image.height()-1) / Tile::SIZE;
+	const int ty1 = ty0 + (image.height()-1) / Tile::SIZE;
 	
 	for(;ty0<=ty1;++ty0) {
 		for(int tx=tx0;tx<=tx1;++tx) {
 			int i = ty0*xtiles_ + tx;
 			Q_ASSERT(i>=0 && i < xtiles_*ytiles_);
 			delete tiles_[i];
-			tiles_[i] = new Tile(image, tx, ty0, x, y);
+			tiles_[i] = new Tile(image, tx, ty0, Tile::roundDown(x), Tile::roundDown(y));
 		}
 	}
 	

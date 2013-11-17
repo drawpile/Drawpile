@@ -18,38 +18,56 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#include "loopbackserver.h"
 
-#include "../shared/net/layer.h"
+#include "idlist.h"
 
-namespace net {
-
-LoopbackServer::LoopbackServer(QObject *parent)
-	: QObject(parent), _layer_ids(255)
+int UsedIdList::takeNext()
 {
+	// TODO start giving out release IDs after unused ones run out
+	const int oldnext = _next;
+	do {
+		if(!_used.contains(_next)) {
+			reserve(_next);
+			return _next;
+		}
+
+		++_next;
+		if(_next>_max)
+			_next = _min;
+	} while(_next != oldnext);
+
+	// TODO handle this properly
+	return _min-1;
 }
 	
-void LoopbackServer::reset()
+void UsedIdList::release(int id)
 {
-	_layer_ids.reset();
+	// TODO
+#if 0
+	Q_ASSERT(_inuse.contains(id));
+	_inuse.remove(id);
+	if(!_used.contains(id))
+		_used.append(id);
+#endif
+}
+	
+void UsedIdList::reserve(int id)
+{
+#if 0
+	Q_ASSERT(!_inuse.contains(id));
+	if(!_inuse.contains(id))
+		_inuse.append(id);
+	_used.remove(id);
+#else
+	Q_ASSERT(!_used.contains(id));
+	_used.append(id);
+#endif
 }
 
-void LoopbackServer::sendMessage(protocol::Message *msg)
+void UsedIdList::reset()
 {
-	// Keep track of layer creation IDs.
-	switch(msg->type()) {
-		using namespace protocol;
-		case MSG_LAYER_CREATE: {
-			LayerCreate *lc = static_cast<LayerCreate*>(msg);
-			if(lc->id() == 0)
-				lc->setId(_layer_ids.takeNext());
-			else
-				_layer_ids.reserve(lc->id());
-			break;
-		}
-		default: /* no special handling needed */ break;
-	}
-	emit messageReceived(msg);
+	//_inuse.clear();
+	_used.clear();
+	_next = _min;
 }
 
-}

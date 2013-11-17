@@ -31,8 +31,8 @@ bool loadSingleLayerImage(net::Client *client, const QString &filename)
 	image = image.convertToFormat(QImage::Format_ARGB32);
 	
 	client->sendCanvasResize(image.size());
-	client->sendNewLayer(Qt::transparent, "Background");
-	client->sendImage(0, 0, 0, image, false);
+	client->sendNewLayer(1, Qt::transparent, "Background");
+	client->sendImage(1, 0, 0, image, false);
 	return true;
 }
 
@@ -41,7 +41,7 @@ bool loadSingleLayerImage(net::Client *client, const QString &filename)
 bool BlankCanvasLoader::sendInitCommands(net::Client *client) const
 {
 	client->sendCanvasResize(_size);
-	client->sendNewLayer(_color, "Background");
+	client->sendNewLayer(1, _color, "Background");
 	return true;
 }
 

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,13 +24,14 @@
 
 class QListView;
 
-namespace protocol {
-	class Message;
+namespace net {
+	class Client;
 }
 
 namespace widgets {
 
 class LayerListModel;
+class LayerListItem;
 
 class LayerListWidget : public QDockWidget
 {
@@ -40,17 +41,36 @@ class LayerListWidget : public QDockWidget
 
 		LayerListModel *layerList() { return _model; }
 
-	public slots:
-		void setSelection(int id);
+		void setClient(net::Client *client) { _client = client; }
+
+		//! Initialize the widget for a new session
+		void init();
 		
+		void addLayer(int id, const QString &title);
+		void changeLayer(int id, float opacity, const QString &title);
+		void deleteLayer(int id);
+		void reorderLayers(const QList<uint8_t> &order);
+
 	signals:
-		//! Layer altering command emitted in response to user input
-		void layerCommand(protocol::Message *cmd);
+		//! A layer was selected by the user
+		void layerSelected(int id);
 
 		//! User wants to toggle the visibility of a layer (local)
-		void layerHide(int id, bool hidden);
+		void layerSetHidden(int id, bool hidden);
 		
+	private slots:
+		void newLayer();
+		void selected(const QModelIndex&);
+		void rename(const QModelIndex&, const QString &name);
+		void changeOpacity(const QModelIndex&, int);
+		void deleteLayer(const QModelIndex &index);
+		void sendLayerAttribs(const LayerListItem &layer);
+		void moveLayer(int oldIdx, int newIdx);
+
 	private:
+		int currentLayer();
+
+		net::Client *_client;
 		QListView *_list;
 		LayerListModel *_model;
 };

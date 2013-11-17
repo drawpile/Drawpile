@@ -244,15 +244,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 void CanvasView::onPenDown(const dpcore::Point &p)
 {
-	if(_scene->hasImage()) {
+	if(_scene->hasImage())
 		_current_tool->begin(p);
-#if 0
-		if(tool_->readonly()==false) {
-			if(board_->hasImage())
-				emit changed();
-		}	
-#endif
-	}
 }
 
 void CanvasView::onPenMove(const dpcore::Point &p)

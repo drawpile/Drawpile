@@ -59,6 +59,7 @@ set (
 	widgets/layerlistdelegate.cpp
 	widgets/layerlistitem.cpp
 	widgets/layerwidget.cpp
+	widgets/layermimedata.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 

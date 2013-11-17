@@ -103,7 +103,7 @@ bool Writer::writeStackXml(Zipfile &zf) const
 		const dpcore::Layer *l = layers_->getLayerByIndex(i);
 		QDomElement layer = doc.createElement("layer");
 		layer.setAttribute("src", QString("data/layer") + QString::number(i) + ".png");
-		layer.setAttribute("name", l->name());
+		layer.setAttribute("name", l->title());
 		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
 		// TODO this is not yet standardized
 		layer.setAttribute("visibility", l->hidden() ? "hidden" : "visible");

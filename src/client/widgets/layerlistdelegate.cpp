@@ -39,14 +39,9 @@ LayerListDelegate::LayerListDelegate(QObject *parent)
 
 void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	// This is copied from QItemDelegate::paint
-	QStyleOptionViewItemV4 opt = setOptions(index, option);
-	const QStyleOptionViewItemV2 *v2 = qstyleoption_cast<const QStyleOptionViewItemV2 *>(&option);
-	opt.features = v2 ? v2->features : QStyleOptionViewItemV2::ViewItemFeatures(QStyleOptionViewItemV2::None);
-	const QStyleOptionViewItemV3 *v3 = qstyleoption_cast<const QStyleOptionViewItemV3 *>(&option);
-    opt.locale = v3 ? v3->locale : QLocale();
-    opt.widget = v3 ? v3->widget : 0;
-
+	QStyleOptionViewItem opt = setOptions(index, option);
+	painter->save();
+	
 	// Background
 	// Note. We have to do this manually, instead of just calling drawBackground(),
 	// because in certain styles (like plastic) the highlight will be drawn in
@@ -65,7 +60,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		const QPixmap addicon = icon::add().pixmap(24);
 		painter->drawPixmap(opt.rect.topLeft()+QPoint(0,opt.rect.height()/2-addicon.height()/2),
 				addicon);
-		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), tr("New layer..."));
+		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), index.data().toString());
 	} else {
 		LayerListItem layer = index.data().value<LayerListItem>();
 
@@ -80,13 +75,11 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 		drawDisplay(painter, opt, textrect, layer.title);
 
 		// Draw delete button (except when in a network session, and when this is the last layer)
-#if 0
-		const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
-		if(layers->layers()>1) {
-			painter->drawPixmap(opt.rect.topRight()-QPoint(delsize.width(), -opt.rect.height()/2+delsize.height()/2), icon::remove().pixmap(16));
-		}
-#endif
+		// TODO hide
+		painter->drawPixmap(opt.rect.topRight()-QPoint(delsize.width(), -opt.rect.height()/2+delsize.height()/2), icon::remove().pixmap(16));
 	}
+	
+	painter->restore();
 }
 
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -109,24 +102,17 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		if(index.row()==0) {
 			emit newLayer();
 		} else {
-#if 0
-			const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-
 			if(me->x() < btnsize) {
 				// Layer style button
-				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(layer);
+				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(index);
 				lw->move(me->globalPos() - QPoint(15, 15));
-				lw->connect(lw, SIGNAL(opacityChanged(int,int)), this, SIGNAL(changeOpacity(int,int)));
-				lw->connect(lw, SIGNAL(toggleHidden(int)), this, SIGNAL(layerToggleHidden(int)));
+				lw->connect(lw, SIGNAL(opacityChanged(const QModelIndex&,int)), this, SIGNAL(changeOpacity(const QModelIndex&,int)));
+				lw->connect(lw, SIGNAL(setHidden(int, bool)), this, SIGNAL(layerSetHidden(int, bool)));
 				lw->show();
-
 			} else if(me->x() >= option.rect.width() - btnsize) {
 				// Delete button
-				const dpcore::LayerStack *layers = static_cast<const dpcore::LayerStack*>(index.model());
-				if(layers->layers()>1)
-					emit deleteLayer(layer);
+				emit deleteLayer(index);
 			}
-#endif
 		}
 	} else if(event->type() == QEvent::MouseButtonPress) {
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
@@ -151,12 +137,7 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const
 {
-#if 0
-	emit renameLayer(
-			index.data().value<dpcore::Layer*>()->id(),
-			static_cast<QLineEdit*>(editor)->text()
-			);
-#endif
+	emit renameLayer(index, static_cast<QLineEdit*>(editor)->text());
 }
 
 void LayerListDelegate::drawStyleGlyph(const QRectF& rect, QPainter *painter,const QPalette& palette, float value, bool hidden) const

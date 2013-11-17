@@ -70,9 +70,6 @@
 #include "dialogs/joindialog.h"
 #include "dialogs/settingsdialog.h"
 
-#include "core/layerstack.h"
-
-
 /**
  * @param source if not null, clone settings from this window
  */
@@ -111,6 +108,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	// Create view
 	_view = new widgets::CanvasView(this);
 	_view->setToolSettings(toolsettings_);
+	
+	connect(_layerlist, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
 
 	splitter_->addWidget(_view);
 	splitter_->setCollapsible(0, false);
@@ -135,7 +134,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	splitter_->addWidget(chatbox_);
 
 	// Create board
-	_canvas = new drawingboard::CanvasScene(this, layerlist_);
+	_canvas = new drawingboard::CanvasScene(this, _layerlist);
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setBoard(_canvas);
@@ -153,6 +152,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	// Create the network client
 	_client = new net::Client(this);
 	_view->setClient(_client);
+	_layerlist->setClient(_client);
 	
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::Message*)), _canvas, SLOT(handleDrawingCommand(protocol::Message*)));
@@ -237,19 +237,19 @@ MainWindow::MainWindow(const MainWindow *source)
 			chatbox_, SLOT(systemMessage(QString)));
 
 	// Layer box -> controller
-	connect(layerlist_, SIGNAL(newLayer(const QString&)),
+	connect(_layerlist, SIGNAL(newLayer(const QString&)),
 			controller_, SLOT(newLayer(const QString&)));
-	connect(layerlist_, SIGNAL(deleteLayer(int, bool)),
+	connect(_layerlist, SIGNAL(deleteLayer(int, bool)),
 			controller_, SLOT(deleteLayer(int, bool)));
-	connect(layerlist_, SIGNAL(layerMove(int, int)),
+	connect(_layerlist, SIGNAL(layerMove(int, int)),
 			controller_, SLOT(moveLayer(int, int)));
-	connect(layerlist_, SIGNAL(renameLayer(int, const QString&)),
+	connect(_layerlist, SIGNAL(renameLayer(int, const QString&)),
 			controller_, SLOT(renameLayer(int, const QString&)));
-	connect(layerlist_, SIGNAL(selected(int)),
+	connect(_layerlist, SIGNAL(selected(int)),
 			controller_, SLOT(selectLayer(int)));
-	connect(layerlist_, SIGNAL(opacityChange(int,int)),
+	connect(_layerlist, SIGNAL(opacityChange(int,int)),
 			controller_, SLOT(setLayerOpacity(int,int)));
-	connect(layerlist_, SIGNAL(layerToggleHidden(int)),
+	connect(_layerlist, SIGNAL(layerToggleHidden(int)),
 			controller_, SLOT(toggleLayerHidden(int)));
 #endif
 	if(source)
@@ -280,6 +280,8 @@ bool MainWindow::loadDocument(const SessionLoader &loader)
 	MainWindow *win = canReplace() ? this : new MainWindow(this);
 	
 	win->_canvas->initCanvas();
+	win->_client->init();
+	
 	bool ok = loader.sendInitCommands(win->_client);
 	
 	if(!ok) {
@@ -1533,7 +1535,7 @@ void MainWindow::createDocks()
 	createNavigator(toggles);
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
-	tabifyDockWidget(userlist_, layerlist_);
+	tabifyDockWidget(userlist_, _layerlist);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1568,11 +1570,11 @@ void MainWindow::createUserList(QMenu *toggles)
 
 void MainWindow::createLayerList(QMenu *toggles)
 {
-	layerlist_ = new widgets::LayerListWidget(this);
-	layerlist_->setObjectName("layerlistdock");
-	layerlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	toggles->addAction(layerlist_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, layerlist_);
+	_layerlist = new widgets::LayerListWidget(this);
+	_layerlist->setObjectName("layerlistdock");
+	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	toggles->addAction(_layerlist->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
 }
 
 void MainWindow::createPalette(QMenu *toggles)

@@ -61,8 +61,34 @@ public:
 		: Message(MSG_LAYER_CREATE), _id(id), _fill(fill), _title(title.toUtf8())
 		{}
 
+	/**
+	 * \brief ID of the newly created layer.
+	 * 
+	 * When this command is sent by the client, the ID should be set to zero
+	 * to indicate the server should assign a free ID. An exception to this
+	 * is when generating a snapshot: in that case the client is free to use any
+	 * available ID number. (Typically when creating the snapshot, the layers have
+	 * already been assigned IDs by the server, or the session has just started meaning
+	 * all IDs are free.)
+	 * 
+	 * @return layer ID number
+	 */
 	uint8_t id() const { return _id; }
+
+	void setId(uint8_t id) { _id = id; }
+
+	/**
+	 * \brief Initial fill color
+	 * 
+	 * The layer is filled with this color when created.
+	 * @return fill color (ARGB)
+	 */
 	uint32_t fill() const { return _fill; }
+	
+	/**
+	 * \brief Layer title (UTF-8 encoded)
+	 * @return layer title
+	 */
 	const QByteArray &title() const { return _title; }
 
 protected:
@@ -80,7 +106,7 @@ private:
 class LayerAttributes : public Message {
 public:
 	LayerAttributes(uint8_t id, uint8_t opacity, uint8_t blend, const QString &title)
-		: Message(MSG_LAYER_CREATE), _id(id),
+		: Message(MSG_LAYER_ATTR), _id(id),
 		_opacity(opacity), _blend(blend), _title(title.toUtf8())
 		{}
 
@@ -123,18 +149,21 @@ private:
  */
 class LayerDelete : public Message {
 public:
-	LayerDelete(uint8_t id)
+	LayerDelete(uint8_t id, uint8_t merge)
 		: Message(MSG_LAYER_DELETE),
-		_id(id)
+		_id(id),
+		_merge(merge)
 		{}
 	
 	uint8_t id() const { return _id; }
+	uint8_t merge() const { return _merge; }
 	
 protected:
 	int payloadLength() const;
 
 private:
 	uint8_t _id;
+	uint8_t _merge;
 };
 
 }

@@ -17,45 +17,38 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef LAYERWIDGET_H
-#define LAYERWIDGET_H
+#ifndef LAYERMIMEDATA_H
+#define LAYERMIMEDATA_H
 
-#include <QFrame>
-#include <QModelIndex>
-
-class QSlider;
-class QCheckBox;
+#include <QMimeData>
 
 namespace widgets {
 
-class LayerListItem;
-	
 /**
- * A widget for adjusting the visual attributes of a layer.
- * This pops up when the user clicks on the layer details icon.
+ * A specialization of QMimeData for passing layers around inside
+ * the application. Can also export the layer content as a regular
+ * image on demand.
  */
-class LayerStyleEditor : public QFrame
+class LayerMimeData : public QMimeData
 {
 	Q_OBJECT
 	public:
-		LayerStyleEditor(const QModelIndex &index, QWidget *parent=0);
-		~LayerStyleEditor();
+		LayerMimeData(int layer_id);
 
-	signals:
-		void opacityChanged(const QModelIndex &index, int newopacity);
-		void setHidden(int id, bool hidden);
+#if 0
+		//! Get the layer
+		Layer *layer() const { return layer_; }
+#endif
+		int layerId() const { return _id; }
 
+		//! Supported export formats
+		QStringList formats() const;
+	
 	protected:
-		void changeEvent(QEvent*);
-
-	private slots:
-		void updateOpacity(int o);
-		void toggleHide();
+		QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
 
 	private:
-		QSlider *opacity_;
-		QCheckBox *hide_;
-		QModelIndex _idx;
+		int _id;
 };
 
 }

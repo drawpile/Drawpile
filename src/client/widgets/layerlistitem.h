@@ -26,6 +26,11 @@
 namespace widgets {
 
 struct LayerListItem {
+	LayerListItem() : id(0), title(""), opacity(1.0), hidden(false) {}
+	LayerListItem(int id_, const QString &title_, float opacity_=1.0, bool hidden_=false)
+		: id(id_), title(title_), opacity(opacity_), hidden(hidden_)
+		{}
+
 	//! Layer ID
 	int id;
 	
@@ -46,15 +51,26 @@ public:
 	
 	int rowCount(const QModelIndex &parent=QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
+	Qt::ItemFlags flags(const QModelIndex& index) const;
+	Qt::DropActions supportedDropActions() const;
+	QStringList mimeTypes() const;
+	QMimeData *mimeData(const QModelIndexList& indexes) const;
+	bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+
+	QModelIndex layerIndex(int id);
 	
-public slots:
+	void clear();
 	void createLayer(int id, const QString &title);
 	void deleteLayer(int id);
-	void changeLayer(const LayerListItem &layer);
-	void reorderLayers(QList<int> neworder);
-	void setLayers(QVector<LayerListItem> items);
+	void changeLayer(int id, float opacity, const QString &title);
+	void reorderLayers(QList<uint8_t> neworder);
+	
+signals:
+	void moveLayer(int idx, int afterIdx);
 
 private:
+	int indexOf(int id) const;
+	
 	QVector<LayerListItem> _items;
 };
 

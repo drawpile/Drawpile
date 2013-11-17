@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2009-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,13 +26,14 @@
 #include <QGridLayout>
 
 #include "layerwidget.h"
-#include "core/layer.h"
+#include "layerlistitem.h"
 
 namespace widgets {
 
-LayerStyleEditor::LayerStyleEditor(const dpcore::Layer *layer, QWidget *parent)
-	: QFrame(parent, Qt::FramelessWindowHint), id_(layer->id())
+LayerStyleEditor::LayerStyleEditor(const QModelIndex &index, QWidget *parent)
+	: QFrame(parent, Qt::FramelessWindowHint), _idx(index)
 {
+	const LayerListItem &layer = index.data().value<LayerListItem>();
 	setAttribute(Qt::WA_DeleteOnClose);
 	setFrameStyle(Panel);
 	setFrameShadow(Raised);
@@ -40,7 +41,7 @@ LayerStyleEditor::LayerStyleEditor(const dpcore::Layer *layer, QWidget *parent)
 	QGridLayout *layout = new QGridLayout();
 
 	hide_ = new QCheckBox(this);
-	hide_->setChecked(layer->hidden());
+	hide_->setChecked(layer.hidden);
 	hide_->setText(tr("Hide"));
 	layout->addWidget(hide_, 0, 0);
 
@@ -50,7 +51,7 @@ LayerStyleEditor::LayerStyleEditor(const dpcore::Layer *layer, QWidget *parent)
 
 	opacity_ = new QSlider(Qt::Horizontal, this);
 	opacity_->setRange(0, 255);
-	opacity_->setValue(layer->opacity());
+	opacity_->setValue(layer.opacity * 255);
 	layout->addWidget(opacity_, 1, 1);
 
 	setLayout(layout);
@@ -77,12 +78,12 @@ void LayerStyleEditor::changeEvent(QEvent *e)
 
 void LayerStyleEditor::updateOpacity(int o)
 {
-	emit opacityChanged(id_, o);
+	emit opacityChanged(_idx, o);
 }
 
 void LayerStyleEditor::toggleHide()
 {
-	emit toggleHidden(id_);
+	emit setHidden(_idx.data().value<LayerListItem>().id, hide_->isChecked());
 }
 
 }

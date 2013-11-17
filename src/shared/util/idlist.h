@@ -18,38 +18,42 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#include "loopbackserver.h"
+#ifndef DP_UTIL_IDLIST_H
+#define DP_UTIL_IDLIST_H
 
-#include "../shared/net/layer.h"
+#include <QList>
 
-namespace net {
-
-LoopbackServer::LoopbackServer(QObject *parent)
-	: QObject(parent), _layer_ids(255)
-{
-}
+/**
+ * \brief A class for keeping track of used IDs
+ * 
+ * This class records ID numbers that are currently in use and that
+ * have been used and tries to assign unused ones. If unused IDs have run
+ * out, used ID numbers will be given out.
+ * TODO ID recycling
+ */
+class UsedIdList {
+public:
+	UsedIdList(int max, int min=1) : _min(min), _max(max), _next(min) { }
 	
-void LoopbackServer::reset()
-{
-	_layer_ids.reset();
-}
+	//! Get the next free ID number
+	int takeNext();
+	
+	//! Release the given ID number
+	void release(int id);
+	
+	//! Mark this ID number as being in use
+	void reserve(int id);
 
-void LoopbackServer::sendMessage(protocol::Message *msg)
-{
-	// Keep track of layer creation IDs.
-	switch(msg->type()) {
-		using namespace protocol;
-		case MSG_LAYER_CREATE: {
-			LayerCreate *lc = static_cast<LayerCreate*>(msg);
-			if(lc->id() == 0)
-				lc->setId(_layer_ids.takeNext());
-			else
-				_layer_ids.reserve(lc->id());
-			break;
-		}
-		default: /* no special handling needed */ break;
-	}
-	emit messageReceived(msg);
-}
+	//! Reset IDs
+	void reset();
 
-}
+private:
+	//QList<int> _inuse;
+	QList<int> _used;
+	const int _min;
+	const int _max;
+	int _next;
+};
+
+#endif
+

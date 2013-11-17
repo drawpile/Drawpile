@@ -24,15 +24,19 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "widgets/layerlistwidget.h"
+
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
 
 namespace drawingboard {
 
-StateTracker::StateTracker(dpcore::LayerStack *image, QObject *parent)
-	: QObject(parent), _image(image)
+StateTracker::StateTracker(dpcore::LayerStack *image, widgets::LayerListWidget *layerlist, QObject *parent)
+	: QObject(parent), _image(image), _layerlist(layerlist)
 {
+	_layerlist->init();
+	connect(_layerlist, SIGNAL(layerSetHidden(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
 	
 void StateTracker::receiveCommand(protocol::Message *msg)
@@ -67,7 +71,7 @@ void StateTracker::receiveCommand(protocol::Message *msg)
 			handlePutImage(*static_cast<PutImage*>(msg));
 			break;
 		default:
-			qDebug() << "Unhandled command" << msg->type();
+			qDebug() << "Unhandled drawing command" << msg->type();
 	}
 	
 	// TODO
@@ -76,26 +80,45 @@ void StateTracker::receiveCommand(protocol::Message *msg)
 
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)
 {
-	// TODO support actual resizing
-	_image->init(QSize(cmd.width(), cmd.height()));
+	if(_image->width()>0) {
+		// TODO support actual resizing
+		qWarning() << "canvas resize is currently supported on session initialization only.";
+	} else {
+		_image->init(QSize(cmd.width(), cmd.height()));
+	}
 }
 
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
-	_image->addLayer(cmd.id(), cmd.title(), cmd.fill());
+	_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()));
+	_layerlist->addLayer(cmd.id(), cmd.title());
 }
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 {
+	dpcore::Layer *layer = _image->getLayer(cmd.id());
+	if(!layer) {
+		qWarning() << "received layer attributes for non-existent layer" << cmd.id();
+		return;
+	}
+	
+	layer->setOpacity(cmd.opacity());
+	layer->setTitle(cmd.title());
+	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)
 {
+	_image->reorderLayers(cmd.order());
+	_layerlist->reorderLayers(cmd.order());
 }
 
 void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 {
+	if(cmd.merge())
+		_image->mergeLayerDown(cmd.id());
 	_image->deleteLayer(cmd.id());
+	_layerlist->deleteLayer(cmd.id());
 }
 
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
@@ -119,12 +142,16 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
+	dpcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
+	if(!layer) {
+		qWarning() << "penMove by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
+		return;
+	}
+	
 	dpcore::Point p;
 	foreach(const protocol::PenPoint pp, cmd.points()) {
 		p = dpcore::Point(pp.x, pp.y, pp.p/255.0);
-		
-		dpcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
-		
+
 		if(ctx.pendown) {
 			layer->drawLine(ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
 		} else {
@@ -144,9 +171,13 @@ void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 
 void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 {
+	dpcore::Layer *layer = _image->getLayer(cmd.layer());
+	if(!layer) {
+		qWarning() << "putImage on non-existent layer" << cmd.layer();
+		return;
+	}
 	QByteArray data = qUncompress(cmd.image());
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
-	dpcore::Layer *layer = _image->getLayer(cmd.layer());
 	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
 }
 

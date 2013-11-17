@@ -22,7 +22,10 @@
 #define DP_NET_LOOPBACKSERVER_H
 
 #include <QObject>
+
 #include "server.h"
+
+#include "../shared/util/idlist.h"
 
 namespace net {
 
@@ -34,6 +37,9 @@ class LoopbackServer : public QObject, public Server {
 public:
 	LoopbackServer(QObject *parent=0);
 	
+	//! Reset tracked state
+	void reset();
+	
 	/**
 	 * \brief Send a message to the server
 	 */
@@ -41,6 +47,9 @@ public:
 
 signals:
 	void messageReceived(protocol::Message *message);
+	
+private:
+	UsedIdList _layer_ids;
 };
 
 

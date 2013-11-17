@@ -44,6 +44,10 @@ namespace dpcore {
 	class LayerStack;
 }
 
+namespace widgets {
+	class LayerListWidget;
+}
+
 namespace drawingboard {
 
 struct ToolContext {
@@ -51,19 +55,37 @@ struct ToolContext {
 	dpcore::Brush brush;
 };
 
+/**
+ * \brief User state
+ * 
+ * The drawing context captures the state needed by a single user for drawing.
+ */
 struct DrawingContext {
 	DrawingContext() : pendown(false), distance_accumulator(0) {}
 	
+	//! Currently selected tool
 	ToolContext tool;
+	
+	//! Last pen-move point
 	dpcore::Point lastpoint;
+	
+	//! Is the stroke currently in progress?
 	bool pendown;
+	
+	//! Stroke length (used for dab spacing)
 	qreal distance_accumulator;
 };
 
+/**
+ * \brief Drawing context state tracker
+ * 
+ * The state tracker object keeps track of each drawing context and performs
+ * the drawing using the paint engine.
+ */
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(dpcore::LayerStack *_image, QObject *parent=0);
+	StateTracker(dpcore::LayerStack *image, widgets::LayerListWidget *llist, QObject *parent=0);
 	
 	void receiveCommand(protocol::Message *msg);
 	
@@ -86,6 +108,7 @@ private:
 	QHash<int, DrawingContext> _contexts;
 	
 	dpcore::LayerStack *_image;
+	widgets::LayerListWidget *_layerlist;
 };
 
 }

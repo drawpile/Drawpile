@@ -42,7 +42,7 @@ class LayerStack;
 class Layer {
 	public:
 		//! Construct a layer filled with solid color
-		Layer(LayerStack *owner, int id, const QString& name, const QColor& color, const QSize& size);
+		Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size);
 
 		~Layer();
 
@@ -56,10 +56,10 @@ class Layer {
 		int id() const { return id_; }
 
 		//! Get the layer name
-		const QString& name() const { return name_; }
+		const QString& title() const { return _title; }
 
 		//! Set the layer name
-		void setName(const QString& name);
+		void setTitle(const QString& title);
 
 		//! Get the layer as an image
 		QImage toImage() const;
@@ -142,7 +142,7 @@ class Layer {
 		
 		LayerStack *owner_;
 		int id_;
-		QString name_;
+		QString _title;
 	
 		int width_;
 		int height_;

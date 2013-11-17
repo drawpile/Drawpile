@@ -227,7 +227,7 @@ class MainWindow : public QMainWindow {
 		QSplitter *splitter_;
 		widgets::ToolSettings *toolsettings_;
 		widgets::UserList *userlist_;
-		widgets::LayerListWidget *layerlist_;
+		widgets::LayerListWidget *_layerlist;
 		widgets::ChatBox *chatbox_;
 
 		widgets::DualColorButton *fgbgcolor_;

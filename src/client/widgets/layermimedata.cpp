@@ -17,48 +17,36 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef LAYERWIDGET_H
-#define LAYERWIDGET_H
+#include <QStringList>
 
-#include <QFrame>
-#include <QModelIndex>
-
-class QSlider;
-class QCheckBox;
+#include "layermimedata.h"
 
 namespace widgets {
 
-class LayerListItem;
-	
-/**
- * A widget for adjusting the visual attributes of a layer.
- * This pops up when the user clicks on the layer details icon.
- */
-class LayerStyleEditor : public QFrame
+LayerMimeData::LayerMimeData(int layer_id)
+	: QMimeData(), _id(layer_id)
 {
-	Q_OBJECT
-	public:
-		LayerStyleEditor(const QModelIndex &index, QWidget *parent=0);
-		~LayerStyleEditor();
-
-	signals:
-		void opacityChanged(const QModelIndex &index, int newopacity);
-		void setHidden(int id, bool hidden);
-
-	protected:
-		void changeEvent(QEvent*);
-
-	private slots:
-		void updateOpacity(int o);
-		void toggleHide();
-
-	private:
-		QSlider *opacity_;
-		QCheckBox *hide_;
-		QModelIndex _idx;
-};
-
 }
 
+QStringList LayerMimeData::formats() const
+{
+	return QStringList() << "image/png";
+}
+
+QVariant LayerMimeData::retrieveData(const QString& mimeType, QVariant::Type type) const
+{
+	// TODO
+#if 0
+	if(type!=QVariant::ByteArray || mimeType != "image/png")
+		return QVariant();
+	QByteArray img;
+	QBuffer buf(&img);
+	layer_->toImage().save(&buf, "PNG");
+	return img;
+#else
+	return QVariant();
 #endif
+}
+
+}
 

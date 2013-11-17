@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2010 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
-
-#include <QMessageBox>
 
 #include "canvasscene.h"
 #include "canvasitem.h"
@@ -59,7 +57,7 @@ void CanvasScene::initCanvas()
 	delete _image;
 	delete _statetracker;
 	_image = new CanvasItem();
-	_statetracker = new StateTracker(_image->image());
+	_statetracker = new StateTracker(_image->image(), _layerlistwidget);
 	
 	addItem(_image);
 	clearAnnotations();
@@ -71,40 +69,6 @@ void CanvasScene::initCanvas()
 }
 
 #if 0
-/**
- * A new image is created with the given size and initialized to a solid color
- * @param size size of the drawing board
- * @param background background color
- */
-bool CanvasScene::initBoard(const QSize& size, const QColor& background)
-{
-
-	QImage image(size, QImage::Format_RGB32);
-	image.fill(background.rgb());
-
-	return initBoard(image);
-}
-
-/**
- * An existing image is used as a base.
- * @param image image to use
- */
-bool CanvasScene::initBoard(QImage image)
-{
-	setSceneRect(0,0,image.width(), image.height());
-	delete _image;
-	delete _statetracker;
-	_image = new CanvasItem(image.convertToFormat(QImage::Format_RGB32));
-	_statetracker = new StateTracker(_image);
-	addItem(_image);
-	
-	QList<QRectF> regions;
-	regions.append(sceneRect());
-	emit changed(regions);
-	previewstarted_ = false;
-	return true;
-}
-
 bool CanvasScene::initBoard(const QString& file)
 {
 	using openraster::Reader;
@@ -272,7 +236,7 @@ bool CanvasScene::hasAnnotations() const
  */
 int CanvasScene::width() const {
 	if(_image)
-		return int(_image->boundingRect().width());
+		return _image->image()->width();
 	else
 		return -1;
 }
@@ -282,7 +246,7 @@ int CanvasScene::width() const {
  */
 int CanvasScene::height() const {
 	if(_image)
-		return int(_image->boundingRect().height());
+		return _image->image()->height();
 	else
 		return -1;
 }
@@ -369,8 +333,11 @@ void CanvasScene::flushPreviews()
 
 void CanvasScene::handleDrawingCommand(protocol::Message *cmd)
 {
-	Q_ASSERT(_statetracker);
-	_statetracker->receiveCommand(cmd);
+	if(_statetracker) {
+		_statetracker->receiveCommand(cmd);
+	} else {
+		qWarning() << "Received a drawing command but canvas does not exist!";
+	}
 }
 
 #if 0

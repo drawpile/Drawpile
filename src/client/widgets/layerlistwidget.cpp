@@ -17,6 +17,7 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QDebug>
 #include <QItemSelection>
 #include <QListView>
 #include <QInputDialog>
@@ -27,9 +28,7 @@
 #include "layerlistdelegate.h"
 #include "layerlistitem.h"
 
-#include "canvasscene.h"
-#include "core/layerstack.h"
-#include "core/layer.h"
+#include "net/client.h"
 
 namespace widgets {
 
@@ -41,6 +40,7 @@ LayerListWidget::LayerListWidget(QWidget *parent)
 
 	_list->setDragEnabled(true);
 	_list->viewport()->setAcceptDrops(true);
+	_list->setEnabled(false);
 	// Disallow automatic selections. We handle them ourselves in the delegate.
 	_list->setSelectionMode(QAbstractItemView::NoSelection);
 
@@ -50,74 +50,62 @@ LayerListWidget::LayerListWidget(QWidget *parent)
 	_model = new LayerListModel(this);
 	_list->setModel(_model);
 
-	// Connect signals from controls buttons
-	// These signals may be processed and are re-emitted.
 	connect(del, SIGNAL(newLayer()), this, SLOT(newLayer()));
-	connect(del, SIGNAL(deleteLayer(const dpcore::Layer*)), this,
-			SLOT(deleteLayer(const dpcore::Layer*)));
-	connect(del, SIGNAL(layerToggleHidden(int)), this,
-			SIGNAL(layerToggleHidden(int)));
-	connect(del, SIGNAL(renameLayer(int, const QString&)), this,
-			SIGNAL(renameLayer(int, const QString&)));
-	connect(del, SIGNAL(changeOpacity(int, int)), this,
-			SIGNAL(opacityChange(int,int)));
+	connect(del, SIGNAL(layerSetHidden(int,bool)), this, SIGNAL(layerSetHidden(int,bool)));
+	connect(del, SIGNAL(renameLayer(const QModelIndex&, const QString&)), this,
+			SLOT(rename(const QModelIndex&, const QString&)));
+	connect(del, SIGNAL(changeOpacity(const QModelIndex&, int)), this,
+			SLOT(changeOpacity(const QModelIndex&,int)));
 	connect(del, SIGNAL(select(const QModelIndex&)),
 			this, SLOT(selected(const QModelIndex&)));
+	connect(del, SIGNAL(deleteLayer(const QModelIndex&)), this,
+			SLOT(deleteLayer(const QModelIndex&)));
+	connect(_model, SIGNAL(moveLayer(int,int)), this, SLOT(moveLayer(int,int)));
 }
 
-/**
- * This is called to synchronize the UI with changes that have happened
- * due to things like layer deletion and network events.
- * @param id layer ID
- */
-void LayerListWidget::setSelection(int id)
+void LayerListWidget::init()
 {
-#if 0
-	dpcore::LayerStack *layers = static_cast<dpcore::LayerStack*>(_list->model());
-	int row = layers->layers() - layers->id2index(id);
-	QModelIndexList sel = _list->selectionModel()->selectedIndexes();
-	if(sel.isEmpty() || sel.first().row() != row) {
-		_list->selectionModel()->clear();
-		_list->selectionModel()->select(layers->index(row,0),
-				QItemSelectionModel::Select);
-	}
-#endif
+	_model->clear();
+	_list->setEnabled(true);
 }
 
-#if 0
-/**
- * A layer was selected via delegate. Update the UI and emit a signal
- * to inform the Controller of the new selection.
- */
-void LayerListWidget::selected(const QModelIndex& index)
+void LayerListWidget::addLayer(int id, const QString &title)
 {
-	const dpcore::Layer *layer = index.data().value<dpcore::Layer*>();
-	_list->selectionModel()->clear();
-	_list->selectionModel()->select(index, QItemSelectionModel::Select);
-	emit selected(layer->id());
-}
-
-/**
- * Check if it was the currently selected layer that was just moved.
- * If so, update the selection to reflect the new position. The real selection
- * has not changed, so only the UI needs to be updated.
- */
-void LayerListWidget::moved(const QModelIndex& from, const QModelIndex& to)
-{
-	QModelIndex sel = _list->selectionModel()->selection().indexes().first();
-	if(from == sel) {
-		_list->selectionModel()->clear();
-		_list->selectionModel()->select(to, QItemSelectionModel::Select);
+	_model->createLayer(id, title);
+	if(_model->rowCount()==2) {
+		// Automatically select the first layer
+		selected(_model->index(1,0));
 	}
 }
 
-/**
- * Opacity was changed via UI. Emit a signal to inform the Controller.
- */
-void LayerListWidget::opacityChanged(int opacity)
+void LayerListWidget::changeLayer(int id, float opacity, const QString &title)
 {
-	const dpcore::Layer *layer = _list->selectionModel()->selection().indexes().first().data().value<dpcore::Layer*>();
-	emit opacityChange(layer->id(), opacity);
+	_model->changeLayer(id, opacity, title);
+}
+
+void LayerListWidget::deleteLayer(int id)
+{
+	_model->deleteLayer(id);
+	// TODO change layer if this one was selected
+}
+
+void LayerListWidget::reorderLayers(const QList<uint8_t> &order)
+{
+	int selection = currentLayer();
+	_model->reorderLayers(order);
+	
+	if(selection>0) {
+		_list->selectionModel()->clear();
+		_list->selectionModel()->select(_model->layerIndex(selection), QItemSelectionModel::Select);
+	}
+}
+
+int LayerListWidget::currentLayer()
+{
+	QModelIndex idx = _list->selectionModel()->currentIndex();
+	if(idx.isValid())
+		return idx.data().value<LayerListItem>().id;
+	return 0;
 }
 
 /**
@@ -126,30 +114,62 @@ void LayerListWidget::opacityChanged(int opacity)
 void LayerListWidget::newLayer()
 {
 	bool ok;
-	QString name = QInputDialog::getText(this, tr("Add a new layer"),
-			tr("Layer name:"), QLineEdit::Normal, "", &ok);
+	QString name = QInputDialog::getText(this,
+		tr("Add a new layer"),
+		tr("Layer name:"),
+		QLineEdit::Normal,
+		"",
+		&ok
+	);
 	if(ok) {
 		if(name.isEmpty())
 			name = tr("Unnamed layer");
-		emit newLayer(name);
+		_client->sendNewLayer(0, Qt::transparent, name);
 	}
 }
 
 /**
- * Delete layer button was pressed
+ * New name was entered
  */
-void LayerListWidget::deleteLayer(const dpcore::Layer *layer)
+void LayerListWidget::rename(const QModelIndex &index, const QString &newtitle)
 {
-	QMessageBox box(QMessageBox::Question, tr("Delete layer"),
-			tr("Really delete \"%1\"?").arg(layer->name()),
-			QMessageBox::NoButton, this);
+	LayerListItem layer = index.data().value<LayerListItem>();
+	if(layer.title != newtitle) {
+		layer.title = newtitle;
+		sendLayerAttribs(layer);
+	}
+}
+
+/**
+ * Opacity slider was adjusted
+ */
+void LayerListWidget::changeOpacity(const QModelIndex &index, int opacity)
+{
+	LayerListItem layer = index.data().value<LayerListItem>();
+	layer.opacity = opacity / 255.0;
+	sendLayerAttribs(layer);
+}
+
+/**
+ * Delete button was clicked
+ */
+void LayerListWidget::deleteLayer(const QModelIndex &index)
+{
+	Q_ASSERT(_client);
+	LayerListItem layer = index.data().value<LayerListItem>();
+	
+	QMessageBox box(QMessageBox::Question,
+		tr("Delete layer"),
+		tr("Really delete \"%1\"?").arg(layer.title),
+		QMessageBox::NoButton, this
+	);
 
 	box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
 
 	// Offer the choice to merge down only if there is a layer
 	// below this one.
 	QPushButton *merge = 0;
-	if(static_cast<dpcore::LayerStack*>(_list->model())->isBottommost(layer)==false) {
+	if(index.sibling(index.row()+1, 0).isValid()) {
 		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
 		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
 	}
@@ -161,9 +181,50 @@ void LayerListWidget::deleteLayer(const dpcore::Layer *layer)
 
 	QAbstractButton *choice = box.clickedButton();
 	if(choice != cancel)
-		emit deleteLayer(layer->id(), choice==merge);
+		_client->sendDeleteLayer(layer.id, choice==merge);
 }
-#endif
+
+void LayerListWidget::sendLayerAttribs(const LayerListItem &layer)
+{
+	Q_ASSERT(_client);
+	
+	_client->sendLayerAttribs(layer.id, layer.opacity, layer.title);
+}
+
+/**
+ * A layer was selected via delegate. Update the UI and emit a signal
+ * to inform the Controller of the new selection.
+ */
+void LayerListWidget::selected(const QModelIndex& index)
+{
+	_list->selectionModel()->clear();
+	_list->selectionModel()->select(index, QItemSelectionModel::Select);
+
+	emit layerSelected(index.data().value<LayerListItem>().id);
+}
+
+void LayerListWidget::moveLayer(int oldIdx, int newIdx)
+{
+	// Need at least two real layers for this to make sense
+	if(_model->rowCount() <= 2)
+		return;
+	
+	QList<uint8_t> layers;
+	int rows = _model->rowCount() - 1;
+	for(int i=rows;i>=1;--i)
+		layers.append(_model->data(_model->index(i, 0)).value<LayerListItem>().id);
+	
+	int m0 = rows-oldIdx-1;
+	int m1 = rows-newIdx;
+	if(m1>m0) --m1;
+	
+	if(m0 == m1)
+		return;
+
+	layers.move(m0, m1);
+
+	_client->sendLayerReorder(layers);
+}
 
 }
 

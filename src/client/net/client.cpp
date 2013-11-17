@@ -51,6 +51,11 @@ Client::~Client()
 {
 }
 
+void Client::init()
+{
+	_loopback->reset();
+}
+
 void Client::sendCanvasResize(const QSize &newsize)
 {
 	_server->sendMessage(new protocol::CanvasResize(
@@ -59,13 +64,28 @@ void Client::sendCanvasResize(const QSize &newsize)
 	));
 }
 
-void Client::sendNewLayer(const QColor &fill, const QString &title)
+void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 {
-	_server->sendMessage(new protocol::LayerCreate(
-		0,
-		fill.rgba(),
-		title
-	));
+	Q_ASSERT(id>=0 && id<256);
+	_server->sendMessage(new protocol::LayerCreate(id, fill.rgba(), title));
+}
+
+void Client::sendLayerAttribs(int id, float opacity, const QString &title)
+{
+	Q_ASSERT(id>=0 && id<256);
+	_server->sendMessage(new protocol::LayerAttributes(id, opacity*255, 0, title));
+}
+
+void Client::sendDeleteLayer(int id, bool merge)
+{
+	Q_ASSERT(id>=0 && id<256);
+	_server->sendMessage(new protocol::LayerDelete(id, merge));
+}
+
+void Client::sendLayerReorder(const QList<uint8_t> &ids)
+{
+	Q_ASSERT(ids.size()>0);
+	_server->sendMessage(new protocol::LayerOrder(ids));
 }
 
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
