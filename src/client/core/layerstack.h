@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QList>
 #include <QImage>
+#include <QPixmap>
+#include <QBitArray>
 
 namespace dpcore {
 
@@ -106,7 +108,9 @@ class LayerStack : public QObject {
 		int _width, _height;
 		int _xtiles, _ytiles;
 		QList<Layer*> _layers;
-		QPixmap *_cache;
+
+		QPixmap _cache;
+		QBitArray _dirtytiles;
 };
 
 }

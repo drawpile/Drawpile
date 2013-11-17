@@ -39,7 +39,6 @@ LayerStack::~LayerStack()
 {
 	foreach(Layer *l, _layers)
 		delete l;
-	delete [] _cache;
 }
 
 /**
@@ -54,7 +53,8 @@ void LayerStack::init(const QSize& size)
 	_height = size.height();
 	_xtiles = _width / Tile::SIZE + ((_width % Tile::SIZE)>0);
 	_ytiles = _height / Tile::SIZE + ((_height % Tile::SIZE)>0);
-	_cache = new QPixmap[_xtiles*_ytiles];
+	_cache = QPixmap(size);
+	_dirtytiles = QBitArray(_xtiles*_ytiles, true);
 }
 
 /**
@@ -184,27 +184,25 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
  */
 void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
-	const int top = qMax(int(rect.top()), 0);
-	const int left = qMax(int(rect.left()), 0);
-	const int right = Tile::roundUp(qMin(int(rect.right()), _width));
-	const int bottom = Tile::roundUp(qMin(int(rect.bottom()), _height));
+	// Refresh cache
+	const int tx0 = rect.left() / Tile::SIZE;
+	const int tx1 = rect.right() / Tile::SIZE;
+	const int ty0 = rect.top() / Tile::SIZE;
+	const int ty1 = rect.bottom() / Tile::SIZE;
 
-	// TODO use a single big pixmap as a cache instead?
-	painter->save();
-	painter->setClipRect(rect);
-	for(int y=top;y<bottom;y+=Tile::SIZE) {
-		const int yindex = (y/Tile::SIZE);
-		for(int x=left;x<right;x+=Tile::SIZE) {
-			const int xindex = x/Tile::SIZE;
-			int i = _xtiles*yindex + xindex;
-			if(_cache[i].isNull())
-				updateCache(xindex, yindex);
-			painter->drawPixmap(QPoint(xindex*Tile::SIZE, yindex*Tile::SIZE),
-					_cache[i]);
+	for(int ty=ty0;ty<=ty1;++ty) {
+		const int y = ty*_xtiles;
+		for(int tx=tx0;tx<=tx1;++tx) {
+			const int i = y+tx;
+			if(_dirtytiles.at(i)) {
+				updateCache(tx,ty);
+				_dirtytiles.clearBit(i);
+			}
 		}
 	}
-	painter->restore();
 
+	// Paint the cached pixmap
+	painter->drawPixmap(rect, _cache, rect);
 }
 
 QColor LayerStack::colorAt(int x, int y) const
@@ -254,16 +252,16 @@ void LayerStack::updateCache(int xindex, int yindex)
 {
 	quint32 data[Tile::SIZE*Tile::SIZE];
 	flattenTile(data, xindex, yindex);
-	_cache[yindex*_xtiles+xindex] = QPixmap::fromImage(
-			QImage(reinterpret_cast<const uchar*>(data), Tile::SIZE, Tile::SIZE,
-				QImage::Format_RGB32)
-			);
-
-	// This is needed for Windows, since QPixmap shares the memory.
-	// On other systems, QPixmap data is stored elsewhere (i.e. in
-	// display server memory)
-	_cache[yindex*_xtiles+xindex].detach();
-
+	QPainter painter(&_cache);
+	painter.setCompositionMode(QPainter::CompositionMode_Source);
+	painter.drawImage(
+		xindex*Tile::SIZE,
+		yindex*Tile::SIZE,
+		QImage(reinterpret_cast<const uchar*>(data),
+			Tile::SIZE, Tile::SIZE,
+			QImage::Format_ARGB32
+		)
+	);
 }
 
 void LayerStack::markDirty(const QRect &area)
@@ -275,7 +273,7 @@ void LayerStack::markDirty(const QRect &area)
 	
 	for(;ty0<=ty1;++ty0) {
 		for(int tx=tx0;tx<=tx1;++tx) {
-			_cache[ty0*_xtiles + tx] = QPixmap();
+			_dirtytiles.setBit(ty0*_xtiles + tx);
 		}
 	}
 	emit areaChanged(area);
@@ -283,8 +281,7 @@ void LayerStack::markDirty(const QRect &area)
 
 void LayerStack::markDirty()
 {
-	for(int i=0;i<_xtiles*_ytiles;++i)
-		_cache[i] = QPixmap();
+	_dirtytiles.fill(true);
 	emit areaChanged(QRect(0, 0, _width, _height));
 }
 
