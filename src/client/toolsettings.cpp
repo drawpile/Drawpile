@@ -21,7 +21,7 @@
 
 #include "main.h"
 #include "toolsettings.h"
-#include "brushpreview.h"
+#include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
 #include "widgets/brushslider.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces

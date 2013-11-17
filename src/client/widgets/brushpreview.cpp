@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -105,7 +105,6 @@ void BrushPreview::updatePreview()
 	}
 	dpcore::Layer *layer = preview_->getLayerByIndex(0);
 
-	//layer->fillChecker(palette().light().color(), palette().mid().color());
 	layer->fillColor(color2_);
 
 	const int strokew = preview_->width() - preview_->width()/4;

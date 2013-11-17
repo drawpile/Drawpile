@@ -191,7 +191,7 @@
   <customwidget>
    <class>BrushPreview</class>
    <extends>QFrame</extends>
-   <header>brushpreview.h</header>
+   <header>widgets/brushpreview.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

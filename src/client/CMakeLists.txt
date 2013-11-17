@@ -22,7 +22,6 @@ set (
 	canvasview.cpp
 	canvasitem.cpp
 	statetracker.cpp
-	brushpreview.cpp
 	tools.cpp toolsettings.cpp
 	preview.cpp localserver.cpp
 	userlistmodel.cpp
@@ -60,6 +59,7 @@ set (
 	widgets/layerlistitem.cpp
 	widgets/layerwidget.cpp
 	widgets/layermimedata.cpp
+	widgets/brushpreview.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 
