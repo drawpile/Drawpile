@@ -140,6 +140,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	_view->setBoard(_canvas);
 	navigator_->setScene(_canvas);
 
+	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
 			_view, SLOT(scrollTo(const QPoint&)));

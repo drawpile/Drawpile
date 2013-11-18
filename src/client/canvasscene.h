@@ -116,6 +116,9 @@ public:
 	//! Show/hide annotations
 	void showAnnotations(bool show);
 
+	//! Pick a color at the given coordinates. Emits colorPicked
+	void pickColor(int x, int y);
+
 public slots:
 	//! Highlight all annotations
 	void highlightAnnotations(bool hl);
@@ -128,6 +131,9 @@ signals:
 
 	//! An annotation is about to be deleted
 	void annotationDeleted(drawingboard::AnnotationItem *item);
+
+	//! User used a color picker tool on this scene
+	void colorPicked(const QColor &color);
 
 private:
 

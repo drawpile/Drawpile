@@ -147,20 +147,12 @@ void BrushBase::end()
 
 void ColorPicker::begin(const dpcore::Point& point)
 {
-#if 0
-	QColor col = editor()->colorAt(point);
-	if(col.isValid())
-		editor()->setLocalForeground(col);
-#endif
+	scene().pickColor(point.x(), point.y());
 }
 
 void ColorPicker::motion(const dpcore::Point& point)
 {
-#if 0
-	QColor col = editor()->colorAt(point);
-	if(col.isValid())
-		editor()->setLocalForeground(col);
-#endif
+	scene().pickColor(point.x(), point.y());
 }
 
 void ColorPicker::end()

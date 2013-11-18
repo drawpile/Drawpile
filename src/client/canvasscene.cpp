@@ -24,7 +24,6 @@
 #include "statetracker.h"
 
 #include "annotationitem.h"
-#include "preview.h"
 
 #include "widgets/layerlistwidget.h"
 
@@ -184,6 +183,16 @@ QImage CanvasScene::image() const
 	else
 		return QImage();
 }
+
+void CanvasScene::pickColor(int x, int y)
+{
+	if(_image) {
+		QColor color = _image->image()->colorAt(x, y);
+		if(color.isValid())
+			emit colorPicked(color);
+	}
+}
+
 
 /**
  * The file format is determined from the name of the file

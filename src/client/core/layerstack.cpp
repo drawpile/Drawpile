@@ -207,11 +207,14 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 
 QColor LayerStack::colorAt(int x, int y) const
 {
-	// TODO merge
 	if(_layers.isEmpty())
 		return QColor();
 
-	return _layers.at(0)->colorAt(x, y);
+	// TODO some more efficient way of doing this
+	quint32 tile[Tile::SIZE*Tile::SIZE];
+	flattenTile(tile, x/Tile::SIZE, y/Tile::SIZE);
+	quint32 c = tile[(y-Tile::roundDown(y)) * Tile::SIZE + (x-Tile::roundDown(x))];
+	return QColor(c);
 }
 
 QImage LayerStack::toFlatImage() const
@@ -225,7 +228,7 @@ QImage LayerStack::toFlatImage() const
 }
 
 // Flatten a single tile
-void LayerStack::flattenTile(quint32 *data, int xindex, int yindex)
+void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 {
 	// Start out with a checkerboard pattern to denote transparency
 	Tile::fillChecker(data, QColor(128,128,128), Qt::white);

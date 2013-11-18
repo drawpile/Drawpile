@@ -102,7 +102,7 @@ class LayerStack : public QObject {
 		void areaChanged(const QRect &area);
 
 	private:
-		void flattenTile(quint32 *data, int xindex, int yindex);
+		void flattenTile(quint32 *data, int xindex, int yindex) const;
 		void updateCache(int xindex, int yindex);
 
 		int _width, _height;
