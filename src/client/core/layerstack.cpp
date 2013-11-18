@@ -216,16 +216,12 @@ QColor LayerStack::colorAt(int x, int y) const
 
 QImage LayerStack::toFlatImage() const
 {
-	// FIXME: this won't work if layer 0 is hidden or has opacity < 100%
-	// TODO use a new empty lauyer instead?
-	Layer *scratch = Layer::scratchCopy(_layers[0]);
+	Layer flat(0, 0, "", Qt::transparent, QSize(_width, _height));
 
-	for(int i=1;i<_layers.size();++i)
-		scratch->merge(0,0, _layers[i]);
+	foreach(const Layer *l, _layers)
+		flat.merge(0, 0, l);
 
-	QImage img = scratch->toImage();
-	delete scratch;
-	return img;
+	return flat.toImage();
 }
 
 // Flatten a single tile

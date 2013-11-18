@@ -133,10 +133,6 @@ class Layer {
 		 */
 		bool visible() const { return opacity_ > 0 && !hidden_; }
 
-		//! Return a (temporary use) copy of the given layer
-		// TODO needed?
-		static Layer *scratchCopy(const Layer *src);
-
 	private:
 		QImage padImageToTileBoundary(int leftpad, int toppad, const QImage &original, bool alpha) const;
 		

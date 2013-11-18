@@ -57,20 +57,6 @@ Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& colo
 	}
 }
 
-/**
- * @param src
- * @return new layer with identical content as src
- */
-Layer *Layer::scratchCopy(const Layer *src)
-{
-	Q_ASSERT(src!=0);
-	Layer *scratch = new Layer(0, -1, "scratch", Qt::transparent, QSize(src->width(), src->height()));
-	scratch->opacity_ = src->opacity_;
-	for(int i=0;i<src->xtiles_*src->ytiles_;++i)
-		scratch->tiles_[i] = new Tile(src->tiles_[i]);
-	return scratch;
-}
-
 Layer::~Layer() {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		delete tiles_[i];
