@@ -23,7 +23,7 @@ set (
 	canvasitem.cpp
 	statetracker.cpp
 	tools.cpp toolsettings.cpp
-	preview.cpp localserver.cpp
+        localserver.cpp
 	userlistmodel.cpp
 	icons.cpp 
 	annotationitem.cpp

@@ -37,7 +37,7 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), toolpreview_(0), hla_(false),
+    : QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), hla_(false),
 	_layerlistwidget(layerlistwidget)
 {
 	setItemIndexMethod(NoIndex);
@@ -65,7 +65,9 @@ void CanvasScene::initCanvas()
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
+#if 0
 	previewstarted_ = false;
+#endif
 }
 
 #if 0
@@ -261,6 +263,15 @@ dpcore::LayerStack *CanvasScene::layers()
 	return 0;
 }
 
+void CanvasScene::setToolPreview(QGraphicsItem *preview)
+{
+    delete _toolpreview;
+    _toolpreview = preview;
+    addItem(_toolpreview);
+}
+
+
+#if 0
 /**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
@@ -269,7 +280,6 @@ dpcore::LayerStack *CanvasScene::layers()
  */
 void CanvasScene::addPreview(const dpcore::Point& point)
 {
-#if 0
 	Q_ASSERT(localuser_ != -1);
 	User *user = users_.value(localuser_);
 
@@ -286,8 +296,8 @@ void CanvasScene::addPreview(const dpcore::Point& point)
 	}
 	lastpreview_ = point;
 	previews_.enqueue(pre);
-#endif
 }
+
 
 /**
  */
@@ -330,6 +340,7 @@ void CanvasScene::flushPreviews()
 		previewcache_.enqueue(p);
 	}
 }
+#endif
 
 void CanvasScene::handleDrawingCommand(protocol::Message *cmd)
 {

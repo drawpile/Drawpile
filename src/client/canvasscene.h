@@ -38,6 +38,8 @@ namespace widgets {
 	class LayerListWidget;
 }
 
+class QGraphicsItem;
+
 //! Drawing board related classes
 namespace drawingboard {
 
@@ -56,99 +58,108 @@ class CanvasScene : public QGraphicsScene
 {
 	Q_OBJECT
 
-	public:
-		CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget);
-		~CanvasScene();
+public:
+	CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget);
+	~CanvasScene();
 
-		//! Clear and initialize the canvas
-		void initCanvas();
+	//! Clear and initialize the canvas
+	void initCanvas();
 
-		//! Get board width
-		int width() const;
+	//! Get canvas width
+	int width() const;
 
-		//! Get board height
-		int height() const;
+	//! Get canvas height
+	int height() const;
 
-		//! Get the layers
-		dpcore::LayerStack *layers();
+	//! Get the layers
+	dpcore::LayerStack *layers();
 
-		//! Get board contents as an image
-		QImage image() const;
+	//! Get canvas contents as an image
+	QImage image() const;
 
-		//! Save the board
-		bool save(const QString& filename) const;
+	//! Save the canvas to a file
+	bool save(const QString& filename) const;
 
-		//! Check if we are using features that require saving in OpenRaster format to preserve
-		bool needSaveOra() const;
+	//! Check if we are using features that require saving in OpenRaster format to preserve
+	bool needSaveOra() const;
 
-		//! Is there an image on the drawing board
-		bool hasImage() const;
+	//! Is there an image on the drawing board
+	bool hasImage() const;
 
-		//! Check if there are any annotations
-		bool hasAnnotations() const;
+	//! Check if there are any annotations
+	bool hasAnnotations() const;
 
-		//! Get all annotations as message strings
-		// TODO
-		QStringList getAnnotations(bool zeroid) const;
+	//! Get all annotations as message strings
+	// TODO
+	QStringList getAnnotations(bool zeroid) const;
 
-		//! Remove all annotations
-		void clearAnnotations();
+	//! Remove all annotations
+	void clearAnnotations();
 
-		//! Add a preview stroke
-		void addPreview(const dpcore::Point& point);
+	//! Set the graphics item used for tool preview
+	void setToolPreview(QGraphicsItem *item);
 
-		//! End a preview stroke
-		void endPreview();
+	//! Get the current tool preview item
+	QGraphicsItem *toolPreview() { return _toolpreview; }
 
-		//! Scrap preview strokes
-		void flushPreviews();
+#if 0
+	//! Add a preview stroke
+	void addPreview(const dpcore::Point& point);
 
-		//! Show/hide annotations
-		void showAnnotations(bool show);
+	//! End a preview stroke
+	void endPreview();
 
-	public slots:
-		//! Highlight all annotations
-		void highlightAnnotations(bool hl);
+	//! Scrap preview strokes
+	void flushPreviews();
+#endif
 
-		void handleDrawingCommand(protocol::Message *cmd);
+	//! Show/hide annotations
+	void showAnnotations(bool show);
 
-	signals:
-		//! The local user just created a new annotation
-		void newLocalAnnotation(drawingboard::AnnotationItem *item);
+public slots:
+	//! Highlight all annotations
+	void highlightAnnotations(bool hl);
 
-		//! An annotation is about to be deleted
-		void annotationDeleted(drawingboard::AnnotationItem *item);
+	void handleDrawingCommand(protocol::Message *cmd);
 
-	private:
-		
-		//! Commit preview strokes to the board
-		void commitPreviews();
+signals:
+	//! The local user just created a new annotation
+	void newLocalAnnotation(drawingboard::AnnotationItem *item);
 
-		//! The board contents
-		CanvasItem *_image;
+	//! An annotation is about to be deleted
+	void annotationDeleted(drawingboard::AnnotationItem *item);
 
-		//! Drawing context state tracker
-		StateTracker *_statetracker;
+private:
 
-		//! Preview strokes currently on screen
-		QQueue<Preview*> previews_;
+	//! Commit preview strokes to the board
+	void commitPreviews();
 
-		//! Cache of reusable preview strokes
-		QQueue<Preview*> previewcache_;
+	//! The board contents
+	CanvasItem *_image;
 
-		//! Has a preview been started?
-		bool previewstarted_;
+	//! Drawing context state tracker
+	StateTracker *_statetracker;
 
-		//! Coordinate of the last preview stroke
-		dpcore::Point lastpreview_;
+#if 0
+	//! Preview strokes currently on screen
+	QQueue<Preview*> previews_;
 
-		//! Preview stroke for use with tool previews (eg. line)
-		Preview *toolpreview_;
+	//! Cache of reusable preview strokes
+	QQueue<Preview*> previewcache_;
 
-		bool hla_;
-		
-		//! The layer list widget to update on layer changes
-		widgets::LayerListWidget *_layerlistwidget;
+	//! Has a preview been started?
+	bool previewstarted_;
+
+	//! Coordinate of the last preview stroke
+	dpcore::Point lastpreview_;
+#endif
+	//! Graphics item for previewing a special tool shape
+	QGraphicsItem *_toolpreview;
+
+	bool hla_;
+
+	//! The layer list widget to update on layer changes
+	widgets::LayerListWidget *_layerlistwidget;
 };
 
 }

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
 */
 
 #include <QDebug>
+#include <QGraphicsLineItem>
+#include <QGraphicsRectItem>
+
 #include "tools.h"
 #include "toolsettings.h"
 #include "core/brush.h"
@@ -28,6 +31,36 @@
 #include "net/client.h"
 #include "docks/toolsettingswidget.h"
 #include "statetracker.h"
+
+namespace {
+
+/**
+ * @brief Convert a brush definition to a QPen
+ * This is used to set preview stroke styles.
+ * @param brush
+ * @return QPen instance
+ */
+QPen brush2pen(const dpcore::Brush &brush)
+{
+	const int rad = brush.radius(1.0);
+	QColor color = brush.color(1.0);
+	QPen pen;
+	if(rad==0) {
+		pen.setWidth(1);
+		color.setAlphaF(brush.opacity(1.0));
+	} else {
+		pen.setWidth(rad*2);
+		pen.setCapStyle(Qt::RoundCap);
+		pen.setJoinStyle(Qt::RoundJoin);
+		// Approximate brush transparency
+		const qreal a = brush.opacity(1.0) * rad * (1-brush.spacing()/100.0);
+		color.setAlphaF(qMin(a, 1.0));
+	}
+	pen.setColor(color);
+	return pen;
+}
+
+}
 
 namespace tools {
 
@@ -59,6 +92,12 @@ void ToolCollection::setClient(net::Client *client)
 {
 	Q_ASSERT(client);
 	_client = client;
+}
+
+void ToolCollection::setScene(drawingboard::CanvasScene *scene)
+{
+    Q_ASSERT(scene);
+    _scene = scene;
 }
 
 void ToolCollection::setToolSettings(widgets::ToolSettings *s)
@@ -128,56 +167,78 @@ void ColorPicker::end()
 {
 }
 
-void ComplexBase::begin(const dpcore::Point& point)
+void Line::begin(const dpcore::Point& point)
 {
-#if 0
-	editor()->startPreview(type(), point, editor()->localBrush());
-	start_ = point;
-	end_ = point;
-#endif
+	QGraphicsLineItem *item = new QGraphicsLineItem();
+	item->setPen(brush2pen(settings().getBrush()));
+	item->setLine(QLineF(point, point));
+	scene().setToolPreview(item);
+	_p1 = point;
+	_p2 = point;
 }
 
-void ComplexBase::motion(const dpcore::Point& point)
+void Line::motion(const dpcore::Point& point)
 {
-#if 0
-	editor()->continuePreview(point);
-	end_ = point;
-#endif
+	_p2 = point;
+	QGraphicsLineItem *item = qgraphicsitem_cast<QGraphicsLineItem*>(scene().toolPreview());
+	if(item)
+		item->setLine(QLineF(_p1, _p2));
 }
 
-void ComplexBase::end()
+void Line::end()
 {
-#if 0
-	editor()->endPreview();
-	dpcore::Brush brush = editor()->localBrush();
-	if(editor()->isCurrentBrush(brush) == false)
-		editor()->setTool(brush);
-	commit();
-#endif
+	using namespace dpcore;
+	scene().setToolPreview(0);
+
+	drawingboard::ToolContext tctx = {
+		layer(),
+		settings().getBrush()
+	};
+
+	client().sendToolChange(tctx);
+	PointVector pv;
+	pv << _p1 << _p2;
+	client().sendStroke(pv);
+	client().sendPenup();
 }
 
-void Line::commit()
+void Rectangle::begin(const dpcore::Point& point)
 {
-#if 0
-	editor()->startAtomic();
-	editor()->addStroke(start_);
-	editor()->addStroke(end_);
-	editor()->endStroke();
-#endif
+	QGraphicsRectItem *item = new QGraphicsRectItem();
+	item->setPen(brush2pen(settings().getBrush()));
+	item->setRect(QRectF(point, point));
+	scene().setToolPreview(item);
+	_p1 = point;
+	_p2 = point;
 }
 
-void Rectangle::commit()
+void Rectangle::motion(const dpcore::Point& point)
 {
-#if 0
-	using dpcore::Point;
-	editor()->startAtomic();
-	editor()->addStroke(start_);
-	editor()->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
-	editor()->addStroke(end_);
-	editor()->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
-	editor()->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
-	editor()->endStroke();
-#endif
+	_p2 = point;
+	QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
+	if(item)
+		item->setRect(QRectF(_p1, _p2).normalized());
+}
+
+void Rectangle::end()
+{
+	using namespace dpcore;
+	scene().setToolPreview(0);
+
+	drawingboard::ToolContext tctx = {
+		layer(),
+		settings().getBrush()
+	};
+
+	client().sendToolChange(tctx);
+	PointVector pv;
+	pv << _p1;
+	pv << Point(_p1.x(), _p2.y(), _p1.pressure());
+	pv << _p2;
+	pv << Point(_p2.x(), _p1.y(), _p1.pressure());
+	pv << _p1 - Point(_p1.x()<_p2.x()?-1:1,0,1);
+	client().sendStroke(pv);
+	client().sendPenup();
 }
 
 /**

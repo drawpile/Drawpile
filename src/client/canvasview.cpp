@@ -58,6 +58,7 @@ CanvasView::CanvasView(QWidget *parent)
 void CanvasView::setBoard(drawingboard::CanvasScene *scene)
 {
 	_scene = scene;
+	_toolbox.setScene(scene);
 	setScene(scene);
 	// notify of scene change
 	sceneChanged();
