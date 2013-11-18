@@ -185,10 +185,10 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
 void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
 	// Refresh cache
-	const int tx0 = rect.left() / Tile::SIZE;
-	const int tx1 = rect.right() / Tile::SIZE;
-	const int ty0 = rect.top() / Tile::SIZE;
-	const int ty1 = rect.bottom() / Tile::SIZE;
+	const int tx0 = qBound(0, int(rect.left() / Tile::SIZE), _xtiles-1);
+	const int tx1 = qBound(0, int(rect.right() / Tile::SIZE), _xtiles-1);
+	const int ty0 = qBound(0, int(rect.top() / Tile::SIZE), _ytiles-1);
+	const int ty1 = qBound(0, int(rect.bottom() / Tile::SIZE), _ytiles-1);
 
 	for(int ty=ty0;ty<=ty1;++ty) {
 		const int y = ty*_xtiles;
@@ -250,6 +250,9 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex)
 // according to their blend mode and opacity options.
 void LayerStack::updateCache(int xindex, int yindex)
 {
+	Q_ASSERT(xindex >= 0 && xindex < _xtiles);
+	Q_ASSERT(yindex >= 0 && yindex < _ytiles);
+
 	quint32 data[Tile::SIZE*Tile::SIZE];
 	flattenTile(data, xindex, yindex);
 	QPainter painter(&_cache);

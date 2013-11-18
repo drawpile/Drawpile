@@ -153,13 +153,15 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
 	const int h = y1 - y0;
 	
 	QImage image(w, h, QImage::Format_ARGB32);
-	
+	image.fill(0);
+
 	// Copy background from existing tiles
 	for(int y=0;y<h;y+=Tile::SIZE) {
 		//int yt = (y0 + y) / Tile::SIZE;
 		for(int x=0;x<w;x+=Tile::SIZE) {
-			tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE)->copyToImage(image, x, y);
-			//tile(x / Tile::SIZE, yt)->copyToImage(image, x, y);
+			const Tile *t = tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE);
+			if(t)
+				t->copyToImage(image, x, y);
 		}
 	}
 	
