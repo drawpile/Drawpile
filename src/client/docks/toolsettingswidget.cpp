@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006-2008 Calle Laakkonen
+	Copyright (C) 2006-2013 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 namespace widgets {
 
-ToolSettings::ToolSettings(QWidget *parent)
+ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	: QDockWidget(parent)
 {
 	// Create a widget stack
@@ -63,7 +63,7 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 }
 
-ToolSettings::~ToolSettings()
+ToolSettingsDock::~ToolSettingsDock()
 {
 	delete pensettings_,
 	delete brushsettings_,
@@ -78,7 +78,7 @@ ToolSettings::~ToolSettings()
  * Set which tool setting widget is visible
  * @param tool tool identifier
  */
-void ToolSettings::setTool(tools::Type tool) {
+void ToolSettingsDock::setTool(tools::Type tool) {
 	switch(tool) {
 		case tools::PEN: currenttool_ = pensettings_; break;
 		case tools::BRUSH: currenttool_ = brushsettings_; break;
@@ -88,8 +88,16 @@ void ToolSettings::setTool(tools::Type tool) {
 		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
 		case tools::ANNOTATION: currenttool_ = textsettings_; break;
 	}
-	if(tool != tools::ANNOTATION)
-		getAnnotationSettings()->setSelection(0); // lose the highlight border if any
+
+	// Deselect annotation on tool change
+	if(tool != tools::ANNOTATION) {
+		int a = getAnnotationSettings()->selected();
+		if(a) {
+			getAnnotationSettings()->setSelection(0);
+			emit annotationDeselected(a);
+		}
+	}
+
 	setWindowTitle(currenttool_->getTitle());
 	widgets_->setCurrentWidget(currenttool_->getUi());
 	currenttool_->setForeground(fgcolor_);
@@ -102,27 +110,17 @@ void ToolSettings::setTool(tools::Type tool) {
 		emit colorsChanged(fgcolor_, bgcolor_);
 }
 
-void ToolSettings::setForeground(const QColor& color)
+void ToolSettingsDock::setForeground(const QColor& color)
 {
 	fgcolor_ = color;
 	currenttool_->setForeground(color);
-#if 0 /* we have a true eraser now? */
-	if(currenttool_ == erasersettings_) // eraser is a special case
-		emit colorsChanged(bgcolor_, fgcolor_);
-	else
-#endif
 	emit colorsChanged(fgcolor_, bgcolor_);
 }
 
-void ToolSettings::setBackground(const QColor& color)
+void ToolSettingsDock::setBackground(const QColor& color)
 {
 	bgcolor_ = color;
 	currenttool_->setBackground(color);
-#if 0
-	if(currenttool_ == erasersettings_) // eraser is a special case
-		emit colorsChanged(bgcolor_, fgcolor_);
-	else
-#endif
 	emit colorsChanged(fgcolor_, bgcolor_);
 }
 
@@ -130,12 +128,12 @@ void ToolSettings::setBackground(const QColor& color)
  * Get a brush with settings from the currently visible widget
  * @return brush
  */
-const dpcore::Brush& ToolSettings::getBrush() const
+const dpcore::Brush& ToolSettingsDock::getBrush() const
 {
 	return currenttool_->getBrush();
 }
 
-tools::AnnotationSettings *ToolSettings::getAnnotationSettings()
+tools::AnnotationSettings *ToolSettingsDock::getAnnotationSettings()
 {
 	return static_cast<tools::AnnotationSettings*>(textsettings_);
 }

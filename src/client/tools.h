@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ namespace drawingboard {
 }
 
 namespace widgets {
-	class ToolSettings;
+	class ToolSettingsDock;
 }
 
 namespace net {
@@ -74,7 +74,7 @@ public:
 	virtual void end() = 0;
 
 protected:
-	inline widgets::ToolSettings &settings();
+	inline widgets::ToolSettingsDock &settings();
 	inline net::Client &client();
 	inline drawingboard::CanvasScene &scene();
 	inline int layer();
@@ -158,17 +158,17 @@ private:
  * separate from the pixel data.
  */
 class Annotation : public Tool {
-	public:
-		Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), sel_(0) { }
+public:
+	Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), _selected(0) { }
 
-		void begin(const dpcore::Point& point);
-		void motion(const dpcore::Point& point);
-		void end();
+	void begin(const dpcore::Point& point);
+	void motion(const dpcore::Point& point);
+	void end();
 
-	private:
-		drawingboard::AnnotationItem *sel_;
-		int handle_;
-		QPoint start_, end_;
+private:
+	drawingboard::AnnotationItem *_selected;
+	int _handle;
+	QPoint _start, _end;
 };
 
 
@@ -188,7 +188,7 @@ class ToolCollection {
         void setScene(drawingboard::CanvasScene *scene);
 
 		//! Set the tool settings widget from which current settings are fetched
-		void setToolSettings(widgets::ToolSettings *as);
+		void setToolSettings(widgets::ToolSettingsDock *settings);
 
 		//! Set the currently active layer
 		void selectLayer(int layer_id);
@@ -199,14 +199,14 @@ class ToolCollection {
 	private:
 		net::Client *_client;
         drawingboard::CanvasScene *_scene;
-		widgets::ToolSettings *_toolsettings;
+		widgets::ToolSettingsDock *_toolsettings;
 		QHash<Type, Tool*> _tools;
 		int _layer;
 
 };
 
 net::Client &Tool::client() { return *_owner._client; }
-widgets::ToolSettings &Tool::settings() { return *_owner._toolsettings; }
+widgets::ToolSettingsDock &Tool::settings() { return *_owner._toolsettings; }
 drawingboard::CanvasScene &Tool::scene() { return *_owner._scene; }
 int Tool::layer() { return _owner._layer; }
 

@@ -23,7 +23,6 @@
 #include <QGraphicsView>
 
 #include "core/point.h"
-#include "statetracker.h"
 #include "tools.h"
 
 namespace drawingboard {
@@ -36,7 +35,7 @@ namespace net {
 
 namespace widgets {
 
-class ToolSettings;
+class ToolSettingsDock;
 
 //! Editor view
 /**
@@ -57,7 +56,7 @@ class CanvasView : public QGraphicsView
 		void setClient(net::Client *client);
 
 		//! Set the tool settings panel
-		void setToolSettings(widgets::ToolSettings *settings);
+		void setToolSettings(widgets::ToolSettingsDock *settings);
 		
 		//! Get the current zoom factor
 		int zoom() const { return zoom_; }

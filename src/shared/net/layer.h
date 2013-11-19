@@ -89,7 +89,7 @@ public:
 	 * \brief Layer title (UTF-8 encoded)
 	 * @return layer title
 	 */
-	const QByteArray &title() const { return _title; }
+	QString title() const { return QString::fromUtf8(_title); }
 
 protected:
 	int payloadLength() const;

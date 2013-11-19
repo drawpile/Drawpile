@@ -100,7 +100,7 @@ void ToolCollection::setScene(drawingboard::CanvasScene *scene)
     _scene = scene;
 }
 
-void ToolCollection::setToolSettings(widgets::ToolSettings *s)
+void ToolCollection::setToolSettings(widgets::ToolSettingsDock *s)
 {
 	Q_ASSERT(s);
 	_toolsettings = s;
@@ -239,18 +239,30 @@ void Rectangle::end()
  */
 void Annotation::begin(const dpcore::Point& point)
 {
-#if 0
-	drawingboard::AnnotationItem *item = editor()->annotationAt(point);
+	drawingboard::AnnotationItem *item = scene().annotationAt(point);
 	if(item) {
-		sel_ = item;
-		handle_ = sel_->handleAt(point - sel_->pos());
-		aeditor()->setSelection(item);
+		_selected = item;
+		_handle = _selected->handleAt(point - _selected->pos());
+
+		// Set selection highlights
+		scene().unHilightAnnotation(settings().getAnnotationSettings()->selected());
+		item->setHighlight(true);
+
+		// Set editor selection
+		settings().getAnnotationSettings()->setSelection(item);
+
 	} else {
-		editor()->startPreview(ANNOTATION, point, editor()->localBrush());
-		end_ = point;
+		QGraphicsRectItem *item = new QGraphicsRectItem();
+		QPen pen;
+		pen.setWidth(1);
+		pen.setColor(Qt::red); // TODO
+		pen.setStyle(Qt::DotLine);
+		item->setPen(pen);
+		item->setRect(QRectF(point, point));
+		scene().setToolPreview(item);
+		_end = point;
 	}
-	start_ = point;
-#endif
+	_start = point;
 }
 
 /**
@@ -259,63 +271,51 @@ void Annotation::begin(const dpcore::Point& point)
  */
 void Annotation::motion(const dpcore::Point& point)
 {
-#if 0
-	if(sel_) {
-		QPoint d = point - start_;
-		switch(handle_) {
+	if(_selected) {
+		// TODO a "ghost" mode to indicate annotation has not really moved
+		// until the server roundtrip
+		QPoint d = point - _start;
+		switch(_handle) {
 			case drawingboard::AnnotationItem::TRANSLATE:
-				sel_->moveBy(d.x(), d.y());
+				_selected->moveBy(d.x(), d.y());
 				break;
 			case drawingboard::AnnotationItem::RS_TOPLEFT:
-				sel_->growTopLeft(d.x(), d.y());
+				_selected->growTopLeft(d.x(), d.y());
 				break;
 			case drawingboard::AnnotationItem::RS_BOTTOMRIGHT:
-				sel_->growBottomRight(d.x(), d.y());
+				_selected->growBottomRight(d.x(), d.y());
 				break;
 		}
-		start_ = point;
+		_start = point;
 	} else {
-		editor()->continuePreview(point);
-		end_ = point;
+		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
+		if(item)
+			item->setRect(QRectF(_start, _end).normalized());
+		_end = point;
 	}
-#endif
 }
 
 /**
- * If we have a selection, reannotate it. This is does nothing in local mode,
- * but is needed in a network session to inform the server of the new size/
- * position. (Room for optimization, don't reannotate if geometry didn't change)
- * If no existing annotation was selected, create a new one based on the
- * starting and ending coordinates. The new annotation is given some minimum
- * size to make sure something appears when the user just clicks and doesn't
- * move the mouse/stylus.
+ * If we have a selected annotation, adjust its shape.
+ * Otherwise, create a new annotation.
  */
 void Annotation::end()
 {
-#if 0
-	if(sel_) {
-		// This is superfluous when in local mode, but needed
-		// when in a networked session.
-		// TODO
-		protocol::Annotation a;
-		sel_->getOptions(a);
-		editor()->annotate(a);
-		sel_ = 0;
+	if(_selected) {
+		client().sendAnnotationReshape(_selected->id(), _selected->geometry());
+		_selected = 0;
 	} else {
-		editor()->endPreview();
-		QRectF rect(QRectF(start_, end_));
-		rect = rect.normalized();
+		scene().setToolPreview(0);
+
+		QRect rect = QRect(_start, _end).normalized();
+
 		if(rect.width()<15)
 			rect.setWidth(15);
 		if(rect.height()<15)
 			rect.setHeight(15);
-		protocol::Annotation a;
-		a.rect = rect.toRect();
-		a.textcolor = editor()->localBrush().color(1.0).name();
-		a.backgroundcolor = editor()->localBrush().color(0.0).name();
-		editor()->annotate(a);
+
+		client().sendAnnotationCreate(0, rect);
 	}
-#endif
 }
 
 }

@@ -47,6 +47,7 @@
 
 #include "canvasview.h"
 #include "canvasscene.h"
+#include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
 
@@ -101,13 +102,13 @@ MainWindow::MainWindow(const MainWindow *source)
 	lockstatus_->setToolTip(tr("Board is not locked"));
 	statusbar->addPermanentWidget(lockstatus_);
 
-	// Work area is split between the view and the chatbox
+	// Work area is split between the canvas view and the chatbox
 	splitter_ = new QSplitter(Qt::Vertical, this);
 	setCentralWidget(splitter_);
 
-	// Create view
+	// Create canvas view
 	_view = new widgets::CanvasView(this);
-	_view->setToolSettings(toolsettings_);
+	_view->setToolSettings(_toolsettings);
 	
 	connect(_layerlist, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
 
@@ -117,9 +118,9 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(toggleoutline_, SIGNAL(triggered(bool)),
 			_view, SLOT(setOutline(bool)));
 #if 0
-	connect(toolsettings_, SIGNAL(sizeChanged(int)),
+	connect(_toolsettings, SIGNAL(sizeChanged(int)),
 			_view, SLOT(setOutlineRadius(int)));
-	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)),
+	connect(_toolsettings, SIGNAL(colorsChanged(const QColor&, const QColor&)),
 			_view, SLOT(setOutlineColors(const QColor&, const QColor&)));
 #endif
 	connect(_view, SIGNAL(imageDropped(QString)),
@@ -133,7 +134,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	chatbox_ = new widgets::ChatBox(this);
 	splitter_->addWidget(chatbox_);
 
-	// Create board
+	// Create canvas scene
 	_canvas = new drawingboard::CanvasScene(this, _layerlist);
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
@@ -141,6 +142,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	navigator_->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
+	connect(_toolsettings, SIGNAL(annotationDeselected(int)), _canvas, SLOT(unHilightAnnotation(int)));
 
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
@@ -155,12 +158,13 @@ MainWindow::MainWindow(const MainWindow *source)
 	_client = new net::Client(this);
 	_view->setClient(_client);
 	_layerlist->setClient(_client);
+	_toolsettings->getAnnotationSettings()->setClient(_client);
 	
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::Message*)), _canvas, SLOT(handleDrawingCommand(protocol::Message*)));
 
 #if 0
-	controller_ = new Controller(toolsettings_->getAnnotationSettings(), this);
+	controller_ = new Controller(_toolsettings->getAnnotationSettings(), this);
 	controller_->setModel(_board);
 	connect(controller_, SIGNAL(changed()),
 			this, SLOT(boardChanged()));
@@ -238,21 +242,6 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(netstatus_, SIGNAL(statusMessage(QString)),
 			chatbox_, SLOT(systemMessage(QString)));
 
-	// Layer box -> controller
-	connect(_layerlist, SIGNAL(newLayer(const QString&)),
-			controller_, SLOT(newLayer(const QString&)));
-	connect(_layerlist, SIGNAL(deleteLayer(int, bool)),
-			controller_, SLOT(deleteLayer(int, bool)));
-	connect(_layerlist, SIGNAL(layerMove(int, int)),
-			controller_, SLOT(moveLayer(int, int)));
-	connect(_layerlist, SIGNAL(renameLayer(int, const QString&)),
-			controller_, SLOT(renameLayer(int, const QString&)));
-	connect(_layerlist, SIGNAL(selected(int)),
-			controller_, SLOT(selectLayer(int)));
-	connect(_layerlist, SIGNAL(opacityChange(int,int)),
-			controller_, SLOT(setLayerOpacity(int,int)));
-	connect(_layerlist, SIGNAL(layerToggleHidden(int)),
-			controller_, SLOT(toggleLayerHidden(int)));
 #endif
 	if(source)
 		cloneSettings(source);
@@ -446,7 +435,7 @@ void MainWindow::readSettings()
 	QList<QAction*> actions = drawingtools_->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
-	toolsettings_->setTool(tools::Type(tool));
+	_toolsettings->setTool(tools::Type(tool));
 
 	// Remember cursor settings
 	toggleoutline_->setChecked(cfg.value("outline",true).toBool());
@@ -488,7 +477,7 @@ void MainWindow::cloneSettings(const MainWindow *source)
 			source->drawingtools_->checkedAction()
 			);
 	drawingtools_->actions()[tool]->trigger();
-	toolsettings_->setTool(tools::Type(tool));
+	_toolsettings->setTool(tools::Type(tool));
 	_view->selectTool(tools::Type(tool));
 
 	// Copy foreground and background colors
@@ -1222,8 +1211,10 @@ void MainWindow::selectTool(QAction *tool)
 	else
 		return;
 	lasttool_ = tool;
+
 	// When using the annotation tool, highlight all text boxes
-	_canvas->highlightAnnotations(type==tools::ANNOTATION);
+	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
+
 	emit toolChanged(type);
 }
 
@@ -1551,14 +1542,14 @@ void MainWindow::createNavigator(QMenu *toggles)
 
 void MainWindow::createToolSettings(QMenu *toggles)
 {
-	toolsettings_ = new widgets::ToolSettings(this);
-	toolsettings_->setObjectName("toolsettingsdock");
-	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
-	toggles->addAction(toolsettings_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
-	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), toolsettings_, SLOT(setForeground(const QColor&)));
-	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), toolsettings_, SLOT(setBackground(const QColor&)));
+	_toolsettings = new widgets::ToolSettingsDock(this);
+	_toolsettings->setObjectName("toolsettingsdock");
+	_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	connect(this, SIGNAL(toolChanged(tools::Type)), _toolsettings, SLOT(setTool(tools::Type)));
+	toggles->addAction(_toolsettings->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, _toolsettings);
+	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), _toolsettings, SLOT(setForeground(const QColor&)));
+	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), _toolsettings, SLOT(setBackground(const QColor&)));
 }
 
 void MainWindow::createUserList(QMenu *toggles)

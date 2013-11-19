@@ -21,22 +21,24 @@
 #include "loopbackserver.h"
 
 #include "../shared/net/layer.h"
+#include "../shared/net/annotation.h"
 
 namespace net {
 
 LoopbackServer::LoopbackServer(QObject *parent)
-	: QObject(parent), _layer_ids(255)
+	: QObject(parent), _layer_ids(255), _annotation_ids(255)
 {
 }
 	
 void LoopbackServer::reset()
 {
 	_layer_ids.reset();
+	_annotation_ids.reset();
 }
 
 void LoopbackServer::sendMessage(protocol::Message *msg)
 {
-	// Keep track of layer creation IDs.
+	// Keep track of layer and annotation IDs.
 	switch(msg->type()) {
 		using namespace protocol;
 		case MSG_LAYER_CREATE: {
@@ -45,6 +47,14 @@ void LoopbackServer::sendMessage(protocol::Message *msg)
 				lc->setId(_layer_ids.takeNext());
 			else
 				_layer_ids.reserve(lc->id());
+			break;
+		}
+		case MSG_ANNOTATION_CREATE: {
+			AnnotationCreate *ac = static_cast<AnnotationCreate*>(msg);
+			if(ac->id() == 0)
+				ac->setId(_annotation_ids.takeNext());
+			else
+				_annotation_ids.reserve(ac->id());
 			break;
 		}
 		default: /* no special handling needed */ break;

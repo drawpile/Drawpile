@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,45 +19,34 @@
 */
 
 #include <QPainter>
+
 #include "annotationitem.h"
-#include "core/layer.h"
-#include "core/tile.h"
 
 namespace drawingboard {
 
-/**
- * Return a new unique ID for an annotation. Note! These are used only
- * when in local mode! In network mode the server assigns all IDs,
- * including new ones for the annotations that existed when the
- * session was created.
- * @return ID number
- */
-int AnnotationItem::nextId()
-{
-	static int ids=0;
-	return ++ids;
-}
-
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent), id_(id), flags_(Qt::TextWordWrap), highlight_(false), forceborder_(false)
+	: QGraphicsItem(parent),
+	  id_(id),
+	  bgcol_(Qt::transparent),
+	  _highlight(false), _showborder(false)
 {
 }
 
 void AnnotationItem::growTopLeft(qreal x, qreal y)
 {
-	if(size_.width() - x <= 0) x = 0;
-	if(size_.height() - y <= 0) y = 0;
+	if(_size.width() - x <= 0) x = 0;
+	if(_size.height() - y <= 0) y = 0;
 	prepareGeometryChange();
 	moveBy(x, y);
-	size_ = QSizeF(size_.width() - x, size_.height() - y);
+	_size = QSizeF(_size.width() - x, _size.height() - y);
 }
 
 void AnnotationItem::growBottomRight(qreal x, qreal y)
 {
-	if(size_.width() + x <= 0) x = 0;
-	if(size_.height() + y <= 0) y = 0;
+	if(_size.width() + x <= 0) x = 0;
+	if(_size.height() + y <= 0) y = 0;
 	prepareGeometryChange();
-	size_ = QSizeF(size_.width() + x, size_.height() + y);
+	_size = QSizeF(_size.width() + x, _size.height() + y);
 }
 
 /**
@@ -67,99 +56,63 @@ AnnotationItem::Handle AnnotationItem::handleAt(const QPointF point)
 {
 	if(point.x() < HANDLE && point.y() < HANDLE)
 		return RS_TOPLEFT;
-	else if(point.x() > size_.width()-HANDLE && point.y() > size_.height()-HANDLE)
+	else if(point.x() > _size.width()-HANDLE && point.y() > _size.height()-HANDLE)
 		return RS_BOTTOMRIGHT;
 	return TRANSLATE;
 
 }
 
+/**
+ * Highlight is used to indicate the selected annotation.
+ * @param hl
+ */
 void AnnotationItem::setHighlight(bool hl)
 {
-	bool old = highlight_;
-	highlight_ = hl;
+	bool old = _highlight;
+	_highlight = hl;
 	if(hl != old)
 		update();
 }
 
 /**
- * Normally a border is drawn only when an annotation lacks content
- * or when it is highlighted.
+ * Border is normally drawn when the annotation is highlighted or has no text.
+ * The border is forced on when the annotation edit tool is selected.
  */
-void AnnotationItem::forceBorder(bool force)
+void AnnotationItem::setShowBorder(bool show)
 {
-	bool old = forceborder_;
-	forceborder_ = force;
-	if(force != old)
+	bool old = _showborder;
+	_showborder = show;
+	if(show != old)
 		update();
 }
 
-int AnnotationItem::justify() const {
-#if 0
-	using protocol::Annotation;
-	if((flags_ & Qt::AlignRight))
-		return Annotation::RIGHT;
-	if((flags_ & Qt::AlignHCenter))
-		return Annotation::CENTER;
-	if((flags_ & Qt::AlignJustify))
-		return Annotation::FILL;
-	return Annotation::LEFT;
-#else
-	return 0;
-#endif
+void AnnotationItem::setGeometry(const QRect &rect)
+{
+	prepareGeometryChange();
+	setPos(rect.topLeft());
+	_size = rect.size();
 }
 
-void AnnotationItem::setOptions(const protocol::Annotation& a)
+QRect AnnotationItem::geometry() const
 {
-#if 0
-	QPointF newpos(a.rect.left(), a.rect.top());
-	QSizeF newsize(a.rect.width(), a.rect.height());
-	if(pos() != newpos)
-		setPos(newpos);
-	if(size_ != newsize) {
-		prepareGeometryChange();
-		size_ = newsize;
-	}
-	text_ = a.text;
-	textcol_ = QColor(a.textcolor);
-	textcol_.setAlpha(a.textalpha);
-	bgcol_ = QColor(a.backgroundcolor);
-	bgcol_.setAlpha(a.bgalpha);
-	flags_ = Qt::TextWordWrap;
-	switch(a.justify) {
-		using protocol::Annotation;
-		case Annotation::LEFT: flags_ |= Qt::AlignLeft; break;
-		case Annotation::RIGHT: flags_ |= Qt::AlignRight; break;
-		case Annotation::CENTER: flags_ |= Qt::AlignHCenter; break;
-		case Annotation::FILL: flags_ |= Qt::AlignJustify; break;
-	}
-	font_.setBold(a.bold);
-	font_.setItalic(a.italic);
-	font_.setFamily(a.font);
-	font_.setPixelSize(a.size);
+	return QRect(pos().toPoint(), _size.toSize());
+}
+
+QRectF AnnotationItem::boundingRect() const
+{
+	return QRectF(QPointF(), _size);
+}
+
+void AnnotationItem::setBackgroundColor(const QColor &color)
+{
+	bgcol_ = color;
 	update();
-#endif
 }
 
-void AnnotationItem::getOptions(protocol::Annotation& a)
+void AnnotationItem::setText(const QString &text)
 {
-#if 0
-	a.id = id_;
-	a.rect = QRect(pos().toPoint(), size_.toSize());
-	a.text = text();
-	a.textcolor = textcol_.name();
-	a.textalpha = textcol_.alpha();
-	a.backgroundcolor = bgcol_.name();
-	a.bgalpha = bgcol_.alpha();
-	a.justify = justify();
-	a.bold = bold();
-	a.italic = italic();
-	a.font = font();
-	a.size = fontSize();
-#endif
-}
-
-QRectF AnnotationItem::boundingRect() const {
-	return QRectF(0, 0, size_.width(), size_.height());
+	_text.setHtml(text);
+	update();
 }
 
 /**
@@ -167,51 +120,46 @@ QRectF AnnotationItem::boundingRect() const {
  * @param painter painter to render with
  * @param rect rectangle to which the annotation is rendered
  */
-void AnnotationItem::render(QPainter *painter, const QRectF& rect) const
+void AnnotationItem::render(QPainter *painter, const QRectF& rect)
 {
 	painter->fillRect(rect, bgcol_);
-	painter->setPen(textcol_);
-	painter->setFont(font_);
-	painter->drawText(rect, flags_, text_);
+	_text.setTextWidth(_size.width());
+	_text.drawContents(painter, rect);
 }
 
 void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *widget)
 {
-	QRectF rect (QPointF(), size_);
+	Q_UNUSED(options);
+	Q_UNUSED(widget);
+
+	QRectF rect(QPointF(), _size);
 	render(painter, rect);
 
-	// Draw a border. If background and text color are the same, draw
-	// the border in negative.
-	QColor border = textcol_;
-	bool drawb = highlight_ || forceborder_ || text_.isEmpty();
-	if(textcol_.rgb() == bgcol_.rgb()) {
-		border = QColor(255-textcol_.red(), 255-textcol_.green(), 255-textcol_.blue());
-		drawb = true;
-	}
-	border.setAlpha(255);
+	if(_showborder || _text.isEmpty()) {
+		QColor border = Qt::red;// TODO
+		border.setAlpha(255);
 
-	QPen bpen(highlight_?Qt::DashLine:Qt::DotLine);
-	if(drawb) {
+		QPen bpen(_highlight && _showborder ? Qt::DashLine : Qt::DotLine);
 		bpen.setColor(border);
 		painter->setPen(bpen);
 		painter->drawRect(rect);
-	}
 
-	// Draw resizing handles
-	if(highlight_) {
-		painter->setClipRect(QRectF(QPointF(), size_));
-		painter->setPen(border);
-		painter->setBrush(border);
+		// Draw resizing handles
+		if(_highlight) {
+			painter->setClipRect(QRectF(QPointF(), _size));
+			painter->setPen(border);
+			painter->setBrush(border);
 
-		QPointF triangle[3] = {QPointF(0,0), QPointF(HANDLE,0), QPointF(0,HANDLE)};
-		painter->drawConvexPolygon(triangle, 3);
-		triangle[0] = QPointF(size_.width()-HANDLE, size_.height());
-		triangle[1] = QPointF(size_.width(), size_.height());
-		triangle[2] = QPointF(size_.width(),size_.height()-HANDLE); 
-		painter->drawConvexPolygon(triangle, 3);
+			QPointF triangle[3] = {QPointF(0,0), QPointF(HANDLE,0), QPointF(0,HANDLE)};
+			painter->drawConvexPolygon(triangle, 3);
+			triangle[0] = QPointF(_size.width()-HANDLE, _size.height());
+			triangle[1] = QPointF(_size.width(), _size.height());
+			triangle[2] = QPointF(_size.width(),_size.height()-HANDLE);
+			painter->drawConvexPolygon(triangle, 3);
+		}
 	}
 }
-
+#if 0
 /**
  * The annotation will be rendered on the new layer with an offset
  * so it can be merged simply by compositing whole tiles.
@@ -220,25 +168,24 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
  */
 dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
 {
-#if 0
 	using namespace dpcore;
 	int xi = int(pos().x()/Tile::SIZE);
 	int yi = int(pos().y()/Tile::SIZE);
 	QPoint offset(int(pos().x() - xi*Tile::SIZE),
 			int(pos().y() - yi*Tile::SIZE));
-	QImage img(offset.x() + int(size_.width()),
-			int(offset.y() + size_.height()), QImage::Format_ARGB32);
+	QImage img(offset.x() + int(_size.width()),
+			int(offset.y() + _size.height()), QImage::Format_ARGB32);
 	img.fill(0);
 	QPainter painter(&img);
-	render(&painter, QRectF(offset, size_));
+	render(&painter, QRectF(offset, _size));
 	if(x)
 		*x = xi;
 	if(y)
 		*y = yi;
 	return new Layer(0, -1, "", img);
-#endif
 	return 0;
 }
+#endif
 
 }
 

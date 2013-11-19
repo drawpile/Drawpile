@@ -38,6 +38,10 @@ namespace protocol {
 	class PenMove;
 	class PenUp;
 	class PutImage;
+	class AnnotationCreate;
+	class AnnotationReshape;
+	class AnnotationEdit;
+	class AnnotationDelete;
 }
 
 namespace dpcore {
@@ -49,6 +53,9 @@ namespace widgets {
 }
 
 namespace drawingboard {
+
+class CanvasScene;
+class AnnotationItem;
 
 struct ToolContext {
 	int layer_id;
@@ -85,10 +92,10 @@ struct DrawingContext {
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(dpcore::LayerStack *image, widgets::LayerListWidget *llist, QObject *parent=0);
+	StateTracker(CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListWidget *llist, QObject *parent=0);
 	
 	void receiveCommand(protocol::Message *msg);
-	
+
 private:
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd);
@@ -104,9 +111,14 @@ private:
 	void handlePutImage(const protocol::PutImage &cmd);
 	
 	// Annotation related commands
-	
+	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
+	void handleAnnotationReshape(const protocol::AnnotationReshape &cmd);
+	void handleAnnotationEdit(const protocol::AnnotationEdit &cmd);
+	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
+
 	QHash<int, DrawingContext> _contexts;
 	
+	CanvasScene *_scene;
 	dpcore::LayerStack *_image;
 	widgets::LayerListWidget *_layerlist;
 };

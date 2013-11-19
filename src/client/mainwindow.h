@@ -225,7 +225,7 @@ class MainWindow : public QMainWindow {
 		void createNavigator(QMenu *menu);
 
 		QSplitter *splitter_;
-		widgets::ToolSettings *toolsettings_;
+		widgets::ToolSettingsDock *_toolsettings;
 		widgets::UserList *userlist_;
 		widgets::LayerListWidget *_layerlist;
 		widgets::ChatBox *chatbox_;

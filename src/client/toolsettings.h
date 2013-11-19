@@ -29,8 +29,10 @@ class Ui_SimpleSettings;
 class Ui_TextSettings;
 class QSettings;
 
+namespace net {
+	class Client;
+}
 namespace drawingboard {
-	class BoardEditor;
 	class AnnotationItem;
 }
 
@@ -202,6 +204,9 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		AnnotationSettings(QString name, QString title);
 		~AnnotationSettings();
 
+		//! Set the client to use for edit commands
+		void setClient(net::Client *client) { _client = client; }
+
 		QWidget *createUi(QWidget *parent);
 
 		void setForeground(const QColor& color);
@@ -210,19 +215,21 @@ class AnnotationSettings : public QObject, public ToolSettings {
 
 		int getSize() const { return 0; }
 
-		//! Set the board editor to change selected annotations
-		void setBoardEditor(drawingboard::BoardEditor *editor) { editor_ = editor; }
-
-		//! Enable or disabled baking
-		void enableBaking(bool enable);
+		//! Get the ID of the currently selected annotation
+		int selected() const { return _selected; }
 
 	public slots:
 		//! Set the currently selected annotation item
 		void setSelection(drawingboard::AnnotationItem *item);
+
 		//! Unselect this item if currently selected
-		void unselect(drawingboard::AnnotationItem *item);
+		void unselect(int id);
 
 	private slots:
+		void changeAlignment();
+		void toggleBold(bool bold);
+		void updateStyleButtons();
+
 		void applyChanges();
 		void removeAnnotation();
 		void bake();
@@ -231,12 +238,13 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		void baked();
 
 	private:
-		dpcore::Brush brush_;
 		Ui_TextSettings *ui_;
 		QWidget *uiwidget_;
-		drawingboard::AnnotationItem *sel_;
-		drawingboard::BoardEditor *editor_;
+
+		int _selected;
+
 		bool noupdate_;
+		net::Client *_client;
 };
 
 //! No settings

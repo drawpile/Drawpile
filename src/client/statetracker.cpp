@@ -21,6 +21,8 @@
 #include <QDebug>
 
 #include "statetracker.h"
+#include "canvasscene.h" // needed for annotations
+#include "annotationitem.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -29,11 +31,12 @@
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
+#include "../shared/net/annotation.h"
 
 namespace drawingboard {
 
-StateTracker::StateTracker(dpcore::LayerStack *image, widgets::LayerListWidget *layerlist, QObject *parent)
-	: QObject(parent), _image(image), _layerlist(layerlist)
+StateTracker::StateTracker(CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListWidget *layerlist, QObject *parent)
+	: QObject(parent), _scene(scene), _image(image), _layerlist(layerlist)
 {
 	_layerlist->init();
 	connect(_layerlist, SIGNAL(layerSetHidden(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
@@ -69,6 +72,18 @@ void StateTracker::receiveCommand(protocol::Message *msg)
 			break;
 		case MSG_PUTIMAGE:
 			handlePutImage(*static_cast<PutImage*>(msg));
+			break;
+		case MSG_ANNOTATION_CREATE:
+			handleAnnotationCreate(*static_cast<AnnotationCreate*>(msg));
+			break;
+		case MSG_ANNOTATION_RESHAPE:
+			handleAnnotationReshape(*static_cast<AnnotationReshape*>(msg));
+			break;
+		case MSG_ANNOTATION_EDIT:
+			handleAnnotationEdit(*static_cast<AnnotationEdit*>(msg));
+			break;
+		case MSG_ANNOTATION_DELETE:
+			handleAnnotationDelete(*static_cast<AnnotationDelete*>(msg));
 			break;
 		default:
 			qDebug() << "Unhandled drawing command" << msg->type();
@@ -179,6 +194,49 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	QByteArray data = qUncompress(cmd.image());
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
 	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
+}
+
+void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
+{
+	AnnotationItem *item = new AnnotationItem(cmd.id());
+	item->setShowBorder(_scene->showAnnotationBorders());
+	item->setGeometry(QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
+
+	_scene->addItem(item);
+}
+
+void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cmd)
+{
+	AnnotationItem *item = _scene->getAnnotationById(cmd.id());
+	if(!item) {
+		qWarning() << "Got annotation reshape for non-existent annotation" << cmd.id();
+		return;
+	}
+
+	item->setGeometry(QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
+}
+
+void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
+{
+	AnnotationItem *item = _scene->getAnnotationById(cmd.id());
+	if(!item) {
+		qWarning() << "Got annotation edit for non-existent annotation" << cmd.id();
+		return;
+	}
+
+	item->setBackgroundColor(QColor::fromRgba(cmd.bg()));
+	item->setText(cmd.text());
+}
+
+void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
+{
+	AnnotationItem *item = _scene->getAnnotationById(cmd.id());
+	if(!item) {
+		qWarning() << "Got annotation delete for non-existent annotation" << cmd.id();
+		return;
+	}
+
+	delete item;
 }
 
 }

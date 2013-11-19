@@ -89,9 +89,20 @@ public:
 	//! Check if there are any annotations
 	bool hasAnnotations() const;
 
-	//! Get all annotations as message strings
-	// TODO
-	QStringList getAnnotations(bool zeroid) const;
+	//! Return the annotation at the given coordinates (if any)
+	AnnotationItem *annotationAt(const QPoint &point);
+
+	//! Return the annotation with the given ID
+	AnnotationItem *getAnnotationById(int id);
+
+	//! Are annotation borders shown?
+	bool showAnnotationBorders() const { return _showAnnotationBorders; }
+
+	//! Show/hide annotations
+	void showAnnotations(bool show);
+
+	//! Delete an annotation with the specific ID. Triggers annotationDeleted signal
+	void deleteAnnotation(int id);
 
 	//! Remove all annotations
 	void clearAnnotations();
@@ -113,28 +124,32 @@ public:
 	void flushPreviews();
 #endif
 
-	//! Show/hide annotations
-	void showAnnotations(bool show);
-
 	//! Pick a color at the given coordinates. Emits colorPicked
 	void pickColor(int x, int y);
 
+	/**
+	 * @brief Get the state tracker for this session.
+	 *
+	 * Note! The state tracker is deleted when this board is reinitialized!
+	 * @return state tracker instance
+	 */
+	StateTracker *statetracker() { return _statetracker; }
+
 public slots:
-	//! Highlight all annotations
-	void highlightAnnotations(bool hl);
+	//! Show annotation borders
+	void showAnnotationBorders(bool hl);
+
+	//! Unhilight an annotation
+	void unHilightAnnotation(int id);
 
 	void handleDrawingCommand(protocol::Message *cmd);
 
 signals:
-	//! The local user just created a new annotation
-	void newLocalAnnotation(drawingboard::AnnotationItem *item);
-
-	//! An annotation is about to be deleted
-	void annotationDeleted(drawingboard::AnnotationItem *item);
-
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color);
 
+	//! An annotation was just deleted
+	void annotationDeleted(int id);
 private:
 
 	//! Commit preview strokes to the board
@@ -162,7 +177,7 @@ private:
 	//! Graphics item for previewing a special tool shape
 	QGraphicsItem *_toolpreview;
 
-	bool hla_;
+	bool _showAnnotationBorders;
 
 	//! The layer list widget to update on layer changes
 	widgets::LayerListWidget *_layerlistwidget;

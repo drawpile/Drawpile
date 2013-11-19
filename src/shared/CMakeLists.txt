@@ -11,6 +11,7 @@ set (
 	net/layer.cpp
 	net/pen.cpp
 	net/image.cpp
+	net/annotation.cpp
 	)
 
 set (

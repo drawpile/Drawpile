@@ -69,7 +69,7 @@ void CanvasView::setClient(net::Client *client)
 	_toolbox.setClient(client);
 }
 
-void CanvasView::setToolSettings(widgets::ToolSettings *settings)
+void CanvasView::setToolSettings(widgets::ToolSettingsDock *settings)
 {
 	_toolbox.setToolSettings(settings);
 }

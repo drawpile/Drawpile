@@ -30,6 +30,7 @@
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
+#include "../shared/net/annotation.h"
 
 namespace net {
 
@@ -183,7 +184,46 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 			compressed
 		));
 	}
-	
+}
+
+void Client::sendAnnotationCreate(int id, const QRect &rect)
+{
+	Q_ASSERT(id>=0 && id < 256);
+	_server->sendMessage(new protocol::AnnotationCreate(id,
+		qMax(0, rect.x()),
+		qMax(0, rect.y()),
+		rect.width(),
+		rect.height()
+	));
+}
+
+void Client::sendAnnotationReshape(int id, const QRect &rect)
+{
+	Q_ASSERT(id>0 && id < 256);
+	_server->sendMessage(new protocol::AnnotationReshape(
+		id,
+		qMax(0, rect.x()),
+		qMax(0, rect.y()),
+		rect.width(),
+		rect.height()
+	));
+}
+
+void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
+{
+	Q_ASSERT(id>0 && id < 256);
+	_server->sendMessage(new protocol::AnnotationEdit(
+		id,
+		bg.rgba(),
+		text
+	));
+}
+
+
+void Client::sendAnnotationDelete(int id)
+{
+	Q_ASSERT(id>0 && id < 256);
+	_server->sendMessage(new protocol::AnnotationDelete(id));
 }
 
 void Client::handleMessage(protocol::Message *msg)

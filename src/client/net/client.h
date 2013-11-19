@@ -66,9 +66,14 @@ public:
 	void sendStroke(const dpcore::Point &point);
 	void sendStroke(const dpcore::PointVector &points);
 	void sendPenup();
-	
 	void sendImage(int layer, int x, int y, const QImage &image, bool blend);
-	
+
+	// Annotations
+	void sendAnnotationCreate(int id, const QRect &rect);
+	void sendAnnotationReshape(int id, const QRect &rect);
+	void sendAnnotationEdit(int id, const QColor &bg, const QString &text);
+	void sendAnnotationDelete(int id);
+
 signals:
 	void drawingCommandReceived(protocol::Message *msg);
 

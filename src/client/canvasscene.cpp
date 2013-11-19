@@ -36,7 +36,7 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget)
-    : QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), hla_(false),
+	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _showAnnotationBorders(false),
 	_layerlistwidget(layerlistwidget)
 {
 	setItemIndexMethod(NoIndex);
@@ -56,7 +56,7 @@ void CanvasScene::initCanvas()
 	delete _image;
 	delete _statetracker;
 	_image = new CanvasItem();
-	_statetracker = new StateTracker(_image->image(), _layerlistwidget);
+	_statetracker = new StateTracker(this, _image->image(), _layerlistwidget);
 	
 	addItem(_image);
 	clearAnnotations();
@@ -102,7 +102,7 @@ bool CanvasScene::initBoard(const QString& file)
 #if 0
 		foreach(QString a, reader.annotations()) {
 			AnnotationItem *item = new AnnotationItem(AnnotationItem::nextId(), _image);
-			item->forceBorder(hla_);
+			item->showBorder(hla_);
 			// Parse the annotation message
 			protocol::Message msg(a);
 			item->setOptions(protocol::Annotation(msg.tokens()));
@@ -125,6 +125,7 @@ bool CanvasScene::initBoard(const QString& file)
 }
 #endif
 
+#if 0
 /**
  * @param zeroid if true, set the ID of each annotation to zero
  * @return list of ANNOTATE messages
@@ -132,7 +133,7 @@ bool CanvasScene::initBoard(const QString& file)
 QStringList CanvasScene::getAnnotations(bool zeroid) const
 {
 	QStringList messages;
-#if 0
+
 	if(_image)
 		foreach(QGraphicsItem *item, _image->childItems())
 			if(item->type() == AnnotationItem::Type) {
@@ -142,35 +143,81 @@ QStringList CanvasScene::getAnnotations(bool zeroid) const
 					a.id = 0;
 				messages << protocol::Message::quote(a.tokens());
 			}
-#endif
 	return messages;
 }
+#endif
 
 void CanvasScene::clearAnnotations()
 {
-	if(_image)
-		foreach(QGraphicsItem *item, _image->childItems())
-			if(item->type() == AnnotationItem::Type) {
-				emit annotationDeleted(static_cast<AnnotationItem*>(item));
-				delete item;
-			}
+	foreach(QGraphicsItem *item, items()) {
+		if(item->type() == AnnotationItem::Type) {
+			emit annotationDeleted(static_cast<AnnotationItem*>(item)->id());
+			delete item;
+		}
+	}
 }
 
 void CanvasScene::showAnnotations(bool show)
 {
-	if(_image)
-		foreach(QGraphicsItem *item, _image->childItems())
-			if(item->type() == AnnotationItem::Type)
-				item->setVisible(show);
+	foreach(QGraphicsItem *item, items()) {
+		if(item->type() == AnnotationItem::Type)
+			item->setVisible(show);
+	}
 }
 
-void CanvasScene::highlightAnnotations(bool hl)
+void CanvasScene::showAnnotationBorders(bool hl)
 {
-	hla_ = hl;
-	if(_image)
-		foreach(QGraphicsItem *item, _image->childItems())
-			if(item->type() == AnnotationItem::Type)
-				static_cast<AnnotationItem*>(item)->forceBorder(hl);
+	_showAnnotationBorders = hl;
+	foreach(QGraphicsItem *item, items()) {
+		if(item->type() == AnnotationItem::Type)
+			static_cast<AnnotationItem*>(item)->setShowBorder(hl);
+	}
+}
+
+void CanvasScene::unHilightAnnotation(int id)
+{
+	AnnotationItem *i = getAnnotationById(id);
+	if(i)
+		i->setHighlight(false);
+}
+
+bool CanvasScene::hasAnnotations() const
+{
+	foreach(const QGraphicsItem *i, items()) {
+		if(i->type() == AnnotationItem::Type)
+			return true;
+	}
+	return false;
+}
+
+AnnotationItem *CanvasScene::annotationAt(const QPoint &point)
+{
+	foreach(QGraphicsItem *i, items(point)) {
+		if(i->type() == AnnotationItem::Type)
+			return static_cast<AnnotationItem*>(i);
+	}
+	return 0;
+}
+
+AnnotationItem *CanvasScene::getAnnotationById(int id)
+{
+	foreach(QGraphicsItem *i, items()) {
+		if(i->type() == AnnotationItem::Type) {
+			AnnotationItem *item = static_cast<AnnotationItem*>(i);
+			if(item->id() == id)
+				return item;
+		}
+	}
+	return 0;
+}
+
+void CanvasScene::deleteAnnotation(int id)
+{
+	AnnotationItem *a = getAnnotationById(id);
+	if(a) {
+		emit annotationDeleted(id);
+		delete a;
+	}
 }
 
 /**
@@ -204,7 +251,9 @@ bool CanvasScene::save(const QString& file) const
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
 		openraster::Writer writer(_image->image());
+#if 0
 		writer.setAnnotations(getAnnotations(true));
+#endif
 		return writer.save(file);
 	} else {
 		// Regular image formats: flatten the image first.
@@ -231,15 +280,6 @@ bool CanvasScene::needSaveOra() const
  */
 bool CanvasScene::hasImage() const {
 	return _image!=0;
-}
-
-bool CanvasScene::hasAnnotations() const
-{
-	if(_image)
-		foreach(QGraphicsItem *i, _image->childItems())
-			if(i->type() == AnnotationItem::Type)
-				return true;
-	return false;
 }
 
 /**
@@ -276,7 +316,8 @@ void CanvasScene::setToolPreview(QGraphicsItem *preview)
 {
     delete _toolpreview;
     _toolpreview = preview;
-    addItem(_toolpreview);
+	if(preview)
+		addItem(preview);
 }
 
 
@@ -359,93 +400,6 @@ void CanvasScene::handleDrawingCommand(protocol::Message *cmd)
 		qWarning() << "Received a drawing command but canvas does not exist!";
 	}
 }
-
-#if 0
-void CanvasScene::annotate(const protocol::Annotation& annotation)
-{
-	if(!_image) return;
-	AnnotationItem *item=0;
-	bool newitem = true;
-	// Find existing annotation
-	foreach(QGraphicsItem *i, _image->childItems()) {
-		if(i->type() == AnnotationItem::Type) {
-			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
-			if(ai->id() == annotation.id) {
-				item = ai;
-				newitem = false;
-				break;
-			}
-		}
-	}
-
-	if(item==0) {
-		item = new AnnotationItem(annotation.id, _image);
-		item->forceBorder(hla_);
-	}
-	item->setOptions(annotation);
-	if(newitem && annotation.user == localuser_)
-		emit newLocalAnnotation(item);
-}
-
-void CanvasScene::unannotate(int id)
-{
-	if(!_image) return;
-	AnnotationItem *item=0;
-	foreach(QGraphicsItem *i, _image->childItems()) {
-		if(i->type() == AnnotationItem::Type) {
-			AnnotationItem *ai = static_cast<AnnotationItem*>(i);
-			if(ai->id() == id) {
-				item = ai;
-				break;
-			}
-		}
-	}
-	if(item) {
-		emit annotationDeleted(item);
-		delete item;
-	} else {
-		qWarning() << "Can't delete annotation" << id << "because it doesn't exist!";
-	}
-}
-
-void CanvasScene::addLayer(const QString& name)
-{
-	layers()->addLayer(name, layers()->size());
-}
-
-/**
- * The layer is removed while making sure all users still have a valid
- * layer selection.
- * to something else.
- * @param layer id
- */
-void CanvasScene::deleteLayer(int id, bool mergedown)
-{
-	const int index = layers()->indexOf(id);
-	if(index<0) {
-		// Should never happen
-		qWarning() << "Tried to delete nonexistent layer" << id;
-		return;
-	}
-
-	if(mergedown)
-		layers()->mergeLayerDown(id);
-
-	layers()->deleteLayer(id);
-
-	foreach(User *u, users_) {
-		if(u->layer() == id) {
-			if(layers()->layers()-index>0)
-				u->setLayerId(layers()->getLayerByIndex(index)->id());
-			else
-				u->setLayerId(layers()->getLayerByIndex(0)->id());
-		}
-	}
-
-	update();
-}
-
-#endif
 
 }
 

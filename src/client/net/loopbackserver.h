@@ -50,6 +50,7 @@ signals:
 	
 private:
 	UsedIdList _layer_ids;
+	UsedIdList _annotation_ids;
 };
 
 

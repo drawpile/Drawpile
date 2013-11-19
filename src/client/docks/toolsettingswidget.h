@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ class QStackedWidget;
 namespace tools {
 	class ToolSettings;
 	class AnnotationSettings;
-	class AnnotationEditor;
 }
 
 namespace dpcore {
@@ -42,13 +41,15 @@ namespace widgets {
 /**
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettings: public QDockWidget
+class ToolSettingsDock : public QDockWidget
 {
 	Q_OBJECT
 	public:
-		ToolSettings(QWidget *parent=0);
+		ToolSettingsDock(QWidget *parent=0);
+		ToolSettingsDock(const ToolSettingsDock& ts) = delete;
+		ToolSettingsDock& operator=(const ToolSettingsDock& ts) = delete;
 
-		~ToolSettings();
+		~ToolSettingsDock();
 
 		//! Get a brush with the current settings
 		const dpcore::Brush& getBrush() const;
@@ -63,6 +64,9 @@ class ToolSettings: public QDockWidget
 		//! This signal is emitted when the tool's colors are changed
 		void colorsChanged(const QColor& fg, const QColor& bg);
 
+		//! Switching away from annotation editor causes deselection
+		void annotationDeselected(int id);
+
 	public slots:
 		//! Set the tool for which settings are shown
 		void setTool(tools::Type tool);
@@ -74,9 +78,6 @@ class ToolSettings: public QDockWidget
 		void setBackground(const QColor& color);
 
 	private:
-		ToolSettings(const ToolSettings& ts);
-		ToolSettings& operator=(const ToolSettings& ts);
-
 		tools::ToolSettings *pensettings_;
 		tools::ToolSettings *brushsettings_;
 		tools::ToolSettings *erasersettings_;
