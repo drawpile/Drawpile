@@ -32,6 +32,8 @@
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
 
+using protocol::MessagePtr;
+
 namespace net {
 
 Client::Client(QObject *parent)
@@ -42,9 +44,9 @@ Client::Client(QObject *parent)
 	
 	connect(
 		_loopback,
-		SIGNAL(messageReceived(protocol::Message*)),
+		SIGNAL(messageReceived(protocol::MessagePtr)),
 		this,
-		SLOT(handleMessage(protocol::Message*))
+		SLOT(handleMessage(protocol::MessagePtr))
 	);
 }
 
@@ -59,40 +61,40 @@ void Client::init()
 
 void Client::sendCanvasResize(const QSize &newsize)
 {
-	_server->sendMessage(new protocol::CanvasResize(
+	_server->sendMessage(MessagePtr(new protocol::CanvasResize(
 		newsize.width(),
 		newsize.height()
-	));
+	)));
 }
 
 void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(new protocol::LayerCreate(id, fill.rgba(), title));
+	_server->sendMessage(MessagePtr(new protocol::LayerCreate(id, fill.rgba(), title)));
 }
 
 void Client::sendLayerAttribs(int id, float opacity, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(new protocol::LayerAttributes(id, opacity*255, 0, title));
+	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, 0, title)));
 }
 
 void Client::sendDeleteLayer(int id, bool merge)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(new protocol::LayerDelete(id, merge));
+	_server->sendMessage(MessagePtr(new protocol::LayerDelete(id, merge)));
 }
 
 void Client::sendLayerReorder(const QList<uint8_t> &ids)
 {
 	Q_ASSERT(ids.size()>0);
-	_server->sendMessage(new protocol::LayerOrder(ids));
+	_server->sendMessage(MessagePtr(new protocol::LayerOrder(ids)));
 }
 
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 {
 	// TODO check if needs resending
-	_server->sendMessage(new protocol::ToolChange(
+	_server->sendMessage(MessagePtr(new protocol::ToolChange(
 		_my_id,
 		ctx.layer_id,
 		ctx.brush.blendingMode(),
@@ -106,7 +108,7 @@ void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 		ctx.brush.radius(0.0),
 		ctx.brush.opacity(1.0) * 255,
 		ctx.brush.opacity(0.0) * 255
-	));
+	)));
 }
 
 protocol::PenPoint point2net(const dpcore::Point &p)
@@ -119,7 +121,7 @@ void Client::sendStroke(const dpcore::Point &point)
 {
 	protocol::PenPointVector v(1);
 	v[0] = point2net(point);
-	_server->sendMessage(new protocol::PenMove(_my_id, v));
+	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, v)));
 }
 
 void Client::sendStroke(const dpcore::PointVector &points)
@@ -128,12 +130,12 @@ void Client::sendStroke(const dpcore::PointVector &points)
 	for(int i=0;i<points.size();++i)
 		v[i] = point2net(points[i]);
 	
-	_server->sendMessage(new protocol::PenMove(_my_id, v));
+	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, v)));
 }
 
 void Client::sendPenup()
 {
-	_server->sendMessage(new protocol::PenUp(_my_id));
+	_server->sendMessage(MessagePtr(new protocol::PenUp(_my_id)));
 }
 
 /**
@@ -174,7 +176,7 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 	
 	} else {
 		// It fits! Send data!
-		_server->sendMessage(new protocol::PutImage(
+		_server->sendMessage(MessagePtr(new protocol::PutImage(
 			layer,
 			blend ? protocol::PutImage::MODE_BLEND : 0,
 			x,
@@ -182,51 +184,51 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 			image.width(),
 			image.height(),
 			compressed
-		));
+		)));
 	}
 }
 
 void Client::sendAnnotationCreate(int id, const QRect &rect)
 {
 	Q_ASSERT(id>=0 && id < 256);
-	_server->sendMessage(new protocol::AnnotationCreate(id,
+	_server->sendMessage(MessagePtr(new protocol::AnnotationCreate(id,
 		qMax(0, rect.x()),
 		qMax(0, rect.y()),
 		rect.width(),
 		rect.height()
-	));
+	)));
 }
 
 void Client::sendAnnotationReshape(int id, const QRect &rect)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(new protocol::AnnotationReshape(
+	_server->sendMessage(MessagePtr(new protocol::AnnotationReshape(
 		id,
 		qMax(0, rect.x()),
 		qMax(0, rect.y()),
 		rect.width(),
 		rect.height()
-	));
+	)));
 }
 
 void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(new protocol::AnnotationEdit(
+	_server->sendMessage(MessagePtr(new protocol::AnnotationEdit(
 		id,
 		bg.rgba(),
 		text
-	));
+	)));
 }
 
 
 void Client::sendAnnotationDelete(int id)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(new protocol::AnnotationDelete(id));
+	_server->sendMessage(MessagePtr(new protocol::AnnotationDelete(id)));
 }
 
-void Client::handleMessage(protocol::Message *msg)
+void Client::handleMessage(protocol::MessagePtr msg)
 {
 	if(msg->isCommand()) {
 		emit drawingCommandReceived(msg);

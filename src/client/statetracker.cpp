@@ -42,55 +42,52 @@ StateTracker::StateTracker(CanvasScene *scene, dpcore::LayerStack *image, widget
 	connect(_layerlist, SIGNAL(layerSetHidden(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
 	
-void StateTracker::receiveCommand(protocol::Message *msg)
+void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
 	switch(msg->type()) {
 		using namespace protocol;
 		case MSG_CANVAS_RESIZE:
-			handleCanvasResize(*static_cast<CanvasResize*>(msg));
+			handleCanvasResize(msg.cast<CanvasResize>());
 			break;
 		case MSG_LAYER_CREATE:
-			handleLayerCreate(*static_cast<LayerCreate*>(msg));
+			handleLayerCreate(msg.cast<LayerCreate>());
 			break;
 		case MSG_LAYER_ATTR:
-			handleLayerAttributes(*static_cast<LayerAttributes*>(msg));
+			handleLayerAttributes(msg.cast<LayerAttributes>());
 			break;
 		case MSG_LAYER_ORDER:
-			handleLayerOrder(*static_cast<LayerOrder*>(msg));
+			handleLayerOrder(msg.cast<LayerOrder>());
 			break;
 		case MSG_LAYER_DELETE:
-			handleLayerDelete(*static_cast<LayerDelete*>(msg));
+			handleLayerDelete(msg.cast<LayerDelete>());
 			break;
 		case MSG_TOOLCHANGE:
-			handleToolChange(*static_cast<ToolChange*>(msg));
+			handleToolChange(msg.cast<ToolChange>());
 			break;
 		case MSG_PEN_MOVE:
-			handlePenMove(*static_cast<PenMove*>(msg));
+			handlePenMove(msg.cast<PenMove>());
 			break;
 		case MSG_PEN_UP:
-			handlePenUp(*static_cast<PenUp*>(msg));
+			handlePenUp(msg.cast<PenUp>());
 			break;
 		case MSG_PUTIMAGE:
-			handlePutImage(*static_cast<PutImage*>(msg));
+			handlePutImage(msg.cast<PutImage>());
 			break;
 		case MSG_ANNOTATION_CREATE:
-			handleAnnotationCreate(*static_cast<AnnotationCreate*>(msg));
+			handleAnnotationCreate(msg.cast<AnnotationCreate>());
 			break;
 		case MSG_ANNOTATION_RESHAPE:
-			handleAnnotationReshape(*static_cast<AnnotationReshape*>(msg));
+			handleAnnotationReshape(msg.cast<AnnotationReshape>());
 			break;
 		case MSG_ANNOTATION_EDIT:
-			handleAnnotationEdit(*static_cast<AnnotationEdit*>(msg));
+			handleAnnotationEdit(msg.cast<AnnotationEdit>());
 			break;
 		case MSG_ANNOTATION_DELETE:
-			handleAnnotationDelete(*static_cast<AnnotationDelete*>(msg));
+			handleAnnotationDelete(msg.cast<AnnotationDelete>());
 			break;
 		default:
 			qDebug() << "Unhandled drawing command" << msg->type();
 	}
-	
-	// TODO
-	delete msg;
 }
 
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)

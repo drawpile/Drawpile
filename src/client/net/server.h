@@ -21,9 +21,7 @@
 #ifndef DP_NET_SERVER_H
 #define DP_NET_SERVER_H
 
-namespace protocol {
-	class Message;
-}
+#include "../shared/net/message.h"
 
 namespace net {
 
@@ -37,7 +35,7 @@ public:
 	/**
 	 * \brief Send a message to the server
 	 */
-	virtual void sendMessage(protocol::Message *msg) = 0;
+    virtual void sendMessage(protocol::MessagePtr msg) = 0;
 };
 
 

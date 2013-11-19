@@ -43,10 +43,10 @@ public:
 	/**
 	 * \brief Send a message to the server
 	 */
-	void sendMessage(protocol::Message *msg);
+	void sendMessage(protocol::MessagePtr msg);
 
 signals:
-	void messageReceived(protocol::Message *message);
+	void messageReceived(protocol::MessagePtr message);
 	
 private:
 	UsedIdList _layer_ids;

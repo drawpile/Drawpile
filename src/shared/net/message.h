@@ -55,8 +55,9 @@ enum MessageType {
 };
 
 class Message {
+	friend class MessagePtr;
 public:
-	Message(MessageType type): _type(type) {}
+	Message(MessageType type): _type(type), _refcount(0) {}
 	virtual ~Message() = default;
 	
 	/**
@@ -89,6 +90,53 @@ protected:
 	
 private:
 	const MessageType _type;
+
+	int _refcount;
+};
+
+/**
+* @brief A reference counting pointer for Messages
+*
+* This object is the length of a normal pointer so it can be used
+* efficiently with QList.
+*/
+class MessagePtr {
+public:
+	explicit MessagePtr(Message *msg)
+		: _ptr(msg)
+	{
+		Q_ASSERT(_ptr);
+		Q_ASSERT(_ptr->_refcount==0);
+		++_ptr->_refcount;
+	}
+
+	MessagePtr(const MessagePtr &ptr) : _ptr(ptr._ptr) { ++_ptr->_refcount; }
+
+	~MessagePtr()
+	{
+		Q_ASSERT(_ptr->_refcount>0);
+		if(--_ptr->_refcount == 0)
+			delete _ptr;
+	}
+
+	MessagePtr &operator=(const MessagePtr &msg)
+	{
+		if(msg._ptr != _ptr) {
+			Q_ASSERT(_ptr->_refcount>0);
+			if(--_ptr->_refcount == 0)
+				delete _ptr;
+			_ptr = msg._ptr;
+			++_ptr->_refcount;
+		}
+	}
+
+	Message &operator*() const { return *_ptr; }
+	Message *operator ->() const { return _ptr; }
+
+	template<class msgtype> msgtype &cast() const { return static_cast<msgtype&>(*_ptr); }
+
+private:
+	Message *_ptr;
 };
 
 }

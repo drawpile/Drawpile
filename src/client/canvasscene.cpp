@@ -392,7 +392,7 @@ void CanvasScene::flushPreviews()
 }
 #endif
 
-void CanvasScene::handleDrawingCommand(protocol::Message *cmd)
+void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 {
 	if(_statetracker) {
 		_statetracker->receiveCommand(cmd);

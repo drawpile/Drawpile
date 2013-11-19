@@ -25,13 +25,10 @@
 #include <QQueue>
 
 #include "core/point.h"
+#include "../shared/net/message.h"
 
 namespace dpcore {
 	class LayerStack;
-}
-
-namespace protocol {
-	class Message;
 }
 
 namespace widgets {
@@ -142,7 +139,7 @@ public slots:
 	//! Unhilight an annotation
 	void unHilightAnnotation(int id);
 
-	void handleDrawingCommand(protocol::Message *cmd);
+	void handleDrawingCommand(protocol::MessagePtr cmd);
 
 signals:
 	//! User used a color picker tool on this scene

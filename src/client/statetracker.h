@@ -26,9 +26,9 @@
 
 #include "core/brush.h"
 #include "core/point.h"
+#include "../shared/net/message.h"
 
 namespace protocol {
-	class Message;
 	class CanvasResize;
 	class LayerCreate;
 	class LayerAttributes;
@@ -94,7 +94,7 @@ class StateTracker : public QObject {
 public:
 	StateTracker(CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListWidget *llist, QObject *parent=0);
 	
-	void receiveCommand(protocol::Message *msg);
+	void receiveCommand(protocol::MessagePtr msg);
 
 private:
 	// Layer related commands

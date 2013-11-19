@@ -36,25 +36,25 @@ void LoopbackServer::reset()
 	_annotation_ids.reset();
 }
 
-void LoopbackServer::sendMessage(protocol::Message *msg)
+void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 {
 	// Keep track of layer and annotation IDs.
 	switch(msg->type()) {
 		using namespace protocol;
 		case MSG_LAYER_CREATE: {
-			LayerCreate *lc = static_cast<LayerCreate*>(msg);
-			if(lc->id() == 0)
-				lc->setId(_layer_ids.takeNext());
+			LayerCreate &lc = msg.cast<LayerCreate>();
+			if(lc.id() == 0)
+				lc.setId(_layer_ids.takeNext());
 			else
-				_layer_ids.reserve(lc->id());
+				_layer_ids.reserve(lc.id());
 			break;
 		}
 		case MSG_ANNOTATION_CREATE: {
-			AnnotationCreate *ac = static_cast<AnnotationCreate*>(msg);
-			if(ac->id() == 0)
-				ac->setId(_annotation_ids.takeNext());
+			AnnotationCreate &ac = msg.cast<AnnotationCreate>();
+			if(ac.id() == 0)
+				ac.setId(_annotation_ids.takeNext());
 			else
-				_annotation_ids.reserve(ac->id());
+				_annotation_ids.reserve(ac.id());
 			break;
 		}
 		default: /* no special handling needed */ break;

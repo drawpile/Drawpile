@@ -161,7 +161,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	_toolsettings->getAnnotationSettings()->setClient(_client);
 	
 	// Client command receive signals
-	connect(_client, SIGNAL(drawingCommandReceived(protocol::Message*)), _canvas, SLOT(handleDrawingCommand(protocol::Message*)));
+	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
 
 #if 0
 	controller_ = new Controller(_toolsettings->getAnnotationSettings(), this);

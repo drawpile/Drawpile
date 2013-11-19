@@ -24,13 +24,10 @@
 #include <QObject>
 
 #include "core/point.h"
+#include "../shared/net/message.h"
 
 namespace dpcore {
 	class Point;
-}
-
-namespace protocol {
-	class Message;
 }
 
 namespace drawingboard {
@@ -75,10 +72,10 @@ public:
 	void sendAnnotationDelete(int id);
 
 signals:
-	void drawingCommandReceived(protocol::Message *msg);
+	void drawingCommandReceived(protocol::MessagePtr msg);
 
 protected slots:
-	void handleMessage(protocol::Message *msg);
+	void handleMessage(protocol::MessagePtr msg);
 
 private:
 	Server *_server;
