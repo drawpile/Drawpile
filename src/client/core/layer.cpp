@@ -405,12 +405,16 @@ void Layer::fillChecker(const QColor& dark, const QColor& light)
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		tiles_[i]->fillChecker(dark, light);
+	if(owner_ && visible())
+		owner_->markDirty();
 }
 
 void Layer::fillColor(const QColor& color)
 {
 	for(int i=0;i<xtiles_*ytiles_;++i)
 		tiles_[i]->fillColor(color);
+	if(owner_ && visible())
+		owner_->markDirty();
 }
 
 /**
