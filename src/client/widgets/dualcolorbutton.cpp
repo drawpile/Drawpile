@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2010 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+
+#include <cmath>
 
 #include <QApplication>
 #include <QPainter>
@@ -83,7 +85,12 @@ void DualColorButton::swapColors()
 QRectF DualColorButton::foregroundRect() const
 {
 	// foreground rectangle fills the upper left two thirds of the widget
-	return QRectF(0,0.5, width()/3.0*2, height()/3.0*2);
+	return QRectF(
+			0.5,
+			0.5,
+			ceil(width()/3.0*2),
+			ceil(height()/3.0*2)
+	);
 }
 
 QRectF DualColorButton::backgroundRect() const
@@ -92,22 +99,27 @@ QRectF DualColorButton::backgroundRect() const
 	// It is partially obscured by the foreground rectangle
 	const float x = width() / 3.0;
 	const float y = height() / 3.0;
-	return QRectF(x-1,y-1, x*2-1, y*2-1);
+	return QRectF(
+		floor(x-1) + 0.5,
+		floor(y-1) + 0.5,
+		ceil(x*2),
+		ceil(y*2)
+	);
 }
 
 QRectF DualColorButton::resetBlackRect() const
 {
-	const int w = width() / (3.0 * (3.0 / 2.0)) - 2;
-	const int h = height() / (3.0 * (3.0 / 2.0)) - 2;
-	const int x = 1;
-	const int y = 1 + height() * (2.0 / 3.0);
-	return QRectF(x, y, w, h);
+	const float w = floor(width() / (3.0 * (3.0 / 2.0)) - 2);
+	const float h = floor(height() / (3.0 * (3.0 / 2.0)) - 2);
+	const float x = 1;
+	const float y = ceil(1 + height() * (2.0 / 3.0));
+	return QRectF(x+0.5, y+0.5, w, h);
 }
 
 QRectF DualColorButton::resetWhiteRect() const
 {
 	QRectF r = resetBlackRect();
-	r.translate(r.width()/2.0, r.height()/2.0);
+	r.translate(floor(r.width()/2.0), ceil(r.height()/2.0));
 	return r;
 }
 
@@ -155,7 +167,7 @@ void DualColorButton::paintEvent(QPaintEvent *event)
 		QPointF(2, 0)
 	};
 	const qreal scale = (1.0 / 8.0) * width() / 3.0;
-	painter.translate(fgbox.width() + 0.5, 0);
+	painter.translate(ceil(fgbox.width()) + 0.0, 0);
 	painter.scale(scale, scale);
 	painter.setPen(hilite_==3 ? hilite : normal);
 	painter.setBrush(palette().dark());
