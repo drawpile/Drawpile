@@ -184,6 +184,9 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
  */
 void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
+	if(_layers.isEmpty())
+		return;
+
 	// Refresh cache
 	const int tx0 = qBound(0, int(rect.left()) / Tile::SIZE, _xtiles-1);
 	const int tx1 = qBound(tx0, int(rect.right()) / Tile::SIZE, _xtiles-1);
@@ -268,6 +271,8 @@ void LayerStack::updateCache(int xindex, int yindex)
 
 void LayerStack::markDirty(const QRect &area)
 {
+	if(_layers.isEmpty())
+		return;
 	int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
 	int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1);
 	int ty0 = qBound(0, area.top() / Tile::SIZE, _ytiles-1);
@@ -283,6 +288,8 @@ void LayerStack::markDirty(const QRect &area)
 
 void LayerStack::markDirty()
 {
+	if(_layers.isEmpty())
+		return;
 	_dirtytiles.fill(true);
 	emit areaChanged(QRect(0, 0, _width, _height));
 }
