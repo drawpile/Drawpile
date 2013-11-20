@@ -185,10 +185,10 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
 void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
 	// Refresh cache
-	const int tx0 = qBound(0, int(rect.left() / Tile::SIZE), _xtiles-1);
-	const int tx1 = qBound(0, int(rect.right() / Tile::SIZE), _xtiles-1);
-	const int ty0 = qBound(0, int(rect.top() / Tile::SIZE), _ytiles-1);
-	const int ty1 = qBound(0, int(rect.bottom() / Tile::SIZE), _ytiles-1);
+	const int tx0 = qBound(0, int(rect.left()) / Tile::SIZE, _xtiles-1);
+	const int tx1 = qBound(tx0, int(rect.right()) / Tile::SIZE, _xtiles-1);
+	const int ty0 = qBound(0, int(rect.top()) / Tile::SIZE, _ytiles-1);
+	const int ty1 = qBound(ty0, int(rect.bottom()) / Tile::SIZE, _ytiles-1);
 
 	for(int ty=ty0;ty<=ty1;++ty) {
 		const int y = ty*_xtiles;
@@ -268,10 +268,10 @@ void LayerStack::updateCache(int xindex, int yindex)
 
 void LayerStack::markDirty(const QRect &area)
 {
-	int tx0 = area.left() / Tile::SIZE;
-	int tx1 = qMin(_width-1, area.right()) / Tile::SIZE;
-	int ty0 = area.top() / Tile::SIZE;
-	int ty1 = qMin(_height-1, area.bottom()) / Tile::SIZE;
+	int tx0 = qBound(0, area.left() / Tile::SIZE, _xtiles-1);
+	int tx1 = qBound(tx0, area.right() / Tile::SIZE, _xtiles-1);
+	int ty0 = qBound(0, area.top() / Tile::SIZE, _ytiles-1);
+	int ty1 = qBound(ty0, area.bottom() / Tile::SIZE, _ytiles-1);
 	
 	for(;ty0<=ty1;++ty0) {
 		for(int tx=tx0;tx<=tx1;++tx) {
