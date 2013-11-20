@@ -18,7 +18,14 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
+
+#include <QDebug>
+
 #include "loopbackserver.h"
+
+#ifdef LAG_SIMULATOR
+#include <QTimer>
+#endif
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -28,6 +35,10 @@ namespace net {
 LoopbackServer::LoopbackServer(QObject *parent)
 	: QObject(parent), _layer_ids(255), _annotation_ids(255)
 {
+#ifdef LAG_SIMULATOR
+	_lagtimer = new QTimer(this);
+	connect(_lagtimer, SIGNAL(timeout()), this, SLOT(sendDelayedMessage()));
+#endif
 }
 	
 void LoopbackServer::reset()
@@ -59,7 +70,25 @@ void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 		}
 		default: /* no special handling needed */ break;
 	}
+#ifdef LAG_SIMULATOR
+	_msgqueue.append(msg);
+	if(!_lagtimer->isActive()) {
+		_lagtimer->start(qrand() % LAG_SIMULATOR);
+	}
+#else
 	emit messageReceived(msg);
+#endif
 }
+
+#ifdef LAG_SIMULATOR
+void LoopbackServer::sendDelayedMessage()
+{
+	if(!_msgqueue.isEmpty()) {
+		qDebug() << "sending" << _msgqueue.first()->type();
+		emit messageReceived(_msgqueue.takeFirst());
+		_lagtimer->start(qrand() % LAG_SIMULATOR);
+	}
+}
+#endif
 
 }

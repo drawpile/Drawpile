@@ -27,6 +27,14 @@
 
 #include "../shared/util/idlist.h"
 
+/*
+ * Uncomment this to enable network lag simulator.
+ * The number is the maximum amount of lag in milliseconds to inject between messages.
+ */
+#define LAG_SIMULATOR 50
+
+class QTimer;
+
 namespace net {
 
 /**
@@ -48,9 +56,18 @@ public:
 signals:
 	void messageReceived(protocol::MessagePtr message);
 	
+private slots:
+#ifdef LAG_SIMULATOR
+	void sendDelayedMessage();
+#endif
+
 private:
 	UsedIdList _layer_ids;
 	UsedIdList _annotation_ids;
+#ifdef LAG_SIMULATOR
+	QTimer *_lagtimer;
+	QList<protocol::MessagePtr> _msgqueue;
+#endif
 };
 
 
