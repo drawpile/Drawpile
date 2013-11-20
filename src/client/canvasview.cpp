@@ -231,13 +231,12 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 	if(isdragging_) {
 		moveDrag(event->x(), event->y());
-	} else {;
+	} else {
 		const dpcore::Point point(mapToScene(event->pos()), 1.0);
 		if(!prevpoint_.intSame(point)) {
 			if(pendown_)
 				onPenMove(point);
-			else
-				updateOutline(point);
+			updateOutline(point);
 			prevpoint_ = point;
 		}
 	}
