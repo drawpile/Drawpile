@@ -59,13 +59,13 @@ class CanvasView : public QGraphicsView
 		void setToolSettings(widgets::ToolSettingsDock *settings);
 		
 		//! Get the current zoom factor
-		int zoom() const { return zoom_; }
+		int zoom() const { return _zoom; }
 
 		//! Set the zoom factor
 		void setZoom(int zoom);
 
 		//! Get the current rotation angle in degrees
-		qreal rotation() const { return rotate_; }
+		qreal rotation() const { return _rotate; }
 
 		//! Set the rotation angle in degrees
 		void setRotation(qreal angle);
@@ -142,25 +142,25 @@ class CanvasView : public QGraphicsView
 		 * - MOUSDOWN mouse is down
 		 * - TABLETDOWN tablet stylus is down
 		 */
-		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} pendown_;
+		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} _pendown;
 
 		//! Is the view being dragged
-		ViewTransform isdragging_;
-		ViewTransform dragbtndown_;
-		int dragx_,dragy_;
+		ViewTransform _isdragging;
+		ViewTransform _dragbtndown;
+		int _dragx,_dragy;
 
 		//! Previous pointer location
-		dpcore::Point prevpoint_;
+		dpcore::Point _prevpoint;
 
-		int outlinesize_, dia_;
-		bool enableoutline_,showoutline_;
-		QColor foreground_, background_;
-		QCursor cursor_;
+		int _outlinesize, _dia;
+		bool _enableoutline, _showoutline;
+		QColor _foreground, _background;
+		QCursor _cursor;
 
 		//! View zoom in percents
-		int zoom_;
+		int _zoom;
 		//! View rotation in degrees
-		qreal rotate_;
+		qreal _rotate;
 
 		drawingboard::CanvasScene *_scene;
 		

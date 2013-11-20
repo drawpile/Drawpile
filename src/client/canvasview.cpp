@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
@@ -34,9 +35,9 @@
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), pendown_(NOTDOWN), isdragging_(NOTRANSFORM),
-	dragbtndown_(NOTRANSFORM), outlinesize_(10), dia_(20),
-	enableoutline_(true), showoutline_(true), zoom_(100), rotate_(0)
+	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(NOTRANSFORM),
+	_dragbtndown(NOTRANSFORM), _outlinesize(10), _dia(20),
+	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -51,8 +52,8 @@ CanvasView::CanvasView(QWidget *parent)
 	QBitmap mask = bm;
 	bmp.setPen(Qt::color0);
 	bmp.drawPoint(16,16);
-	cursor_ = QCursor(bm, mask);
-	viewport()->setCursor(cursor_);
+	_cursor = QCursor(bm, mask);
+	viewport()->setCursor(_cursor);
 }
 
 void CanvasView::setBoard(drawingboard::CanvasScene *scene)
@@ -82,12 +83,12 @@ void CanvasView::setToolSettings(widgets::ToolSettingsDock *settings)
 void CanvasView::setZoom(int zoom)
 {
 	Q_ASSERT(zoom>0);
-	zoom_ = zoom;
+	_zoom = zoom;
 	QMatrix nm(1,0,0,1, matrix().dx(), matrix().dy());
-	nm.scale(zoom_/100.0, zoom_/100.0);
-	nm.rotate(rotate_);
+	nm.scale(_zoom/100.0, _zoom/100.0);
+	nm.rotate(_rotate);
 	setMatrix(nm);
-	emit viewTransformed(zoom_, rotate_);
+	emit viewTransformed(_zoom, _rotate);
 }
 
 /**
@@ -97,8 +98,8 @@ void CanvasView::setZoom(int zoom)
  */
 void CanvasView::setRotation(qreal angle)
 {
-	rotate_ = angle;
-	setZoom(zoom_);
+	_rotate = angle;
+	setZoom(_zoom);
 }
 
 void CanvasView::selectTool(tools::Type tool)
@@ -116,7 +117,7 @@ void CanvasView::selectLayer(int layer_id)
  */
 void CanvasView::setOutline(bool enable)
 {
-	enableoutline_ = enable;
+	_enableoutline = enable;
 	viewport()->setMouseTracking(enable);
 }
 
@@ -128,13 +129,13 @@ void CanvasView::setOutline(bool enable)
  */
 void CanvasView::setOutlineColors(const QColor& fg, const QColor& bg)
 {
-	foreground_ = fg;
-	background_ = bg;
-	if(enableoutline_ && showoutline_) {
+	_foreground = fg;
+	_background = bg;
+	if(_enableoutline && _showoutline) {
 		QList<QRectF> rect;
-		rect.append(QRectF(prevpoint_.x() - outlinesize_,
-					prevpoint_.y() - outlinesize_,
-					dia_, dia_));
+		rect.append(QRectF(_prevpoint.x() - _outlinesize,
+					_prevpoint.y() - _outlinesize,
+					_dia, _dia));
 		updateScene(rect);
 	}
 }
@@ -144,15 +145,15 @@ void CanvasView::setOutlineColors(const QColor& fg, const QColor& bg)
  */
 void CanvasView::setOutlineRadius(int radius)
 {
-	int updatesize = outlinesize_;
-	outlinesize_ = radius;
-	dia_ = radius*2;
-	if(enableoutline_ && showoutline_) {
-		if(outlinesize_>updatesize)
-			updatesize = outlinesize_;
+	int updatesize = _outlinesize;
+	_outlinesize = radius;
+	_dia = radius*2;
+	if(_enableoutline && _showoutline) {
+		if(_outlinesize>updatesize)
+			updatesize = _outlinesize;
 		QList<QRectF> rect;
-		rect.append(QRectF(prevpoint_.x() - updatesize,
-					prevpoint_.y() - updatesize,
+		rect.append(QRectF(_prevpoint.x() - updatesize,
+					_prevpoint.y() - updatesize,
 					updatesize*2, updatesize*2));
 		updateScene(rect);
 	}
@@ -160,17 +161,17 @@ void CanvasView::setOutlineRadius(int radius)
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
-	if(enableoutline_ && showoutline_ && outlinesize_>1) {
-		const QRectF outline(prevpoint_-QPointF(outlinesize_,outlinesize_),
-					QSizeF(dia_, dia_));
+	if(_enableoutline && _showoutline && _outlinesize>1) {
+		const QRectF outline(_prevpoint-QPointF(_outlinesize,_outlinesize),
+					QSizeF(_dia, _dia));
 		if(rect.intersects(outline)) {
 			//painter->setClipRect(0,0,_scene->width(),_scene->height()); // default
 			//painter->setClipRect(outline.adjusted(-7, -7, 7, 7)); // smaller clipping
 			//painter->setRenderHint(QPainter::Antialiasing, true); // default
-			QPen pen(background_);
+			QPen pen(_background);
 			painter->setPen(pen);
 			painter->drawEllipse(outline);
-			pen.setColor(foreground_);
+			pen.setColor(_foreground);
 			pen.setStyle(Qt::DashLine);
 			painter->setPen(pen);
 			painter->drawEllipse(outline);
@@ -181,8 +182,8 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 void CanvasView::enterEvent(QEvent *event)
 {
 	QGraphicsView::enterEvent(event);
-	if(enableoutline_) {
-		showoutline_ = true;
+	if(_enableoutline) {
+		_showoutline = true;
 	}
 	// Give focus to this widget on mouseover. This is so that
 	// using spacebar for dragging works rightaway.
@@ -192,12 +193,12 @@ void CanvasView::enterEvent(QEvent *event)
 void CanvasView::leaveEvent(QEvent *event)
 {
 	QGraphicsView::leaveEvent(event);
-	if(enableoutline_) {
-		showoutline_ = false;
+	if(_enableoutline) {
+		_showoutline = false;
 		QList<QRectF> rect;
-		rect.append(QRectF(prevpoint_.x() - outlinesize_,
-					prevpoint_.y() - outlinesize_,
-					dia_, dia_));
+		rect.append(QRectF(_prevpoint.x() - _outlinesize,
+					_prevpoint.y() - _outlinesize,
+					_dia, _dia));
 		updateScene(rect);
 	}
 }
@@ -206,12 +207,12 @@ void CanvasView::leaveEvent(QEvent *event)
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(pendown_ != NOTDOWN)
+	if(_pendown != NOTDOWN)
 		return;
-	if(event->button() == Qt::MidButton || dragbtndown_) {
-		startDrag(event->x(), event->y(), dragbtndown_!=ROTATE?TRANSLATE:ROTATE);
-	} else if(event->button() == Qt::LeftButton && isdragging_==NOTRANSFORM) {
-		pendown_ = MOUSEDOWN;
+	if(event->button() == Qt::MidButton || _dragbtndown) {
+		startDrag(event->x(), event->y(), _dragbtndown!=ROTATE?TRANSLATE:ROTATE);
+	} else if(event->button() == Qt::LeftButton && _isdragging==NOTRANSFORM) {
+		_pendown = MOUSEDOWN;
 		
 		onPenDown(dpcore::Point(mapToScene(event->pos()), 1.0));
 	}
@@ -221,23 +222,23 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 void CanvasView::mouseMoveEvent(QMouseEvent *event)
 {
 	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(pendown_ == TABLETDOWN)
+	if(_pendown == TABLETDOWN)
 		return;
-	if(pendown_ && event->buttons() == Qt::NoButton) {
+	if(_pendown && event->buttons() == Qt::NoButton) {
 		// In case we missed a mouse release
 		mouseReleaseEvent(event);
 		return;
 	}
 
-	if(isdragging_) {
+	if(_isdragging) {
 		moveDrag(event->x(), event->y());
 	} else {
 		const dpcore::Point point(mapToScene(event->pos()), 1.0);
-		if(!prevpoint_.intSame(point)) {
-			if(pendown_)
+		if(!_prevpoint.intSame(point)) {
+			if(_pendown)
 				onPenMove(point);
 			updateOutline(point);
-			prevpoint_ = point;
+			_prevpoint = point;
 		}
 	}
 }
@@ -250,6 +251,7 @@ void CanvasView::onPenDown(const dpcore::Point &p)
 
 void CanvasView::onPenMove(const dpcore::Point &p)
 {
+	qDebug() << "onPenMove" << p.x() << p.y();
 	if(_scene->hasImage())
 		_current_tool->motion(p);
 }
@@ -263,13 +265,13 @@ void CanvasView::onPenUp()
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(pendown_ == TABLETDOWN)
+	if(_pendown == TABLETDOWN)
 		return;
-	prevpoint_ = dpcore::Point(mapToScene(event->pos()), 0.0);
-	if(isdragging_) {
+	_prevpoint = dpcore::Point(mapToScene(event->pos()), 0.0);
+	if(_isdragging) {
 		stopDrag();
-	} else if(event->button() == Qt::LeftButton && pendown_ == MOUSEDOWN) {
-		pendown_ = NOTDOWN;
+	} else if(event->button() == Qt::LeftButton && _pendown == MOUSEDOWN) {
+		_pendown = NOTDOWN;
 		onPenUp();
 	}
 }
@@ -283,9 +285,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
 		if(event->modifiers() & Qt::ControlModifier) {
-			dragbtndown_ = ROTATE;
+			_dragbtndown = ROTATE;
 		} else {
-			dragbtndown_ = TRANSLATE;
+			_dragbtndown = TRANSLATE;
 		}
 		viewport()->setCursor(Qt::OpenHandCursor);
 	} else {
@@ -296,9 +298,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
-		dragbtndown_ = NOTRANSFORM;
-		if(isdragging_==NOTRANSFORM)
-			viewport()->setCursor(cursor_);
+		_dragbtndown = NOTRANSFORM;
+		if(_isdragging==NOTRANSFORM)
+			viewport()->setCursor(_cursor);
 	} else {
 		QGraphicsView::keyReleaseEvent(event);
 	}
@@ -316,14 +318,14 @@ bool CanvasView::viewportEvent(QEvent *event)
 		tabev->accept();
 		const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
-		if(!prevpoint_.intSame(point)) {
-			if(isdragging_)
+		if(!_prevpoint.intSame(point)) {
+			if(_isdragging)
 				moveDrag(tabev->x(), tabev->y());
 			else {
-				if(pendown_) {
+				if(_pendown) {
 					if(point.pressure()==0) {
 						// Missed a release event
-						pendown_ = NOTDOWN;
+						_pendown = NOTDOWN;
 						onPenUp();
 					} else {
 						onPenMove(point);
@@ -331,35 +333,35 @@ bool CanvasView::viewportEvent(QEvent *event)
 				}
 				updateOutline(point);
 			}
-			prevpoint_ = point;
+			_prevpoint = point;
 		}
 	} else if(event->type() == QEvent::TabletPress) {
 		// Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		if(dragbtndown_) {
-			startDrag(tabev->x(), tabev->y(), dragbtndown_);
+		if(_dragbtndown) {
+			startDrag(tabev->x(), tabev->y(), _dragbtndown);
 		} else {
-			if(pendown_ == NOTDOWN) {
+			if(_pendown == NOTDOWN) {
 				const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
-				pendown_ = TABLETDOWN;
+				_pendown = TABLETDOWN;
 				onPenDown(point);
 				updateOutline(point);
-				prevpoint_ = point;
+				_prevpoint = point;
 			}
 		}
 	} else if(event->type() == QEvent::TabletRelease) {
 		// Stylus lifted
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		if(isdragging_) {
+		if(_isdragging) {
 			stopDrag();
-		} else if(pendown_ == TABLETDOWN) {
+		} else if(_pendown == TABLETDOWN) {
 			dpcore::Point point(mapToScene(tabev->pos()), 0);
 			updateOutline(point);
-			prevpoint_ = point;
-			pendown_ = NOTDOWN;
+			_prevpoint = point;
+			_pendown = NOTDOWN;
 			onPenUp();
 		}
 	} else {
@@ -370,12 +372,12 @@ bool CanvasView::viewportEvent(QEvent *event)
 }
 
 void CanvasView::updateOutline(const dpcore::Point& point) {
-	if(enableoutline_ && showoutline_) {
+	if(_enableoutline && _showoutline) {
 		QList<QRectF> rect;
-		rect.append(QRectF(prevpoint_.x() - outlinesize_,
-					prevpoint_.y() - outlinesize_, dia_, dia_));
-		rect.append(QRectF(point.x() - outlinesize_,
-					point.y() - outlinesize_, dia_, dia_));
+		rect.append(QRectF(_prevpoint.x() - _outlinesize,
+					_prevpoint.y() - _outlinesize, _dia, _dia));
+		rect.append(QRectF(point.x() - _outlinesize,
+					point.y() - _outlinesize, _dia, _dia));
 		updateScene(rect);
 	}
 }
@@ -393,15 +395,15 @@ void CanvasView::sceneChanged()
 void CanvasView::startDrag(int x,int y, ViewTransform mode)
 {
 	viewport()->setCursor(Qt::ClosedHandCursor);
-	dragx_ = x;
-	dragy_ = y;
-	isdragging_ = mode;
-	if(enableoutline_) {
-		showoutline_ = false;
+	_dragx = x;
+	_dragy = y;
+	_isdragging = mode;
+	if(_enableoutline) {
+		_showoutline = false;
 		QList<QRectF> rect;
-		rect.append(QRectF(prevpoint_.x() - outlinesize_,
-					prevpoint_.y() - outlinesize_,
-					dia_, dia_));
+		rect.append(QRectF(_prevpoint.x() - _outlinesize,
+					_prevpoint.y() - _outlinesize,
+					_dia, _dia));
 		updateScene(rect);
 	}
 }
@@ -419,11 +421,11 @@ void CanvasView::scrollTo(const QPoint& point)
  */
 void CanvasView::moveDrag(int x, int y)
 {
-	const int dx = dragx_ - x;
-	const int dy = dragy_ - y;
+	const int dx = _dragx - x;
+	const int dy = _dragy - y;
 
-	if(isdragging_==ROTATE) {
-		qreal preva = atan2( width()/2 - dragx_, height()/2 - dragy_ );
+	if(_isdragging==ROTATE) {
+		qreal preva = atan2( width()/2 - _dragx, height()/2 - _dragy );
 		qreal a = atan2( width()/2 - x, height()/2 - y );
 		setRotation(rotation() + (preva-a) * (180.0 / M_PI));
 	} else {
@@ -433,8 +435,8 @@ void CanvasView::moveDrag(int x, int y)
 		hor->setSliderPosition(hor->sliderPosition()+dx);
 	}
 
-	dragx_ = x;
-	dragy_ = y;
+	_dragx = x;
+	_dragy = y;
 
 	// notify of scene change
 	sceneChanged();
@@ -443,12 +445,12 @@ void CanvasView::moveDrag(int x, int y)
 //! Stop dragging
 void CanvasView::stopDrag()
 {
-	if(dragbtndown_ != NOTRANSFORM)
+	if(_dragbtndown != NOTRANSFORM)
 		viewport()->setCursor(Qt::OpenHandCursor);
 	else
-		viewport()->setCursor(cursor_);
-	isdragging_ = NOTRANSFORM;
-	showoutline_ = true;
+		viewport()->setCursor(_cursor);
+	_isdragging = NOTRANSFORM;
+	_showoutline = true;
 }
 
 /**
