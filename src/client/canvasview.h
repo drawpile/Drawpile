@@ -50,7 +50,7 @@ class CanvasView : public QGraphicsView
 		CanvasView(QWidget *parent=0);
 
 		//! Set the board to use
-		void setBoard(drawingboard::CanvasScene *scene);
+		void setCanvas(drawingboard::CanvasScene *scene);
 
 		//! Set the network client
 		void setClient(net::Client *client);
@@ -109,6 +109,7 @@ class CanvasView : public QGraphicsView
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
 		void mouseDoubleClickEvent(QMouseEvent*);
+		void wheelEvent(QWheelEvent *event);
 		void keyPressEvent(QKeyEvent *event);
 		void keyReleaseEvent(QKeyEvent *event);
 		bool viewportEvent(QEvent *event);

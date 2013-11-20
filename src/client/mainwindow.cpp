@@ -135,7 +135,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	_canvas = new drawingboard::CanvasScene(this, _layerlist);
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
-	_view->setBoard(_canvas);
+	_view->setCanvas(_canvas);
 	navigator_->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));

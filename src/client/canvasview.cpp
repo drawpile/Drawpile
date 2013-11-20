@@ -55,7 +55,7 @@ CanvasView::CanvasView(QWidget *parent)
 	viewport()->setCursor(_cursor);
 }
 
-void CanvasView::setBoard(drawingboard::CanvasScene *scene)
+void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 {
 	_scene = scene;
 	_toolbox.setScene(scene);
@@ -277,6 +277,20 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 void CanvasView::mouseDoubleClickEvent(QMouseEvent*)
 {
 	// Ignore doubleclicks
+}
+
+void CanvasView::wheelEvent(QWheelEvent *event)
+{
+	if((event->modifiers() & Qt::ControlModifier)) {
+		float delta = event->angleDelta().y() / (30 * 8.0);
+		if(delta>0) {
+			setZoom(_zoom * (1+delta));
+		} else if(delta<0) {
+			setZoom(_zoom / (1-delta));
+		}
+	} else {
+		QGraphicsView::wheelEvent(event);
+	}
 }
 
 void CanvasView::keyPressEvent(QKeyEvent *event) {
