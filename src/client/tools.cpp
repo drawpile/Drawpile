@@ -101,14 +101,18 @@ void BrushBase::begin(const dpcore::Point& point)
 		settings().getBrush()
 	};
 	
-	scene().startPreview(settings().getBrush(), point);
+	if(!client().isLocalServer())
+		scene().startPreview(settings().getBrush(), point);
+
 	client().sendToolChange(tctx);
 	client().sendStroke(point);
 }
 
 void BrushBase::motion(const dpcore::Point& point)
 {
-	scene().addPreview(point);
+	if(!client().isLocalServer())
+		scene().addPreview(point);
+
 	client().sendStroke(point);
 }
 

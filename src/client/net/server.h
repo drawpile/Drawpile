@@ -30,12 +30,22 @@ namespace net {
  */
 class Server {
 public:
+    Server(bool local) : _local(local) {}
 	virtual ~Server() = default;
 	
 	/**
 	 * \brief Send a message to the server
 	 */
     virtual void sendMessage(protocol::MessagePtr msg) = 0;
+
+    /**
+     * @brief Is this a local server?
+     * @return true if local
+     */
+    bool isLocal() const { return _local; }
+
+private:
+    bool _local;
 };
 
 

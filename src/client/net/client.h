@@ -48,6 +48,21 @@ public:
 	Client(QObject *parent=0);
 	~Client();
 
+	/**
+	 * @brief Get the local user's user/context ID
+	 * @return user ID
+	 */
+	int myId() const { return _my_id; }
+
+	/**
+	 * @brief Is the client connected to a local server?
+	 *
+	 * A local server is one that is running on this computer
+	 * and thus has minimum latency.
+	 * @return true if server is local
+	 */
+	bool isLocalServer() const;
+
 	//! Reinitialize after clearing out the old board
 	void init();
 

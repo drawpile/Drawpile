@@ -31,7 +31,7 @@
  * Uncomment this to enable network lag simulator.
  * The number is the maximum amount of lag in milliseconds to inject between messages.
  */
-#define LAG_SIMULATOR 50
+//#define LAG_SIMULATOR 50
 
 class QTimer;
 

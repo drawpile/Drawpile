@@ -269,7 +269,7 @@ bool MainWindow::loadDocument(const SessionLoader &loader)
 
 	MainWindow *win = canReplace() ? this : new MainWindow(this);
 	
-	win->_canvas->initCanvas(1); // TODO proper ID
+	win->_canvas->initCanvas(_client->myId());
 	win->_client->init();
 	
 	bool ok = loader.sendInitCommands(win->_client);

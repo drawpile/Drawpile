@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QDebug>
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
@@ -251,7 +250,6 @@ void CanvasView::onPenDown(const dpcore::Point &p)
 
 void CanvasView::onPenMove(const dpcore::Point &p)
 {
-	qDebug() << "onPenMove" << p.x() << p.y();
 	if(_scene->hasImage())
 		_current_tool->motion(p);
 }

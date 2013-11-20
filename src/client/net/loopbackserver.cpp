@@ -33,7 +33,13 @@
 namespace net {
 
 LoopbackServer::LoopbackServer(QObject *parent)
-	: QObject(parent), _layer_ids(255), _annotation_ids(255)
+	: QObject(parent),
+#ifdef LAG_SIMULATOR
+	  Server(false),
+#else
+	  Server(true),
+  #endif
+	  _layer_ids(255), _annotation_ids(255)
 {
 #ifdef LAG_SIMULATOR
 	_lagtimer = new QTimer(this);
@@ -84,7 +90,6 @@ void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 void LoopbackServer::sendDelayedMessage()
 {
 	if(!_msgqueue.isEmpty()) {
-		qDebug() << "sending" << _msgqueue.first()->type();
 		emit messageReceived(_msgqueue.takeFirst());
 		_lagtimer->start(qrand() % LAG_SIMULATOR);
 	}

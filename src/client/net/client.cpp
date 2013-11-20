@@ -59,6 +59,11 @@ void Client::init()
 	_loopback->reset();
 }
 
+bool Client::isLocalServer() const
+{
+	return _server->isLocal();
+}
+
 void Client::sendCanvasResize(const QSize &newsize)
 {
 	_server->sendMessage(MessagePtr(new protocol::CanvasResize(
