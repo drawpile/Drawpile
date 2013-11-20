@@ -41,7 +41,21 @@ class SessionLoader {
 public:
 	virtual ~SessionLoader() = default;
 	
+	/**
+	 * @brief send the drawing commands required to initialize the canvas
+	 * @param client
+	 * @return false if an error occurred
+	 */
 	virtual bool sendInitCommands(net::Client *client) const = 0;
+
+	/**
+	 * @brief get the name of the file
+	 *
+	 * This if for image loaders. If there is no file (that can be saved again),
+	 * this function should return an empty string.
+	 * @return filename or empty string
+	 */
+	virtual QString filename() const = 0;
 };
 
 class BlankCanvasLoader : public SessionLoader {
@@ -50,7 +64,8 @@ public:
 	{}
 	
 	bool sendInitCommands(net::Client *client) const;
-	
+	QString filename() const { return ""; }
+
 private:
 	QSize _size;
 	QColor _color;
@@ -61,7 +76,8 @@ public:
 	ImageCanvasLoader(const QString &filename) : _filename(filename) {}
 	
 	bool sendInitCommands(net::Client *client) const;
-	
+	QString filename() const { return _filename; }
+
 private:
 	QString _filename;
 };

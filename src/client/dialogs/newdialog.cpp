@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,45 +29,35 @@ namespace dialogs {
 NewDialog::NewDialog(QWidget *parent)
 	: QDialog(parent)
 {
-	ui_ = new Ui_NewDialog;
-	ui_->setupUi(this);
-	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create new"));
+	_ui = new Ui_NewDialog;
+	_ui->setupUi(this);
+	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create new"));
+	connect(this, SIGNAL(accepted()), this, SLOT(onAccept()));
 }
 
 NewDialog::~NewDialog()
 {
-	delete ui_;
+	delete _ui;
 }
 
-int NewDialog::newWidth() const
+void NewDialog::setSize(const QSize &size)
 {
-	return ui_->width->value();
+	_ui->width->setValue(size.width());
+	_ui->height->setValue(size.height());
+
 }
 
-//! Get the height for the new image
-int NewDialog::newHeight() const
+void NewDialog::setBackground(const QColor &color)
 {
-	return ui_->height->value();
-}
-//! Get the background color for the new image
-QColor NewDialog::newBackground() const
-{
-	return ui_->background->color();
+	_ui->background->setColor(color);
 }
 
-void NewDialog::setNewWidth(int w)
+void NewDialog::onAccept()
 {
-	ui_->width->setValue(w);
-}
-
-void NewDialog::setNewHeight(int h)
-{
-	ui_->height->setValue(h);
-}
-
-void NewDialog::setNewBackground(const QColor& color)
-{
-	ui_->background->setColor(color);
+	emit accepted(
+		QSize(_ui->width->value(), _ui->height->value()),
+		_ui->background->color()
+	);
 }
 
 }

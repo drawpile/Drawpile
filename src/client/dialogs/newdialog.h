@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,38 +25,35 @@
 class Ui_NewDialog;
 
 namespace dialogs {
-//! Dialog to set new drawing settings
+
 /**
+ * @brief Dialog to set new drawing settings
  * The "new drawing" dialog allows the user to set the width, height
  * and background color of a new image.
  */
 class NewDialog : public QDialog
 {
-	Q_OBJECT
-	public:
-		NewDialog(QWidget *parent=0);
-		~NewDialog();
+Q_OBJECT
+public:
+	NewDialog(QWidget *parent=0);
+	~NewDialog();
 
-		//! Get the width for the new image
-		int newWidth() const;
-		//! Get the height for the new image
-		int newHeight() const;
-		//! Get the background color for the new image
-		QColor newBackground() const;
+	//! Set the width/height fields
+	void setSize(const QSize &size);
 
-		//! Set new width
-		void setNewWidth(int w);
+	//! Set the background color field
+	void setBackground(const QColor &color);
 
-		//! Set new height
-		void setNewHeight(int h);
+signals:
+	void accepted(const QSize &size, const QColor &background);
 
-		//! Set new background color
-		void setNewBackground(const QColor& color);
-	private:
-		Ui_NewDialog *ui_;
+private slots:
+	void onAccept();
+
+private:
+	Ui_NewDialog *_ui;
 };
 
 }
 
 #endif
-

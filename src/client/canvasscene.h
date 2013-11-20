@@ -147,6 +147,10 @@ signals:
 
 	//! An annotation was just deleted
 	void annotationDeleted(int id);
+
+	//! Emitted when a canvas modifying command is received
+	void canvasModified();
+
 private:
 
 	//! Commit preview strokes to the board

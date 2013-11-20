@@ -83,7 +83,6 @@ MainWindow::MainWindow(const MainWindow *source)
 	createMenus();
 	createToolbars();
 	createDocks();
-	createDialogs();
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
@@ -142,6 +141,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_toolsettings, SIGNAL(annotationDeselected(int)), _canvas, SLOT(unHilightAnnotation(int)));
+	connect(_canvas, SIGNAL(canvasModified()), this, SLOT(markUnsaved()));
 
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
@@ -265,35 +265,31 @@ MainWindow::~MainWindow()
  */
 bool MainWindow::loadDocument(const SessionLoader &loader)
 {
-	
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
 	MainWindow *win = canReplace() ? this : new MainWindow(this);
 	
 	win->_canvas->initCanvas();
 	win->_client->init();
 	
 	bool ok = loader.sendInitCommands(win->_client);
-	
+
+	QApplication::restoreOverrideCursor();
+
 	if(!ok) {
 		if(win != this)
 			delete win;
-		showErrorMessage(ERR_OPEN);
+		showErrorMessage(ERR_OPEN);	
 		return false;
 	}
 	
-	// TODO filename
-	win->filename_ = ""; //filename;
+	win->filename_ = loader.filename();
 	win->setWindowModified(false);
 	win->setTitle();
 	win->save_->setEnabled(true);
 	win->saveas_->setEnabled(true);
 	return true;
 }
-
-void MainWindow::initDefaultCanvas()
-{
-	loadDocument(BlankCanvasLoader(QSize(800, 600), Qt::white));
-}
-
 
 /**
  * @param url URL
@@ -318,12 +314,7 @@ void MainWindow::joinSession(const QUrl& url)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-#if 0 // TODO
-	return !(isWindowModified() || _canvas->hasAnnotations() ||
-		controller_->isConnected());
-#else
-	return true;
-#endif
+	return !(isWindowModified() || _canvas->hasAnnotations() /* TODO || isconnected */);
 }
 
 /**
@@ -577,7 +568,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 /**
  * Mark window as modified
  */
-void MainWindow::boardChanged()
+void MainWindow::markUnsaved()
 {
 	setWindowModified(true);
 }
@@ -587,19 +578,17 @@ void MainWindow::boardChanged()
  */
 void MainWindow::showNew()
 {
-	const QSize size = _canvas->sceneRect().size().toSize();
+	dialogs::NewDialog *dlg = new dialogs::NewDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, SIGNAL(accepted(QSize, QColor)), this, SLOT(newDocument(QSize, QColor)));
+
 	if (_canvas->hasImage())
-	{
-		newdlg_->setNewWidth(size.width());
-		newdlg_->setNewHeight(size.height());
-	}
+		dlg->setSize(QSize(_canvas->width(), _canvas->height()));
 	else
-	{
-		newdlg_->setNewWidth(800);
-		newdlg_->setNewHeight(600);
-	}
-	newdlg_->setNewBackground(fgbgcolor_->background());
-	newdlg_->show();
+		dlg->setSize(QSize(800, 600));
+
+	dlg->setBackground(fgbgcolor_->background());
+	dlg->show();
 }
 
 /**
@@ -607,15 +596,9 @@ void MainWindow::showNew()
  * chosen in the dialog.
  * If the document is unsaved, create a new window.
  */
-void MainWindow::newDocument()
+void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-	loadDocument(BlankCanvasLoader(
-		QSize(newdlg_->newWidth(), newdlg_->newHeight()),
-		newdlg_->newBackground()
-	));
-#if 0
-	win->fgbgcolor_->setBackground(newdlg_->newBackground());
-#endif
+	loadDocument(BlankCanvasLoader(size, background));
 }
 
 /**
@@ -1025,10 +1008,6 @@ void MainWindow::unlock()
 	lockstatus_->setToolTip(tr("Board is not locked"));
 }
 
-void MainWindow::rasterUp(int p)
-{
-	statusBar()->showMessage(tr("Sending board contents to new user, %1% done").arg(QString::number(p)),1000);
-}
 
 void MainWindow::setForegroundColor()
 {
@@ -1604,11 +1583,5 @@ void MainWindow::createColorBoxes(QMenu *toggles)
 	addDockWidget(Qt::RightDockWidgetArea, hsv_);
 }
 
-
-void MainWindow::createDialogs()
-{
-	newdlg_ = new dialogs::NewDialog(this);
-	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
-}
 
 

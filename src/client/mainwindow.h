@@ -47,7 +47,6 @@ namespace widgets {
 }
 namespace dialogs {
 	class ColorDialog;
-	class NewDialog;
 	class HostDialog;
 	class JoinDialog;
 }
@@ -69,10 +68,8 @@ class MainWindow : public QMainWindow {
 		MainWindow(const MainWindow *source=0);
 		~MainWindow();
 
+		//! Load initial session state
 		bool loadDocument(const SessionLoader &loader);
-
-		//! Initialize a default drawing board
-		void initDefaultCanvas();
 
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
@@ -85,7 +82,7 @@ class MainWindow : public QMainWindow {
 		void eraserNear(bool near);
 
 	public slots:
-		//! Check if document is changed and show New dialog
+		//! Show the "new file" dialog
 		void showNew();
 		//! Open the file
 		void open(const QString& file);
@@ -127,11 +124,11 @@ class MainWindow : public QMainWindow {
 		//! Set session title
 		void setSessionTitle(const QString& title);
 		//! Create new document
-		void newDocument();
+		void newDocument(const QSize &size, const QColor &color);
 		//! Open a recent file
 		void openRecent(QAction *action);
 		//! Mark unsaved changes
-		void boardChanged();
+		void markUnsaved();
 		//! Cancel or start hosting
 		void finishHost(int i);
 		//! Cancel or join
@@ -150,8 +147,6 @@ class MainWindow : public QMainWindow {
 		void unlock();
 		//! Board settings changed
 		void boardInfoChanged();
-		//! Inform user about raster upload progress
-		void rasterUp(int p);
 		//! Toggle annotations
 		void toggleAnnotations(bool hidden);
 
@@ -219,8 +214,6 @@ class MainWindow : public QMainWindow {
 		void createPalette(QMenu *menu);
 		//! Create color docks
 		void createColorBoxes(QMenu *menu);
-		//! Create dialogs
-		void createDialogs();
 		//! Create navigator dock
 		void createNavigator(QMenu *menu);
 
@@ -240,7 +233,6 @@ class MainWindow : public QMainWindow {
 		QLabel *lockstatus_;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
-		dialogs::NewDialog *newdlg_;
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
 
