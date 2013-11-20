@@ -37,7 +37,7 @@ using protocol::MessagePtr;
 namespace net {
 
 Client::Client(QObject *parent)
-	: QObject(parent), _my_id(0)
+	: QObject(parent), _my_id(1)
 {
 	_loopback = new LoopbackServer(this);
 	_server = _loopback;

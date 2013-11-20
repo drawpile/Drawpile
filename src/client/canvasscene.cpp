@@ -50,13 +50,14 @@ CanvasScene::~CanvasScene()
 
 /**
  * This prepares the canvas for new drawing commands.
+ * @param myid the context id of the local user
  */
-void CanvasScene::initCanvas()
+void CanvasScene::initCanvas(int myid)
 {
 	delete _image;
 	delete _statetracker;
 	_image = new CanvasItem();
-	_statetracker = new StateTracker(this, _image->image(), _layerlistwidget);
+	_statetracker = new StateTracker(myid, this, _image->image(), _layerlistwidget);
 	
 	addItem(_image);
 	clearAnnotations();
@@ -320,8 +321,13 @@ void CanvasScene::setToolPreview(QGraphicsItem *preview)
 		addItem(preview);
 }
 
+void CanvasScene::startPreview(const dpcore::Brush &brush, const dpcore::Point &point)
+{
+	_previewpen = penForBrush(brush);
+	_lastpreview = point;
+	addPreview(point);
+}
 
-#if 0
 /**
  * Preview strokes are used to give immediate feedback to the user,
  * before the stroke info messages have completed their roundtrip
@@ -330,53 +336,27 @@ void CanvasScene::setToolPreview(QGraphicsItem *preview)
  */
 void CanvasScene::addPreview(const dpcore::Point& point)
 {
-	Q_ASSERT(localuser_ != -1);
-	User *user = users_.value(localuser_);
-
-	Preview *pre;
-	if(previewcache_.isEmpty()) {
-		pre = new StrokePreview(user->board());
-	} else
-		pre = previewcache_.dequeue();
-	if(previewstarted_) {
-		pre->preview(lastpreview_, point, brushsrc_->getBrush());
+	QGraphicsLineItem *s;
+	if(_previewstrokecache.isEmpty()) {
+		s = new QGraphicsLineItem();
+		addItem(s);
 	} else {
-		pre->preview(point, point, brushsrc_->getBrush());
-		previewstarted_ = true;
+		s = _previewstrokecache.takeLast();
+		s->show();
 	}
-	lastpreview_ = point;
-	previews_.enqueue(pre);
+	s->setPen(_previewpen);
+	s->setLine(_lastpreview.x(), _lastpreview.y(), point.x(), point.y());
+	_previewstrokes.append(s);
+	_lastpreview = point;
 }
 
-
-/**
- */
-void CanvasScene::endPreview()
+void CanvasScene::takePreview(int count)
 {
-	previewstarted_ = false;
-}
-
-/**
- * This is called when leaving a session. All pending preview strokes
- * are immediately drawn on the board.
- */
-void CanvasScene::commitPreviews()
-{
-#if 0
-	dpcore::Point lastpoint(-1,-1,0);
-	while(previews_.isEmpty()==false) {
-		qreal distance;
-		Preview *p = previews_.dequeue();
-		if(p->from() != lastpoint) // TODO
-			_image->drawPoint(0, p->from(), p->brush());
-		else // TODO
-			_image->drawLine(0, p->from(), p->to(), p->brush(), distance);
-		lastpoint = p->to();
-		delete p;
+	while(count-->0 && !_previewstrokes.isEmpty()) {
+		QGraphicsLineItem *s = _previewstrokes.takeFirst();
+		s->hide();
+		_previewstrokecache.append(s);
 	}
-#endif
-	while(previewcache_.isEmpty()==false)
-		delete previewcache_.dequeue();
 }
 
 /**
@@ -384,13 +364,12 @@ void CanvasScene::commitPreviews()
  */
 void CanvasScene::flushPreviews()
 {
-	while(previews_.isEmpty()==false) {
-		Preview *p = previews_.dequeue();
-		p->hidePreview();
-		previewcache_.enqueue(p);
+	while(_previewstrokes.isEmpty()==false) {
+		QGraphicsLineItem *p = _previewstrokes.takeFirst();
+		p->hide();
+		_previewstrokecache.append(p);
 	}
 }
-#endif
 
 void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 {
@@ -402,5 +381,24 @@ void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 	}
 }
 
+QPen CanvasScene::penForBrush(const dpcore::Brush &brush)
+{
+	const int rad = brush.radius(1.0);
+	QColor color = brush.color(1.0);
+	QPen pen;
+	if(rad==0) {
+		pen.setWidth(1);
+		color.setAlphaF(brush.opacity(1.0));
+	} else {
+		pen.setWidth(rad*2);
+		pen.setCapStyle(Qt::RoundCap);
+		pen.setJoinStyle(Qt::RoundJoin);
+		// Approximate brush transparency
+		const qreal a = brush.opacity(1.0) * rad * (1-brush.spacing()/100.0);
+		color.setAlphaF(qMin(a, 1.0));
+	}
+	pen.setColor(color);
+	return pen;
+}
 }
 

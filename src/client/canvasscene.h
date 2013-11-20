@@ -21,14 +21,13 @@
 #define CANVAS_SCENE_H
 
 #include <QGraphicsScene>
-#include <QHash>
-#include <QQueue>
 
 #include "core/point.h"
 #include "../shared/net/message.h"
 
 namespace dpcore {
 	class LayerStack;
+	class Brush;
 }
 
 namespace widgets {
@@ -60,7 +59,7 @@ public:
 	~CanvasScene();
 
 	//! Clear and initialize the canvas
-	void initCanvas();
+	void initCanvas(int myid);
 
 	//! Get canvas width
 	int width() const;
@@ -110,16 +109,18 @@ public:
 	//! Get the current tool preview item
 	QGraphicsItem *toolPreview() { return _toolpreview; }
 
-#if 0
+	//! Start a new preview stroke
+	void startPreview(const dpcore::Brush &brush, const dpcore::Point &point);
+
 	//! Add a preview stroke
 	void addPreview(const dpcore::Point& point);
 
-	//! End a preview stroke
-	void endPreview();
+	//! Remove the oldest preview stroke(s)
+	void takePreview(int count);
 
 	//! Scrap preview strokes
 	void flushPreviews();
-#endif
+
 
 	//! Pick a color at the given coordinates. Emits colorPicked
 	void pickColor(int x, int y);
@@ -131,6 +132,15 @@ public:
 	 * @return state tracker instance
 	 */
 	StateTracker *statetracker() { return _statetracker; }
+
+	/**
+	 * @brief Get a QPen that resembles the given brush
+	 *
+	 * This is used for preview strokes
+	 * @param brush
+	 * @return qpen
+	 */
+	static QPen penForBrush(const dpcore::Brush &brush);
 
 public slots:
 	//! Show annotation borders
@@ -152,29 +162,24 @@ signals:
 	void canvasModified();
 
 private:
-
-	//! Commit preview strokes to the board
-	void commitPreviews();
-
 	//! The board contents
 	CanvasItem *_image;
 
 	//! Drawing context state tracker
 	StateTracker *_statetracker;
 
-#if 0
 	//! Preview strokes currently on screen
-	QQueue<Preview*> previews_;
+	QList<QGraphicsLineItem*> _previewstrokes;
 
 	//! Cache of reusable preview strokes
-	QQueue<Preview*> previewcache_;
-
-	//! Has a preview been started?
-	bool previewstarted_;
+	QList<QGraphicsLineItem*> _previewstrokecache;
 
 	//! Coordinate of the last preview stroke
-	dpcore::Point lastpreview_;
-#endif
+	dpcore::Point _lastpreview;
+
+	//! The pen to use for preview strokes
+	QPen _previewpen;
+
 	//! Graphics item for previewing a special tool shape
 	QGraphicsItem *_toolpreview;
 

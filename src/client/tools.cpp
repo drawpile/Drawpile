@@ -32,36 +32,6 @@
 #include "docks/toolsettingswidget.h"
 #include "statetracker.h"
 
-namespace {
-
-/**
- * @brief Convert a brush definition to a QPen
- * This is used to set preview stroke styles.
- * @param brush
- * @return QPen instance
- */
-QPen brush2pen(const dpcore::Brush &brush)
-{
-	const int rad = brush.radius(1.0);
-	QColor color = brush.color(1.0);
-	QPen pen;
-	if(rad==0) {
-		pen.setWidth(1);
-		color.setAlphaF(brush.opacity(1.0));
-	} else {
-		pen.setWidth(rad*2);
-		pen.setCapStyle(Qt::RoundCap);
-		pen.setJoinStyle(Qt::RoundJoin);
-		// Approximate brush transparency
-		const qreal a = brush.opacity(1.0) * rad * (1-brush.spacing()/100.0);
-		color.setAlphaF(qMin(a, 1.0));
-	}
-	pen.setColor(color);
-	return pen;
-}
-
-}
-
 namespace tools {
 
 /**
@@ -131,12 +101,14 @@ void BrushBase::begin(const dpcore::Point& point)
 		settings().getBrush()
 	};
 	
+	scene().startPreview(settings().getBrush(), point);
 	client().sendToolChange(tctx);
 	client().sendStroke(point);
 }
 
 void BrushBase::motion(const dpcore::Point& point)
 {
+	scene().addPreview(point);
 	client().sendStroke(point);
 }
 
@@ -162,7 +134,7 @@ void ColorPicker::end()
 void Line::begin(const dpcore::Point& point)
 {
 	QGraphicsLineItem *item = new QGraphicsLineItem();
-	item->setPen(brush2pen(settings().getBrush()));
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush()));
 	item->setLine(QLineF(point, point));
 	scene().setToolPreview(item);
 	_p1 = point;
@@ -197,7 +169,7 @@ void Line::end()
 void Rectangle::begin(const dpcore::Point& point)
 {
 	QGraphicsRectItem *item = new QGraphicsRectItem();
-	item->setPen(brush2pen(settings().getBrush()));
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush()));
 	item->setRect(QRectF(point, point));
 	scene().setToolPreview(item);
 	_p1 = point;

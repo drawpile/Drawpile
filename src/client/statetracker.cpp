@@ -35,8 +35,8 @@
 
 namespace drawingboard {
 
-StateTracker::StateTracker(CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListWidget *layerlist, QObject *parent)
-	: QObject(parent), _scene(scene), _image(image), _layerlist(layerlist)
+StateTracker::StateTracker(int myid, CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListWidget *layerlist, QObject *parent)
+	: QObject(parent), _scene(scene), _image(image), _layerlist(layerlist), _myid(myid)
 {
 	_layerlist->init();
 	connect(_layerlist, SIGNAL(layerSetHidden(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
@@ -173,6 +173,8 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		}
 		ctx.lastpoint = p;
 	}
+	if(cmd.contextId() == _myid)
+		_scene->takePreview(cmd.points().size());
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
