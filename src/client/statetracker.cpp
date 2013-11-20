@@ -86,7 +86,8 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			handleAnnotationDelete(msg.cast<AnnotationDelete>());
 			break;
 		default:
-			qDebug() << "Unhandled drawing command" << msg->type();
+			qWarning() << "Unhandled drawing command" << msg->type();
+			return;
 	}
 }
 
