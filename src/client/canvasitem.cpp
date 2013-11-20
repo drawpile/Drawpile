@@ -36,6 +36,7 @@ CanvasItem::CanvasItem(QGraphicsItem *parent)
 {
 	_image = new dpcore::LayerStack(this);
 	connect(_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
+	connect(_image, SIGNAL(resized()), this, SLOT(canvasResize()));
 }
 
 void CanvasItem::refreshImage(const QRect &area)
@@ -54,6 +55,11 @@ void CanvasItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 	QRectF exposed = option->exposedRect.adjusted(-1, -1, 1, 1);
 	exposed &= QRectF(0,0,_image->width(),_image->height());
 	_image->paint(exposed, painter);
+}
+
+void CanvasItem::canvasResize()
+{
+	prepareGeometryChange();
 }
 
 }

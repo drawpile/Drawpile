@@ -38,26 +38,29 @@ namespace drawingboard {
  */
 class CanvasItem : public QGraphicsObject
 {
-	Q_OBJECT
-	public:
-		//! Construct an empty board
-		CanvasItem(QGraphicsItem *parent=0);
+Q_OBJECT
+public:
+	//! Construct an empty board
+	CanvasItem(QGraphicsItem *parent=0);
 
-		//! Get the image
-		dpcore::LayerStack *image() const { return _image; }
+	//! Get the image
+	dpcore::LayerStack *image() const { return _image; }
 
-		/** reimplematation */
-		QRectF boundingRect() const;
+	/** reimplematation */
+	QRectF boundingRect() const;
 
-	public slots:
-		void refreshImage(const QRect &area);
+public slots:
+	void refreshImage(const QRect &area);
 
-	protected:
-		/** reimplementation */
-		void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+private slots:
+	void canvasResize();
 
-	private:
-		dpcore::LayerStack *_image;
+protected:
+	/** reimplementation */
+	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+
+private:
+	dpcore::LayerStack *_image;
 };
 
 }

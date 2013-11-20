@@ -55,6 +55,7 @@ void LayerStack::init(const QSize& size)
 	_ytiles = _height / Tile::SIZE + ((_height % Tile::SIZE)>0);
 	_cache = QPixmap(size);
 	_dirtytiles = QBitArray(_xtiles*_ytiles, true);
+	emit resized();
 }
 
 /**

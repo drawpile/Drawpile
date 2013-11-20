@@ -101,6 +101,9 @@ class LayerStack : public QObject {
 		//! Emitted when the visible layers are edited
 		void areaChanged(const QRect &area);
 
+		//! Layer width/height changed
+		void resized();
+
 	private:
 		void flattenTile(quint32 *data, int xindex, int yindex) const;
 		void updateCache(int xindex, int yindex);
