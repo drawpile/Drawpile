@@ -54,6 +54,15 @@ class Point : public QPoint {
 			yfrac_ = fabs(modf(point.y(), &tmp));
 		}
 
+        //! Construct a point with fractional subpixel offsets
+        Point(int x, int y, qreal xfrac, qreal yfrac, qreal p)
+            : QPoint(x, y), p_(p), xfrac_(xfrac), yfrac_(yfrac)
+        {
+            Q_ASSERT(p>=0 && p<=1);
+            Q_ASSERT(xfrac>=0 && xfrac<1);
+            Q_ASSERT(yfrac>=0 && yfrac<1);
+        }
+
 		//! Construct a point from a QPoint + pressure value
 		Point(const QPoint& point, qreal p)
 			: QPoint(point), p_(p), xfrac_(0.5), yfrac_(0.5)

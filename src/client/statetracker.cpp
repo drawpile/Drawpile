@@ -162,7 +162,14 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	
 	dpcore::Point p;
 	foreach(const protocol::PenPoint pp, cmd.points()) {
-		p = dpcore::Point(pp.x, pp.y, pp.p/255.0);
+		// The coordinate encoding code is in net/client.cpp
+		p = dpcore::Point(
+			(pp.x >> 2) - 128,
+			(pp.y >> 2) - 128,
+			(pp.x & 3) / 4.0,
+			(pp.y & 3) / 4.0,
+			pp.p/255.0
+		);
 
 		if(ctx.pendown) {
 			layer->drawLine(ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
