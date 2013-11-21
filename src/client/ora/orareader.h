@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009-2010 Calle Laakkonen
+   Copyright (C) 2009-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,11 +20,8 @@
 #ifndef ORAREADER_H
 #define ORAREADER_H
 
-#include <QRect>
-
-namespace dpcore {
-	class LayerStack;
-}
+#include <QString>
+#include "../shared/net/message.h"
 
 class Zipfile;
 class QDomElement;
@@ -43,36 +40,40 @@ class Reader {
 			//! The OpenRaster file uses unsupported app. specific extensions
 			ORA_EXTENDED = 0x01,
 			//! Nested layers are used
-			ORA_NESTED = 0x02,
+			ORA_NESTED = 0x02
 		};
 		Q_DECLARE_FLAGS(Warnings, Warning)
 
-		Reader(const QString& file);
-		~Reader();
+		Reader();
+		Reader(const Reader&) = delete;
 
 		//! Load the image
-		bool load();
+		bool load(const QString &filename);
 
-		//! Get loaded annotations
-		const QStringList& annotations() const { return annotations_; }
-
-		//! Get the loaded layers
-		dpcore::LayerStack *layers() const { return stack_; }
+		/**
+		 * @brief get the session initialization commands
+		 *
+		 * Note. The command list is only valid if load() has been called
+		 * beforehand and the return value was true.
+		 *
+		 * @return session initialization command list
+		 */
+		const QList<protocol::MessagePtr> &initCommands() const { return _commands; }
 
 		//! Get the error message
-		const QString& error() const { return error_; }
+		const QString& error() const { return _error; }
 
 		//! Get the warning flags
-		const Warnings warnings() const { return warnings_; }
+		const Warnings warnings() const { return _warnings; }
+
 	private:
-		bool loadLayers(const QDomElement& stack, QPoint offset);
+		bool loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset);
 		void loadAnnotations(const QDomElement& annotations);
 
-		Zipfile *ora_;
-		QStringList annotations_;
-		dpcore::LayerStack *stack_;
-		QString error_;
-		Warnings warnings_;
+		QString _error;
+		Warnings _warnings;
+		QList<protocol::MessagePtr> _commands;
+		int _layerid;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Reader::Warnings)

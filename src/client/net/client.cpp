@@ -21,8 +21,10 @@
 #include <QDebug>
 #include <QImage>
 
-#include "client.h"
-#include "loopbackserver.h"
+#include "net/client.h"
+#include "net/loopbackserver.h"
+#include "net/utils.h"
+
 #include "statetracker.h"
 
 #include "core/point.h"
@@ -169,43 +171,8 @@ void Client::sendPenup()
  */
 void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 {
-	Q_ASSERT(image.format() == QImage::Format_ARGB32);
-
-	// Compress pixel data and see if it fits in a single message
-	QByteArray data(reinterpret_cast<const char*>(image.bits()), image.byteCount());
-	QByteArray compressed = qCompress(data);
-	
-	if(compressed.length() > protocol::PutImage::MAX_LEN) {
-		// Too big! Recursively divide the image and try sending those
-		compressed = QByteArray(); // release data
-		QImage i1, i2;
-		int px, py;
-		if(image.width() > image.height()) {
-			px = image.width() / 2;
-			py = 0;
-			i1 = image.copy(0, 0, px, image.height());
-			i2 = image.copy(px, 0, image.width()-px, image.height());
-		} else {
-			px = 0;
-			py = image.height() / 2;
-			i1 = image.copy(0, 0, image.width(), py);
-			i2 = image.copy(0, py, image.width(), image.height()-py);
-		}
-		sendImage(layer, x, y, i1, blend);
-		sendImage(layer, x+px, y+py, i2, blend);
-	
-	} else {
-		// It fits! Send data!
-		_server->sendMessage(MessagePtr(new protocol::PutImage(
-			layer,
-			blend ? protocol::PutImage::MODE_BLEND : 0,
-			x,
-			y,
-			image.width(),
-			image.height(),
-			compressed
-		)));
-	}
+	foreach(MessagePtr msg, putQImage(layer, x, y, image, blend))
+		_server->sendMessage(msg);
 }
 
 void Client::sendAnnotationCreate(int id, const QRect &rect)
@@ -241,11 +208,15 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 	)));
 }
 
-
 void Client::sendAnnotationDelete(int id)
 {
 	Q_ASSERT(id>0 && id < 256);
 	_server->sendMessage(MessagePtr(new protocol::AnnotationDelete(id)));
+}
+
+void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
+{
+	_server->sendSnapshotMessages(commands);
 }
 
 void Client::handleMessage(protocol::MessagePtr msg)

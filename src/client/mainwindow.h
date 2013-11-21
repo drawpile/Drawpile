@@ -63,13 +63,12 @@ class SessionLoader;
 //! The application main window
 class MainWindow : public QMainWindow {
 	Q_OBJECT
-	enum ErrorType {ERR_SAVE, ERR_OPEN, BAD_URL};
 	public:
 		MainWindow(const MainWindow *source=0);
 		~MainWindow();
 
 		//! Load initial session state
-		bool loadDocument(const SessionLoader &loader);
+		bool loadDocument(SessionLoader &loader);
 
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
@@ -182,9 +181,6 @@ class MainWindow : public QMainWindow {
 
 		//! Save settings and exit
 		void exit();
-
-		//! Display a standardised error message
-		void showErrorMessage(ErrorType type);
 
 		//! Display an error message
 		void showErrorMessage(const QString& message, const QString& details=QString());

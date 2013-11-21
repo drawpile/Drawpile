@@ -53,6 +53,8 @@ public:
 	 */
 	void sendMessage(protocol::MessagePtr msg);
 
+	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
+
 signals:
 	void messageReceived(protocol::MessagePtr message);
 	

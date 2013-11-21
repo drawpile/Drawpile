@@ -263,7 +263,7 @@ MainWindow::~MainWindow()
  * If the document in this window cannot be rep
  * @return true on success
  */
-bool MainWindow::loadDocument(const SessionLoader &loader)
+bool MainWindow::loadDocument(SessionLoader &loader)
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
@@ -271,18 +271,21 @@ bool MainWindow::loadDocument(const SessionLoader &loader)
 	
 	win->_canvas->initCanvas(_client->myId());
 	win->_client->init();
-	
-	bool ok = loader.sendInitCommands(win->_client);
 
-	QApplication::restoreOverrideCursor();
+	QList<protocol::MessagePtr> init = loader.loadInitCommands();
 
-	if(!ok) {
+	if(init.isEmpty()) {
+		QApplication::restoreOverrideCursor();
 		if(win != this)
 			delete win;
-		showErrorMessage(ERR_OPEN);	
+		showErrorMessage(tr("An error occured while trying to open image"), loader.errorMessage());
 		return false;
 	}
 	
+	win->_client->sendSnapshot(init);
+
+	QApplication::restoreOverrideCursor();
+
 	win->filename_ = loader.filename();
 	win->setWindowModified(false);
 	win->setTitle();
@@ -598,7 +601,8 @@ void MainWindow::showNew()
  */
 void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-	loadDocument(BlankCanvasLoader(size, background));
+	BlankCanvasLoader bcl(size, background);
+	loadDocument(bcl);
 }
 
 /**
@@ -617,7 +621,8 @@ void MainWindow::openRecent(QAction *action)
  */
 void MainWindow::open(const QString& file)
 {
-	if(loadDocument(ImageCanvasLoader(file))) {
+	ImageCanvasLoader icl(file);
+	if(loadDocument(icl)) {
 		addRecentFile(file);
 	}
 }
@@ -693,7 +698,7 @@ bool MainWindow::save()
 				return false;
 		}
 		if(_canvas->save(filename_) == false) {
-			showErrorMessage(ERR_SAVE);
+			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
 			setWindowModified(false);
@@ -745,7 +750,7 @@ bool MainWindow::saveas()
 
 		// Save the image
 		if(_canvas->save(file) == false) {
-			showErrorMessage(ERR_SAVE);
+			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
 			filename_ = file;
@@ -856,7 +861,7 @@ void MainWindow::finishHost(int i)
 
 		if(address.isValid() == false || address.host().isEmpty()) {
 			hostdlg_->show();
-			showErrorMessage(BAD_URL);
+			showErrorMessage(tr("Invalid address"));
 			return;
 		}
 		address.setUserName(hostdlg_->getUserName());
@@ -914,7 +919,7 @@ void MainWindow::finishJoin(int i) {
 		QUrl address = QUrl(scheme + joindlg_->getAddress(),QUrl::TolerantMode);
 		if(address.isValid()==false || address.host().isEmpty()) {
 			joindlg_->show();
-			showErrorMessage(BAD_URL);
+			showErrorMessage(tr("Invalid address"));
 			return;
 		}
 		address.setUserName(joindlg_->getUserName());
@@ -1041,21 +1046,6 @@ void MainWindow::exit()
 		fullscreen(false);
 	writeSettings();
 	deleteLater();
-}
-
-/**
- * @param type error type
- */
-void MainWindow::showErrorMessage(ErrorType type)
-{
-	QString msg;
-	switch(type) {
-		case ERR_SAVE: msg = tr("An error occured while trying to save the image."); break;
-		case ERR_OPEN: msg = tr("An error occured while trying to open the image."); break;
-		case BAD_URL: msg = tr("Invalid address entered."); break;
-		default: qFatal("no such error type");
-	}
-	showErrorMessage(msg);
 }
 
 /**

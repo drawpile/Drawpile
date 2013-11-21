@@ -154,7 +154,8 @@ int main(int argc, char *argv[]) {
 			}
 			win->joinSession(url);
 		} else {
-			if(win->loadDocument(ImageCanvasLoader(argv[1]))==false) {
+			ImageCanvasLoader icl(argv[1]);
+			if(win->loadDocument(icl)==false) {
 				// If image couldn't be loaded, initialize to a default board
 				// and show error message.
 				QMessageBox::warning(win, app.tr("DrawPile"),

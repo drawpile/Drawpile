@@ -86,6 +86,9 @@ public:
 	void sendAnnotationEdit(int id, const QColor &bg, const QString &text);
 	void sendAnnotationDelete(int id);
 
+	// Snapshot
+	void sendSnapshot(const QList<protocol::MessagePtr> commands);
+
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 

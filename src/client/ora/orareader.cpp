@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009-2010 Calle Laakkonen
+   Copyright (C) 2009-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,57 +21,59 @@
 #include <QImageReader>
 #include <QDomDocument>
 #include <QDebug>
+#include <QScopedPointer>
 
 #include "zipfile.h"
 #include "orareader.h"
 
-#include "../core/layerstack.h"
-#include "../core/layer.h"
+#include "../shared/net/layer.h"
+#include "net/utils.h"
 
 namespace openraster {
 
 static const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
 
-Reader::Reader(const QString& filename)
-	: error_(QT_TR_NOOP("No error")), warnings_(NO_WARNINGS)
+Reader::Reader()
+	: _error(QT_TR_NOOP("No error")), _warnings(NO_WARNINGS)
 {
-	ora_ = new Zipfile(filename, Zipfile::READ);
-}
-
-Reader::~Reader()
-{
-	delete ora_;
 }
 
 /**
  * If the load fails, you can get the (translateable) error message using \a error().
  * @return true on success
  */
-bool Reader::load()
+bool Reader::load(const QString &filename)
 {
-	if(ora_->open()==false) {
-		error_ = QApplication::tr("Error loading file: %1")
-			.arg(ora_->errorMessage());
+	Zipfile zip(filename, Zipfile::READ);
+
+	if(zip.open()==false) {
+		_error = QApplication::tr("Error loading file: %1")
+			.arg(zip.errorMessage());
 		return false;
 	}
 
 	// Make sure this is an OpenRaster file
-	QIODevice *mimeio = ora_->getFile("mimetype");
-	QString mimetype = mimeio->readLine();
-	delete mimeio;
-	qDebug() << "read mimetype:" << mimetype;
-	if(mimetype != "image/openraster") {
-		error_ = QApplication::tr("File is not an OpenRaster file");
-		return false;
+	{
+		QScopedPointer<QIODevice> mimeio(zip.getFile("mimetype"));
+		QString mimetype = mimeio->readLine();
+		qDebug() << "read mimetype:" << mimetype;
+		if(mimetype != "image/openraster") {
+			_error = QApplication::tr("File is not an OpenRaster file");
+			return false;
+		}
 	}
 
 	// Read the stack
 	QDomDocument doc;
-	QIODevice *stackio = ora_->getFile("stack.xml");
-	doc.setContent(stackio, true);
-	delete stackio;
-
-	stack_ = new dpcore::LayerStack();
+	{
+		QScopedPointer<QIODevice> stackio(zip.getFile("stack.xml"));
+		if(stackio.isNull()) {
+			_error = QApplication::tr(("Invalid OpenRaster file"));
+			return false;
+		}
+		if(doc.setContent(stackio.data(), true, &_error) == false)
+			return false;
+	}
 
 	const QDomElement stackroot = doc.documentElement().firstChildElement("stack");
 
@@ -81,22 +83,20 @@ bool Reader::load()
 			doc.documentElement().attribute("w").toInt(),
 			doc.documentElement().attribute("h").toInt()
 			);
+
 	if(imagesize.isEmpty()) {
-		error_ = QApplication::tr("Image has zero size!");
-		ora_->close();
+		_error = QApplication::tr("Image has zero size!");
 		return false;
 	}
 
 	// Initialize the layer stack now that we know the size
-	stack_->init(imagesize);
+	_commands.append(protocol::MessagePtr(new protocol::CanvasResize(imagesize.width(), imagesize.height())));
 
+	_layerid = 0;
 	// Load the layer images
-	if(loadLayers(stackroot, QPoint()) == false) {
-		ora_->close();
+	if(loadLayers(zip, stackroot, QPoint()) == false)
 		return false;
-	}
 
-	ora_->close();
 	return true;
 }
 
@@ -124,7 +124,7 @@ bool isKnown(const QDomNamedNodeMap& attrs, const char **names) {
 	return ok;
 }
 
-bool Reader::loadLayers(const QDomElement& stack, QPoint offset)
+bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 {
 	// TODO are layer coordinates relative to stack coordinates?
 	// The spec, as of this writing, is not clear on this.
@@ -134,7 +134,7 @@ bool Reader::loadLayers(const QDomElement& stack, QPoint offset)
 			);
 
 	QDomNodeList nodes = stack.childNodes();
-	// Iterate backwards to get the layers in the right order (addLayer always adds to the top of the stack)
+	// Iterate backwards to get the layers in the right order (layers are always added to the top of the stack)
 	for(int n=nodes.count()-1;n>=0;--n) {
 		QDomElement e = nodes.at(n).toElement();
 		if(e.isNull())
@@ -146,50 +146,59 @@ bool Reader::loadLayers(const QDomElement& stack, QPoint offset)
 					"x", "y", "name", "src", "opacity", "visibility", 0
 			};
 			if(!isKnown(e.attributes(), layerattrs))
-				warnings_ |= ORA_EXTENDED;
-
-			// Get the layer content file
-			const QString src = e.attribute("src");
-			QIODevice *imgsrc = ora_->getFile(src);
-			if(imgsrc==0) {
-				error_ = QApplication::tr("Couldn't get layer %1").arg(src);
-				return false;
-			}
+				_warnings |= ORA_EXTENDED;
 
 			// Load content image from the file
+			const QString src = e.attribute("src");
 			QImage content;
-			if(content.load(imgsrc, "png")==false) {
-				error_ = QApplication::tr("Couldn't load layer %1").arg(src);
-				return false;
+			{
+				QScopedPointer<QIODevice> imgsrc(zip.getFile(src));
+				if(imgsrc.isNull()) {
+					_error = QApplication::tr("Couldn't get layer %1").arg(src);
+					return false;
+				}
+				if(content.load(imgsrc.data(), "png")==false) {
+					_error = QApplication::tr("Couldn't load layer %1").arg(src);
+					return false;
+				}
 			}
 
 			// Create layer
-#if 0
-			dpcore::Layer *layer = stack_->addLayer(
-					0, // TODO proper ID
-					e.attribute("name", QApplication::tr("Unnamed layer")),
-					content,
-					offset + QPoint(
-						e.attribute("x", "0").toInt(),
-						e.attribute("y", "0").toInt()
-						)
-					);
-			layer->setOpacity(qRound(255 * e.attribute("opacity", "1.0").toDouble()));
-			// TODO this isn't in the spec yet, but (at least) myPaint uses it.
-			layer->setHidden(e.attribute("visibility", "visible") != "visible");
-#endif
+			QString name = e.attribute("name", QApplication::tr("Unnamed layer"));
+			_commands.append(protocol::MessagePtr(new protocol::LayerCreate(
+				++_layerid,
+				0,
+				name
+			)));
+
+			QPoint layerPos = offset + QPoint(
+				e.attribute("x", "0").toInt(),
+				e.attribute("y", "0").toInt()
+				);
+			_commands.append(net::putQImage(_layerid, layerPos.x(), layerPos.y(), content, false));
+
+			_commands.append(protocol::MessagePtr(new protocol::LayerAttributes(
+				_layerid,
+				qRound(255 * e.attribute("opacity", "1.0").toDouble()),
+				0, // TODO blend modes
+				name
+			)));
+
+			// TODO visibility flag
+			//layer->setHidden(e.attribute("visibility", "visible") != "visible");
 		} else if(e.tagName()=="stack") {
 			// Nested stacks are not fully supported
-			warnings_ |= ORA_NESTED;
-			return loadLayers(e, offset);
+			_warnings |= ORA_NESTED;
+			if(loadLayers(zip, e, offset)==false)
+				return false;
 		} else if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="annotations") {
 			loadAnnotations(e);
 		} else if(e.namespaceURI()==DP_NAMESPACE) {
 			qWarning() << "Unhandled drawpile extension in stack:" << e.tagName();
-			warnings_ |= ORA_EXTENDED;
+			_warnings |= ORA_EXTENDED;
 		} else if(e.prefix()=="") {
 			qWarning() << "Unhandled stack element:" << e.tagName();
-			warnings_ |= ORA_EXTENDED;
+			_warnings |= ORA_EXTENDED;
 		}
 	}
 	return true;
@@ -202,10 +211,12 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 		QDomElement e = nodes.at(n).toElement();
 		if(e.isNull())
 			continue;
+#if 0
 		if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="a")
 			annotations_ << e.text();
 		else
 			qWarning() << "unhandled annotations (DP ext.) element:" << e.tagName();
+#endif
 
 	}
 }

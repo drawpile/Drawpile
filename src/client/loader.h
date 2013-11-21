@@ -24,9 +24,7 @@
 #include <QColor>
 #include <QString>
 
-namespace net {
-	class Client;
-}
+#include "../shared/net/message.h"
 
 /**
  * \brief Base class for session initializers.
@@ -42,11 +40,23 @@ public:
 	virtual ~SessionLoader() = default;
 	
 	/**
-	 * @brief send the drawing commands required to initialize the canvas
+	 * @brief Get the commands needed to initialize the session.
+	 *
+	 * The commands should be sent to the server in response to a snapshot request,
+	 * or when initializing the session in local mode.
+	 *
 	 * @param client
-	 * @return false if an error occurred
+	 * @return empty list if an error occurred
 	 */
-	virtual bool sendInitCommands(net::Client *client) const = 0;
+	virtual QList<protocol::MessagePtr> loadInitCommands() = 0;
+
+	/**
+	 * @brief Get the error message
+	 *
+	 * The error message is available if loadInitCommands() returns false.
+	 * @return error message
+	 */
+	virtual QString errorMessage() const = 0;
 
 	/**
 	 * @brief get the name of the file
@@ -63,23 +73,26 @@ public:
 	BlankCanvasLoader(const QSize &size, const QColor &color) : _size(size), _color(color)
 	{}
 	
-	bool sendInitCommands(net::Client *client) const;
+	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return ""; }
+	QString errorMessage() const { return ""; /* cannot fail */ }
 
 private:
 	QSize _size;
 	QColor _color;
 };
 
-class ImageCanvasLoader : public SessionLoader{
+class ImageCanvasLoader : public SessionLoader {
 public:
 	ImageCanvasLoader(const QString &filename) : _filename(filename) {}
 	
-	bool sendInitCommands(net::Client *client) const;
+	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return _filename; }
+	QString errorMessage() const { return _error; }
 
 private:
 	QString _filename;
+	QString _error;
 };
 
 #endif

@@ -22,6 +22,7 @@
 #define DP_NET_IMAGE_H
 
 #include <QByteArray>
+#include <QList>
 
 #include "message.h"
 

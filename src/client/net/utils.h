@@ -1,3 +1,5 @@
+#ifndef DP_NET_UTILS_H
+#define DP_NET_UTILS_H
 /*
    DrawPile - a collaborative drawing program.
 
@@ -18,47 +20,14 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#ifndef DP_NET_SERVER_H
-#define DP_NET_SERVER_H
 
 #include "../shared/net/message.h"
 
 namespace net {
 
-/**
- * \brief Abstract base class for servers
- */
-class Server {
-public:
-    Server(bool local) : _local(local) {}
-	virtual ~Server() = default;
-	
-	/**
-	 * \brief Send a message to the server
-	 */
-    virtual void sendMessage(protocol::MessagePtr msg) = 0;
-
-    /**
-     * @brief Enqueue messages needed to construct an initial state
-     *
-     * Unlike normal messages, the snapshot messages are kept in a separate queue
-     * and are sent asynchronously so snapshot uploading won't entirely block this user.
-     * @param msgs
-     */
-    virtual void sendSnapshotMessages(QList<protocol::MessagePtr> msgs) = 0;
-
-    /**
-     * @brief Is this a local server?
-     * @return true if local
-     */
-    bool isLocal() const { return _local; }
-
-private:
-    bool _local;
-};
-
+//! Generate a list of PutImage commands from a QImage
+QList<protocol::MessagePtr> putQImage(int layer, int x, int y, const QImage &image, bool blend);
 
 }
 
 #endif
-

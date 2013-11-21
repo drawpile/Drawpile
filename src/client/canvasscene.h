@@ -118,10 +118,6 @@ public:
 	//! Remove the oldest preview stroke(s)
 	void takePreview(int count);
 
-	//! Scrap preview strokes
-	void flushPreviews();
-
-
 	//! Pick a color at the given coordinates. Emits colorPicked
 	void pickColor(int x, int y);
 

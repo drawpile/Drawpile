@@ -31,7 +31,6 @@
 #include "core/layer.h"
 
 #include "ora/orawriter.h"
-#include "ora/orareader.h"
 
 namespace drawingboard {
 
@@ -61,92 +60,18 @@ void CanvasScene::initCanvas(int myid)
 	
 	addItem(_image);
 	clearAnnotations();
+
+	foreach(QGraphicsLineItem *p, _previewstrokes)
+		delete p;
+	_previewstrokes.clear();
+	foreach(QGraphicsLineItem *p, _previewstrokecache)
+		delete p;
+	_previewstrokecache.clear();
 	
 	QList<QRectF> regions;
 	regions.append(sceneRect());
 	emit changed(regions);
-#if 0
-	previewstarted_ = false;
-#endif
 }
-
-#if 0
-bool CanvasScene::initBoard(const QString& file)
-{
-	using openraster::Reader;
-	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
-		Reader reader = openraster::Reader(file);
-		if(reader.load()==false) {
-			qWarning() << "Unable to open" << file << "reason:" << reader.error();
-			return false;
-		}
-
-		if(reader.warnings() != Reader::NO_WARNINGS) {
-			QString text = tr("DrawPile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
-			if((reader.warnings() & Reader::ORA_EXTENDED))
-				text += "\n- " + tr("Application specific extensions are used");
-			if((reader.warnings() & Reader::ORA_NESTED))
-				text += "\n- " + tr("Nested layers are not fully supported.");
-			QMessageBox::warning(0, tr("Partially supported OpenRaster"), text);
-		}
-
-		// Image loaded, clear out the board
-		dpcore::LayerStack *layers = reader.layers();
-		setSceneRect(0,0,layers->width(), layers->height());
-		delete _image;
-		delete _statetracker;
-		_image = new CanvasItem(layers);
-		_statetracker = new StateTracker(_image);
-		addItem(_image);
-
-		// Add annotations (if present)
-#if 0
-		foreach(QString a, reader.annotations()) {
-			AnnotationItem *item = new AnnotationItem(AnnotationItem::nextId(), _image);
-			item->showBorder(hla_);
-			// Parse the annotation message
-			protocol::Message msg(a);
-			item->setOptions(protocol::Annotation(msg.tokens()));
-		}
-#endif
-
-		// Refresh UI
-		QList<QRectF> regions;
-		regions.append(sceneRect());
-		emit changed(regions);
-		previewstarted_ = false;
-	} else {
-		// Not an OpenRaster file, no need for complex loading
-		QImage image;
-        if(image.load(file)==false)
-			return false;
-		return initBoard(image);
-	}
-	return true;
-}
-#endif
-
-#if 0
-/**
- * @param zeroid if true, set the ID of each annotation to zero
- * @return list of ANNOTATE messages
- */
-QStringList CanvasScene::getAnnotations(bool zeroid) const
-{
-	QStringList messages;
-
-	if(_image)
-		foreach(QGraphicsItem *item, _image->childItems())
-			if(item->type() == AnnotationItem::Type) {
-				protocol::Annotation a;
-				static_cast<AnnotationItem*>(item)->getOptions(a);
-				if(zeroid)
-					a.id = 0;
-				messages << protocol::Message::quote(a.tokens());
-			}
-	return messages;
-}
-#endif
 
 void CanvasScene::clearAnnotations()
 {
@@ -252,6 +177,7 @@ bool CanvasScene::save(const QString& file) const
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
 		openraster::Writer writer(_image->image());
+		// TODO
 #if 0
 		writer.setAnnotations(getAnnotations(true));
 #endif
@@ -356,18 +282,6 @@ void CanvasScene::takePreview(int count)
 		QGraphicsLineItem *s = _previewstrokes.takeFirst();
 		s->hide();
 		_previewstrokecache.append(s);
-	}
-}
-
-/**
- * Remove all preview strokes from the board
- */
-void CanvasScene::flushPreviews()
-{
-	while(_previewstrokes.isEmpty()==false) {
-		QGraphicsLineItem *p = _previewstrokes.takeFirst();
-		p->hide();
-		_previewstrokecache.append(p);
 	}
 }
 

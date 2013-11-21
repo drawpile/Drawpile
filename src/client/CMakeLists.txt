@@ -30,6 +30,7 @@ set (
 	loader.cpp
 	net/client.cpp
 	net/loopbackserver.cpp
+	net/utils.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp

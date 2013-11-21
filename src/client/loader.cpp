@@ -18,35 +18,64 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QApplication>
 #include <QImage>
+#include <QMessageBox>
+
 #include "loader.h"
 #include "net/client.h"
+#include "net/utils.h"
+#include "ora/orareader.h"
 
-namespace {
-bool loadSingleLayerImage(net::Client *client, const QString &filename)
+#include "../shared/net/layer.h"
+
+using protocol::MessagePtr;
+
+QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
-	QImage image;
-	if(image.load(filename)==false)
-		return false;
-	image = image.convertToFormat(QImage::Format_ARGB32);
-	
-	client->sendCanvasResize(image.size());
-	client->sendNewLayer(1, Qt::transparent, "Background");
-	client->sendImage(1, 0, 0, image, false);
-	return true;
+	QList<MessagePtr> msgs;
+	msgs.append(MessagePtr(new protocol::CanvasResize(_size.width(), _size.height())));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, _color.rgba(), "Background")));
+	return msgs;
 }
 
-}
-
-bool BlankCanvasLoader::sendInitCommands(net::Client *client) const
+QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 {
-	client->sendCanvasResize(_size);
-	client->sendNewLayer(1, _color, "Background");
-	return true;
-}
+	if(_filename.endsWith(".ora", Qt::CaseInsensitive)) {
+		// Load OpenRaster image
+		using openraster::Reader;
+		// TODO identify by filetype magic?
+		Reader reader;
 
-bool ImageCanvasLoader::sendInitCommands(net::Client *client) const
-{
-	// TODO ORA loading
-	return loadSingleLayerImage(client, _filename);
+		if(reader.load(_filename) == false) {
+			_error = reader.error();
+			return QList<MessagePtr>();
+		}
+
+		if(reader.warnings() != Reader::NO_WARNINGS) {
+			QString text = QApplication::tr("DrawPile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
+			if((reader.warnings() & Reader::ORA_EXTENDED))
+				text += "\n- " + QApplication::tr("Application specific extensions are used");
+			if((reader.warnings() & Reader::ORA_NESTED))
+				text += "\n- " + QApplication::tr("Nested layers are not fully supported.");
+			QMessageBox::warning(0, QApplication::tr("Partially supported OpenRaster"), text);
+		}
+		return reader.initCommands();
+	} else {
+		// Load a simple single-layer image using Qt's image loader
+		QList<MessagePtr> msgs;
+
+		QImage image;
+		if(image.load(_filename)==false) {
+			_error = "Couldn't load file"; // TODO get proper error message
+			return msgs;
+		}
+		image = image.convertToFormat(QImage::Format_ARGB32);
+
+		msgs.append(MessagePtr(new protocol::CanvasResize(image.size().width(), image.size().height())));
+		msgs.append(MessagePtr(new protocol::LayerCreate(1, 0, "Background")));
+		msgs.append(net::putQImage(1, 0, 0, image, false));
+
+		return msgs;
+	}
 }
