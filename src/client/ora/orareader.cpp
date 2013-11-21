@@ -22,12 +22,16 @@
 #include <QDomDocument>
 #include <QDebug>
 #include <QScopedPointer>
+#include <QColor>
 
 #include "zipfile.h"
 #include "orareader.h"
 
 #include "../shared/net/layer.h"
+#include "../shared/net/annotation.h"
 #include "net/utils.h"
+
+using protocol::MessagePtr;
 
 namespace openraster {
 
@@ -90,9 +94,10 @@ bool Reader::load(const QString &filename)
 	}
 
 	// Initialize the layer stack now that we know the size
-	_commands.append(protocol::MessagePtr(new protocol::CanvasResize(imagesize.width(), imagesize.height())));
+	_commands.append(MessagePtr(new protocol::CanvasResize(imagesize.width(), imagesize.height())));
 
 	_layerid = 0;
+	_annotationid = 0;
 	// Load the layer images
 	if(loadLayers(zip, stackroot, QPoint()) == false)
 		return false;
@@ -165,7 +170,7 @@ bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 
 			// Create layer
 			QString name = e.attribute("name", QApplication::tr("Unnamed layer"));
-			_commands.append(protocol::MessagePtr(new protocol::LayerCreate(
+			_commands.append(MessagePtr(new protocol::LayerCreate(
 				++_layerid,
 				0,
 				name
@@ -177,7 +182,7 @@ bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 				);
 			_commands.append(net::putQImage(_layerid, layerPos.x(), layerPos.y(), content, false));
 
-			_commands.append(protocol::MessagePtr(new protocol::LayerAttributes(
+			_commands.append(MessagePtr(new protocol::LayerAttributes(
 				_layerid,
 				qRound(255 * e.attribute("opacity", "1.0").toDouble()),
 				0, // TODO blend modes
@@ -211,13 +216,22 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 		QDomElement e = nodes.at(n).toElement();
 		if(e.isNull())
 			continue;
-#if 0
-		if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="a")
-			annotations_ << e.text();
-		else
+		if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="a") {
+			_commands.append(MessagePtr(new protocol::AnnotationCreate(
+				++_annotationid,
+				e.attribute("x").toInt(),
+				e.attribute("y").toInt(),
+				e.attribute("w").toInt(),
+				e.attribute("h").toInt()
+			)));
+			_commands.append(MessagePtr(new protocol::AnnotationEdit(
+				_annotationid,
+				e.attribute("bg").mid(1).toUInt(0,16),
+				e.text()
+			)));
+		} else {
 			qWarning() << "unhandled annotations (DP ext.) element:" << e.tagName();
-#endif
-
+		}
 	}
 }
 

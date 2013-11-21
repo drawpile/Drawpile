@@ -21,10 +21,13 @@
 #include <QBuffer>
 #include <QDebug>
 
-#include "zipfile.h"
-#include "orawriter.h"
+#include "annotationitem.h"
+
+#include "ora/zipfile.h"
+#include "ora/orawriter.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
+
 
 namespace {
 
@@ -56,7 +59,13 @@ bool writeStackXml(Zipfile &zf, const dpcore::LayerStack *layers, const QList<dr
 		foreach(const drawingboard::AnnotationItem *a, annotations) {
 			QDomElement an = doc.createElementNS("http://drawpile.sourceforge.net/","a");
 			an.setPrefix("drawpile");
-			an.appendChild(doc.createTextNode("TODO"));
+			QRect ag = a->geometry();
+			an.setAttribute("x", ag.x());
+			an.setAttribute("y", a->y());
+			an.setAttribute("w", ag.width());
+			an.setAttribute("h", ag.height());
+			an.setAttribute("bg", QString("#%1").arg(uint(a->backgroundColor().rgba()), 8, 16, QChar('0')));
+			an.appendChild(doc.createCDATASection(a->text()));
 			annotationEls.appendChild(an);
 		}
 		stack.appendChild(annotationEls);

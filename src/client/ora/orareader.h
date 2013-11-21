@@ -74,6 +74,7 @@ class Reader {
 		Warnings _warnings;
 		QList<protocol::MessagePtr> _commands;
 		int _layerid;
+		int _annotationid;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Reader::Warnings)
