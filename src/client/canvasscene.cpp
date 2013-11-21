@@ -176,12 +176,13 @@ bool CanvasScene::save(const QString& file) const
 {
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		openraster::Writer writer(_image->image());
-		// TODO
-#if 0
-		writer.setAnnotations(getAnnotations(true));
-#endif
-		return writer.save(file);
+		QList<AnnotationItem*> annotations;
+		foreach(QGraphicsItem *i, items()) {
+			if(i->type() == AnnotationItem::Type)
+				annotations.append(static_cast<AnnotationItem*>(i));
+		}
+
+		return openraster::saveOpenRaster(file, _image->image(), annotations);
 	} else {
 		// Regular image formats: flatten the image first.
 		return image().save(file);

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009 Calle Laakkonen
+   Copyright (C) 2009-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,35 +20,19 @@
 #ifndef ORAWRITER_H
 #define ORAWRITER_H
 
-#include <QStringList>
+#include <QList>
 
 namespace dpcore {
 	class LayerStack;
 }
 
-class Zipfile;
+namespace drawingboard {
+	class AnnotationItem;
+}
 
 namespace openraster {
 
-//! OpenRaster writer
-class Writer {
-	public:
-		Writer(const dpcore::LayerStack *layers);
-
-		//! Set the annotations to save
-		void setAnnotations(const QStringList& annotations);
-
-		//! Save the layers as an OpenRaster image
-		bool save(const QString& filename) const;
-
-	private:
-		bool writeStackXml(Zipfile &zf) const;
-		bool writeLayer(Zipfile &zf, int index) const;
-		bool writeThumbnail(Zipfile &zf) const;
-
-		const dpcore::LayerStack *layers_;
-		QStringList annotations_;
-};
+bool saveOpenRaster(const QString &filename, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations);
 
 }
 
