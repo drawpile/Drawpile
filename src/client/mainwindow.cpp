@@ -312,12 +312,12 @@ void MainWindow::joinSession(const QUrl& url)
  * This function is used to check if the current board can be replaced
  * or if a new window is needed to open other content.
  *
- * The window can be replaced when there are no unsaved changes AND the board
- * is not joined to a network session.
+ * The window can be replaced when there are no unsaved changes AND the
+ * there is no active network connection
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || _canvas->hasAnnotations() /* TODO || isconnected */);
+	return !(isWindowModified() /* TODO || isconnected */);
 }
 
 /**
@@ -697,7 +697,10 @@ bool MainWindow::save()
 			if(confirmFlatten(filename_)==false)
 				return false;
 		}
-		if(_canvas->save(filename_) == false) {
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		bool saved = _canvas->save(filename_);
+		QApplication::restoreOverrideCursor();
+		if(!saved) {
 			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
@@ -731,25 +734,37 @@ bool MainWindow::saveas()
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save image"), lastpath_, filter, &selfilter);
+	qDebug() << "selfilter" << selfilter;
 	if(file.isEmpty()==false) {
-		// If no file suffix is given, use a default one
+
+		// Set file suffix if missing
 		const QFileInfo info(file);
 		if(info.suffix().isEmpty()) {
-			// Pick the default suffix based on the features used
-			if(_canvas->needSaveOra())
-				file += ".ora";
-			else
-				file += ".png";
-		} else if(_canvas->needSaveOra() && info.suffix() != "ora") {
-			// If the user has already chosen a format and it lacks
-			// the necessary features, confirm this is what they
-			// really want to do.
+			if(selfilter.isEmpty()) {
+				// If we don't have selfilter, pick what is best
+				if(_canvas->needSaveOra())
+					file += ".ora";
+				else
+					file += ".png";
+			} else {
+				// Use the currently selected filter
+				int i = selfilter.indexOf("*.")+1;
+				int i2 = selfilter.indexOf(')', i);
+				file += selfilter.mid(i, i2-i);
+			}
+		}
+
+		// Confirm format choice if saving would result in flattening layers
+		if(_canvas->needSaveOra() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
 			if(confirmFlatten(file)==false)
 				return false;
 		}
 
 		// Save the image
-		if(_canvas->save(file) == false) {
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		bool saved = _canvas->save(file);
+		QApplication::restoreOverrideCursor();
+		if(!saved) {
 			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
