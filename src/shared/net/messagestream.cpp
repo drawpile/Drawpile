@@ -22,12 +22,47 @@
 #include <QDebug>
 
 #include "messagestream.h"
+#include "snapshot.h"
 
 namespace protocol {
 
 MessageStream::MessageStream()
 	: _offset(0)
 {
+}
+
+void MessageStream::addSnapshotPoint()
+{
+	// Sanity checking
+	if(hasSnapshot()) {
+		const SnapshotPoint &sp = snapshotPoint().cast<protocol::SnapshotPoint>();
+		if(!sp.isComplete()) {
+			qWarning() << "Tried to add a new snapshot point even though the old one isn't finished!";
+			return;
+		}
+	}
+
+	// Create the new point
+	append(MessagePtr(new SnapshotPoint()));
+	_snapshotpointer = end()-1;
+}
+
+void MessageStream::cleanup()
+{
+	if(hasSnapshot()) {
+		const SnapshotPoint &sp = snapshotPoint().cast<protocol::SnapshotPoint>();
+		if(sp.isComplete()) {
+			_messages = _messages.mid(_snapshotpointer - _offset);
+			_snapshotpointer = 0;
+		}
+	}
+}
+
+void MessageStream::clear()
+{
+	_offset = end();
+	_snapshotpointer = -1;
+	_messages.clear();
 }
 
 }

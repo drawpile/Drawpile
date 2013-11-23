@@ -59,8 +59,8 @@ void UsedIdList::reserve(int id)
 		_inuse.append(id);
 	_used.remove(id);
 #else
-	Q_ASSERT(!_used.contains(id));
-	_used.append(id);
+	if(!_used.contains(id))
+		_used.append(id);
 #endif
 }
 

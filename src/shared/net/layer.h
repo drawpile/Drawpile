@@ -147,7 +147,8 @@ public:
 	static LayerOrder *deserialize(const uchar *data, uint len);
 
 	const QList<uint8_t> &order() const { return _order; }
-	
+	void setOrder(const QList<uint8_t> order) { _order = order; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;

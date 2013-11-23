@@ -57,7 +57,7 @@ public:
 	 * @param i
 	 * @return true if message can be got with at(i)
 	 */
-	bool isValidIndex(int i) { return i >= offset() && i < end(); }
+	bool isValidIndex(int i) const { return i >= offset() && i < end(); }
 
 	MessagePtr at(int pos) { return _messages.at(pos-_offset); }
 
@@ -70,12 +70,42 @@ public:
 	void append(MessagePtr msg) { _messages.append(msg); }
 
 	/**
+	 * @brief Create a new snapshot point
+	 * @pre previous snapshot point must be complete
+	 */
+	void addSnapshotPoint();
+
+	/**
 	 * @brief Does this stream contain a snapshot
 	 *
 	 * @todo always returns true because stream discarding is not yet implemented
 	 * @return true if this stream contains a snapshot
 	 */
-	bool hasSnapshot() { return true; }
+	bool hasSnapshot() const { return isValidIndex(_snapshotpointer); }
+
+	/**
+	 * @brief Get the latest snapshot point
+	 * @return snapshot point
+	 * @pre hasSnapshot() == true
+	 */
+	MessagePtr snapshotPoint() const { return at(_snapshotpointer); }
+
+	/**
+	 * @brief Get the index to the snapshot point
+	 * @return snapshot point index
+	 * @pre hasSnapshot() == true
+	 */
+	int snapshotPointIndex() const { return _snapshotpointer; }
+
+	/**
+	 * @brief remove all messages before the last complete snapshot point
+	 */
+	void cleanup();
+
+	/**
+	 * @brief remove all messages, including the snapshot point
+	 */
+	void clear();
 
 	/**
 	 * @brief return the whole stream as a list
@@ -86,6 +116,7 @@ public:
 private:
 	QList<MessagePtr> _messages;
 	int _offset;
+	int _snapshotpointer;
 };
 
 }

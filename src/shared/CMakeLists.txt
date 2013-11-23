@@ -27,6 +27,7 @@ set (
 	SRV_SOURCES
 	server/server.cpp
 	server/client.cpp
+	server/session.cpp
 	)
 
 add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )

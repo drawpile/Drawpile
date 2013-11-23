@@ -68,7 +68,31 @@ public:
 	 */
 	void setId(int id) { _id = id; }
 
+	/**
+	 * @brief Request the client to generate a snapshot
+	 *
+	 * This causes the creation of a new snapshot point on the main stream.
+	 */
 	void requestSnapshot();
+
+	/**
+	 * @brief Is this client's input queue on hold?
+	 *
+	 * Hold-lock is a type of lock where the input queue is merely put
+	 * on hold (some non-drawing commands are still allowed though). Once
+	 * the hold-lock is released, the queued commands will be processed.
+	 * @return
+	 */
+	bool isHoldLocked() const;
+
+	/**
+	 * @brief Is this client's input queue being ignored?
+	 *
+	 * Drop lock is a type of lock where all drawing commands are being
+	 * dropped.
+	 * @return
+	 */
+	bool isDropLocked() const;
 
 signals:
 	void disconnected(Client *client);
@@ -79,6 +103,11 @@ public slots:
 	 * @brief Enqueue all available commands for sending
 	 */
 	void sendAvailableCommands();
+
+	/**
+	 * @brief A new snapshot was just created
+	 */
+	void snapshotNowAvailable();
 
 private slots:
 	void gotBadData(int len, int type);
@@ -93,10 +122,14 @@ private:
 	void handleJoinSession(const QString &msg);
 
 	bool validateUsername(const QString &username);
+	void updateState(protocol::MessagePtr msg);
+
+	void enqueueHeldCommands();
 
 	Server *_server;
 	QTcpSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
+	QList<protocol::MessagePtr> _holdqueue;
 
 	State _state;
 	int _substate;

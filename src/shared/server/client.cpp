@@ -26,6 +26,8 @@
 #include "exceptions.h"
 
 #include "../net/messagequeue.h"
+#include "../net/annotation.h"
+#include "../net/layer.h"
 #include "../net/login.h"
 #include "../net/snapshot.h"
 
@@ -39,7 +41,7 @@ Client::Client(Server *server, QTcpSocket *socket)
 	  _socket(socket),
 	  _state(LOGIN), _substate(0),
 	  _awaiting_snapshot(false),
-	  _uploading_snapshot(-1),
+	  _uploading_snapshot(false),
 	  _streampointer(0),
 	  _substreampointer(-1),
 	  _id(0)
@@ -112,8 +114,6 @@ void Client::receiveMessages()
 			handleLoginMessage(msg.cast<protocol::Login>());
 			break;
 		case WAIT_FOR_SYNC:
-			qDebug() << "TODO. Got " << msg->type() << "while in WAIT_FOR_SYNC mode";
-			break;
 		case IN_SESSION:
 			handleSessionMessage(msg);
 			break;
@@ -130,9 +130,20 @@ void Client::receiveSnapshot()
 	}
 
 	while(_msgqueue->isPendingSnapshot()) {
-		if(_server->addToSnapshotStream(_msgqueue->getPendingSnapshot())) {
+		MessagePtr msg = _msgqueue->getPendingSnapshot();
+
+		// Add message
+		if(_server->addToSnapshotStream(msg)) {
 			_server->printDebug(QString("Finished getting snapshot from client %1").arg(_id));
 			_uploading_snapshot = false;
+
+			// Graduate to session
+			if(_state == WAIT_FOR_SYNC) {
+				_server->session().syncInitialState(_server->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
+				_state = IN_SESSION;
+				enqueueHeldCommands();
+			}
+
 			if(_msgqueue->isPendingSnapshot()) {
 				_server->printError(QString("Client %1 sent too much snapshot data!").arg(_id));
 				_socket->disconnect();
@@ -155,7 +166,7 @@ void Client::socketDisconnect()
 
 void Client::requestSnapshot()
 {
-	Q_ASSERT(_state == IN_SESSION);
+	Q_ASSERT(_state != LOGIN);
 	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 
@@ -175,8 +186,70 @@ void Client::requestSnapshot()
  */
 void Client::handleSessionMessage(MessagePtr msg)
 {
-	// TODO validate commands
+	if(isDropLocked()) {
+		// ignore command
+		return;
+	} else if(isHoldLocked()) {
+		_holdqueue.append(msg);
+		return;
+	}
+
+	// Track state
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_LAYER_CREATE:
+		_server->session().createLayer(msg.cast<LayerCreate>(), true);
+		break;
+	case MSG_LAYER_ORDER:
+		_server->session().reorderLayers(msg.cast<LayerOrder>());
+		break;
+	case MSG_LAYER_DELETE:
+		// drop message if layer didn't exist
+		if(!_server->session().deleteLayer(msg.cast<LayerDelete>().id()))
+			return;
+		break;
+	case MSG_ANNOTATION_CREATE:
+		_server->session().createAnnotation(msg.cast<AnnotationCreate>(), true);
+		break;
+	case MSG_ANNOTATION_DELETE:
+		// drop message if annotation didn't exist
+		if(!_server->session().deleteAnnotation(msg.cast<AnnotationDelete>().id()))
+			return;
+	default: break;
+	}
+
 	_server->addToCommandStream(msg);
+}
+
+bool Client::isHoldLocked() const
+{
+	return _state == WAIT_FOR_SYNC;
+}
+
+bool Client::isDropLocked() const
+{
+	return false;
+}
+
+void Client::enqueueHeldCommands()
+{
+	if(isHoldLocked())
+		return;
+
+	foreach(protocol::MessagePtr msg, _holdqueue)
+		handleSessionMessage(msg);
+	_holdqueue.clear();
+}
+
+void Client::snapshotNowAvailable()
+{
+	if(_state == WAIT_FOR_SYNC) {
+		_state = IN_SESSION;
+		_streampointer = _server->mainstream().snapshotPointIndex();
+		_substreampointer = 0;
+		sendAvailableCommands();
+		enqueueHeldCommands();
+	}
 }
 
 /**
@@ -254,7 +327,10 @@ void Client::handleHostSession(const QString &msg)
 	emit loggedin(this);
 
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
-	_state = IN_SESSION;
+
+	// Initial state for host is always WAIT_FOR_SYNC, because the server
+	// is not yet in sync with the user!
+	_state = WAIT_FOR_SYNC;
 
 	// Send request for initial state
 	requestSnapshot();
@@ -278,7 +354,7 @@ void Client::handleJoinSession(const QString &msg)
 	Q_ASSERT(_id>0);
 
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
-	_state = IN_SESSION;
+	_state = _server->mainstream().hasSnapshot() ? IN_SESSION : WAIT_FOR_SYNC;
 }
 
 bool Client::validateUsername(const QString &username)

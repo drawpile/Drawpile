@@ -28,6 +28,8 @@
 #include "../util/idlist.h"
 #include "../net/messagestream.h"
 
+#include "session.h"
+
 class QTcpServer;
 
 namespace server {
@@ -92,6 +94,8 @@ public:
 
 	void startSession() { _hasSession = true; }
 
+	SessionState &session() { return _session; }
+
 	void printError(const QString &message);
 	void printDebug(const QString &message);
 
@@ -111,6 +115,9 @@ signals:
 	//! New commands have been added to the main stream
 	void newCommandsAvailable();
 
+	//! A new snapshot was just created
+	void snapshotCreated();
+
 private:
 	QTcpServer *_server;
 	QList<Client*> _clients;
@@ -119,10 +126,9 @@ private:
 	QTextStream *_debug;
 
 	protocol::MessageStream _mainstream;
-	int _snapshotpointer;
 
 	bool _hasSession;
-	UsedIdList _userids;
+	SessionState _session;
 };
 
 }

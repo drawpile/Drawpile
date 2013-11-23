@@ -33,9 +33,7 @@ Server::Server(QObject *parent)
 	  _server(0),
 	  _errors(0),
 	  _debug(0),
-	  _snapshotpointer(-1),
-	  _hasSession(false),
-	  _userids(UsedIdList(255))
+	  _hasSession(false)
 {
 }
 
@@ -107,11 +105,11 @@ void Server::clientLoggedIn(Client *client)
 	// Assign user ID
 	if(client->id()!=0) {
 		// self assigned id, must be the session host
-		_userids.reserve(client->id());
+		_session.userids.reserve(client->id());
 		printDebug(QString("Session host logged in with user ID %1").arg(client->id()));
 	} else {
 		// New normal user, assign an ID
-		client->setId(_userids.takeNext());
+		client->setId(_session.userids.takeNext());
 		printDebug(QString("User from %1 logged in, assigned ID %2").arg(client->peerAddress().toString(), client->id()));
 	}
 
@@ -137,27 +135,17 @@ void Server::addToCommandStream(protocol::MessagePtr msg)
 
 void Server::addSnapshotPoint()
 {
-	// Sanity checking
-	if(_mainstream.isValidIndex(_snapshotpointer)) {
-		const protocol::SnapshotPoint &sp = _mainstream.at(_snapshotpointer).cast<protocol::SnapshotPoint>();
-		if(!sp.isComplete()) {
-			printError("Tried to add a new snapshot point even though the old one isn't finished!");
-			return;
-		}
-	}
-
-	// Create the new point
-	_mainstream.append(protocol::MessagePtr(new protocol::SnapshotPoint()));
-	_snapshotpointer = _mainstream.end()-1;
+	_mainstream.addSnapshotPoint();
+	emit snapshotCreated();
 }
 
 bool Server::addToSnapshotStream(protocol::MessagePtr msg)
 {
-	if(!_mainstream.isValidIndex(_snapshotpointer)) {
+	if(!_mainstream.hasSnapshot()) {
 		printError("Tried to add a snapshot command, but there is no snapshot point!");
 		return true;
 	}
-	protocol::SnapshotPoint &sp = _mainstream.at(_snapshotpointer).cast<protocol::SnapshotPoint>();
+	protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
 	if(sp.isComplete()) {
 		printError("Tried to add a snapshot command, but the snapshot point is already complete!");
 		return true;

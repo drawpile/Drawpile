@@ -34,7 +34,7 @@
 class UsedIdList {
 public:
 	UsedIdList(int max, int min=1) : _min(min), _max(max), _next(min) { }
-	
+
 	//! Get the next free ID number
 	int takeNext();
 	
