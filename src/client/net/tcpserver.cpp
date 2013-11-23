@@ -52,6 +52,11 @@ void TcpServer::login(LoginHandler *login)
 	_socket->connectToHost(login->url().host(), login->url().port(protocol::DEFAULT_PORT));
 }
 
+void TcpServer::logout()
+{
+	_socket->close();
+}
+
 void TcpServer::sendMessage(protocol::MessagePtr msg)
 {
 	_msgqueue->send(msg);
@@ -90,8 +95,12 @@ void TcpServer::handleDisconnect()
 
 void TcpServer::handleSocketError()
 {
+	qWarning() << "Socket error:" << _socket->errorString();
 	_error = _socket->errorString();
-	_socket->close();
+	if(_socket->state() != QTcpSocket::UnconnectedState)
+		_socket->close();
+	else
+		handleDisconnect();
 }
 
 void TcpServer::loginFailure(const QString &message)

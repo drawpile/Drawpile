@@ -165,9 +165,13 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
 	// Network status changes
-	connect(_client, SIGNAL(serverConnected()), this, SLOT(connecting()));
+	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
 	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
+
+	connect(_client, SIGNAL(serverConnected(QString)), netstatus, SLOT(connectingToHost(QString)));
+	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
+	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
 
 #if 0
 	controller_ = new Controller(_toolsettings->getAnnotationSettings(), this);
@@ -195,20 +199,10 @@ MainWindow::MainWindow(const MainWindow *source)
 			controller_, SLOT(disallowJoins(bool)));
 
 	// Controller <-> mainwindow
-	connect(controller_, SIGNAL(connected(QString)),
-			this, SLOT(connected()));
-	connect(controller_, SIGNAL(disconnected(QString)),
-			this, SLOT(disconnected()));
 	connect(controller_, SIGNAL(lockboard(QString)),
 			this, SLOT(lock(QString)));
 	connect(controller_, SIGNAL(unlockboard()),
 			this, SLOT(unlock()));
-	connect(controller_, SIGNAL(joined()),
-			this, SLOT(joined()));
-	connect(controller_, SIGNAL(boardChanged()),
-			this, SLOT(boardInfoChanged()));
-	connect(controller_, SIGNAL(rasterUploadProgress(int)),
-			this, SLOT(rasterUp(int)));
 
 	// Controller <-> login dialog connections
 	connect(controller_, SIGNAL(connected(const QString&)),
@@ -811,6 +805,7 @@ void MainWindow::leave()
 	connect(leavebox, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
 	
 #if 0
+	// TODO check if there is stuff in the upload queue
 	if(controller_->isUploading()) {
 		leavebox->setIcon(QMessageBox::Warning);
 		leavebox->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
@@ -820,16 +815,12 @@ void MainWindow::leave()
 }
 
 /**
- * Leave action confirmed, disconnected.
- * 
- * @todo do this more gracefully by first sending out an unsubscribe message.
+ * @brief Disconnect if OK button on "really leave" dialog was clicked
  */
 void MainWindow::finishLeave(int i)
 {
-#if 0
 	if(i == 0)
-		controller_->disconnectHost();
-#endif
+		_client->disconnectFromServer();
 }
 
 /**
@@ -945,7 +936,6 @@ void MainWindow::connecting()
 	// Disable UI until login completes
 	_view->setEnabled(false);
 	_drawingtools->setEnabled(false);
-	statusBar()->showMessage(tr("Connecting to server..."));
 }
 
 /**
@@ -963,7 +953,6 @@ void MainWindow::disconnected(const QString &message)
 	_drawingtools->setEnabled(true);
 
 	setSessionTitle(QString());
-	statusBar()->showMessage(tr("Disconnected"), 1000);
 
 	// This should be true at this time still
 	if(!_client->isLoggedIn()) {
@@ -977,7 +966,6 @@ void MainWindow::disconnected(const QString &message)
 void MainWindow::loggedin(bool join)
 {
 	qDebug() << "MainWindow::loggedin()";
-	statusBar()->showMessage(tr("Connected!"), 1000);
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -986,27 +974,6 @@ void MainWindow::loggedin(bool join)
 	// Initialize the canvas (in host mode the canvas was prepared already)
 	if(join)
 		_canvas->initCanvas(_client->myId());
-}
-
-/**
- * Board info has changed.
- * Things that can change:
- * - board size (not handled ATM)
- * - title
- * - owner
- * - board lock (handled elsewhere)
- */
-void MainWindow::boardInfoChanged()
-{
-#if 0
-	const network::SessionState *session = controller_->session();
-	const network::Session& info = session->info();
-	setSessionTitle(info.title());
-	const bool isowner = info.owner() == session->host()->localUser();
-	userlist_->setAdminMode(isowner);
-	adminTools_->setEnabled(isowner);
-	disallowjoins_->setChecked(info.maxUsers() <= session->userCount());
-#endif
 }
 
 /**

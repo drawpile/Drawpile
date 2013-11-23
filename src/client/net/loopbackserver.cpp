@@ -53,6 +53,11 @@ void LoopbackServer::reset()
 	_annotation_ids.reset();
 }
 
+void LoopbackServer::logout()
+{
+	qWarning() << "tried to log out from the loopback server!";
+}
+
 void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 {
 	// Keep track of layer and annotation IDs.

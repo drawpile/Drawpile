@@ -56,6 +56,7 @@ public:
 
 	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
 
+	void logout();
 signals:
 	void messageReceived(protocol::MessagePtr message);
 	

@@ -60,6 +60,11 @@ public:
 	void connectToServer(LoginHandler *loginhandler);
 
 	/**
+	 * @brief Disconnect from the remote server
+	 */
+	void disconnectFromServer();
+
+	/**
 	 * @brief Get the local user's user/context ID
 	 * @return user ID
 	 */
@@ -119,7 +124,7 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void needSnapshot();
 
-	void serverConnected();
+	void serverConnected(const QString &address);
 	void serverLoggedin(bool join);
 	void serverDisconnected(const QString &message);
 

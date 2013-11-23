@@ -49,6 +49,11 @@ public:
     virtual void sendSnapshotMessages(QList<protocol::MessagePtr> msgs) = 0;
 
     /**
+     * @brief Log out from the server
+     */
+    virtual void logout() = 0;
+
+    /**
      * @brief Is this a local server?
      * @return true if local
      */

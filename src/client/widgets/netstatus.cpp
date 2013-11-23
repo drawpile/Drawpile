@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -69,20 +69,26 @@ NetStatus::NetStatus(QWidget *parent)
  * A context menu to copy the address to clipboard will be enabled.
  * @param address the address to display
  */
-void NetStatus::connectHost(const QString& address)
+void NetStatus::connectingToHost(const QString& address)
 {
 	address_ = address;
-	label_->setText(tr("Host: %1").arg(address_));
+	label_->setText(tr("Connecting to %1...").arg(address_));
 	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::On));
 	copyaction_->setEnabled(true);
-	message(tr("Connected to %1").arg(address_));
+	message(label_->text());
+}
+
+void NetStatus::loggedIn()
+{
+	label_->setText(tr("Host: %1").arg(address_));
+	message(tr("Logged in!"));
 }
 
 /**
  * Set the label to indicate a lack of connection.
  * Context menu will be disabled.
  */
-void NetStatus::disconnectHost()
+void NetStatus::hostDisconnected()
 {
 	address_ = QString();
 	label_->setText(tr("not connected"));
@@ -103,25 +109,20 @@ void NetStatus::copyAddress()
 	QApplication::clipboard()->setText(address_, QClipboard::Selection);
 }
 
+#if 0
 void NetStatus::join(const network::User& user)
 {
-#if 0
 	message(tr("<b>%1</b> has joined").arg(user.name()));
-#endif
 }
 
 void NetStatus::leave(const network::User& user)
 {
-#if 0
 	message(tr("<b>%1</b> has left").arg(user.name()));
-#endif
 }
 
 void NetStatus::kicked(const network::User& user)
 {
-#if 0
 	message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
-#endif
 }
 
 void NetStatus::lock(const QString& reason)
@@ -133,6 +134,8 @@ void NetStatus::unlock()
 {
 	message(tr("Board unlocked"));
 }
+
+#endif
 
 void NetStatus::message(const QString& msg)
 {

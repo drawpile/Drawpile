@@ -42,6 +42,7 @@ public:
 	explicit TcpServer(QObject *parent = 0);
 
 	void login(LoginHandler *login);
+	void logout();
 
 	void sendMessage(protocol::MessagePtr msg);
 	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);

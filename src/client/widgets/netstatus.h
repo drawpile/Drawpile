@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2007 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,16 +24,12 @@
 
 class QLabel;
 
-namespace network {
-	class User;
-}
-
 namespace widgets {
 
 class PopupMessage;
 
-//! Network connection status widget
 /**
+ * @brief Network connection status widget
  * This widget displays the current status of the connection with the server
  * and the address of the host.
  */
@@ -44,22 +40,19 @@ class NetStatus : public QWidget
 		NetStatus(QWidget *parent);
 	
 	public slots:
-		//! Connect to a host
-		void connectHost(const QString& address);
-		//! Disconnect from host
-		void disconnectHost();
-		//! Copy the address to clipboard
-		void copyAddress();
-		//! User joins
+		void connectingToHost(const QString& address);
+		void loggedIn();
+		void hostDisconnected();
+
+#if 0
 		void join(const network::User& user);
-		//! User leaves
 		void leave(const network::User& user);
-		//! User got kicked out
 		void kicked(const network::User& user);
-		//! Board was locked
 		void lock(const QString& reason);
-		//! Board was unlocked
 		void unlock();
+#endif
+
+		void copyAddress();
 
 	signals:
 		//! A status message

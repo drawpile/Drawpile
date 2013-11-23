@@ -75,8 +75,17 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(_my_id);
 
-	emit serverConnected();
+	QString address = loginhandler->url().host();
+	if(loginhandler->url().port() != -1)
+		address = address + QString(":%1").arg(loginhandler->url().port());
+
+	emit serverConnected(address);
 	server->login(loginhandler);
+}
+
+void Client::disconnectFromServer()
+{
+	_server->logout();
 }
 
 bool Client::isLoggedIn() const

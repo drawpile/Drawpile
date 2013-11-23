@@ -121,8 +121,6 @@ class MainWindow : public QMainWindow {
 		void lock(const QString& reason);
 		void unlock();
 
-		void boardInfoChanged();
-
 		void updateShortcuts();
 
 	signals:
