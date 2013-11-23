@@ -30,7 +30,9 @@ set (
 	loader.cpp
 	net/client.cpp
 	net/loopbackserver.cpp
+	net/tcpserver.cpp
 	net/utils.cpp
+	net/login.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp

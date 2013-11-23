@@ -16,45 +16,28 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
 */
 
-#include <QtEndian>
-#include "image.h"
+#include <cstring>
+#include "login.h"
 
 namespace protocol {
 
-PutImage *PutImage::deserialize(const uchar *data, uint len)
+Login *Login::deserialize(const uchar *data, uint len)
 {
-	if(len < 11)
-		return 0;
-
-	return new PutImage(
-		*data,
-		*(data+1),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		qFromBigEndian<quint16>(data+8),
-		QByteArray((const char*)data+10, len-10)
-	);
+	return new Login(QByteArray((const char*)data, len));
 }
 
-int PutImage::payloadLength() const
+int Login::serializePayload(uchar *data) const
 {
-	return 1 + 1 + 4*2 + _image.size();
+	memcpy(data, _msg.constData(), _msg.length());
+	return _msg.length();
 }
 
-int PutImage::serializePayload(uchar *data) const
+int Login::payloadLength() const
 {
-	*data = _layer; ++data;
-	*data = _flags; ++data;
-	qToBigEndian(_x, data); data += 2;
-	qToBigEndian(_y, data); data += 2;
-	qToBigEndian(_w, data); data += 2;
-	qToBigEndian(_h, data); data += 2;
-	memcpy(data, _image.constData(), _image.length());
-	return 1 + 1 + 4*2 + _image.size();
+    return _msg.length();
 }
+
 
 }

@@ -1,7 +1,8 @@
+
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,42 +20,27 @@
 
 */
 
-#include <QtEndian>
-#include "image.h"
+#include "snapshot.h"
 
 namespace protocol {
 
-PutImage *PutImage::deserialize(const uchar *data, uint len)
+SnapshotMode *SnapshotMode::deserialize(const uchar *data, int len)
 {
-	if(len < 11)
+	if(len != 1)
 		return 0;
 
-	return new PutImage(
-		*data,
-		*(data+1),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		qFromBigEndian<quint16>(data+8),
-		QByteArray((const char*)data+10, len-10)
-	);
+	return new SnapshotMode(Mode(*data));
 }
 
-int PutImage::payloadLength() const
+int SnapshotMode::payloadLength() const
 {
-	return 1 + 1 + 4*2 + _image.size();
+	return 1;
 }
 
-int PutImage::serializePayload(uchar *data) const
+int SnapshotMode::serializePayload(uchar *data) const
 {
-	*data = _layer; ++data;
-	*data = _flags; ++data;
-	qToBigEndian(_x, data); data += 2;
-	qToBigEndian(_y, data); data += 2;
-	qToBigEndian(_w, data); data += 2;
-	qToBigEndian(_h, data); data += 2;
-	memcpy(data, _image.constData(), _image.length());
-	return 1 + 1 + 4*2 + _image.size();
+	*data = _mode;
+	return 1;
 }
 
 }

@@ -40,11 +40,14 @@ public:
 		: Message(MSG_CANVAS_RESIZE), _width(width), _height(height)
 		{}
 
+	static CanvasResize *deserialize(const uchar *data, uint len);
+
 	uint16_t width() const { return _width; }
 	uint16_t height() const { return _height; }
 		
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint16_t _width;
@@ -60,6 +63,8 @@ public:
 	LayerCreate(uint8_t id, uint32_t fill, const QString &title)
 		: Message(MSG_LAYER_CREATE), _id(id), _fill(fill), _title(title.toUtf8())
 		{}
+
+	static LayerCreate *deserialize(const uchar *data, uint len);
 
 	/**
 	 * \brief ID of the newly created layer.
@@ -93,6 +98,7 @@ public:
 
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;
@@ -110,6 +116,8 @@ public:
 		_opacity(opacity), _blend(blend), _title(title.toUtf8())
 		{}
 
+	static LayerAttributes *deserialize(const uchar *data, uint len);
+
 	uint8_t id() const { return _id; }
 	uint8_t opacity() const { return _opacity; }
 	uint8_t blend() const { return _blend; }
@@ -117,6 +125,7 @@ public:
 
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;
@@ -135,10 +144,13 @@ public:
 		_order(order)
 		{}
 	
+	static LayerOrder *deserialize(const uchar *data, uint len);
+
 	const QList<uint8_t> &order() const { return _order; }
 	
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	QList<uint8_t> _order;
@@ -154,12 +166,15 @@ public:
 		_id(id),
 		_merge(merge)
 		{}
+
+	static LayerDelete *deserialize(const uchar *data, uint len);
 	
 	uint8_t id() const { return _id; }
 	uint8_t merge() const { return _merge; }
 	
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;

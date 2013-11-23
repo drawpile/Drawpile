@@ -21,6 +21,8 @@
 #ifndef DP_NET_MESSAGE_H
 #define DP_NET_MESSAGE_H
 
+#include <Qt>
+
 namespace protocol {
 
 /**
@@ -44,6 +46,7 @@ enum MessageType {
 	MSG_ANNOTATION_EDIT,
 	MSG_ANNOTATION_DELETE,
 	MSG_UNDO,
+	MSG_REDO,
 	// Meta stream
 	MSG_USER_JOIN,
 	MSG_USER_ATTR,
@@ -81,13 +84,40 @@ public:
 	 */
 	int length() const { return 3 + payloadLength(); }
 	
+	/**
+	 * @brief Serialize this message
+	 *
+	 * The data buffer must be long enough to hold length() bytes.
+	 * @param data buffer where to write the message
+	 * @return number of bytes written (should always be length())
+	 */
+	int serialize(char *data) const;
+
+	/**
+	 * @brief get the length of the message from the given data
+	 *
+	 * Data buffer should be at least two bytes long
+	 * @param data data buffer
+	 * @return length
+	 */
+	static int sniffLength(const char *data);
+
+	/**
+	 * @brief deserialize a message from data buffer
+	 * @param data
+	 * @return message or 0 if type is unknown
+	 */
+	static Message *deserialize(const uchar *data);
+
 protected:
 	/**
 	 * \brief Get the length of the message payload
 	 * @return payload length in bytes
 	 */
 	virtual int payloadLength() const = 0;
-	
+
+	virtual int serializePayload(uchar *data) const = 0;
+
 private:
 	const MessageType _type;
 

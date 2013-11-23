@@ -88,9 +88,7 @@ void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 
 void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 {
-	// No special handling needed here
-	foreach(protocol::MessagePtr m, msgs)
-		sendMessage(m);
+	// There are no snapshots in loopback mode
 }
 
 #ifdef LAG_SIMULATOR

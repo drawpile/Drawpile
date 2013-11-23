@@ -18,43 +18,37 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
+#ifndef DP_NET_LOGIN_H
+#define DP_NET_LOGIN_H
 
-#include <QtEndian>
-#include "image.h"
+#include <QString>
+
+#include "message.h"
 
 namespace protocol {
 
-PutImage *PutImage::deserialize(const uchar *data, uint len)
-{
-	if(len < 11)
-		return 0;
+class Login : public Message {
+public:
+    static const int MODE_BLEND = (1<<0);
+    static const int MAX_LEN = (1<<16) - 10;
 
-	return new PutImage(
-		*data,
-		*(data+1),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		qFromBigEndian<quint16>(data+8),
-		QByteArray((const char*)data+10, len-10)
-	);
-}
+	Login(const QByteArray &msg) : Message(MSG_LOGIN), _msg(msg) {}
+	Login(const QString &msg) : Login(msg.toUtf8()) {}
+		//: Message(MSG_LOGIN), _msg(msg.toUtf8())
+	//{}
 
-int PutImage::payloadLength() const
-{
-	return 1 + 1 + 4*2 + _image.size();
-}
+	static Login *deserialize(const uchar *data, uint len);
 
-int PutImage::serializePayload(uchar *data) const
-{
-	*data = _layer; ++data;
-	*data = _flags; ++data;
-	qToBigEndian(_x, data); data += 2;
-	qToBigEndian(_y, data); data += 2;
-	qToBigEndian(_w, data); data += 2;
-	qToBigEndian(_h, data); data += 2;
-	memcpy(data, _image.constData(), _image.length());
-	return 1 + 1 + 4*2 + _image.size();
-}
+	QString message() const { return QString::fromUtf8(_msg); }
+
+protected:
+    int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+    QByteArray _msg;
+};
 
 }
+
+#endif

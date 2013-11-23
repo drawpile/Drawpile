@@ -12,6 +12,9 @@ set (
 	net/pen.cpp
 	net/image.cpp
 	net/annotation.cpp
+	net/login.cpp
+	net/snapshot.cpp
+	net/messagequeue.cpp
 	)
 
 set (
@@ -22,6 +25,7 @@ set (
 set (
 	SRV_SOURCES
 	server/server.cpp
+	server/client.cpp
 	)
 
 add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )

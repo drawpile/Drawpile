@@ -38,6 +38,7 @@ namespace net {
 	
 class Server;
 class LoopbackServer;
+class LoginHandler;
 
 /**
  * The client for accessing the drawing server.
@@ -47,6 +48,12 @@ Q_OBJECT
 public:
 	Client(QObject *parent=0);
 	~Client();
+
+	/**
+	 * @brief Connect to a remote server
+	 * @param loginhandler the login handler to use
+	 */
+	void connectToServer(LoginHandler *loginhandler);
 
 	/**
 	 * @brief Get the local user's user/context ID
@@ -88,18 +95,24 @@ public:
 
 	// Snapshot
 	void sendSnapshot(const QList<protocol::MessagePtr> commands);
+	void sendLocalInit(const QList<protocol::MessagePtr> commands);
 
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 
-protected slots:
+	void serverDisconnected();
+
+private slots:
 	void handleMessage(protocol::MessagePtr msg);
+	void handleConnect(int userid);
+	void handleDisconnect(const QString &message);
 
 private:
 	Server *_server;
 	LoopbackServer *_loopback;
 	
 	int _my_id;
+	bool _isloopback;
 };
 
 }

@@ -22,7 +22,6 @@ void printHelp() {
 }
 
 int main(int argc, char *argv[]) {
-#if 0
 	QCoreApplication app(argc, argv);
 
 	int port = protocol::DEFAULT_PORT;
@@ -32,6 +31,7 @@ int main(int argc, char *argv[]) {
 	int maxnamelen=16;
 
 	// Parse command line arguments
+	// TODO
 	QStringList args = app.arguments();
 	for(int i=1;i<args.size();++i) {
 		if(args[i] == "-h" || args[i] == "--help") {
@@ -81,14 +81,19 @@ int main(int argc, char *argv[]) {
 
 	// Start the server
 	Server *server = new Server();
+	verbose = true;
+#if 0
 	server->setPassword(password);
 	server->setMaxNameLength(maxnamelen);
 	server->setUniqueIps(uniq_ip);
+#endif
+	server->setErrorStream(new QTextStream(stderr));
 	if(verbose)
 		server->setDebugStream(new QTextStream(stdout));
-	server->start(port, address);
+
+	if(!server->start(port, address))
+		return 1;
+
 	return app.exec();
-#endif
-return 0;
 }
 

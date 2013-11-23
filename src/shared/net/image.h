@@ -36,6 +36,8 @@ public:
 	PutImage(uint8_t layer, uint8_t flags, uint16_t x, uint16_t y, uint16_t w, uint16_t h, const QByteArray &image)
 	: Message(MSG_PUTIMAGE), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
 	{}
+
+	static PutImage *deserialize(const uchar *data, uint len);
 	
 	uint8_t layer() const { return _layer; }
 	uint8_t flags() const { return _flags; }
@@ -51,6 +53,7 @@ protected:
 	 * @return payload length in bytes
 	 */
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 	
 private:
 	uint8_t _layer;

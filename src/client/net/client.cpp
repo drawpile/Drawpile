@@ -23,7 +23,9 @@
 
 #include "net/client.h"
 #include "net/loopbackserver.h"
+#include "net/tcpserver.h"
 #include "net/utils.h"
+#include "net/login.h"
 
 #include "statetracker.h"
 
@@ -43,7 +45,8 @@ Client::Client(QObject *parent)
 {
 	_loopback = new LoopbackServer(this);
 	_server = _loopback;
-	
+	_isloopback = true;
+
 	connect(
 		_loopback,
 		SIGNAL(messageReceived(protocol::MessagePtr)),
@@ -54,6 +57,37 @@ Client::Client(QObject *parent)
 
 Client::~Client()
 {
+}
+
+void Client::connectToServer(LoginHandler *loginhandler)
+{
+	Q_ASSERT(_isloopback);
+
+	TcpServer *server = new TcpServer(this);
+	_server = server;
+	_isloopback = false;
+
+	connect(server, SIGNAL(serverDisconnected(QString)), this, SLOT(handleDisconnect(QString)));
+	connect(server, SIGNAL(loggedIn(int)), this, SLOT(handleConnect(int)));
+
+	if(loginhandler->mode() == LoginHandler::HOST)
+		loginhandler->setUserId(_my_id);
+
+	qDebug() << "connecting to server...";
+	server->login(loginhandler);
+}
+
+void Client::handleConnect(int userid)
+{
+	_my_id = userid;
+}
+
+void Client::handleDisconnect(const QString &message)
+{
+	qDebug() << "server disconnected" << message;
+	_server = _loopback;
+	_isloopback = true;
+	emit serverDisconnected();
 }
 
 void Client::init()
@@ -214,9 +248,24 @@ void Client::sendAnnotationDelete(int id)
 	_server->sendMessage(MessagePtr(new protocol::AnnotationDelete(id)));
 }
 
+/**
+ * @brief Send the session initialization command stream
+ * @param commands snapshot point commands
+ */
 void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 {
 	_server->sendSnapshotMessages(commands);
+}
+
+/**
+ * @brief Send a list of commands to initialize the session in local mode
+ * @param commands
+ */
+void Client::sendLocalInit(const QList<protocol::MessagePtr> commands)
+{
+	Q_ASSERT(_isloopback);
+	foreach(protocol::MessagePtr msg, commands)
+		_loopback->sendMessage(msg);
 }
 
 void Client::handleMessage(protocol::MessagePtr msg)

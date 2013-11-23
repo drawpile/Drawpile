@@ -29,6 +29,7 @@ namespace net {
  * \brief Abstract base class for servers
  */
 class Server {
+    friend class LoginHandler;
 public:
     Server(bool local) : _local(local) {}
 	virtual ~Server() = default;
@@ -52,6 +53,10 @@ public:
      * @return true if local
      */
     bool isLocal() const { return _local; }
+
+protected:
+    virtual void loginFailure(const QString &message) {}
+    virtual void loginSuccess() {}
 
 private:
     bool _local;

@@ -22,54 +22,120 @@
 #include <QTcpSocket>
 
 #include "server.h"
-#if 0
-#include "../net/message.h"
-#include "../net/toolselect.h"
-#endif
+#include "client.h"
 
 namespace server {
 
-Server::Server(QObject *parent) : QObject(parent)
+Server::Server(QObject *parent)
+	: QObject(parent),
+	  _server(0),
+	  _errors(0),
+	  _debug(0),
+	  _hasSession(false),
+	  _userids(UsedIdList(255))
 {
-	//_errors = new QTextStream(stderr);
 }
 
-Server::~Server() {
-#if 0
-	delete _errors;
-	delete _debug;
-#endif
+Server::~Server()
+{
+	delete _server;
 }
 
 /**
  * Start listening on the specified address.
  */
 bool Server::start(quint16 port, const QHostAddress& address) {
-#if 0
 	Q_ASSERT(_server==0);
 	_server = new QTcpServer(this);
+
 	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+
 	if(_server->listen(address, port)==false) {
 		printError(_server->errorString());
 		delete _server;
+		_server = 0;
 		return false;
 	}
-	_liveclients = 0;
-	_lastclient = 1;
-#endif
+
+	printDebug(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString()));
 	return true;
+}
+
+/**
+ * @brief Accept or reject new client connection
+ */
+void Server::newClient()
+{
+	QTcpSocket *socket = _server->nextPendingConnection();
+#if 0 // TODO
+	if(_uniqueIps) {
+		foreach(Client *c, _clients) {
+			if(c->address() == socket->peerAddress()) {
+				printDebug("New client connected, but there is already a connection from " + socket->peerAddress().toString());
+				socket->close();
+				delete socket;
+				return;
+			}
+		}
+	}
+#endif
+	printDebug(QString("Accepted new client from adderss %1").arg(socket->peerAddress().toString()));
+	printDebug(QString("Number of connected clients is now %1").arg(_clients.size() + 1));
+
+	Client *client = new Client(this, socket);
+	_clients.append(client);
+
+	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
+}
+
+void Server::removeClient(Client *client)
+{
+	printDebug(QString("Client %1 from %2 disconnected").arg(client->id()).arg(client->peerAddress().toString()));
+
+	client->deleteLater();
+
+	bool removed = _clients.removeOne(client);
+	Q_ASSERT(removed);
+}
+
+void Server::clientLoggedIn(Client *client)
+{
+	// Assign user ID
+	if(client->id()!=0) {
+		// self assigned id, must be the session host
+		_userids.reserve(client->id());
+		printDebug(QString("Session host logged in with user ID %1").arg(client->id()));
+	} else {
+		// New normal user, assign an ID
+		client->setId(_userids.takeNext());
+		printDebug(QString("User from %1 logged in, assigned ID %2").arg(client->peerAddress().toString(), client->id()));
+	}
 }
 
 /**
  * Disconnect all clients and stop listening.
  */
 void Server::stop() {
-#if 0
-	clearClients();
+	//clearClients();
 	_server->close();
 	delete _server;
 	_server = 0;
-#endif
+}
+
+void Server::printError(const QString &message)
+{
+	if(_errors) {
+		*_errors << message << '\n';
+		_errors->flush();
+	}
+}
+
+void Server::printDebug(const QString &message)
+{
+	if(_debug) {
+		*_debug << message << '\n';
+		_debug->flush();
+	}
 }
 
 }

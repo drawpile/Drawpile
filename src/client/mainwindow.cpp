@@ -64,6 +64,7 @@
 #include "docks/colorbox.h"
 
 #include "net/client.h"
+#include "net/login.h"
 
 #include "dialogs/colordialog.h"
 #include "dialogs/newdialog.h"
@@ -282,7 +283,7 @@ bool MainWindow::loadDocument(SessionLoader &loader)
 		return false;
 	}
 	
-	win->_client->sendSnapshot(init);
+	win->_client->sendLocalInit(init);
 
 	QApplication::restoreOverrideCursor();
 
@@ -885,31 +886,45 @@ void MainWindow::finishHost(int i)
 		hostdlg_->rememberSettings();
 
 		// Start server if hosting locally
+#if 0
 		if(useremote==false) {
 			LocalServer::startServer();
 		}
+#endif
 
 		// If another image was selected, open a new window (unless this window
 		// is replaceable)
-#if 0 // TODO
+
 		MainWindow *w = this;
+#if 0 // TODO
 		if(hostdlg_->useOriginalImage() == false) {
 			if(!canReplace())
 				w = new MainWindow(this);
 			w->initBoard(hostdlg_->getImage());
 		}
-		w->hostSession(address, hostdlg_->getPassword(), hostdlg_->getTitle(),
-				hostdlg_->getUserLimit(), hostdlg_->getAllowDrawing());
-#endif
+
+		w->hostSession(
+			address,
+			hostdlg_->getPassword(),
+			hostdlg_->getTitle(),
+			hostdlg_->getUserLimit(),
+			hostdlg_->getAllowDrawing()
+		);
+		#endif
+		net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
+		login->setPassword(hostdlg_->getPassword());
+		login->setTitle(hostdlg_->getTitle());
+		w->_client->connectToServer(login);
 
 	}
 	hostdlg_->deleteLater();
 }
 
+#if 0
 void MainWindow::hostSession(const QUrl& url, const QString& password,
 		const QString& title, int userlimit, bool allowdrawing)
 {
-#if 0
+
 	// Connect to host
 	disconnect(controller_, SIGNAL(loggedin()), this, 0);
 	controller_->hostSession(url, password,
@@ -918,8 +933,8 @@ void MainWindow::hostSession(const QUrl& url, const QString& password,
 	// Set login dialog to correct state
 	logindlg_->connecting(url.host(), true);
 	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
-#endif
 }
+#endif
 
 /**
  * User has finally decided to connect to a server and join a session.

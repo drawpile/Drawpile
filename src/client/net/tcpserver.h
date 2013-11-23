@@ -18,63 +18,57 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#ifndef DP_NET_LOOPBACKSERVER_H
-#define DP_NET_LOOPBACKSERVER_H
+#ifndef DP_NET_TCPSERVER_H
+#define DP_NET_TCPSERVER_H
 
 #include <QObject>
 
 #include "server.h"
 
-#include "../shared/util/idlist.h"
+class QTcpSocket;
 
-/*
- * Uncomment this to enable network lag simulator.
- * The number is the maximum amount of lag in milliseconds to inject between messages.
- */
-//#define LAG_SIMULATOR 50
-
-class QTimer;
+namespace protocol {
+    class MessageQueue;
+}
 
 namespace net {
 
-/**
- * \brief Loopback sever for local single user mode
- */
-class LoopbackServer : public QObject, public Server
+class LoginHandler;
+
+class TcpServer : public QObject, public Server
 {
 	Q_OBJECT
 public:
-	explicit LoopbackServer(QObject *parent=0);
-	
-	//! Reset tracked state
-	void reset();
-	
-	/**
-	 * \brief Send a message to the server
-	 */
-	void sendMessage(protocol::MessagePtr msg);
+	explicit TcpServer(QObject *parent = 0);
 
+	void login(LoginHandler *login);
+
+	void sendMessage(protocol::MessagePtr msg);
 	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
 
 signals:
+	void loggedIn(int userid);
+	void serverDisconnected(const QString &message);
+
+	void bytesReceived(int);
 	void messageReceived(protocol::MessagePtr message);
-	
+
+protected:
+	void loginFailure(const QString &message) override;
+	void loginSuccess() override;
+
 private slots:
-#ifdef LAG_SIMULATOR
-	void sendDelayedMessage();
-#endif
+	void handleMessage();
+	void handleBadData(int len, int type);
+	void handleDisconnect();
 
 private:
-	UsedIdList _layer_ids;
-	UsedIdList _annotation_ids;
-#ifdef LAG_SIMULATOR
-	QTimer *_lagtimer;
-	QList<protocol::MessagePtr> _msgqueue;
-#endif
+	QTcpSocket *_socket;
+	protocol::MessageQueue *_msgqueue;
+	LoginHandler *_loginstate;
+	QString _error;
 };
-
 
 }
 
-#endif
-
+#endif // TCPSERVER_H

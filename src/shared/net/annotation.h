@@ -39,6 +39,8 @@ public:
 		: Message(MSG_ANNOTATION_CREATE), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
+	static AnnotationCreate *deserialize(const uchar *data, uint len);
+
 	/**
 	 * @brief id the ID of the newly created annotation
 	 *
@@ -56,6 +58,7 @@ public:
 
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;
@@ -74,6 +77,8 @@ public:
 		: Message(MSG_ANNOTATION_RESHAPE), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
+	static AnnotationReshape *deserialize(const uchar *data, uint len);
+
 	uint8_t id() const { return _id; }
 	uint16_t x() const { return _x; }
 	uint16_t y() const { return _y; }
@@ -82,6 +87,7 @@ public:
 
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;
@@ -96,9 +102,14 @@ private:
  */
 class AnnotationEdit : public Message {
 public:
-	AnnotationEdit(uint8_t id, uint32_t bg, const QString &text)
-		: Message(MSG_ANNOTATION_EDIT), _id(id), _bg(bg), _text(text.toUtf8())
+	AnnotationEdit(uint8_t id, uint32_t bg, const QByteArray &text)
+		: Message(MSG_ANNOTATION_EDIT), _id(id), _bg(bg), _text(text)
 	{}
+	AnnotationEdit(uint8_t id, uint32_t bg, const QString &text)
+		: AnnotationEdit(id, bg, text.toUtf8())
+	{}
+
+	static AnnotationEdit *deserialize(const uchar *data, uint len);
 
 	uint8_t id() const { return _id; }
 	uint32_t bg() const { return _bg; }
@@ -106,6 +117,7 @@ public:
 
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;
@@ -122,10 +134,13 @@ public:
 		: Message(MSG_ANNOTATION_DELETE), _id(id)
 	{}
 
+	static AnnotationDelete *deserialize(const uchar *data, uint len);
+
 	uint8_t id() const { return _id; }
 
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 
 private:
 	uint8_t _id;

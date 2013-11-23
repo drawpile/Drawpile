@@ -50,6 +50,8 @@ public:
 		_hard_h(hard_h), _hard_l(hard_l), _size_h(size_h), _size_l(size_l),
 		_opacity_h(opacity_h), _opacity_l(opacity_l)
 		{}
+
+		static ToolChange *deserialize(const uchar *data, uint len);
 		
 		uint8_t contextId() const { return _id; }
 		uint8_t layer() const { return _layer; }
@@ -67,7 +69,8 @@ public:
 		
 protected:
 	int payloadLength() const;
-	
+	int serializePayload(uchar *data) const;
+
 private:
 	const uint8_t _id;
 	const uint8_t _layer;
@@ -85,7 +88,7 @@ private:
 };
 
 struct PenPoint {
-	PenPoint() {};
+	PenPoint() {}
 	PenPoint(uint16_t x_, uint16_t y_, uint8_t p_) : x(x_), y(y_), p(p_) {}
 	uint16_t x, y;
 	uint8_t p;
@@ -104,11 +107,14 @@ public:
 		_ctx(ctx), _points(points)
 		{}
 	
+	static PenMove *deserialize(const uchar *data, uint len);
+
 	uint8_t contextId() const { return _ctx; }
 	const PenPointVector &points() const { return _points; }
 	
 protected:
 	int payloadLength() const;
+	int serializePayload(uchar *data) const;
 	
 private:
 	uint8_t _ctx;
@@ -125,11 +131,14 @@ public:
 		_ctx(ctx)
 		{}
 	
+	static PenUp *deserialize(const uchar *data, uint len);
+
 	uint8_t contextId() const { return _ctx; }
 	
 protected:
 	int payloadLength() const;
-	
+	int serializePayload(uchar *data) const;
+
 private:
 	uint8_t _ctx;
 };
