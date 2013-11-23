@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2009 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,14 +33,11 @@ class QTemporaryFile;
 class QTimer;
 
 namespace widgets {
-	class ViewStatus;
-	class NetStatus;
 	class CanvasView;
 	class DualColorButton;
 	class ToolSettings;
 	class UserList;
 	class LayerListWidget;
-	class ChatBox;
 	class PaletteBox;
 	class ColorBox;
 	class Navigator;
@@ -68,7 +65,7 @@ class MainWindow : public QMainWindow {
 		~MainWindow();
 
 		//! Load initial session state
-		bool loadDocument(SessionLoader &loader);
+		MainWindow *loadDocument(SessionLoader &loader);
 
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
@@ -77,75 +74,55 @@ class MainWindow : public QMainWindow {
 		void eraserNear(bool near);
 
 	public slots:
-		//! Show the "new file" dialog
+		// Triggerable actions
 		void showNew();
-		//! Open the file
-		void open(const QString& file);
-		//! Show file open dialog
 		void open();
-		//! Save current document
+		void open(const QString& file);
 		bool save();
-		//! Save current document with a new name
 		bool saveas();
-		//! Show settings dialog
+
 		void showSettings();
-		//! Show host session dialog
+
 		void host();
-		//! Show join session dialog
 		void join();
-		//! Leave session (ask confirmation first)
 		void leave();
-		//! Zoom in
+
 		void zoomin();
-		//! Zoom out
 		void zoomout();
-		//! Reset to 1:1 zoom
 		void zoomone();
-		//! Reset rotation
 		void rotatezero();
-		//! Toggle fullscreen mode
+
 		void fullscreen(bool enable);
-		//! Change current tool
-		void selectTool(QAction *tool);
-		//! Display about dialog
-		void about();
-		//! Go to drawpile homepage
-		void homepage();
-	private slots:
-		//! Show a color dialog and set foreground color
-		void setForegroundColor();
-		//! Show a color dialog and set background color
-		void setBackgroundColor();
-		//! Set session title
-		void setSessionTitle(const QString& title);
-		//! Create new document
-		void newDocument(const QSize &size, const QColor &color);
-		//! Open a recent file
-		void openRecent(QAction *action);
-		//! Mark unsaved changes
-		void markUnsaved();
-		//! Cancel or start hosting
-		void finishHost(int i);
-		//! Cancel or join
-		void finishJoin(int i);
-		//! Leave session
-		void finishLeave(int i);
-		//! Connection established
-		void connected();
-		//! Connection cut
-		void disconnected();
-		//! Joined a session
-		void joined();
-		//! Disallow changes to the board
-		void lock(const QString& reason);
-		//! Allow changes to the board
-		void unlock();
-		//! Board settings changed
-		void boardInfoChanged();
-		//! Toggle annotations
 		void toggleAnnotations(bool hidden);
 
-		//! Update keyboard shortcuts for all main windows
+		void selectTool(QAction *tool);
+
+		void about();
+		void homepage();
+
+	private slots:
+		void setForegroundColor();
+		void setBackgroundColor();
+		void setSessionTitle(const QString& title);
+
+		void newDocument(const QSize &size, const QColor &color);
+		void openRecent(QAction *action);
+
+		void markUnsaved();
+
+		void finishHost(int i);
+		void finishJoin(int i);
+		void finishLeave(int i);
+
+		void connecting();
+		void loggedin(bool join);
+		void disconnected(const QString &message);
+
+		void lock(const QString& reason);
+		void unlock();
+
+		void boardInfoChanged();
+
 		void updateShortcuts();
 
 	signals:
@@ -173,7 +150,7 @@ class MainWindow : public QMainWindow {
 		void addRecentFile(const QString& file);
 
 		//! Set the window title according to open file name
-		void setTitle();
+		void updateTitle();
 
 		//! Save settings and exit
 		void exit();
@@ -181,48 +158,33 @@ class MainWindow : public QMainWindow {
 		//! Display an error message
 		void showErrorMessage(const QString& message, const QString& details=QString());
 
-		//! Read settings from file/registry
 		void readSettings();
-		//! Clone settings from another MainWindow
 		void cloneSettings(const MainWindow *source);
-		//! Write settings to file/reqistry
 		void writeSettings();
 
-		//! Initialise QActions
 		void initActions();
-		//! Create menus
 		void createMenus();
-		//! Create toolbars
 		void createToolbars();
-		//! Create all dock windows
 		void createDocks();
-		//! Create tool settings dock
+
 		void createToolSettings(QMenu *menu);
-		//! Create user list dock
 		void createUserList(QMenu *menu);
-		//! Create layer list dock
 		void createLayerList(QMenu *menu);
-		//! Create palette dock
 		void createPalette(QMenu *menu);
-		//! Create color docks
 		void createColorBoxes(QMenu *menu);
-		//! Create navigator dock
 		void createNavigator(QMenu *menu);
 
 		QSplitter *splitter_;
 		widgets::ToolSettingsDock *_toolsettings;
 		widgets::UserList *userlist_;
 		widgets::LayerListWidget *_layerlist;
-		widgets::ChatBox *chatbox_;
 
 		widgets::DualColorButton *fgbgcolor_;
-		widgets::ViewStatus *viewstatus_;
-		widgets::NetStatus *netstatus_;
 		widgets::CanvasView *_view;
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
 		widgets::Navigator *navigator_;
-		QLabel *lockstatus_;
+		QLabel *lockstatus_; // TODO
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		dialogs::HostDialog *hostdlg_;
@@ -250,7 +212,7 @@ class MainWindow : public QMainWindow {
 		QAction *lock_board;
 		QAction *disallowjoins_;
 
-		QActionGroup *drawingtools_;
+		QActionGroup *_drawingtools;
 		QAction *pentool_;
 		QAction *brushtool_;
 		QAction *erasertool_;

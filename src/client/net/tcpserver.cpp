@@ -37,6 +37,7 @@ TcpServer::TcpServer(QObject *parent) :
 	_msgqueue = new protocol::MessageQueue(_socket, this);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
+	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
 	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(handleBadData(int,int)));
@@ -87,6 +88,12 @@ void TcpServer::handleDisconnect()
 	deleteLater();
 }
 
+void TcpServer::handleSocketError()
+{
+	_error = _socket->errorString();
+	_socket->close();
+}
+
 void TcpServer::loginFailure(const QString &message)
 {
 	qWarning() << "Login failed:" << message;
@@ -97,7 +104,7 @@ void TcpServer::loginFailure(const QString &message)
 void TcpServer::loginSuccess()
 {
 	qDebug() << "logged in! Got user id" << _loginstate->userId();
-	emit loggedIn(_loginstate->userId());
+	emit loggedIn(_loginstate->userId(), _loginstate->mode() == LoginHandler::JOIN);
 
 	_loginstate->deleteLater();
 	_loginstate = 0;

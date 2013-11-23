@@ -113,6 +113,7 @@ private slots:
 	void gotBadData(int len, int type);
 	void receiveMessages();
 	void receiveSnapshot();
+	void socketError();
 	void socketDisconnect();
 
 private:

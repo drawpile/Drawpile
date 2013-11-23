@@ -69,27 +69,33 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	_isloopback = false;
 
 	connect(server, SIGNAL(serverDisconnected(QString)), this, SLOT(handleDisconnect(QString)));
-	connect(server, SIGNAL(loggedIn(int)), this, SLOT(handleConnect(int)));
+	connect(server, SIGNAL(loggedIn(int, bool)), this, SLOT(handleConnect(int, bool)));
 	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(_my_id);
 
-	qDebug() << "connecting to server...";
+	emit serverConnected();
 	server->login(loginhandler);
 }
 
-void Client::handleConnect(int userid)
+bool Client::isLoggedIn() const
+{
+	return _server->isLoggedIn();
+}
+
+void Client::handleConnect(int userid, bool join)
 {
 	_my_id = userid;
+	emit serverLoggedin(join);
 }
 
 void Client::handleDisconnect(const QString &message)
 {
 	qDebug() << "server disconnected" << message;
+	emit serverDisconnected(message);
 	_server = _loopback;
 	_isloopback = true;
-	emit serverDisconnected();
 }
 
 void Client::init()

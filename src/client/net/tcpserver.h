@@ -46,8 +46,10 @@ public:
 	void sendMessage(protocol::MessagePtr msg);
 	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
 
+	bool isLoggedIn() const { return _loginstate == 0; }
+
 signals:
-	void loggedIn(int userid);
+	void loggedIn(int userid, bool join);
 	void serverDisconnected(const QString &message);
 
 	void bytesReceived(int);
@@ -61,6 +63,7 @@ private slots:
 	void handleMessage();
 	void handleBadData(int len, int type);
 	void handleDisconnect();
+	void handleSocketError();
 
 private:
 	QTcpSocket *_socket;

@@ -27,7 +27,7 @@
 namespace protocol {
 
 MessageStream::MessageStream()
-	: _offset(0)
+	: _offset(0), _snapshotpointer(-1)
 {
 }
 

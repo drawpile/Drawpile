@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,10 +23,14 @@
 #include <QImageReader>
 
 #include "main.h"
-#include "hostdialog.h"
-#include "../widgets/imageselector.h"
-#include "../utils/mandatoryfields.h"
-#include "colordialog.h"
+#include "loader.h"
+
+#include "dialogs/hostdialog.h"
+#include "dialogs/colordialog.h"
+
+#include "widgets/imageselector.h"
+#include "utils/mandatoryfields.h"
+
 using widgets::ImageSelector;
 
 #include <QSettings>
@@ -106,7 +110,9 @@ void HostDialog::selectColor()
 
 void HostDialog::selectPicture()
 {
-	 // Get a list of supported formats
+	// TODO support openraster
+
+	// Get a list of supported formats
 	QString formats;
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 			formats += "*." + format + " ";
@@ -158,9 +164,19 @@ QString HostDialog::getPassword() const
 	return ui_->sessionpassword->text();
 }
 
-QImage HostDialog::getImage() const
+SessionLoader *HostDialog::getSessionLoader() const
 {
-	return ui_->imageSelector->image();
+	if(ui_->imageSelector->isColor()) {
+		return new BlankCanvasLoader(
+			QSize(
+				ui_->picturewidth->value(),
+				ui_->pictureheight->value()
+			),
+			ui_->imageSelector->color()
+		);
+	} else {
+		return new QImageCanvasLoader(ui_->imageSelector->image());
+	}
 }
 
 bool HostDialog::useOriginalImage() const

@@ -54,6 +54,8 @@ public:
      */
     bool isLocal() const { return _local; }
 
+    virtual bool isLoggedIn() const { return false; }
+
 protected:
     virtual void loginFailure(const QString &message) {}
     virtual void loginSuccess() {}

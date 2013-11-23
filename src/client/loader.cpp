@@ -70,12 +70,21 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			_error = "Couldn't load file"; // TODO get proper error message
 			return msgs;
 		}
-		image = image.convertToFormat(QImage::Format_ARGB32);
 
-		msgs.append(MessagePtr(new protocol::CanvasResize(image.size().width(), image.size().height())));
-		msgs.append(MessagePtr(new protocol::LayerCreate(1, 0, "Background")));
-		msgs.append(net::putQImage(1, 0, 0, image, false));
-
-		return msgs;
+		QImageCanvasLoader imgloader(image);
+		return imgloader.loadInitCommands();
 	}
+}
+
+QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
+{
+	QList<MessagePtr> msgs;
+
+	QImage image = _image.convertToFormat(QImage::Format_ARGB32);
+
+	msgs.append(MessagePtr(new protocol::CanvasResize(image.size().width(), image.size().height())));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0, "Background")));
+	msgs.append(net::putQImage(1, 0, 0, image, false));
+
+	return msgs;
 }

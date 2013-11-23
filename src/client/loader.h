@@ -23,6 +23,7 @@
 #include <QSize>
 #include <QColor>
 #include <QString>
+#include <QImage>
 
 #include "../shared/net/message.h"
 
@@ -93,6 +94,18 @@ public:
 private:
 	QString _filename;
 	QString _error;
+};
+
+class QImageCanvasLoader : public SessionLoader {
+public:
+	QImageCanvasLoader(const QImage &image) : _image(image) {}
+
+	QList<protocol::MessagePtr> loadInitCommands();
+	QString filename() const { return ""; }
+	QString errorMessage() const { return ""; }
+
+private:
+	QImage _image;
 };
 
 #endif

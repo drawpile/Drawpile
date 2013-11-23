@@ -78,7 +78,7 @@
 MainWindow::MainWindow(const MainWindow *source)
 	: QMainWindow(), _canvas(0)
 {
-	setTitle();
+	updateTitle();
 
 	initActions();
 	createMenus();
@@ -89,12 +89,12 @@ MainWindow::MainWindow(const MainWindow *source)
 	setStatusBar(statusbar);
 
 	// Create the view status widget
-	viewstatus_ = new widgets::ViewStatus(this);
-	statusbar->addPermanentWidget(viewstatus_);
+	widgets::ViewStatus *viewstatus = new widgets::ViewStatus(this);
+	statusbar->addPermanentWidget(viewstatus);
 
 	// Create net status widget
-	netstatus_ = new widgets::NetStatus(this);
-	statusbar->addPermanentWidget(netstatus_);
+	widgets::NetStatus *netstatus = new widgets::NetStatus(this);
+	statusbar->addPermanentWidget(netstatus);
 
 	// Create lock status widget
 	lockstatus_ = new QLabel(this);
@@ -124,13 +124,13 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_view, SIGNAL(imageDropped(QString)),
 			this, SLOT(open(QString)));
 	connect(_view, SIGNAL(viewTransformed(int, qreal)),
-			viewstatus_, SLOT(setTransformation(int, qreal)));
+			viewstatus, SLOT(setTransformation(int, qreal)));
 
 	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
 	
 	// Create the chatbox
-	chatbox_ = new widgets::ChatBox(this);
-	splitter_->addWidget(chatbox_);
+	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
+	splitter_->addWidget(chatbox);
 
 	// Create canvas scene
 	_canvas = new drawingboard::CanvasScene(this, _layerlist);
@@ -163,6 +163,11 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
 	connect(_client, SIGNAL(needSnapshot()), _canvas, SLOT(sendSnapshot()));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
+
+	// Network status changes
+	connect(_client, SIGNAL(serverConnected()), this, SLOT(connecting()));
+	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
+	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
 
 #if 0
 	controller_ = new Controller(_toolsettings->getAnnotationSettings(), this);
@@ -252,9 +257,9 @@ MainWindow::~MainWindow()
 
 /**
  * If the document in this window cannot be rep
- * @return true on success
+ * @return the MainWindow instance in which the document was loaded or 0 in case of error
  */
-bool MainWindow::loadDocument(SessionLoader &loader)
+MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
@@ -270,7 +275,7 @@ bool MainWindow::loadDocument(SessionLoader &loader)
 		if(win != this)
 			delete win;
 		showErrorMessage(tr("An error occured while trying to open image"), loader.errorMessage());
-		return false;
+		return 0;
 	}
 	
 	win->_client->sendLocalInit(init);
@@ -279,24 +284,10 @@ bool MainWindow::loadDocument(SessionLoader &loader)
 
 	win->filename_ = loader.filename();
 	win->setWindowModified(false);
-	win->setTitle();
+	win->updateTitle();
 	win->save_->setEnabled(true);
 	win->saveas_->setEnabled(true);
-	return true;
-}
-
-/**
- * @param url URL
- */
-void MainWindow::joinSession(const QUrl& url)
-{
-#if 0
-	controller_->joinSession(url);
-
-	// Set login dialog to correct state
-	logindlg_->connecting(url.host(), false);
-	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
-#endif
+	return win;
 }
 
 /**
@@ -308,7 +299,7 @@ void MainWindow::joinSession(const QUrl& url)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() /* TODO || isconnected */);
+	return !(isWindowModified() || _client->isConnected());
 }
 
 /**
@@ -329,7 +320,7 @@ void MainWindow::addRecentFile(const QString& file)
 /**
  * Set window title according to currently open file and session
  */
-void MainWindow::setTitle()
+void MainWindow::updateTitle()
 {
 	QString name;
 	if(filename_.isEmpty()) {
@@ -415,7 +406,7 @@ void MainWindow::readSettings()
 	cfg.beginGroup("tools");
 	// Remember last used tool
 	int tool = cfg.value("tool", 0).toInt();
-	QList<QAction*> actions = drawingtools_->actions();
+	QList<QAction*> actions = _drawingtools->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
 	_toolsettings->setTool(tools::Type(tool));
@@ -456,10 +447,10 @@ void MainWindow::cloneSettings(const MainWindow *source)
 	lastpath_ = source->lastpath_;
 
 	// Copy tool selection
-	const int tool = source->drawingtools_->actions().indexOf(
-			source->drawingtools_->checkedAction()
+	const int tool = source->_drawingtools->actions().indexOf(
+			source->_drawingtools->checkedAction()
 			);
-	drawingtools_->actions()[tool]->trigger();
+	_drawingtools->actions()[tool]->trigger();
 	_toolsettings->setTool(tools::Type(tool));
 	_view->selectTool(tools::Type(tool));
 
@@ -487,7 +478,7 @@ void MainWindow::writeSettings()
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
-	const int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
+	const int tool = _drawingtools->actions().indexOf(_drawingtools->checkedAction());
 	cfg.setValue("tool", tool);
 	cfg.setValue("outline", toggleoutline_->isChecked());
 	cfg.setValue("foreground",fgbgcolor_->foreground().name());
@@ -761,7 +752,7 @@ bool MainWindow::saveas()
 		} else {
 			filename_ = file;
 			setWindowModified(false);
-			setTitle();
+			updateTitle();
 			return true;
 		}
 	}
@@ -877,30 +868,20 @@ void MainWindow::finishHost(int i)
 
 		// Start server if hosting locally
 #if 0
+		// TODO
 		if(useremote==false) {
 			LocalServer::startServer();
 		}
 #endif
 
-		// If another image was selected, open a new window (unless this window
-		// is replaceable)
-
+		// Initialize session (unless original was used)
 		MainWindow *w = this;
-#if 0 // TODO
 		if(hostdlg_->useOriginalImage() == false) {
-			if(!canReplace())
-				w = new MainWindow(this);
-			w->initBoard(hostdlg_->getImage());
+			QScopedPointer<SessionLoader> loader(hostdlg_->getSessionLoader());
+			w = loadDocument(*loader);
 		}
 
-		w->hostSession(
-			address,
-			hostdlg_->getPassword(),
-			hostdlg_->getTitle(),
-			hostdlg_->getUserLimit(),
-			hostdlg_->getAllowDrawing()
-		);
-		#endif
+		// Connect to server
 		net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
 		login->setPassword(hostdlg_->getPassword());
 		login->setTitle(hostdlg_->getTitle());
@@ -909,22 +890,6 @@ void MainWindow::finishHost(int i)
 	}
 	hostdlg_->deleteLater();
 }
-
-#if 0
-void MainWindow::hostSession(const QUrl& url, const QString& password,
-		const QString& title, int userlimit, bool allowdrawing)
-{
-
-	// Connect to host
-	disconnect(controller_, SIGNAL(loggedin()), this, 0);
-	controller_->hostSession(url, password,
-			title, _board->image(), userlimit, allowdrawing);
-
-	// Set login dialog to correct state
-	logindlg_->connecting(url.host(), true);
-	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
-}
-#endif
 
 /**
  * User has finally decided to connect to a server and join a session.
@@ -948,47 +913,79 @@ void MainWindow::finishJoin(int i) {
 		joindlg_->rememberSettings();
 
 		// Connect
-		MainWindow *win;
-		if(canReplace()) {
-			win = this;
-		} else {
-			win = new MainWindow(this);
-		}
-		win->joinSession(address);
+		joinSession(address);
 	}
 	joindlg_->deleteLater();
 }
 
 /**
- * Connection established, so disable and enable some UI elements
+ * @param url URL
  */
-void MainWindow::connected()
+void MainWindow::joinSession(const QUrl& url)
 {
+	MainWindow *win;
+	if(canReplace())
+		win = this;
+	else
+		win = new MainWindow(this);
+
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url);
+	win->_client->connectToServer(login);
+}
+
+/**
+ * Now connecting to server
+ */
+void MainWindow::connecting()
+{
+	qDebug() << "MainWindow::connecting()";
 	host_->setEnabled(false);
 	logout_->setEnabled(true);
+
+	// Disable UI until login completes
+	_view->setEnabled(false);
+	_drawingtools->setEnabled(false);
+	statusBar()->showMessage(tr("Connecting to server..."));
 }
 
 /**
  * Connection lost, so disable and enable some UI elements
  */
-void MainWindow::disconnected()
+void MainWindow::disconnected(const QString &message)
 {
-	userlist_->setSession(0);
+	qDebug() << "MainWindow::disconnected()";
 	host_->setEnabled(true);
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
+
+	// Re-enable UI
+	_view->setEnabled(true);
+	_drawingtools->setEnabled(true);
+
 	setSessionTitle(QString());
+	statusBar()->showMessage(tr("Disconnected"), 1000);
+
+	// This should be true at this time still
+	if(!_client->isLoggedIn()) {
+		showErrorMessage(tr("Couldn't connect to server"), message);
+	}
 }
 
 /**
- * @param session the session that was joined
+ * Server connection established and login successfull
  */
-void MainWindow::joined()
+void MainWindow::loggedin(bool join)
 {
-#if 0
-	userlist_->setSession(controller_->session());
-#endif
-	chatbox_->joined();
+	qDebug() << "MainWindow::loggedin()";
+	statusBar()->showMessage(tr("Connected!"), 1000);
+
+	// Re-enable UI
+	_view->setEnabled(true);
+	_drawingtools->setEnabled(true);
+
+	// Initialize the canvas (in host mode the canvas was prepared already)
+	if(join)
+		_canvas->initCanvas(_client->myId());
 }
 
 /**
@@ -1053,7 +1050,7 @@ void MainWindow::setBackgroundColor()
 void MainWindow::setSessionTitle(const QString& title)
 {
 	sessiontitle_ = title;
-	setTitle();
+	updateTitle();
 }
 
 /**
@@ -1337,16 +1334,16 @@ void MainWindow::initActions()
 	// A default
 	lasttool_ = brushtool_;
 
-	drawingtools_ = new QActionGroup(this);
-	drawingtools_->setExclusive(true);
-	drawingtools_->addAction(pentool_);
-	drawingtools_->addAction(brushtool_);
-	drawingtools_->addAction(erasertool_);
-	drawingtools_->addAction(pickertool_);
-	drawingtools_->addAction(linetool_);
-	drawingtools_->addAction(recttool_);
-	drawingtools_->addAction(annotationtool_);
-	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+	_drawingtools = new QActionGroup(this);
+	_drawingtools->setExclusive(true);
+	_drawingtools->addAction(pentool_);
+	_drawingtools->addAction(brushtool_);
+	_drawingtools->addAction(erasertool_);
+	_drawingtools->addAction(pickertool_);
+	_drawingtools->addAction(linetool_);
+	_drawingtools->addAction(recttool_);
+	_drawingtools->addAction(annotationtool_);
+	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// View actions
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);

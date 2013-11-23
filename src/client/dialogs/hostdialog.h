@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include <QDialog>
 
 class Ui_HostDialog;
+
+class SessionLoader;
 
 namespace dialogs {
 
@@ -57,8 +59,12 @@ class HostDialog : public QDialog
 		//! Should users be allowed to draw by default
 		bool getAllowDrawing() const;
 
-		//! Get session image
-		QImage getImage() const;
+		/**
+		 * @brief Get session loader for initializing a new session
+		 * @return session loader instance
+		 * @pre useOriginalImage() == false
+		 */
+		SessionLoader *getSessionLoader() const;
 
 		//! Use the original image?
 		bool useOriginalImage() const;

@@ -74,6 +74,18 @@ public:
 	 */
 	bool isLocalServer() const;
 
+	/**
+	 * @brief Is the client connected by network?
+	 * @return true if a network connection is open
+	 */
+	bool isConnected() const { return !_isloopback; }
+
+	/**
+	 * @brief Is the user connected and logged in?
+	 * @return true if there is an active network connection and login process has completed
+	 */
+	bool isLoggedIn() const;
+
 	//! Reinitialize after clearing out the old board
 	void init();
 
@@ -107,11 +119,13 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void needSnapshot();
 
-	void serverDisconnected();
+	void serverConnected();
+	void serverLoggedin(bool join);
+	void serverDisconnected(const QString &message);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
-	void handleConnect(int userid);
+	void handleConnect(int userid, bool join);
 	void handleDisconnect(const QString &message);
 
 	void handleSnapshotRequest(const protocol::SnapshotMode &msg);

@@ -49,10 +49,11 @@ Client::Client(Server *server, QTcpSocket *socket)
 	_msgqueue = new protocol::MessageQueue(socket, this);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
+	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError()));
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(receiveMessages()));
 	connect(_msgqueue, SIGNAL(snapshotAvailable()), this, SLOT(receiveSnapshot()));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(gotBadData(int,int)));
-	connect(_msgqueue, SIGNAL(allSent()), this, SLOT(sendAvailableCommands()));
+	//connect(_msgqueue, SIGNAL(allSent()), this, SLOT(sendAvailableCommands()));
 
 	// Client just connected, start by saying hello
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("DRAWPILE 0"))));
@@ -72,11 +73,10 @@ QHostAddress Client::peerAddress() const
 
 void Client::sendAvailableCommands()
 {
-	qDebug() << "sendAvailableCommands" << _streampointer << " < " << _server->mainstream().end();
-	// First check if there are any commands available
-	if(_streampointer >= _server->mainstream().end())
+	if(_state != IN_SESSION)
 		return;
 
+	qDebug() << "sendAvailableCommands" << _streampointer << " < " << _server->mainstream().end() << "sub=" << _substreampointer;
 	if(_substreampointer>=0) {
 		// Are we downloading a substream?
 		const protocol::MessagePtr sptr = _server->mainstream().at(_streampointer);
@@ -84,6 +84,7 @@ void Client::sendAvailableCommands()
 		const protocol::SnapshotPoint &sp = sptr.cast<const protocol::SnapshotPoint>();
 
 		// Enqueue substream
+		qDebug() << "substream" << _substreampointer << " < " << sp.substream().length();
 		while(_substreampointer < sp.substream().length())
 			_msgqueue->send(sp.substream().at(_substreampointer++));
 
@@ -156,7 +157,13 @@ void Client::receiveSnapshot()
 void Client::gotBadData(int len, int type)
 {
 	_server->printError(QString("Received unknown message type #%1 of length %2 from %3").arg(type).arg(len).arg(peerAddress().toString()));
-	_socket->disconnect();
+	_socket->close();
+}
+
+void Client::socketError()
+{
+	_server->printError(QString("Socket error %1 (from %2)").arg(_socket->errorString()).arg(peerAddress().toString()));
+	_socket->close();
 }
 
 void Client::socketDisconnect()
@@ -333,7 +340,9 @@ void Client::handleHostSession(const QString &msg)
 	_state = WAIT_FOR_SYNC;
 
 	// Send request for initial state
+	_server->startSession();
 	requestSnapshot();
+	_server->printDebug(QString("User %1 hosts the session").arg(_id));
 }
 
 void Client::handleJoinSession(const QString &msg)
@@ -355,6 +364,14 @@ void Client::handleJoinSession(const QString &msg)
 
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
 	_state = _server->mainstream().hasSnapshot() ? IN_SESSION : WAIT_FOR_SYNC;
+
+	_server->printDebug(QString("User %1 joined, wait_for_sync is=%2").arg(_id).arg(_state==WAIT_FOR_SYNC));
+
+	if(_state == IN_SESSION) {
+		_streampointer = _server->mainstream().snapshotPointIndex();
+		_substreampointer = 0;
+		sendAvailableCommands();
+	}
 }
 
 bool Client::validateUsername(const QString &username)

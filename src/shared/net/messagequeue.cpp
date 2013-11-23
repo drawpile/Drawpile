@@ -72,18 +72,22 @@ MessagePtr MessageQueue::getPendingSnapshot()
 
 void MessageQueue::send(MessagePtr packet)
 {
-	_sendqueue.enqueue(packet);
-	if(_sentcount==0)
-		writeData();
+	if(!_closeWhenReady) {
+		_sendqueue.enqueue(packet);
+		if(_sentcount==0)
+			writeData();
+	}
 }
 
 void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 {
-	_snapshot_send = snapshot;
-	_snapshot_send.append(MessagePtr(new SnapshotMode(SnapshotMode::END)));
+	if(!_closeWhenReady) {
+		_snapshot_send = snapshot;
+		_snapshot_send.append(MessagePtr(new SnapshotMode(SnapshotMode::END)));
 
-	if(_sentcount==0)
-		writeData();
+		if(_sentcount==0)
+			writeData();
+	}
 }
 
 void MessageQueue::readData() {

@@ -44,7 +44,7 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	case 0: expectHello(msg); break;
 	case 1: expectPasswordResponse(msg); break;
 	case 2: expectLoginOk(msg); break;
-	default: _server->loginFailure(QApplication::tr("Invalid state"));
+	default: _server->loginFailure(QApplication::tr("Unexpected response"));
 	}
 }
 
@@ -111,10 +111,13 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	// Check for valid error responses
 	if(msg == "BADNAME") {
 		_server->loginFailure(QApplication::tr("Username invalid or reserved"));
+		return;
 	} else if(msg == "NOSESSION") {
 		_server->loginFailure(QApplication::tr("Session does not exist yet!"));
+		return;
 	} else if(msg == "CLOSED") {
 		_server->loginFailure(QApplication::tr("Session is closed!"));
+		return;
 	}
 
 	// OK response should be in format "OK <userid>"
