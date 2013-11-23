@@ -58,6 +58,7 @@ void TcpServer::sendMessage(protocol::MessagePtr msg)
 
 void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 {
+	qDebug() << "sending" << msgs.length() << "snapshot messages";
 	_msgqueue->sendSnapshot(msgs);
 }
 
@@ -95,7 +96,7 @@ void TcpServer::loginFailure(const QString &message)
 
 void TcpServer::loginSuccess()
 {
-	qDebug() << "logged in! Got user id", _loginstate->userId();
+	qDebug() << "logged in! Got user id" << _loginstate->userId();
 	emit loggedIn(_loginstate->userId());
 
 	_loginstate->deleteLater();

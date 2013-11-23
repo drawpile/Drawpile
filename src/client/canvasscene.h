@@ -147,6 +147,9 @@ public slots:
 
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
+	//! Generate a snapshot point and send it to the server
+	void sendSnapshot();
+
 signals:
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color);
@@ -156,6 +159,9 @@ signals:
 
 	//! Emitted when a canvas modifying command is received
 	void canvasModified();
+
+	//! Emitted when a new snapshot point was generated
+	void newSnapshot(QList<protocol::MessagePtr>);
 
 private:
 	//! The board contents

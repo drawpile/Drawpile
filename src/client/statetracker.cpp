@@ -89,6 +89,13 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			qWarning() << "Unhandled drawing command" << msg->type();
 			return;
 	}
+	_msgstream.append(msg);
+}
+
+QList<protocol::MessagePtr> StateTracker::generateSnapshot()
+{
+	// New snapshot point generation
+	return _msgstream.toList();
 }
 
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)

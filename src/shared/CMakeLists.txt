@@ -15,6 +15,7 @@ set (
 	net/login.cpp
 	net/snapshot.cpp
 	net/messagequeue.cpp
+	net/messagestream.cpp
 	)
 
 set (

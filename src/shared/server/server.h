@@ -26,6 +26,7 @@
 #include <QHash>
 
 #include "../util/idlist.h"
+#include "../net/messagestream.h"
 
 class QTcpServer;
 
@@ -61,6 +62,34 @@ public:
 	 */
 	bool isSessionStarted() const { return _hasSession; }
 
+	/**
+	 * @brief get the main command stream
+	 * @return reference to main command stream
+	 */
+	const protocol::MessageStream &mainstream() const { return _mainstream; }
+
+	/**
+	 * @brief Add a command to the message stream.
+	 *
+	 * Emits newCommandsAvailable
+	 * @param msg
+	 */
+	void addToCommandStream(protocol::MessagePtr msg);
+
+	/**
+	 * @brief Add a new snapshot point.
+	 * @pre there are no unfinished snapshot points
+	 */
+	void addSnapshotPoint();
+
+	/**
+	 * @brief Add a message to the latest snapshot point.
+	 * @param msg
+	 * @pre there is an unfinished snapshot point
+	 * @return true if this was the command that completed the snapshot
+	 */
+	bool addToSnapshotStream(protocol::MessagePtr msg);
+
 	void startSession() { _hasSession = true; }
 
 	void printError(const QString &message);
@@ -79,12 +108,18 @@ signals:
 	//! This signal is emitted when the server becomes empty
 	void lastClientLeft();
 
+	//! New commands have been added to the main stream
+	void newCommandsAvailable();
+
 private:
 	QTcpServer *_server;
 	QList<Client*> _clients;
 
 	QTextStream *_errors;
 	QTextStream *_debug;
+
+	protocol::MessageStream _mainstream;
+	int _snapshotpointer;
 
 	bool _hasSession;
 	UsedIdList _userids;

@@ -161,21 +161,11 @@ MainWindow::MainWindow(const MainWindow *source)
 	
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
+	connect(_client, SIGNAL(needSnapshot()), _canvas, SLOT(sendSnapshot()));
+	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
 #if 0
 	controller_ = new Controller(_toolsettings->getAnnotationSettings(), this);
-	controller_->setModel(_board);
-	connect(controller_, SIGNAL(changed()),
-			this, SLOT(boardChanged()));
-	connect(this, SIGNAL(toolChanged(tools::Type)),
-			controller_, SLOT(setTool(tools::Type)));
-
-	connect(_view,SIGNAL(penDown(dpcore::Point)),
-			controller_,SLOT(penDown(dpcore::Point)));
-	connect(_view,SIGNAL(penMove(dpcore::Point)),
-			controller_,SLOT(penMove(dpcore::Point)));
-	connect(_view,SIGNAL(penUp()),
-			controller_,SLOT(penUp()));
 
 	// Controller -> netstatus
 	connect(controller_, SIGNAL(disconnected(QString)),

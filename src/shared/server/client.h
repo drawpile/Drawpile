@@ -23,6 +23,8 @@
 #include <QObject>
 #include <QHostAddress>
 
+#include "../net/message.h"
+
 class QTcpSocket;
 
 namespace protocol {
@@ -66,18 +68,26 @@ public:
 	 */
 	void setId(int id) { _id = id; }
 
+	void requestSnapshot();
+
 signals:
 	void disconnected(Client *client);
 	void loggedin(Client *client);
 
 public slots:
+	/**
+	 * @brief Enqueue all available commands for sending
+	 */
+	void sendAvailableCommands();
 
 private slots:
 	void gotBadData(int len, int type);
 	void receiveMessages();
+	void receiveSnapshot();
 	void socketDisconnect();
 
 private:
+	void handleSessionMessage(protocol::MessagePtr msg);
 	void handleLoginMessage(const protocol::Login &msg);
 	void handleHostSession(const QString &msg);
 	void handleJoinSession(const QString &msg);
@@ -90,6 +100,12 @@ private:
 
 	State _state;
 	int _substate;
+	bool _awaiting_snapshot;
+	bool _uploading_snapshot;
+
+	int _streampointer;
+	int _substreampointer;
+
 
 	int _id;
 	QString _username;

@@ -76,10 +76,10 @@ public:
 	 * The canvas can be reconstructed exactly using only command messages.
 	 * @return true if this is a drawing command
 	 */
-	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_UNDO; }
+	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_REDO; }
 
 	/**
-	 * \brief Get the message
+	 * \brief Get the message length, header included
 	 * @return message length in bytes
 	 */
 	int length() const { return 3 + payloadLength(); }
@@ -104,18 +104,27 @@ public:
 
 	/**
 	 * @brief deserialize a message from data buffer
-	 * @param data
+	 *
+	 * The provided buffer should contain at least sniffLength(data)
+	 * bytes. This returns zero when the message type is unrecognized
+	 * or when the message content is determined to be invalid.
+	 * @param data input data buffer
 	 * @return message or 0 if type is unknown
 	 */
 	static Message *deserialize(const uchar *data);
 
 protected:
 	/**
-	 * \brief Get the length of the message payload
+	 * @brief Get the length of the message payload
 	 * @return payload length in bytes
 	 */
 	virtual int payloadLength() const = 0;
 
+	/**
+	 * @brief Serialize the message payload
+	 * @param data data buffer
+	 * @return number of bytes written (should always be the same as payloadLenth())
+	 */
 	virtual int serializePayload(uchar *data) const = 0;
 
 private:
@@ -129,9 +138,18 @@ private:
 *
 * This object is the length of a normal pointer so it can be used
 * efficiently with QList.
+*
+* @todo use QAtomicInt if thread safety is needed
 */
 class MessagePtr {
 public:
+	/**
+	 * @brief Take ownership of the given raw Message pointer.
+	 *
+	 * The message will be deleted when reference count falls to zero.
+	 * Null pointers are not allowed.
+	 * @param msg
+	 */
 	explicit MessagePtr(Message *msg)
 		: _ptr(msg)
 	{

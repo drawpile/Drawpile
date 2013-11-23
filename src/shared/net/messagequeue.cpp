@@ -140,19 +140,22 @@ void MessageQueue::readData() {
 
 void MessageQueue::writeData() {
 	if(_sendbuflen==0) {
-		if(_sendqueue.isEmpty()) {
+		// If send buffer is empty, serialize the next message in the queue
+
+		if(_sendqueue.isEmpty() && _snapshot_send.isEmpty()) {
 			emit allSent();
 			return;
 		}
-		if(_snapshot_send.isEmpty())
-			// No snapshots queued, send normal messages
-			_sendbuflen = _sendqueue.dequeue()->serialize(_sendbuffer);
-		else {
-			// Snapshots queued, send one + the preceding snapshot mode marker
+
+		if(_sendqueue.isEmpty()) {
+			// If there is nothing in the normal send queue, there should
+			// there should be something in the lower priority snapshot queue
 			SnapshotMode mode(SnapshotMode::SNAPSHOT);
-			mode.serialize(_sendbuffer);
-			_sendbuflen = _sendqueue.dequeue()->serialize(_sendbuffer + mode.length());
-			_sendbuflen += mode.length();
+			_sendbuflen = mode.serialize(_sendbuffer);
+			_sendbuflen += _snapshot_send.takeFirst()->serialize(_sendbuffer + _sendbuflen);
+		} else {
+			// There are messages in the higher priority queue, send one
+			_sendbuflen = _sendqueue.dequeue()->serialize(_sendbuffer);
 		}
 	}
 

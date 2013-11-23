@@ -76,7 +76,7 @@ PenMove *PenMove::deserialize(const uchar *data, uint len)
 	uint8_t id = *data;
 	PenPointVector pp;
 
-	const int points = (len-1)/6;
+	const int points = (len-1)/5;
 	pp.reserve(points);
 	++data;
 	for(int i=0;i<points;++i) {

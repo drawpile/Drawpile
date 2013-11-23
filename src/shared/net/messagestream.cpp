@@ -1,4 +1,3 @@
-
 /*
    DrawPile - a collaborative drawing program.
 
@@ -20,40 +19,16 @@
 
 */
 
-#include "snapshot.h"
+#include <QDebug>
+
+#include "messagestream.h"
 
 namespace protocol {
 
-SnapshotMode *SnapshotMode::deserialize(const uchar *data, int len)
+MessageStream::MessageStream()
+	: _offset(0)
 {
-	if(len != 1)
-		return 0;
-
-	return new SnapshotMode(Mode(*data));
-}
-
-int SnapshotMode::payloadLength() const
-{
-	return 1;
-}
-
-int SnapshotMode::serializePayload(uchar *data) const
-{
-	*data = _mode;
-	return 1;
-}
-
-void SnapshotPoint::append(MessagePtr msg)
-{
-	if(_complete) {
-		qWarning("Tried to append to a completed snapshot point!");
-		return;
-	}
-
-	if(msg->type() == MSG_SNAPSHOT && msg.cast<SnapshotMode>().mode() == SnapshotMode::END)
-		_complete = true;
-	else
-		_substream.append(msg);
 }
 
 }
+

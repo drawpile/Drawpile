@@ -24,6 +24,8 @@
 #include "server.h"
 #include "client.h"
 
+#include "../net/snapshot.h"
+
 namespace server {
 
 Server::Server(QObject *parent)
@@ -31,6 +33,7 @@ Server::Server(QObject *parent)
 	  _server(0),
 	  _errors(0),
 	  _debug(0),
+	  _snapshotpointer(-1),
 	  _hasSession(false),
 	  _userids(UsedIdList(255))
 {
@@ -86,6 +89,7 @@ void Server::newClient()
 	_clients.append(client);
 
 	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
+	connect(client, SIGNAL(loggedin(Client*)), this, SLOT(clientLoggedIn(Client*)));
 }
 
 void Server::removeClient(Client *client)
@@ -110,6 +114,8 @@ void Server::clientLoggedIn(Client *client)
 		client->setId(_userids.takeNext());
 		printDebug(QString("User from %1 logged in, assigned ID %2").arg(client->peerAddress().toString(), client->id()));
 	}
+
+	connect(this, SIGNAL(newCommandsAvailable()), client, SLOT(sendAvailableCommands()));
 }
 
 /**
@@ -120,6 +126,48 @@ void Server::stop() {
 	_server->close();
 	delete _server;
 	_server = 0;
+}
+
+void Server::addToCommandStream(protocol::MessagePtr msg)
+{
+	qDebug() << "added to stream" << msg->type();
+	_mainstream.append(msg);
+	emit newCommandsAvailable();
+}
+
+void Server::addSnapshotPoint()
+{
+	// Sanity checking
+	if(_mainstream.isValidIndex(_snapshotpointer)) {
+		const protocol::SnapshotPoint &sp = _mainstream.at(_snapshotpointer).cast<protocol::SnapshotPoint>();
+		if(!sp.isComplete()) {
+			printError("Tried to add a new snapshot point even though the old one isn't finished!");
+			return;
+		}
+	}
+
+	// Create the new point
+	_mainstream.append(protocol::MessagePtr(new protocol::SnapshotPoint()));
+	_snapshotpointer = _mainstream.end()-1;
+}
+
+bool Server::addToSnapshotStream(protocol::MessagePtr msg)
+{
+	if(!_mainstream.isValidIndex(_snapshotpointer)) {
+		printError("Tried to add a snapshot command, but there is no snapshot point!");
+		return true;
+	}
+	protocol::SnapshotPoint &sp = _mainstream.at(_snapshotpointer).cast<protocol::SnapshotPoint>();
+	if(sp.isComplete()) {
+		printError("Tried to add a snapshot command, but the snapshot point is already complete!");
+		return true;
+	}
+
+	sp.append(msg);
+
+	emit newCommandsAvailable();
+
+	return sp.isComplete();
 }
 
 void Server::printError(const QString &message)

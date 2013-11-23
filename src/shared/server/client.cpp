@@ -38,13 +38,19 @@ Client::Client(Server *server, QTcpSocket *socket)
 	  _server(server),
 	  _socket(socket),
 	  _state(LOGIN), _substate(0),
+	  _awaiting_snapshot(false),
+	  _uploading_snapshot(-1),
+	  _streampointer(0),
+	  _substreampointer(-1),
 	  _id(0)
 {
 	_msgqueue = new protocol::MessageQueue(socket, this);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(receiveMessages()));
+	connect(_msgqueue, SIGNAL(snapshotAvailable()), this, SLOT(receiveSnapshot()));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(gotBadData(int,int)));
+	connect(_msgqueue, SIGNAL(allSent()), this, SLOT(sendAvailableCommands()));
 
 	// Client just connected, start by saying hello
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("DRAWPILE 0"))));
@@ -62,6 +68,40 @@ QHostAddress Client::peerAddress() const
 	return _socket->peerAddress();
 }
 
+void Client::sendAvailableCommands()
+{
+	qDebug() << "sendAvailableCommands" << _streampointer << " < " << _server->mainstream().end();
+	// First check if there are any commands available
+	if(_streampointer >= _server->mainstream().end())
+		return;
+
+	if(_substreampointer>=0) {
+		// Are we downloading a substream?
+		const protocol::MessagePtr sptr = _server->mainstream().at(_streampointer);
+		Q_ASSERT(sptr->type() == protocol::MSG_SNAPSHOT);
+		const protocol::SnapshotPoint &sp = sptr.cast<const protocol::SnapshotPoint>();
+
+		// Enqueue substream
+		while(_substreampointer < sp.substream().length())
+			_msgqueue->send(sp.substream().at(_substreampointer++));
+
+		if(sp.isComplete()) {
+			_substreampointer = -1;
+			++_streampointer;
+			sendAvailableCommands();
+		}
+	} else {
+		// No substream in progress, enqueue normal commands
+		// Snapshot points (substreams) are skipped.
+		while(_streampointer < _server->mainstream().end()) {
+			MessagePtr msg = _server->mainstream().at(_streampointer++);
+			if(msg->type() != protocol::MSG_SNAPSHOT)
+				_msgqueue->send(msg);
+		}
+	}
+
+}
+
 void Client::receiveMessages()
 {
 	while(_msgqueue->isPending()) {
@@ -72,7 +112,31 @@ void Client::receiveMessages()
 			handleLoginMessage(msg.cast<protocol::Login>());
 			break;
 		case WAIT_FOR_SYNC:
+			qDebug() << "TODO. Got " << msg->type() << "while in WAIT_FOR_SYNC mode";
+			break;
 		case IN_SESSION:
+			handleSessionMessage(msg);
+			break;
+		}
+	}
+}
+
+void Client::receiveSnapshot()
+{
+	if(!_uploading_snapshot) {
+		_server->printError(QString("Received snapshot data from client %1 when not expecting it!").arg(_id));
+		_socket->disconnect();
+		return;
+	}
+
+	while(_msgqueue->isPendingSnapshot()) {
+		if(_server->addToSnapshotStream(_msgqueue->getPendingSnapshot())) {
+			_server->printDebug(QString("Finished getting snapshot from client %1").arg(_id));
+			_uploading_snapshot = false;
+			if(_msgqueue->isPendingSnapshot()) {
+				_server->printError(QString("Client %1 sent too much snapshot data!").arg(_id));
+				_socket->disconnect();
+			}
 			break;
 		}
 	}
@@ -87,6 +151,32 @@ void Client::gotBadData(int len, int type)
 void Client::socketDisconnect()
 {
 	emit disconnected(this);
+}
+
+void Client::requestSnapshot()
+{
+	Q_ASSERT(_state == IN_SESSION);
+	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::REQUEST)));
+	_awaiting_snapshot = true;
+
+	_server->addSnapshotPoint();
+	_uploading_snapshot = true;
+
+	_server->printDebug(QString("Created a new snapshot point and requested data from client %1").arg(_id));
+}
+
+/**
+ * @brief Handle messages in normal session mode
+ *
+ * This one is pretty simple. The message is validated to make sure
+ * the client is authorized to send it, etc. and it is added to the
+ * main message stream, from which it is distributed to all connected clients.
+ * @param msg the message received from the client
+ */
+void Client::handleSessionMessage(MessagePtr msg)
+{
+	// TODO validate commands
+	_server->addToCommandStream(msg);
 }
 
 /**
@@ -167,7 +257,7 @@ void Client::handleHostSession(const QString &msg)
 	_state = IN_SESSION;
 
 	// Send request for initial state
-	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::REQUEST)));
+	requestSnapshot();
 }
 
 void Client::handleJoinSession(const QString &msg)

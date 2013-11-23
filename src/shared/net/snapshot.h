@@ -21,6 +21,7 @@
 #ifndef DP_NET_SNAPSHOT_H
 #define DP_NET_SNAPSHOT_H
 
+#include <QList>
 #include "message.h"
 
 namespace protocol {
@@ -49,6 +50,51 @@ private:
     Mode _mode;
 };
 
+/**
+ * @brief A snapshot point container
+ *
+ * This message is never actually transmitted over the network. It
+ * serves as a container for the snapshot point stream in the actual
+ * command stream.
+ */
+class SnapshotPoint : public Message {
+public:
+	SnapshotPoint() : Message(MSG_SNAPSHOT), _complete(false) {}
+
+	/**
+	 * @brief Get the snapshot point substream
+	 * @return list of snapshot commands
+	 */
+	const QList<MessagePtr> &substream() const { return _substream; }
+
+	/**
+	 * @brief Add a message to the snapshot point
+	 *
+	 * Adding a SnapshotMode::END message marks this snapshot point as complete.
+	 * No messages after it are accepted.
+	 * @param msg
+	 */
+	void append(MessagePtr msg);
+
+	/**
+	 * @brief Check if this snapshot point is complete
+	 *
+	 * A client's main stream pointer is not advanced until the
+	 * snapshot stream is complete, even if it has consumed all
+	 * available snasphot commands, as there are still more on the way.
+	 * @return true if substream is complete
+	 */
+	bool isComplete() const { return _complete; }
+
+protected:
+	int payloadLength() const { return 0; }
+	int serializePayload(uchar*) const { return 0; }
+
+private:
+	QList<MessagePtr> _substream;
+	bool _complete;
+
+};
 }
 
 #endif

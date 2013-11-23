@@ -296,6 +296,16 @@ void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 	}
 }
 
+void CanvasScene::sendSnapshot()
+{
+	if(_statetracker) {
+		qDebug() << "generating snapshot point...";
+		emit newSnapshot(_statetracker->generateSnapshot());
+	} else {
+		qWarning() << "This shouldn't happen... Received a snapshot request but canvas does not exist!";
+	}
+}
+
 QPen CanvasScene::penForBrush(const dpcore::Brush &brush)
 {
 	const int rad = brush.radius(1.0);

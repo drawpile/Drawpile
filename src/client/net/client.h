@@ -34,6 +34,10 @@ namespace drawingboard {
 	class ToolContext;
 }
 
+namespace protocol {
+	class SnapshotMode;
+}
+
 namespace net {
 	
 class Server;
@@ -93,12 +97,15 @@ public:
 	void sendAnnotationEdit(int id, const QColor &bg, const QString &text);
 	void sendAnnotationDelete(int id);
 
-	// Snapshot
-	void sendSnapshot(const QList<protocol::MessagePtr> commands);
+	// Snapshot	
 	void sendLocalInit(const QList<protocol::MessagePtr> commands);
+
+public slots:
+	void sendSnapshot(const QList<protocol::MessagePtr> commands);
 
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
+	void needSnapshot();
 
 	void serverDisconnected();
 
@@ -106,6 +113,8 @@ private slots:
 	void handleMessage(protocol::MessagePtr msg);
 	void handleConnect(int userid);
 	void handleDisconnect(const QString &message);
+
+	void handleSnapshotRequest(const protocol::SnapshotMode &msg);
 
 private:
 	Server *_server;

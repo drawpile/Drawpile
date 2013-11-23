@@ -27,6 +27,7 @@
 #include "core/brush.h"
 #include "core/point.h"
 #include "../shared/net/message.h"
+#include "../shared/net/messagestream.h"
 
 namespace protocol {
 	class CanvasResize;
@@ -96,6 +97,8 @@ public:
 	
 	void receiveCommand(protocol::MessagePtr msg);
 
+	QList<protocol::MessagePtr> generateSnapshot();
+
 private:
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd);
@@ -123,6 +126,8 @@ private:
 	widgets::LayerListWidget *_layerlist;
 
 	int _myid;
+
+	protocol::MessageStream _msgstream;
 };
 
 }

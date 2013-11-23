@@ -35,6 +35,7 @@
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/snapshot.h"
 
 using protocol::MessagePtr;
 
@@ -69,6 +70,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 
 	connect(server, SIGNAL(serverDisconnected(QString)), this, SLOT(handleDisconnect(QString)));
 	connect(server, SIGNAL(loggedIn(int)), this, SLOT(handleConnect(int)));
+	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(_my_id);
@@ -254,6 +256,10 @@ void Client::sendAnnotationDelete(int id)
  */
 void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 {
+	// Send ACK to indicate the rest of the data is on its way
+	_server->sendMessage(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::ACK)));
+
+	// The actual snapshot data will be sent in parallel with normal session traffic
 	_server->sendSnapshotMessages(commands);
 }
 
@@ -272,7 +278,28 @@ void Client::handleMessage(protocol::MessagePtr msg)
 {
 	if(msg->isCommand()) {
 		emit drawingCommandReceived(msg);
+		return;
 	}
+	// Not a command stream message? Must be a meta command then
+	qDebug() << "handling" << msg->type();
+	switch(msg->type()) {
+	case protocol::MSG_SNAPSHOT:
+		handleSnapshotRequest(msg.cast<protocol::SnapshotMode>());
+		break;
+	default:
+		qWarning() << "received unhandled meta(?) command" << msg->type();
+	}
+}
+
+void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
+{
+	// The server should ever only send a REQUEST mode snapshot messages
+	if(msg.mode() != protocol::SnapshotMode::REQUEST) {
+		qWarning() << "received unhandled snapshot mode" << msg.mode() << "message.";
+	}
+
+	qDebug() << "need snapshot!";
+	emit needSnapshot();
 }
 
 }
