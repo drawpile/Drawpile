@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
+#include <QTimer>
 
 #include "canvasscene.h"
 #include "canvasitem.h"
@@ -39,6 +40,8 @@ CanvasScene::CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwid
 	_layerlistwidget(layerlistwidget)
 {
 	setItemIndexMethod(NoIndex);
+	_previewClearTimer = new QTimer(this);
+	connect(_previewClearTimer, SIGNAL(timeout()), this, SLOT(clearPreviews()));
 }
 
 CanvasScene::~CanvasScene()
@@ -275,6 +278,11 @@ void CanvasScene::addPreview(const dpcore::Point& point)
 	s->setLine(_lastpreview.x(), _lastpreview.y(), point.x(), point.y());
 	_previewstrokes.append(s);
 	_lastpreview = point;
+
+	// Clear out previews automatically.
+	// If the user is locked, some strokes may have been dropped by
+	// the server, causing an annoying tail of preview strokes.
+	_previewClearTimer->start(2000);
 }
 
 void CanvasScene::takePreview(int count)
@@ -283,6 +291,19 @@ void CanvasScene::takePreview(int count)
 		QGraphicsLineItem *s = _previewstrokes.takeFirst();
 		s->hide();
 		_previewstrokecache.append(s);
+	}
+}
+
+void CanvasScene::clearPreviews()
+{
+	while(!_previewstrokes.isEmpty()) {
+		QGraphicsLineItem *s = _previewstrokes.takeFirst();
+		s->hide();
+		_previewstrokecache.append(s);
+	}
+	// Limit the size of the cache
+	while(_previewstrokecache.size() > 100) {
+		delete _previewstrokecache.takeLast();
 	}
 }
 

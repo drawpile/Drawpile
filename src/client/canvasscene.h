@@ -150,6 +150,9 @@ public slots:
 	//! Generate a snapshot point and send it to the server
 	void sendSnapshot();
 
+	//! Clear out all preview strokes
+	void clearPreviews();
+
 signals:
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color);
@@ -189,6 +192,8 @@ private:
 
 	//! The layer list widget to update on layer changes
 	widgets::LayerListWidget *_layerlistwidget;
+
+	QTimer *_previewClearTimer;
 };
 
 }
