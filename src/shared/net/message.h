@@ -64,13 +64,13 @@ public:
 	virtual ~Message() = default;
 	
 	/**
-	 * \brief Get the type of this message.
+	 * @brief Get the type of this message.
 	 * @return message type
 	 */
 	MessageType type() const { return _type; }
 	
 	/**
-	 * \brief Check if this message type is a command stream type
+	 * @brief Check if this message type is a command stream type
 	 * 
 	 * Command stream messages are the messages directly related to drawing.
 	 * The canvas can be reconstructed exactly using only command messages.
@@ -79,11 +79,20 @@ public:
 	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_REDO; }
 
 	/**
-	 * \brief Get the message length, header included
+	 * @brief Get the message length, header included
 	 * @return message length in bytes
 	 */
 	int length() const { return 3 + payloadLength(); }
 	
+	/**
+	 * @brief Set the user ID of this message, if it has one.
+	 *
+	 * This is used to enforce proper origin IDs for drawing commands.
+	 *
+	 * @param userid the new user id
+	 */
+	virtual void setOrigin(uint8_t userid) { }
+
 	/**
 	 * @brief Serialize this message
 	 *

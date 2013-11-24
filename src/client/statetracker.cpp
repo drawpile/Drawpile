@@ -111,6 +111,7 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
 	_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()));
+	qDebug() << "added layer" << cmd.id();
 	_layerlist->addLayer(cmd.id(), cmd.title());
 }
 

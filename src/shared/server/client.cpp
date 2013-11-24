@@ -29,7 +29,9 @@
 #include "../net/annotation.h"
 #include "../net/layer.h"
 #include "../net/login.h"
+#include "../net/meta.h"
 #include "../net/snapshot.h"
+#include "../net/constants.h"
 
 namespace server {
 
@@ -44,7 +46,9 @@ Client::Client(Server *server, QTcpSocket *socket)
 	  _uploading_snapshot(false),
 	  _streampointer(0),
 	  _substreampointer(-1),
-	  _id(0)
+	  _id(0),
+	  _isOperator(false),
+	  _userLock(false)
 {
 	_msgqueue = new protocol::MessageQueue(socket, this);
 
@@ -53,10 +57,10 @@ Client::Client(Server *server, QTcpSocket *socket)
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(receiveMessages()));
 	connect(_msgqueue, SIGNAL(snapshotAvailable()), this, SLOT(receiveSnapshot()));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(gotBadData(int,int)));
-	//connect(_msgqueue, SIGNAL(allSent()), this, SLOT(sendAvailableCommands()));
 
 	// Client just connected, start by saying hello
-	_msgqueue->send(MessagePtr(new protocol::Login(QString("DRAWPILE 0"))));
+	QString hello = QString("DRAWPILE %1.%2").arg(protocol::REVISION).arg(_server->session().minorVersion);
+	_msgqueue->send(MessagePtr(new protocol::Login(hello)));
 	// No password protection (TODO), so we are expecting a HOST/JOIN command
 	_substate = 1;
 }
@@ -76,7 +80,6 @@ void Client::sendAvailableCommands()
 	if(_state != IN_SESSION)
 		return;
 
-	qDebug() << "sendAvailableCommands" << _streampointer << " < " << _server->mainstream().end() << "sub=" << _substreampointer;
 	if(_substreampointer>=0) {
 		// Are we downloading a substream?
 		const protocol::MessagePtr sptr = _server->mainstream().at(_streampointer);
@@ -84,7 +87,6 @@ void Client::sendAvailableCommands()
 		const protocol::SnapshotPoint &sp = sptr.cast<const protocol::SnapshotPoint>();
 
 		// Enqueue substream
-		qDebug() << "substream" << _substreampointer << " < " << sp.substream().length();
 		while(_substreampointer < sp.substream().length())
 			_msgqueue->send(sp.substream().at(_substreampointer++));
 
@@ -133,6 +135,8 @@ void Client::receiveSnapshot()
 	while(_msgqueue->isPendingSnapshot()) {
 		MessagePtr msg = _msgqueue->getPendingSnapshot();
 
+		// TODO filter allowed message types
+
 		// Add message
 		if(_server->addToSnapshotStream(msg)) {
 			_server->printDebug(QString("Finished getting snapshot from client %1").arg(_id));
@@ -143,6 +147,7 @@ void Client::receiveSnapshot()
 				_server->session().syncInitialState(_server->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
 				_state = IN_SESSION;
 				enqueueHeldCommands();
+				sendAvailableCommands();
 			}
 
 			if(_msgqueue->isPendingSnapshot()) {
@@ -168,6 +173,10 @@ void Client::socketError()
 
 void Client::socketDisconnect()
 {
+	if(_id>0) {
+		_server->session().userids.release(_id);
+		_server->addToCommandStream(MessagePtr(new protocol::UserLeave(_id)));
+	}
 	emit disconnected(this);
 }
 
@@ -193,15 +202,35 @@ void Client::requestSnapshot()
  */
 void Client::handleSessionMessage(MessagePtr msg)
 {
-	if(isDropLocked()) {
-		// ignore command
+	// Filter away blatantly unallowed messages
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_LOGIN:
+	case MSG_USER_JOIN:
+	case MSG_USER_ATTR:
+	case MSG_USER_LEAVE:
+	case MSG_STREAMPOS:
 		return;
-	} else if(isHoldLocked()) {
-		_holdqueue.append(msg);
-		return;
+	default: break;
 	}
 
-	// Track state
+	// TODO filter away operator only commands
+
+	// Locking (note. applies only to command stream)
+	if(msg->isCommand()) {
+		if(isDropLocked()) {
+			// ignore command
+			return;
+		} else if(isHoldLocked()) {
+			_holdqueue.append(msg);
+			return;
+		}
+	}
+
+	// Make sure the origin user ID is set
+	msg->setOrigin(_id);
+
+	// Track state and special commands
 	switch(msg->type()) {
 	using namespace protocol;
 	case MSG_LAYER_CREATE:
@@ -222,9 +251,16 @@ void Client::handleSessionMessage(MessagePtr msg)
 		// drop message if annotation didn't exist
 		if(!_server->session().deleteAnnotation(msg.cast<AnnotationDelete>().id()))
 			return;
+	case MSG_CHAT:
+		// Chat is used also for operator commands
+		if(_isOperator && handleOperatorCommand(msg.cast<Chat>().message()))
+			return;
+		break;
+
 	default: break;
 	}
 
+	// Add to main command stream to be distributed to everyone
 	_server->addToCommandStream(msg);
 }
 
@@ -235,7 +271,49 @@ bool Client::isHoldLocked() const
 
 bool Client::isDropLocked() const
 {
-	return false;
+	return _userLock;
+}
+
+void Client::grantOp()
+{
+	_server->printDebug(QString("Granted operator privileges to user #%1 (%2)").arg(_id).arg(_username));
+	_isOperator = true;
+	sendUpdatedAttrs();
+}
+
+void Client::deOp()
+{
+	_server->printDebug(QString("Revoked operator privileges from user #%1 (%2)").arg(_id).arg(_username));
+	_isOperator = false;
+	sendUpdatedAttrs();
+}
+
+void Client::lockUser()
+{
+	_server->printDebug(QString("Locked user #%1 (%2)").arg(_id).arg(_username));
+	_userLock = true;
+	sendUpdatedAttrs();
+}
+
+void Client::unlockUser()
+{
+	_server->printDebug(QString("Unlocked user #%1 (%2)").arg(_id).arg(_username));
+	_userLock = false;
+	sendUpdatedAttrs();
+}
+
+void Client::kick(int kickedBy)
+{
+	_server->printDebug(QString("User #%1 (%2) kicked by #%3").arg(_id).arg(_username).arg(kickedBy));
+	_socket->close();
+}
+
+void Client::sendUpdatedAttrs()
+{
+	// Note. These changes are applied immediately on the server, but may take some
+	// time to reach the clients. This doesn't matter much though, since locks and operator
+	// privileges are enforced by the server only.
+	_server->addToCommandStream(MessagePtr(new protocol::UserAttr(_id, _userLock, _isOperator)));
 }
 
 void Client::enqueueHeldCommands()
@@ -330,8 +408,14 @@ void Client::handleHostSession(const QString &msg)
 
 	_id = userid;
 	_username = username;
-	// TODO set minor version
+	_server->session().minorVersion = minorVersion;
+
+	// Reserve ID
+	_server->session().userids.reserve(_id);
+
 	emit loggedin(this);
+
+	_server->printDebug(QString("User %1 hosts the session").arg(_id));
 
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
 
@@ -342,7 +426,8 @@ void Client::handleHostSession(const QString &msg)
 	// Send request for initial state
 	_server->startSession();
 	requestSnapshot();
-	_server->printDebug(QString("User %1 hosts the session").arg(_id));
+	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
+	grantOp();
 }
 
 void Client::handleJoinSession(const QString &msg)
@@ -358,20 +443,32 @@ void Client::handleJoinSession(const QString &msg)
 		throw ProtocolViolation("BADNAME");
 
 	_username = username;
+
+	// Assign ID
+	_id = _server->session().userids.takeNext();
+	if(_id<1) {
+		// Out of space!
+		throw ProtocolViolation("CLOSED");
+	}
+
 	emit loggedin(this);
-	// the server should have assigned the ID in response to the signal
-	Q_ASSERT(_id>0);
-
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
+
+
 	_state = _server->mainstream().hasSnapshot() ? IN_SESSION : WAIT_FOR_SYNC;
-
-	_server->printDebug(QString("User %1 joined, wait_for_sync is=%2").arg(_id).arg(_state==WAIT_FOR_SYNC));
-
 	if(_state == IN_SESSION) {
 		_streampointer = _server->mainstream().snapshotPointIndex();
 		_substreampointer = 0;
-		sendAvailableCommands();
 	}
+
+	_server->printDebug(QString("User %1 joined, wait_for_sync is=%2").arg(_id).arg(_state==WAIT_FOR_SYNC));
+
+	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
+
+	// Give op to this user if it is the only one here
+	if(_server->userCount() == 1)
+		grantOp();
+
 }
 
 bool Client::validateUsername(const QString &username)
@@ -381,6 +478,44 @@ bool Client::validateUsername(const QString &username)
 
 	// TODO check for duplicates
 	return true;
+}
+
+/**
+ * @brief Handle IRC style operator commands
+ * @param cmd
+ * @return true if command was accepted
+ */
+bool Client::handleOperatorCommand(const QString &cmd)
+{
+	// Operator command must start with a slash
+	if(cmd.length() == 0 || cmd.at(0) != '/')
+		return false;
+
+	// Supported commands
+	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
+	if(tokens[0] == "/lock" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			c->lockUser();
+			return true;
+		}
+	} else if(tokens[0] == "/unlock" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			c->unlockUser();
+			return true;
+		}
+	} else if(tokens[0] == "/kick" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			c->kick(_id); // TODO inform of the reason
+			return true;
+		}
+	}
+	return false;
 }
 
 }

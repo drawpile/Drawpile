@@ -113,6 +113,12 @@ public:
 	 */
 	QList<MessagePtr> toList() const { return _messages; }
 
+	/**
+	 * @brief return a filtered copy of the stream as a list, containing only the command stream messages.
+	 * @return command stream messages
+	 */
+	QList<MessagePtr> toCommandList() const;
+
 private:
 	QList<MessagePtr> _messages;
 	int _offset;

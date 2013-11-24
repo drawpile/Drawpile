@@ -26,6 +26,8 @@
 #include "net/login.h"
 #include "net/server.h"
 #include "../shared/net/login.h"
+#include "../shared/net/constants.h"
+#include "version.h"
 
 namespace net {
 
@@ -50,22 +52,43 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 void LoginHandler::expectHello(const QString &msg)
 {
-	// Hello response should be in format "DRAWPILE <version> [PASS]"
+	// Hello response should be in format "DRAWPILE <major.minor> [PASS]"
 	QStringList tokens = msg.split(' ', QString::SkipEmptyParts);
 
 	if(tokens.length() < 2 || tokens.length() > 3) {
-		qDebug() << "Login error. Expected hello, got:" << msg;
+		qWarning() << "Login error. Expected hello, got:" << msg;
 		_server->loginFailure(QApplication::tr("Incompatible server"));
 		return;
 	}
 
 	if(tokens[0] != "DRAWPILE") {
-		qDebug() << "Login error. Expected \"DRAWPILE\", got:" << tokens[0];
+		qWarning() << "Login error. Expected \"DRAWPILE\", got:" << tokens[0];
 		_server->loginFailure(QApplication::tr("Incompatible server"));
 		return;
 	}
 
-	// TODO check version number
+	QStringList versions = tokens[1].split('.', QString::SkipEmptyParts);
+	if(versions.length()!=2) {
+		qWarning() << "Login error. Expected <minor>.<major>, got:" << tokens[1];
+		_server->loginFailure(QApplication::tr("Incompatible server"));
+		return;
+	}
+	// Major version must match ours
+	bool ok;
+	int majorVersion = versions[0].toInt(&ok);
+	if(!ok || majorVersion != protocol::REVISION) {
+		qWarning() << "Login error. Server major version mismatch.";
+		_server->loginFailure(QApplication::tr("Server is for a different DrawPile version!"));
+		return;
+	}
+
+	// Minor version (if set) must also match ours
+	int minorVersion = versions[1].toInt(&ok);
+	if(!ok || (minorVersion>0 && minorVersion != version::MINOR_REVISION)) {
+		qWarning() << "Login error. Server minor version mismatch";
+		_server->loginFailure(QApplication::tr("Session for different DrawPile version in progress!"));
+		return;
+	}
 
 	// Is a password needed?
 	bool needpassword = false;
@@ -95,8 +118,7 @@ void LoginHandler::sendLogin()
 	QString msg;
 	switch(_mode) {
 	case HOST:
-		// TODO set minor version
-		msg = QString("HOST %1 %2 %3").arg(0).arg(_userid).arg(_address.userName());
+		msg = QString("HOST %1 %2 %3").arg(version::MINOR_REVISION).arg(_userid).arg(_address.userName());
 		break;
 	case JOIN:
 		msg = QString("JOIN %1").arg(_address.userName());

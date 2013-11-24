@@ -33,7 +33,7 @@
  */
 class UsedIdList {
 public:
-	UsedIdList(int max, int min=1) : _min(min), _max(max), _next(min) { }
+	UsedIdList(int max, int min=1) : _min(min), _max(max), _next(min) { Q_ASSERT(min<max); }
 
 	//! Get the next free ID number
 	int takeNext();

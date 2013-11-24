@@ -26,15 +26,17 @@
 #include "net/tcpserver.h"
 #include "net/utils.h"
 #include "net/login.h"
+#include "net/userlist.h"
 
 #include "statetracker.h"
 
 #include "core/point.h"
 
-#include "../shared/net/pen.h"
-#include "../shared/net/layer.h"
-#include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/image.h"
+#include "../shared/net/layer.h"
+#include "../shared/net/meta.h"
+#include "../shared/net/pen.h"
 #include "../shared/net/snapshot.h"
 
 using protocol::MessagePtr;
@@ -47,6 +49,9 @@ Client::Client(QObject *parent)
 	_loopback = new LoopbackServer(this);
 	_server = _loopback;
 	_isloopback = true;
+	_isOp = false;
+
+	_userlist = new UserListModel(this);
 
 	connect(
 		_loopback,
@@ -101,10 +106,12 @@ void Client::handleConnect(int userid, bool join)
 
 void Client::handleDisconnect(const QString &message)
 {
-	qDebug() << "server disconnected" << message;
 	emit serverDisconnected(message);
+	_userlist->clearUsers();
 	_server = _loopback;
 	_isloopback = true;
+	_isOp = false;
+	emit opPrivilegeChange(true); // user is always op in loopback mode
 }
 
 void Client::init()
@@ -278,6 +285,11 @@ void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 	_server->sendSnapshotMessages(commands);
 }
 
+void Client::sendChat(const QString &message)
+{
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, message)));
+}
+
 /**
  * @brief Send a list of commands to initialize the session in local mode
  * @param commands
@@ -289,6 +301,26 @@ void Client::sendLocalInit(const QList<protocol::MessagePtr> commands)
 		_loopback->sendMessage(msg);
 }
 
+void Client::sendLockUser(int userid, bool lock)
+{
+	Q_ASSERT(userid>0 && userid<256);
+	QString cmd;
+	if(lock)
+		cmd = "/lock ";
+	else
+		cmd = "/unlock ";
+	cmd += QString::number(userid);
+
+	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
+}
+
+void Client::sendKickUser(int userid)
+{
+	Q_ASSERT(userid>0 && userid<256);
+	QString cmd = QString("/kick %1").arg(userid);
+	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
+}
+
 void Client::handleMessage(protocol::MessagePtr msg)
 {
 	if(msg->isCommand()) {
@@ -296,10 +328,21 @@ void Client::handleMessage(protocol::MessagePtr msg)
 		return;
 	}
 	// Not a command stream message? Must be a meta command then
-	qDebug() << "handling" << msg->type();
 	switch(msg->type()) {
 	case protocol::MSG_SNAPSHOT:
 		handleSnapshotRequest(msg.cast<protocol::SnapshotMode>());
+		break;
+	case protocol::MSG_CHAT:
+		handleChatMessage(msg.cast<protocol::Chat>());
+		break;
+	case protocol::MSG_USER_JOIN:
+		handleUserJoin(msg.cast<protocol::UserJoin>());
+		break;
+	case protocol::MSG_USER_ATTR:
+		handleUserAttr(msg.cast<protocol::UserAttr>());
+		break;
+	case protocol::MSG_USER_LEAVE:
+		handleUserLeave(msg.cast<protocol::UserLeave>());
 		break;
 	default:
 		qWarning() << "received unhandled meta(?) command" << msg->type();
@@ -311,10 +354,44 @@ void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
 	// The server should ever only send a REQUEST mode snapshot messages
 	if(msg.mode() != protocol::SnapshotMode::REQUEST) {
 		qWarning() << "received unhandled snapshot mode" << msg.mode() << "message.";
+		return;
 	}
 
 	qDebug() << "need snapshot!";
 	emit needSnapshot();
+}
+
+void Client::handleChatMessage(const protocol::Chat &msg)
+{
+	QString username;
+	if(msg.user()!=0) {
+		User user = _userlist->getUserById(msg.user());
+		if(user.id==0)
+			username = tr("User#%1").arg(msg.user());
+		else
+			username = user.name;
+	}
+
+	emit chatMessageReceived(username, msg.message());
+}
+
+void Client::handleUserJoin(const protocol::UserJoin &msg)
+{
+	_userlist->addUser(User(msg.id(), msg.name(), msg.id() == _my_id));
+}
+
+void Client::handleUserAttr(const protocol::UserAttr &msg)
+{
+	if(msg.id() == _my_id) {
+		_isOp = msg.isOp();
+		emit opPrivilegeChange(msg.isOp());
+	}
+	_userlist->updateUser(msg.id(), msg.attrs());
+}
+
+void Client::handleUserLeave(const protocol::UserLeave &msg)
+{
+	_userlist->removeUser(msg.id());
 }
 
 }

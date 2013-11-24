@@ -65,5 +65,14 @@ void MessageStream::clear()
 	_messages.clear();
 }
 
+QList<MessagePtr> MessageStream::toCommandList() const
+{
+	QList<MessagePtr> lst;
+	foreach(MessagePtr m, _messages)
+		if(m->isCommand())
+			lst.append(m);
+	return lst;
+}
+
 }
 

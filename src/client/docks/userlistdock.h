@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,37 +21,47 @@
 #define USERLISTWIDGET_H
 
 #include <QDockWidget>
+#include <QItemDelegate>
 
 class QListView;
-class UserListModel;
-class UserListDelegate;
 
-namespace network {
-	class User;
-	class SessionState;
+namespace net {
+	class Client;
 }
 
 namespace widgets {
 
-//! User list window
 /**
+ * A delegate to display a session user, optionally with buttons to lock or kick the user.
+ */
+class UserListDelegate : public QItemDelegate {
+Q_OBJECT
+public:
+	UserListDelegate(net::Client *client, QObject *parent=0);
+
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
+
+private:
+	net::Client *_client;
+};
+
+/**
+ * @brief User list window
  * A dock widget that displays a list of users, with session administration
  * controls.
  */
 class UserList: public QDockWidget
 {
-	Q_OBJECT
-	public:
-		UserList(QWidget *parent=0);
-		~UserList();
+Q_OBJECT
+public:
+	UserList(QWidget *parent=0);
 
-		void setAdminMode(bool enable);
-		void setSession(network::SessionState *session);
+	void setClient(net::Client *client);
 
-	private:
-		QListView *list_;
-		UserListModel *model_;
-		UserListDelegate *delegate_;
+private:
+	QListView *_list;
 };
 
 }

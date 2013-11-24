@@ -53,8 +53,10 @@ void ChatBox::joined()
 
 void ChatBox::parted()
 {
-	ui_->sendbutton->setEnabled(false);
-	systemMessage(tr("Left session"));
+	if(ui_->sendbutton->isEnabled()) {
+		ui_->sendbutton->setEnabled(false);
+		systemMessage(tr("Left session"));
+	}
 }
 
 void ChatBox::sendMessage()

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,15 +25,9 @@
 namespace protocol {
 
 /**
- * The magic number to identify the protocol
+ * The protocol revision.
  */
-static const char MAGIC[] = {'D', 'r', 'P', 'l'};
-
-/**
- * The protocol revision. Servers should drop connections from
- * clients with a different protocol revision.
- */
-static const int REVISION = 2;
+static const int REVISION = 3;
 
 /**
  * The default port to use.

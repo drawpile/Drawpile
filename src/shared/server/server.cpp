@@ -98,29 +98,54 @@ void Server::removeClient(Client *client)
 
 	bool removed = _clients.removeOne(client);
 	Q_ASSERT(removed);
+
+	// Make sure there is at least one operator in the server
+	bool hasOp=false;
+	foreach(const Client *c, _clients) {
+		if(c->isOperator()) {
+			hasOp=true;
+			break;
+		}
+	}
+	if(!hasOp) {
+		// Make the first fully logged in user the new operator
+		foreach(Client *c, _clients) {
+			if(c->id()>0) {
+				c->grantOp();
+				break;
+			}
+		}
+	}
 }
 
 void Server::clientLoggedIn(Client *client)
 {
-	// Assign user ID
-	if(client->id()!=0) {
-		// self assigned id, must be the session host
-		_session.userids.reserve(client->id());
-		printDebug(QString("Session host logged in with user ID %1").arg(client->id()));
-	} else {
-		// New normal user, assign an ID
-		client->setId(_session.userids.takeNext());
-		printDebug(QString("User from %1 logged in, assigned ID %2").arg(client->peerAddress().toString(), client->id()));
-	}
-
 	connect(this, SIGNAL(newCommandsAvailable()), client, SLOT(sendAvailableCommands()));
+}
+
+int Server::userCount() const
+{
+	int count=0;
+	foreach(const Client *c, _clients)
+		if(c->id() > 0)
+			++count;
+	return count;
+}
+
+Client *Server::getClientById(int id)
+{
+	foreach(Client *c, _clients) {
+		if(c->id() == id) {
+			return c;
+		}
+	}
+	return 0;
 }
 
 /**
  * Disconnect all clients and stop listening.
  */
 void Server::stop() {
-	//clearClients();
 	_server->close();
 	delete _server;
 	_server = 0;
@@ -128,7 +153,6 @@ void Server::stop() {
 
 void Server::addToCommandStream(protocol::MessagePtr msg)
 {
-	qDebug() << "added to stream" << msg->type();
 	_mainstream.append(msg);
 	emit newCommandsAvailable();
 }

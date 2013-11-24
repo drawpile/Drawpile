@@ -174,7 +174,7 @@ class MainWindow : public QMainWindow {
 
 		QSplitter *splitter_;
 		widgets::ToolSettingsDock *_toolsettings;
-		widgets::UserList *userlist_;
+		widgets::UserList *_userlist;
 		widgets::LayerListWidget *_layerlist;
 
 		widgets::DualColorButton *fgbgcolor_;

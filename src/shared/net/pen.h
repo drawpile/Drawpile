@@ -67,24 +67,26 @@ public:
 		uint8_t opacity_h() const { return _opacity_h; }
 		uint8_t opacity_l() const { return _opacity_l; }
 		
+		void setOrigin(uint8_t userid) { _id = userid; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	const uint8_t _id;
-	const uint8_t _layer;
-	const uint8_t _blend;
-	const uint8_t _mode;
-	const uint8_t _spacing;
-	const uint32_t _color_h;
-	const uint32_t _color_l;
-	const uint8_t _hard_h;
-	const uint8_t _hard_l;
-	const uint8_t _size_h;
-	const uint8_t _size_l;
-	const uint8_t _opacity_h;
-	const uint8_t _opacity_l;
+	uint8_t _id;
+	uint8_t _layer;
+	uint8_t _blend;
+	uint8_t _mode;
+	uint8_t _spacing;
+	uint32_t _color_h;
+	uint32_t _color_l;
+	uint8_t _hard_h;
+	uint8_t _hard_l;
+	uint8_t _size_h;
+	uint8_t _size_l;
+	uint8_t _opacity_h;
+	uint8_t _opacity_l;
 };
 
 struct PenPoint {
@@ -112,6 +114,8 @@ public:
 	uint8_t contextId() const { return _ctx; }
 	const PenPointVector &points() const { return _points; }
 	
+	void setOrigin(uint8_t userid) { _ctx = userid; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
@@ -135,6 +139,8 @@ public:
 
 	uint8_t contextId() const { return _ctx; }
 	
+	void setOrigin(uint8_t userid) { _ctx = userid; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;

@@ -52,7 +52,6 @@
 #include "utils/recentfiles.h"
 
 #include "widgets/viewstatus.h"
-#include "widgets/userlistwidget.h"
 #include "widgets/netstatus.h"
 #include "widgets/dualcolorbutton.h"
 #include "widgets/chatwidget.h"
@@ -62,6 +61,7 @@
 #include "docks/palettebox.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
+#include "docks/userlistdock.h"
 
 #include "net/client.h"
 #include "net/login.h"
@@ -158,16 +158,24 @@ MainWindow::MainWindow(const MainWindow *source)
 	_view->setClient(_client);
 	_layerlist->setClient(_client);
 	_toolsettings->getAnnotationSettings()->setClient(_client);
-	
+	_userlist->setClient(_client);
+
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
 	connect(_client, SIGNAL(needSnapshot()), _canvas, SLOT(sendSnapshot()));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
+	// Meta commands
+	connect(_client, SIGNAL(chatMessageReceived(QString,QString)),
+			chatbox, SLOT(receiveMessage(QString,QString)));
+	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
+
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
+	connect(_client, SIGNAL(serverLoggedin(bool)), chatbox, SLOT(joined()));
 	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
+	connect(_client, SIGNAL(serverDisconnected(QString)), chatbox, SLOT(parted()));
 
 	connect(_client, SIGNAL(serverConnected(QString)), netstatus, SLOT(connectingToHost(QString)));
 	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
@@ -221,12 +229,8 @@ MainWindow::MainWindow(const MainWindow *source)
 			controller_, SLOT(sendPassword(QString)));
 
 	// Chatbox <-> Controller
-	connect(controller_, SIGNAL(chat(QString,QString)),
-			chatbox_, SLOT(receiveMessage(QString,QString)));
 	connect(controller_, SIGNAL(parted()),
 			chatbox_, SLOT(parted()));
-	connect(chatbox_, SIGNAL(message(QString)),
-			controller_, SLOT(sendChat(QString)));
 	connect(netstatus_, SIGNAL(statusMessage(QString)),
 			chatbox_, SLOT(systemMessage(QString)));
 
@@ -1195,7 +1199,7 @@ void MainWindow::about()
 			"published by the Free Software Foundation, either version 2, or "
 			"(at your opinion) any later version.</p>"
 			"<p>Programming: Calle Laakkonen, M.K.A<br>"
-			"Icons are from the Tango Desktop Project</p>").arg(version::string)
+			"Icons are from the Tango Desktop Project</p>").arg(DRAWPILE_VERSION)
 			);
 }
 
@@ -1479,7 +1483,7 @@ void MainWindow::createDocks()
 	createNavigator(toggles);
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
-	tabifyDockWidget(userlist_, _layerlist);
+	tabifyDockWidget(_userlist, _layerlist);
 	docktoggles_->setMenu(toggles);
 }
 
@@ -1505,11 +1509,11 @@ void MainWindow::createToolSettings(QMenu *toggles)
 
 void MainWindow::createUserList(QMenu *toggles)
 {
-	userlist_ = new widgets::UserList(this);
-	userlist_->setObjectName("userlistdock");
-	userlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	toggles->addAction(userlist_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, userlist_);
+	_userlist = new widgets::UserList(this);
+	_userlist->setObjectName("userlistdock");
+	_userlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	toggles->addAction(_userlist->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, _userlist);
 }
 
 void MainWindow::createLayerList(QMenu *toggles)

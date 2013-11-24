@@ -36,6 +36,10 @@ namespace drawingboard {
 
 namespace protocol {
 	class SnapshotMode;
+	class Chat;
+	class UserJoin;
+	class UserAttr;
+	class UserLeave;
 }
 
 namespace net {
@@ -43,6 +47,7 @@ namespace net {
 class Server;
 class LoopbackServer;
 class LoginHandler;
+class UserListModel;
 
 /**
  * The client for accessing the drawing server.
@@ -91,6 +96,20 @@ public:
 	 */
 	bool isLoggedIn() const;
 
+	/**
+	 * @brief Is the currently logged in user a session operator?
+	 *
+	 * This is always true in local mode.
+	 * @return true
+	 */
+	bool isOperator() const { return _isloopback || _isOp; }
+
+	/**
+	 * @brief Get the user list
+	 * @return user list model
+	 */
+	UserListModel *userlist() const { return _userlist; }
+
 	//! Reinitialize after clearing out the old board
 	void init();
 
@@ -117,30 +136,45 @@ public:
 	// Snapshot	
 	void sendLocalInit(const QList<protocol::MessagePtr> commands);
 
+	// Operator commands
+	void sendLockUser(int userid, bool lock);
+	void sendKickUser(int userid);
+
 public slots:
 	void sendSnapshot(const QList<protocol::MessagePtr> commands);
+	void sendChat(const QString &message);
 
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
+	void chatMessageReceived(const QString &user, const QString &message);
 	void needSnapshot();
 
 	void serverConnected(const QString &address);
 	void serverLoggedin(bool join);
 	void serverDisconnected(const QString &message);
 
+	//! Emitted when current user's operator priviles are granted or revoked
+	void opPrivilegeChange(bool op);
+
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
 	void handleConnect(int userid, bool join);
 	void handleDisconnect(const QString &message);
 
-	void handleSnapshotRequest(const protocol::SnapshotMode &msg);
-
 private:
+	void handleSnapshotRequest(const protocol::SnapshotMode &msg);
+	void handleChatMessage(const protocol::Chat &msg);
+	void handleUserJoin(const protocol::UserJoin &msg);
+	void handleUserAttr(const protocol::UserAttr &msg);
+	void handleUserLeave(const protocol::UserLeave &msg);
+
 	Server *_server;
 	LoopbackServer *_loopback;
 	
 	int _my_id;
 	bool _isloopback;
+	bool _isOp;
+	UserListModel *_userlist;
 };
 
 }

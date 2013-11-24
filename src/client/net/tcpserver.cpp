@@ -48,7 +48,6 @@ void TcpServer::login(LoginHandler *login)
 	_loginstate = login;
 	_loginstate->setParent(this);
 	_loginstate->setServer(this);
-	qDebug() << "connecting to" << login->url().host() << "port" << login->url().port(protocol::DEFAULT_PORT);
 	_socket->connectToHost(login->url().host(), login->url().port(protocol::DEFAULT_PORT));
 }
 
@@ -72,7 +71,6 @@ void TcpServer::handleMessage()
 {
 	while(_msgqueue->isPending()) {
 		protocol::MessagePtr msg = _msgqueue->getPending();
-		qDebug() << "received message" << msg->type();
 		if(_loginstate)
 			_loginstate->receiveMessage(msg);
 		else

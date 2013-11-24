@@ -29,13 +29,8 @@ namespace protocol {
 
 class Login : public Message {
 public:
-    static const int MODE_BLEND = (1<<0);
-    static const int MAX_LEN = (1<<16) - 10;
-
 	Login(const QByteArray &msg) : Message(MSG_LOGIN), _msg(msg) {}
 	Login(const QString &msg) : Login(msg.toUtf8()) {}
-		//: Message(MSG_LOGIN), _msg(msg.toUtf8())
-	//{}
 
 	static Login *deserialize(const uchar *data, uint len);
 

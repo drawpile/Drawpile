@@ -61,12 +61,10 @@ public:
 	int id() const { return _id; }
 
 	/**
-	 * @brief Set the context ID of the client.
-	 *
-	 * For non-hosting users, this is assigned by the server at the end of the login.
-	 * @param id
+	 * @brief Does this user have session operator privileges?
+	 * @return
 	 */
-	void setId(int id) { _id = id; }
+	bool isOperator() const { return _isOperator; }
 
 	/**
 	 * @brief Request the client to generate a snapshot
@@ -93,6 +91,32 @@ public:
 	 * @return
 	 */
 	bool isDropLocked() const;
+
+	/**
+	 * @brief Grant operator privileges to this user
+	 */
+	void grantOp();
+
+	/**
+	 * @brief Revoke this user's operator privileges
+	 */
+	void deOp();
+
+	/**
+	 * @brief Set the user specific lock on this user
+	 */
+	void lockUser();
+
+	/**
+	 * @brief Remove the user specific lock from this user
+	 */
+	void unlockUser();
+
+	/**
+	 * @brief Kick this user off the server
+	 * @param kickedBy user ID of the kicker
+	 */
+	void kick(int kickedBy);
 
 signals:
 	void disconnected(Client *client);
@@ -122,10 +146,13 @@ private:
 	void handleHostSession(const QString &msg);
 	void handleJoinSession(const QString &msg);
 
+	bool handleOperatorCommand(const QString &cmd);
+
 	bool validateUsername(const QString &username);
 	void updateState(protocol::MessagePtr msg);
 
 	void enqueueHeldCommands();
+	void sendUpdatedAttrs();
 
 	Server *_server;
 	QTcpSocket *_socket;
@@ -140,9 +167,14 @@ private:
 	int _streampointer;
 	int _substreampointer;
 
-
 	int _id;
 	QString _username;
+
+	//! Does this user have operator privileges?
+	bool _isOperator;
+
+	//! Is this user locked? (by an operator)
+	bool _userLock;
 };
 
 }

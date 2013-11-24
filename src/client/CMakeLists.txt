@@ -17,14 +17,15 @@ endif()
 
 set (
 	SOURCES
-	main.cpp mainwindow.cpp 
+	main.cpp
+	mainwindow.cpp 
 	canvasscene.cpp
 	canvasview.cpp
 	canvasitem.cpp
 	statetracker.cpp
-	tools.cpp toolsettings.cpp
+	tools.cpp
+	toolsettings.cpp
         localserver.cpp
-	userlistmodel.cpp
 	icons.cpp 
 	annotationitem.cpp
 	loader.cpp
@@ -33,20 +34,27 @@ set (
 	net/tcpserver.cpp
 	net/utils.cpp
 	net/login.cpp
+	net/userlist.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
-	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
+	core/tile.cpp
+	core/layer.cpp
+	core/layerstack.cpp
+	core/brush.cpp
 	core/rasterop.cpp
-	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
-	ora/zip.c ora/unzip.c ora/ioapi.c
+	ora/zipfile.cpp
+	ora/orawriter.cpp
+	ora/orareader.cpp
+	ora/zip.c
+	ora/unzip.c
+	ora/ioapi.c
 	dialogs/colordialog.cpp 
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
 	dialogs/settingsdialog.cpp
 	widgets/viewstatus.cpp
-	widgets/userlistwidget.cpp 
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp 
@@ -67,6 +75,7 @@ set (
 	docks/palettebox.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp
+	docks/userlistdock.cpp 
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

@@ -14,6 +14,7 @@ set (
 	net/annotation.cpp
 	net/login.cpp
 	net/snapshot.cpp
+	net/meta.cpp
 	net/messagequeue.cpp
 	net/messagestream.cpp
 	)

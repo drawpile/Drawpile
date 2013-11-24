@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2008 Calle Laakkonen
+   Copyright (C) 2007-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,60 +17,61 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef USERLISTMODEL_H
-#define USERLISTMODEL_H
+#ifndef DP_NET_USERLISTMODEL_H
+#define DP_NET_USERLISTMODEL_H
 
 #include <QAbstractListModel>
-#include <QItemDelegate>
 #include <QList>
 
-namespace network {
-	class SessionState;
-}
+namespace net {
+
+/**
+ * @brief Information about a user
+ */
+struct User {
+	User() : id(0), name(QString()), isLocal(false), isOperator(false), isLocked(false) {}
+	User(int id_, const QString &name_, bool local) : id(id_), name(name_), isLocal(local), isOperator(false), isLocked(false) {}
+
+	int id;
+	QString name;
+	bool isLocal;
+	bool isOperator;
+	bool isLocked;
+};
 
 /**
  * A list model to represent session users.
- * The list is kept sorted in the order of user IDs
  */
 class UserListModel : public QAbstractListModel {
 	Q_OBJECT
 	public:
 		UserListModel(QObject *parent=0);
-		~UserListModel() {}
-
-		void setSession(network::SessionState *session);
 
 		QVariant data(const QModelIndex& index, int role) const;
 		int rowCount(const QModelIndex& parent) const;
 
-	private slots:
-		void addUser(int id);
+		void addUser(const User &user);
+		void updateUser(int id, uchar attrs);
 		void removeUser(int id);
-		void updateUsers();
+		void clearUsers();
+
+		/**
+		 * @brief Get user info by ID
+		 *
+		 * This will return info about past users as well.
+		 * @param id user id
+		 * @return
+		 */
+		User getUserById(int id) const;
 
 	private:
-		network::SessionState *session_;
-		QList<int> users_;
+		QVector<User> _users;
+		QHash<int,User> _pastUsers;
 };
 
-/**
- * A delegate to display a session user, optionally with buttons to lock or kick the user.
- */
-class UserListDelegate : public QItemDelegate {
-	Q_OBJECT
-	public:
-		UserListDelegate(QObject *parent=0);
+}
 
-		//! Show or hide admin commands
-		void setAdminMode(bool enable);
-
-		void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-		QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-		bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
-
-	private:
-		bool enableadmin_;
-};
+Q_DECLARE_METATYPE(net::User)
 
 #endif
 

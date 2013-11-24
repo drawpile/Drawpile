@@ -45,7 +45,7 @@ struct LayerState {
  * The serverside session state.
  */
 struct SessionState {
-	SessionState() : layerids(255), annotationids(255), userids(255) { }
+	SessionState() : layerids(255), annotationids(255), userids(255), minorVersion(0) { }
 
 	//! Used layer IDs
 	UsedIdList layerids;
@@ -58,6 +58,9 @@ struct SessionState {
 
 	//! Used user/drawing context IDs
 	UsedIdList userids;
+
+	//! The client version used in this session
+	int minorVersion;
 
 	/**
 	 * @brief Set up the initial state based on the hosting users snapshot

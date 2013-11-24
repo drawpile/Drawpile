@@ -5,22 +5,20 @@
 
 namespace version {
 
-//! Protocol level
 /**
- * A client revision level. Sometimes clients change their interpretation
- * of the protocol, but still remain compatible with the server. The
- * revision level is used to prevent incompatable clients from joining
- * the same sessions.
+ * @brief protocol minor revision number.
  *
- * The revision level is usually reset to 0 after protocol compatability
- * is broken. Other implementations of DrawPile should use a different
- * level (e.g. starting from 128) unless they are fully compatible with
- * the official client.
+ * A server can support any client sharing the major protocol
+ * revision, but clients may not interoperate if their minor
+ * numbers do not match. The server enforces none of this though,
+ * it is up to the client to abandon the login attempt in case of version
+ * mismatch.
+ *
+ * The session's minor revision number is set by the hosting user.
+ * The smallest revision number is 1. Zero revision is used to indicate
+ * that the number has not been set yet.
  */
-static const int level = 1; 
-
-//! Version string
-static const char string[] = DRAWPILE_VERSION;
+static const int MINOR_REVISION = 1;
 
 }
 

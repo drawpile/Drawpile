@@ -7,6 +7,7 @@
 #include "image.h"
 #include "layer.h"
 #include "login.h"
+#include "meta.h"
 #include "pen.h"
 #include "snapshot.h"
 
@@ -54,13 +55,13 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(data, len);
 	case MSG_UNDO: return 0;
 	case MSG_REDO: return 0;
-	case MSG_USER_JOIN: return 0;
-	case MSG_USER_ATTR: return 0;
-	case MSG_USER_LEAVE: return 0;
-	case MSG_CHAT: return 0;
-	case MSG_LAYER_ACL: return 0;
+	case MSG_USER_JOIN: return UserJoin::deserialize(data, len);
+	case MSG_USER_ATTR: return UserAttr::deserialize(data, len);
+	case MSG_USER_LEAVE: return UserLeave::deserialize(data, len);
+	case MSG_CHAT: return Chat::deserialize(data, len);
+	case MSG_LAYER_ACL: return 0; // TODO
 	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
-	case MSG_STREAMPOS: return 0;
+	case MSG_STREAMPOS: return 0; // TODO
 	}
 	// Unknown message type!
 	return 0;

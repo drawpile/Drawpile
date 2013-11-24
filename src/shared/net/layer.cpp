@@ -100,7 +100,7 @@ LayerOrder *LayerOrder::deserialize(const uchar *data, uint len)
 
 	QList<uint8_t> order;
 	order.reserve(len);
-	for(int i=0;i<len;++i)
+	for(uint i=0;i<len;++i)
 		order.append(data[i]);
 
 	return new LayerOrder(order);

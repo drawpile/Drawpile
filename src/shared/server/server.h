@@ -96,6 +96,21 @@ public:
 
 	SessionState &session() { return _session; }
 
+	/**
+	 * @brief Get the number of logged in users.
+	 * @return number of logged in users
+	 */
+	int userCount() const;
+
+	/**
+	 * @brief Get the client with the specified ID
+	 *
+	 * Client must be a logged in member of the session
+	 * @param id client ID
+	 * @return client or 0 if not found
+	 */
+	Client *getClientById(int id);
+
 	void printError(const QString &message);
 	void printDebug(const QString &message);
 
