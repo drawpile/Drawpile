@@ -102,6 +102,8 @@ class CanvasView : public QGraphicsView
 		//! Proxy for announcing scene changes
 		void sceneChanged();
 		
+		void setLocked(bool lock);
+
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
@@ -137,6 +139,8 @@ class CanvasView : public QGraphicsView
 		void onPenMove(const dpcore::Point &p);
 		void onPenUp();
 		
+		void resetCursor();
+
 		//! State of the pen
 		/**
 		 * - NOTDOWN pen is not down
@@ -167,6 +171,8 @@ class CanvasView : public QGraphicsView
 		
 		tools::ToolCollection _toolbox;
 		tools::Tool *_current_tool;
+
+		bool _locked;
 };
 
 }

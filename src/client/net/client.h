@@ -40,6 +40,7 @@ namespace protocol {
 	class UserJoin;
 	class UserAttr;
 	class UserLeave;
+	class SessionConf;
 }
 
 namespace net {
@@ -95,6 +96,13 @@ public:
 	 * @return true if there is an active network connection and login process has completed
 	 */
 	bool isLoggedIn() const;
+
+	/**
+	 * @brief Is there a global lock on?
+	 *
+	 * @return true if there is a session or user lock
+	 */
+	bool isLocked() const { return _isSessionLocked || _isUserLocked; }
 
 	/**
 	 * @brief Is the currently logged in user a session operator?
@@ -162,6 +170,7 @@ signals:
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
 	void sessionConfChange(bool locked, bool closed);
+	void userLocked(bool locked);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
@@ -174,6 +183,7 @@ private:
 	void handleUserJoin(const protocol::UserJoin &msg);
 	void handleUserAttr(const protocol::UserAttr &msg);
 	void handleUserLeave(const protocol::UserLeave &msg);
+	void handleSessionConfChange(const protocol::SessionConf &msg);
 
 	Server *_server;
 	LoopbackServer *_loopback;
@@ -181,6 +191,7 @@ private:
 	int _my_id;
 	bool _isloopback;
 	bool _isOp;
+	bool _isSessionLocked, _isUserLocked;
 	UserListModel *_userlist;
 };
 

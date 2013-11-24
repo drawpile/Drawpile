@@ -50,6 +50,8 @@ Client::Client(QObject *parent)
 	_server = _loopback;
 	_isloopback = true;
 	_isOp = false;
+	_isSessionLocked = false;
+	_isUserLocked = false;
 
 	_userlist = new UserListModel(this);
 
@@ -111,8 +113,11 @@ void Client::handleDisconnect(const QString &message)
 	_server = _loopback;
 	_isloopback = true;
 	_isOp = false;
+	_isSessionLocked = false;
+	_isUserLocked = false;
 	emit opPrivilegeChange(true); // user is always op in loopback mode
 	emit sessionConfChange(false, false);
+	emit userLocked(false);
 }
 
 void Client::init()
@@ -377,10 +382,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case MSG_SESSION_TITLE:
 		emit sessionTitleChange(msg.cast<SessionTitle>().title());
 		break;
-	case MSG_SESSION_CONFIG: {
-		const SessionConf &sc = msg.cast<SessionConf>();
-		emit sessionConfChange(sc.locked(), sc.closed());
-	} break;
+	case MSG_SESSION_CONFIG:
+		handleSessionConfChange(msg.cast<SessionConf>());
+		break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();
 	}
@@ -421,7 +425,9 @@ void Client::handleUserAttr(const protocol::UserAttr &msg)
 {
 	if(msg.id() == _my_id) {
 		_isOp = msg.isOp();
+		_isUserLocked = msg.isLocked();
 		emit opPrivilegeChange(msg.isOp());
+		emit userLocked(isLocked());
 	}
 	_userlist->updateUser(msg.id(), msg.attrs());
 }
@@ -429,6 +435,13 @@ void Client::handleUserAttr(const protocol::UserAttr &msg)
 void Client::handleUserLeave(const protocol::UserLeave &msg)
 {
 	_userlist->removeUser(msg.id());
+}
+
+void Client::handleSessionConfChange(const protocol::SessionConf &msg)
+{
+	_isSessionLocked = msg.locked();
+	emit sessionConfChange(msg.locked(), msg.closed());
+	emit userLocked(isLocked());
 }
 
 }

@@ -121,8 +121,7 @@ class MainWindow : public QMainWindow {
 		void disconnected(const QString &message);
 		void sessionConfChanged(bool locked, bool closed);
 
-		void lock(const QString& reason);
-		void unlock();
+		void updateLockWidget();
 
 		void updateShortcuts();
 
@@ -185,7 +184,7 @@ class MainWindow : public QMainWindow {
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
 		widgets::Navigator *navigator_;
-		QLabel *lockstatus_; // TODO
+		QLabel *_lockstatus;
 
 		dialogs::ColorDialog *fgdialog_,*bgdialog_;
 		dialogs::HostDialog *hostdlg_;

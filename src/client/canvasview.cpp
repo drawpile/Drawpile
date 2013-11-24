@@ -36,7 +36,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(NOTRANSFORM),
 	_dragbtndown(NOTRANSFORM), _outlinesize(10), _dia(20),
-	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0)
+	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _locked(false)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -101,6 +101,20 @@ void CanvasView::setRotation(qreal angle)
 	setZoom(_zoom);
 }
 
+void CanvasView::setLocked(bool lock)
+{
+	_locked = lock;
+	resetCursor();
+}
+
+void CanvasView::resetCursor()
+{
+	if(_locked)
+		viewport()->setCursor(Qt::ForbiddenCursor);
+	else
+		viewport()->setCursor(_cursor);
+}
+
 void CanvasView::selectTool(tools::Type tool)
 {
 	_current_tool = _toolbox.get(tool);
@@ -160,7 +174,7 @@ void CanvasView::setOutlineRadius(int radius)
 
 void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 {
-	if(_enableoutline && _showoutline && _outlinesize>1) {
+	if(_enableoutline && _showoutline && _outlinesize>1 && !_locked) {
 		const QRectF outline(_prevpoint-QPointF(_outlinesize,_outlinesize),
 					QSizeF(_dia, _dia));
 		if(rect.intersects(outline)) {
@@ -312,7 +326,7 @@ void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 		event->accept();
 		_dragbtndown = NOTRANSFORM;
 		if(_isdragging==NOTRANSFORM)
-			viewport()->setCursor(_cursor);
+			resetCursor();
 	} else {
 		QGraphicsView::keyReleaseEvent(event);
 	}
@@ -384,7 +398,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 }
 
 void CanvasView::updateOutline(const dpcore::Point& point) {
-	if(_enableoutline && _showoutline) {
+	if(_enableoutline && _showoutline && !_locked) {
 		QList<QRectF> rect;
 		rect.append(QRectF(_prevpoint.x() - _outlinesize,
 					_prevpoint.y() - _outlinesize, _dia, _dia));
@@ -460,7 +474,7 @@ void CanvasView::stopDrag()
 	if(_dragbtndown != NOTRANSFORM)
 		viewport()->setCursor(Qt::OpenHandCursor);
 	else
-		viewport()->setCursor(_cursor);
+		resetCursor();
 	_isdragging = NOTRANSFORM;
 	_showoutline = true;
 }

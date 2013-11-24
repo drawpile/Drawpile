@@ -98,10 +98,10 @@ MainWindow::MainWindow(const MainWindow *source)
 	statusbar->addPermanentWidget(netstatus);
 
 	// Create lock status widget
-	lockstatus_ = new QLabel(this);
-	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
-	lockstatus_->setToolTip(tr("Board is not locked"));
-	statusbar->addPermanentWidget(lockstatus_);
+	_lockstatus = new QLabel(this);
+	_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+	_lockstatus->setToolTip(tr("Board is not locked"));
+	statusbar->addPermanentWidget(_lockstatus);
 
 	// Work area is split between the canvas view and the chatbox
 	splitter_ = new QSplitter(Qt::Vertical, this);
@@ -173,6 +173,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
 	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
+	connect(_client, SIGNAL(userLocked(bool)), this, SLOT(updateLockWidget()));
 
 	// Operator commands
 	connect(_lockSession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
@@ -1010,25 +1011,19 @@ void MainWindow::sessionConfChanged(bool locked, bool closed)
 	_closeSession->setChecked(closed);
 }
 
-/**
- * Board was locked, inform the user about it.
- * @param reason the reason the board was locked
- */
-void MainWindow::lock(const QString& reason)
+void MainWindow::updateLockWidget()
 {
-	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
-	lockstatus_->setToolTip(tr("Board is locked"));
+	// TODO take current layer lock status in account as well
+	bool locked = _client->isLocked();
+	if(locked) {
+		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
+		_lockstatus->setToolTip(tr("Board is locked"));
+	} else {
+		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+		_lockstatus->setToolTip(tr("Board is not locked"));
+	}
+	_view->setLocked(locked);
 }
-
-/**
- * Board is no longer locked, inform the user about it.
- */
-void MainWindow::unlock()
-{
-	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
-	lockstatus_->setToolTip(tr("Board is not locked"));
-}
-
 
 void MainWindow::setForegroundColor()
 {
