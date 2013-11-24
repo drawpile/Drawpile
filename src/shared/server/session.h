@@ -30,6 +30,7 @@ namespace protocol {
 	class LayerCreate;
 	class LayerOrder;
 	class AnnotationCreate;
+	class SessionConf;
 }
 namespace server {
 
@@ -45,7 +46,8 @@ struct LayerState {
  * The serverside session state.
  */
 struct SessionState {
-	SessionState() : layerids(255), annotationids(255), userids(255), minorVersion(0) { }
+	SessionState() : layerids(255), annotationids(255), userids(255), minorVersion(0),
+		locked(false), closed(false), maxusers(255) { }
 
 	//! Used layer IDs
 	UsedIdList layerids;
@@ -61,6 +63,15 @@ struct SessionState {
 
 	//! The client version used in this session
 	int minorVersion;
+
+	//! General all layer/all user lock
+	bool locked;
+
+	//! Is the session closed to new users?
+	bool closed;
+
+	//! Maximum number of users allowed in the session
+	int maxusers;
 
 	/**
 	 * @brief Set up the initial state based on the hosting users snapshot
@@ -107,6 +118,18 @@ struct SessionState {
 	 * @return true if annotation was deleted
 	 */
 	bool deleteAnnotation(int id);
+
+	/**
+	 * @brief Set the configurable options of the session
+	 * @param cmd
+	 */
+	void setSessionConfig(protocol::SessionConf &cmd);
+
+	/**
+	 * @brief Get a SessionConf message describing the current session options
+	 * @return
+	 */
+	protocol::MessagePtr sessionConf() const;
 };
 
 }

@@ -145,6 +145,10 @@ public slots:
 	void sendSnapshot(const QList<protocol::MessagePtr> commands);
 	void sendChat(const QString &message);
 
+	// Operator commands (slots)
+	void sendLockSession(bool lock);
+	void sendCloseSession(bool close);
+
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message);
@@ -157,6 +161,7 @@ signals:
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
+	void sessionConfChange(bool locked, bool closed);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);

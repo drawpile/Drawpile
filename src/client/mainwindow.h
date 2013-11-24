@@ -119,6 +119,7 @@ class MainWindow : public QMainWindow {
 		void connecting();
 		void loggedin(bool join);
 		void disconnected(const QString &message);
+		void sessionConfChanged(bool locked, bool closed);
 
 		void lock(const QString& reason);
 		void unlock();
@@ -209,8 +210,8 @@ class MainWindow : public QMainWindow {
 		QAction *logout_;
 
 		QActionGroup *adminTools_;
-		QAction *lock_board;
-		QAction *disallowjoins_;
+		QAction *_lockSession;
+		QAction *_closeSession;
 		QAction *_changetitle;
 
 		QActionGroup *_drawingtools;

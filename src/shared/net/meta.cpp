@@ -114,4 +114,24 @@ int SessionTitle::payloadLength() const
 	return _title.length();
 }
 
+SessionConf *SessionConf::deserialize(const uchar *data, uint len)
+{
+	if(len!=2)
+		return 0;
+	return new SessionConf(data[0], data[1]);
+}
+
+int SessionConf::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = _locked;
+	*(ptr++) = _closed;
+	return ptr-data;
+}
+
+int SessionConf::payloadLength() const
+{
+	return 2;
+}
+
 }

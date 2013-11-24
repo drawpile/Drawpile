@@ -100,8 +100,10 @@ void Server::removeClient(Client *client)
 	Q_ASSERT(removed);
 
 	// Make sure there is at least one operator in the server
-	bool hasOp=false;
+	bool hasOp=false, hasUsers=false;
 	foreach(const Client *c, _clients) {
+		if(c->id()>0)
+			hasUsers=true;
 		if(c->isOperator()) {
 			hasOp=true;
 			break;
@@ -115,6 +117,11 @@ void Server::removeClient(Client *client)
 				break;
 			}
 		}
+	}
+	if(!hasUsers) {
+		// The last user left the session.
+		_session.closed = false;
+		addToCommandStream(_session.sessionConf());
 	}
 }
 

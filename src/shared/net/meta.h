@@ -106,6 +106,25 @@ private:
 	QByteArray _title;
 };
 
+class SessionConf : public Message {
+public:
+	SessionConf(bool locked, bool closed) : Message(MSG_SESSION_CONFIG),
+		_locked(locked), _closed(closed) {}
+
+	static SessionConf *deserialize(const uchar *data, uint len);
+
+	bool locked() const { return _locked; }
+	bool closed() const { return _closed; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	bool _locked;
+	bool _closed;
+};
+
 class Chat : public Message {
 public:
 	Chat(uint8_t user, const QByteArray &msg) : Message(MSG_CHAT), _user(user), _msg(msg) {}

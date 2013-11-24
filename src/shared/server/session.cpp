@@ -21,6 +21,7 @@
 #include "session.h"
 #include "../net/annotation.h"
 #include "../net/layer.h"
+#include "../net/meta.h"
 #include "../net/pen.h"
 
 namespace server {
@@ -47,6 +48,9 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 			break;
 		case MSG_TOOLCHANGE:
 			userids.reserve(msg.cast<ToolChange>().contextId());
+			break;
+		case MSG_SESSION_CONFIG:
+			setSessionConfig(msg.cast<SessionConf>());
 			break;
 		default: break;
 		}
@@ -117,6 +121,20 @@ bool SessionState::deleteAnnotation(int id)
 {
 	annotationids.release(id);
 	return true; // TODO implement ID tracker properly
+}
+
+void SessionState::setSessionConfig(protocol::SessionConf &cmd)
+{
+	locked = cmd.locked();
+	closed = cmd.closed();
+}
+
+protocol::MessagePtr SessionState::sessionConf() const
+{
+	return protocol::MessagePtr(new protocol::SessionConf(
+		locked,
+		closed
+	));
 }
 
 }

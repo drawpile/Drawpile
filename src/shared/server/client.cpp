@@ -139,6 +139,7 @@ void Client::receiveSnapshot()
 		switch(msg->type()) {
 		using namespace protocol;
 		case MSG_LOGIN:
+		case MSG_SESSION_CONFIG:
 		case MSG_STREAMPOS:
 			continue;
 		default: break;
@@ -216,7 +217,9 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_USER_JOIN:
 	case MSG_USER_ATTR:
 	case MSG_USER_LEAVE:
+	case MSG_SESSION_CONFIG:
 	case MSG_STREAMPOS:
+		_server->printDebug(QString("Warning: user #%1 sent server-to-user only command %2").arg(_id).arg(msg->type()));
 		return;
 	default: break;
 	}
@@ -281,7 +284,7 @@ bool Client::isHoldLocked() const
 
 bool Client::isDropLocked() const
 {
-	return _userLock;
+	return _userLock || _server->session().locked;
 }
 
 void Client::grantOp()
@@ -446,6 +449,10 @@ void Client::handleJoinSession(const QString &msg)
 	if(!_server->isSessionStarted())
 		throw ProtocolViolation("NOSESSION");
 
+	// Session may be closed or full
+	if(_server->session().closed || _server->userCount() >= _server->session().maxusers)
+		throw ProtocolViolation("CLOSED");
+
 	// Parse and validate command
 	// Expected form is "JOIN <username>"
 	QString username = msg.mid(msg.indexOf(' ') + 1).trimmed();
@@ -463,7 +470,6 @@ void Client::handleJoinSession(const QString &msg)
 
 	emit loggedin(this);
 	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
-
 
 	_state = _server->mainstream().hasSnapshot() ? IN_SESSION : WAIT_FOR_SYNC;
 	if(_state == IN_SESSION) {
@@ -502,6 +508,16 @@ bool Client::handleOperatorCommand(const QString &cmd)
 		return false;
 
 	// Supported commands
+	/*
+	 * /lock <user>   - lock the given user
+	 * /unlock <user> - unlock the given user
+	 * /kick <user>   - kick the user off the server
+	 * /lock          - lock the whole board
+	 * /unlock        - unlock the board
+	 * /close         - prevent further logins
+	 * /open          - reallow logins
+	 * /title <tite>  - change session title (for those who like IRC commands)
+	 */
 	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
 	if(tokens[0] == "/lock" && tokens.count()==2) {
 		bool ok;
@@ -524,7 +540,28 @@ bool Client::handleOperatorCommand(const QString &cmd)
 			c->kick(_id); // TODO inform of the reason
 			return true;
 		}
+	} else if(tokens[0] == "/lock" && tokens.count()==1) {
+		_server->session().locked = true;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/unlock" && tokens.count()==1) {
+		_server->session().locked = false;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/close" && tokens.count()==1) {
+		_server->session().closed = true;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/open" && tokens.count()==1) {
+		_server->session().closed = false;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/title" && tokens.count()>1) {
+		QString title = QStringList(tokens.mid(1)).join(' ');
+		_server->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(title)));
+		return true;
 	}
+
 	return false;
 }
 

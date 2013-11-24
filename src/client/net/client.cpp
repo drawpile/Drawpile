@@ -112,6 +112,7 @@ void Client::handleDisconnect(const QString &message)
 	_isloopback = true;
 	_isOp = false;
 	emit opPrivilegeChange(true); // user is always op in loopback mode
+	emit sessionConfChange(false, false);
 }
 
 void Client::init()
@@ -326,6 +327,28 @@ void Client::sendSetSessionTitle(const QString &title)
 	_server->sendMessage(MessagePtr(new protocol::SessionTitle(title)));
 }
 
+void Client::sendLockSession(bool lock)
+{
+	QString cmd;
+	if(lock)
+		cmd = "/lock";
+	else
+		cmd = "/unlock";
+
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
+}
+
+void Client::sendCloseSession(bool close)
+{
+	QString cmd;
+	if(close)
+		cmd = "/close";
+	else
+		cmd = "/open";
+
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
+}
+
 void Client::handleMessage(protocol::MessagePtr msg)
 {
 	// TODO should meta commands go here too for session recording purposes?
@@ -335,24 +358,29 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	}
 	// Not a command stream message? Must be a meta command then
 	switch(msg->type()) {
-	case protocol::MSG_SNAPSHOT:
-		handleSnapshotRequest(msg.cast<protocol::SnapshotMode>());
+	using namespace protocol;
+	case MSG_SNAPSHOT:
+		handleSnapshotRequest(msg.cast<SnapshotMode>());
 		break;
-	case protocol::MSG_CHAT:
-		handleChatMessage(msg.cast<protocol::Chat>());
+	case MSG_CHAT:
+		handleChatMessage(msg.cast<Chat>());
 		break;
-	case protocol::MSG_USER_JOIN:
-		handleUserJoin(msg.cast<protocol::UserJoin>());
+	case MSG_USER_JOIN:
+		handleUserJoin(msg.cast<UserJoin>());
 		break;
-	case protocol::MSG_USER_ATTR:
-		handleUserAttr(msg.cast<protocol::UserAttr>());
+	case MSG_USER_ATTR:
+		handleUserAttr(msg.cast<UserAttr>());
 		break;
-	case protocol::MSG_USER_LEAVE:
-		handleUserLeave(msg.cast<protocol::UserLeave>());
+	case MSG_USER_LEAVE:
+		handleUserLeave(msg.cast<UserLeave>());
 		break;
-	case protocol::MSG_SESSION_TITLE:
-		emit sessionTitleChange(msg.cast<protocol::SessionTitle>().title());
+	case MSG_SESSION_TITLE:
+		emit sessionTitleChange(msg.cast<SessionTitle>().title());
 		break;
+	case MSG_SESSION_CONFIG: {
+		const SessionConf &sc = msg.cast<SessionConf>();
+		emit sessionConfChange(sc.locked(), sc.closed());
+	} break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();
 	}

@@ -172,6 +172,11 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
+	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
+
+	// Operator commands
+	connect(_lockSession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
+	connect(_closeSession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
@@ -999,13 +1004,18 @@ void MainWindow::loggedin(bool join)
 		_canvas->initCanvas(_client->myId());
 }
 
+void MainWindow::sessionConfChanged(bool locked, bool closed)
+{
+	_lockSession->setChecked(locked);
+	_closeSession->setChecked(closed);
+}
+
 /**
  * Board was locked, inform the user about it.
  * @param reason the reason the board was locked
  */
 void MainWindow::lock(const QString& reason)
 {
-	lock_board->setChecked(true);
 	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
 	lockstatus_->setToolTip(tr("Board is locked"));
 }
@@ -1015,7 +1025,6 @@ void MainWindow::lock(const QString& reason)
  */
 void MainWindow::unlock()
 {
-	lock_board->setChecked(false);
 	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
 	lockstatus_->setToolTip(tr("Board is not locked"));
 }
@@ -1288,17 +1297,17 @@ void MainWindow::initActions()
 	host_ = makeAction("hostsession", 0, tr("&Host..."),tr("Share your drawingboard with others"));
 	join_ = makeAction("joinsession", 0, tr("&Join..."),tr("Join another user's drawing session"));
 	logout_ = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
-	lock_board = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"));
-	lock_board->setCheckable(true);
-	disallowjoins_ = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
-	disallowjoins_->setCheckable(true);
+	_lockSession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"));
+	_lockSession->setCheckable(true);
+	_closeSession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
+	_closeSession->setCheckable(true);
 	_changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
 	logout_->setEnabled(false);
 
 	adminTools_ = new QActionGroup(this);
 	adminTools_->setExclusive(false);
-	adminTools_->addAction(lock_board);
-	adminTools_->addAction(disallowjoins_);
+	adminTools_->addAction(_lockSession);
+	adminTools_->addAction(_closeSession);
 	adminTools_->addAction(_changetitle);
 	adminTools_->setEnabled(false);
 
@@ -1414,8 +1423,8 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(join_);
 	sessionmenu->addAction(logout_);
 	sessionmenu->addSeparator();
-	sessionmenu->addAction(lock_board);
-	sessionmenu->addAction(disallowjoins_);
+	sessionmenu->addAction(_lockSession);
+	sessionmenu->addAction(_closeSession);
 	sessionmenu->addAction(_changetitle);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
