@@ -87,6 +87,25 @@ private:
 	uint8_t _attrs;
 };
 
+class SessionTitle : public Message {
+public:
+	SessionTitle(const QByteArray &title) : Message(MSG_SESSION_TITLE), _title(title) {}
+	SessionTitle(const QString &title) : SessionTitle(title.toUtf8()) {}
+
+	static SessionTitle *deserialize(const uchar *data, uint len);
+
+	QString title() const { return QString::fromUtf8(_title); }
+
+	bool isOpCommand() const { return true; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	QByteArray _title;
+};
+
 class Chat : public Message {
 public:
 	Chat(uint8_t user, const QByteArray &msg) : Message(MSG_CHAT), _user(user), _msg(msg) {}

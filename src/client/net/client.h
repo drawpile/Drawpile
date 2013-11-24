@@ -139,6 +139,7 @@ public:
 	// Operator commands
 	void sendLockUser(int userid, bool lock);
 	void sendKickUser(int userid);
+	void sendSetSessionTitle(const QString &title);
 
 public slots:
 	void sendSnapshot(const QList<protocol::MessagePtr> commands);
@@ -153,8 +154,9 @@ signals:
 	void serverLoggedin(bool join);
 	void serverDisconnected(const QString &message);
 
-	//! Emitted when current user's operator priviles are granted or revoked
+	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
+	void sessionTitleChange(const QString &title);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);

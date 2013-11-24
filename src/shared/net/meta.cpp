@@ -98,5 +98,20 @@ int Chat::payloadLength() const
 	return 1 + _msg.length();
 }
 
+SessionTitle *SessionTitle::deserialize(const uchar *data, uint len)
+{
+	return new SessionTitle(QByteArray((const char*)data, len));
+}
+
+int SessionTitle::serializePayload(uchar *data) const
+{
+	memcpy(data, _title.constData(), _title.length());
+	return _title.length();
+}
+
+int SessionTitle::payloadLength() const
+{
+	return _title.length();
+}
 
 }

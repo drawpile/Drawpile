@@ -61,6 +61,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_CHAT: return Chat::deserialize(data, len);
 	case MSG_LAYER_ACL: return 0; // TODO
 	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
+	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
 	case MSG_STREAMPOS: return 0; // TODO
 	}
 	// Unknown message type!

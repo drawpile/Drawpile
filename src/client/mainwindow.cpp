@@ -30,6 +30,7 @@
 #include <QUrl>
 #include <QLabel>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QImageReader>
@@ -169,6 +170,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString)),
 			chatbox, SLOT(receiveMessage(QString,QString)));
 	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
+	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
+	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
 
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
@@ -328,10 +331,10 @@ void MainWindow::updateTitle()
 		name = info.baseName();
 	}
 
-	if(sessiontitle_.isEmpty())
+	if(_sessiontitle.isEmpty())
 		setWindowTitle(tr("%1[*] - DrawPile").arg(name));
 	else
-		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(sessiontitle_));
+		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(_sessiontitle));
 }
 
 /**
@@ -795,7 +798,7 @@ void MainWindow::leave()
 {
 	QMessageBox *leavebox = new QMessageBox(
 		QMessageBox::Question,
-		sessiontitle_.isEmpty()?tr("Untitled session"):sessiontitle_,
+		_sessiontitle.isEmpty()?tr("Untitled session"):_sessiontitle,
 		tr("Really leave the session?"),
 		QMessageBox::NoButton,
 		this,
@@ -913,6 +916,22 @@ void MainWindow::finishJoin(int i) {
 	joindlg_->deleteLater();
 }
 
+void MainWindow::changeSessionTitle()
+{
+	bool ok;
+	QString newtitle = QInputDialog::getText(
+				this,
+				tr("Session title"),
+				tr("Change session title"),
+				QLineEdit::Normal,
+				_sessiontitle,
+				&ok
+	);
+	if(ok && newtitle != _sessiontitle) {
+		_client->sendSetSessionTitle(newtitle);
+	}
+}
+
 /**
  * @param url URL
  */
@@ -1020,8 +1039,14 @@ void MainWindow::setBackgroundColor()
  */
 void MainWindow::setSessionTitle(const QString& title)
 {
-	sessiontitle_ = title;
+	_sessiontitle = title;
 	updateTitle();
+}
+
+void MainWindow::setOperatorMode(bool op)
+{
+	// Don't enable these actions in local mode
+	adminTools_->setEnabled(op && _client->isLoggedIn());
 }
 
 /**
@@ -1267,18 +1292,20 @@ void MainWindow::initActions()
 	lock_board->setCheckable(true);
 	disallowjoins_ = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
 	disallowjoins_->setCheckable(true);
-
+	_changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
 	logout_->setEnabled(false);
 
 	adminTools_ = new QActionGroup(this);
 	adminTools_->setExclusive(false);
 	adminTools_->addAction(lock_board);
 	adminTools_->addAction(disallowjoins_);
+	adminTools_->addAction(_changetitle);
 	adminTools_->setEnabled(false);
 
 	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
 	connect(join_, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
+	connect(_changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
 
 	// Drawing tool actions
 	pentool_ = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"));
@@ -1389,6 +1416,7 @@ void MainWindow::createMenus()
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(lock_board);
 	sessionmenu->addAction(disallowjoins_);
+	sessionmenu->addAction(_changetitle);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(pentool_);

@@ -135,7 +135,14 @@ void Client::receiveSnapshot()
 	while(_msgqueue->isPendingSnapshot()) {
 		MessagePtr msg = _msgqueue->getPendingSnapshot();
 
-		// TODO filter allowed message types
+		// Filter away blatantly unallowed messages
+		switch(msg->type()) {
+		using namespace protocol;
+		case MSG_LOGIN:
+		case MSG_STREAMPOS:
+			continue;
+		default: break;
+		}
 
 		// Add message
 		if(_server->addToSnapshotStream(msg)) {
@@ -214,7 +221,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 	default: break;
 	}
 
-	// TODO filter away operator only commands
+	if(msg->isOpCommand() && !_isOperator) {
+		_server->printDebug(QString("Warning: normal user #%1 tried to use operator command %2").arg(_id).arg(msg->type()));
+		return;
+	}
 
 	// Locking (note. applies only to command stream)
 	if(msg->isCommand()) {

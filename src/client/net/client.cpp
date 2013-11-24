@@ -321,8 +321,14 @@ void Client::sendKickUser(int userid)
 	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
 }
 
+void Client::sendSetSessionTitle(const QString &title)
+{
+	_server->sendMessage(MessagePtr(new protocol::SessionTitle(title)));
+}
+
 void Client::handleMessage(protocol::MessagePtr msg)
 {
+	// TODO should meta commands go here too for session recording purposes?
 	if(msg->isCommand()) {
 		emit drawingCommandReceived(msg);
 		return;
@@ -344,8 +350,11 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case protocol::MSG_USER_LEAVE:
 		handleUserLeave(msg.cast<protocol::UserLeave>());
 		break;
+	case protocol::MSG_SESSION_TITLE:
+		emit sessionTitleChange(msg.cast<protocol::SessionTitle>().title());
+		break;
 	default:
-		qWarning() << "received unhandled meta(?) command" << msg->type();
+		qWarning() << "received unhandled meta command" << msg->type();
 	}
 }
 

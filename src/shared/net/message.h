@@ -54,6 +54,7 @@ enum MessageType {
 	MSG_CHAT,
 	MSG_LAYER_ACL,
 	MSG_SNAPSHOT,
+	MSG_SESSION_TITLE,
 	MSG_STREAMPOS
 };
 
@@ -92,6 +93,12 @@ public:
 	 * @param userid the new user id
 	 */
 	virtual void setOrigin(uint8_t userid) { }
+
+	/**
+	 * @brief Does this command need operator privileges to issue?
+	 * @return true if user must be session operator to send this
+	 */
+	virtual bool isOpCommand() const { return false; }
 
 	/**
 	 * @brief Serialize this message

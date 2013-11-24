@@ -82,6 +82,7 @@ class MainWindow : public QMainWindow {
 		bool saveas();
 
 		void showSettings();
+		void changeSessionTitle();
 
 		void host();
 		void join();
@@ -104,6 +105,7 @@ class MainWindow : public QMainWindow {
 		void setForegroundColor();
 		void setBackgroundColor();
 		void setSessionTitle(const QString& title);
+		void setOperatorMode(bool op);
 
 		void newDocument(const QSize &size, const QColor &color);
 		void openRecent(QAction *action);
@@ -191,7 +193,7 @@ class MainWindow : public QMainWindow {
 		drawingboard::CanvasScene *_canvas;
 		net::Client *_client;
 
-		QString sessiontitle_;
+		QString _sessiontitle;
 		QString filename_;
 		QString lastpath_;
 
@@ -209,6 +211,7 @@ class MainWindow : public QMainWindow {
 		QActionGroup *adminTools_;
 		QAction *lock_board;
 		QAction *disallowjoins_;
+		QAction *_changetitle;
 
 		QActionGroup *_drawingtools;
 		QAction *pentool_;

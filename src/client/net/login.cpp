@@ -26,6 +26,7 @@
 #include "net/login.h"
 #include "net/server.h"
 #include "../shared/net/login.h"
+#include "../shared/net/meta.h"
 #include "../shared/net/constants.h"
 #include "version.h"
 
@@ -164,5 +165,8 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	_server->loginSuccess();
 
 	// TODO if in host mode, send initial session settings
+	if(_mode==HOST) {
+		_server->sendMessage(protocol::MessagePtr(new protocol::SessionTitle(_title)));
+	}
 }
 }
