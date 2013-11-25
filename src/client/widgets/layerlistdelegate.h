@@ -23,7 +23,12 @@
 #include <QAbstractListModel>
 #include <QItemDelegate>
 
+namespace net {
+	class Client;
+}
 namespace widgets {
+
+class LayerListItem;
 
 /**
  * \brief A custom item delegate for displaying layer names and editing layer settings.
@@ -43,22 +48,28 @@ class LayerListDelegate : public QItemDelegate {
 		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 		void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
 
+		void setClient(net::Client *client) { _client = client; }
+
 	signals:
-		//! Create new layer button was pressed
-		void newLayer();
-		//! User request the given layer to be deleted
-		void deleteLayer(const QModelIndex&);
-		//! User wants to toggle the visibility of the given layer
+		//! User wants to toggle the visibility of the given layer (local effect)
 		void layerSetHidden(int, bool);
-		//! User wants to rename the layer
-		void renameLayer(const QModelIndex& index, const QString& name) const;
-		//! User wants to change the layer's opacity
-		void changeOpacity(const QModelIndex&, int opacity);
 		//! User wants to select the layer
 		void select(const QModelIndex& index);
 	
+private slots:
+		void changeOpacity(const QModelIndex&, int opacity);
+
 	private:
 		void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
+
+		void clickNewLayer();
+		void clickLockLayer(const QModelIndex &index);
+		void clickDeleteLayer(const QModelIndex &index);
+
+		void sendLayerAttribs(const LayerListItem &layer) const;
+		void sendLayerAcl(const LayerListItem &layer) const;
+
+		net::Client *_client;
 };
 
 }

@@ -154,6 +154,8 @@ private:
 	void enqueueHeldCommands();
 	void sendUpdatedAttrs();
 
+	bool isLayerLocked(int layerid);
+
 	Server *_server;
 	QTcpSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
@@ -175,6 +177,9 @@ private:
 
 	//! Is this user locked? (by an operator)
 	bool _userLock;
+
+	//! The user's current layer (needed for layer locking)
+	int _currentLayer;
 };
 
 }

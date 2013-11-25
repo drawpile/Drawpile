@@ -354,6 +354,14 @@ void Client::sendCloseSession(bool close)
 	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
 }
 
+void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
+{
+	if(_isloopback)
+		qWarning() << "tried to send layer ACL in loopback mode!";
+	else
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(layerid, locked, exclusive)));
+}
+
 void Client::handleMessage(protocol::MessagePtr msg)
 {
 	// TODO should meta commands go here too for session recording purposes?
@@ -384,6 +392,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 		break;
 	case MSG_SESSION_CONFIG:
 		handleSessionConfChange(msg.cast<SessionConf>());
+		break;
+	case MSG_LAYER_ACL:
+		handleLayerAcl(msg.cast<LayerACL>());
 		break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();
@@ -442,6 +453,11 @@ void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 	_isSessionLocked = msg.locked();
 	emit sessionConfChange(msg.locked(), msg.closed());
 	emit userLocked(isLocked());
+}
+
+void Client::handleLayerAcl(const protocol::LayerACL &msg)
+{
+	emit layerAclChange(msg.id(), msg.locked(), msg.exclusive());
 }
 
 }

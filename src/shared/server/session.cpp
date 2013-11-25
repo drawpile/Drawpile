@@ -31,6 +31,16 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 	using namespace protocol;
 	foreach(MessagePtr msg, messages) {
 		switch(msg->type()) {
+		case MSG_TOOLCHANGE:
+			userids.reserve(msg.cast<ToolChange>().contextId());
+			drawingContextToolChange(msg.cast<ToolChange>());
+			break;
+		case MSG_PEN_MOVE:
+			drawingContextPenDown(msg.cast<PenMove>());
+			break;
+		case MSG_PEN_UP:
+			drawingContextPenUp(msg.cast<PenUp>());
+			break;
 		case MSG_LAYER_CREATE:
 			createLayer(msg.cast<LayerCreate>(), false);
 			break;
@@ -40,14 +50,14 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 		case MSG_LAYER_DELETE:
 			deleteLayer(msg.cast<LayerDelete>().id());
 			break;
+		case MSG_LAYER_ACL:
+			updateLayerAcl(msg.cast<LayerACL>());
+			break;
 		case MSG_ANNOTATION_CREATE:
 			createAnnotation(msg.cast<AnnotationCreate>(), false);
 			break;
 		case MSG_ANNOTATION_DELETE:
 			deleteAnnotation(msg.cast<AnnotationDelete>().id());
-			break;
-		case MSG_TOOLCHANGE:
-			userids.reserve(msg.cast<ToolChange>().contextId());
 			break;
 		case MSG_SESSION_CONFIG:
 			setSessionConfig(msg.cast<SessionConf>());
@@ -55,6 +65,14 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 		default: break;
 		}
 	}
+}
+
+const LayerState *SessionState::getLayerById(int id)
+{
+	foreach(const LayerState &l, layers)
+		if(l.id == id)
+			return &l;
+	return 0;
 }
 
 void SessionState::createLayer(protocol::LayerCreate &cmd, bool assign)
@@ -109,6 +127,18 @@ bool SessionState::deleteLayer(int id)
 	return false;
 }
 
+bool SessionState::updateLayerAcl(const protocol::LayerACL &cmd)
+{
+	for(int i=0;i<layers.size();++i) {
+		if(layers[i].id == cmd.id()) {
+			layers[i].locked = cmd.locked();
+			layers[i].exclusive = cmd.exclusive();
+			return true;
+		}
+	}
+	return false;
+}
+
 void SessionState::createAnnotation(protocol::AnnotationCreate &cmd, bool assign)
 {
 	if(assign)
@@ -121,6 +151,21 @@ bool SessionState::deleteAnnotation(int id)
 {
 	annotationids.release(id);
 	return true; // TODO implement ID tracker properly
+}
+
+void SessionState::drawingContextToolChange(const protocol::ToolChange &cmd)
+{
+	drawingctx[cmd.contextId()].currentLayer = cmd.layer();
+}
+
+void SessionState::drawingContextPenDown(const protocol::PenMove &cmd)
+{
+	drawingctx[cmd.contextId()].penup = false;
+}
+
+void SessionState::drawingContextPenUp(const protocol::PenUp &cmd)
+{
+	drawingctx[cmd.contextId()].penup = true;
 }
 
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)

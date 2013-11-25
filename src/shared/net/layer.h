@@ -23,7 +23,7 @@
 
 #include <cstdint>
 #include <QString>
-#include <QVector>
+#include <QList>
 
 #include "message.h"
 
@@ -170,6 +170,8 @@ public:
 
 	static LayerDelete *deserialize(const uchar *data, uint len);
 	
+	bool isOpCommand() const { return true; }
+
 	uint8_t id() const { return _id; }
 	uint8_t merge() const { return _merge; }
 	
@@ -180,6 +182,34 @@ protected:
 private:
 	uint8_t _id;
 	uint8_t _merge;
+};
+
+/**
+ * @brief Change layer access control list
+ * This is a meta command.
+ */
+class LayerACL : public Message {
+public:
+	LayerACL(uint8_t id, uint8_t locked, const QList<uint8_t> &exclusive)
+		: Message(MSG_LAYER_ACL), _id(id), _locked(locked), _exclusive(exclusive)
+	{}
+
+	static LayerACL *deserialize(const uchar *data, uint len);
+
+	bool isOpCommand() const { return true; }
+
+	uint8_t id() const { return _id; }
+	uint8_t locked() const { return _locked; }
+	const QList<uint8_t> exclusive() const { return _exclusive; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint8_t _id;
+	uint8_t _locked;
+	QList<uint8_t> _exclusive;
 };
 
 }

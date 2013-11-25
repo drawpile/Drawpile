@@ -41,6 +41,7 @@ namespace protocol {
 	class UserAttr;
 	class UserLeave;
 	class SessionConf;
+	class LayerACL;
 }
 
 namespace net {
@@ -148,6 +149,7 @@ public:
 	void sendLockUser(int userid, bool lock);
 	void sendKickUser(int userid);
 	void sendSetSessionTitle(const QString &title);
+	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
 
 public slots:
 	void sendSnapshot(const QList<protocol::MessagePtr> commands);
@@ -171,6 +173,7 @@ signals:
 	void sessionTitleChange(const QString &title);
 	void sessionConfChange(bool locked, bool closed);
 	void userLocked(bool locked);
+	void layerAclChange(int layerid, bool locked, QList<uint8_t> exclusive);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
@@ -184,6 +187,7 @@ private:
 	void handleUserAttr(const protocol::UserAttr &msg);
 	void handleUserLeave(const protocol::UserLeave &msg);
 	void handleSessionConfChange(const protocol::SessionConf &msg);
+	void handleLayerAcl(const protocol::LayerACL &msg);
 
 	Server *_server;
 	LoopbackServer *_loopback;

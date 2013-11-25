@@ -26,9 +26,9 @@
 namespace widgets {
 
 struct LayerListItem {
-	LayerListItem() : id(0), title(""), opacity(1.0), hidden(false) {}
+	LayerListItem() : id(0), title(""), opacity(1.0), hidden(false), locked(false) {}
 	LayerListItem(int id_, const QString &title_, float opacity_=1.0, bool hidden_=false)
-		: id(id_), title(title_), opacity(opacity_), hidden(hidden_)
+		: id(id_), title(title_), opacity(opacity_), hidden(hidden_), locked(false)
 		{}
 
 	//! Layer ID
@@ -42,6 +42,14 @@ struct LayerListItem {
 	
 	//! Layer hidden flag (local only)
 	bool hidden;
+
+	//! General layer lock
+	bool locked;
+
+	//! Exclusive access to these users
+	QList<uint8_t> exclusive;
+
+	bool isLockedFor(int userid) const { return locked || !(exclusive.isEmpty() || exclusive.contains(userid)); }
 };
 
 class LayerListModel : public QAbstractListModel {
@@ -64,6 +72,8 @@ public:
 	void deleteLayer(int id);
 	void changeLayer(int id, float opacity, const QString &title);
 	void reorderLayers(QList<uint8_t> neworder);
+	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
+	void unlockAll();
 	
 signals:
 	void moveLayer(int idx, int afterIdx);

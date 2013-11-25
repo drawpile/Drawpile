@@ -22,16 +22,22 @@
 #define DP_SHARED_SERVER_SESSION_H
 
 #include <QVector>
+#include <QHash>
 
 #include "../util/idlist.h"
 #include "../net/message.h"
 
 namespace protocol {
+	class ToolChange;
+	class PenMove;
+	class PenUp;
 	class LayerCreate;
 	class LayerOrder;
+	class LayerACL;
 	class AnnotationCreate;
 	class SessionConf;
 }
+
 namespace server {
 
 struct LayerState {
@@ -40,6 +46,14 @@ struct LayerState {
 
 	int id;
 	bool locked;
+	QList<uint8_t> exclusive;
+};
+
+struct DrawingContext {
+	DrawingContext() : currentLayer(0), penup(true) {}
+
+	int currentLayer;
+	bool penup;
 };
 
 /**
@@ -58,6 +72,9 @@ struct SessionState {
 	//! Layer states
 	QVector<LayerState> layers;
 
+	//! Drawing context states
+	QHash<int, DrawingContext> drawingctx;
+
 	//! Used user/drawing context IDs
 	UsedIdList userids;
 
@@ -72,6 +89,8 @@ struct SessionState {
 
 	//! Maximum number of users allowed in the session
 	int maxusers;
+
+	const LayerState *getLayerById(int id);
 
 	/**
 	 * @brief Set up the initial state based on the hosting users snapshot
@@ -105,6 +124,13 @@ struct SessionState {
 	bool deleteLayer(int id);
 
 	/**
+	 * @brief Update layer access control list
+	 * @param cmd
+	 * @return true if layer existed
+	 */
+	bool updateLayerAcl(const protocol::LayerACL &cmd);
+
+	/**
 	 * @brief Add a new annotation
 	 *
 	 * This just reserves the ID for the annotation
@@ -124,6 +150,16 @@ struct SessionState {
 	 * @param cmd
 	 */
 	void setSessionConfig(protocol::SessionConf &cmd);
+
+	/**
+	 * @brief Update a drawing context's layer
+	 * @param cmd
+	 */
+	void drawingContextToolChange(const protocol::ToolChange &cmd);
+
+	void drawingContextPenDown(const protocol::PenMove &cmd);
+
+	void drawingContextPenUp(const protocol::PenUp &cmd);
 
 	/**
 	 * @brief Get a SessionConf message describing the current session options

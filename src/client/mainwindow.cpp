@@ -112,6 +112,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	_view->setToolSettings(_toolsettings);
 	
 	connect(_layerlist, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
+	connect(_layerlist, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
 
 	splitter_->addWidget(_view);
 	splitter_->setCollapsible(0, false);
@@ -174,6 +175,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
 	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
 	connect(_client, SIGNAL(userLocked(bool)), this, SLOT(updateLockWidget()));
+	connect(_client, SIGNAL(layerAclChange(int,bool,QList<uint8_t>)), _layerlist, SLOT(changeLayerACL(int,bool,QList<uint8_t>)));
+	connect(_client, SIGNAL(layerAclChange(int,bool,QList<uint8_t>)), this, SLOT(updateLockWidget()));
 
 	// Operator commands
 	connect(_lockSession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
@@ -723,7 +726,7 @@ bool MainWindow::saveas()
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save image"), lastpath_, filter, &selfilter);
-	qDebug() << "selfilter" << selfilter;
+
 	if(file.isEmpty()==false) {
 
 		// Set file suffix if missing
@@ -958,7 +961,6 @@ void MainWindow::joinSession(const QUrl& url)
  */
 void MainWindow::connecting()
 {
-	qDebug() << "MainWindow::connecting()";
 	host_->setEnabled(false);
 	logout_->setEnabled(true);
 
@@ -972,10 +974,10 @@ void MainWindow::connecting()
  */
 void MainWindow::disconnected(const QString &message)
 {
-	qDebug() << "MainWindow::disconnected()";
 	host_->setEnabled(true);
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
+	_layerlist->unlockAll();
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -994,8 +996,6 @@ void MainWindow::disconnected(const QString &message)
  */
 void MainWindow::loggedin(bool join)
 {
-	qDebug() << "MainWindow::loggedin()";
-
 	// Re-enable UI
 	_view->setEnabled(true);
 	_drawingtools->setEnabled(true);
@@ -1013,8 +1013,7 @@ void MainWindow::sessionConfChanged(bool locked, bool closed)
 
 void MainWindow::updateLockWidget()
 {
-	// TODO take current layer lock status in account as well
-	bool locked = _client->isLocked();
+	bool locked = _client->isLocked() || _layerlist->isCurrentLayerLocked();
 	if(locked) {
 		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
 		_lockstatus->setToolTip(tr("Board is locked"));

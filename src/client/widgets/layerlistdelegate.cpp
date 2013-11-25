@@ -22,9 +22,13 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QLineEdit>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QPushButton>
+
+#include "net/client.h"
 
 #include "layerlistdelegate.h"
-#include "layerlistwidget.h"
 #include "layerlistitem.h"
 #include "layerwidget.h"
 
@@ -66,16 +70,27 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 		const QSize delsize = icon::remove().actualSize(QSize(16,16));
 
+		// Draw layer opacity glyph
 		QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
 		drawStyleGlyph(stylerect, painter, option.palette, layer.opacity, layer.hidden);
 
+		// Draw layer lock icon
+		QRect lockrect(opt.rect.topLeft() + QPoint(stylerect.right(), 0), QSize(24, 24));
+		painter->drawPixmap(
+			lockrect.topLeft() + QPoint(4, 6),
+			icon::lock().pixmap(
+				16,
+				QIcon::Normal,
+				layer.isLockedFor(_client->myId()) ?  QIcon::On : QIcon::Off
+			)
+		);
+
 		// Draw layer name
-		textrect.setLeft(stylerect.right());
+		textrect.setLeft(lockrect.right());
 		textrect.setWidth(textrect.width() - delsize.width());
 		drawDisplay(painter, opt, textrect, layer.title);
 
-		// Draw delete button (except when in a network session, and when this is the last layer)
-		// TODO hide
+		// Draw delete button
 		painter->drawPixmap(opt.rect.topRight()-QPoint(delsize.width(), -opt.rect.height()/2+delsize.height()/2), icon::remove().pixmap(16));
 	}
 	
@@ -100,18 +115,21 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 	if(event->type() == QEvent::MouseButtonRelease) {
 		const QMouseEvent *me = static_cast<QMouseEvent*>(event);
 		if(index.row()==0) {
-			emit newLayer();
+			clickNewLayer();
 		} else {
 			if(me->x() < btnsize) {
 				// Layer style button
 				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(index);
 				lw->move(me->globalPos() - QPoint(15, 15));
-				lw->connect(lw, SIGNAL(opacityChanged(const QModelIndex&,int)), this, SIGNAL(changeOpacity(const QModelIndex&,int)));
+				lw->connect(lw, SIGNAL(opacityChanged(const QModelIndex&,int)), this, SLOT(changeOpacity(const QModelIndex&,int)));
 				lw->connect(lw, SIGNAL(setHidden(int, bool)), this, SIGNAL(layerSetHidden(int, bool)));
 				lw->show();
+			} else if(me->x() < 2*btnsize) {
+				// Layer lock button (TODO user exclusive access)
+				clickLockLayer(index);
 			} else if(me->x() >= option.rect.width() - btnsize) {
 				// Delete button
-				emit deleteLayer(index);
+				clickDeleteLayer(index);
 			}
 		}
 	} else if(event->type() == QEvent::MouseButtonPress) {
@@ -132,12 +150,99 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 	const int btnwidth = 24;
 
 	static_cast<QLineEdit*>(editor)->setFrame(true);
-	editor->setGeometry(option.rect.adjusted(btnwidth, 0, -btnwidth, 0));
+	editor->setGeometry(option.rect.adjusted(btnwidth*2, 0, -btnwidth, 0));
 }
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const
 {
-	emit renameLayer(index, static_cast<QLineEdit*>(editor)->text());
+	LayerListItem layer = index.data().value<LayerListItem>();
+	QString newtitle = static_cast<QLineEdit*>(editor)->text();
+	if(layer.title != newtitle) {
+		layer.title = newtitle;
+		sendLayerAttribs(layer);
+	}
+}
+
+
+/**
+ * Opacity slider was adjusted
+ */
+void LayerListDelegate::changeOpacity(const QModelIndex &index, int opacity)
+{
+	LayerListItem layer = index.data().value<LayerListItem>();
+	layer.opacity = opacity / 255.0;
+	sendLayerAttribs(layer);
+}
+
+void LayerListDelegate::clickNewLayer()
+{
+	bool ok;
+	QString name = QInputDialog::getText(0,
+		tr("Add a new layer"),
+		tr("Layer name:"),
+		QLineEdit::Normal,
+		"",
+		&ok
+	);
+	if(ok) {
+		if(name.isEmpty())
+			name = tr("Unnamed layer");
+		_client->sendNewLayer(0, Qt::transparent, name);
+	}
+}
+
+void LayerListDelegate::clickLockLayer(const QModelIndex &index)
+{
+	Q_ASSERT(_client);
+	LayerListItem layer = index.data().value<LayerListItem>();
+
+	layer.locked = !layer.locked;
+	sendLayerAcl(layer);
+}
+
+void LayerListDelegate::clickDeleteLayer(const QModelIndex &index)
+{
+	Q_ASSERT(_client);
+	LayerListItem layer = index.data().value<LayerListItem>();
+
+	QMessageBox box(QMessageBox::Question,
+		tr("Delete layer"),
+		tr("Really delete \"%1\"?").arg(layer.title),
+		QMessageBox::NoButton
+	);
+
+	box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
+
+	// Offer the choice to merge down only if there is a layer
+	// below this one.
+	QPushButton *merge = 0;
+	if(index.sibling(index.row()+1, 0).isValid()) {
+		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
+		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
+	}
+
+	QPushButton *cancel = box.addButton(tr("Cancel"), QMessageBox::RejectRole);
+
+	box.setDefaultButton(cancel);
+	box.exec();
+
+	QAbstractButton *choice = box.clickedButton();
+	if(choice != cancel)
+		_client->sendDeleteLayer(layer.id, choice==merge);
+}
+
+void LayerListDelegate::sendLayerAttribs(const LayerListItem &layer) const
+{
+	Q_ASSERT(_client);
+
+	_client->sendLayerAttribs(layer.id, layer.opacity, layer.title);
+}
+
+void LayerListDelegate::sendLayerAcl(const LayerListItem &layer) const
+{
+	Q_ASSERT(_client);
+
+	_client->sendLayerAcl(layer.id, layer.locked, layer.exclusive);
 }
 
 void LayerListDelegate::drawStyleGlyph(const QRectF& rect, QPainter *painter,const QPalette& palette, float value, bool hidden) const

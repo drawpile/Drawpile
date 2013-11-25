@@ -142,6 +142,26 @@ void LayerListModel::changeLayer(int id, float opacity, const QString &title)
 	emit dataChanged(qmi, qmi);
 }
 
+void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive)
+{
+	int row = indexOf(id);
+	Q_ASSERT(row>=0);
+	LayerListItem &item = _items[row];
+	item.locked = locked;
+	item.exclusive = exclusive;
+	const QModelIndex qmi = createIndex(row+1, 0);
+	emit dataChanged(qmi, qmi);
+}
+
+void LayerListModel::unlockAll()
+{
+	for(int i=0;i<_items.count();++i) {
+		_items[i].locked = false;
+		_items[i].exclusive.clear();
+	}
+	emit dataChanged(index(1), index(_items.count()));
+}
+
 void LayerListModel::reorderLayers(QList<uint8_t> neworder)
 {
 	QVector<LayerListItem> newitems;

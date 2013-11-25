@@ -41,15 +41,21 @@ class LayerListWidget : public QDockWidget
 
 		LayerListModel *layerList() { return _model; }
 
-		void setClient(net::Client *client) { _client = client; }
+		void setClient(net::Client *client);
 
 		//! Initialize the widget for a new session
 		void init();
 		
+		bool isCurrentLayerLocked() const;
+
+	public slots:
+		// State updates from the client
 		void addLayer(int id, const QString &title);
 		void changeLayer(int id, float opacity, const QString &title);
+		void changeLayerACL(int id, bool locked, QList<uint8_t> exclusive);
 		void deleteLayer(int id);
 		void reorderLayers(const QList<uint8_t> &order);
+		void unlockAll();
 
 	signals:
 		//! A layer was selected by the user
@@ -59,12 +65,7 @@ class LayerListWidget : public QDockWidget
 		void layerSetHidden(int id, bool hidden);
 		
 	private slots:
-		void newLayer();
 		void selected(const QModelIndex&);
-		void rename(const QModelIndex&, const QString &name);
-		void changeOpacity(const QModelIndex&, int);
-		void deleteLayer(const QModelIndex &index);
-		void sendLayerAttribs(const LayerListItem &layer);
 		void moveLayer(int oldIdx, int newIdx);
 
 	private:

@@ -20,9 +20,6 @@
 #include <QDebug>
 #include <QItemSelection>
 #include <QListView>
-#include <QInputDialog>
-#include <QMessageBox>
-#include <QPushButton>
 
 #include "layerlistwidget.h"
 #include "layerlistdelegate.h"
@@ -33,7 +30,7 @@
 namespace widgets {
 
 LayerListWidget::LayerListWidget(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent)
+	: QDockWidget(tr("Layers"), parent), _client(0)
 {
 	_list = new QListView(this);
 	setWidget(_list);
@@ -43,24 +40,24 @@ LayerListWidget::LayerListWidget(QWidget *parent)
 	_list->setEnabled(false);
 	// Disallow automatic selections. We handle them ourselves in the delegate.
 	_list->setSelectionMode(QAbstractItemView::NoSelection);
-
-	LayerListDelegate *del = new LayerListDelegate(this);
-	_list->setItemDelegate(del);
 	
 	_model = new LayerListModel(this);
 	_list->setModel(_model);
 
-	connect(del, SIGNAL(newLayer()), this, SLOT(newLayer()));
-	connect(del, SIGNAL(layerSetHidden(int,bool)), this, SIGNAL(layerSetHidden(int,bool)));
-	connect(del, SIGNAL(renameLayer(const QModelIndex&, const QString&)), this,
-			SLOT(rename(const QModelIndex&, const QString&)));
-	connect(del, SIGNAL(changeOpacity(const QModelIndex&, int)), this,
-			SLOT(changeOpacity(const QModelIndex&,int)));
-	connect(del, SIGNAL(select(const QModelIndex&)),
-			this, SLOT(selected(const QModelIndex&)));
-	connect(del, SIGNAL(deleteLayer(const QModelIndex&)), this,
-			SLOT(deleteLayer(const QModelIndex&)));
 	connect(_model, SIGNAL(moveLayer(int,int)), this, SLOT(moveLayer(int,int)));
+}
+
+void LayerListWidget::setClient(net::Client *client)
+{
+	Q_ASSERT(_client==0);
+
+	_client = client;
+	LayerListDelegate *del = new LayerListDelegate(this);
+	del->setClient(client);
+	_list->setItemDelegate(del);
+
+	connect(del, SIGNAL(layerSetHidden(int,bool)), this, SIGNAL(layerSetHidden(int,bool)));
+	connect(del, SIGNAL(select(const QModelIndex&)), this, SLOT(selected(const QModelIndex&)));
 }
 
 void LayerListWidget::init()
@@ -74,13 +71,23 @@ void LayerListWidget::addLayer(int id, const QString &title)
 	_model->createLayer(id, title);
 	if(_model->rowCount()==2) {
 		// Automatically select the first layer
-		selected(_model->index(1,0));
+		selected(_model->index(1));
 	}
 }
 
 void LayerListWidget::changeLayer(int id, float opacity, const QString &title)
 {
 	_model->changeLayer(id, opacity, title);
+}
+
+void LayerListWidget::changeLayerACL(int id, bool locked, QList<uint8_t> exclusive)
+{
+	_model->updateLayerAcl(id, locked, exclusive);
+}
+
+void LayerListWidget::unlockAll()
+{
+	_model->unlockAll();
 }
 
 void LayerListWidget::deleteLayer(int id)
@@ -91,12 +98,16 @@ void LayerListWidget::deleteLayer(int id)
 
 void LayerListWidget::reorderLayers(const QList<uint8_t> &order)
 {
-	int selection = currentLayer();
+	QModelIndexList selidx = _list->selectionModel()->selectedIndexes();
+	int selection = 0;
+	if(!selidx.isEmpty())
+		selection = selidx.at(0).data().value<LayerListItem>().id;
+
 	_model->reorderLayers(order);
 	
-	if(selection>0) {
+	if(selection) {
 		_list->selectionModel()->clear();
-		_list->selectionModel()->select(_model->layerIndex(selection), QItemSelectionModel::Select);
+		_list->selectionModel()->select(_model->layerIndex(selection), QItemSelectionModel::SelectCurrent);
 	}
 }
 
@@ -108,87 +119,12 @@ int LayerListWidget::currentLayer()
 	return 0;
 }
 
-/**
- * New layer button was pressed
- */
-void LayerListWidget::newLayer()
+bool LayerListWidget::isCurrentLayerLocked() const
 {
-	bool ok;
-	QString name = QInputDialog::getText(this,
-		tr("Add a new layer"),
-		tr("Layer name:"),
-		QLineEdit::Normal,
-		"",
-		&ok
-	);
-	if(ok) {
-		if(name.isEmpty())
-			name = tr("Unnamed layer");
-		_client->sendNewLayer(0, Qt::transparent, name);
-	}
-}
-
-/**
- * New name was entered
- */
-void LayerListWidget::rename(const QModelIndex &index, const QString &newtitle)
-{
-	LayerListItem layer = index.data().value<LayerListItem>();
-	if(layer.title != newtitle) {
-		layer.title = newtitle;
-		sendLayerAttribs(layer);
-	}
-}
-
-/**
- * Opacity slider was adjusted
- */
-void LayerListWidget::changeOpacity(const QModelIndex &index, int opacity)
-{
-	LayerListItem layer = index.data().value<LayerListItem>();
-	layer.opacity = opacity / 255.0;
-	sendLayerAttribs(layer);
-}
-
-/**
- * Delete button was clicked
- */
-void LayerListWidget::deleteLayer(const QModelIndex &index)
-{
-	Q_ASSERT(_client);
-	LayerListItem layer = index.data().value<LayerListItem>();
-	
-	QMessageBox box(QMessageBox::Question,
-		tr("Delete layer"),
-		tr("Really delete \"%1\"?").arg(layer.title),
-		QMessageBox::NoButton, this
-	);
-
-	box.addButton(tr("Delete"), QMessageBox::DestructiveRole);
-
-	// Offer the choice to merge down only if there is a layer
-	// below this one.
-	QPushButton *merge = 0;
-	if(index.sibling(index.row()+1, 0).isValid()) {
-		merge = box.addButton(tr("Merge down"), QMessageBox::DestructiveRole);
-		box.setInformativeText(tr("Press merge down to merge the layer with the first visible layer below instead of deleting."));
-	}
-
-	QPushButton *cancel = box.addButton(tr("Cancel"), QMessageBox::RejectRole);
-
-	box.setDefaultButton(cancel);
-	box.exec();
-
-	QAbstractButton *choice = box.clickedButton();
-	if(choice != cancel)
-		_client->sendDeleteLayer(layer.id, choice==merge);
-}
-
-void LayerListWidget::sendLayerAttribs(const LayerListItem &layer)
-{
-	Q_ASSERT(_client);
-	
-	_client->sendLayerAttribs(layer.id, layer.opacity, layer.title);
+	QModelIndexList idx = _list->selectionModel()->selectedIndexes();
+	if(!idx.isEmpty())
+		return idx.at(0).data().value<LayerListItem>().isLockedFor(_client->myId());
+	return false;
 }
 
 /**
@@ -198,7 +134,7 @@ void LayerListWidget::sendLayerAttribs(const LayerListItem &layer)
 void LayerListWidget::selected(const QModelIndex& index)
 {
 	_list->selectionModel()->clear();
-	_list->selectionModel()->select(index, QItemSelectionModel::Select);
+	_list->selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
 
 	emit layerSelected(index.data().value<LayerListItem>().id);
 }

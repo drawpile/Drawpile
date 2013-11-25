@@ -27,9 +27,11 @@
 
 #include "../net/messagequeue.h"
 #include "../net/annotation.h"
+#include "../net/image.h"
 #include "../net/layer.h"
 #include "../net/login.h"
 #include "../net/meta.h"
+#include "../net/pen.h"
 #include "../net/snapshot.h"
 #include "../net/constants.h"
 
@@ -238,6 +240,28 @@ void Client::handleSessionMessage(MessagePtr msg)
 			_holdqueue.append(msg);
 			return;
 		}
+
+		// Layer specific locking. Drop commands that affect layer contents
+		switch(msg->type()) {
+		using namespace protocol;
+		case MSG_PEN_MOVE:
+			if(isLayerLocked(_server->session().drawingctx[_id].currentLayer))
+				return;
+			break;
+		case MSG_LAYER_ATTR:
+			if(isLayerLocked(msg.cast<LayerAttributes>().id()))
+				return;
+			break;
+		case MSG_LAYER_DELETE:
+			if(isLayerLocked(msg.cast<LayerDelete>().id()))
+				return;
+			break;
+		case MSG_PUTIMAGE:
+			if(isLayerLocked(msg.cast<PutImage>().layer()))
+				return;
+			break;
+		default: /* other types are always allowed */ break;
+		}
 	}
 
 	// Make sure the origin user ID is set
@@ -246,6 +270,15 @@ void Client::handleSessionMessage(MessagePtr msg)
 	// Track state and special commands
 	switch(msg->type()) {
 	using namespace protocol;
+	case MSG_TOOLCHANGE:
+		_server->session().drawingContextToolChange(msg.cast<ToolChange>());
+		break;
+	case MSG_PEN_MOVE:
+		_server->session().drawingContextPenDown(msg.cast<PenMove>());
+		break;
+	case MSG_PEN_UP:
+		_server->session().drawingContextPenUp(msg.cast<PenUp>());
+		break;
 	case MSG_LAYER_CREATE:
 		_server->session().createLayer(msg.cast<LayerCreate>(), true);
 		break;
@@ -255,6 +288,11 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_LAYER_DELETE:
 		// drop message if layer didn't exist
 		if(!_server->session().deleteLayer(msg.cast<LayerDelete>().id()))
+			return;
+		break;
+	case MSG_LAYER_ACL:
+		// drop message if layer didn't exist
+		if(!_server->session().updateLayerAcl(msg.cast<LayerACL>()))
 			return;
 		break;
 	case MSG_ANNOTATION_CREATE:
@@ -285,6 +323,12 @@ bool Client::isHoldLocked() const
 bool Client::isDropLocked() const
 {
 	return _userLock || _server->session().locked;
+}
+
+bool Client::isLayerLocked(int layerid)
+{
+	const LayerState *layer = _server->session().getLayerById(layerid);
+	return layer==0 || layer->locked || !(layer->exclusive.isEmpty() || layer->exclusive.contains(_id));
 }
 
 void Client::grantOp()

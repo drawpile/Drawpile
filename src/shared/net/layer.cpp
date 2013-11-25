@@ -138,4 +138,32 @@ int LayerDelete::serializePayload(uchar *data) const
 	return 2;
 }
 
+LayerACL *LayerACL::deserialize(const uchar *data, uint len)
+{
+	if(len < 2 || len > 2+255)
+		return 0;
+	uint8_t id = data[0];
+	uint8_t lock = data[1];
+	QList<uint8_t> exclusive;
+	for(uint i=2;i<len;++i)
+		exclusive.append(data[i]);
+
+	return new LayerACL(id, lock, exclusive);
+}
+
+int LayerACL::payloadLength() const
+{
+	return 2 + _exclusive.count();
+}
+
+int LayerACL::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = _id;
+	*(ptr++) = _locked;
+	foreach(uint8_t e, _exclusive)
+		*(ptr++) = e;
+	return ptr-data;
+}
+
 }

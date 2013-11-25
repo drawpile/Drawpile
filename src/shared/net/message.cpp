@@ -59,7 +59,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_USER_ATTR: return UserAttr::deserialize(data, len);
 	case MSG_USER_LEAVE: return UserLeave::deserialize(data, len);
 	case MSG_CHAT: return Chat::deserialize(data, len);
-	case MSG_LAYER_ACL: return 0; // TODO
+	case MSG_LAYER_ACL: return LayerACL::deserialize(data, len);
 	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
 	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
 	case MSG_SESSION_CONFIG: return SessionConf::deserialize(data, len);
