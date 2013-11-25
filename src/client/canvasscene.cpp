@@ -140,13 +140,15 @@ AnnotationItem *CanvasScene::getAnnotationById(int id)
 	return 0;
 }
 
-void CanvasScene::deleteAnnotation(int id)
+bool CanvasScene::deleteAnnotation(int id)
 {
 	AnnotationItem *a = getAnnotationById(id);
 	if(a) {
 		emit annotationDeleted(id);
 		delete a;
+		return true;
 	}
+	return false;
 }
 
 /**

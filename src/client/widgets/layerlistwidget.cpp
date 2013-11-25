@@ -98,10 +98,7 @@ void LayerListWidget::deleteLayer(int id)
 
 void LayerListWidget::reorderLayers(const QList<uint8_t> &order)
 {
-	QModelIndexList selidx = _list->selectionModel()->selectedIndexes();
-	int selection = 0;
-	if(!selidx.isEmpty())
-		selection = selidx.at(0).data().value<LayerListItem>().id;
+	int selection = currentLayer();
 
 	_model->reorderLayers(order);
 	
@@ -113,9 +110,9 @@ void LayerListWidget::reorderLayers(const QList<uint8_t> &order)
 
 int LayerListWidget::currentLayer()
 {
-	QModelIndex idx = _list->selectionModel()->currentIndex();
-	if(idx.isValid())
-		return idx.data().value<LayerListItem>().id;
+	QModelIndexList selidx = _list->selectionModel()->selectedIndexes();
+	if(!selidx.isEmpty())
+		return selidx.at(0).data().value<LayerListItem>().id;
 	return 0;
 }
 

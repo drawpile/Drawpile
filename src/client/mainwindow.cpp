@@ -160,6 +160,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	_view->setClient(_client);
 	_layerlist->setClient(_client);
 	_toolsettings->getAnnotationSettings()->setClient(_client);
+	_toolsettings->getAnnotationSettings()->setLayerSelector(_layerlist);
 	_userlist->setClient(_client);
 
 	// Client command receive signals

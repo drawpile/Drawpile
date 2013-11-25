@@ -98,7 +98,7 @@ public:
 	void showAnnotations(bool show);
 
 	//! Delete an annotation with the specific ID. Triggers annotationDeleted signal
-	void deleteAnnotation(int id);
+	bool deleteAnnotation(int id);
 
 	//! Remove all annotations
 	void clearAnnotations();

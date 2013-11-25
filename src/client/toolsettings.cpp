@@ -25,6 +25,7 @@
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
 #include "widgets/brushslider.h"
+#include "widgets/layerlistwidget.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO works in qt5?)
 using widgets::ColorButton;
 using widgets::BrushSlider;
@@ -436,7 +437,7 @@ const dpcore::Brush& NoSettings::getBrush() const
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), ToolSettings(name, title), _selected(0), noupdate_(false)
+	: QObject(), ToolSettings(name, title), noupdate_(false)
 {
 	ui_ = new Ui_TextSettings;
 }
@@ -526,9 +527,16 @@ const dpcore::Brush& AnnotationSettings::getBrush() const
 	return DUMMY_BRUSH;
 }
 
+int AnnotationSettings::selected() const
+{
+	if(_selection.isNull())
+		return 0;
+	return _selection->id();
+}
+
 void AnnotationSettings::unselect(int id)
 {
-	if(_selected == id)
+	if(selected() == id)
 		setSelection(0);
 }
 
@@ -537,12 +545,10 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 	noupdate_ = true;
 	uiwidget_->setEnabled(item!=0);
 
+	_selection = item;
 	if(item) {
-		_selected = item->id();
 		ui_->content->setHtml(item->text());
 		ui_->btnBackground->setColor(item->backgroundColor());
-	} else {
-		_selected = 0;
 	}
 	noupdate_ = false;
 }
@@ -551,12 +557,13 @@ void AnnotationSettings::applyChanges()
 {
 	if(noupdate_)
 		return;
-	Q_ASSERT(_selected);
+	Q_ASSERT(selected());
+	Q_ASSERT(_client);
 
 	// TODO add a short delay before actually sending anything
 	// so we won't send an update packet for each and every change.
 	_client->sendAnnotationEdit(
-		_selected,
+		selected(),
 		ui_->btnBackground->color(),
 		ui_->content->toHtml()
 	);
@@ -564,23 +571,22 @@ void AnnotationSettings::applyChanges()
 
 void AnnotationSettings::removeAnnotation()
 {
-	Q_ASSERT(_selected);
-	_client->sendAnnotationDelete(_selected);
-	setSelection(0);
+	Q_ASSERT(selected());
+	Q_ASSERT(_client);
+	_client->sendAnnotationDelete(selected());
+	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }
 
 void AnnotationSettings::bake()
 {
-	Q_ASSERT(_selected);
-	// TODO
-#if 0
-	int x, y;
-	dpcore::Layer *layer = sel_->toLayer(&x, &y);
-	editor_->mergeLayer(x, y, layer);
-	delete layer;
+	Q_ASSERT(selected());
+	Q_ASSERT(_layerlist);
+	Q_ASSERT(_client);
+
+	QImage img = _selection->toImage();
+	int layer = _layerlist->currentLayer();
+	_client->sendImage(layer, _selection->pos().x(), _selection->pos().y(), img, true);
 	removeAnnotation();
-	emit baked();
-#endif
 }
 
 }

@@ -245,13 +245,8 @@ void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 
 void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
 {
-	AnnotationItem *item = _scene->getAnnotationById(cmd.id());
-	if(!item) {
+	if(!_scene->deleteAnnotation(cmd.id()))
 		qWarning() << "Got annotation delete for non-existent annotation" << cmd.id();
-		return;
-	}
-
-	delete item;
 }
 
 }

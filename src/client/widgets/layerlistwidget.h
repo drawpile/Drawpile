@@ -46,6 +46,9 @@ class LayerListWidget : public QDockWidget
 		//! Initialize the widget for a new session
 		void init();
 		
+		//! Get the ID of the currently selected layer
+		int currentLayer();
+
 		bool isCurrentLayerLocked() const;
 
 	public slots:
@@ -69,7 +72,6 @@ class LayerListWidget : public QDockWidget
 		void moveLayer(int oldIdx, int newIdx);
 
 	private:
-		int currentLayer();
 
 		net::Client *_client;
 		QListView *_list;

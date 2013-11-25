@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
+#include <QPointer>
+
 #include "core/brush.h"
 
 class Ui_PenSettings;
@@ -34,6 +36,9 @@ namespace net {
 }
 namespace drawingboard {
 	class AnnotationItem;
+}
+namespace widgets {
+	class LayerListWidget;
 }
 
 namespace tools {
@@ -207,6 +212,9 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		//! Set the client to use for edit commands
 		void setClient(net::Client *client) { _client = client; }
 
+		//! Set the layer selection widget (needed for baking)
+		void setLayerSelector(widgets::LayerListWidget *layerlist) { _layerlist = layerlist; }
+
 		QWidget *createUi(QWidget *parent);
 
 		void setForeground(const QColor& color);
@@ -215,8 +223,11 @@ class AnnotationSettings : public QObject, public ToolSettings {
 
 		int getSize() const { return 0; }
 
-		//! Get the ID of the currently selected annotation
-		int selected() const { return _selected; }
+		/**
+		 * @brief Get the ID of the currently selected annotation
+		 * @return ID or 0 if none selected
+		 */
+		int selected() const;
 
 	public slots:
 		//! Set the currently selected annotation item
@@ -234,17 +245,15 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		void removeAnnotation();
 		void bake();
 
-	signals:
-		void baked();
-
 	private:
 		Ui_TextSettings *ui_;
 		QWidget *uiwidget_;
 
-		int _selected;
+		QPointer<drawingboard::AnnotationItem> _selection;
 
 		bool noupdate_;
 		net::Client *_client;
+		widgets::LayerListWidget *_layerlist;
 };
 
 //! No settings

@@ -302,6 +302,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		// drop message if annotation didn't exist
 		if(!_server->session().deleteAnnotation(msg.cast<AnnotationDelete>().id()))
 			return;
+		break;
 	case MSG_CHAT:
 		// Chat is used also for operator commands
 		if(_isOperator && handleOperatorCommand(msg.cast<Chat>().message()))

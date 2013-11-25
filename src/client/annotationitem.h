@@ -20,13 +20,20 @@
 #ifndef ANNOTATIONITEM_H
 #define ANNOTATIONITEM_H
 
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 #include <QTextDocument>
+#include <QImage>
 
 namespace drawingboard {
 
-//! A text box that can be overlaid on the picture.
-class AnnotationItem : public QGraphicsItem {
+/**
+ * @brief A text box that can be overlaid on the picture.
+ *
+ * This class inherits from QGraphicsObject so we can point to
+ * its instances with QPointer
+ */
+class AnnotationItem : public QGraphicsObject {
+	Q_OBJECT
 	public:
 		static const int HANDLE = 10;
 		enum { Type = UserType + 10 };
@@ -76,10 +83,8 @@ class AnnotationItem : public QGraphicsItem {
 		//! reimplementation
 		int type() const { return Type; }
 
-#if 0
-		//! Render this annotation onto a layer
-		dpcore::Layer *toLayer(int *x, int *y);
-#endif
+		//! Render this annotation onto a QImage
+		QImage toImage();
 
 	protected:
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);

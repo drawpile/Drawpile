@@ -25,7 +25,7 @@
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsItem(parent),
+	: QGraphicsObject(parent),
 	  id_(id),
 	  bgcol_(Qt::transparent),
 	  _highlight(false), _showborder(false)
@@ -159,33 +159,15 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		}
 	}
 }
-#if 0
-/**
- * The annotation will be rendered on the new layer with an offset
- * so it can be merged simply by compositing whole tiles.
- * @param x this will be set to the tile x index
- * @param y this will be set to the tile y index
- */
-dpcore::Layer *AnnotationItem::toLayer(int *x, int *y)
+
+QImage AnnotationItem::toImage()
 {
-	using namespace dpcore;
-	int xi = int(pos().x()/Tile::SIZE);
-	int yi = int(pos().y()/Tile::SIZE);
-	QPoint offset(int(pos().x() - xi*Tile::SIZE),
-			int(pos().y() - yi*Tile::SIZE));
-	QImage img(offset.x() + int(_size.width()),
-			int(offset.y() + _size.height()), QImage::Format_ARGB32);
+	QImage img(_size.toSize(), QImage::Format_ARGB32);
 	img.fill(0);
 	QPainter painter(&img);
-	render(&painter, QRectF(offset, _size));
-	if(x)
-		*x = xi;
-	if(y)
-		*y = yi;
-	return new Layer(0, -1, "", img);
-	return 0;
+	render(&painter, QRectF(QPointF(), QSizeF(_size)));
+	return img;
 }
-#endif
 
 }
 
