@@ -115,6 +115,12 @@ public:
 	bool isOperator() const { return _isloopback || _isOp; }
 
 	/**
+	 * @brief Get the number of bytes waiting to be sent
+	 * @return upload queue length
+	 */
+	int uploadQueueBytes() const;
+
+	/**
 	 * @brief Get the user list
 	 * @return user list model
 	 */
@@ -182,6 +188,9 @@ signals:
 	void lockBitsChanged();
 
 	void layerVisibilityChange(int id, bool hidden);
+
+	void bytesReceived(int);
+	void bytesSent(int);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);

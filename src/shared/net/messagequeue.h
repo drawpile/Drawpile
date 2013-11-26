@@ -102,12 +102,24 @@ public:
 	 */
 	void closeWhenReady();
 
+	/**
+	 * @brief Get the number of bytes in the upload queue
+	 * @return
+	 */
+	int uploadQueueBytes() const;
+
 signals:
 	/**
 	 * @brief data reception statistics
 	 * @param number of bytes received since last signal
 	 */
 	void bytesReceived(int count);
+
+	/**
+	 * @brief data transmission statistics
+	 * @param count number of bytes sent since last signal
+	 */
+	void bytesSent(int count);
 
 	/**
 	 * New message(s) are available. Get them with getPending().

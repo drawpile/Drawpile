@@ -49,11 +49,14 @@ public:
 
 	bool isLoggedIn() const { return _loginstate == 0; }
 
+	int uploadQueueBytes() const;
+
 signals:
 	void loggedIn(int userid, bool join);
 	void serverDisconnected(const QString &message);
 
 	void bytesReceived(int);
+	void bytesSent(int);
 	void messageReceived(protocol::MessagePtr message);
 
 protected:

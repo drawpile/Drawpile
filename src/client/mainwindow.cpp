@@ -189,61 +189,9 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(serverConnected(QString)), netstatus, SLOT(connectingToHost(QString)));
 	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
 	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
+	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
+	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
 
-#if 0
-	controller_ = new Controller(_toolsettings->getAnnotationSettings(), this);
-
-	// Controller -> netstatus
-	connect(controller_, SIGNAL(disconnected(QString)),
-			netstatus_, SLOT(disconnectHost()));
-	connect(controller_, SIGNAL(connected(const QString&)),
-			netstatus_, SLOT(connectHost(const QString&)));
-	connect(controller_, SIGNAL(userJoined(network::User)),
-			netstatus_, SLOT(join(network::User)));
-	connect(controller_, SIGNAL(userParted(network::User)),
-			netstatus_, SLOT(leave(network::User)));
-	connect(controller_, SIGNAL(userKicked(network::User)),
-			netstatus_, SLOT(kicked(network::User)));
-	connect(controller_, SIGNAL(lockboard(QString)),
-			netstatus_, SLOT(lock(QString)));
-	connect(controller_, SIGNAL(unlockboard()),
-			netstatus_, SLOT(unlock()));
-
-	// Actions -> controller
-	connect(lock_board, SIGNAL(triggered(bool)),
-			controller_, SLOT(lockBoard(bool)));
-	connect(disallowjoins_, SIGNAL(triggered(bool)),
-			controller_, SLOT(disallowJoins(bool)));
-
-	// Controller <-> mainwindow
-	connect(controller_, SIGNAL(lockboard(QString)),
-			this, SLOT(lock(QString)));
-	connect(controller_, SIGNAL(unlockboard()),
-			this, SLOT(unlock()));
-
-	// Controller <-> login dialog connections
-	connect(controller_, SIGNAL(connected(const QString&)),
-			logindlg_, SLOT(connected()));
-	connect(controller_, SIGNAL(disconnected(QString)),
-			logindlg_, SLOT(disconnected(QString)));
-	connect(controller_, SIGNAL(loggedin()), logindlg_,
-			SLOT(loggedin()));
-	connect(controller_, SIGNAL(rasterDownloadProgress(int)),
-			logindlg_, SLOT(raster(int)));
-	connect(controller_, SIGNAL(netError(QString)),
-			logindlg_, SLOT(error(QString)));
-	connect(controller_, SIGNAL(needPassword()),
-			logindlg_, SLOT(getPassword()));
-	connect(logindlg_, SIGNAL(password(QString)),
-			controller_, SLOT(sendPassword(QString)));
-
-	// Chatbox <-> Controller
-	connect(controller_, SIGNAL(parted()),
-			chatbox_, SLOT(parted()));
-	connect(netstatus_, SIGNAL(statusMessage(QString)),
-			chatbox_, SLOT(systemMessage(QString)));
-
-#endif
 	if(source)
 		cloneSettings(source);
 	else
@@ -782,7 +730,6 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	// TODO
 	hostdlg_ = new dialogs::HostDialog(_canvas->image(), this);
 	connect(hostdlg_, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
 	hostdlg_->show();
@@ -818,13 +765,11 @@ void MainWindow::leave()
 			);
 	connect(leavebox, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
 	
-#if 0
-	// TODO check if there is stuff in the upload queue
-	if(controller_->isUploading()) {
+	if(_client->uploadQueueBytes() > 0) {
 		leavebox->setIcon(QMessageBox::Warning);
-		leavebox->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
+		leavebox->setInformativeText(tr("There is still unsent data! Please wait until transmission completes!"));
 	}
-#endif
+
 	leavebox->show();
 }
 

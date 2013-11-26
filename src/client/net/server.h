@@ -61,6 +61,8 @@ public:
 
     virtual bool isLoggedIn() const { return false; }
 
+    virtual int uploadQueueBytes() const { return 0; }
+
 protected:
     virtual void loginFailure(const QString &message) {}
     virtual void loginSuccess() {}

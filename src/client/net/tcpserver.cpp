@@ -40,6 +40,7 @@ TcpServer::TcpServer(QObject *parent) :
 	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
 	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
+	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(handleBadData(int,int)));
 }
 
@@ -54,6 +55,11 @@ void TcpServer::login(LoginHandler *login)
 void TcpServer::logout()
 {
 	_socket->close();
+}
+
+int TcpServer::uploadQueueBytes() const
+{
+	return _msgqueue->uploadQueueBytes();
 }
 
 void TcpServer::sendMessage(protocol::MessagePtr msg)

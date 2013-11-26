@@ -90,6 +90,16 @@ void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 	}
 }
 
+int MessageQueue::uploadQueueBytes() const
+{
+	int total = _sendbuflen - _sentcount;
+	foreach(const MessagePtr msg, _sendqueue)
+		total += msg->length();
+	foreach(const MessagePtr msg, _snapshot_send)
+		total += msg->length();
+	return total;
+}
+
 void MessageQueue::readData() {
 	bool gotmessage = false, gotsnapshot = false;
 	int read, totalread=0;
@@ -170,6 +180,7 @@ void MessageQueue::writeData() {
 			emit badData(-1, -1);
 			return;
 		}
+		emit bytesSent(sent);
 		_sentcount += sent;
 		if(_sentcount == _sendbuflen) {
 			_sendbuflen=0;

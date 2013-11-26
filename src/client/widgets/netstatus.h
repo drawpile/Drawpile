@@ -23,6 +23,7 @@
 #include <QWidget>
 
 class QLabel;
+class QTimer;
 
 namespace widgets {
 
@@ -35,36 +36,48 @@ class PopupMessage;
  */
 class NetStatus : public QWidget
 {
-	Q_OBJECT
-	public:
-		NetStatus(QWidget *parent);
-	
-	public slots:
-		void connectingToHost(const QString& address);
-		void loggedIn();
-		void hostDisconnected();
+Q_OBJECT
+public:
+	NetStatus(QWidget *parent);
+
+public slots:
+	void connectingToHost(const QString& address);
+	void loggedIn();
+	void hostDisconnected();
+
+	void bytesReceived(int count);
+	void bytesSent(int count);
 
 #if 0
-		void join(const network::User& user);
-		void leave(const network::User& user);
-		void kicked(const network::User& user);
-		void lock(const QString& reason);
-		void unlock();
+	void join(const network::User& user);
+	void leave(const network::User& user);
+	void kicked(const network::User& user);
+	void lock(const QString& reason);
+	void unlock();
 #endif
 
-		void copyAddress();
+	void copyAddress();
 
-	signals:
-		//! A status message
-		void statusMessage(const QString& message);
+signals:
+	//! A status message
+	void statusMessage(const QString& message);
 
-	private:
-		void message(const QString& msg);
+private slots:
+	void updateStats();
 
-		QLabel *label_, *icon_;
-		PopupMessage *popup_;
-		QString address_;
-		QAction *copyaction_;
+private:
+	void message(const QString& msg);
+	void updateIcon();
+
+	QLabel *label_, *_icon;
+	PopupMessage *popup_;
+	QString address_;
+	QAction *copyaction_;
+
+	bool _online;
+	quint64 _sentbytes, _recvbytes;
+	uchar _activity;
+	QTimer *_timer;
 };
 
 }

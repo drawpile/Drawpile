@@ -88,6 +88,9 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, SIGNAL(loggedIn(int, bool)), this, SLOT(handleConnect(int, bool)));
 	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
+	connect(server, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
+	connect(server, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
+
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(_my_id);
 
@@ -139,6 +142,11 @@ void Client::init()
 bool Client::isLocalServer() const
 {
 	return _server->isLocal();
+}
+
+int Client::uploadQueueBytes() const
+{
+	return _server->uploadQueueBytes();
 }
 
 void Client::sendCanvasResize(const QSize &newsize)

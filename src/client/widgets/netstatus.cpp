@@ -31,7 +31,7 @@
 namespace widgets {
 
 NetStatus::NetStatus(QWidget *parent)
-	: QWidget(parent)
+	: QWidget(parent), _sentbytes(0), _recvbytes(0), _activity(0)
 {
 	setMinimumHeight(16+2);
 
@@ -55,13 +55,18 @@ NetStatus::NetStatus(QWidget *parent)
 	connect(copyaction_,SIGNAL(triggered()),this,SLOT(copyAddress()));
 
 	// Network connection status icon
-	icon_ = new QLabel(QString(), this);
-	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
-	icon_->setFixedSize(icon::network().actualSize(QSize(16,16)));
-	layout->addWidget(icon_);
+	_icon = new QLabel(QString(), this);
+	_icon->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
+	_icon->setFixedSize(icon::network().actualSize(QSize(16,16)));
+	layout->addWidget(_icon);
 
 	// Popup label
 	popup_ = new PopupMessage(this);
+
+	// Timer for activity update
+	_timer = new QTimer(this);
+	_timer->setSingleShot(true);
+	connect(_timer, SIGNAL(timeout()), this, SLOT(updateStats()));
 }
 
 /**
@@ -73,9 +78,14 @@ void NetStatus::connectingToHost(const QString& address)
 {
 	address_ = address;
 	label_->setText(tr("Connecting to %1...").arg(address_));
-	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::On));
 	copyaction_->setEnabled(true);
 	message(label_->text());
+
+	// reset statistics
+	_recvbytes = 0;
+	_sentbytes = 0;
+	_online = true;
+	updateIcon();
 }
 
 void NetStatus::loggedIn()
@@ -92,9 +102,61 @@ void NetStatus::hostDisconnected()
 {
 	address_ = QString();
 	label_->setText(tr("not connected"));
-	icon_->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
+
 	copyaction_->setEnabled(false);
 	message(tr("Disconnected"));
+	_online = false;
+	updateIcon();
+}
+
+void NetStatus::bytesReceived(int count)
+{
+	// TODO show statistics
+	_recvbytes += count;
+	if(!(_activity & 2)) {
+		_activity |= 2;
+		updateIcon();
+	}
+	_timer->start(500);
+}
+
+void NetStatus::bytesSent(int count)
+{
+	// TODO show statistics
+	_sentbytes += count;
+	if(!(_activity & 1)) {
+		_activity |= 1;
+		updateIcon();
+	}
+	_timer->start(500);
+}
+
+void NetStatus::updateStats()
+{
+	_activity = 0;
+	updateIcon();
+}
+
+void NetStatus::updateIcon()
+{
+	if(_online) {
+		switch(_activity) {
+		case 0: // idle
+			_icon->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::On));
+			break;
+		case 1: // transmit
+			_icon->setPixmap(icon::network_transmit().pixmap(16));
+			break;
+		case 2: // receive
+			_icon->setPixmap(icon::network_receive().pixmap(16));
+			break;
+		case 3: // transmit & receive
+			_icon->setPixmap(icon::network_transmit_receive().pixmap(16));
+			break;
+		}
+	} else {
+		_icon->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
+	}
 }
 
 /**
@@ -140,8 +202,8 @@ void NetStatus::unlock()
 void NetStatus::message(const QString& msg)
 {
 	popup_->setMessage(msg);
-	popup_->popupAt(mapToGlobal(icon_->pos() +
-				QPoint(icon_->width()/2, icon_->height()/2)));
+	popup_->popupAt(mapToGlobal(_icon->pos() +
+				QPoint(_icon->width()/2, _icon->height()/2)));
 	emit statusMessage(msg);
 }
 
