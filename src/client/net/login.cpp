@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QStringList>
+#include <QInputDialog>
 
 #include "net/login.h"
 #include "net/server.h"
@@ -102,16 +103,34 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 	}
 
-	// Proceed to next state
-	sendLogin();
-	_state = 2;
+	if(needpassword) {
+		QString pass = QInputDialog::getText(
+			0,
+			QApplication::tr("Session is password protected"),
+			QApplication::tr("Enter password"),
+			QLineEdit::Password
+		);
 
+		_server->sendMessage(protocol::MessagePtr(new protocol::Login(pass)));
+		_state = 1;
+	} else {
+		// Proceed to next state
+		sendLogin();
+		_state = 2;
+	}
 }
 
 void LoginHandler::expectPasswordResponse(const QString &msg)
 {
-	// TODO
-	qDebug() << "TODO password response";
+	if(msg == "OK") {
+		sendLogin();
+		_state = 2;
+	} else if(msg=="BADPASS") {
+		_server->loginFailure(QApplication::tr("Incorrect password"));
+	} else {
+		// This shouldn't happen
+		_server->loginFailure("Unknown password error");
+	}
 }
 
 void LoginHandler::sendLogin()
@@ -166,6 +185,8 @@ void LoginHandler::expectLoginOk(const QString &msg)
 
 	// If in host mode, send initial session settings
 	if(_mode==HOST) {
+		if(!_password.isEmpty())
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/password %1").arg(_password))));
 		_server->sendMessage(protocol::MessagePtr(new protocol::SessionTitle(_title)));
 		if(_maxusers>0)
 			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/maxusers %1").arg(_maxusers))));

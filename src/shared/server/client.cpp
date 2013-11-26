@@ -62,9 +62,17 @@ Client::Client(Server *server, QTcpSocket *socket)
 
 	// Client just connected, start by saying hello
 	QString hello = QString("DRAWPILE %1.%2").arg(protocol::REVISION).arg(_server->session().minorVersion);
+
+	if(!server->session().password.isEmpty()) {
+		// expect password
+		hello = hello + " PASS";
+		_substate = 0;
+	} else {
+		// expect HOST/JOIN
+		_substate = 1;
+	}
+
 	_msgqueue->send(MessagePtr(new protocol::Login(hello)));
-	// No password protection (TODO), so we are expecting a HOST/JOIN command
-	_substate = 1;
 }
 
 Client::~Client()
@@ -414,12 +422,11 @@ void Client::handleLoginMessage(const protocol::Login &loginmsg)
 	QString msg = loginmsg.message();
 	QByteArray errormsg = "WHAT?";
 
-	// TODO password protection
 	try {
 		switch(_substate) {
 		case 0: /* expecting a password */
-			// TODO
-			break;
+			handleLoginPassword(msg);
+			return;
 		case 1: /* expecting HOST or JOIN */
 			if(msg.startsWith("HOST ")) {
 				handleHostSession(msg);
@@ -437,6 +444,16 @@ void Client::handleLoginMessage(const protocol::Login &loginmsg)
 	_server->printError(QString("Error (%1) during login from %2").arg(QString(errormsg)).arg(peerAddress().toString()));
 	_msgqueue->send(MessagePtr(new protocol::Login(errormsg)));
 	_msgqueue->closeWhenReady();
+}
+
+void Client::handleLoginPassword(const QString &pass)
+{
+	if(pass != _server->session().password)
+		throw ProtocolViolation("BADPASS");
+
+	// Password OK, expect HOST/JOIN
+	_msgqueue->send(MessagePtr(new protocol::Login(QByteArray("OK"))));
+	_substate = 1;
 }
 
 void Client::handleHostSession(const QString &msg)
@@ -564,10 +581,11 @@ bool Client::handleOperatorCommand(const QString &cmd)
 	 * /unlock        - unlock the board
 	 * /close         - prevent further logins
 	 * /open          - reallow logins
-	 * /title <tite>  - change session title (for those who like IRC commands)
+	 * /title <title> - change session title (for those who like IRC commands)
 	 * /maxusers <n>  - set session user limit (affects new users only)
 	 * /lockdefault   - lock new users by default
 	 * /unlockdefault - don't lock new users by default
+	 * /password [p]  - password protect the session. If p is omitted, password is removed
 	 */
 	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
 	if(tokens[0] == "/lock" && tokens.count()==2) {
@@ -623,6 +641,12 @@ bool Client::handleOperatorCommand(const QString &cmd)
 		return true;
 	} else if(tokens[0] == "/unlockdefault" && tokens.count()==1) {
 		_server->session().lockdefault = false;
+		return true;
+	} else if(tokens[0] == "/password") {
+		if(tokens.length()==1)
+			_server->session().password = QString();
+		else // note: password may contain spaces
+			_server->session().password = cmd.mid(cmd.indexOf(' ') + 1);
 		return true;
 	}
 

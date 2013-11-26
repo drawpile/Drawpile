@@ -23,6 +23,7 @@
 
 #include <QVector>
 #include <QHash>
+#include <QString>
 
 #include "../util/idlist.h"
 #include "../net/message.h"
@@ -92,6 +93,9 @@ struct SessionState {
 
 	//! Lock new users by default
 	bool lockdefault;
+
+	//! If set, the session is password protected
+	QString password;
 
 	const LayerState *getLayerById(int id);
 

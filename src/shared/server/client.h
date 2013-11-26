@@ -143,6 +143,7 @@ private slots:
 private:
 	void handleSessionMessage(protocol::MessagePtr msg);
 	void handleLoginMessage(const protocol::Login &msg);
+	void handleLoginPassword(const QString &pass);
 	void handleHostSession(const QString &msg);
 	void handleJoinSession(const QString &msg);
 
