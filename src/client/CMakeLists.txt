@@ -36,7 +36,6 @@ set (
 	net/login.cpp
 	net/userlist.cpp
 	net/layerlist.cpp
-	net/layermimedata.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp

@@ -29,7 +29,7 @@
 namespace widgets {
 
 LayerListDock::LayerListDock(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), _client(0)
+	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0)
 {
 	_list = new QListView(this);
 	setWidget(_list);
@@ -39,11 +39,6 @@ LayerListDock::LayerListDock(QWidget *parent)
 	_list->setEnabled(false);
 	// Disallow automatic selections. We handle them ourselves in the delegate.
 	_list->setSelectionMode(QAbstractItemView::NoSelection);
-	
-	_model = new net::LayerListModel(this);
-	_list->setModel(_model);
-
-	connect(_model, SIGNAL(moveLayer(int,int)), this, SLOT(moveLayer(int,int)));
 }
 
 void LayerListDock::setClient(net::Client *client)
@@ -54,69 +49,57 @@ void LayerListDock::setClient(net::Client *client)
 	LayerListDelegate *del = new LayerListDelegate(this);
 	del->setClient(client);
 	_list->setItemDelegate(del);
+	_list->setModel(client->layerlist());
 
-	connect(del, SIGNAL(layerSetHidden(int,bool)), this, SIGNAL(layerSetHidden(int,bool)));
 	connect(del, SIGNAL(select(const QModelIndex&)), this, SLOT(selected(const QModelIndex&)));
+
+	connect(_client->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
+	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
+	connect(_client->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 }
 
 void LayerListDock::init()
 {
-	_model->clear();
 	_list->setEnabled(true);
 }
 
-void LayerListDock::addLayer(int id, const QString &title)
+void LayerListDock::onLayerCreate(bool wasfirst)
 {
-	_model->createLayer(id, title);
-	if(_model->rowCount()==2) {
-		// Automatically select the first layer
-		selected(_model->index(1));
+	// Automatically select the first layer
+	if(wasfirst)
+		selected(_list->model()->index(1, 0));
+}
+
+void LayerListDock::onLayerDelete(int id, int idx)
+{
+	// Automatically select the neighbouring layer on delete
+	if(_selected == id) {
+		if(_list->model()->rowCount() <= idx)
+			--idx;
+		if(idx>0)
+			selected(_list->model()->index(idx, 0));
+		else
+			_selected = 0;
 	}
 }
 
-void LayerListDock::changeLayer(int id, float opacity, const QString &title)
+void LayerListDock::onLayerReorder()
 {
-	_model->changeLayer(id, opacity, title);
-}
-
-void LayerListDock::changeLayerACL(int id, bool locked, QList<uint8_t> exclusive)
-{
-	_model->updateLayerAcl(id, locked, exclusive);
-}
-
-void LayerListDock::unlockAll()
-{
-	_model->unlockAll();
-}
-
-void LayerListDock::deleteLayer(int id)
-{
-	_model->deleteLayer(id);
-	// TODO change layer if this one was selected
-}
-
-void LayerListDock::reorderLayers(const QList<uint8_t> &order)
-{
-	int selection = currentLayer();
-
-	_model->reorderLayers(order);
-	
-	if(selection) {
+	if(_selected) {
 		_list->selectionModel()->clear();
-		_list->selectionModel()->select(_model->layerIndex(selection), QItemSelectionModel::SelectCurrent);
+		_list->selectionModel()->select(_client->layerlist()->layerIndex(_selected), QItemSelectionModel::SelectCurrent);
 	}
 }
 
 int LayerListDock::currentLayer()
 {
-	QModelIndexList selidx = _list->selectionModel()->selectedIndexes();
-	if(!selidx.isEmpty())
-		return selidx.at(0).data().value<net::LayerListItem>().id;
-	return 0;
+	return _selected;
 }
 
 bool LayerListDock::isCurrentLayerLocked() const
 {
+	Q_ASSERT(_client);
+
 	QModelIndexList idx = _list->selectionModel()->selectedIndexes();
 	if(!idx.isEmpty())
 		return idx.at(0).data().value<net::LayerListItem>().isLockedFor(_client->myId());
@@ -132,30 +115,8 @@ void LayerListDock::selected(const QModelIndex& index)
 	_list->selectionModel()->clear();
 	_list->selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
 
-	emit layerSelected(index.data().value<net::LayerListItem>().id);
-}
-
-void LayerListDock::moveLayer(int oldIdx, int newIdx)
-{
-	// Need at least two real layers for this to make sense
-	if(_model->rowCount() <= 2)
-		return;
-	
-	QList<uint8_t> layers;
-	int rows = _model->rowCount() - 1;
-	for(int i=rows;i>=1;--i)
-		layers.append(_model->data(_model->index(i, 0)).value<net::LayerListItem>().id);
-	
-	int m0 = rows-oldIdx-1;
-	int m1 = rows-newIdx;
-	if(m1>m0) --m1;
-	
-	if(m0 == m1)
-		return;
-
-	layers.move(m0, m1);
-
-	_client->sendLayerReorder(layers);
+	_selected = index.data().value<net::LayerListItem>().id;
+	emit layerSelected(_selected);
 }
 
 }

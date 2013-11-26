@@ -33,42 +33,41 @@ namespace widgets {
  * \brief A custom item delegate for displaying layer names and editing layer settings.
  */
 class LayerListDelegate : public QItemDelegate {
-	Q_OBJECT
-	public:
-		LayerListDelegate(QObject *parent=0);
+Q_OBJECT
+public:
+	LayerListDelegate(QObject *parent=0);
 
-		void paint(QPainter *painter, const QStyleOptionViewItem &option,
-				const QModelIndex &index) const;
-		QSize sizeHint(const QStyleOptionViewItem & option,
-				const QModelIndex & index ) const;
-		bool editorEvent(QEvent *event, QAbstractItemModel *model,
-				const QStyleOptionViewItem &option, const QModelIndex &index);
+	void paint(QPainter *painter, const QStyleOptionViewItem &option,
+			const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem & option,
+			const QModelIndex & index ) const;
+	bool editorEvent(QEvent *event, QAbstractItemModel *model,
+			const QStyleOptionViewItem &option, const QModelIndex &index);
 
-		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-		void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
+	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
 
-		void setClient(net::Client *client) { _client = client; }
+	void setClient(net::Client *client) { _client = client; }
 
-	signals:
-		//! User wants to toggle the visibility of the given layer (local effect)
-		void layerSetHidden(int, bool);
-		//! User wants to select the layer
-		void select(const QModelIndex& index);
-	
+signals:
+	//! User wants to select the layer
+	void select(const QModelIndex& index);
+
 private slots:
-		void changeOpacity(const QModelIndex&, int opacity);
+	void changeOpacity(const QModelIndex&, int opacity);
+	void setVisibility(const QModelIndex&, bool hidden);
 
-	private:
-		void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
+private:
+	void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
 
-		void clickNewLayer();
-		void clickLockLayer(const QModelIndex &index);
-		void clickDeleteLayer(const QModelIndex &index);
+	void clickNewLayer();
+	void clickLockLayer(const QModelIndex &index);
+	void clickDeleteLayer(const QModelIndex &index);
 
-		void sendLayerAttribs(const net::LayerListItem &layer) const;
-		void sendLayerAcl(const net::LayerListItem &layer) const;
+	void sendLayerAttribs(const net::LayerListItem &layer) const;
+	void sendLayerAcl(const net::LayerListItem &layer) const;
 
-		net::Client *_client;
+	net::Client *_client;
 };
 
 }

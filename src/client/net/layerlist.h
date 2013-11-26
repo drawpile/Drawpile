@@ -21,6 +21,7 @@
 #define DP_NET_LAYERLIST_H
 
 #include <QAbstractListModel>
+#include <QMimeData>
 #include <QVector>
 
 namespace net {
@@ -76,17 +77,42 @@ public:
 	void unlockAll();
 	
 signals:
-	void moveLayer(int idx, int afterIdx);
+	void layerCreated(bool wasfirst);
+	void layerDeleted(int id, int idx);
+	void layersReordered();
+
+	//! Emitted when layers are manually reordered
+	void layerOrderChanged(const QList<uint8_t> neworder);
 
 private:
+	void handleMoveLayer(int idx, int afterIdx);
+
 	int indexOf(int id) const;
 	
 	QVector<LayerListItem> _items;
 };
 
+/**
+ * A specialization of QMimeData for passing layers around inside
+ * the application.
+ */
+class LayerMimeData : public QMimeData
+{
+	Q_OBJECT
+	public:
+		LayerMimeData(int id) : QMimeData(), _id(id) {}
+
+		int layerId() const { return _id; }
+
+		QStringList formats() const;
+
+	private:
+		int _id;
+};
+
 }
 
-Q_DECLARE_METATYPE(net::LayerListItem);
+Q_DECLARE_METATYPE(net::LayerListItem)
 
 #endif
 

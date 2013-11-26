@@ -121,8 +121,8 @@ bool LayerListDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 				// Layer style button
 				widgets::LayerStyleEditor *lw = new widgets::LayerStyleEditor(index);
 				lw->move(me->globalPos() - QPoint(15, 15));
-				lw->connect(lw, SIGNAL(opacityChanged(const QModelIndex&,int)), this, SLOT(changeOpacity(const QModelIndex&,int)));
-				lw->connect(lw, SIGNAL(setHidden(int, bool)), this, SIGNAL(layerSetHidden(int, bool)));
+				lw->connect(lw, SIGNAL(opacityChanged(QModelIndex,int)), this, SLOT(changeOpacity(QModelIndex,int)));
+				lw->connect(lw, SIGNAL(setHidden(QModelIndex, bool)), this, SLOT(setVisibility(QModelIndex,bool)));
 				lw->show();
 			} else if(me->x() < 2*btnsize) {
 				// Layer lock button (TODO user exclusive access)
@@ -172,6 +172,13 @@ void LayerListDelegate::changeOpacity(const QModelIndex &index, int opacity)
 	net::LayerListItem layer = index.data().value<net::LayerListItem>();
 	layer.opacity = opacity / 255.0;
 	sendLayerAttribs(layer);
+}
+
+void LayerListDelegate::setVisibility(const QModelIndex &index, bool hidden)
+{
+	Q_ASSERT(_client);
+	net::LayerListItem layer = index.data().value<net::LayerListItem>();
+	_client->sendLayerVisibility(layer.id, hidden);
 }
 
 void LayerListDelegate::clickNewLayer()

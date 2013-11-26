@@ -62,10 +62,6 @@ LayerStyleEditor::LayerStyleEditor(const QModelIndex &index, QWidget *parent)
 			this, SLOT(toggleHide()));
 }
 
-LayerStyleEditor::~LayerStyleEditor()
-{
-}
-
 void LayerStyleEditor::changeEvent(QEvent *e)
 {
 	if(e->type() == QEvent::ActivationChange && !isActiveWindow()) {
@@ -83,7 +79,7 @@ void LayerStyleEditor::updateOpacity(int o)
 
 void LayerStyleEditor::toggleHide()
 {
-	emit setHidden(_idx.data().value<net::LayerListItem>().id, hide_->isChecked());
+	emit setHidden(_idx, hide_->isChecked());
 }
 
 }

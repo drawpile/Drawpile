@@ -50,6 +50,7 @@ class Server;
 class LoopbackServer;
 class LoginHandler;
 class UserListModel;
+class LayerListModel;
 
 /**
  * The client for accessing the drawing server.
@@ -119,13 +120,21 @@ public:
 	 */
 	UserListModel *userlist() const { return _userlist; }
 
+	/**
+	 * @brief Get the layer list
+	 * @return layer list model
+	 */
+	LayerListModel *layerlist() const { return _layerlist; }
+
 	//! Reinitialize after clearing out the old board
 	void init();
 
+public slots:
 	// Layer changing
 	void sendCanvasResize(const QSize &newsize);
 	void sendNewLayer(int id, const QColor &fill, const QString &title);
 	void sendLayerAttribs(int id, float opacity, const QString &title);
+	void sendLayerVisibility(int id, bool hide);
 	void sendLayerReorder(const QList<uint8_t> &ids);
 	void sendDeleteLayer(int id, bool merge);
 
@@ -144,18 +153,16 @@ public:
 
 	// Snapshot	
 	void sendLocalInit(const QList<protocol::MessagePtr> commands);
+	void sendSnapshot(const QList<protocol::MessagePtr> commands);
+
+	// Misc.
+	void sendChat(const QString &message);
 
 	// Operator commands
 	void sendLockUser(int userid, bool lock);
 	void sendKickUser(int userid);
 	void sendSetSessionTitle(const QString &title);
 	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
-
-public slots:
-	void sendSnapshot(const QList<protocol::MessagePtr> commands);
-	void sendChat(const QString &message);
-
-	// Operator commands (slots)
 	void sendLockSession(bool lock);
 	void sendCloseSession(bool close);
 
@@ -172,8 +179,9 @@ signals:
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
 	void sessionConfChange(bool locked, bool closed);
-	void userLocked(bool locked);
-	void layerAclChange(int layerid, bool locked, QList<uint8_t> exclusive);
+	void lockBitsChanged();
+
+	void layerVisibilityChange(int id, bool hidden);
 
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
@@ -197,6 +205,7 @@ private:
 	bool _isOp;
 	bool _isSessionLocked, _isUserLocked;
 	UserListModel *_userlist;
+	LayerListModel *_layerlist;
 };
 
 }

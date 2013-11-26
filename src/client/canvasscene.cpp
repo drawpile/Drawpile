@@ -30,9 +30,8 @@
 
 namespace drawingboard {
 
-CanvasScene::CanvasScene(QObject *parent, widgets::LayerListDock *layerlistwidget)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _showAnnotationBorders(false),
-	_layerlistwidget(layerlistwidget)
+CanvasScene::CanvasScene(QObject *parent)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _showAnnotationBorders(false)
 {
 	setItemIndexMethod(NoIndex);
 	_previewClearTimer = new QTimer(this);
@@ -49,12 +48,12 @@ CanvasScene::~CanvasScene()
  * This prepares the canvas for new drawing commands.
  * @param myid the context id of the local user
  */
-void CanvasScene::initCanvas(int myid)
+void CanvasScene::initCanvas(net::Client *client)
 {
 	delete _image;
 	delete _statetracker;
 	_image = new CanvasItem();
-	_statetracker = new StateTracker(myid, this, _image->image(), _layerlistwidget);
+	_statetracker = new StateTracker(this, client);
 	
 	addItem(_image);
 	clearAnnotations();

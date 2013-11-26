@@ -37,11 +37,10 @@ class LayerStyleEditor : public QFrame
 	Q_OBJECT
 	public:
 		LayerStyleEditor(const QModelIndex &index, QWidget *parent=0);
-		~LayerStyleEditor();
 
 	signals:
 		void opacityChanged(const QModelIndex &index, int newopacity);
-		void setHidden(int id, bool hidden);
+		void setHidden(const QModelIndex &index, bool hidden);
 
 	protected:
 		void changeEvent(QEvent*);

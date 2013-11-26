@@ -30,8 +30,8 @@ namespace dpcore {
 	class Brush;
 }
 
-namespace widgets {
-	class LayerListDock;
+namespace net {
+	class Client;
 }
 
 class QGraphicsItem;
@@ -55,11 +55,11 @@ class CanvasScene : public QGraphicsScene
 	Q_OBJECT
 
 public:
-	CanvasScene(QObject *parent, widgets::LayerListDock *layerlistwidget);
+	CanvasScene(QObject *parent);
 	~CanvasScene();
 
 	//! Clear and initialize the canvas
-	void initCanvas(int myid);
+	void initCanvas(net::Client *client);
 
 	//! Get canvas width
 	int width() const;
@@ -189,9 +189,6 @@ private:
 	QGraphicsItem *_toolpreview;
 
 	bool _showAnnotationBorders;
-
-	//! The layer list widget to update on layer changes
-	widgets::LayerListDock *_layerlistwidget;
 
 	QTimer *_previewClearTimer;
 };

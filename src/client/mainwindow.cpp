@@ -133,7 +133,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	splitter_->addWidget(chatbox);
 
 	// Create canvas scene
-	_canvas = new drawingboard::CanvasScene(this, _layerlist);
+	_canvas = new drawingboard::CanvasScene(this);
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setCanvas(_canvas);
@@ -173,9 +173,7 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
 	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
-	connect(_client, SIGNAL(userLocked(bool)), this, SLOT(updateLockWidget()));
-	connect(_client, SIGNAL(layerAclChange(int,bool,QList<uint8_t>)), _layerlist, SLOT(changeLayerACL(int,bool,QList<uint8_t>)));
-	connect(_client, SIGNAL(layerAclChange(int,bool,QList<uint8_t>)), this, SLOT(updateLockWidget()));
+	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 
 	// Operator commands
 	connect(_lockSession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
@@ -274,7 +272,8 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 
 	MainWindow *win = canReplace() ? this : new MainWindow(this);
 	
-	win->_canvas->initCanvas(_client->myId());
+	win->_canvas->initCanvas(_client);
+	win->_layerlist->init();
 	win->_client->init();
 
 	QList<protocol::MessagePtr> init = loader.loadInitCommands();
@@ -976,7 +975,6 @@ void MainWindow::disconnected(const QString &message)
 	host_->setEnabled(true);
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
-	_layerlist->unlockAll();
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -1000,8 +998,10 @@ void MainWindow::loggedin(bool join)
 	_drawingtools->setEnabled(true);
 
 	// Initialize the canvas (in host mode the canvas was prepared already)
-	if(join)
-		_canvas->initCanvas(_client->myId());
+	if(join) {
+		_canvas->initCanvas(_client);
+		_layerlist->init();
+	}
 }
 
 void MainWindow::sessionConfChanged(bool locked, bool closed)

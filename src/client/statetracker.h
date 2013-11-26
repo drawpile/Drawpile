@@ -49,8 +49,9 @@ namespace dpcore {
 	class LayerStack;
 }
 
-namespace widgets {
-	class LayerListDock;
+namespace net {
+	class Client;
+	class LayerListModel;
 }
 
 namespace drawingboard {
@@ -93,7 +94,7 @@ struct DrawingContext {
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(int myid, CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListDock *llist, QObject *parent=0);
+	StateTracker(CanvasScene *scene, net::Client *client, QObject *parent=0);
 	
 	void receiveCommand(protocol::MessagePtr msg);
 
@@ -123,7 +124,7 @@ private:
 	
 	CanvasScene *_scene;
 	dpcore::LayerStack *_image;
-	widgets::LayerListDock *_layerlist;
+	net::LayerListModel *_layerlist;
 
 	int _myid;
 

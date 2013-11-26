@@ -26,7 +26,9 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "docks/layerlistdock.h"
+
+#include "net/client.h"
+#include "net/layerlist.h"
 
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
@@ -35,11 +37,14 @@
 
 namespace drawingboard {
 
-StateTracker::StateTracker(int myid, CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListDock *layerlist, QObject *parent)
-	: QObject(parent), _scene(scene), _image(image), _layerlist(layerlist), _myid(myid)
+StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *parent)
+	: QObject(parent),
+	  _scene(scene),
+	  _image(scene->layers()),
+	  _layerlist(client->layerlist()),
+	  _myid(client->myId())
 {
-	_layerlist->init();
-	connect(_layerlist, SIGNAL(layerSetHidden(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
+	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
 	
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
@@ -112,7 +117,7 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 {
 	_image->addLayer(cmd.id(), cmd.title(), QColor::fromRgba(cmd.fill()));
 	qDebug() << "added layer" << cmd.id();
-	_layerlist->addLayer(cmd.id(), cmd.title());
+	_layerlist->createLayer(cmd.id(), cmd.title());
 }
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)

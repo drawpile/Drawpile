@@ -21,7 +21,6 @@
 #include <QDebug>
 #include <QStringList>
 #include "layerlist.h"
-#include "layermimedata.h"
 
 namespace net {
 
@@ -84,11 +83,36 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 {
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
 	if(ldata) {
-		emit moveLayer(indexOf(ldata->layerId()), qMax(0, row-1));
+		handleMoveLayer(indexOf(ldata->layerId()), qMax(0, row-1));
 	} else {
 		qWarning() << "External layer drag&drop not supported";
 	}
 	return false;
+}
+
+void LayerListModel::handleMoveLayer(int oldIdx, int newIdx)
+{
+	// Need at least two layers for this to make sense
+	const int count = _items.count();
+	if(count < 2)
+		return;
+
+	QList<uint8_t> layers;
+	layers.reserve(count);
+	foreach(const LayerListItem &li, _items)
+		layers.append(li.id);
+
+	if(newIdx>oldIdx)
+		--newIdx;
+
+	layers.move(oldIdx, newIdx);
+
+	// Layers are shown topmost first in the list but
+	// are sent bottom first in the protocol.
+	for(int i=0;i<count/2;++i)
+		layers.swap(i,count-(1+i));
+
+	emit layerOrderChanged(layers);
 }
 
 int LayerListModel::indexOf(int id) const
@@ -112,16 +136,17 @@ void LayerListModel::createLayer(int id, const QString &title)
 	beginInsertRows(QModelIndex(),1,1);
 	_items.prepend(LayerListItem(id, title));
 	endInsertRows();
-
+	emit layerCreated(_items.count()==1);
 }
 
 void LayerListModel::deleteLayer(int id)
 {
 	int row = indexOf(id);
 	Q_ASSERT(row>=0);
-	beginRemoveRows(QModelIndex(), row, row);
+	beginRemoveRows(QModelIndex(), row+1, row+1);
 	_items.remove(row);
 	endRemoveRows();
+	emit layerDeleted(id, row+1);
 }
 
 void LayerListModel::clear()
@@ -138,7 +163,7 @@ void LayerListModel::changeLayer(int id, float opacity, const QString &title)
 	LayerListItem &item = _items[row];
 	item.opacity = opacity;
 	item.title = title;
-	const QModelIndex qmi = createIndex(row+1, 0);
+	const QModelIndex qmi = index(row+1);
 	emit dataChanged(qmi, qmi);
 }
 
@@ -176,6 +201,12 @@ void LayerListModel::reorderLayers(QList<uint8_t> neworder)
 	}
 	_items = newitems;
 	emit dataChanged(index(1,0), index(_items.size(),0));
+	emit layersReordered();
+}
+
+QStringList LayerMimeData::formats() const
+{
+	return QStringList() << "image/png";
 }
 
 }

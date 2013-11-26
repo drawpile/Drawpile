@@ -27,6 +27,7 @@
 #include "net/utils.h"
 #include "net/login.h"
 #include "net/userlist.h"
+#include "net/layerlist.h"
 
 #include "statetracker.h"
 
@@ -54,12 +55,20 @@ Client::Client(QObject *parent)
 	_isUserLocked = false;
 
 	_userlist = new UserListModel(this);
+	_layerlist = new LayerListModel(this);
 
 	connect(
 		_loopback,
 		SIGNAL(messageReceived(protocol::MessagePtr)),
 		this,
 		SLOT(handleMessage(protocol::MessagePtr))
+	);
+
+	connect(
+		_layerlist,
+		SIGNAL(layerOrderChanged(QList<uint8_t>)),
+		this,
+		SLOT(sendLayerReorder(QList<uint8_t>))
 	);
 }
 
@@ -110,6 +119,7 @@ void Client::handleDisconnect(const QString &message)
 {
 	emit serverDisconnected(message);
 	_userlist->clearUsers();
+	_layerlist->unlockAll();
 	_server = _loopback;
 	_isloopback = true;
 	_isOp = false;
@@ -117,12 +127,13 @@ void Client::handleDisconnect(const QString &message)
 	_isUserLocked = false;
 	emit opPrivilegeChange(true); // user is always op in loopback mode
 	emit sessionConfChange(false, false);
-	emit userLocked(false);
+	emit lockBitsChanged();
 }
 
 void Client::init()
 {
 	_loopback->reset();
+	_layerlist->clear();
 }
 
 bool Client::isLocalServer() const
@@ -148,6 +159,12 @@ void Client::sendLayerAttribs(int id, float opacity, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
 	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, 0, title)));
+}
+
+void Client::sendLayerVisibility(int id, bool hide)
+{
+	// This one is actually a local only change
+	emit layerVisibilityChange(id, hide);
 }
 
 void Client::sendDeleteLayer(int id, bool merge)
@@ -438,7 +455,7 @@ void Client::handleUserAttr(const protocol::UserAttr &msg)
 		_isOp = msg.isOp();
 		_isUserLocked = msg.isLocked();
 		emit opPrivilegeChange(msg.isOp());
-		emit userLocked(isLocked());
+		emit lockBitsChanged();
 	}
 	_userlist->updateUser(msg.id(), msg.attrs());
 }
@@ -452,12 +469,13 @@ void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 {
 	_isSessionLocked = msg.locked();
 	emit sessionConfChange(msg.locked(), msg.closed());
-	emit userLocked(isLocked());
+	emit lockBitsChanged();
 }
 
 void Client::handleLayerAcl(const protocol::LayerACL &msg)
 {
-	emit layerAclChange(msg.id(), msg.locked(), msg.exclusive());
+	_layerlist->updateLayerAcl(msg.id(), msg.locked(), msg.exclusive());
+	emit lockBitsChanged();
 }
 
 }

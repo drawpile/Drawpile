@@ -26,7 +26,6 @@ class QListView;
 
 namespace net {
 	class Client;
-	class LayerListModel;
 }
 
 namespace widgets {
@@ -36,8 +35,6 @@ class LayerListDock : public QDockWidget
 	Q_OBJECT
 	public:
 		LayerListDock(QWidget *parent=0);
-
-		net::LayerListModel *layerList() { return _model; }
 
 		void setClient(net::Client *client);
 
@@ -49,31 +46,21 @@ class LayerListDock : public QDockWidget
 
 		bool isCurrentLayerLocked() const;
 
-	public slots:
-		// State updates from the client
-		void addLayer(int id, const QString &title);
-		void changeLayer(int id, float opacity, const QString &title);
-		void changeLayerACL(int id, bool locked, QList<uint8_t> exclusive);
-		void deleteLayer(int id);
-		void reorderLayers(const QList<uint8_t> &order);
-		void unlockAll();
-
 	signals:
 		//! A layer was selected by the user
 		void layerSelected(int id);
-
-		//! User wants to toggle the visibility of a layer (local)
-		void layerSetHidden(int id, bool hidden);
 		
 	private slots:
 		void selected(const QModelIndex&);
-		void moveLayer(int oldIdx, int newIdx);
+		void onLayerCreate(bool wasfirst);
+		void onLayerDelete(int id, int idx);
+		void onLayerReorder();
 
 	private:
 
 		net::Client *_client;
 		QListView *_list;
-		net::LayerListModel *_model;
+		int _selected;
 };
 
 }
