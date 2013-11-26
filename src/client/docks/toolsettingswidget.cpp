@@ -103,25 +103,18 @@ void ToolSettingsDock::setTool(tools::Type tool) {
 	currenttool_->setForeground(fgcolor_);
 	currenttool_->setBackground(bgcolor_);
 	emit sizeChanged(currenttool_->getSize());
-
-	if(currenttool_ == erasersettings_) // eraser is a special case
-		emit colorsChanged(bgcolor_, fgcolor_);
-	else
-		emit colorsChanged(fgcolor_, bgcolor_);
 }
 
 void ToolSettingsDock::setForeground(const QColor& color)
 {
 	fgcolor_ = color;
 	currenttool_->setForeground(color);
-	emit colorsChanged(fgcolor_, bgcolor_);
 }
 
 void ToolSettingsDock::setBackground(const QColor& color)
 {
 	bgcolor_ = color;
 	currenttool_->setBackground(color);
-	emit colorsChanged(fgcolor_, bgcolor_);
 }
 
 /**

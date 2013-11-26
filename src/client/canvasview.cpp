@@ -135,25 +135,6 @@ void CanvasView::setOutline(bool enable)
 }
 
 /**
- * A solid circle is first drawn with the background color,
- * then a dottet circle is drawn over it using the foreground color.
- * @param fg foreground color for outline
- * @param bg background color for outline
- */
-void CanvasView::setOutlineColors(const QColor& fg, const QColor& bg)
-{
-	_foreground = fg;
-	_background = bg;
-	if(_enableoutline && _showoutline) {
-		QList<QRectF> rect;
-		rect.append(QRectF(_prevpoint.x() - _outlinesize,
-					_prevpoint.y() - _outlinesize,
-					_dia, _dia));
-		updateScene(rect);
-	}
-}
-
-/**
  * @param radius circle radius
  */
 void CanvasView::setOutlineRadius(int radius)
@@ -178,16 +159,13 @@ void CanvasView::drawForeground(QPainter *painter, const QRectF& rect)
 		const QRectF outline(_prevpoint-QPointF(_outlinesize,_outlinesize),
 					QSizeF(_dia, _dia));
 		if(rect.intersects(outline)) {
-			//painter->setClipRect(0,0,_scene->width(),_scene->height()); // default
-			//painter->setClipRect(outline.adjusted(-7, -7, 7, 7)); // smaller clipping
-			//painter->setRenderHint(QPainter::Antialiasing, true); // default
-			QPen pen(_background);
+			painter->save();
+			QPen pen(Qt::white);
+			pen.setCosmetic(true);
 			painter->setPen(pen);
+			painter->setCompositionMode(QPainter::CompositionMode_Difference);
 			painter->drawEllipse(outline);
-			pen.setColor(_foreground);
-			pen.setStyle(Qt::DashLine);
-			painter->setPen(pen);
-			painter->drawEllipse(outline);
+			painter->restore();
 		}
 	}
 }

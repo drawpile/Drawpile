@@ -29,7 +29,6 @@
 #include "widgets/layerlistwidget.h"
 
 #include "core/layerstack.h"
-#include "core/layer.h"
 
 #include "ora/orawriter.h"
 

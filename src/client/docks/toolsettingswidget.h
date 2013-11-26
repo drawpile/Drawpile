@@ -61,9 +61,6 @@ class ToolSettingsDock : public QDockWidget
 		//! This signal is emitted when the current tool changes its size
 		void sizeChanged(int size);
 
-		//! This signal is emitted when the tool's colors are changed
-		void colorsChanged(const QColor& fg, const QColor& bg);
-
 		//! Switching away from annotation editor causes deselection
 		void annotationDeselected(int id);
 

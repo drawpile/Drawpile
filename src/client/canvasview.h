@@ -93,9 +93,6 @@ class CanvasView : public QGraphicsView
 		//! Enable or disable cursor outline
 		void setOutline(bool enable);
 
-		//! Set brush outline colors
-		void setOutlineColors(const QColor& fg, const QColor& bg);
-
 		//! Scroll view to location
 		void scrollTo(const QPoint& point);
 		
@@ -159,7 +156,6 @@ class CanvasView : public QGraphicsView
 
 		int _outlinesize, _dia;
 		bool _enableoutline, _showoutline;
-		QColor _foreground, _background;
 		QCursor _cursor;
 
 		//! View zoom in percents

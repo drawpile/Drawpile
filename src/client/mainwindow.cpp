@@ -121,8 +121,6 @@ MainWindow::MainWindow(const MainWindow *source)
 			_view, SLOT(setOutline(bool)));
 	connect(_toolsettings, SIGNAL(sizeChanged(int)),
 			_view, SLOT(setOutlineRadius(int)));
-	connect(_toolsettings, SIGNAL(colorsChanged(const QColor&, const QColor&)),
-			_view, SLOT(setOutlineColors(const QColor&, const QColor&)));
 	connect(_view, SIGNAL(imageDropped(QString)),
 			this, SLOT(open(QString)));
 	connect(_view, SIGNAL(viewTransformed(int, qreal)),
