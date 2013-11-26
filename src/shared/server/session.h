@@ -90,6 +90,9 @@ struct SessionState {
 	//! Maximum number of users allowed in the session
 	int maxusers;
 
+	//! Lock new users by default
+	bool lockdefault;
+
 	const LayerState *getLayerById(int id);
 
 	/**

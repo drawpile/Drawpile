@@ -40,7 +40,7 @@ public:
 	enum Mode {HOST, JOIN};
 
 	LoginHandler(Mode mode, const QUrl &url)
-		: QObject(0), _mode(mode), _address(url), _state(0) { }
+		: QObject(0), _mode(mode), _address(url), _maxusers(0), _allowdrawing(true), _state(0) { }
 
 	/**
 	 * @brief Set the desired user ID. Only for host mode.
@@ -59,6 +59,18 @@ public:
 	 * @param title
 	 */
 	void setTitle(const QString &title) { Q_ASSERT(_mode==HOST); _title=title; }
+
+	/**
+	 * @brief Set the maximum number of users the session will accept
+	 * @param maxusers
+	 */
+	void setMaxUsers(int maxusers) { Q_ASSERT(_mode==HOST); _maxusers = maxusers; }
+
+	/**
+	 * @brief Set whether new users should be locked by default
+	 * @param allowdrawing
+	 */
+	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(_mode==HOST); _allowdrawing = allowdrawing; }
 
 	/**
 	 * @brief Set the server we're communicating with
@@ -95,8 +107,10 @@ private:
 	int _userid;
 	QString _password;
 	QString _title;
-	Server *_server;
+	int _maxusers;
+	bool _allowdrawing;
 
+	Server *_server;
 	int _state;
 	bool _requirepass;
 };

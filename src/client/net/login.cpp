@@ -164,9 +164,13 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	// Login complete!
 	_server->loginSuccess();
 
-	// TODO if in host mode, send initial session settings
+	// If in host mode, send initial session settings
 	if(_mode==HOST) {
 		_server->sendMessage(protocol::MessagePtr(new protocol::SessionTitle(_title)));
+		if(_maxusers>0)
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/maxusers %1").arg(_maxusers))));
+		if(!_allowdrawing)
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/lockdefault").arg(_maxusers))));
 	}
 }
 }

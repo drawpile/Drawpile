@@ -529,6 +529,8 @@ void Client::handleJoinSession(const QString &msg)
 	// Give op to this user if it is the only one here
 	if(_server->userCount() == 1)
 		grantOp();
+	else if(_server->session().lockdefault)
+		lockUser();
 
 }
 
@@ -552,8 +554,9 @@ bool Client::handleOperatorCommand(const QString &cmd)
 	if(cmd.length() == 0 || cmd.at(0) != '/')
 		return false;
 
-	// Supported commands
 	/*
+	 * Supported commands:
+	 *
 	 * /lock <user>   - lock the given user
 	 * /unlock <user> - unlock the given user
 	 * /kick <user>   - kick the user off the server
@@ -562,6 +565,9 @@ bool Client::handleOperatorCommand(const QString &cmd)
 	 * /close         - prevent further logins
 	 * /open          - reallow logins
 	 * /title <tite>  - change session title (for those who like IRC commands)
+	 * /maxusers <n>  - set session user limit (affects new users only)
+	 * /lockdefault   - lock new users by default
+	 * /unlockdefault - don't lock new users by default
 	 */
 	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
 	if(tokens[0] == "/lock" && tokens.count()==2) {
@@ -604,6 +610,19 @@ bool Client::handleOperatorCommand(const QString &cmd)
 	} else if(tokens[0] == "/title" && tokens.count()>1) {
 		QString title = QStringList(tokens.mid(1)).join(' ');
 		_server->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(title)));
+		return true;
+	} else if(tokens[0] == "/maxusers" && tokens.count()==2) {
+		bool ok;
+		int limit = tokens[1].toInt(&ok);
+		if(ok && limit>=0) {
+			_server->session().maxusers = limit;
+			return true;
+		}
+	} else if(tokens[0] == "/lockdefault" && tokens.count()==1) {
+		_server->session().lockdefault = true;
+		return true;
+	} else if(tokens[0] == "/unlockdefault" && tokens.count()==1) {
+		_server->session().lockdefault = false;
 		return true;
 	}
 

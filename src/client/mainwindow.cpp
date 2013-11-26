@@ -890,6 +890,8 @@ void MainWindow::finishHost(int i)
 		net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
 		login->setPassword(hostdlg_->getPassword());
 		login->setTitle(hostdlg_->getTitle());
+		login->setMaxUsers(hostdlg_->getUserLimit());
+		login->setAllowDrawing(hostdlg_->getAllowDrawing());
 		w->_client->connectToServer(login);
 
 	}
