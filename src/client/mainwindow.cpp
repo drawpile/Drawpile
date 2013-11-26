@@ -56,13 +56,13 @@
 #include "widgets/netstatus.h"
 #include "widgets/dualcolorbutton.h"
 #include "widgets/chatwidget.h"
-#include "widgets/layerlistwidget.h"
 
 #include "docks/toolsettingswidget.h"
 #include "docks/palettebox.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/userlistdock.h"
+#include "docks/layerlistdock.h"
 
 #include "net/client.h"
 #include "net/login.h"
@@ -1548,7 +1548,7 @@ void MainWindow::createUserList(QMenu *toggles)
 
 void MainWindow::createLayerList(QMenu *toggles)
 {
-	_layerlist = new widgets::LayerListWidget(this);
+	_layerlist = new widgets::LayerListDock(this);
 	_layerlist->setObjectName("layerlistdock");
 	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	toggles->addAction(_layerlist->toggleViewAction());

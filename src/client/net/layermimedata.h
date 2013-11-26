@@ -22,7 +22,7 @@
 
 #include <QMimeData>
 
-namespace widgets {
+namespace net {
 
 /**
  * A specialization of QMimeData for passing layers around inside
@@ -35,10 +35,6 @@ class LayerMimeData : public QMimeData
 	public:
 		LayerMimeData(int layer_id);
 
-#if 0
-		//! Get the layer
-		Layer *layer() const { return layer_; }
-#endif
 		int layerId() const { return _id; }
 
 		//! Supported export formats

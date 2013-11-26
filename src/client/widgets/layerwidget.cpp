@@ -25,15 +25,15 @@
 #include <QLabel>
 #include <QGridLayout>
 
-#include "layerwidget.h"
-#include "layerlistitem.h"
+#include "widgets/layerwidget.h"
+#include "net/layerlist.h"
 
 namespace widgets {
 
 LayerStyleEditor::LayerStyleEditor(const QModelIndex &index, QWidget *parent)
 	: QFrame(parent, Qt::FramelessWindowHint), _idx(index)
 {
-	const LayerListItem &layer = index.data().value<LayerListItem>();
+	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
 	setAttribute(Qt::WA_DeleteOnClose);
 	setFrameStyle(Panel);
 	setFrameShadow(Raised);
@@ -83,7 +83,7 @@ void LayerStyleEditor::updateOpacity(int o)
 
 void LayerStyleEditor::toggleHide()
 {
-	emit setHidden(_idx.data().value<LayerListItem>().id, hide_->isChecked());
+	emit setHidden(_idx.data().value<net::LayerListItem>().id, hide_->isChecked());
 }
 
 }

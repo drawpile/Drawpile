@@ -27,8 +27,6 @@ class QSlider;
 class QCheckBox;
 
 namespace widgets {
-
-class LayerListItem;
 	
 /**
  * A widget for adjusting the visual attributes of a layer.

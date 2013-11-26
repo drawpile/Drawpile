@@ -17,13 +17,13 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef DP_LAYERLISTWIDGET_ITEM_H
-#define DP_LAYERLISTWIDGET_ITEM_H
+#ifndef DP_NET_LAYERLIST_H
+#define DP_NET_LAYERLIST_H
 
 #include <QAbstractListModel>
 #include <QVector>
 
-namespace widgets {
+namespace net {
 
 struct LayerListItem {
 	LayerListItem() : id(0), title(""), opacity(1.0), hidden(false), locked(false) {}
@@ -86,6 +86,7 @@ private:
 
 }
 
-Q_DECLARE_METATYPE(widgets::LayerListItem);
+Q_DECLARE_METATYPE(net::LayerListItem);
 
 #endif
+

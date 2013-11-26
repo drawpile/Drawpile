@@ -22,19 +22,15 @@
 
 #include "canvasscene.h"
 #include "canvasitem.h"
+#include "annotationitem.h"
 #include "statetracker.h"
 
-#include "annotationitem.h"
-
-#include "widgets/layerlistwidget.h"
-
 #include "core/layerstack.h"
-
 #include "ora/orawriter.h"
 
 namespace drawingboard {
 
-CanvasScene::CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget)
+CanvasScene::CanvasScene(QObject *parent, widgets::LayerListDock *layerlistwidget)
 	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _showAnnotationBorders(false),
 	_layerlistwidget(layerlistwidget)
 {

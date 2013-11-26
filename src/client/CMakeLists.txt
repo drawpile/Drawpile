@@ -35,6 +35,8 @@ set (
 	net/utils.cpp
 	net/login.cpp
 	net/userlist.cpp
+	net/layerlist.cpp
+	net/layermimedata.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
@@ -65,17 +67,15 @@ set (
 	widgets/colorbutton.cpp 
 	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
-	widgets/layerlistwidget.cpp
-	widgets/layerlistdelegate.cpp
-	widgets/layerlistitem.cpp
 	widgets/layerwidget.cpp
-	widgets/layermimedata.cpp
 	widgets/brushpreview.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp
 	docks/userlistdock.cpp 
+	docks/layerlistdock.cpp
+	docks/layerlistdelegate.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui

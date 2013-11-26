@@ -26,7 +26,7 @@
 
 #include "core/layerstack.h"
 #include "core/layer.h"
-#include "widgets/layerlistwidget.h"
+#include "docks/layerlistdock.h"
 
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
@@ -35,7 +35,7 @@
 
 namespace drawingboard {
 
-StateTracker::StateTracker(int myid, CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListWidget *layerlist, QObject *parent)
+StateTracker::StateTracker(int myid, CanvasScene *scene, dpcore::LayerStack *image, widgets::LayerListDock *layerlist, QObject *parent)
 	: QObject(parent), _scene(scene), _image(image), _layerlist(layerlist), _myid(myid)
 {
 	_layerlist->init();

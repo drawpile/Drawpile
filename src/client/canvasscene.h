@@ -31,7 +31,7 @@ namespace dpcore {
 }
 
 namespace widgets {
-	class LayerListWidget;
+	class LayerListDock;
 }
 
 class QGraphicsItem;
@@ -55,7 +55,7 @@ class CanvasScene : public QGraphicsScene
 	Q_OBJECT
 
 public:
-	CanvasScene(QObject *parent, widgets::LayerListWidget *layerlistwidget);
+	CanvasScene(QObject *parent, widgets::LayerListDock *layerlistwidget);
 	~CanvasScene();
 
 	//! Clear and initialize the canvas
@@ -191,7 +191,7 @@ private:
 	bool _showAnnotationBorders;
 
 	//! The layer list widget to update on layer changes
-	widgets::LayerListWidget *_layerlistwidget;
+	widgets::LayerListDock *_layerlistwidget;
 
 	QTimer *_previewClearTimer;
 };

@@ -22,10 +22,10 @@
 
 #include "main.h"
 #include "toolsettings.h"
+#include "docks/layerlistdock.h"
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
 #include "widgets/brushslider.h"
-#include "widgets/layerlistwidget.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO works in qt5?)
 using widgets::ColorButton;
 using widgets::BrushSlider;

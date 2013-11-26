@@ -38,7 +38,7 @@ namespace drawingboard {
 	class AnnotationItem;
 }
 namespace widgets {
-	class LayerListWidget;
+	class LayerListDock;
 }
 
 namespace tools {
@@ -213,7 +213,7 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		void setClient(net::Client *client) { _client = client; }
 
 		//! Set the layer selection widget (needed for baking)
-		void setLayerSelector(widgets::LayerListWidget *layerlist) { _layerlist = layerlist; }
+		void setLayerSelector(widgets::LayerListDock *layerlist) { _layerlist = layerlist; }
 
 		QWidget *createUi(QWidget *parent);
 
@@ -253,7 +253,7 @@ class AnnotationSettings : public QObject, public ToolSettings {
 
 		bool noupdate_;
 		net::Client *_client;
-		widgets::LayerListWidget *_layerlist;
+		widgets::LayerListDock *_layerlist;
 };
 
 //! No settings

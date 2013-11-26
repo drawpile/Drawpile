@@ -37,7 +37,7 @@ namespace widgets {
 	class DualColorButton;
 	class ToolSettings;
 	class UserList;
-	class LayerListWidget;
+	class LayerListDock;
 	class PaletteBox;
 	class ColorBox;
 	class Navigator;
@@ -177,7 +177,7 @@ class MainWindow : public QMainWindow {
 		QSplitter *splitter_;
 		widgets::ToolSettingsDock *_toolsettings;
 		widgets::UserList *_userlist;
-		widgets::LayerListWidget *_layerlist;
+		widgets::LayerListDock *_layerlist;
 
 		widgets::DualColorButton *fgbgcolor_;
 		widgets::CanvasView *_view;

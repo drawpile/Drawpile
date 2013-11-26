@@ -21,7 +21,7 @@
 
 #include "layermimedata.h"
 
-namespace widgets {
+namespace net {
 
 LayerMimeData::LayerMimeData(int layer_id)
 	: QMimeData(), _id(layer_id)

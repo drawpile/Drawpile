@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2010 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@
 #include <QPushButton>
 
 #include "net/client.h"
+#include "net/layerlist.h"
 
-#include "layerlistdelegate.h"
-#include "layerlistitem.h"
-#include "layerwidget.h"
+#include "docks/layerlistdelegate.h"
+#include "widgets/layerwidget.h"
 
 #include "icons.h"
 
@@ -66,7 +66,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 				addicon);
 		drawDisplay(painter, opt, textrect.adjusted(addicon.width(),0,0,0), index.data().toString());
 	} else {
-		LayerListItem layer = index.data().value<LayerListItem>();
+		net::LayerListItem layer = index.data().value<net::LayerListItem>();
 
 		const QSize delsize = icon::remove().actualSize(QSize(16,16));
 
@@ -155,7 +155,7 @@ void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 
 void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const
 {
-	LayerListItem layer = index.data().value<LayerListItem>();
+	net::LayerListItem layer = index.data().value<net::LayerListItem>();
 	QString newtitle = static_cast<QLineEdit*>(editor)->text();
 	if(layer.title != newtitle) {
 		layer.title = newtitle;
@@ -169,7 +169,7 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
  */
 void LayerListDelegate::changeOpacity(const QModelIndex &index, int opacity)
 {
-	LayerListItem layer = index.data().value<LayerListItem>();
+	net::LayerListItem layer = index.data().value<net::LayerListItem>();
 	layer.opacity = opacity / 255.0;
 	sendLayerAttribs(layer);
 }
@@ -194,7 +194,7 @@ void LayerListDelegate::clickNewLayer()
 void LayerListDelegate::clickLockLayer(const QModelIndex &index)
 {
 	Q_ASSERT(_client);
-	LayerListItem layer = index.data().value<LayerListItem>();
+	net::LayerListItem layer = index.data().value<net::LayerListItem>();
 
 	layer.locked = !layer.locked;
 	sendLayerAcl(layer);
@@ -203,7 +203,7 @@ void LayerListDelegate::clickLockLayer(const QModelIndex &index)
 void LayerListDelegate::clickDeleteLayer(const QModelIndex &index)
 {
 	Q_ASSERT(_client);
-	LayerListItem layer = index.data().value<LayerListItem>();
+	net::LayerListItem layer = index.data().value<net::LayerListItem>();
 
 	QMessageBox box(QMessageBox::Question,
 		tr("Delete layer"),
@@ -231,14 +231,14 @@ void LayerListDelegate::clickDeleteLayer(const QModelIndex &index)
 		_client->sendDeleteLayer(layer.id, choice==merge);
 }
 
-void LayerListDelegate::sendLayerAttribs(const LayerListItem &layer) const
+void LayerListDelegate::sendLayerAttribs(const net::LayerListItem &layer) const
 {
 	Q_ASSERT(_client);
 
 	_client->sendLayerAttribs(layer.id, layer.opacity, layer.title);
 }
 
-void LayerListDelegate::sendLayerAcl(const LayerListItem &layer) const
+void LayerListDelegate::sendLayerAcl(const net::LayerListItem &layer) const
 {
 	Q_ASSERT(_client);
 

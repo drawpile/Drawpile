@@ -17,8 +17,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef LAYERLISTWIDGET_H
-#define LAYERLISTWIDGET_H
+#ifndef LAYERLISTDOCK_H
+#define LAYERLISTDOCK_H
 
 #include <QDockWidget>
 
@@ -26,20 +26,18 @@ class QListView;
 
 namespace net {
 	class Client;
+	class LayerListModel;
 }
 
 namespace widgets {
 
-class LayerListModel;
-class LayerListItem;
-
-class LayerListWidget : public QDockWidget
+class LayerListDock : public QDockWidget
 {
 	Q_OBJECT
 	public:
-		LayerListWidget(QWidget *parent=0);
+		LayerListDock(QWidget *parent=0);
 
-		LayerListModel *layerList() { return _model; }
+		net::LayerListModel *layerList() { return _model; }
 
 		void setClient(net::Client *client);
 
@@ -75,7 +73,7 @@ class LayerListWidget : public QDockWidget
 
 		net::Client *_client;
 		QListView *_list;
-		LayerListModel *_model;
+		net::LayerListModel *_model;
 };
 
 }

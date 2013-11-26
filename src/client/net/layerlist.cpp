@@ -20,10 +20,10 @@
 
 #include <QDebug>
 #include <QStringList>
-#include "layerlistitem.h"
+#include "layerlist.h"
 #include "layermimedata.h"
 
-namespace widgets {
+namespace net {
 
 LayerListModel::LayerListModel(QObject *parent)
 	: QAbstractListModel(parent)

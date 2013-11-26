@@ -21,15 +21,14 @@
 #include <QItemSelection>
 #include <QListView>
 
-#include "layerlistwidget.h"
-#include "layerlistdelegate.h"
-#include "layerlistitem.h"
-
 #include "net/client.h"
+#include "net/layerlist.h"
+#include "docks/layerlistdock.h"
+#include "docks/layerlistdelegate.h"
 
 namespace widgets {
 
-LayerListWidget::LayerListWidget(QWidget *parent)
+LayerListDock::LayerListDock(QWidget *parent)
 	: QDockWidget(tr("Layers"), parent), _client(0)
 {
 	_list = new QListView(this);
@@ -41,13 +40,13 @@ LayerListWidget::LayerListWidget(QWidget *parent)
 	// Disallow automatic selections. We handle them ourselves in the delegate.
 	_list->setSelectionMode(QAbstractItemView::NoSelection);
 	
-	_model = new LayerListModel(this);
+	_model = new net::LayerListModel(this);
 	_list->setModel(_model);
 
 	connect(_model, SIGNAL(moveLayer(int,int)), this, SLOT(moveLayer(int,int)));
 }
 
-void LayerListWidget::setClient(net::Client *client)
+void LayerListDock::setClient(net::Client *client)
 {
 	Q_ASSERT(_client==0);
 
@@ -60,13 +59,13 @@ void LayerListWidget::setClient(net::Client *client)
 	connect(del, SIGNAL(select(const QModelIndex&)), this, SLOT(selected(const QModelIndex&)));
 }
 
-void LayerListWidget::init()
+void LayerListDock::init()
 {
 	_model->clear();
 	_list->setEnabled(true);
 }
 
-void LayerListWidget::addLayer(int id, const QString &title)
+void LayerListDock::addLayer(int id, const QString &title)
 {
 	_model->createLayer(id, title);
 	if(_model->rowCount()==2) {
@@ -75,28 +74,28 @@ void LayerListWidget::addLayer(int id, const QString &title)
 	}
 }
 
-void LayerListWidget::changeLayer(int id, float opacity, const QString &title)
+void LayerListDock::changeLayer(int id, float opacity, const QString &title)
 {
 	_model->changeLayer(id, opacity, title);
 }
 
-void LayerListWidget::changeLayerACL(int id, bool locked, QList<uint8_t> exclusive)
+void LayerListDock::changeLayerACL(int id, bool locked, QList<uint8_t> exclusive)
 {
 	_model->updateLayerAcl(id, locked, exclusive);
 }
 
-void LayerListWidget::unlockAll()
+void LayerListDock::unlockAll()
 {
 	_model->unlockAll();
 }
 
-void LayerListWidget::deleteLayer(int id)
+void LayerListDock::deleteLayer(int id)
 {
 	_model->deleteLayer(id);
 	// TODO change layer if this one was selected
 }
 
-void LayerListWidget::reorderLayers(const QList<uint8_t> &order)
+void LayerListDock::reorderLayers(const QList<uint8_t> &order)
 {
 	int selection = currentLayer();
 
@@ -108,19 +107,19 @@ void LayerListWidget::reorderLayers(const QList<uint8_t> &order)
 	}
 }
 
-int LayerListWidget::currentLayer()
+int LayerListDock::currentLayer()
 {
 	QModelIndexList selidx = _list->selectionModel()->selectedIndexes();
 	if(!selidx.isEmpty())
-		return selidx.at(0).data().value<LayerListItem>().id;
+		return selidx.at(0).data().value<net::LayerListItem>().id;
 	return 0;
 }
 
-bool LayerListWidget::isCurrentLayerLocked() const
+bool LayerListDock::isCurrentLayerLocked() const
 {
 	QModelIndexList idx = _list->selectionModel()->selectedIndexes();
 	if(!idx.isEmpty())
-		return idx.at(0).data().value<LayerListItem>().isLockedFor(_client->myId());
+		return idx.at(0).data().value<net::LayerListItem>().isLockedFor(_client->myId());
 	return false;
 }
 
@@ -128,15 +127,15 @@ bool LayerListWidget::isCurrentLayerLocked() const
  * A layer was selected via delegate. Update the UI and emit a signal
  * to inform the Controller of the new selection.
  */
-void LayerListWidget::selected(const QModelIndex& index)
+void LayerListDock::selected(const QModelIndex& index)
 {
 	_list->selectionModel()->clear();
 	_list->selectionModel()->select(index, QItemSelectionModel::SelectCurrent);
 
-	emit layerSelected(index.data().value<LayerListItem>().id);
+	emit layerSelected(index.data().value<net::LayerListItem>().id);
 }
 
-void LayerListWidget::moveLayer(int oldIdx, int newIdx)
+void LayerListDock::moveLayer(int oldIdx, int newIdx)
 {
 	// Need at least two real layers for this to make sense
 	if(_model->rowCount() <= 2)
@@ -145,7 +144,7 @@ void LayerListWidget::moveLayer(int oldIdx, int newIdx)
 	QList<uint8_t> layers;
 	int rows = _model->rowCount() - 1;
 	for(int i=rows;i>=1;--i)
-		layers.append(_model->data(_model->index(i, 0)).value<LayerListItem>().id);
+		layers.append(_model->data(_model->index(i, 0)).value<net::LayerListItem>().id);
 	
 	int m0 = rows-oldIdx-1;
 	int m1 = rows-newIdx;

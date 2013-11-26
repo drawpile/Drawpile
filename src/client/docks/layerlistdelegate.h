@@ -25,10 +25,9 @@
 
 namespace net {
 	class Client;
+	class LayerListItem;
 }
 namespace widgets {
-
-class LayerListItem;
 
 /**
  * \brief A custom item delegate for displaying layer names and editing layer settings.
@@ -66,8 +65,8 @@ private slots:
 		void clickLockLayer(const QModelIndex &index);
 		void clickDeleteLayer(const QModelIndex &index);
 
-		void sendLayerAttribs(const LayerListItem &layer) const;
-		void sendLayerAcl(const LayerListItem &layer) const;
+		void sendLayerAttribs(const net::LayerListItem &layer) const;
+		void sendLayerAcl(const net::LayerListItem &layer) const;
 
 		net::Client *_client;
 };
