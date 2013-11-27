@@ -68,18 +68,7 @@ bool Server::start(quint16 port, const QHostAddress& address) {
 void Server::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
-#if 0 // TODO
-	if(_uniqueIps) {
-		foreach(Client *c, _clients) {
-			if(c->address() == socket->peerAddress()) {
-				printDebug("New client connected, but there is already a connection from " + socket->peerAddress().toString());
-				socket->close();
-				delete socket;
-				return;
-			}
-		}
-	}
-#endif
+
 	printDebug(QString("Accepted new client from adderss %1").arg(socket->peerAddress().toString()));
 	printDebug(QString("Number of connected clients is now %1").arg(_clients.size() + 1));
 
