@@ -77,7 +77,7 @@
 /**
  * @param source if not null, clone settings from this window
  */
-MainWindow::MainWindow(const MainWindow *source)
+MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(), _canvas(0)
 {
 	updateTitle();
@@ -193,10 +193,8 @@ MainWindow::MainWindow(const MainWindow *source)
 	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
 
-	if(source)
-		cloneSettings(source);
-	else
-		readSettings();
+	// Restore settings
+	readSettings(restoreWindowPosition);
 	
 	// Show self
 	show();
@@ -219,7 +217,13 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 {
 	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 
-	MainWindow *win = canReplace() ? this : new MainWindow(this);
+	MainWindow *win;
+	if(canReplace()) {
+		win = this;
+	} else {
+		writeSettings();
+		win = new MainWindow(false);
+	}
 	
 	QList<protocol::MessagePtr> init = loader.loadInitCommands();
 
@@ -339,7 +343,7 @@ void MainWindow::updateShortcuts()
 /**
  * Read and apply mainwindow related settings.
  */
-void MainWindow::readSettings()
+void MainWindow::readSettings(bool windowpos)
 {
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("window");
@@ -347,7 +351,7 @@ void MainWindow::readSettings()
 	// Restore previously used window size and position
 	resize(cfg.value("size",QSize(800,600)).toSize());
 
-	if(cfg.contains("pos")) {
+	if(windowpos && cfg.contains("pos")) {
 		const QPoint pos = cfg.value("pos").toPoint();
 		if(qApp->desktop()->availableGeometry().contains(pos))
 			move(pos);
@@ -392,38 +396,6 @@ void MainWindow::readSettings()
 	// Remember recent files
 	RecentFiles::initMenu(recent_);
 }
-
-/**
- * @param source window whose settings are cloned
- */
-void MainWindow::cloneSettings(const MainWindow *source)
-{
-	// Clone size, but let the window manager position this window
-	resize(source->normalGeometry().size());
-	//source->size() fails miserably if window is maximized
-	
-	// Clone window state?
-	//setWindowState(source->windowState());
-	
-	// Copy dock and view states
-	restoreState(source->saveState());
-	splitter_->restoreState(source->splitter_->saveState());
-
-	lastpath_ = source->lastpath_;
-
-	// Copy tool selection
-	const int tool = source->_drawingtools->actions().indexOf(
-			source->_drawingtools->checkedAction()
-			);
-	_drawingtools->actions()[tool]->trigger();
-	_toolsettings->setTool(tools::Type(tool));
-	_view->selectTool(tools::Type(tool));
-
-	// Copy foreground and background colors
-	fgbgcolor_->setForeground(source->fgbgcolor_->foreground());
-	fgbgcolor_->setBackground(source->fgbgcolor_->background());
-}
-
 
 /**
  * Write out settings

@@ -60,7 +60,7 @@ class SessionLoader;
 class MainWindow : public QMainWindow {
 	Q_OBJECT
 	public:
-		MainWindow(const MainWindow *source=0);
+		MainWindow(bool restoreWindowPosition=true);
 		~MainWindow();
 
 		//! Load initial session state
@@ -157,8 +157,7 @@ class MainWindow : public QMainWindow {
 		//! Display an error message
 		void showErrorMessage(const QString& message, const QString& details=QString());
 
-		void readSettings();
-		void cloneSettings(const MainWindow *source);
+		void readSettings(bool windowpos=true);
 		void writeSettings();
 
 		void initActions();
