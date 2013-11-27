@@ -23,6 +23,7 @@
 #include "statetracker.h"
 #include "canvasscene.h" // needed for annotations
 #include "annotationitem.h"
+#include "loader.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -42,7 +43,8 @@ StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *par
 	  _scene(scene),
 	  _image(scene->layers()),
 	  _layerlist(client->layerlist()),
-	  _myid(client->myId())
+	  _myid(client->myId()),
+	  _hassnapshot(true)
 {
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
@@ -94,13 +96,28 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			qWarning() << "Unhandled drawing command" << msg->type();
 			return;
 	}
+
+	// TODO clear out the message stream if it gets too big
 	_msgstream.append(msg);
 }
 
-QList<protocol::MessagePtr> StateTracker::generateSnapshot()
+QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 {
-	// New snapshot point generation
-	return _msgstream.toList();
+	if(!_hassnapshot || forcenew) {
+		// Generate snapshot
+		QList<protocol::MessagePtr> snapshot = SnapshotLoader(_scene).loadInitCommands();
+
+		// Replace old message stream with snapshot since it didn't contain one
+		_msgstream.clear();
+		foreach(protocol::MessagePtr ptr, snapshot)
+			_msgstream.append(ptr);
+		_hassnapshot = true;
+
+		return snapshot;
+	} else {
+		// Message stream contains (starts with) a snapshot: return it
+		return _msgstream.toList();
+	}
 }
 
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)

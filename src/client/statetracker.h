@@ -98,7 +98,9 @@ public:
 	
 	void receiveCommand(protocol::MessagePtr msg);
 
-	QList<protocol::MessagePtr> generateSnapshot();
+	QList<protocol::MessagePtr> generateSnapshot(bool forcenew);
+
+	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
 
 private:
 	// Layer related commands
@@ -129,6 +131,7 @@ private:
 	int _myid;
 
 	protocol::MessageStream _msgstream;
+	bool _hassnapshot;
 };
 
 }

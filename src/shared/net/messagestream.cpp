@@ -47,15 +47,22 @@ void MessageStream::addSnapshotPoint()
 	_snapshotpointer = end()-1;
 }
 
-void MessageStream::cleanup()
+int MessageStream::cleanup()
 {
 	if(hasSnapshot()) {
 		const SnapshotPoint &sp = snapshotPoint().cast<protocol::SnapshotPoint>();
 		if(sp.isComplete()) {
-			_messages = _messages.mid(_snapshotpointer - _offset);
-			_snapshotpointer = 0;
+			int i = _snapshotpointer - _offset;
+			Q_ASSERT(i>=0);
+			if(i>0) {
+				_messages = _messages.mid(i);
+				_offset += i;
+				_snapshotpointer = _offset;
+			}
+			return i;
 		}
 	}
+	return 0;
 }
 
 void MessageStream::clear()

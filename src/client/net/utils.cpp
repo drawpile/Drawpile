@@ -23,6 +23,8 @@
 
 #include "utils.h"
 #include "../shared/net/image.h"
+#include "../shared/net/pen.h"
+#include "core/brush.h"
 
 namespace {
 void splitImage(int layer, int x, int y, const QImage &image, bool blend, QList<protocol::MessagePtr> &list)
@@ -84,6 +86,25 @@ QList<protocol::MessagePtr> putQImage(int layer, int x, int y, const QImage &ima
 	QList<protocol::MessagePtr> list;
 	splitImage(layer, x, y, image.convertToFormat(QImage::Format_ARGB32), blend, list);
 	return list;
+}
+
+protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brush &brush)
+{
+	return protocol::MessagePtr(new protocol::ToolChange(
+		userid,
+		layer,
+		brush.blendingMode(),
+		(brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0),
+		brush.spacing(),
+		brush.color(1.0).rgba(),
+		brush.color(0.0).rgba(),
+		brush.hardness(1.0) * 255,
+		brush.hardness(0.0) * 255,
+		brush.radius(1.0),
+		brush.radius(0.0),
+		brush.opacity(1.0) * 255,
+		brush.opacity(0.0) * 255
+	));
 }
 
 }

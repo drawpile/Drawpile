@@ -62,7 +62,7 @@ struct DrawingContext {
  */
 struct SessionState {
 	SessionState() : layerids(255), annotationids(255), userids(255), minorVersion(0),
-		locked(false), closed(false), maxusers(255) { }
+		locked(false), closed(false), maxusers(255), syncstate(NOT_SYNCING) { }
 
 	//! Used layer IDs
 	UsedIdList layerids;
@@ -97,6 +97,14 @@ struct SessionState {
 	//! If set, the session is password protected
 	QString password;
 
+	//! State of snapshot sync
+	enum {NOT_SYNCING, SYNC_WAIT_FOR_LOCK, SYNC_WAIT_FOR_ACK } syncstate;
+
+	/**
+	 * @brief Get the layer with the given ID
+	 * @param id
+	 * @return pointer to layer or 0 if not found
+	 */
 	const LayerState *getLayerById(int id);
 
 	/**

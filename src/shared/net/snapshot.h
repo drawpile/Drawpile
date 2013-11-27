@@ -34,7 +34,7 @@ namespace protocol {
  */
 class SnapshotMode : public Message {
 public:
-    enum Mode {REQUEST, ACK, SNAPSHOT, END};
+	enum Mode {REQUEST, REQUEST_NEW, ACK, SNAPSHOT, END};
 
     SnapshotMode(Mode mode) : Message(MSG_SNAPSHOT), _mode(mode) {}
 

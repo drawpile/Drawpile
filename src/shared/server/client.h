@@ -30,6 +30,7 @@ class QTcpSocket;
 namespace protocol {
 	class MessageQueue;
 	class Login;
+	class SnapshotMode;
 }
 
 namespace server {
@@ -61,17 +62,29 @@ public:
 	int id() const { return _id; }
 
 	/**
+	 * @brief Get the user name of this client
+	 * @return user name
+	 */
+	const QString &username() const { return _username; }
+
+	/**
 	 * @brief Does this user have session operator privileges?
 	 * @return
 	 */
 	bool isOperator() const { return _isOperator; }
 
 	/**
+	 * @brief Is this user locked individually?
+	 * @return
+	 */
+	bool isUserLocked() const { return _userLock; }
+
+	/**
 	 * @brief Request the client to generate a snapshot
 	 *
 	 * This causes the creation of a new snapshot point on the main stream.
 	 */
-	void requestSnapshot();
+	void requestSnapshot(bool forcenew);
 
 	/**
 	 * @brief Is this client's input queue on hold?
@@ -118,9 +131,23 @@ public:
 	 */
 	void kick(int kickedBy);
 
+	/**
+	 * @brief Barrier lock this user
+	 *
+	 * If this user is currently drawing, the lock won't take place immediately
+	 *
+	 */
+	void barrierLock();
+
+	/**
+	 * @brief Lift barrier lock
+	 */
+	void barrierUnlock();
+
 signals:
 	void disconnected(Client *client);
 	void loggedin(Client *client);
+	void barrierLocked();
 
 public slots:
 	/**
@@ -146,6 +173,7 @@ private:
 	void handleLoginPassword(const QString &pass);
 	void handleHostSession(const QString &msg);
 	void handleJoinSession(const QString &msg);
+	void handleSnapshotStart(const protocol::SnapshotMode &msg);
 
 	bool handleOperatorCommand(const QString &cmd);
 
@@ -178,6 +206,9 @@ private:
 
 	//! Is this user locked? (by an operator)
 	bool _userLock;
+
+	//! User's barrier (snapshot sync) lock status
+	enum {BARRIER_NOTLOCKED, BARRIER_WAIT, BARRIER_LOCKED } _barrierlock;
 
 	//! The user's current layer (needed for layer locking)
 	int _currentLayer;

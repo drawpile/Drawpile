@@ -78,7 +78,6 @@ public:
 	/**
 	 * @brief Does this stream contain a snapshot
 	 *
-	 * @todo always returns true because stream discarding is not yet implemented
 	 * @return true if this stream contains a snapshot
 	 */
 	bool hasSnapshot() const { return isValidIndex(_snapshotpointer); }
@@ -99,8 +98,9 @@ public:
 
 	/**
 	 * @brief remove all messages before the last complete snapshot point
+	 * @return the number of messages removed
 	 */
-	void cleanup();
+	int cleanup();
 
 	/**
 	 * @brief remove all messages, including the snapshot point

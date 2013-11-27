@@ -165,6 +165,15 @@ void CanvasScene::pickColor(int x, int y)
 	}
 }
 
+QList<AnnotationItem*> CanvasScene::getAnnotations() const
+{
+	QList<AnnotationItem*> annotations;
+	foreach(QGraphicsItem *i, items()) {
+		if(i->type() == AnnotationItem::Type)
+			annotations.append(static_cast<AnnotationItem*>(i));
+	}
+	return annotations;
+}
 
 /**
  * The file format is determined from the name of the file
@@ -175,13 +184,7 @@ bool CanvasScene::save(const QString& file) const
 {
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		QList<AnnotationItem*> annotations;
-		foreach(QGraphicsItem *i, items()) {
-			if(i->type() == AnnotationItem::Type)
-				annotations.append(static_cast<AnnotationItem*>(i));
-		}
-
-		return openraster::saveOpenRaster(file, _image->image(), annotations);
+		return openraster::saveOpenRaster(file, _image->image(), getAnnotations());
 	} else {
 		// Regular image formats: flatten the image first.
 		return image().save(file);
@@ -313,11 +316,11 @@ void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)
 	}
 }
 
-void CanvasScene::sendSnapshot()
+void CanvasScene::sendSnapshot(bool forcenew)
 {
 	if(_statetracker) {
 		qDebug() << "generating snapshot point...";
-		emit newSnapshot(_statetracker->generateSnapshot());
+		emit newSnapshot(_statetracker->generateSnapshot(forcenew));
 	} else {
 		qWarning() << "This shouldn't happen... Received a snapshot request but canvas does not exist!";
 	}

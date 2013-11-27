@@ -193,7 +193,6 @@ class MainWindow : public QMainWindow {
 		drawingboard::CanvasScene *_canvas;
 		net::Client *_client;
 
-		QString _sessiontitle;
 		QString filename_;
 		QString lastpath_;
 

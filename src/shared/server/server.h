@@ -92,6 +92,21 @@ public:
 	 */
 	bool addToSnapshotStream(protocol::MessagePtr msg);
 
+	/**
+	 * @brief Remove all pre-snapshot messages from the command stream
+	 */
+	void cleanupCommandStream();
+
+	/**
+	 * @brief Synchronize clients so that a new snapshot point can be generated
+	 */
+	void startSnapshotSync();
+
+	/**
+	 * @brief Snapshot synchronization has started
+	 */
+	void snapshotSyncStarted();
+
 	void startSession() { _hasSession = true; }
 
 	SessionState &session() { return _session; }
@@ -101,6 +116,12 @@ public:
 	 * @return number of logged in users
 	 */
 	int userCount() const;
+
+	/**
+	 * @brief Get the list of clients
+	 * @return
+	 */
+	const QList<Client*> &clients() { return _clients; }
 
 	/**
 	 * @brief Get the client with the specified ID
@@ -122,6 +143,7 @@ private slots:
 	void newClient();
 	void removeClient(Client *client);
 	void clientLoggedIn(Client *client);
+	void userBarrierLocked();
 
 signals:
 	//! This signal is emitted when the server becomes empty

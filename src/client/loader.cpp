@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QDebug>
 #include <QApplication>
 #include <QImage>
 #include <QMessageBox>
@@ -26,8 +27,16 @@
 #include "net/client.h"
 #include "net/utils.h"
 #include "ora/orareader.h"
+#include "canvasscene.h"
+#include "annotationitem.h"
+#include "statetracker.h"
+#include "core/layerstack.h"
+#include "core/layer.h"
 
 #include "../shared/net/layer.h"
+#include "../shared/net/annotation.h"
+#include "../shared/net/meta.h"
+#include "../shared/net/image.h"
 
 using protocol::MessagePtr;
 
@@ -85,6 +94,47 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 	msgs.append(MessagePtr(new protocol::CanvasResize(image.size().width(), image.size().height())));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0, "Background")));
 	msgs.append(net::putQImage(1, 0, 0, image, false));
+
+	return msgs;
+}
+
+QList<MessagePtr> SnapshotLoader::loadInitCommands()
+{
+	QList<MessagePtr> msgs;
+
+	// Most important bit first: canvas initialization
+	msgs.append(MessagePtr(new protocol::CanvasResize(_scene->width(), _scene->height())));
+
+	// Less important, but it's nice to see it straight away
+	if(!_scene->title().isEmpty())
+		msgs.append((MessagePtr(new protocol::SessionTitle(_scene->title()))));
+
+	// Create layers
+	for(int i=0;i<_scene->layers()->layers();++i) {
+		const dpcore::Layer *layer = _scene->layers()->getLayerByIndex(i);
+		msgs.append(MessagePtr(new protocol::LayerCreate(layer->id(), 0, QString())));
+		msgs.append(MessagePtr(new protocol::LayerAttributes(layer->id(), layer->opacity(), 0, layer->title())));
+		msgs.append(net::putQImage(layer->id(), 0, 0, layer->toImage(), false));
+	}
+
+	// Create annotations
+	foreach(const drawingboard::AnnotationItem *a, _scene->getAnnotations()) {
+		QRect g = a->geometry();
+		msgs.append(MessagePtr(new protocol::AnnotationCreate(a->id(), g.x(), g.y(), g.width(), g.height())));
+		msgs.append((MessagePtr(new protocol::AnnotationEdit(a->id(), a->backgroundColor().rgba(), a->text()))));
+	}
+
+	// User tool changes
+	QHashIterator<int, drawingboard::DrawingContext> iter(_scene->statetracker()->drawingContexts());
+	while(iter.hasNext()) {
+		iter.next();
+
+		msgs.append(net::brushToToolChange(
+			iter.key(),
+			iter.value().tool.layer_id,
+			iter.value().tool.brush
+		));
+	}
 
 	return msgs;
 }

@@ -50,7 +50,8 @@ Client::Client(Server *server, QTcpSocket *socket)
 	  _substreampointer(-1),
 	  _id(0),
 	  _isOperator(false),
-	  _userLock(false)
+	  _userLock(false),
+	  _barrierlock(BARRIER_NOTLOCKED)
 {
 	_msgqueue = new protocol::MessageQueue(socket, this);
 
@@ -134,6 +135,23 @@ void Client::receiveMessages()
 	}
 }
 
+void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
+{
+	if(!_awaiting_snapshot) {
+		_server->printDebug(QString("Got unexpected snapshot message from user %1").arg(_id));
+		return;
+	}
+	if(msg.mode() != protocol::SnapshotMode::ACK) {
+		_server->printError(QString("Got unexpected snapshot message from user %1. Expected ACK, got mode %2").arg(_id).arg(msg.mode()));
+		// TODO abort sync
+		return;
+	}
+
+	_awaiting_snapshot = false;
+	_server->snapshotSyncStarted();
+	_uploading_snapshot = true;
+}
+
 void Client::receiveSnapshot()
 {
 	if(!_uploading_snapshot) {
@@ -157,8 +175,10 @@ void Client::receiveSnapshot()
 
 		// Add message
 		if(_server->addToSnapshotStream(msg)) {
+			// TODO add layer ACLs
 			_server->printDebug(QString("Finished getting snapshot from client %1").arg(_id));
 			_uploading_snapshot = false;
+			_server->cleanupCommandStream();
 
 			// Graduate to session
 			if(_state == WAIT_FOR_SYNC) {
@@ -198,14 +218,21 @@ void Client::socketDisconnect()
 	emit disconnected(this);
 }
 
-void Client::requestSnapshot()
+void Client::requestSnapshot(bool forcenew)
 {
 	Q_ASSERT(_state != LOGIN);
-	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(protocol::SnapshotMode::REQUEST)));
+	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 
 	_server->addSnapshotPoint();
-	_uploading_snapshot = true;
+
+	// Add user introductions to snapshot point
+	foreach(const Client *c, _server->clients()) {
+		if(c->id()>0) {
+			_server->addToSnapshotStream(protocol::MessagePtr(new protocol::UserJoin(c->id(), c->username())));
+			_server->addToSnapshotStream(protocol::MessagePtr(new protocol::UserAttr(c->id(), c->isUserLocked(), c->isOperator())));
+		}
+	}
 
 	_server->printDebug(QString("Created a new snapshot point and requested data from client %1").arg(_id));
 }
@@ -286,6 +313,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 		break;
 	case MSG_PEN_UP:
 		_server->session().drawingContextPenUp(msg.cast<PenUp>());
+		if(_barrierlock == BARRIER_WAIT) {
+			_barrierlock = BARRIER_LOCKED;
+			emit barrierLocked();
+		}
 		break;
 	case MSG_LAYER_CREATE:
 		_server->session().createLayer(msg.cast<LayerCreate>(), true);
@@ -317,6 +348,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 			return;
 		break;
 
+	case MSG_SNAPSHOT:
+		handleSnapshotStart(msg.cast<SnapshotMode>());
+		return;
+
 	default: break;
 	}
 
@@ -326,7 +361,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 bool Client::isHoldLocked() const
 {
-	return _state == WAIT_FOR_SYNC;
+	return _state == WAIT_FOR_SYNC || _barrierlock == BARRIER_LOCKED;
 }
 
 bool Client::isDropLocked() const
@@ -366,6 +401,21 @@ void Client::unlockUser()
 	_server->printDebug(QString("Unlocked user #%1 (%2)").arg(_id).arg(_username));
 	_userLock = false;
 	sendUpdatedAttrs();
+}
+
+void Client::barrierLock()
+{
+	if(_server->session().drawingctx[_id].penup) {
+		_barrierlock = BARRIER_LOCKED;
+		emit barrierLocked();
+	} else {
+		_barrierlock = BARRIER_WAIT;
+	}
+}
+
+void Client::barrierUnlock()
+{
+	_barrierlock = BARRIER_NOTLOCKED;
 }
 
 void Client::kick(int kickedBy)
@@ -500,7 +550,7 @@ void Client::handleHostSession(const QString &msg)
 
 	// Send request for initial state
 	_server->startSession();
-	requestSnapshot();
+	requestSnapshot(false);
 	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
 	grantOp();
 }
@@ -574,18 +624,19 @@ bool Client::handleOperatorCommand(const QString &cmd)
 	/*
 	 * Supported commands:
 	 *
-	 * /lock <user>   - lock the given user
-	 * /unlock <user> - unlock the given user
-	 * /kick <user>   - kick the user off the server
-	 * /lock          - lock the whole board
-	 * /unlock        - unlock the board
-	 * /close         - prevent further logins
-	 * /open          - reallow logins
-	 * /title <title> - change session title (for those who like IRC commands)
-	 * /maxusers <n>  - set session user limit (affects new users only)
-	 * /lockdefault   - lock new users by default
-	 * /unlockdefault - don't lock new users by default
-	 * /password [p]  - password protect the session. If p is omitted, password is removed
+	 * /lock <user>    - lock the given user
+	 * /unlock <user>  - unlock the given user
+	 * /kick <user>    - kick the user off the server
+	 * /lock           - lock the whole board
+	 * /unlock         - unlock the board
+	 * /close          - prevent further logins
+	 * /open           - reallow logins
+	 * /title <title>  - change session title (for those who like IRC commands)
+	 * /maxusers <n>   - set session user limit (affects new users only)
+	 * /lockdefault    - lock new users by default
+	 * /unlockdefault  - don't lock new users by default
+	 * /password [p]   - password protect the session. If p is omitted, password is removed
+	 * /force_snapshot - force snapshot request now
 	 */
 	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
 	if(tokens[0] == "/lock" && tokens.count()==2) {
@@ -647,6 +698,9 @@ bool Client::handleOperatorCommand(const QString &cmd)
 			_server->session().password = QString();
 		else // note: password may contain spaces
 			_server->session().password = cmd.mid(cmd.indexOf(' ') + 1);
+		return true;
+	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
+		_server->startSnapshotSync();
 		return true;
 	}
 

@@ -27,6 +27,10 @@
 
 #include "../shared/net/message.h"
 
+namespace drawingboard {
+	class CanvasScene;
+}
+
 /**
  * \brief Base class for session initializers.
  * 
@@ -106,6 +110,21 @@ public:
 
 private:
 	QImage _image;
+};
+
+/**
+ * @brief A session loader that takes an existing session and generates a new snapshot from it
+ */
+class SnapshotLoader : public SessionLoader {
+public:
+	SnapshotLoader(drawingboard::CanvasScene *scene) : _scene(scene) {}
+
+	QList<protocol::MessagePtr> loadInitCommands();
+	QString filename() const { return ""; }
+	QString errorMessage() const { return ""; }
+
+private:
+	drawingboard::CanvasScene *_scene;
 };
 
 #endif

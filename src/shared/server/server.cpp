@@ -88,6 +88,7 @@ void Server::newClient()
 
 	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
 	connect(client, SIGNAL(loggedin(Client*)), this, SLOT(clientLoggedIn(Client*)));
+	connect(client, SIGNAL(barrierLocked()), this, SLOT(userBarrierLocked()));
 }
 
 void Server::removeClient(Client *client)
@@ -188,6 +189,49 @@ bool Server::addToSnapshotStream(protocol::MessagePtr msg)
 
 	return sp.isComplete();
 }
+
+void Server::cleanupCommandStream()
+{
+	int removed = _mainstream.cleanup();
+	printDebug(QString("Cleaned up %1 messages from the command stream.").arg(removed));
+}
+
+void Server::startSnapshotSync()
+{
+	printDebug("Starting snapshot sync!");
+
+	// Barrier lock all clients
+	foreach(Client *c, _clients)
+		c->barrierLock();
+}
+
+void Server::snapshotSyncStarted()
+{
+	printDebug("Snapshot sync started!");
+	// Lift barrier lock
+	foreach(Client *c, _clients)
+		c->barrierUnlock();
+}
+
+void Server::userBarrierLocked()
+{
+	// Count locked users
+	int locked=0;
+	foreach(const Client *c, _clients)
+		if(c->isHoldLocked() || c->isDropLocked())
+			++locked;
+
+	if(locked == _clients.count()) {
+		// All locked, we can now send the snapshot sync request
+		foreach(Client *c, _clients) {
+			if(c->isOperator()) {
+				c->requestSnapshot(true);
+				break;
+			}
+		}
+	}
+}
+
 
 void Server::printError(const QString &message)
 {

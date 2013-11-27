@@ -175,7 +175,7 @@ public slots:
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message);
-	void needSnapshot();
+	void needSnapshot(bool forcenew);
 
 	void serverConnected(const QString &address);
 	void serverLoggedin(bool join);

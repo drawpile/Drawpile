@@ -91,6 +91,9 @@ public:
 	//! Return the annotation with the given ID
 	AnnotationItem *getAnnotationById(int id);
 
+	//! Get all annotations
+	QList<AnnotationItem*> getAnnotations() const;
+
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return _showAnnotationBorders; }
 
@@ -138,6 +141,18 @@ public:
 	 */
 	static QPen penForBrush(const dpcore::Brush &brush);
 
+	/**
+	 * @brief Set the session title
+	 * @param title
+	 */
+	void setTitle(const QString &title) { _title = title; }
+
+	/**
+	 * @brief Get the session title
+	 * @return
+	 */
+	const QString title() const { return _title; }
+
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool hl);
@@ -148,7 +163,7 @@ public slots:
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
 	//! Generate a snapshot point and send it to the server
-	void sendSnapshot();
+	void sendSnapshot(bool forcenew);
 
 	//! Clear out all preview strokes
 	void clearPreviews();
@@ -191,6 +206,8 @@ private:
 	bool _showAnnotationBorders;
 
 	QTimer *_previewClearTimer;
+
+	QString _title;
 };
 
 }

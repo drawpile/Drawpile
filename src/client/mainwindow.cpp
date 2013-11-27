@@ -163,7 +163,7 @@ MainWindow::MainWindow(const MainWindow *source)
 
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
-	connect(_client, SIGNAL(needSnapshot()), _canvas, SLOT(sendSnapshot()));
+	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
 	// Meta commands
@@ -286,10 +286,10 @@ void MainWindow::updateTitle()
 		name = info.baseName();
 	}
 
-	if(_sessiontitle.isEmpty())
+	if(!_canvas || _canvas->title().isEmpty())
 		setWindowTitle(tr("%1[*] - DrawPile").arg(name));
 	else
-		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(_sessiontitle));
+		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(_canvas->title()));
 }
 
 /**
@@ -752,7 +752,7 @@ void MainWindow::leave()
 {
 	QMessageBox *leavebox = new QMessageBox(
 		QMessageBox::Question,
-		_sessiontitle.isEmpty()?tr("Untitled session"):_sessiontitle,
+		_canvas->title().isEmpty()?tr("Untitled session"):_canvas->title(),
 		tr("Really leave the session?"),
 		QMessageBox::NoButton,
 		this,
@@ -878,10 +878,10 @@ void MainWindow::changeSessionTitle()
 				tr("Session title"),
 				tr("Change session title"),
 				QLineEdit::Normal,
-				_sessiontitle,
+				_canvas->title(),
 				&ok
 	);
-	if(ok && newtitle != _sessiontitle) {
+	if(ok && newtitle != _canvas->title()) {
 		_client->sendSetSessionTitle(newtitle);
 	}
 }
@@ -988,7 +988,7 @@ void MainWindow::setBackgroundColor()
  */
 void MainWindow::setSessionTitle(const QString& title)
 {
-	_sessiontitle = title;
+	_canvas->setTitle(title);
 	updateTitle();
 }
 

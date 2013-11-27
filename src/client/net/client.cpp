@@ -190,21 +190,7 @@ void Client::sendLayerReorder(const QList<uint8_t> &ids)
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 {
 	// TODO check if needs resending
-	_server->sendMessage(MessagePtr(new protocol::ToolChange(
-		_my_id,
-		ctx.layer_id,
-		ctx.brush.blendingMode(),
-		(ctx.brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0),
-		ctx.brush.spacing(),
-		ctx.brush.color(1.0).rgba(),
-		ctx.brush.color(0.0).rgba(),
-		ctx.brush.hardness(1.0) * 255,
-		ctx.brush.hardness(0.0) * 255,
-		ctx.brush.radius(1.0),
-		ctx.brush.radius(0.0),
-		ctx.brush.opacity(1.0) * 255,
-		ctx.brush.opacity(0.0) * 255
-	)));
+	_server->sendMessage(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
 }
 
 namespace {
@@ -429,13 +415,12 @@ void Client::handleMessage(protocol::MessagePtr msg)
 void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
 {
 	// The server should ever only send a REQUEST mode snapshot messages
-	if(msg.mode() != protocol::SnapshotMode::REQUEST) {
+	if(msg.mode() != protocol::SnapshotMode::REQUEST && msg.mode() != protocol::SnapshotMode::REQUEST_NEW) {
 		qWarning() << "received unhandled snapshot mode" << msg.mode() << "message.";
 		return;
 	}
 
-	qDebug() << "need snapshot!";
-	emit needSnapshot();
+	emit needSnapshot(msg.mode() == protocol::SnapshotMode::REQUEST_NEW);
 }
 
 void Client::handleChatMessage(const protocol::Chat &msg)
