@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2008 Calle Laakkonen
+   Copyright (C) 2007-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,21 +17,18 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QDebug>
 #include <QNetworkInterface>
-#include <QSettings>
-#include <QDir>
+#include <QTextStream>
 
-#include "main.h"
-#include "localserver.h"
+#include <iostream>
+
+#include "net/serverthread.h"
+
 #include "../shared/net/constants.h"
 #include "../shared/server/server.h"
+#include "../shared/server/server.h"
 
-LocalServer *LocalServer::instance_;
-
-LocalServer::LocalServer() : QThread()
-{
-}
+namespace {
 
 bool isGlobal(const QHostAddress& address) {
 	// This could be a bit more comprehensive
@@ -53,12 +50,21 @@ bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
 	return !isGlobal(a1);
 }
 
+}
+
+namespace net {
+
+ServerThread::ServerThread(QObject *parent) : QThread(parent)
+{
+	_deleteonexit = false;
+}
+
 /**
  * Attempt to discover the address most likely reachable from the
  * outside.
  * @return server hostname
  */
-QString LocalServer::address()
+QString ServerThread::address()
 {
 	QList<QNetworkInterface> list = QNetworkInterface::allInterfaces();
 	QList<QHostAddress> alist;
@@ -83,51 +89,45 @@ QString LocalServer::address()
 	return "127.0.0.1";
 }
 
-/**
- * If no port is specified in the configuration, the default port is used.
- * @retval false if server could not be started
- * @post if returned true, server is now running in the background
- */
-bool LocalServer::startServer()
+int ServerThread::startServer()
 {
-	if(instance_==0)
-		instance_ = new LocalServer();
-	if(instance_->isRunning())
-		return true;
-	instance_->start();
-	return true;
+	_startmutex.lock();
+
+	start();
+
+	_starter.wait(&_startmutex);
+	_startmutex.unlock();
+
+	return _port;
 }
 
-void LocalServer::stopServer()
+bool ServerThread::isOnDefaultPort() const
 {
-	if(instance_ && instance_->isRunning()) {
-		instance_->quit();
-	}
+	return _port == protocol::DEFAULT_PORT;
 }
 
-void LocalServer::run() {
-#if 0
-	server_ = new server::Server();
-	int port;
-	{
-	QSettings& cfg = DrawPileApp::getSettings();
-	cfg.beginGroup("settings/server");
-	port = cfg.value("port", protocol::DEFAULT_PORT).toInt();
-	server_->setUniqueIps(!cfg.value("multiconnect",true).toBool());
-	server_->setMaxNameLength(cfg.value("maxnamelength",16).toInt());
-	}
-	connect(server_, SIGNAL(lastClientLeft()), this, SLOT(quit()));
-	if(server_->start(port)==false) {
-		qWarning() << "Couldn't start server.";
+void ServerThread::run() {
+	server::Server server;
+	server.setErrorStream(new QTextStream(stderr));
+
+	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
+
+	qDebug() << "starting server";
+	if(!server.start(protocol::DEFAULT_PORT, true)) {
+		qDebug() << "an error occurred";
+		_port = 0;
+		_starter.wakeOne();
 		return;
 	}
-	qDebug() << "server started on port" << port;
+
+	_port = server.port();
+	_starter.wakeOne();
 
 	exec();
 
-	server_->stop();
-	delete server_;
-	qDebug() << "server stopped";
-#endif
+	qDebug() << "server thread exiting. Delete=" << _deleteonexit;
+	if(_deleteonexit)
+		deleteLater();
 }
 
+}

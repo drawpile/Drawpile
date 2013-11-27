@@ -46,10 +46,11 @@ void LayerListDock::setClient(net::Client *client)
 	Q_ASSERT(_client==0);
 
 	_client = client;
+	_list->setModel(client->layerlist());
+
 	LayerListDelegate *del = new LayerListDelegate(this);
 	del->setClient(client);
 	_list->setItemDelegate(del);
-	_list->setModel(client->layerlist());
 
 	connect(del, SIGNAL(select(const QModelIndex&)), this, SLOT(selected(const QModelIndex&)));
 

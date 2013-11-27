@@ -41,7 +41,6 @@
 
 #include "main.h"
 #include "mainwindow.h"
-#include "localserver.h"
 #include "icons.h"
 #include "version.h"
 #include "loader.h"
@@ -67,6 +66,7 @@
 
 #include "net/client.h"
 #include "net/login.h"
+#include "net/serverthread.h"
 
 #include "dialogs/colordialog.h"
 #include "dialogs/newdialog.h"
@@ -221,10 +221,6 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 
 	MainWindow *win = canReplace() ? this : new MainWindow(this);
 	
-	win->_canvas->initCanvas(_client);
-	win->_layerlist->init();
-	win->_client->init();
-
 	QList<protocol::MessagePtr> init = loader.loadInitCommands();
 
 	if(init.isEmpty()) {
@@ -234,6 +230,10 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		showErrorMessage(tr("An error occured while trying to open image"), loader.errorMessage());
 		return 0;
 	}
+
+	win->_canvas->initCanvas(win->_client);
+	win->_layerlist->init();
+	win->_client->init();
 	
 	// Set local history size limit. This must be at least as big as the initializer,
 	// otherwise a new snapshot will always have to be generated when hosting a session.
@@ -809,10 +809,7 @@ void MainWindow::finishHost(int i)
 			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
 					QUrl::TolerantMode);
 		} else {
-			QSettings& cfg = DrawPileApp::getSettings();
-			address.setHost("127.0.0.1");
-			if(cfg.contains("settings/server/port"))
-				address.setPort(cfg.value("settings/server/port").toInt());
+			address.setHost(net::ServerThread::address());
 		}
 
 		if(address.isValid() == false || address.host().isEmpty()) {
@@ -826,12 +823,20 @@ void MainWindow::finishHost(int i)
 		hostdlg_->rememberSettings();
 
 		// Start server if hosting locally
-#if 0
-		// TODO
 		if(useremote==false) {
-			LocalServer::startServer();
+			net::ServerThread *server = new net::ServerThread(this);
+			int port = server->startServer();
+			if(!port) {
+				QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
+				hostdlg_->show();
+				delete server;
+				return;
+			}
+			server->setDeleteOnExit();
+
+			if(!server->isOnDefaultPort())
+				address.setPort(port);
 		}
-#endif
 
 		// Initialize session (unless original was used)
 		MainWindow *w = this;

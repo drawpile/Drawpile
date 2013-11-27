@@ -54,7 +54,10 @@ public:
 	void setDebugStream(QTextStream *stream) { _debug = stream; }
 
 	//! Start the server.
-	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
+	bool start(quint16 port, bool anyport=false, const QHostAddress& address = QHostAddress::Any);
+
+	//! Get the port the server is listening on
+	int port() const;
 
 	/**
 	 * @brief Is there a session
@@ -166,6 +169,7 @@ private:
 
 	bool _hasSession;
 	SessionState _session;
+	bool _stopping;
 };
 
 }

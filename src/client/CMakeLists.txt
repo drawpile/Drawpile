@@ -25,7 +25,6 @@ set (
 	statetracker.cpp
 	tools.cpp
 	toolsettings.cpp
-        localserver.cpp
 	icons.cpp 
 	annotationitem.cpp
 	loader.cpp
@@ -36,6 +35,7 @@ set (
 	net/login.cpp
 	net/userlist.cpp
 	net/layerlist.cpp
+	net/serverthread.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp

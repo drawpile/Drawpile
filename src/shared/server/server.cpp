@@ -33,7 +33,9 @@ Server::Server(QObject *parent)
 	  _server(0),
 	  _errors(0),
 	  _debug(0),
-	  _hasSession(false)
+	  _hasSession(false),
+	  _stopping(false)
+
 {
 }
 
@@ -44,14 +46,23 @@ Server::~Server()
 
 /**
  * Start listening on the specified address.
+ * @param port the port to listen on
+ * @param anyport if true, a random port is tried if the preferred on is not available
+ * @param address listening address
  */
-bool Server::start(quint16 port, const QHostAddress& address) {
+bool Server::start(quint16 port, bool anyport, const QHostAddress& address) {
 	Q_ASSERT(_server==0);
+	_stopping = false;
 	_server = new QTcpServer(this);
 
 	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
 
-	if(_server->listen(address, port)==false) {
+	bool ok = _server->listen(address, port);
+
+	if(!ok && anyport)
+		ok = _server->listen(address, 0);
+
+	if(ok==false) {
 		printError(_server->errorString());
 		delete _server;
 		_server = 0;
@@ -60,6 +71,12 @@ bool Server::start(quint16 port, const QHostAddress& address) {
 
 	printDebug(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString()));
 	return true;
+}
+
+int Server::port() const
+{
+	Q_ASSERT(_server);
+	return _server->serverPort();
 }
 
 /**
@@ -112,6 +129,14 @@ void Server::removeClient(Client *client)
 		// The last user left the session.
 		_session.closed = false;
 		addToCommandStream(_session.sessionConf());
+
+		emit lastClientLeft();
+
+		if(!_mainstream.hasSnapshot()) {
+			// No snapshot and no one to provide one? The server is gone...
+			stop();
+		}
+
 	}
 }
 
@@ -143,9 +168,13 @@ Client *Server::getClientById(int id)
  * Disconnect all clients and stop listening.
  */
 void Server::stop() {
+	_stopping = true;
 	_server->close();
 	delete _server;
 	_server = 0;
+
+	foreach(Client *c, _clients)
+		c->kick(0);
 }
 
 void Server::addToCommandStream(protocol::MessagePtr msg)

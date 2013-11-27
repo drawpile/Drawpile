@@ -29,7 +29,6 @@ class QMessageBox;
 class QUrl;
 class QLabel;
 class QSplitter;
-class QTemporaryFile;
 class QTimer;
 
 namespace widgets {

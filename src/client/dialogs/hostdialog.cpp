@@ -154,6 +154,11 @@ QString HostDialog::getTitle() const
 	return ui_->sessiontitle->text();
 }
 
+int HostDialog::getLocalServerPort() const
+{
+	return 0;
+}
+
 int HostDialog::getUserLimit() const
 {
 	return ui_->userlimit->value();

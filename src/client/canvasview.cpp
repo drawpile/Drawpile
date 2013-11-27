@@ -36,7 +36,7 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(NOTRANSFORM),
 	_dragbtndown(NOTRANSFORM), _outlinesize(10), _dia(20),
-	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _locked(false)
+	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0), _locked(false)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
