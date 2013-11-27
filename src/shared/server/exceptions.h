@@ -20,7 +20,7 @@
 #ifndef DP_SHARED_SERVER_EXCEPTIONS_H
 #define DP_SHARED_SERVER_EXCEPTIONS_H
 
-#include <exception>
+#include <stdexcept>
 
 namespace server {
 
