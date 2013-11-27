@@ -67,7 +67,7 @@ public:
 	 * @brief Add a new command to the stream
 	 * @param msg command to add
 	 */
-	void append(MessagePtr msg) { _messages.append(msg); }
+	void append(MessagePtr msg);
 
 	/**
 	 * @brief Create a new snapshot point
@@ -108,6 +108,14 @@ public:
 	void clear();
 
 	/**
+	 * @brief Get the length of the stored message stream in bytes.
+	 *
+	 * Note. Snapshot point is not included.
+	 * @return length in bytes
+	 */
+	uint lengthInBytes() const { return _bytes; }
+
+	/**
 	 * @brief return the whole stream as a list
 	 * @return list of messages
 	 */
@@ -123,6 +131,7 @@ private:
 	QList<MessagePtr> _messages;
 	int _offset;
 	int _snapshotpointer;
+	uint _bytes;
 };
 
 }

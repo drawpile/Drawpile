@@ -102,6 +102,12 @@ public:
 
 	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
 
+	/**
+	 * @brief Set the maximum length of the stored history.
+	 * @param length
+	 */
+	void setMaxHistorySize(uint limit) { _msgstream_sizelimit = limit; }
+
 private:
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd);
@@ -132,6 +138,7 @@ private:
 
 	protocol::MessageStream _msgstream;
 	bool _hassnapshot;
+	uint _msgstream_sizelimit;
 };
 
 }

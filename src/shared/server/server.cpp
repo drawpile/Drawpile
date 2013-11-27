@@ -150,6 +150,7 @@ void Server::stop() {
 
 void Server::addToCommandStream(protocol::MessagePtr msg)
 {
+	// TODO history size limit. Can clear up to lowest stream pointer index.
 	_mainstream.append(msg);
 	emit newCommandsAvailable();
 }

@@ -48,6 +48,7 @@
 
 #include "canvasview.h"
 #include "canvasscene.h"
+#include "statetracker.h"
 #include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
@@ -234,6 +235,14 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		return 0;
 	}
 	
+	// Set local history size limit. This must be at least as big as the initializer,
+	// otherwise a new snapshot will always have to be generated when hosting a session.
+	uint minsizelimit = 0;
+	foreach(protocol::MessagePtr msg, init)
+		minsizelimit += msg->length();
+	minsizelimit *= 2;
+
+	win->_canvas->statetracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
 	win->_client->sendLocalInit(init);
 
 	QApplication::restoreOverrideCursor();

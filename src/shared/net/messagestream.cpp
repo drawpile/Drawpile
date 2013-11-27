@@ -27,8 +27,14 @@
 namespace protocol {
 
 MessageStream::MessageStream()
-	: _offset(0), _snapshotpointer(-1)
+	: _offset(0), _snapshotpointer(-1), _bytes(0)
 {
+}
+
+void MessageStream::append(MessagePtr msg)
+{
+	_messages.append(msg);
+	_bytes += msg->length();
 }
 
 void MessageStream::addSnapshotPoint()
@@ -58,6 +64,12 @@ int MessageStream::cleanup()
 				_messages = _messages.mid(i);
 				_offset += i;
 				_snapshotpointer = _offset;
+
+				uint newlen=0;
+				for(int j=1;j<_messages.count();++j)
+					newlen += _messages.at(j)->length();
+				_bytes = newlen;
+
 			}
 			return i;
 		}
@@ -70,6 +82,7 @@ void MessageStream::clear()
 	_offset = end();
 	_snapshotpointer = -1;
 	_messages.clear();
+	_bytes = 0;
 }
 
 QList<MessagePtr> MessageStream::toCommandList() const

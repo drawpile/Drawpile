@@ -44,7 +44,8 @@ StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *par
 	  _image(scene->layers()),
 	  _layerlist(client->layerlist()),
 	  _myid(client->myId()),
-	  _hassnapshot(true)
+	  _hassnapshot(true),
+	  _msgstream_sizelimit(1024 * 1024 * 10)
 {
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
@@ -97,8 +98,12 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			return;
 	}
 
-	// TODO clear out the message stream if it gets too big
 	_msgstream.append(msg);
+	if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
+		qDebug() << "Message stream history size limit reached at" << _msgstream.lengthInBytes() / float(1024*1024) << "Mb. Clearing..";
+		_msgstream.clear();
+		_hassnapshot = false;
+	}
 }
 
 QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
@@ -111,6 +116,11 @@ QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 		_msgstream.clear();
 		foreach(protocol::MessagePtr ptr, snapshot)
 			_msgstream.append(ptr);
+
+		// Update size limit
+		if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit)
+			_msgstream_sizelimit = 2 * _msgstream.lengthInBytes();
+
 		_hassnapshot = true;
 
 		return snapshot;
