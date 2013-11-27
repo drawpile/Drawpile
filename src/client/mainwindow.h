@@ -63,7 +63,6 @@ class MainWindow : public QMainWindow {
 		MainWindow(bool restoreWindowPosition=true);
 		~MainWindow();
 
-		//! Load initial session state
 		MainWindow *loadDocument(SessionLoader &loader);
 
 		//! Connect to a host and join a session if full URL is provided.

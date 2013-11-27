@@ -34,10 +34,7 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QImageReader>
-#include <QImageWriter>
 #include <QSplitter>
-#include <QTemporaryFile>
-#include <QTimer>
 
 #include "main.h"
 #include "mainwindow.h"
@@ -74,9 +71,6 @@
 #include "dialogs/joindialog.h"
 #include "dialogs/settingsdialog.h"
 
-/**
- * @param source if not null, clone settings from this window
- */
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(), _canvas(0)
 {
@@ -210,7 +204,10 @@ MainWindow::~MainWindow()
 }
 
 /**
- * If the document in this window cannot be rep
+ * @brief Initialize session state
+ *
+ * If the document in this window cannot be replaced, a new mainwindow is created.
+ *
  * @return the MainWindow instance in which the document was loaded or 0 in case of error
  */
 MainWindow *MainWindow::loadDocument(SessionLoader &loader)
@@ -430,14 +427,14 @@ void MainWindow::writeSettings()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	if(canReplace() == false) {
+
 		// First confirm disconnection
-#if 0
-		if(controller_->isConnected()) {
-			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
-					controller_->isUploading()?
-					tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."):
-					tr("You are still connected to a drawing session."),
-					QMessageBox::NoButton, this);
+		if(_client->isLoggedIn()) {
+			QMessageBox box(
+				QMessageBox::Information,
+				tr("Exit DrawPile"),
+				tr("You are still connected to a drawing session."),
+				QMessageBox::NoButton, this);
 
 			const QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
@@ -446,15 +443,13 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			box.exec();
 			if(box.clickedButton() == exitbtn) {
-				// Delay exiting until actually disconnected
-				connect(controller_, SIGNAL(disconnected(QString)),
-						this, SLOT(close()), Qt::QueuedConnection);
-				controller_->disconnectHost();
+				_client->disconnectFromServer();
+			} else {
+				event->ignore();
+				return;
 			}
-			event->ignore();
-			return;
 		}
-#endif
+
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
 			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
@@ -475,10 +470,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			// Cancel exit
 			if(box.clickedButton() == cancelbtn || cancel) {
-#if 0
-				disconnect(controller_, SIGNAL(disconnected(QString)),
-						this, SLOT(close()));
-#endif
 				event->ignore();
 				return;
 			}
