@@ -872,7 +872,7 @@ void MainWindow::joinSession(const QUrl& url)
 	if(canReplace())
 		win = this;
 	else
-		win = new MainWindow(this);
+		win = new MainWindow(false);
 
 	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url);
 	win->_client->connectToServer(login);
