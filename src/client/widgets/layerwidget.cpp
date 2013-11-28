@@ -52,6 +52,7 @@ LayerStyleEditor::LayerStyleEditor(const QModelIndex &index, QWidget *parent)
 	opacity_ = new QSlider(Qt::Horizontal, this);
 	opacity_->setRange(0, 255);
 	opacity_->setValue(layer.opacity * 255);
+	opacity_->setTracking(false);
 	layout->addWidget(opacity_, 1, 1);
 
 	setLayout(layout);
