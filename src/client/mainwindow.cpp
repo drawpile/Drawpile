@@ -138,7 +138,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
-	connect(_canvas, SIGNAL(canvasModified()), this, SLOT(markUnsaved()));
+	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
 
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
@@ -480,14 +480,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 /**
- * Mark window as modified
- */
-void MainWindow::markUnsaved()
-{
-	setWindowModified(true);
-}
-
-/**
  * Show the "new document" dialog
  */
 void MainWindow::showNew()
@@ -736,7 +728,10 @@ void MainWindow::leave()
 	leavebox->setDefaultButton(
 			leavebox->addButton(tr("Stay"), QMessageBox::NoRole)
 			);
-	connect(leavebox, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
+	connect(leavebox, &QMessageBox::finished, [this](int result) {
+		if(result == 0)
+			_client->disconnectFromServer();
+	});
 	
 	if(_client->uploadQueueBytes() > 0) {
 		leavebox->setIcon(QMessageBox::Warning);
@@ -744,15 +739,6 @@ void MainWindow::leave()
 	}
 
 	leavebox->show();
-}
-
-/**
- * @brief Disconnect if OK button on "really leave" dialog was clicked
- */
-void MainWindow::finishLeave(int i)
-{
-	if(i == 0)
-		_client->disconnectFromServer();
 }
 
 /**

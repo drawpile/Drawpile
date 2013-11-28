@@ -108,11 +108,8 @@ class MainWindow : public QMainWindow {
 		void newDocument(const QSize &size, const QColor &color);
 		void openRecent(QAction *action);
 
-		void markUnsaved();
-
 		void finishHost(int i);
 		void finishJoin(int i);
-		void finishLeave(int i);
 
 		void connecting();
 		void loggedin(bool join);
