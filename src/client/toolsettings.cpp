@@ -19,6 +19,7 @@
 */
 #include <QDebug>
 #include <QSettings>
+#include <QTimer>
 
 #include "main.h"
 #include "toolsettings.h"
@@ -454,12 +455,16 @@ QWidget *AnnotationSettings::createUi(QWidget *parent)
 	setUiWidget(uiwidget_);
 	uiwidget_->setEnabled(false);
 
+	_updatetimer = new QTimer(this);
+	_updatetimer->setInterval(500);
+	_updatetimer->setSingleShot(true);
+
 	// Editor events
-	connect(ui_->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
+	connect(ui_->content, SIGNAL(textChanged()), _updatetimer, SLOT(start()));
 	connect(ui_->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
 
 	connect(ui_->btnBackground, SIGNAL(colorChanged(const QColor&)),
-			this, SLOT(applyChanges()));
+			_updatetimer, SLOT(start()));
 	connect(ui_->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
 	connect(ui_->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
 
@@ -469,6 +474,8 @@ QWidget *AnnotationSettings::createUi(QWidget *parent)
 	connect(ui_->justify, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(ui_->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(ui_->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
+
+	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(applyChanges()));
 
 	return uiwidget_;
 }
@@ -564,8 +571,6 @@ void AnnotationSettings::applyChanges()
 	Q_ASSERT(selected());
 	Q_ASSERT(_client);
 
-	// TODO add a short delay before actually sending anything
-	// so we won't send an update packet for each and every change.
 	_client->sendAnnotationEdit(
 		selected(),
 		ui_->btnBackground->color(),

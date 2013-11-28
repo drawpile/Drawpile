@@ -30,6 +30,7 @@ class Ui_EraserSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
 class QSettings;
+class QTimer;
 
 namespace net {
 	class Client;
@@ -254,6 +255,7 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		bool noupdate_;
 		net::Client *_client;
 		widgets::LayerListDock *_layerlist;
+		QTimer *_updatetimer;
 };
 
 //! No settings
