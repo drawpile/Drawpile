@@ -27,30 +27,33 @@ namespace protocol {
 
 AnnotationCreate *AnnotationCreate::deserialize(const uchar *data, uint len)
 {
-	if(len!=9)
+	if(len!=10)
 		return 0;
 	return new AnnotationCreate(
 		*data,
-		qFromBigEndian<quint16>(data+1),
-		qFromBigEndian<quint16>(data+3),
-		qFromBigEndian<quint16>(data+5),
-		qFromBigEndian<quint16>(data+7)
+		*(data+1),
+		qFromBigEndian<quint16>(data+2),
+		qFromBigEndian<quint16>(data+4),
+		qFromBigEndian<quint16>(data+6),
+		qFromBigEndian<quint16>(data+8)
 	);
 }
 
 int AnnotationCreate::payloadLength() const
 {
-	return 1 + 4*2;
+	return 1 + 1 + 4*2;
 }
 
 int AnnotationCreate::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	qToBigEndian(_x, data); data += 2;
-	qToBigEndian(_y, data); data += 2;
-	qToBigEndian(_w, data); data += 2;
-	qToBigEndian(_h, data); data += 2;
-	return 1 + 4*2;
+	uchar *ptr = data;
+	*(ptr++) = _ctx;
+	*(ptr++) = _id;
+	qToBigEndian(_x, ptr); ptr += 2;
+	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_w, ptr); ptr += 2;
+	qToBigEndian(_h, ptr); ptr += 2;
+	return ptr - data;
 }
 
 int AnnotationReshape::payloadLength() const

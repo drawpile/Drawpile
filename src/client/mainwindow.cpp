@@ -44,6 +44,7 @@
 
 #include "canvasview.h"
 #include "canvasscene.h"
+#include "annotationitem.h"
 #include "statetracker.h"
 #include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
@@ -135,8 +136,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	navigator_->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
-	connect(_toolsettings, SIGNAL(annotationDeselected(int)), _canvas, SLOT(unHilightAnnotation(int)));
 	connect(_canvas, SIGNAL(canvasModified()), this, SLOT(markUnsaved()));
 
 	// Navigator <-> View

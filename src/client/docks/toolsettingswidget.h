@@ -61,9 +61,6 @@ class ToolSettingsDock : public QDockWidget
 		//! This signal is emitted when the current tool changes its size
 		void sizeChanged(int size);
 
-		//! Switching away from annotation editor causes deselection
-		void annotationDeselected(int id);
-
 	public slots:
 		//! Set the tool for which settings are shown
 		void setTool(tools::Type tool);

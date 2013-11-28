@@ -545,8 +545,12 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 	noupdate_ = true;
 	uiwidget_->setEnabled(item!=0);
 
+	if(_selection)
+		_selection->setHighlight(false);
+
 	_selection = item;
 	if(item) {
+		item->setHighlight(true);
 		ui_->content->setHtml(item->text());
 		ui_->btnBackground->setColor(item->backgroundColor());
 	}

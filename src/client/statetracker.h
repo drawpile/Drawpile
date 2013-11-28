@@ -108,6 +108,9 @@ public:
 	 */
 	void setMaxHistorySize(uint limit) { _msgstream_sizelimit = limit; }
 
+signals:
+	void myAnnotationCreated(AnnotationItem *item);
+
 private:
 	// Layer related commands
 	void handleCanvasResize(const protocol::CanvasResize &cmd);

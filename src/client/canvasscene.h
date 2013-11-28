@@ -157,9 +157,6 @@ public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool hl);
 
-	//! Unhilight an annotation
-	void unHilightAnnotation(int id);
-
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
 	//! Generate a snapshot point and send it to the server
@@ -171,6 +168,9 @@ public slots:
 signals:
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color);
+
+	//! An annotation was just created (by the local user)
+	void myAnnotationCreated(AnnotationItem *item);
 
 	//! An annotation was just deleted
 	void annotationDeleted(int id);

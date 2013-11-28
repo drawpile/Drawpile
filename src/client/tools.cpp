@@ -219,14 +219,7 @@ void Annotation::begin(const dpcore::Point& point)
 	if(item) {
 		_selected = item;
 		_handle = _selected->handleAt(point - _selected->pos());
-
-		// Set selection highlights
-		scene().unHilightAnnotation(settings().getAnnotationSettings()->selected());
-		item->setHighlight(true);
-
-		// Set editor selection
 		settings().getAnnotationSettings()->setSelection(item);
-
 	} else {
 		QGraphicsRectItem *item = new QGraphicsRectItem();
 		QPen pen;

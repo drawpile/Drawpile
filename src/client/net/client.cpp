@@ -253,7 +253,9 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 void Client::sendAnnotationCreate(int id, const QRect &rect)
 {
 	Q_ASSERT(id>=0 && id < 256);
-	_server->sendMessage(MessagePtr(new protocol::AnnotationCreate(id,
+	_server->sendMessage(MessagePtr(new protocol::AnnotationCreate(
+		_my_id,
+		id,
 		qMax(0, rect.x()),
 		qMax(0, rect.y()),
 		rect.width(),

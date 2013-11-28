@@ -35,14 +35,20 @@ namespace protocol {
  */
 class AnnotationCreate : public Message {
 public:
-	AnnotationCreate(uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
-		: Message(MSG_ANNOTATION_CREATE), _id(id), _x(x), _y(y), _w(w), _h(h)
+	AnnotationCreate(uint8_t ctx, uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
+		: Message(MSG_ANNOTATION_CREATE), _ctx(ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
 	static AnnotationCreate *deserialize(const uchar *data, uint len);
 
 	/**
-	 * @brief id the ID of the newly created annotation
+	 * @brief The context ID of the user who created this annotation
+	 * @return user id
+	 */
+	uint8_t contextId() const { return _ctx; }
+
+	/**
+	 * @brief The ID of the newly created annotation
 	 *
 	 * The same rules apply as in layer creation.
 	 * @return annotation ID number
@@ -50,6 +56,7 @@ public:
 	uint8_t id() const { return _id; }
 
 	void setId(uint8_t id) { _id = id; }
+	void setOrigin(uint8_t userid) { _ctx = userid; }
 
 	uint16_t x() const { return _x; }
 	uint16_t y() const { return _y; }
@@ -61,6 +68,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
+	uint8_t _ctx;
 	uint8_t _id;
 	uint16_t _x;
 	uint16_t _y;

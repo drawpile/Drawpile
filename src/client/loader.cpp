@@ -120,7 +120,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Create annotations
 	foreach(const drawingboard::AnnotationItem *a, _scene->getAnnotations()) {
 		QRect g = a->geometry();
-		msgs.append(MessagePtr(new protocol::AnnotationCreate(a->id(), g.x(), g.y(), g.width(), g.height())));
+		msgs.append(MessagePtr(new protocol::AnnotationCreate(0, a->id(), g.x(), g.y(), g.width(), g.height())));
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(a->id(), a->backgroundColor().rgba(), a->text()))));
 	}
 

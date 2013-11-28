@@ -55,6 +55,8 @@ void CanvasScene::initCanvas(net::Client *client)
 	_image = new CanvasItem();
 	_statetracker = new StateTracker(this, client);
 	
+	connect(_statetracker, SIGNAL(myAnnotationCreated(AnnotationItem*)), this, SIGNAL(myAnnotationCreated(AnnotationItem*)));
+
 	addItem(_image);
 	clearAnnotations();
 
@@ -95,13 +97,6 @@ void CanvasScene::showAnnotationBorders(bool hl)
 		if(item->type() == AnnotationItem::Type)
 			static_cast<AnnotationItem*>(item)->setShowBorder(hl);
 	}
-}
-
-void CanvasScene::unHilightAnnotation(int id)
-{
-	AnnotationItem *i = getAnnotationById(id);
-	if(i)
-		i->setHighlight(false);
 }
 
 bool CanvasScene::hasAnnotations() const

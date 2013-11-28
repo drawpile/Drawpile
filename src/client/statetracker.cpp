@@ -249,6 +249,8 @@ void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
 	item->setGeometry(QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
 
 	_scene->addItem(item);
+	if(cmd.contextId() == _myid)
+		emit myAnnotationCreated(item);
 }
 
 void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cmd)

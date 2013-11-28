@@ -92,10 +92,8 @@ void ToolSettingsDock::setTool(tools::Type tool) {
 	// Deselect annotation on tool change
 	if(tool != tools::ANNOTATION) {
 		int a = getAnnotationSettings()->selected();
-		if(a) {
+		if(a)
 			getAnnotationSettings()->setSelection(0);
-			emit annotationDeselected(a);
-		}
 	}
 
 	setWindowTitle(currenttool_->getTitle());

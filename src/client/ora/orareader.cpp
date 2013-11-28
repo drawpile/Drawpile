@@ -218,6 +218,7 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 			continue;
 		if(e.namespaceURI()==DP_NAMESPACE && e.localName()=="a") {
 			_commands.append(MessagePtr(new protocol::AnnotationCreate(
+				0,
 				++_annotationid,
 				e.attribute("x").toInt(),
 				e.attribute("y").toInt(),
