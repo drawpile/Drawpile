@@ -27,8 +27,6 @@ option ( GENERIC "Optimize for generic CPU arch" OFF )
 
 option ( RELEASE "Enable final all-in-one compilation." OFF )
 
-option ( BUILD_SHARED_LIBS "Build shared libraries." ON)
-
 # Set build type
 if ( DEBUG )
 	set ( CMAKE_BUILD_TYPE Debug )

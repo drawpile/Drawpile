@@ -31,12 +31,6 @@ set (
 	server/session.cpp
 	)
 
-add_library( ${DPSHAREDLIB} ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )
+add_library( ${DPSHAREDLIB} STATIC ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )
 target_link_libraries ( ${DPSHAREDLIB} ${Qt5Network_LIBRARIES} )
-
-if (WIN32)
-	install ( TARGETS ${DPSHAREDLIB} DESTINATION . )
-else (WIN32)
-	install ( TARGETS ${DPSHAREDLIB} DESTINATION lib )
-endif (WIN32)
 
