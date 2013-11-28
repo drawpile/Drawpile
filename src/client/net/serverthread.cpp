@@ -22,9 +22,10 @@
 
 #include <iostream>
 
+#include "config.h"
+
 #include "net/serverthread.h"
 
-#include "../shared/net/constants.h"
 #include "../shared/server/server.h"
 #include "../shared/server/server.h"
 
@@ -103,7 +104,7 @@ int ServerThread::startServer()
 
 bool ServerThread::isOnDefaultPort() const
 {
-	return _port == protocol::DEFAULT_PORT;
+	return _port == DRAWPILE_PROTO_DEFAULT_PORT;
 }
 
 void ServerThread::run() {
@@ -113,7 +114,7 @@ void ServerThread::run() {
 	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
 
 	qDebug() << "starting server";
-	if(!server.start(protocol::DEFAULT_PORT, true)) {
+	if(!server.start(DRAWPILE_PROTO_DEFAULT_PORT, true)) {
 		qDebug() << "an error occurred";
 		_port = 0;
 		_starter.wakeOne();

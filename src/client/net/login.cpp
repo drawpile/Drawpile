@@ -24,12 +24,11 @@
 #include <QStringList>
 #include <QInputDialog>
 
+#include "config.h"
 #include "net/login.h"
 #include "net/server.h"
 #include "../shared/net/login.h"
 #include "../shared/net/meta.h"
-#include "../shared/net/constants.h"
-#include "version.h"
 
 namespace net {
 
@@ -78,7 +77,7 @@ void LoginHandler::expectHello(const QString &msg)
 	// Major version must match ours
 	bool ok;
 	int majorVersion = versions[0].toInt(&ok);
-	if(!ok || majorVersion != protocol::REVISION) {
+	if(!ok || majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
 		qWarning() << "Login error. Server major version mismatch.";
 		_server->loginFailure(QApplication::tr("Server is for a different DrawPile version!"));
 		return;
@@ -86,7 +85,7 @@ void LoginHandler::expectHello(const QString &msg)
 
 	// Minor version (if set) must also match ours
 	int minorVersion = versions[1].toInt(&ok);
-	if(!ok || (minorVersion>0 && minorVersion != version::MINOR_REVISION)) {
+	if(!ok || (minorVersion>0 && minorVersion != DRAWPILE_PROTO_MINOR_VERSION)) {
 		qWarning() << "Login error. Server minor version mismatch";
 		_server->loginFailure(QApplication::tr("Session for different DrawPile version in progress!"));
 		return;
@@ -138,7 +137,7 @@ void LoginHandler::sendLogin()
 	QString msg;
 	switch(_mode) {
 	case HOST:
-		msg = QString("HOST %1 %2 %3").arg(version::MINOR_REVISION).arg(_userid).arg(_address.userName());
+		msg = QString("HOST %1 %2 %3").arg(DRAWPILE_PROTO_MINOR_VERSION).arg(_userid).arg(_address.userName());
 		break;
 	case JOIN:
 		msg = QString("JOIN %1").arg(_address.userName());

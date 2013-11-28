@@ -21,6 +21,8 @@
 #include <QTcpSocket>
 #include <QStringList>
 
+#include "config.h"
+
 #include "server.h"
 #include "client.h"
 #include "exceptions.h"
@@ -33,7 +35,6 @@
 #include "../net/meta.h"
 #include "../net/pen.h"
 #include "../net/snapshot.h"
-#include "../net/constants.h"
 
 namespace server {
 
@@ -61,7 +62,7 @@ Client::Client(Server *server, QTcpSocket *socket)
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(gotBadData(int,int)));
 
 	// Client just connected, start by saying hello
-	QString hello = QString("DRAWPILE %1.%2").arg(protocol::REVISION).arg(_server->session().minorVersion);
+	QString hello = QString("DRAWPILE %1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(_server->session().minorVersion);
 
 	if(!server->session().password.isEmpty()) {
 		// expect password

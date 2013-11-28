@@ -2,8 +2,9 @@
 #include <QStringList>
 #include <iostream>
 
+#include "config.h"
+
 #include "../shared/server/server.h"
-#include "../shared/net/constants.h"
 
 using std::cerr;
 using server::Server;
@@ -13,7 +14,7 @@ void printHelp() {
 		"drawpile-srv [options]\n\n"
 		"Options:\n"
 		"\t--port, -p <port>           Listening port (default: "
-		<< protocol::DEFAULT_PORT << ")\n"
+		<< DRAWPILE_PROTO_DEFAULT_PORT << ")\n"
 		"\t--listen, -l <address>      Listening address (default: all)\n"
 		"\t--verbose, -v               Verbose mode\n";
 }
@@ -21,7 +22,7 @@ void printHelp() {
 int main(int argc, char *argv[]) {
 	QCoreApplication app(argc, argv);
 
-	int port = protocol::DEFAULT_PORT;
+	int port = DRAWPILE_PROTO_DEFAULT_PORT;
 	QHostAddress address = QHostAddress::Any;
 	bool verbose = false;
 

@@ -8,6 +8,13 @@ set ( WEBSITE "http://drawpile.sourceforge.net/" )
 set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 set ( DRAWPILE_VERSION "0.7.0" )
 
+### protocol versions
+# major version indicates breaks in server compatibility
+# minor version indicates breaks in client compatibility. (note. minor versions always start at 1)
+set ( DRAWPILE_PROTO_MAJOR_VERSION 3 )
+set ( DRAWPILE_PROTO_MINOR_VERSION 1 )
+set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
+
 ###
 include ( "config/Names.cmake" )
 

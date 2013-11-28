@@ -22,11 +22,11 @@
 #include <QMessageBox>
 #include <QHeaderView>
 
+#include "config.h"
 #include "main.h"
 #include "settingsdialog.h"
 
 #include "ui_settings.h"
-#include "../shared/net/constants.h"
 
 namespace dialogs {
 
@@ -49,7 +49,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("settings/server");
 	ui_->multiconnect->setChecked(cfg.value("multiconnect",true).toBool());
-	ui_->serverport->setValue(cfg.value("port",protocol::DEFAULT_PORT).toInt());
+	ui_->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	ui_->maxnamelength->setValue(cfg.value("maxnamelength",16).toInt());
 
 	// Generate an editable list of shortcuts
@@ -89,7 +89,7 @@ void SettingsDialog::rememberSettings() const
 	// Remember server settings
 	cfg.beginGroup("settings/server");
 	cfg.setValue("multiconnect", ui_->multiconnect->isChecked());
-	if(ui_->serverport->value() == protocol::DEFAULT_PORT)
+	if(ui_->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
 		cfg.remove("port");
 	else
 		cfg.setValue("port", ui_->serverport->value());

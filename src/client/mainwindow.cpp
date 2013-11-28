@@ -36,10 +36,10 @@
 #include <QImageReader>
 #include <QSplitter>
 
+#include "config.h"
 #include "main.h"
 #include "mainwindow.h"
 #include "icons.h"
-#include "version.h"
 #include "loader.h"
 
 #include "canvasview.h"

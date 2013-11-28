@@ -22,11 +22,11 @@
 #include <QDebug>
 #include <QTcpSocket>
 
+#include "config.h"
 #include "tcpserver.h"
 #include "login.h"
 
 #include "../shared/net/messagequeue.h"
-#include "../shared/net/constants.h"
 
 namespace net {
 
@@ -50,7 +50,7 @@ void TcpServer::login(LoginHandler *login)
 	_loginstate = login;
 	_loginstate->setParent(this);
 	_loginstate->setServer(this);
-	_socket->connectToHost(login->url().host(), login->url().port(protocol::DEFAULT_PORT));
+	_socket->connectToHost(login->url().host(), login->url().port(DRAWPILE_PROTO_DEFAULT_PORT));
 }
 
 void TcpServer::logout()
