@@ -38,12 +38,7 @@ PopupMessage::PopupMessage(QWidget *parent)
 	message_->setAlignment(Qt::AlignCenter);
 	message_->setTextFormat(Qt::RichText);
 	layout->addWidget(message_);
-#if (QT_VERSION >= QT_VERSION_CHECK(4, 4,0)) // Not supported by QT<4.4?
-	// We should really do the drawing ourselves for best results.
 	layout->addSpacerItem(new QSpacerItem(30, 30, QSizePolicy::MinimumExpanding));
-#else
-	layout->addSpacing(30);
-#endif
 	resize(200,60);
 	timer_.setSingleShot(true);
 	timer_.setInterval(2500);
@@ -95,31 +90,37 @@ void PopupMessage::popupAt(const QPoint& point)
 void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
-	painter.setBrush(palette().light());
+	painter.setBrush(palette().toolTipBase());
 	painter.drawPath(bubble);
 }
 
 void PopupMessage::redrawBubble()
 {
 	// Redraw the background bubble
-	const qreal w = contentsRect().width();
+	const qreal w = contentsRect().width()-1;
 	const qreal h = contentsRect().height();
-	const qreal x = w/6.0;
-	const qreal h1 = h - h/4.0;
-	const qreal aw = (h-h1) / 2.0;
+	const qreal rad = 4;
+	const qreal h1 = h - 10;
+	const qreal aw = 10;
 	qreal arrowsafe = arrowoffset_;
-	if(arrowsafe < x)
-		arrowsafe = x;
-	else if(arrowsafe+aw > w-x)
-		arrowsafe = w-x-aw;
+	if(arrowsafe < rad)
+		arrowsafe = rad;
+	else if(arrowsafe+aw > w-rad)
+		arrowsafe = w-rad-aw;
 
-	bubble = QPainterPath(QPointF(x, 0));
-	bubble.cubicTo(QPointF(0, 0), QPointF(0, h1), QPointF(x, h1));
-	bubble.lineTo(QPointF(arrowsafe, h1));
-	bubble.lineTo(QPointF(arrowoffset_, h));
-	bubble.lineTo(QPointF(arrowsafe+aw, h1));
-	bubble.lineTo(QPointF(w-x, h1));
-	bubble.cubicTo(QPointF(w, h1), QPointF(w, 0), QPointF(w-x, 0));
+	bubble = QPainterPath(QPointF(w-rad, 0));
+	bubble.cubicTo(w-rad/2, 0, w, rad/2, w, rad);
+	bubble.lineTo(w, h1-rad);
+	bubble.cubicTo(w, h1-rad/2, w-rad/2, h1, w-rad, h1);
+
+	bubble.lineTo(arrowsafe+aw, h1);
+	bubble.lineTo(arrowsafe, h);
+	bubble.lineTo(arrowsafe, h1);
+
+	bubble.lineTo(rad, h1);
+	bubble.cubicTo(rad/2, h1, 0, h1-rad/2, 0, h1-rad);
+	bubble.lineTo(0, rad);
+	bubble.cubicTo(0, rad/2, rad/2, 0, rad, 0);
 	bubble.closeSubpath();
 
 	// Set the widget transparency mask
