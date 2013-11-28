@@ -132,7 +132,7 @@ void Server::removeClient(Client *client)
 
 		emit lastClientLeft();
 
-		if(!_mainstream.hasSnapshot()) {
+		if(!_mainstream.hasSnapshot() && _hasSession) {
 			// No snapshot and no one to provide one? The server is gone...
 			stop();
 		}
@@ -170,11 +170,11 @@ Client *Server::getClientById(int id)
 void Server::stop() {
 	_stopping = true;
 	_server->close();
-	delete _server;
-	_server = 0;
 
 	foreach(Client *c, _clients)
 		c->kick(0);
+
+	emit serverStopped();
 }
 
 void Server::addToCommandStream(protocol::MessagePtr msg)

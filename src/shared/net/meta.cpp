@@ -19,6 +19,8 @@
 */
 
 #include <cstring>
+#include <QtEndian>
+
 #include "meta.h"
 
 namespace protocol {
@@ -133,5 +135,24 @@ int SessionConf::payloadLength() const
 {
 	return 2;
 }
+
+StreamPos *StreamPos::deserialize(const uchar *data, uint len)
+{
+	if(len!=4)
+		return 0;
+	return new StreamPos(qFromBigEndian<quint32>(data));
+}
+
+int StreamPos::serializePayload(uchar *data) const
+{
+	qToBigEndian(_bytes, data);;
+	return 4;
+}
+
+int StreamPos::payloadLength() const
+{
+	return 4;
+}
+
 
 }

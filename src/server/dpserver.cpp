@@ -15,8 +15,6 @@ void printHelp() {
 		"\t--port, -p <port>           Listening port (default: "
 		<< protocol::DEFAULT_PORT << ")\n"
 		"\t--listen, -l <address>      Listening address (default: all)\n"
-		"\t--maxnamelen, -n <length>   Maximum username length\n"
-		"\t--unique-ip, -i             Require unique IP addresses for each client\n"
 		"\t--verbose, -v               Verbose mode\n";
 }
 
@@ -25,8 +23,7 @@ int main(int argc, char *argv[]) {
 
 	int port = protocol::DEFAULT_PORT;
 	QHostAddress address = QHostAddress::Any;
-	bool verbose = false, uniq_ip=false;
-	int maxnamelen=16;
+	bool verbose = false;
 
 	// Parse command line arguments
 	// TODO
@@ -55,14 +52,6 @@ int main(int argc, char *argv[]) {
 				cerr << "Not a valid address: " << args[i].toUtf8().constData() << "\n";
 				return 1;
 			}
-		} else if(args[i]=="--maxnamelen" || args[i]=="-n") {
-			if(i+1>=args.size()) {
-				cerr << "Maximum name length not specified\n";
-				return 1;
-			}
-			maxnamelen = args[++i].toInt();
-		} else if(args[i]=="--unique-ip" || args[i]=="-i") {
-			uniq_ip = true;
 		} else if(args[i]=="--verbose" || args[i]=="-v") {
 			verbose = true;
 		} else {
@@ -73,11 +62,10 @@ int main(int argc, char *argv[]) {
 
 	// Start the server
 	Server *server = new Server();
+
+	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
+
 	verbose = true;
-#if 0
-	server->setMaxNameLength(maxnamelen);
-	server->setUniqueIps(uniq_ip);
-#endif
 	server->setErrorStream(new QTextStream(stderr));
 	if(verbose)
 		server->setDebugStream(new QTextStream(stdout));

@@ -55,6 +55,7 @@ signals:
 	void loggedIn(int userid, bool join);
 	void serverDisconnected(const QString &message);
 
+	void expectingBytes(int);
 	void bytesReceived(int);
 	void bytesSent(int);
 	void messageReceived(protocol::MessagePtr message);

@@ -189,6 +189,7 @@ signals:
 
 	void layerVisibilityChange(int id, bool hidden);
 
+	void expectingBytes(int);
 	void bytesReceived(int);
 	void bytesSent(int);
 

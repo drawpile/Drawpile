@@ -46,7 +46,6 @@ Client::Client(Server *server, QTcpSocket *socket)
 	  _state(LOGIN), _substate(0),
 	  _awaiting_snapshot(false),
 	  _uploading_snapshot(false),
-	  _streampointer(0),
 	  _substreampointer(-1),
 	  _id(0),
 	  _isOperator(false),
@@ -97,6 +96,16 @@ void Client::sendAvailableCommands()
 		Q_ASSERT(sptr->type() == protocol::MSG_SNAPSHOT);
 		const protocol::SnapshotPoint &sp = sptr.cast<const protocol::SnapshotPoint>();
 
+		if(_substreampointer == 0) {
+			// User is in the beginning of a stream, send stream position message
+			uint streamlen = 0;
+			for(int i=0;i<sp.substream().length();++i)
+				streamlen += sp.substream().at(i)->length();
+			for(int i=_streampointer+1;i<_server->mainstream().end();++i)
+				streamlen += _server->mainstream().at(i)->length();
+
+			_msgqueue->send(MessagePtr(new protocol::StreamPos(streamlen)));
+		}
 		// Enqueue substream
 		while(_substreampointer < sp.substream().length())
 			_msgqueue->send(sp.substream().at(_substreampointer++));
@@ -551,6 +560,7 @@ void Client::handleHostSession(const QString &msg)
 	// Send request for initial state
 	_server->startSession();
 	requestSnapshot(false);
+	_streampointer = _server->mainstream().snapshotPointIndex();
 	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
 	grantOp();
 }

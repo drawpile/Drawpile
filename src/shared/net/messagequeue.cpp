@@ -25,6 +25,7 @@
 
 #include "messagequeue.h"
 #include "snapshot.h"
+#include "meta.h" /* for STREAMPOS */
 
 namespace protocol {
 
@@ -121,8 +122,12 @@ void MessageQueue::readData() {
 			if(!msg) {
 				emit badData(len, _recvbuffer[2]);
 			} else {
-				// A message preceded by SnapshotMode::SNAPSHOT goes into the snapshot queue
-				if(_expectingSnapshot) {
+				if(msg->type() == MSG_STREAMPOS) {
+					// Special handling for Stream Position message
+					emit expectingBytes(static_cast<StreamPos*>(msg)->bytes() + totalread);
+					delete msg;
+				} else if(_expectingSnapshot) {
+					// A message preceded by SnapshotMode::SNAPSHOT goes into the snapshot queue
 					_snapshot_recv.enqueue(MessagePtr(msg));
 					_expectingSnapshot = false;
 					gotsnapshot = true;

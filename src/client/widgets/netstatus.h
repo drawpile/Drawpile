@@ -24,6 +24,7 @@
 
 class QLabel;
 class QTimer;
+class QProgressBar;
 
 namespace widgets {
 
@@ -45,6 +46,7 @@ public slots:
 	void loggedIn();
 	void hostDisconnected();
 
+	void expectBytes(int count);
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
@@ -69,10 +71,11 @@ private:
 	void message(const QString& msg);
 	void updateIcon();
 
-	QLabel *label_, *_icon;
-	PopupMessage *popup_;
-	QString address_;
-	QAction *copyaction_;
+	QProgressBar *_progress;
+	QLabel *_label, *_icon;
+	PopupMessage *_popup;
+	QString _address;
+	QAction *_copyaction;
 
 	bool _online;
 	quint64 _sentbytes, _recvbytes;

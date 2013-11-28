@@ -88,6 +88,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	connect(server, SIGNAL(loggedIn(int, bool)), this, SLOT(handleConnect(int, bool)));
 	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
+	connect(server, SIGNAL(expectingBytes(int)), this, SIGNAL(expectingBytes(int)));
 	connect(server, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(server, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
 

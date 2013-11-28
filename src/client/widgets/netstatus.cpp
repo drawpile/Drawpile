@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QHBoxLayout>
+#include <QProgressBar>
 
 #include "netstatus.h"
 #include "popupmessage.h"
@@ -39,20 +40,28 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->setMargin(1);
 	layout->setSpacing(4);
 
+	// Data transfer progress (not always shown)
+	_progress = new QProgressBar(this);
+	_progress->setMaximumWidth(120);
+	_progress->setSizePolicy(QSizePolicy());
+	_progress->setTextVisible(false);
+	_progress->hide();
+	layout->addWidget(_progress);
+
 	// Host address label
-	label_ = new QLabel(tr("not connected"), this);
-	label_->setTextInteractionFlags(
+	_label = new QLabel(tr("not connected"), this);
+	_label->setTextInteractionFlags(
 			Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard
 			);
-	label_->setCursor(Qt::IBeamCursor);
-	layout->addWidget(label_);
+	_label->setCursor(Qt::IBeamCursor);
+	layout->addWidget(_label);
 
 	// Action to copy address to clipboard
-	copyaction_ = new QAction(tr("Copy address to clipboard"), this);
-	copyaction_->setEnabled(false);
-	label_->addAction(copyaction_);
-	label_->setContextMenuPolicy(Qt::ActionsContextMenu);
-	connect(copyaction_,SIGNAL(triggered()),this,SLOT(copyAddress()));
+	_copyaction = new QAction(tr("Copy address to clipboard"), this);
+	_copyaction->setEnabled(false);
+	_label->addAction(_copyaction);
+	_label->setContextMenuPolicy(Qt::ActionsContextMenu);
+	connect(_copyaction,SIGNAL(triggered()),this,SLOT(copyAddress()));
 
 	// Network connection status icon
 	_icon = new QLabel(QString(), this);
@@ -61,7 +70,7 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->addWidget(_icon);
 
 	// Popup label
-	popup_ = new PopupMessage(this);
+	_popup = new PopupMessage(this);
 
 	// Timer for activity update
 	_timer = new QTimer(this);
@@ -76,10 +85,10 @@ NetStatus::NetStatus(QWidget *parent)
  */
 void NetStatus::connectingToHost(const QString& address)
 {
-	address_ = address;
-	label_->setText(tr("Connecting to %1...").arg(address_));
-	copyaction_->setEnabled(true);
-	message(label_->text());
+	_address = address;
+	_label->setText(tr("Connecting to %1...").arg(_address));
+	_copyaction->setEnabled(true);
+	message(_label->text());
 
 	// reset statistics
 	_recvbytes = 0;
@@ -90,7 +99,7 @@ void NetStatus::connectingToHost(const QString& address)
 
 void NetStatus::loggedIn()
 {
-	label_->setText(tr("Host: %1").arg(address_));
+	_label->setText(tr("Host: %1").arg(_address));
 	message(tr("Logged in!"));
 }
 
@@ -100,13 +109,20 @@ void NetStatus::loggedIn()
  */
 void NetStatus::hostDisconnected()
 {
-	address_ = QString();
-	label_->setText(tr("not connected"));
+	_address = QString();
+	_label->setText(tr("not connected"));
 
-	copyaction_->setEnabled(false);
+	_copyaction->setEnabled(false);
 	message(tr("Disconnected"));
 	_online = false;
 	updateIcon();
+}
+
+void NetStatus::expectBytes(int count)
+{
+	_progress->reset();
+	_progress->setMaximum(count);
+	_progress->show();
 }
 
 void NetStatus::bytesReceived(int count)
@@ -116,6 +132,13 @@ void NetStatus::bytesReceived(int count)
 	if(!(_activity & 2)) {
 		_activity |= 2;
 		updateIcon();
+	}
+	if(_progress->isVisible()) {
+		int val = _progress->value() + count;
+		if(val>_progress->maximum())
+			_progress->hide();
+		else
+			_progress->setValue(val);
 	}
 	_timer->start(500);
 }
@@ -165,10 +188,10 @@ void NetStatus::updateIcon()
  */
 void NetStatus::copyAddress()
 {
-	QApplication::clipboard()->setText(address_);
+	QApplication::clipboard()->setText(_address);
 	// Put address also in selection buffer so it can be pasted with
 	// a middle mouse click where supported.
-	QApplication::clipboard()->setText(address_, QClipboard::Selection);
+	QApplication::clipboard()->setText(_address, QClipboard::Selection);
 }
 
 #if 0
@@ -201,8 +224,8 @@ void NetStatus::unlock()
 
 void NetStatus::message(const QString& msg)
 {
-	popup_->setMessage(msg);
-	popup_->popupAt(mapToGlobal(_icon->pos() +
+	_popup->setMessage(msg);
+	_popup->popupAt(mapToGlobal(_icon->pos() +
 				QPoint(_icon->width()/2, _icon->height()/2)));
 	emit statusMessage(msg);
 }

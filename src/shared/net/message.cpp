@@ -63,7 +63,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
 	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
 	case MSG_SESSION_CONFIG: return SessionConf::deserialize(data, len);
-	case MSG_STREAMPOS: return 0; // TODO
+	case MSG_STREAMPOS: return StreamPos::deserialize(data, len);
 	}
 	// Unknown message type!
 	return 0;

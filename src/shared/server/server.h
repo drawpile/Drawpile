@@ -158,6 +158,8 @@ signals:
 	//! A new snapshot was just created
 	void snapshotCreated();
 
+	void serverStopped();
+
 private:
 	QTcpServer *_server;
 	QList<Client*> _clients;

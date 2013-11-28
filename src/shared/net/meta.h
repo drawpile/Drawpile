@@ -146,6 +146,27 @@ private:
     QByteArray _msg;
 };
 
+class StreamPos : public Message {
+public:
+	StreamPos(uint32_t bytes) : Message(MSG_STREAMPOS),
+		_bytes(bytes) {}
+
+	static StreamPos *deserialize(const uchar *data, uint len);
+
+	/**
+	 * @brief Number of bytes behind the current stream head
+	 * @return byte count
+	 */
+	uint32_t bytes() const { return _bytes; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint32_t _bytes;
+};
+
 }
 
 #endif
