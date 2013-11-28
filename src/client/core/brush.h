@@ -112,7 +112,7 @@ class Brush
 		void setSpacing(int spacing);
 
 		//! Set subpixel hint
-		void setSubPixel(bool sp);
+		void setSubpixel(bool sp);
 
 		//! Set blending mode hint
 		void setBlendingMode(int mode);

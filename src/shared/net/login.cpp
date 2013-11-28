@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,53 +16,28 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
 */
 
-#include <QIODevice>
-
-#include "constants.h"
+#include <cstring>
 #include "login.h"
-#include "utils.h"
 
 namespace protocol {
 
-LoginId::LoginId(const char magic[4], int rev, int ver) : Packet(LOGIN_ID),      _rev(rev), _ver(ver)
+Login *Login::deserialize(const uchar *data, uint len)
 {
-	_magic[0] = magic[0];
-	_magic[1] = magic[1];
-	_magic[2] = magic[2];
-	_magic[3] = magic[3];
+	return new Login(QByteArray((const char*)data, len));
 }
 
-LoginId::LoginId(int ver) : Packet(LOGIN_ID), _rev(REVISION), _ver(ver) {
-	_magic[0] = MAGIC[0];
-	_magic[1] = MAGIC[1];
-	_magic[2] = MAGIC[2];
-	_magic[3] = MAGIC[3];
+int Login::serializePayload(uchar *data) const
+{
+	memcpy(data, _msg.constData(), _msg.length());
+	return _msg.length();
 }
 
-LoginId *LoginId::deserialize(QIODevice& data, int len) {
-	char magic[4];
-	data.read(magic, 4);
-	int rev = utils::read16(data);
-	int ver = utils::read16(data);
-	return new LoginId(magic, rev, ver);
+int Login::payloadLength() const
+{
+    return _msg.length();
 }
 
-void LoginId::serializeBody(QIODevice& data) const {
-	data.write(_magic, 4);
-	utils::write16(data, _rev);
-	utils::write16(data, _ver);
-}
-
-bool LoginId::isCompatible() const {
-	return _magic[0] == MAGIC[0] &&
-			_magic[1] == MAGIC[1] &&
-			_magic[2] == MAGIC[2] &&
-			_magic[3] == MAGIC[3] &&
-			REVISION == _rev;
-}
 
 }
-

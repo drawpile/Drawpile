@@ -1,7 +1,11 @@
 # src/client/CMakeLists.txt
 
-find_package(Qt4 REQUIRED QtCore QtNetwork QtXml QtGui)
-include ( ${QT_USE_FILE} )
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+find_package(Qt5Network REQUIRED)
+find_package(Qt5Xml REQUIRED)
+find_package(Qt5Widgets REQUIRED)
 
 # Workaround the mess in ioapi.h. Mac OS X and BSDs don't need the "64" suffix for open()
 # and friends.
@@ -12,75 +16,77 @@ endif()
 # files
 
 set (
-	HEADERS
-	main.h mainwindow.h netstatus.h dualcolorbutton.h editorview.h
-	toolsettingswidget.h colordialog.h brushpreview.h qtcolortriangle.h
-	board.h controller.h gradientslider.h colorbutton.h
-	newdialog.h imageselector.h hostdialog.h joindialog.h
-	hoststate.h sessionstate.h logindialog.h
-	localserver.h popupmessage.h userlistwidget.h userlistmodel.h chatwidget.h
-	mandatoryfields.h palettewidget.h palettebox.h
-	colorbox.h settingsdialog.h layerwidget.h
-	navigator.h toolsettings.h brushslider.h viewstatus.h layerlistdelegate.h
-	layerlistwidget.h core/layerstack.h core/layermimedata.h
-)
-
-# unused headers because they do not create moc_* files ()
-set (
-	UNUSED_HEADERS # no QOBJECT ?
-	version.h user.h interfaces.h preview.h boardeditor.h boarditem.h
-	localpalette.h palette.h icons.h
-	tools.h recentfiles.h sessioninfo.h annotationitem.h
-	core/tile.h core/layer.h core/brush.h core/point.h
-	core/rasterop.h
-	ora/zipfile.h ora/orawriter.h ora/orareader.h
-	ora/zip.h ora/unzip.h ora/ioapi.h
-)
-
-set (
 	SOURCES
-	main.cpp mainwindow.cpp netstatus.cpp dualcolorbutton.cpp
-	editorview.cpp toolsettingswidget.cpp colordialog.cpp brushpreview.cpp
-	qtcolortriangle.cpp board.cpp controller.cpp boarditem.cpp user.cpp
-	tools.cpp toolsettings.cpp boardeditor.cpp
-	gradientslider.cpp colorbutton.cpp newdialog.cpp imageselector.cpp
-	hostdialog.cpp joindialog.cpp hoststate.cpp sessionstate.cpp
-	logindialog.cpp preview.cpp localserver.cpp popupmessage.cpp
-	userlistwidget.cpp userlistmodel.cpp chatwidget.cpp recentfiles.cpp
-	sessioninfo.cpp icons.cpp mandatoryfields.cpp
-	localpalette.cpp palettewidget.cpp palettebox.cpp colorbox.cpp
-	settingsdialog.cpp palette.cpp navigator.cpp annotationitem.cpp
-	core/tile.cpp core/layer.cpp core/layerstack.cpp core/brush.cpp
-	core/rasterop.cpp brushslider.cpp viewstatus.cpp layerlistdelegate.cpp
-	layerlistwidget.cpp layerwidget.cpp
-	core/layermimedata.cpp
-	ora/zipfile.cpp ora/orawriter.cpp ora/orareader.cpp
-	ora/zip.c ora/unzip.c ora/ioapi.c
+	main.cpp
+	mainwindow.cpp 
+	canvasscene.cpp
+	canvasview.cpp
+	canvasitem.cpp
+	statetracker.cpp
+	tools.cpp
+	toolsettings.cpp
+	icons.cpp 
+	annotationitem.cpp
+	loader.cpp
+	net/client.cpp
+	net/loopbackserver.cpp
+	net/tcpserver.cpp
+	net/utils.cpp
+	net/login.cpp
+	net/userlist.cpp
+	net/layerlist.cpp
+	net/serverthread.cpp
+	utils/palette.cpp
+	utils/mandatoryfields.cpp
+	utils/recentfiles.cpp
+	core/tile.cpp
+	core/layer.cpp
+	core/layerstack.cpp
+	core/brush.cpp
+	core/rasterop.cpp
+	ora/zipfile.cpp
+	ora/orawriter.cpp
+	ora/orareader.cpp
+	ora/zip.c
+	ora/unzip.c
+	ora/ioapi.c
+	dialogs/colordialog.cpp 
+	dialogs/newdialog.cpp 
+	dialogs/hostdialog.cpp
+	dialogs/joindialog.cpp
+	dialogs/settingsdialog.cpp
+	widgets/viewstatus.cpp
+	widgets/palettewidget.cpp 
+	widgets/popupmessage.cpp
+	widgets/netstatus.cpp 
+	widgets/qtcolortriangle.cpp 
+	widgets/dualcolorbutton.cpp
+	widgets/chatwidget.cpp 
+	widgets/brushslider.cpp 
+	widgets/colorbutton.cpp 
+	widgets/gradientslider.cpp 
+	widgets/imageselector.cpp
+	widgets/layerwidget.cpp
+	widgets/brushpreview.cpp
+	docks/toolsettingswidget.cpp 
+	docks/palettebox.cpp 
+	docks/navigator.cpp 
+	docks/colorbox.cpp
+	docks/userlistdock.cpp 
+	docks/layerlistdock.cpp
+	docks/layerlistdelegate.cpp
 )
 
 set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
-	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui ui/logindialog.ui
+	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui
 	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui
 	ui/erasersettings.ui )
 
-# .UI
+qt5_wrap_ui( UI_Headers ${UIs} )
+qt5_add_resources( QtResource ui/resources.qrc )
 
-QT4_WRAP_UI ( UI_Headers ${UIs} )
-# Tell the compiler where to find the generated headers
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-# The generated headers refer to headers in the source directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-# Qt Resource
-
-QT4_ADD_RESOURCES ( QtResource ui/resources.qrc )
-
-# Qt4 MOC
-
-Qt4_WRAP_CPP ( MOC_Sources ${HEADERS} ) # generate moc_*.cxx
-
-# non-qt4 stuff
+# non-qt stuff
 
 set ( EXETYPE "" )
 set ( RES "" )
@@ -95,7 +101,7 @@ if ( WIN32 )
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
                 ${WEBSITE}
-		"2006-2008 Calle Laakkonen"
+		"2006-2013 Calle Laakkonen"
                 ${DRAWPILE_VERSION}
 	)
 endif ( WIN32 )
@@ -129,18 +135,20 @@ IF ( APPLE )
 ENDIF()
 
 add_executable (
-        drawpile
+	drawpile
 	${EXETYPE}
 	MACOSX_BUNDLE
 	${MACOSX_BUNDLE_INFO_PLIST}
 	${SOURCES}
 	${QtResource}
 	${Win32Resource}
-	${MOC_Sources}
+	#${MOC_Sources}
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES} ${QT_LIBRARIES})
+qt5_use_modules(drawpile Widgets Network Xml)
+
+target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES})
 if ( WIN32 )
         target_link_libraries (drawpile ws2_32 )
 endif ()
@@ -187,3 +195,4 @@ if (NOT DEBUG)
 		strip_exe ( ${CLIENTNAME} )
 	endif()
 endif (NOT DEBUG)
+

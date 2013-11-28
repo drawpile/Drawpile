@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,66 +19,109 @@
 
 */
 
+#include <QtEndian>
+
 #include "annotation.h"
 
 namespace protocol {
 
-/**
- * Check isValid after constructing the annotation.
- */
-Annotation::Annotation(const QStringList& tokens)
-	: valid_(false)
+AnnotationCreate *AnnotationCreate::deserialize(const uchar *data, uint len)
 {
-	if(tokens.size() != 16) return;
-	id = tokens[1].toInt();
-	user = tokens[2].toInt();
-	int x, y, w, h;
-	x = tokens[3].toInt();
-	y = tokens[4].toInt();
-	w = tokens[5].toInt();
-	h = tokens[6].toInt();
-	rect = QRect(x, y, w, h);
-	textcolor = tokens[7];
-	textalpha = tokens[8].toInt();
-	backgroundcolor = tokens[9];
-	bgalpha = tokens[10].toInt();
-	if(tokens[11]=="L") justify=LEFT;
-	else if(tokens[11]=="R") justify=RIGHT;
-	else if(tokens[11]=="C") justify=CENTER;
-	else if(tokens[11]=="F") justify=FILL;
-	bold = tokens[12].contains('B');
-	italic = tokens[12].contains('I');
-	font = tokens[13];
-	size = tokens[14].toInt();
-	text = tokens[15];
-	valid_ = true;
+	if(len!=10)
+		return 0;
+	return new AnnotationCreate(
+		*data,
+		*(data+1),
+		qFromBigEndian<quint16>(data+2),
+		qFromBigEndian<quint16>(data+4),
+		qFromBigEndian<quint16>(data+6),
+		qFromBigEndian<quint16>(data+8)
+	);
 }
 
-QStringList Annotation::tokens() const {
-	QStringList sl;
-	sl << "ANNOTATE" << QString::number(id) <<
-		QString::number(user) <<
-		QString::number(rect.x()) <<
-		QString::number(rect.y()) <<
-		QString::number(rect.width()) <<
-		QString::number(rect.height()) <<
-		textcolor << QString::number(textalpha) <<
-		backgroundcolor << QString::number(bgalpha);
-	switch(justify) {
-		case LEFT: sl << "L"; break;
-		case RIGHT: sl << "R"; break;
-		case CENTER: sl << "C"; break;
-		case FILL: sl << "F"; break;
-	}
-	QString mod;
-	if(bold) mod += "B";
-	if(italic) mod += "I";
-	sl << mod;
-	sl << font;
-	sl << QString::number(size);
-	sl << text;
-	return sl;
+int AnnotationCreate::payloadLength() const
+{
+	return 1 + 1 + 4*2;
+}
+
+int AnnotationCreate::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = _ctx;
+	*(ptr++) = _id;
+	qToBigEndian(_x, ptr); ptr += 2;
+	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_w, ptr); ptr += 2;
+	qToBigEndian(_h, ptr); ptr += 2;
+	return ptr - data;
+}
+
+int AnnotationReshape::payloadLength() const
+{
+	return 1 + 4*2;
+}
+
+AnnotationReshape *AnnotationReshape::deserialize(const uchar *data, uint len)
+{
+	if(len!=9)
+		return 0;
+	return new AnnotationReshape(
+		*data,
+		qFromBigEndian<quint16>(data+1),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7)
+	);
+}
+
+int AnnotationReshape::serializePayload(uchar *data) const
+{
+	*data = _id; ++data;
+	qToBigEndian(_x, data); data += 2;
+	qToBigEndian(_y, data); data += 2;
+	qToBigEndian(_w, data); data += 2;
+	qToBigEndian(_h, data); data += 2;
+	return 1 + 4*2;
+}
+
+AnnotationEdit *AnnotationEdit::deserialize(const uchar *data, uint len)
+{
+	return new AnnotationEdit(
+		*data,
+		qFromBigEndian<quint32>(data+1),
+		QByteArray((const char*)data+5, len-5)
+	);
+}
+
+int AnnotationEdit::payloadLength() const
+{
+	return 1 + 4 + _text.length();
+}
+
+int AnnotationEdit::serializePayload(uchar *data) const
+{
+	*data = _id; ++data;
+	qToBigEndian(_bg, data); data += 4;
+	memcpy(data, _text.constData(), _text.length());
+	return 1 + 4 + _text.length();
+}
+
+AnnotationDelete *AnnotationDelete::deserialize(const uchar *data, uint len)
+{
+	if(len != 1)
+		return 0;
+	return new AnnotationDelete(*data);
+}
+
+int AnnotationDelete::payloadLength() const
+{
+	return 1;
+}
+
+int AnnotationDelete::serializePayload(uchar *data) const
+{
+	*data = _id; ++data;
+	return 1;
 }
 
 }
-

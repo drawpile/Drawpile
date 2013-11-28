@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,9 +25,12 @@
 #include <QHostAddress>
 #include <QHash>
 
-class QTcpServer;
+#include "../util/idlist.h"
+#include "../net/messagestream.h"
 
-#include "board.h"
+#include "session.h"
+
+class QTcpServer;
 
 namespace server {
 
@@ -37,122 +40,138 @@ class Client;
  * The drawpile server.
  */
 class Server : public QObject {
-	Q_OBJECT
+Q_OBJECT
+public:
 	static const int MAXCLIENTS = 255;
-	public:
-		enum State {
-			// Business as usual, relay packets.
-			NORMAL,
-			// Synchronize new users
-			SYNC
-		};
 
-		Server(QObject *parent=0);
+	Server(QObject *parent=0);
+	~Server();
 
-		~Server();
+	//! Set the stream where error messages are written
+	void setErrorStream(QTextStream *stream) { _errors = stream; }
 
-		//! Set the stream where error messages are written
-		void setErrorStream(QTextStream *stream);
+	//! Set the stream where debug messages are written
+	void setDebugStream(QTextStream *stream) { _debug = stream; }
 
-		//! Set the stream where debug messages are written
-		void setDebugStream(QTextStream *stream);
+	//! Start the server.
+	bool start(quint16 port, bool anyport=false, const QHostAddress& address = QHostAddress::Any);
 
-		//! Start the server.
-		bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
-		//! Set the server password
-		void setPassword(const QString& password) { _password = password; }
+	//! Get the port the server is listening on
+	int port() const;
 
-		//! Require each client to have an unique IP address
-		void setUniqueIps(bool uniq) { _uniqueIps = uniq; }
+	/**
+	 * @brief Is there a session
+	 *
+	 * A session is considered to be started after the first user has logged in.
+	 * @return true if session started
+	 */
+	bool isSessionStarted() const { return _hasSession; }
 
-		//! Set the maximum username length
-		void setMaxNameLength(int len) { _maxnamelen = len; }
+	/**
+	 * @brief get the main command stream
+	 * @return reference to main command stream
+	 */
+	const protocol::MessageStream &mainstream() const { return _mainstream; }
 
-		//! Get the maximum username length
-		int maxNameLength() const { return _maxnamelen; }
+	/**
+	 * @brief Add a command to the message stream.
+	 *
+	 * Emits newCommandsAvailable
+	 * @param msg
+	 */
+	void addToCommandStream(protocol::MessagePtr msg);
 
-		//! Get the server password
-		const QString& password() const { return _password; }
+	/**
+	 * @brief Add a new snapshot point.
+	 * @pre there are no unfinished snapshot points
+	 */
+	void addSnapshotPoint();
 
-		 //! Check if a user with the specified ID exists.
-		bool hasClient(int id) { return _clients.contains(id); }
+	/**
+	 * @brief Add a message to the latest snapshot point.
+	 * @param msg
+	 * @pre there is an unfinished snapshot point
+	 * @return true if this was the command that completed the snapshot
+	 */
+	bool addToSnapshotStream(protocol::MessagePtr msg);
 
-		 //! Check if the user with the specified name is logged in.
-		bool hasClient(const QString& name);
+	/**
+	 * @brief Remove all pre-snapshot messages from the command stream
+	 */
+	void cleanupCommandStream();
 
-		 //! Return the number of clients
-		int clients() const { return _clients.size(); }
+	/**
+	 * @brief Synchronize clients so that a new snapshot point can be generated
+	 */
+	void startSnapshotSync();
 
-		 //! Synchronize users so new people can join.
-		void syncUsers();
+	/**
+	 * @brief Snapshot synchronization has started
+	 */
+	void snapshotSyncStarted();
 
-		 //! Get a new client up to speed
-		void briefClient(int id);
+	void startSession() { _hasSession = true; }
 
-		//! Lock a client
-		void lockClient(int locker, int id, bool status);
+	SessionState &session() { return _session; }
 
-		//! Kick a client
-		void kickClient(int kicker, int id, const QString& reason="kicked by session owner");
+	/**
+	 * @brief Get the number of logged in users.
+	 * @return number of logged in users
+	 */
+	int userCount() const;
 
-		 //! Send a packet to all users
-		int redistribute(bool sync, bool active, const QByteArray& data);
+	/**
+	 * @brief Get the list of clients
+	 * @return
+	 */
+	const QList<Client*> &clients() { return _clients; }
 
-		 //! Get the drawing board used
-		Board& board() { return _board; }
-		const Board& board() const { return _board; }
+	/**
+	 * @brief Get the client with the specified ID
+	 *
+	 * Client must be a logged in member of the session
+	 * @param id client ID
+	 * @return client or 0 if not found
+	 */
+	Client *getClientById(int id);
 
-		//! Get the accepted client version
-		int clientVersion() const { return _clientVer; }
+	void printError(const QString &message);
+	void printDebug(const QString &message);
 
-		//! Set the accepted client version
-		void setClientVersion(int ver) { _clientVer = ver; }
+public slots:
+	 //! Stop the server. All clients are disconnected.
+	void stop();
 
-		//! Print a message to the error stream
-		void printError(const QString& message);
+private slots:
+	void newClient();
+	void removeClient(Client *client);
+	void clientLoggedIn(Client *client);
+	void userBarrierLocked();
 
-		//! Print a debug message
-		void printDebug(const QString& message);
+signals:
+	//! This signal is emitted when the server becomes empty
+	void lastClientLeft();
 
-	public slots:
-		 //! Stop the server. All clients are disconnected.
-		void stop();
+	//! New commands have been added to the main stream
+	void newCommandsAvailable();
 
-	signals:
-		//! This signal is emitted when the server becomes empty
-		void lastClientLeft();
+	//! A new snapshot was just created
+	void snapshotCreated();
 
-	private slots:
-		// A new client was added
-		void newClient();
-		// A client was removed
-		void killClient(int id);
-		// A client's sync state changed
-		void userSync(int id, bool state);
+	void serverStopped();
 
-	private:
-		// Request raster data from some user
-		void requestRaster();
+private:
+	QTcpServer *_server;
+	QList<Client*> _clients;
 
-		// Delete all clients
-		void clearClients();
+	QTextStream *_errors;
+	QTextStream *_debug;
 
-		QTcpServer *_server;
-		QHash<int,Client*> _clients;
-		int _liveclients;
-		int _lastclient;
+	protocol::MessageStream _mainstream;
 
-		bool _uniqueIps;
-		int _maxnamelen;
-		QString _password;
-
-		QTextStream *_errors;
-		QTextStream *_debug;
-
-		State _state;
-		Board _board;
-
-		int _clientVer;
+	bool _hasSession;
+	SessionState _session;
+	bool _stopping;
 };
 
 }

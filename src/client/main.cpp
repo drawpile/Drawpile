@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,19 +21,12 @@
 #include <QApplication>
 #include <QSettings>
 #include <QUrl>
-#include <QMessageBox>
 #include <QTabletEvent>
 #include <QIcon>
 
-#ifdef CRASHGUARD
-	#include <QFile>
-	#include <QFileInfo>
-	#include <QDebug>
-	#include <QDir>
-#endif
-
 #include "main.h"
 #include "mainwindow.h"
+#include "loader.h"
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -124,28 +117,6 @@ int main(int argc, char *argv[]) {
 	// Create the main window
 	MainWindow *win = new MainWindow;
 	
-	#ifdef CRASHGUARD
-	QFile crashGuard(QFileInfo(DrawPileApp::getConfDir(), "crash.guard").absoluteFilePath());
-	
-	if (crashGuard.exists())
-	{
-		// crash recovery
-		QFileInfoList autosaves = QDir(DrawPileApp::getConfDir()).entryInfoList(
-			QStringList("*.png"),
-			QDir::Files|QDir::Readable
-			);
-		
-		/** @todo query user which of these should be opened, if any. */
-		foreach(QFileInfo asav, autosaves)
-		{
-			win->open(asav.absoluteFilePath());
-		}
-	}
-	
-	if (!crashGuard.open(QIODevice::WriteOnly|QIODevice::Unbuffered))
-		qWarning() << "crash guard creation failed!";
-	#endif // CRASHGUARD
-	
 	const QStringList args = app.arguments();
 	if(args.count()>1) {
 		const QString arg = args.at(1);
@@ -160,21 +131,11 @@ int main(int argc, char *argv[]) {
 			}
 			win->joinSession(url);
 		} else {
-			if(win->initBoard(argv[1])==false) {
-				// If image couldn't be loaded, initialize to a default board
-				// and show error message.
-				QMessageBox::warning(win, app.tr("DrawPile"),
-						app.tr("Couldn't load image %1.").arg(argv[1]));
-			}
+			ImageCanvasLoader icl(argv[1]);
+			win->loadDocument(icl);
 		}
 	}
 
-	int rv = app.exec();
-	
-	#ifdef CRASHGUARD
-	crashGuard.remove();
-	#endif
-	
-	return rv;
+	return app.exec();
 }
 

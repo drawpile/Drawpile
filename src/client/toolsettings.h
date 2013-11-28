@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@
 #ifndef TOOLSETTINGS_H
 #define TOOLSETTINGS_H
 
+#include <QPointer>
+
 #include "core/brush.h"
 
 class Ui_PenSettings;
@@ -28,10 +30,16 @@ class Ui_EraserSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
 class QSettings;
+class QTimer;
 
+namespace net {
+	class Client;
+}
 namespace drawingboard {
-	class BoardEditor;
 	class AnnotationItem;
+}
+namespace widgets {
+	class LayerListDock;
 }
 
 namespace tools {
@@ -202,6 +210,12 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		AnnotationSettings(QString name, QString title);
 		~AnnotationSettings();
 
+		//! Set the client to use for edit commands
+		void setClient(net::Client *client) { _client = client; }
+
+		//! Set the layer selection widget (needed for baking)
+		void setLayerSelector(widgets::LayerListDock *layerlist) { _layerlist = layerlist; }
+
 		QWidget *createUi(QWidget *parent);
 
 		void setForeground(const QColor& color);
@@ -210,33 +224,38 @@ class AnnotationSettings : public QObject, public ToolSettings {
 
 		int getSize() const { return 0; }
 
-		//! Set the board editor to change selected annotations
-		void setBoardEditor(drawingboard::BoardEditor *editor) { editor_ = editor; }
-
-		//! Enable or disabled baking
-		void enableBaking(bool enable);
+		/**
+		 * @brief Get the ID of the currently selected annotation
+		 * @return ID or 0 if none selected
+		 */
+		int selected() const;
 
 	public slots:
 		//! Set the currently selected annotation item
 		void setSelection(drawingboard::AnnotationItem *item);
+
 		//! Unselect this item if currently selected
-		void unselect(drawingboard::AnnotationItem *item);
+		void unselect(int id);
 
 	private slots:
+		void changeAlignment();
+		void toggleBold(bool bold);
+		void updateStyleButtons();
+
 		void applyChanges();
 		void removeAnnotation();
 		void bake();
 
-	signals:
-		void baked();
-
 	private:
-		dpcore::Brush brush_;
 		Ui_TextSettings *ui_;
 		QWidget *uiwidget_;
-		drawingboard::AnnotationItem *sel_;
-		drawingboard::BoardEditor *editor_;
+
+		QPointer<drawingboard::AnnotationItem> _selection;
+
 		bool noupdate_;
+		net::Client *_client;
+		widgets::LayerListDock *_layerlist;
+		QTimer *_updatetimer;
 };
 
 //! No settings

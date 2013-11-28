@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2009 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,226 +30,167 @@
 #include <QUrl>
 #include <QLabel>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QImageReader>
-#include <QImageWriter>
 #include <QSplitter>
-#include <QTemporaryFile>
-#include <QTimer>
 
+#include "config.h"
 #include "main.h"
 #include "mainwindow.h"
-#include "viewstatus.h"
-#include "netstatus.h"
-#include "editorview.h"
-#include "board.h"
-#include "controller.h"
-#include "toolsettingswidget.h"
-#include "userlistwidget.h"
-#include "layerlistwidget.h"
-#include "chatwidget.h"
-#include "dualcolorbutton.h"
-#include "localserver.h"
-#include "recentfiles.h"
-#include "hoststate.h"
-#include "sessionstate.h"
-#include "palettebox.h"
-#include "colorbox.h"
 #include "icons.h"
-#include "version.h"
+#include "loader.h"
 
-#include "colordialog.h"
-#include "newdialog.h"
-#include "hostdialog.h"
-#include "joindialog.h"
-#include "logindialog.h"
-#include "settingsdialog.h"
-#include "toolsettings.h" // enableBaking()
+#include "canvasview.h"
+#include "canvasscene.h"
+#include "annotationitem.h"
+#include "statetracker.h"
+#include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
-#include "core/layerstack.h"
+#include "utils/recentfiles.h"
 
-#include "navigator.h"
+#include "widgets/viewstatus.h"
+#include "widgets/netstatus.h"
+#include "widgets/dualcolorbutton.h"
+#include "widgets/chatwidget.h"
 
-/**
- * @param source if not null, clone settings from this window
- */
-MainWindow::MainWindow(const MainWindow *source)
-	: QMainWindow(), board_(0)
+#include "docks/toolsettingswidget.h"
+#include "docks/palettebox.h"
+#include "docks/navigator.h"
+#include "docks/colorbox.h"
+#include "docks/userlistdock.h"
+#include "docks/layerlistdock.h"
+
+#include "net/client.h"
+#include "net/login.h"
+#include "net/serverthread.h"
+
+#include "dialogs/colordialog.h"
+#include "dialogs/newdialog.h"
+#include "dialogs/hostdialog.h"
+#include "dialogs/joindialog.h"
+#include "dialogs/settingsdialog.h"
+
+MainWindow::MainWindow(bool restoreWindowPosition)
+	: QMainWindow(), _canvas(0)
 {
-	setTitle();
+	updateTitle();
 
 	initActions();
 	createMenus();
 	createToolbars();
 	createDocks();
-	createDialogs();
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
 	// Create the view status widget
-	viewstatus_ = new widgets::ViewStatus(this);
-	statusbar->addPermanentWidget(viewstatus_);
+	widgets::ViewStatus *viewstatus = new widgets::ViewStatus(this);
+	statusbar->addPermanentWidget(viewstatus);
 
 	// Create net status widget
-	netstatus_ = new widgets::NetStatus(this);
-	statusbar->addPermanentWidget(netstatus_);
+	widgets::NetStatus *netstatus = new widgets::NetStatus(this);
+	statusbar->addPermanentWidget(netstatus);
 
 	// Create lock status widget
-	lockstatus_ = new QLabel(this);
-	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
-	lockstatus_->setToolTip(tr("Board is not locked"));
-	statusbar->addPermanentWidget(lockstatus_);
+	_lockstatus = new QLabel(this);
+	_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+	_lockstatus->setToolTip(tr("Board is not locked"));
+	statusbar->addPermanentWidget(_lockstatus);
 
-	// Work area is split between the view and the chatbox
+	// Work area is split between the canvas view and the chatbox
 	splitter_ = new QSplitter(Qt::Vertical, this);
 	setCentralWidget(splitter_);
 
-	// Create view
-	view_ = new widgets::EditorView(this);
+	// Create canvas view
+	_view = new widgets::CanvasView(this);
+	_view->setToolSettings(_toolsettings);
+	
+	connect(_layerlist, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
+	connect(_layerlist, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
 
-	splitter_->addWidget(view_);
+	splitter_->addWidget(_view);
 	splitter_->setCollapsible(0, false);
 
-	connect(toolsettings_, SIGNAL(sizeChanged(int)),
-			view_, SLOT(setOutlineRadius(int)));
 	connect(toggleoutline_, SIGNAL(triggered(bool)),
-			view_, SLOT(setOutline(bool)));
-	connect(toolsettings_, SIGNAL(colorsChanged(const QColor&, const QColor&)),
-			view_, SLOT(setOutlineColors(const QColor&, const QColor&)));
-	connect(view_, SIGNAL(imageDropped(QString)),
+			_view, SLOT(setOutline(bool)));
+	connect(_toolsettings, SIGNAL(sizeChanged(int)),
+			_view, SLOT(setOutlineRadius(int)));
+	connect(_view, SIGNAL(imageDropped(QString)),
 			this, SLOT(open(QString)));
-	connect(view_, SIGNAL(viewTransformed(int, qreal)),
-			viewstatus_, SLOT(setTransformation(int, qreal)));
+	connect(_view, SIGNAL(viewTransformed(int, qreal)),
+			viewstatus, SLOT(setTransformation(int, qreal)));
 
+	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
+	
 	// Create the chatbox
-	chatbox_ = new widgets::ChatBox(this);
-	splitter_->addWidget(chatbox_);
+	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
+	splitter_->addWidget(chatbox);
 
-	// Create board
-	board_ = new drawingboard::Board(this, toolsettings_, fgbgcolor_);
-	board_->setBackgroundBrush(
+	// Create canvas scene
+	_canvas = new drawingboard::CanvasScene(this);
+	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
-	view_->setBoard(board_);
-	navigator_->setScene(board_);
+	_view->setCanvas(_canvas);
+	navigator_->setScene(_canvas);
+
+	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
+	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
+	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
 
 	// Navigator <-> View
 	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
-			view_, SLOT(scrollTo(const QPoint&)));
-	connect(view_, SIGNAL(viewMovedTo(const QRectF&)), navigator_,
+			_view, SLOT(scrollTo(const QPoint&)));
+	connect(_view, SIGNAL(viewMovedTo(const QRectF&)), navigator_,
 			SLOT(setViewFocus(const QRectF&)));
 	// Navigator <-> Zoom In/Out
 	connect(navigator_, SIGNAL(zoomIn()), this, SLOT(zoomin()));
 	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 
-	// Create controller
-	controller_ = new Controller(toolsettings_->getAnnotationSettings(), this);
-	controller_->setModel(board_);
-	connect(controller_, SIGNAL(changed()),
-			this, SLOT(boardChanged()));
-	connect(this, SIGNAL(toolChanged(tools::Type)),
-			controller_, SLOT(setTool(tools::Type)));
+	// Create the network client
+	_client = new net::Client(this);
+	_view->setClient(_client);
+	_layerlist->setClient(_client);
+	_toolsettings->getAnnotationSettings()->setClient(_client);
+	_toolsettings->getAnnotationSettings()->setLayerSelector(_layerlist);
+	_userlist->setClient(_client);
 
-	connect(view_,SIGNAL(penDown(dpcore::Point)),
-			controller_,SLOT(penDown(dpcore::Point)));
-	connect(view_,SIGNAL(penMove(dpcore::Point)),
-			controller_,SLOT(penMove(dpcore::Point)));
-	connect(view_,SIGNAL(penUp()),
-			controller_,SLOT(penUp()));
+	// Client command receive signals
+	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
+	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
+	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
-	// Controller -> netstatus
-	connect(controller_, SIGNAL(disconnected(QString)),
-			netstatus_, SLOT(disconnectHost()));
-	connect(controller_, SIGNAL(connected(const QString&)),
-			netstatus_, SLOT(connectHost(const QString&)));
-	connect(controller_, SIGNAL(userJoined(network::User)),
-			netstatus_, SLOT(join(network::User)));
-	connect(controller_, SIGNAL(userParted(network::User)),
-			netstatus_, SLOT(leave(network::User)));
-	connect(controller_, SIGNAL(userKicked(network::User)),
-			netstatus_, SLOT(kicked(network::User)));
-	connect(controller_, SIGNAL(lockboard(QString)),
-			netstatus_, SLOT(lock(QString)));
-	connect(controller_, SIGNAL(unlockboard()),
-			netstatus_, SLOT(unlock()));
+	// Meta commands
+	connect(_client, SIGNAL(chatMessageReceived(QString,QString)),
+			chatbox, SLOT(receiveMessage(QString,QString)));
+	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
+	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
+	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
+	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
+	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 
-	// Actions -> controller
-	connect(lockboard_, SIGNAL(triggered(bool)),
-			controller_, SLOT(lockBoard(bool)));
-	connect(disallowjoins_, SIGNAL(triggered(bool)),
-			controller_, SLOT(disallowJoins(bool)));
+	// Operator commands
+	connect(_lockSession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
+	connect(_closeSession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
-	// Controller <-> mainwindow
-	connect(controller_, SIGNAL(connected(QString)),
-			this, SLOT(connected()));
-	connect(controller_, SIGNAL(disconnected(QString)),
-			this, SLOT(disconnected()));
-	connect(controller_, SIGNAL(lockboard(QString)),
-			this, SLOT(lock(QString)));
-	connect(controller_, SIGNAL(unlockboard()),
-			this, SLOT(unlock()));
-	connect(controller_, SIGNAL(joined()),
-			this, SLOT(joined()));
-	connect(controller_, SIGNAL(boardChanged()),
-			this, SLOT(boardInfoChanged()));
-	connect(controller_, SIGNAL(rasterUploadProgress(int)),
-			this, SLOT(rasterUp(int)));
+	// Network status changes
+	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
+	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
+	connect(_client, SIGNAL(serverLoggedin(bool)), chatbox, SLOT(joined()));
+	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
+	connect(_client, SIGNAL(serverDisconnected(QString)), chatbox, SLOT(parted()));
 
-	// Controller <-> login dialog connections
-	connect(controller_, SIGNAL(connected(const QString&)),
-			logindlg_, SLOT(connected()));
-	connect(controller_, SIGNAL(disconnected(QString)),
-			logindlg_, SLOT(disconnected(QString)));
-	connect(controller_, SIGNAL(loggedin()), logindlg_,
-			SLOT(loggedin()));
-	connect(controller_, SIGNAL(rasterDownloadProgress(int)),
-			logindlg_, SLOT(raster(int)));
-	connect(controller_, SIGNAL(netError(QString)),
-			logindlg_, SLOT(error(QString)));
-	connect(controller_, SIGNAL(needPassword()),
-			logindlg_, SLOT(getPassword()));
-	connect(logindlg_, SIGNAL(password(QString)),
-			controller_, SLOT(sendPassword(QString)));
+	connect(_client, SIGNAL(serverConnected(QString)), netstatus, SLOT(connectingToHost(QString)));
+	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
+	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
+	connect(_client, SIGNAL(expectingBytes(int)),netstatus, SLOT(expectBytes(int)));
+	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
+	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
 
-	// Chatbox <-> Controller
-	connect(controller_, SIGNAL(chat(QString,QString)),
-			chatbox_, SLOT(receiveMessage(QString,QString)));
-	connect(controller_, SIGNAL(parted()),
-			chatbox_, SLOT(parted()));
-	connect(chatbox_, SIGNAL(message(QString)),
-			controller_, SLOT(sendChat(QString)));
-	connect(netstatus_, SIGNAL(statusMessage(QString)),
-			chatbox_, SLOT(systemMessage(QString)));
-
-	// Layer box -> controller
-	connect(layerlist_, SIGNAL(newLayer(const QString&)),
-			controller_, SLOT(newLayer(const QString&)));
-	connect(layerlist_, SIGNAL(deleteLayer(int, bool)),
-			controller_, SLOT(deleteLayer(int, bool)));
-	connect(layerlist_, SIGNAL(layerMove(int, int)),
-			controller_, SLOT(moveLayer(int, int)));
-	connect(layerlist_, SIGNAL(renameLayer(int, const QString&)),
-			controller_, SLOT(renameLayer(int, const QString&)));
-	connect(layerlist_, SIGNAL(selected(int)),
-			controller_, SLOT(selectLayer(int)));
-	connect(layerlist_, SIGNAL(opacityChange(int,int)),
-			controller_, SLOT(setLayerOpacity(int,int)));
-	connect(layerlist_, SIGNAL(layerToggleHidden(int)),
-			controller_, SLOT(toggleLayerHidden(int)));
-
-	if(source)
-		cloneSettings(source);
-	else
-		readSettings();
-
-	autosaveTimer_ = new QTimer();
-	connect(autosaveTimer_, SIGNAL(timeout()), this, SLOT(autosave()));
-	// todo: need better location
-	autosaveTmp_ = new QTemporaryFile(QFileInfo(DrawPileApp::getConfDir(), "drawpile_wip.XXXXXX.png").absoluteFilePath());
-	autosaveTmp_->setAutoRemove(false);
-	autosaveTimeout_ = 15; // minutes
-	statusDefaultTimeout_ = 15; // seconds
+	// Restore settings
+	readSettings(restoreWindowPosition);
 	
 	// Show self
 	show();
@@ -262,85 +203,71 @@ MainWindow::~MainWindow()
 		QDialog *child = qobject_cast<QDialog*>(obj);
 		delete child;
 	}
+}
+
+/**
+ * @brief Initialize session state
+ *
+ * If the document in this window cannot be replaced, a new mainwindow is created.
+ *
+ * @return the MainWindow instance in which the document was loaded or 0 in case of error
+ */
+MainWindow *MainWindow::loadDocument(SessionLoader &loader)
+{
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+
+	MainWindow *win;
+	if(canReplace()) {
+		win = this;
+	} else {
+		writeSettings();
+		win = new MainWindow(false);
+	}
 	
-	autosaveTmp_->setAutoRemove(true);
-	delete autosaveTmp_;
-	delete autosaveTimer_;
-}
+	QList<protocol::MessagePtr> init = loader.loadInitCommands();
 
-/**
- * @param filename file to open
- * @return true on success
- */
-bool MainWindow::initBoard(const QString& filename)
-{
-	if(board_->initBoard(filename)==false)
-		return false;
-	postInitBoard(filename);
-	return true;
-}
+	if(init.isEmpty()) {
+		QApplication::restoreOverrideCursor();
+		if(win != this)
+			delete win;
+		showErrorMessage(tr("An error occured while trying to open image"), loader.errorMessage());
+		return 0;
+	}
 
-/**
- * @param size board size
- * @param color background color
- */
-void MainWindow::initBoard(const QSize& size, const QColor& color)
-{
-	board_->initBoard(size,color);
-	postInitBoard("");
-}
+	win->_canvas->initCanvas(win->_client);
+	win->_layerlist->init();
+	win->_client->init();
+	
+	// Set local history size limit. This must be at least as big as the initializer,
+	// otherwise a new snapshot will always have to be generated when hosting a session.
+	uint minsizelimit = 0;
+	foreach(protocol::MessagePtr msg, init)
+		minsizelimit += msg->length();
+	minsizelimit *= 2;
 
-void MainWindow::initDefaultBoard()
-{
-	initBoard(QSize(800,600), Qt::white);
-}
+	win->_canvas->statetracker()->setMaxHistorySize(qMax(1024*1024*10u, minsizelimit));
+	win->_client->sendLocalInit(init);
 
-/**
- * @param image board image
- */
-void MainWindow::initBoard(const QImage& image)
-{
-	board_->initBoard(image);
-	postInitBoard("");
-}
+	QApplication::restoreOverrideCursor();
 
-/**
- * Perform common tasks after board has been initialized
- */
-void MainWindow::postInitBoard(const QString& filename)
-{
-	filename_ = filename;
-	setWindowModified(false);
-	setTitle();
-	save_->setEnabled(true);
-	saveas_->setEnabled(true);
-	layerlist_->setBoard(board_);
-	board_->setLayerList(layerlist_);
-}
-
-/**
- * @param url URL
- */
-void MainWindow::joinSession(const QUrl& url)
-{
-	controller_->joinSession(url);
-
-	// Set login dialog to correct state
-	logindlg_->connecting(url.host(), false);
-	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
+	win->filename_ = loader.filename();
+	win->setWindowModified(false);
+	win->updateTitle();
+	win->save_->setEnabled(true);
+	win->saveas_->setEnabled(true);
+	return win;
 }
 
 /**
  * This function is used to check if the current board can be replaced
  * or if a new window is needed to open other content.
  *
- * The window can be replaced when there are no unsaved changes AND the board
- * is not joined to a network session.
+ * The window can be replaced when there are no unsaved changes AND the
+ * there is no active network connection
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || board_->hasAnnotations() ||
-		controller_->isConnected());
+	return !(isWindowModified() || _client->isConnected());
 }
 
 /**
@@ -361,7 +288,7 @@ void MainWindow::addRecentFile(const QString& file)
 /**
  * Set window title according to currently open file and session
  */
-void MainWindow::setTitle()
+void MainWindow::updateTitle()
 {
 	QString name;
 	if(filename_.isEmpty()) {
@@ -371,10 +298,10 @@ void MainWindow::setTitle()
 		name = info.baseName();
 	}
 
-	if(sessiontitle_.isEmpty())
+	if(!_canvas || _canvas->title().isEmpty())
 		setWindowTitle(tr("%1[*] - DrawPile").arg(name));
 	else
-		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(sessiontitle_));
+		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(_canvas->title()));
 }
 
 /**
@@ -415,7 +342,7 @@ void MainWindow::updateShortcuts()
 /**
  * Read and apply mainwindow related settings.
  */
-void MainWindow::readSettings()
+void MainWindow::readSettings(bool windowpos)
 {
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("window");
@@ -423,7 +350,7 @@ void MainWindow::readSettings()
 	// Restore previously used window size and position
 	resize(cfg.value("size",QSize(800,600)).toSize());
 
-	if(cfg.contains("pos")) {
+	if(windowpos && cfg.contains("pos")) {
 		const QPoint pos = cfg.value("pos").toPoint();
 		if(qApp->desktop()->availableGeometry().contains(pos))
 			move(pos);
@@ -447,15 +374,14 @@ void MainWindow::readSettings()
 	cfg.beginGroup("tools");
 	// Remember last used tool
 	int tool = cfg.value("tool", 0).toInt();
-	QList<QAction*> actions = drawingtools_->actions();
+	QList<QAction*> actions = _drawingtools->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
-	toolsettings_->setTool(tools::Type(tool));
-	controller_->setTool(tools::Type(tool));
+	_toolsettings->setTool(tools::Type(tool));
 
 	// Remember cursor settings
 	toggleoutline_->setChecked(cfg.value("outline",true).toBool());
-	view_->setOutline(toggleoutline_->isChecked());
+	_view->setOutline(toggleoutline_->isChecked());
 
 	// Remember foreground and background colors
 	fgbgcolor_->setForeground(QColor(cfg.value("foreground", "black").toString()));
@@ -469,38 +395,6 @@ void MainWindow::readSettings()
 	// Remember recent files
 	RecentFiles::initMenu(recent_);
 }
-
-/**
- * @param source window whose settings are cloned
- */
-void MainWindow::cloneSettings(const MainWindow *source)
-{
-	// Clone size, but let the window manager position this window
-	resize(source->normalGeometry().size());
-	//source->size() fails miserably if window is maximized
-	
-	// Clone window state?
-	//setWindowState(source->windowState());
-	
-	// Copy dock and view states
-	restoreState(source->saveState());
-	splitter_->restoreState(source->splitter_->saveState());
-
-	lastpath_ = source->lastpath_;
-
-	// Copy tool selection
-	const int tool = source->drawingtools_->actions().indexOf(
-			source->drawingtools_->checkedAction()
-			);
-	drawingtools_->actions()[tool]->trigger();
-	toolsettings_->setTool(tools::Type(tool));
-	controller_->setTool(tools::Type(tool));
-
-	// Copy foreground and background colors
-	fgbgcolor_->setForeground(source->fgbgcolor_->foreground());
-	fgbgcolor_->setBackground(source->fgbgcolor_->background());
-}
-
 
 /**
  * Write out settings
@@ -520,7 +414,7 @@ void MainWindow::writeSettings()
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
-	const int tool = drawingtools_->actions().indexOf(drawingtools_->checkedAction());
+	const int tool = _drawingtools->actions().indexOf(_drawingtools->checkedAction());
 	cfg.setValue("tool", tool);
 	cfg.setValue("outline", toggleoutline_->isChecked());
 	cfg.setValue("foreground",fgbgcolor_->foreground().name());
@@ -535,13 +429,14 @@ void MainWindow::writeSettings()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
 	if(canReplace() == false) {
+
 		// First confirm disconnection
-		if(controller_->isConnected()) {
-			QMessageBox box(QMessageBox::Information, tr("Exit DrawPile"),
-					controller_->isUploading()?
-					tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."):
-					tr("You are still connected to a drawing session."),
-					QMessageBox::NoButton, this);
+		if(_client->isLoggedIn()) {
+			QMessageBox box(
+				QMessageBox::Information,
+				tr("Exit DrawPile"),
+				tr("You are still connected to a drawing session."),
+				QMessageBox::NoButton, this);
 
 			const QPushButton *exitbtn = box.addButton(tr("Exit anyway"),
 					QMessageBox::AcceptRole);
@@ -550,13 +445,11 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			box.exec();
 			if(box.clickedButton() == exitbtn) {
-				// Delay exiting until actually disconnected
-				connect(controller_, SIGNAL(disconnected(QString)),
-						this, SLOT(close()), Qt::QueuedConnection);
-				controller_->disconnectHost();
+				_client->disconnectFromServer();
+			} else {
+				event->ignore();
+				return;
 			}
-			event->ignore();
-			return;
 		}
 
 		// Then confirm unsaved changes
@@ -579,8 +472,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 			// Cancel exit
 			if(box.clickedButton() == cancelbtn || cancel) {
-				disconnect(controller_, SIGNAL(disconnected(QString)),
-						this, SLOT(close()));
 				event->ignore();
 				return;
 			}
@@ -590,32 +481,21 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 /**
- * Mark window as modified
- */
-void MainWindow::boardChanged()
-{
-	setWindowModified(true);
-	startAutosaver();
-}
-
-/**
  * Show the "new document" dialog
  */
 void MainWindow::showNew()
 {
-	const QSize size = board_->sceneRect().size().toSize();
-	if (board_->hasImage())
-	{
-		newdlg_->setNewWidth(size.width());
-		newdlg_->setNewHeight(size.height());
-	}
+	dialogs::NewDialog *dlg = new dialogs::NewDialog(this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+	connect(dlg, SIGNAL(accepted(QSize, QColor)), this, SLOT(newDocument(QSize, QColor)));
+
+	if (_canvas->hasImage())
+		dlg->setSize(QSize(_canvas->width(), _canvas->height()));
 	else
-	{
-		newdlg_->setNewWidth(800);
-		newdlg_->setNewHeight(600);
-	}
-	newdlg_->setNewBackground(fgbgcolor_->background());
-	newdlg_->show();
+		dlg->setSize(QSize(800, 600));
+
+	dlg->setBackground(fgbgcolor_->background());
+	dlg->show();
 }
 
 /**
@@ -623,18 +503,10 @@ void MainWindow::showNew()
  * chosen in the dialog.
  * If the document is unsaved, create a new window.
  */
-void MainWindow::newDocument()
+void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
-	MainWindow *win;
-	if(canReplace()) {
-		win = this;
-	} else {
-		win = new MainWindow(this);
-	}
-
-	win->initBoard(QSize(newdlg_->newWidth(), newdlg_->newHeight()),
-			newdlg_->newBackground());
-	win->fgbgcolor_->setBackground(newdlg_->newBackground());
+	BlankCanvasLoader bcl(size, background);
+	loadDocument(bcl);
 }
 
 /**
@@ -653,19 +525,9 @@ void MainWindow::openRecent(QAction *action)
  */
 void MainWindow::open(const QString& file)
 {
-	if(canReplace()) {
-		if(initBoard(file)==false)
-			showErrorMessage(ERR_OPEN);
-		else
-			addRecentFile(file);
-	} else {
-		MainWindow *win = new MainWindow(this);
-		if(win->initBoard(file)==false) {
-			showErrorMessage(ERR_OPEN);
-			delete win;
-		} else {
-			addRecentFile(file);
-		}
+	ImageCanvasLoader icl(file);
+	if(loadDocument(icl)) {
+		addRecentFile(file);
 	}
 }
 
@@ -735,16 +597,18 @@ bool MainWindow::save()
 	if(filename_.isEmpty()) {
 		return saveas();
 	} else {
-		if(QFileInfo(filename_).suffix() != "ora" && board_->needSaveOra()) {
+		if(QFileInfo(filename_).suffix() != "ora" && _canvas->needSaveOra()) {
 			if(confirmFlatten(filename_)==false)
 				return false;
 		}
-		if(board_->save(filename_) == false) {
-			showErrorMessage(ERR_SAVE);
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		bool saved = _canvas->save(filename_);
+		QApplication::restoreOverrideCursor();
+		if(!saved) {
+			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
 			setWindowModified(false);
-			stopAutosaver();
 			addRecentFile(filename_);
 			return true;
 		}
@@ -774,32 +638,43 @@ bool MainWindow::saveas()
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Save image"), lastpath_, filter, &selfilter);
+
 	if(file.isEmpty()==false) {
-		// If no file suffix is given, use a default one
+
+		// Set file suffix if missing
 		const QFileInfo info(file);
 		if(info.suffix().isEmpty()) {
-			// Pick the default suffix based on the features used
-			if(board_->needSaveOra())
-				file += ".ora";
-			else
-				file += ".png";
-		} else if(board_->needSaveOra() && info.suffix() != "ora") {
-			// If the user has already chosen a format and it lacks
-			// the necessary features, confirm this is what they
-			// really want to do.
+			if(selfilter.isEmpty()) {
+				// If we don't have selfilter, pick what is best
+				if(_canvas->needSaveOra())
+					file += ".ora";
+				else
+					file += ".png";
+			} else {
+				// Use the currently selected filter
+				int i = selfilter.indexOf("*.")+1;
+				int i2 = selfilter.indexOf(')', i);
+				file += selfilter.mid(i, i2-i);
+			}
+		}
+
+		// Confirm format choice if saving would result in flattening layers
+		if(_canvas->needSaveOra() && !file.endsWith(".ora", Qt::CaseInsensitive)) {
 			if(confirmFlatten(file)==false)
 				return false;
 		}
 
 		// Save the image
-		if(board_->save(file) == false) {
-			showErrorMessage(ERR_SAVE);
+		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+		bool saved = _canvas->save(file);
+		QApplication::restoreOverrideCursor();
+		if(!saved) {
+			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
 			filename_ = file;
 			setWindowModified(false);
-			stopAutosaver();
-			setTitle();
+			updateTitle();
 			return true;
 		}
 	}
@@ -821,7 +696,7 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	hostdlg_ = new dialogs::HostDialog(board_->image(), this);
+	hostdlg_ = new dialogs::HostDialog(_canvas->image(), this);
 	connect(hostdlg_, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
 	hostdlg_->show();
 }
@@ -843,7 +718,7 @@ void MainWindow::leave()
 {
 	QMessageBox *leavebox = new QMessageBox(
 		QMessageBox::Question,
-		sessiontitle_.isEmpty()?tr("Untitled session"):sessiontitle_,
+		_canvas->title().isEmpty()?tr("Untitled session"):_canvas->title(),
 		tr("Really leave the session?"),
 		QMessageBox::NoButton,
 		this,
@@ -854,24 +729,17 @@ void MainWindow::leave()
 	leavebox->setDefaultButton(
 			leavebox->addButton(tr("Stay"), QMessageBox::NoRole)
 			);
-	connect(leavebox, SIGNAL(finished(int)), this, SLOT(finishLeave(int)));
+	connect(leavebox, &QMessageBox::finished, [this](int result) {
+		if(result == 0)
+			_client->disconnectFromServer();
+	});
 	
-	if(controller_->isUploading()) {
+	if(_client->uploadQueueBytes() > 0) {
 		leavebox->setIcon(QMessageBox::Warning);
-		leavebox->setInformativeText(tr("You are currently sending board contents to a new user. Please wait until it has been fully sent."));
+		leavebox->setInformativeText(tr("There is still unsent data! Please wait until transmission completes!"));
 	}
-	leavebox->show();
-}
 
-/**
- * Leave action confirmed, disconnected.
- * 
- * @todo do this more gracefully by first sending out an unsubscribe message.
- */
-void MainWindow::finishLeave(int i)
-{
-	if(i == 0)
-		controller_->disconnectHost();
+	leavebox->show();
 }
 
 /**
@@ -892,15 +760,12 @@ void MainWindow::finishHost(int i)
 			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
 					QUrl::TolerantMode);
 		} else {
-			QSettings& cfg = DrawPileApp::getSettings();
-			address.setHost("127.0.0.1");
-			if(cfg.contains("settings/server/port"))
-				address.setPort(cfg.value("settings/server/port").toInt());
+			address.setHost(net::ServerThread::address());
 		}
 
 		if(address.isValid() == false || address.host().isEmpty()) {
 			hostdlg_->show();
-			showErrorMessage(BAD_URL);
+			showErrorMessage(tr("Invalid address"));
 			return;
 		}
 		address.setUserName(hostdlg_->getUserName());
@@ -910,35 +775,37 @@ void MainWindow::finishHost(int i)
 
 		// Start server if hosting locally
 		if(useremote==false) {
-			LocalServer::startServer();
+			net::ServerThread *server = new net::ServerThread(this);
+			int port = server->startServer();
+			if(!port) {
+				QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
+				hostdlg_->show();
+				delete server;
+				return;
+			}
+			server->setDeleteOnExit();
+
+			if(!server->isOnDefaultPort())
+				address.setPort(port);
 		}
 
-		// If another image was selected, open a new window (unless this window
-		// is replaceable)
+		// Initialize session (unless original was used)
 		MainWindow *w = this;
 		if(hostdlg_->useOriginalImage() == false) {
-			if(!canReplace())
-				w = new MainWindow(this);
-			w->initBoard(hostdlg_->getImage());
+			QScopedPointer<SessionLoader> loader(hostdlg_->getSessionLoader());
+			w = loadDocument(*loader);
 		}
-		w->hostSession(address, hostdlg_->getPassword(), hostdlg_->getTitle(),
-				hostdlg_->getUserLimit(), hostdlg_->getAllowDrawing());
+
+		// Connect to server
+		net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
+		login->setPassword(hostdlg_->getPassword());
+		login->setTitle(hostdlg_->getTitle());
+		login->setMaxUsers(hostdlg_->getUserLimit());
+		login->setAllowDrawing(hostdlg_->getAllowDrawing());
+		w->_client->connectToServer(login);
 
 	}
 	hostdlg_->deleteLater();
-}
-
-void MainWindow::hostSession(const QUrl& url, const QString& password,
-		const QString& title, int userlimit, bool allowdrawing)
-{
-	// Connect to host
-	disconnect(controller_, SIGNAL(loggedin()), this, 0);
-	controller_->hostSession(url, password,
-			title, board_->image(), userlimit, allowdrawing);
-
-	// Set login dialog to correct state
-	logindlg_->connecting(url.host(), true);
-	connect(logindlg_, SIGNAL(rejected()), controller_, SLOT(disconnectHost()));
 }
 
 /**
@@ -954,7 +821,7 @@ void MainWindow::finishJoin(int i) {
 		QUrl address = QUrl(scheme + joindlg_->getAddress(),QUrl::TolerantMode);
 		if(address.isValid()==false || address.host().isEmpty()) {
 			joindlg_->show();
-			showErrorMessage(BAD_URL);
+			showErrorMessage(tr("Invalid address"));
 			return;
 		}
 		address.setUserName(joindlg_->getUserName());
@@ -963,92 +830,109 @@ void MainWindow::finishJoin(int i) {
 		joindlg_->rememberSettings();
 
 		// Connect
-		MainWindow *win;
-		if(canReplace()) {
-			win = this;
-		} else {
-			win = new MainWindow(this);
-		}
-		win->joinSession(address);
+		joinSession(address);
 	}
 	joindlg_->deleteLater();
 }
 
+void MainWindow::changeSessionTitle()
+{
+	bool ok;
+	QString newtitle = QInputDialog::getText(
+				this,
+				tr("Session title"),
+				tr("Change session title"),
+				QLineEdit::Normal,
+				_canvas->title(),
+				&ok
+	);
+	if(ok && newtitle != _canvas->title()) {
+		_client->sendSetSessionTitle(newtitle);
+	}
+}
+
 /**
- * Connection established, so disable and enable some UI elements
+ * @param url URL
  */
-void MainWindow::connected()
+void MainWindow::joinSession(const QUrl& url)
+{
+	MainWindow *win;
+	if(canReplace())
+		win = this;
+	else
+		win = new MainWindow(false);
+
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url);
+	win->_client->connectToServer(login);
+}
+
+/**
+ * Now connecting to server
+ */
+void MainWindow::connecting()
 {
 	host_->setEnabled(false);
 	logout_->setEnabled(true);
-	toolsettings_->getAnnotationSettings()->enableBaking(false);
+
+	// Disable UI until login completes
+	_view->setEnabled(false);
+	_drawingtools->setEnabled(false);
 }
 
 /**
  * Connection lost, so disable and enable some UI elements
  */
-void MainWindow::disconnected()
+void MainWindow::disconnected(const QString &message)
 {
-	userlist_->setSession(0);
 	host_->setEnabled(true);
 	logout_->setEnabled(false);
 	adminTools_->setEnabled(false);
+
+	// Re-enable UI
+	_view->setEnabled(true);
+	_drawingtools->setEnabled(true);
+
 	setSessionTitle(QString());
-	toolsettings_->getAnnotationSettings()->enableBaking(true);
+
+	// This should be true at this time still
+	if(!_client->isLoggedIn()) {
+		showErrorMessage(tr("Couldn't connect to server"), message);
+	}
 }
 
 /**
- * @param session the session that was joined
+ * Server connection established and login successfull
  */
-void MainWindow::joined()
+void MainWindow::loggedin(bool join)
 {
-	userlist_->setSession(controller_->session());
-	chatbox_->joined();
+	// Re-enable UI
+	_view->setEnabled(true);
+	_drawingtools->setEnabled(true);
+
+	// Initialize the canvas (in host mode the canvas was prepared already)
+	if(join) {
+		_canvas->initCanvas(_client);
+		_layerlist->init();
+	}
 }
 
-/**
- * Board info has changed.
- * Things that can change:
- * - board size (not handled ATM)
- * - title
- * - owner
- * - board lock (handled elsewhere)
- */
-void MainWindow::boardInfoChanged()
+void MainWindow::sessionConfChanged(bool locked, bool closed)
 {
-	const network::SessionState *session = controller_->session();
-	const network::Session& info = session->info();
-	setSessionTitle(info.title());
-	const bool isowner = info.owner() == session->host()->localUser();
-	userlist_->setAdminMode(isowner);
-	adminTools_->setEnabled(isowner);
-	disallowjoins_->setChecked(info.maxUsers() <= session->userCount());
+	_lockSession->setChecked(locked);
+	_closeSession->setChecked(closed);
 }
 
-/**
- * Board was locked, inform the user about it.
- * @param reason the reason the board was locked
- */
-void MainWindow::lock(const QString& reason)
+void MainWindow::updateLockWidget()
 {
-	lockboard_->setChecked(true);
-	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
-	lockstatus_->setToolTip(tr("Board is locked"));
-}
-
-/**
- * Board is no longer locked, inform the user about it.
- */
-void MainWindow::unlock()
-{
-	lockboard_->setChecked(false);
-	lockstatus_->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
-	lockstatus_->setToolTip(tr("Board is not locked"));
-}
-
-void MainWindow::rasterUp(int p)
-{
-	statusBar()->showMessage(tr("Sending board contents to new user, %1% done").arg(QString::number(p)),1000);
+	bool locked = _client->isLocked() || _layerlist->isCurrentLayerLocked();
+	if(locked) {
+		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
+		_lockstatus->setToolTip(tr("Board is locked"));
+	} else {
+		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+		_lockstatus->setToolTip(tr("Board is not locked"));
+	}
+	_view->setLocked(locked);
 }
 
 void MainWindow::setForegroundColor()
@@ -1069,8 +953,14 @@ void MainWindow::setBackgroundColor()
  */
 void MainWindow::setSessionTitle(const QString& title)
 {
-	sessiontitle_ = title;
-	setTitle();
+	_canvas->setTitle(title);
+	updateTitle();
+}
+
+void MainWindow::setOperatorMode(bool op)
+{
+	// Don't enable these actions in local mode
+	adminTools_->setEnabled(op && _client->isLoggedIn());
 }
 
 /**
@@ -1079,26 +969,10 @@ void MainWindow::setSessionTitle(const QString& title)
  */
 void MainWindow::exit()
 {
-	stopAutosaver();
 	if(windowState().testFlag(Qt::WindowFullScreen))
 		fullscreen(false);
 	writeSettings();
 	deleteLater();
-}
-
-/**
- * @param type error type
- */
-void MainWindow::showErrorMessage(ErrorType type)
-{
-	QString msg;
-	switch(type) {
-		case ERR_SAVE: msg = tr("An error occured while trying to save the image."); break;
-		case ERR_OPEN: msg = tr("An error occured while trying to open the image."); break;
-		case BAD_URL: msg = tr("Invalid address entered."); break;
-		default: qFatal("no such error type");
-	}
-	showErrorMessage(msg);
 }
 
 /**
@@ -1125,14 +999,14 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
  */
 void MainWindow::zoomin()
 {
-	int nz = view_->zoom() * 2;
+	int nz = _view->zoom() * 2;
 	if(nz>25) {
 		// When zoom% is over 25, make sure we increase in nice evenly
 		// dividing increments.
 		if(nz % 25) nz = nz / 25 * 25;
 	}
 
-	view_->setZoom(nz);
+	_view->setZoom(nz);
 }
 
 /**
@@ -1140,7 +1014,7 @@ void MainWindow::zoomin()
  */
 void MainWindow::zoomout()
 {
-	view_->setZoom(view_->zoom() / 2);
+	_view->setZoom(_view->zoom() / 2);
 }
 
 /**
@@ -1148,7 +1022,7 @@ void MainWindow::zoomout()
  */
 void MainWindow::zoomone()
 {
-	view_->setZoom(100);
+	_view->setZoom(100);
 }
 
 /**
@@ -1156,13 +1030,13 @@ void MainWindow::zoomone()
  */
 void MainWindow::rotatezero()
 {
-	view_->setRotation(0.0);
+	_view->setRotation(0.0);
 }
 
 void MainWindow::toggleAnnotations(bool hidden)
 {
 	annotationtool_->setEnabled(!hidden);
-	board_->showAnnotations(!hidden);
+	_canvas->showAnnotations(!hidden);
 	if(hidden) {
 		if(annotationtool_->isChecked())
 			brushtool_->trigger();
@@ -1231,8 +1105,10 @@ void MainWindow::selectTool(QAction *tool)
 	else
 		return;
 	lasttool_ = tool;
+
 	// When using the annotation tool, highlight all text boxes
-	board_->highlightAnnotations(type==tools::ANNOTATION);
+	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
+
 	emit toolChanged(type);
 }
 
@@ -1262,14 +1138,8 @@ void MainWindow::about()
 			"published by the Free Software Foundation, either version 2, or "
 			"(at your opinion) any later version.</p>"
 			"<p>Programming: Calle Laakkonen, M.K.A<br>"
-			"Icons are from the Tango Desktop Project</p>").arg(version::string)
+			"Icons are from the Tango Desktop Project</p>").arg(DRAWPILE_VERSION)
 			);
-}
-
-/** @todo anything and everything */
-void MainWindow::help()
-{
-	
 }
 
 void MainWindow::homepage()
@@ -1332,22 +1202,24 @@ void MainWindow::initActions()
 	host_ = makeAction("hostsession", 0, tr("&Host..."),tr("Share your drawingboard with others"));
 	join_ = makeAction("joinsession", 0, tr("&Join..."),tr("Join another user's drawing session"));
 	logout_ = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
-	lockboard_ = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"));
-	lockboard_->setCheckable(true);
-	disallowjoins_ = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
-	disallowjoins_->setCheckable(true);
-
+	_lockSession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"));
+	_lockSession->setCheckable(true);
+	_closeSession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
+	_closeSession->setCheckable(true);
+	_changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
 	logout_->setEnabled(false);
 
 	adminTools_ = new QActionGroup(this);
 	adminTools_->setExclusive(false);
-	adminTools_->addAction(lockboard_);
-	adminTools_->addAction(disallowjoins_);
+	adminTools_->addAction(_lockSession);
+	adminTools_->addAction(_closeSession);
+	adminTools_->addAction(_changetitle);
 	adminTools_->setEnabled(false);
 
 	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
 	connect(join_, SIGNAL(triggered()), this, SLOT(join()));
 	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
+	connect(_changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
 
 	// Drawing tool actions
 	pentool_ = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"));
@@ -1374,16 +1246,16 @@ void MainWindow::initActions()
 	// A default
 	lasttool_ = brushtool_;
 
-	drawingtools_ = new QActionGroup(this);
-	drawingtools_->setExclusive(true);
-	drawingtools_->addAction(pentool_);
-	drawingtools_->addAction(brushtool_);
-	drawingtools_->addAction(erasertool_);
-	drawingtools_->addAction(pickertool_);
-	drawingtools_->addAction(linetool_);
-	drawingtools_->addAction(recttool_);
-	drawingtools_->addAction(annotationtool_);
-	connect(drawingtools_, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+	_drawingtools = new QActionGroup(this);
+	_drawingtools->setExclusive(true);
+	_drawingtools->addAction(pentool_);
+	_drawingtools->addAction(brushtool_);
+	_drawingtools->addAction(erasertool_);
+	_drawingtools->addAction(pickertool_);
+	_drawingtools->addAction(linetool_);
+	_drawingtools->addAction(recttool_);
+	_drawingtools->addAction(annotationtool_);
+	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// View actions
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
@@ -1419,9 +1291,6 @@ void MainWindow::initActions()
 	docktoggles_ = new QAction(tr("&Docks"), this);
 
 	// Help actions
-	help_ = makeAction("dphelp", 0, tr("DrawPile &Help"), tr("Show online help"), QKeySequence("F1"));
-	help_->setEnabled(false);
-	connect(help_,SIGNAL(triggered()), this, SLOT(help()));
 	homepage_ = makeAction("dphomepage", 0, tr("&DrawPile homepage"), tr("Open DrawPile homepage with the default web browser"));
 	connect(homepage_,SIGNAL(triggered()), this, SLOT(homepage()));
 	about_ = makeAction("dpabout", 0, tr("&About DrawPile"), tr("Show information about DrawPile"));
@@ -1459,8 +1328,9 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(join_);
 	sessionmenu->addAction(logout_);
 	sessionmenu->addSeparator();
-	sessionmenu->addAction(lockboard_);
-	sessionmenu->addAction(disallowjoins_);
+	sessionmenu->addAction(_lockSession);
+	sessionmenu->addAction(_closeSession);
+	sessionmenu->addAction(_changetitle);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addAction(pentool_);
@@ -1479,7 +1349,6 @@ void MainWindow::createMenus()
 	//QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
-	helpmenu->addAction(help_);
 	helpmenu->addAction(homepage_);
 	helpmenu->addSeparator();
 	helpmenu->addAction(about_);
@@ -1556,13 +1425,13 @@ void MainWindow::createDocks()
 	createNavigator(toggles);
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
-	tabifyDockWidget(userlist_, layerlist_);
+	tabifyDockWidget(_userlist, _layerlist);
 	docktoggles_->setMenu(toggles);
 }
 
 void MainWindow::createNavigator(QMenu *toggles)
 {
-	navigator_ = new widgets::Navigator(this, board_);
+	navigator_ = new widgets::Navigator(this, _canvas);
 	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	toggles->addAction(navigator_->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, navigator_);
@@ -1570,34 +1439,32 @@ void MainWindow::createNavigator(QMenu *toggles)
 
 void MainWindow::createToolSettings(QMenu *toggles)
 {
-	toolsettings_ = new widgets::ToolSettings(this);
-	toolsettings_->setObjectName("toolsettingsdock");
-	toolsettings_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	connect(this, SIGNAL(toolChanged(tools::Type)), toolsettings_, SLOT(setTool(tools::Type)));
-	toggles->addAction(toolsettings_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, toolsettings_);
-	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), toolsettings_, SLOT(setForeground(const QColor&)));
-	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), toolsettings_, SLOT(setBackground(const QColor&)));
-	connect(toolsettings_->getAnnotationSettings(), SIGNAL(baked()),
-			this, SLOT(boardChanged()));
+	_toolsettings = new widgets::ToolSettingsDock(this);
+	_toolsettings->setObjectName("toolsettingsdock");
+	_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	connect(this, SIGNAL(toolChanged(tools::Type)), _toolsettings, SLOT(setTool(tools::Type)));
+	toggles->addAction(_toolsettings->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, _toolsettings);
+	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), _toolsettings, SLOT(setForeground(const QColor&)));
+	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), _toolsettings, SLOT(setBackground(const QColor&)));
 }
 
 void MainWindow::createUserList(QMenu *toggles)
 {
-	userlist_ = new widgets::UserList(this);
-	userlist_->setObjectName("userlistdock");
-	userlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	toggles->addAction(userlist_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, userlist_);
+	_userlist = new widgets::UserList(this);
+	_userlist->setObjectName("userlistdock");
+	_userlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	toggles->addAction(_userlist->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, _userlist);
 }
 
 void MainWindow::createLayerList(QMenu *toggles)
 {
-	layerlist_ = new widgets::LayerList(this);
-	layerlist_->setObjectName("layerlistdock");
-	layerlist_->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	toggles->addAction(layerlist_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, layerlist_);
+	_layerlist = new widgets::LayerListDock(this);
+	_layerlist->setObjectName("layerlistdock");
+	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	toggles->addAction(_layerlist->toggleViewAction());
+	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
 }
 
 void MainWindow::createPalette(QMenu *toggles)
@@ -1637,49 +1504,4 @@ void MainWindow::createColorBoxes(QMenu *toggles)
 }
 
 
-void MainWindow::createDialogs()
-{
-	newdlg_ = new dialogs::NewDialog(this);
-	connect(newdlg_, SIGNAL(accepted()), this, SLOT(newDocument()));
-
-	logindlg_ = new dialogs::LoginDialog(this);
-}
-
-void MainWindow::startAutosaver()
-{
-	if (!autosaveTimer_->isActive())
-		autosaveTimer_->start(autosaveTimeout_ * 60000); // minutes
-}
-
-void MainWindow::stopAutosaver()
-{
-	if (autosaveTimer_->isActive())
-		autosaveTimer_->stop();
-}
-
-void MainWindow::autosave()
-{
-	// don't trigger auto-save again unless board is changed
-	stopAutosaver();
-	
-	if (!autosaveTmp_->isOpen())
-		autosaveTmp_->open();
-	
-	QStatusBar *bar = statusBar();
-	bar->showMessage(tr("Auto-saving..."), statusDefaultTimeout_ * 1000);
-	// save
-	if (board_->image().save(autosaveTmp_))
-	{
-		// maybe? maybe not?
-		//setWindowModified(false); //?
-		//addRecentFile(autosaveTmp_->fileName()); // ?
-		bar->showMessage(tr("Auto-save done!"), 5000);
-	}
-	else
-	{
-		qWarning() << "auto-save to" << autosaveTmp_->fileName() << "failed!";
-		bar->showMessage(tr("Auto-save failed!"), statusDefaultTimeout_ * 1000);
-	}
-	
-}
 

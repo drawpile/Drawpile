@@ -1,138 +1,156 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>TextSettings</class>
- <widget class="QWidget" name="TextSettings" >
-  <property name="geometry" >
+ <widget class="QWidget" name="TextSettings">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>233</width>
+    <width>265</width>
     <height>308</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Annotation settings</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>3</number>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTextEdit" name="content" />
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QFontComboBox" name="font"/>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="size">
+       <property name="decimals">
+        <number>0</number>
+       </property>
+       <property name="minimum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>72.000000000000000</double>
+       </property>
+       <property name="value">
+        <double>12.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>0</number>
      </property>
      <item>
-      <widget class="QToolButton" name="left" >
-       <property name="font" >
+      <widget class="QToolButton" name="left">
+       <property name="font">
         <font>
          <italic>true</italic>
         </font>
        </property>
-       <property name="toolTip" >
-        <string>Left justify</string>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Left align&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>I</string>
        </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
+       <property name="icon">
+        <iconset resource="resources.qrc">
          <normaloff>:/icons/format-justify-left.png</normaloff>:/icons/format-justify-left.png</iconset>
        </property>
-       <property name="checkable" >
+       <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="checked" >
+       <property name="checked">
         <bool>true</bool>
        </property>
-       <property name="autoExclusive" >
+       <property name="autoExclusive">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="center" >
-       <property name="font" >
+      <widget class="QToolButton" name="center">
+       <property name="font">
         <font>
          <italic>true</italic>
         </font>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Center</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>I</string>
        </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
+       <property name="icon">
+        <iconset resource="resources.qrc">
          <normaloff>:/icons/format-justify-center.png</normaloff>:/icons/format-justify-center.png</iconset>
        </property>
-       <property name="checkable" >
+       <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoExclusive" >
+       <property name="autoExclusive">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="fill" >
-       <property name="font" >
+      <widget class="QToolButton" name="justify">
+       <property name="font">
         <font>
          <italic>true</italic>
         </font>
        </property>
-       <property name="toolTip" >
-        <string>Fill</string>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Justify&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>I</string>
        </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
+       <property name="icon">
+        <iconset resource="resources.qrc">
          <normaloff>:/icons/format-justify-fill.png</normaloff>:/icons/format-justify-fill.png</iconset>
        </property>
-       <property name="checkable" >
+       <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoExclusive" >
+       <property name="autoExclusive">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="right" >
-       <property name="font" >
+      <widget class="QToolButton" name="right">
+       <property name="font">
         <font>
          <italic>true</italic>
         </font>
        </property>
-       <property name="toolTip" >
-        <string>Right justify</string>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align right&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>I</string>
        </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
+       <property name="icon">
+        <iconset resource="resources.qrc">
          <normaloff>:/icons/format-justify-right.png</normaloff>:/icons/format-justify-right.png</iconset>
        </property>
-       <property name="checkable" >
+       <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoExclusive" >
+       <property name="autoExclusive">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
       <spacer>
-       <property name="orientation" >
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -141,46 +159,59 @@
       </spacer>
      </item>
      <item>
-      <widget class="QToolButton" name="bold" >
-       <property name="font" >
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
+      <widget class="ColorButton" name="btnTextColor" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
-       <property name="toolTip" >
-        <string>Bold</string>
-       </property>
-       <property name="text" >
-        <string>B</string>
-       </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
-         <normaloff>:/icons/format-text-bold.png</normaloff>:/icons/format-text-bold.png</iconset>
-       </property>
-       <property name="checkable" >
+       <property name="setAlpha" stdset="0">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="italic" >
-       <property name="font" >
+      <widget class="QToolButton" name="bold">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>Bold</string>
+       </property>
+       <property name="text">
+        <string>B</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/format-text-bold.png</normaloff>:/icons/format-text-bold.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="italic">
+       <property name="font">
         <font>
          <italic>true</italic>
         </font>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Italic</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>I</string>
        </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
+       <property name="icon">
+        <iconset resource="resources.qrc">
          <normaloff>:/icons/format-text-italic.png</normaloff>:/icons/format-text-italic.png</iconset>
        </property>
-       <property name="checkable" >
+       <property name="checkable">
         <bool>true</bool>
        </property>
       </widget>
@@ -188,88 +219,57 @@
     </layout>
    </item>
    <item>
-    <widget class="QFontComboBox" name="font" />
+    <widget class="QTextEdit" name="content"/>
    </item>
    <item>
-    <layout class="QGridLayout" >
-     <property name="verticalSpacing" >
-      <number>0</number>
-     </property>
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Text</string>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Background:</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
-        <string>Background</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2" >
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
-        <string>Size</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" >
-      <widget class="ColorButton" name="btnText" >
-       <property name="minimumSize" >
+     <item>
+      <widget class="ColorButton" name="btnBackground" native="true">
+       <property name="minimumSize">
         <size>
-         <width>0</width>
-         <height>24</height>
+         <width>24</width>
+         <height>0</height>
         </size>
        </property>
-       <property name="setAlpha" stdset="0" >
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="ColorButton" name="btnBackground" >
-       <property name="color" >
+       <property name="color" stdset="0">
         <color>
          <red>0</red>
          <green>0</green>
          <blue>0</blue>
         </color>
        </property>
-       <property name="setAlpha" stdset="0" >
+       <property name="setAlpha" stdset="0">
         <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2" >
-      <widget class="QSpinBox" name="size" >
-       <property name="minimum" >
-        <number>10</number>
        </property>
       </widget>
      </item>
     </layout>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QPushButton" name="btnBake" >
-       <property name="toolTip" >
-        <string>Bake the text onto the image</string>
+      <widget class="QPushButton" name="btnBake">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Merge the text onto the current layer&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="text" >
-        <string>Bake</string>
+       <property name="text">
+        <string>Merge</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="btnRemove" >
-       <property name="toolTip" >
+      <widget class="QPushButton" name="btnRemove">
+       <property name="toolTip">
         <string>Delete this annotation</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>Remove</string>
        </property>
       </widget>
@@ -282,11 +282,79 @@
   <customwidget>
    <class>ColorButton</class>
    <extends>QWidget</extends>
-   <header>colorbutton.h</header>
+   <header>widgets/colorbutton.h</header>
+   <slots>
+    <signal>colorChanged(QColor)</signal>
+   </slots>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc" />
+  <include location="resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>font</sender>
+   <signal>currentFontChanged(QFont)</signal>
+   <receiver>content</receiver>
+   <slot>setCurrentFont(QFont)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>139</x>
+     <y>121</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>italic</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>content</receiver>
+   <slot>setFontItalic(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>209</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>193</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>size</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>content</receiver>
+   <slot>setFontPointSize(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>203</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnTextColor</sender>
+   <signal>colorChanged(QColor)</signal>
+   <receiver>content</receiver>
+   <slot>setTextColor(QColor)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>168</x>
+     <y>55</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>113</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

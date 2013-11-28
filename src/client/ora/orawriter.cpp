@@ -21,26 +21,103 @@
 #include <QBuffer>
 #include <QDebug>
 
-#include "zipfile.h"
-#include "orawriter.h"
-#include "../core/layerstack.h"
-#include "../core/layer.h"
+#include "annotationitem.h"
 
-namespace openraster {
+#include "ora/zipfile.h"
+#include "ora/orawriter.h"
+#include "core/layerstack.h"
+#include "core/layer.h"
 
-Writer::Writer(const dpcore::LayerStack *layers)
-	: layers_(layers)
-{
-}
+
+namespace {
 
 bool putTextInZip(Zipfile &zip, const QString& filename, const QString& text)
 {
 	QBuffer *buf = new QBuffer();
-   	buf->setData(text.toUtf8());
+	buf->setData(text.toUtf8());
 	return zip.addFile(filename, buf, Zipfile::STORE);
 }
 
-bool Writer::save(const QString& filename) const
+bool writeStackXml(Zipfile &zf, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> annotations)
+{
+	QDomDocument doc;
+	QDomElement root = doc.createElement("image");
+	doc.appendChild(root);
+	// Width and height are required attributes
+	root.setAttribute("w", layers->width());
+	root.setAttribute("h", layers->height());
+
+	QDomElement stack = doc.createElement("stack");
+	root.appendChild(stack);
+
+	// Add annotations
+	// This will probably be replaced with proper text element support
+	// once standardized.
+	if(annotations.isEmpty()==false) {
+		QDomElement annotationEls = doc.createElementNS("http://drawpile.sourceforge.net/", "annotations");
+		annotationEls.setPrefix("drawpile");
+		foreach(const drawingboard::AnnotationItem *a, annotations) {
+			QDomElement an = doc.createElementNS("http://drawpile.sourceforge.net/","a");
+			an.setPrefix("drawpile");
+			QRect ag = a->geometry();
+			an.setAttribute("x", ag.x());
+			an.setAttribute("y", a->y());
+			an.setAttribute("w", ag.width());
+			an.setAttribute("h", ag.height());
+			an.setAttribute("bg", QString("#%1").arg(uint(a->backgroundColor().rgba()), 8, 16, QChar('0')));
+			an.appendChild(doc.createCDATASection(a->text()));
+			annotationEls.appendChild(an);
+		}
+		stack.appendChild(annotationEls);
+	}
+
+	// Add layers (topmost layer goes first in ORA)
+	for(int i=layers->layers()-1;i>=0;--i) {
+		const dpcore::Layer *l = layers->getLayerByIndex(i);
+
+		QDomElement layer = doc.createElement("layer");
+		layer.setAttribute("src", QString("data/layer%1.png").arg(i));
+		layer.setAttribute("name", l->title());
+		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
+		if(l->hidden())
+			layer.setAttribute("visibility", "hidden");
+
+		stack.appendChild(layer);
+	}
+
+	QBuffer *buf = new QBuffer();
+	buf->setData(doc.toByteArray());
+	return zf.addFile("stack.xml", buf);
+}
+
+bool writeLayer(Zipfile &zf, const dpcore::LayerStack *layers, int index)
+{
+	const dpcore::Layer *l = layers->getLayerByIndex(index);
+	QBuffer image;
+	image.open(QIODevice::ReadWrite);
+	// TODO autocrop layer to play nice with programs like mypaint?
+	l->toImage().save(&image, "PNG");
+	// Save the image without compression, as trying to squeeze a few more bytes out of a PNG is pointless.
+	return zf.addFile(QString("data/layer%1.png").arg(index), &image, Zipfile::STORE);
+}
+
+bool writeThumbnail(Zipfile &zf, const dpcore::LayerStack *layers)
+{
+	QImage img = layers->toFlatImage();
+	if(img.width() > 256 || img.height() > 256)
+		img = img.scaled(QSize(256, 256), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	QBuffer thumb;
+	thumb.open(QIODevice::ReadWrite);
+	img.save(&thumb, "PNG");
+	return zf.addFile("Thumbnails/thumbnail.png", &thumb, Zipfile::STORE);
+}
+
+}
+
+namespace openraster {
+
+bool saveOpenRaster(const QString& filename, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations)
 {
 	Zipfile zf(filename, Zipfile::OVERWRITE);
 
@@ -54,89 +131,16 @@ bool Writer::save(const QString& filename) const
 
 	// The stack XML contains the image structure
 	// definition.
-	writeStackXml(zf);
+	writeStackXml(zf, layers, annotations);
 
 	// Each layer is written as an individual PNG image
-	for(int i=layers_->layers()-1;i>=0;--i)
-		writeLayer(zf, i);
+	for(int i=layers->layers()-1;i>=0;--i)
+		writeLayer(zf, layers, i);
 
 	// A ready to use thumbnail for file managers etc.
-	writeThumbnail(zf);
+	writeThumbnail(zf, layers);
 
 	return zf.close();
-}
-
-void Writer::setAnnotations(const QStringList& annotations)
-{
-	annotations_ = annotations;
-}
-
-bool Writer::writeStackXml(Zipfile &zf) const
-{
-	QDomDocument doc;
-	QDomElement root = doc.createElement("image");
-	doc.appendChild(root);
-	// Width and height are required attributes
-	root.setAttribute("w", layers_->width());
-	root.setAttribute("h", layers_->height());
-
-	QDomElement stack = doc.createElement("stack");
-	root.appendChild(stack);
-
-	// Add annotations
-	// This will be replaced with proper text element support
-	// once standardized.
-	if(annotations_.isEmpty()==false) {
-		QDomElement annotations = doc.createElementNS("http://drawpile.sourceforge.net/", "annotations");
-		annotations.setPrefix("drawpile");
-		foreach(QString a, annotations_) {
-			QDomElement an = doc.createElementNS("http://drawpile.sourceforge.net/","a");
-			an.setPrefix("drawpile");
-			an.appendChild(doc.createTextNode(a));
-			annotations.appendChild(an);
-		}
-		stack.appendChild(annotations);
-	}
-
-	// Add layers
-	for(int i=layers_->layers()-1;i>=0;--i) {
-		const dpcore::Layer *l = layers_->getLayerByIndex(i);
-		QDomElement layer = doc.createElement("layer");
-		layer.setAttribute("src", QString("data/layer") + QString::number(i) + ".png");
-		layer.setAttribute("name", l->name());
-		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
-		// TODO this is not yet standardized
-		layer.setAttribute("visibility", l->hidden() ? "hidden" : "visible");
-
-		stack.appendChild(layer);
-	}
-
-	QBuffer *buf = new QBuffer();
-	buf->setData(doc.toByteArray());
-	return zf.addFile("stack.xml", buf);
-}
-
-bool Writer::writeLayer(Zipfile &zf, int index) const
-{
-	const dpcore::Layer *l = layers_->getLayerByIndex(index);
-	QBuffer image;
-	image.open(QIODevice::ReadWrite);
-	// TODO autocrop layer to play nice with programs like mypaint?
-	l->toImage().save(&image, "PNG");
-	// Save the image without compression, as trying to squeeze a few more bytes out of a PNG is pointless.
-	return zf.addFile(QString("data/layer") + QString::number(index) + ".png", &image, Zipfile::STORE);
-}
-
-bool Writer::writeThumbnail(Zipfile &zf) const
-{
-	QImage img = layers_->toFlatImage();
-	if(img.width() > 256 || img.height() > 256)
-		img = img.scaled(QSize(256, 256), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-	// TODO upscale if smaller
-	QBuffer thumb;
-	thumb.open(QIODevice::ReadWrite);
-	img.save(&thumb, "PNG");
-	return zf.addFile(QString("Thumbnails/thumbnail.png"), &thumb, Zipfile::STORE);
 }
 
 }

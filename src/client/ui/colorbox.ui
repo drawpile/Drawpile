@@ -149,7 +149,7 @@
   <customwidget>
    <class>GradientSlider</class>
    <extends>QWidget</extends>
-   <header>gradientslider.h</header>
+   <header>widgets/gradientslider.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

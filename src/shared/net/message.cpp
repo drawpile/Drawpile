@@ -1,85 +1,72 @@
-/*
-   DrawPile - a collaborative drawing program.
-
-   Copyright (C) 2008 Calle Laakkonen
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-
-*/
-
-#include <QIODevice>
-#include <QRegExp>
+#include <QObject>
+#include <QtEndian>
 
 #include "message.h"
 
+#include "annotation.h"
+#include "image.h"
+#include "layer.h"
+#include "login.h"
+#include "meta.h"
+#include "pen.h"
+#include "snapshot.h"
+
 namespace protocol {
 
-Message *Message::deserialize(QIODevice& data, int len) {
-	return new Message(QString::fromUtf8(data.read(len)));
+int Message::sniffLength(const char *data)
+{
+	// extract payload length
+	quint16 len = qFromBigEndian<quint16>((uchar*)data);
+
+	// return total message length
+	return len + 3;
 }
 
-unsigned int Message::payloadLength() const {
-	return _message.toUtf8().length();
+int Message::serialize(char *data) const
+{
+	qToBigEndian(quint16(payloadLength()), (uchar*)data); data += 2;
+	*data = _type; ++data;
+	int written = serializePayload((uchar*)data);
+	Q_ASSERT(written == payloadLength());
+	return 3+written;
 }
 
-void Message::serializeBody(QIODevice& data) const {
-	data.write(_message.toUtf8());
-}
+Message *Message::deserialize(const uchar *data)
+{
+	quint16 len = qFromBigEndian<quint16>(data);
 
-QStringList Message::tokens() const {
-	QRegExp re("(\"(?:[^\"]|\\\\\")+\"|\\S+)(?:\\s+|$)");
-	QStringList tkn;
-	int pos=0;
-	while(pos<_message.length()) {
-		pos = re.indexIn(_message, pos);
-		if(pos==-1)
-			break;
-		QString text = re.capturedTexts()[1];
-		// Unescape backslash and quotes
-		text.replace("\\\\", "\\");
-		text.replace("\\\"", "\"");
-		if(text[0]=='"')
-			tkn.append(text.mid(1, text.length()-2));
-		else
-			tkn.append(text);
-		pos += re.matchedLength();
+	MessageType type = MessageType(data[2]);
+	data += 3;
+
+	switch(type) {
+	case MSG_LOGIN: return Login::deserialize(data, len);
+	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(data, len);
+	case MSG_LAYER_CREATE: return LayerCreate::deserialize(data, len);
+	case MSG_LAYER_ATTR: return LayerAttributes::deserialize(data, len);
+	case MSG_LAYER_ORDER: return LayerOrder::deserialize(data, len);
+	case MSG_LAYER_DELETE: return LayerDelete::deserialize(data, len);
+	case MSG_PUTIMAGE: return PutImage::deserialize(data, len);
+	case MSG_TOOLCHANGE: return ToolChange::deserialize(data, len);
+	case MSG_PEN_MOVE: return PenMove::deserialize(data, len);
+	case MSG_PEN_UP: return PenUp::deserialize(data, len);
+	case MSG_ANNOTATION_CREATE: return AnnotationCreate::deserialize(data, len);
+	case MSG_ANNOTATION_RESHAPE: return AnnotationReshape::deserialize(data, len);
+	case MSG_ANNOTATION_EDIT: return AnnotationEdit::deserialize(data, len);
+	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(data, len);
+	case MSG_UNDO: return 0;
+	case MSG_REDO: return 0;
+	case MSG_USER_JOIN: return UserJoin::deserialize(data, len);
+	case MSG_USER_ATTR: return UserAttr::deserialize(data, len);
+	case MSG_USER_LEAVE: return UserLeave::deserialize(data, len);
+	case MSG_CHAT: return Chat::deserialize(data, len);
+	case MSG_LAYER_ACL: return LayerACL::deserialize(data, len);
+	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
+	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
+	case MSG_SESSION_CONFIG: return SessionConf::deserialize(data, len);
+	case MSG_STREAMPOS: return StreamPos::deserialize(data, len);
 	}
-	return tkn;
-}
-
-QString Message::quote(const QStringList& tokens) {
-	const QRegExp space("\\s");
-	QString msg;
-	QListIterator<QString> i(tokens);
-	while(i.hasNext()) {
-		QString tok = i.next();
-		bool needquotes = tok.indexOf(space)!=-1 || tok.length()==0;
-		tok.replace('\\', "\\");
-		tok.replace('"', "\\\"");
-		if(needquotes) {
-			msg.append('\"');
-			msg.append(tok);
-			msg.append('\"');
-		} else {
-			msg.append(tok);
-		}
-		if(i.hasNext())
-			msg.append(' ');
-	}
-	return msg;
+	// Unknown message type!
+	return 0;
 }
 
 }
-

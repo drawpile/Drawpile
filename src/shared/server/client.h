@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,157 +17,203 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-
-#ifndef DP_SRV_CLIENT_H
-#define DP_SRV_CLIENT_H
+#ifndef DP_SERVER_CLIENT_H
+#define DP_SERVER_CLIENT_H
 
 #include <QObject>
-#include <QByteArray>
 #include <QHostAddress>
+
+#include "../net/message.h"
 
 class QTcpSocket;
 
 namespace protocol {
 	class MessageQueue;
-	class LoginId;
-	class Message;
-	class Packet;
-	class BinaryChunk;
+	class Login;
+	class SnapshotMode;
 }
 
 namespace server {
 
 class Server;
 
-/**
- * A client of the server.
- */
-class Client : public QObject {
-	Q_OBJECT
-	public:
-		enum State {
-			// Expect protocol identifier
-			CONNECT,
-			// Expect password
-			AUTHENTICATION,
-			// Expect user details
-			LOGIN,
-			// Synchronizing
-			SYNC,
-			// User is an active part of the session
-			ACTIVE
-		};
-		 //! Construct a new client. Clients start out in CONNECT state.
-		Client(int id, Server *parent, QTcpSocket *socket, bool locked);
+class Client : public QObject
+{
+    Q_OBJECT
+	enum State {
+		LOGIN,
+		WAIT_FOR_SYNC,
+		IN_SESSION
+	};
 
-		//! Get the client's address
-		const QHostAddress& address() const { return _address; }
+public:
+	Client(Server *server, QTcpSocket *socket);
+	~Client();
 
-		 //! Kick the user out.
-		void kick(const QString& message);
+	//! Get the user's host address
+	QHostAddress peerAddress() const;
 
-		//! Get the state of the user.
-		State state() const { return _state; }
+	/**
+	 * @brief Get the context ID of the client
+	 *
+	 * This is initially zero until the login process is complete.
+	 * @return client ID
+	 */
+	int id() const { return _id; }
 
-		//! Get the ID of the user
-		int id() const { return _id; }
+	/**
+	 * @brief Get the user name of this client
+	 * @return user name
+	 */
+	const QString &username() const { return _username; }
 
-		//! Get the name of the user. The name is only valid after LOGIN state.
-		const QString& name() const { return _name; }
+	/**
+	 * @brief Does this user have session operator privileges?
+	 * @return
+	 */
+	bool isOperator() const { return _isOperator; }
 
-		//! Set the name of the user
-		void setName(const QString& name) { _name = name; }
+	/**
+	 * @brief Is this user locked individually?
+	 * @return
+	 */
+	bool isUserLocked() const { return _userLock; }
 
-		//! Is the user locked? Drawing commands sent by a locked user are dropped.
-		bool isLocked() const { return _lock | _syncready; }
+	/**
+	 * @brief Request the client to generate a snapshot
+	 *
+	 * This causes the creation of a new snapshot point on the main stream.
+	 */
+	void requestSnapshot(bool forcenew);
 
-		//! Lock or unlock this client
-		void lock(bool status);
+	/**
+	 * @brief Is this client's input queue on hold?
+	 *
+	 * Hold-lock is a type of lock where the input queue is merely put
+	 * on hold (some non-drawing commands are still allowed though). Once
+	 * the hold-lock is released, the queued commands will be processed.
+	 * @return
+	 */
+	bool isHoldLocked() const;
 
-		//! Has the user sent a drawing command
-		bool hasSentStroke() const { return _sentStroke; }
+	/**
+	 * @brief Is this client's input queue being ignored?
+	 *
+	 * Drop lock is a type of lock where all drawing commands are being
+	 * dropped.
+	 * @return
+	 */
+	bool isDropLocked() const;
 
-		//! Is the user ready for synchronization?
-		bool isSyncReady() const { return _syncready; }
+	/**
+	 * @brief Grant operator privileges to this user
+	 */
+	void grantOp();
 
-		//! Is the user a ghost?
-		bool isGhost() const;
+	/**
+	 * @brief Revoke this user's operator privileges
+	 */
+	void deOp();
 
-		//! Turn this user into a ghost
-		void makeGhost();
+	/**
+	 * @brief Set the user specific lock on this user
+	 */
+	void lockUser();
 
-		//! Send arbitrary data to this user.
-		void sendRaw(const QByteArray& data);
+	/**
+	 * @brief Remove the user specific lock from this user
+	 */
+	void unlockUser();
 
-		//! Lock the user for synchronization.
-		void syncLock();
+	/**
+	 * @brief Kick this user off the server
+	 * @param kickedBy user ID of the kicker
+	 */
+	void kick(int kickedBy);
 
-		//! Remove the synchronization lock.
-		void syncUnlock();
+	/**
+	 * @brief Barrier lock this user
+	 *
+	 * If this user is currently drawing, the lock won't take place immediately
+	 *
+	 */
+	void barrierLock();
 
-		//! Request the user to start sending a copy of their board
-		void requestRaster();
+	/**
+	 * @brief Lift barrier lock
+	 */
+	void barrierUnlock();
 
-		//! Get the last tool select message received from this user
-		const QByteArray& lastTool() const { return _lastTool; }
+signals:
+	void disconnected(Client *client);
+	void loggedin(Client *client);
+	void barrierLocked();
 
-		//! Get the last layer select received from this user
-		int lastLayer() const { return _lastLayer; }
+public slots:
+	/**
+	 * @brief Enqueue all available commands for sending
+	 */
+	void sendAvailableCommands();
 
-		//! Get an info message about this user.
-		QString toMessage() const;
+	/**
+	 * @brief A new snapshot was just created
+	 */
+	void snapshotNowAvailable();
 
-	signals:
-		void disconnected(int id);
+private slots:
+	void gotBadData(int len, int type);
+	void receiveMessages();
+	void receiveSnapshot();
+	void socketError();
+	void socketDisconnect();
 
-		// User becomes ready or unready for synchronization
-		void syncReady(int id, bool state);
+private:
+	void handleSessionMessage(protocol::MessagePtr msg);
+	void handleLoginMessage(const protocol::Login &msg);
+	void handleLoginPassword(const QString &pass);
+	void handleHostSession(const QString &msg);
+	void handleJoinSession(const QString &msg);
+	void handleSnapshotStart(const protocol::SnapshotMode &msg);
 
-	private slots:
-		// New data is available
-		void newData();
-		// Kick the user out for a protocol violation
-		void bail(const char* message="unspecified error");
-		// Socket was closed
-		void closeSocket();
-		//! Send the next chunk of raster buffer
-		void sendBufferChunk();
+	bool handleOperatorCommand(const QString &cmd);
 
-	private:
-		void expectRaster(const QStringList& tokens);
-		void handleChat(const QStringList& tokens);
-		void handlePassword(const QStringList& tokens);
-		void handleLock(const QString& token, bool lock);
+	bool validateUsername(const QString &username);
+	void updateState(protocol::MessagePtr msg);
 
-		void handleLogin(const protocol::LoginId *pkt);
-		void handleMessage(const protocol::Message *msg);
-		void handleBinary(const protocol::BinaryChunk *bin);
-		void handleDrawing(const protocol::Packet *bin);
-		void handleAnnotation(const QStringList& tokens);
+	void enqueueHeldCommands();
+	void sendUpdatedAttrs();
 
-		void loginLocalUser(const QStringList& tokens);
-		void sendBuffer();
+	bool isLayerLocked(int layerid);
 
-		int _id;
-		QString _name;
+	Server *_server;
+	QTcpSocket *_socket;
+	protocol::MessageQueue *_msgqueue;
+	QList<protocol::MessagePtr> _holdqueue;
 
-		Server *_server;
-		protocol::MessageQueue *_socket;
+	State _state;
+	int _substate;
+	bool _awaiting_snapshot;
+	bool _uploading_snapshot;
 
-		State _state;
-		bool _sentStroke;
-		bool _lock;
-		bool _syncready;
-		bool _giveraster;
-		int _rasteroffset;
-		QByteArray _lastTool;
-		int _lastLayer;
+	int _streampointer;
+	int _substreampointer;
 
-		QString _salt;
-		QHostAddress _address;
+	int _id;
+	QString _username;
+
+	//! Does this user have operator privileges?
+	bool _isOperator;
+
+	//! Is this user locked? (by an operator)
+	bool _userLock;
+
+	//! User's barrier (snapshot sync) lock status
+	enum {BARRIER_NOTLOCKED, BARRIER_WAIT, BARRIER_LOCKED } _barrierlock;
+
+	//! The user's current layer (needed for layer locking)
+	int _currentLayer;
 };
 
 }
 
 #endif
-

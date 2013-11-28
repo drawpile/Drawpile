@@ -71,7 +71,7 @@
   <customwidget>
    <class>NavigatorView</class>
    <extends>QGraphicsView</extends>
-   <header>navigator.h</header>
+   <header>docks/navigator.h</header>
   </customwidget>
  </customwidgets>
  <resources>

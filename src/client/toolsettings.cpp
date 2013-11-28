@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006-2009 Calle Laakkonen
+	Copyright (C) 2006-2013 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -17,14 +17,17 @@
 	along with this program; if not, write to the Free Software Foundation,
 	Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
+#include <QDebug>
 #include <QSettings>
+#include <QTimer>
 
 #include "main.h"
 #include "toolsettings.h"
-#include "brushpreview.h"
-#include "colorbutton.h"
-#include "brushslider.h"
-using widgets::BrushPreview; // qt designer doesn't know about namespaces
+#include "docks/layerlistdock.h"
+#include "widgets/brushpreview.h"
+#include "widgets/colorbutton.h"
+#include "widgets/brushslider.h"
+using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO works in qt5?)
 using widgets::ColorButton;
 using widgets::BrushSlider;
 #include "ui_pensettings.h"
@@ -33,11 +36,15 @@ using widgets::BrushSlider;
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
 
-#include "boardeditor.h"
 #include "annotationitem.h"
-#include "../shared/net/annotation.h"
-#include "core/layer.h"
-#include "core/rasterop.h"
+#include "net/client.h"
+
+#include "core/rasterop.h" // for blend modes
+
+
+namespace {
+	static dpcore::Brush DUMMY_BRUSH(0);
+}
 
 namespace tools {
 
@@ -108,7 +115,7 @@ QWidget *PenSettings::createUi(QWidget *parent)
 	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
 	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
 
-	ui_->preview->setSubPixel(false);
+	ui_->preview->setSubpixel(false);
 
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -348,7 +355,7 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		ui_->preview->setPreviewShape(BrushPreview::Line);
 	else if(type_==Rectangle)
 		ui_->preview->setPreviewShape(BrushPreview::Rectangle);
-	ui_->preview->setSubPixel(subpixel_);
+	ui_->preview->setSubpixel(subpixel_);
 
 	// Load previous settings
 	QSettings& cfg = getSettings();
@@ -372,9 +379,7 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		// If subpixel accuracy wasn't enabled, don't offer a chance to
 		// enable it.
 		ui_->hardedge->hide();
-#if (QT_VERSION >= QT_VERSION_CHECK(4, 4,0)) // Not supported by QT<4.4?
 		ui_->brushopts->addSpacing(ui_->hardedge->width());
-#endif
 	}
 
 	// Connect size change signal
@@ -429,13 +434,11 @@ void NoSettings::setBackground(const QColor&)
 
 const dpcore::Brush& NoSettings::getBrush() const
 {
-	// return a default brush
-	static dpcore::Brush dummy(0);
-	return dummy;
+	return DUMMY_BRUSH;
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), ToolSettings(name, title), brush_(0), sel_(0), noupdate_(false)
+	: QObject(), ToolSettings(name, title), noupdate_(false)
 {
 	ui_ = new Ui_TextSettings;
 }
@@ -452,69 +455,111 @@ QWidget *AnnotationSettings::createUi(QWidget *parent)
 	setUiWidget(uiwidget_);
 	uiwidget_->setEnabled(false);
 
-	connect(ui_->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
-	connect(ui_->left, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(ui_->center, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(ui_->fill, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(ui_->right, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(ui_->bold, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(ui_->italic, SIGNAL(clicked()), this, SLOT(applyChanges()));
-	connect(ui_->font, SIGNAL(currentFontChanged(const QFont&)),
-			this, SLOT(applyChanges()));
-	connect(ui_->size, SIGNAL(valueChanged(int)), this, SLOT(applyChanges()));
-	connect(ui_->btnText, SIGNAL(colorChanged(const QColor&)),
-			this, SLOT(applyChanges()));
+	_updatetimer = new QTimer(this);
+	_updatetimer->setInterval(500);
+	_updatetimer->setSingleShot(true);
+
+	// Editor events
+	connect(ui_->content, SIGNAL(textChanged()), _updatetimer, SLOT(start()));
+	connect(ui_->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
+
 	connect(ui_->btnBackground, SIGNAL(colorChanged(const QColor&)),
-			this, SLOT(applyChanges()));
+			_updatetimer, SLOT(start()));
 	connect(ui_->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
 	connect(ui_->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
+
+	// Intra-editor connections that couldn't be made in the UI designer
+	connect(ui_->left, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(ui_->center, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(ui_->justify, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(ui_->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(ui_->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
+
+	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(applyChanges()));
+
 	return uiwidget_;
+}
+
+void AnnotationSettings::updateStyleButtons()
+{
+	QTextBlockFormat bf = ui_->content->textCursor().blockFormat();
+	switch(bf.alignment()) {
+	case Qt::AlignLeft: ui_->left->setChecked(true); break;
+	case Qt::AlignCenter: ui_->center->setChecked(true); break;
+	case Qt::AlignJustify: ui_->justify->setChecked(true); break;
+	case Qt::AlignRight: ui_->right->setChecked(true); break;
+	default: break;
+	}
+	QTextCharFormat cf = ui_->content->textCursor().charFormat();
+	ui_->btnTextColor->setColor(cf.foreground().color());
+	if(cf.fontPointSize() < 1)
+		ui_->size->setValue(12);
+	else
+		ui_->size->setValue(cf.fontPointSize());
+	ui_->font->setFont(cf.font());
+	ui_->italic->setChecked(cf.fontItalic());
+	ui_->bold->setChecked(cf.fontWeight() > QFont::Normal);
+}
+
+void AnnotationSettings::toggleBold(bool bold)
+{
+	ui_->content->setFontWeight(bold ? QFont::Bold : QFont::Normal);
+}
+
+void AnnotationSettings::changeAlignment()
+{
+	Qt::Alignment a = Qt::AlignLeft;
+	if(ui_->left->isChecked())
+		a = Qt::AlignLeft;
+	else if(ui_->center->isChecked())
+		a = Qt::AlignCenter;
+	else if(ui_->justify->isChecked())
+		a = Qt::AlignJustify;
+	else if(ui_->right->isChecked())
+		a = Qt::AlignRight;
+
+	ui_->content->setAlignment(a);
 }
 
 void AnnotationSettings::setForeground(const QColor& color)
 {
-	brush_.setColor(color);
 }
 
 void AnnotationSettings::setBackground(const QColor& color)
 {
-	brush_.setColor2(color);
 }
 
 const dpcore::Brush& AnnotationSettings::getBrush() const
 {
-	return brush_;
+	return DUMMY_BRUSH;
 }
 
-void AnnotationSettings::unselect(drawingboard::AnnotationItem *item)
+int AnnotationSettings::selected() const
 {
-	if(sel_ == item)
+	if(_selection.isNull())
+		return 0;
+	return _selection->id();
+}
+
+void AnnotationSettings::unselect(int id)
+{
+	if(selected() == id)
 		setSelection(0);
 }
 
 void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 {
 	noupdate_ = true;
-	if(sel_)
-		sel_->setHighlight(false);
-	sel_ = item;
-	uiwidget_->setEnabled(sel_!=0);
+	uiwidget_->setEnabled(item!=0);
+
+	if(_selection)
+		_selection->setHighlight(false);
+
+	_selection = item;
 	if(item) {
-		sel_->setHighlight(true);
-		ui_->content->setText(item->text());
-		ui_->btnText->setColor(item->textColor());
+		item->setHighlight(true);
+		ui_->content->setHtml(item->text());
 		ui_->btnBackground->setColor(item->backgroundColor());
-		switch(item->justify()) {
-			using protocol::Annotation;
-			case Annotation::LEFT: ui_->left->setChecked(true); break;
-			case Annotation::RIGHT: ui_->right->setChecked(true); break;
-			case Annotation::CENTER: ui_->center->setChecked(true); break;
-			case Annotation::FILL: ui_->fill->setChecked(true); break;
-		}
-		ui_->bold->setChecked(item->bold());
-		ui_->italic->setChecked(item->italic());
-		ui_->font->setCurrentFont(item->font());
-		ui_->size->setValue(item->fontSize());
 	}
 	noupdate_ = false;
 }
@@ -523,58 +568,34 @@ void AnnotationSettings::applyChanges()
 {
 	if(noupdate_)
 		return;
-	Q_ASSERT(sel_);
-	protocol::Annotation a;
-	a.id = sel_->id();
-	a.rect = QRect(sel_->pos().toPoint(), sel_->size().toSize());
-	a.text = ui_->content->toPlainText();
-	a.textcolor = ui_->btnText->color().name();
-	a.textalpha = ui_->btnText->color().alpha();
-	a.backgroundcolor = ui_->btnBackground->color().name();
-	a.bgalpha = ui_->btnBackground->color().alpha();
-	if(ui_->left->isChecked())
-		a.justify = protocol::Annotation::LEFT;
-	else if(ui_->right->isChecked())
-		a.justify = protocol::Annotation::RIGHT;
-	else if(ui_->center->isChecked())
-		a.justify = protocol::Annotation::CENTER;
-	else if(ui_->fill->isChecked())
-		a.justify = protocol::Annotation::FILL;
-	a.bold = ui_->bold->isChecked();
-	a.italic = ui_->italic->isChecked();
-	a.font = ui_->font->currentFont().family();
-	a.size = ui_->size->value();
+	Q_ASSERT(selected());
+	Q_ASSERT(_client);
 
-	editor_->annotate(a);
+	_client->sendAnnotationEdit(
+		selected(),
+		ui_->btnBackground->color(),
+		ui_->content->toHtml()
+	);
 }
 
 void AnnotationSettings::removeAnnotation()
 {
-	Q_ASSERT(sel_);
-	editor_->removeAnnotation(sel_->id());
+	Q_ASSERT(selected());
+	Q_ASSERT(_client);
+	_client->sendAnnotationDelete(selected());
+	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }
 
 void AnnotationSettings::bake()
 {
-	Q_ASSERT(sel_);
-	int x, y;
-	dpcore::Layer *layer = sel_->toLayer(&x, &y);
-	editor_->mergeLayer(x, y, layer);
-	delete layer;
-	removeAnnotation();
-	emit baked();
-}
+	Q_ASSERT(selected());
+	Q_ASSERT(_layerlist);
+	Q_ASSERT(_client);
 
-/**
- * Currently we can't bake annotations when in a network session,
- * because we have no way of knowing if every user has the same
- * fonts and the same font rendering engines.
- * When we can upload arbitrary raster data as drawing commands,
- * this can be removed.
- */
-void AnnotationSettings::enableBaking(bool enable)
-{
-	ui_->btnBake->setEnabled(enable);
+	QImage img = _selection->toImage();
+	int layer = _layerlist->currentLayer();
+	_client->sendImage(layer, _selection->pos().x(), _selection->pos().y(), img, true);
+	removeAnnotation();
 }
 
 }

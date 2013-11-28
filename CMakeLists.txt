@@ -8,6 +8,13 @@ set ( WEBSITE "http://drawpile.sourceforge.net/" )
 set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
 set ( DRAWPILE_VERSION "0.7.0" )
 
+### protocol versions
+# major version indicates breaks in server compatibility
+# minor version indicates breaks in client compatibility. (note. minor versions always start at 1)
+set ( DRAWPILE_PROTO_MAJOR_VERSION 3 )
+set ( DRAWPILE_PROTO_MINOR_VERSION 1 )
+set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
+
 ###
 include ( "config/Names.cmake" )
 
@@ -19,8 +26,6 @@ option ( DEBUG "Enable debugging and asserts" OFF )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
 
 option ( RELEASE "Enable final all-in-one compilation." OFF )
-
-option ( BUILD_SHARED_LIBS "Build shared libraries." ON)
 
 # Set build type
 if ( DEBUG )
@@ -42,6 +47,11 @@ set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
 set ( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
 
 find_package ( ZLIB REQUIRED )
+
+# Enable C++11
+list(APPEND CMAKE_CXX_FLAGS "-std=c++11")
+# GCC <4.7 may need this instead:
+#list(APPEND CMAKE_CXX_FLAGS "-std=c++0x")
 
 ### Output config.h ###
 configure_file ( config/config.h.cmake ${CMAKE_BINARY_DIR}/config.h )

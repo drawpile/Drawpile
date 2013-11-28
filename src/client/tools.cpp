@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,32 +19,34 @@
 */
 
 #include <QDebug>
-#include "controller.h"
+#include <QGraphicsLineItem>
+#include <QGraphicsRectItem>
+
 #include "tools.h"
 #include "toolsettings.h"
 #include "core/brush.h"
-#include "board.h"
-#include "boardeditor.h"
+#include "canvasscene.h"
 #include "annotationitem.h"
-#include "../shared/net/annotation.h"
+
+#include "net/client.h"
+#include "docks/toolsettingswidget.h"
+#include "statetracker.h"
 
 namespace tools {
-
-Tool::~Tool() { /* abstract */ }
 
 /**
  * Construct one of each tool for the collection
  */
 ToolCollection::ToolCollection()
-	: editor_(0)
+	: _client(0), _toolsettings(0)
 {
-	tools_[PEN] = new Pen(*this);
-	tools_[BRUSH] = new Brush(*this);
-	tools_[ERASER] = new Eraser(*this);
-	tools_[PICKER] = new ColorPicker(*this);
-	tools_[LINE] = new Line(*this);
-	tools_[RECTANGLE] = new Rectangle(*this);
-	tools_[ANNOTATION] = new Annotation(*this);
+	_tools[PEN] = new Pen(*this);
+	_tools[BRUSH] = new Brush(*this);
+	_tools[ERASER] = new Eraser(*this);
+	_tools[PICKER] = new ColorPicker(*this);
+	_tools[LINE] = new Line(*this);
+	_tools[RECTANGLE] = new Rectangle(*this);
+	_tools[ANNOTATION] = new Annotation(*this);
 }
 
 /**
@@ -52,24 +54,31 @@ ToolCollection::ToolCollection()
  */
 ToolCollection::~ToolCollection()
 {
-	foreach(Tool *t, tools_)
+	foreach(Tool *t, _tools)
 		delete t;
 }
 
-/**
- * Set the board editor for this collection
- * @param editor BoardEditor to use
- */
-void ToolCollection::setEditor(drawingboard::BoardEditor *editor)
+void ToolCollection::setClient(net::Client *client)
 {
-	Q_ASSERT(editor);
-	editor_ = editor;
+	Q_ASSERT(client);
+	_client = client;
 }
 
-void ToolCollection::setAnnotationSettings(AnnotationSettings *as)
+void ToolCollection::setScene(drawingboard::CanvasScene *scene)
 {
-	Q_ASSERT(as);
-	as_ = as;
+    Q_ASSERT(scene);
+    _scene = scene;
+}
+
+void ToolCollection::setToolSettings(widgets::ToolSettingsDock *s)
+{
+	Q_ASSERT(s);
+	_toolsettings = s;
+}
+
+void ToolCollection::selectLayer(int layer_id)
+{
+	_layer = layer_id;
 }
 
 /**
@@ -81,88 +90,123 @@ void ToolCollection::setAnnotationSettings(AnnotationSettings *as)
  */
 Tool *ToolCollection::get(Type type)
 {
-	Q_ASSERT(tools_.contains(type));
-	return tools_.value(type);
+	Q_ASSERT(_tools.contains(type));
+	return _tools.value(type);
 }
 
 void BrushBase::begin(const dpcore::Point& point)
 {
-	dpcore::Brush brush = editor()->localBrush();
+	drawingboard::ToolContext tctx = {
+		layer(),
+		settings().getBrush()
+	};
+	
+	if(!client().isLocalServer())
+		scene().startPreview(settings().getBrush(), point);
 
-	if(editor()->isCurrentBrush(brush) == false)
-		editor()->setTool(brush);
-
-	editor()->addStroke(point);
+	client().sendToolChange(tctx);
+	client().sendStroke(point);
 }
 
 void BrushBase::motion(const dpcore::Point& point)
 {
-	editor()->addStroke(point);
+	if(!client().isLocalServer())
+		scene().addPreview(point);
+
+	client().sendStroke(point);
 }
 
 void BrushBase::end()
 {
-	editor()->endStroke();
+	client().sendPenup();
 }
 
 void ColorPicker::begin(const dpcore::Point& point)
 {
-	QColor col = editor()->colorAt(point);
-	if(col.isValid())
-		editor()->setLocalForeground(col);
+	scene().pickColor(point.x(), point.y());
 }
 
 void ColorPicker::motion(const dpcore::Point& point)
 {
-	QColor col = editor()->colorAt(point);
-	if(col.isValid())
-		editor()->setLocalForeground(col);
+	scene().pickColor(point.x(), point.y());
 }
 
 void ColorPicker::end()
 {
 }
 
-void ComplexBase::begin(const dpcore::Point& point)
+void Line::begin(const dpcore::Point& point)
 {
-	editor()->startPreview(type(), point, editor()->localBrush());
-	start_ = point;
-	end_ = point;
+	QGraphicsLineItem *item = new QGraphicsLineItem();
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush()));
+	item->setLine(QLineF(point, point));
+	scene().setToolPreview(item);
+	_p1 = point;
+	_p2 = point;
 }
 
-void ComplexBase::motion(const dpcore::Point& point)
+void Line::motion(const dpcore::Point& point)
 {
-	editor()->continuePreview(point);
-	end_ = point;
+	_p2 = point;
+	QGraphicsLineItem *item = qgraphicsitem_cast<QGraphicsLineItem*>(scene().toolPreview());
+	if(item)
+		item->setLine(QLineF(_p1, _p2));
 }
 
-void ComplexBase::end()
+void Line::end()
 {
-	editor()->endPreview();
-	dpcore::Brush brush = editor()->localBrush();
-	if(editor()->isCurrentBrush(brush) == false)
-		editor()->setTool(brush);
-	commit();
+	using namespace dpcore;
+	scene().setToolPreview(0);
+
+	drawingboard::ToolContext tctx = {
+		layer(),
+		settings().getBrush()
+	};
+
+	client().sendToolChange(tctx);
+	PointVector pv;
+	pv << _p1 << _p2;
+	client().sendStroke(pv);
+	client().sendPenup();
 }
 
-void Line::commit()
+void Rectangle::begin(const dpcore::Point& point)
 {
-	editor()->startAtomic();
-	editor()->addStroke(start_);
-	editor()->addStroke(end_);
-	editor()->endStroke();
+	QGraphicsRectItem *item = new QGraphicsRectItem();
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush()));
+	item->setRect(QRectF(point, point));
+	scene().setToolPreview(item);
+	_p1 = point;
+	_p2 = point;
 }
 
-void Rectangle::commit()
+void Rectangle::motion(const dpcore::Point& point)
 {
-	using dpcore::Point;
-	editor()->startAtomic();
-	editor()->addStroke(start_);
-	editor()->addStroke(Point(start_.x(), end_.y(), start_.pressure()));
-	editor()->addStroke(end_);
-	editor()->addStroke(Point(end_.x(), start_.y(), start_.pressure()));
-	editor()->addStroke(start_ - Point(start_.x()<end_.x()?-1:1,0,1));
-	editor()->endStroke();
+	_p2 = point;
+	QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
+	if(item)
+		item->setRect(QRectF(_p1, _p2).normalized());
+}
+
+void Rectangle::end()
+{
+	using namespace dpcore;
+	scene().setToolPreview(0);
+
+	drawingboard::ToolContext tctx = {
+		layer(),
+		settings().getBrush()
+	};
+
+	client().sendToolChange(tctx);
+	PointVector pv;
+	pv << _p1;
+	pv << Point(_p1.x(), _p2.y(), _p1.pressure());
+	pv << _p2;
+	pv << Point(_p2.x(), _p1.y(), _p1.pressure());
+	pv << _p1 - Point(_p1.x()<_p2.x()?-1:1,0,1);
+	client().sendStroke(pv);
+	client().sendPenup();
 }
 
 /**
@@ -171,16 +215,23 @@ void Rectangle::commit()
  */
 void Annotation::begin(const dpcore::Point& point)
 {
-	drawingboard::AnnotationItem *item = editor()->annotationAt(point);
+	drawingboard::AnnotationItem *item = scene().annotationAt(point);
 	if(item) {
-		sel_ = item;
-		handle_ = sel_->handleAt(point - sel_->pos());
-		aeditor()->setSelection(item);
+		_selected = item;
+		_handle = _selected->handleAt(point - _selected->pos());
+		settings().getAnnotationSettings()->setSelection(item);
 	} else {
-		editor()->startPreview(ANNOTATION, point, editor()->localBrush());
-		end_ = point;
+		QGraphicsRectItem *item = new QGraphicsRectItem();
+		QPen pen;
+		pen.setWidth(1);
+		pen.setColor(Qt::red); // TODO
+		pen.setStyle(Qt::DotLine);
+		item->setPen(pen);
+		item->setRect(QRectF(point, point));
+		scene().setToolPreview(item);
+		_end = point;
 	}
-	start_ = point;
+	_start = point;
 }
 
 /**
@@ -189,57 +240,50 @@ void Annotation::begin(const dpcore::Point& point)
  */
 void Annotation::motion(const dpcore::Point& point)
 {
-	if(sel_) {
-		QPoint d = point - start_;
-		switch(handle_) {
+	if(_selected) {
+		// TODO a "ghost" mode to indicate annotation has not really moved
+		// until the server roundtrip
+		QPoint d = point - _start;
+		switch(_handle) {
 			case drawingboard::AnnotationItem::TRANSLATE:
-				sel_->moveBy(d.x(), d.y());
+				_selected->moveBy(d.x(), d.y());
 				break;
 			case drawingboard::AnnotationItem::RS_TOPLEFT:
-				sel_->growTopLeft(d.x(), d.y());
+				_selected->growTopLeft(d.x(), d.y());
 				break;
 			case drawingboard::AnnotationItem::RS_BOTTOMRIGHT:
-				sel_->growBottomRight(d.x(), d.y());
+				_selected->growBottomRight(d.x(), d.y());
 				break;
 		}
-		start_ = point;
+		_start = point;
 	} else {
-		editor()->continuePreview(point);
-		end_ = point;
+		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
+		if(item)
+			item->setRect(QRectF(_start, _end).normalized());
+		_end = point;
 	}
 }
 
 /**
- * If we have a selection, reannotate it. This is does nothing in local mode,
- * but is needed in a network session to inform the server of the new size/
- * position. (Room for optimization, don't reannotate if geometry didn't change)
- * If no existing annotation was selected, create a new one based on the
- * starting and ending coordinates. The new annotation is given some minimum
- * size to make sure something appears when the user just clicks and doesn't
- * move the mouse/stylus.
+ * If we have a selected annotation, adjust its shape.
+ * Otherwise, create a new annotation.
  */
 void Annotation::end()
 {
-	if(sel_) {
-		// This is superfluous when in local mode, but needed
-		// when in a networked session.
-		protocol::Annotation a;
-		sel_->getOptions(a);
-		editor()->annotate(a);
-		sel_ = 0;
+	if(_selected) {
+		client().sendAnnotationReshape(_selected->id(), _selected->geometry());
+		_selected = 0;
 	} else {
-		editor()->endPreview();
-		QRectF rect(QRectF(start_, end_));
-		rect = rect.normalized();
+		scene().setToolPreview(0);
+
+		QRect rect = QRect(_start, _end).normalized();
+
 		if(rect.width()<15)
 			rect.setWidth(15);
 		if(rect.height()<15)
 			rect.setHeight(15);
-		protocol::Annotation a;
-		a.rect = rect.toRect();
-		a.textcolor = editor()->localBrush().color(1.0).name();
-		a.backgroundcolor = editor()->localBrush().color(0.0).name();
-		editor()->annotate(a);
+
+		client().sendAnnotationCreate(0, rect);
 	}
 }
 

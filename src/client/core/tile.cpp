@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -83,9 +83,6 @@ Tile::Tile(const QImage& image, int xi, int yi, int xoff, int yoff)
 	}
 }
 
-Tile::~Tile() {
-}
-
 void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 {
 	const int HALF = SIZE/2;
@@ -117,6 +114,7 @@ void Tile::fillColor(const QColor& color)
 }
 
 void Tile::copyToImage(QImage& image) const {
+#if 0
 	int w = 4*(image.width()-x_*SIZE<SIZE?image.width()-x_*SIZE:SIZE);
 	int h = image.height()-y_*SIZE<SIZE?image.height()-y_*SIZE:SIZE;
 	const quint32 *ptr = data_;
@@ -126,15 +124,21 @@ void Tile::copyToImage(QImage& image) const {
 		targ += image.bytesPerLine();
 		ptr += SIZE;
 	}
+#else
+	copyToImage(image, x_*SIZE, y_*SIZE);
+#endif
 }
 
-/**
- * X and Y coordinates must be in range [0..SIZE[
- * @param x
- * @param y
- */
-quint32 Tile::pixel(int x,int y) const {
-	return *(data_ + y * SIZE + x);
+void Tile::copyToImage(QImage& image, int x, int y) const {
+	int w = 4*(image.width()-x<SIZE ? image.width()-x : SIZE);
+	int h = image.height()-y<SIZE ? image.height()-y : SIZE;
+	const quint32 *ptr = data_;
+	uchar *targ = image.bits() + y * image.bytesPerLine() + x * 4;
+	for(int y=0;y<h;++y) {
+		memcpy(targ, ptr, w);
+		targ += image.bytesPerLine();
+		ptr += SIZE;
+	}
 }
 
 /**
@@ -169,14 +173,13 @@ void Tile::merge(const Tile *tile, uchar opacity)
  */
 bool Tile::isBlank() const
 {
-	const uchar *data = reinterpret_cast<const uchar*>(data_);
-	const uchar *ptr = data + BYTES - 1;
-	while(ptr>data) {
-		if(*ptr != 0)
+	const quint32 *pixel = data_;
+	const quint32 *end = data_ + SIZE*SIZE;
+	while(pixel<end) {
+		if((*pixel & 0xff000000))
 			return false;
-		ptr -= 4;
+		++pixel;
 	}
-	Q_ASSERT((data-1)==ptr);
 	return true;
 }
 

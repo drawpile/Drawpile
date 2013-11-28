@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,507 +19,703 @@
 */
 
 #include <QTcpSocket>
-#include <QHostAddress>
+#include <QStringList>
+
+#include "config.h"
 
 #include "server.h"
 #include "client.h"
-#include "../net/messagequeue.h"
-#include "../net/login.h"
-#include "../net/message.h"
-#include "../net/toolselect.h"
-#include "../net/binary.h"
-#include "../net/utils.h"
+#include "exceptions.h"
 
-using protocol::Message;
+#include "../net/messagequeue.h"
+#include "../net/annotation.h"
+#include "../net/image.h"
+#include "../net/layer.h"
+#include "../net/login.h"
+#include "../net/meta.h"
+#include "../net/pen.h"
+#include "../net/snapshot.h"
 
 namespace server {
 
-/**
- * Make up a random string of letters and numbers
- */
-QString randomSalt() {
-	QString salt;
-	for(int i=0;i<4;++i)
-		salt += QChar(48 + qrand()%42);
-	return salt;
-}
+using protocol::MessagePtr;
 
-/**
- * Construct a client
- * @param id client id
- * @param server parent server
- * @param socket client socket
- * @param locked does the client start out as locked?
- */
-Client::Client(int id, Server *server, QTcpSocket *socket, bool locked)
-	: QObject(server), _id(id), _server(server), _socket(new protocol::MessageQueue(socket, this)), _state(CONNECT), _lock(locked), _syncready(false), _giveraster(false), _lastLayer(-1), _address(socket->peerAddress())
+Client::Client(Server *server, QTcpSocket *socket)
+	: QObject(server),
+	  _server(server),
+	  _socket(socket),
+	  _state(LOGIN), _substate(0),
+	  _awaiting_snapshot(false),
+	  _uploading_snapshot(false),
+	  _substreampointer(-1),
+	  _id(0),
+	  _isOperator(false),
+	  _userLock(false),
+	  _barrierlock(BARRIER_NOTLOCKED)
 {
-	_server->printDebug("New client connected from " + socket->peerAddress().toString() + " and was given ID " + QString::number(id));
-	connect(_socket, SIGNAL(messageAvailable()), this, SLOT(newData()));
-	connect(_socket, SIGNAL(badData()), this, SLOT(bail()));
-	connect(socket, SIGNAL(disconnected()), this, SLOT(closeSocket()));
+	_msgqueue = new protocol::MessageQueue(socket, this);
+
+	connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
+	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError()));
+	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(receiveMessages()));
+	connect(_msgqueue, SIGNAL(snapshotAvailable()), this, SLOT(receiveSnapshot()));
+	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(gotBadData(int,int)));
+
+	// Client just connected, start by saying hello
+	QString hello = QString("DRAWPILE %1.%2").arg(DRAWPILE_PROTO_MAJOR_VERSION).arg(_server->session().minorVersion);
+
+	if(!server->session().password.isEmpty()) {
+		// expect password
+		hello = hello + " PASS";
+		_substate = 0;
+	} else {
+		// expect HOST/JOIN
+		_substate = 1;
+	}
+
+	_msgqueue->send(MessagePtr(new protocol::Login(hello)));
 }
 
-/**
- * Handle received data.
- */
-void Client::newData() {
-	protocol::Packet *pkt;
-	while((pkt=_socket->getPending())) {
-		switch(pkt->type()) {
-			case protocol::STROKE:
-			case protocol::STROKE_END:
-			case protocol::TOOL_SELECT:
-			case protocol::LAYER_SELECT:
-				handleDrawing(pkt);
-				break;
-			case protocol::LOGIN_ID:
-				handleLogin(static_cast<protocol::LoginId*>(pkt));
-				break;
-			case protocol::MESSAGE:
-				handleMessage(static_cast<Message*>(pkt));
-				break;
-			case protocol::BINARY_CHUNK:
-				handleBinary(static_cast<protocol::BinaryChunk*>(pkt));
-				break;
+Client::~Client()
+{
+	delete _socket;
+}
+
+QHostAddress Client::peerAddress() const
+{
+	return _socket->peerAddress();
+}
+
+void Client::sendAvailableCommands()
+{
+	if(_state != IN_SESSION)
+		return;
+
+	if(_substreampointer>=0) {
+		// Are we downloading a substream?
+		const protocol::MessagePtr sptr = _server->mainstream().at(_streampointer);
+		Q_ASSERT(sptr->type() == protocol::MSG_SNAPSHOT);
+		const protocol::SnapshotPoint &sp = sptr.cast<const protocol::SnapshotPoint>();
+
+		if(_substreampointer == 0) {
+			// User is in the beginning of a stream, send stream position message
+			uint streamlen = 0;
+			for(int i=0;i<sp.substream().length();++i)
+				streamlen += sp.substream().at(i)->length();
+			for(int i=_streampointer+1;i<_server->mainstream().end();++i)
+				streamlen += _server->mainstream().at(i)->length();
+
+			_msgqueue->send(MessagePtr(new protocol::StreamPos(streamlen)));
 		}
-		delete pkt;
+		// Enqueue substream
+		while(_substreampointer < sp.substream().length())
+			_msgqueue->send(sp.substream().at(_substreampointer++));
+
+		if(sp.isComplete()) {
+			_substreampointer = -1;
+			++_streampointer;
+			sendAvailableCommands();
+		}
+	} else {
+		// No substream in progress, enqueue normal commands
+		// Snapshot points (substreams) are skipped.
+		while(_streampointer < _server->mainstream().end()) {
+			MessagePtr msg = _server->mainstream().at(_streampointer++);
+			if(msg->type() != protocol::MSG_SNAPSHOT)
+				_msgqueue->send(msg);
+		}
+	}
+
+}
+
+void Client::receiveMessages()
+{
+	while(_msgqueue->isPending()) {
+		MessagePtr msg = _msgqueue->getPending();
+
+		switch(_state) {
+		case LOGIN:
+			handleLoginMessage(msg.cast<protocol::Login>());
+			break;
+		case WAIT_FOR_SYNC:
+		case IN_SESSION:
+			handleSessionMessage(msg);
+			break;
+		}
 	}
 }
 
-/**
- * A message (KICK) is sent to the user to inform them of the reason
- * and the connection is cut.
- * @param message reason why the user was kicked
- */
-void Client::kick(const QString& message) {
-	_server->printDebug("Kicking user " + _name + ". Reason: " + message);
-	QStringList msg;
-	msg << "KICK" << message;
-	_socket->send(Message(Message::quote(msg)));
-	_socket->closeWhenReady();
+void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
+{
+	if(!_awaiting_snapshot) {
+		_server->printDebug(QString("Got unexpected snapshot message from user %1").arg(_id));
+		return;
+	}
+	if(msg.mode() != protocol::SnapshotMode::ACK) {
+		_server->printError(QString("Got unexpected snapshot message from user %1. Expected ACK, got mode %2").arg(_id).arg(msg.mode()));
+		// TODO abort sync
+		return;
+	}
+
+	_awaiting_snapshot = false;
+	_server->snapshotSyncStarted();
+	_uploading_snapshot = true;
 }
 
-void Client::bail(const char* message) {
-	_server->printError("Disconnecting client " + QString::number(_id) + " due to protocol violation: " + message);
+void Client::receiveSnapshot()
+{
+	if(!_uploading_snapshot) {
+		_server->printError(QString("Received snapshot data from client %1 when not expecting it!").arg(_id));
+		_socket->disconnect();
+		return;
+	}
+
+	while(_msgqueue->isPendingSnapshot()) {
+		MessagePtr msg = _msgqueue->getPendingSnapshot();
+
+		// Filter away blatantly unallowed messages
+		switch(msg->type()) {
+		using namespace protocol;
+		case MSG_LOGIN:
+		case MSG_SESSION_CONFIG:
+		case MSG_STREAMPOS:
+			continue;
+		default: break;
+		}
+
+		// Add message
+		if(_server->addToSnapshotStream(msg)) {
+			// TODO add layer ACLs
+			_server->printDebug(QString("Finished getting snapshot from client %1").arg(_id));
+			_uploading_snapshot = false;
+			_server->cleanupCommandStream();
+
+			// Graduate to session
+			if(_state == WAIT_FOR_SYNC) {
+				_server->session().syncInitialState(_server->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
+				_state = IN_SESSION;
+				enqueueHeldCommands();
+				sendAvailableCommands();
+			}
+
+			if(_msgqueue->isPendingSnapshot()) {
+				_server->printError(QString("Client %1 sent too much snapshot data!").arg(_id));
+				_socket->disconnect();
+			}
+			break;
+		}
+	}
+}
+
+void Client::gotBadData(int len, int type)
+{
+	_server->printError(QString("Received unknown message type #%1 of length %2 from %3").arg(type).arg(len).arg(peerAddress().toString()));
 	_socket->close();
 }
 
+void Client::socketError()
+{
+	_server->printError(QString("Socket error %1 (from %2)").arg(_socket->errorString()).arg(peerAddress().toString()));
+	_socket->close();
+}
+
+void Client::socketDisconnect()
+{
+	if(_id>0) {
+		_server->session().userids.release(_id);
+		_server->addToCommandStream(MessagePtr(new protocol::UserLeave(_id)));
+	}
+	emit disconnected(this);
+}
+
+void Client::requestSnapshot(bool forcenew)
+{
+	Q_ASSERT(_state != LOGIN);
+	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
+	_awaiting_snapshot = true;
+
+	_server->addSnapshotPoint();
+
+	// Add user introductions to snapshot point
+	foreach(const Client *c, _server->clients()) {
+		if(c->id()>0) {
+			_server->addToSnapshotStream(protocol::MessagePtr(new protocol::UserJoin(c->id(), c->username())));
+			_server->addToSnapshotStream(protocol::MessagePtr(new protocol::UserAttr(c->id(), c->isUserLocked(), c->isOperator())));
+		}
+	}
+
+	_server->printDebug(QString("Created a new snapshot point and requested data from client %1").arg(_id));
+}
+
 /**
- * A ghost is a user that has disconnected, but is kept around because
- * strokes drawn by them are still out there.
- * The user is marked as a ghost by prefixing the username with '!'
- */
-bool Client::isGhost() const {
-	return _name.length()>1 && _name.at(0)=='!';
-}
-
-void Client::makeGhost() {
-	_name.prepend('!');
-}
-
-void Client::closeSocket() {
-	emit disconnected(_id);
-}
-
-void Client::sendRaw(const QByteArray& data) {
-	_socket->sendRaw(data);
-}
-
-/**
- * The users will lock themselves for real as soon as they have finished
- * any ongoing strokes.
+ * @brief Handle messages in normal session mode
  *
- * The client may allow the user to continue drawing while sync lock is in
- * place, just buffering the commands for sending when the lock is lifted.
- * Typically, a sync lock wont be on for very long, as it is removed almost
- * immediately after everyone has been synchronized.
+ * This one is pretty simple. The message is validated to make sure
+ * the client is authorized to send it, etc. and it is added to the
+ * main message stream, from which it is distributed to all connected clients.
+ * @param msg the message received from the client
  */
-void Client::syncLock() {
-	_socket->send(Message("SLOCK"));
+void Client::handleSessionMessage(MessagePtr msg)
+{
+	// Filter away blatantly unallowed messages
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_LOGIN:
+	case MSG_USER_JOIN:
+	case MSG_USER_ATTR:
+	case MSG_USER_LEAVE:
+	case MSG_SESSION_CONFIG:
+	case MSG_STREAMPOS:
+		_server->printDebug(QString("Warning: user #%1 sent server-to-user only command %2").arg(_id).arg(msg->type()));
+		return;
+	default: break;
+	}
+
+	if(msg->isOpCommand() && !_isOperator) {
+		_server->printDebug(QString("Warning: normal user #%1 tried to use operator command %2").arg(_id).arg(msg->type()));
+		return;
+	}
+
+	// Locking (note. applies only to command stream)
+	if(msg->isCommand()) {
+		if(isDropLocked()) {
+			// ignore command
+			return;
+		} else if(isHoldLocked()) {
+			_holdqueue.append(msg);
+			return;
+		}
+
+		// Layer specific locking. Drop commands that affect layer contents
+		switch(msg->type()) {
+		using namespace protocol;
+		case MSG_PEN_MOVE:
+			if(isLayerLocked(_server->session().drawingctx[_id].currentLayer))
+				return;
+			break;
+		case MSG_LAYER_ATTR:
+			if(isLayerLocked(msg.cast<LayerAttributes>().id()))
+				return;
+			break;
+		case MSG_LAYER_DELETE:
+			if(isLayerLocked(msg.cast<LayerDelete>().id()))
+				return;
+			break;
+		case MSG_PUTIMAGE:
+			if(isLayerLocked(msg.cast<PutImage>().layer()))
+				return;
+			break;
+		default: /* other types are always allowed */ break;
+		}
+	}
+
+	// Make sure the origin user ID is set
+	msg->setOrigin(_id);
+
+	// Track state and special commands
+	switch(msg->type()) {
+	using namespace protocol;
+	case MSG_TOOLCHANGE:
+		_server->session().drawingContextToolChange(msg.cast<ToolChange>());
+		break;
+	case MSG_PEN_MOVE:
+		_server->session().drawingContextPenDown(msg.cast<PenMove>());
+		break;
+	case MSG_PEN_UP:
+		_server->session().drawingContextPenUp(msg.cast<PenUp>());
+		if(_barrierlock == BARRIER_WAIT) {
+			_barrierlock = BARRIER_LOCKED;
+			emit barrierLocked();
+		}
+		break;
+	case MSG_LAYER_CREATE:
+		_server->session().createLayer(msg.cast<LayerCreate>(), true);
+		break;
+	case MSG_LAYER_ORDER:
+		_server->session().reorderLayers(msg.cast<LayerOrder>());
+		break;
+	case MSG_LAYER_DELETE:
+		// drop message if layer didn't exist
+		if(!_server->session().deleteLayer(msg.cast<LayerDelete>().id()))
+			return;
+		break;
+	case MSG_LAYER_ACL:
+		// drop message if layer didn't exist
+		if(!_server->session().updateLayerAcl(msg.cast<LayerACL>()))
+			return;
+		break;
+	case MSG_ANNOTATION_CREATE:
+		_server->session().createAnnotation(msg.cast<AnnotationCreate>(), true);
+		break;
+	case MSG_ANNOTATION_DELETE:
+		// drop message if annotation didn't exist
+		if(!_server->session().deleteAnnotation(msg.cast<AnnotationDelete>().id()))
+			return;
+		break;
+	case MSG_CHAT:
+		// Chat is used also for operator commands
+		if(_isOperator && handleOperatorCommand(msg.cast<Chat>().message()))
+			return;
+		break;
+
+	case MSG_SNAPSHOT:
+		handleSnapshotStart(msg.cast<SnapshotMode>());
+		return;
+
+	default: break;
+	}
+
+	// Add to main command stream to be distributed to everyone
+	_server->addToCommandStream(msg);
 }
 
-/**
- * Lift the sync lock
- */
-void Client::syncUnlock() {
-	if(_syncready) {
-		_socket->send(Message("SUNLOCK"));
-		_syncready = false;
+bool Client::isHoldLocked() const
+{
+	return _state == WAIT_FOR_SYNC || _barrierlock == BARRIER_LOCKED;
+}
+
+bool Client::isDropLocked() const
+{
+	return _userLock || _server->session().locked;
+}
+
+bool Client::isLayerLocked(int layerid)
+{
+	const LayerState *layer = _server->session().getLayerById(layerid);
+	return layer==0 || layer->locked || !(layer->exclusive.isEmpty() || layer->exclusive.contains(_id));
+}
+
+void Client::grantOp()
+{
+	_server->printDebug(QString("Granted operator privileges to user #%1 (%2)").arg(_id).arg(_username));
+	_isOperator = true;
+	sendUpdatedAttrs();
+}
+
+void Client::deOp()
+{
+	_server->printDebug(QString("Revoked operator privileges from user #%1 (%2)").arg(_id).arg(_username));
+	_isOperator = false;
+	sendUpdatedAttrs();
+}
+
+void Client::lockUser()
+{
+	_server->printDebug(QString("Locked user #%1 (%2)").arg(_id).arg(_username));
+	_userLock = true;
+	sendUpdatedAttrs();
+}
+
+void Client::unlockUser()
+{
+	_server->printDebug(QString("Unlocked user #%1 (%2)").arg(_id).arg(_username));
+	_userLock = false;
+	sendUpdatedAttrs();
+}
+
+void Client::barrierLock()
+{
+	if(_server->session().drawingctx[_id].penup) {
+		_barrierlock = BARRIER_LOCKED;
+		emit barrierLocked();
+	} else {
+		_barrierlock = BARRIER_WAIT;
+	}
+}
+
+void Client::barrierUnlock()
+{
+	_barrierlock = BARRIER_NOTLOCKED;
+}
+
+void Client::kick(int kickedBy)
+{
+	_server->printDebug(QString("User #%1 (%2) kicked by #%3").arg(_id).arg(_username).arg(kickedBy));
+	_socket->close();
+}
+
+void Client::sendUpdatedAttrs()
+{
+	// Note. These changes are applied immediately on the server, but may take some
+	// time to reach the clients. This doesn't matter much though, since locks and operator
+	// privileges are enforced by the server only.
+	_server->addToCommandStream(MessagePtr(new protocol::UserAttr(_id, _userLock, _isOperator)));
+}
+
+void Client::enqueueHeldCommands()
+{
+	if(isHoldLocked())
+		return;
+
+	foreach(protocol::MessagePtr msg, _holdqueue)
+		handleSessionMessage(msg);
+	_holdqueue.clear();
+}
+
+void Client::snapshotNowAvailable()
+{
+	if(_state == WAIT_FOR_SYNC) {
+		_state = IN_SESSION;
+		_streampointer = _server->mainstream().snapshotPointIndex();
+		_substreampointer = 0;
+		sendAvailableCommands();
+		enqueueHeldCommands();
 	}
 }
 
 /**
- * This lock is set by the board owner and takes effect immediately.
- * If the user is currently drawing, there is a possibility that the strokes
- * sent before the LOCK command reaches the client go missing. This could
- * be averted with a lock buffer, but chances are, that if the admin
- * decided to cut someone off mid-drawing, we don't want them to continue.
+ * @brief Handle the login state
+ *
+ * The login process goes like this:
+ * Server sends "DRAWPILE <version> [PASS]"
+ * If password is required (PASS):
+ * 1. Client responds with the password
+ * Server sends BADPASS and disconnects or OK
+ *
+ * The client responds to OK (or initial hello) with "HOST ***" or "JOIN ***"
+ * Server responds with BADNAME, NOSESSION, CLOSED or OK <userid>
+ *
+ * @param loginmsg login message
  */
-void Client::lock(bool status) {
-	_lock = status;
-	_server->redistribute(true, true, Message(toMessage()).serialize());
-}
+void Client::handleLoginMessage(const protocol::Login &loginmsg)
+{
+	QString msg = loginmsg.message();
+	QByteArray errormsg = "WHAT?";
 
-/**
- * The user will set aside a copy of their drawing board and start sending
- * it. Normal drawing may continue while raster data is being transferred.
- */
-void Client::requestRaster() {
-	_socket->send(Message("GIVERASTER"));
-	_giveraster = true;
-}
-
-/**
- * Login sequence goes as follows:
- * 1. Client sends login id.
- * 2. Server accepts or disconnects.
- * 3. Server asks for authentication (if no password set, skip to step 6)
- * 4. Client sends password
- * 5. Server accepts password or disconnects
- * 6. Server asks for client local users with LUSERS
- * 7. Client responds with USER
- * 8. Server goes to sync mode and sends list of users and tool selects
- * 9. All users lock themselves
- * 10. Server picks a random user and requests raster data, then goes back to normal mode
- * 11. Server relays raster data to new user
- * 12. Once data is received, new user goes to ACTIVE state.
- */
-void Client::handleLogin(const protocol::LoginId *pkt) {
-	if(_state != CONNECT) {
-		bail("login not applicable to this state");
-	} else {
-		if(pkt->isCompatible()) {
-			if(_server->clientVersion()<0)
-				_server->setClientVersion(pkt->softwareVersion());
-			else if(pkt->softwareVersion() != _server->clientVersion()) {
-				kick("Client version mismatch");
+	try {
+		switch(_substate) {
+		case 0: /* expecting a password */
+			handleLoginPassword(msg);
+			return;
+		case 1: /* expecting HOST or JOIN */
+			if(msg.startsWith("HOST ")) {
+				handleHostSession(msg);
+				return;
+			} else if(msg.startsWith("JOIN ")) {
+				handleJoinSession(msg);
 				return;
 			}
-			if(_server->password().isEmpty()) {
-				_state = LOGIN;
-				_socket->send(Message("WHORU"));
-			} else {
-				_state = AUTHENTICATION;
-				_salt = randomSalt();
-				QStringList msg;
-				msg << "PASSWORD?" << _salt;
-				_socket->send(Message(msg));
-			}
-		} else {
-			// Not a drawpile client.
-			bail("not a DP client of proper version");
 		}
+	} catch(const ProtocolViolation &pv) {
+		errormsg = pv.what();
 	}
+
+	// Unexpected input
+	_server->printError(QString("Error (%1) during login from %2").arg(QString(errormsg)).arg(peerAddress().toString()));
+	_msgqueue->send(MessagePtr(new protocol::Login(errormsg)));
+	_msgqueue->closeWhenReady();
 }
 
-void Client::handlePassword(const QStringList& tokens) {
-	if(protocol::utils::hashPassword(_server->password(), _salt) == tokens.at(1)) {
-		_state = LOGIN;
-		_socket->send(Message("WHORU"));
-	} else {
-		kick("Incorrect password");
-	}
-}
-
-/**
- * Lock the board or a single user. Admin only.
- * @param token user ID or "BOARD"
- * @param lock whether to lock or unlock
- */
-void Client::handleLock(const QString& token, bool lock) {
-	if(_server->board().owner() != _id) {
-		kick("not owner");
-	} else if(token == "BOARD") {
-		_server->board().setLock(lock);
-		_server->redistribute(true, true, Message(_server->board().toMessage()).serialize());
-	} else
-		_server->lockClient(_id, token.toInt(), lock);
-}
-
-/**
- * Handle command messages and replies sent by the client
- */
-void Client::handleMessage(const Message *msg) {
-	QStringList tokens = msg->tokens();
-	if(tokens.isEmpty()) {
-		bail("no message");
-		return;
-	}
-
-	switch(_state) {
-		case ACTIVE:
-			if(tokens[0] == "ANNOTATE" || tokens[0]=="RMANNOTATION") {
-				handleAnnotation(tokens);
-			} else if(tokens[0] == "SAY") {
-				handleChat(tokens);
-			} else if(tokens[0] == "BOARD") {
-				if(_server->board().owner()>0 && _server->board().owner()!=_id) {
-					kick("not admin");
-				} else {
-					if(_server->board().set(_id, tokens)==false)
-						kick("Invalid board change command");
-					else
-						_server->redistribute(false, true, Message(_server->board().toMessage()).serialize());
-				}
-			} else if(tokens[0] == "PASSWORD") {
-				if(_server->board().owner()!=_id)
-					kick("not admin");
-				else
-					_server->setPassword(tokens.at(1));
-			} else if(tokens[0] == "SYNCREADY") {
-				_server->printDebug(_name + " is ready for sync.");
-				_syncready = true;
-				emit syncReady(_id, true);
-			} else if(tokens[0] == "RASTER") {
-				expectRaster(tokens);
-			} else if(tokens[0] == "LOCK") {
-				handleLock(tokens.at(1), true);
-			} else if(tokens[0] == "UNLOCK") {
-				handleLock(tokens.at(1), false);
-			} else if(tokens[0] == "KICK") {
-				_server->kickClient(_id, tokens.at(1).toInt());
-			} else if(tokens[0] == "USERLIMIT") {
-				if(_server->board().owner() != _id) {
-					kick("not owner");
-				} else {
-					_server->board().setMaxUsers(tokens.at(1).toInt());
-					_server->redistribute(true, true, Message(_server->board().toMessage()).serialize());
-				}
-			} else {
-				bail("unexpected message");
-			}
-			break;
-		case SYNC:
-			if(tokens[0] == "SYNCREADY") {
-				_server->printDebug(_name + " is ready for first sync.");
-				_syncready = true;
-				emit syncReady(_id, true);
-			} else {
-				bail("unexpected message");
-			}
-			break;
-		case LOGIN:
-				if(tokens[0] == "IAM") {
-						if(tokens.size()!=2)
-							bail("bad login message");
-						else {
-							QString name = tokens[1];
-							if(name.length() > _server->maxNameLength())
-								kick("Name too long");
-							else if(_server->hasClient(name))
-								kick("Name already taken");
-							else {
-								_name = name;
-								_state = SYNC;
-								// Tell the user about the board
-								_socket->send(Message(_server->board().toMessage()));
-								// Tell everyone about the new user
-								_server->redistribute(true, true, Message(toMessage()).serialize());
-								// Tell the user about other users
-								_server->briefClient(_id);
-								// Synchronize
-								if(_server->board().exists()) {
-									sendBuffer();
-								} else {
-									_state = ACTIVE;
-								}
-							}
-						}
-					} else {
-					  bail("expected IAM");
-					}
-				  break;
-		case AUTHENTICATION:
-				  if(tokens[0] == "PASSWORD")
-					  handlePassword(tokens);
-				  else
-					  kick("Bad message for AUTHENTICATION state");
-				  break;
-		case CONNECT: break;
-	}
-}
-
-/**
- * When we receive a promise for raster data (and we must be expecting it)
- * inform other users we will be relaying it.
- */
-void Client::expectRaster(const QStringList& tokens) {
-	if(_giveraster==false) {
-		bail("user tried to send raster, but is not allowed to");
-	} else {
-		if(tokens.size()!=2) {
-			bail("invalid RASTER message");
-		} else {
-			_server->printDebug("User " + _name + " promised " + tokens[1] + "bytes of raster data.");
-			_server->board().setExpectedBufferLength(tokens[1].toInt());
-		}
-	}
-}
-
-/**
- * Add the originator of the chat message and redistribute
- */
-void Client::handleChat(const QStringList& tokens) {
-	if(tokens.size()!=2)
-		kick("Invalid chat message");
-	else {
-		QStringList chat;
-		chat << "SAY" << QString::number(_id) << tokens[1];
-		_server->redistribute(true, true, Message(chat).serialize());
-	}
-}
-
-/**
- * A piece of binary data is received, redistribute it to other clients.
- * We currently don't care about the actual size of the data, although
- * we could add checks to make sure the user is actually sending as much
- * as they promised.
- */
-void Client::handleBinary(const protocol::BinaryChunk *bin) {
-	if(_server->board().rasterBufferLength()==0) {
-		kick("not authorized to send raster data");
-		return;
-	}
-	bool more = true;
-	int total = _server->board().rasterBuffer().size() + bin->data().size();
-
-	if(total > _server->board().rasterBufferLength()) {
-		kick("You sent too much data (" + QString::number(total - _server->board().rasterBufferLength()) + " extra bytes)");
-		return;
-	} else if(total ==_server->board().rasterBufferLength()) {
-		_giveraster = false;
-		more = false;
-	}
-
-	_server->board().addRaster(bin->data());
-	if(more)
-		_socket->send(Message("MORE"));
-}
-
-/**
- * Drawing commands are simply redistributed to all clients (including
- * the originator).
- * Commands from a locked user are dropped. This is not a fatal error condition,
- * since commands might have already been in the pipeline before the
- * lock message reached the user.
- * @return true when we're hanging on to the packet
- */
-void Client::handleDrawing(const protocol::Packet *pkt) {
-	// TODO check correct sender id
-	if(_lock || _server->board().locked()) {
-		_server->printError("Got a drawing command from locked user " + QString::number(_id));
-		return;
-	}
-	QByteArray msg = pkt->serialize();
-	_server->redistribute(true, true, msg);
-	_server->board().addDrawingCommand(msg);
-	if(pkt->type()==protocol::TOOL_SELECT)
-		_lastTool = msg;
-	else if(pkt->type()==protocol::LAYER_SELECT)
-		_lastLayer = static_cast<const protocol::LayerSelect*>(pkt)->layer();
-	_sentStroke = true;
-}
-
-/**
- * Clients can add, change or delete annotations. All annotations are
- * kept in the board state, so new users can be informed.
- */
-void Client::handleAnnotation(const QStringList& tokens)
+void Client::handleLoginPassword(const QString &pass)
 {
-	if(tokens[0]=="RMANNOTATION") {
-		if(_server->board().rmAnnotation(tokens.at(1).toInt())) {
-			_server->redistribute(false, true, Message(tokens).serialize());
-		} else {
-			_server->printDebug("User " + QString::number(_id) + " tried to delete nonexistent annotation " + tokens.at(1));
+	if(pass != _server->session().password)
+		throw ProtocolViolation("BADPASS");
+
+	// Password OK, expect HOST/JOIN
+	_msgqueue->send(MessagePtr(new protocol::Login(QByteArray("OK"))));
+	_substate = 1;
+}
+
+void Client::handleHostSession(const QString &msg)
+{
+	// Cannot host if session has already started
+	if(_server->isSessionStarted())
+		throw ProtocolViolation("CLOSED");
+
+	// Parse and validate command
+	// Expected form is "HOST <version> <userid> <username>"
+	QStringList tokens = msg.split(' ', QString::SkipEmptyParts);
+	if(tokens.length() < 4)
+		throw ProtocolViolation("WHAT?");
+
+	bool ok;
+	int minorVersion = tokens[1].toInt(&ok);
+	if(!ok)
+		throw ProtocolViolation("WHAT?");
+
+	int userid = tokens[2].toInt(&ok);
+	if(!ok || userid<1 || userid>255)
+		throw ProtocolViolation("WHAT?");
+
+	QString username = QStringList(tokens.mid(3)).join(' ');
+	if(!validateUsername(username))
+		throw ProtocolViolation("BADNAME");
+
+	_id = userid;
+	_username = username;
+	_server->session().minorVersion = minorVersion;
+
+	// Reserve ID
+	_server->session().userids.reserve(_id);
+
+	emit loggedin(this);
+
+	_server->printDebug(QString("User %1 hosts the session").arg(_id));
+
+	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
+
+	// Initial state for host is always WAIT_FOR_SYNC, because the server
+	// is not yet in sync with the user!
+	_state = WAIT_FOR_SYNC;
+
+	// Send request for initial state
+	_server->startSession();
+	requestSnapshot(false);
+	_streampointer = _server->mainstream().snapshotPointIndex();
+	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
+	grantOp();
+}
+
+void Client::handleJoinSession(const QString &msg)
+{
+	// Cannot join a session that hasn't started yet
+	if(!_server->isSessionStarted())
+		throw ProtocolViolation("NOSESSION");
+
+	// Session may be closed or full
+	if(_server->session().closed || _server->userCount() >= _server->session().maxusers)
+		throw ProtocolViolation("CLOSED");
+
+	// Parse and validate command
+	// Expected form is "JOIN <username>"
+	QString username = msg.mid(msg.indexOf(' ') + 1).trimmed();
+	if(!validateUsername(username))
+		throw ProtocolViolation("BADNAME");
+
+	_username = username;
+
+	// Assign ID
+	_id = _server->session().userids.takeNext();
+	if(_id<1) {
+		// Out of space!
+		throw ProtocolViolation("CLOSED");
+	}
+
+	emit loggedin(this);
+	_msgqueue->send(MessagePtr(new protocol::Login(QString("OK %1").arg(_id))));
+
+	_state = _server->mainstream().hasSnapshot() ? IN_SESSION : WAIT_FOR_SYNC;
+	if(_state == IN_SESSION) {
+		_streampointer = _server->mainstream().snapshotPointIndex();
+		_substreampointer = 0;
+	}
+
+	_server->printDebug(QString("User %1 joined, wait_for_sync is=%2").arg(_id).arg(_state==WAIT_FOR_SYNC));
+
+	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
+
+	// Give op to this user if it is the only one here
+	if(_server->userCount() == 1)
+		grantOp();
+	else if(_server->session().lockdefault)
+		lockUser();
+
+}
+
+bool Client::validateUsername(const QString &username)
+{
+	if(username.isEmpty())
+		return false;
+
+	// TODO check for duplicates
+	return true;
+}
+
+/**
+ * @brief Handle IRC style operator commands
+ * @param cmd
+ * @return true if command was accepted
+ */
+bool Client::handleOperatorCommand(const QString &cmd)
+{
+	// Operator command must start with a slash
+	if(cmd.length() == 0 || cmd.at(0) != '/')
+		return false;
+
+	/*
+	 * Supported commands:
+	 *
+	 * /lock <user>    - lock the given user
+	 * /unlock <user>  - unlock the given user
+	 * /kick <user>    - kick the user off the server
+	 * /lock           - lock the whole board
+	 * /unlock         - unlock the board
+	 * /close          - prevent further logins
+	 * /open           - reallow logins
+	 * /title <title>  - change session title (for those who like IRC commands)
+	 * /maxusers <n>   - set session user limit (affects new users only)
+	 * /lockdefault    - lock new users by default
+	 * /unlockdefault  - don't lock new users by default
+	 * /password [p]   - password protect the session. If p is omitted, password is removed
+	 * /force_snapshot - force snapshot request now
+	 */
+	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
+	if(tokens[0] == "/lock" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			c->lockUser();
+			return true;
 		}
-	} else {
-		protocol::Annotation a(tokens);
-		a.user = _id;
-		if(_server->board().addAnnotation(a))
-			_server->redistribute(false, true, Message(a.tokens()).serialize());
-		else
-			_server->printDebug("Received change to an annotation that doesn't exist.");
+	} else if(tokens[0] == "/unlock" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			c->unlockUser();
+			return true;
+		}
+	} else if(tokens[0] == "/kick" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			c->kick(_id); // TODO inform of the reason
+			return true;
+		}
+	} else if(tokens[0] == "/lock" && tokens.count()==1) {
+		_server->session().locked = true;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/unlock" && tokens.count()==1) {
+		_server->session().locked = false;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/close" && tokens.count()==1) {
+		_server->session().closed = true;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/open" && tokens.count()==1) {
+		_server->session().closed = false;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/title" && tokens.count()>1) {
+		QString title = QStringList(tokens.mid(1)).join(' ');
+		_server->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(title)));
+		return true;
+	} else if(tokens[0] == "/maxusers" && tokens.count()==2) {
+		bool ok;
+		int limit = tokens[1].toInt(&ok);
+		if(ok && limit>=0) {
+			_server->session().maxusers = limit;
+			return true;
+		}
+	} else if(tokens[0] == "/lockdefault" && tokens.count()==1) {
+		_server->session().lockdefault = true;
+		return true;
+	} else if(tokens[0] == "/unlockdefault" && tokens.count()==1) {
+		_server->session().lockdefault = false;
+		return true;
+	} else if(tokens[0] == "/password") {
+		if(tokens.length()==1)
+			_server->session().password = QString();
+		else // note: password may contain spaces
+			_server->session().password = cmd.mid(cmd.indexOf(' ') + 1);
+		return true;
+	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
+		_server->startSnapshotSync();
+		return true;
 	}
-}
 
-/**
- * Start sending the user buffered data.
- * This is after the user has been brought up to speed on logged in
- * clients.
- */
-void Client::sendBuffer() {
-	_rasteroffset = 0;
-	if(_server->board().validBuffer()) {
-		// First swamp the user with old drawing commands.
-		// This is done before anyone else sends newer commands
-		_socket->sendRaw(_server->board().drawingBuffer());
-
-		// Now get the ball rolling by sending the user their first chunk
-		// of raster data. Unlike the uploading user who cares about
-		// the latency of the drawing commands, the receiving user just
-		// wants to get started as soon as possible. Therefore, we sent
-		// the raster data in as big chunks as possible.
-		sendBufferChunk();
-	} else {
-		// If board buffer is not valid, a sync is needed.
-		_server->syncUsers();
-	}
-
-	// If we don't have the whole buffer yet, send more chunks as soon
-	// as we get them.
-	if(_server->board().validBuffer()==false ||
-			_server->board().rasterBuffer().size() < _server->board().rasterBufferLength())
-		connect(&_server->board(), SIGNAL(rasterAvailable()),
-				this, SLOT(sendBufferChunk()));
-}
-
-/**
- * Send the user a chunk of the raster buffer.
- */
-void Client::sendBufferChunk() {
-	if(_rasteroffset==0) {
-		// If this is the first chunk, notify the client how much data
-		// there is to come.
-		QStringList rastermsg;
-		rastermsg << "RASTER" << QString::number(_server->board().rasterBufferLength());
-		_socket->send(Message(rastermsg));
-	}
-	const QByteArray& raster = _server->board().rasterBuffer();
-	if(raster.size() == _server->board().rasterBufferLength())
-		disconnect(&_server->board(), SIGNAL(rasterAvailable()),
-				this, SLOT(sendBufferChunk()));
-
-	do {
-		int chunklen = raster.size() - _rasteroffset;
-		if(chunklen > 0xffff-3)
-			chunklen = 0xffff-3;
-		_socket->send(protocol::BinaryChunk(raster.mid(_rasteroffset, chunklen)));
-		_rasteroffset += chunklen;
-	} while(_rasteroffset < raster.size());
-	// Once the raster buffer is completely sent, the user goes to ACTIVE
-	// state.
-	if(_rasteroffset == _server->board().rasterBufferLength()) {
-		_state = ACTIVE;
-		// Now that the user has a valid drawing board, send all
-		// annotations.
-		foreach(const protocol::Annotation& a, _server->board().annotations())
-			_socket->send(protocol::Message(a.tokens()));
-	}
-}
-
-/**
- * The info messages are used to inform other clients about this
- * user. The info message contains the following information:
- * - user ID
- * - user name
- * - lock status (sync lock not included)
- */
-QString Client::toMessage() const {
-	QStringList tkns;
-	tkns << "USER" << QString::number(_id) << _name << (_lock?"1":"0");
-	return Message::quote(tkns);
+	return false;
 }
 
 }
-

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,23 +25,25 @@
 #include "core/point.h"
 
 namespace drawingboard {
-	class BoardEditor;
 	class AnnotationItem;
+    class CanvasScene;
+}
+
+namespace widgets {
+	class ToolSettingsDock;
+}
+
+namespace net {
+	class Client;
 }
 
 //! Tools
 /**
  * Tools translate commands from the local user into messages that
  * can be sent over the network or directly modify the drawingboard
- * if in offline mode. Some tools do not modify the drawing board
- * and always access the it directly.
- *
- * The BoardEditor class is used to abstract away the difference between
- * local and remote drawing boards.
+ * if in offline mode. Read-only tools access the canvas directly.
  */
 namespace tools {
-
-class AnnotationSettings;
 
 enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
 
@@ -50,49 +52,43 @@ class ToolCollection;
 //! Base class for all tools
 /**
  * Tool classes interpret mouse/pen commands into editing actions.
- * The BoardEditor is used to actually commit those actions.
  */
 class Tool
 {
-	public:
-		Tool(ToolCollection &owner, Type type, bool readonly)
-			: owner_(owner), type_(type), readonly_(readonly) {}
-		virtual ~Tool() = 0;
+public:
+	Tool(ToolCollection &owner, Type type)
+		: _owner(owner), _type(type)
+		{}
+	virtual ~Tool() = default;
 
-		//! Get the type of this tool
-		Type type() const { return type_; }
+	//! Get the type of this tool
+	Type type() const { return _type; }
 
-		//! Is this a read only tool (ie. color picker)
-		bool readonly() const { return readonly_; }
+	//! Begin drawing
+	virtual void begin(const dpcore::Point& point) = 0;
 
-		//! Begin drawing
-		virtual void begin(const dpcore::Point& point) = 0;
+	//! Draw stroke
+	virtual void motion(const dpcore::Point& point) = 0;
 
-		//! Draw stroke
-		virtual void motion(const dpcore::Point& point) = 0;
+	//! End drawing
+	virtual void end() = 0;
 
-		//! End drawing
-		virtual void end() = 0;
+protected:
+	inline widgets::ToolSettingsDock &settings();
+	inline net::Client &client();
+	inline drawingboard::CanvasScene &scene();
+	inline int layer();
 
-	protected:
-		inline drawingboard::BoardEditor *editor();
-		inline AnnotationSettings *aeditor();
-
-	private:
-		ToolCollection &owner_;
-		const Type type_;
-		const bool readonly_;
-
+private:
+	ToolCollection &_owner;
+	const Type _type;
 };
 
 //! Base class for brush type tools
-/**
- * Brush type tools change to drawing board.
- */
 class BrushBase : public Tool
 {
 	public:
-		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type, false) {}
+		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type) {}
 
 		void begin(const dpcore::Point& point);
 		void motion(const dpcore::Point& point);
@@ -123,50 +119,37 @@ class Eraser : public BrushBase {
  */
 class ColorPicker : public Tool {
 	public:
-		ColorPicker(ToolCollection &owner) : Tool(owner, PICKER, true) {}
+		ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
 
 		void begin(const dpcore::Point& point);
 		void motion(const dpcore::Point& point);
 		void end();
-};
-
-//! Base class for complex tools
-/**
- * This is a base class for tools that have special previewing
- * needs.
- */
-class ComplexBase : public Tool {
-	public:
-		ComplexBase(ToolCollection &owner, Type type) : Tool(owner, type, false) {}
-
-		void begin(const dpcore::Point& point);
-		void motion(const dpcore::Point& point);
-		void end();
-
-	protected:
-		virtual void commit() = 0;
-
-		dpcore::Point start_;
-		dpcore::Point end_;
 };
 
 //! Line tool
-class Line : public ComplexBase {
-	public:
-		Line(ToolCollection &owner) : ComplexBase(owner, LINE) {}
+class Line : public Tool {
+public:
+	Line(ToolCollection &owner) : Tool(owner, LINE) {}
 
-	protected:
-		void commit();
+	void begin(const dpcore::Point& point);
+	void motion(const dpcore::Point& point);
+	void end();
 
+private:
+	dpcore::Point _p1, _p2;
 };
 
 //! Rectangle tool
-class Rectangle : public ComplexBase {
-	public:
-		Rectangle(ToolCollection &owner) : ComplexBase(owner, RECTANGLE) {}
+class Rectangle : public Tool {
+public:
+	Rectangle(ToolCollection &owner) : Tool(owner, RECTANGLE) {}
 
-	protected:
-		void commit();
+	void begin(const dpcore::Point& point);
+	void motion(const dpcore::Point& point);
+	void end();
+
+private:
+	dpcore::Point _p1, _p2;
 };
 
 //! Annotation tool
@@ -175,17 +158,17 @@ class Rectangle : public ComplexBase {
  * separate from the pixel data.
  */
 class Annotation : public Tool {
-	public:
-		Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION, true), sel_(0) { }
+public:
+	Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), _selected(0) { }
 
-		void begin(const dpcore::Point& point);
-		void motion(const dpcore::Point& point);
-		void end();
+	void begin(const dpcore::Point& point);
+	void motion(const dpcore::Point& point);
+	void end();
 
-	private:
-		drawingboard::AnnotationItem *sel_;
-		int handle_;
-		QPoint start_, end_;
+private:
+	drawingboard::AnnotationItem *_selected;
+	int _handle;
+	QPoint _start, _end;
 };
 
 
@@ -193,34 +176,39 @@ class Annotation : public Tool {
  * A collection for tools, specific to a single controller.
  */
 class ToolCollection {
+	friend class Tool;
 	public:
 		ToolCollection();
 		~ToolCollection();
 
-		//! Get editor
-		drawingboard::BoardEditor *editor() const { return editor_; }
+		//! Set network client to use
+		void setClient(net::Client *client);
 
-		//! Get the annotation settings editor
-		AnnotationSettings *aeditor() const { return as_; }
+        //! Set the canvas scene to use
+        void setScene(drawingboard::CanvasScene *scene);
 
-		//! Set board editor to use
-		void setEditor(drawingboard::BoardEditor *editor);
+		//! Set the tool settings widget from which current settings are fetched
+		void setToolSettings(widgets::ToolSettingsDock *settings);
 
-		//! Set the annotation settings to use
-		void setAnnotationSettings(AnnotationSettings *as);
+		//! Set the currently active layer
+		void selectLayer(int layer_id);
 
 		//! Get an instance of a specific tool
 		Tool *get(Type type);
 
 	private:
-		drawingboard::BoardEditor *editor_;
-		AnnotationSettings *as_;
-		QHash<Type, Tool*> tools_;
+		net::Client *_client;
+        drawingboard::CanvasScene *_scene;
+		widgets::ToolSettingsDock *_toolsettings;
+		QHash<Type, Tool*> _tools;
+		int _layer;
 
 };
 
-drawingboard::BoardEditor *Tool::editor() { return owner_.editor(); }
-AnnotationSettings *Tool::aeditor() { return owner_.aeditor(); }
+net::Client &Tool::client() { return *_owner._client; }
+widgets::ToolSettingsDock &Tool::settings() { return *_owner._toolsettings; }
+drawingboard::CanvasScene &Tool::scene() { return *_owner._scene; }
+int Tool::layer() { return _owner._layer; }
 
 }
 

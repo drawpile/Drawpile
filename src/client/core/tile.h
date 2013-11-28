@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,12 +30,12 @@ namespace dpcore {
 
 //! A piece of an image
 /**
- * Each tile is a square of size SIZE*SIZE. Only one 32-bit RGBA is supported.
+ * Each tile is a square of size SIZE*SIZE. The pixel format is 32-bit ARGB.
  *
  */
 class Tile {
 	public:
-		//! The tile width/height
+		//! The tile width and height
 		static const int SIZE = 64;
 
 		//! The length of the tile data in bytes
@@ -45,8 +45,17 @@ class Tile {
 		 * @param i coordinate
 		 * @return i rounded up to nearest multiple of SIZE
 		 */
-		static int roundTo(int i) {
+		static int roundUp(int i) {
 			return (i + SIZE-1)/SIZE*SIZE;
+		}
+		
+		/**
+		 * @brief Round i down to SIZE boundary
+		 * @param i coordinate
+		 * @return i rounded down to nearest multiple of SIZE
+		 */
+		static int roundDown(int i) {
+			return (i/SIZE) * SIZE;
 		}
 
 		//! Construct a blank tile
@@ -61,8 +70,6 @@ class Tile {
 		//! Construct an empty tile
 		Tile(int x, int y);
 
-		~Tile();
-
 		//! Get tile X index
 		int x() const { return x_; }
 
@@ -70,7 +77,11 @@ class Tile {
 		int y() const { return y_; }
 
 		//! Get a pixel value from this tile
-		quint32 pixel(int x, int y) const;
+		quint32 pixel(int x, int y) const {
+			Q_ASSERT(x>=0 && x<SIZE);
+			Q_ASSERT(y>=0 && y<SIZE);
+			return *(data_ + y * SIZE + x);
+		}
 
 		//! Composite values multiplied by color onto this tile
 		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
@@ -80,6 +91,9 @@ class Tile {
 
 		//! Copy the contents of this tile onto the appropriate spot on an image
 		void copyToImage(QImage& image) const;
+
+		//! Copy the contents of this tile onto the given spot on an image
+		void copyToImage(QImage& image, int x, int y) const;
 
 		//! Fill this tile with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
