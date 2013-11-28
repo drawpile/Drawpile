@@ -193,6 +193,7 @@ public:
 			_ptr = msg._ptr;
 			++_ptr->_refcount;
 		}
+		return *this;
 	}
 
 	Message &operator*() const { return *_ptr; }
