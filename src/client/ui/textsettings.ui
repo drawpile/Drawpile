@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>233</width>
+    <width>265</width>
     <height>308</height>
    </rect>
   </property>
@@ -50,7 +50,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Left justify</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Left align&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>I</string>
@@ -103,7 +103,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Fill</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Justify&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>I</string>
@@ -128,7 +128,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>Right justify</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align right&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>I</string>
@@ -257,10 +257,10 @@
      <item>
       <widget class="QPushButton" name="btnBake">
        <property name="toolTip">
-        <string>Bake the text onto the image</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Merge the text onto the current layer&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Bake</string>
+        <string>Merge</string>
        </property>
       </widget>
      </item>
