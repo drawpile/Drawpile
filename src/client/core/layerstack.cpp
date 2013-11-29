@@ -82,9 +82,9 @@ bool LayerStack::deleteLayer(int id)
 {
 	for(int i=0;i<_layers.size();++i) {
 		if(_layers.at(i)->id() == id) {
-			delete _layers.takeAt(i);
-			markDirty();
 			// TODO room for optimization: mark only nontransparent tiles as dirty
+			markDirty();
+			delete _layers.takeAt(i);
 			return true;
 		}
 	}
@@ -185,9 +185,6 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
  */
 void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
-	if(_layers.isEmpty())
-		return;
-
 	// Refresh cache
 	const int tx0 = qBound(0, int(rect.left()) / Tile::SIZE, _xtiles-1);
 	const int tx1 = qBound(tx0, int(rect.right()) / Tile::SIZE, _xtiles-1);
