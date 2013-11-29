@@ -33,7 +33,7 @@
 namespace widgets {
 
 LayerListDock::LayerListDock(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0)
+	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false)
 {
 	_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -82,6 +82,10 @@ void LayerListDock::init()
 
 void LayerListDock::opacityAdjusted()
 {
+	// Avoid infinite loop
+	if(_noupdate)
+		return;
+
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
 		Q_ASSERT(_client);
@@ -253,9 +257,11 @@ void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &b
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const net::LayerListItem &layer = currentSelection().data().value<net::LayerListItem>();
+		_noupdate = true;
 		_ui->hideButton->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 		_ui->lockButton->setChecked(layer.locked);
+		_noupdate = false;
 	}
 }
 

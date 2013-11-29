@@ -73,6 +73,7 @@ private:
 	net::Client *_client;
 	int _selected;
 	Ui_LayerBox *_ui;
+	bool _noupdate;
 };
 
 }
