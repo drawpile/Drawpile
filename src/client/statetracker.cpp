@@ -63,6 +63,9 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		case MSG_LAYER_ATTR:
 			handleLayerAttributes(msg.cast<LayerAttributes>());
 			break;
+		case MSG_LAYER_RETITLE:
+			handleLayerTitle(msg.cast<LayerRetitle>());
+			break;
 		case MSG_LAYER_ORDER:
 			handleLayerOrder(msg.cast<LayerOrder>());
 			break;
@@ -155,8 +158,19 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	}
 	
 	layer->setOpacity(cmd.opacity());
+	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0);
+}
+
+void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
+{
+	dpcore::Layer *layer = _image->getLayer(cmd.id());
+	if(!layer) {
+		qWarning() << "received layer title for non-existent layer" << cmd.id();
+		return;
+	}
+
 	layer->setTitle(cmd.title());
-	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, cmd.title());
+	_layerlist->retitleLayer(cmd.id(), cmd.title());
 }
 
 void StateTracker::handleLayerOrder(const protocol::LayerOrder &cmd)

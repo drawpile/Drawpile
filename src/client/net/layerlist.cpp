@@ -149,12 +149,21 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(int id, float opacity, const QString &title)
+void LayerListModel::changeLayer(int id, float opacity)
 {
 	int row = indexOf(id);
 	Q_ASSERT(row>=0);
 	LayerListItem &item = _items[row];
 	item.opacity = opacity;
+	const QModelIndex qmi = index(row);
+	emit dataChanged(qmi, qmi);
+}
+
+void LayerListModel::retitleLayer(int id, const QString &title)
+{
+	int row = indexOf(id);
+	Q_ASSERT(row>=0);
+	LayerListItem &item = _items[row];
 	item.title = title;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);

@@ -43,6 +43,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(data, len);
 	case MSG_LAYER_ATTR: return LayerAttributes::deserialize(data, len);
+	case MSG_LAYER_RETITLE: return LayerRetitle::deserialize(data, len);
 	case MSG_LAYER_ORDER: return LayerOrder::deserialize(data, len);
 	case MSG_LAYER_DELETE: return LayerDelete::deserialize(data, len);
 	case MSG_PUTIMAGE: return PutImage::deserialize(data, len);

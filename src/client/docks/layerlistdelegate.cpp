@@ -93,7 +93,7 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, cons
 	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
 	QString newtitle = static_cast<QLineEdit*>(editor)->text();
 	if(layer.title != newtitle) {
-		_client->sendLayerAttribs(layer.id, layer.opacity, newtitle);
+		_client->sendLayerTitle(layer.id, newtitle);
 	}
 }
 

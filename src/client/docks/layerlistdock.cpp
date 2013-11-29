@@ -87,7 +87,7 @@ void LayerListDock::opacityAdjusted()
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
 		layer.opacity = _ui->opacity->value() / 255.0;
-		_client->sendLayerAttribs(layer.id, layer.opacity, layer.title);
+		_client->sendLayerAttribs(layer.id, layer.opacity);
 	}
 }
 

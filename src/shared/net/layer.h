@@ -111,9 +111,9 @@ private:
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(uint8_t id, uint8_t opacity, uint8_t blend, const QString &title)
+	LayerAttributes(uint8_t id, uint8_t opacity, uint8_t blend)
 		: Message(MSG_LAYER_ATTR), _id(id),
-		_opacity(opacity), _blend(blend), _title(title.toUtf8())
+		_opacity(opacity), _blend(blend)
 		{}
 
 	static LayerAttributes *deserialize(const uchar *data, uint len);
@@ -121,7 +121,6 @@ public:
 	uint8_t id() const { return _id; }
 	uint8_t opacity() const { return _opacity; }
 	uint8_t blend() const { return _blend; }
-	QString title() const { return QString::fromUtf8(_title); }
 
 protected:
 	int payloadLength() const;
@@ -131,6 +130,31 @@ private:
 	uint8_t _id;
 	uint8_t _opacity;
 	uint8_t _blend;
+};
+
+/**
+ * \brief Layer title change command
+ */
+class LayerRetitle : public Message {
+public:
+	LayerRetitle(uint8_t id, const QByteArray &title)
+		: Message(MSG_LAYER_RETITLE), _id(id), _title(title)
+		{}
+	LayerRetitle(uint8_t id, const QString &title)
+		: LayerRetitle(id, title.toUtf8())
+		{}
+
+	static LayerRetitle *deserialize(const uchar *data, uint len);
+
+	uint8_t id() const { return _id; }
+	QString title() const { return QString::fromUtf8(_title); }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	uint8_t _id;
 	QByteArray _title;
 };
 

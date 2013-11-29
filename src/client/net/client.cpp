@@ -164,10 +164,16 @@ void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 	_server->sendMessage(MessagePtr(new protocol::LayerCreate(id, fill.rgba(), title)));
 }
 
-void Client::sendLayerAttribs(int id, float opacity, const QString &title)
+void Client::sendLayerAttribs(int id, float opacity)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, 0, title)));
+	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, 0)));
+}
+
+void Client::sendLayerTitle(int id, const QString &title)
+{
+	Q_ASSERT(id>=0 && id<256);
+	_server->sendMessage(MessagePtr(new protocol::LayerRetitle(id, title)));
 }
 
 void Client::sendLayerVisibility(int id, bool hide)

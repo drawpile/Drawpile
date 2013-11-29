@@ -185,8 +185,7 @@ bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 			_commands.append(MessagePtr(new protocol::LayerAttributes(
 				_layerid,
 				qRound(255 * e.attribute("opacity", "1.0").toDouble()),
-				0, // TODO blend modes
-				name
+				0 // TODO blend modes
 			)));
 
 			// TODO visibility flag

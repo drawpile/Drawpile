@@ -112,8 +112,8 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Create layers
 	for(int i=0;i<_scene->layers()->layers();++i) {
 		const dpcore::Layer *layer = _scene->layers()->getLayerByIndex(i);
-		msgs.append(MessagePtr(new protocol::LayerCreate(layer->id(), 0, QString())));
-		msgs.append(MessagePtr(new protocol::LayerAttributes(layer->id(), layer->opacity(), 0, layer->title())));
+		msgs.append(MessagePtr(new protocol::LayerCreate(layer->id(), 0, layer->title())));
+		msgs.append(MessagePtr(new protocol::LayerAttributes(layer->id(), layer->opacity(), 0)));
 		msgs.append(net::putQImage(layer->id(), 0, 0, layer->toImage(), false));
 	}
 

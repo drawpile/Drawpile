@@ -70,27 +70,50 @@ int LayerCreate::serializePayload(uchar *data) const
 
 LayerAttributes *LayerAttributes::deserialize(const uchar *data, uint len)
 {
+	if(len!=3)
+		return 0;
 	return new LayerAttributes(
 		*data,
 		*(data+1),
-		*(data+2),
-		QByteArray((const char*)data+3, len-3)
+		*(data+2)
 	);
 }
 
 int LayerAttributes::payloadLength() const
 {
-	return 3 + _title.length();
+	return 3;
 }
 
 
 int LayerAttributes::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	*data = _opacity; ++data;
-	*data = _blend; ++data;
-	memcpy(data, _title.constData(), _title.length());
-	return 3 + _title.length();
+	uchar *ptr=data;
+	*(ptr++) = _id;
+	*(ptr++) = _opacity;
+	*(ptr++) = _blend;
+	return ptr-data;
+}
+LayerRetitle *LayerRetitle::deserialize(const uchar *data, uint len)
+{
+	if(len<1)
+		return 0;
+	return new LayerRetitle(
+		*data,
+		QByteArray((const char*)data+1,len-1)
+	);
+}
+
+int LayerRetitle::payloadLength() const
+{
+	return 1+_title.length();
+}
+
+
+int LayerRetitle::serializePayload(uchar *data) const
+{
+	*data = _id;
+	memcpy(data+1, _title.constData(), _title.length());
+	return 1+_title.length();
 }
 
 LayerOrder *LayerOrder::deserialize(const uchar *data, uint len)
