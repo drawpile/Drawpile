@@ -37,6 +37,15 @@ public:
 	//! Get the address of the local server
 	static QString address();
 
+    /**
+     * @brief Set the default port to listen on
+     *
+     * This should be called before startServer(). If
+     * the port is unavailable, a random port will be selected.
+     * @param port
+     */
+    void setPort(int port) { _port = port; }
+
 	/**
 	 * @brief Start the thread and wait for the server to start
 	 * @return the port the server is listening on or 0 in case of error

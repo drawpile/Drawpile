@@ -776,6 +776,11 @@ void MainWindow::finishHost(int i)
 		// Start server if hosting locally
 		if(useremote==false) {
 			net::ServerThread *server = new net::ServerThread(this);
+
+            QSettings &cfg = DrawPileApp::getSettings();
+            if(cfg.contains("settings/server/port"))
+                server->setPort(cfg.value("settings/server/port").toInt());
+
 			int port = server->startServer();
 			if(!port) {
 				QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));

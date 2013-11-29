@@ -58,6 +58,7 @@ namespace net {
 ServerThread::ServerThread(QObject *parent) : QThread(parent)
 {
 	_deleteonexit = false;
+    _port = DRAWPILE_PROTO_DEFAULT_PORT;
 }
 
 /**
@@ -114,7 +115,7 @@ void ServerThread::run() {
 	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
 
 	qDebug() << "starting server";
-	if(!server.start(DRAWPILE_PROTO_DEFAULT_PORT, true)) {
+    if(!server.start(_port, true)) {
 		qDebug() << "an error occurred";
 		_port = 0;
 		_starter.wakeOne();

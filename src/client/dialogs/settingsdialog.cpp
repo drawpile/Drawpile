@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2008 Calle Laakkonen
+   Copyright (C) 2007-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -48,9 +48,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	// Set defaults
 	QSettings& cfg = DrawPileApp::getSettings();
 	cfg.beginGroup("settings/server");
-	ui_->multiconnect->setChecked(cfg.value("multiconnect",true).toBool());
 	ui_->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
-	ui_->maxnamelength->setValue(cfg.value("maxnamelength",16).toInt());
 
 	// Generate an editable list of shortcuts
 	ui_->shortcuts->verticalHeader()->setVisible(false);
@@ -88,12 +86,10 @@ void SettingsDialog::rememberSettings() const
 	QSettings& cfg = DrawPileApp::getSettings();
 	// Remember server settings
 	cfg.beginGroup("settings/server");
-	cfg.setValue("multiconnect", ui_->multiconnect->isChecked());
 	if(ui_->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
 		cfg.remove("port");
 	else
 		cfg.setValue("port", ui_->serverport->value());
-	cfg.setValue("maxnamelength", ui_->maxnamelength->value());
 	cfg.endGroup();
 
 	// Remember shortcuts. Only shortcuts that have been changed
