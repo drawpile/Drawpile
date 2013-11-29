@@ -64,7 +64,8 @@ private slots:
 	void opacityAdjusted();
 	void hiddenToggled();
 
-	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
+	void selectionChanged(const QItemSelection &selected);
 
 private:
 	QModelIndex currentSelection();

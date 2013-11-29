@@ -43,6 +43,7 @@ LayerListDock::LayerListDock(QWidget *parent)
 	_ui->layerlist->setDragEnabled(true);
 	_ui->layerlist->viewport()->setAcceptDrops(true);
 	_ui->layerlist->setEnabled(false);
+	_ui->addButton->setEnabled(false);
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	connect(_ui->addButton, SIGNAL(clicked()), this, SLOT(addLayer()));
@@ -51,7 +52,7 @@ LayerListDock::LayerListDock(QWidget *parent)
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 
-	selectionChanged(QItemSelection(), QItemSelection());
+	selectionChanged(QItemSelection());
 }
 
 void LayerListDock::setClient(net::Client *client)
@@ -69,12 +70,14 @@ void LayerListDock::setClient(net::Client *client)
 	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
 	connect(_client->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
 
-	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection,QItemSelection)));
+	connect(client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 }
 
 void LayerListDock::init()
 {
 	_ui->layerlist->setEnabled(true);
+	_ui->addButton->setEnabled(true);
 }
 
 void LayerListDock::opacityAdjusted()
@@ -227,7 +230,7 @@ bool LayerListDock::isCurrentLayerLocked() const
 	return false;
 }
 
-void LayerListDock::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+void LayerListDock::selectionChanged(const QItemSelection &selected)
 {
 	bool on = selected.count() > 0;
 	_ui->hideButton->setEnabled(on);
@@ -236,18 +239,24 @@ void LayerListDock::selectionChanged(const QItemSelection &selected, const QItem
 	_ui->deleteButton->setEnabled(on);
 
 	if(on) {
-		const net::LayerListItem &layer = currentSelection().data().value<net::LayerListItem>();
+		QModelIndex cs = currentSelection();
+		dataChanged(cs,cs);
+		_selected = cs.data().value<net::LayerListItem>().id;
+	} else {
+		_selected = 0;
+	}
+	emit layerSelected(_selected);
+}
 
+void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+	const int myRow = currentSelection().row();
+	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
+		const net::LayerListItem &layer = currentSelection().data().value<net::LayerListItem>();
 		_ui->hideButton->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 		_ui->lockButton->setChecked(layer.locked);
-
-		_selected = layer.id;
-		emit layerSelected(_selected);
-	} else {
-		_selected = 0;
 	}
 }
 
 }
-
