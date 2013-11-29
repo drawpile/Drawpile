@@ -443,6 +443,7 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 void Client::handleUserJoin(const protocol::UserJoin &msg)
 {
 	_userlist->addUser(User(msg.id(), msg.name(), msg.id() == _my_id));
+	emit userJoined(msg.name());
 }
 
 void Client::handleUserAttr(const protocol::UserAttr &msg)
@@ -458,7 +459,9 @@ void Client::handleUserAttr(const protocol::UserAttr &msg)
 
 void Client::handleUserLeave(const protocol::UserLeave &msg)
 {
+	QString name = _userlist->getUserById(msg.id()).name;
 	_userlist->removeUser(msg.id());
+	emit userLeft(name);
 }
 
 void Client::handleSessionConfChange(const protocol::SessionConf &msg)

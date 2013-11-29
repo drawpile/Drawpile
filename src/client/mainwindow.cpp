@@ -189,6 +189,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
 
+	connect(_client, SIGNAL(userJoined(QString)), netstatus, SLOT(join(QString)));
+	connect(_client, SIGNAL(userLeft(QString)), netstatus, SLOT(leave(QString)));
+
 	// Restore settings
 	readSettings(restoreWindowPosition);
 	
@@ -777,9 +780,9 @@ void MainWindow::finishHost(int i)
 		if(useremote==false) {
 			net::ServerThread *server = new net::ServerThread(this);
 
-            QSettings &cfg = DrawPileApp::getSettings();
-            if(cfg.contains("settings/server/port"))
-                server->setPort(cfg.value("settings/server/port").toInt());
+			QSettings &cfg = DrawPileApp::getSettings();
+			if(cfg.contains("settings/server/port"))
+				server->setPort(cfg.value("settings/server/port").toInt());
 
 			int port = server->startServer();
 			if(!port) {

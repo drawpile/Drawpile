@@ -194,32 +194,21 @@ void NetStatus::copyAddress()
 	QApplication::clipboard()->setText(_address, QClipboard::Selection);
 }
 
+void NetStatus::join(const QString& user)
+{
+	message(tr("<b>%1</b> joined").arg(user));
+}
+
+void NetStatus::leave(const QString& user)
+{
+	message(tr("<b>%1</b> left").arg(user));
+}
+
 #if 0
-void NetStatus::join(const network::User& user)
-{
-	message(tr("<b>%1</b> has joined").arg(user.name()));
-}
-
-void NetStatus::leave(const network::User& user)
-{
-	message(tr("<b>%1</b> has left").arg(user.name()));
-}
-
 void NetStatus::kicked(const network::User& user)
 {
 	message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
 }
-
-void NetStatus::lock(const QString& reason)
-{
-	message(tr("Board locked (%1)").arg(reason));
-}
-
-void NetStatus::unlock()
-{
-	message(tr("Board unlocked"));
-}
-
 #endif
 
 void NetStatus::message(const QString& msg)

@@ -50,12 +50,11 @@ public slots:
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
+
+	void join(const QString& user);
+	void leave(const QString& user);
 #if 0
-	void join(const network::User& user);
-	void leave(const network::User& user);
 	void kicked(const network::User& user);
-	void lock(const QString& reason);
-	void unlock();
 #endif
 
 	void copyAddress();

@@ -181,6 +181,9 @@ signals:
 	void serverLoggedin(bool join);
 	void serverDisconnected(const QString &message);
 
+	void userJoined(const QString &name);
+	void userLeft(const QString &name);
+
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
