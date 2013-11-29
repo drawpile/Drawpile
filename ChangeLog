@@ -1,6 +1,8 @@
-2008-??-?? Version 0.7.0
- * Protocol change: packet length is now comes first in the header
+2013-11-28 Version 0.7.0
  * Layer support
+ * OpenRaster support
+ * Partial rewrite: new server and network protocol
+ * All features now work in network mode
 
 2008-10-20 Version 0.6.0
  * Subpixel drawing
