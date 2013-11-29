@@ -33,21 +33,17 @@ int LayerListModel::rowCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
-	return _items.size() + 1;
+	return _items.size();
 }
 
 QVariant LayerListModel::data(const QModelIndex &index, int role) const
 {
 	if(index.isValid() && index.row() >= 0 && index.row() <= _items.size()) {
 		if(role == Qt::DisplayRole) {
-			// Row 0 is the special "add new layer" button row
-			if(index.row()==0)
-				return tr("New layer");
-			else
-				return QVariant::fromValue(_items.at(index.row()-1));
+			return QVariant::fromValue(_items.at(index.row()));
 		} else if(role == Qt::EditRole) {
 			// Edit role is for renaming the layer
-			return _items.at(index.row()-1).title;
+			return _items.at(index.row()).title;
 		}
 	}
 	return QVariant();
@@ -58,11 +54,7 @@ Qt::ItemFlags LayerListModel::flags(const QModelIndex& index) const
 	if(!index.isValid())
 		return Qt::ItemIsSelectable | Qt::ItemIsDragEnabled | Qt::ItemIsDropEnabled | Qt::ItemIsEnabled;
 
-	const Qt::ItemFlags flags = Qt::ItemIsEnabled;
-	if(index.row()==0) // Row 0 is the "add new layer" special item
-		return flags;
-	else
-		return flags | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
+	return Qt::ItemIsEnabled | Qt::ItemIsDragEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable;
 }
 
 Qt::DropActions LayerListModel::supportedDropActions() const
@@ -83,7 +75,7 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 {
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
 	if(ldata) {
-		handleMoveLayer(indexOf(ldata->layerId()), qMax(0, row-1));
+		handleMoveLayer(indexOf(ldata->layerId()), row);
 	} else {
 		qWarning() << "External layer drag&drop not supported";
 	}
@@ -125,15 +117,16 @@ int LayerListModel::indexOf(int id) const
 
 QModelIndex LayerListModel::layerIndex(int id)
 {
+	// TODO needed?
 	int i = indexOf(id);
 	if(i>=0)
-		return index(i+1);
+		return index(i);
 	return QModelIndex();
 }
 
 void LayerListModel::createLayer(int id, const QString &title)
 {
-	beginInsertRows(QModelIndex(),1,1);
+	beginInsertRows(QModelIndex(),0,0);
 	_items.prepend(LayerListItem(id, title));
 	endInsertRows();
 	emit layerCreated(_items.count()==1);
@@ -143,7 +136,7 @@ void LayerListModel::deleteLayer(int id)
 {
 	int row = indexOf(id);
 	Q_ASSERT(row>=0);
-	beginRemoveRows(QModelIndex(), row+1, row+1);
+	beginRemoveRows(QModelIndex(), row, row);
 	_items.remove(row);
 	endRemoveRows();
 	emit layerDeleted(id, row+1);
@@ -151,7 +144,7 @@ void LayerListModel::deleteLayer(int id)
 
 void LayerListModel::clear()
 {
-	beginRemoveRows(QModelIndex(), 1, _items.size());
+	beginRemoveRows(QModelIndex(), 0, _items.size());
 	_items.clear();
 	endRemoveRows();
 }
@@ -163,7 +156,17 @@ void LayerListModel::changeLayer(int id, float opacity, const QString &title)
 	LayerListItem &item = _items[row];
 	item.opacity = opacity;
 	item.title = title;
-	const QModelIndex qmi = index(row+1);
+	const QModelIndex qmi = index(row);
+	emit dataChanged(qmi, qmi);
+}
+
+void LayerListModel::setLayerHidden(int id, bool hidden)
+{
+	int row = indexOf(id);
+	Q_ASSERT(row>=0);
+	LayerListItem &item = _items[row];
+	item.hidden = hidden;
+	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
 }
 
@@ -174,7 +177,7 @@ void LayerListModel::updateLayerAcl(int id, bool locked, QList<uint8_t> exclusiv
 	LayerListItem &item = _items[row];
 	item.locked = locked;
 	item.exclusive = exclusive;
-	const QModelIndex qmi = createIndex(row+1, 0);
+	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
 }
 
@@ -184,7 +187,7 @@ void LayerListModel::unlockAll()
 		_items[i].locked = false;
 		_items[i].exclusive.clear();
 	}
-	emit dataChanged(index(1), index(_items.count()));
+	emit dataChanged(index(0), index(_items.count()));
 }
 
 void LayerListModel::reorderLayers(QList<uint8_t> neworder)
@@ -200,7 +203,7 @@ void LayerListModel::reorderLayers(QList<uint8_t> neworder)
 		}
 	}
 	_items = newitems;
-	emit dataChanged(index(1,0), index(_items.size(),0));
+	emit dataChanged(index(0), index(_items.size()));
 	emit layersReordered();
 }
 

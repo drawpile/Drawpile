@@ -66,7 +66,6 @@ set (
 	widgets/colorbutton.cpp 
 	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
-	widgets/layerwidget.cpp
 	widgets/brushpreview.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 
@@ -81,7 +80,7 @@ set ( UIs ui/brushsettings.ui ui/simplesettings.ui ui/colordialog.ui
 	ui/newdialog.ui ui/hostdialog.ui ui/joindialog.ui
 	ui/chatbox.ui ui/palettebox.ui ui/colorbox.ui
 	ui/settings.ui ui/navibox.ui ui/textsettings.ui ui/pensettings.ui
-	ui/erasersettings.ui )
+        ui/erasersettings.ui ui/layerbox.ui )
 
 qt5_wrap_ui( UI_Headers ${UIs} )
 qt5_add_resources( QtResource ui/resources.qrc )

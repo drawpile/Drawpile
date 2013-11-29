@@ -41,31 +41,14 @@ public:
 			const QModelIndex &index) const;
 	QSize sizeHint(const QStyleOptionViewItem & option,
 			const QModelIndex & index ) const;
-	bool editorEvent(QEvent *event, QAbstractItemModel *model,
-			const QStyleOptionViewItem &option, const QModelIndex &index);
 
 	void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const;
 	void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex& index) const;
 
 	void setClient(net::Client *client) { _client = client; }
 
-signals:
-	//! User wants to select the layer
-	void select(const QModelIndex& index);
-
-private slots:
-	void changeOpacity(const QModelIndex&, int opacity);
-	void setVisibility(const QModelIndex&, bool hidden);
-
 private:
 	void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
-
-	void clickNewLayer();
-	void clickLockLayer(const QModelIndex &index);
-	void clickDeleteLayer(const QModelIndex &index);
-
-	void sendLayerAttribs(const net::LayerListItem &layer) const;
-	void sendLayerAcl(const net::LayerListItem &layer) const;
 
 	net::Client *_client;
 };

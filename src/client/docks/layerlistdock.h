@@ -22,45 +22,56 @@
 
 #include <QDockWidget>
 
-class QListView;
+class QModelIndex;
+class QItemSelection;
+class Ui_LayerBox;
 
 namespace net {
 	class Client;
+	class LayerListItem;
 }
 
 namespace widgets {
 
 class LayerListDock : public QDockWidget
 {
-	Q_OBJECT
-	public:
-		LayerListDock(QWidget *parent=0);
+Q_OBJECT
+public:
+	LayerListDock(QWidget *parent=0);
 
-		void setClient(net::Client *client);
+	void setClient(net::Client *client);
 
-		//! Initialize the widget for a new session
-		void init();
-		
-		//! Get the ID of the currently selected layer
-		int currentLayer();
+	//! Initialize the widget for a new session
+	void init();
 
-		bool isCurrentLayerLocked() const;
+	//! Get the ID of the currently selected layer
+	int currentLayer();
 
-	signals:
-		//! A layer was selected by the user
-		void layerSelected(int id);
-		
-	private slots:
-		void selected(const QModelIndex&);
-		void onLayerCreate(bool wasfirst);
-		void onLayerDelete(int id, int idx);
-		void onLayerReorder();
+	bool isCurrentLayerLocked() const;
 
-	private:
+signals:
+	//! A layer was selected by the user
+	void layerSelected(int id);
 
-		net::Client *_client;
-		QListView *_list;
-		int _selected;
+private slots:
+	void onLayerCreate(bool wasfirst);
+	void onLayerDelete(int id, int idx);
+	void onLayerReorder();
+
+	void addLayer();
+	void deleteSelected();
+	void lockSelected();
+	void opacityAdjusted();
+	void hiddenToggled();
+
+	void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected);
+
+private:
+	QModelIndex currentSelection();
+
+	net::Client *_client;
+	int _selected;
+	Ui_LayerBox *_ui;
 };
 
 }

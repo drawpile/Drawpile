@@ -173,6 +173,7 @@ void Client::sendLayerAttribs(int id, float opacity, const QString &title)
 void Client::sendLayerVisibility(int id, bool hide)
 {
 	// This one is actually a local only change
+	_layerlist->setLayerHidden(id, hide);
 	emit layerVisibilityChange(id, hide);
 }
 

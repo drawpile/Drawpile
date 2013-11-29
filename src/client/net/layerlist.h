@@ -72,6 +72,7 @@ public:
 	void createLayer(int id, const QString &title);
 	void deleteLayer(int id);
 	void changeLayer(int id, float opacity, const QString &title);
+	void setLayerHidden(int id, bool hidden);
 	void reorderLayers(QList<uint8_t> neworder);
 	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
 	void unlockAll();
