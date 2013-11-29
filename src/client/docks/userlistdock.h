@@ -24,28 +24,13 @@
 #include <QItemDelegate>
 
 class QListView;
+class Ui_UserBox;
 
 namespace net {
 	class Client;
 }
 
 namespace widgets {
-
-/**
- * A delegate to display a session user, optionally with buttons to lock or kick the user.
- */
-class UserListDelegate : public QItemDelegate {
-Q_OBJECT
-public:
-	UserListDelegate(net::Client *client, QObject *parent=0);
-
-	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const;
-	bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index);
-
-private:
-	net::Client *_client;
-};
 
 /**
  * @brief User list window
@@ -60,11 +45,35 @@ public:
 
 	void setClient(net::Client *client);
 
+private slots:
+	void lockSelected();
+	void kickSelected();
+
+	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
+	void selectionChanged(const QItemSelection &selected);
+
 private:
-	QListView *_list;
+	void setOperatorMode(bool op);
+	QModelIndex currentSelection();
+
+	Ui_UserBox *_ui;
+	net::Client *_client;
 };
+
+/**
+ * A delegate to display a session user, optionally with buttons to lock or kick the user.
+ */
+class UserListDelegate : public QItemDelegate {
+Q_OBJECT
+public:
+	UserListDelegate(QObject *parent=0);
+
+	void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const;
+
+};
+
 
 }
 
 #endif
-
