@@ -164,10 +164,10 @@ void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 	_server->sendMessage(MessagePtr(new protocol::LayerCreate(id, fill.rgba(), title)));
 }
 
-void Client::sendLayerAttribs(int id, float opacity)
+void Client::sendLayerAttribs(int id, float opacity, int blend)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, 0)));
+	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, blend)));
 }
 
 void Client::sendLayerTitle(int id, const QString &title)

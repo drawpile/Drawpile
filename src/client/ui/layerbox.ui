@@ -71,6 +71,9 @@
       </widget>
      </item>
      <item>
+      <widget class="QComboBox" name="blendmode"/>
+     </item>
+     <item>
       <widget class="QToolButton" name="lockButton">
        <property name="toolTip">
         <string>Lock this layer</string>

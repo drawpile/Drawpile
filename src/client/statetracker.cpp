@@ -158,7 +158,7 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 	}
 	
 	layer->setOpacity(cmd.opacity());
-	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0);
+	_layerlist->changeLayer(cmd.id(), cmd.opacity() / 255.0, cmd.blend());
 }
 
 void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)

@@ -27,6 +27,7 @@
 #include "net/layerlist.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
+#include "core/rasterop.h" // for blending modes
 
 #include "ui_layerbox.h"
 
@@ -46,10 +47,16 @@ LayerListDock::LayerListDock(QWidget *parent)
 	_ui->addButton->setEnabled(false);
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
+	// Populate blend mode combobox
+	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	}
+
 	connect(_ui->addButton, SIGNAL(clicked()), this, SLOT(addLayer()));
 	connect(_ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelected()));
 	connect(_ui->hideButton, SIGNAL(clicked()), this, SLOT(hiddenToggled()));
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
+	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 
 	selectionChanged(QItemSelection());
@@ -91,7 +98,22 @@ void LayerListDock::opacityAdjusted()
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
 		layer.opacity = _ui->opacity->value() / 255.0;
-		_client->sendLayerAttribs(layer.id, layer.opacity);
+		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
+	}
+}
+
+void LayerListDock::blendModeChanged()
+{
+	// Avoid infinite loop
+	if(_noupdate)
+		return;
+
+	QModelIndex index = currentSelection();
+	if(index.isValid()) {
+		Q_ASSERT(_client);
+		net::LayerListItem layer = index.data().value<net::LayerListItem>();
+		layer.blend = _ui->blendmode->currentIndex();
+		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
 	}
 }
 
@@ -261,6 +283,7 @@ void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &b
 		_ui->hideButton->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 		_ui->lockButton->setChecked(layer.locked);
+		_ui->blendmode->setCurrentIndex(layer.blend);
 		_noupdate = false;
 	}
 }

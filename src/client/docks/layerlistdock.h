@@ -62,6 +62,7 @@ private slots:
 	void deleteSelected();
 	void lockSelected();
 	void opacityAdjusted();
+	void blendModeChanged();
 	void hiddenToggled();
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);

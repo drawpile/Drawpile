@@ -149,12 +149,13 @@ void LayerListModel::clear()
 	endRemoveRows();
 }
 
-void LayerListModel::changeLayer(int id, float opacity)
+void LayerListModel::changeLayer(int id, float opacity, int blend)
 {
 	int row = indexOf(id);
 	Q_ASSERT(row>=0);
 	LayerListItem &item = _items[row];
 	item.opacity = opacity;
+	item.blend = blend;
 	const QModelIndex qmi = index(row);
 	emit dataChanged(qmi, qmi);
 }
