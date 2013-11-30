@@ -20,6 +20,8 @@
 #ifndef LAYERSTACK_H
 #define LAYERSTACK_H
 
+#include <cstdint>
+
 #include <QObject>
 #include <QList>
 #include <QImage>

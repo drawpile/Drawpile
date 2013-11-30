@@ -1,6 +1,6 @@
 #include <QtPlugin>
 
-#include "../../brushpreview.h"
+#include "widgets/brushpreview.h"
 #include "plugin.h"
 
 BrushPreviewPlugin::BrushPreviewPlugin(QObject *parent)
@@ -59,22 +59,23 @@ bool BrushPreviewPlugin::isContainer() const
 
 QString BrushPreviewPlugin::domXml() const
 {
-    return "<widget class=\"BrushPreview\" name=\"brushPreview\">\n"
-           " <property name=\"geometry\">\n"
-           "  <rect>\n"
-           "   <x>0</x>\n"
-           "   <y>0</y>\n"
-           "   <width>128</width>\n"
-           "   <height>64</height>\n"
-           "  </rect>\n"
-           " </property>\n"
-           "</widget>\n";
+    return 
+		"<ui language=\"c++\">\n"
+		"<widget class=\"BrushPreview\" name=\"brushPreview\">\n"
+		" <property name=\"geometry\">\n"
+		"  <rect>\n"
+		"   <x>0</x>\n"
+		"   <y>0</y>\n"
+		"   <width>128</width>\n"
+		"   <height>64</height>\n"
+		"  </rect>\n"
+		" </property>\n"
+		"</widget>\n"
+		"</ui>\n";
 }
 
 QString BrushPreviewPlugin::includeFile() const
 {
-    return "brushpreview.h";
+    return "widgets/brushpreview.h";
 }
-
-Q_EXPORT_PLUGIN2(brushpreviewlugin, BrushPreviewPlugin)
 

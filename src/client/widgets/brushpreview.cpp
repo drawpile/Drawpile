@@ -93,13 +93,13 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 void BrushPreview::updatePreview()
 {
 	if(preview_==0) {
-		preview_ = new dpcore::LayerStack();
+		preview_ = new dpcore::LayerStack;
 		preview_->init(contentsRect().size());
 		preview_->addLayer(0, "", QColor(0,0,0));
 	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
 		// TODO resize more nicely
 		delete preview_;
-		preview_ = new dpcore::LayerStack();
+		preview_ = new dpcore::LayerStack;
 		preview_->init(contentsRect().size());
 		preview_->addLayer(0, "", QColor(0,0,0));
 	}
