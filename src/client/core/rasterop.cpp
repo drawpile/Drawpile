@@ -106,7 +106,7 @@ inline uint blend_subtract(uchar base, uchar blend) {
 }
 
 // Normal alpha blend
-void doAlphablend(quint32 *base, quint32 color, const uchar *mask,
+void doAlphaMaskBlend(quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
 	baseskip *= 4;
@@ -147,11 +147,28 @@ void doAlphablend(quint32 *base, quint32 color, const uchar *mask,
 	}
 }
 
+// Specialized pixel composition: erase alpha channel
+void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, int baseskip)
+{
+	baseskip *= 4;
+	uchar *dest = reinterpret_cast<uchar*>(base) + 3;
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x) {
+			*dest = qMax(0, *dest - *mask);
+
+			dest += 4;
+			++mask;
+		}
+		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
 // A generic composition function for special blending modes
 // This doesn't touch the alpha channel.
 typedef uint(*BlendOp)(uchar,uchar);
 template<BlendOp BO>
-void doComposite(quint32 *base, quint32 color, const uchar *mask,
+void doMaskComposite(quint32 *base, quint32 color, const uchar *mask,
 		int w, int h, int maskskip, int baseskip)
 {
 	baseskip *= 4;
@@ -188,67 +205,10 @@ void doComposite(quint32 *base, quint32 color, const uchar *mask,
 	}
 }
 
-// Specialized pixel composition: erase alpha channel
-void doErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, int baseskip)
+void doPixelAlphaBlend(quint32 *destination, const quint32 *source, uchar opacity, int len)
 {
-	baseskip *= 4;
-	uchar *dest = reinterpret_cast<uchar*>(base) + 3;
-	for(int y=0;y<h;++y) {
-		for(int x=0;x<w;++x) {
-			*dest = qMax(0, *dest - *mask);
-
-			dest += 4;
-			++mask;
-		}
-		dest += baseskip;
-		mask += maskskip;
-	}
-}
-
-void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
-		int w, int h, int maskskip, int baseskip)
-{
-		// Note! Make sure the these are in the correct order!
-		switch(mode) {
-			case 0:
-				doErase(base, mask, w, h, maskskip, baseskip);
-				break;
-			case 2:
-				doComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 3:
-				doComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 4:
-				doComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 5:
-				doComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 6:
-				doComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 7:
-				doComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 8:
-				doComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			case 9:
-				doComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip);
-				break;
-			default:
-				doAlphablend(base, color, mask, w, h, maskskip, baseskip);
-				break;
-		}
-}
-
-void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
-{
-	Q_ASSERT_X(mode==1, "compositePixels", "TODO: Layer composition modes are not yet supported.");
-
-	uchar *dest = reinterpret_cast<uchar*>(base);
-	const uchar *src = reinterpret_cast<const uchar*>(over);
+	uchar *dest = reinterpret_cast<uchar*>(destination);
+	const uchar *src = reinterpret_cast<const uchar*>(source);
 	while(len--) {
 		const uchar a = UINT8_MULT(src[3], opacity);
 		const uchar a2 = UINT8_MULT(255-a, dest[3]);
@@ -258,7 +218,90 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len, ucha
 		*dest = a + a2; ++dest;
 		src+=4;
 	}
+}
 
+// Specialized pixel composition: erase alpha channel
+void doPixelErase(quint32 *destination, const quint32 *source, uchar opacity, int len)
+{
+	uchar *dest = reinterpret_cast<uchar*>(destination) + 3;
+	const uchar *src = reinterpret_cast<const uchar*>(source) + 3;
+	while(len--) {
+		uchar a = qMax(0, *dest - int(UINT8_MULT(*src, opacity)));
+		*dest = a;
+		dest += 4;
+		src += 4;
+	}
+}
+
+
+template<BlendOp BO>
+void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, int len)
+{
+	const uchar *src = reinterpret_cast<const uchar*>(source);
+	uchar *dest = reinterpret_cast<uchar*>(destination);
+	while(len--) {
+		// Special case: source pixel is completely transparent
+		if(*src==0) {
+			dest += 4;
+		}
+		// Special case: source pixel is completely opaque
+		else if(*src==255) {
+			*dest = BO(*dest, src[0]); ++dest;
+			*dest = BO(*dest, src[1]); ++dest;
+			*dest = BO(*dest, src[2]); ++dest;
+			++dest;
+		}
+		// The usual case: blending required
+		else {
+			if(dest[3]>0) {
+				const uchar a = UINT8_MULT(src[3], alpha);
+				const uchar a2 = UINT8_MULT(a, dest[3]);
+				*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, a2); ++dest;
+				*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, a2); ++dest;
+				*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, a2); ++dest;
+				++dest;
+			} else {
+				// No need to do anything if destination pixel is fully transparent
+				dest += 4;
+			}
+		}
+		src += 4;
+	}
+}
+
+void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
+		int w, int h, int maskskip, int baseskip)
+{
+	// Note! Make sure the these are in the correct order!
+	switch(mode) {
+	case 0: doMaskErase(base, mask, w, h, maskskip, baseskip); break;
+	case 1: doAlphaMaskBlend(base, color, mask, w, h, maskskip, baseskip); break;
+	case 2: doMaskComposite<blend_multiply>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 3: doMaskComposite<blend_divide>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 4: doMaskComposite<blend_burn>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 5: doMaskComposite<blend_dodge>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 6: doMaskComposite<blend_darken>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 7: doMaskComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 8: doMaskComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 9: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
+	}
+}
+
+void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity)
+{
+	// Note! Make sure the these are in the correct order!
+	switch(mode) {
+	case 0: doPixelErase(base, over, opacity, len); break;
+	case 1: doPixelAlphaBlend(base, over, opacity, len); break;
+	case 2: doPixelComposite<blend_multiply>(base, over, opacity, len); break;
+	case 3: doPixelComposite<blend_divide>(base, over, opacity, len); break;
+	case 4: doPixelComposite<blend_burn>(base, over, opacity, len); break;
+	case 5: doPixelComposite<blend_dodge>(base, over, opacity, len); break;
+	case 6: doPixelComposite<blend_darken>(base, over, opacity, len); break;
+	case 7: doPixelComposite<blend_lighten>(base, over, opacity, len); break;
+	case 8: doPixelComposite<blend_subtract>(base, over, opacity, len); break;
+	case 9: doPixelComposite<blend_add>(base, over, opacity, len); break;
+	}
 }
 
 }

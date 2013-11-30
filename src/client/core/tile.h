@@ -87,7 +87,7 @@ class Tile {
 		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
 
 		//! Composite another tile with this tile
-		void merge(const Tile *tile, uchar opacity);
+		void merge(const Tile *tile, uchar opacity, int blend);
 
 		//! Copy the contents of this tile onto the appropriate spot on an image
 		void copyToImage(QImage& image) const;

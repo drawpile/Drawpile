@@ -29,7 +29,7 @@ namespace net {
 struct LayerListItem {
 	LayerListItem() : id(0), title(""), opacity(1.0), hidden(false), locked(false) {}
 	LayerListItem(int id_, const QString &title_, float opacity_=1.0, bool hidden_=false)
-		: id(id_), title(title_), opacity(opacity_), blend(0), hidden(hidden_), locked(false)
+		: id(id_), title(title_), opacity(opacity_), blend(1), hidden(hidden_), locked(false)
 		{}
 
 	//! Layer ID

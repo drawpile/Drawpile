@@ -39,7 +39,7 @@ namespace dpcore {
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
 	: owner_(owner), id_(id), _title(title), width_(size.width()), height_(size.height()),
-	opacity_(255), hidden_(false)
+	opacity_(255), _blend(1), hidden_(false)
 {
 	xtiles_ = (width_+Tile::SIZE-1) / Tile::SIZE;
 	ytiles_ = (height_+Tile::SIZE-1) / Tile::SIZE;
@@ -104,7 +104,15 @@ void Layer::setOpacity(int opacity)
 	Q_ASSERT(opacity>=0 && opacity<256);
 	opacity_ = opacity;
 	// TODO optimization: mark only nonempty tiles
-	if(owner_ && !hidden_)
+	if(owner_ && visible())
+		owner_->markDirty();
+}
+
+void Layer::setBlend(int blend)
+{
+	_blend = blend;
+	// TODO optimization: mark only nonempty tiles
+	if(owner_ && visible())
 		owner_->markDirty();
 }
 
@@ -393,7 +401,7 @@ void Layer::merge(int x, int y, const Layer *layer)
 			const int index = xtiles_*myy + myx;
 			if(tiles_[index]==0)
 				tiles_[index] = new Tile(myx, myy);
-			tiles_[xtiles_*myy+myx]->merge(layer->tiles_[layer->xtiles_*i+j], layer->opacity_);
+			tiles_[index]->merge(layer->tiles_[layer->xtiles_*i+j], layer->opacity_, layer->blendmode());
 		}
 		myx = x;
 	}

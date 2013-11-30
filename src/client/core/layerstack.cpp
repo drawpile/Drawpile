@@ -239,7 +239,7 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 		if(l->visible()) {
 			const Tile *tile = l->tile(xindex, yindex);
 			if(tile) {
-				compositePixels(1, data, tile->data(),
+				compositePixels(l->blendmode(), data, tile->data(),
 						Tile::SIZE*Tile::SIZE, l->opacity());
 			}
 		}

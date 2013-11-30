@@ -48,7 +48,8 @@ LayerListDock::LayerListDock(QWidget *parent)
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
 
 	// Populate blend mode combobox
-	for(int b=0;b<dpcore::BLEND_MODES;++b) {
+	// Note. Eraser mode (0) is skipped because it currently isn't implemented properly for layer stack flattening
+	for(int b=1;b<dpcore::BLEND_MODES;++b) {
 		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
@@ -112,7 +113,7 @@ void LayerListDock::blendModeChanged()
 	if(index.isValid()) {
 		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
-		layer.blend = _ui->blendmode->currentIndex();
+		layer.blend = _ui->blendmode->currentIndex() + 1; // skip eraser mode (0)
 		_client->sendLayerAttribs(layer.id, layer.opacity, layer.blend);
 	}
 }
@@ -283,7 +284,7 @@ void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &b
 		_ui->hideButton->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
 		_ui->lockButton->setChecked(layer.locked);
-		_ui->blendmode->setCurrentIndex(layer.blend);
+		_ui->blendmode->setCurrentIndex(layer.blend - 1); // skip eraser mode (0)
 		_noupdate = false;
 	}
 }

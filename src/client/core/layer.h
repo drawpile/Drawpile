@@ -76,6 +76,15 @@ class Layer {
 		//! Set layer opacity
 		void setOpacity(int opacity);
 
+		//! Set layer blending mode
+		void setBlend(int blend);
+
+		/**
+		 * @brief Get the layer blending mode
+		 * @return blending mode number
+		 */
+		int blendmode() const { return _blend; }
+
 		//! Is this layer hidden?
 		/**
 		 * Hiding a layer is slightly different than setting its opacity
@@ -146,6 +155,7 @@ class Layer {
 		int ytiles_;
 		Tile **tiles_;
 		uchar opacity_;
+		int _blend;
 		bool hidden_;
 };
 
