@@ -95,6 +95,9 @@ class LayerStack : public QObject {
 		//! Mark all tiles as dirty
 		void markDirty();
 
+		//! Mark the tile at the given index as dirty
+		void markDirty(int x, int y);
+
 	public slots:
 		//! Set or clear the "hidden" flag of a layer
 		void setLayerHidden(int layerid, bool hide);

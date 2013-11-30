@@ -122,7 +122,7 @@ void BrushPreview::updatePreview()
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(sin(phase) * strokeh);
-			layer->drawLine(brush_,
+			layer->drawLine(0, brush_,
 					dpcore::Point(offx+lastx,offy+lasty, lastp),
 					dpcore::Point(offx+x, offy+y, pressure), distance);
 			lastx = x;
@@ -130,29 +130,32 @@ void BrushPreview::updatePreview()
 			lastp = pressure;
 		}
 	} else if(shape_ == Line) {
-		layer->drawLine(brush_,
+		layer->drawLine(0, brush_,
 				dpcore::Point(offx, offy, 1),
 				dpcore::Point(offx+strokew, offy, 1),
 				distance
 				);
 	} else {
-		layer->drawLine(brush_,
+		layer->drawLine(0, brush_,
 				dpcore::Point(offx, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				distance);
-		layer->drawLine(brush_,
+		layer->drawLine(0, brush_,
 				dpcore::Point(offx+strokew, offy-strokeh, 1),
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				distance);
-		layer->drawLine(brush_,
+		layer->drawLine(0, brush_,
 				dpcore::Point(offx+strokew, offy+strokeh, 1),
 				dpcore::Point(offx, offy+strokeh, 1),
 				distance);
-		layer->drawLine(brush_,
+		layer->drawLine(0, brush_,
 				dpcore::Point(offx, offy+strokeh, 1),
 				dpcore::Point(offx, offy-strokeh, 1),
 				distance);
 	}
+
+	layer->mergeSublayer(0);
+
 	_needupdate=false;
 }
 
@@ -289,6 +292,13 @@ void BrushPreview::setHardEdge(bool hard)
 		brush_.setHardness2(oldhardness2_);
 		brush_.setSubpixel(true);
 	}
+	updatePreview();
+	update();
+}
+
+void BrushPreview::setIncremental(bool incremental)
+{
+	brush_.setIncremental(incremental);
 	updatePreview();
 	update();
 }

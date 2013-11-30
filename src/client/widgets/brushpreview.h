@@ -105,6 +105,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		//! Set/unset hard edge mode (100% hardness + no subpixels)
 		void setHardEdge(bool hard);
 
+		//! Set/unset incremental drawing mode
+		void setIncremental(bool incremental);
+
 	protected:
 		void paintEvent(QPaintEvent *event);
 		void resizeEvent(QResizeEvent *);

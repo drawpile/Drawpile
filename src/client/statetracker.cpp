@@ -195,6 +195,7 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 	ctx.tool.layer_id = cmd.layer();
 	b.setBlendingMode(cmd.blend());
 	b.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
+	b.setIncremental(cmd.mode() & protocol::TOOL_MODE_INCREMENTAL);
 	b.setSpacing(cmd.spacing());
 	b.setRadius(cmd.size_h());
 	b.setRadius2(cmd.size_l());
@@ -227,11 +228,11 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		);
 
 		if(ctx.pendown) {
-			layer->drawLine(ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
+			layer->drawLine(cmd.contextId(), ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
 		} else {
 			ctx.pendown = true;
 			ctx.distance_accumulator = 0;
-			layer->dab(ctx.tool.brush, p);
+			layer->dab(cmd.contextId(), ctx.tool.brush, p);
 		}
 		ctx.lastpoint = p;
 	}
@@ -242,6 +243,15 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
+	dpcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
+	if(!layer) {
+		qWarning() << "penUp by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
+		return;
+	}
+
+	// This ends an indirect stroke. In incremental mode, this does nothing.
+	layer->mergeSublayer(cmd.contextId());
+
 	ctx.pendown = false;
 }
 

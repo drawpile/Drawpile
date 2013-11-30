@@ -131,7 +131,7 @@ void LayerStack::mergeLayerDown(int id) {
 	if(btm==0)
 		qWarning() << "Tried to merge bottom-most layer";
 	else
-		btm->merge(0,0, top);
+		btm->merge(top);
 }
 
 Layer *LayerStack::getLayerByIndex(int index)
@@ -223,7 +223,7 @@ QImage LayerStack::toFlatImage() const
 	Layer flat(0, 0, "", Qt::transparent, QSize(_width, _height));
 
 	foreach(const Layer *l, _layers)
-		flat.merge(0, 0, l);
+		flat.merge(l);
 
 	return flat.toImage();
 }
@@ -238,7 +238,31 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 	foreach(const Layer *l, _layers) {
 		if(l->visible()) {
 			const Tile *tile = l->tile(xindex, yindex);
-			if(tile) {
+			if(l->sublayers().count()) {
+				// Sublayers present, composite them first
+				quint32 ldata[Tile::SIZE*Tile::SIZE];
+				if(tile)
+					for(int ldatai=0;ldatai<Tile::SIZE*Tile::SIZE;++ldatai)
+						ldata[ldatai] = tile->data()[ldatai];
+				else
+					for(int ldatai=0;ldatai<Tile::SIZE*Tile::SIZE;++ldatai)
+						ldata[ldatai] = 0;
+
+				foreach(const Layer *sl, l->sublayers()) {
+					if(sl->visible()) {
+						const Tile *subtile = sl->tile(xindex, yindex);
+						if(subtile) {
+							compositePixels(sl->blendmode(), ldata, subtile->data(),
+									Tile::SIZE*Tile::SIZE, sl->opacity());
+						}
+					}
+				}
+
+				// Composite merged tile
+				compositePixels(l->blendmode(), data, ldata,
+						Tile::SIZE*Tile::SIZE, l->opacity());
+			} else if(tile) {
+				// No sublayers, just this tile
 				compositePixels(l->blendmode(), data, tile->data(),
 						Tile::SIZE*Tile::SIZE, l->opacity());
 			}
@@ -290,6 +314,15 @@ void LayerStack::markDirty()
 		return;
 	_dirtytiles.fill(true);
 	emit areaChanged(QRect(0, 0, _width, _height));
+}
+
+void LayerStack::markDirty(int x, int y)
+{
+	Q_ASSERT(x>=0 && x < _xtiles);
+	Q_ASSERT(y>=0 && y < _ytiles);
+
+	_dirtytiles.setBit(y*_xtiles + x);
+	emit areaChanged(QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE));
 }
 
 }

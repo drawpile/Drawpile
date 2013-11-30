@@ -71,7 +71,7 @@ class Layer {
 		QColor colorAt(int x, int y) const;
 
 		//! Get layer opacity
-		int opacity() const { return opacity_; }
+		int opacity() const { return _opacity; }
 
 		//! Set layer opacity
 		void setOpacity(int opacity);
@@ -85,14 +85,14 @@ class Layer {
 		 */
 		int blendmode() const { return _blend; }
 
-		//! Is this layer hidden?
 		/**
+		 * @brief Is this layer hidden?
 		 * Hiding a layer is slightly different than setting its opacity
 		 * to zero, although the end result is the same. The hidden status
 		 * is purely local: setting it will not hide the layer for other
 		 * users.
 		 */
-		bool hidden() const { return hidden_; }
+		bool hidden() const { return _hidden; }
 
 		//! Hide this layer
 		void setHidden(bool hide);
@@ -101,19 +101,16 @@ class Layer {
 		void putImage(int x, int y, QImage image, bool blend);
 
 		//! Dab the layer with a brush
-		void dab(const Brush& brush, const Point& point);
+		void dab(int contextId, const Brush& brush, const Point& point);
 
 		//! Draw a line using either drawHardLine or drawSoftLine
-		void drawLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
+		void drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, qreal &distance);
 
-		//! Draw a line using the brush
-		void drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
-
-		//! Draw a line using the brush.
-		void drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
+		//! Merge a sublayer with this layer
+		void mergeSublayer(int id);
 
 		//! Merge a layer
-		void merge(int x, int y, const Layer *layer);
+		void merge(const Layer *layer);
 
 		//! Fill the layer with a checker pattern
 		void fillChecker(const QColor& dark, const QColor& light);
@@ -126,13 +123,16 @@ class Layer {
 
 		//! Get a tile
 		const Tile *tile(int x, int y) const {
-			Q_ASSERT(x>=0 && x<xtiles_);
-			Q_ASSERT(y>=0 && y<ytiles_);
-			return tiles_[y*xtiles_+x];
+			Q_ASSERT(x>=0 && x<_xtiles);
+			Q_ASSERT(y>=0 && y<_ytiles);
+			return _tiles[y*_xtiles+x];
 		}
 
 		//! Get a tile
-		const Tile *tile(int index) const { Q_ASSERT(index>=0 && index<xtiles_*ytiles_); return tiles_[index]; }
+		const Tile *tile(int index) const { Q_ASSERT(index>=0 && index<_xtiles*_ytiles); return _tiles[index]; }
+
+		//! Get the sublayers
+		const QList<Layer*> &sublayers() const { return _sublayers; }
 
 		/**
 		 * @brief Is this layer visible
@@ -140,23 +140,35 @@ class Layer {
 		 * it is not explicitly hidden.
 		 * @return true if layer is visible
 		 */
-		bool visible() const { return opacity_ > 0 && !hidden_; }
+		bool visible() const { return _opacity > 0 && !_hidden; }
 
 	private:
+		//! Construct a sublayer
+		Layer(LayerStack *owner, int id, const QSize& size);
+
 		QImage padImageToTileBoundary(int leftpad, int toppad, const QImage &original, bool alpha) const;
-		
+
+		//! Get a sublayer
+		Layer *getSubLayer(int id, int blendmode, uchar opacity);
+
+		void directDab(const Brush& brush, const Point& point);
+		void drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
+		void drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
+
 		LayerStack *owner_;
 		int id_;
 		QString _title;
 	
 		int width_;
 		int height_;
-		int xtiles_;
-		int ytiles_;
-		Tile **tiles_;
-		uchar opacity_;
+		int _xtiles;
+		int _ytiles;
+		Tile **_tiles;
+		uchar _opacity;
 		int _blend;
-		bool hidden_;
+		bool _hidden;
+
+		QList<Layer*> _sublayers;
 };
 
 }

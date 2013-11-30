@@ -90,11 +90,14 @@ QList<protocol::MessagePtr> putQImage(int layer, int x, int y, const QImage &ima
 
 protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brush &brush)
 {
+	uint8_t mode = brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0;
+	mode |= brush.incremental() ? protocol::TOOL_MODE_INCREMENTAL : 0;
+
 	return protocol::MessagePtr(new protocol::ToolChange(
 		userid,
 		layer,
 		brush.blendingMode(),
-		(brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0),
+		mode,
 		brush.spacing(),
 		brush.color(1.0).rgba(),
 		brush.color(0.0).rgba(),

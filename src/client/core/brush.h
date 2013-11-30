@@ -117,6 +117,9 @@ class Brush
 		//! Set blending mode hint
 		void setBlendingMode(int mode);
 
+		//! Set incremental mode (default is true)
+		void setIncremental(bool incremental);
+
 		//! Get interpolated radius
 		int radius(qreal pressure) const;
 		//! Get the diameter of the rendered brush
@@ -133,6 +136,11 @@ class Brush
 		bool subpixel() const { return subpixel_; }
 		//! Get the suggested blending mode
 		int blendingMode() const { return blend_; }
+		//! Is this an incremental mode brush?
+		bool incremental() const { return incremental_; }
+
+		//! Does opacity vary with pressure?
+		bool isOpacityVariable() const;
 
 		//! Render the brush
 		BrushMask render(qreal pressure) const;
@@ -155,9 +163,10 @@ class Brush
 		qreal opacity1_, opacity2_;
 		QColor color1_, color2_;
 		int spacing_;
+		int blend_;
 		bool sensitive_;
 		bool subpixel_;
-		int blend_;
+		bool incremental_;
 
 		mutable BrushMask cache_;
 };

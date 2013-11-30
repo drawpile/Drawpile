@@ -39,28 +39,34 @@ namespace dpcore {
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
 	: owner_(owner), id_(id), _title(title), width_(size.width()), height_(size.height()),
-	opacity_(255), _blend(1), hidden_(false)
+	_opacity(255), _blend(1), _hidden(false)
 {
-	xtiles_ = (width_+Tile::SIZE-1) / Tile::SIZE;
-	ytiles_ = (height_+Tile::SIZE-1) / Tile::SIZE;
-	tiles_ = new Tile*[xtiles_ * ytiles_];
+	_xtiles = (width_+Tile::SIZE-1) / Tile::SIZE;
+	_ytiles = (height_+Tile::SIZE-1) / Tile::SIZE;
+	_tiles = new Tile*[_xtiles * _ytiles];
 	
 	if(color.alpha() == 0) {
 		// Blank layer
-		for(int i=0;i<xtiles_*ytiles_;++i)
-			tiles_[i] = 0;
+		for(int i=0;i<_xtiles*_ytiles;++i)
+			_tiles[i] = 0;
 	} else {
 		// Solid fill
-		for(int y=0;y<ytiles_;++y)
-			for(int x=0;x<xtiles_;++x)
-				tiles_[y*xtiles_+x] = new Tile(color, x, y);
+		for(int y=0;y<_ytiles;++y)
+			for(int x=0;x<_xtiles;++x)
+				_tiles[y*_xtiles+x] = new Tile(color, x, y);
 	}
 }
 
+Layer::Layer(LayerStack *owner, int id, const QSize &size)
+	: Layer(owner, id, "", Qt::transparent, size)
+{
+	// sublayers are used for indirect drawing
+}
+
 Layer::~Layer() {
-	for(int i=0;i<xtiles_*ytiles_;++i)
-		delete tiles_[i];
-	delete [] tiles_;
+	for(int i=0;i<_xtiles*_ytiles;++i)
+		delete _tiles[i];
+	delete [] _tiles;
 }
 
 void Layer::setTitle(const QString& title)
@@ -71,9 +77,9 @@ void Layer::setTitle(const QString& title)
 QImage Layer::toImage() const {
 	QImage image(width_, height_, QImage::Format_ARGB32);
 	image.fill(0);
-	for(int i=0;i<xtiles_*ytiles_;++i) {
-		if(tiles_[i])
-			tiles_[i]->copyToImage(image);
+	for(int i=0;i<_xtiles*_ytiles;++i) {
+		if(_tiles[i])
+			_tiles[i]->copyToImage(image);
 	}
 	return image;
 }
@@ -102,7 +108,7 @@ QColor Layer::colorAt(int x, int y) const
 void Layer::setOpacity(int opacity)
 {
 	Q_ASSERT(opacity>=0 && opacity<256);
-	opacity_ = opacity;
+	_opacity = opacity;
 	// TODO optimization: mark only nonempty tiles
 	if(owner_ && visible())
 		owner_->markDirty();
@@ -121,9 +127,9 @@ void Layer::setBlend(int blend)
  */
 void Layer::setHidden(bool hide)
 {
-	hidden_ = hide;
+	_hidden = hide;
 	// TODO same optimization as above
-	if(owner_ && opacity_>0)
+	if(owner_ && _opacity>0)
 		owner_->markDirty();
 }
 
@@ -202,10 +208,10 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 	
 	for(;ty0<=ty1;++ty0) {
 		for(int tx=tx0;tx<=tx1;++tx) {
-			int i = ty0*xtiles_ + tx;
-			Q_ASSERT(i>=0 && i < xtiles_*ytiles_);
-			delete tiles_[i];
-			tiles_[i] = new Tile(image, tx, ty0, Tile::roundDown(x), Tile::roundDown(y));
+			int i = ty0*_xtiles + tx;
+			Q_ASSERT(i>=0 && i < _xtiles*_ytiles);
+			delete _tiles[i];
+			_tiles[i] = new Tile(image, tx, ty0, Tile::roundDown(x), Tile::roundDown(y));
 		}
 	}
 	
@@ -213,75 +219,49 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 		owner_->markDirty(QRect(x, y, image.width(), image.height()));
 }
 
-/**
- * Apply a single dab of the brush to the layer
- * @param brush brush to use
- * @parma point where to dab. May be outside the image.
- */
-void Layer::dab(const Brush& brush, const Point& point)
+void Layer::dab(int contextId, const Brush &brush, const Point &point)
 {
-	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
-	const int top = point.y() - brush.radius(point.pressure());
-	const int left = point.x() - brush.radius(point.pressure());
-	const int bottom = qMin(top + dia, height_);
-	const int right = qMin(left + dia, width_);
-	if(left+dia<=0 || top+dia<=0 || left>=width_ || top>=height_)
-		return;
+	if(!brush.incremental()) {
+		// Indirect brush: use a sublayer
+		Layer *sl = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
 
-	// Render the brush
-	BrushMask bm = brush.subpixel()?brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure()):brush.render(point.pressure());
-	const int realdia = bm.diameter();
-	const uchar *values = bm.data();
-	QColor color = brush.color(point.pressure());
+		Brush slb(brush);
+		slb.setOpacity(1.0);
+		slb.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
+		slb.setBlendingMode(1);
 
-	// A single dab can (and often does) span multiple tiles.
-	int y = top<0?0:top;
-	int yb = top<0?-top:0; // y in relation to brush origin
-	const int x0 = left<0?0:left;
-	const int xb0 = left<0?-left:0;
-	while(y<bottom) {
-		const int yindex = y / Tile::SIZE;
-		const int yt = y - yindex * Tile::SIZE;
-		const int hb = yt+realdia-yb < Tile::SIZE ? realdia-yb : Tile::SIZE-yt;
-		int x = x0;
-		int xb = xb0; // x in relation to brush origin
-		while(x<right) {
-			const int xindex = x / Tile::SIZE;
-			const int xt = x - xindex * Tile::SIZE;
-			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
-			const int i = xtiles_ * yindex + xindex;
-			if(tiles_[i]==0)
-				tiles_[i] = new Tile(xindex, yindex);
-			tiles_[i]->composite(
-					brush.blendingMode(),
-					values + yb * realdia + xb,
-					color,
-					xt, yt,
-					wb, hb,
-					realdia-wb
-					);
-
-			x = (xindex+1) * Tile::SIZE;
-			xb = xb + wb;
-		}
-		y = (yindex+1) * Tile::SIZE;
-		yb = yb + hb;
+		sl->directDab(slb, point);
+	} else {
+		directDab(brush, point);
 	}
-	if(owner_ && visible())
-		owner_->markDirty(QRect(left, top, right-left, bottom-top));
-
 }
 
 /**
  * Draw a line using either drawSoftLine or drawHardLine, depending on
  * the subpixel hint of the brush.
+ * @param context drawing context id (needed for indirect drawing)
  */
-void Layer::drawLine(const Brush& brush, const Point& from, const Point& to, qreal &distance)
+void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, qreal &distance)
 {
-	if(brush.subpixel())
-		drawSoftLine(brush, from, to, distance);
-	else
-		drawHardLine(brush, from, to, distance);
+	if(!brush.incremental()) {
+		// Indirect brush: use a sublayer
+		Layer *sl = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
+
+		Brush slb(brush);
+		slb.setOpacity(1.0);
+		slb.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
+		slb.setBlendingMode(1);
+
+		if(brush.subpixel())
+			sl->drawSoftLine(slb, from, to, distance);
+		else
+			sl->drawHardLine(slb, from, to, distance);
+	} else {
+		if(brush.subpixel())
+			drawSoftLine(brush, from, to, distance);
+		else
+			drawHardLine(brush, from, to, distance);
+	}
 }
 
 /**
@@ -309,7 +289,7 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
 	p += dp;
 	for(qreal i=0;i<dist-0.5;++i) {
 		if(++distance > spacing) {
-			dab(brush, Point(QPointF(x0,y0),qBound(0.0,p,1.0)));
+			directDab(brush, Point(QPointF(x0,y0),qBound(0.0,p,1.0)));
 			distance = 0;
 		}
 		x0 += dx;
@@ -364,7 +344,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 			x0 += stepx;
 			fraction += dy;
 			if(++distance > spacing) {
-				dab(brush, point);
+				directDab(brush, point);
 				distance = 0;
 			}
 			p += dp;
@@ -379,7 +359,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 			y0 += stepy;
 			fraction += dx;
 			if(++distance > spacing) {
-				dab(brush, point);
+				directDab(brush, point);
 				distance = 0;
 			}
 			p += dp;
@@ -388,39 +368,103 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 }
 
 /**
- * @param tile x index offset
- * @param tile y index offset
- * @param layer the layer that will be merged to this
+ * Apply a single dab of the brush to the layer
+ * @param brush brush to use
+ * @parma point where to dab. May be outside the image.
  */
-void Layer::merge(int x, int y, const Layer *layer)
+void Layer::directDab(const Brush& brush, const Point& point)
 {
-	int myx = x;
-	int myy = y;
-	for(int i=0;i<layer->ytiles_&&myy<ytiles_;++i,myy++) {
-		for(int j=0;j<layer->xtiles_;++j&&myx<xtiles_,myx++) {
-			const int index = xtiles_*myy + myx;
-			if(tiles_[index]==0)
-				tiles_[index] = new Tile(myx, myy);
-			tiles_[index]->merge(layer->tiles_[layer->xtiles_*i+j], layer->opacity_, layer->blendmode());
+	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
+	const int top = point.y() - brush.radius(point.pressure());
+	const int left = point.x() - brush.radius(point.pressure());
+	const int bottom = qMin(top + dia, height_);
+	const int right = qMin(left + dia, width_);
+	if(left+dia<=0 || top+dia<=0 || left>=width_ || top>=height_)
+		return;
+
+	// Render the brush
+	BrushMask bm = brush.subpixel()?brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure()):brush.render(point.pressure());
+	const int realdia = bm.diameter();
+	const uchar *values = bm.data();
+	QColor color = brush.color(point.pressure());
+
+	// A single dab can (and often does) span multiple tiles.
+	int y = top<0?0:top;
+	int yb = top<0?-top:0; // y in relation to brush origin
+	const int x0 = left<0?0:left;
+	const int xb0 = left<0?-left:0;
+	while(y<bottom) {
+		const int yindex = y / Tile::SIZE;
+		const int yt = y - yindex * Tile::SIZE;
+		const int hb = yt+realdia-yb < Tile::SIZE ? realdia-yb : Tile::SIZE-yt;
+		int x = x0;
+		int xb = xb0; // x in relation to brush origin
+		while(x<right) {
+			const int xindex = x / Tile::SIZE;
+			const int xt = x - xindex * Tile::SIZE;
+			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
+			const int i = _xtiles * yindex + xindex;
+			if(_tiles[i]==0)
+				_tiles[i] = new Tile(xindex, yindex);
+			_tiles[i]->composite(
+					brush.blendingMode(),
+					values + yb * realdia + xb,
+					color,
+					xt, yt,
+					wb, hb,
+					realdia-wb
+					);
+
+			x = (xindex+1) * Tile::SIZE;
+			xb = xb + wb;
 		}
-		myx = x;
+		y = (yindex+1) * Tile::SIZE;
+		yb = yb + hb;
 	}
 	if(owner_ && visible())
-		owner_->markDirty();
+		owner_->markDirty(QRect(left, top, right-left, bottom-top));
+
+}
+
+/**
+ * @param layer the layer that will be merged to this
+ */
+void Layer::merge(const Layer *layer)
+{
+	Q_ASSERT(layer->_xtiles == _xtiles);
+	Q_ASSERT(layer->_ytiles == _ytiles);
+
+	const bool md = owner_ && visible();
+
+	for(int y=0;y<layer->_ytiles;++y) {
+		for(int x=0;x<layer->_xtiles;++x) {
+			const int index = _xtiles*y + x;
+
+				if(layer->_tiles[index]==0)
+				continue;
+
+			if(_tiles[index]==0)
+				_tiles[index] = new Tile(x, y);
+
+			_tiles[index]->merge(layer->_tiles[index], layer->_opacity, layer->blendmode());
+			if(md)
+				owner_->markDirty(x, y);
+		}
+	}
 }
 
 void Layer::fillChecker(const QColor& dark, const QColor& light)
 {
-	for(int i=0;i<xtiles_*ytiles_;++i)
-		tiles_[i]->fillChecker(dark, light);
+	for(int i=0;i<_xtiles*_ytiles;++i)
+		_tiles[i]->fillChecker(dark, light);
 	if(owner_ && visible())
 		owner_->markDirty();
 }
 
 void Layer::fillColor(const QColor& color)
 {
-	for(int i=0;i<xtiles_*ytiles_;++i)
-		tiles_[i]->fillColor(color);
+	for(int i=0;i<_xtiles*_ytiles;++i)
+		_tiles[i]->fillColor(color);
 	if(owner_ && visible())
 		owner_->markDirty();
 }
@@ -430,10 +474,77 @@ void Layer::fillColor(const QColor& color)
  */
 void Layer::optimize()
 {
-	for(int i=0;i<xtiles_*ytiles_;++i) {
-		if(tiles_[i] && tiles_[i]->isBlank()) {
-			delete tiles_[i];
-			tiles_[i] = 0;
+	for(int i=0;i<_xtiles*_ytiles;++i) {
+		if(_tiles[i] && _tiles[i]->isBlank()) {
+			delete _tiles[i];
+			_tiles[i] = 0;
+		}
+	}
+	// TODO delete unused sublayers
+}
+
+/**
+ * @brief Get or create a new sublayer
+ *
+ * Sublayers are temporary layers used for indirect drawing.
+ *
+ * @param id sublayer ID (unique to parent layer only)
+ * @param opacity layer opacity (set when creating the layer)
+ * @return sublayer
+ */
+Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
+{
+	// See if the sublayer exists already
+	foreach(Layer *sl, _sublayers)
+		if(sl->id() == id) {
+			if(sl->hidden()) {
+				// Hidden, reset properties
+				sl->_hidden = false;
+				sl->_opacity = opacity;
+				sl->_blend = blendmode;
+			}
+			return sl;
+		}
+
+	// Okay, try recycling a sublayer
+	foreach(Layer *sl, _sublayers) {
+		if(sl->hidden()) {
+			// Set these flags directly to avoid markDirty call.
+			// We know the layer is invisible at this point
+			sl->_hidden = false;
+			sl->id_ = id;
+			sl->_opacity = opacity;
+			sl->_blend = blendmode;
+			return sl;
+		}
+	}
+
+	// No available sublayers, create a new one
+	Layer *sl = new Layer(owner_, id, QSize(width_, height_));
+	sl->_opacity = opacity;
+	sl->_blend = blendmode;
+	_sublayers.append(sl);
+	return sl;
+}
+
+/**
+ * This is used to end an indirect stroke.
+ * If a sublayer with the given ID does not exist, this function does nothing.
+ * @param id
+ */
+void Layer::mergeSublayer(int id)
+{
+	foreach(Layer *sl, _sublayers) {
+		if(sl->id() == id) {
+			merge(sl);
+			sl->_hidden = true;
+
+			for(int i=0;i<_xtiles*_ytiles;++i) {
+				delete sl->_tiles[i];
+				sl->_tiles[i] = 0;
+			}
+
+			return;
 		}
 	}
 }

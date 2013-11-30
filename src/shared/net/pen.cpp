@@ -53,20 +53,21 @@ int ToolChange::payloadLength() const
 
 int ToolChange::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	*data = _layer; ++data;
-	*data = _blend; ++data;
-	*data = _mode; ++data;
-	*data = _spacing; ++data;
-	qToBigEndian(_color_h, data); data += 4;
-	qToBigEndian(_color_l, data); data += 4;
-	*data = _hard_h; ++data;
-	*data = _hard_l; ++data;
-	*data = _size_h; ++data;
-	*data = _size_l; ++data;
-	*data = _opacity_h; ++data;
-	*data = _opacity_l;
-	return 19;
+	uchar *ptr = data;
+	*(ptr++) = _id;
+	*(ptr++) = _layer;
+	*(ptr++) = _blend;
+	*(ptr++) = _mode;
+	*(ptr++) = _spacing;
+	qToBigEndian(_color_h, ptr); ptr += 4;
+	qToBigEndian(_color_l, ptr); ptr += 4;
+	*(ptr++) = _hard_h;
+	*(ptr++) = _hard_l;
+	*(ptr++) = _size_h;
+	*(ptr++) = _size_l;
+	*(ptr++) = _opacity_h;
+	*(ptr++) = _opacity_l;
+	return ptr-data;
 }
 
 PenMove *PenMove::deserialize(const uchar *data, uint len)

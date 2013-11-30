@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SimpleSettings</class>
- <widget class="QWidget" name="SimpleSettings" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SimpleSettings">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,28 +10,37 @@
     <height>284</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="margin" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item>
-    <widget class="BrushPreview" name="preview" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <widget class="BrushPreview" name="preview">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize" >
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>64</height>
       </size>
      </property>
-     <property name="maximumSize" >
+     <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>128</height>
@@ -39,17 +49,17 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="brushopts" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout" name="brushopts">
+     <property name="spacing">
       <number>3</number>
      </property>
-     <property name="topMargin" >
+     <property name="topMargin">
       <number>0</number>
      </property>
      <item>
-      <widget class="QComboBox" name="blendmode" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+      <widget class="QComboBox" name="blendmode">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -57,27 +67,47 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="hardedge" >
-       <property name="maximumSize" >
+      <widget class="QToolButton" name="incremental">
+       <property name="toolTip">
+        <string>Incremental drawing</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/incremental.png</normaloff>:/icons/incremental.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="hardedge">
+       <property name="maximumSize">
         <size>
          <width>20</width>
          <height>20</height>
         </size>
        </property>
-       <property name="toolTip" >
+       <property name="toolTip">
         <string>Hard edge</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>HE</string>
        </property>
-       <property name="icon" >
-        <iconset resource="resources.qrc" >
+       <property name="icon">
+        <iconset resource="resources.qrc">
          <normaloff>:/icons/hardedge.png</normaloff>:/icons/hardedge.png</iconset>
        </property>
-       <property name="checkable" >
+       <property name="checkable">
         <bool>true</bool>
        </property>
-       <property name="autoRaise" >
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
@@ -85,99 +115,90 @@
     </layout>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushsize" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushsize" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Radius</string>
      </property>
-     <property name="minimum" >
+     <property name="minimum" stdset="0">
       <number>0</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>64</number>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushopacity" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushopacity" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Opacity</string>
      </property>
-     <property name="minimum" >
+     <property name="minimum" stdset="0">
       <number>1</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>100</number>
-     </property>
-     <property name="style" >
-      <enum>BrushSlider::Opacity</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushhardness" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushhardness" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Hardness</string>
      </property>
-     <property name="minimum" >
+     <property name="minimum" stdset="0">
       <number>1</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>100</number>
-     </property>
-     <property name="style" >
-      <enum>BrushSlider::Hardness</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushspacing" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushspacing" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Spacing</string>
      </property>
-     <property name="minimum" >
+     <property name="minimum" stdset="0">
       <number>1</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>50</number>
      </property>
-     <property name="style" >
-      <enum>BrushSlider::Spacing</enum>
-     </property>
-     <property name="suffix" >
+     <property name="suffix" stdset="0">
       <string>%</string>
      </property>
     </widget>
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>156</width>
        <height>16</height>
@@ -201,7 +222,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc" />
+  <include location="resources.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -210,11 +231,11 @@
    <receiver>preview</receiver>
    <slot>setBlendingMode(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>14</x>
      <y>99</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>14</x>
      <y>53</y>
     </hint>
@@ -226,11 +247,11 @@
    <receiver>preview</receiver>
    <slot>setHardEdge(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>196</x>
      <y>103</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>126</x>
      <y>30</y>
     </hint>
@@ -242,11 +263,11 @@
    <receiver>preview</receiver>
    <slot>setSize(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
-     <x>61</x>
-     <y>111</y>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>131</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>61</x>
      <y>21</y>
     </hint>
@@ -258,11 +279,11 @@
    <receiver>preview</receiver>
    <slot>setOpacity(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>91</x>
      <y>141</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>85</x>
      <y>39</y>
     </hint>
@@ -274,11 +295,11 @@
    <receiver>preview</receiver>
    <slot>setHardness(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>104</x>
      <y>176</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>108</x>
      <y>36</y>
     </hint>
@@ -290,11 +311,11 @@
    <receiver>preview</receiver>
    <slot>setSpacing(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>84</x>
      <y>197</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>69</x>
      <y>29</y>
     </hint>
@@ -306,13 +327,29 @@
    <receiver>brushhardness</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>196</x>
      <y>103</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>76</x>
      <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>incremental</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setIncremental(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>161</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>164</x>
+     <y>56</y>
     </hint>
    </hints>
   </connection>

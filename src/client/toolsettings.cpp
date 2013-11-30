@@ -68,6 +68,7 @@ PenSettings::~PenSettings()
 		// Remember settings
 		QSettings& cfg = getSettings();
 		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
+		cfg.setValue("incremental", ui_->incremental->isChecked());
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("spacing", ui_->brushspacing->value());
@@ -94,6 +95,9 @@ QWidget *PenSettings::createUi(QWidget *parent)
 	// Load previous settings
 	QSettings& cfg = getSettings();
 	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
+	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
+	ui_->preview->setIncremental(ui_->incremental->isChecked());
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->preview->setSize(ui_->brushsize->value());
@@ -239,6 +243,7 @@ BrushSettings::~BrushSettings()
 		// Remember settings
 		QSettings& cfg = getSettings();
 		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
+		cfg.setValue("incremental", ui_->incremental->isChecked());
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
@@ -267,6 +272,9 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	QSettings& cfg = getSettings();
 
 	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
+	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
+	ui_->preview->setIncremental(ui_->incremental->isChecked());
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->preview->setSize(ui_->brushsize->value());
@@ -329,6 +337,7 @@ SimpleSettings::~SimpleSettings()
 		// Remember settings
 		QSettings& cfg = getSettings();
 		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
+		cfg.setValue("incremental", ui_->incremental->isChecked());
 		cfg.setValue("size", ui_->brushsize->value());
 		cfg.setValue("opacity", ui_->brushopacity->value());
 		cfg.setValue("hardness", ui_->brushhardness->value());
@@ -360,6 +369,9 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 	// Load previous settings
 	QSettings& cfg = getSettings();
 	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
+	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
+	ui_->preview->setIncremental(ui_->incremental->isChecked());
 
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->preview->setSize(ui_->brushsize->value());

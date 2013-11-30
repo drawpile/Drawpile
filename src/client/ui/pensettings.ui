@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PenSettings</class>
- <widget class="QWidget" name="PenSettings" >
-  <property name="geometry" >
+ <widget class="QWidget" name="PenSettings">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,28 +10,37 @@
     <height>271</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="margin" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
     <number>3</number>
    </property>
    <item>
-    <widget class="BrushPreview" name="preview" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <widget class="BrushPreview" name="preview">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="minimumSize" >
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>64</height>
       </size>
      </property>
-     <property name="maximumSize" >
+     <property name="maximumSize">
       <size>
        <width>16777215</width>
        <height>128</height>
@@ -39,17 +49,17 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>3</number>
      </property>
-     <property name="topMargin" >
+     <property name="topMargin">
       <number>3</number>
      </property>
      <item>
-      <widget class="QComboBox" name="blendmode" >
-       <property name="sizePolicy" >
-        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+      <widget class="QComboBox" name="blendmode">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -57,115 +67,125 @@
       </widget>
      </item>
      <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
+      <widget class="QToolButton" name="incremental">
+       <property name="toolTip">
+        <string>Incremental drawing</string>
        </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>20</width>
-         <height>20</height>
-        </size>
+       <property name="text">
+        <string>...</string>
        </property>
-      </spacer>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/incremental.png</normaloff>:/icons/incremental.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushsize" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushsize" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Radius</string>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>64</number>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushopacity" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushopacity" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Opacity</string>
      </property>
-     <property name="minimum" >
+     <property name="minimum" stdset="0">
       <number>1</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>100</number>
-     </property>
-     <property name="style" >
-      <enum>BrushSlider::Opacity</enum>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="BrushSlider" name="brushspacing" >
-     <property name="minimumSize" >
+    <widget class="BrushSlider" name="brushspacing" native="true">
+     <property name="minimumSize">
       <size>
        <width>0</width>
        <height>18</height>
       </size>
      </property>
-     <property name="toolTip" >
+     <property name="toolTip">
       <string>Spacing</string>
      </property>
-     <property name="minimum" >
+     <property name="minimum" stdset="0">
       <number>1</number>
      </property>
-     <property name="maximum" >
+     <property name="maximum" stdset="0">
       <number>50</number>
      </property>
-     <property name="style" >
-      <enum>BrushSlider::Spacing</enum>
-     </property>
-     <property name="suffix" >
+     <property name="suffix" stdset="0">
       <string>%</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_5" >
-     <property name="text" >
+    <widget class="QLabel" name="label_5">
+     <property name="text">
       <string>Pressure sensitivity</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" >
-     <property name="margin" >
+    <layout class="QGridLayout">
+     <property name="leftMargin">
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
       <number>3</number>
      </property>
-     <item row="0" column="0" >
-      <widget class="QCheckBox" name="pressuresize" >
-       <property name="text" >
+     <item row="0" column="0">
+      <widget class="QCheckBox" name="pressuresize">
+       <property name="text">
         <string>Size</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="QCheckBox" name="pressureopacity" >
-       <property name="text" >
+     <item row="0" column="1">
+      <widget class="QCheckBox" name="pressureopacity">
+       <property name="text">
         <string>Opacity</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" >
-      <widget class="QCheckBox" name="pressurecolor" >
-       <property name="text" >
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="pressurecolor">
+       <property name="text">
         <string>Color</string>
        </property>
       </widget>
@@ -174,10 +194,10 @@
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>5</width>
        <height>5</height>
@@ -205,7 +225,9 @@
   <tabstop>pressureopacity</tabstop>
   <tabstop>pressurecolor</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>pressuresize</sender>
@@ -213,11 +235,11 @@
    <receiver>preview</receiver>
    <slot>setSizePressure(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>51</x>
      <y>204</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>60</x>
      <y>27</y>
     </hint>
@@ -229,11 +251,11 @@
    <receiver>preview</receiver>
    <slot>setOpacityPressure(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>161</x>
      <y>204</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>162</x>
      <y>30</y>
     </hint>
@@ -245,11 +267,11 @@
    <receiver>preview</receiver>
    <slot>setColorPressure(bool)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>81</x>
      <y>226</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>162</x>
      <y>25</y>
     </hint>
@@ -261,11 +283,11 @@
    <receiver>preview</receiver>
    <slot>setBlendingMode(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>59</x>
      <y>79</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>30</x>
      <y>33</y>
     </hint>
@@ -277,11 +299,11 @@
    <receiver>preview</receiver>
    <slot>setOpacity(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>61</x>
      <y>133</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>81</x>
      <y>54</y>
     </hint>
@@ -293,11 +315,11 @@
    <receiver>preview</receiver>
    <slot>setSize(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>53</x>
      <y>104</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>50</x>
      <y>30</y>
     </hint>
@@ -309,13 +331,29 @@
    <receiver>preview</receiver>
    <slot>setSpacing(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>116</x>
      <y>150</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>125</x>
      <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>incremental</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>preview</receiver>
+   <slot>setIncremental(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>148</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>144</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>

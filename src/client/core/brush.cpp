@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -50,8 +50,8 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int
 	: radius1_(radius), radius2_(radius),
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
-	color1_(color), color2_(color), spacing_(spacing),
-	sensitive_(false), subpixel_(true), blend_(0)
+	color1_(color), color2_(color), spacing_(spacing), blend_(0),
+	sensitive_(false), subpixel_(true), incremental_(true)
 {
 	Q_ASSERT(radius>=0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
@@ -176,6 +176,17 @@ void Brush::setSubpixel(bool sp)
 }
 
 /**
+ * In incremental drawing mode, dabs are applied directly to the layer.
+ * In indirect drawing mode, dabs are applied (with full opacity) to a
+ * temporary layer which is merged with the actual layer on penup.
+ * @param incremental
+ */
+void Brush::setIncremental(bool incremental)
+{
+	incremental_ = incremental;
+}
+
+/**
  * The brush mask can be composed in other ways that the plain old
  * alpha blend as well.
  * Modes are defined in rasterop.h. Unrecognized modes default to
@@ -276,6 +287,11 @@ QColor Brush::color(qreal pressure) const
 int Brush::spacing() const
 {
 	return spacing_;
+}
+
+bool Brush::isOpacityVariable() const
+{
+	return qAbs(opacity1_ - opacity2_) > (1/256.0);
 }
 
 /**
@@ -383,6 +399,7 @@ bool Brush::operator==(const Brush& brush) const
 			color2_ == brush.color2_ &&
 			spacing_ == brush.spacing_ &&
 			subpixel_ == brush.subpixel_ &&
+			incremental_ == brush.incremental_ &&
 			blend_ == brush.blend_;
 }
 

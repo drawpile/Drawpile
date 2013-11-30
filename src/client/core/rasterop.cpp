@@ -243,15 +243,22 @@ void doPixelAlphaBlend(quint32 *destination, const quint32 *source, uchar opacit
 {
 	uchar *dest = reinterpret_cast<uchar*>(destination);
 	const uchar *src = reinterpret_cast<const uchar*>(source);
+
 	while(len--) {
 		const uchar a = UINT8_MULT(src[3], opacity);
-		const uchar a2 = UINT8_MULT(255-a, dest[3]);
-		*dest = UINT8_MULT(a, src[0]) + UINT8_MULT(a2, *dest); ++dest;
-		*dest = UINT8_MULT(a, src[1]) + UINT8_MULT(a2, *dest); ++dest;
-		*dest = UINT8_MULT(a, src[2]) + UINT8_MULT(a2, *dest); ++dest;
-		*dest = a + a2; ++dest;
-		src+=4;
+		const uchar a2 = UINT8_MULT(dest[3], 255-a);
+		const uchar a_out = a+a2;
+		if(a_out==0) {
+			src+=4;
+			dest+=4;
+		} else {
+			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
+			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
+			*dest = UINT8_DIVIDE(UINT8_MULT(a, *src) + UINT8_MULT(a2, *dest), a_out); ++dest,++src;
+			*dest = a_out; ++dest,++src;
+		}
 	}
+
 }
 
 // Specialized pixel composition: erase alpha channel
@@ -275,7 +282,7 @@ void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, 
 	uchar *dest = reinterpret_cast<uchar*>(destination);
 	while(len--) {
 		// Special case: source or destination pixel is completely transparent
-		if(*src==0 || dest[3]==0) {
+		if(src[3]==0 || dest[3]==0) {
 			dest += 4;
 		}
 		// The usual case: blending required

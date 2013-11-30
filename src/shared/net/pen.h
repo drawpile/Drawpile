@@ -29,7 +29,7 @@
 namespace protocol {
 
 static const uint8_t TOOL_MODE_SUBPIXEL = (1<<0);
-static const uint8_t TOOL_MODE_INDIRECT = (1<<1);
+static const uint8_t TOOL_MODE_INCREMENTAL = (1<<1);
 
 /**
  * \brief Tool setting change command
