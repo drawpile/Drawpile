@@ -274,30 +274,18 @@ void doPixelComposite(quint32 *destination, const quint32 *source, uchar alpha, 
 	const uchar *src = reinterpret_cast<const uchar*>(source);
 	uchar *dest = reinterpret_cast<uchar*>(destination);
 	while(len--) {
-		// Special case: source pixel is completely transparent
-		if(*src==0) {
+		// Special case: source or destination pixel is completely transparent
+		if(*src==0 || dest[3]==0) {
 			dest += 4;
-		}
-		// Special case: source pixel is completely opaque
-		else if(*src==255) {
-			*dest = BO(*dest, src[0]); ++dest;
-			*dest = BO(*dest, src[1]); ++dest;
-			*dest = BO(*dest, src[2]); ++dest;
-			++dest;
 		}
 		// The usual case: blending required
 		else {
-			if(dest[3]>0) {
-				const uchar a = UINT8_MULT(src[3], alpha);
-				const uchar a2 = UINT8_MULT(a, dest[3]);
-				*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, a2); ++dest;
-				*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, a2); ++dest;
-				*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, a2); ++dest;
-				++dest;
-			} else {
-				// No need to do anything if destination pixel is fully transparent
-				dest += 4;
-			}
+			const uchar a = UINT8_MULT(src[3], alpha);
+			const uchar a2 = UINT8_MULT(a, dest[3]);
+			*dest = UINT8_BLEND(BO(*dest, src[0]), *dest, a2); ++dest;
+			*dest = UINT8_BLEND(BO(*dest, src[1]), *dest, a2); ++dest;
+			*dest = UINT8_BLEND(BO(*dest, src[2]), *dest, a2); ++dest;
+			++dest;
 		}
 		src += 4;
 	}
