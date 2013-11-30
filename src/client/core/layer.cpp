@@ -70,7 +70,7 @@ void Layer::setTitle(const QString& title)
 
 QImage Layer::toImage() const {
 	QImage image(width_, height_, QImage::Format_ARGB32);
-	//image.fill(0);
+	image.fill(0);
 	for(int i=0;i<xtiles_*ytiles_;++i) {
 		if(tiles_[i])
 			tiles_[i]->copyToImage(image);

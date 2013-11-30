@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2009 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,40 @@ const char *BLEND_MODE[BLEND_MODES] = {
 	QT_TR_NOOP("Subtract"),
 	QT_TR_NOOP("Add"),
 };
+
+static const QString svgModeNames[BLEND_MODES] = {
+	QString("-dp-erase"), /* this is used internally only */
+	QString("src-over"),
+	QString("multiply"),
+	QString("screen"),
+	QString("color-burn"),
+	QString("color-dodge"),
+	QString("darken"),
+	QString("lighten"),
+	QString("-dp-minus"), /* not part of SVG or OpenRaster spec */
+	QString("plus")
+};
+
+int blendModeSvg(const QString &name)
+{
+	QStringRef n;
+	if(name.startsWith("svg:"))
+		n = name.midRef(4);
+	else
+		n = name.midRef(0);
+
+	for(int i=0;i<BLEND_MODES;++i)
+		if(svgModeNames[i] == n)
+			return i;
+	return -1;
+}
+
+const QString &svgBlendMode(int blendmode)
+{
+	if(blendmode < 0 || blendmode>=BLEND_MODES)
+		return svgModeNames[1];
+	return svgModeNames[blendmode];
+}
 
 // This is borrowed from Pigment of koffice libs:
 /// Blending of two scale values as described by the alpha scale value
@@ -305,4 +339,3 @@ void compositePixels(int mode, quint32 *base, const quint32 *over, int len, ucha
 }
 
 }
-

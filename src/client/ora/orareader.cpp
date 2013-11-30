@@ -24,8 +24,9 @@
 #include <QScopedPointer>
 #include <QColor>
 
-#include "zipfile.h"
-#include "orareader.h"
+#include "core/rasterop.h" // for blend modes
+#include "ora/zipfile.h"
+#include "ora/orareader.h"
 
 #include "../shared/net/layer.h"
 #include "../shared/net/annotation.h"
@@ -148,7 +149,7 @@ bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 		if(e.tagName()=="layer") {
 			// Check for unknown attributes
 			const char *layerattrs[] = {
-					"x", "y", "name", "src", "opacity", "visibility", 0
+					"x", "y", "name", "src", "opacity", "visibility", "composite-op", 0
 			};
 			if(!isKnown(e.attributes(), layerattrs))
 				_warnings |= ORA_EXTENDED;
@@ -182,10 +183,17 @@ bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 				);
 			_commands.append(net::putQImage(_layerid, layerPos.x(), layerPos.y(), content, false));
 
+			QString compositeOp = e.attribute("composite-op", "src-over");
+			int blendmode = dpcore::blendModeSvg(compositeOp);
+			if(blendmode<0) {
+				_warnings |= ORA_EXTENDED;
+				blendmode = 1;
+			}
+
 			_commands.append(MessagePtr(new protocol::LayerAttributes(
 				_layerid,
 				qRound(255 * e.attribute("opacity", "1.0").toDouble()),
-				1 // TODO blend modes
+				blendmode
 			)));
 
 			// TODO visibility flag

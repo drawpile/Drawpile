@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #ifndef RASTEROP_H
 #define RASTEROP_H
 
-#include <Qt>
+#include <QString>
 
 namespace dpcore {
 
@@ -50,6 +50,19 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask, in
  * @param opacity blend opacity (0..255)
  */
 void compositePixels(int mode, quint32 *base, const quint32 *over, int len, uchar opacity);
+
+/**
+ * @brief Get the blending mode for the given SVG composite operation name
+ * @return blending mode or -1 if operation is not supported
+ */
+int blendModeSvg(const QString &name);
+
+/**
+ * @brief Get the SVG composition operation name for the given blend mode
+ * @param blendmode
+ * @return name. The normal blend mode is returned if blendmode is invalid
+ */
+const QString &svgBlendMode(int blendmode);
 
 }
 

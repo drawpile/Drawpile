@@ -27,7 +27,7 @@
 #include "ora/orawriter.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
-
+#include "core/rasterop.h" // for blending modes
 
 namespace {
 
@@ -81,6 +81,8 @@ bool writeStackXml(Zipfile &zf, const dpcore::LayerStack *layers, const QList<dr
 		layer.setAttribute("opacity", QString::number(l->opacity() / 255.0, 'f', 3));
 		if(l->hidden())
 			layer.setAttribute("visibility", "hidden");
+		if(l->blendmode() != 1)
+			layer.setAttribute("composite-op", "svg:" + dpcore::svgBlendMode(l->blendmode()));
 
 		stack.appendChild(layer);
 	}
