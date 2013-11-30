@@ -93,6 +93,7 @@ set (
 	ui/erasersettings.ui
 	ui/layerbox.ui
 	ui/userbox.ui
+	ui/newdialog.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )
