@@ -20,7 +20,6 @@
 */
 
 #include <QApplication>
-#include <QDebug>
 #include <QStringList>
 #include <QInputDialog>
 
@@ -40,8 +39,6 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 	}
 
 	QString msg = message.cast<protocol::Login>().message();
-
-	qDebug() << "LOGIN:" << msg;
 
 	switch(_state) {
 	case 0: expectHello(msg); break;
