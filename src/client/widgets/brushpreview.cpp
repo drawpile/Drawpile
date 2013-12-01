@@ -274,6 +274,7 @@ void BrushPreview::setSubpixel(bool enable)
 void BrushPreview::setBlendingMode(int mode)
 {
 	// Eraser mode (0) is not visible, so add 1
+	// Use -1 to get eraser.
 	brush_.setBlendingMode(mode + 1);
 	updatePreview();
 	update();

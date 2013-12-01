@@ -179,6 +179,8 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 	// Load previous settings
 	QSettings& cfg = getSettings();
 
+	ui_->preview->setBlendingMode(-1); // eraser is normally not visible
+
 	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
 	ui_->preview->setSize(ui_->brushsize->value());
 
