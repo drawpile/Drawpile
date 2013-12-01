@@ -66,7 +66,6 @@ int main(int argc, char *argv[]) {
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
-	verbose = true;
 	server->setErrorStream(new QTextStream(stderr));
 	if(verbose)
 		server->setDebugStream(new QTextStream(stdout));
