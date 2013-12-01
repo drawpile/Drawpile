@@ -7,12 +7,13 @@ The standard is still at a draft stage and subject to change, and so is
 DrawPile's implementation of it.
 
 Presently, a DrawPile specific extension is used for saving the annotations.
-They are saved under the <drawpile:annotations> element in the same format
-as used in the network protocol. Once the <text> element of OpenRaster is
-standardised, it will be used instead.
+They are saved under the <drawpile:annotations> element.
+Once the <text> element of OpenRaster is standardised, it will probably be used instead.
 
 Compatability has been tested with the following programs:
  * myPaint
+ * GIMP
 
 Further reading
  * http://create.freedesktop.org/wiki/OpenRaster/
+

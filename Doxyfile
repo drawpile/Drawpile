@@ -26,7 +26,7 @@ BUILTIN_STL_SUPPORT    = NO
 DISTRIBUTE_GROUP_DOC   = NO
 SUBGROUPING            = YES
 
-EXAMPLE_PATH           = ./doc/dox/examples
+#EXAMPLE_PATH           = ./doc/dox/examples
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -75,7 +75,7 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 
-INPUT                  = ./doc/dox ./src/client ./src/server ./src/shared ./src/tray-server
+INPUT                  = ./src/client ./src/server ./src/shared ./src/tray-server
 FILE_PATTERNS          = *.cpp *.h *.dox
 RECURSIVE              = YES
 EXCLUDE                = ./src/client/widgets
