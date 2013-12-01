@@ -1,6 +1,8 @@
 2013-12-?? Version 0.7.1
  * Redesigned layer & user list boxes
  * Support for layer blending modes
+ * Indirect drawing mode
+ * Text based file format (mainly for testing)
 
 2013-11-28 Version 0.7.0
  * Layer support
