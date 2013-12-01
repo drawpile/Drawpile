@@ -30,8 +30,8 @@ namespace widgets {
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
-//! Color button for foreground and background colors
 /**
+ * @brief Color button for foreground and background colors
  * The DualColorButton provides two colors and signals to notify when they
  * have changed.
  */

@@ -38,8 +38,8 @@ struct BrushMaskData : public QSharedData
 	int pressure;
 };
 
-//! A brush mask
 /**
+ * @brief A brush mask
  * This is an implicitly shared class that holds the alpha map of the
  * brush shape.
  */
@@ -75,8 +75,8 @@ class BrushMask
 		QSharedDataPointer<BrushMaskData> d;
 };
 
-//! A brush for drawing onto a layer
 /**
+ * @brief A brush for drawing onto a layer
  * This class produces an image that can be used as a brush.
  * Two sets of parameters are set and the image is created by
  * interpolating between them.

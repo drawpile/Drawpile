@@ -31,8 +31,8 @@ namespace dpcore {
 
 namespace drawingboard {
 
-//! A drawing board item item for QGraphicsScene
 /**
+ * @brief A drawing board item item for QGraphicsScene
  * The board item provides an interface to a LayerStack for QGraphicsScene.
  * Methods are provided for drawing lines and points with a Brush object.
  */

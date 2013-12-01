@@ -37,8 +37,8 @@ namespace widgets {
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
-//! Brush previewing widget
 /**
+ * @brief Brush previewing widget
  */
 class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_OBJECT

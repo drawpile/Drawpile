@@ -28,8 +28,8 @@ class QPainter;
 
 namespace dpcore {
 
-//! A piece of an image
 /**
+ * @brief A piece of an image
  * Each tile is a square of size SIZE*SIZE. The pixel format is 32-bit ARGB.
  *
  */

@@ -37,11 +37,12 @@ namespace net {
 	class Client;
 }
 
-//! Tools
 /**
+ * @brief Tools
+ *
  * Tools translate commands from the local user into messages that
- * can be sent over the network or directly modify the drawingboard
- * if in offline mode. Read-only tools access the canvas directly.
+ * can be sent over the network.
+ * Read-only tools can access the canvas directly.
  */
 namespace tools {
 
@@ -49,8 +50,8 @@ enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
 
 class ToolCollection;
 
-//! Base class for all tools
 /**
+ * @brief Base class for all tools
  * Tool classes interpret mouse/pen commands into editing actions.
  */
 class Tool
@@ -113,8 +114,8 @@ class Eraser : public BrushBase {
 		Eraser(ToolCollection &owner) : BrushBase(owner, ERASER) {}
 };
 
-//! Color picker
 /**
+ * @brief Color picker
  * Color picker is a local tool, it does not affect the drawing board.
  */
 class ColorPicker : public Tool {
@@ -152,10 +153,8 @@ private:
 	dpcore::Point _p1, _p2;
 };
 
-//! Annotation tool
 /**
- * This is a remote tool, but it only affects annotations that are
- * separate from the pixel data.
+ * @brief Annotation tool
  */
 class Annotation : public Tool {
 public:
@@ -173,7 +172,9 @@ private:
 
 
 /**
- * A collection for tools, specific to a single controller.
+ * @brief A collection for tool instances.
+ *
+ * Note. This is not a singleton. Each mainwindow instance gets its own tool collection.
  */
 class ToolCollection {
 	friend class Tool;

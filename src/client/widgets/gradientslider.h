@@ -30,8 +30,8 @@ namespace widgets {
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
-//! Gradient slider
 /**
+ * @brief Gradient slider
  * A slider that displays either a simple two color gradient or
  * a HSV gradient.
  */

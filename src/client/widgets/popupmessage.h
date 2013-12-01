@@ -28,8 +28,8 @@ class QLabel;
 
 namespace widgets {
 
-//! Popup messagebox
 /**
+ * @brief Popup messagebox
  * A simple box that can be popped up to display a message.
  */
 class PopupMessage : public QWidget

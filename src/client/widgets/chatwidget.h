@@ -26,8 +26,9 @@ class Ui_ChatBox;
 
 namespace widgets {
 
-//! Chat window
 /**
+ * @brief Chat window
+ *
  * A widget for chatting with other users
  */
 class ChatBox: public QWidget

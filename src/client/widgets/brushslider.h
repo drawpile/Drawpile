@@ -30,8 +30,8 @@ namespace widgets {
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
-//! Brush slider
 /**
+ * @brief Brush slider
  * A slider for intuitively changing brush parameters.
  */
 class PLUGIN_EXPORT BrushSlider : public QAbstractSlider {

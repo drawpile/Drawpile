@@ -25,8 +25,9 @@
 class Ui_ColorDialog;
 
 namespace dialogs {
-//! Color selection dialog
+
 /**
+ * @brief Color selection dialog
  * The color selection dialog provides sliders for chaning a color's
  * RGB and HSV values.
  */

@@ -44,8 +44,8 @@ namespace widgets {
 
 namespace tools {
 
-//! Abstract base class for tool settings
 /**
+ * @brief Abstract base class for tool settings
  * The tool settings class provides a user interface widget that is
  * displayed in a dock window and a uniform way of getting a brush
  * configured by the user.
@@ -56,8 +56,8 @@ class ToolSettings {
 			: name_(name), title_(title), widget_(0) {}
 		virtual ~ToolSettings() { }
 
-		//! Create an UI widget
 		/**
+		 * @brief Create the UI widget
 		 * If the tool has a size changing signal, it will be connected to the
 		 * parent's sizeChanged(int) signal.
 		 * @param parent parent widget
@@ -74,29 +74,31 @@ class ToolSettings {
 		//! Set the background color
 		virtual void setBackground(const QColor& color) = 0;
 
-		//! Get a brush based on the settings in the UI
 		/**
+		 * @brief Get a brush based on the settings in the UI
 		 * An UI widget must have been created before this can be called.
 		 * @return brush with values from the UI widget
 		 */
 		virtual const dpcore::Brush& getBrush() const = 0;
 
-		//! Get the brush size
 		/**
+		 * @brief Get the current brush size
 		 * @return size of the current brush
 		 */
 		virtual int getSize() const = 0;
 
-		//! Get the name (internal) of this tool
 		/**
+		 * @brief Get the internal name of this tool
 		 * The internal name is used when settings are stored to a
 		 * configuration file
+		 * @return internal tool name
 		 */
 		const QString& getName() const { return name_; }
 
-		//! Get the title of this tool
+		//!
 		/**
-		 * The title is what is shown to the user
+		 * @brief Get the user facing name of this tool
+		 * @return visible tool name
 		 */
 		const QString& getTitle() const { return title_; }
 
@@ -112,8 +114,8 @@ class ToolSettings {
 		QWidget *widget_;
 };
 
-//! Pen settings
 /**
+ * @brief Pen settings
  * This is much like BrushSettings, except the pen always has 100% hardness
  * and no antialiasing.
  */
@@ -134,8 +136,9 @@ class PenSettings : public ToolSettings {
 		Ui_PenSettings *ui_;
 };
 
-//! Eraser settings
 /**
+ * @brief Eraser settings
+ *
  * This is a settings class for brushes that erase.
  * Erasers don't actually use the colors assigned to them, but will
  * always simple erase the alpha channel.
@@ -157,8 +160,8 @@ class EraserSettings : public ToolSettings {
 		Ui_EraserSettings *ui_;
 };
 
-//! Basic brush settings
 /**
+ * @brief Basic brush settings
  * This is a settings class for brush based drawing tools, like the
  * regular brush and eraser.
  */
@@ -179,8 +182,8 @@ class BrushSettings : public ToolSettings {
 		Ui_BrushSettings *ui_;
 };
 
-//! Settings for tools without pressure sensitivity
 /**
+ * @brief Settings for tools without pressure sensitivity
  */
 class SimpleSettings : public ToolSettings {
 	public:
@@ -203,7 +206,12 @@ class SimpleSettings : public ToolSettings {
 		bool subpixel_;
 };
 
-//! Settings for the annotation tool
+/**
+ * @brief Settings for the annotation tool
+ *
+ * The annotation tool is special because it is used to manipulate
+ * annotation objects rather than pixel data.
+ */
 class AnnotationSettings : public QObject, public ToolSettings {
 	Q_OBJECT
 	public:
@@ -258,9 +266,9 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		QTimer *_updatetimer;
 };
 
-//! No settings
+//!
 /**
- * This is a dummy settings class for settingless tools, like the color picker
+ * @brief A simple settings class for settingless tools, like the color picker
  */
 class NoSettings : public ToolSettings {
 	public:

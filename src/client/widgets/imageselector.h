@@ -31,8 +31,8 @@ namespace widgets {
 #define PLUGIN_EXPORT QDESIGNER_WIDGET_EXPORT
 #endif
 
-//! Image selector widget
 /**
+ * @brief Image selector widget
  * The image selector allows the user to choose which image to use.
  * Options are original image, new image or solid color.
  */

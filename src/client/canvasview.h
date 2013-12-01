@@ -37,8 +37,8 @@ namespace widgets {
 
 class ToolSettingsDock;
 
-//! Editor view
 /**
+ * @brief Editor view
  * The editor view is a customized QGraphicsView that displays
  * the drawing board and handes user input.
  * It also provides other features, such as brush outline preview.
@@ -138,10 +138,11 @@ class CanvasView : public QGraphicsView
 		
 		void resetCursor();
 
-		//! State of the pen
 		/**
+		 * @brief State of the pen
+		 *
 		 * - NOTDOWN pen is not down
-		 * - MOUSDOWN mouse is down
+		 * - MOUSEDOWN mouse is down
 		 * - TABLETDOWN tablet stylus is down
 		 */
 		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} _pendown;

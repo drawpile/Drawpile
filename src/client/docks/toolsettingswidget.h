@@ -37,8 +37,8 @@ namespace dpcore {
 
 namespace widgets {
 
-//! Tool settings window
 /**
+ * @brief Tool settings window
  * A dock widget that displays settings for the currently selected tool.
  */
 class ToolSettingsDock : public QDockWidget
