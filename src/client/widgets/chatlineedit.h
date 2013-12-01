@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,50 +17,38 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef CHATWIDGET_H
-#define CHATWIDGET_H
+#ifndef CHATLINEEDIT_H
+#define CHATLINEEDIT_H
 
-#include <QWidget>
-
-class QTextBrowser;
-class ChatLineEdit;
-
-namespace widgets {
+#include <QStringList>
+#include <QLineEdit>
 
 /**
- * @brief Chat window
- *
- * A widget for chatting with other users
- */
-class ChatBox: public QWidget
+ * @brief A specialized line edit widget for chatting, with history
+  */
+class ChatLineEdit : public QLineEdit
 {
-	Q_OBJECT
-	public:
-		ChatBox(QWidget *parent=0);
-		~ChatBox();
+Q_OBJECT
+public:
+	explicit ChatLineEdit(QWidget *parent = 0);
 
-	public slots:
-		//! Display a received message
-		void receiveMessage(const QString& nick, const QString &message, bool isme=false);
+	bool isEmpty() const;
 
-		//! Display a system message
-		void systemMessage(const QString& message);
+	//! Push text to history
+	void pushHistory(const QString& text);
 
-		void userJoined(const QString &name);
-		void userParted(const QString &name);
+signals:
+	void returnPressed(const QString &text);
 
-		//! Empty the chat box
-		void clear();
+public slots:
 
-	signals:
-		void message(const QString& msg);
+protected:
+	void keyPressEvent(QKeyEvent *event);
 
-	private:
-		QTextBrowser *_view;
-		ChatLineEdit *_myline;
+private:
+	QStringList _history;
+	QString _current;
+	int _historypos;
 };
 
-}
-
 #endif
-

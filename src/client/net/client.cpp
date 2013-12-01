@@ -145,6 +145,11 @@ bool Client::isLocalServer() const
 	return _server->isLocal();
 }
 
+QString Client::myName() const
+{
+	return _userlist->getUserById(_my_id).name;
+}
+
 int Client::uploadQueueBytes() const
 {
 	return _server->uploadQueueBytes();
@@ -419,7 +424,7 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 			username = user.name;
 	}
 
-	emit chatMessageReceived(username, msg.message());
+	emit chatMessageReceived(username, msg.message(), msg.user() == _my_id);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

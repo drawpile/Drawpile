@@ -79,6 +79,12 @@ public:
 	int myId() const { return _my_id; }
 
 	/**
+	 * @brief Get the local user's username
+	 * @return user name
+	 */
+	QString myName() const;
+
+	/**
 	 * @brief Is the client connected to a local server?
 	 *
 	 * A local server is one that is running on this computer
@@ -175,7 +181,7 @@ public slots:
 
 signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
-	void chatMessageReceived(const QString &user, const QString &message);
+	void chatMessageReceived(const QString &user, const QString &message, bool me);
 	void needSnapshot(bool forcenew);
 
 	void serverConnected(const QString &address);

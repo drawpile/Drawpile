@@ -163,8 +163,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
 	// Meta commands
-	connect(_client, SIGNAL(chatMessageReceived(QString,QString)),
-			chatbox, SLOT(receiveMessage(QString,QString)));
+	connect(_client, SIGNAL(chatMessageReceived(QString,QString, bool)),
+			chatbox, SLOT(receiveMessage(QString,QString, bool)));
 	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
@@ -178,9 +178,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
-	connect(_client, SIGNAL(serverLoggedin(bool)), chatbox, SLOT(joined()));
 	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
-	connect(_client, SIGNAL(serverDisconnected(QString)), chatbox, SLOT(parted()));
 
 	connect(_client, SIGNAL(serverConnected(QString)), netstatus, SLOT(connectingToHost(QString)));
 	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
@@ -191,6 +189,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(userJoined(QString)), netstatus, SLOT(join(QString)));
 	connect(_client, SIGNAL(userLeft(QString)), netstatus, SLOT(leave(QString)));
+
+	connect(_client, SIGNAL(userJoined(QString)), chatbox, SLOT(userJoined(QString)));
+	connect(_client, SIGNAL(userLeft(QString)), chatbox, SLOT(userParted(QString)));
 
 	// Restore settings
 	readSettings(restoreWindowPosition);

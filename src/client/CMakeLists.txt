@@ -62,6 +62,7 @@ set (
 	widgets/netstatus.cpp 
 	widgets/qtcolortriangle.cpp 
 	widgets/dualcolorbutton.cpp
+	widgets/chatlineedit.cpp
 	widgets/chatwidget.cpp 
 	widgets/brushslider.cpp 
 	widgets/colorbutton.cpp 
@@ -84,7 +85,6 @@ set (
 	ui/colordialog.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
-	ui/chatbox.ui
 	ui/palettebox.ui
 	ui/colorbox.ui
 	ui/settings.ui
