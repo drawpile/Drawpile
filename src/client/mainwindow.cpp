@@ -541,7 +541,7 @@ void MainWindow::open(const QString& file)
 void MainWindow::open()
 {
 	// Get a list of supported formats
-	QString formats = "*.ora ";
+	QString formats = "*.ora *.dptxt ";
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}

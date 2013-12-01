@@ -28,6 +28,7 @@ set (
 	icons.cpp 
 	annotationitem.cpp
 	loader.cpp
+	textloader.cpp
 	net/client.cpp
 	net/loopbackserver.cpp
 	net/tcpserver.cpp

@@ -22,6 +22,8 @@
 */
 
 #include "../shared/net/message.h"
+#include "../shared/net/pen.h"
+#include "core/point.h"
 
 namespace dpcore {
 	class Brush;
@@ -34,6 +36,11 @@ QList<protocol::MessagePtr> putQImage(int layer, int x, int y, const QImage &ima
 
 //! Generate a tool change message
 protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brush &brush);
+
+
+protocol::PenPoint pointToProtocol(const dpcore::Point &p);
+protocol::PenPointVector pointsToProtocol(const dpcore::PointVector &points);
+
 }
 
 #endif

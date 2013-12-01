@@ -201,41 +201,16 @@ void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 	_server->sendMessage(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
 }
 
-namespace {
-
-/**
- * Convert a dpcore::Point to network format. The
- * reverse operation for this is in statetracker.cpp
- * @param p
- * @return
- */
-protocol::PenPoint point2net(const dpcore::Point &p)
-{
-	// The two least significant bits of the coordinate
-	// are the fractional part.
-	// The rest is the integer part with a bias of 128
-	uint16_t x = (qMax(0, p.x() + 128) << 2) | (uint16_t(p.xFrac()*4) & 3);
-	uint16_t y = (qMax(0, p.y() + 128) << 2) | (uint16_t(p.yFrac()*4) & 3);
-
-	return protocol::PenPoint(x, y, p.pressure() * 255);
-}
-
-}
-
 void Client::sendStroke(const dpcore::Point &point)
 {
 	protocol::PenPointVector v(1);
-	v[0] = point2net(point);
+	v[0] = pointToProtocol(point);
 	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, v)));
 }
 
 void Client::sendStroke(const dpcore::PointVector &points)
 {
-	protocol::PenPointVector v(points.size());
-	for(int i=0;i<points.size();++i)
-		v[i] = point2net(points[i]);
-	
-	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, v)));
+	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, pointsToProtocol(points))));
 }
 
 void Client::sendPenup()

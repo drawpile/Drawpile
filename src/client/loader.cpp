@@ -24,6 +24,7 @@
 #include <QMessageBox>
 
 #include "loader.h"
+#include "textloader.h"
 #include "net/client.h"
 #include "net/utils.h"
 #include "ora/orareader.h"
@@ -70,6 +71,15 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 			QMessageBox::warning(0, QApplication::tr("Partially supported OpenRaster"), text);
 		}
 		return reader.initCommands();
+	} else if(_filename.endsWith(".dptxt", Qt::CaseInsensitive)) {
+		TextCommandLoader txt(filename());
+
+		if(!txt.load()) {
+			_error = txt.errorMessage();
+			return QList<MessagePtr>();
+		}
+
+		return txt.loadInitCommands();
 	} else {
 		// Load a simple single-layer image using Qt's image loader
 		QList<MessagePtr> msgs;

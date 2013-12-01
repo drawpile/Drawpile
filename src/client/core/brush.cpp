@@ -50,7 +50,7 @@ Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int
 	: radius1_(radius), radius2_(radius),
 	hardness1_(hardness), hardness2_(hardness),
 	opacity1_(opacity), opacity2_(opacity),
-	color1_(color), color2_(color), spacing_(spacing), blend_(0),
+	color1_(color), color2_(color), spacing_(spacing), blend_(1),
 	sensitive_(false), subpixel_(true), incremental_(true)
 {
 	Q_ASSERT(radius>=0);

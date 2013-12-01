@@ -110,4 +110,38 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brus
 	));
 }
 
+
+/**
+ * Convert a dpcore::Point to network format. The
+ * reverse operation for this is in statetracker.cpp
+ * @param p
+ * @return
+ */
+protocol::PenPoint pointToProtocol(const dpcore::Point &p)
+{
+	// The two least significant bits of the coordinate
+	// are the fractional part.
+	// The rest is the integer part with a bias of 128
+	uint16_t x = (qMax(0, p.x() + 128) << 2) | (uint16_t(p.xFrac()*4) & 3);
+	uint16_t y = (qMax(0, p.y() + 128) << 2) | (uint16_t(p.yFrac()*4) & 3);
+
+	return protocol::PenPoint(x, y, p.pressure() * 255);
+}
+
+/**
+ * Convert a dpcore::Point to network format. The
+ * reverse operation for this is in statetracker.cpp
+ * @param p
+ * @return
+ */
+protocol::PenPointVector pointsToProtocol(const dpcore::PointVector &points)
+{
+	protocol::PenPointVector ppvec;
+	foreach(const dpcore::Point &p, points)
+		ppvec.append(pointToProtocol(p));
+
+	return ppvec;
+}
+
+
 }
