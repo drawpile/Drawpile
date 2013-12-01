@@ -224,6 +224,9 @@ void Client::socketDisconnect()
 	if(_id>0) {
 		_server->session().userids.release(_id);
 		_server->addToCommandStream(MessagePtr(new protocol::UserLeave(_id)));
+
+		if(!_server->session().drawingctx[_id].penup)
+			_server->addToCommandStream(MessagePtr(new protocol::PenUp(_id)));
 	}
 	emit disconnected(this);
 }

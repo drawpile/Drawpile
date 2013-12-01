@@ -109,6 +109,22 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 	}
 }
 
+/**
+ * @brief Network disconnected, so end remote drawing processes
+ */
+void StateTracker::endRemoteContexts()
+{
+	QHashIterator<int, DrawingContext> iter(_contexts);
+	while(iter.hasNext()) {
+		iter.next();
+		if(iter.key() != _myid) {
+			// Simulate pen-up
+			if(iter.value().pendown)
+				receiveCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
+		}
+	}
+}
+
 QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 {
 	if(!_hassnapshot || forcenew) {

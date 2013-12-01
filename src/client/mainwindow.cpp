@@ -906,6 +906,10 @@ void MainWindow::disconnected(const QString &message)
 	if(!_client->isLoggedIn()) {
 		showErrorMessage(tr("Couldn't connect to server"), message);
 	}
+
+	// Make sure all drawing is complete
+	if(_canvas->hasImage())
+		_canvas->statetracker()->endRemoteContexts();
 }
 
 /**

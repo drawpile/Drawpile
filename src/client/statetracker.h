@@ -99,6 +99,8 @@ public:
 	
 	void receiveCommand(protocol::MessagePtr msg);
 
+	void endRemoteContexts();
+
 	QList<protocol::MessagePtr> generateSnapshot(bool forcenew);
 
 	const QHash<int, DrawingContext> &drawingContexts() const { return _contexts; }
