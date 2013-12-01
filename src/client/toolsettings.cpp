@@ -165,6 +165,7 @@ EraserSettings::~EraserSettings()
 		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
 		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
 		cfg.setValue("hardedge", ui_->hardedge->isChecked());
+		cfg.setValue("incremental", ui_->incremental->isChecked());
 		delete ui_;
 	}
 }
@@ -204,6 +205,9 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 
 	ui_->hardedge->setChecked(cfg.value("hardedge", false).toBool());
 
+	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
+	ui_->preview->setIncremental(ui_->incremental->isChecked());
+
 	// Connect size change signal
 	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
@@ -211,15 +215,11 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 
 void EraserSettings::setForeground(const QColor& color)
 {
-	// Erasers don't use colors anymore
-	//ui_->preview->setColor1(color);
 }
 
 void EraserSettings::setBackground(const QColor& color)
 {
-	// Erasers don't use colors anymore
-	// But we use the background color to fill
-	// the preview backdrop.
+	// This is used just for the background color
 	ui_->preview->setColor2(color);
 }
 
