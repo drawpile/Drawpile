@@ -128,6 +128,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
 	splitter_->addWidget(chatbox);
 
+	// Make sure the canvas gets the majority share of the splitter the first time
+	splitter_->setStretchFactor(0, 1);
+	splitter_->setStretchFactor(1, 0);
+
 	// Create canvas scene
 	_canvas = new drawingboard::CanvasScene(this);
 	_canvas->setBackgroundBrush(
