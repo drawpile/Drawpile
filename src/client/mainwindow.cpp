@@ -123,6 +123,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 			viewstatus, SLOT(setTransformation(int, qreal)));
 
 	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
+
+	connect(_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	
 	// Create the chatbox
 	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
@@ -140,6 +142,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	navigator_->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
+	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });

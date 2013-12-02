@@ -29,6 +29,7 @@ class QStackedWidget;
 namespace tools {
 	class ToolSettings;
 	class AnnotationSettings;
+	class ColorPickerSettings;
 }
 
 namespace dpcore {
@@ -56,6 +57,9 @@ class ToolSettingsDock : public QDockWidget
 
 		//! Get the annotation settings page
 		tools::AnnotationSettings *getAnnotationSettings();
+
+		//! Get the color picker page
+		tools::ColorPickerSettings * getColorPickerSettings();
 
 	signals:
 		//! This signal is emitted when the current tool changes its size

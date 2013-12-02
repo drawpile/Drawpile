@@ -26,6 +26,7 @@
 #include "docks/layerlistdock.h"
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
+#include "widgets/palettewidget.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO works in qt5?)
 using widgets::ColorButton;
 #include "ui_pensettings.h"
@@ -36,6 +37,8 @@ using widgets::ColorButton;
 
 #include "annotationitem.h"
 #include "net/client.h"
+
+#include "utils/palette.h"
 
 #include "core/rasterop.h" // for blend modes
 
@@ -423,34 +426,45 @@ int SimpleSettings::getSize() const
 	return ui_->brushsize->value();
 }
 
-NoSettings::NoSettings(const QString& name, const QString& title)
-	: ToolSettings(name, title)
+ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
+	:  QObject(), ToolSettings(name, title), _palette(new Palette("Color picker"))
 {
 }
 
-NoSettings::~NoSettings()
+QWidget *ColorPickerSettings::createUi(QWidget *parent)
 {
+	_palettewidget = new widgets::PaletteWidget(parent);
+	_palettewidget->setPalette(_palette);
+	_palettewidget->setSwatchSize(32, 24);
+	_palettewidget->setSpacing(3);
+
+	connect(_palettewidget, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorSelected(QColor)));
+
+	setUiWidget(_palettewidget);
+	return _palettewidget;
 }
 
-QWidget *NoSettings::createUi(QWidget *parent)
+ColorPickerSettings::~ColorPickerSettings()
 {
-	QLabel *ui = new QLabel(QApplication::tr("This tool has no settings"),
-			parent);
-	setUiWidget(ui);
-	return ui;
+	delete _palette;
 }
 
-void NoSettings::setForeground(const QColor&)
-{
-}
-
-void NoSettings::setBackground(const QColor&)
-{
-}
-
-const dpcore::Brush& NoSettings::getBrush() const
+const dpcore::Brush &ColorPickerSettings::getBrush() const
 {
 	return DUMMY_BRUSH;
+}
+
+void ColorPickerSettings::addColor(const QColor &color)
+{
+	if(_palette->count() && _palette->color(0) == color)
+		return;
+
+	_palette->insertColor(0, color);
+
+	if(_palette->count() > 80)
+		_palette->removeColor(_palette->count()-1);
+
+	_palettewidget->update();
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)

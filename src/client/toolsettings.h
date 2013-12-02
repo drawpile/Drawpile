@@ -40,7 +40,10 @@ namespace drawingboard {
 }
 namespace widgets {
 	class LayerListDock;
+	class PaletteWidget;
 }
+
+class Palette;
 
 namespace tools {
 
@@ -266,25 +269,32 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		QTimer *_updatetimer;
 };
 
-//!
 /**
- * @brief A simple settings class for settingless tools, like the color picker
+ * @brief Color picker history
  */
-class NoSettings : public ToolSettings {
-	public:
-		NoSettings(const QString& name, const QString& title);
-		~NoSettings();
+class ColorPickerSettings : public QObject, public ToolSettings {
+Q_OBJECT
+public:
+	ColorPickerSettings(const QString &name, const QString &title);
+	~ColorPickerSettings();
 
-		QWidget *createUi(QWidget *parent);
+	QWidget *createUi(QWidget *parent);
 
-		void setForeground(const QColor&);
-		void setBackground(const QColor&);
-		const dpcore::Brush& getBrush() const;
+	void setForeground(const QColor&) {}
+	void setBackground(const QColor&) {}
+	const dpcore::Brush& getBrush() const;
 
-		int getSize() const { return 0; }
+	int getSize() const { return 0; }
 
-	private:
-		Ui_TextSettings *ui_;
+public slots:
+	void addColor(const QColor &color);
+
+signals:
+	void colorSelected(const QColor &color);
+
+private:
+	Palette *_palette;
+	widgets::PaletteWidget *_palettewidget;
 };
 
 }

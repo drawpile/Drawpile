@@ -46,7 +46,7 @@ ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	widgets_->addWidget(erasersettings_->createUi(this));
 
 	// Create a settings widget for color picker
-	pickersettings_ = new tools::NoSettings("picker", tr("Color picker"));
+	pickersettings_ = new tools::ColorPickerSettings("picker", tr("Color picker"));
 	widgets_->addWidget(pickersettings_->createUi(this));
 
 	// Create settings widget for line
@@ -127,6 +127,11 @@ const dpcore::Brush& ToolSettingsDock::getBrush() const
 tools::AnnotationSettings *ToolSettingsDock::getAnnotationSettings()
 {
 	return static_cast<tools::AnnotationSettings*>(textsettings_);
+}
+
+tools::ColorPickerSettings *ToolSettingsDock::getColorPickerSettings()
+{
+	return static_cast<tools::ColorPickerSettings*>(pickersettings_);
 }
 
 }

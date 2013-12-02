@@ -39,6 +39,10 @@ class PaletteWidget : public QWidget {
 	Q_OBJECT
 	public:
 		PaletteWidget(QWidget *parent);
+
+		void setSwatchSize(int width, int height);
+		void setSpacing(int spacing);
+
 		void setPalette(Palette *palette);
 
 	signals:

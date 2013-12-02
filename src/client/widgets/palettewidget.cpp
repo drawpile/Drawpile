@@ -64,6 +64,18 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 			this, SLOT(dialogDone()));
 }
 
+void PaletteWidget::setSwatchSize(int width, int height)
+{
+	swatchsize_ = QSize(width, height);
+	update();
+}
+
+void PaletteWidget::setSpacing(int spacing)
+{
+	spacing_ = spacing;
+	update();
+}
+
 void PaletteWidget::setPalette(Palette *palette)
 {
 	palette_ = palette;
@@ -127,6 +139,7 @@ void PaletteWidget::addColor()
 
 void PaletteWidget::removeColor()
 {
+	Q_ASSERT(palette_);
 	palette_->removeColor(selection_);
 	if(selection_ >= palette_->count()) {
 		outline_->hide();
@@ -140,6 +153,7 @@ void PaletteWidget::removeColor()
  */
 void PaletteWidget::editCurrentColor()
 {
+	Q_ASSERT(palette_);
 	if(dialogsel_<-1 && selection_ >= 0) {
 		dialogsel_ = selection_;
 		colordlg_->setColor(palette_->color(selection_));
@@ -154,6 +168,7 @@ void PaletteWidget::editCurrentColor()
  */
 void PaletteWidget::setCurrentColor(const QColor& color)
 {
+	Q_ASSERT(palette_);
 	Q_ASSERT(dialogsel_>-2);
 	if(dialogsel_==-1) {
 		if(selection_ == -1)
@@ -230,7 +245,8 @@ void PaletteWidget::mousePressEvent(QMouseEvent *event)
 
 void PaletteWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	contextmenu_->popup(mapToGlobal(event->pos()));
+	if(palette_)
+		contextmenu_->popup(mapToGlobal(event->pos()));
 }
 
 void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
