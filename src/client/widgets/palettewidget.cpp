@@ -140,7 +140,7 @@ void PaletteWidget::removeColor()
  */
 void PaletteWidget::editCurrentColor()
 {
-	if(dialogsel_<-1) {
+	if(dialogsel_<-1 && selection_ >= 0) {
 		dialogsel_ = selection_;
 		colordlg_->setColor(palette_->color(selection_));
 		colordlg_->show();
