@@ -561,11 +561,16 @@ void Client::handleHostSession(const QString &msg)
 	// is not yet in sync with the user!
 	_state = WAIT_FOR_SYNC;
 
+	// Send login message to self only, since the distributable login
+	// notification will be part of the initial snapshot.
+	_msgqueue->send(MessagePtr(new protocol::UserJoin(_id, _username)));
+
 	// Send request for initial state
 	_server->startSession();
 	requestSnapshot(false);
 	_streampointer = _server->mainstream().snapshotPointIndex();
-	_server->addToCommandStream(MessagePtr(new protocol::UserJoin(_id, _username)));
+
+	// First user is operator
 	grantOp();
 }
 
