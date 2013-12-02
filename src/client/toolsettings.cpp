@@ -26,10 +26,8 @@
 #include "docks/layerlistdock.h"
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
-#include "widgets/brushslider.h"
 using widgets::BrushPreview; // qt designer doesn't know about namespaces (TODO works in qt5?)
 using widgets::ColorButton;
-using widgets::BrushSlider;
 #include "ui_pensettings.h"
 #include "ui_brushsettings.h"
 #include "ui_erasersettings.h"
@@ -177,6 +175,9 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 	widget->hide();
 	setUiWidget(widget);
 
+	parent->connect(ui_->hardedge, &QToolButton::toggled, [this](bool hard) { ui_->brushhardness->setEnabled(!hard); });
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+
 	// Load previous settings
 	QSettings& cfg = getSettings();
 
@@ -208,8 +209,6 @@ QWidget *EraserSettings::createUi(QWidget *parent)
 	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
 	ui_->preview->setIncremental(ui_->incremental->isChecked());
 
-	// Connect size change signal
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
 }
 
@@ -270,6 +269,9 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
+	// Connect size change signal
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+
 	// Load previous settings
 	QSettings& cfg = getSettings();
 
@@ -302,8 +304,6 @@ QWidget *BrushSettings::createUi(QWidget *parent)
 	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
 	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
 
-	// Connect size change signal
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
 }
 
@@ -361,6 +361,10 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
+	// Connect size change signal
+	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(ui_->hardedge, &QToolButton::toggled, [this](bool hard) { ui_->brushhardness->setEnabled(!hard); });
+
 	// Set proper preview shape
 	if(type_==Line)
 		ui_->preview->setPreviewShape(BrushPreview::Line);
@@ -396,8 +400,6 @@ QWidget *SimpleSettings::createUi(QWidget *parent)
 		ui_->brushopts->addSpacing(ui_->hardedge->width());
 	}
 
-	// Connect size change signal
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
 }
 

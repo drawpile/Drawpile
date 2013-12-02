@@ -64,7 +64,6 @@ set (
 	widgets/dualcolorbutton.cpp
 	widgets/chatlineedit.cpp
 	widgets/chatwidget.cpp 
-	widgets/brushslider.cpp 
 	widgets/colorbutton.cpp 
 	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
