@@ -49,6 +49,20 @@ int UserListModel::rowCount(const QModelIndex& parent) const
 
 void UserListModel::addUser(const User &user)
 {
+	// Check that the user doesn't exist already
+	for(int i=0;i<_users.count();++i) {
+		User &u = _users[i];
+		if(u.id == user.id) {
+			qWarning() << "replacing user" << u.id << u.name << "with" << user.name;
+			u.name = user.name;
+			u.isLocal = user.isLocal;
+
+			QModelIndex idx = index(i);
+			emit dataChanged(idx, idx);
+			return;
+		}
+	}
+
 	int pos = _users.count();
 	beginInsertRows(QModelIndex(),pos,pos);
 	_users.append(user);
