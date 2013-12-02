@@ -25,7 +25,6 @@ set (
 	statetracker.cpp
 	tools.cpp
 	toolsettings.cpp
-	icons.cpp 
 	annotationitem.cpp
 	loader.cpp
 	textloader.cpp
@@ -40,6 +39,7 @@ set (
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
+	utils/icons.cpp 
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp

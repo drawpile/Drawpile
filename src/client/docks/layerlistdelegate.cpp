@@ -28,7 +28,7 @@
 
 #include "docks/layerlistdelegate.h"
 
-#include "icons.h"
+#include "utils/icons.h"
 
 namespace widgets {
 
@@ -52,7 +52,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	// Draw layer opacity glyph
 	QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
-	drawStyleGlyph(stylerect, painter, option.palette, layer.opacity, layer.hidden);
+	drawOpacityGlyph(stylerect, painter, layer.opacity, layer.hidden);
 
 	// Draw layer name
 	textrect.setLeft(stylerect.right());
@@ -97,44 +97,18 @@ void LayerListDelegate::setModelData(QWidget *editor, QAbstractItemModel *, cons
 	}
 }
 
-void LayerListDelegate::drawStyleGlyph(const QRectF& rect, QPainter *painter,const QPalette& palette, float value, bool hidden) const
+void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const
 {
-	painter->save();
-
-	QRectF gr = rect.adjusted(2,2,-2,-2);
-	painter->setRenderHint(QPainter::Antialiasing);
-
-	// Draw the background
-	QPen pen(palette.color(QPalette::Dark));
-	pen.setWidth(1);
-	painter->setPen(pen);
-
-	QLinearGradient grad(gr.topLeft(), gr.bottomLeft());
-	grad.setColorAt(0, palette.color(QPalette::Light));
-	grad.setColorAt(1, palette.color(QPalette::Mid));
-	painter->setBrush(grad);
-
-	painter->drawEllipse(gr);
-
-	// Fill glyph to indicate opacity
-	painter->setClipRect(QRectF(gr.topLeft(), QSize(gr.width() * value, gr.height())));
-	grad.setColorAt(0, palette.color(QPalette::Dark));
-	grad.setColorAt(1, palette.color(QPalette::Shadow));
-	painter->setBrush(palette.highlight());
-
-	painter->drawEllipse(gr.adjusted(1,1,-1,-1));
-	painter->setClipping(false);
-
+	int x = rect.left() + rect.width() / 2 - 8;
+	int y = rect.top() + rect.height() / 2 - 8;
 	if(hidden) {
-		// Indicate if layer is hidden
-		grad.setColorAt(0, QColor(255,0,0));
-		grad.setColorAt(1, QColor(155,0,0));
-		painter->setPen(QPen(grad, 3, Qt::SolidLine, Qt::RoundCap));
-		painter->drawLine(gr.topLeft(), gr.bottomRight());
-		painter->drawLine(gr.topRight(), gr.bottomLeft());
+		painter->drawPixmap(x, y, icon::layerHide().pixmap(QSize(16,16), QIcon::Normal, QIcon::On));
+	} else {
+		painter->save();
+		painter->setOpacity(value);
+		painter->drawPixmap(x, y, icon::layerHide().pixmap(QSize(16,16), QIcon::Normal, QIcon::Off));
+		painter->restore();
 	}
-
-	painter->restore();
 }
 
 }

@@ -39,7 +39,6 @@
 #include "config.h"
 #include "main.h"
 #include "mainwindow.h"
-#include "icons.h"
 #include "loader.h"
 
 #include "canvasview.h"
@@ -49,6 +48,7 @@
 #include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
+#include "utils/icons.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"

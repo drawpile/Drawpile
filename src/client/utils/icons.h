@@ -24,20 +24,11 @@ class QIcon;
 
 namespace icon {
 
+//! Get the layer hide button icon
+const QIcon &layerHide();
+
 //! Get a lock icon
 const QIcon& lock();
-
-//! Get a kick icon
-const QIcon& kick();
-
-//! Get a remove icon
-const QIcon& remove();
-
-//! Get a layer visible icon
-const QIcon& layervisible();
-
-//! Get an add icon
-const QIcon& add();
 
 //! Get a network status icon
 const QIcon& network();

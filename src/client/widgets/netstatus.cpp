@@ -25,9 +25,9 @@
 #include <QHBoxLayout>
 #include <QProgressBar>
 
-#include "netstatus.h"
-#include "popupmessage.h"
-#include "icons.h"
+#include "widgets/netstatus.h"
+#include "widgets/popupmessage.h"
+#include "utils/icons.h"
 
 namespace widgets {
 

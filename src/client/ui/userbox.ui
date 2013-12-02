@@ -55,10 +55,6 @@
        <property name="text">
         <string>...</string>
        </property>
-       <property name="icon">
-        <iconset resource="resources.qrc">
-         <normaloff>:/icons/lock.png</normaloff>:/icons/lock.png</iconset>
-       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>

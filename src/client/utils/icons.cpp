@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,53 +22,25 @@
 
 #include "icons.h"
 
-// TODO replace this with something sensible.
-// Perhaps look into http://labs.trolltech.com/blogs/2009/02/13/freedesktop-icons-in-qt/
-
 namespace icon {
+
+const QIcon& layerHide()
+{
+	static QIcon icon;
+	if(icon.isNull()) {
+		icon.addFile(":icons/eye_closed.png", QSize(), QIcon::Normal, QIcon::On);
+		icon.addFile(":icons/eye_open.png", QSize(), QIcon::Normal, QIcon::Off);
+	}
+	return icon;
+}
+
 
 const QIcon& lock()
 {
 	static QIcon icon;
 	if(icon.isNull()) {
-		icon.addFile(":icons/lock.png", QSize(), QIcon::Normal, QIcon::On);
-		icon.addFile(":icons/unlock.png", QSize(), QIcon::Normal, QIcon::Off);
-	}
-	return icon;
-}
-
-const QIcon& kick()
-{
-	static QIcon icon;
-	if(icon.isNull()) {
-		icon.addFile(":icons/kick.png", QSize(), QIcon::Normal, QIcon::On);
-	}
-	return icon;
-}
-
-const QIcon& remove()
-{
-	static QIcon icon;
-	if(icon.isNull()) {
-		icon.addFile(":icons/list-remove.png", QSize(), QIcon::Normal, QIcon::On);
-	}
-	return icon;
-}
-
-const QIcon& layervisible()
-{
-	static QIcon icon;
-	if(icon.isNull()) {
-		icon.addFile(":icons/layer-visible.png", QSize(), QIcon::Normal, QIcon::On);
-	}
-	return icon;
-}
-
-const QIcon& add()
-{
-	static QIcon icon;
-	if(icon.isNull()) {
-		icon.addFile(":icons/list-add.png", QSize(), QIcon::Normal, QIcon::On);
+		icon.addFile(":icons/lock_closed.png", QSize(), QIcon::Normal, QIcon::On);
+		icon.addFile(":icons/lock_open.png", QSize(), QIcon::Normal, QIcon::Off);
 	}
 	return icon;
 }

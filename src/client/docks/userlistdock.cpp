@@ -25,7 +25,7 @@
 #include "docks/userlistdock.h"
 #include "net/userlist.h"
 #include "net/client.h"
-#include "icons.h"
+#include "utils/icons.h"
 
 #include "ui_userbox.h"
 
@@ -41,6 +41,7 @@ UserList::UserList(QWidget *parent)
 	setOperatorMode(false);
 
 	_ui->userlist->setSelectionMode(QListView::SingleSelection);
+	_ui->lockButton->setIcon(icon::lock());
 
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 	connect(_ui->kickButton, SIGNAL(clicked()), this, SLOT(kickSelected()));

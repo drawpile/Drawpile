@@ -23,8 +23,6 @@
         <file>icons/network-transmit-receive.png</file>
         <file>icons/colortriangle.png</file>
         <file>icons/sliders.png</file>
-        <file>icons/lock.png</file>
-        <file>icons/unlock.png</file>
         <file>icons/kick.png</file>
         <file>icons/list-add.png</file>
         <file>icons/list-remove.png</file>
@@ -35,9 +33,12 @@
         <file>icons/format-text-bold.png</file>
         <file>icons/format-text-italic.png</file>
         <file>icons/angle.png</file>
-        <file>icons/layer-visible.png</file>
         <file>icons/network-idle.png</file>
         <file>icons/network-receive.png</file>
         <file>icons/network-transmit.png</file>
+        <file>icons/eye_closed.png</file>
+        <file>icons/eye_open.png</file>
+        <file>icons/lock_closed.png</file>
+        <file>icons/lock_open.png</file>
     </qresource>
 </RCC>

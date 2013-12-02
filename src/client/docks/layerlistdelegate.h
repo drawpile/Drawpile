@@ -48,7 +48,7 @@ public:
 	void setClient(net::Client *client) { _client = client; }
 
 private:
-	void drawStyleGlyph(const QRectF& rect, QPainter *painter, const QPalette& palette, float value, bool hidden) const;
+	void drawOpacityGlyph(const QRectF& rect, QPainter *painter, float value, bool hidden) const;
 
 	net::Client *_client;
 };

@@ -1,0 +1,44 @@
+The following icons are from Tango Desktop Project under a Public Domain license:
+ * document-new
+ * document-open
+ * document-save-as
+ * document-save
+ * format-justify-center
+ * format-justify-fill
+ * format-justify-left
+ * format-justify-right
+ * format-text-bold
+ * fomrt-text-italic
+ * list-add
+ * list-remove
+ * network-offline
+ * network-receive
+ * network-transmit
+ * network-transmit-receive
+ * system-log-out
+ * view-refresh
+ * zoom-in
+ * zoom-original
+ * zoom-out
+
+The following icons are from the Tango ArtLibre set under the GPL:
+ * color-picker
+ * draw-brush
+ * draw-eraser
+ * draw-freehand
+ * draw-rectangle
+ * draw-text
+
+The following are originally from tango_icons.svg from inkscape (via myPaint) and are GPL licensed:
+ * eye_open
+ * eye_closed
+ * lock_open
+ * lock_closed
+
+Finally, the following are original to DrawPile:
+ * angle
+ * todo-line
+ * hardedge
+ * incremental
+ * kick
+
