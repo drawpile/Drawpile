@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QtMath>
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
@@ -429,9 +430,9 @@ void CanvasView::moveDrag(int x, int y)
 	const int dy = _dragy - y;
 
 	if(_isdragging==ROTATE) {
-		qreal preva = atan2( width()/2 - _dragx, height()/2 - _dragy );
-		qreal a = atan2( width()/2 - x, height()/2 - y );
-		setRotation(rotation() + (preva-a) * (180.0 / M_PI));
+		qreal preva = qAtan2( width()/2 - _dragx, height()/2 - _dragy );
+		qreal a = qAtan2( width()/2 - x, height()/2 - y );
+		setRotation(rotation() + qRadiansToDegrees(preva-a));
 	} else {
 		QScrollBar *ver = verticalScrollBar();
 		ver->setSliderPosition(ver->sliderPosition()+dy);
