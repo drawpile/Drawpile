@@ -37,7 +37,7 @@
      <item>
       <widget class="QToolButton" name="hideButton">
        <property name="toolTip">
-        <string>Hide this layer</string>
+        <string>Hide this layer locally</string>
        </property>
        <property name="text">
         <string>...</string>

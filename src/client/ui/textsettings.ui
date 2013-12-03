@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>265</width>
+    <width>282</width>
     <height>308</height>
    </rect>
   </property>
@@ -65,10 +65,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Left align&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>I</string>
+        <string>Left align</string>
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
@@ -81,6 +78,9 @@
         <bool>true</bool>
        </property>
        <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
@@ -108,6 +108,9 @@
        <property name="autoExclusive">
         <bool>true</bool>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -118,7 +121,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Justify&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Justify</string>
        </property>
        <property name="text">
         <string>I</string>
@@ -133,6 +136,9 @@
        <property name="autoExclusive">
         <bool>true</bool>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -143,7 +149,7 @@
         </font>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Align right&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Right align</string>
        </property>
        <property name="text">
         <string>I</string>
@@ -156,6 +162,9 @@
         <bool>true</bool>
        </property>
        <property name="autoExclusive">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
@@ -207,6 +216,9 @@
        <property name="checkable">
         <bool>true</bool>
        </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
      <item>
@@ -227,6 +239,9 @@
          <normaloff>:/icons/format-text-italic.png</normaloff>:/icons/format-text-italic.png</iconset>
        </property>
        <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
