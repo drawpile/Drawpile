@@ -1,13 +1,13 @@
 resize 1024 768
 newlayer 1 #ffffffff Background
 
-ctx 1 layer=1 colorh=#ff0000
+ctx 1 layer=1 colorh=#ff0000 opacityh=0.3 incremental=false
 
 move 1 10 10
 move 1 100 10; 100 110; 10 110; 10 10
 penup 1
 
-ctx 1 sizeh=0 hardh=1 hardedge=true
+ctx 1 sizeh=0 hardh=1 hardedge=true incremental=true
 move 1 20 20; 30 30; 20 30; 20 20
 penup 1
 

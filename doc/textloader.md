@@ -22,6 +22,7 @@ Supported parameters are:
  * layer = layer ID
  * blend = blending mode (SVG type name)
  * hardedge = <true/false> hard edge mode
+ * incremental = <true/false> incremental drawing mode
  * spacing = dab spacing in percents
  * colorh = high pressure color (#rrggbb)
  * colorl = low pressure color

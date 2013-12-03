@@ -65,9 +65,9 @@ qreal str2real(const QString &str) {
 }
 
 bool str2bool(const QString &str) {
-	if(str.compare("true", Qt::CaseInsensitive))
+	if(str.compare("true", Qt::CaseInsensitive)==0)
 		return true;
-	else if(str.compare("false", Qt::CaseInsensitive))
+	else if(str.compare("false", Qt::CaseInsensitive)==0)
 		return false;
 	throw SyntaxError("Expected true/false, got: " + str);
 }
@@ -179,6 +179,8 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 			ctx.brush.setBlendingMode(mode);
 		} else if(i.key() == "hardedge")
 			ctx.brush.setSubpixel(!str2bool(i.value()));
+		else if(i.key() == "incremental")
+			ctx.brush.setIncremental(str2bool(i.value()));
 		else if(i.key() == "spacing")
 			ctx.brush.setSpacing(str2int(i.value()));
 		else
