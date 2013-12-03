@@ -203,10 +203,10 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 		return;
 	if(event->button() == Qt::MidButton || _dragbtndown) {
 		startDrag(event->x(), event->y(), _dragbtndown!=ROTATE?TRANSLATE:ROTATE);
-	} else if(event->button() == Qt::LeftButton && _isdragging==NOTRANSFORM) {
+	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==NOTRANSFORM) {
 		_pendown = MOUSEDOWN;
 		
-		onPenDown(dpcore::Point(mapToScene(event->pos()), 1.0));
+		onPenDown(dpcore::Point(mapToScene(event->pos()), 1.0), event->button() == Qt::RightButton);
 	}
 }
 
@@ -235,10 +235,10 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	}
 }
 
-void CanvasView::onPenDown(const dpcore::Point &p)
+void CanvasView::onPenDown(const dpcore::Point &p, bool right)
 {
 	if(_scene->hasImage())
-		_current_tool->begin(p);
+		_current_tool->begin(p, right);
 }
 
 void CanvasView::onPenMove(const dpcore::Point &p)
@@ -261,7 +261,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 	_prevpoint = dpcore::Point(mapToScene(event->pos()), 0.0);
 	if(_isdragging) {
 		stopDrag();
-	} else if(event->button() == Qt::LeftButton && _pendown == MOUSEDOWN) {
+	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN) {
 		_pendown = NOTDOWN;
 		onPenUp();
 	}
@@ -351,7 +351,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 				const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
 				_pendown = TABLETDOWN;
-				onPenDown(point);
+				onPenDown(point, false);
 				updateOutline(point);
 				_prevpoint = point;
 			}

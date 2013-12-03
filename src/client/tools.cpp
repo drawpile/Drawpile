@@ -94,15 +94,16 @@ Tool *ToolCollection::get(Type type)
 	return _tools.value(type);
 }
 
-void BrushBase::begin(const dpcore::Point& point)
+void BrushBase::begin(const dpcore::Point& point, bool right)
 {
+	const dpcore::Brush &brush = settings().getBrush(right);
 	drawingboard::ToolContext tctx = {
 		layer(),
-		settings().getBrush()
+		brush
 	};
-	
+
 	if(!client().isLocalServer())
-		scene().startPreview(settings().getBrush(), point);
+		scene().startPreview(brush, point);
 
 	client().sendToolChange(tctx);
 	client().sendStroke(point);
@@ -121,8 +122,9 @@ void BrushBase::end()
 	client().sendPenup();
 }
 
-void ColorPicker::begin(const dpcore::Point& point)
+void ColorPicker::begin(const dpcore::Point& point, bool right)
 {
+	Q_UNUSED(right);
 	scene().pickColor(point.x(), point.y());
 }
 
@@ -135,14 +137,15 @@ void ColorPicker::end()
 {
 }
 
-void Line::begin(const dpcore::Point& point)
+void Line::begin(const dpcore::Point& point, bool right)
 {
 	QGraphicsLineItem *item = new QGraphicsLineItem();
-	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush()));
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
 	item->setLine(QLineF(point, point));
 	scene().setToolPreview(item);
 	_p1 = point;
 	_p2 = point;
+	_swap = right;
 }
 
 void Line::motion(const dpcore::Point& point)
@@ -160,7 +163,7 @@ void Line::end()
 
 	drawingboard::ToolContext tctx = {
 		layer(),
-		settings().getBrush()
+		settings().getBrush(_swap)
 	};
 
 	client().sendToolChange(tctx);
@@ -170,14 +173,15 @@ void Line::end()
 	client().sendPenup();
 }
 
-void Rectangle::begin(const dpcore::Point& point)
+void Rectangle::begin(const dpcore::Point& point, bool right)
 {
 	QGraphicsRectItem *item = new QGraphicsRectItem();
-	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush()));
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
 	item->setRect(QRectF(point, point));
 	scene().setToolPreview(item);
 	_p1 = point;
 	_p2 = point;
+	_swap = right;
 }
 
 void Rectangle::motion(const dpcore::Point& point)
@@ -195,7 +199,7 @@ void Rectangle::end()
 
 	drawingboard::ToolContext tctx = {
 		layer(),
-		settings().getBrush()
+		settings().getBrush(_swap)
 	};
 
 	client().sendToolChange(tctx);
@@ -213,8 +217,10 @@ void Rectangle::end()
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const dpcore::Point& point)
+void Annotation::begin(const dpcore::Point& point, bool right)
 {
+	Q_UNUSED(right);
+
 	drawingboard::AnnotationItem *item = scene().annotationAt(point);
 	if(item) {
 		_selected = item;

@@ -53,7 +53,7 @@ class ToolSettingsDock : public QDockWidget
 		~ToolSettingsDock();
 
 		//! Get a brush with the current settings
-		const dpcore::Brush& getBrush() const;
+		const dpcore::Brush& getBrush(bool swapcolors) const;
 
 		//! Get the annotation settings page
 		tools::AnnotationSettings *getAnnotationSettings();

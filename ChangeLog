@@ -5,6 +5,7 @@
  * Indirect drawing mode
  * Text based file format (mainly for testing)
  * Color picker history
+ * Right mouse button paints with background color
 
 2013-11-28 Version 0.7.0
  * Layer support

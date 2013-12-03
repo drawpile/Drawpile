@@ -57,7 +57,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return shape_; }
 
 		//! Get the displayed brush
-		const dpcore::Brush& brush() const { return brush_; }
+		const dpcore::Brush& brush(bool swapcolors) const;
 
 	public slots:
 		//! Set the brush to preview
@@ -118,9 +118,9 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void updateBackground();
 
 		dpcore::Brush brush_;
-		//QImage preview_;
+		mutable dpcore::Brush swapbrush_;
+
 		dpcore::LayerStack *preview_;
-		QPixmap bg_;
 		bool sizepressure_;
 		bool opacitypressure_;
 		bool hardnesspressure_;

@@ -33,7 +33,7 @@ namespace widgets {
 #endif
 
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
-	: QFrame(parent,f), preview_(0), bg_(32,32), sizepressure_(false),
+	: QFrame(parent,f), preview_(0), sizepressure_(false),
 	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
 	shape_(Stroke)
 {
@@ -69,6 +69,21 @@ void BrushPreview::setColor2(const QColor& color)
 		brush_.setColor2(color);
 	_needupdate = true;
 	update();
+}
+
+const dpcore::Brush &BrushPreview::brush(bool swapcolors) const
+{
+	if(swapcolors) {
+		swapbrush_ = brush_;
+		swapbrush_.setColor(color2_);
+		if(colorpressure_)
+			swapbrush_.setColor2(color1_);
+		else
+			swapbrush_.setColor2(color2_);
+		return swapbrush_;
+	} else {
+		return brush_;
+	}
 }
 
 void BrushPreview::resizeEvent(QResizeEvent *)

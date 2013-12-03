@@ -80,9 +80,11 @@ class ToolSettings {
 		/**
 		 * @brief Get a brush based on the settings in the UI
 		 * An UI widget must have been created before this can be called.
+		 *
+		 * @param swapcolors if true, foreground and background colors are swapped
 		 * @return brush with values from the UI widget
 		 */
-		virtual const dpcore::Brush& getBrush() const = 0;
+		virtual const dpcore::Brush& getBrush(bool swapcolors) const = 0;
 
 		/**
 		 * @brief Get the current brush size
@@ -131,7 +133,7 @@ class PenSettings : public ToolSettings {
 
 		void setForeground(const QColor& color);
 		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush() const;
+		const dpcore::Brush& getBrush(bool swapcolors) const;
 
 		int getSize() const;
 
@@ -155,7 +157,7 @@ class EraserSettings : public ToolSettings {
 
 		void setForeground(const QColor& color);
 		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush() const;
+		const dpcore::Brush& getBrush(bool swapcolors) const;
 
 		int getSize() const;
 
@@ -177,7 +179,7 @@ class BrushSettings : public ToolSettings {
 
 		void setForeground(const QColor& color);
 		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush() const;
+		const dpcore::Brush& getBrush(bool swapcolors) const;
 
 		int getSize() const;
 
@@ -199,7 +201,7 @@ class SimpleSettings : public ToolSettings {
 
 		void setForeground(const QColor& color);
 		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush() const;
+		const dpcore::Brush& getBrush(bool swapcolors) const;
 
 		int getSize() const;
 
@@ -231,7 +233,7 @@ class AnnotationSettings : public QObject, public ToolSettings {
 
 		void setForeground(const QColor& color);
 		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush() const;
+		const dpcore::Brush& getBrush(bool swapcolors) const;
 
 		int getSize() const { return 0; }
 
@@ -282,7 +284,7 @@ public:
 
 	void setForeground(const QColor&) {}
 	void setBackground(const QColor&) {}
-	const dpcore::Brush& getBrush() const;
+	const dpcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const { return 0; }
 

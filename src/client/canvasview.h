@@ -132,7 +132,7 @@ class CanvasView : public QGraphicsView
 		//! Redraw the scene around the outline cursor if necesasry
 		void updateOutline(const dpcore::Point& point);
 
-		void onPenDown(const dpcore::Point &p);
+		void onPenDown(const dpcore::Point &p, bool right);
 		void onPenMove(const dpcore::Point &p);
 		void onPenUp();
 		

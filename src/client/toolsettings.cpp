@@ -137,9 +137,9 @@ void PenSettings::setBackground(const QColor& color)
 	ui_->preview->setColor2(color);
 }
 
-const dpcore::Brush& PenSettings::getBrush() const
+const dpcore::Brush& PenSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush();
+	return ui_->preview->brush(swapcolors);
 }
 
 int PenSettings::getSize() const
@@ -225,9 +225,9 @@ void EraserSettings::setBackground(const QColor& color)
 	ui_->preview->setColor2(color);
 }
 
-const dpcore::Brush& EraserSettings::getBrush() const
+const dpcore::Brush& EraserSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush();
+	return ui_->preview->brush(swapcolors);
 }
 
 int EraserSettings::getSize() const
@@ -320,9 +320,9 @@ void BrushSettings::setBackground(const QColor& color)
 	ui_->preview->setColor2(color);
 }
 
-const dpcore::Brush& BrushSettings::getBrush() const
+const dpcore::Brush& BrushSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush();
+	return ui_->preview->brush(swapcolors);
 }
 
 int BrushSettings::getSize() const
@@ -416,9 +416,9 @@ void SimpleSettings::setBackground(const QColor& color)
 	ui_->preview->setColor2(color);
 }
 
-const dpcore::Brush& SimpleSettings::getBrush() const
+const dpcore::Brush& SimpleSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush();
+	return ui_->preview->brush(swapcolors);
 }
 
 int SimpleSettings::getSize() const
@@ -449,8 +449,9 @@ ColorPickerSettings::~ColorPickerSettings()
 	delete _palette;
 }
 
-const dpcore::Brush &ColorPickerSettings::getBrush() const
+const dpcore::Brush &ColorPickerSettings::getBrush(bool swapcolors) const
 {
+	Q_UNUSED(swapcolors);
 	return DUMMY_BRUSH;
 }
 
@@ -559,8 +560,9 @@ void AnnotationSettings::setBackground(const QColor& color)
 {
 }
 
-const dpcore::Brush& AnnotationSettings::getBrush() const
+const dpcore::Brush& AnnotationSettings::getBrush(bool swapcolors) const
 {
+	Q_UNUSED(swapcolors);
 	return DUMMY_BRUSH;
 }
 
