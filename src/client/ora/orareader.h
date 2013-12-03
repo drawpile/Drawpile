@@ -23,7 +23,7 @@
 #include <QString>
 #include "../shared/net/message.h"
 
-class Zipfile;
+class ZipReader;
 class QDomElement;
 class QPoint;
 
@@ -67,7 +67,7 @@ class Reader {
 		const Warnings warnings() const { return _warnings; }
 
 	private:
-		bool loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset);
+		bool loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset);
 		void loadAnnotations(const QDomElement& annotations);
 
 		QString _error;

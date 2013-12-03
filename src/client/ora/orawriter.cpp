@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009-2010 Calle Laakkonen
+   Copyright (C) 2009-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 #include "annotationitem.h"
 
-#include "ora/zipfile.h"
+#include "ora/zipwriter.h"
 #include "ora/orawriter.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -31,14 +31,16 @@
 
 namespace {
 
-bool putTextInZip(Zipfile &zip, const QString& filename, const QString& text)
+bool putTextInZip(ZipWriter &zip, const QString& filename, const QString& text)
 {
 	QBuffer *buf = new QBuffer();
 	buf->setData(text.toUtf8());
-	return zip.addFile(filename, buf, Zipfile::STORE);
+	zip.setCompressionPolicy(ZipWriter::NeverCompress);
+	zip.addFile(filename, buf);
+	return true;
 }
 
-bool writeStackXml(Zipfile &zf, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> annotations)
+bool writeStackXml(ZipWriter &zf, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> annotations)
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
@@ -89,10 +91,12 @@ bool writeStackXml(Zipfile &zf, const dpcore::LayerStack *layers, const QList<dr
 
 	QBuffer *buf = new QBuffer();
 	buf->setData(doc.toByteArray());
-	return zf.addFile("stack.xml", buf);
+	zf.setCompressionPolicy(ZipWriter::AlwaysCompress);
+	zf.addFile("stack.xml", buf);
+	return true;
 }
 
-bool writeLayer(Zipfile &zf, const dpcore::LayerStack *layers, int index)
+bool writeLayer(ZipWriter &zf, const dpcore::LayerStack *layers, int index)
 {
 	const dpcore::Layer *l = layers->getLayerByIndex(index);
 	QBuffer image;
@@ -100,10 +104,12 @@ bool writeLayer(Zipfile &zf, const dpcore::LayerStack *layers, int index)
 	// TODO autocrop layer to play nice with programs like mypaint?
 	l->toImage().save(&image, "PNG");
 	// Save the image without compression, as trying to squeeze a few more bytes out of a PNG is pointless.
-	return zf.addFile(QString("data/layer%1.png").arg(index), &image, Zipfile::STORE);
+	zf.setCompressionPolicy(ZipWriter::NeverCompress);
+	zf.addFile(QString("data/layer%1.png").arg(index), image.data());
+	return true;
 }
 
-bool writeThumbnail(Zipfile &zf, const dpcore::LayerStack *layers)
+bool writeThumbnail(ZipWriter &zf, const dpcore::LayerStack *layers)
 {
 	QImage img = layers->toFlatImage();
 	if(img.width() > 256 || img.height() > 256)
@@ -112,7 +118,9 @@ bool writeThumbnail(Zipfile &zf, const dpcore::LayerStack *layers)
 	QBuffer thumb;
 	thumb.open(QIODevice::ReadWrite);
 	img.save(&thumb, "PNG");
-	return zf.addFile("Thumbnails/thumbnail.png", &thumb, Zipfile::STORE);
+	zf.setCompressionPolicy(ZipWriter::NeverCompress);
+	zf.addFile("Thumbnails/thumbnail.png", thumb.data());
+	return true;
 }
 
 }
@@ -121,10 +129,11 @@ namespace openraster {
 
 bool saveOpenRaster(const QString& filename, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations)
 {
-	Zipfile zf(filename, Zipfile::OVERWRITE);
-
-	if(zf.open()==false)
+	QFile orafile(filename);
+	if(!orafile.open(QIODevice::WriteOnly))
 		return false;
+
+	ZipWriter zf(&orafile);
 
 	// The first entry of an OpenRaster file is a
 	// file named "mimetype" containing the text
@@ -142,7 +151,8 @@ bool saveOpenRaster(const QString& filename, const dpcore::LayerStack *layers, c
 	// A ready to use thumbnail for file managers etc.
 	writeThumbnail(zf, layers);
 
-	return zf.close();
+	zf.close();
+	return true;
 }
 
 }

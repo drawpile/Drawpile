@@ -45,12 +45,9 @@ set (
 	core/layerstack.cpp
 	core/brush.cpp
 	core/rasterop.cpp
-	ora/zipfile.cpp
+	ora/qzip.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
-	ora/zip.c
-	ora/unzip.c
-	ora/ioapi.c
 	dialogs/colordialog.cpp 
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp

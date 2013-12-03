@@ -25,7 +25,7 @@
 #include <QColor>
 
 #include "core/rasterop.h" // for blend modes
-#include "ora/zipfile.h"
+#include "ora/zipreader.h"
 #include "ora/orareader.h"
 
 #include "../shared/net/layer.h"
@@ -49,18 +49,22 @@ Reader::Reader()
  */
 bool Reader::load(const QString &filename)
 {
-	Zipfile zip(filename, Zipfile::READ);
+	QFile orafile(filename);
+	if(!orafile.open(QIODevice::ReadOnly)) {
+		_error = orafile.errorString();
+		return false;
+	}
 
-	if(zip.open()==false) {
-		_error = QApplication::tr("Error loading file: %1")
-			.arg(zip.errorMessage());
+	ZipReader zip(&orafile);
+
+	if(!zip.isReadable()) {
+		_error = QApplication::tr("ORA file is unreadable!");
 		return false;
 	}
 
 	// Make sure this is an OpenRaster file
 	{
-		QScopedPointer<QIODevice> mimeio(zip.getFile("mimetype"));
-		QString mimetype = mimeio->readLine();
+		QByteArray mimetype(zip.fileData("mimetype"));
 		qDebug() << "read mimetype:" << mimetype;
 		if(mimetype != "image/openraster") {
 			_error = QApplication::tr("File is not an OpenRaster file");
@@ -70,15 +74,8 @@ bool Reader::load(const QString &filename)
 
 	// Read the stack
 	QDomDocument doc;
-	{
-		QScopedPointer<QIODevice> stackio(zip.getFile("stack.xml"));
-		if(stackio.isNull()) {
-			_error = QApplication::tr(("Invalid OpenRaster file"));
-			return false;
-		}
-		if(doc.setContent(stackio.data(), true, &_error) == false)
-			return false;
-	}
+	if(doc.setContent(zip.fileData("stack.xml"), true, &_error) == false)
+		return false;
 
 	const QDomElement stackroot = doc.documentElement().firstChildElement("stack");
 
@@ -130,7 +127,7 @@ bool isKnown(const QDomNamedNodeMap& attrs, const char **names) {
 	return ok;
 }
 
-bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
+bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
 {
 	// TODO are layer coordinates relative to stack coordinates?
 	// The spec, as of this writing, is not clear on this.
@@ -158,12 +155,12 @@ bool Reader::loadLayers(Zipfile &zip, const QDomElement& stack, QPoint offset)
 			const QString src = e.attribute("src");
 			QImage content;
 			{
-				QScopedPointer<QIODevice> imgsrc(zip.getFile(src));
-				if(imgsrc.isNull()) {
+				QByteArray image = zip.fileData(src);
+				if(image.isNull()) {
 					_error = QApplication::tr("Couldn't get layer %1").arg(src);
 					return false;
 				}
-				if(content.load(imgsrc.data(), "png")==false) {
+				if(content.loadFromData(image, "png")==false) {
 					_error = QApplication::tr("Couldn't load layer %1").arg(src);
 					return false;
 				}
