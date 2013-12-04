@@ -24,6 +24,7 @@
 
 #include "loader.h"
 #include "statetracker.h"
+#include "net/layerlist.h"
 
 /**
  * @brief A session loader that loads a text based command stream
@@ -42,14 +43,21 @@ private:
 
 	void handleResize(const QString &args);
 	void handleNewLayer(const QString &args);
+	void handleLayerAttr(const QString &args);
+	void handleRetitleLayer(const QString &args);
+	void handleDeleteLayer(const QString &args);
+	void handleReorderLayers(const QString &args);
+
 	void handleDrawingContext(const QString &args);
 	void handlePenMove(const QString &args);
 	void handlePenUp(const QString &args);
+	void handlePutImage(const QString &args);
 
 	QString _filename;
 	QString _error;
 	QList<protocol::MessagePtr> _messages;
 	QHash<int, drawingboard::ToolContext> _ctx;
+	QHash<int, net::LayerListItem> _layer;
 };
 
 #endif

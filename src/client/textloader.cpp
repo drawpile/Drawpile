@@ -24,7 +24,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRegularExpression>
-#include <QHash>
+#include <QFileInfo>
+#include <QDir>
 
 #include "textloader.h"
 #include "core/rasterop.h"
@@ -132,12 +133,82 @@ void TextCommandLoader::handleNewLayer(const QString &args)
 	if(!m.hasMatch())
 		throw SyntaxError("Expected id, color and title");
 
+	net::LayerListItem layer(str2int(m.captured(1)), m.captured(3));
+	_layer[layer.id] = layer;
+
 	_messages.append(MessagePtr(new protocol::LayerCreate(
 		str2int(m.captured(1)),
 		str2color(m.captured(2)),
 		m.captured(3)
 	)));
 }
+
+void TextCommandLoader::handleLayerAttr(const QString &args)
+{
+	// extract ID
+	int sep = args.indexOf(' ');
+	if(sep<0)
+		throw SyntaxError("Expected parameters as well!");
+
+	int id = str2ctxid(args.left(sep));
+
+	Params params = extractParams(args.mid(sep+1));
+
+	net::LayerListItem &layer = _layer[id];
+
+	ParamIterator i = params.constBegin();
+	while (i!=params.constEnd()) {
+		if(i.key() == "opacity")
+			layer.opacity = str2real(i.value());
+		else if(i.key() == "blend") {
+			int mode = dpcore::blendModeSvg(i.value());
+			if(mode<0)
+				throw SyntaxError("Unrecognized blending mode: " + i.value());
+			layer.blend = mode;
+		} else
+			throw SyntaxError("Unrecognized parameter: " + i.key());
+
+		++i;
+	}
+
+	_messages.append(MessagePtr(new protocol::LayerAttributes(id, layer.opacity*255, layer.blend)));
+}
+
+void TextCommandLoader::handleRetitleLayer(const QString &args)
+{
+	QRegularExpression re("(\\d+) (.*)");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected id and title");
+
+	net::LayerListItem &layer = _layer[str2int(m.captured(1))];
+	layer.title = m.captured(2);
+
+	_messages.append(MessagePtr(new protocol::LayerRetitle(
+		layer.id,
+		layer.title
+	)));
+}
+
+void TextCommandLoader::handleDeleteLayer(const QString &args)
+{
+	QRegularExpression re("(\\d+)(?: (merge))?");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected id and title");
+	_messages.append(MessagePtr(new protocol::LayerDelete(str2int(m.captured(1)), m.captured(2).isEmpty() ? false : true)));
+}
+
+void TextCommandLoader::handleReorderLayers(const QString &args)
+{
+	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
+	QList<uint8_t> ids;
+	foreach(const QString &token, tokens) {
+		ids << str2int(token);
+	}
+	_messages.append(MessagePtr(new protocol::LayerOrder(ids)));
+}
+
 
 void TextCommandLoader::handleDrawingContext(const QString &args)
 {
@@ -225,6 +296,24 @@ void TextCommandLoader::handlePenUp(const QString &args)
 	_messages.append(MessagePtr(new protocol::PenUp(id)));
 }
 
+void TextCommandLoader::handlePutImage(const QString &args)
+{
+	QRegularExpression re("(\\d+) (\\d+) (\\d+)(?: (blend))? ([\\w.]+)");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected layer id, x, y and filename");
+
+	int layer = str2int(m.captured(1));
+	int x = str2int(m.captured(2));
+	int y = str2int(m.captured(3));
+	bool blend = !m.captured(4).isEmpty();
+	QFileInfo filename(QFileInfo(_filename).dir(), m.captured(5));
+
+	QImage image(filename.absoluteFilePath());
+
+	_messages.append(net::putQImage(layer, x, y, image, blend));
+}
+
 bool TextCommandLoader::load()
 {
 	QFile file(_filename);
@@ -256,12 +345,22 @@ bool TextCommandLoader::load()
 				handleResize(args);
 			else if(cmd=="newlayer")
 				handleNewLayer(args);
+			else if(cmd=="layerattr")
+				handleLayerAttr(args);
+			else if(cmd=="retitlelayer")
+				handleRetitleLayer(args);
+			else if(cmd=="deletelayer")
+				handleDeleteLayer(args);
+			else if(cmd=="reorderlayers")
+				handleReorderLayers(args);
 			else if(cmd=="ctx")
 				handleDrawingContext(args);
 			else if(cmd=="move")
 				handlePenMove(args);
 			else if(cmd=="penup")
 				handlePenUp(args);
+			else if(cmd=="putimage")
+				handlePutImage(args);
 			else {
 				_error = QString("Unrecognized command on line %1: %2").arg(linenumber).arg(cmd);
 				return false;
