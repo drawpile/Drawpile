@@ -491,11 +491,11 @@ QWidget *AnnotationSettings::createUi(QWidget *parent)
 	_updatetimer->setSingleShot(true);
 
 	// Editor events
-	connect(ui_->content, SIGNAL(textChanged()), _updatetimer, SLOT(start()));
+	connect(ui_->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
 	connect(ui_->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
 
 	connect(ui_->btnBackground, SIGNAL(colorChanged(const QColor&)),
-			_updatetimer, SLOT(start()));
+			this, SLOT(applyChanges()));
 	connect(ui_->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
 	connect(ui_->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
 
@@ -506,7 +506,7 @@ QWidget *AnnotationSettings::createUi(QWidget *parent)
 	connect(ui_->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(ui_->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
 
-	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(applyChanges()));
+	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
 
 	return uiwidget_;
 }
@@ -601,13 +601,19 @@ void AnnotationSettings::applyChanges()
 	if(noupdate_)
 		return;
 	Q_ASSERT(selected());
+	_updatetimer->start();
+}
+
+void AnnotationSettings::saveChanges()
+{
 	Q_ASSERT(_client);
 
-	_client->sendAnnotationEdit(
-		selected(),
-		ui_->btnBackground->color(),
-		ui_->content->toHtml()
-	);
+	if(selected())
+		_client->sendAnnotationEdit(
+			selected(),
+			ui_->btnBackground->color(),
+			ui_->content->toHtml()
+		);
 }
 
 void AnnotationSettings::removeAnnotation()

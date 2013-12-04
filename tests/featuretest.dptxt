@@ -45,3 +45,18 @@ move 1 138 330; 10 458
 penup 1
 putimage 1 10 330 test.png
 
+# Annotations
+addannotation 1 1 300 10 200 50
+annotate 1 #0
+Hello!
+endannotate
+
+addannotation 1 2 300 10 200 50
+reshapeannotation 2 300 70 200 50
+annotate 2 #0
+World!
+endannotate
+
+addannotation 1 3 10 10 10 10
+deleteannotation 3
+

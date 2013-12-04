@@ -304,7 +304,7 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	if(!m.hasMatch())
 		throw SyntaxError("Expected layer id, x, y and filename");
 
-	int layer = str2int(m.captured(1));
+	int layer = str2ctxid(m.captured(1));
 	int x = str2int(m.captured(2));
 	int y = str2int(m.captured(3));
 	bool blend = !m.captured(4).isEmpty();
@@ -313,6 +313,59 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	QImage image(filename.absoluteFilePath());
 
 	_messages.append(net::putQImage(layer, x, y, image, blend));
+}
+
+void TextCommandLoader::handleAddAnnotation(const QString &args)
+{
+	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
+	if(tokens.count() != 6)
+		throw SyntaxError("Expected context id, annotation id, position and size");
+
+	int ctxid = str2ctxid(tokens[0]);
+	int annid = str2ctxid(tokens[1]);
+	int x = str2int(tokens[2]);
+	int y = str2int(tokens[3]);
+	int w = str2int(tokens[4]);
+	int h = str2int(tokens[5]);
+
+	_messages.append(MessagePtr(new protocol::AnnotationCreate(ctxid, annid, x, y, w, h)));
+}
+
+void TextCommandLoader::handleReshapeAnnotation(const QString &args)
+{
+	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
+	if(tokens.count() != 5)
+		throw SyntaxError("Expected annotation id, position and size");
+
+	int annid = str2ctxid(tokens[0]);
+	int x = str2int(tokens[1]);
+	int y = str2int(tokens[2]);
+	int w = str2int(tokens[3]);
+	int h = str2int(tokens[4]);
+
+	_messages.append(MessagePtr(new protocol::AnnotationReshape(annid, x, y, w, h)));
+}
+
+void TextCommandLoader::handleDeleteAnnotation(const QString &args)
+{
+	int id = str2ctxid(args);
+	_messages.append(MessagePtr(new protocol::AnnotationDelete(id)));
+}
+
+void TextCommandLoader::handlEditAnnotation(const QString &args)
+{
+	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
+	if(tokens.count() != 2)
+		throw SyntaxError("Expected annotation id and background color");
+
+	_edit_a_id = str2ctxid(tokens[0]);
+	_edit_a_color = str2color((tokens[1]));
+	_edit_a_text = "";
+}
+
+void TextCommandLoader::editAnnotationDone()
+{
+	_messages.append(MessagePtr(new protocol::AnnotationEdit(_edit_a_id, _edit_a_color, _edit_a_text)));
 }
 
 bool TextCommandLoader::load()
@@ -325,9 +378,21 @@ bool TextCommandLoader::load()
 	QTextStream text(&file);
 
 	QString line;
+	enum {NORMAL, ANNOTATION} mode = NORMAL;
 	int linenumber=0;
 	while(!(line=text.readLine()).isNull()) {
 		++linenumber;
+		if(mode == ANNOTATION) {
+			if(line == "endannotate") {
+				mode = NORMAL;
+				editAnnotationDone();
+			} else {
+				_edit_a_text += line;
+				_edit_a_text += "\n";
+			}
+			continue;
+		}
+
 		line = line.trimmed();
 		if(line.length()==0 || line.at(0) == '#')
 			continue;
@@ -362,7 +427,16 @@ bool TextCommandLoader::load()
 				handlePenUp(args);
 			else if(cmd=="putimage")
 				handlePutImage(args);
-			else {
+			else if(cmd=="addannotation")
+				handleAddAnnotation(args);
+			else if(cmd=="reshapeannotation")
+				handleReshapeAnnotation(args);
+			else if(cmd=="deleteannotation")
+				handleDeleteAnnotation((args));
+			else if(cmd=="annotate") {
+				handlEditAnnotation(args);
+				mode = ANNOTATION;
+			} else {
 				_error = QString("Unrecognized command on line %1: %2").arg(linenumber).arg(cmd);
 				return false;
 			}

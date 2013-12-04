@@ -53,11 +53,22 @@ private:
 	void handlePenUp(const QString &args);
 	void handlePutImage(const QString &args);
 
+	void handleAddAnnotation(const QString &args);
+	void handleReshapeAnnotation(const QString &args);
+	void handlEditAnnotation(const QString &args);
+	void editAnnotationDone();
+	void handleDeleteAnnotation(const QString &args);
+
 	QString _filename;
 	QString _error;
 	QList<protocol::MessagePtr> _messages;
 	QHash<int, drawingboard::ToolContext> _ctx;
 	QHash<int, net::LayerListItem> _layer;
+
+	// Annotation edit buffer
+	int _edit_a_id;
+	quint32 _edit_a_color;
+	QString _edit_a_text;
 };
 
 #endif

@@ -103,7 +103,7 @@ Change an existing annotations position and size
 ### annotate / endannotate
 
 Usage:
-	annotate aId [bg=<color>]
+	annotate aId bg-color
 	...
 	endannotate
 

@@ -256,10 +256,12 @@ class AnnotationSettings : public QObject, public ToolSettings {
 		void updateStyleButtons();
 
 		void applyChanges();
+		void saveChanges();
 		void removeAnnotation();
 		void bake();
 
 	private:
+
 		Ui_TextSettings *ui_;
 		QWidget *uiwidget_;
 
