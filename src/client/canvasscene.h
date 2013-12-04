@@ -171,6 +171,9 @@ signals:
 	//! An annotation was just created (by the local user)
 	void myAnnotationCreated(AnnotationItem *item);
 
+	//! A new layer was just created (by the local user)
+	void myLayerCreated(int id);
+
 	//! An annotation was just deleted
 	void annotationDeleted(int id);
 

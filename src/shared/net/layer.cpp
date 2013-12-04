@@ -48,24 +48,31 @@ int CanvasResize::serializePayload(uchar *data) const
 
 LayerCreate *LayerCreate::deserialize(const uchar *data, uint len)
 {
+	if(len<6)
+		return 0;
+
 	return new LayerCreate(
 		*data,
-		qFromBigEndian<quint32>(data+1),
-		QByteArray((const char*)data+5, len-5)
+		*(data+1),
+		qFromBigEndian<quint32>(data+2),
+		QByteArray((const char*)data+6, len-6)
 	);
 }
 
 int LayerCreate::payloadLength() const
 {
-	return 5 + _title.length();
+	return 6 + _title.length();
 }
 
 int LayerCreate::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	qToBigEndian(_fill, data); data += 4;
-	memcpy(data, _title.constData(), _title.length());
-	return 5 + _title.length();
+	uchar *ptr = data;
+	*(ptr++) = _ctxid;
+	*(ptr++) = _id;
+	qToBigEndian(_fill, ptr); ptr += 4;
+	memcpy(ptr, _title.constData(), _title.length());
+	ptr += _title.length();
+	return ptr - data;
 }
 
 LayerAttributes *LayerAttributes::deserialize(const uchar *data, uint len)

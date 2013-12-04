@@ -45,7 +45,7 @@ QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
 	QList<MessagePtr> msgs;
 	msgs.append(MessagePtr(new protocol::CanvasResize(_size.width(), _size.height())));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, _color.rgba(), "Background")));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, _color.rgba(), "Background")));
 	return msgs;
 }
 
@@ -102,7 +102,7 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 	QImage image = _image.convertToFormat(QImage::Format_ARGB32);
 
 	msgs.append(MessagePtr(new protocol::CanvasResize(image.size().width(), image.size().height())));
-	msgs.append(MessagePtr(new protocol::LayerCreate(1, 0, "Background")));
+	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, "Background")));
 	msgs.append(net::putQImage(1, 0, 0, image, false));
 
 	return msgs;
@@ -122,7 +122,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	// Create layers
 	for(int i=0;i<_scene->layers()->layers();++i) {
 		const dpcore::Layer *layer = _scene->layers()->getLayerByIndex(i);
-		msgs.append(MessagePtr(new protocol::LayerCreate(layer->id(), 0, layer->title())));
+		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(layer->id(), layer->opacity(), 1)));
 		msgs.append(net::putQImage(layer->id(), 0, 0, layer->toImage(), false));
 	}

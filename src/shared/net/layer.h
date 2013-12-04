@@ -60,11 +60,24 @@ private:
  */
 class LayerCreate : public Message {
 public:
-	LayerCreate(uint8_t id, uint32_t fill, const QString &title)
-		: Message(MSG_LAYER_CREATE), _id(id), _fill(fill), _title(title.toUtf8())
+	LayerCreate(uint8_t ctxid, uint8_t id, uint32_t fill, const QString &title)
+		: Message(MSG_LAYER_CREATE), _ctxid(ctxid), _id(id), _fill(fill), _title(title.toUtf8())
 		{}
 
 	static LayerCreate *deserialize(const uchar *data, uint len);
+
+	/**
+	 * @brief Context ID of the user creating this layer.
+	 *
+	 * The context ID does not affect the way the layer is created, but
+	 * allows the client to identify who created it. This enables
+	 * the layer to be automatically selected by the user who created it.
+	 *
+	 * @return user context ID
+	 */
+	uint8_t contextId() const { return _ctxid; }
+
+	void setOrigin(uint8_t userid) { _ctxid = userid; }
 
 	/**
 	 * \brief ID of the newly created layer.
@@ -101,6 +114,7 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
+	uint8_t _ctxid;
 	uint8_t _id;
 	uint32_t _fill;
 	QByteArray _title;

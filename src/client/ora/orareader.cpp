@@ -169,6 +169,7 @@ bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
 			// Create layer
 			QString name = e.attribute("name", QApplication::tr("Unnamed layer"));
 			_commands.append(MessagePtr(new protocol::LayerCreate(
+				1,
 				++_layerid,
 				0,
 				name

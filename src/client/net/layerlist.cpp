@@ -117,7 +117,6 @@ int LayerListModel::indexOf(int id) const
 
 QModelIndex LayerListModel::layerIndex(int id)
 {
-	// TODO needed?
 	int i = indexOf(id);
 	if(i>=0)
 		return index(i);

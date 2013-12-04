@@ -166,7 +166,7 @@ void Client::sendCanvasResize(const QSize &newsize)
 void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerCreate(id, fill.rgba(), title)));
+	_server->sendMessage(MessagePtr(new protocol::LayerCreate(_my_id, id, fill.rgba(), title)));
 }
 
 void Client::sendLayerAttribs(int id, float opacity, int blend)

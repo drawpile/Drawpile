@@ -113,6 +113,7 @@ public:
 
 signals:
 	void myAnnotationCreated(AnnotationItem *item);
+	void myLayerCreated(int);
 
 private:
 	// Layer related commands

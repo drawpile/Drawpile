@@ -128,18 +128,19 @@ void TextCommandLoader::handleResize(const QString &args)
 
 void TextCommandLoader::handleNewLayer(const QString &args)
 {
-	QRegularExpression re("(\\d+) (#[0-9a-fA-F]{8}) (.*)");
+	QRegularExpression re("(\\d+) (\\d+) (#[0-9a-fA-F]{8}) (.*)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
-		throw SyntaxError("Expected id, color and title");
+		throw SyntaxError("Expected context id, layer id, color and title");
 
-	net::LayerListItem layer(str2int(m.captured(1)), m.captured(3));
+	net::LayerListItem layer(str2int(m.captured(2)), m.captured(4));
 	_layer[layer.id] = layer;
 
 	_messages.append(MessagePtr(new protocol::LayerCreate(
 		str2int(m.captured(1)),
-		str2color(m.captured(2)),
-		m.captured(3)
+		str2int(m.captured(2)),
+		str2color(m.captured(3)),
+		m.captured(4)
 	)));
 }
 

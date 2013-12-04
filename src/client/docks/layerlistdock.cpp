@@ -86,6 +86,12 @@ void LayerListDock::setClient(net::Client *client)
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 }
 
+void LayerListDock::selectLayer(int id)
+{
+	_ui->layerlist->selectionModel()->clear();
+	_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent);
+}
+
 void LayerListDock::init()
 {
 	_ui->layerlist->setEnabled(true);
@@ -232,10 +238,8 @@ void LayerListDock::onLayerDelete(int id, int idx)
 
 void LayerListDock::onLayerReorder()
 {
-	if(_selected) {
-		_ui->layerlist->selectionModel()->clear();
-		_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(_selected), QItemSelectionModel::SelectCurrent);
-	}
+	if(_selected)
+		selectLayer(_selected);
 }
 
 QModelIndex LayerListDock::currentSelection()

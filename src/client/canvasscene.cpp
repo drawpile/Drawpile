@@ -56,6 +56,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	_statetracker = new StateTracker(this, client);
 	
 	connect(_statetracker, SIGNAL(myAnnotationCreated(AnnotationItem*)), this, SIGNAL(myAnnotationCreated(AnnotationItem*)));
+	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
 
 	addItem(_image);
 	clearAnnotations();

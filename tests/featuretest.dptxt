@@ -1,5 +1,5 @@
 resize 1024 768
-newlayer 1 #ffffffff Background
+newlayer 1 1 #ffffffff Background
 
 ctx 1 layer=1 colorh=#ff0000 opacityh=0.3 incremental=false spacing=1
 
@@ -11,17 +11,17 @@ ctx 1 sizeh=0 hardh=1 hardedge=true incremental=true
 move 1 20 20; 30 30; 20 30; 20 20
 penup 1
 
-newlayer 2 #00000000 Test
+newlayer 1 2 #00000000 Test
 ctx 1 layer=2 colorh=#000000 sizeh=10
 move 1 30 30
 move 1 50 30; 50 40; 30 40
 penup 1
 layerattr 2 opacity=0.5
 
-newlayer 3 #00000000 Test0
+newlayer 1 3 #00000000 Test0
 retitlelayer 3 Test 2
 
-newlayer 4 #000000ff Mergetest
+newlayer 1 4 #000000ff Mergetest
 layerattr 4 opacity=0.5
 ctx 1 layer=4 incremental=true opacityh=1
 move 1 200 10; 200 100
