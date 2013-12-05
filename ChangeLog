@@ -1,4 +1,4 @@
-2013-12-?? Version 0.7.1
+2013-12-06 Version 0.7.1
  * Redesigned layer & user list boxes
  * Redesigned chat box
  * Support for layer blending modes
@@ -6,6 +6,7 @@
  * Text based file format (mainly for testing)
  * Color picker history
  * Right mouse button paints with background color
+ * Various bugfixes
 
 2013-11-28 Version 0.7.0
  * Layer support

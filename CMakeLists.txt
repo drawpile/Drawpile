@@ -5,8 +5,7 @@ set ( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/config )
 
 ### generic info
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
-set ( BUGS "http://drawpile.sourceforge.net/tracker/" )
-set ( DRAWPILE_VERSION "0.7.0" )
+set ( DRAWPILE_VERSION "0.7.1" )
 
 ### protocol versions
 # major version indicates breaks in server compatibility
