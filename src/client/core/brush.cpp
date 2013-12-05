@@ -304,30 +304,44 @@ bool Brush::isOpacityVariable() const
  */
 BrushMask Brush::render(qreal pressure) const {
 	const int dia = diameter(pressure)+1;
-	const qreal o = opacity(pressure);
 
 	// Re-render the cache if not up to date
 	if(!cache_.isFresh(pressure, sensitive_)) {
-		const qreal R = qreal(radius(pressure));
-		const qreal rad = (dia-1)/2.0;
-		const qreal rr = rad*rad;
+		const qreal o = opacity(pressure);
+		if(dia==2) {
+			// Special case: smallest brush
+			cache_ = BrushMask(dia, pressure);
+			uchar *ptr = cache_.data();
+			*ptr = o*255;
+			*(ptr+1) = 0;
+			*(ptr+2) = 0;
+			*(ptr+3) = 0;
+		} else {
+			qreal R = interpolate(radius1_, radius2_, pressure) + 1;
+			qreal rr = R*R;
 
-		// Compute a lookup table
-		uchar lookup[int(ceil(rr))];
-		const int grad = int((1 - hardness(pressure)) * ceil(rr));
-		int i=0;
-		for(; i < grad ; ++i)
-			lookup[i] = int(255 * i/qreal(grad) * o);
-		memset(lookup+i, int(255*o), int(ceil(rr)-i));
+			// GIMP style brush shape
+			const qreal hard = hardness(pressure);
+			qreal exponent;
+			if ((1.0 - hard) < 0.0000004)
+				exponent = 1000000.0;
+			else
+				exponent = 0.4 / (1.0 - hard);
 
-		// Render the brush
-		cache_ = BrushMask(dia, pressure);
-		uchar *ptr = cache_.data();
-		for(int y=0;y<dia;++y) {
-			const qreal yy = (R-y)*(R-y);
-			for(int x=0;x<dia;++x) {
-				const qreal dist = (R-x)*(R-x) + yy;
-				*(ptr++) = (dist<rr?lookup[int(rr-dist)]:0);
+			const int lut_len = ceil(rr);
+			uchar lut[lut_len];
+			for(int i=0;i<lut_len;++i)
+				lut[i] = (1-pow(pow(sqrt(i)/R, exponent), 2)) * o * 255;
+
+			cache_ = BrushMask(dia, pressure);
+			uchar *ptr = cache_.data();
+
+			for(int y=0;y<dia;++y) {
+				const qreal yy = (y-R)*(y-R);
+				for(int x=0;x<dia;++x) {
+					const qreal dist = (x-R)*(x-R) + yy;
+					*(ptr++) = dist<rr ? lut[int(dist)] : 0;
+				}
 			}
 		}
 	}
