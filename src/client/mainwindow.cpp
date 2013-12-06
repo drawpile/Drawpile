@@ -1123,6 +1123,8 @@ void MainWindow::selectTool(QAction *tool)
 		type = tools::RECTANGLE;
 	else if(tool == annotationtool_)
 		type = tools::ANNOTATION;
+	else if(tool == selectiontool_)
+		type = tools::SELECTION;
 	else
 		return;
 	lasttool_ = tool;
@@ -1264,6 +1266,9 @@ void MainWindow::initActions()
 	annotationtool_ = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"));
 	annotationtool_->setCheckable(true);
 
+	selectiontool_ = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select areas for copying"));
+	selectiontool_->setCheckable(true);
+
 	// A default
 	lasttool_ = brushtool_;
 
@@ -1276,6 +1281,7 @@ void MainWindow::initActions()
 	_drawingtools->addAction(linetool_);
 	_drawingtools->addAction(recttool_);
 	_drawingtools->addAction(annotationtool_);
+	_drawingtools->addAction(selectiontool_);
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// View actions
@@ -1354,13 +1360,7 @@ void MainWindow::createMenus()
 	sessionmenu->addAction(_changetitle);
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
-	toolsmenu->addAction(pentool_);
-	toolsmenu->addAction(brushtool_);
-	toolsmenu->addAction(erasertool_);
-	toolsmenu->addAction(pickertool_);
-	toolsmenu->addAction(linetool_);
-	toolsmenu->addAction(recttool_);
-	toolsmenu->addAction(annotationtool_);
+	toolsmenu->addActions(_drawingtools->actions());
 	toolsmenu->addSeparator();
 	toolsmenu->addAction(toggleoutline_);
 	toolsmenu->addAction(swapcolors_);
@@ -1393,13 +1393,7 @@ void MainWindow::createToolbars()
 	drawtools->setObjectName("drawtoolsbar");
 	togglemenu->addAction(drawtools->toggleViewAction());
 
-	drawtools->addAction(pentool_);
-	drawtools->addAction(brushtool_);
-	drawtools->addAction(erasertool_);
-	drawtools->addAction(pickertool_);
-	drawtools->addAction(linetool_);
-	drawtools->addAction(recttool_);
-	drawtools->addAction(annotationtool_);
+	drawtools->addActions(_drawingtools->actions());
 	drawtools->addSeparator();
 	drawtools->addAction(zoomin_);
 	drawtools->addAction(zoomout_);

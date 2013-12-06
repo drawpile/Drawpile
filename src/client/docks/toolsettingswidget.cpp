@@ -61,6 +61,10 @@ ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	textsettings_ = new tools::AnnotationSettings("annotation", tr("Annotation"));
 	widgets_->addWidget(textsettings_->createUi(this));
 
+	// Create settings widget for selection
+	selectionsettings_ = new tools::SelectionSettings("selection", tr("Selection"));
+	widgets_->addWidget(selectionsettings_->createUi(this));
+
 }
 
 ToolSettingsDock::~ToolSettingsDock()
@@ -72,6 +76,7 @@ ToolSettingsDock::~ToolSettingsDock()
 	delete linesettings_,
 	delete rectsettings_;
 	delete textsettings_;
+	delete selectionsettings_;
 }
 
 /**
@@ -87,6 +92,7 @@ void ToolSettingsDock::setTool(tools::Type tool) {
 		case tools::LINE: currenttool_ = linesettings_; break;
 		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
 		case tools::ANNOTATION: currenttool_ = textsettings_; break;
+		case tools::SELECTION: currenttool_ = selectionsettings_; break;
 	}
 
 	// Deselect annotation on tool change

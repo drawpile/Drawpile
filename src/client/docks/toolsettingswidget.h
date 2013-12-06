@@ -83,6 +83,7 @@ class ToolSettingsDock : public QDockWidget
 		tools::ToolSettings *linesettings_;
 		tools::ToolSettings *rectsettings_;
 		tools::ToolSettings *textsettings_;
+		tools::ToolSettings *selectionsettings_;
 
 		tools::ToolSettings *currenttool_;
 		QStackedWidget *widgets_;

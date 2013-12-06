@@ -47,6 +47,7 @@ ToolCollection::ToolCollection()
 	_tools[LINE] = new Line(*this);
 	_tools[RECTANGLE] = new Rectangle(*this);
 	_tools[ANNOTATION] = new Annotation(*this);
+	_tools[SELECTION] = new Selection(*this);
 }
 
 /**
@@ -293,5 +294,19 @@ void Annotation::end()
 	}
 }
 
+void Selection::begin(const dpcore::Point &point, bool right)
+{
+
 }
 
+void Selection::motion(const dpcore::Point &point)
+{
+
+}
+
+void Selection::end()
+{
+
+}
+
+}

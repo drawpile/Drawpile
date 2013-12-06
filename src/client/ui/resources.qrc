@@ -40,5 +40,6 @@
         <file>icons/eye_open.png</file>
         <file>icons/lock_closed.png</file>
         <file>icons/lock_open.png</file>
+        <file>icons/select-rectangular.png</file>
     </qresource>
 </RCC>

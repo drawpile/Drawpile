@@ -46,7 +46,7 @@ namespace net {
  */
 namespace tools {
 
-enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
+enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION, SELECTION};
 
 class ToolCollection;
 
@@ -172,6 +172,14 @@ private:
 	QPoint _start, _end;
 };
 
+class Selection : public Tool {
+public:
+	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
+
+	void begin(const dpcore::Point& point, bool right);
+	void motion(const dpcore::Point& point);
+	void end();
+};
 
 /**
  * @brief A collection for tool instances.

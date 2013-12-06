@@ -29,6 +29,7 @@ class Ui_BrushSettings;
 class Ui_EraserSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
+class Ui_SelectionSettings;
 class QSettings;
 class QTimer;
 
@@ -299,6 +300,23 @@ signals:
 private:
 	Palette *_palette;
 	widgets::PaletteWidget *_palettewidget;
+};
+
+class SelectionSettings : public ToolSettings {
+public:
+	SelectionSettings(const QString &name, const QString &title);
+	~SelectionSettings();
+
+	QWidget *createUi(QWidget *parent);
+
+	void setForeground(const QColor&) {}
+	void setBackground(const QColor&) {}
+	const dpcore::Brush& getBrush(bool swapcolors) const;
+
+	int getSize() const { return 0; }
+
+private:
+	Ui_SelectionSettings * _ui;
 };
 
 }

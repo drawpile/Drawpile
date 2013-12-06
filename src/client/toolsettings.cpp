@@ -34,6 +34,7 @@ using widgets::ColorButton;
 #include "ui_erasersettings.h"
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
+#include "ui_selectsettings.h"
 
 #include "annotationitem.h"
 #include "net/client.h"
@@ -636,5 +637,30 @@ void AnnotationSettings::bake()
 	removeAnnotation();
 }
 
+SelectionSettings::SelectionSettings(const QString &name, const QString &title)
+	: ToolSettings(name,title), _ui(0)
+{
+	_ui = new Ui_SelectionSettings;
 }
 
+SelectionSettings::~SelectionSettings()
+{
+	delete _ui;
+}
+
+QWidget *SelectionSettings::createUi(QWidget *parent)
+{
+	QWidget *uiwidget = new QWidget(parent);
+	_ui->setupUi(uiwidget);
+	setUiWidget(uiwidget);
+
+	return uiwidget;
+}
+
+const dpcore::Brush& SelectionSettings::getBrush(bool swapcolors) const
+{
+	Q_UNUSED(swapcolors);
+	return DUMMY_BRUSH;
+}
+
+}

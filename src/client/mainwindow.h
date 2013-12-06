@@ -214,6 +214,7 @@ class MainWindow : public QMainWindow {
 		QAction *linetool_;
 		QAction *recttool_;
 		QAction *annotationtool_;
+		QAction *selectiontool_;
 
 		QAction *lasttool_; // the last used tool
 

@@ -89,6 +89,7 @@ set (
 	ui/textsettings.ui
 	ui/pensettings.ui
 	ui/erasersettings.ui
+	ui/selectsettings.ui
 	ui/layerbox.ui
 	ui/userbox.ui
 	ui/newdialog.ui
