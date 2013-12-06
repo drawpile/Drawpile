@@ -27,6 +27,7 @@
 #include "core/brush.h"
 #include "canvasscene.h"
 #include "annotationitem.h"
+#include "selectionitem.h"
 
 #include "net/client.h"
 #include "docks/toolsettingswidget.h"
@@ -296,17 +297,36 @@ void Annotation::end()
 
 void Selection::begin(const dpcore::Point &point, bool right)
 {
+	Q_UNUSED(right);
+	if(_selection)
+		_handle = _selection->handleAt(point);
+	else
+		_handle = drawingboard::SelectionItem::OUTSIDE;
 
+	_start = point;
+	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
+		_selection = new drawingboard::SelectionItem();
+		_selection->setRect(QRect(point, point));
+		scene().setSelectionItem(_selection);
+	}
 }
 
 void Selection::motion(const dpcore::Point &point)
 {
-
+	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
+		_selection->setRect(QRect(_start, point).normalized());
+	} else {
+		QPoint p = point - _start;
+		_selection->adjustGeometry(_handle, p);
+		_start = point;
+	}
 }
 
 void Selection::end()
 {
-
+	// Remove tiny selections
+	if(_selection->rect().width() * _selection->rect().height() <= 2)
+		scene().setSelectionItem(0);
 }
 
 }

@@ -21,8 +21,10 @@
 #define TOOLS_H
 
 #include <QHash>
+#include <QPointer>
 
 #include "core/point.h"
+#include "selectionitem.h"
 
 namespace drawingboard {
 	class AnnotationItem;
@@ -174,11 +176,18 @@ private:
 
 class Selection : public Tool {
 public:
-	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
+	Selection(ToolCollection &owner) : Tool(owner, SELECTION), _selection(0) {}
 
 	void begin(const dpcore::Point& point, bool right);
 	void motion(const dpcore::Point& point);
 	void end();
+
+	void clearSelection();
+
+private:
+	QPointer<drawingboard::SelectionItem> _selection;
+	QPoint _start;
+	drawingboard::SelectionItem::Handle _handle;
 };
 
 /**

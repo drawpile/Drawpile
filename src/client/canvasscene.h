@@ -42,6 +42,7 @@ namespace drawingboard {
 class StateTracker;
 class CanvasItem;
 class AnnotationItem;
+class SelectionItem;
 class Preview;
 
 /**
@@ -110,6 +111,11 @@ public:
 
 	//! Get the current tool preview item
 	QGraphicsItem *toolPreview() { return _toolpreview; }
+
+	//! Set the selection
+	void setSelectionItem(SelectionItem *selection);
+
+	SelectionItem *selectionItem() { return _selection; }
 
 	//! Start a new preview stroke
 	void startPreview(const dpcore::Brush &brush, const dpcore::Point &point);
@@ -204,6 +210,9 @@ private:
 
 	//! Graphics item for previewing a special tool shape
 	QGraphicsItem *_toolpreview;
+
+	//! Current selection
+	SelectionItem *_selection;
 
 	bool _showAnnotationBorders;
 

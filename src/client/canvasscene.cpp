@@ -22,6 +22,7 @@
 
 #include "canvasscene.h"
 #include "canvasitem.h"
+#include "selectionitem.h"
 #include "annotationitem.h"
 #include "statetracker.h"
 
@@ -31,7 +32,7 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _showAnnotationBorders(false)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false)
 {
 	setItemIndexMethod(NoIndex);
 	_previewClearTimer = new QTimer(this);
@@ -244,6 +245,14 @@ void CanvasScene::setToolPreview(QGraphicsItem *preview)
     _toolpreview = preview;
 	if(preview)
 		addItem(preview);
+}
+
+void CanvasScene::setSelectionItem(SelectionItem *selection)
+{
+	delete _selection;
+	_selection = selection;
+	if(selection)
+		addItem(selection);
 }
 
 void CanvasScene::startPreview(const dpcore::Brush &brush, const dpcore::Point &point)

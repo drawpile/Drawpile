@@ -1,0 +1,64 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2013 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
+#ifndef SELECTIONITEM_H
+#define SELECTIONITEM_H
+
+#include <QGraphicsObject>
+
+namespace drawingboard {
+
+
+class SelectionItem : public QGraphicsObject
+{
+public:
+	static const int HANDLE = 10;
+	enum { Type= UserType + 11 };
+	enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
+
+	SelectionItem(QGraphicsItem *parent=0);
+
+	void setRect(const QRect &rect);
+
+	QRect rect() const { return _rect; }
+
+	//! Get the translation handle at the point
+	Handle handleAt(const QPoint &point);
+
+	//! Grow the box from the top-left corner
+	void adjustGeometry(Handle handle, const QPoint &delta);
+
+	//! reimplementation
+	QRectF boundingRect() const;
+
+	//! reimplementation
+	int type() const { return Type; }
+
+protected:
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
+	void timerEvent(QTimerEvent *e);
+
+private:
+	QRect _rect;
+	qreal _marchingants;
+};
+
+}
+
+#endif // SELECTIONITEM_H

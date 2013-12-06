@@ -26,6 +26,7 @@ set (
 	tools.cpp
 	toolsettings.cpp
 	annotationitem.cpp
+	selectionitem.cpp
 	loader.cpp
 	textloader.cpp
 	net/client.cpp
