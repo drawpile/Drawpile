@@ -101,7 +101,7 @@ void UserListModel::removeUser(int id)
 
 void UserListModel::clearUsers()
 {
-	beginRemoveRows(QModelIndex(), 0, _users.count());
+	beginRemoveRows(QModelIndex(), 0, _users.count()-1);
 	foreach(const User &u, _users)
 		_pastUsers[u.id] = u;
 	_users.clear();

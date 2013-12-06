@@ -28,6 +28,7 @@
 #include "net/layerlist.h"
 #include "docks/layerlistdock.h"
 #include "docks/layerlistdelegate.h"
+#include "docks/layeraclmenu.h"
 #include "core/rasterop.h" // for blending modes
 
 #include "ui_layerbox.h"
@@ -57,12 +58,16 @@ LayerListDock::LayerListDock(QWidget *parent)
 		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
+	// Layer ACL menu
+	_aclmenu = new LayerAclMenu(this);
+	_ui->lockButton->setMenu(_aclmenu);
+
 	connect(_ui->addButton, SIGNAL(clicked()), this, SLOT(addLayer()));
 	connect(_ui->deleteButton, SIGNAL(clicked()), this, SLOT(deleteSelected()));
 	connect(_ui->hideButton, SIGNAL(clicked()), this, SLOT(hiddenToggled()));
 	connect(_ui->opacity, SIGNAL(valueChanged(int)), this, SLOT(opacityAdjusted()));
 	connect(_ui->blendmode, SIGNAL(currentIndexChanged(int)), this, SLOT(blendModeChanged()));
-	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
+	connect(_aclmenu, SIGNAL(layerAclChange(bool, QList<uint8_t>)), this, SLOT(changeLayerAcl(bool, QList<uint8_t>)));
 
 	selectionChanged(QItemSelection());
 }
@@ -77,6 +82,8 @@ void LayerListDock::setClient(net::Client *client)
 	LayerListDelegate *del = new LayerListDelegate(this);
 	del->setClient(client);
 	_ui->layerlist->setItemDelegate(del);
+
+	_aclmenu->setUserList(client->userlist());
 
 	connect(_client->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
 	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
@@ -137,14 +144,14 @@ void LayerListDock::hiddenToggled()
 	}
 }
 
-void LayerListDock::lockSelected()
+void LayerListDock::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 {
 	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
-		Q_ASSERT(_client);
 		net::LayerListItem layer = index.data().value<net::LayerListItem>();
-		layer.locked = _ui->lockButton->isChecked();
+		layer.locked = lock;
+		layer.exclusive = exclusive;
 		_client->sendLayerAcl(layer.id, layer.locked, layer.exclusive);
 	}
 }
@@ -291,8 +298,11 @@ void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &b
 		_noupdate = true;
 		_ui->hideButton->setChecked(layer.hidden);
 		_ui->opacity->setValue(layer.opacity * 255);
-		_ui->lockButton->setChecked(layer.locked);
 		_ui->blendmode->setCurrentIndex(layer.blend - 1); // skip eraser mode (0)
+
+		_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
+		_aclmenu->setAcl(layer.locked, layer.exclusive);
+
 		_noupdate = false;
 	}
 }

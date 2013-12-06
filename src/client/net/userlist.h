@@ -47,8 +47,8 @@ class UserListModel : public QAbstractListModel {
 	public:
 		UserListModel(QObject *parent=0);
 
-		QVariant data(const QModelIndex& index, int role) const;
-		int rowCount(const QModelIndex& parent) const;
+		QVariant data(const QModelIndex& index, int role=Qt::DisplayRole) const;
+		int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
 		void addUser(const User &user);
 		void updateUser(int id, uchar attrs);

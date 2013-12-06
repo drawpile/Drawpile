@@ -72,6 +72,7 @@ set (
 	docks/userlistdock.cpp 
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
+	docks/layeraclmenu.cpp
 )
 
 set (

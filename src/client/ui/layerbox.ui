@@ -67,18 +67,25 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="blendmode"/>
+      <widget class="QComboBox" name="blendmode">
+       <property name="toolTip">
+        <string>Layer blending mode</string>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QToolButton" name="lockButton">
        <property name="toolTip">
-        <string>Lock this layer</string>
+        <string>Layer acess control</string>
        </property>
        <property name="text">
         <string>...</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+       <property name="popupMode">
+        <enum>QToolButton::InstantPopup</enum>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

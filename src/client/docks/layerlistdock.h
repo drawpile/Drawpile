@@ -33,6 +33,8 @@ namespace net {
 
 namespace widgets {
 
+class LayerAclMenu;
+
 class LayerListDock : public QDockWidget
 {
 Q_OBJECT
@@ -63,10 +65,10 @@ private slots:
 
 	void addLayer();
 	void deleteSelected();
-	void lockSelected();
 	void opacityAdjusted();
 	void blendModeChanged();
 	void hiddenToggled();
+	void changeLayerAcl(bool lock, QList<uint8_t> exclusive);
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
@@ -78,6 +80,7 @@ private:
 	int _selected;
 	Ui_LayerBox *_ui;
 	bool _noupdate;
+	LayerAclMenu *_aclmenu;
 };
 
 }
