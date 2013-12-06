@@ -19,6 +19,8 @@
 */
 #include <QDebug>
 #include <QTimer>
+#include <QApplication>
+#include <QClipboard>
 
 #include "canvasscene.h"
 #include "canvasitem.h"
@@ -27,6 +29,7 @@
 #include "statetracker.h"
 
 #include "core/layerstack.h"
+#include "core/layer.h"
 #include "ora/orawriter.h"
 
 namespace drawingboard {
@@ -151,6 +154,25 @@ QImage CanvasScene::image() const
 		return _image->image()->toFlatImage();
 	else
 		return QImage();
+}
+
+void CanvasScene::copyToClipboard(int layerId)
+{
+	if(!hasImage())
+		return;
+
+	QImage img;
+
+	dpcore::Layer *layer = layers()->getLayer(layerId);
+	if(layer)
+		img = layer->toImage();
+	else
+		img = image();
+
+	if(_selection)
+		img = img.copy(_selection->rect());
+
+	QApplication::clipboard()->setImage(img);
 }
 
 void CanvasScene::pickColor(int x, int y)

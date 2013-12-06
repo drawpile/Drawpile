@@ -3,6 +3,8 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * document-open
  * document-save-as
  * document-save
+ * edit-copy
+ * edit-paste
  * format-justify-center
  * format-justify-fill
  * format-justify-left

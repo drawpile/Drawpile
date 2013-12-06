@@ -49,7 +49,7 @@ StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *par
 {
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
-	
+
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
 	switch(msg->type()) {

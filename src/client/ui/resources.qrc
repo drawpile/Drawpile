@@ -41,5 +41,7 @@
         <file>icons/lock_closed.png</file>
         <file>icons/lock_open.png</file>
         <file>icons/select-rectangular.png</file>
+        <file>icons/edit-copy.png</file>
+        <file>icons/edit-paste.png</file>
     </qresource>
 </RCC>

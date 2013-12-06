@@ -44,6 +44,7 @@
 #include "canvasview.h"
 #include "canvasscene.h"
 #include "annotationitem.h"
+#include "selectionitem.h"
 #include "statetracker.h"
 #include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
@@ -1151,6 +1152,16 @@ void MainWindow::eraserNear(bool near)
 	}
 }
 
+void MainWindow::copyLayer()
+{
+	_canvas->copyToClipboard(_layerlist->currentLayer());
+}
+
+void MainWindow::copyVisible()
+{
+	_canvas->copyToClipboard(0);
+}
+
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About DrawPile"),
@@ -1284,6 +1295,13 @@ void MainWindow::initActions()
 	_drawingtools->addAction(selectiontool_);
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
+	// Edit actions
+	_copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
+	_copylayer = makeAction("copylayer", "edit-copy", tr("Copy layer"), tr("Copy selected area of the current layer to the clipboard"));
+
+	connect(_copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
+	connect(_copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
+
 	// View actions
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
 	zoomout_ = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
@@ -1338,6 +1356,10 @@ void MainWindow::createMenus()
 
 	connect(recent_, SIGNAL(triggered(QAction*)),
 			this, SLOT(openRecent(QAction*)));
+
+	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
+	editmenu->addAction(_copy);
+	editmenu->addAction(_copylayer);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles_);

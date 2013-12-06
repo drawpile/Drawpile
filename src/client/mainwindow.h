@@ -120,6 +120,9 @@ class MainWindow : public QMainWindow {
 
 		void updateShortcuts();
 
+		void copyVisible();
+		void copyLayer();
+
 	signals:
 		//! This signal is emitted when the current tool is changed
 		void toolChanged(tools::Type);
@@ -196,6 +199,9 @@ class MainWindow : public QMainWindow {
 		QAction *save_;
 		QAction *saveas_;
 		QAction *quit_;
+
+		QAction *_copy;
+		QAction *_copylayer;
 
 		QAction *host_;
 		QAction *join_;

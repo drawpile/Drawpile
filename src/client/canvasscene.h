@@ -73,6 +73,16 @@ public:
 	//! Get canvas contents as an image
 	QImage image() const;
 
+	/**
+	 * @brief Copy the current selection to the clipboard
+	 *
+	 * If there is no selection, the whole canvas is copied
+	 * If a valid layer ID is provided, only the contents of that layer is copied.
+	 *
+	 * @param layer layer ID
+	 */
+	void copyToClipboard(int layer);
+
 	//! Save the canvas to a file
 	bool save(const QString& filename) const;
 
