@@ -88,7 +88,7 @@ void ChatBox::userJoined(const QString &name)
 
 void ChatBox::userParted(const QString &name)
 {
-	systemMessage(tr("<b>%1</b> joined the session").arg(esc(name)));
+	systemMessage(tr("<b>%1</b> left the session").arg(esc(name)));
 }
 
 /**
