@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <QApplication>
 #include <QClipboard>
+#include <QPainter>
 
 #include "canvasscene.h"
 #include "canvasitem.h"
@@ -146,14 +147,25 @@ bool CanvasScene::deleteAnnotation(int id)
 }
 
 /**
- * @return board contents
+ * @return flattened canvas contents
  */
 QImage CanvasScene::image() const
 {
-	if(_image)
-		return _image->image()->toFlatImage();
-	else
+	if(!hasImage())
 		return QImage();
+
+	QImage image = _image->image()->toFlatImage();
+
+	// Include visible annotations
+	{
+		QPainter painter(&image);
+		foreach(AnnotationItem *a, getAnnotations(true)) {
+			QImage ai = a->toImage();
+			painter.drawImage(a->geometry().topLeft(), ai);
+		}
+	}
+
+	return image;
 }
 
 void CanvasScene::copyToClipboard(int layerId)
@@ -205,12 +217,15 @@ void CanvasScene::pickColor(int x, int y)
 	}
 }
 
-QList<AnnotationItem*> CanvasScene::getAnnotations() const
+QList<AnnotationItem*> CanvasScene::getAnnotations(bool onlyVisible) const
 {
 	QList<AnnotationItem*> annotations;
 	foreach(QGraphicsItem *i, items()) {
-		if(i->type() == AnnotationItem::Type)
-			annotations.append(static_cast<AnnotationItem*>(i));
+		if(i->type() == AnnotationItem::Type) {
+			AnnotationItem *a = static_cast<AnnotationItem*>(i);
+			if(!onlyVisible || a->isVisible())
+				annotations.append(a);
+		}
 	}
 	return annotations;
 }

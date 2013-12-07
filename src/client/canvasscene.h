@@ -105,7 +105,7 @@ public:
 	AnnotationItem *getAnnotationById(int id);
 
 	//! Get all annotations
-	QList<AnnotationItem*> getAnnotations() const;
+	QList<AnnotationItem*> getAnnotations(bool onlyVisible=false) const;
 
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return _showAnnotationBorders; }

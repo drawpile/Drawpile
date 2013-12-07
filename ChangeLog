@@ -2,6 +2,8 @@
  * Per-user layer locking
  * Improved brush shape
  * Copy & paste support
+ * Improved annotation editing
+ * Visible annotations are now included in saved images
 
 2013-12-06 Version 0.7.1
  * Redesigned layer & user list boxes
