@@ -32,7 +32,7 @@ LayerAclMenu::LayerAclMenu(QWidget *parent) :
 	_lock = addAction(tr("Lock this layer"));
 	_lock->setCheckable(true);
 
-	addSeparator();
+	addSection(tr("Exclusive access:"));
 
 	_allusers = addAction(tr("Everyone can draw"));
 	_allusers->setCheckable(true);
