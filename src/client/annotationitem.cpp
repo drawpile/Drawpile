@@ -193,13 +193,16 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		border.setAlpha(255);
 
 		QPen bpen(_highlight && _showborder ? Qt::DashLine : Qt::DotLine);
+		bpen.setCosmetic(true);
 		bpen.setColor(border);
 		painter->setPen(bpen);
 		painter->drawRect(_rect);
 
 		// Draw resizing handles
 		if(_highlight) {
-			painter->setPen(border);
+			QPen pen(border);
+			pen.setCosmetic(true);
+			painter->setPen(pen);
 
 			drawTriangle(painter, RS_TOPLEFT, _rect.topLeft() + QPoint(2, 2));
 			drawTriangle(painter, RS_TOP, _rect.topLeft() + QPoint(_rect.width()/ 2 + 2, 2));
