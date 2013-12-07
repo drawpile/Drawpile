@@ -528,7 +528,11 @@ void AnnotationSettings::updateStyleButtons()
 		ui_->size->setValue(12);
 	else
 		ui_->size->setValue(cf.fontPointSize());
-	ui_->font->setFont(cf.font());
+
+	QFont font = cf.font(); // constant font size for selection box
+	font.setPointSize(12);
+	ui_->font->setFont(font);
+
 	ui_->italic->setChecked(cf.fontItalic());
 	ui_->bold->setChecked(cf.fontWeight() > QFont::Normal);
 }
