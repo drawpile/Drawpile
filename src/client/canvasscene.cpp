@@ -177,9 +177,7 @@ void CanvasScene::copyToClipboard(int layerId)
 
 void CanvasScene::pasteFromClipboard()
 {
-	// TODO initialize board from clipboard
-	if(!hasImage())
-		return;
+	Q_ASSERT(hasImage());
 
 	QImage img = QApplication::clipboard()->image();
 	if(img.isNull())

@@ -122,6 +122,7 @@ class MainWindow : public QMainWindow {
 
 		void copyVisible();
 		void copyLayer();
+		void paste();
 
 	signals:
 		//! This signal is emitted when the current tool is changed

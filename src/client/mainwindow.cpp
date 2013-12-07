@@ -35,6 +35,7 @@
 #include <QPushButton>
 #include <QImageReader>
 #include <QSplitter>
+#include <QClipboard>
 
 #include "config.h"
 #include "main.h"
@@ -142,7 +143,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_view->setCanvas(_canvas);
 	navigator_->setScene(_canvas);
 
-	connect(_paste, SIGNAL(triggered()), _canvas, SLOT(pasteFromClipboard()));
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
@@ -269,6 +269,8 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	win->updateTitle();
 	win->save_->setEnabled(true);
 	win->saveas_->setEnabled(true);
+	win->_copy->setEnabled(true);
+	win->_copylayer->setEnabled(true);
 	return win;
 }
 
@@ -1163,6 +1165,22 @@ void MainWindow::copyVisible()
 	_canvas->copyToClipboard(0);
 }
 
+void MainWindow::paste()
+{
+	selectiontool_->trigger();
+	if(_canvas->hasImage()) {
+		_canvas->pasteFromClipboard();
+	} else {
+		// Canvas not yet initialized? Initialize with clipboard content
+		QImage image = QApplication::clipboard()->image();
+		if(image.isNull())
+			return;
+
+		QImageCanvasLoader loader(image);
+		loadDocument(loader);
+	}
+}
+
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About DrawPile"),
@@ -1301,9 +1319,12 @@ void MainWindow::initActions()
 	_copylayer = makeAction("copylayer", "edit-copy", tr("Copy layer"), tr("Copy selected area of the current layer to the clipboard"));
 	_paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image onto the canvas"), QKeySequence::Paste);
 
+	_copy->setEnabled(false);
+	_copylayer->setEnabled(false);
+
 	connect(_copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(_copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
-	connect(_paste, &QAction::triggered, [this]() { selectiontool_->trigger(); });
+	connect(_paste, SIGNAL(triggered()), this, SLOT(paste()));
 
 	// View actions
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
