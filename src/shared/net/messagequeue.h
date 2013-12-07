@@ -149,6 +149,8 @@ signals:
 	 */
 	void badData(int len, int type);
 
+	void socketError(const QString &errorstring);
+
 private slots:
 	void readData();
 	void writeData();

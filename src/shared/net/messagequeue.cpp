@@ -109,7 +109,7 @@ void MessageQueue::readData() {
 		read = _socket->read(_recvbuffer+_recvcount, MAX_BUF_LEN-_recvcount);
 		if(read<0) {
 			// Error!
-			emit badData(-1, -1);
+			emit socketError(_socket->errorString());
 			return;
 		}
 		_recvcount += read;
@@ -182,7 +182,7 @@ void MessageQueue::writeData() {
 		int sent = _socket->write(_sendbuffer+_sentcount, _sendbuflen-_sentcount);
 		if(sent<0) {
 			// Error
-			emit badData(-1, -1);
+			emit socketError(_socket->errorString());
 			return;
 		}
 		emit bytesSent(sent);
