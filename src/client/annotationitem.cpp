@@ -183,6 +183,9 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	Q_UNUSED(options);
 	Q_UNUSED(widget);
 
+	painter->save();
+	painter->setClipRect(boundingRect().adjusted(0, 0, 1, 1));
+
 	render(painter, _rect);
 
 	if(_showborder || _text.isEmpty()) {
@@ -208,9 +211,9 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 			drawTriangle(painter, RS_BOTTOMLEFT, _rect.bottomLeft() + QPoint(2, -2));
 			drawTriangle(painter, RS_BOTTOM, _rect.bottomLeft() + QPoint(_rect.width()/ 2 + 2, -2));
 			drawTriangle(painter, RS_BOTTOMRIGHT, _rect.bottomRight() + QPoint(-2, -2));
-
 		}
 	}
+	painter->restore();
 }
 
 QImage AnnotationItem::toImage()
