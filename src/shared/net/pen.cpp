@@ -98,13 +98,14 @@ int PenMove::payloadLength() const
 
 int PenMove::serializePayload(uchar *data) const
 {
-	*data = _ctx; ++data;
+	uchar *ptr = data;
+	*(ptr++) = _ctx;
 	foreach(const PenPoint &p, _points) {
-		qToBigEndian(p.x, data); data += 2;
-		qToBigEndian(p.y, data); data += 2;
-		*data = p.p; ++data;
+		qToBigEndian(p.x, ptr); ptr += 2;
+		qToBigEndian(p.y, ptr); ptr += 2;
+		*(ptr++) = p.p;
 	}
-	return 1 + 5 * _points.size();
+	return ptr - data;
 }
 
 PenUp *PenUp::deserialize(const uchar *data, uint len)

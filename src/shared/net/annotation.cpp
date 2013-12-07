@@ -76,12 +76,13 @@ AnnotationReshape *AnnotationReshape::deserialize(const uchar *data, uint len)
 
 int AnnotationReshape::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	qToBigEndian(_x, data); data += 2;
-	qToBigEndian(_y, data); data += 2;
-	qToBigEndian(_w, data); data += 2;
-	qToBigEndian(_h, data); data += 2;
-	return 1 + 4*2;
+	uchar *ptr = data;
+	*(ptr++) = _id;
+	qToBigEndian(_x, ptr); ptr += 2;
+	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_w, ptr); ptr += 2;
+	qToBigEndian(_h, ptr); ptr += 2;
+	return ptr - data;
 }
 
 AnnotationEdit *AnnotationEdit::deserialize(const uchar *data, uint len)
@@ -100,10 +101,12 @@ int AnnotationEdit::payloadLength() const
 
 int AnnotationEdit::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	qToBigEndian(_bg, data); data += 4;
-	memcpy(data, _text.constData(), _text.length());
-	return 1 + 4 + _text.length();
+	uchar *ptr = data;
+	*(ptr++) = _id;;
+	qToBigEndian(_bg, ptr); ptr += 4;
+	memcpy(ptr, _text.constData(), _text.length());
+	ptr += _text.length();
+	return ptr - data;
 }
 
 AnnotationDelete *AnnotationDelete::deserialize(const uchar *data, uint len)
@@ -120,7 +123,7 @@ int AnnotationDelete::payloadLength() const
 
 int AnnotationDelete::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
+	*data = _id;
 	return 1;
 }
 

@@ -47,14 +47,15 @@ int PutImage::payloadLength() const
 
 int PutImage::serializePayload(uchar *data) const
 {
-	*data = _layer; ++data;
-	*data = _flags; ++data;
-	qToBigEndian(_x, data); data += 2;
-	qToBigEndian(_y, data); data += 2;
-	qToBigEndian(_w, data); data += 2;
-	qToBigEndian(_h, data); data += 2;
-	memcpy(data, _image.constData(), _image.length());
-	return 1 + 1 + 4*2 + _image.size();
+	uchar *ptr = data;
+	*(ptr++) = _layer;
+	*(ptr++) = _flags;
+	qToBigEndian(_x, ptr); ptr += 2;
+	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_w, ptr); ptr += 2;
+	qToBigEndian(_h, ptr); ptr += 2;
+	memcpy(ptr, _image.constData(), _image.length());
+	return ptr-data;
 }
 
 }

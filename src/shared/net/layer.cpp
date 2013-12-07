@@ -41,9 +41,10 @@ int CanvasResize::payloadLength() const
 
 int CanvasResize::serializePayload(uchar *data) const
 {
-	qToBigEndian(_width, data); data += 2;
-	qToBigEndian(_height, data);
-	return 4;
+	uchar *ptr = data;
+	qToBigEndian(_width, ptr); ptr += 2;
+	qToBigEndian(_height, ptr); ptr += 2;
+	return ptr - data;
 }
 
 LayerCreate *LayerCreate::deserialize(const uchar *data, uint len)
@@ -144,9 +145,10 @@ int LayerOrder::payloadLength() const
 int LayerOrder::serializePayload(uchar *data) const
 {
 	Q_ASSERT(_order.length()<256);
+	uchar *ptr = data;
 	foreach(uint8_t l, _order)
-		*(data++) = l;
-	return _order.length();
+		*(ptr++) = l;
+	return ptr - data;
 }
 
 LayerDelete *LayerDelete::deserialize(const uchar *data, uint len)
@@ -163,9 +165,10 @@ int LayerDelete::payloadLength() const
 
 int LayerDelete::serializePayload(uchar *data) const
 {
-	*data = _id; ++data;
-	*data = _merge;
-	return 2;
+	uchar *ptr = data;
+	*(ptr++) = _id;
+	*(ptr++) = _merge;
+	return ptr - data;
 }
 
 LayerACL *LayerACL::deserialize(const uchar *data, uint len)
