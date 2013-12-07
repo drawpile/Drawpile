@@ -202,6 +202,7 @@ class MainWindow : public QMainWindow {
 
 		QAction *_copy;
 		QAction *_copylayer;
+		QAction *_paste;
 
 		QAction *host_;
 		QAction *join_;

@@ -180,6 +180,9 @@ public slots:
 	//! Clear out all preview strokes
 	void clearPreviews();
 
+	//! Create a new selection and paste an image from the clipboard
+	void pasteFromClipboard();
+
 signals:
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color);

@@ -175,6 +175,29 @@ void CanvasScene::copyToClipboard(int layerId)
 	QApplication::clipboard()->setImage(img);
 }
 
+void CanvasScene::pasteFromClipboard()
+{
+	// TODO initialize board from clipboard
+	if(!hasImage())
+		return;
+
+	QImage img = QApplication::clipboard()->image();
+	if(img.isNull())
+		return;
+
+	QPoint center;
+	if(_selection)
+		center = _selection->rect().center();
+	else
+		center = QPoint(width()/2, height()/2);
+
+	SelectionItem *paste = new SelectionItem();
+	paste->setRect(QRect(QPoint(center.x() - img.width()/2, center.y() - img.height()/2), img.size()));
+	paste->setPasteImage(img);
+
+	setSelectionItem(paste);
+}
+
 void CanvasScene::pickColor(int x, int y)
 {
 	if(_image) {

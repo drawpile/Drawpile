@@ -142,6 +142,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_view->setCanvas(_canvas);
 	navigator_->setScene(_canvas);
 
+	connect(_paste, SIGNAL(triggered()), _canvas, SLOT(pasteFromClipboard()));
 	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
@@ -1298,9 +1299,11 @@ void MainWindow::initActions()
 	// Edit actions
 	_copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
 	_copylayer = makeAction("copylayer", "edit-copy", tr("Copy layer"), tr("Copy selected area of the current layer to the clipboard"));
+	_paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image onto the canvas"), QKeySequence::Paste);
 
 	connect(_copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(_copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
+	connect(_paste, &QAction::triggered, [this]() { selectiontool_->trigger(); });
 
 	// View actions
 	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
@@ -1360,6 +1363,7 @@ void MainWindow::createMenus()
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
 	editmenu->addAction(_copy);
 	editmenu->addAction(_copylayer);
+	editmenu->addAction(_paste);
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles_);

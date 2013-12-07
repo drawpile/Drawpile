@@ -1,5 +1,7 @@
 2013-12-?? Version 0.7.2
  * Per-user layer locking
+ * Improved brush shape
+ * Copy & paste support
 
 2013-12-06 Version 0.7.1
  * Redesigned layer & user list boxes

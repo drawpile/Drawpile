@@ -84,6 +84,12 @@ void SelectionItem::adjustGeometry(Handle handle, const QPoint &delta)
 		_rect = _rect.normalized();
 }
 
+void SelectionItem::setPasteImage(const QImage &image)
+{
+	_pasteimg = image;
+	update();
+}
+
 QRectF SelectionItem::boundingRect() const
 {
 	return _rect;
@@ -91,6 +97,11 @@ QRectF SelectionItem::boundingRect() const
 
 void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *)
 {
+
+	if(!_pasteimg.isNull()) {
+		painter->drawImage(_rect, _pasteimg);
+	}
+
 	QPen pen;
 	pen.setColor(Qt::white);
 	pen.setStyle(Qt::DashLine);

@@ -174,9 +174,14 @@ private:
 	QPoint _start, _end;
 };
 
+/**
+ * @brief Selection tool
+ *
+ * This is used for selecting regions for copying & pasting.
+ */
 class Selection : public Tool {
 public:
-	Selection(ToolCollection &owner) : Tool(owner, SELECTION), _selection(0) {}
+	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
 
 	void begin(const dpcore::Point& point, bool right);
 	void motion(const dpcore::Point& point);
@@ -185,7 +190,6 @@ public:
 	void clearSelection();
 
 private:
-	QPointer<drawingboard::SelectionItem> _selection;
 	QPoint _start;
 	drawingboard::SelectionItem::Handle _handle;
 };

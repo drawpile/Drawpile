@@ -44,6 +44,12 @@ public:
 	//! Grow the box from the top-left corner
 	void adjustGeometry(Handle handle, const QPoint &delta);
 
+	//! Set the paste buffer
+	void setPasteImage(const QImage &image);
+
+	//! Get the paste buffer
+	const QImage &pasteImage() const { return _pasteimg; }
+
 	//! reimplementation
 	QRectF boundingRect() const;
 
@@ -57,6 +63,7 @@ protected:
 private:
 	QRect _rect;
 	qreal _marchingants;
+	QImage _pasteimg;
 };
 
 }

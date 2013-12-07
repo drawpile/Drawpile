@@ -30,6 +30,7 @@
 #include "selectionitem.h"
 
 #include "net/client.h"
+#include "net/utils.h"
 #include "docks/toolsettingswidget.h"
 #include "statetracker.h"
 
@@ -298,34 +299,60 @@ void Annotation::end()
 void Selection::begin(const dpcore::Point &point, bool right)
 {
 	Q_UNUSED(right);
-	if(_selection)
-		_handle = _selection->handleAt(point);
+
+	// Right click to dismiss selection (and paste buffer)
+	if(right) {
+		scene().setSelectionItem(0);
+		return;
+	}
+
+	if(scene().selectionItem())
+		_handle = scene().selectionItem()->handleAt(point);
 	else
 		_handle = drawingboard::SelectionItem::OUTSIDE;
 
 	_start = point;
 	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
-		_selection = new drawingboard::SelectionItem();
-		_selection->setRect(QRect(point, point));
-		scene().setSelectionItem(_selection);
+		bool hasPaste = scene().selectionItem() && !scene().selectionItem()->pasteImage().isNull();
+		if(hasPaste) {
+			// Left click outside and paste buffer exists: merge image
+			QImage image = scene().selectionItem()->pasteImage();
+			QRect rect = scene().selectionItem()->rect();
+			if(image.size() != rect.size())
+				image = image.scaled(rect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+
+			client().sendImage(layer(), rect.x(), rect.y(), image, true);
+			scene().setSelectionItem(0);
+		} else {
+			drawingboard::SelectionItem *sel = new drawingboard::SelectionItem();
+			sel->setRect(QRect(point, point));
+			scene().setSelectionItem(sel);
+		}
 	}
 }
 
 void Selection::motion(const dpcore::Point &point)
 {
+	if(!scene().selectionItem())
+		return;
+
 	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
-		_selection->setRect(QRect(_start, point).normalized());
+		scene().selectionItem()->setRect(QRect(_start, point).normalized());
 	} else {
 		QPoint p = point - _start;
-		_selection->adjustGeometry(_handle, p);
+		scene().selectionItem()->adjustGeometry(_handle, p);
 		_start = point;
 	}
 }
 
 void Selection::end()
 {
+	if(!scene().selectionItem())
+		return;
+
 	// Remove tiny selections
-	if(_selection->rect().width() * _selection->rect().height() <= 2)
+	QRect sel = scene().selectionItem()->rect();
+	if(sel.width() * sel.height() <= 2)
 		scene().setSelectionItem(0);
 }
 
