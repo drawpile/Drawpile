@@ -633,7 +633,7 @@ void AnnotationSettings::bake()
 
 	QImage img = _selection->toImage();
 	int layer = _layerlist->currentLayer();
-	_client->sendImage(layer, _selection->pos().x(), _selection->pos().y(), img, true);
+	_client->sendImage(layer, _selection->geometry().x(), _selection->geometry().y(), img, true);
 	removeAnnotation();
 }
 

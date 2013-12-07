@@ -37,7 +37,7 @@ class AnnotationItem : public QGraphicsObject {
 	public:
 		static const int HANDLE = 10;
 		enum { Type = UserType + 10 };
-		enum Handle {TRANSLATE, RS_TOPLEFT, RS_BOTTOMRIGHT};
+		enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
 
 		AnnotationItem(int id, QGraphicsItem *parent=0);
 
@@ -45,13 +45,10 @@ class AnnotationItem : public QGraphicsObject {
 		int id() const { return id_; }
 
 		//! Get the translation handle at the point
-		Handle handleAt(QPointF point);
+		Handle handleAt(const QPoint &point) const;
 
-		//! Grow the box from the top-left corner
-		void growTopLeft(qreal x, qreal y);
-
-		//! Grow the box from the bottom-right corner
-		void growBottomRight(qreal x, qreal y);
+		//! Adjust annotation position or size
+		void adjustGeometry(Handle handle, const QPoint &delta);
 
 		//! Highlight this item
 		void setHighlight(bool h);
@@ -93,7 +90,7 @@ class AnnotationItem : public QGraphicsObject {
 		void render(QPainter *painter, const QRectF& rect);
 
 		int id_;
-		QSizeF _size;
+		QRect _rect;
 
 		QTextDocument _text;
 		QColor bgcol_;

@@ -24,6 +24,7 @@
 #include <QPointer>
 
 #include "core/point.h"
+#include "annotationitem.h"
 #include "selectionitem.h"
 
 namespace drawingboard {
@@ -170,7 +171,7 @@ public:
 
 private:
 	drawingboard::AnnotationItem *_selected;
-	int _handle;
+	drawingboard::AnnotationItem::Handle _handle;
 	QPoint _start, _end;
 };
 

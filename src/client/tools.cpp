@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QGraphicsLineItem>
 #include <QGraphicsRectItem>
+#include <QApplication>
 
 #include "tools.h"
 #include "toolsettings.h"
@@ -227,13 +228,13 @@ void Annotation::begin(const dpcore::Point& point, bool right)
 	drawingboard::AnnotationItem *item = scene().annotationAt(point);
 	if(item) {
 		_selected = item;
-		_handle = _selected->handleAt(point - _selected->pos());
+		_handle = _selected->handleAt(point);
 		settings().getAnnotationSettings()->setSelection(item);
 	} else {
 		QGraphicsRectItem *item = new QGraphicsRectItem();
 		QPen pen;
 		pen.setWidth(1);
-		pen.setColor(Qt::red); // TODO
+		pen.setColor(QApplication::palette().color(QPalette::Highlight));
 		pen.setStyle(Qt::DotLine);
 		item->setPen(pen);
 		item->setRect(QRectF(point, point));
@@ -252,18 +253,9 @@ void Annotation::motion(const dpcore::Point& point)
 	if(_selected) {
 		// TODO a "ghost" mode to indicate annotation has not really moved
 		// until the server roundtrip
-		QPoint d = point - _start;
-		switch(_handle) {
-			case drawingboard::AnnotationItem::TRANSLATE:
-				_selected->moveBy(d.x(), d.y());
-				break;
-			case drawingboard::AnnotationItem::RS_TOPLEFT:
-				_selected->growTopLeft(d.x(), d.y());
-				break;
-			case drawingboard::AnnotationItem::RS_BOTTOMRIGHT:
-				_selected->growBottomRight(d.x(), d.y());
-				break;
-		}
+		// TODO use QPointer: annotation may be deleted from under you
+		QPoint p = point - _start;
+		_selected->adjustGeometry(_handle, p);
 		_start = point;
 	} else {
 		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
@@ -298,8 +290,6 @@ void Annotation::end()
 
 void Selection::begin(const dpcore::Point &point, bool right)
 {
-	Q_UNUSED(right);
-
 	// Right click to dismiss selection (and paste buffer)
 	if(right) {
 		scene().setSelectionItem(0);

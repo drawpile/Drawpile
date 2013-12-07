@@ -39,9 +39,9 @@ public:
 	QRect rect() const { return _rect; }
 
 	//! Get the translation handle at the point
-	Handle handleAt(const QPoint &point);
+	Handle handleAt(const QPoint &point) const;
 
-	//! Grow the box from the top-left corner
+	//! Adjust selection position or size
 	void adjustGeometry(Handle handle, const QPoint &delta);
 
 	//! Set the paste buffer

@@ -36,7 +36,7 @@ void SelectionItem::setRect(const QRect &rect)
 	_rect = rect;
 }
 
-SelectionItem::Handle SelectionItem::handleAt(const QPoint &point)
+SelectionItem::Handle SelectionItem::handleAt(const QPoint &point) const
 {
 	if(!_rect.contains(point))
 		return OUTSIDE;
