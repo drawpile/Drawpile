@@ -317,8 +317,8 @@ BrushMask Brush::render(qreal pressure) const {
 			*(ptr+2) = 0;
 			*(ptr+3) = 0;
 		} else {
-			qreal R = interpolate(radius1_, radius2_, pressure) + 1;
-			qreal rr = R*R;
+			const qreal R = interpolate(radius1_, radius2_, pressure);
+			const qreal rr = R*R;
 
 			// GIMP style brush shape
 			const qreal hard = hardness(pressure);
@@ -337,10 +337,10 @@ BrushMask Brush::render(qreal pressure) const {
 			uchar *ptr = cache_.data();
 
 			for(int y=0;y<dia;++y) {
-				const qreal yy = (y-R)*(y-R);
+				const qreal yy = (y-R+0.5)*(y-R+0.5);
 				for(int x=0;x<dia;++x) {
-					const qreal dist = (x-R)*(x-R) + yy;
-					*(ptr++) = dist<rr ? lut[int(dist)] : 0;
+					const int dist = qRound((x-R+0.5)*(x-R+0.5) + yy);
+					*(ptr++) = dist<lut_len ? lut[dist] : 0;
 				}
 			}
 		}
