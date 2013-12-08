@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QtMath>
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
@@ -420,6 +419,11 @@ void CanvasView::scrollTo(const QPoint& point)
 	sceneChanged();
 }
 
+inline float qRadiansToDegrees(float radians)
+{
+    return radians * float(180/M_PI);
+}
+
 /**
  * @param x x coordinate
  * @param y y coordinate
@@ -430,8 +434,8 @@ void CanvasView::moveDrag(int x, int y)
 	const int dy = _dragy - y;
 
 	if(_isdragging==ROTATE) {
-		qreal preva = qAtan2( width()/2 - _dragx, height()/2 - _dragy );
-		qreal a = qAtan2( width()/2 - x, height()/2 - y );
+		qreal preva = atan2( width()/2 - _dragx, height()/2 - _dragy );
+		qreal a = atan2( width()/2 - x, height()/2 - y );
 		setRotation(rotation() + qRadiansToDegrees(preva-a));
 	} else {
 		QScrollBar *ver = verticalScrollBar();

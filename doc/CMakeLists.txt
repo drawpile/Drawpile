@@ -3,7 +3,6 @@ SET(base_files
 	../COPYING
 	../README.md
 	openraster.txt
-	textloader.txt
 )
 
 SET(man1

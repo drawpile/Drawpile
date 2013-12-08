@@ -85,7 +85,7 @@ uint str2color(const QString &str) {
 	if(str.at(0) == '#')
 	{
 		bool ok;
-		uint i = str.midRef(1).toUInt(&ok, 16);
+		uint i = str.mid(1).toUInt(&ok, 16);
 		if(!ok)
 			throw SyntaxError(QString("'%1'' is not an integer!").arg(str));
 		return i;
