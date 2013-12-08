@@ -38,6 +38,10 @@ TcpServer::TcpServer(QObject *parent) :
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
+	connect(_socket, &QTcpSocket::stateChanged, [this](QAbstractSocket::SocketState state) {
+		if(state==QAbstractSocket::ClosingState)
+			emit loggingOut();
+	});
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
 	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
@@ -55,7 +59,7 @@ void TcpServer::login(LoginHandler *login)
 
 void TcpServer::logout()
 {
-	_socket->close();
+	_socket->disconnectFromHost();
 }
 
 int TcpServer::uploadQueueBytes() const
@@ -89,7 +93,7 @@ void TcpServer::handleBadData(int len, int type)
 {
 	qWarning() << "Received" << len << "bytes of unknown message type" << type;
 	_error = tr("Received invalid data");
-	_socket->close();
+	_socket->abort();
 }
 
 void TcpServer::handleDisconnect()

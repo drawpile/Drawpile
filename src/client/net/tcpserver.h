@@ -53,6 +53,7 @@ public:
 
 signals:
 	void loggedIn(int userid, bool join);
+	void loggingOut();
 	void serverDisconnected(const QString &message);
 
 	void expectingBytes(int);

@@ -117,6 +117,12 @@ void NetStatus::loggedIn()
 	message(tr("Logged in!"));
 }
 
+void NetStatus::hostDisconnecting()
+{
+	_label->setText(tr("Logging out..."));
+	message(tr("Logging out..."));
+}
+
 /**
  * Set the label to indicate a lack of connection.
  * Context menu will be disabled.

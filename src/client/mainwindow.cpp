@@ -193,6 +193,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(serverConnected(QString, int)), netstatus, SLOT(connectingToHost(QString, int)));
 	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
+	connect(_client, SIGNAL(serverDisconnecting()), netstatus, SLOT(hostDisconnecting()));
 	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
 	connect(_client, SIGNAL(expectingBytes(int)),netstatus, SLOT(expectBytes(int)));
 	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));

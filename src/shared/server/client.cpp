@@ -210,13 +210,13 @@ void Client::receiveSnapshot()
 void Client::gotBadData(int len, int type)
 {
 	_server->printError(QString("Received unknown message type #%1 of length %2 from %3").arg(type).arg(len).arg(peerAddress().toString()));
-	_socket->close();
+	_socket->abort();
 }
 
 void Client::socketError()
 {
 	_server->printError(QString("Socket error %1 (from %2)").arg(_socket->errorString()).arg(peerAddress().toString()));
-	_socket->close();
+	_socket->abort();
 }
 
 void Client::socketDisconnect()
@@ -434,7 +434,7 @@ void Client::barrierUnlock()
 void Client::kick(int kickedBy)
 {
 	_server->printDebug(QString("User #%1 (%2) kicked by #%3").arg(_id).arg(_username).arg(kickedBy));
-	_socket->close();
+	_socket->disconnectFromHost();
 }
 
 void Client::sendUpdatedAttrs()

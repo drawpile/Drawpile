@@ -186,6 +186,7 @@ signals:
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
+	void serverDisconnecting();
 	void serverDisconnected(const QString &message);
 
 	void userJoined(const QString &name);

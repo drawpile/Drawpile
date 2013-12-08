@@ -44,6 +44,7 @@ public:
 public slots:
 	void connectingToHost(const QString& address, int port);
 	void loggedIn();
+	void hostDisconnecting();
 	void hostDisconnected();
 
 	void expectBytes(int count);
