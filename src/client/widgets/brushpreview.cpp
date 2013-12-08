@@ -18,7 +18,15 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
+
+// Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
+#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
+#include <cmath>
+#define qSin sin
+#else
 #include <QtMath>
+#endif
+
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>

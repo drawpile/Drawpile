@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QtMath>
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
@@ -26,6 +25,17 @@
 #include <QBitmap>
 #include <QPainter>
 #include <QMimeData>
+
+// Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
+#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
+#include <cmath>
+#define qAtan2 atan2
+inline float qRadiansToDegrees(float radians) {
+	return radians * float(180/M_PI);
+}
+#else
+#include <QtMath>
+#endif
 
 #include "canvasview.h"
 #include "canvasscene.h"
