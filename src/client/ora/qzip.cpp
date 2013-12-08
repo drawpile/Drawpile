@@ -44,7 +44,8 @@
 #include "zipreader.h"
 #include "zipwriter.h"
 #include <qdatetime.h>
-#include <qplatformdefs.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include <qendian.h>
 #include <qdebug.h>
 #include <qdir.h>

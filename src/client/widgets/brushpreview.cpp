@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 #include <QDebug>
-#include <QtMath>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QEvent>
@@ -136,7 +135,7 @@ void BrushPreview::updatePreview()
 
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
-			const int y = qRound(qSin(phase) * strokeh);
+			const int y = qRound(sin(phase) * strokeh);
 			layer->drawLine(0, brush_,
 					dpcore::Point(offx+lastx,offy+lasty, lastp),
 					dpcore::Point(offx+x, offy+y, pressure), distance);
