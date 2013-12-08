@@ -4,6 +4,7 @@
  * Copy & paste support
  * Improved annotation editing
  * Visible annotations are now included in saved images
+ * Ability to look up the external IP address using ipecho.net
 
 2013-12-06 Version 0.7.1
  * Redesigned layer & user list boxes

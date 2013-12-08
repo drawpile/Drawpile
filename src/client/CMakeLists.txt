@@ -40,7 +40,8 @@ set (
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
-	utils/icons.cpp 
+	utils/icons.cpp
+	utils/whatismyip.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp

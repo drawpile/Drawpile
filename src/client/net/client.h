@@ -184,7 +184,7 @@ signals:
 	void chatMessageReceived(const QString &user, const QString &message, bool me);
 	void needSnapshot(bool forcenew);
 
-	void serverConnected(const QString &address);
+	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
 	void serverDisconnected(const QString &message);
 

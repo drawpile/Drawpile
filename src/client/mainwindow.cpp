@@ -51,6 +51,7 @@
 
 #include "utils/recentfiles.h"
 #include "utils/icons.h"
+#include "utils/whatismyip.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -186,11 +187,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_closeSession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
 	// Network status changes
-	connect(_client, SIGNAL(serverConnected(QString)), this, SLOT(connecting()));
+	connect(_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
 	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
 
-	connect(_client, SIGNAL(serverConnected(QString)), netstatus, SLOT(connectingToHost(QString)));
+	connect(_client, SIGNAL(serverConnected(QString, int)), netstatus, SLOT(connectingToHost(QString, int)));
 	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
 	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
 	connect(_client, SIGNAL(expectingBytes(int)),netstatus, SLOT(expectBytes(int)));
@@ -776,7 +777,7 @@ void MainWindow::finishHost(int i)
 			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
 					QUrl::TolerantMode);
 		} else {
-			address.setHost(net::ServerThread::address());
+			address.setHost(WhatIsMyIp::localAddress());
 		}
 
 		if(address.isValid() == false || address.host().isEmpty()) {

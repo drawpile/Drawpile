@@ -28,6 +28,7 @@
 #include "widgets/netstatus.h"
 #include "widgets/popupmessage.h"
 #include "utils/icons.h"
+#include "utils/whatismyip.h"
 
 namespace widgets {
 
@@ -54,14 +55,21 @@ NetStatus::NetStatus(QWidget *parent)
 			Qt::TextSelectableByMouse|Qt::TextSelectableByKeyboard
 			);
 	_label->setCursor(Qt::IBeamCursor);
+	_label->setContextMenuPolicy(Qt::ActionsContextMenu);
 	layout->addWidget(_label);
 
 	// Action to copy address to clipboard
 	_copyaction = new QAction(tr("Copy address to clipboard"), this);
 	_copyaction->setEnabled(false);
 	_label->addAction(_copyaction);
-	_label->setContextMenuPolicy(Qt::ActionsContextMenu);
 	connect(_copyaction,SIGNAL(triggered()),this,SLOT(copyAddress()));
+
+	// Discover local IP address
+	_discoverIp = new QAction(tr("Get externally visible IP address"), this);
+	_discoverIp->setVisible(false);
+	_label->addAction(_discoverIp);
+	connect(_discoverIp, SIGNAL(triggered()), this, SLOT(discoverAddress()));
+	connect(WhatIsMyIp::instance(), SIGNAL(myAddressIs(QString)), this, SLOT(externalIpDiscovered(QString)));
 
 	// Network connection status icon
 	_icon = new QLabel(QString(), this);
@@ -83,12 +91,18 @@ NetStatus::NetStatus(QWidget *parent)
  * A context menu to copy the address to clipboard will be enabled.
  * @param address the address to display
  */
-void NetStatus::connectingToHost(const QString& address)
+void NetStatus::connectingToHost(const QString& address, int port)
 {
 	_address = address;
-	_label->setText(tr("Connecting to %1...").arg(_address));
+	_port = port;
+	_label->setText(tr("Connecting to %1...").arg(fullAddress()));
 	_copyaction->setEnabled(true);
 	message(_label->text());
+
+	// Enable "discover IP" item for local host
+	bool isLocal = WhatIsMyIp::isMyPrivateAddress(address);
+	_discoverIp->setEnabled(isLocal);
+	_discoverIp->setVisible(isLocal);
 
 	// reset statistics
 	_recvbytes = 0;
@@ -99,7 +113,7 @@ void NetStatus::connectingToHost(const QString& address)
 
 void NetStatus::loggedIn()
 {
-	_label->setText(tr("Host: %1").arg(_address));
+	_label->setText(tr("Host: %1").arg(fullAddress()));
 	message(tr("Logged in!"));
 }
 
@@ -113,6 +127,8 @@ void NetStatus::hostDisconnected()
 	_label->setText(tr("not connected"));
 
 	_copyaction->setEnabled(false);
+	_discoverIp->setVisible(false);
+
 	message(tr("Disconnected"));
 	_online = false;
 	updateIcon();
@@ -188,10 +204,45 @@ void NetStatus::updateIcon()
  */
 void NetStatus::copyAddress()
 {
-	QApplication::clipboard()->setText(_address);
+	QString addr = fullAddress();
+	QApplication::clipboard()->setText(addr);
 	// Put address also in selection buffer so it can be pasted with
 	// a middle mouse click where supported.
-	QApplication::clipboard()->setText(_address, QClipboard::Selection);
+	QApplication::clipboard()->setText(addr, QClipboard::Selection);
+}
+
+void NetStatus::discoverAddress()
+{
+	WhatIsMyIp::instance()->discoverMyIp();
+	_discoverIp->setEnabled(false);
+}
+
+void NetStatus::externalIpDiscovered(const QString &ip)
+{
+	// Only update IP if solicited
+	if(_discoverIp->isVisible()) {
+		_discoverIp->setEnabled(false);
+
+		// TODO handle IPv6 style addresses
+		int portsep = _address.lastIndexOf(':');
+		QString port;
+		if(portsep>0)
+			port = _address.mid(portsep);
+
+		_address = ip;
+		_label->setText(tr("Host: %1").arg(fullAddress()));
+	}
+}
+
+QString NetStatus::fullAddress() const
+{
+	QString addr;
+	if(_port>0)
+		addr = QString("%1:%2").arg(_address).arg(_port);
+	else
+		addr = _address;
+
+	return addr;
 }
 
 void NetStatus::join(const QString& user)

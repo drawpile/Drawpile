@@ -95,11 +95,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	if(loginhandler->mode() == LoginHandler::HOST)
 		loginhandler->setUserId(_my_id);
 
-	QString address = loginhandler->url().host();
-	if(loginhandler->url().port() != -1)
-		address = address + QString(":%1").arg(loginhandler->url().port());
-
-	emit serverConnected(address);
+	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
 }
 

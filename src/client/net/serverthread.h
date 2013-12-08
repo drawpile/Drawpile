@@ -34,9 +34,6 @@ Q_OBJECT
 public:
 	ServerThread(QObject *parent=0);
 
-	//! Get the address of the local server
-	static QString address();
-
     /**
      * @brief Set the default port to listen on
      *

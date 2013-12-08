@@ -42,7 +42,7 @@ public:
 	NetStatus(QWidget *parent);
 
 public slots:
-	void connectingToHost(const QString& address);
+	void connectingToHost(const QString& address, int port);
 	void loggedIn();
 	void hostDisconnected();
 
@@ -65,16 +65,21 @@ signals:
 
 private slots:
 	void updateStats();
+	void discoverAddress();
+	void externalIpDiscovered(const QString &ip);
 
 private:
 	void message(const QString& msg);
 	void updateIcon();
+	QString fullAddress() const;
 
 	QProgressBar *_progress;
 	QLabel *_label, *_icon;
 	PopupMessage *_popup;
 	QString _address;
+	int _port;
 	QAction *_copyaction;
+	QAction *_discoverIp;
 
 	bool _online;
 	quint64 _sentbytes, _recvbytes;
