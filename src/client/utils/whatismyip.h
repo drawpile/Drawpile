@@ -56,7 +56,7 @@ public:
 	 *
 	 * This function tries to find the address most likely reachable
 	 * from the Internet.
-	 * @return local host IP address
+	 * @return local host IP address in URL friendly format
 	 */
 	static QString localAddress();
 

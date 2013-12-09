@@ -106,8 +106,13 @@ bool WhatIsMyIp::isMyPrivateAddress(const QString &address)
 		return true;
 
 	QHostAddress addr;
-	if(!addr.setAddress(address))
-		return false;
+	if(address.startsWith('[') && address.endsWith(']')) {
+		if(!addr.setAddress(address.mid(1, address.length()-2)))
+			return false;
+	} else {
+		if(!addr.setAddress(address))
+			return false;
+	}
 
 	if(addr.isLoopback())
 		return true;
@@ -137,13 +142,19 @@ QString WhatIsMyIp::localAddress()
 			continue;
 
 		foreach (QNetworkAddressEntry entry, iface.addressEntries()) {
-			alist.append(entry.ip());
+			// Ignore IPv6 addresses with scope ID, because QUrl doesn't accept them (last tested with Qt 5.1.1)
+			QHostAddress a = entry.ip();
+			if(a.scopeId().isEmpty())
+				alist.append(a);
 		}
 	}
 
 	if (alist.count() > 0) {
 		qSort(alist.begin(), alist.end(), addressSort);
-		return alist.at(0).toString();
+		QHostAddress a = alist.at(0);
+		if(a.protocol() == QAbstractSocket::IPv6Protocol)
+			return QString("[%1]").arg(a.toString());
+		return a.toString();
 	}
 	return "127.0.0.1";
 }
