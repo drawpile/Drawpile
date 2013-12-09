@@ -11,6 +11,7 @@ set (
 
 add_executable( ${SRVNAME} ${SOURCES} )
 target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} ${Qt5Network_LIBRARIES} )
+qt5_use_modules( ${SRVNAME} Network )
 
 if ( WIN32 )
 	install ( TARGETS ${SRVNAME} DESTINATION . )

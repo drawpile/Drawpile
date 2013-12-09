@@ -2,7 +2,6 @@
 
 set(CMAKE_AUTOMOC ON)
 find_package(Qt5Network)
-include_directories( ${Qt5Network_INCLUDES} )
 
 set (
 	NET_SOURCES
@@ -33,4 +32,5 @@ set (
 
 add_library( ${DPSHAREDLIB} STATIC ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )
 target_link_libraries ( ${DPSHAREDLIB} ${Qt5Network_LIBRARIES} )
+qt5_use_modules( ${DPSHAREDLIB} Network )
 

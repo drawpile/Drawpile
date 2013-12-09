@@ -3,6 +3,7 @@
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
@@ -160,7 +161,7 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-qt5_use_modules(drawpile Widgets Network Xml)
+qt5_use_modules(drawpile Core Widgets Network Xml)
 
 target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES})
 if ( WIN32 )
