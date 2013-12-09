@@ -339,7 +339,7 @@ BrushMask Brush::render(qreal pressure) const {
 			for(int y=0;y<dia;++y) {
 				const qreal yy = (y-R+0.5)*(y-R+0.5);
 				for(int x=0;x<dia;++x) {
-					const int dist = qRound((x-R+0.5)*(x-R+0.5) + yy);
+					const int dist = int((x-R+0.5)*(x-R+0.5) + yy);
 					*(ptr++) = dist<lut_len ? lut[dist] : 0;
 				}
 			}
