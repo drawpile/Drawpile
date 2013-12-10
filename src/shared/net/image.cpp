@@ -55,6 +55,7 @@ int PutImage::serializePayload(uchar *data) const
 	qToBigEndian(_w, ptr); ptr += 2;
 	qToBigEndian(_h, ptr); ptr += 2;
 	memcpy(ptr, _image.constData(), _image.length());
+	ptr += _image.length();
 	return ptr-data;
 }
 
