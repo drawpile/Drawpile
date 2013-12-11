@@ -230,6 +230,7 @@ void Annotation::begin(const dpcore::Point& point, bool right)
 		_selected = item;
 		_handle = _selected->handleAt(point);
 		settings().getAnnotationSettings()->setSelection(item);
+		_wasselected = true;
 	} else {
 		QGraphicsRectItem *item = new QGraphicsRectItem();
 		QPen pen;
@@ -240,6 +241,7 @@ void Annotation::begin(const dpcore::Point& point, bool right)
 		item->setRect(QRectF(point, point));
 		scene().setToolPreview(item);
 		_end = point;
+		_wasselected = false;
 	}
 	_start = point;
 }
@@ -250,13 +252,16 @@ void Annotation::begin(const dpcore::Point& point, bool right)
  */
 void Annotation::motion(const dpcore::Point& point)
 {
-	if(_selected) {
+	if(_wasselected) {
 		// TODO a "ghost" mode to indicate annotation has not really moved
 		// until the server roundtrip
-		// TODO use QPointer: annotation may be deleted from under you
-		QPoint p = point - _start;
-		_selected->adjustGeometry(_handle, p);
-		_start = point;
+
+		// Annotation may have been deleted by other user while we were moving it.
+		if(_selected) {
+			QPoint p = point - _start;
+			_selected->adjustGeometry(_handle, p);
+			_start = point;
+		}
 	} else {
 		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
 		if(item)
@@ -271,9 +276,11 @@ void Annotation::motion(const dpcore::Point& point)
  */
 void Annotation::end()
 {
-	if(_selected) {
-		client().sendAnnotationReshape(_selected->id(), _selected->geometry());
-		_selected = 0;
+	if(_wasselected) {
+		if(_selected) {
+			client().sendAnnotationReshape(_selected->id(), _selected->geometry());
+			_selected = 0;
+		}
 	} else {
 		scene().setToolPreview(0);
 

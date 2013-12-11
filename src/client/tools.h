@@ -170,9 +170,10 @@ public:
 	void end();
 
 private:
-	drawingboard::AnnotationItem *_selected;
+	QPointer<drawingboard::AnnotationItem> _selected;
 	drawingboard::AnnotationItem::Handle _handle;
 	QPoint _start, _end;
+	bool _wasselected;
 };
 
 /**
