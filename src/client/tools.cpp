@@ -307,11 +307,29 @@ void Selection::begin(const dpcore::Point &point, bool right)
 		if(hasPaste) {
 			// Left click outside and paste buffer exists: merge image
 			QImage image = scene().selectionItem()->pasteImage();
-			QRect rect = scene().selectionItem()->rect();
+			const QRect rect = scene().selectionItem()->rect();
 			if(image.size() != rect.size())
 				image = image.scaled(rect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
-			client().sendImage(layer(), rect.x(), rect.y(), image, true);
+			// Clip image to scene
+			const QRect scenerect(0, 0, scene().width(), scene().height());
+			QRect intersection = rect & scenerect;
+			if(!intersection.isEmpty()) {
+				int xoff=0, yoff=0;
+				if(intersection != rect) {
+					if(rect.x() < 0)
+						xoff = -rect.x();
+					if(rect.y() < 0)
+						yoff = -rect.y();
+
+					intersection.moveLeft(xoff);
+					intersection.moveTop(yoff);
+					image = image.copy(intersection);
+				}
+
+				// Merge image
+				client().sendImage(layer(), rect.x() + xoff, rect.y() + yoff, image, true);
+			}
 			scene().setSelectionItem(0);
 		} else {
 			drawingboard::SelectionItem *sel = new drawingboard::SelectionItem();

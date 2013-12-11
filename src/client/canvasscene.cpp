@@ -182,7 +182,7 @@ void CanvasScene::copyToClipboard(int layerId)
 		img = image();
 
 	if(_selection)
-		img = img.copy(_selection->rect());
+		img = img.copy(_selection->rect().intersected(QRect(0, 0, width(), height())));
 
 	QApplication::clipboard()->setImage(img);
 }
