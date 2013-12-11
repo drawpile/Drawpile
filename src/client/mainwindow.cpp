@@ -1306,6 +1306,7 @@ void MainWindow::initActions()
 
 	_drawingtools = new QActionGroup(this);
 	_drawingtools->setExclusive(true);
+	_drawingtools->addAction(selectiontool_);
 	_drawingtools->addAction(pentool_);
 	_drawingtools->addAction(brushtool_);
 	_drawingtools->addAction(erasertool_);
@@ -1313,7 +1314,7 @@ void MainWindow::initActions()
 	_drawingtools->addAction(linetool_);
 	_drawingtools->addAction(recttool_);
 	_drawingtools->addAction(annotationtool_);
-	_drawingtools->addAction(selectiontool_);
+
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
 	// Edit actions

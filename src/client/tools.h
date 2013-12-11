@@ -49,7 +49,7 @@ namespace net {
  */
 namespace tools {
 
-enum Type {PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION, SELECTION};
+enum Type {SELECTION, PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
 
 class ToolCollection;
 
