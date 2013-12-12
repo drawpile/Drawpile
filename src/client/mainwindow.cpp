@@ -1018,14 +1018,6 @@ void MainWindow::zoomone()
 	_view->setZoom(100);
 }
 
-/**
- * Set rotation angle to 0
- */
-void MainWindow::rotatezero()
-{
-	_view->setRotation(0.0);
-}
-
 void MainWindow::setShowAnnotations(bool show)
 {
 	QAction *annotationtool = getAction("tooltext");
@@ -1316,28 +1308,48 @@ void MainWindow::setupActions()
 	QAction *zoomout = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
 	QAction *rotateorig = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
+	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
+	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
 
-	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
-
+	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
 	showannotations->setChecked(true);
+
+	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
 
 	connect(zoomin, SIGNAL(triggered()), this, SLOT(zoomin()));
 	connect(zoomout, SIGNAL(triggered()), this, SLOT(zoomout()));
 	connect(zoomorig, SIGNAL(triggered()), this, SLOT(zoomone()));
-	connect(rotateorig, SIGNAL(triggered()), this, SLOT(rotatezero()));
+	connect(rotateorig, &QAction::triggered, [this]() { _view->setRotation(0); });
+	connect(rotate90, &QAction::triggered, [this]() { _view->setRotation(90); });
+	connect(rotate180, &QAction::triggered, [this]() { _view->setRotation(180); });
+	connect(rotate270, &QAction::triggered, [this]() { _view->setRotation(270); });
 	connect(fullscreen, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
+
+	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
 	viewmenu->addSeparator();
-	viewmenu->addAction(zoomin);
-	viewmenu->addAction(zoomout);
-	viewmenu->addAction(zoomorig);
-	viewmenu->addAction(rotateorig);
+
+	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));
+	zoommenu->addAction(zoomin);
+	zoommenu->addAction(zoomout);
+	zoommenu->addAction(zoomorig);
+
+	QMenu *rotatemenu = viewmenu->addMenu(tr("Rotation"));
+	rotatemenu->addAction(rotateorig);
+	rotatemenu->addAction(rotate90);
+	rotatemenu->addAction(rotate180);
+	rotatemenu->addAction(rotate270);
+
+	viewmenu->addSeparator();
+	viewmenu->addAction(showoutline);
 	viewmenu->addAction(showannotations);
+
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);
 
@@ -1387,7 +1399,6 @@ void MainWindow::setupActions()
 	QAction *recttool = makeAction("toolrect", "draw-rectangle.png", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
 
-	QAction *toggleoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"), QKeySequence(), true);
 	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
 
 	// Default tool
@@ -1404,12 +1415,10 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(annotationtool);
 
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
-	connect(toggleoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());
 	toolsmenu->addSeparator();
-	toolsmenu->addAction(toggleoutline);
 	toolsmenu->addAction(swapcolors);
 
 	QToolBar *drawtools = new QToolBar("Drawing tools");
