@@ -6,6 +6,7 @@
  * Visible annotations are now included in saved images
  * Ability to look up the external IP address using ipecho.net
  * Menu bar is now hidden in fullscreen mode and floating docks remain visible
+ * Option to pick color from current layer only
 
 2013-12-06 Version 0.7.1
  * Redesigned layer & user list boxes

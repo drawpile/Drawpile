@@ -208,12 +208,22 @@ void CanvasScene::pasteFromClipboard()
 	setSelectionItem(paste);
 }
 
-void CanvasScene::pickColor(int x, int y)
+void CanvasScene::pickColor(int x, int y, int layer)
 {
 	if(_image) {
-		QColor color = _image->image()->colorAt(x, y);
-		if(color.isValid())
+		QColor color;
+		if(layer>0) {
+			const dpcore::Layer *l = _image->image()->getLayer(layer);
+			if(layer)
+				color = l->colorAt(x, y);
+		} else {
+			color = _image->image()->colorAt(x, y);
+		}
+
+		if(color.isValid() && color.alpha()>0) {
+			color.setAlpha(255);
 			emit colorPicked(color);
+		}
 	}
 }
 

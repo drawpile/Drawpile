@@ -32,6 +32,7 @@ class Ui_TextSettings;
 class Ui_SelectionSettings;
 class QSettings;
 class QTimer;
+class QCheckBox;
 
 namespace net {
 	class Client;
@@ -291,6 +292,9 @@ public:
 
 	int getSize() const { return 0; }
 
+	//! Pick color from current layer only?
+	bool pickFromLayer() const;
+
 public slots:
 	void addColor(const QColor &color);
 
@@ -300,6 +304,7 @@ signals:
 private:
 	Palette *_palette;
 	widgets::PaletteWidget *_palettewidget;
+	QCheckBox *_layerpick;
 };
 
 class SelectionSettings : public ToolSettings {

@@ -139,8 +139,15 @@ public:
 	//! Remove the oldest preview stroke(s)
 	void takePreview(int count);
 
-	//! Pick a color at the given coordinates. Emits colorPicked
-	void pickColor(int x, int y);
+	/**
+	 * @brief Pick a color at the given coordinates.
+	 *
+	 * Emits colorPicked
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 * @param layer layer ID. If 0, the merged pixel value is picked.
+	 */
+	void pickColor(int x, int y, int layer);
 
 	/**
 	 * @brief Get the state tracker for this session.

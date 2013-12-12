@@ -129,12 +129,16 @@ void BrushBase::end()
 void ColorPicker::begin(const dpcore::Point& point, bool right)
 {
 	Q_UNUSED(right);
-	scene().pickColor(point.x(), point.y());
+	motion(point);
 }
 
 void ColorPicker::motion(const dpcore::Point& point)
 {
-	scene().pickColor(point.x(), point.y());
+	int layer=0;
+	if(settings().getColorPickerSettings()->pickFromLayer()) {
+		layer = this->layer();
+	}
+	scene().pickColor(point.x(), point.y(), layer);
 }
 
 void ColorPicker::end()

@@ -428,28 +428,49 @@ int SimpleSettings::getSize() const
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
-	:  QObject(), ToolSettings(name, title), _palette(new Palette("Color picker"))
+	:  QObject(), ToolSettings(name, title), _palette(new Palette("Color picker")), _layerpick(0)
 {
 }
 
 QWidget *ColorPickerSettings::createUi(QWidget *parent)
 {
-	_palettewidget = new widgets::PaletteWidget(parent);
+	QWidget *widget = new QWidget(parent);
+	QVBoxLayout *layout = new QVBoxLayout(widget);
+	widget->setLayout(layout);
+
+	_layerpick = new QCheckBox(widget->tr("Pick from current layer only"), widget);
+	layout->addWidget(_layerpick);
+
+	_palettewidget = new widgets::PaletteWidget(widget);
 	_palettewidget->setPalette(_palette);
 	_palettewidget->setSwatchSize(32, 24);
 	_palettewidget->setSpacing(3);
+	layout->addWidget(_palettewidget);
 
 	connect(_palettewidget, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorSelected(QColor)));
 
-	setUiWidget(_palettewidget);
-	return _palettewidget;
+	QSettings& cfg = getSettings();
+	_layerpick->setChecked(cfg.value("layerpick", false).toBool());
+
+	setUiWidget(widget);
+	return widget;
 }
 
 ColorPickerSettings::~ColorPickerSettings()
 {
+	if(_layerpick) {
+		// Remember settings
+		QSettings& cfg = getSettings();
+		cfg.setValue("layerpick", _layerpick->isChecked());
+	}
+
 	delete _palette;
 }
 
+bool ColorPickerSettings::pickFromLayer() const
+{
+	return _layerpick->isChecked();
+}
 const dpcore::Brush &ColorPickerSettings::getBrush(bool swapcolors) const
 {
 	Q_UNUSED(swapcolors);
