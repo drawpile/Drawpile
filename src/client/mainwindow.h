@@ -136,7 +136,6 @@ class MainWindow : public QMainWindow {
 		//! Confirm saving of image in a format that doesn't support all required features
 		bool confirmFlatten(QString& file) const;
 
-		//! Utility function for creating actions
 		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence());
 
 		//! Load customized shortcuts
@@ -245,6 +244,10 @@ class MainWindow : public QMainWindow {
 
 		// List of customizeable actions
 		QList<QAction*> customacts_;
+
+		// Remember window state to return from fullscreen mode
+		QByteArray _fullscreen_oldstate;
+		QRect _fullscreen_oldgeometry;
 };
 
 #endif

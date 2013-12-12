@@ -1075,36 +1075,42 @@ void MainWindow::toggleAnnotations(bool hidden)
 }
 
 /**
- * Toggle fullscreen mode for editor view
+ * @brief Enter/leave fullscreen mode
+ *
+ * Window position and configuration is saved when entering fullscreen mode
+ * and restored when leaving
+ *
+ * @param enable
  */
 void MainWindow::fullscreen(bool enable)
 {
-	static QByteArray oldstate;
-	static QPoint oldpos;
-	static QSize oldsize;
 	if(enable) {
 		Q_ASSERT(windowState().testFlag(Qt::WindowFullScreen)==false);
 		// Save state
-		oldstate = saveState();
-		oldpos = pos();
-		oldsize = size();
-		// Hide everything except the central widget
-		/** @todo hiding the menu bar disables shortcut keys */
+		_fullscreen_oldstate = saveState();
+		_fullscreen_oldgeometry = geometry();
+
+		// Hide everything except floating docks
+		menuBar()->hide();
 		statusBar()->hide();
-		const QObjectList c = children();
-		foreach(QObject *child, c) {
-			if(child->inherits("QToolBar") || child->inherits("QDockWidget"))
+		foreach(QObject *child, children()) {
+			if(child->inherits("QDockWidget")) {
+				QDockWidget *dw = qobject_cast<QDockWidget*>(child);
+				if(!dw->isFloating())
+					dw->hide();
+			} else if(child->inherits("QToolBar"))
 				(qobject_cast<QWidget*>(child))->hide();
 		}
+
 		showFullScreen();
 	} else {
 		Q_ASSERT(windowState().testFlag(Qt::WindowFullScreen)==true);
 		// Restore old state
 		showNormal();
+		menuBar()->show();
 		statusBar()->show();
-		resize(oldsize);
-		move(oldpos);
-		restoreState(oldstate);
+		setGeometry(_fullscreen_oldgeometry);
+		restoreState(_fullscreen_oldstate);
 	}
 }
 
@@ -1203,9 +1209,11 @@ void MainWindow::homepage()
 }
 
 /**
- * A utility function for creating an editable action. All created actions
- * are added to a list that is used in the settings dialog to edit
- * the shortcuts.
+ * @brief Create a new action.
+ *
+ * All created actions are added to a list that is used in the
+ * settings dialog to edit the shortcuts.
+ *
  * @param name (internal) name of the action. If null, no name is set. If no name is set, the shortcut cannot be customized.
  * @param icon name of the icon file to use. If 0, no icon is set.
  * @param text action text
@@ -1230,6 +1238,11 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 
 	if(name!=0 && name[0]!='\0')
 		customacts_.append(act);
+
+	// Add this action to the mainwindow so its shortcut can be used
+	// even when the menu/toolbar is not visible
+	addAction(act);
+
 	return act;
 }
 
