@@ -65,17 +65,22 @@ ColorDialog::ColorDialog(const QString& title, bool showapply, bool showalpha, Q
 	connect(ui_->txtHex, SIGNAL(textChanged(const QString&)),
 			this, SLOT(updateHex()));
 
-#if (QT_VERSION >= QT_VERSION_CHECK(4, 4,0)) // Not supported by QT<4.4?
-	// Adjust the stretch factors (We can't set these in the UI designer at the moment)
+	// Adjust the stretch factors (We can't set these in the UI designer at the moment (TODO is this still true))
 	ui_->horizontalLayout->setStretchFactor(ui_->triangleLayout, 1);
 	ui_->horizontalLayout->setStretchFactor(ui_->sliderLayout, 2);
-#endif
+
 	setWindowTitle(title);
 }
 
 ColorDialog::~ColorDialog()
 {
 	delete ui_;
+}
+
+void ColorDialog::pickNewColor(const QColor &oldcolor)
+{
+	setColor(oldcolor);
+	show();
 }
 
 /**

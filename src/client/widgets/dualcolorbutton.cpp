@@ -233,9 +233,9 @@ void DualColorButton::mouseReleaseEvent(QMouseEvent *event)
 	QRectF fgr = foregroundRect();
 	QRectF bgr = backgroundRect();
 	if(fgr.contains(event->pos()))
-		emit foregroundClicked();
+		emit foregroundClicked(foreground_);
 	else if(bgr.contains(event->pos()))
-		emit backgroundClicked();
+		emit backgroundClicked(background_);
 	else if(event->pos().x() > fgr.right() && event->pos().y() < bgr.top())
 		swapColors();
 	else if(event->pos().x() < bgr.left() && event->pos().y() > fgr.bottom()) {

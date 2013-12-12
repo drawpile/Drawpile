@@ -80,9 +80,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 {
 	updateTitle();
 
-	initActions();
-	createMenus();
-	createToolbars();
 	createDocks();
 
 	QStatusBar *statusbar = new QStatusBar(this);
@@ -116,18 +113,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	splitter_->addWidget(_view);
 	splitter_->setCollapsible(0, false);
 
-	connect(toggleoutline_, SIGNAL(triggered(bool)),
-			_view, SLOT(setOutline(bool)));
-	connect(_toolsettings, SIGNAL(sizeChanged(int)),
-			_view, SLOT(setOutlineRadius(int)));
-	connect(_view, SIGNAL(imageDropped(QString)),
-			this, SLOT(open(QString)));
-	connect(_view, SIGNAL(viewTransformed(int, qreal)),
-			viewstatus, SLOT(setTransformation(int, qreal)));
+	connect(_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
+	connect(_view, SIGNAL(imageDropped(QString)), this, SLOT(open(QString)));
+	connect(_view, SIGNAL(viewTransformed(int, qreal)), viewstatus, SLOT(setTransformation(int, qreal)));
 
 	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
-
-	connect(_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	
 	// Create the chatbox
 	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
@@ -144,7 +134,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_view->setCanvas(_canvas);
 	navigator_->setScene(_canvas);
 
-	connect(_canvas, SIGNAL(colorPicked(QColor)), fgbgcolor_, SLOT(setForeground(QColor)));
 	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(myLayerCreated(int)), _layerlist, SLOT(selectLayer(int)));
@@ -182,10 +171,6 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
 	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 
-	// Operator commands
-	connect(_lockSession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
-	connect(_closeSession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
-
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
@@ -204,6 +189,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(userJoined(QString)), chatbox, SLOT(userJoined(QString)));
 	connect(_client, SIGNAL(userLeft(QString)), chatbox, SLOT(userParted(QString)));
+
+	// Create actions and menus
+	setupActions();
 
 	// Restore settings
 	readSettings(restoreWindowPosition);
@@ -269,10 +257,7 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	win->filename_ = loader.filename();
 	win->setWindowModified(false);
 	win->updateTitle();
-	win->save_->setEnabled(true);
-	win->saveas_->setEnabled(true);
-	win->_copy->setEnabled(true);
-	win->_copylayer->setEnabled(true);
+	win->_currentdoctools->setEnabled(true);
 	return win;
 }
 
@@ -299,7 +284,7 @@ void MainWindow::addRecentFile(const QString& file)
 	foreach(QWidget *widget, QApplication::topLevelWidgets()) {
 		MainWindow *win = qobject_cast<MainWindow*>(widget);
 		if(win)
-			RecentFiles::initMenu(win->recent_);
+			RecentFiles::initMenu(win->_recent);
 	}
 }
 
@@ -398,12 +383,13 @@ void MainWindow::readSettings(bool windowpos)
 	_toolsettings->setTool(tools::Type(tool));
 
 	// Remember cursor settings
-	toggleoutline_->setChecked(cfg.value("outline",true).toBool());
-	_view->setOutline(toggleoutline_->isChecked());
+	bool brushoutline = cfg.value("outline",true).toBool();
+	getAction("brushoutline")->setChecked(brushoutline);
+	_view->setOutline(brushoutline);
 
 	// Remember foreground and background colors
-	fgbgcolor_->setForeground(QColor(cfg.value("foreground", "black").toString()));
-	fgbgcolor_->setBackground(QColor(cfg.value("background", "white").toString()));
+	_fgbgcolor->setForeground(QColor(cfg.value("foreground", "black").toString()));
+	_fgbgcolor->setBackground(QColor(cfg.value("background", "white").toString()));
 
 	cfg.endGroup();
 
@@ -411,7 +397,7 @@ void MainWindow::readSettings(bool windowpos)
 	loadShortcuts();
 
 	// Remember recent files
-	RecentFiles::initMenu(recent_);
+	RecentFiles::initMenu(_recent);
 }
 
 /**
@@ -434,9 +420,9 @@ void MainWindow::writeSettings()
 	cfg.beginGroup("tools");
 	const int tool = _drawingtools->actions().indexOf(_drawingtools->checkedAction());
 	cfg.setValue("tool", tool);
-	cfg.setValue("outline", toggleoutline_->isChecked());
-	cfg.setValue("foreground",fgbgcolor_->foreground().name());
-	cfg.setValue("background",fgbgcolor_->background().name());
+	cfg.setValue("outline", getAction("brushoutline")->isChecked());
+	cfg.setValue("foreground", _fgbgcolor->foreground().name());
+	cfg.setValue("background", _fgbgcolor->background().name());
 }
 
 /**
@@ -512,7 +498,7 @@ void MainWindow::showNew()
 	else
 		dlg->setSize(QSize(800, 600));
 
-	dlg->setBackground(fgbgcolor_->background());
+	dlg->setBackground(_fgbgcolor->background());
 	dlg->show();
 }
 
@@ -525,15 +511,6 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
 {
 	BlankCanvasLoader bcl(size, background);
 	loadDocument(bcl);
-}
-
-/**
- * @param action
- */
-void MainWindow::openRecent(QAction *action)
-{
-	action->setProperty("deletelater",true);
-	open(action->property("filepath").toString());
 }
 
 /**
@@ -894,8 +871,9 @@ void MainWindow::joinSession(const QUrl& url)
  */
 void MainWindow::connecting()
 {
-	host_->setEnabled(false);
-	logout_->setEnabled(true);
+	// Enable connection related actions
+	getAction("hostsession")->setEnabled(false);
+	getAction("leavesession")->setEnabled(true);
 
 	// Disable UI until login completes
 	_view->setEnabled(false);
@@ -907,9 +885,9 @@ void MainWindow::connecting()
  */
 void MainWindow::disconnected(const QString &message)
 {
-	host_->setEnabled(true);
-	logout_->setEnabled(false);
-	adminTools_->setEnabled(false);
+	getAction("hostsession")->setEnabled(true);
+	getAction("leavesession")->setEnabled(false);
+	_admintools->setEnabled(false);
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -945,8 +923,8 @@ void MainWindow::loggedin(bool join)
 
 void MainWindow::sessionConfChanged(bool locked, bool closed)
 {
-	_lockSession->setChecked(locked);
-	_closeSession->setChecked(closed);
+	getAction("locksession")->setChecked(locked);
+	getAction("denyjoins")->setChecked(closed);
 }
 
 void MainWindow::updateLockWidget()
@@ -962,18 +940,6 @@ void MainWindow::updateLockWidget()
 	_view->setLocked(locked);
 }
 
-void MainWindow::setForegroundColor()
-{
-	fgdialog_->setColor(fgbgcolor_->foreground());
-	fgdialog_->show();
-}
-
-void MainWindow::setBackgroundColor()
-{
-	bgdialog_->setColor(fgbgcolor_->background());
-	bgdialog_->show();
-}
-
 /**
  * Session title changed
  * @param title new title
@@ -987,7 +953,7 @@ void MainWindow::setSessionTitle(const QString& title)
 void MainWindow::setOperatorMode(bool op)
 {
 	// Don't enable these actions in local mode
-	adminTools_->setEnabled(op && _client->isLoggedIn());
+	_admintools->setEnabled(op && _client->isLoggedIn());
 }
 
 /**
@@ -1062,14 +1028,15 @@ void MainWindow::rotatezero()
 
 void MainWindow::toggleAnnotations(bool hidden)
 {
-	annotationtool_->setEnabled(!hidden);
+	QAction *annotationtool = getAction("tooltext");
+	annotationtool->setEnabled(!hidden);
 	_canvas->showAnnotations(!hidden);
 	if(hidden) {
-		if(annotationtool_->isChecked())
-			brushtool_->trigger();
-		// lasttool_ might be erasertool_ when tablet is brought near
-		if(lasttool_ == annotationtool_)
-			lasttool_ = brushtool_;
+		if(annotationtool->isChecked())
+			getAction("toolbrush")->trigger();
+		// lasttool might be erasertool when tablet is brought near
+		if(_lasttool == annotationtool)
+			_lasttool = getAction("toolbrush");
 	}
 
 }
@@ -1120,26 +1087,14 @@ void MainWindow::fullscreen(bool enable)
  */
 void MainWindow::selectTool(QAction *tool)
 {
-	tools::Type type;
-	if(tool == pentool_) 
-		type = tools::PEN;
-	else if(tool == brushtool_) 
-		type = tools::BRUSH;
-	else if(tool == erasertool_) 
-		type = tools::ERASER;
-	else if(tool == pickertool_) 
-		type = tools::PICKER;
-	else if(tool == linetool_) 
-		type = tools::LINE;
-	else if(tool == recttool_) 
-		type = tools::RECTANGLE;
-	else if(tool == annotationtool_)
-		type = tools::ANNOTATION;
-	else if(tool == selectiontool_)
-		type = tools::SELECTION;
-	else
+	// Note. Actions must be in the same order in the enum and the group
+	int idx = _drawingtools->actions().indexOf(tool);
+	Q_ASSERT(idx>=0);
+	if(idx<0)
 		return;
-	lasttool_ = tool;
+
+	tools::Type type = tools::Type(idx);
+	_lasttool = tool;
 
 	// When using the annotation tool, highlight all text boxes
 	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
@@ -1155,11 +1110,11 @@ void MainWindow::selectTool(QAction *tool)
 void MainWindow::eraserNear(bool near)
 {
 	if(near) {
-		QAction *lt = lasttool_; // Save lasttool_
-		erasertool_->trigger();
-		lasttool_ = lt;
+		QAction *lt = _lasttool; // Save _lasttool
+		getAction("tooleraser")->trigger();
+		_lasttool = lt;
 	} else {
-		lasttool_->trigger();
+		_lasttool->trigger();
 	}
 }
 
@@ -1175,7 +1130,7 @@ void MainWindow::copyVisible()
 
 void MainWindow::paste()
 {
-	selectiontool_->trigger();
+	getAction("toolselectrect")->trigger();
 	if(_canvas->hasImage()) {
 		_canvas->pasteFromClipboard();
 	} else {
@@ -1219,8 +1174,9 @@ void MainWindow::homepage()
  * @param text action text
  * @param tip status bar tip
  * @param shortcut default shortcut
+ * @param checkable is this a checkable action
  */
-QAction *MainWindow::makeAction(const char *name, const char *icon, const QString& text, const QString& tip, const QKeySequence& shortcut)
+QAction *MainWindow::makeAction(const char *name, const char *icon, const QString& text, const QString& tip, const QKeySequence& shortcut, bool checkable)
 {
 	QAction *act;
 	QIcon qicon;
@@ -1233,6 +1189,9 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 		act->setShortcut(shortcut);
 		act->setProperty("defaultshortcut", shortcut);
 	}
+
+	act->setCheckable(checkable);
+
 	if(tip.isEmpty()==false)
 		act->setStatusTip(tip);
 
@@ -1246,340 +1205,312 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 	return act;
 }
 
-void MainWindow::initActions()
+QAction *MainWindow::getAction(const QString &name)
 {
-	// File actions
-	new_ = makeAction("newdocument", "document-new.png", tr("&New"), tr("Start a new drawing"), QKeySequence::New);
-	open_ = makeAction("opendocument", "document-open.png", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
-	save_ = makeAction("savedocument", "document-save.png",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
-	saveas_ = makeAction("savedocumentas", "document-save-as.png", tr("Save &As..."), tr("Save drawing to a file with a new name"));
-	quit_ = makeAction("exitprogram", "system-log-out.png", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
-	quit_->setMenuRole(QAction::QuitRole);
-
-	// The saving actions are initially disabled, as we have no image
-	save_->setEnabled(false);
-	saveas_->setEnabled(false);
-
-	connect(new_,SIGNAL(triggered()), this, SLOT(showNew()));
-	connect(open_,SIGNAL(triggered()), this, SLOT(open()));
-	connect(save_,SIGNAL(triggered()), this, SLOT(save()));
-	connect(saveas_,SIGNAL(triggered()), this, SLOT(saveas()));
-	connect(quit_,SIGNAL(triggered()), this, SLOT(close()));
-
-	// Session actions
-	host_ = makeAction("hostsession", 0, tr("&Host..."),tr("Share your drawingboard with others"));
-	join_ = makeAction("joinsession", 0, tr("&Join..."),tr("Join another user's drawing session"));
-	logout_ = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
-	_lockSession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"));
-	_lockSession->setCheckable(true);
-	_closeSession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"));
-	_closeSession->setCheckable(true);
-	_changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
-	logout_->setEnabled(false);
-
-	adminTools_ = new QActionGroup(this);
-	adminTools_->setExclusive(false);
-	adminTools_->addAction(_lockSession);
-	adminTools_->addAction(_closeSession);
-	adminTools_->addAction(_changetitle);
-	adminTools_->setEnabled(false);
-
-	connect(host_, SIGNAL(triggered()), this, SLOT(host()));
-	connect(join_, SIGNAL(triggered()), this, SLOT(join()));
-	connect(logout_, SIGNAL(triggered()), this, SLOT(leave()));
-	connect(_changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
-
-	// Drawing tool actions
-	pentool_ = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"));
-	pentool_->setCheckable(true);
-
-	brushtool_ = makeAction("toolbrush", "draw-brush.png", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"));
-	brushtool_->setCheckable(true); brushtool_->setChecked(true);
-
-	erasertool_ = makeAction("tooleraser", "draw-eraser.png", tr("&Eraser"), tr("Draw with the background color"), QKeySequence("E"));
-	erasertool_->setCheckable(true);
-
-	pickertool_ = makeAction("toolpicker", "color-picker.png", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"));
-	pickertool_->setCheckable(true);
-
-	linetool_ = makeAction("toolline", "todo-line.png", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"));
-	linetool_->setCheckable(true);
-
-	recttool_ = makeAction("toolrect", "draw-rectangle.png", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"));
-	recttool_->setCheckable(true);
-
-	annotationtool_ = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"));
-	annotationtool_->setCheckable(true);
-
-	selectiontool_ = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select areas for copying"));
-	selectiontool_->setCheckable(true);
-
-	// A default
-	lasttool_ = brushtool_;
-
-	_drawingtools = new QActionGroup(this);
-	_drawingtools->setExclusive(true);
-	_drawingtools->addAction(selectiontool_);
-	_drawingtools->addAction(pentool_);
-	_drawingtools->addAction(brushtool_);
-	_drawingtools->addAction(erasertool_);
-	_drawingtools->addAction(pickertool_);
-	_drawingtools->addAction(linetool_);
-	_drawingtools->addAction(recttool_);
-	_drawingtools->addAction(annotationtool_);
-
-	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
-
-	// Edit actions
-	_copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
-	_copylayer = makeAction("copylayer", "edit-copy", tr("Copy layer"), tr("Copy selected area of the current layer to the clipboard"));
-	_paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image onto the canvas"), QKeySequence::Paste);
-
-	_copy->setEnabled(false);
-	_copylayer->setEnabled(false);
-
-	connect(_copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
-	connect(_copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
-	connect(_paste, SIGNAL(triggered()), this, SLOT(paste()));
-
-	// View actions
-	zoomin_ = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
-	zoomout_ = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
-	zoomorig_ = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
-	rotateorig_ = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
-
-	fullscreen_ = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"));
-	fullscreen_->setCheckable(true);
-
-	hideannotations_ = makeAction("toggleannotations", 0, tr("Hide &annotations"), QString());
-	hideannotations_->setCheckable(true);
-
-	connect(zoomin_, SIGNAL(triggered()), this, SLOT(zoomin()));
-	connect(zoomout_, SIGNAL(triggered()), this, SLOT(zoomout()));
-	connect(zoomorig_, SIGNAL(triggered()), this, SLOT(zoomone()));
-	connect(rotateorig_, SIGNAL(triggered()), this, SLOT(rotatezero()));
-	connect(fullscreen_, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
-	connect(hideannotations_, SIGNAL(triggered(bool)), this, SLOT(toggleAnnotations(bool)));
-
-	// Tool cursor settings
-	toggleoutline_ = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"));
-	toggleoutline_->setCheckable(true);
-
-	swapcolors_ = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
-
-	// Settings window action
-	settings_ = makeAction(0, 0, tr("&Settings"));
-	connect(settings_, SIGNAL(triggered()), this, SLOT(showSettings()));
-
-	// Toolbar toggling actions
-	toolbartoggles_ = new QAction(tr("&Toolbars"), this);
-	docktoggles_ = new QAction(tr("&Docks"), this);
-
-	// Help actions
-	homepage_ = makeAction("dphomepage", 0, tr("&DrawPile homepage"), tr("Open DrawPile homepage with the default web browser"));
-	connect(homepage_,SIGNAL(triggered()), this, SLOT(homepage()));
-	about_ = makeAction("dpabout", 0, tr("&About DrawPile"), tr("Show information about DrawPile"));
-	about_->setMenuRole(QAction::AboutRole);
-	connect(about_,SIGNAL(triggered()), this, SLOT(about()));
+	QAction *a = findChild<QAction*>(name, Qt::FindDirectChildrenOnly);
+	Q_ASSERT(a);
+	return a;
 }
 
-void MainWindow::createMenus()
+/**
+ * @brief Create actions, menus and toolbars
+ */
+void MainWindow::setupActions()
 {
-	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
-	filemenu->addAction(new_);
-	filemenu->addAction(open_);
-	recent_ = filemenu->addMenu(tr("Open recent"));
-	filemenu->addAction(save_);
-	filemenu->addAction(saveas_);
-	filemenu->addSeparator();
-	filemenu->addAction(quit_);
+	// Action groups
+	_currentdoctools = new QActionGroup(this);
+	_currentdoctools->setExclusive(false);
+	_currentdoctools->setEnabled(false);
 
-	connect(recent_, SIGNAL(triggered(QAction*)),
-			this, SLOT(openRecent(QAction*)));
+	_admintools = new QActionGroup(this);
+	_admintools->setExclusive(false);
+
+	_drawingtools = new QActionGroup(this);
+	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+
+	QMenu *toggletoolbarmenu = new QMenu(this);
+	QMenu *toggledockmenu = new QMenu(this);
+
+	// Collect list of docks for dock menu
+	foreach(QObject *c, children()) {
+		QDockWidget *dw = qobject_cast<QDockWidget*>(c);
+		if(dw)
+			toggledockmenu->addAction(dw->toggleViewAction());
+	}
+
+	//
+	// File menu and toolbar
+	//
+	QAction *newdocument = makeAction("newdocument", "document-new.png", tr("&New"), tr("Start a new drawing"), QKeySequence::New);
+	QAction *open = makeAction("opendocument", "document-open.png", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
+	QAction *save = makeAction("savedocument", "document-save.png",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
+	QAction *saveas = makeAction("savedocumentas", "document-save-as.png", tr("Save &As..."), tr("Save drawing to a file with a new name"));
+	QAction *quit = makeAction("exitprogram", "system-log-out.png", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
+	quit->setMenuRole(QAction::QuitRole);
+
+	_currentdoctools->addAction(save);
+	_currentdoctools->addAction(saveas);
+
+	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
+	connect(open, SIGNAL(triggered()), this, SLOT(open()));
+	connect(save, SIGNAL(triggered()), this, SLOT(save()));
+	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
+
+	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
+	filemenu->addAction(newdocument);
+	filemenu->addAction(open);
+	_recent = filemenu->addMenu(tr("Open recent"));
+	filemenu->addAction(save);
+	filemenu->addAction(saveas);
+	filemenu->addSeparator();
+	filemenu->addAction(quit);
+
+	QToolBar *filetools = new QToolBar(tr("File tools"));
+	filetools->setObjectName("filetoolsbar");
+	toggletoolbarmenu->addAction(filetools->toggleViewAction());
+	filetools->addAction(newdocument);
+	filetools->addAction(open);
+	filetools->addAction(save);
+	filetools->addAction(saveas);
+	addToolBar(Qt::TopToolBarArea, filetools);
+
+	connect(_recent, &QMenu::triggered, [this](QAction *action) {
+		action->setProperty("deletelater",true);
+		this->open(action->property("filepath").toString());
+	});
+
+	//
+	// Edit menu
+	//
+	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
+	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
+	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image onto the canvas"), QKeySequence::Paste);
+	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
+
+	_currentdoctools->addAction(copy);
+	_currentdoctools->addAction(copylayer);
+
+	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
+	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
+	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
+	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
-	editmenu->addAction(_copy);
-	editmenu->addAction(_copylayer);
-	editmenu->addAction(_paste);
+	editmenu->addAction(copy);
+	editmenu->addAction(copylayer);
+	editmenu->addAction(paste);
+	editmenu->addSeparator();
+	editmenu->addAction(preferences);
+
+	//
+	// View menu
+	//
+	QAction *toolbartoggles = new QAction(tr("&Toolbars"), this);
+	toolbartoggles->setMenu(toggletoolbarmenu);
+
+	QAction *docktoggles = new QAction(tr("&Docks"), this);
+	docktoggles->setMenu(toggledockmenu);
+
+	QAction *zoomin = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
+	QAction *zoomout = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
+	QAction *zoomorig = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
+	QAction *rotateorig = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
+
+	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
+
+	QAction *hideannotations = makeAction("toggleannotations", 0, tr("Hide &annotations"), QString(), QKeySequence(), true);
+
+	connect(zoomin, SIGNAL(triggered()), this, SLOT(zoomin()));
+	connect(zoomout, SIGNAL(triggered()), this, SLOT(zoomout()));
+	connect(zoomorig, SIGNAL(triggered()), this, SLOT(zoomone()));
+	connect(rotateorig, SIGNAL(triggered()), this, SLOT(rotatezero()));
+	connect(fullscreen, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
+	connect(hideannotations, SIGNAL(triggered(bool)), this, SLOT(toggleAnnotations(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
-	viewmenu->addAction(toolbartoggles_);
-	viewmenu->addAction(docktoggles_);
+	viewmenu->addAction(toolbartoggles);
+	viewmenu->addAction(docktoggles);
 	viewmenu->addSeparator();
-	viewmenu->addAction(zoomin_);
-	viewmenu->addAction(zoomout_);
-	viewmenu->addAction(zoomorig_);
-	viewmenu->addAction(rotateorig_);
-	viewmenu->addAction(fullscreen_);
-	viewmenu->addAction(hideannotations_);
+	viewmenu->addAction(zoomin);
+	viewmenu->addAction(zoomout);
+	viewmenu->addAction(zoomorig);
+	viewmenu->addAction(rotateorig);
+	viewmenu->addAction(hideannotations);
+	viewmenu->addSeparator();
+	viewmenu->addAction(fullscreen);
+
+	//
+	// Session menu
+	//
+	QAction *host = makeAction("hostsession", 0, tr("&Host..."),tr("Share your drawingboard with others"));
+	QAction *join = makeAction("joinsession", 0, tr("&Join..."),tr("Join another user's drawing session"));
+	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
+	logout->setEnabled(false);
+
+	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence(), true);
+	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
+
+	QAction *changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
+
+	_admintools->addAction(locksession);
+	_admintools->addAction(closesession);
+	_admintools->addAction(changetitle);
+	_admintools->setEnabled(false);
+
+	connect(host, SIGNAL(triggered()), this, SLOT(host()));
+	connect(join, SIGNAL(triggered()), this, SLOT(join()));
+	connect(logout, SIGNAL(triggered()), this, SLOT(leave()));
+	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
+	connect(locksession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
+	connect(closesession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
-	sessionmenu->addAction(host_);
-	sessionmenu->addAction(join_);
-	sessionmenu->addAction(logout_);
+	sessionmenu->addAction(host);
+	sessionmenu->addAction(join);
+	sessionmenu->addAction(logout);
 	sessionmenu->addSeparator();
-	sessionmenu->addAction(_lockSession);
-	sessionmenu->addAction(_closeSession);
-	sessionmenu->addAction(_changetitle);
+	sessionmenu->addAction(locksession);
+	sessionmenu->addAction(closesession);
+	sessionmenu->addAction(changetitle);
+
+	//
+	// Tools menu and toolbar
+	//
+	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select areas for copying"), QKeySequence("S"), true);
+	QAction *pentool = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"), true);
+	QAction *brushtool = makeAction("toolbrush", "draw-brush.png", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
+	QAction *erasertool = makeAction("tooleraser", "draw-eraser.png", tr("&Eraser"), tr("Draw with the background color"), QKeySequence("E"), true);
+	QAction *pickertool = makeAction("toolpicker", "color-picker.png", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
+	QAction *linetool = makeAction("toolline", "todo-line.png", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
+	QAction *recttool = makeAction("toolrect", "draw-rectangle.png", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"), true);
+	QAction *annotationtool = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
+
+	QAction *toggleoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"), QKeySequence(), true);
+	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
+
+	// Default tool
+	brushtool->setChecked(true);
+	_lasttool = brushtool;
+
+	_drawingtools->addAction(selectiontool);
+	_drawingtools->addAction(pentool);
+	_drawingtools->addAction(brushtool);
+	_drawingtools->addAction(erasertool);
+	_drawingtools->addAction(pickertool);
+	_drawingtools->addAction(linetool);
+	_drawingtools->addAction(recttool);
+	_drawingtools->addAction(annotationtool);
+
+	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
+	connect(toggleoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());
 	toolsmenu->addSeparator();
-	toolsmenu->addAction(toggleoutline_);
-	toolsmenu->addAction(swapcolors_);
-	toolsmenu->addSeparator();
-	toolsmenu->addAction(settings_);
+	toolsmenu->addAction(toggleoutline);
+	toolsmenu->addAction(swapcolors);
 
-	//QMenu *settingsmenu = menuBar()->addMenu(tr("Settings"));
-
-	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
-	helpmenu->addAction(homepage_);
-	helpmenu->addSeparator();
-	helpmenu->addAction(about_);
-}
-
-void MainWindow::createToolbars()
-{
-	QMenu *togglemenu = new QMenu(this);
-	// File toolbar
-	QToolBar *filetools = new QToolBar(tr("File tools"));
-	filetools->setObjectName("filetoolsbar");
-	togglemenu->addAction(filetools->toggleViewAction());
-	filetools->addAction(new_);
-	filetools->addAction(open_);
-	filetools->addAction(save_);
-	filetools->addAction(saveas_);
-	addToolBar(Qt::TopToolBarArea, filetools);
-
-	// Drawing toolbar
 	QToolBar *drawtools = new QToolBar("Drawing tools");
 	drawtools->setObjectName("drawtoolsbar");
-	togglemenu->addAction(drawtools->toggleViewAction());
+	toggletoolbarmenu->addAction(drawtools->toggleViewAction());
 
 	drawtools->addActions(_drawingtools->actions());
 	drawtools->addSeparator();
-	drawtools->addAction(zoomin_);
-	drawtools->addAction(zoomout_);
-	drawtools->addAction(zoomorig_);
-	drawtools->addAction(rotateorig_);
+	drawtools->addAction(zoomin);
+	drawtools->addAction(zoomout);
+	drawtools->addAction(zoomorig);
+	drawtools->addAction(rotateorig);
 	drawtools->addSeparator();
 
-	// Create color button
-	fgbgcolor_ = new widgets::DualColorButton(drawtools);
+	// Create color button for drawing tool bar
+	_fgbgcolor = new widgets::DualColorButton(drawtools);
 
-	connect(swapcolors_, SIGNAL(triggered()),
-			fgbgcolor_, SLOT(swapColors()));
+	connect(swapcolors, SIGNAL(triggered()), _fgbgcolor, SLOT(swapColors()));
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(const QColor&)), _toolsettings, SLOT(setForeground(const QColor&)));
+	connect(_fgbgcolor, SIGNAL(backgroundChanged(const QColor&)), _toolsettings, SLOT(setBackground(const QColor&)));
+	connect(_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
-	connect(fgbgcolor_,SIGNAL(foregroundClicked()),
-			this, SLOT(setForegroundColor()));
+	connect(_canvas, SIGNAL(colorPicked(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
-	connect(fgbgcolor_,SIGNAL(backgroundClicked()),
-			this, SLOT(setBackgroundColor()));
+	connect(palette_, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), rgb_, SLOT(setColor(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), hsv_, SLOT(setColor(QColor)));
+
+	connect(rgb_, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(hsv_, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	// Create color changer dialogs
-	fgdialog_ = new dialogs::ColorDialog(tr("Foreground color"), true, false, this);
-	connect(fgdialog_, SIGNAL(colorSelected(QColor)),
-			fgbgcolor_, SLOT(setForeground(QColor)));
+	_fgdialog = new dialogs::ColorDialog(tr("Foreground color"), true, false, this);
+	connect(_fgdialog, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), _fgdialog, SLOT(pickNewColor(QColor)));
 
-	bgdialog_ = new dialogs::ColorDialog(tr("Background color"), true, false, this);
-	connect(bgdialog_, SIGNAL(colorSelected(QColor)),
-			fgbgcolor_, SLOT(setBackground(QColor)));
+	_bgdialog = new dialogs::ColorDialog(tr("Background color"), true, false, this);
+	connect(_bgdialog, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setBackground(QColor)));
+	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), _bgdialog, SLOT(pickNewColor(QColor)));
 
-	drawtools->addWidget(fgbgcolor_);
+	drawtools->addWidget(_fgbgcolor);
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
 
-	toolbartoggles_->setMenu(togglemenu);
+	//
+	// Help menu
+	//
+	QAction *homepage = makeAction("dphomepage", 0, tr("&DrawPile homepage"), tr("Open DrawPile homepage with the default web browser"));
+	QAction *about = makeAction("dpabout", 0, tr("&About DrawPile"), tr("Show information about DrawPile"));
+
+	connect(about, SIGNAL(triggered()), this, SLOT(about()));
+	connect(homepage, SIGNAL(triggered()), this, SLOT(homepage()));
+
+	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
+	helpmenu->addAction(homepage);
+	helpmenu->addSeparator();
+	helpmenu->addAction(about);
 }
 
 void MainWindow::createDocks()
 {
-	QMenu *toggles = new QMenu(this);
-	createToolSettings(toggles);
-	createColorBoxes(toggles);
-	createPalette(toggles);
-	createUserList(toggles);
-	createLayerList(toggles);
-	createNavigator(toggles);
-	tabifyDockWidget(hsv_, rgb_);
-	tabifyDockWidget(hsv_, palette_);
-	tabifyDockWidget(_userlist, _layerlist);
-	docktoggles_->setMenu(toggles);
-}
-
-void MainWindow::createNavigator(QMenu *toggles)
-{
-	navigator_ = new widgets::Navigator(this, _canvas);
-	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-	toggles->addAction(navigator_->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, navigator_);
-}
-
-void MainWindow::createToolSettings(QMenu *toggles)
-{
+	// Create tool settings
 	_toolsettings = new widgets::ToolSettingsDock(this);
 	_toolsettings->setObjectName("toolsettingsdock");
 	_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	connect(this, SIGNAL(toolChanged(tools::Type)), _toolsettings, SLOT(setTool(tools::Type)));
-	toggles->addAction(_toolsettings->toggleViewAction());
 	addDockWidget(Qt::RightDockWidgetArea, _toolsettings);
-	connect(fgbgcolor_, SIGNAL(foregroundChanged(const QColor&)), _toolsettings, SLOT(setForeground(const QColor&)));
-	connect(fgbgcolor_, SIGNAL(backgroundChanged(const QColor&)), _toolsettings, SLOT(setBackground(const QColor&)));
-}
 
-void MainWindow::createUserList(QMenu *toggles)
-{
-	_userlist = new widgets::UserList(this);
-	_userlist->setObjectName("userlistdock");
-	_userlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	toggles->addAction(_userlist->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, _userlist);
-}
-
-void MainWindow::createLayerList(QMenu *toggles)
-{
-	_layerlist = new widgets::LayerListDock(this);
-	_layerlist->setObjectName("layerlistdock");
-	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	toggles->addAction(_layerlist->toggleViewAction());
-	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
-}
-
-void MainWindow::createPalette(QMenu *toggles)
-{
-	palette_ = new widgets::PaletteBox(tr("Palette"), this);
-	palette_->setObjectName("palettedock");
-	toggles->addAction(palette_->toggleViewAction());
-
-	connect(palette_, SIGNAL(colorSelected(QColor)),
-			fgbgcolor_, SLOT(setForeground(QColor)));
-
-	addDockWidget(Qt::RightDockWidgetArea, palette_);
-}
-
-void MainWindow::createColorBoxes(QMenu *toggles)
-{
+	// Create color boxes
 	rgb_ = new widgets::ColorBox("RGB", widgets::ColorBox::RGB, this);
 	rgb_->setObjectName("rgbdock");
-	toggles->addAction(rgb_->toggleViewAction());
 
 	hsv_ = new widgets::ColorBox("HSV", widgets::ColorBox::HSV, this);
 	hsv_->setObjectName("hsvdock");
-	toggles->addAction(hsv_->toggleViewAction());
-
-	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)),
-			rgb_, SLOT(setColor(QColor)));
-	connect(fgbgcolor_,SIGNAL(foregroundChanged(QColor)),
-			hsv_, SLOT(setColor(QColor)));
-
-	connect(rgb_, SIGNAL(colorChanged(QColor)),
-			fgbgcolor_, SLOT(setForeground(QColor)));
-	connect(hsv_, SIGNAL(colorChanged(QColor)),
-			fgbgcolor_, SLOT(setForeground(QColor)));
 
 	addDockWidget(Qt::RightDockWidgetArea, rgb_);
 	addDockWidget(Qt::RightDockWidgetArea, hsv_);
+
+	// Create palette box
+	palette_ = new widgets::PaletteBox(tr("Palette"), this);
+	palette_->setObjectName("palettedock");
+	addDockWidget(Qt::RightDockWidgetArea, palette_);
+
+	// Create user list
+	_userlist = new widgets::UserList(this);
+	_userlist->setObjectName("userlistdock");
+	_userlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _userlist);
+
+	// Create layer list
+	_layerlist = new widgets::LayerListDock(this);
+	_layerlist->setObjectName("layerlistdock");
+	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
+
+	// Create navigator
+	navigator_ = new widgets::Navigator(this, _canvas);
+	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, navigator_);
+
+	// Tabify docks
+	tabifyDockWidget(hsv_, rgb_);
+	tabifyDockWidget(hsv_, palette_);
+	tabifyDockWidget(_userlist, _layerlist);
 }
-
-
-

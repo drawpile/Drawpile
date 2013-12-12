@@ -100,13 +100,10 @@ class MainWindow : public QMainWindow {
 		void homepage();
 
 	private slots:
-		void setForegroundColor();
-		void setBackgroundColor();
 		void setSessionTitle(const QString& title);
 		void setOperatorMode(bool op);
 
 		void newDocument(const QSize &size, const QColor &color);
-		void openRecent(QAction *action);
 
 		void finishHost(int i);
 		void finishJoin(int i);
@@ -136,7 +133,8 @@ class MainWindow : public QMainWindow {
 		//! Confirm saving of image in a format that doesn't support all required features
 		bool confirmFlatten(QString& file) const;
 
-		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence());
+		QAction *makeAction(const char *name, const char *icon, const QString& text, const QString& tip = QString(), const QKeySequence& shortcut = QKeySequence(), bool checkable=false);
+		QAction *getAction(const QString &name);
 
 		//! Load customized shortcuts
 		void loadShortcuts();
@@ -159,31 +157,22 @@ class MainWindow : public QMainWindow {
 		void readSettings(bool windowpos=true);
 		void writeSettings();
 
-		void initActions();
-		void createMenus();
-		void createToolbars();
 		void createDocks();
-
-		void createToolSettings(QMenu *menu);
-		void createUserList(QMenu *menu);
-		void createLayerList(QMenu *menu);
-		void createPalette(QMenu *menu);
-		void createColorBoxes(QMenu *menu);
-		void createNavigator(QMenu *menu);
+		void setupActions();
 
 		QSplitter *splitter_;
 		widgets::ToolSettingsDock *_toolsettings;
 		widgets::UserList *_userlist;
 		widgets::LayerListDock *_layerlist;
 
-		widgets::DualColorButton *fgbgcolor_;
+		widgets::DualColorButton *_fgbgcolor;
 		widgets::CanvasView *_view;
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
 		widgets::Navigator *navigator_;
 		QLabel *_lockstatus;
 
-		dialogs::ColorDialog *fgdialog_,*bgdialog_;
+		dialogs::ColorDialog *_fgdialog, *_bgdialog;
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
 
@@ -192,55 +181,12 @@ class MainWindow : public QMainWindow {
 
 		QString filename_;
 		QString lastpath_;
+		QMenu *_recent;
 
-		QAction *new_;
-		QAction *open_;
-		QMenu *recent_;
-		QAction *save_;
-		QAction *saveas_;
-		QAction *quit_;
-
-		QAction *_copy;
-		QAction *_copylayer;
-		QAction *_paste;
-
-		QAction *host_;
-		QAction *join_;
-		QAction *logout_;
-
-		QActionGroup *adminTools_;
-		QAction *_lockSession;
-		QAction *_closeSession;
-		QAction *_changetitle;
-
-		QActionGroup *_drawingtools;
-		QAction *pentool_;
-		QAction *brushtool_;
-		QAction *erasertool_;
-		QAction *pickertool_;
-		QAction *linetool_;
-		QAction *recttool_;
-		QAction *annotationtool_;
-		QAction *selectiontool_;
-
-		QAction *lasttool_; // the last used tool
-
-		QAction *zoomin_;
-		QAction *zoomout_;
-		QAction *zoomorig_;
-		QAction *rotateorig_;
-		QAction *fullscreen_;
-		QAction *settings_;
-
-		QAction *toggleoutline_;
-		QAction *hideannotations_;
-		QAction *swapcolors_;
-
-		QAction *toolbartoggles_;
-		QAction *docktoggles_;
-
-		QAction *homepage_;
-		QAction *about_;
+		QActionGroup *_currentdoctools; // actions relating to the currently open document
+		QActionGroup *_admintools; // session operator actions
+		QActionGroup *_drawingtools; // drawing tool selection
+		QAction *_lasttool; // the last used tool
 
 		// List of customizeable actions
 		QList<QAction*> customacts_;

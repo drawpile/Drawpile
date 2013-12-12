@@ -68,10 +68,10 @@ class PLUGIN_EXPORT DualColorButton : public QWidget {
 		void backgroundChanged(const QColor &c);
 
 		//! Emitted when the user clicks on the foreground color box
-		void foregroundClicked();
+		void foregroundClicked(const QColor &c);
 
 		//! Emitted when the user clicks on the background color box
-		void backgroundClicked();
+		void backgroundClicked(const QColor &c);
 
 	protected:
 		void mousePressEvent(QMouseEvent *event);

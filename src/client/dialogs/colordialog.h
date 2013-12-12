@@ -48,6 +48,8 @@ class ColorDialog : public QDialog
 		void accept();
 		void apply();
 
+		void pickNewColor(const QColor &oldcolor);
+
 	signals:
 		//! This signal is emitted when Ok is pressed
 		void colorSelected(const QColor& color);
