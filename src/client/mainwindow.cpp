@@ -1026,12 +1026,12 @@ void MainWindow::rotatezero()
 	_view->setRotation(0.0);
 }
 
-void MainWindow::toggleAnnotations(bool hidden)
+void MainWindow::setShowAnnotations(bool show)
 {
 	QAction *annotationtool = getAction("tooltext");
-	annotationtool->setEnabled(!hidden);
-	_canvas->showAnnotations(!hidden);
-	if(hidden) {
+	annotationtool->setEnabled(show);
+	_canvas->showAnnotations(show);
+	if(!show) {
 		if(annotationtool->isChecked())
 			getAction("toolbrush")->trigger();
 		// lasttool might be erasertool when tablet is brought near
@@ -1319,14 +1319,15 @@ void MainWindow::setupActions()
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
 
-	QAction *hideannotations = makeAction("toggleannotations", 0, tr("Hide &annotations"), QString(), QKeySequence(), true);
+	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
+	showannotations->setChecked(true);
 
 	connect(zoomin, SIGNAL(triggered()), this, SLOT(zoomin()));
 	connect(zoomout, SIGNAL(triggered()), this, SLOT(zoomout()));
 	connect(zoomorig, SIGNAL(triggered()), this, SLOT(zoomone()));
 	connect(rotateorig, SIGNAL(triggered()), this, SLOT(rotatezero()));
 	connect(fullscreen, SIGNAL(triggered(bool)), this, SLOT(fullscreen(bool)));
-	connect(hideannotations, SIGNAL(triggered(bool)), this, SLOT(toggleAnnotations(bool)));
+	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
@@ -1336,7 +1337,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(zoomout);
 	viewmenu->addAction(zoomorig);
 	viewmenu->addAction(rotateorig);
-	viewmenu->addAction(hideannotations);
+	viewmenu->addAction(showannotations);
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);
 

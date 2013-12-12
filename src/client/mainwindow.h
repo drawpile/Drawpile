@@ -92,7 +92,7 @@ class MainWindow : public QMainWindow {
 		void rotatezero();
 
 		void fullscreen(bool enable);
-		void toggleAnnotations(bool hidden);
+		void setShowAnnotations(bool show);
 
 		void selectTool(QAction *tool);
 
