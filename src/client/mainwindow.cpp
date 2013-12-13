@@ -918,6 +918,7 @@ void MainWindow::loggedin(bool join)
 	if(join) {
 		_canvas->initCanvas(_client);
 		_layerlist->init();
+		_currentdoctools->setEnabled(true);
 	}
 }
 
