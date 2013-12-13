@@ -1469,14 +1469,17 @@ void MainWindow::setupActions()
 	//
 	QAction *homepage = makeAction("dphomepage", 0, tr("&DrawPile homepage"), tr("Open DrawPile homepage with the default web browser"));
 	QAction *about = makeAction("dpabout", 0, tr("&About DrawPile"), tr("Show information about DrawPile"));
+	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt"), tr("Show Qt library version"));
 
 	connect(about, SIGNAL(triggered()), this, SLOT(about()));
+	connect(aboutqt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	connect(homepage, SIGNAL(triggered()), this, SLOT(homepage()));
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
+	helpmenu->addAction(aboutqt);
 }
 
 void MainWindow::createDocks()
