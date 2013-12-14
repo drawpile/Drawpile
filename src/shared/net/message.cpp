@@ -10,6 +10,7 @@
 #include "meta.h"
 #include "pen.h"
 #include "snapshot.h"
+#include "undo.h"
 
 namespace protocol {
 
@@ -28,7 +29,8 @@ int Message::serialize(char *data) const
 	*data = _type; ++data;
 	int written = serializePayload((uchar*)data);
 	Q_ASSERT(written == payloadLength());
-	return 3+written;
+	Q_ASSERT(written + 3 <= 0xffff);
+	return 3 + written;
 }
 
 Message *Message::deserialize(const uchar *data)
@@ -54,8 +56,8 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_ANNOTATION_RESHAPE: return AnnotationReshape::deserialize(data, len);
 	case MSG_ANNOTATION_EDIT: return AnnotationEdit::deserialize(data, len);
 	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(data, len);
-	case MSG_UNDO: return 0;
-	case MSG_REDO: return 0;
+	case MSG_UNDOPOINT: return UndoPoint::deserialize(data, len);
+	case MSG_UNDO: return Undo::deserialize(data, len);
 	case MSG_USER_JOIN: return UserJoin::deserialize(data, len);
 	case MSG_USER_ATTR: return UserAttr::deserialize(data, len);
 	case MSG_USER_LEAVE: return UserLeave::deserialize(data, len);

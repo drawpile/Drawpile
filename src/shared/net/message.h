@@ -46,8 +46,8 @@ enum MessageType {
 	MSG_ANNOTATION_RESHAPE,
 	MSG_ANNOTATION_EDIT,
 	MSG_ANNOTATION_DELETE,
+	MSG_UNDOPOINT,
 	MSG_UNDO,
-	MSG_REDO,
 	// Meta stream
 	MSG_USER_JOIN,
 	MSG_USER_ATTR,
@@ -79,7 +79,7 @@ public:
 	 * The canvas can be reconstructed exactly using only command messages.
 	 * @return true if this is a drawing command
 	 */
-	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_REDO; }
+	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_UNDO; }
 
 	/**
 	 * @brief Get the message length, header included
