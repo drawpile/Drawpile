@@ -4,27 +4,27 @@ newlayer 1 1 #ffaacccc Putimage test
 ctx 1 layer=1
 
 # Tile boundary aligned putimage
-putimage 1 64 64 blend test.png
+putimage 1 1 64 64 blend test.png
 
 # Tile boundary aligned putimage without blending
 # This overwrites the background color with transparency
-putimage 1 128 64 test.png
+putimage 1 1 128 64 test.png
 
 # Not boundary aligned
-putimage 1 96 128 blend test.png
+putimage 1 1 96 128 blend test.png
 
 # Not boundary aligned without blending
 # This uses the same code path as blended put, since
 # tile background must be preserved.
-putimage 1 160 128 test.png
+putimage 1 1 160 128 test.png
 
 # Putimages that are completely outside canvas boundaries
-putimage 1 300 0 blend test.png
-putimage 1 0 300 blend test.png
-putimage 1 400 400 blend test.png
+putimage 1 1 300 0 blend test.png
+putimage 1 1 0 300 blend test.png
+putimage 1 1 400 400 blend test.png
 
 # Putimages partially outside canvas boundaries
-putimage 1 268 0 blend test.png
-putimage 1 268 268 blend test.png
-putimage 1 0 268 blend test.png
+putimage 1 1 268 0 blend test.png
+putimage 1 1 268 268 blend test.png
+putimage 1 1 0 268 blend test.png
 

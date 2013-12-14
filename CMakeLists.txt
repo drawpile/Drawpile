@@ -10,8 +10,8 @@ set ( DRAWPILE_VERSION "0.7.2" )
 ### protocol versions
 # major version indicates breaks in server compatibility
 # minor version indicates breaks in client compatibility. (note. minor versions always start at 1)
-set ( DRAWPILE_PROTO_MAJOR_VERSION 4 )
-set ( DRAWPILE_PROTO_MINOR_VERSION 2 )
+set ( DRAWPILE_PROTO_MAJOR_VERSION 5 )
+set ( DRAWPILE_PROTO_MINOR_VERSION 1 )
 set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
 
 ###

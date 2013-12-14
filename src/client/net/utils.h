@@ -32,7 +32,7 @@ namespace dpcore {
 namespace net {
 
 //! Generate a list of PutImage commands from a QImage
-QList<protocol::MessagePtr> putQImage(int layer, int x, int y, const QImage &image, bool blend);
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, const QImage &image, bool blend);
 
 //! Generate a tool change message
 protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brush &brush);

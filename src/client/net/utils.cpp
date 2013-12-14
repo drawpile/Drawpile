@@ -27,7 +27,7 @@
 #include "core/brush.h"
 
 namespace {
-void splitImage(int layer, int x, int y, const QImage &image, bool blend, QList<protocol::MessagePtr> &list)
+void splitImage(int ctxid, int layer, int x, int y, const QImage &image, bool blend, QList<protocol::MessagePtr> &list)
 {
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
 
@@ -51,12 +51,13 @@ void splitImage(int layer, int x, int y, const QImage &image, bool blend, QList<
 			i1 = image.copy(0, 0, image.width(), py);
 			i2 = image.copy(0, py, image.width(), image.height()-py);
 		}
-		splitImage(layer, x, y, i1, blend, list);
-		splitImage(layer, x+px, y+py, i2, blend, list);
+		splitImage(ctxid, layer, x, y, i1, blend, list);
+		splitImage(ctxid, layer, x+px, y+py, i2, blend, list);
 
 	} else {
 		// It fits! Send data!
 		list.append(protocol::MessagePtr(new protocol::PutImage(
+			ctxid,
 			layer,
 			blend ? protocol::PutImage::MODE_BLEND : 0,
 			x,
@@ -74,6 +75,7 @@ namespace net {
 /**
  * Multiple messages are generated if the image is too large to fit in just one.
  * If needed, the image is recursively split into smaller parts.
+ * @param ctxid user context ID
  * @param layer target layer ID
  * @param x X coordinate
  * @param y Y coordinate
@@ -81,10 +83,10 @@ namespace net {
  * @param blend alpha blend instead of overwrite
  * @return
  */
-QList<protocol::MessagePtr> putQImage(int layer, int x, int y, const QImage &image, bool blend)
+QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, const QImage &image, bool blend)
 {
 	QList<protocol::MessagePtr> list;
-	splitImage(layer, x, y, image.convertToFormat(QImage::Format_ARGB32), blend, list);
+	splitImage(ctxid, layer, x, y, image.convertToFormat(QImage::Format_ARGB32), blend, list);
 	return list;
 }
 

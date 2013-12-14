@@ -118,7 +118,7 @@ Delete an annotation
 
 ### putimage
 
-Usage: putimage layerId x y [blend] filename
+Usage: putimage ctxId layerId x y [blend] filename
 
 Load an image and draw it onto the given canvas at the specified location.
 If the "blend" parameter is set, the image is alpha blended. Otherwise the

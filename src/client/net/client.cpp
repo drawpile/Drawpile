@@ -231,7 +231,7 @@ void Client::sendPenup()
  */
 void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 {
-	foreach(MessagePtr msg, putQImage(layer, x, y, image, blend))
+	foreach(MessagePtr msg, putQImage(_my_id, layer, x, y, image, blend))
 		_server->sendMessage(msg);
 }
 

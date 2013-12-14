@@ -179,7 +179,7 @@ bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
 				e.attribute("x", "0").toInt(),
 				e.attribute("y", "0").toInt()
 				);
-			_commands.append(net::putQImage(_layerid, layerPos.x(), layerPos.y(), content, false));
+			_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, false));
 
 			QString compositeOp = e.attribute("composite-op", "src-over");
 			int blendmode = dpcore::blendModeSvg(compositeOp);

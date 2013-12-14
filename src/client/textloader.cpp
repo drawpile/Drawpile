@@ -299,20 +299,21 @@ void TextCommandLoader::handlePenUp(const QString &args)
 
 void TextCommandLoader::handlePutImage(const QString &args)
 {
-	QRegularExpression re("(\\d+) (\\d+) (\\d+)(?: (blend))? ([\\w.]+)");
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+)(?: (blend))? ([\\w.]+)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
 		throw SyntaxError("Expected layer id, x, y and filename");
 
-	int layer = str2ctxid(m.captured(1));
-	int x = str2int(m.captured(2));
-	int y = str2int(m.captured(3));
-	bool blend = !m.captured(4).isEmpty();
-	QFileInfo filename(QFileInfo(_filename).dir(), m.captured(5));
+	int ctxid = str2ctxid(m.captured(1));
+	int layer = str2ctxid(m.captured(2));
+	int x = str2int(m.captured(3));
+	int y = str2int(m.captured(4));
+	bool blend = !m.captured(5).isEmpty();
+	QFileInfo filename(QFileInfo(_filename).dir(), m.captured(6));
 
 	QImage image(filename.absoluteFilePath());
 
-	_messages.append(net::putQImage(layer, x, y, image, blend));
+	_messages.append(net::putQImage(ctxid, layer, x, y, image, blend));
 }
 
 void TextCommandLoader::handleAddAnnotation(const QString &args)

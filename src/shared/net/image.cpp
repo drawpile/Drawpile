@@ -30,24 +30,26 @@ PutImage *PutImage::deserialize(const uchar *data, uint len)
 		return 0;
 
 	return new PutImage(
-		*data,
+		*(data+0),
 		*(data+1),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		qFromBigEndian<quint16>(data+8),
-		QByteArray((const char*)data+10, len-10)
+		*(data+2),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7),
+		qFromBigEndian<quint16>(data+9),
+		QByteArray((const char*)data+11, len-11)
 	);
 }
 
 int PutImage::payloadLength() const
 {
-	return 1 + 1 + 4*2 + _image.size();
+	return 1 + 1 + 1 + 4*2 + _image.size();
 }
 
 int PutImage::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
+	*(ptr++) = _ctx;
 	*(ptr++) = _layer;
 	*(ptr++) = _flags;
 	qToBigEndian(_x, ptr); ptr += 2;

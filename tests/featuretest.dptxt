@@ -37,13 +37,13 @@ move 1 10 200; 138 328
 penup 1
 move 1 138 200; 10 328
 penup 1
-putimage 1 10 200 blend test.png
+putimage 1 1 10 200 blend test.png
 
 move 1 10 330; 138 458
 penup 1
 move 1 138 330; 10 458
 penup 1
-putimage 1 10 330 test.png
+putimage 1 1 10 330 test.png
 
 # Annotations
 addannotation 1 1 300 10 200 50
