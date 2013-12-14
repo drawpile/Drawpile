@@ -27,39 +27,34 @@
 
 namespace dpcore {
 
-Tile::Tile(const QColor& color, int x, int y)
-	: x_(x), y_(y)
+Tile::Tile() :
+	_data(0)
 {
-	quint32 *ptr = data_;
+}
+
+Tile::Tile(const QColor& color)
+	: _data(new TileData)
+{
+	quint32 *ptr = _data->data;
 	quint32 col = color.rgba();
 	for(int i=0;i<SIZE*SIZE;++i)
 		*(ptr++) = col;
 }
 
-Tile::Tile(int x, int y)
-	: x_(x), y_(y)
-{
-	memset(data_, 0, BYTES);
-}
-
-Tile::Tile(const Tile *src)
-	: x_(src->x_), y_(src->y_)
-{
-	memcpy(data_, src->data_, BYTES);
-}
-
 /**
- * Copy all pixel data from (x*SIZE-xoff, y*SIZE-yoff, (x+1)*SIZE-xoff, (y+1)*SIZE-yoff).
- * Pixels outside the source image are set to zero
+ * -Copy all pixel data from (x*SIZE-xoff, y*SIZE-yoff, (x+1)*SIZE-xoff, (y+1)*SIZE-yoff).
+ * -Pixels outside the source image are set to zero
+ * Copy pixel data from (xoff, yoff, min(xoff+SIZE, image.width()), min(yoff+SIZE, image.height()))
+ * Pixels outside the image will be set to zero
+ *
  * @param image source image
- * @param xi tile X index
- * @param yi tile Y index
  * @param xoff source image offset
  * @param yoff source image offset
  */
-Tile::Tile(const QImage& image, int xi, int yi, int xoff, int yoff)
-	: x_(xi), y_(yi)
+Tile::Tile(const QImage& image, int xoff, int yoff)
+	: _data(new TileData)
 {
+#if 0
 	// Tile top-left coordinates relative to layer origin
 	const int x = xi * SIZE;
 	const int y = yi * SIZE;
@@ -72,15 +67,33 @@ Tile::Tile(const QImage& image, int xi, int yi, int xoff, int yoff)
 
 	// If we are not writing the whole tile, initialize memory first
 	if(top || left || bottom<SIZE || right<SIZE) 
-		memset(data_, 0, BYTES);
+		memset(_data->data, 0, BYTES);
 
 	// Copy pixels from source area
-	uchar *dest = reinterpret_cast<uchar*>(data_) + (SIZE * 4 * top) + (4 * left);
+	uchar *dest = reinterpret_cast<uchar*>(_data->data) + (SIZE * 4 * top) + (4 * left);
 	for(int yy=top;yy<bottom;++yy) {
 		const uchar *pixels = image.scanLine(y + yy - yoff) + (x+left-xoff)*4;
 		memcpy(dest, pixels, (right-left)*4);
 		dest += SIZE*4;
 	}
+#else
+	Q_ASSERT(xoff>=0 && xoff < image.width());
+	Q_ASSERT(yoff>=0 && yoff < image.height());
+	Q_ASSERT(image.format() == QImage::Format_ARGB32);
+
+	const int w = xoff + SIZE > image.width() ? image.width() - xoff : SIZE;
+	const int h = yoff + SIZE > image.height() ? image.height() - yoff : SIZE;
+
+	uchar *ptr = reinterpret_cast<uchar*>(_data->data);
+	memset(ptr, 0, BYTES);
+
+	const uchar *src = image.scanLine(yoff) + xoff*4;
+	for(int y=0;y<h;++y) {
+		memcpy(ptr, src, w*4);
+		ptr += SIZE*4;
+		src += image.bytesPerLine();
+	}
+#endif
 }
 
 void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
@@ -102,42 +115,51 @@ void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 
 void Tile::fillChecker(const QColor& dark, const QColor& light)
 {
-	fillChecker(data_, dark, light);
+	fillChecker(getOrCreateUninitializedData(), dark, light);
 }
 
 void Tile::fillColor(const QColor& color)
 {
 	const quint32 c = color.rgba();
-	quint32 *ptr = data_;
+	quint32 *ptr = getOrCreateUninitializedData();
 	for(int i=0;i<SIZE*SIZE;++i)
 		*(ptr++) = c;
 }
 
-void Tile::copyToImage(QImage& image) const {
-#if 0
-	int w = 4*(image.width()-x_*SIZE<SIZE?image.width()-x_*SIZE:SIZE);
-	int h = image.height()-y_*SIZE<SIZE?image.height()-y_*SIZE:SIZE;
-	const quint32 *ptr = data_;
-	uchar *targ = image.bits() + (y_ * SIZE) * image.bytesPerLine() + (x_ * SIZE) * 4;
-	for(int y=0;y<h;++y) {
-		memcpy(targ, ptr, w);
-		targ += image.bytesPerLine();
-		ptr += SIZE;
-	}
-#else
-	copyToImage(image, x_*SIZE, y_*SIZE);
-#endif
+void Tile::blank()
+{
+	_data = 0;
 }
 
+void Tile::copyTo(quint32 *data) const
+{
+	if(isNull()) {
+		for(int i=0;i<SIZE*SIZE;++i)
+			*(data++) = 0;
+	} else {
+		const quint32 *ptr = _data->data;
+		for(int i=0;i<SIZE*SIZE;++i,++data,++ptr)
+			*data = *ptr;
+	}
+
+}
 void Tile::copyToImage(QImage& image, int x, int y) const {
 	int w = 4*(image.width()-x<SIZE ? image.width()-x : SIZE);
 	int h = image.height()-y<SIZE ? image.height()-y : SIZE;
-	const quint32 *ptr = data_;
 	uchar *targ = image.bits() + y * image.bytesPerLine() + x * 4;
-	for(int y=0;y<h;++y) {
-		memcpy(targ, ptr, w);
-		targ += image.bytesPerLine();
-		ptr += SIZE;
+
+	if(isNull()) {
+		for(int y=0;y<h;++y) {
+			memset(targ, 0, w);
+			targ += image.bytesPerLine();
+		}
+	} else {
+		const quint32 *ptr = _data->data;
+		for(int y=0;y<h;++y) {
+			memcpy(targ, ptr, w);
+			targ += image.bytesPerLine();
+			ptr += SIZE;
+		}
 	}
 }
 
@@ -154,7 +176,7 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
 {
 	Q_ASSERT(x>=0 && x<SIZE && y>=0 && y<SIZE);
 	Q_ASSERT((x+w)<=SIZE && (y+h)<=SIZE);
-	compositeMask(mode, data_ + y * SIZE + x,
+	compositeMask(mode, getOrCreateData() + y * SIZE + x,
 			color.rgba(), values, w, h, skip, SIZE-w);
 }
 
@@ -162,11 +184,15 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
  * @param tile the tile which will be composited over this tile
  * @param opacity opacity modifier of tile
  * @param blend blending mode
+ * @return true if there were any pixels to merge
  */
-void Tile::merge(const Tile *tile, uchar opacity, int blend)
+bool Tile::merge(const Tile &tile, uchar opacity, int blend)
 {
-	if(tile!=0)
-		compositePixels(blend, data_, tile->data_, SIZE*SIZE, opacity);
+	if(!tile.isNull()) {
+		compositePixels(blend, getOrCreateData(), tile.data(), SIZE*SIZE, opacity);
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -174,8 +200,11 @@ void Tile::merge(const Tile *tile, uchar opacity, int blend)
  */
 bool Tile::isBlank() const
 {
-	const quint32 *pixel = data_;
-	const quint32 *end = data_ + SIZE*SIZE;
+	if(isNull())
+		return true;
+
+	const quint32 *pixel = _data->data;
+	const quint32 *end = pixel + SIZE*SIZE;
 	while(pixel<end) {
 		if((*pixel & 0xff000000))
 			return false;
@@ -184,5 +213,10 @@ bool Tile::isBlank() const
 	return true;
 }
 
+void Tile::optimize()
+{
+	if(!isNull() && isBlank())
+		_data = 0;
 }
 
+}

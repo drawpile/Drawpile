@@ -20,13 +20,17 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <QPixmap>
+#include <QSharedDataPointer>
 
 class QColor;
 class QImage;
-class QPainter;
 
 namespace dpcore {
+
+/// Shared tile data
+struct TileData : public QSharedData {
+	quint32 data[64*64];
+};
 
 /**
  * @brief A piece of an image
@@ -58,39 +62,29 @@ class Tile {
 			return (i/SIZE) * SIZE;
 		}
 
-		//! Construct a blank tile
-		Tile(const QColor& color, int x, int y);
+		//! Construct a null tile
+		Tile();
+
+		//! Construct a tile filled with the given color
+		Tile(const QColor& color);
 
 		//! Construct a tile from an image
-		Tile(const QImage& image, int x, int y, int xoff=0, int yoff=0);
-
-		//! Construct a copy of the given tile
-		Tile(const Tile *src);
-
-		//! Construct an empty tile
-		Tile(int x, int y);
-
-		//! Get tile X index
-		int x() const { return x_; }
-
-		//! Get tile Y index
-		int y() const { return y_; }
+		Tile(const QImage& image, int xoff=0, int yoff=0);
 
 		//! Get a pixel value from this tile
 		quint32 pixel(int x, int y) const {
 			Q_ASSERT(x>=0 && x<SIZE);
 			Q_ASSERT(y>=0 && y<SIZE);
-			return *(data_ + y * SIZE + x);
+			if(_data)
+				return *(_data->data + y * SIZE + x);
+			return 0;
 		}
 
 		//! Composite values multiplied by color onto this tile
 		void composite(int mode, const uchar *values, const QColor& color, int x, int y, int w, int h, int offset);
 
 		//! Composite another tile with this tile
-		void merge(const Tile *tile, uchar opacity, int blend);
-
-		//! Copy the contents of this tile onto the appropriate spot on an image
-		void copyToImage(QImage& image) const;
+		bool merge(const Tile &tile, uchar opacity, int blend);
 
 		//! Copy the contents of this tile onto the given spot on an image
 		void copyToImage(QImage& image, int x, int y) const;
@@ -101,18 +95,50 @@ class Tile {
 		//! Fill this tile with a solid color
 		void fillColor(const QColor& color);
 
+		//! Make this a null tile
+		void blank();
+
 		//! Get read access to the raw pixel data
-		const quint32 *data() const { return data_; }
+		const quint32 *data() const { Q_ASSERT( _data); return _data->data; }
+
+		//! Copy the contents of this tile
+		void copyTo(quint32 *data) const;
+
+		/**
+		 * @brief is this a null tile?
+		 *
+		 * Null tiles have no pixel data and should be considered
+		 * to be completely transparent.
+		 * @return true if there is no pixel data
+		 */
+		bool isNull() const { return !_data; }
 
 		//! Check if this tile is completely transparent
 		bool isBlank() const;
+
+		//! Make this a null tile if it is completely transparent
+		void optimize();
 
 		//! Fill a tile sized memory buffer with a checker pattenr
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
 
 	private:
-		int x_, y_;
-		quint32 data_[SIZE*SIZE];
+		quint32 *getOrCreateData() {
+			if(!_data) {
+				_data = new TileData;
+				for(int i=0;i<SIZE*SIZE;++i)
+					_data->data[i] = 0;
+			}
+			return _data->data;
+		}
+
+		quint32 *getOrCreateUninitializedData() {
+			if(!_data)
+				_data = new TileData;
+			return _data->data;
+		}
+
+		QSharedDataPointer<TileData> _data;
 };
 
 }

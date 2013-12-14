@@ -237,22 +237,17 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 	// Composite visible layers
 	foreach(const Layer *l, _layers) {
 		if(l->visible()) {
-			const Tile *tile = l->tile(xindex, yindex);
+			const Tile &tile = l->tile(xindex, yindex);
 			if(l->sublayers().count()) {
 				// Sublayers present, composite them first
 				quint32 ldata[Tile::SIZE*Tile::SIZE];
-				if(tile)
-					for(int ldatai=0;ldatai<Tile::SIZE*Tile::SIZE;++ldatai)
-						ldata[ldatai] = tile->data()[ldatai];
-				else
-					for(int ldatai=0;ldatai<Tile::SIZE*Tile::SIZE;++ldatai)
-						ldata[ldatai] = 0;
+				tile.copyTo(ldata);
 
 				foreach(const Layer *sl, l->sublayers()) {
 					if(sl->visible()) {
-						const Tile *subtile = sl->tile(xindex, yindex);
-						if(subtile) {
-							compositePixels(sl->blendmode(), ldata, subtile->data(),
+						const Tile &subtile = sl->tile(xindex, yindex);
+						if(!subtile.isNull()) {
+							compositePixels(sl->blendmode(), ldata, subtile.data(),
 									Tile::SIZE*Tile::SIZE, sl->opacity());
 						}
 					}
@@ -261,9 +256,9 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 				// Composite merged tile
 				compositePixels(l->blendmode(), data, ldata,
 						Tile::SIZE*Tile::SIZE, l->opacity());
-			} else if(tile) {
+			} else if(!tile.isNull()) {
 				// No sublayers, just this tile
-				compositePixels(l->blendmode(), data, tile->data(),
+				compositePixels(l->blendmode(), data, tile.data(),
 						Tile::SIZE*Tile::SIZE, l->opacity());
 			}
 		}

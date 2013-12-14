@@ -22,6 +22,8 @@
 
 #include <QColor>
 
+#include "tile.h"
+
 class QImage;
 class QSize;
 
@@ -47,10 +49,10 @@ class Layer {
 		~Layer();
 
 		//! Get the layer width in pixels
-		int width() const { return width_; }
+		int width() const { return _width; }
 
 		//! Get the layer height in pixels
-		int height() const { return height_; }
+		int height() const { return _height; }
 
 		//! Get the layer ID
 		int id() const { return id_; }
@@ -122,14 +124,14 @@ class Layer {
 		void optimize();
 
 		//! Get a tile
-		const Tile *tile(int x, int y) const {
+		const Tile &tile(int x, int y) const {
 			Q_ASSERT(x>=0 && x<_xtiles);
 			Q_ASSERT(y>=0 && y<_ytiles);
 			return _tiles[y*_xtiles+x];
 		}
 
 		//! Get a tile
-		const Tile *tile(int index) const { Q_ASSERT(index>=0 && index<_xtiles*_ytiles); return _tiles[index]; }
+		const Tile &tile(int index) const { Q_ASSERT(index>=0 && index<_xtiles*_ytiles); return _tiles[index]; }
 
 		//! Get the sublayers
 		const QList<Layer*> &sublayers() const { return _sublayers; }
@@ -159,11 +161,11 @@ class Layer {
 		int id_;
 		QString _title;
 	
-		int width_;
-		int height_;
+		int _width;
+		int _height;
 		int _xtiles;
 		int _ytiles;
-		Tile **_tiles;
+		QVector<Tile> _tiles;
 		uchar _opacity;
 		int _blend;
 		bool _hidden;

@@ -38,22 +38,16 @@ namespace dpcore {
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: owner_(owner), id_(id), _title(title), width_(size.width()), height_(size.height()),
+	: owner_(owner), id_(id), _title(title), _width(size.width()), _height(size.height()),
 	_opacity(255), _blend(1), _hidden(false)
 {
-	_xtiles = (width_+Tile::SIZE-1) / Tile::SIZE;
-	_ytiles = (height_+Tile::SIZE-1) / Tile::SIZE;
-	_tiles = new Tile*[_xtiles * _ytiles];
+	_xtiles = (_width+Tile::SIZE-1) / Tile::SIZE;
+	_ytiles = (_height+Tile::SIZE-1) / Tile::SIZE;
+	_tiles = QVector<Tile>(_xtiles * _ytiles);
 	
-	if(color.alpha() == 0) {
-		// Blank layer
-		for(int i=0;i<_xtiles*_ytiles;++i)
-			_tiles[i] = 0;
-	} else {
-		// Solid fill
-		for(int y=0;y<_ytiles;++y)
-			for(int x=0;x<_xtiles;++x)
-				_tiles[y*_xtiles+x] = new Tile(color, x, y);
+	if(color.alpha() > 0) {
+		for(int i=0;i<_tiles.size();++i)
+			_tiles[i].fillColor(color);
 	}
 }
 
@@ -64,9 +58,8 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 }
 
 Layer::~Layer() {
-	for(int i=0;i<_xtiles*_ytiles;++i)
-		delete _tiles[i];
-	delete [] _tiles;
+	foreach(Layer *sl, _sublayers)
+		delete sl;
 }
 
 void Layer::setTitle(const QString& title)
@@ -75,11 +68,11 @@ void Layer::setTitle(const QString& title)
 }
 
 QImage Layer::toImage() const {
-	QImage image(width_, height_, QImage::Format_ARGB32);
-	image.fill(0);
-	for(int i=0;i<_xtiles*_ytiles;++i) {
-		if(_tiles[i])
-			_tiles[i]->copyToImage(image);
+	QImage image(_width, _height, QImage::Format_ARGB32);
+	int i=0;
+	for(int y=0;y<_ytiles;++y) {
+		for(int x=0;x<_xtiles;++x,++i)
+			_tiles[i].copyToImage(image, x*Tile::SIZE, y*Tile::SIZE);
 	}
 	return image;
 }
@@ -91,15 +84,15 @@ QImage Layer::toImage() const {
  */
 QColor Layer::colorAt(int x, int y) const
 {
-	if(x<0 || y<0 || x>=width_ || y>=height_)
+	if(x<0 || y<0 || x>=_width || y>=_height)
 		return QColor();
+
 	const int yindex = y/Tile::SIZE;
 	const int xindex = x/Tile::SIZE;
-	const Tile *t = tile(xindex, yindex);
-	if(!t)
-		return Qt::transparent;
-	
-	return QColor::fromRgb(t->pixel(x-xindex*Tile::SIZE, y-yindex*Tile::SIZE));
+
+	return QColor::fromRgb(
+		tile(xindex, yindex).pixel(x-xindex*Tile::SIZE, y-yindex*Tile::SIZE)
+	);
 }
 
 /**
@@ -145,23 +138,22 @@ void Layer::setHidden(bool hide)
 QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original, bool alpha) const
 {
 	const int x0 = Tile::roundDown(xpos);
-	const int x1 = Tile::roundUp(xpos+original.width());
+	const int x1 = qMin(_width, Tile::roundUp(xpos+original.width()));
 	const int y0 = Tile::roundDown(ypos);
-	const int y1 = Tile::roundUp(ypos+original.height());
+	const int y1 = qMin(_width, Tile::roundUp(ypos+original.height()));
 
 	const int w = x1 - x0;
 	const int h = y1 - y0;
 	
 	QImage image(w, h, QImage::Format_ARGB32);
-	image.fill(0);
+	//image.fill(0);
 
 	// Copy background from existing tiles
 	for(int y=0;y<h;y+=Tile::SIZE) {
 		//int yt = (y0 + y) / Tile::SIZE;
 		for(int x=0;x<w;x+=Tile::SIZE) {
-			const Tile *t = tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE);
-			if(t)
-				t->copyToImage(image, x, y);
+			const Tile &t = tile((x0+x) / Tile::SIZE, (y0+y) / Tile::SIZE);
+			t.copyToImage(image, x, y);
 		}
 	}
 	
@@ -198,40 +190,29 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 	if(x<0 || y<0)
 		return;
 	
-	// First check if the image is completely outside the layer
-	if(x >= width_ || y >= height_)
+	// Check if the image is completely outside the layer
+	if(x >= _width || y >= _height)
 		return;
-
-	// Crop image if it is only partially within boundaries
-	if(x+image.width() > width_ || y+image.height() > height_) {
-		image = image.copy(
-			0,
-			0,
-			qMin(image.width(), width_ - x),
-			qMin(image.height(), height_ - y)
-		);
-	}
 
 	const int x0 = Tile::roundDown(x);
 	const int y0 = Tile::roundDown(y);
-	const int xoff = x - x0;
-	const int yoff = y - y0;
 	
-	if(xoff || yoff || image.width() % Tile::SIZE || image.height() % Tile::SIZE || blend) {
+	if(x-x0 || y-y0 || image.width() % Tile::SIZE || image.height() % Tile::SIZE || blend) {
 		image = padImageToTileBoundary(x, y, image, blend);
 	}
 	
-	const int tx0 = x / Tile::SIZE;
-	const int tx1 = tx0 + (image.width()-1) / Tile::SIZE;
-	int ty0 = y / Tile::SIZE;
-	const int ty1 = ty0 + (image.height()-1) / Tile::SIZE;
-	
-	for(;ty0<=ty1;++ty0) {
+	const int tx0 = x0 / Tile::SIZE;
+	const int ty0 = y0 / Tile::SIZE;
+	const int tx1 = qMin((x0 + image.width() - 1) / Tile::SIZE, _xtiles-1);
+	const int ty1 = qMin((y0 + image.height() - 1) / Tile::SIZE, _ytiles-1);
+
+	for(int ty=ty0;ty<=ty1;++ty) {
+		int yoff = (ty-ty0) * Tile::SIZE;
 		for(int tx=tx0;tx<=tx1;++tx) {
-			int i = ty0*_xtiles + tx;
+			int xoff = (tx-tx0) * Tile::SIZE;
+			int i = ty*_xtiles + tx;
 			Q_ASSERT(i>=0 && i < _xtiles*_ytiles);
-			delete _tiles[i];
-			_tiles[i] = new Tile(image, tx, ty0, Tile::roundDown(x), Tile::roundDown(y));
+			_tiles[i] = Tile(image, xoff, yoff);
 		}
 	}
 	
@@ -397,9 +378,9 @@ void Layer::directDab(const Brush& brush, const Point& point)
 	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
 	const int top = point.y() - brush.radius(point.pressure());
 	const int left = point.x() - brush.radius(point.pressure());
-	const int bottom = qMin(top + dia, height_);
-	const int right = qMin(left + dia, width_);
-	if(left+dia<=0 || top+dia<=0 || left>=width_ || top>=height_)
+	const int bottom = qMin(top + dia, _height);
+	const int right = qMin(left + dia, _width);
+	if(left+dia<=0 || top+dia<=0 || left>=_width || top>=_height)
 		return;
 
 	// Render the brush
@@ -424,9 +405,7 @@ void Layer::directDab(const Brush& brush, const Point& point)
 			const int xt = x - xindex * Tile::SIZE;
 			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
 			const int i = _xtiles * yindex + xindex;
-			if(_tiles[i]==0)
-				_tiles[i] = new Tile(xindex, yindex);
-			_tiles[i]->composite(
+			_tiles[i].composite(
 					brush.blendingMode(),
 					values + yb * realdia + xb,
 					color,
@@ -460,14 +439,9 @@ void Layer::merge(const Layer *layer)
 		for(int x=0;x<layer->_xtiles;++x) {
 			const int index = _xtiles*y + x;
 
-				if(layer->_tiles[index]==0)
-				continue;
-
-			if(_tiles[index]==0)
-				_tiles[index] = new Tile(x, y);
-
-			_tiles[index]->merge(layer->_tiles[index], layer->_opacity, layer->blendmode());
-			if(md)
+			bool merged;
+			merged = _tiles[index].merge(layer->_tiles[index], layer->_opacity, layer->blendmode());
+			if(md && merged)
 				owner_->markDirty(x, y);
 		}
 	}
@@ -475,16 +449,16 @@ void Layer::merge(const Layer *layer)
 
 void Layer::fillChecker(const QColor& dark, const QColor& light)
 {
-	for(int i=0;i<_xtiles*_ytiles;++i)
-		_tiles[i]->fillChecker(dark, light);
+	for(int i=0;i<_tiles.size();++i)
+		_tiles[i].fillChecker(dark, light);
 	if(owner_ && visible())
 		owner_->markDirty();
 }
 
 void Layer::fillColor(const QColor& color)
 {
-	for(int i=0;i<_xtiles*_ytiles;++i)
-		_tiles[i]->fillColor(color);
+	for(int i=0;i<_tiles.size();++i)
+		_tiles[i].fillColor(color);
 	if(owner_ && visible())
 		owner_->markDirty();
 }
@@ -494,12 +468,9 @@ void Layer::fillColor(const QColor& color)
  */
 void Layer::optimize()
 {
-	for(int i=0;i<_xtiles*_ytiles;++i) {
-		if(_tiles[i] && _tiles[i]->isBlank()) {
-			delete _tiles[i];
-			_tiles[i] = 0;
-		}
-	}
+	for(int i=0;i<_tiles.size();++i)
+		_tiles[i].optimize();
+
 	// TODO delete unused sublayers
 }
 
@@ -540,7 +511,7 @@ Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
 	}
 
 	// No available sublayers, create a new one
-	Layer *sl = new Layer(owner_, id, QSize(width_, height_));
+	Layer *sl = new Layer(owner_, id, QSize(_width, _height));
 	sl->_opacity = opacity;
 	sl->_blend = blendmode;
 	_sublayers.append(sl);
@@ -559,10 +530,8 @@ void Layer::mergeSublayer(int id)
 			merge(sl);
 			sl->_hidden = true;
 
-			for(int i=0;i<_xtiles*_ytiles;++i) {
-				delete sl->_tiles[i];
-				sl->_tiles[i] = 0;
-			}
+			for(int i=0;i<_tiles.size();++i)
+				sl->_tiles[i].blank();
 
 			return;
 		}
