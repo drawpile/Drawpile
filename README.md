@@ -19,7 +19,7 @@ Some feature highlights:
 
 Dependencies:
 
-* Qt 5.1 or newer
+* Qt 5.0 or newer
 * zlib
 
 It's a good idead to build in a separate directory to keep build files
@@ -37,6 +37,7 @@ or install them with `make install`.
 
 The configuration step supports some options:
 
+* CLIENT=off: don't build the client (useful when building the stand-alone server only)
 * SERVER=off: don't build the stand-alone server.
 * DEBUG=on: enable debugging features
 
