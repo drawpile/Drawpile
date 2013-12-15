@@ -76,7 +76,7 @@
      <item>
       <widget class="QToolButton" name="lockButton">
        <property name="toolTip">
-        <string>Layer acess control</string>
+        <string>Layer access control</string>
        </property>
        <property name="text">
         <string>...</string>
