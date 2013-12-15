@@ -39,6 +39,7 @@
 #include "../shared/net/meta.h"
 #include "../shared/net/pen.h"
 #include "../shared/net/snapshot.h"
+#include "../shared/net/undo.h"
 
 using protocol::MessagePtr;
 
@@ -234,6 +235,18 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 {
 	foreach(MessagePtr msg, putQImage(_my_id, layer, x, y, image, blend))
 		_server->sendMessage(msg);
+}
+
+void Client::sendUndopoint()
+{
+	_server->sendMessage(MessagePtr(new protocol::UndoPoint(_my_id)));
+}
+
+void Client::sendUndo(int actions, int override)
+{
+	Q_ASSERT(actions != 0);
+	Q_ASSERT(actions >= -128 && actions <= 127);
+	_server->sendMessage(MessagePtr(new protocol::Undo(_my_id, override, actions)));
 }
 
 void Client::sendAnnotationCreate(int id, const QRect &rect)

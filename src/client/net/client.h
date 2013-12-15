@@ -158,6 +158,10 @@ public slots:
 	void sendPenup();
 	void sendImage(int layer, int x, int y, const QImage &image, bool blend);
 
+	// Undo/redo
+	void sendUndopoint();
+	void sendUndo(int actions, int override=0);
+
 	// Annotations
 	void sendAnnotationCreate(int id, const QRect &rect);
 	void sendAnnotationReshape(int id, const QRect &rect);

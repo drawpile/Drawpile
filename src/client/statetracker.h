@@ -40,6 +40,8 @@ namespace protocol {
 	class PenMove;
 	class PenUp;
 	class PutImage;
+	class UndoPoint;
+	class Undo;
 	class AnnotationCreate;
 	class AnnotationReshape;
 	class AnnotationEdit;
@@ -48,6 +50,7 @@ namespace protocol {
 
 namespace dpcore {
 	class LayerStack;
+	class Savepoint;
 }
 
 namespace net {
@@ -86,6 +89,8 @@ struct DrawingContext {
 	qreal distance_accumulator;
 };
 
+class StateSavepoint;
+
 /**
  * \brief Drawing context state tracker
  * 
@@ -96,8 +101,10 @@ class StateTracker : public QObject {
 	Q_OBJECT
 public:
 	StateTracker(CanvasScene *scene, net::Client *client, QObject *parent=0);
-	
-	void receiveCommand(protocol::MessagePtr msg);
+	StateTracker(const StateTracker &) = delete;
+	~StateTracker();
+
+	void receiveCommand(protocol::MessagePtr msg, bool replay=false);
 
 	void endRemoteContexts();
 
@@ -110,6 +117,8 @@ public:
 	 * @param length
 	 */
 	void setMaxHistorySize(uint limit) { _msgstream_sizelimit = limit; }
+
+	StateTracker &operator=(const StateTracker&) = delete;
 
 signals:
 	void myAnnotationCreated(AnnotationItem *item);
@@ -129,7 +138,14 @@ private:
 	void handlePenMove(const protocol::PenMove &cmd);
 	void handlePenUp(const protocol::PenUp &cmd);
 	void handlePutImage(const protocol::PutImage &cmd);
-	
+
+	// Undo/redo
+	void handleUndoPoint(const protocol::UndoPoint &cmd);
+	void handleUndo(protocol::Undo &cmd);
+	bool canMakeSavepoint() const;
+	void makeSavepoint();
+	void revertSavepoint(const StateSavepoint *savepoint);
+
 	// Annotation related commands
 	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
 	void handleAnnotationReshape(const protocol::AnnotationReshape &cmd);
@@ -145,6 +161,7 @@ private:
 	int _myid;
 
 	protocol::MessageStream _msgstream;
+	QList<StateSavepoint*> _savepoints;
 	bool _hassnapshot;
 	uint _msgstream_sizelimit;
 };

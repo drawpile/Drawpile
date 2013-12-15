@@ -1,0 +1,105 @@
+resize 1 800 600
+newlayer 1 1 #ffffffff Undo test
+
+ctx 1 layer=1 colorh=#ff0000
+
+# Simple undo test.
+# first, draw a diagonal
+move 1 10 10
+move 1 100 100
+penup 1
+
+# draw a line straight up, then undo it
+undopoint 1
+move 1 100 100
+move 1 100 10
+penup 1
+undo 1 1
+
+# draw a line to the left.
+# Expected result: red shape like: _\
+move 1 100 100
+move 1 10 100
+penup 1
+
+# Multi user undo: undo an overwritten stroke
+ctx 2 layer=1 colorh=#0000ff
+
+undopoint 1
+move 1 110 10
+move 1 200 100
+penup 1
+
+undopoint 2
+move 2 200 10
+move 2 110 100
+penup 2
+
+# expected result: blue stroke: /
+undo 1 1
+
+# Multi user undo: undo the topmost stroke
+undopoint 1
+move 1 210 10
+move 1 300 100
+penup 1
+
+undopoint 2
+move 2 300 10
+move 2 210 100
+penup 2
+
+# expected result: red stroke: \
+undo 2 1
+
+# Test missing missing undo point
+# This should just print a waning message and not undo anything
+ctx 3 layer=1 colorh=#00ff00
+move 3 310 10
+move 3 400 100
+penup 3
+undo 3 1
+
+# Test empty undo
+undopoint 3
+undo 3 1
+
+# Test redo
+move 1 10 110
+move 1 100 200
+penup 1
+
+undopoint 1
+move 1 100 200
+move 1 100 110
+penup 1
+undo 1 1
+
+undopoint 1
+move 1 100 200
+move 1 10 200
+penup 1
+# This shouldn't work, because there is a non-undone undo-point in between
+# expected result: same as the shape above (_\)
+undo 1 -1
+
+# Test redo
+move 1 110 110
+move 1 200 200
+penup 1
+
+undopoint 1
+move 1 200 200
+move 1 200 110
+penup 1
+undo 1 1
+
+undopoint 1
+move 1 200 200
+move 1 110 200
+penup 1
+# This should work, as the last two blocks are undone
+# expected result: bottom right pointing arrow shape
+undo 1 1
+undo 1 -2
+

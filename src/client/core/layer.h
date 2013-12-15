@@ -46,6 +46,9 @@ class Layer {
 		//! Construct a layer filled with solid color
 		Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size);
 
+		//! Construct a copy of this layer
+		Layer(const Layer &layer);
+
 		~Layer();
 
 		//! Get the layer width in pixels
@@ -143,6 +146,9 @@ class Layer {
 		 * @return true if layer is visible
 		 */
 		bool visible() const { return _opacity > 0 && !_hidden; }
+
+		// Disable assignment operator
+		Layer& operator=(const Layer&) = delete;
 
 	private:
 		//! Construct a sublayer

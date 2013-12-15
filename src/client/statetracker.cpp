@@ -19,6 +19,7 @@
 
 */
 #include <QDebug>
+#include <QDateTime>
 
 #include "statetracker.h"
 #include "canvasscene.h" // needed for annotations
@@ -35,8 +36,21 @@
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
+#include "../shared/net/undo.h"
 
 namespace drawingboard {
+
+struct StateSavepoint {
+	StateSavepoint() : timestamp(0), streampointer(-1), canvas(0) {}
+	StateSavepoint(const StateSavepoint &) = delete;
+	StateSavepoint &operator=(const StateSavepoint&) = delete;
+	~StateSavepoint() { delete canvas; }
+
+	qint64 timestamp;
+	int streampointer;
+	dpcore::Savepoint *canvas;
+	QHash<int, DrawingContext> ctxstate;
+};
 
 StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *parent)
 	: QObject(parent),
@@ -50,8 +64,23 @@ StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *par
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
 
-void StateTracker::receiveCommand(protocol::MessagePtr msg)
+StateTracker::~StateTracker()
 {
+	while(!_savepoints.isEmpty())
+		delete _savepoints.takeLast();
+}
+
+void StateTracker::receiveCommand(protocol::MessagePtr msg, bool replay)
+{
+	if(!replay) {
+		if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
+			qDebug() << "Message stream history size limit reached at" << _msgstream.lengthInBytes() / float(1024*1024) << "Mb. Clearing..";
+			_msgstream.hardCleanup(_msgstream_sizelimit);
+			_hassnapshot = false;
+		}
+		_msgstream.append(msg);
+	}
+
 	switch(msg->type()) {
 		using namespace protocol;
 		case MSG_CANVAS_RESIZE:
@@ -84,6 +113,12 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		case MSG_PUTIMAGE:
 			handlePutImage(msg.cast<PutImage>());
 			break;
+		case MSG_UNDOPOINT:
+			handleUndoPoint(msg.cast<UndoPoint>());
+			break;
+		case MSG_UNDO:
+			handleUndo(msg.cast<Undo>());
+			break;
 		case MSG_ANNOTATION_CREATE:
 			handleAnnotationCreate(msg.cast<AnnotationCreate>());
 			break;
@@ -99,13 +134,6 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 		default:
 			qWarning() << "Unhandled drawing command" << msg->type();
 			return;
-	}
-
-	_msgstream.append(msg);
-	if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
-		qDebug() << "Message stream history size limit reached at" << _msgstream.lengthInBytes() / float(1024*1024) << "Mb. Clearing..";
-		_msgstream.clear();
-		_hassnapshot = false;
 	}
 }
 
@@ -156,6 +184,9 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)
 		qWarning() << "canvas resize is currently supported on session initialization only.";
 	} else {
 		_image->init(QSize(cmd.width(), cmd.height()));
+
+		// Generate the initial savepoint, just in case
+		makeSavepoint();
 	}
 }
 
@@ -283,6 +314,157 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	QByteArray data = qUncompress(cmd.image());
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
 	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
+}
+
+void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd)
+{
+	Q_UNUSED(cmd);
+	makeSavepoint();
+}
+
+void StateTracker::handleUndo(protocol::Undo &cmd)
+{
+	if(cmd.points()==0) {
+		qWarning() << "zero undo from user" << cmd.contextId();
+		return;
+	}
+
+	const uint8_t ctxid = cmd.effectiveId();
+	int actions = qAbs(cmd.points());
+	bool undo = cmd.points()>0;
+
+	// Step 1. Find undo point
+	int pos = _msgstream.end();
+	while(actions>0 && _msgstream.isValidIndex(--pos)) {
+		protocol::MessagePtr msg = _msgstream.at(pos);
+		if(msg->type() == protocol::MSG_UNDOPOINT) {
+			const protocol::UndoPoint &up = msg.cast<protocol::UndoPoint>();
+			if(undo) {
+				if(up.contextId() == ctxid && !up.isUndone())
+					--actions;
+			} else {
+				// Redo stops at first not-undone action
+				if(up.contextId() == ctxid) {
+					if(up.isUndone())
+						--actions;
+					else {
+						qWarning() << "reached non-undone point by user" << cmd.contextId() << "but we were still looking for another" << actions;
+						if(actions == -cmd.points()) {
+							qWarning() << "...nothing to redo";
+							return;
+						}
+						actions = 0;
+					}
+
+				}
+			}
+		}
+	}
+
+	if(!_msgstream.isValidIndex(pos)) {
+		// Normally the server should enforce undo limits to prevent
+		// this from happening
+		qWarning() << "Cannot undo action by user" << ctxid << ": not enough messages in buffer!";
+		return;
+	}
+
+	// Step 2. Find nearest save point
+	const StateSavepoint *savepoint = 0;
+	for(int i=_savepoints.count()-1;i>=0;--i) {
+		if(_savepoints.at(i)->streampointer <= pos) {
+			savepoint = _savepoints.at(i);
+			break;
+		}
+	}
+
+	if(!savepoint) {
+		qWarning() << "Cannot undo action by user" << ctxid << ": no savepoint found!";
+		return;
+	}
+
+	// Step 3. (Un)mark all actions by the user as undone
+	for(int i=pos;i<_msgstream.end();++i) {
+		if(_msgstream.at(i)->contextId() == ctxid) {
+			// Don't unmark UNDOs, otherwise we end up in an infinite loop
+			if(undo || _msgstream.at(i)->type() != protocol::MSG_UNDO)
+				_msgstream.at(i)->setUndone(undo);
+		}
+	}
+
+	// The redo action must be marked as undone to avoid looping
+	if(!undo)
+		cmd.setUndone(true);
+
+	// Step 4. Revert to savepoint
+	revertSavepoint(savepoint);
+
+	qDebug() << "reverted to" << savepoint->streampointer + 1 << "of" << _msgstream.end();
+	// Step 5. Replay commands, excluding undone actions
+	pos = savepoint->streampointer + 1;
+	while(pos < _msgstream.end()) {
+		if(!_msgstream.at(pos)->isUndone())
+			receiveCommand(_msgstream.at(pos), true);
+		++pos;
+	}
+}
+
+/**
+ * @brief Check if it is possible to create a new savepoint now
+ *
+ * The following criteria are used:
+ *
+ * - All users must be in PEN_UP state
+ * - Sufficient time must have elapsed since last savepoint
+ * @return
+ */
+bool StateTracker::canMakeSavepoint() const
+{
+	// Make sure there is something in the message stream buffer
+	if(_msgstream.end() <= _msgstream.offset())
+		return false;
+
+	// Check if sufficient time and actions has elapsed from previous savepoint
+	if(!_savepoints.isEmpty()) {
+		const StateSavepoint *sp = _savepoints.last();
+		quint64 now = QDateTime::currentMSecsSinceEpoch();
+		if(now - sp->timestamp < 1000 && _msgstream.end() - sp->streampointer < 100)
+			return false;
+	}
+
+	// Check if all users are in PEN_UP state
+	// (this is not strictly necessary, but it makes for neater savepoints)
+	foreach(const DrawingContext &ctx, _contexts)
+		if(ctx.pendown)
+			return false;
+
+	// Ok, looks like we're good to go
+	return true;
+}
+
+void StateTracker::makeSavepoint()
+{
+	if(canMakeSavepoint()) {
+		qDebug() << "making savepoint";
+		StateSavepoint *savepoint = new StateSavepoint;
+		savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
+		savepoint->streampointer = _msgstream.end() - 1;
+		savepoint->canvas = _image->makeSavepoint();
+		savepoint->ctxstate = _contexts;
+
+		_savepoints.append(savepoint);
+	}
+}
+
+void StateTracker::revertSavepoint(const StateSavepoint *savepoint)
+{
+	Q_ASSERT(_savepoints.contains(const_cast<StateSavepoint*>(savepoint)));
+
+	_image->restoreSavepoint(savepoint->canvas);
+	_contexts = savepoint->ctxstate;
+
+	// Reverting a savepoint destroys all newer savepoints
+	while(_savepoints.last() != savepoint)
+		delete _savepoints.takeLast();
 }
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)

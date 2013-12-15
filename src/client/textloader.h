@@ -53,6 +53,9 @@ private:
 	void handlePenUp(const QString &args);
 	void handlePutImage(const QString &args);
 
+	void handleUndoPoint(const QString &args);
+	void handleUndo(const QString &args);
+
 	void handleAddAnnotation(const QString &args);
 	void handleReshapeAnnotation(const QString &args);
 	void handlEditAnnotation(const QString &args);

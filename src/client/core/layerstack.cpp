@@ -320,4 +320,29 @@ void LayerStack::markDirty(int x, int y)
 	emit areaChanged(QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE));
 }
 
+Savepoint::~Savepoint()
+{
+	while(!layers.isEmpty())
+		delete layers.takeLast();
+}
+
+Savepoint *LayerStack::makeSavepoint()
+{
+	Savepoint *sp = new Savepoint;
+	foreach(Layer *l, _layers) {
+		l->optimize();
+		sp->layers.append(new Layer(*l));
+	}
+
+	return sp;
+}
+
+void LayerStack::restoreSavepoint(const Savepoint *savepoint)
+{
+	while(!_layers.isEmpty())
+		delete _layers.takeLast();
+	foreach(const Layer *l, savepoint->layers)
+		_layers.append(new Layer(*l));
+}
+
 }

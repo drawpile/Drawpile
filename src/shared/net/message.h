@@ -31,8 +31,20 @@ namespace protocol {
 enum MessageType {
 	// Login stream
 	MSG_LOGIN,
+
+	// Meta stream
+	MSG_USER_JOIN,
+	MSG_USER_ATTR,
+	MSG_USER_LEAVE,
+	MSG_CHAT,
+	MSG_LAYER_ACL,
+	MSG_SNAPSHOT,
+	MSG_SESSION_TITLE,
+	MSG_SESSION_CONFIG,
+	MSG_STREAMPOS,
+
 	// Command stream
-	MSG_CANVAS_RESIZE,
+	MSG_CANVAS_RESIZE=128,
 	MSG_LAYER_CREATE,
 	MSG_LAYER_ATTR,
 	MSG_LAYER_RETITLE,
@@ -47,17 +59,7 @@ enum MessageType {
 	MSG_ANNOTATION_EDIT,
 	MSG_ANNOTATION_DELETE,
 	MSG_UNDOPOINT,
-	MSG_UNDO,
-	// Meta stream
-	MSG_USER_JOIN,
-	MSG_USER_ATTR,
-	MSG_USER_LEAVE,
-	MSG_CHAT,
-	MSG_LAYER_ACL,
-	MSG_SNAPSHOT,
-	MSG_SESSION_TITLE,
-	MSG_SESSION_CONFIG,
-	MSG_STREAMPOS
+	MSG_UNDO
 };
 
 class Message {
@@ -79,7 +81,7 @@ public:
 	 * The canvas can be reconstructed exactly using only command messages.
 	 * @return true if this is a drawing command
 	 */
-	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE && _type <= MSG_UNDO; }
+	bool isCommand() const { return _type >= MSG_CANVAS_RESIZE; }
 
 	/**
 	 * @brief Get the message length, header included
@@ -112,7 +114,7 @@ public:
 	 * @brief Has this command been marked as undone?
 	 *
 	 * Note. This is a purely local flag that is not part of the
-	 * protocol. It is here so to avoid the need to maintain an
+	 * protocol. It is here to avoid the need to maintain an
 	 * external undone action list.
 	 *
 	 * @return true if this message has been marked as undone
@@ -122,12 +124,12 @@ public:
 	/**
 	 * @brief Mark this message as undone
 	 *
-	 * Note. Not all messages are undoable. If function
+	 * Note. Not all messages are undoable. This function
 	 * does nothing if this message type doesn't support undoing.
 	 *
 	 * @param undone new undo flag state
 	 */
-	void setUndone(bool undone) { if(isUndone()) _undone = undone; }
+	void setUndone(bool undone) { if(isUndoable()) _undone = undone; }
 
 	/**
 	 * @brief Serialize this message
@@ -151,8 +153,11 @@ public:
 	 * @brief deserialize a message from data buffer
 	 *
 	 * The provided buffer should contain at least sniffLength(data)
-	 * bytes. This returns zero when the message type is unrecognized
-	 * or when the message content is determined to be invalid.
+	 * bytes.
+	 *
+	 * If the message type is unrecognized or the message content is
+	 * determined to be invalid, a null pointer is returned.
+	 *
 	 * @param data input data buffer
 	 * @return message or 0 if type is unknown
 	 */

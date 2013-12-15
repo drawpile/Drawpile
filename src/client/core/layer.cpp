@@ -57,6 +57,19 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 	// sublayers are used for indirect drawing
 }
 
+Layer::Layer(const Layer &layer)
+	: owner_(layer.owner_), id_(layer.id()), _title(layer._title),
+	  _width(layer._width), _height(layer._height),
+	  _xtiles(layer._xtiles), _ytiles(layer._ytiles),
+	  _tiles(layer._tiles),
+	  _opacity(layer._opacity), _blend(layer._blend), _hidden(layer._hidden)
+{
+	// Copy only visible sublayers
+	foreach(const Layer *sl, layer._sublayers)
+		if(!sl->hidden())
+			_sublayers.append(new Layer(*sl));
+}
+
 Layer::~Layer() {
 	foreach(Layer *sl, _sublayers)
 		delete sl;

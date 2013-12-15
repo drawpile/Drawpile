@@ -31,6 +31,7 @@
 namespace dpcore {
 
 class Layer;
+class Savepoint;
 
 /**
  * \brief A stack of layers.
@@ -98,6 +99,12 @@ class LayerStack : public QObject {
 		//! Mark the tile at the given index as dirty
 		void markDirty(int x, int y);
 
+		//! Create a new savepoint
+		Savepoint *makeSavepoint();
+
+		//! Restore layer stack to a previous savepoint
+		void restoreSavepoint(const Savepoint *savepoint);
+
 	public slots:
 		//! Set or clear the "hidden" flag of a layer
 		void setLayerHidden(int layerid, bool hide);
@@ -119,6 +126,16 @@ class LayerStack : public QObject {
 
 		QPixmap _cache;
 		QBitArray _dirtytiles;
+};
+
+/// Layer stack savepoint for undo use
+class Savepoint {
+	friend class LayerStack;
+public:
+	~Savepoint();
+private:
+	Savepoint() {}
+	QList<Layer*> layers;
 };
 
 }

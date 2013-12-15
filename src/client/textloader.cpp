@@ -36,6 +36,7 @@
 #include "../shared/net/layer.h"
 #include "../shared/net/meta.h"
 #include "../shared/net/pen.h"
+#include "../shared/net/undo.h"
 
 
 using protocol::MessagePtr;
@@ -332,6 +333,28 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	_messages.append(net::putQImage(ctxid, layer, x, y, image, blend));
 }
 
+void TextCommandLoader::handleUndoPoint(const QString &args)
+{
+	int ctxid = str2ctxid(args);
+
+	_messages.append(MessagePtr(new protocol::UndoPoint(ctxid)));
+}
+
+void TextCommandLoader::handleUndo(const QString &args)
+{
+	QRegularExpression re("(\\d+) (-?\\d+)");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected context id and undo count");
+
+	int ctxid = str2ctxid(m.captured(1));
+	int count = str2int(m.captured(2));
+	if(count==0)
+		throw SyntaxError("zero undo is not allowed");
+
+	_messages.append(MessagePtr(new protocol::Undo(ctxid, 0, count)));
+}
+
 void TextCommandLoader::handleAddAnnotation(const QString &args)
 {
 	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
@@ -452,6 +475,10 @@ bool TextCommandLoader::load()
 				handlePenUp(args);
 			else if(cmd=="putimage")
 				handlePutImage(args);
+			else if(cmd=="undopoint")
+				handleUndoPoint(args);
+			else if(cmd=="undo")
+				handleUndo(args);
 			else if(cmd=="addannotation")
 				handleAddAnnotation(args);
 			else if(cmd=="reshapeannotation")

@@ -127,3 +127,15 @@ If the "blend" parameter is set, the image is alpha blended. Otherwise the
 image will simply replace the existing pixels.
 The file name is relative to the path of the command file.
 
+### undopoint
+
+Usage: `undopoint ctxId`
+
+Create an undo point
+
+### undo
+
+Usage: `undo ctxId actions`
+
+Undo or redo the given number of actions. If the number is negative,
+the actions are redone.
