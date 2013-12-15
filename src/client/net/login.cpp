@@ -182,12 +182,12 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	// If in host mode, send initial session settings
 	if(_mode==HOST) {
 		if(!_password.isEmpty())
-			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/password %1").arg(_password))));
-		_server->sendMessage(protocol::MessagePtr(new protocol::SessionTitle(_title)));
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/password %1").arg(_password))));
+		_server->sendMessage(protocol::MessagePtr(new protocol::SessionTitle(_userid, _title)));
 		if(_maxusers>0)
-			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/maxusers %1").arg(_maxusers))));
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/maxusers %1").arg(_maxusers))));
 		if(!_allowdrawing)
-			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(0, QString("/lockdefault").arg(_maxusers))));
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/lockdefault").arg(_maxusers))));
 	}
 }
 }

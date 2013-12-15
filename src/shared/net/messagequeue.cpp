@@ -30,7 +30,7 @@
 namespace protocol {
 
 // Reserve enough buffer space for one complete message + snapshot mode marker
-static const int MAX_BUF_LEN = 1024*64 + 3 + 4;
+static const int MAX_BUF_LEN = 1024*64 + 4 + 5;
 
 MessageQueue::MessageQueue(QIODevice *socket, QObject *parent)
 	: QObject(parent), _socket(socket), _closeWhenReady(false), _expectingSnapshot(false)

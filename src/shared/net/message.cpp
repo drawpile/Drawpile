@@ -26,10 +26,12 @@ int Message::sniffLength(const char *data)
 int Message::serialize(char *data) const
 {
 	qToBigEndian(quint16(payloadLength()), (uchar*)data); data += 2;
-	*data = _type; ++data;
+	*(data++) = _type;
+
 	int written = serializePayload((uchar*)data);
 	Q_ASSERT(written == payloadLength());
 	Q_ASSERT(written + 3 <= 0xffff);
+
 	return 3 + written;
 }
 
@@ -42,6 +44,17 @@ Message *Message::deserialize(const uchar *data)
 
 	switch(type) {
 	case MSG_LOGIN: return Login::deserialize(data, len);
+
+	case MSG_USER_JOIN: return UserJoin::deserialize(data, len);
+	case MSG_USER_ATTR: return UserAttr::deserialize(data, len);
+	case MSG_USER_LEAVE: return UserLeave::deserialize(data, len);
+	case MSG_CHAT: return Chat::deserialize(data, len);
+	case MSG_LAYER_ACL: return LayerACL::deserialize(data, len);
+	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
+	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
+	case MSG_SESSION_CONFIG: return SessionConf::deserialize(data, len);
+	case MSG_STREAMPOS: return StreamPos::deserialize(data, len);
+
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(data, len);
 	case MSG_LAYER_ATTR: return LayerAttributes::deserialize(data, len);
@@ -58,15 +71,6 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(data, len);
 	case MSG_UNDOPOINT: return UndoPoint::deserialize(data, len);
 	case MSG_UNDO: return Undo::deserialize(data, len);
-	case MSG_USER_JOIN: return UserJoin::deserialize(data, len);
-	case MSG_USER_ATTR: return UserAttr::deserialize(data, len);
-	case MSG_USER_LEAVE: return UserLeave::deserialize(data, len);
-	case MSG_CHAT: return Chat::deserialize(data, len);
-	case MSG_LAYER_ACL: return LayerACL::deserialize(data, len);
-	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
-	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
-	case MSG_SESSION_CONFIG: return SessionConf::deserialize(data, len);
-	case MSG_STREAMPOS: return StreamPos::deserialize(data, len);
 	}
 	// Unknown message type!
 	return 0;

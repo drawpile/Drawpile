@@ -1,4 +1,4 @@
-resize 1024 768
+resize 1 1024 768
 newlayer 1 1 #ffffffff Background
 
 ctx 1 layer=1 colorh=#ff0000 opacityh=0.3 incremental=false spacing=1
@@ -16,19 +16,19 @@ ctx 1 layer=2 colorh=#000000 sizeh=10
 move 1 30 30
 move 1 50 30; 50 40; 30 40
 penup 1
-layerattr 2 opacity=0.5
+layerattr 1 2 opacity=0.5
 
 newlayer 1 3 #00000000 Test0
-retitlelayer 3 Test 2
+retitlelayer 1 3 Test 2
 
 newlayer 1 4 #000000ff Mergetest
-layerattr 4 opacity=0.5
+layerattr 1 4 opacity=0.5
 ctx 1 layer=4 incremental=true opacityh=1
 move 1 200 10; 200 100
 penup 1
-deletelayer 4 merge
+deletelayer 1 4 merge
 
-reorderlayers 1 3 2
+reorderlayers 1 1 3 2
 
 # Image putting
 
@@ -47,16 +47,15 @@ putimage 1 1 10 330 test.png
 
 # Annotations
 addannotation 1 1 300 10 200 50
-annotate 1 #0
+annotate 1 1 #0
 Hello!
 endannotate
 
 addannotation 1 2 300 10 200 50
-reshapeannotation 2 300 70 200 50
-annotate 2 #0
+reshapeannotation 1 2 300 70 200 50
+annotate 1 2 #0
 World!
 endannotate
 
 addannotation 1 3 10 10 10 10
-deleteannotation 3
-
+deleteannotation 1 3

@@ -313,7 +313,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 	}
 
 	// Make sure the origin user ID is set
-	msg->setOrigin(_id);
+	msg->setContextId(_id);
 
 	// Track state and special commands
 	switch(msg->type()) {
@@ -357,7 +357,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		break;
 	case MSG_CHAT:
 		// Chat is used also for operator commands
-		if(_isOperator && handleOperatorCommand(msg.cast<Chat>().message()))
+		if(_isOperator && handleOperatorCommand(msg->contextId(), msg.cast<Chat>().message()))
 			return;
 		break;
 
@@ -631,10 +631,11 @@ bool Client::validateUsername(const QString &username)
 
 /**
  * @brief Handle IRC style operator commands
+ * @param ctxid user context id
  * @param cmd
  * @return true if command was accepted
  */
-bool Client::handleOperatorCommand(const QString &cmd)
+bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 {
 	// Operator command must start with a slash
 	if(cmd.length() == 0 || cmd.at(0) != '/')
@@ -697,7 +698,7 @@ bool Client::handleOperatorCommand(const QString &cmd)
 		return true;
 	} else if(tokens[0] == "/title" && tokens.count()>1) {
 		QString title = QStringList(tokens.mid(1)).join(' ');
-		_server->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(title)));
+		_server->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(ctxid, title)));
 		return true;
 	} else if(tokens[0] == "/maxusers" && tokens.count()==2) {
 		bool ok;

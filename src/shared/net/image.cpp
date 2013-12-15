@@ -43,13 +43,13 @@ PutImage *PutImage::deserialize(const uchar *data, uint len)
 
 int PutImage::payloadLength() const
 {
-	return 1 + 1 + 1 + 4*2 + _image.size();
+	return 1 + 2 + 4*2 + _image.size();
 }
 
 int PutImage::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = _ctx;
+	*(ptr++) = contextId();
 	*(ptr++) = _layer;
 	*(ptr++) = _flags;
 	qToBigEndian(_x, ptr); ptr += 2;

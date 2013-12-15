@@ -37,15 +37,15 @@ static const uint8_t TOOL_MODE_INCREMENTAL = (1<<1);
 class ToolChange : public Message {
 public:
 	ToolChange(
-		uint8_t id, uint8_t layer,
+		uint8_t ctx, uint8_t layer,
 		uint8_t blend, uint8_t mode, uint8_t spacing,
 		uint32_t color_h, uint32_t color_l,
 		uint8_t hard_h, uint8_t hard_l,
 		uint8_t size_h, uint8_t size_l,
 		uint8_t opacity_h, uint8_t opacity_l
 		)
-		: Message(MSG_TOOLCHANGE),
-		_id(id), _layer(layer), _blend(blend), _mode(mode),
+		: Message(MSG_TOOLCHANGE, ctx),
+		_layer(layer), _blend(blend), _mode(mode),
 		_spacing(spacing), _color_h(color_h), _color_l(color_l),
 		_hard_h(hard_h), _hard_l(hard_l), _size_h(size_h), _size_l(size_l),
 		_opacity_h(opacity_h), _opacity_l(opacity_l)
@@ -53,7 +53,6 @@ public:
 
 		static ToolChange *deserialize(const uchar *data, uint len);
 		
-		uint8_t contextId() const { return _id; }
 		uint8_t layer() const { return _layer; }
 		uint8_t blend() const { return _blend; }
 		uint8_t mode() const { return _mode; }
@@ -66,15 +65,12 @@ public:
 		uint8_t size_l() const { return _size_l; }
 		uint8_t opacity_h() const { return _opacity_h; }
 		uint8_t opacity_l() const { return _opacity_l; }
-		
-		void setOrigin(uint8_t userid) { _id = userid; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
 	uint8_t _layer;
 	uint8_t _blend;
 	uint8_t _mode;
@@ -105,23 +101,20 @@ typedef QVector<PenPoint> PenPointVector;
 class PenMove : public Message {
 public:
 	PenMove(uint8_t ctx, const PenPointVector &points)
-		: Message(MSG_PEN_MOVE),
-		_ctx(ctx), _points(points)
+		: Message(MSG_PEN_MOVE, ctx),
+		_points(points)
 		{}
 	
 	static PenMove *deserialize(const uchar *data, uint len);
 
-	uint8_t contextId() const { return _ctx; }
 	const PenPointVector &points() const { return _points; }
 	
-	void setOrigin(uint8_t userid) { _ctx = userid; }
-
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	
+	bool isUndoable() const { return true; }
+
 private:
-	uint8_t _ctx;
 	PenPointVector _points;
 };
 
@@ -130,23 +123,14 @@ private:
  */
 class PenUp : public Message {
 public:
-	PenUp(uint8_t ctx)
-		: Message(MSG_PEN_UP),
-		_ctx(ctx)
-		{}
+	PenUp(uint8_t ctx) : Message(MSG_PEN_UP, ctx) {}
 	
 	static PenUp *deserialize(const uchar *data, uint len);
-
-	uint8_t contextId() const { return _ctx; }
-	
-	void setOrigin(uint8_t userid) { _ctx = userid; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-
-private:
-	uint8_t _ctx;
+	bool isUndoable() const { return true; }
 };
 
 }

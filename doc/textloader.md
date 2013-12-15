@@ -13,7 +13,7 @@ and comments starting with '#' are allowed.
 
 ### ctx
 
-Usage: ctx ctxId param=value...
+Usage: `ctx ctxId param=value...`
 
 This command generates a tool context change. The loader will remember
 generated contexts, so specifying only the parameters that change is allowed.
@@ -35,31 +35,33 @@ Supported parameters are:
 
 ### move
 
-Usage: move ctxId x y [p][; x y [p];...]
+Usage: `move ctxId x y [p][; x y [p];...]`
 
 This command generates a pen move. The pressure paramter
 is optional. If omitted, a pressure of 1.0 will be used.
 
 ### penup
 
-Usage: penup ctxId
+Usage: `penup ctxId`
 
 This command generates a penup event for the given drawing context.
 
-### resize w h
+### resize
+
+Usage: `resize ctxId w h`
 
 This command generates a canvas resize message. Currently it can only
 be used once in the very beginning of the file.
 
 ### newlayer
 
-Usage: newlayer layerId fill [title]
+Usage: `newlayer ctxId layerId fill [title]`
 
 This command creates a new layer. The fill color should be in format #rrggbbaa.
 
 ### layerattr
 
-Usage: layerattr layerId *parameters
+Usage: `layerattr ctxId layerId *parameters`
 
 This command changes layer attributes. The loader will remember the layer's old
 attributes, so specifying only the parameters that change is allowed.
@@ -70,40 +72,40 @@ Supported parameters are:
 
 ### retitlelayer
 
-Usage: retitlelayer <layerId> <title>
+Usage: `retitlelayer ctxId layerId title`
 
 This command changes a layer's title
 
 ### deletelayer
 
-Usage: deletelayer id [merge]
+Usage: `deletelayer ctxId id [merge]`
 
 This command deletes a layer. If the parameter "merge" is present, the
 layer will be merged with the one below it
 
 ### reorderlayers
 
-Usage: reorderlayers id1 id2 ...
+Usage: `reorderlayers ctxId id1 id2 ...`
 
 This command reorders the layers. All existing layers should be listed
 in bottom to top order.
 
 ### addannotation
 
-Usage: addannotation ctxId aId x y w h
+Usage: `addannotation ctxId aId x y w h`
 
-Create a blank new annotation by user <ctx>
+Create a blank new annotation
 
 ### reshapeannotation
 
-Usage: reshapeannotation aId x y w h
+Usage: `reshapeannotation ctxId aId x y w h`
 
 Change an existing annotations position and size
 
 ### annotate / endannotate
 
 Usage:
-	annotate aId bg-color
+	annotate ctxId aId bg-color
 	...
 	endannotate
 
@@ -112,13 +114,13 @@ between annotate and endannotate will be used as the annotation content.
 
 ### deleteannotation
 
-Usage: deleteannotation aId
+Usage: `deleteannotation ctxId aId`
 
 Delete an annotation
 
 ### putimage
 
-Usage: putimage ctxId layerId x y [blend] filename
+Usage: `putimage ctxId layerId x y [blend] filename`
 
 Load an image and draw it onto the given canvas at the specified location.
 If the "blend" parameter is set, the image is alpha blended. Otherwise the

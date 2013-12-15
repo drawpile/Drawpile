@@ -16,7 +16,7 @@ int UndoPoint::payloadLength() const
 
 int UndoPoint::serializePayload(uchar *data) const
 {
-	*data = _ctx;
+	*data = contextId();
 	return 1;
 }
 
@@ -34,13 +34,13 @@ Undo *Undo::deserialize(const uchar *data, uint len)
 
 int Undo::payloadLength() const
 {
-	return 3;
+	return 1 + 2;
 }
 
 int Undo::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = _ctx;
+	*(ptr++) = contextId();
 	*(ptr++) = _override;
 	*(ptr++) = _points;
 	return ptr-data;

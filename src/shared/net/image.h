@@ -45,12 +45,11 @@ public:
 	static const int MAX_LEN = (1<<16) - 10;
 
 	PutImage(uint8_t ctx, uint8_t layer, uint8_t flags, uint16_t x, uint16_t y, uint16_t w, uint16_t h, const QByteArray &image)
-	: Message(MSG_PUTIMAGE), _ctx(ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
+	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
 	{}
 
 	static PutImage *deserialize(const uchar *data, uint len);
 	
-	uint8_t contextId() const { return _ctx; }
 	uint8_t layer() const { return _layer; }
 	uint8_t flags() const { return _flags; }
 	uint16_t x() const { return _x; }
@@ -58,19 +57,13 @@ public:
 	uint16_t width() const { return _w; }
 	uint16_t height() const { return _h; }
 	const QByteArray &image() const { return _image; }
-	
-	void setOrigin(uint8_t userid) { _ctx = userid; }
 
 protected:
-	/**
-	 * \brief Get the length of the message payload
-	 * @return payload length in bytes
-	 */
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	
+	bool isUndoable() const { return true; }
+
 private:
-	uint8_t _ctx;
 	uint8_t _layer;
 	uint8_t _flags;
 	uint16_t _x;

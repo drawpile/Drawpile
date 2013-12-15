@@ -29,12 +29,11 @@ namespace protocol {
 
 class UserJoin : public Message {
 public:
-	UserJoin(uint8_t id, const QByteArray &name) : Message(MSG_USER_JOIN), _id(id), _name(name) {}
-	UserJoin(uint8_t id, const QString &name) : UserJoin(id, name.toUtf8()) {}
+	UserJoin(uint8_t ctx, const QByteArray &name) : Message(MSG_USER_JOIN, ctx), _name(name) {}
+	UserJoin(uint8_t ctx, const QString &name) : UserJoin(ctx, name.toUtf8()) {}
 
 	static UserJoin *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
 	QString name() const { return QString::fromUtf8(_name); }
 
 protected:
@@ -42,24 +41,18 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
 	QByteArray _name;
 };
 
 class UserLeave : public Message {
 public:
-	explicit UserLeave(uint8_t id) : Message(MSG_USER_LEAVE), _id(id) {}
+	explicit UserLeave(uint8_t ctx) : Message(MSG_USER_LEAVE, ctx) {}
 
 	static UserLeave *deserialize(const uchar *data, uint len);
-
-	uint8_t id() const { return _id; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-
-private:
-	uint8_t _id;
 };
 
 class UserAttr: public Message {
@@ -67,12 +60,11 @@ public:
 	static const uint8_t ATTR_LOCKED = 0x01;
 	static const uint8_t ATTR_OP = 0x02;
 
-	UserAttr(uint8_t id, uint8_t attrs) : Message(MSG_USER_ATTR), _id(id), _attrs(attrs) {}
-	UserAttr(uint8_t id, bool locked, bool op) : UserAttr(id, (locked?ATTR_LOCKED:0) | (op?ATTR_OP:0)) {}
+	UserAttr(uint8_t ctx, uint8_t attrs) : Message(MSG_USER_ATTR, ctx), _attrs(attrs) {}
+	UserAttr(uint8_t ctx, bool locked, bool op) : UserAttr(ctx, (locked?ATTR_LOCKED:0) | (op?ATTR_OP:0)) {}
 
 	static UserAttr *deserialize(const uchar *data, uint len);
 
-	uint8_t id() const { return _id; }
 	uint8_t attrs() const { return _attrs; }
 
 	bool isLocked() const { return _attrs & ATTR_LOCKED; }
@@ -83,14 +75,13 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _id;
 	uint8_t _attrs;
 };
 
 class SessionTitle : public Message {
 public:
-	SessionTitle(const QByteArray &title) : Message(MSG_SESSION_TITLE), _title(title) {}
-	SessionTitle(const QString &title) : SessionTitle(title.toUtf8()) {}
+	SessionTitle(uint8_t ctx, const QByteArray &title) : Message(MSG_SESSION_TITLE, ctx), _title(title) {}
+	SessionTitle(uint8_t ctx, const QString &title) : SessionTitle(ctx, title.toUtf8()) {}
 
 	static SessionTitle *deserialize(const uchar *data, uint len);
 
@@ -108,7 +99,7 @@ private:
 
 class SessionConf : public Message {
 public:
-	SessionConf(bool locked, bool closed) : Message(MSG_SESSION_CONFIG),
+	SessionConf(bool locked, bool closed) : Message(MSG_SESSION_CONFIG, 0),
 		_locked(locked), _closed(closed) {}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
@@ -127,28 +118,24 @@ private:
 
 class Chat : public Message {
 public:
-	Chat(uint8_t user, const QByteArray &msg) : Message(MSG_CHAT), _user(user), _msg(msg) {}
-	Chat(uint8_t user, const QString &msg) : Chat(user, msg.toUtf8()) {}
+	Chat(uint8_t ctx, const QByteArray &msg) : Message(MSG_CHAT, ctx), _msg(msg) {}
+	Chat(uint8_t ctx, const QString &msg) : Chat(ctx, msg.toUtf8()) {}
 
 	static Chat *deserialize(const uchar *data, uint len);
 
-	uint8_t user() const { return _user; }
 	QString message() const { return QString::fromUtf8(_msg); }
-
-	void setOrigin(uint8_t userid) { _user = userid; }
 
 protected:
     int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _user;
     QByteArray _msg;
 };
 
 class StreamPos : public Message {
 public:
-	StreamPos(uint32_t bytes) : Message(MSG_STREAMPOS),
+	StreamPos(uint32_t bytes) : Message(MSG_STREAMPOS, 0),
 		_bytes(bytes) {}
 
 	static StreamPos *deserialize(const uchar *data, uint len);

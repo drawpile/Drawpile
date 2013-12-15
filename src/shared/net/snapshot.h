@@ -36,7 +36,7 @@ class SnapshotMode : public Message {
 public:
 	enum Mode {REQUEST, REQUEST_NEW, ACK, SNAPSHOT, END};
 
-    SnapshotMode(Mode mode) : Message(MSG_SNAPSHOT), _mode(mode) {}
+	SnapshotMode(Mode mode) : Message(MSG_SNAPSHOT, 0), _mode(mode) {}
 
 	static SnapshotMode *deserialize(const uchar *data, int len);
 
@@ -59,7 +59,7 @@ private:
  */
 class SnapshotPoint : public Message {
 public:
-	SnapshotPoint() : Message(MSG_SNAPSHOT), _complete(false) {}
+	SnapshotPoint() : Message(MSG_SNAPSHOT, 0), _complete(false) {}
 
 	/**
 	 * @brief Get the snapshot point substream

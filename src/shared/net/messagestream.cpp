@@ -77,6 +77,13 @@ int MessageStream::cleanup()
 	return 0;
 }
 
+void MessageStream::hardCleanup(uint sizelimit)
+{
+	while(lengthInBytes() > sizelimit) {
+		_messages.removeFirst();
+	}
+}
+
 void MessageStream::clear()
 {
 	_offset = end();

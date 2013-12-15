@@ -103,7 +103,18 @@ public:
 	int cleanup();
 
 	/**
+	 * @brief Clean up old messages
+	 *
+	 * Old messages are removed until the size of the buffer is less than the
+	 * given limit.
+	 * @param sizelimit maximum size
+	 */
+	void hardCleanup(uint sizelimit);
+
+	/**
 	 * @brief remove all messages, including the snapshot point
+	 *
+	 * TODO use hardCleanup instead
 	 */
 	void clear();
 

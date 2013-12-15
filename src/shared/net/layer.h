@@ -36,8 +36,8 @@ namespace protocol {
  */
 class CanvasResize : public Message {
 public:
-	CanvasResize(uint16_t width, uint16_t height)
-		: Message(MSG_CANVAS_RESIZE), _width(width), _height(height)
+	CanvasResize(uint8_t ctx, uint16_t width, uint16_t height)
+		: Message(MSG_CANVAS_RESIZE, ctx), _width(width), _height(height)
 		{}
 
 	static CanvasResize *deserialize(const uchar *data, uint len);
@@ -61,23 +61,10 @@ private:
 class LayerCreate : public Message {
 public:
 	LayerCreate(uint8_t ctxid, uint8_t id, uint32_t fill, const QString &title)
-		: Message(MSG_LAYER_CREATE), _ctxid(ctxid), _id(id), _fill(fill), _title(title.toUtf8())
+		: Message(MSG_LAYER_CREATE, ctxid), _id(id), _fill(fill), _title(title.toUtf8())
 		{}
 
 	static LayerCreate *deserialize(const uchar *data, uint len);
-
-	/**
-	 * @brief Context ID of the user creating this layer.
-	 *
-	 * The context ID does not affect the way the layer is created, but
-	 * allows the client to identify who created it. This enables
-	 * the layer to be automatically selected by the user who created it.
-	 *
-	 * @return user context ID
-	 */
-	uint8_t contextId() const { return _ctxid; }
-
-	void setOrigin(uint8_t userid) { _ctxid = userid; }
 
 	/**
 	 * \brief ID of the newly created layer.
@@ -114,7 +101,6 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _ctxid;
 	uint8_t _id;
 	uint32_t _fill;
 	QByteArray _title;
@@ -125,8 +111,8 @@ private:
  */
 class LayerAttributes : public Message {
 public:
-	LayerAttributes(uint8_t id, uint8_t opacity, uint8_t blend)
-		: Message(MSG_LAYER_ATTR), _id(id),
+	LayerAttributes(uint8_t ctx, uint8_t id, uint8_t opacity, uint8_t blend)
+		: Message(MSG_LAYER_ATTR, ctx), _id(id),
 		_opacity(opacity), _blend(blend)
 		{}
 
@@ -151,11 +137,11 @@ private:
  */
 class LayerRetitle : public Message {
 public:
-	LayerRetitle(uint8_t id, const QByteArray &title)
-		: Message(MSG_LAYER_RETITLE), _id(id), _title(title)
+	LayerRetitle(uint8_t ctx, uint8_t id, const QByteArray &title)
+		: Message(MSG_LAYER_RETITLE, ctx), _id(id), _title(title)
 		{}
-	LayerRetitle(uint8_t id, const QString &title)
-		: LayerRetitle(id, title.toUtf8())
+	LayerRetitle(uint8_t ctx, uint8_t id, const QString &title)
+		: LayerRetitle(ctx, id, title.toUtf8())
 		{}
 
 	static LayerRetitle *deserialize(const uchar *data, uint len);
@@ -177,8 +163,8 @@ private:
  */
 class LayerOrder : public Message {
 public:
-	LayerOrder(const QList<uint8_t> &order)
-		: Message(MSG_LAYER_ORDER),
+	LayerOrder(uint8_t ctx, const QList<uint8_t> &order)
+		: Message(MSG_LAYER_ORDER, ctx),
 		_order(order)
 		{}
 	
@@ -200,8 +186,8 @@ private:
  */
 class LayerDelete : public Message {
 public:
-	LayerDelete(uint8_t id, uint8_t merge)
-		: Message(MSG_LAYER_DELETE),
+	LayerDelete(uint8_t ctx, uint8_t id, uint8_t merge)
+		: Message(MSG_LAYER_DELETE, ctx),
 		_id(id),
 		_merge(merge)
 		{}
@@ -228,8 +214,8 @@ private:
  */
 class LayerACL : public Message {
 public:
-	LayerACL(uint8_t id, uint8_t locked, const QList<uint8_t> &exclusive)
-		: Message(MSG_LAYER_ACL), _id(id), _locked(locked), _exclusive(exclusive)
+	LayerACL(uint8_t ctx, uint8_t id, uint8_t locked, const QList<uint8_t> &exclusive)
+		: Message(MSG_LAYER_ACL, ctx), _id(id), _locked(locked), _exclusive(exclusive)
 	{}
 
 	static LayerACL *deserialize(const uchar *data, uint len);

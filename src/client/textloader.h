@@ -66,6 +66,7 @@ private:
 	QHash<int, net::LayerListItem> _layer;
 
 	// Annotation edit buffer
+	int _edit_a_ctx;
 	int _edit_a_id;
 	quint32 _edit_a_color;
 	QString _edit_a_text;

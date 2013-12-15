@@ -30,7 +30,7 @@ ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 		return 0;
 
 	return new ToolChange(
-		*data,
+		*(data+0),
 		*(data+1),
 		*(data+2),
 		*(data+3),
@@ -48,13 +48,13 @@ ToolChange *ToolChange::deserialize(const uchar *data, uint len)
 
 int ToolChange::payloadLength() const
 {
-	return 19;
+	return 1 + 18;
 }
 
 int ToolChange::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = _id;
+	*(ptr++) = contextId();
 	*(ptr++) = _layer;
 	*(ptr++) = _blend;
 	*(ptr++) = _mode;
@@ -72,14 +72,14 @@ int ToolChange::serializePayload(uchar *data) const
 
 PenMove *PenMove::deserialize(const uchar *data, uint len)
 {
-	if(len<6)
+	if(len<6 || (len-1)%5)
 		return 0;
-	uint8_t id = *data;
 	PenPointVector pp;
+
+	uint8_t ctx = *(data++);
 
 	const int points = (len-1)/5;
 	pp.reserve(points);
-	++data;
 	for(int i=0;i<points;++i) {
 		pp.append(PenPoint(
 			qFromBigEndian<quint16>(data),
@@ -88,7 +88,7 @@ PenMove *PenMove::deserialize(const uchar *data, uint len)
 		));
 		data += 5;
 	}
-	return new PenMove(id, pp);
+	return new PenMove(ctx, pp);
 }
 
 int PenMove::payloadLength() const
@@ -99,7 +99,7 @@ int PenMove::payloadLength() const
 int PenMove::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = _ctx;
+	*(ptr++) = contextId();
 	foreach(const PenPoint &p, _points) {
 		qToBigEndian(p.x, ptr); ptr += 2;
 		qToBigEndian(p.y, ptr); ptr += 2;
@@ -123,7 +123,7 @@ int PenUp::payloadLength() const
 
 int PenUp::serializePayload(uchar *data) const
 {
-	*data = _ctx;
+	*data = contextId();
 	return 1;
 }
 

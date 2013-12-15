@@ -1,4 +1,4 @@
-resize 300 300
+resize 1 300 300
 newlayer 1 1 #ffaacccc Putimage test
 
 ctx 1 layer=1

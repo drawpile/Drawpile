@@ -32,20 +32,13 @@ namespace protocol {
 class UndoPoint : public Message
 {
 public:
-	UndoPoint(uint8_t ctx) : Message(MSG_UNDOPOINT), _ctx(ctx) {}
+	UndoPoint(uint8_t ctx) : Message(MSG_UNDOPOINT, ctx) {}
 
 	static UndoPoint *deserialize(const uchar *data, uint len);
-
-	uint8_t contextId() const { return _ctx; }
-
-	void setOrigin(uint8_t userid) { _ctx = userid; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-
-private:
-	uint8_t _ctx;
 };
 
 /**
@@ -55,15 +48,9 @@ private:
 class Undo : public Message
 {
 public:
-	Undo(uint8_t ctx, uint8_t override, int8_t points) : Message(MSG_UNDO), _ctx(ctx), _override(override), _points(points) { }
+	Undo(uint8_t ctx, uint8_t override, int8_t points) : Message(MSG_UNDO, ctx), _override(override), _points(points) { }
 
 	static Undo *deserialize(const uchar *data, uint len);
-
-	/**
-	 * @brief the user who issued this command
-	 * @return context id
-	 */
-	uint8_t contextId() const { return _ctx; }
 
 	/**
 	 * @brief override user ID
@@ -76,6 +63,12 @@ public:
 	uint8_t overrideId() const { return _override; }
 
 	/**
+	 * @brief Get the effective user ID of this undo command
+	 * @return either override ID or normal context ID
+	 */
+	uint8_t effectiveId() const { return _override ? _override : contextId(); }
+
+	/**
 	 * @brief number of actions to undo/redo
 	 *
 	 * This is the number of undo points the given user's actions should be rolled back.
@@ -86,14 +79,11 @@ public:
 	 */
 	int8_t points() const { return _points; }
 
-	void setOrigin(uint8_t userid) { _ctx = userid; }
-
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _ctx;
 	uint8_t _override;
 	int8_t _points;
 };

@@ -117,12 +117,13 @@ Params extractParams(const QString &string)
 void TextCommandLoader::handleResize(const QString &args)
 {
 	QStringList wh = args.split(' ');
-	if(wh.count() != 2)
-		throw SyntaxError("Expected width and height");
+	if(wh.count() != 3)
+		throw SyntaxError("Expected context id, width and height");
 
 	_messages.append(MessagePtr(new protocol::CanvasResize(
-		str2int(wh[0]),
-		str2int(wh[1])
+		str2ctxid(wh[0]),
+		str2int(wh[1]),
+		str2int(wh[2])
 	)));
 }
 
@@ -146,14 +147,18 @@ void TextCommandLoader::handleNewLayer(const QString &args)
 
 void TextCommandLoader::handleLayerAttr(const QString &args)
 {
-	// extract ID
+	// extract context ID
 	int sep = args.indexOf(' ');
 	if(sep<0)
 		throw SyntaxError("Expected parameters as well!");
 
-	int id = str2ctxid(args.left(sep));
+	int ctxid = str2ctxid(args.left(sep));
 
-	Params params = extractParams(args.mid(sep+1));
+	// extract layer ID
+	int sep2 = args.indexOf(' ', sep+1);
+	int id = str2ctxid(args.mid(sep+1, sep2-sep-1));
+
+	Params params = extractParams(args.mid(sep2+1));
 
 	net::LayerListItem &layer = _layer[id];
 
@@ -172,20 +177,21 @@ void TextCommandLoader::handleLayerAttr(const QString &args)
 		++i;
 	}
 
-	_messages.append(MessagePtr(new protocol::LayerAttributes(id, layer.opacity*255, layer.blend)));
+	_messages.append(MessagePtr(new protocol::LayerAttributes(ctxid, id, layer.opacity*255, layer.blend)));
 }
 
 void TextCommandLoader::handleRetitleLayer(const QString &args)
 {
-	QRegularExpression re("(\\d+) (.*)");
+	QRegularExpression re("(\\d+) (\\d+) (.*)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
 		throw SyntaxError("Expected id and title");
 
-	net::LayerListItem &layer = _layer[str2int(m.captured(1))];
-	layer.title = m.captured(2);
+	net::LayerListItem &layer = _layer[str2int(m.captured(2))];
+	layer.title = m.captured(3);
 
 	_messages.append(MessagePtr(new protocol::LayerRetitle(
+		str2ctxid(m.captured(1)),
 		layer.id,
 		layer.title
 	)));
@@ -193,21 +199,31 @@ void TextCommandLoader::handleRetitleLayer(const QString &args)
 
 void TextCommandLoader::handleDeleteLayer(const QString &args)
 {
-	QRegularExpression re("(\\d+)(?: (merge))?");
+	QRegularExpression re("(\\d+) (\\d+)(?: (merge))?");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
-		throw SyntaxError("Expected id and title");
-	_messages.append(MessagePtr(new protocol::LayerDelete(str2int(m.captured(1)), m.captured(2).isEmpty() ? false : true)));
+		throw SyntaxError("Expected context id, layer id and title");
+	_messages.append(MessagePtr(new protocol::LayerDelete(
+		str2ctxid(m.captured(1)),
+		str2int(m.captured(2)),
+		m.captured(3).isEmpty() ? false : true
+	)));
 }
 
 void TextCommandLoader::handleReorderLayers(const QString &args)
 {
 	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
+	if(tokens.length()<3)
+		throw SyntaxError("At least two layers needed!");
+
 	QList<uint8_t> ids;
+
 	foreach(const QString &token, tokens) {
 		ids << str2int(token);
 	}
-	_messages.append(MessagePtr(new protocol::LayerOrder(ids)));
+
+	int ctxid = ids.takeFirst();
+	_messages.append(MessagePtr(new protocol::LayerOrder(ctxid, ids)));
 }
 
 
@@ -335,38 +351,46 @@ void TextCommandLoader::handleAddAnnotation(const QString &args)
 void TextCommandLoader::handleReshapeAnnotation(const QString &args)
 {
 	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
-	if(tokens.count() != 5)
-		throw SyntaxError("Expected annotation id, position and size");
+	if(tokens.count() != 6)
+		throw SyntaxError("Expected context id, annotation id, position and size");
 
-	int annid = str2ctxid(tokens[0]);
-	int x = str2int(tokens[1]);
-	int y = str2int(tokens[2]);
-	int w = str2int(tokens[3]);
-	int h = str2int(tokens[4]);
+	int ctxid = str2ctxid(tokens[0]);
+	int annid = str2ctxid(tokens[1]);
+	int x = str2int(tokens[2]);
+	int y = str2int(tokens[3]);
+	int w = str2int(tokens[4]);
+	int h = str2int(tokens[5]);
 
-	_messages.append(MessagePtr(new protocol::AnnotationReshape(annid, x, y, w, h)));
+	_messages.append(MessagePtr(new protocol::AnnotationReshape(ctxid, annid, x, y, w, h)));
 }
 
 void TextCommandLoader::handleDeleteAnnotation(const QString &args)
 {
-	int id = str2ctxid(args);
-	_messages.append(MessagePtr(new protocol::AnnotationDelete(id)));
+	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
+	if(tokens.count() != 2)
+		throw SyntaxError("Expected context id and annotation id");
+
+	int ctx = str2ctxid(tokens[0]);
+	int id = str2ctxid(tokens[1]);
+
+	_messages.append(MessagePtr(new protocol::AnnotationDelete(ctx, id)));
 }
 
 void TextCommandLoader::handlEditAnnotation(const QString &args)
 {
 	QStringList tokens = args.split(' ', QString::SkipEmptyParts);
-	if(tokens.count() != 2)
-		throw SyntaxError("Expected annotation id and background color");
+	if(tokens.count() != 3)
+		throw SyntaxError("Expected context id, annotation id and background color");
 
-	_edit_a_id = str2ctxid(tokens[0]);
-	_edit_a_color = str2color((tokens[1]));
+	_edit_a_ctx = str2ctxid(tokens[0]);
+	_edit_a_id = str2ctxid(tokens[1]);
+	_edit_a_color = str2color((tokens[2]));
 	_edit_a_text = "";
 }
 
 void TextCommandLoader::editAnnotationDone()
 {
-	_messages.append(MessagePtr(new protocol::AnnotationEdit(_edit_a_id, _edit_a_color, _edit_a_text)));
+	_messages.append(MessagePtr(new protocol::AnnotationEdit(_edit_a_ctx, _edit_a_id, _edit_a_color, _edit_a_text)));
 }
 
 bool TextCommandLoader::load()

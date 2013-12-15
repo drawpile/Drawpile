@@ -155,6 +155,7 @@ int Client::uploadQueueBytes() const
 void Client::sendCanvasResize(const QSize &newsize)
 {
 	_server->sendMessage(MessagePtr(new protocol::CanvasResize(
+		_my_id,
 		newsize.width(),
 		newsize.height()
 	)));
@@ -169,13 +170,13 @@ void Client::sendNewLayer(int id, const QColor &fill, const QString &title)
 void Client::sendLayerAttribs(int id, float opacity, int blend)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(id, opacity*255, blend)));
+	_server->sendMessage(MessagePtr(new protocol::LayerAttributes(_my_id, id, opacity*255, blend)));
 }
 
 void Client::sendLayerTitle(int id, const QString &title)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerRetitle(id, title)));
+	_server->sendMessage(MessagePtr(new protocol::LayerRetitle(_my_id, id, title)));
 }
 
 void Client::sendLayerVisibility(int id, bool hide)
@@ -188,13 +189,13 @@ void Client::sendLayerVisibility(int id, bool hide)
 void Client::sendDeleteLayer(int id, bool merge)
 {
 	Q_ASSERT(id>=0 && id<256);
-	_server->sendMessage(MessagePtr(new protocol::LayerDelete(id, merge)));
+	_server->sendMessage(MessagePtr(new protocol::LayerDelete(_my_id, id, merge)));
 }
 
 void Client::sendLayerReorder(const QList<uint8_t> &ids)
 {
 	Q_ASSERT(ids.size()>0);
-	_server->sendMessage(MessagePtr(new protocol::LayerOrder(ids)));
+	_server->sendMessage(MessagePtr(new protocol::LayerOrder(_my_id, ids)));
 }
 
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
@@ -252,6 +253,7 @@ void Client::sendAnnotationReshape(int id, const QRect &rect)
 {
 	Q_ASSERT(id>0 && id < 256);
 	_server->sendMessage(MessagePtr(new protocol::AnnotationReshape(
+		_my_id,
 		id,
 		qMax(0, rect.x()),
 		qMax(0, rect.y()),
@@ -264,6 +266,7 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 {
 	Q_ASSERT(id>0 && id < 256);
 	_server->sendMessage(MessagePtr(new protocol::AnnotationEdit(
+		_my_id,
 		id,
 		bg.rgba(),
 		text
@@ -273,7 +276,7 @@ void Client::sendAnnotationEdit(int id, const QColor &bg, const QString &text)
 void Client::sendAnnotationDelete(int id)
 {
 	Q_ASSERT(id>0 && id < 256);
-	_server->sendMessage(MessagePtr(new protocol::AnnotationDelete(id)));
+	_server->sendMessage(MessagePtr(new protocol::AnnotationDelete(_my_id, id)));
 }
 
 /**
@@ -327,7 +330,7 @@ void Client::sendKickUser(int userid)
 
 void Client::sendSetSessionTitle(const QString &title)
 {
-	_server->sendMessage(MessagePtr(new protocol::SessionTitle(title)));
+	_server->sendMessage(MessagePtr(new protocol::SessionTitle(_my_id, title)));
 }
 
 void Client::sendLockSession(bool lock)
@@ -357,7 +360,7 @@ void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 	if(_isloopback)
 		qWarning() << "tried to send layer ACL in loopback mode!";
 	else
-		_server->sendMessage(MessagePtr(new protocol::LayerACL(layerid, locked, exclusive)));
+		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, exclusive)));
 }
 
 void Client::handleMessage(protocol::MessagePtr msg)
@@ -413,38 +416,38 @@ void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
 void Client::handleChatMessage(const protocol::Chat &msg)
 {
 	QString username;
-	if(msg.user()!=0) {
-		User user = _userlist->getUserById(msg.user());
+	if(msg.contextId()!=0) {
+		User user = _userlist->getUserById(msg.contextId());
 		if(user.id==0)
-			username = tr("User#%1").arg(msg.user());
+			username = tr("User#%1").arg(msg.contextId());
 		else
 			username = user.name;
 	}
 
-	emit chatMessageReceived(username, msg.message(), msg.user() == _my_id);
+	emit chatMessageReceived(username, msg.message(), msg.contextId() == _my_id);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)
 {
-	_userlist->addUser(User(msg.id(), msg.name(), msg.id() == _my_id));
+	_userlist->addUser(User(msg.contextId(), msg.name(), msg.contextId() == _my_id));
 	emit userJoined(msg.name());
 }
 
 void Client::handleUserAttr(const protocol::UserAttr &msg)
 {
-	if(msg.id() == _my_id) {
+	if(msg.contextId() == _my_id) {
 		_isOp = msg.isOp();
 		_isUserLocked = msg.isLocked();
 		emit opPrivilegeChange(msg.isOp());
 		emit lockBitsChanged();
 	}
-	_userlist->updateUser(msg.id(), msg.attrs());
+	_userlist->updateUser(msg.contextId(), msg.attrs());
 }
 
 void Client::handleUserLeave(const protocol::UserLeave &msg)
 {
-	QString name = _userlist->getUserById(msg.id()).name;
-	_userlist->removeUser(msg.id());
+	QString name = _userlist->getUserById(msg.contextId()).name;
+	_userlist->removeUser(msg.contextId());
 	emit userLeft(name);
 }
 

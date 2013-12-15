@@ -92,7 +92,7 @@ bool Reader::load(const QString &filename)
 	}
 
 	// Initialize the layer stack now that we know the size
-	_commands.append(MessagePtr(new protocol::CanvasResize(imagesize.width(), imagesize.height())));
+	_commands.append(MessagePtr(new protocol::CanvasResize(1, imagesize.width(), imagesize.height())));
 
 	_layerid = 0;
 	_annotationid = 0;
@@ -189,6 +189,7 @@ bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
 			}
 
 			_commands.append(MessagePtr(new protocol::LayerAttributes(
+				1,
 				_layerid,
 				qRound(255 * e.attribute("opacity", "1.0").toDouble()),
 				blendmode
@@ -231,6 +232,7 @@ void Reader::loadAnnotations(const QDomElement& annotations)
 				e.attribute("h").toInt()
 			)));
 			_commands.append(MessagePtr(new protocol::AnnotationEdit(
+				1,
 				_annotationid,
 				e.attribute("bg").mid(1).toUInt(0,16),
 				e.text()

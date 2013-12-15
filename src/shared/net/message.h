@@ -63,7 +63,7 @@ enum MessageType {
 class Message {
 	friend class MessagePtr;
 public:
-	Message(MessageType type): _type(type), _refcount(0) {}
+	Message(MessageType type, uint8_t ctx): _type(type), _contextid(ctx), _undone(false), _refcount(0) {}
 	virtual ~Message() = default;
 	
 	/**
@@ -86,21 +86,48 @@ public:
 	 * @return message length in bytes
 	 */
 	int length() const { return 3 + payloadLength(); }
-	
+
 	/**
-	 * @brief Set the user ID of this message, if it has one.
+	 * @brief Get the user context ID of this message
 	 *
-	 * This is used to enforce proper origin IDs for drawing commands.
+	 * The ID is 0 for messages that are not related to any user
+	 * @return context ID or 0 if not applicable
+	 */
+	uint8_t contextId() const { return _contextid; }
+
+	/**
+	 * @brief Set the user ID of this message
 	 *
 	 * @param userid the new user id
 	 */
-	virtual void setOrigin(uint8_t userid) { }
+	void setContextId(uint8_t userid) { _contextid = userid; }
 
 	/**
 	 * @brief Does this command need operator privileges to issue?
 	 * @return true if user must be session operator to send this
 	 */
 	virtual bool isOpCommand() const { return false; }
+
+	/**
+	 * @brief Has this command been marked as undone?
+	 *
+	 * Note. This is a purely local flag that is not part of the
+	 * protocol. It is here so to avoid the need to maintain an
+	 * external undone action list.
+	 *
+	 * @return true if this message has been marked as undone
+	 */
+	bool isUndone() const { return _undone; }
+
+	/**
+	 * @brief Mark this message as undone
+	 *
+	 * Note. Not all messages are undoable. If function
+	 * does nothing if this message type doesn't support undoing.
+	 *
+	 * @param undone new undo flag state
+	 */
+	void setUndone(bool undone) { if(isUndone()) _undone = undone; }
 
 	/**
 	 * @brief Serialize this message
@@ -145,9 +172,17 @@ protected:
 	 */
 	virtual int serializePayload(uchar *data) const = 0;
 
+	/**
+	 * @brief Is this message type undoable?
+	 * @return true if this action can be undone
+	 */
+	virtual bool isUndoable() const { return false; }
+
 private:
 	const MessageType _type;
+	uint8_t _contextid; // this is part of the payload for those message types that have it
 
+	bool _undone;
 	int _refcount;
 };
 

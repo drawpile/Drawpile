@@ -36,16 +36,10 @@ namespace protocol {
 class AnnotationCreate : public Message {
 public:
 	AnnotationCreate(uint8_t ctx, uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
-		: Message(MSG_ANNOTATION_CREATE), _ctx(ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
+		: Message(MSG_ANNOTATION_CREATE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
 	static AnnotationCreate *deserialize(const uchar *data, uint len);
-
-	/**
-	 * @brief The context ID of the user who created this annotation
-	 * @return user id
-	 */
-	uint8_t contextId() const { return _ctx; }
 
 	/**
 	 * @brief The ID of the newly created annotation
@@ -56,7 +50,6 @@ public:
 	uint8_t id() const { return _id; }
 
 	void setId(uint8_t id) { _id = id; }
-	void setOrigin(uint8_t userid) { _ctx = userid; }
 
 	uint16_t x() const { return _x; }
 	uint16_t y() const { return _y; }
@@ -68,7 +61,6 @@ protected:
 	int serializePayload(uchar *data) const;
 
 private:
-	uint8_t _ctx;
 	uint8_t _id;
 	uint16_t _x;
 	uint16_t _y;
@@ -81,8 +73,8 @@ private:
  */
 class AnnotationReshape : public Message {
 public:
-	AnnotationReshape(uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
-		: Message(MSG_ANNOTATION_RESHAPE), _id(id), _x(x), _y(y), _w(w), _h(h)
+	AnnotationReshape(uint8_t ctx, uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
+		: Message(MSG_ANNOTATION_RESHAPE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
 	static AnnotationReshape *deserialize(const uchar *data, uint len);
@@ -110,11 +102,11 @@ private:
  */
 class AnnotationEdit : public Message {
 public:
-	AnnotationEdit(uint8_t id, uint32_t bg, const QByteArray &text)
-		: Message(MSG_ANNOTATION_EDIT), _id(id), _bg(bg), _text(text)
+	AnnotationEdit(uint8_t ctx, uint8_t id, uint32_t bg, const QByteArray &text)
+		: Message(MSG_ANNOTATION_EDIT, ctx), _id(id), _bg(bg), _text(text)
 	{}
-	AnnotationEdit(uint8_t id, uint32_t bg, const QString &text)
-		: AnnotationEdit(id, bg, text.toUtf8())
+	AnnotationEdit(uint8_t ctx, uint8_t id, uint32_t bg, const QString &text)
+		: AnnotationEdit(ctx, id, bg, text.toUtf8())
 	{}
 
 	static AnnotationEdit *deserialize(const uchar *data, uint len);
@@ -138,8 +130,8 @@ private:
  */
 class AnnotationDelete : public Message {
 public:
-	AnnotationDelete(uint8_t id)
-		: Message(MSG_ANNOTATION_DELETE), _id(id)
+	AnnotationDelete(uint8_t ctx, uint8_t id)
+		: Message(MSG_ANNOTATION_DELETE, ctx), _id(id)
 	{}
 
 	static AnnotationDelete *deserialize(const uchar *data, uint len);

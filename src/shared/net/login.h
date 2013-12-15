@@ -29,7 +29,7 @@ namespace protocol {
 
 class Login : public Message {
 public:
-	Login(const QByteArray &msg) : Message(MSG_LOGIN), _msg(msg) {}
+	Login(const QByteArray &msg) : Message(MSG_LOGIN, 0), _msg(msg) {}
 	Login(const QString &msg) : Login(msg.toUtf8()) {}
 
 	static Login *deserialize(const uchar *data, uint len);

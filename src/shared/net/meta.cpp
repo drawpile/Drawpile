@@ -34,9 +34,11 @@ UserJoin *UserJoin::deserialize(const uchar *data, uint len)
 
 int UserJoin::serializePayload(uchar *data) const
 {
-	*data = _id;
-	memcpy(data+1, _name.constData(), _name.length());
-	return 1 + _name.length();
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	memcpy(ptr, _name.constData(), _name.length());
+	ptr += _name.length();
+	return ptr - data;
 }
 
 int UserJoin::payloadLength() const
@@ -53,7 +55,7 @@ UserLeave *UserLeave::deserialize(const uchar *data, uint len)
 
 int UserLeave::serializePayload(uchar *data) const
 {
-	*data = _id;
+	*data = contextId();
 	return 1;
 }
 
@@ -71,49 +73,37 @@ UserAttr *UserAttr::deserialize(const uchar *data, uint len)
 
 int UserAttr::serializePayload(uchar *data) const
 {
-	*data = _id;
-	*(data+1) = _attrs;
-	return 2;
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	*(ptr++) = _attrs;
+	return ptr - data;
 }
 
 int UserAttr::payloadLength() const
 {
-	return 2;
-}
-
-Chat *Chat::deserialize(const uchar *data, uint len)
-{
-	if(len<2)
-		return 0;
-	return new Chat(*data, QByteArray((const char*)data+1, len-1));
-}
-
-int Chat::serializePayload(uchar *data) const
-{
-	*data = _user;
-	memcpy(data+1, _msg.constData(), _msg.length());
-	return 1 + _msg.length();
-}
-
-int Chat::payloadLength() const
-{
-	return 1 + _msg.length();
+	return 1 + 1;
 }
 
 SessionTitle *SessionTitle::deserialize(const uchar *data, uint len)
 {
-	return new SessionTitle(QByteArray((const char*)data, len));
+	if(len<1)
+		return 0;
+
+	return new SessionTitle(data[0], QByteArray((const char*)data+1, len-1));
 }
 
 int SessionTitle::serializePayload(uchar *data) const
 {
-	memcpy(data, _title.constData(), _title.length());
-	return _title.length();
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	memcpy(ptr, _title.constData(), _title.length());
+	ptr += _title.length();
+	return ptr - data;
 }
 
 int SessionTitle::payloadLength() const
 {
-	return _title.length();
+	return 1 + _title.length();
 }
 
 SessionConf *SessionConf::deserialize(const uchar *data, uint len)
@@ -135,6 +125,28 @@ int SessionConf::payloadLength() const
 {
 	return 2;
 }
+
+Chat *Chat::deserialize(const uchar *data, uint len)
+{
+	if(len<2)
+		return 0;
+	return new Chat(*data, QByteArray((const char*)data+1, len-1));
+}
+
+int Chat::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	memcpy(ptr, _msg.constData(), _msg.length());
+	ptr += _msg.length();
+	return ptr - data;
+}
+
+int Chat::payloadLength() const
+{
+	return 1 + _msg.length();
+}
+
 
 StreamPos *StreamPos::deserialize(const uchar *data, uint len)
 {

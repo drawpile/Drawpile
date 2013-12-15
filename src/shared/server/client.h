@@ -175,7 +175,7 @@ private:
 	void handleJoinSession(const QString &msg);
 	void handleSnapshotStart(const protocol::SnapshotMode &msg);
 
-	bool handleOperatorCommand(const QString &cmd);
+	bool handleOperatorCommand(uint8_t ctxid, const QString &cmd);
 
 	bool validateUsername(const QString &username);
 	void updateState(protocol::MessagePtr msg);
