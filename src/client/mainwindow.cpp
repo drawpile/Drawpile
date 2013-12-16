@@ -1362,7 +1362,7 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
 	logout->setEnabled(false);
 
-	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence(), true);
+	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence("Ctrl+L"), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
