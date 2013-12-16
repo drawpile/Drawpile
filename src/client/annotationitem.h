@@ -26,6 +26,16 @@
 
 namespace drawingboard {
 
+struct AnnotationState {
+	AnnotationState() {}
+	AnnotationState(int id) : id(id), bgcolor(Qt::transparent) {}
+
+	int id;
+	QRect rect;
+	QString text;
+	QColor bgcolor;
+};
+
 /**
  * @brief A text box that can be overlaid on the picture.
  *
@@ -40,9 +50,10 @@ class AnnotationItem : public QGraphicsObject {
 		enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
 
 		AnnotationItem(int id, QGraphicsItem *parent=0);
+		AnnotationItem(const AnnotationState &state, QGraphicsItem *parent=0);
 
 		//! Get the ID number of this annotation
-		int id() const { return id_; }
+		int id() const { return _state.id; }
 
 		//! Get the translation handle at the point
 		Handle handleAt(const QPoint &point) const;
@@ -66,13 +77,13 @@ class AnnotationItem : public QGraphicsObject {
 		void setText(const QString &text);
 
 		//! Get the annotation text
-		QString text() const { return _text.toHtml(); }
+		QString text() const { return _doc.toHtml(); }
 
 		//! Set the background color
 		void setBackgroundColor(const QColor &color);
 
 		//! Get the color of the background
-		const QColor& backgroundColor() const { return bgcol_; }
+		const QColor& backgroundColor() const { return _state.bgcolor; }
 
 		//! reimplementation
 		QRectF boundingRect() const;
@@ -83,19 +94,19 @@ class AnnotationItem : public QGraphicsObject {
 		//! Render this annotation onto a QImage
 		QImage toImage();
 
+		//! Get the state of the annotation
+		const AnnotationState &state() const;
+
 	protected:
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 	private:
 		void render(QPainter *painter, const QRectF& rect);
 
-		int id_;
-		QRect _rect;
-
-		QTextDocument _text;
-		QColor bgcol_;
-
-		bool _highlight, _showborder;
+		AnnotationState _state;
+		QTextDocument _doc;
+		bool _highlight;
+		bool _showborder;
 };
 
 }

@@ -109,6 +109,7 @@ void BrushBase::begin(const dpcore::Point& point, bool right)
 	if(!client().isLocalServer())
 		scene().startPreview(brush, point);
 
+	client().sendUndopoint();
 	client().sendToolChange(tctx);
 	client().sendStroke(point);
 }
@@ -174,6 +175,7 @@ void Line::end()
 		settings().getBrush(_swap)
 	};
 
+	client().sendUndopoint();
 	client().sendToolChange(tctx);
 	PointVector pv;
 	pv << _p1 << _p2;
@@ -210,6 +212,7 @@ void Rectangle::end()
 		settings().getBrush(_swap)
 	};
 
+	client().sendUndopoint();
 	client().sendToolChange(tctx);
 	PointVector pv;
 	pv << _p1;

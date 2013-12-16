@@ -41,6 +41,7 @@ namespace drawingboard {
 
 class StateTracker;
 class CanvasItem;
+class AnnotationState;
 class AnnotationItem;
 class SelectionItem;
 class Preview;
@@ -106,6 +107,9 @@ public:
 
 	//! Get all annotations
 	QList<AnnotationItem*> getAnnotations(bool onlyVisible=false) const;
+
+	//! Reset annotations
+	void setAnnotations(const QVector<AnnotationState> &annotations);
 
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return _showAnnotationBorders; }

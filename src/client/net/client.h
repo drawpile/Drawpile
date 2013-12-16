@@ -160,7 +160,8 @@ public slots:
 
 	// Undo/redo
 	void sendUndopoint();
-	void sendUndo(int actions, int override=0);
+	void sendUndo(int actions=1, int override=0);
+	void sendRedo(int actions=1, int override=0);
 
 	// Annotations
 	void sendAnnotationCreate(int id, const QRect &rect);

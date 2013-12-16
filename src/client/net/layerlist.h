@@ -81,6 +81,9 @@ public:
 	void updateLayerAcl(int id, bool locked, QList<uint8_t> exclusive);
 	void unlockAll();
 	
+	QVector<LayerListItem> getLayers() const { return _items; }
+	void setLayers(const QVector<LayerListItem> &items);
+
 signals:
 	void layerCreated(bool wasfirst);
 	void layerDeleted(int id, int idx);

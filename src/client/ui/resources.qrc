@@ -43,5 +43,7 @@
         <file>icons/select-rectangular.png</file>
         <file>icons/edit-copy.png</file>
         <file>icons/edit-paste.png</file>
+        <file>icons/edit-undo.png</file>
+        <file>icons/edit-redo.png</file>
     </qresource>
 </RCC>

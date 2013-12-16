@@ -343,6 +343,9 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		delete _layers.takeLast();
 	foreach(const Layer *l, savepoint->layers)
 		_layers.append(new Layer(*l));
+
+	// TODO mark only changed tiles as dirty
+	markDirty();
 }
 
 }

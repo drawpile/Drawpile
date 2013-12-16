@@ -27,11 +27,19 @@
 namespace drawingboard {
 
 AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
-	: QGraphicsObject(parent),
-	  id_(id),
-	  bgcol_(Qt::transparent),
-	  _highlight(false), _showborder(false)
+	: QGraphicsObject(parent), _state(id), _highlight(false), _showborder(false)
 {
+}
+
+AnnotationItem::AnnotationItem(const AnnotationState &state, QGraphicsItem *parent)
+	: QGraphicsObject(parent), _state(state), _highlight(false), _showborder(false)
+{
+	_doc.setHtml(state.text);
+}
+
+const AnnotationState &AnnotationItem::state() const
+{
+	return _state;
 }
 
 /**
@@ -39,26 +47,26 @@ AnnotationItem::AnnotationItem(int id, QGraphicsItem *parent)
  */
 AnnotationItem::Handle AnnotationItem::handleAt(const QPoint &point) const
 {
-	if(!_rect.contains(point))
+	if(!_state.rect.contains(point))
 		return OUTSIDE;
 
-	QPoint p = point - _rect.topLeft();
+	QPoint p = point - _state.rect.topLeft();
 
 	if(p.x() < HANDLE) {
 		if(p.y() < HANDLE)
 			return RS_TOPLEFT;
-		else if(p.y() > _rect.height()-HANDLE)
+		else if(p.y() > _state.rect.height()-HANDLE)
 			return RS_BOTTOMLEFT;
 		return RS_LEFT;
-	} else if(p.x() > _rect.width() - HANDLE) {
+	} else if(p.x() > _state.rect.width() - HANDLE) {
 		if(p.y() < HANDLE)
 			return RS_TOPRIGHT;
-		else if(p.y() > _rect.height()-HANDLE)
+		else if(p.y() > _state.rect.height()-HANDLE)
 			return RS_BOTTOMRIGHT;
 		return RS_RIGHT;
 	} else if(p.y() < HANDLE)
 		return RS_TOP;
-	else if(p.y() > _rect.height()-HANDLE)
+	else if(p.y() > _state.rect.height()-HANDLE)
 		return RS_BOTTOM;
 
 	return TRANSLATE;
@@ -69,19 +77,19 @@ void AnnotationItem::adjustGeometry(Handle handle, const QPoint &delta)
 	prepareGeometryChange();
 	switch(handle) {
 	case OUTSIDE: return;
-	case TRANSLATE: _rect.translate(delta); break;
-	case RS_TOPLEFT: _rect.adjust(delta.x(), delta.y(), 0, 0); break;
-	case RS_TOPRIGHT: _rect.adjust(0, delta.y(), delta.x(), 0); break;
-	case RS_BOTTOMRIGHT: _rect.adjust(0, 0, delta.x(), delta.y()); break;
-	case RS_BOTTOMLEFT: _rect.adjust(delta.x(), 0, 0, delta.y()); break;
-	case RS_TOP: _rect.adjust(0, delta.y(), 0, 0); break;
-	case RS_RIGHT: _rect.adjust(0, 0, delta.x(), 0); break;
-	case RS_BOTTOM: _rect.adjust(0, 0, 0, delta.y()); break;
-	case RS_LEFT: _rect.adjust(delta.x(), 0, 0, 0); break;
+	case TRANSLATE: _state.rect.translate(delta); break;
+	case RS_TOPLEFT: _state.rect.adjust(delta.x(), delta.y(), 0, 0); break;
+	case RS_TOPRIGHT: _state.rect.adjust(0, delta.y(), delta.x(), 0); break;
+	case RS_BOTTOMRIGHT: _state.rect.adjust(0, 0, delta.x(), delta.y()); break;
+	case RS_BOTTOMLEFT: _state.rect.adjust(delta.x(), 0, 0, delta.y()); break;
+	case RS_TOP: _state.rect.adjust(0, delta.y(), 0, 0); break;
+	case RS_RIGHT: _state.rect.adjust(0, 0, delta.x(), 0); break;
+	case RS_BOTTOM: _state.rect.adjust(0, 0, 0, delta.y()); break;
+	case RS_LEFT: _state.rect.adjust(delta.x(), 0, 0, 0); break;
 	}
 
-	if(_rect.left() > _rect.right() || _rect.top() > _rect.bottom())
-		_rect = _rect.normalized();
+	if(_state.rect.left() > _state.rect.right() || _state.rect.top() > _state.rect.bottom())
+		_state.rect = _state.rect.normalized();
 }
 
 
@@ -112,28 +120,29 @@ void AnnotationItem::setShowBorder(bool show)
 void AnnotationItem::setGeometry(const QRect &rect)
 {
 	prepareGeometryChange();
-	_rect = rect;
+	_state.rect = rect;
 }
 
 QRect AnnotationItem::geometry() const
 {
-	return _rect;
+	return _state.rect;
 }
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return QRectF(_rect);
+	return QRectF(geometry());
 }
 
 void AnnotationItem::setBackgroundColor(const QColor &color)
 {
-	bgcol_ = color;
+	_state.bgcolor = color;
 	update();
 }
 
 void AnnotationItem::setText(const QString &text)
 {
-	_text.setHtml(text);
+	_doc.setHtml(text);
+	_state.text = text;
 	update();
 }
 
@@ -144,12 +153,12 @@ void AnnotationItem::setText(const QString &text)
  */
 void AnnotationItem::render(QPainter *painter, const QRectF& rect)
 {
-	painter->fillRect(rect, bgcol_);
+	painter->fillRect(rect, _state.bgcolor);
 
 	painter->save();
 	painter->translate(rect.topLeft());
-	_text.setTextWidth(_rect.width());
-	_text.drawContents(painter, QRectF(QPointF(), rect.size()));
+	_doc.setTextWidth(_state.rect.width());
+	_doc.drawContents(painter, QRectF(QPointF(), rect.size()));
 	painter->restore();
 }
 
@@ -186,9 +195,9 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->save();
 	painter->setClipRect(boundingRect().adjusted(0, 0, 1, 1));
 
-	render(painter, _rect);
+	render(painter, _state.rect);
 
-	if(_showborder || _text.isEmpty()) {
+	if(_showborder || _doc.isEmpty()) {
 		QColor border = QApplication::palette().color(QPalette::Highlight);
 		border.setAlpha(255);
 
@@ -196,7 +205,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		bpen.setCosmetic(true);
 		bpen.setColor(border);
 		painter->setPen(bpen);
-		painter->drawRect(_rect);
+		painter->drawRect(_state.rect);
 
 		// Draw resizing handles
 		if(_highlight) {
@@ -204,16 +213,16 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 			pen.setCosmetic(true);
 			painter->setPen(pen);
 
-			drawTriangle(painter, RS_TOPLEFT, _rect.topLeft() + QPoint(2, 2));
-			drawTriangle(painter, RS_TOP, _rect.topLeft() + QPoint(_rect.width()/ 2 + 2, 2));
-			drawTriangle(painter, RS_TOPRIGHT, _rect.topRight() + QPoint(-2, 2));
+			drawTriangle(painter, RS_TOPLEFT, _state.rect.topLeft() + QPoint(2, 2));
+			drawTriangle(painter, RS_TOP, _state.rect.topLeft() + QPoint(_state.rect.width()/ 2 + 2, 2));
+			drawTriangle(painter, RS_TOPRIGHT, _state.rect.topRight() + QPoint(-2, 2));
 
-			drawTriangle(painter, RS_LEFT, _rect.center() - QPoint(_rect.width()/2 - 2, 0));
-			drawTriangle(painter, RS_RIGHT, _rect.center() + QPoint(_rect.width()/2 - 2, 0));
+			drawTriangle(painter, RS_LEFT, _state.rect.center() - QPoint(_state.rect.width()/2 - 2, 0));
+			drawTriangle(painter, RS_RIGHT, _state.rect.center() + QPoint(_state.rect.width()/2 - 2, 0));
 
-			drawTriangle(painter, RS_BOTTOMLEFT, _rect.bottomLeft() + QPoint(2, -2));
-			drawTriangle(painter, RS_BOTTOM, _rect.bottomLeft() + QPoint(_rect.width()/ 2 + 2, -2));
-			drawTriangle(painter, RS_BOTTOMRIGHT, _rect.bottomRight() + QPoint(-2, -2));
+			drawTriangle(painter, RS_BOTTOMLEFT, _state.rect.bottomLeft() + QPoint(2, -2));
+			drawTriangle(painter, RS_BOTTOM, _state.rect.bottomLeft() + QPoint(_state.rect.width()/ 2 + 2, -2));
+			drawTriangle(painter, RS_BOTTOMRIGHT, _state.rect.bottomRight() + QPoint(-2, -2));
 		}
 	}
 	painter->restore();
@@ -221,10 +230,10 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 QImage AnnotationItem::toImage()
 {
-	QImage img(_rect.size(), QImage::Format_ARGB32);
+	QImage img(_state.rect.size(), QImage::Format_ARGB32);
 	img.fill(0);
 	QPainter painter(&img);
-	render(&painter, QRect(QPoint(), _rect.size()));
+	render(&painter, QRect(QPoint(), _state.rect.size()));
 	return img;
 }
 

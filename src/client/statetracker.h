@@ -104,7 +104,7 @@ public:
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
-	void receiveCommand(protocol::MessagePtr msg, bool replay=false);
+	void receiveCommand(protocol::MessagePtr msg);
 
 	void endRemoteContexts();
 
@@ -125,8 +125,10 @@ signals:
 	void myLayerCreated(int);
 
 private:
+	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
+
 	// Layer related commands
-	void handleCanvasResize(const protocol::CanvasResize &cmd);
+	void handleCanvasResize(const protocol::CanvasResize &cmd, int pos);
 	void handleLayerCreate(const protocol::LayerCreate &cmd);
 	void handleLayerAttributes(const protocol::LayerAttributes &cmd);
 	void handleLayerTitle(const protocol::LayerRetitle &cmd);
@@ -140,10 +142,10 @@ private:
 	void handlePutImage(const protocol::PutImage &cmd);
 
 	// Undo/redo
-	void handleUndoPoint(const protocol::UndoPoint &cmd);
+	void handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos);
 	void handleUndo(protocol::Undo &cmd);
-	bool canMakeSavepoint() const;
-	void makeSavepoint();
+	bool canMakeSavepoint(int pos) const;
+	void makeSavepoint(int pos);
 	void revertSavepoint(const StateSavepoint *savepoint);
 
 	// Annotation related commands

@@ -83,7 +83,7 @@ penup 1
 # expected result: same as the shape above (_\)
 undo 1 -1
 
-# Test redo
+# Test redo again
 move 1 110 110
 move 1 200 200
 penup 1
@@ -92,14 +92,77 @@ undopoint 1
 move 1 200 200
 move 1 200 110
 penup 1
-undo 1 1
 
 undopoint 1
 move 1 200 200
 move 1 110 200
 penup 1
 # This should work, as the last two blocks are undone
-# expected result: bottom right pointing arrow shape
+# expected result: bottom right pointing arrow shape: _\|
+undo 1 1
 undo 1 1
 undo 1 -2
 
+# Third redo test. Redo, then continue
+undopoint 1
+move 1 210 110
+move 1 300 200
+penup 1
+
+undopoint 1
+move 1 300 200
+move 1 300 110
+penup 1
+
+undopoint 1
+move 1 300 200
+move 1 210 200
+penup 1
+
+# Undo the last two strokes, then redo the first (upward stroke)
+undo 1 2
+undo 1 -1
+
+# Make a stroke. Expected result is a triangle pointo north-east
+undopoint 1
+move 1 300 110
+move 1 210 110
+penup 1
+
+# Test redo sealing
+undopoint 1
+move 1 320 110
+penup 1
+
+undopoint 1
+move 1 340 110
+penup 1
+
+undopoint 1
+move 1 360 110
+penup 1
+
+undo 1 2
+
+# draw after undoing: this should branch the undo history
+undopoint 1
+move 1 380 110
+penup 1
+
+# expected result: 1 dot, two empty spaces, 1 dot
+undo 1 1
+undo 1 -1
+
+# Test undo after branch+undo+redo pair
+undopoint 1
+move 1 320 200
+penup 1
+
+undo 1 1
+
+undopoint 1
+move 1 340 200
+penup 1
+
+undo 1 1
+undo 1 -1

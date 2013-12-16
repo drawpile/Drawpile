@@ -5,6 +5,8 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * document-save
  * edit-copy
  * edit-paste
+ * edit-undo
+ * edit-redo
  * format-justify-center
  * format-justify-fill
  * format-justify-left

@@ -221,4 +221,11 @@ QStringList LayerMimeData::formats() const
 	return QStringList() << "image/png";
 }
 
+void LayerListModel::setLayers(const QVector<LayerListItem> &items)
+{
+	beginResetModel();
+	_items = items;
+	endResetModel();
+}
+
 }

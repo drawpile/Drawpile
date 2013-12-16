@@ -88,7 +88,7 @@ void LayerListDock::setClient(net::Client *client)
 	connect(_client->layerlist(), SIGNAL(layerCreated(bool)), this, SLOT(onLayerCreate(bool)));
 	connect(_client->layerlist(), SIGNAL(layerDeleted(int,int)), this, SLOT(onLayerDelete(int,int)));
 	connect(_client->layerlist(), SIGNAL(layersReordered()), this, SLOT(onLayerReorder()));
-
+	connect(_client->layerlist(), SIGNAL(modelReset()), this, SLOT(onLayerReorder()));
 	connect(client->layerlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 }

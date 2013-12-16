@@ -1276,20 +1276,29 @@ void MainWindow::setupActions()
 	//
 	// Edit menu
 	//
+	QAction *undo = makeAction("undo", "edit-undo", tr("&Undo"), tr("Undo changes"), QKeySequence::Undo);
+	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), tr("Redo undo changes"), QKeySequence::Redo);
 	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image onto the canvas"), QKeySequence::Paste);
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
 
+	_currentdoctools->addAction(undo);
+	_currentdoctools->addAction(redo);
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 
+	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
+	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
 	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
+	editmenu->addAction(undo);
+	editmenu->addAction(redo);
+	editmenu->addSeparator();
 	editmenu->addAction(copy);
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);

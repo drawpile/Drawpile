@@ -249,6 +249,11 @@ void Client::sendUndo(int actions, int override)
 	_server->sendMessage(MessagePtr(new protocol::Undo(_my_id, override, actions)));
 }
 
+void Client::sendRedo(int actions, int override)
+{
+	sendUndo(-actions, override);
+}
+
 void Client::sendAnnotationCreate(int id, const QRect &rect)
 {
 	Q_ASSERT(id>=0 && id < 256);

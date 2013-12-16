@@ -62,10 +62,16 @@ enum MessageType {
 	MSG_UNDO
 };
 
+enum MessageUndoState {
+	DONE   = 0x00, /* done/not undone */
+	UNDONE = 0x01, /* marked as undone, can be redone */
+	GONE   = 0x03  /* marked as undone, cannot be redone */
+};
+
 class Message {
 	friend class MessagePtr;
 public:
-	Message(MessageType type, uint8_t ctx): _type(type), _contextid(ctx), _undone(false), _refcount(0) {}
+	Message(MessageType type, uint8_t ctx): _type(type), _contextid(ctx), _undone(DONE), _refcount(0) {}
 	virtual ~Message() = default;
 	
 	/**
@@ -119,7 +125,7 @@ public:
 	 *
 	 * @return true if this message has been marked as undone
 	 */
-	bool isUndone() const { return _undone; }
+	MessageUndoState undoState() const { return _undone; }
 
 	/**
 	 * @brief Mark this message as undone
@@ -129,7 +135,7 @@ public:
 	 *
 	 * @param undone new undo flag state
 	 */
-	void setUndone(bool undone) { if(isUndoable()) _undone = undone; }
+	void setUndoState(MessageUndoState undo) { if(isUndoable()) _undone = undo; }
 
 	/**
 	 * @brief Serialize this message
@@ -187,7 +193,7 @@ private:
 	const MessageType _type;
 	uint8_t _contextid; // this is part of the payload for those message types that have it
 
-	bool _undone;
+	MessageUndoState _undone;
 	int _refcount;
 };
 

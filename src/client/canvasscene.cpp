@@ -240,6 +240,16 @@ QList<AnnotationItem*> CanvasScene::getAnnotations(bool onlyVisible) const
 	return annotations;
 }
 
+void CanvasScene::setAnnotations(const QVector<AnnotationState> &annotations)
+{
+	clearAnnotations();
+	foreach(const AnnotationState &a, annotations) {
+		AnnotationItem *i = new AnnotationItem(a);
+		i->setShowBorder(showAnnotationBorders());
+		addItem(i);
+	}
+}
+
 /**
  * The file format is determined from the name of the file
  * @param file file path

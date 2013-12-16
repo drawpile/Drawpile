@@ -50,6 +50,8 @@ struct StateSavepoint {
 	int streampointer;
 	dpcore::Savepoint *canvas;
 	QHash<int, DrawingContext> ctxstate;
+	QVector<net::LayerListItem> layermodel;
+	QVector<drawingboard::AnnotationState> annotations;
 };
 
 StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *parent)
@@ -70,21 +72,25 @@ StateTracker::~StateTracker()
 		delete _savepoints.takeLast();
 }
 
-void StateTracker::receiveCommand(protocol::MessagePtr msg, bool replay)
+void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
-	if(!replay) {
-		if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
-			qDebug() << "Message stream history size limit reached at" << _msgstream.lengthInBytes() / float(1024*1024) << "Mb. Clearing..";
-			_msgstream.hardCleanup(_msgstream_sizelimit);
-			_hassnapshot = false;
-		}
-		_msgstream.append(msg);
-	}
 
+	if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
+		qDebug() << "Message stream history size limit reached at" << _msgstream.lengthInBytes() / float(1024*1024) << "Mb. Clearing..";
+		_msgstream.hardCleanup(_msgstream_sizelimit);
+		_hassnapshot = false;
+	}
+	_msgstream.append(msg);
+	int pos = _msgstream.end() - 1;
+	handleCommand(msg, false, pos);
+}
+
+void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
+{
 	switch(msg->type()) {
 		using namespace protocol;
 		case MSG_CANVAS_RESIZE:
-			handleCanvasResize(msg.cast<CanvasResize>());
+			handleCanvasResize(msg.cast<CanvasResize>(), pos);
 			break;
 		case MSG_LAYER_CREATE:
 			handleLayerCreate(msg.cast<LayerCreate>());
@@ -114,7 +120,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg, bool replay)
 			handlePutImage(msg.cast<PutImage>());
 			break;
 		case MSG_UNDOPOINT:
-			handleUndoPoint(msg.cast<UndoPoint>());
+			handleUndoPoint(msg.cast<UndoPoint>(), replay, pos);
 			break;
 		case MSG_UNDO:
 			handleUndo(msg.cast<Undo>());
@@ -177,7 +183,7 @@ QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 	}
 }
 
-void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)
+void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos)
 {
 	if(_image->width()>0) {
 		// TODO support actual resizing
@@ -186,7 +192,7 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd)
 		_image->init(QSize(cmd.width(), cmd.height()));
 
 		// Generate the initial savepoint, just in case
-		makeSavepoint();
+		makeSavepoint(pos);
 	}
 }
 
@@ -316,49 +322,75 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
 }
 
-void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd)
+void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)
 {
-	Q_UNUSED(cmd);
-	makeSavepoint();
+	// New undo point. This branches the undo history. Since we store the
+	// commands in a linear sequence, this branching is represented by marking
+	// the unreachable commands as GONE.
+	if(!replay) {
+		int i = pos - 1; // skip the one just added
+		while(_msgstream.isValidIndex(i)) {
+			protocol::MessagePtr msg = _msgstream.at(i);
+			if(msg->contextId() == cmd.contextId()) {
+				// optimization: we can stop searching after finding the first GONE command
+				if(msg->type() != protocol::MSG_UNDO && msg->undoState() == protocol::GONE)
+					break;
+				else if(msg->undoState() == protocol::UNDONE)
+					msg->setUndoState(protocol::GONE);
+			}
+			--i;
+		}
+	}
+
+	// Make a new savepoint (if possible)
+	makeSavepoint(pos);
 }
 
 void StateTracker::handleUndo(protocol::Undo &cmd)
 {
+	// Undo/redo commands are never replayed, so start
+	// by marking it as unavailable.
+	cmd.setUndoState(protocol::GONE);
+
 	if(cmd.points()==0) {
 		qWarning() << "zero undo from user" << cmd.contextId();
 		return;
 	}
 
 	const uint8_t ctxid = cmd.effectiveId();
+	const bool undo = cmd.points()>0;
 	int actions = qAbs(cmd.points());
-	bool undo = cmd.points()>0;
 
-	// Step 1. Find undo point
+	// Step 1. Find undo or redo point
 	int pos = _msgstream.end();
-	while(actions>0 && _msgstream.isValidIndex(--pos)) {
-		protocol::MessagePtr msg = _msgstream.at(pos);
-		if(msg->type() == protocol::MSG_UNDOPOINT) {
-			const protocol::UndoPoint &up = msg.cast<protocol::UndoPoint>();
-			if(undo) {
-				if(up.contextId() == ctxid && !up.isUndone())
+	if(undo) {
+		// Search for undoable actions from the end of the
+		// command stream towards the beginning
+		while(actions>0 && _msgstream.isValidIndex(--pos)) {
+			protocol::MessagePtr msg = _msgstream.at(pos);
+			if(msg->type() == protocol::MSG_UNDOPOINT && msg->contextId() == ctxid) {
+				if(msg->undoState() == protocol::DONE)
 					--actions;
-			} else {
-				// Redo stops at first not-undone action
-				if(up.contextId() == ctxid) {
-					if(up.isUndone())
-						--actions;
-					else {
-						qWarning() << "reached non-undone point by user" << cmd.contextId() << "but we were still looking for another" << actions;
-						if(actions == -cmd.points()) {
-							qWarning() << "...nothing to redo";
-							return;
-						}
-						actions = 0;
-					}
-
-				}
 			}
 		}
+	} else {
+		// Find the start of the undo sequence
+		int redostart = pos;
+		while(_msgstream.isValidIndex(--pos)) {
+			protocol::MessagePtr msg = _msgstream.at(pos);
+			if(msg->type() == protocol::MSG_UNDOPOINT && msg->contextId() == ctxid) {
+				if(msg->undoState() != protocol::DONE)
+					redostart = pos;
+				else
+					break;
+			}
+		}
+
+		if(redostart == _msgstream.end()) {
+			qWarning() << "nothing to redo for user" << cmd.contextId();
+			return;
+		}
+		pos = redostart;
 	}
 
 	if(!_msgstream.isValidIndex(pos)) {
@@ -383,17 +415,29 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	}
 
 	// Step 3. (Un)mark all actions by the user as undone
-	for(int i=pos;i<_msgstream.end();++i) {
-		if(_msgstream.at(i)->contextId() == ctxid) {
-			// Don't unmark UNDOs, otherwise we end up in an infinite loop
-			if(undo || _msgstream.at(i)->type() != protocol::MSG_UNDO)
-				_msgstream.at(i)->setUndone(undo);
+	if(undo) {
+		for(int i=pos;i<_msgstream.end();++i) {
+			protocol::MessagePtr msg = _msgstream.at(i);
+			if(msg->contextId() == ctxid)
+				msg->setUndoState(protocol::MessageUndoState(protocol::UNDONE | msg->undoState()));
+		}
+	} else {
+		int i=pos;
+		++actions;
+		while(i<_msgstream.end()) {
+			protocol::MessagePtr msg = _msgstream.at(i);
+			if(msg->contextId() == ctxid) {
+				if(msg->type() == protocol::MSG_UNDOPOINT && msg->undoState() != protocol::GONE)
+					if(--actions==0)
+						break;
+
+				// GONE messages cannot be redone
+				if(msg->undoState() == protocol::UNDONE)
+					msg->setUndoState(protocol::DONE);
+			}
+			++i;
 		}
 	}
-
-	// The redo action must be marked as undone to avoid looping
-	if(!undo)
-		cmd.setUndone(true);
 
 	// Step 4. Revert to savepoint
 	revertSavepoint(savepoint);
@@ -402,8 +446,9 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	// Step 5. Replay commands, excluding undone actions
 	pos = savepoint->streampointer + 1;
 	while(pos < _msgstream.end()) {
-		if(!_msgstream.at(pos)->isUndone())
-			receiveCommand(_msgstream.at(pos), true);
+		if(_msgstream.at(pos)->undoState() == protocol::DONE) {
+			handleCommand(_msgstream.at(pos), true, pos);
+		}
 		++pos;
 	}
 }
@@ -417,7 +462,7 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
  * - Sufficient time must have elapsed since last savepoint
  * @return
  */
-bool StateTracker::canMakeSavepoint() const
+bool StateTracker::canMakeSavepoint(int pos) const
 {
 	// Make sure there is something in the message stream buffer
 	if(_msgstream.end() <= _msgstream.offset())
@@ -441,15 +486,21 @@ bool StateTracker::canMakeSavepoint() const
 	return true;
 }
 
-void StateTracker::makeSavepoint()
+void StateTracker::makeSavepoint(int pos)
 {
-	if(canMakeSavepoint()) {
-		qDebug() << "making savepoint";
+	if(canMakeSavepoint(pos)) {
+		qDebug() << "making savepoint" << pos;
 		StateSavepoint *savepoint = new StateSavepoint;
 		savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
-		savepoint->streampointer = _msgstream.end() - 1;
+		savepoint->streampointer = pos;
 		savepoint->canvas = _image->makeSavepoint();
 		savepoint->ctxstate = _contexts;
+		savepoint->layermodel = _layerlist->getLayers();
+
+		QList<drawingboard::AnnotationItem*> annotations = _scene->getAnnotations();
+		savepoint->annotations.reserve(annotations.size());
+		foreach(const drawingboard::AnnotationItem *a, annotations)
+			savepoint->annotations.append(a->state());
 
 		_savepoints.append(savepoint);
 	}
@@ -461,6 +512,8 @@ void StateTracker::revertSavepoint(const StateSavepoint *savepoint)
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
+	_layerlist->setLayers(savepoint->layermodel);
+	_scene->setAnnotations(savepoint->annotations);
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
