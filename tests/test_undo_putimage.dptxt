@@ -1,0 +1,28 @@
+# Test annotation interaction with undo
+# Annotations are currently not undoable, but they are still
+# part of the command stream
+
+resize 1 300 300
+newlayer 1 1 #ffffffff Undo test
+
+ctx 1 layer=1 colorh=#ff0000 sizeh=1
+
+undopoint 1
+putimage 1 1 64 64 blend test.png
+
+undopoint 1
+move 1 64 64
+move 1 128 128
+penup 1
+move 1 128 64
+move 1 64 128
+penup 1
+
+undopoint 1
+putimage 1 1 64 64 test.png
+
+undo 1 1
+
+# Expected result: image with a cross drawn over it
+# Wrong result: image that has overwritten the canvas
+

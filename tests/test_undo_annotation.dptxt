@@ -22,3 +22,11 @@ reshapeannotation 1 1 100 10 100 100
 undo 1 1
 # expected result: diagonal line is undone, annotation has moved to 100x10
 # and no new annotation has been created
+
+# Annotation deletion in undoable
+undopoint 1
+deleteannotation 1 1
+
+undo 1 1
+# expected result: annotation was not deleted
+

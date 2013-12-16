@@ -342,6 +342,7 @@ void Selection::begin(const dpcore::Point &point, bool right)
 				}
 
 				// Merge image
+				client().sendUndopoint();
 				client().sendImage(layer(), rect.x() + xoff, rect.y() + yoff, image, true);
 			}
 			scene().setSelectionItem(0);

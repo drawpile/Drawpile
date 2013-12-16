@@ -646,6 +646,7 @@ void AnnotationSettings::removeAnnotation()
 {
 	Q_ASSERT(selected());
 	Q_ASSERT(_client);
+	_client->sendUndopoint();
 	_client->sendAnnotationDelete(selected());
 	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }
@@ -658,8 +659,10 @@ void AnnotationSettings::bake()
 
 	QImage img = _selection->toImage();
 	int layer = _layerlist->currentLayer();
+	_client->sendUndopoint();
 	_client->sendImage(layer, _selection->geometry().x(), _selection->geometry().y(), img, true);
-	removeAnnotation();
+	_client->sendAnnotationDelete(selected());
+	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title)
