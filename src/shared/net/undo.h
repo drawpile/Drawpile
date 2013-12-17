@@ -26,6 +26,18 @@
 namespace protocol {
 
 /**
+ * @brief The minimum number of undo points clients must store
+ *
+ * To ensure undo works on all clients, each must keep at least this
+ * many undo points in their command history.
+ *
+ * Note. This number is part of the protocol! Increasing it will break
+ * compatibility with previous clients, as they may not store enough
+ * history the perform an undo!
+ */
+static const int UNDO_HISTORY_LIMIT = 30;
+
+/**
  * @brief Undo demarcation point
  *
  */

@@ -74,12 +74,49 @@ StateTracker::~StateTracker()
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
 {
-
+	// Cleanup
 	if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
-		qDebug() << "Message stream history size limit reached at" << _msgstream.lengthInBytes() / float(1024*1024) << "Mb. Clearing..";
-		_msgstream.hardCleanup(_msgstream_sizelimit);
+		uint oldlen = _msgstream.lengthInBytes();
+		qDebug() << "Message stream history size limit reached at" << oldlen / float(1024*1024) << "Mb. Clearing..";
+		_msgstream.hardCleanup(_msgstream_sizelimit / 2);
+		qDebug() << "Released" << (oldlen-_msgstream.lengthInBytes()) / float(1024*1024) << "Mb.";
 		_hassnapshot = false;
+
+		// Clear out old savepoints
+		// First, find the oldest undo point in the stream
+		int undopoint = _msgstream.offset();
+		while(undopoint<_msgstream.end()) {
+			if(_msgstream.at(undopoint)->type() == protocol::MSG_UNDOPOINT)
+				break;
+			++undopoint;
+		}
+
+		if(undopoint == _msgstream.end()) {
+			qWarning() << "no undo point found after cleaning history!";
+		} else {
+			// Find the newest savepoint older or same age as the undo point
+			int savepoint=0;
+			while(savepoint < _savepoints.count()) {
+				if(_savepoints[savepoint]->streampointer > undopoint) {
+					--savepoint;
+					break;
+				}
+				++savepoint;
+			}
+
+			// Remove redundant save points
+			Q_ASSERT(savepoint>=0);
+			if(savepoint<0) {
+				qWarning() << "no savepoint for undo point" << undopoint << "after cleanup!";
+			} else {
+				qDebug() << "removing" << savepoint << "redundant save points out of" << _savepoints.count();
+				while(savepoint--)
+					delete _savepoints.takeFirst();
+			}
+		}
 	}
+
+	// Add command to history and execute it
 	_msgstream.append(msg);
 	int pos = _msgstream.end() - 1;
 	handleCommand(msg, false, pos);

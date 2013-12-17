@@ -23,6 +23,7 @@
 
 #include "messagestream.h"
 #include "snapshot.h"
+#include "undo.h"
 
 namespace protocol {
 
@@ -79,8 +80,20 @@ int MessageStream::cleanup()
 
 void MessageStream::hardCleanup(uint sizelimit)
 {
-	while(lengthInBytes() > sizelimit) {
-		_messages.removeFirst();
+	// First, find the index of the last protected undo point
+	int undo_point = _offset;
+	int undo_points = 0;
+	for(int i=end()-1;i>=offset() && undo_points<UNDO_HISTORY_LIMIT;--i) {
+		if(at(i)->type() == MSG_UNDOPOINT) {
+			undo_point = i;
+			++undo_points;
+		}
+	}
+
+	// Remove messages until size limit or protected undo point is reached
+	while(_bytes > sizelimit && _offset < undo_point) {
+		_bytes -= _messages.takeFirst()->length();
+		++_offset;
 	}
 }
 
