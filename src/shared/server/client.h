@@ -31,6 +31,7 @@ namespace protocol {
 	class MessageQueue;
 	class Login;
 	class SnapshotMode;
+	class Undo;
 }
 
 namespace server {
@@ -176,6 +177,8 @@ private:
 	void handleSnapshotStart(const protocol::SnapshotMode &msg);
 
 	bool handleOperatorCommand(uint8_t ctxid, const QString &cmd);
+	void handleUndoPoint();
+	bool handleUndoCommand(protocol::Undo &undo);
 
 	bool validateUsername(const QString &username);
 	void updateState(protocol::MessagePtr msg);

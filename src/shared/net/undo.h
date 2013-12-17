@@ -69,17 +69,11 @@ public:
 	 * @brief override user ID
 	 *
 	 * This is used by session operators to undo actions by other
-	 * users. This is normally set to zero when undoing one's own actions.
+	 * users. This should be zero when undoing one's own actions.
 	 *
 	 * @return context id
 	 */
 	uint8_t overrideId() const { return _override; }
-
-	/**
-	 * @brief Get the effective user ID of this undo command
-	 * @return either override ID or normal context ID
-	 */
-	uint8_t effectiveId() const { return _override ? _override : contextId(); }
 
 	/**
 	 * @brief number of actions to undo/redo
@@ -91,6 +85,8 @@ public:
 	 * @return points
 	 */
 	int8_t points() const { return _points; }
+
+	void setPoints(int8_t points) { _points = points; }
 
 protected:
 	int payloadLength() const;

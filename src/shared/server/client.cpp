@@ -35,6 +35,7 @@
 #include "../net/meta.h"
 #include "../net/pen.h"
 #include "../net/snapshot.h"
+#include "../net/undo.h"
 
 namespace server {
 
@@ -353,6 +354,15 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_ANNOTATION_DELETE:
 		// drop message if annotation didn't exist
 		if(!_server->session().deleteAnnotation(msg.cast<AnnotationDelete>().id()))
+			return;
+		break;
+	case MSG_UNDOPOINT:
+		// keep track of undo points
+		handleUndoPoint();
+		break;
+	case MSG_UNDO:
+		// validate undo command
+		if(!handleUndoCommand(msg.cast<Undo>()))
 			return;
 		break;
 	case MSG_CHAT:
@@ -725,6 +735,130 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 	}
 
 	return false;
+}
+
+void Client::handleUndoPoint()
+{
+	// New undo point. This branches the undo history. Since we store the
+	// commands in a linear sequence, this branching is represented by marking
+	// the unreachable UndoPoints as GONE.
+	int pos = _server->mainstream().end() - 1;
+	int limit = protocol::UNDO_HISTORY_LIMIT;
+	while(_server->mainstream().isValidIndex(pos) && limit>0) {
+		protocol::MessagePtr msg = _server->mainstream().at(pos);
+		if(msg->type() == protocol::MSG_UNDOPOINT) {
+			--limit;
+			if(msg->contextId() == _id) {
+				// optimization: we can stop searching after finding the first GONE point
+				if(msg->undoState() == protocol::GONE)
+					break;
+				else if(msg->undoState() == protocol::UNDONE)
+					msg->setUndoState(protocol::GONE);
+			}
+		}
+		--pos;
+	}
+}
+
+bool Client::handleUndoCommand(protocol::Undo &undo)
+{
+	// First check if user context override is used
+	if(undo.overrideId()) {
+		// only operators are allowed to undo other users' actions
+		if(!isOperator())
+			return false;
+
+		undo.setContextId(undo.overrideId());
+	}
+
+	// Undo history is limited to last UNDO_HISTORY_LIMIT undopoints
+	// or the latest snapshot point, whichever comes first
+	// Clients usually store more than that, but to ensure a consistent
+	// experience, we enforce the limit here.
+
+	if(undo.points()>0) {
+		// Undo mode: iterator towards the beginning of the history,
+		// marking not-undone UndoPoints as undone.
+		int limit = protocol::UNDO_HISTORY_LIMIT;
+		int pos = _server->mainstream().end()-1;
+		int points = 0;
+		while(limit>0 && points<undo.points() && _server->mainstream().isValidIndex(pos)) {
+			MessagePtr msg = _server->mainstream().at(pos);
+
+			if(msg->type() == protocol::MSG_SNAPSHOT)
+				break;
+
+			if(msg->type() == protocol::MSG_UNDOPOINT) {
+				--limit;
+				if(msg->contextId() == undo.contextId() && msg->undoState()==protocol::DONE) {
+					msg->setUndoState(protocol::UNDONE);
+					++points;
+				}
+			}
+			--pos;
+		}
+
+		// Did we undo anything?
+		if(points==0)
+			return false;
+
+		// Number of undoable actions may be less than expected, but undo what we got.
+		qDebug() << "UNDOING" << points << "ORIGINAL WAS" << undo.points();
+		undo.setPoints(points);
+		return true;
+	} else if(undo.points()<0) {
+		// Redo mode: find the start of the latest undo sequence, then mark
+		// (points) UndoPoints as redone.
+		int redostart = _server->mainstream().end();
+		int limit = protocol::UNDO_HISTORY_LIMIT;
+		int pos = _server->mainstream().end();
+		while(_server->mainstream().isValidIndex(--pos) && limit>0) {
+			protocol::MessagePtr msg = _server->mainstream().at(pos);
+			if(msg->type() == protocol::MSG_UNDOPOINT) {
+				--limit;
+				if(msg->contextId() == undo.contextId()) {
+					if(msg->undoState() != protocol::DONE)
+						redostart = pos;
+					else
+						break;
+				}
+			}
+		}
+
+		// There may be nothing to redo
+		if(redostart == _server->mainstream().end())
+			return false;
+
+		pos = redostart;
+
+		// Mark undone actions as done again
+		int actions = -undo.points() + 1;
+		int points = 0;
+		while(pos < _server->mainstream().end()) {
+			protocol::MessagePtr msg = _server->mainstream().at(pos);
+			if(msg->contextId() == undo.contextId() && msg->type() == protocol::MSG_UNDOPOINT) {
+				if(msg->undoState() == protocol::UNDONE) {
+					if(--actions==0)
+						break;
+
+					msg->setUndoState(protocol::DONE);
+					++points;
+				}
+			}
+			++pos;
+		}
+
+		// Did we redo anything
+		if(points==0)
+			return false;
+
+		qDebug() << "REDOING" << points << "ORIGINAL WAS" << -undo.points();
+		undo.setPoints(-points);
+		return true;
+	} else {
+		// points==0 is invalid
+		return false;
+	}
 }
 
 }

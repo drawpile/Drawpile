@@ -394,7 +394,7 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 		return;
 	}
 
-	const uint8_t ctxid = cmd.effectiveId();
+	const uint8_t ctxid = cmd.contextId();
 	const bool undo = cmd.points()>0;
 	int actions = qAbs(cmd.points());
 
