@@ -657,6 +657,8 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 	 * /lock <user>    - lock the given user
 	 * /unlock <user>  - unlock the given user
 	 * /kick <user>    - kick the user off the server
+	 * /op <user>      - grant operator privileges to user
+	 * /deop <user>    - remove operator privileges from user
 	 * /lock           - lock the whole board
 	 * /unlock         - unlock the board
 	 * /close          - prevent further logins
@@ -688,6 +690,23 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 		Client *c = _server->getClientById(tokens[1].toInt(&ok));
 		if(c && ok) {
 			c->kick(_id); // TODO inform of the reason
+			return true;
+		}
+	} else if(tokens[0] == "/op" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			if(!c->isOperator())
+				c->grantOp();
+			return true;
+		}
+	} else if(tokens[0] == "/deop" && tokens.count()==2) {
+		bool ok;
+		Client *c = _server->getClientById(tokens[1].toInt(&ok));
+		if(c && ok) {
+			// can't deop self
+			if(c->id() != _id && c->isOperator())
+				c->deOp();
 			return true;
 		}
 	} else if(tokens[0] == "/lock" && tokens.count()==1) {
