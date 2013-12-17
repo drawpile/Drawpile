@@ -88,6 +88,12 @@ public:
 
 	void setPoints(int8_t points) { _points = points; }
 
+	/**
+	 * @brief Undo command requires operator privileges if the override field is set
+	 * @return true if override field is set
+	 */
+	bool isOpCommand() const { return _override!=0; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;

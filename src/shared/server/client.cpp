@@ -764,10 +764,6 @@ bool Client::handleUndoCommand(protocol::Undo &undo)
 {
 	// First check if user context override is used
 	if(undo.overrideId()) {
-		// only operators are allowed to undo other users' actions
-		if(!isOperator())
-			return false;
-
 		undo.setContextId(undo.overrideId());
 	}
 

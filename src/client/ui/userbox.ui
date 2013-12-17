@@ -35,6 +35,23 @@
       <number>3</number>
      </property>
      <item>
+      <widget class="QToolButton" name="undoButton">
+       <property name="toolTip">
+        <string>Undo changes by selected user</string>
+       </property>
+       <property name="text">
+        <string>U</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>

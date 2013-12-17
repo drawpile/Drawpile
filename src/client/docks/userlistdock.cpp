@@ -45,12 +45,14 @@ UserList::UserList(QWidget *parent)
 
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 	connect(_ui->kickButton, SIGNAL(clicked()), this, SLOT(kickSelected()));
+	connect(_ui->undoButton, SIGNAL(clicked()), this, SLOT(undoSelected()));
 }
 
 void UserList::setOperatorMode(bool op)
 {
 	_ui->lockButton->setEnabled(op);
 	_ui->kickButton->setEnabled(op);
+	_ui->undoButton->setEnabled(op);
 }
 
 void UserList::setClient(net::Client *client)
@@ -83,6 +85,13 @@ void UserList::kickSelected()
 	QModelIndex idx = currentSelection();
 	if(idx.isValid())
 		_client->sendKickUser(idx.data().value<net::User>().id);
+}
+
+void UserList::undoSelected()
+{
+	QModelIndex idx = currentSelection();
+	if(idx.isValid())
+		_client->sendUndo(1, idx.data().value<net::User>().id);
 }
 
 void UserList::selectionChanged(const QItemSelection &selected)
