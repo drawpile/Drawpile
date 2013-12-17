@@ -210,8 +210,10 @@ void LayerListDock::deleteSelected()
 	box.exec();
 
 	QAbstractButton *choice = box.clickedButton();
-	if(choice != cancel)
+	if(choice != cancel) {
+		_client->sendUndopoint();
 		_client->sendDeleteLayer(layer.id, choice==merge);
+	}
 }
 
 /**

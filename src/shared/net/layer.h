@@ -202,6 +202,7 @@ public:
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	bool isUndoable() const { return true; }
 
 private:
 	uint8_t _id;
