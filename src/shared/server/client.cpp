@@ -803,7 +803,6 @@ bool Client::handleUndoCommand(protocol::Undo &undo)
 			return false;
 
 		// Number of undoable actions may be less than expected, but undo what we got.
-		qDebug() << "UNDOING" << points << "ORIGINAL WAS" << undo.points();
 		undo.setPoints(points);
 		return true;
 	} else if(undo.points()<0) {
@@ -852,7 +851,6 @@ bool Client::handleUndoCommand(protocol::Undo &undo)
 		if(points==0)
 			return false;
 
-		qDebug() << "REDOING" << points << "ORIGINAL WAS" << -undo.points();
 		undo.setPoints(-points);
 		return true;
 	} else {

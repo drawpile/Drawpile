@@ -479,7 +479,6 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	// Step 4. Revert to savepoint
 	revertSavepoint(savepoint);
 
-	qDebug() << "reverted to" << savepoint->streampointer + 1 << "of" << _msgstream.end();
 	// Step 5. Replay commands, excluding undone actions
 	pos = savepoint->streampointer + 1;
 	while(pos < _msgstream.end()) {
@@ -526,7 +525,6 @@ bool StateTracker::canMakeSavepoint(int pos) const
 void StateTracker::makeSavepoint(int pos)
 {
 	if(canMakeSavepoint(pos)) {
-		qDebug() << "making savepoint" << pos;
 		StateSavepoint *savepoint = new StateSavepoint;
 		savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
 		savepoint->streampointer = pos;
