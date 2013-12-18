@@ -589,13 +589,25 @@ bool MainWindow::confirmFlatten(QString& file) const
  */
 bool MainWindow::save()
 {
+	QFileInfo filename(filename_);
 	if(filename_.isEmpty()) {
 		return saveas();
 	} else {
-		if(QFileInfo(filename_).suffix() != "ora" && _canvas->needSaveOra()) {
+		QString suffix = QFileInfo(filename_).suffix().toLower();
+
+		// Check if suffix is one of the supported formats
+		// If not, we need to ask for a new file name
+		if(suffix != "ora" && suffix != "png" && suffix != "jpeg" && suffix != "jpg" && suffix!="bmp") {
+			return saveas();
+		}
+
+		// Check if features that need OpenRaster format are used
+		if(suffix != "ora" && _canvas->needSaveOra()) {
 			if(confirmFlatten(filename_)==false)
 				return false;
 		}
+
+		// Overwrite current file
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 		bool saved = _canvas->save(filename_);
 		QApplication::restoreOverrideCursor();
