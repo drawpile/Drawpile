@@ -20,7 +20,6 @@
 #include <QDebug>
 #include <QTimer>
 #include <QApplication>
-#include <QClipboard>
 #include <QPainter>
 
 #include "canvasscene.h"
@@ -168,10 +167,10 @@ QImage CanvasScene::image() const
 	return image;
 }
 
-void CanvasScene::copyToClipboard(int layerId)
+QImage CanvasScene::selectionToImage(int layerId)
 {
 	if(!hasImage())
-		return;
+		return QImage();
 
 	QImage img;
 
@@ -184,16 +183,12 @@ void CanvasScene::copyToClipboard(int layerId)
 	if(_selection)
 		img = img.copy(_selection->rect().intersected(QRect(0, 0, width(), height())));
 
-	QApplication::clipboard()->setImage(img);
+	return img;
 }
 
-void CanvasScene::pasteFromClipboard()
+void CanvasScene::pasteFromImage(const QImage &image)
 {
 	Q_ASSERT(hasImage());
-
-	QImage img = QApplication::clipboard()->image();
-	if(img.isNull())
-		return;
 
 	QPoint center;
 	if(_selection)
@@ -202,8 +197,8 @@ void CanvasScene::pasteFromClipboard()
 		center = QPoint(width()/2, height()/2);
 
 	SelectionItem *paste = new SelectionItem();
-	paste->setRect(QRect(QPoint(center.x() - img.width()/2, center.y() - img.height()/2), img.size()));
-	paste->setPasteImage(img);
+	paste->setRect(QRect(QPoint(center.x() - image.width()/2, center.y() - image.height()/2), image.size()));
+	paste->setPasteImage(image);
 
 	setSelectionItem(paste);
 }

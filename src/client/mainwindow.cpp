@@ -1124,27 +1124,65 @@ void MainWindow::eraserNear(bool near)
 
 void MainWindow::copyLayer()
 {
-	_canvas->copyToClipboard(_layerlist->currentLayer());
+	QImage img = _canvas->selectionToImage(_layerlist->currentLayer());
+	QApplication::clipboard()->setImage(img);
 }
 
 void MainWindow::copyVisible()
 {
-	_canvas->copyToClipboard(0);
+	QImage img = _canvas->selectionToImage(0);
+	QApplication::clipboard()->setImage(img);
 }
 
 void MainWindow::paste()
 {
+	QImage img = QApplication::clipboard()->image();
+	if(img.isNull())
+		return;
+
 	getAction("toolselectrect")->trigger();
 	if(_canvas->hasImage()) {
-		_canvas->pasteFromClipboard();
+		_canvas->pasteFromImage(img);
 	} else {
 		// Canvas not yet initialized? Initialize with clipboard content
-		QImage image = QApplication::clipboard()->image();
-		if(image.isNull())
-			return;
-
-		QImageCanvasLoader loader(image);
+		QImageCanvasLoader loader(img);
 		loadDocument(loader);
+	}
+}
+
+void MainWindow::pasteFile()
+{
+	// Get a list of supported formats
+	QString formats;
+	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
+		formats += "*." + format + " ";
+	}
+	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
+
+	// Get the file name to open
+	const QString file = QFileDialog::getOpenFileName(this,
+			tr("Paste image"), lastpath_, filter);
+
+	// Open the file if it was selected
+	if(file.isEmpty()==false) {
+		const QFileInfo info(file);
+		lastpath_ = info.absolutePath();
+
+		QImage img(file);
+		if(img.isNull()) {
+			showErrorMessage(tr("The image could not be loaded"));
+			return;
+		}
+
+		// Paste the image
+		getAction("toolselectrect")->trigger();
+		if(_canvas->hasImage()) {
+			_canvas->pasteFromImage(img);
+		} else {
+			// Canvas not yet initialized? Initialize with clipboard content
+			QImageCanvasLoader loader(img);
+			loadDocument(loader);
+		}
 	}
 }
 
@@ -1264,7 +1302,7 @@ void MainWindow::setupActions()
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
 	filemenu->addAction(newdocument);
 	filemenu->addAction(open);
-	_recent = filemenu->addMenu(tr("Open recent"));
+	_recent = filemenu->addMenu(tr("Open &recent"));
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
 	filemenu->addSeparator();
@@ -1291,7 +1329,8 @@ void MainWindow::setupActions()
 	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), tr("Redo undo changes"), QKeySequence::Redo);
 	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
-	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image onto the canvas"), QKeySequence::Paste);
+	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image from the clipboard onto the canvas"), QKeySequence::Paste);
+	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file"), tr("Paste an image from a file onto the canvas"));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
 
 	_currentdoctools->addAction(undo);
@@ -1304,6 +1343,7 @@ void MainWindow::setupActions()
 	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
+	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
@@ -1313,6 +1353,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(copy);
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
+	editmenu->addAction(pastefile);
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 

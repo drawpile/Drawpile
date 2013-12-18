@@ -75,17 +75,17 @@ public:
 	QImage image() const;
 
 	/**
-	 * @brief Copy the current selection to the clipboard
+	 * @brief Get the current selection as an image
 	 *
 	 * If there is no selection, the whole canvas is copied
 	 * If a valid layer ID is provided, only the contents of that layer is copied.
 	 *
 	 * @param layer layer ID
 	 */
-	void copyToClipboard(int layer);
+	QImage selectionToImage(int layer);
 
 	//! Create a new selection and paste an image from the clipboard
-	void pasteFromClipboard();
+	void pasteFromImage(const QImage &image);
 
 	//! Save the canvas to a file
 	bool save(const QString& filename) const;
