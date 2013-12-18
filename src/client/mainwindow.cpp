@@ -234,7 +234,7 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 		QApplication::restoreOverrideCursor();
 		if(win != this)
 			delete win;
-		showErrorMessage(tr("An error occured while trying to open image"), loader.errorMessage());
+		showErrorMessage(loader.errorMessage());
 		return 0;
 	}
 
