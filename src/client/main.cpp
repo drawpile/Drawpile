@@ -18,6 +18,8 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QStandardPaths>
+#include <QDebug>
 #include <QApplication>
 #include <QSettings>
 #include <QUrl>
@@ -54,33 +56,12 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 QSettings& DrawPileApp::getSettings()
 {
-#if 0 /*def Q_WS_WIN*/
-	// QColor serialization seems to be broken currently when using IniFormat on windows
-	// Use .ini files on windows
-	static QSettings cfg(QSettings::IniFormat, QSettings::UserScope,
-			organizationName(), applicationName());
-#endif
-	// And native files on other platforms. (ie. .ini on UNIX, XML on Mac)
 	static QSettings cfg;
 
 	while(cfg.group().isEmpty()==false)
 		cfg.endGroup();
 
 	return cfg;
-}
-
-/**
- * Get the location of configuration files.
- * @return path to configuration directory
- */
-QString DrawPileApp::getConfDir()
-{
-	// TODO Location on MacOS
-#ifdef WIN32
-	return QString("%1\\DrawPile\\").arg(getenv("APPDATA"));
-#else
-	return QString("%1/.config/DrawPile/").arg(getenv("HOME"));
-#endif
 }
 
 /**

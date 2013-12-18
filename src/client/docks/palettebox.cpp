@@ -18,6 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
+#include <QStandardPaths>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QDebug>
@@ -50,19 +51,25 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	ui_->palettelist->setCompleter(0);
 
 	// Load palettes
-	QDir confdir(DrawPileApp::getConfDir());
-	QFileInfoList pfiles = confdir.entryInfoList(
-			QStringList("*.gpl"),
-			QDir::Files|QDir::Readable
-			);
-
+	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
 	int okpalettes=0;
-	foreach(QFileInfo pfile, pfiles) {
-		Palette *pal = Palette::fromFile(pfile);
-		if(pal) {
-			++okpalettes;
-			palettes_.append(pal);
-			ui_->palettelist->addItem(pal->name());
+	QSet<QString> palettefiles;
+	foreach(const QString datapath, datapaths) {
+		QFileInfoList pfiles = QDir(datapath).entryInfoList(
+				QStringList("*.gpl"),
+				QDir::Files|QDir::Readable
+				);
+
+		foreach(QFileInfo pfile, pfiles) {
+			if(!palettefiles.contains(pfile.fileName())) {
+				palettefiles.insert(pfile.fileName());
+				Palette *pal = Palette::fromFile(pfile);
+				if(pal) {
+					++okpalettes;
+					palettes_.append(pal);
+					ui_->palettelist->addItem(pal->name());
+				}
+			}
 		}
 	}
 
@@ -106,11 +113,14 @@ PaletteBox::~PaletteBox()
 {
 	DrawPileApp::getSettings().setValue("history/lastpalette",
 			ui_->palettelist->currentIndex());
-	QString confdir = DrawPileApp::getConfDir();
+	QString datadir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 	while(palettes_.isEmpty()==false) {
 		Palette *pal = palettes_.takeFirst();
-		if(pal->isModified())
-			pal->save(QFileInfo(confdir,pal->filename()).absoluteFilePath());
+		if(pal->isModified()) {
+			if(!QDir(datadir).mkpath("."))
+				qWarning() << "Couldn't create directory:" << datadir;
+			pal->save(QFileInfo(datadir, pal->filename()).absoluteFilePath());
+		}
 		delete pal;
 	}
 	delete ui_;
@@ -135,11 +145,11 @@ void PaletteBox::nameChanged(const QString& name)
 		// Check for name clashes
 		// Rename only if name is unique
 		if(isUniquePaletteName(name, pal)) {
-			QString paldir = DrawPileApp::getConfDir();
-			QFile oldfile(QFileInfo(paldir,pal->filename()).absoluteFilePath());
+			QString datadir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+			QFile oldfile(QFileInfo(datadir, pal->filename()).absoluteFilePath());
 			pal->setName(name);
 			if(oldfile.exists())
-				oldfile.rename(QFileInfo(paldir,pal->filename()).absoluteFilePath());
+				oldfile.rename(QFileInfo(datadir, pal->filename()).absoluteFilePath());
 			ui_->palettelist->setItemText(ui_->palettelist->currentIndex(), name);
 		}
 	}
@@ -195,7 +205,7 @@ void PaletteBox::deletePalette()
 			QMessageBox::Yes|QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
 		Palette *pal = palettes_.takeAt(index);
-		QFile fpal(QFileInfo(DrawPileApp::getConfDir(), pal->filename()).absoluteFilePath());
+		QFile fpal(QFileInfo(QStandardPaths::writableLocation(QStandardPaths::DataLocation), pal->filename()).absoluteFilePath());
 		if(fpal.exists())
 			fpal.remove();
 		delete pal;

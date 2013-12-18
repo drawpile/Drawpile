@@ -36,9 +36,6 @@ class DrawPileApp : public QApplication {
 		//! Get application settings
 		static QSettings& getSettings();
 
-		//! Get the path to the configuration directory
-		static QString getConfDir();
-
 	protected:
 		bool event(QEvent *e);
 };
