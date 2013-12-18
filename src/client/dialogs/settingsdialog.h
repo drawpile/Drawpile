@@ -44,8 +44,8 @@ class SettingsDialog : public QDialog
 		void validateShortcut(int row, int col);
 
 	private:
-		Ui_SettingsDialog *ui_;
-		QList<QAction*> acts_;
+		Ui_SettingsDialog *_ui;
+		QList<QAction*> _customactions;
 };
 
 }

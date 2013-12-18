@@ -21,11 +21,62 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QHeaderView>
+#include <QStyledItemDelegate>
+#include <QItemEditorFactory>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+#include <QKeySequenceEdit>
+#endif
+
+#include <qdebug.h>
 
 #include "config.h"
 #include "settingsdialog.h"
 
 #include "ui_settings.h"
+
+class KeySequenceTableItem : public QTableWidgetItem
+{
+public:
+	static const int TYPE = QTableWidgetItem::UserType + 1;
+	KeySequenceTableItem(const QKeySequence &keysequence)
+		: QTableWidgetItem(TYPE), _keysequence(keysequence)
+	{}
+
+	QVariant data(int role) const
+	{
+		switch(role) {
+		case Qt::DisplayRole: return _keysequence.toString();
+		case Qt::EditRole: return _keysequence;
+		default: return QVariant();
+		}
+	}
+
+	void setData(int role, const QVariant &data)
+	{
+		if(role == Qt::EditRole)
+			_keysequence = data.value<QKeySequence>();
+	}
+
+private:
+	QKeySequence _keysequence;
+};
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+class KeySequenceEditFactory : public QItemEditorCreatorBase
+{
+public:
+	QWidget *createWidget(QWidget *parent) const
+	{
+		return new QKeySequenceEdit(parent);
+	}
+
+	QByteArray valuePropertyName() const
+	{
+		return "keySequence";
+	}
+};
+#endif
 
 namespace dialogs {
 
@@ -37,47 +88,57 @@ namespace dialogs {
  * @param parent parent widget
  */
 SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
-	: QDialog(parent), acts_(actions)
+	: QDialog(parent), _customactions(actions)
 {
-	ui_ = new Ui_SettingsDialog;
-	ui_->setupUi(this);
+	_ui = new Ui_SettingsDialog;
+	_ui->setupUi(this);
 
-	connect(ui_->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
+	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
 
 	// Set defaults
 	QSettings cfg;
 	cfg.beginGroup("settings/server");
-	ui_->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
+	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 
 	// Generate an editable list of shortcuts
-	ui_->shortcuts->verticalHeader()->setVisible(false);
-	ui_->shortcuts->setRowCount(acts_.size());
-	for(int i=0;i<acts_.size();++i) {
-		QTableWidgetItem *label = new QTableWidgetItem(acts_[i]->text().remove('&'));
+	_ui->shortcuts->verticalHeader()->setVisible(false);
+	_ui->shortcuts->setRowCount(_customactions.size());
+
+	// QKeySequence editor delegate
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+	QStyledItemDelegate *keyseqdel = new QStyledItemDelegate(_ui->shortcuts);
+	QItemEditorFactory *itemeditorfactory = new QItemEditorFactory;
+	itemeditorfactory->registerEditor(QVariant::nameToType("QKeySequence"), new KeySequenceEditFactory);
+	keyseqdel->setItemEditorFactory(itemeditorfactory);
+	_ui->shortcuts->setItemDelegateForColumn(1, keyseqdel);
+#endif
+
+	for(int i=0;i<_customactions.size();++i) {
+		QTableWidgetItem *label = new QTableWidgetItem(_customactions[i]->text().remove('&'));
 		label->setFlags(Qt::ItemIsSelectable);
-		const QKeySequence& defks = acts_[i]->property("defaultshortcut").value<QKeySequence>();
-		if(acts_[i]->shortcut() != defks) {
+		const QKeySequence& defks = _customactions[i]->property("defaultshortcut").value<QKeySequence>();
+		if(_customactions[i]->shortcut() != defks) {
 			QFont font = label->font();
 			font.setBold(true);
 			label->setFont(font);
 		}
-		QTableWidgetItem *accel = new QTableWidgetItem(acts_[i]->shortcut().toString());
+		QTableWidgetItem *accel = new KeySequenceTableItem(_customactions[i]->shortcut());
 		QTableWidgetItem *def = new QTableWidgetItem(defks.toString());
 		def->setFlags(Qt::ItemIsSelectable);
-		ui_->shortcuts->setItem(i, 0, label);
-		ui_->shortcuts->setItem(i, 1, accel);
-		ui_->shortcuts->setItem(i, 2, def);
+		_ui->shortcuts->setItem(i, 0, label);
+		_ui->shortcuts->setItem(i, 1, accel);
+		_ui->shortcuts->setItem(i, 2, def);
 	}
-	ui_->shortcuts->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
-	ui_->shortcuts->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
-	ui_->shortcuts->horizontalHeader()->setSectionResizeMode(2,QHeaderView::ResizeToContents);
-	connect(ui_->shortcuts, SIGNAL(cellChanged(int, int)),
+	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(0,QHeaderView::Stretch);
+	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(1,QHeaderView::ResizeToContents);
+	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(2,QHeaderView::ResizeToContents);
+	connect(_ui->shortcuts, SIGNAL(cellChanged(int, int)),
 			this, SLOT(validateShortcut(int, int)));
 }
 
 SettingsDialog::~SettingsDialog()
 {
-	delete ui_;
+	delete _ui;
 }
 
 void SettingsDialog::rememberSettings() const
@@ -85,10 +146,10 @@ void SettingsDialog::rememberSettings() const
 	QSettings cfg;
 	// Remember server settings
 	cfg.beginGroup("settings/server");
-	if(ui_->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
+	if(_ui->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
 		cfg.remove("port");
 	else
-		cfg.setValue("port", ui_->serverport->value());
+		cfg.setValue("port", _ui->serverport->value());
 	cfg.endGroup();
 
 	// Remember shortcuts. Only shortcuts that have been changed
@@ -96,12 +157,12 @@ void SettingsDialog::rememberSettings() const
 	cfg.beginGroup("settings/shortcuts");
 	cfg.remove("");
 	bool changed = false;
-	for(int i=0;i<acts_.size();++i) {
-		QKeySequence ks(ui_->shortcuts->item(i, 1)->text());
-		if(changed==false && ks != acts_[i]->shortcut())
+	for(int i=0;i<_customactions.size();++i) {
+		QKeySequence ks(_ui->shortcuts->item(i, 1)->text());
+		if(changed==false && ks != _customactions[i]->shortcut())
 			changed = true;
-		if(ks != acts_[i]->property("defaultshortcut").value<QKeySequence>())
-			cfg.setValue(acts_[i]->objectName(), ks);
+		if(ks != _customactions[i]->property("defaultshortcut").value<QKeySequence>())
+			cfg.setValue(_customactions[i]->objectName(), ks);
 	}
 	if(changed)
 		emit shortcutsChanged();
@@ -116,29 +177,29 @@ void SettingsDialog::validateShortcut(int row, int col)
 	if(col!=1)
 		return;
 
-	QString newShortcut = ui_->shortcuts->item(row, col)->text();
+	QString newShortcut = _ui->shortcuts->item(row, col)->text();
 	QKeySequence ks(newShortcut);
 	if(ks.isEmpty() && !newShortcut.isEmpty()) {
 		// If new shortcut was invalid, restore the original
-		ui_->shortcuts->setItem(row, col,
-				new QTableWidgetItem(acts_[row]->shortcut().toString()));
+		_ui->shortcuts->setItem(row, col,
+				new QTableWidgetItem(_customactions[row]->shortcut().toString()));
 	} else {
 		// Check for conflicts.
 		if(!ks.isEmpty()) {
-			for(int c=0;c<acts_.size();++c) {
-				if(c!=row && ks == QKeySequence(ui_->shortcuts->item(c, 1)->text())) {
-					ui_->shortcuts->setItem(row, col,
-						new QTableWidgetItem(acts_[row]->shortcut().toString()));
-					QMessageBox::information(this, tr("Conflict"), tr("This shortcut is already used for \"%1\"").arg(acts_[c]->text().remove('&')));
+			for(int c=0;c<_customactions.size();++c) {
+				if(c!=row && ks == QKeySequence(_ui->shortcuts->item(c, 1)->text())) {
+					_ui->shortcuts->setItem(row, col,
+						new QTableWidgetItem(_customactions[row]->shortcut().toString()));
+					QMessageBox::information(this, tr("Conflict"), tr("This shortcut is already used for \"%1\"").arg(_customactions[c]->text().remove('&')));
 					return;
 				}
 			}
 		}
 		// If the new shortcut is not the same as the default, make the
 		// action label bold.
-		QFont font = ui_->shortcuts->item(row, 0)->font();
-		font.setBold(ks != acts_[row]->property("defaultshortcut").value<QKeySequence>());
-		ui_->shortcuts->item(row, 0)->setFont(font);
+		QFont font = _ui->shortcuts->item(row, 0)->font();
+		font.setBold(ks != _customactions[row]->property("defaultshortcut").value<QKeySequence>());
+		_ui->shortcuts->item(row, 0)->setFont(font);
 	}
 }
 
