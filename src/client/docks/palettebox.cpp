@@ -25,7 +25,6 @@
 #include <QSettings>
 #include <QDir>
 
-#include "main.h"
 #include "palettebox.h"
 
 #include "widgets/palettewidget.h"
@@ -81,7 +80,8 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 		ui_->palette->setPalette(p);
 	} else {
 		// If there were palettes, remember which one was used the last time
-		int last = DrawPileApp::getSettings().value("history/lastpalette", 0).toInt();
+		QSettings cfg;
+		int last = cfg.value("history/lastpalette", 0).toInt();
 		if(last<0 || last>= palettes_.count())
 			last = 0;
 		ui_->palettelist->setCurrentIndex(last);
@@ -111,8 +111,8 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
  */
 PaletteBox::~PaletteBox()
 {
-	DrawPileApp::getSettings().setValue("history/lastpalette",
-			ui_->palettelist->currentIndex());
+	QSettings cfg;
+	cfg.setValue("history/lastpalette", ui_->palettelist->currentIndex());
 	QString datadir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
 	while(palettes_.isEmpty()==false) {
 		Palette *pal = palettes_.takeFirst();

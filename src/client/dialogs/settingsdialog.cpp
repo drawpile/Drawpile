@@ -23,7 +23,6 @@
 #include <QHeaderView>
 
 #include "config.h"
-#include "main.h"
 #include "settingsdialog.h"
 
 #include "ui_settings.h"
@@ -46,7 +45,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	connect(ui_->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
 
 	// Set defaults
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	cfg.beginGroup("settings/server");
 	ui_->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 
@@ -83,7 +82,7 @@ SettingsDialog::~SettingsDialog()
 
 void SettingsDialog::rememberSettings() const
 {
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	// Remember server settings
 	cfg.beginGroup("settings/server");
 	if(ui_->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)

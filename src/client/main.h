@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,23 +22,13 @@
 
 #include <QApplication>
 
-class LocalServer;
-class QSettings;
-
 class DrawPileApp : public QApplication {
-	Q_OBJECT
-	public:
-		DrawPileApp(int & argc, char ** argv );
+Q_OBJECT
+public:
+	DrawPileApp(int & argc, char ** argv );
 
-		//! Get the application instance
-		static DrawPileApp *getInstance() { return static_cast<DrawPileApp*>(qApp); }
-
-		//! Get application settings
-		static QSettings& getSettings();
-
-	protected:
-		bool event(QEvent *e);
+protected:
+	bool event(QEvent *e);
 };
 
 #endif
-

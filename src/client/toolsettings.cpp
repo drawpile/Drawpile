@@ -21,7 +21,6 @@
 #include <QSettings>
 #include <QTimer>
 
-#include "main.h"
 #include "toolsettings.h"
 #include "docks/layerlistdock.h"
 #include "widgets/brushpreview.h"
@@ -43,388 +42,409 @@ using widgets::ColorButton;
 
 #include "core/rasterop.h" // for blend modes
 
-
 namespace {
 	static dpcore::Brush DUMMY_BRUSH(0);
 }
 
 namespace tools {
 
-QSettings& ToolSettings::getSettings()
+QWidget *ToolSettings::createUi(QWidget *parent)
 {
-	QSettings& cfg = DrawPileApp::getSettings();
+	_widget = createUiWidget(parent);
+	restoreSettings();
+	return _widget;
+}
+
+void ToolSettings::saveSettings()
+{
+	Q_ASSERT(_widget);
+	QSettings cfg;
 	cfg.beginGroup("tools");
-	cfg.beginGroup(name_);
-	return cfg;
+	cfg.beginGroup(_name);
+	saveToolSettings(cfg);
+}
+
+void ToolSettings::restoreSettings()
+{
+	Q_ASSERT(_widget);
+	QSettings cfg;
+	cfg.beginGroup("tools");
+	cfg.beginGroup(_name);
+	restoreToolSettings(cfg);
 }
 
 PenSettings::PenSettings(QString name, QString title)
-	: ToolSettings(name, title)
+	: ToolSettings(name, title), _ui(0)
 {
-	ui_ = new Ui_PenSettings();
 }
 
 PenSettings::~PenSettings()
 {
-	if(ui_) {
-		// Remember settings
-		QSettings& cfg = getSettings();
-		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
-		cfg.setValue("incremental", ui_->incremental->isChecked());
-		cfg.setValue("size", ui_->brushsize->value());
-		cfg.setValue("opacity", ui_->brushopacity->value());
-		cfg.setValue("spacing", ui_->brushspacing->value());
-		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
-		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
-		cfg.setValue("pressurecolor", ui_->pressurecolor->isChecked());
-		delete ui_;
+	if(_ui) {
+		saveSettings();
+		delete _ui;
 	}
 }
 
-QWidget *PenSettings::createUi(QWidget *parent)
+QWidget *PenSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
-	ui_->setupUi(widget);
-	widget->hide();
-	setUiWidget(widget);
+	_ui = new Ui_PenSettings;
+	_ui->setupUi(widget);
 
 	// Populate blend mode combobox
 	// Blend mode 0 is reserved for the eraser
 	for(int b=1;b<dpcore::BLEND_MODES;++b) {
-		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
-	// Load previous settings
-	QSettings& cfg = getSettings();
-	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
-
-	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
-	ui_->preview->setIncremental(ui_->incremental->isChecked());
-
-	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->preview->setSize(ui_->brushsize->value());
-
-	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->preview->setOpacity(ui_->brushopacity->value());
-
-	ui_->preview->setHardness(100);
-
-	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->preview->setSpacing(ui_->brushspacing->value());
-
-	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
-	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
-
-	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
-	ui_->preview->setOpacityPressure(ui_->pressureopacity->isChecked());
-
-	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
-	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
-
-	ui_->preview->setSubpixel(false);
-
 	// Connect size change signal
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
+}
+
+void PenSettings::restoreToolSettings(QSettings &cfg)
+{
+	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->preview->setIncremental(_ui->incremental->isChecked());
+
+	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->preview->setSize(_ui->brushsize->value());
+
+	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->preview->setOpacity(_ui->brushopacity->value());
+
+	_ui->preview->setHardness(100);
+
+	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->preview->setSpacing(_ui->brushspacing->value());
+
+	_ui->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
+
+	_ui->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
+
+	_ui->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
+
+	_ui->preview->setSubpixel(false);
+}
+
+void PenSettings::saveToolSettings(QSettings &cfg)
+{
+	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
+	cfg.setValue("incremental", _ui->incremental->isChecked());
+	cfg.setValue("size", _ui->brushsize->value());
+	cfg.setValue("opacity", _ui->brushopacity->value());
+	cfg.setValue("spacing", _ui->brushspacing->value());
+	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
+	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
+	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
 }
 
 void PenSettings::setForeground(const QColor& color)
 {
-	ui_->preview->setColor1(color);
+	_ui->preview->setColor1(color);
 }
 
 void PenSettings::setBackground(const QColor& color)
 {
-	ui_->preview->setColor2(color);
+	_ui->preview->setColor2(color);
 }
 
 const dpcore::Brush& PenSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush(swapcolors);
+	return _ui->preview->brush(swapcolors);
 }
 
 int PenSettings::getSize() const
 {
-	return ui_->brushsize->value();
+	return _ui->brushsize->value();
 }
 
 EraserSettings::EraserSettings(QString name, QString title)
-	: ToolSettings(name,title)
+	: ToolSettings(name,title), _ui(0)
 {
-	ui_ = new Ui_EraserSettings();
 }
 
 EraserSettings::~EraserSettings()
 {
-	if(ui_) {
-		// Remember settings
-		QSettings& cfg = getSettings();
-		cfg.setValue("size", ui_->brushsize->value());
-		cfg.setValue("opacity", ui_->brushopacity->value());
-		cfg.setValue("hardness", ui_->brushhardness->value());
-		cfg.setValue("spacing", ui_->brushspacing->value());
-		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
-		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
-		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
-		cfg.setValue("hardedge", ui_->hardedge->isChecked());
-		cfg.setValue("incremental", ui_->incremental->isChecked());
-		delete ui_;
+	if(_ui) {
+		saveSettings();
+		delete _ui;
 	}
 }
 
-QWidget *EraserSettings::createUi(QWidget *parent)
+QWidget *EraserSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
-	ui_->setupUi(widget);
-	widget->hide();
-	setUiWidget(widget);
+	_ui = new Ui_EraserSettings();
+	_ui->setupUi(widget);
 
-	parent->connect(ui_->hardedge, &QToolButton::toggled, [this](bool hard) { ui_->brushhardness->setEnabled(!hard); });
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	_ui->preview->setBlendingMode(-1); // eraser is normally not visible
 
-	// Load previous settings
-	QSettings& cfg = getSettings();
-
-	ui_->preview->setBlendingMode(-1); // eraser is normally not visible
-
-	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->preview->setSize(ui_->brushsize->value());
-
-	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->preview->setOpacity(ui_->brushopacity->value());
-
-	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
-	ui_->preview->setHardness(ui_->brushhardness->value());
-
-	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->preview->setSpacing(ui_->brushspacing->value());
-
-	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
-	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
-
-	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
-	ui_->preview->setOpacityPressure(ui_->pressureopacity->isChecked());
-
-	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
-	ui_->preview->setHardnessPressure(ui_->pressurehardness->isChecked());
-
-	ui_->hardedge->setChecked(cfg.value("hardedge", false).toBool());
-
-	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
-	ui_->preview->setIncremental(ui_->incremental->isChecked());
+	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
+	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 
 	return widget;
+}
+
+void EraserSettings::saveToolSettings(QSettings &cfg)
+{
+	cfg.setValue("size", _ui->brushsize->value());
+	cfg.setValue("opacity", _ui->brushopacity->value());
+	cfg.setValue("hardness", _ui->brushhardness->value());
+	cfg.setValue("spacing", _ui->brushspacing->value());
+	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
+	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
+	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
+	cfg.setValue("hardedge", _ui->hardedge->isChecked());
+	cfg.setValue("incremental", _ui->incremental->isChecked());
+}
+
+void EraserSettings::restoreToolSettings(QSettings &cfg)
+{
+	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->preview->setSize(_ui->brushsize->value());
+
+	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->preview->setOpacity(_ui->brushopacity->value());
+
+	_ui->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	_ui->preview->setHardness(_ui->brushhardness->value());
+
+	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->preview->setSpacing(_ui->brushspacing->value());
+
+	_ui->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
+
+	_ui->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
+
+	_ui->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
+
+	_ui->hardedge->setChecked(cfg.value("hardedge", false).toBool());
+
+	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->preview->setIncremental(_ui->incremental->isChecked());
 }
 
 void EraserSettings::setForeground(const QColor& color)
 {
+	// Eraser has no foreground color
 }
 
 void EraserSettings::setBackground(const QColor& color)
 {
-	// This is used just for the background color
-	ui_->preview->setColor2(color);
+	// This is used just for the preview background color
+	_ui->preview->setColor2(color);
 }
 
 const dpcore::Brush& EraserSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush(swapcolors);
+	return _ui->preview->brush(swapcolors);
 }
 
 int EraserSettings::getSize() const
 {
-	return ui_->brushsize->value();
+	return _ui->brushsize->value();
 }
 
 BrushSettings::BrushSettings(QString name, QString title)
-	: ToolSettings(name,title)
+	: ToolSettings(name,title), _ui(0)
 {
-	ui_ = new Ui_BrushSettings();
 }
 
 BrushSettings::~BrushSettings()
 {
-	if(ui_) {
-		// Remember settings
-		QSettings& cfg = getSettings();
-		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
-		cfg.setValue("incremental", ui_->incremental->isChecked());
-		cfg.setValue("size", ui_->brushsize->value());
-		cfg.setValue("opacity", ui_->brushopacity->value());
-		cfg.setValue("hardness", ui_->brushhardness->value());
-		cfg.setValue("spacing", ui_->brushspacing->value());
-		cfg.setValue("pressuresize", ui_->pressuresize->isChecked());
-		cfg.setValue("pressureopacity", ui_->pressureopacity->isChecked());
-		cfg.setValue("pressurehardness", ui_->pressurehardness->isChecked());
-		cfg.setValue("pressurecolor", ui_->pressurecolor->isChecked());
-		delete ui_;
+	if(_ui) {
+		saveSettings();
+		delete _ui;
 	}
 }
 
-QWidget *BrushSettings::createUi(QWidget *parent)
+QWidget *BrushSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
-	ui_->setupUi(widget);
-	widget->hide();
-	setUiWidget(widget);
+	_ui = new Ui_BrushSettings;
+	_ui->setupUi(widget);
 
 	// Populate blend mode combobox
 	for(int b=1;b<dpcore::BLEND_MODES;++b) {
-		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
 	// Connect size change signal
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-
-	// Load previous settings
-	QSettings& cfg = getSettings();
-
-	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
-
-	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
-	ui_->preview->setIncremental(ui_->incremental->isChecked());
-
-	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->preview->setSize(ui_->brushsize->value());
-
-	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->preview->setOpacity(ui_->brushopacity->value());
-
-	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
-	ui_->preview->setHardness(ui_->brushhardness->value());
-
-	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->preview->setSpacing(ui_->brushspacing->value());
-
-	ui_->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
-	ui_->preview->setSizePressure(ui_->pressuresize->isChecked());
-
-	ui_->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
-	ui_->preview->setOpacityPressure(ui_->pressureopacity->isChecked());
-
-	ui_->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
-	ui_->preview->setHardnessPressure(ui_->pressurehardness->isChecked());
-
-	ui_->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
-	ui_->preview->setColorPressure(ui_->pressurecolor->isChecked());
+	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 
 	return widget;
+}
+
+void BrushSettings::saveToolSettings(QSettings &cfg)
+{
+	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
+	cfg.setValue("incremental", _ui->incremental->isChecked());
+	cfg.setValue("size", _ui->brushsize->value());
+	cfg.setValue("opacity", _ui->brushopacity->value());
+	cfg.setValue("hardness", _ui->brushhardness->value());
+	cfg.setValue("spacing", _ui->brushspacing->value());
+	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
+	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
+	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
+	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
+}
+
+void BrushSettings::restoreToolSettings(QSettings &cfg)
+{
+	_ui->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
+	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->preview->setIncremental(_ui->incremental->isChecked());
+
+	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->preview->setSize(_ui->brushsize->value());
+
+	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->preview->setOpacity(_ui->brushopacity->value());
+
+	_ui->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	_ui->preview->setHardness(_ui->brushhardness->value());
+
+	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->preview->setSpacing(_ui->brushspacing->value());
+
+	_ui->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
+
+	_ui->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
+
+	_ui->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
+
+	_ui->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
 }
 
 void BrushSettings::setForeground(const QColor& color)
 {
-	ui_->preview->setColor1(color);
+	_ui->preview->setColor1(color);
 }
 
 void BrushSettings::setBackground(const QColor& color)
 {
-	ui_->preview->setColor2(color);
+	_ui->preview->setColor2(color);
 }
 
 const dpcore::Brush& BrushSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush(swapcolors);
+	return _ui->preview->brush(swapcolors);
 }
 
 int BrushSettings::getSize() const
 {
-	return ui_->brushsize->value();
+	return _ui->brushsize->value();
 }
 
 SimpleSettings::SimpleSettings(QString name, QString title, Type type, bool sp)
-	: ToolSettings(name,title), type_(type), subpixel_(sp)
+	: ToolSettings(name,title), _ui(0), _type(type), _subpixel(sp)
 {
-	ui_ = new Ui_SimpleSettings();
 }
 
 SimpleSettings::~SimpleSettings()
 {
-	if(ui_) {
-		// Remember settings
-		QSettings& cfg = getSettings();
-		cfg.setValue("blendmode", ui_->blendmode->currentIndex());
-		cfg.setValue("incremental", ui_->incremental->isChecked());
-		cfg.setValue("size", ui_->brushsize->value());
-		cfg.setValue("opacity", ui_->brushopacity->value());
-		cfg.setValue("hardness", ui_->brushhardness->value());
-		cfg.setValue("spacing", ui_->brushspacing->value());
-		cfg.setValue("hardedge", ui_->hardedge->isChecked());
-		delete ui_;
+	if(_ui) {
+		saveSettings();
+		delete _ui;
 	}
 }
 
-QWidget *SimpleSettings::createUi(QWidget *parent)
+QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
-	ui_->setupUi(widget);
-	widget->hide();
-	setUiWidget(widget);
+	_ui = new Ui_SimpleSettings;
+	_ui->setupUi(widget);
 
 	// Populate blend mode combobox
 	for(int b=1;b<dpcore::BLEND_MODES;++b) {
-		ui_->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
 	}
 
 	// Connect size change signal
-	parent->connect(ui_->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
-	parent->connect(ui_->hardedge, &QToolButton::toggled, [this](bool hard) { ui_->brushhardness->setEnabled(!hard); });
+	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
+	parent->connect(_ui->hardedge, &QToolButton::toggled, [this](bool hard) { _ui->brushhardness->setEnabled(!hard); });
 
 	// Set proper preview shape
-	if(type_==Line)
-		ui_->preview->setPreviewShape(BrushPreview::Line);
-	else if(type_==Rectangle)
-		ui_->preview->setPreviewShape(BrushPreview::Rectangle);
-	ui_->preview->setSubpixel(subpixel_);
-
-	// Load previous settings
-	QSettings& cfg = getSettings();
-	ui_->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
-
-	ui_->incremental->setChecked(cfg.value("incremental", true).toBool());
-	ui_->preview->setIncremental(ui_->incremental->isChecked());
-
-	ui_->brushsize->setValue(cfg.value("size", 0).toInt());
-	ui_->preview->setSize(ui_->brushsize->value());
-
-	ui_->brushopacity->setValue(cfg.value("opacity", 100).toInt());
-	ui_->preview->setOpacity(ui_->brushopacity->value());
-
-	ui_->brushhardness->setValue(cfg.value("hardness", 50).toInt());
-	ui_->preview->setHardness(ui_->brushhardness->value());
-
-	ui_->brushspacing->setValue(cfg.value("spacing", 15).toInt());
-	ui_->preview->setSpacing(ui_->brushspacing->value());
-
-	ui_->hardedge->setChecked(cfg.value("hardedge", false).toBool());
-
-	if(!subpixel_) {
-		// If subpixel accuracy wasn't enabled, don't offer a chance to
-		// enable it.
-		ui_->hardedge->hide();
-		ui_->brushopts->addSpacing(ui_->hardedge->width());
-	}
+	if(_type==Line)
+		_ui->preview->setPreviewShape(BrushPreview::Line);
+	else if(_type==Rectangle)
+		_ui->preview->setPreviewShape(BrushPreview::Rectangle);
+	_ui->preview->setSubpixel(_subpixel);
 
 	return widget;
 }
 
+void SimpleSettings::saveToolSettings(QSettings &cfg)
+{
+	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
+	cfg.setValue("incremental", _ui->incremental->isChecked());
+	cfg.setValue("size", _ui->brushsize->value());
+	cfg.setValue("opacity", _ui->brushopacity->value());
+	cfg.setValue("hardness", _ui->brushhardness->value());
+	cfg.setValue("spacing", _ui->brushspacing->value());
+	cfg.setValue("hardedge", _ui->hardedge->isChecked());
+}
+
+void SimpleSettings::restoreToolSettings(QSettings &cfg)
+{
+	_ui->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+
+	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->preview->setIncremental(_ui->incremental->isChecked());
+
+	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->preview->setSize(_ui->brushsize->value());
+
+	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->preview->setOpacity(_ui->brushopacity->value());
+
+	_ui->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	_ui->preview->setHardness(_ui->brushhardness->value());
+
+	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->preview->setSpacing(_ui->brushspacing->value());
+
+	_ui->hardedge->setChecked(cfg.value("hardedge", false).toBool());
+
+	if(!_subpixel) {
+		// If subpixel accuracy wasn't enabled, don't offer a chance to
+		// enable it.
+		_ui->hardedge->hide();
+		_ui->brushopts->addSpacing(_ui->hardedge->width());
+	}
+}
+
 void SimpleSettings::setForeground(const QColor& color)
 {
-	ui_->preview->setColor1(color);
+	_ui->preview->setColor1(color);
 }
 
 void SimpleSettings::setBackground(const QColor& color)
 {
-	ui_->preview->setColor2(color);
+	_ui->preview->setColor2(color);
 }
 
 const dpcore::Brush& SimpleSettings::getBrush(bool swapcolors) const
 {
-	return ui_->preview->brush(swapcolors);
+	return _ui->preview->brush(swapcolors);
 }
 
 int SimpleSettings::getSize() const
 {
-	return ui_->brushsize->value();
+	return _ui->brushsize->value();
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
@@ -432,7 +452,13 @@ ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &tit
 {
 }
 
-QWidget *ColorPickerSettings::createUi(QWidget *parent)
+ColorPickerSettings::~ColorPickerSettings()
+{
+	if(getUi())
+		saveSettings();
+}
+
+QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *widget = new QWidget(parent);
 	QVBoxLayout *layout = new QVBoxLayout(widget);
@@ -449,22 +475,17 @@ QWidget *ColorPickerSettings::createUi(QWidget *parent)
 
 	connect(_palettewidget, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorSelected(QColor)));
 
-	QSettings& cfg = getSettings();
-	_layerpick->setChecked(cfg.value("layerpick", false).toBool());
-
-	setUiWidget(widget);
 	return widget;
 }
 
-ColorPickerSettings::~ColorPickerSettings()
+void ColorPickerSettings::saveToolSettings(QSettings &cfg)
 {
-	if(_layerpick) {
-		// Remember settings
-		QSettings& cfg = getSettings();
-		cfg.setValue("layerpick", _layerpick->isChecked());
-	}
+	cfg.setValue("layerpick", _layerpick->isChecked());
+}
 
-	delete _palette;
+void ColorPickerSettings::restoreToolSettings(QSettings &cfg)
+{
+	_layerpick->setChecked(cfg.value("layerpick", false).toBool());
 }
 
 bool ColorPickerSettings::pickFromLayer() const
@@ -491,91 +512,90 @@ void ColorPickerSettings::addColor(const QColor &color)
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), ToolSettings(name, title), noupdate_(false)
+	: QObject(), ToolSettings(name, title), _ui(0), _noupdate(false)
 {
-	ui_ = new Ui_TextSettings;
 }
 
 AnnotationSettings::~AnnotationSettings()
 {
-	delete ui_;
+	delete _ui;
 }
 
-QWidget *AnnotationSettings::createUi(QWidget *parent)
+QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 {
-	uiwidget_ = new QWidget(parent);
-	ui_->setupUi(uiwidget_);
-	setUiWidget(uiwidget_);
-	uiwidget_->setEnabled(false);
+	QWidget *widget = new QWidget(parent);
+	_ui = new Ui_TextSettings;
+	_ui->setupUi(widget);
+	widget->setEnabled(false);
 
 	_updatetimer = new QTimer(this);
 	_updatetimer->setInterval(500);
 	_updatetimer->setSingleShot(true);
 
 	// Editor events
-	connect(ui_->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
-	connect(ui_->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
+	connect(_ui->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
+	connect(_ui->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
 
-	connect(ui_->btnBackground, SIGNAL(colorChanged(const QColor&)),
+	connect(_ui->btnBackground, SIGNAL(colorChanged(const QColor&)),
 			this, SLOT(applyChanges()));
-	connect(ui_->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
-	connect(ui_->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
+	connect(_ui->btnRemove, SIGNAL(clicked()), this, SLOT(removeAnnotation()));
+	connect(_ui->btnBake, SIGNAL(clicked()), this, SLOT(bake()));
 
 	// Intra-editor connections that couldn't be made in the UI designer
-	connect(ui_->left, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(ui_->center, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(ui_->justify, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(ui_->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
-	connect(ui_->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
+	connect(_ui->left, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(_ui->center, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(_ui->justify, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(_ui->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
+	connect(_ui->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
 
 	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
 
-	return uiwidget_;
+	return widget;
 }
 
 void AnnotationSettings::updateStyleButtons()
 {
-	QTextBlockFormat bf = ui_->content->textCursor().blockFormat();
+	QTextBlockFormat bf = _ui->content->textCursor().blockFormat();
 	switch(bf.alignment()) {
-	case Qt::AlignLeft: ui_->left->setChecked(true); break;
-	case Qt::AlignCenter: ui_->center->setChecked(true); break;
-	case Qt::AlignJustify: ui_->justify->setChecked(true); break;
-	case Qt::AlignRight: ui_->right->setChecked(true); break;
+	case Qt::AlignLeft: _ui->left->setChecked(true); break;
+	case Qt::AlignCenter: _ui->center->setChecked(true); break;
+	case Qt::AlignJustify: _ui->justify->setChecked(true); break;
+	case Qt::AlignRight: _ui->right->setChecked(true); break;
 	default: break;
 	}
-	QTextCharFormat cf = ui_->content->textCursor().charFormat();
-	ui_->btnTextColor->setColor(cf.foreground().color());
+	QTextCharFormat cf = _ui->content->textCursor().charFormat();
+	_ui->btnTextColor->setColor(cf.foreground().color());
 	if(cf.fontPointSize() < 1)
-		ui_->size->setValue(12);
+		_ui->size->setValue(12);
 	else
-		ui_->size->setValue(cf.fontPointSize());
+		_ui->size->setValue(cf.fontPointSize());
 
 	QFont font = cf.font(); // constant font size for selection box
 	font.setPointSize(12);
-	ui_->font->setFont(font);
+	_ui->font->setFont(font);
 
-	ui_->italic->setChecked(cf.fontItalic());
-	ui_->bold->setChecked(cf.fontWeight() > QFont::Normal);
+	_ui->italic->setChecked(cf.fontItalic());
+	_ui->bold->setChecked(cf.fontWeight() > QFont::Normal);
 }
 
 void AnnotationSettings::toggleBold(bool bold)
 {
-	ui_->content->setFontWeight(bold ? QFont::Bold : QFont::Normal);
+	_ui->content->setFontWeight(bold ? QFont::Bold : QFont::Normal);
 }
 
 void AnnotationSettings::changeAlignment()
 {
 	Qt::Alignment a = Qt::AlignLeft;
-	if(ui_->left->isChecked())
+	if(_ui->left->isChecked())
 		a = Qt::AlignLeft;
-	else if(ui_->center->isChecked())
+	else if(_ui->center->isChecked())
 		a = Qt::AlignCenter;
-	else if(ui_->justify->isChecked())
+	else if(_ui->justify->isChecked())
 		a = Qt::AlignJustify;
-	else if(ui_->right->isChecked())
+	else if(_ui->right->isChecked())
 		a = Qt::AlignRight;
 
-	ui_->content->setAlignment(a);
+	_ui->content->setAlignment(a);
 }
 
 void AnnotationSettings::setForeground(const QColor& color)
@@ -607,8 +627,8 @@ void AnnotationSettings::unselect(int id)
 
 void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 {
-	noupdate_ = true;
-	uiwidget_->setEnabled(item!=0);
+	_noupdate = true;
+	getUi()->setEnabled(item!=0);
 
 	if(_selection)
 		_selection->setHighlight(false);
@@ -616,15 +636,15 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 	_selection = item;
 	if(item) {
 		item->setHighlight(true);
-		ui_->content->setHtml(item->text());
-		ui_->btnBackground->setColor(item->backgroundColor());
+		_ui->content->setHtml(item->text());
+		_ui->btnBackground->setColor(item->backgroundColor());
 	}
-	noupdate_ = false;
+	_noupdate = false;
 }
 
 void AnnotationSettings::applyChanges()
 {
-	if(noupdate_)
+	if(_noupdate)
 		return;
 	Q_ASSERT(selected());
 	_updatetimer->start();
@@ -637,8 +657,8 @@ void AnnotationSettings::saveChanges()
 	if(selected())
 		_client->sendAnnotationEdit(
 			selected(),
-			ui_->btnBackground->color(),
-			ui_->content->toHtml()
+			_ui->btnBackground->color(),
+			_ui->content->toHtml()
 		);
 }
 
@@ -668,7 +688,6 @@ void AnnotationSettings::bake()
 SelectionSettings::SelectionSettings(const QString &name, const QString &title)
 	: ToolSettings(name,title), _ui(0)
 {
-	_ui = new Ui_SelectionSettings;
 }
 
 SelectionSettings::~SelectionSettings()
@@ -676,11 +695,11 @@ SelectionSettings::~SelectionSettings()
 	delete _ui;
 }
 
-QWidget *SelectionSettings::createUi(QWidget *parent)
+QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 {
 	QWidget *uiwidget = new QWidget(parent);
+	_ui = new Ui_SelectionSettings;
 	_ui->setupUi(uiwidget);
-	setUiWidget(uiwidget);
 
 	return uiwidget;
 }

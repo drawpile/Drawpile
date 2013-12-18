@@ -18,8 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QStandardPaths>
-#include <QDebug>
 #include <QApplication>
 #include <QSettings>
 #include <QUrl>
@@ -38,7 +36,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 	setApplicationName("DrawPile");
 
 	// Make sure a user name is set
-	QSettings& cfg = getSettings();
+	QSettings cfg;
 	cfg.beginGroup("history");
 	if(cfg.contains("username") == false ||
 			cfg.value("username").toString().isEmpty())
@@ -52,16 +50,6 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 		cfg.setValue("username", defaultname);
 	}
 	setWindowIcon(QIcon(":icons/drawpile.png"));
-}
-
-QSettings& DrawPileApp::getSettings()
-{
-	static QSettings cfg;
-
-	while(cfg.group().isEmpty()==false)
-		cfg.endGroup();
-
-	return cfg;
 }
 
 /**
@@ -108,7 +96,8 @@ int main(int argc, char *argv[]) {
 			QUrl url(arg, QUrl::TolerantMode);
 			if(url.userName().isEmpty()) {
 				// Set username if not specified
-				url.setUserName(app.getSettings().value("history/username").toString());
+				QSettings cfg;
+				url.setUserName(cfg.value("history/username").toString());
 			}
 			win->joinSession(url);
 		} else {

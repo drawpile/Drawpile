@@ -38,7 +38,6 @@
 #include <QClipboard>
 
 #include "config.h"
-#include "main.h"
 #include "mainwindow.h"
 #include "loader.h"
 
@@ -312,7 +311,7 @@ void MainWindow::updateTitle()
  */
 void MainWindow::loadShortcuts()
 {
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	cfg.beginGroup("settings/shortcuts");
 
 	QList<QAction*> actions = findChildren<QAction*>();
@@ -347,7 +346,7 @@ void MainWindow::updateShortcuts()
  */
 void MainWindow::readSettings(bool windowpos)
 {
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	cfg.beginGroup("window");
 
 	// Restore previously used window size and position
@@ -405,7 +404,7 @@ void MainWindow::readSettings(bool windowpos)
  */
 void MainWindow::writeSettings()
 {
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	cfg.beginGroup("window");
 	
 	cfg.setValue("pos", normalGeometry().topLeft());
@@ -784,7 +783,7 @@ void MainWindow::finishHost(int i)
 		if(useremote==false) {
 			net::ServerThread *server = new net::ServerThread(this);
 
-			QSettings &cfg = DrawPileApp::getSettings();
+			QSettings cfg;
 			if(cfg.contains("settings/server/port"))
 				server->setPort(cfg.value("settings/server/port").toInt());
 

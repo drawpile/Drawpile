@@ -22,7 +22,6 @@
 #include <QFileDialog>
 #include <QImageReader>
 
-#include "main.h"
 #include "loader.h"
 
 #include "dialogs/hostdialog.h"
@@ -61,7 +60,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
 	// Set defaults
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	cfg.beginGroup("history");
 	ui_->username->setText(cfg.value("username").toString());
 	ui_->sessiontitle->setText(cfg.value("sessiontitle").toString());
@@ -77,7 +76,7 @@ HostDialog::~HostDialog()
 
 void HostDialog::rememberSettings() const
 {
-	QSettings& cfg = DrawPileApp::getSettings();
+	QSettings cfg;
 	cfg.beginGroup("history");
 	cfg.setValue("username", getUserName());
 	cfg.setValue("sessiontitle", getTitle());

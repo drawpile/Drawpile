@@ -51,96 +51,111 @@ namespace tools {
 
 /**
  * @brief Abstract base class for tool settings
+ *
  * The tool settings class provides a user interface widget that is
  * displayed in a dock window and a uniform way of getting a brush
  * configured by the user.
  */
 class ToolSettings {
-	public:
-		ToolSettings(QString name,QString title)
-			: name_(name), title_(title), widget_(0) {}
-		virtual ~ToolSettings() { }
+public:
+	ToolSettings(QString name,QString title)
+		: _name(name), _title(title), _widget(0) {}
+	virtual ~ToolSettings() = default;
 
-		/**
-		 * @brief Create the UI widget
-		 * If the tool has a size changing signal, it will be connected to the
-		 * parent's sizeChanged(int) signal.
-		 * @param parent parent widget
-		 * @return UI widget
-		 */
-		virtual QWidget *createUi(QWidget *parent) = 0;
+	/**
+	 * @brief Create the UI widget
+	 *
+	 * If the tool has a size changing signal, it will be connected to the
+	 * parent's sizeChanged(int) signal.
+	 *
+	 * @param parent parent widget
+	 * @return UI widget
+	 */
+	QWidget *createUi(QWidget *parent);
 
-		//! Get the UI widget
-		QWidget *getUi() { return widget_; }
+	//! Get the UI widget
+	QWidget *getUi() { return _widget; }
 
-		//! Set the foreground color
-		virtual void setForeground(const QColor& color) = 0;
+	//! Set the foreground color
+	virtual void setForeground(const QColor& color) = 0;
 
-		//! Set the background color
-		virtual void setBackground(const QColor& color) = 0;
+	//! Set the background color
+	virtual void setBackground(const QColor& color) = 0;
 
-		/**
-		 * @brief Get a brush based on the settings in the UI
-		 * An UI widget must have been created before this can be called.
-		 *
-		 * @param swapcolors if true, foreground and background colors are swapped
-		 * @return brush with values from the UI widget
-		 */
-		virtual const dpcore::Brush& getBrush(bool swapcolors) const = 0;
+	/**
+	 * @brief Get a brush based on the settings in the UI
+	 * An UI widget must have been created before this can be called.
+	 *
+	 * @param swapcolors if true, foreground and background colors are swapped
+	 * @return brush with values from the UI widget
+	 */
+	virtual const dpcore::Brush& getBrush(bool swapcolors) const = 0;
 
-		/**
-		 * @brief Get the current brush size
-		 * @return size of the current brush
-		 */
-		virtual int getSize() const = 0;
+	/**
+	 * @brief Get the current brush size
+	 * @return size of the current brush
+	 */
+	virtual int getSize() const = 0;
 
-		/**
-		 * @brief Get the internal name of this tool
-		 * The internal name is used when settings are stored to a
-		 * configuration file
-		 * @return internal tool name
-		 */
-		const QString& getName() const { return name_; }
+	/**
+	 * @brief Get the internal name of this tool
+	 * The internal name is used when settings are stored to a
+	 * configuration file
+	 * @return internal tool name
+	 */
+	const QString& getName() const { return _name; }
 
-		//!
-		/**
-		 * @brief Get the user facing name of this tool
-		 * @return visible tool name
-		 */
-		const QString& getTitle() const { return title_; }
+	/**
+	 * @brief Get the user facing name of this tool
+	 * @return visible tool name
+	 */
+	const QString& getTitle() const { return _title; }
 
-	protected:
-		void setUiWidget(QWidget *widget) { widget_ = widget; }
+	/**
+	 * @brief Save the settings of this tool
+	 */
+	void saveSettings();
 
-		//! Get a settings object prepared for this tool
-		QSettings &getSettings();
+	/**
+	 * @brief Load settings for this tool
+	 */
+	void restoreSettings();
 
-	private:
-		QString name_;
-		QString title_;
-		QWidget *widget_;
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent) = 0;
+	virtual void saveToolSettings(QSettings &cfg) {}
+	virtual void restoreToolSettings(QSettings &cfg) {}
+
+private:
+	QString _name;
+	QString _title;
+	QWidget *_widget;
 };
 
 /**
  * @brief Pen settings
+ *
  * This is much like BrushSettings, except the pen always has 100% hardness
  * and no antialiasing.
  */
 class PenSettings : public ToolSettings {
-	public:
-		PenSettings(QString name, QString title);
-		~PenSettings();
+public:
+	PenSettings(QString name, QString title);
+	~PenSettings();
 
-		QWidget *createUi(QWidget *parent);
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+	const dpcore::Brush& getBrush(bool swapcolors) const;
 
-		void setForeground(const QColor& color);
-		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush(bool swapcolors) const;
+	int getSize() const;
 
-		int getSize() const;
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+	virtual void saveToolSettings(QSettings &cfg);
+	virtual void restoreToolSettings(QSettings &cfg);
 
-	private:
-		Ui_PenSettings *ui_;
+private:
+	Ui_PenSettings *_ui;
 };
 
 /**
@@ -151,66 +166,75 @@ class PenSettings : public ToolSettings {
  * always simple erase the alpha channel.
  */
 class EraserSettings : public ToolSettings {
-	public:
-		EraserSettings(QString name, QString title);
-		~EraserSettings();
+public:
+	EraserSettings(QString name, QString title);
+	~EraserSettings();
 
-		QWidget *createUi(QWidget *parent);
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+	const dpcore::Brush& getBrush(bool swapcolors) const;
 
-		void setForeground(const QColor& color);
-		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush(bool swapcolors) const;
+	int getSize() const;
 
-		int getSize() const;
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+	virtual void saveToolSettings(QSettings &cfg);
+	virtual void restoreToolSettings(QSettings &cfg);
 
-	private:
-		Ui_EraserSettings *ui_;
+private:
+	Ui_EraserSettings *_ui;
 };
 
 /**
- * @brief Basic brush settings
- * This is a settings class for brush based drawing tools, like the
- * regular brush and eraser.
+ * @brief Brush settings
+ *
+ * This is a settings class for the brush tool.
  */
 class BrushSettings : public ToolSettings {
-	public:
-		BrushSettings(QString name, QString title);
-		~BrushSettings();
+public:
+	BrushSettings(QString name, QString title);
+	~BrushSettings();
 
-		QWidget *createUi(QWidget *parent);
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+	const dpcore::Brush& getBrush(bool swapcolors) const;
 
-		void setForeground(const QColor& color);
-		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush(bool swapcolors) const;
+	int getSize() const;
 
-		int getSize() const;
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+	virtual void saveToolSettings(QSettings &cfg);
+	virtual void restoreToolSettings(QSettings &cfg);
 
-	private:
-		Ui_BrushSettings *ui_;
+private:
+	Ui_BrushSettings *_ui;
 };
 
 /**
  * @brief Settings for tools without pressure sensitivity
  */
 class SimpleSettings : public ToolSettings {
-	public:
-		enum Type {Line, Rectangle};
+public:
+	enum Type {Line, Rectangle};
 
-		SimpleSettings(QString name, QString title, Type type, bool sp);
-		~SimpleSettings();
+	SimpleSettings(QString name, QString title, Type type, bool sp);
+	~SimpleSettings();
 
-		QWidget *createUi(QWidget *parent);
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+	const dpcore::Brush& getBrush(bool swapcolors) const;
 
-		void setForeground(const QColor& color);
-		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush(bool swapcolors) const;
+	int getSize() const;
 
-		int getSize() const;
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+	virtual void saveToolSettings(QSettings &cfg);
+	virtual void restoreToolSettings(QSettings &cfg);
 
-	private:
-		Ui_SimpleSettings *ui_;
-		Type type_;
-		bool subpixel_;
+private:
+	Ui_SimpleSettings *_ui;
+	Type _type;
+	bool _subpixel;
 };
 
 /**
@@ -220,59 +244,60 @@ class SimpleSettings : public ToolSettings {
  * annotation objects rather than pixel data.
  */
 class AnnotationSettings : public QObject, public ToolSettings {
-	Q_OBJECT
-	public:
-		AnnotationSettings(QString name, QString title);
-		~AnnotationSettings();
+Q_OBJECT
+public:
+	AnnotationSettings(QString name, QString title);
+	~AnnotationSettings();
 
-		//! Set the client to use for edit commands
-		void setClient(net::Client *client) { _client = client; }
+	//! Set the client to use for edit commands
+	void setClient(net::Client *client) { _client = client; }
 
-		//! Set the layer selection widget (needed for baking)
-		void setLayerSelector(widgets::LayerListDock *layerlist) { _layerlist = layerlist; }
+	//! Set the layer selection widget (needed for baking)
+	void setLayerSelector(widgets::LayerListDock *layerlist) { _layerlist = layerlist; }
 
-		QWidget *createUi(QWidget *parent);
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+	const dpcore::Brush& getBrush(bool swapcolors) const;
 
-		void setForeground(const QColor& color);
-		void setBackground(const QColor& color);
-		const dpcore::Brush& getBrush(bool swapcolors) const;
+	int getSize() const { return 0; }
 
-		int getSize() const { return 0; }
+	/**
+	 * @brief Get the ID of the currently selected annotation
+	 * @return ID or 0 if none selected
+	 */
+	int selected() const;
 
-		/**
-		 * @brief Get the ID of the currently selected annotation
-		 * @return ID or 0 if none selected
-		 */
-		int selected() const;
+public slots:
+	//! Set the currently selected annotation item
+	void setSelection(drawingboard::AnnotationItem *item);
 
-	public slots:
-		//! Set the currently selected annotation item
-		void setSelection(drawingboard::AnnotationItem *item);
+	//! Unselect this item if currently selected
+	void unselect(int id);
 
-		//! Unselect this item if currently selected
-		void unselect(int id);
+private slots:
+	void changeAlignment();
+	void toggleBold(bool bold);
+	void updateStyleButtons();
 
-	private slots:
-		void changeAlignment();
-		void toggleBold(bool bold);
-		void updateStyleButtons();
+	void applyChanges();
+	void saveChanges();
+	void removeAnnotation();
+	void bake();
 
-		void applyChanges();
-		void saveChanges();
-		void removeAnnotation();
-		void bake();
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
 
-	private:
+private:
 
-		Ui_TextSettings *ui_;
-		QWidget *uiwidget_;
+	Ui_TextSettings *_ui;
+	QWidget *_uiwidget;
 
-		QPointer<drawingboard::AnnotationItem> _selection;
+	QPointer<drawingboard::AnnotationItem> _selection;
 
-		bool noupdate_;
-		net::Client *_client;
-		widgets::LayerListDock *_layerlist;
-		QTimer *_updatetimer;
+	bool _noupdate;
+	net::Client *_client;
+	widgets::LayerListDock *_layerlist;
+	QTimer *_updatetimer;
 };
 
 /**
@@ -283,8 +308,6 @@ Q_OBJECT
 public:
 	ColorPickerSettings(const QString &name, const QString &title);
 	~ColorPickerSettings();
-
-	QWidget *createUi(QWidget *parent);
 
 	void setForeground(const QColor&) {}
 	void setBackground(const QColor&) {}
@@ -301,6 +324,11 @@ public slots:
 signals:
 	void colorSelected(const QColor &color);
 
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+	virtual void saveToolSettings(QSettings &cfg);
+	virtual void restoreToolSettings(QSettings &cfg);
+
 private:
 	Palette *_palette;
 	widgets::PaletteWidget *_palettewidget;
@@ -312,13 +340,14 @@ public:
 	SelectionSettings(const QString &name, const QString &title);
 	~SelectionSettings();
 
-	QWidget *createUi(QWidget *parent);
-
 	void setForeground(const QColor&) {}
 	void setBackground(const QColor&) {}
 	const dpcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const { return 0; }
+
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
 	Ui_SelectionSettings * _ui;
