@@ -1,0 +1,115 @@
+resize 1 600 600
+newlayer 1 1 #ffaaffff Brush test
+
+ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=1
+
+#
+# Test simple line drawing
+#
+
+# Test small brush sizes (hard edge)
+ctx 1 size=0
+move 1 10 12; 266 10
+penup 1
+
+ctx 1 size=1
+move 1 10 22; 266 20
+penup 1
+
+ctx 1 size=2
+move 1 10 32; 266 30
+penup 1
+
+ctx 1 size=3
+move 1 10 42; 266 40
+penup 1
+
+# Test small brush sizes (soft edge)
+ctx 1 hardedge=false size=0
+move 1 300 12; 556 10
+penup 1
+
+ctx 1 size=1
+move 1 300 22; 556 20
+penup 1
+
+ctx 1 size=2
+move 1 300 32; 556 30
+penup 1
+
+ctx 1 size=3
+move 1 300 42; 556 40
+penup 1
+
+#
+# Test pressure interpolation (hard edge)
+#
+
+# Size
+ctx 1 hardedge=true sizeh=20 sizel=0
+move 1 30 80 1; 230 80 0
+penup 1
+
+move 1 260 80 0; 460 80 1
+penup 1
+
+# Opacity
+ctx 1 size=20 opacityh=1 opacityl=0
+move 1 30 140 1; 230 140 0
+penup 1
+
+move 1 260 140 0; 460 140 1
+penup 1
+
+# Hardness
+ctx 1 opacity=1 hardh=1 hardl=0
+move 1 30 200 1; 230 200 0
+penup 1
+
+move 1 260 200 0; 460 200 1
+penup 1
+
+# Color
+ctx 1 hard=1 colorh=#0 colorl=#ffffff
+move 1 30 260 1; 230 260 0
+penup 1
+
+move 1 260 260 0; 460 260 1
+penup 1
+
+#
+# Test pressure interpolation (soft edge)
+#
+
+# Size
+ctx 1 hardedge=false color=#0 sizeh=20 sizel=0 hard=0.5
+move 1 30 320 1; 230 320 0
+penup 1
+
+move 1 260 320 0; 460 320 1
+penup 1
+
+# Opacity
+ctx 1 size=20 opacityh=1 opacityl=0
+move 1 30 380 1; 230 380 0
+penup 1
+
+move 1 260 380 0; 460 380 1
+penup 1
+
+# Hardness
+ctx 1 opacity=1 hardh=1 hardl=0
+move 1 30 440 1; 230 440 0
+penup 1
+
+move 1 260 440 0; 460 440 1
+penup 1
+
+# Color
+ctx 1 hard=1 colorh=#0 colorl=#ffffff hard=0.5
+move 1 30 500 1; 230 500 0
+penup 1
+
+move 1 260 500 0; 460 500 1
+penup 1
+

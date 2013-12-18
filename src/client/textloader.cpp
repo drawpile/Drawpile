@@ -245,19 +245,35 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 	while (i!=params.constEnd()) {
 		if(i.key() == "layer")
 			ctx.layer_id = str2ctxid(i.value());
-		else if(i.key() == "colorh")
+		else if(i.key() == "color") {
+			QColor c = str2color(i.value());
+			ctx.brush.setColor(c);
+			ctx.brush.setColor2(c);
+		} else if(i.key() == "colorh")
 			ctx.brush.setColor(str2color(i.value()));
 		else if(i.key() == "colorl")
 			ctx.brush.setColor2(str2color(i.value()));
-		else if(i.key() == "hardh")
+		else if(i.key() == "hard") {
+			qreal r = str2real(i.value());
+			ctx.brush.setHardness(r);
+			ctx.brush.setHardness2(r);
+		} else if(i.key() == "hardh")
 			ctx.brush.setHardness(str2real(i.value()));
 		else if(i.key() == "hardl")
 			ctx.brush.setHardness2(str2real(i.value()));
-		else if(i.key() == "sizeh")
+		else if(i.key() == "size") {
+			int val = str2int(i.value());
+			ctx.brush.setRadius(val);
+			ctx.brush.setRadius2(val);
+		} else if(i.key() == "sizeh")
 			ctx.brush.setRadius(str2int(i.value()));
 		else if(i.key() == "sizel")
 			ctx.brush.setRadius2(str2int(i.value()));
-		else if(i.key() == "opacityh")
+		else if(i.key() == "opacity") {
+			qreal r = str2real(i.value());
+			ctx.brush.setOpacity(r);
+			ctx.brush.setOpacity2(r);
+		} else if(i.key() == "opacityh")
 			ctx.brush.setOpacity(str2real(i.value()));
 		else if(i.key() == "opacityl")
 			ctx.brush.setOpacity2(str2real(i.value()));

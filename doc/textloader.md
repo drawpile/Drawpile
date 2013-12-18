@@ -26,12 +26,16 @@ Supported parameters are:
  * spacing = dab spacing in percents
  * colorh = high pressure color (#rrggbb)
  * colorl = low pressure color
+ * color = set both color values
  * hardh = high pressure hardness
  * hardl = low pressure hardness
+ * hard = set both hardness values
  * sizeh = high pressure size
  * sizel = low pressure size
+ * size = set both size values
  * opacityh = high pressure opacity
  * opacityl = low pressure opacity
+ * opacity = set both opacity values
 
 ### move
 
