@@ -180,6 +180,9 @@ private:
 	void handleUndoPoint();
 	bool handleUndoCommand(protocol::Undo &undo);
 
+	void sendOpWhoList();
+	void sendOpServerStatus();
+
 	bool validateUsername(const QString &username);
 	void updateState(protocol::MessagePtr msg);
 

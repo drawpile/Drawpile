@@ -751,6 +751,12 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
 		_server->startSnapshotSync();
 		return true;
+	} else if(tokens[0] == "/who" && tokens.count()==1) {
+		sendOpWhoList();
+		return true;
+	} else if(tokens[0] == "/status" && tokens.count()==1) {
+		sendOpServerStatus();
+		return true;
 	}
 
 	return false;
@@ -872,6 +878,36 @@ bool Client::handleUndoCommand(protocol::Undo &undo)
 		// points==0 is invalid
 		return false;
 	}
+}
+
+void Client::sendOpWhoList()
+{
+	const QList<Client*> clients = _server->clients();
+	QStringList msgs;
+	foreach(const Client *c, clients) {
+		QString flags="";
+		if(c->isOperator())
+			flags = "@";
+		if(c->isUserLocked())
+			flags += "L";
+		if(c->isHoldLocked())
+			flags += "l";
+		msgs << QString("#%1: %2 [%3]").arg(c->id()).arg(c->username(), flags);
+	}
+	foreach(const QString &m, msgs)
+		_msgqueue->send(MessagePtr(new protocol::Chat(0, m)));
+}
+
+void Client::sendOpServerStatus()
+{
+	QStringList msgs;
+	msgs << QString("Logged in users: %1").arg(_server->userCount());
+	msgs << QString("History size: %1 Mb").arg(_server->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2);
+	msgs << QString("History indices: %1 -- %2").arg(_server->mainstream().offset()).arg(_server->mainstream().end());
+	msgs << QString("Snapshot point exists: %1").arg(_server->mainstream().hasSnapshot() ? "yes" : "no");
+
+	foreach(const QString &m, msgs)
+		_msgqueue->send(MessagePtr(new protocol::Chat(0, m)));
 }
 
 }
