@@ -417,7 +417,7 @@ QPen CanvasScene::penForBrush(const dpcore::Brush &brush)
 		pen.setCapStyle(Qt::RoundCap);
 		pen.setJoinStyle(Qt::RoundJoin);
 		// Approximate brush transparency
-		const qreal a = brush.opacity(1.0) * rad * (1-brush.spacing()/100.0);
+		const qreal a = brush.opacity(1.0) * qMin(1.0, 0.5+brush.hardness(1.0)) * (1-brush.spacing()/100.0);
 		color.setAlphaF(qMin(a, 1.0));
 	}
 	pen.setColor(color);
