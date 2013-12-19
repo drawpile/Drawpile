@@ -23,6 +23,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QProgressBar>
 
 #include "widgets/netstatus.h"
@@ -42,12 +43,39 @@ NetStatus::NetStatus(QWidget *parent)
 	layout->setSpacing(4);
 
 	// Data transfer progress (not always shown)
-	_progress = new QProgressBar(this);
-	_progress->setMaximumWidth(120);
-	_progress->setSizePolicy(QSizePolicy());
-	_progress->setTextVisible(false);
-	_progress->hide();
-	layout->addWidget(_progress);
+	QVBoxLayout *progresslayout = new QVBoxLayout;
+	progresslayout->setContentsMargins(0, 0, 0 ,0);
+	progresslayout->setSpacing(0);
+
+	// Upload progress bar
+	_upload = new QProgressBar(this);
+	_upload->setMaximumWidth(120);
+	_upload->setSizePolicy(QSizePolicy());
+	_upload->setTextVisible(false);
+	_upload->hide();
+	{
+		// Red progress bar for upload
+		QPalette pal = _upload->palette();
+		pal.setColor(QPalette::Highlight, QColor(198, 48, 48));
+		_upload->setPalette(pal);
+	}
+	progresslayout->addWidget(_upload);
+
+	// Download progress bar
+	_download = new QProgressBar(this);
+	_download->setMaximumWidth(120);
+	_download->setSizePolicy(QSizePolicy());
+	_download->setTextVisible(false);
+	_download->hide();
+	{
+		// Blue progress bar for download
+		QPalette pal = _upload->palette();
+		pal.setColor(QPalette::Highlight, QColor(48, 140, 198));
+		_download->setPalette(pal);
+	}
+	progresslayout->addWidget(_download);
+
+	layout->addLayout(progresslayout);
 
 	// Host address label
 	_label = new QLabel(tr("not connected"), this);
@@ -142,9 +170,17 @@ void NetStatus::hostDisconnected()
 
 void NetStatus::expectBytes(int count)
 {
-	_progress->reset();
-	_progress->setMaximum(count);
-	_progress->show();
+	_download->reset();
+	_download->setMaximum(count);
+	_download->show();
+}
+
+void NetStatus::sendingBytes(int count)
+{
+	_upload->reset();
+	// this is count-1, because there always seems to be exactly one extra byte.
+	_upload->setMaximum(count - 1);
+	_upload->show();
 }
 
 void NetStatus::bytesReceived(int count)
@@ -155,12 +191,12 @@ void NetStatus::bytesReceived(int count)
 		_activity |= 2;
 		updateIcon();
 	}
-	if(_progress->isVisible()) {
-		int val = _progress->value() + count;
-		if(val>_progress->maximum())
-			_progress->hide();
+	if(_download->isVisible()) {
+		int val = _download->value() + count;
+		if(val>=_download->maximum())
+			_download->hide();
 		else
-			_progress->setValue(val);
+			_download->setValue(val);
 	}
 	_timer->start(500);
 }
@@ -172,6 +208,13 @@ void NetStatus::bytesSent(int count)
 	if(!(_activity & 1)) {
 		_activity |= 1;
 		updateIcon();
+	}
+	if(_upload->isVisible()) {
+		int val = _upload->value() + count;
+		if(val>=_upload->maximum())
+			_upload->hide();
+		else
+			_upload->setValue(val);
 	}
 	_timer->start(500);
 }

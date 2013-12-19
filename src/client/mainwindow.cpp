@@ -180,6 +180,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(serverDisconnecting()), netstatus, SLOT(hostDisconnecting()));
 	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
 	connect(_client, SIGNAL(expectingBytes(int)),netstatus, SLOT(expectBytes(int)));
+	connect(_client, SIGNAL(sendingBytes(int)), netstatus, SLOT(sendingBytes(int)));
 	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
 

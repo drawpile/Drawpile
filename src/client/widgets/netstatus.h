@@ -48,6 +48,7 @@ public slots:
 	void hostDisconnected();
 
 	void expectBytes(int count);
+	void sendingBytes(int count);
 	void bytesReceived(int count);
 	void bytesSent(int count);
 
@@ -74,7 +75,9 @@ private:
 	void updateIcon();
 	QString fullAddress() const;
 
-	QProgressBar *_progress;
+	QProgressBar *_download;
+	QProgressBar *_upload;
+
 	QLabel *_label, *_icon;
 	PopupMessage *_popup;
 	QString _address;

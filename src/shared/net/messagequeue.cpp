@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#include <QDebug>
 #include <QIODevice>
 #include <cstring>
 
@@ -92,11 +91,11 @@ void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 
 int MessageQueue::uploadQueueBytes() const
 {
-	int total = _sendbuflen - _sentcount;
+	int total = _socket->bytesToWrite() + _sendbuflen - _sentcount;
 	foreach(const MessagePtr msg, _sendqueue)
 		total += msg->length();
 	foreach(const MessagePtr msg, _snapshot_send)
-		total += msg->length();
+		total += msg->length() + 4; /* include snapshot mode packets */
 	return total;
 }
 

@@ -235,6 +235,8 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 {
 	foreach(MessagePtr msg, putQImage(_my_id, layer, x, y, image, blend))
 		_server->sendMessage(msg);
+
+	emit sendingBytes(_server->uploadQueueBytes());
 }
 
 void Client::sendUndopoint()
@@ -308,6 +310,8 @@ void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 
 	// The actual snapshot data will be sent in parallel with normal session traffic
 	_server->sendSnapshotMessages(commands);
+
+	emit sendingBytes(_server->uploadQueueBytes());
 }
 
 void Client::sendChat(const QString &message)
