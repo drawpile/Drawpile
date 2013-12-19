@@ -72,7 +72,10 @@ class CanvasView : public QGraphicsView
 		
 	signals:
 		//! An image has been dropped on the widget
-		void imageDropped(const QString& filename);
+		void imageDropped(const QImage &image);
+
+		//! An URL was dropped on the widget
+		void urlDropped(const QUrl &url);
 
 		//! Signals scene rectangle changes
 		void viewMovedTo(const QRectF& rect);
@@ -114,6 +117,7 @@ class CanvasView : public QGraphicsView
 		bool viewportEvent(QEvent *event);
 		void drawForeground(QPainter *painter, const QRectF& rect);
 		void dragEnterEvent(QDragEnterEvent *event);
+		void dragMoveEvent(QDragMoveEvent *event);
 		void dropEvent(QDropEvent *event);
 
 	private:

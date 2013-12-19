@@ -476,19 +476,31 @@ void CanvasView::stopDrag()
  */
 void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasUrls())
+	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage())
+		event->acceptProposedAction();
+}
+
+void CanvasView::dragMoveEvent(QDragMoveEvent *event)
+{
+	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage())
 		event->acceptProposedAction();
 }
 
 /**
- * @brief handle color and image drops
+ * @brief handle image drops
  * @param event event info
- *
- * @todo Reset the image modification state to unmodified
  */
 void CanvasView::dropEvent(QDropEvent *event)
 {
-	emit imageDropped(event->mimeData()->urls().first().toLocalFile());
+	const QMimeData *data = event->mimeData();
+	if(data->hasImage()) {
+		emit imageDropped(qvariant_cast<QImage>(event->mimeData()->imageData()));
+	} else if(data->hasUrls()) {
+		emit urlDropped(event->mimeData()->urls().first());
+	} else {
+		// unsupported data
+		return;
+	}
 	event->acceptProposedAction();
 }
 

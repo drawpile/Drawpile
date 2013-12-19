@@ -113,7 +113,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	splitter_->setCollapsible(0, false);
 
 	connect(_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
-	connect(_view, SIGNAL(imageDropped(QString)), this, SLOT(open(QString)));
+	connect(_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
+	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(pasteFile(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(int, qreal)), viewstatus, SLOT(setTransformation(int, qreal)));
 
 	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
@@ -1143,14 +1144,7 @@ void MainWindow::paste()
 	if(img.isNull())
 		return;
 
-	getAction("toolselectrect")->trigger();
-	if(_canvas->hasImage()) {
-		_canvas->pasteFromImage(img);
-	} else {
-		// Canvas not yet initialized? Initialize with clipboard content
-		QImageCanvasLoader loader(img);
-		loadDocument(loader);
-	}
+	pasteImage(img);
 }
 
 void MainWindow::pasteFile()
@@ -1171,21 +1165,34 @@ void MainWindow::pasteFile()
 		const QFileInfo info(file);
 		lastpath_ = info.absolutePath();
 
-		QImage img(file);
-		if(img.isNull()) {
-			showErrorMessage(tr("The image could not be loaded"));
-			return;
-		}
+		pasteFile(QUrl::fromLocalFile(file));
+	}
+}
 
-		// Paste the image
+void MainWindow::pasteFile(const QUrl &url)
+{
+	// TODO load remote URLs
+	if(!url.isLocalFile())
+		return;
+
+	QImage img(url.toLocalFile());
+	if(img.isNull()) {
+		showErrorMessage(tr("The image could not be loaded"));
+		return;
+	}
+
+	pasteImage(img);
+}
+
+void MainWindow::pasteImage(const QImage &image)
+{
+	if(_canvas->hasImage()) {
 		getAction("toolselectrect")->trigger();
-		if(_canvas->hasImage()) {
-			_canvas->pasteFromImage(img);
-		} else {
-			// Canvas not yet initialized? Initialize with clipboard content
-			QImageCanvasLoader loader(img);
-			loadDocument(loader);
-		}
+		_canvas->pasteFromImage(image);
+	} else {
+		// Canvas not yet initialized? Initialize with clipboard content
+		QImageCanvasLoader loader(image);
+		loadDocument(loader);
 	}
 }
 
