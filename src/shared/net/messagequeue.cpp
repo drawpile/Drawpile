@@ -18,7 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-
 #include <QDebug>
 #include <QIODevice>
 #include <cstring>
@@ -36,7 +35,7 @@ MessageQueue::MessageQueue(QIODevice *socket, QObject *parent)
 	: QObject(parent), _socket(socket), _closeWhenReady(false), _expectingSnapshot(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
-	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(writeData()));
+	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
 
 	_recvbuffer = new char[MAX_BUF_LEN];
 	_sendbuffer = new char[MAX_BUF_LEN];
@@ -75,7 +74,7 @@ void MessageQueue::send(MessagePtr packet)
 {
 	if(!_closeWhenReady) {
 		_sendqueue.enqueue(packet);
-		if(_sentcount==0)
+		if(_sendbuflen==0)
 			writeData();
 	}
 }
@@ -86,7 +85,7 @@ void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 		_snapshot_send = snapshot;
 		_snapshot_send.append(MessagePtr(new SnapshotMode(SnapshotMode::END)));
 
-		if(_sentcount==0)
+		if(_sendbuflen==0)
 			writeData();
 	}
 }
@@ -157,24 +156,32 @@ void MessageQueue::readData() {
 		emit snapshotAvailable();
 }
 
+void MessageQueue::dataWritten(qint64 bytes)
+{
+	emit bytesSent(bytes);
+
+	// Write more once the buffer is empty
+	if(_socket->bytesToWrite()==0) {
+		if(_sendbuflen==0 && _sendqueue.isEmpty() && _snapshot_send.isEmpty())
+			emit allSent();
+		else
+			writeData();
+	}
+}
+
 void MessageQueue::writeData() {
 	if(_sendbuflen==0) {
-		// If send buffer is empty, serialize the next message in the queue
-
-		if(_sendqueue.isEmpty() && _snapshot_send.isEmpty()) {
-			emit allSent();
-			return;
-		}
-
-		if(_sendqueue.isEmpty()) {
-			// If there is nothing in the normal send queue, there should
-			// there should be something in the lower priority snapshot queue
+		// If send buffer is empty, serialize the next message in the queue.
+		// The snapshot upload queue has lower priority than the normal queue.
+		if(!_sendqueue.isEmpty()) {
+			// There are messages in the higher priority queue, send one
+			_sendbuflen = _sendqueue.dequeue()->serialize(_sendbuffer);
+		} else if(!_snapshot_send.isEmpty()) {
+			// If there is nothing in the normal send queue, check if
+			// there is something in the lower priority snapshot queue
 			SnapshotMode mode(SnapshotMode::SNAPSHOT);
 			_sendbuflen = mode.serialize(_sendbuffer);
 			_sendbuflen += _snapshot_send.takeFirst()->serialize(_sendbuffer + _sendbuflen);
-		} else {
-			// There are messages in the higher priority queue, send one
-			_sendbuflen = _sendqueue.dequeue()->serialize(_sendbuffer);
 		}
 	}
 
@@ -185,7 +192,6 @@ void MessageQueue::writeData() {
 			emit socketError(_socket->errorString());
 			return;
 		}
-		emit bytesSent(sent);
 		_sentcount += sent;
 		if(_sentcount == _sendbuflen) {
 			_sendbuflen=0;

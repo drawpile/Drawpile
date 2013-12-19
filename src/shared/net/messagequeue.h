@@ -153,9 +153,11 @@ signals:
 
 private slots:
 	void readData();
-	void writeData();
+	void dataWritten(qint64);
 
 private:
+	void writeData();
+
 	QIODevice *_socket;
 
 	char *_recvbuffer;
