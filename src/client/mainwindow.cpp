@@ -703,7 +703,7 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	hostdlg_ = new dialogs::HostDialog(_canvas->image(), this);
+	hostdlg_ = new dialogs::HostDialog(_canvas->image(), lastpath_, this);
 	connect(hostdlg_, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
 	hostdlg_->show();
 }
@@ -756,6 +756,8 @@ void MainWindow::leave()
  */
 void MainWindow::finishHost(int i)
 {
+	lastpath_ = hostdlg_->lastPath();
+
 	if(i==QDialog::Accepted) {
 		const bool useremote = hostdlg_->useRemoteAddress();
 		QUrl address;

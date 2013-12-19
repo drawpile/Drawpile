@@ -32,7 +32,7 @@ class HostDialog : public QDialog
 {
 	Q_OBJECT
 	public:
-		HostDialog(const QImage &original, QWidget *parent=0);
+		HostDialog(const QImage &original, const QString &lastpath, QWidget *parent=0);
 		~HostDialog();
 
 		//! Store settings in configuration file
@@ -69,6 +69,12 @@ class HostDialog : public QDialog
 		//! Use the original image?
 		bool useOriginalImage() const;
 
+		/**
+		 * @brief Get the last used image path
+		 * @return
+		 */
+		const QString &lastPath() const { return _lastpath; }
+
 	private slots:
 		void selectColor();
 		bool selectPicture();
@@ -76,7 +82,7 @@ class HostDialog : public QDialog
 
 	private:
 		Ui_HostDialog *ui_;
-		QString prevpath_;
+		QString _lastpath;
 };
 
 }

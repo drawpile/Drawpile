@@ -38,8 +38,8 @@ using widgets::ImageSelector;
 
 namespace dialogs {
 
-HostDialog::HostDialog(const QImage& original, QWidget *parent)
-	: QDialog(parent)
+HostDialog::HostDialog(const QImage& original, const QString &lastpath, QWidget *parent)
+	: QDialog(parent), _lastpath(lastpath)
 {
 	ui_ = new Ui_HostDialog;
 	ui_->setupUi(this);
@@ -120,7 +120,7 @@ bool HostDialog::selectPicture()
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
-					tr("Open image"), prevpath_, filter);
+					tr("Open image"), _lastpath, filter);
 
 	bool selected = false;
 	if(file.isEmpty()==false) {
@@ -130,8 +130,10 @@ bool HostDialog::selectPicture()
 			ui_->imageSelector->setImage(img);
 			ui_->otherpicture->click();
 			selected = true;
+			QFileInfo info(file);
+			_lastpath = info.absolutePath();
 		}
-		prevpath_ = file;
+		_lastpath = file;
 	}
 	return selected;
 }
