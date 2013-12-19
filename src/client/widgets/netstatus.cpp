@@ -272,7 +272,7 @@ void NetStatus::message(const QString& msg)
 {
 	_popup->setMessage(msg);
 	_popup->popupAt(mapToGlobal(_icon->pos() +
-				QPoint(_icon->width()/2, _icon->height()/2)));
+				QPoint(_icon->width()/2, 2)));
 	emit statusMessage(msg);
 }
 

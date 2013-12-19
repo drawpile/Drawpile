@@ -103,8 +103,8 @@ void PopupMessage::redrawBubble()
 	const qreal h1 = h - 10;
 	const qreal aw = 10;
 	qreal arrowsafe = arrowoffset_;
-	if(arrowsafe < rad)
-		arrowsafe = rad;
+	if(arrowsafe-aw < rad)
+		arrowsafe = rad+aw;
 	else if(arrowsafe+aw > w-rad)
 		arrowsafe = w-rad-aw;
 
@@ -115,7 +115,7 @@ void PopupMessage::redrawBubble()
 
 	bubble.lineTo(arrowsafe+aw, h1);
 	bubble.lineTo(arrowsafe, h);
-	bubble.lineTo(arrowsafe, h1);
+	bubble.lineTo(arrowsafe-aw, h1);
 
 	bubble.lineTo(rad, h1);
 	bubble.cubicTo(rad/2, h1, 0, h1-rad/2, 0, h1-rad);
