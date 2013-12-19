@@ -242,6 +242,7 @@ void Annotation::begin(const dpcore::Point& point, bool right)
 		QGraphicsRectItem *item = new QGraphicsRectItem();
 		QPen pen;
 		pen.setWidth(1);
+		pen.setCosmetic(true);
 		pen.setColor(QApplication::palette().color(QPalette::Highlight));
 		pen.setStyle(Qt::DotLine);
 		item->setPen(pen);
