@@ -53,9 +53,6 @@ class HostDialog : public QDialog
 		//! Get session password
 		QString getPassword() const;
 
-		//! Get the local server port
-		int getLocalServerPort() const;
-
 		//! Get max. user count
 		int getUserLimit() const;
 
@@ -74,7 +71,7 @@ class HostDialog : public QDialog
 
 	private slots:
 		void selectColor();
-		void selectPicture();
+		bool selectPicture();
 		void newSelected();
 
 	private:

@@ -107,7 +107,7 @@ void HostDialog::selectColor()
 	}
 }
 
-void HostDialog::selectPicture()
+bool HostDialog::selectPicture()
 {
 	// TODO support openraster
 
@@ -122,15 +122,18 @@ void HostDialog::selectPicture()
 	const QString file = QFileDialog::getOpenFileName(this,
 					tr("Open image"), prevpath_, filter);
 
+	bool selected = false;
 	if(file.isEmpty()==false) {
 		// Open the file
 		QImage img(file);
 		if(img.isNull()==false) {
 			ui_->imageSelector->setImage(img);
 			ui_->otherpicture->click();
+			selected = true;
 		}
 		prevpath_ = file;
 	}
+	return selected;
 }
 
 QString HostDialog::getRemoteAddress() const
@@ -151,11 +154,6 @@ QString HostDialog::getUserName() const
 QString HostDialog::getTitle() const
 {
 	return ui_->sessiontitle->text();
-}
-
-int HostDialog::getLocalServerPort() const
-{
-	return 0;
 }
 
 int HostDialog::getUserLimit() const
@@ -190,13 +188,12 @@ bool HostDialog::useOriginalImage() const
 
 void HostDialog::newSelected()
 {
-	selectPicture();
-	if(ui_->imageSelector->image().isNull()) {
+	if(!selectPicture()) {
+		// Select something else if no image was selected
 		if(ui_->existingpicture->isEnabled())
-			ui_->existingpicture->setChecked(true);
+			ui_->existingpicture->click();
 		else
-			ui_->solidcolor->setChecked(true);
-		ui_->imageSelector->chooseOriginal();
+			ui_->solidcolor->click();
 	}
 }
 

@@ -3,6 +3,7 @@
  * Bugfix: pop up "save as" dialog when trying to save a file in an unsupported format
  * Added "paste from file" action
  * Added upload progress bar
+ * Host dialog fixes
 
 2013-12-14 Version 0.7.2
  * Per-user layer locking

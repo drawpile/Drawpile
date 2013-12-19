@@ -167,14 +167,18 @@ void ImageSelector::chooseColor()
 
 void ImageSelector::chooseImage()
 {
+	if(image_.isNull()) {
+		emit noImageSet();
+		return;
+	}
+
 	mode_ = IMAGE;
 	size_ = image_.size();
 	emit widthChanged(size_.width());
 	emit heightChanged(size_.height());
 	updateCache(image_);
 	update();
-	if(image_.isNull())
-		emit noImageSet();
+
 }
 
 /**
