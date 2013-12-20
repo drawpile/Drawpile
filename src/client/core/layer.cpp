@@ -153,7 +153,7 @@ QImage Layer::padImageToTileBoundary(int xpos, int ypos, const QImage &original,
 	const int x0 = Tile::roundDown(xpos);
 	const int x1 = qMin(_width, Tile::roundUp(xpos+original.width()));
 	const int y0 = Tile::roundDown(ypos);
-	const int y1 = qMin(_width, Tile::roundUp(ypos+original.height()));
+	const int y1 = qMin(_height, Tile::roundUp(ypos+original.height()));
 
 	const int w = x1 - x0;
 	const int h = y1 - y0;
