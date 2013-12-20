@@ -1,4 +1,4 @@
-2013-12-?? Version 0.8.0
+2013-12-20 Version 0.8.0
  * Undo and redo support
  * Bugfix: pop up "save as" dialog when trying to save a file in an unsupported format
  * Added "paste from file" action
