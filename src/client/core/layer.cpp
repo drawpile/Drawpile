@@ -26,6 +26,7 @@
 #include "layer.h"
 #include "tile.h"
 #include "brush.h"
+#include "brushmask.h"
 #include "point.h"
 
 namespace paintcore {
@@ -244,9 +245,9 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
 		slb.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
 		slb.setBlendingMode(1);
 
-		sl->directDab(slb, point);
+		sl->directDab(slb, BrushMaskGenerator::cached(slb), point);
 	} else {
-		directDab(brush, point);
+		directDab(brush, BrushMaskGenerator::cached(brush), point);
 	}
 }
 
@@ -266,15 +267,19 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 		slb.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
 		slb.setBlendingMode(1);
 
+		const BrushMaskGenerator &bmg = BrushMaskGenerator::cached(slb);
+
 		if(brush.subpixel())
-			sl->drawSoftLine(slb, from, to, distance);
+			sl->drawSoftLine(slb, bmg, from, to, distance);
 		else
-			sl->drawHardLine(slb, from, to, distance);
+			sl->drawHardLine(slb, bmg, from, to, distance);
 	} else {
+		const BrushMaskGenerator &bmg = BrushMaskGenerator::cached(brush);
+
 		if(brush.subpixel())
-			drawSoftLine(brush, from, to, distance);
+			drawSoftLine(brush, bmg, from, to, distance);
 		else
-			drawHardLine(brush, from, to, distance);
+			drawHardLine(brush, bmg, from, to, distance);
 	}
 }
 
@@ -285,7 +290,7 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
  * @param to ending point
  * @param distance distance from previous dab.
  */
-void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance)
+void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, const Point& from, const Point& to, qreal &distance)
 {
 	const qreal spacing = brush.spacing()*brush.radius(from.pressure())/100.0;
 	qreal x0 = from.x() + from.xFrac();
@@ -298,16 +303,15 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
 	const qreal dy = (y1-y0)/dist;
 	const qreal dp = (to.pressure()-from.pressure())/dist;
 	// Skip the first dab.
-	x0 += dx;
-	y0 += dy;
+	QPointF pf(x0 + dx, y0+dy);
 	p += dp;
 	for(qreal i=0;i<dist-0.5;++i) {
 		if(++distance > spacing) {
-			directDab(brush, Point(QPointF(x0,y0),qBound(0.0,p,1.0)));
+			directDab(brush, mask, Point(pf, qBound(0.0,p,1.0)));
 			distance = 0;
 		}
-		x0 += dx;
-		y0 += dy;
+		pf.rx() += dx;
+		pf.ry() += dy;
 		p += dp;
 	}
 }
@@ -317,7 +321,7 @@ void Layer::drawSoftLine(const Brush& brush, const Point& from, const Point& to,
  * precision.
  * The last point is not drawn, so successive lines can be drawn blotches.
  */
-void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal &distance) {
+void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
 
 	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
@@ -358,7 +362,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 			x0 += stepx;
 			fraction += dy;
 			if(++distance > spacing) {
-				directDab(brush, point);
+				directDab(brush, mask, point);
 				distance = 0;
 			}
 			p += dp;
@@ -373,7 +377,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
 			y0 += stepy;
 			fraction += dx;
 			if(++distance > spacing) {
-				directDab(brush, point);
+				directDab(brush, mask, point);
 				distance = 0;
 			}
 			p += dp;
@@ -386,7 +390,7 @@ void Layer::drawHardLine(const Brush& brush, const Point& from, const Point& to,
  * @param brush brush to use
  * @parma point where to dab. May be outside the image.
  */
-void Layer::directDab(const Brush& brush, const Point& point)
+void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const Point& point)
 {
 	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
 	const int top = point.y() - brush.radius(point.pressure());
@@ -397,7 +401,12 @@ void Layer::directDab(const Brush& brush, const Point& point)
 		return;
 
 	// Render the brush
-	BrushMask bm = brush.subpixel()?brush.render_subsampled(point.xFrac(), point.yFrac(), point.pressure()):brush.render(point.pressure());
+	BrushMask bm;
+	if(brush.subpixel())
+		bm = mask.make(point.xFrac(), point.yFrac(), point.pressure());
+	else
+		bm = mask.make(point.pressure());
+
 	const int realdia = bm.diameter();
 	const uchar *values = bm.data();
 	QColor color = brush.color(point.pressure());

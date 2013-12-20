@@ -47,6 +47,7 @@ set (
 	core/layer.cpp
 	core/layerstack.cpp
 	core/brush.cpp
+	core/brushmask.cpp
 	core/rasterop.cpp
 	ora/qzip.cpp
 	ora/orawriter.cpp

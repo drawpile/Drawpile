@@ -33,6 +33,7 @@ namespace paintcore {
  */
 inline qreal interpolate(qreal a, qreal b, qreal alpha)
 {
+	Q_ASSERT(alpha>=0 && alpha<=1);
 	//return a*alpha + b*(1-alpha);
 	return (a-b) * alpha + b;
 }
@@ -47,165 +48,16 @@ inline qreal interpolate(qreal a, qreal b, qreal alpha)
  * @param spacing brush spacing hint, as percentage of brush radius
  */
 Brush::Brush(int radius, qreal hardness, qreal opacity, const QColor& color, int spacing)
-	: radius1_(radius), radius2_(radius),
-	hardness1_(hardness), hardness2_(hardness),
-	opacity1_(opacity), opacity2_(opacity),
-	color1_(color), color2_(color), spacing_(spacing), blend_(1),
-	sensitive_(false), subpixel_(true), incremental_(true)
+	: _radius1(radius), _radius2(radius),
+	_hardness1(hardness), _hardness2(hardness),
+	_opacity1(opacity), _opacity2(opacity),
+	_color1(color), _color2(color), _spacing(spacing), _blend(1),
+	_subpixel(false), _incremental(true)
 {
 	Q_ASSERT(radius>=0);
 	Q_ASSERT(hardness>=0 && hardness <=1);
 	Q_ASSERT(opacity>=0 && opacity <=1);
 	Q_ASSERT(spacing>=0 && spacing <=100);
-}
-
-/**
- * Set the radius for pressure=1.0
- * @param radius brush radius. 0 means single pixel brush
- * @pre 0 <= radius
- */
-void Brush::setRadius(int radius)
-{
-	Q_ASSERT(radius>=0);
-	radius1_ = radius;
-	checkSensitivity();
-	cache_ = BrushMask();
-}
-
-/**
- * Set the hardness for pressure=1.0
- * @param hardness brush hardness
- * @pre 0 <= hardness <= 1
- */
-void Brush::setHardness(qreal hardness)
-{
-	Q_ASSERT(hardness>=0 && hardness<=1);
-	hardness1_ = hardness;
-	checkSensitivity();
-	cache_ = BrushMask();
-}
-
-/**
- * Set the opacity for pressure=1.0
- * @param opacity brush opacity
- * @pre 0 <= opacity <= 1
- */
-void Brush::setOpacity(qreal opacity)
-{
-	Q_ASSERT(opacity>=0 && opacity<=1);
-	opacity1_ = opacity;
-	checkSensitivity();
-	cache_ = BrushMask();
-}
-
-/**
- * Set the color for pressure=1.0
- * @param color brush color.
- */
-void Brush::setColor(const QColor& color)
-{
-	color1_ = color;
-}
-
-
-/**
- * Set the radius for pressure=0.0
- * @param radius brush radius. 0 means single pixel brush
- * @pre 0 <= radius
- */
-void Brush::setRadius2(int radius)
-{
-	Q_ASSERT(radius>=0);
-	radius2_  = radius;
-	checkSensitivity();
-	cache_ = BrushMask();
-}
-
-/**
- * Set the hardness for pressure=0.0
- * @param hardness brush hardness
- * @pre 0 <= hardness <= 1
- */
-void Brush::setHardness2(qreal hardness)
-{
-	Q_ASSERT(hardness>=0 && hardness<=1);
-	hardness2_ = hardness;
-	checkSensitivity();
-	cache_ = BrushMask();
-}
-
-/**
- * Set the opacity for pressure=0.0
- * @param opacity brush hardness
- * @pre 0 <= opacity <= 1
- */
-void Brush::setOpacity2(qreal opacity)
-{
-	Q_ASSERT(opacity>=0 && opacity<=1);
-	opacity2_ = opacity;
-	checkSensitivity();
-	cache_ = BrushMask();
-}
-
-/**
- * Set the color for pressure=0.0
- * @param color brush color.
- */
-void Brush::setColor2(const QColor& color)
-{
-	color2_ = color;
-}
-
-/**
- * @param spacing brush spacing is a percentage of brush radius
- * @pre 0 <= spacing <= 100
- */
-void Brush::setSpacing(int spacing)
-{
-	Q_ASSERT(spacing >= 0 && spacing <= 100);
-	spacing_ = spacing;
-}
-
-/**
- * Some tools don't need subpixel rendering. Set this to false
- * to inform the drawing code that only integer precision is needed.
- */
-void Brush::setSubpixel(bool sp)
-{
-	subpixel_ = sp;
-}
-
-/**
- * In incremental drawing mode, dabs are applied directly to the layer.
- * In indirect drawing mode, dabs are applied (with full opacity) to a
- * temporary layer which is merged with the actual layer on penup.
- * @param incremental
- */
-void Brush::setIncremental(bool incremental)
-{
-	incremental_ = incremental;
-}
-
-/**
- * The brush mask can be composed in other ways that the plain old
- * alpha blend as well.
- * Modes are defined in rasterop.h. Unrecognized modes default to
- * alpha blend.
- */
-void Brush::setBlendingMode(int mode)
-{
-	blend_ = mode;
-}
-
-/**
- * Sets sensitive_ if brush can change its shape or color according
- * to the pressure. Insensitive brushes can be cached more easily.
- */
-void Brush::checkSensitivity()
-{
-	sensitive_ = radius1_ != radius2_ ||
-			qAbs(hardness1_ - hardness2_) >= 1.0/256.0 ||
-			qAbs(opacity1_ - opacity2_) >= 1.0/256.0;
 }
 
 /**
@@ -217,8 +69,19 @@ void Brush::checkSensitivity()
  */
 int Brush::radius(qreal pressure) const
 {
-	Q_ASSERT(pressure>=0 && pressure<=1);
-	return unsigned(ceil(interpolate(radius1_, radius2_, pressure)));
+	return ceil(interpolate(radius1(), radius2(), pressure));
+}
+
+/**
+ * @brief Get the real radius for the given pressure
+ * @param pressure
+ * @return radius
+ * @pre 0 <= pressure <= 1
+ * @post 0.5 <= RESULT
+ */
+qreal Brush::fradius(qreal pressure) const
+{
+	return qMax(0.5, interpolate(radius1(), radius2(), pressure));
 }
 
 /**
@@ -229,8 +92,7 @@ int Brush::radius(qreal pressure) const
  */
 int Brush::diameter(qreal pressure) const
 {
-	int rad = radius(pressure);
-	return rad*2 + 1;
+	return qMax(0.5, interpolate(radius1(), radius2(), pressure))*2;
 }
 
 /**
@@ -242,8 +104,7 @@ int Brush::diameter(qreal pressure) const
  */
 qreal Brush::hardness(qreal pressure) const
 {
-	Q_ASSERT(pressure>=0 && pressure<=1);
-	return interpolate(hardness1_, hardness2_, pressure);
+	return interpolate(hardness1(), hardness2(), pressure);
 }
 
 /**
@@ -255,8 +116,7 @@ qreal Brush::hardness(qreal pressure) const
  */
 qreal Brush::opacity(qreal pressure) const
 {
-	Q_ASSERT(pressure>=0 && pressure<=1);
-	return interpolate(opacity1_, opacity2_, pressure);
+	return interpolate(opacity1(), opacity2(), pressure);
 }
 
 /**
@@ -267,32 +127,19 @@ qreal Brush::opacity(qreal pressure) const
  */
 QColor Brush::color(qreal pressure) const
 {
-	Q_ASSERT(pressure>=0 && pressure<=1);
-	
 	return QColor(
-			qRound(interpolate(color1_.red(), color2_.red(), pressure)),
-			qRound(interpolate(color1_.green(), color2_.green(), pressure)),
-			qRound(interpolate(color1_.blue(), color2_.blue(), pressure))
-			);
-
-
-}
-
-/**
- * Spacing is not used internally by the brush, but is provided here because
- * it is closely related to how the brush is drawn.
- * @return spacing as a percentage of brush radius
- * @post 0 <= RESULT <= 100
- */
-int Brush::spacing() const
-{
-	return spacing_;
+		qRound(interpolate(color1().red(), color2().red(), pressure)),
+		qRound(interpolate(color1().green(), color2().green(), pressure)),
+		qRound(interpolate(color1().blue(), color2().blue(), pressure))
+	);
 }
 
 bool Brush::isOpacityVariable() const
 {
-	return qAbs(opacity1_ - opacity2_) > (1/256.0);
+	return qAbs(opacity1() - opacity2()) > (1/256.0);
 }
+
+#if 0
 
 /**
  * Returns the value of each pixel of the brush. It is up to you to blend
@@ -399,28 +246,29 @@ BrushMask Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
 	return b;
 }
 
-/**
- * Any cached data is ignored in the equality test.
- */
+#endif
+
 bool Brush::operator==(const Brush& brush) const
 {
-	return radius1_ == brush.radius1_ && radius2_ == brush.radius2_ &&
-			qAbs(hardness1_ - brush.hardness1_) <= 1.0/256.0 &&
-			qAbs(hardness2_ - brush.hardness2_) <= 1.0/256.0 &&
-			qAbs(opacity1_ - brush.opacity1_) <= 1.0/256.0 &&
-			qAbs(opacity2_ - brush.opacity2_) <= 1.0/256.0 &&
-			color1_ == brush.color1_ &&
-			color2_ == brush.color2_ &&
-			spacing_ == brush.spacing_ &&
-			subpixel_ == brush.subpixel_ &&
-			incremental_ == brush.incremental_ &&
-			blend_ == brush.blend_;
+	return radius1() == brush.radius1() && radius2() == brush.radius2() &&
+			qAbs(hardness1() - brush.hardness1()) <= 1.0/256.0 &&
+			qAbs(hardness2() - brush.hardness2()) <= 1.0/256.0 &&
+			qAbs(opacity1() - brush.opacity1()) <= 1.0/256.0 &&
+			qAbs(opacity2() - brush.opacity2()) <= 1.0/256.0 &&
+			color1() == brush.color1() &&
+			color2() == brush.color2() &&
+			spacing() == brush.spacing() &&
+			subpixel() == brush.subpixel() &&
+			incremental() == brush.incremental() &&
+			blendingMode() == brush.blendingMode();
 }
 
 bool Brush::operator!=(const Brush& brush) const
 {
 	return !(*this == brush);
 }
+
+#if 0
 
 /**
  * Copy the data from an existing brush. A brush data is guaranteed
@@ -461,5 +309,6 @@ bool BrushMask::isFresh(qreal pressure, bool sensitive) const {
 	else
 		return d.constData() && d->pressure>=0;
 }
+#endif
 
 }

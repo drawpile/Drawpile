@@ -327,6 +327,8 @@ void BrushSettings::restoreToolSettings(QSettings &cfg)
 
 	_ui->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
 	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
+
+	_ui->preview->setSubpixel(true);
 }
 
 void BrushSettings::setForeground(const QColor& color)

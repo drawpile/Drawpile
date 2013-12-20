@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,155 +20,93 @@
 #ifndef BRUSH_H
 #define BRUSH_H
 
-#include <QSharedDataPointer>
 #include <QColor>
 
 namespace paintcore {
 
-class Point;
-
-struct BrushMaskData : public QSharedData
-{
-	BrushMaskData() : data(0), dia(0), pressure(-1) { }
-	BrushMaskData(const BrushMaskData& other);
-	~BrushMaskData() { delete [] data; }
-
-	uchar *data;
-	int dia;
-	int pressure;
-};
-
-/**
- * @brief A brush mask
- * This is an implicitly shared class that holds the alpha map of the
- * brush shape.
- */
-class BrushMask
-{
-	public:
-		//! Number of pressure levels supported.
-		/**
-		 * The limiting factor is the number of bits in the protocol.
-		 * Adjust accordingly here. This setting affects brush caching.
-		 */
-		static const int PRESSURE_LEVELS = 256;
-
-		//! Create an empty brush
-		BrushMask() : d(0) { }
-
-		//! Create a new rendered brush
-		BrushMask(int dia, qreal pressure);
-
-		//! Is this brush still valid
-		bool isFresh(qreal pressure, bool sensitive) const;
-
-		//! Get write access to raw data
-		uchar *data() { return d->data; }
-
-		//! Get read only access to raw data
-		const uchar *data() const { return d->data; }
-
-		//! Get the diameter of the rendered brush.
-		int diameter() const { return d->dia; }
-
-	private:
-		QSharedDataPointer<BrushMaskData> d;
-};
-
 /**
  * @brief A brush for drawing onto a layer
- * This class produces an image that can be used as a brush.
- * Two sets of parameters are set and the image is created by
- * interpolating between them.
+ *
+ * This class contains the parameters defining a brush.
  */
 class Brush
 {
-	public:
-		//! Construct a brush
-		Brush(int radius=8, qreal hardness=0, qreal opacity=1.0,
-				const QColor& color=Qt::black, int spacing=25);
+public:
+	//! Construct a brush
+	Brush(int radius=0, qreal hardness=1.0, qreal opacity=1.0,
+			const QColor& color=Qt::black, int spacing=25);
 
-		//! Set radius heavy brush
-		void setRadius(int radius);
-		//! Set radius for light brush
-		void setRadius2(int radius);
+	//! Set radius heavy brush
+	void setRadius(int radius) { Q_ASSERT(radius>=0); _radius1  = radius; }
+	//! Set radius for light brush
+	void setRadius2(int radius) { Q_ASSERT(radius>=0); _radius2  = radius; }
 
-		//! Set hardness for heavy brush
-		void setHardness(qreal hardness);
-		//! Set hardness for light brush
-		void setHardness2(qreal hardness);
+	int radius1() const { return _radius1; }
+	int radius2() const { return _radius2; }
 
-		//! Set opacity for heavy brush
-		void setOpacity(qreal opacity);
-		//! Set opacity for light brush
-		void setOpacity2(qreal opacity);
+	//! Set hardness for heavy brush
+	void setHardness(qreal hardness) { Q_ASSERT(hardness>=0 && hardness<=1); _hardness1 = hardness; }
+	//! Set hardness for light brush
+	void setHardness2(qreal hardness) { Q_ASSERT(hardness>=0 && hardness<=1); _hardness2 = hardness; }
 
-		//! Set color for heavy brush
-		void setColor(const QColor& color);
-		//! Set color for light brush
-		void setColor2(const QColor& color);
+	qreal hardness1() const { return _hardness1; }
+	qreal hardness2() const { return _hardness2; }
 
-		//! Set spacing hint
-		void setSpacing(int spacing);
+	//! Set opacity for heavy brush
+	void setOpacity(qreal opacity) { Q_ASSERT(opacity>=0 && opacity<=1); _opacity1 = opacity; }
+	//! Set opacity for light brush
+	void setOpacity2(qreal opacity) { Q_ASSERT(opacity>=0 && opacity<=1); _opacity2 = opacity; }
 
-		//! Set subpixel hint
-		void setSubpixel(bool sp);
+	qreal opacity1() const { return _opacity1; }
+	qreal opacity2() const { return _opacity2; }
 
-		//! Set blending mode hint
-		void setBlendingMode(int mode);
+	//! Set color for heavy brush
+	void setColor(const QColor& color) { _color1 = color; }
+	//! Set color for light brush
+	void setColor2(const QColor& color) { _color2 = color; }
 
-		//! Set incremental mode (default is true)
-		void setIncremental(bool incremental);
+	const QColor &color1() const { return _color1; }
+	const QColor &color2() const { return _color2; }
 
-		//! Get interpolated radius
-		int radius(qreal pressure) const;
-		//! Get the diameter of the rendered brush
-		int diameter(qreal pressure) const;
-		//! Get interpolated hardness
-		qreal hardness(qreal pressure) const;
-		//! Get interpolated opacity
-		qreal opacity(qreal pressure) const;
-		//! Get interpolated color
-		QColor color(qreal pressure) const;
-		//! Get spacing hint
-		int spacing() const;
-		//! Should subpixel rendering be used?
-		bool subpixel() const { return subpixel_; }
-		//! Get the suggested blending mode
-		int blendingMode() const { return blend_; }
-		//! Is this an incremental mode brush?
-		bool incremental() const { return incremental_; }
+	void setSpacing(int spacing) { Q_ASSERT(spacing >= 0 && spacing <= 100); _spacing = spacing; }
+	int spacing() const { return _spacing; }
 
-		//! Does opacity vary with pressure?
-		bool isOpacityVariable() const;
+	void setSubpixel(bool sp) { _subpixel = sp; }
+	bool subpixel() const { return _subpixel; }
 
-		//! Render the brush
-		BrushMask render(qreal pressure) const;
+	void setIncremental(bool incremental) { _incremental = incremental; }
+	bool incremental() const { return _incremental; }
 
-		//! Render the brush with an offset
-		BrushMask render_subsampled(qreal x, qreal y, qreal pressure) const;
+	void setBlendingMode(int mode) { _blend = mode; }
+	int blendingMode() const { return _blend; }
 
-		//! Equality test
-		bool operator==(const Brush& brush) const;
+	//! Get interpolated radius
+	int radius(qreal pressure) const;
+	qreal fradius(qreal pressure) const;
+	//! Get the diameter of the rendered brush
+	int diameter(qreal pressure) const;
+	//! Get interpolated hardness
+	qreal hardness(qreal pressure) const;
+	//! Get interpolated opacity
+	qreal opacity(qreal pressure) const;
+	//! Get interpolated color
+	QColor color(qreal pressure) const;
 
-		//! Inequality test
-		bool operator!=(const Brush& brush) const;
+	//! Does opacity vary with pressure?
+	bool isOpacityVariable() const;
 
-	private:
-		//! Check if the brush is sensitive to pressure
-		void checkSensitivity();
+	bool operator==(const Brush& brush) const;
+	bool operator!=(const Brush& brush) const;
 
-		int radius1_, radius2_;
-		qreal hardness1_, hardness2_;
-		qreal opacity1_, opacity2_;
-		QColor color1_, color2_;
-		int spacing_;
-		int blend_;
-		bool sensitive_;
-		bool subpixel_;
-		bool incremental_;
-
-		mutable BrushMask cache_;
+private:
+	int _radius1, _radius2;
+	qreal _hardness1, _hardness2;
+	qreal _opacity1, _opacity2;
+	QColor _color1, _color2;
+	int _spacing;
+	int _blend;
+	bool _subpixel;
+	bool _incremental;
 };
 
 }

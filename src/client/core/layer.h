@@ -30,6 +30,7 @@ class QSize;
 namespace paintcore {
 
 class Brush;
+class BrushMaskGenerator;
 class Point;
 class Tile;
 class LayerStack;
@@ -159,9 +160,9 @@ class Layer {
 		//! Get a sublayer
 		Layer *getSubLayer(int id, int blendmode, uchar opacity);
 
-		void directDab(const Brush& brush, const Point& point);
-		void drawHardLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
-		void drawSoftLine(const Brush& brush, const Point& from, const Point& to, qreal &distance);
+		void directDab(const Brush &brush, const BrushMaskGenerator& mask, const Point& point);
+		void drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance);
+		void drawSoftLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance);
 
 		LayerStack *owner_;
 		int id_;
