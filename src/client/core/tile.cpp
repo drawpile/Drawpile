@@ -25,7 +25,7 @@
 #include "tile.h"
 #include "rasterop.h"
 
-namespace dpcore {
+namespace paintcore {
 
 Tile::Tile() :
 	_data(0)

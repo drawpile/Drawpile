@@ -216,7 +216,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==NOTRANSFORM) {
 		_pendown = MOUSEDOWN;
 		
-		onPenDown(dpcore::Point(mapToScene(event->pos()), 1.0), event->button() == Qt::RightButton);
+		onPenDown(paintcore::Point(mapToScene(event->pos()), 1.0), event->button() == Qt::RightButton);
 	}
 }
 
@@ -235,7 +235,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	if(_isdragging) {
 		moveDrag(event->x(), event->y());
 	} else {
-		const dpcore::Point point(mapToScene(event->pos()), 1.0);
+		const paintcore::Point point(mapToScene(event->pos()), 1.0);
 		if(!_prevpoint.intSame(point)) {
 			if(_pendown)
 				onPenMove(point);
@@ -245,13 +245,13 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	}
 }
 
-void CanvasView::onPenDown(const dpcore::Point &p, bool right)
+void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
 	if(_scene->hasImage())
 		_current_tool->begin(p, right);
 }
 
-void CanvasView::onPenMove(const dpcore::Point &p)
+void CanvasView::onPenMove(const paintcore::Point &p)
 {
 	if(_scene->hasImage())
 		_current_tool->motion(p);
@@ -268,7 +268,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(_pendown == TABLETDOWN)
 		return;
-	_prevpoint = dpcore::Point(mapToScene(event->pos()), 0.0);
+	_prevpoint = paintcore::Point(mapToScene(event->pos()), 0.0);
 	if(_isdragging) {
 		stopDrag();
 	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN) {
@@ -331,7 +331,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
+		const paintcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
 		if(!_prevpoint.intSame(point)) {
 			if(_isdragging)
@@ -358,7 +358,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			startDrag(tabev->x(), tabev->y(), _dragbtndown);
 		} else {
 			if(_pendown == NOTDOWN) {
-				const dpcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
+				const paintcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
 
 				_pendown = TABLETDOWN;
 				onPenDown(point, false);
@@ -373,7 +373,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		if(_isdragging) {
 			stopDrag();
 		} else if(_pendown == TABLETDOWN) {
-			dpcore::Point point(mapToScene(tabev->pos()), 0);
+			paintcore::Point point(mapToScene(tabev->pos()), 0);
 			updateOutline(point);
 			_prevpoint = point;
 			_pendown = NOTDOWN;
@@ -386,7 +386,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 	return true;
 }
 
-void CanvasView::updateOutline(const dpcore::Point& point) {
+void CanvasView::updateOutline(const paintcore::Point& point) {
 	if(_enableoutline && _showoutline && !_locked) {
 		QList<QRectF> rect;
 		rect.append(QRectF(_prevpoint.x() - _outlinesize,

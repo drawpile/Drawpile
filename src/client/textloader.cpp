@@ -168,7 +168,7 @@ void TextCommandLoader::handleLayerAttr(const QString &args)
 		if(i.key() == "opacity")
 			layer.opacity = str2real(i.value());
 		else if(i.key() == "blend") {
-			int mode = dpcore::blendModeSvg(i.value());
+			int mode = paintcore::blendModeSvg(i.value());
 			if(mode<0)
 				throw SyntaxError("Unrecognized blending mode: " + i.value());
 			layer.blend = mode;
@@ -278,7 +278,7 @@ void TextCommandLoader::handleDrawingContext(const QString &args)
 		else if(i.key() == "opacityl")
 			ctx.brush.setOpacity2(str2real(i.value()));
 		else if(i.key() == "blend") {
-			int mode = dpcore::blendModeSvg(i.value());
+			int mode = paintcore::blendModeSvg(i.value());
 			if(mode<0)
 				throw SyntaxError("Unrecognized blending mode: " + i.value());
 			ctx.brush.setBlendingMode(mode);
@@ -304,7 +304,7 @@ void TextCommandLoader::handlePenMove(const QString &args)
 		throw SyntaxError("Expected ID and point");
 	int id = str2ctxid(args.left(idsep));
 
-	dpcore::PointVector points;
+	paintcore::PointVector points;
 	QStringList pargs = args.mid(idsep+1).split(';', QString::SkipEmptyParts);
 	QRegularExpression re("(\\d+(?:\\.\\d+)?) (\\d+(?:\\.\\d+)?)(?: (\\d(?:\\.\\d+)?))?");
 	foreach(const QString &parg, pargs) {
@@ -312,7 +312,7 @@ void TextCommandLoader::handlePenMove(const QString &args)
 		if(!m.hasMatch())
 			throw SyntaxError("Invalid point: " + parg);
 
-		points.append(dpcore::Point(
+		points.append(paintcore::Point(
 			QPointF(
 				str2real(m.captured(1)),
 				str2real(m.captured(2))

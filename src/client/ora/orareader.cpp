@@ -182,7 +182,7 @@ bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
 			_commands.append(net::putQImage(1, _layerid, layerPos.x(), layerPos.y(), content, false));
 
 			QString compositeOp = e.attribute("composite-op", "src-over");
-			int blendmode = dpcore::blendModeSvg(compositeOp);
+			int blendmode = paintcore::blendModeSvg(compositeOp);
 			if(blendmode<0) {
 				_warnings |= ORA_EXTENDED;
 				blendmode = 1;

@@ -23,7 +23,7 @@
 #include <QSharedDataPointer>
 #include <QColor>
 
-namespace dpcore {
+namespace paintcore {
 
 class Point;
 

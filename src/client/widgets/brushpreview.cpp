@@ -79,7 +79,7 @@ void BrushPreview::setColor2(const QColor& color)
 	update();
 }
 
-const dpcore::Brush &BrushPreview::brush(bool swapcolors) const
+const paintcore::Brush &BrushPreview::brush(bool swapcolors) const
 {
 	if(swapcolors) {
 		swapbrush_ = brush_;
@@ -116,17 +116,17 @@ void BrushPreview::paintEvent(QPaintEvent *event)
 void BrushPreview::updatePreview()
 {
 	if(preview_==0) {
-		preview_ = new dpcore::LayerStack;
+		preview_ = new paintcore::LayerStack;
 		preview_->init(contentsRect().size());
 		preview_->addLayer(0, "", QColor(0,0,0));
 	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
 		// TODO resize more nicely
 		delete preview_;
-		preview_ = new dpcore::LayerStack;
+		preview_ = new paintcore::LayerStack;
 		preview_->init(contentsRect().size());
 		preview_->addLayer(0, "", QColor(0,0,0));
 	}
-	dpcore::Layer *layer = preview_->getLayerByIndex(0);
+	paintcore::Layer *layer = preview_->getLayerByIndex(0);
 
 	layer->fillColor(color2_);
 
@@ -146,34 +146,34 @@ void BrushPreview::updatePreview()
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const int y = qRound(qSin(phase) * strokeh);
 			layer->drawLine(0, brush_,
-					dpcore::Point(offx+lastx,offy+lasty, lastp),
-					dpcore::Point(offx+x, offy+y, pressure), distance);
+					paintcore::Point(offx+lastx,offy+lasty, lastp),
+					paintcore::Point(offx+x, offy+y, pressure), distance);
 			lastx = x;
 			lasty = y;
 			lastp = pressure;
 		}
 	} else if(shape_ == Line) {
 		layer->drawLine(0, brush_,
-				dpcore::Point(offx, offy, 1),
-				dpcore::Point(offx+strokew, offy, 1),
+				paintcore::Point(offx, offy, 1),
+				paintcore::Point(offx+strokew, offy, 1),
 				distance
 				);
 	} else {
 		layer->drawLine(0, brush_,
-				dpcore::Point(offx, offy-strokeh, 1),
-				dpcore::Point(offx+strokew, offy-strokeh, 1),
+				paintcore::Point(offx, offy-strokeh, 1),
+				paintcore::Point(offx+strokew, offy-strokeh, 1),
 				distance);
 		layer->drawLine(0, brush_,
-				dpcore::Point(offx+strokew, offy-strokeh, 1),
-				dpcore::Point(offx+strokew, offy+strokeh, 1),
+				paintcore::Point(offx+strokew, offy-strokeh, 1),
+				paintcore::Point(offx+strokew, offy+strokeh, 1),
 				distance);
 		layer->drawLine(0, brush_,
-				dpcore::Point(offx+strokew, offy+strokeh, 1),
-				dpcore::Point(offx, offy+strokeh, 1),
+				paintcore::Point(offx+strokew, offy+strokeh, 1),
+				paintcore::Point(offx, offy+strokeh, 1),
 				distance);
 		layer->drawLine(0, brush_,
-				dpcore::Point(offx, offy+strokeh, 1),
-				dpcore::Point(offx, offy-strokeh, 1),
+				paintcore::Point(offx, offy+strokeh, 1),
+				paintcore::Point(offx, offy-strokeh, 1),
 				distance);
 	}
 
@@ -185,7 +185,7 @@ void BrushPreview::updatePreview()
 /**
  * @param brush brush to set
  */
-void BrushPreview::setBrush(const dpcore::Brush& brush)
+void BrushPreview::setBrush(const paintcore::Brush& brush)
 {
 	brush_ = brush;
 	updatePreview();

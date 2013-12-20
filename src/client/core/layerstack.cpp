@@ -28,7 +28,7 @@
 #include "tile.h"
 #include "rasterop.h"
 
-namespace dpcore {
+namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
 	: QObject(parent), _width(-1), _height(-1)

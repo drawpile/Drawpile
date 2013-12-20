@@ -48,7 +48,7 @@ struct StateSavepoint {
 
 	qint64 timestamp;
 	int streampointer;
-	dpcore::Savepoint *canvas;
+	paintcore::Savepoint *canvas;
 	QHash<int, DrawingContext> ctxstate;
 	QVector<net::LayerListItem> layermodel;
 	QVector<drawingboard::AnnotationState> annotations;
@@ -243,7 +243,7 @@ void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)
 
 void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 {
-	dpcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.id());
 	if(!layer) {
 		qWarning() << "received layer attributes for non-existent layer" << cmd.id();
 		return;
@@ -256,7 +256,7 @@ void StateTracker::handleLayerAttributes(const protocol::LayerAttributes &cmd)
 
 void StateTracker::handleLayerTitle(const protocol::LayerRetitle &cmd)
 {
-	dpcore::Layer *layer = _image->getLayer(cmd.id());
+	paintcore::Layer *layer = _image->getLayer(cmd.id());
 	if(!layer) {
 		qWarning() << "received layer title for non-existent layer" << cmd.id();
 		return;
@@ -283,7 +283,7 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
-	dpcore::Brush &b = ctx.tool.brush;
+	paintcore::Brush &b = ctx.tool.brush;
 	ctx.tool.layer_id = cmd.layer();
 	b.setBlendingMode(cmd.blend());
 	b.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
@@ -302,16 +302,16 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
-	dpcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
+	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
 	if(!layer) {
 		qWarning() << "penMove by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
 		return;
 	}
 	
-	dpcore::Point p;
+	paintcore::Point p;
 	foreach(const protocol::PenPoint pp, cmd.points()) {
 		// The coordinate encoding code is in net/client.cpp
-		p = dpcore::Point(
+		p = paintcore::Point(
 			(pp.x >> 2) - 128,
 			(pp.y >> 2) - 128,
 			(pp.x & 3) / 4.0,
@@ -335,7 +335,7 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
-	dpcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
+	paintcore::Layer *layer = _image->getLayer(ctx.tool.layer_id);
 	if(!layer) {
 		qWarning() << "penUp by user" << cmd.contextId() << "on non-existent layer" << ctx.tool.layer_id;
 		return;
@@ -349,7 +349,7 @@ void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 
 void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 {
-	dpcore::Layer *layer = _image->getLayer(cmd.layer());
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
 	if(!layer) {
 		qWarning() << "putImage on non-existent layer" << cmd.layer();
 		return;

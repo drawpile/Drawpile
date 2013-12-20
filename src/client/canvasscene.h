@@ -25,7 +25,7 @@
 #include "core/point.h"
 #include "../shared/net/message.h"
 
-namespace dpcore {
+namespace paintcore {
 	class LayerStack;
 	class Brush;
 }
@@ -69,7 +69,7 @@ public:
 	int height() const;
 
 	//! Get the layers
-	dpcore::LayerStack *layers();
+	paintcore::LayerStack *layers();
 
 	//! Get canvas contents as an image
 	QImage image() const;
@@ -135,10 +135,10 @@ public:
 	SelectionItem *selectionItem() { return _selection; }
 
 	//! Start a new preview stroke
-	void startPreview(const dpcore::Brush &brush, const dpcore::Point &point);
+	void startPreview(const paintcore::Brush &brush, const paintcore::Point &point);
 
 	//! Add a preview stroke
-	void addPreview(const dpcore::Point& point);
+	void addPreview(const paintcore::Point& point);
 
 	//! Remove the oldest preview stroke(s)
 	void takePreview(int count);
@@ -168,7 +168,7 @@ public:
 	 * @param brush
 	 * @return qpen
 	 */
-	static QPen penForBrush(const dpcore::Brush &brush);
+	static QPen penForBrush(const paintcore::Brush &brush);
 
 	/**
 	 * @brief Set the session title
@@ -227,7 +227,7 @@ private:
 	QList<QGraphicsLineItem*> _previewstrokecache;
 
 	//! Coordinate of the last preview stroke
-	dpcore::Point _lastpreview;
+	paintcore::Point _lastpreview;
 
 	//! The pen to use for preview strokes
 	QPen _previewpen;

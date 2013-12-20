@@ -25,7 +25,7 @@
 #include "../shared/net/pen.h"
 #include "core/point.h"
 
-namespace dpcore {
+namespace paintcore {
 	class Brush;
 }
 
@@ -35,11 +35,11 @@ namespace net {
 QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, const QImage &image, bool blend);
 
 //! Generate a tool change message
-protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brush &brush);
+protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush);
 
 
-protocol::PenPoint pointToProtocol(const dpcore::Point &p);
-protocol::PenPointVector pointsToProtocol(const dpcore::PointVector &points);
+protocol::PenPoint pointToProtocol(const paintcore::Point &p);
+protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points);
 
 }
 

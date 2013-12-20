@@ -89,7 +89,7 @@ public:
 	 * @param swapcolors if true, foreground and background colors are swapped
 	 * @return brush with values from the UI widget
 	 */
-	virtual const dpcore::Brush& getBrush(bool swapcolors) const = 0;
+	virtual const paintcore::Brush& getBrush(bool swapcolors) const = 0;
 
 	/**
 	 * @brief Get the current brush size
@@ -145,7 +145,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
 
@@ -172,7 +172,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
 
@@ -197,7 +197,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
 
@@ -222,7 +222,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
 
@@ -257,7 +257,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const { return 0; }
 
@@ -311,7 +311,7 @@ public:
 
 	void setForeground(const QColor&) {}
 	void setBackground(const QColor&) {}
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const { return 0; }
 
@@ -342,7 +342,7 @@ public:
 
 	void setForeground(const QColor&) {}
 	void setBackground(const QColor&) {}
-	const dpcore::Brush& getBrush(bool swapcolors) const;
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const { return 0; }
 

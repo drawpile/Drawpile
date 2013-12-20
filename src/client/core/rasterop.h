@@ -22,7 +22,7 @@
 
 #include <QString>
 
-namespace dpcore {
+namespace paintcore {
 
 static const int BLEND_MODES=10;
 // Names of each blending mode

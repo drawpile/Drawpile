@@ -24,7 +24,7 @@
 
 #include "core/brush.h"
 
-namespace dpcore {
+namespace paintcore {
 	class LayerStack;
 }
 
@@ -57,14 +57,14 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		PreviewShape previewShape() const { return shape_; }
 
 		//! Get the displayed brush
-		const dpcore::Brush& brush(bool swapcolors) const;
+		const paintcore::Brush& brush(bool swapcolors) const;
 
 	public slots:
 		//! Set the brush to preview
 		/**
 		 * @param brush brush to set
 		 */
-		void setBrush(const dpcore::Brush& brush);
+		void setBrush(const paintcore::Brush& brush);
 
 		//! Set preview brush size
 		void setSize(int size);
@@ -117,10 +117,10 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 		void updatePreview();
 		void updateBackground();
 
-		dpcore::Brush brush_;
-		mutable dpcore::Brush swapbrush_;
+		paintcore::Brush brush_;
+		mutable paintcore::Brush swapbrush_;
 
-		dpcore::LayerStack *preview_;
+		paintcore::LayerStack *preview_;
 		bool sizepressure_;
 		bool opacitypressure_;
 		bool hardnesspressure_;

@@ -22,7 +22,7 @@
 
 #include <QList>
 
-namespace dpcore {
+namespace paintcore {
 	class LayerStack;
 }
 
@@ -32,7 +32,7 @@ namespace drawingboard {
 
 namespace openraster {
 
-bool saveOpenRaster(const QString &filename, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations);
+bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations);
 
 }
 

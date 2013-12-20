@@ -134,10 +134,10 @@ class CanvasView : public QGraphicsView
 		void moveDrag(int x, int y);
 
 		//! Redraw the scene around the outline cursor if necesasry
-		void updateOutline(const dpcore::Point& point);
+		void updateOutline(const paintcore::Point& point);
 
-		void onPenDown(const dpcore::Point &p, bool right);
-		void onPenMove(const dpcore::Point &p);
+		void onPenDown(const paintcore::Point &p, bool right);
+		void onPenMove(const paintcore::Point &p);
 		void onPenUp();
 		
 		void resetCursor();
@@ -157,7 +157,7 @@ class CanvasView : public QGraphicsView
 		int _dragx,_dragy;
 
 		//! Previous pointer location
-		dpcore::Point _prevpoint;
+		paintcore::Point _prevpoint;
 
 		int _outlinesize, _dia;
 		bool _enableoutline, _showoutline;

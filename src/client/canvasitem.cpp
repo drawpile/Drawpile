@@ -34,7 +34,7 @@ namespace drawingboard {
 CanvasItem::CanvasItem(QGraphicsItem *parent)
 	: QGraphicsObject(parent)
 {
-	_image = new dpcore::LayerStack(this);
+	_image = new paintcore::LayerStack(this);
 	connect(_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
 	connect(_image, SIGNAL(resized()), this, SLOT(canvasResize()));
 }

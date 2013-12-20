@@ -205,14 +205,14 @@ void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 	_server->sendMessage(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
 }
 
-void Client::sendStroke(const dpcore::Point &point)
+void Client::sendStroke(const paintcore::Point &point)
 {
 	protocol::PenPointVector v(1);
 	v[0] = pointToProtocol(point);
 	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, v)));
 }
 
-void Client::sendStroke(const dpcore::PointVector &points)
+void Client::sendStroke(const paintcore::PointVector &points)
 {
 	_server->sendMessage(MessagePtr(new protocol::PenMove(_my_id, pointsToProtocol(points))));
 }

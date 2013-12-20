@@ -28,7 +28,7 @@
 #include "brush.h"
 #include "point.h"
 
-namespace dpcore {
+namespace paintcore {
 
 /**
  * Construct a layer initialized to a solid color

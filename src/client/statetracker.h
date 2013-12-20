@@ -48,7 +48,7 @@ namespace protocol {
 	class AnnotationDelete;
 }
 
-namespace dpcore {
+namespace paintcore {
 	class LayerStack;
 	class Savepoint;
 }
@@ -65,7 +65,7 @@ class AnnotationItem;
 
 struct ToolContext {
 	int layer_id;
-	dpcore::Brush brush;
+	paintcore::Brush brush;
 };
 
 /**
@@ -80,7 +80,7 @@ struct DrawingContext {
 	ToolContext tool;
 	
 	//! Last pen-move point
-	dpcore::Point lastpoint;
+	paintcore::Point lastpoint;
 	
 	//! Is the stroke currently in progress?
 	bool pendown;
@@ -157,7 +157,7 @@ private:
 	QHash<int, DrawingContext> _contexts;
 	
 	CanvasScene *_scene;
-	dpcore::LayerStack *_image;
+	paintcore::LayerStack *_image;
 	net::LayerListModel *_layerlist;
 
 	int _myid;

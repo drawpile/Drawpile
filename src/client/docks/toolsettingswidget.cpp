@@ -125,7 +125,7 @@ void ToolSettingsDock::setBackground(const QColor& color)
  * Get a brush with settings from the currently visible widget
  * @return brush
  */
-const dpcore::Brush& ToolSettingsDock::getBrush(bool swapcolors) const
+const paintcore::Brush& ToolSettingsDock::getBrush(bool swapcolors) const
 {
 	return currenttool_->getBrush(swapcolors);
 }

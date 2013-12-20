@@ -174,7 +174,7 @@ QImage CanvasScene::selectionToImage(int layerId)
 
 	QImage img;
 
-	dpcore::Layer *layer = layers()->getLayer(layerId);
+	paintcore::Layer *layer = layers()->getLayer(layerId);
 	if(layer)
 		img = layer->toImage();
 	else
@@ -208,7 +208,7 @@ void CanvasScene::pickColor(int x, int y, int layer)
 	if(_image) {
 		QColor color;
 		if(layer>0) {
-			const dpcore::Layer *l = _image->image()->getLayer(layer);
+			const paintcore::Layer *l = _image->image()->getLayer(layer);
 			if(layer)
 				color = l->colorAt(x, y);
 		} else {
@@ -305,7 +305,7 @@ int CanvasScene::height() const {
 /**
  * @return layer stack
  */
-dpcore::LayerStack *CanvasScene::layers()
+paintcore::LayerStack *CanvasScene::layers()
 {
 	if(_image)
 		return _image->image();
@@ -328,7 +328,7 @@ void CanvasScene::setSelectionItem(SelectionItem *selection)
 		addItem(selection);
 }
 
-void CanvasScene::startPreview(const dpcore::Brush &brush, const dpcore::Point &point)
+void CanvasScene::startPreview(const paintcore::Brush &brush, const paintcore::Point &point)
 {
 	_previewpen = penForBrush(brush);
 	_lastpreview = point;
@@ -341,7 +341,7 @@ void CanvasScene::startPreview(const dpcore::Brush &brush, const dpcore::Point &
  * through the server.
  * @param point stroke point
  */
-void CanvasScene::addPreview(const dpcore::Point& point)
+void CanvasScene::addPreview(const paintcore::Point& point)
 {
 	QGraphicsLineItem *s;
 	if(_previewstrokecache.isEmpty()) {
@@ -404,7 +404,7 @@ void CanvasScene::sendSnapshot(bool forcenew)
 	}
 }
 
-QPen CanvasScene::penForBrush(const dpcore::Brush &brush)
+QPen CanvasScene::penForBrush(const paintcore::Brush &brush)
 {
 	const int rad = brush.radius(1.0);
 	QColor color = brush.color(1.0);

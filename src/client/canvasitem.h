@@ -22,7 +22,7 @@
 
 #include <QGraphicsObject>
 
-namespace dpcore {
+namespace paintcore {
 	class Layer;
 	class LayerStack;
 	class Brush;
@@ -44,7 +44,7 @@ public:
 	CanvasItem(QGraphicsItem *parent=0);
 
 	//! Get the image
-	dpcore::LayerStack *image() const { return _image; }
+	paintcore::LayerStack *image() const { return _image; }
 
 	/** reimplematation */
 	QRectF boundingRect() const;
@@ -60,7 +60,7 @@ protected:
 	void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
 
 private:
-	dpcore::LayerStack *_image;
+	paintcore::LayerStack *_image;
 };
 
 }

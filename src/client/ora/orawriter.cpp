@@ -40,7 +40,7 @@ bool putTextInZip(ZipWriter &zip, const QString& filename, const QString& text)
 	return true;
 }
 
-bool writeStackXml(ZipWriter &zf, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> annotations)
+bool writeStackXml(ZipWriter &zf, const paintcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> annotations)
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
@@ -75,7 +75,7 @@ bool writeStackXml(ZipWriter &zf, const dpcore::LayerStack *layers, const QList<
 
 	// Add layers (topmost layer goes first in ORA)
 	for(int i=layers->layers()-1;i>=0;--i) {
-		const dpcore::Layer *l = layers->getLayerByIndex(i);
+		const paintcore::Layer *l = layers->getLayerByIndex(i);
 
 		QDomElement layer = doc.createElement("layer");
 		layer.setAttribute("src", QString("data/layer%1.png").arg(i));
@@ -84,7 +84,7 @@ bool writeStackXml(ZipWriter &zf, const dpcore::LayerStack *layers, const QList<
 		if(l->hidden())
 			layer.setAttribute("visibility", "hidden");
 		if(l->blendmode() != 1)
-			layer.setAttribute("composite-op", "svg:" + dpcore::svgBlendMode(l->blendmode()));
+			layer.setAttribute("composite-op", "svg:" + paintcore::svgBlendMode(l->blendmode()));
 
 		stack.appendChild(layer);
 	}
@@ -96,9 +96,9 @@ bool writeStackXml(ZipWriter &zf, const dpcore::LayerStack *layers, const QList<
 	return true;
 }
 
-bool writeLayer(ZipWriter &zf, const dpcore::LayerStack *layers, int index)
+bool writeLayer(ZipWriter &zf, const paintcore::LayerStack *layers, int index)
 {
-	const dpcore::Layer *l = layers->getLayerByIndex(index);
+	const paintcore::Layer *l = layers->getLayerByIndex(index);
 	QBuffer image;
 	image.open(QIODevice::ReadWrite);
 	// TODO autocrop layer to play nice with programs like mypaint?
@@ -109,7 +109,7 @@ bool writeLayer(ZipWriter &zf, const dpcore::LayerStack *layers, int index)
 	return true;
 }
 
-bool writeThumbnail(ZipWriter &zf, const dpcore::LayerStack *layers)
+bool writeThumbnail(ZipWriter &zf, const paintcore::LayerStack *layers)
 {
 	QImage img = layers->toFlatImage();
 	if(img.width() > 256 || img.height() > 256)
@@ -127,7 +127,7 @@ bool writeThumbnail(ZipWriter &zf, const dpcore::LayerStack *layers)
 
 namespace openraster {
 
-bool saveOpenRaster(const QString& filename, const dpcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations)
+bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations)
 {
 	QFile orafile(filename);
 	if(!orafile.open(QIODevice::WriteOnly))

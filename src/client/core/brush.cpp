@@ -24,7 +24,7 @@
 #include "point.h"
 #include "brush.h"
 
-namespace dpcore {
+namespace paintcore {
 
 /**
  * \brief Linear interpolation

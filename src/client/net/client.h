@@ -26,7 +26,7 @@
 #include "core/point.h"
 #include "../shared/net/message.h"
 
-namespace dpcore {
+namespace paintcore {
 	class Point;
 }
 
@@ -153,8 +153,8 @@ public slots:
 
 	// Drawing
 	void sendToolChange(const drawingboard::ToolContext &ctx);
-	void sendStroke(const dpcore::Point &point);
-	void sendStroke(const dpcore::PointVector &points);
+	void sendStroke(const paintcore::Point &point);
+	void sendStroke(const paintcore::PointVector &points);
 	void sendPenup();
 	void sendImage(int layer, int x, int y, const QImage &image, bool blend);
 

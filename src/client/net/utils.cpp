@@ -90,7 +90,7 @@ QList<protocol::MessagePtr> putQImage(int ctxid, int layer, int x, int y, const 
 	return list;
 }
 
-protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brush &brush)
+protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::Brush &brush)
 {
 	uint8_t mode = brush.subpixel() ? protocol::TOOL_MODE_SUBPIXEL : 0;
 	mode |= brush.incremental() ? protocol::TOOL_MODE_INCREMENTAL : 0;
@@ -119,7 +119,7 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const dpcore::Brus
  * @param p
  * @return
  */
-protocol::PenPoint pointToProtocol(const dpcore::Point &p)
+protocol::PenPoint pointToProtocol(const paintcore::Point &p)
 {
 	// The two least significant bits of the coordinate
 	// are the fractional part.
@@ -136,10 +136,10 @@ protocol::PenPoint pointToProtocol(const dpcore::Point &p)
  * @param p
  * @return
  */
-protocol::PenPointVector pointsToProtocol(const dpcore::PointVector &points)
+protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points)
 {
 	protocol::PenPointVector ppvec;
-	foreach(const dpcore::Point &p, points)
+	foreach(const paintcore::Point &p, points)
 		ppvec.append(pointToProtocol(p));
 
 	return ppvec;

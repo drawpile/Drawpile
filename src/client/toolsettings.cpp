@@ -43,7 +43,7 @@ using widgets::ColorButton;
 #include "core/rasterop.h" // for blend modes
 
 namespace {
-	static dpcore::Brush DUMMY_BRUSH(0);
+	static paintcore::Brush DUMMY_BRUSH(0);
 }
 
 namespace tools {
@@ -94,8 +94,8 @@ QWidget *PenSettings::createUiWidget(QWidget *parent)
 
 	// Populate blend mode combobox
 	// Blend mode 0 is reserved for the eraser
-	for(int b=1;b<dpcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	for(int b=1;b<paintcore::BLEND_MODES;++b) {
+		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
 	}
 
 	// Connect size change signal
@@ -153,7 +153,7 @@ void PenSettings::setBackground(const QColor& color)
 	_ui->preview->setColor2(color);
 }
 
-const dpcore::Brush& PenSettings::getBrush(bool swapcolors) const
+const paintcore::Brush& PenSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -243,7 +243,7 @@ void EraserSettings::setBackground(const QColor& color)
 	_ui->preview->setColor2(color);
 }
 
-const dpcore::Brush& EraserSettings::getBrush(bool swapcolors) const
+const paintcore::Brush& EraserSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -273,8 +273,8 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(widget);
 
 	// Populate blend mode combobox
-	for(int b=1;b<dpcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	for(int b=1;b<paintcore::BLEND_MODES;++b) {
+		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
 	}
 
 	// Connect size change signal
@@ -339,7 +339,7 @@ void BrushSettings::setBackground(const QColor& color)
 	_ui->preview->setColor2(color);
 }
 
-const dpcore::Brush& BrushSettings::getBrush(bool swapcolors) const
+const paintcore::Brush& BrushSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -369,8 +369,8 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(widget);
 
 	// Populate blend mode combobox
-	for(int b=1;b<dpcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(dpcore::BLEND_MODE[b]));
+	for(int b=1;b<paintcore::BLEND_MODES;++b) {
+		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
 	}
 
 	// Connect size change signal
@@ -437,7 +437,7 @@ void SimpleSettings::setBackground(const QColor& color)
 	_ui->preview->setColor2(color);
 }
 
-const dpcore::Brush& SimpleSettings::getBrush(bool swapcolors) const
+const paintcore::Brush& SimpleSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
 }
@@ -492,7 +492,7 @@ bool ColorPickerSettings::pickFromLayer() const
 {
 	return _layerpick->isChecked();
 }
-const dpcore::Brush &ColorPickerSettings::getBrush(bool swapcolors) const
+const paintcore::Brush &ColorPickerSettings::getBrush(bool swapcolors) const
 {
 	Q_UNUSED(swapcolors);
 	return DUMMY_BRUSH;
@@ -606,7 +606,7 @@ void AnnotationSettings::setBackground(const QColor& color)
 {
 }
 
-const dpcore::Brush& AnnotationSettings::getBrush(bool swapcolors) const
+const paintcore::Brush& AnnotationSettings::getBrush(bool swapcolors) const
 {
 	Q_UNUSED(swapcolors);
 	return DUMMY_BRUSH;
@@ -704,7 +704,7 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	return uiwidget;
 }
 
-const dpcore::Brush& SelectionSettings::getBrush(bool swapcolors) const
+const paintcore::Brush& SelectionSettings::getBrush(bool swapcolors) const
 {
 	Q_UNUSED(swapcolors);
 	return DUMMY_BRUSH;

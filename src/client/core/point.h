@@ -25,7 +25,7 @@
 #include <QPoint>
 #include <QVector>
 
-namespace dpcore {
+namespace paintcore {
 
 //! An extended point class that includes pressure information.
 /**

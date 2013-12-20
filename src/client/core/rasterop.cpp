@@ -20,7 +20,7 @@
 
 #include "rasterop.h"
 
-namespace dpcore {
+namespace paintcore {
 
 const char *BLEND_MODE[BLEND_MODES] = {
 	QT_TR_NOOP("Erase"), // This is a special mode

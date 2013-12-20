@@ -25,7 +25,7 @@
 class QColor;
 class QImage;
 
-namespace dpcore {
+namespace paintcore {
 
 /// Shared tile data
 struct TileData : public QSharedData {

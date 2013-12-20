@@ -69,10 +69,10 @@ public:
 	Type type() const { return _type; }
 
 	//! Begin drawing
-	virtual void begin(const dpcore::Point& point, bool right) = 0;
+	virtual void begin(const paintcore::Point& point, bool right) = 0;
 
 	//! Draw stroke
-	virtual void motion(const dpcore::Point& point) = 0;
+	virtual void motion(const paintcore::Point& point) = 0;
 
 	//! End drawing
 	virtual void end() = 0;
@@ -94,8 +94,8 @@ class BrushBase : public Tool
 	public:
 		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type) {}
 
-		void begin(const dpcore::Point& point, bool right);
-		void motion(const dpcore::Point& point);
+		void begin(const paintcore::Point& point, bool right);
+		void motion(const paintcore::Point& point);
 		void end();
 };
 
@@ -125,8 +125,8 @@ class ColorPicker : public Tool {
 	public:
 		ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
 
-		void begin(const dpcore::Point& point, bool right);
-		void motion(const dpcore::Point& point);
+		void begin(const paintcore::Point& point, bool right);
+		void motion(const paintcore::Point& point);
 		void end();
 };
 
@@ -135,12 +135,12 @@ class Line : public Tool {
 public:
 	Line(ToolCollection &owner) : Tool(owner, LINE) {}
 
-	void begin(const dpcore::Point& point, bool right);
-	void motion(const dpcore::Point& point);
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point);
 	void end();
 
 private:
-	dpcore::Point _p1, _p2;
+	paintcore::Point _p1, _p2;
 	bool _swap;
 };
 
@@ -149,12 +149,12 @@ class Rectangle : public Tool {
 public:
 	Rectangle(ToolCollection &owner) : Tool(owner, RECTANGLE) {}
 
-	void begin(const dpcore::Point& point, bool right);
-	void motion(const dpcore::Point& point);
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point);
 	void end();
 
 private:
-	dpcore::Point _p1, _p2;
+	paintcore::Point _p1, _p2;
 	bool _swap;
 };
 
@@ -165,8 +165,8 @@ class Annotation : public Tool {
 public:
 	Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), _selected(0) { }
 
-	void begin(const dpcore::Point& point, bool right);
-	void motion(const dpcore::Point& point);
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point);
 	void end();
 
 private:
@@ -185,8 +185,8 @@ class Selection : public Tool {
 public:
 	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
 
-	void begin(const dpcore::Point& point, bool right);
-	void motion(const dpcore::Point& point);
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point);
 	void end();
 
 	void clearSelection();

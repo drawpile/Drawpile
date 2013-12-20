@@ -28,7 +28,7 @@
 #include <QPixmap>
 #include <QBitArray>
 
-namespace dpcore {
+namespace paintcore {
 
 class Layer;
 class Savepoint;

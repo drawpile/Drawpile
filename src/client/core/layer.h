@@ -27,7 +27,7 @@
 class QImage;
 class QSize;
 
-namespace dpcore {
+namespace paintcore {
 
 class Brush;
 class Point;

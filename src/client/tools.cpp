@@ -98,9 +98,9 @@ Tool *ToolCollection::get(Type type)
 	return _tools.value(type);
 }
 
-void BrushBase::begin(const dpcore::Point& point, bool right)
+void BrushBase::begin(const paintcore::Point& point, bool right)
 {
-	const dpcore::Brush &brush = settings().getBrush(right);
+	const paintcore::Brush &brush = settings().getBrush(right);
 	drawingboard::ToolContext tctx = {
 		layer(),
 		brush
@@ -114,7 +114,7 @@ void BrushBase::begin(const dpcore::Point& point, bool right)
 	client().sendStroke(point);
 }
 
-void BrushBase::motion(const dpcore::Point& point)
+void BrushBase::motion(const paintcore::Point& point)
 {
 	if(!client().isLocalServer())
 		scene().addPreview(point);
@@ -127,13 +127,13 @@ void BrushBase::end()
 	client().sendPenup();
 }
 
-void ColorPicker::begin(const dpcore::Point& point, bool right)
+void ColorPicker::begin(const paintcore::Point& point, bool right)
 {
 	Q_UNUSED(right);
 	motion(point);
 }
 
-void ColorPicker::motion(const dpcore::Point& point)
+void ColorPicker::motion(const paintcore::Point& point)
 {
 	int layer=0;
 	if(settings().getColorPickerSettings()->pickFromLayer()) {
@@ -146,7 +146,7 @@ void ColorPicker::end()
 {
 }
 
-void Line::begin(const dpcore::Point& point, bool right)
+void Line::begin(const paintcore::Point& point, bool right)
 {
 	QGraphicsLineItem *item = new QGraphicsLineItem();
 	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
@@ -157,7 +157,7 @@ void Line::begin(const dpcore::Point& point, bool right)
 	_swap = right;
 }
 
-void Line::motion(const dpcore::Point& point)
+void Line::motion(const paintcore::Point& point)
 {
 	_p2 = point;
 	QGraphicsLineItem *item = qgraphicsitem_cast<QGraphicsLineItem*>(scene().toolPreview());
@@ -167,7 +167,7 @@ void Line::motion(const dpcore::Point& point)
 
 void Line::end()
 {
-	using namespace dpcore;
+	using namespace paintcore;
 	scene().setToolPreview(0);
 
 	drawingboard::ToolContext tctx = {
@@ -183,7 +183,7 @@ void Line::end()
 	client().sendPenup();
 }
 
-void Rectangle::begin(const dpcore::Point& point, bool right)
+void Rectangle::begin(const paintcore::Point& point, bool right)
 {
 	QGraphicsRectItem *item = new QGraphicsRectItem();
 	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
@@ -194,7 +194,7 @@ void Rectangle::begin(const dpcore::Point& point, bool right)
 	_swap = right;
 }
 
-void Rectangle::motion(const dpcore::Point& point)
+void Rectangle::motion(const paintcore::Point& point)
 {
 	_p2 = point;
 	QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
@@ -204,7 +204,7 @@ void Rectangle::motion(const dpcore::Point& point)
 
 void Rectangle::end()
 {
-	using namespace dpcore;
+	using namespace paintcore;
 	scene().setToolPreview(0);
 
 	drawingboard::ToolContext tctx = {
@@ -228,7 +228,7 @@ void Rectangle::end()
  * The annotation tool has fairly complex needs. Clicking on an existing
  * annotation selects it, otherwise a new annotation is started.
  */
-void Annotation::begin(const dpcore::Point& point, bool right)
+void Annotation::begin(const paintcore::Point& point, bool right)
 {
 	Q_UNUSED(right);
 
@@ -258,7 +258,7 @@ void Annotation::begin(const dpcore::Point& point, bool right)
  * If we have a selected annotation, move or resize it. Otherwise extend
  * the preview rectangle for the new annotation.
  */
-void Annotation::motion(const dpcore::Point& point)
+void Annotation::motion(const paintcore::Point& point)
 {
 	if(_wasselected) {
 		// TODO a "ghost" mode to indicate annotation has not really moved
@@ -303,7 +303,7 @@ void Annotation::end()
 	}
 }
 
-void Selection::begin(const dpcore::Point &point, bool right)
+void Selection::begin(const paintcore::Point &point, bool right)
 {
 	// Right click to dismiss selection (and paste buffer)
 	if(right) {
@@ -355,7 +355,7 @@ void Selection::begin(const dpcore::Point &point, bool right)
 	}
 }
 
-void Selection::motion(const dpcore::Point &point)
+void Selection::motion(const paintcore::Point &point)
 {
 	if(!scene().selectionItem())
 		return;
