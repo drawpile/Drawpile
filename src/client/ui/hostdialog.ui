@@ -251,7 +251,7 @@
             <string>Select an image file</string>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset theme="document-open">
              <normaloff>:icons/document-open.png</normaloff>:icons/document-open.png</iconset>
            </property>
            <property name="autoRaise">
@@ -275,7 +275,7 @@
             <string>Pick a color</string>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset theme="color-picker">
              <normaloff>:icons/color-picker.png</normaloff>:icons/color-picker.png</iconset>
            </property>
            <property name="autoRaise">

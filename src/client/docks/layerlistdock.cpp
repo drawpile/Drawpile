@@ -23,7 +23,6 @@
 #include <QInputDialog>
 #include <QPushButton>
 
-#include "utils/icons.h"
 #include "net/client.h"
 #include "net/layerlist.h"
 #include "docks/layerlistdock.h"
@@ -48,9 +47,6 @@ LayerListDock::LayerListDock(QWidget *parent)
 	_ui->layerlist->setEnabled(false);
 	_ui->addButton->setEnabled(false);
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
-
-	_ui->hideButton->setIcon(icon::layerHide());
-	_ui->lockButton->setIcon(icon::lock());
 
 	// Populate blend mode combobox
 	// Note. Eraser mode (0) is skipped because it currently isn't implemented properly for layer stack flattening

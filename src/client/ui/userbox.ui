@@ -43,7 +43,7 @@
         <string>U</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="edit-undo" resource="resources.qrc">
          <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
        </property>
        <property name="autoRaise">
@@ -72,6 +72,11 @@
        <property name="text">
         <string>...</string>
        </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/icons/lock_open.png</normaloff>
+         <normalon>:/icons/lock_closed.png</normalon>:/icons/lock_open.png</iconset>
+       </property>
        <property name="checkable">
         <bool>true</bool>
        </property>
@@ -89,8 +94,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
-         <normaloff>:/icons/kick.png</normaloff>:/icons/kick.png</iconset>
+        <iconset theme="list-remove" resource="resources.qrc">
+         <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

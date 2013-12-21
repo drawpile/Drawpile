@@ -33,10 +33,12 @@
 namespace widgets {
 
 namespace {
-
-QPixmap netstatusIcon(const char *name) {
-	return QIcon(QLatin1Literal(":icons/network-") + name).pixmap(16, 16);
-}
+	QPixmap netstatusIcon(const char *name) {
+		return QIcon::fromTheme(
+				QLatin1Literal("network-") + name,
+				QIcon(QLatin1Literal(":icons/network-") + name)
+			).pixmap(16, 16);
+	}
 }
 
 NetStatus::NetStatus(QWidget *parent)

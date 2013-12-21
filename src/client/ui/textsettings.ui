@@ -68,7 +68,7 @@
         <string>Left align</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="format-justify-left" resource="resources.qrc">
          <normaloff>:/icons/format-justify-left.png</normaloff>:/icons/format-justify-left.png</iconset>
        </property>
        <property name="checkable">
@@ -99,7 +99,7 @@
         <string>I</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="format-justify-center" resource="resources.qrc">
          <normaloff>:/icons/format-justify-center.png</normaloff>:/icons/format-justify-center.png</iconset>
        </property>
        <property name="checkable">
@@ -127,7 +127,7 @@
         <string>I</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="format-justify-fill" resource="resources.qrc">
          <normaloff>:/icons/format-justify-fill.png</normaloff>:/icons/format-justify-fill.png</iconset>
        </property>
        <property name="checkable">
@@ -155,7 +155,7 @@
         <string>I</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="format-justify-right" resource="resources.qrc">
          <normaloff>:/icons/format-justify-right.png</normaloff>:/icons/format-justify-right.png</iconset>
        </property>
        <property name="checkable">
@@ -183,7 +183,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="ColorButton" name="btnTextColor" native="true">
+      <widget class="ColorButton" name="btnTextColor">
        <property name="minimumSize">
         <size>
          <width>24</width>
@@ -210,7 +210,7 @@
         <string>B</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="format-text-bold" resource="resources.qrc">
          <normaloff>:/icons/format-text-bold.png</normaloff>:/icons/format-text-bold.png</iconset>
        </property>
        <property name="checkable">
@@ -235,7 +235,7 @@
         <string>I</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset theme="format-text-italic" resource="resources.qrc">
          <normaloff>:/icons/format-text-italic.png</normaloff>:/icons/format-text-italic.png</iconset>
        </property>
        <property name="checkable">
@@ -261,14 +261,14 @@
       </widget>
      </item>
      <item>
-      <widget class="ColorButton" name="btnBackground" native="true">
+      <widget class="ColorButton" name="btnBackground">
        <property name="minimumSize">
         <size>
          <width>24</width>
          <height>0</height>
         </size>
        </property>
-       <property name="color" stdset="0">
+       <property name="color">
         <color>
          <red>0</red>
          <green>0</green>

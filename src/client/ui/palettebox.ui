@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PaletteBox</class>
- <widget class="QWidget" name="PaletteBox" >
-  <property name="geometry" >
+ <widget class="QWidget" name="PaletteBox">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,62 +10,82 @@
     <height>169</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>3</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>6</number>
    </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
+    <layout class="QHBoxLayout">
+     <property name="spacing">
       <number>3</number>
      </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
      <item>
-      <widget class="QComboBox" name="palettelist" >
-       <property name="editable" >
+      <widget class="QComboBox" name="palettelist">
+       <property name="editable">
         <bool>true</bool>
        </property>
-       <property name="insertPolicy" >
+       <property name="insertPolicy">
         <enum>QComboBox::NoInsert</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="addpalette" >
-       <property name="toolTip" >
+      <widget class="QToolButton" name="addpalette">
+       <property name="toolTip">
         <string>Add a new palette</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>+</string>
        </property>
-       <property name="icon" >
-        <iconset>:icons/list-add.png</iconset>
+       <property name="icon">
+        <iconset theme="list-add">
+         <normaloff>:icons/list-add.png</normaloff>:icons/list-add.png</iconset>
        </property>
-       <property name="autoRaise" >
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="delpalette" >
-       <property name="toolTip" >
+      <widget class="QToolButton" name="delpalette">
+       <property name="toolTip">
         <string>Delete the palette</string>
        </property>
-       <property name="text" >
+       <property name="text">
         <string>-</string>
        </property>
-       <property name="icon" >
-        <iconset>:icons/list-remove.png</iconset>
+       <property name="icon">
+        <iconset theme="list-remove">
+         <normaloff>:icons/list-remove.png</normaloff>:icons/list-remove.png</iconset>
        </property>
-       <property name="autoRaise" >
+       <property name="autoRaise">
         <bool>true</bool>
        </property>
       </widget>
@@ -72,7 +93,7 @@
     </layout>
    </item>
    <item>
-    <widget class="PaletteWidget" native="1" name="palette" />
+    <widget class="PaletteWidget" name="palette" native="true"/>
    </item>
   </layout>
  </widget>

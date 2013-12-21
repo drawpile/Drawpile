@@ -28,12 +28,13 @@
 
 #include "docks/layerlistdelegate.h"
 
-#include "utils/icons.h"
-
 namespace widgets {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
-	: QItemDelegate(parent)
+	: QItemDelegate(parent),
+	  _lockicon(QPixmap(":icons/lock_closed.png")),
+	  _visibleicon(QPixmap(":icons/eye_open.png")),
+	  _hiddenicon(QPixmap(":icons/eye_closed.png"))
 {
 }
 
@@ -48,7 +49,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 	const net::LayerListItem &layer = index.data().value<net::LayerListItem>();
 
-	const QSize locksize = icon::lock().actualSize(QSize(16,16));
+	const QSize locksize = _lockicon.size();
 
 	// Draw layer opacity glyph
 	QRect stylerect(opt.rect.topLeft() + QPoint(0, opt.rect.height()/2-12), QSize(24,24));
@@ -63,7 +64,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 	if(layer.isLockedFor(_client->myId()))
 		painter->drawPixmap(
 			opt.rect.topRight()-QPoint(locksize.width(), -opt.rect.height()/2+locksize.height()/2),
-			icon::lock().pixmap(16, QIcon::Normal, QIcon::On)
+			_lockicon
 		);
 
 	painter->restore();
@@ -72,7 +73,7 @@ void LayerListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = icon::lock().actualSize(QSize(16,16));
+	const QSize iconsize = _lockicon.size();
 	QFontMetrics fm(option.font);
 	int minheight = qMax(fm.height() * 3 / 2, iconsize.height()) + 2;
 	if(size.height() < minheight)
@@ -102,11 +103,11 @@ void LayerListDelegate::drawOpacityGlyph(const QRectF& rect, QPainter *painter, 
 	int x = rect.left() + rect.width() / 2 - 8;
 	int y = rect.top() + rect.height() / 2 - 8;
 	if(hidden) {
-		painter->drawPixmap(x, y, icon::layerHide().pixmap(QSize(16,16), QIcon::Normal, QIcon::On));
+		painter->drawPixmap(x, y, _hiddenicon);
 	} else {
 		painter->save();
 		painter->setOpacity(value);
-		painter->drawPixmap(x, y, icon::layerHide().pixmap(QSize(16,16), QIcon::Normal, QIcon::Off));
+		painter->drawPixmap(x, y, _visibleicon);
 		painter->restore();
 	}
 }

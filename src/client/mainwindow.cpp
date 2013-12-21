@@ -49,7 +49,6 @@
 #include "toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
-#include "utils/icons.h"
 #include "utils/whatismyip.h"
 
 #include "widgets/viewstatus.h"
@@ -94,7 +93,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Create lock status widget
 	_lockstatus = new QLabel(this);
-	_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+	_lockstatus->setPixmap(QPixmap(":icon/lock_open.png"));
 	_lockstatus->setToolTip(tr("Board is not locked"));
 	statusbar->addPermanentWidget(_lockstatus);
 
@@ -947,10 +946,10 @@ void MainWindow::updateLockWidget()
 {
 	bool locked = _client->isLocked() || _layerlist->isCurrentLayerLocked();
 	if(locked) {
-		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::On));
+		_lockstatus->setPixmap(QPixmap(":icons/lock_closed.png"));
 		_lockstatus->setToolTip(tr("Board is locked"));
 	} else {
-		_lockstatus->setPixmap(icon::lock().pixmap(16,QIcon::Normal,QIcon::Off));
+		_lockstatus->setPixmap(QPixmap(":icons/lock_open.png"));
 		_lockstatus->setToolTip(tr("Board is not locked"));
 	}
 	_view->setLocked(locked);
@@ -1233,7 +1232,7 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 	QAction *act;
 	QIcon qicon;
 	if(icon)
-		qicon = QIcon(QString(":icons/") + icon);
+		qicon = QIcon::fromTheme(icon, QIcon(QLatin1Literal(":icons/") + icon));
 	act = new QAction(qicon, text, this);
 	if(name)
 		act->setObjectName(name);

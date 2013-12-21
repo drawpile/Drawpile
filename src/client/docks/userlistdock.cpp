@@ -25,7 +25,6 @@
 #include "docks/userlistdock.h"
 #include "net/userlist.h"
 #include "net/client.h"
-#include "utils/icons.h"
 
 #include "ui_userbox.h"
 
@@ -41,7 +40,6 @@ UserList::UserList(QWidget *parent)
 	setOperatorMode(false);
 
 	_ui->userlist->setSelectionMode(QListView::SingleSelection);
-	_ui->lockButton->setIcon(icon::lock());
 
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 	connect(_ui->kickButton, SIGNAL(clicked()), this, SLOT(kickSelected()));
@@ -117,7 +115,8 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 }
 
 UserListDelegate::UserListDelegate(QObject *parent)
-	: QItemDelegate(parent)
+	: QItemDelegate(parent),
+	  _lockicon(QPixmap(":icons/lock_closed.png"))
 {
 }
 
@@ -133,7 +132,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
 	// Name
 	QRect textrect = opt.rect;
-	const QSize locksize = icon::lock().actualSize(QSize(16,16));
+	const QSize locksize = _lockicon.size();
 
 	if(user.isLocal)
 		opt.font.setStyle(QFont::StyleItalic);
@@ -147,7 +146,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	if(user.isLocked)
 		painter->drawPixmap(
 			opt.rect.topRight()-QPoint(locksize.width(), -opt.rect.height()/2+locksize.height()/2),
-			icon::lock().pixmap(16, QIcon::Normal, QIcon::On)
+			_lockicon
 		);
 
 	painter->restore();
@@ -156,7 +155,7 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 QSize UserListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index ) const
 {
 	QSize size = QItemDelegate::sizeHint(option, index);
-	const QSize iconsize = icon::lock().actualSize(QSize(16,16));
+	const QSize iconsize = _lockicon.size();
 	if(size.height() < iconsize.height())
 		size.setHeight(iconsize.height());
 	return size;
