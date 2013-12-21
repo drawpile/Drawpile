@@ -18,10 +18,7 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QtGlobal>
-
 #include <cmath>
-#include "point.h"
 #include "brush.h"
 
 namespace paintcore {
@@ -139,115 +136,6 @@ bool Brush::isOpacityVariable() const
 	return qAbs(opacity1() - opacity2()) > (1/256.0);
 }
 
-#if 0
-
-/**
- * Returns the value of each pixel of the brush. It is up to you to blend
- * the color in. A pointer to internal memory is returned, which will be
- * invalidated when render is called with a different pressure or when
- * the brush object is destroyed.
- * @param pressure brush pressue [0..1]
- * @return diameter^2 pixel values
- */
-BrushMask Brush::render(qreal pressure) const {
-	const int dia = diameter(pressure)+1;
-
-	// Re-render the cache if not up to date
-	if(!cache_.isFresh(pressure, sensitive_)) {
-		const qreal o = opacity(pressure);
-		if(dia==2) {
-			// Special case: smallest brush
-			cache_ = BrushMask(dia, pressure);
-			uchar *ptr = cache_.data();
-			*ptr = o*255;
-			*(ptr+1) = 0;
-			*(ptr+2) = 0;
-			*(ptr+3) = 0;
-		} else {
-			const qreal R = interpolate(radius1_, radius2_, pressure);
-			const qreal rr = R*R;
-
-			// GIMP style brush shape
-			const qreal hard = hardness(pressure);
-			qreal exponent;
-			if ((1.0 - hard) < 0.0000004)
-				exponent = 1000000.0;
-			else
-				exponent = 0.4 / (1.0 - hard);
-
-			const int lut_len = ceil(rr);
-			uchar lut[lut_len];
-			for(int i=0;i<lut_len;++i)
-				lut[i] = (1-pow(pow(sqrt(i)/R, exponent), 2)) * o * 255;
-
-			cache_ = BrushMask(dia, pressure);
-			uchar *ptr = cache_.data();
-
-			for(int y=0;y<dia;++y) {
-				const qreal yy = (y-R+0.5)*(y-R+0.5);
-				for(int x=0;x<dia;++x) {
-					const int dist = int((x-R+0.5)*(x-R+0.5) + yy);
-					*(ptr++) = dist<lut_len ? lut[dist] : 0;
-				}
-			}
-		}
-	}
-
-	return cache_;
-}
-
-/**
- * A convolution operation is performed on the brush mask, shifting it
- * south-east by x and y amount.
- *
- * @param x horizontal offset [0..1]
- * @param y vertical offset [0..1]
- * @param pressure brush pressure
- * @return resampled brush mask
- */
-BrushMask Brush::render_subsampled(qreal x, qreal y, qreal pressure) const
-{
-	Q_ASSERT(x>= 0 && x<= 1);
-	Q_ASSERT(y>= 0 && y<= 1);
-	const BrushMask rb = render(pressure);
-	if(x==0 && y==0)
-		return rb;
-	const int dia = rb.diameter();
-	BrushMask b(dia, pressure);
-
-	qreal kernel[] = {x*y, (1.0-x)*y, x*(1.0-y), (1.0-x)*(1.0-y)};
-	Q_ASSERT(fabs(kernel[0]+kernel[1]+kernel[2]+kernel[3]-1.0)<0.001);
-	const uchar *src = rb.data();
-	uchar *ptr = b.data();
-
-#if 0
-	for(int y=-1;y<dia-1;++y) {
-		const int Y = y*dia;
-		for(int x=-1;x<dia-1;++x) {
-			Q_ASSERT(Y+dia+x+1<dia*dia);
-			*(ptr++) =
-				(Y<0?0:(x<0?0:src[Y+x]*kernel[0]) + src[Y+x+1]*kernel[1]) +
-				(x<0?0:src[Y+dia+x]*kernel[2]) + src[Y+dia+x+1]*kernel[3];
-		}
-	}
-#else
-	// Unrolled version of the above
-	*(ptr++) = uchar(src[0] * kernel[3]);
-	for(int x=0;x<dia-1;++x)
-		*(ptr++) = uchar(src[x]*kernel[2] + src[x+1]*kernel[3]);
-	for(int y=0;y<dia-1;++y) {
-		const int Y = y*dia;
-		*(ptr++) = uchar(src[Y]*kernel[1] + src[Y+dia]*kernel[3]);
-		for(int x=0;x<dia-1;++x)
-			*(ptr++) = uchar(src[Y+x]*kernel[0] + src[Y+x+1]*kernel[1] +
-				src[Y+dia+x]*kernel[2] + src[Y+dia+x+1]*kernel[3]);
-	}
-#endif
-	return b;
-}
-
-#endif
-
 bool Brush::operator==(const Brush& brush) const
 {
 	return radius1() == brush.radius1() && radius2() == brush.radius2() &&
@@ -267,48 +155,5 @@ bool Brush::operator!=(const Brush& brush) const
 {
 	return !(*this == brush);
 }
-
-#if 0
-
-/**
- * Copy the data from an existing brush. A brush data is guaranteed
- * to contain a pixel buffer.
- */
-BrushMaskData::BrushMaskData(const BrushMaskData& other)
-	: dia(other.dia), pressure(other.pressure)
-{
-	data = new uchar[dia*dia];
-	memcpy(data, other.data, dia*dia);
-}
-
-/**
- * The newly created brush is uninitialized, so remember to actually fill
- * it with something!
- * The pressure value is used only for isFresh.
- * @param dia diameter of the new brush
- * @param pressure the pressure value at which the brush was rendered
- */
-BrushMask::BrushMask(int dia, qreal pressure)
-	: d(new BrushMaskData)
-{
-	Q_ASSERT(dia>0);
-	d->data = new uchar[dia*dia];
-	d->dia = dia;
-	d->pressure = int(pressure*PRESSURE_LEVELS);
-}
-
-/**
- * This is used when determining if a cached brush is still usable.
- * A brush is considred fresh if:
- * 1. it contains data
- * 2. it's pressure value is the same as @parma pressure iff sensitive is true.
- */
-bool BrushMask::isFresh(qreal pressure, bool sensitive) const {
-	if(sensitive)
-		return d.constData() && int(pressure*PRESSURE_LEVELS)==d->pressure;
-	else
-		return d.constData() && d->pressure>=0;
-}
-#endif
 
 }
