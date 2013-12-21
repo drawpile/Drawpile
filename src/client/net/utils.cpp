@@ -101,14 +101,14 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::B
 		brush.blendingMode(),
 		mode,
 		brush.spacing(),
-		brush.color(1.0).rgba(),
-		brush.color(0.0).rgba(),
-		brush.hardness(1.0) * 255,
-		brush.hardness(0.0) * 255,
-		brush.radius(1.0),
-		brush.radius(0.0),
-		brush.opacity(1.0) * 255,
-		brush.opacity(0.0) * 255
+		brush.color1().rgba(),
+		brush.color2().rgba(),
+		brush.hardness1() * 255,
+		brush.hardness2() * 255,
+		brush.radius1(),
+		brush.radius2(),
+		brush.opacity1() * 255,
+		brush.opacity2() * 255
 	));
 }
 
