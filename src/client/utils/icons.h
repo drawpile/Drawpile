@@ -30,13 +30,6 @@ const QIcon &layerHide();
 //! Get a lock icon
 const QIcon& lock();
 
-//! Get a network status icon
-const QIcon& network();
-
-const QIcon& network_transmit();
-const QIcon& network_receive();
-const QIcon& network_transmit_receive();
-
 }
 
 #endif

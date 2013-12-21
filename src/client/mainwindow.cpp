@@ -1293,11 +1293,11 @@ void MainWindow::setupActions()
 	//
 	// File menu and toolbar
 	//
-	QAction *newdocument = makeAction("newdocument", "document-new.png", tr("&New"), tr("Start a new drawing"), QKeySequence::New);
-	QAction *open = makeAction("opendocument", "document-open.png", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
-	QAction *save = makeAction("savedocument", "document-save.png",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
-	QAction *saveas = makeAction("savedocumentas", "document-save-as.png", tr("Save &As..."), tr("Save drawing to a file with a new name"));
-	QAction *quit = makeAction("exitprogram", "system-log-out.png", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
+	QAction *newdocument = makeAction("newdocument", "document-new", tr("&New"), tr("Start a new drawing"), QKeySequence::New);
+	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
+	QAction *save = makeAction("savedocument", "document-save",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
+	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), tr("Save drawing to a file with a new name"));
+	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
 
 	_currentdoctools->addAction(save);
@@ -1376,10 +1376,10 @@ void MainWindow::setupActions()
 	QAction *docktoggles = new QAction(tr("&Docks"), this);
 	docktoggles->setMenu(toggledockmenu);
 
-	QAction *zoomin = makeAction("zoomin", "zoom-in.png",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
-	QAction *zoomout = makeAction("zoomout", "zoom-out.png",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
-	QAction *zoomorig = makeAction("zoomone", "zoom-original.png",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
-	QAction *rotateorig = makeAction("rotatezero", "view-refresh.png",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
+	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
+	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
+	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
+	QAction *rotateorig = makeAction("rotatezero", "view-refresh",tr("&Reset rotation"), tr("Drag the view while holding ctrl-space to rotate"), QKeySequence(Qt::CTRL + Qt::Key_R));
 	QAction *rotate90 = makeAction("rotate90", 0, tr("Rotate to 90°"));
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
@@ -1463,13 +1463,13 @@ void MainWindow::setupActions()
 	// Tools menu and toolbar
 	//
 	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select areas for copying"), QKeySequence("S"), true);
-	QAction *pentool = makeAction("toolpen", "draw-freehand.png", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"), true);
-	QAction *brushtool = makeAction("toolbrush", "draw-brush.png", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
-	QAction *erasertool = makeAction("tooleraser", "draw-eraser.png", tr("&Eraser"), tr("Draw with the background color"), QKeySequence("E"), true);
-	QAction *pickertool = makeAction("toolpicker", "color-picker.png", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
-	QAction *linetool = makeAction("toolline", "todo-line.png", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
-	QAction *recttool = makeAction("toolrect", "draw-rectangle.png", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"), true);
-	QAction *annotationtool = makeAction("tooltext", "draw-text.png", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
+	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"), true);
+	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
+	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Draw with the background color"), QKeySequence("E"), true);
+	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
+	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
+	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"), true);
+	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
 
 	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
 

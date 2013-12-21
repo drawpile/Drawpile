@@ -28,10 +28,16 @@
 
 #include "widgets/netstatus.h"
 #include "widgets/popupmessage.h"
-#include "utils/icons.h"
 #include "utils/whatismyip.h"
 
 namespace widgets {
+
+namespace {
+
+QPixmap netstatusIcon(const char *name) {
+	return QIcon(QLatin1Literal(":icons/network-") + name).pixmap(16, 16);
+}
+}
 
 NetStatus::NetStatus(QWidget *parent)
 	: QWidget(parent), _sentbytes(0), _recvbytes(0), _activity(0)
@@ -101,8 +107,8 @@ NetStatus::NetStatus(QWidget *parent)
 
 	// Network connection status icon
 	_icon = new QLabel(QString(), this);
-	_icon->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
-	_icon->setFixedSize(icon::network().actualSize(QSize(16,16)));
+	_icon->setPixmap(netstatusIcon("offline"));
+	_icon->setFixedSize(_icon->pixmap()->size());
 	layout->addWidget(_icon);
 
 	// Popup label
@@ -229,21 +235,13 @@ void NetStatus::updateIcon()
 {
 	if(_online) {
 		switch(_activity) {
-		case 0: // idle
-			_icon->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::On));
-			break;
-		case 1: // transmit
-			_icon->setPixmap(icon::network_transmit().pixmap(16));
-			break;
-		case 2: // receive
-			_icon->setPixmap(icon::network_receive().pixmap(16));
-			break;
-		case 3: // transmit & receive
-			_icon->setPixmap(icon::network_transmit_receive().pixmap(16));
-			break;
+		case 0: _icon->setPixmap(netstatusIcon("idle")); break;
+		case 1: _icon->setPixmap(netstatusIcon("transmit")); break;
+		case 2: _icon->setPixmap(netstatusIcon("receive")); break;
+		case 3: _icon->setPixmap(netstatusIcon("transmit-receive")); break;
 		}
 	} else {
-		_icon->setPixmap(icon::network().pixmap(16,QIcon::Normal,QIcon::Off));
+		_icon->setPixmap(netstatusIcon("offline"));
 	}
 }
 

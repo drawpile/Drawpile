@@ -45,39 +45,5 @@ const QIcon& lock()
 	return icon;
 }
 
-const QIcon& network()
-{
-	static QIcon icon;
-	if(icon.isNull()) {
-		icon.addFile(":icons/network-idle.png", QSize(), QIcon::Normal, QIcon::On);
-		icon.addFile(":icons/network-offline.png", QSize(), QIcon::Normal, QIcon::Off);
-	}
-	return icon;
-}
-
-const QIcon& network_transmit()
-{
-	static QIcon icon;
-	if(icon.isNull())
-		icon.addFile(":icons/network-transmit.png");
-	return icon;
-}
-
-const QIcon& network_receive()
-{
-	static QIcon icon;
-	if(icon.isNull())
-		icon.addFile(":icons/network-receive.png");
-	return icon;
-}
-
-const QIcon& network_transmit_receive()
-{
-	static QIcon icon;
-	if(icon.isNull())
-		icon.addFile(":icons/network-transmit-receive.png");
-	return icon;
-}
-
 }
 
