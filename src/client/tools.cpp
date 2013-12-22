@@ -232,10 +232,10 @@ void Annotation::begin(const paintcore::Point& point, bool right)
 {
 	Q_UNUSED(right);
 
-	drawingboard::AnnotationItem *item = scene().annotationAt(point);
+	drawingboard::AnnotationItem *item = scene().annotationAt(point.toPoint());
 	if(item) {
 		_selected = item;
-		_handle = _selected->handleAt(point);
+		_handle = _selected->handleAt(point.toPoint());
 		settings().getAnnotationSettings()->setSelection(item);
 		_wasselected = true;
 	} else {
@@ -266,8 +266,8 @@ void Annotation::motion(const paintcore::Point& point)
 
 		// Annotation may have been deleted by other user while we were moving it.
 		if(_selected) {
-			QPoint p = point - _start;
-			_selected->adjustGeometry(_handle, p);
+			QPointF p = point - _start;
+			_selected->adjustGeometry(_handle, p.toPoint());
 			_start = point;
 		}
 	} else {
@@ -292,7 +292,7 @@ void Annotation::end()
 	} else {
 		scene().setToolPreview(0);
 
-		QRect rect = QRect(_start, _end).normalized();
+		QRect rect = QRect(_start.toPoint(), _end.toPoint()).normalized();
 
 		if(rect.width()<15)
 			rect.setWidth(15);
@@ -312,11 +312,11 @@ void Selection::begin(const paintcore::Point &point, bool right)
 	}
 
 	if(scene().selectionItem())
-		_handle = scene().selectionItem()->handleAt(point);
+		_handle = scene().selectionItem()->handleAt(point.toPoint());
 	else
 		_handle = drawingboard::SelectionItem::OUTSIDE;
 
-	_start = point;
+	_start = point.toPoint();
 	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
 		bool hasPaste = scene().selectionItem() && !scene().selectionItem()->pasteImage().isNull();
 		if(hasPaste) {
@@ -349,7 +349,7 @@ void Selection::begin(const paintcore::Point &point, bool right)
 			scene().setSelectionItem(0);
 		} else {
 			drawingboard::SelectionItem *sel = new drawingboard::SelectionItem();
-			sel->setRect(QRect(point, point));
+			sel->setRect(QRectF(point, point).toRect());
 			scene().setSelectionItem(sel);
 		}
 	}
@@ -361,11 +361,11 @@ void Selection::motion(const paintcore::Point &point)
 		return;
 
 	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
-		scene().selectionItem()->setRect(QRect(_start, point).normalized());
+		scene().selectionItem()->setRect(QRectF(_start, point).normalized().toRect());
 	} else {
-		QPoint p = point - _start;
-		scene().selectionItem()->adjustGeometry(_handle, p);
-		_start = point;
+		QPointF p = point - _start;
+		scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
+		_start = point.toPoint();
 	}
 }
 

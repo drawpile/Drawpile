@@ -326,10 +326,9 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 
 	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
 
-	Point point = from;
-	int &x0 = point.rx();
-	int &y0 = point.ry();
-	qreal &p = point.rpressure();
+	int x0 = from.x();
+	int y0 = from.y();
+	qreal p = from.pressure();
 	int x1 = to.x();
 	int y1 = to.y();
 	int dy = y1 - y0;
@@ -362,7 +361,7 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 			x0 += stepx;
 			fraction += dy;
 			if(++distance > spacing) {
-				directDab(brush, mask, point);
+				directDab(brush, mask, Point(x0, y0, p));
 				distance = 0;
 			}
 			p += dp;
@@ -377,7 +376,7 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 			y0 += stepy;
 			fraction += dx;
 			if(++distance > spacing) {
-				directDab(brush, mask, point);
+				directDab(brush, mask, Point(x0, y0, p));
 				distance = 0;
 			}
 			p += dp;

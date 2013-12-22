@@ -27,81 +27,67 @@
 
 namespace paintcore {
 
-//! An extended point class that includes pressure information.
 /**
- * The regular x() and y() methods return coordinates relative to the top
- * left corner of the pixel. For subpixel precision, use
- * cx() + xFrac() and cy() + yFrac() to get corrected coordinates.
+ * @brief An extended point class that includes pressure information.
  */
-class Point : public QPoint {
-	public:
-		Point() : QPoint(), p_(1), xfrac_(0.5), yfrac_(0.5) {}
+class Point : public QPointF {
+public:
+	Point() : QPointF(), _p(1) {}
 
-		//! Construct a point with integer coordinates
-		Point(int x, int y, qreal p)
-			: QPoint(x,y), p_(p), xfrac_(0.5), yfrac_(0.5)
-		{
-			Q_ASSERT(p>=0 && p<=1);
-		}
+	Point(qreal x, qreal y, qreal p)
+		: QPointF(x, y), _p(p)
+	{
+		Q_ASSERT(p>=0 && p<=1);
+	}
 
-		//! Construct a point with subpixel accuracy
-		Point(const QPointF& point, qreal p)
-			: QPoint(int(point.x()), int(point.y())), p_(p)
-		{
-			Q_ASSERT(p>=0 && p<=1);
-			double tmp;
-			xfrac_ = fabs(modf(point.x(), &tmp));
-			yfrac_ = fabs(modf(point.y(), &tmp));
-		}
+	Point(const QPointF& point, qreal p)
+		: QPointF(point), _p(p)
+	{
+		Q_ASSERT(p>=0 && p<=1);
+	}
 
-        //! Construct a point with fractional subpixel offsets
-        Point(int x, int y, qreal xfrac, qreal yfrac, qreal p)
-            : QPoint(x, y), p_(p), xfrac_(xfrac), yfrac_(yfrac)
-        {
-            Q_ASSERT(p>=0 && p<=1);
-            Q_ASSERT(xfrac>=0 && xfrac<1);
-            Q_ASSERT(yfrac>=0 && yfrac<1);
-        }
+	Point(const QPoint& point, qreal p)
+		: QPointF(point), _p(p)
+	{
+		Q_ASSERT(p>=0 && p<=1);
+	}
 
-		//! Construct a point from a QPoint + pressure value
-		Point(const QPoint& point, qreal p)
-			: QPoint(point), p_(p), xfrac_(0.5), yfrac_(0.5)
-		{
-			Q_ASSERT(p>=0 && p<=1);
-		}
+	//! Get the pressure value for this point
+	qreal pressure() const { return _p; }
 
-		//! Get the pressure value for this point
-		qreal pressure() const { return p_; }
+	//! Get a reference to the pressure value of this point
+	qreal &rpressure() { return _p; }
 
-		//! Get a reference to the pressure value of this point
-		qreal &rpressure() { return p_; }
+	//! Set this point's pressure value
+	void setPressure(qreal p) { Q_ASSERT(p>=0 && p<=1); _p = p; }
 
-		//! Set this point's pressure value
-		void setPressure(qreal p) { p_ = p; }
+	//! Get the horizontal subpixel offset
+	qreal xFrac() const { double tmp; return fabs(modf(x(), &tmp)); }
 
-		//! Get the horizontal subpixel offset
-		qreal xFrac() const { return xfrac_; }
+	//! Get the vertical subpixel offset
+	qreal yFrac() const { double tmp; return fabs(modf(y(), &tmp)); }
 
-		//! Get the vertical subpixel offset
-		qreal yFrac() const { return yfrac_; }
+	//! Compare two points at subpixel resolution
+	bool roughlySame(const Point& point) const {
+		qreal dx = x() - point.x();
+		qreal dy = y() - point.y();
+		qreal d = dx*dx + dy*dy;
+		return d <= ((1/4.0)*(1/4.0));
+	}
 
-		//! Compare two points just by their integer coordinates
-		bool intSame(const Point& point) const {
-			return x() == point.x() && y()==point.y();
-		}
+	//! Are the two points less than one pixel different?
+	bool intSame(const Point &point) const {
+		qreal dx = x() - point.x();
+		qreal dy = y() - point.y();
+		qreal d = dx*dx + dy*dy;
+		return d < 1.0;
+	}
 
-		//! Compare two points at subpixel resolution
-		bool roughlySame(const Point& point) const {
-			return intSame(point) && fabs(xfrac_-point.xfrac_)<(1/4.0) &&
-				fabs(yfrac_-point.yfrac_)<(1/4.0);
-		}
-
-	private:
-		qreal p_;
-		qreal xfrac_, yfrac_;
+private:
+	qreal _p;
 };
 
-static inline const Point operator-(const Point& p1,const QPoint& p2)
+static inline Point operator-(const Point& p1, const QPointF& p2)
 {
 	return Point(p1.x()-p2.x(), p1.y()-p2.y(), p1.pressure());
 }

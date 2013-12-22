@@ -124,8 +124,8 @@ protocol::PenPoint pointToProtocol(const paintcore::Point &p)
 	// The two least significant bits of the coordinate
 	// are the fractional part.
 	// The rest is the integer part with a bias of 128
-	uint16_t x = (qMax(0, p.x() + 128) << 2) | (uint16_t(p.xFrac()*4) & 3);
-	uint16_t y = (qMax(0, p.y() + 128) << 2) | (uint16_t(p.yFrac()*4) & 3);
+	uint16_t x = (qMax(0, int(p.x()) + 128) << 2) | (uint16_t(p.xFrac()*4) & 3);
+	uint16_t y = (qMax(0, int(p.y()) + 128) << 2) | (uint16_t(p.yFrac()*4) & 3);
 
 	return protocol::PenPoint(x, y, p.pressure() * 255);
 }

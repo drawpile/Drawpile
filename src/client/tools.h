@@ -172,7 +172,7 @@ public:
 private:
 	QPointer<drawingboard::AnnotationItem> _selected;
 	drawingboard::AnnotationItem::Handle _handle;
-	QPoint _start, _end;
+	QPointF _start, _end;
 	bool _wasselected;
 };
 

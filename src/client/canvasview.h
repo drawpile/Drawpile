@@ -70,6 +70,10 @@ class CanvasView : public QGraphicsView
 		//! Set the rotation angle in degrees
 		void setRotation(qreal angle);
 		
+		using QGraphicsView::mapToScene;
+		paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
+		paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);

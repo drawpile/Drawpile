@@ -312,10 +312,8 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	foreach(const protocol::PenPoint pp, cmd.points()) {
 		// The coordinate encoding code is in net/client.cpp
 		p = paintcore::Point(
-			(pp.x >> 2) - 128,
-			(pp.y >> 2) - 128,
-			(pp.x & 3) / 4.0,
-			(pp.y & 3) / 4.0,
+			(pp.x >> 2) - 128 + (pp.x & 3) / 4.0,
+			(pp.y >> 2) - 128 + (pp.y & 3) / 4.0,
 			pp.p/255.0
 		);
 

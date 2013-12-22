@@ -17,7 +17,6 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-
 #include <QMouseEvent>
 #include <QTabletEvent>
 #include <QScrollBar>
@@ -205,6 +204,33 @@ void CanvasView::leaveEvent(QEvent *event)
 	}
 }
 
+paintcore::Point CanvasView::mapToScene(const QPoint &point, qreal pressure) const
+{
+	return paintcore::Point(mapToScene(point), pressure);
+}
+
+paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) const
+{
+	// QGraphicsView API lacks mapToScene(QPointF), even though
+	// the QPoint is converted to QPointF internally...
+	// To work around this, map (x,y) and (x+1, y+1) and linearly interpolate
+	// between the two
+	double tmp;
+	qreal xf = modf(point.x(), &tmp);
+	qreal yf = modf(point.y(), &tmp);
+
+	QPoint p0 = point.toPoint();
+	QPointF p1 = mapToScene(p0);
+	QPointF p2 = mapToScene(p0 + QPoint(1,1));
+
+	QPointF mapped(
+		(p1.x()-p2.x()) * xf + p2.x(),
+		(p1.y()-p2.y()) * yf + p2.y()
+	);
+
+	return paintcore::Point(mapped, pressure);
+}
+
 //! Handle mouse press events
 void CanvasView::mousePressEvent(QMouseEvent *event)
 {
@@ -216,7 +242,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==NOTRANSFORM) {
 		_pendown = MOUSEDOWN;
 		
-		onPenDown(paintcore::Point(mapToScene(event->pos()), 1.0), event->button() == Qt::RightButton);
+		onPenDown(mapToScene(event->pos(), 1.0), event->button() == Qt::RightButton);
 	}
 }
 
@@ -235,7 +261,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	if(_isdragging) {
 		moveDrag(event->x(), event->y());
 	} else {
-		const paintcore::Point point(mapToScene(event->pos()), 1.0);
+		const paintcore::Point point = mapToScene(event->pos(), 1.0);
 		if(!_prevpoint.intSame(point)) {
 			if(_pendown)
 				onPenMove(point);
@@ -268,7 +294,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(_pendown == TABLETDOWN)
 		return;
-	_prevpoint = paintcore::Point(mapToScene(event->pos()), 0.0);
+	_prevpoint = mapToScene(event->pos(), 0.0);
 	if(_isdragging) {
 		stopDrag();
 	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN) {
@@ -331,7 +357,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		const paintcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
+		const paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
 
 		if(!_prevpoint.intSame(point)) {
 			if(_isdragging)
@@ -358,7 +384,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			startDrag(tabev->x(), tabev->y(), _dragbtndown);
 		} else {
 			if(_pendown == NOTDOWN) {
-				const paintcore::Point point(mapToScene(tabev->pos()), tabev->pressure());
+				const paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
 
 				_pendown = TABLETDOWN;
 				onPenDown(point, false);
@@ -373,7 +399,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		if(_isdragging) {
 			stopDrag();
 		} else if(_pendown == TABLETDOWN) {
-			paintcore::Point point(mapToScene(tabev->pos()), 0);
+			paintcore::Point point = mapToScene(tabev->posF(), 0);
 			updateOutline(point);
 			_prevpoint = point;
 			_pendown = NOTDOWN;
