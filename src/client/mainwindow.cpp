@@ -169,6 +169,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
 	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
 	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
+	connect(_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
 
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));

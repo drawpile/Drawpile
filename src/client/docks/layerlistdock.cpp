@@ -265,8 +265,10 @@ bool LayerListDock::isCurrentLayerLocked() const
 	Q_ASSERT(_client);
 
 	QModelIndexList idx = _ui->layerlist->selectionModel()->selectedIndexes();
-	if(!idx.isEmpty())
-		return idx.at(0).data().value<net::LayerListItem>().isLockedFor(_client->myId());
+	if(!idx.isEmpty()) {
+		const net::LayerListItem &item = idx.at(0).data().value<net::LayerListItem>();
+		return item.hidden || item.isLockedFor(_client->myId());
+	}
 	return false;
 }
 
