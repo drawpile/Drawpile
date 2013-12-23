@@ -30,28 +30,36 @@
 namespace protocol {
 
 /**
- * \brief Canvas resize command
+ * \brief Canvas size adjustment command
  * 
  * This affects the size of all existing and future layers.
+ *
+ * The new canvas size is relative to the old one. The four adjustement
+ * parameters extend or rectract their respective borders.
+ * Initial canvas resize should be (0, w, h, 0).
  */
 class CanvasResize : public Message {
 public:
-	CanvasResize(uint8_t ctx, uint16_t width, uint16_t height)
-		: Message(MSG_CANVAS_RESIZE, ctx), _width(width), _height(height)
+	CanvasResize(uint8_t ctx, int16_t top, int16_t right, int16_t bottom, int16_t left)
+		: Message(MSG_CANVAS_RESIZE, ctx), _top(top), _right(right), _bottom(bottom), _left(left)
 		{}
 
 	static CanvasResize *deserialize(const uchar *data, uint len);
 
-	uint16_t width() const { return _width; }
-	uint16_t height() const { return _height; }
+	int16_t top() const { return _top; }
+	int16_t right() const { return _right; }
+	int16_t bottom() const { return _bottom; }
+	int16_t left() const { return _left; }
 		
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	uint16_t _width;
-	uint16_t _height;
+	int16_t _top;
+	int16_t _right;
+	int16_t _bottom;
+	int16_t _left;
 };
 
 /**

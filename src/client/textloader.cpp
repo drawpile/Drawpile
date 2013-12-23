@@ -118,13 +118,15 @@ Params extractParams(const QString &string)
 void TextCommandLoader::handleResize(const QString &args)
 {
 	QStringList wh = args.split(' ');
-	if(wh.count() != 3)
+	if(wh.count() != 5)
 		throw SyntaxError("Expected context id, width and height");
 
 	_messages.append(MessagePtr(new protocol::CanvasResize(
 		str2ctxid(wh[0]),
 		str2int(wh[1]),
-		str2int(wh[2])
+		str2int(wh[2]),
+		str2int(wh[3]),
+		str2int(wh[4])
 	)));
 }
 

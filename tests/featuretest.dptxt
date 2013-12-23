@@ -1,4 +1,4 @@
-resize 1 1024 768
+resize 1 0 1024 768 0
 newlayer 1 1 #ffffffff Background
 
 ctx 1 layer=1 colorh=#ff0000 opacityh=0.3 incremental=false spacing=1

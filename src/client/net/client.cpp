@@ -153,12 +153,11 @@ int Client::uploadQueueBytes() const
 	return _server->uploadQueueBytes();
 }
 
-void Client::sendCanvasResize(const QSize &newsize)
+void Client::sendCanvasResize(int top, int right, int bottom, int left)
 {
 	_server->sendMessage(MessagePtr(new protocol::CanvasResize(
 		_my_id,
-		newsize.width(),
-		newsize.height()
+		top, right, bottom, left
 	)));
 }
 

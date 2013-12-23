@@ -143,7 +143,7 @@ public:
 
 public slots:
 	// Layer changing
-	void sendCanvasResize(const QSize &newsize);
+	void sendCanvasResize(int top, int right, int bottom, int left);
 	void sendNewLayer(int id, const QColor &fill, const QString &title);
 	void sendLayerAttribs(int id, float opacity, int blend);
 	void sendLayerTitle(int id, const QString &title);

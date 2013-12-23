@@ -1,4 +1,4 @@
-resize 1 600 600
+resize 1 0 600 600 0
 newlayer 1 1 #ffaaffff Brush test
 
 ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=1

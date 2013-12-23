@@ -226,7 +226,7 @@ void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos
 		// TODO support actual resizing
 		qWarning() << "canvas resize is currently supported on session initialization only.";
 	} else {
-		_image->init(QSize(cmd.width(), cmd.height()));
+		_image->init(QSize(cmd.right(), cmd.bottom()));
 
 		// Generate the initial savepoint, just in case
 		makeSavepoint(pos);

@@ -2,7 +2,7 @@
 # Annotations are currently not undoable, but they are still
 # part of the command stream
 
-resize 1 800 600
+resize 1 0 800 600 0
 newlayer 1 1 #ffffffff Undo test
 
 ctx 1 layer=1 colorh=#ff0000 sizeh=1

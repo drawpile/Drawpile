@@ -92,7 +92,7 @@ bool Reader::load(const QString &filename)
 	}
 
 	// Initialize the layer stack now that we know the size
-	_commands.append(MessagePtr(new protocol::CanvasResize(1, imagesize.width(), imagesize.height())));
+	_commands.append(MessagePtr(new protocol::CanvasResize(1, 0, imagesize.width(), imagesize.height(), 0)));
 
 	_layerid = 0;
 	_annotationid = 0;

@@ -44,7 +44,7 @@ using protocol::MessagePtr;
 QList<MessagePtr> BlankCanvasLoader::loadInitCommands()
 {
 	QList<MessagePtr> msgs;
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, _size.width(), _size.height())));
+	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _size.width(), _size.height(), 0)));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, _color.rgba(), "Background")));
 	return msgs;
 }
@@ -101,7 +101,7 @@ QList<MessagePtr> QImageCanvasLoader::loadInitCommands()
 
 	QImage image = _image.convertToFormat(QImage::Format_ARGB32);
 
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, image.size().width(), image.size().height())));
+	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, image.size().width(), image.size().height(), 0)));
 	msgs.append(MessagePtr(new protocol::LayerCreate(1, 1, 0, "Background")));
 	msgs.append(net::putQImage(1, 1, 0, 0, image, false));
 
@@ -113,7 +113,7 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	// Most important bit first: canvas initialization
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, _scene->width(), _scene->height())));
+	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _scene->width(), _scene->height(), 0)));
 
 	// Less important, but it's nice to see it straight away
 	if(!_scene->title().isEmpty())
