@@ -273,19 +273,19 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
-	if(_scene->hasImage())
+	if(_scene->hasImage() && !_locked)
 		_current_tool->begin(p, right);
 }
 
 void CanvasView::onPenMove(const paintcore::Point &p)
 {
-	if(_scene->hasImage())
+	if(_scene->hasImage() && !_locked)
 		_current_tool->motion(p);
 }
 
 void CanvasView::onPenUp()
 {
-	if(_scene->hasImage())
+	if(_scene->hasImage() && !_locked)
 		_current_tool->end();
 }
 
