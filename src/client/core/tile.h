@@ -42,8 +42,11 @@ class Tile {
 		//! The tile width and height
 		static const int SIZE = 64;
 
+		//! The length of the tile in 32 bit words
+		static const int LENGTH = SIZE * SIZE;
+
 		//! The length of the tile data in bytes
-		static const int BYTES = SIZE * SIZE * sizeof(quint32);
+		static const int BYTES = LENGTH * sizeof(quint32);
 
 		/** @brief Round i upwards to SIZE boundary
 		 * @param i coordinate
@@ -60,6 +63,18 @@ class Tile {
 		 */
 		static int roundDown(int i) {
 			return (i/SIZE) * SIZE;
+		}
+
+		/**
+		 * @brief Round to the number of tiles needed
+		 * @param i
+		 * @return
+		 */
+		static int roundTiles(int i) {
+			if(i<0)
+				return (i - SIZE + 1) / SIZE;
+			else
+				return (i + SIZE - 1) / SIZE;
 		}
 
 		//! Construct a null tile
@@ -123,20 +138,8 @@ class Tile {
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
 
 	private:
-		quint32 *getOrCreateData() {
-			if(!_data) {
-				_data = new TileData;
-				for(int i=0;i<SIZE*SIZE;++i)
-					_data->data[i] = 0;
-			}
-			return _data->data;
-		}
-
-		quint32 *getOrCreateUninitializedData() {
-			if(!_data)
-				_data = new TileData;
-			return _data->data;
-		}
+		quint32 *getOrCreateData();
+		quint32 *getOrCreateUninitializedData();
 
 		QSharedDataPointer<TileData> _data;
 };

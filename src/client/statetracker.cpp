@@ -222,15 +222,10 @@ QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 
 void StateTracker::handleCanvasResize(const protocol::CanvasResize &cmd, int pos)
 {
-	if(_image->width()>0) {
-		// TODO support actual resizing
-		qWarning() << "canvas resize is currently supported on session initialization only.";
-	} else {
-		_image->init(QSize(cmd.right(), cmd.bottom()));
+	_image->resize(cmd.top(), cmd.right(), cmd.bottom(), cmd.left());
 
-		// Generate the initial savepoint, just in case
-		makeSavepoint(pos);
-	}
+	// Generate the initial savepoint, just in case
+	makeSavepoint(pos);
 }
 
 void StateTracker::handleLayerCreate(const protocol::LayerCreate &cmd)

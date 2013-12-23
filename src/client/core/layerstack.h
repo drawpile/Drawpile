@@ -42,8 +42,8 @@ class LayerStack : public QObject {
 		LayerStack(QObject *parent=0);
 		~LayerStack();
 
-		//! Initialize the image
-		void init(const QSize& size);
+		//! Adjust layer stack size
+		void resize(int top, int right, int bottom, int left);
 
 		//! Add a new layer of solid color to the top of the stack
 		Layer *addLayer(int id, const QString& name, const QColor& color);

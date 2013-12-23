@@ -31,7 +31,7 @@
 namespace paintcore {
 
 LayerStack::LayerStack(QObject *parent)
-	: QObject(parent), _width(-1), _height(-1)
+	: QObject(parent), _width(0), _height(0)
 {
 }
 
@@ -41,20 +41,27 @@ LayerStack::~LayerStack()
 		delete l;
 }
 
-/**
- * If not already initialized, this is called automatically when the
- * first layer is added.
- * @param size the size of the layers (each layer must be this big)
- */
-void LayerStack::init(const QSize& size)
+void LayerStack::resize(int top, int right, int bottom, int left)
 {
-	Q_ASSERT(!size.isEmpty());
-	_width = size.width();
-	_height = size.height();
-	_xtiles = _width / Tile::SIZE + ((_width % Tile::SIZE)>0);
-	_ytiles = _height / Tile::SIZE + ((_height % Tile::SIZE)>0);
-	_cache = QPixmap(size);
+	int newtop = -top;
+	int newleft = -left;
+	int newright = _width + right;
+	int newbottom = _height + bottom;
+	if(newtop >= newbottom || newleft >= newright) {
+		qWarning() << "Invalid resize: borders reversed";
+		return;
+	}
+	_width = newright - newleft;
+	_height = newbottom - newtop;
+
+	_xtiles = Tile::roundTiles(_width);
+	_ytiles = Tile::roundTiles(_height);
+	_cache = QPixmap(_width, _height);
 	_dirtytiles = QBitArray(_xtiles*_ytiles, true);
+
+	foreach(Layer *l, _layers)
+		l->resize(top, right, bottom, left);
+
 	emit resized();
 }
 
@@ -195,7 +202,7 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 		const int y = ty*_xtiles;
 		for(int tx=tx0;tx<=tx1;++tx) {
 			const int i = y+tx;
-			if(_dirtytiles.at(i)) {
+			if(_dirtytiles.testBit(i)) {
 				updateCache(tx,ty);
 				_dirtytiles.clearBit(i);
 			}

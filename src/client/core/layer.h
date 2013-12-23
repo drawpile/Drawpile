@@ -70,8 +70,8 @@ class Layer {
 		//! Get the layer as an image
 		QImage toImage() const;
 
-		//! Resize this layer
-		//void resize(const QSize& newsize);
+		//! Adjust layer size
+		void resize(int top, int right, int bottom, int left);
 
 		//! Get the color at the specified coordinate
 		QColor colorAt(int x, int y) const;

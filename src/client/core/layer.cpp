@@ -39,12 +39,10 @@ namespace paintcore {
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: owner_(owner), id_(id), _title(title), _width(size.width()), _height(size.height()),
+	: owner_(owner), id_(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
 	_opacity(255), _blend(1), _hidden(false)
 {
-	_xtiles = (_width+Tile::SIZE-1) / Tile::SIZE;
-	_ytiles = (_height+Tile::SIZE-1) / Tile::SIZE;
-	_tiles = QVector<Tile>(_xtiles * _ytiles);
+	resize(0, size.width(), size.height(), 0);
 	
 	if(color.alpha() > 0) {
 		for(int i=0;i<_tiles.size();++i)
@@ -74,6 +72,96 @@ Layer::Layer(const Layer &layer)
 Layer::~Layer() {
 	foreach(Layer *sl, _sublayers)
 		delete sl;
+}
+
+void Layer::resize(int top, int right, int bottom, int left)
+{
+	// Minimize amount of data that needs to be copied
+	optimize();
+
+	// Resize sublayers
+	foreach(Layer *sl, _sublayers)
+		sl->resize(top, right, bottom, left);
+
+	// Calculate new size
+	int width = left + _width + right;
+	int height = top + _height + bottom;
+
+	int xtiles = Tile::roundTiles(width);
+	int ytiles = Tile::roundTiles(height);
+	QVector<Tile> tiles(xtiles * ytiles);
+
+	// if there is no old content, resizing is simple
+	bool hascontent = false;
+	for(int i=0;i<_tiles.length();++i) {
+		if(!_tiles.at(i).isBlank()) {
+			hascontent = true;
+			break;
+		}
+	}
+	if(!hascontent) {
+		_width = width;
+		_height = height;
+		_xtiles = xtiles;
+		_ytiles = ytiles;
+		_tiles = tiles;
+		return;
+	}
+
+	if((left % Tile::SIZE) || (top % Tile::SIZE)) {
+		// If top/left adjustment is not divisble by tile size,
+		// we need to move the layer content
+
+		QImage oldcontent = toImage();
+
+		_width = width;
+		_height = height;
+		_xtiles = xtiles;
+		_ytiles = ytiles;
+		_tiles = tiles;
+		if(left<0 || top<0) {
+			int cropx = 0;
+			if(left<0) {
+				cropx = -left;
+				left = 0;
+			}
+			int cropy = 0;
+			if(top<0) {
+				cropy = -top;
+				top = 0;
+			}
+			oldcontent = oldcontent.copy(cropx, cropy, oldcontent.width()-cropx, oldcontent.height()-cropy);
+		}
+		putImage(left, top, oldcontent, false);
+	} else {
+		// top/left offset is aligned at tile boundary:
+		// existing tile content can be reused
+
+		const int firstrow = Tile::roundTiles(-top);
+		const int firstcol = Tile::roundTiles(-left);
+
+		int oldy = firstrow;
+		for(int y=0;y<ytiles;++y,++oldy) {
+			int oldx = firstcol;
+			if(oldy<0 || oldy>=_ytiles)
+				continue;
+			const int oldyy = _xtiles * oldy;
+			const int yy = xtiles * y;
+			for(int x=0;x<xtiles;++x,++oldx) {
+				if(oldx<0 || oldx>=_xtiles)
+					continue;
+				const int oldi = oldyy + oldx;
+				const int i = yy + x;
+				tiles[i] = _tiles.at(oldi);
+			}
+		}
+
+		_width = width;
+		_height = height;
+		_xtiles = xtiles;
+		_ytiles = ytiles;
+		_tiles = tiles;
+	}
 }
 
 void Layer::setTitle(const QString& title)

@@ -54,29 +54,6 @@ Tile::Tile(const QColor& color)
 Tile::Tile(const QImage& image, int xoff, int yoff)
 	: _data(new TileData)
 {
-#if 0
-	// Tile top-left coordinates relative to layer origin
-	const int x = xi * SIZE;
-	const int y = yi * SIZE;
-
-	// Work area inside the tile
-	const int top = yoff < y ? 0 : yoff - y;
-	const int left = xoff < x ? 0 : xoff - x;
-	const int bottom = (yoff + image.height() - y) > SIZE ? SIZE : (yoff + image.height() - y);
-	const int right = (xoff + image.width() - x) > SIZE ? SIZE : (xoff + image.width() - x);
-
-	// If we are not writing the whole tile, initialize memory first
-	if(top || left || bottom<SIZE || right<SIZE) 
-		memset(_data->data, 0, BYTES);
-
-	// Copy pixels from source area
-	uchar *dest = reinterpret_cast<uchar*>(_data->data) + (SIZE * 4 * top) + (4 * left);
-	for(int yy=top;yy<bottom;++yy) {
-		const uchar *pixels = image.scanLine(y + yy - yoff) + (x+left-xoff)*4;
-		memcpy(dest, pixels, (right-left)*4);
-		dest += SIZE*4;
-	}
-#else
 	Q_ASSERT(xoff>=0 && xoff < image.width());
 	Q_ASSERT(yoff>=0 && yoff < image.height());
 	Q_ASSERT(image.format() == QImage::Format_ARGB32);
@@ -93,7 +70,6 @@ Tile::Tile(const QImage& image, int xoff, int yoff)
 		ptr += SIZE*4;
 		src += image.bytesPerLine();
 	}
-#endif
 }
 
 void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
@@ -122,7 +98,7 @@ void Tile::fillColor(const QColor& color)
 {
 	const quint32 c = color.rgba();
 	quint32 *ptr = getOrCreateUninitializedData();
-	for(int i=0;i<SIZE*SIZE;++i)
+	for(int i=0;i<LENGTH;++i)
 		*(ptr++) = c;
 }
 
@@ -133,16 +109,12 @@ void Tile::blank()
 
 void Tile::copyTo(quint32 *data) const
 {
-	if(isNull()) {
-		for(int i=0;i<SIZE*SIZE;++i)
-			*(data++) = 0;
-	} else {
-		const quint32 *ptr = _data->data;
-		for(int i=0;i<SIZE*SIZE;++i,++data,++ptr)
-			*data = *ptr;
-	}
-
+	if(isNull())
+		memset(data, 0, BYTES);
+	else
+		memcpy(data, _data->data, BYTES);
 }
+
 void Tile::copyToImage(QImage& image, int x, int y) const {
 	int w = 4*(image.width()-x<SIZE ? image.width()-x : SIZE);
 	int h = image.height()-y<SIZE ? image.height()-y : SIZE;
@@ -217,6 +189,20 @@ void Tile::optimize()
 {
 	if(!isNull() && isBlank())
 		_data = 0;
+}
+
+quint32 *Tile::getOrCreateData() {
+	if(!_data) {
+		_data = new TileData;
+		memset(_data->data, 0, BYTES);
+	}
+	return _data->data;
+}
+
+quint32 *Tile::getOrCreateUninitializedData() {
+	if(!_data)
+		_data = new TileData;
+	return _data->data;
 }
 
 }
