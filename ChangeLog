@@ -1,6 +1,7 @@
 201?-??-?? Version 0.8.1
  * Use icons from current theme
  * Tread hidden layers as locked
+ * Added "delete empty annotations" action
 
 2013-12-20 Version 0.8.0
  * Undo and redo support

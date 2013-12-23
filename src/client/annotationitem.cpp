@@ -146,6 +146,11 @@ void AnnotationItem::setText(const QString &text)
 	update();
 }
 
+bool AnnotationItem::isEmpty() const
+{
+	return _doc.isEmpty();
+}
+
 /**
  * Render the annotation using a painter.
  * @param painter painter to render with
@@ -197,7 +202,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
 	render(painter, _state.rect);
 
-	if(_showborder || _doc.isEmpty()) {
+	if(_showborder || isEmpty()) {
 		QColor border = QApplication::palette().color(QPalette::Highlight);
 		border.setAlpha(255);
 

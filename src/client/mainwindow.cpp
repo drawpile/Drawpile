@@ -1196,6 +1196,20 @@ void MainWindow::pasteImage(const QImage &image)
 	}
 }
 
+void MainWindow::removeEmptyAnnotations()
+{
+	QList<int> ids;
+	foreach(drawingboard::AnnotationItem *ai, _canvas->getAnnotations()) {
+		if(ai->isEmpty())
+			ids << ai->id();
+	}
+	if(!ids.isEmpty()) {
+		_client->sendUndopoint();
+		foreach(int id, ids)
+			_client->sendAnnotationDelete(id);
+	}
+}
+
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About DrawPile"),
@@ -1341,12 +1355,14 @@ void MainWindow::setupActions()
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image from the clipboard onto the canvas"), QKeySequence::Paste);
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file"), tr("Paste an image from a file onto the canvas"));
+	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"), tr("Delete all annotations without any text"));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
+	_currentdoctools->addAction(deleteAnnotations);
 
 	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
@@ -1354,6 +1370,7 @@ void MainWindow::setupActions()
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
+	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
@@ -1364,6 +1381,8 @@ void MainWindow::setupActions()
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);
+	editmenu->addSeparator();
+	editmenu->addAction(deleteAnnotations);
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 

@@ -123,6 +123,8 @@ class MainWindow : public QMainWindow {
 		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
 
+		void removeEmptyAnnotations();
+
 	signals:
 		//! This signal is emitted when the current tool is changed
 		void toolChanged(tools::Type);

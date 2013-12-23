@@ -79,6 +79,9 @@ class AnnotationItem : public QGraphicsObject {
 		//! Get the annotation text
 		QString text() const { return _doc.toHtml(); }
 
+		//! Check if there is no text content
+		bool isEmpty() const;
+
 		//! Set the background color
 		void setBackgroundColor(const QColor &color);
 
