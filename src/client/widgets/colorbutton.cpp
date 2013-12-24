@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,68 +31,73 @@ namespace widgets {
 #endif
 
 ColorButton::ColorButton(QWidget *parent,const QColor& color)
-	: QWidget(parent), color_(color), isdown_(false), setAlpha_(false)
+	: QToolButton(parent), _color(color), _setAlpha(false)
 {
 	setAcceptDrops(true);
+
+	connect(this, SIGNAL(clicked()), this, SLOT(selectColor()));
 }
 
 void ColorButton::setColor(const QColor& color)
 {
-	color_ = color;
+	_color = color;
 	update();
 }
 
 void ColorButton::setAlpha(bool use)
 {
-	setAlpha_ = use;
+	_setAlpha = use;
+}
+
+void ColorButton::selectColor()
+{
+#ifndef DESIGNER_PLUGIN
+	dialogs::ColorDialog dlg(tr("Select a color"), false, alpha());
+	dlg.setColor(color());
+	if(dlg.exec() == QDialog::Accepted) {
+		if(dlg.color() != color()) {
+			setColor(dlg.color());
+			emit colorChanged(color());
+		}
+	}
+#endif
 }
 
 /**
  * Draw widget contents on screen
  * @param event event info
  */
-void ColorButton::paintEvent(QPaintEvent *)
+void ColorButton::paintEvent(QPaintEvent *e)
 {
-	QStylePainter painter(this);
+	// this is based on QtColorButton from Qt tools source
+	QToolButton::paintEvent(e);
 
-	QStyleOptionButton option;
-	option.initFrom(this);
-	option.state = isdown_ ? QStyle::State_Sunken : QStyle::State_Raised;
+	const int pixSize = 10;
 
-	painter.drawControl(QStyle::CE_PushButtonBevel,option);
-	const int adj = qMin(width(),height()) / 5;
-	QRect rect = contentsRect().adjusted(adj, adj, -adj, -adj);
-	painter.fillRect(rect, color_);
-}
-
-/**
- * @brief Handle mouse press
- * @param event event info
- */
-void ColorButton::mousePressEvent(QMouseEvent *)
-{
-	isdown_ = true;
-	update();
-}
-
-/**
- * @brief Handle mouse release
- * @param event event info
- */
-void ColorButton::mouseReleaseEvent(QMouseEvent *)
-{
-	isdown_ = false;
-	update();
-#ifndef DESIGNER_PLUGIN
-	dialogs::ColorDialog dlg(tr("Select a color"), false, setAlpha_);
-	dlg.setColor(color_);
-	if(dlg.exec() == QDialog::Accepted) {
-		if(dlg.color() != color_) {
-			setColor(dlg.color());
-			emit colorChanged(color_);
-		}
+	QBrush br(color());
+	if (_setAlpha) {
+		QPixmap pm(2 * pixSize, 2 * pixSize);
+		QPainter pmp(&pm);
+		pmp.fillRect(0, 0, pixSize, pixSize, Qt::white);
+		pmp.fillRect(pixSize, pixSize, pixSize, pixSize, Qt::white);
+		pmp.fillRect(0, pixSize, pixSize, pixSize, Qt::black);
+		pmp.fillRect(pixSize, 0, pixSize, pixSize, Qt::black);
+		pmp.fillRect(0, 0, 2 * pixSize, 2 * pixSize, color());
+		br = QBrush(pm);
 	}
-#endif
+
+	QPainter p(this);
+	const int corr = 4;
+	QRect r = rect().adjusted(corr, corr, -corr, -corr);
+	p.setBrushOrigin((r.width() % pixSize + pixSize) / 2 + corr, (r.height() % pixSize + pixSize) / 2 + corr);
+	p.fillRect(r, br);
+
+	const QColor frameColor1(0, 0, 0, 26);
+	p.setPen(frameColor1);
+	p.drawRect(r.adjusted(1, 1, -2, -2));
+	const QColor frameColor2(0, 0, 0, 51);
+	p.setPen(frameColor2);
+	p.drawRect(r.adjusted(0, 0, -1, -1));
 }
 
 /**
@@ -101,8 +106,8 @@ void ColorButton::mouseReleaseEvent(QMouseEvent *)
  */
 void ColorButton::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasFormat("application/x-color"))
-	event->acceptProposedAction();
+	if(event->mimeData()->hasColor())
+		event->acceptProposedAction();
 }
 
 /**

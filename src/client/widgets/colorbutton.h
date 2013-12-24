@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2013 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #ifndef COLORBUTTON_H
 #define COLORBUTTON_H
 
-#include <QWidget>
+#include <QToolButton>
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets {
@@ -31,41 +31,41 @@ namespace widgets {
 #endif
 
 //! A button for selecting a color
-class PLUGIN_EXPORT ColorButton : public QWidget {
-	Q_OBJECT
-	Q_PROPERTY(QColor color READ color WRITE setColor)
-	Q_PROPERTY(bool setAlpha READ alpha WRITE setAlpha)
-	public:
-		ColorButton(QWidget *parent=0,const QColor& color = Qt::black);
-		~ColorButton() {}
+class PLUGIN_EXPORT ColorButton : public QToolButton {
+Q_OBJECT
+Q_PROPERTY(QColor color READ color WRITE setColor)
+Q_PROPERTY(bool setAlpha READ alpha WRITE setAlpha)
+public:
+	ColorButton(QWidget *parent=0,const QColor& color = Qt::black);
+	~ColorButton() {}
 
-		//! Get the selected color
-		QColor color() const { return color_; }
+	//! Get the selected color
+	QColor color() const { return _color; }
 
-		//! Allow setting of alpha value
-		void setAlpha(bool use);
+	//! Allow setting of alpha value
+	void setAlpha(bool use);
 
-		//! Set alpha value?
-		bool alpha() const { return setAlpha_; }
+	//! Set alpha value?
+	bool alpha() const { return _setAlpha; }
 
-	public slots:
-		//! Set color selection
-		void setColor(const QColor& color);
+public slots:
+	//! Set color selection
+	void setColor(const QColor& color);
 
-	signals:
-		void colorChanged(const QColor& color);
+signals:
+	void colorChanged(const QColor& color);
 
-	protected:
-		void paintEvent(QPaintEvent *);
-		void mousePressEvent(QMouseEvent *);
-		void mouseReleaseEvent(QMouseEvent *);
-		void dragEnterEvent(QDragEnterEvent *event);
-		void dropEvent(QDropEvent *event);
+private slots:
+	void selectColor();
 
-	private:
-		QColor color_;
-		bool isdown_;
-		bool setAlpha_;
+protected:
+	void paintEvent(QPaintEvent *);
+	void dragEnterEvent(QDragEnterEvent *);
+	void dropEvent(QDropEvent *);
+
+private:
+	QColor _color;
+	bool _setAlpha;
 };
 
 #ifndef DESIGNER_PLUGIN
@@ -73,4 +73,3 @@ class PLUGIN_EXPORT ColorButton : public QWidget {
 #endif
 
 #endif
-
