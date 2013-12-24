@@ -183,12 +183,44 @@
       </spacer>
      </item>
      <item>
+      <widget class="ColorButton" name="btnBackground">
+       <property name="minimumSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Background color</string>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+       <property name="color">
+        <color>
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </property>
+       <property name="setAlpha" stdset="0">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="ColorButton" name="btnTextColor">
        <property name="minimumSize">
         <size>
          <width>24</width>
          <height>24</height>
         </size>
+       </property>
+       <property name="toolTip">
+        <string>Text color</string>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
        <property name="setAlpha" stdset="0">
         <bool>true</bool>
@@ -252,37 +284,6 @@
     <widget class="QTextEdit" name="content"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Background:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="ColorButton" name="btnBackground">
-       <property name="minimumSize">
-        <size>
-         <width>24</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="color">
-        <color>
-         <red>0</red>
-         <green>0</green>
-         <blue>0</blue>
-        </color>
-       </property>
-       <property name="setAlpha" stdset="0">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
     <layout class="QHBoxLayout">
      <item>
       <widget class="QPushButton" name="btnBake">
@@ -311,7 +312,7 @@
  <customwidgets>
   <customwidget>
    <class>ColorButton</class>
-   <extends>QWidget</extends>
+   <extends>QToolButton</extends>
    <header>widgets/colorbutton.h</header>
    <slots>
     <signal>colorChanged(QColor)</signal>
@@ -323,30 +324,14 @@
  </resources>
  <connections>
   <connection>
-   <sender>font</sender>
-   <signal>currentFontChanged(QFont)</signal>
-   <receiver>content</receiver>
-   <slot>setCurrentFont(QFont)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>118</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>139</x>
-     <y>121</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>italic</sender>
    <signal>toggled(bool)</signal>
    <receiver>content</receiver>
    <slot>setFontItalic(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>209</x>
-     <y>43</y>
+     <x>277</x>
+     <y>54</y>
     </hint>
     <hint type="destinationlabel">
      <x>193</x>
@@ -377,12 +362,28 @@
    <slot>setTextColor(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>168</x>
+     <x>229</x>
      <y>55</y>
     </hint>
     <hint type="destinationlabel">
      <x>113</x>
      <y>94</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>font</sender>
+   <signal>currentFontChanged(QFont)</signal>
+   <receiver>content</receiver>
+   <slot>setCurrentFont(QFont)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>125</x>
+     <y>167</y>
     </hint>
    </hints>
   </connection>

@@ -567,14 +567,17 @@ void AnnotationSettings::updateStyleButtons()
 	}
 	QTextCharFormat cf = _ui->content->textCursor().charFormat();
 	_ui->btnTextColor->setColor(cf.foreground().color());
+
+	_ui->size->blockSignals(true);
 	if(cf.fontPointSize() < 1)
 		_ui->size->setValue(12);
 	else
 		_ui->size->setValue(cf.fontPointSize());
+	_ui->size->blockSignals(false);
 
-	QFont font = cf.font(); // constant font size for selection box
-	font.setPointSize(12);
-	_ui->font->setFont(font);
+	_ui->font->blockSignals(true);
+	_ui->font->setCurrentFont(cf.font());
+	_ui->font->blockSignals(false);
 
 	_ui->italic->setChecked(cf.fontItalic());
 	_ui->bold->setChecked(cf.fontWeight() > QFont::Normal);
