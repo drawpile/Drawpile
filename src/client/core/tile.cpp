@@ -102,7 +102,7 @@ void Tile::fillColor(const QColor& color)
 		*(ptr++) = c;
 }
 
-void Tile::blank()
+void Tile::makeBlank()
 {
 	_data = 0;
 }

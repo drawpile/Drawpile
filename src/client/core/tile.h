@@ -111,7 +111,7 @@ class Tile {
 		void fillColor(const QColor& color);
 
 		//! Make this a null tile
-		void blank();
+		void makeBlank();
 
 		//! Get read access to the raw pixel data
 		const quint32 *data() const { Q_ASSERT( _data); return _data->data; }

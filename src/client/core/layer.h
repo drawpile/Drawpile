@@ -103,6 +103,9 @@ class Layer {
 		//! Hide this layer
 		void setHidden(bool hide);
 
+		//! Empty this layer
+		void makeBlank();
+
 		//! Draw an image onto the layer
 		void putImage(int x, int y, QImage image, bool blend);
 

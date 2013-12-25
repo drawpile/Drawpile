@@ -63,10 +63,8 @@ Layer::Layer(const Layer &layer)
 	  _tiles(layer._tiles),
 	  _opacity(layer._opacity), _blend(layer._blend), _hidden(layer._hidden)
 {
-	// Copy only visible sublayers
 	foreach(const Layer *sl, layer._sublayers)
-		if(!sl->hidden())
-			_sublayers.append(new Layer(*sl));
+		_sublayers.append(new Layer(*sl));
 }
 
 Layer::~Layer() {
@@ -575,10 +573,28 @@ void Layer::fillColor(const QColor& color)
  */
 void Layer::optimize()
 {
+	// Optimize tile memory usage
 	for(int i=0;i<_tiles.size();++i)
 		_tiles[i].optimize();
 
-	// TODO delete unused sublayers
+	// Delete unused sublayers
+	QMutableListIterator<Layer*> li(_sublayers);
+	while(li.hasNext()) {
+		Layer *sl = li.next();
+		if(sl->hidden()) {
+			delete sl;
+			li.remove();
+		}
+	}
+}
+
+void Layer::makeBlank()
+{
+	for(int i=0;i<_tiles.size();++i)
+		_tiles[i].makeBlank();
+
+	if(owner_ && visible())
+		owner_->markDirty();
 }
 
 /**
@@ -597,9 +613,10 @@ Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
 		if(sl->id() == id) {
 			if(sl->hidden()) {
 				// Hidden, reset properties
-				sl->_hidden = false;
+				sl->makeBlank();
 				sl->_opacity = opacity;
 				sl->_blend = blendmode;
+				sl->_hidden = false;
 			}
 			return sl;
 		}
@@ -609,10 +626,11 @@ Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
 		if(sl->hidden()) {
 			// Set these flags directly to avoid markDirty call.
 			// We know the layer is invisible at this point
-			sl->_hidden = false;
+			sl->makeBlank();
 			sl->id_ = id;
 			sl->_opacity = opacity;
 			sl->_blend = blendmode;
+			sl->_hidden = false;
 			return sl;
 		}
 	}
@@ -635,11 +653,9 @@ void Layer::mergeSublayer(int id)
 	foreach(Layer *sl, _sublayers) {
 		if(sl->id() == id) {
 			merge(sl);
+			// Set hidden flag directly to avoid markDirty call.
+			// The merge should cause no visual change.
 			sl->_hidden = true;
-
-			for(int i=0;i<_tiles.size();++i)
-				sl->_tiles[i].blank();
-
 			return;
 		}
 	}
