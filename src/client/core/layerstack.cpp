@@ -341,6 +341,9 @@ Savepoint *LayerStack::makeSavepoint()
 		sp->layers.append(new Layer(*l));
 	}
 
+	sp->width = _width;
+	sp->height = _height;
+
 	return sp;
 }
 
@@ -351,8 +354,19 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 	foreach(const Layer *l, savepoint->layers)
 		_layers.append(new Layer(*l));
 
-	// TODO mark only changed tiles as dirty
-	markDirty();
+
+	if(_width != savepoint->width || _height != savepoint->height) {
+		_width = savepoint->width;
+		_height = savepoint->height;
+		_xtiles = Tile::roundTiles(_width);
+		_ytiles = Tile::roundTiles(_height);
+		_cache = QPixmap(_width, _height);
+		_dirtytiles = QBitArray(_xtiles*_ytiles, true);
+		emit resized();
+	} else {
+		// TODO mark only changed tiles as dirty
+		markDirty();
+	}
 }
 
 }

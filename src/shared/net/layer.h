@@ -54,6 +54,7 @@ public:
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
+	bool isUndoable() const { return true; }
 
 private:
 	int16_t _top;

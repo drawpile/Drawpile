@@ -136,6 +136,7 @@ public:
 private:
 	Savepoint() {}
 	QList<Layer*> layers;
+	int width, height;
 };
 
 }
