@@ -1107,6 +1107,10 @@ void MainWindow::selectTool(QAction *tool)
 	// When using the annotation tool, highlight all text boxes
 	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
 
+	// Remove selection when not using selection tool
+	if(type != tools::SELECTION)
+		_canvas->setSelectionItem(0);
+
 	emit toolChanged(type);
 }
 
