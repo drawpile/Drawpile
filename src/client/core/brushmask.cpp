@@ -99,8 +99,8 @@ void BrushMaskGenerator::buildLUT(const Brush &brush)
 	// First, determine if the brush shape depends on pressure
 	_usepressure =
 		brush.radius1() != brush.radius2() ||
-		qAbs(brush.hardness1() - brush.hardness2()) >= (1/256) ||
-		qAbs(brush.opacity1() - brush.opacity2()) >= (1/256)
+		qAbs(brush.hardness1() - brush.hardness2()) >= (1/256.0) ||
+		qAbs(brush.opacity1() - brush.opacity2()) >= (1/256.0)
 		;
 
 	if(_usepressure) {
@@ -127,7 +127,7 @@ void BrushMaskGenerator::buildLUT(const Brush &brush)
 	} else {
 		// Shape not affected by pressure: only lookup table needed
 		float radius = brush.fradius(1.0);
-		int len = square(int(radius)+1);
+		int len = ceil(radius*radius);
 		_lut.resize(len);
 		_index.append(len);
 		_radius.append(radius);
