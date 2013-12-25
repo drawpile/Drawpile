@@ -26,6 +26,8 @@
 		<file>icons/format-justify-right.png</file>
 		<file>icons/format-text-bold.png</file>
 		<file>icons/format-text-italic.png</file>
+		<file>icons/format-text-strikethrough.png</file>
+		<file>icons/format-text-underline.png</file>
 		<file>icons/list-add.png</file>
 		<file>icons/list-remove.png</file>
 		<file>icons/network-idle.png</file>

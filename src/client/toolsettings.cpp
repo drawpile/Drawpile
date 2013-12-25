@@ -549,6 +549,7 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	connect(_ui->justify, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(_ui->right, SIGNAL(clicked()), this, SLOT(changeAlignment()));
 	connect(_ui->bold, SIGNAL(toggled(bool)), this, SLOT(toggleBold(bool)));
+	connect(_ui->strikethrough, SIGNAL(toggled(bool)), this, SLOT(toggleStrikethrough(bool)));
 
 	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(saveChanges()));
 
@@ -581,11 +582,20 @@ void AnnotationSettings::updateStyleButtons()
 
 	_ui->italic->setChecked(cf.fontItalic());
 	_ui->bold->setChecked(cf.fontWeight() > QFont::Normal);
+	_ui->underline->setChecked(cf.fontUnderline());
+	_ui->strikethrough->setChecked(cf.font().strikeOut());
 }
 
 void AnnotationSettings::toggleBold(bool bold)
 {
 	_ui->content->setFontWeight(bold ? QFont::Bold : QFont::Normal);
+}
+
+void AnnotationSettings::toggleStrikethrough(bool strike)
+{
+	QFont font = _ui->content->currentFont();
+	font.setStrikeOut(strike);
+	_ui->content->setCurrentFont(font);
 }
 
 void AnnotationSettings::changeAlignment()

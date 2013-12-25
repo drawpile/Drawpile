@@ -277,6 +277,7 @@ public slots:
 private slots:
 	void changeAlignment();
 	void toggleBold(bool bold);
+	void toggleStrikethrough(bool strike);
 	void updateStyleButtons();
 
 	void applyChanges();

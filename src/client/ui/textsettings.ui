@@ -278,6 +278,46 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QToolButton" name="underline">
+       <property name="toolTip">
+        <string>Underline</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="format-text-underline" resource="resources.qrc">
+         <normaloff>:/icons/format-text-underline.png</normaloff>:/icons/format-text-underline.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="strikethrough">
+       <property name="toolTip">
+        <string>Strikethrough</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset theme="format-text-strikethrough" resource="resources.qrc">
+         <normaloff>:/icons/format-text-strikethrough.png</normaloff>:/icons/format-text-strikethrough.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -330,7 +370,7 @@
    <slot>setFontItalic(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>277</x>
+     <x>229</x>
      <y>54</y>
     </hint>
     <hint type="destinationlabel">
@@ -362,7 +402,7 @@
    <slot>setTextColor(QColor)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>229</x>
+     <x>181</x>
      <y>55</y>
     </hint>
     <hint type="destinationlabel">
@@ -384,6 +424,22 @@
     <hint type="destinationlabel">
      <x>125</x>
      <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>underline</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>content</receiver>
+   <slot>setFontUnderline(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>50</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>242</x>
+     <y>172</y>
     </hint>
    </hints>
   </connection>
