@@ -1,6 +1,6 @@
 #include <QtPlugin>
 
-#include "../../imageselector.h"
+#include "../imageselector.h"
 #include "plugin.h"
 
 ImageSelectorPlugin::ImageSelectorPlugin(QObject *parent)
@@ -59,22 +59,22 @@ bool ImageSelectorPlugin::isContainer() const
 
 QString ImageSelectorPlugin::domXml() const
 {
-    return "<widget class=\"ImageSelector\" name=\"imageSelector\">\n"
-           " <property name=\"geometry\">\n"
-           "  <rect>\n"
-           "   <x>0</x>\n"
-           "   <y>0</y>\n"
-           "   <width>128</width>\n"
-           "   <height>128</height>\n"
-           "  </rect>\n"
-           " </property>\n"
-           "</widget>\n";
+    return "<ui language=\"c++\">\n"
+			"<widget class=\"ImageSelector\" name=\"imageSelector\">\n"
+			" <property name=\"geometry\">\n"
+			"  <rect>\n"
+			"   <x>0</x>\n"
+			"   <y>0</y>\n"
+			"   <width>128</width>\n"
+			"   <height>128</height>\n"
+			"  </rect>\n"
+			" </property>\n"
+			"</widget>\n"
+			"</ui>\n";
 }
 
 QString ImageSelectorPlugin::includeFile() const
 {
-    return "imageselector.h";
+    return "widgets/imageselector.h";
 }
-
-Q_EXPORT_PLUGIN2(imageselectorplugin, ImageSelectorPlugin)
 
