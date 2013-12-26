@@ -72,6 +72,7 @@
 #include "dialogs/hostdialog.h"
 #include "dialogs/joindialog.h"
 #include "dialogs/settingsdialog.h"
+#include "dialogs/resizedialog.h"
 
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(), _canvas(0)
@@ -1214,6 +1215,19 @@ void MainWindow::removeEmptyAnnotations()
 	}
 }
 
+void MainWindow::resizeCanvas()
+{
+	QSize size(_canvas->width(), _canvas->height());
+	dialogs::ResizeDialog *dlg = new dialogs::ResizeDialog(size, this);
+	dlg->setAttribute(Qt::WA_DeleteOnClose);
+
+	connect(dlg, &QDialog::accepted, [this, dlg]() {
+		dialogs::ResizeVector r = dlg->resizeVector();
+		_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
+	});
+	dlg->show();
+}
+
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About DrawPile"),
@@ -1360,6 +1374,7 @@ void MainWindow::setupActions()
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image from the clipboard onto the canvas"), QKeySequence::Paste);
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file"), tr("Paste an image from a file onto the canvas"));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"), tr("Delete all annotations without any text"));
+	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas"));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
 
 	_currentdoctools->addAction(undo);
@@ -1367,6 +1382,7 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 	_currentdoctools->addAction(deleteAnnotations);
+	_currentdoctools->addAction(resize);
 
 	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
@@ -1375,6 +1391,7 @@ void MainWindow::setupActions()
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
+	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
@@ -1385,6 +1402,8 @@ void MainWindow::setupActions()
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);
+	editmenu->addSeparator();
+	editmenu->addAction(resize);
 	editmenu->addSeparator();
 	editmenu->addAction(deleteAnnotations);
 	editmenu->addSeparator();

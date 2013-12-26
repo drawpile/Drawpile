@@ -56,6 +56,7 @@ set (
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
 	dialogs/settingsdialog.cpp
+        dialogs/resizedialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -96,6 +97,7 @@ set (
 	ui/layerbox.ui
 	ui/userbox.ui
 	ui/newdialog.ui
+        ui/resizedialog.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )

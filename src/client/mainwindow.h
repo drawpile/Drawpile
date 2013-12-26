@@ -124,6 +124,7 @@ class MainWindow : public QMainWindow {
 		void pasteImage(const QImage &image);
 
 		void removeEmptyAnnotations();
+		void resizeCanvas();
 
 	signals:
 		//! This signal is emitted when the current tool is changed
