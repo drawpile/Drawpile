@@ -1226,8 +1226,10 @@ void MainWindow::resizeCanvas()
 
 	connect(dlg, &QDialog::accepted, [this, dlg]() {
 		dialogs::ResizeVector r = dlg->resizeVector();
-		_client->sendUndopoint();
-		_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
+		if(!r.isZero()) {
+			_client->sendUndopoint();
+			_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
+		}
 	});
 	dlg->show();
 }

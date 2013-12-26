@@ -28,6 +28,10 @@ namespace dialogs {
 
 struct ResizeVector {
 	int top, right, bottom, left;
+
+	bool isZero() const {
+		return top==0 && right==0 && bottom==0 && left==0;
+	}
 };
 
 class ResizeDialog : public QDialog
@@ -50,6 +54,7 @@ private slots:
 	void heightChanged(int);
 	void toggleAspectRatio(bool keep);
 	void centerOffset();
+	void reset();
 
 private:
 	Ui_ResizeDialog *_ui;

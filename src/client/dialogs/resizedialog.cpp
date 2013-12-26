@@ -38,6 +38,8 @@ ResizeDialog::ResizeDialog(const QSize &oldsize, QWidget *parent) :
 	connect(_ui->height, SIGNAL(valueChanged(int)), this, SLOT(heightChanged(int)));
 	connect(_ui->keepaspect, SIGNAL(toggled(bool)), this, SLOT(toggleAspectRatio(bool)));
 	connect(_ui->centerButton, SIGNAL(clicked()), this, SLOT(centerOffset()));
+
+	connect(_ui->buttons->button(QDialogButtonBox::Reset), SIGNAL(clicked()), this, SLOT(reset()));
 }
 
 ResizeDialog::~ResizeDialog()
@@ -85,6 +87,18 @@ void ResizeDialog::centerOffset()
 	QSize newsize = newSize();
 	_ui->xoffset->setValue((newsize.width() - _oldsize.width()) / 2);
 	_ui->yoffset->setValue((newsize.height() - _oldsize.height()) / 2);
+}
+
+void ResizeDialog::reset()
+{
+	_ui->width->blockSignals(true);
+	_ui->height->blockSignals(true);
+	_ui->width->setValue(_oldsize.width());
+	_ui->height->setValue(_oldsize.height());
+	_ui->width->blockSignals(false);
+	_ui->height->blockSignals(false);
+	_ui->xoffset->setValue(0);
+	_ui->yoffset->setValue(0);
 }
 
 QSize ResizeDialog::newSize() const
