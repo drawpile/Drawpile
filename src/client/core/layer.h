@@ -73,8 +73,11 @@ class Layer {
 		//! Adjust layer size
 		void resize(int top, int right, int bottom, int left);
 
-		//! Get the color at the specified coordinate
+		//! Get the color at the specified coordinates
 		QColor colorAt(int x, int y) const;
+
+		//! Get the raw pixel value at the specified coordinates
+		QRgb pixelAt(int x, int y) const;
 
 		//! Get layer opacity
 		int opacity() const { return _opacity; }

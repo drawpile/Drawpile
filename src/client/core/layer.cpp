@@ -31,6 +31,68 @@
 
 namespace paintcore {
 
+namespace {
+
+//! Sample colors at layer edges and return the most frequent color
+QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, bool left)
+{
+	const int STEP = 22;
+	QHash<QRgb, int> colorfreq;
+	// Sample top & bottom edges
+	for(int x=0;x<layer->width();x+=STEP) {
+		int count;
+		QRgb c;
+		if(top) {
+			c = layer->pixelAt(x, 0);
+			count = colorfreq[c];
+			++count;
+			colorfreq[c] = count;
+		}
+
+		if(bottom) {
+			c = layer->pixelAt(x, layer->height()-1);
+			count = colorfreq[c];
+			++count;
+			colorfreq[c] = count;
+		}
+	}
+
+	// Sample left & right edges
+	for(int y=0;y<layer->height();y+=STEP) {
+		int count;
+		QRgb c;
+		if(left) {
+			c = layer->pixelAt(0, y);
+			count = colorfreq[c];
+			++count;
+			colorfreq[c] = count;
+		}
+
+		if(right) {
+			c = layer->pixelAt(layer->width()-1, y);
+			count = colorfreq[c];
+			++count;
+			colorfreq[c] = count;
+		}
+	}
+
+	// Return the most frequent color
+	QRgb color=0;
+	int freq=0;
+	QHashIterator<QRgb, int> i(colorfreq);
+	while(i.hasNext()) {
+		i.next();
+		if(i.value() > freq) {
+			freq = i.value();
+			color = i.key();
+		}
+	}
+
+	return QColor::fromRgba(color);
+}
+
+}
+
 /**
  * Construct a layer initialized to a solid color
  * @param owner the stack to which this layer belongs to
@@ -106,6 +168,10 @@ void Layer::resize(int top, int right, int bottom, int left)
 		return;
 	}
 
+	// Sample colors around the layer edges to determine fill color
+	// for the new tiles
+	QColor bgcolor = _sampleEdgeColors(this, top>0, right>0, bottom>0, left>0);
+
 	if((left % Tile::SIZE) || (top % Tile::SIZE)) {
 		// If top/left adjustment is not divisble by tile size,
 		// we need to move the layer content
@@ -130,6 +196,10 @@ void Layer::resize(int top, int right, int bottom, int left)
 			}
 			oldcontent = oldcontent.copy(cropx, cropy, oldcontent.width()-cropx, oldcontent.height()-cropy);
 		}
+
+		if(bgcolor.alpha()>0)
+			fillColor(bgcolor);
+
 		putImage(left, top, oldcontent, false);
 	} else {
 		// top/left offset is aligned at tile boundary:
@@ -141,16 +211,18 @@ void Layer::resize(int top, int right, int bottom, int left)
 		int oldy = firstrow;
 		for(int y=0;y<ytiles;++y,++oldy) {
 			int oldx = firstcol;
-			if(oldy<0 || oldy>=_ytiles)
-				continue;
 			const int oldyy = _xtiles * oldy;
 			const int yy = xtiles * y;
 			for(int x=0;x<xtiles;++x,++oldx) {
-				if(oldx<0 || oldx>=_xtiles)
-					continue;
-				const int oldi = oldyy + oldx;
 				const int i = yy + x;
-				tiles[i] = _tiles.at(oldi);
+
+				if(oldy<0 || oldy>=_ytiles || oldx<0 || oldx>=_xtiles) {
+					if(bgcolor.alpha()>0)
+						tiles[i].fillColor(bgcolor);
+				} else {
+					const int oldi = oldyy + oldx;
+					tiles[i] = _tiles.at(oldi);
+				}
 			}
 		}
 
@@ -187,12 +259,18 @@ QColor Layer::colorAt(int x, int y) const
 	if(x<0 || y<0 || x>=_width || y>=_height)
 		return QColor();
 
+	return QColor::fromRgb(pixelAt(x, y));
+}
+
+QRgb Layer::pixelAt(int x, int y) const
+{
+	if(x<0 || y<0 || x>=_width || y>=_height)
+		return 0;
+
 	const int yindex = y/Tile::SIZE;
 	const int xindex = x/Tile::SIZE;
 
-	return QColor::fromRgb(
-		tile(xindex, yindex).pixel(x-xindex*Tile::SIZE, y-yindex*Tile::SIZE)
-	);
+	return tile(xindex, yindex).pixel(x-xindex*Tile::SIZE, y-yindex*Tile::SIZE);
 }
 
 /**
