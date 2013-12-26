@@ -44,6 +44,7 @@ UserList::UserList(QWidget *parent)
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 	connect(_ui->kickButton, SIGNAL(clicked()), this, SLOT(kickSelected()));
 	connect(_ui->undoButton, SIGNAL(clicked()), this, SLOT(undoSelected()));
+	connect(_ui->opButton, SIGNAL(clicked()), this, SLOT(opSelected()));
 }
 
 void UserList::setOperatorMode(bool op)
@@ -51,6 +52,7 @@ void UserList::setOperatorMode(bool op)
 	_ui->lockButton->setEnabled(op);
 	_ui->kickButton->setEnabled(op);
 	_ui->undoButton->setEnabled(op);
+	_ui->opButton->setEnabled(op);
 }
 
 void UserList::setClient(net::Client *client)
@@ -92,9 +94,17 @@ void UserList::undoSelected()
 		_client->sendUndo(1, idx.data().value<net::User>().id);
 }
 
+void UserList::opSelected()
+{
+	QModelIndex idx = currentSelection();
+	if(idx.isValid())
+		_client->sendOpUser(idx.data().value<net::User>().id, _ui->opButton->isChecked());
+}
+
 void UserList::selectionChanged(const QItemSelection &selected)
 {
 	bool on = selected.count() > 0;
+
 	setOperatorMode(on && _client->isOperator() && _client->isLoggedIn());
 
 	if(on) {
@@ -109,8 +119,11 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {
 		const net::User &user = currentSelection().data().value<net::User>();
 		_ui->lockButton->setChecked(user.isLocked);
-		if(user.isLocal)
+		_ui->opButton->setChecked(user.isOperator);
+		if(user.isLocal) {
 			_ui->kickButton->setEnabled(false);
+			_ui->opButton->setEnabled(false);
+		}
 	}
 }
 
@@ -130,15 +143,24 @@ void UserListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 	// Background
 	drawBackground(painter, opt, index);
 
-	// Name
+	// [OP] + Name
 	QRect textrect = opt.rect;
 	const QSize locksize = _lockicon.size();
 
+	{
+		opt.font.setBold(true);
+		QFontMetrics fm(opt.font);
+		QString opmsg("[OP]");
+
+		if(user.isOperator)
+			drawDisplay(painter, opt, textrect, "[OP]");
+
+		textrect.moveLeft(fm.width(opmsg) + 5);
+		opt.font.setBold(false);
+	}
+
 	if(user.isLocal)
 		opt.font.setStyle(QFont::StyleItalic);
-
-	if(user.isOperator)
-		opt.palette.setColor(QPalette::Text, Qt::red);
 
 	drawDisplay(painter, opt, textrect, user.name);
 

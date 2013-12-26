@@ -1,9 +1,10 @@
 201?-??-?? Version 0.8.1
  * Use icons from current theme
- * Tread hidden layers as locked
+ * Treat hidden layers as locked
  * Added "delete empty annotations" action
  * Annotation edit box UI bug fixes
  * Canvas resizing
+ * Added button for granting and revoking session operator privileges
 
 2013-12-20 Version 0.8.0
  * Undo and redo support

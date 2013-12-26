@@ -48,6 +48,7 @@ public:
 private slots:
 	void lockSelected();
 	void kickSelected();
+	void opSelected();
 	void undoSelected();
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);

@@ -342,6 +342,19 @@ void Client::sendLockUser(int userid, bool lock)
 	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
 }
 
+void Client::sendOpUser(int userid, bool op)
+{
+	Q_ASSERT(userid>0 && userid<256);
+	QString cmd;
+	if(op)
+		cmd = "/op ";
+	else
+		cmd = "/deop ";
+	cmd += QString::number(userid);
+
+	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
+}
+
 void Client::sendKickUser(int userid)
 {
 	Q_ASSERT(userid>0 && userid<256);

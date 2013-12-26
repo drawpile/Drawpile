@@ -65,6 +65,28 @@
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="opButton">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="toolTip">
+        <string>Session operator</string>
+       </property>
+       <property name="text">
+        <string notr="true">OP</string>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="lockButton">
        <property name="toolTip">
         <string>Lock selected user</string>

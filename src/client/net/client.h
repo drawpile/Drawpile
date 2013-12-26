@@ -179,6 +179,7 @@ public slots:
 	// Operator commands
 	void sendLockUser(int userid, bool lock);
 	void sendKickUser(int userid);
+	void sendOpUser(int userid, bool op);
 	void sendSetSessionTitle(const QString &title);
 	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
 	void sendLockSession(bool lock);
