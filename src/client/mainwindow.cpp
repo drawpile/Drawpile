@@ -1380,10 +1380,10 @@ void MainWindow::setupActions()
 	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image from the clipboard onto the canvas"), QKeySequence::Paste);
-	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file"), tr("Paste an image from a file onto the canvas"));
+	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."), tr("Paste an image from a file onto the canvas"));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"), tr("Delete all annotations without any text"));
-	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas"));
-	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
+	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
+	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
 
 	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+Alt+J"));
 	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+Alt+K"));
