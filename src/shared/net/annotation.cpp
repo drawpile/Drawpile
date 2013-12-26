@@ -27,21 +27,21 @@ namespace protocol {
 
 AnnotationCreate *AnnotationCreate::deserialize(const uchar *data, uint len)
 {
-	if(len!=10)
+	if(len!=14)
 		return 0;
 	return new AnnotationCreate(
 		*(data+0),
 		*(data+1),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		qFromBigEndian<quint16>(data+8)
+		qFromBigEndian<qint32>(data+2),
+		qFromBigEndian<qint32>(data+6),
+		qFromBigEndian<quint16>(data+10),
+		qFromBigEndian<quint16>(data+12)
 	);
 }
 
 int AnnotationCreate::payloadLength() const
 {
-	return 1 + 1 + 4*2;
+	return 1 + 1 + 4*2 + 2*2;
 }
 
 int AnnotationCreate::serializePayload(uchar *data) const
@@ -49,8 +49,8 @@ int AnnotationCreate::serializePayload(uchar *data) const
 	uchar *ptr = data;
 	*(ptr++) = contextId();
 	*(ptr++) = _id;
-	qToBigEndian(_x, ptr); ptr += 2;
-	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_x, ptr); ptr += 4;
+	qToBigEndian(_y, ptr); ptr += 4;
 	qToBigEndian(_w, ptr); ptr += 2;
 	qToBigEndian(_h, ptr); ptr += 2;
 	return ptr - data;
@@ -58,20 +58,20 @@ int AnnotationCreate::serializePayload(uchar *data) const
 
 int AnnotationReshape::payloadLength() const
 {
-	return 1 + 1 + 4*2;
+	return 1 + 1 + 4*2 + 2*2;
 }
 
 AnnotationReshape *AnnotationReshape::deserialize(const uchar *data, uint len)
 {
-	if(len!=10)
+	if(len!=14)
 		return 0;
 	return new AnnotationReshape(
 		*(data+0),
 		*(data+1),
-		qFromBigEndian<quint16>(data+2),
-		qFromBigEndian<quint16>(data+4),
-		qFromBigEndian<quint16>(data+6),
-		qFromBigEndian<quint16>(data+8)
+		qFromBigEndian<qint32>(data+2),
+		qFromBigEndian<qint32>(data+6),
+		qFromBigEndian<quint16>(data+10),
+		qFromBigEndian<quint16>(data+12)
 	);
 }
 
@@ -80,8 +80,8 @@ int AnnotationReshape::serializePayload(uchar *data) const
 	uchar *ptr = data;
 	*(ptr++) = contextId();
 	*(ptr++) = _id;
-	qToBigEndian(_x, ptr); ptr += 2;
-	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_x, ptr); ptr += 4;
+	qToBigEndian(_y, ptr); ptr += 4;
 	qToBigEndian(_w, ptr); ptr += 2;
 	qToBigEndian(_h, ptr); ptr += 2;
 	return ptr - data;

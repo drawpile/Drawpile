@@ -261,8 +261,8 @@ void Client::sendAnnotationCreate(int id, const QRect &rect)
 	_server->sendMessage(MessagePtr(new protocol::AnnotationCreate(
 		_my_id,
 		id,
-		qMax(0, rect.x()),
-		qMax(0, rect.y()),
+		rect.x(),
+		rect.y(),
 		rect.width(),
 		rect.height()
 	)));
@@ -274,8 +274,8 @@ void Client::sendAnnotationReshape(int id, const QRect &rect)
 	_server->sendMessage(MessagePtr(new protocol::AnnotationReshape(
 		_my_id,
 		id,
-		qMax(0, rect.x()),
-		qMax(0, rect.y()),
+		rect.x(),
+		rect.y(),
 		rect.width(),
 		rect.height()
 	)));

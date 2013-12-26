@@ -87,8 +87,8 @@ private:
 
 struct PenPoint {
 	PenPoint() {}
-	PenPoint(uint16_t x_, uint16_t y_, uint8_t p_) : x(x_), y(y_), p(p_) {}
-	uint16_t x, y;
+	PenPoint(int32_t x_, int32_t y_, uint8_t p_) : x(x_), y(y_), p(p_) {}
+	int32_t x, y;
 	uint8_t p;
 };
 

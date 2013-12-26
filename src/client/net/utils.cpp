@@ -121,11 +121,8 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::B
  */
 protocol::PenPoint pointToProtocol(const paintcore::Point &p)
 {
-	// The two least significant bits of the coordinate
-	// are the fractional part.
-	// The rest is the integer part with a bias of 128
-	uint16_t x = (qMax(0, int(p.x()) + 128) << 2) | (uint16_t(p.xFrac()*4) & 3);
-	uint16_t y = (qMax(0, int(p.y()) + 128) << 2) | (uint16_t(p.yFrac()*4) & 3);
+	int32_t x = p.x() * 4.0;
+	int32_t y = p.y() * 4.0;
 
 	return protocol::PenPoint(x, y, p.pressure() * 255);
 }

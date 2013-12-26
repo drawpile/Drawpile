@@ -35,7 +35,7 @@ namespace protocol {
  */
 class AnnotationCreate : public Message {
 public:
-	AnnotationCreate(uint8_t ctx, uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
+	AnnotationCreate(uint8_t ctx, uint8_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
 		: Message(MSG_ANNOTATION_CREATE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
@@ -51,8 +51,8 @@ public:
 
 	void setId(uint8_t id) { _id = id; }
 
-	uint16_t x() const { return _x; }
-	uint16_t y() const { return _y; }
+	int32_t x() const { return _x; }
+	int32_t y() const { return _y; }
 	uint16_t w() const { return _w; }
 	uint16_t h() const { return _h; }
 
@@ -62,8 +62,8 @@ protected:
 
 private:
 	uint8_t _id;
-	uint16_t _x;
-	uint16_t _y;
+	int32_t _x;
+	int32_t _y;
 	uint16_t _w;
 	uint16_t _h;
 };
@@ -73,15 +73,15 @@ private:
  */
 class AnnotationReshape : public Message {
 public:
-	AnnotationReshape(uint8_t ctx, uint8_t id, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
+	AnnotationReshape(uint8_t ctx, uint8_t id, int32_t x, int32_t y, uint16_t w, uint16_t h)
 		: Message(MSG_ANNOTATION_RESHAPE, ctx), _id(id), _x(x), _y(y), _w(w), _h(h)
 	{}
 
 	static AnnotationReshape *deserialize(const uchar *data, uint len);
 
 	uint8_t id() const { return _id; }
-	uint16_t x() const { return _x; }
-	uint16_t y() const { return _y; }
+	int32_t x() const { return _x; }
+	int32_t y() const { return _y; }
 	uint16_t w() const { return _w; }
 	uint16_t h() const { return _h; }
 
@@ -91,8 +91,8 @@ protected:
 
 private:
 	uint8_t _id;
-	uint16_t _x;
-	uint16_t _y;
+	int32_t _x;
+	int32_t _y;
 	uint16_t _w;
 	uint16_t _h;
 };
