@@ -61,6 +61,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	
 	connect(_statetracker, SIGNAL(myAnnotationCreated(AnnotationItem*)), this, SIGNAL(myAnnotationCreated(AnnotationItem*)));
 	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
+	connect(_image->image(), SIGNAL(resized(int,int)), this, SLOT(handleCanvasResize(int,int)));
 
 	addItem(_image);
 	clearAnnotations();
@@ -143,6 +144,23 @@ bool CanvasScene::deleteAnnotation(int id)
 		return true;
 	}
 	return false;
+}
+
+void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
+{
+	if(xoffset || yoffset) {
+		QPoint offset(xoffset, yoffset);
+
+		// Adjust annotation positions
+		foreach(AnnotationItem *a, getAnnotations()) {
+			a->setGeometry(a->geometry().translated(offset));
+		}
+
+		// Adjust selection (if it exists)
+		if(_selection) {
+			_selection->setRect(_selection->rect().translated(offset));
+		}
+	}
 }
 
 /**

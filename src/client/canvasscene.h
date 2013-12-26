@@ -213,6 +213,9 @@ signals:
 	//! Emitted when a new snapshot point was generated
 	void newSnapshot(QList<protocol::MessagePtr>);
 
+private slots:
+	void handleCanvasResize(int xoffset, int yoffset);
+
 private:
 	//! The board contents
 	CanvasItem *_image;

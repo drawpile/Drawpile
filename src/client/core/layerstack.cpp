@@ -62,7 +62,7 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 	foreach(Layer *l, _layers)
 		l->resize(top, right, bottom, left);
 
-	emit resized();
+	emit resized(left, top);
 }
 
 /**
@@ -362,7 +362,7 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		_ytiles = Tile::roundTiles(_height);
 		_cache = QPixmap(_width, _height);
 		_dirtytiles = QBitArray(_xtiles*_ytiles, true);
-		emit resized();
+		emit resized(0, 0);
 	} else {
 		// TODO mark only changed tiles as dirty
 		markDirty();

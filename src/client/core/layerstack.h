@@ -114,7 +114,7 @@ class LayerStack : public QObject {
 		void areaChanged(const QRect &area);
 
 		//! Layer width/height changed
-		void resized();
+		void resized(int xoffset, int yoffset);
 
 	private:
 		void flattenTile(quint32 *data, int xindex, int yindex) const;

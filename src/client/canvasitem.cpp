@@ -36,7 +36,7 @@ CanvasItem::CanvasItem(QGraphicsItem *parent)
 {
 	_image = new paintcore::LayerStack(this);
 	connect(_image, SIGNAL(areaChanged(QRect)), this, SLOT(refreshImage(QRect)));
-	connect(_image, SIGNAL(resized()), this, SLOT(canvasResize()));
+	connect(_image, SIGNAL(resized(int, int)), this, SLOT(canvasResize()));
 }
 
 void CanvasItem::refreshImage(const QRect &area)

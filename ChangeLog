@@ -3,6 +3,7 @@
  * Tread hidden layers as locked
  * Added "delete empty annotations" action
  * Annotation edit box UI bug fixes
+ * Canvas resizing
 
 2013-12-20 Version 0.8.0
  * Undo and redo support

@@ -1223,6 +1223,7 @@ void MainWindow::resizeCanvas()
 
 	connect(dlg, &QDialog::accepted, [this, dlg]() {
 		dialogs::ResizeVector r = dlg->resizeVector();
+		_client->sendUndopoint();
 		_client->sendCanvasResize(r.top, r.right, r.bottom, r.left);
 	});
 	dlg->show();
@@ -1377,12 +1378,21 @@ void MainWindow::setupActions()
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas"));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces"));
 
+	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+Alt+J"));
+	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+Alt+K"));
+	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+Alt+H"));
+	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+Alt+L"));
+
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 	_currentdoctools->addAction(deleteAnnotations);
 	_currentdoctools->addAction(resize);
+	_currentdoctools->addAction(expandup);
+	_currentdoctools->addAction(expanddown);
+	_currentdoctools->addAction(expandleft);
+	_currentdoctools->addAction(expandright);
 
 	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
@@ -1394,6 +1404,12 @@ void MainWindow::setupActions()
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
+	// Expanding by multiples of tile size allows efficient resizing
+	connect(expandup, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(64, 0 ,0, 0);});
+	connect(expandright, &QAction::triggered, [this] {_client->sendUndopoint();  _client->sendCanvasResize(0, 64, 0, 0);});
+	connect(expanddown, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(0,0, 64, 0);});
+	connect(expandleft, &QAction::triggered, [this] { _client->sendUndopoint(); _client->sendCanvasResize(0,0, 0, 64);});
+
 	QMenu *editmenu = menuBar()->addMenu(tr("&Edit"));
 	editmenu->addAction(undo);
 	editmenu->addAction(redo);
@@ -1403,7 +1419,14 @@ void MainWindow::setupActions()
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);
 	editmenu->addSeparator();
+
 	editmenu->addAction(resize);
+	QMenu *expandmenu = editmenu->addMenu(tr("Expand canvas"));
+	expandmenu->addAction(expandup);
+	expandmenu->addAction(expanddown);
+	expandmenu->addAction(expandleft);
+	expandmenu->addAction(expandright);
+
 	editmenu->addSeparator();
 	editmenu->addAction(deleteAnnotations);
 	editmenu->addSeparator();
