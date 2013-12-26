@@ -190,6 +190,7 @@ class MainWindow : public QMainWindow {
 
 		QActionGroup *_currentdoctools; // actions relating to the currently open document
 		QActionGroup *_admintools; // session operator actions
+		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
 		QAction *_lasttool; // the last used tool
 

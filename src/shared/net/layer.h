@@ -50,7 +50,9 @@ public:
 	int16_t right() const { return _right; }
 	int16_t bottom() const { return _bottom; }
 	int16_t left() const { return _left; }
-		
+
+	bool isOpCommand() const { return true; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;

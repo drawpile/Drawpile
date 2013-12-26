@@ -260,6 +260,7 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	win->setWindowModified(false);
 	win->updateTitle();
 	win->_currentdoctools->setEnabled(true);
+	win->_docadmintools->setEnabled(true);
 	return win;
 }
 
@@ -904,6 +905,7 @@ void MainWindow::disconnected(const QString &message)
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
 	_admintools->setEnabled(false);
+	_docadmintools->setEnabled(true);
 
 	// Re-enable UI
 	_view->setEnabled(true);
@@ -971,6 +973,7 @@ void MainWindow::setOperatorMode(bool op)
 {
 	// Don't enable these actions in local mode
 	_admintools->setEnabled(op && _client->isLoggedIn());
+	_docadmintools->setEnabled(op);
 }
 
 /**
@@ -1310,6 +1313,10 @@ void MainWindow::setupActions()
 	_admintools = new QActionGroup(this);
 	_admintools->setExclusive(false);
 
+	_docadmintools = new QActionGroup(this);
+	_docadmintools->setExclusive(false);
+	_docadmintools->setEnabled(false);
+
 	_drawingtools = new QActionGroup(this);
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 
@@ -1388,11 +1395,12 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 	_currentdoctools->addAction(deleteAnnotations);
-	_currentdoctools->addAction(resize);
-	_currentdoctools->addAction(expandup);
-	_currentdoctools->addAction(expanddown);
-	_currentdoctools->addAction(expandleft);
-	_currentdoctools->addAction(expandright);
+
+	_docadmintools->addAction(resize);
+	_docadmintools->addAction(expandup);
+	_docadmintools->addAction(expanddown);
+	_docadmintools->addAction(expandleft);
+	_docadmintools->addAction(expandright);
 
 	connect(undo, SIGNAL(triggered()), _client, SLOT(sendUndo()));
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
