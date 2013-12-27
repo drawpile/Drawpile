@@ -153,7 +153,7 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 	// if there is no old content, resizing is simple
 	bool hascontent = false;
-	for(int i=0;i<_tiles.length();++i) {
+	for(int i=0;i<_tiles.count();++i) {
 		if(!_tiles.at(i).isBlank()) {
 			hascontent = true;
 			break;
