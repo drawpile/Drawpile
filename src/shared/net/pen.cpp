@@ -78,9 +78,9 @@ PenMove *PenMove::deserialize(const uchar *data, uint len)
 
 	uint8_t ctx = *(data++);
 
-	const int points = (len-1)/5;
+	int points = (len-1)/9;
 	pp.reserve(points);
-	for(int i=0;i<points;++i) {
+	while(points--) {
 		pp.append(PenPoint(
 			qFromBigEndian<qint32>(data),
 			qFromBigEndian<qint32>(data+4),
