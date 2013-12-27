@@ -186,11 +186,13 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
 	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
 
-	connect(_client, SIGNAL(userJoined(QString)), netstatus, SLOT(join(QString)));
+	connect(_client, SIGNAL(userJoined(int, QString)), netstatus, SLOT(join(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), netstatus, SLOT(leave(QString)));
 
-	connect(_client, SIGNAL(userJoined(QString)), chatbox, SLOT(userJoined(QString)));
+	connect(_client, SIGNAL(userJoined(int, QString)), chatbox, SLOT(userJoined(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), chatbox, SLOT(userParted(QString)));
+
+	connect(_client, SIGNAL(userJoined(int,QString)), _canvas, SLOT(setUserMarkerName(int,QString)));
 
 	// Create actions and menus
 	setupActions();
@@ -1050,7 +1052,6 @@ void MainWindow::setShowAnnotations(bool show)
 		if(_lasttool == annotationtool)
 			_lasttool = getAction("toolbrush");
 	}
-
 }
 
 /**
@@ -1461,7 +1462,9 @@ void MainWindow::setupActions()
 
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
+	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), tr("Show the positions of other users pointers as they draw"), QKeySequence(), true);
 	showannotations->setChecked(true);
+	showusermarkers->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
 
@@ -1476,6 +1479,7 @@ void MainWindow::setupActions()
 
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
+	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
@@ -1496,6 +1500,7 @@ void MainWindow::setupActions()
 	viewmenu->addSeparator();
 	viewmenu->addAction(showoutline);
 	viewmenu->addAction(showannotations);
+	viewmenu->addAction(showusermarkers);
 
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);

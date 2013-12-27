@@ -53,7 +53,7 @@ public slots:
 	void bytesSent(int count);
 
 
-	void join(const QString& user);
+	void join(int id, const QString& user);
 	void leave(const QString& user);
 #if 0
 	void kicked(const network::User& user);

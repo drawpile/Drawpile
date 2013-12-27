@@ -195,7 +195,7 @@ signals:
 	void serverDisconnecting();
 	void serverDisconnected(const QString &message);
 
-	void userJoined(const QString &name);
+	void userJoined(int id, const QString &name);
 	void userLeft(const QString &name);
 
 	void canvasLocked(bool locked);

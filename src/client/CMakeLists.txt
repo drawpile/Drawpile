@@ -28,6 +28,7 @@ set (
 	toolsettings.cpp
 	annotationitem.cpp
 	selectionitem.cpp
+	usermarkeritem.cpp
 	loader.cpp
 	textloader.cpp
 	net/client.cpp

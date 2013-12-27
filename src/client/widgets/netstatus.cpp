@@ -294,8 +294,9 @@ QString NetStatus::fullAddress() const
 	return addr;
 }
 
-void NetStatus::join(const QString& user)
+void NetStatus::join(int id, const QString& user)
 {
+	Q_UNUSED(id);
 	message(tr("<b>%1</b> joined").arg(user));
 }
 

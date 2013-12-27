@@ -318,6 +318,8 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	}
 	if(cmd.contextId() == _myid)
 		_scene->takePreview(cmd.points().size());
+	else
+		_scene->moveUserMarker(cmd.contextId(), ctx.tool.brush.color1(), ctx.lastpoint);
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
@@ -333,6 +335,7 @@ void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 	layer->mergeSublayer(cmd.contextId());
 
 	ctx.pendown = false;
+	_scene->hideUserMarker(cmd.contextId());
 }
 
 void StateTracker::handlePutImage(const protocol::PutImage &cmd)

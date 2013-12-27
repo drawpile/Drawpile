@@ -44,6 +44,7 @@ class CanvasItem;
 class AnnotationState;
 class AnnotationItem;
 class SelectionItem;
+class UserMarkerItem;
 class Preview;
 
 /**
@@ -161,6 +162,9 @@ public:
 	 */
 	StateTracker *statetracker() { return _statetracker; }
 
+	void moveUserMarker(int id, const QColor &color, const paintcore::Point &point);
+	void hideUserMarker(int id);
+
 	/**
 	 * @brief Get a QPen that resembles the given brush
 	 *
@@ -186,6 +190,9 @@ public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool hl);
 
+	//! Show/hide remote cursor markers
+	void showUserMarkers(bool show);
+
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
 	//! Generate a snapshot point and send it to the server
@@ -193,6 +200,8 @@ public slots:
 
 	//! Clear out all preview strokes
 	void clearPreviews();
+
+	void setUserMarkerName(int id, const QString &name);
 
 signals:
 	//! User used a color picker tool on this scene
@@ -217,6 +226,8 @@ private slots:
 	void handleCanvasResize(int xoffset, int yoffset);
 
 private:
+	UserMarkerItem *getOrCreateUserMarker(int id);
+
 	//! The board contents
 	CanvasItem *_image;
 
@@ -241,7 +252,11 @@ private:
 	//! Current selection
 	SelectionItem *_selection;
 
+	//! User markers display remote user cursor positions
+	QHash<int, UserMarkerItem*> _usermarkers;
+
 	bool _showAnnotationBorders;
+	bool _showUserMarkers;
 
 	QTimer *_previewClearTimer;
 

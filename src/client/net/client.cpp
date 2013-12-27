@@ -464,7 +464,7 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 void Client::handleUserJoin(const protocol::UserJoin &msg)
 {
 	_userlist->addUser(User(msg.contextId(), msg.name(), msg.contextId() == _my_id));
-	emit userJoined(msg.name());
+	emit userJoined(msg.contextId(), msg.name());
 }
 
 void Client::handleUserAttr(const protocol::UserAttr &msg)

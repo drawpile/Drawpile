@@ -81,8 +81,9 @@ void ChatBox::clear()
 	_view->clear();
 }
 
-void ChatBox::userJoined(const QString &name)
+void ChatBox::userJoined(int id, const QString &name)
 {
+	Q_UNUSED(id);
 	systemMessage(tr("<b>%1</b> joined the session").arg(esc(name)));
 }
 

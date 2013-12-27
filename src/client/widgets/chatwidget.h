@@ -46,7 +46,7 @@ class ChatBox: public QWidget
 		//! Display a system message
 		void systemMessage(const QString& message);
 
-		void userJoined(const QString &name);
+		void userJoined(int id, const QString &name);
 		void userParted(const QString &name);
 
 		//! Empty the chat box

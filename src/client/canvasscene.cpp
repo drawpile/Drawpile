@@ -26,6 +26,7 @@
 #include "canvasitem.h"
 #include "selectionitem.h"
 #include "annotationitem.h"
+#include "usermarkeritem.h"
 #include "statetracker.h"
 
 #include "core/layerstack.h"
@@ -35,7 +36,7 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true)
 {
 	setItemIndexMethod(NoIndex);
 	_previewClearTimer = new QTimer(this);
@@ -72,6 +73,9 @@ void CanvasScene::initCanvas(net::Client *client)
 	foreach(QGraphicsLineItem *p, _previewstrokecache)
 		delete p;
 	_previewstrokecache.clear();
+	foreach(UserMarkerItem *i, _usermarkers)
+		delete i;
+	_usermarkers.clear();
 	
 	QList<QRectF> regions;
 	regions.append(sceneRect());
@@ -441,5 +445,51 @@ QPen CanvasScene::penForBrush(const paintcore::Brush &brush)
 	pen.setColor(color);
 	return pen;
 }
+
+UserMarkerItem *CanvasScene::getOrCreateUserMarker(int id)
+{
+	if(_usermarkers.contains(id))
+		return _usermarkers[id];
+
+	UserMarkerItem *item = new UserMarkerItem;
+	item->setColor(QColor(0, 0, 0));
+	item->setText(QString("#%1").arg(id));
+	item->hide();
+	addItem(item);
+	_usermarkers[id] = item;
+	return item;
 }
 
+void CanvasScene::setUserMarkerName(int id, const QString &name)
+{
+	auto *item = getOrCreateUserMarker(id);
+	item->setText(name);
+}
+
+void CanvasScene::moveUserMarker(int id, const QColor &color, const paintcore::Point &point)
+{
+	if(_showUserMarkers) {
+		auto *item = getOrCreateUserMarker(id);
+		item->setColor(color);
+		item->setPos(point);
+		item->fadein();
+	}
+}
+
+void CanvasScene::hideUserMarker(int id)
+{
+	if(_usermarkers.contains(id)) {
+		_usermarkers[id]->fadeout();
+	}
+}
+
+void CanvasScene::showUserMarkers(bool show)
+{
+	_showUserMarkers = show;
+	if(!show) {
+		foreach(UserMarkerItem *item, _usermarkers)
+			item->hide();
+	}
+}
+
+}
