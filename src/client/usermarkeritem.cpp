@@ -36,6 +36,7 @@ static const float ARROW = 10;
 UserMarkerItem::UserMarkerItem(QGraphicsItem *parent)
 	: QGraphicsObject(parent), _fadeout(0)
 {
+	setFlag(ItemIgnoresTransformations);
 	_bgbrush.setStyle(Qt::SolidPattern);
 	QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
 	shadow->setOffset(0);
