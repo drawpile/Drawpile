@@ -42,11 +42,15 @@ namespace protocol {
 class PutImage : public Message {
 public:
 	static const int MODE_BLEND = (1<<0);
-	static const int MAX_LEN = (1<<16) - 10;
+
+	//! Maximum length of image data array
+	static const int MAX_LEN = (1<<16) - 11;
 
 	PutImage(uint8_t ctx, uint8_t layer, uint8_t flags, uint16_t x, uint16_t y, uint16_t w, uint16_t h, const QByteArray &image)
 	: Message(MSG_PUTIMAGE, ctx), _layer(layer), _flags(flags), _x(x), _y(y), _w(w), _h(h), _image(image)
-	{}
+	{
+		Q_ASSERT(image.length() <= MAX_LEN);
+	}
 
 	static PutImage *deserialize(const uchar *data, uint len);
 	
