@@ -187,7 +187,11 @@ void LoginHandler::expectLoginOk(const QString &msg)
 		if(_maxusers>0)
 			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/maxusers %1").arg(_maxusers))));
 		if(!_allowdrawing)
-			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/lockdefault").arg(_maxusers))));
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/lockdefault"))));
+		if(_layerctrllock)
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/locklayerctrl"))));
+		else
+			_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, QString("/unlocklayerctrl"))));
 	}
 }
 }

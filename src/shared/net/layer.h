@@ -204,8 +204,6 @@ public:
 		{}
 
 	static LayerDelete *deserialize(const uchar *data, uint len);
-	
-	bool isOpCommand() const { return true; }
 
 	uint8_t id() const { return _id; }
 	uint8_t merge() const { return _merge; }

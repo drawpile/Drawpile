@@ -127,8 +127,8 @@ void Client::handleDisconnect(const QString &message)
 	_isOp = false;
 	_isSessionLocked = false;
 	_isUserLocked = false;
-	emit opPrivilegeChange(true); // user is always op in loopback mode
-	emit sessionConfChange(false, false);
+	emit opPrivilegeChange(false);
+	emit sessionConfChange(false, false, false);
 	emit lockBitsChanged();
 }
 
@@ -378,6 +378,17 @@ void Client::sendLockSession(bool lock)
 	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
 }
 
+void Client::sendLockLayerControls(bool lock)
+{
+	QString cmd;
+	if(lock)
+		cmd = "/locklayerctrl";
+	else
+		cmd = "/unlocklayerctrl";
+
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
+}
+
 void Client::sendCloseSession(bool close)
 {
 	QString cmd;
@@ -488,7 +499,7 @@ void Client::handleUserLeave(const protocol::UserLeave &msg)
 void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 {
 	_isSessionLocked = msg.locked();
-	emit sessionConfChange(msg.locked(), msg.closed());
+	emit sessionConfChange(msg.locked(), msg.layerControlsLocked(), msg.closed());
 	emit lockBitsChanged();
 }
 

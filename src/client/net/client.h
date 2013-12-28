@@ -183,6 +183,7 @@ public slots:
 	void sendSetSessionTitle(const QString &title);
 	void sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive);
 	void sendLockSession(bool lock);
+	void sendLockLayerControls(bool lock);
 	void sendCloseSession(bool close);
 
 signals:
@@ -201,7 +202,7 @@ signals:
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);
 	void sessionTitleChange(const QString &title);
-	void sessionConfChange(bool locked, bool closed);
+	void sessionConfChange(bool locked, bool layerctrllocked, bool closed);
 	void lockBitsChanged();
 
 	void layerVisibilityChange(int id, bool hidden);

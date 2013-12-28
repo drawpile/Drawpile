@@ -6,6 +6,7 @@
  * Canvas resizing
  * Added button for granting and revoking session operator privileges
  * Show remote user pointer positions
+ * Layer control locking
 
 2013-12-20 Version 0.8.0
  * Undo and redo support

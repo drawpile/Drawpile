@@ -35,7 +35,7 @@
 namespace widgets {
 
 LayerListDock::LayerListDock(QWidget *parent)
-	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false)
+	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false), _op(false), _lockctrl(false)
 {
 	_ui = new Ui_LayerBox;
 	QWidget *w = new QWidget(this);
@@ -45,8 +45,8 @@ LayerListDock::LayerListDock(QWidget *parent)
 	_ui->layerlist->setDragEnabled(true);
 	_ui->layerlist->viewport()->setAcceptDrops(true);
 	_ui->layerlist->setEnabled(false);
-	_ui->addButton->setEnabled(false);
 	_ui->layerlist->setSelectionMode(QAbstractItemView::SingleSelection);
+	setControlsLocked(true);
 
 	// Populate blend mode combobox
 	// Note. Eraser mode (0) is skipped because it currently isn't implemented properly for layer stack flattening
@@ -89,6 +89,29 @@ void LayerListDock::setClient(net::Client *client)
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 }
 
+void LayerListDock::setOperatorMode(bool op)
+{
+	_op = op;
+	bool ctrls = op | !_lockctrl;
+
+	_ui->addButton->setEnabled(ctrls);
+
+	// Rest of the controls need a selection to work
+	if(!_selected)
+		ctrls = false;
+
+	_ui->lockButton->setEnabled(op && ctrls);
+	_ui->deleteButton->setEnabled(ctrls);
+	_ui->opacity->setEnabled(ctrls);
+	_ui->blendmode->setEnabled(ctrls);
+}
+
+void LayerListDock::setControlsLocked(bool locked)
+{
+	_lockctrl = locked;
+	setOperatorMode(_op);
+}
+
 void LayerListDock::selectLayer(int id)
 {
 	_ui->layerlist->selectionModel()->clear();
@@ -98,7 +121,7 @@ void LayerListDock::selectLayer(int id)
 void LayerListDock::init()
 {
 	_ui->layerlist->setEnabled(true);
-	_ui->addButton->setEnabled(true);
+	setControlsLocked(false);
 }
 
 void LayerListDock::opacityAdjusted()
@@ -275,10 +298,6 @@ bool LayerListDock::isCurrentLayerLocked() const
 void LayerListDock::selectionChanged(const QItemSelection &selected)
 {
 	bool on = selected.count() > 0;
-	_ui->hideButton->setEnabled(on);
-	_ui->opacity->setEnabled(on);
-	_ui->lockButton->setEnabled(on);
-	_ui->deleteButton->setEnabled(on);
 
 	if(on) {
 		QModelIndex cs = currentSelection();
@@ -287,6 +306,9 @@ void LayerListDock::selectionChanged(const QItemSelection &selected)
 	} else {
 		_selected = 0;
 	}
+
+	setControlsLocked(_lockctrl);
+
 	emit layerSelected(_selected);
 }
 

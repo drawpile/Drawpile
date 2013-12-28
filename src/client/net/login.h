@@ -40,7 +40,7 @@ public:
 	enum Mode {HOST, JOIN};
 
 	LoginHandler(Mode mode, const QUrl &url)
-		: QObject(0), _mode(mode), _address(url), _maxusers(0), _allowdrawing(true), _state(0) { }
+		: QObject(0), _mode(mode), _address(url), _maxusers(0), _allowdrawing(true), _layerctrllock(true), _state(0) { }
 
 	/**
 	 * @brief Set the desired user ID. Only for host mode.
@@ -71,6 +71,12 @@ public:
 	 * @param allowdrawing
 	 */
 	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(_mode==HOST); _allowdrawing = allowdrawing; }
+
+	/**
+	 * @brief Set whether layer controls should be locked to operators only by default
+	 * @param layerlock
+	 */
+	void setLayerControlLock(bool layerlock) { Q_ASSERT(_mode==HOST); _layerctrllock = layerlock; }
 
 	/**
 	 * @brief Set the server we're communicating with
@@ -109,6 +115,7 @@ private:
 	QString _title;
 	int _maxusers;
 	bool _allowdrawing;
+	bool _layerctrllock;
 
 	Server *_server;
 	int _state;

@@ -62,7 +62,9 @@ struct DrawingContext {
  */
 struct SessionState {
 	SessionState() : layerids(255), annotationids(255), userids(255), minorVersion(0),
-		locked(false), closed(false), maxusers(255), lockdefault(false), syncstate(NOT_SYNCING) { }
+		locked(false), layerctrllocked(true), closed(false), maxusers(255),
+		lockdefault(false), syncstate(NOT_SYNCING)
+	{ }
 
 	//! Used layer IDs
 	UsedIdList layerids;
@@ -84,6 +86,9 @@ struct SessionState {
 
 	//! General all layer/all user lock
 	bool locked;
+
+	//! Lock layer controls from non-operators
+	bool layerctrllocked;
 
 	//! Is the session closed to new users?
 	bool closed;

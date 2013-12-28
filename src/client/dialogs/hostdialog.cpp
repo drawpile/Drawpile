@@ -204,5 +204,9 @@ bool HostDialog::getAllowDrawing() const
 	return ui_->allowdrawing->isChecked();
 }
 
+bool HostDialog::getLayerControlLock() const
+{
+	return ui_->layerctrllock->isChecked();
 }
 
+}

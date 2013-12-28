@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>385</width>
-    <height>402</height>
+    <width>392</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -440,7 +440,17 @@
             </item>
            </layout>
           </item>
-          <item row="1" column="0">
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="layerctrllock">
+            <property name="text">
+             <string>Lock layer controls</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
            <widget class="QCheckBox" name="allowdrawing">
             <property name="text">
              <string>Allow drawing</string>

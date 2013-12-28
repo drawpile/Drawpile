@@ -108,9 +108,9 @@ int SessionTitle::payloadLength() const
 
 SessionConf *SessionConf::deserialize(const uchar *data, uint len)
 {
-	if(len!=2)
+	if(len!=3)
 		return 0;
-	return new SessionConf(data[0], data[1]);
+	return new SessionConf(data[0], data[1], data[2]);
 }
 
 int SessionConf::serializePayload(uchar *data) const
@@ -118,12 +118,13 @@ int SessionConf::serializePayload(uchar *data) const
 	uchar *ptr = data;
 	*(ptr++) = _locked;
 	*(ptr++) = _closed;
+	*(ptr++) = _layerctrlslocked;
 	return ptr-data;
 }
 
 int SessionConf::payloadLength() const
 {
-	return 2;
+	return 3;
 }
 
 Chat *Chat::deserialize(const uchar *data, uint len)

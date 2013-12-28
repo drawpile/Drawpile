@@ -99,13 +99,21 @@ private:
 
 class SessionConf : public Message {
 public:
-	SessionConf(bool locked, bool closed) : Message(MSG_SESSION_CONFIG, 0),
-		_locked(locked), _closed(closed) {}
+	SessionConf(bool locked, bool closed, bool layerctrlslocked)
+		: Message(MSG_SESSION_CONFIG, 0),
+		_locked(locked), _closed(closed), _layerctrlslocked(layerctrlslocked)
+	{}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
 
+	//! Is the whole session locked?
 	bool locked() const { return _locked; }
+
+	//! Is the session closed to further users?
 	bool closed() const { return _closed; }
+
+	//! Are layer controls limited to operators only?
+	bool layerControlsLocked() const { return _layerctrlslocked; }
 
 protected:
 	int payloadLength() const;
@@ -114,6 +122,7 @@ protected:
 private:
 	bool _locked;
 	bool _closed;
+	bool _layerctrlslocked;
 };
 
 class Chat : public Message {

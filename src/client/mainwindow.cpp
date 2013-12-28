@@ -168,7 +168,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
-	connect(_client, SIGNAL(sessionConfChange(bool,bool)), this, SLOT(sessionConfChanged(bool,bool)));
+	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool)), this, SLOT(sessionConfChanged(bool,bool,bool)));
 	connect(_client, SIGNAL(lockBitsChanged()), this, SLOT(updateLockWidget()));
 	connect(_client, SIGNAL(layerVisibilityChange(int,bool)), this, SLOT(updateLockWidget()));
 
@@ -821,6 +821,7 @@ void MainWindow::finishHost(int i)
 		login->setTitle(hostdlg_->getTitle());
 		login->setMaxUsers(hostdlg_->getUserLimit());
 		login->setAllowDrawing(hostdlg_->getAllowDrawing());
+		login->setLayerControlLock(hostdlg_->getLayerControlLock());
 		w->_client->connectToServer(login);
 
 	}
@@ -942,10 +943,12 @@ void MainWindow::loggedin(bool join)
 	}
 }
 
-void MainWindow::sessionConfChanged(bool locked, bool closed)
+void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed)
 {
 	getAction("locksession")->setChecked(locked);
+	getAction("locklayerctrl")->setChecked(layerctrllocked);
 	getAction("denyjoins")->setChecked(closed);
+	_layerlist->setControlsLocked(layerctrllocked);
 }
 
 void MainWindow::updateLockWidget()
@@ -973,9 +976,9 @@ void MainWindow::setSessionTitle(const QString& title)
 
 void MainWindow::setOperatorMode(bool op)
 {
-	// Don't enable these actions in local mode
-	_admintools->setEnabled(op && _client->isLoggedIn());
+	_admintools->setEnabled(op);
 	_docadmintools->setEnabled(op);
+	_layerlist->setOperatorMode(op);
 }
 
 /**
@@ -1514,11 +1517,13 @@ void MainWindow::setupActions()
 	logout->setEnabled(false);
 
 	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence("Ctrl+L"), true);
+	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock layer controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
 	QAction *changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
 
 	_admintools->addAction(locksession);
+	_admintools->addAction(locklayerctrl);
 	_admintools->addAction(closesession);
 	_admintools->addAction(changetitle);
 	_admintools->setEnabled(false);
@@ -1528,6 +1533,7 @@ void MainWindow::setupActions()
 	connect(logout, SIGNAL(triggered()), this, SLOT(leave()));
 	connect(changetitle, SIGNAL(triggered()), this, SLOT(changeSessionTitle()));
 	connect(locksession, SIGNAL(triggered(bool)), _client, SLOT(sendLockSession(bool)));
+	connect(locklayerctrl, SIGNAL(triggered(bool)), _client, SLOT(sendLockLayerControls(bool)));
 	connect(closesession, SIGNAL(triggered(bool)), _client, SLOT(sendCloseSession(bool)));
 
 	QMenu *sessionmenu = menuBar()->addMenu(tr("&Session"));
@@ -1536,6 +1542,7 @@ void MainWindow::setupActions()
 	sessionmenu->addAction(logout);
 	sessionmenu->addSeparator();
 	sessionmenu->addAction(locksession);
+	sessionmenu->addAction(locklayerctrl);
 	sessionmenu->addAction(closesession);
 	sessionmenu->addAction(changetitle);
 

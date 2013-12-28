@@ -280,6 +280,21 @@ void Client::handleSessionMessage(MessagePtr msg)
 		return;
 	}
 
+	// Layer control locking
+	if(_server->session().layerctrllocked && !_isOperator) {
+		switch(msg->type()) {
+		using namespace protocol;
+		case MSG_LAYER_CREATE:
+		case MSG_LAYER_ATTR:
+		case MSG_LAYER_ORDER:
+		case MSG_LAYER_RETITLE:
+		case MSG_LAYER_DELETE:
+			_server->printDebug(QString("Blocked layer control command from non-operator #%1").arg(_id));
+			return;
+		default: break;
+		}
+	}
+
 	// Locking (note. applies only to command stream)
 	if(msg->isCommand()) {
 		if(isDropLocked()) {
@@ -654,21 +669,23 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 	/*
 	 * Supported commands:
 	 *
-	 * /lock <user>    - lock the given user
-	 * /unlock <user>  - unlock the given user
-	 * /kick <user>    - kick the user off the server
-	 * /op <user>      - grant operator privileges to user
-	 * /deop <user>    - remove operator privileges from user
-	 * /lock           - lock the whole board
-	 * /unlock         - unlock the board
-	 * /close          - prevent further logins
-	 * /open           - reallow logins
-	 * /title <title>  - change session title (for those who like IRC commands)
-	 * /maxusers <n>   - set session user limit (affects new users only)
-	 * /lockdefault    - lock new users by default
-	 * /unlockdefault  - don't lock new users by default
-	 * /password [p]   - password protect the session. If p is omitted, password is removed
-	 * /force_snapshot - force snapshot request now
+	 * /lock <user>     - lock the given user
+	 * /unlock <user>   - unlock the given user
+	 * /kick <user>     - kick the user off the server
+	 * /op <user>       - grant operator privileges to user
+	 * /deop <user>     - remove operator privileges from user
+	 * /lock            - lock the whole board
+	 * /unlock          - unlock the board
+	 * /locklayerctrl   - lock layer controls (for non-operators)
+	 * /unlocklayrectrl - unlock layer controls
+	 * /close           - prevent further logins
+	 * /open            - reallow logins
+	 * /title <title>   - change session title (for those who like IRC commands)
+	 * /maxusers <n>    - set session user limit (affects new users only)
+	 * /lockdefault     - lock new users by default
+	 * /unlockdefault   - don't lock new users by default
+	 * /password [p]    - password protect the session. If p is omitted, password is removed
+	 * /force_snapshot  - force snapshot request now
 	 */
 	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
 	if(tokens[0] == "/lock" && tokens.count()==2) {
@@ -715,6 +732,14 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 		return true;
 	} else if(tokens[0] == "/unlock" && tokens.count()==1) {
 		_server->session().locked = false;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/locklayerctrl" && tokens.count()==1) {
+		_server->session().layerctrllocked = true;
+		_server->addToCommandStream(_server->session().sessionConf());
+		return true;
+	} else if(tokens[0] == "/unlocklayerctrl" && tokens.count()==1) {
+		_server->session().layerctrllocked = false;
 		_server->addToCommandStream(_server->session().sessionConf());
 		return true;
 	} else if(tokens[0] == "/close" && tokens.count()==1) {

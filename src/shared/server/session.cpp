@@ -178,7 +178,8 @@ protocol::MessagePtr SessionState::sessionConf() const
 {
 	return protocol::MessagePtr(new protocol::SessionConf(
 		locked,
-		closed
+		closed,
+		layerctrllocked
 	));
 }
 

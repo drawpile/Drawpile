@@ -51,6 +51,9 @@ public:
 
 	bool isCurrentLayerLocked() const;
 
+	void setOperatorMode(bool op);
+	void setControlsLocked(bool locked);
+
 public slots:
 	void selectLayer(int id);
 
@@ -81,6 +84,8 @@ private:
 	Ui_LayerBox *_ui;
 	bool _noupdate;
 	LayerAclMenu *_aclmenu;
+	bool _op;
+	bool _lockctrl;
 };
 
 }

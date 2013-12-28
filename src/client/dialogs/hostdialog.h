@@ -59,6 +59,9 @@ class HostDialog : public QDialog
 		//! Should users be allowed to draw by default
 		bool getAllowDrawing() const;
 
+		//! Should layer controls be locked by default
+		bool getLayerControlLock() const;
+
 		/**
 		 * @brief Get session loader for initializing a new session
 		 * @return session loader instance
