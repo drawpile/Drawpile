@@ -53,17 +53,17 @@ if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
         COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE GCC_VERSION)
     if (GCC_VERSION VERSION_LESS 4.7)
         # GCC < 4.7
-        set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_C_FLAGS}")
+        set(CMAKE_CXX_FLAGS "-std=c++0x ${CMAKE_CXX_FLAGS}")
     else ()
         # GCC >= 4.7 (set instead of append, because it needs to be first)
-        set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_C_FLAGS}")
+        set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
     endif ()
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     # Clang++
-    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_C_FLAGS} -stdlib=libc++")
+    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -stdlib=libc++")
 else ()
     # Other C++ compilers
-    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 endif ()
 
 ### Output config.h ###
