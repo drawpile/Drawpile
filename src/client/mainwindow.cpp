@@ -1391,10 +1391,10 @@ void MainWindow::setupActions()
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
 
-	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+Alt+J"));
-	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+Alt+K"));
-	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+Alt+H"));
-	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+Alt+L"));
+	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+J"));
+	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+K"));
+	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+H"));
+	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+L"));
 
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
