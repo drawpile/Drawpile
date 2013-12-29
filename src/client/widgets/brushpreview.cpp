@@ -133,9 +133,9 @@ void BrushPreview::updatePreview()
 	layer->fillColor(color2_);
 
 	const int strokew = preview_->width() - preview_->width()/4;
-	const int strokeh = preview_->height() / 4;
+	const qreal strokeh = preview_->height() / 4.0;
 	const int offx = preview_->width()/8;
-	const int offy = preview_->height()/2;
+	const qreal offy = preview_->height()/2.0;
 	qreal distance = 0;
 	if(shape_ == Stroke) {
 		int lastx=0,lasty=0;
@@ -146,7 +146,7 @@ void BrushPreview::updatePreview()
 
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
-			const int y = qRound(qSin(phase) * strokeh);
+			const qreal y = qSin(phase) * strokeh;
 			layer->drawLine(0, brush_,
 					paintcore::Point(offx+lastx,offy+lasty, lastp),
 					paintcore::Point(offx+x, offy+y, pressure), distance);
