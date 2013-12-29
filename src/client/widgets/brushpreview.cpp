@@ -121,12 +121,7 @@ void BrushPreview::updatePreview()
 		preview_->resize(0, size.width(), size.height(), 0);
 		preview_->addLayer(0, "", QColor(0,0,0));
 	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
-		// TODO resize more nicely
-		delete preview_;
-		preview_ = new paintcore::LayerStack;
-		QSize size = contentsRect().size();
-		preview_->resize(0, size.width(), size.height(), 0);
-		preview_->addLayer(0, "", QColor(0,0,0));
+		preview_->resize(0, contentsRect().width() - preview_->width(), contentsRect().height() - preview_->height(), 0);
 	}
 	paintcore::Layer *layer = preview_->getLayerByIndex(0);
 
