@@ -730,10 +730,12 @@ void Layer::mergeSublayer(int id)
 {
 	foreach(Layer *sl, _sublayers) {
 		if(sl->id() == id) {
-			merge(sl);
-			// Set hidden flag directly to avoid markDirty call.
-			// The merge should cause no visual change.
-			sl->_hidden = true;
+			if(!sl->hidden()) {
+				merge(sl);
+				// Set hidden flag directly to avoid markDirty call.
+				// The merge should cause no visual change.
+				sl->_hidden = true;
+			}
 			return;
 		}
 	}
