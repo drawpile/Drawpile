@@ -1,4 +1,4 @@
-#include "../../gradientslider.h"
+#include "../gradientslider.h"
 #include "plugin.h"
 
 #include <QtPlugin>
@@ -59,21 +59,24 @@ bool GradientSliderPlugin::isContainer() const
 
 QString GradientSliderPlugin::domXml() const
 {
-	return "<widget class=\"GradientSlider\" name=\"gradientSlider\">\n"
-		   " <property name=\"geometry\">\n"
-		   "  <rect>\n"
-		   "   <x>0</x>\n"
-		   "   <y>0</y>\n"
-		   "   <width>128</width>\n"
-		   "   <height>16</height>\n"
-		   "  </rect>\n"
-		   " </property>\n"
-		   "</widget>\n";
+	return
+		"<ui language=\"c++\">\n"
+		"<widget class=\"GradientSlider\" name=\"gradientSlider\">\n"
+		" <property name=\"geometry\">\n"
+		"  <rect>\n"
+		"   <x>0</x>\n"
+		"   <y>0</y>\n"
+		"   <width>128</width>\n"
+		"   <height>16</height>\n"
+		"  </rect>\n"
+		" </property>\n"
+		"</widget>\n"
+		"</ui>\n"
+		;
 }
 
 QString GradientSliderPlugin::includeFile() const
 {
-	return "gradientslider.h";
+	return "widgets/gradientslider.h";
 }
 
-Q_EXPORT_PLUGIN2(gradientsliderplugin, GradientSliderPlugin)
