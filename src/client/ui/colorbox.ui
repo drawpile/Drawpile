@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ColorBox</class>
- <widget class="QWidget" name="ColorBox" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ColorBox">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,41 +10,57 @@
     <height>95</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>3</number>
-   </property>
-   <property name="spacing" >
+  <layout class="QVBoxLayout">
+   <property name="spacing">
     <number>0</number>
    </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
-    <layout class="QGridLayout" >
-     <property name="margin" >
+    <layout class="QGridLayout">
+     <property name="leftMargin">
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="topMargin">
       <number>0</number>
      </property>
-     <item row="1" column="1" >
-      <widget class="GradientSlider" name="c2" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>5</vsizetype>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing">
+      <number>3</number>
+     </property>
+     <property name="verticalSpacing">
+      <number>0</number>
+     </property>
+     <item row="1" column="1">
+      <widget class="GradientSlider" name="c2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <property name="maximum" >
+       <property name="maximum">
         <number>255</number>
        </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="color2" >
+       <property name="color2">
         <color>
          <red>0</red>
          <green>255</green>
@@ -52,43 +69,40 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="c3label" >
-       <property name="text" >
+     <item row="2" column="0">
+      <widget class="QLabel" name="c3label">
+       <property name="text">
         <string>B</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="2" >
-      <widget class="QSpinBox" name="c3box" >
-       <property name="maximum" >
+     <item row="2" column="2">
+      <widget class="QSpinBox" name="c3box">
+       <property name="maximum">
         <number>255</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="2" >
-      <widget class="QSpinBox" name="c1box" >
-       <property name="maximum" >
+     <item row="0" column="2">
+      <widget class="QSpinBox" name="c1box">
+       <property name="maximum">
         <number>255</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="0" >
-      <widget class="QLabel" name="c1label" >
-       <property name="text" >
+     <item row="0" column="0">
+      <widget class="QLabel" name="c1label">
+       <property name="text">
         <string>R</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="GradientSlider" name="c3" >
-       <property name="maximum" >
+     <item row="2" column="1">
+      <widget class="GradientSlider" name="c3">
+       <property name="maximum">
         <number>255</number>
        </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="color2" >
+       <property name="color2">
         <color>
          <red>0</red>
          <green>0</green>
@@ -97,29 +111,26 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="c2label" >
-       <property name="text" >
+     <item row="1" column="0">
+      <widget class="QLabel" name="c2label">
+       <property name="text">
         <string>G</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="2" >
-      <widget class="QSpinBox" name="c2box" >
-       <property name="maximum" >
+     <item row="1" column="2">
+      <widget class="QSpinBox" name="c2box">
+       <property name="maximum">
         <number>255</number>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="GradientSlider" name="c1" >
-       <property name="maximum" >
+     <item row="0" column="1">
+      <widget class="GradientSlider" name="c1">
+       <property name="maximum">
         <number>255</number>
        </property>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="color2" >
+       <property name="color2">
         <color>
          <red>255</red>
          <green>0</green>
@@ -132,10 +143,10 @@
    </item>
    <item>
     <spacer>
-     <property name="orientation" >
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>5</width>
        <height>5</height>
@@ -152,6 +163,11 @@
    <header>widgets/gradientslider.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>c1box</tabstop>
+  <tabstop>c2box</tabstop>
+  <tabstop>c3box</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -160,11 +176,11 @@
    <receiver>c1box</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>167</x>
      <y>31</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>215</x>
      <y>26</y>
     </hint>
@@ -176,11 +192,11 @@
    <receiver>c1</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>202</x>
      <y>38</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>135</x>
      <y>39</y>
     </hint>
@@ -192,11 +208,11 @@
    <receiver>c2box</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>163</x>
      <y>72</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>227</x>
      <y>72</y>
     </hint>
@@ -208,11 +224,11 @@
    <receiver>c2</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>199</x>
      <y>58</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>145</x>
      <y>58</y>
     </hint>
@@ -224,11 +240,11 @@
    <receiver>c3box</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>128</x>
      <y>99</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>208</x>
      <y>97</y>
     </hint>
@@ -240,11 +256,11 @@
    <receiver>c3</receiver>
    <slot>setValue(int)</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>200</x>
      <y>111</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>118</x>
      <y>111</y>
     </hint>

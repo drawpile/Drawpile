@@ -143,6 +143,15 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>hideButton</tabstop>
+  <tabstop>opacity</tabstop>
+  <tabstop>blendmode</tabstop>
+  <tabstop>lockButton</tabstop>
+  <tabstop>addButton</tabstop>
+  <tabstop>deleteButton</tabstop>
+  <tabstop>layerlist</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

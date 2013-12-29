@@ -502,7 +502,21 @@
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
+  <tabstop>sessiontitle</tabstop>
+  <tabstop>username</tabstop>
+  <tabstop>sessionpassword</tabstop>
+  <tabstop>existingpicture</tabstop>
+  <tabstop>otherpicture</tabstop>
+  <tabstop>solidcolor</tabstop>
+  <tabstop>picturewidth</tabstop>
+  <tabstop>pictureheight</tabstop>
   <tabstop>buttons</tabstop>
+  <tabstop>uselocal</tabstop>
+  <tabstop>useremote</tabstop>
+  <tabstop>remotehost</tabstop>
+  <tabstop>userlimit</tabstop>
+  <tabstop>allowdrawing</tabstop>
+  <tabstop>layerctrllock</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -513,8 +527,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>374</y>
+     <x>244</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -529,8 +543,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>304</x>
-     <y>374</y>
+     <x>312</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

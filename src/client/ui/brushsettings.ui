@@ -269,6 +269,12 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>blendmode</tabstop>
+  <tabstop>incremental</tabstop>
+  <tabstop>brushsize</tabstop>
+  <tabstop>brushopacity</tabstop>
+  <tabstop>brushhardness</tabstop>
+  <tabstop>brushspacing</tabstop>
   <tabstop>pressuresize</tabstop>
   <tabstop>pressureopacity</tabstop>
   <tabstop>pressurehardness</tabstop>
