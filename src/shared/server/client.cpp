@@ -313,11 +313,15 @@ void Client::handleSessionMessage(MessagePtr msg)
 				return;
 			break;
 		case MSG_LAYER_ATTR:
-			if(isLayerLocked(msg.cast<LayerAttributes>().id()))
+			if(!_isOperator && isLayerLocked(msg.cast<LayerAttributes>().id()))
+				return;
+			break;
+		case MSG_LAYER_RETITLE:
+			if(!_isOperator && isLayerLocked(msg.cast<LayerRetitle>().id()))
 				return;
 			break;
 		case MSG_LAYER_DELETE:
-			if(isLayerLocked(msg.cast<LayerDelete>().id()))
+			if(!_isOperator && isLayerLocked(msg.cast<LayerDelete>().id()))
 				return;
 			break;
 		case MSG_PUTIMAGE:

@@ -77,6 +77,8 @@ private slots:
 	void selectionChanged(const QItemSelection &selected);
 
 private:
+	void updateLockedControls();
+
 	QModelIndex currentSelection();
 
 	net::Client *_client;

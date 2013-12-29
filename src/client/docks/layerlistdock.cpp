@@ -92,24 +92,33 @@ void LayerListDock::setClient(net::Client *client)
 void LayerListDock::setOperatorMode(bool op)
 {
 	_op = op;
-	bool ctrls = op | !_lockctrl;
-
-	_ui->addButton->setEnabled(ctrls);
-
-	// Rest of the controls need a selection to work
-	if(!_selected)
-		ctrls = false;
-
-	_ui->lockButton->setEnabled(op && ctrls);
-	_ui->deleteButton->setEnabled(ctrls);
-	_ui->opacity->setEnabled(ctrls);
-	_ui->blendmode->setEnabled(ctrls);
+	updateLockedControls();
 }
 
 void LayerListDock::setControlsLocked(bool locked)
 {
 	_lockctrl = locked;
-	setOperatorMode(_op);
+	updateLockedControls();
+}
+
+void LayerListDock::updateLockedControls()
+{
+	bool enabled = _op | !_lockctrl;
+
+	_ui->addButton->setEnabled(enabled);
+
+	// Rest of the controls need a selection to work.
+	// If there is a selection, but the layer is locked, the controls
+	// are locked for non-operators.
+	if(_selected)
+		enabled = enabled & (_op | !isCurrentLayerLocked());
+	else
+		enabled = false;
+
+	_ui->lockButton->setEnabled(_op && enabled);
+	_ui->deleteButton->setEnabled(enabled);
+	_ui->opacity->setEnabled(enabled);
+	_ui->blendmode->setEnabled(enabled);
 }
 
 void LayerListDock::selectLayer(int id)
@@ -307,7 +316,7 @@ void LayerListDock::selectionChanged(const QItemSelection &selected)
 		_selected = 0;
 	}
 
-	setControlsLocked(_lockctrl);
+	updateLockedControls();
 
 	emit layerSelected(_selected);
 }
@@ -324,7 +333,7 @@ void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &b
 
 		_ui->lockButton->setChecked(layer.locked || !layer.exclusive.isEmpty());
 		_aclmenu->setAcl(layer.locked, layer.exclusive);
-
+		updateLockedControls();
 		_noupdate = false;
 	}
 }
