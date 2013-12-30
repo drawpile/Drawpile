@@ -31,6 +31,12 @@ namespace protocol {
  *
  * It is used to request the generation of a snapshot as well as a modifier
  * to indicate the next message is part of the snapshot stream.
+ *
+ * The REQUEST and REQUEST_NEW mode messages are sent by the server. Upon receiving,
+ * the client should generate the snapshot and respond with an ACK message. The client
+ * can then transmit the snapshot message in parallel with its normal data by preceding
+ * each message belonging to the snapshot with the SNAPSHOT mode message. To signal
+ * the end of the snapshot, the client sends a SNAPSHOT+END message pair.
  */
 class SnapshotMode : public Message {
 public:

@@ -27,6 +27,12 @@
 
 namespace protocol {
 
+/**
+ * @brief Login handshake message
+ *
+ * This is the only message of the "Login" type. It is used only during the
+ * login phase.
+ */
 class Login : public Message {
 public:
 	Login(const QByteArray &msg) : Message(MSG_LOGIN, 0), _msg(msg) {}

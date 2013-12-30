@@ -498,8 +498,8 @@ void Client::handleUserLeave(const protocol::UserLeave &msg)
 
 void Client::handleSessionConfChange(const protocol::SessionConf &msg)
 {
-	_isSessionLocked = msg.locked();
-	emit sessionConfChange(msg.locked(), msg.layerControlsLocked(), msg.closed());
+	_isSessionLocked = msg.isLocked();
+	emit sessionConfChange(msg.isLocked(), msg.isLayerControlsLocked(), msg.isClosed());
 	emit lockBitsChanged();
 }
 

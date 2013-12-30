@@ -170,8 +170,9 @@ void SessionState::drawingContextPenUp(const protocol::PenUp &cmd)
 
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 {
-	locked = cmd.locked();
-	closed = cmd.closed();
+	locked = cmd.isLocked();
+	closed = cmd.isClosed();
+	layerctrllocked = cmd.isLayerControlsLocked();
 }
 
 protocol::MessagePtr SessionState::sessionConf() const

@@ -40,6 +40,7 @@ static const int UNDO_HISTORY_LIMIT = 30;
 /**
  * @brief Undo demarcation point
  *
+ * The client sends an UndoPoint message to signal the start of an undoable sequence.
  */
 class UndoPoint : public Message
 {

@@ -20,7 +20,6 @@
 
 #include <cstring>
 #include <QtEndian>
-
 #include "meta.h"
 
 namespace protocol {
@@ -108,23 +107,21 @@ int SessionTitle::payloadLength() const
 
 SessionConf *SessionConf::deserialize(const uchar *data, uint len)
 {
-	if(len!=3)
+	if(len!=1)
 		return 0;
-	return new SessionConf(data[0], data[1], data[2]);
+	return new SessionConf(data[0]);
 }
 
 int SessionConf::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
-	*(ptr++) = _locked;
-	*(ptr++) = _closed;
-	*(ptr++) = _layerctrlslocked;
+	*(ptr++) = _attrs;
 	return ptr-data;
 }
 
 int SessionConf::payloadLength() const
 {
-	return 3;
+	return 1;
 }
 
 Chat *Chat::deserialize(const uchar *data, uint len)

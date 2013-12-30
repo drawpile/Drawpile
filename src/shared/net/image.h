@@ -31,12 +31,20 @@ namespace protocol {
 /**
  * @brief Draw a bitmap onto a layer
  *
+ * This is used when initializing the canvas from an existing file
+ * and when pasting images.
+ *
+ * If the BLEND flag is set, the image is alpha-blended onto the canvas. Otherwise
+ * the new pixels will simply overwrite the existing ones, alpha values and all.
+ *
+ * The image data is DEFLATEd 32bit non-premultiplied ARGB data.
+ *
  * The contextId doesn't affect the way the bitmap is
  * drawn, but it is needed to identify the user so PutImages
  * can be undone/redone.
  *
- * Note that since the message lengt is fairly limited, a
- * large image may have to be divided into multiple putimage
+ * Note that since the message length is fairly limited, a
+ * large image may have to be divided into multiple PutImage
  * commands.
  */
 class PutImage : public Message {

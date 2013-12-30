@@ -31,7 +31,10 @@ namespace protocol {
 /**
  * @brief A command for creating a new annotation.
  *
- * The new annotation is initally empy with a transparent background
+ * Annotations are floating text layers. They are drawn over the image layers and
+ * have no defined stacking order.
+ *
+ * The new annotation created with this command is initally empy with a transparent background
  */
 class AnnotationCreate : public Message {
 public:
@@ -99,6 +102,8 @@ private:
 
 /**
  * @brief A command for changing annotation contents
+ *
+ * Accepted contents is the subset of HTML understood by QTextDocument
  */
 class AnnotationEdit : public Message {
 public:
@@ -127,6 +132,12 @@ private:
 
 /**
  * @brief A command for deleting an annotation
+ *
+ * Note. Unlike in layer delete command, there is no "merge" option here.
+ * Merging an annotation is done by rendering the annotation item to
+ * an image and drawing the image with PutImage command. This is to ensure
+ * identical rendering on all clients, as due to font and possible rendering
+ * engine differences, text annotations may appear differently on each client.
  */
 class AnnotationDelete : public Message {
 public:

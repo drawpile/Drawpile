@@ -32,7 +32,12 @@ static const uint8_t TOOL_MODE_SUBPIXEL = (1<<0);
 static const uint8_t TOOL_MODE_INCREMENTAL = (1<<1);
 
 /**
- * \brief Tool setting change command
+ * @brief Tool setting change command
+ *
+ * This command is sent by the client to set the tool properties.
+ * The initial state of the tool is undefined by the protocol, so the client
+ * must send a ToolChange before sending the first PenMove command. A tool
+ * change may only be sent when the client is in a PenUp state.
  */
 class ToolChange : public Message {
 public:
@@ -95,8 +100,9 @@ struct PenPoint {
 typedef QVector<PenPoint> PenPointVector;
 
 /**
- * \brief Pen move command
+ * @brief Pen move command
  * 
+ * The first pen move command starts a new stroke.
  */
 class PenMove : public Message {
 public:
@@ -119,7 +125,10 @@ private:
 };
 
 /**
- * \brief Pen up command
+ * @brief Pen up command
+ *
+ * The pen up signals the end of the stroke. In indirect drawing mode, it causes
+ * the stroke to be committed to the current layer.
  */
 class PenUp : public Message {
 public:

@@ -32,6 +32,8 @@ namespace protocol {
 /**
  * \brief Canvas size adjustment command
  * 
+ * This is the first command that must be sent to initialize the session.
+ *
  * This affects the size of all existing and future layers.
  *
  * The new canvas size is relative to the old one. The four adjustement
@@ -68,6 +70,17 @@ private:
 /**
  * \brief Layer creation command.
  * 
+ * A session starts with zero layers, so a layer creation command is typically
+ * the second command to be sent, right after setting the canvas size.
+ *
+ * When this command is sent by the client, the ID should be set to zero
+ * to indicate the server should assign a free ID. An exception to this
+ * is when generating a snapshot: in that case the client is free to use any
+ * available ID number. (Typically when creating the snapshot, the layers have
+ * already been assigned IDs by the server, or the session has just started meaning
+ * all IDs are free.)
+ *
+ * If layer controls are locked, this command requires session operator privileges.
  */
 class LayerCreate : public Message {
 public:
@@ -77,35 +90,11 @@ public:
 
 	static LayerCreate *deserialize(const uchar *data, uint len);
 
-	/**
-	 * \brief ID of the newly created layer.
-	 * 
-	 * When this command is sent by the client, the ID should be set to zero
-	 * to indicate the server should assign a free ID. An exception to this
-	 * is when generating a snapshot: in that case the client is free to use any
-	 * available ID number. (Typically when creating the snapshot, the layers have
-	 * already been assigned IDs by the server, or the session has just started meaning
-	 * all IDs are free.)
-	 * 
-	 * @return layer ID number
-	 */
 	uint8_t id() const { return _id; }
+	uint32_t fill() const { return _fill; }
+	QString title() const { return QString::fromUtf8(_title); }
 
 	void setId(uint8_t id) { _id = id; }
-
-	/**
-	 * \brief Initial fill color
-	 * 
-	 * The layer is filled with this color when created.
-	 * @return fill color (ARGB)
-	 */
-	uint32_t fill() const { return _fill; }
-	
-	/**
-	 * \brief Layer title (UTF-8 encoded)
-	 * @return layer title
-	 */
-	QString title() const { return QString::fromUtf8(_title); }
 
 protected:
 	int payloadLength() const;
@@ -118,7 +107,10 @@ private:
 };
 
 /**
- * \brief Layer attribute change command
+ * @brief Layer attribute change command
+ *
+ * If the current layer or layer controls in general are locked, this command
+ * requires session operator privileges.
  */
 class LayerAttributes : public Message {
 public:
@@ -144,7 +136,10 @@ private:
 };
 
 /**
- * \brief Layer title change command
+ * @brief Layer title change command
+ *
+ * If the current layer or layer controls in general are locked, this command
+ * requires session operator privileges.
  */
 class LayerRetitle : public Message {
 public:
@@ -170,7 +165,19 @@ private:
 };
 
 /**
- * \brief Layer order change command
+ * @brief Layer order change command
+ *
+ * New layers are always added to the top of the stack.
+ * This command includes a list of layer IDs that define the new stacking order.
+ * A order change command sent by the server must list all layers.
+ * A command sent by the client may be missing (newly created) layers,
+ * in which case the missing layers will be included at the top of the stack in
+ * their existing relative order.
+ *
+ * For example: if the current stack is [1,2,3,4,5] and the client sends
+ * a reordering command [3,2,1], the server must add the missing layers: [3,2,1,4,5].
+ *
+ * If layer controls are locked, this command requires session operator privileges.
  */
 class LayerOrder : public Message {
 public:
@@ -193,7 +200,13 @@ private:
 };
 
 /**
- * \brief Layer deletion command
+ * @brief Layer deletion command
+ *
+ * If the merge attribute is set, the contents of the layer is merged
+ * to the layer below it. Merging the bottom-most layer does nothing.
+ *
+ * If the current layer or layer controls in general are locked, this command
+ * requires session operator privileges.
  */
 class LayerDelete : public Message {
 public:
@@ -220,7 +233,9 @@ private:
 
 /**
  * @brief Change layer access control list
- * This is a meta command.
+ *
+ * This is a meta command. It is used to set the general layer lock
+ * as well as give exclusive access to selected users.
  */
 class LayerACL : public Message {
 public:

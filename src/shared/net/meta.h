@@ -27,6 +27,12 @@
 
 namespace protocol {
 
+/**
+ * @brief Inform the client of a new user
+ *
+ * This message is sent only be the server. It associates a username
+ * with a context ID.
+ */
 class UserJoin : public Message {
 public:
 	UserJoin(uint8_t ctx, const QByteArray &name) : Message(MSG_USER_JOIN, ctx), _name(name) {}
@@ -44,6 +50,13 @@ private:
 	QByteArray _name;
 };
 
+/**
+ * @brief Inform the client of a user leaving
+ *
+ * This message is sent only by the server. Upon receiving this message,
+ * clients will typically remove the user from the user listing. The client
+ * is also allowed to release resources associated with this context ID.
+ */
 class UserLeave : public Message {
 public:
 	explicit UserLeave(uint8_t ctx) : Message(MSG_USER_LEAVE, ctx) {}
@@ -55,6 +68,13 @@ protected:
 	int serializePayload(uchar *data) const;
 };
 
+/**
+ * @brief User attribute change
+ *
+ * This message is sent only by the server. It is used to update user status
+ * information. This information should only be used to update the user interface;
+ * it should have no effect on the interpretation of drawing commands.
+ */
 class UserAttr: public Message {
 public:
 	static const uint8_t ATTR_LOCKED = 0x01;
@@ -78,6 +98,10 @@ private:
 	uint8_t _attrs;
 };
 
+/**
+ * @brief Change the session title
+ *
+ */
 class SessionTitle : public Message {
 public:
 	SessionTitle(uint8_t ctx, const QByteArray &title) : Message(MSG_SESSION_TITLE, ctx), _title(title) {}
@@ -97,34 +121,52 @@ private:
 	QByteArray _title;
 };
 
+/**
+ * @brief Update session configuration information
+ *
+ * This message is sent only by the server. As with the user status update,
+ * this information should only be used to update the user interface.
+ */
 class SessionConf : public Message {
 public:
+	static const uint8_t ATTR_LOCKED = 0x01;
+	static const uint8_t ATTR_CLOSED = 0x02;
+	static const uint8_t ATTR_LAYERCTRLLOCKED = 0x04;
+
+	SessionConf(uint8_t attrs) : Message(MSG_SESSION_CONFIG, 0), _attrs(attrs) {}
 	SessionConf(bool locked, bool closed, bool layerctrlslocked)
-		: Message(MSG_SESSION_CONFIG, 0),
-		_locked(locked), _closed(closed), _layerctrlslocked(layerctrlslocked)
-	{}
+		: SessionConf(
+			  (locked?ATTR_LOCKED:0) |
+			  (closed?ATTR_CLOSED:0) |
+			  (layerctrlslocked?ATTR_LAYERCTRLLOCKED:0)
+		) {}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
 
+	uint8_t attrs() const { return _attrs; }
+
 	//! Is the whole session locked?
-	bool locked() const { return _locked; }
+	bool isLocked() const { return _attrs & ATTR_LOCKED; }
 
 	//! Is the session closed to further users?
-	bool closed() const { return _closed; }
+	bool isClosed() const { return _attrs & ATTR_CLOSED; }
 
 	//! Are layer controls limited to operators only?
-	bool layerControlsLocked() const { return _layerctrlslocked; }
+	bool isLayerControlsLocked() const { return _attrs & ATTR_LAYERCTRLLOCKED; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
-	bool _locked;
-	bool _closed;
-	bool _layerctrlslocked;
+	uint8_t _attrs;
 };
 
+/**
+ * @brief A chat message
+ *
+ * Chat message sent by the server with the context ID 0 are server messages.
+ */
 class Chat : public Message {
 public:
 	Chat(uint8_t ctx, const QByteArray &msg) : Message(MSG_CHAT, ctx), _msg(msg) {}
@@ -142,6 +184,12 @@ private:
     QByteArray _msg;
 };
 
+/**
+ * @brief Download progress message
+ *
+ * The StreamPos message is used to inform the client of roughly how many bytes
+ * of data to expect. The client can use this to show a download progress bar.
+ */
 class StreamPos : public Message {
 public:
 	StreamPos(uint32_t bytes) : Message(MSG_STREAMPOS, 0),
