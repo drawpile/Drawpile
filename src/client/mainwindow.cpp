@@ -68,6 +68,7 @@
 #include "net/serverthread.h"
 
 #include "../shared/record/writer.h"
+#include "../shared/record/reader.h"
 
 #include "dialogs/colordialog.h"
 #include "dialogs/newdialog.h"
@@ -75,9 +76,10 @@
 #include "dialogs/joindialog.h"
 #include "dialogs/settingsdialog.h"
 #include "dialogs/resizedialog.h"
+#include "dialogs/playbackdialog.h"
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), _canvas(0), _recorder(0)
+	: QMainWindow(), _playbackdlg(0), _canvas(0), _recorder(0)
 {
 	updateTitle();
 
@@ -269,16 +271,66 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	return win;
 }
 
+MainWindow *MainWindow::loadRecording(recording::Reader *reader)
+{
+	MainWindow *win;
+	if(canReplace()) {
+		win = this;
+	} else {
+		writeSettings();
+		win = new MainWindow(false);
+	}
+
+	win->_canvas->initCanvas(win->_client);
+	win->_layerlist->init();
+	win->_client->init();
+
+	win->_canvas->statetracker()->setMaxHistorySize(1024*1024*10u);
+	win->_canvas->statetracker()->setShowAllUserMarkers(true);
+
+	win->filename_ = QString();
+	win->setWindowModified(false);
+	win->updateTitle();
+	win->_currentdoctools->setEnabled(true);
+	win->_docadmintools->setEnabled(true);
+
+	QFileInfo fileinfo(reader->filename());
+
+	win->_playbackdlg = new dialogs::PlaybackDialog(reader, win);
+	win->_playbackdlg->setWindowTitle(fileinfo.baseName() + " - " + win->_playbackdlg->windowTitle());
+	win->_playbackdlg->setAttribute(Qt::WA_DeleteOnClose);
+
+	connect(win->_playbackdlg, &dialogs::PlaybackDialog::commandRead, win->_client, &net::Client::playbackCommand);
+	connect(win->_playbackdlg, SIGNAL(playbackToggled(bool)), win, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
+	connect(win->_playbackdlg, &dialogs::PlaybackDialog::destroyed, [win]() {
+		win->_playbackdlg = 0;
+		win->getAction("startrecord")->setEnabled(true);
+		win->setRecorderStatus(false);
+		win->_canvas->statetracker()->setShowAllUserMarkers(false);
+		win->_client->endPlayback();
+	});
+
+	win->_playbackdlg->show();
+	win->getAction("startrecord")->setEnabled(false);
+	win->setRecorderStatus(false);
+
+	return win;
+}
+
 /**
  * This function is used to check if the current board can be replaced
  * or if a new window is needed to open other content.
  *
- * The window can be replaced when there are no unsaved changes AND the
- * there is no active network connection AND session recorder is not active
+ * The window cannot be replaced if any of the following conditions are true:
+ * - there are unsaved changes
+ * - there is a network connection
+ * - session recording is in progress
+ * - recording playback is in progress
+ *
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || _client->isConnected() || _recorder);
+	return !(isWindowModified() || _client->isConnected() || _recorder || _playbackdlg);
 }
 
 /**
@@ -528,9 +580,18 @@ void MainWindow::newDocument(const QSize &size, const QColor &background)
  */
 void MainWindow::open(const QString& file)
 {
-	ImageCanvasLoader icl(file);
-	if(loadDocument(icl)) {
-		addRecentFile(file);
+	if(file.endsWith(".dprec", Qt::CaseInsensitive)) {
+		auto reader = dialogs::PlaybackDialog::openRecording(file, this);
+		if(reader) {
+			if(loadRecording(reader))
+				addRecentFile(file);
+			else
+				delete reader;
+		}
+	} else {
+		ImageCanvasLoader icl(file);
+		if(loadDocument(icl))
+			addRecentFile(file);
 	}
 }
 
@@ -541,11 +602,17 @@ void MainWindow::open(const QString& file)
 void MainWindow::open()
 {
 	// Get a list of supported formats
-	QString formats = "*.ora *.dptxt ";
+	QString dpimages = "*.ora ";
+	QString dprecs = "*.dptxt *.dprec ";
+	QString formats;
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
-	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
+	const QString filter =
+			tr("All supported files (%1").arg(dpimages + dprecs + formats) + ";;" +
+			tr("Images (%1)").arg(dpimages + formats) + ";;" +
+			tr("Drawpile recordings (%1)").arg(dprecs) + ";;" +
+			tr("All files (*)");
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
@@ -558,7 +625,6 @@ void MainWindow::open()
 
 		open(file);
 	}
-
 }
 
 /**
@@ -698,12 +764,22 @@ bool MainWindow::saveas()
 
 void MainWindow::setRecorderStatus(bool on)
 {
-	QIcon icon = QIcon::fromTheme("media-record", QIcon(":icons/media-record.png"));
-	_recorderstatus->setPixmap(icon.pixmap(16, 16, on ? QIcon::Normal : QIcon::Disabled));
-	if(on)
-		_recorderstatus->setToolTip("Recording session");
-	else
-		_recorderstatus->setToolTip("Not recording");
+	if(_playbackdlg) {
+		if(_playbackdlg->isPlaying()) {
+			_recorderstatus->setPixmap(QIcon::fromTheme("media-playback-start", QIcon(":icons/media-playback-start")).pixmap(16, 16));
+			_recorderstatus->setToolTip("Playing back recording");
+		} else {
+			_recorderstatus->setPixmap(QIcon::fromTheme("media-playback-pause", QIcon(":icons/media-playback-pause")).pixmap(16, 16));
+			_recorderstatus->setToolTip("Playback paused");
+		}
+	} else {
+		QIcon icon = QIcon::fromTheme("media-record", QIcon(":icons/media-record.png"));
+		_recorderstatus->setPixmap(icon.pixmap(16, 16, on ? QIcon::Normal : QIcon::Disabled));
+		if(on)
+			_recorderstatus->setToolTip("Recording session");
+		else
+			_recorderstatus->setToolTip("Not recording");
+	}
 }
 
 void MainWindow::startRecording()
@@ -712,7 +788,7 @@ void MainWindow::startRecording()
 		qWarning() << "Recording already started!";
 		return;
 	}
-	QString filter = "Drawpile recording (*.dprec);;";
+	QString filter = tr("Drawpile recordings (%1)").arg("*.dprec") + ";;" + tr("All files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Record session"), lastpath_, filter);
 
@@ -1237,7 +1313,7 @@ void MainWindow::pasteFile()
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
-	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
+	const QString filter = tr("Images (%1)").arg(formats) + ";;" + tr("All files (*)");
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,

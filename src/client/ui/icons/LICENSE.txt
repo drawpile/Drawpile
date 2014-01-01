@@ -15,6 +15,11 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * fomrt-text-italic
  * list-add
  * list-remove
+ * media-playback-pause
+ * media-playback-start
+ * media-record
+ * media-seek-forward
+ * media-skip-forward
  * network-offline
  * network-receive
  * network-transmit

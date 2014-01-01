@@ -45,6 +45,7 @@ namespace dialogs {
 	class ColorDialog;
 	class HostDialog;
 	class JoinDialog;
+	class PlaybackDialog;
 }
 namespace drawingboard {
 	class CanvasScene;
@@ -56,6 +57,7 @@ namespace net {
 
 namespace recording {
 	class Writer;
+	class Reader;
 }
 
 class SessionLoader;
@@ -68,6 +70,7 @@ class MainWindow : public QMainWindow {
 		~MainWindow();
 
 		MainWindow *loadDocument(SessionLoader &loader);
+		MainWindow *loadRecording(recording::Reader *reader);
 
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
@@ -120,6 +123,7 @@ class MainWindow : public QMainWindow {
 		void sessionConfChanged(bool locked, bool layerctrllocked, bool closed);
 
 		void updateLockWidget();
+		void setRecorderStatus(bool on);
 
 		void updateShortcuts();
 
@@ -160,8 +164,6 @@ class MainWindow : public QMainWindow {
 		//! Set the window title according to open file name
 		void updateTitle();
 
-		void setRecorderStatus(bool on);
-
 		//! Save settings and exit
 		void exit();
 
@@ -190,6 +192,7 @@ class MainWindow : public QMainWindow {
 		dialogs::ColorDialog *_fgdialog, *_bgdialog;
 		dialogs::HostDialog *hostdlg_;
 		dialogs::JoinDialog *joindlg_;
+		dialogs::PlaybackDialog *_playbackdlg;
 
 		drawingboard::CanvasScene *_canvas;
 		net::Client *_client;

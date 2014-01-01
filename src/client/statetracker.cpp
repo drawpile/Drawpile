@@ -56,12 +56,13 @@ struct StateSavepoint {
 
 StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *parent)
 	: QObject(parent),
-	  _scene(scene),
-	  _image(scene->layers()),
-	  _layerlist(client->layerlist()),
-	  _myid(client->myId()),
-	  _hassnapshot(true),
-	  _msgstream_sizelimit(1024 * 1024 * 10)
+		_scene(scene),
+		_image(scene->layers()),
+		_layerlist(client->layerlist()),
+		_myid(client->myId()),
+		_msgstream_sizelimit(1024 * 1024 * 10),
+		_hassnapshot(true),
+		_showallmarkers(false)
 {
 	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
@@ -318,7 +319,8 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	}
 	if(cmd.contextId() == _myid)
 		_scene->takePreview(cmd.points().size());
-	else
+
+	if(_showallmarkers || cmd.contextId() != _myid)
 		_scene->moveUserMarker(cmd.contextId(), ctx.tool.brush.color1(), ctx.lastpoint);
 }
 

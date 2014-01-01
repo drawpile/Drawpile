@@ -100,8 +100,9 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 		// Write Interval message if sufficient time has passed since the last one
 		if(_writeIntervals) {
 			qint64 now = QDateTime::currentMSecsSinceEpoch();
-			if(now - _interval >= (1000/20)) {
-				protocol::Interval imsg(now - _interval);
+			qint64 interval = now - _interval;
+			if(interval >= (1000/20)) {
+				protocol::Interval imsg(qMin(qint64(0xffff), interval));
 				QVarLengthArray<char> ibuf(imsg.length());
 				int ilen = imsg.serialize(ibuf.data());
 				_file.write(ibuf.data(), ilen);

@@ -408,6 +408,19 @@ void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 		_server->sendMessage(MessagePtr(new protocol::LayerACL(_my_id, layerid, locked, exclusive)));
 }
 
+void Client::playbackCommand(protocol::MessagePtr msg)
+{
+	if(_isloopback)
+		_server->sendMessage(msg);
+	else
+		qWarning() << "tried to play back command in network mode";
+}
+
+void Client::endPlayback()
+{
+	_userlist->clearUsers();
+}
+
 void Client::handleMessage(protocol::MessagePtr msg)
 {
 	// Emit message as-is for recording

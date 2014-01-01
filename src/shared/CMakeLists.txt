@@ -23,6 +23,7 @@ set (
 set (
         RECORDING_SOURCES
         record/writer.cpp
+        record/reader.cpp
         )
 
 set (

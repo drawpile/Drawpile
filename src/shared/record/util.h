@@ -27,6 +27,14 @@ inline quint32 version32(quint16 major, quint16 minor) {
 	return major << 16 | minor;
 }
 
+inline quint16 majorVersion(quint32 version) {
+	return version >> 16;
+}
+
+inline quint16 minorVersion(quint32 version) {
+	return version & 0xffff;
+}
+
 }
 
 #endif

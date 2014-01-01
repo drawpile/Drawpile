@@ -192,6 +192,9 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
  */
 void LayerStack::paint(const QRectF& rect, QPainter *painter)
 {
+	if(_width<=0 || _height<=0)
+		return;
+
 	// Refresh cache
 	const int tx0 = qBound(0, int(rect.left()) / Tile::SIZE, _xtiles-1);
 	const int tx1 = qBound(tx0, int(rect.right()) / Tile::SIZE, _xtiles-1);

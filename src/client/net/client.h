@@ -186,6 +186,10 @@ public slots:
 	void sendLockLayerControls(bool lock);
 	void sendCloseSession(bool close);
 
+	// Recording
+	void playbackCommand(protocol::MessagePtr msg);
+	void endPlayback();
+
 signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);

@@ -118,6 +118,12 @@ public:
 	 */
 	void setMaxHistorySize(uint limit) { _msgstream_sizelimit = limit; }
 
+	/**
+	 * @brief Set if all user markers (own included) should be shown
+	 * @param showall
+	 */
+	void setShowAllUserMarkers(bool showall) { _showallmarkers = showall; }
+
 	StateTracker &operator=(const StateTracker&) = delete;
 
 signals:
@@ -164,8 +170,9 @@ private:
 
 	protocol::MessageStream _msgstream;
 	QList<StateSavepoint*> _savepoints;
-	bool _hassnapshot;
 	uint _msgstream_sizelimit;
+	bool _hassnapshot;
+	bool _showallmarkers;
 };
 
 }
