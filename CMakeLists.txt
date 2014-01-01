@@ -75,6 +75,7 @@ include_directories ( ${CMAKE_BINARY_DIR} )
 # scan sub-directories
 add_subdirectory( src )
 add_subdirectory( doc )
+add_subdirectory( desktop )
 
 if ( CMAKE_BUILD_TYPE STREQUAL Debug )
 	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_DEBUG}")

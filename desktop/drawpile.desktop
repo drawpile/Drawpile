@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Name=Drawpile
+GenericName=Online drawing program
+Exec=drawpile %f
+Comment=Multiuser collaborative drawing program
+MimeType=image/openraster;image/png;image/jpeg;
+Type=Application
+Icon=drawpile
+StartupNotify=true
+Categories=Graphics;Network;RasterGraphics;
+Terminal=false

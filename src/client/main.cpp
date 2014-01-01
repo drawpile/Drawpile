@@ -49,7 +49,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 		cfg.setValue("username", defaultname);
 	}
-	setWindowIcon(QIcon(":icons/drawpile.png"));
+	setWindowIcon(QIcon::fromTheme("drawpile", QIcon(":icons/drawpile.png")));
 }
 
 /**
