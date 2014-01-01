@@ -54,6 +54,10 @@ namespace net {
 	class Client;
 }
 
+namespace recording {
+	class Writer;
+}
+
 class SessionLoader;
 
 //! The application main window
@@ -99,6 +103,9 @@ class MainWindow : public QMainWindow {
 		void homepage();
 
 	private slots:
+		void startRecording();
+		void stopRecording();
+
 		void setSessionTitle(const QString& title);
 		void setOperatorMode(bool op);
 
@@ -153,6 +160,8 @@ class MainWindow : public QMainWindow {
 		//! Set the window title according to open file name
 		void updateTitle();
 
+		void setRecorderStatus(bool on);
+
 		//! Save settings and exit
 		void exit();
 
@@ -176,6 +185,7 @@ class MainWindow : public QMainWindow {
 		widgets::ColorBox *rgb_, *hsv_;
 		widgets::Navigator *navigator_;
 		QLabel *_lockstatus;
+		QLabel *_recorderstatus;
 
 		dialogs::ColorDialog *_fgdialog, *_bgdialog;
 		dialogs::HostDialog *hostdlg_;
@@ -187,6 +197,8 @@ class MainWindow : public QMainWindow {
 		QString filename_;
 		QString lastpath_;
 		QMenu *_recent;
+
+		recording::Writer *_recorder;
 
 		QActionGroup *_currentdoctools; // actions relating to the currently open document
 		QActionGroup *_admintools; // session operator actions

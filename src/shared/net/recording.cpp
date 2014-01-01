@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,52 +18,29 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#include "undo.h"
+#include <QtEndian>
+
+#include "recording.h"
 
 namespace protocol {
 
-UndoPoint *UndoPoint::deserialize(const uchar *data, uint len)
+Interval *Interval::deserialize(const uchar *data, uint len)
 {
-	if(len!=1)
+	if(len!=2)
 		return 0;
-	return new UndoPoint(*data);
+	return new Interval(qFromBigEndian<quint16>(data));
 }
 
-int UndoPoint::payloadLength() const
+int Interval::payloadLength() const
 {
-	return 1;
+	return 2;
 }
 
-int UndoPoint::serializePayload(uchar *data) const
+int Interval::serializePayload(uchar *data) const
 {
-	*data = contextId();
-	return 1;
-}
-
-
-Undo *Undo::deserialize(const uchar *data, uint len)
-{
-	if(len!=3)
-		return 0;
-	return new Undo(
-		data[0],
-		data[1],
-		data[2]
-	);
-}
-
-int Undo::payloadLength() const
-{
-	return 1 + 2;
-}
-
-int Undo::serializePayload(uchar *data) const
-{
-	uchar *ptr = data;
-	*(ptr++) = contextId();
-	*(ptr++) = _override;
-	*(ptr++) = _points;
-	return ptr-data;
+	qToBigEndian(_msecs, data);
+	return 2;
 }
 
 }
+

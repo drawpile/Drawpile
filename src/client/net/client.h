@@ -187,6 +187,7 @@ public slots:
 	void sendCloseSession(bool close);
 
 signals:
+	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool me);
 	void needSnapshot(bool forcenew);

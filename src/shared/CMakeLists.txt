@@ -15,9 +15,15 @@ set (
 	net/snapshot.cpp
 	net/meta.cpp
 	net/undo.cpp
+	net/recording.cpp
 	net/messagequeue.cpp
 	net/messagestream.cpp
 	)
+
+set (
+        RECORDING_SOURCES
+        record/writer.cpp
+        )
 
 set (
 	UTIL_SOURCES
@@ -31,7 +37,6 @@ set (
 	server/session.cpp
 	)
 
-add_library( ${DPSHAREDLIB} STATIC ${NET_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )
+add_library( ${DPSHAREDLIB} STATIC ${NET_SOURCES} ${RECORDING_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )
 target_link_libraries ( ${DPSHAREDLIB} ${Qt5Network_LIBRARIES} )
 qt5_use_modules( ${DPSHAREDLIB} Network )
-

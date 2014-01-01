@@ -410,12 +410,16 @@ void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
 
 void Client::handleMessage(protocol::MessagePtr msg)
 {
-	// TODO should meta commands go here too for session recording purposes?
+	// Emit message as-is for recording
+	emit messageReceived(msg);
+
+	// Emit command stream messages for drawing
 	if(msg->isCommand()) {
 		emit drawingCommandReceived(msg);
 		return;
 	}
-	// Not a command stream message? Must be a meta command then
+
+	// Handle meta messages here
 	switch(msg->type()) {
 	using namespace protocol;
 	case MSG_SNAPSHOT:
@@ -441,6 +445,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 		break;
 	case MSG_LAYER_ACL:
 		handleLayerAcl(msg.cast<LayerACL>());
+		break;
+	case MSG_INTERVAL:
+		/* intervals are used only when playing back recordings */
 		break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();

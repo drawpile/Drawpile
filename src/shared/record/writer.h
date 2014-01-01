@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,52 +18,40 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#include "undo.h"
+#ifndef WRITER_H
+#define WRITER_H
 
-namespace protocol {
+#include <QObject>
+#include <QFile>
+#include "../net/message.h"
 
-UndoPoint *UndoPoint::deserialize(const uchar *data, uint len)
+namespace recording {
+
+class Writer : public QObject
 {
-	if(len!=1)
-		return 0;
-	return new UndoPoint(*data);
-}
+	Q_OBJECT
+public:
+	Writer(const QString &filename, QObject *parent=0);
+	~Writer();
 
-int UndoPoint::payloadLength() const
-{
-	return 1;
-}
+	QString errorString() const;
 
-int UndoPoint::serializePayload(uchar *data) const
-{
-	*data = contextId();
-	return 1;
-}
+	bool open();
+	void close();
 
+	void setWriteIntervals(bool wi);
 
-Undo *Undo::deserialize(const uchar *data, uint len)
-{
-	if(len!=3)
-		return 0;
-	return new Undo(
-		data[0],
-		data[1],
-		data[2]
-	);
-}
+	bool writeHeader();
 
-int Undo::payloadLength() const
-{
-	return 1 + 2;
-}
+public slots:
+	void recordMessage(const protocol::MessagePtr msg);
 
-int Undo::serializePayload(uchar *data) const
-{
-	uchar *ptr = data;
-	*(ptr++) = contextId();
-	*(ptr++) = _override;
-	*(ptr++) = _points;
-	return ptr-data;
-}
+private:
+	QFile _file;
+	bool _writeIntervals;
+	qint64 _interval;
+};
 
 }
+
+#endif

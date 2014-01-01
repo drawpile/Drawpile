@@ -67,6 +67,8 @@
 #include "net/login.h"
 #include "net/serverthread.h"
 
+#include "../shared/record/writer.h"
+
 #include "dialogs/colordialog.h"
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
@@ -75,7 +77,7 @@
 #include "dialogs/resizedialog.h"
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), _canvas(0)
+	: QMainWindow(), _canvas(0), _recorder(0)
 {
 	updateTitle();
 
@@ -84,18 +86,15 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
 
-	// Create the view status widget
-	widgets::ViewStatus *viewstatus = new widgets::ViewStatus(this);
-	statusbar->addPermanentWidget(viewstatus);
-
-	// Create net status widget
-	widgets::NetStatus *netstatus = new widgets::NetStatus(this);
-	statusbar->addPermanentWidget(netstatus);
-
-	// Create lock status widget
+	// Create status indicator widgets
+	auto *viewstatus = new widgets::ViewStatus(this);
+	auto *netstatus = new widgets::NetStatus(this);
+	_recorderstatus = new QLabel(this);
 	_lockstatus = new QLabel(this);
-	_lockstatus->setPixmap(QPixmap(":icon/lock_open.png"));
-	_lockstatus->setToolTip(tr("Board is not locked"));
+
+	statusbar->addPermanentWidget(viewstatus);
+	statusbar->addPermanentWidget(netstatus);
+	statusbar->addPermanentWidget(_recorderstatus);
 	statusbar->addPermanentWidget(_lockstatus);
 
 	// Work area is split between the canvas view and the chatbox
@@ -200,6 +199,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Restore settings
 	readSettings(restoreWindowPosition);
 	
+	// Set status indicators
+	updateLockWidget();
+	setRecorderStatus(false);
+
 	// Show self
 	show();
 }
@@ -271,11 +274,11 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
  * or if a new window is needed to open other content.
  *
  * The window can be replaced when there are no unsaved changes AND the
- * there is no active network connection
+ * there is no active network connection AND session recorder is not active
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || _client->isConnected());
+	return !(isWindowModified() || _client->isConnected() || _recorder);
 }
 
 /**
@@ -691,6 +694,74 @@ bool MainWindow::saveas()
 		}
 	}
 	return false;
+}
+
+void MainWindow::setRecorderStatus(bool on)
+{
+	QIcon icon = QIcon::fromTheme("media-record", QIcon(":icons/media-record.png"));
+	_recorderstatus->setPixmap(icon.pixmap(16, 16, on ? QIcon::Normal : QIcon::Disabled));
+	if(on)
+		_recorderstatus->setToolTip("Recording session");
+	else
+		_recorderstatus->setToolTip("Not recording");
+}
+
+void MainWindow::startRecording()
+{
+	if(_recorder) {
+		qWarning() << "Recording already started!";
+		return;
+	}
+	QString filter = "Drawpile recording (*.dprec);;";
+	QString file = QFileDialog::getSaveFileName(this,
+			tr("Record session"), lastpath_, filter);
+
+	if(!file.isEmpty()) {
+		// Set file suffix if missing
+		const QFileInfo info(file);
+		if(info.suffix().isEmpty())
+			file += ".dprec";
+
+		// Start the recorder
+		_recorder = new recording::Writer(file, this);
+
+		if(!_recorder->open()) {
+			showErrorMessage(_recorder->errorString());
+			delete _recorder;
+			_recorder = 0;
+		} else {
+			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+			_recorder->writeHeader();
+
+			QList<protocol::MessagePtr> snapshot = _canvas->statetracker()->generateSnapshot(false);
+			foreach(const protocol::MessagePtr ptr, snapshot) {
+				_recorder->recordMessage(ptr);
+			}
+
+			_recorder->setWriteIntervals(true);
+			connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
+
+			getAction("startrecord")->setEnabled(false);
+			getAction("stoprecord")->setEnabled(true);
+
+			QApplication::restoreOverrideCursor();
+			setRecorderStatus(true);
+		}
+	}
+}
+
+void MainWindow::stopRecording()
+{
+	if(!_recorder) {
+		qWarning() << "Recording already stopped!";
+		return;
+	}
+	_recorder->close();
+	delete _recorder;
+	_recorder = 0;
+	getAction("startrecord")->setEnabled(true);
+	getAction("stoprecord")->setEnabled(false);
+	setRecorderStatus(false);
 }
 
 /**
@@ -1343,16 +1414,24 @@ void MainWindow::setupActions()
 	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), tr("Save drawing to a file with a new name"));
+	QAction *record = makeAction("startrecord", "media-record", tr("Record session..."), tr("Start recording the session for later playback"));
+	QAction *stoprecord = makeAction("stoprecord", 0, tr("Stop recording"));
 	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
 
+	stoprecord->setEnabled(false);
+
 	_currentdoctools->addAction(save);
 	_currentdoctools->addAction(saveas);
+	_currentdoctools->addAction(record);
+	_currentdoctools->addAction(stoprecord);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
+	connect(record, SIGNAL(triggered()), this, SLOT(startRecording()));
+	connect(stoprecord, SIGNAL(triggered()), this, SLOT(stopRecording()));
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
 
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
@@ -1361,6 +1440,9 @@ void MainWindow::setupActions()
 	_recent = filemenu->addMenu(tr("Open &recent"));
 	filemenu->addAction(save);
 	filemenu->addAction(saveas);
+	filemenu->addSeparator();
+	filemenu->addAction(record);
+	filemenu->addAction(stoprecord);
 	filemenu->addSeparator();
 	filemenu->addAction(quit);
 
