@@ -133,7 +133,10 @@ void PlaybackDialog::nextSequence()
 void PlaybackDialog::endOfFileReached()
 {
 	_ui->play->setChecked(false);
-	setEnabled(false);
+	_ui->play->setEnabled(false);
+	_ui->seek->setEnabled(false);
+	_ui->skip->setEnabled(false);
+	_ui->progressBar->setEnabled(false);
 }
 
 recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)
