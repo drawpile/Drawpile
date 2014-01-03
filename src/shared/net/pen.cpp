@@ -72,28 +72,28 @@ int ToolChange::serializePayload(uchar *data) const
 
 PenMove *PenMove::deserialize(const uchar *data, uint len)
 {
-	if(len<10 || (len-1)%9)
+	if(len<11 || (len-1)%10)
 		return 0;
 	PenPointVector pp;
 
 	uint8_t ctx = *(data++);
 
-	int points = (len-1)/9;
+	int points = (len-1)/10;
 	pp.reserve(points);
 	while(points--) {
 		pp.append(PenPoint(
 			qFromBigEndian<qint32>(data),
 			qFromBigEndian<qint32>(data+4),
-			*(data+8)
+			qFromBigEndian<quint16>(data+8)
 		));
-		data += 9;
+		data += 10;
 	}
 	return new PenMove(ctx, pp);
 }
 
 int PenMove::payloadLength() const
 {
-	return 1 + 9 * _points.size();
+	return 1 + 10 * _points.size();
 }
 
 int PenMove::serializePayload(uchar *data) const
@@ -103,7 +103,7 @@ int PenMove::serializePayload(uchar *data) const
 	foreach(const PenPoint &p, _points) {
 		qToBigEndian(p.x, ptr); ptr += 4;
 		qToBigEndian(p.y, ptr); ptr += 4;
-		*(ptr++) = p.p;
+		qToBigEndian(p.p, ptr); ptr += 2;
 	}
 	return ptr - data;
 }

@@ -119,12 +119,13 @@ protocol::MessagePtr brushToToolChange(int userid, int layer, const paintcore::B
  * @param p
  * @return
  */
-protocol::PenPoint pointToProtocol(const paintcore::Point &p)
+protocol::PenPoint pointToProtocol(const paintcore::Point &point)
 {
-	int32_t x = p.x() * 4.0;
-	int32_t y = p.y() * 4.0;
+	int32_t x = point.x() * 4.0;
+	int32_t y = point.y() * 4.0;
+	uint16_t p = point.pressure() * 0xffff;
 
-	return protocol::PenPoint(x, y, p.pressure() * 255);
+	return protocol::PenPoint(x, y, p);
 }
 
 /**
@@ -136,6 +137,7 @@ protocol::PenPoint pointToProtocol(const paintcore::Point &p)
 protocol::PenPointVector pointsToProtocol(const paintcore::PointVector &points)
 {
 	protocol::PenPointVector ppvec;
+	ppvec.reserve(points.size());
 	foreach(const paintcore::Point &p, points)
 		ppvec.append(pointToProtocol(p));
 

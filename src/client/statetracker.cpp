@@ -306,7 +306,7 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	
 	paintcore::Point p;
 	foreach(const protocol::PenPoint pp, cmd.points()) {
-		p = paintcore::Point(pp.x / 4.0, pp.y / 4.0, pp.p/255.0);
+		p = paintcore::Point(pp.x / 4.0, pp.y / 4.0, pp.p/qreal(0xffff));
 
 		if(ctx.pendown) {
 			layer->drawLine(cmd.contextId(), ctx.tool.brush, ctx.lastpoint, p, ctx.distance_accumulator);
