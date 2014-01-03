@@ -21,3 +21,13 @@ See `src/shared/net/message.h` for the full list of message types.
 
 A subset of the network protocol is used as the session recording format.
 
+## Protocol revision history
+
+The protocol version number consists of two parts: the major and the minor number. Change in the major number indicates changes that break compatibility between the server and the client. Change in the minor number indicate smaller changes in the client's interpretation of the drawing commands. Minor versions always start at 1.
+
+Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
+
+Protocol 7.1:
+
+ * First protocol revision that can be recorded.
+
