@@ -1,75 +1,97 @@
+/*
+   DrawPile - a collaborative drawing program.
+
+   Copyright (C) 2013-2014 Calle Laakkonen
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software Foundation,
+   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+*/
 #include <QCoreApplication>
 #include <QStringList>
+
+#if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
+#include "qcommandlineparser.h"
+#else
+#include <QCommandLineParser>
+#endif
+
 #include <iostream>
 
 #include "config.h"
 
 #include "../shared/server/server.h"
 
-using std::cerr;
 using server::Server;
-
-void printHelp() {
-	std::cout << "DrawPile standalone server. Usage:\n\n"
-		"drawpile-srv [options]\n\n"
-		"Options:\n"
-		"\t--port, -p <port>           Listening port (default: "
-		<< DRAWPILE_PROTO_DEFAULT_PORT << ")\n"
-		"\t--listen, -l <address>      Listening address (default: all)\n"
-		"\t--verbose, -v               Verbose mode\n";
-}
 
 int main(int argc, char *argv[]) {
 	QCoreApplication app(argc, argv);
 
-	int port = DRAWPILE_PROTO_DEFAULT_PORT;
-	QHostAddress address = QHostAddress::Any;
-	bool verbose = false;
+	QCoreApplication::setApplicationName("drawpile-srv");
+	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
 
 	// Parse command line arguments
-	// TODO
-	QStringList args = app.arguments();
-	for(int i=1;i<args.size();++i) {
-		if(args[i] == "-h" || args[i] == "--help") {
-			printHelp();
-			return 0;
-		} else if(args[i]=="--port" || args[i]=="-p") {
-			if(i+1>=args.size()) {
-				cerr << "Port number not specified\n";
-				return 1;
-			}
-			bool ok;
-			port = args[++i].toInt(&ok);
-			if(!ok) {
-				cerr << args[i].toUtf8().constData() << " is not a number.";
-				return 1;
-			}
-		} else if(args[i]=="--listen" || args[i]=="-l") {
-			if(i+1>=args.size()) {
-				cerr << "Listening address not specified\n";
-				return 1;
-			}
-			if(address.setAddress(args[++i])==false) {
-				cerr << "Not a valid address: " << args[i].toUtf8().constData() << "\n";
-				return 1;
-			}
-		} else if(args[i]=="--verbose" || args[i]=="-v") {
-			verbose = true;
-		} else {
-			cerr << "Unrecognized argument: " << args[i].toUtf8().constData() << "\n";
-			return 1;
-		}
-	}
+	QCommandLineParser parser;
 
-	// Start the server
+	parser.setApplicationDescription("Standalone server for Drawpile");
+	parser.addHelpOption();
+	parser.addVersionOption();
+
+	// --verbose, -V
+	QCommandLineOption verboseOption(QStringList() << "verbose" << "V", "Verbose mode");
+	parser.addOption(verboseOption);
+
+	// --port, -p <port>
+	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port");
+	parser.addOption(portOption);
+
+	// --listen, -l <address>
+	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
+	parser.addOption(listenOption);
+
+	// Parse
+	parser.process(app);
+
+	// Initialize the server
 	Server *server = new Server();
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
 	server->setErrorStream(new QTextStream(stderr));
-	if(verbose)
+	if(parser.isSet(verboseOption))
 		server->setDebugStream(new QTextStream(stdout));
 
+	int port = DRAWPILE_PROTO_DEFAULT_PORT;
+	QHostAddress address = QHostAddress::Any;
+
+	if(parser.isSet(portOption)) {
+		bool ok;
+		port = parser.value(portOption).toInt(&ok);
+		if(!ok || port<1 || port>0xffff) {
+			std::cerr << "invalid port\n";
+			return 1;
+		}
+	}
+
+	if(parser.isSet(listenOption)) {
+		if(!address.setAddress(parser.value(listenOption))) {
+			std::cerr << "Invalid listening address\n";
+			return 1;
+		}
+	}
+
+	// Start
 	if(!server->start(port, false, address))
 		return 1;
 
