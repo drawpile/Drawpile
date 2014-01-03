@@ -93,6 +93,8 @@ void PlaybackDialog::nextCommand()
 		break;
 	case recording::MessageRecord::INVALID:
 		qWarning() << "Unrecognized command " << next.type << "of length" << next.len;
+		if(_play)
+			_timer->start(1);
 		break;
 	case recording::MessageRecord::END_OF_RECORDING:
 		endOfFileReached();
@@ -137,6 +139,8 @@ void PlaybackDialog::endOfFileReached()
 	_ui->seek->setEnabled(false);
 	_ui->skip->setEnabled(false);
 	_ui->progressBar->setEnabled(false);
+	_ui->progressBar->setFormat(tr("Recording ended"));
+	_ui->progressBar->setTextVisible(true);
 }
 
 recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)

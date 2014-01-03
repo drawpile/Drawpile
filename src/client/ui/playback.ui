@@ -116,7 +116,7 @@
        <item row="0" column="0" colspan="2">
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Max. interval:</string>
+          <string>Max. pause:</string>
          </property>
         </widget>
        </item>
