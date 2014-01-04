@@ -26,7 +26,6 @@
 #include "server.h"
 #include "client.h"
 #include "session.h"
-#include "exceptions.h"
 
 #include "../net/messagequeue.h"
 #include "../net/annotation.h"
