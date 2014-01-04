@@ -41,7 +41,6 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 	QString msg = message.cast<protocol::Login>().message();
 
-	qDebug() << "login" << msg;
 	switch(_state) {
 	case 0: expectHello(msg); break;
 	case 1: expectSessionDescription(msg); break;
