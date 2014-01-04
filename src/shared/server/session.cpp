@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,12 +19,231 @@
 */
 
 #include "session.h"
+#include "client.h"
 #include "../net/annotation.h"
 #include "../net/layer.h"
 #include "../net/meta.h"
 #include "../net/pen.h"
+#include "../net/snapshot.h"
 
 namespace server {
+
+using protocol::MessagePtr;
+
+SessionState::SessionState(int minorVersion, SharedLogger logger, QObject *parent)
+	: QObject(parent),
+	_logger(logger),
+	_syncstate(NOT_SYNCING),
+	_userids(255), _layerids(255), _annotationids(255),
+	_minorVersion(minorVersion), _maxusers(255),
+	_locked(false), _layerctrllocked(true), _closed(false),
+	_lockdefault(false)
+{ }
+
+void SessionState::assignId(Client *user)
+{
+	user->setId(_userids.takeNext());
+}
+
+void SessionState::joinUser(Client *user, bool host)
+{
+	user->setSession(this);
+	_clients.append(user);
+
+	// Make sure the ID is reserved (hosting user gets to choose their own)
+	_userids.reserve(user->id());
+
+	connect(user, SIGNAL(barrierLocked()), this, SLOT(userBarrierLocked()));
+	connect(user, SIGNAL(disconnected(Client*)), this, SLOT(removeUser(Client*)));
+	connect(this, SIGNAL(newCommandsAvailable()), user, SLOT(sendAvailableCommands()));
+
+	MessagePtr joinmsg(new protocol::UserJoin(user->id(), user->username()));
+
+	if(host) {
+		Q_ASSERT(!_mainstream.hasSnapshot());
+		// Send login message directly, since the distributable login
+		// notification will be part of the initial snapshot.
+		user->sendDirectMessage(joinmsg);
+
+		// Request initial session content. This creates a snapshot point for the session
+		// and upgrades the client to full session state
+		user->requestSnapshot(false);
+	}
+
+	addToCommandStream(joinmsg);
+
+	// Give op to this user if it is the only one here
+	if(userCount() == 1)
+		user->grantOp();
+	else if(_lockdefault)
+		user->lockUser();
+
+	_logger->logDebug(QString("User %1 joined").arg(user->id()));
+}
+
+void SessionState::removeUser(Client *user)
+{
+	Q_ASSERT(_clients.contains(user));
+
+	_clients.removeOne(user);
+	_userids.release(user->id());
+
+	if(_drawingctx[user->id()].penup)
+		addToCommandStream(MessagePtr(new protocol::PenUp(user->id())));
+	addToCommandStream(MessagePtr(new protocol::UserLeave(user->id())));
+
+	// Make sure there is at least one operator in the session
+	bool hasOp=false;
+	foreach(const Client *c, _clients) {
+		if(c->isOperator()) {
+			hasOp=true;
+			break;
+		}
+	}
+
+	if(!hasOp && !_clients.isEmpty())
+		_clients.first()->grantOp();
+
+	// Reopen the session when the last user leaves
+	if(_clients.isEmpty()) {
+		setClosed(false);
+		emit lastClientLeft();
+	}
+
+	user->deleteLater();
+}
+
+Client *SessionState::getClientById(int id)
+{
+	foreach(Client *c, _clients) {
+		if(c->id() == id)
+			return c;
+	}
+	return 0;
+}
+
+void SessionState::setClosed(bool closed)
+{
+	if(_closed != closed) {
+		_closed = closed;
+		addToCommandStream(sessionConf());
+	}
+}
+
+void SessionState::setLocked(bool locked)
+{
+	if(_locked != locked) {
+		_locked = locked;
+		addToCommandStream(sessionConf());
+	}
+}
+
+void SessionState::setLayerControlLocked(bool locked)
+{
+	if(_layerctrllocked != locked) {
+		_layerctrllocked = locked;
+		addToCommandStream(sessionConf());
+	}
+}
+
+void SessionState::setUsersLockedByDefault(bool locked)
+{
+	if(_lockdefault != locked) {
+		_lockdefault = locked;
+		addToCommandStream(sessionConf());
+	}
+}
+
+void SessionState::setMaxUsers(int maxusers)
+{
+	Q_ASSERT(maxusers>0);
+	_maxusers = maxusers;
+}
+
+void SessionState::addToCommandStream(protocol::MessagePtr msg)
+{
+	// TODO history size limit. Can clear up to lowest stream pointer index.
+	_mainstream.append(msg);
+	emit newCommandsAvailable();
+}
+
+void SessionState::addSnapshotPoint()
+{
+	// Create new snapshot point
+	_mainstream.addSnapshotPoint();
+
+	// Add user introductions to snapshot point
+	foreach(const Client *c, _clients) {
+		if(c->id()>0) {
+			addToSnapshotStream(protocol::MessagePtr(new protocol::UserJoin(c->id(), c->username())));
+			addToSnapshotStream(protocol::MessagePtr(new protocol::UserAttr(c->id(), c->isUserLocked(), c->isOperator())));
+		}
+	}
+
+	emit snapshotCreated();
+}
+
+bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
+{
+	if(!_mainstream.hasSnapshot()) {
+		_logger->logError("Tried to add a snapshot command, but there is no snapshot point!");
+		return true;
+	}
+	protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
+	if(sp.isComplete()) {
+		_logger->logError("Tried to add a snapshot command, but the snapshot point is already complete!");
+		return true;
+	}
+
+	sp.append(msg);
+
+	emit newCommandsAvailable();
+
+	return sp.isComplete();
+}
+
+void SessionState::cleanupCommandStream()
+{
+	int removed = _mainstream.cleanup();
+	_logger->logDebug(QString("Cleaned up %1 messages from the command stream.").arg(removed));
+}
+
+void SessionState::startSnapshotSync()
+{
+	_logger->logDebug("Starting snapshot sync!");
+
+	// Barrier lock all clients
+	foreach(Client *c, _clients)
+		c->barrierLock();
+}
+
+void SessionState::snapshotSyncStarted()
+{
+	_logger->logDebug("Snapshot sync started!");
+
+	// Lift barrier lock
+	foreach(Client *c, _clients)
+		c->barrierUnlock();
+}
+
+void SessionState::userBarrierLocked()
+{
+	// Count locked users
+	int locked=0;
+	foreach(const Client *c, _clients)
+		if(c->isHoldLocked() || c->isDropLocked())
+			++locked;
+
+	if(locked == _clients.count()) {
+		// All locked, we can now send the snapshot sync request
+		foreach(Client *c, _clients) {
+			if(c->isOperator()) {
+				c->requestSnapshot(true);
+				break;
+			}
+		}
+	}
+}
 
 void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 {
@@ -32,7 +251,7 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 	foreach(MessagePtr msg, messages) {
 		switch(msg->type()) {
 		case MSG_TOOLCHANGE:
-			userids.reserve(msg.cast<ToolChange>().contextId());
+			_userids.reserve(msg.cast<ToolChange>().contextId());
 			drawingContextToolChange(msg.cast<ToolChange>());
 			break;
 		case MSG_PEN_MOVE:
@@ -69,7 +288,7 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 
 const LayerState *SessionState::getLayerById(int id)
 {
-	foreach(const LayerState &l, layers)
+	foreach(const LayerState &l, _layers)
 		if(l.id == id)
 			return &l;
 	return 0;
@@ -78,17 +297,17 @@ const LayerState *SessionState::getLayerById(int id)
 void SessionState::createLayer(protocol::LayerCreate &cmd, bool assign)
 {
 	if(assign)
-		cmd.setId(layerids.takeNext());
+		cmd.setId(_layerids.takeNext());
 	else
-		layerids.reserve(cmd.id());
-	layers.append(LayerState(cmd.id()));
+		_layerids.reserve(cmd.id());
+	_layers.append(LayerState(cmd.id()));
 }
 
 void SessionState::reorderLayers(protocol::LayerOrder &cmd)
 {
 	QVector<LayerState> newlayers;
-	QVector<LayerState> oldlayers = layers;
-	newlayers.reserve(layers.size());
+	QVector<LayerState> oldlayers = _layers;
+	newlayers.reserve(_layers.size());
 
 	// Set new order
 	foreach(int id, cmd.order()) {
@@ -104,23 +323,23 @@ void SessionState::reorderLayers(protocol::LayerOrder &cmd)
 	for(int i=0;i<oldlayers.size();++i)
 		newlayers.append(oldlayers[i]);
 
-	layers = newlayers;
+	_layers = newlayers;
 
 	// Update commands ID list
 	QList<uint8_t> validorder;
-	validorder.reserve(layers.size());
-	for(int i=0;i<layers.size();++i)
-		validorder.append(layers[i].id);
+	validorder.reserve(_layers.size());
+	for(int i=0;i<_layers.size();++i)
+		validorder.append(_layers[i].id);
 
 	cmd.setOrder(validorder);
 }
 
 bool SessionState::deleteLayer(int id)
 {
-	for(int i=0;i<layers.size();++i) {
-		if(layers[i].id == id) {
-			layers.remove(i);
-			layerids.release(id);
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers[i].id == id) {
+			_layers.remove(i);
+			_layerids.release(id);
 			return true;
 		}
 	}
@@ -129,10 +348,10 @@ bool SessionState::deleteLayer(int id)
 
 bool SessionState::updateLayerAcl(const protocol::LayerACL &cmd)
 {
-	for(int i=0;i<layers.size();++i) {
-		if(layers[i].id == cmd.id()) {
-			layers[i].locked = cmd.locked();
-			layers[i].exclusive = cmd.exclusive();
+	for(int i=0;i<_layers.size();++i) {
+		if(_layers[i].id == cmd.id()) {
+			_layers[i].locked = cmd.locked();
+			_layers[i].exclusive = cmd.exclusive();
 			return true;
 		}
 	}
@@ -142,45 +361,56 @@ bool SessionState::updateLayerAcl(const protocol::LayerACL &cmd)
 void SessionState::createAnnotation(protocol::AnnotationCreate &cmd, bool assign)
 {
 	if(assign)
-		cmd.setId(annotationids.takeNext());
+		cmd.setId(_annotationids.takeNext());
 	else
-		annotationids.reserve(cmd.id());
+		_annotationids.reserve(cmd.id());
 }
 
 bool SessionState::deleteAnnotation(int id)
 {
-	annotationids.release(id);
+	_annotationids.release(id);
 	return true; // TODO implement ID tracker properly
 }
 
 void SessionState::drawingContextToolChange(const protocol::ToolChange &cmd)
 {
-	drawingctx[cmd.contextId()].currentLayer = cmd.layer();
+	_drawingctx[cmd.contextId()].currentLayer = cmd.layer();
 }
 
 void SessionState::drawingContextPenDown(const protocol::PenMove &cmd)
 {
-	drawingctx[cmd.contextId()].penup = false;
+	_drawingctx[cmd.contextId()].penup = false;
 }
 
 void SessionState::drawingContextPenUp(const protocol::PenUp &cmd)
 {
-	drawingctx[cmd.contextId()].penup = true;
+	_drawingctx[cmd.contextId()].penup = true;
+}
+
+/**
+ * @brief Kick all users off the server
+ */
+void SessionState::kickAllUsers()
+{
+	foreach(Client *c, _clients)
+		c->kick(0);
 }
 
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 {
-	locked = cmd.isLocked();
-	closed = cmd.isClosed();
-	layerctrllocked = cmd.isLayerControlsLocked();
+	_locked = cmd.isLocked();
+	_closed = cmd.isClosed();
+	_layerctrllocked = cmd.isLayerControlsLocked();
+	_lockdefault = cmd.isUsersLockedByDefault();
 }
 
 protocol::MessagePtr SessionState::sessionConf() const
 {
 	return protocol::MessagePtr(new protocol::SessionConf(
-		locked,
-		closed,
-		layerctrllocked
+		_locked,
+		_closed,
+		_layerctrllocked,
+		_lockdefault
 	));
 }
 

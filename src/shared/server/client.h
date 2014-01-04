@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include <QHostAddress>
 
 #include "../net/message.h"
+#include "../util/logger.h"
 
 class QTcpSocket;
 
@@ -36,8 +37,15 @@ namespace protocol {
 
 namespace server {
 
-class Server;
+class SessionState;
 
+/**
+ * @brief Server client
+ *
+ * This class represents a client that connects to the server.
+ * A client is initially in a "lobby" state, until it finishes the login
+ * handshake, at which point it is assigned to a session.
+ */
 class Client : public QObject
 {
     Q_OBJECT
@@ -48,25 +56,36 @@ class Client : public QObject
 	};
 
 public:
-	Client(Server *server, QTcpSocket *socket);
+	Client(QTcpSocket *socket, SharedLogger logger, QObject *parent=0);
 	~Client();
 
-	//! Get the user's host address
+	//! Get the user's IP address
 	QHostAddress peerAddress() const;
+
+	/**
+	 * @brief Assign this client to a session
+	 * @param session
+	 */
+	void setSession(SessionState *session);
 
 	/**
 	 * @brief Get the context ID of the client
 	 *
 	 * This is initially zero until the login process is complete.
+	 *
+	 * The ID is assigned by the session the client is joining, or by the client
+	 * itself when hosting a new session
 	 * @return client ID
 	 */
 	int id() const { return _id; }
+	void setId(int id) { _id = id; }
 
 	/**
 	 * @brief Get the user name of this client
 	 * @return user name
 	 */
 	const QString &username() const { return _username; }
+	void setUsername(const QString &username) { _username = username; }
 
 	/**
 	 * @brief Does this user have session operator privileges?
@@ -76,7 +95,7 @@ public:
 
 	/**
 	 * @brief Is this user locked individually?
-	 * @return
+	 * @return true if user lock is set
 	 */
 	bool isUserLocked() const { return _userLock; }
 
@@ -130,7 +149,7 @@ public:
 	 * @brief Kick this user off the server
 	 * @param kickedBy user ID of the kicker
 	 */
-	void kick(int kickedBy);
+	void kick(int kickedBy=0);
 
 	/**
 	 * @brief Barrier lock this user
@@ -145,9 +164,18 @@ public:
 	 */
 	void barrierUnlock();
 
+	/**
+	 * @brief Send a message directly to this client
+	 *
+	 * Note. Typically messages are sent via the main message stream. This is
+	 * used during the login phase and for client specific notifications.
+	 * @param msg
+	 */
+	void sendDirectMessage(protocol::MessagePtr msg);
+
 signals:
+	void loginMessage(protocol::MessagePtr message);
 	void disconnected(Client *client);
-	void loggedin(Client *client);
 	void barrierLocked();
 
 public slots:
@@ -183,7 +211,6 @@ private:
 	void sendOpWhoList();
 	void sendOpServerStatus();
 
-	bool validateUsername(const QString &username);
 	void updateState(protocol::MessagePtr msg);
 
 	void enqueueHeldCommands();
@@ -191,7 +218,9 @@ private:
 
 	bool isLayerLocked(int layerid);
 
-	Server *_server;
+	SessionState *_session;
+	SharedLogger _logger;
+
 	QTcpSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
 	QList<protocol::MessagePtr> _holdqueue;
@@ -215,9 +244,6 @@ private:
 
 	//! User's barrier (snapshot sync) lock status
 	enum {BARRIER_NOTLOCKED, BARRIER_WAIT, BARRIER_LOCKED } _barrierlock;
-
-	//! The user's current layer (needed for layer locking)
-	int _currentLayer;
 };
 
 }

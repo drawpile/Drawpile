@@ -132,13 +132,15 @@ public:
 	static const uint8_t ATTR_LOCKED = 0x01;
 	static const uint8_t ATTR_CLOSED = 0x02;
 	static const uint8_t ATTR_LAYERCTRLLOCKED = 0x04;
+	static const uint8_t ATTR_LOCKDEFAULT = 0x08;
 
 	SessionConf(uint8_t attrs) : Message(MSG_SESSION_CONFIG, 0), _attrs(attrs) {}
-	SessionConf(bool locked, bool closed, bool layerctrlslocked)
+	SessionConf(bool locked, bool closed, bool layerctrlslocked, bool lockdefault)
 		: SessionConf(
 			  (locked?ATTR_LOCKED:0) |
 			  (closed?ATTR_CLOSED:0) |
-			  (layerctrlslocked?ATTR_LAYERCTRLLOCKED:0)
+			  (layerctrlslocked?ATTR_LAYERCTRLLOCKED:0) |
+			  (lockdefault?ATTR_LOCKDEFAULT:0)
 		) {}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
@@ -153,6 +155,9 @@ public:
 
 	//! Are layer controls limited to operators only?
 	bool isLayerControlsLocked() const { return _attrs & ATTR_LAYERCTRLLOCKED; }
+
+	//! Are new users locked automatically when they join?
+	bool isUsersLockedByDefault() const { return _attrs & ATTR_LOCKDEFAULT; }
 
 protected:
 	int payloadLength() const;

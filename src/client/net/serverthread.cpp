@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,9 +17,6 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QTextStream>
-
-#include <iostream>
 
 #include "config.h"
 
@@ -55,13 +52,19 @@ bool ServerThread::isOnDefaultPort() const
 
 void ServerThread::run() {
 	server::Server server;
-	server.setErrorStream(new QTextStream(stderr));
+	SharedLogger logger(new ConsoleLogger);
+#ifdef NDEBUG
+	logger->setLogLevel(Logger::LOG_WARNING);
+#else
+	logger->setLogLevel(Logger::LOG_DEBUG);
+#endif
+	server.setLogger(logger);
 
 	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
 
-	qDebug() << "starting server";
+	logger->logDebug("Starting server");
     if(!server.start(_port, true)) {
-		qDebug() << "an error occurred";
+		logger->logError("Couldn't start server");
 		_port = 0;
 		_starter.wakeOne();
 		return;
@@ -72,7 +75,7 @@ void ServerThread::run() {
 
 	exec();
 
-	qDebug() << "server thread exiting. Delete=" << _deleteonexit;
+	logger->logDebug("server thread exiting.");
 	if(_deleteonexit)
 		deleteLater();
 }

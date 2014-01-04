@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,7 +22,9 @@
 #include <QTcpSocket>
 
 #include "server.h"
+#include "session.h"
 #include "client.h"
+#include "loginhandler.h"
 
 #include "../net/snapshot.h"
 
@@ -31,21 +33,18 @@ namespace server {
 Server::Server(QObject *parent)
 	: QObject(parent),
 	  _server(0),
-	  _errors(0),
-	  _debug(0),
-	  _hasSession(false),
+	  _logger(SharedLogger(new DummyLogger)),
+	  _session(0),
 	  _stopping(false)
-
 {
 }
 
 Server::~Server()
 {
-	delete _server;
 }
 
 /**
- * Start listening on the specified address.
+ * @brief Start listening on the specified address.
  * @param port the port to listen on
  * @param anyport if true, a random port is tried if the preferred on is not available
  * @param address listening address
@@ -63,20 +62,38 @@ bool Server::start(quint16 port, bool anyport, const QHostAddress& address) {
 		ok = _server->listen(address, 0);
 
 	if(ok==false) {
-		printError(_server->errorString());
+		_logger->logError(_server->errorString());
 		delete _server;
 		_server = 0;
 		return false;
 	}
 
-	printDebug(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString()));
+	_logger->logDebug(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString()));
 	return true;
 }
 
+/**
+ * @brief Get the port the server is listening on
+ * @return port number
+ */
 int Server::port() const
 {
 	Q_ASSERT(_server);
 	return _server->serverPort();
+}
+
+/**
+ * @brief Get the number of connected clients.
+ *
+ * This includes the clients who haven't yet logged in to the session
+ * @return
+ */
+int Server::clientCount() const
+{
+	int total = _lobby.size();
+	if(_session)
+		total += _session->userCount();
+	return total;
 }
 
 /**
@@ -86,82 +103,48 @@ void Server::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
 
-	printDebug(QString("Accepted new client from adderss %1").arg(socket->peerAddress().toString()));
-	printDebug(QString("Number of connected clients is now %1").arg(_clients.size() + 1));
+	_logger->logDebug(QString("Accepted new client from adderss %1").arg(socket->peerAddress().toString()));
+	_logger->logDebug(QString("Number of connected clients is now %1").arg(clientCount() + 1));
 
-	Client *client = new Client(this, socket);
-	_clients.append(client);
+	Client *client = new Client(socket, _logger, this);
+	_lobby.append(client);
 
 	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
-	connect(client, SIGNAL(loggedin(Client*)), this, SLOT(clientLoggedIn(Client*)));
-	connect(client, SIGNAL(barrierLocked()), this, SLOT(userBarrierLocked()));
+
+	LoginHandler *lh = new LoginHandler(client, _session, _logger);
+	connect(lh, &LoginHandler::sessionCreated, [this](SessionState *session) {
+		if(_session) {
+			// whoops! someone else beat this user to it!
+			delete session;
+			return;
+		}
+		_session = session;
+		session->setParent(this);
+		connect(session, SIGNAL(lastClientLeft()), this, SLOT(lastSessionUserLeft()));
+	});
+	lh->startLoginProcess();
 }
 
 void Server::removeClient(Client *client)
 {
-	printDebug(QString("Client %1 from %2 disconnected").arg(client->id()).arg(client->peerAddress().toString()));
-
-	client->deleteLater();
-
-	bool removed = _clients.removeOne(client);
-	Q_ASSERT(removed);
-
-	// Make sure there is at least one operator in the server
-	bool hasOp=false, hasUsers=false;
-	foreach(const Client *c, _clients) {
-		if(c->id()>0)
-			hasUsers=true;
-		if(c->isOperator()) {
-			hasOp=true;
-			break;
-		}
-	}
-	if(!hasOp) {
-		// Make the first fully logged in user the new operator
-		foreach(Client *c, _clients) {
-			if(c->id()>0) {
-				c->grantOp();
-				break;
-			}
-		}
-	}
-	if(!hasUsers) {
-		// The last user left the session.
-		_session.closed = false;
-		addToCommandStream(_session.sessionConf());
-
-		emit lastClientLeft();
-
-		if(!_mainstream.hasSnapshot() && _hasSession) {
-			// No snapshot and no one to provide one? The server is gone...
-			stop();
-		}
-
+	_logger->logDebug(QString("Client %1 from %2 disconnected").arg(client->id()).arg(client->peerAddress().toString()));
+	bool wasInLobby = _lobby.removeOne(client);
+	if(wasInLobby) {
+		// If client was not in the lobby, it was part of a session.
+		client->deleteLater();
 	}
 }
 
-void Server::clientLoggedIn(Client *client)
+void Server::lastSessionUserLeft()
 {
-	connect(this, SIGNAL(newCommandsAvailable()), client, SLOT(sendAvailableCommands()));
-}
+	_logger->logDebug("Last user in session left");
+	bool hasSnapshot = _session->mainstream().hasSnapshot();
 
-int Server::userCount() const
-{
-	int count=0;
-	foreach(const Client *c, _clients)
-		if(c->id() > 0)
-			++count;
-	return count;
-}
-
-Client *Server::getClientById(int id)
-{
-	foreach(Client *c, _clients) {
-		if(c->id() == id) {
-			return c;
-		}
+	if(!hasSnapshot) {
+		_logger->logWarning("Shutting down because session has not snapshot point!");
+		// No snapshot and nobody left: session has been lost
+		stop();
 	}
-	return 0;
 }
 
 /**
@@ -171,101 +154,13 @@ void Server::stop() {
 	_stopping = true;
 	_server->close();
 
-	foreach(Client *c, _clients)
+	foreach(Client *c, _lobby)
 		c->kick(0);
 
+	if(_session)
+		_session->kickAllUsers();
+
 	emit serverStopped();
-}
-
-void Server::addToCommandStream(protocol::MessagePtr msg)
-{
-	// TODO history size limit. Can clear up to lowest stream pointer index.
-	_mainstream.append(msg);
-	emit newCommandsAvailable();
-}
-
-void Server::addSnapshotPoint()
-{
-	_mainstream.addSnapshotPoint();
-	emit snapshotCreated();
-}
-
-bool Server::addToSnapshotStream(protocol::MessagePtr msg)
-{
-	if(!_mainstream.hasSnapshot()) {
-		printError("Tried to add a snapshot command, but there is no snapshot point!");
-		return true;
-	}
-	protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
-	if(sp.isComplete()) {
-		printError("Tried to add a snapshot command, but the snapshot point is already complete!");
-		return true;
-	}
-
-	sp.append(msg);
-
-	emit newCommandsAvailable();
-
-	return sp.isComplete();
-}
-
-void Server::cleanupCommandStream()
-{
-	int removed = _mainstream.cleanup();
-	printDebug(QString("Cleaned up %1 messages from the command stream.").arg(removed));
-}
-
-void Server::startSnapshotSync()
-{
-	printDebug("Starting snapshot sync!");
-
-	// Barrier lock all clients
-	foreach(Client *c, _clients)
-		c->barrierLock();
-}
-
-void Server::snapshotSyncStarted()
-{
-	printDebug("Snapshot sync started!");
-	// Lift barrier lock
-	foreach(Client *c, _clients)
-		c->barrierUnlock();
-}
-
-void Server::userBarrierLocked()
-{
-	// Count locked users
-	int locked=0;
-	foreach(const Client *c, _clients)
-		if(c->isHoldLocked() || c->isDropLocked())
-			++locked;
-
-	if(locked == _clients.count()) {
-		// All locked, we can now send the snapshot sync request
-		foreach(Client *c, _clients) {
-			if(c->isOperator()) {
-				c->requestSnapshot(true);
-				break;
-			}
-		}
-	}
-}
-
-
-void Server::printError(const QString &message)
-{
-	if(_errors) {
-		*_errors << message << '\n';
-		_errors->flush();
-	}
-}
-
-void Server::printDebug(const QString &message)
-{
-	if(_debug) {
-		*_debug << message << '\n';
-		_debug->flush();
-	}
 }
 
 }

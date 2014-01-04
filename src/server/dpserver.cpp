@@ -27,8 +27,6 @@
 #include <QCommandLineParser>
 #endif
 
-#include <iostream>
-
 #include "config.h"
 
 #include "../shared/server/server.h"
@@ -64,13 +62,16 @@ int main(int argc, char *argv[]) {
 	parser.process(app);
 
 	// Initialize the server
-	Server *server = new Server();
+	Server *server = new Server;
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
-	server->setErrorStream(new QTextStream(stderr));
+	SharedLogger logger(new ConsoleLogger);
 	if(parser.isSet(verboseOption))
-		server->setDebugStream(new QTextStream(stdout));
+		logger->setLogLevel(Logger::LOG_DEBUG);
+	else
+		logger->setLogLevel(Logger::LOG_WARNING);
+	server->setLogger(logger);
 
 	int port = DRAWPILE_PROTO_DEFAULT_PORT;
 	QHostAddress address = QHostAddress::Any;
@@ -79,14 +80,14 @@ int main(int argc, char *argv[]) {
 		bool ok;
 		port = parser.value(portOption).toInt(&ok);
 		if(!ok || port<1 || port>0xffff) {
-			std::cerr << "invalid port\n";
+			logger->logError("Invalid port");
 			return 1;
 		}
 	}
 
 	if(parser.isSet(listenOption)) {
 		if(!address.setAddress(parser.value(listenOption))) {
-			std::cerr << "Invalid listening address\n";
+			logger->logError("Invalid listening address");
 			return 1;
 		}
 	}

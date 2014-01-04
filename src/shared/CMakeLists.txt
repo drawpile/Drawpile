@@ -21,14 +21,15 @@ set (
 	)
 
 set (
-        RECORDING_SOURCES
-        record/writer.cpp
-        record/reader.cpp
-        )
+	RECORDING_SOURCES
+	record/writer.cpp
+	record/reader.cpp
+	)
 
 set (
 	UTIL_SOURCES
 	util/idlist.cpp
+	util/logger.cpp
 	)
 
 set (
@@ -36,6 +37,7 @@ set (
 	server/server.cpp
 	server/client.cpp
 	server/session.cpp
+	server/loginhandler.cpp
 	)
 
 add_library( ${DPSHAREDLIB} STATIC ${NET_SOURCES} ${RECORDING_SOURCES} ${UTIL_SOURCES} ${SRV_SOURCES} )

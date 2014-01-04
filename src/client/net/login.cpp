@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,15 +34,17 @@ namespace net {
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
 {
 	if(message->type() != protocol::MSG_LOGIN) {
+		qWarning() << "Login error: got message type" << message->type() << "when expected type 0";
 		_server->loginFailure(QApplication::tr("Invalid state"));
 		return;
 	}
 
 	QString msg = message.cast<protocol::Login>().message();
 
+	qDebug() << "login" << msg;
 	switch(_state) {
 	case 0: expectHello(msg); break;
-	case 1: expectPasswordResponse(msg); break;
+	case 1: expectSessionDescription(msg); break;
 	case 2: expectLoginOk(msg); break;
 	default: _server->loginFailure(QApplication::tr("Unexpected response"));
 	}
@@ -50,10 +52,10 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 void LoginHandler::expectHello(const QString &msg)
 {
-	// Hello response should be in format "DRAWPILE <major.minor> [PASS]"
+	// Hello response should be in format "DRAWPILE <major>"
 	QStringList tokens = msg.split(' ', QString::SkipEmptyParts);
 
-	if(tokens.length() < 2 || tokens.length() > 3) {
+	if(tokens.length() != 2) {
 		qWarning() << "Login error. Expected hello, got:" << msg;
 		_server->loginFailure(QApplication::tr("Incompatible server"));
 		return;
@@ -65,83 +67,76 @@ void LoginHandler::expectHello(const QString &msg)
 		return;
 	}
 
-	QStringList versions = tokens[1].split('.', QString::SkipEmptyParts);
-	if(versions.length()!=2) {
-		qWarning() << "Login error. Expected <minor>.<major>, got:" << tokens[1];
-		_server->loginFailure(QApplication::tr("Incompatible server"));
-		return;
-	}
 	// Major version must match ours
 	bool ok;
-	int majorVersion = versions[0].toInt(&ok);
+	int majorVersion = tokens[1].toInt(&ok);
 	if(!ok || majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
 		qWarning() << "Login error. Server major version mismatch.";
 		_server->loginFailure(QApplication::tr("Server is for a different DrawPile version!"));
 		return;
 	}
 
-	// Minor version (if set) must also match ours
-	int minorVersion = versions[1].toInt(&ok);
-	if(!ok || (minorVersion>0 && minorVersion != DRAWPILE_PROTO_MINOR_VERSION)) {
-		qWarning() << "Login error. Server minor version mismatch";
-		_server->loginFailure(QApplication::tr("Session for different DrawPile version in progress!"));
-		return;
-	}
+	// Next, we expect the session description
+	_state = 1;
+}
 
-	// Is a password needed?
-	bool needpassword = false;
-	if(tokens.length()==3) {
-		if(tokens[2] == "PASS") {
-			needpassword = true;
-		} else {
+void LoginHandler::expectSessionDescription(const QString &msg)
+{
+	if(msg == "NOSESSION") {
+		if(_mode != HOST) {
+			_server->loginFailure(QApplication::tr("Session does not exist yet!"));
+			return;
+		}
+
+		// Ok, we're good to host
+		QString hostmsg = QString("HOST %1 %2 %3").arg(DRAWPILE_PROTO_MINOR_VERSION).arg(_userid).arg(_address.userName());
+		_server->sendMessage(protocol::MessagePtr(new protocol::Login(hostmsg)));
+	} else {
+		QStringList tokens = msg.split(' ', QString::SkipEmptyParts);
+		// Expect session description in format:
+		// SESSION <minorVersion> [PASS]
+		if(tokens.size() < 2 || tokens.size() > 3) {
+			qWarning() << "Login error. Expected session description, got:" << msg;
 			_server->loginFailure(QApplication::tr("Incompatible server"));
 			return;
 		}
+
+		bool ok;
+		int minorVersion = tokens[1].toInt(&ok);
+		if(!ok || minorVersion != DRAWPILE_PROTO_MINOR_VERSION) {
+			qWarning() << "Login error. Server minor version mismatch";
+			_server->loginFailure(QApplication::tr("Session for a different DrawPile version in progress!"));
+			return;
+		}
+
+		bool needpass = false;
+		if(tokens.size()==3) {
+			if(tokens[2] == "PASS")
+				needpass = true;
+			else {
+				qWarning() << "Login error. Unknown session flag:" << tokens[2];
+				_server->loginFailure(QApplication::tr("Incompatible server"));
+				return;
+			}
+		}
+
+		QString password;
+		if(needpass) {
+			password = QInputDialog::getText(
+				0,
+				QApplication::tr("Session is password protected"),
+				QApplication::tr("Enter password"),
+				QLineEdit::Password
+			);
+		}
+
+		// So far so good, send join message
+		QString joinmsg = QString("JOIN %1 %2").arg(_address.userName()).arg(password);
+		_server->sendMessage(protocol::MessagePtr(new protocol::Login(joinmsg)));
 	}
 
-	if(needpassword) {
-		QString pass = QInputDialog::getText(
-			0,
-			QApplication::tr("Session is password protected"),
-			QApplication::tr("Enter password"),
-			QLineEdit::Password
-		);
-
-		_server->sendMessage(protocol::MessagePtr(new protocol::Login(pass)));
-		_state = 1;
-	} else {
-		// Proceed to next state
-		sendLogin();
-		_state = 2;
-	}
-}
-
-void LoginHandler::expectPasswordResponse(const QString &msg)
-{
-	if(msg == "OK") {
-		sendLogin();
-		_state = 2;
-	} else if(msg=="BADPASS") {
-		_server->loginFailure(QApplication::tr("Incorrect password"));
-	} else {
-		// This shouldn't happen
-		_server->loginFailure("Unknown password error");
-	}
-}
-
-void LoginHandler::sendLogin()
-{
-	QString msg;
-	switch(_mode) {
-	case HOST:
-		msg = QString("HOST %1 %2 %3").arg(DRAWPILE_PROTO_MINOR_VERSION).arg(_userid).arg(_address.userName());
-		break;
-	case JOIN:
-		msg = QString("JOIN %1").arg(_address.userName());
-		break;
-	}
-
-	_server->sendMessage(protocol::MessagePtr(new protocol::Login(msg)));
+	// Expect OK/Error response
+	_state = 2;
 }
 
 void LoginHandler::expectLoginOk(const QString &msg)
@@ -150,11 +145,11 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	if(msg == "BADNAME") {
 		_server->loginFailure(QApplication::tr("Username invalid or reserved"));
 		return;
-	} else if(msg == "NOSESSION") {
-		_server->loginFailure(QApplication::tr("Session does not exist yet!"));
-		return;
 	} else if(msg == "CLOSED") {
 		_server->loginFailure(QApplication::tr("Session is closed!"));
+		return;
+	} else if(msg == "BADPASS") {
+		_server->loginFailure(QApplication::tr("Incorrect password"));
 		return;
 	}
 

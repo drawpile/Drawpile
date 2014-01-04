@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -102,9 +102,8 @@ public:
 
 private:
 	void expectHello(const QString &msg);
-	void expectPasswordResponse(const QString &msg);
+	void expectSessionDescription(const QString &msg);
 	void expectLoginOk(const QString &msg);
-	void sendLogin();
 
 	Mode _mode;
 	QUrl _address;

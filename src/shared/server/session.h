@@ -26,7 +26,9 @@
 #include <QString>
 
 #include "../util/idlist.h"
+#include "../util/logger.h"
 #include "../net/message.h"
+#include "../net/messagestream.h"
 
 namespace protocol {
 	class ToolChange;
@@ -40,6 +42,8 @@ namespace protocol {
 }
 
 namespace server {
+
+class Client;
 
 struct LayerState {
 	LayerState() : id(0), locked(false) {}
@@ -60,50 +64,149 @@ struct DrawingContext {
 /**
  * The serverside session state.
  */
-struct SessionState {
-	SessionState() : layerids(255), annotationids(255), userids(255), minorVersion(0),
-		locked(false), layerctrllocked(true), closed(false), maxusers(255),
-		lockdefault(false), syncstate(NOT_SYNCING)
-	{ }
+class SessionState : public QObject {
+	Q_OBJECT
+public:
+	enum SessionSyncState {NOT_SYNCING, SYNC_WAIT_FOR_LOCK, SYNC_WAIT_FOR_ACK };
 
-	//! Used layer IDs
-	UsedIdList layerids;
+	explicit SessionState(int minorVersion, SharedLogger _logger, QObject *parent=0);
 
-	//! Used annotation IDs
-	UsedIdList annotationids;
+	/**
+	 * @brief Get the minor protocol version of this session
+	 *
+	 * The server does not care about differences in the minor version, but
+	 * clients do. The session's minor version is set by the user who creates
+	 * the session.
+	 * @return protocol minor version
+	 */
+	int minorProtocolVersion() const { return _minorVersion; }
 
-	//! Layer states
-	QVector<LayerState> layers;
+	/**
+	 * @brief Get the session password
+	 *
+	 * This is an empty string if no password is required
+	 * @return password
+	 */
+	const QString &password() const { return _password; }
+	void setPassword(const QString &password) { _password = password; }
 
-	//! Drawing context states
-	QHash<int, DrawingContext> drawingctx;
+	/**
+	 * @brief Is the session closed to new users?
+	 * @return true if new users will not be admitted
+	 */
+	bool isClosed() const { return _closed; }
+	void setClosed(bool closed);
 
-	//! Used user/drawing context IDs
-	UsedIdList userids;
+	/**
+	 * @brief Is the session locked?
+	 * @return true if general session lock is in place
+	 */
+	bool isLocked() const { return _locked; }
+	void setLocked(bool locked);
 
-	//! The client version used in this session
-	int minorVersion;
+	/**
+	 * @brief Have layer controls been locked for non-operators?
+	 * @return true if layer controls are locked
+	 */
+	bool isLayerControlLocked() const { return _layerctrllocked; }
+	void setLayerControlLocked(bool locked);
 
-	//! General all layer/all user lock
-	bool locked;
+	/**
+	 * @brief Are newly joining users locked by default?
+	 * @return true if users are automatically locked when they join
+	 */
+	bool isUsersLockedByDefault() const { return _lockdefault; }
+	void setUsersLockedByDefault(bool locked);
 
-	//! Lock layer controls from non-operators
-	bool layerctrllocked;
+	/**
+	 * @brief Get the maximum number of users allowed in the session
+	 *
+	 * This setting only affects new joins. Old users are not removed,
+	 * even if the limit is lowered.
+	 * @return user limit
+	 */
+	int maxUsers() const { return _maxusers; }
+	void setMaxUsers(int maxusers);
 
-	//! Is the session closed to new users?
-	bool closed;
+	/**
+	 * @brief Add a new client to the session
+	 * @param user
+	 */
+	void joinUser(Client *user, bool host);
 
-	//! Maximum number of users allowed in the session
-	int maxusers;
+	/**
+	 * @brief Assign an ID for this user
+	 *
+	 * This is used during the login phase to prepare
+	 * the user for joining the session
+	 * @param user
+	 */
+	void assignId(Client *user);
 
-	//! Lock new users by default
-	bool lockdefault;
+	/**
+	 * @brief Get a client by ID
+	 * @param id user ID
+	 * @return user or 0 if not found
+	 */
+	Client *getClientById(int id);
 
-	//! If set, the session is password protected
-	QString password;
+	/**
+	 * @brief Get the number of clients in the session
+	 * @return user count
+	 */
+	int userCount() const { return _clients.size(); }
 
-	//! State of snapshot sync
-	enum {NOT_SYNCING, SYNC_WAIT_FOR_LOCK, SYNC_WAIT_FOR_ACK } syncstate;
+	const QList<Client*> &clients() { return _clients; }
+
+	/**
+	 * @brief Get the drawing context for the given user
+	 * @param id
+	 * @return
+	 */
+	DrawingContext &drawingContext(int id) { return _drawingctx[id]; }
+
+	/**
+	 * @brief get the main command stream
+	 * @return reference to main command stream
+	 */
+	const protocol::MessageStream &mainstream() const { return _mainstream; }
+
+	/**
+	 * @brief Add a command to the message stream.
+	 *
+	 * Emits newCommandsAvailable
+	 * @param msg
+	 */
+	void addToCommandStream(protocol::MessagePtr msg);
+
+	/**
+	 * @brief Add a new snapshot point.
+	 * @pre there are no unfinished snapshot points
+	 */
+	void addSnapshotPoint();
+
+	/**
+	 * @brief Add a message to the latest snapshot point.
+	 * @param msg
+	 * @pre there is an unfinished snapshot point
+	 * @return true if this was the command that completed the snapshot
+	 */
+	bool addToSnapshotStream(protocol::MessagePtr msg);
+
+	/**
+	 * @brief Remove all pre-snapshot messages from the command stream
+	 */
+	void cleanupCommandStream();
+
+	/**
+	 * @brief Synchronize clients so that a new snapshot point can be generated
+	 */
+	void startSnapshotSync();
+
+	/**
+	 * @brief Snapshot synchronization has started
+	 */
+	void snapshotSyncStarted();
 
 	/**
 	 * @brief Get the layer with the given ID
@@ -181,11 +284,45 @@ struct SessionState {
 
 	void drawingContextPenUp(const protocol::PenUp &cmd);
 
-	/**
-	 * @brief Get a SessionConf message describing the current session options
-	 * @return
-	 */
+	void kickAllUsers();
+
+signals:
+	//! Last user in the session just left
+	void lastClientLeft();
+
+	//! New commands have been added to the main stream
+	void newCommandsAvailable();
+
+	//! A new snapshot was just created
+	void snapshotCreated();
+
+private slots:
+	void removeUser(Client *user);
+	void userBarrierLocked();
+
+private:
 	protocol::MessagePtr sessionConf() const;
+
+	SharedLogger _logger;
+	QList<Client*> _clients;
+
+	protocol::MessageStream _mainstream;
+	SessionSyncState _syncstate;
+
+	UsedIdList _userids;
+	UsedIdList _layerids;
+	UsedIdList _annotationids;
+	QVector<LayerState> _layers;
+	QHash<int, DrawingContext> _drawingctx;
+
+	int _minorVersion;
+	int _maxusers;
+	QString _password;
+
+	bool _locked;
+	bool _layerctrllocked;
+	bool _closed;
+	bool _lockdefault;
 };
 
 }

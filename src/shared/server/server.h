@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,18 +23,15 @@
 
 #include <QObject>
 #include <QHostAddress>
-#include <QHash>
 
-#include "../util/idlist.h"
-#include "../net/messagestream.h"
-
-#include "session.h"
+#include "../util/logger.h"
 
 class QTcpServer;
 
 namespace server {
 
 class Client;
+class SessionState;
 
 /**
  * The drawpile server.
@@ -44,99 +41,16 @@ Q_OBJECT
 public:
 	static const int MAXCLIENTS = 255;
 
-	Server(QObject *parent=0);
+	explicit Server(QObject *parent=0);
 	~Server();
 
-	//! Set the stream where error messages are written
-	void setErrorStream(QTextStream *stream) { _errors = stream; }
+	void setLogger(SharedLogger logger) { _logger = logger; }
 
-	//! Set the stream where debug messages are written
-	void setDebugStream(QTextStream *stream) { _debug = stream; }
-
-	//! Start the server.
 	bool start(quint16 port, bool anyport=false, const QHostAddress& address = QHostAddress::Any);
 
-	//! Get the port the server is listening on
 	int port() const;
-
-	/**
-	 * @brief Is there a session
-	 *
-	 * A session is considered to be started after the first user has logged in.
-	 * @return true if session started
-	 */
-	bool isSessionStarted() const { return _hasSession; }
-
-	/**
-	 * @brief get the main command stream
-	 * @return reference to main command stream
-	 */
-	const protocol::MessageStream &mainstream() const { return _mainstream; }
-
-	/**
-	 * @brief Add a command to the message stream.
-	 *
-	 * Emits newCommandsAvailable
-	 * @param msg
-	 */
-	void addToCommandStream(protocol::MessagePtr msg);
-
-	/**
-	 * @brief Add a new snapshot point.
-	 * @pre there are no unfinished snapshot points
-	 */
-	void addSnapshotPoint();
-
-	/**
-	 * @brief Add a message to the latest snapshot point.
-	 * @param msg
-	 * @pre there is an unfinished snapshot point
-	 * @return true if this was the command that completed the snapshot
-	 */
-	bool addToSnapshotStream(protocol::MessagePtr msg);
-
-	/**
-	 * @brief Remove all pre-snapshot messages from the command stream
-	 */
-	void cleanupCommandStream();
-
-	/**
-	 * @brief Synchronize clients so that a new snapshot point can be generated
-	 */
-	void startSnapshotSync();
-
-	/**
-	 * @brief Snapshot synchronization has started
-	 */
-	void snapshotSyncStarted();
-
-	void startSession() { _hasSession = true; }
-
-	SessionState &session() { return _session; }
-
-	/**
-	 * @brief Get the number of logged in users.
-	 * @return number of logged in users
-	 */
-	int userCount() const;
-
-	/**
-	 * @brief Get the list of clients
-	 * @return
-	 */
-	const QList<Client*> &clients() { return _clients; }
-
-	/**
-	 * @brief Get the client with the specified ID
-	 *
-	 * Client must be a logged in member of the session
-	 * @param id client ID
-	 * @return client or 0 if not found
-	 */
-	Client *getClientById(int id);
-
-	void printError(const QString &message);
-	void printDebug(const QString &message);
+	int clientCount() const;
+	bool isSessionStarted() const { return _session != 0; }
 
 public slots:
 	 //! Stop the server. All clients are disconnected.
@@ -145,32 +59,22 @@ public slots:
 private slots:
 	void newClient();
 	void removeClient(Client *client);
-	void clientLoggedIn(Client *client);
-	void userBarrierLocked();
+	void lastSessionUserLeft();
 
 signals:
 	//! This signal is emitted when the server becomes empty
 	void lastClientLeft();
 
-	//! New commands have been added to the main stream
-	void newCommandsAvailable();
-
-	//! A new snapshot was just created
-	void snapshotCreated();
-
 	void serverStopped();
 
 private:
 	QTcpServer *_server;
-	QList<Client*> _clients;
 
-	QTextStream *_errors;
-	QTextStream *_debug;
+	QList<Client*> _lobby;
 
-	protocol::MessageStream _mainstream;
+	SharedLogger _logger;
 
-	bool _hasSession;
-	SessionState _session;
+	SessionState *_session;
 	bool _stopping;
 };
 
