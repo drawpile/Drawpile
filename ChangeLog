@@ -1,6 +1,7 @@
 2014-01-?? Version 0.8.2
  * New application icon
  * Session recording and playback support
+ * Adjustable server session history size limit
 
 2013-12-30 Version 0.8.1
  * Use icons from current theme
