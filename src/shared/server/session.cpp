@@ -69,9 +69,8 @@ void SessionState::joinUser(Client *user, bool host)
 		user->requestSnapshot(false);
 	} else {
 		connect(this, SIGNAL(snapshotCreated()), user, SLOT(snapshotNowAvailable()));
+		addToCommandStream(joinmsg);
 	}
-
-	addToCommandStream(joinmsg);
 
 	// Give op to this user if it is the only one here
 	if(userCount() == 1)
