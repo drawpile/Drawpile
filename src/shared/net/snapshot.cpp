@@ -45,10 +45,6 @@ int SnapshotMode::serializePayload(uchar *data) const
 
 void SnapshotPoint::append(MessagePtr msg)
 {
-	Q_ASSERT(!_complete);
-	if(_complete)
-		return;
-
 	if(msg->type() == MSG_SNAPSHOT && msg.cast<SnapshotMode>().mode() == SnapshotMode::END)
 		_complete = true;
 	else

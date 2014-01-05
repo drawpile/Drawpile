@@ -191,6 +191,8 @@ void SessionState::addToCommandStream(protocol::MessagePtr msg)
 				uint difference = oldsize - _mainstream.lengthInBytes();
 				_logger->logDebug(QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2));
 
+				// TODO perhaps this can be deferred? Doing it now will cut off undo history,
+				// but deferring new snapshot generation risks leaving the session in unjoinable state.
 				startSnapshotSync();
 			}
 		}
@@ -230,10 +232,17 @@ bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 
 	sp.append(msg);
 
-	emit newCommandsAvailable();
+	if(sp.isComplete()) {
+		// Add latest layer ACL status to snapshot stream
+		foreach(const LayerState &layer, _layers) {
+			sp.append(MessagePtr(new protocol::LayerACL(0, layer.id, layer.locked, layer.exclusive)));
+		}
 
-	if(sp.isComplete())
+		// Messages older than the snapshot point can now be removed
 		cleanupCommandStream();
+	}
+
+	emit newCommandsAvailable();
 
 	return sp.isComplete();
 }

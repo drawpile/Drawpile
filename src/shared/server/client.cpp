@@ -175,7 +175,7 @@ void Client::receiveSnapshot()
 {
 	if(!_uploading_snapshot) {
 		_logger->logError(QString("Received snapshot data from client %1 when not expecting it!").arg(_id));
-		_socket->disconnect();
+		kick();
 		return;
 	}
 
@@ -194,7 +194,6 @@ void Client::receiveSnapshot()
 
 		// Add message
 		if(_session->addToSnapshotStream(msg)) {
-			// TODO add layer ACLs
 			_logger->logDebug(QString("Finished getting snapshot from client %1").arg(_id));
 			_uploading_snapshot = false;
 
@@ -211,7 +210,7 @@ void Client::receiveSnapshot()
 
 			if(_msgqueue->isPendingSnapshot()) {
 				_logger->logError(QString("Client #%1 sent too much snapshot data!").arg(_id));
-				_socket->disconnectFromHost();
+				kick();
 			}
 			break;
 		}
