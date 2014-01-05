@@ -60,7 +60,7 @@ Client::Client(QTcpSocket *socket, SharedLogger logger, QObject *parent)
 	_socket->setParent(this);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(socketDisconnect()));
-	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError()));
+	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(socketError(QAbstractSocket::SocketError)));
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(receiveMessages()));
 	connect(_msgqueue, SIGNAL(snapshotAvailable()), this, SLOT(receiveSnapshot()));
 	connect(_msgqueue, SIGNAL(badData(int,int)), this, SLOT(gotBadData(int,int)));
@@ -224,10 +224,12 @@ void Client::gotBadData(int len, int type)
 	_socket->abort();
 }
 
-void Client::socketError()
+void Client::socketError(QAbstractSocket::SocketError error)
 {
-	_logger->logError(QString("Socket error %1 (from %2)").arg(_socket->errorString()).arg(peerAddress().toString()));
-	_socket->abort();
+	if(error != QAbstractSocket::RemoteHostClosedError) {
+		_logger->logError(QString("Socket error %1 (from %2)").arg(_socket->errorString()).arg(peerAddress().toString()));
+		_socket->abort();
+	}
 }
 
 void Client::socketDisconnect()

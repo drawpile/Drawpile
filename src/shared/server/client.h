@@ -22,11 +22,10 @@
 
 #include <QObject>
 #include <QHostAddress>
+#include <QTcpSocket>
 
 #include "../net/message.h"
 #include "../util/logger.h"
-
-class QTcpSocket;
 
 namespace protocol {
 	class MessageQueue;
@@ -225,7 +224,7 @@ private slots:
 	void gotBadData(int len, int type);
 	void receiveMessages();
 	void receiveSnapshot();
-	void socketError();
+	void socketError(QAbstractSocket::SocketError error);
 	void socketDisconnect();
 
 private:
