@@ -36,6 +36,7 @@ Server::Server(QObject *parent)
 	  _logger(SharedLogger(new DummyLogger)),
 	  _session(0),
 	  _stopping(false),
+	  _persistent(false),
 	  _historylimit(0)
 {
 }
@@ -142,8 +143,12 @@ void Server::lastSessionUserLeft()
 	_logger->logDebug("Last user in session left");
 	bool hasSnapshot = _session->mainstream().hasSnapshot();
 
-	if(!hasSnapshot) {
-		_logger->logWarning("Shutting down because session has not snapshot point!");
+	if(!hasSnapshot || !_persistent) {
+		if(hasSnapshot)
+			_logger->logWarning("Shutting down due to lack of users");
+		else
+			_logger->logWarning("Shutting down because session has not snapshot point!");
+
 		// No snapshot and nobody left: session has been lost
 		stop();
 	}

@@ -107,6 +107,9 @@ int main(int argc, char *argv[]) {
 		server->setHistorylimit(limitbytes);
 	}
 
+	// Dedicated server shouldn't shut down just because there are no users
+	server->setPersistent(true);
+
 	// Start
 	if(!server->start(port, false, address))
 		return 1;
