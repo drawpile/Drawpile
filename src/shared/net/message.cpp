@@ -52,6 +52,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_CHAT: return Chat::deserialize(data, len);
 	case MSG_LAYER_ACL: return LayerACL::deserialize(data, len);
 	case MSG_SNAPSHOT: return SnapshotMode::deserialize(data, len);
+	case MSG_SNAPSHOTPOINT: return 0; /* this message is for internal use only */
 	case MSG_SESSION_TITLE: return SessionTitle::deserialize(data, len);
 	case MSG_SESSION_CONFIG: return SessionConf::deserialize(data, len);
 	case MSG_STREAMPOS: return StreamPos::deserialize(data, len);

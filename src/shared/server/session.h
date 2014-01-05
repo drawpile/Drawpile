@@ -82,6 +82,16 @@ public:
 	int minorProtocolVersion() const { return _minorVersion; }
 
 	/**
+	 * @brief Get the maximum session history size in bytes
+	 *
+	 * If the session history grows beyond this limit, a new snapshot point will
+	 * be requested.
+	 * @return
+	 */
+	uint historyLimit() const { return _historylimit; }
+	void setHistoryLimit(uint limit) { _historylimit = limit; }
+
+	/**
 	 * @brief Get the session password
 	 *
 	 * This is an empty string if no password is required
@@ -186,17 +196,19 @@ public:
 	void addSnapshotPoint();
 
 	/**
+	 * @brief Abandon the snapshot point currently under construction
+	 *
+	 * This will disconnect any client currently download the point.
+	 */
+	void abandonSnapshotPoint();
+
+	/**
 	 * @brief Add a message to the latest snapshot point.
 	 * @param msg
 	 * @pre there is an unfinished snapshot point
 	 * @return true if this was the command that completed the snapshot
 	 */
 	bool addToSnapshotStream(protocol::MessagePtr msg);
-
-	/**
-	 * @brief Remove all pre-snapshot messages from the command stream
-	 */
-	void cleanupCommandStream();
 
 	/**
 	 * @brief Synchronize clients so that a new snapshot point can be generated
@@ -301,6 +313,8 @@ private slots:
 	void userBarrierLocked();
 
 private:
+	void cleanupCommandStream();
+
 	protocol::MessagePtr sessionConf() const;
 
 	SharedLogger _logger;
@@ -323,6 +337,8 @@ private:
 	bool _layerctrllocked;
 	bool _closed;
 	bool _lockdefault;
+
+	uint _historylimit;
 };
 
 }

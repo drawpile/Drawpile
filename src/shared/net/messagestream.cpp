@@ -54,6 +54,21 @@ void MessageStream::addSnapshotPoint()
 	_snapshotpointer = end()-1;
 }
 
+void MessageStream::abandonSnapshotPoint()
+{
+	if(!hasSnapshot())
+		return;
+
+	// Find previous snapshot point
+	int idx = _snapshotpointer;
+	snapshotPoint().cast<SnapshotPoint>().abandon();
+	while(isValidIndex(idx) && (at(idx)->type() != MSG_SNAPSHOTPOINT || at(idx).cast<SnapshotPoint>().isAbandoned())) --idx;
+	if(isValidIndex(idx))
+		_snapshotpointer = idx;
+	else
+		_snapshotpointer = -1;
+}
+
 int MessageStream::cleanup()
 {
 	if(hasSnapshot()) {

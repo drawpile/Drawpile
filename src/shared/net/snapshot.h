@@ -65,7 +65,7 @@ private:
  */
 class SnapshotPoint : public Message {
 public:
-	SnapshotPoint() : Message(MSG_SNAPSHOT, 0), _complete(false) {}
+	SnapshotPoint() : Message(MSG_SNAPSHOTPOINT, 0), _complete(false), _abandoned(false) {}
 
 	/**
 	 * @brief Get the snapshot point substream
@@ -83,6 +83,11 @@ public:
 	void append(MessagePtr msg);
 
 	/**
+	 * @brief Abort the construction of this snapshot point
+	 */
+	void abandon();
+
+	/**
 	 * @brief Check if this snapshot point is complete
 	 *
 	 * A client's main stream pointer is not advanced until the
@@ -92,6 +97,17 @@ public:
 	 */
 	bool isComplete() const { return _complete; }
 
+	/**
+	 * @brief Check if this snapshot point has been abandoned before it was complete
+	 *
+	 * If the client who was uploading the snapshot disconnects before it was ready,
+	 * the snapshot point is abandoned. An abandoned snapshot point is treated
+	 * as if it doesn't exist at all.
+	 *
+	 * @return true if this snapshot point should be ignored
+	 */
+	bool isAbandoned() const { return _abandoned; }
+
 protected:
 	int payloadLength() const { return 0; }
 	int serializePayload(uchar*) const { return 0; }
@@ -99,6 +115,7 @@ protected:
 private:
 	QList<MessagePtr> _substream;
 	bool _complete;
+	bool _abandoned;
 
 };
 }

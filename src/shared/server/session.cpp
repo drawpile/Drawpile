@@ -85,6 +85,10 @@ void SessionState::removeUser(Client *user)
 {
 	Q_ASSERT(_clients.contains(user));
 
+	if(user->isUploadingSnapshot()) {
+		abandonSnapshotPoint();
+	}
+
 	_clients.removeOne(user);
 	_userids.release(user->id());
 
@@ -199,7 +203,40 @@ bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 
 	emit newCommandsAvailable();
 
+	if(sp.isComplete())
+		cleanupCommandStream();
+
 	return sp.isComplete();
+}
+
+void SessionState::abandonSnapshotPoint()
+{
+	_logger->logWarning(QString("Abandoning snapshot point (%1)!").arg(_mainstream.snapshotPointIndex()));
+
+	if(!_mainstream.hasSnapshot()) {
+		_logger->logError("Tried to abandon a snapshot point that doesn't exist!");
+		return;
+	}
+	const protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
+	if(sp.isComplete()) {
+		_logger->logError("Tried to abandon a complete snapshot point!");
+		return;
+	}
+
+	foreach(Client *c, _clients) {
+		if(c->isDownloadingLatestSnapshot()) {
+			// TODO inform of the reason why
+			c->kick();
+		}
+	}
+
+	_mainstream.abandonSnapshotPoint();
+
+	// Make sure no-one remains locked
+	foreach(Client *c, _clients)
+		c->barrierUnlock();
+
+	_logger->logDebug(QString("Snapshot point rolled back to %1").arg(_mainstream.snapshotPointIndex()));
 }
 
 void SessionState::cleanupCommandStream()

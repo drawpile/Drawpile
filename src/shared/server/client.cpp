@@ -98,7 +98,7 @@ void Client::sendAvailableCommands()
 	if(_substreampointer>=0) {
 		// Are we downloading a substream?
 		const protocol::MessagePtr sptr = _session->mainstream().at(_streampointer);
-		Q_ASSERT(sptr->type() == protocol::MSG_SNAPSHOT);
+		Q_ASSERT(sptr->type() == protocol::MSG_SNAPSHOTPOINT);
 		const protocol::SnapshotPoint &sp = sptr.cast<const protocol::SnapshotPoint>();
 
 		if(_substreampointer == 0) {
@@ -125,7 +125,7 @@ void Client::sendAvailableCommands()
 		// Snapshot points (substreams) are skipped.
 		while(_streampointer < _session->mainstream().end()) {
 			MessagePtr msg = _session->mainstream().at(_streampointer++);
-			if(msg->type() != protocol::MSG_SNAPSHOT)
+			if(msg->type() != protocol::MSG_SNAPSHOTPOINT)
 				_msgqueue->send(msg);
 		}
 	}
@@ -158,15 +158,17 @@ void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
 		_logger->logDebug(QString("Got unexpected snapshot message from user %1").arg(_id));
 		return;
 	}
-	if(msg.mode() != protocol::SnapshotMode::ACK) {
-		_logger->logError(QString("Got unexpected snapshot message from user %1. Expected ACK, got mode %2").arg(_id).arg(msg.mode()));
-		// TODO abort sync
-		return;
-	}
 
 	_awaiting_snapshot = false;
-	_session->snapshotSyncStarted();
-	_uploading_snapshot = true;
+
+	if(msg.mode() != protocol::SnapshotMode::ACK) {
+		_logger->logError(QString("Got unexpected snapshot message from user %1. Expected ACK, got mode %2").arg(_id).arg(msg.mode()));
+		_session->abandonSnapshotPoint();
+		return;
+	} else {
+		_session->snapshotSyncStarted();
+		_uploading_snapshot = true;
+	}
 }
 
 void Client::receiveSnapshot()
@@ -195,12 +197,11 @@ void Client::receiveSnapshot()
 			// TODO add layer ACLs
 			_logger->logDebug(QString("Finished getting snapshot from client %1").arg(_id));
 			_uploading_snapshot = false;
-			_session->cleanupCommandStream();
 
 			// If this was the hosting user, graduate to full session status
 			// The server now needs to be brought up to date with the initial uploaded state
 			if(_state == WAIT_FOR_SYNC) {
-				_logger->logDebug(QString("Session host %1 sync complete").arg(_id));
+				_logger->logDebug(QString("Client #%1 session sync complete").arg(_id));
 				_state = IN_SESSION;
 				_streampointer = _session->mainstream().snapshotPointIndex();
 				_session->syncInitialState(_session->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
@@ -209,8 +210,8 @@ void Client::receiveSnapshot()
 			}
 
 			if(_msgqueue->isPendingSnapshot()) {
-				_logger->logError(QString("Client %1 sent too much snapshot data!").arg(_id));
-				_socket->disconnect();
+				_logger->logError(QString("Client #%1 sent too much snapshot data!").arg(_id));
+				_socket->disconnectFromHost();
 			}
 			break;
 		}
@@ -232,6 +233,19 @@ void Client::socketError()
 void Client::socketDisconnect()
 {
 	emit disconnected(this);
+}
+
+bool Client::isDownloadingLatestSnapshot() const
+{
+	if(!_session)
+		return false;
+
+	return _substreampointer >= 0 && _streampointer == _session->mainstream().snapshotPointIndex();
+}
+
+bool Client::isUploadingSnapshot() const
+{
+	return _uploading_snapshot;
 }
 
 void Client::requestSnapshot(bool forcenew)
@@ -659,7 +673,7 @@ bool Client::handleUndoCommand(protocol::Undo &undo)
 		while(limit>0 && points<undo.points() && _session->mainstream().isValidIndex(pos)) {
 			MessagePtr msg = _session->mainstream().at(pos);
 
-			if(msg->type() == protocol::MSG_SNAPSHOT)
+			if(msg->type() == protocol::MSG_SNAPSHOTPOINT)
 				break;
 
 			if(msg->type() == protocol::MSG_UNDOPOINT) {

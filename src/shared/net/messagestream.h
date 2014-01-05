@@ -76,6 +76,14 @@ public:
 	void addSnapshotPoint();
 
 	/**
+	 * @brief Abandon the latest snapshot point
+	 *
+	 * Snapshot pointer is reverted to the previous un-abandoned snapshot point.
+	 * If none exists, the pointer will point to an invalid index.
+	 */
+	void abandonSnapshotPoint();
+
+	/**
 	 * @brief Does this stream contain a snapshot
 	 *
 	 * @return true if this stream contains a snapshot

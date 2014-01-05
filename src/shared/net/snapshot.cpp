@@ -45,15 +45,24 @@ int SnapshotMode::serializePayload(uchar *data) const
 
 void SnapshotPoint::append(MessagePtr msg)
 {
-	if(_complete) {
-		qWarning("Tried to append to a completed snapshot point!");
+	Q_ASSERT(!_complete);
+	if(_complete)
 		return;
-	}
 
 	if(msg->type() == MSG_SNAPSHOT && msg.cast<SnapshotMode>().mode() == SnapshotMode::END)
 		_complete = true;
 	else
 		_substream.append(msg);
+}
+
+void SnapshotPoint::abandon()
+{
+	Q_ASSERT(!_complete);
+	if(_complete)
+		return;
+
+	_abandoned = true;
+	_substream.clear();
 }
 
 }

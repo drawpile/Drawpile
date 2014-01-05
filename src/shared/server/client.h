@@ -100,6 +100,18 @@ public:
 	bool isUserLocked() const { return _userLock; }
 
 	/**
+	 * @brief Is this client currently downloading the latest snapshot?
+	 * @return
+	 */
+	bool isDownloadingLatestSnapshot() const;
+
+	/**
+	 * @brief Is this user currently uploading a snapshot?
+	 * @return
+	 */
+	bool isUploadingSnapshot() const;
+
+	/**
 	 * @brief Request the client to generate a snapshot
 	 *
 	 * This causes the creation of a new snapshot point on the main stream.
