@@ -469,6 +469,7 @@ void Client::barrierLock()
 void Client::barrierUnlock()
 {
 	_barrierlock = BARRIER_NOTLOCKED;
+	enqueueHeldCommands();
 }
 
 void Client::kick(int kickedBy)
@@ -490,9 +491,8 @@ void Client::enqueueHeldCommands()
 	if(isHoldLocked())
 		return;
 
-	foreach(protocol::MessagePtr msg, _holdqueue)
-		handleSessionMessage(msg);
-	_holdqueue.clear();
+	while(!_holdqueue.isEmpty())
+		handleSessionMessage(_holdqueue.takeFirst());
 }
 
 void Client::snapshotNowAvailable()

@@ -93,7 +93,7 @@ void SessionState::removeUser(Client *user)
 	_clients.removeOne(user);
 	_userids.release(user->id());
 
-	if(_drawingctx[user->id()].penup)
+	if(!_drawingctx[user->id()].penup)
 		addToCommandStream(MessagePtr(new protocol::PenUp(user->id())));
 	addToCommandStream(MessagePtr(new protocol::UserLeave(user->id())));
 
@@ -168,36 +168,32 @@ void SessionState::setMaxUsers(int maxusers)
 void SessionState::addToCommandStream(protocol::MessagePtr msg)
 {
 	if(_historylimit>0 && _mainstream.lengthInBytes() > _historylimit) {
-		bool hasOp = false, isSyncing = false;
+		// Cannot cleanup until previous snapshot is finished
+		if(!_mainstream.hasSnapshot() || _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>().isComplete()) {
 
-		// Make sure an operator is present
-		foreach(Client *c, _clients) {
-			if(c->hasBarrierLock() || c->isUploadingSnapshot()) {
-				// A sync is still in progress
-				isSyncing = true;
-				break;
-			}
-			if(c->isOperator()) {
-				hasOp = true;
-				break;
-			}
-		}
-
-		if(hasOp && !isSyncing) {
-			// If there are no operators, we can't clean up history, because that would
-			// end the session due to lack of a snapshot point
-
-			int streampos = _mainstream.end();
-			foreach(const Client *c, _clients) {
-				streampos = qMin(streampos, c->streampointer());
+			// An operator must be present, otherwise the session will end due to a lack
+			// of snapshot point
+			bool hasOp = false;
+			foreach(Client *c, _clients) {
+				if(c->isOperator()) {
+					hasOp = true;
+					break;
+				}
 			}
 
-			uint oldsize = _mainstream.lengthInBytes();
-			_mainstream.hardCleanup(0, streampos);
-			uint difference = oldsize - _mainstream.lengthInBytes();
-			_logger->logDebug(QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2));
+			if(hasOp) {
+				int streampos = _mainstream.end();
+				foreach(const Client *c, _clients) {
+					streampos = qMin(streampos, c->streampointer());
+				}
 
-			startSnapshotSync();
+				uint oldsize = _mainstream.lengthInBytes();
+				_mainstream.hardCleanup(0, streampos);
+				uint difference = oldsize - _mainstream.lengthInBytes();
+				_logger->logDebug(QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2));
+
+				startSnapshotSync();
+			}
 		}
 	}
 
