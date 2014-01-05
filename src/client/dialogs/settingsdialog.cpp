@@ -99,6 +99,8 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	QSettings cfg;
 	cfg.beginGroup("settings/server");
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
+	_ui->enablehistorylimit->setChecked(cfg.value("historylimit", false).toBool());
+	_ui->historylimit->setValue(cfg.value("historysize", 10).toDouble());
 
 	// Generate an editable list of shortcuts
 	_ui->shortcuts->verticalHeader()->setVisible(false);
@@ -150,6 +152,10 @@ void SettingsDialog::rememberSettings() const
 		cfg.remove("port");
 	else
 		cfg.setValue("port", _ui->serverport->value());
+
+	cfg.setValue("historylimit", _ui->enablehistorylimit->isChecked());
+	cfg.setValue("historysize", _ui->historylimit->value());
+
 	cfg.endGroup();
 
 	// Remember shortcuts. Only shortcuts that have been changed

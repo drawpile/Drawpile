@@ -70,6 +70,52 @@
          </item>
         </layout>
        </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="enablehistorylimit">
+         <property name="text">
+          <string>Limit session history:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QDoubleSpinBox" name="historylimit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="suffix">
+            <string> Mb</string>
+           </property>
+           <property name="decimals">
+            <number>1</number>
+           </property>
+           <property name="minimum">
+            <double>1.000000000000000</double>
+           </property>
+           <property name="maximum">
+            <double>1024.000000000000000</double>
+           </property>
+           <property name="value">
+            <double>10.000000000000000</double>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_2">
@@ -127,8 +173,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -143,12 +189,28 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>292</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>enablehistorylimit</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>historylimit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>124</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>235</x>
+     <y>97</y>
     </hint>
    </hints>
   </connection>

@@ -31,6 +31,7 @@ ServerThread::ServerThread(QObject *parent) : QThread(parent)
 {
 	_deleteonexit = false;
     _port = DRAWPILE_PROTO_DEFAULT_PORT;
+	_historylimit = 0;
 }
 
 int ServerThread::startServer()
@@ -59,6 +60,8 @@ void ServerThread::run() {
 	logger->setLogLevel(Logger::LOG_DEBUG);
 #endif
 	server.setLogger(logger);
+
+	server.setHistorylimit(_historylimit);
 
 	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
 

@@ -942,6 +942,9 @@ void MainWindow::finishHost(int i)
 			if(cfg.contains("settings/server/port"))
 				server->setPort(cfg.value("settings/server/port").toInt());
 
+			if(cfg.value("settings/server/historylimit",false).toBool())
+				server->setHistorylimit(cfg.value("settings/server/historysize", 10).toDouble() * 1024*1024);
+
 			int port = server->startServer();
 			if(!port) {
 				QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
