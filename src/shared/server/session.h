@@ -67,8 +67,6 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	enum SessionSyncState {NOT_SYNCING, SYNC_WAIT_FOR_LOCK, SYNC_WAIT_FOR_ACK };
-
 	explicit SessionState(int minorVersion, SharedLogger _logger, QObject *parent=0);
 
 	/**
@@ -321,7 +319,6 @@ private:
 	QList<Client*> _clients;
 
 	protocol::MessageStream _mainstream;
-	SessionSyncState _syncstate;
 
 	UsedIdList _userids;
 	UsedIdList _layerids;

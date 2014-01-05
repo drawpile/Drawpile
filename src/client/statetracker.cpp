@@ -79,7 +79,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 	if(_msgstream_sizelimit>0 && _msgstream.lengthInBytes() > _msgstream_sizelimit) {
 		uint oldlen = _msgstream.lengthInBytes();
 		qDebug() << "Message stream history size limit reached at" << oldlen / float(1024*1024) << "Mb. Clearing..";
-		_msgstream.hardCleanup(_msgstream_sizelimit / 2);
+		_msgstream.hardCleanup(0, _msgstream.end());
 		qDebug() << "Released" << (oldlen-_msgstream.lengthInBytes()) / float(1024*1024) << "Mb.";
 		_hassnapshot = false;
 

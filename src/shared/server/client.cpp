@@ -409,7 +409,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 
 bool Client::isHoldLocked() const
 {
-	return _state == WAIT_FOR_SYNC || _barrierlock == BARRIER_LOCKED;
+	return _state == WAIT_FOR_SYNC || isBarrierLocked();
 }
 
 bool Client::isDropLocked() const
@@ -453,6 +453,11 @@ void Client::unlockUser()
 
 void Client::barrierLock()
 {
+	if(_barrierlock != BARRIER_NOTLOCKED) {
+		_logger->logWarning(QString("Tried to double-barrier lock user #%1").arg(_id));
+		return;
+	}
+
 	if(_session->drawingContext(_id).penup) {
 		_barrierlock = BARRIER_LOCKED;
 		emit barrierLocked();

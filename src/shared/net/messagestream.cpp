@@ -93,8 +93,10 @@ int MessageStream::cleanup()
 	return 0;
 }
 
-void MessageStream::hardCleanup(uint sizelimit)
+void MessageStream::hardCleanup(uint sizelimit, int indexlimit)
 {
+	Q_ASSERT(indexlimit <= end());
+
 	// First, find the index of the last protected undo point
 	int undo_point = _offset;
 	int undo_points = 0;
@@ -105,8 +107,11 @@ void MessageStream::hardCleanup(uint sizelimit)
 		}
 	}
 
+	if(undo_point < indexlimit)
+		indexlimit = undo_point;
+
 	// Remove messages until size limit or protected undo point is reached
-	while(_bytes > sizelimit && _offset < undo_point) {
+	while(_bytes > sizelimit && _offset < indexlimit) {
 		_bytes -= _messages.takeFirst()->length();
 		++_offset;
 	}

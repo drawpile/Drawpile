@@ -35,7 +35,8 @@ Server::Server(QObject *parent)
 	  _server(0),
 	  _logger(SharedLogger(new DummyLogger)),
 	  _session(0),
-	  _stopping(false)
+	  _stopping(false),
+	  _historylimit(0)
 {
 }
 
@@ -120,6 +121,7 @@ void Server::newClient()
 		}
 		_session = session;
 		session->setParent(this);
+		_session->setHistoryLimit(_historylimit);
 		connect(session, SIGNAL(lastClientLeft()), this, SLOT(lastSessionUserLeft()));
 	});
 	lh->startLoginProcess();

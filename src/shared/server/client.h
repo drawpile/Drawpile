@@ -129,6 +129,20 @@ public:
 	bool isHoldLocked() const;
 
 	/**
+	 * @brief Has this user been barrier locked?
+	 *
+	 * Barrier locking is used to synchronize users for snapshot generation
+	 * @return
+	 */
+	bool isBarrierLocked() const { return _barrierlock == BARRIER_LOCKED; }
+
+	/**
+	 * @brief Is the client barrier locked or waiting for barrier lock?
+	 * @return
+	 */
+	bool hasBarrierLock() const { return _barrierlock != BARRIER_NOTLOCKED; }
+
+	/**
 	 * @brief Is this client's input queue being ignored?
 	 *
 	 * Drop lock is a type of lock where all drawing commands are being
@@ -184,6 +198,12 @@ public:
 	 * @param msg
 	 */
 	void sendDirectMessage(protocol::MessagePtr msg);
+
+	/**
+	 * @brief Get this client's position in the message stream
+	 * @return message stream index
+	 */
+	int streampointer() const { return _streampointer; }
 
 signals:
 	void loginMessage(protocol::MessagePtr message);

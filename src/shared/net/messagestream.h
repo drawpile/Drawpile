@@ -116,8 +116,10 @@ public:
 	 * Old messages are removed until the size of the buffer is less than the
 	 * given limit.
 	 * @param sizelimit maximum size
+	 * @param indexlimit last index that can be cleaned up
+	 * @pre indexlimit <= end()
 	 */
-	void hardCleanup(uint sizelimit);
+	void hardCleanup(uint sizelimit, int indexlimit);
 
 	/**
 	 * @brief remove all messages, including the snapshot point

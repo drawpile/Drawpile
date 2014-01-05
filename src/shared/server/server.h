@@ -48,6 +48,8 @@ public:
 
 	bool start(quint16 port, bool anyport=false, const QHostAddress& address = QHostAddress::Any);
 
+	void setHistorylimit(uint limit) { _historylimit = limit; }
+
 	int port() const;
 	int clientCount() const;
 	bool isSessionStarted() const { return _session != 0; }
@@ -76,6 +78,7 @@ private:
 
 	SessionState *_session;
 	bool _stopping;
+	uint _historylimit;
 };
 
 }

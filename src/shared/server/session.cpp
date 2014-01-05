@@ -33,11 +33,10 @@ using protocol::MessagePtr;
 SessionState::SessionState(int minorVersion, SharedLogger logger, QObject *parent)
 	: QObject(parent),
 	_logger(logger),
-	_syncstate(NOT_SYNCING),
 	_userids(255), _layerids(255), _annotationids(255),
 	_minorVersion(minorVersion), _maxusers(255),
 	_locked(false), _layerctrllocked(true), _closed(false),
-	_lockdefault(false)
+	_lockdefault(false), _historylimit(0)
 { }
 
 void SessionState::assignId(Client *user)
@@ -68,6 +67,8 @@ void SessionState::joinUser(Client *user, bool host)
 		// Request initial session content. This creates a snapshot point for the session
 		// and upgrades the client to full session state
 		user->requestSnapshot(false);
+	} else {
+		connect(this, SIGNAL(snapshotCreated()), user, SLOT(snapshotNowAvailable()));
 	}
 
 	addToCommandStream(joinmsg);
@@ -166,7 +167,40 @@ void SessionState::setMaxUsers(int maxusers)
 
 void SessionState::addToCommandStream(protocol::MessagePtr msg)
 {
-	// TODO history size limit. Can clear up to lowest stream pointer index.
+	if(_historylimit>0 && _mainstream.lengthInBytes() > _historylimit) {
+		bool hasOp = false, isSyncing = false;
+
+		// Make sure an operator is present
+		foreach(Client *c, _clients) {
+			if(c->hasBarrierLock() || c->isUploadingSnapshot()) {
+				// A sync is still in progress
+				isSyncing = true;
+				break;
+			}
+			if(c->isOperator()) {
+				hasOp = true;
+				break;
+			}
+		}
+
+		if(hasOp && !isSyncing) {
+			// If there are no operators, we can't clean up history, because that would
+			// end the session due to lack of a snapshot point
+
+			int streampos = _mainstream.end();
+			foreach(const Client *c, _clients) {
+				streampos = qMin(streampos, c->streampointer());
+			}
+
+			uint oldsize = _mainstream.lengthInBytes();
+			_mainstream.hardCleanup(0, streampos);
+			uint difference = oldsize - _mainstream.lengthInBytes();
+			_logger->logDebug(QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2));
+
+			startSnapshotSync();
+		}
+	}
+
 	_mainstream.append(msg);
 	emit newCommandsAvailable();
 }
@@ -268,7 +302,7 @@ void SessionState::userBarrierLocked()
 	// Count locked users
 	int locked=0;
 	foreach(const Client *c, _clients)
-		if(c->isHoldLocked() || c->isDropLocked())
+		if(c->isBarrierLocked())
 			++locked;
 
 	if(locked == _clients.count()) {

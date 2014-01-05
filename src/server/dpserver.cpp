@@ -58,6 +58,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
+	// --limit
+	QCommandLineOption limitOption("limit", "Limit history size", "size (Mb)");
+	parser.addOption(limitOption);
+
 	// Parse
 	parser.process(app);
 
@@ -90,6 +94,17 @@ int main(int argc, char *argv[]) {
 			logger->logError("Invalid listening address");
 			return 1;
 		}
+	}
+
+	if(parser.isSet(limitOption)) {
+		bool ok;
+		float limit = parser.value(limitOption).toFloat(&ok);
+		if(!ok) {
+			logger->logError("Invalid history limit size");
+			return 1;
+		}
+		uint limitbytes = limit * 1024 * 1024;
+		server->setHistorylimit(limitbytes);
 	}
 
 	// Start
