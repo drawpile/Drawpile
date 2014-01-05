@@ -326,7 +326,7 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 	foreach(MessagePtr msg, messages) {
 		switch(msg->type()) {
 		case MSG_TOOLCHANGE:
-			_userids.reserve(msg.cast<ToolChange>().contextId());
+			_userids.markUsed(msg.cast<ToolChange>().contextId());
 			drawingContextToolChange(msg.cast<ToolChange>());
 			break;
 		case MSG_PEN_MOVE:
@@ -444,7 +444,7 @@ void SessionState::createAnnotation(protocol::AnnotationCreate &cmd, bool assign
 bool SessionState::deleteAnnotation(int id)
 {
 	_annotationids.release(id);
-	return true; // TODO implement ID tracker properly
+	return true;
 }
 
 void SessionState::drawingContextToolChange(const protocol::ToolChange &cmd)

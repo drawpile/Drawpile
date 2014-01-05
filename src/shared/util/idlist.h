@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,8 +28,7 @@
  * 
  * This class records ID numbers that are currently in use and that
  * have been used and tries to assign unused ones. If unused IDs have run
- * out, used ID numbers will be given out.
- * TODO ID recycling
+ * out, released IDs will be recycled.
  */
 class UsedIdList {
 public:
@@ -44,11 +43,14 @@ public:
 	//! Mark this ID number as being in use
 	void reserve(int id);
 
+	//! Mark this ID as haven been used (but not currently in use)
+	void markUsed(int id);
+
 	//! Reset IDs
 	void reset();
 
 private:
-	//QList<int> _inuse;
+	QList<int> _inuse;
 	QList<int> _used;
 	const int _min;
 	const int _max;

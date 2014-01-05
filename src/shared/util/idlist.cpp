@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,51 +23,64 @@
 
 int UsedIdList::takeNext()
 {
-	// TODO start giving out release IDs after unused ones run out
-	const int oldnext = _next;
-	do {
-		if(!_used.contains(_next)) {
-			reserve(_next);
-			return _next;
-		}
+	const int total = _max - _min + 1;
+	// Find an unused ID if available
+	if(_used.size() < total) {
+		const int oldnext = _next;
+		do {
+			if(!_used.contains(_next)) {
+				reserve(_next);
+				return _next;
+			}
 
-		++_next;
-		if(_next>_max)
-			_next = _min;
-	} while(_next != oldnext);
+			++_next;
+			if(_next>_max)
+				_next = _min;
+		} while(_next != oldnext);
+	}
 
-	// TODO handle this properly
+	// Ok, all IDs have been used at least once. Find a free one
+	if(_inuse.size() < total) {
+		const int oldnext = _next;
+		do {
+			if(!_inuse.contains(_next)) {
+				reserve(_next);
+				return _next;
+			}
+
+			++_next;
+			if(_next>_max)
+				_next = _min;
+		} while(_next != oldnext);
+	}
+
+	// None available
 	return _min-1;
 }
 	
 void UsedIdList::release(int id)
 {
-	// TODO
-#if 0
 	Q_ASSERT(_inuse.contains(id));
-	_inuse.remove(id);
-	if(!_used.contains(id))
-		_used.append(id);
-#endif
+	_inuse.removeOne(id);
 }
 	
 void UsedIdList::reserve(int id)
 {
-#if 0
-	Q_ASSERT(!_inuse.contains(id));
 	if(!_inuse.contains(id))
 		_inuse.append(id);
-	_used.remove(id);
-#else
 	if(!_used.contains(id))
 		_used.append(id);
-#endif
+}
+
+void UsedIdList::markUsed(int id)
+{
+	if(!_used.contains(id))
+		_used.append(id);
 }
 
 void UsedIdList::reset()
 {
-	//_inuse.clear();
+	_inuse.clear();
 	_used.clear();
 	_next = _min;
 }
-
