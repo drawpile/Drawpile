@@ -5,6 +5,7 @@
 
 		<!-- Fallbacks for theme icons -->
 		<file>icons/application-exit.png</file>
+		<file>icons/applications-multimedia.png</file>
 		<file>icons/color-picker.png</file>
 		<file>icons/document-new.png</file>
 		<file>icons/document-open.png</file>

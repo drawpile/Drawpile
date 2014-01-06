@@ -59,6 +59,7 @@ set (
 	dialogs/settingsdialog.cpp
 	dialogs/resizedialog.cpp
 	dialogs/playbackdialog.cpp
+	dialogs/videoexportdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -79,6 +80,8 @@ set (
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
+	export/videoexporter.cpp
+	export/imageseriesexporter.cpp
 )
 
 set (
@@ -101,6 +104,7 @@ set (
 	ui/newdialog.ui
 	ui/resizedialog.ui
 	ui/playback.ui
+	ui/videoexport.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )

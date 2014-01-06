@@ -28,6 +28,11 @@ namespace recording {
 	class Reader;
 }
 
+namespace drawingboard {
+	class CanvasScene;
+}
+
+class VideoExporter;
 class QTimer;
 
 class Ui_PlaybackDialog;
@@ -38,11 +43,14 @@ class PlaybackDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	explicit PlaybackDialog(recording::Reader *reader, QWidget *parent = 0);
+	explicit PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent = 0);
+	~PlaybackDialog();
 
 	static recording::Reader *openRecording(const QString &filename, QWidget *msgboxparent=0);
 
 	bool isPlaying() const { return _play; }
+
+	void centerOnParent();
 
 signals:
 	void commandRead(protocol::MessagePtr msg);
@@ -53,14 +61,25 @@ public slots:
 	void nextCommand();
 	void nextSequence();
 
+private slots:
+	void exportButtonClicked();
+	void exportFrame();
+	void exportConfig();
+
 private:
 	void endOfFileReached();
 
 	Ui_PlaybackDialog *_ui;
+	drawingboard::CanvasScene *_canvas;
 	recording::Reader *_reader;
+	VideoExporter *_exporter;
 	QTimer *_timer;
 	float _speedfactor;
 	bool _play;
+
+	QAction *_exportFrameAction;
+	QAction *_autoExportAction;
+	QAction *_exportConfigAction;
 };
 
 }

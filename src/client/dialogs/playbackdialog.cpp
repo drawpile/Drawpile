@@ -22,16 +22,24 @@
 #include <QMessageBox>
 #include <QScopedPointer>
 #include <QTimer>
+#include <QMenu>
+
+#include <cmath>
 
 #include "playbackdialog.h"
-#include "ui_playback.h"
+#include "videoexportdialog.h"
+#include "export/videoexporter.h"
+#include "canvasscene.h"
+
 #include "../shared/record/reader.h"
 #include "../shared/net/recording.h"
 
+#include "ui_playback.h"
+
 namespace dialogs {
 
-PlaybackDialog::PlaybackDialog(recording::Reader *reader, QWidget *parent) :
-	QDialog(parent), _reader(reader), _speedfactor(1.0f), _play(false)
+PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent) :
+	QDialog(parent), _canvas(canvas), _reader(reader), _exporter(0), _speedfactor(1.0f), _play(false)
 {
 	setWindowFlags(Qt::Tool);
 	_reader->setParent(this);
@@ -59,6 +67,49 @@ PlaybackDialog::PlaybackDialog(recording::Reader *reader, QWidget *parent) :
 
 		_speedfactor = 1.0f / _speedfactor;
 	});
+
+	QMenu *exportmenu = new QMenu(this);
+
+	_exportFrameAction = exportmenu->addAction("Export frame", this, SLOT(exportFrame()));
+	{
+		QFont font = _exportFrameAction->font();
+		font.setBold(true);
+		_exportFrameAction->setFont(font);
+		_exportFrameAction->setEnabled(false);
+	}
+
+	_autoExportAction = exportmenu->addAction("Auto export");
+	_autoExportAction->setCheckable(true);
+	_autoExportAction->setChecked(true);
+
+	exportmenu->addSeparator();
+
+	_exportConfigAction = exportmenu->addAction("Configure...", this, SLOT(exportConfig()));
+
+	_ui->exportbutton->setMenu(exportmenu);
+	connect(_ui->exportbutton, SIGNAL(clicked()), this, SLOT(exportButtonClicked()));
+}
+
+PlaybackDialog::~PlaybackDialog()
+{
+	delete _ui;
+	if(_exporter) {
+		_exporter->finish();
+		delete _exporter;
+	}
+}
+
+void PlaybackDialog::centerOnParent()
+{
+	if(parentWidget() != 0) {
+		QRect parentG = parentWidget()->geometry();
+		QRect myG = geometry();
+
+		move(
+			parentG.x() + parentG.width()/2 - myG.width()/2,
+			parentG.y() + parentG.height()/2 - myG.height()/2
+		);
+	}
 }
 
 void PlaybackDialog::togglePlay(bool play)
@@ -66,12 +117,13 @@ void PlaybackDialog::togglePlay(bool play)
 	_play = play;
 	if(_play)
 		_timer->start(0);
+	else
+		_timer->stop();
 }
 
 void PlaybackDialog::nextCommand()
 {
 	recording::MessageRecord next = _reader->readNext();
-	_ui->progressBar->setValue(_reader->position());
 	switch(next.status) {
 	case recording::MessageRecord::OK:
 		if(next.message->type() == protocol::MSG_INTERVAL) {
@@ -100,6 +152,10 @@ void PlaybackDialog::nextCommand()
 		endOfFileReached();
 		break;
 	}
+
+	if(_autoExportAction->isChecked())
+		exportFrame();
+	_ui->progressBar->setValue(_reader->position());
 }
 
 void PlaybackDialog::nextSequence()
@@ -129,6 +185,9 @@ void PlaybackDialog::nextSequence()
 		}
 	}
 
+	if(_autoExportAction->isChecked())
+		exportFrame();
+
 	_ui->progressBar->setValue(_reader->position());
 }
 
@@ -141,6 +200,75 @@ void PlaybackDialog::endOfFileReached()
 	_ui->progressBar->setEnabled(false);
 	_ui->progressBar->setFormat(tr("Recording ended"));
 	_ui->progressBar->setTextVisible(true);
+}
+
+void PlaybackDialog::exportButtonClicked()
+{
+	if(_exporter)
+		exportFrame();
+	else
+		exportConfig();
+}
+
+void PlaybackDialog::exportFrame()
+{
+	if(_exporter) {
+		QImage img = _canvas->image();
+		if(!img.isNull()) {
+			if(!_exporter->saveFrame(img)) {
+				// Stop playback and exporting on error
+				if(_play)
+					_ui->play->setChecked(false);
+
+				QMessageBox::warning(this, tr("Export error"), _exporter->errorString());
+
+				delete _exporter;
+				_exporter = 0;
+				_exportConfigAction->setEnabled(true);
+				_ui->frameLabel->setEnabled(false);
+				_ui->timeLabel->setEnabled(false);
+			} else {
+				_ui->frameLabel->setText(QString::number(_exporter->frame()));
+
+				float time = _exporter->time();
+				int minutes = time / 60;
+				if(minutes>0) {
+					time = fmod(time, 60.0);
+					_ui->timeLabel->setText(tr("%1 m. %2 s.").arg(minutes).arg(time, 0, 'f', 2));
+				} else {
+					_ui->timeLabel->setText(tr("%1 s.").arg(time, 0, 'f', 2));
+				}
+
+				if(_ui->play->isEnabled()==false) {
+					// Stop exporting after saving the last frame
+					_exporter->finish();
+					delete _exporter;
+					_exporter = 0;
+					_ui->exportbutton->setEnabled(false);
+					_ui->frameLabel->setEnabled(false);
+					_ui->timeLabel->setEnabled(false);
+				}
+			}
+		}
+	}
+}
+
+void PlaybackDialog::exportConfig()
+{
+	VideoExportDialog *dialog = new VideoExportDialog(this);
+
+	dialog->exec();
+
+	VideoExporter *ve = dialog->getExporter();
+	if(ve) {
+		_exporter = ve;
+		_exportFrameAction->setEnabled(true);
+		_exportConfigAction->setEnabled(false);
+		_ui->frameLabel->setEnabled(true);
+		_ui->timeLabel->setEnabled(true);
+	}
+
+	delete dialog;
 }
 
 recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)

@@ -2,6 +2,7 @@
  * New application icon
  * Session recording and playback support
  * Adjustable server session history size limit
+ * Video export (image sequence only at the moment)
 
 2013-12-30 Version 0.8.1
  * Use icons from current theme

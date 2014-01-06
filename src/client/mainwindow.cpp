@@ -296,7 +296,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 
 	QFileInfo fileinfo(reader->filename());
 
-	win->_playbackdlg = new dialogs::PlaybackDialog(reader, win);
+	win->_playbackdlg = new dialogs::PlaybackDialog(win->_canvas, reader, win);
 	win->_playbackdlg->setWindowTitle(fileinfo.baseName() + " - " + win->_playbackdlg->windowTitle());
 	win->_playbackdlg->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -311,6 +311,8 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	});
 
 	win->_playbackdlg->show();
+	win->_playbackdlg->centerOnParent();
+
 	win->getAction("startrecord")->setEnabled(false);
 	win->setRecorderStatus(false);
 
