@@ -106,8 +106,7 @@ class MainWindow : public QMainWindow {
 		void homepage();
 
 	private slots:
-		void startRecording();
-		void stopRecording();
+		void toggleRecording();
 
 		void setSessionTitle(const QString& title);
 		void setOperatorMode(bool op);

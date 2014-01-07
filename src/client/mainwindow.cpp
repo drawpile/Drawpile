@@ -304,7 +304,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	connect(win->_playbackdlg, SIGNAL(playbackToggled(bool)), win, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
 	connect(win->_playbackdlg, &dialogs::PlaybackDialog::destroyed, [win]() {
 		win->_playbackdlg = 0;
-		win->getAction("startrecord")->setEnabled(true);
+		win->getAction("recordsession")->setEnabled(true);
 		win->setRecorderStatus(false);
 		win->_canvas->statetracker()->setShowAllUserMarkers(false);
 		win->_client->endPlayback();
@@ -313,7 +313,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	win->_playbackdlg->show();
 	win->_playbackdlg->centerOnParent();
 
-	win->getAction("startrecord")->setEnabled(false);
+	win->getAction("recordsession")->setEnabled(false);
 	win->setRecorderStatus(false);
 
 	return win;
@@ -784,12 +784,21 @@ void MainWindow::setRecorderStatus(bool on)
 	}
 }
 
-void MainWindow::startRecording()
+void MainWindow::toggleRecording()
 {
+	QAction *recordAction = getAction("recordsession");
+
 	if(_recorder) {
-		qWarning() << "Recording already started!";
+		_recorder->close();
+		delete _recorder;
+		_recorder = 0;
+
+		recordAction->setText("Record...");
+		recordAction->setIcon(QIcon::fromTheme("media-record", QIcon(":/icons/media-record")));
+		setRecorderStatus(false);
 		return;
 	}
+
 	QString filter = tr("Drawpile recordings (%1)").arg("*.dprec") + ";;" + tr("All files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Record session"), lastpath_, filter);
@@ -819,8 +828,8 @@ void MainWindow::startRecording()
 			_recorder->setWriteIntervals(true);
 			connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
 
-			getAction("startrecord")->setEnabled(false);
-			getAction("stoprecord")->setEnabled(true);
+			recordAction->setText("Stop recording");
+			recordAction->setIcon(QIcon::fromTheme("media-playback-stop"));
 
 			QApplication::restoreOverrideCursor();
 			setRecorderStatus(true);
@@ -828,19 +837,6 @@ void MainWindow::startRecording()
 	}
 }
 
-void MainWindow::stopRecording()
-{
-	if(!_recorder) {
-		qWarning() << "Recording already stopped!";
-		return;
-	}
-	_recorder->close();
-	delete _recorder;
-	_recorder = 0;
-	getAction("startrecord")->setEnabled(true);
-	getAction("stoprecord")->setEnabled(false);
-	setRecorderStatus(false);
-}
 
 /**
  * The settings window will be window modal and automatically destruct
@@ -1495,24 +1491,19 @@ void MainWindow::setupActions()
 	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
 	QAction *save = makeAction("savedocument", "document-save",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
 	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), tr("Save drawing to a file with a new name"));
-	QAction *record = makeAction("startrecord", "media-record", tr("Record session..."), tr("Start recording the session for later playback"));
-	QAction *stoprecord = makeAction("stoprecord", 0, tr("Stop recording"));
+	QAction *record = makeAction("recordsession", "media-record", tr("Record..."), tr("Record session for later playback"));
 	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
-
-	stoprecord->setEnabled(false);
 
 	_currentdoctools->addAction(save);
 	_currentdoctools->addAction(saveas);
 	_currentdoctools->addAction(record);
-	_currentdoctools->addAction(stoprecord);
 
 	connect(newdocument, SIGNAL(triggered()), this, SLOT(showNew()));
 	connect(open, SIGNAL(triggered()), this, SLOT(open()));
 	connect(save, SIGNAL(triggered()), this, SLOT(save()));
 	connect(saveas, SIGNAL(triggered()), this, SLOT(saveas()));
-	connect(record, SIGNAL(triggered()), this, SLOT(startRecording()));
-	connect(stoprecord, SIGNAL(triggered()), this, SLOT(stopRecording()));
+	connect(record, SIGNAL(triggered()), this, SLOT(toggleRecording()));
 	connect(quit, SIGNAL(triggered()), this, SLOT(close()));
 
 	QMenu *filemenu = menuBar()->addMenu(tr("&File"));
@@ -1523,7 +1514,6 @@ void MainWindow::setupActions()
 	filemenu->addAction(saveas);
 	filemenu->addSeparator();
 	filemenu->addAction(record);
-	filemenu->addAction(stoprecord);
 	filemenu->addSeparator();
 	filemenu->addAction(quit);
 

@@ -70,7 +70,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 
 	QMenu *exportmenu = new QMenu(this);
 
-	_exportFrameAction = exportmenu->addAction("Export frame", this, SLOT(exportFrame()));
+	_exportFrameAction = exportmenu->addAction("Save frame", this, SLOT(exportFrame()));
 	{
 		QFont font = _exportFrameAction->font();
 		font.setBold(true);
@@ -78,7 +78,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 		_exportFrameAction->setEnabled(false);
 	}
 
-	_autoExportAction = exportmenu->addAction("Auto export");
+	_autoExportAction = exportmenu->addAction("Autosave");
 	_autoExportAction->setCheckable(true);
 	_autoExportAction->setChecked(true);
 
