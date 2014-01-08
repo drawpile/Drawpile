@@ -37,7 +37,6 @@ Writer::Writer(const QString &filename, QObject *parent)
 
 Writer::~Writer()
 {
-
 }
 
 void Writer::setWriteIntervals(bool wi)

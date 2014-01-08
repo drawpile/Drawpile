@@ -50,6 +50,7 @@ public:
 
 	void setHistorylimit(uint limit) { _historylimit = limit; }
 	void setPersistent(bool persistent) { _persistent = false; }
+	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
 
 	int port() const;
 	int clientCount() const;
@@ -81,6 +82,7 @@ private:
 	bool _stopping;
 	bool _persistent;
 	uint _historylimit;
+	QString _recordingFile;
 };
 
 }

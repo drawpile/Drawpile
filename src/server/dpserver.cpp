@@ -62,6 +62,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption limitOption("limit", "Limit history size", "size (Mb)");
 	parser.addOption(limitOption);
 
+	// --record, -r
+	QCommandLineOption recordOption(QStringList() << "record" << "r", "Record session", "filename");
+	parser.addOption(recordOption);
+
 	// Parse
 	parser.process(app);
 
@@ -106,6 +110,9 @@ int main(int argc, char *argv[]) {
 		uint limitbytes = limit * 1024 * 1024;
 		server->setHistorylimit(limitbytes);
 	}
+
+	if(parser.isSet(recordOption))
+		server->setRecordingFile(parser.value(recordOption));
 
 	// Dedicated server shouldn't shut down just because there are no users
 	server->setPersistent(true);

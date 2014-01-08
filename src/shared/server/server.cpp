@@ -123,6 +123,7 @@ void Server::newClient()
 		_session = session;
 		session->setParent(this);
 		_session->setHistoryLimit(_historylimit);
+		_session->setRecordingFile(_recordingFile);
 		connect(session, SIGNAL(lastClientLeft()), this, SLOT(lastSessionUserLeft()));
 	});
 	lh->startLoginProcess();
@@ -164,8 +165,10 @@ void Server::stop() {
 	foreach(Client *c, _lobby)
 		c->kick(0);
 
-	if(_session)
+	if(_session) {
 		_session->kickAllUsers();
+		_session->stopRecording();
+	}
 
 	emit serverStopped();
 }

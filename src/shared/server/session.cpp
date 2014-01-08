@@ -25,6 +25,7 @@
 #include "../net/meta.h"
 #include "../net/pen.h"
 #include "../net/snapshot.h"
+#include "../record/writer.h"
 
 namespace server {
 
@@ -32,12 +33,13 @@ using protocol::MessagePtr;
 
 SessionState::SessionState(int minorVersion, SharedLogger logger, QObject *parent)
 	: QObject(parent),
-	_logger(logger),
+	_logger(logger), _recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
 	_minorVersion(minorVersion), _maxusers(255),
 	_locked(false), _layerctrllocked(true), _closed(false),
 	_lockdefault(false), _historylimit(0)
 { }
+
 
 void SessionState::assignId(Client *user)
 {
@@ -199,6 +201,8 @@ void SessionState::addToCommandStream(protocol::MessagePtr msg)
 	}
 
 	_mainstream.append(msg);
+	if(_recorder)
+		_recorder->recordMessage(msg);
 	emit newCommandsAvailable();
 }
 
@@ -359,6 +363,9 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 		default: break;
 		}
 	}
+
+	if(!_recordingFile.isEmpty())
+		startRecording(messages);
 }
 
 const LayerState *SessionState::getLayerById(int id)
@@ -487,6 +494,44 @@ protocol::MessagePtr SessionState::sessionConf() const
 		_layerctrllocked,
 		_lockdefault
 	));
+}
+
+void SessionState::startRecording(const QList<protocol::MessagePtr> &snapshot)
+{
+	Q_ASSERT(_recorder==0);
+	QString filename = _recordingFile;
+
+	// Expand placeholders
+
+	// Start recording
+	_logger->logDebug(QString("Starting session recording (%1)").arg(filename));
+
+	_recorder = new recording::Writer(filename, this);
+	if(!_recorder->open()) {
+		_logger->logError(QString("Couldn't start recording to %1").arg(filename));
+		_logger->logError(_recorder->errorString());
+		delete _recorder;
+		_recorder = 0;
+	}
+
+	_recorder->writeHeader();
+
+	// Record snapshot and what is in the main stream
+	foreach(protocol::MessagePtr msg, snapshot) {
+		_recorder->recordMessage(msg);
+	}
+
+	for(int i=_mainstream.offset();i<_mainstream.end();++i)
+		_recorder->recordMessage(_mainstream.at(i));
+}
+
+void SessionState::stopRecording()
+{
+	if(_recorder) {
+		_recorder->close();
+		delete _recorder;
+		_recorder = 0;
+	}
 }
 
 }

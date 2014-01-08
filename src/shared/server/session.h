@@ -41,6 +41,10 @@ namespace protocol {
 	class SessionConf;
 }
 
+namespace recording {
+	class Writer;
+}
+
 namespace server {
 
 class Client;
@@ -88,6 +92,19 @@ public:
 	 */
 	uint historyLimit() const { return _historylimit; }
 	void setHistoryLimit(uint limit) { _historylimit = limit; }
+
+	/**
+	 * @brief Set the name of the recording file to create
+	 *
+	 * The recording will be created after a snapshot point has been created.
+	 * @param writer
+	 */
+	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
+
+	/**
+	 * @brief Stop any recording that might be in progress
+	 */
+	void stopRecording();
 
 	/**
 	 * @brief Get the session password
@@ -312,10 +329,13 @@ private slots:
 
 private:
 	void cleanupCommandStream();
+	void startRecording(const QList<protocol::MessagePtr> &snapshot);
 
 	protocol::MessagePtr sessionConf() const;
 
 	SharedLogger _logger;
+	recording::Writer *_recorder;
+	QString _recordingFile;
 	QList<Client*> _clients;
 
 	protocol::MessageStream _mainstream;
