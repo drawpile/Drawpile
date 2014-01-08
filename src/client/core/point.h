@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,8 +19,6 @@
 */
 #ifndef PPOINT_H
 #define PPOINT_H
-
-#include <cmath>
 
 #include <QPoint>
 #include <QVector>
@@ -60,12 +58,6 @@ public:
 
 	//! Set this point's pressure value
 	void setPressure(qreal p) { Q_ASSERT(p>=0 && p<=1); _p = p; }
-
-	//! Get the horizontal subpixel offset
-	qreal xFrac() const { double tmp; return fabs(modf(x(), &tmp)); }
-
-	//! Get the vertical subpixel offset
-	qreal yFrac() const { double tmp; return fabs(modf(y(), &tmp)); }
 
 	//! Compare two points at subpixel resolution
 	bool roughlySame(const Point& point) const {

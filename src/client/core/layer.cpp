@@ -554,8 +554,11 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const Point& point)
 {
 	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
-	const int top = point.y() - brush.radius(point.pressure());
-	const int left = point.x() - brush.radius(point.pressure());
+	const float fradius = brush.fradius(point.pressure());
+	const float fx = point.x() - fradius;
+	const float fy = point.y() - fradius;
+	const int top = floor(fy);
+	const int left = floor(fx);
 	const int bottom = qMin(top + dia, _height);
 	const int right = qMin(left + dia, _width);
 	if(left+dia<=0 || top+dia<=0 || left>=_width || top>=_height)
@@ -563,9 +566,11 @@ void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const 
 
 	// Render the brush
 	BrushMask bm;
-	if(brush.subpixel())
-		bm = mask.make(point.xFrac(), point.yFrac(), point.pressure());
-	else
+	if(brush.subpixel()) {
+		float xfrac = fx - left;
+		float yfrac = fy - top;
+		bm = mask.make(xfrac, yfrac, point.pressure());
+	} else
 		bm = mask.make(point.pressure());
 
 	const int realdia = bm.diameter();
