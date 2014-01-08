@@ -13,7 +13,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\"
 .
-.TH DRAWPILE-SRV 1 "2013" "drawpile-srv" "DrawPile standalone serverr"
+.TH DRAWPILE-SRV 1 "2014" "drawpile-srv" "DrawPile standalone serverr"
 .
 .SH NAME
 drawpile-srv \- DrawPile server
@@ -29,14 +29,30 @@ A standalone server for DrawPile.
 .SH OPTIONS
 .
 .TP
+.BR --help , \ -h
+show help text
+.TP
+.BR --version , \ -v
+prints program version number
+.TP
+.BR --verbose , \ -V
+print extra debugging information
+.TP
 .BR --port , \ -p\  port
 listen on the specified port instead of the default.
 .TP
 .BR --listen , \ -l\  address 
 bind to the specified address. If no listening address is specified,
 drawpile-srv will listen on all addresses.
-.BR --verbose , \ -v
-prints extra debugging messages.
+.TP
+.BR --limit\  size
+limit session history to given size (in megabytes.) Once size is exceeded,
+the session history will be replaced with a snapshot of the current canvas
+contents. Note: to avoid resetting the history too often, the size should be at
+least bigger than the typical image when saved as a PNG image.
+.TP
+.BR --record , \ -r\  filename
+record session to file.
 
 .
 .SH AUTHOR
@@ -45,7 +61,7 @@ Written by Calle Laakkonen <laakkonenc@gmail.com>.
 .
 .SH COPYRIGHT
 .
-Copyright \(co 2013 Calle Laakkonen <laakkonenc@gmail.com>
+Copyright \(co 2013-2014 Calle Laakkonen <laakkonenc@gmail.com>
 .br
 This is Free Software; this software is licensed under the GPL version 2, as published by the Free Software Foundation.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
