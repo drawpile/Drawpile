@@ -49,7 +49,7 @@ public:
 	bool start(quint16 port, bool anyport=false, const QHostAddress& address = QHostAddress::Any);
 
 	void setHistorylimit(uint limit) { _historylimit = limit; }
-	void setPersistent(bool persistent) { _persistent = false; }
+	void setPersistent(bool persistent) { _persistent = persistent; }
 	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
 
 	int port() const;
