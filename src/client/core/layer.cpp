@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -467,7 +467,7 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
 	// Skip the first dab.
 	Point p(from.x() + dx, from.y()+dy, qBound(0.0, from.pressure() + dp, 1.0));
 
-	for(qreal i=0;i<dist-0.5;++i) {
+	for(qreal i=0;i<dist;++i) {
 		if(++distance > spacing) {
 			directDab(brush, mask, p);
 			distance = 0;

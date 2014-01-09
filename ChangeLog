@@ -1,8 +1,9 @@
-2014-01-?? Version 0.8.2
+2014-01-10 Version 0.8.2
  * New application icon
  * Session recording and playback support
  * Adjustable server session history size limit
  * Video export (image sequence only at the moment)
+ * Improved dab and line drawing
 
 2013-12-30 Version 0.8.1
  * Use icons from current theme
