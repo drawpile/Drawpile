@@ -2,17 +2,16 @@ Drawpile - a collaborative drawing program
 ------------------------------------------
 
 DrawPile is a drawing program with a twist: you can share your drawing
-live with other people
+live with other people.
 
 Some feature highlights:
 
-* Shared network drawing
-* Built-in and standalone servers
-* Layers 
-* Text annotations
-* Tablet support
-* Chat
-* Canvas rotation
+* Shared canvas using the built-in server or a dedicated server
+* Record, play back and export drawing sessions
+* Layers and blending modes
+* Text layers
+* Supports pressure sensitive Wacom tablets
+* Built-in chat
 * Supports OpenRaster file format
 
 ## Building with cmake
@@ -21,6 +20,8 @@ Dependencies:
 
 * Qt 5.0 or newer
 * zlib
+
+For building just the dedicated server, only QtCore and QtNetwork are required.
 
 It's a good idead to build in a separate directory to keep build files
 separate from the source tree.
@@ -32,7 +33,7 @@ Example:
     $ cmake ..
     $ make
 
-The executables will be generated in the build/bin directory. You can run them from there,
+The executables will be generated in the `build/bin` directory. You can run them from there,
 or install them with `make install`.
 
 The configuration step supports some options:
@@ -41,6 +42,5 @@ The configuration step supports some options:
 * SERVER=off: don't build the stand-alone server.
 * DEBUG=on: enable debugging features
 
-Example:
-    $ cmake .. -DDEBUG=on
+Example: `$ cmake .. -DDEBUG=on`
 
