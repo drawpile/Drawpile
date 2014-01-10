@@ -456,7 +456,7 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
  */
 void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, const Point& from, const Point& to, qreal &distance)
 {
-	const qreal spacing = brush.spacing()*brush.radius(from.pressure())/100.0;
+	const qreal spacing = qMax(1.0, brush.spacing()*brush.radius(from.pressure())/100.0);
 	qreal dx = to.x() - from.x();
 	qreal dy = to.y() - from.y();
 	const qreal dist = hypot(dx, dy);
@@ -464,18 +464,23 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
 	dy = dy / dist;
 	const qreal dp = (to.pressure() - from.pressure()) / dist;
 
-	// Skip the first dab.
-	Point p(from.x() + dx, from.y()+dy, qBound(0.0, from.pressure() + dp, 1.0));
+	qreal i;
+	if(distance>=spacing)
+		i = 0;
+	else if(distance==0)
+		i = spacing;
+	else
+		i = distance;
 
-	for(qreal i=0;i<dist;++i) {
-		if(++distance > spacing) {
-			directDab(brush, mask, p);
-			distance = 0;
-		}
-		p.rx() += dx;
-		p.ry() += dy;
-		p.setPressure(qBound(0.0, p.pressure() + dp, 1.0));
+	Point p(from.x() + dx*i, from.y() + dy*i, qBound(0.0, from.pressure() + dp*i, 1.0));
+
+	for(;i<=dist;i+=spacing) {
+		directDab(brush, mask, p);
+		p.rx() += dx * spacing;
+		p.ry() += dy * spacing;
+		p.setPressure(qBound(0.0, p.pressure() + dp * spacing, 1.0));
 	}
+	distance = i-dist;
 }
 
 /**
