@@ -124,9 +124,6 @@ class Layer {
 		//! Merge a layer
 		void merge(const Layer *layer);
 
-		//! Fill the layer with a checker pattern
-		void fillChecker(const QColor& dark, const QColor& light);
-
 		//! Fill the layer with solid color
 		void fillColor(const QColor& color);
 
@@ -154,6 +151,9 @@ class Layer {
 		 */
 		bool visible() const { return _opacity > 0 && !_hidden; }
 
+		//! Mark non-empty tiles as dirty
+		void markOpaqueDirty(bool forceVisible=false);
+
 		// Disable assignment operator
 		Layer& operator=(const Layer&) = delete;
 
@@ -170,7 +170,7 @@ class Layer {
 		void drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance);
 		void drawSoftLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance);
 
-		LayerStack *owner_;
+		LayerStack *_owner;
 		int id_;
 		QString _title;
 	

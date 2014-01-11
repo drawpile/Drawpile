@@ -93,11 +93,14 @@ class LayerStack : public QObject {
 		//! Mark the tiles under the area dirty
 		void markDirty(const QRect &area);
 
-		//! Mark all tiles as dirty
+		//! Mark all tiles as dirty and call notifyAreaChanged
 		void markDirty();
 
 		//! Mark the tile at the given index as dirty
 		void markDirty(int x, int y);
+
+		//! Emit areaChanged if anything has been marked as dirty
+		void notifyAreaChanged();
 
 		//! Create a new savepoint
 		Savepoint *makeSavepoint();
@@ -126,6 +129,7 @@ class LayerStack : public QObject {
 
 		QPixmap _cache;
 		QBitArray _dirtytiles;
+		QRect _dirtyrect;
 };
 
 /// Layer stack savepoint for undo use

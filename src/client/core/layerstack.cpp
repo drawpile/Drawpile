@@ -89,8 +89,7 @@ bool LayerStack::deleteLayer(int id)
 {
 	for(int i=0;i<_layers.size();++i) {
 		if(_layers.at(i)->id() == id) {
-			// TODO room for optimization: mark only nontransparent tiles as dirty
-			markDirty();
+			_layers.at(i)->markOpaqueDirty();
 			delete _layers.takeAt(i);
 			return true;
 		}
@@ -310,7 +309,7 @@ void LayerStack::markDirty(const QRect &area)
 			_dirtytiles.setBit(ty0*_xtiles + tx);
 		}
 	}
-	emit areaChanged(area);
+	_dirtyrect |= area;
 }
 
 void LayerStack::markDirty()
@@ -318,7 +317,9 @@ void LayerStack::markDirty()
 	if(_layers.isEmpty())
 		return;
 	_dirtytiles.fill(true);
-	emit areaChanged(QRect(0, 0, _width, _height));
+
+	_dirtyrect = QRect(0, 0, _width, _height);
+	notifyAreaChanged();
 }
 
 void LayerStack::markDirty(int x, int y)
@@ -327,7 +328,16 @@ void LayerStack::markDirty(int x, int y)
 	Q_ASSERT(y>=0 && y < _ytiles);
 
 	_dirtytiles.setBit(y*_xtiles + x);
-	emit areaChanged(QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE));
+
+	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+}
+
+void LayerStack::notifyAreaChanged()
+{
+	if(!_dirtyrect.isEmpty()) {
+		emit areaChanged(_dirtyrect);
+		_dirtyrect = QRect();
+	}
 }
 
 Savepoint::~Savepoint()

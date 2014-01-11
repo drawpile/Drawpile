@@ -101,7 +101,7 @@ QColor _sampleEdgeColors(const Layer *layer, bool top, bool right, bool bottom, 
  * @parma size layer size
  */
 Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& color, const QSize& size)
-	: owner_(owner), id_(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
+	: _owner(owner), id_(id), _title(title), _width(0), _height(0), _xtiles(0), _ytiles(0),
 	_opacity(255), _blend(1), _hidden(false)
 {
 	resize(0, size.width(), size.height(), 0);
@@ -119,7 +119,7 @@ Layer::Layer(LayerStack *owner, int id, const QSize &size)
 }
 
 Layer::Layer(const Layer &layer)
-	: owner_(layer.owner_), id_(layer.id()), _title(layer._title),
+	: _owner(layer._owner), id_(layer.id()), _title(layer._title),
 	  _width(layer._width), _height(layer._height),
 	  _xtiles(layer._xtiles), _ytiles(layer._ytiles),
 	  _tiles(layer._tiles),
@@ -280,17 +280,13 @@ void Layer::setOpacity(int opacity)
 {
 	Q_ASSERT(opacity>=0 && opacity<256);
 	_opacity = opacity;
-	// TODO optimization: mark only nonempty tiles
-	if(owner_ && visible())
-		owner_->markDirty();
+	markOpaqueDirty(true);
 }
 
 void Layer::setBlend(int blend)
 {
 	_blend = blend;
-	// TODO optimization: mark only nonempty tiles
-	if(owner_ && visible())
-		owner_->markDirty();
+	markOpaqueDirty();
 }
 
 /**
@@ -299,9 +295,7 @@ void Layer::setBlend(int blend)
 void Layer::setHidden(bool hide)
 {
 	_hidden = hide;
-	// TODO same optimization as above
-	if(owner_ && _opacity>0)
-		owner_->markDirty();
+	markOpaqueDirty(true);
 }
 
 /**
@@ -394,8 +388,10 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 		}
 	}
 	
-	if(owner_ && visible())
-		owner_->markDirty(QRect(x, y, image.width(), image.height()));
+	if(_owner && visible()) {
+		_owner->markDirty(QRect(x, y, image.width(), image.height()));
+		_owner->notifyAreaChanged();
+	}
 }
 
 void Layer::dab(int contextId, const Brush &brush, const Point &point)
@@ -413,6 +409,9 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
 	} else {
 		directDab(brush, BrushMaskGenerator::cached(brush), point);
 	}
+
+	if(_owner)
+		_owner->notifyAreaChanged();
 }
 
 /**
@@ -445,6 +444,9 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
 		else
 			drawHardLine(brush, bmg, from, to, distance);
 	}
+
+	if(_owner)
+		_owner->notifyAreaChanged();
 }
 
 /**
@@ -613,8 +615,9 @@ void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const 
 		y = (yindex+1) * Tile::SIZE;
 		yb = yb + hb;
 	}
-	if(owner_ && visible())
-		owner_->markDirty(QRect(left, top, right-left, bottom-top));
+
+	if(_owner && visible())
+		_owner->markDirty(QRect(left, top, right-left, bottom-top));
 
 }
 
@@ -626,7 +629,7 @@ void Layer::merge(const Layer *layer)
 	Q_ASSERT(layer->_xtiles == _xtiles);
 	Q_ASSERT(layer->_ytiles == _ytiles);
 
-	const bool md = owner_ && visible();
+	const bool md = _owner && visible();
 
 	for(int y=0;y<layer->_ytiles;++y) {
 		for(int x=0;x<layer->_xtiles;++x) {
@@ -635,25 +638,21 @@ void Layer::merge(const Layer *layer)
 			bool merged;
 			merged = _tiles[index].merge(layer->_tiles[index], layer->_opacity, layer->blendmode());
 			if(md && merged)
-				owner_->markDirty(x, y);
+				_owner->markDirty(x, y);
 		}
 	}
-}
 
-void Layer::fillChecker(const QColor& dark, const QColor& light)
-{
-	for(int i=0;i<_tiles.size();++i)
-		_tiles[i].fillChecker(dark, light);
-	if(owner_ && visible())
-		owner_->markDirty();
+	if(md)
+		_owner->notifyAreaChanged();
 }
 
 void Layer::fillColor(const QColor& color)
 {
 	for(int i=0;i<_tiles.size();++i)
 		_tiles[i].fillColor(color);
-	if(owner_ && visible())
-		owner_->markDirty();
+
+	if(_owner && visible())
+		_owner->markDirty();
 }
 
 /**
@@ -681,8 +680,8 @@ void Layer::makeBlank()
 	for(int i=0;i<_tiles.size();++i)
 		_tiles[i].makeBlank();
 
-	if(owner_ && visible())
-		owner_->markDirty();
+	if(_owner && visible())
+		_owner->markDirty();
 }
 
 /**
@@ -724,7 +723,7 @@ Layer *Layer::getSubLayer(int id, int blendmode, uchar opacity)
 	}
 
 	// No available sublayers, create a new one
-	Layer *sl = new Layer(owner_, id, QSize(_width, _height));
+	Layer *sl = new Layer(_owner, id, QSize(_width, _height));
 	sl->_opacity = opacity;
 	sl->_blend = blendmode;
 	_sublayers.append(sl);
@@ -749,6 +748,22 @@ void Layer::mergeSublayer(int id)
 			return;
 		}
 	}
+}
+
+void Layer::markOpaqueDirty(bool forceVisible)
+{
+	if(!_owner || !(forceVisible || visible()))
+		return;
+
+	for(int y=0;y<_ytiles;++y) {
+		int yy = y * _xtiles;
+		for(int x=0;x<_xtiles;++x) {
+			const Tile &t = _tiles.at(yy+x);
+			if(!t.isNull())
+				_owner->markDirty(x, y);
+		}
+	}
+	_owner->notifyAreaChanged();
 }
 
 }
