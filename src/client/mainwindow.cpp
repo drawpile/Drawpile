@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -107,6 +107,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_view = new widgets::CanvasView(this);
 	_view->setToolSettings(_toolsettings);
 	
+	_inputsettings->connectCanvasView(_view);
 	connect(_layerlist, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
 	connect(_layerlist, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
 

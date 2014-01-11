@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -46,7 +46,8 @@ namespace widgets {
 CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(NOTRANSFORM),
 	_dragbtndown(NOTRANSFORM), _outlinesize(10), _dia(20),
-	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0), _locked(false)
+	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
+	_smoothing(0), _locked(false)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -264,29 +265,55 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 		const paintcore::Point point = mapToScene(event->pos(), 1.0);
 		if(!_prevpoint.intSame(point)) {
 			if(_pendown)
-				onPenMove(point);
+				onPenMove(point, event->button() == Qt::RightButton);
 			updateOutline(point);
 			_prevpoint = point;
 		}
 	}
 }
 
-void CanvasView::onPenDown(const paintcore::Point &p, bool right)
+void CanvasView::setStrokeSmoothing(int smoothing)
 {
-	if(_scene->hasImage() && !_locked)
-		_current_tool->begin(p, right);
+	Q_ASSERT(smoothing>=0);
+	_smoothing = smoothing;
+	if(smoothing>0)
+		_smoother.setSmoothing(smoothing);
 }
 
-void CanvasView::onPenMove(const paintcore::Point &p)
+void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
-	if(_scene->hasImage() && !_locked)
-		_current_tool->motion(p);
+	if(_scene->hasImage() && !_locked) {
+		if(_smoothing>0)
+			_smoother.addPoint(p);
+		else
+			_current_tool->begin(p, right);
+
+	}
+}
+
+void CanvasView::onPenMove(const paintcore::Point &p, bool right)
+{
+	if(_scene->hasImage() && !_locked) {
+		if(_smoothing>0) {
+			_smoother.addPoint(p);
+			if(_smoother.hasSmoothPoint()) {
+				if(_smoother.isFirstSmoothPoint())
+					_current_tool->begin(_smoother.smoothPoint(), right);
+				else
+					_current_tool->motion(_smoother.smoothPoint());
+			}
+		} else {
+			_current_tool->motion(p);
+		}
+	}
 }
 
 void CanvasView::onPenUp()
 {
-	if(_scene->hasImage() && !_locked)
+	if(_scene->hasImage() && !_locked) {
+		_smoother.reset();
 		_current_tool->end();
+	}
 }
 
 //! Handle mouse release events
@@ -369,7 +396,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 						_pendown = NOTDOWN;
 						onPenUp();
 					} else {
-						onPenMove(point);
+						onPenMove(point, false);
 					}
 				}
 				updateOutline(point);

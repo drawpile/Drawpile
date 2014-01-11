@@ -20,6 +20,7 @@
 
 #include <QSettings>
 
+#include "canvasview.h"
 #include "inputsettingsdock.h"
 #include "ui_inputcfg.h"
 
@@ -32,8 +33,6 @@ InputSettingsDock::InputSettingsDock(QWidget *parent) :
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 	_ui->setupUi(w);
-
-	connect(_ui->smoothing, SIGNAL(valueChanged(int)), this, SIGNAL(strokeSmoothingChanged(int)));
 
 	// Restore settings
 	QSettings cfg;
@@ -51,6 +50,12 @@ InputSettingsDock::~InputSettingsDock()
 
 	// Clean up
 	delete _ui;
+}
+
+void InputSettingsDock::connectCanvasView(CanvasView *view)
+{
+	view->setStrokeSmoothing(_ui->smoothing->value());
+	connect(_ui->smoothing, SIGNAL(valueChanged(int)), view, SLOT(setStrokeSmoothing(int)));
 }
 
 }

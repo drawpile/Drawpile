@@ -26,6 +26,8 @@ class Ui_InputSettings;
 
 namespace widgets {
 
+class CanvasView;
+
 class InputSettingsDock : public QDockWidget
 {
 	Q_OBJECT
@@ -33,8 +35,7 @@ public:
 	explicit InputSettingsDock(QWidget *parent = 0);
 	~InputSettingsDock();
 
-signals:
-	void strokeSmoothingChanged(int smoothing);
+	void connectCanvasView(CanvasView *view);
 
 public slots:
 

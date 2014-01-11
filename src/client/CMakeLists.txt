@@ -43,6 +43,7 @@ set (
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
 	utils/whatismyip.cpp
+	utils/strokesmoother.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp

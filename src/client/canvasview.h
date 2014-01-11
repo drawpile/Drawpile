@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include <QGraphicsView>
 
 #include "core/point.h"
+#include "utils/strokesmoother.h"
 #include "tools.h"
 
 namespace drawingboard {
@@ -108,6 +109,9 @@ class CanvasView : public QGraphicsView
 		
 		void setLocked(bool lock);
 
+		//! Set stroke smoothing strength
+		void setStrokeSmoothing(int smoothing);
+
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
@@ -141,7 +145,7 @@ class CanvasView : public QGraphicsView
 		void updateOutline(const paintcore::Point& point);
 
 		void onPenDown(const paintcore::Point &p, bool right);
-		void onPenMove(const paintcore::Point &p);
+		void onPenMove(const paintcore::Point &p, bool right);
 		void onPenUp();
 		
 		void resetCursor();
@@ -162,6 +166,7 @@ class CanvasView : public QGraphicsView
 
 		//! Previous pointer location
 		paintcore::Point _prevpoint;
+		StrokeSmoother _smoother;
 
 		int _outlinesize, _dia;
 		bool _enableoutline, _showoutline;
@@ -177,6 +182,7 @@ class CanvasView : public QGraphicsView
 		tools::ToolCollection _toolbox;
 		tools::Tool *_current_tool;
 
+		int _smoothing;
 		bool _locked;
 };
 
