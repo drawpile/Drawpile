@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QMimeData>
+#include <QtConcurrent>
 
 #include "layer.h"
 #include "layerstack.h"
@@ -183,6 +184,18 @@ void LayerStack::setLayerHidden(int layerid, bool hide)
 	}
 }
 
+namespace {
+
+struct UpdateTile {
+	UpdateTile() : x(-1), y(-1) {}
+	UpdateTile(int x_, int y_) : x(x_), y(y_) {}
+
+	int x, y;
+	quint32 data[Tile::LENGTH];
+};
+
+}
+
 /**
  * Paint a view of the layer stack. The layers are composited
  * together according to their options.
@@ -194,20 +207,46 @@ void LayerStack::paint(const QRectF& rect, QPainter *painter)
 	if(_width<=0 || _height<=0)
 		return;
 
-	// Refresh cache
+	// Affected tile range
 	const int tx0 = qBound(0, int(rect.left()) / Tile::SIZE, _xtiles-1);
 	const int tx1 = qBound(tx0, int(rect.right()) / Tile::SIZE, _xtiles-1);
 	const int ty0 = qBound(0, int(rect.top()) / Tile::SIZE, _ytiles-1);
 	const int ty1 = qBound(ty0, int(rect.bottom()) / Tile::SIZE, _ytiles-1);
+
+	// Gather list of tiles in need of updating
+	QList<UpdateTile*> updates;
 
 	for(int ty=ty0;ty<=ty1;++ty) {
 		const int y = ty*_xtiles;
 		for(int tx=tx0;tx<=tx1;++tx) {
 			const int i = y+tx;
 			if(_dirtytiles.testBit(i)) {
-				updateCache(tx,ty);
+				updates.append(new UpdateTile(tx, ty));
 				_dirtytiles.clearBit(i);
 			}
+		}
+	}
+
+	if(!updates.isEmpty()) {
+		// Flatten tiles
+		QtConcurrent::blockingMap(updates, [this](UpdateTile *t) {
+			flattenTile(t->data, t->x, t->y);
+		});
+
+		// Repaint cache
+		QPainter cache(&_cache);
+		cache.setCompositionMode(QPainter::CompositionMode_Source);
+		while(!updates.isEmpty()) {
+			UpdateTile *ut = updates.takeLast();
+			cache.drawImage(
+				ut->x*Tile::SIZE,
+				ut->y*Tile::SIZE,
+				QImage(reinterpret_cast<const uchar*>(ut->data),
+					Tile::SIZE, Tile::SIZE,
+					QImage::Format_ARGB32
+				)
+			);
+			delete ut;
 		}
 	}
 
@@ -272,27 +311,6 @@ void LayerStack::flattenTile(quint32 *data, int xindex, int yindex) const
 			}
 		}
 	}
-}
-
-// Update the paint cache. The layers are composited together
-// according to their blend mode and opacity options.
-void LayerStack::updateCache(int xindex, int yindex)
-{
-	Q_ASSERT(xindex >= 0 && xindex < _xtiles);
-	Q_ASSERT(yindex >= 0 && yindex < _ytiles);
-
-	quint32 data[Tile::SIZE*Tile::SIZE];
-	flattenTile(data, xindex, yindex);
-	QPainter painter(&_cache);
-	painter.setCompositionMode(QPainter::CompositionMode_Source);
-	painter.drawImage(
-		xindex*Tile::SIZE,
-		yindex*Tile::SIZE,
-		QImage(reinterpret_cast<const uchar*>(data),
-			Tile::SIZE, Tile::SIZE,
-			QImage::Format_ARGB32
-		)
-	);
 }
 
 void LayerStack::markDirty(const QRect &area)

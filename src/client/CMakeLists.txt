@@ -168,7 +168,7 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-qt5_use_modules(drawpile Core Widgets Network Xml)
+qt5_use_modules(drawpile Core Widgets Network Xml Concurrent)
 
 target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES})
 if ( WIN32 )

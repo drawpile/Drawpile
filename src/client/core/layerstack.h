@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -121,7 +121,6 @@ class LayerStack : public QObject {
 
 	private:
 		void flattenTile(quint32 *data, int xindex, int yindex) const;
-		void updateCache(int xindex, int yindex);
 
 		int _width, _height;
 		int _xtiles, _ytiles;
