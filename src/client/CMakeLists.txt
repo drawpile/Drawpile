@@ -79,6 +79,7 @@ set (
 	docks/layerlistdock.cpp
 	docks/layerlistdelegate.cpp
 	docks/layeraclmenu.cpp
+	docks/inputsettingsdock.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 )
@@ -103,6 +104,7 @@ set (
 	ui/resizedialog.ui
 	ui/playback.ui
 	ui/videoexport.ui
+	ui/inputcfg.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )

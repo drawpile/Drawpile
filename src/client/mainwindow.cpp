@@ -61,6 +61,7 @@
 #include "docks/colorbox.h"
 #include "docks/userlistdock.h"
 #include "docks/layerlistdock.h"
+#include "docks/inputsettingsdock.h"
 
 #include "net/client.h"
 #include "net/login.h"
@@ -1791,6 +1792,12 @@ void MainWindow::createDocks()
 	connect(this, SIGNAL(toolChanged(tools::Type)), _toolsettings, SLOT(setTool(tools::Type)));
 	addDockWidget(Qt::RightDockWidgetArea, _toolsettings);
 
+	// Create input settings
+	_inputsettings = new widgets::InputSettingsDock(this);
+	_inputsettings->setObjectName("inputsettingsdock");
+	_inputsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _inputsettings);
+
 	// Create color boxes
 	rgb_ = new widgets::ColorBox("RGB", widgets::ColorBox::RGB, this);
 	rgb_->setObjectName("rgbdock");
@@ -1819,6 +1826,7 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
 
 	// Tabify docks
+	tabifyDockWidget(_inputsettings, _toolsettings);
 	tabifyDockWidget(hsv_, rgb_);
 	tabifyDockWidget(hsv_, palette_);
 	tabifyDockWidget(_userlist, _layerlist);

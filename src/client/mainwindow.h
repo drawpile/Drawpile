@@ -35,6 +35,7 @@ namespace widgets {
 	class CanvasView;
 	class DualColorButton;
 	class ToolSettings;
+	class InputSettingsDock;
 	class UserList;
 	class LayerListDock;
 	class PaletteBox;
@@ -176,6 +177,7 @@ class MainWindow : public QMainWindow {
 
 		QSplitter *splitter_;
 		widgets::ToolSettingsDock *_toolsettings;
+		widgets::InputSettingsDock *_inputsettings;
 		widgets::UserList *_userlist;
 		widgets::LayerListDock *_layerlist;
 
