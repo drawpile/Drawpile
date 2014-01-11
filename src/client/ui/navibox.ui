@@ -13,37 +13,52 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>3</number>
+   </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="NavigatorView" name="view"/>
    </item>
    <item>
-    <layout class="QHBoxLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QToolButton" name="zoomin">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Zoom in</string>
-       </property>
-       <property name="icon">
-        <iconset theme="zoom-in" resource="resources.qrc">
-         <normaloff>:/icons/zoom-in.png</normaloff>:/icons/zoom-in.png</iconset>
+        <string>Angle:</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer>
+      <widget class="QDoubleSpinBox" name="angle">
+       <property name="decimals">
+        <number>1</number>
+       </property>
+       <property name="minimum">
+        <double>-360.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>360.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>10.000000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -56,6 +71,20 @@
       </spacer>
      </item>
      <item>
+      <widget class="QToolButton" name="zoomin">
+       <property name="text">
+        <string>Zoom in</string>
+       </property>
+       <property name="icon">
+        <iconset theme="zoom-in" resource="resources.qrc">
+         <normaloff>:/icons/zoom-in.png</normaloff>:/icons/zoom-in.png</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="zoomout">
        <property name="text">
         <string>Zoom out</string>
@@ -63,6 +92,9 @@
        <property name="icon">
         <iconset theme="zoom-out" resource="resources.qrc">
          <normaloff>:/icons/zoom-out.png</normaloff>:/icons/zoom-out.png</iconset>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
        </property>
       </widget>
      </item>

@@ -135,7 +135,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setCanvas(_canvas);
-	navigator_->setScene(_canvas);
+	_navigator->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
@@ -144,13 +144,18 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
 
 	// Navigator <-> View
-	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
+	connect(_navigator, SIGNAL(focusMoved(const QPoint&)),
 			_view, SLOT(scrollTo(const QPoint&)));
-	connect(_view, SIGNAL(viewMovedTo(const QRectF&)), navigator_,
-			SLOT(setViewFocus(const QRectF&)));
+	connect(_navigator, SIGNAL(angleChanged(qreal)),
+			_view, SLOT(setRotation(qreal)));
+	connect(_view, SIGNAL(viewRectChange(const QPolygonF&)),
+			_navigator, SLOT(setViewFocus(const QPolygonF&)));
+	connect(_view, SIGNAL(viewTransformed(int,qreal)),
+			_navigator, SLOT(setViewTransform(int,qreal)));
+
 	// Navigator <-> Zoom In/Out
-	connect(navigator_, SIGNAL(zoomIn()), this, SLOT(zoomin()));
-	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
+	connect(_navigator, SIGNAL(zoomIn()), this, SLOT(zoomin()));
+	connect(_navigator, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 
 	// Create the network client
 	_client = new net::Client(this);
@@ -1838,9 +1843,10 @@ void MainWindow::createDocks()
 	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
 
 	// Create navigator
-	navigator_ = new widgets::Navigator(this, _canvas);
-	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, navigator_);
+	_navigator = new widgets::Navigator(this);
+	_navigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _navigator);
+	_navigator->hide(); // hidden by default
 
 	// Tabify docks
 	tabifyDockWidget(_inputsettings, _toolsettings);

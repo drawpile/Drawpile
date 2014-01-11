@@ -79,6 +79,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	
 	QList<QRectF> regions;
 	regions.append(sceneRect());
+	emit canvasInitialized();
 	emit changed(regions);
 }
 

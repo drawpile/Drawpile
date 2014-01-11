@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008 Calle Laakkonen, 2007 M.K.A.
+   Copyright (C) 2008-2014 Calle Laakkonen, 2007 M.K.A.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,30 +21,34 @@ using widgets::NavigatorView; // to satisfy ui_navibox
 #include "ui_navibox.h"
 
 #include <QMouseEvent>
-#include <QGraphicsScene>
-#include <QPushButton>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QSize>
-#include <QDebug>
 
 namespace widgets {
 
-/** @todo change viewportUpdateMode to manual updating after every pen-up */
 NavigatorView::NavigatorView(QWidget *parent)
-	: QGraphicsView(parent), dragging_(false)
+	: QGraphicsView(parent), _dragging(false)
 {
 	viewport()->setMouseTracking(true);
 	setInteractive(false);
-	
+	setViewportUpdateMode(NoViewportUpdate);
+
 	setResizeAnchor(QGraphicsView::AnchorViewCenter);
 	setAlignment(Qt::AlignCenter);
 	
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
-	setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing
-		|QGraphicsView::DontSavePainterState);
+	setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing);
+
+	_updatetimer = new QTimer(this);
+	_updatetimer->setSingleShot(true);
+	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(doUpdate()));
+}
+
+
+void NavigatorView::resizeEvent(QResizeEvent *event)
+{
+	QGraphicsView::resizeEvent(event);
+	rescale();
 }
 
 /**
@@ -53,7 +57,7 @@ NavigatorView::NavigatorView(QWidget *parent)
 void NavigatorView::mousePressEvent(QMouseEvent *event)
 {
 	emit focusMoved(mapToScene(event->pos()).toPoint());
-	dragging_ = true;
+	_dragging = true;
 }
 
 /**
@@ -61,7 +65,7 @@ void NavigatorView::mousePressEvent(QMouseEvent *event)
  */
 void NavigatorView::mouseMoveEvent(QMouseEvent *event)
 {
-	if (dragging_)
+	if (_dragging)
 		emit focusMoved(mapToScene(event->pos()).toPoint());
 }
 
@@ -70,23 +74,23 @@ void NavigatorView::mouseMoveEvent(QMouseEvent *event)
  */
 void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 {
-	dragging_ = false;
+	_dragging = false;
 }
 
 /**
  * The focus rectangle represents the visible area in the
  * main viewport.
  */
-void NavigatorView::setFocus(const QRectF& rect)
+void NavigatorView::setViewFocus(const QPolygonF& rect)
 {
-	QList<QRectF> up;
-	up.append(rect.adjusted(-5,-5,5,5));
-	up.append(focusRect_.adjusted(-5,-5,5,5));
+	QRegion up;
+
+	up |= mapFromScene(rect.boundingRect().adjusted(-5,-5,5,5));
+	up |= mapFromScene(_focusrect.boundingRect().adjusted(-5,-5,5,5).toRect());
 	
-	focusRect_ = rect;
+	_focusrect = rect;
 	
-	// update whole navigator
-	updateScene(up);
+	viewport()->update(up);
 }
 
 /**
@@ -97,78 +101,86 @@ void NavigatorView::rescale()
 	resetTransform();
 	
 	QRectF ss = scene()->sceneRect();
-	// we shouldn't need to use view_
+
 	qreal x = qreal(width()) / ss.width();
 	qreal y = qreal(height()-5) / ss.height();
-	qreal min = (x < y ? x : y);
-	
+	qreal min = qMin(x, y);
+
 	scale(min, min);
+	viewport()->update();
 }
 
-/**
- * @todo the color should be user defined
- * @todo rectangle line style should be user defined as well
- */
+void NavigatorView::updateScene(const QList<QRectF> &rects)
+{
+	foreach(const QRectF r, rects)
+		_updaterect |= r;
+	if(!_updatetimer->isActive())
+		_updatetimer->start(1000);
+}
+
+void NavigatorView::doUpdate()
+{
+	QRegion up = mapFromScene(_updaterect);
+	_updaterect = QRectF();
+
+	viewport()->update(up);
+}
+
 void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
 {
+	Q_UNUSED(rect);
 	QPen pen(Qt::black);
+	pen.setCosmetic(true);
 	pen.setStyle(Qt::DashLine);
 	painter->setPen(pen);
-	painter->drawRect(focusRect_);
+	painter->drawPolygon(_focusrect);
 }
 
 /**
  * Construct the navigator dock widget.
  */
-Navigator::Navigator(QWidget *parent, QGraphicsScene *scene)
+Navigator::Navigator(QWidget *parent)
 	: QDockWidget(tr("Navigator"), parent)
 {
 	setObjectName("navigatordock");
 	
 	QWidget *w = new QWidget(this);
-	ui_ = new Ui_NaviBox();
-	ui_->setupUi(w);
+	_ui = new Ui_NaviBox();
+	_ui->setupUi(w);
 
-	connect(ui_->view, SIGNAL(focusMoved(const QPoint&)),
+	connect(_ui->view, SIGNAL(focusMoved(const QPoint&)),
 			this, SIGNAL(focusMoved(const QPoint&)));
-
-	setScene(scene);
 	
-	connect(ui_->zoomin, SIGNAL(pressed()), this, SIGNAL(zoomIn()));
-	connect(ui_->zoomout, SIGNAL(pressed()), this, SIGNAL(zoomOut()));
+	connect(_ui->zoomin, SIGNAL(pressed()), this, SIGNAL(zoomIn()));
+	connect(_ui->zoomout, SIGNAL(pressed()), this, SIGNAL(zoomOut()));
+	connect(_ui->angle, SIGNAL(valueChanged(double)), this, SIGNAL(angleChanged(qreal)));
 
 	setWidget(w);
 }
 
 Navigator::~Navigator()
 {
-	delete ui_;
+	delete _ui;
 }
 
 void Navigator::setScene(QGraphicsScene *scene)
 {
-	if (scene)
-	{
-		connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), ui_->view, SLOT(rescale()));
-		ui_->view->setScene(scene);
-		ui_->view->rescale();
-	}
-	else
-	{
-		disconnect(ui_->view, SLOT(rescale()));
-		ui_->view->setScene(scene);
-	}
+	connect(scene, SIGNAL(sceneRectChanged(const QRectF&)), _ui->view, SLOT(rescale()));
+	_ui->view->setScene(scene);
+	_ui->view->rescale();
 }
 
-void Navigator::resizeEvent(QResizeEvent *event)
+void Navigator::setViewFocus(const QPolygonF& rect)
 {
-	ui_->view->rescale();
+	_ui->view->setViewFocus(rect);
 }
 
-void Navigator::setViewFocus(const QRectF& rect)
+void Navigator::setViewTransform(int zoom, qreal angle)
 {
-	ui_->view->setFocus(rect);
+	Q_UNUSED(zoom);
+	_ui->angle->blockSignals(true);
+	_ui->angle->setValue(angle);
+	_ui->angle->blockSignals(false);
 }
-
 }
 

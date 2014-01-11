@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2008 Calle Laakkonen, 2007 M.K.A.
+   Copyright (C) 2008-2014 Calle Laakkonen, 2007 M.K.A.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
 #ifndef Navigator_H
 #define Navigator_H
 
-#include <QDockWidget> // inherited by Navigator
-#include <QGraphicsView> // inherited by NavigatorView
-#include <QRectF>
+#include <QDockWidget>
+#include <QGraphicsView>
+#include <QTimer>
 
 class Ui_NaviBox;
 
@@ -34,34 +34,31 @@ class NavigatorView
 	Q_OBJECT
 public:
 	NavigatorView(QWidget *parent);
-	
-signals:
-	//! Signal rectangle movement
-	void focusMoved(const QPoint& to);
+
+	void setViewFocus(const QPolygonF& rect);
 	
 public slots:
-	//! Set rectangle
-	void setFocus(const QRectF& rect);
-	
-	//! Re-scale the viewport
 	void rescale();
+	void updateScene(const QList<QRectF> &rects);
+
+signals:
+	void focusMoved(const QPoint& to);
 	
 protected:
-	//! Draw rectangle
 	void drawForeground(QPainter *painter, const QRectF& rect);
-	
-	//! Drag rectangle if button is pressed
+	void resizeEvent(QResizeEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
-	//! Move rectangle and enable dragging
 	void mousePressEvent(QMouseEvent *event);
-	//! Disable dragging
 	void mouseReleaseEvent(QMouseEvent *event);
 	
+private slots:
+	void doUpdate();
+
 private:
-	QRectF focusRect_;
-	
-	//! Is dragging?
-	bool dragging_;
+	QTimer *_updatetimer;
+	QRectF _updaterect;
+	QPolygonF _focusrect;
+	bool _dragging;
 };
 
 //! Navigator dock widget
@@ -70,7 +67,7 @@ class Navigator
 {
 	Q_OBJECT
 public:
-	Navigator(QWidget *parent, QGraphicsScene *scene);
+	Navigator(QWidget *parent);
 	~Navigator();
 	
 	//! Set associated graphics scene
@@ -78,22 +75,19 @@ public:
 
 public slots:
 	//! Move the view focus rectangle
-	void setViewFocus(const QRectF& rect);
+	void setViewFocus(const QPolygonF& rect);
+
+	//! Set the transform controls
+	void setViewTransform(int zoom, qreal angle);
 
 signals:
-	//! A zoom in button was pressed
 	void zoomIn();
-	//! A zoom out button was pressed
 	void zoomOut();
-	//! The view focus rectangle was moved
 	void focusMoved(const QPoint& to);
-	
-protected:
-	//! React to widget resizing
-	void resizeEvent(QResizeEvent *event);
+	void angleChanged(qreal angle);
 	
 private:
-	Ui_NaviBox *ui_;
+	Ui_NaviBox *_ui;
 };
 
 }

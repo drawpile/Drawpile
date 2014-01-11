@@ -204,6 +204,8 @@ public slots:
 	void setUserMarkerName(int id, const QString &name);
 
 signals:
+	void canvasInitialized();
+
 	//! User used a color picker tool on this scene
 	void colorPicked(const QColor &color);
 

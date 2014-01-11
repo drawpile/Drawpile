@@ -71,8 +71,8 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 	_scene = scene;
 	_toolbox.setScene(scene);
 	setScene(scene);
-	// notify of scene change
-	sceneChanged();
+
+	connect(_scene, &drawingboard::CanvasScene::canvasInitialized, [this]() { viewRectChanged(); });
 }
 
 void CanvasView::setClient(net::Client *client)
@@ -99,6 +99,7 @@ void CanvasView::setZoom(int zoom)
 	nm.rotate(_rotate);
 	setMatrix(nm);
 	emit viewTransformed(_zoom, _rotate);
+	viewRectChanged();
 }
 
 /**
@@ -203,6 +204,18 @@ void CanvasView::leaveEvent(QEvent *event)
 					_dia, _dia));
 		updateScene(rect);
 	}
+}
+
+void CanvasView::scrollContentsBy(int dx, int dy)
+{
+	QGraphicsView::scrollContentsBy(dx, dy);
+	viewRectChanged();
+}
+
+void CanvasView::resizeEvent(QResizeEvent *event)
+{
+	QGraphicsView::resizeEvent(event);
+	viewRectChanged();
 }
 
 paintcore::Point CanvasView::mapToScene(const QPoint &point, qreal pressure) const
@@ -450,10 +463,10 @@ void CanvasView::updateOutline(const paintcore::Point& point) {
 	}
 }
 
-void CanvasView::sceneChanged()
+void CanvasView::viewRectChanged()
 {
 	// Signal visible view rectangle change
-	emit viewMovedTo(mapToScene(rect()).boundingRect());
+	emit viewRectChange(mapToScene(rect()));
 }
 
 /**
@@ -479,8 +492,6 @@ void CanvasView::startDrag(int x,int y, ViewTransform mode)
 void CanvasView::scrollTo(const QPoint& point)
 {
 	centerOn(point);
-	// notify of scene change
-	sceneChanged();
 }
 
 /**
@@ -505,9 +516,6 @@ void CanvasView::moveDrag(int x, int y)
 
 	_dragx = x;
 	_dragy = y;
-
-	// notify of scene change
-	sceneChanged();
 }
 
 //! Stop dragging

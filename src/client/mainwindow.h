@@ -186,7 +186,7 @@ class MainWindow : public QMainWindow {
 		widgets::CanvasView *_view;
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
-		widgets::Navigator *navigator_;
+		widgets::Navigator *_navigator;
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
 

@@ -67,9 +67,6 @@ class CanvasView : public QGraphicsView
 
 		//! Get the current rotation angle in degrees
 		qreal rotation() const { return _rotate; }
-
-		//! Set the rotation angle in degrees
-		void setRotation(qreal angle);
 		
 		using QGraphicsView::mapToScene;
 		paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
@@ -82,8 +79,8 @@ class CanvasView : public QGraphicsView
 		//! An URL was dropped on the widget
 		void urlDropped(const QUrl &url);
 
-		//! Signals scene rectangle changes
-		void viewMovedTo(const QRectF& rect);
+		//! Viewport has changed
+		void viewRectChange(const QPolygonF& viewport);
 
 		//! The view has been transformed
 		void viewTransformed(int zoom, qreal angle);
@@ -104,9 +101,9 @@ class CanvasView : public QGraphicsView
 		//! Scroll view to location
 		void scrollTo(const QPoint& point);
 		
-		//! Proxy for announcing scene changes
-		void sceneChanged();
-		
+		//! Set the rotation angle in degrees
+		void setRotation(qreal angle);
+
 		void setLocked(bool lock);
 
 		//! Set stroke smoothing strength
@@ -115,6 +112,8 @@ class CanvasView : public QGraphicsView
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
+		void scrollContentsBy(int dx, int dy);
+		void resizeEvent(QResizeEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mousePressEvent(QMouseEvent *event);
 		void mouseReleaseEvent(QMouseEvent *event);
@@ -129,6 +128,8 @@ class CanvasView : public QGraphicsView
 		void dropEvent(QDropEvent *event);
 
 	private:
+		void viewRectChanged();
+
 		//! View transformation mode (for dragging)
 		enum ViewTransform {NOTRANSFORM, TRANSLATE, ROTATE};
 
