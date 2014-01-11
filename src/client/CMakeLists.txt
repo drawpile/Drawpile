@@ -74,7 +74,6 @@ set (
 	widgets/brushpreview.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 
-	docks/navigator.cpp 
 	docks/colorbox.cpp
 	docks/userlistdock.cpp 
 	docks/layerlistdock.cpp
@@ -94,7 +93,6 @@ set (
 	ui/palettebox.ui
 	ui/colorbox.ui
 	ui/settings.ui
-	ui/navibox.ui
 	ui/textsettings.ui
 	ui/pensettings.ui
 	ui/erasersettings.ui

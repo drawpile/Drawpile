@@ -39,7 +39,6 @@ namespace widgets {
 	class LayerListDock;
 	class PaletteBox;
 	class ColorBox;
-	class Navigator;
 }
 namespace dialogs {
 	class ColorDialog;
@@ -184,7 +183,6 @@ class MainWindow : public QMainWindow {
 		widgets::CanvasView *_view;
 		widgets::PaletteBox *palette_;
 		widgets::ColorBox *rgb_, *hsv_;
-		widgets::Navigator *navigator_;
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
 
