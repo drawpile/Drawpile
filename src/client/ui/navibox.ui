@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>NaviBox</class>
+ <widget class="QWidget" name="NaviBox">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>226</width>
+    <height>153</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="NavigatorView" name="view"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QToolButton" name="zoomin">
+       <property name="text">
+        <string>Zoom in</string>
+       </property>
+       <property name="icon">
+        <iconset theme="zoom-in" resource="resources.qrc">
+         <normaloff>:/icons/zoom-in.png</normaloff>:/icons/zoom-in.png</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QToolButton" name="zoomout">
+       <property name="text">
+        <string>Zoom out</string>
+       </property>
+       <property name="icon">
+        <iconset theme="zoom-out" resource="resources.qrc">
+         <normaloff>:/icons/zoom-out.png</normaloff>:/icons/zoom-out.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NavigatorView</class>
+   <extends>QGraphicsView</extends>
+   <header>docks/navigator.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

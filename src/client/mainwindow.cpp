@@ -58,6 +58,7 @@
 
 #include "docks/toolsettingswidget.h"
 #include "docks/palettebox.h"
+#include "docks/navigator.h"
 #include "docks/colorbox.h"
 #include "docks/userlistdock.h"
 #include "docks/layerlistdock.h"
@@ -134,12 +135,22 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setCanvas(_canvas);
+	navigator_->setScene(_canvas);
 
 	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(myLayerCreated(int)), _layerlist, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
+
+	// Navigator <-> View
+	connect(navigator_, SIGNAL(focusMoved(const QPoint&)),
+			_view, SLOT(scrollTo(const QPoint&)));
+	connect(_view, SIGNAL(viewMovedTo(const QRectF&)), navigator_,
+			SLOT(setViewFocus(const QRectF&)));
+	// Navigator <-> Zoom In/Out
+	connect(navigator_, SIGNAL(zoomIn()), this, SLOT(zoomin()));
+	connect(navigator_, SIGNAL(zoomOut()), this, SLOT(zoomout()));
 
 	// Create the network client
 	_client = new net::Client(this);
@@ -1825,6 +1836,11 @@ void MainWindow::createDocks()
 	_layerlist->setObjectName("layerlistdock");
 	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
+
+	// Create navigator
+	navigator_ = new widgets::Navigator(this, _canvas);
+	navigator_->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, navigator_);
 
 	// Tabify docks
 	tabifyDockWidget(_inputsettings, _toolsettings);
