@@ -296,7 +296,7 @@ void CanvasView::setStrokeSmoothing(int smoothing)
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
 	if(_scene->hasImage() && !_locked) {
-		if(_smoothing>0)
+		if(_smoothing>0 && _current_tool->allowSmoothing())
 			_smoother.addPoint(p);
 		else
 			_current_tool->begin(p, right);
@@ -307,7 +307,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 void CanvasView::onPenMove(const paintcore::Point &p, bool right)
 {
 	if(_scene->hasImage() && !_locked) {
-		if(_smoothing>0) {
+		if(_smoothing>0 && _current_tool->allowSmoothing()) {
 			_smoother.addPoint(p);
 			if(_smoother.hasSmoothPoint()) {
 				if(_smoother.isFirstSmoothPoint())

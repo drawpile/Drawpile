@@ -77,6 +77,9 @@ public:
 	//! End drawing
 	virtual void end() = 0;
 
+	//! Does this tool allow stroke smoothing to be used?
+	virtual bool allowSmoothing() const { return false; }
+
 protected:
 	inline widgets::ToolSettingsDock &settings();
 	inline net::Client &client();
@@ -97,6 +100,8 @@ class BrushBase : public Tool
 		void begin(const paintcore::Point& point, bool right);
 		void motion(const paintcore::Point& point);
 		void end();
+
+		bool allowSmoothing() const { return true; }
 };
 
 //! Pen
