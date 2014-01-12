@@ -118,7 +118,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
 	connect(_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(pasteFile(QUrl)));
-	connect(_view, SIGNAL(viewTransformed(int, qreal)), viewstatus, SLOT(setTransformation(int, qreal)));
+	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
 
 	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
 	
@@ -150,12 +150,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 			_view, SLOT(setRotation(qreal)));
 	connect(_view, SIGNAL(viewRectChange(const QPolygonF&)),
 			_navigator, SLOT(setViewFocus(const QPolygonF&)));
-	connect(_view, SIGNAL(viewTransformed(int,qreal)),
-			_navigator, SLOT(setViewTransform(int,qreal)));
-
-	// Navigator <-> Zoom In/Out
-	connect(_navigator, SIGNAL(zoomIn()), this, SLOT(zoomin()));
-	connect(_navigator, SIGNAL(zoomOut()), this, SLOT(zoomout()));
+	connect(_view, SIGNAL(viewTransformed(qreal,qreal)),
+			_navigator, SLOT(setViewTransform(qreal,qreal)));
+	connect(_navigator, SIGNAL(zoomIn()), _view, SLOT(zoomin()));
+	connect(_navigator, SIGNAL(zoomOut()), _view, SLOT(zoomout()));
 
 	// Create the network client
 	_client = new net::Client(this);
@@ -1167,37 +1165,6 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 	msgbox->show();
 }
 
-/**
- * Increase zoom factor
- */
-void MainWindow::zoomin()
-{
-	int nz = _view->zoom() * 2;
-	if(nz>25) {
-		// When zoom% is over 25, make sure we increase in nice evenly
-		// dividing increments.
-		if(nz % 25) nz = nz / 25 * 25;
-	}
-
-	_view->setZoom(nz);
-}
-
-/**
- * Decrease zoom factor
- */
-void MainWindow::zoomout()
-{
-	_view->setZoom(_view->zoom() / 2);
-}
-
-/**
- * Set zoom factor to 100%
- */
-void MainWindow::zoomone()
-{
-	_view->setZoom(100);
-}
-
 void MainWindow::setShowAnnotations(bool show)
 {
 	QAction *annotationtool = getAction("tooltext");
@@ -1631,9 +1598,9 @@ void MainWindow::setupActions()
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
 
-	connect(zoomin, SIGNAL(triggered()), this, SLOT(zoomin()));
-	connect(zoomout, SIGNAL(triggered()), this, SLOT(zoomout()));
-	connect(zoomorig, SIGNAL(triggered()), this, SLOT(zoomone()));
+	connect(zoomin, SIGNAL(triggered()), _view, SLOT(zoomin()));
+	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
+	connect(zoomorig, &QAction::triggered, [this]() { _view->setZoom(100.0); });
 	connect(rotateorig, &QAction::triggered, [this]() { _view->setRotation(0); });
 	connect(rotate90, &QAction::triggered, [this]() { _view->setRotation(90); });
 	connect(rotate180, &QAction::triggered, [this]() { _view->setRotation(180); });

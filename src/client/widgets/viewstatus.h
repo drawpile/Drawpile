@@ -33,7 +33,7 @@ class ViewStatus : public QWidget
 		ViewStatus(QWidget *parent);
 	
 	public slots:
-		void setTransformation(int zoom, qreal angle);
+		void setTransformation(qreal zoom, qreal angle);
 	private:
 	QLabel *zoom_, *angle_;
 };

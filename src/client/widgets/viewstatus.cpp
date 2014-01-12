@@ -46,9 +46,9 @@ ViewStatus::ViewStatus(QWidget *parent)
 	layout->addWidget(angle_);
 }
 
-void ViewStatus::setTransformation(int zoom, qreal angle)
+void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
-	zoom_->setText(QString::number(zoom) + "%");
+	zoom_->setText(QString::number(zoom, 'f', 0) + "%");
 	angle_->setText(QString::number(angle, 'f', 1) + QChar(0xb0));
 }
 

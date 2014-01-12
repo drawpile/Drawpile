@@ -78,7 +78,7 @@ public slots:
 	void setViewFocus(const QPolygonF& rect);
 
 	//! Set the transform controls
-	void setViewTransform(int zoom, qreal angle);
+	void setViewTransform(qreal zoom, qreal angle);
 
 signals:
 	void zoomIn();

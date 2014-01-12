@@ -60,10 +60,10 @@ class CanvasView : public QGraphicsView
 		void setToolSettings(widgets::ToolSettingsDock *settings);
 		
 		//! Get the current zoom factor
-		int zoom() const { return _zoom; }
+		qreal zoom() const { return _zoom; }
 
 		//! Set the zoom factor
-		void setZoom(int zoom);
+		void setZoom(qreal zoom);
 
 		//! Get the current rotation angle in degrees
 		qreal rotation() const { return _rotate; }
@@ -83,7 +83,7 @@ class CanvasView : public QGraphicsView
 		void viewRectChange(const QPolygonF& viewport);
 
 		//! The view has been transformed
-		void viewTransformed(int zoom, qreal angle);
+		void viewTransformed(qreal zoom, qreal angle);
 
 	public slots:
 		//! Select the active tool
@@ -109,6 +109,12 @@ class CanvasView : public QGraphicsView
 		//! Set stroke smoothing strength
 		void setStrokeSmoothing(int smoothing);
 
+		//! Increase zoom factor
+		void zoomin();
+
+		//! Decrease zoom factor
+		void zoomout();
+
 	protected:
 		void enterEvent(QEvent *event);
 		void leaveEvent(QEvent *event);
@@ -131,7 +137,7 @@ class CanvasView : public QGraphicsView
 		void viewRectChanged();
 
 		//! View transformation mode (for dragging)
-		enum ViewTransform {NOTRANSFORM, TRANSLATE, ROTATE};
+		enum ViewTransform {DRAG_NOTRANSFORM, DRAG_TRANSLATE, DRAG_ROTATE, DRAG_ZOOM};
 
 		//! Start dragging the view
 		void startDrag(int x, int y, ViewTransform mode);
@@ -174,7 +180,7 @@ class CanvasView : public QGraphicsView
 		QCursor _cursor;
 
 		//! View zoom in percents
-		int _zoom;
+		qreal _zoom;
 		//! View rotation in degrees
 		qreal _rotate;
 

@@ -94,10 +94,6 @@ class MainWindow : public QMainWindow {
 		void join();
 		void leave();
 
-		void zoomin();
-		void zoomout();
-		void zoomone();
-
 		void fullscreen(bool enable);
 		void setShowAnnotations(bool show);
 

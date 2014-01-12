@@ -44,8 +44,8 @@ inline float qRadiansToDegrees(float radians) {
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(NOTRANSFORM),
-	_dragbtndown(NOTRANSFORM), _outlinesize(10), _dia(20),
+	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(DRAG_NOTRANSFORM),
+	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _locked(false)
 {
@@ -85,14 +85,26 @@ void CanvasView::setToolSettings(widgets::ToolSettingsDock *settings)
 	_toolbox.setToolSettings(settings);
 }
 
+void CanvasView::zoomin()
+{
+	setZoom(_zoom * 2);
+}
+
+void CanvasView::zoomout()
+{
+	setZoom(_zoom / 2);
+}
+
 /**
  * You should use this function instead of calling scale() directly
  * to keep track of the zoom factor.
  * @param zoom new zoom factor
  */
-void CanvasView::setZoom(int zoom)
+void CanvasView::setZoom(qreal zoom)
 {
-	Q_ASSERT(zoom>0);
+	if(zoom<=0)
+		return;
+
 	_zoom = zoom;
 	QMatrix nm(1,0,0,1, matrix().dx(), matrix().dy());
 	nm.scale(_zoom/100.0, _zoom/100.0);
@@ -245,46 +257,6 @@ paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) co
 	return paintcore::Point(mapped, pressure);
 }
 
-//! Handle mouse press events
-void CanvasView::mousePressEvent(QMouseEvent *event)
-{
-	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(_pendown != NOTDOWN)
-		return;
-	if(event->button() == Qt::MidButton || _dragbtndown) {
-		startDrag(event->x(), event->y(), _dragbtndown!=ROTATE?TRANSLATE:ROTATE);
-	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==NOTRANSFORM) {
-		_pendown = MOUSEDOWN;
-		
-		onPenDown(mapToScene(event->pos(), 1.0), event->button() == Qt::RightButton);
-	}
-}
-
-//! Handle mouse motion events
-void CanvasView::mouseMoveEvent(QMouseEvent *event)
-{
-	/** @todo why do we sometimes get mouse events for tablet strokes? */
-	if(_pendown == TABLETDOWN)
-		return;
-	if(_pendown && event->buttons() == Qt::NoButton) {
-		// In case we missed a mouse release
-		mouseReleaseEvent(event);
-		return;
-	}
-
-	if(_isdragging) {
-		moveDrag(event->x(), event->y());
-	} else {
-		const paintcore::Point point = mapToScene(event->pos(), 1.0);
-		if(!_prevpoint.intSame(point)) {
-			if(_pendown)
-				onPenMove(point, event->button() == Qt::RightButton);
-			updateOutline(point);
-			_prevpoint = point;
-		}
-	}
-}
-
 void CanvasView::setStrokeSmoothing(int smoothing)
 {
 	Q_ASSERT(smoothing>=0);
@@ -329,6 +301,55 @@ void CanvasView::onPenUp()
 	}
 }
 
+//! Handle mouse press events
+void CanvasView::mousePressEvent(QMouseEvent *event)
+{
+	/** @todo why do we sometimes get mouse events for tablet strokes? */
+	if(_pendown != NOTDOWN)
+		return;
+	if(event->button() == Qt::MidButton || _dragbtndown) {
+		ViewTransform mode;
+		if(_dragbtndown == DRAG_NOTRANSFORM) {
+			if((event->modifiers() & Qt::ControlModifier))
+				mode = DRAG_ZOOM;
+			else
+				mode = DRAG_TRANSLATE;
+		} else
+			mode = _dragbtndown;
+
+		startDrag(event->x(), event->y(), mode);
+	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
+		_pendown = MOUSEDOWN;
+
+		onPenDown(mapToScene(event->pos(), 1.0), event->button() == Qt::RightButton);
+	}
+}
+
+//! Handle mouse motion events
+void CanvasView::mouseMoveEvent(QMouseEvent *event)
+{
+	/** @todo why do we sometimes get mouse events for tablet strokes? */
+	if(_pendown == TABLETDOWN)
+		return;
+	if(_pendown && event->buttons() == Qt::NoButton) {
+		// In case we missed a mouse release
+		mouseReleaseEvent(event);
+		return;
+	}
+
+	if(_isdragging) {
+		moveDrag(event->x(), event->y());
+	} else {
+		const paintcore::Point point = mapToScene(event->pos(), 1.0);
+		if(!_prevpoint.intSame(point)) {
+			if(_pendown)
+				onPenMove(point, event->button() == Qt::RightButton);
+			updateOutline(point);
+			_prevpoint = point;
+		}
+	}
+}
+
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
@@ -366,9 +387,9 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
 		if(event->modifiers() & Qt::ControlModifier) {
-			_dragbtndown = ROTATE;
+			_dragbtndown = DRAG_ROTATE;
 		} else {
-			_dragbtndown = TRANSLATE;
+			_dragbtndown = DRAG_TRANSLATE;
 		}
 		viewport()->setCursor(Qt::OpenHandCursor);
 	} else {
@@ -379,8 +400,8 @@ void CanvasView::keyPressEvent(QKeyEvent *event) {
 void CanvasView::keyReleaseEvent(QKeyEvent *event) {
 	if(event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
 		event->accept();
-		_dragbtndown = NOTRANSFORM;
-		if(_isdragging==NOTRANSFORM)
+		_dragbtndown = DRAG_NOTRANSFORM;
+		if(_isdragging==DRAG_NOTRANSFORM)
 			resetCursor();
 	} else {
 		QGraphicsView::keyReleaseEvent(event);
@@ -469,9 +490,15 @@ void CanvasView::viewRectChanged()
 	emit viewRectChange(mapToScene(rect()));
 }
 
+void CanvasView::scrollTo(const QPoint& point)
+{
+	centerOn(point);
+}
+
 /**
  * @param x initial x coordinate
  * @param y initial y coordinate
+ * @param mode dragging mode
  */
 void CanvasView::startDrag(int x,int y, ViewTransform mode)
 {
@@ -489,11 +516,6 @@ void CanvasView::startDrag(int x,int y, ViewTransform mode)
 	}
 }
 
-void CanvasView::scrollTo(const QPoint& point)
-{
-	centerOn(point);
-}
-
 /**
  * @param x x coordinate
  * @param y y coordinate
@@ -503,10 +525,21 @@ void CanvasView::moveDrag(int x, int y)
 	const int dx = _dragx - x;
 	const int dy = _dragy - y;
 
-	if(_isdragging==ROTATE) {
+	if(_isdragging==DRAG_ROTATE) {
 		qreal preva = qAtan2( width()/2 - _dragx, height()/2 - _dragy );
 		qreal a = qAtan2( width()/2 - x, height()/2 - y );
 		setRotation(rotation() + qRadiansToDegrees(preva-a));
+
+	} else if(_isdragging==DRAG_ZOOM) {
+		if(dy!=0) {
+			float delta = qBound(-1.0, dy / 100.0, 1.0);
+			if(delta>0) {
+				setZoom(_zoom * (1+delta));
+			} else if(delta<0) {
+				setZoom(_zoom / (1-delta));
+			}
+		}
+
 	} else {
 		QScrollBar *ver = verticalScrollBar();
 		ver->setSliderPosition(ver->sliderPosition()+dy);
@@ -521,11 +554,11 @@ void CanvasView::moveDrag(int x, int y)
 //! Stop dragging
 void CanvasView::stopDrag()
 {
-	if(_dragbtndown != NOTRANSFORM)
+	if(_dragbtndown != DRAG_NOTRANSFORM)
 		viewport()->setCursor(Qt::OpenHandCursor);
 	else
 		resetCursor();
-	_isdragging = NOTRANSFORM;
+	_isdragging = DRAG_NOTRANSFORM;
 	_showoutline = true;
 }
 

@@ -175,7 +175,7 @@ void Navigator::setViewFocus(const QPolygonF& rect)
 	_ui->view->setViewFocus(rect);
 }
 
-void Navigator::setViewTransform(int zoom, qreal angle)
+void Navigator::setViewTransform(qreal zoom, qreal angle)
 {
 	Q_UNUSED(zoom);
 	_ui->angle->blockSignals(true);
