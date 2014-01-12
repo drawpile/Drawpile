@@ -44,7 +44,7 @@ inline float qRadiansToDegrees(float radians) {
 namespace widgets {
 
 CanvasView::CanvasView(QWidget *parent)
-	: QGraphicsView(parent), _pendown(NOTDOWN), _isdragging(DRAG_NOTRANSFORM),
+	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _locked(false)
@@ -268,27 +268,37 @@ void CanvasView::setStrokeSmoothing(int smoothing)
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
 	if(_scene->hasImage() && !_locked) {
-		if(_smoothing>0 && _current_tool->allowSmoothing())
-			_smoother.addPoint(p);
-		else
-			_current_tool->begin(p, right);
 
+		if(_specialpenmode) {
+			// quick color pick mode
+			_scene->pickColor(p.x(), p.y(), 0);
+		} else {
+			if(_smoothing>0 && _current_tool->allowSmoothing())
+				_smoother.addPoint(p);
+			else
+				_current_tool->begin(p, right);
+		}
 	}
 }
 
 void CanvasView::onPenMove(const paintcore::Point &p, bool right)
 {
 	if(_scene->hasImage() && !_locked) {
-		if(_smoothing>0 && _current_tool->allowSmoothing()) {
-			_smoother.addPoint(p);
-			if(_smoother.hasSmoothPoint()) {
-				if(_smoother.isFirstSmoothPoint())
-					_current_tool->begin(_smoother.smoothPoint(), right);
-				else
-					_current_tool->motion(_smoother.smoothPoint());
-			}
+		if(_specialpenmode) {
+			// quick color pick mode
+			_scene->pickColor(p.x(), p.y(), 0);
 		} else {
-			_current_tool->motion(p);
+			if(_smoothing>0 && _current_tool->allowSmoothing()) {
+				_smoother.addPoint(p);
+				if(_smoother.hasSmoothPoint()) {
+					if(_smoother.isFirstSmoothPoint())
+						_current_tool->begin(_smoother.smoothPoint(), right);
+					else
+						_current_tool->motion(_smoother.smoothPoint());
+				}
+			} else {
+				_current_tool->motion(p);
+			}
 		}
 	}
 }
@@ -297,7 +307,8 @@ void CanvasView::onPenUp()
 {
 	if(_scene->hasImage() && !_locked) {
 		_smoother.reset();
-		_current_tool->end();
+		if(!_specialpenmode)
+			_current_tool->end();
 	}
 }
 
@@ -321,6 +332,7 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
 		_pendown = MOUSEDOWN;
 
+		_specialpenmode = event->modifiers() & Qt::ControlModifier;
 		onPenDown(mapToScene(event->pos(), 1.0), event->button() == Qt::RightButton);
 	}
 }
@@ -447,6 +459,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			if(_pendown == NOTDOWN) {
 				const paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
 
+				_specialpenmode = tabev->modifiers() & Qt::ControlModifier; /* note: modifiers doesn't seem to work, at least on Qt 5.2.0 */
 				_pendown = TABLETDOWN;
 				onPenDown(point, false);
 				updateOutline(point);

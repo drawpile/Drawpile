@@ -166,6 +166,9 @@ class CanvasView : public QGraphicsView
 		 */
 		enum {NOTDOWN, MOUSEDOWN, TABLETDOWN} _pendown;
 
+		//! If Ctrl is held, pen goes to "special" mode (which is currently quick color picker mode)
+		bool _specialpenmode;
+
 		//! Is the view being dragged
 		ViewTransform _isdragging;
 		ViewTransform _dragbtndown;
