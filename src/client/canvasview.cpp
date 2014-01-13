@@ -265,6 +265,11 @@ void CanvasView::setStrokeSmoothing(int smoothing)
 		_smoother.setSmoothing(smoothing);
 }
 
+void CanvasView::setPressureCurve(const KisCubicCurve &curve)
+{
+	_pressurecurve = curve;
+}
+
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 {
 	if(_scene->hasImage() && !_locked) {
@@ -430,7 +435,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		const paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
+		const paintcore::Point point = mapToScene(tabev->posF(), _pressurecurve.value(tabev->pressure()));
 
 		if(!_prevpoint.intSame(point)) {
 			if(_isdragging)
@@ -457,7 +462,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 			startDrag(tabev->x(), tabev->y(), _dragbtndown);
 		} else {
 			if(_pendown == NOTDOWN) {
-				const paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
+				const paintcore::Point point = mapToScene(tabev->posF(), _pressurecurve.value(tabev->pressure()));
 
 				_specialpenmode = tabev->modifiers() & Qt::ControlModifier; /* note: modifiers doesn't seem to work, at least on Qt 5.2.0 */
 				_pendown = TABLETDOWN;

@@ -22,6 +22,7 @@
 
 #include "canvasview.h"
 #include "inputsettingsdock.h"
+#include "utils/kis_cubic_curve.h"
 #include "ui_inputcfg.h"
 
 namespace widgets {
@@ -38,6 +39,12 @@ InputSettingsDock::InputSettingsDock(QWidget *parent) :
 	QSettings cfg;
 	cfg.beginGroup("input");
 	_ui->smoothing->setValue(cfg.value("smoothing", 0).toInt());
+
+	if(cfg.contains("pressurecurve")) {
+		KisCubicCurve curve;
+		curve.fromString(cfg.value("pressurecurve").toString());
+		_ui->curveWidget->setCurve(curve);
+	}
 }
 
 InputSettingsDock::~InputSettingsDock()
@@ -47,6 +54,7 @@ InputSettingsDock::~InputSettingsDock()
 	cfg.beginGroup("input");
 
 	cfg.setValue("smoothing", _ui->smoothing->value());
+	cfg.setValue("pressurecurve", _ui->curveWidget->curve().toString());
 
 	// Clean up
 	delete _ui;
@@ -55,7 +63,9 @@ InputSettingsDock::~InputSettingsDock()
 void InputSettingsDock::connectCanvasView(CanvasView *view)
 {
 	view->setStrokeSmoothing(_ui->smoothing->value());
+	view->setPressureCurve(_ui->curveWidget->curve());
 	connect(_ui->smoothing, SIGNAL(valueChanged(int)), view, SLOT(setStrokeSmoothing(int)));
+	connect(_ui->curveWidget, SIGNAL(curveChanged(KisCubicCurve)), view, SLOT(setPressureCurve(KisCubicCurve)));
 }
 
 }

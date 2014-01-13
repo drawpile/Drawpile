@@ -24,6 +24,7 @@
 
 #include "core/point.h"
 #include "utils/strokesmoother.h"
+#include "utils/kis_cubic_curve.h"
 #include "tools.h"
 
 namespace drawingboard {
@@ -109,6 +110,9 @@ class CanvasView : public QGraphicsView
 		//! Set stroke smoothing strength
 		void setStrokeSmoothing(int smoothing);
 
+		//! Set stylus pressure adjustment curve
+		void setPressureCurve(const KisCubicCurve &curve);
+
 		//! Increase zoom factor
 		void zoomin();
 
@@ -193,6 +197,7 @@ class CanvasView : public QGraphicsView
 		tools::Tool *_current_tool;
 
 		int _smoothing;
+		KisCubicCurve _pressurecurve;
 		bool _locked;
 };
 

@@ -44,6 +44,7 @@ set (
 	utils/recentfiles.cpp
 	utils/whatismyip.cpp
 	utils/strokesmoother.cpp
+	utils/kis_cubic_curve.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp
@@ -73,6 +74,7 @@ set (
 	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
+	widgets/kis_curve_widget.cpp
 	docks/toolsettingswidget.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 
