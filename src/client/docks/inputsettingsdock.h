@@ -37,11 +37,12 @@ public:
 
 	void connectCanvasView(CanvasView *view);
 
-public slots:
+private slots:
+	void updateFakePressureMode();
 
 private:
 	Ui_InputSettings *_ui;
-
+	CanvasView *_canvasview;
 };
 
 }

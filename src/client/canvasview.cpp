@@ -47,7 +47,8 @@ CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
-	_smoothing(0), _locked(false)
+	_smoothing(0), _pressuremode(PRESSUREMODE_NONE), _usestylus(true),
+	_locked(false)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -265,9 +266,30 @@ void CanvasView::setStrokeSmoothing(int smoothing)
 		_smoother.setSmoothing(smoothing);
 }
 
+void CanvasView::setPressureMode(PressureMode mode, float param)
+{
+	_pressuremode = PressureMode(mode);
+	_modeparam = param;
+}
+
+void CanvasView::setStylusPressureEnabled(bool enabled)
+{
+	_usestylus = enabled;
+}
+
 void CanvasView::setPressureCurve(const KisCubicCurve &curve)
 {
 	_pressurecurve = curve;
+}
+
+void CanvasView::setDistanceCurve(const KisCubicCurve &curve)
+{
+	_pressuredistance = curve;
+}
+
+void CanvasView::setVelocityCurve(const KisCubicCurve &curve)
+{
+	_pressurevelocity = curve;
 }
 
 void CanvasView::onPenDown(const paintcore::Point &p, bool right)
@@ -336,9 +358,11 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 		startDrag(event->x(), event->y(), mode);
 	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _isdragging==DRAG_NOTRANSFORM) {
 		_pendown = MOUSEDOWN;
+		_pointerdistance = 0;
+		_pointervelocity = 0;
 
 		_specialpenmode = event->modifiers() & Qt::ControlModifier;
-		onPenDown(mapToScene(event->pos(), 1.0), event->button() == Qt::RightButton);
+		onPenDown(mapToScene(event->pos(), mapPressure(1.0, false)), event->button() == Qt::RightButton);
 	}
 }
 
@@ -357,10 +381,14 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 	if(_isdragging) {
 		moveDrag(event->x(), event->y());
 	} else {
-		const paintcore::Point point = mapToScene(event->pos(), 1.0);
+		paintcore::Point point = mapToScene(event->pos(), 1);
 		if(!_prevpoint.intSame(point)) {
-			if(_pendown)
+			if(_pendown) {
+				_pointervelocity = point.distance(_prevpoint);
+				_pointerdistance += _pointervelocity;
+				point.setPressure(mapPressure(1.0, false));
 				onPenMove(point, event->button() == Qt::RightButton);
+			}
 			updateOutline(point);
 			_prevpoint = point;
 		}
@@ -435,7 +463,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// Stylus moved
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
-		const paintcore::Point point = mapToScene(tabev->posF(), _pressurecurve.value(tabev->pressure()));
+
+		paintcore::Point point = mapToScene(tabev->posF(), tabev->pressure());
 
 		if(!_prevpoint.intSame(point)) {
 			if(_isdragging)
@@ -447,6 +476,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 						_pendown = NOTDOWN;
 						onPenUp();
 					} else {
+						_pointervelocity = point.distance(_prevpoint);
+						_pointerdistance += _pointervelocity;
+						point.setPressure(mapPressure(point.pressure(), true));
 						onPenMove(point, false);
 					}
 				}
@@ -462,13 +494,17 @@ bool CanvasView::viewportEvent(QEvent *event)
 			startDrag(tabev->x(), tabev->y(), _dragbtndown);
 		} else {
 			if(_pendown == NOTDOWN) {
-				const paintcore::Point point = mapToScene(tabev->posF(), _pressurecurve.value(tabev->pressure()));
+				_pointerdistance = 0;
+				_pointervelocity = 0;
+
+				const paintcore::Point point = mapToScene(tabev->posF(), mapPressure(tabev->pressure(), true));
 
 				_specialpenmode = tabev->modifiers() & Qt::ControlModifier; /* note: modifiers doesn't seem to work, at least on Qt 5.2.0 */
 				_pendown = TABLETDOWN;
 				onPenDown(point, false);
 				updateOutline(point);
 				_prevpoint = point;
+
 			}
 		}
 	} else if(event->type() == QEvent::TabletRelease) {
@@ -489,6 +525,33 @@ bool CanvasView::viewportEvent(QEvent *event)
 	}
 	
 	return true;
+}
+
+float CanvasView::mapPressure(float pressure, bool stylus)
+{
+	if(stylus && _usestylus) {
+		// Use real pressure
+		return _pressurecurve.value(pressure);
+	}
+
+	// Otherwise fake pressure
+	switch(_pressuremode) {
+	case PRESSUREMODE_NONE:
+		return 1.0;
+
+	case PRESSUREMODE_DISTANCE: {
+		float d = qMin(_pointerdistance, _modeparam) / _modeparam;
+		return _pressuredistance.value(d);
+	}
+
+	case PRESSUREMODE_VELOCITY:
+		float v = qMin(_pointervelocity, _modeparam) / _modeparam;
+		return _pressurevelocity.value(v);
+	}
+
+	// Shouldn't be reached
+	Q_ASSERT(false);
+	return 0;
 }
 
 void CanvasView::updateOutline(const paintcore::Point& point) {

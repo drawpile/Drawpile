@@ -20,6 +20,7 @@
 #ifndef PPOINT_H
 #define PPOINT_H
 
+#include <cmath>
 #include <QPoint>
 #include <QVector>
 
@@ -73,6 +74,11 @@ public:
 		qreal dy = y() - point.y();
 		qreal d = dx*dx + dy*dy;
 		return d < 1.0;
+	}
+
+	float distance(const QPointF &point) const
+	{
+		return hypot(point.x()-x(), point.y()-y());
 	}
 
 private:

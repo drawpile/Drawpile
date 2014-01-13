@@ -49,6 +49,8 @@ class CanvasView : public QGraphicsView
 {
 	Q_OBJECT
 	public:
+		enum PressureMode { PRESSUREMODE_NONE, PRESSUREMODE_DISTANCE, PRESSUREMODE_VELOCITY };
+
 		CanvasView(QWidget *parent=0);
 
 		//! Set the board to use
@@ -69,6 +71,9 @@ class CanvasView : public QGraphicsView
 		//! Get the current rotation angle in degrees
 		qreal rotation() const { return _rotate; }
 		
+		//! Set fake pressure mode
+		void setPressureMode(PressureMode mode, float param);
+
 		using QGraphicsView::mapToScene;
 		paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
 		paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
@@ -110,8 +115,17 @@ class CanvasView : public QGraphicsView
 		//! Set stroke smoothing strength
 		void setStrokeSmoothing(int smoothing);
 
+		//! Enable use of tablet pressure
+		void setStylusPressureEnabled(bool enabled);
+
 		//! Set stylus pressure adjustment curve
 		void setPressureCurve(const KisCubicCurve &curve);
+
+		//! Set distance to pressure curve
+		void setDistanceCurve(const KisCubicCurve &curve);
+
+		//! Set velocity to pressure curve
+		void setVelocityCurve(const KisCubicCurve &curve);
 
 		//! Increase zoom factor
 		void zoomin();
@@ -139,6 +153,7 @@ class CanvasView : public QGraphicsView
 
 	private:
 		void viewRectChanged();
+		float mapPressure(float pressure, bool stylus);
 
 		//! View transformation mode (for dragging)
 		enum ViewTransform {DRAG_NOTRANSFORM, DRAG_TRANSLATE, DRAG_ROTATE, DRAG_ZOOM};
@@ -180,6 +195,8 @@ class CanvasView : public QGraphicsView
 
 		//! Previous pointer location
 		paintcore::Point _prevpoint;
+		float _pointerdistance;
+		float _pointervelocity;
 		StrokeSmoother _smoother;
 
 		int _outlinesize, _dia;
@@ -196,8 +213,15 @@ class CanvasView : public QGraphicsView
 		tools::ToolCollection _toolbox;
 		tools::Tool *_current_tool;
 
+		// Input settings
 		int _smoothing;
+		PressureMode _pressuremode;
+		float _modeparam;
 		KisCubicCurve _pressurecurve;
+		KisCubicCurve _pressuredistance;
+		KisCubicCurve _pressurevelocity;
+		bool _usestylus;
+
 		bool _locked;
 };
 
