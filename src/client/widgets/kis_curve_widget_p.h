@@ -18,7 +18,8 @@
  */
 #ifndef _KIS_CURVE_WIDGET_P_H_
 #define _KIS_CURVE_WIDGET_P_H_
-#include <kis_cubic_curve.h>
+
+#include "utils/kis_cubic_curve.h"
 
 enum enumState {
     ST_NORMAL,
