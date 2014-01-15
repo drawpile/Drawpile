@@ -243,10 +243,10 @@ paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) co
 	// To work around this, map (x,y) and (x+1, y+1) and linearly interpolate
 	// between the two
 	double tmp;
-	qreal xf = modf(point.x(), &tmp);
-	qreal yf = modf(point.y(), &tmp);
+	qreal xf = qAbs(modf(point.x(), &tmp));
+	qreal yf = qAbs(modf(point.y(), &tmp));
 
-	QPoint p0 = point.toPoint();
+	QPoint p0(floor(point.x()), floor(point.y()));
 	QPointF p1 = mapToScene(p0);
 	QPointF p2 = mapToScene(p0 + QPoint(1,1));
 
