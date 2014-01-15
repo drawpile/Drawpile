@@ -398,12 +398,10 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 //! Handle mouse release events
 void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(_pendown == TABLETDOWN)
-		return;
 	_prevpoint = mapToScene(event->pos(), 0.0);
 	if(_isdragging) {
 		stopDrag();
-	} else if((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN) {
+	} else if(_pendown == TABLETDOWN || ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN)) {
 		_pendown = NOTDOWN;
 		onPenUp();
 	}
@@ -471,16 +469,10 @@ bool CanvasView::viewportEvent(QEvent *event)
 				moveDrag(tabev->x(), tabev->y());
 			else {
 				if(_pendown) {
-					if(point.pressure()==0) {
-						// Missed a release event
-						_pendown = NOTDOWN;
-						onPenUp();
-					} else {
-						_pointervelocity = point.distance(_prevpoint);
-						_pointerdistance += _pointervelocity;
-						point.setPressure(mapPressure(point.pressure(), true));
-						onPenMove(point, false);
-					}
+					_pointervelocity = point.distance(_prevpoint);
+					_pointerdistance += _pointervelocity;
+					point.setPressure(mapPressure(point.pressure(), true));
+					onPenMove(point, false);
 				}
 				updateOutline(point);
 			}
@@ -509,17 +501,8 @@ bool CanvasView::viewportEvent(QEvent *event)
 		}
 	} else if(event->type() == QEvent::TabletRelease) {
 		// Stylus lifted
-		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
-		tabev->accept();
-		if(_isdragging) {
-			stopDrag();
-		} else if(_pendown == TABLETDOWN) {
-			paintcore::Point point = mapToScene(tabev->posF(), 0);
-			updateOutline(point);
-			_prevpoint = point;
-			_pendown = NOTDOWN;
-			onPenUp();
-		}
+		// Ignore this event: a mouseRelease event is also generated, so we let
+		// the mouseRleaseEvent function handle this.
 	} else {
 		return QGraphicsView::viewportEvent(event);
 	}
