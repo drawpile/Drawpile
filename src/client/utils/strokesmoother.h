@@ -71,6 +71,12 @@ public:
 	 */
 	paintcore::Point smoothPoint() const;
 
+	/**
+	 * @brief Get the last point added to the smoother
+	 * @return
+	 */
+	paintcore::Point latestPoint() const { return at(0); }
+
 private:
 	paintcore::Point at(int i) const;
 

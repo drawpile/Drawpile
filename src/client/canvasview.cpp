@@ -330,12 +330,18 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right)
 	}
 }
 
-void CanvasView::onPenUp()
+void CanvasView::onPenUp(bool right)
 {
 	if(_scene->hasImage() && !_locked) {
-		_smoother.reset();
-		if(!_specialpenmode)
+		if(!_specialpenmode) {
+			// Add the missing single dab when smoothing is used
+			if(_smoothing>0 && _current_tool->allowSmoothing() && !_smoother.hasSmoothPoint()) {
+				_current_tool->begin(_smoother.latestPoint(), right);
+			}
 			_current_tool->end();
+		}
+
+		_smoother.reset();
 	}
 }
 
@@ -403,7 +409,7 @@ void CanvasView::mouseReleaseEvent(QMouseEvent *event)
 		stopDrag();
 	} else if(_pendown == TABLETDOWN || ((event->button() == Qt::LeftButton || event->button() == Qt::RightButton) && _pendown == MOUSEDOWN)) {
 		_pendown = NOTDOWN;
-		onPenUp();
+		onPenUp(event->button() == Qt::RightButton);
 	}
 }
 

@@ -172,7 +172,7 @@ class CanvasView : public QGraphicsView
 
 		void onPenDown(const paintcore::Point &p, bool right);
 		void onPenMove(const paintcore::Point &p, bool right);
-		void onPenUp();
+		void onPenUp(bool right);
 		
 		void resetCursor();
 
