@@ -1322,7 +1322,7 @@ void MainWindow::pasteImage(const QImage &image)
 {
 	if(_canvas->hasImage()) {
 		getAction("toolselectrect")->trigger();
-		_canvas->pasteFromImage(image);
+		_canvas->pasteFromImage(image, _view->viewCenterPoint());
 	} else {
 		// Canvas not yet initialized? Initialize with clipboard content
 		QImageCanvasLoader loader(image);

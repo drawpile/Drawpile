@@ -554,6 +554,11 @@ void CanvasView::updateOutline(const paintcore::Point& point) {
 	}
 }
 
+QPoint CanvasView::viewCenterPoint() const
+{
+	return mapToScene(rect().center()).toPoint();
+}
+
 void CanvasView::viewRectChanged()
 {
 	// Signal visible view rectangle change

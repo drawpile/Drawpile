@@ -209,7 +209,7 @@ QImage CanvasScene::selectionToImage(int layerId)
 	return img;
 }
 
-void CanvasScene::pasteFromImage(const QImage &image)
+void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint)
 {
 	Q_ASSERT(hasImage());
 
@@ -217,7 +217,7 @@ void CanvasScene::pasteFromImage(const QImage &image)
 	if(_selection)
 		center = _selection->rect().center();
 	else
-		center = QPoint(width()/2, height()/2);
+		center = defaultPoint;
 
 	SelectionItem *paste = new SelectionItem();
 	paste->setRect(QRect(QPoint(center.x() - image.width()/2, center.y() - image.height()/2), image.size()));

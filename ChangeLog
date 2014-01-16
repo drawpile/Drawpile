@@ -1,10 +1,11 @@
-2014-??-?? Version 0.8.3
+2014-01-17 Version 0.8.3
  * Improved navigator
  * Stroke smoothing
  * New zoom shortcut (ctrl+middle button or stylus button)
  * Quick color picking: Ctrl + mouse click
  * Pen pressure emulation modes for mouse
  * Fixed rounding bug which caused jitter in tablet pointer coordinates
+ * Usability improvement: paste images to center of current view
 
 2014-01-10 Version 0.8.2
  * New application icon

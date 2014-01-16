@@ -78,6 +78,9 @@ class CanvasView : public QGraphicsView
 		paintcore::Point mapToScene(const QPoint &point, qreal pressure) const;
 		paintcore::Point mapToScene(const QPointF &point, qreal pressure) const;
 
+		//! The center point of the view in scene coordinates
+		QPoint viewCenterPoint() const;
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);

@@ -86,7 +86,7 @@ public:
 	QImage selectionToImage(int layer);
 
 	//! Create a new selection and paste an image from the clipboard
-	void pasteFromImage(const QImage &image);
+	void pasteFromImage(const QImage &image, const QPoint &defaultPoint);
 
 	//! Save the canvas to a file
 	bool save(const QString& filename) const;
