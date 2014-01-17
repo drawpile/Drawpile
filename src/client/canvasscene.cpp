@@ -153,6 +153,7 @@ bool CanvasScene::deleteAnnotation(int id)
 
 void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
 {
+	setSceneRect(_image->boundingRect());
 	if(xoffset || yoffset) {
 		QPoint offset(xoffset, yoffset);
 

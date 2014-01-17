@@ -1,4 +1,5 @@
 2014-??-?? Version 0.8.4
+ * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries
 
 2014-01-17 Version 0.8.3
  * Improved navigator
