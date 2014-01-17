@@ -151,8 +151,9 @@ public:
 	 * @param x X coordinate
 	 * @param y Y coordinate
 	 * @param layer layer ID. If 0, the merged pixel value is picked.
+	 * @param bg pick background color
 	 */
-	void pickColor(int x, int y, int layer);
+	void pickColor(int x, int y, int layer, bool bg);
 
 	/**
 	 * @brief Get the state tracker for this session.
@@ -207,7 +208,7 @@ signals:
 	void canvasInitialized();
 
 	//! User used a color picker tool on this scene
-	void colorPicked(const QColor &color);
+	void colorPicked(const QColor &color, bool background);
 
 	//! An annotation was just created (by the local user)
 	void myAnnotationCreated(AnnotationItem *item);

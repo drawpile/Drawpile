@@ -298,7 +298,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 
 		if(_specialpenmode) {
 			// quick color pick mode
-			_scene->pickColor(p.x(), p.y(), 0);
+			_scene->pickColor(p.x(), p.y(), 0, right);
 		} else {
 			if(_smoothing>0 && _current_tool->allowSmoothing())
 				_smoother.addPoint(p);
@@ -313,7 +313,7 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right)
 	if(_scene->hasImage() && !_locked) {
 		if(_specialpenmode) {
 			// quick color pick mode
-			_scene->pickColor(p.x(), p.y(), 0);
+			_scene->pickColor(p.x(), p.y(), 0, right);
 		} else {
 			if(_smoothing>0 && _current_tool->allowSmoothing()) {
 				_smoother.addPoint(p);

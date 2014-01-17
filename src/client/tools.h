@@ -127,12 +127,15 @@ class Eraser : public BrushBase {
  * Color picker is a local tool, it does not affect the drawing board.
  */
 class ColorPicker : public Tool {
-	public:
-		ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
+public:
+	ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
 
-		void begin(const paintcore::Point& point, bool right);
-		void motion(const paintcore::Point& point);
-		void end();
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point);
+	void end();
+
+private:
+	bool _bg;
 };
 
 //! Line tool

@@ -137,7 +137,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_view->setCanvas(_canvas);
 	_navigator->setScene(_canvas);
 
-	connect(_canvas, SIGNAL(colorPicked(QColor)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
+	connect(_canvas, SIGNAL(colorPicked(QColor, bool)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(myLayerCreated(int)), _layerlist, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
@@ -1727,7 +1727,12 @@ void MainWindow::setupActions()
 	connect(_fgbgcolor, SIGNAL(backgroundChanged(const QColor&)), _toolsettings, SLOT(setBackground(const QColor&)));
 	connect(_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
-	connect(_canvas, SIGNAL(colorPicked(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
+		if(bg)
+			_fgbgcolor->setBackground(c);
+		else
+			_fgbgcolor->setForeground(c);
+	});
 
 	connect(palette_, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), rgb_, SLOT(setColor(QColor)));

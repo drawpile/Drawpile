@@ -227,7 +227,7 @@ void CanvasScene::pasteFromImage(const QImage &image, const QPoint &defaultPoint
 	setSelectionItem(paste);
 }
 
-void CanvasScene::pickColor(int x, int y, int layer)
+void CanvasScene::pickColor(int x, int y, int layer, bool bg)
 {
 	if(_image) {
 		QColor color;
@@ -241,7 +241,7 @@ void CanvasScene::pickColor(int x, int y, int layer)
 
 		if(color.isValid() && color.alpha()>0) {
 			color.setAlpha(255);
-			emit colorPicked(color);
+			emit colorPicked(color, bg);
 		}
 	}
 }
