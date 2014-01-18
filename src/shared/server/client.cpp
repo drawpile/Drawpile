@@ -336,6 +336,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 			if(isLayerLocked(msg.cast<PutImage>().layer()))
 				return;
 			break;
+		case MSG_FILLRECT:
+			if(isLayerLocked(msg.cast<FillRect>().layer()))
+				return;
+			break;
 		default: /* other types are always allowed */ break;
 		}
 	}

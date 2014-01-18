@@ -198,6 +198,25 @@ void doMaskErase(quint32 *base, const uchar *mask, int w, int h, int maskskip, i
 	}
 }
 
+// Specialized pixel composition: copy source without any blending
+void doMaskCopy(quint32 *base, quint32 color, const uchar *mask, int w, int h, int maskskip, int baseskip)
+{
+	baseskip *= 4;
+	uchar *dest = reinterpret_cast<uchar*>(base);
+	const uchar *src = reinterpret_cast<const uchar*>(&color);
+	for(int y=0;y<h;++y) {
+		for(int x=0;x<w;++x) {
+			*(dest++) = UINT8_MULT(*(src+0), *mask);
+			*(dest++) = UINT8_MULT(*(src+1), *mask);
+			*(dest++) = UINT8_MULT(*(src+2), *mask);
+			*(dest++) = UINT8_MULT(*(src+3), *mask);
+			++mask;
+		}
+		dest += baseskip;
+		mask += maskskip;
+	}
+}
+
 // A generic composition function for special blending modes
 // This doesn't touch the alpha channel.
 typedef uint(*BlendOp)(uchar,uchar);
@@ -313,6 +332,7 @@ void compositeMask(int mode, quint32 *base, quint32 color, const uchar *mask,
 	case 7: doMaskComposite<blend_lighten>(base, color, mask, w, h, maskskip, baseskip); break;
 	case 8: doMaskComposite<blend_subtract>(base, color, mask, w, h, maskskip, baseskip); break;
 	case 9: doMaskComposite<blend_add>(base, color, mask, w, h, maskskip, baseskip); break;
+	case 255: doMaskCopy(base, color, mask, w, h, maskskip, baseskip); break;
 	}
 }
 

@@ -62,7 +62,8 @@ enum MessageType {
 	MSG_ANNOTATION_EDIT,
 	MSG_ANNOTATION_DELETE,
 	MSG_UNDOPOINT,
-	MSG_UNDO
+	MSG_UNDO,
+	MSG_FILLRECT
 };
 
 enum MessageUndoState {

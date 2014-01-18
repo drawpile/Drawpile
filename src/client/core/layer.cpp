@@ -394,6 +394,48 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 	}
 }
 
+void Layer::fillRect(const QRect &rect, const QColor &color, int blendmode)
+{
+	if(rect.contains(QRect(0, 0, _width, _height)) && blendmode==255) {
+		// Fill entire layer
+		fillColor(color);
+		return;
+	}
+
+	uchar mask[Tile::LENGTH];
+	if(blendmode==255)
+		memset(mask, 0xff, Tile::LENGTH);
+	else
+		memset(mask, color.alpha(), Tile::LENGTH);
+
+	const int size = Tile::SIZE;
+	const int bottom = rect.y() + rect.height();
+	const int right = rect.x() + rect.width();
+
+	const int tx0 = rect.x() / size;
+	const int tx1 = right / size;
+	const int ty0 = rect.y() / size;
+	const int ty1 = bottom / size;
+
+	for(int ty=ty0;ty<=ty1;++ty) {
+		for(int tx=tx0;tx<=tx1;++tx) {
+			int left = qMax(tx * size, rect.x()) - tx*size;
+			int top = qMax(ty * size, rect.y()) - ty*size;
+			int w = qMin((tx+1)*size, right) - tx*size - left;
+			int h = qMin((ty+1)*size, bottom) - ty*size - top;
+
+			Tile &t = _tiles[ty*_xtiles+tx];
+
+			t.composite(blendmode, mask, color, left, top, w, h, 0);
+		}
+	}
+
+	if(_owner && visible()) {
+		_owner->markDirty(rect);
+		_owner->notifyAreaChanged();
+	}
+}
+
 void Layer::dab(int contextId, const Brush &brush, const Point &point)
 {
 	if(!brush.incremental()) {

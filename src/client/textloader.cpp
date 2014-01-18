@@ -82,7 +82,7 @@ int str2ctxid(const QString &str)
 	return id;
 }
 
-uint str2color(const QString &str) {
+quint32 str2color(const QString &str) {
 	if(str.at(0) == '#')
 	{
 		bool ok;
@@ -337,7 +337,7 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+)(?: (blend))? ([\\w.]+)");
 	QRegularExpressionMatch m = re.match(args);
 	if(!m.hasMatch())
-		throw SyntaxError("Expected layer id, x, y and filename");
+		throw SyntaxError("Expected context id, layer id, x, y and filename");
 
 	int ctxid = str2ctxid(m.captured(1));
 	int layer = str2ctxid(m.captured(2));
@@ -349,6 +349,34 @@ void TextCommandLoader::handlePutImage(const QString &args)
 	QImage image(filename.absoluteFilePath());
 
 	_messages.append(net::putQImage(ctxid, layer, x, y, image, blend));
+}
+
+void TextCommandLoader::handleFillRect(const QString &args)
+{
+	QRegularExpression re("(\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (\\d+) (#[0-9a-fA-F]{8})(?: ([\\w-]+))?");
+	QRegularExpressionMatch m = re.match(args);
+	if(!m.hasMatch())
+		throw SyntaxError("Expected context id, layer id, x, y, w, h, color and blending mode");
+
+	int ctxid = str2ctxid(m.captured(1));
+	int layer = str2ctxid(m.captured(2));
+	int x = str2int(m.captured(3));
+	int y = str2int(m.captured(4));
+	int w = str2int(m.captured(5));
+	int h = str2int(m.captured(6));
+	quint32 color = str2color(m.captured(7));
+
+	int blend;
+	if(m.captured(8).isEmpty())
+		blend = 255;
+	else
+		blend = paintcore::blendModeSvg(m.captured(8));
+
+	if(blend<0)
+		throw SyntaxError("Invalid blending mode: " + m.captured(8));
+
+	_messages.append(MessagePtr(new protocol::FillRect(ctxid, layer, blend, x, y, w, h, color)));
+
 }
 
 void TextCommandLoader::handleUndoPoint(const QString &args)
@@ -493,6 +521,8 @@ bool TextCommandLoader::load()
 				handlePenUp(args);
 			else if(cmd=="putimage")
 				handlePutImage(args);
+			else if(cmd=="fillrect")
+				handleFillRect(args);
 			else if(cmd=="undopoint")
 				handleUndoPoint(args);
 			else if(cmd=="undo")

@@ -61,4 +61,42 @@ int PutImage::serializePayload(uchar *data) const
 	return ptr-data;
 }
 
+FillRect *FillRect::deserialize(const uchar *data, uint len)
+{
+	if(len != 15)
+		return 0;
+
+	return new FillRect(
+		*(data+0),
+		*(data+1),
+		*(data+2),
+		qFromBigEndian<quint16>(data+3),
+		qFromBigEndian<quint16>(data+5),
+		qFromBigEndian<quint16>(data+7),
+		qFromBigEndian<quint16>(data+9),
+		qFromBigEndian<quint32>(data+11)
+	);
+}
+
+int FillRect::payloadLength() const
+{
+	return 1 + 2 + 2*4 + 4;
+}
+
+int FillRect::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	*(ptr++) = _layer;
+	*(ptr++) = _blend;
+	qToBigEndian(_x, ptr); ptr += 2;
+	qToBigEndian(_y, ptr); ptr += 2;
+	qToBigEndian(_w, ptr); ptr += 2;
+	qToBigEndian(_h, ptr); ptr += 2;
+	qToBigEndian(_color, ptr); ptr += 4;
+
+	return ptr-data;
+}
+
+
 }

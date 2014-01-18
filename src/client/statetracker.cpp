@@ -175,6 +175,9 @@ void StateTracker::handleCommand(protocol::MessagePtr msg, bool replay, int pos)
 		case MSG_ANNOTATION_DELETE:
 			handleAnnotationDelete(msg.cast<AnnotationDelete>());
 			break;
+		case MSG_FILLRECT:
+			handleFillRect(msg.cast<FillRect>());
+			break;
 		default:
 			qWarning() << "Unhandled drawing command" << msg->type();
 			return;
@@ -350,6 +353,17 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 	QByteArray data = qUncompress(cmd.image());
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
 	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
+}
+
+void StateTracker::handleFillRect(const protocol::FillRect &cmd)
+{
+	paintcore::Layer *layer = _image->getLayer(cmd.layer());
+	if(!layer) {
+		qWarning() << "fillRect on non-existent layer" << cmd.layer();
+		return;
+	}
+
+	layer->fillRect(QRect(cmd.x(), cmd.y(), cmd.width(), cmd.height()), QColor::fromRgba(cmd.color()), cmd.blend());
 }
 
 void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos)

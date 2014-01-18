@@ -85,6 +85,45 @@ private:
 	QByteArray _image;
 };
 
+/**
+ * @brief Fill a rectangle with solid color
+ *
+ * The rectangle is blended onto the layer using the normal blending operations.
+ * The special mode 255 is used to indicate that no blending should be used and the
+ * new color should just overwrite existing layer content.
+ */
+class FillRect : public Message {
+public:
+	FillRect(uint8_t ctx, uint8_t layer, uint8_t blend, uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint32_t color)
+		: Message(MSG_FILLRECT, ctx), _layer(layer), _blend(blend), _x(x), _y(y), _w(w), _h(h), _color(color)
+	{
+	}
+
+	static FillRect *deserialize(const uchar *data, uint len);
+
+	uint8_t layer() const { return _layer; }
+	uint8_t blend() const { return _blend; }
+	uint16_t x() const { return _x; }
+	uint16_t y() const { return _y; }
+	uint16_t width() const { return _w; }
+	uint16_t height() const { return _h; }
+	uint32_t color() const { return _color; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+	bool isUndoable() const { return true; }
+
+private:
+	uint8_t _layer;
+	uint8_t _blend;
+	uint16_t _x;
+	uint16_t _y;
+	uint16_t _w;
+	uint16_t _h;
+	uint32_t _color;
+};
+
 }
 
 #endif

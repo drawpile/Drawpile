@@ -9,7 +9,7 @@ set ( DRAWPILE_VERSION "0.8.4" )
 
 ### protocol versions
 # see doc/protocol.md for protocol version history
-set ( DRAWPILE_PROTO_MAJOR_VERSION 7 )
+set ( DRAWPILE_PROTO_MAJOR_VERSION 8 )
 set ( DRAWPILE_PROTO_MINOR_VERSION 1 )
 set ( DRAWPILE_PROTO_DEFAULT_PORT 27750 )
 

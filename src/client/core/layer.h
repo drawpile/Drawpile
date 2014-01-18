@@ -112,6 +112,9 @@ class Layer {
 		//! Draw an image onto the layer
 		void putImage(int x, int y, QImage image, bool blend);
 
+		//! Fill a rectangle
+		void fillRect(const QRect &rect, const QColor &color, int blendmode);
+
 		//! Dab the layer with a brush
 		void dab(int contextId, const Brush& brush, const Point& point);
 

@@ -52,6 +52,7 @@ private:
 	void handlePenMove(const QString &args);
 	void handlePenUp(const QString &args);
 	void handlePutImage(const QString &args);
+	void handleFillRect(const QString &args);
 
 	void handleUndoPoint(const QString &args);
 	void handleUndo(const QString &args);

@@ -1,0 +1,26 @@
+resize 1 0 200 200 0
+
+newlayer 1 2 #ffff0000 Background
+
+newlayer 1 1 #ff00ffff FillRect test
+
+ctx 1 layer=1
+
+# Fill whole layer
+fillrect 1 1 0 0 400 400 #ffffffff
+
+# Make some holes
+fillrect 1 1 10 10 10 10 #00000000
+fillrect 1 1 25 10 10 20 #00000000
+fillrect 1 1 40 10 10 30 #00000000
+fillrect 1 1 55 10 10 40 #00000000
+fillrect 1 1 70 10 10 50 #00000000
+fillrect 1 1 85 10 10 60 #00000000
+
+# Tile boundary aligned hole
+fillrect 1 1 128 64 64 64 #00000000
+
+# Color blending
+fillrect 1 1 5 15 100 3 #3300ff00 src-over
+fillrect 1 1 5 20 100 3 #3300ff00 multiply
+

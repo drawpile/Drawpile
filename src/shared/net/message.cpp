@@ -75,6 +75,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_ANNOTATION_DELETE: return AnnotationDelete::deserialize(data, len);
 	case MSG_UNDOPOINT: return UndoPoint::deserialize(data, len);
 	case MSG_UNDO: return Undo::deserialize(data, len);
+	case MSG_FILLRECT: return FillRect::deserialize(data, len);
 	}
 	// Unknown message type!
 	return 0;
