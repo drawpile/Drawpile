@@ -17,9 +17,9 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <QDebug>
 #include <QPainter>
 #include <QImage>
+#include <QtConcurrent>
 #include <cmath>
 
 #include "layerstack.h"
@@ -629,21 +629,24 @@ void Layer::merge(const Layer *layer)
 	Q_ASSERT(layer->_xtiles == _xtiles);
 	Q_ASSERT(layer->_ytiles == _ytiles);
 
-	const bool md = _owner && visible();
+	// Gather a list of non-null tiles to merge
+	QVector<int> mergeidx;
+	mergeidx.reserve(_tiles.size());
+	for(int i=0;i<_tiles.size();++i)
+		if(!layer->_tiles[i].isNull())
+			mergeidx.append(i);
 
-	for(int y=0;y<layer->_ytiles;++y) {
-		for(int x=0;x<layer->_xtiles;++x) {
-			const int index = _xtiles*y + x;
+	// Detach tile vector explicitly to make sure concurrent modifications
+	// are all done to the same vector
+	_tiles.detach();
 
-			bool merged;
-			merged = _tiles[index].merge(layer->_tiles[index], layer->_opacity, layer->blendmode());
-			if(md && merged)
-				_owner->markDirty(x, y);
-		}
-	}
+	// Merge tiles
+	QtConcurrent::blockingMap(mergeidx, [this, layer](int idx) {
+		_tiles[idx].merge(layer->_tiles[idx], layer->_opacity, layer->blendmode());
+	});
 
-	if(md)
-		_owner->notifyAreaChanged();
+	// Merging a layer does not cause an immediate visual change, so we don't
+	// mark the area as dirty here.
 }
 
 void Layer::fillColor(const QColor& color)

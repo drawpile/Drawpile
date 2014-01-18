@@ -156,15 +156,11 @@ void Tile::composite(int mode, const uchar *values, const QColor& color, int x, 
  * @param tile the tile which will be composited over this tile
  * @param opacity opacity modifier of tile
  * @param blend blending mode
- * @return true if there were any pixels to merge
  */
-bool Tile::merge(const Tile &tile, uchar opacity, int blend)
+void Tile::merge(const Tile &tile, uchar opacity, int blend)
 {
-	if(!tile.isNull()) {
+	if(!tile.isNull())
 		compositePixels(blend, getOrCreateData(), tile.data(), SIZE*SIZE, opacity);
-		return true;
-	}
-	return false;
 }
 
 /**
