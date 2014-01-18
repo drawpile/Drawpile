@@ -31,7 +31,7 @@
 namespace recording {
 
 Writer::Writer(const QString &filename, QObject *parent)
-	: QObject(parent), _file(filename), _writeIntervals(false)
+	: QObject(parent), _file(filename), _minInterval(0)
 {
 }
 
@@ -39,9 +39,9 @@ Writer::~Writer()
 {
 }
 
-void Writer::setWriteIntervals(bool wi)
+void Writer::setMinimumInterval(int min)
 {
-	_writeIntervals = wi;
+	_minInterval = min;
 	_interval = QDateTime::currentMSecsSinceEpoch();
 }
 
@@ -96,17 +96,17 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 	Q_ASSERT(_file.isOpen());
 
 	if(msg->isCommand() || isRecordableMeta(msg->type())) {
-		// Write Interval message if sufficient time has passed since the last one
-		if(_writeIntervals) {
+		// Write Interval message if sufficient time has passed since last message was written
+		if(_minInterval>0) {
 			qint64 now = QDateTime::currentMSecsSinceEpoch();
 			qint64 interval = now - _interval;
-			if(interval >= (1000/20)) {
+			if(interval >= _minInterval) {
 				protocol::Interval imsg(qMin(qint64(0xffff), interval));
 				QVarLengthArray<char> ibuf(imsg.length());
 				int ilen = imsg.serialize(ibuf.data());
 				_file.write(ibuf.data(), ilen);
-				_interval = now;
 			}
+			_interval = now;
 		}
 
 		// Write the actual message

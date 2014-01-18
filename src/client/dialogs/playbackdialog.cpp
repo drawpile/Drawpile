@@ -138,9 +138,10 @@ void PlaybackDialog::nextCommand()
 			}
 			delete next.message;
 		} else {
-			emit commandRead(protocol::MessagePtr(next.message));
 			if(_play)
-				_timer->start(1);
+				_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));
+
+			emit commandRead(protocol::MessagePtr(next.message));
 		}
 		break;
 	case recording::MessageRecord::INVALID:

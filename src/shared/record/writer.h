@@ -39,7 +39,14 @@ public:
 	bool open();
 	void close();
 
-	void setWriteIntervals(bool wi);
+	/**
+	 * @brief Set the minimum time between messages before writing an Interval message
+	 *
+	 * Set the time to 0 to disable interval messages altogether
+	 *
+	 * @param min minimum time in milliseconds (0 to disable)
+	 */
+	void setMinimumInterval(int min);
 
 	bool writeHeader();
 
@@ -48,7 +55,7 @@ public slots:
 
 private:
 	QFile _file;
-	bool _writeIntervals;
+	qint64 _minInterval;
 	qint64 _interval;
 };
 

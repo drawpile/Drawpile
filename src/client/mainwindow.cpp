@@ -830,7 +830,11 @@ void MainWindow::toggleRecording()
 				_recorder->recordMessage(ptr);
 			}
 
-			_recorder->setWriteIntervals(true);
+			QSettings cfg;
+			cfg.beginGroup("settings/recording");
+			if(cfg.value("recordpause", true).toBool())
+				_recorder->setMinimumInterval(1000 * cfg.value("minimumpause", 0.5).toFloat());
+
 			connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
 
 			recordAction->setText("Stop recording");

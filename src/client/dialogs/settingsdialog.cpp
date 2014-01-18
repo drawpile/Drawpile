@@ -97,6 +97,13 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 
 	// Set defaults
 	QSettings cfg;
+
+	cfg.beginGroup("settings/recording");
+	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
+	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
+
+	cfg.endGroup();
+
 	cfg.beginGroup("settings/server");
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	_ui->enablehistorylimit->setChecked(cfg.value("historylimit", false).toBool());
@@ -146,6 +153,13 @@ SettingsDialog::~SettingsDialog()
 void SettingsDialog::rememberSettings() const
 {
 	QSettings cfg;
+	// Remember general settings
+	cfg.beginGroup("settings/recording");
+	cfg.setValue("recordpause", _ui->recordpause->isChecked());
+	cfg.setValue("minimumpause", _ui->minimumpause->value());
+
+	cfg.endGroup();
+
 	// Remember server settings
 	cfg.beginGroup("settings/server");
 	if(_ui->serverport->value() == DRAWPILE_PROTO_DEFAULT_PORT)
