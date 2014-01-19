@@ -101,8 +101,12 @@ Compatibility Reader::open()
 		return UNKNOWN_COMPATIBILITY;
 
 	// Recording made with an older version.
-	// TODO: there are no older versions at the moment
-	return UNKNOWN_COMPATIBILITY;
+	// Version 7.1 is fully compatible with current
+	if(protover >= version32(7, 1))
+		return COMPATIBLE;
+
+	// Older versions are incompatible
+	return INCOMPATIBLE;
 }
 
 QString Reader::errorString() const
