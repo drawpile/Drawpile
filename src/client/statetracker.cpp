@@ -200,6 +200,19 @@ void StateTracker::endRemoteContexts()
 	}
 }
 
+/**
+ * @brief Playback ended, make sure drawing contexts (local one included) are ended
+ */
+void StateTracker::endPlayback()
+{
+	QHashIterator<int, DrawingContext> iter(_contexts);
+	while(iter.hasNext()) {
+		iter.next();
+		if(iter.value().pendown)
+			receiveCommand(protocol::MessagePtr(new protocol::PenUp(iter.key())));
+	}
+}
+
 QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 {
 	if(!_hassnapshot || forcenew) {

@@ -313,6 +313,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 		win->setRecorderStatus(false);
 		win->_canvas->statetracker()->setShowAllUserMarkers(false);
 		win->_client->endPlayback();
+		win->_canvas->statetracker()->endPlayback();
 	});
 
 	win->_playbackdlg->show();

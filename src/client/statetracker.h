@@ -108,6 +108,7 @@ public:
 	void receiveCommand(protocol::MessagePtr msg);
 
 	void endRemoteContexts();
+	void endPlayback();
 
 	QList<protocol::MessagePtr> generateSnapshot(bool forcenew);
 
