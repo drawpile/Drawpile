@@ -238,6 +238,17 @@ void Client::sendImage(int layer, int x, int y, const QImage &image, bool blend)
 	emit sendingBytes(_server->uploadQueueBytes());
 }
 
+void Client::sendFillRect(int layer, const QRect &rect, const QColor &color, int blend)
+{
+	_server->sendMessage(MessagePtr(new protocol::FillRect(
+		_my_id, layer,
+		blend,
+		rect.x(), rect.y(),
+		rect.width(), rect.height(),
+		color.rgba()
+	)));
+}
+
 void Client::sendUndopoint()
 {
 	_server->sendMessage(MessagePtr(new protocol::UndoPoint(_my_id)));

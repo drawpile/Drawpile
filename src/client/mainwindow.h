@@ -130,6 +130,10 @@ class MainWindow : public QMainWindow {
 		void pasteFile(const QUrl &url);
 		void pasteImage(const QImage &image);
 
+		void clearArea();
+		void fillFgArea();
+		void fillBgArea();
+
 		void removeEmptyAnnotations();
 		void resizeCanvas();
 
@@ -171,6 +175,8 @@ class MainWindow : public QMainWindow {
 
 		void createDocks();
 		void setupActions();
+
+		void fillArea(const QColor &color);
 
 		QSplitter *splitter_;
 		widgets::ToolSettingsDock *_toolsettings;

@@ -1348,6 +1348,33 @@ void MainWindow::removeEmptyAnnotations()
 	}
 }
 
+void MainWindow::clearArea()
+{
+	fillArea(Qt::transparent);
+}
+
+void MainWindow::fillFgArea()
+{
+	fillArea(_fgbgcolor->foreground());
+}
+
+void MainWindow::fillBgArea()
+{
+	fillArea(_fgbgcolor->background());
+}
+
+void MainWindow::fillArea(const QColor &color)
+{
+	QRect area;
+	if(_canvas->selectionItem())
+		area = _canvas->selectionItem()->rect();
+	else
+		area = QRect(0, 0, _canvas->width(), _canvas->height());
+
+	_client->sendUndopoint();
+	_client->sendFillRect(_layerlist->currentLayer(), area, color);
+}
+
 void MainWindow::resizeCanvas()
 {
 	QSize size(_canvas->width(), _canvas->height());
@@ -1527,11 +1554,18 @@ void MainWindow::setupActions()
 	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+H"));
 	QAction *expandright = makeAction("expandup", 0, tr("Expand right"), "", QKeySequence("Ctrl+L"));
 
+	QAction *cleararea = makeAction("cleararea", 0, tr("Clear"), tr("Clear selected area of the current layer"), QKeySequence("Delete"));
+	QAction *fillfgarea = makeAction("fillfgarea", 0, tr("Fill with &FG color"), tr("Fill selected area with foreground color"), QKeySequence("Ctrl+,"));
+	QAction *fillbgarea = makeAction("fillbgarea", 0, tr("Fill with B&G color"), tr("Fill selected area with background color"), QKeySequence("Ctrl+."));
+
 	_currentdoctools->addAction(undo);
 	_currentdoctools->addAction(redo);
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
 	_currentdoctools->addAction(deleteAnnotations);
+	_currentdoctools->addAction(cleararea);
+	_currentdoctools->addAction(fillfgarea);
+	_currentdoctools->addAction(fillbgarea);
 
 	_docadmintools->addAction(resize);
 	_docadmintools->addAction(expandup);
@@ -1546,6 +1580,9 @@ void MainWindow::setupActions()
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
+	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearArea()));
+	connect(fillfgarea, SIGNAL(triggered()), this, SLOT(fillFgArea()));
+	connect(fillbgarea, SIGNAL(triggered()), this, SLOT(fillBgArea()));
 	connect(resize, SIGNAL(triggered()), this, SLOT(resizeCanvas()));
 	connect(preferences, SIGNAL(triggered()), this, SLOT(showSettings()));
 
@@ -1574,6 +1611,9 @@ void MainWindow::setupActions()
 
 	editmenu->addSeparator();
 	editmenu->addAction(deleteAnnotations);
+	editmenu->addAction(cleararea);
+	editmenu->addAction(fillfgarea);
+	editmenu->addAction(fillbgarea);
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 
