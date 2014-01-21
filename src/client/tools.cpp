@@ -51,6 +51,7 @@ ToolCollection::ToolCollection()
 	_tools[RECTANGLE] = new Rectangle(*this);
 	_tools[ANNOTATION] = new Annotation(*this);
 	_tools[SELECTION] = new Selection(*this);
+	_tools[LASERPOINTER] = new LaserPointer(*this);
 }
 
 /**
@@ -125,6 +126,23 @@ void BrushBase::motion(const paintcore::Point& point)
 void BrushBase::end()
 {
 	client().sendPenup();
+}
+
+void LaserPointer::begin(const paintcore::Point &point, bool right)
+{
+	Q_UNUSED(right);
+	// Send initial point to serve as the start of the line
+	client().sendLaserPointer(point.x(), point.y(), 0);
+}
+
+void LaserPointer::motion(const paintcore::Point &point)
+{
+	client().sendLaserPointer(point.x(), point.y(), settings().getLaserPointerSettings()->trailPersistence());
+}
+
+void LaserPointer::end()
+{
+	// Nothing to do here, laser trail does not need penup type notification
 }
 
 void ColorPicker::begin(const paintcore::Point& point, bool right)

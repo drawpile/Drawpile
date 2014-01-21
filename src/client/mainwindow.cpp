@@ -165,6 +165,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
+	connect(_client, SIGNAL(userPointerMoved(int,int,int,int)), _canvas, SLOT(moveUserMarker(int,int,int,int)));
 	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
@@ -1242,6 +1243,9 @@ void MainWindow::selectTool(QAction *tool)
 	// When using the annotation tool, highlight all text boxes
 	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
 
+	// Send pointer updates when using the laser pointer (TODO checkbox)
+	_view->setPointerTracking(type==tools::LASERPOINTER && _toolsettings->getLaserPointerSettings()->pointerTracking());
+
 	// Remove selection when not using selection tool
 	if(type != tools::SELECTION)
 		_canvas->setSelectionItem(0);
@@ -1729,6 +1733,7 @@ void MainWindow::setupActions()
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
 	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
+	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 
 	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
 
@@ -1744,6 +1749,7 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(linetool);
 	_drawingtools->addAction(recttool);
 	_drawingtools->addAction(annotationtool);
+	_drawingtools->addAction(lasertool);
 
 	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
 

@@ -30,6 +30,7 @@ namespace tools {
 	class ToolSettings;
 	class AnnotationSettings;
 	class ColorPickerSettings;
+	class LaserPointerSettings;
 }
 
 namespace paintcore {
@@ -56,10 +57,13 @@ class ToolSettingsDock : public QDockWidget
 		const paintcore::Brush& getBrush(bool swapcolors) const;
 
 		//! Get the annotation settings page
-		tools::AnnotationSettings *getAnnotationSettings();
+		tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
 
 		//! Get the color picker page
-		tools::ColorPickerSettings * getColorPickerSettings();
+		tools::ColorPickerSettings *getColorPickerSettings() { return _pickersettings; }
+
+		//! Get the laser pointer settings page
+		tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
 
 	signals:
 		//! This signal is emitted when the current tool changes its size
@@ -79,11 +83,12 @@ class ToolSettingsDock : public QDockWidget
 		tools::ToolSettings *pensettings_;
 		tools::ToolSettings *brushsettings_;
 		tools::ToolSettings *erasersettings_;
-		tools::ToolSettings *pickersettings_;
+		tools::ColorPickerSettings *_pickersettings;
 		tools::ToolSettings *linesettings_;
 		tools::ToolSettings *rectsettings_;
-		tools::ToolSettings *textsettings_;
+		tools::AnnotationSettings *_textsettings;
 		tools::ToolSettings *selectionsettings_;
+		tools::LaserPointerSettings  *_lasersettings;
 
 		tools::ToolSettings *currenttool_;
 		QStackedWidget *widgets_;

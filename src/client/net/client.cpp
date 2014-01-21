@@ -329,6 +329,17 @@ void Client::sendChat(const QString &message)
 	_server->sendMessage(MessagePtr(new protocol::Chat(0, message)));
 }
 
+void Client::sendPointerMove(int x, int y)
+{
+	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, x, y, 0)));
+}
+
+void Client::sendLaserPointer(int x, int y, int trail)
+{
+	Q_ASSERT(trail>=0);
+	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, x, y, trail)));
+}
+
 /**
  * @brief Send a list of commands to initialize the session in local mode
  * @param commands
@@ -473,6 +484,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case MSG_INTERVAL:
 		/* intervals are used only when playing back recordings */
 		break;
+	case MSG_MOVEPOINTER:
+		handleMovePointer(msg.cast<MovePointer>());
+		break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();
 	}
@@ -538,6 +552,11 @@ void Client::handleLayerAcl(const protocol::LayerACL &msg)
 {
 	_layerlist->updateLayerAcl(msg.id(), msg.locked(), msg.exclusive());
 	emit lockBitsChanged();
+}
+
+void Client::handleMovePointer(const protocol::MovePointer &msg)
+{
+	emit userPointerMoved(msg.contextId(), msg.x(), msg.y(), msg.persistence());
 }
 
 }

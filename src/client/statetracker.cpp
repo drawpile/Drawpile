@@ -309,6 +309,8 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 	b.setOpacity2(cmd.opacity_l() / 255.0);
 	b.setColor(cmd.color_h());
 	b.setColor2(cmd.color_l());
+
+	_scene->setUserMarkerColor(cmd.contextId(), b.color1());
 }
 
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)
@@ -337,7 +339,7 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 		_scene->takePreview(cmd.points().size());
 
 	if(_showallmarkers || cmd.contextId() != _myid)
-		_scene->moveUserMarker(cmd.contextId(), ctx.tool.brush.color1(), ctx.lastpoint);
+		_scene->moveUserMarker(cmd.contextId(), ctx.lastpoint.x(), ctx.lastpoint.y(), 0);
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)

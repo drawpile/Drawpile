@@ -42,6 +42,7 @@ namespace protocol {
 	class UserLeave;
 	class SessionConf;
 	class LayerACL;
+	class MovePointer;
 }
 
 namespace net {
@@ -176,6 +177,8 @@ public slots:
 
 	// Misc.
 	void sendChat(const QString &message);
+	void sendPointerMove(int x, int y);
+	void sendLaserPointer(int x, int y, int trail);
 
 	// Operator commands
 	void sendLockUser(int userid, bool lock);
@@ -196,6 +199,7 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool me);
 	void needSnapshot(bool forcenew);
+	void userPointerMoved(int ctx, int x, int y, int trail);
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
@@ -231,6 +235,7 @@ private:
 	void handleUserLeave(const protocol::UserLeave &msg);
 	void handleSessionConfChange(const protocol::SessionConf &msg);
 	void handleLayerAcl(const protocol::LayerACL &msg);
+	void handleMovePointer(const protocol::MovePointer &msg);
 
 	Server *_server;
 	LoopbackServer *_loopback;

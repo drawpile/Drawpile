@@ -42,6 +42,7 @@ UserMarkerItem::UserMarkerItem(QGraphicsItem *parent)
 	shadow->setOffset(0);
 	shadow->setBlurRadius(10);
 	setGraphicsEffect(shadow);
+	setZValue(9999);
 }
 
 void UserMarkerItem::setColor(const QColor &color)

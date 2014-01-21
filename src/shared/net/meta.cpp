@@ -155,7 +155,7 @@ StreamPos *StreamPos::deserialize(const uchar *data, uint len)
 
 int StreamPos::serializePayload(uchar *data) const
 {
-	qToBigEndian(_bytes, data);;
+	qToBigEndian(_bytes, data);
 	return 4;
 }
 
@@ -164,5 +164,32 @@ int StreamPos::payloadLength() const
 	return 4;
 }
 
+MovePointer *MovePointer::deserialize(const uchar *data, uint len)
+{
+	if(len!=10)
+		return 0;
+	return new MovePointer(
+		*(data+0),
+		qFromBigEndian<quint32>(data+1),
+		qFromBigEndian<quint32>(data+5),
+		*(data+9)
+	);
+}
+
+int MovePointer::payloadLength() const
+{
+	return 1 + 2*4 + 1;
+}
+
+int MovePointer::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	qToBigEndian(_x, ptr); ptr += 4;
+	qToBigEndian(_y, ptr); ptr += 4;
+	*(ptr++) = _persistence;
+
+	return ptr-data;
+}
 
 }

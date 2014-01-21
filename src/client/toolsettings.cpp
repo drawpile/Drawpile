@@ -34,6 +34,7 @@ using widgets::ColorButton;
 #include "ui_simplesettings.h"
 #include "ui_textsettings.h"
 #include "ui_selectsettings.h"
+#include "ui_lasersettings.h"
 
 #include "annotationitem.h"
 #include "net/client.h"
@@ -351,6 +352,66 @@ int BrushSettings::getSize() const
 	return _ui->brushsize->value();
 }
 
+void BrushlessSettings::setForeground(const QColor& color)
+{
+}
+
+void BrushlessSettings::setBackground(const QColor& color)
+{
+}
+
+const paintcore::Brush& BrushlessSettings::getBrush(bool swapcolors) const
+{
+	Q_UNUSED(swapcolors);
+	return DUMMY_BRUSH;
+}
+
+LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title)
+	: QObject(), BrushlessSettings(name, title), _ui(0)
+{
+}
+
+LaserPointerSettings::~LaserPointerSettings()
+{
+	if(_ui) {
+		saveSettings();
+		delete _ui;
+	}
+}
+
+QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
+{
+	QWidget *widget = new QWidget(parent);
+	_ui = new Ui_LaserSettings;
+	_ui->setupUi(widget);
+
+	connect(_ui->trackpointer, SIGNAL(clicked(bool)), this, SIGNAL(pointerTrackingToggled(bool)));
+
+	return widget;
+}
+
+void LaserPointerSettings::saveToolSettings(QSettings &cfg)
+{
+	cfg.setValue("tracking", _ui->trackpointer->isChecked());
+	cfg.setValue("persistence", _ui->persistence->value());
+}
+
+void LaserPointerSettings::restoreToolSettings(QSettings &cfg)
+{
+	_ui->trackpointer->setChecked(cfg.value("tracking", true).toBool());
+	_ui->persistence->setValue(cfg.value("persistence", 1).toInt());
+}
+
+bool LaserPointerSettings::pointerTracking() const
+{
+	return _ui->trackpointer->isChecked();
+}
+
+int LaserPointerSettings::trailPersistence() const
+{
+	return _ui->persistence->value();
+}
+
 SimpleSettings::SimpleSettings(QString name, QString title, Type type, bool sp)
 	: ToolSettings(name,title), _ui(0), _type(type), _subpixel(sp)
 {
@@ -450,7 +511,7 @@ int SimpleSettings::getSize() const
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
-	:  QObject(), ToolSettings(name, title), _palette(new Palette("Color picker")), _layerpick(0)
+	:  QObject(), BrushlessSettings(name, title), _palette(new Palette("Color picker")), _layerpick(0)
 {
 }
 
@@ -494,11 +555,6 @@ bool ColorPickerSettings::pickFromLayer() const
 {
 	return _layerpick->isChecked();
 }
-const paintcore::Brush &ColorPickerSettings::getBrush(bool swapcolors) const
-{
-	Q_UNUSED(swapcolors);
-	return DUMMY_BRUSH;
-}
 
 void ColorPickerSettings::addColor(const QColor &color)
 {
@@ -514,7 +570,7 @@ void ColorPickerSettings::addColor(const QColor &color)
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), ToolSettings(name, title), _ui(0), _noupdate(false)
+	: QObject(), BrushlessSettings(name, title), _ui(0), _noupdate(false)
 {
 }
 
@@ -613,20 +669,6 @@ void AnnotationSettings::changeAlignment()
 	_ui->content->setAlignment(a);
 }
 
-void AnnotationSettings::setForeground(const QColor& color)
-{
-}
-
-void AnnotationSettings::setBackground(const QColor& color)
-{
-}
-
-const paintcore::Brush& AnnotationSettings::getBrush(bool swapcolors) const
-{
-	Q_UNUSED(swapcolors);
-	return DUMMY_BRUSH;
-}
-
 int AnnotationSettings::selected() const
 {
 	if(_selection.isNull())
@@ -701,7 +743,7 @@ void AnnotationSettings::bake()
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title)
-	: ToolSettings(name,title), _ui(0)
+	: BrushlessSettings(name,title), _ui(0)
 {
 }
 
@@ -717,12 +759,6 @@ QWidget *SelectionSettings::createUiWidget(QWidget *parent)
 	_ui->setupUi(uiwidget);
 
 	return uiwidget;
-}
-
-const paintcore::Brush& SelectionSettings::getBrush(bool swapcolors) const
-{
-	Q_UNUSED(swapcolors);
-	return DUMMY_BRUSH;
 }
 
 }

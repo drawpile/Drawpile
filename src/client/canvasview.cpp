@@ -38,7 +38,10 @@ inline float qRadiansToDegrees(float radians) {
 
 #include "canvasview.h"
 #include "canvasscene.h"
+#include "docks/toolsettingswidget.h"
+#include "toolsettings.h"
 
+#include "net/client.h"
 #include "core/point.h"
 
 namespace widgets {
@@ -48,7 +51,7 @@ CanvasView::CanvasView(QWidget *parent)
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
 	_smoothing(0), _pressuremode(PRESSUREMODE_NONE), _usestylus(true),
-	_locked(false)
+	_locked(false), _pointertracking(false)
 {
 	viewport()->setAcceptDrops(true);
 	setAcceptDrops(true);
@@ -79,11 +82,13 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 void CanvasView::setClient(net::Client *client)
 {
 	_toolbox.setClient(client);
+	connect(this, SIGNAL(pointerMoved(int,int)), client, SLOT(sendPointerMove(int,int)));
 }
 
 void CanvasView::setToolSettings(widgets::ToolSettingsDock *settings)
 {
 	_toolbox.setToolSettings(settings);
+	connect(settings->getLaserPointerSettings(), SIGNAL(pointerTrackingToggled(bool)), this, SLOT(setPointerTracking(bool)));
 }
 
 void CanvasView::zoomin()
@@ -258,6 +263,11 @@ paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) co
 	return paintcore::Point(mapped, pressure);
 }
 
+void CanvasView::setPointerTracking(bool tracking)
+{
+	_pointertracking = tracking;
+}
+
 void CanvasView::setStrokeSmoothing(int smoothing)
 {
 	Q_ASSERT(smoothing>=0);
@@ -394,6 +404,8 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 				_pointerdistance += _pointervelocity;
 				point.setPressure(mapPressure(1.0, false));
 				onPenMove(point, event->button() == Qt::RightButton);
+			} else if(_pointertracking && _scene->hasImage()) {
+				emit pointerMoved(point.x(), point.y());
 			}
 			updateOutline(point);
 			_prevpoint = point;
@@ -488,6 +500,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 		// Stylus touches the tablet surface
 		QTabletEvent *tabev = static_cast<QTabletEvent*>(event);
 		tabev->accept();
+
 		if(_dragbtndown) {
 			startDrag(tabev->x(), tabev->y(), _dragbtndown);
 		} else {

@@ -49,7 +49,7 @@ namespace net {
  */
 namespace tools {
 
-enum Type {SELECTION, PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION};
+enum Type {SELECTION, PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION, LASERPOINTER};
 
 class ToolCollection;
 
@@ -202,6 +202,15 @@ public:
 private:
 	QPoint _start;
 	drawingboard::SelectionItem::Handle _handle;
+};
+
+class LaserPointer : public Tool {
+public:
+	LaserPointer(ToolCollection &owner) : Tool(owner, LASERPOINTER) {}
+
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point);
+	void end();
 };
 
 /**

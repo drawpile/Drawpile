@@ -94,6 +94,9 @@ class CanvasView : public QGraphicsView
 		//! The view has been transformed
 		void viewTransformed(qreal zoom, qreal angle);
 
+		//! Pointer moved in pointer tracking mode
+		void pointerMoved(int x, int y);
+
 	public slots:
 		//! Select the active tool
 		void selectTool(tools::Type tool);
@@ -114,6 +117,9 @@ class CanvasView : public QGraphicsView
 		void setRotation(qreal angle);
 
 		void setLocked(bool lock);
+
+		//! Send pointer position updates even when not drawing
+		void setPointerTracking(bool tracking);
 
 		//! Set stroke smoothing strength
 		void setStrokeSmoothing(int smoothing);
@@ -226,6 +232,7 @@ class CanvasView : public QGraphicsView
 		bool _usestylus;
 
 		bool _locked;
+		bool _pointertracking;
 };
 
 }

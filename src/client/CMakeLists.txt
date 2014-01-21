@@ -29,6 +29,7 @@ set (
 	annotationitem.cpp
 	selectionitem.cpp
 	usermarkeritem.cpp
+	lasertrailitem.cpp
 	loader.cpp
 	textloader.cpp
 	net/client.cpp
@@ -103,6 +104,7 @@ set (
 	ui/pensettings.ui
 	ui/erasersettings.ui
 	ui/selectsettings.ui
+	ui/lasersettings.ui
 	ui/layerbox.ui
 	ui/userbox.ui
 	ui/newdialog.ui

@@ -27,6 +27,7 @@
 #include "selectionitem.h"
 #include "annotationitem.h"
 #include "usermarkeritem.h"
+#include "lasertrailitem.h"
 #include "statetracker.h"
 
 #include "core/layerstack.h"
@@ -468,14 +469,27 @@ void CanvasScene::setUserMarkerName(int id, const QString &name)
 	item->setText(name);
 }
 
-void CanvasScene::moveUserMarker(int id, const QColor &color, const paintcore::Point &point)
+void CanvasScene::setUserMarkerColor(int id, const QColor &color)
 {
-	if(_showUserMarkers) {
-		auto *item = getOrCreateUserMarker(id);
-		item->setColor(color);
-		item->setPos(point);
-		item->fadein();
+	auto *item = getOrCreateUserMarker(id);
+	item->setColor(color);
+}
+
+void CanvasScene::moveUserMarker(int id, int x,int y, int trail)
+{
+	auto *item = getOrCreateUserMarker(id);
+	QPointF p(x, y);
+
+	if(trail>0) {
+		auto *laser = new LaserTrailItem(QLineF(item->pos(), p));
+		_lasertrails.append(laser);
+		addItem(laser);
 	}
+
+	item->setPos(p);
+
+	if(_showUserMarkers)
+		item->fadein();
 }
 
 void CanvasScene::hideUserMarker(int id)

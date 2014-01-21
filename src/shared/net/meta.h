@@ -216,6 +216,39 @@ private:
 	uint32_t _bytes;
 };
 
+/**
+ * @brief Move user pointer
+ *
+ * This is message is used to update the position of the user pointer when no
+ * actual drawing is taking place. It is also used to draw the "laser pointer" trail.
+ * Note. This is a META message, since this is used for a temporary visual effect only,
+ * and thus doesn't affect the actual canvas content.
+ *
+ * When persistence is nonzero, a line is drawn from the previous pointer coordinates
+ * to the new coordinates. The line will disappear in p seconds.
+ */
+class MovePointer : public Message {
+public:
+	MovePointer(uint8_t ctx, int32_t x, int32_t y, uint8_t persistence)
+		: Message(MSG_MOVEPOINTER, ctx), _x(x), _y(y), _persistence(persistence)
+	{}
+
+	static MovePointer *deserialize(const uchar *data, uint len);
+
+	int32_t x() const { return _x; }
+	int32_t y() const { return _y; }
+	uint8_t persistence() const { return _persistence; }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	int32_t _x;
+	int32_t _y;
+	uint8_t _persistence;
+};
+
 }
 
 #endif

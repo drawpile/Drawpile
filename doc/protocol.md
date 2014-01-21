@@ -29,6 +29,7 @@ Clients can connect to any server sharing the same major protocol version number
 
 Protocol 8.1:
  * New command: FillRect
+ * New meta command: MovePointer
  * Fully backward compatible with 7.1
 
 Protocol 7.1:

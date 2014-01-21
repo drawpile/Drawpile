@@ -30,6 +30,7 @@ class Ui_EraserSettings;
 class Ui_SimpleSettings;
 class Ui_TextSettings;
 class Ui_SelectionSettings;
+class Ui_LaserSettings;
 class QSettings;
 class QTimer;
 class QCheckBox;
@@ -238,12 +239,26 @@ private:
 };
 
 /**
+ * @brief Settings base class for non-brush based tools
+ */
+class BrushlessSettings : public ToolSettings {
+public:
+	BrushlessSettings(QString name,QString title) : ToolSettings(name, title) {}
+
+	const paintcore::Brush& getBrush(bool swapcolors) const;
+	void setForeground(const QColor& color);
+	void setBackground(const QColor& color);
+
+	int getSize() const { return 0; }
+};
+
+/**
  * @brief Settings for the annotation tool
  *
  * The annotation tool is special because it is used to manipulate
  * annotation objects rather than pixel data.
  */
-class AnnotationSettings : public QObject, public ToolSettings {
+class AnnotationSettings : public QObject, public BrushlessSettings {
 Q_OBJECT
 public:
 	AnnotationSettings(QString name, QString title);
@@ -254,12 +269,6 @@ public:
 
 	//! Set the layer selection widget (needed for baking)
 	void setLayerSelector(widgets::LayerListDock *layerlist) { _layerlist = layerlist; }
-
-	void setForeground(const QColor& color);
-	void setBackground(const QColor& color);
-	const paintcore::Brush& getBrush(bool swapcolors) const;
-
-	int getSize() const { return 0; }
 
 	/**
 	 * @brief Get the ID of the currently selected annotation
@@ -304,17 +313,11 @@ private:
 /**
  * @brief Color picker history
  */
-class ColorPickerSettings : public QObject, public ToolSettings {
+class ColorPickerSettings : public QObject, public BrushlessSettings {
 Q_OBJECT
 public:
 	ColorPickerSettings(const QString &name, const QString &title);
 	~ColorPickerSettings();
-
-	void setForeground(const QColor&) {}
-	void setBackground(const QColor&) {}
-	const paintcore::Brush& getBrush(bool swapcolors) const;
-
-	int getSize() const { return 0; }
 
 	//! Pick color from current layer only?
 	bool pickFromLayer() const;
@@ -336,22 +339,37 @@ private:
 	QCheckBox *_layerpick;
 };
 
-class SelectionSettings : public ToolSettings {
+class SelectionSettings : public BrushlessSettings {
 public:
 	SelectionSettings(const QString &name, const QString &title);
 	~SelectionSettings();
-
-	void setForeground(const QColor&) {}
-	void setBackground(const QColor&) {}
-	const paintcore::Brush& getBrush(bool swapcolors) const;
-
-	int getSize() const { return 0; }
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
 
 private:
 	Ui_SelectionSettings * _ui;
+};
+
+class LaserPointerSettings : public QObject, public BrushlessSettings {
+	Q_OBJECT
+public:
+	LaserPointerSettings(const QString &name, const QString &title);
+	~LaserPointerSettings();
+
+	bool pointerTracking() const;
+	int trailPersistence() const;
+
+signals:
+	void pointerTrackingToggled(bool);
+
+protected:
+	virtual QWidget *createUiWidget(QWidget *parent);
+	virtual void saveToolSettings(QSettings &cfg);
+	virtual void restoreToolSettings(QSettings &cfg);
+
+private:
+	Ui_LaserSettings * _ui;
 };
 
 }

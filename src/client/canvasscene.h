@@ -45,6 +45,7 @@ class AnnotationState;
 class AnnotationItem;
 class SelectionItem;
 class UserMarkerItem;
+class LaserTrailItem;
 class Preview;
 
 /**
@@ -163,7 +164,6 @@ public:
 	 */
 	StateTracker *statetracker() { return _statetracker; }
 
-	void moveUserMarker(int id, const QColor &color, const paintcore::Point &point);
 	void hideUserMarker(int id);
 
 	/**
@@ -202,7 +202,9 @@ public slots:
 	//! Clear out all preview strokes
 	void clearPreviews();
 
+	void moveUserMarker(int id, int x, int y, int trail);
 	void setUserMarkerName(int id, const QString &name);
+	void setUserMarkerColor(int id, const QColor &color);
 
 signals:
 	void canvasInitialized();
@@ -242,6 +244,9 @@ private:
 
 	//! Cache of reusable preview strokes
 	QList<QGraphicsLineItem*> _previewstrokecache;
+
+	//! Laser pointer trails
+	QList<LaserTrailItem*> _lasertrails;
 
 	//! Coordinate of the last preview stroke
 	paintcore::Point _lastpreview;

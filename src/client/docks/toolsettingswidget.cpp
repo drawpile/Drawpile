@@ -32,39 +32,33 @@ ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	widgets_ = new QStackedWidget(this);
 	setWidget(widgets_);
 
-	// Create settings widget for brush
 	pensettings_ = new tools::PenSettings("pen", tr("Pen"));
 	widgets_->addWidget(pensettings_->createUi(this));
 
-	// Create settings widget for brush
 	brushsettings_ = new tools::BrushSettings("brush", tr("Brush"));
 	widgets_->addWidget(brushsettings_->createUi(this));
 	currenttool_ = brushsettings_;
 
-	// Create settings widget for eraser
 	erasersettings_ = new tools::EraserSettings("eraser", tr("Eraser"));
 	widgets_->addWidget(erasersettings_->createUi(this));
 
-	// Create a settings widget for color picker
-	pickersettings_ = new tools::ColorPickerSettings("picker", tr("Color picker"));
-	widgets_->addWidget(pickersettings_->createUi(this));
+	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color picker"));
+	widgets_->addWidget(_pickersettings->createUi(this));
 
-	// Create settings widget for line
 	linesettings_ = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line, true);
 	widgets_->addWidget(linesettings_->createUi(this));
 
-	// Create settings widget for line
 	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
 	widgets_->addWidget(rectsettings_->createUi(this));
 
-	// Create settings widget for annotations
-	textsettings_ = new tools::AnnotationSettings("annotation", tr("Annotation"));
-	widgets_->addWidget(textsettings_->createUi(this));
+	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
+	widgets_->addWidget(_textsettings->createUi(this));
 
-	// Create settings widget for selection
 	selectionsettings_ = new tools::SelectionSettings("selection", tr("Selection"));
 	widgets_->addWidget(selectionsettings_->createUi(this));
 
+	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));
+	widgets_->addWidget(_lasersettings->createUi(this));
 }
 
 ToolSettingsDock::~ToolSettingsDock()
@@ -72,11 +66,12 @@ ToolSettingsDock::~ToolSettingsDock()
 	delete pensettings_,
 	delete brushsettings_,
 	delete erasersettings_,
-	delete pickersettings_,
+	delete _pickersettings,
 	delete linesettings_,
 	delete rectsettings_;
-	delete textsettings_;
+	delete _textsettings;
 	delete selectionsettings_;
+	delete _lasersettings;
 }
 
 /**
@@ -88,11 +83,12 @@ void ToolSettingsDock::setTool(tools::Type tool) {
 		case tools::PEN: currenttool_ = pensettings_; break;
 		case tools::BRUSH: currenttool_ = brushsettings_; break;
 		case tools::ERASER: currenttool_ = erasersettings_; break;
-		case tools::PICKER: currenttool_ = pickersettings_; break;
+		case tools::PICKER: currenttool_ = _pickersettings; break;
 		case tools::LINE: currenttool_ = linesettings_; break;
 		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
-		case tools::ANNOTATION: currenttool_ = textsettings_; break;
+		case tools::ANNOTATION: currenttool_ = _textsettings; break;
 		case tools::SELECTION: currenttool_ = selectionsettings_; break;
+		case tools::LASERPOINTER: currenttool_ = _lasersettings; break;
 	}
 
 	// Deselect annotation on tool change
@@ -128,16 +124,6 @@ void ToolSettingsDock::setBackground(const QColor& color)
 const paintcore::Brush& ToolSettingsDock::getBrush(bool swapcolors) const
 {
 	return currenttool_->getBrush(swapcolors);
-}
-
-tools::AnnotationSettings *ToolSettingsDock::getAnnotationSettings()
-{
-	return static_cast<tools::AnnotationSettings*>(textsettings_);
-}
-
-tools::ColorPickerSettings *ToolSettingsDock::getColorPickerSettings()
-{
-	return static_cast<tools::ColorPickerSettings*>(pickersettings_);
 }
 
 }
