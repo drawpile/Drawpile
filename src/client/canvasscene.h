@@ -164,7 +164,7 @@ public:
 	 */
 	StateTracker *statetracker() { return _statetracker; }
 
-	void hideUserMarker(int id);
+	void hideUserMarker(int id=-1);
 
 	/**
 	 * @brief Get a QPen that resembles the given brush
@@ -229,6 +229,7 @@ signals:
 
 private slots:
 	void handleCanvasResize(int xoffset, int yoffset);
+	void advanceUsermarkerAnimation();
 
 private:
 	UserMarkerItem *getOrCreateUserMarker(int id);
@@ -267,6 +268,7 @@ private:
 	bool _showUserMarkers;
 
 	QTimer *_previewClearTimer;
+	QTimer *_animTickTimer;
 
 	QString _title;
 };

@@ -131,7 +131,15 @@ void BrushBase::end()
 void LaserPointer::begin(const paintcore::Point &point, bool right)
 {
 	Q_UNUSED(right);
-	// Send initial point to serve as the start of the line
+	// Send initial point to serve as the start of the line,
+	// and also a toolchange to set the laser color
+
+	const paintcore::Brush &brush = settings().getBrush(right);
+	drawingboard::ToolContext tctx = {
+		layer(),
+		brush
+	};
+	client().sendToolChange(tctx);
 	client().sendLaserPointer(point.x(), point.y(), 0);
 }
 

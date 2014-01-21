@@ -250,6 +250,9 @@ public:
 	void setBackground(const QColor& color);
 
 	int getSize() const { return 0; }
+
+private:
+	paintcore::Brush _dummybrush;
 };
 
 /**

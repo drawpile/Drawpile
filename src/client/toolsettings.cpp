@@ -43,10 +43,6 @@ using widgets::ColorButton;
 
 #include "core/rasterop.h" // for blend modes
 
-namespace {
-	static paintcore::Brush DUMMY_BRUSH(0);
-}
-
 namespace tools {
 
 QWidget *ToolSettings::createUi(QWidget *parent)
@@ -354,16 +350,18 @@ int BrushSettings::getSize() const
 
 void BrushlessSettings::setForeground(const QColor& color)
 {
+	_dummybrush.setColor(color);
 }
 
 void BrushlessSettings::setBackground(const QColor& color)
 {
+	_dummybrush.setColor2(color);
 }
 
 const paintcore::Brush& BrushlessSettings::getBrush(bool swapcolors) const
 {
 	Q_UNUSED(swapcolors);
-	return DUMMY_BRUSH;
+	return _dummybrush;
 }
 
 LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title)

@@ -27,7 +27,21 @@ namespace drawingboard {
 class LaserTrailItem : public QGraphicsLineItem
 {
 public:
-	LaserTrailItem(const QLineF &line, QGraphicsItem *parent=0);
+	LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, QGraphicsItem *parent=0);
+
+	/**
+	 * @brief Advance fadeout animation
+	 * @return true if the item just became completely transparent
+	 */
+	bool fadeoutStep(float dt);
+
+	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+private:
+	float _life;
+	float _dOpacity;
+	bool _blink;
+	QPen _pen1, _pen2;
 };
 
 }

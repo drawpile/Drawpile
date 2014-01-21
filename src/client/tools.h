@@ -211,6 +211,8 @@ public:
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point);
 	void end();
+
+	bool allowSmoothing() const { return true; }
 };
 
 /**

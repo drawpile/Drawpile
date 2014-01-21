@@ -34,7 +34,7 @@ static const float ARROW = 10;
 
 }
 UserMarkerItem::UserMarkerItem(QGraphicsItem *parent)
-	: QGraphicsObject(parent), _fadeout(0)
+	: QGraphicsItem(parent), _fadeout(0)
 {
 	setFlag(ItemIgnoresTransformations);
 	_bgbrush.setStyle(Qt::SolidPattern);
@@ -55,6 +55,11 @@ void UserMarkerItem::setColor(const QColor &color)
 		_textpen = QPen(Qt::white);
 
 	update();
+}
+
+const QColor &UserMarkerItem::color() const
+{
+	return _bgbrush.color();
 }
 
 void UserMarkerItem::setText(const QString &text)
@@ -111,31 +116,29 @@ void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->drawText(_textpos, _text);
 }
 
-void UserMarkerItem::timerEvent(QTimerEvent *)
-{
-	qreal o = opacity() - 1/(25.0 *5);
-	if(o<=0) {
-		hide();
-		killTimer(_fadeout);
-		_fadeout=0;
-	} else
-		setOpacity(o);
-}
-
 void UserMarkerItem::fadein()
 {
-	if(_fadeout) {
-		killTimer(_fadeout);
-		_fadeout=0;
-	}
+	_fadeout = 10.0;
 	setOpacity(1);
 	show();
 }
 
 void UserMarkerItem::fadeout()
 {
-	if(isVisible() && _fadeout==0)
-		_fadeout = startTimer(1000/25);
+	_fadeout = 1.0;
+}
+
+bool UserMarkerItem::fadeoutStep(float dt)
+{
+	if(_fadeout>0) {
+		_fadeout -= dt;
+		if(_fadeout <= 0.0) {
+			hide();
+			return true;
+		} else if(_fadeout < 1.0)
+			setOpacity(_fadeout);
+	}
+	return false;
 }
 
 }

@@ -266,6 +266,9 @@ paintcore::Point CanvasView::mapToScene(const QPointF &point, qreal pressure) co
 void CanvasView::setPointerTracking(bool tracking)
 {
 	_pointertracking = tracking;
+	if(!tracking && _scene) {
+		_scene->hideUserMarker();
+	}
 }
 
 void CanvasView::setStrokeSmoothing(int smoothing)

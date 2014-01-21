@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 
 namespace drawingboard {
 
-class UserMarkerItem : public QGraphicsObject
+class UserMarkerItem : public QGraphicsItem
 {
 public:
 	UserMarkerItem(QGraphicsItem *parent=0);
@@ -33,14 +33,17 @@ public:
 	QRectF boundingRect() const;
 
 	void setColor(const QColor &color);
+	const QColor &color() const;
+
 	void setText(const QString &text);
 
 	void fadein();
 	void fadeout();
 
+	bool fadeoutStep(float dt);
+
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
-	void timerEvent(QTimerEvent *);
 
 private:
 	QRectF _bounds;
@@ -49,7 +52,7 @@ private:
 	QPainterPath _bubble;
 	QString _text;
 	QPointF _textpos;
-	int _fadeout;
+	float _fadeout;
 };
 
 }

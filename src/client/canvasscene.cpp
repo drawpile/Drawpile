@@ -40,8 +40,14 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true)
 {
 	setItemIndexMethod(NoIndex);
+
 	_previewClearTimer = new QTimer(this);
 	connect(_previewClearTimer, SIGNAL(timeout()), this, SLOT(clearPreviews()));
+
+	_animTickTimer = new QTimer(this);
+	connect(_animTickTimer, SIGNAL(timeout()), this, SLOT(advanceUsermarkerAnimation()));
+	_animTickTimer->setInterval(200);
+	_animTickTimer->start(200);
 }
 
 CanvasScene::~CanvasScene()
@@ -167,6 +173,30 @@ void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
 		if(_selection) {
 			_selection->setRect(_selection->rect().translated(offset));
 		}
+	}
+}
+
+/**
+ * @brief Advance canvas animations
+ *
+ * Note. We don't use the scene's built-in animation features since we care about
+ * just a few specific animations.
+ */
+void CanvasScene::advanceUsermarkerAnimation()
+{
+	const float STEP = 0.2; // time delta in seconds
+
+	QMutableListIterator<LaserTrailItem*> laseri(_lasertrails);
+	while(laseri.hasNext()) {
+		auto *l = laseri.next();
+		if(l->fadeoutStep(STEP)) {
+			delete l;
+			laseri.remove();
+		}
+	}
+
+	foreach(UserMarkerItem *um, _usermarkers) {
+		um->fadeoutStep(STEP);
 	}
 }
 
@@ -481,9 +511,13 @@ void CanvasScene::moveUserMarker(int id, int x,int y, int trail)
 	QPointF p(x, y);
 
 	if(trail>0) {
-		auto *laser = new LaserTrailItem(QLineF(item->pos(), p));
+		auto *laser = new LaserTrailItem(QLineF(item->pos(), p), item->color(), trail);
 		_lasertrails.append(laser);
 		addItem(laser);
+
+		// Limit total laser trail length
+		if(_lasertrails.size() > 500)
+			delete _lasertrails.takeFirst();
 	}
 
 	item->setPos(p);
@@ -494,6 +528,9 @@ void CanvasScene::moveUserMarker(int id, int x,int y, int trail)
 
 void CanvasScene::hideUserMarker(int id)
 {
+	if(id<0 && _statetracker)
+		id = _statetracker->localId();
+
 	if(_usermarkers.contains(id)) {
 		_usermarkers[id]->fadeout();
 	}

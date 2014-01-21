@@ -126,6 +126,12 @@ public:
 	 */
 	void setShowAllUserMarkers(bool showall) { _showallmarkers = showall; }
 
+	/**
+	 * @brief Get the local user's ID
+	 * @return
+	 */
+	int localId() const { return _myid; }
+
 	StateTracker &operator=(const StateTracker&) = delete;
 
 signals:

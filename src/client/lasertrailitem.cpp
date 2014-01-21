@@ -19,18 +19,50 @@
 */
 
 #include <QPen>
+#include <QPainter>
+
 #include "lasertrailitem.h"
 
 namespace drawingboard {
 
-LaserTrailItem::LaserTrailItem(const QLineF &line, QGraphicsItem *parent)
-	: QGraphicsLineItem(line, parent)
+LaserTrailItem::LaserTrailItem(const QLineF &line, const QColor &color, int fadetime, QGraphicsItem *parent)
+	: QGraphicsLineItem(line, parent), _blink(false)
 {
-	QPen pen;
-	pen.setCosmetic(true);
-	pen.setWidth(2);
-	pen.setColor(Qt::red);
-	setPen(pen);
+	_pen1.setCosmetic(true);
+	_pen1.setWidth(1);
+	_pen1.setColor(color.lighter(110));
+
+	_pen2 = _pen1;
+	_pen2.setColor(color.lighter(90));
+
+	_life = fadetime;
+}
+
+void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+	Q_UNUSED(option);
+	Q_UNUSED(widget);
+	painter->save();
+	painter->setRenderHint(QPainter::Antialiasing, true);
+	painter->setPen(_blink ? _pen1 : _pen2);
+	//if(_blink)
+		//painter->setCompositionMode(QPainter::CompositionMode_Plus);
+	painter->drawLine(line());
+	painter->restore();
+}
+
+bool LaserTrailItem::fadeoutStep(float dt)
+{
+	_blink = !_blink;
+	_life -= dt;
+	if(_life<=0.0)
+		return true;
+
+	if(_life<1.0)
+		setOpacity(_life);
+
+	update(boundingRect());
+	return false;
 }
 
 }
