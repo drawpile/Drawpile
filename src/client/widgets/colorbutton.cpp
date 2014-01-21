@@ -31,7 +31,7 @@ namespace widgets {
 #endif
 
 ColorButton::ColorButton(QWidget *parent,const QColor& color)
-	: QToolButton(parent), _color(color), _setAlpha(false)
+	: QToolButton(parent), _color(color), _setAlpha(false), _locked(false)
 {
 	setAcceptDrops(true);
 
@@ -52,12 +52,14 @@ void ColorButton::setAlpha(bool use)
 void ColorButton::selectColor()
 {
 #ifndef DESIGNER_PLUGIN
-	dialogs::ColorDialog dlg(tr("Select a color"), false, alpha());
-	dlg.setColor(color());
-	if(dlg.exec() == QDialog::Accepted) {
-		if(dlg.color() != color()) {
-			setColor(dlg.color());
-			emit colorChanged(color());
+	if(!_locked) {
+		dialogs::ColorDialog dlg(tr("Select a color"), false, alpha());
+		dlg.setColor(color());
+		if(dlg.exec() == QDialog::Accepted) {
+			if(dlg.color() != color()) {
+				setColor(dlg.color());
+				emit colorChanged(color());
+			}
 		}
 	}
 #endif
@@ -106,8 +108,10 @@ void ColorButton::paintEvent(QPaintEvent *e)
  */
 void ColorButton::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasColor())
-		event->acceptProposedAction();
+	if(!_locked) {
+		if(event->mimeData()->hasColor())
+			event->acceptProposedAction();
+	}
 }
 
 /**
@@ -116,9 +120,11 @@ void ColorButton::dragEnterEvent(QDragEnterEvent *event)
  */
 void ColorButton::dropEvent(QDropEvent *event)
 {
-	const QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
-	setColor(col);
-	emit colorChanged(col);
+	if(!_locked) {
+		const QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
+		setColor(col);
+		emit colorChanged(col);
+	}
 }
 
 #ifndef DESIGNER_PLUGIN

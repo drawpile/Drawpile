@@ -251,7 +251,7 @@ public:
 
 	int getSize() const { return 0; }
 
-private:
+protected:
 	paintcore::Brush _dummybrush;
 };
 
@@ -362,6 +362,9 @@ public:
 
 	bool pointerTracking() const;
 	int trailPersistence() const;
+
+	void setForeground(const QColor& color);
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 signals:
 	void pointerTrackingToggled(bool);

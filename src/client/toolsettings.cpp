@@ -392,12 +392,29 @@ void LaserPointerSettings::saveToolSettings(QSettings &cfg)
 {
 	cfg.setValue("tracking", _ui->trackpointer->isChecked());
 	cfg.setValue("persistence", _ui->persistence->value());
+
+	int color=0;
+
+	if(_ui->color1->isChecked())
+		color=1;
+	else if(_ui->color2->isChecked())
+		color=2;
+	else if(_ui->color3->isChecked())
+		color=3;
+	cfg.setValue("color", color);
 }
 
 void LaserPointerSettings::restoreToolSettings(QSettings &cfg)
 {
 	_ui->trackpointer->setChecked(cfg.value("tracking", true).toBool());
 	_ui->persistence->setValue(cfg.value("persistence", 1).toInt());
+
+	switch(cfg.value("color", 0).toInt()) {
+	case 1: _ui->color1->setChecked(true); break;
+	case 2: _ui->color2->setChecked(true); break;
+	case 3: _ui->color3->setChecked(true); break;
+	default: _ui->color0->setChecked(true); break;
+	}
 }
 
 bool LaserPointerSettings::pointerTracking() const
@@ -408,6 +425,30 @@ bool LaserPointerSettings::pointerTracking() const
 int LaserPointerSettings::trailPersistence() const
 {
 	return _ui->persistence->value();
+}
+
+void LaserPointerSettings::setForeground(const QColor &color)
+{
+	_ui->color0->setColor(color);
+}
+
+const paintcore::Brush& LaserPointerSettings::getBrush(bool swapcolors) const
+{
+	QColor c;
+	if(swapcolors)
+		c = _dummybrush.color2();
+	else {
+		if(_ui->color0->isChecked())
+			c = _ui->color0->color();
+		else if(_ui->color1->isChecked())
+			c = _ui->color1->color();
+		else if(_ui->color2->isChecked())
+			c = _ui->color2->color();
+		else if(_ui->color3->isChecked())
+			c = _ui->color3->color();
+	}
+	const_cast<paintcore::Brush&>(_dummybrush).setColor(c);
+	return _dummybrush;
 }
 
 SimpleSettings::SimpleSettings(QString name, QString title, Type type, bool sp)
