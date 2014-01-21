@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -510,7 +510,7 @@ void CanvasScene::moveUserMarker(int id, int x,int y, int trail)
 	auto *item = getOrCreateUserMarker(id);
 	QPointF p(x, y);
 
-	if(trail>0) {
+	if(trail>0 && _showLaserTrails) {
 		auto *laser = new LaserTrailItem(QLineF(item->pos(), p), item->color(), trail);
 		_lasertrails.append(laser);
 		addItem(laser);
@@ -542,6 +542,15 @@ void CanvasScene::showUserMarkers(bool show)
 	if(!show) {
 		foreach(UserMarkerItem *item, _usermarkers)
 			item->hide();
+	}
+}
+
+void CanvasScene::showLaserTrails(bool show)
+{
+	_showLaserTrails = show;
+	if(!show) {
+		while(!_lasertrails.isEmpty())
+			delete _lasertrails.takeLast();
 	}
 }
 

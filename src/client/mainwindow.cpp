@@ -1642,8 +1642,10 @@ void MainWindow::setupActions()
 	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), tr("Show the positions of other users pointers as they draw"), QKeySequence(), true);
+	QAction *showlasers = makeAction("showlasers", 0, tr("Show laser trails"), tr("Show laser pointer trails"), QKeySequence(), true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
+	showlasers->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
 
@@ -1659,6 +1661,7 @@ void MainWindow::setupActions()
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
+	connect(showlasers, SIGNAL(triggered(bool)), _canvas, SLOT(showLaserTrails(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
@@ -1680,6 +1683,7 @@ void MainWindow::setupActions()
 	viewmenu->addAction(showoutline);
 	viewmenu->addAction(showannotations);
 	viewmenu->addAction(showusermarkers);
+	viewmenu->addAction(showlasers);
 
 	viewmenu->addSeparator();
 	viewmenu->addAction(fullscreen);

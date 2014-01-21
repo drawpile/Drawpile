@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2009 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -194,6 +194,9 @@ public slots:
 	//! Show/hide remote cursor markers
 	void showUserMarkers(bool show);
 
+	//! Show hide laser pointer trails
+	void showLaserTrails(bool show);
+
 	void handleDrawingCommand(protocol::MessagePtr cmd);
 
 	//! Generate a snapshot point and send it to the server
@@ -266,6 +269,7 @@ private:
 
 	bool _showAnnotationBorders;
 	bool _showUserMarkers;
+	bool _showLaserTrails;
 
 	QTimer *_previewClearTimer;
 	QTimer *_animTickTimer;
