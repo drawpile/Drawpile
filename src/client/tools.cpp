@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,6 +22,14 @@
 #include <QGraphicsLineItem>
 #include <QGraphicsRectItem>
 #include <QApplication>
+
+// Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
+#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
+#include <cmath>
+#define qAtan2 atan2
+#else
+#include <QtMath>
+#endif
 
 #include "tools.h"
 #include "toolsettings.h"
@@ -115,8 +123,9 @@ void BrushBase::begin(const paintcore::Point& point, bool right)
 	client().sendStroke(point);
 }
 
-void BrushBase::motion(const paintcore::Point& point)
+void BrushBase::motion(const paintcore::Point& point, bool constrain)
 {
+	Q_UNUSED(constrain);
 	if(!client().isLocalServer())
 		scene().addPreview(point);
 
@@ -143,8 +152,9 @@ void LaserPointer::begin(const paintcore::Point &point, bool right)
 	client().sendLaserPointer(point.x(), point.y(), 0);
 }
 
-void LaserPointer::motion(const paintcore::Point &point)
+void LaserPointer::motion(const paintcore::Point &point, bool constrain)
 {
+	Q_UNUSED(constrain);
 	client().sendLaserPointer(point.x(), point.y(), settings().getLaserPointerSettings()->trailPersistence());
 }
 
@@ -156,11 +166,12 @@ void LaserPointer::end()
 void ColorPicker::begin(const paintcore::Point& point, bool right)
 {
 	_bg = right;
-	motion(point);
+	motion(point, false);
 }
 
-void ColorPicker::motion(const paintcore::Point& point)
+void ColorPicker::motion(const paintcore::Point& point, bool constrain)
 {
+	Q_UNUSED(constrain);
 	int layer=0;
 	if(settings().getColorPickerSettings()->pickFromLayer()) {
 		layer = this->layer();
@@ -183,9 +194,28 @@ void Line::begin(const paintcore::Point& point, bool right)
 	_swap = right;
 }
 
-void Line::motion(const paintcore::Point& point)
+namespace {
+QPointF angleConstraint(const QPointF &p1, const QPointF &p2)
 {
-	_p2 = point;
+	QPointF dp = p2 - p1;
+	double a = qAtan2(dp.y(), dp.x());
+	double m = hypot(dp.x(), dp.y());
+
+	// Round a to the nearest multiple of π/4
+	const double STEPS = M_PI / 4.0;
+	a = qRound(a / STEPS) * STEPS;
+
+	return p1 + QPointF(cos(a)*m, sin(a)*m);
+}
+}
+
+void Line::motion(const paintcore::Point& point, bool constrain)
+{
+	if(constrain)
+		_p2 = angleConstraint(_p1, point);
+	else
+		_p2 = point;
+
 	QGraphicsLineItem *item = qgraphicsitem_cast<QGraphicsLineItem*>(scene().toolPreview());
 	if(item)
 		item->setLine(QLineF(_p1, _p2));
@@ -203,9 +233,7 @@ void Line::end()
 
 	client().sendUndopoint();
 	client().sendToolChange(tctx);
-	PointVector pv;
-	pv << _p1 << _p2;
-	client().sendStroke(pv);
+	client().sendStroke(PointVector() << Point(_p1, 1) << Point(_p2, 1));
 	client().sendPenup();
 }
 
@@ -220,9 +248,32 @@ void Rectangle::begin(const paintcore::Point& point, bool right)
 	_swap = right;
 }
 
-void Rectangle::motion(const paintcore::Point& point)
+namespace {
+
+QPointF squareConstraint(const QPointF &p1, const QPointF &p2)
 {
-	_p2 = point;
+	float dx = p2.x() - p1.x();
+	float dy = p2.y() - p1.y();
+	const float ax = qAbs(dx);
+	const float ay = qAbs(dy);
+
+	if(ax>ay)
+		dy = ax * (dy<0?-1:1);
+	else
+		dx = ay * (dx<0?-1:1);
+
+	return p1 + QPointF(dx, dy);
+}
+
+}
+
+void Rectangle::motion(const paintcore::Point& point, bool constrain)
+{
+	if(constrain)
+		_p2 = squareConstraint(_p1, point);
+	else
+		_p2 = point;
+
 	QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
 	if(item)
 		item->setRect(QRectF(_p1, _p2).normalized());
@@ -241,11 +292,11 @@ void Rectangle::end()
 	client().sendUndopoint();
 	client().sendToolChange(tctx);
 	PointVector pv;
-	pv << _p1;
-	pv << Point(_p1.x(), _p2.y(), _p1.pressure());
-	pv << _p2;
-	pv << Point(_p2.x(), _p1.y(), _p1.pressure());
-	pv << _p1 - Point(_p1.x()<_p2.x()?-1:1,0,1);
+	pv << Point(_p1, 1);
+	pv << Point(_p1.x(), _p2.y(), 1);
+	pv << Point(_p2, 1);
+	pv << Point(_p2.x(), _p1.y(), 1);
+	pv << Point(_p1 - QPointF(_p1.x()<_p2.x()?-1:1, 0), 1);
 	client().sendStroke(pv);
 	client().sendPenup();
 }
@@ -284,7 +335,7 @@ void Annotation::begin(const paintcore::Point& point, bool right)
  * If we have a selected annotation, move or resize it. Otherwise extend
  * the preview rectangle for the new annotation.
  */
-void Annotation::motion(const paintcore::Point& point)
+void Annotation::motion(const paintcore::Point& point, bool constrain)
 {
 	if(_wasselected) {
 		// TODO a "ghost" mode to indicate annotation has not really moved
@@ -293,14 +344,19 @@ void Annotation::motion(const paintcore::Point& point)
 		// Annotation may have been deleted by other user while we were moving it.
 		if(_selected) {
 			QPointF p = point - _start;
+			// TODO constrain
 			_selected->adjustGeometry(_handle, p.toPoint());
 			_start = point;
 		}
 	} else {
+		if(constrain)
+			_end = squareConstraint(_start, point);
+		else
+			_end = point;
+
 		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
 		if(item)
 			item->setRect(QRectF(_start, _end).normalized());
-		_end = point;
 	}
 }
 
@@ -381,14 +437,21 @@ void Selection::begin(const paintcore::Point &point, bool right)
 	}
 }
 
-void Selection::motion(const paintcore::Point &point)
+void Selection::motion(const paintcore::Point &point, bool constrain)
 {
 	if(!scene().selectionItem())
 		return;
 
 	if(_handle==drawingboard::SelectionItem::OUTSIDE) {
-		scene().selectionItem()->setRect(QRectF(_start, point).normalized().toRect());
+		QPointF p;
+		if(constrain)
+			p = squareConstraint(_start, point);
+		else
+			p = point;
+
+		scene().selectionItem()->setRect(QRectF(_start, p).normalized().toRect());
 	} else {
+			// TODO constrain
 		QPointF p = point - _start;
 		scene().selectionItem()->adjustGeometry(_handle, p.toPoint());
 		_start = point.toPoint();

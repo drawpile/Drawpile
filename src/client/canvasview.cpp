@@ -321,7 +321,7 @@ void CanvasView::onPenDown(const paintcore::Point &p, bool right)
 	}
 }
 
-void CanvasView::onPenMove(const paintcore::Point &p, bool right)
+void CanvasView::onPenMove(const paintcore::Point &p, bool right, bool shift)
 {
 	if(_scene->hasImage() && !_locked) {
 		if(_specialpenmode) {
@@ -334,10 +334,10 @@ void CanvasView::onPenMove(const paintcore::Point &p, bool right)
 					if(_smoother.isFirstSmoothPoint())
 						_current_tool->begin(_smoother.smoothPoint(), right);
 					else
-						_current_tool->motion(_smoother.smoothPoint());
+						_current_tool->motion(_smoother.smoothPoint(), shift);
 				}
 			} else {
-				_current_tool->motion(p);
+				_current_tool->motion(p, shift);
 			}
 		}
 	}
@@ -406,7 +406,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 				_pointervelocity = point.distance(_prevpoint);
 				_pointerdistance += _pointervelocity;
 				point.setPressure(mapPressure(1.0, false));
-				onPenMove(point, event->button() == Qt::RightButton);
+				onPenMove(point, event->button() == Qt::RightButton, event->modifiers() & Qt::ShiftModifier);
 			} else if(_pointertracking && _scene->hasImage()) {
 				emit pointerMoved(point.x(), point.y());
 			}
@@ -493,7 +493,7 @@ bool CanvasView::viewportEvent(QEvent *event)
 					_pointervelocity = point.distance(_prevpoint);
 					_pointerdistance += _pointervelocity;
 					point.setPressure(mapPressure(point.pressure(), true));
-					onPenMove(point, false);
+					onPenMove(point, false, tabev->modifiers() & Qt::ShiftModifier);
 				}
 				updateOutline(point);
 			}

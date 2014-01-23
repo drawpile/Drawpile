@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -68,11 +68,19 @@ public:
 	//! Get the type of this tool
 	Type type() const { return _type; }
 
-	//! Begin drawing
+	/**
+	 * @brief Start a new stroke
+	 * @param point starting point
+	 * @param right is the right mouse/pen button pressed instead of the left one
+	 */
 	virtual void begin(const paintcore::Point& point, bool right) = 0;
 
-	//! Draw stroke
-	virtual void motion(const paintcore::Point& point) = 0;
+	/**
+	 * @brief Continue a stroke
+	 * @param point new point
+	 * @param constrain is the "constrain motion" button pressed
+	 */
+	virtual void motion(const paintcore::Point& point, bool constrain) = 0;
 
 	//! End drawing
 	virtual void end() = 0;
@@ -98,7 +106,7 @@ class BrushBase : public Tool
 		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type) {}
 
 		void begin(const paintcore::Point& point, bool right);
-		void motion(const paintcore::Point& point);
+		void motion(const paintcore::Point& point, bool constrain);
 		void end();
 
 		bool allowSmoothing() const { return true; }
@@ -131,7 +139,7 @@ public:
 	ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point);
+	void motion(const paintcore::Point& point, bool constrain);
 	void end();
 
 private:
@@ -144,11 +152,11 @@ public:
 	Line(ToolCollection &owner) : Tool(owner, LINE) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point);
+	void motion(const paintcore::Point& point, bool constrain);
 	void end();
 
 private:
-	paintcore::Point _p1, _p2;
+	QPointF _p1, _p2;
 	bool _swap;
 };
 
@@ -158,11 +166,11 @@ public:
 	Rectangle(ToolCollection &owner) : Tool(owner, RECTANGLE) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point);
+	void motion(const paintcore::Point& point, bool constrain);
 	void end();
 
 private:
-	paintcore::Point _p1, _p2;
+	QPointF _p1, _p2;
 	bool _swap;
 };
 
@@ -174,7 +182,7 @@ public:
 	Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), _selected(0) { }
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point);
+	void motion(const paintcore::Point& point, bool constrain);
 	void end();
 
 private:
@@ -194,7 +202,7 @@ public:
 	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point);
+	void motion(const paintcore::Point& point, bool constrain);
 	void end();
 
 	void clearSelection();
@@ -209,7 +217,7 @@ public:
 	LaserPointer(ToolCollection &owner) : Tool(owner, LASERPOINTER) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point);
+	void motion(const paintcore::Point& point, bool constrain);
 	void end();
 
 	bool allowSmoothing() const { return true; }
