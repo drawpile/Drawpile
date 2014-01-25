@@ -217,7 +217,7 @@ public:
 private:
 	QPointer<drawingboard::AnnotationItem> _selected;
 	drawingboard::AnnotationItem::Handle _handle;
-	QPointF _start, _end;
+	QPointF _start, _p1, _p2;
 	bool _wasselected;
 };
 
@@ -237,7 +237,7 @@ public:
 	void clearSelection();
 
 private:
-	QPoint _start;
+	QPoint _start, _p1;
 	drawingboard::SelectionItem::Handle _handle;
 };
 

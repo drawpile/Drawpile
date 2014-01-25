@@ -362,10 +362,11 @@ void Annotation::begin(const paintcore::Point& point, bool right)
 		item->setPen(pen);
 		item->setRect(QRectF(point, point));
 		scene().setToolPreview(item);
-		_end = point;
+		_p2 = point;
 		_wasselected = false;
 	}
 	_start = point;
+	_p1 = point;
 }
 
 /**
@@ -387,13 +388,18 @@ void Annotation::motion(const paintcore::Point& point, bool constrain, bool cent
 		}
 	} else {
 		if(constrain)
-			_end = squareConstraint(_start, point);
+			_p2 = squareConstraint(_start, point);
 		else
-			_end = point;
+			_p2 = point;
+
+		if(center)
+			_p1 = _start - (_p2 - _start);
+		else
+			_p1 = _start;
 
 		QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
 		if(item)
-			item->setRect(QRectF(_start, _end).normalized());
+			item->setRect(QRectF(_p1, _p2).normalized());
 	}
 }
 
@@ -411,7 +417,7 @@ void Annotation::end()
 	} else {
 		scene().setToolPreview(0);
 
-		QRect rect = QRect(_start.toPoint(), _end.toPoint()).normalized();
+		QRect rect = QRect(_p1.toPoint(), _p2.toPoint()).normalized();
 
 		if(rect.width()<15)
 			rect.setWidth(15);
@@ -436,6 +442,8 @@ void Selection::begin(const paintcore::Point &point, bool right)
 		_handle = drawingboard::SelectionItem::OUTSIDE;
 
 	_start = point.toPoint();
+	_p1 = _start;
+
 	if(_handle == drawingboard::SelectionItem::OUTSIDE) {
 		bool hasPaste = scene().selectionItem() && !scene().selectionItem()->pasteImage().isNull();
 		if(hasPaste) {
@@ -486,7 +494,12 @@ void Selection::motion(const paintcore::Point &point, bool constrain, bool cente
 		else
 			p = point;
 
-		scene().selectionItem()->setRect(QRectF(_start, p).normalized().toRect());
+		if(center)
+			_p1 = _start - (p.toPoint() - _start);
+		else
+			_p1 = _start;
+
+		scene().selectionItem()->setRect(QRectF(_p1, p).normalized().toRect());
 	} else {
 			// TODO constrain
 		QPointF p = point - _start;
