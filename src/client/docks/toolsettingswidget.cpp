@@ -51,7 +51,7 @@ ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
 	widgets_->addWidget(rectsettings_->createUi(this));
 
-	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), tools::SimpleSettings::Ellipse, false);
+	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), tools::SimpleSettings::Ellipse, true);
 	widgets_->addWidget(_ellipsesettings->createUi(this));
 
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
