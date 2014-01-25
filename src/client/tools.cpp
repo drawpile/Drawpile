@@ -126,9 +126,10 @@ void BrushBase::begin(const paintcore::Point& point, bool right)
 	client().sendStroke(point);
 }
 
-void BrushBase::motion(const paintcore::Point& point, bool constrain)
+void BrushBase::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
+	Q_UNUSED(center);
 	if(!client().isLocalServer())
 		scene().addPreview(point);
 
@@ -155,9 +156,10 @@ void LaserPointer::begin(const paintcore::Point &point, bool right)
 	client().sendLaserPointer(point.x(), point.y(), 0);
 }
 
-void LaserPointer::motion(const paintcore::Point &point, bool constrain)
+void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
+	Q_UNUSED(center);
 	client().sendLaserPointer(point.x(), point.y(), settings().getLaserPointerSettings()->trailPersistence());
 }
 
@@ -169,12 +171,13 @@ void LaserPointer::end()
 void ColorPicker::begin(const paintcore::Point& point, bool right)
 {
 	_bg = right;
-	motion(point, false);
+	motion(point, false, false);
 }
 
-void ColorPicker::motion(const paintcore::Point& point, bool constrain)
+void ColorPicker::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
+	Q_UNUSED(center);
 	int layer=0;
 	if(settings().getColorPickerSettings()->pickFromLayer()) {
 		layer = this->layer();
@@ -212,8 +215,9 @@ QPointF angleConstraint(const QPointF &p1, const QPointF &p2)
 }
 }
 
-void Line::motion(const paintcore::Point& point, bool constrain)
+void Line::motion(const paintcore::Point& point, bool constrain, bool center)
 {
+	Q_UNUSED(center);
 	if(constrain)
 		_p2 = angleConstraint(_p1, point);
 	else
@@ -240,17 +244,6 @@ void Line::end()
 	client().sendPenup();
 }
 
-void Rectangle::begin(const paintcore::Point& point, bool right)
-{
-	QGraphicsRectItem *item = new QGraphicsRectItem();
-	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
-	item->setRect(QRectF(point, point));
-	scene().setToolPreview(item);
-	_p1 = point;
-	_p2 = point;
-	_swap = right;
-}
-
 namespace {
 
 QPointF squareConstraint(const QPointF &p1, const QPointF &p2)
@@ -270,59 +263,34 @@ QPointF squareConstraint(const QPointF &p1, const QPointF &p2)
 
 }
 
-void Rectangle::motion(const paintcore::Point& point, bool constrain)
+void RectangularTool::begin(const paintcore::Point& point, bool right)
 {
-	if(constrain)
-		_p2 = squareConstraint(_p1, point);
-	else
-		_p2 = point;
-
-	QGraphicsRectItem *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
-	if(item)
-		item->setRect(QRectF(_p1, _p2).normalized());
-}
-
-void Rectangle::end()
-{
-	scene().setToolPreview(0);
-
-	drawingboard::ToolContext tctx = {
-		layer(),
-		settings().getBrush(_swap)
-	};
-
-	client().sendUndopoint();
-	client().sendToolChange(tctx);
-	client().sendStroke(paintcore::shapes::rectangle(QRectF(_p1, _p2).normalized()));
-	client().sendPenup();
-}
-
-void Ellipse::begin(const paintcore::Point& point, bool right)
-{
-	QGraphicsEllipseItem *item = new QGraphicsEllipseItem;
+	auto *item = createPreview(point);
 	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
-	item->setRect(QRectF(point, point));
 	scene().setToolPreview(item);
+	_start = point;
 	_p1 = point;
 	_p2 = point;
 	_swap = right;
 }
 
-void Ellipse::motion(const paintcore::Point& point, bool constrain)
+void RectangularTool::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	if(constrain)
-		_p2 = squareConstraint(_p1, point);
+		_p2 = squareConstraint(_start, point);
 	else
 		_p2 = point;
 
-	QGraphicsEllipseItem *item = qgraphicsitem_cast<QGraphicsEllipseItem*>(scene().toolPreview());
-	if(item)
-		item->setRect(QRectF(_p1, _p2).normalized());
+	if(center)
+		_p1 = _start - (_p2 - _start);
+	else
+		_p1 = _start;
+
+	updateToolPreview();
 }
 
-void Ellipse::end()
+void RectangularTool::end()
 {
-	using namespace paintcore;
 	scene().setToolPreview(0);
 
 	drawingboard::ToolContext tctx = {
@@ -332,10 +300,43 @@ void Ellipse::end()
 
 	client().sendUndopoint();
 	client().sendToolChange(tctx);
-	client().sendStroke(paintcore::shapes::ellipse(QRectF(_p1, _p2).normalized()));
+	client().sendStroke(pointVector());
 	client().sendPenup();
 }
 
+QAbstractGraphicsShapeItem *Rectangle::createPreview(const paintcore::Point &p)
+{
+	return new QGraphicsRectItem(p.x(), p.y(), 1, 1, 0);
+}
+
+void Rectangle::updateToolPreview()
+{
+	auto *item = qgraphicsitem_cast<QGraphicsRectItem*>(scene().toolPreview());
+	if(item)
+		item->setRect(rect());
+}
+
+paintcore::PointVector Rectangle::pointVector()
+{
+	return paintcore::shapes::rectangle(rect());
+}
+
+QAbstractGraphicsShapeItem *Ellipse::createPreview(const paintcore::Point &p)
+{
+	return new QGraphicsEllipseItem(p.x(), p.y(), 1, 1, 0);
+}
+
+void Ellipse::updateToolPreview()
+{
+	auto *item = qgraphicsitem_cast<QGraphicsEllipseItem*>(scene().toolPreview());
+	if(item)
+		item->setRect(rect());
+}
+
+paintcore::PointVector Ellipse::pointVector()
+{
+	return paintcore::shapes::ellipse(rect());
+}
 
 /**
  * The annotation tool has fairly complex needs. Clicking on an existing
@@ -371,7 +372,7 @@ void Annotation::begin(const paintcore::Point& point, bool right)
  * If we have a selected annotation, move or resize it. Otherwise extend
  * the preview rectangle for the new annotation.
  */
-void Annotation::motion(const paintcore::Point& point, bool constrain)
+void Annotation::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	if(_wasselected) {
 		// TODO a "ghost" mode to indicate annotation has not really moved
@@ -473,7 +474,7 @@ void Selection::begin(const paintcore::Point &point, bool right)
 	}
 }
 
-void Selection::motion(const paintcore::Point &point, bool constrain)
+void Selection::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	if(!scene().selectionItem())
 		return;

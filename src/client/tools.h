@@ -22,6 +22,7 @@
 
 #include <QHash>
 #include <QPointer>
+#include <QAbstractGraphicsShapeItem>
 
 #include "core/point.h"
 #include "annotationitem.h"
@@ -79,8 +80,9 @@ public:
 	 * @brief Continue a stroke
 	 * @param point new point
 	 * @param constrain is the "constrain motion" button pressed
+	 * @param cener is the "center on start point" button pressed
 	 */
-	virtual void motion(const paintcore::Point& point, bool constrain) = 0;
+	virtual void motion(const paintcore::Point& point, bool constrain, bool center) = 0;
 
 	//! End drawing
 	virtual void end() = 0;
@@ -106,7 +108,7 @@ class BrushBase : public Tool
 		BrushBase(ToolCollection &owner, Type type) : Tool(owner, type) {}
 
 		void begin(const paintcore::Point& point, bool right);
-		void motion(const paintcore::Point& point, bool constrain);
+		void motion(const paintcore::Point& point, bool constrain, bool center);
 		void end();
 
 		bool allowSmoothing() const { return true; }
@@ -139,7 +141,7 @@ public:
 	ColorPicker(ToolCollection &owner) : Tool(owner, PICKER) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 private:
@@ -152,39 +154,53 @@ public:
 	Line(ToolCollection &owner) : Tool(owner, LINE) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 private:
 	QPointF _p1, _p2;
+	bool _swap;
+};
+
+//! Base class for tools that make a rectangular selection
+class RectangularTool : public Tool {
+public:
+	RectangularTool(ToolCollection &owner, Type type) : Tool(owner, type) {}
+
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
+	void end();
+
+protected:
+	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p) = 0;
+	virtual void updateToolPreview() = 0;
+	virtual paintcore::PointVector pointVector() = 0;
+	QRectF rect() const { return QRectF(_p1, _p2).normalized(); }
+
+private:
+	QPointF _start, _p1, _p2;
 	bool _swap;
 };
 
 //! Rectangle tool
-class Rectangle : public Tool {
+class Rectangle : public RectangularTool {
 public:
-	Rectangle(ToolCollection &owner) : Tool(owner, RECTANGLE) {}
+	Rectangle(ToolCollection &owner) : RectangularTool(owner, RECTANGLE) {}
 
-	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
-	void end();
-
-private:
-	QPointF _p1, _p2;
-	bool _swap;
+protected:
+	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p);
+	virtual void updateToolPreview();
+	virtual paintcore::PointVector pointVector();
 };
 
-class Ellipse : public Tool {
+class Ellipse : public RectangularTool {
 public:
-	Ellipse(ToolCollection &owner) : Tool(owner, ELLIPSE) {}
+	Ellipse(ToolCollection &owner) : RectangularTool(owner, ELLIPSE) {}
 
-	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
-	void end();
-
-private:
-	QPointF _p1, _p2;
-	bool _swap;
+protected:
+	virtual QAbstractGraphicsShapeItem *createPreview(const paintcore::Point &p);
+	virtual void updateToolPreview();
+	virtual paintcore::PointVector pointVector();
 };
 
 /**
@@ -195,7 +211,7 @@ public:
 	Annotation(ToolCollection &owner) : Tool(owner, ANNOTATION), _selected(0) { }
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 private:
@@ -215,7 +231,7 @@ public:
 	Selection(ToolCollection &owner) : Tool(owner, SELECTION) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 	void clearSelection();
@@ -230,7 +246,7 @@ public:
 	LaserPointer(ToolCollection &owner) : Tool(owner, LASERPOINTER) {}
 
 	void begin(const paintcore::Point& point, bool right);
-	void motion(const paintcore::Point& point, bool constrain);
+	void motion(const paintcore::Point& point, bool constrain, bool center);
 	void end();
 
 	bool allowSmoothing() const { return true; }

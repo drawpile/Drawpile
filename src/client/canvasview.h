@@ -180,7 +180,7 @@ class CanvasView : public QGraphicsView
 		void updateOutline(const paintcore::Point& point);
 
 		void onPenDown(const paintcore::Point &p, bool right);
-		void onPenMove(const paintcore::Point &p, bool right, bool shift);
+		void onPenMove(const paintcore::Point &p, bool right, bool shift, bool alt);
 		void onPenUp(bool right);
 		
 		void resetCursor();
