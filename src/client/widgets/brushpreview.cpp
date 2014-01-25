@@ -145,7 +145,7 @@ void BrushPreview::updatePreview()
 			pointvector << paintcore::Point(offx+x, offy+y, pressure);
 		}
 	} else if(shape_ == Line) {
-		pointvector << paintcore::Point(offx, offy, 1.0) << paintcore::Point(offx+strokew, offy, 1.0);
+		pointvector << paintcore::Point(offx, offy + strokeh, 1.0) << paintcore::Point(offx+strokew, offy - strokeh, 1.0);
 	} else if(shape_ == Rectangle) {
 		pointvector = paintcore::shapes::rectangle(QRectF(offx, offy-strokeh, strokew, strokeh*2));
 	} else {
