@@ -48,6 +48,12 @@ class UserMarkerItem;
 class LaserTrailItem;
 class Preview;
 
+enum StrokePreviewMode {
+	NO_PREVIEW,
+	SIMPLE_PREVIEW,
+	APPROXIMATE_PREVIEW
+};
+
 /**
  * @brief The drawing board
  * The drawing board contains the picture and provides methods
@@ -187,6 +193,8 @@ public:
 	 */
 	const QString title() const { return _title; }
 
+	void setStrokePreviewMode(StrokePreviewMode mode);
+
 public slots:
 	//! Show annotation borders
 	void showAnnotationBorders(bool hl);
@@ -256,7 +264,7 @@ private:
 	paintcore::Point _lastpreview;
 
 	//! The pen to use for preview strokes
-	QPen _previewpen;
+	QPen _previewpen, _simplepreviewpen;
 
 	//! Graphics item for previewing a special tool shape
 	QGraphicsItem *_toolpreview;
@@ -275,6 +283,8 @@ private:
 	QTimer *_animTickTimer;
 
 	QString _title;
+
+	StrokePreviewMode _previewmode;
 };
 
 }

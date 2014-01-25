@@ -37,7 +37,8 @@
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true)
+	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true),
+	  _previewmode(NO_PREVIEW)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -48,6 +49,10 @@ CanvasScene::CanvasScene(QObject *parent)
 	connect(_animTickTimer, SIGNAL(timeout()), this, SLOT(advanceUsermarkerAnimation()));
 	_animTickTimer->setInterval(200);
 	_animTickTimer->start(200);
+
+	_simplepreviewpen.setColor(Qt::red);
+	_simplepreviewpen.setWidth(1);
+	_simplepreviewpen.setCosmetic(true);
 }
 
 CanvasScene::~CanvasScene()
@@ -398,16 +403,24 @@ void CanvasScene::startPreview(const paintcore::Brush &brush, const paintcore::P
  */
 void CanvasScene::addPreview(const paintcore::Point& point)
 {
+	if(_previewmode==NO_PREVIEW)
+		return;
+
 	QGraphicsLineItem *s;
 	if(_previewstrokecache.isEmpty()) {
 		s = new QGraphicsLineItem();
 		addItem(s);
 	} else {
 		s = _previewstrokecache.takeLast();
-		s->show();
 	}
-	s->setPen(_previewpen);
+
+	if(_previewmode==SIMPLE_PREVIEW)
+		s->setPen(_simplepreviewpen);
+	else
+		s->setPen(_previewpen);
+
 	s->setLine(_lastpreview.x(), _lastpreview.y(), point.x(), point.y());
+	s->show();
 	_previewstrokes.append(s);
 	_lastpreview = point;
 
@@ -423,6 +436,14 @@ void CanvasScene::takePreview(int count)
 		QGraphicsLineItem *s = _previewstrokes.takeFirst();
 		s->hide();
 		_previewstrokecache.append(s);
+	}
+}
+
+void CanvasScene::setStrokePreviewMode(StrokePreviewMode mode)
+{
+	if(mode != _previewmode) {
+		_previewmode = mode;
+		clearPreviews();
 	}
 }
 

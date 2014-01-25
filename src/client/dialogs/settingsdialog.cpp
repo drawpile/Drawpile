@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,9 +28,8 @@
 #include <QKeySequenceEdit>
 #endif
 
-#include <qdebug.h>
-
 #include "config.h"
+#include "main.h"
 #include "settingsdialog.h"
 
 #include "ui_settings.h"
@@ -101,13 +100,21 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	cfg.beginGroup("settings/recording");
 	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
 	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
-
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
 	_ui->serverport->setValue(cfg.value("port",DRAWPILE_PROTO_DEFAULT_PORT).toInt());
 	_ui->enablehistorylimit->setChecked(cfg.value("historylimit", false).toBool());
 	_ui->historylimit->setValue(cfg.value("historysize", 10).toDouble());
+	cfg.endGroup();
+
+	cfg.beginGroup("settings/lag");
+	switch(cfg.value("previewstyle", 2).toInt()) {
+	case 0: _ui->preview_none->setChecked(true); break;
+	case 1: _ui->preview_simple->setChecked(true); break;
+	default: _ui->preview_approx->setChecked(true); break;
+	}
+	cfg.endGroup();
 
 	// Generate an editable list of shortcuts
 	_ui->shortcuts->verticalHeader()->setVisible(false);
@@ -172,6 +179,17 @@ void SettingsDialog::rememberSettings() const
 
 	cfg.endGroup();
 
+	// Remember lag settings
+	cfg.beginGroup("settings/lag");
+	int previewstyle=2;
+	if(_ui->preview_none->isChecked())
+		previewstyle=0;
+	else if(_ui->preview_simple->isChecked())
+		previewstyle=1;
+	cfg.setValue("previewstyle", previewstyle);
+
+	cfg.endGroup();
+
 	// Remember shortcuts. Only shortcuts that have been changed
 	// from their default values are stored.
 	cfg.beginGroup("settings/shortcuts");
@@ -184,8 +202,8 @@ void SettingsDialog::rememberSettings() const
 		if(ks != _customactions[i]->property("defaultshortcut").value<QKeySequence>())
 			cfg.setValue(_customactions[i]->objectName(), ks);
 	}
-	if(changed)
-		emit shortcutsChanged();
+
+	static_cast<DrawPileApp*>(qApp)->notifySettingsChanged();
 }
 
 /**

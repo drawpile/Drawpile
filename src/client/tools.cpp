@@ -130,9 +130,8 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	if(!client().isLocalServer())
-		scene().addPreview(point);
 
+	scene().addPreview(point);
 	client().sendStroke(point);
 }
 

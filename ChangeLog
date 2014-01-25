@@ -5,6 +5,7 @@
  * New feature: Laser pointer tool
  * New feature: constrain rectangle and line drawing to squares and straight lines with shift key
  * New feature: Ellipse drawing tool
+ * New feature: Preview stroke style is now selectable
 
 2014-01-17 Version 0.8.3
  * Improved navigator

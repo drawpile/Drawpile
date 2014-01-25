@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2008 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -32,10 +32,6 @@ class SettingsDialog : public QDialog
 	public:
 		SettingsDialog(const QList<QAction*>& actions, QWidget *parent=0);
 		~SettingsDialog();
-
-	signals:
-		//! Shortcuts have changed, reload them from the settings
-		void shortcutsChanged() const;
 
 	public slots:
 		void rememberSettings() const;

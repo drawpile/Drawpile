@@ -80,6 +80,11 @@ bool DrawPileApp::event(QEvent *e) {
 	return QApplication::event(e);
 }
 
+void DrawPileApp::notifySettingsChanged()
+{
+	emit settingsChanged();
+}
+
 int main(int argc, char *argv[]) {
 	DrawPileApp app(argc,argv);
 

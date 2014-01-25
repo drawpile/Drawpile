@@ -122,6 +122,7 @@ class MainWindow : public QMainWindow {
 		void setRecorderStatus(bool on);
 
 		void updateShortcuts();
+		void updateStrokePreviewMode();
 
 		void copyVisible();
 		void copyLayer();

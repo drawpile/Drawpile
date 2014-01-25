@@ -27,6 +27,11 @@ Q_OBJECT
 public:
 	DrawPileApp(int & argc, char ** argv );
 
+	void notifySettingsChanged();
+
+signals:
+	void settingsChanged();
+
 protected:
 	bool event(QEvent *e);
 };

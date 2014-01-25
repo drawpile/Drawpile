@@ -201,6 +201,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(userJoined(int,QString)), _canvas, SLOT(setUserMarkerName(int,QString)));
 
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateStrokePreviewMode()));
+	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
+
 	// Create actions and menus
 	setupActions();
 
@@ -856,7 +859,6 @@ void MainWindow::toggleRecording()
 void MainWindow::showSettings()
 {
 	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(customacts_, this);
-	connect(dlg, SIGNAL(shortcutsChanged()), this, SLOT(updateShortcuts()));
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->show();
@@ -1083,6 +1085,8 @@ void MainWindow::disconnected(const QString &message)
 	// Make sure all drawing is complete
 	if(_canvas->hasImage())
 		_canvas->statetracker()->endRemoteContexts();
+
+	updateStrokePreviewMode();
 }
 
 /**
@@ -1099,6 +1103,23 @@ void MainWindow::loggedin(bool join)
 		_canvas->initCanvas(_client);
 		_layerlist->init();
 		_currentdoctools->setEnabled(true);
+	}
+
+	updateStrokePreviewMode();
+}
+
+void MainWindow::updateStrokePreviewMode()
+{
+	if(_client->isLocalServer()) {
+		_canvas->setStrokePreviewMode(drawingboard::NO_PREVIEW);
+	} else {
+		QSettings cfg;
+		int mode = cfg.value("settings/lag/previewstyle", -1).toInt();
+
+		if(mode<0 || mode>drawingboard::APPROXIMATE_PREVIEW)
+			mode = drawingboard::APPROXIMATE_PREVIEW;
+
+		_canvas->setStrokePreviewMode(drawingboard::StrokePreviewMode(mode));
 	}
 }
 
