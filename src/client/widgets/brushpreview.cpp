@@ -44,6 +44,7 @@ namespace widgets {
 BrushPreview::BrushPreview(QWidget *parent, Qt::WindowFlags f)
 	: QFrame(parent,f), preview_(0), sizepressure_(false),
 	opacitypressure_(false), hardnesspressure_(false), colorpressure_(false),
+	color1_(Qt::black), color2_(Qt::white),
 	shape_(Stroke)
 {
 	setAttribute(Qt::WA_NoSystemBackground);
