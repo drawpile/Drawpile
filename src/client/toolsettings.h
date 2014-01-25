@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ private:
  */
 class SimpleSettings : public ToolSettings {
 public:
-	enum Type {Line, Rectangle};
+	enum Type {Line, Rectangle, Ellipse};
 
 	SimpleSettings(QString name, QString title, Type type, bool sp);
 	~SimpleSettings();

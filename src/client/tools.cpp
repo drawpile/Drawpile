@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QGraphicsLineItem>
 #include <QGraphicsRectItem>
+#include <QGraphicsEllipseItem>
 #include <QApplication>
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
@@ -34,6 +35,7 @@
 #include "tools.h"
 #include "toolsettings.h"
 #include "core/brush.h"
+#include "core/shapes.h"
 #include "canvasscene.h"
 #include "annotationitem.h"
 #include "selectionitem.h"
@@ -57,6 +59,7 @@ ToolCollection::ToolCollection()
 	_tools[PICKER] = new ColorPicker(*this);
 	_tools[LINE] = new Line(*this);
 	_tools[RECTANGLE] = new Rectangle(*this);
+	_tools[ELLIPSE] = new Ellipse(*this);
 	_tools[ANNOTATION] = new Annotation(*this);
 	_tools[SELECTION] = new Selection(*this);
 	_tools[LASERPOINTER] = new LaserPointer(*this);
@@ -281,6 +284,44 @@ void Rectangle::motion(const paintcore::Point& point, bool constrain)
 
 void Rectangle::end()
 {
+	scene().setToolPreview(0);
+
+	drawingboard::ToolContext tctx = {
+		layer(),
+		settings().getBrush(_swap)
+	};
+
+	client().sendUndopoint();
+	client().sendToolChange(tctx);
+	client().sendStroke(paintcore::shapes::rectangle(QRectF(_p1, _p2).normalized()));
+	client().sendPenup();
+}
+
+void Ellipse::begin(const paintcore::Point& point, bool right)
+{
+	QGraphicsEllipseItem *item = new QGraphicsEllipseItem;
+	item->setPen(drawingboard::CanvasScene::penForBrush(settings().getBrush(right)));
+	item->setRect(QRectF(point, point));
+	scene().setToolPreview(item);
+	_p1 = point;
+	_p2 = point;
+	_swap = right;
+}
+
+void Ellipse::motion(const paintcore::Point& point, bool constrain)
+{
+	if(constrain)
+		_p2 = squareConstraint(_p1, point);
+	else
+		_p2 = point;
+
+	QGraphicsEllipseItem *item = qgraphicsitem_cast<QGraphicsEllipseItem*>(scene().toolPreview());
+	if(item)
+		item->setRect(QRectF(_p1, _p2).normalized());
+}
+
+void Ellipse::end()
+{
 	using namespace paintcore;
 	scene().setToolPreview(0);
 
@@ -291,15 +332,10 @@ void Rectangle::end()
 
 	client().sendUndopoint();
 	client().sendToolChange(tctx);
-	PointVector pv;
-	pv << Point(_p1, 1);
-	pv << Point(_p1.x(), _p2.y(), 1);
-	pv << Point(_p2, 1);
-	pv << Point(_p2.x(), _p1.y(), 1);
-	pv << Point(_p1 - QPointF(_p1.x()<_p2.x()?-1:1, 0), 1);
-	client().sendStroke(pv);
+	client().sendStroke(paintcore::shapes::ellipse(QRectF(_p1, _p2).normalized()));
 	client().sendPenup();
 }
+
 
 /**
  * The annotation tool has fairly complex needs. Clicking on an existing

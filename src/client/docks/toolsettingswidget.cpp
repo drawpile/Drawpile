@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006-2013 Calle Laakkonen
+	Copyright (C) 2006-2014 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -51,6 +51,9 @@ ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
 	widgets_->addWidget(rectsettings_->createUi(this));
 
+	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), tools::SimpleSettings::Ellipse, false);
+	widgets_->addWidget(_ellipsesettings->createUi(this));
+
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
 	widgets_->addWidget(_textsettings->createUi(this));
 
@@ -69,6 +72,7 @@ ToolSettingsDock::~ToolSettingsDock()
 	delete _pickersettings,
 	delete linesettings_,
 	delete rectsettings_;
+	delete _ellipsesettings;
 	delete _textsettings;
 	delete selectionsettings_;
 	delete _lasersettings;
@@ -86,6 +90,7 @@ void ToolSettingsDock::setTool(tools::Type tool) {
 		case tools::PICKER: currenttool_ = _pickersettings; break;
 		case tools::LINE: currenttool_ = linesettings_; break;
 		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
+		case tools::ELLIPSE: currenttool_ = _ellipsesettings; break;
 		case tools::ANNOTATION: currenttool_ = _textsettings; break;
 		case tools::SELECTION: currenttool_ = selectionsettings_; break;
 		case tools::LASERPOINTER: currenttool_ = _lasersettings; break;

@@ -49,7 +49,7 @@ namespace net {
  */
 namespace tools {
 
-enum Type {SELECTION, PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ANNOTATION, LASERPOINTER};
+enum Type {SELECTION, PEN, BRUSH, ERASER, PICKER, LINE, RECTANGLE, ELLIPSE, ANNOTATION, LASERPOINTER};
 
 class ToolCollection;
 
@@ -164,6 +164,19 @@ private:
 class Rectangle : public Tool {
 public:
 	Rectangle(ToolCollection &owner) : Tool(owner, RECTANGLE) {}
+
+	void begin(const paintcore::Point& point, bool right);
+	void motion(const paintcore::Point& point, bool constrain);
+	void end();
+
+private:
+	QPointF _p1, _p2;
+	bool _swap;
+};
+
+class Ellipse : public Tool {
+public:
+	Ellipse(ToolCollection &owner) : Tool(owner, ELLIPSE) {}
 
 	void begin(const paintcore::Point& point, bool right);
 	void motion(const paintcore::Point& point, bool constrain);

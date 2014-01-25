@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class PLUGIN_EXPORT BrushPreview : public QFrame {
 	Q_PROPERTY(PreviewShape previewShape READ previewShape WRITE setPreviewShape)
 	Q_ENUMS(PreviewShape)
 	public:
-		enum PreviewShape {Stroke, Line, Rectangle};
+		enum PreviewShape {Stroke, Line, Rectangle, Ellipse};
 
 		BrushPreview(QWidget *parent=0, Qt::WindowFlags f=0);
 		~BrushPreview();

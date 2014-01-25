@@ -52,6 +52,7 @@ set (
 	core/brush.cpp
 	core/brushmask.cpp
 	core/rasterop.cpp
+        core/shapes.cpp
 	ora/qzip.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp

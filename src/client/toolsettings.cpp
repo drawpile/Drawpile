@@ -47,6 +47,7 @@ namespace tools {
 
 QWidget *ToolSettings::createUi(QWidget *parent)
 {
+	Q_ASSERT(_widget==0);
 	_widget = createUiWidget(parent);
 	restoreSettings();
 	return _widget;
@@ -484,6 +485,9 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 		_ui->preview->setPreviewShape(BrushPreview::Line);
 	else if(_type==Rectangle)
 		_ui->preview->setPreviewShape(BrushPreview::Rectangle);
+	else if(_type==Ellipse)
+		_ui->preview->setPreviewShape(BrushPreview::Ellipse);
+
 	_ui->preview->setSubpixel(_subpixel);
 
 	return widget;

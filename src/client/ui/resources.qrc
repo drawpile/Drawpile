@@ -1,61 +1,56 @@
 <RCC>
-	<qresource prefix="/">
-		<!-- App icon -->
-		<file>icons/drawpile.png</file>
-
-		<!-- Fallbacks for theme icons -->
-		<file>icons/application-exit.png</file>
-		<file>icons/applications-multimedia.png</file>
-		<file>icons/color-picker.png</file>
-		<file>icons/document-new.png</file>
-		<file>icons/document-open.png</file>
-		<file>icons/document-save-as.png</file>
-		<file>icons/document-save.png</file>
-		<file>icons/draw-brush.png</file>
-		<file>icons/draw-eraser.png</file>
-		<file>icons/draw-freehand.png</file>
-		<file>icons/draw-line.png</file>
-		<file>icons/draw-rectangle.png</file>
-		<file>icons/draw-text.png</file>
-		<file>icons/tool-laserpointer.png</file>
-		<file>icons/edit-copy.png</file>
-		<file>icons/edit-paste.png</file>
-		<file>icons/edit-redo.png</file>
-		<file>icons/edit-undo.png</file>
-		<file>icons/format-justify-center.png</file>
-		<file>icons/format-justify-fill.png</file>
-		<file>icons/format-justify-left.png</file>
-		<file>icons/format-justify-right.png</file>
-		<file>icons/format-text-bold.png</file>
-		<file>icons/format-text-italic.png</file>
-		<file>icons/format-text-strikethrough.png</file>
-		<file>icons/format-text-underline.png</file>
-		<file>icons/list-add.png</file>
-		<file>icons/list-remove.png</file>
-		<file>icons/media-playback-start.png</file>
-		<file>icons/media-playback-pause.png</file>
-		<file>icons/media-record.png</file>
-		<file>icons/media-seek-forward.png</file>
-		<file>icons/media-skip-forward.png</file>
-		<file>icons/network-idle.png</file>
-		<file>icons/network-offline.png</file>
-		<file>icons/network-receive.png</file>
-		<file>icons/network-transmit.png</file>
-		<file>icons/network-transmit-receive.png</file>
-		<file>icons/select-rectangular.png</file>
-		<file>icons/view-refresh.png</file>
-		<file>icons/zoom-in.png</file>
-		<file>icons/zoom-original.png</file>
-		<file>icons/zoom-out.png</file>
-
-		<!-- Nonstandard icons -->
-		<file>icons/angle.png</file>
-		<file>icons/hardedge.png</file>
-		<file>icons/incremental.png</file>
-
-		<file>icons/eye_closed.png</file>
-		<file>icons/eye_open.png</file>
-		<file>icons/lock_closed.png</file>
-		<file>icons/lock_open.png</file>
-	</qresource>
+    <qresource prefix="/">
+        <file>icons/drawpile.png</file>
+        <file>icons/application-exit.png</file>
+        <file>icons/applications-multimedia.png</file>
+        <file>icons/color-picker.png</file>
+        <file>icons/document-new.png</file>
+        <file>icons/document-open.png</file>
+        <file>icons/document-save-as.png</file>
+        <file>icons/document-save.png</file>
+        <file>icons/draw-brush.png</file>
+        <file>icons/draw-eraser.png</file>
+        <file>icons/draw-freehand.png</file>
+        <file>icons/draw-line.png</file>
+        <file>icons/draw-rectangle.png</file>
+        <file>icons/draw-text.png</file>
+        <file>icons/tool-laserpointer.png</file>
+        <file>icons/edit-copy.png</file>
+        <file>icons/edit-paste.png</file>
+        <file>icons/edit-redo.png</file>
+        <file>icons/edit-undo.png</file>
+        <file>icons/format-justify-center.png</file>
+        <file>icons/format-justify-fill.png</file>
+        <file>icons/format-justify-left.png</file>
+        <file>icons/format-justify-right.png</file>
+        <file>icons/format-text-bold.png</file>
+        <file>icons/format-text-italic.png</file>
+        <file>icons/format-text-strikethrough.png</file>
+        <file>icons/format-text-underline.png</file>
+        <file>icons/list-add.png</file>
+        <file>icons/list-remove.png</file>
+        <file>icons/media-playback-start.png</file>
+        <file>icons/media-playback-pause.png</file>
+        <file>icons/media-record.png</file>
+        <file>icons/media-seek-forward.png</file>
+        <file>icons/media-skip-forward.png</file>
+        <file>icons/network-idle.png</file>
+        <file>icons/network-offline.png</file>
+        <file>icons/network-receive.png</file>
+        <file>icons/network-transmit.png</file>
+        <file>icons/network-transmit-receive.png</file>
+        <file>icons/select-rectangular.png</file>
+        <file>icons/view-refresh.png</file>
+        <file>icons/zoom-in.png</file>
+        <file>icons/zoom-original.png</file>
+        <file>icons/zoom-out.png</file>
+        <file>icons/angle.png</file>
+        <file>icons/hardedge.png</file>
+        <file>icons/incremental.png</file>
+        <file>icons/eye_closed.png</file>
+        <file>icons/eye_open.png</file>
+        <file>icons/lock_closed.png</file>
+        <file>icons/lock_open.png</file>
+        <file>icons/draw-ellipse.png</file>
+    </qresource>
 </RCC>

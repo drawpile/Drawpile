@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
 #include "core/point.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
+#include "core/shapes.h"
 #include "brushpreview.h"
 
 #ifndef DESIGNER_PLUGIN
@@ -123,56 +124,40 @@ void BrushPreview::updatePreview()
 	} else if(preview_->width() != contentsRect().width() || preview_->height() != contentsRect().height()) {
 		preview_->resize(0, contentsRect().width() - preview_->width(), contentsRect().height() - preview_->height(), 0);
 	}
-	paintcore::Layer *layer = preview_->getLayerByIndex(0);
-
-	layer->fillColor(color2_);
 
 	const int strokew = preview_->width() - preview_->width()/4;
 	const qreal strokeh = preview_->height() / 4.0;
 	const int offx = preview_->width()/8;
 	const qreal offy = preview_->height()/2.0;
-	qreal distance = 0;
+
+	paintcore::PointVector pointvector;
+
 	if(shape_ == Stroke) {
-		int lastx=0,lasty=0;
-		qreal lastp = 0;
 		const qreal dphase = (2*M_PI)/qreal(strokew);
 		qreal phase = 0;
+
+		pointvector << paintcore::Point(offx, offy, 0.0);
 		for(int x=0;x<strokew;++x, phase += dphase) {
 
 			const qreal fx = x/qreal(strokew);
 			const qreal pressure = qBound(0.0, ((fx*fx) - (fx*fx*fx))*6.756, 1.0);
 			const qreal y = qSin(phase) * strokeh;
-			layer->drawLine(0, brush_,
-					paintcore::Point(offx+lastx,offy+lasty, lastp),
-					paintcore::Point(offx+x, offy+y, pressure), distance);
-			lastx = x;
-			lasty = y;
-			lastp = pressure;
+			pointvector << paintcore::Point(offx+x, offy+y, pressure);
 		}
 	} else if(shape_ == Line) {
-		layer->drawLine(0, brush_,
-				paintcore::Point(offx, offy, 1),
-				paintcore::Point(offx+strokew, offy, 1),
-				distance
-				);
+		pointvector << paintcore::Point(offx, offy, 1.0) << paintcore::Point(offx+strokew, offy, 1.0);
+	} else if(shape_ == Rectangle) {
+		pointvector = paintcore::shapes::rectangle(QRectF(offx, offy-strokeh, strokew, strokeh*2));
 	} else {
-		layer->drawLine(0, brush_,
-				paintcore::Point(offx, offy-strokeh, 1),
-				paintcore::Point(offx+strokew, offy-strokeh, 1),
-				distance);
-		layer->drawLine(0, brush_,
-				paintcore::Point(offx+strokew, offy-strokeh, 1),
-				paintcore::Point(offx+strokew, offy+strokeh, 1),
-				distance);
-		layer->drawLine(0, brush_,
-				paintcore::Point(offx+strokew, offy+strokeh, 1),
-				paintcore::Point(offx, offy+strokeh, 1),
-				distance);
-		layer->drawLine(0, brush_,
-				paintcore::Point(offx, offy+strokeh, 1),
-				paintcore::Point(offx, offy-strokeh, 1),
-				distance);
+		pointvector = paintcore::shapes::ellipse(QRectF(offx, offy-strokeh, strokew, strokeh*2));
 	}
+
+	paintcore::Layer *layer = preview_->getLayerByIndex(0);
+	layer->fillColor(color2_);
+
+	qreal distance = 0;
+	for(int i=1;i<pointvector.size();++i)
+		layer->drawLine(0, brush_, pointvector[i-1], pointvector[i], distance);
 
 	layer->mergeSublayer(0);
 

@@ -86,6 +86,7 @@ class ToolSettingsDock : public QDockWidget
 		tools::ColorPickerSettings *_pickersettings;
 		tools::ToolSettings *linesettings_;
 		tools::ToolSettings *rectsettings_;
+		tools::ToolSettings *_ellipsesettings;
 		tools::AnnotationSettings *_textsettings;
 		tools::ToolSettings *selectionsettings_;
 		tools::LaserPointerSettings  *_lasersettings;
