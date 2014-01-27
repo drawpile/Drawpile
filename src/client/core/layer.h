@@ -82,6 +82,9 @@ class Layer {
 		//! Get layer opacity
 		int opacity() const { return _opacity; }
 
+		//! Get the effective layer opacity (0 if hidden)
+		int effectiveOpacity() const { return hidden() ? 0 : _opacity; }
+
 		//! Set layer opacity
 		void setOpacity(int opacity);
 

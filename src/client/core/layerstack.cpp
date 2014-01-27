@@ -380,13 +380,8 @@ Savepoint *LayerStack::makeSavepoint()
 
 void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 {
-	while(!_layers.isEmpty())
-		delete _layers.takeLast();
-	foreach(const Layer *l, savepoint->layers)
-		_layers.append(new Layer(*l));
-
-
 	if(_width != savepoint->width || _height != savepoint->height) {
+		// Restore canvas size if it was different in the savepoint
 		_width = savepoint->width;
 		_height = savepoint->height;
 		_xtiles = Tile::roundTiles(_width);
@@ -395,9 +390,41 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		_dirtytiles = QBitArray(_xtiles*_ytiles, true);
 		emit resized(0, 0);
 	} else {
-		// TODO mark only changed tiles as dirty
-		markDirty();
+		// Mark changed tiles as changed. Usually savepoints are quite close together
+		// so most tiles will remain unchanged
+		if(savepoint->layers.size() != _layers.size()) {
+			// Layers added or deleted, just refresh everything
+			markDirty();
+		} else {
+			// Layer count has not changed, compare layer contents
+			for(int l=0;l<savepoint->layers.size();++l) {
+				const Layer *l0 = _layers.at(l);
+				const Layer *l1 = savepoint->layers.at(l);
+				if(l0->effectiveOpacity() != l1->effectiveOpacity()) {
+					// Layer opacity has changed, refresh everything
+					markDirty();
+					break;
+				}
+				for(int y=0;y<_ytiles;++y) {
+					for(int x=0;x<_xtiles;++x) {
+						// Note: An identity comparison works here, because the tiles
+						// utilize copy-on-write semantics. Unchanged tiles will share
+						// data pointers between savepoints.
+						if(l0->tile(x, y) != l1->tile(x, y))
+							markDirty(x, y);
+					}
+				}
+			}
+		}
 	}
+
+	// Restore layers
+	while(!_layers.isEmpty())
+		delete _layers.takeLast();
+	foreach(const Layer *l, savepoint->layers)
+		_layers.append(new Layer(*l));
+
+	notifyAreaChanged();
 }
 
 }

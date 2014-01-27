@@ -137,6 +137,17 @@ class Tile {
 		//! Fill a tile sized memory buffer with a checker pattenr
 		static void fillChecker(quint32 *data, const QColor& dark, const QColor& light);
 
+		/**
+		 * @brief Return true if the two tiles point to the same data
+		 *
+		 * This is an identity comparison. This will return false even
+		 * if the tiles have identical contents but have different data pointers.
+		 * @param other
+		 * @return true if tiles share data pointers
+		 */
+		bool operator==(const Tile &other) const { return _data == other._data; }
+		bool operator!=(const Tile &other) const { return !(*this == other); }
+
 	private:
 		quint32 *getOrCreateData();
 		quint32 *getOrCreateUninitializedData();
