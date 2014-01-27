@@ -99,6 +99,9 @@ class LayerStack : public QObject {
 		//! Mark the tile at the given index as dirty
 		void markDirty(int x, int y);
 
+		//! Mark the tile at the given index as dirty
+		void markDirty(int index);
+
 		//! Emit areaChanged if anything has been marked as dirty
 		void notifyAreaChanged();
 

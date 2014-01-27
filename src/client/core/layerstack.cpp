@@ -350,6 +350,18 @@ void LayerStack::markDirty(int x, int y)
 	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
 }
 
+void LayerStack::markDirty(int index)
+{
+	Q_ASSERT(index>=0 && index < _dirtytiles.size());
+
+	_dirtytiles.setBit(index);
+
+	const int y = index / _xtiles;
+	const int x = index % _xtiles;
+
+	_dirtyrect |= QRect(x*Tile::SIZE, y*Tile::SIZE, Tile::SIZE, Tile::SIZE);
+}
+
 void LayerStack::notifyAreaChanged()
 {
 	if(!_dirtyrect.isEmpty()) {
@@ -405,14 +417,12 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 					markDirty();
 					break;
 				}
-				for(int y=0;y<_ytiles;++y) {
-					for(int x=0;x<_xtiles;++x) {
-						// Note: An identity comparison works here, because the tiles
-						// utilize copy-on-write semantics. Unchanged tiles will share
-						// data pointers between savepoints.
-						if(l0->tile(x, y) != l1->tile(x, y))
-							markDirty(x, y);
-					}
+				for(int i=0;i<_xtiles*_ytiles;++i) {
+					// Note: An identity comparison works here, because the tiles
+					// utilize copy-on-write semantics. Unchanged tiles will share
+					// data pointers between savepoints.
+					if(l0->tile(i) != l1->tile(i))
+						markDirty(i);
 				}
 			}
 		}

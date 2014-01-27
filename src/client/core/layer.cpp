@@ -800,13 +800,9 @@ void Layer::markOpaqueDirty(bool forceVisible)
 	if(!_owner || !(forceVisible || visible()))
 		return;
 
-	for(int y=0;y<_ytiles;++y) {
-		int yy = y * _xtiles;
-		for(int x=0;x<_xtiles;++x) {
-			const Tile &t = _tiles.at(yy+x);
-			if(!t.isNull())
-				_owner->markDirty(x, y);
-		}
+	for(int i=0;i<_xtiles*_ytiles;++i) {
+		if(!_tiles.at(i).isNull())
+			_owner->markDirty(i);
 	}
 	_owner->notifyAreaChanged();
 }
