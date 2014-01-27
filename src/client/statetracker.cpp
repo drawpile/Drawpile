@@ -534,12 +534,6 @@ bool StateTracker::canMakeSavepoint(int pos) const
 			return false;
 	}
 
-	// Check if all users are in PEN_UP state
-	// (this is not strictly necessary, but it makes for neater savepoints)
-	foreach(const DrawingContext &ctx, _contexts)
-		if(ctx.pendown)
-			return false;
-
 	// Ok, looks like we're good to go
 	return true;
 }
