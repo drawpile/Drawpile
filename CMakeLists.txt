@@ -19,6 +19,7 @@ include ( "config/Names.cmake" )
 ### options ###
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile UI-less server" ON )
+option ( INSTALL_DOC "Install documents" ON )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
@@ -73,7 +74,11 @@ include_directories ( ${CMAKE_BINARY_DIR} )
 
 # scan sub-directories
 add_subdirectory( src )
-add_subdirectory( doc )
+
+if ( INSTALL_DOC )
+	add_subdirectory( doc )
+endif ( )
+
 add_subdirectory( desktop )
 
 if ( CMAKE_BUILD_TYPE STREQUAL Debug )
