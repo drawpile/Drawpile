@@ -1,20 +1,20 @@
 resize 1 0 300 300 0
 newlayer 1 1 #ffffffff Multiuser undo test
 
-ctx 1 layer=1 color=#ff0000
+ctx 1 layer=1 color=#ff0000 incremental=true
 ctx 2 layer=1 color=#0000ff
 
 # Start stroke 1
 undopoint 1
 move 1 10 10
-move 1 210 210
+move 1 290 290
 
 # Start stroke 2 while 1 is still underway
 undopoint 2
-move 2 110 10
+move 2 210 10
 
 # Finish stroke 1
-move 1 210 10
+move 1 10 290
 penup 1
 
 # Finish stroke 2
