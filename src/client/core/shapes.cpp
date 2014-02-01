@@ -58,9 +58,10 @@ PointVector ellipse(const QRectF &rect)
 	PointVector pv;
 
 	// TODO smart step size selection
-	for(qreal t=0;t<2*M_PI;t+=M_PI/13) {
+	for(qreal t=0;t<2*M_PI;t+=M_PI/20) {
 		pv << Point(cx + a*qCos(t), cy + b*qSin(t), 1.0);
 	}
+	pv << Point(cx+a, cy, 1);
 	return pv;
 }
 
