@@ -40,6 +40,7 @@ public:
 public slots:
 	void rescale();
 	void updateScene(const QList<QRectF> &rects);
+	void doUpdate();
 
 signals:
 	void focusMoved(const QPoint& to);
@@ -50,9 +51,6 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
-	
-private slots:
-	void doUpdate();
 
 private:
 	QTimer *_updatetimer;
@@ -79,6 +77,8 @@ public slots:
 
 	//! Set the transform controls
 	void setViewTransform(qreal zoom, qreal angle);
+
+	void doUpdate();
 
 signals:
 	void zoomIn();

@@ -235,6 +235,9 @@ signals:
 	//! Emitted when a canvas modifying command is received
 	void canvasModified();
 
+	//! Emitted when a penup command has been handled
+	void penUp();
+
 	//! Emitted when a new snapshot point was generated
 	void newSnapshot(QList<protocol::MessagePtr>);
 

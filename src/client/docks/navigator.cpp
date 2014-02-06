@@ -115,15 +115,17 @@ void NavigatorView::updateScene(const QList<QRectF> &rects)
 	foreach(const QRectF r, rects)
 		_updaterect |= r;
 	if(!_updatetimer->isActive())
-		_updatetimer->start(1000);
+		_updatetimer->start(2000);
 }
 
 void NavigatorView::doUpdate()
 {
-	QRegion up = mapFromScene(_updaterect);
-	_updaterect = QRectF();
+	if(!_updaterect.isEmpty()) {
+		QRegion up = mapFromScene(_updaterect);
+		_updaterect = QRectF();
 
-	viewport()->update(up);
+		viewport()->update(up);
+	}
 }
 
 void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)
@@ -182,5 +184,11 @@ void Navigator::setViewTransform(qreal zoom, qreal angle)
 	_ui->angle->setValue(angle);
 	_ui->angle->blockSignals(false);
 }
+
+void Navigator::doUpdate()
+{
+	_ui->view->doUpdate();
+}
+
 }
 

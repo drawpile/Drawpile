@@ -74,6 +74,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	
 	connect(_statetracker, SIGNAL(myAnnotationCreated(AnnotationItem*)), this, SIGNAL(myAnnotationCreated(AnnotationItem*)));
 	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
+	connect(_statetracker, SIGNAL(penUp()), this, SIGNAL(penUp()));
 	connect(_image->image(), SIGNAL(resized(int,int)), this, SLOT(handleCanvasResize(int,int)));
 
 	addItem(_image);

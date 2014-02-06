@@ -141,6 +141,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
 	connect(_canvas, SIGNAL(myLayerCreated(int)), _layerlist, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
+	connect(_canvas, SIGNAL(penUp()), _navigator, SLOT(doUpdate()));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
 
 	// Navigator <-> View
