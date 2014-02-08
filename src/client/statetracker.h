@@ -137,7 +137,6 @@ public:
 signals:
 	void myAnnotationCreated(AnnotationItem *item);
 	void myLayerCreated(int);
-	void penUp();
 
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);

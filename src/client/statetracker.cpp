@@ -356,8 +356,6 @@ void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 
 	ctx.pendown = false;
 	_scene->hideUserMarker(cmd.contextId());
-
-	emit penUp();
 }
 
 void StateTracker::handlePutImage(const protocol::PutImage &cmd)
