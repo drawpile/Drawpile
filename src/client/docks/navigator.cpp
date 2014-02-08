@@ -29,7 +29,6 @@ NavigatorView::NavigatorView(QWidget *parent)
 {
 	viewport()->setMouseTracking(true);
 	setInteractive(false);
-	setViewportUpdateMode(NoViewportUpdate);
 
 	setResizeAnchor(QGraphicsView::AnchorViewCenter);
 	setAlignment(Qt::AlignCenter);
@@ -38,10 +37,6 @@ NavigatorView::NavigatorView(QWidget *parent)
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	
 	setOptimizationFlags(QGraphicsView::DontAdjustForAntialiasing);
-
-	_updatetimer = new QTimer(this);
-	_updatetimer->setSingleShot(true);
-	connect(_updatetimer, SIGNAL(timeout()), this, SLOT(doUpdate()));
 }
 
 
@@ -108,22 +103,6 @@ void NavigatorView::rescale()
 
 	scale(min, min);
 	viewport()->update();
-}
-
-void NavigatorView::updateScene(const QList<QRectF> &rects)
-{
-	foreach(const QRectF r, rects)
-		_updaterect |= r;
-	if(!_updatetimer->isActive())
-		_updatetimer->start(1000);
-}
-
-void NavigatorView::doUpdate()
-{
-	QRegion up = mapFromScene(_updaterect);
-	_updaterect = QRectF();
-
-	viewport()->update(up);
 }
 
 void NavigatorView::drawForeground(QPainter *painter, const QRectF& rect)

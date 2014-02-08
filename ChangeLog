@@ -1,5 +1,5 @@
 2014-02-?? Version 0.8.5
- * Improvement: Navigator is refresh on pen-up event
+ * Navigator view is now updated in real time
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries

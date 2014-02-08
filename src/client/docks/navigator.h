@@ -21,7 +21,6 @@
 
 #include <QDockWidget>
 #include <QGraphicsView>
-#include <QTimer>
 
 class Ui_NaviBox;
 
@@ -39,7 +38,6 @@ public:
 	
 public slots:
 	void rescale();
-	void updateScene(const QList<QRectF> &rects);
 
 signals:
 	void focusMoved(const QPoint& to);
@@ -50,13 +48,8 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 	void mousePressEvent(QMouseEvent *event);
 	void mouseReleaseEvent(QMouseEvent *event);
-	
-private slots:
-	void doUpdate();
 
 private:
-	QTimer *_updatetimer;
-	QRectF _updaterect;
 	QPolygonF _focusrect;
 	bool _dragging;
 };
