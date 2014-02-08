@@ -80,8 +80,8 @@ void NavigatorView::setViewFocus(const QPolygonF& rect)
 {
 	QRegion up;
 
-	up |= mapFromScene(rect.boundingRect().adjusted(-5,-5,5,5));
-	up |= mapFromScene(_focusrect.boundingRect().adjusted(-5,-5,5,5).toRect());
+	up |= mapFromScene(rect).boundingRect().adjusted(-1,-1,1,1);
+	up |= mapFromScene(_focusrect).boundingRect().adjusted(-1,-1,1,1);
 	
 	_focusrect = rect;
 	
