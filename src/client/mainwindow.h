@@ -96,6 +96,7 @@ class MainWindow : public QMainWindow {
 
 		void fullscreen(bool enable);
 		void setShowAnnotations(bool show);
+		void setShowLaserTrails(bool show);
 
 		void selectTool(QAction *tool);
 

@@ -1,5 +1,6 @@
 2014-02-?? Version 0.8.5
  * Navigator view is now updated in real time
+ * Hiding laser trails will disable the laser pointer tool
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries

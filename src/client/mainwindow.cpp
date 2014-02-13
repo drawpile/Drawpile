@@ -1206,6 +1206,20 @@ void MainWindow::setShowAnnotations(bool show)
 	}
 }
 
+void MainWindow::setShowLaserTrails(bool show)
+{
+	QAction *lasertool = getAction("toollaser");
+	lasertool->setEnabled(show);
+	_canvas->showLaserTrails(show);
+	if(!show) {
+		if(lasertool->isChecked())
+			getAction("toolbrush")->trigger();
+		// lasttool might be erasertool when tablet is brought near
+		if(_lasttool == lasertool)
+			_lasttool = getAction("toolbrush");
+	}
+}
+
 /**
  * @brief Enter/leave fullscreen mode
  *
@@ -1682,7 +1696,7 @@ void MainWindow::setupActions()
 	connect(showoutline, SIGNAL(triggered(bool)), _view, SLOT(setOutline(bool)));
 	connect(showannotations, SIGNAL(triggered(bool)), this, SLOT(setShowAnnotations(bool)));
 	connect(showusermarkers, SIGNAL(triggered(bool)), _canvas, SLOT(showUserMarkers(bool)));
-	connect(showlasers, SIGNAL(triggered(bool)), _canvas, SLOT(showLaserTrails(bool)));
+	connect(showlasers, SIGNAL(triggered(bool)), this, SLOT(setShowLaserTrails(bool)));
 
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
