@@ -17,32 +17,36 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef INPUTSETTINGSDOCK_H
-#define INPUTSETTINGSDOCK_H
+#ifndef InputSettings_H
+#define InputSettings_H
 
 #include <QDockWidget>
 
 class Ui_InputSettings;
 
 namespace widgets {
+	class CanvasView;
+}
+
+namespace docks {
 
 class CanvasView;
 
-class InputSettingsDock : public QDockWidget
+class InputSettings : public QDockWidget
 {
 	Q_OBJECT
 public:
-	explicit InputSettingsDock(QWidget *parent = 0);
-	~InputSettingsDock();
+	explicit InputSettings(QWidget *parent = 0);
+	~InputSettings();
 
-	void connectCanvasView(CanvasView *view);
+	void connectCanvasView(widgets::CanvasView *view);
 
 private slots:
 	void updateFakePressureMode();
 
 private:
 	Ui_InputSettings *_ui;
-	CanvasView *_canvasview;
+	widgets::CanvasView *_canvasview;
 };
 
 }

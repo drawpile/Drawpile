@@ -21,13 +21,13 @@
 #include <QSettings>
 
 #include "canvasview.h"
-#include "inputsettingsdock.h"
+#include "docks/inputsettingsdock.h"
 #include "utils/kis_cubic_curve.h"
 #include "ui_inputcfg.h"
 
-namespace widgets {
+namespace docks {
 
-InputSettingsDock::InputSettingsDock(QWidget *parent) :
+InputSettings::InputSettings(QWidget *parent) :
 	QDockWidget(tr("Input"), parent)
 {
 	_ui = new Ui_InputSettings;
@@ -68,7 +68,7 @@ InputSettingsDock::InputSettingsDock(QWidget *parent) :
 	_ui->velocity->setValue(cfg.value("velocity", _ui->velocity->minimum()).toInt());
 }
 
-InputSettingsDock::~InputSettingsDock()
+InputSettings::~InputSettings()
 {
 	// Save settings
 	QSettings cfg;
@@ -87,7 +87,7 @@ InputSettingsDock::~InputSettingsDock()
 	delete _ui;
 }
 
-void InputSettingsDock::connectCanvasView(CanvasView *view)
+void InputSettings::connectCanvasView(widgets::CanvasView *view)
 {
 	_canvasview = view;
 	view->setStrokeSmoothing(_ui->smoothing->value());
@@ -108,12 +108,12 @@ void InputSettingsDock::connectCanvasView(CanvasView *view)
 	connect(_ui->velocity, SIGNAL(valueChanged(int)), this, SLOT(updateFakePressureMode()));
 }
 
-void InputSettingsDock::updateFakePressureMode()
+void InputSettings::updateFakePressureMode()
 {
 	switch(_ui->fakepressure->currentIndex()) {
-	case 0: _canvasview->setPressureMode(CanvasView::PRESSUREMODE_NONE, 0); break;
-	case 1: _canvasview->setPressureMode(CanvasView::PRESSUREMODE_DISTANCE, _ui->distance->value()); break;
-	case 2: _canvasview->setPressureMode(CanvasView::PRESSUREMODE_VELOCITY, _ui->velocity->value()); break;
+	case 0: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_NONE, 0); break;
+	case 1: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_DISTANCE, _ui->distance->value()); break;
+	case 2: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_VELOCITY, _ui->velocity->value()); break;
 	}
 }
 

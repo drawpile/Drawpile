@@ -26,7 +26,7 @@ class Ui_PaletteBox;
 
 class Palette;
 
-namespace widgets {
+namespace docks {
 
 class PaletteBox : public QDockWidget {
 	Q_OBJECT

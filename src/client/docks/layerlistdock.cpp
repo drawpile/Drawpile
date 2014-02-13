@@ -32,9 +32,9 @@
 
 #include "ui_layerbox.h"
 
-namespace widgets {
+namespace docks {
 
-LayerListDock::LayerListDock(QWidget *parent)
+LayerList::LayerList(QWidget *parent)
 	: QDockWidget(tr("Layers"), parent), _client(0), _selected(0), _noupdate(false), _op(false), _lockctrl(false)
 {
 	_ui = new Ui_LayerBox;
@@ -68,7 +68,7 @@ LayerListDock::LayerListDock(QWidget *parent)
 	selectionChanged(QItemSelection());
 }
 
-void LayerListDock::setClient(net::Client *client)
+void LayerList::setClient(net::Client *client)
 {
 	Q_ASSERT(_client==0);
 
@@ -89,19 +89,19 @@ void LayerListDock::setClient(net::Client *client)
 	connect(_ui->layerlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
 }
 
-void LayerListDock::setOperatorMode(bool op)
+void LayerList::setOperatorMode(bool op)
 {
 	_op = op;
 	updateLockedControls();
 }
 
-void LayerListDock::setControlsLocked(bool locked)
+void LayerList::setControlsLocked(bool locked)
 {
 	_lockctrl = locked;
 	updateLockedControls();
 }
 
-void LayerListDock::updateLockedControls()
+void LayerList::updateLockedControls()
 {
 	bool enabled = _op | !_lockctrl;
 
@@ -121,19 +121,19 @@ void LayerListDock::updateLockedControls()
 	_ui->blendmode->setEnabled(enabled);
 }
 
-void LayerListDock::selectLayer(int id)
+void LayerList::selectLayer(int id)
 {
 	_ui->layerlist->selectionModel()->clear();
 	_ui->layerlist->selectionModel()->select(_client->layerlist()->layerIndex(id), QItemSelectionModel::SelectCurrent);
 }
 
-void LayerListDock::init()
+void LayerList::init()
 {
 	_ui->layerlist->setEnabled(true);
 	setControlsLocked(false);
 }
 
-void LayerListDock::opacityAdjusted()
+void LayerList::opacityAdjusted()
 {
 	// Avoid infinite loop
 	if(_noupdate)
@@ -148,7 +148,7 @@ void LayerListDock::opacityAdjusted()
 	}
 }
 
-void LayerListDock::blendModeChanged()
+void LayerList::blendModeChanged()
 {
 	// Avoid infinite loop
 	if(_noupdate)
@@ -163,7 +163,7 @@ void LayerListDock::blendModeChanged()
 	}
 }
 
-void LayerListDock::hiddenToggled()
+void LayerList::hiddenToggled()
 {
 	QModelIndex index = currentSelection();
 	if(index.isValid()) {
@@ -172,7 +172,7 @@ void LayerListDock::hiddenToggled()
 	}
 }
 
-void LayerListDock::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
+void LayerList::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 {
 	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
@@ -187,7 +187,7 @@ void LayerListDock::changeLayerAcl(bool lock, QList<uint8_t> exclusive)
 /**
  * @brief Layer add button pressed
  */
-void LayerListDock::addLayer()
+void LayerList::addLayer()
 {
 	bool ok;
 	QString name = QInputDialog::getText(0,
@@ -207,7 +207,7 @@ void LayerListDock::addLayer()
 /**
  * @brief Layer delete button pressed
  */
-void LayerListDock::deleteSelected()
+void LayerList::deleteSelected()
 {
 	Q_ASSERT(_client);
 	QModelIndex index = currentSelection();
@@ -248,7 +248,7 @@ void LayerListDock::deleteSelected()
  * @brief Respond to creation of a new layer
  * @param wasfirst
  */
-void LayerListDock::onLayerCreate(bool wasfirst)
+void LayerList::onLayerCreate(bool wasfirst)
 {
 	// Automatically select the first layer
 	if(wasfirst)
@@ -260,7 +260,7 @@ void LayerListDock::onLayerCreate(bool wasfirst)
  * @param id
  * @param idx
  */
-void LayerListDock::onLayerDelete(int id, int idx)
+void LayerList::onLayerDelete(int id, int idx)
 {
 	// Automatically select the neighbouring layer on delete
 	if(_selected == id) {
@@ -273,13 +273,13 @@ void LayerListDock::onLayerDelete(int id, int idx)
 	}
 }
 
-void LayerListDock::onLayerReorder()
+void LayerList::onLayerReorder()
 {
 	if(_selected)
 		selectLayer(_selected);
 }
 
-QModelIndex LayerListDock::currentSelection()
+QModelIndex LayerList::currentSelection()
 {
 	QModelIndexList sel = _ui->layerlist->selectionModel()->selectedIndexes();
 	if(sel.isEmpty())
@@ -287,12 +287,12 @@ QModelIndex LayerListDock::currentSelection()
 	return sel.first();
 }
 
-int LayerListDock::currentLayer()
+int LayerList::currentLayer()
 {
 	return _selected;
 }
 
-bool LayerListDock::isCurrentLayerLocked() const
+bool LayerList::isCurrentLayerLocked() const
 {
 	Q_ASSERT(_client);
 
@@ -304,7 +304,7 @@ bool LayerListDock::isCurrentLayerLocked() const
 	return false;
 }
 
-void LayerListDock::selectionChanged(const QItemSelection &selected)
+void LayerList::selectionChanged(const QItemSelection &selected)
 {
 	bool on = selected.count() > 0;
 
@@ -321,7 +321,7 @@ void LayerListDock::selectionChanged(const QItemSelection &selected)
 	emit layerSelected(_selected);
 }
 
-void LayerListDock::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+void LayerList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
 	const int myRow = currentSelection().row();
 	if(topLeft.row() <= myRow && myRow <= bottomRight.row()) {

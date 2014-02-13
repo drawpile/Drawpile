@@ -77,7 +77,7 @@ set (
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
 	widgets/kis_curve_widget.cpp
-	docks/toolsettingswidget.cpp 
+	docks/toolsettingsdock.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 
 	docks/colorbox.cpp

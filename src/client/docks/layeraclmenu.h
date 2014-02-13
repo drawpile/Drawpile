@@ -27,7 +27,7 @@ namespace net {
 	class UserListModel;
 }
 
-namespace widgets {
+namespace docks {
 
 class LayerAclMenu : public QMenu
 {

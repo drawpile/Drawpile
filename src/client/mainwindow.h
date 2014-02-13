@@ -34,10 +34,12 @@ class QTimer;
 namespace widgets {
 	class CanvasView;
 	class DualColorButton;
+}
+namespace docks {
 	class ToolSettings;
-	class InputSettingsDock;
+	class InputSettings;
 	class UserList;
-	class LayerListDock;
+	class LayerList;
 	class PaletteBox;
 	class ColorBox;
 	class Navigator;
@@ -182,13 +184,13 @@ class MainWindow : public QMainWindow {
 
 		QSplitter *_splitter;
 
-		widgets::ToolSettingsDock *_dock_toolsettings;
-		widgets::InputSettingsDock *_dock_input;
-		widgets::UserList *_dock_users;
-		widgets::LayerListDock *_dock_layers;
-		widgets::PaletteBox *_dock_palette;
-		widgets::ColorBox *_dock_rgb, *_dock_hsv;
-		widgets::Navigator *_dock_navigator;
+		docks::ToolSettings *_dock_toolsettings;
+		docks::InputSettings *_dock_input;
+		docks::UserList *_dock_users;
+		docks::LayerList *_dock_layers;
+		docks::PaletteBox *_dock_palette;
+		docks::ColorBox *_dock_rgb, *_dock_hsv;
+		docks::Navigator *_dock_navigator;
 
 		widgets::DualColorButton *_fgbgcolor;
 		widgets::CanvasView *_view;

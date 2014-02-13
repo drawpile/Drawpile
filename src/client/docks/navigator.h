@@ -24,7 +24,7 @@
 
 class Ui_NaviBox;
 
-namespace widgets {
+namespace docks {
 
 //! Navigator graphics view
 class NavigatorView

@@ -33,7 +33,7 @@ using widgets::PaletteWidget;
 
 #include "utils/palette.h"
 
-namespace widgets {
+namespace docks {
 
 /**
  * Create a palette box dock widget.

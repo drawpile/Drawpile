@@ -28,7 +28,7 @@
 
 #include "docks/layerlistdelegate.h"
 
-namespace widgets {
+namespace docks {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),

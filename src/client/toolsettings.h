@@ -41,8 +41,10 @@ namespace net {
 namespace drawingboard {
 	class AnnotationItem;
 }
+namespace docks {
+	class LayerList;
+}
 namespace widgets {
-	class LayerListDock;
 	class PaletteWidget;
 }
 
@@ -271,7 +273,7 @@ public:
 	void setClient(net::Client *client) { _client = client; }
 
 	//! Set the layer selection widget (needed for baking)
-	void setLayerSelector(widgets::LayerListDock *layerlist) { _layerlist = layerlist; }
+	void setLayerSelector(docks::LayerList *layerlist) { _layerlist = layerlist; }
 
 	/**
 	 * @brief Get the ID of the currently selected annotation
@@ -309,7 +311,7 @@ private:
 
 	bool _noupdate;
 	net::Client *_client;
-	widgets::LayerListDock *_layerlist;
+	docks::LayerList *_layerlist;
 	QTimer *_updatetimer;
 };
 

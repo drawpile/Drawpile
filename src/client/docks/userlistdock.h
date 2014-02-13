@@ -30,7 +30,7 @@ namespace net {
 	class Client;
 }
 
-namespace widgets {
+namespace docks {
 
 /**
  * @brief User list window

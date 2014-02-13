@@ -38,7 +38,7 @@ inline float qRadiansToDegrees(float radians) {
 
 #include "canvasview.h"
 #include "canvasscene.h"
-#include "docks/toolsettingswidget.h"
+#include "docks/toolsettingsdock.h"
 #include "toolsettings.h"
 
 #include "net/client.h"
@@ -85,7 +85,7 @@ void CanvasView::setClient(net::Client *client)
 	connect(this, SIGNAL(pointerMoved(int,int)), client, SLOT(sendPointerMove(int,int)));
 }
 
-void CanvasView::setToolSettings(widgets::ToolSettingsDock *settings)
+void CanvasView::setToolSettings(docks::ToolSettings *settings)
 {
 	_toolbox.setToolSettings(settings);
 	connect(settings->getLaserPointerSettings(), SIGNAL(pointerTrackingToggled(bool)), this, SLOT(setPointerTracking(bool)));

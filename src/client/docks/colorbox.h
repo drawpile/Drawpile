@@ -24,7 +24,7 @@
 
 class Ui_ColorBox;
 
-namespace widgets {
+namespace docks {
 
 class ColorBox : public QDockWidget {
 	Q_OBJECT

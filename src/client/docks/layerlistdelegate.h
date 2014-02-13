@@ -27,7 +27,7 @@ namespace net {
 	class Client;
 	class LayerListItem;
 }
-namespace widgets {
+namespace docks {
 
 /**
  * \brief A custom item delegate for displaying layer names and editing layer settings.

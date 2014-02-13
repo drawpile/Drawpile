@@ -26,7 +26,7 @@ using widgets::ColorButton;
 using widgets::GradientSlider;
 #include "ui_colorbox.h"
 
-namespace widgets {
+namespace docks {
 
 ColorBox::ColorBox(const QString& title, Mode mode, QWidget *parent)
 	: QDockWidget(title, parent), updating_(false), mode_(mode)

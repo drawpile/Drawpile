@@ -28,7 +28,7 @@
 
 #include "ui_userbox.h"
 
-namespace widgets {
+namespace docks {
 
 UserList::UserList(QWidget *parent)
 	:QDockWidget(tr("Users"), parent)

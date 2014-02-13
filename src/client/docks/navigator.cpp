@@ -17,12 +17,12 @@
 */
 
 #include "navigator.h"
-using widgets::NavigatorView; // to satisfy ui_navibox
+using docks::NavigatorView; // to satisfy ui_navibox
 #include "ui_navibox.h"
 
 #include <QMouseEvent>
 
-namespace widgets {
+namespace docks {
 
 NavigatorView::NavigatorView(QWidget *parent)
 	: QGraphicsView(parent), _dragging(false)

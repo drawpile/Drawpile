@@ -35,9 +35,12 @@ namespace net {
 	class Client;
 }
 
+namespace docs {
+	class ToolSettings;
+}
+
 namespace widgets {
 
-class ToolSettingsDock;
 
 /**
  * @brief Editor view
@@ -60,7 +63,7 @@ class CanvasView : public QGraphicsView
 		void setClient(net::Client *client);
 
 		//! Set the tool settings panel
-		void setToolSettings(widgets::ToolSettingsDock *settings);
+		void setToolSettings(docks::ToolSettings *settings);
 		
 		//! Get the current zoom factor
 		qreal zoom() const { return _zoom; }

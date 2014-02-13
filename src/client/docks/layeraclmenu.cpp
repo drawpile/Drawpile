@@ -23,7 +23,7 @@
 #include "docks/layeraclmenu.h"
 #include "net/userlist.h"
 
-namespace widgets {
+namespace docks {
 
 
 LayerAclMenu::LayerAclMenu(QWidget *parent) :

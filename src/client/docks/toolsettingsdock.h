@@ -17,8 +17,8 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef TOOLSETTINGSWIDGET_H
-#define TOOLSETTINGSWIDGET_H
+#ifndef TOOLSETTINGSDOCK_H
+#define TOOLSETTINGSDOCK_H
 
 #include <QDockWidget>
 
@@ -37,21 +37,21 @@ namespace paintcore {
 	class Brush;
 }
 
-namespace widgets {
+namespace docks {
 
 /**
  * @brief Tool settings window
  * A dock widget that displays settings for the currently selected tool.
  */
-class ToolSettingsDock : public QDockWidget
+class ToolSettings : public QDockWidget
 {
 	Q_OBJECT
 	public:
-		ToolSettingsDock(QWidget *parent=0);
-		ToolSettingsDock(const ToolSettingsDock& ts) = delete;
-		ToolSettingsDock& operator=(const ToolSettingsDock& ts) = delete;
+		ToolSettings(QWidget *parent=0);
+		ToolSettings(const ToolSettings& ts) = delete;
+		ToolSettings& operator=(const ToolSettings& ts) = delete;
 
-		~ToolSettingsDock();
+		~ToolSettings();
 
 		//! Get a brush with the current settings
 		const paintcore::Brush& getBrush(bool swapcolors) const;

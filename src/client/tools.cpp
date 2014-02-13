@@ -42,7 +42,7 @@
 
 #include "net/client.h"
 #include "net/utils.h"
-#include "docks/toolsettingswidget.h"
+#include "docks/toolsettingsdock.h"
 #include "statetracker.h"
 
 namespace tools {
@@ -86,7 +86,7 @@ void ToolCollection::setScene(drawingboard::CanvasScene *scene)
     _scene = scene;
 }
 
-void ToolCollection::setToolSettings(widgets::ToolSettingsDock *s)
+void ToolCollection::setToolSettings(docks::ToolSettings *s)
 {
 	Q_ASSERT(s);
 	_toolsettings = s;

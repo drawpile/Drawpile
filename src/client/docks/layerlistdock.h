@@ -31,15 +31,15 @@ namespace net {
 	class LayerListItem;
 }
 
-namespace widgets {
+namespace docks {
 
 class LayerAclMenu;
 
-class LayerListDock : public QDockWidget
+class LayerList : public QDockWidget
 {
 Q_OBJECT
 public:
-	LayerListDock(QWidget *parent=0);
+	LayerList(QWidget *parent=0);
 
 	void setClient(net::Client *client);
 

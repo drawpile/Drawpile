@@ -56,7 +56,7 @@
 #include "widgets/dualcolorbutton.h"
 #include "widgets/chatwidget.h"
 
-#include "docks/toolsettingswidget.h"
+#include "docks/toolsettingsdock.h"
 #include "docks/palettebox.h"
 #include "docks/navigator.h"
 #include "docks/colorbox.h"
@@ -1867,47 +1867,47 @@ void MainWindow::setupActions()
 void MainWindow::createDocks()
 {
 	// Create tool settings
-	_dock_toolsettings = new widgets::ToolSettingsDock(this);
-	_dock_toolsettings->setObjectName("toolsettingsdock");
+	_dock_toolsettings = new docks::ToolSettings(this);
+	_dock_toolsettings->setObjectName("ToolSettings");
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	connect(this, SIGNAL(toolChanged(tools::Type)), _dock_toolsettings, SLOT(setTool(tools::Type)));
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
 
 	// Create input settings
-	_dock_input = new widgets::InputSettingsDock(this);
-	_dock_input->setObjectName("inputsettingsdock");
+	_dock_input = new docks::InputSettings(this);
+	_dock_input->setObjectName("InputSettings");
 	_dock_input->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
 
 	// Create color boxes
-	_dock_rgb = new widgets::ColorBox("RGB", widgets::ColorBox::RGB, this);
+	_dock_rgb = new docks::ColorBox("RGB", docks::ColorBox::RGB, this);
 	_dock_rgb->setObjectName("rgbdock");
 
-	_dock_hsv = new widgets::ColorBox("HSV", widgets::ColorBox::HSV, this);
+	_dock_hsv = new docks::ColorBox("HSV", docks::ColorBox::HSV, this);
 	_dock_hsv->setObjectName("hsvdock");
 
 	addDockWidget(Qt::RightDockWidgetArea, _dock_rgb);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_hsv);
 
 	// Create palette box
-	_dock_palette = new widgets::PaletteBox(tr("Palette"), this);
+	_dock_palette = new docks::PaletteBox(tr("Palette"), this);
 	_dock_palette->setObjectName("palettedock");
 	addDockWidget(Qt::RightDockWidgetArea, _dock_palette);
 
 	// Create user list
-	_dock_users = new widgets::UserList(this);
+	_dock_users = new docks::UserList(this);
 	_dock_users->setObjectName("userlistdock");
 	_dock_users->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_users);
 
 	// Create layer list
-	_dock_layers = new widgets::LayerListDock(this);
-	_dock_layers->setObjectName("layerlistdock");
+	_dock_layers = new docks::LayerList(this);
+	_dock_layers->setObjectName("LayerList");
 	_dock_layers->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_layers);
 
 	// Create navigator
-	_dock_navigator = new widgets::Navigator(this);
+	_dock_navigator = new docks::Navigator(this);
 	_dock_navigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
 	addDockWidget(Qt::RightDockWidgetArea, _dock_navigator);
 	_dock_navigator->hide(); // hidden by default

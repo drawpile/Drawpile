@@ -33,8 +33,8 @@ namespace drawingboard {
     class CanvasScene;
 }
 
-namespace widgets {
-	class ToolSettingsDock;
+namespace docks {
+	class ToolSettings;
 }
 
 namespace net {
@@ -91,7 +91,7 @@ public:
 	virtual bool allowSmoothing() const { return false; }
 
 protected:
-	inline widgets::ToolSettingsDock &settings();
+	inline docks::ToolSettings &settings();
 	inline net::Client &client();
 	inline drawingboard::CanvasScene &scene();
 	inline int layer();
@@ -270,7 +270,7 @@ class ToolCollection {
         void setScene(drawingboard::CanvasScene *scene);
 
 		//! Set the tool settings widget from which current settings are fetched
-		void setToolSettings(widgets::ToolSettingsDock *settings);
+		void setToolSettings(docks::ToolSettings *settings);
 
 		//! Set the currently active layer
 		void selectLayer(int layer_id);
@@ -281,14 +281,14 @@ class ToolCollection {
 	private:
 		net::Client *_client;
         drawingboard::CanvasScene *_scene;
-		widgets::ToolSettingsDock *_toolsettings;
+		docks::ToolSettings *_toolsettings;
 		QHash<Type, Tool*> _tools;
 		int _layer;
 
 };
 
 net::Client &Tool::client() { return *_owner._client; }
-widgets::ToolSettingsDock &Tool::settings() { return *_owner._toolsettings; }
+docks::ToolSettings &Tool::settings() { return *_owner._toolsettings; }
 drawingboard::CanvasScene &Tool::scene() { return *_owner._scene; }
 int Tool::layer() { return _owner._layer; }
 

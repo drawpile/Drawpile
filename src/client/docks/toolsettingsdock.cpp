@@ -20,12 +20,12 @@
 
 #include <QStackedWidget>
 
-#include "toolsettingswidget.h"
+#include "toolsettingsdock.h"
 #include "toolsettings.h"
 
-namespace widgets {
+namespace docks {
 
-ToolSettingsDock::ToolSettingsDock(QWidget *parent)
+ToolSettings::ToolSettings(QWidget *parent)
 	: QDockWidget(parent)
 {
 	// Create a widget stack
@@ -64,7 +64,7 @@ ToolSettingsDock::ToolSettingsDock(QWidget *parent)
 	widgets_->addWidget(_lasersettings->createUi(this));
 }
 
-ToolSettingsDock::~ToolSettingsDock()
+ToolSettings::~ToolSettings()
 {
 	delete pensettings_,
 	delete brushsettings_,
@@ -82,7 +82,7 @@ ToolSettingsDock::~ToolSettingsDock()
  * Set which tool setting widget is visible
  * @param tool tool identifier
  */
-void ToolSettingsDock::setTool(tools::Type tool) {
+void ToolSettings::setTool(tools::Type tool) {
 	switch(tool) {
 		case tools::PEN: currenttool_ = pensettings_; break;
 		case tools::BRUSH: currenttool_ = brushsettings_; break;
@@ -110,13 +110,13 @@ void ToolSettingsDock::setTool(tools::Type tool) {
 	emit sizeChanged(currenttool_->getSize());
 }
 
-void ToolSettingsDock::setForeground(const QColor& color)
+void ToolSettings::setForeground(const QColor& color)
 {
 	fgcolor_ = color;
 	currenttool_->setForeground(color);
 }
 
-void ToolSettingsDock::setBackground(const QColor& color)
+void ToolSettings::setBackground(const QColor& color)
 {
 	bgcolor_ = color;
 	currenttool_->setBackground(color);
@@ -126,7 +126,7 @@ void ToolSettingsDock::setBackground(const QColor& color)
  * Get a brush with settings from the currently visible widget
  * @return brush
  */
-const paintcore::Brush& ToolSettingsDock::getBrush(bool swapcolors) const
+const paintcore::Brush& ToolSettings::getBrush(bool swapcolors) const
 {
 	return currenttool_->getBrush(swapcolors);
 }
