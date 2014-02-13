@@ -36,7 +36,7 @@ using widgets::ColorButton;
 #include "ui_selectsettings.h"
 #include "ui_lasersettings.h"
 
-#include "annotationitem.h"
+#include "scene/annotationitem.h"
 #include "net/client.h"
 
 #include "utils/palette.h"

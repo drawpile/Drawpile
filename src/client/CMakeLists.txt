@@ -20,18 +20,18 @@ set (
 	SOURCES
 	main.cpp
 	mainwindow.cpp 
-	canvasscene.cpp
-	canvasview.cpp
-	canvasitem.cpp
 	statetracker.cpp
 	tools.cpp
 	toolsettings.cpp
-	annotationitem.cpp
-	selectionitem.cpp
-	usermarkeritem.cpp
-	lasertrailitem.cpp
 	loader.cpp
 	textloader.cpp
+	scene/canvasscene.cpp
+	scene/canvasview.cpp
+	scene/canvasitem.cpp
+	scene/annotationitem.cpp
+	scene/selectionitem.cpp
+	scene/usermarkeritem.cpp
+	scene/lasertrailitem.cpp
 	net/client.cpp
 	net/loopbackserver.cpp
 	net/tcpserver.cpp
@@ -52,7 +52,7 @@ set (
 	core/brush.cpp
 	core/brushmask.cpp
 	core/rasterop.cpp
-        core/shapes.cpp
+	core/shapes.cpp
 	ora/qzip.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp

@@ -25,8 +25,8 @@
 #include <QAbstractGraphicsShapeItem>
 
 #include "core/point.h"
-#include "annotationitem.h"
-#include "selectionitem.h"
+#include "scene/annotationitem.h"
+#include "scene/selectionitem.h"
 
 namespace drawingboard {
 	class AnnotationItem;

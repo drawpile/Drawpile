@@ -41,10 +41,10 @@
 #include "mainwindow.h"
 #include "loader.h"
 
-#include "canvasview.h"
-#include "canvasscene.h"
-#include "annotationitem.h"
-#include "selectionitem.h"
+#include "scene/canvasview.h"
+#include "scene/canvasscene.h"
+#include "scene/annotationitem.h"
+#include "scene/selectionitem.h"
 #include "statetracker.h"
 #include "toolsettings.h" // for setting annotation editor widgets Client pointer
 

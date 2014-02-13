@@ -22,8 +22,8 @@
 #include <QDateTime>
 
 #include "statetracker.h"
-#include "canvasscene.h" // needed for annotations
-#include "annotationitem.h"
+#include "scene/canvasscene.h" // needed for annotations
+#include "scene/annotationitem.h"
 #include "loader.h"
 
 #include "core/layerstack.h"

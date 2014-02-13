@@ -21,7 +21,7 @@
 #include <QBuffer>
 #include <QDebug>
 
-#include "annotationitem.h"
+#include "scene/annotationitem.h"
 
 #include "ora/zipwriter.h"
 #include "ora/orawriter.h"

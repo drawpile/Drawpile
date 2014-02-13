@@ -36,9 +36,9 @@
 #include "toolsettings.h"
 #include "core/brush.h"
 #include "core/shapes.h"
-#include "canvasscene.h"
-#include "annotationitem.h"
-#include "selectionitem.h"
+#include "scene/canvasscene.h"
+#include "scene/annotationitem.h"
+#include "scene/selectionitem.h"
 
 #include "net/client.h"
 #include "net/utils.h"

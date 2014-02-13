@@ -29,7 +29,7 @@
 #include "playbackdialog.h"
 #include "videoexportdialog.h"
 #include "export/videoexporter.h"
-#include "canvasscene.h"
+#include "scene/canvasscene.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/net/recording.h"
