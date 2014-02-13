@@ -80,7 +80,7 @@
 #include "dialogs/playbackdialog.h"
 
 MainWindow::MainWindow(bool restoreWindowPosition)
-	: QMainWindow(), _playbackdlg(0), _canvas(0), _recorder(0)
+	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0)
 {
 	updateTitle();
 
@@ -101,21 +101,21 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	statusbar->addPermanentWidget(_lockstatus);
 
 	// Work area is split between the canvas view and the chatbox
-	splitter_ = new QSplitter(Qt::Vertical, this);
-	setCentralWidget(splitter_);
+	_splitter = new QSplitter(Qt::Vertical, this);
+	setCentralWidget(_splitter);
 
 	// Create canvas view
 	_view = new widgets::CanvasView(this);
-	_view->setToolSettings(_toolsettings);
+	_view->setToolSettings(_dock_toolsettings);
 	
-	_inputsettings->connectCanvasView(_view);
-	connect(_layerlist, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
-	connect(_layerlist, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
+	_dock_input->connectCanvasView(_view);
+	connect(_dock_layers, SIGNAL(layerSelected(int)), _view, SLOT(selectLayer(int)));
+	connect(_dock_layers, SIGNAL(layerSelected(int)), this, SLOT(updateLockWidget()));
 
-	splitter_->addWidget(_view);
-	splitter_->setCollapsible(0, false);
+	_splitter->addWidget(_view);
+	_splitter->setCollapsible(0, false);
 
-	connect(_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
+	connect(_dock_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
 	connect(_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(pasteFile(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
@@ -124,44 +124,44 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	
 	// Create the chatbox
 	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
-	splitter_->addWidget(chatbox);
+	_splitter->addWidget(chatbox);
 
 	// Make sure the canvas gets the majority share of the splitter the first time
-	splitter_->setStretchFactor(0, 1);
-	splitter_->setStretchFactor(1, 0);
+	_splitter->setStretchFactor(0, 1);
+	_splitter->setStretchFactor(1, 0);
 
 	// Create canvas scene
 	_canvas = new drawingboard::CanvasScene(this);
 	_canvas->setBackgroundBrush(
 			palette().brush(QPalette::Active,QPalette::Window));
 	_view->setCanvas(_canvas);
-	_navigator->setScene(_canvas);
+	_dock_navigator->setScene(_canvas);
 
-	connect(_canvas, SIGNAL(colorPicked(QColor, bool)), _toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
-	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
-	connect(_canvas, SIGNAL(myLayerCreated(int)), _layerlist, SLOT(selectLayer(int)));
-	connect(_canvas, SIGNAL(annotationDeleted(int)), _toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
+	connect(_canvas, SIGNAL(colorPicked(QColor, bool)), _dock_toolsettings->getColorPickerSettings(), SLOT(addColor(QColor)));
+	connect(_canvas, &drawingboard::CanvasScene::myAnnotationCreated, _dock_toolsettings->getAnnotationSettings(), &tools::AnnotationSettings::setSelection);
+	connect(_canvas, SIGNAL(myLayerCreated(int)), _dock_layers, SLOT(selectLayer(int)));
+	connect(_canvas, SIGNAL(annotationDeleted(int)), _dock_toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
 
 	// Navigator <-> View
-	connect(_navigator, SIGNAL(focusMoved(const QPoint&)),
+	connect(_dock_navigator, SIGNAL(focusMoved(const QPoint&)),
 			_view, SLOT(scrollTo(const QPoint&)));
-	connect(_navigator, SIGNAL(angleChanged(qreal)),
+	connect(_dock_navigator, SIGNAL(angleChanged(qreal)),
 			_view, SLOT(setRotation(qreal)));
 	connect(_view, SIGNAL(viewRectChange(const QPolygonF&)),
-			_navigator, SLOT(setViewFocus(const QPolygonF&)));
+			_dock_navigator, SLOT(setViewFocus(const QPolygonF&)));
 	connect(_view, SIGNAL(viewTransformed(qreal,qreal)),
-			_navigator, SLOT(setViewTransform(qreal,qreal)));
-	connect(_navigator, SIGNAL(zoomIn()), _view, SLOT(zoomin()));
-	connect(_navigator, SIGNAL(zoomOut()), _view, SLOT(zoomout()));
+			_dock_navigator, SLOT(setViewTransform(qreal,qreal)));
+	connect(_dock_navigator, SIGNAL(zoomIn()), _view, SLOT(zoomin()));
+	connect(_dock_navigator, SIGNAL(zoomOut()), _view, SLOT(zoomout()));
 
 	// Create the network client
 	_client = new net::Client(this);
 	_view->setClient(_client);
-	_layerlist->setClient(_client);
-	_toolsettings->getAnnotationSettings()->setClient(_client);
-	_toolsettings->getAnnotationSettings()->setLayerSelector(_layerlist);
-	_userlist->setClient(_client);
+	_dock_layers->setClient(_client);
+	_dock_toolsettings->getAnnotationSettings()->setClient(_client);
+	_dock_toolsettings->getAnnotationSettings()->setLayerSelector(_dock_layers);
+	_dock_users->setClient(_client);
 
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
@@ -257,7 +257,7 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 	}
 
 	win->_canvas->initCanvas(win->_client);
-	win->_layerlist->init();
+	win->_dock_layers->init();
 	win->_client->init();
 	
 	// Set local history size limit. This must be at least as big as the initializer,
@@ -272,7 +272,7 @@ MainWindow *MainWindow::loadDocument(SessionLoader &loader)
 
 	QApplication::restoreOverrideCursor();
 
-	win->filename_ = loader.filename();
+	win->_current_filename = loader.filename();
 	win->setWindowModified(false);
 	win->updateTitle();
 	win->_currentdoctools->setEnabled(true);
@@ -291,13 +291,13 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 	}
 
 	win->_canvas->initCanvas(win->_client);
-	win->_layerlist->init();
+	win->_dock_layers->init();
 	win->_client->init();
 
 	win->_canvas->statetracker()->setMaxHistorySize(1024*1024*10u);
 	win->_canvas->statetracker()->setShowAllUserMarkers(true);
 
-	win->filename_ = QString();
+	win->_current_filename = QString();
 	win->setWindowModified(false);
 	win->updateTitle();
 	win->_currentdoctools->setEnabled(true);
@@ -305,14 +305,14 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 
 	QFileInfo fileinfo(reader->filename());
 
-	win->_playbackdlg = new dialogs::PlaybackDialog(win->_canvas, reader, win);
-	win->_playbackdlg->setWindowTitle(fileinfo.baseName() + " - " + win->_playbackdlg->windowTitle());
-	win->_playbackdlg->setAttribute(Qt::WA_DeleteOnClose);
+	win->_dialog_playback = new dialogs::PlaybackDialog(win->_canvas, reader, win);
+	win->_dialog_playback->setWindowTitle(fileinfo.baseName() + " - " + win->_dialog_playback->windowTitle());
+	win->_dialog_playback->setAttribute(Qt::WA_DeleteOnClose);
 
-	connect(win->_playbackdlg, &dialogs::PlaybackDialog::commandRead, win->_client, &net::Client::playbackCommand);
-	connect(win->_playbackdlg, SIGNAL(playbackToggled(bool)), win, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
-	connect(win->_playbackdlg, &dialogs::PlaybackDialog::destroyed, [win]() {
-		win->_playbackdlg = 0;
+	connect(win->_dialog_playback, &dialogs::PlaybackDialog::commandRead, win->_client, &net::Client::playbackCommand);
+	connect(win->_dialog_playback, SIGNAL(playbackToggled(bool)), win, SLOT(setRecorderStatus(bool))); // note: the argument goes unused in this case
+	connect(win->_dialog_playback, &dialogs::PlaybackDialog::destroyed, [win]() {
+		win->_dialog_playback = 0;
 		win->getAction("recordsession")->setEnabled(true);
 		win->setRecorderStatus(false);
 		win->_canvas->statetracker()->setShowAllUserMarkers(false);
@@ -320,8 +320,8 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
 		win->_canvas->statetracker()->endPlayback();
 	});
 
-	win->_playbackdlg->show();
-	win->_playbackdlg->centerOnParent();
+	win->_dialog_playback->show();
+	win->_dialog_playback->centerOnParent();
 
 	win->getAction("recordsession")->setEnabled(false);
 	win->setRecorderStatus(false);
@@ -342,7 +342,7 @@ MainWindow *MainWindow::loadRecording(recording::Reader *reader)
  * @retval false if a new window needs to be created
  */
 bool MainWindow::canReplace() const {
-	return !(isWindowModified() || _client->isConnected() || _recorder || _playbackdlg);
+	return !(isWindowModified() || _client->isConnected() || _recorder || _dialog_playback);
 }
 
 /**
@@ -366,10 +366,10 @@ void MainWindow::addRecentFile(const QString& file)
 void MainWindow::updateTitle()
 {
 	QString name;
-	if(filename_.isEmpty()) {
+	if(_current_filename.isEmpty()) {
 		name = tr("Untitled");
 	} else {
-		const QFileInfo info(filename_);
+		const QFileInfo info(_current_filename);
 		name = info.baseName();
 	}
 
@@ -404,7 +404,7 @@ void MainWindow::updateShortcuts()
 		MainWindow *win = qobject_cast<MainWindow*>(widget);
 		if(win) {
 			// First reset to defaults
-			foreach(QAction *a, win->customacts_)
+			foreach(QAction *a, win->_customizable_actions)
 				a->setShortcut(
 						a->property("defaultshortcut").value<QKeySequence>()
 						);
@@ -440,10 +440,10 @@ void MainWindow::readSettings(bool windowpos)
 		restoreState(cfg.value("state").toByteArray());
 	}
 	if(cfg.contains("viewstate")) {
-		splitter_->restoreState(cfg.value("viewstate").toByteArray());
+		_splitter->restoreState(cfg.value("viewstate").toByteArray());
 	}
 
-	lastpath_ = cfg.value("lastpath").toString();
+	_lastpath = cfg.value("lastpath").toString();
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
@@ -452,7 +452,7 @@ void MainWindow::readSettings(bool windowpos)
 	QList<QAction*> actions = _drawingtools->actions();
 	if(tool<0 || tool>=actions.count()) tool=0;
 	actions[tool]->trigger();
-	_toolsettings->setTool(tools::Type(tool));
+	_dock_toolsettings->setTool(tools::Type(tool));
 
 	// Remember cursor settings
 	bool brushoutline = cfg.value("outline",true).toBool();
@@ -485,8 +485,8 @@ void MainWindow::writeSettings()
 	
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
-	cfg.setValue("viewstate", splitter_->saveState());
-	cfg.setValue("lastpath", lastpath_);
+	cfg.setValue("viewstate", _splitter->saveState());
+	cfg.setValue("lastpath", _lastpath);
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
@@ -628,12 +628,12 @@ void MainWindow::open()
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
-			tr("Open image"), lastpath_, filter);
+			tr("Open image"), _lastpath, filter);
 
 	// Open the file if it was selected
 	if(file.isEmpty()==false) {
 		const QFileInfo info(file);
-		lastpath_ = info.absolutePath();
+		_lastpath = info.absolutePath();
 
 		open(file);
 	}
@@ -675,11 +675,11 @@ bool MainWindow::confirmFlatten(QString& file) const
  */
 bool MainWindow::save()
 {
-	QFileInfo filename(filename_);
-	if(filename_.isEmpty()) {
+	QFileInfo filename(_current_filename);
+	if(_current_filename.isEmpty()) {
 		return saveas();
 	} else {
-		QString suffix = QFileInfo(filename_).suffix().toLower();
+		QString suffix = QFileInfo(_current_filename).suffix().toLower();
 
 		// Check if suffix is one of the supported formats
 		// If not, we need to ask for a new file name
@@ -689,20 +689,20 @@ bool MainWindow::save()
 
 		// Check if features that need OpenRaster format are used
 		if(suffix != "ora" && _canvas->needSaveOra()) {
-			if(confirmFlatten(filename_)==false)
+			if(confirmFlatten(_current_filename)==false)
 				return false;
 		}
 
 		// Overwrite current file
 		QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-		bool saved = _canvas->save(filename_);
+		bool saved = _canvas->save(_current_filename);
 		QApplication::restoreOverrideCursor();
 		if(!saved) {
 			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
 			setWindowModified(false);
-			addRecentFile(filename_);
+			addRecentFile(_current_filename);
 			return true;
 		}
 	}
@@ -730,7 +730,7 @@ bool MainWindow::saveas()
 
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Save image"), lastpath_, filter, &selfilter);
+			tr("Save image"), _lastpath, filter, &selfilter);
 
 	if(file.isEmpty()==false) {
 
@@ -765,7 +765,7 @@ bool MainWindow::saveas()
 			showErrorMessage(tr("Couldn't save image"));
 			return false;
 		} else {
-			filename_ = file;
+			_current_filename = file;
 			setWindowModified(false);
 			updateTitle();
 			return true;
@@ -776,8 +776,8 @@ bool MainWindow::saveas()
 
 void MainWindow::setRecorderStatus(bool on)
 {
-	if(_playbackdlg) {
-		if(_playbackdlg->isPlaying()) {
+	if(_dialog_playback) {
+		if(_dialog_playback->isPlaying()) {
 			_recorderstatus->setPixmap(QIcon::fromTheme("media-playback-start", QIcon(":icons/media-playback-start")).pixmap(16, 16));
 			_recorderstatus->setToolTip("Playing back recording");
 		} else {
@@ -811,7 +811,7 @@ void MainWindow::toggleRecording()
 
 	QString filter = tr("Drawpile recordings (%1)").arg("*.dprec") + ";;" + tr("All files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Record session"), lastpath_, filter);
+			tr("Record session"), _lastpath, filter);
 
 	if(!file.isEmpty()) {
 		// Set file suffix if missing
@@ -858,7 +858,7 @@ void MainWindow::toggleRecording()
  */
 void MainWindow::showSettings()
 {
-	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(customacts_, this);
+	dialogs::SettingsDialog *dlg = new dialogs::SettingsDialog(_customizable_actions, this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
 	dlg->setWindowModality(Qt::WindowModal);
 	dlg->show();
@@ -866,9 +866,9 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	hostdlg_ = new dialogs::HostDialog(_canvas->image(), lastpath_, this);
-	connect(hostdlg_, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
-	hostdlg_->show();
+	_dialog_host = new dialogs::HostDialog(_canvas->image(), _lastpath, this);
+	connect(_dialog_host, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
+	_dialog_host->show();
 }
 
 /**
@@ -876,9 +876,9 @@ void MainWindow::host()
  */
 void MainWindow::join()
 {
-	joindlg_ = new dialogs::JoinDialog(this);
-	connect(joindlg_, SIGNAL(finished(int)), this, SLOT(finishJoin(int)));
-	joindlg_->show();
+	_dialog_join = new dialogs::JoinDialog(this);
+	connect(_dialog_join, SIGNAL(finished(int)), this, SLOT(finishJoin(int)));
+	_dialog_join->show();
 }
 
 /**
@@ -919,31 +919,31 @@ void MainWindow::leave()
  */
 void MainWindow::finishHost(int i)
 {
-	lastpath_ = hostdlg_->lastPath();
+	_lastpath = _dialog_host->lastPath();
 
 	if(i==QDialog::Accepted) {
-		const bool useremote = hostdlg_->useRemoteAddress();
+		const bool useremote = _dialog_host->useRemoteAddress();
 		QUrl address;
 
 		if(useremote) {
 			QString scheme;
-			if(hostdlg_->getRemoteAddress().startsWith("drawpile://")==false)
+			if(_dialog_host->getRemoteAddress().startsWith("drawpile://")==false)
 				scheme = "drawpile://";
-			address = QUrl(scheme + hostdlg_->getRemoteAddress(),
+			address = QUrl(scheme + _dialog_host->getRemoteAddress(),
 					QUrl::TolerantMode);
 		} else {
 			address.setHost(WhatIsMyIp::localAddress());
 		}
 
 		if(address.isValid() == false || address.host().isEmpty()) {
-			hostdlg_->show();
+			_dialog_host->show();
 			showErrorMessage(tr("Invalid address"));
 			return;
 		}
-		address.setUserName(hostdlg_->getUserName());
+		address.setUserName(_dialog_host->getUserName());
 
 		// Remember some settings
-		hostdlg_->rememberSettings();
+		_dialog_host->rememberSettings();
 
 		// Start server if hosting locally
 		if(useremote==false) {
@@ -959,7 +959,7 @@ void MainWindow::finishHost(int i)
 			int port = server->startServer();
 			if(!port) {
 				QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
-				hostdlg_->show();
+				_dialog_host->show();
 				delete server;
 				return;
 			}
@@ -971,22 +971,22 @@ void MainWindow::finishHost(int i)
 
 		// Initialize session (unless original was used)
 		MainWindow *w = this;
-		if(hostdlg_->useOriginalImage() == false) {
-			QScopedPointer<SessionLoader> loader(hostdlg_->getSessionLoader());
+		if(_dialog_host->useOriginalImage() == false) {
+			QScopedPointer<SessionLoader> loader(_dialog_host->getSessionLoader());
 			w = loadDocument(*loader);
 		}
 
 		// Connect to server
 		net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
-		login->setPassword(hostdlg_->getPassword());
-		login->setTitle(hostdlg_->getTitle());
-		login->setMaxUsers(hostdlg_->getUserLimit());
-		login->setAllowDrawing(hostdlg_->getAllowDrawing());
-		login->setLayerControlLock(hostdlg_->getLayerControlLock());
+		login->setPassword(_dialog_host->getPassword());
+		login->setTitle(_dialog_host->getTitle());
+		login->setMaxUsers(_dialog_host->getUserLimit());
+		login->setAllowDrawing(_dialog_host->getAllowDrawing());
+		login->setLayerControlLock(_dialog_host->getLayerControlLock());
 		w->_client->connectToServer(login);
 
 	}
-	hostdlg_->deleteLater();
+	_dialog_host->deleteLater();
 }
 
 /**
@@ -997,23 +997,23 @@ void MainWindow::finishHost(int i)
 void MainWindow::finishJoin(int i) {
 	if(i==QDialog::Accepted) {
 		QString scheme;
-		if(joindlg_->getAddress().startsWith("drawpile://")==false)
+		if(_dialog_join->getAddress().startsWith("drawpile://")==false)
 			scheme = "drawpile://";
-		QUrl address = QUrl(scheme + joindlg_->getAddress(),QUrl::TolerantMode);
+		QUrl address = QUrl(scheme + _dialog_join->getAddress(),QUrl::TolerantMode);
 		if(address.isValid()==false || address.host().isEmpty()) {
-			joindlg_->show();
+			_dialog_join->show();
 			showErrorMessage(tr("Invalid address"));
 			return;
 		}
-		address.setUserName(joindlg_->getUserName());
+		address.setUserName(_dialog_join->getUserName());
 
 		// Remember some settings
-		joindlg_->rememberSettings();
+		_dialog_join->rememberSettings();
 
 		// Connect
 		joinSession(address);
 	}
-	joindlg_->deleteLater();
+	_dialog_join->deleteLater();
 }
 
 void MainWindow::changeSessionTitle()
@@ -1101,7 +1101,7 @@ void MainWindow::loggedin(bool join)
 	// Initialize the canvas (in host mode the canvas was prepared already)
 	if(join) {
 		_canvas->initCanvas(_client);
-		_layerlist->init();
+		_dock_layers->init();
 		_currentdoctools->setEnabled(true);
 	}
 
@@ -1128,12 +1128,12 @@ void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool clos
 	getAction("locksession")->setChecked(locked);
 	getAction("locklayerctrl")->setChecked(layerctrllocked);
 	getAction("denyjoins")->setChecked(closed);
-	_layerlist->setControlsLocked(layerctrllocked);
+	_dock_layers->setControlsLocked(layerctrllocked);
 }
 
 void MainWindow::updateLockWidget()
 {
-	bool locked = _client->isLocked() || _layerlist->isCurrentLayerLocked();
+	bool locked = _client->isLocked() || _dock_layers->isCurrentLayerLocked();
 	if(locked) {
 		_lockstatus->setPixmap(QPixmap(":icons/lock_closed.png"));
 		_lockstatus->setToolTip(tr("Board is locked"));
@@ -1158,7 +1158,7 @@ void MainWindow::setOperatorMode(bool op)
 {
 	_admintools->setEnabled(op);
 	_docadmintools->setEnabled(op);
-	_layerlist->setOperatorMode(op);
+	_dock_layers->setOperatorMode(op);
 }
 
 /**
@@ -1279,7 +1279,7 @@ void MainWindow::selectTool(QAction *tool)
 	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
 
 	// Send pointer updates when using the laser pointer (TODO checkbox)
-	_view->setPointerTracking(type==tools::LASERPOINTER && _toolsettings->getLaserPointerSettings()->pointerTracking());
+	_view->setPointerTracking(type==tools::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
 
 	// Remove selection when not using selection tool
 	if(type != tools::SELECTION)
@@ -1306,7 +1306,7 @@ void MainWindow::eraserNear(bool near)
 
 void MainWindow::copyLayer()
 {
-	QImage img = _canvas->selectionToImage(_layerlist->currentLayer());
+	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
 	QApplication::clipboard()->setImage(img);
 }
 
@@ -1336,12 +1336,12 @@ void MainWindow::pasteFile()
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
-			tr("Paste image"), lastpath_, filter);
+			tr("Paste image"), _lastpath, filter);
 
 	// Open the file if it was selected
 	if(file.isEmpty()==false) {
 		const QFileInfo info(file);
-		lastpath_ = info.absolutePath();
+		_lastpath = info.absolutePath();
 
 		pasteFile(QUrl::fromLocalFile(file));
 	}
@@ -1412,7 +1412,7 @@ void MainWindow::fillArea(const QColor &color)
 		area = QRect(0, 0, _canvas->width(), _canvas->height());
 
 	_client->sendUndopoint();
-	_client->sendFillRect(_layerlist->currentLayer(), area, color);
+	_client->sendFillRect(_dock_layers->currentLayer(), area, color);
 }
 
 void MainWindow::resizeCanvas()
@@ -1483,7 +1483,7 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 		act->setStatusTip(tip);
 
 	if(name!=0 && name[0]!='\0')
-		customacts_.append(act);
+		_customizable_actions.append(act);
 
 	// Add this action to the mainwindow so its shortcut can be used
 	// even when the menu/toolbar is not visible
@@ -1815,9 +1815,9 @@ void MainWindow::setupActions()
 	_fgbgcolor = new widgets::DualColorButton(drawtools);
 
 	connect(swapcolors, SIGNAL(triggered()), _fgbgcolor, SLOT(swapColors()));
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(const QColor&)), _toolsettings, SLOT(setForeground(const QColor&)));
-	connect(_fgbgcolor, SIGNAL(backgroundChanged(const QColor&)), _toolsettings, SLOT(setBackground(const QColor&)));
-	connect(_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(const QColor&)), _dock_toolsettings, SLOT(setForeground(const QColor&)));
+	connect(_fgbgcolor, SIGNAL(backgroundChanged(const QColor&)), _dock_toolsettings, SLOT(setBackground(const QColor&)));
+	connect(_dock_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
 		if(bg)
@@ -1826,21 +1826,21 @@ void MainWindow::setupActions()
 			_fgbgcolor->setForeground(c);
 	});
 
-	connect(palette_, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), rgb_, SLOT(setColor(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), hsv_, SLOT(setColor(QColor)));
+	connect(_dock_palette, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), _dock_rgb, SLOT(setColor(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), _dock_hsv, SLOT(setColor(QColor)));
 
-	connect(rgb_, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(hsv_, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_dock_rgb, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_dock_hsv, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	// Create color changer dialogs
-	_fgdialog = new dialogs::ColorDialog(tr("Foreground color"), true, false, this);
-	connect(_fgdialog, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), _fgdialog, SLOT(pickNewColor(QColor)));
+	_dialog_fgcolor = new dialogs::ColorDialog(tr("Foreground color"), true, false, this);
+	connect(_dialog_fgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), _dialog_fgcolor, SLOT(pickNewColor(QColor)));
 
-	_bgdialog = new dialogs::ColorDialog(tr("Background color"), true, false, this);
-	connect(_bgdialog, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setBackground(QColor)));
-	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), _bgdialog, SLOT(pickNewColor(QColor)));
+	_dialog_bgcolor = new dialogs::ColorDialog(tr("Background color"), true, false, this);
+	connect(_dialog_bgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setBackground(QColor)));
+	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), _dialog_bgcolor, SLOT(pickNewColor(QColor)));
 
 	drawtools->addWidget(_fgbgcolor);
 
@@ -1867,54 +1867,54 @@ void MainWindow::setupActions()
 void MainWindow::createDocks()
 {
 	// Create tool settings
-	_toolsettings = new widgets::ToolSettingsDock(this);
-	_toolsettings->setObjectName("toolsettingsdock");
-	_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	connect(this, SIGNAL(toolChanged(tools::Type)), _toolsettings, SLOT(setTool(tools::Type)));
-	addDockWidget(Qt::RightDockWidgetArea, _toolsettings);
+	_dock_toolsettings = new widgets::ToolSettingsDock(this);
+	_dock_toolsettings->setObjectName("toolsettingsdock");
+	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	connect(this, SIGNAL(toolChanged(tools::Type)), _dock_toolsettings, SLOT(setTool(tools::Type)));
+	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
 
 	// Create input settings
-	_inputsettings = new widgets::InputSettingsDock(this);
-	_inputsettings->setObjectName("inputsettingsdock");
-	_inputsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _inputsettings);
+	_dock_input = new widgets::InputSettingsDock(this);
+	_dock_input->setObjectName("inputsettingsdock");
+	_dock_input->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_input);
 
 	// Create color boxes
-	rgb_ = new widgets::ColorBox("RGB", widgets::ColorBox::RGB, this);
-	rgb_->setObjectName("rgbdock");
+	_dock_rgb = new widgets::ColorBox("RGB", widgets::ColorBox::RGB, this);
+	_dock_rgb->setObjectName("rgbdock");
 
-	hsv_ = new widgets::ColorBox("HSV", widgets::ColorBox::HSV, this);
-	hsv_->setObjectName("hsvdock");
+	_dock_hsv = new widgets::ColorBox("HSV", widgets::ColorBox::HSV, this);
+	_dock_hsv->setObjectName("hsvdock");
 
-	addDockWidget(Qt::RightDockWidgetArea, rgb_);
-	addDockWidget(Qt::RightDockWidgetArea, hsv_);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_rgb);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_hsv);
 
 	// Create palette box
-	palette_ = new widgets::PaletteBox(tr("Palette"), this);
-	palette_->setObjectName("palettedock");
-	addDockWidget(Qt::RightDockWidgetArea, palette_);
+	_dock_palette = new widgets::PaletteBox(tr("Palette"), this);
+	_dock_palette->setObjectName("palettedock");
+	addDockWidget(Qt::RightDockWidgetArea, _dock_palette);
 
 	// Create user list
-	_userlist = new widgets::UserList(this);
-	_userlist->setObjectName("userlistdock");
-	_userlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _userlist);
+	_dock_users = new widgets::UserList(this);
+	_dock_users->setObjectName("userlistdock");
+	_dock_users->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_users);
 
 	// Create layer list
-	_layerlist = new widgets::LayerListDock(this);
-	_layerlist->setObjectName("layerlistdock");
-	_layerlist->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _layerlist);
+	_dock_layers = new widgets::LayerListDock(this);
+	_dock_layers->setObjectName("layerlistdock");
+	_dock_layers->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_layers);
 
 	// Create navigator
-	_navigator = new widgets::Navigator(this);
-	_navigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
-	addDockWidget(Qt::RightDockWidgetArea, _navigator);
-	_navigator->hide(); // hidden by default
+	_dock_navigator = new widgets::Navigator(this);
+	_dock_navigator->setAllowedAreas(Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea);
+	addDockWidget(Qt::RightDockWidgetArea, _dock_navigator);
+	_dock_navigator->hide(); // hidden by default
 
 	// Tabify docks
-	tabifyDockWidget(_inputsettings, _toolsettings);
-	tabifyDockWidget(hsv_, rgb_);
-	tabifyDockWidget(hsv_, palette_);
-	tabifyDockWidget(_userlist, _layerlist);
+	tabifyDockWidget(_dock_input, _dock_toolsettings);
+	tabifyDockWidget(_dock_hsv, _dock_rgb);
+	tabifyDockWidget(_dock_hsv, _dock_palette);
+	tabifyDockWidget(_dock_users, _dock_layers);
 }

@@ -180,30 +180,32 @@ class MainWindow : public QMainWindow {
 
 		void fillArea(const QColor &color);
 
-		QSplitter *splitter_;
-		widgets::ToolSettingsDock *_toolsettings;
-		widgets::InputSettingsDock *_inputsettings;
-		widgets::UserList *_userlist;
-		widgets::LayerListDock *_layerlist;
+		QSplitter *_splitter;
+
+		widgets::ToolSettingsDock *_dock_toolsettings;
+		widgets::InputSettingsDock *_dock_input;
+		widgets::UserList *_dock_users;
+		widgets::LayerListDock *_dock_layers;
+		widgets::PaletteBox *_dock_palette;
+		widgets::ColorBox *_dock_rgb, *_dock_hsv;
+		widgets::Navigator *_dock_navigator;
 
 		widgets::DualColorButton *_fgbgcolor;
 		widgets::CanvasView *_view;
-		widgets::PaletteBox *palette_;
-		widgets::ColorBox *rgb_, *hsv_;
-		widgets::Navigator *_navigator;
+
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
 
-		dialogs::ColorDialog *_fgdialog, *_bgdialog;
-		dialogs::HostDialog *hostdlg_;
-		dialogs::JoinDialog *joindlg_;
-		dialogs::PlaybackDialog *_playbackdlg;
+		dialogs::ColorDialog *_dialog_fgcolor, *_dialog_bgcolor;
+		dialogs::HostDialog *_dialog_host;
+		dialogs::JoinDialog *_dialog_join;
+		dialogs::PlaybackDialog *_dialog_playback;
 
 		drawingboard::CanvasScene *_canvas;
 		net::Client *_client;
 
-		QString filename_;
-		QString lastpath_;
+		QString _current_filename;
+		QString _lastpath;
 		QMenu *_recent;
 
 		recording::Writer *_recorder;
@@ -213,9 +215,7 @@ class MainWindow : public QMainWindow {
 		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
 		QAction *_lasttool; // the last used tool
-
-		// List of customizeable actions
-		QList<QAction*> customacts_;
+		QList<QAction*> _customizable_actions;
 
 		// Remember window state to return from fullscreen mode
 		QByteArray _fullscreen_oldstate;
