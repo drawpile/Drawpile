@@ -22,7 +22,7 @@
 
 #include <QMainWindow>
 
-#include "tools.h"
+#include "tools/tool.h"
 
 class QActionGroup;
 class QMessageBox;

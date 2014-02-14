@@ -21,10 +21,17 @@ set (
 	main.cpp
 	mainwindow.cpp 
 	statetracker.cpp
-	tools.cpp
-	toolsettings.cpp
 	loader.cpp
 	textloader.cpp
+	tools/toolsettings.cpp
+	tools/tool.cpp
+	tools/utils.cpp
+	tools/annotation.cpp
+	tools/brushes.cpp
+	tools/colorpicker.cpp
+	tools/laser.cpp
+	tools/selection.cpp
+	tools/shapetools.cpp
 	scene/canvasscene.cpp
 	scene/canvasview.cpp
 	scene/canvasitem.cpp

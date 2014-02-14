@@ -46,7 +46,7 @@
 #include "scene/annotationitem.h"
 #include "scene/selectionitem.h"
 #include "statetracker.h"
-#include "toolsettings.h" // for setting annotation editor widgets Client pointer
+#include "tools/toolsettings.h" // for setting annotation editor widgets Client pointer
 
 #include "utils/recentfiles.h"
 #include "utils/whatismyip.h"

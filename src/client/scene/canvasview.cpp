@@ -39,7 +39,7 @@ inline float qRadiansToDegrees(float radians) {
 #include "canvasview.h"
 #include "canvasscene.h"
 #include "docks/toolsettingsdock.h"
-#include "toolsettings.h"
+#include "tools/toolsettings.h"
 
 #include "net/client.h"
 #include "core/point.h"

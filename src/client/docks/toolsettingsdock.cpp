@@ -20,8 +20,8 @@
 
 #include <QStackedWidget>
 
-#include "toolsettingsdock.h"
-#include "toolsettings.h"
+#include "docks/toolsettingsdock.h"
+#include "tools/toolsettings.h"
 
 namespace docks {
 

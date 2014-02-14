@@ -25,7 +25,7 @@
 #include "core/point.h"
 #include "utils/strokesmoother.h"
 #include "utils/kis_cubic_curve.h"
-#include "tools.h"
+#include "tools/tool.h"
 
 namespace drawingboard {
 	class CanvasScene;

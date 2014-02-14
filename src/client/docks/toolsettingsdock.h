@@ -22,7 +22,7 @@
 
 #include <QDockWidget>
 
-#include "tools.h"
+#include "tools/tool.h"
 
 class QStackedWidget;
 
