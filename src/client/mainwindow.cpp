@@ -45,6 +45,7 @@
 #include "scene/canvasscene.h"
 #include "scene/annotationitem.h"
 #include "scene/selectionitem.h"
+#include "scene/strokepreviewer.h"
 #include "statetracker.h"
 #include "tools/toolsettings.h" // for setting annotation editor widgets Client pointer
 
@@ -203,6 +204,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateStrokePreviewMode()));
 	connect(qApp, SIGNAL(settingsChanged()), this, SLOT(updateShortcuts()));
+
+	updateStrokePreviewMode();
 
 	// Create actions and menus
 	setupActions();
@@ -1110,17 +1113,21 @@ void MainWindow::loggedin(bool join)
 
 void MainWindow::updateStrokePreviewMode()
 {
+	drawingboard::StrokePreviewer *preview;
 	if(_client->isLocalServer()) {
-		_canvas->setStrokePreviewMode(drawingboard::NO_PREVIEW);
+		preview = drawingboard::NopStrokePreviewer::getInstance();
 	} else {
 		QSettings cfg;
-		int mode = cfg.value("settings/lag/previewstyle", -1).toInt();
+		int mode = cfg.value("settings/lag/previewstyle", 2).toInt();
 
-		if(mode<0 || mode>drawingboard::APPROXIMATE_PREVIEW)
-			mode = drawingboard::APPROXIMATE_PREVIEW;
-
-		_canvas->setStrokePreviewMode(drawingboard::StrokePreviewMode(mode));
+		switch(mode) {
+		case 0: preview = drawingboard::NopStrokePreviewer::getInstance(); break;
+		case 1: preview = new drawingboard::OverlayStrokePreviewer(_canvas); break;
+		case 3: preview = new drawingboard::TempLayerStrokePreviewer(_canvas); break;
+		default: preview = new drawingboard::ApproximateOverlayStrokePreviewer(_canvas); break;
+		}
 	}
+	_canvas->setStrokePreview(preview);
 }
 
 void MainWindow::sessionConfChanged(bool locked, bool layerctrllocked, bool closed)

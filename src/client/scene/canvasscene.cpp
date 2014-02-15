@@ -22,41 +22,46 @@
 #include <QApplication>
 #include <QPainter>
 
-#include "canvasscene.h"
-#include "canvasitem.h"
-#include "selectionitem.h"
-#include "annotationitem.h"
-#include "usermarkeritem.h"
-#include "lasertrailitem.h"
+#include "scene/canvasscene.h"
+#include "scene/canvasitem.h"
+#include "scene/selectionitem.h"
+#include "scene/annotationitem.h"
+#include "scene/usermarkeritem.h"
+#include "scene/lasertrailitem.h"
+#include "scene/strokepreviewer.h"
 #include "statetracker.h"
 
 #include "core/layerstack.h"
+#include "core/layer.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
 
 namespace drawingboard {
 
 CanvasScene::CanvasScene(QObject *parent)
-	: QGraphicsScene(parent), _image(0), _statetracker(0), _toolpreview(0), _selection(0), _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true),
-	  _previewmode(NO_PREVIEW)
+	: QGraphicsScene(parent), _image(0), _statetracker(0),
+	  _strokepreview(NopStrokePreviewer::getInstance()), _toolpreview(0),
+	  _selection(0),
+	  _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
+	// The preview clear timer is used to clear out old preview strokes.
+	// Preview strokes may go unaccounted for when the server filters out pen move commands.
 	_previewClearTimer = new QTimer(this);
-	connect(_previewClearTimer, SIGNAL(timeout()), this, SLOT(clearPreviews()));
+	_previewClearTimer->setSingleShot(true);
+	connect(_previewClearTimer, &QTimer::timeout, [this]() { _strokepreview->clear(); });
 
+	// Timer for on-canvas animations (user pointer fadeout, laser trail flickering and such)
 	_animTickTimer = new QTimer(this);
 	connect(_animTickTimer, SIGNAL(timeout()), this, SLOT(advanceUsermarkerAnimation()));
 	_animTickTimer->setInterval(200);
 	_animTickTimer->start(200);
-
-	_simplepreviewpen.setColor(Qt::red);
-	_simplepreviewpen.setWidth(1);
-	_simplepreviewpen.setCosmetic(true);
 }
 
 CanvasScene::~CanvasScene()
 {
+	setStrokePreview(NopStrokePreviewer::getInstance());
 	delete _image;
 	delete _statetracker;
 }
@@ -79,12 +84,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	addItem(_image);
 	clearAnnotations();
 
-	foreach(QGraphicsLineItem *p, _previewstrokes)
-		delete p;
-	_previewstrokes.clear();
-	foreach(QGraphicsLineItem *p, _previewstrokecache)
-		delete p;
-	_previewstrokecache.clear();
+	_strokepreview->clear();
 	foreach(UserMarkerItem *i, _usermarkers)
 		delete i;
 	_usermarkers.clear();
@@ -388,76 +388,20 @@ void CanvasScene::setSelectionItem(SelectionItem *selection)
 		addItem(selection);
 }
 
-void CanvasScene::startPreview(const paintcore::Brush &brush, const paintcore::Point &point)
+void CanvasScene::setStrokePreview(StrokePreviewer *preview)
 {
-	_previewpen = penForBrush(brush);
-	_lastpreview = point;
-	addPreview(point);
+	Q_ASSERT(preview);
+	if(_strokepreview != NopStrokePreviewer::getInstance())
+		delete _strokepreview;
+	_strokepreview = preview;
 }
 
-/**
- * Preview strokes are used to give immediate feedback to the user,
- * before the stroke info messages have completed their roundtrip
- * through the server.
- * @param point stroke point
- */
-void CanvasScene::addPreview(const paintcore::Point& point)
+void CanvasScene::resetPreviewClearTimer()
 {
-	if(_previewmode==NO_PREVIEW)
-		return;
-
-	QGraphicsLineItem *s;
-	if(_previewstrokecache.isEmpty()) {
-		s = new QGraphicsLineItem();
-		addItem(s);
-	} else {
-		s = _previewstrokecache.takeLast();
-	}
-
-	if(_previewmode==SIMPLE_PREVIEW)
-		s->setPen(_simplepreviewpen);
-	else
-		s->setPen(_previewpen);
-
-	s->setLine(_lastpreview.x(), _lastpreview.y(), point.x(), point.y());
-	s->show();
-	_previewstrokes.append(s);
-	_lastpreview = point;
-
 	// Clear out previews automatically.
 	// If the user is locked, some strokes may have been dropped by
 	// the server, causing an annoying tail of preview strokes.
-	_previewClearTimer->start(2000);
-}
-
-void CanvasScene::takePreview(int count)
-{
-	while(count-->0 && !_previewstrokes.isEmpty()) {
-		QGraphicsLineItem *s = _previewstrokes.takeFirst();
-		s->hide();
-		_previewstrokecache.append(s);
-	}
-}
-
-void CanvasScene::setStrokePreviewMode(StrokePreviewMode mode)
-{
-	if(mode != _previewmode) {
-		_previewmode = mode;
-		clearPreviews();
-	}
-}
-
-void CanvasScene::clearPreviews()
-{
-	while(!_previewstrokes.isEmpty()) {
-		QGraphicsLineItem *s = _previewstrokes.takeFirst();
-		s->hide();
-		_previewstrokecache.append(s);
-	}
-	// Limit the size of the cache
-	while(_previewstrokecache.size() > 100) {
-		delete _previewstrokecache.takeLast();
-	}
+	_previewClearTimer->start(4000);
 }
 
 void CanvasScene::handleDrawingCommand(protocol::MessagePtr cmd)

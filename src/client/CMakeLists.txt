@@ -39,6 +39,7 @@ set (
 	scene/selectionitem.cpp
 	scene/usermarkeritem.cpp
 	scene/lasertrailitem.cpp
+	scene/strokepreviewer.cpp
 	net/client.cpp
 	net/loopbackserver.cpp
 	net/tcpserver.cpp

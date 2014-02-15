@@ -127,6 +127,9 @@ class Layer {
 		//! Merge a sublayer with this layer
 		void mergeSublayer(int id);
 
+		//! Remove a sublayer
+		void removeSublayer(int id);
+
 		//! Merge a layer
 		void merge(const Layer *layer);
 

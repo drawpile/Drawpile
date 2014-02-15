@@ -22,7 +22,6 @@
 
 #include <QGraphicsScene>
 
-#include "core/point.h"
 #include "../shared/net/message.h"
 
 namespace paintcore {
@@ -46,13 +45,7 @@ class AnnotationItem;
 class SelectionItem;
 class UserMarkerItem;
 class LaserTrailItem;
-class Preview;
-
-enum StrokePreviewMode {
-	NO_PREVIEW,
-	SIMPLE_PREVIEW,
-	APPROXIMATE_PREVIEW
-};
+class StrokePreviewer;
 
 /**
  * @brief The drawing board
@@ -142,15 +135,6 @@ public:
 
 	SelectionItem *selectionItem() { return _selection; }
 
-	//! Start a new preview stroke
-	void startPreview(const paintcore::Brush &brush, const paintcore::Point &point);
-
-	//! Add a preview stroke
-	void addPreview(const paintcore::Point& point);
-
-	//! Remove the oldest preview stroke(s)
-	void takePreview(int count);
-
 	/**
 	 * @brief Pick a color at the given coordinates.
 	 *
@@ -193,7 +177,11 @@ public:
 	 */
 	const QString title() const { return _title; }
 
-	void setStrokePreviewMode(StrokePreviewMode mode);
+	void setStrokePreview(StrokePreviewer *strokepreview);
+
+	StrokePreviewer *strokepreview() { return _strokepreview; }
+
+	void resetPreviewClearTimer();
 
 public slots:
 	//! Show annotation borders
@@ -209,9 +197,6 @@ public slots:
 
 	//! Generate a snapshot point and send it to the server
 	void sendSnapshot(bool forcenew);
-
-	//! Clear out all preview strokes
-	void clearPreviews();
 
 	void moveUserMarker(int id, int x, int y, int trail);
 	void setUserMarkerName(int id, const QString &name);
@@ -251,20 +236,10 @@ private:
 	//! Drawing context state tracker
 	StateTracker *_statetracker;
 
-	//! Preview strokes currently on screen
-	QList<QGraphicsLineItem*> _previewstrokes;
-
-	//! Cache of reusable preview strokes
-	QList<QGraphicsLineItem*> _previewstrokecache;
+	StrokePreviewer *_strokepreview;
 
 	//! Laser pointer trails
 	QList<LaserTrailItem*> _lasertrails;
-
-	//! Coordinate of the last preview stroke
-	paintcore::Point _lastpreview;
-
-	//! The pen to use for preview strokes
-	QPen _previewpen, _simplepreviewpen;
 
 	//! Graphics item for previewing a special tool shape
 	QGraphicsItem *_toolpreview;
@@ -275,16 +250,14 @@ private:
 	//! User markers display remote user cursor positions
 	QHash<int, UserMarkerItem*> _usermarkers;
 
-	bool _showAnnotationBorders;
-	bool _showUserMarkers;
-	bool _showLaserTrails;
-
 	QTimer *_previewClearTimer;
 	QTimer *_animTickTimer;
 
 	QString _title;
 
-	StrokePreviewMode _previewmode;
+	bool _showAnnotationBorders;
+	bool _showUserMarkers;
+	bool _showLaserTrails;
 };
 
 }

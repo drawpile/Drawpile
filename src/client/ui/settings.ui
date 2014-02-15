@@ -32,7 +32,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -229,27 +229,27 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QRadioButton" name="preview_none">
-            <property name="text">
-             <string>None</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QRadioButton" name="preview_simple">
-            <property name="text">
-             <string>Simple</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QRadioButton" name="preview_approx">
-            <property name="text">
-             <string>Approximate</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
+           <widget class="QComboBox" name="strokepreview">
+            <item>
+             <property name="text">
+              <string>None</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Quick</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Simple overlay</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Realistic</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

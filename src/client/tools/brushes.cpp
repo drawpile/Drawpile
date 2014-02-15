@@ -19,6 +19,7 @@
 */
 
 #include "scene/canvasscene.h"
+#include "scene/strokepreviewer.h"
 #include "docks/toolsettingsdock.h"
 #include "core/brush.h"
 #include "net/client.h"
@@ -36,8 +37,7 @@ void BrushBase::begin(const paintcore::Point& point, bool right)
 		brush
 	};
 
-	if(!client().isLocalServer())
-		scene().startPreview(brush, point);
+	scene().strokepreview()->startStroke(brush, point, layer());
 
 	client().sendUndopoint();
 	client().sendToolChange(tctx);
@@ -49,12 +49,13 @@ void BrushBase::motion(const paintcore::Point& point, bool constrain, bool cente
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
 
-	scene().addPreview(point);
+	scene().strokepreview()->continueStroke(point);
 	client().sendStroke(point);
 }
 
 void BrushBase::end()
 {
+	scene().strokepreview()->endStroke();
 	client().sendPenup();
 }
 

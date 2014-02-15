@@ -109,11 +109,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/lag");
-	switch(cfg.value("previewstyle", 2).toInt()) {
-	case 0: _ui->preview_none->setChecked(true); break;
-	case 1: _ui->preview_simple->setChecked(true); break;
-	default: _ui->preview_approx->setChecked(true); break;
-	}
+	_ui->strokepreview->setCurrentIndex(cfg.value("previewstyle", 2).toInt());
 	cfg.endGroup();
 
 	// Generate an editable list of shortcuts
@@ -181,12 +177,7 @@ void SettingsDialog::rememberSettings() const
 
 	// Remember lag settings
 	cfg.beginGroup("settings/lag");
-	int previewstyle=2;
-	if(_ui->preview_none->isChecked())
-		previewstyle=0;
-	else if(_ui->preview_simple->isChecked())
-		previewstyle=1;
-	cfg.setValue("previewstyle", previewstyle);
+	cfg.setValue("previewstyle", _ui->strokepreview->currentIndex());
 
 	cfg.endGroup();
 

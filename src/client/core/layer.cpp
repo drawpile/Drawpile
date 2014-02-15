@@ -115,7 +115,7 @@ Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& colo
 Layer::Layer(LayerStack *owner, int id, const QSize &size)
 	: Layer(owner, id, "", Qt::transparent, size)
 {
-	// sublayers are used for indirect drawing
+	// sublayers are used for indirect drawing and previews
 }
 
 Layer::Layer(const Layer &layer)
@@ -125,8 +125,13 @@ Layer::Layer(const Layer &layer)
 	  _tiles(layer._tiles),
 	  _opacity(layer._opacity), _blend(layer._blend), _hidden(layer._hidden)
 {
-	foreach(const Layer *sl, layer._sublayers)
-		_sublayers.append(new Layer(*sl));
+	// Hidden and ephemeral layers are not copied, since hiding a sublayer is
+	// effectively the same as deleting it and ephemeral layers are not considered
+	// part of the true layer content.
+	foreach(const Layer *sl, layer._sublayers) {
+		if(sl->id() >= 0 && !sl->hidden())
+			_sublayers.append(new Layer(*sl));
+	}
 }
 
 Layer::~Layer() {
@@ -463,29 +468,29 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
  */
 void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const Point& to, qreal &distance)
 {
+	Brush effective_brush = brush;
+	Layer *l = this;
+
 	if(!brush.incremental()) {
 		// Indirect brush: use a sublayer
-		Layer *sl = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
+		l = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
 
-		Brush slb(brush);
-		slb.setOpacity(1.0);
-		slb.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		slb.setBlendingMode(1);
+		effective_brush.setOpacity(1.0);
+		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
+		effective_brush.setBlendingMode(1);
 
-		const BrushMaskGenerator &bmg = BrushMaskGenerator::cached(slb);
-
-		if(brush.subpixel())
-			sl->drawSoftLine(slb, bmg, from, to, distance);
-		else
-			sl->drawHardLine(slb, bmg, from, to, distance);
-	} else {
-		const BrushMaskGenerator &bmg = BrushMaskGenerator::cached(brush);
-
-		if(brush.subpixel())
-			drawSoftLine(brush, bmg, from, to, distance);
-		else
-			drawHardLine(brush, bmg, from, to, distance);
+	} else if(contextId<0) {
+		// Special case: negative context IDs are temporary overlay strokes
+		l = getSubLayer(contextId, brush.blendingMode(), 255);
+		effective_brush.setBlendingMode(1);
 	}
+
+	const BrushMaskGenerator &bmg = BrushMaskGenerator::cached(effective_brush);
+
+	if(effective_brush.subpixel())
+		l->drawSoftLine(effective_brush, bmg, from, to, distance);
+	else
+		l->drawHardLine(effective_brush, bmg, from, to, distance);
 
 	if(_owner)
 		_owner->notifyAreaChanged();
@@ -734,6 +739,8 @@ void Layer::makeBlank()
  *
  * Sublayers are temporary layers used for indirect drawing.
  *
+ * Negative IDs are used for ephemeral preview layers.
+ *
  * @param id sublayer ID (unique to parent layer only)
  * @param opacity layer opacity (set when creating the layer)
  * @return sublayer
@@ -790,6 +797,23 @@ void Layer::mergeSublayer(int id)
 				// The merge should cause no visual change.
 				sl->_hidden = true;
 			}
+			return;
+		}
+	}
+}
+
+/**
+ * @brief This is used to remove temporary sublayers
+ *
+ * The layer isn't actually deleted, but is just marked as hidden for recycling.
+ * Call optimize() to clean up removed sublayers.
+ * @param id
+ */
+void Layer::removeSublayer(int id)
+{
+	foreach(Layer *sl, _sublayers) {
+		if(sl->id() == id) {
+			sl->setHidden(true);
 			return;
 		}
 	}

@@ -24,6 +24,7 @@
 #include "statetracker.h"
 #include "scene/canvasscene.h" // needed for annotations
 #include "scene/annotationitem.h"
+#include "scene/strokepreviewer.h"
 #include "loader.h"
 
 #include "core/layerstack.h"
@@ -336,7 +337,7 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	}
 
 	if(cmd.contextId() == _myid)
-		_scene->takePreview(cmd.points().size());
+		_scene->strokepreview()->takeStrokes(cmd.points().size());
 
 	if(_showallmarkers || cmd.contextId() != _myid)
 		_scene->moveUserMarker(cmd.contextId(), ctx.lastpoint.x(), ctx.lastpoint.y(), 0);
