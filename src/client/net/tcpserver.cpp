@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
-	QObject(parent), Server(false), _loginstate(0)
+	QObject(parent), Server(false), _loginstate(0), _paused(false)
 {
 	_socket = new QTcpSocket(this);
 	_msgqueue = new protocol::MessageQueue(_socket, this);
@@ -80,6 +80,9 @@ void TcpServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 
 void TcpServer::handleMessage()
 {
+	if(_paused)
+		return;
+
 	while(_msgqueue->isPending()) {
 		protocol::MessagePtr msg = _msgqueue->getPending();
 		if(_loginstate)
@@ -87,6 +90,13 @@ void TcpServer::handleMessage()
 		else
 			emit messageReceived(msg);
 	}
+}
+
+void TcpServer::pauseInput(bool pause)
+{
+	_paused = pause;
+	if(!pause)
+		handleMessage();
 }
 
 void TcpServer::handleBadData(int len, int type)

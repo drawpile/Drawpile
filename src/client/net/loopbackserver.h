@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,6 +57,9 @@ public:
 	void sendSnapshotMessages(QList<protocol::MessagePtr> msgs);
 
 	void logout();
+
+	void pauseInput(bool pause);
+
 signals:
 	void messageReceived(protocol::MessagePtr message);
 	
@@ -71,6 +74,8 @@ private:
 #ifdef LAG_SIMULATOR
 	QTimer *_lagtimer;
 	QList<protocol::MessagePtr> _msgqueue;
+	bool _paused;
+	int _pausepos;
 #endif
 };
 

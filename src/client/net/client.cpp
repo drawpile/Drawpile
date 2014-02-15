@@ -123,6 +123,7 @@ void Client::handleDisconnect(const QString &message)
 	_userlist->clearUsers();
 	_layerlist->unlockAll();
 	_server = _loopback;
+	_server->pauseInput(false);
 	_isloopback = true;
 	_isOp = false;
 	_isSessionLocked = false;
@@ -130,6 +131,11 @@ void Client::handleDisconnect(const QString &message)
 	emit opPrivilegeChange(false);
 	emit sessionConfChange(false, false, false);
 	emit lockBitsChanged();
+}
+
+void Client::pauseInput(bool pause)
+{
+	_server->pauseInput(pause);
 }
 
 void Client::init()

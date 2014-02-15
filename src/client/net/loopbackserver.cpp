@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -38,12 +38,15 @@ LoopbackServer::LoopbackServer(QObject *parent)
 	  Server(false),
 #else
 	  Server(true),
-  #endif
+#endif
 	  _layer_ids(255), _annotation_ids(255)
 {
 #ifdef LAG_SIMULATOR
 	_lagtimer = new QTimer(this);
+	_lagtimer->setSingleShot(true);
 	connect(_lagtimer, SIGNAL(timeout()), this, SLOT(sendDelayedMessage()));
+	_paused = false;
+	_pausepos = 0;
 #endif
 }
 	
@@ -56,6 +59,19 @@ void LoopbackServer::reset()
 void LoopbackServer::logout()
 {
 	qWarning() << "tried to log out from the loopback server!";
+}
+
+void LoopbackServer::pauseInput(bool pause)
+{
+#ifdef LAG_SIMULATOR
+	_paused = pause;
+	if(pause)
+		_pausepos = 0;
+	else
+		_lagtimer->start(qrand() % LAG_SIMULATOR);
+#else
+	Q_UNUSED(pause);
+#endif
 }
 
 void LoopbackServer::sendMessage(protocol::MessagePtr msg)
@@ -99,10 +115,20 @@ void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
 #ifdef LAG_SIMULATOR
 void LoopbackServer::sendDelayedMessage()
 {
-	if(!_msgqueue.isEmpty()) {
-		emit messageReceived(_msgqueue.takeFirst());
-		_lagtimer->start(qrand() % LAG_SIMULATOR);
+	if(_paused) {
+		++_pausepos;
+
+	} else {
+		while(!_msgqueue.isEmpty() && _pausepos>=0) {
+			emit messageReceived(_msgqueue.takeFirst());
+			--_pausepos;
+		}
+		if(_pausepos<0)
+			_pausepos = 0;
 	}
+
+	if(!_msgqueue.isEmpty())
+		_lagtimer->start(qrand() % LAG_SIMULATOR);
 }
 #endif
 

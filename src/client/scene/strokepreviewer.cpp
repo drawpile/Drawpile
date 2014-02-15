@@ -127,6 +127,16 @@ TempLayerStrokePreviewer::~TempLayerStrokePreviewer()
 	clear();
 }
 
+bool TempLayerStrokePreviewer::pauseInput() const
+{
+	// Since we can't easily remove partial preview strokes, we work around it by
+	// pausing input message handling for the duration of the stroke. This way the user
+	// at least gets a clear view of what they are drawing, while they are drawing.
+
+	// Exception: if the brush is idempotent, there is no need to remove the preview overlay
+	return !_brush.isIdempotent();
+}
+
 void TempLayerStrokePreviewer::startStroke(const paintcore::Brush &brush, const paintcore::Point &point, int layer)
 {
 	_brush = brush;

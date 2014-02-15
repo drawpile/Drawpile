@@ -37,6 +37,7 @@ void BrushBase::begin(const paintcore::Point& point, bool right)
 		brush
 	};
 
+	client().pauseInput(scene().strokepreview()->pauseInput());
 	scene().strokepreview()->startStroke(brush, point, layer());
 
 	client().sendUndopoint();
@@ -57,6 +58,7 @@ void BrushBase::end()
 {
 	scene().strokepreview()->endStroke();
 	client().sendPenup();
+	client().pauseInput(false);
 }
 
 }

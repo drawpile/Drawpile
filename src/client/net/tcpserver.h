@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -51,6 +51,8 @@ public:
 
 	int uploadQueueBytes() const;
 
+	void pauseInput(bool pause);
+
 signals:
 	void loggedIn(int userid, bool join);
 	void loggingOut();
@@ -76,6 +78,7 @@ private:
 	protocol::MessageQueue *_msgqueue;
 	LoginHandler *_loginstate;
 	QString _error;
+	bool _paused;
 };
 
 }

@@ -44,6 +44,7 @@ public:
 	virtual void takeStrokes(int count) = 0;
 	virtual void endStroke() = 0;
 	virtual void clear() = 0;
+	virtual bool pauseInput() const { return false; }
 
 protected:
 	CanvasScene * const _scene;
@@ -113,6 +114,7 @@ public:
 	void endStroke();
 	void takeStrokes(int count);
 	void clear();
+	bool pauseInput() const;
 
 private:
 	struct Stroke {

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -52,6 +52,12 @@ public:
      * @brief Log out from the server
      */
     virtual void logout() = 0;
+
+	/**
+	 * @brief Hold input messages until unpaused
+	 * @param pause
+	 */
+	virtual void pauseInput(bool pause) = 0;
 
     /**
      * @brief Is this a local server?

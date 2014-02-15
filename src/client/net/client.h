@@ -74,6 +74,12 @@ public:
 	void disconnectFromServer();
 
 	/**
+	 * @brief Pause input message handling
+	 * @param pause
+	 */
+	void pauseInput(bool pause);
+
+	/**
 	 * @brief Get the local user's user/context ID
 	 * @return user ID
 	 */
