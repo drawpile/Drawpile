@@ -73,7 +73,7 @@ KisCurveWidget::KisCurveWidget(QWidget *parent, Qt::WindowFlags f)
     setMouseTracking(true);
     setAutoFillBackground(false);
     setAttribute(Qt::WA_OpaquePaintEvent);
-    setMinimumSize(150, 50);
+	setMinimumSize(50, 50);
 
     d->setCurveModified();
 	emit curveChanged(curve());
@@ -258,7 +258,6 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
     // FIXME: let's user tell the last word (in config)
     //p.setRenderHint(QPainter::Antialiasing);
 
-
     //  draw background
     if (!d->m_pix.isNull()) {
         if (d->m_pixmapDirty || !d->m_pixmapCache) {
@@ -274,8 +273,8 @@ void KisCurveWidget::paintEvent(QPaintEvent *)
     } else
         p.fillRect(rect(), palette().background());
 
-
     d->drawGrid(p, wWidth, wHeight);
+	p.drawRect(QRect(0, 0, wWidth, wHeight));
 
 	p.setRenderHint(QPainter::Antialiasing);
 

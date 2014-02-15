@@ -50,7 +50,7 @@ CanvasView::CanvasView(QWidget *parent)
 	: QGraphicsView(parent), _pendown(NOTDOWN), _specialpenmode(false), _isdragging(DRAG_NOTRANSFORM),
 	_dragbtndown(DRAG_NOTRANSFORM), _outlinesize(10), _dia(20),
 	_enableoutline(true), _showoutline(true), _zoom(100), _rotate(0), _scene(0),
-	_smoothing(0), _pressuremode(PRESSUREMODE_NONE), _usestylus(true),
+	_smoothing(0), _pressuremode(PRESSUREMODE_STYLUS),
 	_locked(false), _pointertracking(false)
 {
 	viewport()->setAcceptDrops(true);
@@ -283,11 +283,6 @@ void CanvasView::setPressureMode(PressureMode mode, float param)
 {
 	_pressuremode = PressureMode(mode);
 	_modeparam = param;
-}
-
-void CanvasView::setStylusPressureEnabled(bool enabled)
-{
-	_usestylus = enabled;
 }
 
 void CanvasView::setPressureCurve(const KisCubicCurve &curve)
@@ -534,15 +529,9 @@ bool CanvasView::viewportEvent(QEvent *event)
 
 float CanvasView::mapPressure(float pressure, bool stylus)
 {
-	if(stylus && _usestylus) {
-		// Use real pressure
-		return _pressurecurve.value(pressure);
-	}
-
-	// Otherwise fake pressure
 	switch(_pressuremode) {
-	case PRESSUREMODE_NONE:
-		return 1.0;
+	case PRESSUREMODE_STYLUS:
+		return stylus ? _pressurecurve.value(pressure) : 1.0;
 
 	case PRESSUREMODE_DISTANCE: {
 		float d = qMin(_pointerdistance, _modeparam) / _modeparam;

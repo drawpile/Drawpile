@@ -39,8 +39,8 @@ InputSettings::InputSettings(QWidget *parent) :
 	QSettings cfg;
 	cfg.beginGroup("input");
 	_ui->smoothing->setValue(cfg.value("smoothing", 0).toInt());
-	_ui->usestylus->setChecked(cfg.value("usestylus", true).toBool());
-	_ui->fakepressure->setCurrentIndex(cfg.value("pressuremode", 0).toInt());
+	_ui->pressuresrc->setCurrentIndex(cfg.value("pressuremode", 0).toInt());
+	_ui->stackedWidget->setCurrentIndex(_ui->pressuresrc->currentIndex());
 
 	if(cfg.contains("pressurecurve")) {
 		KisCubicCurve curve;
@@ -75,8 +75,7 @@ InputSettings::~InputSettings()
 	cfg.beginGroup("input");
 
 	cfg.setValue("smoothing", _ui->smoothing->value());
-	cfg.setValue("usestylus", _ui->usestylus->isChecked());
-	cfg.setValue("pressuremode", _ui->fakepressure->currentIndex());
+	cfg.setValue("pressuremode", _ui->pressuresrc->currentIndex());
 	cfg.setValue("pressurecurve", _ui->stylusCurve->curve().toString());
 	cfg.setValue("distancecurve", _ui->distanceCurve->curve().toString());
 	cfg.setValue("velocitycurve", _ui->velocityCurve->curve().toString());
@@ -94,24 +93,22 @@ void InputSettings::connectCanvasView(widgets::CanvasView *view)
 	view->setPressureCurve(_ui->stylusCurve->curve());
 	view->setDistanceCurve(_ui->distanceCurve->curve());
 	view->setVelocityCurve(_ui->velocityCurve->curve());
-	view->setStylusPressureEnabled(_ui->usestylus->isChecked());
 	updateFakePressureMode();
 
 	connect(_ui->smoothing, SIGNAL(valueChanged(int)), view, SLOT(setStrokeSmoothing(int)));
-	connect(_ui->usestylus, SIGNAL(toggled(bool)), view, SLOT(setStylusPressureEnabled(bool)));
 	connect(_ui->stylusCurve, SIGNAL(curveChanged(KisCubicCurve)), view, SLOT(setPressureCurve(KisCubicCurve)));
 	connect(_ui->distanceCurve, SIGNAL(curveChanged(KisCubicCurve)), view, SLOT(setDistanceCurve(KisCubicCurve)));
 	connect(_ui->velocityCurve, SIGNAL(curveChanged(KisCubicCurve)), view, SLOT(setVelocityCurve(KisCubicCurve)));
 
-	connect(_ui->fakepressure, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFakePressureMode()));
+	connect(_ui->pressuresrc, SIGNAL(currentIndexChanged(int)), this, SLOT(updateFakePressureMode()));
 	connect(_ui->distance, SIGNAL(valueChanged(int)), this, SLOT(updateFakePressureMode()));
 	connect(_ui->velocity, SIGNAL(valueChanged(int)), this, SLOT(updateFakePressureMode()));
 }
 
 void InputSettings::updateFakePressureMode()
 {
-	switch(_ui->fakepressure->currentIndex()) {
-	case 0: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_NONE, 0); break;
+	switch(_ui->pressuresrc->currentIndex()) {
+	case 0: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_STYLUS, 0); break;
 	case 1: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_DISTANCE, _ui->distance->value()); break;
 	case 2: _canvasview->setPressureMode(widgets::CanvasView::PRESSUREMODE_VELOCITY, _ui->velocity->value()); break;
 	}

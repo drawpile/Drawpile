@@ -52,7 +52,7 @@ class CanvasView : public QGraphicsView
 {
 	Q_OBJECT
 	public:
-		enum PressureMode { PRESSUREMODE_NONE, PRESSUREMODE_DISTANCE, PRESSUREMODE_VELOCITY };
+		enum PressureMode { PRESSUREMODE_STYLUS, PRESSUREMODE_DISTANCE, PRESSUREMODE_VELOCITY };
 
 		CanvasView(QWidget *parent=0);
 
@@ -126,9 +126,6 @@ class CanvasView : public QGraphicsView
 
 		//! Set stroke smoothing strength
 		void setStrokeSmoothing(int smoothing);
-
-		//! Enable use of tablet pressure
-		void setStylusPressureEnabled(bool enabled);
 
 		//! Set stylus pressure adjustment curve
 		void setPressureCurve(const KisCubicCurve &curve);
@@ -232,7 +229,6 @@ class CanvasView : public QGraphicsView
 		KisCubicCurve _pressurecurve;
 		KisCubicCurve _pressuredistance;
 		KisCubicCurve _pressurevelocity;
-		bool _usestylus;
 
 		bool _locked;
 		bool _pointertracking;

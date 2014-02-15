@@ -6,16 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>208</width>
+    <width>215</width>
     <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>3</number>
+    <number>5</number>
    </property>
    <property name="leftMargin">
     <number>3</number>
@@ -31,11 +31,14 @@
    </property>
    <item>
     <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <property name="horizontalSpacing">
       <number>3</number>
      </property>
      <property name="verticalSpacing">
-      <number>3</number>
+      <number>5</number>
      </property>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
@@ -63,18 +66,15 @@
      <item row="1" column="0">
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Fake pressure:</string>
+        <string>Pressure:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="fakepressure">
-       <property name="toolTip">
-        <string>Pressure emulation mode for mouse</string>
-       </property>
+      <widget class="QComboBox" name="pressuresrc">
        <item>
         <property name="text">
-         <string>No pressure</string>
+         <string>Stylus</string>
         </property>
        </item>
        <item>
@@ -89,39 +89,15 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="0" colspan="2">
-      <widget class="QCheckBox" name="usestylus">
-       <property name="toolTip">
-        <string>Uncheck this to use emulated pressure for tablet input as well</string>
-       </property>
-       <property name="text">
-        <string>Use stylus pressure</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </item>
    <item>
-    <widget class="QToolBox" name="toolBox">
+    <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
-     <property name="tabSpacing">
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>202</width>
-        <height>160</height>
-       </rect>
-      </property>
-      <attribute name="label">
-       <string>Stylus pressure</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout">
+     <widget class="QWidget" name="page_4">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
         <number>0</number>
        </property>
@@ -141,29 +117,18 @@
         <widget class="KisCurveWidget" name="stylusCurve" native="true">
          <property name="minimumSize">
           <size>
-           <width>150</width>
-           <height>125</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_2">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>202</width>
-        <height>160</height>
-       </rect>
-      </property>
-      <attribute name="label">
-       <string>Distance to pressure</string>
-      </attribute>
+     <widget class="QWidget" name="page_5">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
-        <number>0</number>
+        <number>3</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -180,23 +145,32 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="spacing">
-          <number>3</number>
+          <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_3">
-           <property name="minimumSize">
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
             <size>
-             <width>0</width>
-             <height>16</height>
+             <width>10</width>
+             <height>20</height>
             </size>
            </property>
-           <property name="text">
-            <string>Distance:</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
          <item>
           <widget class="QSlider" name="distance">
+           <property name="toolTip">
+            <string>Curve distance</string>
+           </property>
+           <property name="autoFillBackground">
+            <bool>false</bool>
+           </property>
            <property name="minimum">
             <number>10</number>
            </property>
@@ -209,7 +183,29 @@
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+           <property name="tickInterval">
+            <number>10</number>
+           </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>10</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -217,29 +213,18 @@
         <widget class="KisCurveWidget" name="distanceCurve" native="true">
          <property name="minimumSize">
           <size>
-           <width>150</width>
-           <height>125</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="page_3">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>202</width>
-        <height>160</height>
-       </rect>
-      </property>
-      <attribute name="label">
-       <string>Velocity to pressure</string>
-      </attribute>
+     <widget class="QWidget" name="page_6">
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <property name="spacing">
-        <number>0</number>
+        <number>3</number>
        </property>
        <property name="leftMargin">
         <number>0</number>
@@ -256,23 +241,29 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
-          <number>3</number>
+          <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_4">
-           <property name="minimumSize">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
             <size>
-             <width>0</width>
-             <height>16</height>
+             <width>10</width>
+             <height>20</height>
             </size>
            </property>
-           <property name="text">
-            <string>Velocity:</string>
-           </property>
-          </widget>
+          </spacer>
          </item>
          <item>
           <widget class="QSlider" name="velocity">
+           <property name="toolTip">
+            <string>Velocity range</string>
+           </property>
            <property name="minimum">
             <number>10</number>
            </property>
@@ -285,7 +276,29 @@
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+           <property name="tickInterval">
+            <number>10</number>
+           </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_4">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>10</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>
@@ -293,8 +306,8 @@
         <widget class="KisCurveWidget" name="velocityCurve" native="true">
          <property name="minimumSize">
           <size>
-           <width>150</width>
-           <height>125</height>
+           <width>50</width>
+           <height>50</height>
           </size>
          </property>
         </widget>
@@ -316,18 +329,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>fakepressure</sender>
+   <sender>pressuresrc</sender>
    <signal>activated(int)</signal>
-   <receiver>toolBox</receiver>
+   <receiver>stackedWidget</receiver>
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>134</x>
+     <x>135</x>
      <y>31</y>
     </hint>
     <hint type="destinationlabel">
-     <x>119</x>
-     <y>77</y>
+     <x>192</x>
+     <y>200</y>
     </hint>
    </hints>
   </connection>
