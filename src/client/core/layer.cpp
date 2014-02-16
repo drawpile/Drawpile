@@ -399,13 +399,17 @@ void Layer::putImage(int x, int y, QImage image, bool blend)
 	}
 }
 
-void Layer::fillRect(const QRect &rect, const QColor &color, int blendmode)
+void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 {
-	if(rect.contains(QRect(0, 0, _width, _height)) && blendmode==255) {
+	const QRect canvas(0, 0, _width, _height);
+
+	if(rectangle.contains(canvas) && blendmode==255) {
 		// Fill entire layer
 		fillColor(color);
 		return;
 	}
+
+	QRect rect = rectangle.intersected(canvas);
 
 	uchar mask[Tile::LENGTH];
 	if(blendmode==255)

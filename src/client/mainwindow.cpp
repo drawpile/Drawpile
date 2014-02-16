@@ -1412,14 +1412,17 @@ void MainWindow::fillBgArea()
 
 void MainWindow::fillArea(const QColor &color)
 {
+	const QRect bounds = QRect(0, 0, _canvas->width(), _canvas->height());
 	QRect area;
 	if(_canvas->selectionItem())
-		area = _canvas->selectionItem()->rect();
+		area = _canvas->selectionItem()->rect().intersected(bounds);
 	else
-		area = QRect(0, 0, _canvas->width(), _canvas->height());
+		area = bounds;
 
-	_client->sendUndopoint();
-	_client->sendFillRect(_dock_layers->currentLayer(), area, color);
+	if(!area.isEmpty()) {
+		_client->sendUndopoint();
+		_client->sendFillRect(_dock_layers->currentLayer(), area, color);
+	}
 }
 
 void MainWindow::resizeCanvas()
