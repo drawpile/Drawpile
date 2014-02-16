@@ -271,7 +271,7 @@ QImage LayerStack::toFlatImage() const
 	Layer flat(0, 0, "", Qt::transparent, QSize(_width, _height));
 
 	foreach(const Layer *l, _layers)
-		flat.merge(l);
+		flat.merge(l, true);
 
 	return flat.toImage();
 }

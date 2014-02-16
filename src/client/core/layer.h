@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ class Layer {
 		void removeSublayer(int id);
 
 		//! Merge a layer
-		void merge(const Layer *layer);
+		void merge(const Layer *layer, bool sublayers=false);
 
 		//! Fill the layer with solid color
 		void fillColor(const QColor& color);

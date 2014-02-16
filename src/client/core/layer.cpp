@@ -674,8 +674,9 @@ void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const 
 
 /**
  * @param layer the layer that will be merged to this
+ * @param sublayers merge sublayers as well
  */
-void Layer::merge(const Layer *layer)
+void Layer::merge(const Layer *layer, bool sublayers)
 {
 	Q_ASSERT(layer->_xtiles == _xtiles);
 	Q_ASSERT(layer->_ytiles == _ytiles);
@@ -683,17 +684,37 @@ void Layer::merge(const Layer *layer)
 	// Gather a list of non-null tiles to merge
 	QVector<int> mergeidx;
 	mergeidx.reserve(_tiles.size());
-	for(int i=0;i<_tiles.size();++i)
-		if(!layer->_tiles[i].isNull())
+	for(int i=0;i<_tiles.size();++i) {
+		bool isnull = layer->_tiles[i].isNull();
+
+		if(isnull && sublayers) {
+			foreach(Layer *sl, _sublayers) {
+				if(sl->_tiles[i].isNull()) {
+					isnull = false;
+					break;
+				}
+			}
+		}
+
+		if(!isnull)
 			mergeidx.append(i);
+	}
 
 	// Detach tile vector explicitly to make sure concurrent modifications
 	// are all done to the same vector
 	_tiles.detach();
 
 	// Merge tiles
-	QtConcurrent::blockingMap(mergeidx, [this, layer](int idx) {
+	QtConcurrent::blockingMap(mergeidx, [this, layer, sublayers](int idx) {
 		_tiles[idx].merge(layer->_tiles[idx], layer->_opacity, layer->blendmode());
+
+		if(sublayers) {
+			foreach(Layer *sl, layer->_sublayers) {
+				if(sl->visible()) {
+					_tiles[idx].merge(sl->_tiles[idx], sl->_opacity, sl->blendmode());
+				}
+			}
+		}
 	});
 
 	// Merging a layer does not cause an immediate visual change, so we don't
