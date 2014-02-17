@@ -437,9 +437,8 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		} else if(delta<0) {
 			setZoom(_zoom / (1-delta));
 		}
-	} else if(_pendown == NOTDOWN && (event->modifiers() & Qt::ShiftModifier)) {
-		float delta = event->angleDelta().y() / (30 * 4.0);
-		_toolbox.toolsettings()->quickAdjustCurrent1(delta);
+	} else if((event->modifiers() & Qt::ShiftModifier)) {
+		doQuickAdjust1(event->angleDelta().y() / (30 * 4.0));
 	} else {
 		QGraphicsView::wheelEvent(event);
 	}
@@ -560,6 +559,13 @@ void CanvasView::updateOutline(const paintcore::Point& point) {
 					point.y() - _outlinesize, _dia, _dia));
 		updateScene(rect);
 	}
+}
+
+void CanvasView::doQuickAdjust1(float delta)
+{
+	// Brush attribute adjustment is allowed only when stroke is not in progress
+	if(_pendown == NOTDOWN)
+		_toolbox.toolsettings()->quickAdjustCurrent1(delta);
 }
 
 QPoint CanvasView::viewCenterPoint() const

@@ -1785,8 +1785,6 @@ void MainWindow::setupActions()
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 
-	QAction *swapcolors = makeAction("swapcolors", 0, tr("Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
-
 	// Default tool
 	brushtool->setChecked(true);
 	_lasttool = brushtool;
@@ -1807,7 +1805,19 @@ void MainWindow::setupActions()
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());
 	toolsmenu->addSeparator();
-	toolsmenu->addAction(swapcolors);
+
+	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
+
+	QAction *swapcolors = makeAction("swapcolors", 0, tr("&Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
+	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease brush size"), QString(), Qt::Key_BracketLeft);
+	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase brush size"), QString(), Qt::Key_BracketRight);
+
+	connect(smallerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(-1);});
+	connect(biggerbrush, &QAction::triggered, [this]() { _view->doQuickAdjust1(1);});
+
+	toolshortcuts->addAction(smallerbrush);
+	toolshortcuts->addAction(biggerbrush);
+	toolshortcuts->addAction(swapcolors);
 
 	QToolBar *drawtools = new QToolBar("Drawing tools");
 	drawtools->setObjectName("drawtoolsbar");

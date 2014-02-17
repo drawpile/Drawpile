@@ -3,7 +3,7 @@
  * Hiding laser trails will disable the laser pointer tool
  * New stroke preview style: realistic preview using a temporary layer
  * Simplified input settings dock
- * Brush size shortcut: Shift+mouse wheel to adjust brush size
+ * Brush size shortcut: Shift+mouse wheel or '[' and ']' to adjust brush size
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries

@@ -84,6 +84,9 @@ class CanvasView : public QGraphicsView
 		//! The center point of the view in scene coordinates
 		QPoint viewCenterPoint() const;
 
+		//! Quick adjust current tool attribute 1 if possible
+		void doQuickAdjust1(float delta);
+
 	signals:
 		//! An image has been dropped on the widget
 		void imageDropped(const QImage &image);
