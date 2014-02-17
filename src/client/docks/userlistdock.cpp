@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ UserList::UserList(QWidget *parent)
 	connect(_ui->lockButton, SIGNAL(clicked()), this, SLOT(lockSelected()));
 	connect(_ui->kickButton, SIGNAL(clicked()), this, SLOT(kickSelected()));
 	connect(_ui->undoButton, SIGNAL(clicked()), this, SLOT(undoSelected()));
+	connect(_ui->redoButton, SIGNAL(clicked()), this, SLOT(redoSelected()));
 	connect(_ui->opButton, SIGNAL(clicked()), this, SLOT(opSelected()));
 }
 
@@ -52,6 +53,7 @@ void UserList::setOperatorMode(bool op)
 	_ui->lockButton->setEnabled(op);
 	_ui->kickButton->setEnabled(op);
 	_ui->undoButton->setEnabled(op);
+	_ui->redoButton->setEnabled(op);
 	_ui->opButton->setEnabled(op);
 }
 
@@ -92,6 +94,13 @@ void UserList::undoSelected()
 	QModelIndex idx = currentSelection();
 	if(idx.isValid())
 		_client->sendUndo(1, idx.data().value<net::User>().id);
+}
+
+void UserList::redoSelected()
+{
+	QModelIndex idx = currentSelection();
+	if(idx.isValid())
+		_client->sendUndo(-1, idx.data().value<net::User>().id);
 }
 
 void UserList::opSelected()

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 #include <QDockWidget>
 #include <QItemDelegate>
 
-class QListView;
 class Ui_UserBox;
 
 namespace net {
@@ -50,6 +49,7 @@ private slots:
 	void kickSelected();
 	void opSelected();
 	void undoSelected();
+	void redoSelected();
 
 	void dataChanged(const QModelIndex &topLeft, const QModelIndex & bottomRight);
 	void selectionChanged(const QItemSelection &selected);
@@ -63,7 +63,7 @@ private:
 };
 
 /**
- * A delegate to display a session user, optionally with buttons to lock or kick the user.
+ * A delegate to display a session user with status icons
  */
 class UserListDelegate : public QItemDelegate {
 Q_OBJECT

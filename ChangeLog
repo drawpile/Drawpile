@@ -4,6 +4,7 @@
  * New stroke preview style: realistic preview using a temporary layer
  * Simplified input settings dock
  * Brush size shortcut: Shift+mouse wheel or '[' and ']' to adjust brush size
+ * Added "redo" button to user list dock
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries
