@@ -437,6 +437,9 @@ void CanvasView::wheelEvent(QWheelEvent *event)
 		} else if(delta<0) {
 			setZoom(_zoom / (1-delta));
 		}
+	} else if(_pendown == NOTDOWN && (event->modifiers() & Qt::ShiftModifier)) {
+		float delta = event->angleDelta().y() / (30 * 4.0);
+		_toolbox.toolsettings()->quickAdjustCurrent1(delta);
 	} else {
 		QGraphicsView::wheelEvent(event);
 	}

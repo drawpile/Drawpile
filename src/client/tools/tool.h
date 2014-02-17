@@ -120,6 +120,9 @@ class ToolCollection {
 		//! Set the tool settings widget from which current settings are fetched
 		void setToolSettings(docks::ToolSettings *settings);
 
+		//! Get the tool settings widget
+		docks::ToolSettings *toolsettings() const { return _toolsettings; }
+
 		//! Set the currently active layer
 		void selectLayer(int layer_id);
 

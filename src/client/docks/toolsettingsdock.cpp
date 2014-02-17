@@ -122,6 +122,11 @@ void ToolSettings::setBackground(const QColor& color)
 	currenttool_->setBackground(color);
 }
 
+void ToolSettings::quickAdjustCurrent1(float adjustment)
+{
+	currenttool_->quickAdjust1(adjustment);
+}
+
 /**
  * Get a brush with settings from the currently visible widget
  * @return brush

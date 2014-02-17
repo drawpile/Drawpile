@@ -151,6 +151,11 @@ void PenSettings::setBackground(const QColor& color)
 	_ui->preview->setColor2(color);
 }
 
+void PenSettings::quickAdjust1(float adjustment)
+{
+	_ui->brushsize->setValue(_ui->brushsize->value() + qRound(adjustment));
+}
+
 const paintcore::Brush& PenSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
@@ -239,6 +244,11 @@ void EraserSettings::setBackground(const QColor& color)
 {
 	// This is used just for the preview background color
 	_ui->preview->setColor2(color);
+}
+
+void EraserSettings::quickAdjust1(float adjustment)
+{
+	_ui->brushsize->setValue(_ui->brushsize->value() + qRound(adjustment));
 }
 
 const paintcore::Brush& EraserSettings::getBrush(bool swapcolors) const
@@ -339,6 +349,11 @@ void BrushSettings::setBackground(const QColor& color)
 	_ui->preview->setColor2(color);
 }
 
+void BrushSettings::quickAdjust1(float adjustment)
+{
+	_ui->brushsize->setValue(_ui->brushsize->value() + qRound(adjustment));
+}
+
 const paintcore::Brush& BrushSettings::getBrush(bool swapcolors) const
 {
 	return _ui->preview->brush(swapcolors);
@@ -431,6 +446,11 @@ int LaserPointerSettings::trailPersistence() const
 void LaserPointerSettings::setForeground(const QColor &color)
 {
 	_ui->color0->setColor(color);
+}
+
+void LaserPointerSettings::quickAdjust1(float adjustment)
+{
+	_ui->persistence->setValue(_ui->persistence->value() + qRound(adjustment));
 }
 
 const paintcore::Brush& LaserPointerSettings::getBrush(bool swapcolors) const
@@ -541,6 +561,11 @@ void SimpleSettings::setForeground(const QColor& color)
 void SimpleSettings::setBackground(const QColor& color)
 {
 	_ui->preview->setColor2(color);
+}
+
+void SimpleSettings::quickAdjust1(float adjustment)
+{
+	_ui->brushsize->setValue(_ui->brushsize->value() + qRound(adjustment));
 }
 
 const paintcore::Brush& SimpleSettings::getBrush(bool swapcolors) const

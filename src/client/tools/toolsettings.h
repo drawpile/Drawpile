@@ -86,6 +86,15 @@ public:
 	virtual void setBackground(const QColor& color) = 0;
 
 	/**
+	 * @brief Quick adjust a tool parameter
+	 *
+	 * This is a shortcut for adjusting a tool parameter.
+	 * For brush based tools, this adjust the size.
+	 * @param adjustment how much to adjust by (-1/1 is the normal rate)
+	 */
+	virtual void quickAdjust1(float adjustment) = 0;
+
+	/**
 	 * @brief Get a brush based on the settings in the UI
 	 * An UI widget must have been created before this can be called.
 	 *
@@ -148,6 +157,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
+	void quickAdjust1(float adjustment);
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
@@ -175,6 +185,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
+	void quickAdjust1(float adjustment);
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
@@ -200,6 +211,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
+	void quickAdjust1(float adjustment);
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
@@ -225,6 +237,7 @@ public:
 
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
+	void quickAdjust1(float adjustment);
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 	int getSize() const;
@@ -250,6 +263,7 @@ public:
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 	void setForeground(const QColor& color);
 	void setBackground(const QColor& color);
+	void quickAdjust1(float adjustment) { Q_UNUSED(adjustment); }
 
 	int getSize() const { return 0; }
 
@@ -366,6 +380,7 @@ public:
 	int trailPersistence() const;
 
 	void setForeground(const QColor& color);
+	void quickAdjust1(float adjustment);
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
 signals:

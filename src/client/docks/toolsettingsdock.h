@@ -65,6 +65,9 @@ class ToolSettings : public QDockWidget
 		//! Get the laser pointer settings page
 		tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
 
+		//! Quick adjust current tool
+		void quickAdjustCurrent1(float adjustment);
+
 	signals:
 		//! This signal is emitted when the current tool changes its size
 		void sizeChanged(int size);
