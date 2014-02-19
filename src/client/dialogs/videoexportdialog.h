@@ -41,12 +41,15 @@ public:
 	VideoExporter *getExporter();
 
 private slots:
-	void selectOutputDirectory();
+	void selectExportFormat(int idx);
+	void selectContainerFormat(const QString &fmt);
 
 private:
 	VideoExporter *getImageSeriesExporter();
+	VideoExporter *getFfmpegExporter();
 
 	Ui_VideoExport *_ui;
+	QString _lastpath;
 };
 
 }

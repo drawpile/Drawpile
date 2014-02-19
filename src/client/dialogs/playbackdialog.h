@@ -61,13 +61,21 @@ public slots:
 	void nextCommand();
 	void nextSequence();
 
+protected:
+	void closeEvent(QCloseEvent *);
+
 private slots:
 	void exportButtonClicked();
 	void exportFrame();
 	void exportConfig();
 
+	void exporterError(const QString &message);
+	void exporterReady();
+	void exporterFinished();
+
 private:
 	void endOfFileReached();
+	bool waitForExporter();
 
 	Ui_PlaybackDialog *_ui;
 	drawingboard::CanvasScene *_canvas;
@@ -75,11 +83,15 @@ private:
 	VideoExporter *_exporter;
 	QTimer *_timer;
 	float _speedfactor;
-	bool _play;
 
 	QAction *_exportFrameAction;
 	QAction *_autoExportAction;
 	QAction *_exportConfigAction;
+
+	bool _play;
+	bool _exporterReady;
+	bool _waitedForExporter;
+	bool _closing;
 };
 
 }

@@ -20,15 +20,17 @@
 #ifndef VIDEOEXPORTER_H
 #define VIDEOEXPORTER_H
 
+#include <QThread>
 #include <QString>
+#include <QSize>
 
 class QImage;
 
-class VideoExporter
+class VideoExporter : public QObject
 {
+	Q_OBJECT
 public:
-	VideoExporter();
-	virtual ~VideoExporter() = default;
+	VideoExporter(QObject *parent);
 
 	/**
 	 * @brief Set framerate
@@ -38,27 +40,28 @@ public:
 	int fps() const { return _fps; }
 
 	/**
-	 * @brief Set whether frames should be scaled to the original size
-	 * @param scale
+	 * @brief Can each frame keep their original size
+	 *
+	 * If variable size is false (as is required by some exporters, such as ffmpeg,)
+	 * frames are scaled to framesize() before they are passed to the exporter.
+	 * @param vs
 	 */
-	void setScaleToOriginal(bool scale) { _scaleToOriginal = scale; }
-	bool scaleToOriginal() const { return _scaleToOriginal; }
+	void setVariableSize(bool vs) { _variablesize = vs; }
+	bool isVariableSize() const { return _variablesize; }
 
 	/**
-	 * @brief Add a new frame to the video
-	 *
-	 * If an error occurs, get the error message with errorString()
-	 *
-	 * @param frame frame content
-	 * @return false on error
+	 * @brief Force output to specific size
+	 * @param size
 	 */
-	bool saveFrame(const QImage &image);
+	void setFrameSize(const QSize &size);
 
 	/**
-	 * @brief Get the last error message
+	 * @brief Get the output frame size
+	 *
+	 * Note. This is only meaningful if isVariableSize() == false
 	 * @return
 	 */
-	const QString &errorString() const { return _error; }
+	const QSize &framesize() const { return _targetsize; }
 
 	/**
 	 * @brief Get current frame
@@ -72,21 +75,41 @@ public:
 	 */
 	float time() const { return frame() / float(_fps); }
 
+	void start();
+
 	/**
-	 * @brief Finalize video
+	 * @brief Add a new frame to the video
+	 *
+	 * @param image frame content
 	 */
-	virtual void finish() = 0;
+	void saveFrame(const QImage &image);
+
+	/**
+	 * @brief Stop exporter
+	 */
+	void finish();
+
+signals:
+	//! This signal is emitted when the exporter becomes ready for a new frame
+	void exporterReady();
+
+	//! This signal is emitted when an error occurs. The exporter will terminate
+	void exporterError(const QString &message);
+
+	//! This signal is emitted after the exporter has shut down normally
+	void exporterFinished();
 
 protected:
-	void setErrorString(const QString &error) { _error = error; }
-	virtual bool writeFrame(const QImage &image) = 0;
+	void run();
+	virtual void initExporter() = 0;
+	virtual void writeFrame(const QImage &image) = 0;
+	virtual void shutdownExporter() = 0;
 
 private:
 	int _fps;
-	bool _scaleToOriginal;
+	bool _variablesize;
 	int _frame;
-	QSize _originalSize;
-	QString _error;
+	QSize _targetsize;
 };
 
 #endif // VIDEOEXPORTER_H

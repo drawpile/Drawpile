@@ -96,6 +96,7 @@ set (
 	docks/inputsettingsdock.cpp
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
+	export/ffmpegexporter.cpp
 )
 
 set (

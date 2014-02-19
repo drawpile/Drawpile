@@ -23,6 +23,7 @@
 #include <QScopedPointer>
 #include <QTimer>
 #include <QMenu>
+#include <QCloseEvent>
 
 #include <cmath>
 
@@ -39,7 +40,7 @@
 namespace dialogs {
 
 PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent) :
-	QDialog(parent), _canvas(canvas), _reader(reader), _exporter(0), _speedfactor(1.0f), _play(false)
+	QDialog(parent), _canvas(canvas), _reader(reader), _exporter(0), _speedfactor(1.0f), _play(false), _closing(false)
 {
 	setWindowFlags(Qt::Tool);
 	_reader->setParent(this);
@@ -93,9 +94,21 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 PlaybackDialog::~PlaybackDialog()
 {
 	delete _ui;
+}
+
+void PlaybackDialog::closeEvent(QCloseEvent *event)
+{
 	if(_exporter) {
-		_exporter->finish();
-		delete _exporter;
+		event->ignore();
+		if(!_closing) {
+			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
+			_closing = true;
+			_exporter->finish();
+		}
+	} else {
+		if(_closing)
+			QApplication::restoreOverrideCursor();
+		QDialog::closeEvent(event);
 	}
 }
 
@@ -123,6 +136,11 @@ void PlaybackDialog::togglePlay(bool play)
 
 void PlaybackDialog::nextCommand()
 {
+	if(waitForExporter()) {
+		_waitedForExporter = true;
+		return;
+	}
+
 	recording::MessageRecord next = _reader->readNext();
 	switch(next.status) {
 	case recording::MessageRecord::OK:
@@ -161,6 +179,9 @@ void PlaybackDialog::nextCommand()
 
 void PlaybackDialog::nextSequence()
 {
+	if(waitForExporter())
+		return;
+
 	// Play back until either an undopoint or end-of-file is reached
 	bool loop=true;
 	while(loop) {
@@ -216,60 +237,103 @@ void PlaybackDialog::exportFrame()
 	if(_exporter) {
 		QImage img = _canvas->image();
 		if(!img.isNull()) {
-			if(!_exporter->saveFrame(img)) {
-				// Stop playback and exporting on error
-				if(_play)
-					_ui->play->setChecked(false);
-
-				QMessageBox::warning(this, tr("Export error"), _exporter->errorString());
-
-				delete _exporter;
-				_exporter = 0;
-				_exportConfigAction->setEnabled(true);
-				_ui->frameLabel->setEnabled(false);
-				_ui->timeLabel->setEnabled(false);
-			} else {
-				_ui->frameLabel->setText(QString::number(_exporter->frame()));
-
-				float time = _exporter->time();
-				int minutes = time / 60;
-				if(minutes>0) {
-					time = fmod(time, 60.0);
-					_ui->timeLabel->setText(tr("%1 m. %2 s.").arg(minutes).arg(time, 0, 'f', 2));
-				} else {
-					_ui->timeLabel->setText(tr("%1 s.").arg(time, 0, 'f', 2));
-				}
-
-				if(_ui->play->isEnabled()==false) {
-					// Stop exporting after saving the last frame
-					_exporter->finish();
-					delete _exporter;
-					_exporter = 0;
-					_ui->exportbutton->setEnabled(false);
-					_ui->frameLabel->setEnabled(false);
-					_ui->timeLabel->setEnabled(false);
-				}
-			}
+			Q_ASSERT(_exporterReady);
+			_exporterReady = false;
+			_ui->exportbutton->setEnabled(false);
+			_exporter->saveFrame(img);
 		}
 	}
 }
 
 void PlaybackDialog::exportConfig()
 {
-	VideoExportDialog *dialog = new VideoExportDialog(this);
+	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
 
-	dialog->exec();
+	VideoExporter *ve=0;
+	while(!ve) {
+		if(dialog->exec() != QDialog::Accepted)
+			return;
 
-	VideoExporter *ve = dialog->getExporter();
-	if(ve) {
-		_exporter = ve;
-		_exportFrameAction->setEnabled(true);
-		_exportConfigAction->setEnabled(false);
-		_ui->frameLabel->setEnabled(true);
-		_ui->timeLabel->setEnabled(true);
+		ve = dialog->getExporter();
+	}
+	_exporterReady = false;
+	_waitedForExporter = false;
+	_exporter = ve;
+	_exporter->setParent(this);
+
+	connect(_exporter, SIGNAL(exporterReady()), this, SLOT(exporterReady()), Qt::QueuedConnection);
+	connect(_exporter, SIGNAL(exporterError(QString)), this, SLOT(exporterError(QString)), Qt::QueuedConnection);
+	connect(_exporter, SIGNAL(exporterFinished()), this, SLOT(exporterFinished()), Qt::QueuedConnection);
+
+	_exporter->start();
+
+	_exportConfigAction->setEnabled(false);
+	_exportFrameAction->setEnabled(true);
+	_ui->frameLabel->setEnabled(true);
+	_ui->timeLabel->setEnabled(true);
+}
+
+bool PlaybackDialog::waitForExporter()
+{
+	if(!_exporter)
+		return false;
+	return !_exporterReady;
+}
+
+void PlaybackDialog::exporterReady()
+{
+	_ui->exportbutton->setEnabled(true);
+	_exporterReady = true;
+
+	_ui->frameLabel->setText(QString::number(_exporter->frame()));
+
+	float time = _exporter->time();
+	int minutes = time / 60;
+	if(minutes>0) {
+		time = fmod(time, 60.0);
+		_ui->timeLabel->setText(tr("%1 m. %2 s.").arg(minutes).arg(time, 0, 'f', 2));
+	} else {
+		_ui->timeLabel->setText(tr("%1 s.").arg(time, 0, 'f', 2));
 	}
 
-	delete dialog;
+	// Stop exporting after saving the last frame
+	if(_ui->play->isEnabled()==false) {
+		_exporter->finish();
+		_exporter = 0;
+		_ui->exportbutton->setEnabled(false);
+		_ui->frameLabel->setEnabled(false);
+		_ui->timeLabel->setEnabled(false);
+	}
+	// Tried to proceed to next frame while exporter was busy
+	else if(_waitedForExporter) {
+		_waitedForExporter = false;
+		nextCommand();
+	}
+}
+
+void PlaybackDialog::exporterError(const QString &message)
+{
+	// Stop playback on error
+	if(_play)
+		_ui->play->setChecked(false);
+
+	// Show warning message
+	QMessageBox::warning(this, tr("Video error"), message);
+
+	exporterFinished();
+}
+
+void PlaybackDialog::exporterFinished()
+{
+	_exporter = 0;
+	_ui->exportbutton->setEnabled(true);
+	_exportConfigAction->setEnabled(true);
+	_exportFrameAction->setEnabled(false);
+	_ui->frameLabel->setEnabled(false);
+	_ui->timeLabel->setEnabled(false);
+
+	if(_closing)
+		close();
 }
 
 recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidget *msgboxparent)

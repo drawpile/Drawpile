@@ -17,20 +17,38 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef IMAGESERIESEXPORTER_H
-#define IMAGESERIESEXPORTER_H
+#ifndef FFMPEGEXPORTER_H
+#define FFMPEGEXPORTER_H
+
+#include <QProcess>
 
 #include "videoexporter.h"
 
-class ImageSeriesExporter : public VideoExporter
+class FfmpegExporter : public VideoExporter
 {
 	Q_OBJECT
 public:
-	ImageSeriesExporter(QObject *parent=0);
+	FfmpegExporter(QObject *parent=0);
 
-	void setOutputPath(const QString &path) { _path = path; }
-	void setFilePattern(const QString &pattern) { _filepattern = pattern; }
-	void setFormat(const QString &format) { _format = format.toLatin1(); }
+	void setFilename(const QString &filename) { _filename = filename; }
+	void setSoundtrack(const QString &filename) { _soundtrack = filename; }
+	void setFormat(const QString &format) { _format = format; }
+	void setVideoCodec(const QString &codec) { _videoCodec = codec; }
+	void setAudioCodec(const QString &codec) { _audioCodec = codec; }
+
+	/**
+	 * @brief Set video quality
+	 *
+	 * Quality range is 0 (low) to 3 (very high)
+	 * @param quality
+	 */
+	void setQuality(int quality) { _quality = quality; }
+
+	static bool isFfmpegAvailable();
+
+private slots:
+	void processError(QProcess::ProcessError error);
+	void bytesWritten();
 
 protected:
 	void initExporter();
@@ -38,9 +56,14 @@ protected:
 	void shutdownExporter();
 
 private:
-	QString _path;
-	QString _filepattern;
-	QByteArray _format;
+	QProcess *_encoder;
+
+	QString _filename;
+	QString _soundtrack;
+	QString _format;
+	QString _videoCodec;
+	QString _audioCodec;
+	int _quality;
 };
 
-#endif // IMAGESERIESEXPORTER_H
+#endif // FFMPEGEXPORTER_H

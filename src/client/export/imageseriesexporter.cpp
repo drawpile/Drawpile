@@ -24,7 +24,12 @@
 
 #include "imageseriesexporter.h"
 
-bool ImageSeriesExporter::writeFrame(const QImage &image)
+ImageSeriesExporter::ImageSeriesExporter(QObject *parent)
+	: VideoExporter(parent)
+{
+}
+
+void ImageSeriesExporter::writeFrame(const QImage &image)
 {
 	QString filename = _filepattern;
 	filename.replace(QLatin1Literal("{F}"), QString("%1").arg(frame(), 5, 10, QLatin1Char('0')));
@@ -33,15 +38,18 @@ bool ImageSeriesExporter::writeFrame(const QImage &image)
 	QString fullpath = QFileInfo(QDir(_path), filename).absoluteFilePath();
 
 	QImageWriter writer(fullpath, _format);
-	if(!writer.write(image)) {
-		setErrorString(writer.errorString());
-		return false;
-	}
-
-	return true;
+	if(!writer.write(image))
+		emit exporterError(writer.errorString());
+	else
+		emit exporterReady();
 }
 
-void ImageSeriesExporter::finish()
+void ImageSeriesExporter::initExporter()
 {
-	// no need to do anything here
+	emit exporterReady();
+}
+
+void ImageSeriesExporter::shutdownExporter()
+{
+	emit exporterFinished();
 }

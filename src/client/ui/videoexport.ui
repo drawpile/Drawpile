@@ -25,12 +25,14 @@
      </item>
      <item>
       <widget class="QComboBox" name="exportFormatChoice">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <item>
         <property name="text">
          <string>Image series</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Video</string>
         </property>
        </item>
       </widget>
@@ -83,11 +85,71 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QCheckBox" name="keepOriginalSize">
-        <property name="toolTip">
-         <string>Scale frames to original size if canvas is resized</string>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Size:</string>
         </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <item>
+         <widget class="QSpinBox" name="framewidth">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimum">
+           <number>10</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>1280</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>×</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="frameheight">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimum">
+           <number>10</number>
+          </property>
+          <property name="maximum">
+           <number>10000</number>
+          </property>
+          <property name="value">
+           <number>720</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="1">
+       <widget class="QCheckBox" name="keepOriginalSize">
         <property name="text">
          <string>Keep original frame size</string>
         </property>
@@ -108,46 +170,36 @@
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QStackedWidget" name="optionStack">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
         <widget class="QWidget" name="page">
          <layout class="QFormLayout" name="formLayout">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Output directory:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QLineEdit" name="outputDirectory"/>
-            </item>
-            <item>
-             <widget class="QToolButton" name="pickOutputDirectory">
-              <property name="text">
-               <string>...</string>
-              </property>
-              <property name="icon">
-               <iconset theme="document-open-folder" resource="resources.qrc">
-                <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
-              </property>
-              <property name="autoRaise">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
            <widget class="QLabel" name="label_5">
             <property name="text">
              <string>Image format:</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
              <widget class="QComboBox" name="imageFormatChoice"/>
@@ -167,14 +219,14 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
+          <item row="1" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>File name pattern:</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLineEdit" name="filenamePattern">
@@ -204,7 +256,7 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
+          <item row="2" column="0">
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
@@ -217,7 +269,7 @@
             </property>
            </spacer>
           </item>
-          <item row="4" column="0" colspan="2">
+          <item row="3" column="0" colspan="2">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Supported pattern placeholders:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{F}&lt;/span&gt; - frame number&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{E}&lt;/span&gt; - file extension&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -229,7 +281,175 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="page_2"/>
+        <widget class="QWidget" name="page_2">
+         <layout class="QFormLayout" name="formLayout_3">
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_9">
+            <item>
+             <widget class="QLineEdit" name="soundtrack"/>
+            </item>
+            <item>
+             <widget class="QToolButton" name="pickSoundtrack">
+              <property name="text">
+               <string>...</string>
+              </property>
+              <property name="icon">
+               <iconset theme="document-open" resource="resources.qrc">
+                <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Format:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QComboBox" name="videoFormat">
+              <property name="toolTip">
+               <string>Container format</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>AVI</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Matroska</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>WebM</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string notr="true">:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="videoCodec">
+              <property name="toolTip">
+               <string>Video codec</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>H.264</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>VP8</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Theora</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="audioCodec">
+              <property name="toolTip">
+               <string>Audio codec</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Original</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>MP3</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>AAC</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Vorbis</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_13">
+            <property name="text">
+             <string>Quality:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="videoquality">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>Low</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Normal</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Good</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Very good</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Soundtrack;</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="2">
+           <widget class="QLabel" name="noFfmpegWarning">
+            <property name="styleSheet">
+             <string notr="true">font-weight: bold;
+color: red;</string>
+            </property>
+            <property name="text">
+             <string>Error: Ffmpeg executable not found!</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -258,8 +478,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>256</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -274,12 +494,60 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>324</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>exportFormatChoice</sender>
+   <signal>activated(int)</signal>
+   <receiver>optionStack</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>35</x>
+     <y>251</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>keepOriginalSize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>framewidth</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>126</x>
+     <y>135</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>121</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>keepOriginalSize</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>frameheight</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>142</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>109</y>
     </hint>
    </hints>
   </connection>

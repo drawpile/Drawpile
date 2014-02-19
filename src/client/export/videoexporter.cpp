@@ -23,26 +23,36 @@
 
 #include "videoexporter.h"
 
-VideoExporter::VideoExporter()
-	: _fps(25), _scaleToOriginal(true), _frame(0), _originalSize(0, 0)
-{}
+VideoExporter::VideoExporter(QObject *parent)
+	: QObject(parent), _fps(25), _variablesize(true), _frame(0), _targetsize(0, 0)
+{
+}
 
-bool VideoExporter::saveFrame(const QImage &image)
+void VideoExporter::setFrameSize(const QSize &size)
+{
+	_targetsize = size;
+	setVariableSize(false);
+}
+
+void VideoExporter::finish()
+{
+	shutdownExporter();
+}
+
+void VideoExporter::saveFrame(const QImage &image)
 {
 	++_frame;
 
-	if(_originalSize.isNull()) {
-		_originalSize = image.size();
-	} else if(scaleToOriginal() && image.size() != _originalSize) {
-		QImage newframe = QImage(_originalSize, QImage::Format_ARGB32);
+	if(!isVariableSize() && image.size() != _targetsize) {
+		QImage newframe = QImage(_targetsize, QImage::Format_ARGB32);
 		newframe.fill(Qt::black);
 
-		QSize newsize = image.size().scaled(_originalSize, Qt::KeepAspectRatio);
+		QSize newsize = image.size().scaled(_targetsize, Qt::KeepAspectRatio);
 
 		QRect rect(
 					QPoint(
-						_originalSize.width()/2 - newsize.width()/2,
-						_originalSize.height()/2 - newsize.height()/2
+						_targetsize.width()/2 - newsize.width()/2,
+						_targetsize.height()/2 - newsize.height()/2
 					),
 					newsize
 		);
@@ -52,8 +62,14 @@ bool VideoExporter::saveFrame(const QImage &image)
 			painter.drawImage(rect, image, QRect(QPoint(), image.size()));
 		}
 
-		return writeFrame(newframe);
-	}
+		writeFrame(newframe);
 
-	return writeFrame(image);
+	} else {
+		writeFrame(image);
+	}
+}
+
+void VideoExporter::start()
+{
+	initExporter();
 }
