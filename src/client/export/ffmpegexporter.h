@@ -21,6 +21,7 @@
 #define FFMPEGEXPORTER_H
 
 #include <QProcess>
+#include <QByteArray>
 
 #include "videoexporter.h"
 
@@ -48,7 +49,7 @@ public:
 
 private slots:
 	void processError(QProcess::ProcessError error);
-	void bytesWritten();
+	void bytesWritten(qint64 bytes);
 
 protected:
 	void initExporter();
@@ -64,6 +65,10 @@ private:
 	QString _videoCodec;
 	QString _audioCodec;
 	int _quality;
+
+	QByteArray _writebuffer;
+	qint64 _written;
+	qint64 _chunk;
 };
 
 #endif // FFMPEGEXPORTER_H

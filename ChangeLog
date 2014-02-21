@@ -5,6 +5,7 @@
  * Simplified input settings dock
  * Brush size shortcut: Shift+mouse wheel or '[' and ']' to adjust brush size
  * Added "redo" button to user list dock
+ * New feature: Direct to video export using ffmpeg
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries

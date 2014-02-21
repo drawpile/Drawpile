@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QImage>
+#include <QBuffer>
 
 #define FFMPEG_EXECUTABLE "ffmpeg"
 
@@ -113,7 +114,7 @@ void FfmpegExporter::initExporter()
 	_encoder->setProcessChannelMode(QProcess::ForwardedChannels);
 
 	connect(_encoder, SIGNAL(error(QProcess::ProcessError)), this, SLOT(processError(QProcess::ProcessError)));
-	connect(_encoder, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten()));
+	connect(_encoder, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
 	connect(_encoder, SIGNAL(started()), this, SIGNAL(exporterReady()));
 	connect(_encoder, SIGNAL(finished(int)), this, SIGNAL(exporterFinished()));
 
@@ -140,14 +141,36 @@ void FfmpegExporter::processError(QProcess::ProcessError error)
 
 void FfmpegExporter::writeFrame(const QImage &image)
 {
+	Q_ASSERT(_writebuffer.isEmpty());
 	//qDebug() << "WRITING FRAME" << frame();
-	image.save(_encoder, "BMP");
+	{
+		QBuffer buf(&_writebuffer);
+		buf.open(QIODevice::ReadWrite);
+		image.save(&buf, "BMP");
+		_written = 0;
+		_chunk = 0;
+	}
+	bytesWritten(0);
 }
 
-void FfmpegExporter::bytesWritten()
+void FfmpegExporter::bytesWritten(qint64 bytes)
 {
-	if(_encoder->bytesToWrite()==0)
+	const qint64 bufsize = _writebuffer.size();
+	_written += bytes;
+	_chunk -= bytes;
+	Q_ASSERT(_written <= bufsize);
+	Q_ASSERT(_chunk >= 0);
+
+	//qDebug() << "wrote" << bytes << "bytes:" << _written << "of" << bufsize << QString("(%1%)").arg(_written/qreal(bufsize)*100, 0, 'f', 1);
+
+	if(_written == bufsize) {
+		_writebuffer.clear();
 		emit exporterReady();
+
+	} else if(_written < bufsize && _chunk==0) {
+		_chunk = qMin(bufsize - _written, qint64(1024 * 1024));
+		_encoder->write(_writebuffer.constData() + _written, _chunk);
+	}
 }
 
 void FfmpegExporter::shutdownExporter()
