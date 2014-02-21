@@ -45,6 +45,8 @@ public:
 	 */
 	void setQuality(int quality) { _quality = quality; }
 
+	static QString getFfmpegPath();
+	static void setFfmpegPath(const QString &path);
 	static bool isFfmpegAvailable();
 
 private slots:

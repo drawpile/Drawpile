@@ -21,8 +21,7 @@
 #include <QDebug>
 #include <QImage>
 #include <QBuffer>
-
-#define FFMPEG_EXECUTABLE "ffmpeg"
+#include <QSettings>
 
 #include "ffmpegexporter.h"
 
@@ -118,9 +117,9 @@ void FfmpegExporter::initExporter()
 	connect(_encoder, SIGNAL(started()), this, SIGNAL(exporterReady()));
 	connect(_encoder, SIGNAL(finished(int)), this, SIGNAL(exporterFinished()));
 
-	qDebug() << "Encoding: ffmpeg" << args;
+	qDebug() << "Encoding:" << getFfmpegPath() << args;
 
-	_encoder->start(FFMPEG_EXECUTABLE, args);
+	_encoder->start(getFfmpegPath(), args);
 }
 
 void FfmpegExporter::processError(QProcess::ProcessError error)
@@ -189,10 +188,26 @@ bool FfmpegExporter::isFfmpegAvailable()
 {
 	if(_ffmpegAvailable == NOT_TESTED) {
 		QProcess p;
-		p.start(FFMPEG_EXECUTABLE);
+		p.start(getFfmpegPath());
 		_ffmpegAvailable = p.waitForStarted() ? FFMPEG_FOUND : FFMPEG_NOT_FOUND;
 		p.waitForFinished();
 	}
 
 	return _ffmpegAvailable == FFMPEG_FOUND;
+}
+
+QString FfmpegExporter::getFfmpegPath()
+{
+	QSettings cfg;
+	return cfg.value("settings/recording/ffmpegpath", "ffmpeg").toString();
+}
+
+void FfmpegExporter::setFfmpegPath(const QString &path)
+{
+	QSettings cfg;
+	if(path.isEmpty())
+		cfg.remove("settings/recording/ffmpegpath");
+	else
+		cfg.setValue("settings/recording/ffmpegpath", path);
+	_ffmpegAvailable = NOT_TESTED;
 }

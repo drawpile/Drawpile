@@ -23,6 +23,7 @@
 #include <QHeaderView>
 #include <QStyledItemDelegate>
 #include <QItemEditorFactory>
+#include <QFileDialog>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QKeySequenceEdit>
@@ -31,6 +32,7 @@
 #include "config.h"
 #include "main.h"
 #include "settingsdialog.h"
+#include "export/ffmpegexporter.h" // for setting ffmpeg path
 
 #include "ui_settings.h"
 
@@ -94,12 +96,24 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 
 	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
 
+	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
+		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
+#ifdef Q_WS_WIN
+			tr("Executables (*.exe)") + ";;" +
+#endif
+			tr("All files (*)")
+		);
+		if(!path.isEmpty())
+			_ui->ffmpegpath->setText(path);
+	});
+
 	// Set defaults
 	QSettings cfg;
 
 	cfg.beginGroup("settings/recording");
 	_ui->recordpause->setChecked(cfg.value("recordpause", true).toBool());
 	_ui->minimumpause->setValue(cfg.value("minimumpause", 0.5).toFloat());
+	_ui->ffmpegpath->setText(FfmpegExporter::getFfmpegPath());
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/server");
@@ -160,7 +174,7 @@ void SettingsDialog::rememberSettings() const
 	cfg.beginGroup("settings/recording");
 	cfg.setValue("recordpause", _ui->recordpause->isChecked());
 	cfg.setValue("minimumpause", _ui->minimumpause->value());
-
+	FfmpegExporter::setFfmpegPath(_ui->ffmpegpath->text().trimmed());
 	cfg.endGroup();
 
 	// Remember server settings
