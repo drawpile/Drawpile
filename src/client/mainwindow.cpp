@@ -567,9 +567,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
  */
 void MainWindow::showNew()
 {
-	dialogs::NewDialog *dlg = new dialogs::NewDialog(this);
+	auto dlg = new dialogs::NewDialog(this);
 	dlg->setAttribute(Qt::WA_DeleteOnClose);
-	connect(dlg, SIGNAL(accepted(QSize, QColor)), this, SLOT(newDocument(QSize, QColor)));
+	connect(dlg, &dialogs::NewDialog::accepted, [this](const QSize &size, const QColor &background) {
+		BlankCanvasLoader bcl(size, background);
+		loadDocument(bcl);
+	});
 
 	if (_canvas->hasImage())
 		dlg->setSize(QSize(_canvas->width(), _canvas->height()));
@@ -578,17 +581,6 @@ void MainWindow::showNew()
 
 	dlg->setBackground(_fgbgcolor->background());
 	dlg->show();
-}
-
-/**
- * Initialize the board and set background color to the one
- * chosen in the dialog.
- * If the document is unsaved, create a new window.
- */
-void MainWindow::newDocument(const QSize &size, const QColor &background)
-{
-	BlankCanvasLoader bcl(size, background);
-	loadDocument(bcl);
 }
 
 /**
@@ -878,9 +870,78 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	_dialog_host = new dialogs::HostDialog(_canvas->image(), _lastpath, this);
-	connect(_dialog_host, SIGNAL(finished(int)), this, SLOT(finishHost(int)));
-	_dialog_host->show();
+	auto dlg = new dialogs::HostDialog(_canvas->image(), _lastpath, this);
+	connect(dlg, &dialogs::HostDialog::finished, [this, dlg](int i) {
+		_lastpath = dlg->lastPath();
+
+		if(i==QDialog::Accepted) {
+			const bool useremote = dlg->useRemoteAddress();
+			QUrl address;
+
+			if(useremote) {
+				QString scheme;
+				if(dlg->getRemoteAddress().startsWith("drawpile://")==false)
+					scheme = "drawpile://";
+				address = QUrl(scheme + dlg->getRemoteAddress(),
+						QUrl::TolerantMode);
+			} else {
+				address.setHost(WhatIsMyIp::localAddress());
+			}
+
+			if(address.isValid() == false || address.host().isEmpty()) {
+				dlg->show();
+				showErrorMessage(tr("Invalid address"));
+				return;
+			}
+			address.setUserName(dlg->getUserName());
+
+			// Remember some settings
+			dlg->rememberSettings();
+
+			// Start server if hosting locally
+			if(useremote==false) {
+				net::ServerThread *server = new net::ServerThread(this);
+
+				QSettings cfg;
+				if(cfg.contains("settings/server/port"))
+					server->setPort(cfg.value("settings/server/port").toInt());
+
+				if(cfg.value("settings/server/historylimit",false).toBool())
+					server->setHistorylimit(cfg.value("settings/server/historysize", 10).toDouble() * 1024*1024);
+
+				int port = server->startServer();
+				if(!port) {
+					QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
+					dlg->show();
+					delete server;
+					return;
+				}
+				server->setDeleteOnExit();
+
+				if(!server->isOnDefaultPort())
+					address.setPort(port);
+			}
+
+			// Initialize session (unless original was used)
+			MainWindow *w = this;
+			if(dlg->useOriginalImage() == false) {
+				QScopedPointer<SessionLoader> loader(dlg->getSessionLoader());
+				w = loadDocument(*loader);
+			}
+
+			// Connect to server
+			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
+			login->setPassword(dlg->getPassword());
+			login->setTitle(dlg->getTitle());
+			login->setMaxUsers(dlg->getUserLimit());
+			login->setAllowDrawing(dlg->getAllowDrawing());
+			login->setLayerControlLock(dlg->getLayerControlLock());
+			w->_client->connectToServer(login);
+
+		}
+		dlg->deleteLater();
+	});
+	dlg->show();
 }
 
 /**
@@ -888,9 +949,29 @@ void MainWindow::host()
  */
 void MainWindow::join()
 {
-	_dialog_join = new dialogs::JoinDialog(this);
-	connect(_dialog_join, SIGNAL(finished(int)), this, SLOT(finishJoin(int)));
-	_dialog_join->show();
+	auto dlg = new dialogs::JoinDialog(this);
+	connect(dlg, &dialogs::JoinDialog::finished, [this, dlg](int i) {
+		if(i==QDialog::Accepted) {
+			QString scheme;
+			if(dlg->getAddress().startsWith("drawpile://")==false)
+				scheme = "drawpile://";
+			QUrl address = QUrl(scheme + dlg->getAddress(),QUrl::TolerantMode);
+			if(address.isValid()==false || address.host().isEmpty()) {
+				dlg->show();
+				showErrorMessage(tr("Invalid address"));
+				return;
+			}
+			address.setUserName(dlg->getUserName());
+
+			// Remember some settings
+			dlg->rememberSettings();
+
+			// Connect
+			joinSession(address);
+		}
+		dlg->deleteLater();
+	});
+	dlg->show();
 }
 
 /**
@@ -922,110 +1003,6 @@ void MainWindow::leave()
 	}
 
 	leavebox->show();
-}
-
-/**
- * User has finally decided to connect to a host (possibly localhost)
- * and host a session.
- * @param i dialog return value
- */
-void MainWindow::finishHost(int i)
-{
-	_lastpath = _dialog_host->lastPath();
-
-	if(i==QDialog::Accepted) {
-		const bool useremote = _dialog_host->useRemoteAddress();
-		QUrl address;
-
-		if(useremote) {
-			QString scheme;
-			if(_dialog_host->getRemoteAddress().startsWith("drawpile://")==false)
-				scheme = "drawpile://";
-			address = QUrl(scheme + _dialog_host->getRemoteAddress(),
-					QUrl::TolerantMode);
-		} else {
-			address.setHost(WhatIsMyIp::localAddress());
-		}
-
-		if(address.isValid() == false || address.host().isEmpty()) {
-			_dialog_host->show();
-			showErrorMessage(tr("Invalid address"));
-			return;
-		}
-		address.setUserName(_dialog_host->getUserName());
-
-		// Remember some settings
-		_dialog_host->rememberSettings();
-
-		// Start server if hosting locally
-		if(useremote==false) {
-			net::ServerThread *server = new net::ServerThread(this);
-
-			QSettings cfg;
-			if(cfg.contains("settings/server/port"))
-				server->setPort(cfg.value("settings/server/port").toInt());
-
-			if(cfg.value("settings/server/historylimit",false).toBool())
-				server->setHistorylimit(cfg.value("settings/server/historysize", 10).toDouble() * 1024*1024);
-
-			int port = server->startServer();
-			if(!port) {
-				QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
-				_dialog_host->show();
-				delete server;
-				return;
-			}
-			server->setDeleteOnExit();
-
-			if(!server->isOnDefaultPort())
-				address.setPort(port);
-		}
-
-		// Initialize session (unless original was used)
-		MainWindow *w = this;
-		if(_dialog_host->useOriginalImage() == false) {
-			QScopedPointer<SessionLoader> loader(_dialog_host->getSessionLoader());
-			w = loadDocument(*loader);
-		}
-
-		// Connect to server
-		net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
-		login->setPassword(_dialog_host->getPassword());
-		login->setTitle(_dialog_host->getTitle());
-		login->setMaxUsers(_dialog_host->getUserLimit());
-		login->setAllowDrawing(_dialog_host->getAllowDrawing());
-		login->setLayerControlLock(_dialog_host->getLayerControlLock());
-		w->_client->connectToServer(login);
-
-	}
-	_dialog_host->deleteLater();
-}
-
-/**
- * User has finally decided to connect to a server and join a session.
- * If there are multiple sessions, we will have to ask the user which
- * one to join later.
- */
-void MainWindow::finishJoin(int i) {
-	if(i==QDialog::Accepted) {
-		QString scheme;
-		if(_dialog_join->getAddress().startsWith("drawpile://")==false)
-			scheme = "drawpile://";
-		QUrl address = QUrl(scheme + _dialog_join->getAddress(),QUrl::TolerantMode);
-		if(address.isValid()==false || address.host().isEmpty()) {
-			_dialog_join->show();
-			showErrorMessage(tr("Invalid address"));
-			return;
-		}
-		address.setUserName(_dialog_join->getUserName());
-
-		// Remember some settings
-		_dialog_join->rememberSettings();
-
-		// Connect
-		joinSession(address);
-	}
-	_dialog_join->deleteLater();
 }
 
 void MainWindow::changeSessionTitle()

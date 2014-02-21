@@ -46,8 +46,6 @@ namespace docks {
 }
 namespace dialogs {
 	class ColorDialog;
-	class HostDialog;
-	class JoinDialog;
 	class PlaybackDialog;
 }
 namespace drawingboard {
@@ -110,11 +108,6 @@ class MainWindow : public QMainWindow {
 
 		void setSessionTitle(const QString& title);
 		void setOperatorMode(bool op);
-
-		void newDocument(const QSize &size, const QColor &color);
-
-		void finishHost(int i);
-		void finishJoin(int i);
 
 		void connecting();
 		void loggedin(bool join);
@@ -200,8 +193,6 @@ class MainWindow : public QMainWindow {
 		QLabel *_recorderstatus;
 
 		dialogs::ColorDialog *_dialog_fgcolor, *_dialog_bgcolor;
-		dialogs::HostDialog *_dialog_host;
-		dialogs::JoinDialog *_dialog_join;
 		dialogs::PlaybackDialog *_dialog_playback;
 
 		drawingboard::CanvasScene *_canvas;
