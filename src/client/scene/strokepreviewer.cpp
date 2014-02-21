@@ -143,6 +143,11 @@ void TempLayerStrokePreviewer::startStroke(const paintcore::Brush &brush, const 
 	_lastpoint = point;
 	_distance = 0;
 	_strokes.append(Stroke(layer, --_current_id, 1));
+
+	paintcore::Layer *l = _scene->layers()->getLayer(layer);
+	if(l)
+		l->dab(_current_id, _brush, point);
+
 }
 
 void TempLayerStrokePreviewer::continueStroke(const paintcore::Point &point)

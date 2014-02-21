@@ -447,19 +447,24 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 
 void Layer::dab(int contextId, const Brush &brush, const Point &point)
 {
+	Brush effective_brush = brush;
+	Layer *l = this;
+
 	if(!brush.incremental()) {
 		// Indirect brush: use a sublayer
-		Layer *sl = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
+		l = getSubLayer(contextId, brush.blendingMode(), brush.opacity(1) * 255);
 
-		Brush slb(brush);
-		slb.setOpacity(1.0);
-		slb.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
-		slb.setBlendingMode(1);
+		effective_brush.setOpacity(1.0);
+		effective_brush.setOpacity2(brush.isOpacityVariable() ? 0.0 : 1.0);
+		effective_brush.setBlendingMode(1);
 
-		sl->directDab(slb, BrushMaskGenerator::cached(slb), point);
-	} else {
-		directDab(brush, BrushMaskGenerator::cached(brush), point);
+	} else if(contextId<0) {
+		// Special case: negative context IDs are temporary overlay strokes
+		l = getSubLayer(contextId, brush.blendingMode(), 255);
+		effective_brush.setBlendingMode(1);
 	}
+
+	l->directDab(effective_brush, BrushMaskGenerator::cached(effective_brush), point);
 
 	if(_owner)
 		_owner->notifyAreaChanged();
