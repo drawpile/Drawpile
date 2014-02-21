@@ -26,6 +26,7 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * network-transmit
  * network-transmit-receive
  * application-exit
+ * video-display
  * view-refresh
  * zoom-in
  * zoom-original

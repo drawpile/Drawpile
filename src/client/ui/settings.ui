@@ -60,6 +60,9 @@
             <iconset theme="document-open" resource="resources.qrc">
              <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
            </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
         </layout>

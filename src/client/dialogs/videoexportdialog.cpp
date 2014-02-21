@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QMessageBox>
+#include <QMenu>
 
 #include "config.h"
 
@@ -39,6 +40,18 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 {
 	_ui = new Ui_VideoExport;
 	_ui->setupUi(this);
+
+	QMenu *sizepresets = new QMenu(_ui->sizePreset);
+	sizepresets->addAction("360p")->setProperty("fs", QSize(480, 360));
+	sizepresets->addAction("480p")->setProperty("fs", QSize(640, 480));
+	sizepresets->addAction("720p")->setProperty("fs", QSize(1280, 720));
+	sizepresets->addAction("1080p")->setProperty("fs", QSize(1920, 1080));
+	_ui->sizePreset->setMenu(sizepresets);
+	connect(sizepresets, &QMenu::triggered, [this](const QAction *a) {
+		const QSize s = a->property("fs").toSize();
+		_ui->framewidth->setValue(s.width());
+		_ui->frameheight->setValue(s.height());
+	});
 
 	connect(_ui->exportFormatChoice, SIGNAL(activated(int)), this, SLOT(selectExportFormat(int)));
 	connect(_ui->videoFormat, SIGNAL(activated(QString)), this, SLOT(selectContainerFormat(QString)));
