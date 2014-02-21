@@ -173,7 +173,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Meta commands
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString, bool)),
 			chatbox, SLOT(receiveMessage(QString,QString, bool)));
+	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool)),
+			this, SLOT(statusbarChat(QString,QString)));
 	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
+
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
 	connect(_client, SIGNAL(sessionConfChange(bool,bool,bool)), this, SLOT(sessionConfChanged(bool,bool,bool)));
@@ -854,6 +857,12 @@ void MainWindow::toggleRecording()
 	}
 }
 
+void MainWindow::statusbarChat(const QString &nick, const QString &msg)
+{
+	// Show message only if chat box is hidden
+	if(_splitter->sizes().at(1) == 0)
+		statusBar()->showMessage(nick + ": " + msg, 3000);
+}
 
 /**
  * The settings window will be window modal and automatically destruct

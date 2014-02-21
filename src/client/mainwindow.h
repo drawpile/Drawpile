@@ -123,6 +123,7 @@ class MainWindow : public QMainWindow {
 
 		void updateLockWidget();
 		void setRecorderStatus(bool on);
+		void statusbarChat(const QString &nick, const QString &msg);
 
 		void updateShortcuts();
 		void updateStrokePreviewMode();

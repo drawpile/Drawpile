@@ -6,6 +6,7 @@
  * Brush size shortcut: Shift+mouse wheel or '[' and ']' to adjust brush size
  * Added "redo" button to user list dock
  * New feature: Direct to video export using ffmpeg
+ * New feature: latest chat message is shown in the statusbar if chat box is hidden
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries
