@@ -1551,12 +1551,12 @@ void MainWindow::setupActions()
 	//
 	// File menu and toolbar
 	//
-	QAction *newdocument = makeAction("newdocument", "document-new", tr("&New"), tr("Start a new drawing"), QKeySequence::New);
-	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), tr("Open an existing drawing"), QKeySequence::Open);
-	QAction *save = makeAction("savedocument", "document-save",tr("&Save"),tr("Save drawing to file"),QKeySequence::Save);
-	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."), tr("Save drawing to a file with a new name"));
-	QAction *record = makeAction("recordsession", "media-record", tr("Record..."), tr("Record session for later playback"));
-	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), tr("Quit the program"), QKeySequence("Ctrl+Q"));
+	QAction *newdocument = makeAction("newdocument", "document-new", tr("&New"), QString(), QKeySequence::New);
+	QAction *open = makeAction("opendocument", "document-open", tr("&Open..."), QString(), QKeySequence::Open);
+	QAction *save = makeAction("savedocument", "document-save",tr("&Save"), QString(),QKeySequence::Save);
+	QAction *saveas = makeAction("savedocumentas", "document-save-as", tr("Save &As..."));
+	QAction *record = makeAction("recordsession", "media-record", tr("Record..."));
+	QAction *quit = makeAction("exitprogram", "application-exit", tr("&Quit"), QString(), QKeySequence("Ctrl+Q"));
 	quit->setMenuRole(QAction::QuitRole);
 
 	_currentdoctools->addAction(save);
@@ -1598,13 +1598,13 @@ void MainWindow::setupActions()
 	//
 	// Edit menu
 	//
-	QAction *undo = makeAction("undo", "edit-undo", tr("&Undo"), tr("Undo changes"), QKeySequence::Undo);
-	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), tr("Redo undo changes"), QKeySequence::Redo);
+	QAction *undo = makeAction("undo", "edit-undo", tr("&Undo"), QString(), QKeySequence::Undo);
+	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), QString(), QKeySequence::Redo);
 	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
-	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), tr("Paste an image from the clipboard onto the canvas"), QKeySequence::Paste);
-	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."), tr("Paste an image from a file onto the canvas"));
-	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"), tr("Delete all annotations without any text"));
+	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
+	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."));
+	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"));
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
 
@@ -1693,10 +1693,10 @@ void MainWindow::setupActions()
 	QAction *rotate180 = makeAction("rotate180", 0, tr("Rotate to 180°"));
 	QAction *rotate270 = makeAction("rotate270", 0, tr("Rotate to 270°"));
 
-	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), tr("Display the brush outline around the cursor"), QKeySequence(), true);
+	QAction *showoutline = makeAction("brushoutline", 0, tr("Show brush &outline"), QString(), QKeySequence(), true);
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
-	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), tr("Show the positions of other users pointers as they draw"), QKeySequence(), true);
-	QAction *showlasers = makeAction("showlasers", 0, tr("Show laser trails"), tr("Show laser pointer trails"), QKeySequence(), true);
+	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), QString(), QKeySequence(), true);
+	QAction *showlasers = makeAction("showlasers", 0, tr("Show laser trails"), QString(), QKeySequence(), true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
 	showlasers->setChecked(true);
@@ -1754,7 +1754,7 @@ void MainWindow::setupActions()
 	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock layer controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
-	QAction *changetitle = makeAction("changetitle", 0, tr("Change &title..."), tr("Change the session title"));
+	QAction *changetitle = makeAction("changetitle", 0, tr("Change &title..."));
 
 	_admintools->addAction(locksession);
 	_admintools->addAction(locklayerctrl);
@@ -1783,15 +1783,15 @@ void MainWindow::setupActions()
 	//
 	// Tools menu and toolbar
 	//
-	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select areas for copying"), QKeySequence("S"), true);
-	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard strokes"), QKeySequence("P"), true);
+	QAction *selectiontool = makeAction("toolselectrect", "select-rectangular", tr("&Select"), tr("Select area for copying"), QKeySequence("S"), true);
+	QAction *pentool = makeAction("toolpen", "draw-freehand", tr("&Pen"), tr("Draw with hard edged strokes"), QKeySequence("P"), true);
 	QAction *brushtool = makeAction("toolbrush", "draw-brush", tr("&Brush"), tr("Draw with smooth strokes"), QKeySequence("B"), true);
-	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Draw with the background color"), QKeySequence("E"), true);
+	QAction *erasertool = makeAction("tooleraser", "draw-eraser", tr("&Eraser"), tr("Erase layer content"), QKeySequence("E"), true);
 	QAction *pickertool = makeAction("toolpicker", "color-picker", tr("&Color picker"), tr("Pick colors from the image"), QKeySequence("I"), true);
 	QAction *linetool = makeAction("toolline", "draw-line", tr("&Line"), tr("Draw straight lines"), QKeySequence("U"), true);
-	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled rectangles"), QKeySequence("R"), true);
+	QAction *recttool = makeAction("toolrect", "draw-rectangle", tr("&Rectangle"), tr("Draw unfilled squares and rectangles"), QKeySequence("R"), true);
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
-	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add annotations to the picture"), QKeySequence("A"), true);
+	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
 
 	// Default tool
@@ -1817,7 +1817,7 @@ void MainWindow::setupActions()
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));
 
-	QAction *swapcolors = makeAction("swapcolors", 0, tr("&Swap colors"), tr("Swap foreground and background colors"), QKeySequence(Qt::Key_X));
+	QAction *swapcolors = makeAction("swapcolors", 0, tr("&Swap colors"), QString(), QKeySequence(Qt::Key_X));
 	QAction *smallerbrush = makeAction("ensmallenbrush", 0, tr("&Decrease brush size"), QString(), Qt::Key_BracketLeft);
 	QAction *biggerbrush = makeAction("embiggenbrush", 0, tr("&Increase brush size"), QString(), Qt::Key_BracketRight);
 
@@ -1878,9 +1878,9 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", 0, tr("&DrawPile homepage"), tr("Open DrawPile homepage with the default web browser"));
-	QAction *about = makeAction("dpabout", 0, tr("&About DrawPile"), tr("Show information about DrawPile"));
-	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt"), tr("Show Qt library version"));
+	QAction *homepage = makeAction("dphomepage", 0, tr("&DrawPile homepage"));
+	QAction *about = makeAction("dpabout", 0, tr("&About DrawPile"));
+	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt"));
 
 	connect(about, SIGNAL(triggered()), this, SLOT(about()));
 	connect(aboutqt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
