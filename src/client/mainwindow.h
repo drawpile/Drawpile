@@ -45,7 +45,6 @@ namespace docks {
 	class Navigator;
 }
 namespace dialogs {
-	class ColorDialog;
 	class PlaybackDialog;
 }
 namespace drawingboard {
@@ -192,7 +191,6 @@ class MainWindow : public QMainWindow {
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
 
-		dialogs::ColorDialog *_dialog_fgcolor, *_dialog_bgcolor;
 		dialogs::PlaybackDialog *_dialog_playback;
 
 		drawingboard::CanvasScene *_canvas;
