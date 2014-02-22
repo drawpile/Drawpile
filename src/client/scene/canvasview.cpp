@@ -364,6 +364,8 @@ void CanvasView::mousePressEvent(QMouseEvent *event)
 		if(_dragbtndown == DRAG_NOTRANSFORM) {
 			if((event->modifiers() & Qt::ControlModifier))
 				mode = DRAG_ZOOM;
+			else if((event->modifiers() & Qt::ShiftModifier))
+				mode = DRAG_QUICKADJUST1;
 			else
 				mode = DRAG_TRANSLATE;
 		} else
@@ -628,7 +630,11 @@ void CanvasView::moveDrag(int x, int y)
 				setZoom(_zoom / (1-delta));
 			}
 		}
-
+	} else if(_isdragging==DRAG_QUICKADJUST1) {
+		if(dy!=0) {
+			float delta = qBound(-2.0, dy / 10.0, 2.0);
+			doQuickAdjust1(delta);
+		}
 	} else {
 		QScrollBar *ver = verticalScrollBar();
 		ver->setSliderPosition(ver->sliderPosition()+dy);

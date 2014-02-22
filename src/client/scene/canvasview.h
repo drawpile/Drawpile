@@ -168,7 +168,7 @@ class CanvasView : public QGraphicsView
 		float mapPressure(float pressure, bool stylus);
 
 		//! View transformation mode (for dragging)
-		enum ViewTransform {DRAG_NOTRANSFORM, DRAG_TRANSLATE, DRAG_ROTATE, DRAG_ZOOM};
+		enum ViewTransform {DRAG_NOTRANSFORM, DRAG_TRANSLATE, DRAG_ROTATE, DRAG_ZOOM, DRAG_QUICKADJUST1};
 
 		//! Start dragging the view
 		void startDrag(int x, int y, ViewTransform mode);
