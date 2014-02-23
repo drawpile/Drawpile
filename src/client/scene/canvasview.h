@@ -94,6 +94,9 @@ class CanvasView : public QGraphicsView
 		//! An URL was dropped on the widget
 		void urlDropped(const QUrl &url);
 
+		//! A color was dropped on the widget
+		void colorDropped(const QColor &color);
+
 		//! Viewport has changed
 		void viewRectChange(const QPolygonF& viewport);
 

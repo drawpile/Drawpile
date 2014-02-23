@@ -1823,6 +1823,7 @@ void MainWindow::setupActions()
 	connect(swapcolors, SIGNAL(triggered()), _fgbgcolor, SLOT(swapColors()));
 	connect(_fgbgcolor, SIGNAL(foregroundChanged(const QColor&)), _dock_toolsettings, SLOT(setForeground(const QColor&)));
 	connect(_fgbgcolor, SIGNAL(backgroundChanged(const QColor&)), _dock_toolsettings, SLOT(setBackground(const QColor&)));
+	connect(_view, SIGNAL(colorDropped(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 	connect(_dock_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {

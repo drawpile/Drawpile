@@ -665,7 +665,7 @@ void CanvasView::stopDrag()
  */
 void CanvasView::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage())
+	if(event->mimeData()->hasUrls() || event->mimeData()->hasImage() || event->mimeData()->hasColor())
 		event->acceptProposedAction();
 }
 
@@ -686,6 +686,8 @@ void CanvasView::dropEvent(QDropEvent *event)
 		emit imageDropped(qvariant_cast<QImage>(event->mimeData()->imageData()));
 	} else if(data->hasUrls()) {
 		emit urlDropped(event->mimeData()->urls().first());
+	} else if(data->hasColor()) {
+		emit colorDropped(event->mimeData()->colorData().value<QColor>());
 	} else {
 		// unsupported data
 		return;
