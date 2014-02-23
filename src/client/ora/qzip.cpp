@@ -1354,7 +1354,8 @@ void ZipWriter::addSymLink(const QString &fileName, const QString &destination)
 void ZipWriter::close()
 {
     if (!(d->device->openMode() & QIODevice::WriteOnly)) {
-        d->device->close();
+		if(d->device->isOpen())
+			d->device->close();
         return;
     }
 
@@ -1383,6 +1384,8 @@ void ZipWriter::close()
 
     d->device->write((const char *)&eod, sizeof(EndOfDirectory));
     d->device->write(d->comment);
+#if 0 // won't work with QSaveFile
     d->device->close();
+#endif
 }
 

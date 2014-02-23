@@ -63,6 +63,8 @@ namespace drawingboard {
 struct ToolContext {
 	int layer_id;
 	paintcore::Brush brush;
+
+	void updateFromToolchange(const protocol::ToolChange &cmd);
 };
 
 /**
@@ -86,7 +88,35 @@ struct DrawingContext {
 	qreal distance_accumulator;
 };
 
-class StateSavepoint;
+class StateTracker;
+
+/**
+ * @brief A snapshot of the statetracker state.
+ *
+ * This is used for undo/redo as well as jumping around in indexed recordings.
+ */
+class StateSavepoint {
+	friend class StateTracker;
+public:
+	StateSavepoint() : _data(0) {}
+	StateSavepoint(const StateSavepoint &sp);
+	StateSavepoint &operator=(const StateSavepoint &sp);
+	~StateSavepoint();
+
+	void toDatastream(QDataStream &ds) const;
+	static StateSavepoint fromDatastream(QDataStream &ds, StateTracker *owner);
+
+	bool operator!() const { return !_data; }
+	bool operator==(const StateSavepoint &sp) { return _data == sp._data; }
+	bool operator!=(const StateSavepoint &sp) { return _data != sp._data; }
+private:
+	class Data;
+
+	const Data *operator ->() const { return _data; }
+	Data *operator ->();
+
+	Data *_data;
+};
 
 /**
  * \brief Drawing context state tracker
@@ -148,6 +178,24 @@ public:
 
 	StateTracker &operator=(const StateTracker&) = delete;
 
+	/**
+	 * @brief Create a new savepoint
+	 *
+	 * This is used internally for undo/redo as well as when
+	 * saving snapshots for an indexed recording.
+	 * @return
+	 */
+	StateSavepoint createSavepoint(int pos=-1);
+
+	/**
+	 * @brief Reset state to the given save point
+	 *
+	 * This is used when jumping inside a recording. Calling this
+	 * will reset session history
+	 * @param sp
+	 */
+	void resetToSavepoint(StateSavepoint sp);
+
 signals:
 	void myAnnotationCreated(int id);
 	void myLayerCreated(int);
@@ -178,9 +226,8 @@ private:
 	// Undo/redo
 	void handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, int pos);
 	void handleUndo(protocol::Undo &cmd);
-	bool canMakeSavepoint(int pos) const;
 	void makeSavepoint(int pos);
-	void revertSavepoint(const StateSavepoint *savepoint);
+	void revertSavepoint(const StateSavepoint savepoint);
 
 	// Annotation related commands
 	void handleAnnotationCreate(const protocol::AnnotationCreate &cmd);
@@ -197,7 +244,7 @@ private:
 	int _myid;
 
 	protocol::MessageStream _msgstream;
-	QList<StateSavepoint*> _savepoints;
+	QList<StateSavepoint> _savepoints;
 	uint _msgstream_sizelimit;
 	bool _hassnapshot;
 	bool _showallmarkers;

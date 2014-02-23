@@ -18,8 +18,10 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
+
 #include <QtEndian>
 #include <QVarLengthArray>
+#include <QFile>
 
 #include <cstring>
 
@@ -32,60 +34,54 @@
 namespace recording {
 
 Reader::Reader(const QString &filename, QObject *parent)
-	: QObject(parent), _file(filename)
+	: Reader(new QFile(filename), true, parent)
 {
+}
+
+Reader::Reader(QFileDevice *file, bool autoclose, QObject *parent)
+	: QObject(parent), _file(file), _autoclose(autoclose), _current(-1)
+{
+	Q_ASSERT(file);
 }
 
 Reader::~Reader()
 {
-
+	if(_autoclose)
+		delete _file;
 }
 
 Compatibility Reader::open()
 {
-	if(!_file.open(QFile::ReadOnly))
+	if(!_file->isOpen()) {
+		if(!_file->open(QFile::ReadOnly))
+			return CANNOT_READ;
+	}
+
+	// Read magic bytes "DPRECR\0"
+	char buf[7];
+	if(_file->read(buf, 7) != 7)
 		return CANNOT_READ;
 
-	// Read first 5 bytes: expect magic bytes "DPREC"
-	char buf[5];
-	if(_file.read(buf, 5) != 5)
-		return CANNOT_READ;
-
-	if(memcmp(buf, "DPREC", 5))
-		return NOT_DPREC;
-
-	// Next byte is either 'R' for raw recording or 'I' for indexed.
-	char rectype;
-	if(_file.read(&rectype, 1) != 1)
-		return NOT_DPREC;
-
-	// Expect 0 byte
-	if(_file.read(buf, 1) != 1)
-		return NOT_DPREC;
-
-	if(buf[0] != 0)
+	if(memcmp(buf, "DPRECR", 7))
 		return NOT_DPREC;
 
 	// Read protocol version
-	if(_file.read(buf, 4) != 4)
+	if(_file->read(buf, 4) != 4)
 		return NOT_DPREC;
 	quint32 protover = qFromBigEndian<quint32>((const uchar*)buf);
 
 	// Read program version
 	QByteArray progver;
 	do {
-		if(_file.read(buf, 1) != 1)
+		if(_file->read(buf, 1) != 1)
 			return NOT_DPREC;
 		progver.append(buf[0]);
 	} while(buf[0] != '\0');
 	_writerversion = QString::fromUtf8(progver);
 
+	_beginning = _file->pos();
+
 	// Decide if we are compatible
-
-	// only raw recordings are currently supported
-	if(rectype != 'R')
-		return INCOMPATIBLE;
-
 	quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
 
 	// Best case
@@ -111,46 +107,83 @@ Compatibility Reader::open()
 
 QString Reader::errorString() const
 {
-	return _file.errorString();
+	return _file->errorString();
+}
+
+QString Reader::filename() const
+{
+	return _file->fileName();
+}
+
+qint64 Reader::filesize() const
+{
+	return _file->size();
+}
+
+qint64 Reader::position() const
+{
+	return _file->pos();
 }
 
 void Reader::close()
 {
-	Q_ASSERT(_file.isOpen());
-	_file.close();
+	Q_ASSERT(_file->isOpen());
+	_file->close();
+}
+
+void Reader::rewind()
+{
+	_file->seek(_beginning);
+	_current = -1;
+}
+
+void Reader::seekTo(int pos, qint64 position)
+{
+	_current = pos;
+	_file->seek(position);
+}
+
+bool Reader::readNextToBuffer(QByteArray &buffer)
+{
+	// Read length and type header
+	if(buffer.length() < 3)
+		buffer.resize(1024);
+
+	if(_file->read(buffer.data(), 3) != 3)
+		return false;
+
+	const int len = protocol::Message::sniffLength(buffer.constData());
+	Q_ASSERT(len>=3); // fixed header length should be included
+
+	if(buffer.length() < len)
+		buffer.resize(len);
+
+	// Read message payload
+	const int payloadlen = len - 3;
+	if(_file->read(buffer.data()+3, payloadlen) != payloadlen)
+		return false;
+
+	++_current;
+
+	return true;
 }
 
 MessageRecord Reader::readNext()
 {
 	MessageRecord msg;
 
-	// Read length and type header
-	char header[3];
-	if(_file.read(header, 2) != 2)
-		return msg;
-	int len = qFromBigEndian<quint16>((uchar*)header);
-
-	if(_file.read(header+2, 1) != 1)
-		return msg;
-	protocol::MessageType msgtype = protocol::MessageType(header[2]);
-
-	// Read message payload
-	QVarLengthArray<char> buf(len+3);
-	memcpy(buf.data(), header, 3);
-
-	if(_file.read(buf.data()+3, len) != len)
+	if(!readNextToBuffer(_msgbuf))
 		return msg;
 
-	// Deserialize message
-	protocol::Message *message = protocol::Message::deserialize((const uchar*)buf.data());
+	auto *message = protocol::Message::deserialize((const uchar*)_msgbuf.constData());
 
 	if(message) {
 		msg.status = MessageRecord::OK;
 		msg.message = message;
 	} else {
 		msg.status = MessageRecord::INVALID;
-		msg.len = len;
-		msg.type = msgtype;
+		msg.len = protocol::Message::sniffLength(_msgbuf.constData());
+		msg.type = protocol::MessageType(_msgbuf.at(2));
 	}
 
 	return msg;

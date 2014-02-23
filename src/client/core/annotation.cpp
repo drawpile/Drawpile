@@ -20,6 +20,7 @@
 
 #include <QPainter>
 #include <QTextDocument>
+#include <QDataStream>
 
 #include "annotation.h"
 
@@ -87,6 +88,31 @@ QImage Annotation::toImage() const
 	QPainter painter(&img);
 	paint(&painter, QRectF(QPointF(), _rect.size()));
 	return img;
+}
+
+void Annotation::toDatastream(QDataStream &out) const
+{
+	// Write ID
+	out << qint16(_id);
+
+	// Write position and size
+	out << _rect;
+
+	// Write content
+	out << _bgcolor;
+	out << _text;
+}
+
+Annotation *Annotation::fromDatastream(QDataStream &in)
+{
+	qint16 id;
+	in >> id;
+	Annotation *a = new Annotation(id);
+	in >> a->_rect;
+	in >> a->_bgcolor;
+	in >> a->_text;
+
+	return a;
 }
 
 }

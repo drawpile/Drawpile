@@ -22,6 +22,8 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * media-record
  * media-seek-forward
  * media-skip-forward
+ * media-seek-backward
+ * media-skip-backward
  * network-offline
  * network-receive
  * network-transmit

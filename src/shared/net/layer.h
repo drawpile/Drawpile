@@ -54,11 +54,11 @@ public:
 	int16_t left() const { return _left; }
 
 	bool isOpCommand() const { return true; }
+	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
+	int serializePayload(uchar *data) const;	
 
 private:
 	int16_t _top;
@@ -220,11 +220,12 @@ public:
 
 	uint8_t id() const { return _id; }
 	uint8_t merge() const { return _merge; }
+
+	bool isUndoable() const { return true; }
 	
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
 
 private:
 	uint8_t _id;

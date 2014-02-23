@@ -65,6 +65,13 @@ set (
 	ora/qzip.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
+	recording/index.cpp
+	recording/indexbuilder.cpp
+	recording/indexloader.cpp
+	recording/filter.cpp
+	recording/indexgraphicsitem.cpp
+	recording/indexpointergraphicsitem.cpp
+	recording/indexgraphicsview.cpp
 	dialogs/colordialog.cpp 
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
@@ -73,6 +80,7 @@ set (
 	dialogs/resizedialog.cpp
 	dialogs/playbackdialog.cpp
 	dialogs/videoexportdialog.cpp
+	dialogs/recfilterdialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -123,6 +131,7 @@ set (
 	ui/playback.ui
 	ui/videoexport.ui
 	ui/inputcfg.ui
+	ui/recfilter.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )

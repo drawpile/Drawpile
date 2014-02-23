@@ -26,6 +26,7 @@
 
 class QImage;
 class QSize;
+class QDataStream;
 
 namespace paintcore {
 
@@ -165,6 +166,9 @@ class Layer {
 
 		// Disable assignment operator
 		Layer& operator=(const Layer&) = delete;
+
+		void toDatastream(QDataStream &out) const;
+		static Layer *fromDatastream(LayerStack *owner, QDataStream &in);
 
 	private:
 		//! Construct a sublayer

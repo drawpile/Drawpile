@@ -18,25 +18,39 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#include <QtEndian>
 #include <QVarLengthArray>
 #include <QDateTime>
+#include <QFile>
 
 #include "writer.h"
 #include "util.h"
 #include "../net/recording.h"
+#include "../util/ioutils.h"
 
 #include "config.h"
 
 namespace recording {
 
+// TODO: use QSaveFile
+// #if (QT_VERSION >= QT_VERSION_CHECK(5, 1, 0))
+// #include <QSaveFile>
+// #endif
+
 Writer::Writer(const QString &filename, QObject *parent)
-	: QObject(parent), _file(filename), _minInterval(0)
+	: Writer(new QFile(filename), true, parent)
+{
+}
+
+
+Writer::Writer(QFileDevice *file, bool autoclose, QObject *parent)
+	: QObject(parent), _file(file), _autoclose(autoclose), _minInterval(0)
 {
 }
 
 Writer::~Writer()
 {
+	if(_autoclose)
+		delete _file;
 }
 
 void Writer::setMinimumInterval(int min)
@@ -47,30 +61,31 @@ void Writer::setMinimumInterval(int min)
 
 bool Writer::open()
 {
-	return _file.open(QFile::WriteOnly);
+	if(_file->isOpen())
+		return true;
+
+	return _file->open(QFile::WriteOnly);
 }
 
 QString Writer::errorString() const
 {
-	return _file.errorString();
+	return _file->errorString();
 }
 
 bool Writer::writeHeader()
 {
-	Q_ASSERT(_file.isOpen());
+	Q_ASSERT(_file->isOpen());
 
 	// Format identification
 	const char *MAGIC = "DPRECR";
-	_file.write(MAGIC, 7);
+	_file->write(MAGIC, 7);
 
 	// Protocol version
-	uchar protover[4];
-	qToBigEndian(version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION), protover);
-	_file.write((const char*)protover, 4);
+	ioutils::write32(_file, version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION));
 
 	// Program version
 	const char *VERSION = DRAWPILE_VERSION;
-	_file.write(VERSION, qstrlen(VERSION)+1);
+	_file->write(VERSION, qstrlen(VERSION)+1);
 
 	return true;
 }
@@ -91,9 +106,16 @@ bool isRecordableMeta(protocol::MessageType type) {
 }
 }
 
+void Writer::writeFromBuffer(const QByteArray &buffer)
+{
+	int len = protocol::Message::sniffLength(buffer.constData());
+	Q_ASSERT(len <= buffer.length());
+	_file->write(buffer.constData(), len);
+}
+
 void Writer::recordMessage(const protocol::MessagePtr msg)
 {
-	Q_ASSERT(_file.isOpen());
+	Q_ASSERT(_file->isOpen());
 
 	if(msg->isCommand() || isRecordableMeta(msg->type())) {
 		// Write Interval message if sufficient time has passed since last message was written
@@ -104,7 +126,7 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 				protocol::Interval imsg(qMin(qint64(0xffff), interval));
 				QVarLengthArray<char> ibuf(imsg.length());
 				int ilen = imsg.serialize(ibuf.data());
-				_file.write(ibuf.data(), ilen);
+				_file->write(ibuf.data(), ilen);
 			}
 			_interval = now;
 		}
@@ -113,14 +135,14 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 		QVarLengthArray<char> buf(msg->length());
 		int len = msg->serialize(buf.data());
 		Q_ASSERT(len == buf.length());
-		_file.write(buf.data(), len);
+		_file->write(buf.data(), len);
 	}
 }
 
 void Writer::close()
 {
-	Q_ASSERT(_file.isOpen());
-	_file.close();
+	Q_ASSERT(_file->isOpen());
+	_file->close();
 }
 
 }

@@ -70,10 +70,11 @@ public:
 	uint16_t height() const { return _h; }
 	const QByteArray &image() const { return _image; }
 
+	bool isUndoable() const { return true; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
 
 private:
 	uint8_t _layer;
@@ -109,10 +110,11 @@ public:
 	uint16_t height() const { return _h; }
 	uint32_t color() const { return _color; }
 
+	bool isUndoable() const { return true; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
 
 private:
 	uint8_t _layer;

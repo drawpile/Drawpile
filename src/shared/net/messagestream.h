@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -122,11 +122,11 @@ public:
 	void hardCleanup(uint sizelimit, int indexlimit);
 
 	/**
-	 * @brief remove all messages, including the snapshot point
+	 * @brief Remove all messages and change the offset
 	 *
-	 * TODO use hardCleanup instead
+	 * @param newoffset
 	 */
-	void clear();
+	void resetTo(int newoffset);
 
 	/**
 	 * @brief Get the length of the stored message stream in bytes.

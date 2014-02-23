@@ -115,10 +115,11 @@ public:
 
 	const PenPointVector &points() const { return _points; }
 	
+	bool isUndoable() const { return true; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
 
 private:
 	PenPointVector _points;
@@ -136,10 +137,11 @@ public:
 	
 	static PenUp *deserialize(const uchar *data, uint len);
 
+	bool isUndoable() const { return true; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
 };
 
 }

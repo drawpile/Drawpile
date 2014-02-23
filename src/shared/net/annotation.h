@@ -148,11 +148,11 @@ public:
 	static AnnotationDelete *deserialize(const uchar *data, uint len);
 
 	uint8_t id() const { return _id; }
+	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
 
 private:
 	uint8_t _id;

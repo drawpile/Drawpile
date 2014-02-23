@@ -28,27 +28,89 @@
 #include "core/layer.h"
 
 #include "net/layerlist.h"
+#include "net/utils.h"
 
 #include "../shared/net/pen.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
+#include "../shared/util/ioutils.h"
 
 namespace drawingboard {
 
-struct StateSavepoint {
-	StateSavepoint() : timestamp(0), streampointer(-1), canvas(0) {}
-	StateSavepoint(const StateSavepoint &) = delete;
-	StateSavepoint &operator=(const StateSavepoint&) = delete;
-	~StateSavepoint() { delete canvas; }
+struct StateSavepoint::Data {
+	Data() : timestamp(0), streampointer(-1), canvas(0), _refcount(1) {}
+	Data(const Data &) = delete;
+	Data &operator=(const Data&) = delete;
+	~Data() { delete canvas; }
 
 	qint64 timestamp;
 	int streampointer;
 	paintcore::Savepoint *canvas;
 	QHash<int, DrawingContext> ctxstate;
 	QVector<net::LayerListItem> layermodel;
+
+private:
+	int _refcount;
+	friend class StateSavepoint;
 };
+
+StateSavepoint::StateSavepoint(const StateSavepoint &sp)
+	: _data(sp._data)
+{
+	if(_data)
+		++_data->_refcount;
+}
+
+StateSavepoint &StateSavepoint::operator =(const StateSavepoint &sp)
+{
+	if(_data) {
+		if(sp._data != _data) {
+			Q_ASSERT(_data->_refcount>0);
+			if(--_data->_refcount == 0)
+				delete _data;
+			_data = sp._data;
+			++_data->_refcount;
+		}
+	} else {
+		_data = sp._data;
+		++_data->_refcount;
+	}
+	return *this;
+}
+
+StateSavepoint::~StateSavepoint()
+{
+	if(_data) {
+		Q_ASSERT(_data->_refcount>0);
+		if(--_data->_refcount == 0)
+			delete _data;
+	}
+}
+
+StateSavepoint::Data *StateSavepoint::operator ->() {
+	if(!_data)
+		_data = new StateSavepoint::Data;
+	return _data;
+}
+
+void ToolContext::updateFromToolchange(const protocol::ToolChange &cmd)
+{
+	layer_id = cmd.layer();
+	brush.setBlendingMode(cmd.blend());
+	brush.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
+	brush.setIncremental(cmd.mode() & protocol::TOOL_MODE_INCREMENTAL);
+	brush.setSpacing(cmd.spacing());
+	brush.setRadius(cmd.size_h());
+	brush.setRadius2(cmd.size_l());
+	brush.setHardness(cmd.hard_h() / 255.0);
+	brush.setHardness2(cmd.hard_l() / 255.0);
+	brush.setOpacity(cmd.opacity_h() / 255.0);
+	brush.setOpacity2(cmd.opacity_l() / 255.0);
+	brush.setColor(cmd.color_h());
+	brush.setColor2(cmd.color_l());
+}
 
 /**
  * @brief Construct a state tracker instance
@@ -71,8 +133,6 @@ StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *la
 
 StateTracker::~StateTracker()
 {
-	while(!_savepoints.isEmpty())
-		delete _savepoints.takeLast();
 }
 
 void StateTracker::receiveCommand(protocol::MessagePtr msg)
@@ -114,7 +174,7 @@ void StateTracker::receiveCommand(protocol::MessagePtr msg)
 			} else {
 				qDebug() << "removing" << savepoint << "redundant save points out of" << _savepoints.count();
 				while(savepoint--)
-					delete _savepoints.takeFirst();
+					_savepoints.takeFirst();
 			}
 		}
 	}
@@ -222,7 +282,7 @@ QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 		QList<protocol::MessagePtr> snapshot = SnapshotLoader(this).loadInitCommands();
 
 		// Replace old message stream with snapshot since it didn't contain one
-		_msgstream.clear();
+		_msgstream.resetTo(0);
 		foreach(protocol::MessagePtr ptr, snapshot)
 			_msgstream.append(ptr);
 
@@ -297,22 +357,9 @@ void StateTracker::handleLayerDelete(const protocol::LayerDelete &cmd)
 void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 {
 	DrawingContext &ctx = _contexts[cmd.contextId()];
-	paintcore::Brush &b = ctx.tool.brush;
-	ctx.tool.layer_id = cmd.layer();
-	b.setBlendingMode(cmd.blend());
-	b.setSubpixel(cmd.mode() & protocol::TOOL_MODE_SUBPIXEL);
-	b.setIncremental(cmd.mode() & protocol::TOOL_MODE_INCREMENTAL);
-	b.setSpacing(cmd.spacing());
-	b.setRadius(cmd.size_h());
-	b.setRadius2(cmd.size_l());
-	b.setHardness(cmd.hard_h() / 255.0);
-	b.setHardness2(cmd.hard_l() / 255.0);
-	b.setOpacity(cmd.opacity_h() / 255.0);
-	b.setOpacity2(cmd.opacity_l() / 255.0);
-	b.setColor(cmd.color_h());
-	b.setColor2(cmd.color_l());
+	ctx.tool.updateFromToolchange(cmd);
 
-	emit userMarkerColor(cmd.contextId(), b.color1());
+	emit userMarkerColor(cmd.contextId(), ctx.tool.brush.color1());
 }
 
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)
@@ -462,7 +509,7 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	}
 
 	// Step 2. Find nearest save point
-	const StateSavepoint *savepoint = 0;
+	StateSavepoint savepoint;
 	for(int i=_savepoints.count()-1;i>=0;--i) {
 		if(_savepoints.at(i)->streampointer <= pos) {
 			savepoint = _savepoints.at(i);
@@ -513,50 +560,57 @@ void StateTracker::handleUndo(protocol::Undo &cmd)
 	}
 }
 
-/**
- * @brief Check if it is possible to create a new savepoint now
- *
- * The following criteria are used:
- *
- * - All users must be in PEN_UP state
- * - Sufficient time must have elapsed since last savepoint
- * @return
- */
-bool StateTracker::canMakeSavepoint(int pos) const
+StateSavepoint StateTracker::createSavepoint(int pos)
 {
-	// Make sure there is something in the message stream buffer
-	if(_msgstream.end() <= _msgstream.offset())
-		return false;
+	StateSavepoint savepoint;
+	savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
+	savepoint->streampointer = pos<0 ? _msgstream.end() : pos;
+	savepoint->canvas = _image->makeSavepoint();
+	savepoint->ctxstate = _contexts;
+	savepoint->layermodel = _layerlist->getLayers();
 
-	// Check if sufficient time and actions has elapsed from previous savepoint
-	if(!_savepoints.isEmpty()) {
-		const StateSavepoint *sp = _savepoints.last();
-		quint64 now = QDateTime::currentMSecsSinceEpoch();
-		if(now - sp->timestamp < 1000 && _msgstream.end() - sp->streampointer < 100)
-			return false;
-	}
-
-	// Ok, looks like we're good to go
-	return true;
+	return savepoint;
 }
 
 void StateTracker::makeSavepoint(int pos)
 {
-	if(canMakeSavepoint(pos)) {
-		StateSavepoint *savepoint = new StateSavepoint;
-		savepoint->timestamp = QDateTime::currentMSecsSinceEpoch();
-		savepoint->streampointer = pos;
-		savepoint->canvas = _image->makeSavepoint();
-		savepoint->ctxstate = _contexts;
-		savepoint->layermodel = _layerlist->getLayers();
+	// Make sure there is something in the message stream buffer
+	if(_msgstream.end() <= _msgstream.offset())
+		return;
 
-		_savepoints.append(savepoint);
+	// Check if sufficient time and actions has elapsed from previous savepoint
+	if(!_savepoints.isEmpty()) {
+		const StateSavepoint sp = _savepoints.last();
+		quint64 now = QDateTime::currentMSecsSinceEpoch();
+		if(now - sp->timestamp < 1000 && _msgstream.end() - sp->streampointer < 100)
+			return;
 	}
+
+	// Looks like a good spot for a savepoint
+	_savepoints.append(createSavepoint(pos));
 }
 
-void StateTracker::revertSavepoint(const StateSavepoint *savepoint)
+
+void StateTracker::resetToSavepoint(const StateSavepoint savepoint)
 {
-	Q_ASSERT(_savepoints.contains(const_cast<StateSavepoint*>(savepoint)));
+	// This function is called when jumping to a recorded savepoint
+
+	_msgstream.resetTo(savepoint->streampointer);
+	_savepoints.clear();
+
+	_image->restoreSavepoint(savepoint->canvas);
+	_contexts = savepoint->ctxstate;
+	_layerlist->setLayers(savepoint->layermodel);
+
+	_savepoints.append(savepoint);
+}
+
+void StateTracker::revertSavepoint(const StateSavepoint savepoint)
+{
+	// This function is called when reverting to an earlier state to undo
+	// an action.
+
+	Q_ASSERT(_savepoints.contains(savepoint));
 
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
@@ -564,7 +618,7 @@ void StateTracker::revertSavepoint(const StateSavepoint *savepoint)
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
-		delete _savepoints.takeLast();
+		_savepoints.takeLast();
 }
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
@@ -587,6 +641,156 @@ void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
 {
 	_image->deleteAnnotation(cmd.id());
+}
+
+void StateSavepoint::toDatastream(QDataStream &out) const
+{
+	Q_ASSERT(_data);
+	const auto *d = _data;
+
+	// Write stream pointer
+	out << quint32(d->streampointer);
+
+	// Write drawing contexts
+	out << quint8(d->ctxstate.size());
+	foreach(quint8 ctxid, d->ctxstate.keys()) {
+		const DrawingContext &ctx = d->ctxstate[ctxid];
+
+		// write context ID
+		out << ctxid;
+
+		// write tool context
+		protocol::MessagePtr tc = net::brushToToolChange(ctxid, ctx.tool.layer_id, ctx.tool.brush);
+		QByteArray tcb(tc->length(), '\0');
+		tc->serialize(tcb.data());
+		out.writeBytes(tcb.data(), tcb.length());
+
+		// write last point
+		out << ctx.lastpoint.x();
+		out << ctx.lastpoint.y();
+		out << ctx.lastpoint.pressure();
+
+		// write pendown bit
+		out << ctx.pendown;
+
+		// write stroke length accumulator
+		out << ctx.distance_accumulator;
+	}
+
+	// Write layer model
+	out << quint8(d->layermodel.size());
+	foreach(const net::LayerListItem &layer, d->layermodel) {
+		// Write layer ID
+		out << qint32(layer.id);
+
+		// Write layer title
+		out << layer.title;
+
+		// Write layer opacity and flags
+		out << layer.opacity;
+		out << quint8(layer.blend);
+		out << layer.hidden << layer.locked;
+
+		// Write layer ACL
+		out << layer.exclusive;
+	}
+
+	// Write layer stack
+	d->canvas->toDatastream(out);
+}
+
+StateSavepoint StateSavepoint::fromDatastream(QDataStream &in, StateTracker *owner)
+{
+	StateSavepoint sp;
+	sp._data = new StateSavepoint::Data;
+	auto *d = sp._data;
+
+	// Read stream pointer
+	quint32 sptr;
+	in >> sptr;
+	d->streampointer = sptr;
+
+	// Read drawing contexts
+	quint8 contexts;
+	in >> contexts;
+	while(contexts--) {
+		DrawingContext ctx;
+
+		// Read context id
+		quint8 ctxid;
+		in >> ctxid;
+
+		// Read tool context
+		char *msgbuf;
+		unsigned int msglen;
+		in.readBytes(msgbuf, msglen);
+
+		protocol::Message *tc = protocol::Message::deserialize((const uchar*)msgbuf);
+		if(!tc) {
+			qWarning() << "invalid tool change message in snapshot!";
+			return StateSavepoint();
+		}
+		ctx.tool.updateFromToolchange(static_cast<const protocol::ToolChange&>(*tc));
+		delete tc;
+
+		// Read last point
+		qreal lpx, lpy, lpp;
+		in >> lpx >> lpy >> lpp;
+		ctx.lastpoint = paintcore::Point(lpx, lpy, lpp);
+
+		// Read pendown bit
+		in >> ctx.pendown;
+
+		// Read stroke length accumulator
+		in >> ctx.distance_accumulator;
+
+		d->ctxstate[ctxid] = ctx;
+	}
+
+	// Read layer list
+	quint8 layercount;
+	in >> layercount;
+	while(layercount--) {
+		// Read layer ID
+		qint32 layerid;
+		in >> layerid;
+
+		// Read layer title
+		QString title;
+		in >> title;
+
+		// Read opacity and flags
+		float opacity;
+		in >> opacity;
+
+		quint8 blend;
+		in >> blend;
+
+		bool hidden;
+		in >> hidden;
+
+		bool locked;
+		in >> locked;
+
+		// Read layer ACL
+		QList<uint8_t> acls;
+		in >> acls;
+
+		sp->layermodel.append(net::LayerListItem(
+			layerid,
+			title,
+			opacity,
+			blend,
+			hidden,
+			locked,
+			acls
+		));
+	}
+
+	// Read layerstack snapshot
+	d->canvas = paintcore::Savepoint::fromDatastream(in, owner->image());
+
+	return sp;
 }
 
 }

@@ -23,6 +23,7 @@
 #include <QPainter>
 #include <QMimeData>
 #include <QtConcurrent>
+#include <QDataStream>
 
 #include "annotation.h"
 #include "layer.h"
@@ -532,6 +533,48 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 
 
 	notifyAreaChanged();
+}
+
+void Savepoint::toDatastream(QDataStream &out) const
+{
+	// Write size
+	out << quint32(width) << quint32(height);
+
+	// Write layers
+	out << quint8(layers.size());
+	foreach(const Layer *layer, layers) {
+		layer->toDatastream(out);
+	}
+
+	// Write annotations
+	out << quint16(annotations.size());
+	foreach(const Annotation *annotation, annotations) {
+		annotation->toDatastream(out);
+	}
+}
+
+Savepoint *Savepoint::fromDatastream(QDataStream &in, LayerStack *owner)
+{
+	Savepoint *sp = new Savepoint;
+	quint32 width, height;
+	in >> width >> height;
+
+	sp->width = width;
+	sp->height = height;
+
+	quint8 layers;
+	in >> layers;
+	while(layers--) {
+		sp->layers.append(Layer::fromDatastream(owner, in));
+	}
+
+	quint16 annotations;
+	in >> annotations;
+	while(annotations--) {
+		sp->annotations.append(Annotation::fromDatastream(in));
+	}
+
+	return sp;
 }
 
 }

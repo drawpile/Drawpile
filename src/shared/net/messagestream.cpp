@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -117,9 +117,9 @@ void MessageStream::hardCleanup(uint sizelimit, int indexlimit)
 	}
 }
 
-void MessageStream::clear()
+void MessageStream::resetTo(int newoffset)
 {
-	_offset = end();
+	_offset = newoffset;
 	_snapshotpointer = -1;
 	_messages.clear();
 	_bytes = 0;

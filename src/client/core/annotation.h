@@ -25,6 +25,7 @@
 
 class QPainter;
 class QTextDocument;
+class QDataStream;
 
 namespace paintcore {
 
@@ -89,6 +90,9 @@ public:
 	 * @return
 	 */
 	QImage toImage() const;
+
+	void toDatastream(QDataStream &out) const;
+	static Annotation *fromDatastream(QDataStream &in);
 
 private:
 	int _id;

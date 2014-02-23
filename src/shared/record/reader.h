@@ -22,8 +22,10 @@
 #define REC_READER_H
 
 #include <QObject>
-#include <QFile>
+
 #include "../net/message.h"
+
+class QFileDevice;
 
 namespace recording {
 
@@ -59,15 +61,30 @@ class Reader : public QObject
 {
 	Q_OBJECT
 public:
+	/**
+	 * @brief Reader
+	 * @param filename
+	 * @param parent
+	 */
 	Reader(const QString &filename, QObject *parent=0);
+
+	/**
+	 * @brief Reader
+	 *
+	 * @param file input file device
+	 * @param autoclose if true, the Reader instance will take ownership of the file device
+	 * @param parent
+	 */
+	Reader(QFileDevice *file, bool autoclose=false, QObject *parent=0);
+
+	Reader(const Reader &) = delete;
+	Reader &operator=(const Reader &) = delete;
 	~Reader();
 
-	QString filename() const { return _file.fileName(); }
-
-	qint64 filesize() const { return _file.size(); }
-
-	qint64 position() const { return _file.pos(); }
-
+	QString filename() const;
+	qint64 filesize() const;
+	int current() const { return _current; }
+	qint64 position() const;
 	QString errorString() const;
 
 	/**
@@ -84,10 +101,21 @@ public:
 	 */
 	Compatibility open();
 
-	/**
-	 * @brief Close the file
-	 */
+	//! Close the file
 	void close();
+
+	//! Rewind to the first message
+	void rewind();
+
+	/**
+	 * @brief Read the next message to the given buffer
+	 *
+	 * The buffer will be resized, if necesasry, to hold the entire message.
+	 *
+	 * @param buffer
+	 * @return false on error
+	 */
+	bool readNextToBuffer(QByteArray &buffer);
 
 	/**
 	 * @brief Read the next message
@@ -95,9 +123,16 @@ public:
 	 */
 	MessageRecord readNext();
 
+	//! Seek to given position in the recording
+	void seekTo(int pos, qint64 offset);
+
 private:
-	QFile _file;
+	QFileDevice *_file;
+	QByteArray _msgbuf;
+	bool _autoclose;
 	QString _writerversion;
+	int _current;
+	qint64 _beginning;
 };
 
 }

@@ -24,13 +24,26 @@
 #include <QTimer>
 #include <QMenu>
 #include <QCloseEvent>
+#include <QBuffer>
+#include <QFileInfo>
+
+#include <QGraphicsScene>
+#include <QGraphicsRectItem>
 
 #include <cmath>
 
-#include "playbackdialog.h"
-#include "videoexportdialog.h"
+#include "dialogs/playbackdialog.h"
+#include "dialogs/videoexportdialog.h"
+#include "dialogs/recfilterdialog.h"
+
 #include "export/videoexporter.h"
 #include "scene/canvasscene.h"
+#include "recording/indexgraphicsitem.h"
+#include "recording/indexpointergraphicsitem.h"
+#include "recording/indexbuilder.h"
+#include "recording/indexloader.h"
+#include "statetracker.h"
+#include "mainwindow.h"
 
 #include "../shared/record/reader.h"
 #include "../shared/net/recording.h"
@@ -40,7 +53,9 @@
 namespace dialogs {
 
 PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent) :
-	QDialog(parent), _canvas(canvas), _reader(reader), _exporter(0), _speedfactor(1.0f), _play(false), _closing(false)
+	QDialog(parent),
+	_reader(reader), _index(0), _indexscene(0), _indexpositem(0),
+	_canvas(canvas), _exporter(0), _speedfactor(1.0f), _play(false), _closing(false)
 {
 	setWindowFlags(Qt::Tool);
 	_reader->setParent(this);
@@ -57,6 +72,12 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	connect(_ui->play, SIGNAL(toggled(bool)), this, SIGNAL(playbackToggled(bool)));
 	connect(_ui->seek, SIGNAL(clicked()), this, SLOT(nextCommand()));
 	connect(_ui->skip, SIGNAL(clicked()), this, SLOT(nextSequence()));
+
+	connect(_ui->snapshotBackwards, SIGNAL(clicked()), this, SLOT(prevSnapshot()));
+	connect(_ui->snapshotForwards, SIGNAL(clicked()), this, SLOT(nextSnapshot()));
+
+	connect(_ui->filterButton1, SIGNAL(clicked()), this, SLOT(filterRecording()));
+	connect(_ui->filterButton2, SIGNAL(clicked()), this, SLOT(filterRecording()));
 
 	connect(_ui->speedcontrol, &QDial::valueChanged, [this](int speed) {
 		if(speed<=100)
@@ -89,11 +110,33 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 
 	_ui->exportbutton->setMenu(exportmenu);
 	connect(_ui->exportbutton, SIGNAL(clicked()), this, SLOT(exportButtonClicked()));
+
+	connect(_ui->indexButton, SIGNAL(clicked()), this, SLOT(makeIndex()));
+
+	loadIndex();
 }
 
 PlaybackDialog::~PlaybackDialog()
 {
 	delete _ui;
+}
+
+void PlaybackDialog::createIndexView()
+{
+	_indexscene = new QGraphicsScene(this);
+
+	// Populate scene
+	IndexGraphicsItem::buildScene(_indexscene, _index->index());
+
+	// Create current position indicator item
+	_indexpositem = new IndexPointerGraphicsItem(_indexscene->height());
+	_indexpositem->setVisible(false);
+	_indexscene->addItem(_indexpositem);
+
+	_ui->indexView->setScene(_indexscene);
+	_ui->indexStack->setCurrentIndex(1);
+
+	_ui->indexView->centerOn(QPointF(0, 0));
 }
 
 void PlaybackDialog::closeEvent(QCloseEvent *event)
@@ -142,6 +185,7 @@ void PlaybackDialog::nextCommand()
 	}
 
 	recording::MessageRecord next = _reader->readNext();
+
 	switch(next.status) {
 	case recording::MessageRecord::OK:
 		if(next.message->type() == protocol::MSG_INTERVAL) {
@@ -174,6 +218,9 @@ void PlaybackDialog::nextCommand()
 
 	if(_autoExportAction->isChecked())
 		exportFrame();
+
+	updateIndexPosition();
+
 	_ui->progressBar->setValue(_reader->position());
 }
 
@@ -213,15 +260,112 @@ void PlaybackDialog::nextSequence()
 	_ui->progressBar->setValue(_reader->position());
 }
 
+void PlaybackDialog::updateIndexPosition()
+{
+	if(_indexpositem) {
+		_indexpositem->setIndex(_reader->current());
+		_indexpositem->setVisible(true);
+		_ui->indexView->centerOn(_indexpositem);
+	}
+}
+
+void PlaybackDialog::jumpTo(int pos)
+{
+	if(!_ui->play->isEnabled())
+		return;
+
+	// Skip forward a shot distance: don't bother resetting to a snapshot
+	if(pos > _reader->current() && pos - _reader->current() < 100) {
+		while(_reader->current() < pos && _ui->play->isEnabled()) {
+			nextCommand();
+		}
+		return;
+	}
+
+	// Find nearest snapshot and jump there
+	int seIdx=0;
+	for(int i=1;i<_index->index().snapshots().size();++i) {
+		const recording::SnapshotEntry &next = _index->index().snapshots().at(i);
+		if(int(next.pos) > pos)
+			break;
+
+		seIdx = i;
+	}
+
+	jumptToSnapshot(seIdx);
+
+	while(_reader->current() < pos && _ui->play->isEnabled())
+		nextCommand();
+}
+
+void PlaybackDialog::jumptToSnapshot(int idx)
+{
+	recording::SnapshotEntry se = _index->index().snapshots().at(idx);
+	drawingboard::StateSavepoint savepoint = _index->loadSavepoint(idx, _canvas->statetracker());
+
+	if(!savepoint) {
+		qWarning() << "error loading savepoint";
+		return;
+	}
+
+	_reader->seekTo(se.pos, se.stream_offset);
+	_canvas->statetracker()->resetToSavepoint(savepoint);
+	_ui->progressBar->setValue(_reader->position());
+	updateIndexPosition();
+}
+
+void PlaybackDialog::prevSnapshot()
+{
+	const unsigned int current = qMin(0, _reader->current());
+
+	int seIdx=0;
+	for(int i=1;i<_index->index().snapshots().size();++i) {
+		const recording::SnapshotEntry &next = _index->index().snapshots().at(i);
+		if(next.pos >= current)
+			break;
+
+		seIdx = i;
+	}
+
+	jumptToSnapshot(seIdx);
+	updateIndexPosition();
+}
+
+void PlaybackDialog::nextSnapshot()
+{
+	const unsigned int current = qMin(0, _reader->current());
+
+	int seIdx=_index->index().snapshots().size() - 1;
+	int pos = _index->index().snapshots().last().pos;
+	for(int i=seIdx-1;i>=0;--i) {
+		const recording::SnapshotEntry &prev = _index->index().snapshots().at(i);
+		if(prev.pos <= current)
+			break;
+
+		seIdx = i;
+		pos = prev.pos;
+	}
+
+	if(pos > _reader->position())
+		jumptToSnapshot(seIdx);
+}
+
 void PlaybackDialog::endOfFileReached()
 {
 	_ui->play->setChecked(false);
-	_ui->play->setEnabled(false);
-	_ui->seek->setEnabled(false);
-	_ui->skip->setEnabled(false);
-	_ui->progressBar->setEnabled(false);
-	_ui->progressBar->setFormat(tr("Recording ended"));
-	_ui->progressBar->setTextVisible(true);
+
+	if(_index) {
+		// EOF won't stop us in indexed mode
+	} else {
+		_ui->play->setEnabled(false);
+		_ui->seek->setEnabled(false);
+		_ui->skip->setEnabled(false);
+		_ui->progressBar->setEnabled(false);
+		_ui->progressBar->setFormat(tr("Recording ended"));
+		_ui->progressBar->setTextVisible(true);
+		if(_indexpositem)
+			_indexpositem->setVisible(false);
+	}
 }
 
 void PlaybackDialog::exportButtonClicked()
@@ -380,6 +524,70 @@ recording::Reader *PlaybackDialog::openRecording(const QString &filename, QWidge
 	}
 
 	return reader.take();
+}
+
+QString PlaybackDialog::indexFileName() const
+{
+	QString name = _reader->filename();
+	int suffix = name.lastIndexOf('.');
+	return name.left(suffix) + ".dpidx";
+
+}
+
+void PlaybackDialog::loadIndex()
+{
+	QFileInfo indexfile(indexFileName());
+	if(!indexfile.exists()) {
+		_ui->noindexReason->setText(tr("Index not yet generated"));
+		return;
+	}
+
+	_index = new recording::IndexLoader(_reader->filename(), indexFileName());
+	if(!_index->open()) {
+		delete _index;
+		_index = 0;
+		_ui->noindexReason->setText(tr("Error loading index!"));
+		return;
+	}
+
+	createIndexView();
+	connect(_ui->indexView, SIGNAL(jumpRequest(int)), this, SLOT(jumpTo(int)));
+}
+
+void PlaybackDialog::makeIndex()
+{
+	_ui->indexButton->setEnabled(false);
+	auto *builder = new recording::IndexBuilder(_reader->filename(), indexFileName(), this);
+
+	_ui->buildProgress->setMaximum(_reader->filesize());
+	connect(builder, SIGNAL(progress(int)), _ui->buildProgress, SLOT(setValue(int)), Qt::QueuedConnection);
+	connect(builder, SIGNAL(done(bool, QString)), this, SLOT(indexMade(bool, QString)), Qt::QueuedConnection);
+
+	builder->start();
+}
+
+void PlaybackDialog::indexMade(bool ok, const QString &msg)
+{
+	_ui->indexButton->setEnabled(true);
+	_ui->buildProgress->setValue(0);
+
+	if(ok)
+		loadIndex();
+	else
+		QMessageBox::warning(this, tr("Error"), msg);
+}
+
+void PlaybackDialog::filterRecording()
+{
+	dialogs::FilterRecordingDialog dlg(this);
+	if(dlg.exec() == QDialog::Accepted) {
+		QString filename = dlg.filterRecording(_reader->filename());
+
+		if(!filename.isEmpty()) {
+			MainWindow *win = new MainWindow(false);
+			win->open(filename);
+		}
+	}
 }
 
 }

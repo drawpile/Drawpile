@@ -122,6 +122,12 @@ public:
 	virtual bool isOpCommand() const { return false; }
 
 	/**
+	 * @brief Is this message type undoable?
+	 * @return true if this action can be undone
+	 */
+	virtual bool isUndoable() const { return false; }
+
+	/**
 	 * @brief Has this command been marked as undone?
 	 *
 	 * Note. This is a purely local flag that is not part of the
@@ -187,12 +193,6 @@ protected:
 	 * @return number of bytes written (should always be the same as payloadLenth())
 	 */
 	virtual int serializePayload(uchar *data) const = 0;
-
-	/**
-	 * @brief Is this message type undoable?
-	 * @return true if this action can be undone
-	 */
-	virtual bool isUndoable() const { return false; }
 
 private:
 	const MessageType _type;

@@ -26,6 +26,7 @@
 
 namespace recording {
 	class Reader;
+	class IndexLoader;
 }
 
 namespace drawingboard {
@@ -34,6 +35,8 @@ namespace drawingboard {
 
 class VideoExporter;
 class QTimer;
+class QGraphicsScene;
+class IndexPointerGraphicsItem;
 
 class Ui_PlaybackDialog;
 
@@ -61,6 +64,9 @@ public slots:
 	void nextCommand();
 	void nextSequence();
 
+	void prevSnapshot();
+	void nextSnapshot();
+
 protected:
 	void closeEvent(QCloseEvent *);
 
@@ -73,13 +79,31 @@ private slots:
 	void exporterReady();
 	void exporterFinished();
 
+	void makeIndex();
+	void indexMade(bool ok, const QString &msg);
+	void filterRecording();
+
+	void jumpTo(int pos);
+
 private:
+	void createIndexView();
 	void endOfFileReached();
 	bool waitForExporter();
+	void loadIndex();
+	void jumptToSnapshot(int idx);
+	void updateIndexPosition();
+
+	QString indexFileName() const;
 
 	Ui_PlaybackDialog *_ui;
-	drawingboard::CanvasScene *_canvas;
+
 	recording::Reader *_reader;
+	recording::IndexLoader *_index;
+
+	QGraphicsScene *_indexscene;
+	IndexPointerGraphicsItem *_indexpositem;
+
+	drawingboard::CanvasScene *_canvas;	
 	VideoExporter *_exporter;
 	QTimer *_timer;
 	float _speedfactor;

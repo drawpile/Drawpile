@@ -33,7 +33,9 @@
         <file>icons/media-playback-start.png</file>
         <file>icons/media-playback-pause.png</file>
         <file>icons/media-record.png</file>
+        <file>icons/media-seek-backward.png</file>
         <file>icons/media-seek-forward.png</file>
+        <file>icons/media-skip-backward.png</file>
         <file>icons/media-skip-forward.png</file>
         <file>icons/network-idle.png</file>
         <file>icons/network-offline.png</file>

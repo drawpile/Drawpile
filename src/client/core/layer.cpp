@@ -20,6 +20,7 @@
 #include <QPainter>
 #include <QImage>
 #include <QtConcurrent>
+#include <QDataStream>
 #include <cmath>
 
 #include "layerstack.h"
@@ -859,6 +860,70 @@ void Layer::markOpaqueDirty(bool forceVisible)
 			_owner->markDirty(i);
 	}
 	_owner->notifyAreaChanged();
+}
+
+void Layer::toDatastream(QDataStream &out) const
+{
+	// Write ID
+	out << qint32(id_);
+
+	// Write title
+	out << _title;
+
+	// Write opacity, blend mode and hidden flag
+	out << _opacity;
+	out << quint8(_blend);
+	out << _hidden;
+
+	// Write layer data
+	out << toImage();
+
+	// Write sublayers
+	out << quint8(_sublayers.size());
+	foreach(const Layer *sl, _sublayers) {
+		sl->toDatastream(out);
+	}
+}
+
+Layer *Layer::fromDatastream(LayerStack *owner, QDataStream &in)
+{
+	// Read ID
+	qint32 id;
+	in >> id;
+
+	// Read title
+	QString title;
+	in >> title;
+
+	// Read opacity, blend mode and hidden flag
+	uchar opacity;
+	uchar blend;
+	bool hidden;
+	in >> opacity >> blend >> hidden;
+
+	// Read image data
+	QImage img;
+	in >> img;
+
+	Layer *layer = new Layer(owner, id, title, Qt::transparent, img.size());
+	layer->_opacity = opacity;
+	layer->_blend = blend;
+	layer->_hidden = hidden;
+	layer->putImage(0, 0, img, false);
+
+	// Read sublayers
+	quint8 sublayers;
+	in >> sublayers;
+	while(sublayers--) {
+		Layer *sl = Layer::fromDatastream(owner, in);
+		if(!sl) {
+			delete layer;
+			return 0;
+		}
+		layer->_sublayers.append(sl);
+	}
+
+	return layer;
 }
 
 }

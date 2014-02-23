@@ -28,6 +28,8 @@
 #include <QPixmap>
 #include <QBitArray>
 
+class QDataStream;
+
 namespace paintcore {
 
 class Annotation;
@@ -165,6 +167,10 @@ class Savepoint {
 	friend class LayerStack;
 public:
 	~Savepoint();
+
+	void toDatastream(QDataStream &out) const;
+	static Savepoint *fromDatastream(QDataStream &in, LayerStack *owner);
+
 private:
 	Savepoint() {}
 	QList<Layer*> layers;

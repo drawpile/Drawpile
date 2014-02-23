@@ -48,11 +48,11 @@ public:
 	UndoPoint(uint8_t ctx) : Message(MSG_UNDOPOINT, ctx) {}
 
 	static UndoPoint *deserialize(const uchar *data, uint len);
+	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
+	int serializePayload(uchar *data) const;	
 };
 
 /**
@@ -94,11 +94,11 @@ public:
 	 * @return true if override field is set
 	 */
 	bool isOpCommand() const { return _override!=0; }
+	bool isUndoable() const { return true; }
 
 protected:
 	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-	bool isUndoable() const { return true; }
+	int serializePayload(uchar *data) const;	
 
 private:
 	uint8_t _override;

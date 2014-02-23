@@ -22,8 +22,10 @@
 #define WRITER_H
 
 #include <QObject>
-#include <QFile>
+
 #include "../net/message.h"
+
+class QFileDevice;
 
 namespace recording {
 
@@ -31,12 +33,30 @@ class Writer : public QObject
 {
 	Q_OBJECT
 public:
+	/**
+	 * @brief Open a writer that writes to the named file
+	 * @param filename
+	 * @param parent
+	 */
 	Writer(const QString &filename, QObject *parent=0);
+
+	/**
+	 * @brief Open a writer that writes to the given device
+	 * @param file file device
+	 * @param autoclose if true, this object will take ownership of the file device
+	 * @param parent
+	 */
+	Writer(QFileDevice *file, bool autoclose=false, QObject *parent=0);
+	Writer(const Writer&) = delete;
+	Writer &operator=(const Writer&) = delete;
 	~Writer();
 
 	QString errorString() const;
 
+	//! Open the file for writing
 	bool open();
+
+	//! Close the file
 	void close();
 
 	/**
@@ -48,13 +68,29 @@ public:
 	 */
 	void setMinimumInterval(int min);
 
+	/**
+	 * @brief Write recording header
+	 *
+	 * This should be called before writing the first message.
+	 *
+	 * @return false on error
+	 */
 	bool writeHeader();
+
+	/**
+	 * @brief Write a message from a buffer
+	 *
+	 * Note. The buffer must contain a valid serialized Message!
+	 * @param buffer
+	 */
+	void writeFromBuffer(const QByteArray &buffer);
 
 public slots:
 	void recordMessage(const protocol::MessagePtr msg);
 
 private:
-	QFile _file;
+	QFileDevice *_file;
+	bool _autoclose;
 	qint64 _minInterval;
 	qint64 _interval;
 };

@@ -3,6 +3,7 @@
  * Spin boxes for accurate adjustment of brush parameters
  * New feature: cut selection to clipboard
  * Smoother laser pointer trails
+ * Indexed recordings
 
 2014-02-25 Version 0.8.5
  * Navigator view is now updated in real time
