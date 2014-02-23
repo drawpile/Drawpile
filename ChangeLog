@@ -7,6 +7,7 @@
  * Added "redo" button to user list dock
  * New feature: Direct to video export using ffmpeg
  * New feature: latest chat message is shown in the statusbar if chat box is hidden
+ * Bugfix: right mouse button now works correctly when input smoothing is enabled
 
 2014-02-03 Version 0.8.4
  * Bugfix: stop scene rectangle from growing when lines or annotations are dragged beyond boundaries

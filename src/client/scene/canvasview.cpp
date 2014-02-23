@@ -403,7 +403,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 				_pointervelocity = point.distance(_prevpoint);
 				_pointerdistance += _pointervelocity;
 				point.setPressure(mapPressure(1.0, false));
-				onPenMove(point, event->button() == Qt::RightButton, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::AltModifier);
+				onPenMove(point, event->buttons() & Qt::RightButton, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::AltModifier);
 			} else if(_pointertracking && _scene->hasImage()) {
 				emit pointerMoved(point.x(), point.y());
 			}
