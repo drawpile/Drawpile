@@ -23,7 +23,7 @@ Dependencies:
 
 For building just the dedicated server, only QtCore and QtNetwork are required.
 
-It's a good idead to build in a separate directory to keep build files
+It's a good idea to build in a separate directory to keep build files
 separate from the source tree.
 
 Example:
