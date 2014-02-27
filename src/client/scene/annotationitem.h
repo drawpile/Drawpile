@@ -80,6 +80,7 @@ class AnnotationItem : public QGraphicsObject {
 	private:
 		int _id;
 		QRectF _rect;
+		QRectF _oldrect;
 
 		paintcore::LayerStack *_image;
 

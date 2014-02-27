@@ -66,6 +66,9 @@ AnnotationItem::Handle AnnotationItem::handleAt(const QPoint &point) const
 void AnnotationItem::adjustGeometry(Handle handle, const QPoint &delta)
 {
 	prepareGeometryChange();
+	if(_oldrect.isNull())
+		_oldrect = _rect;
+
 	switch(handle) {
 	case OUTSIDE: return;
 	case TRANSLATE: _rect.translate(delta); break;
@@ -122,12 +125,13 @@ void AnnotationItem::refresh()
 
 	prepareGeometryChange();
 	_rect = a->rect();
+	_oldrect = QRectF();
 	update();
 }
 
 QRectF AnnotationItem::boundingRect() const
 {
-	return _rect;
+	return _rect | _oldrect;
 }
 
 namespace {
@@ -166,7 +170,7 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 		return;
 
 	painter->save();
-	painter->setClipRect(boundingRect().adjusted(0, 0, 1, 1));
+	painter->setClipRect(boundingRect().adjusted(-1, -1, 1, 1));
 
 	state->paint(painter, _rect);
 
@@ -198,6 +202,15 @@ void AnnotationItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 			drawTriangle(painter, RS_BOTTOMRIGHT, _rect.bottomRight() + QPointF(-2, -2));
 		}
 	}
+	if(!_oldrect.isNull()) {
+		// Annotation has been reshaped, but the shape changed command hasn't made the roundtrip yet
+		QPen bpen(Qt::DotLine);
+		bpen.setCosmetic(true);
+		bpen.setColor(Qt::red);
+		painter->setPen(bpen);
+		painter->drawRect(_oldrect);
+	}
+
 	painter->restore();
 }
 

@@ -68,9 +68,6 @@ void Annotation::begin(const paintcore::Point& point, bool right)
 void Annotation::motion(const paintcore::Point& point, bool constrain, bool center)
 {
 	if(_wasselected) {
-		// TODO a "ghost" mode to indicate annotation has not really moved
-		// until the server roundtrip
-
 		// Annotation may have been deleted by other user while we were moving it.
 		if(_selected) {
 			QPointF p = point - _start;
