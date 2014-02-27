@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -62,7 +62,6 @@ namespace net {
 namespace drawingboard {
 
 class CanvasScene;
-class AnnotationItem;
 
 struct ToolContext {
 	int layer_id;
@@ -135,7 +134,7 @@ public:
 	StateTracker &operator=(const StateTracker&) = delete;
 
 signals:
-	void myAnnotationCreated(AnnotationItem *item);
+	void myAnnotationCreated(int id);
 	void myLayerCreated(int);
 
 private:

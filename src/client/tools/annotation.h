@@ -20,6 +20,7 @@
 #ifndef TOOLS_ANNOTATION_H
 #define TOOLS_ANNOTATION_H
 
+#include "scene/annotationitem.h"
 #include "tool.h"
 
 namespace drawingboard {

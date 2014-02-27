@@ -1,7 +1,7 @@
 /*
 	DrawPile - a collaborative drawing program.
 
-	Copyright (C) 2006-2013 Calle Laakkonen
+	Copyright (C) 2006-2014 Calle Laakkonen
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ using widgets::ColorButton;
 
 #include "utils/palette.h"
 
+#include "core/annotation.h"
 #include "core/rasterop.h" // for blend modes
 
 namespace tools {
@@ -771,8 +772,10 @@ void AnnotationSettings::setSelection(drawingboard::AnnotationItem *item)
 	_selection = item;
 	if(item) {
 		item->setHighlight(true);
-		_ui->content->setHtml(item->text());
-		_ui->btnBackground->setColor(item->backgroundColor());
+		const paintcore::Annotation *a = item->getAnnotation();
+		Q_ASSERT(a);
+		_ui->content->setHtml(a->text());
+		_ui->btnBackground->setColor(a->backgroundColor());
 	}
 	_noupdate = false;
 }
@@ -812,10 +815,14 @@ void AnnotationSettings::bake()
 	Q_ASSERT(_layerlist);
 	Q_ASSERT(_client);
 
-	QImage img = _selection->toImage();
+	const paintcore::Annotation *a = _selection->getAnnotation();
+	Q_ASSERT(a);
+
+	QImage img = a->toImage();
+
 	int layer = _layerlist->currentLayer();
 	_client->sendUndopoint();
-	_client->sendImage(layer, _selection->geometry().x(), _selection->geometry().y(), img, true);
+	_client->sendImage(layer, a->rect().x(), a->rect().y(), img, true);
 	_client->sendAnnotationDelete(selected());
 	setSelection(0); /* not strictly necessary, but makes the UI seem more responsive */
 }

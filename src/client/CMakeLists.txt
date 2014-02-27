@@ -54,6 +54,7 @@ set (
 	utils/whatismyip.cpp
 	utils/strokesmoother.cpp
 	utils/kis_cubic_curve.cpp
+	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp
 	core/layerstack.cpp

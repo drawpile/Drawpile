@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009-2013 Calle Laakkonen
+   Copyright (C) 2009-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,13 +26,9 @@ namespace paintcore {
 	class LayerStack;
 }
 
-namespace drawingboard {
-	class AnnotationItem;
-}
-
 namespace openraster {
 
-bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *layers, const QList<drawingboard::AnnotationItem*> &annotations);
+bool saveOpenRaster(const QString &filename, const paintcore::LayerStack *image);
 
 }
 

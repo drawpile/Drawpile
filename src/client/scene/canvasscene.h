@@ -97,32 +97,17 @@ public:
 	//! Is there an image on the drawing board
 	bool hasImage() const;
 
-	//! Check if there are any annotations
-	bool hasAnnotations() const;
-
 	//! Return the annotation at the given coordinates (if any)
 	AnnotationItem *annotationAt(const QPoint &point);
 
-	//! Return the annotation with the given ID
-	AnnotationItem *getAnnotationById(int id);
-
-	//! Get all annotations
-	QList<AnnotationItem*> getAnnotations(bool onlyVisible=false) const;
-
-	//! Reset annotations
-	void setAnnotations(const QVector<AnnotationState> &annotations);
+	//! Get a list of annotations with no content
+	QList<int> listEmptyAnnotations() const;
 
 	//! Are annotation borders shown?
 	bool showAnnotationBorders() const { return _showAnnotationBorders; }
 
 	//! Show/hide annotations
 	void showAnnotations(bool show);
-
-	//! Delete an annotation with the specific ID. Triggers annotationDeleted signal
-	bool deleteAnnotation(int id);
-
-	//! Remove all annotations
-	void clearAnnotations();
 
 	//! Set the graphics item used for tool preview
 	void setToolPreview(QGraphicsItem *item);
@@ -225,10 +210,12 @@ signals:
 
 private slots:
 	void handleCanvasResize(int xoffset, int yoffset);
+	void handleAnnotationChange(int id);
 	void advanceUsermarkerAnimation();
 
 private:
 	UserMarkerItem *getOrCreateUserMarker(int id);
+	AnnotationItem *getAnnotationItem(int id);
 
 	//! The board contents
 	CanvasItem *_image;
@@ -255,6 +242,7 @@ private:
 
 	QString _title;
 
+	bool _showAnnotations;
 	bool _showAnnotationBorders;
 	bool _showUserMarkers;
 	bool _showLaserTrails;

@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,20 +21,13 @@
 #define ANNOTATIONITEM_H
 
 #include <QGraphicsObject>
-#include <QTextDocument>
-#include <QImage>
+
+namespace paintcore {
+	class Annotation;
+	class LayerStack;
+}
 
 namespace drawingboard {
-
-struct AnnotationState {
-	AnnotationState() {}
-	AnnotationState(int id) : id(id), bgcolor(Qt::transparent) {}
-
-	int id;
-	QRect rect;
-	QString text;
-	QColor bgcolor;
-};
 
 /**
  * @brief A text box that can be overlaid on the picture.
@@ -49,11 +42,13 @@ class AnnotationItem : public QGraphicsObject {
 		enum { Type = UserType + 10 };
 		enum Handle {OUTSIDE, TRANSLATE, RS_TOPLEFT, RS_TOPRIGHT, RS_BOTTOMRIGHT, RS_BOTTOMLEFT, RS_TOP, RS_RIGHT, RS_BOTTOM, RS_LEFT};
 
-		AnnotationItem(int id, QGraphicsItem *parent=0);
-		AnnotationItem(const AnnotationState &state, QGraphicsItem *parent=0);
+		AnnotationItem(int id, paintcore::LayerStack *image, QGraphicsItem *parent=0);
 
 		//! Get the ID number of this annotation
-		int id() const { return _state.id; }
+		int id() const { return _id; }
+
+		//! Get the annotation model instance
+		const paintcore::Annotation *getAnnotation() const;
 
 		//! Get the translation handle at the point
 		Handle handleAt(const QPoint &point) const;
@@ -61,32 +56,17 @@ class AnnotationItem : public QGraphicsObject {
 		//! Adjust annotation position or size
 		void adjustGeometry(Handle handle, const QPoint &delta);
 
+		//! Get item position and size
+		const QRectF &geometry() const { return _rect; }
+
+		//! Refresh item from underlaying annotation model
+		void refresh();
+
 		//! Highlight this item
 		void setHighlight(bool h);
 
 		//! Enable border
 		void setShowBorder(bool show);
-
-		//! Set the position and size of the annotation
-		void setGeometry(const QRect &rect);
-
-		//! Get the position and size
-		QRect geometry() const;
-
-		//! Set the annotation text
-		void setText(const QString &text);
-
-		//! Get the annotation text
-		QString text() const { return _doc.toHtml(); }
-
-		//! Check if there is no text content
-		bool isEmpty() const;
-
-		//! Set the background color
-		void setBackgroundColor(const QColor &color);
-
-		//! Get the color of the background
-		const QColor& backgroundColor() const { return _state.bgcolor; }
 
 		//! reimplementation
 		QRectF boundingRect() const;
@@ -94,20 +74,15 @@ class AnnotationItem : public QGraphicsObject {
 		//! reimplementation
 		int type() const { return Type; }
 
-		//! Render this annotation onto a QImage
-		QImage toImage();
-
-		//! Get the state of the annotation
-		const AnnotationState &state() const;
-
 	protected:
 		void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
 
 	private:
-		void render(QPainter *painter, const QRectF& rect);
+		int _id;
+		QRectF _rect;
 
-		AnnotationState _state;
-		QTextDocument _doc;
+		paintcore::LayerStack *_image;
+
 		bool _highlight;
 		bool _showborder;
 };

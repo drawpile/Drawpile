@@ -43,7 +43,6 @@
 
 #include "scene/canvasview.h"
 #include "scene/canvasscene.h"
-#include "scene/annotationitem.h"
 #include "scene/selectionitem.h"
 #include "scene/strokepreviewer.h"
 #include "statetracker.h"
@@ -1369,11 +1368,7 @@ void MainWindow::pasteImage(const QImage &image)
 
 void MainWindow::removeEmptyAnnotations()
 {
-	QList<int> ids;
-	foreach(drawingboard::AnnotationItem *ai, _canvas->getAnnotations()) {
-		if(ai->isEmpty())
-			ids << ai->id();
-	}
+	QList<int> ids = _canvas->listEmptyAnnotations();
 	if(!ids.isEmpty()) {
 		_client->sendUndopoint();
 		foreach(int id, ids)

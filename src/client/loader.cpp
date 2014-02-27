@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,8 +29,9 @@
 #include "net/utils.h"
 #include "ora/orareader.h"
 #include "scene/canvasscene.h"
-#include "scene/annotationitem.h"
 #include "statetracker.h"
+
+#include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 
@@ -128,8 +129,8 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	}
 
 	// Create annotations
-	foreach(const drawingboard::AnnotationItem *a, _scene->getAnnotations()) {
-		QRect g = a->geometry();
+	foreach(const paintcore::Annotation *a, _scene->layers()->annotations()) {
+		const QRect g = a->rect();
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a->id(), g.x(), g.y(), g.width(), g.height())));
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a->id(), a->backgroundColor().rgba(), a->text()))));
 	}

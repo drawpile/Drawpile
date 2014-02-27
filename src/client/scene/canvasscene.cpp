@@ -31,8 +31,8 @@
 #include "scene/strokepreviewer.h"
 #include "statetracker.h"
 
+#include "core/annotation.h"
 #include "core/layerstack.h"
-#include "core/layer.h"
 #include "core/layer.h"
 #include "ora/orawriter.h"
 
@@ -42,7 +42,7 @@ CanvasScene::CanvasScene(QObject *parent)
 	: QGraphicsScene(parent), _image(0), _statetracker(0),
 	  _strokepreview(NopStrokePreviewer::getInstance()), _toolpreview(0),
 	  _selection(0),
-	  _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true)
+	  _showAnnotations(true), _showAnnotationBorders(false), _showUserMarkers(true), _showLaserTrails(true)
 {
 	setItemIndexMethod(NoIndex);
 
@@ -77,12 +77,22 @@ void CanvasScene::initCanvas(net::Client *client)
 	_image = new CanvasItem();
 	_statetracker = new StateTracker(this, client);
 	
-	connect(_statetracker, SIGNAL(myAnnotationCreated(AnnotationItem*)), this, SIGNAL(myAnnotationCreated(AnnotationItem*)));
+	connect(_statetracker, &StateTracker::myAnnotationCreated, [this](int id) {
+		emit myAnnotationCreated(getAnnotationItem(id));
+	});
 	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
 	connect(_image->image(), SIGNAL(resized(int,int)), this, SLOT(handleCanvasResize(int,int)));
+	connect(_image->image(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
 
 	addItem(_image);
-	clearAnnotations();
+
+	// Clear out any old annotation items
+	foreach(QGraphicsItem *item, items()) {
+		if(item->type() == AnnotationItem::Type) {
+			emit annotationDeleted(static_cast<AnnotationItem*>(item)->id());
+			delete item;
+		}
+	}
 
 	_strokepreview->clear();
 	foreach(UserMarkerItem *i, _usermarkers)
@@ -95,18 +105,9 @@ void CanvasScene::initCanvas(net::Client *client)
 	emit changed(regions);
 }
 
-void CanvasScene::clearAnnotations()
-{
-	foreach(QGraphicsItem *item, items()) {
-		if(item->type() == AnnotationItem::Type) {
-			emit annotationDeleted(static_cast<AnnotationItem*>(item)->id());
-			delete item;
-		}
-	}
-}
-
 void CanvasScene::showAnnotations(bool show)
 {
+	_showAnnotations = show;
 	foreach(QGraphicsItem *item, items()) {
 		if(item->type() == AnnotationItem::Type)
 			item->setVisible(show);
@@ -122,15 +123,6 @@ void CanvasScene::showAnnotationBorders(bool hl)
 	}
 }
 
-bool CanvasScene::hasAnnotations() const
-{
-	foreach(const QGraphicsItem *i, items()) {
-		if(i->type() == AnnotationItem::Type)
-			return true;
-	}
-	return false;
-}
-
 AnnotationItem *CanvasScene::annotationAt(const QPoint &point)
 {
 	foreach(QGraphicsItem *i, items(point)) {
@@ -140,7 +132,30 @@ AnnotationItem *CanvasScene::annotationAt(const QPoint &point)
 	return 0;
 }
 
-AnnotationItem *CanvasScene::getAnnotationById(int id)
+QList<int> CanvasScene::listEmptyAnnotations() const
+{
+	QList<int> ids;
+	foreach(const paintcore::Annotation *a, _image->image()->annotations()) {
+		if(a->isEmpty())
+			ids << a->id();
+	}
+	return ids;
+}
+
+void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
+{
+	setSceneRect(_image->boundingRect());
+	if(xoffset || yoffset) {
+		QPoint offset(xoffset, yoffset);
+
+		// Adjust selection (if it exists)
+		if(_selection) {
+			_selection->setRect(_selection->rect().translated(offset));
+		}
+	}
+}
+
+AnnotationItem *CanvasScene::getAnnotationItem(int id)
 {
 	foreach(QGraphicsItem *i, items()) {
 		if(i->type() == AnnotationItem::Type) {
@@ -152,32 +167,28 @@ AnnotationItem *CanvasScene::getAnnotationById(int id)
 	return 0;
 }
 
-bool CanvasScene::deleteAnnotation(int id)
+void CanvasScene::handleAnnotationChange(int id)
 {
-	AnnotationItem *a = getAnnotationById(id);
-	if(a) {
+	const paintcore::Annotation *a = _image->image()->getAnnotation(id);
+
+	// Find annotation item
+	AnnotationItem *item = getAnnotationItem(id);
+
+	// Refresh item
+	if(!a) {
+		// Annotation deleted
 		emit annotationDeleted(id);
-		delete a;
-		return true;
-	}
-	return false;
-}
-
-void CanvasScene::handleCanvasResize(int xoffset, int yoffset)
-{
-	setSceneRect(_image->boundingRect());
-	if(xoffset || yoffset) {
-		QPoint offset(xoffset, yoffset);
-
-		// Adjust annotation positions
-		foreach(AnnotationItem *a, getAnnotations()) {
-			a->setGeometry(a->geometry().translated(offset));
+		delete item;
+	} else {
+		if(!item) {
+			// Annotation created
+			item = new AnnotationItem(id, _image->image());
+			item->setShowBorder(showAnnotationBorders());
+			item->setVisible(_showAnnotations);
+			addItem(item);
 		}
 
-		// Adjust selection (if it exists)
-		if(_selection) {
-			_selection->setRect(_selection->rect().translated(offset));
-		}
+		item->refresh();
 	}
 }
 
@@ -213,18 +224,8 @@ QImage CanvasScene::image() const
 	if(!hasImage())
 		return QImage();
 
-	QImage image = _image->image()->toFlatImage();
-
-	// Include visible annotations
-	{
-		QPainter painter(&image);
-		foreach(AnnotationItem *a, getAnnotations(true)) {
-			QImage ai = a->toImage();
-			painter.drawImage(a->geometry().topLeft(), ai);
-		}
-	}
-
-	return image;
+	// TODO include annotations only if annotations are visible
+	return _image->image()->toFlatImage(true);
 }
 
 QImage CanvasScene::selectionToImage(int layerId)
@@ -282,29 +283,6 @@ void CanvasScene::pickColor(int x, int y, int layer, bool bg)
 	}
 }
 
-QList<AnnotationItem*> CanvasScene::getAnnotations(bool onlyVisible) const
-{
-	QList<AnnotationItem*> annotations;
-	foreach(QGraphicsItem *i, items()) {
-		if(i->type() == AnnotationItem::Type) {
-			AnnotationItem *a = static_cast<AnnotationItem*>(i);
-			if(!onlyVisible || a->isVisible())
-				annotations.append(a);
-		}
-	}
-	return annotations;
-}
-
-void CanvasScene::setAnnotations(const QVector<AnnotationState> &annotations)
-{
-	clearAnnotations();
-	foreach(const AnnotationState &a, annotations) {
-		AnnotationItem *i = new AnnotationItem(a);
-		i->setShowBorder(showAnnotationBorders());
-		addItem(i);
-	}
-}
-
 /**
  * The file format is determined from the name of the file
  * @param file file path
@@ -314,7 +292,7 @@ bool CanvasScene::save(const QString& file) const
 {
 	if(file.endsWith(".ora", Qt::CaseInsensitive)) {
 		// Special case: Save as OpenRaster with all the layers intact.
-		return openraster::saveOpenRaster(file, _image->image(), getAnnotations());
+		return openraster::saveOpenRaster(file, _image->image());
 	} else {
 		// Regular image formats: flatten the image first.
 		return image().save(file);
@@ -331,8 +309,7 @@ bool CanvasScene::save(const QString& file) const
  */
 bool CanvasScene::needSaveOra() const
 {
-	return _image->image()->layers() > 1 ||
-		hasAnnotations();
+	return _image->image()->layers() > 1 || _image->image()->hasAnnotations();
 }
 
 /**

@@ -103,7 +103,7 @@ void Annotation::end()
 {
 	if(_wasselected) {
 		if(_selected) {
-			client().sendAnnotationReshape(_selected->id(), _selected->geometry());
+			client().sendAnnotationReshape(_selected->id(), _selected->geometry().toRect());
 			_selected = 0;
 		}
 	} else {

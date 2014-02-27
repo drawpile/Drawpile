@@ -20,6 +20,7 @@
 #ifndef TOOLS_SELECTION_H
 #define TOOLS_SELECTION_H
 
+#include "scene/selectionitem.h"
 #include "tool.h"
 
 namespace tools {

@@ -23,6 +23,7 @@
 #include <QPointer>
 
 #include "core/brush.h"
+#include "scene/annotationitem.h"
 
 class Ui_PenSettings;
 class Ui_BrushSettings;
@@ -37,9 +38,6 @@ class QCheckBox;
 
 namespace net {
 	class Client;
-}
-namespace drawingboard {
-	class AnnotationItem;
 }
 namespace docks {
 	class LayerList;

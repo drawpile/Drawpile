@@ -24,6 +24,7 @@
 #include <QMimeData>
 #include <QtConcurrent>
 
+#include "annotation.h"
 #include "layer.h"
 #include "layerstack.h"
 #include "tile.h"
@@ -62,6 +63,15 @@ void LayerStack::resize(int top, int right, int bottom, int left)
 
 	foreach(Layer *l, _layers)
 		l->resize(top, right, bottom, left);
+
+	if(left || top) {
+		// Update annotation positions
+		QPoint offset(left, top);
+		foreach(Annotation *a, _annotations) {
+			a->setRect(a->rect().translated(offset));
+			emit annotationChanged(a->id());
+		}
+	}
 
 	emit resized(left, top);
 }
@@ -160,6 +170,64 @@ Layer *LayerStack::getLayer(int id)
 		if(l->id() == id)
 			return l;
 	return 0;
+}
+
+Annotation *LayerStack::getAnnotation(int id)
+{
+	foreach(Annotation *a, _annotations)
+		if(a->id() == id)
+			return a;
+	return 0;
+}
+
+Annotation *LayerStack::addAnnotation(int id, const QRect &initialrect)
+{
+	if(getAnnotation(id) != 0) {
+		qWarning() << "Tried to add annotation" << id << "which already exists!";
+		return 0;
+	}
+
+	Annotation *a = new Annotation(id);
+	a->setRect(initialrect);
+	_annotations.append(a);
+	emit annotationChanged(id);
+
+	return a;
+}
+
+void LayerStack::reshapeAnnotation(int id, const QRect &newrect)
+{
+	Annotation *a = getAnnotation(id);
+	if(!a) {
+		qWarning() << "Tried to reshape non-existent annotation" << id;
+		return;
+	}
+	a->setRect(newrect);
+	emit annotationChanged(id);
+}
+
+void LayerStack::changeAnnotation(int id, const QString &newtext, const QColor &bgcolor)
+{
+	Annotation *a = getAnnotation(id);
+	if(!a) {
+		qWarning() << "Tried to change non-existent annotation" << id;
+		return;
+	}
+	a->setText(newtext);
+	a->setBackgroundColor(bgcolor);
+	emit annotationChanged(id);
+}
+
+void LayerStack::deleteAnnotation(int id)
+{
+	Annotation *a = getAnnotation(id);
+	if(!a) {
+		qWarning() << "Tried to delete non-existent annotation" << id;
+		return;
+	}
+	_annotations.removeAll(a);
+	delete a;
+	emit annotationChanged(id);
 }
 
 /**
@@ -266,14 +334,22 @@ QColor LayerStack::colorAt(int x, int y) const
 	return QColor(c);
 }
 
-QImage LayerStack::toFlatImage() const
+QImage LayerStack::toFlatImage(bool includeAnnotations) const
 {
 	Layer flat(0, 0, "", Qt::transparent, QSize(_width, _height));
 
 	foreach(const Layer *l, _layers)
 		flat.merge(l, true);
 
-	return flat.toImage();
+	QImage image = flat.toImage();
+
+	if(includeAnnotations) {
+		QPainter painter(&image);
+		foreach(Annotation *a, _annotations)
+			a->paint(&painter);
+	}
+
+	return image;
 }
 
 // Flatten a single tile
@@ -374,6 +450,8 @@ Savepoint::~Savepoint()
 {
 	while(!layers.isEmpty())
 		delete layers.takeLast();
+	while(!annotations.isEmpty())
+		delete annotations.takeLast();
 }
 
 Savepoint *LayerStack::makeSavepoint()
@@ -383,6 +461,9 @@ Savepoint *LayerStack::makeSavepoint()
 		l->optimize();
 		sp->layers.append(new Layer(*l));
 	}
+
+	foreach(Annotation *a, _annotations)
+		sp->annotations.append(new Annotation(*a));
 
 	sp->width = _width;
 	sp->height = _height;
@@ -433,6 +514,22 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		delete _layers.takeLast();
 	foreach(const Layer *l, savepoint->layers)
 		_layers.append(new Layer(*l));
+
+	// Restore annotations
+	QSet<int> annotations;
+	while(!_annotations.isEmpty()) {
+		Annotation *a = _annotations.takeLast();
+		annotations.insert(a->id());
+		delete a;
+	}
+	foreach(const Annotation *a, savepoint->annotations) {
+		annotations.insert(a->id());
+		_annotations.append(new Annotation(*a));
+	}
+
+	foreach(int id, annotations)
+		emit annotationChanged(id);
+
 
 	notifyAreaChanged();
 }

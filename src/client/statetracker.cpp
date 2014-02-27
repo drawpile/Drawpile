@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
 #include <QDateTime>
 
 #include "statetracker.h"
-#include "scene/canvasscene.h" // needed for annotations
-#include "scene/annotationitem.h"
+#include "scene/canvasscene.h" // TODO refactor this away
 #include "scene/strokepreviewer.h"
 #include "loader.h"
 
@@ -52,7 +51,6 @@ struct StateSavepoint {
 	paintcore::Savepoint *canvas;
 	QHash<int, DrawingContext> ctxstate;
 	QVector<net::LayerListItem> layermodel;
-	QVector<drawingboard::AnnotationState> annotations;
 };
 
 StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *parent)
@@ -549,11 +547,6 @@ void StateTracker::makeSavepoint(int pos)
 		savepoint->ctxstate = _contexts;
 		savepoint->layermodel = _layerlist->getLayers();
 
-		QList<drawingboard::AnnotationItem*> annotations = _scene->getAnnotations();
-		savepoint->annotations.reserve(annotations.size());
-		foreach(const drawingboard::AnnotationItem *a, annotations)
-			savepoint->annotations.append(a->state());
-
 		_savepoints.append(savepoint);
 	}
 }
@@ -565,7 +558,6 @@ void StateTracker::revertSavepoint(const StateSavepoint *savepoint)
 	_image->restoreSavepoint(savepoint->canvas);
 	_contexts = savepoint->ctxstate;
 	_layerlist->setLayers(savepoint->layermodel);
-	_scene->setAnnotations(savepoint->annotations);
 
 	// Reverting a savepoint destroys all newer savepoints
 	while(_savepoints.last() != savepoint)
@@ -574,42 +566,24 @@ void StateTracker::revertSavepoint(const StateSavepoint *savepoint)
 
 void StateTracker::handleAnnotationCreate(const protocol::AnnotationCreate &cmd)
 {
-	AnnotationItem *item = new AnnotationItem(cmd.id());
-	item->setShowBorder(_scene->showAnnotationBorders());
-	item->setGeometry(QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
-
-	_scene->addItem(item);
+	_image->addAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
 	if(cmd.contextId() == _myid)
-		emit myAnnotationCreated(item);
+		emit myAnnotationCreated(cmd.id());
 }
 
 void StateTracker::handleAnnotationReshape(const protocol::AnnotationReshape &cmd)
 {
-	AnnotationItem *item = _scene->getAnnotationById(cmd.id());
-	if(!item) {
-		qWarning() << "Got annotation reshape for non-existent annotation" << cmd.id();
-		return;
-	}
-
-	item->setGeometry(QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
+	_image->reshapeAnnotation(cmd.id(), QRect(cmd.x(), cmd.y(), cmd.w(), cmd.h()));
 }
 
 void StateTracker::handleAnnotationEdit(const protocol::AnnotationEdit &cmd)
 {
-	AnnotationItem *item = _scene->getAnnotationById(cmd.id());
-	if(!item) {
-		qWarning() << "Got annotation edit for non-existent annotation" << cmd.id();
-		return;
-	}
-
-	item->setBackgroundColor(QColor::fromRgba(cmd.bg()));
-	item->setText(cmd.text());
+	_image->changeAnnotation(cmd.id(), cmd.text(), QColor::fromRgba(cmd.bg()));
 }
 
 void StateTracker::handleAnnotationDelete(const protocol::AnnotationDelete &cmd)
 {
-	if(!_scene->deleteAnnotation(cmd.id()))
-		qWarning() << "Got annotation delete for non-existent annotation" << cmd.id();
+	_image->deleteAnnotation(cmd.id());
 }
 
 }
