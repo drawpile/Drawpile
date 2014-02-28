@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -336,15 +336,10 @@ void Client::sendChat(const QString &message)
 	_server->sendMessage(MessagePtr(new protocol::Chat(0, message)));
 }
 
-void Client::sendPointerMove(int x, int y)
-{
-	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, x, y, 0)));
-}
-
-void Client::sendLaserPointer(int x, int y, int trail)
+void Client::sendLaserPointer(const QPointF &point, int trail)
 {
 	Q_ASSERT(trail>=0);
-	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, x, y, trail)));
+	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, point.x() * 4, point.y() * 4, trail)));
 }
 
 /**
@@ -563,7 +558,7 @@ void Client::handleLayerAcl(const protocol::LayerACL &msg)
 
 void Client::handleMovePointer(const protocol::MovePointer &msg)
 {
-	emit userPointerMoved(msg.contextId(), msg.x(), msg.y(), msg.persistence());
+	emit userPointerMoved(msg.contextId(), QPointF(msg.x() / 4.0, msg.y() / 4.0), msg.persistence());
 }
 
 }

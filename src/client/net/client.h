@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -183,8 +183,7 @@ public slots:
 
 	// Misc.
 	void sendChat(const QString &message);
-	void sendPointerMove(int x, int y);
-	void sendLaserPointer(int x, int y, int trail);
+	void sendLaserPointer(const QPointF &point, int trail=0);
 
 	// Operator commands
 	void sendLockUser(int userid, bool lock);
@@ -205,7 +204,7 @@ signals:
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool me);
 	void needSnapshot(bool forcenew);
-	void userPointerMoved(int ctx, int x, int y, int trail);
+	void userPointerMoved(int ctx, const QPointF &point, int trail);
 
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);

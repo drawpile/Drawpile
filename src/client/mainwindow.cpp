@@ -165,7 +165,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Client command receive signals
 	connect(_client, SIGNAL(drawingCommandReceived(protocol::MessagePtr)), _canvas, SLOT(handleDrawingCommand(protocol::MessagePtr)));
-	connect(_client, SIGNAL(userPointerMoved(int,int,int,int)), _canvas, SLOT(moveUserMarker(int,int,int,int)));
+	connect(_client, SIGNAL(userPointerMoved(int,QPointF,int)), _canvas, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_client, SIGNAL(needSnapshot(bool)), _canvas, SLOT(sendSnapshot(bool)));
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 

@@ -104,7 +104,7 @@ class CanvasView : public QGraphicsView
 		void viewTransformed(qreal zoom, qreal angle);
 
 		//! Pointer moved in pointer tracking mode
-		void pointerMoved(int x, int y);
+		void pointerMoved(const QPointF &point);
 
 	public slots:
 		//! Select the active tool

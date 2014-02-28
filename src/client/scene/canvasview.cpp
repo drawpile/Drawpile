@@ -82,7 +82,7 @@ void CanvasView::setCanvas(drawingboard::CanvasScene *scene)
 void CanvasView::setClient(net::Client *client)
 {
 	_toolbox.setClient(client);
-	connect(this, SIGNAL(pointerMoved(int,int)), client, SLOT(sendPointerMove(int,int)));
+	connect(this, SIGNAL(pointerMoved(QPointF)), client, SLOT(sendLaserPointer(QPointF)));
 }
 
 void CanvasView::setToolSettings(docks::ToolSettings *settings)
@@ -405,7 +405,7 @@ void CanvasView::mouseMoveEvent(QMouseEvent *event)
 				point.setPressure(mapPressure(1.0, false));
 				onPenMove(point, event->buttons() & Qt::RightButton, event->modifiers() & Qt::ShiftModifier, event->modifiers() & Qt::AltModifier);
 			} else if(_pointertracking && _scene->hasImage()) {
-				emit pointerMoved(point.x(), point.y());
+				emit pointerMoved(point);
 			}
 			updateOutline(point);
 			_prevpoint = point;

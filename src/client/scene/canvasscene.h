@@ -181,7 +181,7 @@ public slots:
 	//! Generate a snapshot point and send it to the server
 	void sendSnapshot(bool forcenew);
 
-	void moveUserMarker(int id, int x, int y, int trail);
+	void moveUserMarker(int id, const QPointF &point, int trail);
 	void setUserMarkerName(int id, const QString &name);
 	void setUserMarkerColor(int id, const QColor &color);
 	void hideUserMarker(int id=-1);

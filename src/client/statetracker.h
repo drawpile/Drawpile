@@ -154,7 +154,7 @@ signals:
 	void myStrokesCommitted(int count);
 
 	void userMarkerColor(int id, const QColor &color);
-	void userMarkerMove(int id, int x, int y, int trail);
+	void userMarkerMove(int id, const QPointF &point, int trail);
 	void userMarkerHide(int id);
 
 private:

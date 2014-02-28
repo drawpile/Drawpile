@@ -27,7 +27,13 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 8.2:
+
+ * MovePointer command coordinates now use 1/4 pixel resolution (same as normal brushes)
+ * Minor incompatibility: recorded laser trails will appear magnified 4x
+
 Protocol 8.1:
+
  * New command: FillRect
  * New meta command: MovePointer
  * Fully backward compatible with 7.1

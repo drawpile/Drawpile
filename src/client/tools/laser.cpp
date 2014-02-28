@@ -42,14 +42,14 @@ void LaserPointer::begin(const paintcore::Point &point, bool right)
 		brush
 	};
 	client().sendToolChange(tctx);
-	client().sendLaserPointer(point.x(), point.y(), 0);
+	client().sendLaserPointer(point, 0);
 }
 
 void LaserPointer::motion(const paintcore::Point &point, bool constrain, bool center)
 {
 	Q_UNUSED(constrain);
 	Q_UNUSED(center);
-	client().sendLaserPointer(point.x(), point.y(), settings().getLaserPointerSettings()->trailPersistence());
+	client().sendLaserPointer(point, settings().getLaserPointerSettings()->trailPersistence());
 }
 
 void LaserPointer::end()

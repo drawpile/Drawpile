@@ -83,7 +83,7 @@ void CanvasScene::initCanvas(net::Client *client)
 	});
 	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
 	connect(_statetracker, SIGNAL(userMarkerColor(int,QColor)), this, SLOT(setUserMarkerColor(int,QColor)));
-	connect(_statetracker, SIGNAL(userMarkerMove(int,int,int,int)), this, SLOT(moveUserMarker(int,int,int,int)));
+	connect(_statetracker, SIGNAL(userMarkerMove(int,QPointF,int)), this, SLOT(moveUserMarker(int,QPointF,int)));
 	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
 	connect(_statetracker, &StateTracker::myStrokesCommitted, [this](int count) {
 		strokepreview()->takeStrokes(count);
@@ -466,13 +466,12 @@ void CanvasScene::setUserMarkerColor(int id, const QColor &color)
 	item->setColor(color);
 }
 
-void CanvasScene::moveUserMarker(int id, int x,int y, int trail)
+void CanvasScene::moveUserMarker(int id, const QPointF &point, int trail)
 {
 	auto *item = getOrCreateUserMarker(id);
-	QPointF p(x, y);
 
 	if(trail>0 && _showLaserTrails) {
-		auto *laser = new LaserTrailItem(QLineF(item->pos(), p), item->color(), trail);
+		auto *laser = new LaserTrailItem(QLineF(item->pos(), point), item->color(), trail);
 		_lasertrails.append(laser);
 		addItem(laser);
 
@@ -481,7 +480,7 @@ void CanvasScene::moveUserMarker(int id, int x,int y, int trail)
 			delete _lasertrails.takeFirst();
 	}
 
-	item->setPos(p);
+	item->setPos(point);
 
 	if(_showUserMarkers)
 		item->fadein();
