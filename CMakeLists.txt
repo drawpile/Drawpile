@@ -1,7 +1,7 @@
 project ( drawpile CXX C )
 
 cmake_minimum_required( VERSION 2.8.9 )
-set ( CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/config )
+set ( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/config" )
 
 ### generic info
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
@@ -42,8 +42,8 @@ include ( "config/Optimize.cmake" )
 include ( "config/Macros.cmake" )
 
 ### binary and library output ###
-set ( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
-set ( LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib )
+set ( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" )
+set ( LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" )
 
 find_package ( ZLIB REQUIRED )
 
@@ -67,10 +67,10 @@ else ()
 endif ()
 
 ### Output config.h ###
-configure_file ( config/config.h.cmake ${CMAKE_BINARY_DIR}/config.h )
+configure_file ( config/config.h.cmake "${CMAKE_BINARY_DIR}/config.h" )
 add_definitions ( -DHAVE_CONFIG_H )
 # Tell the compiler where to find config.h
-include_directories ( ${CMAKE_BINARY_DIR} )
+include_directories ( "${CMAKE_BINARY_DIR}" )
 
 # scan sub-directories
 add_subdirectory( src )
