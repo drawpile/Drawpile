@@ -122,6 +122,7 @@ class MainWindow : public QMainWindow {
 
 		void copyVisible();
 		void copyLayer();
+		void cutLayer();
 		void paste();
 		void pasteFile();
 		void pasteFile(const QUrl &url);

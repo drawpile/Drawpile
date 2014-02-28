@@ -1296,6 +1296,13 @@ void MainWindow::eraserNear(bool near)
 	}
 }
 
+void MainWindow::cutLayer()
+{
+	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
+	clearArea();
+	QApplication::clipboard()->setImage(img);
+}
+
 void MainWindow::copyLayer()
 {
 	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
@@ -1574,6 +1581,7 @@ void MainWindow::setupActions()
 	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), QString(), QKeySequence::Redo);
 	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
 	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
+	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."));
 	QAction *deleteAnnotations = makeAction("deleteemptyannotations", 0, tr("Delete empty annotations"));
@@ -1593,6 +1601,7 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(redo);
 	_currentdoctools->addAction(copy);
 	_currentdoctools->addAction(copylayer);
+	_currentdoctools->addAction(cutlayer);
 	_currentdoctools->addAction(deleteAnnotations);
 	_currentdoctools->addAction(cleararea);
 	_currentdoctools->addAction(fillfgarea);
@@ -1608,6 +1617,7 @@ void MainWindow::setupActions()
 	connect(redo, SIGNAL(triggered()), _client, SLOT(sendRedo()));
 	connect(copy, SIGNAL(triggered()), this, SLOT(copyVisible()));
 	connect(copylayer, SIGNAL(triggered()), this, SLOT(copyLayer()));
+	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
@@ -1627,6 +1637,7 @@ void MainWindow::setupActions()
 	editmenu->addAction(undo);
 	editmenu->addAction(redo);
 	editmenu->addSeparator();
+	editmenu->addAction(cutlayer);
 	editmenu->addAction(copy);
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);

@@ -16,6 +16,7 @@
         <file>icons/draw-text.png</file>
         <file>icons/tool-laserpointer.png</file>
         <file>icons/edit-copy.png</file>
+        <file>icons/edit-cut.png</file>
         <file>icons/edit-paste.png</file>
         <file>icons/edit-redo.png</file>
         <file>icons/edit-undo.png</file>
