@@ -139,8 +139,6 @@ public:
 	 */
 	StateTracker *statetracker() { return _statetracker; }
 
-	void hideUserMarker(int id=-1);
-
 	/**
 	 * @brief Get a QPen that resembles the given brush
 	 *
@@ -154,13 +152,13 @@ public:
 	 * @brief Set the session title
 	 * @param title
 	 */
-	void setTitle(const QString &title) { _title = title; }
+	void setTitle(const QString &title);
 
 	/**
 	 * @brief Get the session title
 	 * @return
 	 */
-	const QString title() const { return _title; }
+	const QString &title() const;
 
 	void setStrokePreview(StrokePreviewer *strokepreview);
 
@@ -186,6 +184,7 @@ public slots:
 	void moveUserMarker(int id, int x, int y, int trail);
 	void setUserMarkerName(int id, const QString &name);
 	void setUserMarkerColor(int id, const QColor &color);
+	void hideUserMarker(int id=-1);
 
 signals:
 	void canvasInitialized();
@@ -239,8 +238,6 @@ private:
 
 	QTimer *_previewClearTimer;
 	QTimer *_animTickTimer;
-
-	QString _title;
 
 	bool _showAnnotations;
 	bool _showAnnotationBorders;

@@ -55,13 +55,10 @@ namespace paintcore {
 }
 
 namespace net {
-	class Client;
 	class LayerListModel;
 }
 
 namespace drawingboard {
-
-class CanvasScene;
 
 struct ToolContext {
 	int layer_id;
@@ -100,7 +97,7 @@ class StateSavepoint;
 class StateTracker : public QObject {
 	Q_OBJECT
 public:
-	StateTracker(CanvasScene *scene, net::Client *client, QObject *parent=0);
+	StateTracker(paintcore::LayerStack *image, net::LayerListModel *layerlist, int myId, QObject *parent=0);
 	StateTracker(const StateTracker &) = delete;
 	~StateTracker();
 
@@ -131,11 +128,34 @@ public:
 	 */
 	int localId() const { return _myid; }
 
+	/**
+	 * @brief Set session title
+	 * @param title
+	 */
+	void setTitle(const QString &title) { _title = title; }
+
+	/**
+	 * @brief Get session title
+	 * @return
+	 */
+	const QString &title() const { return _title; }
+
+	/**
+	 * @brief Get the paint canvas
+	 * @return
+	 */
+	paintcore::LayerStack *image() { return _image; }
+
 	StateTracker &operator=(const StateTracker&) = delete;
 
 signals:
 	void myAnnotationCreated(int id);
 	void myLayerCreated(int);
+	void myStrokesCommitted(int count);
+
+	void userMarkerColor(int id, const QColor &color);
+	void userMarkerMove(int id, int x, int y, int trail);
+	void userMarkerHide(int id);
 
 private:
 	void handleCommand(protocol::MessagePtr msg, bool replay, int pos);
@@ -169,11 +189,11 @@ private:
 	void handleAnnotationDelete(const protocol::AnnotationDelete &cmd);
 
 	QHash<int, DrawingContext> _contexts;
-	
-	CanvasScene *_scene;
+
 	paintcore::LayerStack *_image;
 	net::LayerListModel *_layerlist;
 
+	QString _title;
 	int _myid;
 
 	protocol::MessageStream _msgstream;

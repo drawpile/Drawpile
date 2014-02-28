@@ -31,6 +31,7 @@
 #include "scene/strokepreviewer.h"
 #include "statetracker.h"
 
+#include "net/client.h"
 #include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
@@ -75,14 +76,22 @@ void CanvasScene::initCanvas(net::Client *client)
 	delete _image;
 	delete _statetracker;
 	_image = new CanvasItem();
-	_statetracker = new StateTracker(this, client);
-	
+	_statetracker = new StateTracker(_image->image(), client->layerlist(), client->myId(), this);
+
 	connect(_statetracker, &StateTracker::myAnnotationCreated, [this](int id) {
 		emit myAnnotationCreated(getAnnotationItem(id));
 	});
 	connect(_statetracker, SIGNAL(myLayerCreated(int)), this, SIGNAL(myLayerCreated(int)));
+	connect(_statetracker, SIGNAL(userMarkerColor(int,QColor)), this, SLOT(setUserMarkerColor(int,QColor)));
+	connect(_statetracker, SIGNAL(userMarkerMove(int,int,int,int)), this, SLOT(moveUserMarker(int,int,int,int)));
+	connect(_statetracker, SIGNAL(userMarkerHide(int)), this, SLOT(hideUserMarker(int)));
+	connect(_statetracker, &StateTracker::myStrokesCommitted, [this](int count) {
+		strokepreview()->takeStrokes(count);
+	});
+
 	connect(_image->image(), SIGNAL(resized(int,int)), this, SLOT(handleCanvasResize(int,int)));
 	connect(_image->image(), SIGNAL(annotationChanged(int)), this, SLOT(handleAnnotationChange(int)));
+	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image->image(), SLOT(setLayerHidden(int,bool)));
 
 	addItem(_image);
 
@@ -419,6 +428,16 @@ QPen CanvasScene::penForBrush(const paintcore::Brush &brush)
 	}
 	pen.setColor(color);
 	return pen;
+}
+
+void CanvasScene::setTitle(const QString &title)
+{
+	_statetracker->setTitle(title);
+}
+
+const QString &CanvasScene::title() const
+{
+	return _statetracker->title();
 }
 
 UserMarkerItem *CanvasScene::getOrCreateUserMarker(int id)

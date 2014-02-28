@@ -22,14 +22,11 @@
 #include <QDateTime>
 
 #include "statetracker.h"
-#include "scene/canvasscene.h" // TODO refactor this away
-#include "scene/strokepreviewer.h"
 #include "loader.h"
 
 #include "core/layerstack.h"
 #include "core/layer.h"
 
-#include "net/client.h"
 #include "net/layerlist.h"
 
 #include "../shared/net/pen.h"
@@ -53,17 +50,23 @@ struct StateSavepoint {
 	QVector<net::LayerListItem> layermodel;
 };
 
-StateTracker::StateTracker(CanvasScene *scene, net::Client *client, QObject *parent)
+/**
+ * @brief Construct a state tracker instance
+ *
+ * @param image the canvas content
+ * @param layerlist layer list model for the UI
+ * @param myId ID of the local user
+ * @param parent
+ */
+StateTracker::StateTracker(paintcore::LayerStack *image, net::LayerListModel *layerlist, int myId, QObject *parent)
 	: QObject(parent),
-		_scene(scene),
-		_image(scene->layers()),
-		_layerlist(client->layerlist()),
-		_myid(client->myId()),
+		_image(image),
+		_layerlist(layerlist),
+		_myid(myId),
 		_msgstream_sizelimit(1024 * 1024 * 10),
 		_hassnapshot(true),
 		_showallmarkers(false)
 {
-	connect(client, SIGNAL(layerVisibilityChange(int,bool)), _image, SLOT(setLayerHidden(int,bool)));
 }
 
 StateTracker::~StateTracker()
@@ -216,7 +219,7 @@ QList<protocol::MessagePtr> StateTracker::generateSnapshot(bool forcenew)
 {
 	if(!_hassnapshot || forcenew) {
 		// Generate snapshot
-		QList<protocol::MessagePtr> snapshot = SnapshotLoader(_scene).loadInitCommands();
+		QList<protocol::MessagePtr> snapshot = SnapshotLoader(this).loadInitCommands();
 
 		// Replace old message stream with snapshot since it didn't contain one
 		_msgstream.clear();
@@ -309,7 +312,7 @@ void StateTracker::handleToolChange(const protocol::ToolChange &cmd)
 	b.setColor(cmd.color_h());
 	b.setColor2(cmd.color_l());
 
-	_scene->setUserMarkerColor(cmd.contextId(), b.color1());
+	emit userMarkerColor(cmd.contextId(), b.color1());
 }
 
 void StateTracker::handlePenMove(const protocol::PenMove &cmd)
@@ -335,10 +338,10 @@ void StateTracker::handlePenMove(const protocol::PenMove &cmd)
 	}
 
 	if(cmd.contextId() == _myid)
-		_scene->strokepreview()->takeStrokes(cmd.points().size());
+		emit myStrokesCommitted(cmd.points().size());
 
 	if(_showallmarkers || cmd.contextId() != _myid)
-		_scene->moveUserMarker(cmd.contextId(), ctx.lastpoint.x(), ctx.lastpoint.y(), 0);
+		emit userMarkerMove(cmd.contextId(), ctx.lastpoint.x(), ctx.lastpoint.y(), 0);
 }
 
 void StateTracker::handlePenUp(const protocol::PenUp &cmd)
@@ -354,7 +357,7 @@ void StateTracker::handlePenUp(const protocol::PenUp &cmd)
 	layer->mergeSublayer(cmd.contextId());
 
 	ctx.pendown = false;
-	_scene->hideUserMarker(cmd.contextId());
+	emit userMarkerHide(cmd.contextId());
 }
 
 void StateTracker::handlePutImage(const protocol::PutImage &cmd)

@@ -28,7 +28,7 @@
 #include "../shared/net/message.h"
 
 namespace drawingboard {
-	class CanvasScene;
+	class StateTracker;
 }
 
 /**
@@ -117,14 +117,14 @@ private:
  */
 class SnapshotLoader : public SessionLoader {
 public:
-	SnapshotLoader(drawingboard::CanvasScene *scene) : _scene(scene) {}
+	SnapshotLoader(drawingboard::StateTracker *session) : _session(session) {}
 
 	QList<protocol::MessagePtr> loadInitCommands();
 	QString filename() const { return ""; }
 	QString errorMessage() const { return ""; }
 
 private:
-	drawingboard::CanvasScene *_scene;
+	drawingboard::StateTracker *_session;
 };
 
 #endif

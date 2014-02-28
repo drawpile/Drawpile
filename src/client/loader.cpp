@@ -28,7 +28,6 @@
 #include "net/client.h"
 #include "net/utils.h"
 #include "ora/orareader.h"
-#include "scene/canvasscene.h"
 #include "statetracker.h"
 
 #include "core/annotation.h"
@@ -114,29 +113,30 @@ QList<MessagePtr> SnapshotLoader::loadInitCommands()
 	QList<MessagePtr> msgs;
 
 	// Most important bit first: canvas initialization
-	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, _scene->width(), _scene->height(), 0)));
+	const QSize imgsize = _session->image()->size();
+	msgs.append(MessagePtr(new protocol::CanvasResize(1, 0, imgsize.width(), imgsize.height(), 0)));
 
 	// Less important, but it's nice to see it straight away
-	if(!_scene->title().isEmpty())
-		msgs.append((MessagePtr(new protocol::SessionTitle(1, _scene->title()))));
+	if(!_session->title().isEmpty())
+		msgs.append((MessagePtr(new protocol::SessionTitle(1, _session->title()))));
 
 	// Create layers
-	for(int i=0;i<_scene->layers()->layers();++i) {
-		const paintcore::Layer *layer = _scene->layers()->getLayerByIndex(i);
+	for(int i=0;i<_session->image()->layers();++i) {
+		const paintcore::Layer *layer = _session->image()->getLayerByIndex(i);
 		msgs.append(MessagePtr(new protocol::LayerCreate(1, layer->id(), 0, layer->title())));
 		msgs.append(MessagePtr(new protocol::LayerAttributes(1, layer->id(), layer->opacity(), 1)));
 		msgs.append(net::putQImage(1, layer->id(), 0, 0, layer->toImage(), false));
 	}
 
 	// Create annotations
-	foreach(const paintcore::Annotation *a, _scene->layers()->annotations()) {
+	foreach(const paintcore::Annotation *a, _session->image()->annotations()) {
 		const QRect g = a->rect();
 		msgs.append(MessagePtr(new protocol::AnnotationCreate(1, a->id(), g.x(), g.y(), g.width(), g.height())));
 		msgs.append((MessagePtr(new protocol::AnnotationEdit(1, a->id(), a->backgroundColor().rgba(), a->text()))));
 	}
 
 	// User tool changes
-	QHashIterator<int, drawingboard::DrawingContext> iter(_scene->statetracker()->drawingContexts());
+	QHashIterator<int, drawingboard::DrawingContext> iter(_session->drawingContexts());
 	while(iter.hasNext()) {
 		iter.next();
 
