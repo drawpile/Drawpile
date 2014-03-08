@@ -308,7 +308,7 @@ void PlaybackDialog::jumptToSnapshot(int idx)
 
 void PlaybackDialog::prevSnapshot()
 {
-	const unsigned int current = qMin(0, _reader->current());
+	const unsigned int current = qMax(0, _reader->current());
 
 	int seIdx=0;
 	for(int i=1;i<_index->index().snapshots().size();++i) {
@@ -325,7 +325,7 @@ void PlaybackDialog::prevSnapshot()
 
 void PlaybackDialog::nextSnapshot()
 {
-	const unsigned int current = qMin(0, _reader->current());
+	const unsigned int current = qMax(0, _reader->current());
 
 	int seIdx=_index->index().snapshots().size() - 1;
 	int pos = _index->index().snapshots().last().pos;
@@ -338,7 +338,7 @@ void PlaybackDialog::nextSnapshot()
 		pos = prev.pos;
 	}
 
-	if(pos > _reader->position())
+	if(pos > _reader->current())
 		jumptToSnapshot(seIdx);
 }
 
