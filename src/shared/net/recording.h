@@ -21,6 +21,9 @@
 #ifndef DP_NET_RECORDING_H
 #define DP_NET_RECORDING_H
 
+#include <QByteArray>
+#include <QString>
+
 #include "message.h"
 
 namespace protocol {
@@ -48,6 +51,28 @@ protected:
 
 private:
 	uint16_t _msecs;
+};
+
+/**
+ * @brief A bookmark marker
+ *
+ * This is used to bookmark points in the session for quick access when playing back a recording.
+ */
+class Marker : public Message
+{
+public:
+	Marker(uint8_t ctx, const QString &text) : Message(MSG_MARKER, ctx), _text(text.toUtf8()) { }
+
+	static Marker *deserialize(const uchar *data, uint len);
+
+	QString text() const { return QString::fromUtf8(_text); }
+
+protected:
+	int payloadLength() const;
+	int serializePayload(uchar *data) const;
+
+private:
+	QByteArray _text;
 };
 
 }

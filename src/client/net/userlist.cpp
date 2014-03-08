@@ -123,4 +123,21 @@ User UserListModel::getUserById(int id) const
 	return User();
 }
 
+QString UserListModel::getUsername(int id) const
+{
+	// Try active users first
+	foreach(const User &u, _users)
+		if(u.id == id)
+			return u.name;
+
+	// Then the past users
+	if(_pastUsers.contains(id)) {
+		if(_pastUsers.contains(id))
+			_pastUsers[id].name;
+	}
+
+	// Not found
+	return tr("User #%1").arg(id);
+}
+
 }

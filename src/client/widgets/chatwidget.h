@@ -43,6 +43,9 @@ class ChatBox: public QWidget
 		//! Display a received message
 		void receiveMessage(const QString& nick, const QString &message, bool isme=false);
 
+		//! Display a received marker
+		void receiveMarker(const QString &nick, const QString &message);
+
 		//! Display a system message
 		void systemMessage(const QString& message);
 

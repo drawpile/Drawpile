@@ -62,6 +62,7 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	const QPixmap deleteLayerIcon = getIcon("list-remove");
 	const QPixmap putimageIcon = getIcon("edit-paste");
 	const QPixmap textIcon = getIcon("draw-text");
+	const QPixmap markerIcon = getIcon("flag-red");
 
 	// Assign rows to each context ID in the order they appear
 	QHash<int, int> ctxrow;
@@ -118,6 +119,9 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 		using namespace recording;
 		case IDX_NULL:
 			color = Qt::black;
+			break;
+		case IDX_MARKER:
+			item->_icon = markerIcon;
 			break;
 		case IDX_CREATELAYER:
 			item->_icon = createLayerIcon;

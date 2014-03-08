@@ -43,6 +43,7 @@ namespace protocol {
 	class SessionConf;
 	class LayerACL;
 	class MovePointer;
+	class Marker;
 }
 
 namespace net {
@@ -184,6 +185,7 @@ public slots:
 	// Misc.
 	void sendChat(const QString &message);
 	void sendLaserPointer(const QPointF &point, int trail=0);
+	void sendMarker(const QString &text);
 
 	// Operator commands
 	void sendLockUser(int userid, bool lock);
@@ -203,6 +205,7 @@ signals:
 	void messageReceived(protocol::MessagePtr msg);
 	void drawingCommandReceived(protocol::MessagePtr msg);
 	void chatMessageReceived(const QString &user, const QString &message, bool me);
+	void markerMessageReceived(const QString &user, const QString &message);
 	void needSnapshot(bool forcenew);
 	void userPointerMoved(int ctx, const QPointF &point, int trail);
 
@@ -235,6 +238,7 @@ private slots:
 private:
 	void handleSnapshotRequest(const protocol::SnapshotMode &msg);
 	void handleChatMessage(const protocol::Chat &msg);
+	void handleMarkerMessage(const protocol::Marker &msg);
 	void handleUserJoin(const protocol::UserJoin &msg);
 	void handleUserAttr(const protocol::UserAttr &msg);
 	void handleUserLeave(const protocol::UserLeave &msg);

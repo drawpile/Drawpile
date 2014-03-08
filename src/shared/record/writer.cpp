@@ -100,6 +100,7 @@ bool isRecordableMeta(protocol::MessageType type) {
 	case MSG_SESSION_TITLE:
 	case MSG_INTERVAL:
 	case MSG_MOVEPOINTER:
+	case MSG_MARKER:
 		return true;
 	default:
 		return false;

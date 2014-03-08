@@ -61,6 +61,8 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 	filter.setRemoveChat(_ui->removeChat->isChecked());
 	filter.setRemoveLookyloos(_ui->removeLookyloos->isChecked());
 	filter.setRemoveDelays(_ui->removeDelays->isChecked());
+	filter.setRemoveLasers(_ui->removeLasers->isChecked());
+	filter.setRemoveMarkers(_ui->removeMarkers->isChecked());
 
 	// Perform filtering
 	QFile inputfile(recordingFile);

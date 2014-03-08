@@ -97,6 +97,8 @@ bool Index::readIndex(QIODevice *out)
 		e.type = IndexType(type);
 		ds >> e.context_id >> e.offset >> e.start >> e.end >> e.color;
 		_index.append(e);
+		if(e.type == IDX_MARKER)
+			_markers.append(MarkerEntry(_index.size()-1, e.start));
 	}
 
 	// Read snapshot list
@@ -109,6 +111,38 @@ bool Index::readIndex(QIODevice *out)
 	}
 
 	return true;
+}
+
+IndexEntry Index::prevMarker(unsigned int from) const
+{
+	if(!_markers.isEmpty()) {
+		MarkerEntry e = _markers.first();
+		for(int i=1;i<_markers.size();++i) {
+			if(_markers[i].pos >= from)
+				break;
+
+			e = _markers[i];
+		}
+		if(e.pos != from)
+			return _index[e.idxpos];
+	}
+	return IndexEntry();
+}
+
+IndexEntry Index::nextMarker(unsigned int from) const
+{
+	if(!_markers.isEmpty()) {
+		MarkerEntry e = _markers.last();
+		for(int i=_markers.size()-2;i>=0;--i) {
+			if(_markers[i].pos <= from)
+				break;
+
+			e = _markers[i];
+		}
+		if(e.pos != from)
+			return _index[e.idxpos];
+	}
+	return IndexEntry();
 }
 
 QByteArray hashRecording(const QString &filename)

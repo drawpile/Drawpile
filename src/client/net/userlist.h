@@ -64,6 +64,15 @@ class UserListModel : public QAbstractListModel {
 		 */
 		User getUserById(int id) const;
 
+		/**
+		 * @brief Get the name of the user with the given context ID
+		 *
+		 * If no such user exists, "User #X" is returned, where X is the ID number.
+		 * @param id
+		 * @return user name
+		 */
+		QString getUsername(int id) const;
+
 	private:
 		QVector<User> _users;
 		QHash<int,User> _pastUsers;

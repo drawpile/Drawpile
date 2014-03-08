@@ -108,6 +108,11 @@ void ChatBox::receiveMessage(const QString& nick, const QString& message, bool i
 	_view->append("<p style=\"margin: 5px 0\"><b style=\""+ extrastyle + "\">&lt;" + esc(nick) + "&gt;</b> " + esc(message) + "</p>");
 }
 
+void ChatBox::receiveMarker(const QString &nick, const QString &message)
+{
+	_view->append("<p style=\"margin: 5px 0; color: red\"><b>&lt;" + esc(nick) + "&gt;</b> " + esc(message) + "</p>");
+}
+
 /**
  * @param message the message
  */

@@ -57,6 +57,10 @@ public:
 	void setRemoveLasers(bool remove) { _remove_lasers = remove; }
 	bool removeLasers() const { return _remove_lasers; }
 
+	//! Filter: remove markers
+	void setRemoveMarkers(bool remove) { _remove_markers = remove; }
+	bool removeMarkers() const { return _remove_markers; }
+
 	//! Get the error message
 	const QString &errorString() const { return _errormsg; }
 
@@ -73,7 +77,7 @@ public:
 	 * @brief Check if any filtering option has been set
 	 * @return
 	 */
-	bool needFiltering() const { return _expunge_undos || _remove_chat || _remove_lookyloos || _remove_delays; }
+	bool needFiltering() const { return _expunge_undos || _remove_chat || _remove_lookyloos || _remove_delays || _remove_lasers || _remove_markers; }
 
 
 private:
@@ -84,6 +88,7 @@ private:
 	bool _remove_lookyloos;
 	bool _remove_delays;
 	bool _remove_lasers;
+	bool _remove_markers;
 };
 
 }

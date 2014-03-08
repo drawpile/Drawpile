@@ -174,6 +174,10 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 			chatbox, SLOT(receiveMessage(QString,QString, bool)));
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool)),
 			this, SLOT(statusbarChat(QString,QString)));
+	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
+			chatbox, SLOT(receiveMarker(QString,QString)));
+	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
+			this, SLOT(statusbarChat(QString,QString)));
 	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
@@ -1429,6 +1433,14 @@ void MainWindow::resizeCanvas()
 	dlg->show();
 }
 
+void MainWindow::markSpotForRecording()
+{
+	bool ok;
+	QString text = QInputDialog::getText(this, tr("Mark position"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
+	if(ok)
+		_client->sendMarker(text);
+}
+
 void MainWindow::about()
 {
 	QMessageBox::about(this, tr("About DrawPile"),
@@ -1776,6 +1788,9 @@ void MainWindow::setupActions()
 	QAction *ellipsetool = makeAction("toolellipse", "draw-ellipse", tr("&Ellipse"), tr("Draw unfilled circles and ellipses"), QKeySequence("O"), true);
 	QAction *annotationtool = makeAction("tooltext", "draw-text", tr("&Annotation"), tr("Add text to the picture"), QKeySequence("A"), true);
 	QAction *lasertool = makeAction("toollaser", "tool-laserpointer", tr("&Laser pointer"), tr("Point out things on the canvas"), QKeySequence("L"), true);
+	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
+
+	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
 
 	// Default tool
 	brushtool->setChecked(true);
@@ -1796,6 +1811,7 @@ void MainWindow::setupActions()
 
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());
+	toolsmenu->addAction(markertool);
 	toolsmenu->addSeparator();
 
 	QMenu *toolshortcuts = toolsmenu->addMenu(tr("&Shortcuts"));

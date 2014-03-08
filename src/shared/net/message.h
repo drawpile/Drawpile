@@ -45,6 +45,7 @@ enum MessageType {
 	MSG_STREAMPOS,
 	MSG_INTERVAL,
 	MSG_MOVEPOINTER,
+	MSG_MARKER,
 
 	// Command stream
 	MSG_CANVAS_RESIZE=128,

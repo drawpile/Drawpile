@@ -168,6 +168,9 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 
 	case MSG_CHAT: type = IDX_CHAT; break;
 	case MSG_INTERVAL: type = IDX_PAUSE; break;
+
+	case MSG_MARKER: type = IDX_MARKER; break;
+
 	default: break;
 	}
 

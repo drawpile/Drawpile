@@ -104,6 +104,12 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg)
 			return;
 		}
 
+	case MSG_MARKER:
+		if(filter.removeMarkers()) {
+			mark_delete(state.index.last());
+			return;
+		}
+
 	default: break;
 	}
 
@@ -219,7 +225,8 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 }
 
 Filter::Filter()
-	: _expunge_undos(false), _remove_chat(false), _remove_lookyloos(false), _remove_delays(false)
+	: _expunge_undos(false), _remove_chat(false), _remove_lookyloos(false), _remove_delays(false),
+	  _remove_lasers(false), _remove_markers(false)
 {
 }
 

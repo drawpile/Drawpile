@@ -71,6 +71,14 @@ struct IndexEntry {
 	bool _finished;
 };
 
+struct MarkerEntry {
+	MarkerEntry() : idxpos(-1), pos(0) { }
+	MarkerEntry(int idxpos_, int pos_) : idxpos(idxpos_), pos(pos_) { }
+
+	int idxpos;
+	quint32 pos;
+};
+
 struct SnapshotEntry {
 	SnapshotEntry() : stream_offset(-1), pos(-1) { }
 	SnapshotEntry(qint64 offset, quint32 pos_) : stream_offset(offset), pos(pos_) { }
@@ -109,6 +117,10 @@ public:
 	//! Get all snapshots
 	const SnapshotVector &snapshots() const { return _snapshots; }
 
+	IndexEntry nextMarker(unsigned int from) const;
+	IndexEntry prevMarker(unsigned int from) const;
+
+
 	bool writeIndex(QIODevice *out) const;
 	bool readIndex(QIODevice *in);
 
@@ -116,6 +128,7 @@ private:
 	IndexVector _index;
 	SnapshotVector _snapshots;
 	QHash<int, QString> _ctxnames;
+	QVector<MarkerEntry> _markers;
 };
 
 //! Hash the recording file

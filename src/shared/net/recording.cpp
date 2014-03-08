@@ -42,5 +42,29 @@ int Interval::serializePayload(uchar *data) const
 	return 2;
 }
 
+Marker *Marker::deserialize(const uchar *data, uint len)
+{
+	if(len<1)
+		return 0;
+
+	return new Marker(
+		*(data+0),
+		QByteArray((const char*)data+1, len-1)
+	);
 }
 
+int Marker::payloadLength() const
+{
+	return 1 + _text.length();
+}
+
+int Marker::serializePayload(uchar *data) const
+{
+	uchar *ptr = data;
+	*(ptr++) = contextId();
+	memcpy(ptr, _text.constData(), _text.length());
+	ptr += _text.length();
+	return ptr - data;
+}
+
+}

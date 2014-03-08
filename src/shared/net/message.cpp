@@ -58,6 +58,7 @@ Message *Message::deserialize(const uchar *data)
 	case MSG_STREAMPOS: return StreamPos::deserialize(data, len);
 	case MSG_INTERVAL: return Interval::deserialize(data, len);
 	case MSG_MOVEPOINTER: return MovePointer::deserialize(data, len);
+	case MSG_MARKER: return Marker::deserialize(data, len);
 
 	case MSG_CANVAS_RESIZE: return CanvasResize::deserialize(data, len);
 	case MSG_LAYER_CREATE: return LayerCreate::deserialize(data, len);

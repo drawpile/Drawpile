@@ -40,6 +40,7 @@
 #include "../shared/net/pen.h"
 #include "../shared/net/snapshot.h"
 #include "../shared/net/undo.h"
+#include "../shared/net/recording.h"
 
 using protocol::MessagePtr;
 
@@ -333,13 +334,18 @@ void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 
 void Client::sendChat(const QString &message)
 {
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, message)));
+	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message)));
 }
 
 void Client::sendLaserPointer(const QPointF &point, int trail)
 {
 	Q_ASSERT(trail>=0);
 	_server->sendMessage(MessagePtr(new protocol::MovePointer(_my_id, point.x() * 4, point.y() * 4, trail)));
+}
+
+void Client::sendMarker(const QString &text)
+{
+	_server->sendMessage(MessagePtr(new protocol::Marker(_my_id, text)));
 }
 
 /**
@@ -489,6 +495,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case MSG_MOVEPOINTER:
 		handleMovePointer(msg.cast<MovePointer>());
 		break;
+	case MSG_MARKER:
+		handleMarkerMessage(msg.cast<Marker>());
+		break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();
 	}
@@ -507,16 +516,19 @@ void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
 
 void Client::handleChatMessage(const protocol::Chat &msg)
 {
-	QString username;
-	if(msg.contextId()!=0) {
-		User user = _userlist->getUserById(msg.contextId());
-		if(user.id==0)
-			username = tr("User#%1").arg(msg.contextId());
-		else
-			username = user.name;
-	}
+	emit chatMessageReceived(
+		_userlist->getUsername(msg.contextId()),
+		msg.message(),
+		msg.contextId() == _my_id
+	);
+}
 
-	emit chatMessageReceived(username, msg.message(), msg.contextId() == _my_id);
+void Client::handleMarkerMessage(const protocol::Marker &msg)
+{
+	emit markerMessageReceived(
+		_userlist->getUsername(msg.contextId()),
+		msg.text()
+	);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

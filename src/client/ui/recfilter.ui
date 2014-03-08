@@ -17,34 +17,41 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Filtering</string>
+      <string>Remove</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QCheckBox" name="removeDelays">
         <property name="text">
-         <string>Remove pauses</string>
+         <string>Pauses</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="removeChat">
         <property name="text">
-         <string>Remove chat messages</string>
+         <string>Chat messages</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="removeLasers">
         <property name="text">
-         <string>Remove laser pointers</string>
+         <string>Laser pointers</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="removeMarkers">
+        <property name="text">
+         <string>Markers</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="removeLookyloos">
         <property name="text">
-         <string>Remove non-participating users</string>
+         <string>Non-participating users</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -54,7 +61,7 @@
       <item>
        <widget class="QCheckBox" name="removeUndos">
         <property name="text">
-         <string>Remove undone actions</string>
+         <string>Undone actions</string>
         </property>
         <property name="checked">
          <bool>true</bool>

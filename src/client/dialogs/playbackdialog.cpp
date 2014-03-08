@@ -74,6 +74,8 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 
 	connect(_ui->snapshotBackwards, SIGNAL(clicked()), this, SLOT(prevSnapshot()));
 	connect(_ui->snapshotForwards, SIGNAL(clicked()), this, SLOT(nextSnapshot()));
+	connect(_ui->prevMarker, SIGNAL(clicked()), this, SLOT(prevMarker()));
+	connect(_ui->nextMarker, SIGNAL(clicked()), this, SLOT(nextMarker()));
 
 	connect(_ui->speedcontrol, &QDial::valueChanged, [this](int speed) {
 		if(speed<=100)
@@ -196,8 +198,13 @@ void PlaybackDialog::nextCommand()
 				return;
 			}
 		} else {
-			if(_play)
-				_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));
+			if(_play) {
+				if(msg->type() == protocol::MSG_MARKER && _ui->stopOnMarkers->isChecked()) {
+					_ui->play->setChecked(false);
+				} else {
+					_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));
+				}
+			}
 
 			emit commandRead(msg);
 		}
@@ -343,6 +350,22 @@ void PlaybackDialog::nextSnapshot()
 
 	if(pos > _reader->current())
 		jumptToSnapshot(seIdx);
+}
+
+void PlaybackDialog::prevMarker()
+{
+	recording::IndexEntry e = _index->index().prevMarker(qMax(0, _reader->current()));
+	if(e.type == recording::IDX_MARKER) {
+		jumpTo(e.start);
+	}
+}
+
+void PlaybackDialog::nextMarker()
+{
+	recording::IndexEntry e = _index->index().nextMarker(qMax(0, _reader->current()));
+	if(e.type == recording::IDX_MARKER) {
+		jumpTo(e.start);
+	}
 }
 
 void PlaybackDialog::endOfFileReached()

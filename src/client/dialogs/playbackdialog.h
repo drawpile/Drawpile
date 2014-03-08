@@ -67,6 +67,9 @@ public slots:
 	void prevSnapshot();
 	void nextSnapshot();
 
+	void prevMarker();
+	void nextMarker();
+
 protected:
 	void closeEvent(QCloseEvent *);
 

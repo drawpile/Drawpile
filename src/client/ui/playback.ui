@@ -203,6 +203,23 @@ QProgressBar::chunk {
       </layout>
      </item>
      <item>
+      <layout class="QFormLayout" name="formLayout_2">
+       <property name="leftMargin">
+        <number>8</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="stopOnMarkers">
+         <property name="text">
+          <string>Stop on markers</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -329,6 +346,13 @@ QProgressBar::chunk {
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
          <item>
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Snapshots:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QToolButton" name="snapshotBackwards">
            <property name="toolTip">
             <string>Previous snapshot</string>
@@ -356,6 +380,38 @@ QProgressBar::chunk {
            <property name="icon">
             <iconset theme="media-skip-forward" resource="resources.qrc">
              <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string>Markers:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="prevMarker">
+           <property name="icon">
+            <iconset theme="media-seek-backward" resource="resources.qrc">
+             <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="nextMarker">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset theme="media-seek-forward" resource="resources.qrc">
+             <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
