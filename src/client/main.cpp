@@ -41,7 +41,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 	if(cfg.contains("username") == false ||
 			cfg.value("username").toString().isEmpty())
 	{
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 		QString defaultname = getenv("USERNAME");
 #else
 		QString defaultname = getenv("USER");

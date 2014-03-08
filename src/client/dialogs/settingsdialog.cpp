@@ -98,7 +98,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 
 	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
 		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
-#ifdef Q_WS_WIN
+#ifdef Q_OS_WIN
 			tr("Executables (*.exe)") + ";;" +
 #endif
 			tr("All files (*)")
