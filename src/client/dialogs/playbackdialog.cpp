@@ -169,6 +169,8 @@ void PlaybackDialog::nextCommand()
 
 	recording::MessageRecord next = _reader->readNext();
 
+	int writeFrames = 1;
+
 	switch(next.status) {
 	case recording::MessageRecord::OK:
 		if(next.message->type() == protocol::MSG_INTERVAL) {
@@ -177,6 +179,15 @@ void PlaybackDialog::nextCommand()
 				int interval = static_cast<protocol::Interval*>(next.message)->milliseconds();
 				float maxinterval = _ui->maxinterval->value() * 1000;
 				_timer->start(qMin(maxinterval, interval * _speedfactor));
+
+				// Export pause
+				if(_exporter && _ui->autoSaveFrame->isChecked()) {
+					int pauseframes = qRound(qMin(double(interval), _ui->maxinterval->value() * 1000) / 1000.0 *  _exporter->fps());
+					qDebug() << "pausing for" << pauseframes << "frames";
+					if(pauseframes>0)
+						writeFrames = pauseframes;
+				}
+
 			} else {
 				// manual mode: skip interval
 				nextCommand();
@@ -200,11 +211,9 @@ void PlaybackDialog::nextCommand()
 	}
 
 	if(_ui->autoSaveFrame->isChecked())
-		exportFrame();
+		exportFrame(writeFrames);
 
 	updateIndexPosition();
-
-	_ui->progressBar->setValue(_reader->position());
 }
 
 void PlaybackDialog::nextSequence()
@@ -240,7 +249,7 @@ void PlaybackDialog::nextSequence()
 	if(_ui->autoSaveFrame->isChecked())
 		exportFrame();
 
-	_ui->progressBar->setValue(_reader->position());
+	updateIndexPosition();
 }
 
 void PlaybackDialog::updateIndexPosition()
@@ -250,6 +259,7 @@ void PlaybackDialog::updateIndexPosition()
 		_indexpositem->setVisible(true);
 		_ui->indexView->centerOn(_indexpositem);
 	}
+	_ui->progressBar->setValue(_reader->position());
 }
 
 void PlaybackDialog::jumpTo(int pos)
@@ -293,7 +303,6 @@ void PlaybackDialog::jumptToSnapshot(int idx)
 
 	_reader->seekTo(se.pos, se.stream_offset);
 	_canvas->statetracker()->resetToSavepoint(savepoint);
-	_ui->progressBar->setValue(_reader->position());
 	updateIndexPosition();
 }
 
@@ -359,15 +368,16 @@ void PlaybackDialog::exportButtonClicked()
 		exportConfig();
 }
 
-void PlaybackDialog::exportFrame()
+void PlaybackDialog::exportFrame(int count)
 {
+	Q_ASSERT(count>0);
 	if(_exporter) {
 		QImage img = _canvas->image();
 		if(!img.isNull()) {
 			Q_ASSERT(_exporterReady);
 			_exporterReady = false;
 			_ui->saveFrame->setEnabled(false);
-			_exporter->saveFrame(img);
+			_exporter->saveFrame(img, count);
 		}
 	}
 }

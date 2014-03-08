@@ -4,6 +4,7 @@
  * New feature: cut selection to clipboard
  * Smoother laser pointer trails
  * Indexed recordings
+ * Pauses in recordings are now exported to video
 
 2014-02-25 Version 0.8.5
  * Navigator view is now updated in real time

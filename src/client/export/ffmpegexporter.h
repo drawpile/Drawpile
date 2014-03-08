@@ -55,7 +55,7 @@ private slots:
 
 protected:
 	void initExporter();
-	void writeFrame(const QImage &image);
+	void writeFrame(const QImage &image, int repeat);
 	void shutdownExporter();
 
 private:
@@ -71,6 +71,7 @@ private:
 	QByteArray _writebuffer;
 	qint64 _written;
 	qint64 _chunk;
+	int _repeats;
 };
 
 #endif // FFMPEGEXPORTER_H

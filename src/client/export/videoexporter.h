@@ -80,9 +80,12 @@ public:
 	/**
 	 * @brief Add a new frame to the video
 	 *
+	 * The frame counter is incremented after the frame(s) have been written.
+	 *
 	 * @param image frame content
+	 * @param count number of times to write the frame
 	 */
-	void saveFrame(const QImage &image);
+	void saveFrame(const QImage &image, int count);
 
 	/**
 	 * @brief Stop exporter
@@ -102,7 +105,7 @@ signals:
 protected:
 	void run();
 	virtual void initExporter() = 0;
-	virtual void writeFrame(const QImage &image) = 0;
+	virtual void writeFrame(const QImage &image, int repeat) = 0;
 	virtual void shutdownExporter() = 0;
 
 private:

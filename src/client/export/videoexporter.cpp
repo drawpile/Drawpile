@@ -39,9 +39,12 @@ void VideoExporter::finish()
 	shutdownExporter();
 }
 
-void VideoExporter::saveFrame(const QImage &image)
+void VideoExporter::saveFrame(const QImage &image, int count)
 {
-	++_frame;
+	Q_ASSERT(count>0);
+	Q_ASSERT(!image.isNull());
+
+	QImage frameImage = image;
 
 	if(!isVariableSize() && image.size() != _targetsize) {
 		QImage newframe = QImage(_targetsize, QImage::Format_ARGB32);
@@ -57,15 +60,16 @@ void VideoExporter::saveFrame(const QImage &image)
 					newsize
 		);
 
-		{
-			QPainter painter(&newframe);
-			painter.drawImage(rect, image, QRect(QPoint(), image.size()));
-		}
+		QPainter painter(&newframe);
+		painter.drawImage(rect, image, QRect(QPoint(), image.size()));
+		painter.end();
 
-		writeFrame(newframe);
+		frameImage = newframe;
+	}
 
-	} else {
-		writeFrame(image);
+	if(count>0) {
+		writeFrame(frameImage, count);
+		_frame += count;
 	}
 }
 

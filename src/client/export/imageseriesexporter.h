@@ -34,7 +34,7 @@ public:
 
 protected:
 	void initExporter();
-	void writeFrame(const QImage &image);
+	void writeFrame(const QImage &image, int repeat);
 	void shutdownExporter();
 
 private:

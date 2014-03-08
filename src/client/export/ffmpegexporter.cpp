@@ -138,7 +138,7 @@ void FfmpegExporter::processError(QProcess::ProcessError error)
 	}
 }
 
-void FfmpegExporter::writeFrame(const QImage &image)
+void FfmpegExporter::writeFrame(const QImage &image, int repeat)
 {
 	Q_ASSERT(_writebuffer.isEmpty());
 	//qDebug() << "WRITING FRAME" << frame();
@@ -148,6 +148,7 @@ void FfmpegExporter::writeFrame(const QImage &image)
 		image.save(&buf, "BMP");
 		_written = 0;
 		_chunk = 0;
+		_repeats = repeat;
 	}
 	bytesWritten(0);
 }
@@ -163,9 +164,15 @@ void FfmpegExporter::bytesWritten(qint64 bytes)
 	//qDebug() << "wrote" << bytes << "bytes:" << _written << "of" << bufsize << QString("(%1%)").arg(_written/qreal(bufsize)*100, 0, 'f', 1);
 
 	if(_written == bufsize) {
-		_writebuffer.clear();
-		emit exporterReady();
-
+		--_repeats;
+		if(_repeats<=0) {
+			_writebuffer.clear();
+			emit exporterReady();
+		} else {
+			_written = 0;
+			_chunk = 0;
+			bytesWritten(0);
+		}
 	} else if(_written < bufsize && _chunk==0) {
 		_chunk = qMin(bufsize - _written, qint64(1024 * 1024));
 		_encoder->write(_writebuffer.constData() + _written, _chunk);

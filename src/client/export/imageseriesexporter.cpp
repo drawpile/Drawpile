@@ -29,19 +29,22 @@ ImageSeriesExporter::ImageSeriesExporter(QObject *parent)
 {
 }
 
-void ImageSeriesExporter::writeFrame(const QImage &image)
+void ImageSeriesExporter::writeFrame(const QImage &image, int repeat)
 {
-	QString filename = _filepattern;
-	filename.replace(QLatin1Literal("{F}"), QString("%1").arg(frame(), 5, 10, QLatin1Char('0')));
-	filename.replace(QLatin1Literal("{E}"), _format);
+	for(int f=1;f<=repeat;++f) {
+		QString filename = _filepattern;
+		filename.replace(QLatin1Literal("{F}"), QString("%1").arg(frame() + f, 5, 10, QLatin1Char('0')));
+		filename.replace(QLatin1Literal("{E}"), _format);
 
-	QString fullpath = QFileInfo(QDir(_path), filename).absoluteFilePath();
+		QString fullpath = QFileInfo(QDir(_path), filename).absoluteFilePath();
 
-	QImageWriter writer(fullpath, _format);
-	if(!writer.write(image))
-		emit exporterError(writer.errorString());
-	else
-		emit exporterReady();
+		QImageWriter writer(fullpath, _format);
+		if(!writer.write(image)) {
+			emit exporterError(writer.errorString());
+			return;
+		}
+	}
+	emit exporterReady();
 }
 
 void ImageSeriesExporter::initExporter()

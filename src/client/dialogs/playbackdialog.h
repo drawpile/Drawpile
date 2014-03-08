@@ -72,7 +72,7 @@ protected:
 
 private slots:
 	void exportButtonClicked();
-	void exportFrame();
+	void exportFrame(int count=1);
 	void exportConfig();
 
 	void exporterError(const QString &message);
