@@ -172,11 +172,13 @@ void PlaybackDialog::nextCommand()
 	int writeFrames = 1;
 
 	switch(next.status) {
-	case recording::MessageRecord::OK:
-		if(next.message->type() == protocol::MSG_INTERVAL) {
+	case recording::MessageRecord::OK: {
+		protocol::MessagePtr msg(next.message);
+
+		if(msg->type() == protocol::MSG_INTERVAL) {
 			if(_play) {
 				// autoplay mode: set timer
-				int interval = static_cast<protocol::Interval*>(next.message)->milliseconds();
+				int interval = msg.cast<protocol::Interval>().milliseconds();
 				float maxinterval = _ui->maxinterval->value() * 1000;
 				_timer->start(qMin(maxinterval, interval * _speedfactor));
 
@@ -191,15 +193,16 @@ void PlaybackDialog::nextCommand()
 			} else {
 				// manual mode: skip interval
 				nextCommand();
+				return;
 			}
-			delete next.message;
 		} else {
 			if(_play)
 				_timer->start(int(qMax(1.0f, 33.0f * _speedfactor) + 0.5));
 
-			emit commandRead(protocol::MessagePtr(next.message));
+			emit commandRead(msg);
 		}
 		break;
+	}
 	case recording::MessageRecord::INVALID:
 		qWarning() << "Unrecognized command " << next.type << "of length" << next.len;
 		if(_play)
@@ -358,14 +361,6 @@ void PlaybackDialog::endOfFileReached()
 		if(_indexpositem)
 			_indexpositem->setVisible(false);
 	}
-}
-
-void PlaybackDialog::exportButtonClicked()
-{
-	if(_exporter)
-		exportFrame();
-	else
-		exportConfig();
 }
 
 void PlaybackDialog::exportFrame(int count)

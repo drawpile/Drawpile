@@ -71,7 +71,6 @@ protected:
 	void closeEvent(QCloseEvent *);
 
 private slots:
-	void exportButtonClicked();
 	void exportFrame(int count=1);
 	void exportConfig();
 

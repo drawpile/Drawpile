@@ -76,7 +76,7 @@ enum MessageUndoState {
 class Message {
 	friend class MessagePtr;
 public:
-	Message(MessageType type, uint8_t ctx): _type(type), _contextid(ctx), _undone(DONE), _refcount(0) {}
+	Message(MessageType type, uint8_t ctx): _type(type), _undone(DONE), _refcount(0), _contextid(ctx) {}
 	virtual ~Message() = default;
 	
 	/**
@@ -196,10 +196,9 @@ protected:
 
 private:
 	const MessageType _type;
-	uint8_t _contextid; // this is part of the payload for those message types that have it
-
 	MessageUndoState _undone;
 	int _refcount;
+	uint8_t _contextid; // this is part of the payload for those message types that have it
 };
 
 /**
