@@ -1,5 +1,4 @@
 The following icons are from Tango Desktop Project under a Public Domain license:
- * applications-multimedia
  * document-new
  * document-open
  * document-save-as

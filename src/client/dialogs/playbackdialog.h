@@ -108,9 +108,6 @@ private:
 	QTimer *_timer;
 	float _speedfactor;
 
-	QAction *_exportFrameAction;
-	QAction *_autoExportAction;
-	QAction *_exportConfigAction;
 
 	bool _play;
 	bool _exporterReady;

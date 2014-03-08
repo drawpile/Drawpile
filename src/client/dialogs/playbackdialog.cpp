@@ -22,9 +22,7 @@
 #include <QMessageBox>
 #include <QScopedPointer>
 #include <QTimer>
-#include <QMenu>
 #include <QCloseEvent>
-#include <QBuffer>
 #include <QFileInfo>
 
 #include <QGraphicsScene>
@@ -68,6 +66,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 
 	_ui->progressBar->setMaximum(_reader->filesize());
 
+	// Playback control
 	connect(_ui->play, SIGNAL(toggled(bool)), this, SLOT(togglePlay(bool)));
 	connect(_ui->play, SIGNAL(toggled(bool)), this, SIGNAL(playbackToggled(bool)));
 	connect(_ui->seek, SIGNAL(clicked()), this, SLOT(nextCommand()));
@@ -76,42 +75,26 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	connect(_ui->snapshotBackwards, SIGNAL(clicked()), this, SLOT(prevSnapshot()));
 	connect(_ui->snapshotForwards, SIGNAL(clicked()), this, SLOT(nextSnapshot()));
 
-	connect(_ui->filterButton1, SIGNAL(clicked()), this, SLOT(filterRecording()));
-	connect(_ui->filterButton2, SIGNAL(clicked()), this, SLOT(filterRecording()));
-
 	connect(_ui->speedcontrol, &QDial::valueChanged, [this](int speed) {
 		if(speed<=100)
 			_speedfactor = speed / 100.0f;
 		else
 			_speedfactor = 1.0f + ((speed-100) / 100.f) * 5;
 
-		_ui->speedlabel->setText(tr("Speed: %1%").arg(_speedfactor * 100, 0, 'f', 0));
+		_ui->speedBox->setValue(_speedfactor * 100);
+		//_ui->speedbox->setText(tr("Speed: %1%").arg(_speedfactor * 100, 0, 'f', 0));
 
 		_speedfactor = 1.0f / _speedfactor;
 	});
 
-	QMenu *exportmenu = new QMenu(this);
-
-	_exportFrameAction = exportmenu->addAction("Save frame", this, SLOT(exportFrame()));
-	{
-		QFont font = _exportFrameAction->font();
-		font.setBold(true);
-		_exportFrameAction->setFont(font);
-		_exportFrameAction->setEnabled(false);
-	}
-
-	_autoExportAction = exportmenu->addAction("Autosave");
-	_autoExportAction->setCheckable(true);
-	_autoExportAction->setChecked(true);
-
-	exportmenu->addSeparator();
-
-	_exportConfigAction = exportmenu->addAction("Configure...", this, SLOT(exportConfig()));
-
-	_ui->exportbutton->setMenu(exportmenu);
-	connect(_ui->exportbutton, SIGNAL(clicked()), this, SLOT(exportButtonClicked()));
-
+	// Filtering and indexing
+	connect(_ui->filterButton1, SIGNAL(clicked()), this, SLOT(filterRecording()));
+	connect(_ui->filterButton2, SIGNAL(clicked()), this, SLOT(filterRecording()));
 	connect(_ui->indexButton, SIGNAL(clicked()), this, SLOT(makeIndex()));
+
+	// Video export
+	connect(_ui->configureExportButton, SIGNAL(clicked()), this, SLOT(exportConfig()));
+	connect(_ui->saveFrame, SIGNAL(clicked()), this, SLOT(exportFrame()));
 
 	loadIndex();
 }
@@ -216,7 +199,7 @@ void PlaybackDialog::nextCommand()
 		break;
 	}
 
-	if(_autoExportAction->isChecked())
+	if(_ui->autoSaveFrame->isChecked())
 		exportFrame();
 
 	updateIndexPosition();
@@ -254,7 +237,7 @@ void PlaybackDialog::nextSequence()
 		}
 	}
 
-	if(_autoExportAction->isChecked())
+	if(_ui->autoSaveFrame->isChecked())
 		exportFrame();
 
 	_ui->progressBar->setValue(_reader->position());
@@ -383,7 +366,7 @@ void PlaybackDialog::exportFrame()
 		if(!img.isNull()) {
 			Q_ASSERT(_exporterReady);
 			_exporterReady = false;
-			_ui->exportbutton->setEnabled(false);
+			_ui->saveFrame->setEnabled(false);
 			_exporter->saveFrame(img);
 		}
 	}
@@ -411,10 +394,7 @@ void PlaybackDialog::exportConfig()
 
 	_exporter->start();
 
-	_exportConfigAction->setEnabled(false);
-	_exportFrameAction->setEnabled(true);
-	_ui->frameLabel->setEnabled(true);
-	_ui->timeLabel->setEnabled(true);
+	_ui->exportStack->setCurrentIndex(0);
 }
 
 bool PlaybackDialog::waitForExporter()
@@ -426,7 +406,7 @@ bool PlaybackDialog::waitForExporter()
 
 void PlaybackDialog::exporterReady()
 {
-	_ui->exportbutton->setEnabled(true);
+	_ui->saveFrame->setEnabled(true);
 	_exporterReady = true;
 
 	_ui->frameLabel->setText(QString::number(_exporter->frame()));
@@ -444,9 +424,6 @@ void PlaybackDialog::exporterReady()
 	if(_ui->play->isEnabled()==false) {
 		_exporter->finish();
 		_exporter = 0;
-		_ui->exportbutton->setEnabled(false);
-		_ui->frameLabel->setEnabled(false);
-		_ui->timeLabel->setEnabled(false);
 	}
 	// Tried to proceed to next frame while exporter was busy
 	else if(_waitedForExporter) {
@@ -470,9 +447,7 @@ void PlaybackDialog::exporterError(const QString &message)
 void PlaybackDialog::exporterFinished()
 {
 	_exporter = 0;
-	_ui->exportbutton->setEnabled(true);
-	_exportConfigAction->setEnabled(true);
-	_exportFrameAction->setEnabled(false);
+	_ui->saveFrame->setEnabled(false);
 	_ui->frameLabel->setEnabled(false);
 	_ui->timeLabel->setEnabled(false);
 

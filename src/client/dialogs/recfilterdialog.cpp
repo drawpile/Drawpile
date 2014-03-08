@@ -44,7 +44,7 @@ FilterRecordingDialog::~FilterRecordingDialog()
 QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 {
 	// First, get output file name
-	QString outfile = QFileDialog::getSaveFileName(this, tr("Save indexed recording"), QString(),
+	QString outfile = QFileDialog::getSaveFileName(this, tr("Save filtered recording"), QString(),
 		tr("Drawpile recordings (%1)").arg("*.dprec")
 	);
 
