@@ -88,18 +88,23 @@ Compatibility Reader::open()
 	if(myversion == protover)
 		return COMPATIBLE;
 
-	// Same major versions: expect only minor incompatibility
-	if(majorVersion(myversion) == majorVersion(protover))
-		return MINOR_INCOMPATIBILITY;
-
 	// Recording made with a newer version. It may include unsupported commands.
-	if(myversion < protover)
+	if(myversion < protover) {
+		// If major version is same, expect only minor incompatabilities
+		if(majorVersion(myversion) == majorVersion(protover))
+			return MINOR_INCOMPATIBILITY;
+
 		return UNKNOWN_COMPATIBILITY;
+	}
 
 	// Recording made with an older version.
 	// Version 7.1 is fully compatible with current
 	if(protover >= version32(7, 1))
 		return COMPATIBLE;
+
+	// Older release with same major version: we know there are minor incompatabilities
+	if(majorVersion(myversion) == majorVersion(protover))
+		return MINOR_INCOMPATIBILITY;
 
 	// Older versions are incompatible
 	return INCOMPATIBLE;

@@ -99,6 +99,7 @@ bool isRecordableMeta(protocol::MessageType type) {
 	case MSG_CHAT:
 	case MSG_SESSION_TITLE:
 	case MSG_INTERVAL:
+	case MSG_MOVEPOINTER:
 		return true;
 	default:
 		return false;

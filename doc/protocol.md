@@ -30,7 +30,7 @@ Clients can connect to any server sharing the same major protocol version number
 Protocol 8.2:
 
  * MovePointer command coordinates now use 1/4 pixel resolution (same as normal brushes)
- * Minor incompatibility: recorded laser trails will appear magnified 4x
+ * Recordings are fully backward compatible with 8.1
 
 Protocol 8.1:
 

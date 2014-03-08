@@ -53,6 +53,10 @@ public:
 	void setRemoveDelays(bool remove) { _remove_delays = remove; }
 	bool removeDelays() const { return _remove_delays; }
 
+	//! Filter: remove laser pointer trails
+	void setRemoveLasers(bool remove) { _remove_lasers = remove; }
+	bool removeLasers() const { return _remove_lasers; }
+
 	//! Get the error message
 	const QString &errorString() const { return _errormsg; }
 
@@ -79,8 +83,7 @@ private:
 	bool _remove_chat;
 	bool _remove_lookyloos;
 	bool _remove_delays;
-
-
+	bool _remove_lasers;
 };
 
 }

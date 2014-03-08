@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>179</height>
+    <width>305</width>
+    <height>201</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,6 +21,13 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
+       <widget class="QCheckBox" name="removeDelays">
+        <property name="text">
+         <string>Remove pauses</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="removeChat">
         <property name="text">
          <string>Remove chat messages</string>
@@ -28,9 +35,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="removeDelays">
+       <widget class="QCheckBox" name="removeLasers">
         <property name="text">
-         <string>Remove delays</string>
+         <string>Remove laser pointers</string>
         </property>
        </widget>
       </item>
