@@ -107,6 +107,8 @@ void IndexBuilder::run()
 	zip.close();
 #ifndef NO_QSAVEFILE
 	savefile.commit();
+#else
+	savefile.close();
 #endif
 
 	emit done(true, QString());

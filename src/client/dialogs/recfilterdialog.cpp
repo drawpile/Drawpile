@@ -91,6 +91,8 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 
 #ifndef NO_QSAVEFILE // Qt 5.0 compatibility
 	outputfile.commit();
+#else
+	outputfile.close();
 #endif
 
 	return outfile;
