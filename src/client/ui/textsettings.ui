@@ -321,7 +321,11 @@
     </layout>
    </item>
    <item>
-    <widget class="QTextEdit" name="content"/>
+    <widget class="QTextEdit" name="content">
+     <property name="placeholderText">
+      <string>Annotation content</string>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout">
