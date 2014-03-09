@@ -20,7 +20,14 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QSaveFile>
+#else
+#include <QFile>
+#define QSaveFile QFile
+#define NO_QSAVEFILE
+#endif
 
 #include "dialogs/recfilterdialog.h"
 #include "recording/filter.h"
@@ -82,7 +89,9 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 		return QString();
 	}
 
+#ifndef NO_QSAVEFILE // Qt 5.0 compatibility
 	outputfile.commit();
+#endif
 
 	return outfile;
 }

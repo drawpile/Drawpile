@@ -20,11 +20,18 @@
 */
 
 #include <QDebug>
-#include <QTemporaryFile>
-#include <QSaveFile>
 #include <QBuffer>
 #include <QColor>
 #include <QBuffer>
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+#include <QSaveFile>
+#else
+#include <QFile>
+#define QSaveFile QFile
+#define NO_QSAVEFILE
+#endif
+
 
 #include "recording/indexbuilder.h"
 #include "ora/zipwriter.h"
@@ -98,7 +105,9 @@ void IndexBuilder::run()
 	zip.addFile("hash", hash);
 
 	zip.close();
+#ifndef NO_QSAVEFILE
 	savefile.commit();
+#endif
 
 	emit done(true, QString());
 }
