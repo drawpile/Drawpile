@@ -185,6 +185,9 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 
 	case MSG_MARKER: type = IDX_MARKER; break;
 
+	case MSG_USER_JOIN:
+		_index._ctxnames[msg.contextId()] = static_cast<const protocol::UserJoin&>(msg).name();
+		return;
 
 	default: break;
 	}
