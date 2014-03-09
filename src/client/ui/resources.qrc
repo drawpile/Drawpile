@@ -2,6 +2,7 @@
     <qresource prefix="/">
         <file>icons/drawpile.png</file>
         <file>icons/application-exit.png</file>
+        <file>icons/chat.png</file>
         <file>icons/color-picker.png</file>
         <file>icons/document-new.png</file>
         <file>icons/document-open.png</file>
@@ -19,6 +20,7 @@
         <file>icons/edit-paste.png</file>
         <file>icons/edit-redo.png</file>
         <file>icons/edit-undo.png</file>
+        <file>icons/flag-red.png</file>
         <file>icons/format-justify-center.png</file>
         <file>icons/format-justify-fill.png</file>
         <file>icons/format-justify-left.png</file>

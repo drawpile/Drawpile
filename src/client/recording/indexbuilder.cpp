@@ -38,6 +38,7 @@
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
 #include "../shared/net/pen.h"
+#include "../shared/net/meta.h"
 
 #include "statetracker.h"
 #include "core/layerstack.h"
@@ -180,7 +181,10 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 	case MSG_CHAT: type = IDX_CHAT; break;
 	case MSG_INTERVAL: type = IDX_PAUSE; break;
 
+	case MSG_MOVEPOINTER: type = IDX_LASER; break;
+
 	case MSG_MARKER: type = IDX_MARKER; break;
+
 
 	default: break;
 	}
@@ -188,26 +192,33 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 	if(type==IDX_NULL) {
 		return;
 
-	} else if(type==IDX_PUTIMAGE) {
-		// Combine consecutive putimages from the same user
+	} else if(type==IDX_PUTIMAGE || type==IDX_ANNOTATE) {
+		// Combine consecutive messages from the same user
 		for(int i=_index._index.size()-1;i>=0;--i) {
 			IndexEntry &e = _index._index[i];
 			if(e.context_id == msg.contextId()) {
-				if(e.type == IDX_PUTIMAGE) {
+				if(e.type == type) {
 					e.end = _pos;
 					return;
 				}
 				break;
 			}
 		}
-	} else if(type==IDX_ANNOTATE) {
-		// Combine consecutive annotation edits
+
+	} else if(type==IDX_LASER) {
+		// Combine laser pointer strokes and drop other MovePointer messages
 		for(int i=_index._index.size()-1;i>=0;--i) {
 			IndexEntry &e = _index._index[i];
 			if(e.context_id == msg.contextId()) {
-				if(e.type == IDX_ANNOTATE) {
-					e.end = _pos;
-					return;
+				if(e.type == type) {
+					int persistence = static_cast<const protocol::MovePointer&>(msg).persistence();
+					if(persistence==0) {
+						e._finished = true;
+						return;
+					} else if(!e._finished) {
+						e.end = _pos;
+						return;
+					}
 				}
 				break;
 			}

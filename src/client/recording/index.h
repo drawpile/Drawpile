@@ -43,6 +43,7 @@ enum IndexType {
 	IDX_ANNOTATE,    // annotation editing
 	IDX_CHAT,        // a chat message
 	IDX_PAUSE,       // pause
+	IDX_LASER,       // laser pointing
 };
 
 struct IndexEntry {

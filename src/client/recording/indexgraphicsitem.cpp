@@ -63,6 +63,9 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	const QPixmap putimageIcon = getIcon("edit-paste");
 	const QPixmap textIcon = getIcon("draw-text");
 	const QPixmap markerIcon = getIcon("flag-red");
+	const QPixmap chatIcon = getIcon("chat");
+	const QPixmap pauseIcon = getIcon("media-playback-pause");
+	const QPixmap laserIcon = getIcon("tool-laserpointer");
 
 	// Assign rows to each context ID in the order they appear
 	QHash<int, int> ctxrow;
@@ -114,6 +117,8 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 		);
 
 		QColor color(Qt::white);
+		bool setpen=false;
+		QPen pen;
 
 		switch(e.type) {
 		using namespace recording;
@@ -139,11 +144,27 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 		case IDX_ANNOTATE:
 			item->_icon = textIcon;
 			break;
+		case IDX_CHAT:
+			item->_icon = chatIcon;
+			break;
+		case IDX_PAUSE:
+			item->_icon = pauseIcon;
+			break;
+		case IDX_LASER:
+			item->_icon = laserIcon;
+			setpen = true;
+			pen.setColor(QColor::fromRgb(e.color));
+			pen.setStyle(Qt::DashLine);
+			break;
 		default: break;
 		}
 
 		item->_brush = QBrush(color);
-		item->_pen = QPen(item->_brush.color().darker(120));
+
+		if(setpen)
+			item->_pen = pen;
+		else
+			item->_pen = QPen(item->_brush.color().darker(120));
 
 		scene->addItem(item);
 	}
