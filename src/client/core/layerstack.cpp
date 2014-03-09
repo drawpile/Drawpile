@@ -328,6 +328,9 @@ QColor LayerStack::colorAt(int x, int y) const
 	if(_layers.isEmpty())
 		return QColor();
 
+	if(x<0 || y<0 || x>=_width || y>=_height)
+		return QColor();
+
 	// TODO some more efficient way of doing this
 	quint32 tile[Tile::SIZE*Tile::SIZE];
 	flattenTile(tile, x/Tile::SIZE, y/Tile::SIZE);
