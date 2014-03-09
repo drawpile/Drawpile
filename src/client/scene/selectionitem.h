@@ -20,12 +20,12 @@
 #ifndef SELECTIONITEM_H
 #define SELECTIONITEM_H
 
-#include <QGraphicsObject>
+#include <QGraphicsItem>
 
 namespace drawingboard {
 
 
-class SelectionItem : public QGraphicsObject
+class SelectionItem : public QGraphicsItem
 {
 public:
 	static const int HANDLE = 10;
@@ -56,9 +56,10 @@ public:
 	//! reimplementation
 	int type() const { return Type; }
 
+	void marchingAnts();
+
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
-	void timerEvent(QTimerEvent *e);
 
 private:
 	QRect _rect;

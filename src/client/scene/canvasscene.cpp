@@ -223,6 +223,9 @@ void CanvasScene::advanceUsermarkerAnimation()
 	foreach(UserMarkerItem *um, _usermarkers) {
 		um->fadeoutStep(STEP);
 	}
+
+	if(_selection)
+		_selection->marchingAnts();
 }
 
 /**

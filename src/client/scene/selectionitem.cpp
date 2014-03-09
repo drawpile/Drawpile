@@ -25,9 +25,8 @@
 namespace drawingboard {
 
 SelectionItem::SelectionItem(QGraphicsItem *parent)
-	: QGraphicsObject(parent), _marchingants(0)
+	: QGraphicsItem(parent), _marchingants(0)
 {
-	startTimer(100);
 }
 
 void SelectionItem::setRect(const QRect &rect)
@@ -113,7 +112,7 @@ void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 	painter->drawRect(_rect);
 }
 
-void SelectionItem::timerEvent(QTimerEvent *e)
+void SelectionItem::marchingAnts()
 {
 	_marchingants += 1;
 	update();
