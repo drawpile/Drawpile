@@ -669,6 +669,11 @@ QWidget *AnnotationSettings::createUiWidget(QWidget *parent)
 	_updatetimer->setInterval(500);
 	_updatetimer->setSingleShot(true);
 
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+	// Set editor placeholder
+	_ui->content->setPlaceholderText(tr("Annotation content"));
+#endif
+
 	// Editor events
 	connect(_ui->content, SIGNAL(textChanged()), this, SLOT(applyChanges()));
 	connect(_ui->content, SIGNAL(cursorPositionChanged()), this, SLOT(updateStyleButtons()));
