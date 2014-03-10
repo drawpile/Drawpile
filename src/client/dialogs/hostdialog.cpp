@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,12 +25,13 @@
 #include "loader.h"
 
 #include "dialogs/hostdialog.h"
-#include "dialogs/colordialog.h"
 
 #include "widgets/imageselector.h"
+#include "widgets/colorbutton.h"
 #include "utils/mandatoryfields.h"
 
 using widgets::ImageSelector;
+using widgets::ColorButton;
 
 #include <QSettings>
 
@@ -55,7 +56,10 @@ HostDialog::HostDialog(const QImage& original, const QString &lastpath, QWidget 
 	} else {
 		ui_->imageSelector->setOriginal(original);
 	}
-	connect(ui_->selectColor, SIGNAL(clicked()), this, SLOT(selectColor()));
+
+	connect(ui_->colorButton, SIGNAL(colorChanged(QColor)), ui_->imageSelector, SLOT(setColor(QColor)));
+	connect(ui_->colorButton, SIGNAL(colorChanged(QColor)), ui_->solidcolor, SLOT(click()));
+
 	connect(ui_->selectPicture, SIGNAL(clicked()), this, SLOT(selectPicture()));
 	connect(ui_->imageSelector, SIGNAL(noImageSet()), this, SLOT(newSelected()));
 
@@ -91,20 +95,6 @@ void HostDialog::rememberSettings() const
 			hosts << ui_->remotehost->itemText(i);
 	cfg.setValue("recentremotehosts", hosts);
 
-}
-
-void HostDialog::selectColor()
-{
-	const QColor oldcolor = ui_->imageSelector->color();
-	dialogs::ColorDialog dlg(tr("Select a color"), false);
-	dlg.setColor(oldcolor);
-	if(dlg.exec() == QDialog::Accepted) {
-		QColor col = dlg.color();
-		if(col.isValid() && col != oldcolor) {
-			ui_->imageSelector->setColor(col);
-			ui_->solidcolor->click();
-		}
-	}
 }
 
 bool HostDialog::selectPicture()
