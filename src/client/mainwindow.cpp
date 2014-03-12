@@ -792,6 +792,8 @@ void MainWindow::setRecorderStatus(bool on)
 			_recorderstatus->setToolTip("Recording session");
 		else
 			_recorderstatus->setToolTip("Not recording");
+
+		getAction("toolmarker")->setEnabled(on);
 	}
 }
 
