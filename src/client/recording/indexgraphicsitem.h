@@ -26,13 +26,13 @@
 #include <QPen>
 #include <QPixmap>
 
-namespace recording {
-	class Index;
-}
+#include "recording/index.h"
 
 class IndexGraphicsItem : public QGraphicsItem
 {
 public:
+	enum { Type = UserType + 20 };
+
 	explicit IndexGraphicsItem(QGraphicsItem *parent=0);
 
 	static const int STEP_WIDTH = 16;
@@ -48,14 +48,31 @@ public:
 
 	QRectF boundingRect() const;
 
+	/**
+	 * @brief Has this event been marked as silenced?
+	 *
+	 * Silenced entries can be filtered out of the recording
+	 * @return
+	 */
+	bool isSilenced() const { return _silenced; }
+
+	const recording::IndexEntry &entry() const { return _entry; }
+
+	int type() const { return Type; }
+
 protected:
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *);
+	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
 	QRectF _rect;
 	QBrush _brush;
 	QPen _pen;
 	QPixmap _icon;
+
+	bool _canSilence;
+	bool _silenced;
+	recording::IndexEntry _entry;
 };
 
 #endif // INDEXGRAPHICSITEM_H

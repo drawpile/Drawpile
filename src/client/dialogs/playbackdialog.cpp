@@ -586,6 +586,19 @@ void PlaybackDialog::indexMade(bool ok, const QString &msg)
 void PlaybackDialog::filterRecording()
 {
 	dialogs::FilterRecordingDialog dlg(this);
+
+	// Get entries to silence
+	recording::IndexVector silence;
+	if(_indexscene) {
+		foreach(const QGraphicsItem *item, _indexscene->items()) {
+			const IndexGraphicsItem *gi = qgraphicsitem_cast<const IndexGraphicsItem*>(item);
+			if(gi && gi->isSilenced())
+				silence.append(gi->entry());
+		}
+	}
+
+	dlg.setSilence(silence);
+
 	if(dlg.exec() == QDialog::Accepted) {
 		QString filename = dlg.filterRecording(_reader->filename());
 

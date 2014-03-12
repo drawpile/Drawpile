@@ -21,6 +21,8 @@
 #ifndef REC_FILTER_H
 #define REC_FILTER_H
 
+#include "recording/index.h"
+
 namespace protocol {
 	class MessagePtr;
 	class Message;
@@ -61,6 +63,10 @@ public:
 	void setRemoveMarkers(bool remove) { _remove_markers = remove; }
 	bool removeMarkers() const { return _remove_markers; }
 
+	//! Filter: remove selected entries
+	void setSilenceVector(const IndexVector &entries) { _silence = entries; }
+	const IndexVector &silenceVector() const { return _silence; }
+
 	//! Get the error message
 	const QString &errorString() const { return _errormsg; }
 
@@ -73,12 +79,6 @@ public:
 	 */
 	bool filterRecording(QFileDevice *inputfile, QFileDevice *outputfile);
 
-	/**
-	 * @brief Check if any filtering option has been set
-	 * @return
-	 */
-	bool needFiltering() const { return _expunge_undos || _remove_chat || _remove_lookyloos || _remove_delays || _remove_lasers || _remove_markers; }
-
 
 private:
 	QString _errormsg;
@@ -89,6 +89,7 @@ private:
 	bool _remove_delays;
 	bool _remove_lasers;
 	bool _remove_markers;
+	IndexVector _silence;
 };
 
 }

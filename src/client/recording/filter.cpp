@@ -203,6 +203,79 @@ void filterLookyloos(State &state)
 	}
 }
 
+//! Remove all silenced actions
+void filterSilenced(const IndexVector &silence, State &state)
+{
+	foreach(const IndexEntry &e, silence) {
+		for(quint32 i=e.start;i<=e.end;++i) {
+			if(state.index[i].ctxid == e.context_id)
+				mark_delete(state.index[i]);
+		}
+	}
+}
+
+/**
+ * @brief Remove adjacent undo points by the same user
+ *
+ * This removes all duplicate undo points that appear _next to each other_ in
+ * the message stream. Such undo points are left over when actions are undone or
+ * silenced.
+ *
+ * @param state
+ */
+void filterAdjacentUndoPoints(State &state)
+{
+	FilterIndex prev;
+	prev.type = 0;
+
+	for(int i=0;i<state.index.size();++i) {
+		FilterIndex &fi = state.index[i];
+
+		if(isDeleted(fi))
+			continue;
+
+		if(fi.type == protocol::MSG_INTERVAL)
+			continue;
+
+		if(fi.type == protocol::MSG_UNDOPOINT && prev.type == protocol::MSG_UNDOPOINT) {
+			if(fi.ctxid == prev.ctxid) {
+				mark_delete(fi);
+			}
+		}
+
+		prev = fi;
+	}
+}
+
+//! Remove extraneous tool change messages
+void filterExtraToolChanges(State &state)
+{
+	FilterIndex prev;
+	prev.type = 0;
+
+	for(int i=state.index.size()-1;i>0;--i) {
+		FilterIndex &fi = state.index[i];
+
+		if(isDeleted(fi))
+			continue;
+
+		// ignroe meta messages
+		if(fi.type < 128)
+			continue;
+
+		if(fi.type == protocol::MSG_UNDOPOINT)
+			continue;
+
+		if(fi.type == protocol::MSG_TOOLCHANGE && prev.type == protocol::MSG_TOOLCHANGE) {
+			if(fi.ctxid == prev.ctxid) {
+				mark_delete(fi);
+			}
+		}
+
+		prev = fi;
+	}
+}
+
 void doFilterRecording(Filter &filter, State &state, Reader &recording)
 {
 	while(true) {
@@ -220,6 +293,12 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 
 	if(filter.removeLookyloos())
 		filterLookyloos(state);
+
+	if(!filter.silenceVector().isEmpty())
+		filterSilenced(filter.silenceVector(), state);
+
+	filterExtraToolChanges(state);
+	filterAdjacentUndoPoints(state);
 }
 
 }
@@ -257,13 +336,10 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 
 	writer.writeHeader();
 
-	unsigned int index=0;
 	QByteArray buffer;
 	while(reader.readNextToBuffer(buffer)) {
-		if(!isDeleted(state.index[index]))
+		if(!isDeleted(state.index[reader.current()]))
 			writer.writeFromBuffer(buffer);
-
-		++index;
 	}
 
 	return true;

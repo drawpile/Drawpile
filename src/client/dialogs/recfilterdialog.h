@@ -22,6 +22,8 @@
 
 #include <QDialog>
 
+#include "recording/index.h"
+
 class Ui_FilterRecording;
 
 namespace dialogs {
@@ -33,9 +35,13 @@ public:
 	explicit FilterRecordingDialog(QWidget *parent = 0);
 	~FilterRecordingDialog();
 
+	void setSilence(const recording::IndexVector &silence);
+
 	QString filterRecording(const QString &recordingFile);
+
 private:
 	Ui_FilterRecording *_ui;
+	recording::IndexVector _silence;
 };
 
 }

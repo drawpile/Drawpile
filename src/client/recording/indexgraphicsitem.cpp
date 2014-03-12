@@ -23,13 +23,16 @@
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
+#include <QGraphicsSceneHoverEvent>
 #include <QIcon>
+#include <QStyleOptionGraphicsItem>
+#include <QPalette>
 
 #include "indexgraphicsitem.h"
 #include "recording/index.h"
 
 IndexGraphicsItem::IndexGraphicsItem(QGraphicsItem *parent)
-	: QGraphicsItem(parent)
+	: QGraphicsItem(parent), _canSilence(false), _silenced(false)
 {
 }
 
@@ -41,11 +44,27 @@ QRectF IndexGraphicsItem::boundingRect() const
 void IndexGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *)
 {
 	Q_UNUSED(options);
-	painter->setPen(_pen);
-	painter->setBrush(_brush);
+	if(isSilenced()) {
+		QPen pen = _pen;
+		pen.setStyle(Qt::DashDotDotLine);
+		painter->setPen(pen);
+
+		QBrush brush = _brush;
+		QColor color = brush.color();
+		color.setAlphaF(0.5);
+		brush.setColor(color);
+		painter->setBrush(brush);
+	} else {
+		painter->setPen(_pen);
+		painter->setBrush(_brush);
+	}
+
 	painter->drawRect(_rect);
-	if(!_icon.isNull())
+	if(!_icon.isNull()) {
+		if(isSilenced())
+			painter->setOpacity(0.5);
 		painter->drawPixmap(_rect.topLeft(), _icon);
+	}
 }
 
 namespace {
@@ -67,6 +86,8 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	const QPixmap chatIcon = getIcon("chat");
 	const QPixmap pauseIcon = getIcon("media-playback-pause");
 	const QPixmap laserIcon = getIcon("tool-laserpointer");
+
+	const QCursor silencableCursor = QCursor(Qt::PointingHandCursor);
 
 	// Assign rows to each context ID in the order they appear
 	QHash<int, int> ctxrow;
@@ -130,10 +151,13 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 		enum {ICON_ONLY, BLOCK, OUTLINE} style = e.start == e.end ? ICON_ONLY : BLOCK;
 		QColor color(Qt::white);
 
+		bool silence = true;
+
 		switch(e.type) {
 		using namespace recording;
 		case IDX_NULL:
 			color = Qt::black;
+			silence = false;
 			break;
 		case IDX_MARKER:
 			item->_icon = markerIcon;
@@ -186,6 +210,22 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 		if(!e.title.isEmpty())
 			item->setToolTip(e.title);
 
+		if(silence) {
+			item->_canSilence = true;
+			item->setCursor(silencableCursor);
+		}
+
+		item->_entry = e;
+
 		scene->addItem(item);
 	}
 }
+
+void IndexGraphicsItem::mousePressEvent(QGraphicsSceneMouseEvent *)
+{
+	if(_canSilence) {
+		_silenced = !_silenced;
+		update();
+	}
+}
+

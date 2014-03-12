@@ -48,6 +48,13 @@ FilterRecordingDialog::~FilterRecordingDialog()
 	delete _ui;
 }
 
+void FilterRecordingDialog::setSilence(const recording::IndexVector &silence)
+{
+	_silence = silence;
+	_ui->removeSilenced->setChecked(!silence.isEmpty());
+	_ui->removeSilenced->setDisabled(silence.isEmpty());
+}
+
 QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 {
 	// First, get output file name
@@ -70,6 +77,9 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 	filter.setRemoveDelays(_ui->removeDelays->isChecked());
 	filter.setRemoveLasers(_ui->removeLasers->isChecked());
 	filter.setRemoveMarkers(_ui->removeMarkers->isChecked());
+
+	if(_ui->removeSilenced->isChecked())
+		filter.setSilenceVector(_silence);
 
 	// Perform filtering
 	QFile inputfile(recordingFile);
