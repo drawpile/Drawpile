@@ -333,10 +333,7 @@ QProgressBar::chunk {
        <item>
         <widget class="IndexGraphicsView" name="indexView">
          <property name="interactive">
-          <bool>false</bool>
-         </property>
-         <property name="dragMode">
-          <enum>QGraphicsView::ScrollHandDrag</enum>
+          <bool>true</bool>
          </property>
          <property name="viewportUpdateMode">
           <enum>QGraphicsView::FullViewportUpdate</enum>

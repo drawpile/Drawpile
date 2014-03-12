@@ -48,7 +48,7 @@ protected:
 	void run();
 
 private:
-	void addToIndex(const protocol::Message &msg);
+	void addToIndex(const protocol::MessagePtr msg);
 	void writeSnapshots(Reader &reader, ZipWriter &zip);
 
 	QString _inputfile, _targetfile;

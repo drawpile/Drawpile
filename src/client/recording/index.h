@@ -48,7 +48,7 @@ enum IndexType {
 
 struct IndexEntry {
 	IndexEntry() : type(IDX_NULL), context_id(0), offset(0), start(0), end(0), color(0), _finished(false) { }
-	IndexEntry(IndexType typ, int ctx, qint64 o, int s, int e, quint32 c) : type(typ), context_id(ctx), offset(o), start(s), end(e), color(c), _finished(false) { }
+	IndexEntry(IndexType typ, int ctx, qint64 o, int s, int e, quint32 c, const QString &title_) : type(typ), context_id(ctx), offset(o), start(s), end(e), color(c), title(title_), _finished(false) { }
 
 	//! Type of the index entry
 	IndexType type;
@@ -67,6 +67,9 @@ struct IndexEntry {
 
 	//! Color hint for this index entry (RGB)
 	quint32 color;
+
+	//! Title/tooltip text for the index entry
+	QString title;
 
 	// Flags used when building the index
 	bool _finished;

@@ -52,7 +52,7 @@ bool Index::writeIndex(QIODevice *out) const
 	// Write index
 	ds << quint32(_index.size());
 	foreach(const IndexEntry &e, _index) {
-		ds << quint8(e.type) << e.context_id << e.offset << e.start << e.end << e.color;
+		ds << quint8(e.type) << e.context_id << e.offset << e.start << e.end << e.color << e.title;
 	}
 
 	// Write snapshot list
@@ -95,7 +95,7 @@ bool Index::readIndex(QIODevice *out)
 		quint8 type;
 		ds >> type;
 		e.type = IndexType(type);
-		ds >> e.context_id >> e.offset >> e.start >> e.end >> e.color;
+		ds >> e.context_id >> e.offset >> e.start >> e.end >> e.color >> e.title;
 		_index.append(e);
 		if(e.type == IDX_MARKER)
 			_markers.append(MarkerEntry(_index.size()-1, e.start));

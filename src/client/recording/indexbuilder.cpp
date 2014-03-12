@@ -39,6 +39,7 @@
 #include "../shared/record/writer.h"
 #include "../shared/net/pen.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/recording.h"
 
 #include "statetracker.h"
 #include "core/layerstack.h"
@@ -77,8 +78,8 @@ void IndexBuilder::run()
 		_offset = reader.position() - zero_offset;
 		record = reader.readNext();
 		if(record.status == MessageRecord::OK) {
-			addToIndex(*record.message);
-			delete record.message;
+			protocol::MessagePtr msg(record.message);
+			addToIndex(msg);
 		} else if(record.status == MessageRecord::INVALID) {
 			qWarning() << "invalid message type" << record.type << "at index" << _pos;
 		}
@@ -153,10 +154,11 @@ void IndexBuilder::writeSnapshots(Reader &reader, ZipWriter &zip)
 	}
 }
 
-void IndexBuilder::addToIndex(const protocol::Message &msg)
+void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 {
 	IndexType type = IDX_NULL;
-	switch(msg.type()) {
+	QString title;
+	switch(msg->type()) {
 	using namespace protocol;
 	case MSG_CANVAS_RESIZE: type = IDX_RESIZE; break;
 
@@ -170,7 +172,7 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 	case MSG_PEN_UP: type = IDX_STROKE; break;
 
 	case MSG_TOOLCHANGE:
-		_colors[msg.contextId()] = static_cast<const protocol::ToolChange&>(msg).color_h();
+		_colors[msg->contextId()] = msg.cast<const protocol::ToolChange>().color_h();
 		break;
 
 	case MSG_ANNOTATION_CREATE:
@@ -178,15 +180,22 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 	case MSG_ANNOTATION_EDIT:
 	case MSG_ANNOTATION_RESHAPE: type = IDX_ANNOTATE; break;
 
-	case MSG_CHAT: type = IDX_CHAT; break;
+	case MSG_CHAT:
+		type = IDX_CHAT;
+		title = msg.cast<const protocol::Chat>().message().left(32);
+		break;
+
 	case MSG_INTERVAL: type = IDX_PAUSE; break;
 
 	case MSG_MOVEPOINTER: type = IDX_LASER; break;
 
-	case MSG_MARKER: type = IDX_MARKER; break;
+	case MSG_MARKER:
+		type = IDX_MARKER;
+		title = msg.cast<const protocol::Marker>().text();
+		break;
 
 	case MSG_USER_JOIN:
-		_index._ctxnames[msg.contextId()] = static_cast<const protocol::UserJoin&>(msg).name();
+		_index._ctxnames[msg->contextId()] = msg.cast<const protocol::UserJoin>().name();
 		return;
 
 	default: break;
@@ -199,7 +208,7 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 		// Combine consecutive messages from the same user
 		for(int i=_index._index.size()-1;i>=0;--i) {
 			IndexEntry &e = _index._index[i];
-			if(e.context_id == msg.contextId()) {
+			if(e.context_id == msg->contextId()) {
 				if(e.type == type) {
 					e.end = _pos;
 					return;
@@ -212,9 +221,9 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 		// Combine laser pointer strokes and drop other MovePointer messages
 		for(int i=_index._index.size()-1;i>=0;--i) {
 			IndexEntry &e = _index._index[i];
-			if(e.context_id == msg.contextId()) {
+			if(e.context_id == msg->contextId()) {
 				if(e.type == type) {
-					int persistence = static_cast<const protocol::MovePointer&>(msg).persistence();
+					int persistence = msg.cast<const protocol::MovePointer>().persistence();
 					if(persistence==0) {
 						e._finished = true;
 						return;
@@ -231,10 +240,10 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 		// Combine all strokes up to last pen-up from the same user
 		for(int i=_index._index.size()-1;i>=0;--i) {
 			IndexEntry &e = _index._index[i];
-			if(e.context_id == msg.contextId() && e.type == IDX_STROKE) {
+			if(e.context_id == msg->contextId() && e.type == IDX_STROKE) {
 				if(!e._finished) {
 					e.end = _pos;
-					if(msg.type() == protocol::MSG_PEN_UP)
+					if(msg->type() == protocol::MSG_PEN_UP)
 						e._finished = true;
 					return;
 				}
@@ -244,7 +253,7 @@ void IndexBuilder::addToIndex(const protocol::Message &msg)
 	}
 
 	// New index entry
-	_index._index.append(IndexEntry(type, msg.contextId(), _offset, _pos, _pos, _colors[msg.contextId()]));
+	_index._index.append(IndexEntry(type, msg->contextId(), _offset, _pos, _pos, _colors[msg->contextId()], title));
 }
 
 }

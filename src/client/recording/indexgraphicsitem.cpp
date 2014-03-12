@@ -183,6 +183,9 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 			break;
 		}
 
+		if(!e.title.isEmpty())
+			item->setToolTip(e.title);
+
 		scene->addItem(item);
 	}
 }
