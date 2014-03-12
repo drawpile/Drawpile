@@ -565,6 +565,7 @@ void PlaybackDialog::makeIndex()
 	_ui->buildProgress->setMaximum(_reader->filesize());
 	connect(builder, SIGNAL(progress(int)), _ui->buildProgress, SLOT(setValue(int)), Qt::QueuedConnection);
 	connect(builder, SIGNAL(done(bool, QString)), this, SLOT(indexMade(bool, QString)), Qt::QueuedConnection);
+	connect(builder, SIGNAL(finished()), builder, SLOT(deleteLater()));
 
 	builder->start();
 }
