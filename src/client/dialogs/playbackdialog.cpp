@@ -555,6 +555,8 @@ void PlaybackDialog::loadIndex()
 
 	createIndexView();
 	connect(_ui->indexView, SIGNAL(jumpRequest(int)), this, SLOT(jumpTo(int)));
+
+	updateIndexPosition();
 }
 
 void PlaybackDialog::makeIndex()
