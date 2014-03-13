@@ -79,6 +79,7 @@ set (
 	dialogs/settingsdialog.cpp
 	dialogs/resizedialog.cpp
 	dialogs/playbackdialog.cpp
+	dialogs/tinyplayer.cpp
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
 	widgets/viewstatus.cpp
@@ -132,6 +133,7 @@ set (
 	ui/videoexport.ui
 	ui/inputcfg.ui
 	ui/recfilter.ui
+	ui/tinyplayer.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )

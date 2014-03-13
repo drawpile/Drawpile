@@ -42,6 +42,8 @@ class Ui_PlaybackDialog;
 
 namespace dialogs {
 
+class TinyPlayer;
+
 class PlaybackDialog : public QDialog
 {
 	Q_OBJECT
@@ -110,6 +112,7 @@ private:
 	QTimer *_timer;
 	float _speedfactor;
 
+	TinyPlayer *_tinyPlayer;
 
 	bool _play;
 	bool _exporterReady;

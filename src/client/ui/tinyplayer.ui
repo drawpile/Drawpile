@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TinyPlayer</class>
+ <widget class="QWidget" name="TinyPlayer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>210</width>
+    <height>60</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">#TinyPlayer {
+background: qradialgradient(spread:pad, cx:0.5, cy:0, radius:0.5, fx:0.5, fy:0, stop:0 rgba(170, 170, 172, 255), stop:1 rgba(90, 90, 90, 255))
+}
+
+QToolButton:hover {
+border: none;
+border-radius: 5px;
+background: rgba(255,255,255,0.3);
+}
+
+QToolButton:pressed {
+/*border: 1px solid #f31;
+border-radius: 5px;
+*/
+background: rgba(255,255,255,0.7);
+}
+
+QToolButton:checked {
+border: 1px solid #3c1;
+border-radius: 5px;
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>1</number>
+   </property>
+   <property name="leftMargin">
+    <number>4</number>
+   </property>
+   <property name="topMargin">
+    <number>4</number>
+   </property>
+   <property name="rightMargin">
+    <number>4</number>
+   </property>
+   <property name="bottomMargin">
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="QProgressBar" name="progress">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>10</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QProgressBar {
+	border: 1px solid #222;
+	background: #dde2dd;
+	text-align: center;
+	color: #ccc;
+}
+
+QProgressBar::chunk {
+	background: #333;
+	border-right: 2px solid #f33;
+}</string>
+     </property>
+     <property name="textVisible">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="spacing">
+      <number>5</number>
+     </property>
+     <item>
+      <widget class="QToolButton" name="prevMarker">
+       <property name="toolTip">
+        <string>Previous marker</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-seek-backward" resource="resources.qrc">
+         <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="play">
+       <property name="toolTip">
+        <string>Play</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-playback-start" resource="resources.qrc">
+         <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="step">
+       <property name="toolTip">
+        <string>Step stroke</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-seek-forward" resource="resources.qrc">
+         <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="skip">
+       <property name="toolTip">
+        <string>Skip stroke</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-skip-forward" resource="resources.qrc">
+         <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>32</width>
+         <height>32</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="nextMarker">
+       <property name="toolTip">
+        <string>Next marker</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+       <property name="icon">
+        <iconset theme="media-seek-forward" resource="resources.qrc">
+         <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="autoRaise">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

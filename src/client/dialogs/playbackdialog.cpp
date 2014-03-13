@@ -33,6 +33,7 @@
 #include "dialogs/playbackdialog.h"
 #include "dialogs/videoexportdialog.h"
 #include "dialogs/recfilterdialog.h"
+#include "dialogs/tinyplayer.h"
 
 #include "export/videoexporter.h"
 #include "scene/canvasscene.h"
@@ -47,6 +48,7 @@
 #include "../shared/net/recording.h"
 
 #include "ui_playback.h"
+#include "ui_tinyplayer.h"
 
 namespace dialogs {
 
@@ -60,15 +62,17 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	_ui = new Ui_PlaybackDialog;
 	_ui->setupUi(this);
 
+	_tinyPlayer = new TinyPlayer(this);
+
 	_timer = new QTimer(this);
 	_timer->setSingleShot(true);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(nextCommand()));
 
 	_ui->progressBar->setMaximum(_reader->filesize());
+	_tinyPlayer->setMaxProgress(_reader->filesize());
 
 	// Playback control
 	connect(_ui->play, SIGNAL(toggled(bool)), this, SLOT(togglePlay(bool)));
-	connect(_ui->play, SIGNAL(toggled(bool)), this, SIGNAL(playbackToggled(bool)));
 	connect(_ui->seek, SIGNAL(clicked()), this, SLOT(nextCommand()));
 	connect(_ui->skip, SIGNAL(clicked()), this, SLOT(nextSequence()));
 
@@ -97,6 +101,22 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	// Video export
 	connect(_ui->configureExportButton, SIGNAL(clicked()), this, SLOT(exportConfig()));
 	connect(_ui->saveFrame, SIGNAL(clicked()), this, SLOT(exportFrame()));
+
+	// Tiny player controls
+	connect(_ui->smallPlayer, &QCheckBox::clicked, [this]() {
+		QSize size = _tinyPlayer->size();
+		_tinyPlayer->move(QCursor::pos() - QPoint(size.width()/2, size.height()/2));
+		_tinyPlayer->show();
+		this->hide();
+		_ui->smallPlayer->setChecked(false);
+	});
+
+	connect(_tinyPlayer, SIGNAL(hidden()), this, SLOT(show()));
+	connect(_tinyPlayer, SIGNAL(prevMarker()), this, SLOT(prevMarker()));
+	connect(_tinyPlayer, SIGNAL(nextMarker()), this, SLOT(nextMarker()));
+	connect(_tinyPlayer, SIGNAL(playToggled(bool)), _ui->play, SLOT(setChecked(bool)));
+	connect(_tinyPlayer, SIGNAL(step()), this, SLOT(nextCommand()));
+	connect(_tinyPlayer, SIGNAL(skip()), this, SLOT(nextSequence()));
 
 	loadIndex();
 }
@@ -160,6 +180,9 @@ void PlaybackDialog::togglePlay(bool play)
 		_timer->start(0);
 	else
 		_timer->stop();
+
+	_tinyPlayer->setPlayback(play);
+	emit playbackToggled(play);
 }
 
 void PlaybackDialog::nextCommand()
@@ -270,6 +293,7 @@ void PlaybackDialog::updateIndexPosition()
 		_ui->indexView->centerOn(_indexpositem);
 	}
 	_ui->progressBar->setValue(_reader->position());
+	_tinyPlayer->setProgress(_reader->position());
 }
 
 void PlaybackDialog::jumpTo(int pos)
@@ -383,7 +407,12 @@ void PlaybackDialog::endOfFileReached()
 		_ui->progressBar->setTextVisible(true);
 		if(_indexpositem)
 			_indexpositem->setVisible(false);
+
+		_ui->smallPlayer->setEnabled(false);
 	}
+
+	_tinyPlayer->hide();
+	show();
 }
 
 void PlaybackDialog::exportFrame(int count)
@@ -555,6 +584,16 @@ void PlaybackDialog::loadIndex()
 
 	createIndexView();
 	connect(_ui->indexView, SIGNAL(jumpRequest(int)), this, SLOT(jumpTo(int)));
+
+	_tinyPlayer->enableIndex();
+
+	// Re-enable controls in case the playback has already finished
+	_ui->play->setEnabled(true);
+	_ui->seek->setEnabled(true);
+	_ui->skip->setEnabled(true);
+	_ui->progressBar->setEnabled(true);
+	_ui->progressBar->setTextVisible(false);
+	_ui->smallPlayer->setEnabled(true);
 
 	updateIndexPosition();
 }
