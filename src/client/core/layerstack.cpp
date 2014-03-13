@@ -491,7 +491,10 @@ void LayerStack::restoreSavepoint(const Savepoint *savepoint)
 		// so most tiles will remain unchanged
 		if(savepoint->layers.size() != _layers.size()) {
 			// Layers added or deleted, just refresh everything
-			markDirty();
+			// (force refresh even if layer stack is empty)
+			_dirtytiles.fill(true);
+			_dirtyrect = QRect(0, 0, _width, _height);
+
 		} else {
 			// Layer count has not changed, compare layer contents
 			for(int l=0;l<savepoint->layers.size();++l) {
