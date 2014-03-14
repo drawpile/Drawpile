@@ -144,20 +144,37 @@ void PlaybackDialog::createIndexView()
 	_ui->indexView->centerOn(QPointF(0, 0));
 }
 
-void PlaybackDialog::closeEvent(QCloseEvent *event)
+bool PlaybackDialog::exitCleanup()
 {
+	if(_indexbuilder)
+		_indexbuilder->abort();
+
 	if(_exporter) {
-		event->ignore();
 		if(!_closing) {
 			QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 			_closing = true;
 			_exporter->finish();
 		}
+		return false;
 	} else {
 		if(_closing)
 			QApplication::restoreOverrideCursor();
-		QDialog::closeEvent(event);
+		return true;
 	}
+}
+
+void PlaybackDialog::closeEvent(QCloseEvent *event)
+{
+	if(!exitCleanup())
+		event->ignore();
+	else
+		QDialog::closeEvent(event);
+}
+
+void PlaybackDialog::done(int r)
+{
+	if(exitCleanup())
+		QDialog::done(r);
 }
 
 void PlaybackDialog::centerOnParent()
@@ -600,15 +617,17 @@ void PlaybackDialog::loadIndex()
 
 void PlaybackDialog::makeIndex()
 {
+	Q_ASSERT(_indexbuilder.isNull());
+
 	_ui->indexButton->setEnabled(false);
-	auto *builder = new recording::IndexBuilder(_reader->filename(), indexFileName(), this);
+	_indexbuilder = new recording::IndexBuilder(_reader->filename(), indexFileName());
 
 	_ui->buildProgress->setMaximum(_reader->filesize());
-	connect(builder, SIGNAL(progress(int)), _ui->buildProgress, SLOT(setValue(int)), Qt::QueuedConnection);
-	connect(builder, SIGNAL(done(bool, QString)), this, SLOT(indexMade(bool, QString)), Qt::QueuedConnection);
-	connect(builder, SIGNAL(finished()), builder, SLOT(deleteLater()));
+	connect(_indexbuilder, SIGNAL(progress(int)), _ui->buildProgress, SLOT(setValue(int)));
+	connect(_indexbuilder, SIGNAL(done(bool, QString)), this, SLOT(indexMade(bool, QString)));
+	connect(_indexbuilder, SIGNAL(finished()), _indexbuilder, SLOT(deleteLater()));
 
-	builder->start();
+	_indexbuilder->start();
 }
 
 void PlaybackDialog::indexMade(bool ok, const QString &msg)

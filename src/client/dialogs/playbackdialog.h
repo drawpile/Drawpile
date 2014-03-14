@@ -21,12 +21,14 @@
 #define PLAYBACKDIALOG_H
 
 #include <QDialog>
+#include <QPointer>
 
 #include "../shared/net/message.h"
 
 namespace recording {
 	class Reader;
 	class IndexLoader;
+	class IndexBuilder;
 }
 
 namespace drawingboard {
@@ -72,6 +74,8 @@ public slots:
 	void prevMarker();
 	void nextMarker();
 
+	virtual void done(int r);
+
 protected:
 	void closeEvent(QCloseEvent *);
 
@@ -97,12 +101,15 @@ private:
 	void jumptToSnapshot(int idx);
 	void updateIndexPosition();
 
+	bool exitCleanup();
+
 	QString indexFileName() const;
 
 	Ui_PlaybackDialog *_ui;
 
 	recording::Reader *_reader;
 	recording::IndexLoader *_index;
+	QPointer<recording::IndexBuilder> _indexbuilder;
 
 	QGraphicsScene *_indexscene;
 	IndexPointerGraphicsItem *_indexpositem;

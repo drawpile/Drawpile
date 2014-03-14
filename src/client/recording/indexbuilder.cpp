@@ -52,6 +52,12 @@ IndexBuilder::IndexBuilder(const QString &inputfile, const QString &targetfile, 
 {
 }
 
+void IndexBuilder::abort()
+{
+	_abortflag = 1;
+	qDebug() << "aborting indexing...";
+}
+
 void IndexBuilder::run()
 {
 	// Open output file
@@ -66,7 +72,7 @@ void IndexBuilder::run()
 
 	Compatibility readerOk = reader.open();
 	if(readerOk != COMPATIBLE && readerOk != MINOR_INCOMPATIBILITY) {
-		qDebug() << "Couldn't open recording for indexing. Error code" << readerOk;
+		qWarning() << "Couldn't open recording for indexing. Error code" << readerOk;
 		emit done(false, reader.errorString());
 		return;
 	}
@@ -75,6 +81,12 @@ void IndexBuilder::run()
 	_pos = 0;
 	const qint64 zero_offset = reader.position();
 	do {
+		if(_abortflag.load()) {
+			qWarning() << "Indexing aborted (index phase)";
+			emit done(false, "aborted");
+			return;
+		}
+
 		_offset = reader.position() - zero_offset;
 		record = reader.readNext();
 		if(record.status == MessageRecord::OK) {
@@ -92,6 +104,12 @@ void IndexBuilder::run()
 	reader.rewind();
 	emit progress(reader.position());
 	writeSnapshots(reader, zip);
+
+	if(_abortflag.load()) {
+		qWarning() << "Indexing aborted (snapshot phase)";
+		emit done(false, "aborted");
+		return;
+	}
 
 	// Write index
 	{
@@ -124,6 +142,9 @@ void IndexBuilder::writeSnapshots(Reader &reader, ZipWriter &zip)
 
 	MessageRecord msg;
 	while(true) {
+		if(_abortflag.load())
+			return;
+
 		msg = reader.readNext();
 		if(msg.status == MessageRecord::END_OF_RECORDING)
 			break;

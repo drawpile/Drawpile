@@ -24,6 +24,7 @@
 #include <QThread>
 #include <QString>
 #include <QHash>
+#include <QAtomicInt>
 
 #include "recording/filter.h"
 #include "recording/index.h"
@@ -40,6 +41,8 @@ class IndexBuilder : public QThread
 public:
 	IndexBuilder(const QString &inputfile, const QString &targetfile, QObject *parent=0);
 
+	void abort();
+
 signals:
 	void progress(int pos);
 	void done(bool ok, const QString &msg);
@@ -52,6 +55,7 @@ private:
 	void writeSnapshots(Reader &reader, ZipWriter &zip);
 
 	QString _inputfile, _targetfile;
+	QAtomicInt _abortflag;
 
 	Index _index;
 	qint64 _offset;
