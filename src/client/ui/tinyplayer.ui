@@ -10,9 +10,6 @@
     <height>60</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <property name="styleSheet">
    <string notr="true">#TinyPlayer {
 background: qradialgradient(spread:pad, cx:0.5, cy:0, radius:0.5, fx:0.5, fy:0, stop:0 rgba(170, 170, 172, 255), stop:1 rgba(90, 90, 90, 255))
@@ -130,7 +127,7 @@ QProgressBar::chunk {
      <item>
       <widget class="QToolButton" name="step">
        <property name="toolTip">
-        <string>Step stroke</string>
+        <string>Step</string>
        </property>
        <property name="icon">
         <iconset theme="media-seek-forward" resource="resources.qrc">

@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QMouseEvent>
+#include <QContextMenuEvent>
 
 #include "dialogs/tinyplayer.h"
 
@@ -50,6 +51,16 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 
 	_ui->prevMarker->hide();
 	_ui->nextMarker->hide();
+
+	// Context menu
+	_idxactions = new QActionGroup(this);
+	_ctxmenu = new QMenu(this);
+	_ctxmenu->addAction("Normal player", this, SLOT(restoreBigPlayer()));
+	_ctxmenu->addSeparator();
+	_idxactions->addAction(_ctxmenu->addAction(tr("Previous snapshot"), this, SIGNAL(prevSnapshot())));
+	_idxactions->addAction(_ctxmenu->addAction(tr("Next snapshot"), this, SIGNAL(nextSnapshot())));
+
+	_idxactions->setEnabled(false);
 }
 
 TinyPlayer::~TinyPlayer()
@@ -76,6 +87,7 @@ void TinyPlayer::enableIndex()
 {
 	_ui->prevMarker->show();
 	_ui->nextMarker->show();
+	_idxactions->setEnabled(true);
 }
 
 void TinyPlayer::mouseMoveEvent(QMouseEvent *event)
@@ -93,10 +105,19 @@ void TinyPlayer::mouseReleaseEvent(QMouseEvent *)
 void TinyPlayer::keyReleaseEvent(QKeyEvent *event)
 {
 	QWidget::keyReleaseEvent(event);
-	if(event->key() == Qt::Key_Escape) {
-		hide();
-		emit hidden();
-	}
+	if(event->key() == Qt::Key_Escape)
+		restoreBigPlayer();
+}
+
+void TinyPlayer::contextMenuEvent(QContextMenuEvent *event)
+{
+	_ctxmenu->popup(event->globalPos());
+}
+
+void TinyPlayer::restoreBigPlayer()
+{
+	hide();
+	emit hidden();
 }
 
 }

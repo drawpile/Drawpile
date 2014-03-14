@@ -114,6 +114,8 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	connect(_tinyPlayer, SIGNAL(hidden()), this, SLOT(show()));
 	connect(_tinyPlayer, SIGNAL(prevMarker()), this, SLOT(prevMarker()));
 	connect(_tinyPlayer, SIGNAL(nextMarker()), this, SLOT(nextMarker()));
+	connect(_tinyPlayer, SIGNAL(prevSnapshot()), this, SLOT(prevSnapshot()));
+	connect(_tinyPlayer, SIGNAL(nextSnapshot()), this, SLOT(nextSnapshot()));
 	connect(_tinyPlayer, SIGNAL(playToggled(bool)), _ui->play, SLOT(setChecked(bool)));
 	connect(_tinyPlayer, SIGNAL(step()), this, SLOT(nextCommand()));
 	connect(_tinyPlayer, SIGNAL(skip()), this, SLOT(nextSequence()));

@@ -21,6 +21,7 @@
 #define TINYPLAYER_H
 
 #include <QWidget>
+#include <QMenu>
 
 class Ui_TinyPlayer;
 
@@ -41,6 +42,8 @@ public:
 signals:
 	void prevMarker();
 	void nextMarker();
+	void prevSnapshot();
+	void nextSnapshot();
 	void playToggled(bool play);
 	void step();
 	void skip();
@@ -50,10 +53,16 @@ protected:
 	void mouseMoveEvent(QMouseEvent *);
 	void mouseReleaseEvent(QMouseEvent *);
 	void keyReleaseEvent(QKeyEvent *);
+	void contextMenuEvent(QContextMenuEvent *);
+
+private slots:
+	void restoreBigPlayer();
 
 private:
 	Ui_TinyPlayer *_ui;
 	QPoint _dragpoint;
+	QMenu *_ctxmenu;
+	QActionGroup *_idxactions;
 };
 
 }
