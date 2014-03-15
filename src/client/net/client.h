@@ -25,6 +25,7 @@
 
 #include "core/point.h"
 #include "../shared/net/message.h"
+#include "statetracker.h" // for ToolContext
 
 namespace paintcore {
 	class Point;
@@ -255,6 +256,8 @@ private:
 	bool _isSessionLocked, _isUserLocked;
 	UserListModel *_userlist;
 	LayerListModel *_layerlist;
+
+	drawingboard::ToolContext _lastToolCtx;
 };
 
 }

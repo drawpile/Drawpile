@@ -61,10 +61,20 @@ namespace net {
 namespace drawingboard {
 
 struct ToolContext {
+	ToolContext() : layer_id(-1) {}
+	ToolContext(int layer, const paintcore::Brush &b) : layer_id(layer), brush(b) { }
+
 	int layer_id;
 	paintcore::Brush brush;
 
 	void updateFromToolchange(const protocol::ToolChange &cmd);
+
+	bool operator==(const ToolContext &other) const {
+		return layer_id == other.layer_id && brush == other.brush;
+	}
+	bool operator!=(const ToolContext &other) const {
+		return layer_id != other.layer_id || brush != other.brush;
+	}
 };
 
 /**

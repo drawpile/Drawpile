@@ -100,6 +100,8 @@ void Client::connectToServer(LoginHandler *loginhandler)
 
 	emit serverConnected(loginhandler->url().host(), loginhandler->url().port());
 	server->login(loginhandler);
+
+	_lastToolCtx = drawingboard::ToolContext();
 }
 
 void Client::disconnectFromServer()
@@ -207,8 +209,10 @@ void Client::sendLayerReorder(const QList<uint8_t> &ids)
 
 void Client::sendToolChange(const drawingboard::ToolContext &ctx)
 {
-	// TODO check if needs resending
-	_server->sendMessage(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
+	if(ctx != _lastToolCtx) {
+		_server->sendMessage(brushToToolChange(_my_id, ctx.layer_id, ctx.brush));
+		_lastToolCtx = ctx;
+	}
 }
 
 void Client::sendStroke(const paintcore::Point &point)
