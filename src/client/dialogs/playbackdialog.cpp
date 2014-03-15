@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QCloseEvent>
 #include <QFileInfo>
+#include <QSettings>
 
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
@@ -123,10 +124,23 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	connect(_tinyPlayer, SIGNAL(skip()), this, SLOT(nextSequence()));
 
 	loadIndex();
+
+	// Restore settings
+	QSettings cfg;
+	cfg.beginGroup("playback");
+	_ui->stopOnMarkers->setChecked(cfg.value("stoponmarkers", true).toBool());
+	_ui->maxinterval->setValue(cfg.value("maxinterval", 1.0).toDouble());
 }
 
 PlaybackDialog::~PlaybackDialog()
 {
+	// Remember some settings
+	QSettings cfg;
+	cfg.beginGroup("playback");
+
+	cfg.setValue("stoponmarkers", _ui->stopOnMarkers->isChecked());
+	cfg.setValue("maxinterval", _ui->maxinterval->value());
+
 	delete _ui;
 }
 
