@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QScopedPointer>
 #include <QTimer>
 #include <QCloseEvent>
@@ -97,6 +98,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	connect(_ui->filterButton1, SIGNAL(clicked()), this, SLOT(filterRecording()));
 	connect(_ui->filterButton2, SIGNAL(clicked()), this, SLOT(filterRecording()));
 	connect(_ui->indexButton, SIGNAL(clicked()), this, SLOT(makeIndex()));
+	connect(_ui->markButton, SIGNAL(clicked()), this, SLOT(addMarkerHere()));
 
 	// Video export
 	connect(_ui->configureExportButton, SIGNAL(clicked()), this, SLOT(exportConfig()));
@@ -317,6 +319,8 @@ void PlaybackDialog::updateIndexPosition()
 
 void PlaybackDialog::jumpTo(int pos)
 {
+	Q_ASSERT(_index);
+
 	if(!_ui->play->isEnabled())
 		return;
 
@@ -346,6 +350,7 @@ void PlaybackDialog::jumpTo(int pos)
 
 void PlaybackDialog::jumptToSnapshot(int idx)
 {
+	Q_ASSERT(_index);
 	recording::SnapshotEntry se = _index->index().snapshots().at(idx);
 	drawingboard::StateSavepoint savepoint = _index->loadSavepoint(idx, _canvas->statetracker());
 
@@ -361,6 +366,7 @@ void PlaybackDialog::jumptToSnapshot(int idx)
 
 void PlaybackDialog::prevSnapshot()
 {
+	Q_ASSERT(_index);
 	const unsigned int current = qMax(0, _reader->current());
 
 	int seIdx=0;
@@ -378,6 +384,7 @@ void PlaybackDialog::prevSnapshot()
 
 void PlaybackDialog::nextSnapshot()
 {
+	Q_ASSERT(_index);
 	const unsigned int current = qMax(0, _reader->current());
 
 	int seIdx=_index->index().snapshots().size() - 1;
@@ -397,17 +404,31 @@ void PlaybackDialog::nextSnapshot()
 
 void PlaybackDialog::prevMarker()
 {
-	recording::IndexEntry e = _index->index().prevMarker(qMax(0, _reader->current()));
-	if(e.type == recording::IDX_MARKER) {
-		jumpTo(e.start);
+	Q_ASSERT(_index);
+	recording::MarkerEntry e = _index->index().prevMarker(qMax(0, _reader->current()));
+	if(e.pos>0) {
+		jumpTo(e.pos);
 	}
 }
 
 void PlaybackDialog::nextMarker()
 {
-	recording::IndexEntry e = _index->index().nextMarker(qMax(0, _reader->current()));
-	if(e.type == recording::IDX_MARKER) {
-		jumpTo(e.start);
+	Q_ASSERT(_index);
+	recording::MarkerEntry e = _index->index().nextMarker(qMax(0, _reader->current()));
+	if(e.pos>0) {
+		jumpTo(e.pos);
+	}
+}
+
+void PlaybackDialog::addMarkerHere()
+{
+	Q_ASSERT(_index);
+
+	bool ok;
+	QString title = QInputDialog::getText(this, tr("Mark position"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
+	if(ok) {
+		recording::IndexEntry e = _index->index().addMarker(_reader->position(), _reader->current(), title);
+		IndexGraphicsItem::addToScene(e, _indexscene);
 	}
 }
 
@@ -648,16 +669,23 @@ void PlaybackDialog::filterRecording()
 	dialogs::FilterRecordingDialog dlg(this);
 
 	// Get entries to silence
-	recording::IndexVector silence;
 	if(_indexscene) {
+		recording::IndexVector silence, markers;
+
 		foreach(const QGraphicsItem *item, _indexscene->items()) {
 			const IndexGraphicsItem *gi = qgraphicsitem_cast<const IndexGraphicsItem*>(item);
-			if(gi && gi->isSilenced())
+			// silenced entry (excluding added ones)
+			if(gi && gi->isSilenced() && !(gi->entry().flags & recording::IndexEntry::FLAG_ADDED))
 				silence.append(gi->entry());
-		}
-	}
 
-	dlg.setSilence(silence);
+			// added non-silenced markers
+			else if(gi && !gi->isSilenced() && gi->entry().type == recording::IDX_MARKER && (gi->entry().flags & recording::IndexEntry::FLAG_ADDED))
+				markers.append(gi->entry());
+		}
+
+		dlg.setSilence(silence);
+		dlg.setNewMarkers(markers);
+	}
 
 	if(dlg.exec() == QDialog::Accepted) {
 		QString filename = dlg.filterRecording(_reader->filename());

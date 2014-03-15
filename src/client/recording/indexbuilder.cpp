@@ -246,9 +246,9 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 				if(e.type == type) {
 					int persistence = msg.cast<const protocol::MovePointer>().persistence();
 					if(persistence==0) {
-						e._finished = true;
+						e.flags |= IndexEntry::FLAG_FINISHED;
 						return;
-					} else if(!e._finished) {
+					} else if(!(e.flags & IndexEntry::FLAG_FINISHED)) {
 						e.end = _pos;
 						return;
 					}
@@ -262,10 +262,10 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 		for(int i=_index._index.size()-1;i>=0;--i) {
 			IndexEntry &e = _index._index[i];
 			if(e.context_id == msg->contextId() && e.type == IDX_STROKE) {
-				if(!e._finished) {
+				if(!(e.flags & IndexEntry::FLAG_FINISHED)) {
 					e.end = _pos;
 					if(msg->type() == protocol::MSG_PEN_UP)
-						e._finished = true;
+						e.flags |= IndexEntry::FLAG_FINISHED;
 					return;
 				}
 				break;

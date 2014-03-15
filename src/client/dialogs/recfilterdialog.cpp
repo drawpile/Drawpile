@@ -20,6 +20,7 @@
 
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QPushButton>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QSaveFile>
@@ -41,6 +42,7 @@ FilterRecordingDialog::FilterRecordingDialog(QWidget *parent) :
 {
 	_ui = new Ui_FilterRecording;
 	_ui->setupUi(this);
+	_ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Filter"));
 }
 
 FilterRecordingDialog::~FilterRecordingDialog()
@@ -53,6 +55,13 @@ void FilterRecordingDialog::setSilence(const recording::IndexVector &silence)
 	_silence = silence;
 	_ui->removeSilenced->setChecked(!silence.isEmpty());
 	_ui->removeSilenced->setDisabled(silence.isEmpty());
+}
+
+void FilterRecordingDialog::setNewMarkers(const recording::IndexVector &markers)
+{
+	_newmarkers = markers;
+	_ui->addNewMarkers->setChecked(!markers.isEmpty());
+	_ui->addNewMarkers->setDisabled(markers.isEmpty());
 }
 
 QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
@@ -80,6 +89,9 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 
 	if(_ui->removeSilenced->isChecked())
 		filter.setSilenceVector(_silence);
+
+	if(_ui->addNewMarkers->isChecked())
+		filter.setNewMarkers(_newmarkers);
 
 	// Perform filtering
 	QFile inputfile(recordingFile);

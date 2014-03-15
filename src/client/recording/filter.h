@@ -67,6 +67,10 @@ public:
 	void setSilenceVector(const IndexVector &entries) { _silence = entries; }
 	const IndexVector &silenceVector() const { return _silence; }
 
+	//! Filter: add new markers
+	void setNewMarkers(const IndexVector &markers) { _newmarkers = markers; }
+	const IndexVector &newMarkers() const { return _newmarkers; }
+
 	//! Get the error message
 	const QString &errorString() const { return _errormsg; }
 
@@ -90,6 +94,7 @@ private:
 	bool _remove_lasers;
 	bool _remove_markers;
 	IndexVector _silence;
+	IndexVector _newmarkers;
 };
 
 }

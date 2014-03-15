@@ -439,6 +439,20 @@ QProgressBar::chunk {
           </spacer>
          </item>
          <item>
+          <widget class="QPushButton" name="markButton">
+           <property name="text">
+            <string>Mark</string>
+           </property>
+           <property name="icon">
+            <iconset theme="flag-blue" resource="resources.qrc">
+             <normaloff>:/icons/flag-blue.png</normaloff>:/icons/flag-blue.png</iconset>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="filterButton2">
            <property name="text">
             <string>Filter...</string>

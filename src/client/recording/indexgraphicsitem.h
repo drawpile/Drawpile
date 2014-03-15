@@ -28,6 +28,8 @@
 
 #include "recording/index.h"
 
+struct IndexGraphicsContext;
+
 class IndexGraphicsItem : public QGraphicsItem
 {
 public:
@@ -38,6 +40,8 @@ public:
 	static const int STEP_WIDTH = 16;
 	static const int ITEM_HEIGHT = 16;
 	static const int VERTICAL_PADDING = 2;
+
+	static void addToScene(const recording::IndexEntry &entry, QGraphicsScene *scene);
 
 	/**
 	 * @brief Populate a graphics scene with index items
@@ -65,6 +69,8 @@ protected:
 	void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 private:
+	static void addToScene(const recording::IndexEntry &entry, const IndexGraphicsContext &ctx, QGraphicsScene *scene);
+
 	QRectF _rect;
 	QBrush _brush;
 	QPen _pen;

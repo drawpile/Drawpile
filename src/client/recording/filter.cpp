@@ -27,6 +27,7 @@
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
 #include "../shared/net/undo.h"
+#include "../shared/net/recording.h"
 
 #include "filter.h"
 
@@ -336,9 +337,27 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 
 	writer.writeHeader();
 
+	unsigned int newmarkerpos = 0;
+	const unsigned int MARKERS = _newmarkers.size();
+
 	QByteArray buffer;
 	while(reader.readNextToBuffer(buffer)) {
-		if(!isDeleted(state.index[reader.current()]))
+		const unsigned int pos = reader.current();
+
+		// Inject new marker
+		if(newmarkerpos < MARKERS) {
+			while(newmarkerpos < MARKERS && _newmarkers.at(newmarkerpos).start < pos)
+				++newmarkerpos;
+			if(newmarkerpos < MARKERS && _newmarkers.at(newmarkerpos).start == pos) {
+				const IndexEntry &m = _newmarkers.at(newmarkerpos);
+				protocol::MessagePtr msg(new protocol::Marker(m.context_id, m.title));
+				writer.recordMessage(msg);
+				++newmarkerpos;
+			}
+		}
+
+		// Copy original message, unless marked for deletion
+		if(!isDeleted(state.index[pos]))
 			writer.writeFromBuffer(buffer);
 	}
 

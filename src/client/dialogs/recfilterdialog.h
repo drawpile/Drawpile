@@ -36,12 +36,14 @@ public:
 	~FilterRecordingDialog();
 
 	void setSilence(const recording::IndexVector &silence);
+	void setNewMarkers(const recording::IndexVector &markers);
 
 	QString filterRecording(const QString &recordingFile);
 
 private:
 	Ui_FilterRecording *_ui;
 	recording::IndexVector _silence;
+	recording::IndexVector _newmarkers;
 };
 
 }

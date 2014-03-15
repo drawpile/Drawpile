@@ -93,6 +93,8 @@ private slots:
 
 	void jumpTo(int pos);
 
+	void addMarkerHere();
+
 private:
 	void createIndexView();
 	void endOfFileReached();

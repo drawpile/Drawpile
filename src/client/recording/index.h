@@ -47,8 +47,8 @@ enum IndexType {
 };
 
 struct IndexEntry {
-	IndexEntry() : type(IDX_NULL), context_id(0), offset(0), start(0), end(0), color(0), _finished(false) { }
-	IndexEntry(IndexType typ, int ctx, qint64 o, int s, int e, quint32 c, const QString &title_) : type(typ), context_id(ctx), offset(o), start(s), end(e), color(c), title(title_), _finished(false) { }
+	IndexEntry() : type(IDX_NULL), context_id(0), offset(0), start(0), end(0), color(0), flags(0) { }
+	IndexEntry(IndexType typ, int ctx, qint64 o, int s, int e, quint32 c, const QString &title_) : type(typ), context_id(ctx), offset(o), start(s), end(e), color(c), title(title_), flags(0) { }
 
 	//! Type of the index entry
 	IndexType type;
@@ -71,16 +71,25 @@ struct IndexEntry {
 	//! Title/tooltip text for the index entry
 	QString title;
 
-	// Flags used when building the index
-	bool _finished;
+	// Flags used when building and modifying the index
+	int flags;
+
+	static const int FLAG_FINISHED = 0x01;
+	static const int FLAG_ADDED = 0x02;
 };
 
 struct MarkerEntry {
 	MarkerEntry() : idxpos(-1), pos(0) { }
-	MarkerEntry(int idxpos_, int pos_) : idxpos(idxpos_), pos(pos_) { }
+	MarkerEntry(int idxpos_, int pos_, const QString &title_) : idxpos(idxpos_), pos(pos_), title(title_) { }
 
+	// position of the marker in the index
 	int idxpos;
+
+	// position of the marker in the message stream.
 	quint32 pos;
+
+	// marker title
+	QString title;
 };
 
 struct SnapshotEntry {
@@ -121,9 +130,11 @@ public:
 	//! Get all snapshots
 	const SnapshotVector &snapshots() const { return _snapshots; }
 
-	IndexEntry nextMarker(unsigned int from) const;
-	IndexEntry prevMarker(unsigned int from) const;
+	MarkerEntry nextMarker(unsigned int from) const;
+	MarkerEntry prevMarker(unsigned int from) const;
 
+	//! Add a new marker. This can be turned in to a real marker using the recording filter
+	const IndexEntry &addMarker(qint64 offset, quint32 pos, const QString &title);
 
 	bool writeIndex(QIODevice *out) const;
 	bool readIndex(QIODevice *in);

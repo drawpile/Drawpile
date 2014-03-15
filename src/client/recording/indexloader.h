@@ -43,7 +43,7 @@ public:
 
 	bool open();
 
-	const Index &index() const { return _index; }
+	Index &index() { return _index; }
 
 	drawingboard::StateSavepoint loadSavepoint(int idx, drawingboard::StateTracker *owner);
 

@@ -54,6 +54,7 @@ Finally, the following are original to Drawpile:
  * draw-line
  * hardedge
  * incremental
- * kick
  * flag-red
+ * flag-blue
  * chat
+
