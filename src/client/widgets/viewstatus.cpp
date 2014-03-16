@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
 
 #include <QLabel>
 #include <QHBoxLayout>
+
 #include "viewstatus.h"
 
 namespace widgets {
 
 ViewStatus::ViewStatus(QWidget *parent)
+	: QWidget(parent)
 {
 	setMinimumHeight(16+2);
 	QHBoxLayout *layout = new QHBoxLayout(this);
@@ -35,21 +37,21 @@ ViewStatus::ViewStatus(QWidget *parent)
 	// Zoom level
 	QLabel *zlbl = new QLabel(tr("Zoom:"), this);
 	layout->addWidget(zlbl);
-	zoom_ = new QLabel("100%", this);
-	layout->addWidget(zoom_);
+	_zoom = new QLabel("100%", this);
+	layout->addWidget(_zoom);
 
 	// Rotation angle
-	QLabel *rlbl = new QLabel(this);
-	rlbl->setPixmap(QPixmap(":/icons/angle.png"));
+	layout->addSpacing(10);
+	QLabel *rlbl = new QLabel(tr("Angle:"), this);
 	layout->addWidget(rlbl);
-	angle_ = new QLabel(QString('0') + QChar(0xb0));
-	layout->addWidget(angle_);
+	_angle = new QLabel(QString::fromUtf8("0°"));
+	layout->addWidget(_angle);
 }
 
 void ViewStatus::setTransformation(qreal zoom, qreal angle)
 {
-	zoom_->setText(QString::number(zoom, 'f', 0) + "%");
-	angle_->setText(QString::number(angle, 'f', 1) + QChar(0xb0));
+	_zoom->setText(QString::number(zoom, 'f', 0) + "%");
+	_angle->setText(QString::number(angle, 'f', 1) + QChar(0xb0));
 }
 
 }

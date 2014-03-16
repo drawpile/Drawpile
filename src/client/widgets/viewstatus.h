@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -28,17 +28,17 @@ namespace widgets {
 
 class ViewStatus : public QWidget
 {
-	Q_OBJECT
-	public:
-		ViewStatus(QWidget *parent);
-	
-	public slots:
-		void setTransformation(qreal zoom, qreal angle);
-	private:
-	QLabel *zoom_, *angle_;
+Q_OBJECT
+public:
+	ViewStatus(QWidget *parent=0);
+
+public slots:
+	void setTransformation(qreal zoom, qreal angle);
+
+private:
+	QLabel *_zoom, *_angle;
 };
 
 }
 
 #endif
-

@@ -51,7 +51,6 @@ The following are originally from tango_icons.svg from inkscape (via myPaint) an
  * lock_closed
 
 Finally, the following are original to Drawpile:
- * angle
  * draw-line
  * hardedge
  * incremental
