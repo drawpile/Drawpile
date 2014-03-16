@@ -342,7 +342,7 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 
 	QByteArray buffer;
 	while(reader.readNextToBuffer(buffer)) {
-		const unsigned int pos = reader.current();
+		const unsigned int pos = reader.currentIndex();
 
 		// Inject new marker
 		if(newmarkerpos < MARKERS) {

@@ -323,12 +323,12 @@ void PlaybackDialog::nextSequence()
 void PlaybackDialog::updateIndexPosition()
 {
 	if(_indexpositem) {
-		_indexpositem->setIndex(_reader->current());
+		_indexpositem->setIndex(_reader->currentIndex());
 		_indexpositem->setVisible(true);
 		_ui->indexView->centerOn(_indexpositem);
 	}
-	_ui->progressBar->setValue(_reader->position());
-	_tinyPlayer->setProgress(_reader->position());
+	_ui->progressBar->setValue(_reader->currentPosition());
+	_tinyPlayer->setProgress(_reader->currentPosition());
 }
 
 void PlaybackDialog::jumpTo(int pos)
@@ -339,8 +339,8 @@ void PlaybackDialog::jumpTo(int pos)
 		return;
 
 	// Skip forward a shot distance: don't bother resetting to a snapshot
-	if(pos > _reader->current() && pos - _reader->current() < 100) {
-		while(_reader->current() < pos && _ui->play->isEnabled()) {
+	if(pos > _reader->currentIndex() && pos - _reader->currentIndex() < 100) {
+		while(_reader->currentIndex() < pos && _ui->play->isEnabled()) {
 			nextCommand();
 		}
 		return;
@@ -358,7 +358,7 @@ void PlaybackDialog::jumpTo(int pos)
 
 	jumptToSnapshot(seIdx);
 
-	while(_reader->current() < pos && _ui->play->isEnabled())
+	while(_reader->currentIndex() < pos && _ui->play->isEnabled())
 		nextCommand();
 }
 
@@ -381,7 +381,7 @@ void PlaybackDialog::jumptToSnapshot(int idx)
 void PlaybackDialog::prevSnapshot()
 {
 	Q_ASSERT(_index);
-	const unsigned int current = qMax(0, _reader->current());
+	const unsigned int current = qMax(0, _reader->currentIndex());
 
 	int seIdx=0;
 	for(int i=1;i<_index->index().snapshots().size();++i) {
@@ -399,7 +399,7 @@ void PlaybackDialog::prevSnapshot()
 void PlaybackDialog::nextSnapshot()
 {
 	Q_ASSERT(_index);
-	const unsigned int current = qMax(0, _reader->current());
+	const unsigned int current = qMax(0, _reader->currentIndex());
 
 	int seIdx=_index->index().snapshots().size() - 1;
 	int pos = _index->index().snapshots().last().pos;
@@ -412,14 +412,14 @@ void PlaybackDialog::nextSnapshot()
 		pos = prev.pos;
 	}
 
-	if(pos > _reader->current())
+	if(pos > _reader->currentIndex())
 		jumptToSnapshot(seIdx);
 }
 
 void PlaybackDialog::prevMarker()
 {
 	Q_ASSERT(_index);
-	recording::MarkerEntry e = _index->index().prevMarker(qMax(0, _reader->current()));
+	recording::MarkerEntry e = _index->index().prevMarker(qMax(0, _reader->currentIndex()));
 	if(e.pos>0) {
 		jumpTo(e.pos);
 	}
@@ -428,7 +428,7 @@ void PlaybackDialog::prevMarker()
 void PlaybackDialog::nextMarker()
 {
 	Q_ASSERT(_index);
-	recording::MarkerEntry e = _index->index().nextMarker(qMax(0, _reader->current()));
+	recording::MarkerEntry e = _index->index().nextMarker(qMax(0, _reader->currentIndex()));
 	if(e.pos>0) {
 		jumpTo(e.pos);
 	}
@@ -441,7 +441,7 @@ void PlaybackDialog::addMarkerHere()
 	bool ok;
 	QString title = QInputDialog::getText(this, tr("Mark position"), tr("Marker text"), QLineEdit::Normal, QString(), &ok);
 	if(ok) {
-		recording::IndexEntry e = _index->index().addMarker(_reader->position(), _reader->current(), title);
+		recording::IndexEntry e = _index->index().addMarker(_reader->currentPosition(), _reader->currentIndex(), title);
 		IndexGraphicsItem::addToScene(e, _indexscene);
 	}
 }

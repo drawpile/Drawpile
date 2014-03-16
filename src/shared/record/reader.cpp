@@ -125,7 +125,7 @@ qint64 Reader::filesize() const
 	return _file->size();
 }
 
-qint64 Reader::position() const
+qint64 Reader::filePosition() const
 {
 	return _file->pos();
 }
@@ -140,11 +140,13 @@ void Reader::rewind()
 {
 	_file->seek(_beginning);
 	_current = -1;
+	_currentPos = -1;
 }
 
 void Reader::seekTo(int pos, qint64 position)
 {
 	_current = pos;
+	_currentPos = position;
 	_file->seek(position);
 }
 
@@ -153,6 +155,8 @@ bool Reader::readNextToBuffer(QByteArray &buffer)
 	// Read length and type header
 	if(buffer.length() < 3)
 		buffer.resize(1024);
+
+	_currentPos = filePosition();
 
 	if(_file->read(buffer.data(), 3) != 3)
 		return false;

@@ -81,10 +81,21 @@ public:
 	Reader &operator=(const Reader &) = delete;
 	~Reader();
 
+	//! Name of the currently open file
 	QString filename() const;
+
+	//! Size of the currently open file
 	qint64 filesize() const;
-	int current() const { return _current; }
-	qint64 position() const;
+
+	//! Index of the last read message
+	int currentIndex() const { return _current; }
+
+	//! Position of the last read message in the file
+	qint64 currentPosition() const { return _currentPos; }
+
+	//! Position in the file (position of the next message to be read)
+	qint64 filePosition() const;
+
 	QString errorString() const;
 
 	/**
@@ -132,6 +143,7 @@ private:
 	bool _autoclose;
 	QString _writerversion;
 	int _current;
+	qint64 _currentPos;
 	qint64 _beginning;
 };
 

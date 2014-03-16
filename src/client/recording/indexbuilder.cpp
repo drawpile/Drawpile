@@ -79,7 +79,6 @@ void IndexBuilder::run()
 
 	MessageRecord record;
 	_pos = 0;
-	const qint64 zero_offset = reader.position();
 	do {
 		if(_abortflag.load()) {
 			qWarning() << "Indexing aborted (index phase)";
@@ -87,7 +86,7 @@ void IndexBuilder::run()
 			return;
 		}
 
-		_offset = reader.position() - zero_offset;
+		_offset = reader.filePosition();
 		record = reader.readNext();
 		if(record.status == MessageRecord::OK) {
 			protocol::MessagePtr msg(record.message);
@@ -102,7 +101,7 @@ void IndexBuilder::run()
 
 	// Write snapshots
 	reader.rewind();
-	emit progress(reader.position());
+	emit progress(reader.filePosition());
 	writeSnapshots(reader, zip);
 
 	if(_abortflag.load()) {
@@ -156,8 +155,8 @@ void IndexBuilder::writeSnapshots(Reader &reader, ZipWriter &zip)
 			statetracker.receiveCommand(m);
 
 		// TODO: should snapshot interval be adjustable or dynamic?
-		if(reader.current() % 100 == 0) {
-			qint64 streampos = reader.position();
+		if(reader.currentIndex() % 100 == 0) {
+			qint64 streampos = reader.filePosition();
 			emit progress(streampos);;
 			drawingboard::StateSavepoint sp = statetracker.createSavepoint();
 
@@ -170,7 +169,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, ZipWriter &zip)
 
 			int snapshotIdx = _index._snapshots.size();
 			zip.addFile(QString("snapshot-%1").arg(snapshotIdx), buf.data());
-			_index._snapshots.append(SnapshotEntry(streampos, reader.current()));
+			_index._snapshots.append(SnapshotEntry(streampos, reader.currentIndex()));
 		}
 	}
 }
