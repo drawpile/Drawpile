@@ -130,6 +130,9 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	cfg.beginGroup("playback");
 	_ui->stopOnMarkers->setChecked(cfg.value("stoponmarkers", true).toBool());
 	_ui->maxinterval->setValue(cfg.value("maxinterval", 1.0).toDouble());
+
+	// Automatically take the first step
+	QTimer::singleShot(0, this, SLOT(nextCommand()));
 }
 
 PlaybackDialog::~PlaybackDialog()
