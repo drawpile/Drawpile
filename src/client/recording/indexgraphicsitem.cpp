@@ -88,6 +88,8 @@ struct IndexGraphicsContext {
 	QPixmap chatIcon;
 	QPixmap pauseIcon;
 	QPixmap laserIcon;
+	QPixmap undoIcon;
+	QPixmap redoIcon;
 	QCursor silencableCursor;
 };
 Q_DECLARE_METATYPE(IndexGraphicsContext)
@@ -107,6 +109,8 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	ctx.chatIcon = getIcon("chat");
 	ctx.pauseIcon = getIcon("media-playback-pause");
 	ctx.laserIcon = getIcon("tool-laserpointer");
+	ctx.undoIcon = getIcon("edit-undo");
+	ctx.redoIcon = getIcon("edit-redo");
 
 	ctx.silencableCursor = QCursor(Qt::PointingHandCursor);
 
@@ -225,6 +229,16 @@ void IndexGraphicsItem::addToScene(const recording::IndexEntry &e, const IndexGr
 		item->_icon = ctx.laserIcon;
 		color = QColor::fromRgb(e.color);
 		style = OUTLINE;
+		break;
+	case IDX_UNDO:
+		item->_icon = ctx.undoIcon;
+		break;
+	case IDX_REDO:
+		item->_icon = ctx.redoIcon;
+		break;
+	case IDX_FILL:
+		color = QColor::fromRgb(e.color);
+		style = BLOCK;
 		break;
 	default: break;
 	}

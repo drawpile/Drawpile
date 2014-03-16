@@ -33,7 +33,7 @@ namespace recording {
 static const quint16 INDEX_VERSION = 0x0001;
 
 enum IndexType {
-	IDX_NULL,        // null entry
+	IDX_NULL,        // null/invalid entry
 	IDX_MARKER,      // pause point marker
 	IDX_RESIZE,      // canvas resize
 	IDX_CREATELAYER, // layer creation
@@ -44,6 +44,9 @@ enum IndexType {
 	IDX_CHAT,        // a chat message
 	IDX_PAUSE,       // pause
 	IDX_LASER,       // laser pointing
+	IDX_UNDO,        // undo
+	IDX_REDO,        // redo
+	IDX_FILL         // fill area
 };
 
 struct IndexEntry {

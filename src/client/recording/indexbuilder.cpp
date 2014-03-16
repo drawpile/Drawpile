@@ -38,7 +38,9 @@
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
 #include "../shared/net/pen.h"
+#include "../shared/net/image.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/undo.h"
 #include "../shared/net/recording.h"
 
 #include "statetracker.h"
@@ -178,6 +180,8 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 {
 	IndexType type = IDX_NULL;
 	QString title;
+	quint32 color = _colors[msg->contextId()];
+
 	switch(msg->type()) {
 	using namespace protocol;
 	case MSG_CANVAS_RESIZE: type = IDX_RESIZE; break;
@@ -199,6 +203,18 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 	case MSG_ANNOTATION_DELETE:
 	case MSG_ANNOTATION_EDIT:
 	case MSG_ANNOTATION_RESHAPE: type = IDX_ANNOTATE; break;
+
+	case MSG_UNDO:
+		if(msg.cast<const protocol::Undo>().points() > 0)
+			type = IDX_UNDO;
+		else
+			type = IDX_REDO;
+		break;
+
+	case MSG_FILLRECT:
+		type = IDX_FILL;
+		color = msg.cast<const protocol::FillRect>().color();
+		break;
 
 	case MSG_CHAT:
 		type = IDX_CHAT;
@@ -273,7 +289,7 @@ void IndexBuilder::addToIndex(const protocol::MessagePtr msg)
 	}
 
 	// New index entry
-	_index._index.append(IndexEntry(type, msg->contextId(), _offset, _pos, _pos, _colors[msg->contextId()], title));
+	_index._index.append(IndexEntry(type, msg->contextId(), _offset, _pos, _pos, color, title));
 }
 
 }
