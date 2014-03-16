@@ -81,7 +81,7 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 		FilterIndex imsg;
 		imsg.type = msg->type();
 		imsg.ctxid = msg->contextId();
-		imsg.flags = msg->isUndoable() ? UNDOABLE : 0 | msg->undoState();
+		imsg.flags = msg->isUndoable() ? UNDOABLE : 0;
 		imsg.offset = offset;
 		state.index.append(imsg);
 	}
@@ -125,6 +125,11 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 
 	// Perform undo
 	if(msg->type() == protocol::MSG_UNDO && filter.expungeUndos()) {
+		// Normally, performing an undo will implicitly delete the undo action itself,
+		// but it can be restored by a redo. Therefore, we must explicitly flag the
+		// undo messages for deletion to be sure they are gone.
+		mark_delete(state.index.last());
+
 		// Perform an undo. This is a stripped down version of handleUndo from StateTracker
 		const protocol::Undo &cmd = msg.cast<protocol::Undo>();
 
@@ -186,7 +191,7 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg,
 
 					// GONE messages cannot be redone
 					if(undostate(u) == protocol::UNDONE)
-						u.flags &= UNDOABLE;
+						u.flags &= ~protocol::UNDONE;
 				}
 				++i;
 			}
