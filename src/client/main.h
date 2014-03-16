@@ -31,6 +31,7 @@ public:
 
 signals:
 	void settingsChanged();
+	void eraserNear(bool near);
 
 protected:
 	bool event(QEvent *e);

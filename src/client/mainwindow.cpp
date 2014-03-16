@@ -223,6 +223,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	updateLockWidget();
 	setRecorderStatus(false);
 
+	// Handle eraser event
+	connect(qApp, SIGNAL(eraserNear(bool)), this, SLOT(eraserNear(bool)));
+
 	// Show self
 	show();
 }

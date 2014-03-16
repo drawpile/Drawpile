@@ -75,9 +75,6 @@ class MainWindow : public QMainWindow {
 		//! Connect to a host and join a session if full URL is provided.
 		void joinSession(const QUrl& url);
 
-		//! React to eraser tip proximity
-		void eraserNear(bool near);
-
 	public slots:
 		// Triggerable actions
 		void showNew();
@@ -101,6 +98,9 @@ class MainWindow : public QMainWindow {
 
 		void about();
 		void homepage();
+
+		//! React to eraser tip proximity
+		void eraserNear(bool near);
 
 	private slots:
 		void toggleRecording();

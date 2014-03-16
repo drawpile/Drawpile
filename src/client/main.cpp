@@ -59,22 +59,11 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
  * we were using before.
  */
 bool DrawPileApp::event(QEvent *e) {
-	if(e->type() == QEvent::TabletEnterProximity) {
+	if(e->type() == QEvent::TabletEnterProximity || e->type() == QEvent::TabletLeaveProximity) {
 		QTabletEvent *te = static_cast<QTabletEvent*>(e);
-		if(te->pointerType()==QTabletEvent::Eraser) {
-			foreach(QWidget *widget, topLevelWidgets()) {
-				MainWindow *mw = qobject_cast<MainWindow*>(widget);
-				if(mw)
-					mw->eraserNear(true);
-			}
-			return true;
-		}
-	} else if(e->type() == QEvent::TabletLeaveProximity) {
-		foreach(QWidget *widget, topLevelWidgets()) {
-			MainWindow *mw = qobject_cast<MainWindow*>(widget);
-			if(mw)
-				mw->eraserNear(false);
-		}
+		if(te->pointerType()==QTabletEvent::Eraser)
+			emit eraserNear(e->type() == QEvent::TabletEnterProximity);
+
 		return true;
 	}
 	return QApplication::event(e);
