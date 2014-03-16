@@ -679,8 +679,7 @@ void PlaybackDialog::updateMarkerMenu()
 
 		_markermenu->addAction(title)->setProperty("streamidx", me.pos);
 	}
-	if(_markermenu->isEmpty())
-		_ui->jumpToMarker->setEnabled(false);
+	_ui->jumpToMarker->setDisabled(_markermenu->isEmpty());
 }
 
 void PlaybackDialog::makeIndex()
