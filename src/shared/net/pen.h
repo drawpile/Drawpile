@@ -114,7 +114,8 @@ public:
 	static PenMove *deserialize(const uchar *data, uint len);
 
 	const PenPointVector &points() const { return _points; }
-	
+	PenPointVector &points() { return _points; }
+
 	bool isUndoable() const { return true; }
 
 protected:

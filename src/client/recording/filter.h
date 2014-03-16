@@ -63,6 +63,10 @@ public:
 	void setRemoveMarkers(bool remove) { _remove_markers = remove; }
 	bool removeMarkers() const { return _remove_markers; }
 
+	//! Filter: merge all PenMoves of the stroke to an single message
+	void setSquishStrokes(bool squish) { _squish_strokes = squish; }
+	bool squishStrokes() const { return _squish_strokes; }
+
 	//! Filter: remove selected entries
 	void setSilenceVector(const IndexVector &entries) { _silence = entries; }
 	const IndexVector &silenceVector() const { return _silence; }
@@ -93,6 +97,7 @@ private:
 	bool _remove_delays;
 	bool _remove_lasers;
 	bool _remove_markers;
+	bool _squish_strokes;
 	IndexVector _silence;
 	IndexVector _newmarkers;
 };

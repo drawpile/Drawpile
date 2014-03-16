@@ -115,11 +115,11 @@ void Writer::writeFromBuffer(const QByteArray &buffer)
 	_file->write(buffer.constData(), len);
 }
 
-void Writer::recordMessage(const protocol::MessagePtr msg)
+void Writer::recordMessage(const protocol::Message &msg)
 {
 	Q_ASSERT(_file->isOpen());
 
-	if(msg->isCommand() || isRecordableMeta(msg->type())) {
+	if(msg.isCommand() || isRecordableMeta(msg.type())) {
 		// Write Interval message if sufficient time has passed since last message was written
 		if(_minInterval>0) {
 			qint64 now = QDateTime::currentMSecsSinceEpoch();
@@ -134,11 +134,17 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 		}
 
 		// Write the actual message
-		QVarLengthArray<char> buf(msg->length());
-		int len = msg->serialize(buf.data());
+		QVarLengthArray<char> buf(msg.length());
+		int len = msg.serialize(buf.data());
 		Q_ASSERT(len == buf.length());
 		_file->write(buf.data(), len);
 	}
+}
+
+
+void Writer::recordMessage(const protocol::MessagePtr msg)
+{
+	recordMessage(*msg);
 }
 
 void Writer::close()

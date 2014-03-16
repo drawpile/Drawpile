@@ -26,6 +26,7 @@
 
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
+#include "../shared/net/pen.h"
 #include "../shared/net/undo.h"
 #include "../shared/net/recording.h"
 
@@ -42,12 +43,19 @@ struct FilterIndex {
 	uchar type;
 	uchar ctxid;
 	uchar flags;
+	qint64 offset;
 };
 
 struct State {
 	QVector<FilterIndex> index;
 	QHash<int, QList<int>> userjoins;
+	QHash<quint32, protocol::Message*> replacements;
 	QSet<int> users_seen;
+
+	~State() {
+		foreach(protocol::Message* msg, replacements.values())
+			delete msg;
+	}
 };
 
 void mark_delete(FilterIndex &i) {
@@ -66,7 +74,7 @@ bool isDeleted(const FilterIndex &i) {
 	return i.flags & (REMOVED | protocol::UNDONE);
 }
 
-void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg)
+void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg, qint64 offset)
 {
 	// Put this message in the index
 	{
@@ -74,6 +82,7 @@ void filterMessage(const Filter &filter, State &state, protocol::MessagePtr msg)
 		imsg.type = msg->type();
 		imsg.ctxid = msg->contextId();
 		imsg.flags = msg->isUndoable() ? UNDOABLE : 0 | msg->undoState();
+		imsg.offset = offset;
 		state.index.append(imsg);
 	}
 
@@ -277,6 +286,46 @@ void filterExtraToolChanges(State &state)
 	}
 }
 
+void squishStrokes(State &state, Reader &recording)
+{
+	QHash<int,int> strokes; // ctxId -> current stroke mapping
+
+	for(int i=0;i<state.index.size();++i) {
+		FilterIndex &fi = state.index[i];
+
+		if(isDeleted(fi))
+			continue;
+
+		if(fi.type == protocol::MSG_PEN_MOVE) {
+			recording.seekTo(i, fi.offset);
+			MessageRecord msg = recording.readNext();
+			Q_ASSERT(msg.status == MessageRecord::OK);
+			Q_ASSERT(msg.message->type() == protocol::MSG_PEN_MOVE);
+
+			if(strokes.contains(fi.ctxid)) {
+				// a stroke is still underway: add coordinates to the replacement PenMove
+				protocol::Message *squished = state.replacements[strokes[fi.ctxid]];
+				Q_ASSERT(squished);
+				Q_ASSERT(squished->type() == protocol::MSG_PEN_MOVE);
+
+				// TODO: A single PenMove can hold about 6500 points. We should probably check if the limit is exceeded
+				// (although it is a bit unlikely)
+				static_cast<protocol::PenMove*>(squished)->points() += static_cast<const protocol::PenMove*>(msg.message)->points();
+				mark_delete(fi);
+
+				delete msg.message;
+			} else {
+				// start a new stroke
+				strokes[fi.ctxid] = i;
+				state.replacements[i] = msg.message;
+			}
+
+		} else if(fi.type == protocol::MSG_PEN_UP) {
+			strokes.remove(fi.ctxid);
+		}
+	}
+}
+
 void doFilterRecording(Filter &filter, State &state, Reader &recording)
 {
 	while(true) {
@@ -289,7 +338,7 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 		}
 
 		protocol::MessagePtr msgp(msg.message);
-		filterMessage(filter, state, msgp);
+		filterMessage(filter, state, msgp, recording.currentPosition());
 	}
 
 	if(filter.removeLookyloos())
@@ -297,6 +346,9 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 
 	if(!filter.silenceVector().isEmpty())
 		filterSilenced(filter.silenceVector(), state);
+
+	if(filter.squishStrokes())
+		squishStrokes(state, recording);
 
 	filterExtraToolChanges(state);
 	filterAdjacentUndoPoints(state);
@@ -356,9 +408,14 @@ bool Filter::filterRecording(QFileDevice *input, QFileDevice *output)
 			}
 		}
 
-		// Copy original message, unless marked for deletion
-		if(!isDeleted(state.index[pos]))
-			writer.writeFromBuffer(buffer);
+		// Copy (or replace) original message, unless marked for deletion
+		if(!isDeleted(state.index[pos])) {
+
+			if(state.replacements.contains(pos))
+				writer.recordMessage(*state.replacements[pos]);
+			else
+				writer.writeFromBuffer(buffer);
+		}
 	}
 
 	return true;

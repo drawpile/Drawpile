@@ -85,6 +85,8 @@ public:
 	 */
 	void writeFromBuffer(const QByteArray &buffer);
 
+	void recordMessage(const protocol::Message &msg);
+
 public slots:
 	void recordMessage(const protocol::MessagePtr msg);
 

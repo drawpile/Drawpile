@@ -86,6 +86,7 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 	filter.setRemoveDelays(_ui->removeDelays->isChecked());
 	filter.setRemoveLasers(_ui->removeLasers->isChecked());
 	filter.setRemoveMarkers(_ui->removeMarkers->isChecked());
+	filter.setSquishStrokes(_ui->squishStrokes->isChecked());
 
 	if(_ui->removeSilenced->isChecked())
 		filter.setSilenceVector(_silence);
