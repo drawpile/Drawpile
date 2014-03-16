@@ -232,9 +232,11 @@ void IndexGraphicsItem::addToScene(const recording::IndexEntry &e, const IndexGr
 		break;
 	case IDX_UNDO:
 		item->_icon = ctx.undoIcon;
+		silence = false; // undo&redo filtering is performed before silencing
 		break;
 	case IDX_REDO:
 		item->_icon = ctx.redoIcon;
+		silence = false;
 		break;
 	case IDX_FILL:
 		color = QColor::fromRgb(e.color);
