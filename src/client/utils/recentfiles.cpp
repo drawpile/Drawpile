@@ -96,6 +96,7 @@ void RecentFiles::initMenu(QMenu *menu)
 	foreach(QString filename, files) {
 		const QFileInfo file(filename);
 		QAction *a = menu->addAction(QString(index<10?"&%1. %2":"%1. %2").arg(index).arg(file.fileName()));
+		a->setStatusTip(file.absoluteFilePath());
 		a->setProperty("filepath",file.absoluteFilePath());
 		++index;
 	}
