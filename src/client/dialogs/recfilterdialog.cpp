@@ -21,6 +21,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QSettings>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QSaveFile>
@@ -66,13 +67,18 @@ void FilterRecordingDialog::setNewMarkers(const recording::IndexVector &markers)
 
 QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 {
+	QSettings cfg;
+
 	// First, get output file name
-	QString outfile = QFileDialog::getSaveFileName(this, tr("Save filtered recording"), QString(),
+	QString outfile = QFileDialog::getSaveFileName(this, tr("Save filtered recording"),
+		cfg.value("window/lastpath").toString(),
 		tr("Drawpile recordings (%1)").arg("*.dprec")
 	);
 
 	if(outfile.isEmpty())
 		return QString();
+
+	cfg.setValue("window/lastpath", outfile);
 
 	if(!outfile.endsWith(".dprec", Qt::CaseInsensitive))
 		outfile.append(".dprec");

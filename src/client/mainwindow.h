@@ -199,7 +199,6 @@ class MainWindow : public QMainWindow {
 		net::Client *_client;
 
 		QString _current_filename;
-		QString _lastpath;
 		QMenu *_recent;
 
 		recording::Writer *_recorder;

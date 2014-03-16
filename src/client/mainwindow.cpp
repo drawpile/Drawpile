@@ -79,6 +79,20 @@
 #include "dialogs/resizedialog.h"
 #include "dialogs/playbackdialog.h"
 
+namespace {
+
+QString getLastPath() {
+	QSettings cfg;
+	return cfg.value("window/lastpath").toString();
+}
+
+void setLastPath(const QString &lastpath) {
+	QSettings cfg;
+	cfg.setValue("window/lastpath", lastpath);
+}
+
+}
+
 MainWindow::MainWindow(bool restoreWindowPosition)
 	: QMainWindow(), _dialog_playback(0), _canvas(0), _recorder(0)
 {
@@ -455,8 +469,6 @@ void MainWindow::readSettings(bool windowpos)
 		_splitter->restoreState(cfg.value("viewstate").toByteArray());
 	}
 
-	_lastpath = cfg.value("lastpath").toString();
-
 	cfg.endGroup();
 	cfg.beginGroup("tools");
 	// Remember last used tool
@@ -498,7 +510,6 @@ void MainWindow::writeSettings()
 	cfg.setValue("maximized", isMaximized());
 	cfg.setValue("state", saveState());
 	cfg.setValue("viewstate", _splitter->saveState());
-	cfg.setValue("lastpath", _lastpath);
 
 	cfg.endGroup();
 	cfg.beginGroup("tools");
@@ -632,12 +643,12 @@ void MainWindow::open()
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
-			tr("Open image"), _lastpath, filter);
+			tr("Open image"), getLastPath(), filter);
 
 	// Open the file if it was selected
 	if(file.isEmpty()==false) {
 		const QFileInfo info(file);
-		_lastpath = info.absolutePath();
+		setLastPath(info.absolutePath());
 
 		open(file);
 	}
@@ -721,20 +732,21 @@ bool MainWindow::saveas()
 	QString selfilter;
 	QString filter;
 #if 0
-	// Get a list of supported formats
+	// Get a list of all supported formats
 	foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
 		filter += QString(format).toUpper() + " (*." + format + ");;";
 	}
-#endif
+#else
 	// We build the filter manually, because these are pretty much the only
 	// reasonable formats (who would want to save a 1600x1200 image
 	// as an XPM?). Perhaps we should check GIF support was compiled in?
 	filter = "OpenRaster (*.ora);;PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp);;";
 	filter += tr("All files (*)");
+#endif
 
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Save image"), _lastpath, filter, &selfilter);
+			tr("Save image"), getLastPath(), filter, &selfilter);
 
 	if(file.isEmpty()==false) {
 
@@ -817,7 +829,7 @@ void MainWindow::toggleRecording()
 
 	QString filter = tr("Drawpile recordings (%1)").arg("*.dprec") + ";;" + tr("All files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Record session"), _lastpath, filter);
+			tr("Record session"), getLastPath(), filter);
 
 	if(!file.isEmpty()) {
 		// Set file suffix if missing
@@ -878,10 +890,8 @@ void MainWindow::showSettings()
 
 void MainWindow::host()
 {
-	auto dlg = new dialogs::HostDialog(_canvas->image(), _lastpath, this);
+	auto dlg = new dialogs::HostDialog(_canvas->image(), this);
 	connect(dlg, &dialogs::HostDialog::finished, [this, dlg](int i) {
-		_lastpath = dlg->lastPath();
-
 		if(i==QDialog::Accepted) {
 			const bool useremote = dlg->useRemoteAddress();
 			QUrl address;
@@ -1344,12 +1354,12 @@ void MainWindow::pasteFile()
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
-			tr("Paste image"), _lastpath, filter);
+			tr("Paste image"), getLastPath(), filter);
 
 	// Open the file if it was selected
 	if(file.isEmpty()==false) {
 		const QFileInfo info(file);
-		_lastpath = info.absolutePath();
+		setLastPath(info.absolutePath());
 
 		pasteFile(QUrl::fromLocalFile(file));
 	}

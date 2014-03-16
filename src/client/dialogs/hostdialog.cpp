@@ -21,6 +21,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QImageReader>
+#include <QSettings>
 
 #include "loader.h"
 
@@ -39,8 +40,8 @@ using widgets::ColorButton;
 
 namespace dialogs {
 
-HostDialog::HostDialog(const QImage& original, const QString &lastpath, QWidget *parent)
-	: QDialog(parent), _lastpath(lastpath)
+HostDialog::HostDialog(const QImage& original, QWidget *parent)
+	: QDialog(parent)
 {
 	ui_ = new Ui_HostDialog;
 	ui_->setupUi(this);
@@ -109,21 +110,25 @@ bool HostDialog::selectPicture()
 	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
 
 	// Get the file name to open
+	QSettings cfg;
+
 	const QString file = QFileDialog::getOpenFileName(this,
-					tr("Open image"), _lastpath, filter);
+					tr("Open image"),
+					cfg.value("window/lastpath").toString(),
+					filter
+	);
 
 	bool selected = false;
-	if(file.isEmpty()==false) {
+	if(!file.isEmpty()) {
 		// Open the file
 		QImage img(file);
-		if(img.isNull()==false) {
+		if(!img.isNull()) {
 			ui_->imageSelector->setImage(img);
 			ui_->otherpicture->click();
 			selected = true;
-			QFileInfo info(file);
-			_lastpath = info.absolutePath();
 		}
-		_lastpath = file;
+
+		cfg.setValue("window/lastpath", file);
 	}
 	return selected;
 }
