@@ -426,6 +426,20 @@ QProgressBar::chunk {
           </widget>
          </item>
          <item>
+          <widget class="QToolButton" name="jumpToMarker">
+           <property name="icon">
+            <iconset theme="go-jump" resource="resources.qrc">
+             <normaloff>:/icons/go-jump.png</normaloff>:/icons/go-jump.png</iconset>
+           </property>
+           <property name="popupMode">
+            <enum>QToolButton::InstantPopup</enum>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>

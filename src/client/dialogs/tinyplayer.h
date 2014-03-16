@@ -38,6 +38,7 @@ public:
 	void setProgress(int pos);
 	void setPlayback(bool play);
 	void enableIndex();
+	void setMarkerMenu(QMenu *menu);
 
 signals:
 	void prevMarker();

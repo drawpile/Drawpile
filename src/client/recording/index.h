@@ -133,6 +133,8 @@ public:
 	MarkerEntry nextMarker(unsigned int from) const;
 	MarkerEntry prevMarker(unsigned int from) const;
 
+	const QVector<MarkerEntry> &markers() const { return _markers; }
+
 	//! Add a new marker. This can be turned in to a real marker using the recording filter
 	const IndexEntry &addMarker(qint64 offset, quint32 pos, const QString &title);
 

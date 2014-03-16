@@ -35,9 +35,11 @@ namespace drawingboard {
 	class CanvasScene;
 }
 
-class VideoExporter;
-class QTimer;
 class QGraphicsScene;
+class QTimer;
+class QMenu;
+
+class VideoExporter;
 class IndexPointerGraphicsItem;
 
 class Ui_PlaybackDialog;
@@ -105,6 +107,8 @@ private:
 
 	bool exitCleanup();
 
+	void updateMarkerMenu();
+
 	QString indexFileName() const;
 
 	Ui_PlaybackDialog *_ui;
@@ -115,6 +119,7 @@ private:
 
 	QGraphicsScene *_indexscene;
 	IndexPointerGraphicsItem *_indexpositem;
+	QMenu *_markermenu;
 
 	drawingboard::CanvasScene *_canvas;	
 	VideoExporter *_exporter;

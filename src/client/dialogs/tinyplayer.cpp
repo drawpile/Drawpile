@@ -90,6 +90,11 @@ void TinyPlayer::enableIndex()
 	_idxactions->setEnabled(true);
 }
 
+void TinyPlayer::setMarkerMenu(QMenu *menu)
+{
+	_ctxmenu->addMenu(menu);
+}
+
 void TinyPlayer::mouseMoveEvent(QMouseEvent *event)
 {
 	if(_dragpoint.x()<0)

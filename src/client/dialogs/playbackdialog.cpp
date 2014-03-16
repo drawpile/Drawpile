@@ -56,7 +56,7 @@ namespace dialogs {
 
 PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Reader *reader, QWidget *parent) :
 	QDialog(parent),
-	_reader(reader), _index(0), _indexscene(0), _indexpositem(0),
+	_reader(reader), _index(0), _indexscene(0), _indexpositem(0), _markermenu(0),
 	_canvas(canvas), _exporter(0), _speedfactor(1.0f), _play(false), _closing(false)
 {
 	setWindowFlags(Qt::Tool);
@@ -443,6 +443,8 @@ void PlaybackDialog::addMarkerHere()
 	if(ok) {
 		recording::IndexEntry e = _index->index().addMarker(_reader->currentPosition(), _reader->currentIndex(), title);
 		IndexGraphicsItem::addToScene(e, _indexscene);
+
+		updateMarkerMenu();
 	}
 }
 
@@ -641,6 +643,17 @@ void PlaybackDialog::loadIndex()
 
 	_tinyPlayer->enableIndex();
 
+	// Construct jump-to-marker list
+	_markermenu = new QMenu(tr("Jump to"), this);
+	updateMarkerMenu();
+	_tinyPlayer->setMarkerMenu(_markermenu);
+
+	_ui->jumpToMarker->setMenu(_markermenu);
+
+	connect(_markermenu, &QMenu::triggered, [this](QAction *a) {
+		jumpTo(a->property("streamidx").toInt());
+	});
+
 	// Re-enable controls in case the playback has already finished
 	_ui->play->setEnabled(true);
 	_ui->seek->setEnabled(true);
@@ -650,6 +663,21 @@ void PlaybackDialog::loadIndex()
 	_ui->smallPlayer->setEnabled(true);
 
 	updateIndexPosition();
+}
+
+void PlaybackDialog::updateMarkerMenu()
+{
+	_markermenu->clear();
+	int untitled=0;
+	foreach(const recording::MarkerEntry &me, _index->index().markers()) {
+		QString title = me.title;
+		if(title.isEmpty())
+			title = QString("#%1").arg(++untitled);
+
+		_markermenu->addAction(title)->setProperty("streamidx", me.pos);
+	}
+	if(_markermenu->isEmpty())
+		_ui->jumpToMarker->setEnabled(false);
 }
 
 void PlaybackDialog::makeIndex()

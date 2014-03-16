@@ -13,7 +13,8 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * format-justify-left
  * format-justify-right
  * format-text-bold
- * fomrt-text-italic
+ * format-text-italic
+ * go-jump
  * list-add
  * list-remove
  * media-playback-pause
