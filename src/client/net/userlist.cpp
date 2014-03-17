@@ -133,7 +133,7 @@ QString UserListModel::getUsername(int id) const
 	// Then the past users
 	if(_pastUsers.contains(id)) {
 		if(_pastUsers.contains(id))
-			_pastUsers[id].name;
+			return _pastUsers[id].name;
 	}
 
 	// Not found
