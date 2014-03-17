@@ -39,7 +39,6 @@ public:
 
 private:
 	float _life;
-	float _dOpacity;
 	bool _blink;
 	QPen _pen1, _pen2;
 };

@@ -120,7 +120,7 @@ public:
 	bool operator==(const StateSavepoint &sp) { return _data == sp._data; }
 	bool operator!=(const StateSavepoint &sp) { return _data != sp._data; }
 private:
-	class Data;
+	struct Data;
 
 	const Data *operator ->() const { return _data; }
 	Data *operator ->();

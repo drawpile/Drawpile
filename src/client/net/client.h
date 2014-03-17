@@ -31,10 +31,6 @@ namespace paintcore {
 	class Point;
 }
 
-namespace drawingboard {
-	class ToolContext;
-}
-
 namespace protocol {
 	class SnapshotMode;
 	class Chat;

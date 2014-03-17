@@ -45,8 +45,6 @@ void LaserTrailItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 	painter->save();
 	painter->setRenderHint(QPainter::Antialiasing, true);
 	painter->setPen(_blink ? _pen1 : _pen2);
-	//if(_blink)
-		//painter->setCompositionMode(QPainter::CompositionMode_Plus);
 	painter->drawLine(line());
 	painter->restore();
 }

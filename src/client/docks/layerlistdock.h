@@ -28,7 +28,7 @@ class Ui_LayerBox;
 
 namespace net {
 	class Client;
-	class LayerListItem;
+	struct LayerListItem;
 }
 
 namespace docks {

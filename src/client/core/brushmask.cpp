@@ -29,12 +29,6 @@ namespace {
 
 template<typename T> T square(T x) { return x*x; }
 
-inline qreal interpolate(qreal a, qreal b, qreal alpha)
-{
-	//return a*alpha + b*(1-alpha);
-	return (a-b) * alpha + b;
-}
-
 typedef quint64 BrushCacheKey;
 static QCache<BrushCacheKey, BrushMaskGenerator> BMG_CACHE(10);
 
