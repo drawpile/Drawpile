@@ -552,11 +552,11 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 
 	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
 
-	int x0 = from.x();
-	int y0 = from.y();
+	int x0 = qRound(from.x());
+	int y0 = qRound(from.y());
 	qreal p = from.pressure();
-	int x1 = to.x();
-	int y1 = to.y();
+	int x1 = qRound(to.x());
+	int y1 = qRound(to.y());
 	int dy = y1 - y0;
 	int dx = x1 - x0;
 	int stepx, stepy;
@@ -617,27 +617,35 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
  */
 void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const Point& point)
 {
-	const int dia = brush.diameter(point.pressure())+1; // space for subpixels
-	const float fradius = brush.fradius(point.pressure());
-	const float fx = point.x() - fradius;
-	const float fy = point.y() - fradius;
-	const int top = floor(fy);
-	const int left = floor(fx);
+	// Render the brush
+	BrushMask bm;
+	int top, left;
+
+	if(brush.subpixel()) {
+		const float fradius = brush.fradius(point.pressure());
+		const float fx = point.x() - fradius;
+		const float fy = point.y() - fradius;
+
+		top = floor(fy);
+		left = floor(fx);
+
+		bm = mask.make(fx - left, fy - top, point.pressure());
+
+	} else {
+		const int radius = brush.radius(point.pressure());
+		top = point.y() - radius;
+		left = point.x() - radius;
+
+		bm = mask.make(point.pressure());
+	}
+
+	const int dia = bm.diameter();
 	const int bottom = qMin(top + dia, _height);
 	const int right = qMin(left + dia, _width);
 	if(left+dia<=0 || top+dia<=0 || left>=_width || top>=_height)
 		return;
 
-	// Render the brush
-	BrushMask bm;
-	if(brush.subpixel()) {
-		float xfrac = fx - left;
-		float yfrac = fy - top;
-		bm = mask.make(xfrac, yfrac, point.pressure());
-	} else
-		bm = mask.make(point.pressure());
-
-	const int realdia = bm.diameter();
+	// Composite the brush mask onto the layer
 	const uchar *values = bm.data();
 	QColor color = brush.color(point.pressure());
 
@@ -649,21 +657,21 @@ void Layer::directDab(const Brush &brush, const BrushMaskGenerator& mask, const 
 	while(y<bottom) {
 		const int yindex = y / Tile::SIZE;
 		const int yt = y - yindex * Tile::SIZE;
-		const int hb = yt+realdia-yb < Tile::SIZE ? realdia-yb : Tile::SIZE-yt;
+		const int hb = yt+dia-yb < Tile::SIZE ? dia-yb : Tile::SIZE-yt;
 		int x = x0;
 		int xb = xb0; // x in relation to brush origin
 		while(x<right) {
 			const int xindex = x / Tile::SIZE;
 			const int xt = x - xindex * Tile::SIZE;
-			const int wb = xt+realdia-xb < Tile::SIZE ? realdia-xb : Tile::SIZE-xt;
+			const int wb = xt+dia-xb < Tile::SIZE ? dia-xb : Tile::SIZE-xt;
 			const int i = _xtiles * yindex + xindex;
 			_tiles[i].composite(
 					brush.blendingMode(),
-					values + yb * realdia + xb,
+					values + yb * dia + xb,
 					color,
 					xt, yt,
 					wb, hb,
-					realdia-wb
+					dia-wb
 					);
 
 			x = (xindex+1) * Tile::SIZE;

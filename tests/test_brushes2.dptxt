@@ -1,0 +1,38 @@
+resize 1 0 600 600 0
+newlayer 1 1 #ffaaffff Brush test
+
+ctx 1 layer=1 color=#0 hardedge=true incremental=true spacing=35 hard=1 opacity=1
+
+# Hard edge brush size change
+ctx 1 sizel=0 sizeh=10 hardedge=true
+
+move 1 10 30 0; 200 30 1
+penup 1
+
+move 1 10 50 0; 200 60 1
+penup 1
+
+move 1 10 70 0; 200 100 1
+penup 1
+
+move 1 10 100 0; 200 140 1
+penup 1
+move 1 10 140 0; 200 300 1
+penup 1
+
+# Soft edge brush size change
+ctx 1 hardedge=false
+
+move 1 300 30 0; 490 30 1
+penup 1
+
+move 1 300 50 0; 490 60 1
+penup 1
+
+move 1 300 70 0; 490 100 1
+penup 1
+
+move 1 300 100 0; 490 140 1
+penup 1
+move 1 300 140 0; 490 300 1
+penup 1
