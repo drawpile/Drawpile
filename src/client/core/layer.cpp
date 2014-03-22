@@ -515,7 +515,6 @@ void Layer::drawLine(int contextId, const Brush& brush, const Point& from, const
  */
 void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, const Point& from, const Point& to, qreal &distance)
 {
-	const qreal spacing = qMax(1.0, brush.spacing()*brush.radius(from.pressure())/100.0);
 	qreal dx = to.x() - from.x();
 	qreal dy = to.y() - from.y();
 	const qreal dist = hypot(dx, dy);
@@ -523,21 +522,24 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
 	dy = dy / dist;
 	const qreal dp = (to.pressure() - from.pressure()) / dist;
 
+	const qreal spacing0 = qMax(1.0, brush.spacingDist(from.pressure()));
 	qreal i;
-	if(distance>=spacing)
+	if(distance>=spacing0)
 		i = 0;
 	else if(distance==0)
-		i = spacing;
+		i = spacing0;
 	else
 		i = distance;
 
 	Point p(from.x() + dx*i, from.y() + dy*i, qBound(0.0, from.pressure() + dp*i, 1.0));
 
-	for(;i<=dist;i+=spacing) {
+	while(i<=dist) {
+		const qreal spacing = qMax(1.0, brush.spacingDist(p.pressure()));
 		directDab(brush, mask, p);
 		p.rx() += dx * spacing;
 		p.ry() += dy * spacing;
 		p.setPressure(qBound(0.0, p.pressure() + dp * spacing, 1.0));
+		i += spacing;
 	}
 	distance = i-dist;
 }
@@ -549,8 +551,6 @@ void Layer::drawSoftLine(const Brush& brush, const BrushMaskGenerator &mask, con
  */
 void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, const Point& from, const Point& to, qreal &distance) {
 	const qreal dp = (to.pressure()-from.pressure()) / hypot(to.x()-from.x(), to.y()-from.y());
-
-	const int spacing = brush.spacing()*brush.radius(from.pressure())/100;
 
 	int x0 = qRound(from.x());
 	int y0 = qRound(from.y());
@@ -580,13 +580,14 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 	if (dx > dy) {
 		int fraction = dy - (dx >> 1);
 		while (x0 != x1) {
+			const qreal spacing = brush.spacingDist(p);
 			if (fraction >= 0) {
 				y0 += stepy;
 				fraction -= dx;
 			}
 			x0 += stepx;
 			fraction += dy;
-			if(++distance > spacing) {
+			if(++distance >= spacing) {
 				directDab(brush, mask, Point(x0, y0, p));
 				distance = 0;
 			}
@@ -595,13 +596,14 @@ void Layer::drawHardLine(const Brush &brush, const BrushMaskGenerator& mask, con
 	} else {
 		int fraction = dx - (dy >> 1);
 		while (y0 != y1) {
+			const qreal spacing = brush.spacingDist(p);
 			if (fraction >= 0) {
 				x0 += stepx;
 				fraction -= dy;
 			}
 			y0 += stepy;
 			fraction += dx;
-			if(++distance > spacing) {
+			if(++distance >= spacing) {
 				directDab(brush, mask, Point(x0, y0, p));
 				distance = 0;
 			}

@@ -131,6 +131,11 @@ QColor Brush::color(qreal pressure) const
 	);
 }
 
+qreal Brush::spacingDist(qreal pressure) const
+{
+	return spacing() * radius(pressure)/100.0;
+}
+
 bool Brush::isOpacityVariable() const
 {
 	return qAbs(opacity1() - opacity2()) > (1/256.0);

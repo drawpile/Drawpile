@@ -91,6 +91,8 @@ public:
 	qreal opacity(qreal pressure) const;
 	//! Get interpolated color
 	QColor color(qreal pressure) const;
+	//! Get the dab spacing distance
+	qreal spacingDist(qreal pressure) const;
 
 	//! Does opacity vary with pressure?
 	bool isOpacityVariable() const;
