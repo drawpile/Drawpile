@@ -27,12 +27,13 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
-Protocol 9.1:
+Protocol 9.2: (0.8.6)
 
  * MovePointer command coordinates now use 1/4 pixel resolution (same as normal brushes)
  * MovePointers were not recorded in earlier versions, so backwards compatibility is maintained.
  * New meta command: Marker
- * Recordings are fully backward compatible with 7.1 and 8.1
+ * Client side change: minor changes to stroke rendering
+ * Recordings are backward compatible with 7.1 and 8.1, but strokes may be drawn slightly differently
 
 Protocol 8.1:
 
