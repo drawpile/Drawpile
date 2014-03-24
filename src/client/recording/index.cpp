@@ -115,34 +115,34 @@ bool Index::readIndex(QIODevice *out)
 
 MarkerEntry Index::prevMarker(unsigned int from) const
 {
-	if(!_markers.isEmpty()) {
-		MarkerEntry e = _markers.first();
-		for(int i=1;i<_markers.size();++i) {
-			if(_markers[i].pos >= from)
-				break;
+	MarkerEntry e;
+	for(int i=0;i<_markers.size();++i) {
+		if(_markers[i].pos >= from)
+			break;
 
-			e = _markers[i];
-		}
-		if(e.pos != from)
-			return e;
+		e = _markers[i];
 	}
-	return MarkerEntry();
+
+	if(e.pos == from)
+		e = MarkerEntry();
+
+	return e;
 }
 
 MarkerEntry Index::nextMarker(unsigned int from) const
 {
-	if(!_markers.isEmpty()) {
-		MarkerEntry e = _markers.last();
-		for(int i=_markers.size()-2;i>=0;--i) {
-			if(_markers[i].pos <= from)
-				break;
+	MarkerEntry e;
+	for(int i=_markers.size()-1;i>=0;--i) {
+		if(_markers[i].pos <= from)
+			break;
 
-			e = _markers[i];
-		}
-		if(e.pos != from)
-			return e;
+		e = _markers[i];
 	}
-	return MarkerEntry();
+
+	if(e.pos == from)
+		e = MarkerEntry();
+
+	return e;
 }
 
 const IndexEntry &Index::addMarker(qint64 offset, quint32 pos, const QString &title)
