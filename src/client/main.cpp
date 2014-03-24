@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 
 #include "main.h"
 #include "mainwindow.h"
-#include "loader.h"
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -94,9 +93,9 @@ int main(int argc, char *argv[]) {
 				url.setUserName(cfg.value("history/username").toString());
 			}
 			win->joinSession(url);
+
 		} else {
-			ImageCanvasLoader icl(argv[1]);
-			win->loadDocument(icl);
+			win->open(argv[1]);
 		}
 	}
 
