@@ -469,9 +469,6 @@ void PlaybackDialog::endOfFileReached()
 
 		_ui->smallPlayer->setEnabled(false);
 	}
-
-	_tinyPlayer->hide();
-	show();
 }
 
 void PlaybackDialog::exportFrame(int count)
