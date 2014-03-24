@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QMouseEvent>
 #include <QContextMenuEvent>
+#include <QGraphicsDropShadowEffect>
 
 #include "dialogs/tinyplayer.h"
 
@@ -32,16 +33,20 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 	: QWidget(parent, Qt::Tool | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint), _dragpoint(-1, -1)
 {
 	hide();
+	setAttribute(Qt::WA_TranslucentBackground);
+
+	QWidget *w = new QWidget(this);
 	_ui = new Ui_TinyPlayer;
-	_ui->setupUi(this);
+	_ui->setupUi(w);
 
-	QPolygon mask;
-	const int R = 2;
-	mask << QPoint(R, 0) << QPoint(width() - R, 0) << QPoint(width(), R)
-		<< QPoint(width(), height()-R) << QPoint(width()-R, height()) << QPoint(R, height())
-		<< QPoint(0, height() - R) << QPoint(0, R);
+	auto *shadow = new QGraphicsDropShadowEffect;
+	shadow->setColor(Qt::black);
+	shadow->setBlurRadius(5);
+	shadow->setOffset(1);
+	w->setGraphicsEffect(shadow);
 
-	setMask(QRegion(mask));
+	w->move(5, 5);
+	resize(w->width() + 10, w->height() + 10);
 
 	connect(_ui->prevMarker, SIGNAL(clicked()), this, SIGNAL(prevMarker()));
 	connect(_ui->nextMarker, SIGNAL(clicked()), this, SIGNAL(nextMarker()));
@@ -97,13 +102,16 @@ void TinyPlayer::setMarkerMenu(QMenu *menu)
 
 void TinyPlayer::mouseMoveEvent(QMouseEvent *event)
 {
-	if(_dragpoint.x()<0)
+	if(_dragpoint.x()<0) {
 		_dragpoint = event->pos();
+		setCursor(Qt::SizeAllCursor);
+	}
 	move(event->globalPos() - _dragpoint);
 }
 
 void TinyPlayer::mouseReleaseEvent(QMouseEvent *)
 {
+	setCursor(QCursor());
 	_dragpoint = QPoint(-1, -1);
 }
 
