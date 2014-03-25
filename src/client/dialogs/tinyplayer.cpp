@@ -33,20 +33,9 @@ TinyPlayer::TinyPlayer(QWidget *parent)
 	: QWidget(parent, Qt::Tool | Qt::CustomizeWindowHint | Qt::WindowStaysOnTopHint), _dragpoint(-1, -1)
 {
 	hide();
-	setAttribute(Qt::WA_TranslucentBackground);
 
-	QWidget *w = new QWidget(this);
 	_ui = new Ui_TinyPlayer;
-	_ui->setupUi(w);
-
-	auto *shadow = new QGraphicsDropShadowEffect;
-	shadow->setColor(Qt::black);
-	shadow->setBlurRadius(5);
-	shadow->setOffset(1);
-	w->setGraphicsEffect(shadow);
-
-	w->move(5, 5);
-	resize(w->width() + 10, w->height() + 10);
+	_ui->setupUi(this);
 
 	connect(_ui->prevMarker, SIGNAL(clicked()), this, SIGNAL(prevMarker()));
 	connect(_ui->nextMarker, SIGNAL(clicked()), this, SIGNAL(nextMarker()));
