@@ -39,7 +39,7 @@ Reader::Reader(const QString &filename, QObject *parent)
 }
 
 Reader::Reader(QFileDevice *file, bool autoclose, QObject *parent)
-	: QObject(parent), _file(file), _autoclose(autoclose), _current(-1)
+	: QObject(parent), _file(file), _current(-1), _autoclose(autoclose), _eof(false)
 {
 	Q_ASSERT(file);
 }
@@ -140,6 +140,7 @@ void Reader::rewind()
 	_file->seek(_beginning);
 	_current = -1;
 	_currentPos = -1;
+	_eof = false;
 }
 
 void Reader::seekTo(int pos, qint64 position)
@@ -147,6 +148,7 @@ void Reader::seekTo(int pos, qint64 position)
 	_current = pos;
 	_currentPos = position;
 	_file->seek(position);
+	_eof =false;
 }
 
 bool Reader::readNextToBuffer(QByteArray &buffer)
@@ -157,8 +159,10 @@ bool Reader::readNextToBuffer(QByteArray &buffer)
 
 	_currentPos = filePosition();
 
-	if(_file->read(buffer.data(), 3) != 3)
+	if(_file->read(buffer.data(), 3) != 3) {
+		_eof = true;
 		return false;
+	}
 
 	const int len = protocol::Message::sniffLength(buffer.constData());
 	Q_ASSERT(len>=3); // fixed header length should be included
@@ -168,8 +172,10 @@ bool Reader::readNextToBuffer(QByteArray &buffer)
 
 	// Read message payload
 	const int payloadlen = len - 3;
-	if(_file->read(buffer.data()+3, payloadlen) != payloadlen)
+	if(_file->read(buffer.data()+3, payloadlen) != payloadlen) {
+		_eof = true;
 		return false;
+	}
 
 	++_current;
 

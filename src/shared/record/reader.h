@@ -96,6 +96,9 @@ public:
 	//! Position in the file (position of the next message to be read)
 	qint64 filePosition() const;
 
+	//! Did the last read hit the end of the file?
+	bool isEof() const { return _eof; }
+
 	QString errorString() const;
 
 	/**
@@ -134,17 +137,25 @@ public:
 	 */
 	MessageRecord readNext();
 
-	//! Seek to given position in the recording
+	/**
+	 * @brief Seek to given position in the recording
+	 *
+	 * Calling this will reset the EOF flag.
+	 *
+	 * @param pos entry index
+	 * @param offset entry offset in the file
+	 */
 	void seekTo(int pos, qint64 offset);
 
 private:
 	QFileDevice *_file;
 	QByteArray _msgbuf;
-	bool _autoclose;
 	QString _writerversion;
 	int _current;
 	qint64 _currentPos;
 	qint64 _beginning;
+	bool _autoclose;
+	bool _eof;
 };
 
 }

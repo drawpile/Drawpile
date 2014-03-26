@@ -132,7 +132,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	_ui->maxinterval->setValue(cfg.value("maxinterval", 1.0).toDouble());
 
 	// Automatically take the first step
-	QTimer::singleShot(0, this, SLOT(nextCommand()));
+	_timer->start(0);
 }
 
 PlaybackDialog::~PlaybackDialog()
@@ -338,31 +338,49 @@ void PlaybackDialog::jumpTo(int pos)
 {
 	Q_ASSERT(_index);
 
-	if(!_ui->play->isEnabled())
+	if(!_ui->play->isEnabled() || waitForExporter())
 		return;
 
-	// Skip forward a shot distance: don't bother resetting to a snapshot
-	if(pos > _reader->currentIndex() && pos - _reader->currentIndex() < 100) {
-		while(_reader->currentIndex() < pos && _ui->play->isEnabled()) {
-			nextCommand();
+	// If the target position is behind current position or sufficiently far ahead, jump
+	// to the closest snapshot point first
+	if(pos < _reader->currentIndex() || pos - _reader->currentIndex() > 100) {
+		int seIdx=0;
+		for(int i=1;i<_index->index().snapshots().size();++i) {
+			const recording::SnapshotEntry &next = _index->index().snapshots().at(i);
+			if(int(next.pos) > pos)
+				break;
+
+			seIdx = i;
 		}
-		return;
+
+		jumptToSnapshot(seIdx);
 	}
 
-	// Find nearest snapshot and jump there
-	int seIdx=0;
-	for(int i=1;i<_index->index().snapshots().size();++i) {
-		const recording::SnapshotEntry &next = _index->index().snapshots().at(i);
-		if(int(next.pos) > pos)
+	// Now the current position is somewhere before the target position: replay commands
+	while(_reader->currentIndex() < pos && !_reader->isEof()) {
+		recording::MessageRecord next = _reader->readNext();
+		switch(next.status) {
+		case recording::MessageRecord::OK:
+			if(next.message->type() == protocol::MSG_INTERVAL) {
+				// skip intervals
+				delete next.message;
+			} else {
+				emit commandRead(protocol::MessagePtr(next.message));
+			}
 			break;
-
-		seIdx = i;
+		case recording::MessageRecord::INVALID:
+			qWarning() << "Unrecognized command " << next.type << "of length" << next.len;
+			break;
+		case recording::MessageRecord::END_OF_RECORDING:
+			endOfFileReached();
+			break;
+		}
 	}
 
-	jumptToSnapshot(seIdx);
+	if(_ui->autoSaveFrame->isChecked())
+		exportFrame();
 
-	while(_reader->currentIndex() < pos && _ui->play->isEnabled())
-		nextCommand();
+	updateIndexPosition();
 }
 
 void PlaybackDialog::jumptToSnapshot(int idx)
