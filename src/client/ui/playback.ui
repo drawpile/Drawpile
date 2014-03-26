@@ -620,6 +620,16 @@ QProgressBar::chunk {
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="stopExport">
+         <property name="text">
+          <string>Stop</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="page_2">

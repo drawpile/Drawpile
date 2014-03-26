@@ -104,6 +104,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	// Video export
 	connect(_ui->configureExportButton, SIGNAL(clicked()), this, SLOT(exportConfig()));
 	connect(_ui->saveFrame, SIGNAL(clicked()), this, SLOT(exportFrame()));
+	connect(_ui->stopExport, SIGNAL(clicked()), this, SLOT(stopExportClicked()));
 
 	// Tiny player controls
 	connect(_ui->smallPlayer, &QCheckBox::clicked, [this]() {
@@ -503,6 +504,15 @@ void PlaybackDialog::exportFrame(int count)
 	}
 }
 
+void PlaybackDialog::stopExportClicked()
+{
+	Q_ASSERT(_exporter);
+
+	_ui->play->setChecked(false);
+	_ui->stopExport->setEnabled(false);
+	_exporter->finish();
+}
+
 void PlaybackDialog::exportConfig()
 {
 	QScopedPointer<VideoExportDialog> dialog(new VideoExportDialog(this));
@@ -581,6 +591,9 @@ void PlaybackDialog::exporterFinished()
 	_ui->saveFrame->setEnabled(false);
 	_ui->frameLabel->setEnabled(false);
 	_ui->timeLabel->setEnabled(false);
+	_ui->stopExport->setEnabled(true);
+
+	_ui->exportStack->setCurrentIndex(1);
 
 	if(_closing)
 		close();

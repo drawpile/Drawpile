@@ -97,6 +97,8 @@ private slots:
 
 	void addMarkerHere();
 
+	void stopExportClicked();
+
 private:
 	void createIndexView();
 	void endOfFileReached();
