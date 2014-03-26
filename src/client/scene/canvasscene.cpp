@@ -369,6 +369,13 @@ void CanvasScene::setToolPreview(QGraphicsItem *preview)
 		addItem(preview);
 }
 
+void CanvasScene::setSelectionItem(const QRect &rect)
+{
+	auto *sel = new SelectionItem;
+	sel->setRect(rect);
+	setSelectionItem(sel);
+}
+
 void CanvasScene::setSelectionItem(SelectionItem *selection)
 {
 	delete _selection;

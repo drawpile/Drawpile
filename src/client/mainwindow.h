@@ -120,6 +120,8 @@ class MainWindow : public QMainWindow {
 		void updateShortcuts();
 		void updateStrokePreviewMode();
 
+		void selectAll();
+		void selectNone();
 		void copyVisible();
 		void copyLayer();
 		void cutLayer();

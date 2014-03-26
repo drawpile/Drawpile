@@ -117,6 +117,7 @@ public:
 
 	//! Set the selection
 	void setSelectionItem(SelectionItem *selection);
+	void setSelectionItem(const QRect &rect);
 
 	SelectionItem *selectionItem() { return _selection; }
 

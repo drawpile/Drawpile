@@ -72,10 +72,9 @@ void Selection::begin(const paintcore::Point &point, bool right)
 				client().sendImage(layer(), rect.x() + xoff, rect.y() + yoff, image, true);
 			}
 			scene().setSelectionItem(0);
+
 		} else {
-			drawingboard::SelectionItem *sel = new drawingboard::SelectionItem();
-			sel->setRect(QRectF(point, point).toRect());
-			scene().setSelectionItem(sel);
+			scene().setSelectionItem(QRectF(point, point).toRect());
 		}
 	}
 }

@@ -1315,6 +1315,17 @@ void MainWindow::eraserNear(bool near)
 	}
 }
 
+void MainWindow::selectAll()
+{
+	getAction("toolselectrect")->trigger();
+	_canvas->setSelectionItem(QRect(0, 0, _canvas->width(), _canvas->height()));
+}
+
+void MainWindow::selectNone()
+{
+	_canvas->setSelectionItem(0);
+}
+
 void MainWindow::cutLayer()
 {
 	QImage img = _canvas->selectionToImage(_dock_layers->currentLayer());
@@ -1615,6 +1626,9 @@ void MainWindow::setupActions()
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
 
+	QAction *selectall = makeAction("selectall", 0, tr("Select &all"), QString(), QKeySequence::SelectAll);
+	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
+
 	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+J"));
 	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+K"));
 	QAction *expandleft = makeAction("expandup", 0, tr("Expand left"), "", QKeySequence("Ctrl+H"));
@@ -1633,6 +1647,8 @@ void MainWindow::setupActions()
 	_currentdoctools->addAction(cleararea);
 	_currentdoctools->addAction(fillfgarea);
 	_currentdoctools->addAction(fillbgarea);
+	_currentdoctools->addAction(selectall);
+	_currentdoctools->addAction(selectnone);
 
 	_docadmintools->addAction(resize);
 	_docadmintools->addAction(expandup);
@@ -1647,6 +1663,8 @@ void MainWindow::setupActions()
 	connect(cutlayer, SIGNAL(triggered()), this, SLOT(cutLayer()));
 	connect(paste, SIGNAL(triggered()), this, SLOT(paste()));
 	connect(pastefile, SIGNAL(triggered()), this, SLOT(pasteFile()));
+	connect(selectall, SIGNAL(triggered()), this, SLOT(selectAll()));
+	connect(selectnone, SIGNAL(triggered()), this, SLOT(selectNone()));
 	connect(deleteAnnotations, SIGNAL(triggered()), this, SLOT(removeEmptyAnnotations()));
 	connect(cleararea, SIGNAL(triggered()), this, SLOT(clearArea()));
 	connect(fillfgarea, SIGNAL(triggered()), this, SLOT(fillFgArea()));
@@ -1669,6 +1687,10 @@ void MainWindow::setupActions()
 	editmenu->addAction(copylayer);
 	editmenu->addAction(paste);
 	editmenu->addAction(pastefile);
+	editmenu->addSeparator();
+
+	editmenu->addAction(selectall);
+	editmenu->addAction(selectnone);
 	editmenu->addSeparator();
 
 	editmenu->addAction(resize);
