@@ -175,7 +175,12 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 	// Sample colors around the layer edges to determine fill color
 	// for the new tiles
-	QColor bgcolor = _sampleEdgeColors(this, top>0, right>0, bottom>0, left>0);
+	Tile bgtile;
+	{
+		QColor bgcolor = _sampleEdgeColors(this, top>0, right>0, bottom>0, left>0);
+		if(bgcolor.alpha()>0)
+			bgtile = Tile(bgcolor);
+	}
 
 	if((left % Tile::SIZE) || (top % Tile::SIZE)) {
 		// If top/left adjustment is not divisble by tile size,
@@ -202,18 +207,16 @@ void Layer::resize(int top, int right, int bottom, int left)
 			oldcontent = oldcontent.copy(cropx, cropy, oldcontent.width()-cropx, oldcontent.height()-cropy);
 		}
 
-		if(bgcolor.alpha()>0)
-			fillColor(bgcolor);
+		_tiles.fill(bgtile);
 
 		putImage(left, top, oldcontent, false);
+
 	} else {
 		// top/left offset is aligned at tile boundary:
 		// existing tile content can be reused
 
 		const int firstrow = Tile::roundTiles(-top);
 		const int firstcol = Tile::roundTiles(-left);
-
-		Tile bgtile(bgcolor);
 
 		int oldy = firstrow;
 		for(int y=0;y<ytiles;++y,++oldy) {
@@ -224,8 +227,7 @@ void Layer::resize(int top, int right, int bottom, int left)
 				const int i = yy + x;
 
 				if(oldy<0 || oldy>=_ytiles || oldx<0 || oldx>=_xtiles) {
-					if(bgcolor.alpha()>0)
-						tiles[i] = bgtile;
+					tiles[i] = bgtile;
 
 				} else {
 					const int oldi = oldyy + oldx;
@@ -407,43 +409,44 @@ void Layer::fillRect(const QRect &rectangle, const QColor &color, int blendmode)
 	const QRect canvas(0, 0, _width, _height);
 
 	if(rectangle.contains(canvas) && blendmode==255) {
-		// Fill entire layer
-		fillColor(color);
-		return;
-	}
+		// Special case: rectangle covers entire layer and blendmode is OVERWRITE
+		_tiles.fill(Tile(color));
 
-	QRect rect = rectangle.intersected(canvas);
+	} else {
+		// The usual case: only a portion of the layer is filled or pixel blending is needed
+		QRect rect = rectangle.intersected(canvas);
 
-	uchar mask[Tile::LENGTH];
-	if(blendmode==255)
-		memset(mask, 0xff, Tile::LENGTH);
-	else
-		memset(mask, color.alpha(), Tile::LENGTH);
+		uchar mask[Tile::LENGTH];
+		if(blendmode==255)
+			memset(mask, 0xff, Tile::LENGTH);
+		else
+			memset(mask, color.alpha(), Tile::LENGTH);
 
-	const int size = Tile::SIZE;
-	const int bottom = rect.y() + rect.height();
-	const int right = rect.x() + rect.width();
+		const int size = Tile::SIZE;
+		const int bottom = rect.y() + rect.height();
+		const int right = rect.x() + rect.width();
 
-	const int tx0 = rect.x() / size;
-	const int tx1 = right / size;
-	const int ty0 = rect.y() / size;
-	const int ty1 = bottom / size;
+		const int tx0 = rect.x() / size;
+		const int tx1 = right / size;
+		const int ty0 = rect.y() / size;
+		const int ty1 = bottom / size;
 
-	for(int ty=ty0;ty<=ty1;++ty) {
-		for(int tx=tx0;tx<=tx1;++tx) {
-			int left = qMax(tx * size, rect.x()) - tx*size;
-			int top = qMax(ty * size, rect.y()) - ty*size;
-			int w = qMin((tx+1)*size, right) - tx*size - left;
-			int h = qMin((ty+1)*size, bottom) - ty*size - top;
+		for(int ty=ty0;ty<=ty1;++ty) {
+			for(int tx=tx0;tx<=tx1;++tx) {
+				int left = qMax(tx * size, rect.x()) - tx*size;
+				int top = qMax(ty * size, rect.y()) - ty*size;
+				int w = qMin((tx+1)*size, right) - tx*size - left;
+				int h = qMin((ty+1)*size, bottom) - ty*size - top;
 
-			Tile &t = _tiles[ty*_xtiles+tx];
+				Tile &t = _tiles[ty*_xtiles+tx];
 
-			t.composite(blendmode, mask, color, left, top, w, h, 0);
+				t.composite(blendmode, mask, color, left, top, w, h, 0);
+			}
 		}
 	}
 
 	if(_owner && visible()) {
-		_owner->markDirty(rect);
+		_owner->markDirty(rectangle);
 		_owner->notifyAreaChanged();
 	}
 }
@@ -737,14 +740,6 @@ void Layer::merge(const Layer *layer, bool sublayers)
 
 	// Merging a layer does not cause an immediate visual change, so we don't
 	// mark the area as dirty here.
-}
-
-void Layer::fillColor(const QColor& color)
-{
-	_tiles.fill(Tile(color));
-
-	if(_owner && visible())
-		_owner->markDirty();
 }
 
 /**

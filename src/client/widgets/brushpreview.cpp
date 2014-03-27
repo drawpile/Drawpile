@@ -154,7 +154,7 @@ void BrushPreview::updatePreview()
 	}
 
 	paintcore::Layer *layer = preview_->getLayerByIndex(0);
-	layer->fillColor(color2_);
+	layer->fillRect(QRect(0, 0, layer->width(), layer->height()), color2_);
 
 	qreal distance = 0;
 	for(int i=1;i<pointvector.size();++i)
