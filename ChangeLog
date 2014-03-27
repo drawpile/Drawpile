@@ -1,4 +1,4 @@
-2014-0?-?? Version 0.8.6
+2014-03-27 Version 0.8.6
  * Show old annotation position until reshape message has finished its roundtrip
  * Spin boxes for accurate adjustment of brush parameters
  * New feature: cut selection to clipboard
@@ -6,6 +6,8 @@
  * Indexed recordings
  * Pauses in recordings are now exported to video
  * New tool: recording markers
+ * Added button to stop video export
+ * Added "Select all" and "Deselect" menu entries
 
 2014-02-25 Version 0.8.5
  * Navigator view is now updated in real time
