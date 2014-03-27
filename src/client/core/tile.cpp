@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -87,19 +87,6 @@ void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 		}
 		q1 += HALF; q2 += HALF; q3 += HALF; q4 += HALF;
 	}
-}
-
-void Tile::fillChecker(const QColor& dark, const QColor& light)
-{
-	fillChecker(getOrCreateUninitializedData(), dark, light);
-}
-
-void Tile::fillColor(const QColor& color)
-{
-	const quint32 c = color.rgba();
-	quint32 *ptr = getOrCreateUninitializedData();
-	for(int i=0;i<LENGTH;++i)
-		*(ptr++) = c;
 }
 
 void Tile::makeBlank()
@@ -192,12 +179,6 @@ quint32 *Tile::getOrCreateData() {
 		_data = new TileData;
 		memset(_data->data, 0, BYTES);
 	}
-	return _data->data;
-}
-
-quint32 *Tile::getOrCreateUninitializedData() {
-	if(!_data)
-		_data = new TileData;
 	return _data->data;
 }
 

@@ -108,8 +108,7 @@ Layer::Layer(LayerStack *owner, int id, const QString& title, const QColor& colo
 	resize(0, size.width(), size.height(), 0);
 	
 	if(color.alpha() > 0) {
-		for(int i=0;i<_tiles.size();++i)
-			_tiles[i].fillColor(color);
+		_tiles.fill(Tile(color));
 	}
 }
 
@@ -214,6 +213,8 @@ void Layer::resize(int top, int right, int bottom, int left)
 		const int firstrow = Tile::roundTiles(-top);
 		const int firstcol = Tile::roundTiles(-left);
 
+		Tile bgtile(bgcolor);
+
 		int oldy = firstrow;
 		for(int y=0;y<ytiles;++y,++oldy) {
 			int oldx = firstcol;
@@ -224,7 +225,8 @@ void Layer::resize(int top, int right, int bottom, int left)
 
 				if(oldy<0 || oldy>=_ytiles || oldx<0 || oldx>=_xtiles) {
 					if(bgcolor.alpha()>0)
-						tiles[i].fillColor(bgcolor);
+						tiles[i] = bgtile;
+
 				} else {
 					const int oldi = oldyy + oldx;
 					tiles[i] = _tiles.at(oldi);
@@ -739,8 +741,7 @@ void Layer::merge(const Layer *layer, bool sublayers)
 
 void Layer::fillColor(const QColor& color)
 {
-	for(int i=0;i<_tiles.size();++i)
-		_tiles[i].fillColor(color);
+	_tiles.fill(Tile(color));
 
 	if(_owner && visible())
 		_owner->markDirty();

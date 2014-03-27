@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2008-2013 Calle Laakkonen
+   Copyright (C) 2008-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -81,10 +81,10 @@ class Tile {
 		Tile();
 
 		//! Construct a tile filled with the given color
-		Tile(const QColor& color);
+		explicit Tile(const QColor& color);
 
 		//! Construct a tile from an image
-		Tile(const QImage& image, int xoff=0, int yoff=0);
+		explicit Tile(const QImage& image, int xoff=0, int yoff=0);
 
 		//! Get a pixel value from this tile
 		quint32 pixel(int x, int y) const {
@@ -103,12 +103,6 @@ class Tile {
 
 		//! Copy the contents of this tile onto the given spot on an image
 		void copyToImage(QImage& image, int x, int y) const;
-
-		//! Fill this tile with a checker pattern
-		void fillChecker(const QColor& dark, const QColor& light);
-
-		//! Fill this tile with a solid color
-		void fillColor(const QColor& color);
 
 		//! Make this a null tile
 		void makeBlank();
@@ -150,7 +144,6 @@ class Tile {
 
 	private:
 		quint32 *getOrCreateData();
-		quint32 *getOrCreateUninitializedData();
 
 		QSharedDataPointer<TileData> _data;
 };
