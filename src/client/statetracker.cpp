@@ -414,7 +414,12 @@ void StateTracker::handlePutImage(const protocol::PutImage &cmd)
 		qWarning() << "putImage on non-existent layer" << cmd.layer();
 		return;
 	}
+	const int expectedLen = cmd.width() * cmd.height() * 4;
 	QByteArray data = qUncompress(cmd.image());
+	if(data.length() != expectedLen) {
+		qWarning() << "Invalid putImage: Expected" << expectedLen << "bytes, but got" << data.length();
+		return;
+	}
 	QImage img(reinterpret_cast<const uchar*>(data.constData()), cmd.width(), cmd.height(), QImage::Format_ARGB32);
 	layer->putImage(cmd.x(), cmd.y(), img, (cmd.flags() & protocol::PutImage::MODE_BLEND));
 }
