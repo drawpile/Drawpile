@@ -748,8 +748,10 @@ void Layer::merge(const Layer *layer, bool sublayers)
 void Layer::optimize()
 {
 	// Optimize tile memory usage
-	for(int i=0;i<_tiles.size();++i)
-		_tiles[i].optimize();
+	for(int i=0;i<_tiles.size();++i) {
+		if(!_tiles[i].isNull() && _tiles[i].isBlank())
+			_tiles[i] = Tile();
+	}
 
 	// Delete unused sublayers
 	QMutableListIterator<Layer*> li(_sublayers);
@@ -764,8 +766,7 @@ void Layer::optimize()
 
 void Layer::makeBlank()
 {
-	for(int i=0;i<_tiles.size();++i)
-		_tiles[i].makeBlank();
+	_tiles.fill(Tile());
 
 	if(_owner && visible())
 		_owner->markDirty();

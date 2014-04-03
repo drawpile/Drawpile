@@ -27,11 +27,6 @@
 
 namespace paintcore {
 
-Tile::Tile() :
-	_data(0)
-{
-}
-
 Tile::Tile(const QColor& color)
 	: _data(new TileData)
 {
@@ -42,8 +37,6 @@ Tile::Tile(const QColor& color)
 }
 
 /**
- * -Copy all pixel data from (x*SIZE-xoff, y*SIZE-yoff, (x+1)*SIZE-xoff, (y+1)*SIZE-yoff).
- * -Pixels outside the source image are set to zero
  * Copy pixel data from (xoff, yoff, min(xoff+SIZE, image.width()), min(yoff+SIZE, image.height()))
  * Pixels outside the image will be set to zero
  *
@@ -87,11 +80,6 @@ void Tile::fillChecker(quint32 *data, const QColor& dark, const QColor& light)
 		}
 		q1 += HALF; q2 += HALF; q3 += HALF; q4 += HALF;
 	}
-}
-
-void Tile::makeBlank()
-{
-	_data = 0;
 }
 
 void Tile::copyTo(quint32 *data) const
@@ -166,12 +154,6 @@ bool Tile::isBlank() const
 		++pixel;
 	}
 	return true;
-}
-
-void Tile::optimize()
-{
-	if(!isNull() && isBlank())
-		_data = 0;
 }
 
 quint32 *Tile::getOrCreateData() {

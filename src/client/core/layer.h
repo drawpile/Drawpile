@@ -33,7 +33,6 @@ namespace paintcore {
 class Brush;
 class BrushMaskGenerator;
 class Point;
-class Tile;
 class LayerStack;
 
 /**
