@@ -1626,8 +1626,8 @@ void MainWindow::setupActions()
 	QAction *resize = makeAction("resizecanvas", 0, tr("Resi&ze canvas..."));
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
 
-	QAction *selectall = makeAction("selectall", 0, tr("Select &all"), QString(), QKeySequence::SelectAll);
-	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
+	QAction *selectall = makeAction("selectall", 0, tr("Select &all"));
+	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"));
 
 	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+J"));
 	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+K"));
