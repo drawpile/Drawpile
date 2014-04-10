@@ -30,12 +30,15 @@
 
 namespace {
 
-bool putTextInZip(ZipWriter &zip, const QString& filename, const QString& text)
+bool putPngInZip(ZipWriter &zip, const QString &filename, const QImage &image)
 {
-	QBuffer *buf = new QBuffer();
-	buf->setData(text.toUtf8());
+	QBuffer buf;
+	image.save(&buf, "PNG");
+
+	// PNG is already compressed, so no use attempting to recompress.
 	zip.setCompressionPolicy(ZipWriter::NeverCompress);
-	zip.addFile(filename, buf);
+	zip.addFile(filename, buf.data());
+
 	return true;
 }
 
@@ -89,24 +92,17 @@ bool writeStackXml(ZipWriter &zf, const paintcore::LayerStack *image)
 		stack.appendChild(layer);
 	}
 
-	QBuffer *buf = new QBuffer();
-	buf->setData(doc.toByteArray());
 	zf.setCompressionPolicy(ZipWriter::AlwaysCompress);
-	zf.addFile("stack.xml", buf);
+	zf.addFile("stack.xml", doc.toByteArray());
 	return true;
 }
 
 bool writeLayer(ZipWriter &zf, const paintcore::LayerStack *layers, int index)
 {
 	const paintcore::Layer *l = layers->getLayerByIndex(index);
-	QBuffer image;
-	image.open(QIODevice::ReadWrite);
-	// TODO autocrop layer to play nice with programs like mypaint?
-	l->toImage().save(&image, "PNG");
-	// Save the image without compression, as trying to squeeze a few more bytes out of a PNG is pointless.
-	zf.setCompressionPolicy(ZipWriter::NeverCompress);
-	zf.addFile(QString("data/layer%1.png").arg(index), image.data());
-	return true;
+	Q_ASSERT(l);
+
+	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage());
 }
 
 bool writeThumbnail(ZipWriter &zf, const paintcore::LayerStack *layers)
@@ -115,12 +111,7 @@ bool writeThumbnail(ZipWriter &zf, const paintcore::LayerStack *layers)
 	if(img.width() > 256 || img.height() > 256)
 		img = img.scaled(QSize(256, 256), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-	QBuffer thumb;
-	thumb.open(QIODevice::ReadWrite);
-	img.save(&thumb, "PNG");
-	zf.setCompressionPolicy(ZipWriter::NeverCompress);
-	zf.addFile("Thumbnails/thumbnail.png", thumb.data());
-	return true;
+	return putPngInZip(zf, "Thumbnails/thumbnail.png", img);
 }
 
 }
@@ -135,10 +126,10 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 
 	ZipWriter zf(&orafile);
 
-	// The first entry of an OpenRaster file is a
-	// file named "mimetype" containing the text
-	// "image/openraster" (must be uncompressed)
-	putTextInZip(zf, "mimetype", "image/openraster");
+	// The first entry of an OpenRaster file must be a
+	// (uncompressed) file named "mimetype".
+	zf.setCompressionPolicy(ZipWriter::NeverCompress);
+	zf.addFile("mimetype", QByteArray("image/openraster"));
 
 	// The stack XML contains the image structure
 	// definition.
