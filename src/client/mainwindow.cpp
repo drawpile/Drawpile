@@ -636,7 +636,7 @@ void MainWindow::open()
 		formats += "*." + format + " ";
 	}
 	const QString filter =
-			tr("All supported files (%1").arg(dpimages + dprecs + formats) + ";;" +
+			tr("All supported files (%1)").arg(dpimages + dprecs + formats) + ";;" +
 			tr("Images (%1)").arg(dpimages + formats) + ";;" +
 			tr("Drawpile recordings (%1)").arg(dprecs) + ";;" +
 			tr("All files (*)");
