@@ -1627,7 +1627,11 @@ void MainWindow::setupActions()
 	QAction *preferences = makeAction(0, 0, tr("Prefere&nces..."));
 
 	QAction *selectall = makeAction("selectall", 0, tr("Select &all"), QString(), QKeySequence::SelectAll);
+#if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
+	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"));
+#else
 	QAction *selectnone = makeAction("selectnone", 0, tr("&Deselect"), QString(), QKeySequence::Deselect);
+#endif
 
 	QAction *expandup = makeAction("expandup", 0, tr("Expand up"), "", QKeySequence("Ctrl+J"));
 	QAction *expanddown = makeAction("expandup", 0, tr("Expand down"), "", QKeySequence("Ctrl+K"));
