@@ -21,11 +21,11 @@
 #include <QVarLengthArray>
 #include <QDateTime>
 #include <QFile>
+#include <QtEndian>
 
 #include "writer.h"
 #include "util.h"
 #include "../net/recording.h"
-#include "../util/ioutils.h"
 
 #include "config.h"
 
@@ -81,7 +81,9 @@ bool Writer::writeHeader()
 	_file->write(MAGIC, 7);
 
 	// Protocol version
-	ioutils::write32(_file, version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION));
+	uchar version[4];
+	qToBigEndian(version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION), version);
+	_file->write((const char*)version, 4);
 
 	// Program version
 	const char *VERSION = DRAWPILE_VERSION;

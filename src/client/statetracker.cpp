@@ -35,7 +35,6 @@
 #include "../shared/net/image.h"
 #include "../shared/net/annotation.h"
 #include "../shared/net/undo.h"
-#include "../shared/util/ioutils.h"
 
 namespace drawingboard {
 
