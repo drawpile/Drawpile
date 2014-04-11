@@ -171,15 +171,18 @@ public:
 	 * @brief deserialize a message from data buffer
 	 *
 	 * The provided buffer should contain at least sniffLength(data)
-	 * bytes.
+	 * bytes. The parameter buflen is the maximum length of the buffer.
+	 * If the announced length of the message is less than the buffer
+	 * length, a null pointer is returned.
 	 *
 	 * If the message type is unrecognized or the message content is
 	 * determined to be invalid, a null pointer is returned.
 	 *
 	 * @param data input data buffer
+	 * @param buflen length of the data buffer
 	 * @return message or 0 if type is unknown
 	 */
-	static Message *deserialize(const uchar *data);
+	static Message *deserialize(const uchar *data, int buflen);
 
 protected:
 	/**

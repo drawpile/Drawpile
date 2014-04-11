@@ -36,11 +36,18 @@ int Message::serialize(char *data) const
 	return 3 + written;
 }
 
-Message *Message::deserialize(const uchar *data)
+Message *Message::deserialize(const uchar *data, int buflen)
 {
-	quint16 len = qFromBigEndian<quint16>(data);
+	// All valid messages have the fixed length header
+	if(buflen<3)
+		return 0;
 
-	MessageType type = MessageType(data[2]);
+	const quint16 len = qFromBigEndian<quint16>(data);
+
+	if(buflen < len+3)
+		return 0;
+
+	const MessageType type = MessageType(data[2]);
 	data += 3;
 
 	switch(type) {

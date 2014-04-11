@@ -189,7 +189,7 @@ MessageRecord Reader::readNext()
 	if(!readNextToBuffer(_msgbuf))
 		return msg;
 
-	auto *message = protocol::Message::deserialize((const uchar*)_msgbuf.constData());
+	auto *message = protocol::Message::deserialize((const uchar*)_msgbuf.constData(), _msgbuf.length());
 
 	if(message) {
 		msg.status = MessageRecord::OK;

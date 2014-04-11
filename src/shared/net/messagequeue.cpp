@@ -116,7 +116,7 @@ void MessageQueue::readData() {
 		int len;
 		while(2 < _recvcount && (len=Message::sniffLength(_recvbuffer)) <= _recvcount) {
 			// Whole message received!
-			Message *msg = Message::deserialize((const uchar*)_recvbuffer);
+			Message *msg = Message::deserialize((const uchar*)_recvbuffer, _recvcount);
 			if(!msg) {
 				emit badData(len, _recvbuffer[2]);
 			} else {
