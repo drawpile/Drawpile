@@ -48,7 +48,7 @@
 #include <QtCore/QtPlugin>
 #include <QtGui/QPixmap>
 
-#include "../../qtcolortriangle.h"
+#include "../qtcolortriangle.h"
 #include "plugin.h"
 #include "qtcolortriangle.xpm"
 
@@ -113,7 +113,6 @@ QIcon QtColorTrianglePlugin::icon() const
 
 QString QtColorTrianglePlugin::domXml() const
 {
-    return QLatin1String("<widget class=\"QtColorTriangle\" name=\"colortriangle\"></widget>");
+    return QLatin1String("<ui language=\"c++\"><widget class=\"QtColorTriangle\" name=\"colortriangle\"></widget></ui>");
 }
 
-Q_EXPORT_PLUGIN2(qtcolortriangleplugin,QtColorTrianglePlugin)
