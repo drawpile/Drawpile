@@ -236,8 +236,7 @@ QImage CanvasScene::image() const
 	if(!hasImage())
 		return QImage();
 
-	// TODO include annotations only if annotations are visible
-	return _image->image()->toFlatImage(true);
+	return _image->image()->toFlatImage(_showAnnotations);
 }
 
 QImage CanvasScene::selectionToImage(int layerId)
