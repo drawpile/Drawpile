@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,18 +23,13 @@
 #include <QGraphicsObject>
 
 namespace paintcore {
-	class Layer;
 	class LayerStack;
-	class Brush;
-	class Point;
 }
 
 namespace drawingboard {
 
 /**
- * @brief A drawing board item item for QGraphicsScene
- * The board item provides an interface to a LayerStack for QGraphicsScene.
- * Methods are provided for drawing lines and points with a Brush object.
+ * @brief A graphics item that draws a LayerStack
  */
 class CanvasItem : public QGraphicsObject
 {
@@ -66,5 +61,3 @@ private:
 }
 
 #endif
-
-
