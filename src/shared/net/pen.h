@@ -106,10 +106,15 @@ typedef QVector<PenPoint> PenPointVector;
  */
 class PenMove : public Message {
 public:
+	//! The maximum number of points that will fit into a single PenMove message
+	static const int MAX_POINTS = (0xffff-1) / 10;
+
 	PenMove(uint8_t ctx, const PenPointVector &points)
 		: Message(MSG_PEN_MOVE, ctx),
 		_points(points)
-		{}
+	{
+		Q_ASSERT(points.size() <= MAX_POINTS);
+	}
 	
 	static PenMove *deserialize(const uchar *data, uint len);
 

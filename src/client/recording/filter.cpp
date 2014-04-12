@@ -313,12 +313,19 @@ void squishStrokes(State &state, Reader &recording)
 				Q_ASSERT(squished);
 				Q_ASSERT(squished->type() == protocol::MSG_PEN_MOVE);
 
-				// TODO: A single PenMove can hold about 6500 points. We should probably check if the limit is exceeded
-				// (although it is a bit unlikely)
-				static_cast<protocol::PenMove*>(squished)->points() += static_cast<const protocol::PenMove*>(msg.message)->points();
-				mark_delete(fi);
+				protocol::PenMove *pm = static_cast<protocol::PenMove*>(squished);
+				protocol::PenMove *pm2 = static_cast<protocol::PenMove*>(msg.message);
+				if(pm->points().size() + pm2->points().size() > protocol::PenMove::MAX_POINTS) {
+					// Maximum points per message reached! Continue in a new message
+					strokes[fi.ctxid] = i;
+					state.replacements[i] = msg.message;
 
-				delete msg.message;
+				} else {
+					pm->points() += pm2->points();
+					mark_delete(fi);
+					delete msg.message;
+				}
+
 			} else {
 				// start a new stroke
 				strokes[fi.ctxid] = i;
