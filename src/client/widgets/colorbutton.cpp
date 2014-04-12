@@ -53,7 +53,11 @@ void ColorButton::selectColor()
 {
 #ifndef DESIGNER_PLUGIN
 	if(!_locked) {
-		dialogs::ColorDialog dlg(tr("Select a color"), false, alpha());
+		dialogs::ColorDialog::Flags flags = dialogs::ColorDialog::NO_APPLY;
+		if(alpha())
+			flags |= dialogs::ColorDialog::SHOW_ALPHA;
+
+		dialogs::ColorDialog dlg(0, tr("Select a color"), flags);
 		dlg.setColor(color());
 		if(dlg.exec() == QDialog::Accepted) {
 			if(dlg.color() != color()) {

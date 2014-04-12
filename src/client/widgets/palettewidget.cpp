@@ -55,7 +55,7 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	scrollbar_ = new QScrollBar(this);
 	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 
-	colordlg_ = new dialogs::ColorDialog(tr("Set palette color"), true, false, this);
+	colordlg_ = new dialogs::ColorDialog(this, tr("Set palette color"));
 
 	connect(colordlg_, SIGNAL(colorSelected(QColor)),
 			this, SLOT(setCurrentColor(QColor)));

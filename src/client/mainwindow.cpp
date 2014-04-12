@@ -1904,11 +1904,11 @@ void MainWindow::setupActions()
 	connect(_dock_hsv, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	// Create color changer dialogs
-	auto dlg_fgcolor = new dialogs::ColorDialog(tr("Foreground color"), true, false, this);
+	auto dlg_fgcolor = new dialogs::ColorDialog(this, tr("Foreground color"));
 	connect(dlg_fgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), dlg_fgcolor, SLOT(pickNewColor(QColor)));
 
-	auto dlg_bgcolor = new dialogs::ColorDialog(tr("Background color"), true, false, this);
+	auto dlg_bgcolor = new dialogs::ColorDialog(this, tr("Background color"));
 	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setBackground(QColor)));
 	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(pickNewColor(QColor)));
 

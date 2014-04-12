@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2008 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -33,43 +33,59 @@ namespace dialogs {
  */
 class ColorDialog : public QDialog
 {
-	Q_OBJECT
-	public:
-		ColorDialog(const QString& title, bool showapply=true, bool showalpha=false, QWidget *parent=0);
-		~ColorDialog();
+Q_OBJECT
+public:
+	enum Flag {
+		NO_OPTIONS = 0x00,
+		NO_APPLY = 0x01,
+		SHOW_ALPHA = 0x02
+	};
+	Q_DECLARE_FLAGS(Flags, Flag)
 
-		//! Set the color
-		void setColor(const QColor& color);
+	ColorDialog(QWidget *parent, const QString& title, Flags flags=NO_OPTIONS);
+	~ColorDialog();
 
-		//! Get the current color
-		QColor color() const;
-	
-	public slots:
-		void accept();
-		void apply();
+	//! Set the current color
+	void setColor(const QColor& color);
 
-		void pickNewColor(const QColor &oldcolor);
+	//! Get the current color
+	QColor color() const;
 
-	signals:
-		//! This signal is emitted when Ok is pressed
-		void colorSelected(const QColor& color);
+public slots:
+	void accept();
+	void apply();
 
-	private slots:
-		void reset();
-		void updateRgb();
-		void updateHsv();
-		void updateTriangle(const QColor& color);
-		void updateHex();
+	/**
+	 * @brief Show the color picker dialog
+	 * @param oldcolor the currently selected color
+	 */
+	void pickNewColor(const QColor &oldcolor);
 
-	private:
-		void updateBars();
-		void updateCurrent(const QColor& color);
+signals:
+	/**
+	 * @brief Apply or Ok was pressed
+	 * @param color the new selected color
+	 */
+	void colorSelected(const QColor& color);
 
-		Ui_ColorDialog *ui_;
-		bool updating_;
-		int validhue_;
-		bool showalpha_;
+private slots:
+	void reset();
+	void updateRgb();
+	void updateHsv();
+	void updateTriangle(const QColor& color);
+	void updateHex();
+
+private:
+	void updateBars();
+	void updateCurrent(const QColor& color);
+
+	Ui_ColorDialog *_ui;
+	int _validhue;
+	bool _showalpha;
+	bool _updating;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(ColorDialog::Flags)
 
 }
 

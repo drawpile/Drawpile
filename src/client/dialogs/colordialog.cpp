@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2009 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,52 +29,48 @@ using widgets::GradientSlider;
 
 namespace dialogs {
 
-ColorDialog::ColorDialog(const QString& title, bool showapply, bool showalpha, QWidget *parent)
-	: QDialog(parent/*, Qt::Tool*/), updating_(false), validhue_(0), showalpha_(showalpha)
+ColorDialog::ColorDialog(QWidget *parent, const QString& title, Flags flags)
+	: QDialog(parent), _validhue(0), _showalpha(flags.testFlag(SHOW_ALPHA)), _updating(false)
 {
-	ui_ = new Ui_ColorDialog;
-	ui_->setupUi(this);
+	_ui = new Ui_ColorDialog;
+	_ui->setupUi(this);
 
-	ui_->current->setAutoFillBackground(true);
-	ui_->old->setAutoFillBackground(true);
+	_ui->current->setAutoFillBackground(true);
+	_ui->old->setAutoFillBackground(true);
 
-	if(showapply==false)
-		ui_->buttonBox->removeButton(ui_->buttonBox->button(QDialogButtonBox::Apply));
+	if(flags.testFlag(NO_APPLY))
+		_ui->buttonBox->removeButton(_ui->buttonBox->button(QDialogButtonBox::Apply));
 	else
-		connect(ui_->buttonBox->button(QDialogButtonBox::Apply),
+		connect(_ui->buttonBox->button(QDialogButtonBox::Apply),
 				SIGNAL(clicked()), this, SLOT(apply()));
 
-	ui_->alphalbl->setVisible(showalpha_);
-	ui_->alpha->setVisible(showalpha_);
-	ui_->alphaBox->setVisible(showalpha_);
+	_ui->alphalbl->setVisible(_showalpha);
+	_ui->alpha->setVisible(_showalpha);
+	_ui->alphaBox->setVisible(_showalpha);
 
-	connect(ui_->red, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
-	connect(ui_->green, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
-	connect(ui_->blue, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
+	connect(_ui->red, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
+	connect(_ui->green, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
+	connect(_ui->blue, SIGNAL(valueChanged(int)), this, SLOT(updateRgb()));
 
-	connect(ui_->hue, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
-	connect(ui_->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
-	connect(ui_->value, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
+	connect(_ui->hue, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
+	connect(_ui->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
+	connect(_ui->value, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
 
-	connect(ui_->colorTriangle, SIGNAL(colorChanged(const QColor&)),
+	connect(_ui->colorTriangle, SIGNAL(colorChanged(const QColor&)),
 			this, SLOT(updateTriangle(const QColor&)));
 
-	connect(ui_->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
+	connect(_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
 			this, SLOT(reset()));
 
-	connect(ui_->txtHex, SIGNAL(textChanged(const QString&)),
+	connect(_ui->txtHex, SIGNAL(textChanged(const QString&)),
 			this, SLOT(updateHex()));
-
-	// Adjust the stretch factors (We can't set these in the UI designer at the moment (TODO is this still true))
-	ui_->horizontalLayout->setStretchFactor(ui_->triangleLayout, 1);
-	ui_->horizontalLayout->setStretchFactor(ui_->sliderLayout, 2);
 
 	setWindowTitle(title);
 }
 
 ColorDialog::~ColorDialog()
 {
-	delete ui_;
+	delete _ui;
 }
 
 void ColorDialog::pickNewColor(const QColor &oldcolor)
@@ -93,24 +89,24 @@ void ColorDialog::setColor(const QColor& color)
 	int h,s,v;
 	color.getHsv(&h,&s,&v);
 
-	updating_ = true;
-	ui_->red->setValue(color.red());
-	ui_->green->setValue(color.green());
-	ui_->blue->setValue(color.blue());
-	ui_->hue->setValue(h);
-	ui_->saturation->setValue(s);
-	ui_->value->setValue(v);
-	ui_->alpha->setValue(color.alpha());
-	ui_->colorTriangle->setColor(color);
-	ui_->txtHex->setText(color.name());
+	_updating = true;
+	_ui->red->setValue(color.red());
+	_ui->green->setValue(color.green());
+	_ui->blue->setValue(color.blue());
+	_ui->hue->setValue(h);
+	_ui->saturation->setValue(s);
+	_ui->value->setValue(v);
+	_ui->alpha->setValue(color.alpha());
+	_ui->colorTriangle->setColor(color);
+	_ui->txtHex->setText(color.name());
 	if(h!=-1)
-		validhue_ = h;
+		_validhue = h;
 	updateBars();
 	QPalette palette;
-	palette.setColor(ui_->current->backgroundRole(), color);
-	ui_->current->setPalette(palette);
-	ui_->old->setPalette(palette);
-	updating_ = false;
+	palette.setColor(_ui->current->backgroundRole(), color);
+	_ui->current->setPalette(palette);
+	_ui->old->setPalette(palette);
+	_updating = false;
 }
 
 /*
@@ -118,9 +114,9 @@ void ColorDialog::setColor(const QColor& color)
  */
 QColor ColorDialog::color() const
 {
-	QColor c(ui_->red->value(), ui_->green->value(), ui_->blue->value());
-	if(showalpha_)
-		c.setAlpha(ui_->alpha->value());
+	QColor c(_ui->red->value(), _ui->green->value(), _ui->blue->value());
+	if(_showalpha)
+		c.setAlpha(_ui->alpha->value());
 	return c;
 }
 
@@ -131,8 +127,8 @@ void ColorDialog::apply()
 {
 	const QColor c = color();
 	QPalette palette;
-	palette.setColor(ui_->current->backgroundRole(), c);
-	ui_->old->setPalette(palette);
+	palette.setColor(_ui->current->backgroundRole(), c);
+	_ui->old->setPalette(palette);
 	emit colorSelected(c);
 }
 
@@ -150,7 +146,7 @@ void ColorDialog::accept()
  */
 void ColorDialog::reset()
 {
-	setColor(ui_->old->palette().color(ui_->old->backgroundRole()));
+	setColor(_ui->old->palette().color(_ui->old->backgroundRole()));
 }
 
 /**
@@ -158,24 +154,24 @@ void ColorDialog::reset()
  */
 void ColorDialog::updateRgb()
 {
-	if(!updating_) {
+	if(!_updating) {
 		QColor col = color();
 		int h,s,v;
 		col.getHsv(&h,&s,&v);
 		if(h==-1)
-			h = validhue_;
+			h = _validhue;
 		else
-			validhue_ = h;
-		updating_ = true;
-		ui_->hue->setValue(h);
-		ui_->saturation->setValue(s);
-		ui_->value->setValue(v);
-		ui_->colorTriangle->setColor(col);
+			_validhue = h;
+		_updating = true;
+		_ui->hue->setValue(h);
+		_ui->saturation->setValue(s);
+		_ui->value->setValue(v);
+		_ui->colorTriangle->setColor(col);
 		updateBars();
 
-		ui_->txtHex->setText(col.name());
+		_ui->txtHex->setText(col.name());
 		updateCurrent(col);
-		updating_ = false;
+		_updating = false;
 	}
 }
 
@@ -184,22 +180,22 @@ void ColorDialog::updateRgb()
  */
 void ColorDialog::updateHsv()
 {
-	if(!updating_) {
+	if(!_updating) {
 		const QColor col = QColor::fromHsv(
-				ui_->hue->value(),
-				ui_->saturation->value(),
-				ui_->value->value()
+				_ui->hue->value(),
+				_ui->saturation->value(),
+				_ui->value->value()
 				);
-		updating_ = true;
-		validhue_ = ui_->hue->value();
-		ui_->red->setValue(col.red());
-		ui_->green->setValue(col.green());
-		ui_->blue->setValue(col.blue());
-		ui_->colorTriangle->setColor(col);
+		_updating = true;
+		_validhue = _ui->hue->value();
+		_ui->red->setValue(col.red());
+		_ui->green->setValue(col.green());
+		_ui->blue->setValue(col.blue());
+		_ui->colorTriangle->setColor(col);
 		updateBars();
 		updateCurrent(col);
-		ui_->txtHex->setText(col.name());
-		updating_ = false;
+		_ui->txtHex->setText(col.name());
+		_updating = false;
 	}
 }
 
@@ -208,23 +204,23 @@ void ColorDialog::updateHsv()
  */
 void ColorDialog::updateTriangle(const QColor& color)
 {
-	if(!updating_) {
-		updating_ = true;
-		ui_->red->setValue(color.red());
-		ui_->green->setValue(color.green());
-		ui_->blue->setValue(color.blue());
+	if(!_updating) {
+		_updating = true;
+		_ui->red->setValue(color.red());
+		_ui->green->setValue(color.green());
+		_ui->blue->setValue(color.blue());
 
 		int h,s,v;
 		color.getHsv(&h,&s,&v);
 		if(h==-1)
-			h = validhue_;
-		ui_->hue->setValue(h);
-		ui_->saturation->setValue(s);
-		ui_->value->setValue(v);
+			h = _validhue;
+		_ui->hue->setValue(h);
+		_ui->saturation->setValue(s);
+		_ui->value->setValue(v);
 		updateCurrent(color);
-		ui_->txtHex->setText(color.name());
+		_ui->txtHex->setText(color.name());
 
-		updating_ = false;
+		_updating = false;
 	}
 }
 
@@ -234,31 +230,31 @@ void ColorDialog::updateTriangle(const QColor& color)
  */
 void ColorDialog::updateHex()
 {
-	if(!updating_) {
-		updating_ = true;
-		QColor color(ui_->txtHex->text());
+	if(!_updating) {
+		_updating = true;
+		QColor color(_ui->txtHex->text());
 		if(color.isValid()) {
 			// Update RGB sliders
-			ui_->red->setValue(color.red());
-			ui_->green->setValue(color.green());
-			ui_->blue->setValue(color.blue());
+			_ui->red->setValue(color.red());
+			_ui->green->setValue(color.green());
+			_ui->blue->setValue(color.blue());
 
 			// Update HSV sliders
 			int h,s,v;
 			color.getHsv(&h,&s,&v);
 			if(h==-1)
-				h = validhue_;
-			ui_->hue->setValue(h);
-			ui_->saturation->setValue(s);
-			ui_->value->setValue(v);
+				h = _validhue;
+			_ui->hue->setValue(h);
+			_ui->saturation->setValue(s);
+			_ui->value->setValue(v);
 
 
 			// Update everything else
 			updateBars();
-			ui_->colorTriangle->setColor(color);
+			_ui->colorTriangle->setColor(color);
 			updateCurrent(color);
 		}
-		updating_ = false;
+		_updating = false;
 	}
 }
 
@@ -273,38 +269,37 @@ void ColorDialog::updateBars()
 	col.getRgb(&r,&g,&b);
 	col.getHsvF(&h,&s,&v);
 	if(h<0)
-		h = validhue_/360.0;
+		h = _validhue/360.0;
 
-	ui_->red->setColor1(QColor(0,g,b));
-	ui_->red->setColor2(QColor(255,g,b));
+	_ui->red->setColor1(QColor(0,g,b));
+	_ui->red->setColor2(QColor(255,g,b));
 
-	ui_->green->setColor1(QColor(r,0,b));
-	ui_->green->setColor2(QColor(r,255,b));
+	_ui->green->setColor1(QColor(r,0,b));
+	_ui->green->setColor2(QColor(r,255,b));
 
-	ui_->blue->setColor1(QColor(r,g,0));
-	ui_->blue->setColor2(QColor(r,g,255));
+	_ui->blue->setColor1(QColor(r,g,0));
+	_ui->blue->setColor2(QColor(r,g,255));
 
-	ui_->hue->setColorSaturation(s);
-	ui_->hue->setColorValue(v);
+	_ui->hue->setColorSaturation(s);
+	_ui->hue->setColorValue(v);
 
-	ui_->saturation->setColor1(QColor::fromHsvF(h,0,v));
-	ui_->saturation->setColor2(QColor::fromHsvF(h,1,v));
+	_ui->saturation->setColor1(QColor::fromHsvF(h,0,v));
+	_ui->saturation->setColor2(QColor::fromHsvF(h,1,v));
 
-	ui_->value->setColor1(QColor::fromHsvF(h,s,0));
-	ui_->value->setColor2(QColor::fromHsvF(h,s,1));
+	_ui->value->setColor1(QColor::fromHsvF(h,s,0));
+	_ui->value->setColor2(QColor::fromHsvF(h,s,1));
 
-	if(showalpha_) {
-		ui_->alpha->setColor1(QColor(r,g,b,0));
-		ui_->alpha->setColor2(QColor(r,g,b,255));
+	if(_showalpha) {
+		_ui->alpha->setColor1(QColor(r,g,b,0));
+		_ui->alpha->setColor2(QColor(r,g,b,255));
 	}
 }
 
 void ColorDialog::updateCurrent(const QColor& color)
 {
 	QPalette palette;
-	palette.setColor(ui_->current->backgroundRole(), color);
-	ui_->current->setPalette(palette);
+	palette.setColor(_ui->current->backgroundRole(), color);
+	_ui->current->setPalette(palette);
 }
 
 }
-
