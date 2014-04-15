@@ -21,34 +21,36 @@ int Message::sniffLength(const char *data)
 	quint16 len = qFromBigEndian<quint16>((uchar*)data);
 
 	// return total message length
-	return len + 3;
+	return len + HEADER_LEN;
 }
 
 int Message::serialize(char *data) const
 {
+	// Fixed header: payload length + message type
 	qToBigEndian(quint16(payloadLength()), (uchar*)data); data += 2;
 	*(data++) = _type;
 
+	// Message payload. (May be 0 length)
 	int written = serializePayload((uchar*)data);
 	Q_ASSERT(written == payloadLength());
-	Q_ASSERT(written + 3 <= 0xffff);
+	Q_ASSERT(written <= 0xffff);
 
-	return 3 + written;
+	return HEADER_LEN + written;
 }
 
 Message *Message::deserialize(const uchar *data, int buflen)
 {
 	// All valid messages have the fixed length header
-	if(buflen<3)
+	if(buflen<HEADER_LEN)
 		return 0;
 
 	const quint16 len = qFromBigEndian<quint16>(data);
 
-	if(buflen < len+3)
+	if(buflen < len+HEADER_LEN)
 		return 0;
 
 	const MessageType type = MessageType(data[2]);
-	data += 3;
+	data += HEADER_LEN;
 
 	switch(type) {
 	case MSG_LOGIN: return Login::deserialize(data, len);

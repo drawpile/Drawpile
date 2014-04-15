@@ -154,25 +154,24 @@ void Reader::seekTo(int pos, qint64 position)
 bool Reader::readNextToBuffer(QByteArray &buffer)
 {
 	// Read length and type header
-	if(buffer.length() < 3)
+	if(buffer.length() < protocol::Message::HEADER_LEN)
 		buffer.resize(1024);
 
 	_currentPos = filePosition();
 
-	if(_file->read(buffer.data(), 3) != 3) {
+	if(_file->read(buffer.data(), protocol::Message::HEADER_LEN) != protocol::Message::HEADER_LEN) {
 		_eof = true;
 		return false;
 	}
 
 	const int len = protocol::Message::sniffLength(buffer.constData());
-	Q_ASSERT(len>=3); // fixed header length should be included
 
 	if(buffer.length() < len)
 		buffer.resize(len);
 
 	// Read message payload
-	const int payloadlen = len - 3;
-	if(_file->read(buffer.data()+3, payloadlen) != payloadlen) {
+	const int payloadlen = len - protocol::Message::HEADER_LEN;
+	if(_file->read(buffer.data()+protocol::Message::HEADER_LEN, payloadlen) != payloadlen) {
 		_eof = true;
 		return false;
 	}

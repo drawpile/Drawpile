@@ -114,7 +114,7 @@ void MessageQueue::readData() {
 
 		// Extract all complete messages
 		int len;
-		while(2 < _recvcount && (len=Message::sniffLength(_recvbuffer)) <= _recvcount) {
+		while(_recvcount >= Message::HEADER_LEN && _recvcount >= (len=Message::sniffLength(_recvbuffer))) {
 			// Whole message received!
 			Message *msg = Message::deserialize((const uchar*)_recvbuffer, _recvcount);
 			if(!msg) {

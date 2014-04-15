@@ -77,6 +77,9 @@ enum MessageUndoState {
 class Message {
 	friend class MessagePtr;
 public:
+	//! Length of the fixed message header
+	static const int HEADER_LEN = 3;
+
 	Message(MessageType type, uint8_t ctx): _type(type), _undone(DONE), _refcount(0), _contextid(ctx) {}
 	virtual ~Message() = default;
 	
@@ -99,7 +102,7 @@ public:
 	 * @brief Get the message length, header included
 	 * @return message length in bytes
 	 */
-	int length() const { return 3 + payloadLength(); }
+	int length() const { return HEADER_LEN + payloadLength(); }
 
 	/**
 	 * @brief Get the user context ID of this message
