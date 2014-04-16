@@ -24,9 +24,9 @@
 #include <QVector>
 #include <QHash>
 #include <QString>
+#include <QObject>
 
 #include "../util/idlist.h"
-#include "../util/logger.h"
 #include "../net/message.h"
 #include "../net/messagestream.h"
 
@@ -71,7 +71,7 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	explicit SessionState(int minorVersion, SharedLogger _logger, QObject *parent=0);
+	explicit SessionState(int minorVersion, QObject *parent=0);
 
 	/**
 	 * @brief Get the minor protocol version of this session
@@ -333,7 +333,6 @@ private:
 
 	protocol::MessagePtr sessionConf() const;
 
-	SharedLogger _logger;
 	recording::Writer *_recorder;
 	QString _recordingFile;
 	QList<Client*> _clients;

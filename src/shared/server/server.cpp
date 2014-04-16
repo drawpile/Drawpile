@@ -25,6 +25,7 @@
 #include "session.h"
 #include "client.h"
 #include "loginhandler.h"
+#include "../util/logger.h"
 
 #include "../net/snapshot.h"
 
@@ -33,7 +34,6 @@ namespace server {
 Server::Server(QObject *parent)
 	: QObject(parent),
 	  _server(0),
-	  _logger(SharedLogger(new DummyLogger)),
 	  _session(0),
 	  _stopping(false),
 	  _persistent(false),
@@ -64,13 +64,13 @@ bool Server::start(quint16 port, bool anyport, const QHostAddress& address) {
 		ok = _server->listen(address, 0);
 
 	if(ok==false) {
-		_logger->logError(_server->errorString());
+		logger::error() << _server->errorString();
 		delete _server;
 		_server = 0;
 		return false;
 	}
 
-	_logger->logDebug(QString("Started listening on port %1 at address %2").arg(port).arg(address.toString()));
+	logger::info() << "Started listening on port" << port << "at address" << address.toString();
 	return true;
 }
 
@@ -105,15 +105,15 @@ void Server::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
 
-	_logger->logDebug(QString("Accepted new client from adderss %1").arg(socket->peerAddress().toString()));
-	_logger->logDebug(QString("Number of connected clients is now %1").arg(clientCount() + 1));
+	logger::info() << "Accepted new client from address" << socket->peerAddress().toString();
+	logger::info() << "Number of connected clients is now" << clientCount() + 1;
 
-	Client *client = new Client(socket, _logger, this);
+	Client *client = new Client(socket, this);
 	_lobby.append(client);
 
 	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
 
-	LoginHandler *lh = new LoginHandler(client, _session, _logger);
+	LoginHandler *lh = new LoginHandler(client, _session);
 	connect(lh, &LoginHandler::sessionCreated, [this](SessionState *session) {
 		if(_session) {
 			// whoops! someone else beat this user to it!
@@ -131,7 +131,7 @@ void Server::newClient()
 
 void Server::removeClient(Client *client)
 {
-	_logger->logDebug(QString("Client %1 from %2 disconnected").arg(client->id()).arg(client->peerAddress().toString()));
+	logger::info() << "Client" << client->id() << "from" << client->peerAddress().toString() << "disconnected";
 	bool wasInLobby = _lobby.removeOne(client);
 	if(wasInLobby) {
 		// If client was not in the lobby, it was part of a session.
@@ -141,14 +141,14 @@ void Server::removeClient(Client *client)
 
 void Server::lastSessionUserLeft()
 {
-	_logger->logDebug("Last user in session left");
+	logger::info() << "Last user in session left!";
 	bool hasSnapshot = _session->mainstream().hasSnapshot();
 
 	if(!hasSnapshot || !_persistent) {
 		if(hasSnapshot)
-			_logger->logWarning("Shutting down due to lack of users");
+			logger::warning() << "Shutting down due to lack of users";
 		else
-			_logger->logWarning("Shutting down because session has not snapshot point!");
+			logger::warning() << "Shutting down because session has not snapshot point!";
 
 		// No snapshot and nobody left: session has been lost
 		stop();

@@ -22,7 +22,6 @@
 
 #include <QObject>
 
-#include "../util/logger.h"
 #include "../net/message.h"
 
 namespace server {
@@ -55,7 +54,7 @@ class LoginHandler : public QObject
 {
 	Q_OBJECT
 public:
-	explicit LoginHandler(Client *client, SessionState *session, SharedLogger logger);
+	explicit LoginHandler(Client *client, SessionState *session);
 
 	void startLoginProcess();
 
@@ -74,7 +73,6 @@ private:
 
 	Client *_client;
 	SessionState *_session;
-	SharedLogger _logger;
 };
 
 }

@@ -24,8 +24,6 @@
 #include <QObject>
 #include <QHostAddress>
 
-#include "../util/logger.h"
-
 class QTcpServer;
 
 namespace server {
@@ -43,8 +41,6 @@ public:
 
 	explicit Server(QObject *parent=0);
 	~Server();
-
-	void setLogger(SharedLogger logger) { _logger = logger; }
 
 	bool start(quint16 port, bool anyport=false, const QHostAddress& address = QHostAddress::Any);
 
@@ -75,8 +71,6 @@ private:
 	QTcpServer *_server;
 
 	QList<Client*> _lobby;
-
-	SharedLogger _logger;
 
 	SessionState *_session;
 	bool _stopping;

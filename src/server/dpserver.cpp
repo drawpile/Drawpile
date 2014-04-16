@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "../shared/server/server.h"
+#include "../shared/util/logger.h"
 
 using server::Server;
 
@@ -74,12 +75,10 @@ int main(int argc, char *argv[]) {
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
-	SharedLogger logger(new ConsoleLogger);
 	if(parser.isSet(verboseOption))
-		logger->setLogLevel(Logger::LOG_DEBUG);
+		logger::setLogLevel(logger::LOG_INFO);
 	else
-		logger->setLogLevel(Logger::LOG_WARNING);
-	server->setLogger(logger);
+		logger::setLogLevel(logger::LOG_WARNING);
 
 	int port = DRAWPILE_PROTO_DEFAULT_PORT;
 	QHostAddress address = QHostAddress::Any;
@@ -88,14 +87,14 @@ int main(int argc, char *argv[]) {
 		bool ok;
 		port = parser.value(portOption).toInt(&ok);
 		if(!ok || port<1 || port>0xffff) {
-			logger->logError("Invalid port");
+			logger::error() << "Invalid port";
 			return 1;
 		}
 	}
 
 	if(parser.isSet(listenOption)) {
 		if(!address.setAddress(parser.value(listenOption))) {
-			logger->logError("Invalid listening address");
+			logger::error() << "Invalid listening address";
 			return 1;
 		}
 	}
@@ -104,7 +103,7 @@ int main(int argc, char *argv[]) {
 		bool ok;
 		float limit = parser.value(limitOption).toFloat(&ok);
 		if(!ok) {
-			logger->logError("Invalid history limit size");
+			logger::error() << "Invalid history limit size";
 			return 1;
 		}
 		uint limitbytes = limit * 1024 * 1024;

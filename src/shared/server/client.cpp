@@ -36,15 +36,15 @@
 #include "../net/pen.h"
 #include "../net/snapshot.h"
 #include "../net/undo.h"
+#include "../util/logger.h"
 
 namespace server {
 
 using protocol::MessagePtr;
 
-Client::Client(QTcpSocket *socket, SharedLogger logger, QObject *parent)
+Client::Client(QTcpSocket *socket, QObject *parent)
 	: QObject(parent),
 	  _session(0),
-	  _logger(logger),
 	  _socket(socket),
 	  _state(LOGIN), _substate(0),
 	  _awaiting_snapshot(false),
@@ -145,7 +145,7 @@ void Client::receiveMessages()
 			if(msg->type() == protocol::MSG_LOGIN)
 				emit loginMessage(msg);
 			else
-				_logger->logWarning(QString("Got non-login message (type=%1) in login state from %2").arg(msg->type()).arg(peerAddress().toString()));
+				logger::warning() << "Got non-login message (type=" << msg->type() << ") in login state from" << peerAddress().toString();
 		} else {
 			handleSessionMessage(msg);
 		}
@@ -155,14 +155,14 @@ void Client::receiveMessages()
 void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
 {
 	if(!_awaiting_snapshot) {
-		_logger->logDebug(QString("Got unexpected snapshot message from user %1").arg(_id));
+		logger::warning() << "Got unexpected snapshot message from user" << _id;
 		return;
 	}
 
 	_awaiting_snapshot = false;
 
 	if(msg.mode() != protocol::SnapshotMode::ACK) {
-		_logger->logError(QString("Got unexpected snapshot message from user %1. Expected ACK, got mode %2").arg(_id).arg(msg.mode()));
+		logger::warning() << "Got unexpected snapshot message from user" << _id << ". Expected ACK, got mode" << msg.mode();
 		_session->abandonSnapshotPoint();
 		return;
 	} else {
@@ -174,7 +174,7 @@ void Client::handleSnapshotStart(const protocol::SnapshotMode &msg)
 void Client::receiveSnapshot()
 {
 	if(!_uploading_snapshot) {
-		_logger->logError(QString("Received snapshot data from client %1 when not expecting it!").arg(_id));
+		logger::warning() << "Received snapshot data from client" << _id << "when not expecting it!";
 		kick();
 		return;
 	}
@@ -194,13 +194,13 @@ void Client::receiveSnapshot()
 
 		// Add message
 		if(_session->addToSnapshotStream(msg)) {
-			_logger->logDebug(QString("Finished getting snapshot from client %1").arg(_id));
+			logger::info() << "Finished getting snapshot from client" << _id;
 			_uploading_snapshot = false;
 
 			// If this was the hosting user, graduate to full session status
 			// The server now needs to be brought up to date with the initial uploaded state
 			if(_state == WAIT_FOR_SYNC) {
-				_logger->logDebug(QString("Client #%1 session sync complete").arg(_id));
+				logger::info() << "Client #" << _id << "session sync complete";
 				_state = IN_SESSION;
 				_streampointer = _session->mainstream().snapshotPointIndex();
 				_session->syncInitialState(_session->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
@@ -209,7 +209,7 @@ void Client::receiveSnapshot()
 			}
 
 			if(_msgqueue->isPendingSnapshot()) {
-				_logger->logError(QString("Client #%1 sent too much snapshot data!").arg(_id));
+				logger::warning() << "Client #" << _id << "sent too much snapshot data!";
 				kick();
 			}
 			break;
@@ -219,14 +219,14 @@ void Client::receiveSnapshot()
 
 void Client::gotBadData(int len, int type)
 {
-	_logger->logError(QString("Received unknown message type #%1 of length %2 from %3").arg(type).arg(len).arg(peerAddress().toString()));
+	logger::warning() << "Received unknown message type #" << type << "of length" << len << "from" << peerAddress().toString();
 	_socket->abort();
 }
 
 void Client::socketError(QAbstractSocket::SocketError error)
 {
 	if(error != QAbstractSocket::RemoteHostClosedError) {
-		_logger->logError(QString("Socket error %1 (from %2)").arg(_socket->errorString()).arg(peerAddress().toString()));
+		logger::error() << "Socket error" << _socket->errorString() << "from" << peerAddress().toString();
 		_socket->abort();
 	}
 }
@@ -256,7 +256,7 @@ void Client::requestSnapshot(bool forcenew)
 	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 	_session->addSnapshotPoint();
-	_logger->logDebug(QString("Created a new snapshot point and requested data from client %1").arg(_id));
+	logger::info() << "Created a new snapshot point and requested data from client" << _id;
 }
 
 /**
@@ -278,13 +278,13 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_USER_LEAVE:
 	case MSG_SESSION_CONFIG:
 	case MSG_STREAMPOS:
-		_logger->logDebug(QString("Warning: user #%1 sent server-to-user only command %2").arg(_id).arg(msg->type()));
+		logger::warning() << "Warning: user #" << _id << "sent server-to-user only command" << msg->type();
 		return;
 	default: break;
 	}
 
 	if(msg->isOpCommand() && !_isOperator) {
-		_logger->logDebug(QString("Warning: normal user #%1 tried to use operator command %2").arg(_id).arg(msg->type()));
+		logger::warning() << "Warning: normal user #" << _id << "tried to use operator command" << msg->type();
 		return;
 	}
 
@@ -297,7 +297,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		case MSG_LAYER_ORDER:
 		case MSG_LAYER_RETITLE:
 		case MSG_LAYER_DELETE:
-			_logger->logDebug(QString("Blocked layer control command from non-operator #%1").arg(_id));
+			logger::warning() << "Blocked layer control command from non-operator" << _id;
 			return;
 		default: break;
 		}
@@ -430,28 +430,28 @@ bool Client::isLayerLocked(int layerid)
 
 void Client::grantOp()
 {
-	_logger->logDebug(QString("Granted operator privileges to user #%1 (%2)").arg(_id).arg(_username));
+	logger::info() << "Granted operator privileges to user" << _id << _username;
 	_isOperator = true;
 	sendUpdatedAttrs();
 }
 
 void Client::deOp()
 {
-	_logger->logDebug(QString("Revoked operator privileges from user #%1 (%2)").arg(_id).arg(_username));
+	logger::info() << "Revoked operator privileges from user" << _id << _username;
 	_isOperator = false;
 	sendUpdatedAttrs();
 }
 
 void Client::lockUser()
 {
-	_logger->logDebug(QString("Locked user #%1 (%2)").arg(_id).arg(_username));
+	logger::info() << "Locked user" << _id << _username;
 	_userLock = true;
 	sendUpdatedAttrs();
 }
 
 void Client::unlockUser()
 {
-	_logger->logDebug(QString("Unlocked user #%1 (%2)").arg(_id).arg(_username));
+	logger::info() << "Unlocked user" << _id << _username;
 	_userLock = false;
 	sendUpdatedAttrs();
 }
@@ -459,7 +459,7 @@ void Client::unlockUser()
 void Client::barrierLock()
 {
 	if(_barrierlock != BARRIER_NOTLOCKED) {
-		_logger->logWarning(QString("Tried to double-barrier lock user #%1").arg(_id));
+		logger::error() << "Tried to double-barrier lock user" << _id;
 		return;
 	}
 
@@ -479,7 +479,7 @@ void Client::barrierUnlock()
 
 void Client::kick(int kickedBy)
 {
-	_logger->logDebug(QString("User #%1 (%2) kicked by #%3").arg(_id).arg(_username).arg(kickedBy));
+	logger::info() << "User" << _id << _username << "kicked by" << kickedBy;
 	_socket->disconnectFromHost();
 }
 
@@ -503,7 +503,6 @@ void Client::enqueueHeldCommands()
 void Client::snapshotNowAvailable()
 {
 	if(_state == WAIT_FOR_SYNC) {
-		_logger->logDebug(QString("User %1 graduating to IN_SESSION state").arg(_id));
 		_state = IN_SESSION;
 		_streampointer = _session->mainstream().snapshotPointIndex();
 		_substreampointer = 0;

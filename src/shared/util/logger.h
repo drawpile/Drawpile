@@ -17,56 +17,55 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef DP_SHARED_LOGGING_H
+#define DP_SHARED_LOGGING_H
 
-#include <QString>
-#include <QSharedPointer>
+#include <QDebug>
+
+namespace logger {
+
+enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_INFO};
+
+void setLogLevel(LogLevel level);
 
 /**
- * @brief A simple logging interface for the server
+ * \brief Stream oriented log printing class
+ *
+ * Based on QDebug
  */
-class Logger
-{
-public:
-	enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_DEBUG};
-	Logger();
-	virtual ~Logger() = default;
-
-	void setLogLevel(LogLevel level);
-
-	void logError(const QString &msg);
-	void logWarning(const QString &msg);
-	void logDebug(const QString &msg);
-
-protected:
-	virtual void printMessage(LogLevel level, const QString &message) = 0;
-
+class Logger {
 private:
-	LogLevel _level;
+	struct Stream {
+		Stream(LogLevel lev) : ts(&str, QIODevice::WriteOnly), ref(1), level(lev), space(true) { }
+
+		QTextStream ts;
+		QString str;
+		int ref;
+		LogLevel level;
+		bool space;
+	} *stream;
+public:
+	Logger(LogLevel level);
+	Logger(const Logger &logger);
+	Logger &operator=(const Logger &logger);
+	~Logger();
+
+    inline Logger &space() { if(stream) { stream->space = true; stream->ts << ' '; } return *this; }
+    inline Logger &nospace() { if(stream) { stream->space = false; } return *this; }
+    inline Logger &maybeSpace() { if (stream && stream->space) stream->ts << ' '; return *this; }
+
+    Logger &operator<<(bool t) { if(stream) { stream->ts << (t ? "true" : "false"); } return maybeSpace(); }
+    Logger &operator<<(int t) { if(stream) { stream->ts << t; } return maybeSpace(); }
+    Logger &operator<<(double t) { if(stream) { stream->ts << t; } return maybeSpace(); }
+	Logger &operator<<(const char* t) { if(stream) { stream->ts << QString::fromLocal8Bit(t); } return maybeSpace(); }
+    Logger &operator<<(const QString & t) { if(stream) { stream->ts << '\"' << t  << '\"'; } return maybeSpace(); }
 };
 
-typedef QSharedPointer<Logger> SharedLogger;
+inline Logger error() { return Logger(LOG_ERROR); }
+inline Logger warning() { return Logger(LOG_WARNING); }
+inline Logger info() { return Logger(LOG_INFO); }
 
-/**
- * @brief A do-nothing logger
- */
-class DummyLogger : public Logger
-{
-protected:
-	void printMessage(LogLevel level, const QString &message) {
-		Q_UNUSED(level);
-		Q_UNUSED(message);
-	}
-};
+}
 
-/**
- * @brief A concrete logger that prints to stdout/stderr
- */
-class ConsoleLogger : public Logger
-{
-protected:
-	void printMessage(LogLevel level, const QString &message);
-};
+#endif
 
-#endif // LOGGER_H

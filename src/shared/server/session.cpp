@@ -26,14 +26,15 @@
 #include "../net/pen.h"
 #include "../net/snapshot.h"
 #include "../record/writer.h"
+#include "../util/logger.h"
 
 namespace server {
 
 using protocol::MessagePtr;
 
-SessionState::SessionState(int minorVersion, SharedLogger logger, QObject *parent)
+SessionState::SessionState(int minorVersion, QObject *parent)
 	: QObject(parent),
-	_logger(logger), _recorder(0),
+	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
 	_minorVersion(minorVersion), _maxusers(255),
 	_locked(false), _layerctrllocked(true), _closed(false),
@@ -80,7 +81,7 @@ void SessionState::joinUser(Client *user, bool host)
 	else if(_lockdefault)
 		user->lockUser();
 
-	_logger->logDebug(QString("User %1 joined").arg(user->id()));
+	logger::info() << "User" << user->id() << "joined";
 }
 
 void SessionState::removeUser(Client *user)
@@ -191,7 +192,7 @@ void SessionState::addToCommandStream(protocol::MessagePtr msg)
 				uint oldsize = _mainstream.lengthInBytes();
 				_mainstream.hardCleanup(0, streampos);
 				uint difference = oldsize - _mainstream.lengthInBytes();
-				_logger->logDebug(QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2));
+				logger::info() << QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2);
 
 				// TODO perhaps this can be deferred? Doing it now will cut off undo history,
 				// but deferring new snapshot generation risks leaving the session in unjoinable state.
@@ -225,12 +226,12 @@ void SessionState::addSnapshotPoint()
 bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 {
 	if(!_mainstream.hasSnapshot()) {
-		_logger->logError("Tried to add a snapshot command, but there is no snapshot point!");
+		logger::error() << "Tried to add a snapshot command, but there is no snapshot point!";
 		return true;
 	}
 	protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
 	if(sp.isComplete()) {
-		_logger->logError("Tried to add a snapshot command, but the snapshot point is already complete!");
+		logger::error() << "Tried to add a snapshot command, but the snapshot point is already complete!";
 		return true;
 	}
 
@@ -253,15 +254,15 @@ bool SessionState::addToSnapshotStream(protocol::MessagePtr msg)
 
 void SessionState::abandonSnapshotPoint()
 {
-	_logger->logWarning(QString("Abandoning snapshot point (%1)!").arg(_mainstream.snapshotPointIndex()));
+	logger::warning() << "Abandoning snapshot point" << _mainstream.snapshotPointIndex();
 
 	if(!_mainstream.hasSnapshot()) {
-		_logger->logError("Tried to abandon a snapshot point that doesn't exist!");
+		logger::error() << "Tried to abandon a snapshot point that doesn't exist!";
 		return;
 	}
 	const protocol::SnapshotPoint &sp = _mainstream.snapshotPoint().cast<protocol::SnapshotPoint>();
 	if(sp.isComplete()) {
-		_logger->logError("Tried to abandon a complete snapshot point!");
+		logger::error() << "Tried to abandon a complete snapshot point!";
 		return;
 	}
 
@@ -278,18 +279,18 @@ void SessionState::abandonSnapshotPoint()
 	foreach(Client *c, _clients)
 		c->barrierUnlock();
 
-	_logger->logDebug(QString("Snapshot point rolled back to %1").arg(_mainstream.snapshotPointIndex()));
+	logger::info() << "Snapshot point rolled back to" << _mainstream.snapshotPointIndex();
 }
 
 void SessionState::cleanupCommandStream()
 {
 	int removed = _mainstream.cleanup();
-	_logger->logDebug(QString("Cleaned up %1 messages from the command stream.").arg(removed));
+	logger::info() << "Cleaned up" << removed << "messages from the command stream.";
 }
 
 void SessionState::startSnapshotSync()
 {
-	_logger->logDebug("Starting snapshot sync!");
+	logger::info() << "Starting snapshot sync!";
 
 	// Barrier lock all clients
 	foreach(Client *c, _clients)
@@ -298,7 +299,7 @@ void SessionState::startSnapshotSync()
 
 void SessionState::snapshotSyncStarted()
 {
-	_logger->logDebug("Snapshot sync started!");
+	logger::info() << "Snapshot sync started!";
 
 	// Lift barrier lock
 	foreach(Client *c, _clients)
@@ -504,12 +505,11 @@ void SessionState::startRecording(const QList<protocol::MessagePtr> &snapshot)
 	// Expand placeholders
 
 	// Start recording
-	_logger->logDebug(QString("Starting session recording (%1)").arg(filename));
+	logger::info() << "Starting session recording" << filename;
 
 	_recorder = new recording::Writer(filename, this);
 	if(!_recorder->open()) {
-		_logger->logError(QString("Couldn't start recording to %1").arg(filename));
-		_logger->logError(_recorder->errorString());
+		logger::error() << "Couldn't write session recording to" << filename << _recorder->errorString();
 		delete _recorder;
 		_recorder = 0;
 	}

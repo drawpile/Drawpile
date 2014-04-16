@@ -25,13 +25,14 @@
 #include "session.h"
 
 #include "../net/login.h"
+#include "../util/logger.h"
 
 #include "config.h"
 
 namespace server {
 
-LoginHandler::LoginHandler(Client *client, SessionState *session, SharedLogger logger) :
-	QObject(client), _client(client), _session(session), _logger(logger)
+LoginHandler::LoginHandler(Client *client, SessionState *session) :
+	QObject(client), _client(client), _session(session)
 {
 	connect(client, SIGNAL(loginMessage(protocol::MessagePtr)), this, SLOT(handleLoginMessage(protocol::MessagePtr)));
 }
@@ -57,7 +58,7 @@ void LoginHandler::startLoginProcess()
 void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 {
 	if(msg->type() != protocol::MSG_LOGIN) {
-		_logger->logError("login handler was passed a non-login message!");
+		logger::error() << "login handler was passed a non-login message!";
 		return;
 	}
 
@@ -68,7 +69,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	else if(message.startsWith("JOIN "))
 		handleJoinMessage(message);
 	else {
-		_logger->logWarning(QString("Got invalid login message from %1").arg(_client->peerAddress().toString()));
+		logger::warning() << "Got invalid login message from" << _client->peerAddress().toString();
 		send("WHAT?");
 		_client->kick(0);
 	}
@@ -118,7 +119,7 @@ void LoginHandler::handleHostMessage(const QString &message)
 	send(QString("OK %1").arg(userId));
 
 	// Create a new session
-	SessionState *session = new SessionState(minorVersion, _logger);
+	SessionState *session = new SessionState(minorVersion);
 	session->joinUser(_client, true);
 
 	emit sessionCreated(session);

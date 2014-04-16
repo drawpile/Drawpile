@@ -21,38 +21,67 @@
 
 #include "logger.h"
 
-Logger::Logger()
-	: _level(LOG_DEBUG)
-{
+namespace logger {
+
+namespace {
+	static LogLevel loglevel = LOG_INFO;
+
+	static const char *LOG_PREFIX[] = {
+		"",
+		"ERROR",
+		"WARNING",
+		"INFO"
+	};
+
+	void printLog(LogLevel level, const QString &msg) {
+		std::cerr << LOG_PREFIX[level] << ": " << msg.toLocal8Bit().constData() << std::endl;
+	}
 }
 
-void Logger::setLogLevel(LogLevel level)
-{
-	_level = level;
-}
+void setLogLevel(LogLevel level) { loglevel = level; }
 
-void Logger::logError(const QString &msg)
+Logger::Logger(LogLevel level)
 {
-	if(_level >= LOG_ERROR)
-		printMessage(LOG_ERROR, "ERROR: " + msg);
-}
-
-void Logger::logWarning(const QString &msg)
-{
-	if(_level >= LOG_WARNING)
-		printMessage(LOG_WARNING, "WARNING: " + msg);
-}
-
-void Logger::logDebug(const QString &msg)
-{
-	if(_level >= LOG_DEBUG)
-		printMessage(LOG_DEBUG, "DEBUG: " + msg);
-}
-
-void ConsoleLogger::printMessage(LogLevel level, const QString &message)
-{
-	if(level <= LOG_DEBUG)
-		std::cerr << message.toLocal8Bit().constData() << std::endl;
+	Q_ASSERT(level >= LOG_ERROR && level <= LOG_INFO);
+	if(level <= loglevel)
+		stream = new Stream(level);
 	else
-		std::cout << message.toLocal8Bit().constData() << std::endl;
+		stream = 0;
 }
+
+Logger::Logger(const Logger &other)
+	: stream(other.stream)
+{
+	if(stream)
+		++stream->ref;
+}
+
+Logger &Logger::operator=(const Logger &other)
+{
+	if(other.stream != stream) {
+		if(stream) {
+			Q_ASSERT(stream->ref>0);
+			if(--stream->ref==0) {
+				printLog(stream->level, stream->str);
+				delete stream;
+			}
+		}
+	}
+	stream = other.stream;
+	++stream->ref;
+	return *this;
+}
+
+Logger::~Logger()
+{
+	if(stream) {
+		Q_ASSERT(stream->ref>0);
+		if(--stream->ref==0) {
+			printLog(stream->level, stream->str);
+			delete stream;
+		}
+	}
+}
+
+}
+

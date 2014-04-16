@@ -23,7 +23,7 @@
 #include "net/serverthread.h"
 
 #include "../shared/server/server.h"
-#include "../shared/server/server.h"
+#include "../shared/util/logger.h"
 
 namespace net {
 
@@ -53,21 +53,19 @@ bool ServerThread::isOnDefaultPort() const
 
 void ServerThread::run() {
 	server::Server server;
-	SharedLogger logger(new ConsoleLogger);
 #ifdef NDEBUG
-	logger->setLogLevel(Logger::LOG_WARNING);
+	logger::setLogLevel(logger::LOG_WARNING);
 #else
-	logger->setLogLevel(Logger::LOG_DEBUG);
+	logger::setLogLevel(logger::LOG_INFO);
 #endif
-	server.setLogger(logger);
 
 	server.setHistorylimit(_historylimit);
 
 	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
 
-	logger->logDebug("Starting server");
+	logger::info() << "Starting server";
     if(!server.start(_port, true)) {
-		logger->logError("Couldn't start server");
+		logger::error() << "Couldn't start server!";
 		_port = 0;
 		_starter.wakeOne();
 		return;
@@ -78,7 +76,7 @@ void ServerThread::run() {
 
 	exec();
 
-	logger->logDebug("server thread exiting.");
+	logger::info() << "server thread exiting.";
 	if(_deleteonexit)
 		deleteLater();
 }

@@ -25,7 +25,6 @@
 #include <QTcpSocket>
 
 #include "../net/message.h"
-#include "../util/logger.h"
 
 namespace protocol {
 	class MessageQueue;
@@ -55,7 +54,7 @@ class Client : public QObject
 	};
 
 public:
-	Client(QTcpSocket *socket, SharedLogger logger, QObject *parent=0);
+	explicit Client(QTcpSocket *socket, QObject *parent=0);
 	~Client();
 
 	//! Get the user's IP address
@@ -250,7 +249,6 @@ private:
 	bool isLayerLocked(int layerid);
 
 	SessionState *_session;
-	SharedLogger _logger;
 
 	QTcpSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
