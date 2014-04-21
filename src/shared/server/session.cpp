@@ -32,13 +32,13 @@ namespace server {
 
 using protocol::MessagePtr;
 
-SessionState::SessionState(int minorVersion, QObject *parent)
+SessionState::SessionState(int id, int minorVersion, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
-	_minorVersion(minorVersion), _maxusers(255),
+	_id(id), _minorVersion(minorVersion), _maxusers(255),
 	_locked(false), _layerctrllocked(true), _closed(false),
-	_lockdefault(false), _historylimit(0)
+	_lockdefault(false), _persistent(false), _historylimit(0)
 { }
 
 
@@ -82,6 +82,7 @@ void SessionState::joinUser(Client *user, bool host)
 		user->lockUser();
 
 	logger::info() << "User" << user->id() << "joined";
+	emit userConnected(this);
 }
 
 void SessionState::removeUser(Client *user)
@@ -114,10 +115,11 @@ void SessionState::removeUser(Client *user)
 	// Reopen the session when the last user leaves
 	if(_clients.isEmpty()) {
 		setClosed(false);
-		emit lastClientLeft();
 	}
 
 	user->deleteLater();
+
+	emit userDisconnected(this);
 }
 
 Client *SessionState::getClientById(int id)
@@ -134,6 +136,7 @@ void SessionState::setClosed(bool closed)
 	if(_closed != closed) {
 		_closed = closed;
 		addToCommandStream(sessionConf());
+		emit sessionAttributeChanged(this);
 	}
 }
 
@@ -164,7 +167,34 @@ void SessionState::setUsersLockedByDefault(bool locked)
 void SessionState::setMaxUsers(int maxusers)
 {
 	Q_ASSERT(maxusers>0);
-	_maxusers = maxusers;
+	if(_maxusers != maxusers) {
+		_maxusers = maxusers;
+		emit sessionAttributeChanged(this);
+	}
+}
+
+void SessionState::setPersistent(bool persistent)
+{
+	if(_persistent != persistent) {
+		_persistent = persistent;
+		emit sessionAttributeChanged(this);
+	}
+}
+
+void SessionState::setPassword(const QString &password)
+{
+	if(_password != password) {
+		_password = password;
+		emit sessionAttributeChanged(this);
+	}
+}
+
+void SessionState::setTitle(const QString &title)
+{
+	if(_title != title) {
+		_title = title;
+		emit sessionAttributeChanged(this);
+	}
 }
 
 void SessionState::addToCommandStream(protocol::MessagePtr msg)
@@ -192,7 +222,7 @@ void SessionState::addToCommandStream(protocol::MessagePtr msg)
 				uint oldsize = _mainstream.lengthInBytes();
 				_mainstream.hardCleanup(0, streampos);
 				uint difference = oldsize - _mainstream.lengthInBytes();
-				logger::info() << QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2);
+				logger::debug() << QString("History cleanup. Removed %1 Mb.").arg(difference / qreal(1024*1024), 0, 'f', 2);
 
 				// TODO perhaps this can be deferred? Doing it now will cut off undo history,
 				// but deferring new snapshot generation risks leaving the session in unjoinable state.
@@ -279,18 +309,18 @@ void SessionState::abandonSnapshotPoint()
 	foreach(Client *c, _clients)
 		c->barrierUnlock();
 
-	logger::info() << "Snapshot point rolled back to" << _mainstream.snapshotPointIndex();
+	logger::debug() << "Snapshot point rolled back to" << _mainstream.snapshotPointIndex();
 }
 
 void SessionState::cleanupCommandStream()
 {
 	int removed = _mainstream.cleanup();
-	logger::info() << "Cleaned up" << removed << "messages from the command stream.";
+	logger::debug() << "Cleaned up" << removed << "messages from the command stream.";
 }
 
 void SessionState::startSnapshotSync()
 {
-	logger::info() << "Starting snapshot sync!";
+	logger::debug() << "Starting snapshot sync!";
 
 	// Barrier lock all clients
 	foreach(Client *c, _clients)
@@ -299,7 +329,7 @@ void SessionState::startSnapshotSync()
 
 void SessionState::snapshotSyncStarted()
 {
-	logger::info() << "Snapshot sync started!";
+	logger::debug() << "Snapshot sync started!";
 
 	// Lift barrier lock
 	foreach(Client *c, _clients)
@@ -360,6 +390,9 @@ void SessionState::syncInitialState(const QList<protocol::MessagePtr> &messages)
 			break;
 		case MSG_SESSION_CONFIG:
 			setSessionConfig(msg.cast<SessionConf>());
+			break;
+		case MSG_SESSION_TITLE:
+			setTitle(msg.cast<SessionTitle>().title());
 			break;
 		default: break;
 		}

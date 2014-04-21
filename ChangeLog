@@ -1,3 +1,6 @@
+2014-0?-?? Version 0.9.0
+ * Support for multiple sessions on a single server
+
 2014-03-27 Version 0.8.6
  * Show old annotation position until reshape message has finished its roundtrip
  * Spin boxes for accurate adjustment of brush parameters

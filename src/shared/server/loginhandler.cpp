@@ -19,10 +19,12 @@
 */
 
 #include <QStringList>
+#include <QRegExp>
 
 #include "loginhandler.h"
 #include "client.h"
 #include "session.h"
+#include "sessionserver.h"
 
 #include "../net/login.h"
 #include "../util/logger.h"
@@ -31,28 +33,72 @@
 
 namespace server {
 
-LoginHandler::LoginHandler(Client *client, SessionState *session) :
-	QObject(client), _client(client), _session(session)
+LoginHandler::LoginHandler(Client *client, SessionServer *server) :
+	QObject(client), _client(client), _server(server), _complete(false)
 {
-	connect(client, SIGNAL(loginMessage(protocol::MessagePtr)), this, SLOT(handleLoginMessage(protocol::MessagePtr)));
+	connect(client, SIGNAL(loginMessage(protocol::MessagePtr)), this,
+			SLOT(handleLoginMessage(protocol::MessagePtr)));
+
+	connect(server, SIGNAL(sessionChanged(SessionState*)), this, SLOT(announceSession(SessionState*)));
+	connect(server, SIGNAL(sessionEnded(int)), this, SLOT(announceSessionEnd(int)));
 }
 
 void LoginHandler::startLoginProcess()
 {
+	QStringList flags;
+
+	if(_server->sessionLimit()>1)
+		flags << "MULTI";
+	if(!_server->hostPassword().isEmpty())
+		flags << "HOSTP";
+	if(_server->allowPersistentSessions())
+		flags << "PERSIST";
+	// TODO SECURE and SECNOW
+
 	// Start by telling who we are
-	send(QString("DRAWPILE %1").arg(DRAWPILE_PROTO_MAJOR_VERSION));
+	send(QString("DRAWPILE %1 %2")
+		 .arg(DRAWPILE_PROTO_MAJOR_VERSION)
+		 .arg(flags.isEmpty() ? "-" : flags.join(","))
+	);
+
 	// Client should disconnect upon receiving the above if the version number does not match
 
 	// Tell about our session
-	if(_session) {
-		QString ses = QString("SESSION %1").arg(_session->minorProtocolVersion());
-		if(!_session->password().isEmpty())
-			ses.append(" PASS");
+	QList<SessionState*> sessions = _server->sessions();
 
-		send(ses);
-	} else {
+	if(sessions.isEmpty()) {
 		send("NOSESSION");
+	} else {
+		for(SessionState *session : sessions) {
+			announceSession(session);
+		}
 	}
+}
+
+void LoginHandler::announceSession(SessionState *session)
+{
+	QStringList flags;
+	if(!session->password().isEmpty())
+		flags << "PASS";
+
+	if(session->isClosed())
+		flags << "CLOSED";
+
+	if(session->isPersistent())
+		flags << "PERSIST";
+
+	send(QString("SESSION %1 %2 %3 %4 \"%5\"")
+			.arg(session->id())
+			.arg(session->minorProtocolVersion())
+			.arg(flags.isEmpty() ? "-" : flags.join(","))
+			.arg(session->userCount())
+			.arg(session->title())
+	);
+}
+
+void LoginHandler::announceSessionEnd(int id)
+{
+	send(QString("NOSESSION %1").arg(id));
 }
 
 void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
@@ -77,38 +123,30 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 
 void LoginHandler::handleHostMessage(const QString &message)
 {
-	if(_session) {
-		// protocol violation: session already in progress
-		send("CLOSED");
+	if(_server->sessionCount() >= _server->sessionLimit()) {
+		send("ERROR CLOSED");
+	}
+
+	QRegExp re("HOST (\\d+) (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?");
+	if(!re.exactMatch(message)) {
+		send("ERROR SYNTAX");
 		_client->kick(0);
 		return;
 	}
 
-	QStringList tokens = message.split(' ', QString::SkipEmptyParts);
-	if(tokens.size() < 4) {
-		send("WHAT?");
-		_client->kick(0);
-		return;
-	}
+	int minorVersion = re.cap(1).toInt();
+	int userId = re.cap(2).toInt();
 
-	bool ok;
-	int minorVersion = tokens.at(1).toInt(&ok);
-	if(!ok) {
-		send("WHAT?");
-		_client->kick(0);
-		return;
-	}
-
-	int userId = tokens.at(2).toInt(&ok);
-	if(!ok || userId<1 || userId>255) {
-		send("WHAT?");
-		_client->kick(0);
-		return;
-	}
-
-	QString username = QStringList(tokens.mid(3)).join(' ');
+	QString username = re.cap(3);
 	if(!validateUsername(username)) {
-		send("BADNAME");
+		send("ERROR BADNAME");
+		_client->kick(0);
+		return;
+	}
+
+	QString password = re.cap(4);
+	if(password != _server->hostPassword()) {
+		send("ERROR BADPASS");
 		_client->kick(0);
 		return;
 	}
@@ -116,66 +154,72 @@ void LoginHandler::handleHostMessage(const QString &message)
 	_client->setId(userId);
 	_client->setUsername(username);
 
+	// Mark login phase as complete. No more login messages will be sent to this user
 	send(QString("OK %1").arg(userId));
+	_complete = true;
 
 	// Create a new session
-	SessionState *session = new SessionState(minorVersion);
-	session->joinUser(_client, true);
+	SessionState *session = _server->createSession(minorVersion);
 
-	emit sessionCreated(session);
+	session->joinUser(_client, true);
 
 	deleteLater();
 }
 
 void LoginHandler::handleJoinMessage(const QString &message)
 {
-	if(!_session) {
-		send("NOSESSION");
+	QRegExp re("JOIN (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?");
+	if(!re.exactMatch(message)) {
+		send("ERROR SYNTAX");
 		_client->kick(0);
 		return;
 	}
 
-	if(_session->userCount() >= _session->maxUsers()) {
-		send("CLOSED");
+	int sessionId = re.cap(1).toInt();
+	SessionState *session = _server->getSessionById(sessionId);
+	if(!session) {
+		send("ERROR NOSESSION");
 		_client->kick(0);
 		return;
 	}
 
-	QString username, password;
-	int passwordstart = message.indexOf(';');
-	if(passwordstart>0) {
-		username = message.mid(5, passwordstart-5).trimmed();
-		password = message.mid(passwordstart+1);
-	} else {
-		username = message.mid(5).trimmed();
+	if(session->userCount() >= session->maxUsers()) {
+		send("ERROR CLOSED");
+		_client->kick(0);
+		return;
 	}
+
+	QString username = re.cap(2);
+	QString password = re.cap(3);
 
 	if(!validateUsername(username)) {
-		send("BADNAME");
+		send("ERROR BAD");
 		_client->kick(0);
 		return;
 	}
 
-	if(password != _session->password()) {
-		send("BADPASS");
+	if(password != session->password()) {
+		send("ERROR BADPASS");
 		_client->kick(0);
 		return;
 	}
 
 	// Ok, join the session
 	_client->setUsername(username);
-	_session->assignId(_client);
+	session->assignId(_client);
 
 	send(QString("OK %1").arg(_client->id()));
 
-	_session->joinUser(_client, false);
+	session->joinUser(_client, false);
+	emit clientJoined(_client);
 
 	deleteLater();
 }
 
 void LoginHandler::send(const QString &msg)
 {
-	_client->sendDirectMessage(protocol::MessagePtr(new protocol::Login(msg)));
+	if(!_complete)
+		_client->sendDirectMessage(protocol::MessagePtr(new protocol::Login(msg)));
 }
 
 bool LoginHandler::validateUsername(const QString &username)

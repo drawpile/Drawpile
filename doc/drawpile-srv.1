@@ -45,7 +45,7 @@ listen on the specified port instead of the default.
 bind to the specified address. If no listening address is specified,
 drawpile-srv will listen on all addresses.
 .TP
-.BR --limit\  size
+.BR --history-limit\  size
 limit session history to given size (in megabytes.) Once size is exceeded,
 the session history will be replaced with a snapshot of the current canvas
 contents. Note: to avoid resetting the history too often, the size should be at
@@ -53,6 +53,17 @@ least bigger than the typical image when saved as a PNG image.
 .TP
 .BR --record , \ -r\  filename
 record session to file.
+.TP
+.BR --host-password\  password
+set the session hosting password. If set, this password must be entered to host a session.
+.TP
+.BR --sessions\  count
+set session limit. This is the maximum number of sessions that can be active at the same time.
+.TP
+.BR --persistent , \ -P
+enable persistent sessions. Non-persistent sessions will be deleted immediately
+when the last user leaves.
+
 
 .
 .SH AUTHOR

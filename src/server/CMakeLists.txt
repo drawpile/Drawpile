@@ -1,5 +1,6 @@
 # src/server/CMakeLists.txt
 
+set(CMAKE_AUTOMOC ON)
 find_package( Qt5Network )
 include_directories( ${Qt5Network_INCLUDES} )
 add_definitions(${Qt5Network_DEFINITIONS})
@@ -7,6 +8,7 @@ add_definitions(${Qt5Network_DEFINITIONS})
 set (
 	SOURCES
 	dpserver.cpp
+	multiserver.cpp
 	)
 
 # Use local copy of Qt's command line parser for Qt <5.2

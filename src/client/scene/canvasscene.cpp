@@ -441,12 +441,16 @@ QPen CanvasScene::penForBrush(const paintcore::Brush &brush)
 
 void CanvasScene::setTitle(const QString &title)
 {
-	_statetracker->setTitle(title);
+	if(_statetracker)
+		_statetracker->setTitle(title);
 }
 
-const QString &CanvasScene::title() const
+QString CanvasScene::title() const
 {
-	return _statetracker->title();
+	if(_statetracker)
+		return _statetracker->title();
+	else
+		return QString();
 }
 
 UserMarkerItem *CanvasScene::getOrCreateUserMarker(int id)

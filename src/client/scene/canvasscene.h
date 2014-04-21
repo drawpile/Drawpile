@@ -159,7 +159,7 @@ public:
 	 * @brief Get the session title
 	 * @return
 	 */
-	const QString &title() const;
+	QString title() const;
 
 	void setStrokePreview(StrokePreviewer *strokepreview);
 

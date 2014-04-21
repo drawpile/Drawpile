@@ -28,41 +28,70 @@ namespace server {
 
 class Client;
 class SessionState;
+class SessionServer;
 
 /**
  * @brief Perform the client login handshake
  *
  * The login process is as follows:
- * (client C connects to server S)
- * S: DRAWPILE <proto-major>
+ * (client C connects to [this] server S)
+ *
+ * S: DRAWPILE <proto-major> <FEATURES¹>
  *
  * - client should disconnect at this point if proto-major does not match -
  *
- * S: SESSION <proto-minor> [PASS]
+ * S: SESSION <id> <proto-minor> <FLAGS²> <user-count> "title"
  *  - or -
- * S: NOSESSION
+ * S: NOSESSION [id³]
  *
- * C: HOST <proto-minor> <userid> <username>
+ * - Note. Server may send updates to session list until the client has made a choice.
+ *
+ * C: HOST <proto-minor> <userid> "<username>" [;server password⁴]
  *  - or -
- * C: JOIN <username> [;password]
+ * C: JOIN <id> "<username>" [;password]
  *
  * S: OK <userid>
  *  - or -
- * S: BADPASS / BADNAME / CLOSED
+ * S: ERROR <BADPASS|BADNAME|SESLIMIT|CLOSED>
+ *
+ * Notes:
+ * ------
+ *
+ * 1) Possible server features (comma separated list):
+ *    -       - no optional features supported
+ *    MULTI   - this server supports multiple sessions
+ *    HOSTP   - a password is needed to host a session
+ *    SECURE  - the server supports encryption
+ *    SECNOW  - the server requires encryption before login can proceed (implies SECURE)
+ *    PERSIST - persistent sessions are supported
+ *
+ * 2) Set of comma delimited session flags:
+ *    -       - no flags
+ *    PASS    - password is needed to join
+ *    CLOSED  - closed for new users
+ *    PERSIST - this is a persistent session
+ *
+ * 3) If the ID is specified, this command indicates the session has just terminated.
+ *    Otherwise, it means there are no available session at all.
+ *
+ * 4) The server password must be provided if HOSTP was listed in server features.
  */
 class LoginHandler : public QObject
 {
 	Q_OBJECT
 public:
-	explicit LoginHandler(Client *client, SessionState *session);
+	LoginHandler(Client *client, SessionServer *server);
 
 	void startLoginProcess();
 
 signals:
-	void sessionCreated(SessionState *session);
+	void clientJoined(Client *client);
 
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
+
+	void announceSession(SessionState *session);
+	void announceSessionEnd(int id);
 
 private:
 	void handleHostMessage(const QString &message);
@@ -72,9 +101,12 @@ private:
 	bool validateUsername(const QString &name);
 
 	Client *_client;
-	SessionState *_session;
+	SessionServer *_server;
+
+	bool _complete;
 };
 
 }
 
 #endif // LOGINHANDLER_H
+

@@ -23,7 +23,6 @@
 
 #include "config.h"
 
-#include "server.h"
 #include "client.h"
 #include "session.h"
 
@@ -194,13 +193,13 @@ void Client::receiveSnapshot()
 
 		// Add message
 		if(_session->addToSnapshotStream(msg)) {
-			logger::info() << "Finished getting snapshot from client" << _id;
+			logger::debug() << "Finished getting snapshot from client" << _id;
 			_uploading_snapshot = false;
 
 			// If this was the hosting user, graduate to full session status
 			// The server now needs to be brought up to date with the initial uploaded state
 			if(_state == WAIT_FOR_SYNC) {
-				logger::info() << "Client #" << _id << "session sync complete";
+				logger::debug() << "Client #" << _id << "session sync complete";
 				_state = IN_SESSION;
 				_streampointer = _session->mainstream().snapshotPointIndex();
 				_session->syncInitialState(_session->mainstream().snapshotPoint().cast<protocol::SnapshotPoint>().substream());
@@ -404,7 +403,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_SNAPSHOT:
 		handleSnapshotStart(msg.cast<SnapshotMode>());
 		return;
-
+	case MSG_SESSION_TITLE:
+		// Keep track of title changes
+		_session->setTitle(msg.cast<SessionTitle>().title());
+		break;
 	default: break;
 	}
 
@@ -543,6 +545,8 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 	 * /unlockdefault   - don't lock new users by default
 	 * /password [p]    - password protect the session. If p is omitted, password is removed
 	 * /force_snapshot  - force snapshot request now
+	 * /who             - list users
+	 * /status          - show session status
 	 */
 	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
 	if(tokens[0] == "/lock" && tokens.count()==2) {
@@ -603,6 +607,7 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 		return true;
 	} else if(tokens[0] == "/title" && tokens.count()>1) {
 		QString title = QStringList(tokens.mid(1)).join(' ');
+		_session->setTitle(title);
 		_session->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(ctxid, title)));
 		return true;
 	} else if(tokens[0] == "/maxusers" && tokens.count()==2) {
@@ -761,7 +766,7 @@ void Client::sendOpWhoList()
 	const QList<Client*> &clients = _session->clients();
 	QStringList msgs;
 	foreach(const Client *c, clients) {
-		QString flags="";
+		QString flags;
 		if(c->isOperator())
 			flags = "@";
 		if(c->isUserLocked())
@@ -770,19 +775,24 @@ void Client::sendOpWhoList()
 			flags += "l";
 		msgs << QString("#%1: %2 [%3]").arg(c->id()).arg(c->username(), flags);
 	}
-	foreach(const QString &m, msgs)
+	for(const QString &m : msgs)
 		_msgqueue->send(MessagePtr(new protocol::Chat(0, m)));
 }
 
 void Client::sendOpServerStatus()
 {
 	QStringList msgs;
-	msgs << QString("Logged in users: %1").arg(_session->userCount());
-	msgs << QString("History size: %1 Mb").arg(_session->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2);
+	msgs << QString("Session #%1").arg(_session->id());
+	msgs << QString("Logged in users: %1 (max: %2)").arg(_session->userCount()).arg(_session->maxUsers());
+	msgs << QString("Persistent session: %1").arg(_session->isPersistent());
+	msgs << QString("Password protected: %1").arg(!_session->password().isEmpty());
+	msgs << QString("History size: %1 Mb (limit: %2 Mb)")
+			.arg(_session->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)
+			.arg(_session->historyLimit() / qreal(1024*1024), 0, 'f', 2);
 	msgs << QString("History indices: %1 -- %2").arg(_session->mainstream().offset()).arg(_session->mainstream().end());
 	msgs << QString("Snapshot point exists: %1").arg(_session->mainstream().hasSnapshot() ? "yes" : "no");
 
-	foreach(const QString &m, msgs)
+	for(const QString &m : msgs)
 		_msgqueue->send(MessagePtr(new protocol::Chat(0, m)));
 }
 

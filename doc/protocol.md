@@ -21,6 +21,20 @@ See `src/shared/net/message.h` for the full list of message types.
 
 A subset of the network protocol is used as the session recording format.
 
+## Login process
+
+The login handshake is a string based protocol that uses the LOGIN message type. The handshake begins when the user connects to the server port.
+
+The server starts by sending a hello message, which includes the protocol version and the set of server feature flags. If the client does not support the protocol or does not understand the features, it should disconnect.
+
+The server continues by sending a list of available sessions. The client can either join one of the sessions or host a new one. (Whether a client is allowed to host a session is indicated by a server feature flag.) The server may send updated session information until the client has made a decision.
+
+The built-in server only supports a single session per server instance. This is indicated with a feature flag. In this case, the client may join the only session automatically without prompting the user.
+
+The server responds to the join/host command either by a success signal or an error code. If the command was accepted, the client leaves the login state and enters the session. In case of error, the server disconnects the client.
+
+See `src/shared/server/loginhandler.h` for implementation details.
+
 ## Session recording format
 
 A session recording starts with a header that identifies the file type, followed by messages in the same format as transmitted over the network. All command messages and a select few meta message types are recorded.
@@ -47,6 +61,11 @@ The format of the index file is not documented and it can change from version to
 The protocol version number consists of two parts: the major and the minor number. Change in the major number indicates changes that break compatibility between the server and the client. Change in the minor number indicate smaller changes in the client's interpretation of the drawing commands.
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
+
+Protocol 10.2 (0.9.0)
+
+ * New login process to support multiple sessions on a single server
+ * No change in recording format
 
 Protocol 9.2: (0.8.6)
 

@@ -71,7 +71,12 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	explicit SessionState(int minorVersion, QObject *parent=0);
+	SessionState(int id, int minorVersion, QObject *parent=0);
+
+	/**
+	 * \brief Get the ID of the session
+	 */
+	int id() const { return _id; }
 
 	/**
 	 * @brief Get the minor protocol version of this session
@@ -113,13 +118,25 @@ public:
 	 * @return password
 	 */
 	const QString &password() const { return _password; }
-	void setPassword(const QString &password) { _password = password; }
+	void setPassword(const QString &password);
+
+	/**
+	 * @brief Get the title of the session
+	 * @return
+	 */
+	const QString &title() const { return _title; }
+	void setTitle(const QString &title);
 
 	/**
 	 * @brief Is the session closed to new users?
+	 *
+	 * A session can be closed in two ways:
+	 * - by setting the Closed flag
+	 * - when user count reaches maxUsers()
+	 *
 	 * @return true if new users will not be admitted
 	 */
-	bool isClosed() const { return _closed; }
+	bool isClosed() const { return _closed || userCount() >= maxUsers(); }
 	void setClosed(bool closed);
 
 	/**
@@ -152,6 +169,16 @@ public:
 	 */
 	int maxUsers() const { return _maxusers; }
 	void setMaxUsers(int maxusers);
+
+	/**
+	 * @brief Is this a persistent session
+	 *
+	 * A persistent session is not automatically deleted when the last user leaves.
+	 *
+	 * @return
+	 */
+	bool isPersistent() const { return _persistent; }
+	void setPersistent(bool persistent);
 
 	/**
 	 * @brief Add a new client to the session
@@ -314,8 +341,26 @@ public:
 	void kickAllUsers();
 
 signals:
-	//! Last user in the session just left
-	void lastClientLeft();
+	//! A user just connected to the session
+	void userConnected(SessionState *thisSession);
+
+	//! A user disconnected from the session
+	void userDisconnected(SessionState *thisSession);
+
+	/**
+	 * @brief A publishable session attribute just changed.
+	 *
+	 * This signal is emitted when any of the following attributes are changed:
+	 *
+	 * - title
+	 * - open/closed status
+	 * - maximum user count
+	 * - password
+	 * - persistent mode
+	 *
+	 * @param thisSession
+	 */
+	void sessionAttributeChanged(SessionState *thisSession);
 
 	//! New commands have been added to the main stream
 	void newCommandsAvailable();
@@ -345,14 +390,17 @@ private:
 	QVector<LayerState> _layers;
 	QHash<int, DrawingContext> _drawingctx;
 
+	const int _id;
 	int _minorVersion;
 	int _maxusers;
 	QString _password;
+	QString _title;
 
 	bool _locked;
 	bool _layerctrllocked;
 	bool _closed;
 	bool _lockdefault;
+	bool _persistent;
 
 	uint _historylimit;
 };

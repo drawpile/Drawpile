@@ -30,50 +30,68 @@
 namespace net {
 
 class Server;
+class LoginSessionModel;
 
 /**
- * Server login process state machine
+ * @brief Login process state machine
  */
 class LoginHandler : public QObject {
 	Q_OBJECT
 public:
 	enum Mode {HOST, JOIN};
 
-	LoginHandler(Mode mode, const QUrl &url)
-		: QObject(0), _mode(mode), _address(url), _maxusers(0), _allowdrawing(true), _layerctrllock(true), _state(0) { }
+	LoginHandler(Mode mode, const QUrl &url, QWidget *parent=0);
 
 	/**
-	 * @brief Set the desired user ID. Only for host mode.
+	 * @brief Set the desired user ID
+	 *
+	 * Only for host mode. When joining an existing session, the server assigns the user ID.
+	 *
 	 * @param userid
 	 */
 	void setUserId(int userid) { Q_ASSERT(_mode==HOST); _userid=userid; }
 
 	/**
-	 * @brief Set the session password. Only for host mode.
+	 * @brief Set the session password
+	 *
+	 * Only for host mode.
+	 *
 	 * @param password
 	 */
-	void setPassword(const QString &password) { Q_ASSERT(_mode==HOST); _password=password; }
+	void setPassword(const QString &password) { Q_ASSERT(_mode==HOST); _sessionPassword=password; }
 
 	/**
-	 * @brief Set the session title. Only for host mode.
+	 * @brief Set the session title
+	 *
+	 * Only for host mode.
+	 *
 	 * @param title
 	 */
 	void setTitle(const QString &title) { Q_ASSERT(_mode==HOST); _title=title; }
 
 	/**
 	 * @brief Set the maximum number of users the session will accept
+	 *
+	 * Only for host mode.
+	 *
 	 * @param maxusers
 	 */
 	void setMaxUsers(int maxusers) { Q_ASSERT(_mode==HOST); _maxusers = maxusers; }
 
 	/**
 	 * @brief Set whether new users should be locked by default
+	 *
+	 * Only for host mode.
+	 *
 	 * @param allowdrawing
 	 */
 	void setAllowDrawing(bool allowdrawing) { Q_ASSERT(_mode==HOST); _allowdrawing = allowdrawing; }
 
 	/**
 	 * @brief Set whether layer controls should be locked to operators only by default
+	 *
+	 * Only for host mode.
+	 *
 	 * @param layerlock
 	 */
 	void setLayerControlLock(bool layerlock) { Q_ASSERT(_mode==HOST); _layerctrllock = layerlock; }
@@ -90,8 +108,16 @@ public:
 	 */
 	void receiveMessage(protocol::MessagePtr message);
 
+	/**
+	 * @brief Login mode (host or join)
+	 * @return
+	 */
 	Mode mode() const { return _mode; }
 
+	/**
+	 * @brief Server URL
+	 * @return
+	 */
 	const QUrl &url() const { return _address; }
 
 	/**
@@ -100,25 +126,44 @@ public:
 	 */
 	int userId() const { return _userid; }
 
+private slots:
+	void joinSelectedSession(int id, bool needPassword);
+
 private:
+	enum State {
+		EXPECT_HELLO,
+		EXPECT_SESSIONLIST_TO_JOIN,
+		EXPECT_SESSIONLIST_TO_HOST,
+		EXPECT_LOGIN_OK
+	};
+
 	void expectHello(const QString &msg);
-	void expectSessionDescription(const QString &msg);
+	void expectSessionDescriptionHost(const QString &msg);
+	void expectSessionDescriptionJoin(const QString &msg);
 	void expectLoginOk(const QString &msg);
+	void send(const QString &message);
 
 	Mode _mode;
 	QUrl _address;
+	QWidget *_widgetParent;
 
 	// session properties for hosting
 	int _userid;
-	QString _password;
+	QString _sessionPassword;
 	QString _title;
 	int _maxusers;
 	bool _allowdrawing;
 	bool _layerctrllock;
 
+	// Process state
 	Server *_server;
-	int _state;
-	bool _requirepass;
+	State _state;
+	LoginSessionModel *_sessions;
+
+	// Server flags
+	bool _multisession;
+	QString _hostPassword;
+
 };
 
 }

@@ -30,7 +30,8 @@ namespace {
 		"",
 		"ERROR",
 		"WARNING",
-		"INFO"
+		"INFO",
+		"DEBUG"
 	};
 
 	void printLog(LogLevel level, const QString &msg) {
@@ -42,7 +43,7 @@ void setLogLevel(LogLevel level) { loglevel = level; }
 
 Logger::Logger(LogLevel level)
 {
-	Q_ASSERT(level >= LOG_ERROR && level <= LOG_INFO);
+	Q_ASSERT(level >= LOG_ERROR && level <= LOG_DEBUG);
 	if(level <= loglevel)
 		stream = new Stream(level);
 	else

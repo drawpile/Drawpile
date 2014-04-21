@@ -29,18 +29,17 @@
 
 #include "config.h"
 
-#include "../shared/server/server.h"
+#include "multiserver.h"
 #include "../shared/util/logger.h"
-
-using server::Server;
 
 int main(int argc, char *argv[]) {
 	QCoreApplication app(argc, argv);
 
+	QCoreApplication::setOrganizationName("DrawPile");
 	QCoreApplication::setApplicationName("drawpile-srv");
 	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
 
-	// Parse command line arguments
+	// Set up command line arguments
 	QCommandLineParser parser;
 
 	parser.setApplicationDescription("Standalone server for Drawpile");
@@ -59,26 +58,43 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption listenOption(QStringList() << "listen" << "l", "Listening address", "address");
 	parser.addOption(listenOption);
 
-	// --limit
-	QCommandLineOption limitOption("limit", "Limit history size", "size (Mb)");
+	// --limit <size>
+	QCommandLineOption limitOption("history-limit", "Limit history size", "size (Mb)");
 	parser.addOption(limitOption);
 
-	// --record, -r
+	// --record, -r <filename>
 	QCommandLineOption recordOption(QStringList() << "record" << "r", "Record session", "filename");
 	parser.addOption(recordOption);
+
+	// --host-password <password>
+	QCommandLineOption hostPassOption("host-password", "Host password", "password");
+	parser.addOption(hostPassOption);
+
+	// --sessions <count>
+	QCommandLineOption sessionLimitOption("sessions", "Maximum number of sessions", "count");
+	parser.addOption(sessionLimitOption);
+
+	// --persistent, -P
+	QCommandLineOption persistentSessionOption(QStringList() << "persistent" << "P", "Enable persistent sessions");
+	parser.addOption(persistentSessionOption);
 
 	// Parse
 	parser.process(app);
 
 	// Initialize the server
-	Server *server = new Server;
+	server::MultiServer *server = new server::MultiServer;
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
-	if(parser.isSet(verboseOption))
+	if(parser.isSet(verboseOption)) {
+#ifdef NDEBUG
 		logger::setLogLevel(logger::LOG_INFO);
-	else
+#else
+		logger::setLogLevel(logger::LOG_DEBUG);
+#endif
+	} else {
 		logger::setLogLevel(logger::LOG_WARNING);
+	}
 
 	int port = DRAWPILE_PROTO_DEFAULT_PORT;
 	QHostAddress address = QHostAddress::Any;
@@ -107,17 +123,30 @@ int main(int argc, char *argv[]) {
 			return 1;
 		}
 		uint limitbytes = limit * 1024 * 1024;
-		server->setHistorylimit(limitbytes);
+		server->setHistoryLimit(limitbytes);
 	}
 
 	if(parser.isSet(recordOption))
 		server->setRecordingFile(parser.value(recordOption));
 
-	// Dedicated server shouldn't shut down just because there are no users
-	server->setPersistent(true);
+	if(parser.isSet(hostPassOption))
+		server->setHostPassword(parser.value(hostPassOption));
+
+	int sessionLimit = 20;
+	if(parser.isSet(sessionLimitOption)) {
+		bool ok;
+		sessionLimit = parser.value(sessionLimitOption).toInt(&ok);
+		if(!ok || sessionLimit<1) {
+			logger::error() << "Invalid session count limit";
+			return 1;
+		}
+	}
+	server->setSessionLimit(sessionLimit);
+
+	server->setPersistentSessions(parser.isSet(persistentSessionOption));
 
 	// Start
-	if(!server->start(port, false, address))
+	if(!server->start(port, address))
 		return 1;
 
 	return app.exec();

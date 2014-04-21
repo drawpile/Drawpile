@@ -34,9 +34,9 @@ set (
 
 set (
 	SRV_SOURCES
-	server/server.cpp
 	server/client.cpp
 	server/session.cpp
+	server/sessionserver.cpp
 	server/loginhandler.cpp
 	)
 

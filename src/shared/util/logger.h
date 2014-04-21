@@ -24,7 +24,7 @@
 
 namespace logger {
 
-enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_INFO};
+enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG};
 
 void setLogLevel(LogLevel level);
 
@@ -64,6 +64,7 @@ public:
 inline Logger error() { return Logger(LOG_ERROR); }
 inline Logger warning() { return Logger(LOG_WARNING); }
 inline Logger info() { return Logger(LOG_INFO); }
+inline Logger debug() { return Logger(LOG_DEBUG); }
 
 }
 

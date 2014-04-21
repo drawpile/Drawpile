@@ -45,9 +45,11 @@ set (
 	net/tcpserver.cpp
 	net/utils.cpp
 	net/login.cpp
+	net/loginsessions.cpp
 	net/userlist.cpp
 	net/layerlist.cpp
 	net/serverthread.cpp
+	net/builtinserver.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
@@ -82,6 +84,7 @@ set (
 	dialogs/tinyplayer.cpp
 	dialogs/videoexportdialog.cpp
 	dialogs/recfilterdialog.cpp
+	dialogs/selectsessiondialog.cpp
 	widgets/viewstatus.cpp
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
@@ -134,6 +137,7 @@ set (
 	ui/inputcfg.ui
 	ui/recfilter.ui
 	ui/tinyplayer.ui
+	ui/selectsession.ui
 )
 
 qt5_wrap_ui( UI_Headers ${UIs} )

@@ -22,7 +22,7 @@
 
 #include "net/serverthread.h"
 
-#include "../shared/server/server.h"
+#include "builtinserver.h"
 #include "../shared/util/logger.h"
 
 namespace net {
@@ -52,19 +52,19 @@ bool ServerThread::isOnDefaultPort() const
 }
 
 void ServerThread::run() {
-	server::Server server;
+	server::BuiltinServer server;
 #ifdef NDEBUG
 	logger::setLogLevel(logger::LOG_WARNING);
 #else
-	logger::setLogLevel(logger::LOG_INFO);
+	logger::setLogLevel(logger::LOG_DEBUG);
 #endif
 
-	server.setHistorylimit(_historylimit);
+	server.setHistoryLimit(_historylimit);
 
-	connect(&server, SIGNAL(lastClientLeft()), this, SLOT(quit()));
+	connect(&server, SIGNAL(serverStopped()), this, SLOT(quit()));
 
 	logger::info() << "Starting server";
-    if(!server.start(_port, true)) {
+	if(!server.start(_port)) {
 		logger::error() << "Couldn't start server!";
 		_port = 0;
 		_starter.wakeOne();

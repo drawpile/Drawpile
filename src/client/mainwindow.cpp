@@ -918,7 +918,8 @@ void MainWindow::host()
 
 			// Start server if hosting locally
 			if(useremote==false) {
-				net::ServerThread *server = new net::ServerThread(this);
+				net::ServerThread *server = new net::ServerThread;
+				server->setDeleteOnExit();
 
 				QSettings cfg;
 				if(cfg.contains("settings/server/port"))
@@ -934,7 +935,6 @@ void MainWindow::host()
 					delete server;
 					return;
 				}
-				server->setDeleteOnExit();
 
 				if(!server->isOnDefaultPort())
 					address.setPort(port);
@@ -948,7 +948,7 @@ void MainWindow::host()
 			}
 
 			// Connect to server
-			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address);
+			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, this);
 			login->setPassword(dlg->getPassword());
 			login->setTitle(dlg->getTitle());
 			login->setMaxUsers(dlg->getUserLimit());
@@ -1050,7 +1050,7 @@ void MainWindow::joinSession(const QUrl& url)
 	else
 		win = new MainWindow(false);
 
-	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url);
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
 	win->_client->connectToServer(login);
 }
 
