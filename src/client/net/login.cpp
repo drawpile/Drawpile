@@ -218,7 +218,6 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 		} else if(flag=="PERSIST") {
 			session.persistent = true;
 		} else {
-			// TODO multisession: show as disabled
 			qWarning() << "Session" << session.id << "has unknown flag:" << flag;
 			session.incompatible = true;
 		}
@@ -298,6 +297,9 @@ void LoginHandler::expectLoginOk(const QString &msg)
 				init << "/locklayerctrl";
 			else
 				init << "/unlocklayerctrl";
+
+			if(_requestPersistent)
+				init << "/persist";
 
 			for(const QString msg : init)
 				_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, msg)));

@@ -67,7 +67,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,1">
             <item>
              <widget class="QLineEdit" name="username">
               <property name="sizePolicy">
@@ -110,7 +110,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="2,1">
             <item>
              <widget class="QLineEdit" name="sessionpassword">
               <property name="sizePolicy">
@@ -370,6 +370,19 @@
             </property>
             <property name="insertPolicy">
              <enum>QComboBox::InsertAtTop</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QCheckBox" name="persistentSession">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="toolTip">
+             <string>A persistent session can be joined even after all users have left</string>
+            </property>
+            <property name="text">
+             <string>Persistent session</string>
             </property>
            </widget>
           </item>
@@ -711,6 +724,22 @@
     <hint type="destinationlabel">
      <x>241</x>
      <y>103</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useremote</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>persistentSession</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>99</x>
+     <y>102</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>79</x>
+     <y>132</y>
     </hint>
    </hints>
   </connection>

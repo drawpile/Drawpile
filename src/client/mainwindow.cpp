@@ -954,6 +954,7 @@ void MainWindow::host()
 			login->setMaxUsers(dlg->getUserLimit());
 			login->setAllowDrawing(dlg->getAllowDrawing());
 			login->setLayerControlLock(dlg->getLayerControlLock());
+			login->setPersistentSessions(dlg->getPersistentMode());
 			w->_client->connectToServer(login);
 
 		}

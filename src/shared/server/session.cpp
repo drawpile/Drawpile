@@ -32,13 +32,13 @@ namespace server {
 
 using protocol::MessagePtr;
 
-SessionState::SessionState(int id, int minorVersion, QObject *parent)
+SessionState::SessionState(int id, int minorVersion, bool allowPersistent, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
 	_id(id), _minorVersion(minorVersion), _maxusers(255),
 	_locked(false), _layerctrllocked(true), _closed(false),
-	_lockdefault(false), _persistent(false), _historylimit(0)
+	_lockdefault(false), _allowPersistent(allowPersistent), _persistent(false), _historylimit(0)
 { }
 
 
@@ -175,6 +175,9 @@ void SessionState::setMaxUsers(int maxusers)
 
 void SessionState::setPersistent(bool persistent)
 {
+	if(!_allowPersistent && persistent)
+		return;
+
 	if(_persistent != persistent) {
 		_persistent = persistent;
 		emit sessionAttributeChanged(this);

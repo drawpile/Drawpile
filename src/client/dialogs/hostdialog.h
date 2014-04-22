@@ -62,6 +62,9 @@ class HostDialog : public QDialog
 		//! Should layer controls be locked by default
 		bool getLayerControlLock() const;
 
+		//! Should the session be persistent
+		bool getPersistentMode() const;
+
 		/**
 		 * @brief Get session loader for initializing a new session
 		 * @return session loader instance

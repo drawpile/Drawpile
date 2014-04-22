@@ -46,9 +46,8 @@ SessionServer::~SessionServer()
 
 SessionState *SessionServer::createSession(int minorVersion)
 {
-	SessionState *session = new SessionState(_nextId++, minorVersion, this);
+	SessionState *session = new SessionState(_nextId++, minorVersion, allowPersistentSessions(), this);
 
-	session->setPersistent(allowPersistentSessions());
 	session->setHistoryLimit(_historyLimit);
 
 	connect(session, SIGNAL(userConnected(SessionState*)), this, SIGNAL(sessionChanged(SessionState*)));

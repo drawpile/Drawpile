@@ -97,6 +97,16 @@ public:
 	void setLayerControlLock(bool layerlock) { Q_ASSERT(_mode==HOST); _layerctrllock = layerlock; }
 
 	/**
+	 * @brief Set whether the session should be persistent
+	 *
+	 * Only for host mode. Whether this option actually gets set depends on whether the server
+	 * supports persistent sessions.
+	 *
+	 * @param persistent
+	 */
+	void setPersistentSessions(bool persistent) { Q_ASSERT(_mode==HOST); _requestPersistent = persistent; }
+
+	/**
 	 * @brief Set the server we're communicating with
 	 * @param server
 	 */
@@ -154,6 +164,7 @@ private:
 	int _maxusers;
 	bool _allowdrawing;
 	bool _layerctrllock;
+	bool _requestPersistent;
 
 	// Process state
 	Server *_server;

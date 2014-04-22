@@ -135,6 +135,11 @@ void Client::sendDirectMessage(protocol::MessagePtr msg)
 	_msgqueue->send(msg);
 }
 
+void Client::sendSystemChat(const QString &message)
+{
+	_msgqueue->send(MessagePtr(new protocol::Chat(0, message)));
+}
+
 void Client::receiveMessages()
 {
 	while(_msgqueue->isPending()) {
@@ -252,7 +257,7 @@ void Client::requestSnapshot(bool forcenew)
 {
 	Q_ASSERT(_state != LOGIN);
 
-	_msgqueue->send(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
+	sendDirectMessage(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 	_session->addSnapshotPoint();
 	logger::info() << "Created a new snapshot point and requested data from client" << _id;
@@ -545,6 +550,8 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 	 * /unlockdefault   - don't lock new users by default
 	 * /password [p]    - password protect the session. If p is omitted, password is removed
 	 * /force_snapshot  - force snapshot request now
+	 * /persist         - make the session persistent
+	 * /nopersist       - make the session non-persistent
 	 * /who             - list users
 	 * /status          - show session status
 	 */
@@ -631,6 +638,15 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 		return true;
 	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
 		_session->startSnapshotSync();
+		return true;
+	} else if(tokens[0] == "/persist" && tokens.count()==1) {
+		if(_session->isPersistenceAllowed())
+			_session->setPersistent(true);
+		else
+			sendSystemChat("Session persistence is not enabled");
+		return true;
+	} else if(tokens[0] == "/nopersist" && tokens.count()==1) {
+		_session->setPersistent(false);
 		return true;
 	} else if(tokens[0] == "/who" && tokens.count()==1) {
 		sendOpWhoList();
@@ -776,7 +792,7 @@ void Client::sendOpWhoList()
 		msgs << QString("#%1: %2 [%3]").arg(c->id()).arg(c->username(), flags);
 	}
 	for(const QString &m : msgs)
-		_msgqueue->send(MessagePtr(new protocol::Chat(0, m)));
+		sendSystemChat(m);
 }
 
 void Client::sendOpServerStatus()
@@ -784,8 +800,8 @@ void Client::sendOpServerStatus()
 	QStringList msgs;
 	msgs << QString("Session #%1").arg(_session->id());
 	msgs << QString("Logged in users: %1 (max: %2)").arg(_session->userCount()).arg(_session->maxUsers());
-	msgs << QString("Persistent session: %1").arg(_session->isPersistent());
-	msgs << QString("Password protected: %1").arg(!_session->password().isEmpty());
+	msgs << QString("Persistent session: %1").arg(_session->isPersistenceAllowed() ? (_session->isPersistent() ? "yes" : "no") : "not allowed");
+	msgs << QString("Password protected: %1").arg(!_session->password().isEmpty() ? "yes" : "no");
 	msgs << QString("History size: %1 Mb (limit: %2 Mb)")
 			.arg(_session->mainstream().lengthInBytes() / qreal(1024*1024), 0, 'f', 2)
 			.arg(_session->historyLimit() / qreal(1024*1024), 0, 'f', 2);
@@ -793,7 +809,7 @@ void Client::sendOpServerStatus()
 	msgs << QString("Snapshot point exists: %1").arg(_session->mainstream().hasSnapshot() ? "yes" : "no");
 
 	for(const QString &m : msgs)
-		_msgqueue->send(MessagePtr(new protocol::Chat(0, m)));
+		sendSystemChat(m);
 }
 
 }

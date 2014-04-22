@@ -71,7 +71,7 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	SessionState(int id, int minorVersion, QObject *parent=0);
+	SessionState(int id, int minorVersion, bool allowPersistent, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
@@ -178,6 +178,7 @@ public:
 	 * @return
 	 */
 	bool isPersistent() const { return _persistent; }
+	bool isPersistenceAllowed() const { return _allowPersistent; }
 	void setPersistent(bool persistent);
 
 	/**
@@ -400,6 +401,7 @@ private:
 	bool _layerctrllocked;
 	bool _closed;
 	bool _lockdefault;
+	bool _allowPersistent;
 	bool _persistent;
 
 	uint _historylimit;

@@ -204,4 +204,9 @@ bool HostDialog::getLayerControlLock() const
 	return ui_->layerctrllock->isChecked();
 }
 
+bool HostDialog::getPersistentMode() const
+{
+	return ui_->persistentSession->isChecked();
+}
+
 }

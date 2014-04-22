@@ -198,6 +198,12 @@ public:
 	void sendDirectMessage(protocol::MessagePtr msg);
 
 	/**
+	 * @brief Send a message from the server directly to this user
+	 * @param message
+	 */
+	void sendSystemChat(const QString &message);
+
+	/**
 	 * @brief Get this client's position in the message stream
 	 * @return message stream index
 	 */
