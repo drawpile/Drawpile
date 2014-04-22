@@ -130,7 +130,7 @@ void LoginHandler::expectHello(const QString &msg)
 
 		connect(dialog, SIGNAL(selected(int,bool)), this, SLOT(joinSelectedSession(int,bool)));
 		connect(dialog, &QDialog::rejected, [this]() {
-			_server->loginFailure(QApplication::tr("Cancelled"));
+			_server->loginFailure(QApplication::tr("Cancelled"), true);
 		});
 
 		dialog->show();

@@ -31,7 +31,7 @@
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
-	QObject(parent), Server(false), _loginstate(0), _paused(false)
+	QObject(parent), Server(false), _loginstate(0), _localDisconnect(false), _paused(false)
 {
 	_socket = new QTcpSocket(this);
 	_msgqueue = new protocol::MessageQueue(_socket, this);
@@ -59,6 +59,7 @@ void TcpServer::login(LoginHandler *login)
 
 void TcpServer::logout()
 {
+	_localDisconnect = true;
 	_socket->disconnectFromHost();
 }
 
@@ -108,7 +109,7 @@ void TcpServer::handleBadData(int len, int type)
 
 void TcpServer::handleDisconnect()
 {
-	emit serverDisconnected(_error);
+	emit serverDisconnected(_error, _localDisconnect);
 	deleteLater();
 }
 
@@ -122,10 +123,11 @@ void TcpServer::handleSocketError()
 		handleDisconnect();
 }
 
-void TcpServer::loginFailure(const QString &message)
+void TcpServer::loginFailure(const QString &message, bool cancelled)
 {
 	qWarning() << "Login failed:" << message;
 	_error = message;
+	_localDisconnect = cancelled;
 	_socket->close();
 }
 

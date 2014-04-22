@@ -209,7 +209,7 @@ signals:
 	void serverConnected(const QString &address, int port);
 	void serverLoggedin(bool join);
 	void serverDisconnecting();
-	void serverDisconnected(const QString &message);
+	void serverDisconnected(const QString &message, bool localDisconnect);
 
 	void userJoined(int id, const QString &name);
 	void userLeft(const QString &name);
@@ -230,7 +230,7 @@ signals:
 private slots:
 	void handleMessage(protocol::MessagePtr msg);
 	void handleConnect(int userid, bool join);
-	void handleDisconnect(const QString &message);
+	void handleDisconnect(const QString &message, bool localDisconnect);
 
 private:
 	void handleSnapshotRequest(const protocol::SnapshotMode &msg);

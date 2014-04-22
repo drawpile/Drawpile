@@ -110,7 +110,7 @@ class MainWindow : public QMainWindow {
 
 		void connecting();
 		void loggedin(bool join);
-		void disconnected(const QString &message);
+		void disconnected(const QString &message, bool localDisconnect);
 		void sessionConfChanged(bool locked, bool layerctrllocked, bool closed);
 
 		void updateLockWidget();

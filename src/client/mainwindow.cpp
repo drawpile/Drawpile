@@ -203,12 +203,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	// Network status changes
 	connect(_client, SIGNAL(serverConnected(QString, int)), this, SLOT(connecting()));
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
-	connect(_client, SIGNAL(serverDisconnected(QString)), this, SLOT(disconnected(QString)));
+	connect(_client, SIGNAL(serverDisconnected(QString, bool)), this, SLOT(disconnected(QString, bool)));
 
 	connect(_client, SIGNAL(serverConnected(QString, int)), netstatus, SLOT(connectingToHost(QString, int)));
 	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
 	connect(_client, SIGNAL(serverDisconnecting()), netstatus, SLOT(hostDisconnecting()));
-	connect(_client, SIGNAL(serverDisconnected(QString)), netstatus, SLOT(hostDisconnected()));
+	connect(_client, SIGNAL(serverDisconnected(QString, bool)), netstatus, SLOT(hostDisconnected()));
 	connect(_client, SIGNAL(expectingBytes(int)),netstatus, SLOT(expectBytes(int)));
 	connect(_client, SIGNAL(sendingBytes(int)), netstatus, SLOT(sendingBytes(int)));
 	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
@@ -1071,7 +1071,7 @@ void MainWindow::connecting()
 /**
  * Connection lost, so disable and enable some UI elements
  */
-void MainWindow::disconnected(const QString &message)
+void MainWindow::disconnected(const QString &message, bool localDisconnect)
 {
 	getAction("hostsession")->setEnabled(true);
 	getAction("leavesession")->setEnabled(false);
@@ -1084,8 +1084,8 @@ void MainWindow::disconnected(const QString &message)
 
 	setSessionTitle(QString());
 
-	// This should be true at this time still
-	if(!_client->isLoggedIn()) {
+	// Display login error if not yet logged in
+	if(!_client->isLoggedIn() && !localDisconnect) {
 		showErrorMessage(tr("Couldn't connect to server"), message);
 	}
 

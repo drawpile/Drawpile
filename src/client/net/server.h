@@ -70,7 +70,14 @@ public:
     virtual int uploadQueueBytes() const { return 0; }
 
 protected:
-    virtual void loginFailure(const QString &message) {}
+	/**
+	 * @brief Signal a failed login
+	 *
+	 *
+	 * @param message error message
+	 * @param cancelled if true, the error was due to user cancellation
+	 */
+	virtual void loginFailure(const QString &message, bool cancelled=false) {}
     virtual void loginSuccess() {}
 
 private:

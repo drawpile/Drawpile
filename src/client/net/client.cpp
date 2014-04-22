@@ -87,7 +87,7 @@ void Client::connectToServer(LoginHandler *loginhandler)
 	_isloopback = false;
 
 	connect(server, SIGNAL(loggingOut()), this, SIGNAL(serverDisconnecting()));
-	connect(server, SIGNAL(serverDisconnected(QString)), this, SLOT(handleDisconnect(QString)));
+	connect(server, SIGNAL(serverDisconnected(QString, bool)), this, SLOT(handleDisconnect(QString, bool)));
 	connect(server, SIGNAL(loggedIn(int, bool)), this, SLOT(handleConnect(int, bool)));
 	connect(server, SIGNAL(messageReceived(protocol::MessagePtr)), this, SLOT(handleMessage(protocol::MessagePtr)));
 
@@ -120,9 +120,9 @@ void Client::handleConnect(int userid, bool join)
 	emit serverLoggedin(join);
 }
 
-void Client::handleDisconnect(const QString &message)
+void Client::handleDisconnect(const QString &message, bool localDisconnect)
 {
-	emit serverDisconnected(message);
+	emit serverDisconnected(message, localDisconnect);
 	_userlist->clearUsers();
 	_layerlist->unlockAll();
 	_server = _loopback;
