@@ -520,8 +520,14 @@ void Client::handleSnapshotRequest(const protocol::SnapshotMode &msg)
 
 void Client::handleChatMessage(const protocol::Chat &msg)
 {
+	QString username;
+	if(msg.contextId()==0)
+		username = tr("Server");
+	else
+		username = _userlist->getUsername(msg.contextId());
+
 	emit chatMessageReceived(
-		_userlist->getUsername(msg.contextId()),
+		username,
 		msg.message(),
 		msg.contextId() == _my_id
 	);
