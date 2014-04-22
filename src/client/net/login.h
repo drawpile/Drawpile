@@ -34,6 +34,8 @@ class LoginSessionModel;
 
 /**
  * @brief Login process state machine
+ *
+ * See also LoginHandler in src/shared/server/ for the serverside implementation
  */
 class LoginHandler : public QObject {
 	Q_OBJECT

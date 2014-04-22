@@ -27,11 +27,13 @@ The login handshake is a string based protocol that uses the LOGIN message type.
 
 The server starts by sending a hello message, which includes the protocol version and the set of server feature flags. If the client does not support the protocol or does not understand the features, it should disconnect.
 
-The server continues by sending a list of available sessions. The client can either join one of the sessions or host a new one. (Whether a client is allowed to host a session is indicated by a server feature flag.) The server may send updated session information until the client has made a decision.
+The server continues by sending a list of available sessions. The client can either join one of the sessions or host a new one. The server may send updated session information until the client has made a decision.
 
-The built-in server only supports a single session per server instance. This is indicated with a feature flag. In this case, the client may join the only session automatically without prompting the user.
+The built-in server only supports a single session per server instance. This is indicated by (the lack of) a feature flag. In this case, the client may join the only session automatically without prompting the user.
 
-The server responds to the join/host command either by a success signal or an error code. If the command was accepted, the client leaves the login state and enters the session. In case of error, the server disconnects the client.
+The server responds to the join/host command either by a success signal or an error code. If the command was accepted, the client leaves the login state and enters the session. In case of error, the server disconnects the client. Users joining a session will be assigned a user ID by the server. Hosting users can choose their own IDs.
+
+When hosting a session, the hosting user must announce its minor protocol version. A joining user must not join a session with a mismatching minor version. This way, a single server can support multiple client versions as long as the major versions match.
 
 See `src/shared/server/loginhandler.h` for implementation details.
 
