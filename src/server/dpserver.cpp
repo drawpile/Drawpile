@@ -32,6 +32,10 @@
 #include "multiserver.h"
 #include "../shared/util/logger.h"
 
+#ifdef Q_OS_UNIX
+#include "unixsignals.h"
+#endif
+
 int main(int argc, char *argv[]) {
 	QCoreApplication app(argc, argv);
 
@@ -144,6 +148,11 @@ int main(int argc, char *argv[]) {
 	server->setSessionLimit(sessionLimit);
 
 	server->setPersistentSessions(parser.isSet(persistentSessionOption));
+
+#ifdef Q_OS_UNIX
+	// Catch signals
+	server->connect(UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
+#endif
 
 	// Start
 	if(!server->start(port, address))

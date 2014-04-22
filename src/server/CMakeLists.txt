@@ -11,6 +11,10 @@ set (
 	multiserver.cpp
 	)
 
+if ( UNIX )
+	set ( SOURCES ${SOURCES} unixsignals.cpp )
+endif ( UNIX )
+
 # Use local copy of Qt's command line parser for Qt <5.2
 # Remove this when we no longer need to support old Qt.
 if ( ${Qt5Network_VERSION_STRING} VERSION_LESS "5.2.0" )
