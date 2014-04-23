@@ -34,10 +34,20 @@
 #include "../shared/util/logger.h"
 
 #ifdef Q_OS_UNIX
+#include <iostream>
+#include <unistd.h>
 #include "unixsignals.h"
 #endif
 
 int main(int argc, char *argv[]) {
+#ifdef Q_OS_UNIX
+	// Security check
+	if(geteuid() == 0) {
+		std::cerr << "This program should not be run as root!\n";
+		return 1;
+	}
+#endif
+
 	QCoreApplication app(argc, argv);
 
 	QCoreApplication::setOrganizationName("DrawPile");
@@ -166,6 +176,7 @@ int main(int argc, char *argv[]) {
 			if(!server->start(port, address))
 				return 1;
 		} else {
+			// listening socket passed to us by the init system
 			if(listenfds.size() != 1) {
 				logger::error() << "Too many file descriptors received.";
 				return 1;
