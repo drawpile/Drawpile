@@ -27,7 +27,6 @@
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
 #include "../shared/server/client.h"
-#include "../shared/server/loginhandler.h"
 
 #include "../shared/net/snapshot.h"
 
@@ -39,6 +38,14 @@ MultiServer::MultiServer(QObject *parent)
 	_state(NOT_STARTED)
 {
 	_sessions = new SessionServer(this);
+
+	connect(_sessions, SIGNAL(userLoggedIn()), this, SLOT(printStatusUpdate()));
+	connect(_sessions, &SessionServer::userDisconnected, [this]() {
+		printStatusUpdate();
+		// The server will be fully stopped after all users have disconnected
+		if(_state == STOPPING)
+			stop();
+	});
 
 	// TODO move this somewhere else?
 	connect(_sessions, &SessionServer::sessionCreated, [this](SessionState *session) {
@@ -117,60 +124,26 @@ bool MultiServer::startFd(int fd)
 }
 
 /**
- * @brief Get the number of connected clients.
- *
- * This includes the clients who haven't yet logged in to a session
- *
- * @return connected client count
- */
-int MultiServer::clientCount() const
-{
-	return _lobby.size() + _sessions->totalUsers();
-}
-
-/**
  * @brief Accept or reject new client connection
  */
 void MultiServer::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
 
-	logger::info() << "Accepted new client from adderss" << socket->peerAddress().toString();
-	logger::info() << "Number of connected clients is now" << clientCount() + 1;
+	logger::info() << "Accepted new client from address" << socket->peerAddress();
 
-	Client *client = new Client(socket, this);
-	_lobby.append(client);
-
-	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
-
-	auto *login = new LoginHandler(client, _sessions);
-	connect(login, SIGNAL(clientJoined(Client*)), this, SLOT(clientJoined(Client*)));
-	login->startLoginProcess();
+	_sessions->addClient(new Client(socket));
 
 	printStatusUpdate();
 }
 
-void MultiServer::clientJoined(Client *client)
+
+void MultiServer::printStatusUpdate()
 {
-	logger::debug() << "client" << client->id() << "moved from lobby to session";
-	_lobby.removeOne(client);
-	printStatusUpdate();
-}
-
-void MultiServer::removeClient(Client *client)
-{
-	logger::info() << "Client" << client->id() << "from" << client->peerAddress().toString() << "disconnected";
-	bool wasInLobby = _lobby.removeOne(client);
-
-	// We are responsible for clients not part of any session
-	if(wasInLobby) {
-		client->deleteLater();
-	}
-
-	printStatusUpdate();
-
-	if(_state == STOPPING)
-		stop();
+	initsys::notifyStatus(QString("%1 users and %2 sessions")
+		.arg(_sessions->totalUsers())
+		.arg(_sessions->sessionCount())
+	);
 }
 
 /**
@@ -178,31 +151,20 @@ void MultiServer::removeClient(Client *client)
  */
 void MultiServer::stop() {
 	if(_state == RUNNING) {
-		logger::info() << "Stopping server and kicking out" << clientCount() << "users...";
+		logger::info() << "Stopping server and kicking out" << _sessions->totalUsers() << "users...";
 		_state = STOPPING;
 		_server->close();
-
-		for(Client *c : _lobby)
-			c->kick(0);
 
 		_sessions->stopAll();
 	}
 
 	if(_state == STOPPING) {
-		if(clientCount() == 0) {
+		if(_sessions->totalUsers() == 0) {
 			_state = STOPPED;
 			logger::info() << "Server stopped.";
 			emit serverStopped();
 		}
 	}
-}
-
-void MultiServer::printStatusUpdate()
-{
-	initsys::notifyStatus(QString("%1 users and %2 sessions")
-		.arg(clientCount())
-		.arg(_sessions->sessionCount())
-	);
 }
 
 }

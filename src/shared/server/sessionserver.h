@@ -23,6 +23,7 @@
 namespace server {
 
 class SessionState;
+class Client;
 
 /**
  * @brief Session manager
@@ -70,6 +71,16 @@ public:
 	 */
 	void setAllowPersistentSessions(bool persistent) { _allowPersistentSessions = persistent; }
 	bool allowPersistentSessions() const { return _allowPersistentSessions; }
+
+	/**
+	 * @brief Add a new client
+	 *
+	 * This will start the login process during which the client will
+	 * be assigned to a session.
+	 *
+	 * @param client newly created client
+	 */
+	void addClient(Client *client);
 
 	/**
 	 * @brief Create a new session
@@ -130,16 +141,30 @@ signals:
 	void sessionChanged(SessionState *session);
 
 	/**
+	 * @brief A user just logged in to a session
+	 */
+	void userLoggedIn();
+
+	/**
+	 * @brief A user just disconnected
+	 */
+	void userDisconnected();
+
+	/**
 	 * @brief Session with the given ID has just been destroyed
 	 */
 	void sessionEnded(int id);
 
 private slots:
+	void moveFromLobby(SessionState *session, Client *client);
+	void lobbyDisconnectedEvent(Client *client);
 	void userDisconnectedEvent(SessionState *session);
-	void sessionDeletedEvent(QObject *session);
 
 private:
+	void destroySession(SessionState *session);
+
 	QList<SessionState*> _sessions;
+	QList<Client*> _lobby;
 	int _nextId;
 
 	int _sessionLimit;

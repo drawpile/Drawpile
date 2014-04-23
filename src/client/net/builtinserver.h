@@ -27,7 +27,6 @@ class QTcpServer;
 
 namespace server {
 
-class Client;
 class SessionServer;
 
 /**
@@ -43,7 +42,6 @@ public:
 	bool start(quint16 preferredPort);
 
 	int port() const;
-	int clientCount() const;
 
 public slots:
 	 //! Stop the server. All clients are disconnected.
@@ -51,8 +49,6 @@ public slots:
 
 private slots:
 	void newClient();
-	void clientJoined(Client *client);
-	void removeClient(Client *client);
 
 signals:
 	void serverStopped();
@@ -61,7 +57,6 @@ private:
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
 	QTcpServer *_server;
-	QList<Client*> _lobby;
 	SessionServer *_sessions;
 	State _state;
 };

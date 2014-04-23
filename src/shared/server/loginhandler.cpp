@@ -211,7 +211,6 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	send(QString("OK %1").arg(_client->id()));
 
 	session->joinUser(_client, false);
-	emit clientJoined(_client);
 
 	deleteLater();
 }

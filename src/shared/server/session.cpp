@@ -82,7 +82,7 @@ void SessionState::joinUser(Client *user, bool host)
 		user->lockUser();
 
 	logger::info() << "User" << user->id() << "joined";
-	emit userConnected(this);
+	emit userConnected(this, user);
 }
 
 void SessionState::removeUser(Client *user)

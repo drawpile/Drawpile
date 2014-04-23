@@ -84,9 +84,6 @@ public:
 
 	void startLoginProcess();
 
-signals:
-	void clientJoined(Client *client);
-
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
 

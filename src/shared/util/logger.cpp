@@ -17,9 +17,11 @@
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
-#include <iostream>
 
 #include "logger.h"
+
+#include <iostream>
+#include <QHostAddress>
 
 namespace logger {
 
@@ -87,5 +89,6 @@ Logger::~Logger()
 	}
 }
 
-}
+Logger &Logger::operator<<(const QHostAddress &a) { if(stream) { stream->ts << a.toString(); } return maybeSpace(); }
 
+}

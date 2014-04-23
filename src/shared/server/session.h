@@ -343,7 +343,7 @@ public:
 
 signals:
 	//! A user just connected to the session
-	void userConnected(SessionState *thisSession);
+	void userConnected(SessionState *thisSession, Client *client);
 
 	//! A user disconnected from the session
 	void userDisconnected(SessionState *thisSession);

@@ -52,26 +52,21 @@ public:
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);
 
-	int clientCount() const;
-
 public slots:
 	 //! Stop the server. All clients are disconnected.
 	void stop();
 
 private slots:
 	void newClient();
-	void clientJoined(Client *client);
-	void removeClient(Client *client);
+	void printStatusUpdate();
 
 signals:
 	void serverStopped();
 
 private:
-	void printStatusUpdate();
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
 	QTcpServer *_server;
-	QList<Client*> _lobby;
 	SessionServer *_sessions;
 	State _state;
 

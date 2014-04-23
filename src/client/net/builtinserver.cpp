@@ -44,6 +44,11 @@ BuiltinServer::BuiltinServer(QObject *parent)
 	// Only one session per server is supported here
 	_sessions->setSessionLimit(1);
 	connect(_sessions, SIGNAL(sessionEnded(int)), this, SLOT(stop()));
+	connect(_sessions, &SessionServer::userDisconnected, [this]() {
+		// The server will be fully stopped after all users have disconnected
+		if(_state == STOPPING)
+			stop();
+	});
 }
 
 void BuiltinServer::setHistoryLimit(uint limit)
@@ -93,51 +98,15 @@ int BuiltinServer::port() const
 }
 
 /**
- * @brief Get the number of connected clients.
- *
- * This includes the clients who haven't yet logged in to the session
- * @return
- */
-int BuiltinServer::clientCount() const
-{
-	return _lobby.size() + _sessions->totalUsers();
-}
-
-/**
  * @brief Accept or reject new client connection
  */
 void BuiltinServer::newClient()
 {
 	QTcpSocket *socket = _server->nextPendingConnection();
 
-	logger::info() << "Accepted new client from address" << socket->peerAddress().toString();
+	logger::info() << "Accepted new client from address" << socket->peerAddress();
 
-	Client *client = new Client(socket, this);
-	_lobby.append(client);
-
-	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(removeClient(Client*)));
-
-	auto *login = new LoginHandler(client, _sessions);
-	connect(login, SIGNAL(clientJoined(Client*)), this, SLOT(clientJoined(Client*)));
-	login->startLoginProcess();
-}
-
-void BuiltinServer::clientJoined(Client *client)
-{
-	_lobby.removeOne(client);
-}
-
-void BuiltinServer::removeClient(Client *client)
-{
-	logger::info() << "Client" << client->id() << "from" << client->peerAddress().toString() << "disconnected";
-	bool wasInLobby = _lobby.removeOne(client);
-	if(wasInLobby) {
-		// If client was not in the lobby, it was part of a session.
-		client->deleteLater();
-	}
-
-	if(_state == STOPPING)
-		stop();
+	_sessions->addClient(new Client(socket));
 }
 
 /**
@@ -149,15 +118,11 @@ void BuiltinServer::stop() {
 		_state = STOPPING;
 
 		_server->close();
-
-		for(Client *c : _lobby)
-			c->kick(0);
-
 		_sessions->stopAll();
 	}
 
 	if(_state == STOPPING) {
-		if(clientCount() == 0) {
+		if(_sessions->totalUsers() == 0) {
 			_state = STOPPED;
 			logger::debug() << "Built-in server stopped.";
 			emit serverStopped();

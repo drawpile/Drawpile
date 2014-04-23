@@ -20,6 +20,8 @@
 
 #include "sessionserver.h"
 #include "session.h"
+#include "client.h"
+#include "loginhandler.h"
 
 #include "../util/logger.h"
 
@@ -40,7 +42,7 @@ SessionServer::~SessionServer()
 		logger::warning() << "Destroying" << _sessions.size() << "sessions...";
 		QList<SessionState*> tbd = _sessions;
 		for(SessionState *s : tbd)
-			delete s;
+			destroySession(s);
 	}
 }
 
@@ -50,10 +52,10 @@ SessionState *SessionServer::createSession(int minorVersion)
 
 	session->setHistoryLimit(_historyLimit);
 
-	connect(session, SIGNAL(userConnected(SessionState*)), this, SIGNAL(sessionChanged(SessionState*)));
+	connect(session, SIGNAL(userConnected(SessionState*, Client*)), this, SLOT(moveFromLobby(SessionState*, Client*)));
+	connect(session, SIGNAL(userConnected(SessionState*, Client*)), this, SIGNAL(sessionChanged(SessionState*)));
 	connect(session, SIGNAL(userDisconnected(SessionState*)), this, SLOT(userDisconnectedEvent(SessionState*)));
 	connect(session, SIGNAL(sessionAttributeChanged(SessionState*)), this, SIGNAL(sessionChanged(SessionState*)));
-	connect(session, SIGNAL(destroyed(QObject*)), this, SLOT(sessionDeletedEvent(QObject*)));
 
 	_sessions.append(session);
 
@@ -63,6 +65,18 @@ SessionState *SessionServer::createSession(int minorVersion)
 	logger::info() << "Session" << session->id() << "created";
 
 	return session;
+}
+
+void SessionServer::destroySession(SessionState *session)
+{
+	Q_ASSERT(_sessions.contains(session));
+
+	logger::debug() << "Deleting session" << session->id();
+	_sessions.removeOne(session);
+
+	emit sessionEnded(session->id());
+
+	delete session;
 }
 
 SessionState *SessionServer::getSessionById(int id) const
@@ -76,7 +90,7 @@ SessionState *SessionServer::getSessionById(int id) const
 
 int SessionServer::totalUsers() const
 {
-	int count = 0;
+	int count = _lobby.size();
 	for(const SessionState * s : _sessions)
 		count += s->userCount();
 	return count;
@@ -84,11 +98,64 @@ int SessionServer::totalUsers() const
 
 void SessionServer::stopAll()
 {
-	// TODO
-	//session->kickAllUsers();
-	//session->stopRecording();
+	for(Client *c : _lobby)
+		c->kick();
+
+	for(SessionState *s : _sessions) {
+		s->stopRecording();
+		s->kickAllUsers();
+	}
 }
 
+void SessionServer::addClient(Client *client)
+{
+	client->setParent(this);
+
+	_lobby.append(client);
+
+	connect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
+
+	(new LoginHandler(client, this))->startLoginProcess();
+}
+
+/**
+ * @brief Handle the move of a client from the lobby to a session
+ * @param session
+ * @param client
+ */
+void SessionServer::moveFromLobby(SessionState *session, Client *client)
+{
+	logger::debug() << "client" << client->id() << "moved from lobby to session" << session->id();
+	Q_ASSERT(_lobby.contains(client));
+	_lobby.removeOne(client);
+
+	// the session handles disconnect events from now on
+	disconnect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
+
+	emit userLoggedIn();
+}
+
+/**
+ * @brief Handle client disconnect while the client was not yet logged in
+ * @param client
+ */
+void SessionServer::lobbyDisconnectedEvent(Client *client)
+{
+	logger::debug() << "non-logged in client from" << client->peerAddress() << "removed";
+	Q_ASSERT(_lobby.contains(client));
+	_lobby.removeOne(client);
+
+	client->deleteLater();
+	emit userDisconnected();
+}
+
+/**
+ * @brief Handle client disconnect from a session
+ *
+ * The session takes care of the client itself. Here, we clean up after the session
+ * in case it needs to be closed.
+ * @param session
+ */
 void SessionServer::userDisconnectedEvent(SessionState *session)
 {
 	bool delSession = false;
@@ -110,17 +177,11 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 	}
 
 	if(delSession)
-		session->deleteLater();
+		destroySession(session);
 	else
 		emit sessionChanged(session);
-}
 
-void SessionServer::sessionDeletedEvent(QObject *session)
-{
-	SessionState *s = static_cast<SessionState*>(session);
-	logger::info() << "Session" << s->id() << "deleted.";
-	_sessions.removeAll(s);
-	emit sessionEnded(s->id());
+	emit userDisconnected();
 }
 
 }

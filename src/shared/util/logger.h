@@ -23,6 +23,8 @@
 #include <QDebug>
 #include <functional>
 
+class QHostAddress;
+
 namespace logger {
 
 enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG};
@@ -62,6 +64,7 @@ public:
     Logger &operator<<(double t) { if(stream) { stream->ts << t; } return maybeSpace(); }
 	Logger &operator<<(const char* t) { if(stream) { stream->ts << QString::fromLocal8Bit(t); } return maybeSpace(); }
     Logger &operator<<(const QString & t) { if(stream) { stream->ts << '\"' << t  << '\"'; } return maybeSpace(); }
+	Logger &operator<<(const QHostAddress &a);
 };
 
 inline Logger error() { return Logger(LOG_ERROR); }

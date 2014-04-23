@@ -35,8 +35,9 @@ void notifyReady()
 
 void notifyStatus(const QString &status)
 {
-	Q_UNUSED(status);
-	// dummy
+#ifndef NDEBUG
+	qDebug(status);
+#endif
 }
 
 QList<int> getListenFds()
