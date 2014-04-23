@@ -18,34 +18,50 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#ifndef UNIXSIGNALS_H
-#define UNIXSIGNALS_H
+#ifndef INITSYS_H
+#define INITSYS_H
 
-#include <QObject>
+#include <QString>
+#include "../shared/util/logger.h"
 
 /**
- * @brief A class for converting UNIX signals to Qt signals
+ * Integration with the init system.
  *
- * To use, simply connect to the signal you are interested.
+ * Currently two backends are provided:
+ *
+ * - dummy (no integration)
+ * - systemd
  */
-class UnixSignals : public QObject
-{
-	Q_OBJECT
-public:
-	static UnixSignals *instance();
+namespace initsys {
 
-signals:
-	void sigInt();
-	void sigTerm();
+/**
+ * @brief Set log printing function
+ *
+ */
+void setInitSysLogger();
 
-protected:
-	void connectNotify(const QMetaMethod &signal);
+/**
+ * @brief Send the "server ready" notification
+ */
+void notifyReady();
 
-private slots:
-	void handleSignal();
+/**
+ * @brief Send a freeform status update
+ * @param status
+ */
+void notifyStatus(const QString &status);
 
-private:
-	UnixSignals();
-};
+/**
+ * @brief Get file descriptors passed by the init system
+ *
+ * Currently, we expect either 0 or 1 inet socket.
+ * If a socket is passed, we use that instead of opening
+ * one ourselves.
+ *
+ * @return list of socket file descriptors
+ */
+QList<int> getListenFds();
 
-#endif // UNIXSIGNALS_H
+}
+
+#endif // INITSYS_H

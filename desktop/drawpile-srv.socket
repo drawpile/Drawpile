@@ -1,0 +1,10 @@
+[Unit]
+Description=Drawpile dedicated server socket
+After=network.target
+
+[Socket]
+ListenStream=27750
+
+[Install]
+WantedBy=sockets.target
+

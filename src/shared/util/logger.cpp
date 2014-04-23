@@ -24,9 +24,9 @@
 namespace logger {
 
 namespace {
-	static LogLevel loglevel = LOG_INFO;
+	LogLevel loglevel = LOG_INFO;
 
-	static const char *LOG_PREFIX[] = {
+	const char *LOG_PREFIX[] = {
 		"",
 		"ERROR",
 		"WARNING",
@@ -34,12 +34,15 @@ namespace {
 		"DEBUG"
 	};
 
-	void printLog(LogLevel level, const QString &msg) {
+	void defaultPrintLog(LogLevel level, const QString &msg) {
 		std::cerr << LOG_PREFIX[level] << ": " << msg.toLocal8Bit().constData() << std::endl;
 	}
+
+	LogFunction printLog = defaultPrintLog;
 }
 
 void setLogLevel(LogLevel level) { loglevel = level; }
+void setLogPrinter(LogFunction fn) { printLog = fn; }
 
 Logger::Logger(LogLevel level)
 {

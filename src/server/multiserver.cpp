@@ -22,6 +22,7 @@
 #include <QTcpSocket>
 
 #include "multiserver.h"
+#include "initsys.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
@@ -69,6 +70,7 @@ void MultiServer::setPersistentSessions(bool persistent)
  * @brief Start listening on the specified address.
  * @param port the port to listen on
  * @param address listening address
+ * @return true on success
  */
 bool MultiServer::start(quint16 port, const QHostAddress& address) {
 	Q_ASSERT(_state == NOT_STARTED);
@@ -86,6 +88,31 @@ bool MultiServer::start(quint16 port, const QHostAddress& address) {
 	}
 
 	logger::info() << "Started listening on port" << port << "at address" << address.toString();
+	return true;
+}
+
+/**
+ * @brief Start listening on the given file descriptor
+ * @param fd
+ * @return true on success
+ */
+bool MultiServer::startFd(int fd)
+{
+	Q_ASSERT(_state == NOT_STARTED);
+	_state = RUNNING;
+	_server = new QTcpServer(this);
+
+	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+
+	if(!_server->setSocketDescriptor(fd)) {
+		logger::error() << "Couldn't set server socket descriptor!";
+		delete _server;
+		_server = 0;
+		_state = NOT_STARTED;
+		return false;
+	}
+
+	logger::info() << "Started listening on passed socket";
 	return true;
 }
 
@@ -119,12 +146,15 @@ void MultiServer::newClient()
 	auto *login = new LoginHandler(client, _sessions);
 	connect(login, SIGNAL(clientJoined(Client*)), this, SLOT(clientJoined(Client*)));
 	login->startLoginProcess();
+
+	printStatusUpdate();
 }
 
 void MultiServer::clientJoined(Client *client)
 {
 	logger::debug() << "client" << client->id() << "moved from lobby to session";
 	_lobby.removeOne(client);
+	printStatusUpdate();
 }
 
 void MultiServer::removeClient(Client *client)
@@ -136,6 +166,8 @@ void MultiServer::removeClient(Client *client)
 	if(wasInLobby) {
 		client->deleteLater();
 	}
+
+	printStatusUpdate();
 
 	if(_state == STOPPING)
 		stop();
@@ -163,6 +195,14 @@ void MultiServer::stop() {
 			emit serverStopped();
 		}
 	}
+}
+
+void MultiServer::printStatusUpdate()
+{
+	initsys::notifyStatus(QString("%1 users and %2 sessions")
+		.arg(clientCount())
+		.arg(_sessions->sessionCount())
+	);
 }
 
 }

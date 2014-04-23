@@ -46,6 +46,12 @@ set ( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" )
 set ( LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" )
 
 find_package ( ZLIB REQUIRED )
+find_package ( PkgConfig )
+
+if ( PKGCONFIG_FOUND )
+	pkg_check_modules ( SYSTEMD "libsystemd" )
+endif ( PKGCONFIG_FOUND )
+
 
 ### Compiler-specific C++ 11 activation ###
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")

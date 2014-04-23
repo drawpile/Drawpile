@@ -1,0 +1,12 @@
+[Unit]
+Description=Drawpile dedicated server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/drawpile-srv
+Type=notify
+NotifyAccess=main
+
+[Install]
+WantedBy=multi-user.target
+

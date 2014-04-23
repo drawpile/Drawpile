@@ -46,7 +46,8 @@ namespace {
 
 	// Mapping of signal code -> UnixSignals signal name
 	SignalMapping SIG_MAP[] = {
-		{SIGINT, "sigInt"}
+		{SIGINT, "sigInt"},
+		{SIGTERM, "sigTerm"}
 	};
 	static const int SIGNALS = sizeof(SIG_MAP) / sizeof(SignalMapping);
 

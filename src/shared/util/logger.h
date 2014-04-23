@@ -21,12 +21,15 @@
 #define DP_SHARED_LOGGING_H
 
 #include <QDebug>
+#include <functional>
 
 namespace logger {
 
 enum LogLevel {LOG_NONE, LOG_ERROR, LOG_WARNING, LOG_INFO, LOG_DEBUG};
-
 void setLogLevel(LogLevel level);
+
+typedef std::function<void(LogLevel,const QString&)> LogFunction;
+void setLogPrinter(LogFunction fn);
 
 /**
  * \brief Stream oriented log printing class

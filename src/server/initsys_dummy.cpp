@@ -18,34 +18,30 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 */
-#ifndef UNIXSIGNALS_H
-#define UNIXSIGNALS_H
 
-#include <QObject>
+#include "initsys.h"
 
-/**
- * @brief A class for converting UNIX signals to Qt signals
- *
- * To use, simply connect to the signal you are interested.
- */
-class UnixSignals : public QObject
+namespace initsys {
+
+void setInitSysLogger()
 {
-	Q_OBJECT
-public:
-	static UnixSignals *instance();
+	// dummy
+}
 
-signals:
-	void sigInt();
-	void sigTerm();
+void notifyReady()
+{
+	// dummy
+}
 
-protected:
-	void connectNotify(const QMetaMethod &signal);
+void notifyStatus(const QString &status)
+{
+	Q_UNUSED(status);
+	// dummy
+}
 
-private slots:
-	void handleSignal();
+QList<int> getListenFds()
+{
+	return QList<int>();
+}
 
-private:
-	UnixSignals();
-};
-
-#endif // UNIXSIGNALS_H
+}

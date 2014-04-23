@@ -50,6 +50,7 @@ public:
 	void setPersistentSessions(bool persistent);
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
+	bool startFd(int fd);
 
 	int clientCount() const;
 
@@ -66,6 +67,7 @@ signals:
 	void serverStopped();
 
 private:
+	void printStatusUpdate();
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
 	QTcpServer *_server;

@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "multiserver.h"
+#include "initsys.h"
 #include "../shared/util/logger.h"
 
 #ifdef Q_OS_UNIX
@@ -42,6 +43,8 @@ int main(int argc, char *argv[]) {
 	QCoreApplication::setOrganizationName("DrawPile");
 	QCoreApplication::setApplicationName("drawpile-srv");
 	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
+
+	initsys::setInitSysLogger();
 
 	// Set up command line arguments
 	QCommandLineParser parser;
@@ -152,11 +155,29 @@ int main(int argc, char *argv[]) {
 #ifdef Q_OS_UNIX
 	// Catch signals
 	server->connect(UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
+	server->connect(UnixSignals::instance(), SIGNAL(sigTerm()), server, SLOT(stop()));
 #endif
 
 	// Start
-	if(!server->start(port, address))
-		return 1;
+	{
+		QList<int> listenfds = initsys::getListenFds();
+		if(listenfds.isEmpty()) {
+			// socket activation not used
+			if(!server->start(port, address))
+				return 1;
+		} else {
+			if(listenfds.size() != 1) {
+				logger::error() << "Too many file descriptors received.";
+				return 1;
+			}
+
+			if(!server->startFd(listenfds[0]))
+				return 1;
+		}
+	}
+
+
+	initsys::notifyReady();
 
 	return app.exec();
 }
