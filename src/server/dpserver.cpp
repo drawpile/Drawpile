@@ -182,6 +182,8 @@ int main(int argc, char *argv[]) {
 				return 1;
 			}
 
+			server->setAutoStop(true);
+
 			if(!server->startFd(listenfds[0]))
 				return 1;
 		}

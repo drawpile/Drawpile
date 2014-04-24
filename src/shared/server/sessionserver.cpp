@@ -74,9 +74,9 @@ void SessionServer::destroySession(SessionState *session)
 	logger::debug() << "Deleting session" << session->id();
 	_sessions.removeOne(session);
 
-	emit sessionEnded(session->id());
-
+	int id = session->id();
 	delete session;
+	emit sessionEnded(id);
 }
 
 SessionState *SessionServer::getSessionById(int id) const

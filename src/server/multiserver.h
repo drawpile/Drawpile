@@ -48,6 +48,7 @@ public:
 	void setHostPassword(const QString &password);
 	void setSessionLimit(int limit);
 	void setPersistentSessions(bool persistent);
+	void setAutoStop(bool autostop);
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);
@@ -59,6 +60,7 @@ public slots:
 private slots:
 	void newClient();
 	void printStatusUpdate();
+	void tryAutoStop();
 
 signals:
 	void serverStopped();
@@ -70,6 +72,7 @@ private:
 	SessionServer *_sessions;
 	State _state;
 
+	bool _autoStop;
 	QString _recordingFile;
 };
 

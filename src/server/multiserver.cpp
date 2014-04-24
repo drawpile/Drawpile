@@ -35,16 +35,20 @@ namespace server {
 MultiServer::MultiServer(QObject *parent)
 	: QObject(parent),
 	_server(0),
-	_state(NOT_STARTED)
+	_state(NOT_STARTED),
+	_autoStop(false)
 {
 	_sessions = new SessionServer(this);
 
+	connect(_sessions, SIGNAL(sessionEnded(int)), this, SLOT(tryAutoStop()));
 	connect(_sessions, SIGNAL(userLoggedIn()), this, SLOT(printStatusUpdate()));
 	connect(_sessions, &SessionServer::userDisconnected, [this]() {
 		printStatusUpdate();
 		// The server will be fully stopped after all users have disconnected
 		if(_state == STOPPING)
 			stop();
+		else
+			tryAutoStop();
 	});
 
 	// TODO move this somewhere else?
@@ -63,14 +67,38 @@ void MultiServer::setHostPassword(const QString &password)
 	_sessions->setHostPassword(password);
 }
 
+/**
+ * @brief Set the maximum number of sessions
+ *
+ * Setting this to 1 disables the "multisession" capability flag. Clients
+ * will not display the session selector dialog in that case, but will automatically
+ * connect to the only session.
+ * @param limit
+ */
 void MultiServer::setSessionLimit(int limit)
 {
 	_sessions->setSessionLimit(limit);
 }
 
+/**
+ * @brief Enable or disable persistent sessions
+ * @param persistent
+ */
 void MultiServer::setPersistentSessions(bool persistent)
 {
 	_sessions->setAllowPersistentSessions(persistent);
+}
+
+/**
+ * @brief Automatically stop server when last session is closed
+ *
+ * This is used in socket activation mode. The server will be restarted
+ * by the system init daemon when needed again.
+ * @param autostop
+ */
+void MultiServer::setAutoStop(bool autostop)
+{
+	_autoStop = autostop;
 }
 
 /**
@@ -144,6 +172,17 @@ void MultiServer::printStatusUpdate()
 		.arg(_sessions->totalUsers())
 		.arg(_sessions->sessionCount())
 	);
+}
+
+/**
+ * @brief Stop the server if vacant (and autostop is enabled)
+ */
+void MultiServer::tryAutoStop()
+{
+	if(_state == RUNNING && _autoStop && _sessions->sessionCount() == 0 && _sessions->totalUsers() == 0) {
+		logger::info() << "Autostopping due to lack of sessions";
+		stop();
+	}
 }
 
 /**
