@@ -51,8 +51,10 @@ the session history will be replaced with a snapshot of the current canvas
 contents. Note: to avoid resetting the history too often, the size should be at
 least bigger than the typical image when saved as a PNG image.
 .TP
-.BR --record , \ -r\  filename
-record session to file.
+.BR --record , \ -r\  filename\ pattern
+record sessions to files. Placeholders in the filename pattern will be expanded
+to generate the actual filename. If a directory is given, a default filename pattern
+will be used. The placeholders %d (date), %t (time) and %i (session ID) are supported.
 .TP
 .BR --host-password\  password
 set the session hosting password. If set, this password must be entered to host a session.

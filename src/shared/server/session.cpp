@@ -538,8 +538,6 @@ void SessionState::startRecording(const QList<protocol::MessagePtr> &snapshot)
 	Q_ASSERT(_recorder==0);
 	QString filename = _recordingFile;
 
-	// Expand placeholders
-
 	// Start recording
 	logger::info() << "Starting session recording" << filename;
 
@@ -548,6 +546,7 @@ void SessionState::startRecording(const QList<protocol::MessagePtr> &snapshot)
 		logger::error() << "Couldn't write session recording to" << filename << _recorder->errorString();
 		delete _recorder;
 		_recorder = 0;
+		return;
 	}
 
 	_recorder->writeHeader();

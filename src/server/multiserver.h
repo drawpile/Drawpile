@@ -61,6 +61,7 @@ private slots:
 	void newClient();
 	void printStatusUpdate();
 	void tryAutoStop();
+	void assignRecording(SessionState *session);
 
 signals:
 	void serverStopped();
