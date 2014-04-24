@@ -9,6 +9,7 @@ set (
 	SOURCES
 	dpserver.cpp
 	multiserver.cpp
+	configfile.cpp
 	)
 
 # Unix specific features

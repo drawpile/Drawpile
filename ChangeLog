@@ -1,6 +1,7 @@
 2014-0?-?? Version 0.9.0
  * Server: support for multiple sessions on a single server
  * Server: support for systemd socket activation
+ * Server: options can now be loaded from a settings file
 
 2014-03-27 Version 0.8.6
  * Show old annotation position until reshape message has finished its roundtrip

@@ -20,6 +20,8 @@
 */
 #include <QCoreApplication>
 #include <QStringList>
+#include <QScopedPointer>
+#include <QSettings>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
 #include "qcommandlineparser.h"
@@ -31,6 +33,7 @@
 
 #include "multiserver.h"
 #include "initsys.h"
+#include "configfile.h"
 #include "../shared/util/logger.h"
 
 #ifdef Q_OS_UNIX
@@ -38,6 +41,7 @@
 #include <unistd.h>
 #include "unixsignals.h"
 #endif
+
 
 int main(int argc, char *argv[]) {
 #ifdef Q_OS_UNIX
@@ -68,7 +72,7 @@ int main(int argc, char *argv[]) {
 	parser.addOption(verboseOption);
 
 	// --port, -p <port>
-	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port");
+	QCommandLineOption portOption(QStringList() << "port" << "p", "Listening port", "port", QString::number(DRAWPILE_PROTO_DEFAULT_PORT));
 	parser.addOption(portOption);
 
 	// --listen, -l <address>
@@ -76,7 +80,7 @@ int main(int argc, char *argv[]) {
 	parser.addOption(listenOption);
 
 	// --limit <size>
-	QCommandLineOption limitOption("history-limit", "Limit history size", "size (Mb)");
+	QCommandLineOption limitOption("history-limit", "Limit history size", "size (Mb)", "0");
 	parser.addOption(limitOption);
 
 	// --record, -r <filename>
@@ -88,22 +92,29 @@ int main(int argc, char *argv[]) {
 	parser.addOption(hostPassOption);
 
 	// --sessions <count>
-	QCommandLineOption sessionLimitOption("sessions", "Maximum number of sessions", "count");
+	QCommandLineOption sessionLimitOption("sessions", "Maximum number of sessions", "count", "20");
 	parser.addOption(sessionLimitOption);
 
 	// --persistent, -P
 	QCommandLineOption persistentSessionOption(QStringList() << "persistent" << "P", "Enable persistent sessions");
 	parser.addOption(persistentSessionOption);
 
+	// --config, -c <filename>
+	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
+	parser.addOption(configFileOption);
+
 	// Parse
 	parser.process(app);
+
+	// Load configuration file (if set)
+	ConfigFile cfgfile(parser.value(configFileOption));
 
 	// Initialize the server
 	server::MultiServer *server = new server::MultiServer;
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
 
-	if(parser.isSet(verboseOption)) {
+	if(cfgfile.override(parser, verboseOption).toBool()) {
 #ifdef NDEBUG
 		logger::setLogLevel(logger::LOG_INFO);
 #else
@@ -113,57 +124,66 @@ int main(int argc, char *argv[]) {
 		logger::setLogLevel(logger::LOG_WARNING);
 	}
 
-	int port = DRAWPILE_PROTO_DEFAULT_PORT;
-	QHostAddress address = QHostAddress::Any;
-
-	if(parser.isSet(portOption)) {
+	int port;
+	{
 		bool ok;
-		port = parser.value(portOption).toInt(&ok);
+		QVariant pv = cfgfile.override(parser, portOption);
+		port = pv.toInt(&ok);
 		if(!ok || port<1 || port>0xffff) {
-			logger::error() << "Invalid port";
+			logger::error() << "Invalid port" << pv.toString();
 			return 1;
 		}
 	}
 
-	if(parser.isSet(listenOption)) {
-		if(!address.setAddress(parser.value(listenOption))) {
-			logger::error() << "Invalid listening address";
-			return 1;
+	QHostAddress address = QHostAddress::Any;
+	{
+		QVariant av = cfgfile.override(parser, listenOption);
+		if(!av.isNull()) {
+			if(!address.setAddress(av.toString())) {
+				logger::error() << "Invalid listening address" << av.toString();
+				return 1;
+			}
 		}
 	}
 
-	if(parser.isSet(limitOption)) {
+	{
+		QVariant lv = cfgfile.override(parser, limitOption);
 		bool ok;
-		float limit = parser.value(limitOption).toFloat(&ok);
-		if(!ok) {
-			logger::error() << "Invalid history limit size";
+		float limit = lv.toFloat(&ok);
+		if(!ok || limit<0) {
+			logger::error() << "Invalid history limit: " << lv.toString();
 			return 1;
 		}
 		uint limitbytes = limit * 1024 * 1024;
 		server->setHistoryLimit(limitbytes);
 	}
 
-	if(parser.isSet(recordOption))
-		server->setRecordingFile(parser.value(recordOption));
+	{
+		QVariant rv = cfgfile.override(parser, recordOption);
+		if(!rv.isNull())
+			server->setRecordingFile(rv.toString());
+	}
 
-	if(parser.isSet(hostPassOption))
-		server->setHostPassword(parser.value(hostPassOption));
+	{
+		QVariant hpv = cfgfile.override(parser, hostPassOption);
+		if(!hpv.isNull())
+			server->setHostPassword(hpv.toString());
+	}
 
-	int sessionLimit = 20;
-	if(parser.isSet(sessionLimitOption)) {
+	{
 		bool ok;
-		sessionLimit = parser.value(sessionLimitOption).toInt(&ok);
+		int sessionLimit = cfgfile.override(parser, sessionLimitOption).toInt(&ok);
 		if(!ok || sessionLimit<1) {
 			logger::error() << "Invalid session count limit";
 			return 1;
 		}
+		server->setSessionLimit(sessionLimit);
 	}
-	server->setSessionLimit(sessionLimit);
 
-	server->setPersistentSessions(parser.isSet(persistentSessionOption));
+	server->setPersistentSessions(cfgfile.override(parser, persistentSessionOption).toBool());
 
-#ifdef Q_OS_UNIX
 	// Catch signals
+#ifdef Q_OS_UNIX
 	server->connect(UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
 	server->connect(UnixSignals::instance(), SIGNAL(sigTerm()), server, SLOT(stop()));
 #endif
