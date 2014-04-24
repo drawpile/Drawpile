@@ -25,6 +25,8 @@
 
 #include "../util/logger.h"
 
+#include <QTimer>
+
 namespace server {
 
 SessionServer::SessionServer(QObject *parent)
@@ -32,8 +34,13 @@ SessionServer::SessionServer(QObject *parent)
 	_nextId(1),
 	_sessionLimit(1),
 	_historyLimit(0),
+	_expirationTime(0),
 	_allowPersistentSessions(false)
 {
+	QTimer *cleanupTimer = new QTimer(this);
+	connect(cleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSessions()));
+	cleanupTimer->setInterval(15 * 1000);
+	cleanupTimer->start(cleanupTimer->interval());
 }
 
 SessionServer::~SessionServer()
@@ -182,6 +189,28 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 		emit sessionChanged(session);
 
 	emit userDisconnected();
+}
+
+void SessionServer::cleanupSessions()
+{
+	if(_allowPersistentSessions && _expirationTime>0) {
+		QDateTime now = QDateTime::currentDateTime();
+
+		QList<SessionState*> expirelist;
+
+		for(SessionState *s : _sessions) {
+			if(s->userCount()==0) {
+				if(s->lastEventTime().msecsTo(now) > _expirationTime) {
+					expirelist << s;
+				}
+			}
+		}
+
+		for(SessionState *s : expirelist) {
+			logger::info() << "Vacant session" << s->id() << "expired. Uptime was" << s->uptime();
+			destroySession(s);
+		}
+	}
 }
 
 }

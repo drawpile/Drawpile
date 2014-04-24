@@ -21,7 +21,7 @@
 #include <QCoreApplication>
 #include <QStringList>
 #include <QScopedPointer>
-#include <QSettings>
+#include <QRegularExpression>
 
 #if (QT_VERSION < QT_VERSION_CHECK(5, 2, 0))
 #include "qcommandlineparser.h"
@@ -98,6 +98,10 @@ int main(int argc, char *argv[]) {
 	// --persistent, -P
 	QCommandLineOption persistentSessionOption(QStringList() << "persistent" << "P", "Enable persistent sessions");
 	parser.addOption(persistentSessionOption);
+
+	// --expire <time> (<time>[prefix], where prefix is d, h, m or s. No prefix defaults to s)
+	QCommandLineOption expireOption("expire", "Persistent session expiration time", "expiration", "0");
+	parser.addOption(expireOption);
 
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
@@ -180,7 +184,30 @@ int main(int argc, char *argv[]) {
 		server->setSessionLimit(sessionLimit);
 	}
 
-	server->setPersistentSessions(cfgfile.override(parser, persistentSessionOption).toBool());
+	{
+		bool persist = cfgfile.override(parser, persistentSessionOption).toBool();
+		server->setPersistentSessions(persist);
+		if(persist) {
+			QString expire = cfgfile.override(parser, expireOption).toString();
+			QRegularExpression re("^(\\d+(?:\\.\\d+)?)([dhms]?)$");
+			auto m = re.match(expire);
+			if(!m.hasMatch()) {
+				logger::error() << "Invalid expiration time:" << expire;
+				return 1;
+			}
+
+			float t = m.captured(1).toFloat();
+			if(m.captured(2)=="d")
+				t *= 24*60*60;
+			else if(m.captured(2)=="h")
+				t *= 60*60;
+			else if(m.captured(2)=="m")
+				t *= 60;
+
+			server->setExpirationTime(t);
+		}
+	}
+
 
 	// Catch signals
 #ifdef Q_OS_UNIX

@@ -66,6 +66,10 @@ set session limit. This is the maximum number of sessions that can be active at 
 enable persistent sessions. Non-persistent sessions will be deleted immediately
 when the last user leaves.
 .TP
+.BR --expire\  time
+expire vacant sessions after the given time. Time can be given in seconds (3600),
+minutes (60m), hours (1h) or days (0.04d)
+.TP
 .BR --config , \ -c\  filename
 load configuration file. All parameters can also be set in the configuration file.
 Parameters set on the command line override those in the file.

@@ -89,6 +89,17 @@ void MultiServer::setPersistentSessions(bool persistent)
 }
 
 /**
+ * @brief Set persistent session expiration time
+ *
+ * Setting this to 0 means sessions will not expire.
+ * @param seconds
+ */
+void MultiServer::setExpirationTime(uint seconds)
+{
+	_sessions->setExpirationTime(seconds);
+}
+
+/**
  * @brief Automatically stop server when last session is closed
  *
  * This is used in socket activation mode. The server will be restarted

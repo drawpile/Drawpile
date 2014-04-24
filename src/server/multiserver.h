@@ -48,6 +48,7 @@ public:
 	void setHostPassword(const QString &password);
 	void setSessionLimit(int limit);
 	void setPersistentSessions(bool persistent);
+	void setExpirationTime(uint seconds);
 	void setAutoStop(bool autostop);
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);

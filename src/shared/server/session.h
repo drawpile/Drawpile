@@ -25,6 +25,7 @@
 #include <QHash>
 #include <QString>
 #include <QObject>
+#include <QDateTime>
 
 #include "../util/idlist.h"
 #include "../net/message.h"
@@ -212,6 +213,24 @@ public:
 	const QList<Client*> &clients() { return _clients; }
 
 	/**
+	 * @brief Get the time the session was started
+	 * @return timestamp
+	 */
+	const QDateTime &sessionStartTime() const { return _startTime; }
+
+	/**
+	 * @brief Get session uptime in nice human readable format
+	 * @return
+	 */
+	QString uptime() const;
+
+	/**
+	 * @brief Get the time of the last join/logout event
+	 * @return timestamp
+	 */
+	const QDateTime &lastEventTime() const { return _lastEventTime; }
+
+	/**
 	 * @brief Get the drawing context for the given user
 	 * @param id
 	 * @return
@@ -391,9 +410,14 @@ private:
 	QVector<LayerState> _layers;
 	QHash<int, DrawingContext> _drawingctx;
 
+	const QDateTime _startTime;
+	QDateTime _lastEventTime;
+
 	const int _id;
 	int _minorVersion;
 	int _maxusers;
+	uint _historylimit;
+
 	QString _password;
 	QString _title;
 
@@ -403,8 +427,6 @@ private:
 	bool _lockdefault;
 	bool _allowPersistent;
 	bool _persistent;
-
-	uint _historylimit;
 };
 
 }

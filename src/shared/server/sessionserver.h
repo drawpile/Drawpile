@@ -73,6 +73,15 @@ public:
 	bool allowPersistentSessions() const { return _allowPersistentSessions; }
 
 	/**
+	 * @brief Set persistent session expiration time
+	 *
+	 * A session must be vacant for this many seconds before it is automatically deleted.
+	 *
+	 * @param seconds expiration time in seconds
+	 */
+	void setExpirationTime(uint seconds) { _expirationTime = qint64(seconds) * 1000; }
+
+	/**
 	 * @brief Add a new client
 	 *
 	 * This will start the login process during which the client will
@@ -159,6 +168,7 @@ private slots:
 	void moveFromLobby(SessionState *session, Client *client);
 	void lobbyDisconnectedEvent(Client *client);
 	void userDisconnectedEvent(SessionState *session);
+	void cleanupSessions();
 
 private:
 	void destroySession(SessionState *session);
@@ -169,8 +179,10 @@ private:
 
 	int _sessionLimit;
 	uint _historyLimit;
+	qint64 _expirationTime;
 	QString _hostPassword;
 	bool _allowPersistentSessions;
+
 };
 
 }

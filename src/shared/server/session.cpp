@@ -36,9 +36,10 @@ SessionState::SessionState(int id, int minorVersion, bool allowPersistent, QObje
 	: QObject(parent),
 	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
-	_id(id), _minorVersion(minorVersion), _maxusers(255),
+	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
+	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
 	_locked(false), _layerctrllocked(true), _closed(false),
-	_lockdefault(false), _allowPersistent(allowPersistent), _persistent(false), _historylimit(0)
+	_lockdefault(false), _allowPersistent(allowPersistent), _persistent(false)
 { }
 
 
@@ -81,6 +82,8 @@ void SessionState::joinUser(Client *user, bool host)
 	else if(_lockdefault)
 		user->lockUser();
 
+	_lastEventTime = QDateTime::currentDateTime();
+
 	logger::info() << "User" << user->id() << "joined";
 	emit userConnected(this, user);
 }
@@ -118,6 +121,8 @@ void SessionState::removeUser(Client *user)
 	}
 
 	user->deleteLater();
+
+	_lastEventTime = QDateTime::currentDateTime();
 
 	emit userDisconnected(this);
 }
@@ -567,6 +572,37 @@ void SessionState::stopRecording()
 		delete _recorder;
 		_recorder = 0;
 	}
+}
+
+QString SessionState::uptime() const
+{
+	qint64 up = (QDateTime::currentMSecsSinceEpoch() - _startTime.toMSecsSinceEpoch()) / 1000;
+
+	int days = up / (60*60*24);
+	up -= days * (60*60*24);
+
+	int hours = up / (60*60);
+	up -= hours * (60*60);
+
+	int minutes = up / 60;
+
+	QString uptime;
+	if(days==1)
+		uptime = "one day, ";
+	else if(days>1)
+		uptime = QString::number(days) + " days, ";
+
+	if(hours==1)
+		uptime += "1 hour and ";
+	else
+		uptime += QString::number(hours) + " hours and ";
+
+	if(minutes==1)
+		uptime += "1 minute";
+	else
+		uptime += QString::number(minutes) + " minutes.";
+
+	return uptime;
 }
 
 }
