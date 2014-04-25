@@ -948,7 +948,7 @@ void MainWindow::host()
 			}
 
 			// Connect to server
-			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, this);
+			net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::HOST, address, w);
 			login->setPassword(dlg->getPassword());
 			login->setTitle(dlg->getTitle());
 			login->setMaxUsers(dlg->getUserLimit());
@@ -1051,7 +1051,7 @@ void MainWindow::joinSession(const QUrl& url)
 	else
 		win = new MainWindow(false);
 
-	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, this);
+	net::LoginHandler *login = new net::LoginHandler(net::LoginHandler::JOIN, url, win);
 	win->_client->connectToServer(login);
 }
 

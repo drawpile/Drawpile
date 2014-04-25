@@ -123,10 +123,10 @@ void LoginHandler::expectHello(const QString &msg)
 		);
 	}
 
-	// Show session selector if needed
+	// Show session selector if in multisession mode
 	if(_mode == JOIN && _multisession) {
 		auto *dialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
-		dialog->setModal(true);
+		dialog->setWindowModality(Qt::WindowModal);
 		dialog->setAttribute(Qt::WA_DeleteOnClose);
 
 		connect(dialog, SIGNAL(selected(int,bool)), this, SLOT(joinSelectedSession(int,bool)));

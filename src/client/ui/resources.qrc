@@ -20,6 +20,7 @@
         <file>icons/edit-paste.png</file>
         <file>icons/edit-redo.png</file>
         <file>icons/edit-undo.png</file>
+        <file>icons/emblem-unreadable.png</file>
         <file>icons/flag-red.png</file>
         <file>icons/flag-blue.png</file>
         <file>icons/format-justify-center.png</file>
@@ -46,6 +47,7 @@
         <file>icons/network-transmit.png</file>
         <file>icons/network-transmit-receive.png</file>
         <file>icons/select-rectangular.png</file>
+        <file>icons/stopsign.png</file>
         <file>icons/video-display.png</file>
         <file>icons/view-refresh.png</file>
         <file>icons/zoom-in.png</file>

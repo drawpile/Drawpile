@@ -1,4 +1,5 @@
 The following icons are from Tango Desktop Project under a Public Domain license:
+ * application-exit
  * document-new
  * document-open
  * document-save-as
@@ -8,6 +9,7 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * edit-paste
  * edit-undo
  * edit-redo
+ * emblem-unreadable
  * format-justify-center
  * format-justify-fill
  * format-justify-left
@@ -28,7 +30,7 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * network-receive
  * network-transmit
  * network-transmit-receive
- * application-exit
+ * stopsign (original name: dialog-close)
  * video-display
  * view-refresh
  * zoom-in

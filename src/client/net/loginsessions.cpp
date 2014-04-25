@@ -41,6 +41,12 @@ int LoginSessionModel::columnCount(const QModelIndex &parent) const
 {
 	if(parent.isValid())
 		return 0;
+
+	// Columns:
+	// 0 - closed/incompatible/password needed status icon
+	// 1 - title
+	// 2 - user count
+
 	return 3;
 }
 
@@ -57,7 +63,11 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 	} else if(role == Qt::DecorationRole) {
 		switch(index.column()) {
 		case 0:
-			if(ls.closed)
+			if(ls.incompatible)
+				return QPixmap(":icons/emblem-unreadable.png");
+			else if(ls.closed)
+				return QPixmap(":icons/stopsign.png");
+			else if(ls.needPassword)
 				return QPixmap(":icons/lock_closed.png");
 			break;
 		}
