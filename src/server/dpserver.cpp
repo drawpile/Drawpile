@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 		server->setPersistentSessions(persist);
 		if(persist) {
 			QString expire = cfgfile.override(parser, expireOption).toString();
-			QRegularExpression re("^(\\d+(?:\\.\\d+)?)([dhms]?)$");
+			QRegularExpression re("\\A(\\d+(?:\\.\\d+)?)([dhms]?)\\z");
 			auto m = re.match(expire);
 			if(!m.hasMatch()) {
 				logger::error() << "Invalid expiration time:" << expire;

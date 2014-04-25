@@ -24,6 +24,8 @@
 #include <QFileInfo>
 #include <QTextStream>
 #include <QStringList>
+#include <QRegularExpression>
+
 
 #include "palette.h"
 
@@ -52,7 +54,7 @@ Palette *Palette::fromFile(const QFileInfo& file)
 		Palette *pal = new Palette(line.mid(5).trimmed(),file.fileName());
 
 		int index = 0;
-		QRegExp whitespace("\\s+");
+		QRegularExpression whitespace("\\s+");
 		while (!in.atEnd()) {
 			line = in.readLine();
 			if(line.isEmpty() || line[0] == '#')

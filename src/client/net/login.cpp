@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QStringList>
 #include <QInputDialog>
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include "config.h"
 
@@ -72,16 +72,17 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 void LoginHandler::expectHello(const QString &msg)
 {
 	// Greeting should be in format "DRAWPILE <majorVersion> <flags>"
-	QRegExp re("DRAWPILE (\\d+) (-|[\\w,]+)");
+	const QRegularExpression re("\\ADRAWPILE (\\d+) (-|[\\w,]+)\\z");
+	auto m = re.match(msg);
 
-	if(!re.exactMatch(msg)) {
+	if(!m.hasMatch()) {
 		qWarning() << "Login error. Invalid greeting:" << msg;
 		_server->loginFailure(QApplication::tr("Incompatible server"));
 		return;
 	}
 
 	// Major version must match ours
-	int majorVersion = re.cap(1).toInt();
+	int majorVersion = m.captured(1).toInt();
 	if(majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
 		qWarning() << "Login error. Server major version mismatch.";
 		_server->loginFailure(QApplication::tr("Server is for a different Drawpile version!"));
@@ -89,7 +90,7 @@ void LoginHandler::expectHello(const QString &msg)
 	}
 
 	// Parse server capability flags
-	QStringList flags = re.cap(2).split(",");
+	QStringList flags = m.captured(2).split(",");
 	bool hostPassword=false;
 	for(const QString &flag : flags) {
 		if(flag == "-") {
@@ -192,22 +193,24 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 
 	// Expect session description in format:
 	// SESSION <id> <minorVersion> <FLAGS> <user-count> "title"
-	QRegExp re("SESSION (\\d+) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]*)\"");
-	if(!re.exactMatch(msg)) {
+	const QRegularExpression re("\\ASESSION (\\d+) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]*)\"\\z");
+	auto m = re.match(msg);
+
+	if(!m.hasMatch()) {
 		qWarning() << "Login error. Expected session description, got:" << msg;
 		_server->loginFailure(QApplication::tr("Incompatible server"));
 		return;
 	}
 
-	session.id = re.cap(1).toInt();
+	session.id = m.captured(1).toInt();
 
-	const int minorVersion = re.cap(2).toInt();
+	const int minorVersion = m.captured(2).toInt();
 	if(minorVersion != DRAWPILE_PROTO_MINOR_VERSION) {
 		qWarning() << "Session" << session.id << "minor version" << minorVersion << "mismatch.";
 		session.incompatible = true;
 	}
 
-	const QStringList flags = re.cap(3).split(",");
+	const QStringList flags = m.captured(3).split(",");
 	for(const QString &flag : flags) {
 		if(flag=="-") {
 			// No flags marker
@@ -223,8 +226,8 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 		}
 	}
 
-	session.userCount = re.cap(4).toInt();
-	session.title = re.cap(5);
+	session.userCount = m.captured(4).toInt();
+	session.title = m.captured(5);
 
 	if(_multisession) {
 		// Multisesion mode: add session to list which is presented to the user
@@ -269,14 +272,16 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	}
 
 	if(msg.startsWith("OK ")) {
-		QRegExp re("OK (\\d+)");
-		if(!re.exactMatch(msg)) {
+		const QRegularExpression re("\\AOK (\\d+)\\z");
+		auto m = re.match(msg);
+
+		if(!m.hasMatch()) {
 			qWarning() << "Login error. Expected OK <id>, got:" << msg;
 			_server->loginFailure(QApplication::tr("Incompatible server"));
 			return;
 		}
 
-		_userid = re.cap(1).toInt();
+		_userid = m.captured(1).toInt();
 		_server->loginSuccess();
 
 		// If in host mode, send initial session settings

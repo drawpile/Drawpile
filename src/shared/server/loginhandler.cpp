@@ -18,9 +18,6 @@
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
-#include <QStringList>
-#include <QRegExp>
-
 #include "loginhandler.h"
 #include "client.h"
 #include "session.h"
@@ -30,6 +27,9 @@
 #include "../util/logger.h"
 
 #include "config.h"
+
+#include <QStringList>
+#include <QRegularExpression>
 
 namespace server {
 
@@ -127,24 +127,25 @@ void LoginHandler::handleHostMessage(const QString &message)
 		send("ERROR CLOSED");
 	}
 
-	QRegExp re("HOST (\\d+) (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?");
-	if(!re.exactMatch(message)) {
+	const QRegularExpression re("\\AHOST (\\d+) (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
+	auto m = re.match(message);
+	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
 		_client->kick(0);
 		return;
 	}
 
-	int minorVersion = re.cap(1).toInt();
-	int userId = re.cap(2).toInt();
+	int minorVersion = m.captured(1).toInt();
+	int userId = m.captured(2).toInt();
 
-	QString username = re.cap(3);
+	QString username = m.captured(3);
 	if(!validateUsername(username)) {
 		send("ERROR BADNAME");
 		_client->kick(0);
 		return;
 	}
 
-	QString password = re.cap(4);
+	QString password = m.captured(4);
 	if(password != _server->hostPassword()) {
 		send("ERROR BADPASS");
 		_client->kick(0);
@@ -168,14 +169,15 @@ void LoginHandler::handleHostMessage(const QString &message)
 
 void LoginHandler::handleJoinMessage(const QString &message)
 {
-	QRegExp re("JOIN (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?");
-	if(!re.exactMatch(message)) {
+	const QRegularExpression re("\\AJOIN (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
+	auto m = re.match(message);
+	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
 		_client->kick(0);
 		return;
 	}
 
-	int sessionId = re.cap(1).toInt();
+	int sessionId = m.captured(1).toInt();
 	SessionState *session = _server->getSessionById(sessionId);
 	if(!session) {
 		send("ERROR NOSESSION");
@@ -189,8 +191,8 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	QString username = re.cap(2);
-	QString password = re.cap(3);
+	QString username = m.captured(2);
+	QString password = m.captured(3);
 
 	if(!validateUsername(username)) {
 		send("ERROR BAD");
