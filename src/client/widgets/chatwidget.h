@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,8 +36,7 @@ class ChatBox: public QWidget
 {
 	Q_OBJECT
 	public:
-		ChatBox(QWidget *parent=0);
-		~ChatBox();
+		explicit ChatBox(QWidget *parent=0);
 
 	public slots:
 		//! Display a received message

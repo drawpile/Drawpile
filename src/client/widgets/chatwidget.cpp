@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -26,13 +26,7 @@
 
 #include "chatlineedit.h"
 #include "chatwidget.h"
-
-namespace {
-QString esc(QString str)
-{
-	return str.replace('<', "&lt;").replace('>', "&gt;");
-}
-}
+#include "utils/html.h"
 
 namespace widgets {
 
@@ -69,11 +63,15 @@ ChatBox::ChatBox(QWidget *parent)
 			"border-top: 2px solid #3333da"
 		"}"
 	);
-}
 
-ChatBox::~ChatBox()
-{
-	//delete ui_;
+	_view->document()->setDefaultStyleSheet(
+		"p { margin: 5px 0 }"
+		".marker { color: red }"
+		".sysmsg { color: yellow }"
+		".nick { font-weight: bold }"
+		".nick.me { color: #fff }"
+		"a:link { color: #5454FF }"
+	);
 }
 
 void ChatBox::clear()
@@ -84,12 +82,12 @@ void ChatBox::clear()
 void ChatBox::userJoined(int id, const QString &name)
 {
 	Q_UNUSED(id);
-	systemMessage(tr("<b>%1</b> joined the session").arg(esc(name)));
+	systemMessage(tr("<b>%1</b> joined the session").arg(name.toHtmlEscaped()));
 }
 
 void ChatBox::userParted(const QString &name)
 {
-	systemMessage(tr("<b>%1</b> left the session").arg(esc(name)));
+	systemMessage(tr("<b>%1</b> left the session").arg(name.toHtmlEscaped()));
 }
 
 /**
@@ -100,17 +98,24 @@ void ChatBox::userParted(const QString &name)
  */
 void ChatBox::receiveMessage(const QString& nick, const QString& message, bool isme)
 {
-	QString extrastyle;
-	if(isme)
-		extrastyle = "color: white";
-
-	// TODO turn URLs into links
-	_view->append("<p style=\"margin: 5px 0\"><b style=\""+ extrastyle + "\">&lt;" + esc(nick) + "&gt;</b> " + esc(message) + "</p>");
+	_view->append(
+		"<p class=\"chat\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
+		nick.toHtmlEscaped() +
+		"&gt;</span> <span class=\"msg\">" +
+		htmlutils::linkify(message.toHtmlEscaped()) +
+		"</span></p>"
+	);
 }
 
 void ChatBox::receiveMarker(const QString &nick, const QString &message)
 {
-	_view->append("<p style=\"margin: 5px 0; color: red\"><b>&lt;" + esc(nick) + "&gt;</b> " + esc(message) + "</p>");
+	_view->append(
+		"<p class=\"marker\"><span class=\"nick\">&lt;" +
+		nick.toHtmlEscaped() +
+		"&gt;</span> <span class=\"msg\">" +
+		htmlutils::linkify(message.toHtmlEscaped()) +
+		"</span></p>"
+	);
 }
 
 /**
@@ -118,7 +123,7 @@ void ChatBox::receiveMarker(const QString &nick, const QString &message)
  */
 void ChatBox::systemMessage(const QString& message)
 {
-	_view->append("<p style=\"margin: 5px 0;color: yellow\"> *** " + message + " ***</p>");
+	_view->append("<p class=\"sysmsg\"> *** " + message + " ***</p>");
 }
 
 }
