@@ -19,7 +19,6 @@
 
 */
 #include <QDebug>
-#include <QApplication>
 #include <QStringList>
 #include <QInputDialog>
 #include <QRegularExpression>
@@ -50,22 +49,39 @@ LoginHandler::LoginHandler(Mode mode, const QUrl &url, QWidget *parent)
 	_sessions = new LoginSessionModel(this);
 }
 
+void LoginHandler::serverDisconnected()
+{
+	if(_selectorDialog)
+		_selectorDialog->deleteLater();
+	if(_passwordDialog)
+		_passwordDialog->deleteLater();
+}
+
 void LoginHandler::receiveMessage(protocol::MessagePtr message)
 {
 	if(message->type() != protocol::MSG_LOGIN) {
 		qWarning() << "Login error: got message type" << message->type() << "when expected type 0";
-		_server->loginFailure(QApplication::tr("Invalid state"));
+		_server->loginFailure(tr("Invalid state"));
 		return;
 	}
 
 	QString msg = message.cast<protocol::Login>().message();
 
+	// Overall, the login process is:
+	// 1. wait for server greeting
+	// 2. get hosting password from user if needed
+	// 3. wait for session list
+	// 4. wait for user to finish typing host/join password if needed
+	// 5. send host/join command
+	// 6. wait for OK
+
 	switch(_state) {
 	case EXPECT_HELLO: expectHello(msg); break;
 	case EXPECT_SESSIONLIST_TO_HOST: expectSessionDescriptionHost(msg); break;
 	case EXPECT_SESSIONLIST_TO_JOIN: expectSessionDescriptionJoin(msg); break;
+	case WAIT_FOR_JOIN_PASSWORD:
+	case WAIT_FOR_HOST_PASSWORD: expectNoErrors(msg); break;
 	case EXPECT_LOGIN_OK: expectLoginOk(msg); break;
-	default: _server->loginFailure(QApplication::tr("Unexpected response"));
 	}
 }
 
@@ -77,7 +93,7 @@ void LoginHandler::expectHello(const QString &msg)
 
 	if(!m.hasMatch()) {
 		qWarning() << "Login error. Invalid greeting:" << msg;
-		_server->loginFailure(QApplication::tr("Incompatible server"));
+		_server->loginFailure(tr("Incompatible server"));
 		return;
 	}
 
@@ -85,7 +101,7 @@ void LoginHandler::expectHello(const QString &msg)
 	int majorVersion = m.captured(1).toInt();
 	if(majorVersion != DRAWPILE_PROTO_MAJOR_VERSION) {
 		qWarning() << "Login error. Server major version mismatch.";
-		_server->loginFailure(QApplication::tr("Server is for a different Drawpile version!"));
+		_server->loginFailure(tr("Server is for a different Drawpile version!"));
 		return;
 	}
 
@@ -104,7 +120,7 @@ void LoginHandler::expectHello(const QString &msg)
 		} else if(flag == "SECNOW") {
 			// Encryption not yet supported, but server demands it!
 			qWarning() << "Login error. Server demands encryption!";
-			_server->loginFailure(QApplication::tr("This version does not support encrypted connections!"));
+			_server->loginFailure(tr("Secure connection support not available!"));
 			return;
 		} else if(flag == "PERSIST") {
 			// TODO indicate persistent session support
@@ -115,30 +131,62 @@ void LoginHandler::expectHello(const QString &msg)
 
 	// Query host password if needed
 	if(_mode == HOST && hostPassword) {
-		_hostPassword = QInputDialog::getText(
-			_widgetParent,
-			QApplication::tr("Password is needed to host a session"),
-			QApplication::tr("Enter password"),
-			QLineEdit::Password
-		);
+		showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
 	}
 
 	// Show session selector if in multisession mode
 	if(_mode == JOIN && _multisession) {
-		auto *dialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
-		dialog->setWindowModality(Qt::WindowModal);
-		dialog->setAttribute(Qt::WA_DeleteOnClose);
+		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
+		_selectorDialog->setWindowModality(Qt::WindowModal);
+		_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-		connect(dialog, SIGNAL(selected(int,bool)), this, SLOT(joinSelectedSession(int,bool)));
-		connect(dialog, &QDialog::rejected, [this]() {
-			_server->loginFailure(QApplication::tr("Cancelled"), true);
-		});
+		connect(_selectorDialog, SIGNAL(selected(int,bool)), this, SLOT(joinSelectedSession(int,bool)));
+		connect(_selectorDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
 
-		dialog->show();
+		_selectorDialog->show();
 	}
 
 	// Next, we expect the session description
 	_state = (_mode == HOST) ? EXPECT_SESSIONLIST_TO_HOST : EXPECT_SESSIONLIST_TO_JOIN;
+}
+
+void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
+{
+	Q_ASSERT(_passwordDialog.isNull());
+
+	_passwordDialog = new QInputDialog(_widgetParent);
+	_passwordDialog->setWindowTitle(title);
+	_passwordDialog->setLabelText(text);
+	_passwordDialog->setTextEchoMode(QLineEdit::Password);
+	_passwordDialog->setWindowModality(Qt::WindowModal);
+
+	connect(_passwordDialog, SIGNAL(accepted()), this, SLOT(passwordSet()));
+	connect(_passwordDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
+
+	// note. We use QueuedConnection above, to give the dialog time to get deleted before
+	// this object gets deleted.
+
+	_passwordDialog->show();
+}
+
+void LoginHandler::passwordSet()
+{
+	Q_ASSERT(!_passwordDialog.isNull());
+
+	switch(_state) {
+	case WAIT_FOR_HOST_PASSWORD:
+		_hostPassword = _passwordDialog->textValue();
+		sendHostCommand();
+		break;
+	case WAIT_FOR_JOIN_PASSWORD:
+		_joinPassword = _passwordDialog->textValue();
+		sendJoinCommand();
+		break;
+	default:
+		// shouldn't happen...
+		qFatal("invalid state");
+		return;
+	}
 }
 
 void LoginHandler::expectSessionDescriptionHost(const QString &msg)
@@ -149,22 +197,31 @@ void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 		// We don't care about existing sessions when hosting a new one,
 		// but the reply means we can go ahead
 
-		QString hostmsg = QString("HOST %1 %2 \"%3\"")
-				.arg(DRAWPILE_PROTO_MINOR_VERSION)
-				.arg(_userid)
-				.arg(_address.userName());
-
-		if(!_hostPassword.isEmpty())
-			hostmsg += ";" + _hostPassword;
-
-		send(hostmsg);
-		_state = EXPECT_LOGIN_OK;
+		// No password needed or password already set: go ahead
+		if(_passwordDialog.isNull() || !_hostPassword.isEmpty())
+			sendHostCommand();
+		else
+			_state = WAIT_FOR_HOST_PASSWORD;
 
 	} else {
 		qWarning() << "Expected session list, got" << msg;
-		_server->loginFailure(QApplication::tr("Incompatible server"));
+		_server->loginFailure(tr("Incompatible server"));
 		return;
 	}
+}
+
+void LoginHandler::sendHostCommand()
+{
+	QString hostmsg = QString("HOST %1 %2 \"%3\"")
+			.arg(DRAWPILE_PROTO_MINOR_VERSION)
+			.arg(_userid)
+			.arg(_address.userName());
+
+	if(!_hostPassword.isEmpty())
+		hostmsg += ";" + _hostPassword;
+
+	send(hostmsg);
+	_state = EXPECT_LOGIN_OK;
 }
 
 void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
@@ -174,7 +231,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	if(msg.startsWith("NOSESSION")) {
 		// No sessions
 		if(!_multisession) {
-			_server->loginFailure(QApplication::tr("Session does not exist yet!"));
+			_server->loginFailure(tr("Session does not exist yet!"));
 		}
 
 		int sep = msg.indexOf(' ');
@@ -198,7 +255,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 
 	if(!m.hasMatch()) {
 		qWarning() << "Login error. Expected session description, got:" << msg;
-		_server->loginFailure(QApplication::tr("Incompatible server"));
+		_server->loginFailure(tr("Incompatible server"));
 		return;
 	}
 
@@ -236,11 +293,26 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 	} else {
 		// Single session mode: automatically join the (only) session
 		if(session.incompatible) {
-			_server->loginFailure(QApplication::tr("Session for a different Drawpile version in progress!"));
+			_server->loginFailure(tr("Session for a different Drawpile version in progress!"));
 			return;
 		}
 
 		joinSelectedSession(session.id, session.needPassword);
+		_state = WAIT_FOR_JOIN_PASSWORD;
+	}
+}
+
+void LoginHandler::expectNoErrors(const QString &msg)
+{
+	// A "do nothing" handler while waiting for the user to enter a password
+	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION"))
+		return;
+
+	if(msg.startsWith("ERROR")) {
+		const QString ecode = msg.mid(msg.indexOf(' ') + 1);
+		qWarning() << "Server error while waiting for password:" << ecode;
+
+		_server->loginFailure(tr("An error occurred"));
 	}
 }
 
@@ -256,15 +328,15 @@ void LoginHandler::expectLoginOk(const QString &msg)
 		qWarning() << "Login error:" << ecode;
 		QString error;
 		if(ecode == "BADPASS")
-			error = QApplication::tr("Incorrect password");
+			error = tr("Incorrect password");
 		else if(ecode == "BADNAME")
-			error = QApplication::tr("Invalid username");
+			error = tr("Invalid username");
 		else if(ecode == "CLOSED")
-			error = QApplication::tr("Session is closed");
+			error = tr("Session is closed");
 		else if(ecode == "SESLIMIT")
-			error = QApplication::tr("Session limit reached");
+			error = tr("Session limit reached");
 		else
-			error = QApplication::tr("Unknown error (%1)").arg(ecode);
+			error = tr("Unknown error (%1)").arg(ecode);
 
 		_server->loginFailure(error);
 		return;
@@ -277,7 +349,7 @@ void LoginHandler::expectLoginOk(const QString &msg)
 
 		if(!m.hasMatch()) {
 			qWarning() << "Login error. Expected OK <id>, got:" << msg;
-			_server->loginFailure(QApplication::tr("Incompatible server"));
+			_server->loginFailure(tr("Incompatible server"));
 			return;
 		}
 
@@ -314,28 +386,39 @@ void LoginHandler::expectLoginOk(const QString &msg)
 
 	// Unexpected command
 	qWarning() << "Login error. Unexpected response:" << msg;
-	_server->loginFailure(QApplication::tr("Incompatible server"));
+	_server->loginFailure(tr("Incompatible server"));
 }
 
 void LoginHandler::joinSelectedSession(int id, bool needPassword)
 {
+	_selectedId = id;
+	if(needPassword) {
+		showPasswordDialog(tr("Session is password protected"), tr("Enter session password"));
+		_state = WAIT_FOR_JOIN_PASSWORD;
+
+	} else {
+		sendJoinCommand();
+	}
+}
+
+void LoginHandler::sendJoinCommand()
+{
 	QString joinmsg = QString("JOIN %1 \"%2\"")
-			.arg(id)
+			.arg(_selectedId)
 			.arg(_address.userName());
 
-	if(needPassword) {
-		QString password = QInputDialog::getText(
-			_widgetParent,
-			QApplication::tr("Session is password protected"),
-			QApplication::tr("Enter password"),
-			QLineEdit::Password
-		);
-
-		joinmsg += ";" + password;
+	if(!_joinPassword.isEmpty()) {
+		joinmsg.append(';');
+		joinmsg.append(_joinPassword);
 	}
 
 	send(joinmsg);
 	_state = EXPECT_LOGIN_OK;
+}
+
+void LoginHandler::cancelLogin()
+{
+	_server->loginFailure(tr("Cancelled"), true);
 }
 
 void LoginHandler::send(const QString &message)

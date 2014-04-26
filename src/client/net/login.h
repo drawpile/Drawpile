@@ -24,8 +24,14 @@
 #include <QString>
 #include <QUrl>
 #include <QObject>
+#include <QPointer>
+#include <QInputDialog>
 
 #include "../shared/net/message.h"
+
+namespace dialogs {
+	class SelectSessionDialog;
+}
 
 namespace net {
 
@@ -138,20 +144,31 @@ public:
 	 */
 	int userId() const { return _userid; }
 
+public slots:
+	void serverDisconnected();
+
 private slots:
 	void joinSelectedSession(int id, bool needPassword);
+	void cancelLogin();
+	void passwordSet();
 
 private:
 	enum State {
 		EXPECT_HELLO,
 		EXPECT_SESSIONLIST_TO_JOIN,
 		EXPECT_SESSIONLIST_TO_HOST,
+		WAIT_FOR_JOIN_PASSWORD,
+		WAIT_FOR_HOST_PASSWORD,
 		EXPECT_LOGIN_OK
 	};
 
 	void expectHello(const QString &msg);
+	void showPasswordDialog(const QString &title, const QString &text);
 	void expectSessionDescriptionHost(const QString &msg);
+	void sendHostCommand();
 	void expectSessionDescriptionJoin(const QString &msg);
+	void sendJoinCommand();
+	void expectNoErrors(const QString &msg);
 	void expectLoginOk(const QString &msg);
 	void send(const QString &message);
 
@@ -173,9 +190,15 @@ private:
 	State _state;
 	LoginSessionModel *_sessions;
 
+	QString _hostPassword;
+	QString _joinPassword;
+	int _selectedId;
+
+	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
+	QPointer<QInputDialog> _passwordDialog;
+
 	// Server flags
 	bool _multisession;
-	QString _hostPassword;
 
 };
 
