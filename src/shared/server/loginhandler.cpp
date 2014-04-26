@@ -211,6 +211,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	session->assignId(_client);
 
 	send(QString("OK %1").arg(_client->id()));
+	_complete = true;
 
 	session->joinUser(_client, false);
 
