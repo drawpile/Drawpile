@@ -165,9 +165,6 @@ void LoginHandler::showPasswordDialog(const QString &title, const QString &text)
 	connect(_passwordDialog, SIGNAL(accepted()), this, SLOT(passwordSet()));
 	connect(_passwordDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
 
-	// note. We use QueuedConnection above, to give the dialog time to get deleted before
-	// this object gets deleted.
-
 	_passwordDialog->show();
 }
 
@@ -300,7 +297,6 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 		}
 
 		joinSelectedSession(session.id, session.needPassword);
-		_state = WAIT_FOR_JOIN_PASSWORD;
 	}
 }
 
