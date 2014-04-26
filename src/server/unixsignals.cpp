@@ -68,7 +68,8 @@ namespace {
 	void signalHandler(int sig)
 	{
 		uchar a = sig;
-		::write(SIG_SOCKETS[0], &a, sizeof(a));
+		ssize_t wb = ::write(SIG_SOCKETS[0], &a, sizeof(a));
+		Q_UNUSED(wb);
 	}
 }
 
@@ -117,15 +118,19 @@ void UnixSignals::handleSignal()
 	SIG_NOTIFIER->setEnabled(false);
 
 	uchar sig;
-	::read(SIG_SOCKETS[1], &sig, sizeof(sig));
+	ssize_t rb = ::read(SIG_SOCKETS[1], &sig, sizeof(sig));
+	if(rb != 1 ) {
+		qWarning("read from signal socket failed!");
 
-	SignalMapping *sm = getSignalByCode(sig);
-	Q_ASSERT(sm);
-	if(sm) {
-		// Emit corresponding signal
-		QMetaObject::invokeMethod(this, sm->name);
 	} else {
-		qWarning("Unhandled signal!");
+		SignalMapping *sm = getSignalByCode(sig);
+		Q_ASSERT(sm);
+		if(sm) {
+			// Emit corresponding signal
+			QMetaObject::invokeMethod(this, sm->name);
+		} else {
+			qWarning("Unhandled signal!");
+		}
 	}
 
 	SIG_NOTIFIER->setEnabled(true);
