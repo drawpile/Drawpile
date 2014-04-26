@@ -16,40 +16,29 @@
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software Foundation,
    Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
 */
-#ifndef SELECTSESSIONDIALOG_H
-#define SELECTSESSIONDIALOG_H
+#ifndef DP_UTILS_HTML_H
+#define DP_UTILS_HTML_H
 
-#include <QDialog>
+#include <QString>
 
-class Ui_SelectSession;
+namespace htmlutils {
 
-namespace net {
-	class LoginSessionModel;
-}
+/**
+ * @brief Convert newlines to br:s
+ * @param input
+ * @return
+ */
+QString newlineToBr(const QString &input);
 
-namespace dialogs {
-
-class SelectSessionDialog : public QDialog
-{
-	Q_OBJECT
-public:
-	SelectSessionDialog(net::LoginSessionModel *model, const QString &serverTitle, QWidget *parent = 0);
-
-signals:
-	/**
-	 * @brief A selection was made
-	 * @param id session ID
-	 * @param needPassword if true, a password is needed to join the session
-	 */
-	void selected(int id, bool needPassword);
-
-public slots:
-
-private:
-	Ui_SelectSession *_ui;
-
-};
+/**
+ * @brief Take an input string and wrap all links in <a> tags
+ *
+ * @param input
+ * @return
+ */
+QString linkify(const QString &input);
 
 }
 

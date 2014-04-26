@@ -87,8 +87,8 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 void LoginHandler::expectHello(const QString &msg)
 {
-	// Greeting should be in format "DRAWPILE <majorVersion> <flags>"
-	const QRegularExpression re("\\ADRAWPILE (\\d+) (-|[\\w,]+)\\z");
+	// Greeting should be in format "DRAWPILE <majorVersion> <flags> "title"
+	const QRegularExpression re("\\ADRAWPILE (\\d+) (-|[\\w,]+) \"([^\"]*)\"\\z");
 	auto m = re.match(msg);
 
 	if(!m.hasMatch()) {
@@ -129,6 +129,8 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 	}
 
+	QString serverTitle = m.captured(3);
+
 	// Query host password if needed
 	if(_mode == HOST && hostPassword) {
 		showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
@@ -136,7 +138,7 @@ void LoginHandler::expectHello(const QString &msg)
 
 	// Show session selector if in multisession mode
 	if(_mode == JOIN && _multisession) {
-		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
+		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, serverTitle, _widgetParent);
 		_selectorDialog->setWindowModality(Qt::WindowModal);
 		_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
 

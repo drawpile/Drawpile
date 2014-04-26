@@ -36,7 +36,7 @@ class SessionServer;
  * The login process is as follows:
  * (client C connects to [this] server S)
  *
- * S: DRAWPILE <proto-major> <FEATURES¹>
+ * S: DRAWPILE <proto-major> <FEATURES¹> "server title"
  *
  * - client should disconnect at this point if proto-major does not match -
  *

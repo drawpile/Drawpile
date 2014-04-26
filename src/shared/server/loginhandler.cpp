@@ -56,9 +56,10 @@ void LoginHandler::startLoginProcess()
 	// TODO SECURE and SECNOW
 
 	// Start by telling who we are
-	send(QString("DRAWPILE %1 %2")
+	send(QString("DRAWPILE %1 %2 \"%3\"")
 		 .arg(DRAWPILE_PROTO_MAJOR_VERSION)
 		 .arg(flags.isEmpty() ? "-" : flags.join(","))
+		 .arg(_server->title())
 	);
 
 	// Client should disconnect upon receiving the above if the version number does not match

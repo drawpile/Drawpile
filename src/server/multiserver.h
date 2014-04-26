@@ -43,6 +43,7 @@ Q_OBJECT
 public:
 	explicit MultiServer(QObject *parent=0);
 
+	void setServerTitle(const QString &title);
 	void setHistoryLimit(uint limit);
 	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
 	void setHostPassword(const QString &password);

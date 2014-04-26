@@ -103,6 +103,10 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption expireOption("expire", "Persistent session expiration time", "expiration", "0");
 	parser.addOption(expireOption);
 
+	// --title, -t <server title>
+	QCommandLineOption serverTitleOption(QStringList() << "title" << "t", "Set server title", "title");
+	parser.addOption(serverTitleOption);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -117,6 +121,8 @@ int main(int argc, char *argv[]) {
 	server::MultiServer *server = new server::MultiServer;
 
 	server->connect(server, SIGNAL(serverStopped()), &app, SLOT(quit()));
+
+	server->setServerTitle(cfgfile.override(parser, serverTitleOption).toString());
 
 	if(cfgfile.override(parser, verboseOption).toBool()) {
 #ifdef NDEBUG
@@ -207,7 +213,6 @@ int main(int argc, char *argv[]) {
 			server->setExpirationTime(t);
 		}
 	}
-
 
 	// Catch signals
 #ifdef Q_OS_UNIX

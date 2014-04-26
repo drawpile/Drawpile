@@ -23,12 +23,13 @@
 
 #include "dialogs/selectsessiondialog.h"
 #include "net/loginsessions.h"
+#include "utils/html.h"
 
 #include "ui_selectsession.h"
 
 namespace dialogs {
 
-SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, QWidget *parent) :
+SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, const QString &serverTitle, QWidget *parent) :
 	QDialog(parent)
 {
 	_ui = new Ui_SelectSession;
@@ -39,6 +40,7 @@ SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, QWidget 
 	ok->setEnabled(false);
 
 	_ui->sessionView->setModel(model);
+	_ui->serverTitle->setText(htmlutils::newlineToBr(htmlutils::linkify(serverTitle.toHtmlEscaped())));
 
 	QHeaderView *header = _ui->sessionView->horizontalHeader();
 	header->setSectionResizeMode(1, QHeaderView::Stretch);

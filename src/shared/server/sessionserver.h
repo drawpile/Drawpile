@@ -36,6 +36,15 @@ public:
 	~SessionServer();
 
 	/**
+	 * @brief Set the title of the server
+	 *
+	 * The server title is shown by the client in the session selection dialog.
+	 * @param title
+	 */
+	void setTitle(const QString& title) { _title = title; }
+	const QString &title() const { return _title; }
+
+	/**
 	 * @brief Set the maximum number of sessions
 	 *
 	 * This does not affect existing sessions.
@@ -177,6 +186,7 @@ private:
 	QList<Client*> _lobby;
 	int _nextId;
 
+	QString _title;
 	int _sessionLimit;
 	uint _historyLimit;
 	qint64 _expirationTime;

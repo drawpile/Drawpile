@@ -56,6 +56,11 @@ MultiServer::MultiServer(QObject *parent)
 	});
 }
 
+void MultiServer::setServerTitle(const QString &title)
+{
+	_sessions->setTitle(title);
+}
+
 void MultiServer::setHistoryLimit(uint limit)
 {
 	_sessions->setHistoryLimit(limit);
