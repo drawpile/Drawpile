@@ -357,7 +357,9 @@ void LoginHandler::expectLoginOk(const QString &msg)
 		// If in host mode, send initial session settings
 		if(_mode==HOST) {
 			QStringList init;
-			init << "/title " + _title;
+
+			if(!_title.isEmpty())
+				init << "/title " + _title;
 
 			if(!_sessionPassword.isEmpty())
 				init << "/password " + _sessionPassword;
