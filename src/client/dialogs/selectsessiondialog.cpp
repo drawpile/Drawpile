@@ -29,7 +29,7 @@
 
 namespace dialogs {
 
-SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, const QString &serverTitle, QWidget *parent) :
+SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, QWidget *parent) :
 	QDialog(parent)
 {
 	_ui = new Ui_SelectSession;
@@ -40,7 +40,7 @@ SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, const QS
 	ok->setEnabled(false);
 
 	_ui->sessionView->setModel(model);
-	_ui->serverTitle->setText(htmlutils::newlineToBr(htmlutils::linkify(serverTitle.toHtmlEscaped())));
+	setServerTitle(QString());
 
 	QHeaderView *header = _ui->sessionView->horizontalHeader();
 	header->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -69,6 +69,17 @@ SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, const QS
 		if(ok->isEnabled())
 			accept();
 	});
+}
+
+void SelectSessionDialog::setServerTitle(const QString &title)
+{
+	if(title.isEmpty()) {
+		_ui->serverTitle->setVisible(false);
+
+	} else {
+		_ui->serverTitle->setVisible(true);
+		_ui->serverTitle->setText(htmlutils::newlineToBr(htmlutils::linkify(title.toHtmlEscaped())));
+	}
 }
 
 }

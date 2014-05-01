@@ -87,8 +87,8 @@ void LoginHandler::receiveMessage(protocol::MessagePtr message)
 
 void LoginHandler::expectHello(const QString &msg)
 {
-	// Greeting should be in format "DRAWPILE <majorVersion> <flags> "title"
-	const QRegularExpression re("\\ADRAWPILE (\\d+) (-|[\\w,]+) \"([^\"]*)\"\\z");
+	// Greeting should be in format "DRAWPILE <majorVersion> <flags>
+	const QRegularExpression re("\\ADRAWPILE (\\d+) (-|[\\w,]+)\\z");
 	auto m = re.match(msg);
 
 	if(!m.hasMatch()) {
@@ -129,8 +129,6 @@ void LoginHandler::expectHello(const QString &msg)
 		}
 	}
 
-	QString serverTitle = m.captured(3);
-
 	// Query host password if needed
 	if(_mode == HOST && hostPassword) {
 		showPasswordDialog(tr("Password is needed to host a session"), tr("Enter hosting password"));
@@ -138,7 +136,7 @@ void LoginHandler::expectHello(const QString &msg)
 
 	// Show session selector if in multisession mode
 	if(_mode == JOIN && _multisession) {
-		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, serverTitle, _widgetParent);
+		_selectorDialog = new dialogs::SelectSessionDialog(_sessions, _widgetParent);
 		_selectorDialog->setWindowModality(Qt::WindowModal);
 		_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -202,6 +200,9 @@ void LoginHandler::expectSessionDescriptionHost(const QString &msg)
 		else
 			_state = WAIT_FOR_HOST_PASSWORD;
 
+	} else if(msg.startsWith("TITLE")) {
+		// title is not shown in this mode
+
 	} else {
 		qWarning() << "Expected session list, got" << msg;
 		_server->loginFailure(tr("Incompatible server"));
@@ -242,6 +243,12 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 			else
 				qWarning() << "invalid NOSESSION message:" << msg;
 		}
+		return;
+
+	} else if(msg.startsWith("TITLE ")) {
+		// Server title update
+		if(_selectorDialog)
+			_selectorDialog->setServerTitle(msg.mid(6));
 		return;
 	}
 
@@ -303,7 +310,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 void LoginHandler::expectNoErrors(const QString &msg)
 {
 	// A "do nothing" handler while waiting for the user to enter a password
-	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION"))
+	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION") || msg.startsWith("TITLE"))
 		return;
 
 	if(msg.startsWith("ERROR")) {
@@ -311,12 +318,14 @@ void LoginHandler::expectNoErrors(const QString &msg)
 		qWarning() << "Server error while waiting for password:" << ecode;
 
 		_server->loginFailure(tr("An error occurred"));
+	} else {
+		qWarning() << "Unexpected login message:" << msg;
 	}
 }
 
 void LoginHandler::expectLoginOk(const QString &msg)
 {
-	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION")) {
+	if(msg.startsWith("SESSION") || msg.startsWith("NOSESSION") || msg.startsWith("TITLE")) {
 		// We can still get session list updates here. They are safe to ignore.
 		return;
 	}
@@ -385,7 +394,7 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	}
 
 	// Unexpected command
-	qWarning() << "Login error. Unexpected response:" << msg;
+	qWarning() << "Login error. Unexpected response while waiting for OK:" << msg;
 	_server->loginFailure(tr("Incompatible server"));
 }
 

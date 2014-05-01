@@ -40,11 +40,13 @@ class SessionServer;
  *
  * - client should disconnect at this point if proto-major does not match -
  *
+ * S: TITLE "title" (if set)
+ *
  * S: SESSION <id> <proto-minor> <FLAGS²> <user-count> "title"
  *  - or -
  * S: NOSESSION [id³]
  *
- * - Note. Server may send updates to session list until the client has made a choice.
+ * - Note. Server may send updates to session list and title until the client has made a choice.
  *
  * C: HOST <proto-minor> <userid> "<username>" [;server password⁴]
  *  - or -

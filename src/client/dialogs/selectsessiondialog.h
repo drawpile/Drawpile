@@ -34,7 +34,9 @@ class SelectSessionDialog : public QDialog
 {
 	Q_OBJECT
 public:
-	SelectSessionDialog(net::LoginSessionModel *model, const QString &serverTitle, QWidget *parent = 0);
+	explicit SelectSessionDialog(net::LoginSessionModel *model, QWidget *parent = 0);
+
+	void setServerTitle(const QString &title);
 
 signals:
 	/**
