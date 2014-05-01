@@ -3,19 +3,18 @@
 
    Copyright (C) 2006-2014 Calle Laakkonen
 
-   This program is free software; you can redistribute it and/or modify
+   Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   Drawpile is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+   along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QDebug>
@@ -1470,16 +1469,26 @@ void MainWindow::markSpotForRecording()
 
 void MainWindow::about()
 {
-	QMessageBox::about(this, tr("About DrawPile"),
-			tr("<p><b>DrawPile %1</b><br>"
+	QMessageBox::about(this, tr("About Drawpile"),
+			tr("<p><b>Drawpile %1</b><br>"
 			"A collaborative drawing program.</p>"
+
+			"<p>Copyright © 2007-2014 Calle Laakkonen</p>"
+
 			"<p>This program is free software; you may redistribute it and/or "
 			"modify it under the terms of the GNU General Public License as " 
-			"published by the Free Software Foundation, either version 2, or "
+			"published by the Free Software Foundation, either version 3, or "
 			"(at your opinion) any later version.</p>"
-			"<p>Programming: Calle Laakkonen, M.K.A<br>"
-			"Icons are from the Tango Desktop Project</p>").arg(DRAWPILE_VERSION)
-			);
+
+			"<p>This program is distributed in the hope that it will be useful, "
+			"but WITHOUT ANY WARRANTY; without even the implied warranty of "
+			"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the "
+			"GNU General Public License for more details.</p>"
+
+			"<p>You should have received a copy of the GNU General Public License "
+			"along with this program.  If not, see <a href=\"http://www.gnu.org/licences/\">http://www.gnu.org/licenses/</a>.</p>"
+			).arg(DRAWPILE_VERSION)
+	);
 }
 
 void MainWindow::homepage()

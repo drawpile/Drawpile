@@ -1,0 +1,19 @@
+Drawpile developers
+-------------------
+
+Main developer: Calle Laakkonen
+
+Contributors:
+* M.K.A. (the original server)
+* Marco Molteni (build script fixes)
+* Christian Frisson (OSX compatibility fixes)
+* Alexander Rødseth (build script fixes)
+* Christopher Meng (build script fixes)
+* Christoph Korn (typo fixes)
+* Shane S. (typo fixes)
+
+The project also includes (L)GPL licensed code from:
+ * Nokia Qt solutions (color triangle widget)
+ * Krita (curve editing widget and pixel blending functions)
+ * Qt (zip file handling and command line parser)
+
