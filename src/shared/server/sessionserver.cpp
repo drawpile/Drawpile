@@ -78,11 +78,11 @@ void SessionServer::destroySession(SessionState *session)
 {
 	Q_ASSERT(_sessions.contains(session));
 
-	logger::debug() << "Deleting session" << session->id();
+	logger::debug() << "Deleting session" << session->id() << "with" << session->userCount() << "users";
 	_sessions.removeOne(session);
 
 	int id = session->id();
-	delete session;
+	session->deleteLater(); // destroySession call might be triggered by a signal emitted from the session
 	emit sessionEnded(id);
 }
 
