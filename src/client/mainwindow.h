@@ -96,7 +96,6 @@ class MainWindow : public QMainWindow {
 		void selectTool(QAction *tool);
 
 		void about();
-		void homepage();
 
 		//! React to eraser tip proximity
 		void eraserNear(bool near);

@@ -1491,11 +1491,6 @@ void MainWindow::about()
 	);
 }
 
-void MainWindow::homepage()
-{
-	QDesktopServices::openUrl(QUrl("http://drawpile.sourceforge.net/"));
-}
-
 /**
  * @brief Create a new action.
  *
@@ -1929,16 +1924,19 @@ void MainWindow::setupActions()
 	//
 	// Help menu
 	//
-	QAction *homepage = makeAction("dphomepage", 0, tr("&DrawPile homepage"));
+	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), "http://drawpile.sourceforge.net/");
+	QAction *wikipage = makeAction("dphomepage", 0, tr("&Wiki"), "https://github.com/callaa/Drawpile/wiki");
 	QAction *about = makeAction("dpabout", 0, tr("&About DrawPile"));
 	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt"));
 
+	connect(homepage, &QAction::triggered, [homepage]() { QDesktopServices::openUrl(QUrl(homepage->statusTip())); });
+	connect(wikipage, &QAction::triggered, [wikipage]() { QDesktopServices::openUrl(QUrl(wikipage->statusTip())); });
 	connect(about, SIGNAL(triggered()), this, SLOT(about()));
 	connect(aboutqt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
-	connect(homepage, SIGNAL(triggered()), this, SLOT(homepage()));
 
 	QMenu *helpmenu = menuBar()->addMenu(tr("&Help"));
 	helpmenu->addAction(homepage);
+	helpmenu->addAction(wikipage);
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
