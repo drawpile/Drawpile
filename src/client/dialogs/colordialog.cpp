@@ -214,6 +214,8 @@ void ColorDialog::updateTriangle(const QColor& color)
 		if(h==-1)
 			h = _validhue;
 		_ui->hue->setValue(h);
+		_ui->hue->setColorSaturation(color.saturationF());
+		_ui->hue->setColorValue(color.valueF());
 		_ui->saturation->setValue(s);
 		_ui->value->setValue(v);
 		updateCurrent(color);
