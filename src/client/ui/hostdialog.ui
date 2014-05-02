@@ -741,8 +741,8 @@
      <y>322</y>
     </hint>
     <hint type="destinationlabel">
-     <x>192</x>
-     <y>318</y>
+     <x>175</x>
+     <y>326</y>
     </hint>
    </hints>
   </connection>
@@ -833,12 +833,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>163</x>
-     <y>99</y>
+     <x>117</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
-     <x>241</x>
-     <y>103</y>
+     <x>89</x>
+     <y>63</y>
     </hint>
    </hints>
   </connection>
@@ -849,12 +849,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>99</x>
-     <y>102</y>
+     <x>109</x>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
-     <x>79</x>
-     <y>132</y>
+     <x>89</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>imageDropped()</signal>
+   <receiver>otherpicture</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>215</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>232</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageSelector</sender>
+   <signal>colorDropped()</signal>
+   <receiver>solidcolor</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>51</x>
+     <y>261</y>
     </hint>
    </hints>
   </connection>
