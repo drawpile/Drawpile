@@ -62,8 +62,8 @@ class SessionServer;
  *    -       - no optional features supported
  *    MULTI   - this server supports multiple sessions
  *    HOSTP   - a password is needed to host a session
- *    SECURE  - the server supports encryption
- *    SECNOW  - the server requires encryption before login can proceed (implies SECURE)
+ *    TLS     - the server supports SSL/TLS encryption
+ *    SECURE  - user must initiate encryption before login can proceed
  *    PERSIST - persistent sessions are supported
  *
  * 2) Set of comma delimited session flags:

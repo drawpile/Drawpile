@@ -113,9 +113,9 @@ void LoginHandler::expectHello(const QString &msg)
 			_multisession = true;
 		} else if(flag == "HOSTP") {
 			hostPassword = true;
-		} else if(flag == "SECURE") {
+		} else if(flag == "TLS") {
 			// Encryption is not supported yet in this version. Ignore this flag
-		} else if(flag == "SECNOW") {
+		} else if(flag == "SECURE") {
 			// Encryption not yet supported, but server demands it!
 			qWarning() << "Login error. Server demands encryption!";
 			_server->loginFailure(tr("Secure connection support not available!"));

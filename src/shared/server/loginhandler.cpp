@@ -52,7 +52,7 @@ void LoginHandler::startLoginProcess()
 		flags << "HOSTP";
 	if(_server->allowPersistentSessions())
 		flags << "PERSIST";
-	// TODO SECURE and SECNOW
+	// TODO TLS and SECURE
 
 	// Start by telling who we are
 	send(QString("DRAWPILE %1 %2")
