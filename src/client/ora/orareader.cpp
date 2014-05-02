@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009-2013 Calle Laakkonen
+   Copyright (C) 2009-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -35,11 +35,45 @@ using protocol::MessagePtr;
 
 namespace openraster {
 
-static const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
+namespace {
+	const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
+
+	bool checkIsOraFile(ZipReader &zip)
+	{
+		QByteArray mimetype(zip.fileData("mimetype"));
+		return mimetype == "image/openraster";
+	}
+}
 
 Reader::Reader()
 	: _error(QT_TR_NOOP("No error")), _warnings(NO_WARNINGS)
 {
+}
+
+QImage Reader::loadThumbnail(const QString &filename)
+{
+	QImage image;
+	QFile orafile(filename);
+	if(!orafile.open(QIODevice::ReadOnly))
+		return image;
+
+	ZipReader zip(&orafile);
+
+	if(!zip.isReadable())
+		return image;
+
+	// Make sure this is an OpenRaster file
+	if(!checkIsOraFile(zip))
+		return image;
+
+	// Load thumbnail
+	QByteArray imgdata = zip.fileData("Thumbnails/thumbnail.png");
+	if(imgdata.isNull())
+		return image;
+
+	image.loadFromData(imgdata, "png");
+
+	return image;
 }
 
 /**
@@ -62,13 +96,9 @@ bool Reader::load(const QString &filename)
 	}
 
 	// Make sure this is an OpenRaster file
-	{
-		QByteArray mimetype(zip.fileData("mimetype"));
-		qDebug() << "read mimetype:" << mimetype;
-		if(mimetype != "image/openraster") {
-			_error = QApplication::tr("File is not an OpenRaster file");
-			return false;
-		}
+	if(!checkIsOraFile(zip)) {
+		_error = QApplication::tr("File is not an OpenRaster file");
+		return false;
 	}
 
 	// Read the stack

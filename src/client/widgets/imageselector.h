@@ -44,18 +44,25 @@ class PLUGIN_EXPORT ImageSelector : public QFrame {
 		//! Get the selected image
 		QImage image() const;
 
+		//! Get the selected image file (if isImageFile()==true)
+		const QString &imageFile() const { return _imagefile; }
+
 		//! Return the selected color
-		const QColor& color() const { return color_; }
+		const QColor& color() const { return _color; }
 
 		//! Is solid color currently selected
-		bool isColor() const { return mode_ == COLOR; }
+		bool isColor() const { return _mode == COLOR; }
 
 		//! Is the original image currently selected
-		bool isOriginal() const { return mode_ == ORIGINAL; }
+		bool isOriginal() const { return _mode == ORIGINAL; }
+
+		//! Is image file currently selected
+		bool isImageFile() const { return _mode == IMAGEFILE; }
 
 	public slots:
 		void setOriginal(const QImage& image);
 		void setImage(const QImage& image);
+		void setImage(const QString &filename);
 		void setColor(const QColor& color);
 		void setWidth(int w);
 		void setHeight(int h);
@@ -78,12 +85,19 @@ class PLUGIN_EXPORT ImageSelector : public QFrame {
 
 	private:
 		void updateCache(const QImage& src);
-		QImage image_;
-		QImage original_;
-		QPixmap cache_;
-		QColor color_;
-		QSize size_;
-		enum {ORIGINAL,IMAGE,COLOR} mode_;
+		QImage _image;
+		QString _imagefile;
+		QImage _original;
+		QPixmap _cache;
+		QColor _color;
+		QSize _size;
+
+		enum {
+			ORIGINAL,
+			IMAGE,
+			IMAGEFILE,
+			COLOR
+		} _mode;
 };
 
 #ifndef DESIGNER_PLUGIN

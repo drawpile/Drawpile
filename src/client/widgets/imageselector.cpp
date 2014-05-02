@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,33 +16,38 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "widgets/imageselector.h"
+#include "ora/orareader.h"
+
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QMimeData>
 #include <QPainter>
 #include <QList>
 #include <QUrl>
-#include <QMimeData>
-
-#include "imageselector.h"
 
 #ifndef DESIGNER_PLUGIN
 namespace widgets {
 #endif
 
 ImageSelector::ImageSelector(QWidget *parent, Qt::WindowFlags f)
-	: QFrame(parent,f), color_(Qt::white), size_(30,20), mode_(ORIGINAL)
+	: QFrame(parent,f), _color(Qt::white), _size(30,20), _mode(ORIGINAL)
 {
 	setAcceptDrops(true);
 }
 
 QImage ImageSelector::image() const {
-	switch(mode_) {
-		case ORIGINAL: return original_;
-		case IMAGE: return image_;
-		case COLOR:
-					QImage img(size_, QImage::Format_RGB32);
-					img.fill(color_.rgb());
-					return img;
+	switch(_mode) {
+	case ORIGINAL:
+		return _original;
+	case IMAGE:
+	case IMAGEFILE:
+		return _image;
+	case COLOR:
+		QImage img(_size, QImage::Format_RGB32);
+		img.fill(_color.rgb());
+		return img;
 	}
 	// Should never be reached
 	return QImage();
@@ -58,9 +63,9 @@ void ImageSelector::paintEvent(QPaintEvent *event)
 	const int w = frameWidth();
 	const QRect bounds = frameRect().adjusted(w,w,-w,-w);
 	QPainter painter(this);
-	if(mode_ == COLOR) {
+	if(_mode == COLOR) {
 		// Draw a rectangle of solid color
-		QSize s = size_;
+		QSize s = _size;
 		if(s.width() > bounds.width() || s.height() > bounds.height()) {
 			s.scale(bounds.size(), Qt::KeepAspectRatio);
 		}
@@ -71,23 +76,23 @@ void ImageSelector::paintEvent(QPaintEvent *event)
 					s.width(),
 					s.height()
 					),
-				QBrush(color_)
+				QBrush(_color)
 				);
 	} else {
 		const QPoint p(
-				w + bounds.width()/2 - cache_.width()/2,
-				w + bounds.height()/2 - cache_.height()/2
+				w + bounds.width()/2 - _cache.width()/2,
+				w + bounds.height()/2 - _cache.height()/2
 				);
-		painter.drawPixmap(p,cache_);
+		painter.drawPixmap(p, _cache);
 	}
 }
 
 void ImageSelector::resizeEvent(QResizeEvent *)
 {
-	if(mode_ == ORIGINAL)
-		updateCache(original_);
-	else if(mode_ == IMAGE)
-		updateCache(image_);
+	if(_mode == ORIGINAL)
+		updateCache(_original);
+	else if(_mode == IMAGE || _mode == IMAGEFILE)
+		updateCache(_image);
 }
 
 void ImageSelector::updateCache(const QImage& src)
@@ -95,89 +100,108 @@ void ImageSelector::updateCache(const QImage& src)
 	const int w = frameWidth();
 	const QRect bounds = frameRect().adjusted(w,w,-w,-w);
 	if(src.width() > bounds.width() || src.height() > bounds.height()) {
-		cache_ = QPixmap::fromImage(
+		_cache = QPixmap::fromImage(
 				src.scaled(bounds.size(), Qt::KeepAspectRatio)
 				);
 	} else {
-		cache_ = QPixmap::fromImage(src);
+		_cache = QPixmap::fromImage(src);
 	}
 }
 
 void ImageSelector::setOriginal(const QImage& image)
 {
-	original_ = image;
-	if(mode_ == ORIGINAL) {
-		size_ = original_.size();
-		emit widthChanged(size_.width());
-		emit heightChanged(size_.height());
-		updateCache(original_);
+	_original = image;
+	if(_mode == ORIGINAL) {
+		_size = _original.size();
+		emit widthChanged(_size.width());
+		emit heightChanged(_size.height());
+		updateCache(_original);
 		update();
 	}
 }
 
 void ImageSelector::setImage(const QImage& image)
 {
-	image_ = image;
-	if(mode_ == IMAGE) {
-		size_ = image_.size();
-		emit widthChanged(size_.width());
-		emit heightChanged(size_.height());
-		updateCache(image_);
+	_image = image;
+	_imagefile = QString();
+	if(_mode == IMAGE || _mode == IMAGEFILE) {
+		_size = _image.size();
+		emit widthChanged(_size.width());
+		emit heightChanged(_size.height());
+		updateCache(_image);
 		update();
+	}
+}
+
+void ImageSelector::setImage(const QString &filename)
+{
+	QImage img;
+
+#ifndef DESIGNER_PLUGIN
+	// Special handling for OpenRaster files, as we don't have a loader that integrates with QImage
+	if(filename.endsWith(".ora", Qt::CaseInsensitive))
+		img = openraster::Reader::loadThumbnail(filename);
+
+	else
+#endif
+		img.load(filename);
+
+	if(!img.isNull()) {
+		setImage(img);
+		_imagefile = filename;
 	}
 }
 
 void ImageSelector::setColor(const QColor& color)
 {
-	color_ = color;
-	if(mode_ == COLOR)
+	_color = color;
+	if(_mode == COLOR)
 		update();
 }
 
 void ImageSelector::setWidth(int w)
 {
-	size_.setWidth(w);
-	if(mode_ == COLOR)
+	_size.setWidth(w);
+	if(_mode == COLOR)
 		update();
 }
 
 void ImageSelector::setHeight(int h)
 {
-	size_.setHeight(h);
-	if(mode_ == COLOR)
+	_size.setHeight(h);
+	if(_mode == COLOR)
 		update();
 }
 
 void ImageSelector::chooseOriginal()
 {
-	mode_ = ORIGINAL;
-	size_ = original_.size();
-	emit widthChanged(size_.width());
-	emit heightChanged(size_.height());
-	updateCache(original_);
+	_mode = ORIGINAL;
+	_size = _original.size();
+	emit widthChanged(_size.width());
+	emit heightChanged(_size.height());
+	updateCache(_original);
 	update();
 }
 
 void ImageSelector::chooseColor()
 {
-	mode_ = COLOR;
+	_mode = COLOR;
 	update();
 }
 
 void ImageSelector::chooseImage()
 {
-	if(image_.isNull()) {
+	if(_image.isNull()) {
 		emit noImageSet();
 		return;
 	}
 
-	mode_ = IMAGE;
-	size_ = image_.size();
-	emit widthChanged(size_.width());
-	emit heightChanged(size_.height());
-	updateCache(image_);
+	_mode = _imagefile.isEmpty() ? IMAGE : IMAGEFILE;
+	_size = _image.size();
+	emit widthChanged(_size.width());
+	emit heightChanged(_size.height());
+	updateCache(_image);
 	update();
-
 }
 
 /**
@@ -202,7 +226,6 @@ void ImageSelector::dropEvent(QDropEvent *event)
 		const QColor col = qvariant_cast<QColor>(event->mimeData()->colorData());
 		setColor(col);
 		chooseColor();
-		//emit colorChanged(col);
 		emit colorDropped();
 	} else if(event->mimeData()->hasImage()) {
 		// Drop image
@@ -213,9 +236,9 @@ void ImageSelector::dropEvent(QDropEvent *event)
 	} else if(event->mimeData()->hasUrls()) {
 		// Drop URL, hopefully to an image
 		const QList<QUrl> urls = event->mimeData()->urls();
-		const QImage img(urls.first().toLocalFile());
-		if(img.isNull()==false) {
-			setImage(img);
+		QString filename = urls.first().toLocalFile();
+		setImage(filename);
+		if(_imagefile == filename) {
 			chooseImage();
 			emit imageDropped();
 		}

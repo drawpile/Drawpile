@@ -99,10 +99,8 @@ void HostDialog::rememberSettings() const
 
 bool HostDialog::selectPicture()
 {
-	// TODO support openraster
-
 	// Get a list of supported formats
-	QString formats;
+	QString formats = "*.ora ";
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 			formats += "*." + format + " ";
 	}
@@ -119,10 +117,8 @@ bool HostDialog::selectPicture()
 
 	bool selected = false;
 	if(!file.isEmpty()) {
-		// Open the file
-		QImage img(file);
-		if(!img.isNull()) {
-			ui_->imageSelector->setImage(img);
+		ui_->imageSelector->setImage(file);
+		if(ui_->imageSelector->imageFile() == file) {
 			ui_->otherpicture->click();
 			selected = true;
 		}
@@ -172,6 +168,10 @@ SessionLoader *HostDialog::getSessionLoader() const
 			),
 			ui_->imageSelector->color()
 		);
+
+	} else if(ui_->imageSelector->isImageFile()) {
+		return new ImageCanvasLoader(ui_->imageSelector->imageFile());
+
 	} else {
 		return new QImageCanvasLoader(ui_->imageSelector->image());
 	}

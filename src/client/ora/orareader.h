@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2009-2013 Calle Laakkonen
+   Copyright (C) 2009-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 class ZipReader;
 class QDomElement;
 class QPoint;
+class QImage;
 
 namespace openraster {
 
@@ -45,6 +46,9 @@ class Reader {
 
 		Reader();
 		Reader(const Reader&) = delete;
+
+		//! Load the OpenRaster thumbnail (if available)
+		static QImage loadThumbnail(const QString &filename);
 
 		//! Load the image
 		bool load(const QString &filename);
