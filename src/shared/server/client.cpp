@@ -31,6 +31,7 @@
 #include "../net/layer.h"
 #include "../net/login.h"
 #include "../net/meta.h"
+#include "../net/flow.h"
 #include "../net/pen.h"
 #include "../net/snapshot.h"
 #include "../net/undo.h"
@@ -178,7 +179,7 @@ void Client::receiveSnapshot()
 {
 	if(!_uploading_snapshot) {
 		logger::warning() << "Received snapshot data from client" << _id << "when not expecting it!";
-		kick();
+		disconnectError("Didn't expect snapshot data");
 		return;
 	}
 
@@ -213,7 +214,7 @@ void Client::receiveSnapshot()
 
 			if(_msgqueue->isPendingSnapshot()) {
 				logger::warning() << "Client #" << _id << "sent too much snapshot data!";
-				kick();
+				disconnectError("too much snapshot data");
 			}
 			break;
 		}
@@ -283,6 +284,9 @@ void Client::handleSessionMessage(MessagePtr msg)
 	case MSG_STREAMPOS:
 		logger::warning() << "Warning: user #" << _id << "sent server-to-user only command" << msg->type();
 		return;
+	case MSG_DISCONNECT:
+		// we don't do anything with disconnect notifications from the client
+		break;
 	default: break;
 	}
 
@@ -483,10 +487,21 @@ void Client::barrierUnlock()
 	enqueueHeldCommands();
 }
 
-void Client::kick(int kickedBy)
+void Client::disconnectKick(const QString &kickedBy)
 {
 	logger::info() << "User" << _id << _username << "kicked by" << kickedBy;
-	_socket->disconnectFromHost();
+	_msgqueue->sendDisconnect(protocol::Disconnect::KICK, "Kicked by " + kickedBy);
+}
+
+void Client::disconnectError(const QString &message)
+{
+	logger::info() << "Disconnecting user" << _id << _username << "disconnecting due to error:" << message;
+	_msgqueue->sendDisconnect(protocol::Disconnect::ERROR, message);
+}
+
+void Client::disconnectShutdown()
+{
+	_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
 }
 
 void Client::sendUpdatedAttrs()
@@ -573,7 +588,7 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 		bool ok;
 		Client *c = _session->getClientById(tokens[1].toInt(&ok));
 		if(c && ok) {
-			c->kick(_id); // TODO inform of the reason
+			c->disconnectKick(_username);
 			return true;
 		}
 	} else if(tokens[0] == "/op" && tokens.count()==2) {

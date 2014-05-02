@@ -25,6 +25,7 @@
 #include "login.h"
 
 #include "../shared/net/messagequeue.h"
+#include "../shared/net/flow.h"
 
 namespace net {
 
@@ -58,7 +59,7 @@ void TcpServer::login(LoginHandler *login)
 void TcpServer::logout()
 {
 	_localDisconnect = true;
-	_socket->disconnectFromHost();
+	_msgqueue->sendDisconnect(protocol::Disconnect::SHUTDOWN, QString());
 }
 
 int TcpServer::uploadQueueBytes() const
@@ -116,7 +117,7 @@ void TcpServer::handleSocketError()
 	qWarning() << "Socket error:" << _socket->errorString();
 	_error = _socket->errorString();
 	if(_socket->state() != QTcpSocket::UnconnectedState)
-		_socket->close();
+		_socket->disconnectFromHost();
 	else
 		handleDisconnect();
 }
@@ -126,7 +127,7 @@ void TcpServer::loginFailure(const QString &message, bool cancelled)
 	qWarning() << "Login failed:" << message;
 	_error = message;
 	_localDisconnect = cancelled;
-	_socket->close();
+	_socket->disconnectFromHost();
 }
 
 void TcpServer::loginSuccess()

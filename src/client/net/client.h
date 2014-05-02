@@ -39,6 +39,7 @@ namespace protocol {
 	class LayerACL;
 	class MovePointer;
 	class Marker;
+	class Disconnect;
 }
 
 namespace net {
@@ -240,6 +241,7 @@ private:
 	void handleSessionConfChange(const protocol::SessionConf &msg);
 	void handleLayerAcl(const protocol::LayerACL &msg);
 	void handleMovePointer(const protocol::MovePointer &msg);
+	void handleDisconnectMessage(const protocol::Disconnect &msg);
 
 	Server *_server;
 	LoopbackServer *_loopback;

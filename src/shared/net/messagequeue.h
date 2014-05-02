@@ -25,7 +25,7 @@
 
 #include "message.h"
 
-class QIODevice;
+class QTcpSocket;
 
 namespace protocol {
 
@@ -36,10 +36,11 @@ class MessageQueue : public QObject {
 Q_OBJECT
 public:
 	/**
-	 * Create a message queue that wraps an IO device (typicaly a tcp socket).
-	 * The messagequeue does not take ownership of the device.
+	 * @brief Create a message queue that wraps a TCP socket.
+	 *
+	 * The MessageQueue does not take ownership of the device.
 	 */
-	MessageQueue(QIODevice *socket, QObject *parent=0);
+	explicit MessageQueue(QTcpSocket *socket, QObject *parent=0);
 	MessageQueue(const MessageQueue&) = delete;
 	~MessageQueue();
 
@@ -90,15 +91,16 @@ public:
 	void sendSnapshot(const QList<MessagePtr> &snapshot);
 
 	/**
-	 * Close the IO device
+	 * @brief Gracefully disconnect
+	 *
+	 * This function enqueues the disconnect notification message. The connection will
+	 * be automatically closed after the message has been sent. Additionally, it
+	 * causes all incoming messages to be ignored.
+	 *
+	 * @param reason
+	 * @param message
 	 */
-	void close();
-
-	/**
-	 * Close the IO device as soon as the current message has been sent.
-	 * written.
-	 */
-	void closeWhenReady();
+	void sendDisconnect(int reason, const QString &message);
 
 	/**
 	 * @brief Get the number of bytes in the upload queue
@@ -156,7 +158,7 @@ private slots:
 private:
 	void writeData();
 
-	QIODevice *_socket;
+	QTcpSocket *_socket;
 
 	char *_recvbuffer;
 	char *_sendbuffer;
@@ -171,6 +173,7 @@ private:
 
 	bool _closeWhenReady;
 	bool _expectingSnapshot;
+	bool _ignoreIncoming;
 };
 
 }

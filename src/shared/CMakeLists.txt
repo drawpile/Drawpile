@@ -14,6 +14,7 @@ set (
 	net/login.cpp
 	net/snapshot.cpp
 	net/meta.cpp
+	net/flow.cpp
 	net/undo.cpp
 	net/recording.cpp
 	net/messagequeue.cpp

@@ -144,25 +144,6 @@ int Chat::payloadLength() const
 	return 1 + _msg.length();
 }
 
-
-StreamPos *StreamPos::deserialize(const uchar *data, uint len)
-{
-	if(len!=4)
-		return 0;
-	return new StreamPos(qFromBigEndian<quint32>(data));
-}
-
-int StreamPos::serializePayload(uchar *data) const
-{
-	qToBigEndian(_bytes, data);
-	return 4;
-}
-
-int StreamPos::payloadLength() const
-{
-	return 4;
-}
-
 MovePointer *MovePointer::deserialize(const uchar *data, uint len)
 {
 	if(len!=10)

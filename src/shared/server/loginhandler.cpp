@@ -119,8 +119,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 		handleJoinMessage(message);
 	else {
 		logger::warning() << "Got invalid login message from" << _client->peerAddress().toString();
-		send("WHAT?");
-		_client->kick(0);
+		_client->disconnectError("invalid message");
 	}
 }
 
@@ -134,7 +133,7 @@ void LoginHandler::handleHostMessage(const QString &message)
 	auto m = re.match(message);
 	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
@@ -144,14 +143,14 @@ void LoginHandler::handleHostMessage(const QString &message)
 	QString username = m.captured(3);
 	if(!validateUsername(username)) {
 		send("ERROR BADNAME");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
 	QString password = m.captured(4);
 	if(password != _server->hostPassword()) {
 		send("ERROR BADPASS");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
@@ -176,7 +175,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	auto m = re.match(message);
 	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
@@ -184,13 +183,13 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	SessionState *session = _server->getSessionById(sessionId);
 	if(!session) {
 		send("ERROR NOSESSION");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
 	if(session->userCount() >= session->maxUsers()) {
 		send("ERROR CLOSED");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
@@ -199,13 +198,13 @@ void LoginHandler::handleJoinMessage(const QString &message)
 
 	if(!validateUsername(username)) {
 		send("ERROR BAD");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 
 	if(password != session->password()) {
 		send("ERROR BADPASS");
-		_client->kick(0);
+		_client->disconnectError("login error");
 		return;
 	}
 

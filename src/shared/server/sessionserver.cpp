@@ -105,7 +105,7 @@ int SessionServer::totalUsers() const
 void SessionServer::stopAll()
 {
 	for(Client *c : _lobby)
-		c->kick();
+		c->disconnectShutdown();
 
 	for(SessionState *s : _sessions) {
 		s->stopRecording();

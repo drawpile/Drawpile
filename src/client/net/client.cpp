@@ -35,6 +35,7 @@
 #include "../shared/net/image.h"
 #include "../shared/net/layer.h"
 #include "../shared/net/meta.h"
+#include "../shared/net/flow.h"
 #include "../shared/net/pen.h"
 #include "../shared/net/snapshot.h"
 #include "../shared/net/undo.h"
@@ -501,6 +502,9 @@ void Client::handleMessage(protocol::MessagePtr msg)
 	case MSG_MARKER:
 		handleMarkerMessage(msg.cast<Marker>());
 		break;
+	case MSG_DISCONNECT:
+		handleDisconnectMessage(msg.cast<Disconnect>());
+		break;
 	default:
 		qWarning() << "received unhandled meta command" << msg->type();
 	}
@@ -538,6 +542,12 @@ void Client::handleMarkerMessage(const protocol::Marker &msg)
 		_userlist->getUsername(msg.contextId()),
 		msg.text()
 	);
+}
+
+void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
+{
+	// TODO notify user (at least KICK type messages are interesting to regular users)
+	qDebug() << "Received disconnect notification! Reason =" << msg.reason() << "and message =" << msg.message();
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

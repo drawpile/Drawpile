@@ -305,8 +305,7 @@ void SessionState::abandonSnapshotPoint()
 
 	foreach(Client *c, _clients) {
 		if(c->isDownloadingLatestSnapshot()) {
-			// TODO inform of the reason why
-			c->kick();
+			c->disconnectError("Session snapshot aborted");
 		}
 	}
 
@@ -516,7 +515,7 @@ void SessionState::drawingContextPenUp(const protocol::PenUp &cmd)
 void SessionState::kickAllUsers()
 {
 	foreach(Client *c, _clients)
-		c->kick(0);
+		c->disconnectShutdown();
 }
 
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)

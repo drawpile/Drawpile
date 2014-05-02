@@ -188,33 +188,6 @@ private:
 };
 
 /**
- * @brief Download progress message
- *
- * The StreamPos message is used to inform the client of roughly how many bytes
- * of data to expect. The client can use this to show a download progress bar.
- */
-class StreamPos : public Message {
-public:
-	StreamPos(uint32_t bytes) : Message(MSG_STREAMPOS, 0),
-		_bytes(bytes) {}
-
-	static StreamPos *deserialize(const uchar *data, uint len);
-
-	/**
-	 * @brief Number of bytes behind the current stream head
-	 * @return byte count
-	 */
-	uint32_t bytes() const { return _bytes; }
-
-protected:
-	int payloadLength() const;
-	int serializePayload(uchar *data) const;
-
-private:
-	uint32_t _bytes;
-};
-
-/**
  * @brief Move user pointer
  *
  * This is message is used to update the position of the user pointer when no

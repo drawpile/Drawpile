@@ -67,6 +67,7 @@ Clients can connect to any server sharing the same major protocol version number
 Protocol 10.2 (0.9.0)
 
  * New login process to support multiple sessions on a single server
+ * Added Disconnect message
  * No change in recording format
 
 Protocol 9.2: (0.8.6)

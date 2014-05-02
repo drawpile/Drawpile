@@ -16,20 +16,21 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QIODevice>
+#include <QTcpSocket>
 #include <cstring>
 
 #include "messagequeue.h"
 #include "snapshot.h"
-#include "meta.h" /* for STREAMPOS */
+#include "flow.h"
 
 namespace protocol {
 
 // Reserve enough buffer space for one complete message + snapshot mode marker
 static const int MAX_BUF_LEN = 1024*64 + 4 + 5;
 
-MessageQueue::MessageQueue(QIODevice *socket, QObject *parent)
-	: QObject(parent), _socket(socket), _closeWhenReady(false), _expectingSnapshot(false)
+MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
+	: QObject(parent), _socket(socket), _closeWhenReady(false), _expectingSnapshot(false),
+	  _ignoreIncoming(false)
 {
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
@@ -87,6 +88,13 @@ void MessageQueue::sendSnapshot(const QList<MessagePtr> &snapshot)
 	}
 }
 
+void MessageQueue::sendDisconnect(int reason, const QString &message)
+{
+	send(MessagePtr(new protocol::Disconnect(protocol::Disconnect::Reason(reason), message)));
+	_ignoreIncoming = true;
+	_recvcount = 0;
+}
+
 int MessageQueue::uploadQueueBytes() const
 {
 	int total = _socket->bytesToWrite() + _sendbuflen - _sentcount;
@@ -108,6 +116,16 @@ void MessageQueue::readData() {
 			emit socketError(_socket->errorString());
 			return;
 		}
+
+		if(_ignoreIncoming) {
+			// Ignore incoming data mode is used when we're shutting down the connection
+			// but want to clear the upload queue
+			if(read>0)
+				continue;
+			else
+				return;
+		}
+
 		_recvcount += read;
 
 		// Extract all complete messages
@@ -172,10 +190,16 @@ void MessageQueue::writeData() {
 		// The snapshot upload queue has lower priority than the normal queue.
 		if(!_sendqueue.isEmpty()) {
 			// There are messages in the higher priority queue, send one
-			_sendbuflen = _sendqueue.dequeue()->serialize(_sendbuffer);
+			MessagePtr msg = _sendqueue.dequeue();
+			_sendbuflen = msg->serialize(_sendbuffer);
+			if(msg->type() == protocol::MSG_DISCONNECT) {
+				// Automatically disconnect after Disconnect notification is sent
+				_closeWhenReady = true;
+				_sendqueue.clear();
+			}
+
 		} else if(!_snapshot_send.isEmpty()) {
-			// If there is nothing in the normal send queue, check if
-			// there is something in the lower priority snapshot queue
+			// When the main send queue is empty, messages from the snapshot queue are sent
 			SnapshotMode mode(SnapshotMode::SNAPSHOT);
 			_sendbuflen = mode.serialize(_sendbuffer);
 			_sendbuflen += _snapshot_send.takeFirst()->serialize(_sendbuffer + _sendbuflen);
@@ -193,38 +217,15 @@ void MessageQueue::writeData() {
 		if(_sentcount == _sendbuflen) {
 			_sendbuflen=0;
 			_sentcount=0;
-			if(_closeWhenReady)
-				close();
-			else
+			if(_closeWhenReady) {
+				_socket->disconnectFromHost();
+
+			} else {
 				writeData();
+			}
 		}
 	}
 }
 
-void MessageQueue::close() {
-	_socket->close();
-	_closeWhenReady = false;
-}
-
-/**
- * The socket is closed as soon as all pending data has been written.
- * No further data is accepted for transmission after closeWhenReady()
- * has been called.
- */
-void MessageQueue::closeWhenReady() {
-	if(_sendbuflen==0)
-		close();
-	else
-		_closeWhenReady = true;
-}
-
-#if 0
-void MessageQueue::flush() {
-	_sendbuffer.clear();
-	_recvbuffer.clear();
-	_recvqueue.clear();
-	_expecting = 0;
-}
-#endif
 }
 

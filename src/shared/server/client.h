@@ -170,9 +170,20 @@ public:
 
 	/**
 	 * @brief Kick this user off the server
-	 * @param kickedBy user ID of the kicker
+	 * @param kickedBy username of the operator
 	 */
-	void kick(int kickedBy=0);
+	void disconnectKick(const QString &kickedBy);
+
+	/**
+	 * @brief Disconnect user due to an error
+	 * @param message
+	 */
+	void disconnectError(const QString &message);
+
+	/**
+	 * @brief Disconnect user due to shutdown
+	 */
+	void disconnectShutdown();
 
 	/**
 	 * @brief Barrier lock this user
