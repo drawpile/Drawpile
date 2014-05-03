@@ -63,7 +63,7 @@ PlaybackDialog::PlaybackDialog(drawingboard::CanvasScene *canvas, recording::Rea
 	_ui = new Ui_PlaybackDialog;
 	_ui->setupUi(this);
 
-	_tinyPlayer = new TinyPlayer(this);
+	_tinyPlayer = new TinyPlayer(parent);
 
 	_timer = new QTimer(this);
 	_timer->setSingleShot(true);
@@ -180,6 +180,7 @@ bool PlaybackDialog::exitCleanup()
 	} else {
 		if(_closing)
 			QApplication::restoreOverrideCursor();
+		delete _tinyPlayer;
 		return true;
 	}
 }

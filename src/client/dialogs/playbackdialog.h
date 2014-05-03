@@ -127,7 +127,7 @@ private:
 	QTimer *_timer;
 	float _speedfactor;
 
-	TinyPlayer *_tinyPlayer;
+	QPointer<TinyPlayer> _tinyPlayer;
 
 	bool _play;
 	bool _exporterReady;
