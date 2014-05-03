@@ -192,6 +192,7 @@ void Client::receiveSnapshot()
 		case MSG_LOGIN:
 		case MSG_SESSION_CONFIG:
 		case MSG_STREAMPOS:
+		case MSG_DISCONNECT:
 			continue;
 		default: break;
 		}
@@ -290,7 +291,7 @@ void Client::handleSessionMessage(MessagePtr msg)
 		return;
 	case MSG_DISCONNECT:
 		// we don't do anything with disconnect notifications from the client
-		break;
+		return;
 	default: break;
 	}
 
