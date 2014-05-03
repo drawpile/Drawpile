@@ -656,7 +656,7 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 		return true;
 	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
 #ifdef NDEBUG
-		sendSystemChat("force_snapshot is only enabled in debug builds"
+		sendSystemChat("force_snapshot is only enabled in debug builds");
 #else
 		_session->startSnapshotSync();
 #endif
