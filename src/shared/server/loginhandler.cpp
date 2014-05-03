@@ -196,16 +196,36 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	QString username = m.captured(2);
 	QString password = m.captured(3);
 
-	if(!validateUsername(username)) {
-		send("ERROR BAD");
-		_client->disconnectError("login error");
-		return;
-	}
-
 	if(password != session->password()) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
 		return;
+	}
+
+	if(!validateUsername(username)) {
+		send("ERROR BADNAME");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	bool nameInUse=false;
+	for(const Client *c : session->clients()) {
+		if(c->username().compare(username, Qt::CaseInsensitive)==0) {
+			nameInUse=true;
+			break;
+		}
+	}
+	if(nameInUse) {
+#ifdef NDEBUG
+		send("ERROR NAMEINUSE");
+		_client->disconnectError("login error");
+		return;
+#else
+		// Allow identical usernames in debug builds, so I don't have to keep changing
+		// the username when testing. There is no technical requirement for unique usernames;
+		// the limitation is solely for the benefit of the human users.
+		logger::warning() << "Username clash" << username << "for session" << session->id() << "ignored because this is a debug build.";
+#endif
 	}
 
 	// Ok, join the session
@@ -231,7 +251,9 @@ bool LoginHandler::validateUsername(const QString &username)
 	if(username.isEmpty())
 		return false;
 
-	// TODO check for duplicates
+	if(username.contains('"'))
+		return false;
+
 	return true;
 }
 

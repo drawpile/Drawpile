@@ -35,13 +35,13 @@ class SessionServer;
  * The login process is as follows:
  * (client C connects to [this] server S)
  *
- * S: DRAWPILE <proto-major> <FEATURES¹> "server title"
+ * S: DRAWPILE <proto-major> <FEATURES¹>
  *
  * - client should disconnect at this point if proto-major does not match -
  *
- * S: TITLE "title" (if set)
+ * S: TITLE <title> (if set)
  *
- * S: SESSION <id> <proto-minor> <FLAGS²> <user-count> "title"
+ * S: SESSION <id> <proto-minor> <FLAGS²> <user-count> "<title>"
  *  - or -
  * S: NOSESSION [id³]
  *
@@ -53,7 +53,7 @@ class SessionServer;
  *
  * S: OK <userid>
  *  - or -
- * S: ERROR <BADPASS|BADNAME|SESLIMIT|CLOSED>
+ * S: ERROR <NOSESSION|BADPASS|BADNAME|NAMEINUSE|SYNTAX|CLOSED>
  *
  * Notes:
  * ------

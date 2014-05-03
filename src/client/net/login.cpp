@@ -336,10 +336,10 @@ void LoginHandler::expectLoginOk(const QString &msg)
 			error = tr("Incorrect password");
 		else if(ecode == "BADNAME")
 			error = tr("Invalid username");
+		else if(ecode == "NAMEINUSE")
+			error = tr("Username already taken!");
 		else if(ecode == "CLOSED")
 			error = tr("Session is closed");
-		else if(ecode == "SESLIMIT")
-			error = tr("Session limit reached");
 		else
 			error = tr("Unknown error (%1)").arg(ecode);
 
