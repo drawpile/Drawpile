@@ -52,6 +52,8 @@ public:
 
 	/**
 	 * Get the disconnect message
+	 *
+	 * When reason is KICK, this is the name of the operator who kicked this user.
 	 */
 	QString message() const { return QString::fromUtf8(_message); }
 

@@ -212,6 +212,7 @@ signals:
 
 	void userJoined(int id, const QString &name);
 	void userLeft(const QString &name);
+	void youWereKicked(const QString &kickedBy);
 
 	void canvasLocked(bool locked);
 	void opPrivilegeChange(bool op);

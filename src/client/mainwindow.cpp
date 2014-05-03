@@ -215,9 +215,11 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	connect(_client, SIGNAL(userJoined(int, QString)), netstatus, SLOT(join(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), netstatus, SLOT(leave(QString)));
+	connect(_client, SIGNAL(youWereKicked(QString)), netstatus, SLOT(kicked(QString)));
 
 	connect(_client, SIGNAL(userJoined(int, QString)), chatbox, SLOT(userJoined(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), chatbox, SLOT(userParted(QString)));
+	connect(_client, SIGNAL(youWereKicked(QString)), chatbox, SLOT(kicked(QString)));
 
 	connect(_client, SIGNAL(userJoined(int,QString)), _canvas, SLOT(setUserMarkerName(int,QString)));
 

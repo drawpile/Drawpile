@@ -546,8 +546,26 @@ void Client::handleMarkerMessage(const protocol::Marker &msg)
 
 void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 {
-	// TODO notify user (at least KICK type messages are interesting to regular users)
 	qDebug() << "Received disconnect notification! Reason =" << msg.reason() << "and message =" << msg.message();
+	const QString message = msg.message();
+
+	if(msg.reason() == protocol::Disconnect::KICK) {
+		emit youWereKicked(message);
+		return;
+	}
+
+	QString chat;
+	if(msg.reason() == protocol::Disconnect::ERROR)
+		chat = tr("A server error occurred!");
+	else if(msg.reason() == protocol::Disconnect::SHUTDOWN)
+		chat = tr("The server is shutting down!");
+	else
+		chat = "Unknown error";
+
+	if(!message.isEmpty())
+		chat += QString(" (%1)").arg(message);
+
+	emit chatMessageReceived(tr("Server"), chat, false);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

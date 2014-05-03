@@ -494,7 +494,7 @@ void Client::barrierUnlock()
 void Client::disconnectKick(const QString &kickedBy)
 {
 	logger::info() << "User" << _id << _username << "kicked by" << kickedBy;
-	_msgqueue->sendDisconnect(protocol::Disconnect::KICK, "Kicked by " + kickedBy);
+	_msgqueue->sendDisconnect(protocol::Disconnect::KICK, kickedBy);
 }
 
 void Client::disconnectError(const QString &message)

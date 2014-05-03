@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -296,20 +296,18 @@ QString NetStatus::fullAddress() const
 void NetStatus::join(int id, const QString& user)
 {
 	Q_UNUSED(id);
-	message(tr("<b>%1</b> joined").arg(user));
+	message(tr("<b>%1</b> joined").arg(user.toHtmlEscaped()));
 }
 
 void NetStatus::leave(const QString& user)
 {
-	message(tr("<b>%1</b> left").arg(user));
+	message(tr("<b>%1</b> left").arg(user.toHtmlEscaped()));
 }
 
-#if 0
-void NetStatus::kicked(const network::User& user)
+void NetStatus::kicked(const QString& user)
 {
-	message(tr("<b>%1</b> was kicked by session owner").arg(user.name()));
+	message(tr("You have been kicked by %1").arg(user.toHtmlEscaped()));
 }
-#endif
 
 void NetStatus::message(const QString& msg)
 {

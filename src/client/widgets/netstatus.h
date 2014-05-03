@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@ public slots:
 
 	void join(int id, const QString& user);
 	void leave(const QString& user);
-#if 0
-	void kicked(const network::User& user);
-#endif
+
+	//! This user was kicked off the session
+	void kicked(const QString& user);
 
 	void copyAddress();
 

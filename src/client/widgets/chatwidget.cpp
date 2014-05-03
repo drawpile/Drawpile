@@ -89,6 +89,11 @@ void ChatBox::userParted(const QString &name)
 	systemMessage(tr("<b>%1</b> left the session").arg(name.toHtmlEscaped()));
 }
 
+void ChatBox::kicked(const QString &kickedBy)
+{
+	systemMessage(tr("You have been kicked by %1").arg(kickedBy.toHtmlEscaped()));
+}
+
 /**
  * The received message is displayed in the chat box.
  * @param nick nickname of the user who said something

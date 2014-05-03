@@ -49,6 +49,7 @@ class ChatBox: public QWidget
 
 		void userJoined(int id, const QString &name);
 		void userParted(const QString &name);
+		void kicked(const QString &kickedBy);
 
 		//! Empty the chat box
 		void clear();
