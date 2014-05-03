@@ -27,6 +27,7 @@
 #include <QDateTime>
 
 #include "../util/idlist.h"
+#include "../util/logger.h"
 #include "../net/message.h"
 #include "../net/messagestream.h"
 
@@ -358,6 +359,8 @@ public:
 	void drawingContextPenUp(const protocol::PenUp &cmd);
 
 	void kickAllUsers();
+
+	operator logger::LogId() { return logger::LogId("Session", id(), title()); }
 
 signals:
 	//! A user just connected to the session

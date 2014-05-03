@@ -88,6 +88,26 @@ Logger::~Logger()
 	}
 }
 
-Logger &Logger::operator<<(const QHostAddress &a) { if(stream) { stream->ts << a.toString(); } return maybeSpace(); }
+Logger &Logger::operator<<(const QHostAddress &a) {
+	if(stream) {
+		stream->ts << a.toString();
+	}
+	return maybeSpace();
+}
+
+Logger &Logger::operator <<(const LogId &id)
+{
+	if(stream) {
+		stream->ts << id.typestr << " #" << id.id;
+		if(!id.name.isEmpty()) {
+			if(id.name.length() > 10)
+				stream->ts << " (" << id.name.left(7) << "...)";
+			else
+				stream->ts << " (" << id.name << ")";
+		}
+	}
+	return maybeSpace();
+}
+
 
 }

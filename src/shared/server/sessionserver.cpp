@@ -42,16 +42,6 @@ SessionServer::SessionServer(QObject *parent)
 	cleanupTimer->start(cleanupTimer->interval());
 }
 
-SessionServer::~SessionServer()
-{
-	if(!_sessions.isEmpty()) {
-		logger::warning() << "Destroying" << _sessions.size() << "sessions...";
-		QList<SessionState*> tbd = _sessions;
-		for(SessionState *s : tbd)
-			destroySession(s);
-	}
-}
-
 SessionState *SessionServer::createSession(int minorVersion)
 {
 	SessionState *session = new SessionState(_nextId++, minorVersion, allowPersistentSessions(), this);
@@ -77,7 +67,7 @@ void SessionServer::destroySession(SessionState *session)
 {
 	Q_ASSERT(_sessions.contains(session));
 
-	logger::debug() << "Deleting session" << session->id() << "with" << session->userCount() << "users";
+	logger::debug() << "Deleting" << *session << "with" << session->userCount() << "users";
 	_sessions.removeOne(session);
 
 	int id = session->id();
@@ -131,7 +121,7 @@ void SessionServer::addClient(Client *client)
  */
 void SessionServer::moveFromLobby(SessionState *session, Client *client)
 {
-	logger::debug() << "client" << client->id() << "moved from lobby to session" << session->id();
+	logger::debug() << *client << "moved from lobby to" << *session;
 	Q_ASSERT(_lobby.contains(client));
 	_lobby.removeOne(client);
 
@@ -166,7 +156,7 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 {
 	bool delSession = false;
 	if(session->userCount()==0) {
-		logger::debug() << "Last user of session" << session->id() << "left";
+		logger::debug() << "Last user of" << *session << "left";
 
 		bool hasSnapshot = session->mainstream().hasSnapshot();
 
@@ -174,9 +164,9 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 		// A persistent session can also be deleted if it doesn't contain a snapshot point.
 		if(!hasSnapshot || !session->isPersistent()) {
 			if(hasSnapshot)
-				logger::info() << "Closing non-persistent session" << session->id();
+				logger::info() << "Closing non-persistent" << *session;
 			else
-				logger::info() << "Closing session" << session->id() << "due to lack of snapshot point!";
+				logger::info() << "Closing" << *session << "due to lack of snapshot point!";
 
 			delSession = true;
 		}
@@ -206,7 +196,7 @@ void SessionServer::cleanupSessions()
 		}
 
 		for(SessionState *s : expirelist) {
-			logger::info() << "Vacant session" << s->id() << "expired. Uptime was" << s->uptime();
+			logger::info() << "Vacant" << *s << "expired. Uptime was" << s->uptime();
 			destroySession(s);
 		}
 	}

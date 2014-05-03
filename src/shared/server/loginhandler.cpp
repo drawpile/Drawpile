@@ -118,7 +118,7 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 	else if(message.startsWith("JOIN "))
 		handleJoinMessage(message);
 	else {
-		logger::warning() << "Got invalid login message from" << _client->peerAddress().toString();
+		logger::warning() << "Got invalid login message from" << _client->peerAddress();
 		_client->disconnectError("invalid message");
 	}
 }
@@ -224,7 +224,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		// Allow identical usernames in debug builds, so I don't have to keep changing
 		// the username when testing. There is no technical requirement for unique usernames;
 		// the limitation is solely for the benefit of the human users.
-		logger::warning() << "Username clash" << username << "for session" << session->id() << "ignored because this is a debug build.";
+		logger::warning() << "Username clash" << username << "for" << *session << "ignored because this is a debug build.";
 #endif
 	}
 

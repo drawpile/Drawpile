@@ -33,6 +33,18 @@ typedef std::function<void(LogLevel,const QString&)> LogFunction;
 void setLogPrinter(LogFunction fn);
 
 /**
+ * @brief A helper struct for logging the IDs of things like sessions and clients in consistent format
+ */
+struct LogId {
+	const char *typestr; // type of the object (e.g. Session)
+	int id; // the ID number
+	QString name; // the name or title of the object
+
+	LogId() : typestr("?"), id(0), name(QString()) { }
+	LogId(const char *typestr_, int id_, const QString &name_=QString()) : typestr(typestr_), id(id_), name(name_) { }
+};
+
+/**
  * \brief Stream oriented log printing class
  *
  * Based on QDebug
@@ -64,6 +76,7 @@ public:
 	Logger &operator<<(const char* t) { if(stream) { stream->ts << QString::fromLocal8Bit(t); } return maybeSpace(); }
     Logger &operator<<(const QString & t) { if(stream) { stream->ts << '\"' << t  << '\"'; } return maybeSpace(); }
 	Logger &operator<<(const QHostAddress &a);
+	Logger &operator<<(const LogId &id);
 };
 
 inline Logger error() { return Logger(LOG_ERROR); }

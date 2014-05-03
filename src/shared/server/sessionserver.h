@@ -32,7 +32,6 @@ class SessionServer : public QObject {
 Q_OBJECT
 public:
 	explicit SessionServer(QObject *parent=0);
-	~SessionServer();
 
 	/**
 	 * @brief Set the title of the server

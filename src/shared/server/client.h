@@ -24,6 +24,7 @@
 #include <QTcpSocket>
 
 #include "../net/message.h"
+#include "../util/logger.h"
 
 namespace protocol {
 	class MessageQueue;
@@ -218,6 +219,8 @@ public:
 	 * @return message stream index
 	 */
 	int streampointer() const { return _streampointer; }
+
+	operator logger::LogId() { return logger::LogId("User", id(), username()); }
 
 signals:
 	void loginMessage(protocol::MessagePtr message);
