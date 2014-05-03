@@ -48,7 +48,7 @@ ChatBox::ChatBox(QWidget *parent)
 
 	setLayout(layout);
 
-	connect(_myline, SIGNAL(returnPressed(QString)), this, SIGNAL(message(QString)));
+	connect(_myline, SIGNAL(returnPressed(QString)), this, SLOT(sendMessage(QString)));
 
 	// Chat window styling
 	setStyleSheet(
@@ -128,6 +128,17 @@ void ChatBox::receiveMarker(const QString &nick, const QString &message)
 void ChatBox::systemMessage(const QString& message)
 {
 	_view->append("<p class=\"sysmsg\"> *** " + message + " ***</p>");
+}
+
+void ChatBox::sendMessage(const QString &msg)
+{
+	// Special client side commands
+	if(msg == "/clear") {
+		clear();
+	} else {
+		// A normal chat message/server side command
+		emit message(msg);
+	}
 }
 
 }

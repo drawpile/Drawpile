@@ -33,33 +33,36 @@ namespace widgets {
  */
 class ChatBox: public QWidget
 {
-	Q_OBJECT
-	public:
-		explicit ChatBox(QWidget *parent=0);
+Q_OBJECT
+public:
+	explicit ChatBox(QWidget *parent=0);
 
-	public slots:
-		//! Display a received message
-		void receiveMessage(const QString& nick, const QString &message, bool isme=false);
+public slots:
+	//! Display a received message
+	void receiveMessage(const QString& nick, const QString &message, bool isme=false);
 
-		//! Display a received marker
-		void receiveMarker(const QString &nick, const QString &message);
+	//! Display a received marker
+	void receiveMarker(const QString &nick, const QString &message);
 
-		//! Display a system message
-		void systemMessage(const QString& message);
+	//! Display a system message
+	void systemMessage(const QString& message);
 
-		void userJoined(int id, const QString &name);
-		void userParted(const QString &name);
-		void kicked(const QString &kickedBy);
+	void userJoined(int id, const QString &name);
+	void userParted(const QString &name);
+	void kicked(const QString &kickedBy);
 
-		//! Empty the chat box
-		void clear();
+	//! Empty the chat box
+	void clear();
 
-	signals:
-		void message(const QString& msg);
+private slots:
+	void sendMessage(const QString &msg);
 
-	private:
-		QTextBrowser *_view;
-		ChatLineEdit *_myline;
+signals:
+	void message(const QString &msg);
+
+private:
+	QTextBrowser *_view;
+	ChatLineEdit *_myline;
 };
 
 }
