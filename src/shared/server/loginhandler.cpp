@@ -187,7 +187,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	if(session->userCount() >= session->maxUsers()) {
+	if(session->isClosed()) {
 		send("ERROR CLOSED");
 		_client->disconnectError("login error");
 		return;
