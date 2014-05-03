@@ -257,6 +257,10 @@ void Client::requestSnapshot(bool forcenew)
 {
 	Q_ASSERT(_state != LOGIN);
 
+#ifndef NDEBUG
+	sendSystemChat("(Requesting snapshot...)");
+#endif
+
 	sendDirectMessage(MessagePtr(new protocol::SnapshotMode(forcenew ? protocol::SnapshotMode::REQUEST_NEW : protocol::SnapshotMode::REQUEST)));
 	_awaiting_snapshot = true;
 	_session->addSnapshotPoint();
@@ -651,7 +655,11 @@ bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
 			_session->setPassword(cmd.mid(cmd.indexOf(' ') + 1));
 		return true;
 	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
+#ifdef NDEBUG
+		sendSystemChat("force_snapshot is only enabled in debug builds"
+#else
 		_session->startSnapshotSync();
+#endif
 		return true;
 	} else if(tokens[0] == "/persist" && tokens.count()==1) {
 		if(_session->isPersistenceAllowed())
