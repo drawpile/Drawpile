@@ -42,6 +42,8 @@ struct FilterIndex {
 	uchar ctxid;
 	uchar flags;
 	qint64 offset;
+
+	FilterIndex() : type(0), ctxid(0), flags(0), offset(0) { }
 };
 
 struct State {
@@ -239,7 +241,6 @@ void filterSilenced(const IndexVector &silence, State &state)
 void filterAdjacentUndoPoints(State &state)
 {
 	FilterIndex prev;
-	prev.type = 0;
 
 	for(int i=0;i<state.index.size();++i) {
 		FilterIndex &fi = state.index[i];

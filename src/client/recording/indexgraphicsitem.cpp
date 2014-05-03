@@ -143,7 +143,7 @@ void IndexGraphicsItem::buildScene(QGraphicsScene *scene, const recording::Index
 	// Create row separator lines
 	QPen separatorpen(Qt::gray);
 	separatorpen.setStyle(Qt::DotLine);
-	int separatorY;
+	int separatorY=0;
 	for(int i=0;i<=ctx.ctxrow.size();++i) {
 		separatorY = i * (ITEM_HEIGHT+VERTICAL_PADDING*2);
 		auto *line = new QGraphicsLineItem(minx, separatorY, end*STEP_WIDTH, separatorY);
