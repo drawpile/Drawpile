@@ -469,7 +469,13 @@ void Layer::dab(int contextId, const Brush &brush, const Point &point)
 		effective_brush.setBlendingMode(1);
 	}
 
-	l->directDab(effective_brush, BrushMaskGenerator::cached(effective_brush), point);
+	Point p = point;
+	if(!effective_brush.subpixel()) {
+		p.setX(qRound(p.x()));
+		p.setY(qRound(p.y()));
+	}
+
+	l->directDab(effective_brush, BrushMaskGenerator::cached(effective_brush), p);
 
 	if(_owner)
 		_owner->notifyAreaChanged();

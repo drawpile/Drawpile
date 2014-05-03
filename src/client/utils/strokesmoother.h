@@ -32,7 +32,7 @@ public:
 	 * @brief Set smoothing strength
 	 *
 	 * The higher the value, the smoother the stroke will be.
-	 * Strength should be greater than 1.
+	 * Strength should be greater than zero.
 	 * @param strength
 	 */
 	void setSmoothing(int strength);
