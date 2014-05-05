@@ -489,6 +489,9 @@
          <property name="title">
           <string>Session options</string>
          </property>
+         <property name="flat">
+          <bool>true</bool>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <widget class="QCheckBox" name="persistentSession">
