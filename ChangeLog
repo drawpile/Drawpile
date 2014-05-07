@@ -1,4 +1,4 @@
-2014-0?-?? Version 0.9.0
+2014-05-07 Version 0.9.0
  * Server: support for multiple sessions on a single server
  * Server: support for systemd socket activation
  * Server: options can now be loaded from a settings file
