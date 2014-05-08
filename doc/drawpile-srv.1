@@ -74,6 +74,17 @@ when the last user leaves.
 expire vacant sessions after the given time. Time can be given in seconds (3600),
 minutes (60m), hours (1h) or days (0.04d)
 .TP
+.BR --ssl-cert\  cert.pem
+select SSL certificate file.
+.TP
+.BR --ssl-key\  key.pem
+select SSL private key file. This must be used together with
+.B --ssl-cert
+to enable SSL support.
+.TP
+.BR --secure , \ -S
+strict security mode. When this flag is set, clients must use SSL to log in.
+.TP
 .BR --config , \ -c\  filename
 load configuration file. All parameters can also be set in the configuration file.
 Parameters set on the command line override those in the file.

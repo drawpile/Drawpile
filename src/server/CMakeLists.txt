@@ -10,6 +10,7 @@ set (
 	dpserver.cpp
 	multiserver.cpp
 	configfile.cpp
+        sslserver.cpp
 	)
 
 # Unix specific features

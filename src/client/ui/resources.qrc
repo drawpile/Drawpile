@@ -46,6 +46,9 @@
         <file>icons/network-receive.png</file>
         <file>icons/network-transmit.png</file>
         <file>icons/network-transmit-receive.png</file>
+        <file>icons/security-low.png</file>
+        <file>icons/security-medium.png</file>
+        <file>icons/security-high.png</file>
         <file>icons/select-rectangular.png</file>
         <file>icons/stopsign.png</file>
         <file>icons/video-display.png</file>

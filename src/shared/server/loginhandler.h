@@ -39,6 +39,9 @@ class SessionServer;
  *
  * - client should disconnect at this point if proto-major does not match -
  *
+ * C: STARTTLS (if "TLS" is in FEATURES)
+ * S: STARTTLS (and starts SSL handshake)
+ *
  * S: TITLE <title> (if set)
  *
  * S: SESSION <id> <proto-minor> <FLAGS²> <user-count> "<title>"
@@ -92,8 +95,14 @@ private slots:
 	void announceSessionEnd(int id);
 
 private:
+	enum State {
+		WAIT_FOR_SECURE,
+		WAIT_FOR_LOGIN
+	};
+
 	void handleHostMessage(const QString &message);
 	void handleJoinMessage(const QString &message);
+	void handleStarttls();
 	void send(const QString &msg);
 
 	bool validateUsername(const QString &name);
@@ -101,6 +110,7 @@ private:
 	Client *_client;
 	SessionServer *_server;
 
+	State _state;
 	bool _complete;
 };
 

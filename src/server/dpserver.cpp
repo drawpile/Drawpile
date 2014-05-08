@@ -105,6 +105,18 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption serverTitleOption(QStringList() << "title" << "t", "Set server title", "title");
 	parser.addOption(serverTitleOption);
 
+	// --ssl-cert <certificate file>
+	QCommandLineOption sslCertOption("ssl-cert", "SSL certificate file", "certificate");
+	parser.addOption(sslCertOption);
+
+	// --ssl-key <key file>
+	QCommandLineOption sslKeyOption("ssl-key", "SSL key file", "key");
+	parser.addOption(sslKeyOption);
+
+	// --secure, -S
+	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Force secure mode");
+	parser.addOption(secureOption);
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -209,6 +221,15 @@ int main(int argc, char *argv[]) {
 				t *= 60;
 
 			server->setExpirationTime(t);
+		}
+	}
+
+	{
+		QString sslCert = cfgfile.override(parser, sslCertOption).toString();
+		QString sslKey = cfgfile.override(parser, sslKeyOption).toString();
+		if(!sslCert.isEmpty() && !sslKey.isEmpty()) {
+			server->setSslCertFile(sslCert, sslKey);
+			server->setMustSecure(cfgfile.override(parser, secureOption).toBool());
 		}
 	}
 

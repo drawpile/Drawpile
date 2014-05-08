@@ -19,13 +19,15 @@
 #ifndef DP_CLIENT_NET_LOGINHANDLER_H
 #define DP_CLIENT_NET_LOGINHANDLER_H
 
+#include "../shared/net/message.h"
+
 #include <QString>
 #include <QUrl>
 #include <QObject>
 #include <QPointer>
 #include <QInputDialog>
-
-#include "../shared/net/message.h"
+#include <QMessageBox>
+#include <QSslError>
 
 namespace dialogs {
 	class SelectSessionDialog;
@@ -33,7 +35,7 @@ namespace dialogs {
 
 namespace net {
 
-class Server;
+class TcpServer;
 class LoginSessionModel;
 
 /**
@@ -116,7 +118,7 @@ public:
 	 * @brief Set the server we're communicating with
 	 * @param server
 	 */
-	void setServer(Server *server) { _server = server; }
+	void setServer(TcpServer *server) { _server = server; }
 
 	/**
 	 * @brief Handle a received message
@@ -148,7 +150,11 @@ public slots:
 private slots:
 	void joinSelectedSession(int id, bool needPassword);
 	void cancelLogin();
+	void failLogin(const QString &message);
 	void passwordSet();
+	void tlsStarted();
+	void tlsError(const QList<QSslError> &errors);
+	void tlsAccepted();
 
 private:
 	enum State {
@@ -157,7 +163,10 @@ private:
 		EXPECT_SESSIONLIST_TO_HOST,
 		WAIT_FOR_JOIN_PASSWORD,
 		WAIT_FOR_HOST_PASSWORD,
-		EXPECT_LOGIN_OK
+		WAIT_FOR_ENCRYPTED,
+		WAIT_FOR_ACCEPT_CERT,
+		EXPECT_LOGIN_OK,
+		ABORT_LOGIN
 	};
 
 	void expectHello(const QString &msg);
@@ -168,6 +177,7 @@ private:
 	void sendJoinCommand();
 	void expectNoErrors(const QString &msg);
 	void expectLoginOk(const QString &msg);
+	void startTls();
 	void send(const QString &message);
 
 	Mode _mode;
@@ -184,7 +194,7 @@ private:
 	bool _requestPersistent;
 
 	// Process state
-	Server *_server;
+	TcpServer *_server;
 	State _state;
 	LoginSessionModel *_sessions;
 
@@ -194,10 +204,11 @@ private:
 
 	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
 	QPointer<QInputDialog> _passwordDialog;
+	QPointer<QMessageBox> _certDialog;
 
 	// Server flags
 	bool _multisession;
-
+	bool _tls;
 };
 
 }

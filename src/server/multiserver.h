@@ -45,6 +45,8 @@ public:
 	void setServerTitle(const QString &title);
 	void setHistoryLimit(uint limit);
 	void setRecordingFile(const QString &filename) { _recordingFile = filename; }
+	void setSslCertFile(const QString &certfile, const QString &keyfile) { _sslCertFile = certfile; _sslKeyFile = keyfile; }
+	void setMustSecure(bool secure);
 	void setHostPassword(const QString &password);
 	void setSessionLimit(int limit);
 	void setPersistentSessions(bool persistent);
@@ -68,6 +70,8 @@ signals:
 	void serverStopped();
 
 private:
+	bool createServer();
+
 	enum State {NOT_STARTED, RUNNING, STOPPING, STOPPED};
 
 	QTcpServer *_server;
@@ -76,6 +80,8 @@ private:
 
 	bool _autoStop;
 	QString _recordingFile;
+	QString _sslCertFile;
+	QString _sslKeyFile;
 };
 
 }

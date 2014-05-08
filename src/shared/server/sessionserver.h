@@ -89,6 +89,13 @@ public:
 	void setExpirationTime(uint seconds) { _expirationTime = qint64(seconds) * 1000; }
 
 	/**
+	 * @brief Set whether a secure connection is mandatory
+	 * @param mustSecure
+	 */
+	void setMustSecure(bool mustSecure) { _mustSecure = mustSecure; }
+	bool mustSecure() const { return _mustSecure; }
+
+	/**
 	 * @brief Add a new client
 	 *
 	 * This will start the login process during which the client will
@@ -190,6 +197,7 @@ private:
 	qint64 _expirationTime;
 	QString _hostPassword;
 	bool _allowPersistentSessions;
+	bool _mustSecure;
 
 };
 

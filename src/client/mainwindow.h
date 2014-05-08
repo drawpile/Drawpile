@@ -33,6 +33,7 @@ class QTimer;
 namespace widgets {
 	class CanvasView;
 	class DualColorButton;
+	class NetStatus;
 }
 namespace docks {
 	class ToolSettings;
@@ -192,6 +193,7 @@ class MainWindow : public QMainWindow {
 
 		QLabel *_lockstatus;
 		QLabel *_recorderstatus;
+		widgets::NetStatus *_netstatus;
 
 		dialogs::PlaybackDialog *_dialog_playback;
 

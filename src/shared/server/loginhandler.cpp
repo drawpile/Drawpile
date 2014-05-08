@@ -46,13 +46,20 @@ void LoginHandler::startLoginProcess()
 {
 	QStringList flags;
 
+	_state = WAIT_FOR_LOGIN;
+
 	if(_server->sessionLimit()>1)
 		flags << "MULTI";
 	if(!_server->hostPassword().isEmpty())
 		flags << "HOSTP";
 	if(_server->allowPersistentSessions())
 		flags << "PERSIST";
-	// TODO TLS and SECURE
+	if(_client->hasSslSupport())
+		flags << "TLS";
+	if(_server->mustSecure() && _client->hasSslSupport()) {
+		flags << "SECURE";
+		_state = WAIT_FOR_SECURE;
+	}
 
 	// Start by telling who we are
 	send(QString("DRAWPILE %1 %2")
@@ -113,13 +120,25 @@ void LoginHandler::handleLoginMessage(protocol::MessagePtr msg)
 
 	QString message = msg.cast<protocol::Login>().message();
 
-	if(message.startsWith("HOST "))
-		handleHostMessage(message);
-	else if(message.startsWith("JOIN "))
-		handleJoinMessage(message);
-	else {
-		logger::warning() << "Got invalid login message from" << _client->peerAddress();
-		_client->disconnectError("invalid message");
+	if(_state == WAIT_FOR_SECURE) {
+		if(message == "STARTTLS") {
+			handleStarttls();
+		} else {
+			send("ERROR MUSTSECURE");
+			logger::warning() << "Client from" << _client->peerAddress() << "didn't secure connection!";
+			_client->disconnectError("must secure connection first");
+		}
+	} else {
+		if(message.startsWith("HOST ")) {
+			handleHostMessage(message);
+		} else if(message.startsWith("JOIN ")) {
+			handleJoinMessage(message);
+		} else if(message == "STARTTLS") {
+			handleStarttls();
+		} else {
+			logger::warning() << "Got invalid login message from" << _client->peerAddress();
+			_client->disconnectError("invalid message");
+		}
 	}
 }
 
@@ -127,6 +146,8 @@ void LoginHandler::handleHostMessage(const QString &message)
 {
 	if(_server->sessionCount() >= _server->sessionLimit()) {
 		send("ERROR CLOSED");
+		_client->disconnectError("login error");
+		return;
 	}
 
 	const QRegularExpression re("\\AHOST (\\d+) (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
@@ -238,6 +259,26 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	session->joinUser(_client, false);
 
 	deleteLater();
+}
+
+void LoginHandler::handleStarttls()
+{
+	if(!_client->hasSslSupport()) {
+		// Note. Well behaved clients shouldn't send STARTTLS if TLS was not listed in server features.
+		send("ERROR NOTLS");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	if(_client->isSecure()) {
+		send("ERROR ALREADYSECURE");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	send("STARTTLS");
+	_client->startTls();
+	_state = WAIT_FOR_LOGIN;
 }
 
 void LoginHandler::send(const QString &msg)

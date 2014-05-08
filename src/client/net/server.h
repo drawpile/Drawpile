@@ -21,14 +21,22 @@
 
 #include "../shared/net/message.h"
 
+#include <QSslCertificate>
+
 namespace net {
 
 /**
  * \brief Abstract base class for servers
  */
 class Server {
-    friend class LoginHandler;
 public:
+	enum Security {
+		NO_SECURITY, // No secure connection
+		NEW_HOST,    // Secure connection to a host we haven't seen before
+		KNOWN_HOST,  // Secure connection whose certificate we have seen before
+		TRUSTED_HOST // A host we have explicitly marked as trusted
+	};
+
     Server(bool local) : _local(local) {}
 	virtual ~Server() = default;
 	
@@ -66,6 +74,10 @@ public:
     virtual bool isLoggedIn() const { return false; }
 
     virtual int uploadQueueBytes() const { return 0; }
+
+	virtual Security securityLevel() const { return NO_SECURITY; }
+
+	virtual QSslCertificate hostCertificate() const { return QSslCertificate(); }
 
 protected:
 	/**

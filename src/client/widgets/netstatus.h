@@ -19,6 +19,8 @@
 #ifndef NETSTATUS_H
 #define NETSTATUS_H
 
+#include "net/server.h"
+
 #include <QWidget>
 
 class QLabel;
@@ -40,6 +42,8 @@ Q_OBJECT
 public:
 	NetStatus(QWidget *parent);
 
+	void setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate);
+
 public slots:
 	void connectingToHost(const QString& address, int port);
 	void loggedIn();
@@ -50,7 +54,6 @@ public slots:
 	void sendingBytes(int count);
 	void bytesReceived(int count);
 	void bytesSent(int count);
-
 
 	void join(int id, const QString& user);
 	void leave(const QString& user);
@@ -77,7 +80,7 @@ private:
 	QProgressBar *_download;
 	QProgressBar *_upload;
 
-	QLabel *_label, *_icon;
+	QLabel *_label, *_icon, *_security;
 	PopupMessage *_popup;
 	QString _address;
 	int _port;

@@ -22,6 +22,7 @@
 #include <QObject>
 
 #include "core/point.h"
+#include "net/server.h"
 #include "../shared/net/message.h"
 #include "statetracker.h" // for ToolContext
 
@@ -44,7 +45,6 @@ namespace protocol {
 
 namespace net {
 	
-class Server;
 class LoopbackServer;
 class LoginHandler;
 class UserListModel;
@@ -103,11 +103,24 @@ public:
 	 */
 	bool isConnected() const { return !_isloopback; }
 
+
 	/**
 	 * @brief Is the user connected and logged in?
 	 * @return true if there is an active network connection and login process has completed
 	 */
 	bool isLoggedIn() const;
+
+	/**
+	 * @brief Get connection security level
+	 */
+	Server::Security securityLevel() const { return _server->securityLevel(); }
+
+	/**
+	 * @brief Get host certificate
+	 *
+	 * This is meaningful only if securityLevel != NO_SECURITY
+	 */
+	QSslCertificate hostCertificate() const { return _server->hostCertificate(); }
 
 	/**
 	 * @brief Is there a global lock on?

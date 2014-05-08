@@ -222,6 +222,26 @@ public:
 
 	operator logger::LogId() { return logger::LogId("User", id(), username()); }
 
+	/**
+	 * @brief Does this client socket support SSL connections?
+	 *
+	 * Note. This means serverside support. The actual client might not support
+	 * SSL.
+	 * @return true if server has support for SSL for this client
+	 */
+	bool hasSslSupport() const;
+
+	/**
+	 * @brief Is this connection secure?
+	 * @return
+	 */
+	bool isSecure() const;
+
+	/**
+	 * @brief Start SSL handshake
+	 */
+	void startTls();
+
 signals:
 	void loginMessage(protocol::MessagePtr message);
 	void disconnected(Client *client);

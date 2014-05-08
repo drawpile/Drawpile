@@ -121,12 +121,12 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Create status indicator widgets
 	auto *viewstatus = new widgets::ViewStatus(this);
-	auto *netstatus = new widgets::NetStatus(this);
+	_netstatus = new widgets::NetStatus(this);
 	_recorderstatus = new QLabel(this);
 	_lockstatus = new QLabel(this);
 
 	statusbar->addPermanentWidget(viewstatus);
-	statusbar->addPermanentWidget(netstatus);
+	statusbar->addPermanentWidget(_netstatus);
 	statusbar->addPermanentWidget(_recorderstatus);
 	statusbar->addPermanentWidget(_lockstatus);
 
@@ -221,18 +221,17 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(serverLoggedin(bool)), this, SLOT(loggedin(bool)));
 	connect(_client, SIGNAL(serverDisconnected(QString, bool)), this, SLOT(disconnected(QString, bool)));
 
-	connect(_client, SIGNAL(serverConnected(QString, int)), netstatus, SLOT(connectingToHost(QString, int)));
-	connect(_client, SIGNAL(serverLoggedin(bool)), netstatus, SLOT(loggedIn()));
-	connect(_client, SIGNAL(serverDisconnecting()), netstatus, SLOT(hostDisconnecting()));
-	connect(_client, SIGNAL(serverDisconnected(QString, bool)), netstatus, SLOT(hostDisconnected()));
-	connect(_client, SIGNAL(expectingBytes(int)),netstatus, SLOT(expectBytes(int)));
-	connect(_client, SIGNAL(sendingBytes(int)), netstatus, SLOT(sendingBytes(int)));
-	connect(_client, SIGNAL(bytesReceived(int)), netstatus, SLOT(bytesReceived(int)));
-	connect(_client, SIGNAL(bytesSent(int)), netstatus, SLOT(bytesSent(int)));
+	connect(_client, SIGNAL(serverConnected(QString, int)), _netstatus, SLOT(connectingToHost(QString, int)));
+	connect(_client, SIGNAL(serverDisconnecting()), _netstatus, SLOT(hostDisconnecting()));
+	connect(_client, SIGNAL(serverDisconnected(QString, bool)), _netstatus, SLOT(hostDisconnected()));
+	connect(_client, SIGNAL(expectingBytes(int)), _netstatus, SLOT(expectBytes(int)));
+	connect(_client, SIGNAL(sendingBytes(int)), _netstatus, SLOT(sendingBytes(int)));
+	connect(_client, SIGNAL(bytesReceived(int)), _netstatus, SLOT(bytesReceived(int)));
+	connect(_client, SIGNAL(bytesSent(int)), _netstatus, SLOT(bytesSent(int)));
 
-	connect(_client, SIGNAL(userJoined(int, QString)), netstatus, SLOT(join(int, QString)));
-	connect(_client, SIGNAL(userLeft(QString)), netstatus, SLOT(leave(QString)));
-	connect(_client, SIGNAL(youWereKicked(QString)), netstatus, SLOT(kicked(QString)));
+	connect(_client, SIGNAL(userJoined(int, QString)), _netstatus, SLOT(join(int, QString)));
+	connect(_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
+	connect(_client, SIGNAL(youWereKicked(QString)), _netstatus, SLOT(kicked(QString)));
 
 	connect(_client, SIGNAL(userJoined(int, QString)), chatbox, SLOT(userJoined(int, QString)));
 	connect(_client, SIGNAL(userLeft(QString)), chatbox, SLOT(userParted(QString)));
@@ -1120,6 +1119,10 @@ void MainWindow::disconnected(const QString &message, bool localDisconnect)
  */
 void MainWindow::loggedin(bool join)
 {
+	// Update netstatus widget
+	_netstatus->loggedIn();
+	_netstatus->setSecurityLevel(_client->securityLevel(), _client->hostCertificate());
+
 	// Re-enable UI
 	_view->setEnabled(true);
 	_drawingtools->setEnabled(true);

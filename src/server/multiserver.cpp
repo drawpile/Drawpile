@@ -17,20 +17,20 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QTcpServer>
-#include <QTcpSocket>
-#include <QFileInfo>
-#include <QDateTime>
-#include <QDir>
-
 #include "multiserver.h"
 #include "initsys.h"
+#include "sslserver.h"
 
 #include "../shared/server/session.h"
 #include "../shared/server/sessionserver.h"
 #include "../shared/server/client.h"
 
 #include "../shared/net/snapshot.h"
+
+#include <QTcpSocket>
+#include <QFileInfo>
+#include <QDateTime>
+#include <QDir>
 
 namespace server {
 
@@ -63,6 +63,11 @@ void MultiServer::setServerTitle(const QString &title)
 void MultiServer::setHistoryLimit(uint limit)
 {
 	_sessions->setHistoryLimit(limit);
+}
+
+void MultiServer::setMustSecure(bool secure)
+{
+	_sessions->setMustSecure(secure);
 }
 
 void MultiServer::setHostPassword(const QString &password)
@@ -115,6 +120,23 @@ void MultiServer::setAutoStop(bool autostop)
 	_autoStop = autostop;
 }
 
+bool MultiServer::createServer()
+{
+	if(!_sslCertFile.isEmpty() && !_sslKeyFile.isEmpty()) {
+		SslServer *server = new SslServer(_sslCertFile, _sslKeyFile, this);
+		if(!server->isValidCert())
+			return false;
+		_server = server;
+
+	} else {
+		_server = new QTcpServer(this);
+	}
+
+	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+
+	return true;
+}
+
 /**
  * @brief Start listening on the specified address.
  * @param port the port to listen on
@@ -124,9 +146,8 @@ void MultiServer::setAutoStop(bool autostop)
 bool MultiServer::start(quint16 port, const QHostAddress& address) {
 	Q_ASSERT(_state == NOT_STARTED);
 	_state = RUNNING;
-	_server = new QTcpServer(this);
-
-	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+	if(!createServer())
+		return false;
 
 	if(!_server->listen(address, port)) {
 		logger::error() << _server->errorString();
@@ -149,9 +170,8 @@ bool MultiServer::startFd(int fd)
 {
 	Q_ASSERT(_state == NOT_STARTED);
 	_state = RUNNING;
-	_server = new QTcpServer(this);
-
-	connect(_server, SIGNAL(newConnection()), this, SLOT(newClient()));
+	if(!createServer())
+		return false;
 
 	if(!_server->setSocketDescriptor(fd)) {
 		logger::error() << "Couldn't set server socket descriptor!";

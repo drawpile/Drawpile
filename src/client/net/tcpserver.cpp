@@ -17,9 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
-#include <QTcpSocket>
-
 #include "config.h"
 #include "tcpserver.h"
 #include "login.h"
@@ -27,20 +24,25 @@
 #include "../shared/net/messagequeue.h"
 #include "../shared/net/flow.h"
 
+#include <QDebug>
+#include <QSslSocket>
+
 namespace net {
 
 TcpServer::TcpServer(QObject *parent) :
-	QObject(parent), Server(false), _loginstate(0), _localDisconnect(false), _paused(false)
+	QObject(parent), Server(false), _loginstate(0), _securityLevel(NO_SECURITY),
+	_localDisconnect(false), _paused(false)
 {
-	_socket = new QTcpSocket(this);
+	_socket = new QSslSocket(this);
 	_msgqueue = new protocol::MessageQueue(_socket, this);
 
 	connect(_socket, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
 	connect(_socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(handleSocketError()));
-	connect(_socket, &QTcpSocket::stateChanged, [this](QAbstractSocket::SocketState state) {
+	connect(_socket, &QSslSocket::stateChanged, [this](QAbstractSocket::SocketState state) {
 		if(state==QAbstractSocket::ClosingState)
 			emit loggingOut();
 	});
+
 	connect(_msgqueue, SIGNAL(messageAvailable()), this, SLOT(handleMessage()));
 	connect(_msgqueue, SIGNAL(bytesReceived(int)), this, SIGNAL(bytesReceived(int)));
 	connect(_msgqueue, SIGNAL(bytesSent(int)), this, SIGNAL(bytesSent(int)));
@@ -137,6 +139,11 @@ void TcpServer::loginSuccess()
 
 	_loginstate->deleteLater();
 	_loginstate = 0;
+}
+
+QSslCertificate TcpServer::hostCertificate() const
+{
+	return _socket->peerCertificate();
 }
 
 }

@@ -34,7 +34,8 @@ SessionServer::SessionServer(QObject *parent)
 	_sessionLimit(1),
 	_historyLimit(0),
 	_expirationTime(0),
-	_allowPersistentSessions(false)
+	_allowPersistentSessions(false),
+	_mustSecure(false)
 {
 	QTimer *cleanupTimer = new QTimer(this);
 	connect(cleanupTimer, SIGNAL(timeout()), this, SLOT(cleanupSessions()));

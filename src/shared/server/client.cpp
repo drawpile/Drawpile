@@ -17,9 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QTcpSocket>
-#include <QStringList>
-
 #include "config.h"
 
 #include "client.h"
@@ -36,6 +33,10 @@
 #include "../net/snapshot.h"
 #include "../net/undo.h"
 #include "../util/logger.h"
+
+#include <QTcpSocket>
+#include <QSslSocket>
+#include <QStringList>
 
 namespace server {
 
@@ -833,6 +834,24 @@ void Client::sendOpServerStatus()
 
 	for(const QString &m : msgs)
 		sendSystemChat(m);
+}
+
+bool Client::hasSslSupport() const
+{
+	return _socket->inherits("QSslSocket");
+}
+
+bool Client::isSecure() const
+{
+	QSslSocket *socket = qobject_cast<QSslSocket*>(_socket);
+	return socket && socket->isEncrypted();
+}
+
+void Client::startTls()
+{
+	QSslSocket *socket = qobject_cast<QSslSocket*>(_socket);
+	Q_ASSERT(socket);
+	socket->startServerEncryption();
 }
 
 }

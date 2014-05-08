@@ -112,6 +112,12 @@ NetStatus::NetStatus(QWidget *parent)
 	_icon->setFixedSize(_icon->pixmap()->size());
 	layout->addWidget(_icon);
 
+	// Security level icon
+	_security = new QLabel(QString(), this);
+	_security->setFixedSize(_icon->pixmap()->size());
+	_security->hide();
+	layout->addWidget(_security);
+
 	// Popup label
 	_popup = new PopupMessage(this);
 
@@ -152,6 +158,39 @@ void NetStatus::loggedIn()
 	message(tr("Logged in!"));
 }
 
+void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertificate &certificate)
+{
+	QString iconname;
+	QString tooltip;
+	switch(level) {
+	case net::Server::NO_SECURITY: break;
+	case net::Server::NEW_HOST:
+		iconname = "security-low";
+		tooltip = tr("A previously unvisited host");
+		break;
+
+	case net::Server::KNOWN_HOST:
+		iconname = "security-medium";
+		tooltip = tr("Host certificate has not changed since the last visit");
+		break;
+
+	case net::Server::TRUSTED_HOST:
+		iconname = "security-high";
+		tooltip = tr("This is a trusted host");
+		break;
+	}
+
+	if(iconname.isEmpty()) {
+		_security->hide();
+	} else {
+		_security->setPixmap(QIcon::fromTheme(iconname, QIcon(":icons/" + iconname)).pixmap(16, 16));
+		_security->setToolTip(tooltip);
+		_security->show();
+	}
+
+	// TODO popup menu for inspecting the certificate
+}
+
 void NetStatus::hostDisconnecting()
 {
 	_label->setText(tr("Logging out..."));
@@ -173,6 +212,7 @@ void NetStatus::hostDisconnected()
 	message(tr("Disconnected"));
 	_online = false;
 	updateIcon();
+	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
 }
 
 void NetStatus::expectBytes(int count)

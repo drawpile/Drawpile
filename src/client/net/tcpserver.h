@@ -19,11 +19,11 @@
 #ifndef DP_NET_TCPSERVER_H
 #define DP_NET_TCPSERVER_H
 
-#include <QObject>
-
 #include "server.h"
 
-class QTcpSocket;
+#include <QObject>
+
+class QSslSocket;
 
 namespace protocol {
     class MessageQueue;
@@ -36,6 +36,7 @@ class LoginHandler;
 class TcpServer : public QObject, public Server
 {
 	Q_OBJECT
+	friend class LoginHandler;
 public:
 	explicit TcpServer(QObject *parent = 0);
 
@@ -50,6 +51,11 @@ public:
 	int uploadQueueBytes() const;
 
 	void pauseInput(bool pause);
+
+	void startTls();
+
+	virtual Security securityLevel() const { return _securityLevel; }
+	virtual QSslCertificate hostCertificate() const;
 
 signals:
 	void loggedIn(int userid, bool join);
@@ -72,10 +78,11 @@ private slots:
 	void handleSocketError();
 
 private:
-	QTcpSocket *_socket;
+	QSslSocket *_socket;
 	protocol::MessageQueue *_msgqueue;
 	LoginHandler *_loginstate;
 	QString _error;
+	Security _securityLevel;
 	bool _localDisconnect;
 	bool _paused;
 };
