@@ -158,9 +158,10 @@ if ( WIN32 )
 		"DrawPile client" # full name
 		${CLIENTNAME} # internal name
 		"DrawPile client" 
-                ${WEBSITE}
-		"2006-2013 Calle Laakkonen"
-                ${DRAWPILE_VERSION}
+		${WEBSITE}
+		"2006-2014 Calle Laakkonen"
+		${DRAWPILE_VERSION}
+		"${CMAKE_SOURCE_DIR}/desktop/drawpile.ico"
 	)
 endif ( WIN32 )
 
