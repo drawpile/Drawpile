@@ -19,6 +19,8 @@
 
 #include "initsys.h"
 
+#include <QDebug>
+
 namespace initsys {
 
 void setInitSysLogger()
@@ -34,7 +36,7 @@ void notifyReady()
 void notifyStatus(const QString &status)
 {
 #ifndef NDEBUG
-	qDebug(status);
+	qDebug() << status;
 #endif
 }
 
