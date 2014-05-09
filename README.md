@@ -21,8 +21,9 @@ Dependencies:
 * Qt 5.0 or newer
 * zlib
 
-For building just the dedicated server, only QtCore and QtNetwork are required.
-The server also has optional systemd notify and socket activation support.
+The dedicated server depends doesn't depend on any of the graphical parts of Qt,
+so it can be compiled and used on headless servers. The server also has optional
+systemd notify and socket activation support.
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.
@@ -42,6 +43,7 @@ The configuration step supports some options:
 * CLIENT=off: don't build the client (useful when building the stand-alone server only)
 * SERVER=off: don't build the stand-alone server.
 * DEBUG=on: enable debugging features
+* INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
 
 Example: `$ cmake .. -DDEBUG=on`
 

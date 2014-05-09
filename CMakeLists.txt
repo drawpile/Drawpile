@@ -20,6 +20,7 @@ include ( "config/Names.cmake" )
 option ( CLIENT "Compile client" ON )
 option ( SERVER "Compile UI-less server" ON )
 option ( INSTALL_DOC "Install documents" ON )
+option ( INITSYS "Init system integration" "systemd" )
 
 option ( DEBUG "Enable debugging and asserts" OFF )
 option ( GENERIC "Optimize for generic CPU arch" OFF )
@@ -49,7 +50,9 @@ find_package ( ZLIB REQUIRED )
 find_package ( PkgConfig )
 
 if ( PKGCONFIG_FOUND )
-	pkg_check_modules ( SYSTEMD "libsystemd" )
+	if ( INITSYS STREQUAL  "systemd" )
+		pkg_check_modules ( SYSTEMD "libsystemd" )
+	endif ()
 endif ( PKGCONFIG_FOUND )
 
 

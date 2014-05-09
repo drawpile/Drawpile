@@ -18,12 +18,12 @@ if ( UNIX )
 endif ( UNIX )
 
 # Select init system integration backend
-if ( SYSTEMD_FOUND )
+if ( INITSYS STREQUAL "systemd" AND SYSTEMD_FOUND )
 	set ( SOURCES ${SOURCES} initsys_systemd.cpp )
 	set ( INITSYS_LIB ${SYSTEMD_LIBRARIES} )
 else ()
 	set ( SOURCES ${SOURCES} initsys_dummy.cpp )
-endif ( SYSTEMD_FOUND )
+endif ()
 
 # Use local copy of Qt's command line parser for Qt <5.2
 # Remove this when we no longer need to support old Qt.
