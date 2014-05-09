@@ -36,6 +36,11 @@
 #include <QSplitter>
 #include <QClipboard>
 
+#ifndef NDEBUG
+#include <QTimer>
+#include "core/tile.h"
+#endif
+
 #include "config.h"
 #include "mainwindow.h"
 #include "loader.h"
@@ -101,6 +106,18 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	QStatusBar *statusbar = new QStatusBar(this);
 	setStatusBar(statusbar);
+
+#ifndef NDEBUG
+	// Debugging tool: show amount of memory consumed by tiles
+	QLabel *tilemem = new QLabel(this);
+	QTimer *tilememtimer = new QTimer(this);
+	connect(tilememtimer, &QTimer::timeout, [tilemem]() {
+		tilemem->setText(QString("Tiles: %1 Mb").arg(paintcore::TileData::megabytesUsed(), 0, 'f', 2));
+	});
+	tilememtimer->setInterval(1000);
+	tilememtimer->start(1000);
+	statusbar->addPermanentWidget(tilemem);
+#endif
 
 	// Create status indicator widgets
 	auto *viewstatus = new widgets::ViewStatus(this);

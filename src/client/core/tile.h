@@ -21,6 +21,10 @@
 
 #include <QSharedDataPointer>
 
+#ifndef NDEBUG
+#include <QAtomicInt>
+#endif
+
 class QColor;
 class QImage;
 
@@ -29,6 +33,17 @@ namespace paintcore {
 /// Shared tile data
 struct TileData : public QSharedData {
 	quint32 data[64*64];
+
+#ifndef NDEBUG // Debug tool for measuring memory usage
+	TileData();
+	TileData(const TileData &td);
+	~TileData();
+
+	static int globalCount() { return _count.load() ; }
+	static float megabytesUsed() { return globalCount() * sizeof data / float(1024*1024); }
+private:
+	static QAtomicInt _count;
+#endif
 };
 
 /**
