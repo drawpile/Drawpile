@@ -13,6 +13,7 @@ Some feature highlights:
 * Supports pressure sensitive Wacom tablets
 * Built-in chat
 * Supports OpenRaster file format
+* Encrypted connections using SSL
 
 ## Building with cmake
 
