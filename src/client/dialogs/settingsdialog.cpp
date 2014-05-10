@@ -23,6 +23,12 @@
 #include <QStyledItemDelegate>
 #include <QItemEditorFactory>
 #include <QFileDialog>
+#include <QDir>
+#include <QFile>
+#include <QStandardPaths>
+#include <QSslCertificate>
+
+#include <QDebug>
 
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
 #include <QKeySequenceEdit>
@@ -30,7 +36,8 @@
 
 #include "config.h"
 #include "main.h"
-#include "settingsdialog.h"
+#include "dialogs/settingsdialog.h"
+#include "dialogs/certificateview.h"
 #include "export/ffmpegexporter.h" // for setting ffmpeg path
 
 #include "ui_settings.h"
@@ -94,6 +101,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	_ui->setupUi(this);
 
 	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(rememberSettings()));
+	connect(_ui->buttonBox, SIGNAL(accepted()), this, SLOT(saveCertTrustChanges()));
 
 	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
 		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
@@ -159,6 +167,30 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	_ui->shortcuts->horizontalHeader()->setSectionResizeMode(2,QHeaderView::ResizeToContents);
 	connect(_ui->shortcuts, SIGNAL(cellChanged(int, int)),
 			this, SLOT(validateShortcut(int, int)));
+
+	// Known hosts list
+	connect(_ui->knownHostList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(viewCertificate(QListWidgetItem*)));
+	connect(_ui->knownHostList, SIGNAL(itemSelectionChanged()), this, SLOT(certificateSelectionChanged()));
+	connect(_ui->trustKnownHosts, SIGNAL(clicked()), this, SLOT(markTrustedCertificates()));
+	connect(_ui->removeKnownHosts, SIGNAL(clicked()), this, SLOT(removeCertificates()));
+
+	QStringList pemfilter; pemfilter << "*.pem";
+	QDir knownHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/known-hosts/");
+	QIcon knownIcon = QIcon::fromTheme("security-medium", QIcon(":icons/security-medium"));
+
+	for(const QString &filename : knownHostsDir.entryList(pemfilter, QDir::Files)) {
+		auto *i = new QListWidgetItem(knownIcon, filename.left(filename.length()-4), _ui->knownHostList);
+		i->setData(Qt::UserRole, false);
+		i->setData(Qt::UserRole+1, knownHostsDir.absoluteFilePath(filename));
+	}
+
+	QDir trustedHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
+	QIcon trustedIcon = QIcon::fromTheme("security-high", QIcon(":icons/security-high"));
+	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
+		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), _ui->knownHostList);
+		i->setData(Qt::UserRole, true);
+		i->setData(Qt::UserRole+1, trustedHostsDir.absoluteFilePath(filename));
+	}
 }
 
 SettingsDialog::~SettingsDialog()
@@ -166,7 +198,7 @@ SettingsDialog::~SettingsDialog()
 	delete _ui;
 }
 
-void SettingsDialog::rememberSettings() const
+void SettingsDialog::rememberSettings()
 {
 	QSettings cfg;
 	// Remember general settings
@@ -210,6 +242,23 @@ void SettingsDialog::rememberSettings() const
 	static_cast<DrawPileApp*>(qApp)->notifySettingsChanged();
 }
 
+void SettingsDialog::saveCertTrustChanges()
+{
+	// Delete removed certificates
+	for(const QString &certfile : _removeCerts) {
+		QFile(certfile).remove();
+	}
+
+	// Move selected certs to trusted certs
+	QDir trustedDir = QDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
+	trustedDir.mkpath(".");
+
+	for(const QString &certfile : _trustCerts) {
+		QString certname = certfile.mid(certfile.lastIndexOf('/')+1);
+		QFile(certfile).rename(trustedDir.absoluteFilePath(certname));
+	}
+}
+
 /**
  * Check that the new shortcut is valid
  */
@@ -242,6 +291,69 @@ void SettingsDialog::validateShortcut(int row, int col)
 		QFont font = _ui->shortcuts->item(row, 0)->font();
 		font.setBold(ks != _customactions[row]->property("defaultshortcut").value<QKeySequence>());
 		_ui->shortcuts->item(row, 0)->setFont(font);
+	}
+}
+
+void SettingsDialog::viewCertificate(QListWidgetItem *item)
+{
+	QString filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+	if(item->data(Qt::UserRole).toBool())
+		filename += "/trusted-hosts/";
+	else
+		filename += "/known-hosts/";
+	filename += item->text();
+	filename += ".pem";
+
+	QList<QSslCertificate> certs = QSslCertificate::fromPath(filename);
+	if(certs.isEmpty()) {
+		qWarning() << "Certificate" << filename << "not found!";
+		return;
+	}
+
+	CertificateView *cv = new CertificateView(item->text(), certs.at(0), this);
+	cv->setAttribute(Qt::WA_DeleteOnClose);
+	cv->show();
+}
+
+void SettingsDialog::certificateSelectionChanged()
+{
+	const QItemSelectionModel *sel = _ui->knownHostList->selectionModel();
+	if(sel->selectedIndexes().isEmpty()) {
+		_ui->trustKnownHosts->setEnabled(false);
+		_ui->removeKnownHosts->setEnabled(false);
+	} else {
+		bool cantrust = false;
+		for(const QModelIndex &idx : sel->selectedIndexes()) {
+			if(!idx.data(Qt::UserRole).toBool()) {
+				cantrust = true;
+				break;
+			}
+		}
+		_ui->trustKnownHosts->setEnabled(cantrust);
+		_ui->removeKnownHosts->setEnabled(true);
+	}
+}
+
+void SettingsDialog::markTrustedCertificates()
+{
+	QIcon trustedIcon = QIcon::fromTheme("security-high", QIcon(":icons/security-high"));
+	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
+		if(!item->data(Qt::UserRole).toBool()) {
+			_trustCerts.append(item->data(Qt::UserRole+1).toString());
+			item->setIcon(trustedIcon);
+			item->setData(Qt::UserRole, true);
+		}
+	}
+	_ui->trustKnownHosts->setEnabled(false);
+}
+
+void SettingsDialog::removeCertificates()
+{
+	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
+		QString path = item->data(Qt::UserRole+1).toString();
+		_trustCerts.removeAll(path);
+		_removeCerts.append(path);
+		delete item;
 	}
 }
 

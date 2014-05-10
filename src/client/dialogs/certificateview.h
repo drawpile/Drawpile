@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2014 Calle Laakkonen
+   Copyright (C) 2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,42 +16,28 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SETTINGSDIALOG_H
-#define SETTINGSDIALOG_H
+#ifndef CERTIFICATEVIEW_H
+#define CERTIFICATEVIEW_H
 
 #include <QDialog>
 
-class Ui_SettingsDialog;
-class QListWidgetItem;
+class Ui_CertificateView;
+class QSslCertificate;
 
 namespace dialogs {
 
-class SettingsDialog : public QDialog
+class CertificateView : public QDialog
 {
 	Q_OBJECT
-	public:
-		SettingsDialog(const QList<QAction*>& actions, QWidget *parent=0);
-		~SettingsDialog();
+public:
+	CertificateView(const QString &hostname, const QSslCertificate &certificate, QWidget *parent = 0);
+	~CertificateView();
 
-	private slots:
-		void rememberSettings();
-		void saveCertTrustChanges();
+private:
+	Ui_CertificateView *_ui;
 
-		void validateShortcut(int row, int col);
-		void viewCertificate(QListWidgetItem *item);
-		void markTrustedCertificates();
-		void removeCertificates();
-		void certificateSelectionChanged();
-
-	private:
-		Ui_SettingsDialog *_ui;
-		QList<QAction*> _customactions;
-
-		QStringList _removeCerts;
-		QStringList _trustCerts;
 };
 
 }
 
-#endif
-
+#endif // CERTIFICATEVIEW_H

@@ -75,6 +75,7 @@ set (
 	recording/indexgraphicsitem.cpp
 	recording/indexpointergraphicsitem.cpp
 	recording/indexgraphicsview.cpp
+	dialogs/certificateview.cpp
 	dialogs/colordialog.cpp 
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
@@ -117,6 +118,7 @@ set (
 	UIs
 	ui/brushsettings.ui
 	ui/simplesettings.ui
+	ui/certificateview.ui
 	ui/colordialog.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
