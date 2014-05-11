@@ -173,6 +173,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	connect(_ui->knownHostList, SIGNAL(itemSelectionChanged()), this, SLOT(certificateSelectionChanged()));
 	connect(_ui->trustKnownHosts, SIGNAL(clicked()), this, SLOT(markTrustedCertificates()));
 	connect(_ui->removeKnownHosts, SIGNAL(clicked()), this, SLOT(removeCertificates()));
+	connect(_ui->importTrustedButton, SIGNAL(clicked()), this, SLOT(importTrustedCertificate()));
 
 	QStringList pemfilter; pemfilter << "*.pem";
 	QDir knownHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/known-hosts/");
@@ -257,6 +258,19 @@ void SettingsDialog::saveCertTrustChanges()
 		QString certname = certfile.mid(certfile.lastIndexOf('/')+1);
 		QFile(certfile).rename(trustedDir.absoluteFilePath(certname));
 	}
+
+	// Save imported certificates
+	for(const QSslCertificate &cert : _importCerts) {
+		QString hostname = cert.subjectInfo(QSslCertificate::CommonName).at(0);
+
+		QFile f(trustedDir.absoluteFilePath(hostname + ".pem"));
+		if(!f.open(QFile::WriteOnly)) {
+			qWarning() << "error opening" << f.fileName() << f.errorString();
+			continue;
+		}
+
+		f.write(cert.toPem());
+	}
 }
 
 /**
@@ -296,13 +310,11 @@ void SettingsDialog::validateShortcut(int row, int col)
 
 void SettingsDialog::viewCertificate(QListWidgetItem *item)
 {
-	QString filename = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-	if(item->data(Qt::UserRole).toBool())
-		filename += "/trusted-hosts/";
-	else
-		filename += "/known-hosts/";
-	filename += item->text();
-	filename += ".pem";
+	QString filename;
+	if(item->data(Qt::UserRole+2).isNull())
+		filename = item->data(Qt::UserRole+1).toString();
+	else // read imported cert from original file
+		filename = item->data(Qt::UserRole+2).toString();
 
 	QList<QSslCertificate> certs = QSslCertificate::fromPath(filename);
 	if(certs.isEmpty()) {
@@ -351,10 +363,47 @@ void SettingsDialog::removeCertificates()
 {
 	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
 		QString path = item->data(Qt::UserRole+1).toString();
-		_trustCerts.removeAll(path);
-		_removeCerts.append(path);
+		if(path.isEmpty()) {
+			foreach(const QSslCertificate &imported, _importCerts) {
+				if(imported.subjectInfo(QSslCertificate::CommonName).at(0) == item->text())
+					_importCerts.removeOne(imported);
+			}
+		} else {
+			_trustCerts.removeAll(path);
+			_removeCerts.append(path);
+		}
+
 		delete item;
 	}
+}
+
+void SettingsDialog::importTrustedCertificate()
+{
+	QString path = QFileDialog::getOpenFileName(this, tr("Import trusted certificate"), QString(),
+		tr("Certificates (*.pem)") + ";;" +
+		tr("All files (*)")
+	);
+
+	if(path.isEmpty())
+		return;
+
+	QList<QSslCertificate> certs = QSslCertificate::fromPath(path);
+	if(certs.isEmpty() || certs.at(0).isNull()) {
+		QMessageBox::warning(this, tr("Import trusted certificate"), tr("Invalid certificate!"));
+		return;
+	}
+
+	if(certs.at(0).subjectInfo(QSslCertificate::CommonName).isEmpty()) {
+		QMessageBox::warning(this, tr("Import trusted certificate"), tr("Certificate common name not set!"));
+		return;
+	}
+
+	_importCerts.append(certs.at(0));
+
+	QIcon trustedIcon = QIcon::fromTheme("security-high", QIcon(":icons/security-high"));
+	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), _ui->knownHostList);
+	i->setData(Qt::UserRole, true);
+	i->setData(Qt::UserRole+2, path);
 }
 
 }

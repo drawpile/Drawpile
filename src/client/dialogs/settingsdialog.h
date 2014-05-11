@@ -20,6 +20,7 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
+#include <QSslCertificate>
 
 class Ui_SettingsDialog;
 class QListWidgetItem;
@@ -42,6 +43,7 @@ class SettingsDialog : public QDialog
 		void markTrustedCertificates();
 		void removeCertificates();
 		void certificateSelectionChanged();
+		void importTrustedCertificate();
 
 	private:
 		Ui_SettingsDialog *_ui;
@@ -49,6 +51,7 @@ class SettingsDialog : public QDialog
 
 		QStringList _removeCerts;
 		QStringList _trustCerts;
+		QList<QSslCertificate> _importCerts;
 };
 
 }

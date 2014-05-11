@@ -29,7 +29,7 @@ CertificateView::CertificateView(const QString &hostname, const QSslCertificate 
 {
 	_ui = new Ui_CertificateView;
 	_ui->setupUi(this);
-	setWindowTitle(tr("SSL certificate for: %1").arg(hostname));
+	setWindowTitle(tr("SSL certificate for %1").arg(hostname));
 	_ui->certificateText->setText(certificate.toText());
 }
 
