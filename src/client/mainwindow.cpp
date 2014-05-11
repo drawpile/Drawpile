@@ -123,6 +123,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	auto *viewstatus = new widgets::ViewStatus(this);
 	_netstatus = new widgets::NetStatus(this);
 	_recorderstatus = new QLabel(this);
+	_recorderstatus->hide();
 	_lockstatus = new QLabel(this);
 
 	statusbar->addPermanentWidget(viewstatus);
@@ -817,13 +818,16 @@ void MainWindow::setRecorderStatus(bool on)
 			_recorderstatus->setPixmap(QIcon::fromTheme("media-playback-pause", QIcon(":icons/media-playback-pause")).pixmap(16, 16));
 			_recorderstatus->setToolTip("Playback paused");
 		}
+		_recorderstatus->show();
 	} else {
-		QIcon icon = QIcon::fromTheme("media-record", QIcon(":icons/media-record.png"));
-		_recorderstatus->setPixmap(icon.pixmap(16, 16, on ? QIcon::Normal : QIcon::Disabled));
-		if(on)
+		if(on) {
+			QIcon icon = QIcon::fromTheme("media-record", QIcon(":icons/media-record.png"));
+			_recorderstatus->setPixmap(icon.pixmap(16, 16));
 			_recorderstatus->setToolTip("Recording session");
-		else
-			_recorderstatus->setToolTip("Not recording");
+			_recorderstatus->show();
+		} else {
+			_recorderstatus->hide();
+		}
 
 		getAction("toolmarker")->setEnabled(on);
 	}
