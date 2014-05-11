@@ -87,7 +87,6 @@ private:
 	QAction *_copyaction;
 	QAction *_discoverIp;
 
-	bool _online;
 	quint64 _sentbytes, _recvbytes;
 	uchar _activity;
 	QTimer *_timer;

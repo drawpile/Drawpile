@@ -108,13 +108,13 @@ NetStatus::NetStatus(QWidget *parent)
 
 	// Network connection status icon
 	_icon = new QLabel(QString(), this);
-	_icon->setPixmap(netstatusIcon("offline"));
-	_icon->setFixedSize(_icon->pixmap()->size());
+	_icon->setFixedSize(QSize(16, 16));
+	_icon->hide();
 	layout->addWidget(_icon);
 
 	// Security level icon
 	_security = new QLabel(QString(), this);
-	_security->setFixedSize(_icon->pixmap()->size());
+	_security->setFixedSize(QSize(16, 16));
 	_security->hide();
 	layout->addWidget(_security);
 
@@ -148,7 +148,7 @@ void NetStatus::connectingToHost(const QString& address, int port)
 	// reset statistics
 	_recvbytes = 0;
 	_sentbytes = 0;
-	_online = true;
+	_icon->show();
 	updateIcon();
 }
 
@@ -210,8 +210,7 @@ void NetStatus::hostDisconnected()
 	_discoverIp->setVisible(false);
 
 	message(tr("Disconnected"));
-	_online = false;
-	updateIcon();
+	_icon->hide();
 	setSecurityLevel(net::Server::NO_SECURITY, QSslCertificate());
 }
 
@@ -274,15 +273,11 @@ void NetStatus::updateStats()
 
 void NetStatus::updateIcon()
 {
-	if(_online) {
-		switch(_activity) {
-		case 0: _icon->setPixmap(netstatusIcon("idle")); break;
-		case 1: _icon->setPixmap(netstatusIcon("transmit")); break;
-		case 2: _icon->setPixmap(netstatusIcon("receive")); break;
-		case 3: _icon->setPixmap(netstatusIcon("transmit-receive")); break;
-		}
-	} else {
-		_icon->setPixmap(netstatusIcon("offline"));
+	switch(_activity) {
+	case 0: _icon->setPixmap(netstatusIcon("idle")); break;
+	case 1: _icon->setPixmap(netstatusIcon("transmit")); break;
+	case 2: _icon->setPixmap(netstatusIcon("receive")); break;
+	case 3: _icon->setPixmap(netstatusIcon("transmit-receive")); break;
 	}
 }
 

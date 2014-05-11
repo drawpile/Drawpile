@@ -42,7 +42,6 @@
         <file>icons/media-skip-backward.png</file>
         <file>icons/media-skip-forward.png</file>
         <file>icons/network-idle.png</file>
-        <file>icons/network-offline.png</file>
         <file>icons/network-receive.png</file>
         <file>icons/network-transmit.png</file>
         <file>icons/network-transmit-receive.png</file>

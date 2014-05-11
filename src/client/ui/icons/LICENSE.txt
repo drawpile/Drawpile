@@ -26,7 +26,6 @@ The following icons are from Tango Desktop Project under a Public Domain license
  * media-skip-forward
  * media-seek-backward
  * media-skip-backward
- * network-offline
  * network-receive
  * network-transmit
  * network-transmit-receive
