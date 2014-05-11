@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -36,64 +36,68 @@ namespace widgets {
 
 class PaletteWidget : public QWidget {
 	Q_OBJECT
-	public:
-		PaletteWidget(QWidget *parent);
+public:
+	PaletteWidget(QWidget *parent);
 
-		void setSwatchSize(int width, int height);
-		void setSpacing(int spacing);
+	void setPalette(Palette *palette);
 
-		void setPalette(Palette *palette);
+	void setColumns(int columns);
+	void setSpacing(int spacing);
 
-	signals:
-		void colorSelected(const QColor& color);
+signals:
+	void colorSelected(const QColor& color);
 
-	protected:
-		bool event(QEvent *event);
-		void resizeEvent(QResizeEvent *event);
-		void paintEvent(QPaintEvent *);
+protected:
+	bool event(QEvent *event);
+	void resizeEvent(QResizeEvent *event);
+	void paintEvent(QPaintEvent *);
 
-		void mousePressEvent(QMouseEvent *event);
-		void mouseMoveEvent(QMouseEvent *event);
-		void mouseReleaseEvent(QMouseEvent *event);
-		void mouseDoubleClickEvent(QMouseEvent *);
-		void wheelEvent(QWheelEvent *event);
-		void contextMenuEvent(QContextMenuEvent *event);
-		void keyReleaseEvent(QKeyEvent *event);
+	void mousePressEvent(QMouseEvent *event);
+	void mouseMoveEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	void mouseDoubleClickEvent(QMouseEvent *);
+	void wheelEvent(QWheelEvent *event);
+	void contextMenuEvent(QContextMenuEvent *event);
+	void keyReleaseEvent(QKeyEvent *event);
 
-		void dragEnterEvent(QDragEnterEvent *event);
-		void dragMoveEvent(QDragMoveEvent *event);
-		void dragLeaveEvent(QDragLeaveEvent *event);
-		void dropEvent(QDropEvent *event);
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dropEvent(QDropEvent *event);
 
-		void focusInEvent(QFocusEvent*);
-		void focusOutEvent(QFocusEvent*);
+	void focusInEvent(QFocusEvent*);
+	void focusOutEvent(QFocusEvent*);
 
-	private slots:
-		void scroll(int pos);
-		void addColor();
-		void removeColor();
-		void editCurrentColor();
-		void setCurrentColor(const QColor& color);
-		void dialogDone();
+private slots:
+	void scroll(int pos);
+	void addColor();
+	void removeColor();
+	void editCurrentColor();
+	void setCurrentColor(const QColor& color);
+	void dialogDone();
 
-	private:
-		int columns() const;
-		int indexAt(const QPoint& point) const;
-		int nearestAt(const QPoint& point) const;
-		QRect swatchRect(int index) const;
-		QRect betweenRect(int index) const;
+private:
+	int indexAt(const QPoint& point) const;
+	int nearestAt(const QPoint& point) const;
+	QRect swatchRect(int index) const;
+	QRect betweenRect(int index) const;
+	QSize calcSwatchSize(int availableWidth) const;
 
-		Palette *palette_;
-		QScrollBar *scrollbar_;
-		QSize swatchsize_;
-		int spacing_;
-		int scroll_;
-		QPoint dragstart_;
-		int selection_;
-		QRubberBand *outline_;
-		QMenu *contextmenu_;
-		dialogs::ColorDialog *colordlg_;
-		int dialogsel_;
+	Palette *_palette;
+	QScrollBar *_scrollbar;
+	dialogs::ColorDialog *_colordlg;
+	QMenu *_contextmenu;
+
+	QSize _swatchsize;
+	int _columns;
+	int _spacing;
+	int _leftMargin;
+
+	int _scroll;
+	int _selection;
+	int _dialogsel;
+	QPoint _dragstart;
+	QRubberBand *_outline;
 };
 
 }

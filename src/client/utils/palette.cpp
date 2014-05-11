@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ Palette *Palette::fromFile(const QFileInfo& file)
 			line = in.readLine();
 			if(line.isEmpty() || line[0] == '#')
 				continue;
-			QStringList tokens = line.split(whitespace);
-			if(tokens.count() != 4) // ignore unknown lines
+			QStringList tokens = line.split(whitespace, QString::SkipEmptyParts);
+			if(tokens.count()<3) // ignore unknown lines
 				continue;
 			pal->insertColor(index++, QColor(
 					tokens[0].toInt(),
@@ -101,9 +101,10 @@ Palette *Palette::makeDefaultPalette()
 {
 	Palette *pal = new Palette(QApplication::tr("Default"));
 
-	for(int value=25;value<255;value+=25) {
-		for(int hue=0;hue<345;hue+=35)
-			pal->insertColor(0, QColor::fromHsv(hue,255,value));
+	for(int hue=0;hue<352;hue+=16) {
+		for(int value=255;value>=15;value-=16) {
+			pal->appendColor(QColor::fromHsv(hue,255,value));
+		}
 	}
 	return pal;
 }
@@ -151,6 +152,12 @@ void Palette::setColor(int index, const QColor& color)
 void Palette::insertColor(int index, const QColor& color)
 {
 	colors_.insert(index, color);
+	modified_ = true;
+}
+
+void Palette::appendColor(const QColor &color)
+{
+	colors_.append(color);
 	modified_ = true;
 }
 

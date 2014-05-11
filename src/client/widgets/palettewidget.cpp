@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,6 +16,11 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "dialogs/colordialog.h"
+#include "palettewidget.h"
+#include "utils/palette.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QPainter>
@@ -28,99 +33,120 @@
 #include <QDrag>
 #include <QMimeData>
 
-#include "dialogs/colordialog.h"
-#include "palettewidget.h"
-#include "utils/palette.h"
-
 namespace widgets {
 
 PaletteWidget::PaletteWidget(QWidget *parent)
-	: QWidget(parent), palette_(0), swatchsize_(13,8), spacing_(1), scroll_(0),
-	selection_(-1), dialogsel_(-2)
+	: QWidget(parent), _palette(0),
+	  _swatchsize(13,8), _columns(16), _spacing(1), _leftMargin(0),
+	  _scroll(0), _selection(-1), _dialogsel(-2)
 {
 	setAcceptDrops(true);
 	setFocusPolicy(Qt::StrongFocus);
 
-	outline_ = new QRubberBand(QRubberBand::Rectangle, this);
+	_outline = new QRubberBand(QRubberBand::Rectangle, this);
 
-	contextmenu_ = new QMenu(this);
-	QAction *add= contextmenu_->addAction(tr("Add"));
-	QAction *edit = contextmenu_->addAction(tr("Modify"));
-	QAction *remove = contextmenu_->addAction(tr("Remove"));
-	connect(add, SIGNAL(triggered()), this, SLOT(addColor()));
-	connect(edit, SIGNAL(triggered()), this, SLOT(editCurrentColor()));
-	connect(remove, SIGNAL(triggered()), this, SLOT(removeColor()));
+	_contextmenu = new QMenu(this);
+	_contextmenu->addAction(tr("Add"), this, SLOT(addColor()));
+	_contextmenu->addAction(tr("Modify"), this, SLOT(editCurrentColor()));
+	_contextmenu->addAction(tr("Remove"), this, SLOT(removeColor()));
 
-	scrollbar_ = new QScrollBar(this);
-	connect(scrollbar_, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
+	_scrollbar = new QScrollBar(this);
+	connect(_scrollbar, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 
-	colordlg_ = new dialogs::ColorDialog(this, tr("Set palette color"));
+	_colordlg = new dialogs::ColorDialog(this, tr("Set palette color"));
 
-	connect(colordlg_, SIGNAL(colorSelected(QColor)),
+	connect(_colordlg, SIGNAL(colorSelected(QColor)),
 			this, SLOT(setCurrentColor(QColor)));
 
-	connect(colordlg_, SIGNAL(finished(int)),
+	connect(_colordlg, SIGNAL(finished(int)),
 			this, SLOT(dialogDone()));
 }
 
-void PaletteWidget::setSwatchSize(int width, int height)
+void PaletteWidget::setPalette(Palette *palette)
 {
-	swatchsize_ = QSize(width, height);
+	_palette = palette;
+	resizeEvent(0);
+	update();
+}
+
+void PaletteWidget::setColumns(int columns)
+{
+	Q_ASSERT(columns>=1);
+	_columns = columns;
+	resizeEvent(0);
 	update();
 }
 
 void PaletteWidget::setSpacing(int spacing)
 {
-	spacing_ = spacing;
+	Q_ASSERT(spacing>=0);
+	_spacing = spacing;
+	resizeEvent(0);
 	update();
 }
 
-void PaletteWidget::setPalette(Palette *palette)
+QSize PaletteWidget::calcSwatchSize(int availableWidth) const
 {
-	palette_ = palette;
-	update();
+	QSize s;
+	s.setWidth(qMax(1+_spacing*2, (availableWidth-_spacing)/_columns - _spacing));
+	s.setHeight(s.width() * 0.75 + 0.5);
+	return s;
 }
 
-void PaletteWidget::resizeEvent(QResizeEvent *event)
+namespace {
+	int divRoundUp(int a, int b) {
+		return a/b + (a%b ? 1 : 0);
+	}
+}
+void PaletteWidget::resizeEvent(QResizeEvent*)
 {
-	scrollbar_->setGeometry(QRect(
-			width() - scrollbar_->sizeHint().width(),
-			0,
-			scrollbar_->sizeHint().width(),
-			height()
-			)
-		);
+	int rowsHeight = 0;
 
-	int rows = 0;
-	scrollbar_->setVisible(false);
-	if(palette_) {
+	int contentWidth = width();
+
+	if(_palette) {
 		// First calculate required space without scrollbar
-		rows = (palette_->count() / columns()+1) * (swatchsize_.height()+spacing_);
+		_swatchsize = calcSwatchSize(contentWidth);
+		rowsHeight = (_palette->count() / _columns + 1) * (_swatchsize.height()+_spacing);
 	}
 
-	if(rows <= height()) {
-		scrollbar_->setMaximum( 0 );
+	if(rowsHeight <= height()) {
+		_scrollbar->setVisible(false);
+		_scrollbar->setMaximum(0);
+
 	} else {
-		// not enough room even without scrollbar, recalculate with scrollbar
-		scrollbar_->setVisible(true);
-		rows = (palette_->count() / columns()+1) * (swatchsize_.height()+spacing_);
-		scrollbar_->setMaximum( rows - height() );
-	}
-	scrollbar_->setPageStep( height() );
-			
-}
+		// Recalculate width taking scrollbar in account
+		contentWidth -= _scrollbar->sizeHint().width();
+		_swatchsize = calcSwatchSize(contentWidth);
+		rowsHeight = divRoundUp(_palette->count(), _columns) * (_swatchsize.height()+_spacing);
 
-/**
- * @return number of swatches per row
- */
-int PaletteWidget::columns() const {
-	const int c = (contentsRect().width()-(scrollbar_->isVisible()?scrollbar_->width():0)) / (swatchsize_.width()+spacing_);
-	return qMax(c, 1);
+		_scrollbar->setGeometry(QRect(
+				contentWidth,
+				0,
+				_scrollbar->sizeHint().width(),
+				height()
+				)
+			);
+
+		_scrollbar->setMaximum(rowsHeight - this->height() + 1);
+		_scrollbar->setPageStep(height());
+		_scrollbar->setVisible(true);
+	}
+
+	_scrollbar->setMinimum(0);
+
+	_leftMargin = (contentWidth - _spacing - (_swatchsize.width()+_spacing) * _columns) / 2;
+
+	if(_outline->isVisible())
+		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 }
 
 void PaletteWidget::scroll(int pos)
 {
-	scroll_ = pos;
+	_scroll = pos;
+	if(_outline->isVisible())
+		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
+
 	update();
 }
 
@@ -129,20 +155,20 @@ void PaletteWidget::scroll(int pos)
  */
 void PaletteWidget::addColor()
 {
-	if(dialogsel_<-1) {
-		dialogsel_ = -1;
-		colordlg_->setColor(Qt::black);
-		colordlg_->show();
+	if(_dialogsel<-1) {
+		_dialogsel = -1;
+		_colordlg->setColor(Qt::black);
+		_colordlg->show();
 	}
 }
 
 void PaletteWidget::removeColor()
 {
-	Q_ASSERT(palette_);
-	palette_->removeColor(selection_);
-	if(selection_ >= palette_->count()) {
-		outline_->hide();
-		selection_ = -1;
+	Q_ASSERT(_palette);
+	_palette->removeColor(_selection);
+	if(_selection >= _palette->count()) {
+		_outline->hide();
+		_selection = -1;
 	}
 	update();
 }
@@ -152,11 +178,11 @@ void PaletteWidget::removeColor()
  */
 void PaletteWidget::editCurrentColor()
 {
-	Q_ASSERT(palette_);
-	if(dialogsel_<-1 && selection_ >= 0) {
-		dialogsel_ = selection_;
-		colordlg_->setColor(palette_->color(selection_));
-		colordlg_->show();
+	Q_ASSERT(_palette);
+	if(_dialogsel<-1 && _selection >= 0) {
+		_dialogsel = _selection;
+		_colordlg->setColor(_palette->color(_selection));
+		_colordlg->show();
 	}
 }
 
@@ -167,14 +193,14 @@ void PaletteWidget::editCurrentColor()
  */
 void PaletteWidget::setCurrentColor(const QColor& color)
 {
-	Q_ASSERT(palette_);
-	Q_ASSERT(dialogsel_>-2);
-	if(dialogsel_==-1) {
-		if(selection_ == -1)
-			selection_ = palette_->count();
-		palette_->insertColor(selection_, color);
+	Q_ASSERT(_palette);
+	Q_ASSERT(_dialogsel>-2);
+	if(_dialogsel==-1) {
+		if(_selection == -1)
+			_selection = _palette->count();
+		_palette->insertColor(_selection, color);
 	} else {
-		palette_->setColor(selection_, color);
+		_palette->setColor(_selection, color);
 	}
 	update();
 }
@@ -185,7 +211,7 @@ void PaletteWidget::setCurrentColor(const QColor& color)
  */
 void PaletteWidget::dialogDone()
 {
-	dialogsel_ = -2;
+	_dialogsel = -2;
 }
 
 /**
@@ -199,7 +225,7 @@ bool PaletteWidget::event(QEvent *event)
 		const QPoint pos = (static_cast<const QHelpEvent*>(event))->pos();
 		const int index = indexAt(pos);
 		if(index != -1) {
-			const QColor c = palette_->color(index);
+			const QColor c = _palette->color(index);
 			QToolTip::showText(
 					mapToGlobal(pos),
 					tr("Red: %1\nGreen: %2\nBlue: %3").arg(c.red()).arg(c.green()).arg(c.blue()),
@@ -213,51 +239,57 @@ bool PaletteWidget::event(QEvent *event)
 	return QWidget::event(event);
 }
 
-void PaletteWidget::paintEvent(QPaintEvent *)
+void PaletteWidget::paintEvent(QPaintEvent *event)
 {
-	if(palette_==0)
-		return;
 	QPainter painter(this);
+	//painter.fillRect(event->rect(), QColor("#646464"));
 
-	const int col = columns();
+	if(!_palette || _palette->count()==0)
+		return;
 
-	QRect swatch(QPoint(spacing_,spacing_ - scroll_), swatchsize_);
-	for(int i=0;i<palette_->count();++i) {
-		painter.fillRect(swatch, palette_->color(i));
-		swatch.translate(swatchsize_.width() + spacing_, 0);
-		if((i+1)%col==0) 
-			swatch.moveTo(spacing_, swatch.y() + swatchsize_.height() + spacing_);
+	painter.fillRect(
+		QRectF(
+			_leftMargin, 0,
+			qMin(_columns, _palette->count()) * (_swatchsize.width() + _spacing) + _spacing,
+			divRoundUp(_palette->count(), _columns) * (_swatchsize.height() + _spacing) + _spacing
+		),
+		QColor("#646464")
+	);
+
+	for(int i=0;i<_palette->count();++i) {
+		QRect swatch = swatchRect(i);
+		painter.fillRect(swatch, _palette->color(i));
 	}
 }
 
 void PaletteWidget::mousePressEvent(QMouseEvent *event)
 {
-	dragstart_ = event->pos();
-	selection_ = indexAt(event->pos());
-	if(selection_!=-1) {
-		outline_->setGeometry(swatchRect(selection_).adjusted(-1,-1,1,1));
-		outline_->show();
+	_dragstart = event->pos();
+	_selection = indexAt(event->pos());
+	if(_selection!=-1) {
+		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
+		_outline->show();
 	} else {
-		outline_->hide();
+		_outline->hide();
 	}
 }
 
 void PaletteWidget::contextMenuEvent(QContextMenuEvent *event)
 {
-	if(palette_)
-		contextmenu_->popup(mapToGlobal(event->pos()));
+	if(_palette)
+		_contextmenu->popup(mapToGlobal(event->pos()));
 }
 
 void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	if(selection_ != -1 && (event->buttons() & Qt::LeftButton) &&
-			(event->pos() - dragstart_).manhattanLength() >
+	if(_selection != -1 && (event->buttons() & Qt::LeftButton) &&
+			(event->pos() - _dragstart).manhattanLength() >
 			QApplication::startDragDistance())
 	{
 		QDrag *drag = new QDrag(this);
 
 		QMimeData *mimedata = new QMimeData;
-		const QColor color = palette_->color(selection_);
+		const QColor color = _palette->color(_selection);
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
@@ -267,15 +299,15 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 
 void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	if(selection_ != -1) {
+	if(_selection != -1) {
 		if(event->button()==Qt::LeftButton)
-			emit colorSelected(palette_->color(selection_));
+			emit colorSelected(_palette->color(_selection));
 	}
 }
 
 void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *)
 {
-	if(selection_ > -1)
+	if(_selection > -1)
 		editCurrentColor();
 	else
 		addColor();
@@ -283,18 +315,17 @@ void PaletteWidget::mouseDoubleClickEvent(QMouseEvent *)
 
 void PaletteWidget::keyReleaseEvent(QKeyEvent *event)
 {
-	if(selection_ != -1 && event->key() == Qt::Key_Delete)
+	if(_selection != -1 && event->key() == Qt::Key_Delete)
 		removeColor();
 }
 
 void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 {
-	if(event->mimeData()->hasFormat("application/x-color")
-			&& palette_ != 0) {
+	if(event->mimeData()->hasFormat("application/x-color") && _palette != 0) {
 		if(event->source() == this)
 			event->setDropAction(Qt::MoveAction);
 		event->accept();
-		outline_->show();
+		_outline->show();
 	}
 }
 
@@ -302,30 +333,30 @@ void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
 {
 	const int index = indexAt(event->pos());
 	if(index != -1) {
-		outline_->setGeometry(swatchRect(index));
+		_outline->setGeometry(swatchRect(index));
 	} else {
-		outline_->setGeometry(betweenRect(nearestAt(event->pos())).adjusted(-1,-1,1,1));
+		_outline->setGeometry(betweenRect(nearestAt(event->pos())).adjusted(-1,-1,1,1));
 	}
 }
 
 void PaletteWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
-	if(selection_!=-1 && hasFocus()) {
-		outline_->setGeometry(swatchRect(selection_).adjusted(-1,-1,1,1));
+	if(_selection!=-1 && hasFocus()) {
+		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 	} else {
-		outline_->hide();
+		_outline->hide();
 	}
 }
 
 void PaletteWidget::focusInEvent(QFocusEvent*)
 {
-	if(selection_!=-1)
-		outline_->setGeometry(swatchRect(selection_).adjusted(-1,-1,1,1));
+	if(_selection!=-1)
+		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 }
 
 void PaletteWidget::focusOutEvent(QFocusEvent*)
 {
-	outline_->hide();
+	_outline->hide();
 }
 
 void PaletteWidget::dropEvent(QDropEvent *event)
@@ -334,9 +365,9 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 	if(index != -1) {
 		if(event->source() == this) {
 			// Switch colors
-			palette_->setColor(selection_, palette_->color(index));
+			_palette->setColor(_selection, _palette->color(index));
 		}
-		palette_->setColor(
+		_palette->setColor(
 				index,
 				qvariant_cast<QColor>(event->mimeData()->colorData())
 				);
@@ -344,23 +375,23 @@ void PaletteWidget::dropEvent(QDropEvent *event)
 		index = nearestAt(event->pos());
 		if(event->source() == this) {
 			// Move color
-			palette_->removeColor(selection_);
-			if(index >= selection_)
+			_palette->removeColor(_selection);
+			if(index >= _selection)
 				--index;
 		}
-		palette_->insertColor(
+		_palette->insertColor(
 				index,
 				qvariant_cast<QColor>(event->mimeData()->colorData())
 				);
 	}
-	selection_ = index;
+	_selection = index;
 	update();
 }
 
 void PaletteWidget::wheelEvent(QWheelEvent *event)
 {
 	if(event->orientation() == Qt::Vertical) {
-		scrollbar_->setValue(scrollbar_->value() - event->delta()/16);
+		_scrollbar->setValue(_scrollbar->value() - event->delta()/16);
 	}
 }
 
@@ -371,20 +402,20 @@ void PaletteWidget::wheelEvent(QWheelEvent *event)
  */
 int PaletteWidget::indexAt(const QPoint& point) const
 {
-	if(palette_ == 0)
+	if(_palette == 0)
 		return -1;
-	const int xw = spacing_ + swatchsize_.width();
-	const int x = point.x() / xw;
-	if(point.x() < x * xw + spacing_)
-		return -1;
-
-	const int yw = spacing_ + swatchsize_.height();
-	const int y = (point.y()+scroll_) / yw;
-	if(point.y()+scroll_ < y * yw + spacing_)
+	const int xw = _spacing + _swatchsize.width();
+	const int x = (point.x() - _leftMargin) / xw;
+	if(point.x() < x * xw + _spacing)
 		return -1;
 
-	const int index = y * columns() + x;
-	if(index >= palette_->count())
+	const int yw = _spacing + _swatchsize.height();
+	const int y = (point.y()+_scroll) / yw;
+	if(point.y()+_scroll < y * yw + _spacing)
+		return -1;
+
+	const int index = (y * _columns) + x;
+	if(index >= _palette->count())
 		return -1;
 	return index;
 }
@@ -394,18 +425,14 @@ int PaletteWidget::indexAt(const QPoint& point) const
  * the last palette entry, Palette::count() is returned.
  * @param point coordinates inside the widget
  * @return index of the color swatch nearest
- * @pre palette_ != 0
+ * @pre _palette != 0
  */
 int PaletteWidget::nearestAt(const QPoint& point) const
 {
-	const int x = point.x() / (spacing_ + swatchsize_.width());
-	const int y = (point.y()+scroll_) / (spacing_ + swatchsize_.height());
+	const int x = (point.x()-_leftMargin) / (_spacing + _swatchsize.width());
+	const int y = (point.y()+_scroll) / (_spacing + _swatchsize.height());
 
-	const int index = y * columns() + x;
-	if(index > palette_->count())
-		return palette_->count();
-
-	return index;
+	return qMin(y * _columns + x, _palette->count());
 }
 
 /**
@@ -416,13 +443,13 @@ int PaletteWidget::nearestAt(const QPoint& point) const
  */
 QRect PaletteWidget::swatchRect(int index) const
 {
-	const int cols = columns();
+	Q_ASSERT(index>=0);
 	return QRect(
-			spacing_ + (swatchsize_.width()+spacing_) * (index%cols),
-			spacing_ + (swatchsize_.height()+spacing_) * (index/cols) - scroll_,
-			swatchsize_.width(),
-			swatchsize_.height()
-			);
+		_leftMargin + _spacing + (_swatchsize.width()+_spacing) * (index%_columns),
+		_spacing + (_swatchsize.height()+_spacing) * (index/_columns) - _scroll,
+		_swatchsize.width(),
+		_swatchsize.height()
+	);
 }
 
 /**
@@ -432,12 +459,11 @@ QRect PaletteWidget::swatchRect(int index) const
  */
 QRect PaletteWidget::betweenRect(int index) const
 {
-	const int cols = columns();
 	return QRect(
-			spacing_/2 + (swatchsize_.width()+spacing_) * (index%cols),
-			spacing_ + (swatchsize_.height()+spacing_) * (index/cols) - scroll_,
-			spacing_/2,
-			swatchsize_.height()
+			_spacing/2 + (_swatchsize.width()+_spacing) * (index%_columns),
+			_spacing + (_swatchsize.height()+_spacing) * (index/_columns) - _scroll,
+			_spacing/2,
+			_swatchsize.height()
 			);
 }
 

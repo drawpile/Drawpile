@@ -610,8 +610,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 
 	_palettewidget = new widgets::PaletteWidget(widget);
 	_palettewidget->setPalette(_palette);
-	_palettewidget->setSwatchSize(32, 24);
-	_palettewidget->setSpacing(3);
+	_palettewidget->setColumns(8);
 	layout->addWidget(_palettewidget);
 
 	connect(_palettewidget, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorSelected(QColor)));

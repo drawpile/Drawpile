@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2013 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,10 +21,7 @@
 
 #include <QList>
 
-class QVariant;
 class QFileInfo;
-
-#include "palette.h"
 
 class Palette {
 	public:
@@ -63,6 +60,9 @@ class Palette {
 		
 		//! Insert a new color
 		void insertColor(int index, const QColor& color);
+
+		//! Append anew color to the end of the palette
+		void appendColor(const QColor &color);
 
 		//! Remove a color
 		void removeColor(int index);
