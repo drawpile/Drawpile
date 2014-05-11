@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,13 +17,10 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
-
 #include "docks/layeraclmenu.h"
 #include "net/userlist.h"
 
 namespace docks {
-
 
 LayerAclMenu::LayerAclMenu(QWidget *parent) :
     QMenu(parent)
@@ -89,7 +86,12 @@ void LayerAclMenu::rowsRemoved(const QModelIndex &parent, int start, int end)
 
 void LayerAclMenu::userClicked(QAction *useraction)
 {
+	// Get exclusive user access list
 	QList<uint8_t> exclusive;
+	for(const QAction *a : _users) {
+		if(a->isChecked())
+			exclusive.append(a->property("userid").toInt());
+	}
 
 	if(useraction == _lock) {
 		bool enable = !useraction->isChecked();
@@ -100,16 +102,13 @@ void LayerAclMenu::userClicked(QAction *useraction)
 
 	} else if(useraction == _allusers) {
 		// No user has exclusive access
+		exclusive.clear();
 		_allusers->setChecked(true);
 		foreach(QAction *a, _users)
 			a->setChecked(false);
 
 	} else {
 		// User exclusive access bit changed.
-		foreach(const QAction *a, _users) {
-			if(a->isChecked())
-				exclusive.append(a->property("userid").toInt());
-		}
 		_allusers->setChecked(exclusive.isEmpty());
 	}
 
@@ -123,17 +122,20 @@ void LayerAclMenu::setAcl(bool lock, const QList<uint8_t> acl)
 
 	_allusers->setEnabled(!lock);
 
-	foreach(QAction *u, _users) {
+	for(QAction *u : _users) {
 		u->setChecked(false);
 		u->setEnabled(!lock);
 	}
 
-	foreach(uint8_t id, acl) {
-		const QVariant qvid = id;
-		foreach(QAction *u, _users) {
-			if(u->property("userid") == qvid) {
-				u->setChecked(true);
-				break;
+	_allusers->setChecked(acl.isEmpty());
+	if(!acl.isEmpty()) {
+		for(uint8_t id : acl) {
+			const QVariant qvid = id;
+			for(QAction *u : _users) {
+				if(u->property("userid") == qvid) {
+					u->setChecked(true);
+					break;
+				}
 			}
 		}
 	}
