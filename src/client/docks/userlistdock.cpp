@@ -137,7 +137,7 @@ void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottom
 
 UserListDelegate::UserListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  _lockicon(QPixmap(":icons/lock_closed.png"))
+	  _lockicon(QIcon::fromTheme("object-locked", QIcon(":icons/object-locked")).pixmap(16, 16))
 {
 }
 

@@ -45,6 +45,7 @@
         <file>icons/network-receive.png</file>
         <file>icons/network-transmit.png</file>
         <file>icons/network-transmit-receive.png</file>
+        <file>icons/object-locked.png</file>
         <file>icons/security-low.png</file>
         <file>icons/security-medium.png</file>
         <file>icons/security-high.png</file>
@@ -59,8 +60,6 @@
         <file>icons/incremental.png</file>
         <file>icons/eye_closed.png</file>
         <file>icons/eye_open.png</file>
-        <file>icons/lock_closed.png</file>
-        <file>icons/lock_open.png</file>
         <file>icons/draw-ellipse.png</file>
     </qresource>
 </RCC>

@@ -19,6 +19,7 @@
 
 #include <QDebug>
 #include <QPixmap>
+#include <QIcon>
 
 #include "loginsessions.h"
 
@@ -67,7 +68,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			else if(ls.closed)
 				return QPixmap(":icons/stopsign.png");
 			else if(ls.needPassword)
-				return QPixmap(":icons/lock_closed.png");
+				return QIcon::fromTheme("object-locked", QIcon(":icons/object-locked")).pixmap(16, 16);
 			break;
 		}
 	}

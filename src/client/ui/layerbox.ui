@@ -87,9 +87,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
-         <normaloff>:/icons/lock_open.png</normaloff>
-         <normalon>:/icons/lock_closed.png</normalon>:/icons/lock_open.png</iconset>
+        <iconset theme="object-locked" resource="resources.qrc">
+         <normaloff>:/icons/object-locked.png</normaloff>:/icons/object-locked.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

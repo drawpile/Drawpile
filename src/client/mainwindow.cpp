@@ -1173,7 +1173,7 @@ void MainWindow::updateLockWidget()
 {
 	bool locked = _client->isLocked() || _dock_layers->isCurrentLayerLocked();
 	if(locked) {
-		_lockstatus->setPixmap(QPixmap(":icons/lock_closed.png"));
+		_lockstatus->setPixmap(QIcon::fromTheme("object-locked", QIcon(":icons/object-locked")).pixmap(16, 16));
 		_lockstatus->setToolTip(tr("Board is locked"));
 	} else {
 		_lockstatus->setPixmap(QPixmap());
