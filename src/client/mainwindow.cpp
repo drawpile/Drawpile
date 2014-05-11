@@ -125,6 +125,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_recorderstatus = new QLabel(this);
 	_recorderstatus->hide();
 	_lockstatus = new QLabel(this);
+	_lockstatus->setFixedSize(QSize(16, 16));
 
 	statusbar->addPermanentWidget(viewstatus);
 	statusbar->addPermanentWidget(_netstatus);
@@ -1175,8 +1176,8 @@ void MainWindow::updateLockWidget()
 		_lockstatus->setPixmap(QPixmap(":icons/lock_closed.png"));
 		_lockstatus->setToolTip(tr("Board is locked"));
 	} else {
-		_lockstatus->setPixmap(QPixmap(":icons/lock_open.png"));
-		_lockstatus->setToolTip(tr("Board is not locked"));
+		_lockstatus->setPixmap(QPixmap());
+		_lockstatus->setToolTip(QString());
 	}
 	_view->setLocked(locked);
 }
