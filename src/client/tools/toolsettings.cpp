@@ -635,7 +635,7 @@ bool ColorPickerSettings::pickFromLayer() const
 
 void ColorPickerSettings::addColor(const QColor &color)
 {
-	if(_palette->count() && _palette->color(0) == color)
+	if(_palette->count() && _palette->color(0).color == color)
 		return;
 
 	_palette->insertColor(0, color);

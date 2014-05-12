@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,6 +16,11 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include "palettebox.h"
+
+#include "widgets/palettewidget.h"
+using widgets::PaletteWidget;
+#include "ui_palettebox.h"
 
 #include <QStandardPaths>
 #include <QInputDialog>
@@ -24,15 +29,13 @@
 #include <QSettings>
 #include <QDir>
 
-#include "palettebox.h"
-
-#include "widgets/palettewidget.h"
-using widgets::PaletteWidget;
-#include "ui_palettebox.h"
-
-#include "utils/palette.h"
-
 namespace docks {
+
+namespace {
+	QString paletteDirectory() {
+		return QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/palettes";
+	}
+}
 
 /**
  * Create a palette box dock widget.
@@ -42,30 +45,30 @@ namespace docks {
 PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	: QDockWidget(title, parent)
 {
-	ui_ = new Ui_PaletteBox;
+	_ui = new Ui_PaletteBox;
 	QWidget *w = new QWidget(this);
 	setWidget(w);
-	ui_->setupUi(w);
-	ui_->palettelist->setCompleter(0);
+	_ui->setupUi(w);
+	_ui->palettelist->setCompleter(0);
 
 	// Load palettes
 	QStringList datapaths = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
 	int okpalettes=0;
 	QSet<QString> palettefiles;
-	foreach(const QString datapath, datapaths) {
-		QFileInfoList pfiles = QDir(datapath + "palettes/").entryInfoList(
+	for(const QString datapath : datapaths) {
+		QFileInfoList pfiles = QDir(datapath + "/palettes").entryInfoList(
 				QStringList("*.gpl"),
 				QDir::Files|QDir::Readable
 				);
 
-		foreach(QFileInfo pfile, pfiles) {
+		for(QFileInfo pfile : pfiles) {
 			if(!palettefiles.contains(pfile.fileName())) {
 				palettefiles.insert(pfile.fileName());
-				Palette *pal = Palette::fromFile(pfile);
-				if(pal) {
+				Palette pal = Palette::fromFile(pfile);
+				if(pal.count()>0) {
 					++okpalettes;
-					palettes_.append(pal);
-					ui_->palettelist->addItem(pal->name());
+					_palettes.append(pal);
+					_ui->palettelist->addItem(pal.name());
 				}
 			}
 		}
@@ -73,34 +76,34 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 
 	// Create a default palette if none were loaded
 	if(okpalettes==0) {
-		Palette *p = Palette::makeDefaultPalette();
-		palettes_.append(p);
-		ui_->palettelist->addItem(p->name());
-		ui_->palette->setPalette(p);
+		Palette p = Palette::makeDefaultPalette();
+		_palettes.append(p);
+		_ui->palettelist->addItem(p.name());
+		_ui->palette->setPalette(&_palettes.last());
 	} else {
 		// If there were palettes, remember which one was used the last time
 		QSettings cfg;
 		int last = cfg.value("history/lastpalette", 0).toInt();
-		if(last<0 || last>= palettes_.count())
+		if(last<0 || last>= _palettes.count())
 			last = 0;
-		ui_->palettelist->setCurrentIndex(last);
-		ui_->palette->setPalette(palettes_.at(last));
+		_ui->palettelist->setCurrentIndex(last);
+		paletteChanged(last);
 	}
 
 	// Connect buttons and combobox
-	connect(ui_->palette, SIGNAL(colorSelected(QColor)),
+	connect(_ui->palette, SIGNAL(colorSelected(QColor)),
 			this, SIGNAL(colorSelected(QColor)));
 
-	connect(ui_->addpalette, SIGNAL(clicked()),
+	connect(_ui->addpalette, SIGNAL(clicked()),
 			this, SLOT(addPalette()));
 
-	connect(ui_->delpalette, SIGNAL(clicked()),
+	connect(_ui->delpalette, SIGNAL(clicked()),
 			this, SLOT(deletePalette()));
 
-	connect(ui_->palettelist, SIGNAL(currentIndexChanged(int)),
+	connect(_ui->palettelist, SIGNAL(currentIndexChanged(int)),
 			this, SLOT(paletteChanged(int)));
 
-	connect(ui_->palettelist, SIGNAL(editTextChanged(QString)),
+	connect(_ui->palettelist, SIGNAL(editTextChanged(QString)),
 			this, SLOT(nameChanged(QString)));
 }
 
@@ -111,26 +114,24 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 PaletteBox::~PaletteBox()
 {
 	QSettings cfg;
-	cfg.setValue("history/lastpalette", ui_->palettelist->currentIndex());
-	QString datadir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-	while(palettes_.isEmpty()==false) {
-		Palette *pal = palettes_.takeFirst();
-		if(pal->isModified()) {
-			if(!QDir(datadir).mkpath("."))
-				qWarning() << "Couldn't create directory:" << datadir;
-			pal->save(QFileInfo(datadir, pal->filename()).absoluteFilePath());
-		}
-		delete pal;
+	cfg.setValue("history/lastpalette", _ui->palettelist->currentIndex());
+	QString datadir = paletteDirectory();
+	if(!QDir(datadir).mkpath("."))
+		qWarning() << "Couldn't create directory:" << datadir;
+
+	for(Palette &pal : _palettes) {
+		if(pal.isModified())
+			pal.save(QFileInfo(datadir, pal.filename()).absoluteFilePath());
 	}
-	delete ui_;
+	delete _ui;
 }
 
 void PaletteBox::paletteChanged(int index)
 {
 	if(index==-1)
-		ui_->palette->setPalette(0);
+		_ui->palette->setPalette(0);
 	else
-		ui_->palette->setPalette(palettes_.at(index));
+		_ui->palette->setPalette(&_palettes[index]);
 }
 
 /**
@@ -140,16 +141,16 @@ void PaletteBox::paletteChanged(int index)
 void PaletteBox::nameChanged(const QString& name)
 {
 	if(name.isEmpty()==false) {
-		Palette *pal = palettes_.at(ui_->palettelist->currentIndex());
+		Palette &pal = _palettes[_ui->palettelist->currentIndex()];
 		// Check for name clashes
 		// Rename only if name is unique
-		if(isUniquePaletteName(name, pal)) {
-			QString datadir = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-			QFile oldfile(QFileInfo(datadir, pal->filename()).absoluteFilePath());
-			pal->setName(name);
+		if(isUniquePaletteName(name, _ui->palettelist->currentIndex())) {
+			const QString datadir = paletteDirectory();
+			QFile oldfile(QFileInfo(datadir, pal.filename()).absoluteFilePath());
+			pal.setName(name);
 			if(oldfile.exists())
-				oldfile.rename(QFileInfo(datadir, pal->filename()).absoluteFilePath());
-			ui_->palettelist->setItemText(ui_->palettelist->currentIndex(), name);
+				oldfile.rename(QFileInfo(datadir, pal.filename()).absoluteFilePath());
+			_ui->palettelist->setItemText(_ui->palettelist->currentIndex(), name);
 		}
 	}
 }
@@ -159,10 +160,10 @@ void PaletteBox::nameChanged(const QString& name)
  * @param name name to check
  * @param exclude a palette to exclude from the check
  */
-bool PaletteBox::isUniquePaletteName(const QString& name, const Palette *exclude) const
+bool PaletteBox::isUniquePaletteName(const QString& name, int excludeIdx) const
 {
-	foreach(Palette *p, palettes_) {
-		if(p != exclude && p->name().compare(name,Qt::CaseInsensitive)==0)
+	for(int i=0;i<_palettes.size();++i) {
+		if(i != excludeIdx && _palettes.at(i).name().compare(name,Qt::CaseInsensitive)==0)
 			return false;
 	}
 	return true;
@@ -186,32 +187,30 @@ void PaletteBox::addPalette()
 	} while(1);
 
 	// TODO check that name is unique
-	Palette *pal = new Palette(name);
-	palettes_.append(pal);
-	ui_->palettelist->addItem(name);
-	ui_->palettelist->setCurrentIndex(ui_->palettelist->count()-1);
-	ui_->palettelist->setEnabled(true);
-	ui_->delpalette->setEnabled(true);
+	_palettes.append(Palette(name));
+	_ui->palettelist->addItem(name);
+	_ui->palettelist->setCurrentIndex(_ui->palettelist->count()-1);
+	_ui->palettelist->setEnabled(true);
+	_ui->delpalette->setEnabled(true);
 }
 
 void PaletteBox::deletePalette()
 {
-	const int index = ui_->palettelist->currentIndex();
+	const int index = _ui->palettelist->currentIndex();
 	const int ret = QMessageBox::question(
 			this,
-			tr("DrawPile"),
-			tr("Delete palette \"%1\"?").arg(palettes_.at(index)->name()),
+			tr("Delete"),
+			tr("Delete palette \"%1\"?").arg(_palettes.at(index).name()),
 			QMessageBox::Yes|QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-		Palette *pal = palettes_.takeAt(index);
-		QFile fpal(QFileInfo(QStandardPaths::writableLocation(QStandardPaths::DataLocation), pal->filename()).absoluteFilePath());
+		Palette pal = _palettes.takeAt(index);
+		QFile fpal(QFileInfo(paletteDirectory(), pal.filename()).absoluteFilePath());
 		if(fpal.exists())
 			fpal.remove();
-		delete pal;
-		ui_->palettelist->removeItem(index);
-		if(ui_->palettelist->count()==0) {
-			ui_->palettelist->setEnabled(false);
-			ui_->delpalette->setEnabled(false);
+		_ui->palettelist->removeItem(index);
+		if(_ui->palettelist->count()==0) {
+			_ui->palettelist->setEnabled(false);
+			_ui->delpalette->setEnabled(false);
 		}
 	}
 }

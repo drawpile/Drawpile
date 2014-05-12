@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,32 +21,33 @@
 
 #include <QDockWidget>
 #include <QList>
-class Ui_PaletteBox;
 
-class Palette;
+#include "utils/palette.h"
+
+class Ui_PaletteBox;
 
 namespace docks {
 
 class PaletteBox : public QDockWidget {
 	Q_OBJECT
-	public:
-		PaletteBox(const QString& title, QWidget *parent);
-		~PaletteBox();
+public:
+	PaletteBox(const QString& title, QWidget *parent);
+	~PaletteBox();
 
-	signals:
-		void colorSelected(const QColor& color);
+signals:
+	void colorSelected(const QColor& color);
 
-	private slots:
-		void paletteChanged(int index);
-		void nameChanged(const QString& name);
-		void addPalette();
-		void deletePalette();
+private slots:
+	void paletteChanged(int index);
+	void nameChanged(const QString& name);
+	void addPalette();
+	void deletePalette();
 
-	private:
-		bool isUniquePaletteName(const QString& name, const Palette *exclude) const;
+private:
+	bool isUniquePaletteName(const QString& name, int excludeIdx) const;
 
-		Ui_PaletteBox *ui_;
-		QList<Palette*> palettes_;
+	Ui_PaletteBox *_ui;
+	QList<Palette> _palettes;
 };
 
 }

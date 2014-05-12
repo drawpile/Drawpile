@@ -65,6 +65,9 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 void PaletteWidget::setPalette(Palette *palette)
 {
 	_palette = palette;
+	_columns = palette->columns();
+	_selection = -1;
+	_dialogsel = -2;
 	resizeEvent(0);
 	update();
 }
@@ -181,7 +184,7 @@ void PaletteWidget::editCurrentColor()
 	Q_ASSERT(_palette);
 	if(_dialogsel<-1 && _selection >= 0) {
 		_dialogsel = _selection;
-		_colordlg->setColor(_palette->color(_selection));
+		_colordlg->setColor(_palette->color(_selection).color);
 		_colordlg->show();
 	}
 }
@@ -225,10 +228,15 @@ bool PaletteWidget::event(QEvent *event)
 		const QPoint pos = (static_cast<const QHelpEvent*>(event))->pos();
 		const int index = indexAt(pos);
 		if(index != -1) {
-			const QColor c = _palette->color(index);
+			const PaletteColor c = _palette->color(index);
 			QToolTip::showText(
 					mapToGlobal(pos),
-					tr("Red: %1\nGreen: %2\nBlue: %3").arg(c.red()).arg(c.green()).arg(c.blue()),
+					tr("%1\nRed: %2\nGreen: %3\nBlue: %4\nHex: %5")
+						.arg(c.name)
+						.arg(c.color.red())
+						.arg(c.color.green())
+						.arg(c.color.blue())
+						.arg(c.color.name()),
 					this,
 					swatchRect(index)
 					);
@@ -258,7 +266,7 @@ void PaletteWidget::paintEvent(QPaintEvent *event)
 
 	for(int i=0;i<_palette->count();++i) {
 		QRect swatch = swatchRect(i);
-		painter.fillRect(swatch, _palette->color(i));
+		painter.fillRect(swatch, _palette->color(i).color);
 	}
 }
 
@@ -289,7 +297,7 @@ void PaletteWidget::mouseMoveEvent(QMouseEvent *event)
 		QDrag *drag = new QDrag(this);
 
 		QMimeData *mimedata = new QMimeData;
-		const QColor color = _palette->color(_selection);
+		const QColor color = _palette->color(_selection).color;
 		mimedata->setColorData(color);
 
 		drag->setMimeData(mimedata);
@@ -301,7 +309,7 @@ void PaletteWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 	if(_selection != -1) {
 		if(event->button()==Qt::LeftButton)
-			emit colorSelected(_palette->color(_selection));
+			emit colorSelected(_palette->color(_selection).color);
 	}
 }
 
@@ -331,7 +339,7 @@ void PaletteWidget::dragEnterEvent(QDragEnterEvent *event)
 
 void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
 {
-	const int index = indexAt(event->pos());
+	const int index = indexAt(event->pos(), true);
 	if(index != -1) {
 		_outline->setGeometry(swatchRect(index));
 	} else {
@@ -361,7 +369,7 @@ void PaletteWidget::focusOutEvent(QFocusEvent*)
 
 void PaletteWidget::dropEvent(QDropEvent *event)
 {
-	int index = indexAt(event->pos());
+	int index = indexAt(event->pos(), true);
 	if(index != -1) {
 		if(event->source() == this) {
 			// Switch colors
@@ -397,16 +405,21 @@ void PaletteWidget::wheelEvent(QWheelEvent *event)
 
 /**
  * @param point coordinates inside the widget
+ * @param extrapadding if true, extra room is added between swatches
  * @return index number of color swatch at point
  * @retval -1 if point is outside any color swatch
  */
-int PaletteWidget::indexAt(const QPoint& point) const
+int PaletteWidget::indexAt(const QPoint& point, bool extraPadding) const
 {
-	if(_palette == 0)
+	if(!_palette)
 		return -1;
-	const int xw = _spacing + _swatchsize.width();
-	const int x = (point.x() - _leftMargin) / xw;
-	if(point.x() < x * xw + _spacing)
+
+	const int normalizedX = point.x() - _leftMargin - _spacing;
+	const int ix = normalizedX / (_swatchsize.width() + _spacing);
+	const int nearestX = ix * (_swatchsize.width() + _spacing);
+	int padding = extraPadding ? 4 : 0;
+	int x = normalizedX - nearestX;
+	if(x < _spacing+padding || x> _swatchsize.width()+_spacing)
 		return -1;
 
 	const int yw = _spacing + _swatchsize.height();
@@ -414,9 +427,10 @@ int PaletteWidget::indexAt(const QPoint& point) const
 	if(point.y()+_scroll < y * yw + _spacing)
 		return -1;
 
-	const int index = (y * _columns) + x;
+	const int index = (y * _columns) + ix;
 	if(index >= _palette->count())
 		return -1;
+
 	return index;
 }
 
@@ -429,7 +443,7 @@ int PaletteWidget::indexAt(const QPoint& point) const
  */
 int PaletteWidget::nearestAt(const QPoint& point) const
 {
-	const int x = (point.x()-_leftMargin) / (_spacing + _swatchsize.width());
+	const int x = (point.x()-_leftMargin-_spacing) / (_spacing + _swatchsize.width());
 	const int y = (point.y()+_scroll) / (_spacing + _swatchsize.height());
 
 	return qMin(y * _columns + x, _palette->count());
@@ -460,7 +474,7 @@ QRect PaletteWidget::swatchRect(int index) const
 QRect PaletteWidget::betweenRect(int index) const
 {
 	return QRect(
-			_spacing/2 + (_swatchsize.width()+_spacing) * (index%_columns),
+			_leftMargin + _spacing/2 + (_swatchsize.width()+_spacing) * (index%_columns),
 			_spacing + (_swatchsize.height()+_spacing) * (index/_columns) - _scroll,
 			_spacing/2,
 			_swatchsize.height()

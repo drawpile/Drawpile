@@ -77,7 +77,7 @@ private slots:
 	void dialogDone();
 
 private:
-	int indexAt(const QPoint& point) const;
+	int indexAt(const QPoint& point, bool extraPadding=false) const;
 	int nearestAt(const QPoint& point) const;
 	QRect swatchRect(int index) const;
 	QRect betweenRect(int index) const;

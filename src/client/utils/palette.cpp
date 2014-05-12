@@ -16,62 +16,87 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "palette.h"
+
 #include <QApplication>
+#include <QDebug>
 #include <QVariant>
 #include <QColor>
 #include <QFile>
 #include <QFileInfo>
 #include <QTextStream>
-#include <QStringList>
 #include <QRegularExpression>
 
-
-#include "palette.h"
+Palette::Palette() : _columns(16), _modified(false) { }
 
 Palette::Palette(const QString& name, const QString& filename)
-	: name_(name), filename_(filename), modified_(false)
+	: _name(name), _filename(filename), _columns(16), _modified(false)
 {
-	if(filename_.isEmpty())
-		filename_ = QString("%1.gpl").arg(name);
+	if(_filename.isEmpty())
+		_filename = QString("%1.gpl").arg(name);
 }
 
 /**
  * Load a palette from a GIMP palette file.
+ *
+ * The file format is:
+ *
+ *     GIMP Palette
+ *     *HEADER FIELDS*
+ *     # one or more comment
+ *     r g b	name
+ *     ...
+ *
  * @param filename palette file name
  */
-Palette *Palette::fromFile(const QFileInfo& file)
+Palette Palette::fromFile(const QFileInfo& file)
 {
 	QFile palfile(file.absoluteFilePath());
 	if (!palfile.open(QIODevice::ReadOnly | QIODevice::Text))
-		return 0;
+		return Palette();
 
 	QTextStream in(&palfile);
 	if(in.readLine() != "GIMP Palette")
-		return 0;
-	QString line = in.readLine();
-	if(line.startsWith("Name:")) {
-		Palette *pal = new Palette(line.mid(5).trimmed(),file.fileName());
+		return Palette();
 
-		int index = 0;
-		QRegularExpression whitespace("\\s+");
-		while (!in.atEnd()) {
-			line = in.readLine();
-			if(line.isEmpty() || line[0] == '#')
-				continue;
-			QStringList tokens = line.split(whitespace, QString::SkipEmptyParts);
-			if(tokens.count()<3) // ignore unknown lines
-				continue;
-			pal->insertColor(index++, QColor(
-					tokens[0].toInt(),
-					tokens[1].toInt(),
-					tokens[2].toInt()
-					)
+	Palette pal(file.baseName(), file.fileName());
+
+	const QRegularExpression colorRe("^(\\d+)\\s+(\\d+)\\s+(\\d+)\\s*(.+)?$");
+
+	do {
+		QString line = in.readLine().trimmed();
+		if(line.isEmpty() || line.at(0) == '#') {
+			// ignore comments and empty lines
+
+		} else if(line.startsWith("Name:")) {
+			pal._name = line.mid(5).trimmed();
+
+		} else if(line.startsWith("Columns:")) {
+			bool ok;
+			int cols = line.mid(9).trimmed().toInt(&ok);
+			if(ok && cols>0)
+				pal._columns = cols;
+
+		} else {
+			QRegularExpressionMatch m = colorRe.match(line);
+			if(m.hasMatch()) {
+				pal.appendColor(
+					QColor(
+						m.captured(1).toInt(),
+						m.captured(2).toInt(),
+						m.captured(3).toInt()
+					),
+					m.captured(4)
 				);
+
+			} else {
+				qWarning() << "unhandled line" << line << "in" << file.fileName();
+			}
 		}
-		pal->modified_ = false;
-		return pal;
-	}
-	return 0;
+	} while(!in.atEnd());
+
+	return pal;
 }
 
 /**
@@ -82,11 +107,14 @@ bool Palette::save(const QString& filename)
 	QFile data(filename);
 	if (data.open(QFile::WriteOnly | QFile::Truncate)) {
 		QTextStream out(&data);
-		out << "GIMP Palette\nName: " << name_ << "\n#\n";
-		foreach(QColor color, colors_) {
-			out << color.red() << ' ' << color.green() << ' ' << color.blue() << "\tUntitled\n";
+		out << "GIMP Palette\n";
+		out << "Name: " << _name << "\n";
+		out << "Columns: " << _columns << "\n";
+		out << "#\n";
+		for(const PaletteColor c : _colors) {
+			out << c.color.red() << ' ' << c.color.green() << ' ' << c.color.blue() << '\t' << c.name << '\n';
 		}
-		modified_ = false;
+		_modified = false;
 		return true;
 	}
 	return false;
@@ -97,13 +125,13 @@ bool Palette::save(const QString& filename)
  * Generates a palette with some predefined colors.
  * @return a new palette
  */
-Palette *Palette::makeDefaultPalette()
+Palette Palette::makeDefaultPalette()
 {
-	Palette *pal = new Palette(QApplication::tr("Default"));
+	Palette pal(QApplication::tr("Default"));
 
 	for(int hue=0;hue<352;hue+=16) {
 		for(int value=255;value>=15;value-=16) {
-			pal->appendColor(QColor::fromHsv(hue,255,value));
+			pal.appendColor(QColor::fromHsv(hue,255,value));
 		}
 	}
 	return pal;
@@ -116,23 +144,16 @@ Palette *Palette::makeDefaultPalette()
  */
 void Palette::setName(const QString& name)
 {
-	name_ = name;
-	filename_ = QString("%1.gpl").arg(name);
+	_name = name;
+	_filename = QString("%1.gpl").arg(name);
 }
 
-int Palette::count() const
+void Palette::setColumns(int columns)
 {
-	return colors_.count();
-}
-
-/**
- * @param index color index
- * @return color at specified index
- * @pre 0 <= index < count()
-*/
-QColor Palette::color(int index) const
-{
-	return colors_.at(index);
+	if(_columns != columns) {
+		_columns = columns;
+		_modified = true;
+	}
 }
 
 /**
@@ -143,22 +164,22 @@ QColor Palette::color(int index) const
  * @param color color
  * @pre 0 <= index <= count()
 */
-void Palette::setColor(int index, const QColor& color)
+void Palette::setColor(int index, const PaletteColor& color)
 {
-	colors_[index] = color;
-	modified_ = true;
+	_colors[index] = color;
+	_modified = true;
 }
 
-void Palette::insertColor(int index, const QColor& color)
+void Palette::insertColor(int index, const QColor& color, const QString &name)
 {
-	colors_.insert(index, color);
-	modified_ = true;
+	_colors.insert(index, PaletteColor(color, name));
+	_modified = true;
 }
 
-void Palette::appendColor(const QColor &color)
+void Palette::appendColor(const QColor &color, const QString &name)
 {
-	colors_.append(color);
-	modified_ = true;
+	_colors.append(PaletteColor(color, name));
+	_modified = true;
 }
 
 /**
@@ -168,7 +189,7 @@ void Palette::appendColor(const QColor &color)
 */
 void Palette::removeColor(int index)
 {
-	colors_.removeAt(index);
-	modified_ = true;
+	_colors.removeAt(index);
+	_modified = true;
 }
 

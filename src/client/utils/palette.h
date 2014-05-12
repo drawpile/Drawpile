@@ -20,58 +20,75 @@
 #define LOCALPALETTE_H
 
 #include <QList>
+#include <QColor>
 
 class QFileInfo;
 
+struct PaletteColor {
+	QColor color;
+	QString name;
+
+	PaletteColor(const QColor &c=QColor(), const QString &n=QString()) : color(c), name(n) { }
+};
+
 class Palette {
-	public:
-		//! Construct a blank palette
-		Palette(const QString& name, const QString& filename="");
+public:
+	//! Construct a blank palette
+	Palette();
+	explicit Palette(const QString& name, const QString& filename=QString());
 
-		//! Load a palette from a file
-		static Palette *fromFile(const QFileInfo& file);
+	//! Load a palette from a file
+	static Palette fromFile(const QFileInfo& file);
 
-		//! Generate a default palette
-		static Palette *makeDefaultPalette();
+	//! Generate a default palette
+	static Palette makeDefaultPalette();
 
-		//! Set the name of the palette
-		void setName(const QString& name);
+	//! Set the name of the palette
+	void setName(const QString& name);
 
-		//! Get the name of the palette
-		const QString& name() const { return name_; }
+	//! Get the name of the palette
+	const QString& name() const { return _name; }
 
-		//! Get the filename of the palette
-		const QString& filename() const { return filename_; }
+	//! Get the filename of the palette
+	const QString& filename() const { return _filename; }
 
-		//! Has the palette been modified since it was last saved/loaded?
-		bool isModified() const { return modified_; }
+	//! Get the optimum number of columns to display the colors in
+	int columns() const { return _columns; }
 
-		//! Save palette to file
-		bool save(const QString& filename);
+	//! Set the optimum number of columns
+	void setColumns(int columns);
 
-		//! Get the number of colors
-		int count() const;
-		
-		//! Get the color at index
-		QColor color(int index) const;
-		
-		//! Set a color at the specified index
-		void setColor(int index, const QColor& color);
-		
-		//! Insert a new color
-		void insertColor(int index, const QColor& color);
+	//! Has the palette been modified since it was last saved/loaded?
+	bool isModified() const { return _modified; }
 
-		//! Append anew color to the end of the palette
-		void appendColor(const QColor &color);
+	//! Save palette to file
+	bool save(const QString& filename);
 
-		//! Remove a color
-		void removeColor(int index);
+	//! Get the number of colors
+	int count() const { return _colors.size(); }
 
-	private:
-		QList<QColor> colors_;
-		QString name_;
-		QString filename_;
-		bool modified_;
+	//! Get the color at index
+	PaletteColor color(int index) const { return _colors.at(index); }
+
+	//! Set a color at the specified index
+	void setColor(int index, const PaletteColor &color);
+	void setColor(int index, const QColor& color, const QString &name=QString()) { setColor(index, PaletteColor(color, name)); }
+
+	//! Insert a new color
+	void insertColor(int index, const QColor& color, const QString &name=QString());
+
+	//! Append anew color to the end of the palette
+	void appendColor(const QColor &color, const QString &name=QString());
+
+	//! Remove a color
+	void removeColor(int index);
+
+private:
+	QList<PaletteColor> _colors;
+	QString _name;
+	QString _filename;
+	int _columns;
+	bool _modified;
 };
 
 #endif
