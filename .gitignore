@@ -3,13 +3,11 @@
 config.h
 Makefile
 Makefile.*
+CMakeLists.txt.user
 
 # Build directories
 /bin/
-/build/
-/lib/
-
-*.so
+/*build*/
 
 *.swp
 
