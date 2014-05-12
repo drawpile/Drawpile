@@ -594,7 +594,7 @@ void LoginHandler::tlsStarted()
 			// WTF, accepted() and rejected() signals do not work correctly:
 			// http://qt-project.org/forums/viewthread/21172
 			// https://bugreports.qt-project.org/browse/QTBUG-23967
-			connect(_certDialog, &QMessageBox::finished, [this, cert, certFile, continueBtn]() {
+			connect(_certDialog.data(), &QMessageBox::finished, [this, cert, certFile, continueBtn]() {
 				if(_certDialog->clickedButton() == continueBtn) {
 					saveCert(certFile, cert);
 					tlsAccepted();
