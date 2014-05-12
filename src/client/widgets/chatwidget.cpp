@@ -17,20 +17,22 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "chatlineedit.h"
+#include "chatwidget.h"
+#include "utils/html.h"
+
 #include <QDebug>
+#include <QResizeEvent>
 #include <QTextBrowser>
 #include <QVBoxLayout>
 #include <QTextDocument>
 #include <QUrl>
 
-#include "chatlineedit.h"
-#include "chatwidget.h"
-#include "utils/html.h"
 
 namespace widgets {
 
 ChatBox::ChatBox(QWidget *parent)
-	:  QWidget(parent)
+	:  QWidget(parent), _wasCollapsed(false)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -138,6 +140,19 @@ void ChatBox::sendMessage(const QString &msg)
 	} else {
 		// A normal chat message/server side command
 		emit message(msg);
+	}
+}
+
+void ChatBox::resizeEvent(QResizeEvent *event)
+{
+	QWidget::resizeEvent(event);
+	if(event->size().height() == 0) {
+		if(!_wasCollapsed)
+			emit expanded(false);
+		_wasCollapsed = true;
+	} else if(_wasCollapsed) {
+		_wasCollapsed = false;
+		emit expanded(true);
 	}
 }
 

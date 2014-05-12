@@ -2,6 +2,7 @@
  * SSL support
  * Bugfix: Layer access control menu would lose per-user bits when locking a layer
  * Improved palette widget
+ * Added shortcut for showing and hiding the chat box
 
 2014-05-07 Version 0.9.0
  * Server: support for multiple sessions on a single server

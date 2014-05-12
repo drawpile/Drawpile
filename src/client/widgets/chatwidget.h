@@ -59,10 +59,15 @@ private slots:
 
 signals:
 	void message(const QString &msg);
+	void expanded(bool isVisible);
+
+protected:
+	void resizeEvent(QResizeEvent *event);
 
 private:
 	QTextBrowser *_view;
 	ChatLineEdit *_myline;
+	bool _wasCollapsed;
 };
 
 }

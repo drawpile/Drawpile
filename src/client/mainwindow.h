@@ -34,6 +34,7 @@ namespace widgets {
 	class CanvasView;
 	class DualColorButton;
 	class NetStatus;
+	class ChatBox;
 }
 namespace docks {
 	class ToolSettings;
@@ -187,6 +188,7 @@ class MainWindow : public QMainWindow {
 		docks::PaletteBox *_dock_palette;
 		docks::ColorBox *_dock_rgb, *_dock_hsv;
 		docks::Navigator *_dock_navigator;
+		widgets::ChatBox *_chatbox;
 
 		widgets::DualColorButton *_fgbgcolor;
 		widgets::CanvasView *_view;

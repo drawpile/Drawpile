@@ -155,8 +155,8 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
 	
 	// Create the chatbox
-	widgets::ChatBox *chatbox = new widgets::ChatBox(this);
-	_splitter->addWidget(chatbox);
+	_chatbox = new widgets::ChatBox(this);
+	_splitter->addWidget(_chatbox);
 
 	// Make sure the canvas gets the majority share of the splitter the first time
 	_splitter->setStretchFactor(0, 1);
@@ -203,14 +203,14 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 
 	// Meta commands
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString, bool)),
-			chatbox, SLOT(receiveMessage(QString,QString, bool)));
+			_chatbox, SLOT(receiveMessage(QString,QString, bool)));
 	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool)),
 			this, SLOT(statusbarChat(QString,QString)));
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
-			chatbox, SLOT(receiveMarker(QString,QString)));
+			_chatbox, SLOT(receiveMarker(QString,QString)));
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
 			this, SLOT(statusbarChat(QString,QString)));
-	connect(chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
+	connect(_chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));
@@ -235,9 +235,9 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(userLeft(QString)), _netstatus, SLOT(leave(QString)));
 	connect(_client, SIGNAL(youWereKicked(QString)), _netstatus, SLOT(kicked(QString)));
 
-	connect(_client, SIGNAL(userJoined(int, QString)), chatbox, SLOT(userJoined(int, QString)));
-	connect(_client, SIGNAL(userLeft(QString)), chatbox, SLOT(userParted(QString)));
-	connect(_client, SIGNAL(youWereKicked(QString)), chatbox, SLOT(kicked(QString)));
+	connect(_client, SIGNAL(userJoined(int, QString)), _chatbox, SLOT(userJoined(int, QString)));
+	connect(_client, SIGNAL(userLeft(QString)), _chatbox, SLOT(userParted(QString)));
+	connect(_client, SIGNAL(youWereKicked(QString)), _chatbox, SLOT(kicked(QString)));
 
 	connect(_client, SIGNAL(userJoined(int,QString)), _canvas, SLOT(setUserMarkerName(int,QString)));
 
@@ -1753,6 +1753,8 @@ void MainWindow::setupActions()
 	QAction *docktoggles = new QAction(tr("&Docks"), this);
 	docktoggles->setMenu(toggledockmenu);
 
+	QAction *toggleChat = makeAction("togglechat", 0, tr("Chat"), QString(), QKeySequence("Alt+C"), true);
+
 	QAction *zoomin = makeAction("zoomin", "zoom-in",tr("Zoom &in"), QString(), QKeySequence::ZoomIn);
 	QAction *zoomout = makeAction("zoomout", "zoom-out",tr("Zoom &out"), QString(), QKeySequence::ZoomOut);
 	QAction *zoomorig = makeAction("zoomone", "zoom-original",tr("&Normal size"), QString(), QKeySequence(Qt::CTRL + Qt::Key_0));
@@ -1765,11 +1767,34 @@ void MainWindow::setupActions()
 	QAction *showannotations = makeAction("showannotations", 0, tr("Show &annotations"), QString(), QKeySequence(), true);
 	QAction *showusermarkers = makeAction("showusermarkers", 0, tr("Show user pointers"), QString(), QKeySequence(), true);
 	QAction *showlasers = makeAction("showlasers", 0, tr("Show laser trails"), QString(), QKeySequence(), true);
+	toggleChat->setChecked(true);
 	showannotations->setChecked(true);
 	showusermarkers->setChecked(true);
 	showlasers->setChecked(true);
 
 	QAction *fullscreen = makeAction("fullscreen", 0, tr("&Full screen"), QString(), QKeySequence("F11"), true);
+
+	connect(_chatbox, SIGNAL(expanded(bool)), toggleChat, SLOT(setChecked(bool)));
+	connect(toggleChat, &QAction::triggered, [this](bool show) {
+		QList<int> sizes;
+		if(show) {
+			QVariant oldHeight = _chatbox->property("oldheight");
+			if(oldHeight.isNull()) {
+				const int h = height();
+				sizes << h * 2 / 3;
+				sizes << h / 3;
+			} else {
+				const int oh = oldHeight.toInt();
+				sizes << height() - oh;
+				sizes << oh;
+			}
+		} else {
+			_chatbox->setProperty("oldheight", _chatbox->height());
+			sizes << 1;
+			sizes << 0;
+		}
+		_splitter->setSizes(sizes);
+	});
 
 	connect(zoomin, SIGNAL(triggered()), _view, SLOT(zoomin()));
 	connect(zoomout, SIGNAL(triggered()), _view, SLOT(zoomout()));
@@ -1788,6 +1813,7 @@ void MainWindow::setupActions()
 	QMenu *viewmenu = menuBar()->addMenu(tr("&View"));
 	viewmenu->addAction(toolbartoggles);
 	viewmenu->addAction(docktoggles);
+	viewmenu->addAction(toggleChat);
 	viewmenu->addSeparator();
 
 	QMenu *zoommenu = viewmenu->addMenu(tr("&Zoom"));
