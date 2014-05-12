@@ -23,6 +23,7 @@
 
 #include "core/brush.h"
 #include "scene/annotationitem.h"
+#include "utils/palette.h"
 
 class Ui_PenSettings;
 class Ui_BrushSettings;
@@ -44,8 +45,6 @@ namespace docks {
 namespace widgets {
 	class PaletteWidget;
 }
-
-class Palette;
 
 namespace tools {
 
@@ -350,7 +349,7 @@ protected:
 	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
-	Palette *_palette;
+	Palette _palette;
 	widgets::PaletteWidget *_palettewidget;
 	QCheckBox *_layerpick;
 };

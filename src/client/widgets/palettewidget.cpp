@@ -66,16 +66,9 @@ void PaletteWidget::setPalette(Palette *palette)
 {
 	_palette = palette;
 	_columns = palette->columns();
+	Q_ASSERT(_columns>0);
 	_selection = -1;
 	_dialogsel = -2;
-	resizeEvent(0);
-	update();
-}
-
-void PaletteWidget::setColumns(int columns)
-{
-	Q_ASSERT(columns>=1);
-	_columns = columns;
 	resizeEvent(0);
 	update();
 }

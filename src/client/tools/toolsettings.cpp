@@ -589,8 +589,9 @@ int SimpleSettings::getSize() const
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
-	:  QObject(), BrushlessSettings(name, title), _palette(new Palette("Color picker")), _layerpick(0)
+	:  QObject(), BrushlessSettings(name, title), _layerpick(0)
 {
+	_palette.setColumns(8);
 }
 
 ColorPickerSettings::~ColorPickerSettings()
@@ -609,8 +610,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	layout->addWidget(_layerpick);
 
 	_palettewidget = new widgets::PaletteWidget(widget);
-	_palettewidget->setPalette(_palette);
-	_palettewidget->setColumns(8);
+	_palettewidget->setPalette(&_palette);
 	layout->addWidget(_palettewidget);
 
 	connect(_palettewidget, SIGNAL(colorSelected(QColor)), this, SIGNAL(colorSelected(QColor)));
@@ -635,13 +635,13 @@ bool ColorPickerSettings::pickFromLayer() const
 
 void ColorPickerSettings::addColor(const QColor &color)
 {
-	if(_palette->count() && _palette->color(0).color == color)
+	if(_palette.count() && _palette.color(0).color == color)
 		return;
 
-	_palette->insertColor(0, color);
+	_palette.insertColor(0, color);
 
-	if(_palette->count() > 80)
-		_palette->removeColor(_palette->count()-1);
+	if(_palette.count() > 80)
+		_palette.removeColor(_palette.count()-1);
 
 	_palettewidget->update();
 }

@@ -41,7 +41,6 @@ public:
 
 	void setPalette(Palette *palette);
 
-	void setColumns(int columns);
 	void setSpacing(int spacing);
 
 signals:
