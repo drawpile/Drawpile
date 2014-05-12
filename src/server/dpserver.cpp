@@ -52,7 +52,8 @@ int main(int argc, char *argv[]) {
 
 	QCoreApplication app(argc, argv);
 
-	QCoreApplication::setOrganizationName("DrawPile");
+	QCoreApplication::setOrganizationName("drawpile");
+	QCoreApplication::setOrganizationDomain("drawpile.sourceforge.net");
 	QCoreApplication::setApplicationName("drawpile-srv");
 	QCoreApplication::setApplicationVersion(DRAWPILE_VERSION);
 

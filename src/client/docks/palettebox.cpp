@@ -53,7 +53,7 @@ PaletteBox::PaletteBox(const QString& title, QWidget *parent)
 	int okpalettes=0;
 	QSet<QString> palettefiles;
 	foreach(const QString datapath, datapaths) {
-		QFileInfoList pfiles = QDir(datapath).entryInfoList(
+		QFileInfoList pfiles = QDir(datapath + "palettes/").entryInfoList(
 				QStringList("*.gpl"),
 				QDir::Files|QDir::Readable
 				);

@@ -29,9 +29,9 @@
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 {
-	setOrganizationName("DrawPile");
+	setOrganizationName("drawpile");
 	setOrganizationDomain("drawpile.sourceforge.net");
-	setApplicationName("DrawPile");
+	setApplicationName("drawpile");
 
 	// Make sure a user name is set
 	QSettings cfg;
