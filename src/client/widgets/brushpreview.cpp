@@ -231,7 +231,7 @@ void BrushPreview::setSizePressure(bool enable)
 	if(enable)
 		brush_.setRadius2(0);
 	else
-		brush_.setRadius2(brush_.radius(1.0));
+		brush_.setRadius2(brush_.radius1());
 	updatePreview();
 	update();
 }
@@ -242,7 +242,7 @@ void BrushPreview::setOpacityPressure(bool enable)
 	if(enable)
 		brush_.setOpacity2(0);
 	else
-		brush_.setOpacity2(brush_.opacity(1.0));
+		brush_.setOpacity2(brush_.opacity1());
 	updatePreview();
 	update();
 }
@@ -253,7 +253,7 @@ void BrushPreview::setHardnessPressure(bool enable)
 	if(enable)
 		brush_.setHardness2(0);
 	else
-		brush_.setHardness2(brush_.hardness(1.0));
+		brush_.setHardness2(brush_.hardness1());
 	updatePreview();
 	update();
 }
