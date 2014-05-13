@@ -48,3 +48,8 @@ The configuration step supports some options:
 
 Example: `$ cmake .. -DDEBUG=on`
 
+When compiling on Windows, cmake may complain about missing zlib. Setting the zlib path explicitly on the command line will solve this. For example:
+
+    -DZLIB_LIBRARY:FILEPATH="C:\Qt\Tools\mingw48_32\lib\libz.a" -DZLIB_INCLUDE_DIR:PATH="C:\Qt\Tools\mingw48_32\include"
+
+
