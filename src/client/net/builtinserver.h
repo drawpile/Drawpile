@@ -40,6 +40,8 @@ public:
 
 	int port() const;
 
+	const QString &errorString() const { return _error; }
+
 public slots:
 	 //! Stop the server. All clients are disconnected.
 	void stop();
@@ -56,6 +58,8 @@ private:
 	QTcpServer *_server;
 	SessionServer *_sessions;
 	State _state;
+
+	QString _error;
 };
 
 }

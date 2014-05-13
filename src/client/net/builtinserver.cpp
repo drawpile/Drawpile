@@ -77,7 +77,8 @@ bool BuiltinServer::start(quint16 preferredPort) {
 		ok = _server->listen(QHostAddress::Any, 0);
 
 	if(ok==false) {
-		logger::error() << _server->errorString();
+		_error = _server->errorString();
+		logger::error() << "Error starting server:" << _error;
 		delete _server;
 		_server = 0;
 		_state = NOT_STARTED;

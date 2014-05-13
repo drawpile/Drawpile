@@ -943,13 +943,9 @@ void MainWindow::host()
 				net::ServerThread *server = new net::ServerThread;
 				server->setDeleteOnExit();
 
-				QSettings cfg;
-				if(cfg.contains("settings/server/port"))
-					server->setPort(cfg.value("settings/server/port").toInt());
-
 				int port = server->startServer();
 				if(!port) {
-					QMessageBox::warning(this, tr("Unable to start server"), tr("An error occurred while trying to start the server"));
+					QMessageBox::warning(this, tr("Unable to start server"), server->errorString());
 					dlg->show();
 					delete server;
 					return;

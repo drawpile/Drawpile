@@ -24,11 +24,15 @@
 #include "builtinserver.h"
 #include "../shared/util/logger.h"
 
+#include <QSettings>
+
 namespace net {
 
 ServerThread::ServerThread(QObject *parent)
-	: QThread(parent), _deleteonexit(false), _port(DRAWPILE_PROTO_DEFAULT_PORT)
+	: QThread(parent), _deleteonexit(false)
 {
+	QSettings cfg;
+	_port = cfg.value("settings/server/port", DRAWPILE_PROTO_DEFAULT_PORT).toInt();
 }
 
 int ServerThread::startServer()
@@ -60,8 +64,8 @@ void ServerThread::run() {
 
 	logger::info() << "Starting server";
 	if(!server.start(_port)) {
-		logger::error() << "Couldn't start server!";
 		_port = 0;
+		_error = server.errorString();
 		_starter.wakeOne();
 		return;
 	}

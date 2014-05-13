@@ -56,6 +56,13 @@ public:
 	bool isOnDefaultPort() const;
 
 	/**
+	 * @brief Get the error message
+	 *
+	 * The error message is available if startServer() returned 0.
+	 */
+	const QString &errorString() const { return _error; }
+
+	/**
 	 * @brief Automatically self delete when server exists
 	 */
 	void setDeleteOnExit() { _deleteonexit = true; }
@@ -67,6 +74,7 @@ private:
 	bool _deleteonexit;
 
 	int _port;
+	QString _error;
 	QMutex _startmutex;
 	QWaitCondition _starter;
 };
