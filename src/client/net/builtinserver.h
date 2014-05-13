@@ -36,8 +36,6 @@ Q_OBJECT
 public:
 	explicit BuiltinServer(QObject *parent=0);
 
-	void setHistoryLimit(uint limit);
-
 	bool start(quint16 preferredPort);
 
 	int port() const;

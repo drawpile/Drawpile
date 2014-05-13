@@ -43,14 +43,6 @@ public:
     void setPort(int port) { _port = port; }
 
 	/**
-	 * @brief Set the history size limit
-	 *
-	 * This should be called before startServer().
-	 * @param limit
-	 */
-	void setHistorylimit(uint limit) { _historylimit = limit; }
-
-	/**
 	 * @brief Start the thread and wait for the server to start
 	 * @return the port the server is listening on or 0 in case of error
 	 */
@@ -75,7 +67,6 @@ private:
 	bool _deleteonexit;
 
 	int _port;
-	uint _historylimit;
 	QMutex _startmutex;
 	QWaitCondition _starter;
 };

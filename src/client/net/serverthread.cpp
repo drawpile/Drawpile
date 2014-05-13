@@ -26,11 +26,9 @@
 
 namespace net {
 
-ServerThread::ServerThread(QObject *parent) : QThread(parent)
+ServerThread::ServerThread(QObject *parent)
+	: QThread(parent), _deleteonexit(false), _port(DRAWPILE_PROTO_DEFAULT_PORT)
 {
-	_deleteonexit = false;
-    _port = DRAWPILE_PROTO_DEFAULT_PORT;
-	_historylimit = 0;
 }
 
 int ServerThread::startServer()
@@ -57,8 +55,6 @@ void ServerThread::run() {
 #else
 	logger::setLogLevel(logger::LOG_DEBUG);
 #endif
-
-	server.setHistoryLimit(_historylimit);
 
 	connect(&server, SIGNAL(serverStopped()), this, SLOT(quit()));
 

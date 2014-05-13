@@ -20,6 +20,7 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QHostAddress>
+#include <QSettings>
 
 #include "builtinserver.h"
 
@@ -40,6 +41,12 @@ BuiltinServer::BuiltinServer(QObject *parent)
 {
 	_sessions = new SessionServer(this);
 
+	// Set configurable settings
+	QSettings cfg;
+	cfg.beginGroup("settings/server");
+
+	_sessions->setHistoryLimit(qMax(0, int(cfg.value("historylimit", 0).toDouble() * 1024 * 1024)));
+
 	// Only one session per server is supported here
 	_sessions->setSessionLimit(1);
 	connect(_sessions, SIGNAL(sessionEnded(int)), this, SLOT(stop()));
@@ -48,11 +55,6 @@ BuiltinServer::BuiltinServer(QObject *parent)
 		if(_state == STOPPING)
 			stop();
 	});
-}
-
-void BuiltinServer::setHistoryLimit(uint limit)
-{
-	_sessions->setHistoryLimit(limit);
 }
 
 /**

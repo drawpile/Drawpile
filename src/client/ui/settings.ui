@@ -183,19 +183,12 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="enablehistorylimit">
-            <property name="text">
-             <string>Limit session history:</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_8">
             <item>
              <widget class="QDoubleSpinBox" name="historylimit">
-              <property name="enabled">
-               <bool>false</bool>
+              <property name="specialValueText">
+               <string>unlimited</string>
               </property>
               <property name="suffix">
                <string> Mb</string>
@@ -204,13 +197,13 @@
                <number>1</number>
               </property>
               <property name="minimum">
-               <double>1.000000000000000</double>
+               <double>0.000000000000000</double>
               </property>
               <property name="maximum">
                <double>1024.000000000000000</double>
               </property>
               <property name="value">
-               <double>10.000000000000000</double>
+               <double>1.000000000000000</double>
               </property>
              </widget>
             </item>
@@ -228,6 +221,13 @@
              </spacer>
             </item>
            </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Session history:</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -437,22 +437,6 @@
     <hint type="destinationlabel">
      <x>185</x>
      <y>88</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>enablehistorylimit</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>historylimit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>127</x>
-     <y>120</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>246</x>
-     <y>116</y>
     </hint>
    </hints>
   </connection>
