@@ -450,6 +450,29 @@ void StateTracker::handleUndoPoint(const protocol::UndoPoint &cmd, bool replay, 
 			}
 			--i;
 		}
+
+		// Release state snapshots older than the oldest allowed undopoint
+		i = pos - 1;
+		int upcount = 0;
+		while(_msgstream.isValidIndex(i)) {
+			if(_msgstream.at(i)->type() == protocol::MSG_UNDOPOINT) {
+				++upcount;
+				if(upcount>protocol::UNDO_HISTORY_LIMIT)
+					break;
+			}
+			--i;
+		}
+
+		if(upcount>protocol::UNDO_HISTORY_LIMIT) {
+			QMutableListIterator<StateSavepoint> spi(_savepoints);
+			while(spi.hasNext()) {
+				const StateSavepoint &sp = spi.next();
+				if(sp->streampointer <= i)
+					spi.remove();
+				else
+					break;
+			}
+		}
 	}
 
 	// Make a new savepoint (if possible)
