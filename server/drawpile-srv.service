@@ -6,7 +6,10 @@ After=network.target
 ExecStart=/usr/bin/drawpile-srv
 Type=notify
 NotifyAccess=main
-User=drawpile
+
+# Note: in order to use session recording and SSL safely,
+# a dedicated user account should be created for drawpile-srv.
+User=nobody
 
 [Install]
 WantedBy=multi-user.target
