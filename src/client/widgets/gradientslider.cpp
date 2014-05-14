@@ -40,16 +40,6 @@ void GradientSlider::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 
-	// Draw the frame
-#if 0
-	QStyleOptionFrameV2 frame;
-	frame.initFrom(this);
-	frame.midLineWidth = border_;
-	frame.state = QStyle::State_Sunken;
-
-	style()->drawPrimitive(QStyle::PE_Frame, &frame, &painter, this);
-#endif
-
 	// Draw the gradient
 	QPointF endpoint;
 	QRect gradrect;
@@ -73,6 +63,8 @@ void GradientSlider::paintEvent(QPaintEvent *)
 	}
 
 	painter.fillRect(gradrect, QBrush(grad));
+
+	// Draw the frame
 	painter.setPen(palette().color(QPalette::Mid));
 	painter.drawLine(gradrect.topLeft(), gradrect.bottomLeft());
 	painter.drawLine(gradrect.topLeft(), gradrect.topRight());
