@@ -1837,7 +1837,7 @@ void MainWindow::setupActions()
 	QAction *logout = makeAction("leavesession", 0, tr("&Leave"),tr("Leave this drawing session"));
 	logout->setEnabled(false);
 
-	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence("Ctrl+L"), true);
+	QAction *locksession = makeAction("locksession", 0, tr("Lo&ck the board"), tr("Prevent changes to the drawing board"), QKeySequence("F12"), true);
 	QAction *locklayerctrl = makeAction("locklayerctrl", 0, tr("Lock layer controls"), tr("Allow only session operators to add and change layers"), QKeySequence(), true);
 	QAction *closesession = makeAction("denyjoins", 0, tr("&Deny joins"), tr("Prevent new users from joining the session"), QKeySequence(), true);
 
