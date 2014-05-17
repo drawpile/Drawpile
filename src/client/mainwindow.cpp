@@ -610,11 +610,6 @@ void MainWindow::showNew()
 		loadDocument(bcl);
 	});
 
-	if (_canvas->hasImage())
-		dlg->setSize(QSize(_canvas->width(), _canvas->height()));
-	else
-		dlg->setSize(QSize(800, 600));
-
 	dlg->setBackground(_fgbgcolor->background());
 	dlg->show();
 }

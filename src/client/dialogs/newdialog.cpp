@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2006-2013 Calle Laakkonen
+   Copyright (C) 2006-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -16,7 +16,10 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include <QPushButton>
+#include <QSettings>
+
 #include "newdialog.h"
 #include "widgets/colorbutton.h"
 using widgets::ColorButton;
@@ -32,6 +35,11 @@ NewDialog::NewDialog(QWidget *parent)
 	_ui->setupUi(this);
 	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create new"));
 	connect(this, SIGNAL(accepted()), this, SLOT(onAccept()));
+
+	QSettings cfg;
+	QSize lastSize = cfg.value("history/newsize", QSize(800, 600)).toSize();
+	if(lastSize.isValid())
+		setSize(lastSize);
 }
 
 NewDialog::~NewDialog()
@@ -53,10 +61,10 @@ void NewDialog::setBackground(const QColor &color)
 
 void NewDialog::onAccept()
 {
-	emit accepted(
-		QSize(_ui->width->value(), _ui->height->value()),
-		_ui->background->color()
-	);
+	QSize size(_ui->width->value(), _ui->height->value());
+	QSettings cfg;
+	cfg.setValue("history/newsize", size);
+	emit accepted(size, _ui->background->color());
 }
 
 }
