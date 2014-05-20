@@ -1,19 +1,15 @@
 # src/client/CMakeLists.txt
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
-
-# files
+find_package(Qt5Concurrent REQUIRED)
 
 set (
 	SOURCES
 	main.cpp
-	mainwindow.cpp 
+	mainwindow.cpp
 	statetracker.cpp
 	loader.cpp
 	textloader.cpp
@@ -166,12 +162,6 @@ if ( RELEASE )
 	#generate_final ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
 
-link_libraries(
-	${DPSHAREDLIB}
-	${QT_LIBRARIES}
-	${ZLIB_LIBRARIES}
-)
-
 IF ( APPLE )
         SET(MACOSX_BUNDLE_BUNDLE_NAME ${CLIENTNAME})
         # set how it shows up in the Info.plist file
@@ -197,13 +187,11 @@ add_executable (
 	${SOURCES}
 	${QtResource}
 	${Win32Resource}
-	#${MOC_Sources}
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-qt5_use_modules(drawpile Core Widgets Network Xml Concurrent)
+target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
 
-target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES})
 if ( WIN32 )
         target_link_libraries (drawpile ws2_32 )
 endif ()

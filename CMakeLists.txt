@@ -1,7 +1,10 @@
-project ( drawpile CXX C )
+cmake_minimum_required( VERSION 2.8.11 )
 
-cmake_minimum_required( VERSION 2.8.9 )
-set ( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/config" )
+project ( drawpile CXX )
+
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/config")
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
 
 ### generic info
 set ( WEBSITE "http://drawpile.sourceforge.net/" )
