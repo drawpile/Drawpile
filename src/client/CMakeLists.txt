@@ -6,7 +6,7 @@ find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
-find_package(KF5Archive REQUIRED)
+find_package(KF5Archive NO_MODULE)
 
 set (
 	SOURCES
@@ -135,6 +135,29 @@ set (
 	ui/selectsession.ui
 )
 
+# Use bundled KArchive if library not found
+if(NOT KF5Archive_FOUND)
+	message(WARNING "KArchive not found: using bundled copy!")
+
+	find_package (ZLIB REQUIRED)
+
+	set(
+		SOURCES ${SOURCES}
+		bundled/karchive.cpp
+		bundled/klimitediodevice.cpp
+		bundled/kzip.cpp
+		bundled/kcompressiondevice.cpp
+		bundled/kfilterbase.cpp
+		bundled/kfilterdev.cpp
+		bundled/klimitediodevice.cpp
+		bundled/kgzipfilter.cpp
+		bundled/knonefilter.cpp
+	)
+	message("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
+
+endif()
+
 qt5_wrap_ui( UI_Headers ${UIs} )
 qt5_add_resources( QtResource ui/resources.qrc )
 
@@ -161,7 +184,6 @@ endif ( WIN32 )
 
 if ( RELEASE )
 	generate_final ( SOURCES ${SOURCES} )
-	#generate_final ( MOC_Sources ${MOC_Sources} )
 endif ( RELEASE )
 
 IF ( APPLE )
@@ -193,7 +215,15 @@ add_executable (
 )
 
 target_link_libraries(drawpile ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
-target_link_libraries(drawpile KF5::Archive)
+
+# Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this:
+qt5_use_modules(drawpile Widgets Network Xml Concurrent)
+
+if(KF5Archive_FOUND)
+	target_link_libraries(drawpile KF5::Archive)
+else()
+	target_link_libraries(drawpile ${ZLIB_LIBRARIES})
+endif()
 
 if ( WIN32 )
         target_link_libraries (drawpile ws2_32 )

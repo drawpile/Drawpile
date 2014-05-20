@@ -31,7 +31,9 @@ endif()
 
 add_executable( ${SRVNAME} ${SOURCES} )
 target_link_libraries( ${SRVNAME}  ${DPSHAREDLIB} Qt5::Network ${INITSYS_LIB} )
-#qt5_use_modules( ${SRVNAME} Network )
+
+# Shouldn't be needed anymore, but ubuntu 13.10 cmake doesn't work without this: 
+qt5_use_modules( ${SRVNAME} Network )
 
 if ( WIN32 )
 	install ( TARGETS ${SRVNAME} DESTINATION . )
