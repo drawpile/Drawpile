@@ -21,7 +21,7 @@
 
 #include "scene/canvasview.h"
 #include "docks/inputsettingsdock.h"
-#include "utils/kis_cubic_curve.h"
+#include "bundled/kis_cubic_curve.h"
 #include "ui_inputcfg.h"
 
 namespace docks {

@@ -42,7 +42,7 @@
 
 // Local includes.
 
-#include "widgets/kis_curve_widget.h"
+#include "kis_curve_widget.h"
 
 
 #define bounds(x,a,b) (x<a ? a : (x>b ? b :x))

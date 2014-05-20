@@ -48,7 +48,6 @@ set (
 	utils/recentfiles.cpp
 	utils/whatismyip.cpp
 	utils/strokesmoother.cpp
-	utils/kis_cubic_curve.cpp
 	utils/html.cpp
 	core/annotation.cpp
 	core/tile.cpp
@@ -83,7 +82,6 @@ set (
 	widgets/palettewidget.cpp 
 	widgets/popupmessage.cpp
 	widgets/netstatus.cpp 
-	widgets/qtcolortriangle.cpp 
 	widgets/dualcolorbutton.cpp
 	widgets/chatlineedit.cpp
 	widgets/chatwidget.cpp 
@@ -91,7 +89,6 @@ set (
 	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
-	widgets/kis_curve_widget.cpp
 	docks/toolsettingsdock.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 
@@ -104,6 +101,9 @@ set (
 	export/videoexporter.cpp
 	export/imageseriesexporter.cpp
 	export/ffmpegexporter.cpp
+	bundled/kis_curve_widget.cpp
+	bundled/kis_cubic_curve.cpp
+	bundled/qtcolortriangle.cpp 
 )
 
 set (
@@ -143,15 +143,15 @@ if(NOT KF5Archive_FOUND)
 
 	set(
 		SOURCES ${SOURCES}
-		bundled/karchive.cpp
-		bundled/klimitediodevice.cpp
-		bundled/kzip.cpp
-		bundled/kcompressiondevice.cpp
-		bundled/kfilterbase.cpp
-		bundled/kfilterdev.cpp
-		bundled/klimitediodevice.cpp
-		bundled/kgzipfilter.cpp
-		bundled/knonefilter.cpp
+		bundled/karchive/karchive.cpp
+		bundled/karchive/klimitediodevice.cpp
+		bundled/karchive/kzip.cpp
+		bundled/karchive/kcompressiondevice.cpp
+		bundled/karchive/kfilterbase.cpp
+		bundled/karchive/kfilterdev.cpp
+		bundled/karchive/klimitediodevice.cpp
+		bundled/karchive/kgzipfilter.cpp
+		bundled/karchive/knonefilter.cpp
 	)
 	message("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")

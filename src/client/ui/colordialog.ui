@@ -455,7 +455,7 @@
   <customwidget>
    <class>QtColorTriangle</class>
    <extends>QWidget</extends>
-   <header>widgets/qtcolortriangle.h</header>
+   <header>bundled/qtcolortriangle.h</header>
   </customwidget>
   <customwidget>
    <class>GradientSlider</class>

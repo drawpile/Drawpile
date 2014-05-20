@@ -20,7 +20,7 @@
 #include <QPushButton>
 
 #include "colordialog.h"
-#include "widgets/qtcolortriangle.h"
+#include "bundled/qtcolortriangle.h"
 #include "widgets/gradientslider.h"
 using widgets::GradientSlider;
 

@@ -70,7 +70,7 @@ QWidget *QtColorTrianglePlugin::createWidget(QWidget *parent)
 
 QString QtColorTrianglePlugin::includeFile() const
 {
-    return "widgets/qtcolortriangle.h";
+    return "bundled/qtcolortriangle.h";
 }
 
 void QtColorTrianglePlugin::initialize(QDesignerFormEditorInterface *core)
