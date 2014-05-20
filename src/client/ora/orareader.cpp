@@ -16,20 +16,24 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "core/rasterop.h" // for blend modes
+#include "ora/orareader.h"
+
+#include "../shared/net/layer.h"
+#include "../shared/net/annotation.h"
+#include "net/utils.h"
+#include "utils/archive.h"
+
 #include <QApplication>
 #include <QImageReader>
 #include <QDomDocument>
 #include <QDebug>
 #include <QScopedPointer>
 #include <QColor>
+#include <QFile>
 
-#include "core/rasterop.h" // for blend modes
-#include "ora/zipreader.h"
-#include "ora/orareader.h"
-
-#include "../shared/net/layer.h"
-#include "../shared/net/annotation.h"
-#include "net/utils.h"
+#include <KZip>
 
 using protocol::MessagePtr;
 
@@ -38,10 +42,12 @@ namespace openraster {
 namespace {
 	const QString DP_NAMESPACE = "http://drawpile.sourceforge.net/";
 
-	bool checkIsOraFile(ZipReader &zip)
+	bool checkIsOraFile(KArchive &zip)
 	{
-		QByteArray mimetype(zip.fileData("mimetype"));
-		return mimetype == "image/openraster";
+		const QByteArray expected = "image/openraster";
+		QByteArray mimetype = utils::getArchiveFile(zip, "mimetype", expected.length());
+
+		return mimetype == expected;
 	}
 }
 
@@ -53,13 +59,9 @@ Reader::Reader()
 QImage Reader::loadThumbnail(const QString &filename)
 {
 	QImage image;
-	QFile orafile(filename);
-	if(!orafile.open(QIODevice::ReadOnly))
-		return image;
 
-	ZipReader zip(&orafile);
-
-	if(!zip.isReadable())
+	KZip zip(filename);
+	if(zip.open(QIODevice::ReadOnly))
 		return image;
 
 	// Make sure this is an OpenRaster file
@@ -67,7 +69,7 @@ QImage Reader::loadThumbnail(const QString &filename)
 		return image;
 
 	// Load thumbnail
-	QByteArray imgdata = zip.fileData("Thumbnails/thumbnail.png");
+	QByteArray imgdata = utils::getArchiveFile(zip, "Thumbnails/thumbnail.png");
 	if(imgdata.isNull())
 		return image;
 
@@ -83,15 +85,10 @@ QImage Reader::loadThumbnail(const QString &filename)
 bool Reader::load(const QString &filename)
 {
 	QFile orafile(filename);
-	if(!orafile.open(QIODevice::ReadOnly)) {
+	KZip zip(&orafile);
+
+	if(!zip.open(QIODevice::ReadOnly)) {
 		_error = orafile.errorString();
-		return false;
-	}
-
-	ZipReader zip(&orafile);
-
-	if(!zip.isReadable()) {
-		_error = QApplication::tr("ORA file is unreadable!");
 		return false;
 	}
 
@@ -103,7 +100,7 @@ bool Reader::load(const QString &filename)
 
 	// Read the stack
 	QDomDocument doc;
-	if(doc.setContent(zip.fileData("stack.xml"), true, &_error) == false)
+	if(doc.setContent(utils::getArchiveFile(zip, "stack.xml"), true, &_error) == false)
 		return false;
 
 	const QDomElement stackroot = doc.documentElement().firstChildElement("stack");
@@ -156,7 +153,7 @@ bool isKnown(const QDomNamedNodeMap& attrs, const char **names) {
 	return ok;
 }
 
-bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
+bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 {
 	// TODO are layer coordinates relative to stack coordinates?
 	// The spec, as of this writing, is not clear on this.
@@ -184,7 +181,7 @@ bool Reader::loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset)
 			const QString src = e.attribute("src");
 			QImage content;
 			{
-				QByteArray image = zip.fileData(src);
+				QByteArray image = utils::getArchiveFile(zip, src);
 				if(image.isNull()) {
 					_error = QApplication::tr("Couldn't get layer %1").arg(src);
 					return false;

@@ -17,22 +17,7 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDebug>
-#include <QBuffer>
-#include <QColor>
-#include <QBuffer>
-
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
-#include <QSaveFile>
-#else
-#include <QFile>
-#define QSaveFile QFile
-#define NO_QSAVEFILE
-#endif
-
-
 #include "recording/indexbuilder.h"
-#include "ora/zipwriter.h"
 #include "../shared/record/reader.h"
 #include "../shared/record/writer.h"
 #include "../shared/net/pen.h"
@@ -44,6 +29,12 @@
 #include "statetracker.h"
 #include "core/layerstack.h"
 #include "net/layerlist.h"
+
+#include <QDebug>
+#include <QBuffer>
+#include <QColor>
+#include <QBuffer>
+#include <KZip>
 
 namespace recording {
 
@@ -61,9 +52,9 @@ void IndexBuilder::abort()
 void IndexBuilder::run()
 {
 	// Open output file
-	QSaveFile savefile(_targetfile);
-	if(!savefile.open(QSaveFile::WriteOnly)) {
-		emit done(false, savefile.errorString());
+	KZip zip(_targetfile);
+	if(!zip.open(QIODevice::WriteOnly)) {
+		emit done(false, tr("Error opening %1 for writing").arg(_targetfile));
 		return;
 	}
 
@@ -97,7 +88,7 @@ void IndexBuilder::run()
 		++_pos;
 	} while(record.status != MessageRecord::END_OF_RECORDING);
 
-	ZipWriter zip(&savefile);
+
 
 	// Write snapshots
 	reader.rewind();
@@ -116,24 +107,22 @@ void IndexBuilder::run()
 		indexBuffer.open(QBuffer::ReadWrite);
 		_index.writeIndex(&indexBuffer);
 
-		zip.addFile("index", indexBuffer.data());
+		zip.writeFile("index", indexBuffer.data());
 	}
 
 	// Write recording hash
 	QByteArray hash = hashRecording(_inputfile);
-	zip.addFile("hash", hash);
+	zip.writeFile("hash", hash);
 
-	zip.close();
-#ifndef NO_QSAVEFILE
-	savefile.commit();
-#else
-	savefile.close();
-#endif
+	if(!zip.close()) {
+		emit done(false, tr("Error writing file"));
+		return;
+	}
 
 	emit done(true, QString());
 }
 
-void IndexBuilder::writeSnapshots(Reader &reader, ZipWriter &zip)
+void IndexBuilder::writeSnapshots(Reader &reader, KZip &zip)
 {
 	paintcore::LayerStack image;
 	net::LayerListModel layermodel;
@@ -168,7 +157,7 @@ void IndexBuilder::writeSnapshots(Reader &reader, ZipWriter &zip)
 			}
 
 			int snapshotIdx = _index._snapshots.size();
-			zip.addFile(QString("snapshot-%1").arg(snapshotIdx), buf.data());
+			zip.writeFile(QString("snapshot-%1").arg(snapshotIdx), buf.data());
 			_index._snapshots.append(SnapshotEntry(streampos, reader.currentIndex()));
 		}
 	}

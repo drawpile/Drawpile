@@ -16,32 +16,31 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QDomDocument>
-#include <QBuffer>
-#include <QDebug>
 
-#include "ora/zipwriter.h"
 #include "ora/orawriter.h"
 #include "core/annotation.h"
 #include "core/layerstack.h"
 #include "core/layer.h"
 #include "core/rasterop.h" // for blending modes
 
+#include <QDomDocument>
+#include <QBuffer>
+#include <QDebug>
+#include <KZip>
+
 namespace {
 
-bool putPngInZip(ZipWriter &zip, const QString &filename, const QImage &image)
+bool putPngInZip(KZip &zip, const QString &filename, const QImage &image)
 {
 	QBuffer buf;
 	image.save(&buf, "PNG");
 
-	// PNG is already compressed, so no use attempting to recompress.
-	zip.setCompressionPolicy(ZipWriter::NeverCompress);
-	zip.addFile(filename, buf.data());
-
-	return true;
+	// PNG is already compressed, so no use attempting to recompress
+	zip.setCompression(KZip::NoCompression);
+	return zip.writeFile(filename, buf.data());
 }
 
-bool writeStackXml(ZipWriter &zf, const paintcore::LayerStack *image)
+bool writeStackXml(KZip &zip, const paintcore::LayerStack *image)
 {
 	QDomDocument doc;
 	QDomElement root = doc.createElement("image");
@@ -91,12 +90,12 @@ bool writeStackXml(ZipWriter &zf, const paintcore::LayerStack *image)
 		stack.appendChild(layer);
 	}
 
-	zf.setCompressionPolicy(ZipWriter::AlwaysCompress);
-	zf.addFile("stack.xml", doc.toByteArray());
+	zip.setCompression(KZip::DeflateCompression);
+	return zip.writeFile("stack.xml", doc.toByteArray());
 	return true;
 }
 
-bool writeLayer(ZipWriter &zf, const paintcore::LayerStack *layers, int index)
+bool writeLayer(KZip &zf, const paintcore::LayerStack *layers, int index)
 {
 	const paintcore::Layer *l = layers->getLayerByIndex(index);
 	Q_ASSERT(l);
@@ -104,7 +103,7 @@ bool writeLayer(ZipWriter &zf, const paintcore::LayerStack *layers, int index)
 	return putPngInZip(zf, QString("data/layer%1.png").arg(index), l->toImage());
 }
 
-bool writeThumbnail(ZipWriter &zf, const paintcore::LayerStack *layers)
+bool writeThumbnail(KZip &zf, const paintcore::LayerStack *layers)
 {
 	QImage img = layers->toFlatImage(false);
 	if(img.width() > 256 || img.height() > 256)
@@ -119,16 +118,15 @@ namespace openraster {
 
 bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 {
-	QFile orafile(filename);
-	if(!orafile.open(QIODevice::WriteOnly))
+	KZip zf(filename);
+	if(!zf.open(QIODevice::WriteOnly))
 		return false;
-
-	ZipWriter zf(&orafile);
 
 	// The first entry of an OpenRaster file must be a
 	// (uncompressed) file named "mimetype".
-	zf.setCompressionPolicy(ZipWriter::NeverCompress);
-	zf.addFile("mimetype", QByteArray("image/openraster"));
+	zf.setCompression(KZip::NoCompression);
+	if(!zf.writeFile("mimetype", QByteArray("image/openraster")))
+		return false;
 
 	// The stack XML contains the image structure
 	// definition.
@@ -141,8 +139,7 @@ bool saveOpenRaster(const QString& filename, const paintcore::LayerStack *image)
 	// A ready to use thumbnail for file managers etc.
 	writeThumbnail(zf, image);
 
-	zf.close();
-	return true;
+	return zf.close();
 }
 
 }

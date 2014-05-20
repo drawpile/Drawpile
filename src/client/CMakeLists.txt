@@ -6,6 +6,8 @@ find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
+find_package(KF5Archive REQUIRED)
+
 set (
 	SOURCES
 	main.cpp
@@ -40,6 +42,7 @@ set (
 	net/layerlist.cpp
 	net/serverthread.cpp
 	net/builtinserver.cpp
+	utils/archive.cpp
 	utils/palette.cpp
 	utils/mandatoryfields.cpp
 	utils/recentfiles.cpp
@@ -55,7 +58,6 @@ set (
 	core/brushmask.cpp
 	core/rasterop.cpp
 	core/shapes.cpp
-	ora/qzip.cpp
 	ora/orawriter.cpp
 	ora/orareader.cpp
 	recording/index.cpp
@@ -190,7 +192,8 @@ add_executable (
 	${UI_Headers} # required here for ui_*.h generation
 )
 
-target_link_libraries(drawpile ${DPSHAREDLIB} ${ZLIB_LIBRARIES} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
+target_link_libraries(drawpile ${DPSHAREDLIB} Qt5::Widgets Qt5::Network Qt5::Xml Qt5::Concurrent)
+target_link_libraries(drawpile KF5::Archive)
 
 if ( WIN32 )
         target_link_libraries (drawpile ws2_32 )

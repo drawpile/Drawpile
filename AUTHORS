@@ -15,7 +15,6 @@ Contributors:
 The project also includes (L)GPL licensed code from:
  * Nokia Qt solutions (color triangle widget)
  * Krita (curve editing widget and pixel blending functions)
- * Qt (zip file handling and command line parser)
 
 Icons from Tango Desktop project and others are used.
 See src/client/ui/icons/LICENSE.txt for a comprehensive list.

@@ -27,7 +27,7 @@
 #include "recording/filter.h"
 #include "recording/index.h"
 
-class ZipWriter;
+class KZip;
 
 namespace recording {
 
@@ -50,7 +50,7 @@ protected:
 
 private:
 	void addToIndex(const protocol::MessagePtr msg);
-	void writeSnapshots(Reader &reader, ZipWriter &zip);
+	void writeSnapshots(Reader &reader, KZip &zip);
 
 	QString _inputfile, _targetfile;
 	QAtomicInt _abortflag;

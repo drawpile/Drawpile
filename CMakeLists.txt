@@ -49,7 +49,6 @@ include ( "config/Macros.cmake" )
 set ( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" )
 set ( LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" )
 
-find_package ( ZLIB REQUIRED )
 find_package ( PkgConfig )
 
 if ( PKGCONFIG_FOUND )

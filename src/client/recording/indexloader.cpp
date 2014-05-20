@@ -17,39 +17,39 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "recording/indexloader.h"
+#include "statetracker.h"
+#include "utils/archive.h"
+
 #include <QDebug>
 #include <QBuffer>
-
-#include "recording/indexloader.h"
-#include "ora/zipreader.h"
-#include "statetracker.h"
+#include <KZip>
 
 namespace recording {
 
 IndexLoader::IndexLoader(const QString &recording, const QString &index) : _file(0)
 {
 	_recordingfile = recording;
-	_file = new ZipReader(index);
+	_file.reset(new KZip(index));
 }
 
 IndexLoader::~IndexLoader()
 {
-	delete _file;
 }
 
 bool IndexLoader::open()
 {
-	if(!_file->isReadable())
+	if(!_file->open(QIODevice::ReadOnly))
 		return false;
 
 	// Make sure this is the right index for the recording
-	QByteArray idxHash = _file->fileData("hash");
+	QByteArray idxHash = utils::getArchiveFile(*_file, "hash");
 	QByteArray recHash = hashRecording(_recordingfile);
 
 	if(idxHash != recHash)
 		return false;
 
-	QByteArray indexdata = _file->fileData("index");
+	QByteArray indexdata = utils::getArchiveFile(*_file, "index");
 	QBuffer indexbuffer(&indexdata);
 	indexbuffer.open(QBuffer::ReadOnly);
 	if(!_index.readIndex(&indexbuffer))
@@ -63,7 +63,7 @@ drawingboard::StateSavepoint IndexLoader::loadSavepoint(int idx, drawingboard::S
 	if(idx<0 || idx>=_index.snapshots().size())
 		return drawingboard::StateSavepoint();
 
-	QByteArray snapshotdata = _file->fileData(QString("snapshot-%1").arg(idx));
+	QByteArray snapshotdata = utils::getArchiveFile(*_file, QString("snapshot-%1").arg(idx));
 	if(snapshotdata.isEmpty()) {
 		qWarning() << "no snapshot" << idx << "data!";
 		return drawingboard::StateSavepoint();

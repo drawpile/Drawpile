@@ -19,10 +19,12 @@
 #ifndef ORAREADER_H
 #define ORAREADER_H
 
-#include <QString>
 #include "../shared/net/message.h"
 
-class ZipReader;
+#include <QString>
+#include <QList>
+
+class KArchive;
 class QDomElement;
 class QPoint;
 class QImage;
@@ -70,7 +72,7 @@ class Reader {
 		const Warnings warnings() const { return _warnings; }
 
 	private:
-		bool loadLayers(ZipReader &zip, const QDomElement& stack, QPoint offset);
+		bool loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset);
 		void loadAnnotations(const QDomElement& annotations);
 
 		QString _error;

@@ -17,42 +17,17 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INDEXLOADER_H
-#define INDEXLOADER_H
+#ifndef DP_UTILS_ARCHIVE_H
+#define DP_UTILS_ARCHIVE_H
 
-#include "index.h"
-
-#include <QScopedPointer>
+#include <QString>
 
 class KArchive;
 
-namespace drawingboard {
-	class StateSavepoint;
-	class StateTracker;
-}
+namespace utils {
 
-namespace recording {
-
-class IndexLoader
-{
-public:
-	IndexLoader(const QString &recording, const QString &index);
-	IndexLoader(const IndexLoader&) = delete;
-	IndexLoader &operator=(const IndexLoader&) = delete;
-	~IndexLoader();
-
-	bool open();
-
-	Index &index() { return _index; }
-
-	drawingboard::StateSavepoint loadSavepoint(int idx, drawingboard::StateTracker *owner);
-
-private:
-	QString _recordingfile;
-	QScopedPointer<KArchive> _file;
-	Index _index;
-};
+QByteArray getArchiveFile(const KArchive &archive, const QString &filename, qint64 maxlen=1024*1024*500);
 
 }
 
-#endif // INDEXLOADER_H
+#endif
