@@ -17,8 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QPushButton>
-
 #include "colordialog.h"
 #include "bundled/qtcolortriangle.h"
 #include "widgets/gradientslider.h"
@@ -26,13 +24,22 @@ using widgets::GradientSlider;
 
 #include "ui_colordialog.h"
 
+#include <QPushButton>
+#include <QDesktopWidget>
+#include <QScreen>
+#include <QMouseEvent>
+
 namespace dialogs {
 
 ColorDialog::ColorDialog(QWidget *parent, const QString& title, Flags flags)
-	: QDialog(parent), _validhue(0), _showalpha(flags.testFlag(SHOW_ALPHA)), _updating(false)
+	: QDialog(parent), _validhue(0), _showalpha(flags.testFlag(SHOW_ALPHA)), _updating(false),
+	  _mouseGrabbedForPicking(false)
 {
 	_ui = new Ui_ColorDialog;
 	_ui->setupUi(this);
+
+	QPushButton *pickBtn = _ui->buttonBox->addButton(tr("Pick"), QDialogButtonBox::ActionRole);
+	connect(pickBtn, SIGNAL(clicked()), this, SLOT(pickColor()));
 
 	_ui->current->setAutoFillBackground(true);
 	_ui->old->setAutoFillBackground(true);
@@ -301,6 +308,31 @@ void ColorDialog::updateCurrent(const QColor& color)
 	QPalette palette;
 	palette.setColor(_ui->current->backgroundRole(), color);
 	_ui->current->setPalette(palette);
+}
+
+void ColorDialog::pickColor()
+{
+	grabMouse(Qt::CrossCursor);
+	_mouseGrabbedForPicking = true;
+}
+
+void ColorDialog::mouseReleaseEvent(QMouseEvent *e)
+{
+	if(_mouseGrabbedForPicking) {
+		_mouseGrabbedForPicking = false;
+		releaseMouse();
+
+		int screenNum = QApplication::desktop()->screenNumber(e->globalPos());
+		QScreen *screen = QApplication::screens().at(screenNum);
+
+		WId wid = QApplication::desktop()->winId();
+		QImage img = screen->grabWindow(wid, e->globalPos().x(), e->globalPos().y(), 1, 1).toImage();
+
+		setColor(img.pixel(0, 0));
+
+	} else {
+		QDialog::mouseReleaseEvent(e);
+	}
 }
 
 }

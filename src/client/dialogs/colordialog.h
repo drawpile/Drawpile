@@ -73,6 +73,10 @@ private slots:
 	void updateHsv();
 	void updateTriangle(const QColor& color);
 	void updateHex();
+	void pickColor();
+
+protected:
+	void mouseReleaseEvent(QMouseEvent *);
 
 private:
 	void updateBars();
@@ -82,6 +86,7 @@ private:
 	int _validhue;
 	bool _showalpha;
 	bool _updating;
+	bool _mouseGrabbedForPicking;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(ColorDialog::Flags)
