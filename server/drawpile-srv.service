@@ -1,6 +1,7 @@
 [Unit]
 Description=Drawpile dedicated server
 After=network.target
+Documentation=man:drawpile-srv
 
 [Service]
 ExecStart=/usr/bin/drawpile-srv

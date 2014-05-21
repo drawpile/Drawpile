@@ -22,7 +22,7 @@ Dependencies:
 * Qt 5.0 or newer
 * KF5 KArchive
 
-The dedicated server depends doesn't depend on any of the graphical parts of Qt,
+The dedicated server doesn't depend on any of the graphical parts of Qt,
 so it can be compiled and used on headless servers. The server also has optional
 systemd notify and socket activation support.
 
