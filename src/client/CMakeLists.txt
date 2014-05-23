@@ -1,5 +1,3 @@
-# src/client/CMakeLists.txt
-
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
@@ -7,6 +5,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
 find_package(KF5Archive NO_MODULE)
+#find_package(QtColorPicker)
 
 set (
 	SOURCES
@@ -103,7 +102,6 @@ set (
 	export/ffmpegexporter.cpp
 	bundled/kis_curve_widget.cpp
 	bundled/kis_cubic_curve.cpp
-	bundled/qtcolortriangle.cpp 
 )
 
 set (
@@ -156,6 +154,18 @@ if(NOT KF5Archive_FOUND)
 	message("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
 
+endif()
+
+# Use bundled QtColorPicker widgets if library not found
+if(QTCOLORPICKER_FOUND)
+	include_directories(${LIBQTCOLORPICKER_INCLUDE_DIRS})
+else()
+	message(WARNING "QtColorPicker not found: using bundled copy!")
+	set(
+		SOURCES ${SOURCES}
+		bundled/QtColorPicker/color_wheel.cpp
+	)
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
 endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )
@@ -223,6 +233,10 @@ if(KF5Archive_FOUND)
 	target_link_libraries(drawpile KF5::Archive)
 else()
 	target_link_libraries(drawpile ${ZLIB_LIBRARIES})
+endif()
+
+if(QTCOLORPICKER_FOUND)
+	target_link_libraries(drawpile ${LIBQTCOLORPICKER_LIBRARIES})
 endif()
 
 if ( WIN32 )

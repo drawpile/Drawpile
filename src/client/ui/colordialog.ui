@@ -34,11 +34,11 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QtColorTriangle" name="colorTriangle">
+        <widget class="Color_Wheel" name="colorwheel">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-           <horstretch>1</horstretch>
-           <verstretch>1</verstretch>
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
           </sizepolicy>
          </property>
         </widget>
@@ -254,20 +254,17 @@
         </widget>
        </item>
        <item row="0" column="1" colspan="2">
-        <widget class="GradientSlider" name="hue">
+        <widget class="GradientSlider" name="hue" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
            <horstretch>2</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="maximum">
+         <property name="maximum" stdset="0">
           <number>359</number>
          </property>
-         <property name="mode">
-          <enum>GradientSlider::Hsv</enum>
-         </property>
-         <property name="colorValue">
+         <property name="colorValue" stdset="0">
           <double>1.000000000000000</double>
          </property>
         </widget>
@@ -287,8 +284,8 @@
         </widget>
        </item>
        <item row="1" column="1" colspan="2">
-        <widget class="GradientSlider" name="saturation">
-         <property name="maximum">
+        <widget class="GradientSlider" name="saturation" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
@@ -308,8 +305,8 @@
         </widget>
        </item>
        <item row="2" column="1" colspan="2">
-        <widget class="GradientSlider" name="value">
-         <property name="maximum">
+        <widget class="GradientSlider" name="value" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
@@ -329,8 +326,8 @@
         </widget>
        </item>
        <item row="3" column="1" colspan="2">
-        <widget class="GradientSlider" name="red">
-         <property name="maximum">
+        <widget class="GradientSlider" name="red" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
@@ -350,8 +347,8 @@
         </widget>
        </item>
        <item row="4" column="1" colspan="2">
-        <widget class="GradientSlider" name="green">
-         <property name="maximum">
+        <widget class="GradientSlider" name="green" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
@@ -371,8 +368,8 @@
         </widget>
        </item>
        <item row="5" column="1" colspan="2">
-        <widget class="GradientSlider" name="blue">
-         <property name="maximum">
+        <widget class="GradientSlider" name="blue" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
@@ -412,8 +409,8 @@
         </spacer>
        </item>
        <item row="6" column="1" colspan="2">
-        <widget class="GradientSlider" name="alpha">
-         <property name="maximum">
+        <widget class="GradientSlider" name="alpha" native="true">
+         <property name="maximum" stdset="0">
           <number>255</number>
          </property>
         </widget>
@@ -453,9 +450,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QtColorTriangle</class>
+   <class>Color_Wheel</class>
    <extends>QWidget</extends>
-   <header>bundled/qtcolortriangle.h</header>
+   <header>Color_Wheel</header>
   </customwidget>
   <customwidget>
    <class>GradientSlider</class>

@@ -17,14 +17,16 @@ Some feature highlights:
 
 ## Building with cmake
 
-Dependencies:
+Client dependencies:
 
 * Qt 5.0 or newer
-* KF5 KArchive
+* [KF5 KArchive]
+* [QtColorPicker]
 
-The dedicated server doesn't depend on any of the graphical parts of Qt,
-so it can be compiled and used on headless servers. The server also has optional
-systemd notify and socket activation support.
+Server dependencies:
+
+* Qt 5.0 or newer (QtCore and QtNetwork only)
+* libsystemd (optional)
 
 It's a good idea to build in a separate directory to keep build files
 separate from the source tree.
@@ -52,4 +54,8 @@ When compiling on Windows, cmake may complain about missing zlib. Setting the zl
 
     -DZLIB_LIBRARY:FILEPATH="C:\Qt\Tools\mingw48_32\lib\libz.a" -DZLIB_INCLUDE_DIR:PATH="C:\Qt\Tools\mingw48_32\include"
 
+
+
+[KF5 KArchive]: https://projects.kde.org/projects/frameworks/karchive
+[QtColorPicker]: https://github.com/mbasaglia/Qt-Color-Picker 
 

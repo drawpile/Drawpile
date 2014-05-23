@@ -18,7 +18,6 @@
 */
 
 #include "colordialog.h"
-#include "bundled/qtcolortriangle.h"
 #include "widgets/gradientslider.h"
 using widgets::GradientSlider;
 
@@ -62,8 +61,8 @@ ColorDialog::ColorDialog(QWidget *parent, const QString& title, Flags flags)
 	connect(_ui->saturation, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
 	connect(_ui->value, SIGNAL(valueChanged(int)), this, SLOT(updateHsv()));
 
-	connect(_ui->colorTriangle, SIGNAL(colorChanged(const QColor&)),
-			this, SLOT(updateTriangle(const QColor&)));
+	connect(_ui->colorwheel, SIGNAL(colorChanged(const QColor&)),
+			this, SLOT(updateWheel(const QColor&)));
 
 	connect(_ui->buttonBox->button(QDialogButtonBox::Reset), SIGNAL(clicked()),
 			this, SLOT(reset()));
@@ -103,7 +102,7 @@ void ColorDialog::setColor(const QColor& color)
 	_ui->saturation->setValue(s);
 	_ui->value->setValue(v);
 	_ui->alpha->setValue(color.alpha());
-	_ui->colorTriangle->setColor(color);
+	_ui->colorwheel->setColor(color);
 	_ui->txtHex->setText(color.name());
 	if(h!=-1)
 		_validhue = h;
@@ -172,7 +171,7 @@ void ColorDialog::updateRgb()
 		_ui->hue->setValue(h);
 		_ui->saturation->setValue(s);
 		_ui->value->setValue(v);
-		_ui->colorTriangle->setColor(col);
+		_ui->colorwheel->setColor(col);
 		updateBars();
 
 		_ui->txtHex->setText(col.name());
@@ -197,7 +196,7 @@ void ColorDialog::updateHsv()
 		_ui->red->setValue(col.red());
 		_ui->green->setValue(col.green());
 		_ui->blue->setValue(col.blue());
-		_ui->colorTriangle->setColor(col);
+		_ui->colorwheel->setColor(col);
 		updateBars();
 		updateCurrent(col);
 		_ui->txtHex->setText(col.name());
@@ -208,7 +207,7 @@ void ColorDialog::updateHsv()
 /**
  * Color triangle has been used, update sliders to match
  */
-void ColorDialog::updateTriangle(const QColor& color)
+void ColorDialog::updateWheel(const QColor& color)
 {
 	if(!_updating) {
 		_updating = true;
@@ -259,7 +258,7 @@ void ColorDialog::updateHex()
 
 			// Update everything else
 			updateBars();
-			_ui->colorTriangle->setColor(color);
+			_ui->colorwheel->setColor(color);
 			updateCurrent(color);
 		}
 		_updating = false;

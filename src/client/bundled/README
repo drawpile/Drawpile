@@ -9,15 +9,15 @@ The bundled version is used only if the library is not found.
 
 KArchive homepage: https://projects.kde.org/projects/frameworks/karchive
 
+QtColorPicker
+---------------
+
+Color picker widgets. The bundled version is used only if the library is not found.
+
+QtColorPicker homepage: https://github.com/mbasaglia/Qt-Color-Picker
 
 kis_cubic_curve
 ---------------
 
 This is taken from Krita's source code. It is currently not available in library form.
 
-
-QtColorTriangle
----------------
-
-This is from the Qt solutions package. Upstream doesn't seem to be alive anymore.
-The designer plugin has been updated to work with Qt 5

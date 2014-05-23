@@ -71,7 +71,7 @@ private slots:
 	void reset();
 	void updateRgb();
 	void updateHsv();
-	void updateTriangle(const QColor& color);
+	void updateWheel(const QColor& color);
 	void updateHex();
 	void pickColor();
 
