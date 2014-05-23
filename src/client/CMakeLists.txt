@@ -5,7 +5,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 
 find_package(KF5Archive NO_MODULE)
-#find_package(QtColorPicker)
+find_package(QtColorPicker)
 
 set (
 	SOURCES
