@@ -25,7 +25,7 @@
 #include "colorbutton.h"
 
 #ifndef DESIGNER_PLUGIN
-#include "dialogs/colordialog.h"
+#include <Color_Dialog>
 namespace widgets {
 #endif
 
@@ -52,11 +52,10 @@ void ColorButton::selectColor()
 {
 #ifndef DESIGNER_PLUGIN
 	if(!_locked) {
-		dialogs::ColorDialog::Flags flags = dialogs::ColorDialog::NO_APPLY;
-		if(alpha())
-			flags |= dialogs::ColorDialog::SHOW_ALPHA;
-
-		dialogs::ColorDialog dlg(0, tr("Select a color"), flags);
+		Color_Dialog dlg;
+		dlg.setWindowTitle(tr("Select a color"));
+		dlg.setAlphaEnabled(alpha());
+		dlg.setButtonMode(Color_Dialog::OkCancel);
 		dlg.setColor(color());
 		if(dlg.exec() == QDialog::Accepted) {
 			if(dlg.color() != color()) {

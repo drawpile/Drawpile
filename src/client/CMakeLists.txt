@@ -66,7 +66,6 @@ set (
 	recording/indexpointergraphicsitem.cpp
 	recording/indexgraphicsview.cpp
 	dialogs/certificateview.cpp
-	dialogs/colordialog.cpp 
 	dialogs/newdialog.cpp 
 	dialogs/hostdialog.cpp
 	dialogs/joindialog.cpp
@@ -85,7 +84,6 @@ set (
 	widgets/chatlineedit.cpp
 	widgets/chatwidget.cpp 
 	widgets/colorbutton.cpp 
-	widgets/gradientslider.cpp 
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
 	docks/toolsettingsdock.cpp 
@@ -109,11 +107,9 @@ set (
 	ui/brushsettings.ui
 	ui/simplesettings.ui
 	ui/certificateview.ui
-	ui/colordialog.ui
 	ui/hostdialog.ui
 	ui/joindialog.ui
 	ui/palettebox.ui
-	ui/colorbox.ui
 	ui/settings.ui
 	ui/navibox.ui
 	ui/textsettings.ui
@@ -164,6 +160,10 @@ else()
 	set(
 		SOURCES ${SOURCES}
 		bundled/QtColorPicker/color_wheel.cpp
+		bundled/QtColorPicker/color_preview.cpp
+		bundled/QtColorPicker/color_dialog.cpp
+		bundled/QtColorPicker/gradient_slider.cpp
+		bundled/QtColorPicker/hue_slider.cpp
 	)
 	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
 endif()

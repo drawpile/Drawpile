@@ -4,6 +4,7 @@
  * Improved palette widget
  * Added shortcut for showing and hiding the chat box
  * Memory usage fix (undo savepoints are now correctly released)
+ * New color widgets
 
 2014-05-07 Version 0.9.0
  * Server: support for multiple sessions on a single server

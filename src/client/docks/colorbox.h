@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -21,7 +21,8 @@
 
 #include <QDockWidget>
 
-class Ui_ColorBox;
+class Gradient_Slider;
+class QSpinBox;
 
 namespace docks {
 
@@ -31,7 +32,6 @@ class ColorBox : public QDockWidget {
 		enum Mode {RGB, HSV};
 
 		ColorBox(const QString& title, Mode mode, QWidget *parent);
-		~ColorBox();
 
 	public slots:
 		void setColor(const QColor& color);
@@ -40,13 +40,15 @@ class ColorBox : public QDockWidget {
 		void colorChanged(const QColor& color);
 
 	private slots:
-		void updateColor();
+		void updateFromSliders();
+		void updateFromSpinbox();
 
 	private:
-		void updateSliders();
-		Ui_ColorBox *ui_;
-		bool updating_;
-		Mode mode_;
+		bool _updating;
+		Mode _mode;
+
+		Gradient_Slider *_s1, *_s2, *_s3;
+		QSpinBox *_b1, *_b2, *_b3;
 };
 
 }

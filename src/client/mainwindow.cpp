@@ -36,6 +36,8 @@
 #include <QSplitter>
 #include <QClipboard>
 
+#include <Color_Dialog>
+
 #ifndef NDEBUG
 #include <QTimer>
 #include "core/tile.h"
@@ -75,7 +77,6 @@
 #include "../shared/record/writer.h"
 #include "../shared/record/reader.h"
 
-#include "dialogs/colordialog.h"
 #include "dialogs/newdialog.h"
 #include "dialogs/hostdialog.h"
 #include "dialogs/joindialog.h"
@@ -1950,13 +1951,17 @@ void MainWindow::setupActions()
 	connect(_dock_hsv, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
 	// Create color changer dialogs
-	auto dlg_fgcolor = new dialogs::ColorDialog(this, tr("Foreground color"));
+	auto dlg_fgcolor = new Color_Dialog(this);
+	dlg_fgcolor->setAlphaEnabled(false);
+	dlg_fgcolor->setWindowTitle(tr("Foreground color"));
 	connect(dlg_fgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), dlg_fgcolor, SLOT(pickNewColor(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), dlg_fgcolor, SLOT(showColor(QColor)));
 
-	auto dlg_bgcolor = new dialogs::ColorDialog(this, tr("Background color"));
+	auto dlg_bgcolor = new Color_Dialog(this);
+	dlg_bgcolor->setWindowTitle(tr("Background color"));
+	dlg_bgcolor->setAlphaEnabled(false);
 	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setBackground(QColor)));
-	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(pickNewColor(QColor)));
+	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(showColor(QColor)));
 
 	drawtools->addWidget(_fgbgcolor);
 

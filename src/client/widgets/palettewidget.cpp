@@ -17,7 +17,6 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "dialogs/colordialog.h"
 #include "palettewidget.h"
 #include "utils/palette.h"
 
@@ -32,6 +31,8 @@
 #include <QMenu>
 #include <QDrag>
 #include <QMimeData>
+
+#include <Color_Dialog>
 
 namespace widgets {
 
@@ -53,7 +54,8 @@ PaletteWidget::PaletteWidget(QWidget *parent)
 	_scrollbar = new QScrollBar(this);
 	connect(_scrollbar, SIGNAL(valueChanged(int)), this, SLOT(scroll(int)));
 
-	_colordlg = new dialogs::ColorDialog(this, tr("Set palette color"));
+	_colordlg = new Color_Dialog(this);
+	_colordlg->setWindowTitle(tr("Set palette color"));
 
 	connect(_colordlg, SIGNAL(colorSelected(QColor)),
 			this, SLOT(setCurrentColor(QColor)));
