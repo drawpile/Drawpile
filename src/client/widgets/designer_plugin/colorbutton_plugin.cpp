@@ -20,7 +20,7 @@
 #include <QtPlugin>
 
 #include "../colorbutton.h"
-#include "plugin.h"
+#include "colorbutton_plugin.h"
 
 ColorButtonPlugin::ColorButtonPlugin(QObject *parent)
 	: QObject(parent)
@@ -58,7 +58,7 @@ QString ColorButtonPlugin::group() const
 
 QIcon ColorButtonPlugin::icon() const
 {
-	return QIcon(":colorbutton.png");
+	return QIcon();
 }
 
 QString ColorButtonPlugin::toolTip() const

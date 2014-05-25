@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRADIENTSLIDERPLUGIN_H
-#define GRADIENTSLIDERPLUGIN_H
+#ifndef DUALCOLORBUTTONPLUGIN_H
+#define DUALCOLORBUTTONPLUGIN_H
 
 #include <QDesignerCustomWidgetInterface>
 

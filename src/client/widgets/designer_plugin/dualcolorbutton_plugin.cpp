@@ -17,8 +17,8 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../../dualcolorbutton.h"
-#include "plugin.h"
+#include "widgets/dualcolorbutton.h"
+#include "dualcolorbutton_plugin.h"
 
 #include <QtPlugin>
 
@@ -58,7 +58,7 @@ QString DualColorButtonPlugin::group() const
 
 QIcon DualColorButtonPlugin::icon() const
 {
-	return QIcon(":dualcolorbutton.png");
+	return QIcon();
 }
 
 QString DualColorButtonPlugin::toolTip() const
@@ -78,7 +78,8 @@ bool DualColorButtonPlugin::isContainer() const
 
 QString DualColorButtonPlugin::domXml() const
 {
-	return "<widget class=\"DualColorButton\" name=\"dualColorButton\">\n"
+	return "<ui language=\"c++\">\n"
+		   "<widget class=\"DualColorButton\" name=\"dualColorButton\">\n"
 		   " <property name=\"geometry\">\n"
 		   "  <rect>\n"
 		   "   <x>0</x>\n"
@@ -87,12 +88,12 @@ QString DualColorButtonPlugin::domXml() const
 		   "   <height>16</height>\n"
 		   "  </rect>\n"
 		   " </property>\n"
-		   "</widget>\n";
+		   "</widget>\n"
+		   "</ui>\n";
 }
 
 QString DualColorButtonPlugin::includeFile() const
 {
-	return "dualcolorbutton.h";
+	return "widgets/dualcolorbutton.h";
 }
 
-Q_EXPORT_PLUGIN2(dualcolorbuttonplugin, DualColorButtonPlugin)

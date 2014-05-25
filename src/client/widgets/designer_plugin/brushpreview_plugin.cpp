@@ -20,7 +20,7 @@
 #include <QtPlugin>
 
 #include "widgets/brushpreview.h"
-#include "plugin.h"
+#include "brushpreview_plugin.h"
 
 BrushPreviewPlugin::BrushPreviewPlugin(QObject *parent)
 	: QObject(parent)
@@ -58,7 +58,7 @@ QString BrushPreviewPlugin::group() const
 
 QIcon BrushPreviewPlugin::icon() const
 {
-    return QIcon(":brushpreview.png");
+    return QIcon();
 }
 
 QString BrushPreviewPlugin::toolTip() const

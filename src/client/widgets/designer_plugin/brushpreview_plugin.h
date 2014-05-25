@@ -17,19 +17,18 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GRADIENTSLIDERPLUGIN_H
-#define GRADIENTSLIDERPLUGIN_H
+#ifndef PLUGIN_H
+#define PLUGIN_H
 
 #include <QDesignerCustomWidgetInterface>
 
-class ColorButtonPlugin : public QObject, public QDesignerCustomWidgetInterface
+class BrushPreviewPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
 Q_OBJECT
-Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface" FILE "colorbutton.json")
 Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:
-	ColorButtonPlugin(QObject *parent = 0);
+	BrushPreviewPlugin(QObject *parent = 0);
 
 	bool isContainer() const;
 	bool isInitialized() const;

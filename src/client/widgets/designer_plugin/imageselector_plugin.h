@@ -17,15 +17,14 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef PLUGIN_H
-#define PLUGIN_H
+#ifndef IMAGESELECTORPLUGIN_H
+#define IMAGESELECTORPLUGIN_H
 
 #include <QDesignerCustomWidgetInterface>
 
 class ImageSelectorPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
 Q_OBJECT
-Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QDesignerCustomWidgetInterface" FILE "imageselector.json")
 Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:

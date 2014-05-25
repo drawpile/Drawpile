@@ -20,7 +20,7 @@
 #include <QtPlugin>
 
 #include "../imageselector.h"
-#include "plugin.h"
+#include "imageselector_plugin.h"
 
 ImageSelectorPlugin::ImageSelectorPlugin(QObject *parent)
 	: QObject(parent)
@@ -58,7 +58,7 @@ QString ImageSelectorPlugin::group() const
 
 QIcon ImageSelectorPlugin::icon() const
 {
-    return QIcon(":image.png");
+    return QIcon();
 }
 
 QString ImageSelectorPlugin::toolTip() const
