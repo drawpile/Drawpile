@@ -27,6 +27,7 @@
 
 #include "widgets/netstatus.h"
 #include "widgets/popupmessage.h"
+#include "dialogs/certificateview.h"
 #include "utils/whatismyip.h"
 
 namespace widgets {
@@ -118,6 +119,12 @@ NetStatus::NetStatus(QWidget *parent)
 	_security->hide();
 	layout->addWidget(_security);
 
+	_security->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+	QAction *showcert = new QAction(tr("Show certificate"), this);
+	_security->addAction(showcert);
+	connect(showcert, SIGNAL(triggered()), this, SLOT(showCertificate()));
+
 	// Popup label
 	_popup = new PopupMessage(this);
 
@@ -188,7 +195,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 		_security->show();
 	}
 
-	// TODO popup menu for inspecting the certificate
+	_certificate = certificate;
 }
 
 void NetStatus::hostDisconnecting()
@@ -350,6 +357,13 @@ void NetStatus::message(const QString& msg)
 	_popup->popupAt(mapToGlobal(_icon->pos() +
 				QPoint(_icon->width()/2, 2)));
 	emit statusMessage(msg);
+}
+
+void NetStatus::showCertificate()
+{
+	dialogs::CertificateView *certdlg = new dialogs::CertificateView(_address, _certificate, parentWidget());
+	certdlg->setAttribute(Qt::WA_DeleteOnClose);
+	certdlg->show();
 }
 
 }

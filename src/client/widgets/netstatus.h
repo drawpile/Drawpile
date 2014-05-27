@@ -71,6 +71,7 @@ private slots:
 	void updateStats();
 	void discoverAddress();
 	void externalIpDiscovered(const QString &ip);
+	void showCertificate();
 
 private:
 	void message(const QString& msg);
@@ -90,6 +91,8 @@ private:
 	quint64 _sentbytes, _recvbytes;
 	uchar _activity;
 	QTimer *_timer;
+
+	QSslCertificate _certificate;
 };
 
 }
