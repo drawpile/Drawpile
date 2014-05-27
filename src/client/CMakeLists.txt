@@ -147,8 +147,7 @@ if(NOT KF5Archive_FOUND)
 		bundled/karchive/kgzipfilter.cpp
 		bundled/karchive/knonefilter.cpp
 	)
-	message("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/karchive")
 
 endif()
 
@@ -165,7 +164,7 @@ else()
 		bundled/QtColorPicker/gradient_slider.cpp
 		bundled/QtColorPicker/hue_slider.cpp
 	)
-	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/include")
+	include_directories("${CMAKE_CURRENT_SOURCE_DIR}/bundled/QtColorPicker")
 endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )
