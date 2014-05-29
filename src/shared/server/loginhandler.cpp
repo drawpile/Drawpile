@@ -38,8 +38,8 @@ LoginHandler::LoginHandler(Client *client, SessionServer *server) :
 	connect(client, SIGNAL(loginMessage(protocol::MessagePtr)), this,
 			SLOT(handleLoginMessage(protocol::MessagePtr)));
 
-	connect(server, SIGNAL(sessionChanged(SessionState*)), this, SLOT(announceSession(SessionState*)));
-	connect(server, SIGNAL(sessionEnded(int)), this, SLOT(announceSessionEnd(int)));
+	connect(server, &SessionServer::sessionChanged, this, &LoginHandler::announceSession);
+	connect(server, &SessionServer::sessionEnded, this, &LoginHandler::announceSessionEnd);
 }
 
 void LoginHandler::startLoginProcess()
