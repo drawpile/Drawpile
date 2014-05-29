@@ -32,6 +32,7 @@
 #include "multiserver.h"
 #include "initsys.h"
 #include "configfile.h"
+#include "sslserver.h"
 #include "../shared/util/logger.h"
 
 #ifdef Q_OS_UNIX
@@ -231,6 +232,7 @@ int main(int argc, char *argv[]) {
 		if(!sslCert.isEmpty() && !sslKey.isEmpty()) {
 			server->setSslCertFile(sslCert, sslKey);
 			server->setMustSecure(cfgfile.override(parser, secureOption).toBool());
+			server::SslServer::requireForwardSecrecy();
 		}
 	}
 

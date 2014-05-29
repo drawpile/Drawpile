@@ -21,6 +21,7 @@
 #include "../shared/util/logger.h"
 
 #include <QSslSocket>
+#include <QSslCipher>
 #include <QFile>
 
 namespace server {
@@ -52,6 +53,27 @@ SslServer::SslServer(const QString &certFile, const QString &keyFile, QObject *p
 	_key = QSslKey(&key, QSsl::Rsa);
 	if(_key.isNull())
 		logger::error() << "Invalid private key";
+}
+
+void SslServer::requireForwardSecrecy()
+{
+	QList<QSslCipher> ciphers;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
+	// Note. Requires Qt 5.3 or newer. See: https://bugreports.qt-project.org/browse/QTBUG-20666
+	QStringList methods {"DH", "ECDH"};
+
+	for(const QSslCipher &cipher : QSslSocket::defaultCiphers()) {
+		if(methods.contains(cipher.keyExchangeMethod())) {
+			ciphers.append(cipher);
+		}
+	}
+#endif
+
+	if(ciphers.isEmpty())
+		logger::warning() << "Forward secrecy not available!";
+	else
+		QSslSocket::setDefaultCiphers(ciphers);
 }
 
 bool SslServer::isValidCert() const

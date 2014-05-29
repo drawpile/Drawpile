@@ -36,6 +36,11 @@ public:
 
 	bool isValidCert() const;
 
+	/**
+	 * @brief Limit QSslSocket's default ciphers to those that support forward secrecy
+	 */
+	static void requireForwardSecrecy();
+
 protected:
 	void incomingConnection(qintptr handle);
 
