@@ -91,7 +91,7 @@ public:
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
 
-	void announceSession(SessionState *session);
+	void announceSession(const SessionState *session);
 	void announceSessionEnd(int id);
 
 private:
@@ -100,6 +100,7 @@ private:
 		WAIT_FOR_LOGIN
 	};
 
+	void announceServerInfo();
 	void handleHostMessage(const QString &message);
 	void handleJoinMessage(const QString &message);
 	void handleStarttls();

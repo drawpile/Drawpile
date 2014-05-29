@@ -69,6 +69,13 @@ void LoginHandler::startLoginProcess()
 
 	// Client should disconnect upon receiving the above if the version number does not match
 
+	// In secure mode, the initial announcement is made after the connection has been secured.
+	if(_state == WAIT_FOR_LOGIN)
+		announceServerInfo();
+}
+
+void LoginHandler::announceServerInfo()
+{
 	// Send server title
 	if(!_server->title().isEmpty())
 		send("TITLE " + _server->title());
@@ -79,13 +86,13 @@ void LoginHandler::startLoginProcess()
 	if(sessions.isEmpty()) {
 		send("NOSESSION");
 	} else {
-		for(SessionState *session : sessions) {
+		for(const SessionState *session : sessions) {
 			announceSession(session);
 		}
 	}
 }
 
-void LoginHandler::announceSession(SessionState *session)
+void LoginHandler::announceSession(const SessionState *session)
 {
 	QStringList flags;
 	if(!session->password().isEmpty())
@@ -279,6 +286,7 @@ void LoginHandler::handleStarttls()
 	send("STARTTLS");
 	_client->startTls();
 	_state = WAIT_FOR_LOGIN;
+	announceServerInfo();
 }
 
 void LoginHandler::send(const QString &msg)
