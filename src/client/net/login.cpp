@@ -36,7 +36,7 @@
 #include <QDir>
 #include <QFile>
 #include <QPushButton>
-
+#include <QHostAddress>
 
 namespace {
 
@@ -507,8 +507,15 @@ void LoginHandler::tlsError(const QList<QSslError> &errors)
 	QString errorstr;
 	bool fail = false;
 
+	bool isIp = QHostAddress().setAddress(_address.host());
+
 	for(const QSslError &e : errors) {
-		if(e.error() == QSslError::SelfSignedCertificate || e.error() == QSslError::HostNameMismatch) {
+		if(e.error() == QSslError::SelfSignedCertificate) {
+			// Self signed certificates are acceptable.
+			ignore << e;
+
+		} else if(isIp && e.error() == QSslError::HostNameMismatch) {
+			// Ignore CN mismatch when using an IP address rather than a hostname
 			ignore << e;
 
 		} else {
