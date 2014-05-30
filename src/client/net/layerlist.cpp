@@ -72,6 +72,10 @@ QMimeData *LayerListModel::mimeData(const QModelIndexList& indexes) const
 
 bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent)
 {
+	Q_UNUSED(action);
+	Q_UNUSED(column);
+	Q_UNUSED(parent);
+
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
 	if(ldata) {
 		handleMoveLayer(indexOf(ldata->layerId()), row);

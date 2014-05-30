@@ -51,7 +51,7 @@ struct MessageRecord {
 		struct {
 			int len;
 			protocol::MessageType type;
-		};
+		} error;
 	};
 };
 

@@ -93,7 +93,7 @@ QRectF SelectionItem::boundingRect() const
 	return _rect;
 }
 
-void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *)
+void SelectionItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 
 	if(!_pasteimg.isNull()) {

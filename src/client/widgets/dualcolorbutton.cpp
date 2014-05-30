@@ -124,6 +124,7 @@ QRectF DualColorButton::resetWhiteRect() const
 
 void DualColorButton::paintEvent(QPaintEvent *event)
 {
+	Q_UNUSED(event);
 	QPainter painter(this);
 
 	QPen normal = palette().color(QPalette::Mid);

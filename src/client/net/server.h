@@ -87,7 +87,7 @@ protected:
 	 * @param message error message
 	 * @param cancelled if true, the error was due to user cancellation
 	 */
-	virtual void loginFailure(const QString &message, bool cancelled=false) {}
+	virtual void loginFailure(const QString &, bool) {}
     virtual void loginSuccess() {}
 
 private:

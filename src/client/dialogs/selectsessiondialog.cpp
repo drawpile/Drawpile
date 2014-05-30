@@ -63,7 +63,7 @@ SelectSessionDialog::SelectSessionDialog(net::LoginSessionModel *model, QWidget 
 		}
 	});
 
-	connect(_ui->sessionView, &QTableView::doubleClicked, [this, ok](const QModelIndex &idx) {
+	connect(_ui->sessionView, &QTableView::doubleClicked, [this, ok](const QModelIndex &) {
 		// Shortcut: double click to OK
 		if(ok->isEnabled())
 			accept();

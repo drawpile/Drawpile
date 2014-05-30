@@ -244,6 +244,7 @@ bool PaletteWidget::event(QEvent *event)
 
 void PaletteWidget::paintEvent(QPaintEvent *event)
 {
+	Q_UNUSED(event);
 	QPainter painter(this);
 	//painter.fillRect(event->rect(), QColor("#646464"));
 
@@ -344,6 +345,7 @@ void PaletteWidget::dragMoveEvent(QDragMoveEvent *event)
 
 void PaletteWidget::dragLeaveEvent(QDragLeaveEvent *event)
 {
+	Q_UNUSED(event);
 	if(_selection!=-1 && hasFocus()) {
 		_outline->setGeometry(swatchRect(_selection).adjusted(-1,-1,1,1));
 	} else {

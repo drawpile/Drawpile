@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,34 +17,48 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "whatismyip.h"
+
 #include <QDebug>
 #include <QNetworkInterface>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QMessageBox>
 
-#include "whatismyip.h"
+#include <algorithm>
 
 namespace {
 
 bool isPublicAddress(const QHostAddress& address) {
 	// This could be a bit more comprehensive
 	if(address.protocol() == QAbstractSocket::IPv6Protocol) {
-		if(address.scopeId()=="Global")
-			return true;
-		return false;
+		return address.scopeId() == "Global";
+
 	} else {
-		quint32 a = address.toIPv4Address();
-		return !((a >> 24) == 10 ||
-			(a >> 16) == 0xC0A8);
+		const quint32 a = address.toIPv4Address();
+		return !(
+			(a >> 24) == 10 ||
+			(a >> 24) == 127 ||
+			(a >> 16) == 0xC0A8
+			);
 	}
 }
 
 bool addressSort(const QHostAddress& a1, const QHostAddress& a2)
 {
-	if(a1 == QHostAddress::LocalHost || a1 == QHostAddress::LocalHostIPv6)
-		return false;
-	return !isPublicAddress(a1);
+	// Sort an IP address list so public addresses are at the beginning of the list
+	uchar adr1[17], adr2[17];
+	adr1[0] = a1.isLoopback() ? 2 : 0 | !isPublicAddress(a1) ? 1 : 0;
+	adr2[0] = a2.isLoopback() ? 2 : 0 | !isPublicAddress(a2) ? 1 : 0;
+
+	Q_IPV6ADDR ip6;
+	ip6 = a1.toIPv6Address();
+	memcpy(adr1+1, &ip6, 16);
+
+	ip6 = a2.toIPv6Address();
+	memcpy(adr2+1, &ip6, 16);
+
+	return memcmp(adr1, adr2, 17) < 0 ;
 }
 
 }
@@ -149,11 +163,13 @@ QString WhatIsMyIp::localAddress()
 	}
 
 	if (alist.count() > 0) {
-		qSort(alist.begin(), alist.end(), addressSort);
-		QHostAddress a = alist.at(0);
+		std::sort(alist.begin(), alist.end(), addressSort);
+
+		QHostAddress a = alist.first();
 		if(a.protocol() == QAbstractSocket::IPv6Protocol)
 			return QString("[%1]").arg(a.toString());
 		return a.toString();
 	}
+
 	return "127.0.0.1";
 }

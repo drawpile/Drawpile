@@ -131,8 +131,8 @@ public:
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent) = 0;
-	virtual void saveToolSettings(QSettings &cfg) {}
-	virtual void restoreToolSettings(QSettings &cfg) {}
+	virtual void saveToolSettings(QSettings &) {}
+	virtual void restoreToolSettings(QSettings &) {}
 
 private:
 	QString _name;

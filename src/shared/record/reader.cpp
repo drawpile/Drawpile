@@ -193,8 +193,8 @@ MessageRecord Reader::readNext()
 		msg.message = message;
 	} else {
 		msg.status = MessageRecord::INVALID;
-		msg.len = protocol::Message::sniffLength(_msgbuf.constData());
-		msg.type = protocol::MessageType(_msgbuf.at(2));
+		msg.error.len = protocol::Message::sniffLength(_msgbuf.constData());
+		msg.error.type = protocol::MessageType(_msgbuf.at(2));
 	}
 
 	return msg;

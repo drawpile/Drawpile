@@ -102,7 +102,7 @@ QRectF UserMarkerItem::boundingRect() const
 	return _bounds;
 }
 
-void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *options, QWidget *)
+void UserMarkerItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
 	painter->setRenderHint(QPainter::Antialiasing);
 	painter->setPen(Qt::NoPen);

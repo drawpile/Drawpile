@@ -83,7 +83,7 @@ void IndexBuilder::run()
 			protocol::MessagePtr msg(record.message);
 			addToIndex(msg);
 		} else if(record.status == MessageRecord::INVALID) {
-			qWarning() << "invalid message type" << record.type << "at index" << _pos;
+			qWarning() << "invalid message type" << record.error.type << "at index" << _pos;
 		}
 		++_pos;
 	} while(record.status != MessageRecord::END_OF_RECORDING);

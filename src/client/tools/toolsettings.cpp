@@ -237,7 +237,7 @@ void EraserSettings::restoreToolSettings(QSettings &cfg)
 	_ui->preview->setIncremental(_ui->incremental->isChecked());
 }
 
-void EraserSettings::setForeground(const QColor& color)
+void EraserSettings::setForeground(const QColor&)
 {
 	// Eraser has no foreground color
 }

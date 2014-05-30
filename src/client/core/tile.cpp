@@ -166,7 +166,7 @@ quint32 *Tile::getOrCreateData() {
 #ifndef NDEBUG
 QAtomicInt TileData::_count;
 TileData::TileData() { _count.fetchAndAddOrdered(1); }
-TileData::TileData(const TileData &td) { memcpy(data, td.data, sizeof data); _count.fetchAndAddOrdered(1); }
+TileData::TileData(const TileData &td) : QSharedData() { memcpy(data, td.data, sizeof data); _count.fetchAndAddOrdered(1); }
 TileData::~TileData() { _count.fetchAndAddOrdered(-1); }
 #endif
 

@@ -105,7 +105,7 @@ void LoopbackServer::sendMessage(protocol::MessagePtr msg)
 #endif
 }
 
-void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr> msgs)
+void LoopbackServer::sendSnapshotMessages(QList<protocol::MessagePtr>)
 {
 	// There are no snapshots in loopback mode
 }

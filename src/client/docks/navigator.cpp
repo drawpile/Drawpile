@@ -68,6 +68,7 @@ void NavigatorView::mouseMoveEvent(QMouseEvent *event)
  */
 void NavigatorView::mouseReleaseEvent(QMouseEvent *event)
 {
+	Q_UNUSED(event);
 	_dragging = false;
 }
 

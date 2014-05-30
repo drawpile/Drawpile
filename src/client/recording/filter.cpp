@@ -344,7 +344,7 @@ void doFilterRecording(Filter &filter, State &state, Reader &recording)
 		if(msg.status == MessageRecord::END_OF_RECORDING)
 			break;
 		if(msg.status == MessageRecord::INVALID) {
-			qWarning() << "skipping invalid message type" << msg.type;
+			qWarning() << "skipping invalid message type" << msg.error.type;
 			continue;
 		}
 

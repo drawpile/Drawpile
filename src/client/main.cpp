@@ -26,6 +26,8 @@
 #include "main.h"
 #include "mainwindow.h"
 
+#include "utils/whatismyip.h"
+
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
 {

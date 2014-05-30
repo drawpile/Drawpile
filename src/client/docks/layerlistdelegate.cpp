@@ -80,7 +80,7 @@ QSize LayerListDelegate::sizeHint(const QStyleOptionViewItem & option, const QMo
 	return size;
 }
 
-void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex & index ) const
+void LayerListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem & option, const QModelIndex &) const
 {
 	const int btnwidth = 24;
 

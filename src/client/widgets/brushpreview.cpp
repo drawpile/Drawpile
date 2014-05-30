@@ -102,6 +102,7 @@ void BrushPreview::resizeEvent(QResizeEvent *)
 
 void BrushPreview::changeEvent(QEvent *event)
 {
+	Q_UNUSED(event);
 	_needupdate = true;
 	update();
 }

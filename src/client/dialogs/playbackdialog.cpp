@@ -273,7 +273,7 @@ void PlaybackDialog::nextCommand()
 		break;
 	}
 	case recording::MessageRecord::INVALID:
-		qWarning() << "Unrecognized command " << next.type << "of length" << next.len;
+		qWarning() << "Unrecognized command " << next.error.type << "of length" << next.error.len;
 		if(_play)
 			_timer->start(1);
 		break;
@@ -309,7 +309,7 @@ void PlaybackDialog::nextSequence()
 			}
 			break;
 		case recording::MessageRecord::INVALID:
-			qWarning() << "Unrecognized command " << next.type << "of length" << next.len;
+			qWarning() << "Unrecognized command " << next.error.type << "of length" << next.error.len;
 			break;
 		case recording::MessageRecord::END_OF_RECORDING:
 			endOfFileReached();
@@ -370,7 +370,7 @@ void PlaybackDialog::jumpTo(int pos)
 			}
 			break;
 		case recording::MessageRecord::INVALID:
-			qWarning() << "Unrecognized command " << next.type << "of length" << next.len;
+			qWarning() << "Unrecognized command " << next.error.type << "of length" << next.error.len;
 			break;
 		case recording::MessageRecord::END_OF_RECORDING:
 			endOfFileReached();
