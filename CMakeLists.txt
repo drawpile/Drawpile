@@ -25,22 +25,14 @@ option ( SERVER "Compile UI-less server" ON )
 option ( INSTALL_DOC "Install documents" ON )
 option ( INITSYS "Init system integration" "systemd" )
 
-option ( DEBUG "Enable debugging and asserts" OFF )
-option ( GENERIC "Optimize for generic CPU arch" OFF )
+if (NOT CMAKE_BUILD_TYPE)
+	message(STATUS "No build type selected, default to Release")
+	message(STATUS "Use -DCMAKE_BUILD_TYPE=debug to enable debugging")
+	set(CMAKE_BUILD_TYPE "Release")
+endif()
 
-option ( RELEASE "Enable final all-in-one compilation." OFF )
-
-# Set build type
-if ( DEBUG )
-	set ( CMAKE_BUILD_TYPE Debug )
-else ( )
-	set ( CMAKE_BUILD_TYPE Release )
-endif ( )
 
 message ( STATUS "Build type: ${CMAKE_BUILD_TYPE}" )
-
-### Optimize ###
-include ( "config/Optimize.cmake" )
 
 # Include some nice macros
 include ( "config/Macros.cmake" )
@@ -57,6 +49,8 @@ if ( PKGCONFIG_FOUND )
 	endif ()
 endif ( PKGCONFIG_FOUND )
 
+### General compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
 
 ### Compiler-specific C++ 11 activation ###
 if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
@@ -93,8 +87,8 @@ endif ( )
 add_subdirectory( desktop )
 
 if ( CMAKE_BUILD_TYPE STREQUAL Debug )
-	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_DEBUG}")
+	message ( STATUS "CXX flags (debug): ${CMAKE_CXX_FLAGS_DEBUG}")
 elseif ( CMAKE_BUILD_TYPE STREQUAL Release )
-	message ( STATUS "CXX flags: ${CMAKE_CXX_FLAGS_RELEASE}")
+	message ( STATUS "CXX flags (release): ${CMAKE_CXX_FLAGS_RELEASE}")
 endif ( )
 

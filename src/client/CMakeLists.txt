@@ -175,9 +175,9 @@ qt5_add_resources( QtResource ui/resources.qrc )
 set ( EXETYPE "" )
 set ( RES "" )
 if ( WIN32 )
-	if ( NOT DEBUG )
+	if ( NOT CMAKE_BUILD_TYPE STREQUAL Debug )
 		set ( EXETYPE WIN32 )
-	endif ( NOT DEBUG )
+	endif ( )
 	
 	generate_win32_resource (
 		Win32Resource
@@ -255,7 +255,7 @@ else ( WIN32 )
 	install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 endif ( WIN32 )
 
-if (NOT DEBUG)
+if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
 	if (APPLE)
 		#strip_exe ( ${CLIENTNAME}.app/Contents/MacOS/${CLIENTNAME} )
 		# Install the icon
@@ -283,5 +283,5 @@ if (NOT DEBUG)
 	else ()
 		strip_exe ( ${CLIENTNAME} )
 	endif()
-endif (NOT DEBUG)
+endif ( )
 

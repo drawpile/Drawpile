@@ -45,7 +45,7 @@ The configuration step supports some options:
 
 * CLIENT=off: don't build the client (useful when building the stand-alone server only)
 * SERVER=off: don't build the stand-alone server.
-* DEBUG=on: enable debugging features
+* CMAKE\_BUILD\_TYPE=debug: enable debugging features
 * INITSYS="": select init system integration (currently only "systemd" is supported.) Set this to an empty string to disable all integration.
 
 Example: `$ cmake .. -DDEBUG=on`
