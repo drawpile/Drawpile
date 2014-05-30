@@ -70,6 +70,10 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->sessiontitle->setText(cfg.value("sessiontitle").toString());
 	ui_->remotehost->insertItems(0, cfg.value("recentremotehosts").toStringList());
 
+	QSize lastsize = cfg.value("newsize", QSize(800, 600)).toSize();
+	ui_->picturewidth->setValue(lastsize.width());
+	ui_->pictureheight->setValue(lastsize.height());
+
 	new MandatoryFields(this, ui_->buttons->button(QDialogButtonBox::Ok));
 }
 
@@ -82,10 +86,12 @@ void HostDialog::rememberSettings() const
 {
 	QSettings cfg;
 	cfg.beginGroup("history");
+
 	cfg.setValue("username", getUserName());
 	cfg.setValue("sessiontitle", getTitle());
-	QStringList hosts;
+
 	// Move current address to the top of the list
+	QStringList hosts;
 	const QString current = ui_->remotehost->currentText();
 	int curind = ui_->remotehost->findText(current);
 	if(curind!=-1)
@@ -95,6 +101,10 @@ void HostDialog::rememberSettings() const
 			hosts << ui_->remotehost->itemText(i);
 	cfg.setValue("recentremotehosts", hosts);
 
+	// Remember "newsize" if we created a new picture
+	if(ui_->solidcolor->isChecked()) {
+		cfg.setValue("newsize", QSize(ui_->picturewidth->value(), ui_->pictureheight->value()));
+	}
 }
 
 bool HostDialog::selectPicture()
