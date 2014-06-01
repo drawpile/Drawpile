@@ -19,11 +19,13 @@
 #ifndef TOOLSETTINGSDOCK_H
 #define TOOLSETTINGSDOCK_H
 
+#include "tools/tool.h"
+#include "tools/toolproperties.h"
+
 #include <QDockWidget>
 
-#include "tools/tool.h"
-
 class QStackedWidget;
+class QToolButton;
 
 namespace tools {
 	class ToolSettings;
@@ -48,73 +50,107 @@ namespace docks {
  */
 class ToolSettings : public QDockWidget
 {
-	Q_OBJECT
-	public:
-		ToolSettings(QWidget *parent=0);
-		ToolSettings(const ToolSettings& ts) = delete;
-		ToolSettings& operator=(const ToolSettings& ts) = delete;
+Q_OBJECT
+public:
+	//! Number of quick tool change slots
+	static const int QUICK_SLOTS = 5;
 
-		~ToolSettings();
+	ToolSettings(QWidget *parent=0);
+	ToolSettings(const ToolSettings& ts) = delete;
+	ToolSettings& operator=(const ToolSettings& ts) = delete;
 
-		//! Get a brush with the current settings
-		const paintcore::Brush& getBrush(bool swapcolors) const;
+	~ToolSettings();
 
-		//! Get the annotation settings page
-		tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
+	//! Get a brush with the current settings
+	const paintcore::Brush& getBrush(bool swapcolors) const;
 
-		//! Get the color picker page
-		tools::ColorPickerSettings *getColorPickerSettings() { return _pickersettings; }
+	//! Get the tool settings for the given tool type
+	tools::ToolSettings *getToolSettingsPage(tools::Type tool);
 
-		//! Get the laser pointer settings page
-		tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
+	//! Get the annotation settings page
+	tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
 
-		//! Quick adjust current tool
-		void quickAdjustCurrent1(float adjustment);
+	//! Get the color picker page
+	tools::ColorPickerSettings *getColorPickerSettings() { return _pickersettings; }
 
-		//! Get the current foreground color
-		QColor foregroundColor() const;
+	//! Get the laser pointer settings page
+	tools::LaserPointerSettings  *getLaserPointerSettings() { return _lasersettings; }
 
-		//! Get the current background color
-		QColor backgroundColor() const;
+	//! Quick adjust current tool
+	void quickAdjustCurrent1(float adjustment);
 
-	signals:
-		//! This signal is emitted when the current tool changes its size
-		void sizeChanged(int size);
+	//! Get the current foreground color
+	QColor foregroundColor() const;
 
-		//! Current foreground color selection changed
-		void foregroundColorChanged(const QColor &color);
+	//! Get the current background color
+	QColor backgroundColor() const;
 
-		//! Current background color selection changed
-		void backgroundColorChanged(const QColor &color);
+	//! Get the currently selected tool slot
+	int currentToolSlot() const;
 
-	public slots:
-		//! Set the tool for which settings are shown
-		void setTool(tools::Type tool);
+	//! Get the currently selected tool
+	tools::Type currentTool() const;
 
-		//! Set foreground color
-		void setForegroundColor(const QColor& color);
+	//! Load tool related settings
+	void readSettings();
 
-		//! Set background color
-		void setBackgroundColor(const QColor& color);
+	//! Save tool related settings
+	void saveSettings();
 
-		//! Swap current foreground and background colors
-		void swapForegroundBackground();
+public slots:
+	//! Set the tool for which settings are shown
+	void setTool(tools::Type tool);
 
-	private:
-		tools::ToolSettings *_pensettings;
-		tools::ToolSettings *_brushsettings;
-		tools::ToolSettings *_erasersettings;
-		tools::ColorPickerSettings *_pickersettings;
-		tools::ToolSettings *_linesettings;
-		tools::ToolSettings *_rectsettings;
-		tools::ToolSettings *_ellipsesettings;
-		tools::AnnotationSettings *_textsettings;
-		tools::ToolSettings *_selectionsettings;
-		tools::LaserPointerSettings  *_lasersettings;
+	//! Set the currently active quick tool slot
+	void setToolSlot(int i);
 
-		tools::ToolSettings *_currenttool;
-		QStackedWidget *_widgets;
-		widgets::DualColorButton *_fgbgcolor;
+	//! Set foreground color
+	void setForegroundColor(const QColor& color);
+
+	//! Set background color
+	void setBackgroundColor(const QColor& color);
+
+	//! Swap current foreground and background colors
+	void swapForegroundBackground();
+
+signals:
+	//! This signal is emitted when the current tool changes its size
+	void sizeChanged(int size);
+
+	//! Current foreground color selection changed
+	void foregroundColorChanged(const QColor &color);
+
+	//! Current background color selection changed
+	void backgroundColorChanged(const QColor &color);
+
+	//! Currently active tool was changed
+	void toolChanged(tools::Type tool);
+
+private:
+	void updateToolSlot(int i);
+	void selectTool(tools::Type tool);
+	void selectToolSlot(int i);
+	void saveCurrentTool();
+
+	tools::ToolSettings *_pensettings;
+	tools::ToolSettings *_brushsettings;
+	tools::ToolSettings *_erasersettings;
+	tools::ColorPickerSettings *_pickersettings;
+	tools::ToolSettings *_linesettings;
+	tools::ToolSettings *_rectsettings;
+	tools::ToolSettings *_ellipsesettings;
+	tools::AnnotationSettings *_textsettings;
+	tools::ToolSettings *_selectionsettings;
+	tools::LaserPointerSettings  *_lasersettings;
+
+	tools::ToolSettings *_currenttool;
+	QStackedWidget *_widgets;
+	widgets::DualColorButton *_fgbgcolor;
+
+	QToolButton *_quickslot[QUICK_SLOTS];
+	int _currentQuickslot;
+	tools::Type _currentToolType;
+	QList<tools::ToolsetProperties> _toolprops;
 };
 
 }

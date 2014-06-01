@@ -137,9 +137,7 @@ class MainWindow : public QMainWindow {
 		void resizeCanvas();
 		void markSpotForRecording();
 
-	signals:
-		//! This signal is emitted when the current tool is changed
-		void toolChanged(tools::Type);
+		void toolChanged(tools::Type tool);
 
 	protected:
 		//! Handle closing of the main window

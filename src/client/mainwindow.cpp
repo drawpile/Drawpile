@@ -54,6 +54,7 @@
 
 #include "utils/recentfiles.h"
 #include "utils/whatismyip.h"
+#include "utils/icon.h"
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
@@ -151,7 +152,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(pasteFile(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
 
-	connect(this, SIGNAL(toolChanged(tools::Type)), _view, SLOT(selectTool(tools::Type)));
+	connect(_dock_toolsettings, SIGNAL(toolChanged(tools::Type)), this, SLOT(toolChanged(tools::Type)));
 	
 	// Create the chatbox
 	_chatbox = new widgets::ChatBox(this);
@@ -502,29 +503,22 @@ void MainWindow::readSettings(bool windowpos)
 	}
 
 	cfg.endGroup();
-	cfg.beginGroup("tools");
-	// Remember last used tool
-	int tool = cfg.value("tool", 0).toInt();
-	QList<QAction*> actions = _drawingtools->actions();
-	if(tool<0 || tool>=actions.count()) tool=0;
-	actions[tool]->trigger();
-	_dock_toolsettings->setTool(tools::Type(tool));
 
-	// Remember cursor settings
+	// Restore tool settings
+	_dock_toolsettings->readSettings();
+
+	// Restore cursor settings
+	cfg.beginGroup("tools");
 	bool brushoutline = cfg.value("outline",true).toBool();
 	getAction("brushoutline")->setChecked(brushoutline);
 	_view->setOutline(brushoutline);
-
-	// Remember foreground and background colors
-	_dock_toolsettings->setForegroundColor(QColor(cfg.value("foreground", "black").toString()));
-	_dock_toolsettings->setBackgroundColor(QColor(cfg.value("background", "white").toString()));
 
 	cfg.endGroup();
 
 	// Customize shortcuts
 	loadShortcuts();
 
-	// Remember recent files
+	// Restore recent files
 	RecentFiles::initMenu(_recent);
 }
 
@@ -544,12 +538,10 @@ void MainWindow::writeSettings()
 	cfg.setValue("viewstate", _splitter->saveState());
 
 	cfg.endGroup();
+	qDebug("writeSettings");
+	_dock_toolsettings->saveSettings();
 	cfg.beginGroup("tools");
-	const int tool = _drawingtools->actions().indexOf(_drawingtools->checkedAction());
-	cfg.setValue("tool", tool);
 	cfg.setValue("outline", getAction("brushoutline")->isChecked());
-	cfg.setValue("foreground", _dock_toolsettings->foregroundColor().name());
-	cfg.setValue("background", _dock_toolsettings->backgroundColor().name());
 }
 
 /**
@@ -821,16 +813,16 @@ void MainWindow::setRecorderStatus(bool on)
 {
 	if(_dialog_playback) {
 		if(_dialog_playback->isPlaying()) {
-			_recorderstatus->setPixmap(QIcon::fromTheme("media-playback-start", QIcon(":icons/media-playback-start")).pixmap(16, 16));
+			_recorderstatus->setPixmap(icon::fromTheme("media-playback-start").pixmap(16, 16));
 			_recorderstatus->setToolTip("Playing back recording");
 		} else {
-			_recorderstatus->setPixmap(QIcon::fromTheme("media-playback-pause", QIcon(":icons/media-playback-pause")).pixmap(16, 16));
+			_recorderstatus->setPixmap(icon::fromTheme("media-playback-pause").pixmap(16, 16));
 			_recorderstatus->setToolTip("Playback paused");
 		}
 		_recorderstatus->show();
 	} else {
 		if(on) {
-			QIcon icon = QIcon::fromTheme("media-record", QIcon(":icons/media-record.png"));
+			QIcon icon = icon::fromTheme("media-record");
 			_recorderstatus->setPixmap(icon.pixmap(16, 16));
 			_recorderstatus->setToolTip("Recording session");
 			_recorderstatus->show();
@@ -852,7 +844,7 @@ void MainWindow::toggleRecording()
 		_recorder = 0;
 
 		recordAction->setText("Record...");
-		recordAction->setIcon(QIcon::fromTheme("media-record", QIcon(":/icons/media-record")));
+		recordAction->setIcon(icon::fromTheme("media-record"));
 		setRecorderStatus(false);
 		return;
 	}
@@ -891,7 +883,7 @@ void MainWindow::toggleRecording()
 			connect(_client, SIGNAL(messageReceived(protocol::MessagePtr)), _recorder, SLOT(recordMessage(protocol::MessagePtr)));
 
 			recordAction->setText("Stop recording");
-			recordAction->setIcon(QIcon::fromTheme("media-playback-stop"));
+			recordAction->setIcon(icon::fromTheme("media-playback-stop"));
 
 			QApplication::restoreOverrideCursor();
 			setRecorderStatus(true);
@@ -1174,7 +1166,7 @@ void MainWindow::updateLockWidget()
 {
 	bool locked = _client->isLocked() || _dock_layers->isCurrentLayerLocked();
 	if(locked) {
-		_lockstatus->setPixmap(QIcon::fromTheme("object-locked", QIcon(":icons/object-locked")).pixmap(16, 16));
+		_lockstatus->setPixmap(icon::fromTheme("object-locked").pixmap(16, 16));
 		_lockstatus->setToolTip(tr("Board is locked"));
 	} else {
 		_lockstatus->setPixmap(QPixmap());
@@ -1311,20 +1303,32 @@ void MainWindow::selectTool(QAction *tool)
 	if(idx<0)
 		return;
 
-	tools::Type type = tools::Type(idx);
-	_lasttool = tool;
+	qDebug("selectTool <QAction>");
+	_dock_toolsettings->setTool(tools::Type(idx));
+}
+
+/**
+ * @brief Handle tool change
+ * @param tool
+ */
+void MainWindow::toolChanged(tools::Type tool)
+{
+	QAction *toolaction = _drawingtools->actions().at(int(tool));
+	toolaction->setChecked(true);
+
+	_lasttool = toolaction;
 
 	// When using the annotation tool, highlight all text boxes
-	_canvas->showAnnotationBorders(type==tools::ANNOTATION);
+	_canvas->showAnnotationBorders(tool==tools::ANNOTATION);
 
 	// Send pointer updates when using the laser pointer (TODO checkbox)
-	_view->setPointerTracking(type==tools::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
+	_view->setPointerTracking(tool==tools::LASERPOINTER && _dock_toolsettings->getLaserPointerSettings()->pointerTracking());
 
 	// Remove selection when not using selection tool
-	if(type != tools::SELECTION)
+	if(tool != tools::SELECTION)
 		_canvas->setSelectionItem(0);
 
-	emit toolChanged(type);
+	_view->selectTool(tool);
 }
 
 /**
@@ -1537,7 +1541,7 @@ QAction *MainWindow::makeAction(const char *name, const char *icon, const QStrin
 	QAction *act;
 	QIcon qicon;
 	if(icon)
-		qicon = QIcon::fromTheme(icon, QIcon(QLatin1Literal(":icons/") + icon));
+		qicon = icon::fromTheme(icon);
 	act = new QAction(qicon, text, this);
 	if(name)
 		act->setObjectName(name);
@@ -1907,8 +1911,6 @@ void MainWindow::setupActions()
 	_drawingtools->addAction(annotationtool);
 	_drawingtools->addAction(lasertool);
 
-	connect(_drawingtools, SIGNAL(triggered(QAction*)), this, SLOT(selectTool(QAction*)));
-
 	QMenu *toolsmenu = menuBar()->addMenu(tr("&Tools"));
 	toolsmenu->addActions(_drawingtools->actions());
 	toolsmenu->addAction(markertool);
@@ -1962,6 +1964,24 @@ void MainWindow::setupActions()
 	helpmenu->addSeparator();
 	helpmenu->addAction(about);
 	helpmenu->addAction(aboutqt);
+
+	//
+	// Quick tool change slots
+	//
+	QActionGroup *toolslotactions = new QActionGroup(this);
+	for(int i=0;i<docks::ToolSettings::QUICK_SLOTS;++i) {
+		QAction *q = new QAction(QString("Tool slot #%1").arg(i+1), this);
+		q->setObjectName(QString("quicktoolslot-%1").arg(i));
+		q->setShortcut(QKeySequence(QString::number(i+1)));
+		q->setProperty("defaultshortcut", q->shortcut());
+		q->setProperty("toolslotidx", i);
+		_customizable_actions.append(q);
+		toolslotactions->addAction(q);
+		addAction(q);
+	}
+	connect(toolslotactions, &QActionGroup::triggered, [this](QAction *a) {
+		_dock_toolsettings->setToolSlot(a->property("toolslotidx").toInt());
+	});
 }
 
 void MainWindow::createDocks()
@@ -1970,7 +1990,6 @@ void MainWindow::createDocks()
 	_dock_toolsettings = new docks::ToolSettings(this);
 	_dock_toolsettings->setObjectName("ToolSettings");
 	_dock_toolsettings->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-	connect(this, SIGNAL(toolChanged(tools::Type)), _dock_toolsettings, SLOT(setTool(tools::Type)));
 	addDockWidget(Qt::RightDockWidgetArea, _dock_toolsettings);
 
 	// Create input settings

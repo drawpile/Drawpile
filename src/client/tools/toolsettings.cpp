@@ -16,11 +16,9 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QDebug>
-#include <QSettings>
-#include <QTimer>
 
 #include "toolsettings.h"
+#include "toolproperties.h"
 #include "docks/layerlistdock.h"
 #include "widgets/brushpreview.h"
 #include "widgets/colorbutton.h"
@@ -39,49 +37,49 @@ using widgets::ColorButton;
 #include "net/client.h"
 
 #include "utils/palette.h"
+#include "utils/icon.h"
 
 #include "core/annotation.h"
 #include "core/rasterop.h" // for blend modes
 
+#include <QTimer>
+
 namespace tools {
+
+namespace {
+	void populateBlendmodeBox(QComboBox *box) {
+		// note. blend mode 0 is reserved for the eraser
+		for(int b=1;b<paintcore::BLEND_MODES;++b) {
+			box->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
+		}
+	}
+}
 
 QWidget *ToolSettings::createUi(QWidget *parent)
 {
 	Q_ASSERT(_widget==0);
 	_widget = createUiWidget(parent);
-	restoreSettings();
 	return _widget;
 }
 
-void ToolSettings::saveSettings()
+ToolProperties ToolSettings::saveToolSettings()
 {
-	Q_ASSERT(_widget);
-	QSettings cfg;
-	cfg.beginGroup("tools");
-	cfg.beginGroup(_name);
-	saveToolSettings(cfg);
+	return ToolProperties();
 }
 
-void ToolSettings::restoreSettings()
+void ToolSettings::restoreToolSettings(const ToolProperties &)
 {
-	Q_ASSERT(_widget);
-	QSettings cfg;
-	cfg.beginGroup("tools");
-	cfg.beginGroup(_name);
-	restoreToolSettings(cfg);
 }
+
 
 PenSettings::PenSettings(QString name, QString title)
-	: ToolSettings(name, title), _ui(0)
+	: ToolSettings(name, title, icon::fromTheme("draw-freehand")), _ui(0)
 {
 }
 
 PenSettings::~PenSettings()
 {
-	if(_ui) {
-		saveSettings();
-		delete _ui;
-	}
+	delete _ui;
 }
 
 QWidget *PenSettings::createUiWidget(QWidget *parent)
@@ -90,47 +88,46 @@ QWidget *PenSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_PenSettings;
 	_ui->setupUi(widget);
 
-	// Populate blend mode combobox
-	// Blend mode 0 is reserved for the eraser
-	for(int b=1;b<paintcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
-	}
+	populateBlendmodeBox(_ui->blendmode);
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
 	return widget;
 }
 
-void PenSettings::restoreToolSettings(QSettings &cfg)
+void PenSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
+
+	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
 	_ui->preview->setIncremental(_ui->incremental->isChecked());
 
-	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->brushsize->setValue(cfg.intValue("size", 0));
 	_ui->preview->setSize(_ui->brushsize->value());
 
-	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
 	_ui->preview->setOpacity(_ui->brushopacity->value());
 
 	_ui->preview->setHardness(100);
 
-	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
 	_ui->preview->setSpacing(_ui->brushspacing->value());
 
-	_ui->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	_ui->pressuresize->setChecked(cfg.boolValue("pressuresize",false));
 	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
 
-	_ui->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	_ui->pressureopacity->setChecked(cfg.boolValue("pressureopacity",false));
 	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
 
-	_ui->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+	_ui->pressurecolor->setChecked(cfg.boolValue("pressurecolor",false));
 	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
 
 	_ui->preview->setSubpixel(false);
 }
 
-void PenSettings::saveToolSettings(QSettings &cfg)
+ToolProperties PenSettings::saveToolSettings()
 {
+	ToolProperties cfg;
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
 	cfg.setValue("incremental", _ui->incremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
@@ -139,6 +136,7 @@ void PenSettings::saveToolSettings(QSettings &cfg)
 	cfg.setValue("pressuresize", _ui->pressuresize->isChecked());
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
 	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
+	return cfg;
 }
 
 void PenSettings::setForeground(const QColor& color)
@@ -169,16 +167,13 @@ int PenSettings::getSize() const
 }
 
 EraserSettings::EraserSettings(QString name, QString title)
-	: ToolSettings(name,title), _ui(0)
+	: ToolSettings(name, title, icon::fromTheme("draw-eraser")), _ui(0)
 {
 }
 
 EraserSettings::~EraserSettings()
 {
-	if(_ui) {
-		saveSettings();
-		delete _ui;
-	}
+	delete _ui;
 }
 
 QWidget *EraserSettings::createUiWidget(QWidget *parent)
@@ -195,8 +190,9 @@ QWidget *EraserSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
-void EraserSettings::saveToolSettings(QSettings &cfg)
+ToolProperties EraserSettings::saveToolSettings()
 {
+	ToolProperties cfg;
 	cfg.setValue("size", _ui->brushsize->value());
 	cfg.setValue("opacity", _ui->brushopacity->value());
 	cfg.setValue("hardness", _ui->brushhardness->value());
@@ -206,34 +202,35 @@ void EraserSettings::saveToolSettings(QSettings &cfg)
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
 	cfg.setValue("hardedge", _ui->hardedge->isChecked());
 	cfg.setValue("incremental", _ui->incremental->isChecked());
+	return cfg;
 }
 
-void EraserSettings::restoreToolSettings(QSettings &cfg)
+void EraserSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->brushsize->setValue(cfg.intValue("size", 10));
 	_ui->preview->setSize(_ui->brushsize->value());
 
-	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
 	_ui->preview->setOpacity(_ui->brushopacity->value());
 
-	_ui->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	_ui->brushhardness->setValue(cfg.intValue("hardness", 50));
 	_ui->preview->setHardness(_ui->brushhardness->value());
 
-	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
 	_ui->preview->setSpacing(_ui->brushspacing->value());
 
-	_ui->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	_ui->pressuresize->setChecked(cfg.boolValue("pressuresize",false));
 	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
 
-	_ui->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	_ui->pressureopacity->setChecked(cfg.boolValue("pressureopacity",false));
 	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
 
-	_ui->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	_ui->pressurehardness->setChecked(cfg.boolValue("pressurehardness",false));
 	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
 
-	_ui->hardedge->setChecked(cfg.value("hardedge", false).toBool());
+	_ui->hardedge->setChecked(cfg.boolValue("hardedge", false));
 
-	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
 	_ui->preview->setIncremental(_ui->incremental->isChecked());
 }
 
@@ -266,16 +263,13 @@ int EraserSettings::getSize() const
 }
 
 BrushSettings::BrushSettings(QString name, QString title)
-	: ToolSettings(name,title), _ui(0)
+	: ToolSettings(name, title, icon::fromTheme("draw-brush")), _ui(0)
 {
 }
 
 BrushSettings::~BrushSettings()
 {
-	if(_ui) {
-		saveSettings();
-		delete _ui;
-	}
+	delete _ui;
 }
 
 QWidget *BrushSettings::createUiWidget(QWidget *parent)
@@ -283,11 +277,7 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	QWidget *widget = new QWidget(parent);
 	_ui = new Ui_BrushSettings;
 	_ui->setupUi(widget);
-
-	// Populate blend mode combobox
-	for(int b=1;b<paintcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
-	}
+	populateBlendmodeBox(_ui->blendmode);
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -295,8 +285,9 @@ QWidget *BrushSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
-void BrushSettings::saveToolSettings(QSettings &cfg)
+ToolProperties BrushSettings::saveToolSettings()
 {
+	ToolProperties cfg;
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
 	cfg.setValue("incremental", _ui->incremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
@@ -307,37 +298,38 @@ void BrushSettings::saveToolSettings(QSettings &cfg)
 	cfg.setValue("pressureopacity", _ui->pressureopacity->isChecked());
 	cfg.setValue("pressurehardness", _ui->pressurehardness->isChecked());
 	cfg.setValue("pressurecolor", _ui->pressurecolor->isChecked());
+	return cfg;
 }
 
-void BrushSettings::restoreToolSettings(QSettings &cfg)
+void BrushSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
 
-	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
 	_ui->preview->setIncremental(_ui->incremental->isChecked());
 
-	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->brushsize->setValue(cfg.intValue("size", 0));
 	_ui->preview->setSize(_ui->brushsize->value());
 
-	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
 	_ui->preview->setOpacity(_ui->brushopacity->value());
 
-	_ui->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	_ui->brushhardness->setValue(cfg.intValue("hardness", 50));
 	_ui->preview->setHardness(_ui->brushhardness->value());
 
-	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
 	_ui->preview->setSpacing(_ui->brushspacing->value());
 
-	_ui->pressuresize->setChecked(cfg.value("pressuresize",false).toBool());
+	_ui->pressuresize->setChecked(cfg.boolValue("pressuresize",false));
 	_ui->preview->setSizePressure(_ui->pressuresize->isChecked());
 
-	_ui->pressureopacity->setChecked(cfg.value("pressureopacity",false).toBool());
+	_ui->pressureopacity->setChecked(cfg.boolValue("pressureopacity",false));
 	_ui->preview->setOpacityPressure(_ui->pressureopacity->isChecked());
 
-	_ui->pressurehardness->setChecked(cfg.value("pressurehardness",false).toBool());
+	_ui->pressurehardness->setChecked(cfg.boolValue("pressurehardness",false));
 	_ui->preview->setHardnessPressure(_ui->pressurehardness->isChecked());
 
-	_ui->pressurecolor->setChecked(cfg.value("pressurecolor",false).toBool());
+	_ui->pressurecolor->setChecked(cfg.boolValue("pressurecolor",false));
 	_ui->preview->setColorPressure(_ui->pressurecolor->isChecked());
 
 	_ui->preview->setSubpixel(true);
@@ -387,16 +379,13 @@ const paintcore::Brush& BrushlessSettings::getBrush(bool swapcolors) const
 }
 
 LaserPointerSettings::LaserPointerSettings(const QString &name, const QString &title)
-	: QObject(), BrushlessSettings(name, title), _ui(0)
+	: QObject(), BrushlessSettings(name, title, icon::fromTheme("tool-laserpointer")), _ui(0)
 {
 }
 
 LaserPointerSettings::~LaserPointerSettings()
 {
-	if(_ui) {
-		saveSettings();
-		delete _ui;
-	}
+	delete _ui;
 }
 
 QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
@@ -410,8 +399,9 @@ QWidget *LaserPointerSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
-void LaserPointerSettings::saveToolSettings(QSettings &cfg)
+ToolProperties LaserPointerSettings::saveToolSettings()
 {
+	ToolProperties cfg;
 	cfg.setValue("tracking", _ui->trackpointer->isChecked());
 	cfg.setValue("persistence", _ui->persistence->value());
 
@@ -424,18 +414,20 @@ void LaserPointerSettings::saveToolSettings(QSettings &cfg)
 	else if(_ui->color3->isChecked())
 		color=3;
 	cfg.setValue("color", color);
+
+	return cfg;
 }
 
-void LaserPointerSettings::restoreToolSettings(QSettings &cfg)
+void LaserPointerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->trackpointer->setChecked(cfg.value("tracking", true).toBool());
-	_ui->persistence->setValue(cfg.value("persistence", 1).toInt());
+	_ui->trackpointer->setChecked(cfg.boolValue("tracking", true));
+	_ui->persistence->setValue(cfg.intValue("persistence", 1));
 
-	switch(cfg.value("color", 0).toInt()) {
+	switch(cfg.intValue("color", 0, 0, 3)) {
+	case 0: _ui->color0->setChecked(true); break;
 	case 1: _ui->color1->setChecked(true); break;
 	case 2: _ui->color2->setChecked(true); break;
 	case 3: _ui->color3->setChecked(true); break;
-	default: _ui->color0->setChecked(true); break;
 	}
 }
 
@@ -480,17 +472,14 @@ const paintcore::Brush& LaserPointerSettings::getBrush(bool swapcolors) const
 	return _dummybrush;
 }
 
-SimpleSettings::SimpleSettings(QString name, QString title, Type type, bool sp)
-	: ToolSettings(name,title), _ui(0), _type(type), _subpixel(sp)
+SimpleSettings::SimpleSettings(const QString &name, const QString &title, const QIcon &icon, Type type, bool sp)
+	: ToolSettings(name, title, icon), _ui(0), _type(type), _subpixel(sp)
 {
 }
 
 SimpleSettings::~SimpleSettings()
 {
-	if(_ui) {
-		saveSettings();
-		delete _ui;
-	}
+	delete _ui;
 }
 
 QWidget *SimpleSettings::createUiWidget(QWidget *parent)
@@ -499,10 +488,7 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 	_ui = new Ui_SimpleSettings;
 	_ui->setupUi(widget);
 
-	// Populate blend mode combobox
-	for(int b=1;b<paintcore::BLEND_MODES;++b) {
-		_ui->blendmode->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
-	}
+	populateBlendmodeBox(_ui->blendmode);
 
 	// Connect size change signal
 	parent->connect(_ui->brushsize, SIGNAL(valueChanged(int)), parent, SIGNAL(sizeChanged(int)));
@@ -518,11 +504,19 @@ QWidget *SimpleSettings::createUiWidget(QWidget *parent)
 
 	_ui->preview->setSubpixel(_subpixel);
 
+	if(!_subpixel) {
+		// If subpixel accuracy wasn't enabled, don't offer a chance to
+		// enable it.
+		_ui->hardedge->hide();
+		_ui->brushopts->addSpacing(_ui->hardedge->width());
+	}
+
 	return widget;
 }
 
-void SimpleSettings::saveToolSettings(QSettings &cfg)
+ToolProperties SimpleSettings::saveToolSettings()
 {
+	ToolProperties cfg;
 	cfg.setValue("blendmode", _ui->blendmode->currentIndex());
 	cfg.setValue("incremental", _ui->incremental->isChecked());
 	cfg.setValue("size", _ui->brushsize->value());
@@ -530,35 +524,29 @@ void SimpleSettings::saveToolSettings(QSettings &cfg)
 	cfg.setValue("hardness", _ui->brushhardness->value());
 	cfg.setValue("spacing", _ui->brushspacing->value());
 	cfg.setValue("hardedge", _ui->hardedge->isChecked());
+	return cfg;
 }
 
-void SimpleSettings::restoreToolSettings(QSettings &cfg)
+void SimpleSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_ui->blendmode->setCurrentIndex(cfg.value("blendmode", 0).toInt());
+	_ui->blendmode->setCurrentIndex(cfg.intValue("blendmode", 0));
 
-	_ui->incremental->setChecked(cfg.value("incremental", true).toBool());
+	_ui->incremental->setChecked(cfg.boolValue("incremental", true));
 	_ui->preview->setIncremental(_ui->incremental->isChecked());
 
-	_ui->brushsize->setValue(cfg.value("size", 0).toInt());
+	_ui->brushsize->setValue(cfg.intValue("size", 0));
 	_ui->preview->setSize(_ui->brushsize->value());
 
-	_ui->brushopacity->setValue(cfg.value("opacity", 100).toInt());
+	_ui->brushopacity->setValue(cfg.intValue("opacity", 100));
 	_ui->preview->setOpacity(_ui->brushopacity->value());
 
-	_ui->brushhardness->setValue(cfg.value("hardness", 50).toInt());
+	_ui->brushhardness->setValue(cfg.intValue("hardness", 50));
 	_ui->preview->setHardness(_ui->brushhardness->value());
 
-	_ui->brushspacing->setValue(cfg.value("spacing", 15).toInt());
+	_ui->brushspacing->setValue(cfg.intValue("spacing", 15));
 	_ui->preview->setSpacing(_ui->brushspacing->value());
 
-	_ui->hardedge->setChecked(cfg.value("hardedge", false).toBool());
-
-	if(!_subpixel) {
-		// If subpixel accuracy wasn't enabled, don't offer a chance to
-		// enable it.
-		_ui->hardedge->hide();
-		_ui->brushopts->addSpacing(_ui->hardedge->width());
-	}
+	_ui->hardedge->setChecked(cfg.boolValue("hardedge", false));
 }
 
 void SimpleSettings::setForeground(const QColor& color)
@@ -589,15 +577,13 @@ int SimpleSettings::getSize() const
 }
 
 ColorPickerSettings::ColorPickerSettings(const QString &name, const QString &title)
-	:  QObject(), BrushlessSettings(name, title), _layerpick(0)
+	:  QObject(), BrushlessSettings(name, title, icon::fromTheme("color-picker")), _layerpick(0)
 {
 	_palette.setColumns(8);
 }
 
 ColorPickerSettings::~ColorPickerSettings()
 {
-	if(getUi())
-		saveSettings();
 }
 
 QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
@@ -618,14 +604,16 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	return widget;
 }
 
-void ColorPickerSettings::saveToolSettings(QSettings &cfg)
+ToolProperties ColorPickerSettings::saveToolSettings()
 {
+	ToolProperties cfg;
 	cfg.setValue("layerpick", _layerpick->isChecked());
+	return cfg;
 }
 
-void ColorPickerSettings::restoreToolSettings(QSettings &cfg)
+void ColorPickerSettings::restoreToolSettings(const ToolProperties &cfg)
 {
-	_layerpick->setChecked(cfg.value("layerpick", false).toBool());
+	_layerpick->setChecked(cfg.boolValue("layerpick", false));
 }
 
 bool ColorPickerSettings::pickFromLayer() const
@@ -647,7 +635,7 @@ void ColorPickerSettings::addColor(const QColor &color)
 }
 
 AnnotationSettings::AnnotationSettings(QString name, QString title)
-	: QObject(), BrushlessSettings(name, title), _ui(0), _noupdate(false)
+	: QObject(), BrushlessSettings(name, title, icon::fromTheme("draw-text")), _ui(0), _noupdate(false)
 {
 }
 
@@ -831,7 +819,7 @@ void AnnotationSettings::bake()
 }
 
 SelectionSettings::SelectionSettings(const QString &name, const QString &title)
-	: BrushlessSettings(name,title), _ui(0)
+	: BrushlessSettings(name, title, icon::fromTheme("select-rectangular")), _ui(0)
 {
 }
 

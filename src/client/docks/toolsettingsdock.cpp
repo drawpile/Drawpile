@@ -20,16 +20,21 @@
 #include "docks/toolsettingsdock.h"
 #include "tools/toolsettings.h"
 #include "widgets/dualcolorbutton.h"
+#include "utils/icon.h"
 
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QFrame>
+#include <QToolButton>
+#include <QButtonGroup>
+#include <QSettings>
+
 #include <Color_Dialog>
 
 namespace docks {
 
 ToolSettings::ToolSettings(QWidget *parent)
-	: QDockWidget(parent)
+	: QDockWidget(parent), _currentQuickslot(0)
 {
 	QWidget *w = new QWidget(this);
 	setWidget(w);
@@ -53,13 +58,13 @@ ToolSettings::ToolSettings(QWidget *parent)
 	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color picker"));
 	_widgets->addWidget(_pickersettings->createUi(this));
 
-	_linesettings = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line, true);
+	_linesettings = new tools::SimpleSettings("line", tr("Line"), icon::fromTheme("draw-line"), tools::SimpleSettings::Line, true);
 	_widgets->addWidget(_linesettings->createUi(this));
 
-	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
+	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), icon::fromTheme("draw-rectangle"), tools::SimpleSettings::Rectangle, false);
 	_widgets->addWidget(_rectsettings->createUi(this));
 
-	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), tools::SimpleSettings::Ellipse, true);
+	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), icon::fromTheme("draw-ellipse"), tools::SimpleSettings::Ellipse, true);
 	_widgets->addWidget(_ellipsesettings->createUi(this));
 
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
@@ -109,6 +114,31 @@ ToolSettings::ToolSettings(QWidget *parent)
 	dlg_bgcolor->setAlphaEnabled(false);
 	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), this, SLOT(setBackgroundColor(QColor)));
 	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(showColor(QColor)));
+
+	// Create quick toolchange slot buttons
+	QButtonGroup *quickbuttons = new QButtonGroup(this);
+	quickbuttons->setExclusive(true);
+	for(int i=0;i<QUICK_SLOTS;++i) {
+		QToolButton *b = new QToolButton(w);
+
+		b->setCheckable(true);
+		b->setText(QString::number(i+1));
+		//b->setMinimumSize(32, 32);
+		b->setIconSize(QSize(22, 22));
+		b->setAutoRaise(true);
+
+		hlayout->addWidget(b);
+		quickbuttons->addButton(b, i);
+		_quickslot[i] = b;
+
+		updateToolSlot(i);
+	}
+
+	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
+
+	_toolprops.reserve(QUICK_SLOTS);
+	for(int i=0;i<QUICK_SLOTS;++i)
+		_toolprops.append(tools::ToolsetProperties());
 }
 
 ToolSettings::~ToolSettings()
@@ -125,36 +155,131 @@ ToolSettings::~ToolSettings()
 	delete _lasersettings;
 }
 
+void ToolSettings::readSettings()
+{
+	QSettings cfg;
+	cfg.beginGroup("tools");
+
+	setForegroundColor(QColor(cfg.value("foreground", "black").toString()));
+	setBackgroundColor(QColor(cfg.value("background", "white").toString()));
+
+	int quickslot = qBound(0, cfg.value("slot", 0).toInt(), QUICK_SLOTS-1);
+
+	_toolprops.clear();
+
+	for(int i=0;i<QUICK_SLOTS;++i) {
+		cfg.beginGroup(QString("slot-%1").arg(i));
+		_toolprops << tools::ToolsetProperties::load(cfg);
+		cfg.endGroup();
+	}
+
+	selectToolSlot(quickslot);
+}
+
+void ToolSettings::saveSettings()
+{
+	qDebug("ToolSettings::saveSettings");
+	QSettings cfg;
+	cfg.beginGroup("tools");
+
+	cfg.setValue("foreground", foregroundColor().name());
+	cfg.setValue("background", backgroundColor().name());
+	cfg.setValue("slot", _currentQuickslot);
+	cfg.setValue(QString("slot-%1/tool").arg(currentToolSlot()), _currentToolType);
+
+	saveCurrentTool();
+
+	for(int i=0;i<_toolprops.size();++i) {
+		cfg.beginGroup(QString("slot-%1").arg(i));
+		_toolprops[i].save(cfg);
+		cfg.endGroup();
+	}
+}
+
+tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
+{
+	switch(tool) {
+		case tools::PEN: return _pensettings; break;
+		case tools::BRUSH: return _brushsettings; break;
+		case tools::ERASER: return _erasersettings; break;
+		case tools::PICKER: return _pickersettings; break;
+		case tools::LINE: return _linesettings; break;
+		case tools::RECTANGLE: return _rectsettings; break;
+		case tools::ELLIPSE: return _ellipsesettings; break;
+		case tools::ANNOTATION: return _textsettings; break;
+		case tools::SELECTION: return _selectionsettings; break;
+		case tools::LASERPOINTER: return _lasersettings; break;
+	}
+
+	return nullptr;
+}
+
 /**
  * Set which tool setting widget is visible
  * @param tool tool identifier
  */
 void ToolSettings::setTool(tools::Type tool) {
-	switch(tool) {
-		case tools::PEN: _currenttool = _pensettings; break;
-		case tools::BRUSH: _currenttool = _brushsettings; break;
-		case tools::ERASER: _currenttool = _erasersettings; break;
-		case tools::PICKER: _currenttool = _pickersettings; break;
-		case tools::LINE: _currenttool = _linesettings; break;
-		case tools::RECTANGLE: _currenttool = _rectsettings; break;
-		case tools::ELLIPSE: _currenttool = _ellipsesettings; break;
-		case tools::ANNOTATION: _currenttool = _textsettings; break;
-		case tools::SELECTION: _currenttool = _selectionsettings; break;
-		case tools::LASERPOINTER: _currenttool = _lasersettings; break;
+	// Save old tool settings, then switch to the new tool
+	qDebug("settool: %d", tool);
+	saveCurrentTool();
+	selectTool(tool);
+}
+
+void ToolSettings::selectTool(tools::Type tool)
+{
+	tools::ToolSettings *ts = getToolSettingsPage(tool);
+	if(!ts) {
+		qWarning("selectTool: invalid tool %d", tool);
+		return;
 	}
+
+	_currenttool = ts;
 
 	// Deselect annotation on tool change
 	if(tool != tools::ANNOTATION) {
-		int a = getAnnotationSettings()->selected();
+		int a = _textsettings->selected();
 		if(a)
-			getAnnotationSettings()->setSelection(0);
+			_textsettings->setSelection(0);
 	}
 
 	setWindowTitle(_currenttool->getTitle());
 	_widgets->setCurrentWidget(_currenttool->getUi());
 	_currenttool->setForeground(foregroundColor());
 	_currenttool->setBackground(backgroundColor());
+	_currenttool->restoreToolSettings(_toolprops[currentToolSlot()].tool(_currenttool->getName()));
+	_currentToolType = tool;
+	QSettings().setValue(QString("tools/slot-%1/tool").arg(currentToolSlot()), tool);
+
+	updateToolSlot(currentToolSlot());
+	emit toolChanged(tool);
 	emit sizeChanged(_currenttool->getSize());
+}
+
+tools::Type ToolSettings::currentTool() const
+{
+	return _currentToolType;
+}
+
+void ToolSettings::setToolSlot(int i)
+{
+	Q_ASSERT(i>=0 && i<QUICK_SLOTS);
+	// Save old tool state, then switch to new slot (and tool)
+	saveCurrentTool();
+	selectToolSlot(i);
+}
+
+void ToolSettings::selectToolSlot(int i)
+{
+	_quickslot[i]->setChecked(true);
+	_currentQuickslot = i;
+
+	int tool = QSettings().value(QString("tools/slot-%1/tool").arg(i), 0).toInt();
+	selectTool(tools::Type(tool));
+}
+
+int ToolSettings::currentToolSlot() const
+{
+	return _currentQuickslot;
 }
 
 QColor ToolSettings::foregroundColor() const
@@ -194,6 +319,28 @@ void ToolSettings::quickAdjustCurrent1(float adjustment)
 const paintcore::Brush& ToolSettings::getBrush(bool swapcolors) const
 {
 	return _currenttool->getBrush(swapcolors);
+}
+
+/**
+ * @brief Update the tool slot button to match the stored tool settings
+ * @param i
+ */
+void ToolSettings::updateToolSlot(int i)
+{
+	int tool = QSettings().value(QString("tools/slot-%1/tool").arg(i), 0).toInt();
+	tools::ToolSettings *ts = getToolSettingsPage(tools::Type(tool));
+	if(!ts)
+		ts = getToolSettingsPage(tools::PEN);
+
+	_quickslot[i]->setIcon(ts->getIcon());
+	_quickslot[i]->setToolTip(QString("%1: %2").arg(i+1).arg(ts->getTitle()));
+}
+
+void ToolSettings::saveCurrentTool()
+{
+	Q_ASSERT(_toolprops.size() > currentToolSlot());
+	tools::ToolProperties tp = _currenttool->saveToolSettings();
+	_toolprops[currentToolSlot()].setTool(_currenttool->getName(), tp);
 }
 
 }

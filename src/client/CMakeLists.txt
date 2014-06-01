@@ -15,6 +15,7 @@ set (
 	loader.cpp
 	textloader.cpp
 	tools/toolsettings.cpp
+	tools/toolproperties.cpp
 	tools/tool.cpp
 	tools/utils.cpp
 	tools/annotation.cpp

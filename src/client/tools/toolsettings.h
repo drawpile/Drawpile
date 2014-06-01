@@ -20,6 +20,7 @@
 #define TOOLSETTINGS_H
 
 #include <QPointer>
+#include <QIcon>
 
 #include "core/brush.h"
 #include "scene/annotationitem.h"
@@ -32,7 +33,6 @@ class Ui_SimpleSettings;
 class Ui_TextSettings;
 class Ui_SelectionSettings;
 class Ui_LaserSettings;
-class QSettings;
 class QTimer;
 class QCheckBox;
 
@@ -48,6 +48,7 @@ namespace widgets {
 
 namespace tools {
 
+class ToolProperties;
 /**
  * @brief Abstract base class for tool settings
  *
@@ -57,8 +58,8 @@ namespace tools {
  */
 class ToolSettings {
 public:
-	ToolSettings(QString name,QString title)
-		: _name(name), _title(title), _widget(0) {}
+	ToolSettings(const QString &name, const QString &title, const QIcon &icon)
+		: _name(name), _title(title), _icon(icon), _widget(0) {}
 	virtual ~ToolSettings() = default;
 
 	/**
@@ -119,24 +120,28 @@ public:
 	 */
 	const QString& getTitle() const { return _title; }
 
+	//! Get the icon for this tool type
+	const QIcon getIcon() const { return _icon; }
+
 	/**
 	 * @brief Save the settings of this tool
+	 * @return saved tool settings
 	 */
-	void saveSettings();
+	virtual ToolProperties saveToolSettings();
 
 	/**
 	 * @brief Load settings for this tool
+	 * @param props
 	 */
-	void restoreSettings();
+	virtual void restoreToolSettings(const ToolProperties &);
 
 protected:
-	virtual QWidget *createUiWidget(QWidget *parent) = 0;
-	virtual void saveToolSettings(QSettings &) {}
-	virtual void restoreToolSettings(QSettings &) {}
+	virtual QWidget *createUiWidget(QWidget *parent) = 0;	
 
 private:
 	QString _name;
 	QString _title;
+	QIcon _icon;
 	QWidget *_widget;
 };
 
@@ -158,10 +163,11 @@ public:
 
 	int getSize() const;
 
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
-	virtual void saveToolSettings(QSettings &cfg);
-	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
 	Ui_PenSettings *_ui;
@@ -186,10 +192,11 @@ public:
 
 	int getSize() const;
 
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
-	virtual void saveToolSettings(QSettings &cfg);
-	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
 	Ui_EraserSettings *_ui;
@@ -212,10 +219,11 @@ public:
 
 	int getSize() const;
 
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
-	virtual void saveToolSettings(QSettings &cfg);
-	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
 	Ui_BrushSettings *_ui;
@@ -228,7 +236,7 @@ class SimpleSettings : public ToolSettings {
 public:
 	enum Type {Line, Rectangle, Ellipse};
 
-	SimpleSettings(QString name, QString title, Type type, bool sp);
+	SimpleSettings(const QString &name, const QString &title, const QIcon &icon, Type type, bool sp);
 	~SimpleSettings();
 
 	void setForeground(const QColor& color);
@@ -238,10 +246,11 @@ public:
 
 	int getSize() const;
 
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
-	virtual void saveToolSettings(QSettings &cfg);
-	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
 	Ui_SimpleSettings *_ui;
@@ -254,7 +263,7 @@ private:
  */
 class BrushlessSettings : public ToolSettings {
 public:
-	BrushlessSettings(QString name,QString title) : ToolSettings(name, title) {}
+	BrushlessSettings(const QString &name, const QString &title, const QIcon &icon) : ToolSettings(name, title, icon) {}
 
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 	void setForeground(const QColor& color);
@@ -337,6 +346,9 @@ public:
 	//! Pick color from current layer only?
 	bool pickFromLayer() const;
 
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
 public slots:
 	void addColor(const QColor &color);
 
@@ -345,8 +357,6 @@ signals:
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
-	virtual void saveToolSettings(QSettings &cfg);
-	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
 	Palette _palette;
@@ -379,13 +389,14 @@ public:
 	void quickAdjust1(float adjustment);
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
+	virtual ToolProperties saveToolSettings() override;
+	virtual void restoreToolSettings(const ToolProperties &cfg) override;
+
 signals:
 	void pointerTrackingToggled(bool);
 
 protected:
 	virtual QWidget *createUiWidget(QWidget *parent);
-	virtual void saveToolSettings(QSettings &cfg);
-	virtual void restoreToolSettings(QSettings &cfg);
 
 private:
 	Ui_LaserSettings * _ui;
