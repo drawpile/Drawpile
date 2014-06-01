@@ -64,9 +64,6 @@ public:
 	//! Get a brush with the current settings
 	const paintcore::Brush& getBrush(bool swapcolors) const;
 
-	//! Get the tool settings for the given tool type
-	tools::ToolSettings *getToolSettingsPage(tools::Type tool);
-
 	//! Get the annotation settings page
 	tools::AnnotationSettings *getAnnotationSettings() { return _textsettings; }
 
@@ -127,6 +124,8 @@ signals:
 	void toolChanged(tools::Type tool);
 
 private:
+	tools::ToolSettings *getToolSettingsPage(tools::Type tool);
+
 	void updateToolSlot(int i);
 	void selectTool(tools::Type tool);
 	void selectToolSlot(int i);
@@ -149,7 +148,6 @@ private:
 
 	QToolButton *_quickslot[QUICK_SLOTS];
 	int _currentQuickslot;
-	tools::Type _currentToolType;
 	QList<tools::ToolsetProperties> _toolprops;
 };
 

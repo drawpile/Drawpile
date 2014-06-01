@@ -36,6 +36,12 @@ namespace docks {
 ToolSettings::ToolSettings(QWidget *parent)
 	: QDockWidget(parent), _currentQuickslot(0)
 {
+	// Initialize tool slots
+	_toolprops.reserve(QUICK_SLOTS);
+	for(int i=0;i<QUICK_SLOTS;++i)
+		_toolprops.append(tools::ToolsetProperties());
+
+	// Initialize UI
 	QWidget *w = new QWidget(this);
 	setWidget(w);
 
@@ -93,12 +99,14 @@ ToolSettings::ToolSettings(QWidget *parent)
 
 	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
 		_currenttool->setForeground(c);
+		_toolprops[_currentQuickslot].setForegroundColor(c);
+		emit foregroundColorChanged(c);
 	});
 	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
 		_currenttool->setBackground(c);
+		_toolprops[_currentQuickslot].setBackgroundColor(c);
+		emit backgroundColorChanged(c);
 	});
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), this, SIGNAL(foregroundColorChanged(QColor)));
-	connect(_fgbgcolor, SIGNAL(backgroundChanged(QColor)), this, SIGNAL(backgroundColorChanged(QColor)));
 
 	connect(_pickersettings, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
 
@@ -130,15 +138,9 @@ ToolSettings::ToolSettings(QWidget *parent)
 		hlayout->addWidget(b);
 		quickbuttons->addButton(b, i);
 		_quickslot[i] = b;
-
-		updateToolSlot(i);
 	}
 
 	connect(quickbuttons, SIGNAL(buttonClicked(int)), this, SLOT(setToolSlot(int)));
-
-	_toolprops.reserve(QUICK_SLOTS);
-	for(int i=0;i<QUICK_SLOTS;++i)
-		_toolprops.append(tools::ToolsetProperties());
 }
 
 ToolSettings::~ToolSettings()
@@ -160,9 +162,6 @@ void ToolSettings::readSettings()
 	QSettings cfg;
 	cfg.beginGroup("tools");
 
-	setForegroundColor(QColor(cfg.value("foreground", "black").toString()));
-	setBackgroundColor(QColor(cfg.value("background", "white").toString()));
-
 	int quickslot = qBound(0, cfg.value("slot", 0).toInt(), QUICK_SLOTS-1);
 
 	_toolprops.clear();
@@ -171,6 +170,7 @@ void ToolSettings::readSettings()
 		cfg.beginGroup(QString("slot-%1").arg(i));
 		_toolprops << tools::ToolsetProperties::load(cfg);
 		cfg.endGroup();
+		updateToolSlot(i);
 	}
 
 	selectToolSlot(quickslot);
@@ -182,10 +182,7 @@ void ToolSettings::saveSettings()
 	QSettings cfg;
 	cfg.beginGroup("tools");
 
-	cfg.setValue("foreground", foregroundColor().name());
-	cfg.setValue("background", backgroundColor().name());
 	cfg.setValue("slot", _currentQuickslot);
-	cfg.setValue(QString("slot-%1/tool").arg(currentToolSlot()), _currentToolType);
 
 	saveCurrentTool();
 
@@ -247,8 +244,7 @@ void ToolSettings::selectTool(tools::Type tool)
 	_currenttool->setForeground(foregroundColor());
 	_currenttool->setBackground(backgroundColor());
 	_currenttool->restoreToolSettings(_toolprops[currentToolSlot()].tool(_currenttool->getName()));
-	_currentToolType = tool;
-	QSettings().setValue(QString("tools/slot-%1/tool").arg(currentToolSlot()), tool);
+	_toolprops[_currentQuickslot].setCurrentTool(tool);
 
 	updateToolSlot(currentToolSlot());
 	emit toolChanged(tool);
@@ -257,7 +253,7 @@ void ToolSettings::selectTool(tools::Type tool)
 
 tools::Type ToolSettings::currentTool() const
 {
-	return _currentToolType;
+	return tools::Type(_toolprops[_currentQuickslot].currentTool());
 }
 
 void ToolSettings::setToolSlot(int i)
@@ -273,8 +269,10 @@ void ToolSettings::selectToolSlot(int i)
 	_quickslot[i]->setChecked(true);
 	_currentQuickslot = i;
 
-	int tool = QSettings().value(QString("tools/slot-%1/tool").arg(i), 0).toInt();
-	selectTool(tools::Type(tool));
+	setForegroundColor(_toolprops[i].foregroundColor());
+	setBackgroundColor(_toolprops[i].backgroundColor());
+
+	selectTool(tools::Type(_toolprops[i].currentTool()));
 }
 
 int ToolSettings::currentToolSlot() const
@@ -327,7 +325,7 @@ const paintcore::Brush& ToolSettings::getBrush(bool swapcolors) const
  */
 void ToolSettings::updateToolSlot(int i)
 {
-	int tool = QSettings().value(QString("tools/slot-%1/tool").arg(i), 0).toInt();
+	int tool = _toolprops[i].currentTool();
 	tools::ToolSettings *ts = getToolSettingsPage(tools::Type(tool));
 	if(!ts)
 		ts = getToolSettingsPage(tools::PEN);
