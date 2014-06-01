@@ -538,7 +538,6 @@ void MainWindow::writeSettings()
 	cfg.setValue("viewstate", _splitter->saveState());
 
 	cfg.endGroup();
-	qDebug("writeSettings");
 	_dock_toolsettings->saveSettings();
 	cfg.beginGroup("tools");
 	cfg.setValue("outline", getAction("brushoutline")->isChecked());
@@ -1303,7 +1302,6 @@ void MainWindow::selectTool(QAction *tool)
 	if(idx<0)
 		return;
 
-	qDebug("selectTool <QAction>");
 	_dock_toolsettings->setTool(tools::Type(idx));
 }
 

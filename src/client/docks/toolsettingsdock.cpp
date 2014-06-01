@@ -178,7 +178,6 @@ void ToolSettings::readSettings()
 
 void ToolSettings::saveSettings()
 {
-	qDebug("ToolSettings::saveSettings");
 	QSettings cfg;
 	cfg.beginGroup("tools");
 
@@ -217,7 +216,6 @@ tools::ToolSettings *ToolSettings::getToolSettingsPage(tools::Type tool)
  */
 void ToolSettings::setTool(tools::Type tool) {
 	// Save old tool settings, then switch to the new tool
-	qDebug("settool: %d", tool);
 	saveCurrentTool();
 	selectTool(tool);
 }
