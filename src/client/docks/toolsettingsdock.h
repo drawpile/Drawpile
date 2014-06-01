@@ -25,7 +25,6 @@
 #include <QDockWidget>
 
 class QStackedWidget;
-class QToolButton;
 
 namespace tools {
 	class ToolSettings;
@@ -40,6 +39,7 @@ namespace paintcore {
 
 namespace widgets {
 	class DualColorButton;
+	class ToolSlotButton;
 }
 
 namespace docks {
@@ -146,7 +146,7 @@ private:
 	QStackedWidget *_widgets;
 	widgets::DualColorButton *_fgbgcolor;
 
-	QToolButton *_quickslot[QUICK_SLOTS];
+	widgets::ToolSlotButton *_quickslot[QUICK_SLOTS];
 	int _currentQuickslot;
 	QList<tools::ToolsetProperties> _toolprops;
 };

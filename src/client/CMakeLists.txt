@@ -87,6 +87,7 @@ set (
 	widgets/colorbutton.cpp 
 	widgets/imageselector.cpp
 	widgets/brushpreview.cpp
+	widgets/toolslotbutton.cpp
 	docks/toolsettingsdock.cpp 
 	docks/palettebox.cpp 
 	docks/navigator.cpp 

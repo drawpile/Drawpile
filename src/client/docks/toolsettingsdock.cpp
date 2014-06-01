@@ -20,12 +20,12 @@
 #include "docks/toolsettingsdock.h"
 #include "tools/toolsettings.h"
 #include "widgets/dualcolorbutton.h"
+#include "widgets/toolslotbutton.h"
 #include "utils/icon.h"
 
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QFrame>
-#include <QToolButton>
 #include <QButtonGroup>
 #include <QSettings>
 
@@ -100,11 +100,13 @@ ToolSettings::ToolSettings(QWidget *parent)
 	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
 		_currenttool->setForeground(c);
 		_toolprops[_currentQuickslot].setForegroundColor(c);
+		updateToolSlot(_currentQuickslot);
 		emit foregroundColorChanged(c);
 	});
 	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
 		_currenttool->setBackground(c);
 		_toolprops[_currentQuickslot].setBackgroundColor(c);
+		updateToolSlot(_currentQuickslot);
 		emit backgroundColorChanged(c);
 	});
 
@@ -127,12 +129,13 @@ ToolSettings::ToolSettings(QWidget *parent)
 	QButtonGroup *quickbuttons = new QButtonGroup(this);
 	quickbuttons->setExclusive(true);
 	for(int i=0;i<QUICK_SLOTS;++i) {
-		QToolButton *b = new QToolButton(w);
+		auto *b = new widgets::ToolSlotButton(w);
 
 		b->setCheckable(true);
 		b->setText(QString::number(i+1));
-		//b->setMinimumSize(32, 32);
-		b->setIconSize(QSize(22, 22));
+		b->setMinimumSize(22, 48);
+		b->setToolTip(tr("Tool slot #%1").arg(i+1));
+		//b->setIconSize(QSize(22, 22));
 		b->setAutoRaise(true);
 
 		hlayout->addWidget(b);
@@ -329,7 +332,7 @@ void ToolSettings::updateToolSlot(int i)
 		ts = getToolSettingsPage(tools::PEN);
 
 	_quickslot[i]->setIcon(ts->getIcon());
-	_quickslot[i]->setToolTip(QString("%1: %2").arg(i+1).arg(ts->getTitle()));
+	_quickslot[i]->setColors(_toolprops[i].foregroundColor(), _toolprops[i].backgroundColor());
 }
 
 void ToolSettings::saveCurrentTool()
