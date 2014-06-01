@@ -102,7 +102,7 @@ ToolsetProperties ToolsetProperties::load(QSettings &cfg)
 	// Load common settings
 	tp._foreground = QColor(cfg.value("foreground", "black").toString());
 	tp._background = QColor(cfg.value("background", "white").toString());
-	tp._currentTool = cfg.value("tool", 0).toInt();
+	tp._currentTool = cfg.value("tool", 1).toInt();
 
 	return tp;
 }
