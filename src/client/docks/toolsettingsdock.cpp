@@ -17,63 +17,111 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QStackedWidget>
-
 #include "docks/toolsettingsdock.h"
 #include "tools/toolsettings.h"
+#include "widgets/dualcolorbutton.h"
+
+#include <QStackedWidget>
+#include <QVBoxLayout>
+#include <QFrame>
+#include <Color_Dialog>
 
 namespace docks {
 
 ToolSettings::ToolSettings(QWidget *parent)
 	: QDockWidget(parent)
 {
+	QWidget *w = new QWidget(this);
+	setWidget(w);
+
+	auto *layout = new QVBoxLayout(w);
+
 	// Create a widget stack
-	widgets_ = new QStackedWidget(this);
-	setWidget(widgets_);
+	_widgets = new QStackedWidget(this);
+	layout->addWidget(_widgets, 1);
 
-	pensettings_ = new tools::PenSettings("pen", tr("Pen"));
-	widgets_->addWidget(pensettings_->createUi(this));
+	_pensettings = new tools::PenSettings("pen", tr("Pen"));
+	_widgets->addWidget(_pensettings->createUi(this));
 
-	brushsettings_ = new tools::BrushSettings("brush", tr("Brush"));
-	widgets_->addWidget(brushsettings_->createUi(this));
-	currenttool_ = brushsettings_;
+	_brushsettings = new tools::BrushSettings("brush", tr("Brush"));
+	_widgets->addWidget(_brushsettings->createUi(this));
+	_currenttool = _brushsettings;
 
-	erasersettings_ = new tools::EraserSettings("eraser", tr("Eraser"));
-	widgets_->addWidget(erasersettings_->createUi(this));
+	_erasersettings = new tools::EraserSettings("eraser", tr("Eraser"));
+	_widgets->addWidget(_erasersettings->createUi(this));
 
 	_pickersettings = new tools::ColorPickerSettings("picker", tr("Color picker"));
-	widgets_->addWidget(_pickersettings->createUi(this));
+	_widgets->addWidget(_pickersettings->createUi(this));
 
-	linesettings_ = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line, true);
-	widgets_->addWidget(linesettings_->createUi(this));
+	_linesettings = new tools::SimpleSettings("line", tr("Line"), tools::SimpleSettings::Line, true);
+	_widgets->addWidget(_linesettings->createUi(this));
 
-	rectsettings_ = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
-	widgets_->addWidget(rectsettings_->createUi(this));
+	_rectsettings = new tools::SimpleSettings("rectangle", tr("Rectangle"), tools::SimpleSettings::Rectangle, false);
+	_widgets->addWidget(_rectsettings->createUi(this));
 
 	_ellipsesettings = new tools::SimpleSettings("ellipse", tr("Ellipse"), tools::SimpleSettings::Ellipse, true);
-	widgets_->addWidget(_ellipsesettings->createUi(this));
+	_widgets->addWidget(_ellipsesettings->createUi(this));
 
 	_textsettings = new tools::AnnotationSettings("annotation", tr("Annotation"));
-	widgets_->addWidget(_textsettings->createUi(this));
+	_widgets->addWidget(_textsettings->createUi(this));
 
-	selectionsettings_ = new tools::SelectionSettings("selection", tr("Selection"));
-	widgets_->addWidget(selectionsettings_->createUi(this));
+	_selectionsettings = new tools::SelectionSettings("selection", tr("Selection"));
+	_widgets->addWidget(_selectionsettings->createUi(this));
 
 	_lasersettings = new tools::LaserPointerSettings("laser", tr("Laser pointer"));
-	widgets_->addWidget(_lasersettings->createUi(this));
+	_widgets->addWidget(_lasersettings->createUi(this));
+
+	// Create foreground/background color changing widget
+	QFrame *separator = new QFrame(w);
+	separator->setFrameShape(QFrame::HLine);
+	separator->setFrameShadow(QFrame::Sunken);
+	layout->addWidget(separator);
+
+	auto *hlayout = new QHBoxLayout;
+	hlayout->setMargin(3);
+	layout->addLayout(hlayout);
+
+	_fgbgcolor = new widgets::DualColorButton(w);
+	_fgbgcolor->setMinimumSize(48,48);
+	hlayout->addWidget(_fgbgcolor);
+	hlayout->addSpacerItem(new QSpacerItem(10, 5, QSizePolicy::Expanding));
+
+	connect(_fgbgcolor, &widgets::DualColorButton::foregroundChanged, [this](const QColor &c){
+		_currenttool->setForeground(c);
+	});
+	connect(_fgbgcolor, &widgets::DualColorButton::backgroundChanged, [this](const QColor &c){
+		_currenttool->setBackground(c);
+	});
+	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), this, SIGNAL(foregroundColorChanged(QColor)));
+	connect(_fgbgcolor, SIGNAL(backgroundChanged(QColor)), this, SIGNAL(backgroundColorChanged(QColor)));
+
+	connect(_pickersettings, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
+
+	// Create color changer dialogs
+	auto dlg_fgcolor = new Color_Dialog(this);
+	dlg_fgcolor->setAlphaEnabled(false);
+	dlg_fgcolor->setWindowTitle(tr("Foreground color"));
+	connect(dlg_fgcolor, SIGNAL(colorSelected(QColor)), this, SLOT(setForegroundColor(QColor)));
+	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), dlg_fgcolor, SLOT(showColor(QColor)));
+
+	auto dlg_bgcolor = new Color_Dialog(this);
+	dlg_bgcolor->setWindowTitle(tr("Background color"));
+	dlg_bgcolor->setAlphaEnabled(false);
+	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), this, SLOT(setBackgroundColor(QColor)));
+	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(showColor(QColor)));
 }
 
 ToolSettings::~ToolSettings()
 {
-	delete pensettings_,
-	delete brushsettings_,
-	delete erasersettings_,
+	delete _pensettings,
+	delete _brushsettings,
+	delete _erasersettings,
 	delete _pickersettings,
-	delete linesettings_,
-	delete rectsettings_;
+	delete _linesettings,
+	delete _rectsettings;
 	delete _ellipsesettings;
 	delete _textsettings;
-	delete selectionsettings_;
+	delete _selectionsettings;
 	delete _lasersettings;
 }
 
@@ -83,16 +131,16 @@ ToolSettings::~ToolSettings()
  */
 void ToolSettings::setTool(tools::Type tool) {
 	switch(tool) {
-		case tools::PEN: currenttool_ = pensettings_; break;
-		case tools::BRUSH: currenttool_ = brushsettings_; break;
-		case tools::ERASER: currenttool_ = erasersettings_; break;
-		case tools::PICKER: currenttool_ = _pickersettings; break;
-		case tools::LINE: currenttool_ = linesettings_; break;
-		case tools::RECTANGLE: currenttool_ = rectsettings_; break;
-		case tools::ELLIPSE: currenttool_ = _ellipsesettings; break;
-		case tools::ANNOTATION: currenttool_ = _textsettings; break;
-		case tools::SELECTION: currenttool_ = selectionsettings_; break;
-		case tools::LASERPOINTER: currenttool_ = _lasersettings; break;
+		case tools::PEN: _currenttool = _pensettings; break;
+		case tools::BRUSH: _currenttool = _brushsettings; break;
+		case tools::ERASER: _currenttool = _erasersettings; break;
+		case tools::PICKER: _currenttool = _pickersettings; break;
+		case tools::LINE: _currenttool = _linesettings; break;
+		case tools::RECTANGLE: _currenttool = _rectsettings; break;
+		case tools::ELLIPSE: _currenttool = _ellipsesettings; break;
+		case tools::ANNOTATION: _currenttool = _textsettings; break;
+		case tools::SELECTION: _currenttool = _selectionsettings; break;
+		case tools::LASERPOINTER: _currenttool = _lasersettings; break;
 	}
 
 	// Deselect annotation on tool change
@@ -102,28 +150,41 @@ void ToolSettings::setTool(tools::Type tool) {
 			getAnnotationSettings()->setSelection(0);
 	}
 
-	setWindowTitle(currenttool_->getTitle());
-	widgets_->setCurrentWidget(currenttool_->getUi());
-	currenttool_->setForeground(fgcolor_);
-	currenttool_->setBackground(bgcolor_);
-	emit sizeChanged(currenttool_->getSize());
+	setWindowTitle(_currenttool->getTitle());
+	_widgets->setCurrentWidget(_currenttool->getUi());
+	_currenttool->setForeground(foregroundColor());
+	_currenttool->setBackground(backgroundColor());
+	emit sizeChanged(_currenttool->getSize());
 }
 
-void ToolSettings::setForeground(const QColor& color)
+QColor ToolSettings::foregroundColor() const
 {
-	fgcolor_ = color;
-	currenttool_->setForeground(color);
+	return _fgbgcolor->foreground();
 }
 
-void ToolSettings::setBackground(const QColor& color)
+void ToolSettings::setForegroundColor(const QColor& color)
 {
-	bgcolor_ = color;
-	currenttool_->setBackground(color);
+	_fgbgcolor->setForeground(color);
+}
+
+QColor ToolSettings::backgroundColor() const
+{
+	return _fgbgcolor->background();
+}
+
+void ToolSettings::setBackgroundColor(const QColor& color)
+{
+	_fgbgcolor->setBackground(color);
+}
+
+void ToolSettings::swapForegroundBackground()
+{
+	_fgbgcolor->swapColors();
 }
 
 void ToolSettings::quickAdjustCurrent1(float adjustment)
 {
-	currenttool_->quickAdjust1(adjustment);
+	_currenttool->quickAdjust1(adjustment);
 }
 
 /**
@@ -132,7 +193,7 @@ void ToolSettings::quickAdjustCurrent1(float adjustment)
  */
 const paintcore::Brush& ToolSettings::getBrush(bool swapcolors) const
 {
-	return currenttool_->getBrush(swapcolors);
+	return _currenttool->getBrush(swapcolors);
 }
 
 }

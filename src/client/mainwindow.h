@@ -32,7 +32,6 @@ class QTimer;
 
 namespace widgets {
 	class CanvasView;
-	class DualColorButton;
 	class NetStatus;
 	class ChatBox;
 }
@@ -190,7 +189,6 @@ class MainWindow : public QMainWindow {
 		docks::Navigator *_dock_navigator;
 		widgets::ChatBox *_chatbox;
 
-		widgets::DualColorButton *_fgbgcolor;
 		widgets::CanvasView *_view;
 
 		QLabel *_lockstatus;

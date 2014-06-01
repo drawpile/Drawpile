@@ -129,6 +129,8 @@ void DualColorButton::paintEvent(QPaintEvent *event)
 
 	QPen normal = palette().color(QPalette::Mid);
 	QPen hilite = palette().color(QPalette::Light);
+	normal.setCosmetic(true);
+	hilite.setCosmetic(true);
 
 	painter.setRenderHint(QPainter::Antialiasing);
 
@@ -171,7 +173,7 @@ void DualColorButton::paintEvent(QPaintEvent *event)
 	painter.scale(scale, scale);
 	painter.setPen(hilite_==3 ? hilite : normal);
 	painter.setBrush(palette().dark());
-	painter.drawConvexPolygon(arrows, 12);
+	painter.drawPolygon(arrows, 12);
 
 }
 

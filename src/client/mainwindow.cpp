@@ -36,8 +36,6 @@
 #include <QSplitter>
 #include <QClipboard>
 
-#include <Color_Dialog>
-
 #ifndef NDEBUG
 #include <QTimer>
 #include "core/tile.h"
@@ -59,7 +57,6 @@
 
 #include "widgets/viewstatus.h"
 #include "widgets/netstatus.h"
-#include "widgets/dualcolorbutton.h"
 #include "widgets/chatwidget.h"
 
 #include "docks/toolsettingsdock.h"
@@ -149,6 +146,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	_splitter->setCollapsible(0, false);
 
 	connect(_dock_toolsettings, SIGNAL(sizeChanged(int)), _view, SLOT(setOutlineRadius(int)));
+	connect(_view, SIGNAL(colorDropped(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 	connect(_view, SIGNAL(imageDropped(QImage)), this, SLOT(pasteImage(QImage)));
 	connect(_view, SIGNAL(urlDropped(QUrl)), this, SLOT(pasteFile(QUrl)));
 	connect(_view, SIGNAL(viewTransformed(qreal, qreal)), viewstatus, SLOT(setTransformation(qreal, qreal)));
@@ -175,6 +173,20 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, SIGNAL(myLayerCreated(int)), _dock_layers, SLOT(selectLayer(int)));
 	connect(_canvas, SIGNAL(annotationDeleted(int)), _dock_toolsettings->getAnnotationSettings(), SLOT(unselect(int)));
 	connect(_canvas, &drawingboard::CanvasScene::canvasModified, [this]() { setWindowModified(true); });
+	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
+		if(bg)
+			_dock_toolsettings->setBackgroundColor(c);
+		else
+			_dock_toolsettings->setForegroundColor(c);
+	});
+
+	// Color docks
+	connect(_dock_palette, SIGNAL(colorSelected(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
+
+	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_rgb, SLOT(setColor(QColor)));
+	connect(_dock_toolsettings, SIGNAL(foregroundColorChanged(QColor)), _dock_hsv, SLOT(setColor(QColor)));
+	connect(_dock_rgb, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
+	connect(_dock_hsv, SIGNAL(colorChanged(QColor)), _dock_toolsettings, SLOT(setForegroundColor(QColor)));
 
 	// Navigator <-> View
 	connect(_dock_navigator, SIGNAL(focusMoved(const QPoint&)),
@@ -504,8 +516,8 @@ void MainWindow::readSettings(bool windowpos)
 	_view->setOutline(brushoutline);
 
 	// Remember foreground and background colors
-	_fgbgcolor->setForeground(QColor(cfg.value("foreground", "black").toString()));
-	_fgbgcolor->setBackground(QColor(cfg.value("background", "white").toString()));
+	_dock_toolsettings->setForegroundColor(QColor(cfg.value("foreground", "black").toString()));
+	_dock_toolsettings->setBackgroundColor(QColor(cfg.value("background", "white").toString()));
 
 	cfg.endGroup();
 
@@ -536,8 +548,8 @@ void MainWindow::writeSettings()
 	const int tool = _drawingtools->actions().indexOf(_drawingtools->checkedAction());
 	cfg.setValue("tool", tool);
 	cfg.setValue("outline", getAction("brushoutline")->isChecked());
-	cfg.setValue("foreground", _fgbgcolor->foreground().name());
-	cfg.setValue("background", _fgbgcolor->background().name());
+	cfg.setValue("foreground", _dock_toolsettings->foregroundColor().name());
+	cfg.setValue("background", _dock_toolsettings->backgroundColor().name());
 }
 
 /**
@@ -611,7 +623,7 @@ void MainWindow::showNew()
 		loadDocument(bcl);
 	});
 
-	dlg->setBackground(_fgbgcolor->background());
+	dlg->setBackground(_dock_toolsettings->backgroundColor());
 	dlg->show();
 }
 
@@ -1436,12 +1448,12 @@ void MainWindow::clearArea()
 
 void MainWindow::fillFgArea()
 {
-	fillArea(_fgbgcolor->foreground());
+	fillArea(_dock_toolsettings->foregroundColor());
 }
 
 void MainWindow::fillBgArea()
 {
-	fillArea(_fgbgcolor->background());
+	fillArea(_dock_toolsettings->backgroundColor());
 }
 
 void MainWindow::fillArea(const QColor &color)
@@ -1927,45 +1939,9 @@ void MainWindow::setupActions()
 	drawtools->addAction(rotateorig);
 	drawtools->addSeparator();
 
-	// Create color button for drawing tool bar
-	_fgbgcolor = new widgets::DualColorButton(drawtools);
-
-	connect(swapcolors, SIGNAL(triggered()), _fgbgcolor, SLOT(swapColors()));
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(const QColor&)), _dock_toolsettings, SLOT(setForeground(const QColor&)));
-	connect(_fgbgcolor, SIGNAL(backgroundChanged(const QColor&)), _dock_toolsettings, SLOT(setBackground(const QColor&)));
-	connect(_view, SIGNAL(colorDropped(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_dock_toolsettings->getColorPickerSettings(), SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-
-	connect(_canvas, &drawingboard::CanvasScene::colorPicked, [this](const QColor &c, bool bg) {
-		if(bg)
-			_fgbgcolor->setBackground(c);
-		else
-			_fgbgcolor->setForeground(c);
-	});
-
-	connect(_dock_palette, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), _dock_rgb, SLOT(setColor(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundChanged(QColor)), _dock_hsv, SLOT(setColor(QColor)));
-
-	connect(_dock_rgb, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_dock_hsv, SIGNAL(colorChanged(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-
-	// Create color changer dialogs
-	auto dlg_fgcolor = new Color_Dialog(this);
-	dlg_fgcolor->setAlphaEnabled(false);
-	dlg_fgcolor->setWindowTitle(tr("Foreground color"));
-	connect(dlg_fgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setForeground(QColor)));
-	connect(_fgbgcolor, SIGNAL(foregroundClicked(QColor)), dlg_fgcolor, SLOT(showColor(QColor)));
-
-	auto dlg_bgcolor = new Color_Dialog(this);
-	dlg_bgcolor->setWindowTitle(tr("Background color"));
-	dlg_bgcolor->setAlphaEnabled(false);
-	connect(dlg_bgcolor, SIGNAL(colorSelected(QColor)), _fgbgcolor, SLOT(setBackground(QColor)));
-	connect(_fgbgcolor, SIGNAL(backgroundClicked(QColor)), dlg_bgcolor, SLOT(showColor(QColor)));
-
-	drawtools->addWidget(_fgbgcolor);
-
 	addToolBar(Qt::TopToolBarArea, drawtools);
+
+	connect(swapcolors, SIGNAL(triggered()), _dock_toolsettings, SLOT(swapForegroundBackground()));
 
 	//
 	// Help menu
