@@ -271,7 +271,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	setRecorderStatus(false);
 
 	// Handle eraser event
-	connect(qApp, SIGNAL(eraserNear(bool)), this, SLOT(eraserNear(bool)));
+	connect(qApp, SIGNAL(eraserNear(bool)), _dock_toolsettings, SLOT(eraserNear(bool)));
 
 	// Show self
 	show();
@@ -1230,9 +1230,7 @@ void MainWindow::setShowAnnotations(bool show)
 	if(!show) {
 		if(annotationtool->isChecked())
 			getAction("toolbrush")->trigger();
-		// lasttool might be erasertool when tablet is brought near
-		if(_lasttool == annotationtool)
-			_lasttool = getAction("toolbrush");
+		_dock_toolsettings->disableEraserOverride(tools::ANNOTATION);
 	}
 }
 
@@ -1244,9 +1242,7 @@ void MainWindow::setShowLaserTrails(bool show)
 	if(!show) {
 		if(lasertool->isChecked())
 			getAction("toolbrush")->trigger();
-		// lasttool might be erasertool when tablet is brought near
-		if(_lasttool == lasertool)
-			_lasttool = getAction("toolbrush");
+		_dock_toolsettings->disableEraserOverride(tools::LASERPOINTER);
 	}
 }
 
@@ -1314,8 +1310,6 @@ void MainWindow::toolChanged(tools::Type tool)
 	QAction *toolaction = _drawingtools->actions().at(int(tool));
 	toolaction->setChecked(true);
 
-	_lasttool = toolaction;
-
 	// When using the annotation tool, highlight all text boxes
 	_canvas->showAnnotationBorders(tool==tools::ANNOTATION);
 
@@ -1327,22 +1321,6 @@ void MainWindow::toolChanged(tools::Type tool)
 		_canvas->setSelectionItem(0);
 
 	_view->selectTool(tool);
-}
-
-/**
- * When the eraser is near, switch to eraser tool. When not, switch to
- * whatever tool we were using before
- * @param near
- */
-void MainWindow::eraserNear(bool near)
-{
-	if(near) {
-		QAction *lt = _lasttool; // Save _lasttool
-		getAction("tooleraser")->trigger();
-		_lasttool = lt;
-	} else {
-		_lasttool->trigger();
-	}
 }
 
 void MainWindow::selectAll()
@@ -1893,10 +1871,6 @@ void MainWindow::setupActions()
 	QAction *markertool = makeAction("toolmarker", "flag-red", tr("&Mark"), tr("Leave a marker to find this spot on the recording"), QKeySequence("Ctrl+M"));
 
 	connect(markertool, SIGNAL(triggered()), this, SLOT(markSpotForRecording()));
-
-	// Default tool
-	brushtool->setChecked(true);
-	_lasttool = brushtool;
 
 	_drawingtools->addAction(selectiontool);
 	_drawingtools->addAction(pentool);

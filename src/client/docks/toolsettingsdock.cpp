@@ -34,7 +34,7 @@
 namespace docks {
 
 ToolSettings::ToolSettings(QWidget *parent)
-	: QDockWidget(parent), _currentQuickslot(0)
+	: QDockWidget(parent), _currentQuickslot(0), _eraserOverride(0)
 {
 	// Initialize tool slots
 	_toolprops.reserve(QUICK_SLOTS);
@@ -342,5 +342,20 @@ void ToolSettings::saveCurrentTool()
 	_toolprops[currentToolSlot()].setTool(_currenttool->getName(), tp);
 }
 
+void ToolSettings::eraserNear(bool near)
+{
+	if(near) {
+		_eraserOverride = currentTool();
+		selectTool(tools::ERASER);
+	} else {
+		selectTool(tools::Type(_eraserOverride));
+	}
 }
 
+void ToolSettings::disableEraserOverride(tools::Type tool)
+{
+	if(_eraserOverride == tool)
+		_eraserOverride = tools::BRUSH; // select some tool that can't be disabled
+}
+
+}

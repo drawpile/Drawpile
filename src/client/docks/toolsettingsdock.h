@@ -110,6 +110,25 @@ public slots:
 	//! Swap current foreground and background colors
 	void swapForegroundBackground();
 
+	//! Switch tool when eraser is brought near the tablet
+	void eraserNear(bool near);
+
+	/**
+	 * @brief Change the eraser override tool if it matches the given
+	 *
+	 * This is used to prevent a disabled tool from being reselected
+	 * after the tablet eraser is lifted.
+	 *
+	 * The chain of events is:
+	 * 1. User selects a tool that can be disabled (annotation or laser pointer)
+	 * 2. User places the tablet eraser near the tablet surface, triggering eraser override tool
+	 * 3. User disables annotations/lasers
+	 * 4. User lifts the eraser, causing the previous tool (which is now disabled) to be reselected.
+	 *
+	 * @param tool the tool to disable
+	 */
+	void disableEraserOverride(tools::Type tool);
+
 signals:
 	//! This signal is emitted when the current tool changes its size
 	void sizeChanged(int size);
@@ -148,6 +167,7 @@ private:
 
 	widgets::ToolSlotButton *_quickslot[QUICK_SLOTS];
 	int _currentQuickslot;
+	int _eraserOverride;
 	QList<tools::ToolsetProperties> _toolprops;
 };
 

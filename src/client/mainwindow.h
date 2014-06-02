@@ -98,9 +98,6 @@ class MainWindow : public QMainWindow {
 
 		void about();
 
-		//! React to eraser tip proximity
-		void eraserNear(bool near);
-
 	private slots:
 		void toggleRecording();
 
@@ -207,7 +204,6 @@ class MainWindow : public QMainWindow {
 		QActionGroup *_admintools; // session operator actions
 		QActionGroup *_docadmintools; // current document related operator actions
 		QActionGroup *_drawingtools; // drawing tool selection
-		QAction *_lasttool; // the last used tool
 		QList<QAction*> _customizable_actions;
 
 		// Remember window state to return from fullscreen mode
