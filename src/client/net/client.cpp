@@ -349,7 +349,8 @@ void Client::sendLaserPointer(const QPointF &point, int trail)
 
 void Client::sendMarker(const QString &text)
 {
-	_server->sendMessage(MessagePtr(new protocol::Marker(_my_id, text)));
+	// Keep markers private
+	handleMessage(MessagePtr(new protocol::Marker(_my_id, text)));
 }
 
 /**
