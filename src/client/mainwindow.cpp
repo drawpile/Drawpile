@@ -1911,7 +1911,6 @@ void MainWindow::setupActions()
 	drawtools->addAction(zoomout);
 	drawtools->addAction(zoomorig);
 	drawtools->addAction(rotateorig);
-	drawtools->addSeparator();
 
 	addToolBar(Qt::TopToolBarArea, drawtools);
 
