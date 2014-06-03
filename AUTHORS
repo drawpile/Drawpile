@@ -12,8 +12,7 @@ Contributors:
 * Christoph Korn (typo fixes)
 * Shane S. (typo fixes)
 
-The project also includes (L)GPL licensed code from:
- * Nokia Qt solutions (color triangle widget)
+The project also includes GPL licensed code from:
  * Krita (curve editing widget and pixel blending functions)
 
 Icons from Tango Desktop project and others are used.

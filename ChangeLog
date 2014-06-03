@@ -1,4 +1,4 @@
-2014-0?-?? Version 0.9.1
+2014-06-03 Version 0.9.1
  * SSL support
  * Bugfix: Layer access control menu would lose per-user bits when locking a layer
  * Improved palette widget
