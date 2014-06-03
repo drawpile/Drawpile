@@ -1,8 +1,7 @@
-
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2007-2008 Calle Laakkonen
+   Copyright (C) 2007-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -17,51 +16,58 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QVBoxLayout>
-#include <QSpacerItem>
+
 #include <QPainter>
-#include <QLabel>
 #include <QBitmap>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QTextDocument>
+#include <QTextCursor>
+#include <QTimer>
 
 #include "popupmessage.h"
 
 namespace widgets {
 
 PopupMessage::PopupMessage(QWidget *parent)
-	: QWidget(parent, Qt::ToolTip), arrowoffset_(0)
+	: QWidget(parent, Qt::ToolTip), _arrowoffset(0), _timer(new QTimer(this)), _doc(new QTextDocument(this))
 {
-	QVBoxLayout *layout = new QVBoxLayout(this);
-	message_ = new QLabel(this);
-	message_->setAlignment(Qt::AlignCenter);
-	message_->setTextFormat(Qt::RichText);
-	layout->addWidget(message_);
-	layout->addSpacerItem(new QSpacerItem(30, 30, QSizePolicy::MinimumExpanding));
-	resize(200,60);
-	timer_.setSingleShot(true);
-	timer_.setInterval(2500);
-	connect(&timer_, SIGNAL(timeout()), this, SLOT(hide()));
+	_timer->setSingleShot(true);
+	_timer->setInterval(2500);
+
+	connect(_timer, SIGNAL(timeout()), this, SLOT(hide()));
 }
 
-/**
- * @param message message to display
- */
 void PopupMessage::setMessage(const QString& message)
 {
-	if(isVisible())
-		message_->setText(message_->text() + "<br>" + message);
-	else
-		message_->setText(message);
+	if(!isVisible())
+		_doc->clear();
+
+	QTextCursor cursor(_doc);
+	cursor.movePosition(QTextCursor::End);
+	if(cursor.position()>0)
+		cursor.insertBlock();
+
+	cursor.insertHtml(message);
+
+	// Force tooltip text color
+	QTextCharFormat fmt;
+	fmt.setForeground(palette().toolTipText());
+	cursor.select(QTextCursor::BlockUnderCursor);
+	cursor.mergeCharFormat(fmt);
 }
 
-/**
- * The message will popup at a position where it fits completely on the screen.
- * The position of the arrow is adjusted so it points at the given point.
- * @param point popup coordinates
- */
-void PopupMessage::popupAt(const QPoint& point)
+namespace {
+	static const int PADDING = 4;
+	static const int ARROW_H = 10;
+}
+
+void PopupMessage::showMessage(const QPoint& point, const QString &message)
 {
+	setMessage(message);
+
+	resize(_doc->size().toSize() + QSize(PADDING*2, PADDING*2 + ARROW_H));
+
 	QRect rect(point - QPoint(width() - width()/6,height()), size());
 	const QRect screen = qApp->desktop()->availableGeometry(parentWidget());
 
@@ -71,7 +77,7 @@ void PopupMessage::popupAt(const QPoint& point)
 	} else if(rect.x() < screen.x()) {
 		rect.moveLeft(screen.x());
 	}
-	arrowoffset_ = point.x() - rect.x();
+	_arrowoffset = point.x() - rect.x();
 
 	// Make sure the popup fits vertically
 	if(rect.y() + rect.height() > screen.y() + screen.height())
@@ -83,14 +89,17 @@ void PopupMessage::popupAt(const QPoint& point)
 	redrawBubble();
 	move(rect.topLeft());
 	show();
-	timer_.start();
+	_timer->start();
 }
 
 void PopupMessage::paintEvent(QPaintEvent *)
 {
 	QPainter painter(this);
 	painter.setBrush(palette().toolTipBase());
-	painter.drawPath(bubble);
+	painter.drawPath(_bubble);
+
+	painter.translate(PADDING, PADDING);
+	_doc->drawContents(&painter);
 }
 
 void PopupMessage::redrawBubble()
@@ -99,35 +108,35 @@ void PopupMessage::redrawBubble()
 	const qreal w = contentsRect().width()-1;
 	const qreal h = contentsRect().height();
 	const qreal rad = 4;
-	const qreal h1 = h - 10;
+	const qreal h1 = h - ARROW_H;
 	const qreal aw = 10;
-	qreal arrowsafe = arrowoffset_;
+	qreal arrowsafe = _arrowoffset;
 	if(arrowsafe-aw < rad)
 		arrowsafe = rad+aw;
 	else if(arrowsafe+aw > w-rad)
 		arrowsafe = w-rad-aw;
 
-	bubble = QPainterPath(QPointF(w-rad, 0));
-	bubble.cubicTo(w-rad/2, 0, w, rad/2, w, rad);
-	bubble.lineTo(w, h1-rad);
-	bubble.cubicTo(w, h1-rad/2, w-rad/2, h1, w-rad, h1);
+	_bubble = QPainterPath(QPointF(w-rad, 0));
+	_bubble.cubicTo(w-rad/2, 0, w, rad/2, w, rad);
+	_bubble.lineTo(w, h1-rad);
+	_bubble.cubicTo(w, h1-rad/2, w-rad/2, h1, w-rad, h1);
 
-	bubble.lineTo(arrowsafe+aw, h1);
-	bubble.lineTo(arrowsafe, h);
-	bubble.lineTo(arrowsafe-aw, h1);
+	_bubble.lineTo(arrowsafe+aw, h1);
+	_bubble.lineTo(arrowsafe, h);
+	_bubble.lineTo(arrowsafe-aw, h1);
 
-	bubble.lineTo(rad, h1);
-	bubble.cubicTo(rad/2, h1, 0, h1-rad/2, 0, h1-rad);
-	bubble.lineTo(0, rad);
-	bubble.cubicTo(0, rad/2, rad/2, 0, rad, 0);
-	bubble.closeSubpath();
+	_bubble.lineTo(rad, h1);
+	_bubble.cubicTo(rad/2, h1, 0, h1-rad/2, 0, h1-rad);
+	_bubble.lineTo(0, rad);
+	_bubble.cubicTo(0, rad/2, rad/2, 0, rad, 0);
+	_bubble.closeSubpath();
 
 	// Set the widget transparency mask
 	QBitmap mask(width(), height());
 	mask.fill(Qt::color0);
 	QPainter painter(&mask);
 	painter.setBrush(Qt::color1);
-	painter.drawPath(bubble);
+	painter.drawPath(_bubble);
 	setMask(mask);
 }
 

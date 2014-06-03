@@ -17,6 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "widgets/netstatus.h"
+#include "widgets/popupmessage.h"
+#include "dialogs/certificateview.h"
+#include "utils/whatismyip.h"
+
 #include <QAction>
 #include <QLabel>
 #include <QApplication>
@@ -24,11 +29,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QProgressBar>
-
-#include "widgets/netstatus.h"
-#include "widgets/popupmessage.h"
-#include "dialogs/certificateview.h"
-#include "utils/whatismyip.h"
+#include <QTimer>
 
 namespace widgets {
 
@@ -353,9 +354,9 @@ void NetStatus::kicked(const QString& user)
 
 void NetStatus::message(const QString& msg)
 {
-	_popup->setMessage(msg);
-	_popup->popupAt(mapToGlobal(_icon->pos() +
-				QPoint(_icon->width()/2, 2)));
+	_popup->showMessage(
+				mapToGlobal(_icon->pos() + QPoint(_icon->width()/2, 2)),
+				msg);
 	emit statusMessage(msg);
 }
 
