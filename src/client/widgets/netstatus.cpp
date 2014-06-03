@@ -129,6 +129,12 @@ NetStatus::NetStatus(QWidget *parent)
 	// Popup label
 	_popup = new PopupMessage(this);
 
+	// Some styles are buggy and have bad tooltip colors, so we force the colors here.
+	QPalette popupPalette;
+	popupPalette.setColor(QPalette::ToolTipBase, Qt::black);
+	popupPalette.setColor(QPalette::ToolTipText, Qt::white);
+	_popup->setPalette(popupPalette);
+
 	// Timer for activity update
 	_timer = new QTimer(this);
 	_timer->setSingleShot(true);
