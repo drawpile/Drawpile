@@ -23,6 +23,7 @@ namespace server {
 
 class SessionState;
 class Client;
+class SessionDescription;
 
 /**
  * @brief Session manager
@@ -117,7 +118,7 @@ public:
 	 * @brief Get all current sessions
 	 * @return list of all sessions
 	 */
-	QList<SessionState*> sessions() const { return _sessions; }
+	QList<SessionDescription> sessions() const;
 
 	/**
 	 * @brief Get the session with the specified ID
@@ -161,7 +162,7 @@ signals:
 	 * - participant count change
 	 * - closed/open status change
 	 */
-	void sessionChanged(SessionState *session);
+	void sessionChanged(const SessionDescription &session);
 
 	/**
 	 * @brief A user just logged in to a session

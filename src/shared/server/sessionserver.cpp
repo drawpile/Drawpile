@@ -21,6 +21,7 @@
 #include "session.h"
 #include "client.h"
 #include "loginhandler.h"
+#include "sessiondesc.h"
 
 #include "../util/logger.h"
 
@@ -43,21 +44,30 @@ SessionServer::SessionServer(QObject *parent)
 	cleanupTimer->start(cleanupTimer->interval());
 }
 
+QList<SessionDescription> SessionServer::sessions() const
+{
+	QList<SessionDescription> descs;
+
+	foreach(const SessionState *s, _sessions)
+		descs.append(SessionDescription(*s));
+
+	return descs;
+}
+
 SessionState *SessionServer::createSession(int minorVersion)
 {
 	SessionState *session = new SessionState(_nextId++, minorVersion, allowPersistentSessions(), this);
 
 	session->setHistoryLimit(_historyLimit);
 
-	connect(session, SIGNAL(userConnected(SessionState*, Client*)), this, SLOT(moveFromLobby(SessionState*, Client*)));
-	connect(session, SIGNAL(userConnected(SessionState*, Client*)), this, SIGNAL(sessionChanged(SessionState*)));
-	connect(session, SIGNAL(userDisconnected(SessionState*)), this, SLOT(userDisconnectedEvent(SessionState*)));
-	connect(session, SIGNAL(sessionAttributeChanged(SessionState*)), this, SIGNAL(sessionChanged(SessionState*)));
+	connect(session, &SessionState::userConnected, this, &SessionServer::moveFromLobby);
+	connect(session, &SessionState::userDisconnected, this, &SessionServer::userDisconnectedEvent);
+	connect(session, &SessionState::sessionAttributeChanged, [this](SessionState *ses) { emit sessionChanged(SessionDescription(*ses)); });
 
 	_sessions.append(session);
 
 	emit sessionCreated(session);
-	emit sessionChanged(session);
+	emit sessionChanged(SessionDescription(*session));
 
 	logger::info() << "Session" << session->id() << "created";
 
@@ -130,6 +140,7 @@ void SessionServer::moveFromLobby(SessionState *session, Client *client)
 	disconnect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
 
 	emit userLoggedIn();
+	emit sessionChanged(SessionDescription(*session));
 }
 
 /**
@@ -176,7 +187,7 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 	if(delSession)
 		destroySession(session);
 	else
-		emit sessionChanged(session);
+		emit sessionChanged(SessionDescription(*session));
 
 	emit userDisconnected();
 }

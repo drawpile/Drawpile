@@ -28,6 +28,7 @@ namespace server {
 class Client;
 class SessionState;
 class SessionServer;
+class SessionDescription;
 
 /**
  * @brief Perform the client login handshake
@@ -91,7 +92,7 @@ public:
 private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
 
-	void announceSession(const SessionState *session);
+	void announceSession(const SessionDescription &session);
 	void announceSessionEnd(int id);
 
 private:

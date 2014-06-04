@@ -23,6 +23,7 @@ set (
 	server/client.cpp
 	server/session.cpp
 	server/sessionserver.cpp
+	server/sessiondesc.cpp
 	server/loginhandler.cpp
 	)
 
