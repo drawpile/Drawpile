@@ -52,6 +52,7 @@ public:
 	void setPersistentSessions(bool persistent);
 	void setExpirationTime(uint seconds);
 	void setAutoStop(bool autostop);
+	bool setHibernation(const QString &directory, bool all, bool autoHibernate);
 
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);

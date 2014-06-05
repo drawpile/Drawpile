@@ -72,6 +72,12 @@ The protocol version number consists of two parts: the major and the minor numbe
 
 Clients can connect to any server sharing the same major protocol version number, but all clients in the same session must share the exact version. Version numbers are also used to determine whether a session recording is compatible with the user's client version.
 
+Protocol 11.2 (0.9.2)
+
+ * Added maxUsers field and PERSISTENT flag to SessionConf message
+ * No change in recording format
+ * First version to support session hibernation
+
 Protocol 10.2 (0.9.0)
 
  * New login process to support multiple sessions on a single server

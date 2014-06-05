@@ -344,6 +344,8 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 			session.closed = true;
 		} else if(flag=="PERSIST") {
 			session.persistent = true;
+		} else if(flag=="ASLEEP") {
+			session.asleep = true;
 		} else {
 			qWarning() << "Session" << session.id << "has unknown flag:" << flag;
 			session.incompatible = true;

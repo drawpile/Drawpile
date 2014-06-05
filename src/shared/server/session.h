@@ -72,7 +72,7 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	SessionState(int id, int minorVersion, bool allowPersistent, QObject *parent=0);
+	SessionState(int id, int minorVersion, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
@@ -88,6 +88,13 @@ public:
 	 * @return protocol minor version
 	 */
 	int minorProtocolVersion() const { return _minorVersion; }
+
+	/**
+	 * @brief Set whether session persistence is allowed
+	 * @param allow
+	 */
+	void setPersistenceAllowed(bool allowed) { _allowPersistent = allowed; _persistent = _persistent & allowed; }
+	bool isPersistenceAllowed() const { return _allowPersistent; }
 
 	/**
 	 * @brief Get the maximum session history size in bytes
@@ -175,12 +182,17 @@ public:
 	 * @brief Is this a persistent session
 	 *
 	 * A persistent session is not automatically deleted when the last user leaves.
-	 *
-	 * @return
 	 */
 	bool isPersistent() const { return _persistent; }
-	bool isPersistenceAllowed() const { return _allowPersistent; }
 	void setPersistent(bool persistent);
+
+	/**
+	 * @brief Is this session eligible for hibernation
+	 *
+	 * Hibernatable sessions will be stored before they are deleted
+	 */
+	bool isHibernatable() const { return _hibernatable; }
+	void setHibernatable(bool h) { _hibernatable = h; }
 
 	/**
 	 * @brief Add a new client to the session
@@ -360,7 +372,7 @@ public:
 
 	void kickAllUsers();
 
-	operator logger::LogId() { return logger::LogId("Session", id(), title()); }
+	operator logger::LogId() const { return logger::LogId("Session", id(), title()); }
 
 signals:
 	//! A user just connected to the session
@@ -429,6 +441,7 @@ private:
 	bool _lockdefault;
 	bool _allowPersistent;
 	bool _persistent;
+	bool _hibernatable;
 };
 
 }

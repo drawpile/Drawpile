@@ -30,14 +30,14 @@ namespace server {
 
 using protocol::MessagePtr;
 
-SessionState::SessionState(int id, int minorVersion, bool allowPersistent, QObject *parent)
+SessionState::SessionState(int id, int minorVersion, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),
 	_startTime(QDateTime::currentDateTime()), _lastEventTime(QDateTime::currentDateTime()),
 	_id(id), _minorVersion(minorVersion), _maxusers(255), _historylimit(0),
 	_locked(false), _layerctrllocked(true), _closed(false),
-	_lockdefault(false), _allowPersistent(allowPersistent), _persistent(false)
+	_lockdefault(false), _allowPersistent(false), _persistent(false), _hibernatable(false)
 { }
 
 
@@ -172,6 +172,7 @@ void SessionState::setMaxUsers(int maxusers)
 	Q_ASSERT(maxusers>0);
 	if(_maxusers != maxusers) {
 		_maxusers = maxusers;
+		addToCommandStream(sessionConf());
 		emit sessionAttributeChanged(this);
 	}
 }
@@ -183,6 +184,7 @@ void SessionState::setPersistent(bool persistent)
 
 	if(_persistent != persistent) {
 		_persistent = persistent;
+		addToCommandStream(sessionConf());
 		emit sessionAttributeChanged(this);
 	}
 }
@@ -519,19 +521,23 @@ void SessionState::kickAllUsers()
 
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 {
+	_maxusers = cmd.maxUsers();
 	_locked = cmd.isLocked();
 	_closed = cmd.isClosed();
 	_layerctrllocked = cmd.isLayerControlsLocked();
 	_lockdefault = cmd.isUsersLockedByDefault();
+	_persistent = cmd.isPersistent() && isPersistenceAllowed();
 }
 
 protocol::MessagePtr SessionState::sessionConf() const
 {
 	return protocol::MessagePtr(new protocol::SessionConf(
+		_maxusers,
 		_locked,
 		_closed,
 		_layerctrllocked,
-		_lockdefault
+		_lockdefault,
+		_persistent
 	));
 }
 

@@ -21,6 +21,7 @@
 #include "client.h"
 #include "session.h"
 #include "sessionserver.h"
+#include "sessiondesc.h"
 
 #include "../net/login.h"
 #include "../util/logger.h"
@@ -81,35 +82,39 @@ void LoginHandler::announceServerInfo()
 		send("TITLE " + _server->title());
 
 	// Tell about our session
-	QList<SessionState*> sessions = _server->sessions();
+	QList<SessionDescription> sessions = _server->sessions();
 
 	if(sessions.isEmpty()) {
 		send("NOSESSION");
 	} else {
-		for(const SessionState *session : sessions) {
+		for(const SessionDescription &session : sessions) {
 			announceSession(session);
 		}
 	}
 }
 
-void LoginHandler::announceSession(const SessionState *session)
+void LoginHandler::announceSession(const SessionDescription &session)
 {
 	QStringList flags;
-	if(!session->password().isEmpty())
+	if(!session.password.isEmpty())
 		flags << "PASS";
 
-	if(session->isClosed())
+	if(session.closed)
+	//if(session->isClosed())
 		flags << "CLOSED";
 
-	if(session->isPersistent())
+	if(session.persistent)
 		flags << "PERSIST";
 
+	if(session.hibernating)
+		flags << "ASLEEP";
+
 	send(QString("SESSION %1 %2 %3 %4 \"%5\"")
-			.arg(session->id())
-			.arg(session->minorProtocolVersion())
+			.arg(session.id)
+			.arg(session.protoMinor)
 			.arg(flags.isEmpty() ? "-" : flags.join(","))
-			.arg(session->userCount())
-			.arg(session->title())
+			.arg(session.userCount)
+			.arg(session.title)
 	);
 }
 

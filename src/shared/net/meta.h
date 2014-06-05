@@ -131,17 +131,23 @@ public:
 	static const uint8_t ATTR_CLOSED = 0x02;
 	static const uint8_t ATTR_LAYERCTRLLOCKED = 0x04;
 	static const uint8_t ATTR_LOCKDEFAULT = 0x08;
+	static const uint8_t ATTR_PERSISTENT = 0x10;
 
-	SessionConf(uint8_t attrs) : Message(MSG_SESSION_CONFIG, 0), _attrs(attrs) {}
-	SessionConf(bool locked, bool closed, bool layerctrlslocked, bool lockdefault)
+	SessionConf(uint8_t maxusers, uint8_t attrs) : Message(MSG_SESSION_CONFIG, 0), _maxusers(maxusers), _attrs(attrs) {}
+	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent)
 		: SessionConf(
+			  maxusers,
 			  (locked?ATTR_LOCKED:0) |
 			  (closed?ATTR_CLOSED:0) |
 			  (layerctrlslocked?ATTR_LAYERCTRLLOCKED:0) |
-			  (lockdefault?ATTR_LOCKDEFAULT:0)
+			  (lockdefault?ATTR_LOCKDEFAULT:0) |
+			  (persistent?ATTR_PERSISTENT:0)
 		) {}
 
 	static SessionConf *deserialize(const uchar *data, uint len);
+
+	//! The maximum number of users in the session
+	uint8_t maxUsers() const { return _maxusers; }
 
 	uint8_t attrs() const { return _attrs; }
 
@@ -157,11 +163,15 @@ public:
 	//! Are new users locked automatically when they join?
 	bool isUsersLockedByDefault() const { return _attrs & ATTR_LOCKDEFAULT; }
 
+	//! Is this a persistent session?
+	bool isPersistent() const { return _attrs & ATTR_PERSISTENT; }
+
 protected:
 	int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
+	uint8_t _maxusers;
 	uint8_t _attrs;
 };
 

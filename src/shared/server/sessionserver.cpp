@@ -21,6 +21,8 @@
 #include "session.h"
 #include "client.h"
 #include "loginhandler.h"
+#include "sessiondesc.h"
+#include "sessionstore.h"
 
 #include "../util/logger.h"
 
@@ -30,6 +32,7 @@ namespace server {
 
 SessionServer::SessionServer(QObject *parent)
 	: QObject(parent),
+	_store(nullptr),
 	_nextId(1),
 	_sessionLimit(1),
 	_historyLimit(0),
@@ -43,27 +46,66 @@ SessionServer::SessionServer(QObject *parent)
 	cleanupTimer->start(cleanupTimer->interval());
 }
 
+void SessionServer::setSessionStore(SessionStore *store)
+{
+	Q_ASSERT(store);
+	_store = store;
+	store->setParent(this);
+
+	for(const SessionDescription &s : _store->sessions()) {
+		if(s.id >= _nextId)
+			_nextId = s.id + 1;
+	}
+
+	connect(store, SIGNAL(sessionAvailable(SessionDescription)), this, SIGNAL(sessionChanged(SessionDescription)));
+}
+
+QList<SessionDescription> SessionServer::sessions() const
+{
+	QList<SessionDescription> descs;
+
+	foreach(const SessionState *s, _sessions)
+		descs.append(SessionDescription(*s));
+
+	if(_store)
+		descs += _store->sessions();
+
+	return descs;
+}
+
 SessionState *SessionServer::createSession(int minorVersion)
 {
-	SessionState *session = new SessionState(_nextId++, minorVersion, allowPersistentSessions(), this);
+	SessionState *session = new SessionState(_nextId++, minorVersion, this);
 
-	session->setHistoryLimit(_historyLimit);
+	initSession(session);
 
-	connect(session, SIGNAL(userConnected(SessionState*, Client*)), this, SLOT(moveFromLobby(SessionState*, Client*)));
-	connect(session, SIGNAL(userConnected(SessionState*, Client*)), this, SIGNAL(sessionChanged(SessionState*)));
-	connect(session, SIGNAL(userDisconnected(SessionState*)), this, SLOT(userDisconnectedEvent(SessionState*)));
-	connect(session, SIGNAL(sessionAttributeChanged(SessionState*)), this, SIGNAL(sessionChanged(SessionState*)));
-
-	_sessions.append(session);
-
-	emit sessionCreated(session);
-	emit sessionChanged(session);
-
-	logger::info() << "Session" << session->id() << "created";
+	logger::info() << *session << "created";
 
 	return session;
 }
 
+void SessionServer::initSession(SessionState *session)
+{
+	session->setHistoryLimit(_historyLimit);
+	session->setPersistenceAllowed(allowPersistentSessions());
+
+	connect(session, &SessionState::userConnected, this, &SessionServer::moveFromLobby);
+	connect(session, &SessionState::userDisconnected, this, &SessionServer::userDisconnectedEvent);
+	connect(session, &SessionState::sessionAttributeChanged, [this](SessionState *ses) { emit sessionChanged(SessionDescription(*ses)); });
+
+	_sessions.append(session);
+
+	emit sessionCreated(session);
+	emit sessionChanged(SessionDescription(*session));
+}
+
+/**
+ * @brief Delete a session
+ *
+ * If the session is hibernatable, it will be stored before it is deleted.
+ *
+ * @param session
+ */
 void SessionServer::destroySession(SessionState *session)
 {
 	Q_ASSERT(_sessions.contains(session));
@@ -72,16 +114,33 @@ void SessionServer::destroySession(SessionState *session)
 	_sessions.removeOne(session);
 
 	int id = session->id();
+
+	if(session->isHibernatable() && _store) {
+		logger::info() << "Hibernating" << *session;
+		_store->storeSession(session);
+	}
+
 	session->deleteLater(); // destroySession call might be triggered by a signal emitted from the session
 	emit sessionEnded(id);
 }
 
-SessionState *SessionServer::getSessionById(int id) const
+SessionState *SessionServer::getSessionById(int id)
 {
 	for(SessionState *s : _sessions) {
 		if(s->id() == id)
 			return s;
 	}
+
+	if(_store) {
+		SessionState *session = _store->takeSession(id);
+		if(session) {
+			session->setParent(this);
+			initSession(session);
+			logger::info() << *session << "restored from hibernation";
+			return session;
+		}
+	}
+
 	return nullptr;
 }
 
@@ -98,9 +157,15 @@ void SessionServer::stopAll()
 	for(Client *c : _lobby)
 		c->disconnectShutdown();
 
-	for(SessionState *s : _sessions) {
+	auto sessions = _sessions;
+	for(SessionState *s : sessions) {
+		if(_store)
+			s->setHibernatable(s->isPersistent() || _store->storeAllSessions());
 		s->stopRecording();
 		s->kickAllUsers();
+
+		if(s->userCount()==0)
+			destroySession(s);
 	}
 }
 
@@ -130,6 +195,7 @@ void SessionServer::moveFromLobby(SessionState *session, Client *client)
 	disconnect(client, SIGNAL(disconnected(Client*)), this, SLOT(lobbyDisconnectedEvent(Client*)));
 
 	emit userLoggedIn();
+	emit sessionChanged(SessionDescription(*session));
 }
 
 /**
@@ -171,12 +237,16 @@ void SessionServer::userDisconnectedEvent(SessionState *session)
 
 			delSession = true;
 		}
+
+		// If the hibernatable flag is set, it means we want to put the session
+		// into storage as soon as possible
+		delSession |= session->isHibernatable();
 	}
 
 	if(delSession)
 		destroySession(session);
 	else
-		emit sessionChanged(session);
+		emit sessionChanged(SessionDescription(*session));
 
 	emit userDisconnected();
 }
@@ -198,6 +268,10 @@ void SessionServer::cleanupSessions()
 
 		for(SessionState *s : expirelist) {
 			logger::info() << "Vacant" << *s << "expired. Uptime was" << s->uptime();
+
+			if(_store && _store->autoStore() && s->isPersistent())
+				s->setHibernatable(true);
+
 			destroySession(s);
 		}
 	}

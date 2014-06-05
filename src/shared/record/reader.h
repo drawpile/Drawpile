@@ -21,6 +21,7 @@
 
 #include <QObject>
 
+#include "hibernate.h"
 #include "../net/message.h"
 
 class QFileDevice;
@@ -116,6 +117,15 @@ public:
 	//! Close the file
 	void close();
 
+	/**
+	 * @brief Get the session hibernation header
+	 * @pre isHibernation() == true
+	 */
+	const HibernationHeader &hibernationHeader() const { return _hibheader; }
+
+	//! Is this a session hibernation file instead of a normal recording?
+	bool isHibernation() const { return _isHibernation; }
+
 	//! Rewind to the first message
 	void rewind();
 
@@ -149,11 +159,13 @@ private:
 	QFileDevice *_file;
 	QByteArray _msgbuf;
 	QString _writerversion;
+	HibernationHeader _hibheader;
 	int _current;
 	qint64 _currentPos;
 	qint64 _beginning;
 	bool _autoclose;
 	bool _eof;
+	bool _isHibernation;
 };
 
 }

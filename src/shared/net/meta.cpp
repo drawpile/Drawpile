@@ -106,21 +106,22 @@ int SessionTitle::payloadLength() const
 
 SessionConf *SessionConf::deserialize(const uchar *data, uint len)
 {
-	if(len!=1)
+	if(len!=2)
 		return 0;
-	return new SessionConf(data[0]);
+	return new SessionConf(data[0], data[1]);
 }
 
 int SessionConf::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
+	*(ptr++) = _maxusers;
 	*(ptr++) = _attrs;
 	return ptr-data;
 }
 
 int SessionConf::payloadLength() const
 {
-	return 1;
+	return 2;
 }
 
 Chat *Chat::deserialize(const uchar *data, uint len)

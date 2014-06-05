@@ -27,6 +27,8 @@ class QFileDevice;
 
 namespace recording {
 
+class HibernationHeader;
+
 class Writer : public QObject
 {
 	Q_OBJECT
@@ -67,6 +69,14 @@ public:
 	void setMinimumInterval(int min);
 
 	/**
+	 * @brief Enable/disable meta message filtering.
+	 *
+	 * This is enabled by default
+	 * @param filter
+	 */
+	void setFilterMeta(bool filter);
+
+	/**
 	 * @brief Write recording header
 	 *
 	 * This should be called before writing the first message.
@@ -74,6 +84,17 @@ public:
 	 * @return false on error
 	 */
 	bool writeHeader();
+
+	/**
+	 * @brief Write session hibernation file header
+	 *
+	 * Use this instead of writeHeader when creating a session hibernation file.
+	 * You should also call setFilterMeta(false) to make sure all messages are saved.
+	 *
+	 * @param header
+	 * @return
+	 */
+	bool writeHibernationHeader(const HibernationHeader &header);
 
 	/**
 	 * @brief Write a message from a buffer
@@ -93,6 +114,7 @@ private:
 	bool _autoclose;
 	qint64 _minInterval;
 	qint64 _interval;
+	bool _filterMeta;
 };
 
 }

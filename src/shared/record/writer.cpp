@@ -22,6 +22,7 @@
 #include <QtEndian>
 
 #include "writer.h"
+#include "hibernate.h"
 #include "util.h"
 #include "../net/recording.h"
 
@@ -41,7 +42,7 @@ Writer::Writer(const QString &filename, QObject *parent)
 
 
 Writer::Writer(QFileDevice *file, bool autoclose, QObject *parent)
-	: QObject(parent), _file(file), _autoclose(autoclose), _minInterval(0)
+	: QObject(parent), _file(file), _autoclose(autoclose), _minInterval(0), _filterMeta(true)
 {
 }
 
@@ -55,6 +56,11 @@ void Writer::setMinimumInterval(int min)
 {
 	_minInterval = min;
 	_interval = QDateTime::currentMSecsSinceEpoch();
+}
+
+void Writer::setFilterMeta(bool filter)
+{
+	_filterMeta = filter;
 }
 
 bool Writer::open()
@@ -90,6 +96,50 @@ bool Writer::writeHeader()
 	return true;
 }
 
+bool Writer::writeHibernationHeader(const HibernationHeader &header)
+{
+	Q_ASSERT(_file->isOpen());
+
+	// Format identification (note the 'H' ending)
+	const char *MAGIC = "DPRECH";
+	_file->write(MAGIC, 7);
+
+	// Protocol version
+	// Major version is always the same as the server version, but minor version
+	// is taken from the session
+	uchar version[4];
+	qToBigEndian(version32(DRAWPILE_PROTO_MAJOR_VERSION, header.minorVersion), version);
+	_file->write((const char*)version, 4);
+
+	// Program version (this is always the server version)
+	const char *VERSION = DRAWPILE_VERSION;
+	_file->write(VERSION, qstrlen(VERSION)+1);
+
+	// Hibernation format version
+	char hver = 1;
+	_file->write(&hver, 1);
+
+	// Session title
+	QByteArray title = header.title.toUtf8();
+	uchar titlelen[2];
+	qToBigEndian<quint16>(title.length(), titlelen);
+	_file->write((const char*)titlelen, 2);
+	_file->write(title);
+
+	// Session flags
+	char flags = header.flags;
+	_file->write(&flags, 1);
+
+	// Session password
+	QByteArray password = header.password.toUtf8();
+	uchar passwdlen[2];
+	qToBigEndian<quint16>(password.length(), passwdlen);
+	_file->write((const char*)passwdlen, 2);
+	_file->write(password);
+
+	return true;
+}
+
 namespace {
 bool isRecordableMeta(protocol::MessageType type) {
 	switch(type) {
@@ -119,7 +169,7 @@ void Writer::recordMessage(const protocol::Message &msg)
 {
 	Q_ASSERT(_file->isOpen());
 
-	if(msg.isCommand() || isRecordableMeta(msg.type())) {
+	if(!_filterMeta || msg.isCommand() || isRecordableMeta(msg.type())) {
 		// Write Interval message if sufficient time has passed since last message was written
 		if(_minInterval>0) {
 			qint64 now = QDateTime::currentMSecsSinceEpoch();
