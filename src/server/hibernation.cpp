@@ -101,8 +101,8 @@ SessionState *Hibernation::takeSession(int id)
 		return nullptr;
 
 	// Load the session
-	QString filename = QString("session-%1.dphib").arg(id);
-	recording::Reader reader(QDir(_path).filePath(filename));
+	QString filename = QDir(_path).filePath(QString("session-%1.dphib").arg(id));
+	recording::Reader reader(filename);
 	if(reader.open() != recording::COMPATIBLE) {
 		logger::error() << "Unable to open" << filename << "error:" << reader.errorString();
 		return nullptr;
@@ -144,8 +144,8 @@ SessionState *Hibernation::takeSession(int id)
 
 	reader.close();
 
-	// Delete hibernated file
-	// TODO delete hibernated file
+	// Session has been woken up, so delete the hibernation file.
+	QFile(filename).remove();
 
 	return session;
 }
