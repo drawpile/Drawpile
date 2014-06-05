@@ -24,7 +24,7 @@ namespace server {
 
 SessionDescription::SessionDescription()
 	: id(0), protoMinor(0), userCount(0), title(QString()),
-	  passwordProtected(false), closed(false), persistent(false), hibernating(false)
+	  closed(false), persistent(false), hibernating(false)
 {
 }
 
@@ -33,7 +33,7 @@ SessionDescription::SessionDescription(const SessionState &session)
 	  protoMinor(session.minorProtocolVersion()),
 	  userCount(session.userCount()),
 	  title(session.title()),
-	  passwordProtected(!session.password().isEmpty()),
+	  password(session.password()),
 	  closed(session.isClosed()),
 	  persistent(session.isPersistent()),
 	  hibernating(false)

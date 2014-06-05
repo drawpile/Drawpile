@@ -110,6 +110,17 @@ Compatibility Reader::open()
 		if(!_file->getChar(&flags))
 			return NOT_DPREC;
 		_hibheader.flags = HibernationHeader::Flags((uchar)flags);
+
+		// Read session password
+		if(_file->read(buf, 2) != 2)
+			return NOT_DPREC;
+
+		quint16 passwdLen = qFromBigEndian<quint16>((const uchar*)buf);
+		QByteArray password = _file->read(passwdLen);
+		if(password.length() != passwdLen)
+			return NOT_DPREC;
+
+		_hibheader.password = QString::fromUtf8(password);
 	}
 
 	_beginning = _file->pos();

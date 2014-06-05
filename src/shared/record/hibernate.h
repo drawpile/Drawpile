@@ -33,8 +33,7 @@ namespace recording {
 struct HibernationHeader {
 	enum Flag {
 		NOFLAGS = 0,
-		PERSISTENT = 0x01,
-		PASSWORD = 0x02
+		PERSISTENT = 0x01
 	};
 	Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -46,6 +45,9 @@ struct HibernationHeader {
 
 	//! Session flags
 	Flags flags;
+
+	//! Session password
+	QString password;
 
 	HibernationHeader() : minorVersion(0), flags(NOFLAGS) { }
 };

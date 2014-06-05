@@ -70,7 +70,7 @@ bool Hibernation::init()
 		desc.id = m.captured(1).toInt();
 		desc.protoMinor = reader.hibernationHeader().minorVersion;
 		desc.title = reader.hibernationHeader().title;
-		desc.passwordProtected = reader.hibernationHeader().flags & recording::HibernationHeader::PASSWORD;
+		desc.password = reader.hibernationHeader().password;
 		desc.persistent = reader.hibernationHeader().flags & recording::HibernationHeader::PERSISTENT;
 		desc.hibernating = true;
 
@@ -112,6 +112,9 @@ SessionState *Hibernation::takeSession(int id)
 
 	// enable session persistence for now to get the flag right
 	session->setPersistenceAllowed(true);
+
+	// Restore settings not stored in the message stream
+	session->setPassword(sd.password);
 
 	// Create initial snapshot point
 	session->addSnapshotPoint();
@@ -169,12 +172,10 @@ bool Hibernation::storeSession(const SessionState *session)
 	recording::HibernationHeader header;
 	header.minorVersion = session->minorProtocolVersion();
 	header.title = session->title();
+	header.password = session->password();
 
 	if(session->isPersistent())
 		header.flags |= recording::HibernationHeader::PERSISTENT;
-
-	if(!session->password().isEmpty())
-		header.flags |= recording::HibernationHeader::PASSWORD;
 
 	writer.writeHibernationHeader(header);
 

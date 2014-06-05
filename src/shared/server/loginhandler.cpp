@@ -96,7 +96,7 @@ void LoginHandler::announceServerInfo()
 void LoginHandler::announceSession(const SessionDescription &session)
 {
 	QStringList flags;
-	if(session.passwordProtected)
+	if(!session.password.isEmpty())
 		flags << "PASS";
 
 	if(session.closed)

@@ -35,7 +35,7 @@ struct SessionDescription {
 	int protoMinor;
 	int userCount;
 	QString title;
-	bool passwordProtected;
+	QString password;
 	bool closed;
 	bool persistent;
 	bool hibernating;
