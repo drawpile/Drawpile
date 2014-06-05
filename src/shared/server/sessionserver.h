@@ -24,6 +24,7 @@ namespace server {
 class SessionState;
 class Client;
 class SessionDescription;
+class SessionStore;
 
 /**
  * @brief Session manager
@@ -97,6 +98,17 @@ public:
 	bool mustSecure() const { return _mustSecure; }
 
 	/**
+	 * @brief Set the session storage to use (if any)
+	 *
+	 * Setting this enables restoration of hibernated sessions
+	 * This should be called either during the initialization phase or not at all.
+	 * This object will be made the parent of the session store.
+	 *
+	 * @param store
+	 */
+	void setSessionStore(SessionStore *store);
+
+	/**
 	 * @brief Add a new client
 	 *
 	 * This will start the login process during which the client will
@@ -122,10 +134,13 @@ public:
 
 	/**
 	 * @brief Get the session with the specified ID
+	 *
+	 * This may trigger the de-hibernation of a stored session
+	 *
 	 * @param id session ID
 	 * @return session or null if not found
 	 */
-	SessionState *getSessionById(int id) const;
+	SessionState *getSessionById(int id);
 
 	/**
 	 * @brief Get the total number of users in all sessions
@@ -186,10 +201,12 @@ private slots:
 	void cleanupSessions();
 
 private:
+	void initSession(SessionState *session);
 	void destroySession(SessionState *session);
 
 	QList<SessionState*> _sessions;
 	QList<Client*> _lobby;
+	SessionStore *_store;
 	int _nextId;
 
 	QString _title;

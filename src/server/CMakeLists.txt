@@ -7,7 +7,8 @@ set (
 	dpserver.cpp
 	multiserver.cpp
 	configfile.cpp
-        sslserver.cpp
+	sslserver.cpp
+	hibernation.cpp
 	)
 
 # Unix specific features

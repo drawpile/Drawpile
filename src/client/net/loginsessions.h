@@ -35,9 +35,10 @@ struct LoginSession {
 	bool needPassword;
 	bool persistent;
 	bool closed;
+	bool asleep;
 	bool incompatible;
 
-	LoginSession() : id(-1), userCount(0), needPassword(false), persistent(false), closed(false), incompatible(false) { }
+	LoginSession() : id(-1), userCount(0), needPassword(false), persistent(false), closed(false), asleep(false), incompatible(false) { }
 };
 
 /**

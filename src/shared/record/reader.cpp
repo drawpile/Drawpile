@@ -37,7 +37,7 @@ Reader::Reader(const QString &filename, QObject *parent)
 }
 
 Reader::Reader(QFileDevice *file, bool autoclose, QObject *parent)
-	: QObject(parent), _file(file), _current(-1), _autoclose(autoclose), _eof(false)
+	: QObject(parent), _file(file), _current(-1), _autoclose(autoclose), _eof(false), _isHibernation(false)
 {
 	Q_ASSERT(file);
 }
@@ -55,13 +55,16 @@ Compatibility Reader::open()
 			return CANNOT_READ;
 	}
 
-	// Read magic bytes "DPRECR\0"
+	// Read magic bytes "DPRECR\0" or "DPRECH\0"
 	char buf[7];
 	if(_file->read(buf, 7) != 7)
 		return CANNOT_READ;
 
-	if(memcmp(buf, "DPRECR", 7))
-		return NOT_DPREC;
+	if(memcmp(buf, "DPRECR", 7)) {
+		if(memcmp(buf, "DPRECH", 7))
+			return NOT_DPREC;
+		_isHibernation = true;
+	}
 
 	// Read protocol version
 	if(_file->read(buf, 4) != 4)
@@ -77,34 +80,75 @@ Compatibility Reader::open()
 	} while(buf[0] != '\0');
 	_writerversion = QString::fromUtf8(progver);
 
-	_beginning = _file->pos();
+	// If this is a hibernation file, read the rest of the header
+	if(_isHibernation) {
+		// We already read the protocol minor version
+		_hibheader.minorVersion = minorVersion(protover);
 
-	// Decide if we are compatible
-	quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+		// Check hibernation file format version
+		char fmtver;
+		if(!_file->getChar(&fmtver))
+			return NOT_DPREC;
 
-	// Best case
-	if(myversion == protover)
-		return COMPATIBLE;
+		// Currently there is only one format and no forward compatibility
+		if((uchar)fmtver != 1)
+			return INCOMPATIBLE;
 
-	// If major version is same, expect only minor incompatabilities
-	if(majorVersion(myversion) == majorVersion(protover))
-		return MINOR_INCOMPATIBILITY;
+		// Read session title
+		if(_file->read(buf, 2) != 2)
+			return NOT_DPREC;
 
-	// Recording made with a newer version. It may contain unsupported commands.
-	if(myversion < protover)
-		return UNKNOWN_COMPATIBILITY;
+		quint16 titleLen = qFromBigEndian<quint16>((const uchar*)buf);
+		QByteArray title = _file->read(titleLen);
+		if(title.length() != titleLen)
+			return NOT_DPREC;
 
-	// Recording made with an older version.
-	// This version is compatible protocol-wise with version 7.
-	if(majorVersion(protover) >= 7) {
-		if(minorVersion(protover) == DRAWPILE_PROTO_MINOR_VERSION)
-			return COMPATIBLE;
-		else
-			return MINOR_INCOMPATIBILITY;
+		_hibheader.title = QString::fromUtf8(title);
+
+		// Read session flags
+		char flags;
+		if(!_file->getChar(&flags))
+			return NOT_DPREC;
+		_hibheader.flags = HibernationHeader::Flags((uchar)flags);
 	}
 
-	// Older versions are incompatible
-	return INCOMPATIBLE;
+	_beginning = _file->pos();
+
+	if(_isHibernation) {
+		// Compatibility check is simple for hibernation files: we only need to look at the major version
+		if(DRAWPILE_PROTO_MAJOR_VERSION == majorVersion(protover))
+			return COMPATIBLE;
+		else
+			return INCOMPATIBLE;
+
+	} else {
+		// Compatability check for normal recordings
+		quint32 myversion = version32(DRAWPILE_PROTO_MAJOR_VERSION, DRAWPILE_PROTO_MINOR_VERSION);
+
+		// Best case
+		if(myversion == protover)
+			return COMPATIBLE;
+
+		// If major version is same, expect only minor incompatabilities
+		if(majorVersion(myversion) == majorVersion(protover))
+			return MINOR_INCOMPATIBILITY;
+
+		// Recording made with a newer version. It may contain unsupported commands.
+		if(myversion < protover)
+			return UNKNOWN_COMPATIBILITY;
+
+		// Recording made with an older version.
+		// This version is compatible protocol-wise with version 7.
+		if(majorVersion(protover) >= 7) {
+			if(minorVersion(protover) == DRAWPILE_PROTO_MINOR_VERSION)
+				return COMPATIBLE;
+			else
+				return MINOR_INCOMPATIBILITY;
+		}
+
+		// Older versions are incompatible
+		return INCOMPATIBLE;
+	}
 }
 
 QString Reader::errorString() const
