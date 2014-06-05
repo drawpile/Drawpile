@@ -119,9 +119,13 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Force secure mode");
 	parser.addOption(secureOption);
 
-	// --hibernation
+	// --hibernation <directory>
 	QCommandLineOption hibernationOption("hibernation", "Enable session hibernation", "directory");
 	parser.addOption(hibernationOption);
+
+	// --hibernate-all
+	QCommandLineOption hibernateAllOption("hibernate-all", "Hibernate even non-persistent sessions");
+	parser.addOption(hibernateAllOption);
 
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
@@ -243,7 +247,7 @@ int main(int argc, char *argv[]) {
 	{
 		QString hibernation = cfgfile.override(parser, hibernationOption).toString();
 		if(!hibernation.isEmpty()) {
-			if(!server->setHibernation(hibernation))
+			if(!server->setHibernation(hibernation, cfgfile.override(parser, hibernateAllOption).toBool()))
 				return 1;
 		}
 	}
