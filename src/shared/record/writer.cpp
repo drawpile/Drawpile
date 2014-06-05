@@ -16,10 +16,6 @@
    You should have received a copy of the GNU General Public License
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <QVarLengthArray>
-#include <QDateTime>
-#include <QFile>
-#include <QtEndian>
 
 #include "writer.h"
 #include "hibernate.h"
@@ -28,15 +24,21 @@
 
 #include "config.h"
 
+#include <QVarLengthArray>
+#include <QDateTime>
+#include <QtEndian>
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 2, 0))
+#include <QSaveFile>
+#else
+#include <QFile>
+#define QSaveFile QFile
+#define NO_QSAVEFILE
+#endif
+
 namespace recording {
 
-// TODO: use QSaveFile
-// #if (QT_VERSION >= QT_VERSION_CHECK(5, 1, 0))
-// #include <QSaveFile>
-// #endif
-
 Writer::Writer(const QString &filename, QObject *parent)
-	: Writer(new QFile(filename), true, parent)
+	: Writer(new QSaveFile(filename), true, parent)
 {
 }
 
@@ -68,7 +70,7 @@ bool Writer::open()
 	if(_file->isOpen())
 		return true;
 
-	return _file->open(QFile::WriteOnly);
+	return _file->open(QIODevice::WriteOnly);
 }
 
 QString Writer::errorString() const
@@ -199,8 +201,17 @@ void Writer::recordMessage(const protocol::MessagePtr msg)
 
 void Writer::close()
 {
-	Q_ASSERT(_file->isOpen());
-	_file->close();
+	if(_file->isOpen()) {
+#ifndef NO_QSAVEFILE // Qt 5.0 compatibility
+		QSaveFile *sf = qobject_cast<QSaveFile*>(_file);
+		if(sf)
+			sf->commit();
+		else
+			_file->close();
+#else
+		_file->close();
+#endif
+	}
 }
 
 }

@@ -284,6 +284,10 @@ MainWindow::~MainWindow()
 		QDialog *child = qobject_cast<QDialog*>(obj);
 		delete child;
 	}
+
+	// Cleanly shut down recorder if still active
+	if(_recorder)
+		_recorder->close();
 }
 
 /**
