@@ -268,6 +268,10 @@ void SessionServer::cleanupSessions()
 
 		for(SessionState *s : expirelist) {
 			logger::info() << "Vacant" << *s << "expired. Uptime was" << s->uptime();
+
+			if(_store && _store->autoStore() && s->isPersistent())
+				s->setHibernatable(true);
+
 			destroySession(s);
 		}
 	}

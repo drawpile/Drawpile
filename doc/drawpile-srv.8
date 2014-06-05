@@ -83,6 +83,18 @@ to enable SSL support.
 .BR --secure , \ -S
 strict security mode. When this flag is set, clients must use SSL to log in.
 .TP
+.BR --hibernation\  directory
+enable session hibernation. Persistent sessions will be saved to the given directory when the
+server is shut down. A hibernated session will be restored on demand when a user tries to join one.
+.TP
+.BR --hibernate-all
+hibernate even non-persistent sessions on exit. A hibernated session behaves like a persistent session
+until it is woken up again.
+.TP
+.BR --auto-hibernate
+hibernate persistent sessions upon expiration instead of deleting them. Use together with
+.B --expire
+.TP
 .BR --config , \ -c\  filename
 load configuration file. All parameters can also be set in the configuration file.
 Parameters set on the command line override those in the file.

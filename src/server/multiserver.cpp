@@ -121,7 +121,7 @@ void MultiServer::setAutoStop(bool autostop)
 	_autoStop = autostop;
 }
 
-bool MultiServer::setHibernation(const QString &directory, bool all)
+bool MultiServer::setHibernation(const QString &directory, bool all, bool autoHibernate)
 {
 	Hibernation *hib = new Hibernation(directory);
 	if(!hib->init()) {
@@ -130,6 +130,7 @@ bool MultiServer::setHibernation(const QString &directory, bool all)
 	}
 
 	hib->setStoreAllSessions(all);
+	hib->setAutoStore(autoHibernate);
 
 	_sessions->setSessionStore(hib);
 

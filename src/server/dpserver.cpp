@@ -127,6 +127,11 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption hibernateAllOption("hibernate-all", "Hibernate even non-persistent sessions");
 	parser.addOption(hibernateAllOption);
 
+	// --auto-hibernate
+	QCommandLineOption autoHibernateOption("auto-hibernate", "Hibernate sessions on expiration");
+	parser.addOption(autoHibernateOption);
+
+
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
 	parser.addOption(configFileOption);
@@ -247,7 +252,11 @@ int main(int argc, char *argv[]) {
 	{
 		QString hibernation = cfgfile.override(parser, hibernationOption).toString();
 		if(!hibernation.isEmpty()) {
-			if(!server->setHibernation(hibernation, cfgfile.override(parser, hibernateAllOption).toBool()))
+			if(!server->setHibernation(
+						hibernation,
+						cfgfile.override(parser, hibernateAllOption).toBool(),
+						cfgfile.override(parser, autoHibernateOption).toBool()
+				))
 				return 1;
 		}
 	}

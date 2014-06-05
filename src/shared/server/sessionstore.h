@@ -47,6 +47,13 @@ public:
 	void setStoreAllSessions(bool storeall) { _storeAll = storeall; }
 	bool storeAllSessions() const { return _storeAll; }
 
+	/**
+	 * @brief Set whether (persistent) sessions should be automatically stored instead of deleted
+	 * @param autostore
+	 */
+	void setAutoStore(bool autostore) { _autoStore = autostore; }
+	bool autoStore() const { return _autoStore; }
+
 	//! Return a list of available sessions
 	virtual QList<SessionDescription> sessions() const = 0;
 
@@ -73,6 +80,7 @@ signals:
 
 private:
 	bool _storeAll;
+	bool _autoStore;
 };
 
 }
