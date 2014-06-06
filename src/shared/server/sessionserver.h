@@ -133,6 +133,12 @@ public:
 	QList<SessionDescription> sessions() const;
 
 	/**
+	 * @brief Get a session description by ID
+	 * @return session description or a blank object (id=0) if not found
+	 */
+	SessionDescription getSessionDescriptionById(int id) const;
+
+	/**
 	 * @brief Get the session with the specified ID
 	 *
 	 * This may trigger the de-hibernation of a stored session

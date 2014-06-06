@@ -45,6 +45,8 @@ public:
 
 	QList<SessionDescription> sessions() const { return _sessions; }
 
+	SessionDescription getSessionDescriptionById(int id) const;
+
 	SessionState *takeSession(int id);
 	bool storeSession(const SessionState *session);
 

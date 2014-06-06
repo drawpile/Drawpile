@@ -213,14 +213,14 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	}
 
 	int sessionId = m.captured(1).toInt();
-	SessionState *session = _server->getSessionById(sessionId);
-	if(!session) {
+	SessionDescription sessiondesc = _server->getSessionDescriptionById(sessionId);
+	if(sessiondesc.id==0) {
 		send("ERROR NOSESSION");
 		_client->disconnectError("login error");
 		return;
 	}
 
-	if(session->isClosed()) {
+	if(sessiondesc.closed) {
 		send("ERROR CLOSED");
 		_client->disconnectError("login error");
 		return;
@@ -229,7 +229,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 	QString username = m.captured(2);
 	QString password = m.captured(3);
 
-	if(password != session->password()) {
+	if(password != sessiondesc.password) {
 		send("ERROR BADPASS");
 		_client->disconnectError("login error");
 		return;
@@ -237,6 +237,17 @@ void LoginHandler::handleJoinMessage(const QString &message)
 
 	if(!validateUsername(username)) {
 		send("ERROR BADNAME");
+		_client->disconnectError("login error");
+		return;
+	}
+
+	// Just the username uniqueness check to go, we can wake up the session now
+	// A freshly de-hibernated session will not have any users, so the last check
+	// will never fail in that case.
+	SessionState *session = _server->getSessionById(sessionId);
+	if(!session) {
+		// The session was just deleted from under us! (or de-hibernation failed)
+		send("ERROR NOSESSION");
 		_client->disconnectError("login error");
 		return;
 	}

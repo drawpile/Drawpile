@@ -124,6 +124,19 @@ void SessionServer::destroySession(SessionState *session)
 	emit sessionEnded(id);
 }
 
+SessionDescription SessionServer::getSessionDescriptionById(int id) const
+{
+	for(SessionState *s : _sessions) {
+		if(s->id() == id)
+			return SessionDescription(*s);
+	}
+
+	if(_store)
+		return _store->getSessionDescriptionById(id);
+
+	return SessionDescription();
+}
+
 SessionState *SessionServer::getSessionById(int id)
 {
 	for(SessionState *s : _sessions) {

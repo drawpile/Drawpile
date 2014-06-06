@@ -57,6 +57,9 @@ public:
 	//! Return a list of available sessions
 	virtual QList<SessionDescription> sessions() const = 0;
 
+	//! Get the description of a stored session
+	virtual SessionDescription getSessionDescriptionById(int id) const = 0;
+
 	/**
 	 * @brief Load a session with the given ID
 	 *

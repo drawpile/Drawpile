@@ -83,6 +83,14 @@ bool Hibernation::init()
 	return true;
 }
 
+SessionDescription Hibernation::getSessionDescriptionById(int id) const
+{
+	for(const SessionDescription &sd : _sessions)
+		if(sd.id == id)
+			return sd;
+	return SessionDescription();
+}
+
 SessionState *Hibernation::takeSession(int id)
 {
 	// Find and remove the session from the list
