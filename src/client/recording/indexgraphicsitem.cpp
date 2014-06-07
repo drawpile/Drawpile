@@ -17,17 +17,17 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "indexgraphicsitem.h"
+#include "recording/index.h"
+#include "utils/icon.h"
+
 #include <QDebug>
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsTextItem>
 #include <QGraphicsSceneHoverEvent>
-#include <QIcon>
 #include <QStyleOptionGraphicsItem>
 #include <QPalette>
-
-#include "indexgraphicsitem.h"
-#include "recording/index.h"
 
 IndexGraphicsItem::IndexGraphicsItem(QGraphicsItem *parent)
 	: QGraphicsItem(parent), _canSilence(false), _silenced(false)
@@ -69,7 +69,7 @@ namespace {
 
 	QPixmap getIcon(const QString &name)
 	{
-		return QIcon::fromTheme(name, QIcon(":icons/" + name)).pixmap(IndexGraphicsItem::ITEM_HEIGHT, IndexGraphicsItem::ITEM_HEIGHT);
+		return icon::fromTheme(name).pixmap(IndexGraphicsItem::ITEM_HEIGHT, IndexGraphicsItem::ITEM_HEIGHT);
 	}
 }
 

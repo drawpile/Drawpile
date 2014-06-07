@@ -170,7 +170,11 @@ else()
 endif()
 
 qt5_wrap_ui( UI_Headers ${UIs} )
-qt5_add_resources( QtResource ui/resources.qrc )
+
+if( BUILTIN_ICONS )
+	message(STATUS "Including icons in the executable" )
+	qt5_add_resources( QtResource ui/icons/icons.qrc )
+endif( BUILTIN_ICONS )
 
 # non-qt stuff
 
@@ -256,6 +260,10 @@ if ( WIN32 )
 else ( WIN32 )
 	install ( TARGETS ${CLIENTNAME} DESTINATION bin )
 endif ( WIN32 )
+
+if( NOT BUILTIN_ICONS )
+	install( DIRECTORY ui/icons DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
+endif()
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
 	if (APPLE)

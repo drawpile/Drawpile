@@ -17,11 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "loginsessions.h"
+#include "utils/icon.h"
+
 #include <QDebug>
 #include <QPixmap>
-#include <QIcon>
-
-#include "loginsessions.h"
 
 namespace net {
 
@@ -68,7 +68,7 @@ QVariant LoginSessionModel::data(const QModelIndex &index, int role) const
 			else if(ls.closed)
 				return QPixmap(":icons/stopsign.png");
 			else if(ls.needPassword)
-				return QIcon::fromTheme("object-locked", QIcon(":icons/object-locked")).pixmap(16, 16);
+				return icon::fromTheme("object-locked").pixmap(16, 16);
 			break;
 		}
 	}

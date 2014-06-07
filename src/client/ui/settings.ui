@@ -58,7 +58,7 @@
            </property>
            <property name="icon">
             <iconset theme="document-open" resource="resources.qrc">
-             <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+             <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -356,7 +356,7 @@
            </property>
            <property name="icon">
             <iconset theme="security-high" resource="resources.qrc">
-             <normaloff>:/icons/security-high.png</normaloff>:/icons/security-high.png</iconset>
+             <normaloff>icons:security-high.png</normaloff>icons:security-high.png</iconset>
            </property>
           </widget>
          </item>

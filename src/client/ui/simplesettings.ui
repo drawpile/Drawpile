@@ -79,7 +79,7 @@
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
-         <normaloff>:/icons/incremental.png</normaloff>:/icons/incremental.png</iconset>
+         <normaloff>icons:incremental.png</normaloff>icons:incremental.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -105,7 +105,7 @@
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
-         <normaloff>:/icons/hardedge.png</normaloff>:/icons/hardedge.png</iconset>
+         <normaloff>icons:hardedge.png</normaloff>icons:hardedge.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>

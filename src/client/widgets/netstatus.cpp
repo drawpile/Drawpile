@@ -21,6 +21,7 @@
 #include "widgets/popupmessage.h"
 #include "dialogs/certificateview.h"
 #include "utils/whatismyip.h"
+#include "utils/icon.h"
 
 #include <QAction>
 #include <QLabel>
@@ -35,10 +36,7 @@ namespace widgets {
 
 namespace {
 	QPixmap netstatusIcon(const char *name) {
-		return QIcon::fromTheme(
-				QLatin1Literal("network-") + name,
-				QIcon(QLatin1Literal(":icons/network-") + name)
-			).pixmap(16, 16);
+		return icon::fromTheme(QLatin1Literal("network-") + name).pixmap(16, 16);
 	}
 }
 
@@ -197,7 +195,7 @@ void NetStatus::setSecurityLevel(net::Server::Security level, const QSslCertific
 	if(iconname.isEmpty()) {
 		_security->hide();
 	} else {
-		_security->setPixmap(QIcon::fromTheme(iconname, QIcon(":icons/" + iconname)).pixmap(16, 16));
+		_security->setPixmap(icon::fromTheme(iconname).pixmap(16, 16));
 		_security->setToolTip(tooltip);
 		_security->show();
 	}

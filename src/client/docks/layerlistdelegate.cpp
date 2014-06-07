@@ -24,6 +24,7 @@
 
 #include "net/client.h"
 #include "net/layerlist.h"
+#include "utils/icon.h"
 
 #include "docks/layerlistdelegate.h"
 
@@ -31,7 +32,7 @@ namespace docks {
 
 LayerListDelegate::LayerListDelegate(QObject *parent)
 	: QItemDelegate(parent),
-	  _lockicon(QIcon::fromTheme("object-locked", QIcon(":icons/object-locked")).pixmap(16, 16)),
+	  _lockicon(icon::fromTheme("object-locked").pixmap(16, 16)),
 	  _visibleicon(QPixmap(":icons/eye_open.png")),
 	  _hiddenicon(QPixmap(":icons/eye_closed.png"))
 {

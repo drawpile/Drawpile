@@ -21,12 +21,13 @@
 #include <QSettings>
 #include <QUrl>
 #include <QTabletEvent>
-#include <QIcon>
+#include <QStandardPaths>
+#include <QDir>
 
 #include "main.h"
 #include "mainwindow.h"
 
-#include "utils/whatismyip.h"
+#include "utils/icon.h"
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -34,6 +35,13 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 	setOrganizationName("drawpile");
 	setOrganizationDomain("drawpile.sourceforge.net");
 	setApplicationName("drawpile");
+
+	// Set resource search paths
+	QStringList iconPaths;
+	for(const QString path : QStandardPaths::standardLocations(QStandardPaths::DataLocation))
+		iconPaths << path + "/icons";
+	iconPaths << ":/icons";
+	QDir::setSearchPaths("icons", iconPaths);
 
 	// Make sure a user name is set
 	QSettings cfg;
@@ -49,7 +57,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 		cfg.setValue("username", defaultname);
 	}
-	setWindowIcon(QIcon::fromTheme("drawpile", QIcon(":icons/drawpile.png")));
+	setWindowIcon(icon::fromTheme("drawpile"));
 }
 
 /**

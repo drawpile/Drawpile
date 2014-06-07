@@ -77,7 +77,7 @@
        </property>
        <property name="icon">
         <iconset theme="zoom-in" resource="resources.qrc">
-         <normaloff>:/icons/zoom-in.png</normaloff>:/icons/zoom-in.png</iconset>
+         <normaloff>icons:zoom-in.png</normaloff>icons:zoom-in.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -91,7 +91,7 @@
        </property>
        <property name="icon">
         <iconset theme="zoom-out" resource="resources.qrc">
-         <normaloff>:/icons/zoom-out.png</normaloff>:/icons/zoom-out.png</iconset>
+         <normaloff>icons:zoom-out.png</normaloff>icons:zoom-out.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

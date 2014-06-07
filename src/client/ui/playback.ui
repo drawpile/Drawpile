@@ -79,7 +79,7 @@ QProgressBar::chunk {
          </property>
          <property name="icon">
           <iconset theme="media-playback-start" resource="resources.qrc">
-           <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+           <normaloff>icons:media-playback-start.png</normaloff>icons:media-playback-start.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -102,7 +102,7 @@ QProgressBar::chunk {
          </property>
          <property name="icon">
           <iconset theme="media-seek-forward" resource="resources.qrc">
-           <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+           <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -122,7 +122,7 @@ QProgressBar::chunk {
          </property>
          <property name="icon">
           <iconset theme="media-skip-forward" resource="resources.qrc">
-           <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+           <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -369,7 +369,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="media-skip-backward" resource="resources.qrc">
-             <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
+             <normaloff>icons:media-skip-backward.png</normaloff>icons:media-skip-backward.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -386,7 +386,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="media-skip-forward" resource="resources.qrc">
-             <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+             <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -404,7 +404,7 @@ QProgressBar::chunk {
           <widget class="QToolButton" name="prevMarker">
            <property name="icon">
             <iconset theme="media-seek-backward" resource="resources.qrc">
-             <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
+             <normaloff>icons:media-seek-backward.png</normaloff>icons:media-seek-backward.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -418,7 +418,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="media-seek-forward" resource="resources.qrc">
-             <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+             <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -429,7 +429,7 @@ QProgressBar::chunk {
           <widget class="QToolButton" name="jumpToMarker">
            <property name="icon">
             <iconset theme="go-jump" resource="resources.qrc">
-             <normaloff>:/icons/go-jump.png</normaloff>:/icons/go-jump.png</iconset>
+             <normaloff>icons:go-jump.png</normaloff>icons:go-jump.png</iconset>
            </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
@@ -459,7 +459,7 @@ QProgressBar::chunk {
            </property>
            <property name="icon">
             <iconset theme="flag-blue" resource="resources.qrc">
-             <normaloff>:/icons/flag-blue.png</normaloff>:/icons/flag-blue.png</iconset>
+             <normaloff>icons:flag-blue.png</normaloff>icons:flag-blue.png</iconset>
            </property>
            <property name="autoDefault">
             <bool>false</bool>

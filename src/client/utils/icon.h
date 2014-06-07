@@ -29,11 +29,12 @@ namespace icon {
  * @param name
  * @return
  */
-inline QIcon fromTheme(const char *name)
+inline QIcon fromTheme(const QString &name)
 {
-	return QIcon::fromTheme(name, QIcon(QLatin1Literal(":icons/") + name));
+	return QIcon::fromTheme(name, QIcon(QLatin1Literal("icons:") + name));
 }
 
 }
 
 #endif
+

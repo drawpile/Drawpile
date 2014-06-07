@@ -43,9 +43,9 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
-         <normaloff>:/icons/eye_open.png</normaloff>
-         <normalon>:/icons/eye_closed.png</normalon>:/icons/eye_open.png</iconset>
+        <iconset>
+         <normaloff>icons:eye_open.png</normaloff>
+         <normalon>icons:eye_closed.png</normalon>icons:eye_open.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -87,8 +87,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="object-locked" resource="resources.qrc">
-         <normaloff>:/icons/object-locked.png</normaloff>:/icons/object-locked.png</iconset>
+        <iconset theme="object-locked">
+         <normaloff>icons:object-locked.png</normaloff>icons:object-locked.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -110,8 +110,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-add" resource="resources.qrc">
-         <normaloff>:/icons/list-add.png</normaloff>:/icons/list-add.png</iconset>
+        <iconset theme="list-add">
+         <normaloff>icons:list-add.png</normaloff>icons:list-add.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -127,8 +127,8 @@
         <string>...</string>
        </property>
        <property name="icon">
-        <iconset theme="list-remove" resource="resources.qrc">
-         <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
+        <iconset theme="list-remove">
+         <normaloff>icons:list-remove.png</normaloff>icons:list-remove.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -152,7 +152,7 @@
   <tabstop>layerlist</tabstop>
  </tabstops>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

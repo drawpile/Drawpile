@@ -88,7 +88,7 @@ QProgressBar::chunk {
        </property>
        <property name="icon">
         <iconset theme="media-seek-backward" resource="resources.qrc">
-         <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
+         <normaloff>icons:media-seek-backward.png</normaloff>icons:media-seek-backward.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -108,7 +108,7 @@ QProgressBar::chunk {
        </property>
        <property name="icon">
         <iconset theme="media-playback-start" resource="resources.qrc">
-         <normaloff>:/icons/media-playback-start.png</normaloff>:/icons/media-playback-start.png</iconset>
+         <normaloff>icons:media-playback-start.png</normaloff>icons:media-playback-start.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -131,7 +131,7 @@ QProgressBar::chunk {
        </property>
        <property name="icon">
         <iconset theme="media-seek-forward" resource="resources.qrc">
-         <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+         <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -151,7 +151,7 @@ QProgressBar::chunk {
        </property>
        <property name="icon">
         <iconset theme="media-skip-forward" resource="resources.qrc">
-         <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+         <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
        </property>
        <property name="iconSize">
         <size>
@@ -174,7 +174,7 @@ QProgressBar::chunk {
        </property>
        <property name="icon">
         <iconset theme="media-seek-forward" resource="resources.qrc">
-         <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+         <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
        </property>
        <property name="iconSize">
         <size>

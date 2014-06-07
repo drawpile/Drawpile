@@ -182,7 +182,7 @@
                <widget class="QToolButton" name="selectPicture">
                 <property name="icon">
                  <iconset theme="document-open">
-                  <normaloff>:icons/document-open.png</normaloff>:icons/document-open.png</iconset>
+                  <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>

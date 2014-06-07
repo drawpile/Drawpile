@@ -140,7 +140,7 @@
           </property>
           <property name="icon">
            <iconset theme="video-display" resource="resources.qrc">
-            <normaloff>:/icons/video-display.png</normaloff>:/icons/video-display.png</iconset>
+            <normaloff>icons:video-display.png</normaloff>icons:video-display.png</iconset>
           </property>
           <property name="popupMode">
            <enum>QToolButton::InstantPopup</enum>
@@ -292,7 +292,7 @@
              <widget class="QToolButton" name="pickSoundtrack">
               <property name="icon">
                <iconset theme="document-open" resource="resources.qrc">
-                <normaloff>:/icons/document-open.png</normaloff>:/icons/document-open.png</iconset>
+                <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
               </property>
               <property name="autoRaise">
                <bool>true</bool>

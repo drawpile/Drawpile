@@ -44,7 +44,7 @@
        </property>
        <property name="icon">
         <iconset theme="edit-undo" resource="resources.qrc">
-         <normaloff>:/icons/edit-undo.png</normaloff>:/icons/edit-undo.png</iconset>
+         <normaloff>icons:edit-undo.png</normaloff>icons:edit-undo.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -61,7 +61,7 @@
        </property>
        <property name="icon">
         <iconset theme="edit-redo" resource="resources.qrc">
-         <normaloff>:/icons/edit-redo.png</normaloff>:/icons/edit-redo.png</iconset>
+         <normaloff>icons:edit-redo.png</normaloff>icons:edit-redo.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>
@@ -132,7 +132,7 @@
        </property>
        <property name="icon">
         <iconset theme="list-remove" resource="resources.qrc">
-         <normaloff>:/icons/list-remove.png</normaloff>:/icons/list-remove.png</iconset>
+         <normaloff>icons:list-remove.png</normaloff>icons:list-remove.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>true</bool>

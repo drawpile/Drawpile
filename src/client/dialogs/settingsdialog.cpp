@@ -39,6 +39,7 @@
 #include "dialogs/settingsdialog.h"
 #include "dialogs/certificateview.h"
 #include "export/ffmpegexporter.h" // for setting ffmpeg path
+#include "utils/icon.h"
 
 #include "ui_settings.h"
 
@@ -176,7 +177,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 
 	QStringList pemfilter; pemfilter << "*.pem";
 	QDir knownHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/known-hosts/");
-	QIcon knownIcon = QIcon::fromTheme("security-medium", QIcon(":icons/security-medium"));
+	QIcon knownIcon = icon::fromTheme("security-medium");
 
 	for(const QString &filename : knownHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(knownIcon, filename.left(filename.length()-4), _ui->knownHostList);
@@ -185,7 +186,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	}
 
 	QDir trustedHostsDir(QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/trusted-hosts/");
-	QIcon trustedIcon = QIcon::fromTheme("security-high", QIcon(":icons/security-high"));
+	QIcon trustedIcon = icon::fromTheme("security-high");
 	for(const QString &filename : trustedHostsDir.entryList(pemfilter, QDir::Files)) {
 		auto *i = new QListWidgetItem(trustedIcon, filename.left(filename.length()-4), _ui->knownHostList);
 		i->setData(Qt::UserRole, true);
@@ -346,7 +347,7 @@ void SettingsDialog::certificateSelectionChanged()
 
 void SettingsDialog::markTrustedCertificates()
 {
-	QIcon trustedIcon = QIcon::fromTheme("security-high", QIcon(":icons/security-high"));
+	QIcon trustedIcon = icon::fromTheme("security-high");
 	for(QListWidgetItem *item : _ui->knownHostList->selectedItems()) {
 		if(!item->data(Qt::UserRole).toBool()) {
 			_trustCerts.append(item->data(Qt::UserRole+1).toString());
@@ -398,7 +399,7 @@ void SettingsDialog::importTrustedCertificate()
 
 	_importCerts.append(certs.at(0));
 
-	QIcon trustedIcon = QIcon::fromTheme("security-high", QIcon(":icons/security-high"));
+	QIcon trustedIcon = icon::fromTheme("security-high");
 	auto *i = new QListWidgetItem(trustedIcon, certs.at(0).subjectInfo(QSslCertificate::CommonName).at(0), _ui->knownHostList);
 	i->setData(Qt::UserRole, true);
 	i->setData(Qt::UserRole+2, path);

@@ -69,7 +69,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-left" resource="resources.qrc">
-         <normaloff>:/icons/format-justify-left.png</normaloff>:/icons/format-justify-left.png</iconset>
+         <normaloff>icons:format-justify-left.png</normaloff>icons:format-justify-left.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -100,7 +100,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-center" resource="resources.qrc">
-         <normaloff>:/icons/format-justify-center.png</normaloff>:/icons/format-justify-center.png</iconset>
+         <normaloff>icons:format-justify-center.png</normaloff>icons:format-justify-center.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -128,7 +128,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-fill" resource="resources.qrc">
-         <normaloff>:/icons/format-justify-fill.png</normaloff>:/icons/format-justify-fill.png</iconset>
+         <normaloff>icons:format-justify-fill.png</normaloff>icons:format-justify-fill.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -156,7 +156,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-justify-right" resource="resources.qrc">
-         <normaloff>:/icons/format-justify-right.png</normaloff>:/icons/format-justify-right.png</iconset>
+         <normaloff>icons:format-justify-right.png</normaloff>icons:format-justify-right.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -243,7 +243,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-bold" resource="resources.qrc">
-         <normaloff>:/icons/format-text-bold.png</normaloff>:/icons/format-text-bold.png</iconset>
+         <normaloff>icons:format-text-bold.png</normaloff>icons:format-text-bold.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -268,7 +268,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-italic" resource="resources.qrc">
-         <normaloff>:/icons/format-text-italic.png</normaloff>:/icons/format-text-italic.png</iconset>
+         <normaloff>icons:format-text-italic.png</normaloff>icons:format-text-italic.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -288,7 +288,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-underline" resource="resources.qrc">
-         <normaloff>:/icons/format-text-underline.png</normaloff>:/icons/format-text-underline.png</iconset>
+         <normaloff>icons:format-text-underline.png</normaloff>icons:format-text-underline.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -308,7 +308,7 @@
        </property>
        <property name="icon">
         <iconset theme="format-text-strikethrough" resource="resources.qrc">
-         <normaloff>:/icons/format-text-strikethrough.png</normaloff>:/icons/format-text-strikethrough.png</iconset>
+         <normaloff>icons:format-text-strikethrough.png</normaloff>icons:format-text-strikethrough.png</iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
