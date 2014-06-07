@@ -31,7 +31,7 @@ namespace icon {
  */
 inline QIcon fromTheme(const QString &name)
 {
-	return QIcon::fromTheme(name, QIcon(QLatin1Literal("icons:") + name));
+	return QIcon::fromTheme(name, QIcon(QLatin1Literal("icons:") + name + QLatin1Literal(".png")));
 }
 
 }
