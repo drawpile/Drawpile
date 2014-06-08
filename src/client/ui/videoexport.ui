@@ -113,7 +113,7 @@
         <item>
          <widget class="QLabel" name="label_10">
           <property name="text">
-           <string>×</string>
+           <string notr="true">×</string>
           </property>
          </widget>
         </item>
@@ -139,7 +139,7 @@
            <bool>false</bool>
           </property>
           <property name="icon">
-           <iconset theme="video-display" resource="resources.qrc">
+           <iconset theme="video-display">
             <normaloff>icons:video-display.png</normaloff>icons:video-display.png</iconset>
           </property>
           <property name="popupMode">
@@ -275,7 +275,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>video_{F}.{E}</string>
+             <string notr="true">video_{F}.{E}</string>
             </property>
            </widget>
           </item>
@@ -291,7 +291,7 @@
             <item>
              <widget class="QToolButton" name="pickSoundtrack">
               <property name="icon">
-               <iconset theme="document-open" resource="resources.qrc">
+               <iconset theme="document-open">
                 <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
               </property>
               <property name="autoRaise">
@@ -317,17 +317,17 @@
               </property>
               <item>
                <property name="text">
-                <string>AVI</string>
+                <string notr="true">AVI</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>Matroska</string>
+                <string notr="true">Matroska</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>WebM</string>
+                <string notr="true">WebM</string>
                </property>
               </item>
              </widget>
@@ -346,17 +346,17 @@
               </property>
               <item>
                <property name="text">
-                <string>H.264</string>
+                <string notr="true">H.264</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>VP8</string>
+                <string notr="true">VP8</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>Theora</string>
+                <string notr="true">Theora</string>
                </property>
               </item>
              </widget>
@@ -373,17 +373,17 @@
               </item>
               <item>
                <property name="text">
-                <string>MP3</string>
+                <string notr="true">MP3</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>AAC</string>
+                <string notr="true">AAC</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>Vorbis</string>
+                <string notr="true">Vorbis</string>
                </property>
               </item>
              </widget>
@@ -465,7 +465,7 @@ color: red;</string>
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -52,7 +52,7 @@
           <item row="0" column="1">
            <widget class="QLineEdit" name="sessiontitle">
             <property name="toolTip">
-             <string>A title that is shown to users</string>
+             <string>The title is shown in the application title bar and in the session selection dialog</string>
             </property>
            </widget>
           </item>
@@ -75,9 +75,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="toolTip">
-               <string>Your username</string>
               </property>
               <property name="mandatoryfield" stdset="0">
                <bool>true</bool>
@@ -120,7 +117,7 @@
                </sizepolicy>
               </property>
               <property name="toolTip">
-               <string>Password for this session. If left blank, anyone can join the session</string>
+               <string>Optional. If left blank, no password will be needed to join this session.</string>
               </property>
              </widget>
             </item>
@@ -427,7 +424,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Advanced</string>
+       <string>Server</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>

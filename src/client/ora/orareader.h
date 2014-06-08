@@ -23,6 +23,7 @@
 
 #include <QString>
 #include <QList>
+#include <QApplication>
 
 class KArchive;
 class QDomElement;
@@ -35,6 +36,7 @@ namespace openraster {
  * An OpenRaster reader.
  */
 class Reader {
+	Q_DECLARE_TR_FUNCTIONS(openraster::Reader)
 	public:
 		enum Warning {
 			//! No warnings (i.e. DrawPile supports all features of the file)

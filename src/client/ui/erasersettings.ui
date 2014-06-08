@@ -10,9 +10,6 @@
     <height>300</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
@@ -71,11 +68,8 @@
        <property name="toolTip">
         <string>Incremental drawing</string>
        </property>
-       <property name="text">
-        <string>...</string>
-       </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset>
          <normaloff>icons:incremental.png</normaloff>icons:incremental.png</iconset>
        </property>
        <property name="checkable">
@@ -97,11 +91,8 @@
        <property name="toolTip">
         <string>Hard edge</string>
        </property>
-       <property name="text">
-        <string>HE</string>
-       </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset>
          <normaloff>icons:hardedge.png</normaloff>icons:hardedge.png</iconset>
        </property>
        <property name="checkable">
@@ -212,7 +203,7 @@
      <item row="1" column="2">
       <widget class="QSpinBox" name="spinBox_2">
        <property name="suffix">
-        <string>%</string>
+        <string notr="true">%</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -225,7 +216,7 @@
      <item row="2" column="2">
       <widget class="QSpinBox" name="spinBox_3">
        <property name="suffix">
-        <string>%</string>
+        <string notr="true">%</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -238,7 +229,7 @@
      <item row="3" column="2">
       <widget class="QSpinBox" name="spinBox_4">
        <property name="suffix">
-        <string>%</string>
+        <string notr="true">%</string>
        </property>
        <property name="minimum">
         <number>1</number>
@@ -348,7 +339,7 @@
   <tabstop>pressurehardness</tabstop>
  </tabstops>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections>
   <connection>

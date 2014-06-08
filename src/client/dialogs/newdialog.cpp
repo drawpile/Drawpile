@@ -33,7 +33,7 @@ NewDialog::NewDialog(QWidget *parent)
 {
 	_ui = new Ui_NewDialog;
 	_ui->setupUi(this);
-	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create new"));
+	_ui->buttons->button(QDialogButtonBox::Ok)->setText(tr("Create"));
 	connect(this, SIGNAL(accepted()), this, SLOT(onAccept()));
 
 	QSettings cfg;

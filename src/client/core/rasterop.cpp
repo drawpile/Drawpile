@@ -22,16 +22,16 @@
 namespace paintcore {
 
 const char *BLEND_MODE[BLEND_MODES] = {
-	QT_TR_NOOP("Erase"), // This is a special mode
-	QT_TR_NOOP("Normal"),
-	QT_TR_NOOP("Multiply"),
-	QT_TR_NOOP("Divide"),
-	QT_TR_NOOP("Burn"),
-	QT_TR_NOOP("Dodge"),
-	QT_TR_NOOP("Darken"),
-	QT_TR_NOOP("Lighten"),
-	QT_TR_NOOP("Subtract"),
-	QT_TR_NOOP("Add"),
+	QT_TRANSLATE_NOOP("paintcore", "Erase"), // This is a special mode
+	QT_TRANSLATE_NOOP("paintcore", "Normal"),
+	QT_TRANSLATE_NOOP("paintcore", "Multiply"),
+	QT_TRANSLATE_NOOP("paintcore", "Divide"),
+	QT_TRANSLATE_NOOP("paintcore", "Burn"),
+	QT_TRANSLATE_NOOP("paintcore", "Dodge"),
+	QT_TRANSLATE_NOOP("paintcore", "Darken"),
+	QT_TRANSLATE_NOOP("paintcore", "Lighten"),
+	QT_TRANSLATE_NOOP("paintcore", "Subtract"),
+	QT_TRANSLATE_NOOP("paintcore", "Add"),
 };
 
 static const QString svgModeNames[BLEND_MODES] = {

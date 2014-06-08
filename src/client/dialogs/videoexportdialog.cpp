@@ -58,7 +58,7 @@ VideoExportDialog::VideoExportDialog(QWidget *parent) :
 	connect(_ui->pickSoundtrack, &QToolButton::clicked, [this]() {
 		QString file = QFileDialog::getOpenFileName(this, tr("Select soundtrack"), _lastpath,
 			tr("Sound files (%1)").arg("*.wav *.mp3 *.aac *.ogg *.flac") + ";;" +
-			tr("All files (*)")
+			QApplication::tr("All files (*)")
 		);
 		if(!file.isEmpty())
 			_ui->soundtrack->setText(file);

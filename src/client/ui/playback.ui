@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Session playback</string>
+   <string>Recording playback</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -78,7 +78,7 @@ QProgressBar::chunk {
           <string>Play</string>
          </property>
          <property name="icon">
-          <iconset theme="media-playback-start" resource="resources.qrc">
+          <iconset theme="media-playback-start">
            <normaloff>icons:media-playback-start.png</normaloff>icons:media-playback-start.png</iconset>
          </property>
          <property name="iconSize">
@@ -101,7 +101,7 @@ QProgressBar::chunk {
           <string>Step</string>
          </property>
          <property name="icon">
-          <iconset theme="media-seek-forward" resource="resources.qrc">
+          <iconset theme="media-seek-forward">
            <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
          </property>
          <property name="iconSize">
@@ -121,7 +121,7 @@ QProgressBar::chunk {
           <string>Skip stroke</string>
          </property>
          <property name="icon">
-          <iconset theme="media-skip-forward" resource="resources.qrc">
+          <iconset theme="media-skip-forward">
            <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
          </property>
          <property name="iconSize">
@@ -364,11 +364,8 @@ QProgressBar::chunk {
            <property name="toolTip">
             <string>Previous snapshot</string>
            </property>
-           <property name="text">
-            <string>...</string>
-           </property>
            <property name="icon">
-            <iconset theme="media-skip-backward" resource="resources.qrc">
+            <iconset theme="media-skip-backward">
              <normaloff>icons:media-skip-backward.png</normaloff>icons:media-skip-backward.png</iconset>
            </property>
            <property name="autoRaise">
@@ -381,11 +378,8 @@ QProgressBar::chunk {
            <property name="toolTip">
             <string>Next snapshot</string>
            </property>
-           <property name="text">
-            <string>...</string>
-           </property>
            <property name="icon">
-            <iconset theme="media-skip-forward" resource="resources.qrc">
+            <iconset theme="media-skip-forward">
              <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
            </property>
            <property name="autoRaise">
@@ -403,7 +397,7 @@ QProgressBar::chunk {
          <item>
           <widget class="QToolButton" name="prevMarker">
            <property name="icon">
-            <iconset theme="media-seek-backward" resource="resources.qrc">
+            <iconset theme="media-seek-backward">
              <normaloff>icons:media-seek-backward.png</normaloff>icons:media-seek-backward.png</iconset>
            </property>
            <property name="autoRaise">
@@ -413,11 +407,8 @@ QProgressBar::chunk {
          </item>
          <item>
           <widget class="QToolButton" name="nextMarker">
-           <property name="text">
-            <string>...</string>
-           </property>
            <property name="icon">
-            <iconset theme="media-seek-forward" resource="resources.qrc">
+            <iconset theme="media-seek-forward">
              <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
            </property>
            <property name="autoRaise">
@@ -428,7 +419,7 @@ QProgressBar::chunk {
          <item>
           <widget class="QToolButton" name="jumpToMarker">
            <property name="icon">
-            <iconset theme="go-jump" resource="resources.qrc">
+            <iconset theme="go-jump">
              <normaloff>icons:go-jump.png</normaloff>icons:go-jump.png</iconset>
            </property>
            <property name="popupMode">
@@ -458,7 +449,7 @@ QProgressBar::chunk {
             <string>Mark</string>
            </property>
            <property name="icon">
-            <iconset theme="flag-blue" resource="resources.qrc">
+            <iconset theme="flag-blue">
              <normaloff>icons:flag-blue.png</normaloff>icons:flag-blue.png</iconset>
            </property>
            <property name="autoDefault">
@@ -683,7 +674,7 @@ QProgressBar::chunk {
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

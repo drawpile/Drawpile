@@ -50,7 +50,7 @@ namespace {
 	void populateBlendmodeBox(QComboBox *box) {
 		// note. blend mode 0 is reserved for the eraser
 		for(int b=1;b<paintcore::BLEND_MODES;++b) {
-			box->addItem(QApplication::tr(paintcore::BLEND_MODE[b]));
+			box->addItem(QApplication::translate("paintcore", paintcore::BLEND_MODE[b]));
 		}
 	}
 }
@@ -592,7 +592,7 @@ QWidget *ColorPickerSettings::createUiWidget(QWidget *parent)
 	QVBoxLayout *layout = new QVBoxLayout(widget);
 	widget->setLayout(layout);
 
-	_layerpick = new QCheckBox(widget->tr("Pick from current layer only"), widget);
+	_layerpick = new QCheckBox(tr("Pick from current layer only"), widget);
 	layout->addWidget(_layerpick);
 
 	_palettewidget = new widgets::PaletteWidget(widget);

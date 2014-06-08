@@ -107,9 +107,9 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	connect(_ui->pickFfmpeg, &QToolButton::clicked, [this]() {
 		QString path = QFileDialog::getOpenFileName(this, tr("Set ffmepg path"), _ui->ffmpegpath->text(),
 #ifdef Q_OS_WIN
-			tr("Executables (*.exe)") + ";;" +
+			tr("Executables (%1)").arg("*.exe") + ";;" +
 #endif
-			tr("All files (*)")
+			QApplication::tr("All files (*)")
 		);
 		if(!path.isEmpty())
 			_ui->ffmpegpath->setText(path);
@@ -379,8 +379,8 @@ void SettingsDialog::removeCertificates()
 void SettingsDialog::importTrustedCertificate()
 {
 	QString path = QFileDialog::getOpenFileName(this, tr("Import trusted certificate"), QString(),
-		tr("Certificates (*.pem)") + ";;" +
-		tr("All files (*)")
+		tr("Certificates (%1)").arg("*.pem") + ";;" +
+		QApplication::tr("All files (*)")
 	);
 
 	if(path.isEmpty())

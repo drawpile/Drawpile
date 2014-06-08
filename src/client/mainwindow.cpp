@@ -437,9 +437,9 @@ void MainWindow::updateTitle()
 	}
 
 	if(!_canvas || _canvas->title().isEmpty())
-		setWindowTitle(tr("%1[*] - DrawPile").arg(name));
+		setWindowTitle(tr("%1[*] - Drawpile").arg(name));
 	else
-		setWindowTitle(tr("%1[*] - %2 - DrawPile").arg(name).arg(_canvas->title()));
+		setWindowTitle(tr("%1[*] - %2 - Drawpile").arg(name).arg(_canvas->title()));
 }
 
 /**
@@ -560,7 +560,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 		if(_client->isLoggedIn()) {
 			QMessageBox box(
 				QMessageBox::Information,
-				tr("Exit DrawPile"),
+				tr("Exit Drawpile"),
 				tr("You are still connected to a drawing session."),
 				QMessageBox::NoButton, this);
 
@@ -580,7 +580,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 		// Then confirm unsaved changes
 		if(isWindowModified()) {
-			QMessageBox box(QMessageBox::Question, tr("Exit DrawPile"),
+			QMessageBox box(QMessageBox::Question, tr("Exit Drawpile"),
 					tr("There are unsaved changes. Save them before exiting?"),
 					QMessageBox::NoButton, this);
 			const QPushButton *savebtn = box.addButton(tr("Save"),
@@ -660,8 +660,8 @@ void MainWindow::open()
 	const QString filter =
 			tr("All supported files (%1)").arg(dpimages + dprecs + formats) + ";;" +
 			tr("Images (%1)").arg(dpimages + formats) + ";;" +
-			tr("Drawpile recordings (%1)").arg(dprecs) + ";;" +
-			tr("All files (*)");
+			tr("Recordings (%1)").arg(dprecs) + ";;" +
+			QApplication::tr("All files (*)");
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
@@ -763,7 +763,7 @@ bool MainWindow::saveas()
 	// reasonable formats (who would want to save a 1600x1200 image
 	// as an XPM?). Perhaps we should check GIF support was compiled in?
 	filter = "OpenRaster (*.ora);;PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp);;";
-	filter += tr("All files (*)");
+	filter += QApplication::tr("All files (*)");
 #endif
 
 	// Get the file name
@@ -852,7 +852,7 @@ void MainWindow::toggleRecording()
 		return;
 	}
 
-	QString filter = tr("Drawpile recordings (%1)").arg("*.dprec") + ";;" + tr("All files (*)");
+	QString filter = tr("Recordings (%1)").arg("*.dprec") + ";;" + QApplication::tr("All files (*)");
 	QString file = QFileDialog::getSaveFileName(this,
 			tr("Record session"), getLastPath(), filter);
 
@@ -1215,7 +1215,7 @@ void MainWindow::showErrorMessage(const QString& message, const QString& details
 {
 	QMessageBox *msgbox = new QMessageBox(
 		QMessageBox::Warning,
-		QString("DrawPile"),
+		QString("Drawpile"),
 		message, QMessageBox::Ok,
 		this,
 		Qt::Dialog|Qt::Sheet|Qt::MSWindowsFixedSizeDialogHint
@@ -1373,7 +1373,7 @@ void MainWindow::pasteFile()
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 		formats += "*." + format + " ";
 	}
-	const QString filter = tr("Images (%1)").arg(formats) + ";;" + tr("All files (*)");
+	const QString filter = tr("Images (%1)").arg(formats) + ";;" + QApplication::tr("All files (*)");
 
 	// Get the file name to open
 	const QString file = QFileDialog::getOpenFileName(this,
@@ -1925,7 +1925,7 @@ void MainWindow::setupActions()
 	//
 	QAction *homepage = makeAction("dphomepage", 0, tr("&Homepage"), "http://drawpile.sourceforge.net/");
 	QAction *wikipage = makeAction("dphomepage", 0, tr("&Wiki"), "https://github.com/callaa/Drawpile/wiki");
-	QAction *about = makeAction("dpabout", 0, tr("&About DrawPile"));
+	QAction *about = makeAction("dpabout", 0, tr("&About Drawpile"));
 	QAction *aboutqt = makeAction("aboutqt", 0, tr("About &Qt"));
 
 	connect(homepage, &QAction::triggered, [homepage]() { QDesktopServices::openUrl(QUrl(homepage->statusTip())); });

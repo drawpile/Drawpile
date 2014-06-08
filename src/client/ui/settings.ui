@@ -53,11 +53,8 @@
          </item>
          <item>
           <widget class="QToolButton" name="pickFfmpeg">
-           <property name="text">
-            <string>...</string>
-           </property>
            <property name="icon">
-            <iconset theme="document-open" resource="resources.qrc">
+            <iconset theme="document-open">
              <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
            </property>
            <property name="autoRaise">
@@ -355,7 +352,7 @@
             <string>Mark as trusted</string>
            </property>
            <property name="icon">
-            <iconset theme="security-high" resource="resources.qrc">
+            <iconset theme="security-high">
              <normaloff>icons:security-high.png</normaloff>icons:security-high.png</iconset>
            </property>
           </widget>
@@ -389,7 +386,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections>
   <connection>

@@ -10,9 +10,6 @@
     <height>308</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Annotation settings</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
@@ -68,7 +65,7 @@
         <string>Left align</string>
        </property>
        <property name="icon">
-        <iconset theme="format-justify-left" resource="resources.qrc">
+        <iconset theme="format-justify-left">
          <normaloff>icons:format-justify-left.png</normaloff>icons:format-justify-left.png</iconset>
        </property>
        <property name="checkable">
@@ -95,11 +92,8 @@
        <property name="toolTip">
         <string>Center</string>
        </property>
-       <property name="text">
-        <string>I</string>
-       </property>
        <property name="icon">
-        <iconset theme="format-justify-center" resource="resources.qrc">
+        <iconset theme="format-justify-center">
          <normaloff>icons:format-justify-center.png</normaloff>icons:format-justify-center.png</iconset>
        </property>
        <property name="checkable">
@@ -123,11 +117,8 @@
        <property name="toolTip">
         <string>Justify</string>
        </property>
-       <property name="text">
-        <string>I</string>
-       </property>
        <property name="icon">
-        <iconset theme="format-justify-fill" resource="resources.qrc">
+        <iconset theme="format-justify-fill">
          <normaloff>icons:format-justify-fill.png</normaloff>icons:format-justify-fill.png</iconset>
        </property>
        <property name="checkable">
@@ -151,11 +142,8 @@
        <property name="toolTip">
         <string>Right align</string>
        </property>
-       <property name="text">
-        <string>I</string>
-       </property>
        <property name="icon">
-        <iconset theme="format-justify-right" resource="resources.qrc">
+        <iconset theme="format-justify-right">
          <normaloff>icons:format-justify-right.png</normaloff>icons:format-justify-right.png</iconset>
        </property>
        <property name="checkable">
@@ -238,11 +226,8 @@
        <property name="toolTip">
         <string>Bold</string>
        </property>
-       <property name="text">
-        <string>B</string>
-       </property>
        <property name="icon">
-        <iconset theme="format-text-bold" resource="resources.qrc">
+        <iconset theme="format-text-bold">
          <normaloff>icons:format-text-bold.png</normaloff>icons:format-text-bold.png</iconset>
        </property>
        <property name="checkable">
@@ -263,11 +248,8 @@
        <property name="toolTip">
         <string>Italic</string>
        </property>
-       <property name="text">
-        <string>I</string>
-       </property>
        <property name="icon">
-        <iconset theme="format-text-italic" resource="resources.qrc">
+        <iconset theme="format-text-italic">
          <normaloff>icons:format-text-italic.png</normaloff>icons:format-text-italic.png</iconset>
        </property>
        <property name="checkable">
@@ -283,11 +265,8 @@
        <property name="toolTip">
         <string>Underline</string>
        </property>
-       <property name="text">
-        <string/>
-       </property>
        <property name="icon">
-        <iconset theme="format-text-underline" resource="resources.qrc">
+        <iconset theme="format-text-underline">
          <normaloff>icons:format-text-underline.png</normaloff>icons:format-text-underline.png</iconset>
        </property>
        <property name="checkable">
@@ -303,11 +282,8 @@
        <property name="toolTip">
         <string>Strikethrough</string>
        </property>
-       <property name="text">
-        <string/>
-       </property>
        <property name="icon">
-        <iconset theme="format-text-strikethrough" resource="resources.qrc">
+        <iconset theme="format-text-strikethrough">
          <normaloff>icons:format-text-strikethrough.png</normaloff>icons:format-text-strikethrough.png</iconset>
        </property>
        <property name="checkable">
@@ -328,7 +304,7 @@
      <item>
       <widget class="QPushButton" name="btnBake">
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Merge the text onto the current layer&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>Merge the text onto the current layer</string>
        </property>
        <property name="text">
         <string>Merge</string>
@@ -360,7 +336,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections>
   <connection>

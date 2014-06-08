@@ -71,7 +71,7 @@ QString FilterRecordingDialog::filterRecording(const QString &recordingFile)
 	// First, get output file name
 	QString outfile = QFileDialog::getSaveFileName(this, tr("Save filtered recording"),
 		cfg.value("window/lastpath").toString(),
-		tr("Drawpile recordings (%1)").arg("*.dprec")
+		tr("Recordings (%1)").arg("*.dprec")
 	);
 
 	if(outfile.isEmpty())

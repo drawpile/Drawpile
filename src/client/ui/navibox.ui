@@ -10,9 +10,6 @@
     <height>153</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
@@ -72,11 +69,8 @@
      </item>
      <item>
       <widget class="QToolButton" name="zoomin">
-       <property name="text">
-        <string>Zoom in</string>
-       </property>
        <property name="icon">
-        <iconset theme="zoom-in" resource="resources.qrc">
+        <iconset theme="zoom-in">
          <normaloff>icons:zoom-in.png</normaloff>icons:zoom-in.png</iconset>
        </property>
        <property name="autoRaise">
@@ -86,11 +80,8 @@
      </item>
      <item>
       <widget class="QToolButton" name="zoomout">
-       <property name="text">
-        <string>Zoom out</string>
-       </property>
        <property name="icon">
-        <iconset theme="zoom-out" resource="resources.qrc">
+        <iconset theme="zoom-out">
          <normaloff>icons:zoom-out.png</normaloff>icons:zoom-out.png</iconset>
        </property>
        <property name="autoRaise">
@@ -110,7 +101,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

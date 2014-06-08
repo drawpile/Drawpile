@@ -87,7 +87,7 @@ QProgressBar::chunk {
         <string>Previous marker</string>
        </property>
        <property name="icon">
-        <iconset theme="media-seek-backward" resource="resources.qrc">
+        <iconset theme="media-seek-backward">
          <normaloff>icons:media-seek-backward.png</normaloff>icons:media-seek-backward.png</iconset>
        </property>
        <property name="iconSize">
@@ -107,7 +107,7 @@ QProgressBar::chunk {
         <string>Play</string>
        </property>
        <property name="icon">
-        <iconset theme="media-playback-start" resource="resources.qrc">
+        <iconset theme="media-playback-start">
          <normaloff>icons:media-playback-start.png</normaloff>icons:media-playback-start.png</iconset>
        </property>
        <property name="iconSize">
@@ -130,7 +130,7 @@ QProgressBar::chunk {
         <string>Step</string>
        </property>
        <property name="icon">
-        <iconset theme="media-seek-forward" resource="resources.qrc">
+        <iconset theme="media-seek-forward">
          <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
        </property>
        <property name="iconSize">
@@ -150,7 +150,7 @@ QProgressBar::chunk {
         <string>Skip stroke</string>
        </property>
        <property name="icon">
-        <iconset theme="media-skip-forward" resource="resources.qrc">
+        <iconset theme="media-skip-forward">
          <normaloff>icons:media-skip-forward.png</normaloff>icons:media-skip-forward.png</iconset>
        </property>
        <property name="iconSize">
@@ -169,11 +169,8 @@ QProgressBar::chunk {
        <property name="toolTip">
         <string>Next marker</string>
        </property>
-       <property name="text">
-        <string>...</string>
-       </property>
        <property name="icon">
-        <iconset theme="media-seek-forward" resource="resources.qrc">
+        <iconset theme="media-seek-forward">
          <normaloff>icons:media-seek-forward.png</normaloff>icons:media-seek-forward.png</iconset>
        </property>
        <property name="iconSize">
@@ -192,7 +189,7 @@ QProgressBar::chunk {
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

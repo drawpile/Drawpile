@@ -62,7 +62,7 @@ QList<MessagePtr> ImageCanvasLoader::loadInitCommands()
 		}
 
 		if(reader.warnings() != Reader::NO_WARNINGS) {
-			QString text = QApplication::tr("DrawPile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
+			QString text = QApplication::tr("Drawpile does not support all the features used in this OpenRaster file. Saving this file may result in data loss.\n");
 			if((reader.warnings() & Reader::ORA_EXTENDED))
 				text += "\n- " + QApplication::tr("Application specific extensions are used");
 			if((reader.warnings() & Reader::ORA_NESTED))

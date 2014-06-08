@@ -94,7 +94,7 @@ bool Reader::load(const QString &filename)
 
 	// Make sure this is an OpenRaster file
 	if(!checkIsOraFile(zip)) {
-		_error = QApplication::tr("File is not an OpenRaster file");
+		_error = tr("File is not an OpenRaster file");
 		return false;
 	}
 
@@ -113,7 +113,7 @@ bool Reader::load(const QString &filename)
 			);
 
 	if(imagesize.isEmpty()) {
-		_error = QApplication::tr("Image has zero size!");
+		_error = tr("Image has zero size!");
 		return false;
 	}
 
@@ -182,18 +182,14 @@ bool Reader::loadLayers(KArchive &zip, const QDomElement& stack, QPoint offset)
 			QImage content;
 			{
 				QByteArray image = utils::getArchiveFile(zip, src);
-				if(image.isNull()) {
-					_error = QApplication::tr("Couldn't get layer %1").arg(src);
-					return false;
-				}
-				if(content.loadFromData(image, "png")==false) {
-					_error = QApplication::tr("Couldn't load layer %1").arg(src);
+				if(image.isNull() || !content.loadFromData(image, "png")) {
+					_error = tr("Couldn't load layer %1").arg(src);
 					return false;
 				}
 			}
 
 			// Create layer
-			QString name = e.attribute("name", QApplication::tr("Unnamed layer"));
+			QString name = e.attribute("name", tr("Unnamed layer"));
 			_commands.append(MessagePtr(new protocol::LayerCreate(
 				1,
 				++_layerid,

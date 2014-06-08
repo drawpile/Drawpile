@@ -10,9 +10,6 @@
     <height>195</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>3</number>
@@ -39,11 +36,8 @@
        <property name="toolTip">
         <string>Undo changes by selected user</string>
        </property>
-       <property name="text">
-        <string>U</string>
-       </property>
        <property name="icon">
-        <iconset theme="edit-undo" resource="resources.qrc">
+        <iconset theme="edit-undo">
          <normaloff>icons:edit-undo.png</normaloff>icons:edit-undo.png</iconset>
        </property>
        <property name="autoRaise">
@@ -56,11 +50,8 @@
        <property name="toolTip">
         <string>Redo changes by selected user</string>
        </property>
-       <property name="text">
-        <string>...</string>
-       </property>
        <property name="icon">
-        <iconset theme="edit-redo" resource="resources.qrc">
+        <iconset theme="edit-redo">
          <normaloff>icons:edit-redo.png</normaloff>icons:edit-redo.png</iconset>
        </property>
        <property name="autoRaise">
@@ -108,11 +99,10 @@
        <property name="toolTip">
         <string>Lock selected user</string>
        </property>
-       <property name="text">
-        <string>...</string>
-       </property>
        <property name="icon">
-        <iconset theme="object-locked"/>
+        <iconset theme="object-locked">
+         <normaloff/>
+        </iconset>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -127,11 +117,8 @@
        <property name="toolTip">
         <string>Kick selected user</string>
        </property>
-       <property name="text">
-        <string>...</string>
-       </property>
        <property name="icon">
-        <iconset theme="list-remove" resource="resources.qrc">
+        <iconset theme="list-remove">
          <normaloff>icons:list-remove.png</normaloff>icons:list-remove.png</iconset>
        </property>
        <property name="autoRaise">
@@ -147,7 +134,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

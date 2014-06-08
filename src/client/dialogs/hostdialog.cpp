@@ -114,7 +114,7 @@ bool HostDialog::selectPicture()
 	foreach(QByteArray format, QImageReader::supportedImageFormats()) {
 			formats += "*." + format + " ";
 	}
-	const QString filter = tr("Images (%1);;All files (*)").arg(formats);
+	const QString filter = tr("Images (%1)") + ";;" + QApplication::tr("All files (*)").arg(formats);
 
 	// Get the file name to open
 	QSettings cfg;
