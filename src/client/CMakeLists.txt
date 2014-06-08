@@ -3,6 +3,7 @@ find_package(Qt5Network REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
+find_package(Qt5LinguistTools)
 
 find_package(KF5Archive NO_MODULE)
 find_package(QtColorPicker)
@@ -176,6 +177,14 @@ if( BUILTIN_ICONS )
 	qt5_add_resources( QtResource ui/icons/icons.qrc )
 endif( BUILTIN_ICONS )
 
+if( Qt5LinguistTools_FOUND)
+	set(TRANSLATIONS
+		i18n/drawpile_fi.ts
+	)
+
+	qt5_add_translation(QM_TRANSLATIONS ${TRANSLATIONS})
+endif()
+
 # non-qt stuff
 
 set ( EXETYPE "" )
@@ -225,6 +234,7 @@ add_executable (
 	${MACOSX_BUNDLE_INFO_PLIST}
 	${SOURCES}
 	${QtResource}
+	${QM_TRANSLATIONS}
 	${Win32Resource}
 	${UI_Headers} # required here for ui_*.h generation
 )
@@ -264,6 +274,10 @@ endif ( WIN32 )
 if( NOT BUILTIN_ICONS )
 	install( DIRECTORY ui/icons DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile" )
 endif()
+
+if( QM_TRANSLATIONS )
+	install( FILES ${QM_TRANSLATIONS} DESTINATION "${CMAKE_INSTALL_PREFIX}/share/drawpile/drawpile/i18n" )
+endif( QM_TRANSLATIONS)
 
 if (NOT CMAKE_BUILD_TYPE STREQUAL Debug)
 	if (APPLE)

@@ -22,6 +22,8 @@
 #include <QUrl>
 #include <QTabletEvent>
 #include <QStandardPaths>
+#include <QLibraryInfo>
+#include <QTranslator>
 #include <QDir>
 
 #include "main.h"
@@ -82,8 +84,35 @@ void DrawPileApp::notifySettingsChanged()
 	emit settingsChanged();
 }
 
+
+void initTranslations(const QLocale &locale)
+{
+	// Qt's own translations
+	QTranslator *qtTranslator = new QTranslator;
+	qtTranslator->load(locale, "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	qApp->installTranslator(qtTranslator);
+
+	// Our translations
+	QTranslator *myTranslator = new QTranslator;
+	QStringList datapaths;
+	datapaths << qApp->applicationDirPath();
+	datapaths << QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+	for(const QString &datapath : datapaths) {
+		if(myTranslator->load(locale, "drawpile", "_", datapath + "/i18n"))
+			break;
+	}
+
+	if(myTranslator->isEmpty())
+		delete myTranslator;
+	else
+		qApp->installTranslator(myTranslator);
+}
+
 int main(int argc, char *argv[]) {
+	// Initialize application
 	DrawPileApp app(argc,argv);
+
+	initTranslations(QLocale::system());
 
 	// Create the main window
 	MainWindow *win = new MainWindow;
