@@ -33,6 +33,7 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QImageReader>
+#include <QImageWriter>
 #include <QSplitter>
 #include <QClipboard>
 
@@ -92,6 +93,26 @@ QString getLastPath() {
 void setLastPath(const QString &lastpath) {
 	QSettings cfg;
 	cfg.setValue("window/lastpath", lastpath);
+}
+
+//! Get a whitelisted set of writable image formats
+QList<QPair<QString,QByteArray>> writableImageFormats()
+{
+	QList<QPair<QString,QByteArray>> formats;
+
+	// We support ORA ourselves
+	formats.append(QPair<QString,QByteArray>("OpenRaster", "ora"));
+
+	// Get list of available formats
+	for(const QByteArray &fmt : QImageWriter::supportedImageFormats())
+	{
+		// only offer a reasonable subset
+		if(fmt == "png" || fmt=="jpeg" || fmt=="bmp" || fmt=="gif" || fmt=="tiff")
+			formats.append(QPair<QString,QByteArray>(QString(fmt).toUpper(), fmt));
+		else if(fmt=="jp2")
+			formats.append(QPair<QString,QByteArray>("JPEG2000", fmt));
+	}
+	return formats;
 }
 
 }
@@ -712,17 +733,22 @@ bool MainWindow::confirmFlatten(QString& file) const
  */
 bool MainWindow::save()
 {
-	QFileInfo filename(_current_filename);
 	if(_current_filename.isEmpty()) {
 		return saveas();
 	} else {
-		QString suffix = QFileInfo(_current_filename).suffix().toLower();
+		QByteArray suffix = QFileInfo(_current_filename).suffix().toLower().toUtf8();
 
 		// Check if suffix is one of the supported formats
 		// If not, we need to ask for a new file name
-		if(suffix != "ora" && suffix != "png" && suffix != "jpeg" && suffix != "jpg" && suffix!="bmp") {
-			return saveas();
+		bool isSupported = false;
+		for(const QPair<QString,QByteArray> &fmt : writableImageFormats()) {
+			if(fmt.second == suffix) {
+				isSupported = true;
+				break;
+			}
 		}
+		if(!isSupported)
+			return saveas();
 
 		// Check if features that need OpenRaster format are used
 		if(suffix != "ora" && _canvas->needSaveOra()) {
@@ -752,23 +778,17 @@ bool MainWindow::save()
 bool MainWindow::saveas()
 {
 	QString selfilter;
-	QString filter;
-#if 0
+	QStringList filter;
+
 	// Get a list of all supported formats
-	foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
-		filter += QString(format).toUpper() + " (*." + format + ");;";
+	for(const QPair<QString,QByteArray> &format : writableImageFormats()) {
+		filter << format.first + " (*." + format.second + ")";
 	}
-#else
-	// We build the filter manually, because these are pretty much the only
-	// reasonable formats (who would want to save a 1600x1200 image
-	// as an XPM?). Perhaps we should check GIF support was compiled in?
-	filter = "OpenRaster (*.ora);;PNG (*.png);;JPEG (*.jpeg);;BMP (*.bmp);;";
-	filter += QApplication::tr("All files (*)");
-#endif
+	filter << QApplication::tr("All files (*)");
 
 	// Get the file name
 	QString file = QFileDialog::getSaveFileName(this,
-			tr("Save image"), getLastPath(), filter, &selfilter);
+			tr("Save image"), getLastPath(), filter.join(";;"), &selfilter);
 
 	if(file.isEmpty()==false) {
 
