@@ -222,7 +222,7 @@ public:
 	 */
 	int userCount() const { return _clients.size(); }
 
-	const QList<Client*> &clients() { return _clients; }
+	const QList<Client*> &clients() const { return _clients; }
 
 	/**
 	 * @brief Get the time the session was started
@@ -371,6 +371,12 @@ public:
 	void drawingContextPenUp(const protocol::PenUp &cmd);
 
 	void kickAllUsers();
+
+	/**
+	 * @brief Send a message to every user of this session
+	 * @param message
+	 */
+	void wall(const QString &message);
 
 	operator logger::LogId() const { return logger::LogId("Session", id(), title()); }
 

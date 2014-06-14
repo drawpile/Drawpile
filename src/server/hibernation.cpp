@@ -208,4 +208,27 @@ bool Hibernation::storeSession(const SessionState *session)
 	return true;
 }
 
+bool Hibernation::deleteSession(int id)
+{
+	// Find and remove the session from the list
+	QMutableListIterator<SessionDescription> it(_sessions);
+	SessionDescription sd;
+	while(it.hasNext()) {
+		SessionDescription s = it.next();
+		if(s.id == id) {
+			sd = s;
+			it.remove();
+			break;
+		}
+	}
+
+	// not found
+	if(sd.id==0)
+		return false;
+
+	// Remove hibernation file
+	QString filename = QDir(_path).filePath(QString("session-%1.dphib").arg(id));
+	return QFile(filename).remove();
+}
+
 }

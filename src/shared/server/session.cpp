@@ -519,6 +519,13 @@ void SessionState::kickAllUsers()
 		c->disconnectShutdown();
 }
 
+void SessionState::wall(const QString &message)
+{
+	for(Client *c : _clients) {
+		c->sendSystemChat(message);
+	}
+}
+
 void SessionState::setSessionConfig(protocol::SessionConf &cmd)
 {
 	_maxusers = cmd.maxUsers();

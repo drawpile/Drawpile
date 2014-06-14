@@ -49,6 +49,7 @@ public:
 
 	SessionState *takeSession(int id);
 	bool storeSession(const SessionState *session);
+	bool deleteSession(int id);
 
 private:
 	QList<SessionDescription> _sessions;

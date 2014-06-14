@@ -57,6 +57,8 @@ public:
 	bool start(quint16 port, const QHostAddress& address = QHostAddress::Any);
 	bool startFd(int fd);
 
+	SessionServer *sessionServer() { return _sessions; }
+
 public slots:
 	 //! Stop the server. All clients are disconnected.
 	void stop();

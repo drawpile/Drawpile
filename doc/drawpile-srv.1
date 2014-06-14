@@ -95,6 +95,19 @@ until it is woken up again.
 hibernate persistent sessions upon expiration instead of deleting them. Use together with
 .B --expire
 .TP
+.BR --web-admin-port\  port
+enable the web admin API. The HTTP server will listen on this port.
+.TP
+.BR --web-admin-app\  path
+the directory to server under the path "/app/". This can be used to serve a browser admin interface.
+.TP
+.BR --web-admin-auth\  user:password
+enable basic auth for the API using the given username and password
+.TP
+.BR --web-admin-access\  address/subnet
+set access controls for the web admin interface. A subnet mask (e.g. 192.168.1.1/24) or the special value "all" can be used.
+By default, access is only permitted from localhost.
+.TP
 .BR --config , \ -c\  filename
 load configuration file. All parameters can also be set in the configuration file.
 Parameters set on the command line override those in the file.
@@ -103,7 +116,8 @@ Parameters set on the command line override those in the file.
 .SH SOCKET ACTIVATION
 .
 Drawpile-srv supports systemd socket activation. When the server is started by systemd and a socket is passed, the parameters
---listen and --port are ignored. The listening address must be configured in drawpile-srv.socket unit file.
+--listen, --port and --web-admin-port are ignored. The listening address must be configured in drawpile-srv.socket unit file.
+If two sockets are passed, the second one will be used for the web admin API.
 
 .
 .SH AUTHOR
@@ -114,5 +128,5 @@ Written by Calle Laakkonen <laakkonenc@gmail.com>.
 .
 Copyright \(co 2013-2014 Calle Laakkonen <laakkonenc@gmail.com>
 .br
-This is Free Software; this software is licensed under the GPL version 2, as published by the Free Software Foundation.
+This is Free Software; this software is licensed under the GPL version 3, as published by the Free Software Foundation.
 There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.

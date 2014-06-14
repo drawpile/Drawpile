@@ -77,6 +77,13 @@ public:
 	 */
 	virtual bool storeSession(const SessionState *session) = 0;
 
+	/**
+	 * @brief Delete the session with the given ID from the store
+	 * @param id
+	 * @return true if a session was deleted
+	 */
+	virtual bool deleteSession(int id) = 0;
+
 signals:
 	//! A new session has become available in the store
 	void sessionAvailable(const SessionDescription &dsession);

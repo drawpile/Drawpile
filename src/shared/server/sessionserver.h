@@ -19,11 +19,12 @@
 
 #include <QObject>
 
+#include "sessiondesc.h"
+
 namespace server {
 
 class SessionState;
 class Client;
-class SessionDescription;
 class SessionStore;
 
 /**
@@ -41,7 +42,7 @@ public:
 	 * The server title is shown by the client in the session selection dialog.
 	 * @param title
 	 */
-	void setTitle(const QString& title) { _title = title; }
+	Q_INVOKABLE void setTitle(const QString& title) { _title = title; }
 	const QString &title() const { return _title; }
 
 	/**
@@ -51,7 +52,7 @@ public:
 	 *
 	 * @param limit
 	 */
-	void setSessionLimit(int limit) { Q_ASSERT(limit>=0); _sessionLimit = limit; }
+	Q_INVOKABLE void setSessionLimit(int limit) { Q_ASSERT(limit>=0); _sessionLimit = limit; }
 	int sessionLimit() const { return _sessionLimit; }
 
 	/**
@@ -71,7 +72,7 @@ public:
 	 *
 	 * @param password
 	 */
-	void setHostPassword(const QString &password) { _hostPassword = password; }
+	Q_INVOKABLE void setHostPassword(const QString &password) { _hostPassword = password; }
 	const QString &hostPassword() const { return _hostPassword; }
 
 	/**
@@ -130,13 +131,17 @@ public:
 	 * @brief Get all current sessions
 	 * @return list of all sessions
 	 */
-	QList<SessionDescription> sessions() const;
+	Q_INVOKABLE QList<SessionDescription> sessions() const;
 
 	/**
 	 * @brief Get a session description by ID
+	 *
+	 * @param id the session ID
+	 * @param getExtended get extended information
+	 * @param getUsers get user list as well
 	 * @return session description or a blank object (id=0) if not found
 	 */
-	SessionDescription getSessionDescriptionById(int id) const;
+	Q_INVOKABLE SessionDescription getSessionDescriptionById(int id, bool getExtended=false, bool getUsers=false) const;
 
 	/**
 	 * @brief Get the session with the specified ID
@@ -161,9 +166,35 @@ public:
 	int sessionCount() const { return _sessions.size(); }
 
 	/**
+	 * @brief Get a summarized server status
+	 */
+	Q_INVOKABLE ServerStatus getServerStatus() const;
+
+	/**
+	 * @brief Delete the session with the given ID
+	 *
+	 * The session will be deleted even if it is hibernating.
+	 *
+	 * @param id session ID
+	 * @return true on success
+	 */
+	Q_INVOKABLE bool killSession(int id);
+
+	/**
 	 * @brief Stop all running sessions
 	 */
 	void stopAll();
+
+	/**
+	 * @brief Write a message to all active users
+	 *
+	 * This sends a system chat message to all users of
+	 * every active session.
+	 *
+	 * @param message the message
+	 * @param sessionId if set, limit message to this session only
+	 */
+	Q_INVOKABLE void wall(const QString &message, int sessionId=0);
 
 signals:
 	/**

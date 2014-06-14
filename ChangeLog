@@ -3,6 +3,7 @@
  * Server: session hibernation
  * Translation support
  * Add Finnish translation
+ * Web admin API and sample app
 
 2014-06-03 Version 0.9.1
  * SSL support

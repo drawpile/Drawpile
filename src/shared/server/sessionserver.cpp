@@ -124,11 +124,11 @@ void SessionServer::destroySession(SessionState *session)
 	emit sessionEnded(id);
 }
 
-SessionDescription SessionServer::getSessionDescriptionById(int id) const
+SessionDescription SessionServer::getSessionDescriptionById(int id, bool getExtended, bool getUsers) const
 {
 	for(SessionState *s : _sessions) {
 		if(s->id() == id)
-			return SessionDescription(*s);
+			return SessionDescription(*s, getExtended, getUsers);
 	}
 
 	if(_store)
@@ -165,6 +165,46 @@ int SessionServer::totalUsers() const
 	return count;
 }
 
+ServerStatus SessionServer::getServerStatus() const
+{
+	ServerStatus s;
+	s.sessionCount = sessionCount();
+	s.totalUsers = totalUsers();
+	s.maxSessions = sessionLimit();
+	s.needHostPassword = !_hostPassword.isEmpty();
+	s.allowPersistentSessions = _allowPersistentSessions;
+	s.secureMode = _mustSecure;
+	s.hibernation = _store != nullptr;
+	s.title = title();
+
+	return s;
+}
+
+bool SessionServer::killSession(int id)
+{
+	logger::info() << "Killing session" << id;
+
+	for(SessionState *s : _sessions) {
+		if(s->id() == id) {
+			s->setHibernatable(false);
+			s->setPersistent(false);
+			s->stopRecording();
+			s->kickAllUsers();
+			if(s->userCount()==0)
+				destroySession(s);
+			return true;
+		}
+	}
+
+	// Not an active session? Maybe it's a stored session
+	if(_store) {
+		return _store->deleteSession(id);
+	}
+
+	// not found
+	return false;
+}
+
 void SessionServer::stopAll()
 {
 	for(Client *c : _lobby)
@@ -179,6 +219,14 @@ void SessionServer::stopAll()
 
 		if(s->userCount()==0)
 			destroySession(s);
+	}
+}
+
+void SessionServer::wall(const QString &message, int sessionId)
+{
+	for(SessionState *s : _sessions) {
+		if(sessionId==0 || s->id() == sessionId)
+			s->wall(message);
 	}
 }
 

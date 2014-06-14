@@ -22,10 +22,30 @@
 
 #include <QString>
 #include <QMetaType>
+#include <QList>
+#include <QHostAddress>
+#include <QDateTime>
 
 namespace server {
 
 class SessionState;
+class Client;
+
+/**
+ * @brief Information about a user participating in a session
+ */
+struct UserDescription {
+	int id;
+	QString name;
+	QHostAddress address;
+
+	bool isOp;
+	bool isLocked;
+	bool isSecure;
+
+	UserDescription();
+	explicit UserDescription(const Client &client);
+};
 
 /**
  * @brief Information about an available session
@@ -34,18 +54,47 @@ struct SessionDescription {
 	int id;
 	int protoMinor;
 	int userCount;
+	int maxUsers;
 	QString title;
 	QString password;
 	bool closed;
 	bool persistent;
 	bool hibernating;
+	QDateTime startTime;
+
+	// Extended information
+	float historySizeMb;
+	float historyLimitMb;
+	int historyStart;
+	int historyEnd;
+
+
+	// User information
+	QList<UserDescription> users;
 
 	SessionDescription();
-	explicit SessionDescription(const SessionState &session);
+	SessionDescription(const SessionState &session, bool getExtended=false, bool getUsers=false);
+};
+
+/**
+ * @brief Information about the current server status
+ */
+struct ServerStatus {
+	int sessionCount;
+	int totalUsers;
+	int maxSessions;
+
+	bool needHostPassword;
+	bool allowPersistentSessions;
+	bool secureMode;
+	bool hibernation;
+
+	QString title;
 };
 
 }
 
 Q_DECLARE_METATYPE(server::SessionDescription)
+Q_DECLARE_METATYPE(server::ServerStatus)
 
 #endif

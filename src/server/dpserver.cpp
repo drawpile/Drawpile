@@ -35,6 +35,10 @@
 #include "sslserver.h"
 #include "../shared/util/logger.h"
 
+#ifdef HAVE_WEBADMIN
+#include "webadmin/webadmin.h"
+#endif
+
 #ifdef Q_OS_UNIX
 #include <iostream>
 #include <unistd.h>
@@ -116,7 +120,7 @@ int main(int argc, char *argv[]) {
 	parser.addOption(sslKeyOption);
 
 	// --secure, -S
-	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Force secure mode");
+	QCommandLineOption secureOption(QStringList() << "secure" << "S", "Mandatory SSL mode");
 	parser.addOption(secureOption);
 
 	// --hibernation <directory>
@@ -131,6 +135,24 @@ int main(int argc, char *argv[]) {
 	QCommandLineOption autoHibernateOption("auto-hibernate", "Hibernate sessions on expiration");
 	parser.addOption(autoHibernateOption);
 
+#ifdef HAVE_WEBADMIN
+	// --web-admin-port <port>
+	QCommandLineOption webadminPortOption("web-admin-port", "Web admin interface port", "port", "0");
+	parser.addOption(webadminPortOption);
+
+	// --web-admin-app <root>
+	QCommandLineOption webadminRootOption("web-admin-app", "Web admin app root path", "root");
+	parser.addOption(webadminRootOption);
+
+	// --web-admin-auth <user:password>
+	QCommandLineOption webadminAuthOption("web-admin-auth", "Web admin username & password", "user:password");
+	parser.addOption(webadminAuthOption);
+
+	// --web-admin-access <address/subnet>
+	QCommandLineOption webadminAccessOption("web-admin-access", "Set web admin access mask", "address/subnet|all");
+	parser.addOption(webadminAccessOption);
+
+#endif
 
 	// --config, -c <filename>
 	QCommandLineOption configFileOption(QStringList() << "config" << "c", "Load configuration file", "filename");
@@ -261,6 +283,29 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+#ifdef HAVE_WEBADMIN
+	server::Webadmin webadmin;
+	int webadminPort = cfgfile.override(parser, webadminPortOption).toInt();
+
+	{
+		QString root = cfgfile.override(parser, webadminRootOption).toString();
+		if(!root.isEmpty())
+			webadmin.setWebappRoot(root);
+
+		QString auth = cfgfile.override(parser, webadminAuthOption).toString();
+		if(!auth.isEmpty())
+			webadmin.setBasicAuth(auth);
+
+		QString access = cfgfile.override(parser, webadminAccessOption).toString();
+		if(!access.isEmpty()) {
+			if(!webadmin.setAccessSubnet(access)) {
+				logger::error() << "invalid subnet:" << access;
+				return 1;
+			}
+		}
+	}
+#endif
+
 	// Catch signals
 #ifdef Q_OS_UNIX
 	server->connect(UnixSignals::instance(), SIGNAL(sigInt()), server, SLOT(stop()));
@@ -274,6 +319,13 @@ int main(int argc, char *argv[]) {
 			// socket activation not used
 			if(!server->start(port, address))
 				return 1;
+
+#ifdef HAVE_WEBADMIN
+			if(webadminPort>0) {
+				webadmin.setSessions(server->sessionServer());
+				webadmin.start(webadminPort);
+			}
+#endif
 		} else {
 			// listening socket passed to us by the init system
 			if(listenfds.size() != 1) {
@@ -285,6 +337,8 @@ int main(int argc, char *argv[]) {
 
 			if(!server->startFd(listenfds[0]))
 				return 1;
+
+			// TODO start webadmin if two fds were passsed
 		}
 	}
 

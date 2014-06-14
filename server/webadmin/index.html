@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Drawpile-srv admin</title>
+<meta name="viewport" content="width=device-width, user-scalable=no">
+<link href="style.css" rel="stylesheet">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="srv-admin.js"></script>
+</head>
+
+<div id="header">
+	<h1>Drawpile server</h1>
+</div>
+
+<div id="body">
+
+<!-- SERVER STATUS / SESSION LIST VIEW -->
+<div id="sessionListView">
+
+<table class="table" id="serverTitle">
+	<thead>
+	<tr class="header">
+		<th>Server title</th>
+		<th style="width: 20px"><a id="changeTitleButton" href="#" title="Change">⚙</a></th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr class="empty">
+		<td>(not set)</td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="table" id="serverStatus">
+	<thead>
+	<tr class="header">
+		<th colspan="3">Server status</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<th>Active sessions</th>
+		<td id="sessionCount"></td>
+	</tr>
+	<tr>
+		<th>Total users</th>
+		<td id="totalUsers"></td>
+	</tr>
+	<tr>
+		<th>Features</th>
+		<td id="serverFlags"></td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="table" id="sessionList">
+	<thead>
+	<tr class="header">
+		<th colspan="3">Sessions</th>
+	</tr>
+	<tr>
+		<th style="width: 20px">#<!-- session id --></th>
+		<th>Title</th>
+		<th>Status</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+<p style="margin-top: 35px">
+	<a class="button wallButton" href="#">Message</a>
+</p>
+
+</div><!-- /#sessionListView -->
+
+<!-- SESSION DETAIL VIEW -->
+<div id="sessionView" style="display: none">
+
+<table class="table" id="sessionInfo">
+	<thead>
+	<tr class="header">
+		<th colspan="3" id="sessionInfoTitle">Session #</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<th>Title</th>
+		<td id="sessionDetailTitle"></td>
+	</tr>
+	<tr>
+		<th>Status</th>
+		<td id="sessionStatus"></td>
+	</tr>
+	<tr>
+		<th>Users</th>
+		<td id="sessionUserCount"></td>
+	</tr>
+	</tbody>
+</table>
+
+<table class="table" id="sessionUserList">
+	<thead>
+	<tr class="header">
+		<th colspan="3">Users</th>
+	</tr>
+	<tr>
+		<th style="width: 20px">#<!-- user id --></th>
+		<th>Name</th>
+		<th>Status</th>
+	</tr>
+	</thead>
+	<tbody>
+	</tbody>
+</table>
+
+<p style="margin-top: 35px">
+	<a class="button backButton" href="#">Back</a>
+	<a class="red button killButton" href="#">Kill session</a>
+	<a class="button wallButton" href="#">Message</a>
+</p>
+
+</div><!-- /#sessionView -->
+
+</div><!-- /#body -->
+
+<div id="overlay" style="display: none">
+
+<div id="overlay-dialog">
+	<h1 id="overlay-title"></h1>
+	<div id="overlay-content">
+	</div>
+	<p style="margin-top: 35px">
+		<a class="button backButton" href="#">Cancel</a>
+		<a class="red okButton button" href="#">Ok</a>
+	</p>
+</div>
+
+</div><!-- /#overlay -->
+</div>
+</body>
+</html>

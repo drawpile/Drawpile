@@ -77,6 +77,7 @@ Protocol 11.2 (0.9.2)
  * Added maxUsers field and PERSISTENT flag to SessionConf message
  * No change in recording format
  * First version to support session hibernation
+ * Session ID format change: Clients must support session IDs of format [a-zA-Z0-9:-]{1,64}. This change is for forward compatibility; the server currently produces numeric IDs only.
 
 Protocol 10.2 (0.9.0)
 
