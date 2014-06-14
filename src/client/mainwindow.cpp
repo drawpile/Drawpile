@@ -1654,8 +1654,8 @@ void MainWindow::setupActions()
 	//
 	QAction *undo = makeAction("undo", "edit-undo", tr("&Undo"), QString(), QKeySequence::Undo);
 	QAction *redo = makeAction("redo", "edit-redo", tr("&Redo"), QString(), QKeySequence::Redo);
-	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence::Copy);
-	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"));
+	QAction *copy = makeAction("copyvisible", "edit-copy", tr("&Copy visible"), tr("Copy selected area to the clipboard"), QKeySequence("Shift+Ctrl+C"));
+	QAction *copylayer = makeAction("copylayer", "edit-copy", tr("Copy &layer"), tr("Copy selected area of the current layer to the clipboard"), QKeySequence::Copy);
 	QAction *cutlayer = makeAction("cutlayer", "edit-cut", tr("Cu&t layer"), tr("Cut selected area of the current layer to the clipboard"), QKeySequence::Cut);
 	QAction *paste = makeAction("paste", "edit-paste", tr("&Paste"), QString(), QKeySequence::Paste);
 	QAction *pastefile = makeAction("pastefile", "document-open", tr("Paste &from file..."));
