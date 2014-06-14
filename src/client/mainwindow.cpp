@@ -1749,6 +1749,16 @@ void MainWindow::setupActions()
 	editmenu->addSeparator();
 	editmenu->addAction(preferences);
 
+	QToolBar *edittools = new QToolBar(tr("Edit tools"));
+	edittools->setObjectName("edittoolsbar");
+	toggletoolbarmenu->addAction(edittools->toggleViewAction());
+	edittools->addAction(undo);
+	edittools->addAction(redo);
+	edittools->addAction(cutlayer);
+	edittools->addAction(copylayer);
+	edittools->addAction(paste);
+	addToolBar(Qt::TopToolBarArea, edittools);
+
 	//
 	// View menu
 	//
