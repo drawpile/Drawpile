@@ -45,13 +45,13 @@ class SessionDescription;
  *
  * S: TITLE <title> (if set)
  *
- * S: SESSION <id> <proto-minor> <FLAGS²> <user-count> "<title>"
+ * S: SESSION <id²> <proto-minor> <FLAGS³> <user-count> "<title>"
  *  - or -
- * S: NOSESSION [id³]
+ * S: NOSESSION [id⁴]
  *
  * - Note. Server may send updates to session list and title until the client has made a choice.
  *
- * C: HOST <proto-minor> <userid> "<username>" [;server password⁴]
+ * C: HOST <proto-minor> <userid> "<username>" [;server password⁵]
  *  - or -
  * C: JOIN <id> "<username>" [;password]
  *
@@ -70,16 +70,18 @@ class SessionDescription;
  *    SECURE  - user must initiate encryption before login can proceed
  *    PERSIST - persistent sessions are supported
  *
- * 2) Set of comma delimited session flags:
+ * 2) ID is a string in the format [a-zA-Z0-9:-]{1,64} (future proofing: the server currently produces only numeric IDs.)
+ *
+ * 3) Set of comma delimited session flags:
  *    -       - no flags
  *    PASS    - password is needed to join
  *    CLOSED  - closed for new users
  *    PERSIST - this is a persistent session
  *
- * 3) If the ID is specified, this command indicates the session has just terminated.
+ * 4) If the ID is specified, this command indicates the session has just terminated.
  *    Otherwise, it means there are no available session at all.
  *
- * 4) The server password must be provided if HOSTP was listed in server features.
+ * 5) The server password must be provided if HOSTP was listed in server features.
  */
 class LoginHandler : public QObject
 {
@@ -93,7 +95,7 @@ private slots:
 	void handleLoginMessage(protocol::MessagePtr message);
 
 	void announceSession(const SessionDescription &session);
-	void announceSessionEnd(int id);
+	void announceSessionEnd(const QString &id);
 
 private:
 	enum State {

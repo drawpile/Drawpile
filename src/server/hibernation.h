@@ -45,11 +45,11 @@ public:
 
 	QList<SessionDescription> sessions() const { return _sessions; }
 
-	SessionDescription getSessionDescriptionById(int id) const;
+	SessionDescription getSessionDescriptionById(const QString &id) const;
 
-	SessionState *takeSession(int id);
+	SessionState *takeSession(const QString &id);
 	bool storeSession(const SessionState *session);
-	bool deleteSession(int id);
+	bool deleteSession(const QString &id);
 
 private:
 	QList<SessionDescription> _sessions;

@@ -30,7 +30,7 @@ namespace server {
 
 using protocol::MessagePtr;
 
-SessionState::SessionState(int id, int minorVersion, QObject *parent)
+SessionState::SessionState(const QString &id, int minorVersion, QObject *parent)
 	: QObject(parent),
 	_recorder(0),
 	_userids(255), _layerids(255), _annotationids(255),

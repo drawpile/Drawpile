@@ -72,12 +72,12 @@ struct DrawingContext {
 class SessionState : public QObject {
 	Q_OBJECT
 public:
-	SessionState(int id, int minorVersion, QObject *parent=0);
+	SessionState(const QString &id, int minorVersion, QObject *parent=0);
 
 	/**
 	 * \brief Get the ID of the session
 	 */
-	int id() const { return _id; }
+	QString id() const { return _id; }
 
 	/**
 	 * @brief Get the minor protocol version of this session
@@ -433,7 +433,7 @@ private:
 	const QDateTime _startTime;
 	QDateTime _lastEventTime;
 
-	const int _id;
+	const QString _id;
 	int _minorVersion;
 	int _maxusers;
 	uint _historylimit;

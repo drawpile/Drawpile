@@ -28,7 +28,7 @@ namespace net {
  * @brief Available session description
  */
 struct LoginSession {
-	int id;
+	QString id;
 	int userCount;
 	QString title;
 
@@ -38,7 +38,7 @@ struct LoginSession {
 	bool asleep;
 	bool incompatible;
 
-	LoginSession() : id(-1), userCount(0), needPassword(false), persistent(false), closed(false), asleep(false), incompatible(false) { }
+	LoginSession() : userCount(0), needPassword(false), persistent(false), closed(false), asleep(false), incompatible(false) { }
 };
 
 /**
@@ -57,7 +57,7 @@ public:
 
 	LoginSession sessionAt(int index) const { return _sessions.at(index); }
 	void updateSession(const LoginSession &session);
-	void removeSession(int id);
+	void removeSession(const QString &id);
 
 private:
 	QList<LoginSession> _sessions;

@@ -148,7 +148,7 @@ public slots:
 	void serverDisconnected();
 
 private slots:
-	void joinSelectedSession(int id, bool needPassword);
+	void joinSelectedSession(const QString &id, bool needPassword);
 	void cancelLogin();
 	void failLogin(const QString &message);
 	void passwordSet();
@@ -200,7 +200,7 @@ private:
 
 	QString _hostPassword;
 	QString _joinPassword;
-	int _selectedId;
+	QString _selectedId;
 
 	QPointer<dialogs::SelectSessionDialog> _selectorDialog;
 	QPointer<QInputDialog> _passwordDialog;

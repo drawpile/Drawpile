@@ -37,11 +37,13 @@ void setLogPrinter(LogFunction fn);
  */
 struct LogId {
 	const char *typestr; // type of the object (e.g. Session)
-	int id; // the ID number
+	QString idstr; // ID string
+	int id; // the ID number (used when idstr is not set)
 	QString name; // the name or title of the object
 
 	LogId() : typestr("?"), id(0), name(QString()) { }
 	LogId(const char *typestr_, int id_, const QString &name_=QString()) : typestr(typestr_), id(id_), name(name_) { }
+	LogId(const char *typestr_, const QString &id_, const QString &name_=QString()) : typestr(typestr_), idstr(id_), id(0), name(name_) { }
 };
 
 /**

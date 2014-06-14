@@ -43,7 +43,7 @@ signals:
 	 * @param id session ID
 	 * @param needPassword if true, a password is needed to join the session
 	 */
-	void selected(int id, bool needPassword);
+	void selected(const QString &id, bool needPassword);
 
 public slots:
 

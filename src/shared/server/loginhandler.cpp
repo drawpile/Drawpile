@@ -95,12 +95,13 @@ void LoginHandler::announceServerInfo()
 
 void LoginHandler::announceSession(const SessionDescription &session)
 {
+	Q_ASSERT(!session.id.isEmpty());
+
 	QStringList flags;
 	if(!session.password.isEmpty())
 		flags << "PASS";
 
 	if(session.closed)
-	//if(session->isClosed())
 		flags << "CLOSED";
 
 	if(session.persistent)
@@ -118,7 +119,7 @@ void LoginHandler::announceSession(const SessionDescription &session)
 	);
 }
 
-void LoginHandler::announceSessionEnd(int id)
+void LoginHandler::announceSessionEnd(const QString &id)
 {
 	send(QString("NOSESSION %1").arg(id));
 }
@@ -204,7 +205,7 @@ void LoginHandler::handleHostMessage(const QString &message)
 
 void LoginHandler::handleJoinMessage(const QString &message)
 {
-	const QRegularExpression re("\\AJOIN (\\d+) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
+	const QRegularExpression re("\\AJOIN ([a-zA-Z0-9:-]{1,64}) \"([^\"]+)\"\\s*(?:;(.+))?\\z");
 	auto m = re.match(message);
 	if(!m.hasMatch()) {
 		send("ERROR SYNTAX");
@@ -212,7 +213,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	int sessionId = m.captured(1).toInt();
+	QString sessionId = m.captured(1);
 	SessionDescription sessiondesc = _server->getSessionDescriptionById(sessionId);
 	if(sessiondesc.id==0) {
 		send("ERROR NOSESSION");

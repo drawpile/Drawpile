@@ -109,7 +109,7 @@ void LoginSessionModel::updateSession(const LoginSession &session)
 	}
 }
 
-void LoginSessionModel::removeSession(int id)
+void LoginSessionModel::removeSession(const QString &id)
 {
 	int idx=-1;
 	for(int i=0;i<_sessions.size();++i) {

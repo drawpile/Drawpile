@@ -53,8 +53,9 @@ void SessionServer::setSessionStore(SessionStore *store)
 	store->setParent(this);
 
 	for(const SessionDescription &s : _store->sessions()) {
-		if(s.id >= _nextId)
-			_nextId = s.id + 1;
+		int sid = s.id.toInt(); // TODO remember to change this when we stop producing only numeric IDs
+		if(sid >= _nextId)
+			_nextId = sid + 1;
 	}
 
 	connect(store, SIGNAL(sessionAvailable(SessionDescription)), this, SIGNAL(sessionChanged(SessionDescription)));
@@ -75,7 +76,7 @@ QList<SessionDescription> SessionServer::sessions() const
 
 SessionState *SessionServer::createSession(int minorVersion)
 {
-	SessionState *session = new SessionState(_nextId++, minorVersion, this);
+	SessionState *session = new SessionState(QString::number(_nextId++), minorVersion, this);
 
 	initSession(session);
 
@@ -113,7 +114,7 @@ void SessionServer::destroySession(SessionState *session)
 	logger::debug() << "Deleting" << *session << "with" << session->userCount() << "users";
 	_sessions.removeOne(session);
 
-	int id = session->id();
+	QString id = session->id();
 
 	if(session->isHibernatable() && _store) {
 		logger::info() << "Hibernating" << *session;
@@ -124,7 +125,7 @@ void SessionServer::destroySession(SessionState *session)
 	emit sessionEnded(id);
 }
 
-SessionDescription SessionServer::getSessionDescriptionById(int id, bool getExtended, bool getUsers) const
+SessionDescription SessionServer::getSessionDescriptionById(const QString &id, bool getExtended, bool getUsers) const
 {
 	for(SessionState *s : _sessions) {
 		if(s->id() == id)
@@ -137,7 +138,7 @@ SessionDescription SessionServer::getSessionDescriptionById(int id, bool getExte
 	return SessionDescription();
 }
 
-SessionState *SessionServer::getSessionById(int id)
+SessionState *SessionServer::getSessionById(const QString &id)
 {
 	for(SessionState *s : _sessions) {
 		if(s->id() == id)
@@ -180,7 +181,7 @@ ServerStatus SessionServer::getServerStatus() const
 	return s;
 }
 
-bool SessionServer::killSession(int id)
+bool SessionServer::killSession(const QString &id)
 {
 	logger::info() << "Killing session" << id;
 
@@ -222,10 +223,10 @@ void SessionServer::stopAll()
 	}
 }
 
-void SessionServer::wall(const QString &message, int sessionId)
+void SessionServer::wall(const QString &message, const QString &sessionId)
 {
 	for(SessionState *s : _sessions) {
-		if(sessionId==0 || s->id() == sessionId)
+		if(sessionId.isNull() || s->id() == sessionId)
 			s->wall(message);
 	}
 }

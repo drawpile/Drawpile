@@ -39,7 +39,7 @@ UserDescription::UserDescription(const Client &client)
 }
 
 SessionDescription::SessionDescription()
-	: id(0), protoMinor(0), userCount(0), maxUsers(0), title(QString()),
+	: protoMinor(0), userCount(0), maxUsers(0), title(QString()),
 	  closed(false), persistent(false), hibernating(false), historySizeMb(0), historyLimitMb(0),
 	  historyStart(0), historyEnd(0)
 {

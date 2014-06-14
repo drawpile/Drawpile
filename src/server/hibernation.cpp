@@ -46,7 +46,7 @@ bool Hibernation::init()
 	}
 
 	// Scan for sessions
-	const QRegularExpression re("^session-([1-9][0-9]*)\\.dphib$");
+	const QRegularExpression re("^session-([a-zA-Z0-9:-]{1,64})\\.dphib$");
 
 	for(const QString &filename : dir.entryList(QStringList() << "session-*.dphib", QDir::Files | QDir::Readable)) {
 		QRegularExpressionMatch m = re.match(filename);
@@ -67,7 +67,7 @@ bool Hibernation::init()
 		}
 
 		SessionDescription desc;
-		desc.id = m.captured(1).toInt();
+		desc.id = m.captured(1);
 		desc.protoMinor = reader.hibernationHeader().minorVersion;
 		desc.title = reader.hibernationHeader().title;
 		desc.password = reader.hibernationHeader().password;
@@ -83,7 +83,7 @@ bool Hibernation::init()
 	return true;
 }
 
-SessionDescription Hibernation::getSessionDescriptionById(int id) const
+SessionDescription Hibernation::getSessionDescriptionById(const QString &id) const
 {
 	for(const SessionDescription &sd : _sessions)
 		if(sd.id == id)
@@ -91,7 +91,7 @@ SessionDescription Hibernation::getSessionDescriptionById(int id) const
 	return SessionDescription();
 }
 
-SessionState *Hibernation::takeSession(int id)
+SessionState *Hibernation::takeSession(const QString &id)
 {
 	// Find and remove the session from the list
 	QMutableListIterator<SessionDescription> it(_sessions);
@@ -208,7 +208,7 @@ bool Hibernation::storeSession(const SessionState *session)
 	return true;
 }
 
-bool Hibernation::deleteSession(int id)
+bool Hibernation::deleteSession(const QString &id)
 {
 	// Find and remove the session from the list
 	QMutableListIterator<SessionDescription> it(_sessions);

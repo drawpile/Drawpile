@@ -51,7 +51,7 @@ struct UserDescription {
  * @brief Information about an available session
  */
 struct SessionDescription {
-	int id;
+	QString id;
 	int protoMinor;
 	int userCount;
 	int maxUsers;

@@ -141,7 +141,7 @@ public:
 	 * @param getUsers get user list as well
 	 * @return session description or a blank object (id=0) if not found
 	 */
-	Q_INVOKABLE SessionDescription getSessionDescriptionById(int id, bool getExtended=false, bool getUsers=false) const;
+	Q_INVOKABLE SessionDescription getSessionDescriptionById(const QString &id, bool getExtended=false, bool getUsers=false) const;
 
 	/**
 	 * @brief Get the session with the specified ID
@@ -151,7 +151,7 @@ public:
 	 * @param id session ID
 	 * @return session or null if not found
 	 */
-	SessionState *getSessionById(int id);
+	SessionState *getSessionById(const QString &id);
 
 	/**
 	 * @brief Get the total number of users in all sessions
@@ -178,7 +178,7 @@ public:
 	 * @param id session ID
 	 * @return true on success
 	 */
-	Q_INVOKABLE bool killSession(int id);
+	Q_INVOKABLE bool killSession(const QString &id);
 
 	/**
 	 * @brief Stop all running sessions
@@ -194,7 +194,7 @@ public:
 	 * @param message the message
 	 * @param sessionId if set, limit message to this session only
 	 */
-	Q_INVOKABLE void wall(const QString &message, int sessionId=0);
+	Q_INVOKABLE void wall(const QString &message, const QString &sessionId=QString());
 
 signals:
 	/**
@@ -229,7 +229,7 @@ signals:
 	/**
 	 * @brief Session with the given ID has just been destroyed
 	 */
-	void sessionEnded(int id);
+	void sessionEnded(QString id);
 
 private slots:
 	void moveFromLobby(SessionState *session, Client *client);

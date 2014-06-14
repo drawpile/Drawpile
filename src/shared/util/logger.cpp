@@ -98,7 +98,12 @@ Logger &Logger::operator<<(const QHostAddress &a) {
 Logger &Logger::operator <<(const LogId &id)
 {
 	if(stream) {
-		stream->ts << id.typestr << " #" << id.id;
+		stream->ts << id.typestr;
+		if(id.idstr.isNull())
+			stream->ts << " #" << id.id;
+		else
+			stream->ts << " " << id.idstr;
+
 		if(!id.name.isEmpty()) {
 			if(id.name.length() > 10)
 				stream->ts << " (" << id.name.left(7) << "...)";

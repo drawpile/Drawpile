@@ -44,7 +44,7 @@ MultiServer::MultiServer(QObject *parent)
 	_sessions = new SessionServer(this);
 
 	connect(_sessions, SIGNAL(sessionCreated(SessionState*)), this, SLOT(assignRecording(SessionState*)));
-	connect(_sessions, SIGNAL(sessionEnded(int)), this, SLOT(tryAutoStop()));
+	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(tryAutoStop()));
 	connect(_sessions, SIGNAL(userLoggedIn()), this, SLOT(printStatusUpdate()));
 	connect(_sessions, &SessionServer::userDisconnected, [this]() {
 		printStatusUpdate();
@@ -242,7 +242,7 @@ void MultiServer::assignRecording(SessionState *session)
 	QDateTime now = QDateTime::currentDateTime();
 	filename.replace("%d", now.toString("yyyy-MM-dd"));
 	filename.replace("%t", now.toString("HH.mm.ss"));
-	filename.replace("%i", QString::number(session->id()));
+	filename.replace("%i", session->id());
 
 	// Insert numeric suffix if file already exists
 	int suffixInsert = filename.lastIndexOf('.');

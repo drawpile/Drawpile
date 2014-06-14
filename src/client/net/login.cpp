@@ -167,7 +167,7 @@ void LoginHandler::expectHello(const QString &msg)
 		_selectorDialog->setWindowModality(Qt::WindowModal);
 		_selectorDialog->setAttribute(Qt::WA_DeleteOnClose);
 
-		connect(_selectorDialog, SIGNAL(selected(int,bool)), this, SLOT(joinSelectedSession(int,bool)));
+		connect(_selectorDialog, SIGNAL(selected(QString,bool)), this, SLOT(joinSelectedSession(QString,bool)));
 		connect(_selectorDialog, SIGNAL(rejected()), this, SLOT(cancelLogin()));
 
 		_selectorDialog->show();
@@ -297,12 +297,11 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 
 		int sep = msg.indexOf(' ');
 		if(sep>0) {
-			bool ok;
-			int id = msg.mid(sep+1).toInt(&ok);
-			if(ok)
-				_sessions->removeSession(id);
-			else
+			QString id = msg.mid(sep+1).trimmed();
+			if(id.isEmpty())
 				qWarning() << "invalid NOSESSION message:" << msg;
+			else
+				_sessions->removeSession(id);
 		}
 		return;
 
@@ -317,7 +316,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 
 	// Expect session description in format:
 	// SESSION <id> <minorVersion> <FLAGS> <user-count> "title"
-	const QRegularExpression re("\\ASESSION (\\d+) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]*)\"\\z");
+	const QRegularExpression re("\\ASESSION ([a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]*)\"\\z");
 	auto m = re.match(msg);
 
 	if(!m.hasMatch()) {
@@ -326,7 +325,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 		return;
 	}
 
-	session.id = m.captured(1).toInt();
+	session.id = m.captured(1);
 
 	const int minorVersion = m.captured(2).toInt();
 	if(minorVersion != DRAWPILE_PROTO_MINOR_VERSION) {
@@ -464,7 +463,7 @@ void LoginHandler::expectLoginOk(const QString &msg)
 	failLogin(tr("Incompatible server"));
 }
 
-void LoginHandler::joinSelectedSession(int id, bool needPassword)
+void LoginHandler::joinSelectedSession(const QString &id, bool needPassword)
 {
 	_selectedId = id;
 	if(needPassword) {

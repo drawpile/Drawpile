@@ -58,7 +58,7 @@ public:
 	virtual QList<SessionDescription> sessions() const = 0;
 
 	//! Get the description of a stored session
-	virtual SessionDescription getSessionDescriptionById(int id) const = 0;
+	virtual SessionDescription getSessionDescriptionById(const QString &id) const = 0;
 
 	/**
 	 * @brief Load a session with the given ID
@@ -68,7 +68,7 @@ public:
 	 * @param id session ID
 	 * @return newly defrosted session or null if not found
 	 */
-	virtual SessionState *takeSession(int id) =  0;
+	virtual SessionState *takeSession(const QString &id) =  0;
 
 	/**
 	 * @brief Put a session in non-volatile storage
@@ -82,7 +82,7 @@ public:
 	 * @param id
 	 * @return true if a session was deleted
 	 */
-	virtual bool deleteSession(int id) = 0;
+	virtual bool deleteSession(const QString &id) = 0;
 
 signals:
 	//! A new session has become available in the store
