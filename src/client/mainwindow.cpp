@@ -1165,7 +1165,7 @@ void MainWindow::updateStrokePreviewMode()
 		preview = drawingboard::NopStrokePreviewer::getInstance();
 	} else {
 		QSettings cfg;
-		int mode = cfg.value("settings/lag/previewstyle", 2).toInt();
+		int mode = cfg.value("settings/lag/previewstyle", 3).toInt();
 
 		switch(mode) {
 		case 0: preview = drawingboard::NopStrokePreviewer::getInstance(); break;

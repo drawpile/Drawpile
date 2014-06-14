@@ -130,7 +130,7 @@ SettingsDialog::SettingsDialog(const QList<QAction*>& actions, QWidget *parent)
 	cfg.endGroup();
 
 	cfg.beginGroup("settings/lag");
-	_ui->strokepreview->setCurrentIndex(cfg.value("previewstyle", 2).toInt());
+	_ui->strokepreview->setCurrentIndex(cfg.value("previewstyle", 3).toInt());
 	cfg.endGroup();
 
 	// Generate an editable list of shortcuts
