@@ -127,13 +127,13 @@ private:
  */
 class SessionConf : public Message {
 public:
-	static const uint8_t ATTR_LOCKED = 0x01;
-	static const uint8_t ATTR_CLOSED = 0x02;
-	static const uint8_t ATTR_LAYERCTRLLOCKED = 0x04;
-	static const uint8_t ATTR_LOCKDEFAULT = 0x08;
-	static const uint8_t ATTR_PERSISTENT = 0x10;
+	static const uint16_t ATTR_LOCKED = 0x01;
+	static const uint16_t ATTR_CLOSED = 0x02;
+	static const uint16_t ATTR_LAYERCTRLLOCKED = 0x04;
+	static const uint16_t ATTR_LOCKDEFAULT = 0x08;
+	static const uint16_t ATTR_PERSISTENT = 0x10;
 
-	SessionConf(uint8_t maxusers, uint8_t attrs) : Message(MSG_SESSION_CONFIG, 0), _maxusers(maxusers), _attrs(attrs) {}
+	SessionConf(uint8_t maxusers, uint16_t attrs) : Message(MSG_SESSION_CONFIG, 0), _maxusers(maxusers), _attrs(attrs) {}
 	SessionConf(uint8_t maxusers, bool locked, bool closed, bool layerctrlslocked, bool lockdefault, bool persistent)
 		: SessionConf(
 			  maxusers,
@@ -149,7 +149,7 @@ public:
 	//! The maximum number of users in the session
 	uint8_t maxUsers() const { return _maxusers; }
 
-	uint8_t attrs() const { return _attrs; }
+	uint16_t attrs() const { return _attrs; }
 
 	//! Is the whole session locked?
 	bool isLocked() const { return _attrs & ATTR_LOCKED; }
@@ -172,7 +172,7 @@ protected:
 
 private:
 	uint8_t _maxusers;
-	uint8_t _attrs;
+	uint16_t _attrs;
 };
 
 /**

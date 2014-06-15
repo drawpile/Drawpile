@@ -106,22 +106,25 @@ int SessionTitle::payloadLength() const
 
 SessionConf *SessionConf::deserialize(const uchar *data, uint len)
 {
-	if(len!=2)
+	if(len!=3)
 		return 0;
-	return new SessionConf(data[0], data[1]);
+
+	return new SessionConf(
+		*(data+0),
+		qFromBigEndian<quint16>(data+1));
 }
 
 int SessionConf::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = _maxusers;
-	*(ptr++) = _attrs;
+	qToBigEndian(_attrs, ptr); ptr += 2;
 	return ptr-data;
 }
 
 int SessionConf::payloadLength() const
 {
-	return 2;
+	return 3;
 }
 
 Chat *Chat::deserialize(const uchar *data, uint len)

@@ -11,6 +11,7 @@
  * Added Edit toolbar
  * List of supported image formats for saving is now constructed correctly
  * Protocol change: session IDs are now treated as strings rather than numbers
+ * Protocol change: SessionConf::attrs is now two bytes long
 
 2014-06-03 Version 0.9.1
  * SSL support
