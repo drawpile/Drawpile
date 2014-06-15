@@ -1,9 +1,16 @@
 2014-0?-?? Version 0.9.2
  * Improved message popup widget
  * Server: session hibernation
+ * Protocol change: more information is included in SessionConf message
  * Translation support
  * Add Finnish translation
  * Web admin API and sample app
+ * Bugfix: set layer lock status bits correctly at the start of a new session
+ * Changed default stroke preview type to Realistic
+ * Default shortcuts for Copy layer & Copy visible changed for consistency with other programs
+ * Added Edit toolbar
+ * List of supported image formats for saving is now constructed correctly
+ * Protocol change: session IDs are now treated as strings rather than numbers
 
 2014-06-03 Version 0.9.1
  * SSL support
