@@ -250,7 +250,9 @@ void SessionState::addSnapshotPoint()
 	// Create new snapshot point
 	_mainstream.addSnapshotPoint();
 
-	// Add user introductions to snapshot point
+	// Add current session state to snapshot point
+	addToCommandStream(sessionConf());
+
 	foreach(const Client *c, _clients) {
 		if(c->id()>0) {
 			addToSnapshotStream(protocol::MessagePtr(new protocol::UserJoin(c->id(), c->username())));
