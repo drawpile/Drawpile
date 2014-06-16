@@ -110,7 +110,7 @@ void LoginHandler::announceSession(const SessionDescription &session)
 	if(session.hibernating)
 		flags << "ASLEEP";
 
-	send(QString("SESSION %1 %2 %3 %4 \"%5\"")
+	send(QString("SESSION %1 %2 %3 %4 ;%5")
 			.arg(session.id)
 			.arg(session.protoMinor)
 			.arg(flags.isEmpty() ? "-" : flags.join(","))

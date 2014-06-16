@@ -45,7 +45,7 @@ class SessionDescription;
  *
  * S: TITLE <title> (if set)
  *
- * S: SESSION <id²> <proto-minor> <FLAGS³> <user-count> "<title>"
+ * S: SESSION <id²> <proto-minor> <FLAGS³> <user-count> ;<title>
  *  - or -
  * S: NOSESSION [id⁴]
  *

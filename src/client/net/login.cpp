@@ -316,7 +316,7 @@ void LoginHandler::expectSessionDescriptionJoin(const QString &msg)
 
 	// Expect session description in format:
 	// SESSION <id> <minorVersion> <FLAGS> <user-count> "title"
-	const QRegularExpression re("\\ASESSION ([a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) \"([^\"]*)\"\\z");
+	const QRegularExpression re("\\ASESSION ([a-zA-Z0-9:-]{1,64}) (\\d+) (-|[\\w,]+) (\\d+) ;(.*)\\z");
 	auto m = re.match(msg);
 
 	if(!m.hasMatch()) {
