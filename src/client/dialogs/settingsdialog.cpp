@@ -379,7 +379,7 @@ void SettingsDialog::removeCertificates()
 void SettingsDialog::importTrustedCertificate()
 {
 	QString path = QFileDialog::getOpenFileName(this, tr("Import trusted certificate"), QString(),
-		tr("Certificates (%1)").arg("*.pem") + ";;" +
+		tr("Certificates (%1)").arg("*.pem *.crt *.cer") + ";;" +
 		QApplication::tr("All files (*)")
 	);
 
