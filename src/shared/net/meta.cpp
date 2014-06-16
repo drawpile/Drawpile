@@ -129,15 +129,16 @@ int SessionConf::payloadLength() const
 
 Chat *Chat::deserialize(const uchar *data, uint len)
 {
-	if(len<2)
+	if(len<3)
 		return 0;
-	return new Chat(*data, QByteArray((const char*)data+1, len-1));
+	return new Chat(*data, *(data+1), QByteArray((const char*)data+2, len-2));
 }
 
 int Chat::serializePayload(uchar *data) const
 {
 	uchar *ptr = data;
 	*(ptr++) = contextId();
+	*(ptr++) = flags();
 	memcpy(ptr, _msg.constData(), _msg.length());
 	ptr += _msg.length();
 	return ptr - data;
@@ -145,7 +146,7 @@ int Chat::serializePayload(uchar *data) const
 
 int Chat::payloadLength() const
 {
-	return 1 + _msg.length();
+	return 2 + _msg.length();
 }
 
 MovePointer *MovePointer::deserialize(const uchar *data, uint len)

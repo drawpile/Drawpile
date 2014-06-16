@@ -182,18 +182,36 @@ private:
  */
 class Chat : public Message {
 public:
-	Chat(uint8_t ctx, const QByteArray &msg) : Message(MSG_CHAT, ctx), _msg(msg) {}
-	Chat(uint8_t ctx, const QString &msg) : Chat(ctx, msg.toUtf8()) {}
+	static const uint8_t FLAG_ANNOUNCE = 0x01; // public announcement are included in the session history
+
+	Chat(uint8_t ctx, uint8_t flags, const QByteArray &msg) : Message(MSG_CHAT, ctx), _flags(flags), _msg(msg) {}
+	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement)
+		: Chat(
+			ctx,
+			(publicAnnouncement ? FLAG_ANNOUNCE : 0),
+			msg.toUtf8()
+			) {}
 
 	static Chat *deserialize(const uchar *data, uint len);
 
+	uint8_t flags() const { return _flags; }
+
 	QString message() const { return QString::fromUtf8(_msg); }
+
+	/**
+	 * @brief Is this a public announcement?
+	 *
+	 * Unlike normal chat messages, public announcements are included in the session history
+	 * and will thus be visible to users who join later.
+	 */
+	bool isAnnouncement() const { return _flags & FLAG_ANNOUNCE; }
 
 protected:
     int payloadLength() const;
 	int serializePayload(uchar *data) const;
 
 private:
+	uint8_t _flags;
     QByteArray _msg;
 };
 

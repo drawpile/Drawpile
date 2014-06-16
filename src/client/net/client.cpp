@@ -336,9 +336,9 @@ void Client::sendSnapshot(const QList<protocol::MessagePtr> commands)
 	emit sendingBytes(_server->uploadQueueBytes());
 }
 
-void Client::sendChat(const QString &message)
+void Client::sendChat(const QString &message, bool announce)
 {
-	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message)));
+	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message, announce)));
 }
 
 void Client::sendLaserPointer(const QPointF &point, int trail)
@@ -374,7 +374,7 @@ void Client::sendLockUser(int userid, bool lock)
 		cmd = "/unlock ";
 	cmd += QString::number(userid);
 
-	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
+	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd, false))));
 }
 
 void Client::sendOpUser(int userid, bool op)
@@ -387,14 +387,14 @@ void Client::sendOpUser(int userid, bool op)
 		cmd = "/deop ";
 	cmd += QString::number(userid);
 
-	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
+	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd, false))));
 }
 
 void Client::sendKickUser(int userid)
 {
 	Q_ASSERT(userid>0 && userid<256);
 	QString cmd = QString("/kick %1").arg(userid);
-	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd))));
+	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd, false))));
 }
 
 void Client::sendSetSessionTitle(const QString &title)
@@ -410,7 +410,7 @@ void Client::sendLockSession(bool lock)
 	else
 		cmd = "/unlock";
 
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd, false)));
 }
 
 void Client::sendLockLayerControls(bool lock)
@@ -421,7 +421,7 @@ void Client::sendLockLayerControls(bool lock)
 	else
 		cmd = "/unlocklayerctrl";
 
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd, false)));
 }
 
 void Client::sendCloseSession(bool close)
@@ -432,7 +432,7 @@ void Client::sendCloseSession(bool close)
 	else
 		cmd = "/open";
 
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd)));
+	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd, false)));
 }
 
 void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)
@@ -533,6 +533,7 @@ void Client::handleChatMessage(const protocol::Chat &msg)
 	emit chatMessageReceived(
 		username,
 		msg.message(),
+		msg.isAnnouncement(),
 		msg.contextId() == _my_id
 	);
 }
@@ -566,7 +567,7 @@ void Client::handleDisconnectMessage(const protocol::Disconnect &msg)
 	if(!message.isEmpty())
 		chat += QString(" (%1)").arg(message);
 
-	emit chatMessageReceived(tr("Server"), chat, false);
+	emit chatMessageReceived(tr("Server"), chat, false, false);
 }
 
 void Client::handleUserJoin(const protocol::UserJoin &msg)

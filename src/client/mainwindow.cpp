@@ -237,15 +237,15 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_canvas, SIGNAL(newSnapshot(QList<protocol::MessagePtr>)), _client, SLOT(sendSnapshot(QList<protocol::MessagePtr>)));
 
 	// Meta commands
-	connect(_client, SIGNAL(chatMessageReceived(QString,QString, bool)),
-			_chatbox, SLOT(receiveMessage(QString,QString, bool)));
-	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool)),
+	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool)),
+			_chatbox, SLOT(receiveMessage(QString,QString,bool,bool)));
+	connect(_client, SIGNAL(chatMessageReceived(QString,QString,bool,bool)),
 			this, SLOT(statusbarChat(QString,QString)));
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
 			_chatbox, SLOT(receiveMarker(QString,QString)));
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
 			this, SLOT(statusbarChat(QString,QString)));
-	connect(_chatbox, SIGNAL(message(QString)), _client, SLOT(sendChat(QString)));
+	connect(_chatbox, SIGNAL(message(QString,bool)), _client, SLOT(sendChat(QString,bool)));
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));

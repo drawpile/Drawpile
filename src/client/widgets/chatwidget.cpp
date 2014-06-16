@@ -69,6 +69,7 @@ ChatBox::ChatBox(QWidget *parent)
 		"p { margin: 5px 0 }"
 		".marker { color: red }"
 		".sysmsg { color: yellow }"
+		".announcement { color: white }"
 		".nick { font-weight: bold }"
 		".nick.me { color: #fff }"
 		"a:link { color: #5454FF }"
@@ -100,14 +101,15 @@ void ChatBox::kicked(const QString &kickedBy)
  * The received message is displayed in the chat box.
  * @param nick nickname of the user who said something
  * @param message what was said
+ * @param announcement is this a public announcement?
  * @param isme if true, the message was sent by this user
  */
-void ChatBox::receiveMessage(const QString& nick, const QString& message, bool isme)
+void ChatBox::receiveMessage(const QString& nick, const QString& message, bool announcement, bool isme)
 {
 	_view->append(
 		"<p class=\"chat\"><span class=\"nick" + QString(isme ? " me" : "") + "\">&lt;" +
 		nick.toHtmlEscaped() +
-		"&gt;</span> <span class=\"msg\">" +
+		"&gt;</span> <span class=\"msg" + QString(announcement ? " announcement" : "") + "\">" +
 		htmlutils::linkify(message.toHtmlEscaped()) +
 		"</span></p>"
 	);
@@ -137,9 +139,12 @@ void ChatBox::sendMessage(const QString &msg)
 	// Special client side commands
 	if(msg == "/clear") {
 		clear();
+	} if(msg.startsWith("/!")) {
+		// A public announcement
+		emit message(msg.mid(2), true);
 	} else {
 		// A normal chat message/server side command
-		emit message(msg);
+		emit message(msg, false);
 	}
 }
 

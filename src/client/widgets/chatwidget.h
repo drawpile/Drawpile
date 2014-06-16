@@ -39,7 +39,7 @@ public:
 
 public slots:
 	//! Display a received message
-	void receiveMessage(const QString& nick, const QString &message, bool isme=false);
+	void receiveMessage(const QString& nick, const QString &message, bool announcement, bool isme=false);
 
 	//! Display a received marker
 	void receiveMarker(const QString &nick, const QString &message);
@@ -58,7 +58,7 @@ private slots:
 	void sendMessage(const QString &msg);
 
 signals:
-	void message(const QString &msg);
+	void message(const QString &msg, bool announcement);
 	void expanded(bool isVisible);
 
 protected:

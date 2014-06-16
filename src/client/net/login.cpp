@@ -453,7 +453,7 @@ void LoginHandler::expectLoginOk(const QString &msg)
 				init << "/persist";
 
 			for(const QString msg : init)
-				_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, msg)));
+				_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, msg, false)));
 		}
 		return;
 	}

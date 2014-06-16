@@ -138,7 +138,7 @@ void Client::sendDirectMessage(protocol::MessagePtr msg)
 
 void Client::sendSystemChat(const QString &message)
 {
-	_msgqueue->send(MessagePtr(new protocol::Chat(0, message)));
+	_msgqueue->send(MessagePtr(new protocol::Chat(0, message, false)));
 }
 
 void Client::receiveMessages()
@@ -413,6 +413,14 @@ void Client::handleSessionMessage(MessagePtr msg)
 		// Chat is used also for operator commands
 		if(_isOperator && handleOperatorCommand(msg->contextId(), msg.cast<Chat>().message()))
 			return;
+
+		// Normal chat messages are not included in the session history
+		if(!msg.cast<Chat>().isAnnouncement()) {
+			for(Client *c : _session->clients())
+				c->sendDirectMessage(msg);
+			return;
+		}
+
 		break;
 	case MSG_SNAPSHOT:
 		handleSnapshotStart(msg.cast<SnapshotMode>());
