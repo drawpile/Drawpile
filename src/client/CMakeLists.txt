@@ -50,6 +50,7 @@ set (
 	utils/whatismyip.cpp
 	utils/strokesmoother.cpp
 	utils/html.cpp
+	utils/usernamevalidator.cpp
 	core/annotation.cpp
 	core/tile.cpp
 	core/layer.cpp

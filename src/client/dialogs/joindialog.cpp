@@ -22,6 +22,7 @@
 
 #include "joindialog.h"
 #include "../utils/mandatoryfields.h"
+#include "../utils/usernamevalidator.h"
 
 #include "ui_joindialog.h"
 
@@ -34,6 +35,7 @@ JoinDialog::JoinDialog(QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Join"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	ui_->username->setValidator(new UsernameValidator(this));
 
 	// Set defaults
 	QSettings cfg;

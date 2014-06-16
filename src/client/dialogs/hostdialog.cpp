@@ -29,6 +29,7 @@
 #include "widgets/imageselector.h"
 #include "widgets/colorbutton.h"
 #include "utils/mandatoryfields.h"
+#include "utils/usernamevalidator.h"
 
 using widgets::ImageSelector;
 using widgets::ColorButton;
@@ -46,6 +47,7 @@ HostDialog::HostDialog(const QImage& original, QWidget *parent)
 	ui_->setupUi(this);
 	ui_->buttons->button(QDialogButtonBox::Ok)->setText(tr("Host"));
 	ui_->buttons->button(QDialogButtonBox::Ok)->setDefault(true);
+	ui_->username->setValidator(new UsernameValidator(this));
 
 	if(original.isNull()) {
 		ui_->imageSelector->setWidth(800);
