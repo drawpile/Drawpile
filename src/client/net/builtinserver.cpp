@@ -49,7 +49,7 @@ BuiltinServer::BuiltinServer(QObject *parent)
 
 	// Only one session per server is supported here
 	_sessions->setSessionLimit(1);
-	connect(_sessions, SIGNAL(sessionEnded(int)), this, SLOT(stop()));
+	connect(_sessions, SIGNAL(sessionEnded(QString)), this, SLOT(stop()));
 	connect(_sessions, &SessionServer::userDisconnected, [this]() {
 		// The server will be fully stopped after all users have disconnected
 		if(_state == STOPPING)
