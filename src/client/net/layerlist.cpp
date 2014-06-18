@@ -78,7 +78,9 @@ bool LayerListModel::dropMimeData(const QMimeData *data, Qt::DropAction action, 
 
 	const LayerMimeData *ldata = qobject_cast<const LayerMimeData*>(data);
 	if(ldata) {
-		handleMoveLayer(indexOf(ldata->layerId()), row);
+		// note: if row is -1, the item was dropped on the parent element, which in the
+		// case of the list view means the empty area below the items.
+		handleMoveLayer(indexOf(ldata->layerId()), row<0 ? _items.count() : row);
 	} else {
 		qWarning() << "External layer drag&drop not supported";
 	}
