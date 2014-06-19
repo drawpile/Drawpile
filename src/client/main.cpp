@@ -40,6 +40,7 @@ DrawPileApp::DrawPileApp(int &argc, char **argv)
 
 	// Set resource search paths
 	QStringList iconPaths;
+	iconPaths << qApp->applicationDirPath() + "/icons";
 	for(const QString path : QStandardPaths::standardLocations(QStandardPaths::DataLocation))
 		iconPaths << path + "/icons";
 	iconPaths << ":/icons";
