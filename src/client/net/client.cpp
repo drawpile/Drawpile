@@ -341,6 +341,11 @@ void Client::sendChat(const QString &message, bool announce)
 	_server->sendMessage(MessagePtr(new protocol::Chat(_my_id, message, announce)));
 }
 
+void Client::sendOpCommand(const QString &command)
+{
+	_server->sendMessage(protocol::Chat::opCommand(_my_id, command));
+}
+
 void Client::sendLaserPointer(const QPointF &point, int trail)
 {
 	Q_ASSERT(trail>=0);
@@ -369,12 +374,12 @@ void Client::sendLockUser(int userid, bool lock)
 	Q_ASSERT(userid>0 && userid<256);
 	QString cmd;
 	if(lock)
-		cmd = "/lock ";
+		cmd = "lock #";
 	else
-		cmd = "/unlock ";
+		cmd = "unlock #";
 	cmd += QString::number(userid);
 
-	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd, false))));
+	sendOpCommand(cmd);
 }
 
 void Client::sendOpUser(int userid, bool op)
@@ -382,19 +387,18 @@ void Client::sendOpUser(int userid, bool op)
 	Q_ASSERT(userid>0 && userid<256);
 	QString cmd;
 	if(op)
-		cmd = "/op ";
+		cmd = "op #";
 	else
-		cmd = "/deop ";
+		cmd = "deop #";
 	cmd += QString::number(userid);
 
-	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd, false))));
+	sendOpCommand(cmd);
 }
 
 void Client::sendKickUser(int userid)
 {
 	Q_ASSERT(userid>0 && userid<256);
-	QString cmd = QString("/kick %1").arg(userid);
-	_server->sendMessage((MessagePtr(new protocol::Chat(0, cmd, false))));
+	sendOpCommand(QString("kick #%1").arg(userid));
 }
 
 void Client::sendSetSessionTitle(const QString &title)
@@ -404,35 +408,17 @@ void Client::sendSetSessionTitle(const QString &title)
 
 void Client::sendLockSession(bool lock)
 {
-	QString cmd;
-	if(lock)
-		cmd = "/lock";
-	else
-		cmd = "/unlock";
-
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd, false)));
+	sendOpCommand(QStringLiteral("lockboard ") + (lock ? "on" : "off"));
 }
 
 void Client::sendLockLayerControls(bool lock)
 {
-	QString cmd;
-	if(lock)
-		cmd = "/locklayerctrl";
-	else
-		cmd = "/unlocklayerctrl";
-
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd, false)));
+	sendOpCommand(QStringLiteral("locklayerctrl ") + (lock ? "on" : "off"));
 }
 
 void Client::sendCloseSession(bool close)
 {
-	QString cmd;
-	if(close)
-		cmd = "/close";
-	else
-		cmd = "/open";
-
-	_server->sendMessage(MessagePtr(new protocol::Chat(0, cmd, false)));
+	sendOpCommand(QStringLiteral("logins ") + (close ? "off" : "on"));
 }
 
 void Client::sendLayerAcl(int layerid, bool locked, QList<uint8_t> exclusive)

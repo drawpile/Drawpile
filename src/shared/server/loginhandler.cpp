@@ -253,14 +253,7 @@ void LoginHandler::handleJoinMessage(const QString &message)
 		return;
 	}
 
-	bool nameInUse=false;
-	for(const Client *c : session->clients()) {
-		if(c->username().compare(username, Qt::CaseInsensitive)==0) {
-			nameInUse=true;
-			break;
-		}
-	}
-	if(nameInUse) {
+	if(session->getClientByUsername(username)) {
 #ifdef NDEBUG
 		send("ERROR NAMEINUSE");
 		_client->disconnectError("login error");

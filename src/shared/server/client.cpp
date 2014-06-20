@@ -21,6 +21,7 @@
 
 #include "client.h"
 #include "session.h"
+#include "opcommands.h"
 
 #include "../net/messagequeue.h"
 #include "../net/annotation.h"
@@ -411,8 +412,10 @@ void Client::handleSessionMessage(MessagePtr msg)
 		break;
 	case MSG_CHAT:
 		// Chat is used also for operator commands
-		if(_isOperator && handleOperatorCommand(msg->contextId(), msg.cast<Chat>().message()))
+		if(msg->isOpCommand()) {
+			handleSessionOperatorCommand(this, msg.cast<Chat>().message());
 			return;
+		}
 
 		// Normal chat messages are not included in the session history
 		if(!msg.cast<Chat>().isAnnouncement()) {
@@ -544,151 +547,6 @@ void Client::snapshotNowAvailable()
 		sendAvailableCommands();
 		enqueueHeldCommands();
 	}
-}
-
-/**
- * @brief Handle IRC style operator commands
- * @param ctxid user context id
- * @param cmd
- * @return true if command was accepted
- */
-bool Client::handleOperatorCommand(uint8_t ctxid, const QString &cmd)
-{
-	// Operator command must start with a slash
-	if(cmd.length() == 0 || cmd.at(0) != '/')
-		return false;
-
-	/*
-	 * Supported commands:
-	 *
-	 * /lock <user>     - lock the given user
-	 * /unlock <user>   - unlock the given user
-	 * /kick <user>     - kick the user off the server
-	 * /op <user>       - grant operator privileges to user
-	 * /deop <user>     - remove operator privileges from user
-	 * /lock            - lock the whole board
-	 * /unlock          - unlock the board
-	 * /locklayerctrl   - lock layer controls (for non-operators)
-	 * /unlocklayrectrl - unlock layer controls
-	 * /close           - prevent further logins
-	 * /open            - reallow logins
-	 * /title <title>   - change session title (for those who like IRC commands)
-	 * /maxusers <n>    - set session user limit (affects new users only)
-	 * /lockdefault     - lock new users by default
-	 * /unlockdefault   - don't lock new users by default
-	 * /password [p]    - password protect the session. If p is omitted, password is removed
-	 * /force_snapshot  - force snapshot request now
-	 * /persist         - make the session persistent
-	 * /nopersist       - make the session non-persistent
-	 * /who             - list users
-	 * /status          - show session status
-	 */
-	QStringList tokens = cmd.split(' ', QString::SkipEmptyParts);
-	if(tokens[0] == "/lock" && tokens.count()==2) {
-		bool ok;
-		Client *c = _session->getClientById(tokens[1].toInt(&ok));
-		if(c && ok) {
-			c->lockUser();
-			return true;
-		}
-	} else if(tokens[0] == "/unlock" && tokens.count()==2) {
-		bool ok;
-		Client *c = _session->getClientById(tokens[1].toInt(&ok));
-		if(c && ok) {
-			c->unlockUser();
-			return true;
-		}
-	} else if(tokens[0] == "/kick" && tokens.count()==2) {
-		bool ok;
-		Client *c = _session->getClientById(tokens[1].toInt(&ok));
-		if(c && ok) {
-			c->disconnectKick(_username);
-			return true;
-		}
-	} else if(tokens[0] == "/op" && tokens.count()==2) {
-		bool ok;
-		Client *c = _session->getClientById(tokens[1].toInt(&ok));
-		if(c && ok) {
-			if(!c->isOperator())
-				c->grantOp();
-			return true;
-		}
-	} else if(tokens[0] == "/deop" && tokens.count()==2) {
-		bool ok;
-		Client *c = _session->getClientById(tokens[1].toInt(&ok));
-		if(c && ok) {
-			// can't deop self
-			if(c->id() != _id && c->isOperator())
-				c->deOp();
-			return true;
-		}
-	} else if(tokens[0] == "/lock" && tokens.count()==1) {
-		_session->setLocked(true);
-		return true;
-	} else if(tokens[0] == "/unlock" && tokens.count()==1) {
-		_session->setLocked(false);
-		return true;
-	} else if(tokens[0] == "/locklayerctrl" && tokens.count()==1) {
-		_session->setLayerControlLocked(true);
-		return true;
-	} else if(tokens[0] == "/unlocklayerctrl" && tokens.count()==1) {
-		_session->setLayerControlLocked(false);
-		return true;
-	} else if(tokens[0] == "/close" && tokens.count()==1) {
-		_session->setClosed(true);
-		return true;
-	} else if(tokens[0] == "/open" && tokens.count()==1) {
-		_session->setClosed(false);
-		return true;
-	} else if(tokens[0] == "/title" && tokens.count()>1) {
-		QString title = QStringList(tokens.mid(1)).join(' ');
-		_session->setTitle(title);
-		_session->addToCommandStream(protocol::MessagePtr(new protocol::SessionTitle(ctxid, title)));
-		return true;
-	} else if(tokens[0] == "/maxusers" && tokens.count()==2) {
-		bool ok;
-		int limit = tokens[1].toInt(&ok);
-		if(ok && limit>0) {
-			_session->setMaxUsers(limit);
-			return true;
-		}
-	} else if(tokens[0] == "/lockdefault" && tokens.count()==1) {
-		_session->setUsersLockedByDefault(true);
-		return true;
-	} else if(tokens[0] == "/unlockdefault" && tokens.count()==1) {
-		_session->setUsersLockedByDefault(false);
-		return true;
-	} else if(tokens[0] == "/password") {
-		if(tokens.length()==1)
-			_session->setPassword(QString());
-		else // note: password may contain spaces
-			_session->setPassword(cmd.mid(cmd.indexOf(' ') + 1));
-		return true;
-	} else if(tokens[0] == "/force_snapshot" && tokens.count()==1) {
-#ifdef NDEBUG
-		sendSystemChat("force_snapshot is only enabled in debug builds");
-#else
-		_session->startSnapshotSync();
-#endif
-		return true;
-	} else if(tokens[0] == "/persist" && tokens.count()==1) {
-		if(_session->isPersistenceAllowed())
-			_session->setPersistent(true);
-		else
-			sendSystemChat("Session persistence is not enabled");
-		return true;
-	} else if(tokens[0] == "/nopersist" && tokens.count()==1) {
-		_session->setPersistent(false);
-		return true;
-	} else if(tokens[0] == "/who" && tokens.count()==1) {
-		sendOpWhoList();
-		return true;
-	} else if(tokens[0] == "/status" && tokens.count()==1) {
-		sendOpServerStatus();
-		return true;
-	}
-
-	return false;
 }
 
 void Client::handleUndoPoint()

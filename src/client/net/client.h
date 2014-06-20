@@ -193,6 +193,7 @@ public slots:
 
 	// Misc.
 	void sendChat(const QString &message, bool announce);
+	void sendOpCommand(const QString &command);
 	void sendLaserPointer(const QPointF &point, int trail=0);
 	void sendMarker(const QString &text);
 

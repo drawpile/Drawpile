@@ -183,6 +183,7 @@ private:
 class Chat : public Message {
 public:
 	static const uint8_t FLAG_ANNOUNCE = 0x01; // public announcement are included in the session history
+	static const uint8_t FLAG_OPCMD = 0x02; // this message is an operator command
 
 	Chat(uint8_t ctx, uint8_t flags, const QByteArray &msg) : Message(MSG_CHAT, ctx), _flags(flags), _msg(msg) {}
 	Chat(uint8_t ctx, const QString &msg, bool publicAnnouncement)
@@ -191,6 +192,9 @@ public:
 			(publicAnnouncement ? FLAG_ANNOUNCE : 0),
 			msg.toUtf8()
 			) {}
+
+	//! Construct a chat message that carries a session operator command
+	static MessagePtr opCommand(uint8_t ctx, const QString &cmd) { return MessagePtr(new Chat(ctx, FLAG_OPCMD, cmd.toUtf8())); }
 
 	static Chat *deserialize(const uchar *data, uint len);
 
@@ -205,6 +209,11 @@ public:
 	 * and will thus be visible to users who join later.
 	 */
 	bool isAnnouncement() const { return _flags & FLAG_ANNOUNCE; }
+
+	/**
+	 * @brief Is this chat message an operator command?
+	 */
+	bool isOpCommand() const { return _flags & FLAG_OPCMD; }
 
 protected:
     int payloadLength() const;

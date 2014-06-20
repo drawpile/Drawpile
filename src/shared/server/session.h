@@ -217,6 +217,16 @@ public:
 	Client *getClientById(int id);
 
 	/**
+	 * @brief Get a client by user name
+	 *
+	 * The name comparison is case insensitive.
+	 * Note! In debug mode username uniqueness is not enforced!
+	 * @param username
+	 * @return
+	 */
+	Client *getClientByUsername(const QString &username);
+
+	/**
 	 * @brief Get the number of clients in the session
 	 * @return user count
 	 */

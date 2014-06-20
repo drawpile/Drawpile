@@ -26,6 +26,7 @@ set (
 	server/sessiondesc.cpp
 	server/sessionstore.cpp
 	server/loginhandler.cpp
+        server/opcommands.cpp
 	)
 
 add_library(${DPSHAREDLIB} STATIC ${SOURCES})

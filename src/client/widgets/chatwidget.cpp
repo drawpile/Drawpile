@@ -136,14 +136,32 @@ void ChatBox::systemMessage(const QString& message)
 
 void ChatBox::sendMessage(const QString &msg)
 {
-	// Special client side commands
-	if(msg == "/clear") {
-		clear();
-	} if(msg.startsWith("/!")) {
-		// A public announcement
-		emit message(msg.mid(2), true);
+	if(msg.at(0) == '/') {
+		// Special commands
+
+		int split = msg.indexOf(' ');
+		if(split<0)
+			split = msg.length();
+
+		QString cmd = msg.mid(1, split-1).toLower();
+		QString params = msg.mid(split);
+		qDebug() << "command:" << cmd << "params" << params;
+
+		if(cmd == "clear") {
+			// client side command: clear chat window
+			clear();
+
+		} else if(cmd.at(0)=='!') {
+			// public announcement
+			emit message(msg.mid(2), true);
+
+		} else {
+			// operator commands
+			emit opCommand(cmd + params);
+		}
+
 	} else {
-		// A normal chat message/server side command
+		// A normal chat message
 		emit message(msg, false);
 	}
 }

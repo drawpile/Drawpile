@@ -433,27 +433,24 @@ void LoginHandler::expectLoginOk(const QString &msg)
 			QStringList init;
 
 			if(!_title.isEmpty())
-				init << "/title " + _title;
+				init << "title " + _title;
 
 			if(!_sessionPassword.isEmpty())
-				init << "/password " + _sessionPassword;
+				init << "password " + _sessionPassword;
 
 			if(_maxusers>0)
-				init << QString("/maxusers %1").arg(_maxusers);
+				init << QString("maxusers %1").arg(_maxusers);
 
 			if(!_allowdrawing)
-				init <<  "/lockdefault";
+				init <<  "lockdefault on";
 
-			if(_layerctrllock)
-				init << "/locklayerctrl";
-			else
-				init << "/unlocklayerctrl";
+			init << QStringLiteral("locklayerctrl ") + (_layerctrllock ? "on" : "off");
 
 			if(_requestPersistent)
-				init << "/persist";
+				init << "persistence on";
 
 			for(const QString msg : init)
-				_server->sendMessage(protocol::MessagePtr(new protocol::Chat(_userid, msg, false)));
+				_server->sendMessage(protocol::Chat::opCommand(0, msg));
 		}
 		return;
 	}

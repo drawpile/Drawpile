@@ -131,7 +131,16 @@ Client *SessionState::getClientById(int id)
 		if(c->id() == id)
 			return c;
 	}
-	return 0;
+	return nullptr;
+}
+
+Client *SessionState::getClientByUsername(const QString &username)
+{
+	foreach(Client *c, _clients) {
+		if(c->username().compare(username, Qt::CaseInsensitive)==0)
+			return c;
+	}
+	return nullptr;
 }
 
 void SessionState::setClosed(bool closed)

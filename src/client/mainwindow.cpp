@@ -246,6 +246,7 @@ MainWindow::MainWindow(bool restoreWindowPosition)
 	connect(_client, SIGNAL(markerMessageReceived(QString,QString)),
 			this, SLOT(statusbarChat(QString,QString)));
 	connect(_chatbox, SIGNAL(message(QString,bool)), _client, SLOT(sendChat(QString,bool)));
+	connect(_chatbox, SIGNAL(opCommand(QString)), _client, SLOT(sendOpCommand(QString)));
 
 	connect(_client, SIGNAL(sessionTitleChange(QString)), this, SLOT(setSessionTitle(QString)));
 	connect(_client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(setOperatorMode(bool)));

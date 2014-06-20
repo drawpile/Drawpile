@@ -65,6 +65,7 @@ public:
 	 * @param session
 	 */
 	void setSession(SessionState *session);
+	SessionState *session() { return _session; }
 
 	/**
 	 * @brief Get the context ID of the client
@@ -273,7 +274,6 @@ private:
 	void handleJoinSession(const QString &msg);
 	void handleSnapshotStart(const protocol::SnapshotMode &msg);
 
-	bool handleOperatorCommand(uint8_t ctxid, const QString &cmd);
 	void handleUndoPoint();
 	bool handleUndoCommand(protocol::Undo &undo);
 
