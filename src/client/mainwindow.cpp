@@ -649,8 +649,13 @@ void MainWindow::showNew()
  * @param file file to open
  * @pre file.isEmpty()!=false
  */
-void MainWindow::open(const QString& file)
+void MainWindow::open(const QUrl& url)
 {
+	if(!url.isLocalFile()) {
+		showErrorMessage(tr("Opening remote files is not yet supported."));
+		return;
+	}
+	QString file = url.toLocalFile();
 	if(file.endsWith(".dprec", Qt::CaseInsensitive)) {
 		auto reader = dialogs::PlaybackDialog::openRecording(file, this);
 		if(reader) {
@@ -694,7 +699,7 @@ void MainWindow::open()
 		const QFileInfo info(file);
 		setLastPath(info.absolutePath());
 
-		open(file);
+		open(QUrl::fromLocalFile(file));
 	}
 }
 
@@ -1647,7 +1652,7 @@ void MainWindow::setupActions()
 
 	connect(_recent, &QMenu::triggered, [this](QAction *action) {
 		action->setProperty("deletelater",true);
-		this->open(action->property("filepath").toString());
+		this->open(QUrl::fromLocalFile(action->property("filepath").toString()));
 	});
 
 	//

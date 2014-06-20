@@ -17,7 +17,11 @@
    along with Drawpile.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QApplication>
+#include "main.h"
+#include "mainwindow.h"
+
+#include "utils/icon.h"
+
 #include <QSettings>
 #include <QUrl>
 #include <QTabletEvent>
@@ -25,11 +29,6 @@
 #include <QLibraryInfo>
 #include <QTranslator>
 #include <QDir>
-
-#include "main.h"
-#include "mainwindow.h"
-
-#include "utils/icon.h"
 
 DrawPileApp::DrawPileApp(int &argc, char **argv)
 	: QApplication(argc, argv)
@@ -120,12 +119,11 @@ int main(int argc, char *argv[]) {
 	
 	const QStringList args = app.arguments();
 	if(args.count()>1) {
-		const QString arg = args.at(1);
-		// Parameter given, we assume it to be either an URL to a session
-		// or a filename.
-		if(arg.startsWith("drawpile://")) {
-			// Join the session
-			QUrl url(arg, QUrl::TolerantMode);
+		QUrl url = args.at(1);
+
+		if(url.scheme() == "drawpile") {
+			// Our own protocol: connect to a session
+
 			if(url.userName().isEmpty()) {
 				// Set username if not specified
 				QSettings cfg;
@@ -134,10 +132,16 @@ int main(int argc, char *argv[]) {
 			win->joinSession(url);
 
 		} else {
-			win->open(argv[1]);
+			// Other protocols: load image
+			if(url.scheme().length() <= 1) {
+				// unset or 1 letter long (drive letter) scheme means this is probably
+				// a local filesystem path.
+				url = QUrl::fromLocalFile(args.at(1));
+			}
+
+			win->open(url);
 		}
 	}
 
 	return app.exec();
 }
-

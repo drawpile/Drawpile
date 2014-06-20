@@ -79,7 +79,7 @@ class MainWindow : public QMainWindow {
 		// Triggerable actions
 		void showNew();
 		void open();
-		void open(const QString& file);
+		void open(const QUrl &url);
 		bool save();
 		bool saveas();
 
