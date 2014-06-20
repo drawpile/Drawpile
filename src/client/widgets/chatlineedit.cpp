@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 			setText(_current);
 		}
 	} else if(event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
-		QString txt = text().trimmed();
+		QString txt = trimmedText();
 		if(!txt.isEmpty()) {
 			pushHistory(txt);
 			_historypos = _history.count();
@@ -69,7 +69,18 @@ void ChatLineEdit::keyPressEvent(QKeyEvent *event)
 	}
 }
 
-bool ChatLineEdit::isEmpty() const
+QString ChatLineEdit::trimmedText() const
 {
-	return text().trimmed().isEmpty();
+	QString str = text();
+
+	// Remove trailing whitespace
+	int chop = str.length();
+	while(chop>0 && str.at(chop-1).isSpace())
+		--chop;
+
+	if(chop==0)
+		return QString();
+	str.truncate(chop);
+
+	return str;
 }

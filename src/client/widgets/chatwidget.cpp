@@ -66,7 +66,7 @@ ChatBox::ChatBox(QWidget *parent)
 	);
 
 	_view->document()->setDefaultStyleSheet(
-		"p { margin: 5px 0 }"
+		"p { margin: 5px 0; white-space: pre }"
 		".marker { color: red }"
 		".sysmsg { color: yellow }"
 		".announcement { color: white }"

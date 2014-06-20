@@ -1,7 +1,7 @@
 /*
    DrawPile - a collaborative drawing program.
 
-   Copyright (C) 2013 Calle Laakkonen
+   Copyright (C) 2013-2014 Calle Laakkonen
 
    Drawpile is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,10 +31,11 @@ Q_OBJECT
 public:
 	explicit ChatLineEdit(QWidget *parent = 0);
 
-	bool isEmpty() const;
-
 	//! Push text to history
 	void pushHistory(const QString& text);
+
+	//! Get the current text with trailing whitespace removed
+	QString trimmedText() const;
 
 signals:
 	void returnPressed(const QString &text);
