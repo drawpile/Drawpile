@@ -23,6 +23,7 @@
 #include "../net/meta.h"
 
 #include <QList>
+#include <QStringList>
 
 namespace server {
 
