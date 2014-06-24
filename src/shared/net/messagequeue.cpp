@@ -35,11 +35,21 @@ MessageQueue::MessageQueue(QTcpSocket *socket, QObject *parent)
 	connect(socket, SIGNAL(readyRead()), this, SLOT(readData()));
 	connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
 
+	if(socket->inherits("QSslSocket")) {
+		connect(socket, SIGNAL(encrypted()), this, SLOT(sslEncrypted()));
+	}
+
 	_recvbuffer = new char[MAX_BUF_LEN];
 	_sendbuffer = new char[MAX_BUF_LEN];
 	_recvcount = 0;
 	_sentcount = 0;
 	_sendbuflen = 0;
+}
+
+void MessageQueue::sslEncrypted()
+{
+	disconnect(_socket, SIGNAL(bytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
+	connect(_socket, SIGNAL(encryptedBytesWritten(qint64)), this, SLOT(dataWritten(qint64)));
 }
 
 MessageQueue::~MessageQueue()

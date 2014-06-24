@@ -154,6 +154,7 @@ signals:
 private slots:
 	void readData();
 	void dataWritten(qint64);
+	void sslEncrypted();
 
 private:
 	void writeData();
