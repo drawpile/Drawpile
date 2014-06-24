@@ -170,7 +170,7 @@ void opUser(Client *client, const QString &, const QStringList &tokens)
 {
 	Client *target = _getClient(client, tokens.at(1));
 	if(!target->isOperator())
-		client->grantOp();
+		target->grantOp();
 }
 
 void deopUser(Client *client, const QString &, const QStringList &tokens)
@@ -178,7 +178,7 @@ void deopUser(Client *client, const QString &, const QStringList &tokens)
 	Client *target = _getClient(client, tokens.at(1));
 	if(target==client)
 		throw OpError("cannot deop self");
-	client->deOp();
+	target->deOp();
 }
 
 void lockUser(Client *client, const QString &, const QStringList &tokens)
