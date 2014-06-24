@@ -43,6 +43,9 @@ public:
 
 	void setClient(net::Client *client);
 
+public slots:
+	void opPrivilegeChanged();
+
 private slots:
 	void lockSelected();
 	void kickSelected();

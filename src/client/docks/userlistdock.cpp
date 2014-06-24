@@ -65,6 +65,7 @@ void UserList::setClient(net::Client *client)
 
 	connect(client->userlist(), SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
 	connect(_ui->userlist->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this, SLOT(selectionChanged(QItemSelection)));
+	connect(client, SIGNAL(opPrivilegeChange(bool)), this, SLOT(opPrivilegeChanged()));
 }
 
 QModelIndex UserList::currentSelection()
@@ -120,6 +121,12 @@ void UserList::selectionChanged(const QItemSelection &selected)
 		QModelIndex cs = currentSelection();
 		dataChanged(cs,cs);
 	}
+}
+
+void UserList::opPrivilegeChanged()
+{
+	bool on = currentSelection().isValid();
+	setOperatorMode(on && _client->isOperator() && _client->isLoggedIn());
 }
 
 void UserList::dataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
