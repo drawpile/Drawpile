@@ -23,6 +23,7 @@
 #include <QBitmap>
 #include <QPainter>
 #include <QMimeData>
+#include <QApplication>
 
 // Qt 5.0 compatibility. Remove once Qt 5.1 ships on mainstream distros
 #if (QT_VERSION < QT_VERSION_CHECK(5, 1, 0))
@@ -205,9 +206,18 @@ void CanvasView::enterEvent(QEvent *event)
 	if(_enableoutline) {
 		_showoutline = true;
 	}
+
 	// Give focus to this widget on mouseover. This is so that
-	// using spacebar for dragging works rightaway.
-	setFocus(Qt::MouseFocusReason);
+	// using spacebar for dragging works rightaway. Avoid stealing
+	// focus from text edit widgets though.
+	QWidget *oldfocus = QApplication::focusWidget();
+	if(!oldfocus || !(
+		oldfocus->inherits("QLineEdit") ||
+		oldfocus->inherits("QTextEdit") ||
+		oldfocus->inherits("QPlainTextEdit"))
+		) {
+		setFocus(Qt::MouseFocusReason);
+	}
 }
 
 void CanvasView::leaveEvent(QEvent *event)

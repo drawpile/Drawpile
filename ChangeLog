@@ -15,6 +15,7 @@
  * Protocol change: added "flags" field to Chat message
  * Chat messages are no longer included in the session history by default
  * Fixed crash when dragging&dropping a layer
+ * Fixed canvas stealing focus from text boxes
 
 2014-06-03 Version 0.9.1
  * SSL support
